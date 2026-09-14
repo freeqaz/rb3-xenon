@@ -1,0 +1,5372 @@
+[
+ {
+  "gi": 114,
+  "addr": "0x823d3ac8",
+  "group_index": 113,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 114,
+  "addr": "0x823d3ac8",
+  "group_index": 113,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 114,
+  "addr": "0x823d3ac8",
+  "group_index": 113,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 114,
+  "addr": "0x823d3ac8",
+  "group_index": 113,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 114,
+  "addr": "0x823d3ac8",
+  "group_index": 113,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 114,
+  "addr": "0x823d3ac8",
+  "group_index": 113,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 114,
+  "addr": "0x823d3ac8",
+  "group_index": 113,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 114,
+  "addr": "0x823d3ac8",
+  "group_index": 113,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 114,
+  "addr": "0x823d3ac8",
+  "group_index": 113,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 114,
+  "addr": "0x823d3ac8",
+  "group_index": 113,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 114,
+  "addr": "0x823d3ac8",
+  "group_index": 113,
+  "census_bytes": 60,
+  "folded": "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
+  "survivor": "??$_Copy_Construct@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z",
+  "our_callsites_of_N": 5,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 5
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 114,
+  "addr": "0x823d3ac8",
+  "group_index": 113,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 114,
+  "addr": "0x823d3ac8",
+  "group_index": 113,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 114,
+  "addr": "0x823d3ac8",
+  "group_index": 113,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 114,
+  "addr": "0x823d3ac8",
+  "group_index": 113,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 114,
+  "addr": "0x823d3ac8",
+  "group_index": 113,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 114,
+  "addr": "0x823d3ac8",
+  "group_index": 113,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 114,
+  "addr": "0x823d3ac8",
+  "group_index": 113,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "scored_below_100": 1,
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 114,
+  "addr": "0x823d3ac8",
+  "group_index": 113,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 114,
+  "addr": "0x823d3ac8",
+  "group_index": 113,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 114,
+  "addr": "0x823d3ac8",
+  "group_index": 113,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z",
+  "our_callsites_of_N": 3,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 3
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 203,
+  "addr": "0x822e5040",
+  "group_index": 201,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VSongPattern@@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 203,
+  "addr": "0x822e5040",
+  "group_index": 201,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VSongPattern@@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 203,
+  "addr": "0x822e5040",
+  "group_index": 201,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VSongPattern@@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 203,
+  "addr": "0x822e5040",
+  "group_index": 201,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VSongPattern@@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 203,
+  "addr": "0x822e5040",
+  "group_index": 201,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VSongPattern@@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 203,
+  "addr": "0x822e5040",
+  "group_index": 201,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VSongPattern@@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 203,
+  "addr": "0x822e5040",
+  "group_index": 201,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VSongPattern@@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 203,
+  "addr": "0x822e5040",
+  "group_index": 201,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VSongPattern@@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 203,
+  "addr": "0x822e5040",
+  "group_index": 201,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VSongPattern@@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 203,
+  "addr": "0x822e5040",
+  "group_index": 201,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VSongPattern@@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 203,
+  "addr": "0x822e5040",
+  "group_index": 201,
+  "census_bytes": 60,
+  "folded": "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
+  "survivor": "??$_Copy_Construct@VSongPattern@@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z",
+  "our_callsites_of_N": 5,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 5
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 203,
+  "addr": "0x822e5040",
+  "group_index": 201,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VSongPattern@@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 203,
+  "addr": "0x822e5040",
+  "group_index": 201,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VSongPattern@@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 203,
+  "addr": "0x822e5040",
+  "group_index": 201,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VSongPattern@@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 203,
+  "addr": "0x822e5040",
+  "group_index": 201,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VSongPattern@@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 203,
+  "addr": "0x822e5040",
+  "group_index": 201,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VSongPattern@@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 203,
+  "addr": "0x822e5040",
+  "group_index": 201,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VSongPattern@@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 203,
+  "addr": "0x822e5040",
+  "group_index": 201,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VSongPattern@@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "scored_below_100": 1,
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 203,
+  "addr": "0x822e5040",
+  "group_index": 201,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VSongPattern@@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 203,
+  "addr": "0x822e5040",
+  "group_index": 201,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VSongPattern@@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 203,
+  "addr": "0x822e5040",
+  "group_index": 201,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VSongPattern@@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z",
+  "our_callsites_of_N": 3,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 3
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 338,
+  "addr": "0x822cdc18",
+  "group_index": 336,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 338,
+  "addr": "0x822cdc18",
+  "group_index": 336,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 338,
+  "addr": "0x822cdc18",
+  "group_index": 336,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 338,
+  "addr": "0x822cdc18",
+  "group_index": 336,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 338,
+  "addr": "0x822cdc18",
+  "group_index": 336,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 338,
+  "addr": "0x822cdc18",
+  "group_index": 336,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 338,
+  "addr": "0x822cdc18",
+  "group_index": 336,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 338,
+  "addr": "0x822cdc18",
+  "group_index": 336,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 338,
+  "addr": "0x822cdc18",
+  "group_index": 336,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 338,
+  "addr": "0x822cdc18",
+  "group_index": 336,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 338,
+  "addr": "0x822cdc18",
+  "group_index": 336,
+  "census_bytes": 60,
+  "folded": "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
+  "survivor": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
+  "our_callsites_of_N": 5,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 5
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 338,
+  "addr": "0x822cdc18",
+  "group_index": 336,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 338,
+  "addr": "0x822cdc18",
+  "group_index": 336,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 338,
+  "addr": "0x822cdc18",
+  "group_index": 336,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 338,
+  "addr": "0x822cdc18",
+  "group_index": 336,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 338,
+  "addr": "0x822cdc18",
+  "group_index": 336,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 338,
+  "addr": "0x822cdc18",
+  "group_index": 336,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 338,
+  "addr": "0x822cdc18",
+  "group_index": 336,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "scored_below_100": 1,
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 338,
+  "addr": "0x822cdc18",
+  "group_index": 336,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 338,
+  "addr": "0x822cdc18",
+  "group_index": 336,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 338,
+  "addr": "0x822cdc18",
+  "group_index": 336,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
+  "our_callsites_of_N": 3,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 3
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 557,
+  "addr": "0x82706100",
+  "group_index": 555,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 557,
+  "addr": "0x82706100",
+  "group_index": 555,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 557,
+  "addr": "0x82706100",
+  "group_index": 555,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 557,
+  "addr": "0x82706100",
+  "group_index": 555,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 557,
+  "addr": "0x82706100",
+  "group_index": 555,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 557,
+  "addr": "0x82706100",
+  "group_index": 555,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 557,
+  "addr": "0x82706100",
+  "group_index": 555,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 557,
+  "addr": "0x82706100",
+  "group_index": 555,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 557,
+  "addr": "0x82706100",
+  "group_index": 555,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 557,
+  "addr": "0x82706100",
+  "group_index": 555,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 557,
+  "addr": "0x82706100",
+  "group_index": 555,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 557,
+  "addr": "0x82706100",
+  "group_index": 555,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 557,
+  "addr": "0x82706100",
+  "group_index": 555,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 557,
+  "addr": "0x82706100",
+  "group_index": 555,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "group_index": 562,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "group_index": 562,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "group_index": 562,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "group_index": 562,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "group_index": 562,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "group_index": 562,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "group_index": 562,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "group_index": 562,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "group_index": 562,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "group_index": 562,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "group_index": 562,
+  "census_bytes": 60,
+  "folded": "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "our_callsites_of_N": 5,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 5
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "group_index": 562,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "group_index": 562,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "group_index": 562,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "group_index": 562,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "group_index": 562,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "group_index": 562,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "group_index": 562,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "scored_below_100": 1,
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "group_index": 562,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "group_index": 562,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "group_index": 562,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "our_callsites_of_N": 3,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 3
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 5,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 5
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "scored_below_100": 1,
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 3,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 3
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 5,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 5
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "scored_below_100": 1,
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 3,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 3
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 598,
+  "addr": "0x823048e0",
+  "group_index": 596,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VRndDir@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndDir@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 598,
+  "addr": "0x823048e0",
+  "group_index": 596,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VRndDir@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndDir@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 598,
+  "addr": "0x823048e0",
+  "group_index": 596,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VRndDir@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndDir@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 598,
+  "addr": "0x823048e0",
+  "group_index": 596,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VRndDir@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndDir@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 598,
+  "addr": "0x823048e0",
+  "group_index": 596,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VRndDir@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndDir@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 598,
+  "addr": "0x823048e0",
+  "group_index": 596,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VRndDir@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndDir@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 598,
+  "addr": "0x823048e0",
+  "group_index": 596,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VRndDir@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndDir@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 598,
+  "addr": "0x823048e0",
+  "group_index": 596,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VRndDir@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndDir@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 598,
+  "addr": "0x823048e0",
+  "group_index": 596,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VRndDir@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndDir@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 598,
+  "addr": "0x823048e0",
+  "group_index": 596,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VRndDir@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndDir@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 598,
+  "addr": "0x823048e0",
+  "group_index": 596,
+  "census_bytes": 60,
+  "folded": "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VRndDir@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndDir@@@@ABV1@@Z",
+  "our_callsites_of_N": 5,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 5
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 598,
+  "addr": "0x823048e0",
+  "group_index": 596,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VRndDir@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndDir@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 598,
+  "addr": "0x823048e0",
+  "group_index": 596,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VRndDir@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndDir@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 598,
+  "addr": "0x823048e0",
+  "group_index": 596,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VRndDir@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndDir@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 598,
+  "addr": "0x823048e0",
+  "group_index": 596,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VRndDir@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndDir@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 598,
+  "addr": "0x823048e0",
+  "group_index": 596,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VRndDir@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndDir@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 598,
+  "addr": "0x823048e0",
+  "group_index": 596,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VRndDir@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndDir@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 598,
+  "addr": "0x823048e0",
+  "group_index": 596,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VRndDir@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndDir@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "scored_below_100": 1,
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 598,
+  "addr": "0x823048e0",
+  "group_index": 596,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VRndDir@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndDir@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 598,
+  "addr": "0x823048e0",
+  "group_index": 596,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VRndDir@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndDir@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 598,
+  "addr": "0x823048e0",
+  "group_index": 596,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VRndDir@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndDir@@@@ABV1@@Z",
+  "our_callsites_of_N": 3,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 3
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 5,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 5
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "scored_below_100": 1,
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 3,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 3
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 5,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 5
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "scored_below_100": 1,
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 3,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 3
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 643,
+  "addr": "0x8266c470",
+  "group_index": 641,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 643,
+  "addr": "0x8266c470",
+  "group_index": 641,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 643,
+  "addr": "0x8266c470",
+  "group_index": 641,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 643,
+  "addr": "0x8266c470",
+  "group_index": 641,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 643,
+  "addr": "0x8266c470",
+  "group_index": 641,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 643,
+  "addr": "0x8266c470",
+  "group_index": 641,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 643,
+  "addr": "0x8266c470",
+  "group_index": 641,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 643,
+  "addr": "0x8266c470",
+  "group_index": 641,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 643,
+  "addr": "0x8266c470",
+  "group_index": 641,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 643,
+  "addr": "0x8266c470",
+  "group_index": 641,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 643,
+  "addr": "0x8266c470",
+  "group_index": 641,
+  "census_bytes": 60,
+  "folded": "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
+  "survivor": "??$_Copy_Construct@VLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@ABV1@@Z",
+  "our_callsites_of_N": 5,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 5
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 643,
+  "addr": "0x8266c470",
+  "group_index": 641,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 643,
+  "addr": "0x8266c470",
+  "group_index": 641,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 643,
+  "addr": "0x8266c470",
+  "group_index": 641,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 643,
+  "addr": "0x8266c470",
+  "group_index": 641,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 643,
+  "addr": "0x8266c470",
+  "group_index": 641,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 643,
+  "addr": "0x8266c470",
+  "group_index": 641,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 643,
+  "addr": "0x8266c470",
+  "group_index": 641,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "scored_below_100": 1,
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 643,
+  "addr": "0x8266c470",
+  "group_index": 641,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 643,
+  "addr": "0x8266c470",
+  "group_index": 641,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 643,
+  "addr": "0x8266c470",
+  "group_index": 641,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@ABV1@@Z",
+  "our_callsites_of_N": 3,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 3
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 5,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 5
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "scored_below_100": 1,
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 3,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 3
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 5,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 5
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "scored_below_100": 1,
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 3,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 3
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "group_index": 678,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "group_index": 678,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "group_index": 678,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "group_index": 678,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "group_index": 678,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "group_index": 678,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "group_index": 678,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "group_index": 678,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "group_index": 678,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "group_index": 678,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "group_index": 678,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "group_index": 678,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "group_index": 678,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "group_index": 678,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 730,
+  "addr": "0x823d1a78",
+  "group_index": 728,
+  "census_bytes": 120,
+  "folded": "??0?$ObjDirItr@VDepthBuffer3D@@@@QAA@PAVObjectDir@@_N@Z",
+  "survivor": "??0?$ObjDirItr@VCharClipGroup@@@@QAA@PAVObjectDir@@_N@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 730,
+  "addr": "0x823d1a78",
+  "group_index": 728,
+  "census_bytes": 120,
+  "folded": "??0?$ObjDirItr@VHamSupereasyData@@@@QAA@PAVObjectDir@@_N@Z",
+  "survivor": "??0?$ObjDirItr@VCharClipGroup@@@@QAA@PAVObjectDir@@_N@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ }
+]
