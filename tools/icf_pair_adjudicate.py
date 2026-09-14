@@ -111,8 +111,18 @@ def chase(tgt, ours, survivor, our_name, mapped, depth=0, stack=None, memo=None,
     if key in stack:
         out.append((depth, "CYCLE-ASSUMED", survivor, our_name))
         return True
-    if survivor == our_name:
+    if survivor == our_name and depth > 0:
+        # A same-name SLOT (retail's reloc names S and so does ours) is exactly
+        # what flat T1's relocs_agree accepts: name equality IS the evidence.
         return True
+    # ★ W16-AE: NOT at depth 0.  A self-pair [S, S] handed in at the top used to
+    # short-circuit here and read PROVEN without a single byte compared -- a
+    # vacuous verdict shaped like the strongest one.  Measured: six [S,S] pairs
+    # whose OUR-side COMDAT contradicts the retail body at S's mapped address
+    # (0x8231a578 ??1Automator 224 B retail vs a different ~Automator of ours,
+    # 0x822c5600 operator>><BAMPhrase> ...) all chased PROVEN.  At depth 0 the
+    # question being asked is "is our COMDAT for S the retail body named S?",
+    # and that is answered below by the same byte/reloc tests as any pair.
     if depth > maxdepth:
         out.append((depth, "DEPTH-CAP", survivor, our_name))
         return False
@@ -333,6 +343,25 @@ def main():
                    and not vacuous(tgt[g["survivor"]]))
         pairs = [("IN-FAMILY DECOY (expect REFUTED)", "fn_827B0E78", UIC),
                  ("FLAT-T1 GROUP (expect PROVEN)", pos[0], pos[1])]
+        # ★ W16-AE SELF-PAIR CONTROLS.  chase() used to return True for any
+        # [S, S] pair before comparing a byte, so a survivor whose own COMDAT
+        # contradicts the retail body at its mapped address read PROVEN.  The
+        # negative control is a name both sides define, non-vacuous, whose
+        # retail extent differs from our COMDAT's -- our code for S is NOT the
+        # body retail names S, and the chase must say so.  The positive control
+        # is a self-pair that is byte- and reloc-identical, so the fix cannot
+        # be "refuse every self-pair" either.  Both are chosen from the live
+        # tree rather than hardcoded, so the control survives map repairs.
+        def _self(pred):
+            return next(n for n in tgt if n.startswith("?") and n in ours
+                        and not vacuous(tgt[n]) and not vacuous(ours[n])
+                        and tgt[n][2] > 100 and pred(tgt[n], ours[n]))
+        self_neg = _self(lambda r, o: r[2] != o[2])
+        self_pos = _self(lambda r, o: r[0] == o[0] and list(r[1]) == list(o[1]))
+        pairs += [("SELF-PAIR NEGATIVE, our COMDAT contradicts retail (expect REFUTED)",
+                   self_neg, self_neg),
+                  ("SELF-PAIR POSITIVE, byte+reloc identical (expect PROVEN)",
+                   self_pos, self_pos)]
         a.chase = True
     elif a.pairs:
         pairs = [("", s, o) for s, o in json.load(open(a.pairs))]
