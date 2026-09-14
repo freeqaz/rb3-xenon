@@ -14,7 +14,7 @@ public:
     virtual void StartSearching(User *, const SearchSettings &);
     virtual void StopSearching();
     virtual void ClearSearchResults();
-    virtual int OnMsg(const InviteAcceptedMsg &);
+    virtual bool OnMsg(const InviteAcceptedMsg &);
 
     void AllocateNetSearchResults();
     void GetSearchResults(std::vector<NetSearchResult *> &);
