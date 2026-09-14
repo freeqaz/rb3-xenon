@@ -30403,5 +30403,6 @@
  "0x82812058": "?SyncProperty@UILabelDir@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x82812068": "?PostLoad@UILabelDir@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
  "0x822d3918": "?PostLoad@EndingBonus@@UAAXAAVBinStream@@@Z",
- "0x822d3910": "?PreLoad@EndingBonus@@UAAXAAVBinStream@@@Z"
+ "0x822d3910": "?PreLoad@EndingBonus@@UAAXAAVBinStream@@@Z",
+ "0x82638d58": "?GetRecommendationIndexPath@StoreInfoPanel@@QAAXPBDAAVString@@@Z"
 }
