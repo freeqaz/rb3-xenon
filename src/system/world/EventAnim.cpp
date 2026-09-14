@@ -74,7 +74,15 @@ BEGIN_COPYS(EventAnim)
     END_COPYING_MEMBERS
 END_COPYS
 
-SAVE_OBJ(EventAnim, 0x7F)
+BEGIN_SAVES(EventAnim)
+    SAVE_REVS(1, 0)
+    SAVE_SUPERCLASS(Hmx::Object)
+    SAVE_SUPERCLASS(RndAnimatable)
+    bs << mKeys;
+    bs << mStart;
+    bs << mResetStart;
+    bs << mEnd;
+END_SAVES
 
 BEGIN_LOADS(EventAnim)
     LOAD_REVS(bs)
@@ -98,6 +106,18 @@ BinStream &operator>>(BinStream &bs, EventAnim::KeyFrame &k) {
 BinStream &operator>>(BinStream &bs, EventAnim::EventCall &e) {
     bs >> e.mDir;
     e.mEvent.Load(bs, true, e.mDir);
+    return bs;
+}
+
+BinStream &operator<<(BinStream &bs, const EventAnim::KeyFrame &k) {
+    bs << k.mTime;
+    bs << k.mCalls;
+    return bs;
+}
+
+BinStream &operator<<(BinStream &bs, const EventAnim::EventCall &e) {
+    bs << e.mDir;
+    bs << e.mEvent;
     return bs;
 }
 
