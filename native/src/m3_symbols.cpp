@@ -10,10 +10,16 @@
 #include "utl/TimeConversion.h" // TickToMs decl
 #include "os/Debug.h"
 
-// TickToMs(float): declared in utl/TimeConversion.h but rb3-xenon's
-// TimeConversion.cpp never defines the float overload (only the int inline that
-// forwards to it). Genuine body from the rb3-Wii oracle TimeConversion.cpp.
-float TickToMs(float f) { return TheTempoMap->TickToTime(f); }
+// TickToMs(float): REMOVED 2026-09-14 (lane W15-E) -- no longer a shim, because
+// utl/TimeConversion.cpp now DEFINES the float overload for real. Keeping this
+// definition here is a duplicate-symbol link error (it was, in 10 targets).
+//
+// Worth recording that the two derivations agreed exactly. This shim's body came
+// from the rb3-Wii oracle; the match-build definition was derived independently
+// from retail bytes at 0x827C9110 (lis/lwz TheTempoMap, lwz vtable, lwz +0x4
+// = TickToTime, mtctr, bctr) while proving that address is TickToMs and not the
+// `?Init@Movie@@SAXXZ` the map claimed. Both are
+// `return TheTempoMap->TickToTime(f);`.
 
 // MidiReceiver::SkipCurrentTrack(): present in the rb3-Wii MidiReceiver.cpp but
 // absent from rb3-xenon's (which only carries the ctor + Error). SongParser
