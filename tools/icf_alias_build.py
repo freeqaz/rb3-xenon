@@ -181,6 +181,115 @@ def collect(paths, label=""):
     return out
 
 
+def survivor_self_check(rt, st, mapped=frozenset(), strict=True, mode="shape", eq=None):
+    """★ W16-AE.  Does OUR OWN COMDAT for the SURVIVOR spelling contradict the
+    retail body at the survivor's mapped address?  Returns None (no
+    contradiction, or nothing to compare) or a reason string.
+
+    WHY THIS GATE EXISTS.  Tier 1 verifies the FOLDED spelling's COMDAT against
+    the retail bytes at addr(t) and then trusts the map for the NAME t.  It
+    never looked at ours.get(t).  So when the map name at an address is wrong
+    -- a different template instantiation whose body happens to be the fold
+    twin of the spelling we actually compile -- the builder minted a "T1" group
+    whose survivor is the WRONG name and whose folded member is the RIGHT one,
+    and every consumer read the survivor as proven.  Measured on 0x82b9b1f8
+    (retail 64 B WITH a bl _M_erase, our survivor spelling 92 B reloc-free)
+    and 0x82336af8 (retail 40 B / 5 relocs, our survivor `swap<...>` 28 B / 0
+    relocs): both passed T1 because only the folded side was ever compared.
+    tools/icf_pair_adjudicate.py refutes both once its own depth-0 self-pair
+    short-circuit is removed (same lane).
+
+    WHAT IS REFUSED (mode="shape", the default): a retail/our SIZE mismatch,
+    a relocation COUNT or SHAPE (offset/type) mismatch, or relocation TARGETS
+    that disagree under the same relocs_agree() rule T1 uses for the folded
+    member.  Any of these says our COMDAT for t is not the same function as
+    the body retail names t.  A masked-body-WORD difference alone (same size,
+    same relocs) is NOT refused in this mode -- it is what an imperfect port of
+    the right function looks like -- but it is counted
+    (note_survivor_body_words_differ) so the census shows it.  mode="strict"
+    refuses that too; mode="off" restores the pre-W16-AE behaviour so the gate
+    can be shown to matter.  A survivor spelling we do not compile at all
+    (st is None) cannot be checked and is counted, not refused.
+
+    ★ W16-AE CALIBRATION (same lane, same day).  The first cut compared reloc
+    target NAMES literally and over-refused: the shape census flagged 572 pairs
+    / 852 sites at generation and 279 landed groups on carry, and direct dumps
+    showed most were NAME-VARIANT targets on byte-identical bodies -- e.g.
+    ??_GPreloadPanel calls ??3BinStream@@SAXPAX@Z in retail and ??3@YAXPAX@Z
+    in ours, both members of the 0x8240ddb0 operator-delete fold class, and
+    report.json scores that row 100.0 because objdiff resolves the two through
+    SymbolEquivalences.  A gate stricter than the ruler that pays is not a
+    gate, it is noise.  So `eq` (name -> canonical survivor, from
+    load_equivalences() over the shipped symbol_aliases.json) is applied to
+    BOTH sides before the target comparison, and the refusal names the first
+    pair that still differs.  The control that the gate still discriminates:
+    ??_GAppLabel (retail `bl ?MemFree@@YAXPAX@Z`, ours `bl ??3BandLabel@@SAXPAX@Z`,
+    MemFree in no alias class) is STILL refused -- and report.json scores that
+    row 99.74, i.e. the grader charges the same site."""
+    if mode == "off" or rt is None or st is None or vacuous(st):
+        return None
+    if rt[2] != st[2]:
+        return "size retail %d B vs our survivor COMDAT %d B" % (rt[2], st[2])
+    if len(rt[1]) != len(st[1]):
+        return "reloc count retail %d vs our survivor COMDAT %d" % (len(rt[1]), len(st[1]))
+    for (ro, rn, rty), (oo, on, oty) in zip(rt[1], st[1]):
+        if ro != oo or rty != oty:
+            return "reloc shape differs at retail +0x%x (type %s) vs ours +0x%x (type %s)" % (ro, rty, oo, oty)
+    rtc, stc = canon_relocs(rt, eq), canon_relocs(st, eq)
+    if not relocs_agree(rtc, stc, mapped, strict, None):
+        first = _first_disagreeing_target(rtc, stc, mapped, strict)
+        return ("reloc targets differ after alias-equivalence resolution: retail %s vs ours %s"
+                % (first[0][:70], first[1][:70]))
+    if mode == "strict" and rt[0] != st[0]:
+        return "masked body words differ (strict mode)"
+    return None
+
+
+def _first_disagreeing_target(rt, ob, mapped, strict):
+    """The first (retail, ours) reloc-target pair relocs_agree() REFUSES -- not
+    the first pair whose names merely differ.  The first cut of the refusal
+    string used the latter and pointed an adjudicator at a tolerated
+    placeholder site (`lbl_82000D78 vs __real@00000000`) while the real
+    refusal sat two slots later (KeyLessEq<Color> vs KeyGreaterEq<Vector3>).
+    Evidence that names the wrong site is worse than a bare label."""
+    for (ro, rn, rty), (oo, on, oty) in zip(rt[1], ob[1]):
+        if rn == on:
+            continue
+        if strict and rn.startswith(("fn_", "lbl_")) and on in mapped:
+            return (rn, on)
+        if placeholder(rn) or placeholder(on):
+            continue
+        return (rn, on)
+    return ("?", "?")
+
+
+def load_equivalences(path):
+    """★ W16-AE.  name -> canonical spelling (its group's SURVIVOR) for every
+    membership in a landed symbol_aliases.json.  This is the SAME equivalence
+    objdiff applies (SymbolEquivalences is built from that file), so a reloc
+    target comparison made through it asks exactly what the grader asks.  A
+    spelling that appears in two groups (the W8-A ledger inconsistency) keeps
+    the first class seen; that only ever widens acceptance for a membership
+    the shipped file already forgives.  Returns {} for "" / "none"."""
+    if not path or path == "none":
+        return {}
+    d = json.loads(Path(path).read_text())
+    eq = {}
+    for g in d.get("groups", []):
+        sv = g["survivor"]
+        eq.setdefault(sv, sv)
+        for f in g.get("folded", []):
+            eq.setdefault(f, sv)
+    return eq
+
+
+def canon_relocs(rec, eq):
+    """Rewrite a collect() record's reloc target names through `eq`."""
+    if rec is None or not eq:
+        return rec
+    return (rec[0], [(o, eq.get(n, n), t) for (o, n, t) in rec[1]], rec[2])
+
+
 def vacuous(rec):
     mb, relocs, size = rec
     if size < MIN_WORDS * 4:
@@ -235,6 +344,19 @@ def main() -> int:
                          "`overrides_class`) and carry a `reason`; see "
                          "tools/alias_withdrawals.py:load_overrides. There is "
                          "deliberately no blanket allow-all.")
+    ap.add_argument("--survivor-self-check", choices=("off", "shape", "strict"),
+                    default="shape",
+                    help="★ W16-AE: refuse a pair whose SURVIVOR's own compiled COMDAT "
+                         "contradicts the retail body at the survivor's address "
+                         "(size / reloc count / reloc shape / reloc targets). "
+                         "'strict' also refuses a masked-body-word difference; 'off' "
+                         "restores the pre-W16-AE behaviour (survivor never checked). "
+                         "See survivor_self_check().")
+    ap.add_argument("--equivalences", default=str(PROJECT_ROOT / "scripts" / "symbol_aliases.json"),
+                    help="★ W16-AE: landed symbol_aliases.json whose groups define the "
+                         "reloc-target EQUIVALENCE the survivor/member self-checks compare "
+                         "under (the same classes objdiff applies). 'none' disables "
+                         "resolution (literal names; over-refuses name-variant callees).")
     ap.add_argument("--no-withdrawal-guard", action="store_true",
                     help="DISABLE the withdrawal denylist entirely (for measuring the "
                          "guard's own effect -- it is what re-fabricates withdrawn "
@@ -242,6 +364,9 @@ def main() -> int:
     args = ap.parse_args()
     tiers = {int(x) for x in args.tiers.split(",") if x.strip()}
     strict = not args.loose_placeholders
+    eq = load_equivalences(args.equivalences)
+    print("equivalences: %d spelling(s) in %d class(es) from %s"
+          % (len(eq), len(set(eq.values())), args.equivalences if eq else "(none)"))
 
     # ★ W8-A: the withdrawal ledger, loaded BEFORE any adjudication so a broken
     # ledger refuses the run instead of quietly producing an unprotected file.
@@ -262,6 +387,7 @@ def main() -> int:
                  "" if not _nover else "; %d explicit override(s)" % _nover),
               file=sys.stderr)
     wd_gen, wd_carry, wd_over = [], [], []
+    sv_refused = []  # ★ W16-AE: (survivor, addr, folded, reason, sites)
 
     ev = json.loads(Path(args.evidence).read_text())
     dc3 = ev["dc3_addr"]
@@ -472,6 +598,22 @@ def main() -> int:
             why[(t, b)] = "reject_gate_c_target_naming"
             continue
         rt, ob = retail.get(t), ours.get(b)
+        # ★ W16-AE SURVIVOR SELF-CHECK -- before ANY tier.  Every tier below
+        # adjudicates the FOLDED spelling; none of them ever consulted our own
+        # COMDAT for the survivor, so a wrong map name at addr(t) sailed through
+        # as a "proven" survivor.  See survivor_self_check().
+        _st = ours.get(t)
+        _sv = survivor_self_check(rt, _st, mapped, strict, args.survivor_self_check, eq)
+        if _sv is not None:
+            stats["reject_SURVIVOR_COMDAT_CONTRADICTS_RETAIL"] += 1
+            ssites["reject_SURVIVOR_COMDAT_CONTRADICTS_RETAIL"] += n
+            why[(t, b)] = "reject_SURVIVOR_COMDAT_CONTRADICTS_RETAIL"
+            sv_refused.append((t, addr_of.get(t), b, _sv, n))
+            continue
+        if rt is not None and _st is None:
+            stats["note_survivor_not_compiled"] += 1
+        elif rt is not None and _st is not None and not vacuous(_st) and rt[0] != _st[0]:
+            stats["note_survivor_body_words_differ"] += 1
         tier = None
         if rt is not None and ob is not None and not vacuous(rt):
             if rt[0] == ob[0] and rt[2] == ob[2] and \
@@ -607,6 +749,16 @@ def main() -> int:
         print("     %-38s %6d slots" % (k, v))
     print("\ngroups=%d aliases=%d sites=%d fns=%d"
           % (len(gl), sum(len(g["folded"]) for g in gl), n_sites, len(fset)))
+    if sv_refused:
+        sv_refused.sort(key=lambda r: -r[4])
+        print("\n★ W16-AE survivor self-check (--survivor-self-check=%s): %d pair(s) REFUSED "
+              "because our own COMDAT for the SURVIVOR spelling contradicts the retail "
+              "body at its mapped address:" % (args.survivor_self_check, len(sv_refused)))
+        for t, a_, b, r, n in sv_refused[:80]:
+            print("    %s  %s\n        folded  %s\n        reason  %s  (%d site(s))"
+                  % (a_ or "?", t[:90], b[:90], r, n))
+        if len(sv_refused) > 80:
+            print("    ... %d more (see --why)" % (len(sv_refused) - 80))
     if args.why:
         Path(args.why).write_text(json.dumps(
             {"decisions": [[t, b, w] for (t, b), w in why.items()]}))
@@ -691,8 +843,41 @@ def main() -> int:
                 return "folded spelling referenced by 0 compiled objs -- inert (gate b)"
             return None
 
+        sv_carried = []  # ★ W16-AE: landed groups whose survivor contradicts retail
+        mem_contra = []  # ★ W16-AE: landed MEMBERS whose own COMDAT contradicts retail@survivor
         for g in keep:
             gveto = _carry_group_veto(g)
+            # ★ W16-AE: the carry path used to apply only NAME gates (a/b/c) to
+            # a landed member -- it never re-read a single retail byte.  So a
+            # membership installed by an older, weaker T1 (the 0x82b9b1f8 erase
+            # group: RndText::Line erase is 64 B WITH a bl _M_erase vs the 92 B
+            # reloc-free survivor) was re-landed on every regeneration until a
+            # human ran icf_pair_adjudicate.py by hand.  Re-run the SAME
+            # predicate the survivor gets (size / reloc count / shape / targets
+            # under the shipped equivalences) for every folded member against
+            # the retail body at the survivor's address.  Report-only: a
+            # membership leaves only with a `withdrawn` record + bytes.
+            if args.survivor_self_check != "off":
+                for _f in g.get("folded", []):
+                    _fv = survivor_self_check(retail.get(g["survivor"]), ours.get(_f), mapped,
+                                              strict, "shape", eq)
+                    if _fv is not None:
+                        mem_contra.append((g["survivor"], g.get("address"), g.get("name"), _f, _fv))
+            # ★ W16-AE: the survivor self-check on the CARRY path.  A landed
+            # group is NOT dropped for this -- that would be a clobber (the
+            # house rule: a membership leaves only with a `withdrawn` record
+            # and retail-byte evidence).  It is carried unchanged, flagged
+            # loudly here and listed at the end, so each one gets adjudicated
+            # by a human with the bytes rather than pruned by a census.
+            _gs = g["survivor"]
+            _gsv = survivor_self_check(retail.get(_gs), ours.get(_gs), mapped, strict,
+                                       args.survivor_self_check, eq)
+            if _gsv is not None:
+                sv_carried.append((_gs, g.get("address"), g.get("name"), _gsv))
+                print("  !! landed group's SURVIVOR CONTRADICTS RETAIL (carried unchanged, "
+                      "needs a withdrawn record + role swap): %s\n"
+                      "       group    %s @ %s\n       survivor %s"
+                      % (_gsv, g.get("name"), g.get("address"), _gs), file=sys.stderr)
             if g["survivor"] in have_s:
                 merged += 1
                 # ★ WS-4 MEMBER-LEVEL CARRY-FORWARD. Carrying only whole groups
@@ -789,6 +974,20 @@ def main() -> int:
             gg["folded"] = sorted(kept_f)
             emitted.append(gg)
             kept += 1
+        if sv_carried:
+            print("\n★ W16-AE survivor self-check: %d LANDED group(s) carried UNCHANGED whose "
+                  "survivor's own COMDAT contradicts the retail body (each needs a withdrawn "
+                  "record + role swap; nothing was pruned):" % len(sv_carried))
+            for s_, a_, nm, r in sv_carried:
+                print("    %s  %s  (%s)\n        reason  %s" % (a_ or "?", s_[:90], nm, r))
+        if mem_contra:
+            print("\n★ W16-AE member re-verification on carry: %d landed MEMBERSHIP(s) whose own "
+                  "COMDAT contradicts the retail body at the survivor's address (carried "
+                  "unchanged; each needs adjudication + a withdrawn record; nothing pruned):"
+                  % len(mem_contra))
+            for s_, a_, nm, f_, r in mem_contra:
+                print("    %s  %s  (%s)\n        folded  %s\n        reason  %s"
+                      % (a_ or "?", s_[:90], nm, f_[:90], r))
         print("\nmerge: carried %d pre-existing group(s), %d already re-derived; "
               "member carry-forward: %d never-adjudicated kept, %d REFUTED and "
               "dropped; validator-gate drops: %d group(s), %d member(s)"
