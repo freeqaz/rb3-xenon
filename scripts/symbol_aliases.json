@@ -5159,11 +5159,18 @@
   {
    "name": "$__destroy_range_aux",
    "address": "0x82295fb8",
-   "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@0@0ABU__false_type@0@@Z",
-   "folded": [
-    "??$__destroy_range_aux@V?$reverse_iterator@PAUPropertyFilter@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUPropertyFilter@CameraManager@@@0@0ABU__false_type@0@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions."
+   "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAUPropertyFilter@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUPropertyFilter@CameraManager@@@0@0ABU__false_type@0@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions. [W16-AB 2026-09-14] SURVIVOR ROLE CORRECTED: the map named the wrong instantiation at this address and the group recorded the verified owner as \"folded\". Role swapped; the membership set only SHRANK (no new fold asserted).",
+   "withdrawn": [
+    {
+     "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@0@0ABU__false_type@0@@Z",
+     "lane": "W16-AB 2026-09-14",
+     "class": "WRONG_MAP_IDENTIFICATION_IMPOSSIBLE_FOLD",
+     "disposition": "withdrawn",
+     "reason": "Map name disproved on retail bytes by the two-sided extent normalizer plus a word-level check: our compiled body for the SURVIVOR spelling differs from retail's .pdata extent in SIZE, while our compiled body for the FOLDED spelling matches retail's size exactly AND differs only at its own relocation offsets (reloc-only match, T1). Different-size COMDATs can never fold, so the survivor membership asserted an impossible fold. The two bodies are the SAME STL template shape differing only in the element-size immediate, which is exactly what makes a shape/fingerprint matcher bind the wrong instantiation -- and the element size our side uses is independently CONFIRMED on retail bytes by byte-exact (fuzzy==100) witnesses for the same container type elsewhere in the build, so our layout is right and the address is a different instantiation's function. The pin was CIRCULAR: an exact-size island carved for the wrong map name. Map rebound to the verified spelling and the .text island re-homed to the unit whose base obj defines it, in the same commit."
+    }
+   ]
   },
   {
    "name": "$_Copy_Construct",
@@ -10130,11 +10137,18 @@
   {
    "name": "_M_erase",
    "address": "0x824c4998",
-   "survivor": "?_M_erase@?$vector@UNavItem@HamNavProvider@@V?$StlNodeAlloc@UNavItem@HamNavProvider@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUNavItem@HamNavProvider@@PAU34@ABU__false_type@2@@Z",
-   "folded": [
-    "?_M_erase@?$vector@VCamShotCrowd@@V?$StlNodeAlloc@VCamShotCrowd@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVCamShotCrowd@@PAV3@ABU__false_type@2@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "survivor": "?_M_erase@?$vector@VCamShotCrowd@@V?$StlNodeAlloc@VCamShotCrowd@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVCamShotCrowd@@PAV3@ABU__false_type@2@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions. [W16-AB 2026-09-14] SURVIVOR ROLE CORRECTED: the map named the wrong instantiation at this address and the group recorded the verified owner as \"folded\". Role swapped; the membership set only SHRANK (no new fold asserted).",
+   "withdrawn": [
+    {
+     "spelling": "?_M_erase@?$vector@UNavItem@HamNavProvider@@V?$StlNodeAlloc@UNavItem@HamNavProvider@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUNavItem@HamNavProvider@@PAU34@ABU__false_type@2@@Z",
+     "lane": "W16-AB 2026-09-14",
+     "class": "WRONG_MAP_IDENTIFICATION_IMPOSSIBLE_FOLD",
+     "disposition": "withdrawn",
+     "reason": "Map name disproved on retail bytes by the two-sided extent normalizer plus a word-level check: our compiled body for the SURVIVOR spelling differs from retail's .pdata extent in SIZE, while our compiled body for the FOLDED spelling matches retail's size exactly AND differs only at its own relocation offsets (reloc-only match, T1). Different-size COMDATs can never fold, so the survivor membership asserted an impossible fold. The two bodies are the SAME STL template shape differing only in the element-size immediate, which is exactly what makes a shape/fingerprint matcher bind the wrong instantiation -- and the element size our side uses is independently CONFIRMED on retail bytes by byte-exact (fuzzy==100) witnesses for the same container type elsewhere in the build, so our layout is right and the address is a different instantiation's function. The pin was CIRCULAR: an exact-size island carved for the wrong map name. Map rebound to the verified spelling and the .text island re-homed to the unit whose base obj defines it, in the same commit."
+    }
+   ]
   },
   {
    "name": "_GCharBonesObject",
@@ -12818,11 +12832,18 @@
   {
    "name": "$_M_range_insert",
    "address": "0x82425bc8",
-   "survivor": "??$_M_range_insert@PBVPracticeStep@@@?$vector@VPracticeStep@@V?$StlNodeAlloc@VPracticeStep@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVPracticeStep@@PBV2@1ABUforward_iterator_tag@1@@Z",
-   "folded": [
-    "??$_M_range_insert@PBV?$Key@VObjectStage@@@@@?$vector@V?$Key@VObjectStage@@@@V?$StlNodeAlloc@V?$Key@VObjectStage@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VObjectStage@@@@PBV2@1ABUforward_iterator_tag@1@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "survivor": "??$_M_range_insert@PBV?$Key@VObjectStage@@@@@?$vector@V?$Key@VObjectStage@@@@V?$StlNodeAlloc@V?$Key@VObjectStage@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VObjectStage@@@@PBV2@1ABUforward_iterator_tag@1@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions. [W16-AB 2026-09-14] SURVIVOR ROLE CORRECTED: the map named the wrong instantiation at this address and the group recorded the verified owner as \"folded\". Role swapped; the membership set only SHRANK (no new fold asserted).",
+   "withdrawn": [
+    {
+     "spelling": "??$_M_range_insert@PBVPracticeStep@@@?$vector@VPracticeStep@@V?$StlNodeAlloc@VPracticeStep@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVPracticeStep@@PBV2@1ABUforward_iterator_tag@1@@Z",
+     "lane": "W16-AB 2026-09-14",
+     "class": "WRONG_MAP_IDENTIFICATION_IMPOSSIBLE_FOLD",
+     "disposition": "withdrawn",
+     "reason": "Map name disproved on retail bytes by the two-sided extent normalizer plus a word-level check: our compiled body for the SURVIVOR spelling differs from retail's .pdata extent in SIZE, while our compiled body for the FOLDED spelling matches retail's size exactly AND differs only at its own relocation offsets (reloc-only match, T1). Different-size COMDATs can never fold, so the survivor membership asserted an impossible fold. The two bodies are the SAME STL template shape differing only in the element-size immediate, which is exactly what makes a shape/fingerprint matcher bind the wrong instantiation -- and the element size our side uses is independently CONFIRMED on retail bytes by byte-exact (fuzzy==100) witnesses for the same container type elsewhere in the build, so our layout is right and the address is a different instantiation's function. The pin was CIRCULAR: an exact-size island carved for the wrong map name. Map rebound to the verified spelling and the .text island re-homed to the unit whose base obj defines it, in the same commit."
+    }
+   ]
   },
   {
    "name": "$__destroy_range_aux",
@@ -72035,11 +72056,18 @@
   {
    "name": "H?$_Bit_iter",
    "address": "0x822dcf58",
-   "survivor": "??H?$_Bit_iter@_NPB_N@stlpmtx_std@@QBA?AU01@H@Z",
-   "folded": [
-    "??0?$_Vector_base@VFace@RndMesh@@V?$StlNodeAlloc@VFace@RndMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VFace@RndMesh@@@1@@Z"
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+   "survivor": "??0?$_Vector_base@VFace@RndMesh@@V?$StlNodeAlloc@VFace@RndMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VFace@RndMesh@@@1@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1].  [W16-AB 2026-09-14] SURVIVOR ROLE CORRECTED: the map named the wrong instantiation at this address and the group recorded the verified owner as \"folded\". Role swapped; the membership set only SHRANK (no new fold asserted).",
+   "withdrawn": [
+    {
+     "spelling": "??H?$_Bit_iter@_NPB_N@stlpmtx_std@@QBA?AU01@H@Z",
+     "lane": "W16-AB 2026-09-14",
+     "class": "WRONG_MAP_IDENTIFICATION_IMPOSSIBLE_FOLD",
+     "disposition": "withdrawn",
+     "reason": "Map name disproved on retail bytes by the two-sided extent normalizer plus a word-level check: our compiled body for the SURVIVOR spelling differs from retail's .pdata extent in SIZE, while our compiled body for the FOLDED spelling matches retail's size exactly AND differs only at its own relocation offsets (reloc-only match, T1). Different-size COMDATs can never fold, so the survivor membership asserted an impossible fold. The two bodies are the SAME STL template shape differing only in the element-size immediate, which is exactly what makes a shape/fingerprint matcher bind the wrong instantiation -- and the element size our side uses is independently CONFIRMED on retail bytes by byte-exact (fuzzy==100) witnesses for the same container type elsewhere in the build, so our layout is right and the address is a different instantiation's function. The pin was CIRCULAR: an exact-size island carved for the wrong map name. Map rebound to the verified spelling and the .text island re-homed to the unit whose base obj defines it, in the same commit."
+    }
+   ]
   },
   {
    "name": "$_M_range_insert_aux",
