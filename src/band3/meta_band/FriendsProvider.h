@@ -24,6 +24,8 @@
 // provider — the slot the Wii build passes 0 for) and backs the
 // kState_InviteFriends -> kState_InviteFriendsDenial check in
 // OvershellSlot::UpdateState.
+class Friend;
+
 class FriendsProvider : public UIListProvider, public Hmx::Object {
 public:
     FriendsProvider();
@@ -43,7 +45,18 @@ public:
     // (HX_NATIVE-only body) elsewhere in this header family.
     void Reload();
 
-    std::vector<int> unk2c; // 0x2c — friend entries; NumData() = size()
+    // 0x2c — OWNED Friend* entries; NumData() = size().
+    // ⚠ Was `std::vector<int>`. CORRECTED, lane W16-T, on retail bytes: the
+    // dtor (retail 0x826662F0) and `Reload` (retail 0x826662E0, an 8-byte tail
+    // call) both pass `this+0x2c` to `fn_8250CEE0`, which the target symbol map
+    // names
+    //   ??$DeleteAll@V?$vector@PAVFriend@@V?$StlNodeAlloc@PAVFriend@@@stlpmtx_std@@@stlpmtx_std@@@@YAX…
+    // i.e. DeleteAll<vector<Friend*, StlNodeAlloc<Friend*>>>. The element size
+    // is corroborated independently by the dtor's own deallocation arithmetic
+    // (`subf; srawi r11,r11,2; slwi r3,r11,2` => 4-byte elements). `vector<int>`
+    // is the same 12 bytes, so this is a pure TYPE correction: no layout moves,
+    // and `mpn` is arg-blind to it — it is landed on correctness, not on metric.
+    std::vector<Friend *> mFriends;
     int unk38; // 0x38
     int unk3c; // 0x3c
 };
