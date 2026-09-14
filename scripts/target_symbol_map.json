@@ -5536,7 +5536,7 @@
  "0x823aec68": "?ClassName@CharWeightable@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
  "0x823aec78": "??_ECharWeightable@@$4PPPPPPPM@A@AAPAXI@Z",
  "0x823aec90": "?SetType@CharWeightable@@UAAXVSymbol@@@Z",
- "0x823aedf0": null,
+ "0x823aedf0": "?Replace@CharWeightable@@$2PPPPPPPM@A@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x823aee00": "?Copy@CharWeightable@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
  "0x823aee10": "?SetType@CharWeightable@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
  "0x823aee20": null,
