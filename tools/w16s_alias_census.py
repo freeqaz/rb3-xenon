@@ -137,7 +137,7 @@ def our_comdat_index():
     return ours, fns, data, where
 
 
-def retail_compare(img, size, byva, va, raw, rel):
+def retail_compare(img, size, byva, va, raw, rel, closure=None):
     """our body (raw, rel) vs retail@va.  Returns (verdict, detail, masked_only).
 
     verdict in {'EQ','NE','NOSIZE','NOOFF','SIZE'}.
@@ -172,7 +172,18 @@ def retail_compare(img, size, byva, va, raw, rel):
                 nm = byva.get(dest)
                 if nm:
                     named_checked += 1
-                    if nm != relo[off][0]:
+                    # ⛔ compare the DESTINATIONS under the same /OPT:ICF fixed
+                    # point used for the bodies.  Retail's callee and ours being
+                    # spelled differently is not a divergence if the two callees
+                    # are themselves co-folded -- applying the closure to bodies
+                    # but not to their call targets would charge, at one remove,
+                    # exactly the thing the closure exists to forgive.
+                    ours_nm = relo[off][0]
+                    same = (nm == ours_nm)
+                    if not same and closure is not None:
+                        a, b = closure.get(nm), closure.get(ours_nm)
+                        same = (a is not None and a == b)
+                    if not same:
                         return ("NE", "branch at +%x: retail -> %s, ours -> %s"
                                 % (off, nm, relo[off][0]), False)
         elif x != y:
@@ -181,6 +192,59 @@ def retail_compare(img, size, byva, va, raw, rel):
                  if off // 4 < len(ow) and (ow[off // 4] >> 26) == 18)
     return "EQ", "identical (%d/%d branch relocs adjudicated by name)" % (
         named_checked, nrelbr), (nrelbr > 0 and named_checked == 0)
+
+
+def icf_closure(fns):
+    """The LINKER's fold condition, as a FIXED POINT -- not name identity.
+
+    ⛔ "our N == our S including relocation target NAMES" is STRICTER THAN
+    /OPT:ICF.  MSVC folds to a fixed point: two bodies that differ only in which
+    symbols their relocations name still fold IF those targets are themselves in
+    one fold class.  Measured on this binary: 115 of 118 memberships the
+    name-identity test called CONTRADICTED, and 732 of 732 it called UNDECIDED,
+    have IDENTICAL masked bytes and IDENTICAL relocation shape and differ ONLY in
+    target names -- i.e. the strict test's non-folds are overwhelmingly the
+    closure's candidates.  Shipping those as "contradictions" would close veins
+    on an artifact of the instrument.
+
+    Partition refinement, exactly as ICF computes it:
+      seed  : (masked body bytes, relocation offsets+types)
+      refine: append the CURRENT class id of every relocation target, in order
+      stop  : when the class count stops changing.
+    A target no COMDAT of ours defines is its own singleton (we compile, we never
+    link), which is fail-closed: it can only keep classes apart, never merge them.
+    """
+    sig, cls = {}, {}
+    for n, vs in fns.items():
+        # ⛔ DETERMINISTIC tie-break.  `vs` is a SET of tuples containing bytes,
+        # so a bare max() on length alone breaks ties by set iteration order,
+        # which PYTHONHASHSEED randomises: two runs on an UNCHANGED tree gave
+        # 43,053 and 43,051 fold classes.  A census that does not reproduce is
+        # not evidence.  Include the payload in the key.
+        raw, rel = max(vs, key=lambda kv: (len(kv[0]), kv[0], kv[1]))
+        m = bytearray(raw)
+        for o, _s, _t in rel:
+            m[o:o + 4] = b"\0\0\0\0"
+        sig[n] = (bytes(m), tuple((o, t) for o, _s, t in rel),
+                  tuple(nm for _o, nm, _t in rel))
+        cls[n] = (bytes(m), tuple((o, t) for o, _s, t in rel))
+    ids = {k: i for i, k in enumerate(sorted(set(cls.values()), key=repr))}
+    cur = {n: ids[cls[n]] for n in cls}
+    prev = -1
+    for _ in range(24):
+        nclasses = len(set(cur.values()))
+        if nclasses == prev:
+            break
+        prev = nclasses
+        key = {}
+        for n in cur:
+            key[n] = (cur[n], tuple(cur.get(t, ("EXT", t))
+                                    for t in sig[n][2]))
+        ids = {k: i for i, k in enumerate(sorted(set(key.values()), key=repr))}
+        cur = {n: ids[key[n]] for n in key}
+    print("[icf closure] %d COMDATs -> %d fold classes after refinement"
+          % (len(cur), len(set(cur.values()))))
+    return cur
 
 
 def main():
@@ -242,6 +306,8 @@ def main():
     print("[our build] %d names in obj symbol tables (defs + undefined externs)"
           % len(refs))
     print("[our build] %d distinct code COMDAT names" % len(ours))
+
+    closure = icf_closure(fns)
 
     ali = json.loads((ROOT / "scripts" / "symbol_aliases.json").read_text())
     out = []
@@ -307,6 +373,15 @@ def main():
                                   "including relocation target names")
                 out.append(rec)
                 continue
+            if (N in closure and S in closure
+                    and closure[N] == closure[S]):
+                rec.update(verdict="FOLD_CONFIRMED_CLOSURE",
+                           detail="our N and our S land in ONE /OPT:ICF fold "
+                                  "class under the linker's own fixed point "
+                                  "(masked bytes + reloc shape equal; every "
+                                  "differing target name is itself co-folded)")
+                out.append(rec)
+                continue
             if fvf and svf and (fvf & svf):
                 # bodies identical but the whole COMDAT is not -- the trailing
                 # EH funclet differs, which /OPT:ICF also compares.  Reported as
@@ -323,8 +398,8 @@ def main():
                 out.append(rec)
                 continue
             best = None
-            for raw, rel in sorted(fvf or fv, key=lambda kv: -len(kv[0])):
-                v, d, mo = retail_compare(img, size, byva, X, raw, rel)
+            for raw, rel in sorted(fvf or fv, key=lambda kv: (-len(kv[0]), kv[0], kv[1])):
+                v, d, mo = retail_compare(img, size, byva, X, raw, rel, closure)
                 if best is None or v == "EQ":
                     best = (v, d, mo)
                 if v == "EQ":
@@ -332,8 +407,8 @@ def main():
             v, d, mo = best
             # how our S compares to retail@X -- REQUIRED, not decoration.
             sbest = None
-            for raw, rel in sorted(svf or sv, key=lambda kv: -len(kv[0])):
-                sv_v, sv_d, _ = retail_compare(img, size, byva, X, raw, rel)
+            for raw, rel in sorted(svf or sv, key=lambda kv: (-len(kv[0]), kv[0], kv[1])):
+                sv_v, sv_d, _ = retail_compare(img, size, byva, X, raw, rel, closure)
                 if sbest is None or sv_v == "EQ":
                     sbest = (sv_v, sv_d)
                 if sv_v == "EQ":
