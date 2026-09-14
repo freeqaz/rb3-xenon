@@ -91,6 +91,10 @@ raw = json.loads((ROOT/"scripts/target_symbol_map.json").read_text())
 access_only, sig_diff = [], []
 for k, v in raw.items():
     if not k.lower().startswith("0x"): continue
+    # A JSON `null` value is a DELIBERATE "deliberately unclaimed" tombstone
+    # (see scripts/obj_target_symbol_renamer.py's load_address_map), not a name.
+    # 109 rows carry one; without this guard norm(None) raises TypeError.
+    if v is None: continue
     try: a = int(k.lower().removeprefix("0x"), 16)
     except ValueError: continue
     if a >= 0x82800000: continue
