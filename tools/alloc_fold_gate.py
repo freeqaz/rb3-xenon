@@ -219,7 +219,7 @@ def main():
     in_group = {}
     for g in ali["groups"]:
         for nm in [g["survivor"]] + list(g.get("folded", [])):
-            in_group.setdefault(nm, set()).add(g["address"].lower())
+            in_group.setdefault(nm, set()).add((g.get("address") or "").lower())
 
     verdicts = []
     for name, variants in sorted(ours.items()):
