@@ -335,6 +335,9 @@
             "system/synth_xbox/SynapseAPO.cpp": "NonMatching",
             "system/zlib/inflate.c": "NonMatching",
             "system/zlib/deflate.c": "NonMatching",
+            "system/zlib/trees.c": "NonMatching",
+            "system/zlib/inffast.c": "NonMatching",
+            "system/zlib/inftrees.c": "NonMatching",
             "system/net/json-c/json_object.c": {
                 "status": "NonMatching",
                 "extra_cflags": [
