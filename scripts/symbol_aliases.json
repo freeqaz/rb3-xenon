@@ -73945,11 +73945,17 @@
   {
    "name": "Unload",
    "address": "0x8261feb8",
-   "survivor": "?Unload@CampaignSongInfoPanel@@UAAXXZ",
-   "folded": [
-    "?Unload@MainHubPanel@@UAAXXZ"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "survivor": "?Unload@MainHubPanel@@UAAXXZ",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions. || W16-AL 2026-09-14 REPAIR: verdict CONTRADICTED (word differs @0x18). Retail body at 0x8261feb8 is MainHubPanel::Unload -- it reads/writes member 0x44 (lwz r3,0x44(r31) @+0x18; stw r11,0x44(r31) @+0x3c) and is byte-identical to our ?Unload@MainHubPanel@@UAAXXZ. CampaignSongInfoPanel::Unload uses member 0x3c at both slots and is a DISTINCT 84 B body (it lives at 0x825f58c8, see the group there). A non-relocated immediate difference cannot be one COMDAT, so the fold claim was false and the survivor label was inverted relative to the map row (which already reads ?Unload@MainHubPanel@@UAAXXZ).",
+   "withdrawn": [
+    {
+     "spelling": "?Unload@MainHubPanel@@UAAXXZ",
+     "lane": "W16-AL 2026-09-14",
+     "class": "SURVIVOR_INVERTED_AND_FOLD_REFUTED",
+     "disposition": "promoted to survivor; the former survivor ?Unload@CampaignSongInfoPanel@@UAAXXZ is NOT a fold of this address (member 0x3c vs 0x44, verified on retail bytes) and is re-homed to the 0x825f58c8 group"
+    }
+   ]
   },
   {
    "name": "Replace",
