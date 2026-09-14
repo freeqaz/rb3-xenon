@@ -551,7 +551,14 @@ int NextSongPanel::CountOrCreateExpandedDetails(int slot, DataArrayPtr &ptr, boo
     if (TheAccomplishmentMgr->InqGoalsAcquiredForSong(user, completedSongSym, songGoals)) {
         for (std::vector<Symbol>::iterator it = songGoals.begin(); it != songGoals.end();
              ++it) {
-            Symbol cur = *it;
+            // The explicit Symbol(*it) copy is LOAD-BEARING for the match: it
+            // compiles to identical bytes but shifts MSVC's internal temp
+            // numbering so the strength-reduced `add r3,r11,r28` at this site
+            // (retail 0x82646730) and at the section-loop site 0x82646C98 come
+            // out base-first like retail. Plain `Symbol cur = *it;` yields
+            // `add r3,r28,r11` here (operand order is history-dependent, not
+            // shape-dependent). See docs/decomp/NEXTSONGPANEL_COMMUTE_AUDIT_2026-09-14.md.
+            Symbol cur = Symbol(*it);
             if (b)
                 count++;
             else
@@ -601,7 +608,7 @@ int NextSongPanel::CountOrCreateExpandedDetails(int slot, DataArrayPtr &ptr, boo
                     if (b)
                         count++;
                     else
-                        ptr->Node(count++) =
+                        ptr.Node(count++) =
                             DataArrayPtr(left_label, generic_string, curinfo.unk0);
 
                     if (b)
