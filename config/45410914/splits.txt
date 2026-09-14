@@ -4359,7 +4359,6 @@ MoveMgr.cpp:
 	.text       start:0x822CFD10 end:0x822D16F8
 	.text       start:0x822D1768 end:0x822D2C28
 	.text       start:0x822D2C80 end:0x822D2D58
-	.text       start:0x822D3910 end:0x822D3928
 	.text       start:0x82347218 end:0x82347284
 	.text       start:0x82347E80 end:0x82348048
 	.text       start:0x82348260 end:0x82348420
@@ -8022,7 +8021,7 @@ MatAnim.cpp:
 	.text       start:0x822C882C end:0x822C8838
 	.text       start:0x822C88D8 end:0x822C88E0
 	.text       start:0x822C89C8 end:0x822C8D98
-	.text       start:0x822D3900 end:0x822D3910
+	.text       start:0x822D3900 end:0x822D3908
 	.text       start:0x8245DF70 end:0x8245DFE8
 	.text       start:0x8245E2A8 end:0x8245E358
 	.text       start:0x8245F410 end:0x8245F56C
@@ -11485,7 +11484,7 @@ EndingBonus.cpp:
 	.pdata      start:0x821F7CE8 end:0x821F7CF0
 	.pdata      start:0x821F7CF0 end:0x821F7D10
 	.text       start:0x8227AA48 end:0x8227AAC8
-	.text       start:0x822D3928 end:0x822D396C
+	.text       start:0x822D3908 end:0x822D396C
 	.text       start:0x822D3970 end:0x822D39E8
 	.text       start:0x822D39E8 end:0x822D3FB8
 	.text       start:0x822D3FB8 end:0x822D4088
