@@ -151,7 +151,6 @@ RockCentralJobs.cpp:
 	.text       start:0x8250C808 end:0x8250D0D8
 
 RockCentral.cpp:
-	.pdata      start:0x821F1BF0 end:0x821F1BF8
 	.pdata      start:0x821F2B08 end:0x821F2B28
 	.pdata      start:0x821F2B28 end:0x821F2B48
 	.pdata      start:0x821F2B48 end:0x821F2B78
@@ -222,7 +221,6 @@ RockCentral.cpp:
 	.pdata      start:0x82224768 end:0x82224770
 	.pdata      start:0x82234E88 end:0x82234EA8
 	.pdata      start:0x82235900 end:0x822359B0
-	.text       start:0x82276CD0 end:0x82276D50
 	.text       start:0x82286D88 end:0x82286E98
 	.text       start:0x82286E98 end:0x82286FA8
 	.text       start:0x82286FA8 end:0x82287140
@@ -895,7 +893,7 @@ PatchDir.cpp:
 	.pdata      start:0x821F1AD0 end:0x821F1B30
 	.pdata      start:0x821F1B30 end:0x821F1B90
 	.pdata      start:0x821F1B90 end:0x821F1B98
-	.pdata      start:0x821F1BE8 end:0x821F1BF0
+	.pdata      start:0x821F1BE8 end:0x821F1BF8
 	.pdata      start:0x821F1C70 end:0x821F1CA8
 	.pdata      start:0x821F1CA8 end:0x821F1CB0
 	.pdata      start:0x821F1CB0 end:0x821F1CC0
@@ -934,7 +932,7 @@ PatchDir.cpp:
 	.text       start:0x822759C8 end:0x82276138
 	.text       start:0x82276138 end:0x82276828
 	.text       start:0x82276888 end:0x822768F8
-	.text       start:0x82276C78 end:0x82276CD0
+	.text       start:0x82276C78 end:0x82276D50
 	.text       start:0x82277388 end:0x82277628
 	.text       start:0x82277628 end:0x8227768C
 	.text       start:0x82277690 end:0x82277AF0
@@ -4154,6 +4152,7 @@ CharacterTest.cpp:
 	.text       start:0x823DE208 end:0x823DE254
 
 ChordShapeGenerator.cpp:
+	.pdata      start:0x821F8490 end:0x821F8498
 	.pdata      start:0x821F84C0 end:0x821F84C8
 	.pdata      start:0x821F84C8 end:0x821F84F8
 	.pdata      start:0x821F8500 end:0x821F8508
@@ -4169,6 +4168,7 @@ ChordShapeGenerator.cpp:
 	.pdata      start:0x821F86B8 end:0x821F86C0
 	.pdata      start:0x821F86C0 end:0x821F8888
 	.pdata      start:0x821F8890 end:0x821F8998
+	.text       start:0x822DC9D0 end:0x822DCA50
 	.text       start:0x822DD240 end:0x822DD28C
 	.text       start:0x822DD290 end:0x822DD7AC
 	.text       start:0x822DD808 end:0x822DD9A0
@@ -5839,13 +5839,11 @@ Mat.cpp:
 	.pdata      start:0x8220CB00 end:0x8220CB08
 	.pdata      start:0x8220CB30 end:0x8220CD28
 	.pdata      start:0x8220CD28 end:0x8220CD30
-	.pdata      start:0x8221C160 end:0x8221C168
 	.pdata      start:0x82228218 end:0x82228228
 	.text       start:0x824361A0 end:0x824361DC
 	.text       start:0x824361E0 end:0x82436278
 	.text       start:0x82436488 end:0x82438138
 	.text       start:0x82438138 end:0x824382D4
-	.text       start:0x82553FC8 end:0x82554028
 	.text       start:0x826067C0 end:0x826068A8
 
 band3/meta_band/VoiceoverPanel.cpp:
@@ -7055,12 +7053,12 @@ PostProc_NG.cpp:
 Archive.cpp:
 	.pdata      start:0x821F1E90 end:0x821F1E98
 	.pdata      start:0x821F6EC8 end:0x821F6ED0
-	.pdata      start:0x821F8490 end:0x821F84A8
+	.pdata      start:0x821F8498 end:0x821F84A8
 	.pdata      start:0x82217F28 end:0x82217F38
 	.pdata      start:0x82217F38 end:0x822180E8
 	.text       start:0x82279A00 end:0x82279A70
 	.text       start:0x822C83D0 end:0x822C8448
-	.text       start:0x822DC9D0 end:0x822DCF58
+	.text       start:0x822DCA50 end:0x822DCF58
 	.text       start:0x82512180 end:0x82512264
 	.text       start:0x82512268 end:0x82512288
 	.text       start:0x82512288 end:0x82514858
@@ -8902,12 +8900,10 @@ band3/game/RGTutor.cpp:
 
 band3/meta_band/PrefabMgr.cpp:
 	.pdata      start:0x82208E98 end:0x82208EB8
-	.pdata      start:0x8221C150 end:0x8221C160
-	.pdata      start:0x8221C168 end:0x8221C220
+	.pdata      start:0x8221C150 end:0x8221C220
 	.pdata      start:0x8221C228 end:0x8221C378
 	.text       start:0x823F3648 end:0x823F38C8
-	.text       start:0x82553F28 end:0x82553FC8
-	.text       start:0x82554028 end:0x82554CB0
+	.text       start:0x82553F28 end:0x82554CB0
 	.text       start:0x82554D0C end:0x82555E64
 
 band3/meta_band/AccomplishmentManager.cpp:
