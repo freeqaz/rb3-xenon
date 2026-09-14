@@ -5,6 +5,7 @@
         "cflags": "base",
         "objects": {
             "Main.cpp": "NonMatching",
+            "App.cpp": "NonMatching",
             "keygen_xbox.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
