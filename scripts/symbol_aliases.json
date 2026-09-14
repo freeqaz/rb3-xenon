@@ -45296,7 +45296,6 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z"
    ],
@@ -45577,6 +45576,15 @@
      "witness_c_N_retail_addr": "0x827adff8",
      "witness_c_S_retail_addr": "0x8229dc70",
      "evidence": "RETAIL KEEPS THE DISCRIMINATING CALLEES APART. At +36 our folded spelling calls ??0?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z and the survivor calls ??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z. Retail places them at 0x827adff8 and 0x8229dc70 respectively: 0x827adff8 is witnessed by map-named caller ?_M_insert_overflow_aux@?$vector@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@2@ABV32@ABU__true_type@2@I_N@Z @0x82777558 +84 (tier STRONG), 0x8229dc70 by ??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z @0x823c9178 +36 (tier STRONG). Retail's own body at X=0x823c9178 calls 0x8229dc70 at +36, so X IS the survivor and our spelling is not the body there. Guards: both destinations are .pdata BeginAddresses (120 / 120 B)."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W16-AG 2026-09-14",
+     "class": "RETAIL_WITNESS_REFUTED",
+     "disposition": "withdrawn",
+     "witness_c_N_retail_addr": "0x823e4630",
+     "witness_c_S_retail_addr": "0x8229dc70",
+     "evidence": "RETAIL KEEPS THE DISCRIMINATING CALLEES APART. At +36 our folded spelling calls ??0?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z and the survivor calls ??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z. Retail places them at 0x823e4630 and 0x8229dc70 respectively: 0x823e4630 is witnessed by map-named caller ?_M_fill_insert_aux@?$vector@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@2@IABV32@ABU__true_type@2@@Z @0x82776838 +84 (tier STRONG), 0x8229dc70 by ??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z @0x823c9178 +36 (tier STRONG). Retail's own body at X=0x823c9178 calls 0x8229dc70 at +36, so X IS the survivor and our spelling is not the body there. Guards: both destinations are .pdata BeginAddresses (116 / 120 B)."
     }
    ],
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
@@ -50479,14 +50487,32 @@
    "survivor": "??$_Copy_Construct@UObjVersion@@@stlpmtx_std@@YAXPAUObjVersion@@ABU1@@Z",
    "folded": [
     "??$_Copy_Construct@USink@MsgSinks@@@stlpmtx_std@@YAXPAUSink@MsgSinks@@ABU12@@Z",
-    "??$_Copy_Construct@VTransformCrowd@@@stlpmtx_std@@YAXPAVTransformCrowd@@ABV1@@Z",
-    "??$_Param_Construct@UObjVersion@@U1@@stlpmtx_std@@YAXPAUObjVersion@@ABU1@@Z",
-    "??$_Param_Construct@VTransformCrowd@@V1@@stlpmtx_std@@YAXPAVTransformCrowd@@ABV1@@Z"
+    "??$_Param_Construct@UObjVersion@@U1@@stlpmtx_std@@YAXPAUObjVersion@@ABU1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 5 folded spelling(s), 0 census sites over 1 functions.",
    "repair": {
     "w11d_moved_out": "Lane W11-D moved `??$_Copy_Construct@UVocalEvent@MidiParser@@@stlpmtx_std@@YAXPAUVocalEvent@MidiParser@@ABU12@@Z` OUT of this group to 0x827eb7e0, where it is PROVEN on retail bytes (FLAT T1). This group's address is not where that body lives. The membership forgave 0 charged sites at the time of the move."
-   }
+   },
+   "withdrawn": [
+    {
+     "spelling": "??$_Copy_Construct@VTransformCrowd@@@stlpmtx_std@@YAXPAVTransformCrowd@@ABV1@@Z",
+     "lane": "W16-AG 2026-09-14",
+     "class": "RETAIL_WITNESS_REFUTED",
+     "disposition": "withdrawn",
+     "witness_c_N_retail_addr": "0x824be668",
+     "witness_c_S_retail_addr": "0x8228d530",
+     "evidence": "RETAIL KEEPS THE DISCRIMINATING CALLEES APART. At +40 our folded spelling calls ??0?$ObjPtr@VWorldCrowd@@@@QAA@ABV0@@Z and the survivor calls ??0?$ObjPtr@VObject@Hmx@@@@QAA@ABV0@@Z. Retail places them at 0x824be668 and 0x8228d530 respectively: 0x824be668 is witnessed by map-named caller ??0CamShotCrowd@@QAA@ABV0@@Z @0x824c3608 +28 (tier STRONG), 0x8228d530 by ??0?$Key@VObjectStage@@@@QAA@ABV0@@Z @0x8228efa0 +28 (tier STRONG). Retail's own body at X=0x822c9048 calls 0x8228d530 at +40, so X IS the survivor and our spelling is not the body there. Guards: both destinations are .pdata BeginAddresses (120 / 104 B)."
+    },
+    {
+     "spelling": "??$_Param_Construct@VTransformCrowd@@V1@@stlpmtx_std@@YAXPAVTransformCrowd@@ABV1@@Z",
+     "lane": "W16-AG 2026-09-14",
+     "class": "RETAIL_WITNESS_REFUTED",
+     "disposition": "withdrawn",
+     "witness_c_N_retail_addr": "0x824be668",
+     "witness_c_S_retail_addr": "0x8228d530",
+     "evidence": "RETAIL KEEPS THE DISCRIMINATING CALLEES APART. At +40 our folded spelling calls ??0?$ObjPtr@VWorldCrowd@@@@QAA@ABV0@@Z and the survivor calls ??0?$ObjPtr@VObject@Hmx@@@@QAA@ABV0@@Z. Retail places them at 0x824be668 and 0x8228d530 respectively: 0x824be668 is witnessed by map-named caller ??0CamShotCrowd@@QAA@ABV0@@Z @0x824c3608 +28 (tier STRONG), 0x8228d530 by ??0?$Key@VObjectStage@@@@QAA@ABV0@@Z @0x8228efa0 +28 (tier STRONG). Retail's own body at X=0x822c9048 calls 0x8228d530 at +40, so X IS the survivor and our spelling is not the body there. Guards: both destinations are .pdata BeginAddresses (120 / 104 B)."
+    }
+   ]
   },
   {
    "name": "Cancelled",
