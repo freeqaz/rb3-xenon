@@ -3392,7 +3392,7 @@
  "0x8231e400": "?SyncProperty@StarDisplay@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x8231e410": "?Enter@StarDisplay@@UAAXXZ",
  "0x8231e450": "?StaticClassName@ReviewDisplay@@SA?AVSymbol@@XZ",
- "0x8231e550": "?ForceEmit_ReviewDisplay_StaticClassName@@YA?AVSymbol@@XZ",
+ "0x8231e550": "?ClassName@ReviewDisplay@@UBA?AVSymbol@@XZ",
  "0x8231e588": "?CopyMembers@ReviewDisplay@@UAAXPBVUIComponent@@W4CopyType@Object@Hmx@@@Z",
  "0x8231e5e8": "?Load@ReviewDisplay@@UAAXAAVBinStream@@@Z",
  "0x8231e660": "?PostLoad@ReviewDisplay@@UAAXAAVBinStream@@@Z",
