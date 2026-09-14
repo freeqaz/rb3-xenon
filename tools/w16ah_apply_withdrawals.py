@@ -35,6 +35,21 @@ DIFFERENT evidence and a later lane must be able to tell them apart:
       separately from the element class because it rests on the container
       argument alone.
 
+  TYPE_ABSENT_FROM_RETAIL_ENCLOSING
+      The callee's OWN ENCLOSING CLASS -- not a template argument -- is absent.
+      Rests on the same three halves PLUS a subsystem-presence witness on retail
+      bytes, because half (1) alone is demonstrably unsound: `Quazal::Job` is
+      polymorphic, is declared in rb3-Wii, and is NetZ middleware retail
+      certainly links, yet `.?AVJob@Quazal@@` occurs 0 times in retail.  Only
+      half (3) declines it.  Symmetrically, an rb3-Wii zero can be a WII PORT
+      artifact rather than a statement about the game: retail carries
+      `BinkTextures.cpp`, "Error reading Bink header." and "Not a Bink file.",
+      so `BinkMovieImpl`/`MovieImpl` are NOT refutable and are left alone.  This
+      class is therefore restricted to subsystems with a retail-byte absence
+      witness of their own -- `gesture/` (Kinect: `Kinect`, `NuiSkeleton`,
+      `NUIAPI`, `xnui`, `nui` all 0 in retail) and `hamobj/` (every polymorphic
+      sibling's descriptor reads 0, rb3-Wii declares none of them, DC3 all).
+
 CONTAINER-class rows whose GROUP SURVIVOR is itself an `ObjPtrVec` spelling are
 NOT applied: the container argument impeaches the survivor -- i.e. the map row
 naming that address -- so withdrawing a member while leaving the group resting
@@ -119,6 +134,8 @@ def main():
               "either forgiveness direction and none sits in a fuzzy==100 row."
               % (s["ah_c_N"], s["ah_offset"], s["ah_c_S"], s["ah_c_N"],
                  " | ".join(parts)))
+        if s.get("ah_extra_evidence"):
+            ev += " " + s["ah_extra_evidence"]
         rec = {
             "spelling": s["folded"],
             "lane": LANE,

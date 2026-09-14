@@ -1,0 +1,123 @@
+[
+ {
+  "group_index": 768,
+  "census_gi": 770,
+  "addr": "0x823f5270",
+  "bytes": 76,
+  "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+  "spelling": "??_GFreestyleMove@@UAAPAXI@Z",
+  "absent_types": [
+   "FreestyleMove"
+  ]
+ },
+ {
+  "group_index": 768,
+  "census_gi": 770,
+  "addr": "0x823f5270",
+  "bytes": 76,
+  "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+  "spelling": "??_GHamGameData@@UAAPAXI@Z",
+  "absent_types": [
+   "HamGameData"
+  ]
+ },
+ {
+  "group_index": 768,
+  "census_gi": 770,
+  "addr": "0x823f5270",
+  "bytes": 76,
+  "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+  "spelling": "??_GHamList@@UAAPAXI@Z",
+  "absent_types": [
+   "HamList"
+  ]
+ },
+ {
+  "group_index": 768,
+  "census_gi": 770,
+  "addr": "0x823f5270",
+  "bytes": 76,
+  "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+  "spelling": "??_GHamPartyJumpData@@UAAPAXI@Z",
+  "absent_types": [
+   "HamPartyJumpData"
+  ]
+ },
+ {
+  "group_index": 768,
+  "census_gi": 770,
+  "addr": "0x823f5270",
+  "bytes": 76,
+  "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+  "spelling": "??_GHamVisDir@@UAAPAXI@Z",
+  "absent_types": [
+   "HamVisDir"
+  ]
+ },
+ {
+  "group_index": 768,
+  "census_gi": 770,
+  "addr": "0x823f5270",
+  "bytes": 76,
+  "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+  "spelling": "??_GLayerArray@HamDriver@@UAAPAXI@Z",
+  "absent_types": [
+   "HamDriver::LayerArray"
+  ]
+ },
+ {
+  "group_index": 768,
+  "census_gi": 770,
+  "addr": "0x823f5270",
+  "bytes": 76,
+  "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+  "spelling": "??_GLayerClip@HamDriver@@UAAPAXI@Z",
+  "absent_types": [
+   "HamDriver::LayerClip"
+  ]
+ },
+ {
+  "group_index": 768,
+  "census_gi": 770,
+  "addr": "0x823f5270",
+  "bytes": 76,
+  "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+  "spelling": "??_GNavigationSkeletonDir@@UAAPAXI@Z",
+  "absent_types": [
+   "NavigationSkeletonDir"
+  ]
+ },
+ {
+  "group_index": 768,
+  "census_gi": 770,
+  "addr": "0x823f5270",
+  "bytes": 76,
+  "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+  "spelling": "??_GSkeletonDir@@UAAPAXI@Z",
+  "absent_types": [
+   "SkeletonDir"
+  ]
+ },
+ {
+  "group_index": 768,
+  "census_gi": 770,
+  "addr": "0x823f5270",
+  "bytes": 76,
+  "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+  "spelling": "??_GStreamRecorder@@UAAPAXI@Z",
+  "absent_types": [
+   "StreamRecorder"
+  ]
+ },
+ {
+  "group_index": 768,
+  "census_gi": 770,
+  "addr": "0x823f5270",
+  "bytes": 76,
+  "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+  "spelling": "??_GSuperEasyRemixer@@UAAPAXI@Z",
+  "absent_types": [
+   "SuperEasyRemixer"
+  ]
+ }
+]
