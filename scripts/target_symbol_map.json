@@ -30448,5 +30448,9 @@
  "0x8273cef0": "?BeginDrawing@DxRnd@@UAAXXZ",
  "0x8273d0a0": "?DoPointTests@DxRnd@@AAAXXZ",
  "0x8273d610": "?DoWorldEnd@DxRnd@@EAAXXZ",
- "0x823c3960": "?_M_create_node@?$list@UConstraintSystem@CharBlendBone@@V?$StlNodeAlloc@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABUConstraintSystem@CharBlendBone@@@Z"
+ "0x823c3960": "?_M_create_node@?$list@UConstraintSystem@CharBlendBone@@V?$StlNodeAlloc@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABUConstraintSystem@CharBlendBone@@@Z",
+ "0x8273d728": "?CloneIndexBuffer@@YAPAUD3DIndexBuffer@@PAU1@@Z",
+ "0x8273d658": "?MakeVertexBuffer@@YAPAUD3DVertexBuffer@@HII_N@Z",
+ "0x8273d688": "?CloneVertexBuffer@@YAPAUD3DVertexBuffer@@PAU1@@Z",
+ "0x8273d670": "?MakeIndexBuffer@@YAPAUD3DIndexBuffer@@HIW4_D3DFORMAT@@@Z"
 }
