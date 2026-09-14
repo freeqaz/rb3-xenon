@@ -1709,6 +1709,31 @@ What it enforces — the manual steps survive here only as the explanation of
   while `matched_functions` (44,252) and `masked_equal` (22,886) are
   **bit-identical**, because `mpn` excludes arg-only penalties and
   `none`→`name_check` changes *only* relocation-name arg comparison.
+  ⛔⛔ **THAT INVARIANCE IS GONE — `matched_functions` IS NO LONGER RULER-INVARIANT,
+  AND IT WAS REMOVED ON PURPOSE. DO NOT USE A `none` LEG AS A CONTROL FOR A
+  FUNCTION COUNT** (lane W16-AR, 2026-09-14,
+  `docs/decomp/W16AR_AO_FILED_ROWS_RULER_INVARIANCE_2026-09-14.md` §3). The
+  bit-identical 44,252 above was true **on 2026-08-13's binary**. objdiff-core
+  **`b14ba45` (2026-08-20)** "NameCheck: let a vetted wrong-callee reach
+  match_percent_normalized" added `vetted_reloc_name_diff` to `diff/code.rs`:
+  under `name_check` *only*, a relocation-name diff that passes three screens
+  (not a regalloc save helper, not a placeholder name, not a local-static-ordinal
+  diff) is **excluded from `arg_diff_score`** and stays in `diff_score`, so it no
+  longer cancels out of `mpn = diff_score − arg_diff_score`; under `none` it is
+  never charged at all. Re-measured on objdiff 4.2.9, one built tree, one config
+  key apart, both caches cold, the `name_check` leg reproducing the shipped
+  `report.json` on every key: **`matched_functions` 43,453 (`name_check`) vs
+  45,104 (`none`), Δ+1,651** — 1,651 rows move `mpn <100 → 100`, **zero** the
+  other way; `masked_equal_functions` 23,047 on both. Example:
+  `?AddInfo@PhraseAnalyzer@@QAAXHW4TrackType@@HH_N@Z` (100 B) has zero
+  instruction-byte differences and one `diff_arg` (target
+  `push_back<vector<SongSection>>` vs base `push_back<vector<RawPhrase>>`) and
+  reads `mpn` 99.8 under `name_check`, 100.0 under `none`. ⇒ **both headline
+  numbers are now ruler-dependent**: a function-count absolute is incomparable
+  across rulers exactly like a byte absolute, and a `none` control on a map
+  change measures the ruler, not the change — the 1,651-row population *is* the
+  vetted-wrong-callee stratum, i.e. exactly where map lanes work. The ~817 kB /
+  7.9 pp `matched_code` figure above is unaffected.
   ⇒ **ANY byte absolute recorded before 2026-08-12 00:47 is incomparable to one
   after it unless the ruler is stated.** ⚠ A swing of exactly this shape was
   mis-attributed to an objdiff **rebuild** on 2026-08-13 — it was the **ruler**,
