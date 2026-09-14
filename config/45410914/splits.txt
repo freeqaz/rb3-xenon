@@ -3255,7 +3255,6 @@ HamCamTransform.cpp:
 	.pdata      start:0x821F4E08 end:0x821F4E48
 	.pdata      start:0x821F4E50 end:0x821F4E70
 	.pdata      start:0x821F4E78 end:0x821F4F20
-	.pdata      start:0x821F4F40 end:0x821F4F50
 	.pdata      start:0x821F4F58 end:0x821F4F68
 	.pdata      start:0x821F4F70 end:0x821F4F80
 	.pdata      start:0x821F4F90 end:0x821F4FE8
@@ -3300,7 +3299,7 @@ HamCamTransform.cpp:
 	.text       start:0x822A7DBC end:0x822A8000
 	.text       start:0x822A8064 end:0x822A8970
 	.text       start:0x822A8B64 end:0x822A8B68
-	.text       start:0x822A8BC0 end:0x822A8C40
+	.text       start:0x822A8BC0 end:0x822A8BC8
 	.text       start:0x822A8CAC end:0x822A8E68
 	.text       start:0x822A8ED8 end:0x822A8F78
 	.text       start:0x822A8FD4 end:0x822A8FD8
@@ -11796,6 +11795,7 @@ OutfitConfig.cpp:
 	.pdata      start:0x821F4C48 end:0x821F4C60
 	.pdata      start:0x821F4C60 end:0x821F4C70
 	.pdata      start:0x821F4CD0 end:0x821F4CD8
+	.pdata      start:0x821F4F40 end:0x821F4F50
 	.pdata      start:0x821F52C0 end:0x821F52D0
 	.pdata      start:0x821F52E0 end:0x821F52F0
 	.pdata      start:0x821F5398 end:0x821F53B8
@@ -11834,6 +11834,7 @@ OutfitConfig.cpp:
 	.text       start:0x822A6270 end:0x822A6438
 	.text       start:0x822A6438 end:0x822A6528
 	.text       start:0x822A68E0 end:0x822A6A48
+	.text       start:0x822A8BC8 end:0x822A8C40
 	.text       start:0x822ABA10 end:0x822ABA1C
 	.text       start:0x822ABE70 end:0x822ABFB8
 	.text       start:0x822AC048 end:0x822AC054
