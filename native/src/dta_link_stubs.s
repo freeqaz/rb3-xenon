@@ -58,6 +58,29 @@ JoypadSetActuatorsImp:
     xorq %rax, %rax
     ret
 
+// Joypad platform back end (src/system/os/Joypad_Xbox.cpp, XamInput; not in
+// the native link). Referenced since the JoypadPollCommon port (W16-J item 2b,
+// cdaa2afb). ReadSingleJoypad -> 0 == kJoypadNone (no pad connected), so the
+// poll loop stays inert; requestBreedWrite -> false; keep-alive is a no-op.
+// Weak so a real Joypad_Xinput.cpp back end wins without coordination.
+.weak ReadSingleJoypad
+.type ReadSingleJoypad,@function
+ReadSingleJoypad:
+    xorq %rax, %rax
+    ret
+
+.weak requestBreedWrite
+.type requestBreedWrite,@function
+requestBreedWrite:
+    xorq %rax, %rax
+    ret
+
+.weak JoypadSendKeepAlive
+.type JoypadSendKeepAlive,@function
+JoypadSendKeepAlive:
+    xorq %rax, %rax
+    ret
+
 .weak OutputDebugStringA
 .type OutputDebugStringA,@function
 OutputDebugStringA:
