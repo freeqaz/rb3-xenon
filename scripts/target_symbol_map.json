@@ -30406,5 +30406,12 @@
  "0x8263faa0": "?GetOffersForToken@TokenRedemptionPanel@@QAAXPBDPAVLocalBandUser@@@Z",
  "0x8263f948": "?GetPreviousOffersForUser@TokenRedemptionPanel@@QAAXPAVLocalBandUser@@@Z",
  "0x8263fb98": "?ShowPurchaseUIForOffer@TokenRedemptionPanel@@QAAXHPAVLocalBandUser@@@Z",
- "0x82812028": "?DataDir@ObjectDir@@$4PPPPPPPM@CLE@AAPAV1@XZ"
+ "0x82812028": "?DataDir@ObjectDir@@$4PPPPPPPM@CLE@AAPAV1@XZ",
+ "0x8233ba58": "?Save@HighlightObject@@QBAXAAVBinStream@@@Z",
+ "0x8233c260": "??$?6VHighlightObject@@V?$StlNodeAlloc@VHighlightObject@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VHighlightObject@@V?$StlNodeAlloc@VHighlightObject@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x8233c4e0": "?Save@BandList@@UAAXAAVBinStream@@@Z",
+ "0x824c8f68": "??6@YAAAVBinStream@@AAV0@ABVEventCall@EventAnim@@@Z",
+ "0x824c9478": "??6@YAAAVBinStream@@AAV0@ABVKeyFrame@EventAnim@@@Z",
+ "0x824c94d0": "??$?6VKeyFrame@EventAnim@@V?$StlNodeAlloc@VKeyFrame@EventAnim@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@VKeyFrame@EventAnim@@V?$StlNodeAlloc@VKeyFrame@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x824c9540": "?Save@EventAnim@@UAAXAAVBinStream@@@Z"
 }
