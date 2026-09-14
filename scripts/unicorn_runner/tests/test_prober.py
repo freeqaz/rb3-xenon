@@ -172,8 +172,8 @@ class TestFormatProbeResult(unittest.TestCase):
             ])
         output = format_probe_result(p)
         self.assertIn("input_sensitive", output)
-        self.assertIn("Equiv fills:", output)
-        self.assertIn("Div fills:", output)
+        self.assertIn("Equiv inputs:", output)
+        self.assertIn("Div inputs:", output)
 
 
 if __name__ == "__main__":
