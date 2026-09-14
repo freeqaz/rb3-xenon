@@ -109,8 +109,16 @@ void MainHubPanel::Enter() {
 void MainHubPanel::Poll() {
     UIPanel::Poll();
     if (mMessageTimer.Running()) {
-        mMessageTimer.Split();
-        if (mMessageTimer.Ms() > mMessageRotationMs) {
+        // Retail (fn_82622550) makes ONE out-of-line call here --
+        // `bl fn_82270188` == ?SplitMs@Timer@@QAAMXZ -- and compares its float
+        // return directly against mMessageRotationMs (`lfs f0, 0x4c(r30)`).
+        // Split() and Ms() are both header-inline, so spelling them separately
+        // emits the __mftb sequence and the CyclesToMs float math inline in
+        // place of that single `bl`, which is the whole of this row's gap.
+        // NOTE the rb3-Wii oracle is WRONG for retail X360 here: it spells this
+        // `Timer::CyclesToMs(mMessageTimer.mCycles)`.  Retail bytes outrank the
+        // oracle.  (Lane W16-AN.)
+        if (mMessageTimer.SplitMs() > mMessageRotationMs) {
             mMessageTimer.Restart();
             int num = mMessageProvider->NumData();
             if (num == 0) {
