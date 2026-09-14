@@ -843,17 +843,13 @@ void PlatformMgr::Poll() {
                 for (unsigned long i = 0; i < numFriends; i++) {
                     // W16-M V3: the IV is selected at the FIRST address expression in
                     // the body; retail's is +0x8 (&szGamertag), so evaluate it first.
-                    // W16-M V4 (mechanism probe): one base pointer with THREE uses so the temp
-                    // survives forward substitution and becomes the IV (+0x8 = &szGamertag);
-                    // state and xuid are read relative to it, no second pointer variable.
                     const char *gamertag = pFriends[i].szGamertag;
-                    DWORD state = *(const DWORD *)(gamertag + 0x10);
-                    if (!(state & XONLINE_FRIENDSTATE_FLAG_SENTREQUEST)
-                        && !(state & XONLINE_FRIENDSTATE_FLAG_RECEIVEDREQUEST)) {
+                    if (!(pFriends[i].dwFriendState & XONLINE_FRIENDSTATE_FLAG_SENTREQUEST)
+                        && !(pFriends[i].dwFriendState & XONLINE_FRIENDSTATE_FLAG_RECEIVEDREQUEST)) {
                         Friend *f = new Friend();
                         String name(gamertag);
                         f->SetName(name);
-                        f->mXUID = *(const XUID *)(gamertag - 8);
+                        f->mXUID = pFriends[i].xuid;
                         mFriendsList->push_back(f);
                     }
                 }
