@@ -11,17 +11,26 @@ RndTransAnim::RndTransAnim()
       mRotSpline(false), mRotKeys(), mTransKeys(), mScaleKeys(), mKeysOwner(this, this),
       mRepeatTrans(false), mFollowPath(false) {}
 
+// Retail (0x8245e440) has NO Hmx::Object::Replace fallback -- the body's only
+// calls are __RTDynamicCast and SetOwnerObj, then blr.  Hmx::Object::Replace is
+// EMPTY in the match build (its whole body is #ifdef HX_NATIVE, Object.cpp:228),
+// but with no LTCG an empty out-of-line callee still costs a real `bl`, and
+// there is no such `bl` in the retail body.  Kept under HX_NATIVE, where the
+// base really does forward to mSinks.
+// Retail's only guard is `to == 0`; no `mKeysOwner == this` test, no null-check
+// on the cast.  `addi r11,r3,68` = mKeysOwner at 0x44 and `subi r4,r31,88` =
+// the Hmx::Object vbase at 0x58, both confirmed by /d1reportSingleClassLayout.
 void RndTransAnim::Replace(ObjRef *ref, Hmx::Object *obj) {
     if (RefIs(ref, mKeysOwner)) {
-        RndTransAnim *ta;
-        if (mKeysOwner == this || !(ta = dynamic_cast<RndTransAnim *>(obj))) {
+        if (!obj)
             mKeysOwner.SetOwnerObj(this);
-        } else {
-            mKeysOwner.SetOwnerObj(ta->mKeysOwner.Ptr());
-        }
+        else
+            mKeysOwner.SetOwnerObj(dynamic_cast<RndTransAnim *>(obj)->mKeysOwner.Ptr());
         return;
     }
+#ifdef HX_NATIVE
     Hmx::Object::Replace(ref, obj);
+#endif
 }
 
 BEGIN_HANDLERS(RndTransAnim)

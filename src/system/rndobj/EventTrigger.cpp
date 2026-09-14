@@ -114,7 +114,11 @@ void EventTrigger::Replace(ObjRef *from, Hmx::Object *to) {
             return;
         }
     }
+    // Retail 0x824a0870 (636 B) ends `addi r1,r1,160; b __restgprlr` -- there is
+    // no base-class call of any kind.
+#ifdef HX_NATIVE
     Hmx::Object::Replace(from, to);
+#endif
 }
 
 BEGIN_HANDLERS(EventTrigger)
