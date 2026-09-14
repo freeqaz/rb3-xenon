@@ -767,7 +767,9 @@ void OvershellPanel::ResolveSlotStates() {
                             if (!curSlot->GetState()->InRegisterOnlineFlow()) {
                                 curSlot->SetOverrideFlowReturnState(theID);
                             }
-                            curSlot->ShowState((OvershellSlotStateID)0x8B);
+                            // retail: li r4,0x14 -- kState_SignInWait. 0x8B is
+                            // kState_AutoSignInNintendo (Wii-only). See W16-AK.
+                            curSlot->ShowState(kState_SignInWait);
                         }
                         if (curSlot->GetState()->RequiresOnlineSession()
                             && !mSessionMgr->IsOnlineEnabled()) {
@@ -1012,15 +1014,14 @@ void OvershellPanel::ResolveAutoSignInStates() {
             if (curSlot->GetUser()->IsLocal()) {
                 LocalBandUser *user = curSlot->GetUser()->GetLocalBandUser();
                 OvershellSlotStateID ossID = curSlot->GetState()->GetStateID();
+                // RB3-360 retail (fn_825B2EA0) has NO `ossID == 0x8B` arm:
+                // 0x8B is kState_AutoSignInNintendo, a Wii-only state, and the
+                // ThePlatformMgr.IsConnected()/RunNetStartUtility() body behind
+                // it is the Wii NetStartUtility flow. Retail goes straight from
+                // the 0x10 test to the 0x12 test. See W16-AK.
                 if (ossID == 0x10 && user->IsSignedInOnline()
                     && user->HasOnlinePrivilege()) {
                     curSlot->ShowState(kState_AutoSignInRockCentral);
-                } else if (ossID == 0x8B) {
-                    if (ThePlatformMgr.IsConnected()) {
-                        curSlot->ShowState(kState_AutoSignInRockCentral);
-                    } else if (!ThePlatformMgr.mTimer.Running()) {
-                        ThePlatformMgr.RunNetStartUtility();
-                    }
                 } else if (ossID == 0x12 && TheRockCentral.IsOnline()) {
                     curSlot->ShowState(kState_SignInWait);
                 }
