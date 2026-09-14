@@ -3158,7 +3158,9 @@ PostProc.cpp:
 	.text       start:0x82C25D48 end:0x82C25D50
 
 DataArray.cpp:
+	.pdata      start:0x821F1658 end:0x821F1660
 	.pdata      start:0x8223B8E0 end:0x8223BA48
+	.text       start:0x82270510 end:0x82270560
 	.text       start:0x8274C4E0 end:0x8274DD58
 
 JobMgr.cpp:
@@ -6030,7 +6032,7 @@ TransAnim.cpp:
 	.text       start:0x826A7B38 end:0x826A7D14
 
 PropKeys.cpp:
-	.pdata      start:0x821F1648 end:0x821F1660
+	.pdata      start:0x821F1648 end:0x821F1658
 	.pdata      start:0x821F1778 end:0x821F1790
 	.pdata      start:0x821F5040 end:0x821F5048
 	.pdata      start:0x82203EE8 end:0x82203EF0
@@ -6050,7 +6052,8 @@ PropKeys.cpp:
 	.pdata      start:0x82231108 end:0x82231110
 	.pdata      start:0x82231D80 end:0x82231D88
 	.pdata      start:0x82261498 end:0x822614D8
-	.text       start:0x82270438 end:0x82270580
+	.text       start:0x82270438 end:0x82270510
+	.text       start:0x82270560 end:0x82270580
 	.text       start:0x82271B08 end:0x82271B68
 	.text       start:0x82271B68 end:0x82271C50
 	.text       start:0x822907F0 end:0x822908A8
