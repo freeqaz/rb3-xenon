@@ -90,6 +90,7 @@ Object.cpp:
 	.pdata      start:0x8223C570 end:0x8223C578
 	.pdata      start:0x8223C578 end:0x8223C5A0
 	.pdata      start:0x8223C5A0 end:0x8223C5C0
+	.pdata      start:0x8223C5C0 end:0x8223C5C8
 	.pdata      start:0x8223C5C8 end:0x8223C628
 	.pdata      start:0x8223C628 end:0x8223C638
 	.pdata      start:0x8223C638 end:0x8223C718
@@ -115,6 +116,7 @@ Object.cpp:
 	.text       start:0x8275B410 end:0x8275B6A0
 	.text       start:0x8275B6A0 end:0x8275B864
 	.text       start:0x8275B864 end:0x8275B868
+	.text       start:0x8275B868 end:0x8275B8B0
 	.text       start:0x8275B8B0 end:0x8275BD08
 	.text       start:0x8275BD08 end:0x8275C7DC
 	.text       start:0x8275C7DC end:0x8275CB84
@@ -12570,12 +12572,10 @@ ContextChecker.cpp:
 	.pdata      start:0x822089D0 end:0x822089F0
 	.pdata      start:0x82208F68 end:0x82208F88
 	.pdata      start:0x8221DB20 end:0x8221DCC8
-	.pdata      start:0x8223C5C0 end:0x8223C5C8
 	.pdata      start:0x8225B4B0 end:0x8225B528
 	.text       start:0x823EF498 end:0x823EF5F8
 	.text       start:0x823F4268 end:0x823F43A0
 	.text       start:0x8256C7E0 end:0x8256DF78
-	.text       start:0x8275B868 end:0x8275B8B0
 	.text       start:0x82B6A384 end:0x82B6AA90
 
 PhysicsVolume.cpp:
