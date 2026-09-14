@@ -30465,5 +30465,8 @@
  "0x825fd708": "??$__inplace_stable_sort@PAVSymbol@@VAccomplishmentCmp@@@stlpmtx_std@@YAXPAVSymbol@@0VAccomplishmentCmp@@@Z",
  "0x825fd798": "??$__stable_sort_adaptive@PAVSymbol@@PAV1@HVAccomplishmentCmp@@@stlpmtx_std@@YAXPAVSymbol@@00HVAccomplishmentCmp@@@Z",
  "0x825fde28": "??$__stable_sort_aux@PAVSymbol@@V1@HVAccomplishmentCmp@@@stlpmtx_std@@YAXPAVSymbol@@00PAHVAccomplishmentCmp@@@Z",
- "0x825f32a8": "??RGoalCmp@@QBA_NVSymbol@@0@Z"
+ "0x825f32a8": "??RGoalCmp@@QBA_NVSymbol@@0@Z",
+ "0x825f4258": "?DataDir@UIPanel@@$4PPPPPPPM@BM@AAPAVObjectDir@@XZ",
+ "0x825f4268": "?SetTypeDef@UIPanel@@$4PPPPPPPM@BM@AAXPAVDataArray@@@Z",
+ "0x825f57c0": "??0CampaignSongInfoPanel@@QAA@XZ"
 }
