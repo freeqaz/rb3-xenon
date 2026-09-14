@@ -14591,6 +14591,16 @@ xdk/xapilibi/xthread.cpp:
 	.pdata      start:0x82248B50 end:0x82248B70
 	.text       start:0x8283C4C8 end:0x8283C6AC
 
+xdk/xapilibi/sleep.cpp:
+	.pdata      start:0x82248C28 end:0x82248C30
+	.pdata      start:0x82248FC0 end:0x82248FC8
+	.text       start:0x8283D628 end:0x8283D668
+	.text       start:0x828450F0 end:0x82845180
+
+xdk/xapilibi/xutilitydrive.cpp:
+	.pdata      start:0x82248C50 end:0x82248CE0
+	.text       start:0x8283D818 end:0x8283EB88
+
 xdk/xinput2/tables.cpp:
 	.pdata      start:0x82249398 end:0x822493A8
 	.text       start:0x8284FC00 end:0x8284FFC4
