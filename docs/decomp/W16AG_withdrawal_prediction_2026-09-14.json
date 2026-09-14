@@ -1,0 +1,978 @@
+[
+ {
+  "gi": 338,
+  "addr": "0x822cdc18",
+  "group_index": 336,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 563,
+  "addr": "0x8246efa8",
+  "group_index": 561,
+  "census_bytes": 112,
+  "folded": "?_M_clear_after_move@?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "survivor": "?_M_clear@?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "scored_below_100": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [
+   {
+    "dir": "a",
+    "caller": "?_M_insert_overflow_aux@?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@ABV3@ABU__false_type@2@I_N@Z",
+    "off": 296,
+    "other": "?_M_clear@?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
+   }
+  ],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "group_index": 562,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "group_index": 562,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "group_index": 562,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "group_index": 562,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "group_index": 581,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "group_index": 587,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 620,
+  "addr": "0x8237b938",
+  "group_index": 618,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "group_index": 623,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 658,
+  "addr": "0x8232fb50",
+  "group_index": 656,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 668,
+  "addr": "0x827cda78",
+  "group_index": 666,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "group_index": 678,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "group_index": 678,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "group_index": 678,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "group_index": 678,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "group_index": 678,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 725,
+  "addr": "0x822c9048",
+  "group_index": 723,
+  "census_bytes": 60,
+  "folded": "??$_Copy_Construct@VTransformCrowd@@@stlpmtx_std@@YAXPAVTransformCrowd@@ABV1@@Z",
+  "survivor": "??$_Copy_Construct@UObjVersion@@@stlpmtx_std@@YAXPAUObjVersion@@ABU1@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 725,
+  "addr": "0x822c9048",
+  "group_index": 723,
+  "census_bytes": 60,
+  "folded": "??$_Param_Construct@VTransformCrowd@@V1@@stlpmtx_std@@YAXPAVTransformCrowd@@ABV1@@Z",
+  "survivor": "??$_Copy_Construct@UObjVersion@@@stlpmtx_std@@YAXPAUObjVersion@@ABU1@@Z",
+  "our_callsites_of_N": 3,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 3
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 942,
+  "addr": "0x8229ee78",
+  "group_index": 940,
+  "census_bytes": 80,
+  "folded": "??$_Copy_Construct@UAutoPropEntry@PropertyEventListener@@@stlpmtx_std@@YAXPAUAutoPropEntry@PropertyEventListener@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VOverlay@OutfitConfig@@@stlpmtx_std@@YAXPAVOverlay@OutfitConfig@@ABV12@@Z",
+  "our_callsites_of_N": 1,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 1
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ },
+ {
+  "gi": 942,
+  "addr": "0x8229ee78",
+  "group_index": 940,
+  "census_bytes": 80,
+  "folded": "??$_Param_Construct@UAutoPropEntry@PropertyEventListener@@U12@@stlpmtx_std@@YAXPAUAutoPropEntry@PropertyEventListener@@ABU12@@Z",
+  "survivor": "??$_Copy_Construct@VOverlay@OutfitConfig@@@stlpmtx_std@@YAXPAVOverlay@OutfitConfig@@ABV12@@Z",
+  "our_callsites_of_N": 2,
+  "sites_retail_unnamed": 0,
+  "sites_retail_names_N": 0,
+  "caller_report_status": {
+   "not_a_report_row": 2
+  },
+  "self_is_report_row": false,
+  "charged_sites": [],
+  "dependent_fuzzy100_rows": [],
+  "predicted_bytes_lost": 0,
+  "predicted_rows_lost": 0
+ }
+]
