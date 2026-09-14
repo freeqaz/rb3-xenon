@@ -30,6 +30,18 @@ BinStream &operator>>(BinStream &bs, HighlightObject &o) {
     return bs;
 }
 
+BinStream &operator<<(BinStream &bs, const HighlightObject &o) {
+    o.Save(bs);
+    return bs;
+}
+
+void HighlightObject::Save(BinStream &bs) const {
+    bs << mTargetObj;
+    bs << mXOffset;
+    bs << mYOffset;
+    bs << mZOffset;
+}
+
 void HighlightObject::Load(BinStream &bs) {
     bs >> mTargetObj;
     bs >> mXOffset;
@@ -55,7 +67,26 @@ void BandList::Init() {
     Register();
 }
 
-SAVE_OBJ(BandList, 0x72);
+BEGIN_SAVES(BandList)
+    SAVE_REVS(0x16, 0)
+    SAVE_SUPERCLASS(UIList)
+    bs << mFocusAnim;
+    bs << mPulseAnim;
+    bs << mRevealAnim;
+    bs << mRevealStartDelay;
+    bs << mRevealEntryDelay;
+    bs << mConcealAnim;
+    bs << mConcealStartDelay;
+    bs << mConcealEntryDelay;
+    bs << mRevealScale;
+    bs << mConcealScale;
+    bs << mAutoReveal;
+    bs << mRevealSound;
+    bs << mConcealSound;
+    bs << mRevealSoundDelay;
+    bs << mConcealSoundDelay;
+    bs << mHighlightObjects;
+END_SAVES
 
 BEGIN_LOADS(BandList)
     PreLoad(bs);
