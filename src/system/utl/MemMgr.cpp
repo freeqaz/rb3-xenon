@@ -838,7 +838,12 @@ void MemHeap::FreeBlockStats(int &maxIdx, int &rFrags, int &totalFree, int &bigg
     rFrags = (idx - maxBlock) - 1;
 }
 
-// Retail/match MemHandle::Lock (fn_827966E8, ExactInstructions, TU=MemMgr.o).
+// Retail/match MemHandle::Lock, 0x827BB6F8 (28 B), unit `default/MemMgr`
+// (splits.txt carves `.text 0x827BB6F8-0x827BB714` out of MemHeap's span for
+// it).  ⚠ The address this comment used to carry, fn_827966E8, was a
+// PRE-TU5 address naming nothing on the current target -- main has targeted TU5
+// since 2026-07-15, which invalidates every TU0-era address.  Re-derived from
+// scripts/target_symbol_map.json + build/45410914/asm/MemMgr.s.
 // mAlloc points at a MemHandleAlloc header (mBack@0, mLockCount@4) followed by
 // the relocatable user data at +0x10. Lock bumps the lock count and hands back
 // the data pointer.
