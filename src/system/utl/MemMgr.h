@@ -21,6 +21,9 @@ int _GetFreeSystemMemory();
 const char *MemHeapName(int heapNum);
 int MemFindAddrHeap(void *addr);
 int GetCurrentHeapNum();
+// Retail 0x827BBA68 (anonymous): &gHeaps[GetCurrentHeapNum()] or NULL. Kept
+// out-of-line so _MemAllocH's heap assert emits the `bl` retail shows.
+class MemHeap *MemCurrentHeap();
 int MemNumHeaps();
 int MemFindHeap(const char *);
 void MemPushHeap(int heapNum);

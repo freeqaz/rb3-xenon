@@ -71,6 +71,12 @@ DWORD XInputGetKeystrokeEx(
 DWORD XInputGetState(DWORD dwUserIndex, XINPUT_STATE *pState);
 DWORD XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION *pVibration);
 
+// Not part of the public XInput surface, but the title imports and calls it:
+// JoypadSendKeepAlive (.text 0x82529af0) is a four-byte
+// `b XamInputSendStayAliveRequest` tail call, which fixes the arity at one
+// argument (a second would need an `li r4` ahead of the branch).
+DWORD XamInputSendStayAliveRequest(DWORD dwUserMask);
+
 #ifdef __cplusplus
 }
 #endif
