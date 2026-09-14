@@ -9394,7 +9394,7 @@
  "0x824c9130": "?EndAnim@EventAnim@@UAAXXZ",
  "0x824c91a0": "?SetFrame@EventAnim@@UAAXMM@Z",
  "0x824c9208": "??5@YAAAVBinStream@@AAV0@AAVEventCall@EventAnim@@@Z",
- "0x824c93c0": "??$?6UTarget@HamCamShot@@V?$StlNodeAlloc@UTarget@HamCamShot@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@UTarget@HamCamShot@@V?$StlNodeAlloc@UTarget@HamCamShot@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "0x824c93c0": "??$?6VEventCall@EventAnim@@V?$StlNodeAlloc@VEventCall@EventAnim@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@VEventCall@EventAnim@@V?$StlNodeAlloc@VEventCall@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x824c9430": "?EndFrame@EventAnim@@UAAMXZ",
  "0x824c97d8": "??$?0U?$_List_iterator@UProxyCall@EventTrigger@@U?$_Const_traits@UProxyCall@EventTrigger@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UProxyCall@EventTrigger@@V?$StlNodeAlloc@UProxyCall@EventTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAA@U?$_List_iterator@UProxyCall@EventTrigger@@U?$_Const_traits@UProxyCall@EventTrigger@@@stlpmtx_std@@@1@0ABV?$StlNodeAlloc@UProxyCall@EventTrigger@@@1@@Z",
  "0x824c9878": "??$_M_splice_insert_dispatch@U?$_List_iterator@UProxyCall@EventTrigger@@U?$_Const_traits@UProxyCall@EventTrigger@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UProxyCall@EventTrigger@@V?$StlNodeAlloc@UProxyCall@EventTrigger@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@UProxyCall@EventTrigger@@U?$_Nonconst_traits@UProxyCall@EventTrigger@@@stlpmtx_std@@@1@U?$_List_iterator@UProxyCall@EventTrigger@@U?$_Const_traits@UProxyCall@EventTrigger@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
