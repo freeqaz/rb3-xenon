@@ -834,15 +834,12 @@ void PlatformMgr::Poll() {
         if (res != ERROR_IO_INCOMPLETE) {
             static PlatformMgrOpCompleteMsg msg(false);
             if (res == ERROR_SUCCESS) {
-                // W16-M V1: retail's loop induction pointer is &xf->szGamertag
-                // (reads at -0x8 / 0x0 / 0x10). Spell the cursor at the gamertag.
-                const char *tag = ((XONLINE_FRIEND *)mFriendsBuffer)->szGamertag;
-                for (unsigned long i = 0; i < numFriends; i++, tag += sizeof(XONLINE_FRIEND)) {
-                    XONLINE_FRIEND *xf = (XONLINE_FRIEND *)(tag - 8);
+                XONLINE_FRIEND *xf = (XONLINE_FRIEND *)mFriendsBuffer;
+                for (unsigned long i = 0; i < numFriends; i++, xf++) {
                     if (!(xf->dwFriendState & XONLINE_FRIENDSTATE_FLAG_SENTREQUEST)
                         && !(xf->dwFriendState & XONLINE_FRIENDSTATE_FLAG_RECEIVEDREQUEST)) {
                         Friend *f = new Friend();
-                        String name(tag);
+                        String name(xf->szGamertag);
                         f->SetName(name);
                         f->mXUID = xf->xuid;
                         mFriendsList->push_back(f);
