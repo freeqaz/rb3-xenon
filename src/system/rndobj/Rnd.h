@@ -88,7 +88,10 @@ public:
     struct PointTest {
         int x; // 0x0 - screen x position
         int y; // 0x4 - screen y position
-        int z; // 0x8 - raw depth value
+        // Raw depth straight out of RndCam::ProjectZ(), which returns
+        // `unsigned int`.  DxRnd::DoPointTests loads it with `lwz` (zero
+        // extend) where it loads x/y with `lwa`, so z is unsigned.
+        unsigned int z; // 0x8 - raw depth value
         RndFlare *mFlare; // 0xc
     };
 
