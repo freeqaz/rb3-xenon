@@ -75398,6 +75398,24 @@
      "note_on_the_survivor": "The survivor spelling is provably NOT the body at this address (node-size control above): it is a wrong map name that happens to be the bucket key. Renaming it is a SEPARATE, riskier edit -- CharLipSync.obj defines no set-family spelling, so a rename without a re-home would un-pair the row (CLAUDE.md: proving a name wrong does not make renaming safe). Recorded as a follow-on lead, NOT done here."
     }
    ]
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x82296728",
+   "survivor": "?_M_clear_after_move@?$vector@UPropertyFilter@CameraManager@@V?$StlNodeAlloc@UPropertyFilter@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+   "folded": [
+    "?_M_clear@?$vector@UPropertyFilter@CameraManager@@V?$StlNodeAlloc@UPropertyFilter@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py (lane W16-X T1) -- our COMDATs for survivor and folded spelling are byte-identical AND relocation-identical INCLUDING TARGET NAMES (2 relocs each: the per-T __destroy_range_aux and ?MemOrPoolFreeSTL@@YAXHPAX@Z), and retail's .pdata extent at the fold address equals our COMDAT size exactly on the funclet-normalized reader (tools/twosided_extent.py). Anti-vacuity: the bodies are 116/112 B with 2 NAMED relocation targets compared, not a relocation-free thunk."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x82387a28",
+   "survivor": "?_M_clear@?$vector@UCharInterestState@CharEyes@@V?$StlNodeAlloc@UCharInterestState@CharEyes@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+   "folded": [
+    "?_M_clear_after_move@?$vector@UCharInterestState@CharEyes@@V?$StlNodeAlloc@UCharInterestState@CharEyes@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py (lane W16-X T1) -- our COMDATs for survivor and folded spelling are byte-identical AND relocation-identical INCLUDING TARGET NAMES (2 relocs each: the per-T __destroy_range_aux and ?MemOrPoolFreeSTL@@YAXHPAX@Z), and retail's .pdata extent at the fold address equals our COMDAT size exactly on the funclet-normalized reader (tools/twosided_extent.py). Anti-vacuity: the bodies are 116/112 B with 2 NAMED relocation targets compared, not a relocation-free thunk."
   }
  ]
 }

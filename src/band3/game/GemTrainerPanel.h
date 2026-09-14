@@ -91,6 +91,9 @@ public:
     OBJ_CLASSNAME(GemTrainerLoopPanel);
     OBJ_SET_TYPE(GemTrainerLoopPanel);
     static Hmx::Object *NewObject();
-    virtual ~GemTrainerLoopPanel() {}
+    // NO destructor declared -- retail's ??_GGemTrainerLoopPanel has NO derived vptr-restore
+    // (lane W16-X 2026-09-14). A user-declared dtor, even `{}`, makes MSVC emit
+    // that prologue in ??1GemTrainerLoopPanel, bloating ??_DGemTrainerLoopPanel past the ??_G inline threshold:
+    // 80 B via ??_D instead of retail's direct ??1UIPanel + ??1Hmx::Object.
     virtual void Poll();
 };

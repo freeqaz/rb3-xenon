@@ -23,7 +23,10 @@ public:
     OBJ_CLASSNAME(CampaignSongInfoPanel);
     OBJ_SET_TYPE(CampaignSongInfoPanel);
     virtual DataNode Handle(DataArray *, bool);
-    virtual ~CampaignSongInfoPanel() {}
+    // NO destructor declared -- retail's ??_GCampaignSongInfoPanel has NO derived vptr-restore
+    // (lane W16-X 2026-09-14). A user-declared dtor, even `{}`, makes MSVC emit
+    // that prologue in ??1CampaignSongInfoPanel, bloating ??_DCampaignSongInfoPanel past the ??_G inline threshold:
+    // 80 B via ??_D instead of retail's direct ??1UIPanel + ??1Hmx::Object.
     virtual void Enter();
     virtual void Load();
     virtual void Unload();
