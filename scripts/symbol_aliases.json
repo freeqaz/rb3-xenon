@@ -60658,19 +60658,8 @@
    "folded": [
     "??_GBinkMovieImpl@@UAAPAXI@Z",
     "??_GCriticalSection@@QAAPAXI@Z",
-    "??_GFreestyleMove@@UAAPAXI@Z",
     "??_GFxSendBitCrush360@@UAAPAXI@Z",
-    "??_GHamGameData@@UAAPAXI@Z",
-    "??_GHamList@@UAAPAXI@Z",
-    "??_GHamPartyJumpData@@UAAPAXI@Z",
-    "??_GHamVisDir@@UAAPAXI@Z",
-    "??_GKerningTable@@QAAPAXI@Z",
-    "??_GLayerArray@HamDriver@@UAAPAXI@Z",
-    "??_GLayerClip@HamDriver@@UAAPAXI@Z",
-    "??_GNavigationSkeletonDir@@UAAPAXI@Z",
-    "??_GSkeletonDir@@UAAPAXI@Z",
-    "??_GStreamRecorder@@UAAPAXI@Z",
-    "??_GSuperEasyRemixer@@UAAPAXI@Z"
+    "??_GKerningTable@@QAAPAXI@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 50 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -60841,6 +60830,226 @@
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
      "disposition": "dropped_singleton"
+    },
+    {
+     "spelling": "??_GFreestyleMove@@UAAPAXI@Z",
+     "lane": "W16-AH 2026-09-14",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+     "disposition": "withdrawn",
+     "absent_types": [
+      "FreestyleMove"
+     ],
+     "type_evidence": {
+      "FreestyleMove": {
+       "rtti_mangled": ".?AV/UFreestyleMove@@",
+       "retail_rtti_hits": 0,
+       "polymorphic_in_our_source": "yes (1 virtual declarations in src/system/hamobj/FreestyleMove.h)",
+       "rb3wii_files": 0,
+       "dc3_files": 1
+      }
+     },
+     "witness_verdict_before": "NO_WITNESS_FOLDED_SIDE",
+     "evidence": "TYPE DOES NOT EXIST IN RB3 RETAIL, so the callee this membership turns on was never in any retail COMDAT group and the asserted fold cannot have happened. Our folded spelling calls ??1FreestyleMove@@UAA@XZ at +28, the survivor calls ??1Automator@@UAA@XZ; the retail-side fold witness returned NO_WITNESS_FOLDED_SIDE because ??1FreestyleMove@@UAA@XZ has no map-named caller that compares EQ to retail, so no branch could be decoded for it -- this record settles the row WITHOUT a witness, by type existence. FreestyleMove: retail type-descriptor probe .?AV/UFreestyleMove@@ -> 0 hits; polymorphic in our source = yes (1 virtual declarations in src/system/hamobj/FreestyleMove.h); rb3-Wii (RB3's own dev decomp, names intact) declares it in 0 files, DC3 in 1. Controls: the same retail probe returns PRESENT for Spotlight/RndTex/ObjectDir/EventTrigger/NoteVoiceInst/Fader, and the criterion DECLINES BandPatchMesh and HighlightObject (RTTI-absent but non-polymorphic and present in rb3-Wii), so it is able to fail. Withdrawal predicted and measured Delta 0: over this membership's call sites of the spelling, 0 are charged in either forgiveness direction and none sits in a fuzzy==100 row. This row is refuted on the callee's OWN ENCLOSING CLASS FreestyleMove (subsystem src/system/hamobj/), not on a template argument. retail-byte subsystem witness: every polymorphic hamobj sibling's descriptor reads 0 in retail (HamMove, HamCharacter, HamGameData, HamList, HamVisDir, HamPartyJumpData, FreestyleMove, SuperEasyRemixer), rb3-Wii declares none of them, DC3 declares all. Controls specific to this class, both able to fail and one of which DID: (a) Quazal::Job is polymorphic, declared in rb3-Wii, and NetZ middleware retail certainly links, yet .?AVJob@Quazal@@ occurs 0 times in retail -- so halves (1)+(2) alone would have FALSELY refuted it and only half (3) declined it; (b) retail carries 'BinkTextures.cpp', 'Error reading Bink header.' and 'Not a Bink file.', so the Bink subsystem IS in RB3-360 and BinkMovieImpl/MovieImpl are deliberately NOT refuted even though rb3-Wii declares neither -- that zero is a Wii PORT artifact, not a statement about the game; (c) MoveReplacer (15 rows) and HamMove::LocalizedName (14 rows) are hamobj types that DECLINE on half (2) as non-polymorphic and are left in place."
+    },
+    {
+     "spelling": "??_GHamGameData@@UAAPAXI@Z",
+     "lane": "W16-AH 2026-09-14",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+     "disposition": "withdrawn",
+     "absent_types": [
+      "HamGameData"
+     ],
+     "type_evidence": {
+      "HamGameData": {
+       "rtti_mangled": ".?AV/UHamGameData@@",
+       "retail_rtti_hits": 0,
+       "polymorphic_in_our_source": "yes (3 virtual declarations in src/system/hamobj/HamGameData.h)",
+       "rb3wii_files": 0,
+       "dc3_files": 1
+      }
+     },
+     "witness_verdict_before": "NO_WITNESS_FOLDED_SIDE",
+     "evidence": "TYPE DOES NOT EXIST IN RB3 RETAIL, so the callee this membership turns on was never in any retail COMDAT group and the asserted fold cannot have happened. Our folded spelling calls ??1HamGameData@@UAA@XZ at +28, the survivor calls ??1Automator@@UAA@XZ; the retail-side fold witness returned NO_WITNESS_FOLDED_SIDE because ??1HamGameData@@UAA@XZ has no map-named caller that compares EQ to retail, so no branch could be decoded for it -- this record settles the row WITHOUT a witness, by type existence. HamGameData: retail type-descriptor probe .?AV/UHamGameData@@ -> 0 hits; polymorphic in our source = yes (3 virtual declarations in src/system/hamobj/HamGameData.h); rb3-Wii (RB3's own dev decomp, names intact) declares it in 0 files, DC3 in 1. Controls: the same retail probe returns PRESENT for Spotlight/RndTex/ObjectDir/EventTrigger/NoteVoiceInst/Fader, and the criterion DECLINES BandPatchMesh and HighlightObject (RTTI-absent but non-polymorphic and present in rb3-Wii), so it is able to fail. Withdrawal predicted and measured Delta 0: over this membership's call sites of the spelling, 0 are charged in either forgiveness direction and none sits in a fuzzy==100 row. This row is refuted on the callee's OWN ENCLOSING CLASS HamGameData (subsystem src/system/hamobj/), not on a template argument. retail-byte subsystem witness: every polymorphic hamobj sibling's descriptor reads 0 in retail (HamMove, HamCharacter, HamGameData, HamList, HamVisDir, HamPartyJumpData, FreestyleMove, SuperEasyRemixer), rb3-Wii declares none of them, DC3 declares all. Controls specific to this class, both able to fail and one of which DID: (a) Quazal::Job is polymorphic, declared in rb3-Wii, and NetZ middleware retail certainly links, yet .?AVJob@Quazal@@ occurs 0 times in retail -- so halves (1)+(2) alone would have FALSELY refuted it and only half (3) declined it; (b) retail carries 'BinkTextures.cpp', 'Error reading Bink header.' and 'Not a Bink file.', so the Bink subsystem IS in RB3-360 and BinkMovieImpl/MovieImpl are deliberately NOT refuted even though rb3-Wii declares neither -- that zero is a Wii PORT artifact, not a statement about the game; (c) MoveReplacer (15 rows) and HamMove::LocalizedName (14 rows) are hamobj types that DECLINE on half (2) as non-polymorphic and are left in place."
+    },
+    {
+     "spelling": "??_GHamList@@UAAPAXI@Z",
+     "lane": "W16-AH 2026-09-14",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+     "disposition": "withdrawn",
+     "absent_types": [
+      "HamList"
+     ],
+     "type_evidence": {
+      "HamList": {
+       "rtti_mangled": ".?AV/UHamList@@",
+       "retail_rtti_hits": 0,
+       "polymorphic_in_our_source": "yes (8 virtual declarations in src/system/hamobj/HamList.h)",
+       "rb3wii_files": 0,
+       "dc3_files": 1
+      }
+     },
+     "witness_verdict_before": "NO_WITNESS_FOLDED_SIDE",
+     "evidence": "TYPE DOES NOT EXIST IN RB3 RETAIL, so the callee this membership turns on was never in any retail COMDAT group and the asserted fold cannot have happened. Our folded spelling calls ??_DHamList@@QAAXXZ at +28, the survivor calls ??1Automator@@UAA@XZ; the retail-side fold witness returned NO_WITNESS_FOLDED_SIDE because ??_DHamList@@QAAXXZ has no map-named caller that compares EQ to retail, so no branch could be decoded for it -- this record settles the row WITHOUT a witness, by type existence. HamList: retail type-descriptor probe .?AV/UHamList@@ -> 0 hits; polymorphic in our source = yes (8 virtual declarations in src/system/hamobj/HamList.h); rb3-Wii (RB3's own dev decomp, names intact) declares it in 0 files, DC3 in 1. Controls: the same retail probe returns PRESENT for Spotlight/RndTex/ObjectDir/EventTrigger/NoteVoiceInst/Fader, and the criterion DECLINES BandPatchMesh and HighlightObject (RTTI-absent but non-polymorphic and present in rb3-Wii), so it is able to fail. Withdrawal predicted and measured Delta 0: over this membership's call sites of the spelling, 0 are charged in either forgiveness direction and none sits in a fuzzy==100 row. This row is refuted on the callee's OWN ENCLOSING CLASS HamList (subsystem src/system/hamobj/), not on a template argument. retail-byte subsystem witness: every polymorphic hamobj sibling's descriptor reads 0 in retail (HamMove, HamCharacter, HamGameData, HamList, HamVisDir, HamPartyJumpData, FreestyleMove, SuperEasyRemixer), rb3-Wii declares none of them, DC3 declares all. Controls specific to this class, both able to fail and one of which DID: (a) Quazal::Job is polymorphic, declared in rb3-Wii, and NetZ middleware retail certainly links, yet .?AVJob@Quazal@@ occurs 0 times in retail -- so halves (1)+(2) alone would have FALSELY refuted it and only half (3) declined it; (b) retail carries 'BinkTextures.cpp', 'Error reading Bink header.' and 'Not a Bink file.', so the Bink subsystem IS in RB3-360 and BinkMovieImpl/MovieImpl are deliberately NOT refuted even though rb3-Wii declares neither -- that zero is a Wii PORT artifact, not a statement about the game; (c) MoveReplacer (15 rows) and HamMove::LocalizedName (14 rows) are hamobj types that DECLINE on half (2) as non-polymorphic and are left in place."
+    },
+    {
+     "spelling": "??_GHamPartyJumpData@@UAAPAXI@Z",
+     "lane": "W16-AH 2026-09-14",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+     "disposition": "withdrawn",
+     "absent_types": [
+      "HamPartyJumpData"
+     ],
+     "type_evidence": {
+      "HamPartyJumpData": {
+       "rtti_mangled": ".?AV/UHamPartyJumpData@@",
+       "retail_rtti_hits": 0,
+       "polymorphic_in_our_source": "yes (6 virtual declarations in src/system/hamobj/HamPartyJumpData.h)",
+       "rb3wii_files": 0,
+       "dc3_files": 1
+      }
+     },
+     "witness_verdict_before": "NO_WITNESS_FOLDED_SIDE",
+     "evidence": "TYPE DOES NOT EXIST IN RB3 RETAIL, so the callee this membership turns on was never in any retail COMDAT group and the asserted fold cannot have happened. Our folded spelling calls ??1HamPartyJumpData@@UAA@XZ at +28, the survivor calls ??1Automator@@UAA@XZ; the retail-side fold witness returned NO_WITNESS_FOLDED_SIDE because ??1HamPartyJumpData@@UAA@XZ has no map-named caller that compares EQ to retail, so no branch could be decoded for it -- this record settles the row WITHOUT a witness, by type existence. HamPartyJumpData: retail type-descriptor probe .?AV/UHamPartyJumpData@@ -> 0 hits; polymorphic in our source = yes (6 virtual declarations in src/system/hamobj/HamPartyJumpData.h); rb3-Wii (RB3's own dev decomp, names intact) declares it in 0 files, DC3 in 1. Controls: the same retail probe returns PRESENT for Spotlight/RndTex/ObjectDir/EventTrigger/NoteVoiceInst/Fader, and the criterion DECLINES BandPatchMesh and HighlightObject (RTTI-absent but non-polymorphic and present in rb3-Wii), so it is able to fail. Withdrawal predicted and measured Delta 0: over this membership's call sites of the spelling, 0 are charged in either forgiveness direction and none sits in a fuzzy==100 row. This row is refuted on the callee's OWN ENCLOSING CLASS HamPartyJumpData (subsystem src/system/hamobj/), not on a template argument. retail-byte subsystem witness: every polymorphic hamobj sibling's descriptor reads 0 in retail (HamMove, HamCharacter, HamGameData, HamList, HamVisDir, HamPartyJumpData, FreestyleMove, SuperEasyRemixer), rb3-Wii declares none of them, DC3 declares all. Controls specific to this class, both able to fail and one of which DID: (a) Quazal::Job is polymorphic, declared in rb3-Wii, and NetZ middleware retail certainly links, yet .?AVJob@Quazal@@ occurs 0 times in retail -- so halves (1)+(2) alone would have FALSELY refuted it and only half (3) declined it; (b) retail carries 'BinkTextures.cpp', 'Error reading Bink header.' and 'Not a Bink file.', so the Bink subsystem IS in RB3-360 and BinkMovieImpl/MovieImpl are deliberately NOT refuted even though rb3-Wii declares neither -- that zero is a Wii PORT artifact, not a statement about the game; (c) MoveReplacer (15 rows) and HamMove::LocalizedName (14 rows) are hamobj types that DECLINE on half (2) as non-polymorphic and are left in place."
+    },
+    {
+     "spelling": "??_GHamVisDir@@UAAPAXI@Z",
+     "lane": "W16-AH 2026-09-14",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+     "disposition": "withdrawn",
+     "absent_types": [
+      "HamVisDir"
+     ],
+     "type_evidence": {
+      "HamVisDir": {
+       "rtti_mangled": ".?AV/UHamVisDir@@",
+       "retail_rtti_hits": 0,
+       "polymorphic_in_our_source": "yes (10 virtual declarations in src/system/hamobj/HamVisDir.h)",
+       "rb3wii_files": 0,
+       "dc3_files": 1
+      }
+     },
+     "witness_verdict_before": "NO_WITNESS_FOLDED_SIDE",
+     "evidence": "TYPE DOES NOT EXIST IN RB3 RETAIL, so the callee this membership turns on was never in any retail COMDAT group and the asserted fold cannot have happened. Our folded spelling calls ??_DHamVisDir@@QAAXXZ at +28, the survivor calls ??1Automator@@UAA@XZ; the retail-side fold witness returned NO_WITNESS_FOLDED_SIDE because ??_DHamVisDir@@QAAXXZ has no map-named caller that compares EQ to retail, so no branch could be decoded for it -- this record settles the row WITHOUT a witness, by type existence. HamVisDir: retail type-descriptor probe .?AV/UHamVisDir@@ -> 0 hits; polymorphic in our source = yes (10 virtual declarations in src/system/hamobj/HamVisDir.h); rb3-Wii (RB3's own dev decomp, names intact) declares it in 0 files, DC3 in 1. Controls: the same retail probe returns PRESENT for Spotlight/RndTex/ObjectDir/EventTrigger/NoteVoiceInst/Fader, and the criterion DECLINES BandPatchMesh and HighlightObject (RTTI-absent but non-polymorphic and present in rb3-Wii), so it is able to fail. Withdrawal predicted and measured Delta 0: over this membership's call sites of the spelling, 0 are charged in either forgiveness direction and none sits in a fuzzy==100 row. This row is refuted on the callee's OWN ENCLOSING CLASS HamVisDir (subsystem src/system/hamobj/), not on a template argument. retail-byte subsystem witness: every polymorphic hamobj sibling's descriptor reads 0 in retail (HamMove, HamCharacter, HamGameData, HamList, HamVisDir, HamPartyJumpData, FreestyleMove, SuperEasyRemixer), rb3-Wii declares none of them, DC3 declares all. Controls specific to this class, both able to fail and one of which DID: (a) Quazal::Job is polymorphic, declared in rb3-Wii, and NetZ middleware retail certainly links, yet .?AVJob@Quazal@@ occurs 0 times in retail -- so halves (1)+(2) alone would have FALSELY refuted it and only half (3) declined it; (b) retail carries 'BinkTextures.cpp', 'Error reading Bink header.' and 'Not a Bink file.', so the Bink subsystem IS in RB3-360 and BinkMovieImpl/MovieImpl are deliberately NOT refuted even though rb3-Wii declares neither -- that zero is a Wii PORT artifact, not a statement about the game; (c) MoveReplacer (15 rows) and HamMove::LocalizedName (14 rows) are hamobj types that DECLINE on half (2) as non-polymorphic and are left in place."
+    },
+    {
+     "spelling": "??_GLayerArray@HamDriver@@UAAPAXI@Z",
+     "lane": "W16-AH 2026-09-14",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+     "disposition": "withdrawn",
+     "absent_types": [
+      "HamDriver::LayerArray"
+     ],
+     "type_evidence": {
+      "HamDriver::LayerArray": {
+       "rtti_mangled": ".?AV/ULayerArray@HamDriver@@",
+       "retail_rtti_hits": 0,
+       "polymorphic_in_our_source": "yes (6 virtual declarations in src/system/hamobj/HamDriver.h)",
+       "rb3wii_files": 0,
+       "dc3_files": 1
+      }
+     },
+     "witness_verdict_before": "NO_WITNESS_FOLDED_SIDE",
+     "evidence": "TYPE DOES NOT EXIST IN RB3 RETAIL, so the callee this membership turns on was never in any retail COMDAT group and the asserted fold cannot have happened. Our folded spelling calls ??1LayerArray@HamDriver@@UAA@XZ at +28, the survivor calls ??1Automator@@UAA@XZ; the retail-side fold witness returned NO_WITNESS_FOLDED_SIDE because ??1LayerArray@HamDriver@@UAA@XZ has no map-named caller that compares EQ to retail, so no branch could be decoded for it -- this record settles the row WITHOUT a witness, by type existence. HamDriver::LayerArray: retail type-descriptor probe .?AV/ULayerArray@HamDriver@@ -> 0 hits; polymorphic in our source = yes (6 virtual declarations in src/system/hamobj/HamDriver.h); rb3-Wii (RB3's own dev decomp, names intact) declares it in 0 files, DC3 in 1. Controls: the same retail probe returns PRESENT for Spotlight/RndTex/ObjectDir/EventTrigger/NoteVoiceInst/Fader, and the criterion DECLINES BandPatchMesh and HighlightObject (RTTI-absent but non-polymorphic and present in rb3-Wii), so it is able to fail. Withdrawal predicted and measured Delta 0: over this membership's call sites of the spelling, 0 are charged in either forgiveness direction and none sits in a fuzzy==100 row. This row is refuted on the callee's OWN ENCLOSING CLASS HamDriver::LayerArray (subsystem src/system/hamobj/), not on a template argument. retail-byte subsystem witness: every polymorphic hamobj sibling's descriptor reads 0 in retail (HamMove, HamCharacter, HamGameData, HamList, HamVisDir, HamPartyJumpData, FreestyleMove, SuperEasyRemixer), rb3-Wii declares none of them, DC3 declares all. Controls specific to this class, both able to fail and one of which DID: (a) Quazal::Job is polymorphic, declared in rb3-Wii, and NetZ middleware retail certainly links, yet .?AVJob@Quazal@@ occurs 0 times in retail -- so halves (1)+(2) alone would have FALSELY refuted it and only half (3) declined it; (b) retail carries 'BinkTextures.cpp', 'Error reading Bink header.' and 'Not a Bink file.', so the Bink subsystem IS in RB3-360 and BinkMovieImpl/MovieImpl are deliberately NOT refuted even though rb3-Wii declares neither -- that zero is a Wii PORT artifact, not a statement about the game; (c) MoveReplacer (15 rows) and HamMove::LocalizedName (14 rows) are hamobj types that DECLINE on half (2) as non-polymorphic and are left in place."
+    },
+    {
+     "spelling": "??_GLayerClip@HamDriver@@UAAPAXI@Z",
+     "lane": "W16-AH 2026-09-14",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+     "disposition": "withdrawn",
+     "absent_types": [
+      "HamDriver::LayerClip"
+     ],
+     "type_evidence": {
+      "HamDriver::LayerClip": {
+       "rtti_mangled": ".?AV/ULayerClip@HamDriver@@",
+       "retail_rtti_hits": 0,
+       "polymorphic_in_our_source": "yes (5 virtual declarations in src/system/hamobj/HamDriver.h)",
+       "rb3wii_files": 0,
+       "dc3_files": 1
+      }
+     },
+     "witness_verdict_before": "NO_WITNESS_FOLDED_SIDE",
+     "evidence": "TYPE DOES NOT EXIST IN RB3 RETAIL, so the callee this membership turns on was never in any retail COMDAT group and the asserted fold cannot have happened. Our folded spelling calls ??1LayerClip@HamDriver@@UAA@XZ at +28, the survivor calls ??1Automator@@UAA@XZ; the retail-side fold witness returned NO_WITNESS_FOLDED_SIDE because ??1LayerClip@HamDriver@@UAA@XZ has no map-named caller that compares EQ to retail, so no branch could be decoded for it -- this record settles the row WITHOUT a witness, by type existence. HamDriver::LayerClip: retail type-descriptor probe .?AV/ULayerClip@HamDriver@@ -> 0 hits; polymorphic in our source = yes (5 virtual declarations in src/system/hamobj/HamDriver.h); rb3-Wii (RB3's own dev decomp, names intact) declares it in 0 files, DC3 in 1. Controls: the same retail probe returns PRESENT for Spotlight/RndTex/ObjectDir/EventTrigger/NoteVoiceInst/Fader, and the criterion DECLINES BandPatchMesh and HighlightObject (RTTI-absent but non-polymorphic and present in rb3-Wii), so it is able to fail. Withdrawal predicted and measured Delta 0: over this membership's call sites of the spelling, 0 are charged in either forgiveness direction and none sits in a fuzzy==100 row. This row is refuted on the callee's OWN ENCLOSING CLASS HamDriver::LayerClip (subsystem src/system/hamobj/), not on a template argument. retail-byte subsystem witness: every polymorphic hamobj sibling's descriptor reads 0 in retail (HamMove, HamCharacter, HamGameData, HamList, HamVisDir, HamPartyJumpData, FreestyleMove, SuperEasyRemixer), rb3-Wii declares none of them, DC3 declares all. Controls specific to this class, both able to fail and one of which DID: (a) Quazal::Job is polymorphic, declared in rb3-Wii, and NetZ middleware retail certainly links, yet .?AVJob@Quazal@@ occurs 0 times in retail -- so halves (1)+(2) alone would have FALSELY refuted it and only half (3) declined it; (b) retail carries 'BinkTextures.cpp', 'Error reading Bink header.' and 'Not a Bink file.', so the Bink subsystem IS in RB3-360 and BinkMovieImpl/MovieImpl are deliberately NOT refuted even though rb3-Wii declares neither -- that zero is a Wii PORT artifact, not a statement about the game; (c) MoveReplacer (15 rows) and HamMove::LocalizedName (14 rows) are hamobj types that DECLINE on half (2) as non-polymorphic and are left in place."
+    },
+    {
+     "spelling": "??_GNavigationSkeletonDir@@UAAPAXI@Z",
+     "lane": "W16-AH 2026-09-14",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+     "disposition": "withdrawn",
+     "absent_types": [
+      "NavigationSkeletonDir"
+     ],
+     "type_evidence": {
+      "NavigationSkeletonDir": {
+       "rtti_mangled": ".?AV/UNavigationSkeletonDir@@",
+       "retail_rtti_hits": 0,
+       "polymorphic_in_our_source": "yes (10 virtual declarations in src/system/gesture/NavigationSkeletonDir.h)",
+       "rb3wii_files": 0,
+       "dc3_files": 1
+      }
+     },
+     "witness_verdict_before": "NO_WITNESS_FOLDED_SIDE",
+     "evidence": "TYPE DOES NOT EXIST IN RB3 RETAIL, so the callee this membership turns on was never in any retail COMDAT group and the asserted fold cannot have happened. Our folded spelling calls ??_DNavigationSkeletonDir@@QAAXXZ at +28, the survivor calls ??1Automator@@UAA@XZ; the retail-side fold witness returned NO_WITNESS_FOLDED_SIDE because ??_DNavigationSkeletonDir@@QAAXXZ has no map-named caller that compares EQ to retail, so no branch could be decoded for it -- this record settles the row WITHOUT a witness, by type existence. NavigationSkeletonDir: retail type-descriptor probe .?AV/UNavigationSkeletonDir@@ -> 0 hits; polymorphic in our source = yes (10 virtual declarations in src/system/gesture/NavigationSkeletonDir.h); rb3-Wii (RB3's own dev decomp, names intact) declares it in 0 files, DC3 in 1. Controls: the same retail probe returns PRESENT for Spotlight/RndTex/ObjectDir/EventTrigger/NoteVoiceInst/Fader, and the criterion DECLINES BandPatchMesh and HighlightObject (RTTI-absent but non-polymorphic and present in rb3-Wii), so it is able to fail. Withdrawal predicted and measured Delta 0: over this membership's call sites of the spelling, 0 are charged in either forgiveness direction and none sits in a fuzzy==100 row. This row is refuted on the callee's OWN ENCLOSING CLASS NavigationSkeletonDir (subsystem src/system/gesture/), not on a template argument. retail-byte subsystem witness: Kinect/NUI is ABSENT from retail -- 'Kinect', 'NuiSkeleton', 'NuiImage', 'NUIAPI', 'xnui', 'nui' all occur 0 times. Controls specific to this class, both able to fail and one of which DID: (a) Quazal::Job is polymorphic, declared in rb3-Wii, and NetZ middleware retail certainly links, yet .?AVJob@Quazal@@ occurs 0 times in retail -- so halves (1)+(2) alone would have FALSELY refuted it and only half (3) declined it; (b) retail carries 'BinkTextures.cpp', 'Error reading Bink header.' and 'Not a Bink file.', so the Bink subsystem IS in RB3-360 and BinkMovieImpl/MovieImpl are deliberately NOT refuted even though rb3-Wii declares neither -- that zero is a Wii PORT artifact, not a statement about the game; (c) MoveReplacer (15 rows) and HamMove::LocalizedName (14 rows) are hamobj types that DECLINE on half (2) as non-polymorphic and are left in place."
+    },
+    {
+     "spelling": "??_GSkeletonDir@@UAAPAXI@Z",
+     "lane": "W16-AH 2026-09-14",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+     "disposition": "withdrawn",
+     "absent_types": [
+      "SkeletonDir"
+     ],
+     "type_evidence": {
+      "SkeletonDir": {
+       "rtti_mangled": ".?AV/USkeletonDir@@",
+       "retail_rtti_hits": 0,
+       "polymorphic_in_our_source": "yes (17 virtual declarations in src/system/gesture/SkeletonDir.h)",
+       "rb3wii_files": 0,
+       "dc3_files": 1
+      }
+     },
+     "witness_verdict_before": "NO_WITNESS_FOLDED_SIDE",
+     "evidence": "TYPE DOES NOT EXIST IN RB3 RETAIL, so the callee this membership turns on was never in any retail COMDAT group and the asserted fold cannot have happened. Our folded spelling calls ??_DSkeletonDir@@QAAXXZ at +28, the survivor calls ??1Automator@@UAA@XZ; the retail-side fold witness returned NO_WITNESS_FOLDED_SIDE because ??_DSkeletonDir@@QAAXXZ has no map-named caller that compares EQ to retail, so no branch could be decoded for it -- this record settles the row WITHOUT a witness, by type existence. SkeletonDir: retail type-descriptor probe .?AV/USkeletonDir@@ -> 0 hits; polymorphic in our source = yes (17 virtual declarations in src/system/gesture/SkeletonDir.h); rb3-Wii (RB3's own dev decomp, names intact) declares it in 0 files, DC3 in 1. Controls: the same retail probe returns PRESENT for Spotlight/RndTex/ObjectDir/EventTrigger/NoteVoiceInst/Fader, and the criterion DECLINES BandPatchMesh and HighlightObject (RTTI-absent but non-polymorphic and present in rb3-Wii), so it is able to fail. Withdrawal predicted and measured Delta 0: over this membership's call sites of the spelling, 0 are charged in either forgiveness direction and none sits in a fuzzy==100 row. This row is refuted on the callee's OWN ENCLOSING CLASS SkeletonDir (subsystem src/system/gesture/), not on a template argument. retail-byte subsystem witness: Kinect/NUI is ABSENT from retail -- 'Kinect', 'NuiSkeleton', 'NuiImage', 'NUIAPI', 'xnui', 'nui' all occur 0 times. Controls specific to this class, both able to fail and one of which DID: (a) Quazal::Job is polymorphic, declared in rb3-Wii, and NetZ middleware retail certainly links, yet .?AVJob@Quazal@@ occurs 0 times in retail -- so halves (1)+(2) alone would have FALSELY refuted it and only half (3) declined it; (b) retail carries 'BinkTextures.cpp', 'Error reading Bink header.' and 'Not a Bink file.', so the Bink subsystem IS in RB3-360 and BinkMovieImpl/MovieImpl are deliberately NOT refuted even though rb3-Wii declares neither -- that zero is a Wii PORT artifact, not a statement about the game; (c) MoveReplacer (15 rows) and HamMove::LocalizedName (14 rows) are hamobj types that DECLINE on half (2) as non-polymorphic and are left in place."
+    },
+    {
+     "spelling": "??_GStreamRecorder@@UAAPAXI@Z",
+     "lane": "W16-AH 2026-09-14",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+     "disposition": "withdrawn",
+     "absent_types": [
+      "StreamRecorder"
+     ],
+     "type_evidence": {
+      "StreamRecorder": {
+       "rtti_mangled": ".?AV/UStreamRecorder@@",
+       "retail_rtti_hits": 0,
+       "polymorphic_in_our_source": "yes (11 virtual declarations in src/system/gesture/StreamRecorder.h)",
+       "rb3wii_files": 0,
+       "dc3_files": 1
+      }
+     },
+     "witness_verdict_before": "NO_WITNESS_FOLDED_SIDE",
+     "evidence": "TYPE DOES NOT EXIST IN RB3 RETAIL, so the callee this membership turns on was never in any retail COMDAT group and the asserted fold cannot have happened. Our folded spelling calls ??_DStreamRecorder@@QAAXXZ at +28, the survivor calls ??1Automator@@UAA@XZ; the retail-side fold witness returned NO_WITNESS_FOLDED_SIDE because ??_DStreamRecorder@@QAAXXZ has no map-named caller that compares EQ to retail, so no branch could be decoded for it -- this record settles the row WITHOUT a witness, by type existence. StreamRecorder: retail type-descriptor probe .?AV/UStreamRecorder@@ -> 0 hits; polymorphic in our source = yes (11 virtual declarations in src/system/gesture/StreamRecorder.h); rb3-Wii (RB3's own dev decomp, names intact) declares it in 0 files, DC3 in 1. Controls: the same retail probe returns PRESENT for Spotlight/RndTex/ObjectDir/EventTrigger/NoteVoiceInst/Fader, and the criterion DECLINES BandPatchMesh and HighlightObject (RTTI-absent but non-polymorphic and present in rb3-Wii), so it is able to fail. Withdrawal predicted and measured Delta 0: over this membership's call sites of the spelling, 0 are charged in either forgiveness direction and none sits in a fuzzy==100 row. This row is refuted on the callee's OWN ENCLOSING CLASS StreamRecorder (subsystem src/system/gesture/), not on a template argument. retail-byte subsystem witness: Kinect/NUI is ABSENT from retail -- 'Kinect', 'NuiSkeleton', 'NuiImage', 'NUIAPI', 'xnui', 'nui' all occur 0 times. Controls specific to this class, both able to fail and one of which DID: (a) Quazal::Job is polymorphic, declared in rb3-Wii, and NetZ middleware retail certainly links, yet .?AVJob@Quazal@@ occurs 0 times in retail -- so halves (1)+(2) alone would have FALSELY refuted it and only half (3) declined it; (b) retail carries 'BinkTextures.cpp', 'Error reading Bink header.' and 'Not a Bink file.', so the Bink subsystem IS in RB3-360 and BinkMovieImpl/MovieImpl are deliberately NOT refuted even though rb3-Wii declares neither -- that zero is a Wii PORT artifact, not a statement about the game; (c) MoveReplacer (15 rows) and HamMove::LocalizedName (14 rows) are hamobj types that DECLINE on half (2) as non-polymorphic and are left in place."
+    },
+    {
+     "spelling": "??_GSuperEasyRemixer@@UAAPAXI@Z",
+     "lane": "W16-AH 2026-09-14",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+     "disposition": "withdrawn",
+     "absent_types": [
+      "SuperEasyRemixer"
+     ],
+     "type_evidence": {
+      "SuperEasyRemixer": {
+       "rtti_mangled": ".?AV/USuperEasyRemixer@@",
+       "retail_rtti_hits": 0,
+       "polymorphic_in_our_source": "yes (9 virtual declarations in src/system/hamobj/SuperEasyRemixer.h)",
+       "rb3wii_files": 0,
+       "dc3_files": 3
+      }
+     },
+     "witness_verdict_before": "NO_WITNESS_FOLDED_SIDE",
+     "evidence": "TYPE DOES NOT EXIST IN RB3 RETAIL, so the callee this membership turns on was never in any retail COMDAT group and the asserted fold cannot have happened. Our folded spelling calls ??1SuperEasyRemixer@@UAA@XZ at +28, the survivor calls ??1Automator@@UAA@XZ; the retail-side fold witness returned NO_WITNESS_FOLDED_SIDE because ??1SuperEasyRemixer@@UAA@XZ has no map-named caller that compares EQ to retail, so no branch could be decoded for it -- this record settles the row WITHOUT a witness, by type existence. SuperEasyRemixer: retail type-descriptor probe .?AV/USuperEasyRemixer@@ -> 0 hits; polymorphic in our source = yes (9 virtual declarations in src/system/hamobj/SuperEasyRemixer.h); rb3-Wii (RB3's own dev decomp, names intact) declares it in 0 files, DC3 in 3. Controls: the same retail probe returns PRESENT for Spotlight/RndTex/ObjectDir/EventTrigger/NoteVoiceInst/Fader, and the criterion DECLINES BandPatchMesh and HighlightObject (RTTI-absent but non-polymorphic and present in rb3-Wii), so it is able to fail. Withdrawal predicted and measured Delta 0: over this membership's call sites of the spelling, 0 are charged in either forgiveness direction and none sits in a fuzzy==100 row. This row is refuted on the callee's OWN ENCLOSING CLASS SuperEasyRemixer (subsystem src/system/hamobj/), not on a template argument. retail-byte subsystem witness: every polymorphic hamobj sibling's descriptor reads 0 in retail (HamMove, HamCharacter, HamGameData, HamList, HamVisDir, HamPartyJumpData, FreestyleMove, SuperEasyRemixer), rb3-Wii declares none of them, DC3 declares all. Controls specific to this class, both able to fail and one of which DID: (a) Quazal::Job is polymorphic, declared in rb3-Wii, and NetZ middleware retail certainly links, yet .?AVJob@Quazal@@ occurs 0 times in retail -- so halves (1)+(2) alone would have FALSELY refuted it and only half (3) declined it; (b) retail carries 'BinkTextures.cpp', 'Error reading Bink header.' and 'Not a Bink file.', so the Bink subsystem IS in RB3-360 and BinkMovieImpl/MovieImpl are deliberately NOT refuted even though rb3-Wii declares neither -- that zero is a Wii PORT artifact, not a statement about the game; (c) MoveReplacer (15 rows) and HamMove::LocalizedName (14 rows) are hamobj types that DECLINE on half (2) as non-polymorphic and are left in place."
     }
    ],
    "repair": {

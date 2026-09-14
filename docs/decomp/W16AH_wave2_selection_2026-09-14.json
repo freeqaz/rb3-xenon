@@ -1,0 +1,1762 @@
+[
+ {
+  "gi": 770,
+  "addr": "0x823f5270",
+  "bytes": 76,
+  "survivor": "??_GAutomator@@UAAPAXI@Z",
+  "folded": "??_GFreestyleMove@@UAAPAXI@Z",
+  "N_reaches_EQ_vs_retail": true,
+  "S_reaches_EQ_vs_retail": true,
+  "N_variants": 1,
+  "S_variants": 1,
+  "our_N_obj": "system/hamobj/FreestyleMove.obj",
+  "our_S_obj": "system/ui/UI.obj",
+  "len_N": 76,
+  "len_S": 76,
+  "masked_bytes_equal": true,
+  "reloc_shape_equal": true,
+  "discriminators": [
+   {
+    "offset": 28,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "4bfffd1d",
+    "retail_dest": "0x823f4fa8",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??1FreestyleMove@@UAA@XZ",
+    "S_target": "??1Automator@@UAA@XZ"
+   },
+   {
+    "offset": 44,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "486a3fbd",
+    "retail_dest": "0x82a99258",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??3FreestyleMove@@SAXPAX@Z",
+    "S_target": "??3@YAXPAX@Z"
+   }
+  ],
+  "n_discriminators": 2,
+  "channels": {
+   "a:CLOSABLE-BY-NAMING": 2
+  },
+  "n_channel_a_closable": 2,
+  "n_channel_b": 0,
+  "n_already_named": 0,
+  "pairs": [
+   {
+    "c_N": "??1FreestyleMove@@UAA@XZ",
+    "c_S": "??1Automator@@UAA@XZ",
+    "N_map_named": [],
+    "S_map_named": [
+     "0x8231a578"
+    ],
+    "N_callsites": 5,
+    "S_callsites": 1,
+    "N_strong": [],
+    "S_strong": [
+     "0x823f4fa8"
+    ],
+    "N_medium": [],
+    "S_medium": [],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??_GAutomator@@UAAPAXI@Z",
+      "caller_va": "0x823f5270",
+      "off": 28,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x823f4fa8",
+      "tier": "STRONG"
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": true,
+    "offset": 28,
+    "retail_dest_at_X": "0x823f4fa8"
+   },
+   {
+    "c_N": "??3FreestyleMove@@SAXPAX@Z",
+    "c_S": "??3@YAXPAX@Z",
+    "N_map_named": [],
+    "S_map_named": [
+     "0x82bc6b70"
+    ],
+    "N_callsites": 1,
+    "S_callsites": 1766,
+    "N_strong": [],
+    "S_strong": [
+     "0x8240ddb0"
+    ],
+    "N_medium": [],
+    "S_medium": [
+     "0x8240ddb0"
+    ],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??$DeleteAll@V?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+      "caller_va": "0x82642ce0",
+      "off": 52,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8240ddb0",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??$DeleteAll@V?$vector@PAVFaderGroup@@V?$StlNodeAlloc@PAVFaderGroup@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVFaderGroup@@V?$StlNodeAlloc@PAVFaderGroup@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+      "caller_va": "0x82719d20",
+      "off": 52,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8240ddb0",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??1?$scoped_ptr@VPeakDetector@Synapse@DSP@@@@QAA@XZ",
+      "caller_va": "0x82b6f078",
+      "off": 40,
+      "caller_vs_retail": "NE",
+      "retail_dest": "0x8240ddb0",
+      "tier": "MEDIUM",
+      "call_index": 1,
+      "n_calls": 2,
+      "retail_off": 40
+     },
+     {
+      "caller": "??1Game@@UAA@XZ",
+      "caller_va": "0x8267a648",
+      "off": 92,
+      "caller_vs_retail": "SIZE",
+      "retail_dest": "0x8240ddb0",
+      "tier": "MEDIUM",
+      "call_index": 4,
+      "n_calls": 31,
+      "retail_off": 92
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": false,
+    "offset": 44,
+    "retail_dest_at_X": "0x82a99258"
+   }
+  ],
+  "witness_verdict": "NO_WITNESS_FOLDED_SIDE",
+  "ah_class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+  "ah_evidence_types": {
+   "FreestyleMove": {
+    "rtti_mangled": ".?AV/UFreestyleMove@@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": "yes (1 virtual declarations in src/system/hamobj/FreestyleMove.h)",
+    "rb3wii_files": 0,
+    "dc3_files": 1
+   }
+  },
+  "ah_c_N": "??1FreestyleMove@@UAA@XZ",
+  "ah_c_S": "??1Automator@@UAA@XZ",
+  "ah_offset": 28,
+  "ah_subsystem": "hamobj",
+  "ah_extra_evidence": "This row is refuted on the callee's OWN ENCLOSING CLASS FreestyleMove (subsystem src/system/hamobj/), not on a template argument. retail-byte subsystem witness: every polymorphic hamobj sibling's descriptor reads 0 in retail (HamMove, HamCharacter, HamGameData, HamList, HamVisDir, HamPartyJumpData, FreestyleMove, SuperEasyRemixer), rb3-Wii declares none of them, DC3 declares all. Controls specific to this class, both able to fail and one of which DID: (a) Quazal::Job is polymorphic, declared in rb3-Wii, and NetZ middleware retail certainly links, yet .?AVJob@Quazal@@ occurs 0 times in retail -- so halves (1)+(2) alone would have FALSELY refuted it and only half (3) declined it; (b) retail carries 'BinkTextures.cpp', 'Error reading Bink header.' and 'Not a Bink file.', so the Bink subsystem IS in RB3-360 and BinkMovieImpl/MovieImpl are deliberately NOT refuted even though rb3-Wii declares neither -- that zero is a Wii PORT artifact, not a statement about the game; (c) MoveReplacer (15 rows) and HamMove::LocalizedName (14 rows) are hamobj types that DECLINE on half (2) as non-polymorphic and are left in place."
+ },
+ {
+  "gi": 770,
+  "addr": "0x823f5270",
+  "bytes": 76,
+  "survivor": "??_GAutomator@@UAAPAXI@Z",
+  "folded": "??_GHamGameData@@UAAPAXI@Z",
+  "N_reaches_EQ_vs_retail": true,
+  "S_reaches_EQ_vs_retail": true,
+  "N_variants": 1,
+  "S_variants": 1,
+  "our_N_obj": "system/hamobj/HamGameData.obj",
+  "our_S_obj": "system/ui/UI.obj",
+  "len_N": 76,
+  "len_S": 76,
+  "masked_bytes_equal": true,
+  "reloc_shape_equal": true,
+  "discriminators": [
+   {
+    "offset": 28,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "4bfffd1d",
+    "retail_dest": "0x823f4fa8",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??1HamGameData@@UAA@XZ",
+    "S_target": "??1Automator@@UAA@XZ"
+   },
+   {
+    "offset": 44,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "486a3fbd",
+    "retail_dest": "0x82a99258",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??3HamGameData@@SAXPAX@Z",
+    "S_target": "??3@YAXPAX@Z"
+   }
+  ],
+  "n_discriminators": 2,
+  "channels": {
+   "a:CLOSABLE-BY-NAMING": 2
+  },
+  "n_channel_a_closable": 2,
+  "n_channel_b": 0,
+  "n_already_named": 0,
+  "pairs": [
+   {
+    "c_N": "??1HamGameData@@UAA@XZ",
+    "c_S": "??1Automator@@UAA@XZ",
+    "N_map_named": [],
+    "S_map_named": [
+     "0x8231a578"
+    ],
+    "N_callsites": 1,
+    "S_callsites": 1,
+    "N_strong": [],
+    "S_strong": [
+     "0x823f4fa8"
+    ],
+    "N_medium": [],
+    "S_medium": [],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??_GAutomator@@UAAPAXI@Z",
+      "caller_va": "0x823f5270",
+      "off": 28,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x823f4fa8",
+      "tier": "STRONG"
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": true,
+    "offset": 28,
+    "retail_dest_at_X": "0x823f4fa8"
+   },
+   {
+    "c_N": "??3HamGameData@@SAXPAX@Z",
+    "c_S": "??3@YAXPAX@Z",
+    "N_map_named": [],
+    "S_map_named": [
+     "0x82bc6b70"
+    ],
+    "N_callsites": 1,
+    "S_callsites": 1766,
+    "N_strong": [],
+    "S_strong": [
+     "0x8240ddb0"
+    ],
+    "N_medium": [],
+    "S_medium": [
+     "0x8240ddb0"
+    ],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??$DeleteAll@V?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+      "caller_va": "0x82642ce0",
+      "off": 52,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8240ddb0",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??$DeleteAll@V?$vector@PAVFaderGroup@@V?$StlNodeAlloc@PAVFaderGroup@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVFaderGroup@@V?$StlNodeAlloc@PAVFaderGroup@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+      "caller_va": "0x82719d20",
+      "off": 52,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8240ddb0",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??1?$scoped_ptr@VPeakDetector@Synapse@DSP@@@@QAA@XZ",
+      "caller_va": "0x82b6f078",
+      "off": 40,
+      "caller_vs_retail": "NE",
+      "retail_dest": "0x8240ddb0",
+      "tier": "MEDIUM",
+      "call_index": 1,
+      "n_calls": 2,
+      "retail_off": 40
+     },
+     {
+      "caller": "??1Game@@UAA@XZ",
+      "caller_va": "0x8267a648",
+      "off": 92,
+      "caller_vs_retail": "SIZE",
+      "retail_dest": "0x8240ddb0",
+      "tier": "MEDIUM",
+      "call_index": 4,
+      "n_calls": 31,
+      "retail_off": 92
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": false,
+    "offset": 44,
+    "retail_dest_at_X": "0x82a99258"
+   }
+  ],
+  "witness_verdict": "NO_WITNESS_FOLDED_SIDE",
+  "ah_class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+  "ah_evidence_types": {
+   "HamGameData": {
+    "rtti_mangled": ".?AV/UHamGameData@@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": "yes (3 virtual declarations in src/system/hamobj/HamGameData.h)",
+    "rb3wii_files": 0,
+    "dc3_files": 1
+   }
+  },
+  "ah_c_N": "??1HamGameData@@UAA@XZ",
+  "ah_c_S": "??1Automator@@UAA@XZ",
+  "ah_offset": 28,
+  "ah_subsystem": "hamobj",
+  "ah_extra_evidence": "This row is refuted on the callee's OWN ENCLOSING CLASS HamGameData (subsystem src/system/hamobj/), not on a template argument. retail-byte subsystem witness: every polymorphic hamobj sibling's descriptor reads 0 in retail (HamMove, HamCharacter, HamGameData, HamList, HamVisDir, HamPartyJumpData, FreestyleMove, SuperEasyRemixer), rb3-Wii declares none of them, DC3 declares all. Controls specific to this class, both able to fail and one of which DID: (a) Quazal::Job is polymorphic, declared in rb3-Wii, and NetZ middleware retail certainly links, yet .?AVJob@Quazal@@ occurs 0 times in retail -- so halves (1)+(2) alone would have FALSELY refuted it and only half (3) declined it; (b) retail carries 'BinkTextures.cpp', 'Error reading Bink header.' and 'Not a Bink file.', so the Bink subsystem IS in RB3-360 and BinkMovieImpl/MovieImpl are deliberately NOT refuted even though rb3-Wii declares neither -- that zero is a Wii PORT artifact, not a statement about the game; (c) MoveReplacer (15 rows) and HamMove::LocalizedName (14 rows) are hamobj types that DECLINE on half (2) as non-polymorphic and are left in place."
+ },
+ {
+  "gi": 770,
+  "addr": "0x823f5270",
+  "bytes": 76,
+  "survivor": "??_GAutomator@@UAAPAXI@Z",
+  "folded": "??_GHamList@@UAAPAXI@Z",
+  "N_reaches_EQ_vs_retail": true,
+  "S_reaches_EQ_vs_retail": true,
+  "N_variants": 1,
+  "S_variants": 1,
+  "our_N_obj": "system/hamobj/HamList.obj",
+  "our_S_obj": "system/ui/UI.obj",
+  "len_N": 76,
+  "len_S": 76,
+  "masked_bytes_equal": true,
+  "reloc_shape_equal": true,
+  "discriminators": [
+   {
+    "offset": 28,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "4bfffd1d",
+    "retail_dest": "0x823f4fa8",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??_DHamList@@QAAXXZ",
+    "S_target": "??1Automator@@UAA@XZ"
+   },
+   {
+    "offset": 44,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "486a3fbd",
+    "retail_dest": "0x82a99258",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??3HamList@@SAXPAX@Z",
+    "S_target": "??3@YAXPAX@Z"
+   }
+  ],
+  "n_discriminators": 2,
+  "channels": {
+   "a:CLOSABLE-BY-NAMING": 2
+  },
+  "n_channel_a_closable": 2,
+  "n_channel_b": 0,
+  "n_already_named": 0,
+  "pairs": [
+   {
+    "c_N": "??_DHamList@@QAAXXZ",
+    "c_S": "??1Automator@@UAA@XZ",
+    "N_map_named": [],
+    "S_map_named": [
+     "0x8231a578"
+    ],
+    "N_callsites": 1,
+    "S_callsites": 1,
+    "N_strong": [],
+    "S_strong": [
+     "0x823f4fa8"
+    ],
+    "N_medium": [],
+    "S_medium": [],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??_GAutomator@@UAAPAXI@Z",
+      "caller_va": "0x823f5270",
+      "off": 28,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x823f4fa8",
+      "tier": "STRONG"
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": true,
+    "offset": 28,
+    "retail_dest_at_X": "0x823f4fa8"
+   },
+   {
+    "c_N": "??3HamList@@SAXPAX@Z",
+    "c_S": "??3@YAXPAX@Z",
+    "N_map_named": [],
+    "S_map_named": [
+     "0x82bc6b70"
+    ],
+    "N_callsites": 1,
+    "S_callsites": 1766,
+    "N_strong": [],
+    "S_strong": [
+     "0x8240ddb0"
+    ],
+    "N_medium": [],
+    "S_medium": [
+     "0x8240ddb0"
+    ],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??$DeleteAll@V?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+      "caller_va": "0x82642ce0",
+      "off": 52,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8240ddb0",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??$DeleteAll@V?$vector@PAVFaderGroup@@V?$StlNodeAlloc@PAVFaderGroup@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVFaderGroup@@V?$StlNodeAlloc@PAVFaderGroup@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+      "caller_va": "0x82719d20",
+      "off": 52,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8240ddb0",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??1?$scoped_ptr@VPeakDetector@Synapse@DSP@@@@QAA@XZ",
+      "caller_va": "0x82b6f078",
+      "off": 40,
+      "caller_vs_retail": "NE",
+      "retail_dest": "0x8240ddb0",
+      "tier": "MEDIUM",
+      "call_index": 1,
+      "n_calls": 2,
+      "retail_off": 40
+     },
+     {
+      "caller": "??1Game@@UAA@XZ",
+      "caller_va": "0x8267a648",
+      "off": 92,
+      "caller_vs_retail": "SIZE",
+      "retail_dest": "0x8240ddb0",
+      "tier": "MEDIUM",
+      "call_index": 4,
+      "n_calls": 31,
+      "retail_off": 92
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": false,
+    "offset": 44,
+    "retail_dest_at_X": "0x82a99258"
+   }
+  ],
+  "witness_verdict": "NO_WITNESS_FOLDED_SIDE",
+  "ah_class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+  "ah_evidence_types": {
+   "HamList": {
+    "rtti_mangled": ".?AV/UHamList@@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": "yes (8 virtual declarations in src/system/hamobj/HamList.h)",
+    "rb3wii_files": 0,
+    "dc3_files": 1
+   }
+  },
+  "ah_c_N": "??_DHamList@@QAAXXZ",
+  "ah_c_S": "??1Automator@@UAA@XZ",
+  "ah_offset": 28,
+  "ah_subsystem": "hamobj",
+  "ah_extra_evidence": "This row is refuted on the callee's OWN ENCLOSING CLASS HamList (subsystem src/system/hamobj/), not on a template argument. retail-byte subsystem witness: every polymorphic hamobj sibling's descriptor reads 0 in retail (HamMove, HamCharacter, HamGameData, HamList, HamVisDir, HamPartyJumpData, FreestyleMove, SuperEasyRemixer), rb3-Wii declares none of them, DC3 declares all. Controls specific to this class, both able to fail and one of which DID: (a) Quazal::Job is polymorphic, declared in rb3-Wii, and NetZ middleware retail certainly links, yet .?AVJob@Quazal@@ occurs 0 times in retail -- so halves (1)+(2) alone would have FALSELY refuted it and only half (3) declined it; (b) retail carries 'BinkTextures.cpp', 'Error reading Bink header.' and 'Not a Bink file.', so the Bink subsystem IS in RB3-360 and BinkMovieImpl/MovieImpl are deliberately NOT refuted even though rb3-Wii declares neither -- that zero is a Wii PORT artifact, not a statement about the game; (c) MoveReplacer (15 rows) and HamMove::LocalizedName (14 rows) are hamobj types that DECLINE on half (2) as non-polymorphic and are left in place."
+ },
+ {
+  "gi": 770,
+  "addr": "0x823f5270",
+  "bytes": 76,
+  "survivor": "??_GAutomator@@UAAPAXI@Z",
+  "folded": "??_GHamPartyJumpData@@UAAPAXI@Z",
+  "N_reaches_EQ_vs_retail": true,
+  "S_reaches_EQ_vs_retail": true,
+  "N_variants": 1,
+  "S_variants": 1,
+  "our_N_obj": "system/hamobj/HamPartyJumpData.obj",
+  "our_S_obj": "system/ui/UI.obj",
+  "len_N": 76,
+  "len_S": 76,
+  "masked_bytes_equal": true,
+  "reloc_shape_equal": true,
+  "discriminators": [
+   {
+    "offset": 28,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "4bfffd1d",
+    "retail_dest": "0x823f4fa8",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??1HamPartyJumpData@@UAA@XZ",
+    "S_target": "??1Automator@@UAA@XZ"
+   },
+   {
+    "offset": 44,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "486a3fbd",
+    "retail_dest": "0x82a99258",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??3HamPartyJumpData@@SAXPAX@Z",
+    "S_target": "??3@YAXPAX@Z"
+   }
+  ],
+  "n_discriminators": 2,
+  "channels": {
+   "a:CLOSABLE-BY-NAMING": 2
+  },
+  "n_channel_a_closable": 2,
+  "n_channel_b": 0,
+  "n_already_named": 0,
+  "pairs": [
+   {
+    "c_N": "??1HamPartyJumpData@@UAA@XZ",
+    "c_S": "??1Automator@@UAA@XZ",
+    "N_map_named": [],
+    "S_map_named": [
+     "0x8231a578"
+    ],
+    "N_callsites": 1,
+    "S_callsites": 1,
+    "N_strong": [],
+    "S_strong": [
+     "0x823f4fa8"
+    ],
+    "N_medium": [],
+    "S_medium": [],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??_GAutomator@@UAAPAXI@Z",
+      "caller_va": "0x823f5270",
+      "off": 28,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x823f4fa8",
+      "tier": "STRONG"
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": true,
+    "offset": 28,
+    "retail_dest_at_X": "0x823f4fa8"
+   },
+   {
+    "c_N": "??3HamPartyJumpData@@SAXPAX@Z",
+    "c_S": "??3@YAXPAX@Z",
+    "N_map_named": [],
+    "S_map_named": [
+     "0x82bc6b70"
+    ],
+    "N_callsites": 1,
+    "S_callsites": 1766,
+    "N_strong": [],
+    "S_strong": [
+     "0x8240ddb0"
+    ],
+    "N_medium": [],
+    "S_medium": [
+     "0x8240ddb0"
+    ],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??$DeleteAll@V?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+      "caller_va": "0x82642ce0",
+      "off": 52,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8240ddb0",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??$DeleteAll@V?$vector@PAVFaderGroup@@V?$StlNodeAlloc@PAVFaderGroup@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVFaderGroup@@V?$StlNodeAlloc@PAVFaderGroup@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+      "caller_va": "0x82719d20",
+      "off": 52,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8240ddb0",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??1?$scoped_ptr@VPeakDetector@Synapse@DSP@@@@QAA@XZ",
+      "caller_va": "0x82b6f078",
+      "off": 40,
+      "caller_vs_retail": "NE",
+      "retail_dest": "0x8240ddb0",
+      "tier": "MEDIUM",
+      "call_index": 1,
+      "n_calls": 2,
+      "retail_off": 40
+     },
+     {
+      "caller": "??1Game@@UAA@XZ",
+      "caller_va": "0x8267a648",
+      "off": 92,
+      "caller_vs_retail": "SIZE",
+      "retail_dest": "0x8240ddb0",
+      "tier": "MEDIUM",
+      "call_index": 4,
+      "n_calls": 31,
+      "retail_off": 92
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": false,
+    "offset": 44,
+    "retail_dest_at_X": "0x82a99258"
+   }
+  ],
+  "witness_verdict": "NO_WITNESS_FOLDED_SIDE",
+  "ah_class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+  "ah_evidence_types": {
+   "HamPartyJumpData": {
+    "rtti_mangled": ".?AV/UHamPartyJumpData@@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": "yes (6 virtual declarations in src/system/hamobj/HamPartyJumpData.h)",
+    "rb3wii_files": 0,
+    "dc3_files": 1
+   }
+  },
+  "ah_c_N": "??1HamPartyJumpData@@UAA@XZ",
+  "ah_c_S": "??1Automator@@UAA@XZ",
+  "ah_offset": 28,
+  "ah_subsystem": "hamobj",
+  "ah_extra_evidence": "This row is refuted on the callee's OWN ENCLOSING CLASS HamPartyJumpData (subsystem src/system/hamobj/), not on a template argument. retail-byte subsystem witness: every polymorphic hamobj sibling's descriptor reads 0 in retail (HamMove, HamCharacter, HamGameData, HamList, HamVisDir, HamPartyJumpData, FreestyleMove, SuperEasyRemixer), rb3-Wii declares none of them, DC3 declares all. Controls specific to this class, both able to fail and one of which DID: (a) Quazal::Job is polymorphic, declared in rb3-Wii, and NetZ middleware retail certainly links, yet .?AVJob@Quazal@@ occurs 0 times in retail -- so halves (1)+(2) alone would have FALSELY refuted it and only half (3) declined it; (b) retail carries 'BinkTextures.cpp', 'Error reading Bink header.' and 'Not a Bink file.', so the Bink subsystem IS in RB3-360 and BinkMovieImpl/MovieImpl are deliberately NOT refuted even though rb3-Wii declares neither -- that zero is a Wii PORT artifact, not a statement about the game; (c) MoveReplacer (15 rows) and HamMove::LocalizedName (14 rows) are hamobj types that DECLINE on half (2) as non-polymorphic and are left in place."
+ },
+ {
+  "gi": 770,
+  "addr": "0x823f5270",
+  "bytes": 76,
+  "survivor": "??_GAutomator@@UAAPAXI@Z",
+  "folded": "??_GHamVisDir@@UAAPAXI@Z",
+  "N_reaches_EQ_vs_retail": true,
+  "S_reaches_EQ_vs_retail": true,
+  "N_variants": 1,
+  "S_variants": 1,
+  "our_N_obj": "system/hamobj/HamVisDir.obj",
+  "our_S_obj": "system/ui/UI.obj",
+  "len_N": 76,
+  "len_S": 76,
+  "masked_bytes_equal": true,
+  "reloc_shape_equal": true,
+  "discriminators": [
+   {
+    "offset": 28,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "4bfffd1d",
+    "retail_dest": "0x823f4fa8",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??_DHamVisDir@@QAAXXZ",
+    "S_target": "??1Automator@@UAA@XZ"
+   },
+   {
+    "offset": 44,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "486a3fbd",
+    "retail_dest": "0x82a99258",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??3HamVisDir@@SAXPAX@Z",
+    "S_target": "??3@YAXPAX@Z"
+   }
+  ],
+  "n_discriminators": 2,
+  "channels": {
+   "a:CLOSABLE-BY-NAMING": 2
+  },
+  "n_channel_a_closable": 2,
+  "n_channel_b": 0,
+  "n_already_named": 0,
+  "pairs": [
+   {
+    "c_N": "??_DHamVisDir@@QAAXXZ",
+    "c_S": "??1Automator@@UAA@XZ",
+    "N_map_named": [],
+    "S_map_named": [
+     "0x8231a578"
+    ],
+    "N_callsites": 1,
+    "S_callsites": 1,
+    "N_strong": [],
+    "S_strong": [
+     "0x823f4fa8"
+    ],
+    "N_medium": [],
+    "S_medium": [],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??_GAutomator@@UAAPAXI@Z",
+      "caller_va": "0x823f5270",
+      "off": 28,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x823f4fa8",
+      "tier": "STRONG"
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": true,
+    "offset": 28,
+    "retail_dest_at_X": "0x823f4fa8"
+   },
+   {
+    "c_N": "??3HamVisDir@@SAXPAX@Z",
+    "c_S": "??3@YAXPAX@Z",
+    "N_map_named": [],
+    "S_map_named": [
+     "0x82bc6b70"
+    ],
+    "N_callsites": 1,
+    "S_callsites": 1766,
+    "N_strong": [],
+    "S_strong": [
+     "0x8240ddb0"
+    ],
+    "N_medium": [],
+    "S_medium": [
+     "0x8240ddb0"
+    ],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??$DeleteAll@V?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+      "caller_va": "0x82642ce0",
+      "off": 52,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8240ddb0",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??$DeleteAll@V?$vector@PAVFaderGroup@@V?$StlNodeAlloc@PAVFaderGroup@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVFaderGroup@@V?$StlNodeAlloc@PAVFaderGroup@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+      "caller_va": "0x82719d20",
+      "off": 52,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8240ddb0",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??1?$scoped_ptr@VPeakDetector@Synapse@DSP@@@@QAA@XZ",
+      "caller_va": "0x82b6f078",
+      "off": 40,
+      "caller_vs_retail": "NE",
+      "retail_dest": "0x8240ddb0",
+      "tier": "MEDIUM",
+      "call_index": 1,
+      "n_calls": 2,
+      "retail_off": 40
+     },
+     {
+      "caller": "??1Game@@UAA@XZ",
+      "caller_va": "0x8267a648",
+      "off": 92,
+      "caller_vs_retail": "SIZE",
+      "retail_dest": "0x8240ddb0",
+      "tier": "MEDIUM",
+      "call_index": 4,
+      "n_calls": 31,
+      "retail_off": 92
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": false,
+    "offset": 44,
+    "retail_dest_at_X": "0x82a99258"
+   }
+  ],
+  "witness_verdict": "NO_WITNESS_FOLDED_SIDE",
+  "ah_class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+  "ah_evidence_types": {
+   "HamVisDir": {
+    "rtti_mangled": ".?AV/UHamVisDir@@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": "yes (10 virtual declarations in src/system/hamobj/HamVisDir.h)",
+    "rb3wii_files": 0,
+    "dc3_files": 1
+   }
+  },
+  "ah_c_N": "??_DHamVisDir@@QAAXXZ",
+  "ah_c_S": "??1Automator@@UAA@XZ",
+  "ah_offset": 28,
+  "ah_subsystem": "hamobj",
+  "ah_extra_evidence": "This row is refuted on the callee's OWN ENCLOSING CLASS HamVisDir (subsystem src/system/hamobj/), not on a template argument. retail-byte subsystem witness: every polymorphic hamobj sibling's descriptor reads 0 in retail (HamMove, HamCharacter, HamGameData, HamList, HamVisDir, HamPartyJumpData, FreestyleMove, SuperEasyRemixer), rb3-Wii declares none of them, DC3 declares all. Controls specific to this class, both able to fail and one of which DID: (a) Quazal::Job is polymorphic, declared in rb3-Wii, and NetZ middleware retail certainly links, yet .?AVJob@Quazal@@ occurs 0 times in retail -- so halves (1)+(2) alone would have FALSELY refuted it and only half (3) declined it; (b) retail carries 'BinkTextures.cpp', 'Error reading Bink header.' and 'Not a Bink file.', so the Bink subsystem IS in RB3-360 and BinkMovieImpl/MovieImpl are deliberately NOT refuted even though rb3-Wii declares neither -- that zero is a Wii PORT artifact, not a statement about the game; (c) MoveReplacer (15 rows) and HamMove::LocalizedName (14 rows) are hamobj types that DECLINE on half (2) as non-polymorphic and are left in place."
+ },
+ {
+  "gi": 770,
+  "addr": "0x823f5270",
+  "bytes": 76,
+  "survivor": "??_GAutomator@@UAAPAXI@Z",
+  "folded": "??_GLayerArray@HamDriver@@UAAPAXI@Z",
+  "N_reaches_EQ_vs_retail": true,
+  "S_reaches_EQ_vs_retail": true,
+  "N_variants": 1,
+  "S_variants": 1,
+  "our_N_obj": "system/hamobj/ClipPlayer.obj",
+  "our_S_obj": "system/ui/UI.obj",
+  "len_N": 76,
+  "len_S": 76,
+  "masked_bytes_equal": true,
+  "reloc_shape_equal": true,
+  "discriminators": [
+   {
+    "offset": 28,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "4bfffd1d",
+    "retail_dest": "0x823f4fa8",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??1LayerArray@HamDriver@@UAA@XZ",
+    "S_target": "??1Automator@@UAA@XZ"
+   },
+   {
+    "offset": 44,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "486a3fbd",
+    "retail_dest": "0x82a99258",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??3Layer@HamDriver@@SAXPAX@Z",
+    "S_target": "??3@YAXPAX@Z"
+   }
+  ],
+  "n_discriminators": 2,
+  "channels": {
+   "a:CLOSABLE-BY-NAMING": 2
+  },
+  "n_channel_a_closable": 2,
+  "n_channel_b": 0,
+  "n_already_named": 0,
+  "pairs": [
+   {
+    "c_N": "??1LayerArray@HamDriver@@UAA@XZ",
+    "c_S": "??1Automator@@UAA@XZ",
+    "N_map_named": [],
+    "S_map_named": [
+     "0x8231a578"
+    ],
+    "N_callsites": 2,
+    "S_callsites": 1,
+    "N_strong": [],
+    "S_strong": [
+     "0x823f4fa8"
+    ],
+    "N_medium": [],
+    "S_medium": [],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??_GAutomator@@UAAPAXI@Z",
+      "caller_va": "0x823f5270",
+      "off": 28,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x823f4fa8",
+      "tier": "STRONG"
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": true,
+    "offset": 28,
+    "retail_dest_at_X": "0x823f4fa8"
+   },
+   {
+    "c_N": "??3Layer@HamDriver@@SAXPAX@Z",
+    "c_S": "??3@YAXPAX@Z",
+    "N_map_named": [],
+    "S_map_named": [
+     "0x82bc6b70"
+    ],
+    "N_callsites": 3,
+    "S_callsites": 1766,
+    "N_strong": [],
+    "S_strong": [
+     "0x8240ddb0"
+    ],
+    "N_medium": [],
+    "S_medium": [
+     "0x8240ddb0"
+    ],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??$DeleteAll@V?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+      "caller_va": "0x82642ce0",
+      "off": 52,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8240ddb0",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??$DeleteAll@V?$vector@PAVFaderGroup@@V?$StlNodeAlloc@PAVFaderGroup@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVFaderGroup@@V?$StlNodeAlloc@PAVFaderGroup@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+      "caller_va": "0x82719d20",
+      "off": 52,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8240ddb0",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??1?$scoped_ptr@VPeakDetector@Synapse@DSP@@@@QAA@XZ",
+      "caller_va": "0x82b6f078",
+      "off": 40,
+      "caller_vs_retail": "NE",
+      "retail_dest": "0x8240ddb0",
+      "tier": "MEDIUM",
+      "call_index": 1,
+      "n_calls": 2,
+      "retail_off": 40
+     },
+     {
+      "caller": "??1Game@@UAA@XZ",
+      "caller_va": "0x8267a648",
+      "off": 92,
+      "caller_vs_retail": "SIZE",
+      "retail_dest": "0x8240ddb0",
+      "tier": "MEDIUM",
+      "call_index": 4,
+      "n_calls": 31,
+      "retail_off": 92
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": false,
+    "offset": 44,
+    "retail_dest_at_X": "0x82a99258"
+   }
+  ],
+  "witness_verdict": "NO_WITNESS_FOLDED_SIDE",
+  "ah_class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+  "ah_evidence_types": {
+   "HamDriver::LayerArray": {
+    "rtti_mangled": ".?AV/ULayerArray@HamDriver@@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": "yes (6 virtual declarations in src/system/hamobj/HamDriver.h)",
+    "rb3wii_files": 0,
+    "dc3_files": 1
+   }
+  },
+  "ah_c_N": "??1LayerArray@HamDriver@@UAA@XZ",
+  "ah_c_S": "??1Automator@@UAA@XZ",
+  "ah_offset": 28,
+  "ah_subsystem": "hamobj",
+  "ah_extra_evidence": "This row is refuted on the callee's OWN ENCLOSING CLASS HamDriver::LayerArray (subsystem src/system/hamobj/), not on a template argument. retail-byte subsystem witness: every polymorphic hamobj sibling's descriptor reads 0 in retail (HamMove, HamCharacter, HamGameData, HamList, HamVisDir, HamPartyJumpData, FreestyleMove, SuperEasyRemixer), rb3-Wii declares none of them, DC3 declares all. Controls specific to this class, both able to fail and one of which DID: (a) Quazal::Job is polymorphic, declared in rb3-Wii, and NetZ middleware retail certainly links, yet .?AVJob@Quazal@@ occurs 0 times in retail -- so halves (1)+(2) alone would have FALSELY refuted it and only half (3) declined it; (b) retail carries 'BinkTextures.cpp', 'Error reading Bink header.' and 'Not a Bink file.', so the Bink subsystem IS in RB3-360 and BinkMovieImpl/MovieImpl are deliberately NOT refuted even though rb3-Wii declares neither -- that zero is a Wii PORT artifact, not a statement about the game; (c) MoveReplacer (15 rows) and HamMove::LocalizedName (14 rows) are hamobj types that DECLINE on half (2) as non-polymorphic and are left in place."
+ },
+ {
+  "gi": 770,
+  "addr": "0x823f5270",
+  "bytes": 76,
+  "survivor": "??_GAutomator@@UAAPAXI@Z",
+  "folded": "??_GLayerClip@HamDriver@@UAAPAXI@Z",
+  "N_reaches_EQ_vs_retail": true,
+  "S_reaches_EQ_vs_retail": true,
+  "N_variants": 1,
+  "S_variants": 1,
+  "our_N_obj": "system/hamobj/HamDriver.obj",
+  "our_S_obj": "system/ui/UI.obj",
+  "len_N": 76,
+  "len_S": 76,
+  "masked_bytes_equal": true,
+  "reloc_shape_equal": true,
+  "discriminators": [
+   {
+    "offset": 28,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "4bfffd1d",
+    "retail_dest": "0x823f4fa8",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??1LayerClip@HamDriver@@UAA@XZ",
+    "S_target": "??1Automator@@UAA@XZ"
+   },
+   {
+    "offset": 44,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "486a3fbd",
+    "retail_dest": "0x82a99258",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??3Layer@HamDriver@@SAXPAX@Z",
+    "S_target": "??3@YAXPAX@Z"
+   }
+  ],
+  "n_discriminators": 2,
+  "channels": {
+   "a:CLOSABLE-BY-NAMING": 2
+  },
+  "n_channel_a_closable": 2,
+  "n_channel_b": 0,
+  "n_already_named": 0,
+  "pairs": [
+   {
+    "c_N": "??1LayerClip@HamDriver@@UAA@XZ",
+    "c_S": "??1Automator@@UAA@XZ",
+    "N_map_named": [],
+    "S_map_named": [
+     "0x8231a578"
+    ],
+    "N_callsites": 1,
+    "S_callsites": 1,
+    "N_strong": [],
+    "S_strong": [
+     "0x823f4fa8"
+    ],
+    "N_medium": [],
+    "S_medium": [],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??_GAutomator@@UAAPAXI@Z",
+      "caller_va": "0x823f5270",
+      "off": 28,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x823f4fa8",
+      "tier": "STRONG"
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": true,
+    "offset": 28,
+    "retail_dest_at_X": "0x823f4fa8"
+   },
+   {
+    "c_N": "??3Layer@HamDriver@@SAXPAX@Z",
+    "c_S": "??3@YAXPAX@Z",
+    "N_map_named": [],
+    "S_map_named": [
+     "0x82bc6b70"
+    ],
+    "N_callsites": 3,
+    "S_callsites": 1766,
+    "N_strong": [],
+    "S_strong": [
+     "0x8240ddb0"
+    ],
+    "N_medium": [],
+    "S_medium": [
+     "0x8240ddb0"
+    ],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??$DeleteAll@V?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+      "caller_va": "0x82642ce0",
+      "off": 52,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8240ddb0",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??$DeleteAll@V?$vector@PAVFaderGroup@@V?$StlNodeAlloc@PAVFaderGroup@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVFaderGroup@@V?$StlNodeAlloc@PAVFaderGroup@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+      "caller_va": "0x82719d20",
+      "off": 52,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8240ddb0",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??1?$scoped_ptr@VPeakDetector@Synapse@DSP@@@@QAA@XZ",
+      "caller_va": "0x82b6f078",
+      "off": 40,
+      "caller_vs_retail": "NE",
+      "retail_dest": "0x8240ddb0",
+      "tier": "MEDIUM",
+      "call_index": 1,
+      "n_calls": 2,
+      "retail_off": 40
+     },
+     {
+      "caller": "??1Game@@UAA@XZ",
+      "caller_va": "0x8267a648",
+      "off": 92,
+      "caller_vs_retail": "SIZE",
+      "retail_dest": "0x8240ddb0",
+      "tier": "MEDIUM",
+      "call_index": 4,
+      "n_calls": 31,
+      "retail_off": 92
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": false,
+    "offset": 44,
+    "retail_dest_at_X": "0x82a99258"
+   }
+  ],
+  "witness_verdict": "NO_WITNESS_FOLDED_SIDE",
+  "ah_class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+  "ah_evidence_types": {
+   "HamDriver::LayerClip": {
+    "rtti_mangled": ".?AV/ULayerClip@HamDriver@@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": "yes (5 virtual declarations in src/system/hamobj/HamDriver.h)",
+    "rb3wii_files": 0,
+    "dc3_files": 1
+   }
+  },
+  "ah_c_N": "??1LayerClip@HamDriver@@UAA@XZ",
+  "ah_c_S": "??1Automator@@UAA@XZ",
+  "ah_offset": 28,
+  "ah_subsystem": "hamobj",
+  "ah_extra_evidence": "This row is refuted on the callee's OWN ENCLOSING CLASS HamDriver::LayerClip (subsystem src/system/hamobj/), not on a template argument. retail-byte subsystem witness: every polymorphic hamobj sibling's descriptor reads 0 in retail (HamMove, HamCharacter, HamGameData, HamList, HamVisDir, HamPartyJumpData, FreestyleMove, SuperEasyRemixer), rb3-Wii declares none of them, DC3 declares all. Controls specific to this class, both able to fail and one of which DID: (a) Quazal::Job is polymorphic, declared in rb3-Wii, and NetZ middleware retail certainly links, yet .?AVJob@Quazal@@ occurs 0 times in retail -- so halves (1)+(2) alone would have FALSELY refuted it and only half (3) declined it; (b) retail carries 'BinkTextures.cpp', 'Error reading Bink header.' and 'Not a Bink file.', so the Bink subsystem IS in RB3-360 and BinkMovieImpl/MovieImpl are deliberately NOT refuted even though rb3-Wii declares neither -- that zero is a Wii PORT artifact, not a statement about the game; (c) MoveReplacer (15 rows) and HamMove::LocalizedName (14 rows) are hamobj types that DECLINE on half (2) as non-polymorphic and are left in place."
+ },
+ {
+  "gi": 770,
+  "addr": "0x823f5270",
+  "bytes": 76,
+  "survivor": "??_GAutomator@@UAAPAXI@Z",
+  "folded": "??_GNavigationSkeletonDir@@UAAPAXI@Z",
+  "N_reaches_EQ_vs_retail": true,
+  "S_reaches_EQ_vs_retail": true,
+  "N_variants": 1,
+  "S_variants": 1,
+  "our_N_obj": "system/gesture/NavigationSkeletonDir.obj",
+  "our_S_obj": "system/ui/UI.obj",
+  "len_N": 76,
+  "len_S": 76,
+  "masked_bytes_equal": true,
+  "reloc_shape_equal": true,
+  "discriminators": [
+   {
+    "offset": 28,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "4bfffd1d",
+    "retail_dest": "0x823f4fa8",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??_DNavigationSkeletonDir@@QAAXXZ",
+    "S_target": "??1Automator@@UAA@XZ"
+   },
+   {
+    "offset": 44,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "486a3fbd",
+    "retail_dest": "0x82a99258",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??3NavigationSkeletonDir@@SAXPAX@Z",
+    "S_target": "??3@YAXPAX@Z"
+   }
+  ],
+  "n_discriminators": 2,
+  "channels": {
+   "a:CLOSABLE-BY-NAMING": 2
+  },
+  "n_channel_a_closable": 2,
+  "n_channel_b": 0,
+  "n_already_named": 0,
+  "pairs": [
+   {
+    "c_N": "??_DNavigationSkeletonDir@@QAAXXZ",
+    "c_S": "??1Automator@@UAA@XZ",
+    "N_map_named": [],
+    "S_map_named": [
+     "0x8231a578"
+    ],
+    "N_callsites": 1,
+    "S_callsites": 1,
+    "N_strong": [],
+    "S_strong": [
+     "0x823f4fa8"
+    ],
+    "N_medium": [],
+    "S_medium": [],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??_GAutomator@@UAAPAXI@Z",
+      "caller_va": "0x823f5270",
+      "off": 28,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x823f4fa8",
+      "tier": "STRONG"
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": true,
+    "offset": 28,
+    "retail_dest_at_X": "0x823f4fa8"
+   },
+   {
+    "c_N": "??3NavigationSkeletonDir@@SAXPAX@Z",
+    "c_S": "??3@YAXPAX@Z",
+    "N_map_named": [],
+    "S_map_named": [
+     "0x82bc6b70"
+    ],
+    "N_callsites": 1,
+    "S_callsites": 1766,
+    "N_strong": [],
+    "S_strong": [
+     "0x8240ddb0"
+    ],
+    "N_medium": [],
+    "S_medium": [
+     "0x8240ddb0"
+    ],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??$DeleteAll@V?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+      "caller_va": "0x82642ce0",
+      "off": 52,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8240ddb0",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??$DeleteAll@V?$vector@PAVFaderGroup@@V?$StlNodeAlloc@PAVFaderGroup@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVFaderGroup@@V?$StlNodeAlloc@PAVFaderGroup@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+      "caller_va": "0x82719d20",
+      "off": 52,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8240ddb0",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??1?$scoped_ptr@VPeakDetector@Synapse@DSP@@@@QAA@XZ",
+      "caller_va": "0x82b6f078",
+      "off": 40,
+      "caller_vs_retail": "NE",
+      "retail_dest": "0x8240ddb0",
+      "tier": "MEDIUM",
+      "call_index": 1,
+      "n_calls": 2,
+      "retail_off": 40
+     },
+     {
+      "caller": "??1Game@@UAA@XZ",
+      "caller_va": "0x8267a648",
+      "off": 92,
+      "caller_vs_retail": "SIZE",
+      "retail_dest": "0x8240ddb0",
+      "tier": "MEDIUM",
+      "call_index": 4,
+      "n_calls": 31,
+      "retail_off": 92
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": false,
+    "offset": 44,
+    "retail_dest_at_X": "0x82a99258"
+   }
+  ],
+  "witness_verdict": "NO_WITNESS_FOLDED_SIDE",
+  "ah_class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+  "ah_evidence_types": {
+   "NavigationSkeletonDir": {
+    "rtti_mangled": ".?AV/UNavigationSkeletonDir@@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": "yes (10 virtual declarations in src/system/gesture/NavigationSkeletonDir.h)",
+    "rb3wii_files": 0,
+    "dc3_files": 1
+   }
+  },
+  "ah_c_N": "??_DNavigationSkeletonDir@@QAAXXZ",
+  "ah_c_S": "??1Automator@@UAA@XZ",
+  "ah_offset": 28,
+  "ah_subsystem": "gesture",
+  "ah_extra_evidence": "This row is refuted on the callee's OWN ENCLOSING CLASS NavigationSkeletonDir (subsystem src/system/gesture/), not on a template argument. retail-byte subsystem witness: Kinect/NUI is ABSENT from retail -- 'Kinect', 'NuiSkeleton', 'NuiImage', 'NUIAPI', 'xnui', 'nui' all occur 0 times. Controls specific to this class, both able to fail and one of which DID: (a) Quazal::Job is polymorphic, declared in rb3-Wii, and NetZ middleware retail certainly links, yet .?AVJob@Quazal@@ occurs 0 times in retail -- so halves (1)+(2) alone would have FALSELY refuted it and only half (3) declined it; (b) retail carries 'BinkTextures.cpp', 'Error reading Bink header.' and 'Not a Bink file.', so the Bink subsystem IS in RB3-360 and BinkMovieImpl/MovieImpl are deliberately NOT refuted even though rb3-Wii declares neither -- that zero is a Wii PORT artifact, not a statement about the game; (c) MoveReplacer (15 rows) and HamMove::LocalizedName (14 rows) are hamobj types that DECLINE on half (2) as non-polymorphic and are left in place."
+ },
+ {
+  "gi": 770,
+  "addr": "0x823f5270",
+  "bytes": 76,
+  "survivor": "??_GAutomator@@UAAPAXI@Z",
+  "folded": "??_GSkeletonDir@@UAAPAXI@Z",
+  "N_reaches_EQ_vs_retail": true,
+  "S_reaches_EQ_vs_retail": true,
+  "N_variants": 1,
+  "S_variants": 1,
+  "our_N_obj": "system/gesture/SkeletonDir.obj",
+  "our_S_obj": "system/ui/UI.obj",
+  "len_N": 76,
+  "len_S": 76,
+  "masked_bytes_equal": true,
+  "reloc_shape_equal": true,
+  "discriminators": [
+   {
+    "offset": 28,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "4bfffd1d",
+    "retail_dest": "0x823f4fa8",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??_DSkeletonDir@@QAAXXZ",
+    "S_target": "??1Automator@@UAA@XZ"
+   },
+   {
+    "offset": 44,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "486a3fbd",
+    "retail_dest": "0x82a99258",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??3SkeletonDir@@SAXPAX@Z",
+    "S_target": "??3@YAXPAX@Z"
+   }
+  ],
+  "n_discriminators": 2,
+  "channels": {
+   "a:CLOSABLE-BY-NAMING": 2
+  },
+  "n_channel_a_closable": 2,
+  "n_channel_b": 0,
+  "n_already_named": 0,
+  "pairs": [
+   {
+    "c_N": "??_DSkeletonDir@@QAAXXZ",
+    "c_S": "??1Automator@@UAA@XZ",
+    "N_map_named": [],
+    "S_map_named": [
+     "0x8231a578"
+    ],
+    "N_callsites": 1,
+    "S_callsites": 1,
+    "N_strong": [],
+    "S_strong": [
+     "0x823f4fa8"
+    ],
+    "N_medium": [],
+    "S_medium": [],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??_GAutomator@@UAAPAXI@Z",
+      "caller_va": "0x823f5270",
+      "off": 28,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x823f4fa8",
+      "tier": "STRONG"
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": true,
+    "offset": 28,
+    "retail_dest_at_X": "0x823f4fa8"
+   },
+   {
+    "c_N": "??3SkeletonDir@@SAXPAX@Z",
+    "c_S": "??3@YAXPAX@Z",
+    "N_map_named": [],
+    "S_map_named": [
+     "0x82bc6b70"
+    ],
+    "N_callsites": 1,
+    "S_callsites": 1766,
+    "N_strong": [],
+    "S_strong": [
+     "0x8240ddb0"
+    ],
+    "N_medium": [],
+    "S_medium": [
+     "0x8240ddb0"
+    ],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??$DeleteAll@V?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+      "caller_va": "0x82642ce0",
+      "off": 52,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8240ddb0",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??$DeleteAll@V?$vector@PAVFaderGroup@@V?$StlNodeAlloc@PAVFaderGroup@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVFaderGroup@@V?$StlNodeAlloc@PAVFaderGroup@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+      "caller_va": "0x82719d20",
+      "off": 52,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8240ddb0",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??1?$scoped_ptr@VPeakDetector@Synapse@DSP@@@@QAA@XZ",
+      "caller_va": "0x82b6f078",
+      "off": 40,
+      "caller_vs_retail": "NE",
+      "retail_dest": "0x8240ddb0",
+      "tier": "MEDIUM",
+      "call_index": 1,
+      "n_calls": 2,
+      "retail_off": 40
+     },
+     {
+      "caller": "??1Game@@UAA@XZ",
+      "caller_va": "0x8267a648",
+      "off": 92,
+      "caller_vs_retail": "SIZE",
+      "retail_dest": "0x8240ddb0",
+      "tier": "MEDIUM",
+      "call_index": 4,
+      "n_calls": 31,
+      "retail_off": 92
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": false,
+    "offset": 44,
+    "retail_dest_at_X": "0x82a99258"
+   }
+  ],
+  "witness_verdict": "NO_WITNESS_FOLDED_SIDE",
+  "ah_class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+  "ah_evidence_types": {
+   "SkeletonDir": {
+    "rtti_mangled": ".?AV/USkeletonDir@@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": "yes (17 virtual declarations in src/system/gesture/SkeletonDir.h)",
+    "rb3wii_files": 0,
+    "dc3_files": 1
+   }
+  },
+  "ah_c_N": "??_DSkeletonDir@@QAAXXZ",
+  "ah_c_S": "??1Automator@@UAA@XZ",
+  "ah_offset": 28,
+  "ah_subsystem": "gesture",
+  "ah_extra_evidence": "This row is refuted on the callee's OWN ENCLOSING CLASS SkeletonDir (subsystem src/system/gesture/), not on a template argument. retail-byte subsystem witness: Kinect/NUI is ABSENT from retail -- 'Kinect', 'NuiSkeleton', 'NuiImage', 'NUIAPI', 'xnui', 'nui' all occur 0 times. Controls specific to this class, both able to fail and one of which DID: (a) Quazal::Job is polymorphic, declared in rb3-Wii, and NetZ middleware retail certainly links, yet .?AVJob@Quazal@@ occurs 0 times in retail -- so halves (1)+(2) alone would have FALSELY refuted it and only half (3) declined it; (b) retail carries 'BinkTextures.cpp', 'Error reading Bink header.' and 'Not a Bink file.', so the Bink subsystem IS in RB3-360 and BinkMovieImpl/MovieImpl are deliberately NOT refuted even though rb3-Wii declares neither -- that zero is a Wii PORT artifact, not a statement about the game; (c) MoveReplacer (15 rows) and HamMove::LocalizedName (14 rows) are hamobj types that DECLINE on half (2) as non-polymorphic and are left in place."
+ },
+ {
+  "gi": 770,
+  "addr": "0x823f5270",
+  "bytes": 76,
+  "survivor": "??_GAutomator@@UAAPAXI@Z",
+  "folded": "??_GStreamRecorder@@UAAPAXI@Z",
+  "N_reaches_EQ_vs_retail": true,
+  "S_reaches_EQ_vs_retail": true,
+  "N_variants": 1,
+  "S_variants": 1,
+  "our_N_obj": "system/gesture/StreamRecorder.obj",
+  "our_S_obj": "system/ui/UI.obj",
+  "len_N": 76,
+  "len_S": 76,
+  "masked_bytes_equal": true,
+  "reloc_shape_equal": true,
+  "discriminators": [
+   {
+    "offset": 28,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "4bfffd1d",
+    "retail_dest": "0x823f4fa8",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??_DStreamRecorder@@QAAXXZ",
+    "S_target": "??1Automator@@UAA@XZ"
+   },
+   {
+    "offset": 44,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "486a3fbd",
+    "retail_dest": "0x82a99258",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??3StreamRecorder@@SAXPAX@Z",
+    "S_target": "??3@YAXPAX@Z"
+   }
+  ],
+  "n_discriminators": 2,
+  "channels": {
+   "a:CLOSABLE-BY-NAMING": 2
+  },
+  "n_channel_a_closable": 2,
+  "n_channel_b": 0,
+  "n_already_named": 0,
+  "pairs": [
+   {
+    "c_N": "??_DStreamRecorder@@QAAXXZ",
+    "c_S": "??1Automator@@UAA@XZ",
+    "N_map_named": [],
+    "S_map_named": [
+     "0x8231a578"
+    ],
+    "N_callsites": 1,
+    "S_callsites": 1,
+    "N_strong": [],
+    "S_strong": [
+     "0x823f4fa8"
+    ],
+    "N_medium": [],
+    "S_medium": [],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??_GAutomator@@UAAPAXI@Z",
+      "caller_va": "0x823f5270",
+      "off": 28,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x823f4fa8",
+      "tier": "STRONG"
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": true,
+    "offset": 28,
+    "retail_dest_at_X": "0x823f4fa8"
+   },
+   {
+    "c_N": "??3StreamRecorder@@SAXPAX@Z",
+    "c_S": "??3@YAXPAX@Z",
+    "N_map_named": [],
+    "S_map_named": [
+     "0x82bc6b70"
+    ],
+    "N_callsites": 1,
+    "S_callsites": 1766,
+    "N_strong": [],
+    "S_strong": [
+     "0x8240ddb0"
+    ],
+    "N_medium": [],
+    "S_medium": [
+     "0x8240ddb0"
+    ],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??$DeleteAll@V?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+      "caller_va": "0x82642ce0",
+      "off": 52,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8240ddb0",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??$DeleteAll@V?$vector@PAVFaderGroup@@V?$StlNodeAlloc@PAVFaderGroup@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVFaderGroup@@V?$StlNodeAlloc@PAVFaderGroup@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+      "caller_va": "0x82719d20",
+      "off": 52,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8240ddb0",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??1?$scoped_ptr@VPeakDetector@Synapse@DSP@@@@QAA@XZ",
+      "caller_va": "0x82b6f078",
+      "off": 40,
+      "caller_vs_retail": "NE",
+      "retail_dest": "0x8240ddb0",
+      "tier": "MEDIUM",
+      "call_index": 1,
+      "n_calls": 2,
+      "retail_off": 40
+     },
+     {
+      "caller": "??1Game@@UAA@XZ",
+      "caller_va": "0x8267a648",
+      "off": 92,
+      "caller_vs_retail": "SIZE",
+      "retail_dest": "0x8240ddb0",
+      "tier": "MEDIUM",
+      "call_index": 4,
+      "n_calls": 31,
+      "retail_off": 92
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": false,
+    "offset": 44,
+    "retail_dest_at_X": "0x82a99258"
+   }
+  ],
+  "witness_verdict": "NO_WITNESS_FOLDED_SIDE",
+  "ah_class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+  "ah_evidence_types": {
+   "StreamRecorder": {
+    "rtti_mangled": ".?AV/UStreamRecorder@@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": "yes (11 virtual declarations in src/system/gesture/StreamRecorder.h)",
+    "rb3wii_files": 0,
+    "dc3_files": 1
+   }
+  },
+  "ah_c_N": "??_DStreamRecorder@@QAAXXZ",
+  "ah_c_S": "??1Automator@@UAA@XZ",
+  "ah_offset": 28,
+  "ah_subsystem": "gesture",
+  "ah_extra_evidence": "This row is refuted on the callee's OWN ENCLOSING CLASS StreamRecorder (subsystem src/system/gesture/), not on a template argument. retail-byte subsystem witness: Kinect/NUI is ABSENT from retail -- 'Kinect', 'NuiSkeleton', 'NuiImage', 'NUIAPI', 'xnui', 'nui' all occur 0 times. Controls specific to this class, both able to fail and one of which DID: (a) Quazal::Job is polymorphic, declared in rb3-Wii, and NetZ middleware retail certainly links, yet .?AVJob@Quazal@@ occurs 0 times in retail -- so halves (1)+(2) alone would have FALSELY refuted it and only half (3) declined it; (b) retail carries 'BinkTextures.cpp', 'Error reading Bink header.' and 'Not a Bink file.', so the Bink subsystem IS in RB3-360 and BinkMovieImpl/MovieImpl are deliberately NOT refuted even though rb3-Wii declares neither -- that zero is a Wii PORT artifact, not a statement about the game; (c) MoveReplacer (15 rows) and HamMove::LocalizedName (14 rows) are hamobj types that DECLINE on half (2) as non-polymorphic and are left in place."
+ },
+ {
+  "gi": 770,
+  "addr": "0x823f5270",
+  "bytes": 76,
+  "survivor": "??_GAutomator@@UAAPAXI@Z",
+  "folded": "??_GSuperEasyRemixer@@UAAPAXI@Z",
+  "N_reaches_EQ_vs_retail": true,
+  "S_reaches_EQ_vs_retail": true,
+  "N_variants": 1,
+  "S_variants": 1,
+  "our_N_obj": "system/hamobj/SuperEasyRemixer.obj",
+  "our_S_obj": "system/ui/UI.obj",
+  "len_N": 76,
+  "len_S": 76,
+  "masked_bytes_equal": true,
+  "reloc_shape_equal": true,
+  "discriminators": [
+   {
+    "offset": 28,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "4bfffd1d",
+    "retail_dest": "0x823f4fa8",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??1SuperEasyRemixer@@UAA@XZ",
+    "S_target": "??1Automator@@UAA@XZ"
+   },
+   {
+    "offset": 44,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "486a3fbd",
+    "retail_dest": "0x82a99258",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??3SuperEasyRemixer@@SAXPAX@Z",
+    "S_target": "??3@YAXPAX@Z"
+   }
+  ],
+  "n_discriminators": 2,
+  "channels": {
+   "a:CLOSABLE-BY-NAMING": 2
+  },
+  "n_channel_a_closable": 2,
+  "n_channel_b": 0,
+  "n_already_named": 0,
+  "pairs": [
+   {
+    "c_N": "??1SuperEasyRemixer@@UAA@XZ",
+    "c_S": "??1Automator@@UAA@XZ",
+    "N_map_named": [],
+    "S_map_named": [
+     "0x8231a578"
+    ],
+    "N_callsites": 1,
+    "S_callsites": 1,
+    "N_strong": [],
+    "S_strong": [
+     "0x823f4fa8"
+    ],
+    "N_medium": [],
+    "S_medium": [],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??_GAutomator@@UAAPAXI@Z",
+      "caller_va": "0x823f5270",
+      "off": 28,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x823f4fa8",
+      "tier": "STRONG"
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": true,
+    "offset": 28,
+    "retail_dest_at_X": "0x823f4fa8"
+   },
+   {
+    "c_N": "??3SuperEasyRemixer@@SAXPAX@Z",
+    "c_S": "??3@YAXPAX@Z",
+    "N_map_named": [],
+    "S_map_named": [
+     "0x82bc6b70"
+    ],
+    "N_callsites": 1,
+    "S_callsites": 1766,
+    "N_strong": [],
+    "S_strong": [
+     "0x8240ddb0"
+    ],
+    "N_medium": [],
+    "S_medium": [
+     "0x8240ddb0"
+    ],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??$DeleteAll@V?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+      "caller_va": "0x82642ce0",
+      "off": 52,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8240ddb0",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??$DeleteAll@V?$vector@PAVFaderGroup@@V?$StlNodeAlloc@PAVFaderGroup@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVFaderGroup@@V?$StlNodeAlloc@PAVFaderGroup@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+      "caller_va": "0x82719d20",
+      "off": 52,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8240ddb0",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??1?$scoped_ptr@VPeakDetector@Synapse@DSP@@@@QAA@XZ",
+      "caller_va": "0x82b6f078",
+      "off": 40,
+      "caller_vs_retail": "NE",
+      "retail_dest": "0x8240ddb0",
+      "tier": "MEDIUM",
+      "call_index": 1,
+      "n_calls": 2,
+      "retail_off": 40
+     },
+     {
+      "caller": "??1Game@@UAA@XZ",
+      "caller_va": "0x8267a648",
+      "off": 92,
+      "caller_vs_retail": "SIZE",
+      "retail_dest": "0x8240ddb0",
+      "tier": "MEDIUM",
+      "call_index": 4,
+      "n_calls": 31,
+      "retail_off": 92
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": false,
+    "offset": 44,
+    "retail_dest_at_X": "0x82a99258"
+   }
+  ],
+  "witness_verdict": "NO_WITNESS_FOLDED_SIDE",
+  "ah_class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+  "ah_evidence_types": {
+   "SuperEasyRemixer": {
+    "rtti_mangled": ".?AV/USuperEasyRemixer@@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": "yes (9 virtual declarations in src/system/hamobj/SuperEasyRemixer.h)",
+    "rb3wii_files": 0,
+    "dc3_files": 3
+   }
+  },
+  "ah_c_N": "??1SuperEasyRemixer@@UAA@XZ",
+  "ah_c_S": "??1Automator@@UAA@XZ",
+  "ah_offset": 28,
+  "ah_subsystem": "hamobj",
+  "ah_extra_evidence": "This row is refuted on the callee's OWN ENCLOSING CLASS SuperEasyRemixer (subsystem src/system/hamobj/), not on a template argument. retail-byte subsystem witness: every polymorphic hamobj sibling's descriptor reads 0 in retail (HamMove, HamCharacter, HamGameData, HamList, HamVisDir, HamPartyJumpData, FreestyleMove, SuperEasyRemixer), rb3-Wii declares none of them, DC3 declares all. Controls specific to this class, both able to fail and one of which DID: (a) Quazal::Job is polymorphic, declared in rb3-Wii, and NetZ middleware retail certainly links, yet .?AVJob@Quazal@@ occurs 0 times in retail -- so halves (1)+(2) alone would have FALSELY refuted it and only half (3) declined it; (b) retail carries 'BinkTextures.cpp', 'Error reading Bink header.' and 'Not a Bink file.', so the Bink subsystem IS in RB3-360 and BinkMovieImpl/MovieImpl are deliberately NOT refuted even though rb3-Wii declares neither -- that zero is a Wii PORT artifact, not a statement about the game; (c) MoveReplacer (15 rows) and HamMove::LocalizedName (14 rows) are hamobj types that DECLINE on half (2) as non-polymorphic and are left in place."
+ }
+]
