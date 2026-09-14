@@ -16525,7 +16525,7 @@
  "0x826ccb00": "?NoteOn@DirectInstrument@@QAAXH@Z",
  "0x826ccb20": "?NoteOff@DirectInstrument@@QAAXH@Z",
  "0x826ccb30": "?PlayNote@DirectInstrument@@QAAXHH@Z",
- "0x826ccb48": "??$_Destroy@UGrammar@SpeechMgr@@@stlpmtx_std@@YAXPAUGrammar@SpeechMgr@@@Z",
+ "0x826ccb48": "?IsLoaded@DirectInstrument@@QAA_NXZ",
  "0x826ccb50": "?PostLoad@DirectInstrument@@QAAXXZ",
  "0x826ccb60": "?Enable@DirectInstrument@@QAAXXZ",
  "0x826ccc10": "??0DirectInstrument@@QAA@XZ",
