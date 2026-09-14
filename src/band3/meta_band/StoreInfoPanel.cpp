@@ -146,7 +146,16 @@ bool StoreInfoPanel::ParseRecommendations(DataArray *data) {
 void StoreInfoPanel::GetRecommendationIndexPath(const char *cc, String &str) {
     static const char *pathFmt = "dlc_store/%s/%s/related/%s.dta";
     Symbol regionSym = PlatformRegionToSymbol(ThePlatformMgr.GetRegion());
-    str = MakeString(pathFmt, regionSym, SystemLanguage(), cc);
+    // RETAIL-PROVEN, lane W16-L: the second %s is SystemLocale(), converted to
+    // const char*, not SystemLanguage() passed as a Symbol.  Two independent
+    // charges said so: the callee relocation names ?SystemLocale@@YA?AVSymbol@@XZ
+    // (0x82510040 -- ?SystemLanguage@@ is not in the map at any address, and
+    // there is no alias, so this is not an ICF fold), and the MakeString
+    // instantiation is ??$MakeString@VSymbol@@PBDPBD@@ (Symbol, const char*,
+    // const char*) against our ??$MakeString@VSymbol@@V1@PBD@@ (Symbol, Symbol,
+    // const char*).  Symbol::Str() is inline `return mStr`, so the instruction
+    // stream is unchanged -- only the two relocation names move.
+    str = MakeString(pathFmt, regionSym, SystemLocale().Str(), cc);
     Server *server = TheNet.GetServer();
     if (server && server->IsConnected()) {
         // RETAIL-PROVEN CALLEE (lane W16-L, 2026-09-14).  The rb3-Wii oracle has
