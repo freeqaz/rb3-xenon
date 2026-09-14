@@ -57,6 +57,34 @@ def main():
 
     rows = json.loads(Path(args.census).read_text())
     orig_text = ALI.read_text()
+    # ⛔ THE CENSUS'S `gi` IS NOT AN INDEX INTO groups[].  Measured 2026-09-14
+    # (lane W16-AD): of 5,315 census rows only 503 have gi == the true index;
+    # 4,785 are wrong (skew +1 on 68 and +2 on 564 of the 643 UNDECIDED_MASKED
+    # rows alone) and 27 resolve to no group at all.  Keying on gi therefore
+    # edited the WRONG group -- and because the edit filters by NAME
+    # membership, a wrong group simply does not contain those spellings, so the
+    # ablation SILENTLY REMOVED NOTHING and under-reported what the class
+    # forgives.  A no-op that looks like a measurement is the worst shape a
+    # defect can take here.
+    # (survivor, address) is unique over all 1,634 groups, and resolving the
+    # 643 UNDECIDED_MASKED rows that way puts the folded spelling inside the
+    # resolved group 643/643 -- which is the check that proves the key, since a
+    # wrong key lands on a group that does not contain the spelling.
+    gali = json.loads(orig_text)
+    gkey = {(g["survivor"], g.get("address")): i
+            for i, g in enumerate(gali["groups"])}
+
+    def resolve(r):
+        i = gkey.get((r["survivor"], r["addr"]))
+        if i is None:
+            sys.exit("REFUSING: census row (survivor=%s addr=%s) matches no "
+                     "alias group -- the census and the alias file disagree"
+                     % (r["survivor"][:60], r["addr"]))
+        if r["folded"] not in gali["groups"][i]["folded"]:
+            sys.exit("REFUSING: %s is not in the folded list of the group it "
+                     "resolved to -- the key is wrong, and ablating here would "
+                     "silently remove nothing" % r["folded"][:70])
+        return i
     results = {}
     try:
         print("== leg A: baseline (alias file as committed) ==")
@@ -67,7 +95,7 @@ def main():
             drop = collections.defaultdict(set)
             for r in rows:
                 if r["verdict"] == cls:
-                    drop[r["gi"]].add(r["folded"])
+                    drop[resolve(r)].add(r["folded"])
             n = sum(len(v) for v in drop.values())
             if not n:
                 print("== %s: 0 memberships, skipped ==" % cls)
