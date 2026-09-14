@@ -2259,7 +2259,7 @@ row keyed to the merge SHA, pushed). Two are still running.
 | **W15-E** RockCentral Handle + Movie map (opus) | `c52f2af6` | **+11 / +4,256 B** | `0x827c9110` is `TickToMs`, not `Movie::Init` — both names compile to the SAME 24 B thunk and the row read a FALSE 100 (ruler structurally blind; settled on retail bytes of the neighbour `BeatToMs`); `TickToMs` was declared and **defined nowhere**; `0x825df840` is `OvershellSlot::RemoveUser`, our body carried Wii-only `TheWiiProfileMgr.RemovePad()` — a behavioural bug on Xbox, 40.41 → 100; `Handle@RockCentral` Δ0 → **escalated to Fable (W16-B)** |
 
 Ledger: 42,846 / 3,892,688 B / 37.992 % (`bbcf979b`, wave start) →
-**43,101 / 3,908,104 B / 38.1428 %** (`467a91f2`; W15-D, W15-E and W15-F each additive to the byte). `total_code` 10,245,956
+**43,101 / 3,908,104 B / 38.1429 %** (`467a91f2`; W15-D, W15-E and W15-F each additive to the byte). `total_code` 10,245,956
 throughout — none of it is denominator movement.
 
 ### Three corrections to the coordinator's own briefs
