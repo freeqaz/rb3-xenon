@@ -6,7 +6,10 @@
 class FadePanel : public UIPanel {
 public:
     FadePanel();
-    virtual ~FadePanel() {}
+    // NO destructor declared -- retail's ??_GFadePanel has NO derived vptr-restore
+    // (lane W16-X 2026-09-14). A user-declared dtor, even `{}`, makes MSVC emit
+    // that prologue in ??1FadePanel, bloating ??_DFadePanel past the ??_G inline threshold:
+    // 80 B via ??_D instead of retail's direct ??1UIPanel + ??1Hmx::Object.
     OBJ_CLASSNAME(FadePanel)
     OBJ_SET_TYPE(FadePanel)
     virtual DataNode Handle(DataArray *, bool);

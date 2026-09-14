@@ -12,7 +12,10 @@ public:
     OBJ_SET_TYPE(MultiSelectListPanel);
     NEW_OBJ(MultiSelectListPanel);
     virtual DataNode Handle(DataArray *, bool);
-    virtual ~MultiSelectListPanel() {}
+    // NO destructor declared -- retail's ??_GMultiSelectListPanel has NO derived vptr-restore
+    // (lane W16-X 2026-09-14). A user-declared dtor, even `{}`, makes MSVC emit
+    // that prologue in ??1MultiSelectListPanel, bloating ??_DMultiSelectListPanel past the ??_G inline threshold:
+    // 80 B via ??_D instead of retail's direct ??1UIPanel + ??1Hmx::Object.
     virtual void Unload();
     virtual void FinishLoad();
 
