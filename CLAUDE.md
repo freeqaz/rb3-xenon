@@ -40,8 +40,16 @@ and proportional: a sentence or two per step, not an essay per tool call.
 ---
 
 Decompilation of **Rock Band 3** for **Xbox 360** (PowerPC). Goal: matching
-machine code from C++ source. Target binary: vanilla retail XEX, title ID
-`45410914`, at `orig/45410914/default.xex` (not committed).
+machine code from C++ source. Target binary: title ID `45410914`, at
+`orig/45410914/default.xex` (not committed).
+⛔ **NOT "vanilla retail" — the targeted image is the RB3DX-lineage TU5**, byte-identical
+to `RB3DX-Xbox/default.xex` (sha1 `c5a17091…`), verified on retail bytes by lane W16-R
+(`docs/decomp/W16R_SETDISKERROR_CAVE_SERVER_VTABLE_2026-09-14.md` §1). Clean retail TU5
+is a *different* image (`_tu5probe/clean/clean_tu5.xex`, PE sha1 `5f3f667a…`), differing
+by 53 words / 10 in-place byte-patch groups — so a handful of rows (`DataSet`, `IsDemo`,
+`AddSongData`, `SetDiskError`, `main`) are structurally unmatchable against *this* image
+by any source work, and a confident "LikelyFixable" on them is a false positive by
+construction. Vanilla retail TU0 is archived at `orig/45410914/tu0-archive/`.
 
 **Docs index: `docs/INDEX.md`** — audited master index of every doc under
 `docs/` (2026-07-06): current references vs `[HIST]` frozen records, plus a

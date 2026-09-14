@@ -6083,7 +6083,8 @@ RhythmDetector.cpp:
 	.pdata      start:0x821F1628 end:0x821F1638
 	.pdata      start:0x821F1638 end:0x821F1648
 	.pdata      start:0x821F1678 end:0x821F16C0
-	.pdata      start:0x821F16C8 end:0x821F1750
+	.pdata      start:0x821F16C8 end:0x821F1700
+	.pdata      start:0x821F1708 end:0x821F1750
 	.pdata      start:0x8222B190 end:0x8222B198
 	.pdata      start:0x8222D830 end:0x8222D838
 	.pdata      start:0x8222D838 end:0x8222D848
@@ -6091,11 +6092,16 @@ RhythmDetector.cpp:
 	.text       start:0x822703A8 end:0x82270414
 	.text       start:0x82270418 end:0x82270438
 	.text       start:0x82270690 end:0x82270B1C
-	.text       start:0x82270B84 end:0x82271748
+	.text       start:0x82270B84 end:0x82270E68
+	.text       start:0x822715B0 end:0x82271748
 	.text       start:0x826342F0 end:0x82634354
 	.text       start:0x82657660 end:0x826576C8
 	.text       start:0x826576C8 end:0x8265776C
 	.text       start:0x82667FC8 end:0x82667FD8
+
+App.cpp:
+	.pdata      start:0x821F1700 end:0x821F1708
+	.text       start:0x82270E68 end:0x822715B0
 
 UIListDir.cpp:
 	.pdata      start:0x821FEE30 end:0x821FEE38
@@ -7069,12 +7075,14 @@ Rnd_Xbox.cpp:
 	.pdata      start:0x8223A7B0 end:0x8223A7B8
 	.pdata      start:0x8223A7B8 end:0x8223A800
 	.pdata      start:0x8223A810 end:0x8223AAE8
+	.pdata      start:0x8223AB10 end:0x8223AB28
 	.text       start:0x8235CC80 end:0x8235CCC8
 	.text       start:0x827378B8 end:0x82738A48
 	.text       start:0x82738A48 end:0x82738AB4
 	.text       start:0x82738AB4 end:0x82739020
 	.text       start:0x82739078 end:0x82739080
 	.text       start:0x827390D8 end:0x8273CA70
+	.text       start:0x8273CC08 end:0x8273CEF0
 
 MidiSynth.cpp:
 	.pdata      start:0x822140C0 end:0x82214230
@@ -14605,6 +14613,32 @@ xdk/xapilibi/sleep.cpp:
 	.pdata      start:0x82248FC0 end:0x82248FC8
 	.text       start:0x8283D628 end:0x8283D668
 	.text       start:0x828450F0 end:0x82845180
+
+xdk/xapilibi/xapi0.cpp:
+	.pdata      start:0x82248B98 end:0x82248BB8
+	.text       start:0x8283CA00 end:0x8283CED8
+
+xdk/xapilibi/xgetoverlappedextendederror.cpp:
+	.text       start:0x8283D2B0 end:0x8283D2D8
+
+xdk/xapilibi/closehandle.cpp:
+	.pdata      start:0x82248BF8 end:0x82248C00
+	.text       start:0x8283D2D8 end:0x8283D320
+
+xdk/xapilibi/xgetoverlappedresult.cpp:
+	.pdata      start:0x82248C00 end:0x82248C08
+	.text       start:0x8283D320 end:0x8283D3B8
+
+xdk/xapilibi/getlocaltime.cpp:
+	.pdata      start:0x82248C20 end:0x82248C28
+	.text       start:0x8283D590 end:0x8283D624
+
+xdk/xapilibi/xusergetsignininfo.cpp:
+	.pdata      start:0x82248C48 end:0x82248C50
+	.text       start:0x8283D7C8 end:0x8283D810
+
+xdk/xapilibi/xnotify.cpp:
+	.text       start:0x8283D810 end:0x8283D818
 
 xdk/xapilibi/xutilitydrive.cpp:
 	.pdata      start:0x82248C50 end:0x82248CE0
