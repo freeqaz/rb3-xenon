@@ -1,0 +1,1507 @@
+[
+ {
+  "gi": 557,
+  "addr": "0x82706100",
+  "bytes": 60,
+  "survivor": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "N_reaches_EQ_vs_retail": true,
+  "S_reaches_EQ_vs_retail": true,
+  "N_variants": 1,
+  "S_variants": 1,
+  "our_N_obj": "system/bandobj/CrowdAudio.obj",
+  "our_S_obj": "system/char/Character.obj",
+  "len_N": 60,
+  "len_S": 60,
+  "masked_bytes_equal": true,
+  "reloc_shape_equal": true,
+  "discriminators": [
+   {
+    "offset": 36,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "4bffff45",
+    "retail_dest": "0x82706068",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??0Node@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@QAA@ABU01@@Z",
+    "S_target": "??0Node@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@QAA@ABU01@@Z"
+   }
+  ],
+  "n_discriminators": 1,
+  "channels": {
+   "a:CLOSABLE-BY-NAMING": 1
+  },
+  "n_channel_a_closable": 1,
+  "n_channel_b": 0,
+  "n_already_named": 0,
+  "pairs": [
+   {
+    "c_N": "??0Node@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@QAA@ABU01@@Z",
+    "c_S": "??0Node@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@QAA@ABU01@@Z",
+    "N_map_named": [],
+    "S_map_named": [],
+    "N_callsites": 3,
+    "S_callsites": 3,
+    "N_strong": [],
+    "S_strong": [
+     "0x82706068"
+    ],
+    "N_medium": [],
+    "S_medium": [
+     "0x822a43e8"
+    ],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+      "caller_va": "0x82706100",
+      "off": 36,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x82706068",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+      "caller_va": "0x822a46c8",
+      "off": 36,
+      "caller_vs_retail": "NE",
+      "retail_dest": "0x822a43e8",
+      "tier": "MEDIUM",
+      "call_index": 0,
+      "n_calls": 1,
+      "retail_off": 36
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": true,
+    "offset": 36,
+    "retail_dest_at_X": "0x82706068"
+   }
+  ],
+  "witness_verdict": "NO_WITNESS_FOLDED_SIDE",
+  "qualifying_types": [
+   "ObjPtrVec"
+  ],
+  "type_evidence": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_class": "TYPE_ABSENT_FROM_RETAIL_CONTAINER",
+  "ah_evidence_types": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_c_N": "??0Node@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_c_S": "??0Node@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_offset": 36,
+  "ah_hold_reason": "group survivor is itself an ObjPtrVec spelling: the container argument impeaches the map row naming this address, so the row is a map identification question, not an alias withdrawal"
+ },
+ {
+  "gi": 557,
+  "addr": "0x82706100",
+  "bytes": 60,
+  "survivor": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "N_reaches_EQ_vs_retail": true,
+  "S_reaches_EQ_vs_retail": true,
+  "N_variants": 1,
+  "S_variants": 1,
+  "our_N_obj": "system/gesture/StreamRecorder.obj",
+  "our_S_obj": "system/char/Character.obj",
+  "len_N": 60,
+  "len_S": 60,
+  "masked_bytes_equal": true,
+  "reloc_shape_equal": true,
+  "discriminators": [
+   {
+    "offset": 36,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "4bffff45",
+    "retail_dest": "0x82706068",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??0Node@?$ObjPtrVec@VRndTex@@VObjectDir@@@@QAA@ABU01@@Z",
+    "S_target": "??0Node@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@QAA@ABU01@@Z"
+   }
+  ],
+  "n_discriminators": 1,
+  "channels": {
+   "a:CLOSABLE-BY-NAMING": 1
+  },
+  "n_channel_a_closable": 1,
+  "n_channel_b": 0,
+  "n_already_named": 0,
+  "pairs": [
+   {
+    "c_N": "??0Node@?$ObjPtrVec@VRndTex@@VObjectDir@@@@QAA@ABU01@@Z",
+    "c_S": "??0Node@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@QAA@ABU01@@Z",
+    "N_map_named": [],
+    "S_map_named": [],
+    "N_callsites": 3,
+    "S_callsites": 3,
+    "N_strong": [],
+    "S_strong": [
+     "0x82706068"
+    ],
+    "N_medium": [],
+    "S_medium": [
+     "0x822a43e8"
+    ],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+      "caller_va": "0x82706100",
+      "off": 36,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x82706068",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+      "caller_va": "0x822a46c8",
+      "off": 36,
+      "caller_vs_retail": "NE",
+      "retail_dest": "0x822a43e8",
+      "tier": "MEDIUM",
+      "call_index": 0,
+      "n_calls": 1,
+      "retail_off": 36
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": true,
+    "offset": 36,
+    "retail_dest_at_X": "0x82706068"
+   }
+  ],
+  "witness_verdict": "NO_WITNESS_FOLDED_SIDE",
+  "qualifying_types": [
+   "ObjPtrVec"
+  ],
+  "type_evidence": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_class": "TYPE_ABSENT_FROM_RETAIL_CONTAINER",
+  "ah_evidence_types": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_c_N": "??0Node@?$ObjPtrVec@VRndTex@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_c_S": "??0Node@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_offset": 36,
+  "ah_hold_reason": "group survivor is itself an ObjPtrVec spelling: the container argument impeaches the map row naming this address, so the row is a map identification question, not an alias withdrawal"
+ },
+ {
+  "gi": 557,
+  "addr": "0x82706100",
+  "bytes": 60,
+  "survivor": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "N_reaches_EQ_vs_retail": true,
+  "S_reaches_EQ_vs_retail": true,
+  "N_variants": 1,
+  "S_variants": 1,
+  "our_N_obj": "system/math/Rot.obj",
+  "our_S_obj": "system/char/Character.obj",
+  "len_N": 60,
+  "len_S": 60,
+  "masked_bytes_equal": true,
+  "reloc_shape_equal": true,
+  "discriminators": [
+   {
+    "offset": 36,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "4bffff45",
+    "retail_dest": "0x82706068",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??0Node@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@QAA@ABU01@@Z",
+    "S_target": "??0Node@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@QAA@ABU01@@Z"
+   }
+  ],
+  "n_discriminators": 1,
+  "channels": {
+   "a:CLOSABLE-BY-NAMING": 1
+  },
+  "n_channel_a_closable": 1,
+  "n_channel_b": 0,
+  "n_already_named": 0,
+  "pairs": [
+   {
+    "c_N": "??0Node@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@QAA@ABU01@@Z",
+    "c_S": "??0Node@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@QAA@ABU01@@Z",
+    "N_map_named": [],
+    "S_map_named": [],
+    "N_callsites": 6,
+    "S_callsites": 3,
+    "N_strong": [],
+    "S_strong": [
+     "0x82706068"
+    ],
+    "N_medium": [],
+    "S_medium": [
+     "0x822a43e8"
+    ],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+      "caller_va": "0x82706100",
+      "off": 36,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x82706068",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+      "caller_va": "0x822a46c8",
+      "off": 36,
+      "caller_vs_retail": "NE",
+      "retail_dest": "0x822a43e8",
+      "tier": "MEDIUM",
+      "call_index": 0,
+      "n_calls": 1,
+      "retail_off": 36
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": true,
+    "offset": 36,
+    "retail_dest_at_X": "0x82706068"
+   }
+  ],
+  "witness_verdict": "NO_WITNESS_FOLDED_SIDE",
+  "qualifying_types": [
+   "ObjPtrVec"
+  ],
+  "type_evidence": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_class": "TYPE_ABSENT_FROM_RETAIL_CONTAINER",
+  "ah_evidence_types": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_c_N": "??0Node@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_c_S": "??0Node@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_offset": 36,
+  "ah_hold_reason": "group survivor is itself an ObjPtrVec spelling: the container argument impeaches the map row naming this address, so the row is a map identification question, not an alias withdrawal"
+ },
+ {
+  "gi": 557,
+  "addr": "0x82706100",
+  "bytes": 60,
+  "survivor": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+  "folded": "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
+  "N_reaches_EQ_vs_retail": true,
+  "S_reaches_EQ_vs_retail": true,
+  "N_variants": 1,
+  "S_variants": 1,
+  "our_N_obj": "system/math/Rot.obj",
+  "our_S_obj": "system/char/Character.obj",
+  "len_N": 60,
+  "len_S": 60,
+  "masked_bytes_equal": true,
+  "reloc_shape_equal": true,
+  "discriminators": [
+   {
+    "offset": 36,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "4bffff45",
+    "retail_dest": "0x82706068",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??0Node@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@QAA@ABU01@@Z",
+    "S_target": "??0Node@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@QAA@ABU01@@Z"
+   }
+  ],
+  "n_discriminators": 1,
+  "channels": {
+   "a:CLOSABLE-BY-NAMING": 1
+  },
+  "n_channel_a_closable": 1,
+  "n_channel_b": 0,
+  "n_already_named": 0,
+  "pairs": [
+   {
+    "c_N": "??0Node@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@QAA@ABU01@@Z",
+    "c_S": "??0Node@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@QAA@ABU01@@Z",
+    "N_map_named": [],
+    "S_map_named": [],
+    "N_callsites": 6,
+    "S_callsites": 3,
+    "N_strong": [],
+    "S_strong": [
+     "0x82706068"
+    ],
+    "N_medium": [],
+    "S_medium": [
+     "0x822a43e8"
+    ],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+      "caller_va": "0x82706100",
+      "off": 36,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x82706068",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+      "caller_va": "0x822a46c8",
+      "off": 36,
+      "caller_vs_retail": "NE",
+      "retail_dest": "0x822a43e8",
+      "tier": "MEDIUM",
+      "call_index": 0,
+      "n_calls": 1,
+      "retail_off": 36
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": true,
+    "offset": 36,
+    "retail_dest_at_X": "0x82706068"
+   }
+  ],
+  "witness_verdict": "NO_WITNESS_FOLDED_SIDE",
+  "qualifying_types": [
+   "ObjPtrVec"
+  ],
+  "type_evidence": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_class": "TYPE_ABSENT_FROM_RETAIL_CONTAINER",
+  "ah_evidence_types": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_c_N": "??0Node@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_c_S": "??0Node@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_offset": 36,
+  "ah_hold_reason": "group survivor is itself an ObjPtrVec spelling: the container argument impeaches the map row naming this address, so the row is a map identification question, not an alias withdrawal"
+ },
+ {
+  "gi": 557,
+  "addr": "0x82706100",
+  "bytes": 60,
+  "survivor": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "N_reaches_EQ_vs_retail": true,
+  "S_reaches_EQ_vs_retail": true,
+  "N_variants": 1,
+  "S_variants": 1,
+  "our_N_obj": "system/bandobj/CrowdAudio.obj",
+  "our_S_obj": "system/char/Character.obj",
+  "len_N": 60,
+  "len_S": 60,
+  "masked_bytes_equal": true,
+  "reloc_shape_equal": true,
+  "discriminators": [
+   {
+    "offset": 36,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "4bffff45",
+    "retail_dest": "0x82706068",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??0Node@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@QAA@ABU01@@Z",
+    "S_target": "??0Node@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@QAA@ABU01@@Z"
+   }
+  ],
+  "n_discriminators": 1,
+  "channels": {
+   "a:CLOSABLE-BY-NAMING": 1
+  },
+  "n_channel_a_closable": 1,
+  "n_channel_b": 0,
+  "n_already_named": 0,
+  "pairs": [
+   {
+    "c_N": "??0Node@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@QAA@ABU01@@Z",
+    "c_S": "??0Node@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@QAA@ABU01@@Z",
+    "N_map_named": [],
+    "S_map_named": [],
+    "N_callsites": 3,
+    "S_callsites": 3,
+    "N_strong": [],
+    "S_strong": [
+     "0x82706068"
+    ],
+    "N_medium": [],
+    "S_medium": [
+     "0x822a43e8"
+    ],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+      "caller_va": "0x82706100",
+      "off": 36,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x82706068",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+      "caller_va": "0x822a46c8",
+      "off": 36,
+      "caller_vs_retail": "NE",
+      "retail_dest": "0x822a43e8",
+      "tier": "MEDIUM",
+      "call_index": 0,
+      "n_calls": 1,
+      "retail_off": 36
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": true,
+    "offset": 36,
+    "retail_dest_at_X": "0x82706068"
+   }
+  ],
+  "witness_verdict": "NO_WITNESS_FOLDED_SIDE",
+  "qualifying_types": [
+   "ObjPtrVec"
+  ],
+  "type_evidence": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_class": "TYPE_ABSENT_FROM_RETAIL_CONTAINER",
+  "ah_evidence_types": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_c_N": "??0Node@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_c_S": "??0Node@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_offset": 36,
+  "ah_hold_reason": "group survivor is itself an ObjPtrVec spelling: the container argument impeaches the map row naming this address, so the row is a map identification question, not an alias withdrawal"
+ },
+ {
+  "gi": 557,
+  "addr": "0x82706100",
+  "bytes": 60,
+  "survivor": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "N_reaches_EQ_vs_retail": true,
+  "S_reaches_EQ_vs_retail": true,
+  "N_variants": 1,
+  "S_variants": 1,
+  "our_N_obj": "system/gesture/StreamRecorder.obj",
+  "our_S_obj": "system/char/Character.obj",
+  "len_N": 60,
+  "len_S": 60,
+  "masked_bytes_equal": true,
+  "reloc_shape_equal": true,
+  "discriminators": [
+   {
+    "offset": 36,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "4bffff45",
+    "retail_dest": "0x82706068",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??0Node@?$ObjPtrVec@VRndTex@@VObjectDir@@@@QAA@ABU01@@Z",
+    "S_target": "??0Node@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@QAA@ABU01@@Z"
+   }
+  ],
+  "n_discriminators": 1,
+  "channels": {
+   "a:CLOSABLE-BY-NAMING": 1
+  },
+  "n_channel_a_closable": 1,
+  "n_channel_b": 0,
+  "n_already_named": 0,
+  "pairs": [
+   {
+    "c_N": "??0Node@?$ObjPtrVec@VRndTex@@VObjectDir@@@@QAA@ABU01@@Z",
+    "c_S": "??0Node@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@QAA@ABU01@@Z",
+    "N_map_named": [],
+    "S_map_named": [],
+    "N_callsites": 3,
+    "S_callsites": 3,
+    "N_strong": [],
+    "S_strong": [
+     "0x82706068"
+    ],
+    "N_medium": [],
+    "S_medium": [
+     "0x822a43e8"
+    ],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+      "caller_va": "0x82706100",
+      "off": 36,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x82706068",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+      "caller_va": "0x822a46c8",
+      "off": 36,
+      "caller_vs_retail": "NE",
+      "retail_dest": "0x822a43e8",
+      "tier": "MEDIUM",
+      "call_index": 0,
+      "n_calls": 1,
+      "retail_off": 36
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": true,
+    "offset": 36,
+    "retail_dest_at_X": "0x82706068"
+   }
+  ],
+  "witness_verdict": "NO_WITNESS_FOLDED_SIDE",
+  "qualifying_types": [
+   "ObjPtrVec"
+  ],
+  "type_evidence": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_class": "TYPE_ABSENT_FROM_RETAIL_CONTAINER",
+  "ah_evidence_types": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_c_N": "??0Node@?$ObjPtrVec@VRndTex@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_c_S": "??0Node@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_offset": 36,
+  "ah_hold_reason": "group survivor is itself an ObjPtrVec spelling: the container argument impeaches the map row naming this address, so the row is a map identification question, not an alias withdrawal"
+ },
+ {
+  "gi": 557,
+  "addr": "0x82706100",
+  "bytes": 60,
+  "survivor": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "N_reaches_EQ_vs_retail": true,
+  "S_reaches_EQ_vs_retail": true,
+  "N_variants": 1,
+  "S_variants": 1,
+  "our_N_obj": "system/math/Rot.obj",
+  "our_S_obj": "system/char/Character.obj",
+  "len_N": 60,
+  "len_S": 60,
+  "masked_bytes_equal": true,
+  "reloc_shape_equal": true,
+  "discriminators": [
+   {
+    "offset": 36,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "4bffff45",
+    "retail_dest": "0x82706068",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??0Node@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@QAA@ABU01@@Z",
+    "S_target": "??0Node@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@QAA@ABU01@@Z"
+   }
+  ],
+  "n_discriminators": 1,
+  "channels": {
+   "a:CLOSABLE-BY-NAMING": 1
+  },
+  "n_channel_a_closable": 1,
+  "n_channel_b": 0,
+  "n_already_named": 0,
+  "pairs": [
+   {
+    "c_N": "??0Node@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@QAA@ABU01@@Z",
+    "c_S": "??0Node@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@QAA@ABU01@@Z",
+    "N_map_named": [],
+    "S_map_named": [],
+    "N_callsites": 6,
+    "S_callsites": 3,
+    "N_strong": [],
+    "S_strong": [
+     "0x82706068"
+    ],
+    "N_medium": [],
+    "S_medium": [
+     "0x822a43e8"
+    ],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+      "caller_va": "0x82706100",
+      "off": 36,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x82706068",
+      "tier": "STRONG"
+     },
+     {
+      "caller": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+      "caller_va": "0x822a46c8",
+      "off": 36,
+      "caller_vs_retail": "NE",
+      "retail_dest": "0x822a43e8",
+      "tier": "MEDIUM",
+      "call_index": 0,
+      "n_calls": 1,
+      "retail_off": 36
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": true,
+    "offset": 36,
+    "retail_dest_at_X": "0x82706068"
+   }
+  ],
+  "witness_verdict": "NO_WITNESS_FOLDED_SIDE",
+  "qualifying_types": [
+   "ObjPtrVec"
+  ],
+  "type_evidence": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_class": "TYPE_ABSENT_FROM_RETAIL_CONTAINER",
+  "ah_evidence_types": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_c_N": "??0Node@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_c_S": "??0Node@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_offset": 36,
+  "ah_hold_reason": "group survivor is itself an ObjPtrVec spelling: the container argument impeaches the map row naming this address, so the row is a map identification question, not an alias withdrawal"
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "bytes": 60,
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "N_reaches_EQ_vs_retail": true,
+  "S_reaches_EQ_vs_retail": true,
+  "N_variants": 1,
+  "S_variants": 1,
+  "our_N_obj": "system/bandobj/CrowdAudio.obj",
+  "our_S_obj": "system/char/CharIKMidi.obj",
+  "len_N": 60,
+  "len_S": 60,
+  "masked_bytes_equal": true,
+  "reloc_shape_equal": true,
+  "discriminators": [
+   {
+    "offset": 36,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "4bed4ad5",
+    "retail_dest": "0x8229dc70",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??0Node@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@QAA@ABU01@@Z",
+    "S_target": "??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z"
+   }
+  ],
+  "n_discriminators": 1,
+  "channels": {
+   "a:CLOSABLE-BY-NAMING": 1
+  },
+  "n_channel_a_closable": 1,
+  "n_channel_b": 0,
+  "n_already_named": 0,
+  "pairs": [
+   {
+    "c_N": "??0Node@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@QAA@ABU01@@Z",
+    "c_S": "??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z",
+    "N_map_named": [],
+    "S_map_named": [],
+    "N_callsites": 3,
+    "S_callsites": 3,
+    "N_strong": [],
+    "S_strong": [
+     "0x8229dc70"
+    ],
+    "N_medium": [],
+    "S_medium": [],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+      "caller_va": "0x823c9178",
+      "off": 36,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8229dc70",
+      "tier": "STRONG"
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": true,
+    "offset": 36,
+    "retail_dest_at_X": "0x8229dc70"
+   }
+  ],
+  "witness_verdict": "NO_WITNESS_FOLDED_SIDE",
+  "qualifying_types": [
+   "ObjPtrVec"
+  ],
+  "type_evidence": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_class": "TYPE_ABSENT_FROM_RETAIL_CONTAINER",
+  "ah_evidence_types": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_c_N": "??0Node@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_c_S": "??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_offset": 36,
+  "ah_hold_reason": "group survivor is itself an ObjPtrVec spelling: the container argument impeaches the map row naming this address, so the row is a map identification question, not an alias withdrawal"
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "bytes": 60,
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "N_reaches_EQ_vs_retail": true,
+  "S_reaches_EQ_vs_retail": true,
+  "N_variants": 1,
+  "S_variants": 1,
+  "our_N_obj": "system/gesture/StreamRecorder.obj",
+  "our_S_obj": "system/char/CharIKMidi.obj",
+  "len_N": 60,
+  "len_S": 60,
+  "masked_bytes_equal": true,
+  "reloc_shape_equal": true,
+  "discriminators": [
+   {
+    "offset": 36,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "4bed4ad5",
+    "retail_dest": "0x8229dc70",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??0Node@?$ObjPtrVec@VRndTex@@VObjectDir@@@@QAA@ABU01@@Z",
+    "S_target": "??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z"
+   }
+  ],
+  "n_discriminators": 1,
+  "channels": {
+   "a:CLOSABLE-BY-NAMING": 1
+  },
+  "n_channel_a_closable": 1,
+  "n_channel_b": 0,
+  "n_already_named": 0,
+  "pairs": [
+   {
+    "c_N": "??0Node@?$ObjPtrVec@VRndTex@@VObjectDir@@@@QAA@ABU01@@Z",
+    "c_S": "??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z",
+    "N_map_named": [],
+    "S_map_named": [],
+    "N_callsites": 3,
+    "S_callsites": 3,
+    "N_strong": [],
+    "S_strong": [
+     "0x8229dc70"
+    ],
+    "N_medium": [],
+    "S_medium": [],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+      "caller_va": "0x823c9178",
+      "off": 36,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8229dc70",
+      "tier": "STRONG"
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": true,
+    "offset": 36,
+    "retail_dest_at_X": "0x8229dc70"
+   }
+  ],
+  "witness_verdict": "NO_WITNESS_FOLDED_SIDE",
+  "qualifying_types": [
+   "ObjPtrVec"
+  ],
+  "type_evidence": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_class": "TYPE_ABSENT_FROM_RETAIL_CONTAINER",
+  "ah_evidence_types": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_c_N": "??0Node@?$ObjPtrVec@VRndTex@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_c_S": "??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_offset": 36,
+  "ah_hold_reason": "group survivor is itself an ObjPtrVec spelling: the container argument impeaches the map row naming this address, so the row is a map identification question, not an alias withdrawal"
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "bytes": 60,
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "N_reaches_EQ_vs_retail": true,
+  "S_reaches_EQ_vs_retail": true,
+  "N_variants": 1,
+  "S_variants": 1,
+  "our_N_obj": "system/math/Rot.obj",
+  "our_S_obj": "system/char/CharIKMidi.obj",
+  "len_N": 60,
+  "len_S": 60,
+  "masked_bytes_equal": true,
+  "reloc_shape_equal": true,
+  "discriminators": [
+   {
+    "offset": 36,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "4bed4ad5",
+    "retail_dest": "0x8229dc70",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??0Node@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@QAA@ABU01@@Z",
+    "S_target": "??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z"
+   }
+  ],
+  "n_discriminators": 1,
+  "channels": {
+   "a:CLOSABLE-BY-NAMING": 1
+  },
+  "n_channel_a_closable": 1,
+  "n_channel_b": 0,
+  "n_already_named": 0,
+  "pairs": [
+   {
+    "c_N": "??0Node@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@QAA@ABU01@@Z",
+    "c_S": "??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z",
+    "N_map_named": [],
+    "S_map_named": [],
+    "N_callsites": 6,
+    "S_callsites": 3,
+    "N_strong": [],
+    "S_strong": [
+     "0x8229dc70"
+    ],
+    "N_medium": [],
+    "S_medium": [],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+      "caller_va": "0x823c9178",
+      "off": 36,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8229dc70",
+      "tier": "STRONG"
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": true,
+    "offset": 36,
+    "retail_dest_at_X": "0x8229dc70"
+   }
+  ],
+  "witness_verdict": "NO_WITNESS_FOLDED_SIDE",
+  "qualifying_types": [
+   "ObjPtrVec"
+  ],
+  "type_evidence": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_class": "TYPE_ABSENT_FROM_RETAIL_CONTAINER",
+  "ah_evidence_types": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_c_N": "??0Node@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_c_S": "??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_offset": 36,
+  "ah_hold_reason": "group survivor is itself an ObjPtrVec spelling: the container argument impeaches the map row naming this address, so the row is a map identification question, not an alias withdrawal"
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "bytes": 60,
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "folded": "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
+  "N_reaches_EQ_vs_retail": true,
+  "S_reaches_EQ_vs_retail": true,
+  "N_variants": 1,
+  "S_variants": 1,
+  "our_N_obj": "system/math/Rot.obj",
+  "our_S_obj": "system/char/CharIKMidi.obj",
+  "len_N": 60,
+  "len_S": 60,
+  "masked_bytes_equal": true,
+  "reloc_shape_equal": true,
+  "discriminators": [
+   {
+    "offset": 36,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "4bed4ad5",
+    "retail_dest": "0x8229dc70",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??0Node@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@QAA@ABU01@@Z",
+    "S_target": "??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z"
+   }
+  ],
+  "n_discriminators": 1,
+  "channels": {
+   "a:CLOSABLE-BY-NAMING": 1
+  },
+  "n_channel_a_closable": 1,
+  "n_channel_b": 0,
+  "n_already_named": 0,
+  "pairs": [
+   {
+    "c_N": "??0Node@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@QAA@ABU01@@Z",
+    "c_S": "??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z",
+    "N_map_named": [],
+    "S_map_named": [],
+    "N_callsites": 6,
+    "S_callsites": 3,
+    "N_strong": [],
+    "S_strong": [
+     "0x8229dc70"
+    ],
+    "N_medium": [],
+    "S_medium": [],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+      "caller_va": "0x823c9178",
+      "off": 36,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8229dc70",
+      "tier": "STRONG"
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": true,
+    "offset": 36,
+    "retail_dest_at_X": "0x8229dc70"
+   }
+  ],
+  "witness_verdict": "NO_WITNESS_FOLDED_SIDE",
+  "qualifying_types": [
+   "ObjPtrVec"
+  ],
+  "type_evidence": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_class": "TYPE_ABSENT_FROM_RETAIL_CONTAINER",
+  "ah_evidence_types": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_c_N": "??0Node@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_c_S": "??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_offset": 36,
+  "ah_hold_reason": "group survivor is itself an ObjPtrVec spelling: the container argument impeaches the map row naming this address, so the row is a map identification question, not an alias withdrawal"
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "bytes": 60,
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+  "N_reaches_EQ_vs_retail": true,
+  "S_reaches_EQ_vs_retail": true,
+  "N_variants": 1,
+  "S_variants": 1,
+  "our_N_obj": "system/bandobj/CrowdAudio.obj",
+  "our_S_obj": "system/char/CharIKMidi.obj",
+  "len_N": 60,
+  "len_S": 60,
+  "masked_bytes_equal": true,
+  "reloc_shape_equal": true,
+  "discriminators": [
+   {
+    "offset": 36,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "4bed4ad5",
+    "retail_dest": "0x8229dc70",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??0Node@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@QAA@ABU01@@Z",
+    "S_target": "??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z"
+   }
+  ],
+  "n_discriminators": 1,
+  "channels": {
+   "a:CLOSABLE-BY-NAMING": 1
+  },
+  "n_channel_a_closable": 1,
+  "n_channel_b": 0,
+  "n_already_named": 0,
+  "pairs": [
+   {
+    "c_N": "??0Node@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@QAA@ABU01@@Z",
+    "c_S": "??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z",
+    "N_map_named": [],
+    "S_map_named": [],
+    "N_callsites": 3,
+    "S_callsites": 3,
+    "N_strong": [],
+    "S_strong": [
+     "0x8229dc70"
+    ],
+    "N_medium": [],
+    "S_medium": [],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+      "caller_va": "0x823c9178",
+      "off": 36,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8229dc70",
+      "tier": "STRONG"
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": true,
+    "offset": 36,
+    "retail_dest_at_X": "0x8229dc70"
+   }
+  ],
+  "witness_verdict": "NO_WITNESS_FOLDED_SIDE",
+  "qualifying_types": [
+   "ObjPtrVec"
+  ],
+  "type_evidence": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_class": "TYPE_ABSENT_FROM_RETAIL_CONTAINER",
+  "ah_evidence_types": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_c_N": "??0Node@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_c_S": "??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_offset": 36,
+  "ah_hold_reason": "group survivor is itself an ObjPtrVec spelling: the container argument impeaches the map row naming this address, so the row is a map identification question, not an alias withdrawal"
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "bytes": 60,
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+  "N_reaches_EQ_vs_retail": true,
+  "S_reaches_EQ_vs_retail": true,
+  "N_variants": 1,
+  "S_variants": 1,
+  "our_N_obj": "system/gesture/StreamRecorder.obj",
+  "our_S_obj": "system/char/CharIKMidi.obj",
+  "len_N": 60,
+  "len_S": 60,
+  "masked_bytes_equal": true,
+  "reloc_shape_equal": true,
+  "discriminators": [
+   {
+    "offset": 36,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "4bed4ad5",
+    "retail_dest": "0x8229dc70",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??0Node@?$ObjPtrVec@VRndTex@@VObjectDir@@@@QAA@ABU01@@Z",
+    "S_target": "??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z"
+   }
+  ],
+  "n_discriminators": 1,
+  "channels": {
+   "a:CLOSABLE-BY-NAMING": 1
+  },
+  "n_channel_a_closable": 1,
+  "n_channel_b": 0,
+  "n_already_named": 0,
+  "pairs": [
+   {
+    "c_N": "??0Node@?$ObjPtrVec@VRndTex@@VObjectDir@@@@QAA@ABU01@@Z",
+    "c_S": "??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z",
+    "N_map_named": [],
+    "S_map_named": [],
+    "N_callsites": 3,
+    "S_callsites": 3,
+    "N_strong": [],
+    "S_strong": [
+     "0x8229dc70"
+    ],
+    "N_medium": [],
+    "S_medium": [],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+      "caller_va": "0x823c9178",
+      "off": 36,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8229dc70",
+      "tier": "STRONG"
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": true,
+    "offset": 36,
+    "retail_dest_at_X": "0x8229dc70"
+   }
+  ],
+  "witness_verdict": "NO_WITNESS_FOLDED_SIDE",
+  "qualifying_types": [
+   "ObjPtrVec"
+  ],
+  "type_evidence": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_class": "TYPE_ABSENT_FROM_RETAIL_CONTAINER",
+  "ah_evidence_types": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_c_N": "??0Node@?$ObjPtrVec@VRndTex@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_c_S": "??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_offset": 36,
+  "ah_hold_reason": "group survivor is itself an ObjPtrVec spelling: the container argument impeaches the map row naming this address, so the row is a map identification question, not an alias withdrawal"
+ },
+ {
+  "gi": 680,
+  "addr": "0x823c9178",
+  "bytes": 60,
+  "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "folded": "??$_Param_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+  "N_reaches_EQ_vs_retail": true,
+  "S_reaches_EQ_vs_retail": true,
+  "N_variants": 1,
+  "S_variants": 1,
+  "our_N_obj": "system/math/Rot.obj",
+  "our_S_obj": "system/char/CharIKMidi.obj",
+  "len_N": 60,
+  "len_S": 60,
+  "masked_bytes_equal": true,
+  "reloc_shape_equal": true,
+  "discriminators": [
+   {
+    "offset": 36,
+    "our_opcode": 18,
+    "kind": "branch(b/bl)",
+    "retail_word": "4bed4ad5",
+    "retail_dest": "0x8229dc70",
+    "retail_dest_name": null,
+    "channel": "a:CLOSABLE-BY-NAMING",
+    "N_target": "??0Node@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@QAA@ABU01@@Z",
+    "S_target": "??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z"
+   }
+  ],
+  "n_discriminators": 1,
+  "channels": {
+   "a:CLOSABLE-BY-NAMING": 1
+  },
+  "n_channel_a_closable": 1,
+  "n_channel_b": 0,
+  "n_already_named": 0,
+  "pairs": [
+   {
+    "c_N": "??0Node@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@QAA@ABU01@@Z",
+    "c_S": "??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z",
+    "N_map_named": [],
+    "S_map_named": [],
+    "N_callsites": 6,
+    "S_callsites": 3,
+    "N_strong": [],
+    "S_strong": [
+     "0x8229dc70"
+    ],
+    "N_medium": [],
+    "S_medium": [],
+    "N_witness": [],
+    "S_witness": [
+     {
+      "caller": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+      "caller_va": "0x823c9178",
+      "off": 36,
+      "caller_vs_retail": "EQ",
+      "retail_dest": "0x8229dc70",
+      "tier": "STRONG"
+     }
+    ],
+    "verdict": "NO_WITNESS_N",
+    "survivor_witness_is_retail_dest_at_X": true,
+    "offset": 36,
+    "retail_dest_at_X": "0x8229dc70"
+   }
+  ],
+  "witness_verdict": "NO_WITNESS_FOLDED_SIDE",
+  "qualifying_types": [
+   "ObjPtrVec"
+  ],
+  "type_evidence": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_class": "TYPE_ABSENT_FROM_RETAIL_CONTAINER",
+  "ah_evidence_types": {
+   "ObjPtrVec": {
+    "is_template": true,
+    "rtti_mangled": "?$ObjPtrVec@",
+    "retail_rtti_hits": 0,
+    "polymorphic_in_our_source": true,
+    "rb3wii_files": 0,
+    "dc3_files": 2,
+    "dc3_only": true,
+    "qualifies": true
+   }
+  },
+  "ah_c_N": "??0Node@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_c_S": "??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z",
+  "ah_offset": 36,
+  "ah_hold_reason": "group survivor is itself an ObjPtrVec spelling: the container argument impeaches the map row naming this address, so the row is a map identification question, not an alias withdrawal"
+ }
+]
