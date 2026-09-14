@@ -396,13 +396,29 @@ BEGIN_COPYS(BandDirector)
     CREATE_COPY(BandDirector)
 END_COPYS
 
-// retail 0x8227C290: two superclass Replace calls, then returns the
-// dynamic_cast<BandDirector*> of the first arg (RTDynamicCast srctype is
-// Hmx::Object in retail).
+// ⛔ The old comment here read "retail 0x8227C290: two superclass Replace
+// calls, then returns the dynamic_cast<BandDirector*> of the first arg".
+// BOTH halves are wrong (lane W16-U, 2026-09-14):
+//   * 0x8227C290 is NOT a function start -- it is +0x78 inside ?BandInit@@YAXXZ
+//     (0x8227C218, 1008 B).  It is a pre-TU5 address, invalid since 2026-07-15.
+//   * The body it describes is real, but it is ?Copy@BandDirector@@ at
+//     0x8228CD58 (112 B, two `bl ?Copy@Object@Hmx@@`, then __RTDynamicCast) --
+//     NOT Replace.  Our 112 B Replace masked-matched that address only because
+//     Replace and Copy share a shape; the relocation TARGETS discriminate, and
+//     they say Copy.  A whole-binary scan of all 868 retail functions of size
+//     112 found exactly that one masked match and no other.
+// Retail's BandDirector::Replace is an EMPTY body: its vtordisp thunk folded to
+// 0x8234EBC8, which branches to 0x826C3888 = a bare `blr` (4 B) -- the same
+// destination our already-matching 4 B ?Copy@BandTrack@@ reaches.  That is
+// consistent with Hmx::Object::Replace itself being a no-op in the match build
+// (Object.cpp) and with CharWeightable::Replace's "no Hmx::Object::Replace
+// fallback" finding.  rb3-Wii's dev-build oracle does carry the two superclass
+// calls; retail bytes outrank the oracle.  Kept for the native port.
 void BandDirector::Replace(ObjRef *from, Hmx::Object *to) {
+#ifdef HX_NATIVE
     Hmx::Object::Replace(from, to);
     RndDrawable::Replace(from, to);
-    dynamic_cast<BandDirector *>((Hmx::Object *)(void *)from);
+#endif
 }
 
 WorldDir *BandDirector::GetWorld() {
