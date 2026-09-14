@@ -27,6 +27,7 @@ public:
     char const *Str() const;
     bool Bool() const;
     int Int() const;
+    double Double() const;
 
 protected:
     json_object *mObject; // 0x4

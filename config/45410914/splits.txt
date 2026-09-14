@@ -125,13 +125,12 @@ Object.cpp:
 
 ContextWrapper.cpp:
 	.pdata      start:0x822160E0 end:0x82216108
-	.pdata      start:0x82217908 end:0x82217970
 	.pdata      start:0x82217970 end:0x82217988
 	.pdata      start:0x82217988 end:0x82217990
 	.pdata      start:0x82217990 end:0x82217998
 	.pdata      start:0x82217998 end:0x82217A00
 	.text       start:0x824F7600 end:0x824F7770
-	.text       start:0x8250BD90 end:0x8250BFB0
+	.text       start:0x8250BF98 end:0x8250BFB0
 	.text       start:0x8250BFB0 end:0x8250C0C8
 	.text       start:0x8250C0C8 end:0x8250C158
 	.text       start:0x8250C158 end:0x8250C1C8
@@ -142,6 +141,10 @@ EntityUploader.cpp:
 	.pdata      start:0x82217B08 end:0x82217CC8
 	.text       start:0x8250D0D8 end:0x8250D4C0
 	.text       start:0x8250D4C8 end:0x8250F4E0
+
+band3/net_band/DataResults.cpp:
+	.pdata      start:0x82217808 end:0x82217970
+	.text       start:0x8250AF88 end:0x8250BF98
 
 RockCentralJobs.cpp:
 	.pdata      start:0x82217A00 end:0x82217AB8
@@ -203,7 +206,7 @@ RockCentral.cpp:
 	.pdata      start:0x82217130 end:0x822173D8
 	.pdata      start:0x822173D8 end:0x82217408
 	.pdata      start:0x82217408 end:0x82217410
-	.pdata      start:0x82217410 end:0x82217830
+	.pdata      start:0x82217410 end:0x82217808
 	.pdata      start:0x8221A840 end:0x8221A850
 	.pdata      start:0x822204B0 end:0x822204C8
 	.pdata      start:0x822204C8 end:0x822204E8
@@ -277,7 +280,7 @@ RockCentral.cpp:
 	.text       start:0x8250577C end:0x82507290
 	.text       start:0x82507290 end:0x825074C0
 	.text       start:0x825074C0 end:0x82507634
-	.text       start:0x82507634 end:0x8250B138
+	.text       start:0x82507634 end:0x8250AF88
 	.text       start:0x8253B238 end:0x8253B2BC
 	.text       start:0x82593B2C end:0x82593B8C
 	.text       start:0x82593B8C end:0x82593C0C
@@ -6731,7 +6734,7 @@ JsonUtils.cpp:
 	.pdata      start:0x8225C748 end:0x8225C780
 	.text       start:0x827DC9E8 end:0x827DCA78
 	.text       start:0x827DCA78 end:0x827DCAA4
-	.text       start:0x82B81DE0 end:0x82B81E28
+	.text       start:0x82B81DD8 end:0x82B81E28
 	.text       start:0x82B81E28 end:0x82B81EE8
 	.text       start:0x82B81EE8 end:0x82B81FF0
 	.text       start:0x82B81FF0 end:0x82B820A0
@@ -7089,10 +7092,6 @@ DataFile.cpp:
 	.pdata      start:0x821F8B10 end:0x821F8B30
 	.pdata      start:0x82216260 end:0x82216278
 	.pdata      start:0x82216310 end:0x82216318
-	.pdata      start:0x82217830 end:0x82217840
-	.pdata      start:0x82217850 end:0x822178B8
-	.pdata      start:0x822178B8 end:0x822178C8
-	.pdata      start:0x822178C8 end:0x82217908
 	.pdata      start:0x8223D380 end:0x8223D3B0
 	.pdata      start:0x8223D3B8 end:0x8223D550
 	.pdata      start:0x8223D550 end:0x8223D578
@@ -7106,10 +7105,6 @@ DataFile.cpp:
 	.text       start:0x822E4F70 end:0x822E5040
 	.text       start:0x824F88A4 end:0x824F8968
 	.text       start:0x824F9188 end:0x824F91DC
-	.text       start:0x8250B138 end:0x8250B1A0
-	.text       start:0x8250B200 end:0x8250B5C0
-	.text       start:0x8250B5C0 end:0x8250B6F0
-	.text       start:0x8250B6F0 end:0x8250BD90
 	.text       start:0x8276A758 end:0x8276AA00
 	.text       start:0x8276AAB4 end:0x8276C6CC
 	.text       start:0x8276C6CC end:0x8276C958
@@ -12130,9 +12125,7 @@ RGState.cpp:
 
 WebSvcMgrCurl.cpp:
 	.pdata      start:0x821F8CC8 end:0x821F8CF0
-	.pdata      start:0x82217840 end:0x82217850
 	.text       start:0x822E7538 end:0x822E76F4
-	.text       start:0x8250B1A0 end:0x8250B200
 
 Decibels.cpp:
 	.pdata      start:0x8225CD10 end:0x8225CD20
@@ -12850,7 +12843,7 @@ system/dsp/VibratoDetector.cpp:
 
 system/dsp/SndAnalysis.cpp:
 	.pdata      start:0x8225C6B0 end:0x8225C6E8
-	.text       start:0x82B816F0 end:0x82B81DE0
+	.text       start:0x82B816F0 end:0x82B81DD8
 
 band3/game/CommonPhraseCapturer.cpp:
 	.pdata      start:0x821F1660 end:0x821F1678

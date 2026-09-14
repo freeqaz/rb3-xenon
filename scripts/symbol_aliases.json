@@ -75362,6 +75362,24 @@
     "?OnMsg@RockCentral@@QAA?AVDataNode@@ABVFriendsListChangedMsg@@@Z"
    ],
    "evidence": "Lane W16-B (2026-09-14), RockCentral OnMsg escalation. T1 on retail bytes: retail ?Handle@RockCentral (0x82289A50 and 0x82289AC8 in asm/RockCentral.s) calls ONE body, fn_824F7C98 (128 B), from BOTH the UserLoginMsg and the FriendsListChangedMsg HANDLE_MESSAGE blocks -- there is no second body anywhere in the pinned range, so retail folded the two overloads. Our two compiled COMDATs in RockCentral.obj are byte-identical (128 B, sha256 2131fa6a64042225..., identical relocation lists: __savegprlr_26, ??2Job@@SAPAXI@Z, ?Int@DataNode@@QBAHPBVDataArray@@@Z, ??0UpdateFriendsListJob@@QAA@H@Z, ?QueueJob@JobMgr@@QAAXPAVJob@@@Z, __restgprlr_26), which is /OPT:ICF's fold condition exactly, and the survivor spelling reads fuzzy 100 against 0x824F7C98 once named (report.json, build 2 of this lane). Source: both handlers are `mJobMgr.QueueJob(new UpdateFriendsListJob(msg.GetPadNum())); return 1;` -- the rb3-Wii oracle's UserLogin body (TheWiiProfileMgr etc.) and its second FriendsListChanged job are Wii-only and absent from retail Xbox bytes."
+  },
+  {
+   "name": "0?$pair@$$CBVString@@VDataNode",
+   "address": "0x8250b138",
+   "survivor": "??0?$pair@$$CBVString@@VDataNode@@@stlpmtx_std@@QAA@ABU01@@Z",
+   "folded": [
+    "??$?0VString@@VDataNode@@@?$pair@$$CBVString@@VDataNode@@@stlpmtx_std@@QAA@ABU?$pair@VString@@VDataNode@@@1@@Z"
+   ],
+   "evidence": "W16-J (2026-09-14) T1: retail body at the survivor address is byte-identical (relocation-normalized, all reloc targets agree) to our compiled COMDAT for the folded spelling in build/45410914/src/band3/net_band/DataResults.obj; MSVC ICF folds the two pair<const String,DataNode> members because their bodies and relocations are identical. Witness: ?Update@DataResultList@@UAAXPAVMessage@@@Z (0x8250b9c8) is charged at exactly this call site and nowhere else. Fold: copy ctor pair<const String,DataNode>(const pair&) vs converting ctor from pair<String,DataNode> (56 B each, same 2 bl targets: String copy ctor, DataNode copy ctor)."
+  },
+  {
+   "name": "1?$pair@$$CBVString@@VDataNode",
+   "address": "0x8250b050",
+   "survivor": "??1?$pair@$$CBVString@@VDataNode@@@stlpmtx_std@@QAA@XZ",
+   "folded": [
+    "??1?$pair@VString@@VDataNode@@@stlpmtx_std@@QAA@XZ"
+   ],
+   "evidence": "W16-J (2026-09-14) T1: retail body at the survivor address is byte-identical (relocation-normalized, all reloc targets agree) to our compiled COMDAT for the folded spelling in build/45410914/src/band3/net_band/DataResults.obj; MSVC ICF folds the two pair<const String,DataNode> members because their bodies and relocations are identical. Witness: ?Update@DataResultList@@UAAXPAVMessage@@@Z (0x8250b9c8) is charged at exactly this call site and nowhere else. Fold: dtor pair<const String,DataNode> vs dtor pair<String,DataNode> (same 2 bl targets: DataNode release, String dtor)."
   }
  ]
 }
