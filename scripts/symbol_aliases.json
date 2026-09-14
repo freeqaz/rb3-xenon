@@ -62478,10 +62478,21 @@
    "name": "Export",
    "address": "0x8280cb08",
    "survivor": "?Export@RndDir@@$4PPPPPPPM@IE@AAXPAVDataArray@@_N@Z",
-   "folded": [
-    "?Replace@RndTransformable@@$4PPPPPPPM@IE@AAXPAVObjRef@@PAVObject@Hmx@@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "?Replace@RndTransformable@@$4PPPPPPPM@IE@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
+     "lane": "W16-S",
+     "class": "CONTRADICTED_ON_RETAIL",
+     "disposition": "withdrawn from folded; group KEPT, nothing pruned",
+     "verdict": "NOT a fold. This is a 16-byte vtordisp THUNK -- the population where MASKED T1, the tier this group was installed on (tools/icf_alias_build.py, \"byte-identical modulo relocated fields\"), is VACUOUS: the branch DESTINATION is the entire information content of a forwarder, so masking it masks the only discriminator (tools/w33_fold_adjudicate.py docstring; the 661-member $4PPPPPPPM@A@AA group is the same hazard at scale).",
+     "why": "Retail@0x8280cb08 branches to ?Export@RndDir@@UAAXPAVDataArray@@_N@Z; our thunk branches to ?Replace@RndTransformable@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z. Export(DataArray*,bool) and Replace(ObjRef*,Object*) are different methods of different arity.",
+     "adjudicator_detail": "branch at +c: retail -> ?Export@RndDir@@UAAXPAVDataArray@@_N@Z, ours -> ?Replace@RndTransformable@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+     "callee_layer": "BOTH callees are defined in our build and land in DIFFERENT /OPT:ICF fold classes under the linker fixed point (partition refinement over our COMDATs), and that closure was applied to the DESTINATIONS as well as the bodies -- so the refutation does not rest on a missing our-side definition. The group records \"0 census sites over 1 functions\": never witnessed on a charged site.",
+     "note": "tools/w16s_alias_census.py, lane W16-S 2026-09-14. Ablating the whole CONTRADICTED_ON_RETAIL class (16 memberships) measured EXACTLY 0 on all four report.json measures, so this is predicted Delta 0: it buys accuracy, and stops a refuted alias from beginning to forgive a real divergence as porting advances. The other 15 were deliberately NOT withdrawn -- 9 because our own relocation names a callee our build does not DEFINE (the closure fails closed into a false contradiction), 4 because they are VT1 groups proven by retail RTTI VTABLE GEOMETRY, which is stronger retail-side evidence than an our-side closure and reframes them as OUR-SIDE SOURCE DIVERGENCES rather than alias defects, 1 on a SIZE argument (the STLPORT-1 trap), and 1 installed by icf_alias_fixpoint.py whose closure includes alias equivalence while mine deliberately does not. See docs/decomp/W16S_T1_ALIAS_IDENTIFICATION_VS_FOLD_2026-09-14.md."
+    }
+   ]
   },
   {
    "name": "$_Copy_Construct",
