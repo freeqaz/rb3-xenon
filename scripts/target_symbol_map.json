@@ -30404,5 +30404,8 @@
  "0x82812068": "?PostLoad@UILabelDir@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
  "0x822d3918": "?PostLoad@EndingBonus@@UAAXAAVBinStream@@@Z",
  "0x822d3910": "?PreLoad@EndingBonus@@UAAXAAVBinStream@@@Z",
- "0x82638d58": "?GetRecommendationIndexPath@StoreInfoPanel@@QAAXPBDAAVString@@@Z"
+ "0x82638d58": "?GetRecommendationIndexPath@StoreInfoPanel@@QAAXPBDAAVString@@@Z",
+ "0x8263faa0": "?GetOffersForToken@TokenRedemptionPanel@@QAAXPBDPAVLocalBandUser@@@Z",
+ "0x8263f948": "?GetPreviousOffersForUser@TokenRedemptionPanel@@QAAXPAVLocalBandUser@@@Z",
+ "0x8263fb98": "?ShowPurchaseUIForOffer@TokenRedemptionPanel@@QAAXHPAVLocalBandUser@@@Z"
 }
