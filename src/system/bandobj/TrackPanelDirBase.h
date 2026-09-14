@@ -65,12 +65,38 @@ public:
     virtual void StartPulseAnims(float) {}
     virtual float GetPulseAnimStartDelay(bool) const;
     virtual GemTrackResourceManager *GetGemTrackResourceManager() const { return 0; }
-    // Retail TrackPanelDir vtable (file 0x2d464) has two more slots past
-    // GetGemTrackResourceManager (0xd0) that the rb3-Wii dev oracle lacks:
-    //   0xd4 -> 0x82303bb8  (reads this+0x374, shows 3-4 sub-objects)
-    //   0xd8 -> 0x82309b60  (inline: this->0x378 = false)
+    // Retail TrackPanelDir vtable is at .rdata 0x8202d464. Slot 0xd0 is
+    // ?GetGemTrackResourceManager@TrackPanelDir@@UBAPAVGemTrackResourceManager@@XZ
+    // and slot 0xdc reads 0x00000000, so 0xd4/0xd8 are the LAST two slots.
+    // Both are RB3-360-only: the rb3-Wii dev oracle's TrackPanelDirBase.h ends
+    // at GetGemTrackResourceManager.
+    //   0xd4 -> 0x82303bb8   0xd8 -> 0x82309b60 (inline: this->0x378 = false)
     // TrackPanel::Reset() calls slot 0xd8 right before ConfigureTracks(false).
-    virtual void Unkd4() {}
+    //
+    // Slot 0xd4's SIGNATURE is proved on retail bytes (lane W16-AS); its NAME
+    // is NOT, so it keeps the placeholder spelling. Do not invent a name for it.
+    //   * 0x82303bb8 is the ONLY .rdata word in the image equal to itself, i.e.
+    //     TrackPanelDir supplies the only body; every other derivation inherits
+    //     the empty base version (which folds into the shared bare-blr COMDAT).
+    //   * Of 13 ?GetTrackPanelDir@@YAPAVTrackPanelDirBase@@XZ call sites, exactly
+    //     ONE dispatches slot 0xd4 -- GamePanel's fn_82695178 (UpdateNowBar).
+    //   * The override reads r4..r7 and uses all four, so the arity is 4:
+    //         if (this->0x374) {
+    //             this->0x344->vtbl[0x58](a, true);   // UILabel::SetDisplayText
+    //             this->0x350->vtbl[0x58](b, true);
+    //             this->0x35c->vtbl[0x58](c, true);
+    //             SetTextToken((UILabel *)this->0x368, d);
+    //         }
+    //   * Types follow from the consumers, three independent ways:
+    //     a/b/c are ?SetDisplayText@UILabel@@MAAXPBD_N@Z's first parameter =>
+    //     const char *; they are produced by MakeString (returns const char *);
+    //     d is ?SetTextToken@UILabel@@QAAXVSymbol@@@Z's parameter => Symbol.
+    //     NB the map spells that MakeString instantiation
+    //     ??$MakeString@VSymbol@@PBDPBD@@... -- that is an ICF FOLD ARTIFACT
+    //     (all all-4-byte-arg instantiations emit identical code and collapse
+    //     onto one arbitrary survivor name). The retail format strings are
+    //     "%d.%02d.%02d" x2 and "%d.%d.%03d", i.e. three ints each.
+    virtual void Unkd4(const char *, const char *, const char *, Symbol) {}
     virtual void Unkd8() {}
 
     bool Showing() {
