@@ -471,16 +471,30 @@ void GamePanel::UpdateNowBar() {
 __declspec(noinline) void GamePanel::UpdateNowBar() {
     // Retail-360: no mTime RndOverlay to write into (stripped member) --
     // routes through TrackPanelDir's vtable slot 0xd4 instead (see the
-    // call-site note in Poll() above and the Unkd4() declaration/comment
-    // in TrackPanelDirBase.h). The retail callee (fn_82695178) formats the
-    // same "MBT %d:%d:%03d [...]" text seen in the debug-HUD variant above
-    // and hands it to that vtable slot; that text-formatting body is not
-    // ported here since it belongs to a different symbol (Unkd4's true
-    // target, not GamePanel::Poll/UpdateNowBar) -- this preserves the
-    // caller shape Poll() needs without misattributing that work to this
-    // function. No null check here either -- retail's decomp of fn_82695178
-    // dereferences GetTrackPanelDir()'s result unconditionally.
-    GetTrackPanelDir()->Unkd4();
+    // Unkd4() declaration/comment in TrackPanelDirBase.h).
+    //
+    // CORRECTION (lane W16-AS, on retail bytes). Two claims that stood here
+    // before were both FALSE and are removed rather than softened:
+    //   1. "that text-formatting body belongs to a different symbol (Unkd4's
+    //      true target, not UpdateNowBar)" -- WRONG. The three MakeString
+    //      calls are INSIDE fn_82695178 itself; their results are what it
+    //      passes to slot 0xd4. The slot's body (0x82303bb8) does no
+    //      formatting at all, it only fans the finished strings out to four
+    //      UILabels.
+    //   2. "formats the same \"MBT %d:%d:%03d [...]\" text seen in the
+    //      debug-HUD variant above" -- WRONG. fn_82695178 references no MBT
+    //      string; its only format strings are "%d.%02d.%02d" (twice) and
+    //      "%d.%d.%03d". With ?Seconds@TaskMgr@@QBAMW4TimeReference@1@@Z and
+    //      fmod alongside them this is a TIME display, not the debug HUD.
+    //
+    // Still not ported (see the W16-AS write-up): the body additionally needs
+    // TheSongDB's 0x24-byte record vector at +0x20, the unidentified
+    // fn_827C91A0, and the unidentified data at lbl_82C71838. matched_code is
+    // all-or-nothing per row, so partial progress here buys zero bytes -- the
+    // signature is landed because it is proved, not because it crosses.
+    // No null check -- retail dereferences GetTrackPanelDir()'s result
+    // unconditionally.
+    GetTrackPanelDir()->Unkd4(NULL, NULL, NULL, Symbol());
 }
 #endif // RB3_GAMEPANEL_DEBUG_MEMBERS
 
