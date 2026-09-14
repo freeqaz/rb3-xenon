@@ -631,29 +631,25 @@ void OvershellSlot::AttemptRemoveUser() {
     BandUser *pUser = GetUser();
     MILO_ASSERT(pUser->IsLocal(), 0x495);
 
-    bool b1 = false;
-    if (!mSessionMgr->IsLocal()) {
-        LocalBandUser *host = mSessionMgr->GetLocalHost();
-        if (host == pUser->GetLocalUser()) {
-            b1 = true;
-        } else {
-            LocalUser *lUser = dynamic_cast<LocalUser *>(pUser);
-            int i;
-            for (i = 0; i < 4; i++) {
-                if (i != lUser->GetPadNum()) {
-                    int idx = TheWiiProfileMgr.GetIndexForPad(i);
-                    if (idx >= 0 && TheWiiProfileMgr.IsIndexValid(idx)
-                        && !TheWiiProfileMgr.IsPadAGuest(i)
-                        && TheWiiProfileMgr.IsPadRegistered(i))
-                        break;
-                }
-            }
-            if (i == 4)
-                b1 = true;
-        }
-    }
-
-    if (b1) {
+    // Retail X360 0x825DF898 is 0x12C B / 75 instructions and has exactly FOUR
+    // decision points after the assert: !mSessionMgr->IsLocal(), GetLocalHost()
+    // == pUser->GetLocalUser(), mCriticalUser == pUser, mOvershell->InSong() --
+    // then the shared SetOvershellSlotState/UpdateAll tail or RemoveUser().  The
+    // rb3-Wii DEV oracle's pad loop over TheWiiProfileMgr (GetIndexForPad /
+    // IsIndexValid / IsPadAGuest / IsPadRegistered) and its fourth branch on
+    // TheProfileMgr.IsPrimaryProfileCritical() are NOT in the retail bytes
+    // (no loop, no fifth call) -- same Wii-only class W15-E removed from
+    // RemoveUser() below/above.  Retail bytes outrank the oracle.  See
+    // docs/decomp/ROCKCENTRAL_ONMSG_ESCALATION_2026-09-14.md (lane W16-B).
+    //
+    // Build 3 of lane W16-B (94.29%) had this as `bool b1 = false; if (...) {
+    // if (...) b1 = true; } if (b1)` -- the oracle's shape.  Retail has NO
+    // stored bool: both tests branch straight to the critical-user arm
+    // (`bne .L_824A27E8` after IsLocal, `bne cr6, .L_824A27E8` after the host
+    // compare), and the frame is 0x70 with __savegprlr_29 -- one callee-saved
+    // register fewer than the bool needed.  A short-circuit && is that shape.
+    if (!mSessionMgr->IsLocal()
+        && mSessionMgr->GetLocalHost() == pUser->GetLocalUser()) {
         pUser->SetOvershellSlotState(kState_RemoveUserDisconnectConfirm);
         mOvershell->UpdateAll();
     } else if (mSessionMgr->mCritUserListener->mCriticalUser == pUser) {
@@ -661,9 +657,6 @@ void OvershellSlot::AttemptRemoveUser() {
         mOvershell->UpdateAll();
     } else if (mOvershell->InSong()) {
         pUser->SetOvershellSlotState(kState_RemoveUserInSongConfirm);
-        mOvershell->UpdateAll();
-    } else if (TheProfileMgr.IsPrimaryProfileCritical(pUser->GetLocalUser())) {
-        pUser->SetOvershellSlotState(kState_RemoveUserInCampaignConfirm);
         mOvershell->UpdateAll();
     } else
         RemoveUser();
