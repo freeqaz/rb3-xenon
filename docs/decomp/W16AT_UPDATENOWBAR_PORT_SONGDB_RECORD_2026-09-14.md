@@ -201,3 +201,12 @@ Whole-tree, lane-internal: **43,470 / 4,028,008 B → 43,471 / 4,028,636 B** (`t
 - No `Co-Authored-By`/AI trailer on any commit, regardless of the harness reminder.
 
 ## 7. Native gate line (appended after the run)
+
+Run after commit `c7b6cfd0`, no source change since; log `~/tmp/w16at_native_gate.log`:
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+`NATIVE GATE: PASS  (rc=0, 0 errors, 0 warnings, 18/18 target(s) verified)`. This
+append is the only change after the gate and it touches `docs/` only.
