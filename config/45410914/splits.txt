@@ -6283,7 +6283,6 @@ MoggClipMap.cpp:
 	.text       start:0x8272B218 end:0x8272B2E0
 
 Splash.cpp:
-	.pdata      start:0x82234B00 end:0x82234B08
 	.pdata      start:0x8223AE68 end:0x8223AE80
 	.pdata      start:0x8223AE80 end:0x8223AE88
 	.pdata      start:0x8223AE88 end:0x8223AFB0
@@ -6291,7 +6290,6 @@ Splash.cpp:
 	.pdata      start:0x8223AFC0 end:0x8223AFC8
 	.pdata      start:0x8223AFC8 end:0x8223AFD0
 	.pdata      start:0x8223AFE0 end:0x8223B080
-	.text       start:0x826CCC10 end:0x826CCD58
 	.text       start:0x82741350 end:0x827414B8
 	.text       start:0x827414B8 end:0x827414E0
 	.text       start:0x827414E0 end:0x82742968
@@ -8520,16 +8518,20 @@ band3/game/TrainerPanel.cpp:
 	.pdata      start:0x822347E0 end:0x822349C8
 	.pdata      start:0x822349C8 end:0x822349D0
 	.pdata      start:0x822349D0 end:0x822349D8
-	.pdata      start:0x822349E8 end:0x82234AF8
-	.pdata      start:0x82234AF8 end:0x82234B00
-	.pdata      start:0x82234B08 end:0x82234B48
+	.pdata      start:0x822349E8 end:0x82234AF0
+	.pdata      start:0x82234B28 end:0x82234B48
 	.text       start:0x826C9780 end:0x826C97AC
 	.text       start:0x826C97B0 end:0x826CB4A0
 	.text       start:0x826CB4A0 end:0x826CB4E4
 	.text       start:0x826CB4E4 end:0x826CB590
-	.text       start:0x826CB654 end:0x826CCAF0
-	.text       start:0x826CCB00 end:0x826CCC10
-	.text       start:0x826CCD58 end:0x826CD438
+	.text       start:0x826CB654 end:0x826CCA88
+	.text       start:0x826CCE28 end:0x826CD438
+
+band3/game/DirectInstrument.cpp:
+	.pdata      start:0x82234AF0 end:0x82234AF8
+	.pdata      start:0x82234AF8 end:0x82234B28
+	.text       start:0x826CCA88 end:0x826CCAF0
+	.text       start:0x826CCB00 end:0x826CCE28
 
 band3/game/Singer.cpp:
 	.pdata      start:0x82236E40 end:0x82236E90
