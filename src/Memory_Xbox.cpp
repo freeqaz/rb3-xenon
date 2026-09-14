@@ -442,12 +442,22 @@ void *PhysicalAllocTracked(unsigned long size, unsigned long alignment, const ch
     return ptr;
 }
 
+// Retail 0x822733B8 is 84 bytes and makes THREE calls -- XPhysicalSize,
+// XPhysicalFree and MemTrackFree.  Ours was 76 bytes / two calls (no
+// MemTrackFree), which tools/icf_pair_adjudicate.py reports as
+// "masked bodies DIFFER" against that address.  Both of retail's call sites for
+// 0x822733B8 (DxRnd::ReleaseAutoRelease and fn_82B6A828 in ContextChecker) set
+// only r3, so the 1-argument spelling is the one that reaches this body -- and
+// that body tracks.  The map names the address ?PhysicalFreeTracked@@YAXPAXPBDH1@Z
+// because the 4-argument overload ignores p2/p3/p4 and therefore ICF-folds onto
+// this one.  Lane W16-Z, 2026-09-14.
 void PhysicalFree(void *address) {
     if (address != 0) {
         gPhysicalUsage -= XPhysicalSize(address);
     }
 
     XPhysicalFree(address);
+    MemTrackFree(address);
 }
 
 void PhysicalFreeTracked(void *address, const char *p2, int p3, const char *p4) {

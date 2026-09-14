@@ -30445,5 +30445,8 @@
  "0x8283d740": "XShowDirtyDiscErrorUI",
  "0x82844ba8": "RtlSetLastNTError",
  "0x8283d3b8": "WaitForSingleObject",
- "0x8283d7c8": "XUserGetSigninInfo"
+ "0x8283d7c8": "XUserGetSigninInfo",
+ "0x8273cef0": "?BeginDrawing@DxRnd@@UAAXXZ",
+ "0x8273d0a0": "?DoPointTests@DxRnd@@AAAXXZ",
+ "0x8273d610": "?DoWorldEnd@DxRnd@@EAAXXZ"
 }
