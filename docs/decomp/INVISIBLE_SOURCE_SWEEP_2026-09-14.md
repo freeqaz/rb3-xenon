@@ -132,7 +132,15 @@ pay, because the row lives in `default/auto_03_8273CBFC_text`.
    neighbour. Restored from `../rb3/src/system/os/Joypad.cpp:594`, in the oracle's own source position.
 3. **A stale pre-TU5 address in a comment.** `MemHandle::Lock` carried `fn_827966E8`, which names
    nothing on the current target (main has targeted TU5 since 2026-07-15). Real row is `0x827BB6F8`.
-4. **`RB3_RNDTEX_DC3_CRC` had an ungated second use site.** `rndobj/Tex.h:156` claims the DC3-only CRC
+4. **A native-link stub that was a behavioural lie.** `native/src/m10_leaf_stubs.cpp:136` defined
+   `UserHasController(LocalUser *) { return false; }` — a stub that existed *only* because the real
+   body was missing. Restoring the real body made it a **duplicate definition** and the native gate
+   caught it (`first defined here` on `Joypad.cpp.o`, failing `rb3-vocal2` and `rb3-harmony`). Stub
+   removed; the real body is `GetUsersPadNum(user) != -1`, so the native build was also answering the
+   wrong thing. **This is the gate earning its keep for the fifth recorded time** — and it is the
+   documented shape: a match-build change that compiles perfectly can still leave the link broken,
+   which the matching build is structurally incapable of noticing.
+5. **`RB3_RNDTEX_DC3_CRC` had an ungated second use site.** `rndobj/Tex.h:156` claims the DC3-only CRC
    member's "only use is the COPY_MEMBER in Tex.cpp". That claim was **wrong** — `DxTex::ResetSurfaces`
    used it too, and nothing caught it precisely because `rnddx9/Tex.cpp` was wired into no build at all.
 
@@ -182,3 +190,15 @@ named oracle and a pairable unit; neither was attempted for budget reasons, not 
 - Did **not** port `StartCompress` / `FinishCompress` alongside `DoCompress`: they are undefined the
   same way but carry **no named retail row**, so they cannot pair, and leaving them out kept the
   `DoCompress` measurement a clean one-variable change.
+
+## Native gate
+
+Run **last**, as required, because this lane touched `src/`. Verbatim:
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+The **first** run was `verdict=FAIL … verified=16 … failed=2` — the duplicate `UserHasController`
+above. The match-build numbers in this document predate and are unaffected by the fix, which touches
+only `native/src/`, a tree the X360 match build does not compile.
