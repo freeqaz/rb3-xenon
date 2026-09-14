@@ -1145,61 +1145,6 @@
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 28, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 27 folded spelling(s), 28 census sites over 5 functions."
   },
   {
-   "name": "clear",
-   "address": "0x822dea78",
-   "survivor": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
-   "folded": [
-    "?clear@?$_Rb_tree@PAVTrackWidget@@U?$less@PAVTrackWidget@@@stlpmtx_std@@PAV1@U?$_Identity@PAVTrackWidget@@@3@U?$_SetTraitsT@PAVTrackWidget@@@priv@3@V?$StlNodeAlloc@PAVTrackWidget@@@3@@stlpmtx_std@@QAAXXZ",
-    "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAAXXZ"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 32, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 27 census sites over 1 functions.",
-   "withdrawn": [],
-   "repair": {
-    "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-    "lane": "ALIAS-REPAIR 2026-08-19",
-    "why": "Under-partitioned closure. 1 of 2 compiled members agree with the survivor under masking and DISAGREE on their RESOLVED operands (resolved through the ICF congruence over our own build), so they cannot be the same LINKED body and /OPT:ICF cannot have folded them together. Repaired, not refused: the group is partitioned into the 2 classes the evidence does support. `disposition: repartitioned` = re-emitted as its own class in a group immediately following; `dropped_singleton` = its class has one member, and one member is not a fold.",
-    "n_classes": 2,
-    "class_sizes": [
-     1,
-     1
-    ],
-    "n_subgroups": 0
-   },
-   "restore": {
-    "lane": "RELOC-RECONCILE 2026-08-20",
-    "names": [
-     "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAAXXZ"
-    ],
-    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   },
-   "restored": [
-    {
-     "spelling": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAAXXZ",
-     "lane": "W9-D 2026-09-13",
-     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
-     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
-     "superseded_records": [
-      {
-       "spelling": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAAXXZ",
-       "lane": "ALIAS-REPAIR 2026-08-19",
-       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-       "disposition": "dropped_singleton"
-      }
-     ]
-    }
-   ],
-   "added": [
-    {
-     "spelling": "?clear@?$_Rb_tree@PAVTrackWidget@@U?$less@PAVTrackWidget@@@stlpmtx_std@@PAV1@U?$_Identity@PAVTrackWidget@@@3@U?$_SetTraitsT@PAVTrackWidget@@@priv@3@V?$StlNodeAlloc@PAVTrackWidget@@@3@@stlpmtx_std@@QAAXXZ",
-     "lane": "W16-I 2026-09-14",
-     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity, relocation TARGET NAMES compared), with a FAILING negative control",
-     "evidence": "Two-level T1 gate against the RETAIL IMAGE, not against another spelling. LEVEL 1: retail .pdata extent at 0x822dea78 is 80 B; our compiled COMDAT for this spelling (system/char/CharBonesMeshes.obj) is 80 B with ZERO unmasked differing words; its single relocation, at +0x24, is its own _M_erase. LEVEL 1 ALONE IS VACUOUS -- every _Rb_tree::clear body is identical except that one relocation, so all three candidate spellings pass it. LEVEL 2 (the discriminating level): retail's bl at +36 lands on 0x822dd9a0, .pdata extent 92 B; our _M_erase for this spelling is 92 B with ZERO unmasked diffs, and its relocation target names match retail's structure (self-recursion at +0x28, ?MemOrPoolFreeSTL@@YAXHPAX@Z at +0x38). NEGATIVE CONTROL, required to fail and DOES: the survivor's own map<Symbol,CharLipSync*> instantiation differs from retail at +48 in a real unmasked word -- li r3,24 (map node: 16 B base + 8 B pair<const Symbol,CharLipSync*>) vs retail's li r3,20 (set node: 16 B base + 4 B value).",
-     "corroboration": "The group's other folded member, set<Symbol>::clear (restored by lane W9-D on the same flat L1_T1 basis), is the POSITIVE control and passes the identical two-level test with li r3,20. set<Symbol> and set<TrackWidget*> share a 4-byte value type, hence one node size, one node deallocator call and one body; /OPT:ICF folds them legitimately.",
-     "note_on_the_survivor": "The survivor spelling is provably NOT the body at this address (node-size control above): it is a wrong map name that happens to be the bucket key. Renaming it is a SEPARATE, riskier edit -- CharLipSync.obj defines no set-family spelling, so a rename without a re-home would un-pair the row (CLAUDE.md: proving a name wrong does not make renaming safe). Recorded as a follow-on lead, NOT done here."
-    }
-   ]
-  },
-  {
    "name": "SetOwnerObj",
    "address": "0x8245cc78",
    "survivor": "?SetOwnerObj@?$ObjOwnerPtr@VObject@Hmx@@@@QAAXPAVObject@Hmx@@@Z",
@@ -75380,6 +75325,55 @@
     "??1?$pair@VString@@VDataNode@@@stlpmtx_std@@QAA@XZ"
    ],
    "evidence": "W16-J (2026-09-14) T1: retail body at the survivor address is byte-identical (relocation-normalized, all reloc targets agree) to our compiled COMDAT for the folded spelling in build/45410914/src/band3/net_band/DataResults.obj; MSVC ICF folds the two pair<const String,DataNode> members because their bodies and relocations are identical. Witness: ?Update@DataResultList@@UAAXPAVMessage@@@Z (0x8250b9c8) is charged at exactly this call site and nowhere else. Fold: dtor pair<const String,DataNode> vs dtor pair<String,DataNode> (same 2 bl targets: DataNode release, String dtor)."
+  },
+  {
+   "name": "clear",
+   "address": "0x822dea78",
+   "survivor": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAAXXZ",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 32, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 27 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-J 2026-09-14",
+     "class": "CONTRADICTED",
+     "why": "map spelling proven wrong on retail bytes: 0x822dea78 bl's 0x822dd9a0 = set<Symbol>::_M_erase (li r3,20 node size); the map<Symbol,CharLipSync*> instantiation would use li r3,24 (different-size COMDATs cannot fold). 0 of 62 retail callers are in CharLipSync; CharLipSync.obj emits no set-family spelling. Re-homed 0x822dea78 to BandProfile.cpp (which emits set<Symbol>::_M_erase and set<Symbol>::clear and already owns the 0x822dd9a0 carve) and renamed the map row to the set<Symbol>::clear spelling in the same commit (W16-F rule)."
+    }
+   ],
+   "repair": {
+    "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+    "lane": "ALIAS-REPAIR 2026-08-19",
+    "why": "Under-partitioned closure. 1 of 2 compiled members agree with the survivor under masking and DISAGREE on their RESOLVED operands (resolved through the ICF congruence over our own build), so they cannot be the same LINKED body and /OPT:ICF cannot have folded them together. Repaired, not refused: the group is partitioned into the 2 classes the evidence does support. `disposition: repartitioned` = re-emitted as its own class in a group immediately following; `dropped_singleton` = its class has one member, and one member is not a fold.",
+    "n_classes": 2,
+    "class_sizes": [
+     1,
+     1
+    ],
+    "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAAXXZ"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
+   },
+   "restored": [
+    {
+     "spelling": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAAXXZ",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAAXXZ",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   }
  ]
 }
