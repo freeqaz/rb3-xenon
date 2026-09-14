@@ -852,6 +852,59 @@ void *MemHandle::Lock() {
     return (char *)mAlloc + 0x10;
 }
 
+// Retail/match MemHandle ctor (rb3-Wii utl/MemMgr.cpp:827). Retail has no
+// out-of-line ??0MemHandle row; _MemAllocH below inlines it as three stores
+// plus an aliasing reload of mAlloc (lwz r10,0(r3) before stw r11,4(r10)).
+MemHandle::MemHandle(void *alloc) {
+    mAlloc = (MemHandleAlloc *)alloc;
+    mAlloc->mBack = this;
+    mAlloc->mLockCount = 0;
+}
+
+// Retail 0x827BBA68 (104 B, UNNAMED in target_symbol_map.json -- neither
+// rb3-Wii nor DC3 has a name for it, so it stays anonymous rather than carry
+// a name invented for a body we authored). Its bytes are GetCurrentHeapNum()
+// inlined (ThreadMemStack(false) top-of-stack else sDefaultHeap) followed by
+// `heapNum > -1 ? &gHeaps[heapNum] : NULL` (mulli 0x24 = sizeof(MemHeap)).
+// Its single retail caller is _MemAllocH's heap assert, whose value dies but
+// whose call survives -- which is why this is a real function, not a macro.
+MemHeap *MemCurrentHeap() {
+    int heapNum = GetCurrentHeapNum();
+    return heapNum > -1 ? &gHeaps[heapNum] : NULL;
+}
+
+// Retail/match _MemAllocH, 0x827BD190 (120 B), unit `default/MemMgr`.
+// rb3-Wii utl/MemMgr.cpp:1202. MILO_ASSERT is ((void)(cond)) in the match
+// build, so MainThread() and MemCurrentHeap() survive as bare `bl`s with
+// discarded results (see File.cpp NewFile for the same shape). rb3-Wii's
+// second assert also checks heap->mUseHeapAlign; RB3-360's MemHeap has no
+// such member (retail stride is 0x24), so only the non-null half is kept.
+MemHandle *_MemAllocH(int size) {
+    MILO_ASSERT(MainThread(), 0xb23);
+    MemHeap *heap = MemCurrentHeap();
+    MILO_ASSERT(heap != NULL, 0xb27);
+    // Parenthesized (MemAlloc) bypasses the debug-arity macro in MemMgr.h,
+    // which would otherwise force align 0; retail passes 0x10 (li r4,0x10).
+    void *data = (MemAlloc)(((size - 1) & ~0xF) + 0x20, 0x10);
+    // Retail has an explicit `li r3,0` else-arm after the PoolAlloc null test:
+    // that is MSVC's null check on a throw() placement operator new, so the
+    // source is the single new-expression, not rb3-Wii's `if (h) new (h) ...`.
+    return new (PoolAlloc(sizeof(MemHandle), sizeof(MemHandle))) MemHandle(data);
+}
+
+// Retail/match MemFreeH, 0x827BCA08 (72 B), unit `default/MemMgr`.
+// rb3-Wii utl/MemMgr.cpp:1208. W16-D's oracle correction applies: retail calls
+// ?MemFree@@YAXPAX@Z (0x827BC430), not _MemFree, and the 2-arg
+// ?PoolFree@@YAXHPAX@Z (0x827BADB0), not the Wii's 3-arg _PoolFree.
+void MemFreeH(MemHandle *h) {
+    MILO_ASSERT(MainThread(), 0xb42);
+    if (h != NULL) {
+        MILO_ASSERT(h->mAlloc->mLockCount == 0, 0xb47);
+        MemFree(h->mAlloc);
+        PoolFree(sizeof(MemHandle), h);
+    }
+}
+
 void MemFreeBlockStats(
     int heapNum, int &i2, int &i3, int &numFreeBytes, int &i5, int &biggestFreeBlock
 ) {
