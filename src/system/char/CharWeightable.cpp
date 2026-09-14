@@ -32,7 +32,20 @@ void CharWeightable::Replace(ObjRef *ref, Hmx::Object *obj) {
 }
 
 BEGIN_HANDLERS(CharWeightable)
+#ifdef HX_NATIVE
     HANDLE_VIRTUAL_SUPERCLASS(Hmx::Object)
+#else
+    /* Retail 0x823AEE98 (204 B) is ONE body shared by ?Handle@CharData@@ and
+     * ?Handle@CharWeightable@@ -- retail's vtordisp thunks for both classes
+     * folded to 0x823AF220, which branches there (lane W16-U, 2026-09-14).
+     * Our CharData::Handle is masked-EQUAL to those 204 B; our CharWeightable
+     * version was 268 B.  The whole 64 B surplus is the
+     * `if (ClassName() == StaticClassName())` guard that
+     * HANDLE_VIRTUAL_SUPERCLASS adds, evidenced by the one extra relocation
+     * ?StaticClassName@CharWeightable@@ that CharData::Handle does not carry.
+     * Same defect as the SyncProperty note below and RndTransformable's. */
+    HANDLE_SUPERCLASS(Hmx::Object)
+#endif
 END_HANDLERS
 
 BEGIN_PROPSYNCS(CharWeightable)
