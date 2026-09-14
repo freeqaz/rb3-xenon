@@ -1,0 +1,352 @@
+{
+ "_README": "REPORT ONLY -- lane W16-AM. NOTHING here has been written to scripts/symbol_aliases.json; that file is lane W16-AL's. Produced by: python3 tools/icf_alias_build.py --merge scripts/symbol_aliases.json --survivor-self-check shape --out <scratch>  run on worktree /home/free/tmp/wt-w16-am at branch w16-am, full build rc=0.",
+ "_provenance": {
+  "tree": "w16-am",
+  "base": "main ec6aa875",
+  "generation_pairs_refused": 331,
+  "landed_groups_carried_unchanged": 159,
+  "membership_records_parsed": 188,
+  "distinct_survivor_addresses": 168
+ },
+ "_correction": "W16-AE reported '38 contradictions' with 12 REFUTED and '26 non-refuted' split 8 flat-PROVEN / 14 CHASED-PROVEN / rest word-only. THAT POPULATION DOES NOT REPRODUCE. The carry path on this tree reports 159 landed groups / 188 membership records / 168 distinct survivor addresses. AE's own section 4 separately records '336 / 173' for the generation and carried counters after its equivalence fix, which is consistent with the 331 / 159 measured here; the '38' was an ADJUDICATED SUBSET, not the printed population, and the 8/14/rest split describes 26 members of that subset. The split is therefore not re-derivable and should not be carried forward as a figure.",
+ "_class_counts_by_record": {
+  "size_differs": 12,
+  "reloc_targets_differ": 168,
+  "reloc_shape_differs": 3,
+  "reloc_count_differs": 5
+ },
+ "_structural_class_note": "The size / reloc-count / reloc-shape classes are the decisive ones: a differing SIZE or reloc COUNT means the two COMDATs cannot be the same function, so either our port of the survivor spelling is wrong or the survivor NAME on that address is wrong. HAZARD, do not skip: lane STLPORT-1 (ff832b50) showed a previous '+8 B' size finding of exactly this shape was an artifact of tools/coff_bodies_ext.py billing the SUCCESSOR symbol's EH funclet prefix into the COMDAT span; that reader bug is fixed, but re-confirm any size delta against the .pdata extent before withdrawing a membership on it. A one-sided reader error is invisible to a two-sided size test.",
+ "_cross_check": "4 of the 5 W16-AB 'arbitrary bijection' addresses appear in the structural class on SIZE grounds -- 0x823f0b50, 0x8248f1c0, 0x82787718, 0x827d5bb0 -- independently reproducing lane W16-AM's Item 1 survivor-self-pair REFUTED result by a different instrument. 0x823d3918 is absent because W16-AM nulled that row in 547b2a19.",
+ "structural_contradictions": [
+  {
+   "address": "0x822750d0",
+   "survivor": "?push_back@?$ObjPtrList@VRndGroup@@VObjectDir@@@@QAAXPAVRndGroup@@@Z  (push_back)",
+   "class": "reloc_shape_differs",
+   "reason": "reloc shape differs at retail +0x18 (type 16) vs ours +0x4 (type 6)",
+   "folded_members": [
+    null
+   ]
+  },
+  {
+   "address": "0x822873d0",
+   "survivor": "??$__uninitialized_copy@PAVRangeShift@GemTrack@@PAV12@@stlpmtx_std@@YAPAVRangeShift@GemTra  ($__uninitialized_copy)",
+   "class": "reloc_count_differs",
+   "reason": "reloc count retail 2 vs our survivor COMDAT 3",
+   "folded_members": [
+    null
+   ]
+  },
+  {
+   "address": "0x822a54b8",
+   "survivor": "??$__destroy_mv_srcs@V?$reverse_iterator@PAV?$ObjVector@ULod@Character@@@@@stlpmtx_std@@V?  ($__destroy_mv_srcs)",
+   "class": "reloc_count_differs",
+   "reason": "reloc count retail 2 vs our survivor COMDAT 1",
+   "folded_members": [
+    null
+   ]
+  },
+  {
+   "address": "0x82311910",
+   "survivor": "??0?$ObjPtr@VObjectDir@@@@QAA@PAVObject@Hmx@@PAVObjectDir@@@Z  (0?$ObjPtr)",
+   "class": "reloc_shape_differs",
+   "reason": "reloc shape differs at retail +0x20 (type 16) vs ours +0x24 (type 16)",
+   "folded_members": [
+    null
+   ]
+  },
+  {
+   "address": "0x82399348",
+   "survivor": "??$MakeString@HH@@YAPBDPBDHH@Z  ($MakeString)",
+   "class": "reloc_count_differs",
+   "reason": "reloc count retail 2 vs our survivor COMDAT 4",
+   "folded_members": [
+    null
+   ]
+  },
+  {
+   "address": "0x823a40f0",
+   "survivor": "??$__uninitialized_copy@PAVMoveFrame@@PAV1@@stlpmtx_std@@YAPAVMoveFrame@@PAV1@00ABU__false  ($__uninitialized_copy)",
+   "class": "reloc_count_differs",
+   "reason": "reloc count retail 2 vs our survivor COMDAT 3",
+   "folded_members": [
+    null
+   ]
+  },
+  {
+   "address": "0x823cc500",
+   "survivor": "??_GCharDriverMidi@@UAAPAXI@Z  (_GCharDriverMidi)",
+   "class": "size_differs",
+   "reason": "size retail 88 B vs our survivor COMDAT 68 B",
+   "folded_members": [
+    null
+   ]
+  },
+  {
+   "address": "0x823f0b50",
+   "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAVSongPattern@@@stlpmtx_std@@@stlpmtx_std@@YAX  ($__destroy_range_aux)",
+   "class": "size_differs",
+   "reason": "size retail 80 B vs our survivor COMDAT 100 B",
+   "folded_members": [
+    null
+   ]
+  },
+  {
+   "address": "0x823f2608",
+   "survivor": "?push_back@?$vector@VMemStream@@V?$StlNodeAlloc@VMemStream@@@stlpmtx_std@@@stlpmtx_std@@QA  (push_back)",
+   "class": "size_differs",
+   "reason": "size retail 116 B vs our survivor COMDAT 124 B",
+   "folded_members": [
+    null
+   ]
+  },
+  {
+   "address": "0x8245d4c0",
+   "survivor": "??1NetCacheMgrXbox@@UAA@XZ  (1NetCacheMgrXbox)",
+   "class": "size_differs",
+   "reason": "size retail 84 B vs our survivor COMDAT 72 B",
+   "folded_members": [
+    null
+   ]
+  },
+  {
+   "address": "0x8248f1c0",
+   "survivor": "?_M_erase@?$vector@VTriangle@@V?$StlNodeAlloc@VTriangle@@@stlpmtx_std@@@stlpmtx_std@@IAAPA  (_M_erase)",
+   "class": "size_differs",
+   "reason": "size retail 92 B vs our survivor COMDAT 96 B",
+   "folded_members": [
+    null
+   ]
+  },
+  {
+   "address": "0x82514d00",
+   "survivor": "?IsUserAGuest@PlatformMgr@@QBA_NPBVLocalUser@@@Z  (IsUserAGuest)",
+   "class": "size_differs",
+   "reason": "size retail 84 B vs our survivor COMDAT 72 B",
+   "folded_members": [
+    null
+   ]
+  },
+  {
+   "address": "0x8268b1f0",
+   "survivor": "?DeletePlayer@BandUser@@QAAXXZ  (DeletePlayer)",
+   "class": "size_differs",
+   "reason": "size retail 40 B vs our survivor COMDAT 44 B",
+   "folded_members": [
+    null
+   ]
+  },
+  {
+   "address": "0x826fbdb0",
+   "survivor": "?_M_insert_overflow@?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBH  (_M_insert_overflow)",
+   "class": "reloc_count_differs",
+   "reason": "reloc count retail 0 vs our survivor COMDAT 1",
+   "folded_members": [
+    null
+   ]
+  },
+  {
+   "address": "0x82766828",
+   "survivor": "??0NetLoaderRef@@QAA@ABU0@@Z  (0NetLoaderRef)",
+   "class": "reloc_shape_differs",
+   "reason": "reloc shape differs at retail +0x30 (type 6) vs ours +0x1c (type 6)",
+   "folded_members": [
+    null
+   ]
+  },
+  {
+   "address": "0x82772870",
+   "survivor": "?erase@?$vector@UJumpInstance@@V?$StlNodeAlloc@UJumpInstance@@@stlpmtx_std@@@stlpmtx_std@@  (erase)",
+   "class": "size_differs",
+   "reason": "size retail 92 B vs our survivor COMDAT 64 B",
+   "folded_members": [
+    null
+   ]
+  },
+  {
+   "address": "0x82787718",
+   "survivor": "??$__uninitialized_fill_n@PAUSongCollisionOutput@@IU1@@stlpmtx_std@@YAPAUSongCollisionOutp  ($__uninitialized_fill_n)",
+   "class": "size_differs",
+   "reason": "size retail 96 B vs our survivor COMDAT 80 B",
+   "folded_members": [
+    null
+   ]
+  },
+  {
+   "address": "0x8278b7f0",
+   "survivor": "??$__uninitialized_copy@PAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@PAU12@@stlpmtx_std@  ($__uninitialized_copy)",
+   "class": "size_differs",
+   "reason": "size retail 72 B vs our survivor COMDAT 96 B",
+   "folded_members": [
+    null
+   ]
+  },
+  {
+   "address": "0x827cedd0",
+   "survivor": "?Terminate@UIEventMgr@@SAXXZ  (Terminate)",
+   "class": "size_differs",
+   "reason": "size retail 80 B vs our survivor COMDAT 92 B",
+   "folded_members": [
+    null
+   ]
+  },
+  {
+   "address": "0x827d5bb0",
+   "survivor": "??$_M_allocate_and_copy@PAVVector2@@@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx  ($_M_allocate_and_copy)",
+   "class": "size_differs",
+   "reason": "size retail 80 B vs our survivor COMDAT 100 B",
+   "folded_members": [
+    null
+   ]
+  }
+ ],
+ "reloc_target_only_addresses": [
+  "0x822709d8",
+  "0x82279a00",
+  "0x8227b710",
+  "0x8229e1d8",
+  "0x822a3f58",
+  "0x822a46c8",
+  "0x822a4fb8",
+  "0x822a51e0",
+  "0x822a6528",
+  "0x822a6ce8",
+  "0x822a6d38",
+  "0x822a7678",
+  "0x822a79a8",
+  "0x822a7f60",
+  "0x822a82e0",
+  "0x822a8340",
+  "0x822a8668",
+  "0x822a9b70",
+  "0x822aa520",
+  "0x822bed18",
+  "0x822c0228",
+  "0x822c7d58",
+  "0x822cb828",
+  "0x822cd8c0",
+  "0x822d0350",
+  "0x822d09c8",
+  "0x822d0a80",
+  "0x822d17f0",
+  "0x822e4f70",
+  "0x822ec870",
+  "0x823048e0",
+  "0x82308e90",
+  "0x8230c200",
+  "0x8230d238",
+  "0x8230df20",
+  "0x8230ebe0",
+  "0x82310a50",
+  "0x82310cf0",
+  "0x82327878",
+  "0x82339948",
+  "0x8233c850",
+  "0x8233c8c0",
+  "0x8233c910",
+  "0x823470c8",
+  "0x82347600",
+  "0x82371148",
+  "0x8238d9f8",
+  "0x8238fb18",
+  "0x823a94f0",
+  "0x823aade0",
+  "0x823c32b8",
+  "0x823c38e8",
+  "0x823c5bc0",
+  "0x823d14c0",
+  "0x823d3ac8",
+  "0x823d6598",
+  "0x823d6cf0",
+  "0x823dac48",
+  "0x823dc368",
+  "0x823dcfb0",
+  "0x823f5270",
+  "0x8241d000",
+  "0x824238f0",
+  "0x82425410",
+  "0x8242c568",
+  "0x8242c868",
+  "0x82430db8",
+  "0x824352a8",
+  "0x824423e8",
+  "0x82442df8",
+  "0x82445f98",
+  "0x82451f30",
+  "0x824532c8",
+  "0x8245fdf8",
+  "0x824684c8",
+  "0x82469a28",
+  "0x8246b090",
+  "0x8246ef38",
+  "0x82470508",
+  "0x82472188",
+  "0x82477f50",
+  "0x8247ecb0",
+  "0x82480ac8",
+  "0x82482498",
+  "0x82483d40",
+  "0x82483d90",
+  "0x82484070",
+  "0x82484b40",
+  "0x82488920",
+  "0x824913f8",
+  "0x82497638",
+  "0x8249a0d0",
+  "0x824b9818",
+  "0x824cab50",
+  "0x824cf800",
+  "0x824d45b0",
+  "0x824e2ac8",
+  "0x824e74c0",
+  "0x824e9878",
+  "0x824ebf00",
+  "0x82514cb8",
+  "0x82518e68",
+  "0x82519720",
+  "0x82557060",
+  "0x825727c8",
+  "0x82572930",
+  "0x8259f7e0",
+  "0x825a36b8",
+  "0x825d3228",
+  "0x825f3480",
+  "0x825f3c58",
+  "0x825f3db8",
+  "0x825f3e38",
+  "0x82604a40",
+  "0x8263fd68",
+  "0x8264d058",
+  "0x82656a00",
+  "0x82656ac8",
+  "0x8268bb68",
+  "0x826ce268",
+  "0x826e9710",
+  "0x826f93c0",
+  "0x826f94c8",
+  "0x82706208",
+  "0x827148b0",
+  "0x8271f0e0",
+  "0x82747708",
+  "0x82772b08",
+  "0x82775950",
+  "0x82788308",
+  "0x8278def0",
+  "0x827a3fa0",
+  "0x827be190",
+  "0x827cda78",
+  "0x827d3900",
+  "0x827d6538",
+  "0x827e4880",
+  "0x827ebb90",
+  "0x827ed198",
+  "0x82817ae8",
+  "0x82b5f808",
+  "0x82b64670",
+  "0x82b6f100",
+  "0x82b899b8",
+  "0x82b8b238",
+  "0x82b9b590",
+  "0x82ba2378",
+  "0x82ba2438"
+ ]
+}
