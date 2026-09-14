@@ -371,22 +371,29 @@ const char *PlatformMgr::GetName(int padNum) const {
         }
     }
     static Symbol player("player");
-    return MakeString("%s %i", Localize(player, 0, TheLocale), padNum + 1);
+    return MakeString("%s %i", Localize(player, 0), padNum + 1);
 }
 
 // Retail RB3 has NO ShowGamercardForPadNum: the map's only gamercard row is
 // ?ShowGamercard@PlatformMgr@@QAA?AW4ShowGamercardResult@@PAVLocalUser@@PBVOnlineID@@@Z
-// at 0x8251c960, and its extent is 248 B (0x8251c960..0x8251ca58) -- far too
-// large for a thin pad-num wrapper. So RB3 carries the FULL body on the
-// LocalUser overload; DC3's split into ForPadNum is a later refactor.
+// at 0x8251c960. RB3 carries the FULL body on the LocalUser overload; DC3's
+// split into ForPadNum is a later refactor. PROVEN: this body matches retail
+// byte-for-byte (fuzzy 100).
+// [W16-E correction] The extent is 164 B, not the "248 B" first recorded here.
+// 248 is 0x8251ca58-0x8251c960, an ADDRESS-GAP SUBTRACTION across the 72 B
+// funclet fn_8251CA08 and an 8 B EH prefix. Right conclusion, wrong reason.
+// Retail's own control flow is the real evidence, and it is decisive:
+//   lbz r11,0x8(r5) / bne     -- onlineID validity FIRST, BEFORE GetPadNum
+//   lwz r11,0(r4) .. bctrl    -- then the virtual slot-0 GetPadNum
+//   bl fn_8283D720            -- ONE unconditional XShowGamerCardUI: retail has
+//                                NO sXShowCallback load and NO NUI branch.
 ShowGamercardResult PlatformMgr::ShowGamercard(LocalUser *pUser, const OnlineID *onlineID) {
     MILO_ASSERT(pUser, 0x7C6);
     MILO_ASSERT(onlineID, 0x7C6);
-    int padNum = pUser->GetPadNum();
-    unsigned long trackingID;
     if (!onlineID->GetIsValid()) {
         return kShowGamercardResult_Failed;
     }
+    int padNum = pUser->GetPadNum();
     if (!IsSignedIntoLive(padNum)) {
         return kShowGamercardResult_NotSignedIn;
     }
@@ -394,16 +401,8 @@ ShowGamercardResult PlatformMgr::ShowGamercard(LocalUser *pUser, const OnlineID 
     if (!XPrivilegeCheck(XPRIVILEGE_PROFILE_VIEWING, XPRIVILEGE_PROFILE_VIEWING_FRIENDS_ONLY, xuid)) {
         return kShowGamercardResult_PrivilegeFailed;
     }
-    DWORD ret;
-    if (sXShowCallback(trackingID)) {
-        ret = XShowNuiGamerCardUI(trackingID, padNum, xuid);
-    } else {
-        ret = XShowGamerCardUI(padNum, xuid);
-    }
-    if (ret != 0) {
-        return kShowGamercardResult_Failed;
-    }
-    return kShowGamercardResult_Success;
+    return XShowGamerCardUI(padNum, xuid) == 0 ? kShowGamercardResult_Success
+                                               : kShowGamercardResult_Failed;
 }
 
 namespace {
