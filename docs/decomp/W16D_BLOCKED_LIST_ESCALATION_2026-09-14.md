@@ -29,7 +29,8 @@ is the exact sum of the nine per-commit set-diffs (2+35+1+0+1+11+1+1+1 fns; 192+
 
 Commits on `w16-j`, in order: `15188a09` (item 1) · `c17a9f9e` (2a) · `cdaa2afb` (2b) · `07d3d3d2` (2b negative
 results) · `29309b76` (5b) · `73a39e29` (4, zlib) · `772ea67e` (4, mis-carve) · `20afd9c6` (5a source) ·
-`f53af16c` (5a alias) · this record.
+`f53af16c` (5a alias) · `9339a725` (this record, first cut) · `e3196d13` (native-gate fix 1: MemMgr) ·
+`aae976f8` (native-gate fix 2: Joypad stubs) · the amendment adding the "Native gate" section below.
 
 ---
 
@@ -344,7 +345,44 @@ Pre-registered +1 fn / +80 B; **measured exactly that**: CROSSED IN `BandProfile
 
 ---
 
+## Native gate — FAILED twice on this lane's own source, fixed, PASSED (run LAST, after every `src/` edit)
+
+The brief requires `tools/native_build_gate.sh` as the final action whenever `src/` is touched, with the
+`NATIVE_GATE_RESULT` line pasted verbatim and `skipped=0`. Three runs, all in `~/tmp/wt-w16-j`:
+
+| run | log | verdict line (verbatim) | cause |
+|---|---|---|---|
+| 1 | `~/tmp/native_w16j.log` | `NATIVE_GATE_RESULT verdict=FAIL expected=18 verified=1 skipped=0 partial=0 failed=17 rc=1` | **item 1** — `_MemAllocH`'s retail spelling `(MemAlloc)(sz, 0x10)` is a 2-arg call to the `#ifndef HX_NATIVE` overload; under `HX_NATIVE` only the 5-arg debug `MemAlloc` exists ⇒ clang `MemMgr.cpp:888:61: too few arguments to function call, expected at least 4, have 2`; 17/18 targets NOBINARY |
+| 2 | `~/tmp/native_w16j2.log` | `NATIVE_GATE_RESULT verdict=FAIL expected=18 verified=10 skipped=0 partial=0 failed=8 rc=1` | **item 2b** — the `JoypadPollCommon` port calls three `extern "C"` back-end functions (`ReadSingleJoypad`, `requestBreedWrite`, `JoypadSendKeepAlive`) defined only in `Joypad_Xbox.cpp` (XamInput), which the native link does not compile ⇒ `undefined reference` in the 8 targets that link `Joypad.cpp` |
+| 3 | `~/tmp/native_w16j3.log` | **`NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0`** | — |
+
+Fixes, each with the match build proved unmoved:
+
+- **`e3196d13`** — `_MemAllocH` gets the `MemRealloc` precedent from the same file: `#ifdef HX_NATIVE` spells
+  the 5-arg debug form with the same `0x10` align, `#else` keeps `(MemAlloc)(sz, 0x10)` **textually unchanged**.
+  Full match build (`~/tmp/rb3_build_w16j_gatefix.log`, rc=0, exactly one MemMgr recompile): rowset diff vs a
+  snapshot saved immediately before = **0 crossed / 0 fell**, all four measures identical to the post-lane
+  figures above; `_MemAllocH` stays fuzzy 100 / mpn 100. Predicted Δ0 (the preprocessed match TU is
+  identical), measured Δ0.
+- **`aae976f8`** — three `.weak` stubs in `native/src/dta_link_stubs.s` beside the existing
+  `JoypadSetActuatorsImp` (same class: Xbox-side Joypad back end). `ReadSingleJoypad` returns 0 ==
+  `kJoypadNone`, so the ported poll loop stays inert natively; `requestBreedWrite` returns false;
+  `JoypadSendKeepAlive` is a no-op. `native/` is not a match-build input, so no report.json movement is
+  possible and none was measured.
+
+Neither compile error nor link error is visible to the match build (it compiles, never links, and never
+defines `HX_NATIVE`) — this is exactly the class the gate exists for, and the reason the brief says LAST.
+
 ## Traps recorded for the next lane (each one cost this lane a measurement or a re-run)
+
+- **The parenthesised `(MemAlloc)(size, align)` retail spelling is native-hostile.** It bypasses the debug-arity
+  macro on purpose, but under `HX_NATIVE` the 2-arg overload does not exist. Any new site needs the
+  `#ifdef HX_NATIVE` 5-arg / `#else` 2-arg pair (`MemRealloc` and now `_MemAllocH` in `MemMgr.cpp`). Cost
+  here: one failed gate run.
+- **Porting a body that calls `extern "C"` platform back-end functions (`Joypad_Xbox.cpp` etc.) adds native
+  link dependencies the match build cannot see.** Grep `native/src/dta_link_stubs.s` for each new callee before
+  running the gate; the linker lists every undefined reference in one pass, so one re-run suffices once they
+  are all stubbed. Cost here: a second failed gate run.
 
 - **`scripts/symbol_aliases.json` and `scripts/target_symbol_map.json` round-trip with DIFFERENT `ensure_ascii`.**
   Aliases: `json.dumps(a, indent=1) + '\n'` (default `ensure_ascii=True`); the map needs `ensure_ascii=False`.
@@ -385,6 +423,12 @@ Pre-registered +1 fn / +80 B; **measured exactly that**: CROSSED IN `BandProfile
 - W16-D's smaller leftovers `?Release@VertexBufferData@DxMesh@@` (68 B) and `??0Shuttle@@QAA@XZ` (32 B) not
   opened.
 - `fn_82654440` (76 B) in `SessionUsersProviders` unexplained.
+- `PlatformMgr.h:125` / `PlatformMgr.cpp:155` (`SetDiskError`, retail `0x82516320`) **not touched**: W16-M
+  (running concurrently) reports the 208 B extent is a retail `.pdata` artefact — the 4 B `blr` stub's record
+  swallowed a following fragment (two raw branches into `DataSet`, `bl ??0DiskErrorMsg`, …), and
+  `symbols.txt:147625 size:0xD0` merely mirrors it. Same mis-carve class as item 4's `_tr_stored_block`, but
+  it is W16-M's row and belongs to a splits/map lane; recorded by them in
+  `PLATFORMMGR_ESCALATION_2026-09-14.md` §6 on `w16-m`.
 - No `ab_measure.py` A/B was run: every price here is a full-build set-diff against a snapshot saved on the
   same tree immediately before the change, which is the same-ruler protocol; `ab_measure` would have added
   nothing for single-commit source/map legs and refuses `--from-dirty` with a staged index.
