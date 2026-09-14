@@ -30407,5 +30407,6 @@
  "0x82638d58": "?GetRecommendationIndexPath@StoreInfoPanel@@QAAXPBDAAVString@@@Z",
  "0x8263faa0": "?GetOffersForToken@TokenRedemptionPanel@@QAAXPBDPAVLocalBandUser@@@Z",
  "0x8263f948": "?GetPreviousOffersForUser@TokenRedemptionPanel@@QAAXPAVLocalBandUser@@@Z",
- "0x8263fb98": "?ShowPurchaseUIForOffer@TokenRedemptionPanel@@QAAXHPAVLocalBandUser@@@Z"
+ "0x8263fb98": "?ShowPurchaseUIForOffer@TokenRedemptionPanel@@QAAXHPAVLocalBandUser@@@Z",
+ "0x82812028": "?DataDir@ObjectDir@@$4PPPPPPPM@CLE@AAPAV1@XZ"
 }
