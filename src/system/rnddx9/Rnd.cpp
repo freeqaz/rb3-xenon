@@ -5,6 +5,7 @@
 #include "os/Debug.h"
 #include "os/System.h"
 #include "rndobj/Bitmap.h"
+#include "rndobj/Cam.h"
 #include "rndobj/Mat.h"
 #include "rndobj/Mat_NG.h"
 #include "rndobj/Rnd_NG.h"
@@ -49,6 +50,142 @@ void DxRnd::DrawRect(
     const Hmx::Color *colorPtr2
 ) {
     DrawRect(rect, mat, kDrawRectShader, colorRef, colorPtr1, colorPtr2);
+}
+
+namespace {
+    // FVF 0x1c2 = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_SPECULAR | D3DFVF_TEX1,
+    // i.e. 28 bytes per vertex.
+    struct RectVert {
+        float x, y, z; // 0x00
+        unsigned long diffuse; // 0x0c
+        unsigned long specular; // 0x10
+        float u, v; // 0x14
+    };
+}
+
+// W16-A: this 6-param overload was DECLARED in rnddx9/Rnd.h and DEFINED NOWHERE.
+// The 5-param overload above forwards to it, so the match build emitted no body
+// at all and retail's 1,512 B row read fuzzy 0 for want of anything to pair with.
+// Ported from the dc3-decomp oracle (src/system/rnddx9/Rnd.cpp), which is matched
+// there; the three codegen comments below are dc3's own measured findings and are
+// load-bearing -- do not "simplify" any of them.
+void DxRnd::DrawRect(
+    const Hmx::Rect &rect,
+    RndMat *mat,
+    ShaderType shader,
+    const Hmx::Color &color,
+    const Hmx::Color *color1,
+    const Hmx::Color *color2
+) {
+    RectVert verts[4];
+    float z = mReverseZ ? 1.0f : 0.0f;
+    verts[0].z = z;
+    verts[0].x = rect.x;
+    verts[0].y = rect.y;
+    verts[1].x = rect.x;
+    verts[1].z = z;
+    verts[2].y = rect.y;
+    verts[2].z = z;
+    verts[3].z = z;
+    verts[1].y = rect.y + rect.h;
+    verts[2].x = rect.x + rect.w;
+    verts[3].x = rect.x + rect.w;
+    verts[3].y = rect.y + rect.h;
+
+    RndMat *next = mat ? mat->NextPass() : nullptr;
+
+    // The four corner colours. Written as chained assignments because that is
+    // what merges the per-branch tails the way the target does; separate
+    // statements per corner add 7 instructions.
+    if (mat && !mat->Prelit()) {
+        verts[0].diffuse = verts[1].diffuse = verts[2].diffuse = verts[3].diffuse =
+            MakeColor(mat->GetColor());
+    } else if (color1) {
+        // Horizontal gradient: the right-hand corners take color1.
+        verts[0].diffuse = verts[1].diffuse = MakeColor(color);
+        verts[2].diffuse = verts[3].diffuse = MakeColor(*color1);
+    } else if (color2) {
+        // Vertical gradient: the bottom corners take color2.
+        verts[0].diffuse = verts[2].diffuse = MakeColor(color);
+        verts[1].diffuse = verts[3].diffuse = MakeColor(*color2);
+    } else {
+        verts[0].diffuse = verts[1].diffuse = verts[2].diffuse = verts[3].diffuse =
+            MakeColor(color);
+    }
+
+    for (int i = 0; i < 4; i++) {
+        verts[i].specular = 0;
+    }
+
+    const Transform *texXfm = nullptr;
+    if (mat && mat->GetTexGen() == kTexGenXfmOrigin) {
+        texXfm = &mat->TexXfm();
+    }
+    // Each corner's UV is the unit-square coordinate pushed through the
+    // material's texture transform. Written out per corner rather than through a
+    // helper: the target inlines the corner constants, and MSVC folds a multiply
+    // by 1.0f but NOT one by 0.0f (x*0.0f is not x for NaN/Inf), so the 0.0f
+    // factors have to survive into the source.
+    if (texXfm) {
+        verts[0].u = texXfm->m.x.x * 0.0f - texXfm->m.y.x * 0.0f + texXfm->v.x;
+        verts[0].v = texXfm->m.y.y * 0.0f - texXfm->m.x.y * 0.0f + texXfm->v.y;
+    } else {
+        verts[0].u = 0.0f;
+        verts[0].v = 0.0f;
+    }
+    if (texXfm) {
+        verts[1].u = texXfm->m.x.x * 0.0f - texXfm->m.y.x * 1.0f + texXfm->v.x;
+        verts[1].v = texXfm->m.y.y * 1.0f - texXfm->m.x.y * 0.0f + texXfm->v.y;
+    } else {
+        verts[1].u = 0.0f;
+        verts[1].v = 1.0f;
+    }
+    if (texXfm) {
+        verts[2].u = texXfm->m.x.x * 1.0f - texXfm->m.y.x * 0.0f + texXfm->v.x;
+        verts[2].v = texXfm->m.y.y * 0.0f - texXfm->m.x.y * 1.0f + texXfm->v.y;
+    } else {
+        verts[2].u = 1.0f;
+        verts[2].v = 0.0f;
+    }
+    if (texXfm) {
+        verts[3].u = texXfm->m.x.x * 1.0f - texXfm->m.y.x * 1.0f + texXfm->v.x;
+        verts[3].v = texXfm->m.y.y * 1.0f - texXfm->m.x.y * 1.0f + texXfm->v.y;
+    } else {
+        verts[3].u = 1.0f;
+        verts[3].v = 1.0f;
+    }
+
+    static Transform sScreenXfm(
+        Hmx::Matrix3(1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f),
+        Vector3(0.0f, 0.0f, 0.0f)
+    );
+    // Binding the manager to a local reference is what keeps its pointer in a
+    // callee-saved register across the Matrix4 temporary's constructor, which is
+    // what the target does; without it MSVC reloads the global afterwards and the
+    // whole callee-saved allocation shifts. It has to be declared HERE, not at the
+    // top of the function: hoisting it costs an extra register.
+    RndShaderMgr &shaderMgr = TheShaderMgr;
+    shaderMgr.SetVConstant(kVS_ViewProjMatrix, Hmx::Matrix4(sScreenXfm));
+    TheShaderMgr.SetTransform(sScreenXfm);
+    D3DDevice_SetRenderState_ViewportEnable(TheDxRnd.Device(), 0);
+    D3DDevice_SetRenderState_HalfPixelOffset(TheDxRnd.Device(), 1);
+    D3DDevice_SetFVF(mD3DDevice, 0x1c2);
+    RndMat *pass = mat;
+    do {
+        RndShader::SelectConfig(pass, shader, false);
+        D3DDevice_DrawVerticesUP(
+            mD3DDevice, D3DPT_TRIANGLESTRIP, 4, verts, sizeof(RectVert)
+        );
+        pass = next;
+        next = next ? next->NextPass() : nullptr;
+    } while (pass);
+    D3DDevice_SetRenderState_ViewportEnable(TheDxRnd.Device(), 1);
+    D3DDevice_SetRenderState_HalfPixelOffset(TheDxRnd.Device(), 0);
+    if (RndCam::Current()) {
+        TheShaderMgr.SetVConstant(
+            kVS_ViewProjMatrix, RndCam::Current()->GetViewProjMatrix()
+        );
+    }
 }
 
 void DxRnd::DrawLine(const Vector3 &v1, const Vector3 &v2, const Hmx::Color &c, bool b4) {

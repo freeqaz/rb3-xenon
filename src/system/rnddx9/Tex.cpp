@@ -124,10 +124,23 @@ void DxTex::ResetSurfaces() {
         mTexture = nullptr;
     }
 
-    // Release managed texture resource
+    // Release managed texture resource.
+    // ⚠ `unk2c` is the DC3-ONLY Hmx::CRC resource key at RndTex+0x2c that retail
+    // RB3-360 does NOT have -- see the note at rndobj/Tex.h:156, which gates the
+    // member behind RB3_RNDTEX_DC3_CRC and claims "the only use is the
+    // COPY_MEMBER in Tex.cpp".  That claim was WRONG: this second use site was
+    // never gated, and nothing caught it because Tex.cpp was wired into no
+    // build at all.  Retail has no CRC key, so it cannot perform this lookup;
+    // the ungated path is the plain release.  Gated identically to
+    // rndobj/Tex.cpp:119 so a future native build that defines the macro keeps
+    // the DC3 behaviour.
+#ifdef RB3_RNDTEX_DC3_CRC
     if (!TheDxTexMgr.ReleaseRes(unk2c)) {
         TheDxRnd.AutoRelease(mTexture);
     }
+#else
+    TheDxRnd.AutoRelease(mTexture);
+#endif
     mTexture = nullptr;
 
     // Clean up render target surfaces
