@@ -88,23 +88,76 @@ def read_coff_symbols(data):
     return symbols, sections
 
 
-def find_vtable(data, symbols, sections, class_name):
-    """Find vtable symbol and read its relocation entries."""
-    vtable_sym_name = f'??_7{class_name}@@6B@'
-
-    # Find the vtable symbol
-    vtable_sym = None
+def _legacy_select(symbols, class_name):
+    """The PRE-2026-09-14 selection rule. Kept ONLY as the must-fail control of
+    --selftest; never call it for real work.  It took the first symbol merely
+    CONTAINING f'??_7{class}' and '6B', i.e. whatever COFF symbol-table order
+    happened to put first."""
+    want = f'??_7{class_name}@@6B@'
     for sym in symbols:
-        if sym['name'] == vtable_sym_name:
-            vtable_sym = sym
-            break
+        if sym['name'] == want:
+            return sym
+    for sym in symbols:
+        if f'??_7{class_name}' in sym['name'] and '6B' in sym['name']:
+            return sym
+    return None
 
-    if vtable_sym is None:
-        # Try partial match
-        for sym in symbols:
-            if f'??_7{class_name}' in sym['name'] and '6B' in sym['name']:
-                vtable_sym = sym
-                break
+
+def select_vtable_symbol(symbols, class_name, which=None):
+    """Pick the PRIMARY vtable for `class_name`, deterministically.
+
+    Returns (chosen_symbol_or_None, ordered_candidate_names).
+
+    Two defects in the old rule this replaces (lane W16-P, 2026-09-14):
+
+    1. It never selected the virtual-base primary.  A class with a virtual base
+       has no `??_7C@@6B@` at all; its primary is `??_7C@@6B0@@` and its
+       secondary tables are `??_7C@@6B<Base>@@@`.  The old fallback returned
+       whichever came first in the symbol table, so `Server` yielded
+       `??_7Server@@6BMsgSource@@@` -- a secondary table -- from our COMPILED
+       obj.  (From the dtk TARGET obj the same rule happens to land on the
+       primary, which is why the bug stayed latent: the default `--obj`
+       resolution hides it.  See --selftest.)
+    2. `f'??_7{class}' in name` is an UNANCHORED substring test, so class `Set`
+       also matches `??_7Setlist...`.  Now anchored on the full
+       f'??_7{class}@@6B' prefix.
+
+    Preference: exact single-inheritance primary, then virtual-base primary,
+    then remaining tables sorted by NAME (never symbol-table order, which is
+    not a property of the class).
+    """
+    prefix = f'??_7{class_name}@@6B'
+    cands = [s for s in symbols if s['name'].startswith(prefix)]
+    # de-dup by name, keep first occurrence of each
+    seen, uniq = set(), []
+    for s in cands:
+        if s['name'] not in seen:
+            seen.add(s['name'])
+            uniq.append(s)
+
+    def rank(sym):
+        n = sym['name']
+        if n == f'??_7{class_name}@@6B@':
+            return (0, n)          # single-inheritance primary
+        if n == f'??_7{class_name}@@6B0@@':
+            return (1, n)          # virtual-base primary
+        return (2, n)              # secondary / base sub-object tables
+
+    uniq.sort(key=rank)
+    names = [s['name'] for s in uniq]
+
+    if which:
+        for s in uniq:
+            if s['name'] == which or s['name'].endswith(which):
+                return s, names
+        return None, names
+
+    return (uniq[0] if uniq else None), names
+
+
+def find_vtable(data, symbols, sections, class_name, which=None):
+    """Find vtable symbol and read its relocation entries."""
+    vtable_sym, _cands = select_vtable_symbol(symbols, class_name, which)
 
     if vtable_sym is None:
         return None, None
@@ -495,17 +548,92 @@ def _run_resolve(argv):
         print(f"  [{s['slot']:3d}] {s['offset']}  {s['demangled']}{note}{marker}")
 
 
+
+def _selftest():
+    """Prove the selection fix with a control that MUST fail under the old rule.
+
+    Fixture: `Server`, in OUR COMPILED obj (not the dtk target obj).  Server has a
+    virtual base, so it has NO `??_7Server@@6B@`; its primary is
+    `??_7Server@@6B0@@` and its secondary is `??_7Server@@6BMsgSource@@@`.  In the
+    compiled obj the secondary is listed FIRST, so the old rule returns it.
+
+    A selftest that cannot fail is worthless, so this asserts BOTH directions:
+      (1) the legacy rule picks the WRONG table on this fixture.  If it ever picks
+          the right one the fixture has stopped being a trap and the test exits
+          non-zero as VACUOUS rather than passing.
+      (2) the new rule picks the primary.
+    Exit 0 = pass, 1 = fail, 2 = could not run, 3 = vacuous fixture.
+    """
+    import glob as _glob
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # scripts/ -> repo root
+    cands = _glob.glob(os.path.join(root, 'build/45410914/src/**/Server.obj'), recursive=True)
+    cands = [c for c in cands if os.path.basename(c) == 'Server.obj']
+    if not cands:
+        print('SELFTEST: UNRUNNABLE -- no compiled build/45410914/src/**/Server.obj '
+              '(build the tree first)')
+        return 2
+    obj = cands[0]
+    data = open(obj, 'rb').read()
+    symbols, _sections = read_coff_symbols(data)
+
+    PRIMARY   = '??_7Server@@6B0@@'
+    SECONDARY = '??_7Server@@6BMsgSource@@@'
+    present = {s['name'] for s in symbols if s['name'].startswith('??_7Server@@6B')}
+    print(f'SELFTEST fixture: {obj}')
+    print(f'  Server vtable symbols present: {sorted(present)}')
+    if not {PRIMARY, SECONDARY} <= present:
+        print(f'SELFTEST: UNRUNNABLE -- fixture needs both {PRIMARY} and {SECONDARY}')
+        return 2
+
+    legacy = _legacy_select(symbols, 'Server')
+    legacy_name = legacy['name'] if legacy else None
+    print(f'  [control] legacy rule -> {legacy_name}')
+    if legacy_name != SECONDARY:
+        print(f'SELFTEST: VACUOUS -- the legacy rule was expected to pick the SECONDARY '
+              f'table {SECONDARY} on this fixture but picked {legacy_name}. The control '
+              f'no longer fails, so a pass would prove nothing.')
+        return 3
+
+    chosen, cand_names = select_vtable_symbol(symbols, 'Server')
+    chosen_name = chosen['name'] if chosen else None
+    print(f'  [fixed]   new rule    -> {chosen_name}')
+    if chosen_name != PRIMARY:
+        print(f'SELFTEST: FAIL -- new rule picked {chosen_name}, expected {PRIMARY}')
+        return 1
+
+    ov, _ = select_vtable_symbol(symbols, 'Server', which='6BMsgSource@@@')
+    if not ov or ov['name'] != SECONDARY:
+        print(f'SELFTEST: FAIL -- --which suffix override did not reach {SECONDARY}')
+        return 1
+    print(f'  [--which] suffix override -> {ov["name"]}')
+
+    # anchoring: an unanchored substring test would let a longer class name in
+    bogus, _ = select_vtable_symbol(symbols, 'Serv')
+    if bogus is not None:
+        print(f'SELFTEST: FAIL -- prefix "Serv" matched {bogus["name"]}; selection is '
+              f'not anchored on f"??_7{{class}}@@6B"')
+        return 1
+    print('  [anchor]  class "Serv" correctly matches nothing')
+
+    print('SELFTEST: PASS (control failed as required, fix selects the virtual-base primary)')
+    return 0
+
+
 def main():
     # Handle subcommand routing before argparse
     if len(sys.argv) > 1 and sys.argv[1] == 'resolve':
         _run_resolve(sys.argv[2:])
         return
+    if len(sys.argv) > 1 and sys.argv[1] in ('--selftest', 'selftest'):
+        sys.exit(_selftest())
 
     parser = argparse.ArgumentParser(description='Dump vtable layout from original COFF .obj files')
     parser.add_argument('class_name', help='Class name (e.g., RndFontBase, RndFont3d)')
     parser.add_argument('--obj', help='Path to .obj file (auto-detected if not given)')
     parser.add_argument('--demangle', '-d', action='store_true', help='Attempt to demangle symbol names')
     parser.add_argument('--raw', action='store_true', help='Show raw mangled symbol names only')
+    parser.add_argument('--which', help='Select a specific vtable symbol (full mangled name, or a '
+                                        'suffix of it such as "6BMsgSource@@@"). Default: the PRIMARY.')
     args = parser.parse_args()
 
     obj_path = args.obj
@@ -522,7 +650,8 @@ def main():
         data = f.read()
 
     symbols, sections = read_coff_symbols(data)
-    vtable_sym, entries = find_vtable(data, symbols, sections, args.class_name)
+    _chosen, _cands = select_vtable_symbol(symbols, args.class_name, args.which)
+    vtable_sym, entries = find_vtable(data, symbols, sections, args.class_name, args.which)
 
     if vtable_sym is None:
         print(f"Error: No vtable symbol found for {args.class_name}")
@@ -532,7 +661,21 @@ def main():
                 print(f"  {sym['name']}")
         sys.exit(1)
 
-    print(f"Vtable: {vtable_sym['name']} (section {vtable_sym['section']}, {len(entries)} entries)")
+    # ALWAYS say which symbol was chosen and what else was on offer -- the old
+    # rule silently returned a secondary table and nothing in the output said so.
+    kind = ('primary (single inheritance)' if vtable_sym['name'] == f'??_7{args.class_name}@@6B@'
+            else 'PRIMARY (virtual base)' if vtable_sym['name'] == f'??_7{args.class_name}@@6B0@@'
+            else 'secondary / base sub-object table')
+    print(f"Vtable: {vtable_sym['name']}")
+    print(f"  selected: {kind}{' [--which override]' if args.which else ''}")
+    print(f"  section {vtable_sym['section']}, {len(entries)} entries")
+    if len(_cands) > 1:
+        others = [n for n in _cands if n != vtable_sym['name']]
+        print(f"  other vtables on {args.class_name} ({len(others)}): {', '.join(others)}")
+        print(f"  (use --which <name> to dump one of those)")
+    if vtable_sym['section'] == 0:
+        print("  WARNING: symbol has section 0 (no data in this obj) -- 0 slots is an "
+              "artifact of the obj, not a property of the class. Try the other obj.")
     print()
 
     # Known Object virtual function order for annotation

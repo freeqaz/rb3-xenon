@@ -122,7 +122,16 @@ private:
     PlatformRegion mRegion;     // 0x30 (retail SetRegion writes/reads this+0x30 — ground truth from
                                 //       the objdiff TARGET obj for SetRegion itself, verified 2026-07-30;
                                 //       NOT from Ghidra like the other offsets on this page)
-    DiskError mDiskError;       // 0x34 (retail SetDiskError 0x82516320 `stw r4,0x34(r3)`; ctor 0x8251C320 zeroes it)
+    DiskError mDiskError;       // 0x34 -- ground truth is the CONSTRUCTOR: retail ??0PlatformMgr
+                                //       @0x8251C320 emits `stw r29,0x34(r30)` (r29=0, r30=this) in a
+                                //       run of member zeroes 0x1c..0x44. That store is REACHABLE code.
+                                //       ⚠ The `stw r4,0x34(r3)` at 0x82516348 that this comment used to
+                                //       cite is inside SetDiskError's UNREACHABLE tail -- see
+                                //       docs/decomp/W16P_SETDISKERROR_OFFSETOF_MISPINS_VTABLE_2026-09-14.md
+                                //       §1: nothing in the image branches to 0x8251633c, and the 8 `bl`
+                                //       callers of 0x82516320 land on a bare `blr`. It corroborates 0x34
+                                //       (it was compiled from the real class layout) but must not be the
+                                //       lead citation, because a dead-code-only offset is unfalsifiable.
     JobMgr *mJobMgr;            // 0x38 (ctor: `li r3,0x10; bl operator new` then `stw r3,0x38(r30)`)
     bool unk3c;                 // 0x3c (not written by the ctor)
     bool unk3d;                 // 0x3d (ctor `stb 0,0x3d`)
