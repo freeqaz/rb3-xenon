@@ -61,12 +61,25 @@ namespace {
 }
 
 PlatformMgr::PlatformMgr() {
+    // Store set and order follow retail 0x8251c320 (W16-M S3A, 2026-09-14):
+    // 13 member stores at 0x1c..0x44 (incl. mHasHardDrive=false @0x27 and
+    // mRBNMemberPadNum=-1 @0x28, which the DC3-derived body lacked), then the
+    // SEVEN anonymous-namespace statics retail zeroes (lbl_82CCA8F0/E8/E4/DC/
+    // E0/D8/EC = mSigninSameGuest, mFriendsEnum, mFriendsBuffer,
+    // mFriendsCallback, mFriendsAsync, mFriendsList, mListener), `new JobMgr`
+    // (li r3,0x10; bl ??2CriticalSection survivor), and only THEN mXuidCache
+    // (four `std 0` at lbl_82CCA8B8). Retail initialises NONE of DC3's XSocial
+    // storage statics (mServiceIDOverlapped/2, mStorageList, mPathLen,
+    // mServiceIdState, mListSize, mUserID, mResult) -- their stores were the
+    // 22-instruction insert cluster charged at 68.8%.
     mSigninMask = 0;
-    mScreenSaver = true;
     mSigninChangeMask = 0;
     mGuideShowing = false;
     mConfirmCancelSwapped = false;
     mConnected = false;
+    mHasHardDrive = false;
+    mRBNMemberPadNum = -1;
+    mScreenSaver = true;
     mRegion = kRegionNone;
     mDiskError = kNoDiskError;
     unk3d = false;
@@ -83,18 +96,10 @@ PlatformMgr::PlatformMgr() {
 
     mJobMgr = new JobMgr(this);
 
-    mServiceIDOverlapped = 0;
-    mXuidCache[0] = 0;
-    mServiceIDOverlapped2 = 0;
-    mStorageList = 0;
-    mPathLen = 0x200;
-    mXuidCache[1] = 0;
-    mXuidCache[2] = 0;
-    mXuidCache[3] = 0;
-    mServiceIdState = (ServiceIdState)0;
-    mListSize = 0;
-    mUserID = -1;
-    mResult = 0;
+    // Retail's tail is four `std r29` through ONE lis/addi pair with no zero
+    // copies -- the /Oi memset intrinsic; four scalar stores materialised
+    // three `mr rN,r29` (W16-M S3A2).
+    memset(mXuidCache, 0, sizeof(mXuidCache));
     // DC3-only: `XOVERLAPPED mOverlapped` is part of DC3's XSocial block, which
     // lane NCCC removed from PlatformMgr.h on RETAIL-BYTE evidence -- retail's
     // member block runs 0x1c..0x47 (44 B), proven by PlatformMgr::Handle
@@ -105,16 +110,38 @@ PlatformMgr::PlatformMgr() {
 bool PlatformMgr::IsEthernetCableConnected() { return XNetGetEthernetLinkStatus() != 0; }
 
 void PlatformMgr::UpdateSigninState() {
-    XUID oldCache[4] = { mXuidCache[0], mXuidCache[1], mXuidCache[2], mXuidCache[3] };
+    // Retail captures oldCache as a BLOCK copy (four ld through the
+    // mXuidCache base into r8/r7/r6/r9, `mr r9,r27; ld r9,0x18(r9)`, then four
+    // std through r10 = r1+0x50) -- the /Oi memcpy intrinsic. DC3's
+    // initializer-list spelling compiles to scalar ld/std pairs on cl 10224
+    // (W16-M S3C2).
+    XUID oldCache[4];
+    memcpy(oldCache, mXuidCache, sizeof(oldCache));
     int i;
-    mSigninMask = 0;
+    // Retail 0x8251c620 zeroes 0x20 (mSigninChangeMask) beside 0x1c and
+    // lbl_82CCA8F0 -- `stw r30,0x20(r3)` -- exactly as DC3 records for its own
+    // image (W16-M S3C, 2026-09-14). Without it the mask is sticky. The store
+    // ORDER is retail's (sameGuest, changeMask, mask -- the reverse of DC3's
+    // spelling); cl 10224 emits these three in source order (W16-M S3C3).
     mSigninSameGuest = 0;
+    mSigninChangeMask = 0;
+    mSigninMask = 0;
     for (i = 0; i < 4; i++) {
         if (XUserGetSigninState(i) != 0) {
             XUSER_SIGNIN_INFO info = {};
             mSigninMask |= (1 << i);
-            XUserGetSigninInfo(i, 2, &info);
-            XUserGetXUID(i, &info.xuid);
+            // Retail consumes both XUSER results as a branchless select
+            // (`subic r11,r3,1; ld r10,0x70(r1); subfe; and` after each bl)
+            // and only calls XUserGetXUID when the first left the xuid ZERO
+            // (`cmpldi cr6,r11,0; bne`). Same shape as DC3 0x825D3E68.
+            if (XUserGetSigninInfo(i, 2, &info) != 0) {
+                info.xuid = 0;
+            }
+            if (info.xuid == 0) {
+                if (XUserGetXUID(i, &info.xuid) != 0) {
+                    info.xuid = 0;
+                }
+            }
             mXuidCache[i] = info.xuid;
         } else {
             mXuidCache[i] = 0;
@@ -834,16 +861,31 @@ void PlatformMgr::Poll() {
         if (res != ERROR_IO_INCOMPLETE) {
             static PlatformMgrOpCompleteMsg msg(false);
             if (res == ERROR_SUCCESS) {
-                XONLINE_FRIEND *xf = (XONLINE_FRIEND *)mFriendsBuffer;
-                for (unsigned long i = 0; i < numFriends; i++, xf++) {
-                    if (!(xf->dwFriendState & XONLINE_FRIENDSTATE_FLAG_SENTREQUEST)
-                        && !(xf->dwFriendState & XONLINE_FRIENDSTATE_FLAG_RECEIVEDREQUEST)) {
-                        Friend *f = new Friend();
-                        String name(xf->szGamertag);
-                        f->SetName(name);
-                        f->mXUID = xf->xuid;
-                        mFriendsList->push_back(f);
-                    }
+                // W16-M V6: retail's induction variable is mFriendsBuffer + 8 (the
+                // szGamertag field) stepping sizeof(XONLINE_FRIEND): dwFriendState is
+                // read at +0x10 and xuid at -0x8 from it.  An explicit pointer IV is
+                // pinned by the compiler while an indexed form is re-based to the
+                // struct start (V2..V4 measured), so iterate one gamertag cursor.
+                // Retail forms that cursor AFTER the zero-trip guard while the buffer
+                // load and i = 0 precede it, which is a source-level guard around a
+                // do/while, not a for loop (V5 measured the for-loop placement).
+                // (offsetof() is unusable: LIBCMT/stddef.h's macro mis-parenthesises.)
+                unsigned long i = 0;
+                XONLINE_FRIEND *pFriends = (XONLINE_FRIEND *)mFriendsBuffer;
+                if (i < numFriends) {
+                    const char *gamertag = pFriends->szGamertag;
+                    do {
+                        DWORD state = *(const DWORD *)(gamertag + 0x10); // dwFriendState
+                        if (!(state & XONLINE_FRIENDSTATE_FLAG_SENTREQUEST)
+                            && !(state & XONLINE_FRIENDSTATE_FLAG_RECEIVEDREQUEST)) {
+                            Friend *f = new Friend();
+                            String name(gamertag);
+                            f->SetName(name);
+                            f->mXUID = *(const XUID *)(gamertag - 8); // xuid
+                            mFriendsList->push_back(f);
+                        }
+                        gamertag += sizeof(XONLINE_FRIEND);
+                    } while (++i < numFriends);
                 }
                 msg[0] = true;
             } else {

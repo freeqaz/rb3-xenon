@@ -643,9 +643,10 @@
    "address": "0x82b5f808",
    "survivor": "?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z",
    "folded": [
-    "?push_back@?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@QAAXABH@Z"
+    "?push_back@?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@QAAXABH@Z",
+    "?push_back@?$vector@PAVFriend@@V?$StlNodeAlloc@PAVFriend@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVFriend@@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 136, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 47 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 136, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 47 census sites over 1 functions. W16-M (2026-09-14): push_back<Friend*> added on CHASED T1 -- tools/icf_pair_adjudicate.py --survivor 0x82b5f808 --ours <Friend* spelling> --chase: flat T1 REFUTED (template twin, 112 B both sides; retail carries 2 body-twins, this survivor and push_back<Symbol> -- so shape alone cannot pick), CHASED T1 PROVEN: the only differing relocation slot is _M_insert_overflow<Friend*> vs <int>, whose chain (MemOrPoolAlloc/MemOrPoolAllocSTL -> PoolAlloc -> ??2CriticalSection/??2ChunkAllocator) folds slot-by-slot. Retail Poll's own `bl` at the site resolves to 0x82b5f808 (this survivor, NOT the Symbol twin), read from the retail displacement, so the name at the site is the survivor by construction."
   },
   {
    "name": "erase",
@@ -73906,12 +73907,14 @@
     "??2FlowRun@@SAPAXI@Z",
     "??2FlowSound@@SAPAXI@Z",
     "??2FreestyleMoveRecorder@@SAPAXI@Z",
+    "??2Friend@@SAPAXI@Z",
     "??2GemTrackDir@@SAPAXI@Z",
     "??2HamSongData@@SAPAXI@Z",
     "??2HttpGet@@SAPAXI@Z",
     "??2ImmediateWidgetImp@@SAPAXI@Z",
     "??2Interpolator@@SAPAXI@Z",
     "??2Job@@SAPAXI@Z",
+    "??2JobMgr@@SAPAXI@Z",
     "??2KerningTable@@SAPAXI@Z",
     "??2Layer@HamDriver@@SAPAXI@Z",
     "??2Loader@@SAPAXI@Z",
@@ -73964,7 +73967,7 @@
     "?BinkAlloc@@YAPAXI@Z",
     "JsonMalloc"
    ],
-   "evidence": "tools/alloc_fold_gate.py -- 8-byte allocator-thunk fold class. Every folded spelling's COMDAT is byte- AND relocation-identical to the map-resident survivor's, which is the /OPT:ICF condition itself applied to two of our own COMDATs: both carry the same relocation to the same symbol, so the fold does not depend on naming retail's branch target (0x827bcd38 is unnamed in the map, which is where tools/comdat_fold_gate.py fail-closes). The survivor is corroborated on retail bytes -- 8 B, word0 equal as a FULL 32-bit value, matching branch opcode/AA/LK -- and the pair (word0, resolved dest) is UNIQUE image-wide: 712 retail 8-byte <word>+<branch> bodies carry 707 distinct combos and the 12 sharing `li r4,0` have 12 DISTINCT destinations, so shape does none of the work. REFUSED, each on a different mechanism and each a real finding: ??2Task (map address 0x822d4278 is `blr`+pad with ZERO fan-in -- a map defect, not a function), ??2OutfitConfig (0x82b66c48 is a real thunk to a DIFFERENT allocator -- our identical COMDAT is a source defect), ?SampleAlloc (our objs define two distinct COMDAT variants).",
+   "evidence": "tools/alloc_fold_gate.py -- 8-byte allocator-thunk fold class. Every folded spelling's COMDAT is byte- AND relocation-identical to the map-resident survivor's, which is the /OPT:ICF condition itself applied to two of our own COMDATs: both carry the same relocation to the same symbol, so the fold does not depend on naming retail's branch target (0x827bcd38 is unnamed in the map, which is where tools/comdat_fold_gate.py fail-closes). The survivor is corroborated on retail bytes -- 8 B, word0 equal as a FULL 32-bit value, matching branch opcode/AA/LK -- and the pair (word0, resolved dest) is UNIQUE image-wide: 712 retail 8-byte <word>+<branch> bodies carry 707 distinct combos and the 12 sharing `li r4,0` have 12 DISTINCT destinations, so shape does none of the work. REFUSED, each on a different mechanism and each a real finding: ??2Task (map address 0x822d4278 is `blr`+pad with ZERO fan-in -- a map defect, not a function), ??2OutfitConfig (0x82b66c48 is a real thunk to a DIFFERENT allocator -- our identical COMDAT is a source defect), ?SampleAlloc (our objs define two distinct COMDAT variants). W16-M (2026-09-14): ??2Friend@@SAPAXI@Z added -- gate ADMIT (COMDAT byte- and reloc-identical to the survivor, 1 definition, PlatformMgr_Xbox.obj only); retail Poll's call site is `li r3,0x28; bl 0x827bd2f0` (sizeof(Friend)=0x28 agrees), so the survivor IS the callee. Also gate-ADMIT but deliberately NOT installed (out of W16-M scope, not adjudicated): ??2JobMgr, ??2PropertyEventProvider, ??_UVert@RndMesh, and ??2OutfitConfig -- the last one this evidence text records as REFUSED on retail bytes (0x82b66c48 = thunk to a different allocator); its ADMIT today only means the map no longer contradicts it, not that the retail finding is gone. W16-M S3A (2026-09-14): ??2JobMgr@@SAPAXI@Z added -- gate re-run live: ADMIT (COMDAT byte- and reloc-identical to the survivor, 1 definition, PlatformMgr_Xbox.obj only); retail ??0PlatformMgr's site is `li r3,0x10; bl 0x827bd2f0` and sizeof(JobMgr)=0x10 agrees, so the survivor IS the callee. ??2PropertyEventProvider, ??_UVert@RndMesh, ??2OutfitConfig remain NOT installed (unadjudicated / OutfitConfig's REFUSE was retired by a map rename, not evidence).",
    "withdrawn": [
     {
      "spelling": "??2BandRetargetVignette@@SAPAXI@Z",
