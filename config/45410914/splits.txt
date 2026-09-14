@@ -4568,9 +4568,7 @@ Ham.cpp:
 
 HamCharacter.cpp:
 	.pdata      start:0x82246BF8 end:0x82246C40
-	.pdata      start:0x82246C40 end:0x82246C58
 	.text       start:0x828121E8 end:0x82812398
-	.text       start:0x828123A4 end:0x82812500
 
 MoveDir.cpp:
 	.pdata      start:0x821F1920 end:0x821F1928
@@ -13010,6 +13008,7 @@ system/ui/UILabelDir.cpp:
 	.pdata      start:0x82246960 end:0x822469B0
 	.pdata      start:0x822469B0 end:0x82246BD0
 	.pdata      start:0x82246BD0 end:0x82246BF8
+	.pdata      start:0x82246C40 end:0x82246C58
 	.text       start:0x8280FC74 end:0x8280FCF0
 	.text       start:0x8280FCFC end:0x828101A0
 	.text       start:0x828101A0 end:0x82812014
@@ -13020,6 +13019,7 @@ system/ui/UILabelDir.cpp:
 	.text       start:0x82812068 end:0x82812074
 	.text       start:0x82812080 end:0x828121E8
 	.text       start:0x82812398 end:0x828123A4
+	.text       start:0x828123A4 end:0x82812500
 	.text       start:0x82812500 end:0x8281250C
 
 system/gesture/DrawUtl.cpp:

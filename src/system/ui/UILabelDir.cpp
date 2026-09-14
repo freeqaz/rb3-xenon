@@ -110,14 +110,45 @@ BEGIN_LOADS(UILabelDir)
     ObjectDir::Load(bs);
 END_LOADS
 
-INIT_REVS(9, 0)
+// ---------------------------------------------------------------------------
+// Retail UILabelDir::PreLoad (0x82812468, 148 B) uses the obj/ObjMacros.h rev
+// dialect -- CLASS-STATIC-style globals written at load time, gAltRev at
+// base+0 (`sth r11, lbl_82E07A3C@l(r10)`) and gRev at base+4 (`sth r3, 0x4(r8)`)
+// -- and pushes the rev BEFORE calling RndDir::PreLoad (rb3-Wii order), not
+// obj/Object.h's local BinStreamRev + PushRev-after. Same bracketed install as
+// ui/UILabel.cpp so the dialect cannot leak into PostLoad (which keeps the
+// BinStreamRev `d` form) or into any COMDAT-scatter includer of this file.
+// gAltRev is declared FIRST: declaration order fixes .bss placement and retail
+// reads gAltRev at +0, gRev at +4. (lane W16-G, 2026-09-14)
+// ---------------------------------------------------------------------------
+#pragma push_macro("INIT_REVS")
+#pragma push_macro("LOAD_REVS")
+#pragma push_macro("ASSERT_REVS")
+#undef INIT_REVS
+#undef LOAD_REVS
+#undef ASSERT_REVS
+#define INIT_REVS(objType)                                                               \
+    static unsigned short gAltRev = 0;                                                   \
+    static unsigned short gRev = 0;
+#define LOAD_REVS(bs)                                                                    \
+    int rev;                                                                             \
+    bs >> rev;                                                                           \
+    gRev = getHmxRev(rev);                                                               \
+    gAltRev = getAltRev(rev);
+#define ASSERT_REVS(rev1, rev2)
+
+INIT_REVS(UILabelDir)
 
 void UILabelDir::PreLoad(BinStream &bs) {
     LOAD_REVS(bs);
     ASSERT_REVS(9, 0);
-    RndDir::PreLoad(d.stream);
-    d.PushRev(this);
+    BinStream::PushRev(packRevs(gAltRev, gRev), this);
+    RndDir::PreLoad(bs);
 }
+
+#pragma pop_macro("ASSERT_REVS")
+#pragma pop_macro("LOAD_REVS")
+#pragma pop_macro("INIT_REVS")
 
 void UILabelDir::PostLoad(BinStream &bs) {
     BinStreamRev d(bs, bs.PopRev(this));
