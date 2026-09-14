@@ -4,7 +4,6 @@
 #include "meta_band/UIEventMgr.h"
 #include "net/NetMessage.h"
 #include "net/NetSession.h"
-#include "net/VoiceChatMgr.h"
 #include "obj/ObjMacros.h"
 #include "os/Debug.h"
 #include "os/PlatformMgr.h"
@@ -65,12 +64,20 @@ BandUser *SessionUsersProvider::GetUser(int index) {
 
 void SessionUsersProvider::ToggleMuteStatus(int selected) {
     MILO_ASSERT_RANGE(selected, 0, mUsers.size(), 0x6B);
-    TheVoiceChatMgr->ToggleMuteStatus(mUsers[selected]);
+    // RB3-360 has no VoiceChatMgr (rb3-Wii calls
+    // TheVoiceChatMgr->ToggleMuteStatus(mUsers[selected]) here; retail 360 has
+    // no VoiceChatMgr RTTI or strings). Retail compiles this to an EMPTY body:
+    // Handle's toggle_mute_status arm at 0x82654694 is Int() followed by
+    // nothing, and the out-of-line copy is the 4 B `blr` ICF survivor
+    // 0x826c3888 that OvershellSlot::ToggleMuteUser bl's. Evidence:
+    // docs/decomp/W16D_BLOCKED_LIST_ESCALATION_2026-09-14.md item 5a.
 }
 
 bool SessionUsersProvider::IsMuted(int selected) const {
     MILO_ASSERT_RANGE(selected, 0, mUsers.size(), 0x7F);
-    return TheVoiceChatMgr->IsMuted(mUsers[selected]);
+    // RB3-360: constant false (see ToggleMuteStatus). Retail Mat at 0x826541F0
+    // reads only mUncheckedMat (0x40); mCheckedMat (0x3c) is never read.
+    return false;
 }
 
 void SessionUsersProvider::InitData(RndDir *rdir) {
@@ -125,7 +132,7 @@ int SessionUsersProvider::NumData() const { return mUsers.size(); }
 
 BEGIN_HANDLERS(SessionUsersProvider)
     HANDLE_ACTION(kick_player, KickPlayer(_msg->Int(2)))
-    HANDLE_ACTION(toggle_mute_status, _msg->Int(2))
+    HANDLE_ACTION(toggle_mute_status, ToggleMuteStatus(_msg->Int(2)))
     HANDLE_EXPR(get_size, NumData())
     HANDLE_CHECK(0xDB)
 END_HANDLERS
