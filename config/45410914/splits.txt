@@ -4299,7 +4299,7 @@ CharLipSync.cpp:
 	.pdata      start:0x821F84B8 end:0x821F84C0
 	.pdata      start:0x821F84F8 end:0x821F8500
 	.pdata      start:0x821F8510 end:0x821F8518
-	.pdata      start:0x821F8620 end:0x821F8630
+	.pdata      start:0x821F8628 end:0x821F8630
 	.pdata      start:0x821F8630 end:0x821F8638
 	.pdata      start:0x821F8690 end:0x821F8698
 	.pdata      start:0x821F86A0 end:0x821F86A8
@@ -4323,7 +4323,8 @@ CharLipSync.cpp:
 	.text       start:0x822DD1E0 end:0x822DD23C
 	.text       start:0x822DD7B0 end:0x822DD808
 	.text       start:0x822DDA00 end:0x822DDA74
-	.text       start:0x822DEA4C end:0x822DEB3C
+	.text       start:0x822DEA4C end:0x822DEA78
+	.text       start:0x822DEAC8 end:0x822DEB3C
 	.text       start:0x822DEB40 end:0x822DEDEC
 	.text       start:0x822DF8B0 end:0x822DF99C
 	.text       start:0x822DF9F8 end:0x822DFA20
@@ -9415,6 +9416,7 @@ band3/meta_band/SongRecord.cpp:
 
 band3/meta_band/BandProfile.cpp:
 	.pdata      start:0x821F8508 end:0x821F8510
+	.pdata      start:0x821F8620 end:0x821F8628
 	.pdata      start:0x822160D0 end:0x822160E0
 	.pdata      start:0x8221FBC0 end:0x8221FBD0
 	.pdata      start:0x8221FBD0 end:0x8221FBD8
@@ -9452,6 +9454,7 @@ band3/meta_band/BandProfile.cpp:
 	.pdata      start:0x8221FFA8 end:0x822200D8
 	.pdata      start:0x8222BD60 end:0x8222BD68
 	.text       start:0x822DD9A0 end:0x822DD9FC
+	.text       start:0x822DEA78 end:0x822DEAC8
 	.text       start:0x824F7550 end:0x824F7600
 	.text       start:0x8258A018 end:0x8258A108
 	.text       start:0x8258A108 end:0x8258A14C
