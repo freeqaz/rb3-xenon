@@ -924,10 +924,24 @@ void OvershellPanel::ResolvePartWaitStates() {
                     );
                     if (userHasPriority && !otherHasPriority)
                         continue;
-                    if (other->GetOvershellState() == kState_ChoosePartWait
-                        && RepresentSamePart(
-                            user->GetTrackType(), other->GetTrackType()
-                        )) {
+                    // RB3-360 retail branches this as a NESTED if with an early
+                    // `continue`, not the rb3-Wii oracle's single `&&`. The two are
+                    // NOT equivalent: on (state == kState_ChoosePartWait &&
+                    // !RepresentSamePart) the oracle's form falls through and still
+                    // does priorityUsers.push_back(other), while retail skips the
+                    // push_back and the allWaiting update entirely and continues the
+                    // loop. Measured on retail bytes (W16-AQ): at the `clrlwi.` that
+                    // tests RepresentSamePart's return, retail's `beq` targets the
+                    // loop increment (+0x2b8 from function start) where ours targeted
+                    // the push_back (+0x298). The `state != kState_ChoosePartWait`
+                    // branch above it goes to +0x298 on BOTH sides -- that asymmetry
+                    // is what rules out a plain `&&`, which would send both failures
+                    // to the same block.
+                    if (other->GetOvershellState() == kState_ChoosePartWait) {
+                        if (!RepresentSamePart(
+                                user->GetTrackType(), other->GetTrackType()
+                            ))
+                            continue;
                         if (otherHasPriority && !userHasPriority) {
                             needsResolve = true;
                             break;
