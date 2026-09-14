@@ -15730,9 +15730,9 @@
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 19 other group(s) at 20 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 19 of the 20 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
   },
   {
-   "name": "$__uninitialized_copy",
+   "name": "$Handle_caseless_HmxObject",
    "address": "0x823d3918",
-   "survivor": "??$__uninitialized_copy@PAVString@@PAV1@@stlpmtx_std@@YAPAVString@@PAV1@00ABU__false_type@0@@Z",
+   "survivor": "?Handle@CharLipSync@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
    "folded": [
     "?Handle@ADSR@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
     "?Handle@BandSongPref@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
@@ -15755,7 +15755,16 @@
     "?Handle@UIGuide@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
     "?Handle@UIListWidget@@UAA?AVDataNode@@PAVDataArray@@_N@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 20 folded spelling(s), 1 census sites over 2 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 20 folded spelling(s), 1 census sites over 2 functions.  || W16-AQ 2026-09-14 SURVIVOR CORRECTED to ?Handle@CharLipSync@@ after naming 0x823d3918. Proof the fold is REAL and the survivor is CharLipSync's Handle: (1) tools/retail_rtti.py owner 0x823d3918 -> 16 classes hold it at vtable SLOT 6, including .?AVCharLipSync@@ (vtable 0x8205288c). Control: owner 0x8275bd78 (?Handle@Object@Hmx@@) returns .?AVObject@Hmx@@ slot 6, so slot 6 IS Handle; retail_rtti.py --selftest passes 8/8. (2) The rival hypothesis 'these 16 do not override Handle, they inherit it' is REFUTED: 14 of the 16 derive directly from Hmx::Object (RTTI numBaseClasses=3, bases self/Object@Hmx/ObjRef; PerformanceData adds FixedSizeSaveable), and Hmx::Object's own slot 6 is 0x8275bd78 != 0x823d3918 -- inheriting would have left 0x8275bd78 in the slot. So 14 distinct overriding definitions collapsed onto ONE address, which by /OPT:ICF means byte-identical INCLUDING relocations. (3) Our-side COMDAT corroboration: ?Handle@CharLipSync@@ / @UIListWidget@@ / @UIColor@@ / @UIGuide@@ compile to 212 B bodies that are RAW-BYTE IDENTICAL with all 8 real callee relocations identical (?Sym@DataNode@@, ?Handle@Object@Hmx@@, ??0DataNode@@, ?Release@DataArray@@, ?PathName@@, ??1DataNode@@, __savegprlr_26, __restgprlr_26); the ONLY differing relocation is the per-function __ehfuncinfo$ descriptor, itself an identical-content COMDAT that folds. A case-less BEGIN_HANDLERS/HANDLE_SUPERCLASS(Hmx::Object)/END_HANDLERS body mentions its class NOWHERE, which is why every such Handle folds. (4) The fold observed live: retail ?Handle@UIListSlot@@ (0x828152f0) does `bl 0x823d3918` for its HANDLE_SUPERCLASS(UIListWidget) -- i.e. the call site reaches UIListWidget::Handle THROUGH the survivor address. DELIBERATELY NOT ADDED: ?Handle@DxCubeTex@@ and ?Handle@NgFur@@. Both also hold 0x823d3918 at slot 6, but their bases (RndCubeTex, RndFur) are themselves fold members, so slot 6 could be plain inheritance rather than a folded override -- unprovable by this method, and the brief forbids adding a membership to forgive a real divergence.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_copy@PAVString@@PAV1@@stlpmtx_std@@YAPAVString@@PAV1@00ABU__false_type@0@@Z",
+     "lane": "W16-AQ 2026-09-14",
+     "class": "SURVIVOR_MISIDENTIFIED",
+     "disposition": "withdrawn",
+     "reason": "icf_alias_build.py picked this spelling as the survivor while 0x823d3918 was ANONYMOUS, so the choice was never tested against a target name. Refuted on retail bytes: the body at 0x823d3918 is a Milo Handle forwarder (bl ?Sym@DataNode@@, bl ?Handle@Object@Hmx@@, bl ?PathName@@, bl ??1DataNode@@) -- not a String copy loop. Our compiled ??$__uninitialized_copy@PAVString@@ COMDAT is 168 B in all 20 TUs that emit it, whereas the case-less Handle COMDAT is 212 B (retail 164 B body + 40 B EH funclet + 8 B EH prefix), so the two cannot be the same COMDAT. The spelling is also absent from scripts/target_symbol_map.json at every address."
+    }
+   ]
   },
   {
    "name": "_M_clear",
