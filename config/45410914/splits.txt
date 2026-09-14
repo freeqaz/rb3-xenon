@@ -14606,6 +14606,32 @@ xdk/xapilibi/sleep.cpp:
 	.text       start:0x8283D628 end:0x8283D668
 	.text       start:0x828450F0 end:0x82845180
 
+xdk/xapilibi/xapi0.cpp:
+	.pdata      start:0x82248B98 end:0x82248BB8
+	.text       start:0x8283CA00 end:0x8283CED8
+
+xdk/xapilibi/xgetoverlappedextendederror.cpp:
+	.text       start:0x8283D2B0 end:0x8283D2D8
+
+xdk/xapilibi/closehandle.cpp:
+	.pdata      start:0x82248BF8 end:0x82248C00
+	.text       start:0x8283D2D8 end:0x8283D320
+
+xdk/xapilibi/xgetoverlappedresult.cpp:
+	.pdata      start:0x82248C00 end:0x82248C08
+	.text       start:0x8283D320 end:0x8283D3B8
+
+xdk/xapilibi/getlocaltime.cpp:
+	.pdata      start:0x82248C20 end:0x82248C28
+	.text       start:0x8283D590 end:0x8283D624
+
+xdk/xapilibi/xusergetsignininfo.cpp:
+	.pdata      start:0x82248C48 end:0x82248C50
+	.text       start:0x8283D7C8 end:0x8283D810
+
+xdk/xapilibi/xnotify.cpp:
+	.text       start:0x8283D810 end:0x8283D818
+
 xdk/xapilibi/xutilitydrive.cpp:
 	.pdata      start:0x82248C50 end:0x82248CE0
 	.text       start:0x8283D818 end:0x8283EB88
