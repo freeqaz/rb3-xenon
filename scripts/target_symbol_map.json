@@ -16528,7 +16528,7 @@
  "0x826ccb48": "??$_Destroy@UGrammar@SpeechMgr@@@stlpmtx_std@@YAXPAUGrammar@SpeechMgr@@@Z",
  "0x826ccb50": "?PostLoad@DirectInstrument@@QAAXXZ",
  "0x826ccb60": "?Enable@DirectInstrument@@QAAXXZ",
- "0x826ccc10": "??0Splash@@QAA@XZ",
+ "0x826ccc10": "??0DirectInstrument@@QAA@XZ",
  "0x826ccdb8": "??1DirectInstrument@@QAA@XZ",
  "0x826cce60": "??__Fmsg@?BH@??ProcessRecoResult@SpeechMgr@@AAAXPAU_NUI_SPEECH_RECORESULT@@@Z@YAXXZ",
  "0x826cd438": "?reserve@?$vector@DV?$StlNodeAlloc@D@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
@@ -30523,5 +30523,6 @@
  "0x82694860": "?CreateGame@GamePanel@@QAAXXZ",
  "0x82696b48": "?Handle@GamePanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82694b00": "?SendRestartGameNetMsg@GamePanel@@QAAXXZ",
- "0x82695178": "?UpdateNowBar@GamePanel@@QAAXXZ"
+ "0x82695178": "?UpdateNowBar@GamePanel@@QAAXXZ",
+ "0x827421b8": "??0Splash@@QAA@XZ"
 }
