@@ -254,9 +254,13 @@ void OvershellSlot::RemoveUser() {
     MILO_ASSERT(pUser, 0x1E5);
     LocalBandUser *pLocUser = pUser->GetLocalBandUser();
     MILO_ASSERT(pLocUser, 0x1E7);
-    if (TheSaveLoadMgr)
-        TheSaveLoadMgr->AutoSaveNow();
-    TheWiiProfileMgr.RemovePad(pLocUser->GetPadNum());
+    // Retail X360 0x825DF840 is 0x58 B / 22 instructions and STRAIGHT-LINE -- it
+    // holds exactly four calls (GetUserFromSlot, the vtable+0x1c GetLocalBandUser,
+    // SessionMgr::RemoveLocalUser, ResetSlotCamera) and NO branch at all.  So the
+    // `if (TheSaveLoadMgr) AutoSaveNow()` guard cannot be there (it would emit a
+    // branch), and the TheWiiProfileMgr.RemovePad() call is the Wii-only /
+    // Xbox-wrong class -- both came from the rb3-Wii DEV oracle.  Retail bytes
+    // outrank the oracle.  See docs/decomp/ROCKCENTRAL_HANDLE_AND_MOVIE_MAP_2026-09-14.md
     mSessionMgr->RemoveLocalUser(pLocUser);
     ResetSlotCamera();
 }

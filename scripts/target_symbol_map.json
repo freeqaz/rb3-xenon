@@ -13218,7 +13218,7 @@
  "0x825df050": "?UpdateFriendsList@OvershellSlot@@QAAXXZ",
  "0x825df1d8": "?UpdatePartSelectList@OvershellSlot@@QAAXXZ",
  "0x825df420": "?RefreshHighlightedChar@OvershellSlot@@QAAXH@Z",
- "0x825df840": "?clear@?$_List_base@PAVPassiveMessage@@V?$StlNodeAlloc@PAVPassiveMessage@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
+ "0x825df840": "?RemoveUser@OvershellSlot@@QAAXXZ",
  "0x825e00f8": "?ToggleVocalStyle@OvershellSlot@@QAAXXZ",
  "0x825e01b0": "?ToggleLeftyFlip@OvershellSlot@@QAAXXZ",
  "0x825e0248": "?EnableAutohide@OvershellSlot@@QAAX_N@Z",
