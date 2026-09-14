@@ -1310,7 +1310,7 @@ CalibrationPanel.cpp:
 
 TourDescPanel.cpp:
 	.pdata      start:0x821F7478 end:0x821F7480
-	.pdata      start:0x82226ED0 end:0x82226EE0
+	.pdata      start:0x82226ED0 end:0x82226ED8
 	.pdata      start:0x82226FE0 end:0x82226FE8
 	.pdata      start:0x822463A0 end:0x822463C8
 	.pdata      start:0x8225C1E0 end:0x8225C1E8
@@ -1327,7 +1327,7 @@ TourDescPanel.cpp:
 	.pdata      start:0x8225C430 end:0x8225C490
 	.pdata      start:0x8225C490 end:0x8225C498
 	.text       start:0x822CD8C0 end:0x822CD8F4
-	.text       start:0x825F3378 end:0x825F3428
+	.text       start:0x825F3378 end:0x825F33D0
 	.text       start:0x825F4598 end:0x825F45EC
 	.text       start:0x82808C64 end:0x82808FB8
 	.text       start:0x82808FC4 end:0x82808FC8
@@ -10420,13 +10420,16 @@ AccomplishmentPanel.cpp:
 	.pdata      start:0x821FB208 end:0x821FB220
 	.pdata      start:0x82219400 end:0x82219410
 	.pdata      start:0x82219598 end:0x822195A0
-	.pdata      start:0x82226EE0 end:0x82226EF8
-	.pdata      start:0x82226EF8 end:0x82226F10
+	.pdata      start:0x82226EE0 end:0x82226EE8
+	.pdata      start:0x82226EF8 end:0x82226F08
 	.pdata      start:0x82226F10 end:0x82226F30
-	.pdata      start:0x82226F58 end:0x82226F88
+	.pdata      start:0x82226F58 end:0x82226F68
+	.pdata      start:0x82226F70 end:0x82226F78
 	.pdata      start:0x82226F88 end:0x82226F90
 	.pdata      start:0x82226F90 end:0x82226F98
-	.pdata      start:0x82227000 end:0x82227058
+	.pdata      start:0x82227000 end:0x82227018
+	.pdata      start:0x82227028 end:0x82227038
+	.pdata      start:0x82227048 end:0x82227058
 	.pdata      start:0x82227088 end:0x82227090
 	.pdata      start:0x822270A8 end:0x822270C0
 	.pdata      start:0x82227278 end:0x82227280
@@ -10439,14 +10442,17 @@ AccomplishmentPanel.cpp:
 	.text       start:0x8230A7E0 end:0x8230A91C
 	.text       start:0x82528878 end:0x825288F8
 	.text       start:0x8252A598 end:0x8252A620
-	.text       start:0x825F3428 end:0x825F3560
-	.text       start:0x825F3560 end:0x825F3708
+	.text       start:0x825F3428 end:0x825F3480
+	.text       start:0x825F3560 end:0x825F3640
 	.text       start:0x825F3708 end:0x825F3958
 	.text       start:0x825F3AE0 end:0x825F3AE8
-	.text       start:0x825F3C0C end:0x825F3F70
+	.text       start:0x825F3C0C end:0x825F3C58
+	.text       start:0x825F3D08 end:0x825F3DB8
 	.text       start:0x825F3F70 end:0x825F3FEC
 	.text       start:0x825F3FF0 end:0x825F4130
-	.text       start:0x825F4948 end:0x825F50A0
+	.text       start:0x825F4948 end:0x825F4CA8
+	.text       start:0x825F4DF8 end:0x825F4F50
+	.text       start:0x825F4FF8 end:0x825F50A0
 	.text       start:0x825F526C end:0x825F5270
 	.text       start:0x825F5300 end:0x825F5400
 	.text       start:0x825F5460 end:0x825F5468
@@ -12629,8 +12635,8 @@ band3/meta_band/AccomplishmentLessonSongListConditional.cpp:
 	.text       start:0x825E9668 end:0x825E9880
 
 TexLoadPanel.cpp:
-	.pdata      start:0x82226DA8 end:0x82226ED0
-	.text       start:0x825F2210 end:0x825F3378
+	.pdata      start:0x82226DA8 end:0x82226EC0
+	.text       start:0x825F2210 end:0x825F32A8
 
 band3/game/PresenceMgr.cpp:
 	.pdata      start:0x822303C8 end:0x822303D0
@@ -13429,19 +13435,35 @@ band3/meta_band/RetryAudioPanel.cpp:
 	.text       start:0x82630778 end:0x82631130
 
 band3/meta_band/CampaignGoalsLeaderboardChoicePanel.cpp:
+	.pdata      start:0x82226EC0 end:0x82226ED0
+	.pdata      start:0x82226ED8 end:0x82226EE0
+	.pdata      start:0x82226EE8 end:0x82226EF8
+	.pdata      start:0x82226F08 end:0x82226F10
 	.pdata      start:0x82226F30 end:0x82226F50
 	.pdata      start:0x82226F50 end:0x82226F58
+	.pdata      start:0x82226F68 end:0x82226F70
+	.pdata      start:0x82226F78 end:0x82226F88
 	.pdata      start:0x82226F98 end:0x82226FE0
 	.pdata      start:0x82226FE8 end:0x82227000
+	.pdata      start:0x82227018 end:0x82227028
+	.pdata      start:0x82227038 end:0x82227048
 	.pdata      start:0x82227058 end:0x82227080
 	.pdata      start:0x82227080 end:0x82227088
 	.pdata      start:0x82227090 end:0x82227098
 	.pdata      start:0x82227098 end:0x822270A8
 	.pdata      start:0x822270C0 end:0x822270E0
+	.text       start:0x825F32A8 end:0x825F3378
+	.text       start:0x825F33D0 end:0x825F3428
+	.text       start:0x825F3480 end:0x825F3560
+	.text       start:0x825F3640 end:0x825F3708
 	.text       start:0x825F3958 end:0x825F3AE0
 	.text       start:0x825F3AE8 end:0x825F3C0C
+	.text       start:0x825F3C58 end:0x825F3D08
+	.text       start:0x825F3DB8 end:0x825F3F70
 	.text       start:0x825F4130 end:0x825F4598
 	.text       start:0x825F45F0 end:0x825F4948
+	.text       start:0x825F4CA8 end:0x825F4DF8
+	.text       start:0x825F4F50 end:0x825F4FF8
 	.text       start:0x825F50A0 end:0x825F526C
 	.text       start:0x825F5270 end:0x825F5300
 	.text       start:0x825F5400 end:0x825F5460
