@@ -13,19 +13,19 @@
 #include "utl/MemMgr.h"
 #include "utl/Str.h"
 
-#ifdef HX_NATIVE
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
-#include <string>
-#include <unordered_set>
-
 void DataArray::Release() {
     mRefs--;
     MILO_ASSERT(mRefs >= 0, 0x122);
     if (mRefs == 0)
         delete this;
 }
+
+#ifdef HX_NATIVE
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <string>
+#include <unordered_set>
 
 // Intern context path strings for stable pointers and deduplication
 static const char *InternContextPath(const char *path) {
