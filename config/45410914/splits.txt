@@ -4610,7 +4610,7 @@ CharBlendBone.cpp:
 	.pdata      start:0x82205DF0 end:0x82205DF8
 	.pdata      start:0x82205E10 end:0x82205E18
 	.pdata      start:0x82205E18 end:0x82205E28
-	.pdata      start:0x82205E30 end:0x82205EB0
+	.pdata      start:0x82205E28 end:0x82205EB0
 	.pdata      start:0x82205EB0 end:0x82205F10
 	.text       start:0x823B40C0 end:0x823B40D0
 	.text       start:0x823B40DC end:0x823B40E0
@@ -4618,7 +4618,7 @@ CharBlendBone.cpp:
 	.text       start:0x823C3458 end:0x823C35CC
 	.text       start:0x823C3728 end:0x823C3828
 	.text       start:0x823C3828 end:0x823C38E8
-	.text       start:0x823C3954 end:0x823C40F0
+	.text       start:0x823C38E8 end:0x823C40F0
 	.text       start:0x823C40F0 end:0x823C4608
 	.text       start:0x823C4618 end:0x823C4624
 	.text       start:0x823C46E0 end:0x823C46EC
@@ -6310,7 +6310,6 @@ Msg.cpp:
 	.pdata      start:0x821FB560 end:0x821FB568
 	.pdata      start:0x821FB568 end:0x821FB570
 	.pdata      start:0x82202F98 end:0x82202FA0
-	.pdata      start:0x82205E28 end:0x82205E30
 	.pdata      start:0x822072E8 end:0x822072F8
 	.pdata      start:0x8220E5B0 end:0x8220E5B8
 	.pdata      start:0x82214468 end:0x82214470
@@ -6343,7 +6342,6 @@ Msg.cpp:
 	.text       start:0x8230DF20 end:0x8230DF5C
 	.text       start:0x8230DF5C end:0x8230DF88
 	.text       start:0x8238B130 end:0x8238B198
-	.text       start:0x823C38E8 end:0x823C3954
 	.text       start:0x823D9570 end:0x823D9628
 	.text       start:0x8245CC78 end:0x8245CCE0
 	.text       start:0x824CF800 end:0x824CF890
