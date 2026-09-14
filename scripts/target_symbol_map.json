@@ -10423,7 +10423,7 @@
  "0x8251bf18": "?SetPadPresence@PlatformMgr@@QBAXHH@Z",
  "0x8251c048": "?IsInParty@PlatformMgr@@QAA_NXZ",
  "0x8251c0d0": "?IsInPartyWithOthers@PlatformMgr@@QAA_NXZ",
- "0x8251c170": "??1?$ObjPtr@VMoggClip@@@@UAA@XZ",
+ "0x8251c170": "?EnableXMP@PlatformMgr@@QAAXXZ",
  "0x8251c180": "?SetScreenSaver@PlatformMgr@@QAAX_N@Z",
  "0x8251c248": "?GetPadNumFromXuid@?A0x8a9ffbf2@@YAH_K@Z",
  "0x8251c840": "?SetPadProperty@PlatformMgr@@QBAXHHPBG@Z",
