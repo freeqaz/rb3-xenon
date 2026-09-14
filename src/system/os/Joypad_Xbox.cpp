@@ -7,19 +7,39 @@
 #include "os/System.h"
 #include "xdk/XAPILIB.h"
 
+// .bss ORDER AND STORAGE CLASS ARE LOAD-BEARING -- read before touching.
+// Retail RB3's InitXinputJoypadThreadData (fn_82529890) opens
+//   lis r11,0x82cd ; addi r11,r11,-0x4728   => r11 = tInputStates
+//   stb r10,0x98(r11) .. stb r10,0x9b(r11)  => tNeedCaps = tInputStates + 0x98
+//   addi r7,r9,-0x46e8                      => tBreed   = tInputStates + 0x40
+// A BAKED-IN DISPLACEMENT like that is only emitted between INTERNAL-LINKAGE
+// statics; MSVC makes anonymous-namespace variables EXTERNAL, and each external
+// gets its own relocation instead. So the whole block below is file-scope
+// `static`, except the two the target actually names with anon decoration
+// (tBreed, tCritSection).
+// MSVC lays .bss out in REVERSE declaration order, so the run reads back to
+// front: first declared here = highest address. The resulting ascending run is
+//   tInputStates +0x00, tBreed +0x40, sThreadData +0x70, tButtonStatesCurr
+//   +0x78, tButtonStatesPrev +0x88, tNeedCaps +0x98, tCritSection +0x9c
+// which is byte-for-byte the run DC3's Joypad_Xbox.cpp documents -- verified
+// here against RETAIL bytes, not inherited from the oracle.
 namespace {
-    BreedData tBreed[kNumJoypads];
-    // Thread handle and termination flag grouped for proper codegen
-    // The struct layout is required to match the original binary's data layout
-    struct {
-        HANDLE tThread;
-        bool tNoHandle;
-    } sThreadData;
-    unsigned int tButtonStatesPrev[kNumJoypads];
-    unsigned int tButtonStatesCurr[kNumJoypads];
-    XINPUT_STATE tInputStates[kNumJoypads];
     CriticalSection tCritSection;
 }
+// Pad needs its XInput capabilities re-queried before it can be read.
+static bool tNeedCaps[kNumJoypads];
+static unsigned int tButtonStatesPrev[kNumJoypads];
+static unsigned int tButtonStatesCurr[kNumJoypads];
+// Thread handle and termination flag grouped for proper codegen
+// The struct layout is required to match the original binary's data layout
+static struct {
+    HANDLE tThread;
+    bool tNoHandle;
+} sThreadData;
+namespace {
+    BreedData tBreed[kNumJoypads];
+}
+static XINPUT_STATE tInputStates[kNumJoypads];
 
 // Macros to access thread data - required for matching symbol offsets
 #define tThread sThreadData.tThread
@@ -287,7 +307,19 @@ bool ReceiveUpstreamResponse(int pad, unsigned char *data) {
 }
 
 namespace {
-    void InitXinputJoypadThreadData();
+    // Puts every pad into the "nothing known yet" state the polling loop
+    // expects: capabilities must be re-queried, the breed data is stale, and
+    // no XInput packet has been seen. Retail unrolls the first loop into four
+    // stb at 0x98(r11)..0x9b(r11) and runs the second as a stbu/stwu pair.
+    void InitXinputJoypadThreadData() {
+        for (int i = 0; i < kNumJoypads; i++) {
+            tNeedCaps[i] = true;
+        }
+        for (int i = 0; i < kNumJoypads; i++) {
+            tBreed[i].mPending = true;
+            tInputStates[i].dwPacketNumber = 0;
+        }
+    }
 
     void RunXinputJoypadLoop();
 
