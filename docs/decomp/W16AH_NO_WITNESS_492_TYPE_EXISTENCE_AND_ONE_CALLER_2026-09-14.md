@@ -350,8 +350,14 @@ COVERAGE: 1634 groups classified (1634/1634 reached, 6583 member spellings looke
 VALIDATE: PASS -- 1387 map-consistent, 246 tolerated (enumerated above), 0 contradicted, 1634 total
 ```
 
-Alias-file bookkeeping: groups **1,634 → 1,634** (none pruned), folded **5,243 → 4,949**,
-`withdrawn` records **10,164 → 10,458**. Every removed membership carries a record.
+Alias-file bookkeeping: groups **1,634 → 1,634** (none pruned), folded **5,243 → 4,949**
+(exactly −294), `withdrawn` records **10,164 → 10,458**. Every removed membership carries a
+record; 294 of them are this lane's (`lane == "W16-AH 2026-09-14"`), split
+ELEMENT 198 / CONTAINER 84 / ENCLOSING 11 / CALLER_BRANCH 1.
+
+⚠ **Counting trap:** 2 of the 10,458 records are **legacy string-form**, not dicts. A census
+written as `isinstance(w, dict)` reads **10,456** and looks two short; a naive `w['spelling']`
+**raises**. Both forms are live — handle them.
 
 ---
 
