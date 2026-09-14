@@ -676,8 +676,14 @@ PlatformMgr::~PlatformMgr() {
 int PlatformMgr::ThreadStart() {
     if (mRBNCheckInProgress != 1)
         return 0;
+    // `result` is declared OUTSIDE the loop: retail zeroes it exactly once, at
+    // 0x8251C8D0, reusing the `li r31,0` that initialises `i` -- the store sits
+    // before the loop head .L_8251C8D4.  A store to an address-taken local that
+    // is passed by pointer cannot be hoisted by the compiler, so the placement
+    // is source-visible.  Declared inside the loop we emitted an extra
+    // `li r11,0` each iteration (base 128 B vs retail's 124 B).
+    BOOL result = 0;
     for (int i = 0; i < 4; i++) {
-        BOOL result = 0;
         if (XUserCheckPrivilege(i, XPRIVILEGE_CONTENT_AUTHOR, &result) == 0 && result)
             return i;
     }
@@ -687,7 +693,10 @@ int PlatformMgr::ThreadStart() {
 // 0x8251C928: main-thread completion; re-runs the probe if a sign-in change
 // landed while it was in flight.
 void PlatformMgr::ThreadDone(int result) {
-    int rerun = mRBNCheckRerun;
+    // UNSIGNED: retail compares with `cmplwi cr6, r11, 0x1` at 0x8251C938, not
+    // `cmpwi`.  The member itself is read with a plain lwz, so only the local's
+    // signedness is visible here.
+    unsigned int rerun = mRBNCheckRerun;
     mRBNMemberPadNum = result;
     mRBNCheckInProgress = 0;
     mRBNCheckRerun = 0;
@@ -698,8 +707,15 @@ void PlatformMgr::ThreadDone(int result) {
 // 0x8251D538
 void PlatformMgr::EnumerateFriends(int padNum, std::vector<Friend *> &friends, Hmx::Object *callback) {
     unsigned long cb;
+    // The enumerator result goes into a local FIRST, so that `failed = false`
+    // is materialised AFTER the call: retail emits `li r26, 0x0` at 0x8251D578,
+    // i.e. between `bl XFriendsCreateEnumerator` and the `cmplwi r3, 0x0` that
+    // tests it.  With `bool failed = false;` written above the call we emitted
+    // that `li` before the call instead (the row's ONLY divergence: 88 of 90
+    // instructions equal, one insert + one delete of the same `li r26, 0x0`).
+    unsigned long res = XFriendsCreateEnumerator(padNum, 0, 100, &cb, &mFriendsEnum);
     bool failed = false;
-    if (XFriendsCreateEnumerator(padNum, 0, 100, &cb, &mFriendsEnum) != ERROR_SUCCESS) {
+    if (res != ERROR_SUCCESS) {
         failed = true;
     } else {
         mFriendsBuffer = new char[cb];
