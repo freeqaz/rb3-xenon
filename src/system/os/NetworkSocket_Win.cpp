@@ -312,7 +312,6 @@ void WinSockSocket::Init() {
         XNetStartupParams params;
         memset(&params, 0, sizeof(XNetStartupParams));
         params.cfgSizeOfStruct = 0xD;
-        params.cfgFlags = 1;
         XNetStartup(&params);
         WSADATA data;
         WSAStartup(0x202, &data);
