@@ -336,19 +336,13 @@ DataNode OvershellPanel::OnMsg(const MatchmakerChangedMsg &) {
     return 1;
 }
 
-DataNode OvershellPanel::OnMsg(const ServerStatusChangedMsg &msg) {
-    // RB3-360: was `unk4cc == 2` — unk4cc (a per-frame Poll cache of
-    // mPanelOverrideFlow) is absent in retail (Wii-only); direct
-    // mPanelOverrideFlow read is the natural equivalent but the retail
-    // read here is UNVERIFIED (unpinned — decompile 0x8259xxxx when pinned).
-    if (InOverrideFlow(kOverrideFlow_RegisterOnline)) {
-        if (!msg->Int(2)) {
-            TheBandUI.ShowNetError();
-            if (InOverrideFlow(kOverrideFlow_RegisterOnline)) {
-                EndOverrideFlow(kOverrideFlow_RegisterOnline, true);
-            }
-        }
-    }
+// RB3-360 retail has NO guarded body here: Handle's dispatch site for this
+// message branches to the folded 76-byte `{ UpdateAll(); return 1; }` survivor
+// at 0x825b7f70 (map name OnMsg(ConnectionStatusChangedMsg)), and our 132-byte
+// body could not be that COMDAT. The rb3-Wii DEV oracle's `unk4cc == 2` block
+// (ShowNetError / EndOverrideFlow) is Wii-only -- unk4cc does not exist in the
+// retail layout. Retail bytes outrank the oracle. See W16-AK.
+DataNode OvershellPanel::OnMsg(const ServerStatusChangedMsg &) {
     UpdateAll();
     return 1;
 }
@@ -358,17 +352,10 @@ DataNode OvershellPanel::OnMsg(const ConnectionStatusChangedMsg &) {
     return 1;
 }
 
-DataNode OvershellPanel::OnMsg(const NetStartUtilityFinishedMsg &msg) {
-    // RB3-360: was `unk4cc == 2` — see ServerStatusChangedMsg note above
-    // (retail read UNVERIFIED, unpinned).
-    if (InOverrideFlow(kOverrideFlow_RegisterOnline)) {
-        if (!msg->Int(2)) {
-            TheBandUI.ShowNetError();
-            if (InOverrideFlow(kOverrideFlow_RegisterOnline)) {
-                EndOverrideFlow(kOverrideFlow_RegisterOnline, true);
-            }
-        }
-    }
+// RB3-360 retail: same finding as ServerStatusChangedMsg above -- retail's
+// Handle branches to the folded 76-byte survivor, so this handler carries no
+// guarded body. See W16-AK.
+DataNode OvershellPanel::OnMsg(const NetStartUtilityFinishedMsg &) {
     UpdateAll();
     return 1;
 }
@@ -704,6 +691,7 @@ void OvershellPanel::ResolveSlotStates() {
     ResolveReadyToPlayStates();
     ResolveSignInWaitStates();
     ResolveAutoSignInStates();
+    ResolveChooseProfileStates();
     OvershellSlot *curSlot;
     bool b1 = false;
     for (int i = 0; i < mSlots.size(); i++) {
@@ -777,10 +765,12 @@ void OvershellPanel::ResolveSlotStates() {
                         } else if (curSlot->InOverrideFlow(
                                        kOverrideFlow_RegisterOnline
                                    )) {
-                            if (!curSlot->GetState()->InRegisterOnlineFlow()) {
-                                curSlot->SetOverrideFlowReturnState(theID);
-                            }
-                            curSlot->ShowState((OvershellSlotStateID)0x8B);
+                            // retail calls this unconditionally in this arm --
+                            // no second GetState()->InRegisterOnlineFlow() test.
+                            curSlot->SetOverrideFlowReturnState(theID);
+                            // retail: li r4,0x14 -- kState_SignInWait. 0x8B is
+                            // kState_AutoSignInNintendo (Wii-only). See W16-AK.
+                            curSlot->ShowState(kState_SignInWait);
                         }
                         if (curSlot->GetState()->RequiresOnlineSession()
                             && !mSessionMgr->IsOnlineEnabled()) {
@@ -795,7 +785,17 @@ void OvershellPanel::ResolveSlotStates() {
                                                   ->Property("kick_user")
                                                   ->Obj<BandUser>();
                             MILO_ASSERT(pUser, 0x632);
-                            if (!mSessionMgr->HasUser(pUser)) {
+                            // retail calls BandUser's own vftable slot 0 --
+                            // IsInSession(SessionMgr*) -- as
+                            // `pUser-><slot0>(mSessionMgr)`, where the rb3-Wii DEV
+                            // oracle has `mSessionMgr->HasUser(pUser)`. Same TU5
+                            // substitution already identified in
+                            // src/band3/game/BandUser.h (lane NCCC-0731-5f08/f76,
+                            // InputMgr::IsActiveAndConnected). Using the BandUser
+                            // receiver also drops the BandUser*->User* virtual-base
+                            // adjust + null check that HasUser's User* parameter
+                            // forced. See W16-AK.
+                            if (!pUser->IsInSession(mSessionMgr)) {
                                 curSlot->LeaveKickConfirmation();
                             }
                         }
@@ -808,7 +808,9 @@ void OvershellPanel::ResolveSlotStates() {
             }
         }
     }
-    static Message msgHideConnectControllerMesh(hide_connect_controller_mesh, 1);
+    // retail constructs the Symbol from the literal here (bl ??0Symbol@@QAA@PBD@Z
+    // into a stack temp) rather than loading the interned global.
+    static Message msgHideConnectControllerMesh(Symbol("hide_connect_controller_mesh"), 1);
     msgHideConnectControllerMesh[0] = !b1 || InGame();
     HandleType(msgHideConnectControllerMesh);
 }
@@ -1025,17 +1027,39 @@ void OvershellPanel::ResolveAutoSignInStates() {
             if (curSlot->GetUser()->IsLocal()) {
                 LocalBandUser *user = curSlot->GetUser()->GetLocalBandUser();
                 OvershellSlotStateID ossID = curSlot->GetState()->GetStateID();
+                // RB3-360 retail (fn_825B2EA0) has NO `ossID == 0x8B` arm:
+                // 0x8B is kState_AutoSignInNintendo, a Wii-only state, and the
+                // ThePlatformMgr.IsConnected()/RunNetStartUtility() body behind
+                // it is the Wii NetStartUtility flow. Retail goes straight from
+                // the 0x10 test to the 0x12 test. See W16-AK.
                 if (ossID == 0x10 && user->IsSignedInOnline()
                     && user->HasOnlinePrivilege()) {
                     curSlot->ShowState(kState_AutoSignInRockCentral);
-                } else if (ossID == 0x8B) {
-                    if (ThePlatformMgr.IsConnected()) {
-                        curSlot->ShowState(kState_AutoSignInRockCentral);
-                    } else if (!ThePlatformMgr.mTimer.Running()) {
-                        ThePlatformMgr.RunNetStartUtility();
-                    }
                 } else if (ossID == 0x12 && TheRockCentral.IsOnline()) {
                     curSlot->ShowState(kState_SignInWait);
+                }
+            }
+        }
+    }
+}
+
+// RB3-360 retail fn_825B2FF0, the 5th call at the head of ResolveSlotStates.
+// Same shape as ResolveAutoSignInStates above. State 0x1f is kState_ChooseProfile;
+// the guard is vtable slot 0x10 on the LocalUser vfptr, which is IsSignedIn():
+// slots 0x8 and 0x14 on that same vfptr are HasOnlinePrivilege() and
+// IsSignedInOnline() (used by ResolveAutoSignInStates, proven byte-identical),
+// and HasOnlinePrivilege/IsGuest/IsSignedIn/IsSignedInOnline are declared
+// consecutively in LocalUser, so 0x10 is IsSignedIn. Callee fn_825D8660 is
+// mapped ?LeaveOptions@OvershellSlot@@QAAXXZ. See W16-AK.
+void OvershellPanel::ResolveChooseProfileStates() {
+    for (int i = 0; i < mSlots.size(); i++) {
+        OvershellSlot *curSlot = mSlots[i];
+        if (curSlot->GetUser()) {
+            if (curSlot->GetUser()->IsLocal()) {
+                LocalBandUser *user = curSlot->GetUser()->GetLocalBandUser();
+                OvershellSlotStateID ossID = curSlot->GetState()->GetStateID();
+                if (ossID == kState_ChooseProfile && user->IsSignedIn()) {
+                    curSlot->LeaveOptions();
                 }
             }
         }
@@ -1188,36 +1212,17 @@ bool OvershellPanel::Exiting() const {
     }
 }
 
+// RB3-360 retail (fn_825B3230, 100 B / 25 instructions): the ENTIRE
+// `if (TheRnd->mProcCmds & kProcessPost) { ... }` block of the rb3-Wii DEV
+// oracle is absent, and the slot loop is NOT guarded by it. Retail is
+// `mr r31,r3; bl UIPanel::Poll; addi r31,r31,0x74; <slot loop>` -- no
+// ProcCmds read, no inSession/NetSession/Matchmaker, no
+// ThePlatformMgr.mHomeMenuWii->mForcedHomeMenu (a Wii-only member) and no
+// static bWasFinding. unk4c0/unk4c8/unk4cc are likewise Wii-only. See W16-AK.
 void OvershellPanel::Poll() {
-    // RB3-360: removed `unk4cc = mPanelOverrideFlow;` (per-frame cache) and
-    // the whole `if (unk4c8) { ... TheWiiFriendMgr ... unk4c0.push_back ... }`
-    // friends-console-code gather block — unk4c0/unk4c8/unk4cc are absent in
-    // retail (Wii-only online-registration flow).
-    if (TheRnd.ProcCmds() & kProcessPost) {
-        bool inSession = false;
-        if (TheNetSession != nullptr && !TheNetSession->IsLocal()) {
-            inSession = true;
-        }
-        if (TheSessionMgr != nullptr) {
-            Matchmaker *matchmaker = TheSessionMgr->GetMatchmaker();
-            if (matchmaker != nullptr && matchmaker->IsFinding()) {
-                inSession = true;
-            }
-        }
-        if (mPanelOverrideFlow == kOverrideFlow_RegisterOnline) {
-            inSession = true;
-        }
-        ThePlatformMgr.mHomeMenuWii->mForcedHomeMenu = inSession;
-        static bool bWasFinding = false;
-        bool finding = mSessionMgr->GetMatchmaker()->IsFinding();
-        if (bWasFinding != finding) {
-            UpdateAll();
-            bWasFinding = mSessionMgr->GetMatchmaker()->IsFinding();
-        }
-        UIPanel::Poll();
-        for (unsigned int slotI = 0; slotI < mSlots.size(); slotI++) {
-            mSlots[slotI]->Poll();
-        }
+    UIPanel::Poll();
+    for (unsigned int slotI = 0; slotI < mSlots.size(); slotI++) {
+        mSlots[slotI]->Poll();
     }
 }
 
