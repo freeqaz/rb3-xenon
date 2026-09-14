@@ -1175,36 +1175,17 @@ bool OvershellPanel::Exiting() const {
     }
 }
 
+// RB3-360 retail (fn_825B3230, 100 B / 25 instructions): the ENTIRE
+// `if (TheRnd->mProcCmds & kProcessPost) { ... }` block of the rb3-Wii DEV
+// oracle is absent, and the slot loop is NOT guarded by it. Retail is
+// `mr r31,r3; bl UIPanel::Poll; addi r31,r31,0x74; <slot loop>` -- no
+// ProcCmds read, no inSession/NetSession/Matchmaker, no
+// ThePlatformMgr.mHomeMenuWii->mForcedHomeMenu (a Wii-only member) and no
+// static bWasFinding. unk4c0/unk4c8/unk4cc are likewise Wii-only. See W16-AK.
 void OvershellPanel::Poll() {
-    // RB3-360: removed `unk4cc = mPanelOverrideFlow;` (per-frame cache) and
-    // the whole `if (unk4c8) { ... TheWiiFriendMgr ... unk4c0.push_back ... }`
-    // friends-console-code gather block — unk4c0/unk4c8/unk4cc are absent in
-    // retail (Wii-only online-registration flow).
-    if (TheRnd.ProcCmds() & kProcessPost) {
-        bool inSession = false;
-        if (TheNetSession != nullptr && !TheNetSession->IsLocal()) {
-            inSession = true;
-        }
-        if (TheSessionMgr != nullptr) {
-            Matchmaker *matchmaker = TheSessionMgr->GetMatchmaker();
-            if (matchmaker != nullptr && matchmaker->IsFinding()) {
-                inSession = true;
-            }
-        }
-        if (mPanelOverrideFlow == kOverrideFlow_RegisterOnline) {
-            inSession = true;
-        }
-        ThePlatformMgr.mHomeMenuWii->mForcedHomeMenu = inSession;
-        static bool bWasFinding = false;
-        bool finding = mSessionMgr->GetMatchmaker()->IsFinding();
-        if (bWasFinding != finding) {
-            UpdateAll();
-            bWasFinding = mSessionMgr->GetMatchmaker()->IsFinding();
-        }
-        UIPanel::Poll();
-        for (unsigned int slotI = 0; slotI < mSlots.size(); slotI++) {
-            mSlots[slotI]->Poll();
-        }
+    UIPanel::Poll();
+    for (unsigned int slotI = 0; slotI < mSlots.size(); slotI++) {
+        mSlots[slotI]->Poll();
     }
 }
 
