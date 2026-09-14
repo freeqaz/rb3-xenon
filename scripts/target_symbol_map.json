@@ -30468,5 +30468,6 @@
  "0x825f32a8": "??RGoalCmp@@QBA_NVSymbol@@0@Z",
  "0x825f4258": "?DataDir@UIPanel@@$4PPPPPPPM@BM@AAPAVObjectDir@@XZ",
  "0x825f4268": "?SetTypeDef@UIPanel@@$4PPPPPPPM@BM@AAXPAVDataArray@@@Z",
- "0x825f57c0": "??0CampaignSongInfoPanel@@QAA@XZ"
+ "0x825f57c0": "??0CampaignSongInfoPanel@@QAA@XZ",
+ "0x823c8cf0": "??_DCharTransDraw@@QAAXXZ"
 }
