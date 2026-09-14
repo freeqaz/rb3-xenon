@@ -1,0 +1,53 @@
+{
+  "_lane": "W16-AR",
+  "_date": "2026-09-14",
+  "_for": "W16-AQ (owns scripts/symbol_aliases.json, icf_alias_*, config/45410914/splits.txt)",
+  "_note": "W16-AR is barred from editing splits.txt and the alias files. These are PROPOSALS, each priced and with its evidence named. No alias is proposed on map-consistency alone.",
+  "alias_proposals": [],
+  "_alias_note": "NONE. W16-AR proposes no new alias group. Every identification this lane made was settled on retail bytes and landed as a map name, which is the honest instrument; an alias would have forgiven the charge instead of fixing it. Recording the empty set explicitly so a successor does not re-hunt.",
+  "splits_rehome_proposals": [
+    {
+      "id": "AR-1",
+      "address": "0x823c38e8",
+      "map_name_now": "?erase@?$list@UConstraintSystem@CharBlendBone@@V?$StlNodeAlloc@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UConstraintSystem@CharBlendBone@@U?$_Nonconst_traits@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@2@U32@0@Z",
+      "pinned_to": "Msg.cpp",
+      "name_defined_in_obj": "src/system/char/CharBlendBone.obj",
+      "problem": "objdiff pairs target<->base by NAME. This row is pinned to Msg.cpp, whose base obj cannot define a CharBlendBone symbol, so the row reads permanently 0% however correct the source is. The splits pin is CIRCULAR: it was placed because of the old (wrong) map name ?erase@?$list@USink@MsgSinks@@..., so fixing the name leaves the pin wrong.",
+      "current_pin": "Msg.cpp: .text start:0x823C38E8 end:0x823C3954  (single-function unit)",
+      "neighbour": "CharBlendBone.cpp: .text start:0x823c3954 end:0x823c40f0 -- immediately adjacent, same TU by address",
+      "proposal": "Delete the single-function Msg.cpp .text entry and extend CharBlendBone.cpp's block down to 0x823c38e8, i.e. start:0x823c38e8 end:0x823c40f0.",
+      "hazard": "This drains Msg.cpp's LAST .text block. Per CLAUDE.md an emptied unit still emits a 42-byte obj and then report.json HARD-FAILS with 'Invalid COFF/PE section headers'. The whole Msg.cpp splits entry must be removed in the SAME edit. Check whether Msg.cpp has other pinned sections first.",
+      "expected_value_B": 144,
+      "expected_value_basis": "the row is 144 B; it crossed in for W16-AR at +144 B once the NAME was repaired, which means the name is now right and only pairability is left. Re-measure -- do not inherit this figure.",
+      "priced_by": "W16-AR set-diff, full build, ruler name_check"
+    },
+    {
+      "id": "AR-2",
+      "address": "0x822a8bd0",
+      "map_name_now": "?resize@?$ObjList@VOldMatOption@@@@QAAXI@Z",
+      "pinned_to": "HamCamTransform.cpp",
+      "name_defined_in_obj": "src/system/bandobj/OutfitConfig.obj",
+      "problem": "Same shape as AR-1: pinned to a unit whose base obj cannot define the name, so the row cannot pair. ObjList<OldMatOption> is OutfitConfig.h:197 (mMatOptions).",
+      "proposal": "Re-home 0x822a8bd0 to the OutfitConfig.cpp block, or extend OutfitConfig.cpp's .text to cover it if adjacent. W16-AR did not compute the adjacency because it may not edit splits.txt.",
+      "hazard": "RE-HOMING an already-pinned address is NOT metric-neutral (CLAUDE.md, lane PINHOME-1, measured +3 fns / +428 B). It changes which base obj is consulted and therefore changes pairability. It needs its own A/B; it is not a free reattribution.",
+      "expected_value_B": 328,
+      "expected_value_basis": "row size. UNMEASURED -- this is a ceiling, not a prediction.",
+      "priced_by": "not priced by W16-AR"
+    }
+  ],
+  "_splits_total_recoverable_B": 472,
+  "_splits_total_note": "144 B measured + 328 B ceiling. Both require splits.txt edits that W16-AR is barred from making. Neither is a reattribution, so both need their own A/B.",
+  "proven_but_not_landed": [
+    {
+      "id": "AR-3",
+      "family": "??$_M_splice_insert_dispatch@ ... @EventTrigger",
+      "addresses": {
+        "0x824a2190": "UNNAMED -- called by list<Anim@EventTrigger>::operator= (0x824a4518), so it is the Anim instantiation",
+        "0x824a2230": "spelled ...UAnim@EventTrigger... but called by list<ProxyCall@EventTrigger>::operator= (0x824a45c8), so it is the ProxyCall instantiation",
+        "0x824c9878": "spelled ...UProxyCall@EventTrigger... and sits in the 0x824c9xxx displaced-name cluster alongside the two rows W16-AR repaired in item 1"
+      },
+      "why_not_landed": "Same one-function rotation as the operator= family W16-AR did repair, but closing it is a three-row permutation whose injectivity must be checked across the 0x824c9xxx cluster. W16-AR ran out of budget and would rather hand over a proven, unlanded finding than land an unmeasured one.",
+      "owner_suggestion": "any map lane; no splits or alias edit required"
+    }
+  ]
+}
