@@ -303,6 +303,22 @@ outstanding** — collectable on main once W16-AU's re-home to `BandUserMgr` lan
 
 Commit `9a91adbb`. I did **not** touch `splits.txt`.
 
+## Gates
+
+All five, in order, in the worktree, after the final map edit:
+
+| gate | result |
+|---|---|
+| full `./tools/ninja-locked` | `BUILD rc=0` |
+| `verify_ruler_agreement.py --check` | rc=0 — both entry points resolve `name_check` |
+| `verify_objs_patched.py --verify-manifest` | rc=0 — 1,215 decomp + 3,115 target objs, `tree_sha256=4b0a38249c4da02e` |
+| `icf_alias_finder.py --validate` | `PASS -- 1399 map-consistent, 247 tolerated, 0 contradicted, 1647 total` |
+| `tools/native_build_gate.sh` (last action) | see below |
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
 ## NOT done, and why
 
 1. **Item 5 not installed** — refused as vacuous (neither spelling exists on our side). Refutation
