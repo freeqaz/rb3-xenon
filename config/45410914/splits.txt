@@ -10287,6 +10287,7 @@ MainHubPanel.cpp:
 	.pdata      start:0x82229C40 end:0x82229C68
 	.pdata      start:0x82229C68 end:0x82229C90
 	.pdata      start:0x82229C90 end:0x82229C98
+	.pdata      start:0x82229C98 end:0x82229CA8
 	.pdata      start:0x82229CA8 end:0x82229CB8
 	.pdata      start:0x82229CB8 end:0x82229CC8
 	.pdata      start:0x82229CC8 end:0x82229CD8
@@ -10300,6 +10301,7 @@ MainHubPanel.cpp:
 	.text       start:0x8261FBB0 end:0x8261FCF8
 	.text       start:0x8261FCF8 end:0x8261FE88
 	.text       start:0x8261FE88 end:0x8261FEB8
+	.text       start:0x8261FEB8 end:0x8261FFC8
 	.text       start:0x8261FFC8 end:0x82620168
 	.text       start:0x82620168 end:0x826201D8
 	.text       start:0x826201D8 end:0x82620268
@@ -11038,7 +11040,6 @@ CampaignSongInfoPanel.cpp:
 	.pdata      start:0x82227108 end:0x82227110
 	.pdata      start:0x82227128 end:0x82227230
 	.pdata      start:0x82227230 end:0x82227278
-	.pdata      start:0x82229C98 end:0x82229CA8
 	.text       start:0x825F57C0 end:0x825F5898
 	.text       start:0x825F5898 end:0x825F58C8
 	.text       start:0x825F5958 end:0x825F5968
@@ -11047,7 +11048,6 @@ CampaignSongInfoPanel.cpp:
 	.text       start:0x825F5D28 end:0x825F6B00
 	.text       start:0x825F6B00 end:0x825F6F20
 	.text       start:0x82603A78 end:0x82603A84
-	.text       start:0x8261FEB8 end:0x8261FFC8
 
 ChordbookPanel.cpp:
 	.pdata      start:0x82233760 end:0x82233AA8
