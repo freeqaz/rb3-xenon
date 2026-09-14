@@ -54,6 +54,10 @@ def main():
 
     rev = collections.defaultdict(list)
     for va, n in pairs:
+        # `null` is a deliberate unclaimed-row tombstone, not a name: bucketing it
+        # would merge all 109 such addresses under a single None "name".
+        if n is None:
+            continue
         rev[n].append(va)
 
     cen = json.loads(pathlib.Path(a.census).read_text())
