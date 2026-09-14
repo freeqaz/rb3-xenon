@@ -34892,7 +34892,6 @@
     "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
     "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
     "??$_Param_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
-    "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
@@ -34911,9 +34910,6 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z"
    ],
@@ -35173,6 +35169,42 @@
     },
     {
      "spelling": "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W16-AG 2026-09-14",
+     "class": "RETAIL_WITNESS_REFUTED",
+     "disposition": "withdrawn",
+     "witness_c_N_retail_addr": "0x823e4630",
+     "witness_c_S_retail_addr": "0x822b1728",
+     "evidence": "RETAIL KEEPS THE DISCRIMINATING CALLEES APART. At +36 our folded spelling calls ??0?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z and the survivor calls ??0?$ObjPtr@VEventTrigger@@@@QAA@ABV0@@Z. Retail places them at 0x823e4630 and 0x822b1728 respectively: 0x823e4630 is witnessed by map-named caller ?_M_fill_insert_aux@?$vector@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@2@IABV32@ABU__true_type@2@@Z @0x82776838 +84 (tier STRONG), 0x822b1728 by ??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z @0x822bc368 +36 (tier STRONG). Retail's own body at X=0x822bc368 calls 0x822b1728 at +36, so X IS the survivor and our spelling is not the body there. Guards: both destinations are .pdata BeginAddresses (116 / 120 B)."
+    },
+    {
+     "spelling": "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
+     "lane": "W16-AG 2026-09-14",
+     "class": "RETAIL_WITNESS_REFUTED",
+     "disposition": "withdrawn",
+     "witness_c_N_retail_addr": "0x8229d898",
+     "witness_c_S_retail_addr": "0x822b1728",
+     "evidence": "RETAIL KEEPS THE DISCRIMINATING CALLEES APART. At +36 our folded spelling calls ??0BoneOp@CharSignalApplier@@QAA@ABU01@@Z and the survivor calls ??0?$ObjPtr@VEventTrigger@@@@QAA@ABV0@@Z. Retail places them at 0x8229d898 and 0x822b1728 respectively: 0x8229d898 is witnessed by map-named caller ??$_Copy_Construct@UBoneOp@CharSignalApplier@@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z @0x8229ee08 +36 (tier STRONG), 0x822b1728 by ??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z @0x822bc368 +36 (tier STRONG). Retail's own body at X=0x822bc368 calls 0x822b1728 at +36, so X IS the survivor and our spelling is not the body there. Guards: both destinations are .pdata BeginAddresses (104 / 120 B)."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W16-AG 2026-09-14",
+     "class": "RETAIL_WITNESS_REFUTED",
+     "disposition": "withdrawn",
+     "witness_c_N_retail_addr": "0x82bba4c8",
+     "witness_c_S_retail_addr": "0x822b1728",
+     "evidence": "RETAIL KEEPS THE DISCRIMINATING CALLEES APART. At +36 our folded spelling calls ??0?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z and the survivor calls ??0?$ObjPtr@VEventTrigger@@@@QAA@ABV0@@Z. Retail places them at 0x82bba4c8 and 0x822b1728 respectively: 0x82bba4c8 is witnessed by map-named caller ?_M_insert_overflow_aux@?$vector@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@2@ABV32@ABU__true_type@2@I_N@Z @0x82777268 +84 (tier STRONG), 0x822b1728 by ??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z @0x822bc368 +36 (tier STRONG). Retail's own body at X=0x822bc368 calls 0x822b1728 at +36, so X IS the survivor and our spelling is not the body there. Guards: both destinations are .pdata BeginAddresses (120 / 120 B)."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W16-AG 2026-09-14",
+     "class": "RETAIL_WITNESS_REFUTED",
+     "disposition": "withdrawn",
+     "witness_c_N_retail_addr": "0x827adff8",
+     "witness_c_S_retail_addr": "0x822b1728",
+     "evidence": "RETAIL KEEPS THE DISCRIMINATING CALLEES APART. At +36 our folded spelling calls ??0?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z and the survivor calls ??0?$ObjPtr@VEventTrigger@@@@QAA@ABV0@@Z. Retail places them at 0x827adff8 and 0x822b1728 respectively: 0x827adff8 is witnessed by map-named caller ?_M_insert_overflow_aux@?$vector@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@2@ABV32@ABU__true_type@2@I_N@Z @0x82777558 +84 (tier STRONG), 0x822b1728 by ??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z @0x822bc368 +36 (tier STRONG). Retail's own body at X=0x822bc368 calls 0x822b1728 at +36, so X IS the survivor and our spelling is not the body there. Guards: both destinations are .pdata BeginAddresses (120 / 120 B)."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
      "lane": "W16-AG 2026-09-14",
      "class": "RETAIL_WITNESS_REFUTED",
      "disposition": "withdrawn",
@@ -41832,15 +41864,12 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
     "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
     "??$_Param_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
-    "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
@@ -41859,9 +41888,6 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
     "??$_Copy_Construct@UMerger@FileMerger@@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z"
@@ -42107,6 +42133,60 @@
      "spelling": "??$_Param_Construct@VPatchPair@MeshPair@BandPatchMesh@@V123@@stlpmtx_std@@YAXPAVPatchPair@MeshPair@BandPatchMesh@@ABV123@@Z",
      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W16-AG 2026-09-14",
+     "class": "RETAIL_WITNESS_REFUTED",
+     "disposition": "withdrawn",
+     "witness_c_N_retail_addr": "0x8229dc70",
+     "witness_c_S_retail_addr": "0x8232e6d0",
+     "evidence": "RETAIL KEEPS THE DISCRIMINATING CALLEES APART. At +36 our folded spelling calls ??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z and the survivor calls ??0Merger@FileMerger@@QAA@ABU01@@Z. Retail places them at 0x8229dc70 and 0x8232e6d0 respectively: 0x8229dc70 is witnessed by map-named caller ??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z @0x823c9178 +36 (tier STRONG), 0x8232e6d0 by ??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z @0x8232fb50 +36 (tier STRONG). Retail's own body at X=0x8232fb50 calls 0x8232e6d0 at +36, so X IS the survivor and our spelling is not the body there. Guards: both destinations are .pdata BeginAddresses (120 / 224 B)."
+    },
+    {
+     "spelling": "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W16-AG 2026-09-14",
+     "class": "RETAIL_WITNESS_REFUTED",
+     "disposition": "withdrawn",
+     "witness_c_N_retail_addr": "0x823e4630",
+     "witness_c_S_retail_addr": "0x8232e6d0",
+     "evidence": "RETAIL KEEPS THE DISCRIMINATING CALLEES APART. At +36 our folded spelling calls ??0?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z and the survivor calls ??0Merger@FileMerger@@QAA@ABU01@@Z. Retail places them at 0x823e4630 and 0x8232e6d0 respectively: 0x823e4630 is witnessed by map-named caller ?_M_fill_insert_aux@?$vector@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@2@IABV32@ABU__true_type@2@@Z @0x82776838 +84 (tier STRONG), 0x8232e6d0 by ??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z @0x8232fb50 +36 (tier STRONG). Retail's own body at X=0x8232fb50 calls 0x8232e6d0 at +36, so X IS the survivor and our spelling is not the body there. Guards: both destinations are .pdata BeginAddresses (116 / 224 B)."
+    },
+    {
+     "spelling": "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
+     "lane": "W16-AG 2026-09-14",
+     "class": "RETAIL_WITNESS_REFUTED",
+     "disposition": "withdrawn",
+     "witness_c_N_retail_addr": "0x8229d898",
+     "witness_c_S_retail_addr": "0x8232e6d0",
+     "evidence": "RETAIL KEEPS THE DISCRIMINATING CALLEES APART. At +36 our folded spelling calls ??0BoneOp@CharSignalApplier@@QAA@ABU01@@Z and the survivor calls ??0Merger@FileMerger@@QAA@ABU01@@Z. Retail places them at 0x8229d898 and 0x8232e6d0 respectively: 0x8229d898 is witnessed by map-named caller ??$_Copy_Construct@UBoneOp@CharSignalApplier@@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z @0x8229ee08 +36 (tier STRONG), 0x8232e6d0 by ??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z @0x8232fb50 +36 (tier STRONG). Retail's own body at X=0x8232fb50 calls 0x8232e6d0 at +36, so X IS the survivor and our spelling is not the body there. Guards: both destinations are .pdata BeginAddresses (104 / 224 B)."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W16-AG 2026-09-14",
+     "class": "RETAIL_WITNESS_REFUTED",
+     "disposition": "withdrawn",
+     "witness_c_N_retail_addr": "0x82bba4c8",
+     "witness_c_S_retail_addr": "0x8232e6d0",
+     "evidence": "RETAIL KEEPS THE DISCRIMINATING CALLEES APART. At +36 our folded spelling calls ??0?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z and the survivor calls ??0Merger@FileMerger@@QAA@ABU01@@Z. Retail places them at 0x82bba4c8 and 0x8232e6d0 respectively: 0x82bba4c8 is witnessed by map-named caller ?_M_insert_overflow_aux@?$vector@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@2@ABV32@ABU__true_type@2@I_N@Z @0x82777268 +84 (tier STRONG), 0x8232e6d0 by ??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z @0x8232fb50 +36 (tier STRONG). Retail's own body at X=0x8232fb50 calls 0x8232e6d0 at +36, so X IS the survivor and our spelling is not the body there. Guards: both destinations are .pdata BeginAddresses (120 / 224 B)."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W16-AG 2026-09-14",
+     "class": "RETAIL_WITNESS_REFUTED",
+     "disposition": "withdrawn",
+     "witness_c_N_retail_addr": "0x827adff8",
+     "witness_c_S_retail_addr": "0x8232e6d0",
+     "evidence": "RETAIL KEEPS THE DISCRIMINATING CALLEES APART. At +36 our folded spelling calls ??0?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z and the survivor calls ??0Merger@FileMerger@@QAA@ABU01@@Z. Retail places them at 0x827adff8 and 0x8232e6d0 respectively: 0x827adff8 is witnessed by map-named caller ?_M_insert_overflow_aux@?$vector@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@2@ABV32@ABU__true_type@2@I_N@Z @0x82777558 +84 (tier STRONG), 0x8232e6d0 by ??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z @0x8232fb50 +36 (tier STRONG). Retail's own body at X=0x8232fb50 calls 0x8232e6d0 at +36, so X IS the survivor and our spelling is not the body there. Guards: both destinations are .pdata BeginAddresses (120 / 224 B)."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W16-AG 2026-09-14",
+     "class": "RETAIL_WITNESS_REFUTED",
+     "disposition": "withdrawn",
+     "witness_c_N_retail_addr": "0x823e4630",
+     "witness_c_S_retail_addr": "0x8232e6d0",
+     "evidence": "RETAIL KEEPS THE DISCRIMINATING CALLEES APART. At +36 our folded spelling calls ??0?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z and the survivor calls ??0Merger@FileMerger@@QAA@ABU01@@Z. Retail places them at 0x823e4630 and 0x8232e6d0 respectively: 0x823e4630 is witnessed by map-named caller ?_M_fill_insert_aux@?$vector@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@2@IABV32@ABU__true_type@2@@Z @0x82776838 +84 (tier STRONG), 0x8232e6d0 by ??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z @0x8232fb50 +36 (tier STRONG). Retail's own body at X=0x8232fb50 calls 0x8232e6d0 at +36, so X IS the survivor and our spelling is not the body there. Guards: both destinations are .pdata BeginAddresses (116 / 224 B)."
     }
    ],
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md.",
@@ -43363,15 +43443,12 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
     "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
     "??$_Param_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
-    "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
@@ -43390,9 +43467,6 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z"
    ],
@@ -43637,6 +43711,60 @@
      "spelling": "??$_Param_Construct@VPatchPair@MeshPair@BandPatchMesh@@V123@@stlpmtx_std@@YAXPAVPatchPair@MeshPair@BandPatchMesh@@ABV123@@Z",
      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W16-AG 2026-09-14",
+     "class": "RETAIL_WITNESS_REFUTED",
+     "disposition": "withdrawn",
+     "witness_c_N_retail_addr": "0x8229dc70",
+     "witness_c_S_retail_addr": "0x827cd8b8",
+     "evidence": "RETAIL KEEPS THE DISCRIMINATING CALLEES APART. At +36 our folded spelling calls ??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z and the survivor calls ??0NetLoaderRef@@QAA@ABU0@@Z. Retail places them at 0x8229dc70 and 0x827cd8b8 respectively: 0x8229dc70 is witnessed by map-named caller ??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z @0x823c9178 +36 (tier STRONG), 0x827cd8b8 by ??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z @0x827cda78 +36 (tier STRONG). Retail's own body at X=0x827cda78 calls 0x827cd8b8 at +36, so X IS the survivor and our spelling is not the body there. Guards: both destinations are .pdata BeginAddresses (120 / 84 B)."
+    },
+    {
+     "spelling": "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W16-AG 2026-09-14",
+     "class": "RETAIL_WITNESS_REFUTED",
+     "disposition": "withdrawn",
+     "witness_c_N_retail_addr": "0x823e4630",
+     "witness_c_S_retail_addr": "0x827cd8b8",
+     "evidence": "RETAIL KEEPS THE DISCRIMINATING CALLEES APART. At +36 our folded spelling calls ??0?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z and the survivor calls ??0NetLoaderRef@@QAA@ABU0@@Z. Retail places them at 0x823e4630 and 0x827cd8b8 respectively: 0x823e4630 is witnessed by map-named caller ?_M_fill_insert_aux@?$vector@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@2@IABV32@ABU__true_type@2@@Z @0x82776838 +84 (tier STRONG), 0x827cd8b8 by ??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z @0x827cda78 +36 (tier STRONG). Retail's own body at X=0x827cda78 calls 0x827cd8b8 at +36, so X IS the survivor and our spelling is not the body there. Guards: both destinations are .pdata BeginAddresses (116 / 84 B)."
+    },
+    {
+     "spelling": "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
+     "lane": "W16-AG 2026-09-14",
+     "class": "RETAIL_WITNESS_REFUTED",
+     "disposition": "withdrawn",
+     "witness_c_N_retail_addr": "0x8229d898",
+     "witness_c_S_retail_addr": "0x827cd8b8",
+     "evidence": "RETAIL KEEPS THE DISCRIMINATING CALLEES APART. At +36 our folded spelling calls ??0BoneOp@CharSignalApplier@@QAA@ABU01@@Z and the survivor calls ??0NetLoaderRef@@QAA@ABU0@@Z. Retail places them at 0x8229d898 and 0x827cd8b8 respectively: 0x8229d898 is witnessed by map-named caller ??$_Copy_Construct@UBoneOp@CharSignalApplier@@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z @0x8229ee08 +36 (tier STRONG), 0x827cd8b8 by ??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z @0x827cda78 +36 (tier STRONG). Retail's own body at X=0x827cda78 calls 0x827cd8b8 at +36, so X IS the survivor and our spelling is not the body there. Guards: both destinations are .pdata BeginAddresses (104 / 84 B)."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W16-AG 2026-09-14",
+     "class": "RETAIL_WITNESS_REFUTED",
+     "disposition": "withdrawn",
+     "witness_c_N_retail_addr": "0x82bba4c8",
+     "witness_c_S_retail_addr": "0x827cd8b8",
+     "evidence": "RETAIL KEEPS THE DISCRIMINATING CALLEES APART. At +36 our folded spelling calls ??0?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z and the survivor calls ??0NetLoaderRef@@QAA@ABU0@@Z. Retail places them at 0x82bba4c8 and 0x827cd8b8 respectively: 0x82bba4c8 is witnessed by map-named caller ?_M_insert_overflow_aux@?$vector@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@2@ABV32@ABU__true_type@2@I_N@Z @0x82777268 +84 (tier STRONG), 0x827cd8b8 by ??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z @0x827cda78 +36 (tier STRONG). Retail's own body at X=0x827cda78 calls 0x827cd8b8 at +36, so X IS the survivor and our spelling is not the body there. Guards: both destinations are .pdata BeginAddresses (120 / 84 B)."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W16-AG 2026-09-14",
+     "class": "RETAIL_WITNESS_REFUTED",
+     "disposition": "withdrawn",
+     "witness_c_N_retail_addr": "0x827adff8",
+     "witness_c_S_retail_addr": "0x827cd8b8",
+     "evidence": "RETAIL KEEPS THE DISCRIMINATING CALLEES APART. At +36 our folded spelling calls ??0?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z and the survivor calls ??0NetLoaderRef@@QAA@ABU0@@Z. Retail places them at 0x827adff8 and 0x827cd8b8 respectively: 0x827adff8 is witnessed by map-named caller ?_M_insert_overflow_aux@?$vector@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@2@ABV32@ABU__true_type@2@I_N@Z @0x82777558 +84 (tier STRONG), 0x827cd8b8 by ??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z @0x827cda78 +36 (tier STRONG). Retail's own body at X=0x827cda78 calls 0x827cd8b8 at +36, so X IS the survivor and our spelling is not the body there. Guards: both destinations are .pdata BeginAddresses (120 / 84 B)."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W16-AG 2026-09-14",
+     "class": "RETAIL_WITNESS_REFUTED",
+     "disposition": "withdrawn",
+     "witness_c_N_retail_addr": "0x823e4630",
+     "witness_c_S_retail_addr": "0x827cd8b8",
+     "evidence": "RETAIL KEEPS THE DISCRIMINATING CALLEES APART. At +36 our folded spelling calls ??0?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z and the survivor calls ??0NetLoaderRef@@QAA@ABU0@@Z. Retail places them at 0x823e4630 and 0x827cd8b8 respectively: 0x823e4630 is witnessed by map-named caller ?_M_fill_insert_aux@?$vector@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@2@IABV32@ABU__true_type@2@@Z @0x82776838 +84 (tier STRONG), 0x827cd8b8 by ??$_Copy_Construct@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@ABU1@@Z @0x827cda78 +36 (tier STRONG). Retail's own body at X=0x827cda78 calls 0x827cd8b8 at +36, so X IS the survivor and our spelling is not the body there. Guards: both destinations are .pdata BeginAddresses (116 / 84 B)."
     }
    ],
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
@@ -45146,12 +45274,10 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
     "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
     "??$_Param_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
-    "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
@@ -45170,8 +45296,6 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z"
@@ -45417,6 +45541,42 @@
      "spelling": "??$_Param_Construct@VPatchPair@MeshPair@BandPatchMesh@@V123@@stlpmtx_std@@YAXPAVPatchPair@MeshPair@BandPatchMesh@@ABV123@@Z",
      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W16-AG 2026-09-14",
+     "class": "RETAIL_WITNESS_REFUTED",
+     "disposition": "withdrawn",
+     "witness_c_N_retail_addr": "0x823e4630",
+     "witness_c_S_retail_addr": "0x8229dc70",
+     "evidence": "RETAIL KEEPS THE DISCRIMINATING CALLEES APART. At +36 our folded spelling calls ??0?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z and the survivor calls ??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z. Retail places them at 0x823e4630 and 0x8229dc70 respectively: 0x823e4630 is witnessed by map-named caller ?_M_fill_insert_aux@?$vector@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@2@IABV32@ABU__true_type@2@@Z @0x82776838 +84 (tier STRONG), 0x8229dc70 by ??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z @0x823c9178 +36 (tier STRONG). Retail's own body at X=0x823c9178 calls 0x8229dc70 at +36, so X IS the survivor and our spelling is not the body there. Guards: both destinations are .pdata BeginAddresses (116 / 120 B)."
+    },
+    {
+     "spelling": "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
+     "lane": "W16-AG 2026-09-14",
+     "class": "RETAIL_WITNESS_REFUTED",
+     "disposition": "withdrawn",
+     "witness_c_N_retail_addr": "0x8229d898",
+     "witness_c_S_retail_addr": "0x8229dc70",
+     "evidence": "RETAIL KEEPS THE DISCRIMINATING CALLEES APART. At +36 our folded spelling calls ??0BoneOp@CharSignalApplier@@QAA@ABU01@@Z and the survivor calls ??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z. Retail places them at 0x8229d898 and 0x8229dc70 respectively: 0x8229d898 is witnessed by map-named caller ??$_Copy_Construct@UBoneOp@CharSignalApplier@@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z @0x8229ee08 +36 (tier STRONG), 0x8229dc70 by ??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z @0x823c9178 +36 (tier STRONG). Retail's own body at X=0x823c9178 calls 0x8229dc70 at +36, so X IS the survivor and our spelling is not the body there. Guards: both destinations are .pdata BeginAddresses (104 / 120 B)."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W16-AG 2026-09-14",
+     "class": "RETAIL_WITNESS_REFUTED",
+     "disposition": "withdrawn",
+     "witness_c_N_retail_addr": "0x82bba4c8",
+     "witness_c_S_retail_addr": "0x8229dc70",
+     "evidence": "RETAIL KEEPS THE DISCRIMINATING CALLEES APART. At +36 our folded spelling calls ??0?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z and the survivor calls ??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z. Retail places them at 0x82bba4c8 and 0x8229dc70 respectively: 0x82bba4c8 is witnessed by map-named caller ?_M_insert_overflow_aux@?$vector@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@2@ABV32@ABU__true_type@2@I_N@Z @0x82777268 +84 (tier STRONG), 0x8229dc70 by ??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z @0x823c9178 +36 (tier STRONG). Retail's own body at X=0x823c9178 calls 0x8229dc70 at +36, so X IS the survivor and our spelling is not the body there. Guards: both destinations are .pdata BeginAddresses (120 / 120 B)."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W16-AG 2026-09-14",
+     "class": "RETAIL_WITNESS_REFUTED",
+     "disposition": "withdrawn",
+     "witness_c_N_retail_addr": "0x827adff8",
+     "witness_c_S_retail_addr": "0x8229dc70",
+     "evidence": "RETAIL KEEPS THE DISCRIMINATING CALLEES APART. At +36 our folded spelling calls ??0?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z and the survivor calls ??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z. Retail places them at 0x827adff8 and 0x8229dc70 respectively: 0x827adff8 is witnessed by map-named caller ?_M_insert_overflow_aux@?$vector@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@2@ABV32@ABU__true_type@2@I_N@Z @0x82777558 +84 (tier STRONG), 0x8229dc70 by ??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z @0x823c9178 +36 (tier STRONG). Retail's own body at X=0x823c9178 calls 0x8229dc70 at +36, so X IS the survivor and our spelling is not the body there. Guards: both destinations are .pdata BeginAddresses (120 / 120 B)."
     }
    ],
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
