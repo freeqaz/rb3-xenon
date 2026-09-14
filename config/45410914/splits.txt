@@ -1733,7 +1733,7 @@ UIPanel.cpp:
 	.text       start:0x82573450 end:0x82573464
 	.text       start:0x82573468 end:0x82573470
 	.text       start:0x828027C0 end:0x828027E8
-	.text       start:0x82812508 end:0x82812558
+	.text       start:0x82812510 end:0x82812558
 	.text       start:0x82812558 end:0x82814450
 
 LightHue.cpp:
@@ -6231,8 +6231,8 @@ Emitter.cpp:
 	.text       start:0x8271E178 end:0x8271E3A0
 	.text       start:0x8271E3A0 end:0x8271EC2C
 	.text       start:0x8271EC2C end:0x8271ECA4
-	.text       start:0x8271EEE8 end:0x8271EEF0
-	.text       start:0x8271EEF0 end:0x8271F550
+	.text       start:0x8271EEE8 end:0x8271EEF4
+	.text       start:0x8271EEF8 end:0x8271F550
 	.text       start:0x8271F550 end:0x8271F55C
 	.text       start:0x8271F560 end:0x8271F56C
 	.text       start:0x8271F570 end:0x8271F57C
@@ -13020,7 +13020,7 @@ system/ui/UILabelDir.cpp:
 	.text       start:0x82812068 end:0x82812074
 	.text       start:0x82812080 end:0x828121E8
 	.text       start:0x82812398 end:0x828123A4
-	.text       start:0x82812500 end:0x82812508
+	.text       start:0x82812500 end:0x8281250C
 
 system/gesture/DrawUtl.cpp:
 	.pdata      start:0x82228148 end:0x82228158
