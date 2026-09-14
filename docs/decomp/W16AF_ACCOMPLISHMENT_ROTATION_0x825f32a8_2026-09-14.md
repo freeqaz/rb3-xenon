@@ -208,10 +208,10 @@ ready-to-take follow-up: change the global to a function-local static in
   single-use generators for this permutation, superseded by the two committed JSON artifacts which
   carry the reproducible *result*. Committing a one-shot script whose inputs no longer exist would be
   a maintenance liability, not tooling.
-- **Native gate not run** — this lane touched **no `src/` file and no shared header**: the entire diff
+- **Native gate was NOT required** — this lane touched **no `src/` file and no shared header**: the entire diff
   is `scripts/target_symbol_map.json`, `config/45410914/splits.txt` and two new `docs/` JSON
   artifacts. The brief permits a map/splits-only lane to skip it provided that is stated; this is that
-  statement. See §8 for the gates that were run.
+  statement. I ran it regardless; the verbatim PASS line is in §8.
 
 ## 8. Gates
 
@@ -230,7 +230,13 @@ python3 scripts/verify_objs_patched.py --verify-manifest  rc=0
                 2026-09-14T18:17:10Z (tree_sha256=0726cc01b3446889)
 ```
 
-`tools/native_build_gate.sh` — see §7: this lane changed no `src/` file and no shared header.
+`tools/native_build_gate.sh` — the brief permits a map/splits-only lane to skip this, and this lane
+changed no `src/` file and no shared header (§7). I ran it anyway as my last action, because a
+measured line is worth more than an argument that one was unnecessary:
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
 
 Lane-internal before/after, whole-binary, ruler `name_check`:
 
