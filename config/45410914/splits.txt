@@ -90,6 +90,7 @@ Object.cpp:
 	.pdata      start:0x8223C570 end:0x8223C578
 	.pdata      start:0x8223C578 end:0x8223C5A0
 	.pdata      start:0x8223C5A0 end:0x8223C5C0
+	.pdata      start:0x8223C5C0 end:0x8223C5C8
 	.pdata      start:0x8223C5C8 end:0x8223C628
 	.pdata      start:0x8223C628 end:0x8223C638
 	.pdata      start:0x8223C638 end:0x8223C718
@@ -115,6 +116,7 @@ Object.cpp:
 	.text       start:0x8275B410 end:0x8275B6A0
 	.text       start:0x8275B6A0 end:0x8275B864
 	.text       start:0x8275B864 end:0x8275B868
+	.text       start:0x8275B868 end:0x8275B8B0
 	.text       start:0x8275B8B0 end:0x8275BD08
 	.text       start:0x8275BD08 end:0x8275C7DC
 	.text       start:0x8275C7DC end:0x8275CB84
@@ -296,6 +298,7 @@ BandScoreboard.cpp:
 	.pdata      start:0x821F1980 end:0x821F1990
 	.pdata      start:0x821F1FB8 end:0x821F1FC8
 	.pdata      start:0x821F7498 end:0x821F74A0
+	.pdata      start:0x821F74C8 end:0x821F74D0
 	.pdata      start:0x821F74D0 end:0x821F74E8
 	.pdata      start:0x821F7530 end:0x821F7570
 	.pdata      start:0x821F7570 end:0x821F75D8
@@ -304,6 +307,7 @@ BandScoreboard.cpp:
 	.text       start:0x82274290 end:0x822743EC
 	.text       start:0x8227A6A8 end:0x8227A728
 	.text       start:0x822CDA30 end:0x822CDA7C
+	.text       start:0x822CDC80 end:0x822CDD00
 	.text       start:0x822CDD00 end:0x822CDE70
 	.text       start:0x822CE3A8 end:0x822CE6A8
 	.text       start:0x822CE6A8 end:0x822CEC70
@@ -1060,7 +1064,11 @@ StreakMeter.cpp:
 	.pdata      start:0x821F7F48 end:0x821F7FA0
 	.pdata      start:0x821F7FB8 end:0x821F8140
 	.pdata      start:0x821F8140 end:0x821F8150
-	.pdata      start:0x821F8150 end:0x821F82D8
+	.pdata      start:0x821F8150 end:0x821F8218
+	.pdata      start:0x821F8218 end:0x821F8230
+	.pdata      start:0x821F8230 end:0x821F8288
+	.pdata      start:0x821F8288 end:0x821F82B8
+	.pdata      start:0x821F82C0 end:0x821F82D8
 	.text       start:0x822CB014 end:0x822CB018
 	.text       start:0x822CB074 end:0x822CB2D8
 	.text       start:0x822CB428 end:0x822CB828
@@ -1084,7 +1092,11 @@ StreakMeter.cpp:
 	.text       start:0x822D9DC0 end:0x822D9FE4
 	.text       start:0x822D9FE8 end:0x822D9FF4
 	.text       start:0x822D9FF8 end:0x822DA004
-	.text       start:0x822DA010 end:0x822DB298
+	.text       start:0x822DA010 end:0x822DA628
+	.text       start:0x822DA628 end:0x822DA778
+	.text       start:0x822DA778 end:0x822DAAF0
+	.text       start:0x822DAAF0 end:0x822DB0F8
+	.text       start:0x822DB150 end:0x822DB298
 
 CriticalUserListener.cpp:
 	.pdata      start:0x82224F78 end:0x82225020
@@ -3955,9 +3967,7 @@ CharIKFingers.cpp:
 	.text       start:0x823B45A0 end:0x823B4B3C
 
 HamPhotoDisplay.cpp:
-	.pdata      start:0x821F74C8 end:0x821F74D0
 	.pdata      start:0x821F79E0 end:0x821F79E8
-	.text       start:0x822CDC80 end:0x822CDD00
 	.text       start:0x822D38B0 end:0x822D3900
 
 HamRibbon.cpp:
@@ -12570,12 +12580,10 @@ ContextChecker.cpp:
 	.pdata      start:0x822089D0 end:0x822089F0
 	.pdata      start:0x82208F68 end:0x82208F88
 	.pdata      start:0x8221DB20 end:0x8221DCC8
-	.pdata      start:0x8223C5C0 end:0x8223C5C8
 	.pdata      start:0x8225B4B0 end:0x8225B528
 	.text       start:0x823EF498 end:0x823EF5F8
 	.text       start:0x823F4268 end:0x823F43A0
 	.text       start:0x8256C7E0 end:0x8256DF78
-	.text       start:0x8275B868 end:0x8275B8B0
 	.text       start:0x82B6A384 end:0x82B6AA90
 
 PhysicsVolume.cpp:
@@ -12644,8 +12652,10 @@ band3/meta_band/SessionMgr.cpp:
 
 OverdriveMeter.cpp:
 	.pdata      start:0x821F2040 end:0x821F2050
+	.pdata      start:0x821F82B8 end:0x821F82C0
 	.pdata      start:0x821F82D8 end:0x821F8470
 	.text       start:0x8227AB48 end:0x8227ABC8
+	.text       start:0x822DB0F8 end:0x822DB150
 	.text       start:0x822DB298 end:0x822DC7B0
 
 system/beatmatch/BeatMatchUtl.cpp:

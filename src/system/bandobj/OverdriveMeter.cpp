@@ -25,7 +25,13 @@ void OverdriveMeter::SyncObjects() {
     mPulseAnimGroup = Find<RndGroup>("pulse_anim.grp", false);
 }
 
-SAVE_OBJ(OverdriveMeter, 0x34)
+// Retail Xbox has a REAL Save here, not the rb3-Wii oracle's assert stub.
+// fn @0x822DB0F8, 88 B:  li r11,0 / WriteEndian(&rev,4) / addi r3,r31,-0x74 /
+// bl ?Save@RndDir@@UAAXAAVBinStream@@@Z.  rev word is the literal 0.
+BEGIN_SAVES(OverdriveMeter)
+    SAVE_REVS(0, 0)
+    SAVE_SUPERCLASS(RndDir)
+END_SAVES
 
 void OverdriveMeter::PreLoad(BinStream &bs) {
     LOAD_REVS(bs);
