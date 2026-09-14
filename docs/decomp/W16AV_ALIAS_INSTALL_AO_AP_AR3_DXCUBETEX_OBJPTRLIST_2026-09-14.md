@@ -6,8 +6,9 @@ Ruler `name_check`, objdiff 4.2.9 `5a51cd51fe0a353f`, `total_code` 10,246,004.
 | | matched_functions | matched_code | matched_code_percent |
 |---|---:|---:|---:|
 | baseline (`11506937`) | 43,470 | 4,028,008 B | 39.312965 % |
-| **this branch** | **43,477** | **4,030,792 B** | **39.340134 %** |
-| Δ | **+7** | **+2,784 B** | +0.027169 pp |
+| after items 1-4 | 43,477 | 4,030,792 B | 39.340134 % |
+| **this branch** (+ AU-2) | **43,481** | **4,031,480 B** | **39.346850 %** |
+| Δ | **+11** | **+3,472 B** | +0.033885 pp |
 
 Zero rows fell out of the `fuzzy==100` set across all four landed changes (set-diff, every step).
 
@@ -22,9 +23,13 @@ Zero rows fell out of the `fuzzy==100` set across all four landed changes (set-d
 | 4 AR-3 rotation | **INSTALLED**, and AR-3's third name identified | +1 / +176 B | **+1 / +176 B** |
 | 5 `Handle@DxCubeTex` / `Handle@NgFur` | **REFUSED — vacuous** | — | not installed |
 | 6 `ObjPtrList` per-site | **REFUTED — the repair does not exist** | — | not installed, per "report and stop" |
+| AU-1 (late, from W16-AU) | **already installed** by this lane as `71282df4` | — | — |
+| AU-2 (late, from W16-AU) | **INSTALLED** after independent re-proof | +0 / +0 B (wrong) | **+4 / +688 B** |
 
-Three of the four installed items measured **exactly** as predicted. The one that did not
-(item 1) is discussed below, because the mis-prediction is the useful part.
+Three of the four original items measured **exactly** as predicted. The two that did not
+(item 1 and AU-2) are discussed below, because the mis-predictions are the useful part — and
+they are the **same error twice**: pricing the row that changes while ignoring the population
+that *references* it.
 
 ## Briefed figures that did not survive literal testing
 
@@ -230,6 +235,74 @@ addresses are not spelling problems. A future lane should start from `0x8278b7f0
 **divergence** row (72 B, already pairing) and treat `0x822abd60` as an **absent instantiation**,
 not as a rename.
 
+## Late items — W16-AU's two map proposals
+
+Delivered mid-lane by the coordinator from `w16-au`. Neither is an alias; both are wrong map
+names, so the honest instrument is a rename, not forgiveness. I re-verified both on retail bytes
+rather than inheriting them.
+
+### AU-1 `0x826ccb48` — no action needed, already installed
+
+This is the **same repair this lane installed as `71282df4`** (item 2 above). The two lanes
+reached it from disjoint evidence: W16-AU from a whole-`.text` caller scan (exactly one `bl`,
+inside `?IsLoaded@GamePanel@@`), this lane from decoding the branch destination, finding five
+other retail thunks carrying the `_Destroy<Grammar>` shape, and objdiff's independent
+`WRONG_CALLEE` label. Convergence from disjoint evidence is the strongest corroboration
+available here. Nothing further to install.
+
+### AU-2 `0x82682688` — `JsonRealloc` -> `?GetLocalBandUser@BandUserMgr@@SAPAVLocalBandUser@@PAVLocalUser@@@Z` (INSTALLED)
+
+Re-proven on retail bytes. The 28 B body is
+`lis r11,0x82c7 / lis r10,0x82c7 / addi r6,r11,0x2528 / addi r5,r10,-0x1950 / li r7,0 / li r4,0 /
+b 0x8282a0c8` (`__RTDynamicCast`, ABI `(r3 ptr, r4 VfDelta, r5 SrcType, r6 TargetType,
+r7 isReference)`). The two `??_R0` TypeDescriptors decode to:
+
+| reg | address | `??_R0` name |
+|---|---|---|
+| r6 (target) | `0x82c72528` | `.?AVLocalBandUser@@` |
+| r5 (source) | `0x82c6e6b0` | `.?AVLocalUser@@` |
+
+with `VfDelta = 0`, `isReference = 0` — i.e. `dynamic_cast<LocalBandUser*>(LocalUser*)`.
+`BandUserMgr.cpp:88` is that line verbatim, and `BandUserMgr.h:63` declares it `static`, which
+fixes the mangling to `SA`. The old name is refuted by the same bytes: a 28 B RTTI cast thunk is
+not a memory reallocator.
+
+⚠ **The decoder was validated on two known answers before being trusted on the unknown one.**
+The flanking siblings are already at fuzzy 100 with agreed names, and the identical decode
+reproduces them exactly — `0x82682668` -> `.?AVBandUser@@` / `.?AVUser@@`, `0x826826a8` ->
+`.?AVRemoteBandUser@@` / `.?AVRemoteUser@@`. Without that control the middle decode would be an
+unfalsifiable reading of my own tooling.
+
+**Safety, checked before editing:** the proposed name is injective across the whole map;
+`JsonRealloc` was named at this address only and is **referenced by zero objs**, so dropping it
+charges nothing anywhere.
+
+⚠ **Do not read this row's 97.14 fuzzy as support for `JsonRealloc`.** Our `JsonRealloc` is
+`lis/lis/addi/addi/li/li/b MemRealloc` — the same seven opcodes as an RTTI thunk, differing only
+in register fields and relocation-masked immediates. Grinding it to 100 would have produced a
+byte-perfect match of the wrong function. W16-AU flagged this and it is correct.
+
+**Predicted +0 / +0 B in this tree; measured +4 / +688 B.** My prediction was wrong, and wrong
+the *same way as item 1*: I priced the renamed row and ignored the caller population — having
+literally printed that population (`Timer, ClosetMgr, SaveLoadManager, SessionMgr, Campaign`) two
+commands earlier in the safety check. The renamed row itself **is** 0% here, exactly as
+predicted, because this tree lacks AU's re-home and the row is still pinned to `JsonMemory`,
+which cannot define the name. The whole +688 B is the **caller cascade**:
+
+| crossed in | bytes |
+|---|---:|
+| `?OnMsg@SaveLoadManager@@...ProfileSwappedMsg` | 240 |
+| `?UpdateLeader@SessionMgr@@QAAXXZ` | 216 |
+| `?OnMsg@ClosetMgr@@...ProfileSwappedMsg` | 192 |
+| `?GetLocalHost@SessionMgr@@UBAPAVLocalBandUser@@XZ` | 40 |
+
+Those callers' `bl` was being charged as a wrong callee under `name_check` because our source
+spells `GetLocalBandUser` while the map called the target `JsonRealloc`. This is CLAUDE.md's
+"a WRONG NAME is FINANCED BY ITS CALLERS" exactly, and the row's own **+28 B / +1 fn is still
+outstanding** — collectable on main once W16-AU's re-home to `BandUserMgr` lands. 0 rows fell out.
+
+Commit `9a91adbb`. I did **not** touch `splits.txt`.
+
 ## NOT done, and why
 
 1. **Item 5 not installed** — refused as vacuous (neither spelling exists on our side). Refutation
@@ -241,6 +314,10 @@ not as a rename.
 4. **`src/` untouched** — the only sanctioned `src/` edit was item 6's declaration change, and
    item 6 was refuted before any edit was justified.
 5. **`GamePanel.*`, `splits.txt`, `objects.json` untouched** — owned by W16-AT / W16-AU.
-6. **AO's `0x8246af50` `.xdata` equality asserted only via extent equality**, not by decoding the
+6. **AU-2's own +28 B not collected here** — it needs W16-AU's re-home of `0x82682688` to
+   `BandUserMgr` to land on main. Installing the name is the correct half to do now (it is the
+   blocker the re-home is waiting on); the row reads 0% in this tree meanwhile, which costs
+   nothing because it was sub-100 on both rulers before the edit.
+7. **AO's `0x8246af50` `.xdata` equality asserted only via extent equality**, not by decoding the
    unwind records field by field. The fold is proven by the reloc-masked body comparison plus the
    call-site branch evidence; the `.xdata` half rests on both COMDATs having equal retail extent.
