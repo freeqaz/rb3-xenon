@@ -41,7 +41,13 @@ ScoreType CampaignSongInfoPanel::SelectedScoreType() const {
     } else {
         UIList *pInstrumentsList = mDir->Find<UIList>("instruments.lst", true);
         MILO_ASSERT(pInstrumentsList, 0x7F);
-        return SymToScoreType(pInstrumentsList->SelectedSym(true));
+        // Retail reads the Symbol back out of its OWN stack slot
+        // (lwz r3, 0x50(r1)) rather than dereferencing the sret pointer the
+        // call returns (lwz r3, 0x0(r3)), so the temporary must be NAMED.
+        // Same shape as GetCareerScore's `Symbol src = SelectedSource();`
+        // below, which is at 100% and reads lwz r5, 0x50(r31).
+        Symbol sym = pInstrumentsList->SelectedSym(true);
+        return SymToScoreType(sym);
     }
 }
 
