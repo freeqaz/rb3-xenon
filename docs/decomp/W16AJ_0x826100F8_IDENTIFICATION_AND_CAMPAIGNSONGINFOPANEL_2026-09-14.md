@@ -242,12 +242,21 @@ rows plus the thunk = +17 `matched_functions`; no row left the `mpn == 100` set.
 - `0x8260FFD8` / `0x8260EED8` (neighbours of Item 1's survivor) left anonymous — not examined.
 - `fn_82610160`'s suspect `__ucopy_ptrs` charge at `0x825AEE78` — noticed, not adjudicated.
 
-## 8. Gates (run last, in the worktree, after the last source edit)
+## 8. Gates (run last, in the worktree, after the last source edit — tree at build 7 == build 6 inputs)
 
-See the final lane message for the four gate lines; the `NATIVE_GATE_RESULT` line is pasted there
-verbatim. Note for readers: builds 4–6 predate the doc commit, and nothing after build 6 touches a build
-input, so build 6's rc=0 stands as the "full build" gate and the final no-op `./tools/ninja-locked` in
-the gate sequence proves the tree is at a fixed point.
+1. Full build: `./tools/ninja-locked > ~/tmp/rb3_build_w16aj_7.log` → **`BUILD rc=0`**, 0 lines matching
+   `FAILED|ninja: error|split-guard` (a no-op over build 6; nothing after build 6 touched a build input).
+2. `python3 scripts/verify_ruler_agreement.py --check` → **rc=0**, `OK: both objdiff-cli entry points
+   resolve the same ruler.`
+3. `python3 scripts/verify_objs_patched.py --verify-manifest` → **rc=0**, `[patch-state] OK: 1213 decomp,
+   3115 target objects match 2026-09-14T19:52:46Z (tree_sha256=778306eecc198e8d)`.
+4. `tools/native_build_gate.sh` → rc=0, verbatim:
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+The doc commit that records these lines is the only change after the gates ran; it touches no build input.
 
 ## Appendix A — Item 1 alias-group spellings (from `~/tmp/w16aj_alias_evidence.json`; our BUILT objs, build 3 of this lane)
 
