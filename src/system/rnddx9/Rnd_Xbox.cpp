@@ -821,6 +821,22 @@ static inline bool CreateAndBeginQuery(RndOcclusionQueryMgr *mgr, unsigned int &
     return ok;
 }
 
+// Same shape at the top of the function: retail loads the manager once per
+// pair, loads its vtable BEFORE the store through it (0x1804 / 0x1808), and
+// only reloads `this->mOcclusionQueryMgr` between the two pairs (a virtual
+// call intervened).  A member store cannot keep `this->member` live in MSVC,
+// so each pair is an inlined wrapper whose `this` is the cached pointer.
+// Retail (and DC3 retail) dispatch slot 0x20 (OnEndFrame) BEFORE slot 0x1c
+// (OnBeginFrame).
+static inline void EndQueryFrame(RndOcclusionQueryMgr *mgr) {
+    mgr->ToggleFrameIndex();
+    mgr->OnEndFrame();
+}
+static inline void BeginQueryFrame(RndOcclusionQueryMgr *mgr) {
+    mgr->IncrementFrameCounter();
+    mgr->OnBeginFrame();
+}
+
 void DxRnd::DoPointTests() {
     // Block on previous fence if set
     if (sPointTestFence != (DWORD)-1) {
@@ -858,21 +874,15 @@ void DxRnd::DoPointTests() {
     // dispatches vtable slot 0x20 BEFORE slot 0x1c: with the compiler-verified
     // slot layout (7 = OnBeginFrame @0x1c, 8 = OnEndFrame @0x20) the
     // byte-faithful call order is End, increment, Begin.
-    mOcclusionQueryMgr->ToggleFrameIndex();
-    mOcclusionQueryMgr->OnEndFrame();
-    mOcclusionQueryMgr->IncrementFrameCounter();
-    mOcclusionQueryMgr->OnBeginFrame();
-
-    // Count point tests needed
-    int numTests = 0;
-    for (std::list<PointTest>::iterator it = mPointTests.begin(); it !=mPointTests.end(); ++it) {
-        numTests++;
-    }
+    EndQueryFrame(mOcclusionQueryMgr);
+    BeginQueryFrame(mOcclusionQueryMgr);
 
     // Resize mPointTestQueries to match mPointTests count.  Retail inlines
     // resize() (erase arm / _M_fill_insert arm) and builds the fill value
-    // {0, -1, -1} on the stack at 0x58(r1) -- RndPointTest's default ctor.
-    mPointTestQueries.resize(numTests);
+    // {0, -1, -1} on the stack at 0x58(r1) -- RndPointTest's default ctor --
+    // BEFORE the list::size() node walk: right-to-left argument evaluation of
+    // the two-argument resize, not the one-argument form (whose temp follows).
+    mPointTestQueries.resize(mPointTests.size(), RndPointTest());
 
     // Early out if no point tests
     if (mPointTests.empty())
@@ -890,7 +900,8 @@ void DxRnd::DoPointTests() {
     // a local reference declared HERE, not hoisted, is what keeps the pointer
     // in a callee-saved register instead of reloading the global.
     RndShaderMgr &shaderMgr = TheShaderMgr;
-    shaderMgr.SetVConstant(kVS_ViewProjMatrix, Hmx::Matrix4(xfm));
+    Hmx::Matrix4 viewProj(xfm);
+    shaderMgr.SetVConstant(kVS_ViewProjMatrix, viewProj);
 
     // Setup shader state
     RndShader::SelectConfig(nullptr, kStandardShader, false);
