@@ -371,7 +371,7 @@ const char *PlatformMgr::GetName(int padNum) const {
         }
     }
     static Symbol player("player");
-    return MakeString("%s %i", Localize(player, 0, TheLocale), padNum + 1);
+    return MakeString("%s %i", Localize(player, 0), padNum + 1);
 }
 
 // Retail RB3 has NO ShowGamercardForPadNum: the map's only gamercard row is
