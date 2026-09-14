@@ -365,3 +365,13 @@ void DxShaderMgr::LoadShaderFile(FileStream &fs) {
 }
 
 RndShaderProgram *DxShaderMgr::NewShaderProgram() { return new DxShader(); }
+
+// W16-A scatter-include (default/system/rnddx9/ShaderMgr <- rnddx9/Tex.cpp).
+// Tex.cpp was in-tree but wired NOWHERE: absent from objects.json and included
+// by no compiled TU, so the match build emitted no DxTex bodies at all and six
+// named rows in this unit read fuzzy 0 for want of a definition to pair with.
+// Retail puts them in THIS unit's span -- every DxTex address the map names
+// (0x82734148 DoCompress, 0x82734360 Compress, 0x827343B0 TexelsPitch,
+// 0x827347D0 StaticClassName, 0x82734848 ClassName, 0x827349D8 GetRT,
+// 0x827350E8 SetDeviceTex) falls inside the pinned .text 0x82733CB0-0x82736EE8.
+#include "rnddx9/Tex.cpp"
