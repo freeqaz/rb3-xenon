@@ -100,7 +100,18 @@ void BandScoreboard::ResetScore() {
     SetScore(0);
 }
 
-SAVE_OBJ(BandScoreboard, 0xA3)
+// Retail Xbox has a REAL Save here, not the rb3-Wii oracle's assert stub.
+// fn @0x822CDC80, 128 B.  Mirrors PreLoad exactly: rev 1, the same IsProxy
+// guard, the same single ObjPtr member (mStarDisplay, ObjectDir+0x218 ==
+// r31-0x10 in retail), then RndDir::Save at r31-0x48 == base+0x1E0 -- the
+// identical +0x1E0 superclass offset the 100%-matching BandCrowdMeter::Save
+// shows.
+BEGIN_SAVES(BandScoreboard)
+    SAVE_REVS(1, 0)
+    if (!IsProxy())
+        bs << mStarDisplay;
+    SAVE_SUPERCLASS(RndDir)
+END_SAVES
 
 BEGIN_COPYS(BandScoreboard)
     COPY_SUPERCLASS(RndDir)
