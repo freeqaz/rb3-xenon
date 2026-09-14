@@ -181,6 +181,51 @@ def collect(paths, label=""):
     return out
 
 
+def survivor_self_check(rt, st, mapped=frozenset(), strict=True, mode="shape"):
+    """★ W16-AE.  Does OUR OWN COMDAT for the SURVIVOR spelling contradict the
+    retail body at the survivor's mapped address?  Returns None (no
+    contradiction, or nothing to compare) or a reason string.
+
+    WHY THIS GATE EXISTS.  Tier 1 verifies the FOLDED spelling's COMDAT against
+    the retail bytes at addr(t) and then trusts the map for the NAME t.  It
+    never looked at ours.get(t).  So when the map name at an address is wrong
+    -- a different template instantiation whose body happens to be the fold
+    twin of the spelling we actually compile -- the builder minted a "T1" group
+    whose survivor is the WRONG name and whose folded member is the RIGHT one,
+    and every consumer read the survivor as proven.  Measured on 0x82b9b1f8
+    (retail 64 B WITH a bl _M_erase, our survivor spelling 92 B reloc-free)
+    and 0x82336af8 (retail 40 B / 5 relocs, our survivor `swap<...>` 28 B / 0
+    relocs): both passed T1 because only the folded side was ever compared.
+    tools/icf_pair_adjudicate.py refutes both once its own depth-0 self-pair
+    short-circuit is removed (same lane).
+
+    WHAT IS REFUSED (mode="shape", the default): a retail/our SIZE mismatch,
+    a relocation COUNT or SHAPE (offset/type) mismatch, or relocation TARGETS
+    that disagree under the same relocs_agree() rule T1 uses for the folded
+    member.  Any of these says our COMDAT for t is not the same function as
+    the body retail names t.  A masked-body-WORD difference alone (same size,
+    same relocs) is NOT refused in this mode -- it is what an imperfect port of
+    the right function looks like -- but it is counted
+    (note_survivor_body_words_differ) so the census shows it.  mode="strict"
+    refuses that too; mode="off" restores the pre-W16-AE behaviour so the gate
+    can be shown to matter.  A survivor spelling we do not compile at all
+    (st is None) cannot be checked and is counted, not refused."""
+    if mode == "off" or rt is None or st is None or vacuous(st):
+        return None
+    if rt[2] != st[2]:
+        return "size retail %d B vs our survivor COMDAT %d B" % (rt[2], st[2])
+    if len(rt[1]) != len(st[1]):
+        return "reloc count retail %d vs our survivor COMDAT %d" % (len(rt[1]), len(st[1]))
+    for (ro, rn, rty), (oo, on, oty) in zip(rt[1], st[1]):
+        if ro != oo or rty != oty:
+            return "reloc shape differs at retail +0x%x (type %s) vs ours +0x%x (type %s)" % (ro, rty, oo, oty)
+    if not relocs_agree(rt, st, mapped, strict, None):
+        return "reloc targets differ between retail body and our survivor COMDAT"
+    if mode == "strict" and rt[0] != st[0]:
+        return "masked body words differ (strict mode)"
+    return None
+
+
 def vacuous(rec):
     mb, relocs, size = rec
     if size < MIN_WORDS * 4:
@@ -235,6 +280,14 @@ def main() -> int:
                          "`overrides_class`) and carry a `reason`; see "
                          "tools/alias_withdrawals.py:load_overrides. There is "
                          "deliberately no blanket allow-all.")
+    ap.add_argument("--survivor-self-check", choices=("off", "shape", "strict"),
+                    default="shape",
+                    help="★ W16-AE: refuse a pair whose SURVIVOR's own compiled COMDAT "
+                         "contradicts the retail body at the survivor's address "
+                         "(size / reloc count / reloc shape / reloc targets). "
+                         "'strict' also refuses a masked-body-word difference; 'off' "
+                         "restores the pre-W16-AE behaviour (survivor never checked). "
+                         "See survivor_self_check().")
     ap.add_argument("--no-withdrawal-guard", action="store_true",
                     help="DISABLE the withdrawal denylist entirely (for measuring the "
                          "guard's own effect -- it is what re-fabricates withdrawn "
@@ -262,6 +315,7 @@ def main() -> int:
                  "" if not _nover else "; %d explicit override(s)" % _nover),
               file=sys.stderr)
     wd_gen, wd_carry, wd_over = [], [], []
+    sv_refused = []  # ★ W16-AE: (survivor, addr, folded, reason, sites)
 
     ev = json.loads(Path(args.evidence).read_text())
     dc3 = ev["dc3_addr"]
@@ -472,6 +526,22 @@ def main() -> int:
             why[(t, b)] = "reject_gate_c_target_naming"
             continue
         rt, ob = retail.get(t), ours.get(b)
+        # ★ W16-AE SURVIVOR SELF-CHECK -- before ANY tier.  Every tier below
+        # adjudicates the FOLDED spelling; none of them ever consulted our own
+        # COMDAT for the survivor, so a wrong map name at addr(t) sailed through
+        # as a "proven" survivor.  See survivor_self_check().
+        _st = ours.get(t)
+        _sv = survivor_self_check(rt, _st, mapped, strict, args.survivor_self_check)
+        if _sv is not None:
+            stats["reject_SURVIVOR_COMDAT_CONTRADICTS_RETAIL"] += 1
+            ssites["reject_SURVIVOR_COMDAT_CONTRADICTS_RETAIL"] += n
+            why[(t, b)] = "reject_SURVIVOR_COMDAT_CONTRADICTS_RETAIL"
+            sv_refused.append((t, addr_of.get(t), b, _sv, n))
+            continue
+        if rt is not None and _st is None:
+            stats["note_survivor_not_compiled"] += 1
+        elif rt is not None and _st is not None and not vacuous(_st) and rt[0] != _st[0]:
+            stats["note_survivor_body_words_differ"] += 1
         tier = None
         if rt is not None and ob is not None and not vacuous(rt):
             if rt[0] == ob[0] and rt[2] == ob[2] and \
@@ -607,6 +677,16 @@ def main() -> int:
         print("     %-38s %6d slots" % (k, v))
     print("\ngroups=%d aliases=%d sites=%d fns=%d"
           % (len(gl), sum(len(g["folded"]) for g in gl), n_sites, len(fset)))
+    if sv_refused:
+        sv_refused.sort(key=lambda r: -r[4])
+        print("\n★ W16-AE survivor self-check (--survivor-self-check=%s): %d pair(s) REFUSED "
+              "because our own COMDAT for the SURVIVOR spelling contradicts the retail "
+              "body at its mapped address:" % (args.survivor_self_check, len(sv_refused)))
+        for t, a_, b, r, n in sv_refused[:80]:
+            print("    %s  %s\n        folded  %s\n        reason  %s  (%d site(s))"
+                  % (a_ or "?", t[:90], b[:90], r, n))
+        if len(sv_refused) > 80:
+            print("    ... %d more (see --why)" % (len(sv_refused) - 80))
     if args.why:
         Path(args.why).write_text(json.dumps(
             {"decisions": [[t, b, w] for (t, b), w in why.items()]}))
@@ -691,8 +771,24 @@ def main() -> int:
                 return "folded spelling referenced by 0 compiled objs -- inert (gate b)"
             return None
 
+        sv_carried = []  # ★ W16-AE: landed groups whose survivor contradicts retail
         for g in keep:
             gveto = _carry_group_veto(g)
+            # ★ W16-AE: the survivor self-check on the CARRY path.  A landed
+            # group is NOT dropped for this -- that would be a clobber (the
+            # house rule: a membership leaves only with a `withdrawn` record
+            # and retail-byte evidence).  It is carried unchanged, flagged
+            # loudly here and listed at the end, so each one gets adjudicated
+            # by a human with the bytes rather than pruned by a census.
+            _gs = g["survivor"]
+            _gsv = survivor_self_check(retail.get(_gs), ours.get(_gs), mapped, strict,
+                                       args.survivor_self_check)
+            if _gsv is not None:
+                sv_carried.append((_gs, g.get("address"), g.get("name"), _gsv))
+                print("  !! landed group's SURVIVOR CONTRADICTS RETAIL (carried unchanged, "
+                      "needs a withdrawn record + role swap): %s\n"
+                      "       group    %s @ %s\n       survivor %s"
+                      % (_gsv, g.get("name"), g.get("address"), _gs), file=sys.stderr)
             if g["survivor"] in have_s:
                 merged += 1
                 # ★ WS-4 MEMBER-LEVEL CARRY-FORWARD. Carrying only whole groups
@@ -789,6 +885,12 @@ def main() -> int:
             gg["folded"] = sorted(kept_f)
             emitted.append(gg)
             kept += 1
+        if sv_carried:
+            print("\n★ W16-AE survivor self-check: %d LANDED group(s) carried UNCHANGED whose "
+                  "survivor's own COMDAT contradicts the retail body (each needs a withdrawn "
+                  "record + role swap; nothing was pruned):" % len(sv_carried))
+            for s_, a_, nm, r in sv_carried:
+                print("    %s  %s  (%s)\n        reason  %s" % (a_ or "?", s_[:90], nm, r))
         print("\nmerge: carried %d pre-existing group(s), %d already re-derived; "
               "member carry-forward: %d never-adjudicated kept, %d REFUTED and "
               "dropped; validator-gate drops: %d group(s), %d member(s)"

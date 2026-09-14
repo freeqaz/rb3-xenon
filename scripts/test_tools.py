@@ -186,6 +186,12 @@ SCRIPT_ARM: list[dict] = [
     # can fail, which this runner does not perform, and the direct step keeps
     # working if this runner is ever removed. The overlap costs ~1 s.
     {"path": "tools/test_icf_fold_safe.py", "timeout": 300},
+    # W16-AE (2026-09-14): unit test for icf_alias_build.py's SURVIVOR SELF-CHECK
+    # (the builder never byte-checked ours.get(survivor); two landed "T1" groups
+    # at 0x82b9b1f8 / 0x82336af8 had a survivor whose own COMDAT contradicts
+    # retail).  Synthetic records; includes mode=off controls so the verdict is
+    # shown to be the gate's.
+    {"path": "tools/test_icf_alias_survivor_gate.py", "timeout": 120},
 ]
 
 # ── deliberate exclusions ─────────────────────────────────────────────────────
