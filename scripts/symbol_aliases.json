@@ -15702,30 +15702,32 @@
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
   },
   {
-   "name": "$__median",
+   "name": "??$__median@PAVNetSearchResult@@P6A_NPBV1@0@Z@stlpmtx_std@@YAABQAVNetSearchResult@@ABQAV1@00P6A_NPBV1@1@Z@Z",
    "address": "0x823eae30",
-   "survivor": "??$__median@PAVRndDrawable@@P6A_NPAV1@0@Z@stlpmtx_std@@YAABQAVRndDrawable@@ABQAV1@00P6A_NPAV1@1@Z@Z",
+   "survivor": "??$__median@PAVNetSearchResult@@P6A_NPBV1@0@Z@stlpmtx_std@@YAABQAVNetSearchResult@@ABQAV1@00P6A_NPBV1@1@Z@Z",
    "folded": [
     "??$__median@PAVFlowNode@@P6A_NPAV1@0@Z@stlpmtx_std@@YAABQAVFlowNode@@ABQAV1@00P6A_NPAV1@1@Z@Z",
     "??$__median@PAVRndPollable@@P6A_NPBV1@0@Z@stlpmtx_std@@YAABQAVRndPollable@@ABQAV1@00P6A_NPBV1@1@Z@Z",
     "??$__median@PAVRndTransformable@@P6A_NPBV1@0@Z@stlpmtx_std@@YAABQAVRndTransformable@@ABQAV1@00P6A_NPBV1@1@Z@Z",
     "??$__median@PAVVocalPart@@P6A_NPBV1@0@Z@stlpmtx_std@@YAABQAVVocalPart@@ABQAV1@00P6A_NPBV1@1@Z@Z",
-    "??$__median@VSymbol@@P6A_NV1@0@Z@stlpmtx_std@@YAABVSymbol@@ABV1@00P6A_NV1@1@Z@Z"
+    "??$__median@VSymbol@@P6A_NV1@0@Z@stlpmtx_std@@YAABVSymbol@@ABV1@00P6A_NV1@1@Z@Z",
+    "??$__median@PAVRndDrawable@@P6A_NPAV1@0@Z@stlpmtx_std@@YAABQAVRndDrawable@@ABQAV1@00P6A_NPAV1@1@Z@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 6, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 5 folded spelling(s), 1 census sites over 2 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 6, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 5 folded spelling(s), 1 census sites over 2 functions. | W16-AE 2026-09-14: survivor re-spelled to the NetSearchResult instantiation owned by network/net/SessionSearcher.cpp (first COMDAT in retail link order at this address); RndDrawable spelling moved to folded."
   },
   {
-   "name": "$__unguarded_partition",
+   "name": "??$__unguarded_partition@PAPAVNetSearchResult@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAPAPAVNetSearchResult@@PAPAV1@0PAV1@P6A_NPBV1@2@Z@Z",
    "address": "0x823eb2a0",
-   "survivor": "??$__unguarded_partition@PAPAVRndDrawable@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAPAPAVRndDrawable@@PAPAV1@0PAV1@P6A_N11@Z@Z",
+   "survivor": "??$__unguarded_partition@PAPAVNetSearchResult@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAPAPAVNetSearchResult@@PAPAV1@0PAV1@P6A_NPBV1@2@Z@Z",
    "folded": [
     "??$__unguarded_partition@PAPAVFlowNode@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAPAPAVFlowNode@@PAPAV1@0PAV1@P6A_N11@Z@Z",
     "??$__unguarded_partition@PAPAVRndPollable@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAPAPAVRndPollable@@PAPAV1@0PAV1@P6A_NPBV1@2@Z@Z",
     "??$__unguarded_partition@PAPAVRndTransformable@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAPAPAVRndTransformable@@PAPAV1@0PAV1@P6A_NPBV1@2@Z@Z",
     "??$__unguarded_partition@PAPAVVocalPart@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAPAPAVVocalPart@@PAPAV1@0PAV1@P6A_NPBV1@2@Z@Z",
-    "??$__unguarded_partition@PAVSymbol@@V1@P6A_NV1@0@Z@stlpmtx_std@@YAPAVSymbol@@PAV1@0V1@P6A_N11@Z@Z"
+    "??$__unguarded_partition@PAVSymbol@@V1@P6A_NV1@0@Z@stlpmtx_std@@YAPAVSymbol@@PAV1@0V1@P6A_N11@Z@Z",
+    "??$__unguarded_partition@PAPAVRndDrawable@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAPAPAVRndDrawable@@PAPAV1@0PAV1@P6A_N11@Z@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 6, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 5 folded spelling(s), 1 census sites over 2 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 6, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 5 folded spelling(s), 1 census sites over 2 functions. | W16-AE 2026-09-14: survivor re-spelled to the NetSearchResult instantiation owned by network/net/SessionSearcher.cpp (first COMDAT in retail link order at this address); RndDrawable spelling moved to folded."
   },
   {
    "name": "_GUITrigger",
@@ -74123,13 +74125,19 @@
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions."
   },
   {
-   "name": "$__insertion_sort",
+   "name": "?Replace@MsgSource@@$4PPPPPPPM@BI@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
    "address": "0x823eb548",
-   "survivor": "??$__insertion_sort@PAPAVRndPollable@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVRndPollable@@00P6A_NPBV1@1@Z@Z",
-   "folded": [
-    "?Replace@MsgSource@@$4PPPPPPPM@BI@AAXPAVObjRef@@PAVObject@Hmx@@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 5, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "survivor": "?Replace@MsgSource@@$4PPPPPPPM@BI@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
+   "folded": [],
+   "evidence": "W16-AE 2026-09-14: retail disassembly + SessionSearcher.obj COMDAT (16 B, 1 reloc -> ?Replace@MsgSource@@UAAX...). Survivor is the real body; no fold members.",
+   "withdrawn": [
+    {
+     "spelling": "??$__insertion_sort@PAPAVRndPollable@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVRndPollable@@00P6A_NPBV1@1@Z@Z",
+     "lane": "W16-AE 2026-09-14",
+     "class": "NOT_A_FOLD",
+     "disposition": "retail body at 0x823eb548 is a 16 B vtordisp thunk (lwz r11,-4(r3); subf; addi r3,r3,-24; b ?Replace@MsgSource@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z); our __insertion_sort<RndPollable**> is 80 B / 3 relocs \u2014 different size, cannot fold. The T1 evidence was vacuous (0 census sites). Survivor renamed to the thunk emitted by network/net/SessionSearcher.cpp, whose .text span now contains the address."
+    }
+   ]
   },
   {
    "name": "Init",
