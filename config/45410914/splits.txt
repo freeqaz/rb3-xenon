@@ -9291,9 +9291,13 @@ band3/meta_band/StoreMainPanel.cpp:
 	.text       start:0x8263B5B0 end:0x8263C500
 
 band3/meta_band/TokenRedemptionPanel.cpp:
+	.pdata      start:0x82218A28 end:0x82218A38
+	.pdata      start:0x82218A38 end:0x82218A40
 	.pdata      start:0x8222BDD8 end:0x8222BDF8
 	.pdata      start:0x8222BDF8 end:0x8222BE08
 	.pdata      start:0x8222BE20 end:0x8222BFF0
+	.text       start:0x8251D8A4 end:0x8251D9C0
+	.text       start:0x8251D9C0 end:0x8251DA38
 	.text       start:0x8263F910 end:0x8263FB78
 	.text       start:0x8263FB78 end:0x8263FD04
 	.text       start:0x8263FD30 end:0x8263FD60
@@ -10412,8 +10416,6 @@ BandSongMetadata.cpp:
 
 BandUser.cpp:
 	.pdata      start:0x82215950 end:0x82215960
-	.pdata      start:0x82218A28 end:0x82218A38
-	.pdata      start:0x82218A38 end:0x82218A40
 	.pdata      start:0x82218FF0 end:0x82219000
 	.pdata      start:0x82219000 end:0x82219010
 	.pdata      start:0x82219010 end:0x82219018
@@ -10435,8 +10437,6 @@ BandUser.cpp:
 	.pdata      start:0x82231348 end:0x82231358
 	.pdata      start:0x82231358 end:0x82231368
 	.text       start:0x824E9ED0 end:0x824EA034
-	.text       start:0x8251D8A4 end:0x8251D9C0
-	.text       start:0x8251D9C0 end:0x8251DA38
 	.text       start:0x82523BF8 end:0x82523D48
 	.text       start:0x82523D48 end:0x82523E20
 	.text       start:0x82523E20 end:0x82523EB8
