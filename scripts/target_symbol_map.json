@@ -30439,5 +30439,11 @@
  "0x82531980": "?Init@WinSockSocket@@SAXXZ",
  "0x826663f0": "??_GFriendsProvider@@UAAPAXI@Z",
  "0x826662f0": "??1FriendsProvider@@UAA@XZ",
- "0x82666288": "??_EFriendsProvider@@W3AAPAXI@Z"
+ "0x82666288": "??_EFriendsProvider@@W3AAPAXI@Z",
+ "0x8283cab8": "XapiLookupString",
+ "0x8283d590": "GetLocalTime",
+ "0x8283d740": "XShowDirtyDiscErrorUI",
+ "0x82844ba8": "RtlSetLastNTError",
+ "0x8283d3b8": "WaitForSingleObject",
+ "0x8283d7c8": "XUserGetSigninInfo"
 }
