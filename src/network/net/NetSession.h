@@ -32,7 +32,8 @@ END_MESSAGE
 
 DECLARE_MESSAGE(InviteAcceptedMsg, "invite_accepted")
 InviteAcceptedMsg() : Message(Type()) {}
-InviteAcceptedMsg(int x, int y, bool b) : Message(Type(), x, y, b) {}
+InviteAcceptedMsg(int padNum, unsigned int sessionID, bool fromGuide)
+    : Message(Type(), padNum, (int)sessionID, fromGuide) {}
 int GetPadNum() const { return mData->Int(2); }
 int GetSessionID() const { return mData->Int(3); }
 bool GetExpired() const { return mData->Int(4); }
