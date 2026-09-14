@@ -900,8 +900,11 @@ void DxRnd::DoPointTests() {
     // a local reference declared HERE, not hoisted, is what keeps the pointer
     // in a callee-saved register instead of reloading the global.
     RndShaderMgr &shaderMgr = TheShaderMgr;
-    Hmx::Matrix4 viewProj(xfm);
-    shaderMgr.SetVConstant(kVS_ViewProjMatrix, viewProj);
+    // The temporary must stay UNNAMED (V4's named local and V5's const&
+    // binding both lost the `mr r5, r3` shape); what keeps it out of the
+    // loop's `verts` slot is that `vtx`/`verts` below are function-scope
+    // locals, which a statement-level temporary cannot be overlaid with.
+    shaderMgr.SetVConstant(kVS_ViewProjMatrix, Hmx::Matrix4(xfm));
 
     // Setup shader state
     RndShader::SelectConfig(nullptr, kStandardShader, false);
@@ -928,9 +931,31 @@ void DxRnd::DoPointTests() {
     D3DDevice_SetRenderState_ViewportEnable(TheDxRnd.Device(), 0);
     D3DDevice_SetRenderState_HalfPixelOffset(TheDxRnd.Device(), 1);
 
+    // The vertex scratch buffers live OUTSIDE the loop in retail.  Two
+    // independent witnesses on the retail bytes: (1) the point block is a
+    // strict store->load chain (`it->y` is never hoisted above the `vtx.x`
+    // store) -- a loop-body local's address has not escaped yet at block
+    // entry, so the compiler would hoist; a function-scope local's address
+    // escaped through DrawVerticesUP on the previous iteration, so it must
+    // not.  (2) the Matrix4 temporary above keeps its own slot (0x130) and
+    // the z-conversion temp lands after `verts` (0xe0), which is impossible
+    // if `verts` were in a disjoint inner scope the temporaries could share.
+    struct PointVertex {
+        float x, y, z;
+        float w;
+        DWORD color;
+    };
+    struct QuadVertex {
+        float x, y, z;
+        float w;
+        DWORD color;
+    };
+    PointVertex vtx;
+    QuadVertex verts[4];
+
     // Process each point test
     int idx = 0;
-    for (std::list<PointTest>::iterator it = mPointTests.begin(); it !=mPointTests.end(); ++it, ++idx) {
+    for (std::list<PointTest>::iterator it = mPointTests.begin(); it !=mPointTests.end(); ++it) {
 #ifdef HX_NATIVE
         // Retail RB3 has no stats increment in this loop (nothing touches a
         // global between the loop head and the flare's mPointTest load).
@@ -938,20 +963,17 @@ void DxRnd::DoPointTests() {
 #endif
 
         RndFlare *flare = it->mFlare;
-        RndPointTest &test = mPointTestQueries[idx];
-        // Retail stores mFlare FIRST, then the two -1s.
+        // Retail bumps the strength-reduced idx*12 (`addi r21, r21, 0xc`)
+        // right after the element address is formed, at the loop HEAD -- the
+        // post-increment lives in the subscript, not in the for-increment.
+        RndPointTest &test = mPointTestQueries[idx++];
+        // Retail stores mFlare FIRST, then the area -1, then the point -1.
         test.mFlare = flare;
-        test.mPointQueryIdx = -1;
         test.mAreaQueryIdx = -1;
+        test.mPointQueryIdx = -1;
 
         // Point test
         if (flare->GetPointTest()) {
-            struct PointVertex {
-                float x, y, z;
-                float w;
-                DWORD color;
-            };
-            PointVertex vtx;
             vtx.x = (float)it->x;
             vtx.y = (float)it->y;
             vtx.z = (float)it->z * 5.9604651881e-08f;
@@ -971,19 +993,17 @@ void DxRnd::DoPointTests() {
         }
 
         // Area test.  Retail reloads the flare from `test.mFlare`
-        // (`lwz r11, 0x0(r28)`), not from the `flare` local.
-        if (test.mFlare->GetAreaTest()) {
-            struct QuadVertex {
-                float x, y, z;
-                float w;
-                DWORD color;
-            };
-            QuadVertex verts[4];
-
-            // The rect is held BY REFERENCE (`addi r10, r11, 0x134`), so w/h
-            // are read as 0x8(r10)/0xc(r10) rather than off the flare.
-            verts[0].x = test.mFlare->GetArea().x;
-            verts[0].y = test.mFlare->GetArea().y;
+        // (`lwz r11, 0x0(r28)`), not from the `flare` local, and that ONE
+        // load (r11) serves the condition, the area block and the else arm
+        // (0x118 and 0xda are stored off the same register).
+        RndFlare *areaFlare = test.mFlare;
+        if (areaFlare->GetAreaTest()) {
+            // The rect is held BY REFERENCE (`addi r10, r11, 0x104`) across
+            // the copy loops, which clobber the flare register: w/h are read
+            // as 0xc(r10)/0x8(r10), not 0x110/0x10c off the flare.
+            const Hmx::Rect &area = areaFlare->GetArea();
+            verts[0].x = area.x;
+            verts[0].y = area.y;
             verts[0].z = (float)it->z * 5.9604651881e-08f;
             verts[0].w = 1.0f;
             verts[0].color = 0;
@@ -993,14 +1013,14 @@ void DxRnd::DoPointTests() {
             // from the copy -- except verts[3].y, which reloads its own slot.
             // Every `fadds` takes the RECT term first.
             verts[1] = verts[0];
-            verts[1].y = test.mFlare->GetArea().h + verts[0].y;
+            verts[1].y = area.h + verts[0].y;
 
             verts[2] = verts[0];
-            verts[2].x = test.mFlare->GetArea().w + verts[0].x;
+            verts[2].x = area.w + verts[0].x;
 
             verts[3] = verts[0];
-            verts[3].x = test.mFlare->GetArea().w + verts[0].x;
-            verts[3].y = test.mFlare->GetArea().h + verts[3].y;
+            verts[3].x = area.w + verts[0].x;
+            verts[3].y = area.h + verts[3].y;
 
             bool ok = CreateAndBeginQuery(mOcclusionQueryMgr, test.mAreaQueryIdx);
             if (ok) {
@@ -1008,8 +1028,8 @@ void DxRnd::DoPointTests() {
                 mOcclusionQueryMgr->EndQuery(test.mAreaQueryIdx);
             }
         } else {
-            test.mFlare->SetOcclusionReady(true);
-            test.mFlare->SetVisible(true);
+            areaFlare->SetOcclusionReady(true);
+            areaFlare->SetVisible(true);
         }
     }
 
