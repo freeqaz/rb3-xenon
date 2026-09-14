@@ -2480,8 +2480,8 @@
  "0x822d3830": "?SyncProperty@UnisonIcon@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x822d3840": "?Handle@UnisonIcon@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x822d38b0": null,
- "0x822d3908": null,
- "0x822d3920": "??2SpotlightDrawer@@SAPAXI@Z",
+ "0x822d3908": "?Save@EndingBonus@@UAAXAAVBinStream@@@Z",
+ "0x822d3920": "?Copy@EndingBonus@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
  "0x822d3928": "?Succeeded@MiniIconData@EndingBonus@@QAAXXZ",
  "0x822d3970": "?Failed@MiniIconData@EndingBonus@@QAAXXZ",
  "0x822d39b8": "?Success@EndingBonus@@QAAXXZ",
@@ -30401,5 +30401,7 @@
  "0x82812038": "?Save@UILabelDir@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
  "0x82812048": "?Handle@UILabelDir@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82812058": "?SyncProperty@UILabelDir@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
- "0x82812068": "?PostLoad@UILabelDir@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z"
+ "0x82812068": "?PostLoad@UILabelDir@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+ "0x822d3918": "?PostLoad@EndingBonus@@UAAXAAVBinStream@@@Z",
+ "0x822d3910": "?PreLoad@EndingBonus@@UAAXAAVBinStream@@@Z"
 }
