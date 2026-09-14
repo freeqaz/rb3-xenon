@@ -337,7 +337,12 @@ const char *RockCentral::FriendStatusToString(_WiiFriendStatus status) {
 }
 
 void RockCentral::ForceLogout() {
-    if (mState == 1 || mState == 2) {
+    // Retail X360 tests 2 FIRST: `cmpwi 2 / beq <body> / cmpwi 1 / bne <skip>`,
+    // i.e. `mState == 2 || mState == 1`.  Semantically inert (two side-effect-free
+    // equality tests on the same value), so this is an accuracy fix, not a bug
+    // fix -- it closes the only 2 of Handle@RockCentral's 30 charges that name a
+    // source construct.  rb3-Wii has the operands the other way round.
+    if (mState == 2 || mState == 1) {
         mState = 3;
         TheNet.GetServer()->Logout();
     }
