@@ -841,10 +841,13 @@ void PlatformMgr::Poll() {
                 // An explicit `xf++` cursor pins the IV at +0 instead (V0/V1 residual).
                 XONLINE_FRIEND *pFriends = (XONLINE_FRIEND *)mFriendsBuffer;
                 for (unsigned long i = 0; i < numFriends; i++) {
+                    // W16-M V3: the IV is selected at the FIRST address expression in
+                    // the body; retail's is +0x8 (&szGamertag), so evaluate it first.
+                    const char *gamertag = pFriends[i].szGamertag;
                     if (!(pFriends[i].dwFriendState & XONLINE_FRIENDSTATE_FLAG_SENTREQUEST)
                         && !(pFriends[i].dwFriendState & XONLINE_FRIENDSTATE_FLAG_RECEIVEDREQUEST)) {
                         Friend *f = new Friend();
-                        String name(pFriends[i].szGamertag);
+                        String name(gamertag);
                         f->SetName(name);
                         f->mXUID = pFriends[i].xuid;
                         mFriendsList->push_back(f);
