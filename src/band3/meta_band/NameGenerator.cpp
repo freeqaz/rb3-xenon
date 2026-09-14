@@ -43,7 +43,7 @@ void NameGenerator::ConfigureNameData(DataArray *Root) {
 }
 
 DataArray *NameGenerator::GetNameList(Symbol sym) const {
-    std::map<Symbol, DataArray *>::const_iterator NameList = m_mapNameLists.find(sym);
+    std::hash_map<Symbol, DataArray *>::const_iterator NameList = m_mapNameLists.find(sym);
     if (NameList != m_mapNameLists.end()) {
         return NameList->second;
     }

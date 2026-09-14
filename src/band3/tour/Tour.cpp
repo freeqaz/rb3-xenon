@@ -460,14 +460,12 @@ void Tour::UpdateProgressWithCareerData() {
     const AccomplishmentProgress &progress = m_pProfile->GetAccomplishmentProgress();
     pProgress->SetMetaScore(progress.GetMetaScore());
     {
-        const std::hash_map<Symbol, int> &hmap = progress.GetToursPlayedMap();
-        std::map<Symbol, int> smap(hmap.begin(), hmap.end());
-        pProgress->SetToursPlayedMap(smap);
+        // W16-AQ: TourProgress now holds hash_map like AccomplishmentProgress,
+        // so the map<->hash_map conversion temporary is gone.
+        pProgress->SetToursPlayedMap(progress.GetToursPlayedMap());
     }
     {
-        const std::hash_map<Symbol, int> &hmap = progress.GetToursMostStarsMap();
-        std::map<Symbol, int> smap(hmap.begin(), hmap.end());
-        pProgress->SetTourMostStarsMap(smap);
+        pProgress->SetTourMostStarsMap(progress.GetToursMostStarsMap());
     }
     MetaPerformer *performer = MetaPerformer::Current();
     MILO_ASSERT(performer, 0x473);

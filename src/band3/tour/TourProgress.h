@@ -5,6 +5,24 @@
 #include "meta/FixedSizeSaveable.h"
 #include "tour/QuestJournal.h"
 #include "utl/BinStream.h"
+#include <hash_map>
+
+// W16-AQ 2026-09-14: these two progress maps are hash_map in retail, not
+// std::map. Proven on retail bytes, not on the map: (a) ??1TourProgress
+// (0x82362d70) calls 0x826100f8 TWICE, and that 104 B body is byte-identical
+// (fuzzy 100, incl. relocation names) to our compiled
+// hashtable<pair<const int,UIComponent*>,...>::~hashtable; (b) both setters
+// call ??4?$hashtable@...::operator= where we called ??4?$_Rb_tree@...
+// Same correction AccomplishmentProgress.h records for the identical data:
+// "the Wii decomp approximated them as std::map".
+#ifndef RB3_HASH_SYMBOL_DEFINED
+#define RB3_HASH_SYMBOL_DEFINED
+namespace stlpmtx_std {
+_STLP_TEMPLATE_NULL struct hash<Symbol> {
+    size_t operator()(const Symbol &s) const { return (size_t)s.Str(); }
+};
+}
+#endif
 
 enum {
     kTour_NumQuestFilters = 3,
@@ -76,8 +94,8 @@ public:
     int GetToursPlayed(Symbol) const;
     int GetTourMostStars(Symbol) const;
     void SetMetaScore(int);
-    void SetToursPlayedMap(const std::map<Symbol, int> &);
-    void SetTourMostStarsMap(const std::map<Symbol, int> &);
+    void SetToursPlayedMap(const std::hash_map<Symbol, int> &);
+    void SetTourMostStarsMap(const std::hash_map<Symbol, int> &);
     void FakeFill();
     void DumpProperties();
 
@@ -92,8 +110,8 @@ public:
     std::vector<int> unk70; // 0x74
     Symbol mCurrentQuest; // 0x80
     Symbol mQuestFilters[3]; // 0x84, 0x80, 0x84
-    std::map<Symbol, int> unk88;
-    std::map<Symbol, int> unka0;
+    std::hash_map<Symbol, int> unk88;
+    std::hash_map<Symbol, int> unka0;
     int mMetaScore; // 0xc0
     int mNewStars; // 0xc4
     bool mWonQuest; // 0xc8

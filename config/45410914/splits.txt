@@ -4347,7 +4347,6 @@ CharLipSync.cpp:
 	.text       start:0x823D42F0 end:0x823D43C0
 	.text       start:0x823D44B8 end:0x823D4D18
 	.text       start:0x823D4F18 end:0x823D5878
-	.text       start:0x82682668 end:0x82682684
 	.text       start:0x826DC598 end:0x826DC5E8
 	.text       start:0x827799AC end:0x82779A00
 
@@ -13267,6 +13266,7 @@ band3/meta_band/BandStoreOffer.cpp:
 
 band3/game/BandUserMgr.cpp:
 	.pdata      start:0x82230718 end:0x82230970
+	.text       start:0x82682668 end:0x82682684
 	.text       start:0x826826A8 end:0x82684E88
 
 system/utl/LogFile.cpp:
