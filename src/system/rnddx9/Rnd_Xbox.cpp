@@ -591,9 +591,14 @@ void DxRnd::SetShaderRegisterAlloc(RegisterAlloc s) {
             D3DDevice_SetShaderGPRAllocation(mD3DDevice, 0, 0, 0);
             break;
         case 1:
-            D3DDevice_SetShaderGPRAllocation(
-                mD3DDevice, 0, mDefaultVSRegAlloc, mDefaultPSRegAlloc
-            );
+            // Literal 0x20/0x60, NOT mDefaultVSRegAlloc/mDefaultPSRegAlloc.
+            // DC3 promoted these two to configurable members; RB3 retail did
+            // not have them yet.  Witness: SetShaderRegisterAlloc has no
+            // standalone COMDAT in retail (it is absent from report.json), so
+            // it is only ever seen inlined -- and the inlined copy inside
+            // BeginDrawing at 0x8273CEF0 emits `li r5,0x20; li r6,0x60`, while
+            // NOTHING in the whole of Rnd_Xbox.s ever loads 0x3a4/0x3a8/0x3ac.
+            D3DDevice_SetShaderGPRAllocation(mD3DDevice, 0, 0x20, 0x60);
             break;
         case 2:
             D3DDevice_SetShaderGPRAllocation(mD3DDevice, 0, 0x10, 0x70);
@@ -969,6 +974,156 @@ void DxRnd::DoPointTests() {
     }
 }
 
+
+// Retires everything AutoRelease()/AutoDelete() queued while mReleaseImmediate
+// was false.  A resource that is still bound to the device cannot be freed yet,
+// so it is carried over into the next frame's pending list.
+//
+// The two shift expressions are the XDK's D3DTAG "pending mask" arithmetic with
+// a *runtime* index: for a literal stream/sampler MSVC folds it to a constant,
+// but inside these loops the whole expansion survives into the code -- retail
+// hoists the 1<<63 out of both loops (li r11,1; rldicr r28,r11,63,63) and emits
+// one srd per iteration.
+//
+// Ported from DC3's rnddx9/Rnd_Xbox.cpp with ONE retail-driven correction: DC3
+// frees the texture's physical page with the 4-argument PhysicalFreeTracked(p,
+// __FILE__, line, ""), but retail's call site at 0x8273CC08 sets ONLY r3 before
+// the bl (r4-r6 are volatile across the XGGetTextureLayout call immediately
+// above it), so RB3 calls the 1-argument PhysicalFree.  The map names that
+// address ?PhysicalFreeTracked@@YAXPAXPBDH1@Z because the two fold under ICF --
+// the tracked overload ignores p2/p3/p4, so both compile to the same body.
+void DxRnd::ReleaseAutoRelease() {
+    D3DDevice_SetVertexShader(mD3DDevice, nullptr);
+    D3DDevice_SetPixelShader(mD3DDevice, nullptr);
+    D3DDevice_SetIndices(mD3DDevice, nullptr);
+    for (int sampler = 0; sampler < 16; sampler++) {
+        D3DDevice_SetTexture(
+            mD3DDevice, sampler, nullptr, 0x8000000000000000 >> (sampler + 0x20U)
+        );
+    }
+    for (int stream = 0; stream < 4; stream++) {
+        D3DDevice_SetStreamSource(
+            mD3DDevice,
+            stream,
+            nullptr,
+            0,
+            0,
+            0x8000000000000000 >> (((0x5FU - stream) * 0x5556U >> 16) + 0x20U)
+        );
+    }
+
+    std::vector<D3DResource *> stillBoundResources;
+    for (std::vector<D3DResource *>::iterator it = mPendingReleases.begin();
+         it != mPendingReleases.end();
+         ++it) {
+        if (D3DResource_IsSet(*it, mD3DDevice)) {
+            stillBoundResources.push_back(*it);
+        } else if (*it) {
+            (*it)->Release();
+            *it = nullptr;
+        }
+    }
+    mPendingReleases.clear();
+    mPendingReleases.swap(stillBoundResources);
+
+    std::vector<D3DBaseTexture *> stillBoundTextures;
+    for (std::vector<D3DBaseTexture *>::iterator it = mPendingDeletes.begin();
+         it != mPendingDeletes.end();
+         ++it) {
+        D3DBaseTexture *tex = *it;
+        if (tex) {
+            if (D3DResource_IsSet(tex, mD3DDevice)) {
+                stillBoundTextures.push_back(tex);
+            } else {
+                UINT data;
+                XGGetTextureLayout(
+                    tex,
+                    &data,
+                    nullptr,
+                    nullptr,
+                    nullptr,
+                    0,
+                    nullptr,
+                    nullptr,
+                    nullptr,
+                    nullptr,
+                    0
+                );
+                PhysicalFree((void *)data);
+                delete tex;
+            }
+        }
+    }
+    mPendingDeletes.clear();
+    mPendingDeletes.swap(stillBoundTextures);
+}
+
+// Retail 0x8273CEF0 (396 B).  W16-V refused to pin this on adjacency because it
+// opens with a bit test on a global at 0x82E04FFC that DC3's BeginDrawing does
+// not have.  That global is not a render-state member: it is the MSVC local-
+// static initialisation GUARD BIT for the `cpuTimer` static below, with the
+// Timer* itself at 0x82E04FF8.  Retail proves it by construction --
+//   lwz r11,0x4ffc(r10); clrlwi. r9,r11,31; bne <skip>; ori r11,r11,1; stw ...
+//   addi r3,r31,0x50; addi r4,lbl_820010B0; bl ??0Symbol@@QAA@PBD@Z
+//   lwz r3,0(r3);            bl ?GetTimer@AutoTimer@@SAPAVTimer@@VSymbol@@@Z
+//   stw r3,0x4ff8(r11)
+// -- test bit 0, set bit 0, run the initialiser once, store the pointer.  Note
+// the Symbol temporary: RB3's AutoTimer::GetTimer takes a *Symbol* (our
+// os/Timer.h:293 agrees), where DC3's takes a const char*, so the ctor call is
+// part of the argument and not a separate statement.
+//
+// DC3 IS NEWER and its BeginDrawing has four such statics plus mPrintGlitches /
+// MILO_LOG glitch reporting, mCaptureNextFrame / PIXCaptureGpuFrame, and
+// mGSTiming / PerfCounters.  None of that is in retail's 396 bytes -- there is
+// exactly ONE guard bit and ONE Timer* store, and no Timer::Start/Stop call at
+// all -- so this is DC3's body with the later additions removed, not a port.
+//
+// The three virtual calls are read off the compiler's own vtable report rather
+// than guessed: lwz r11,0(r3) then +0xe4 / +0x118 / +0x120 are slots 57 / 70 /
+// 72 = Rnd::DrawPreClear / DxRnd::Resume / NgRnd::ResetStats.  The four members
+// are compiler-verified too: 0x2c mClearColor, 0x1c4 mD3DDevice, 0x398
+// mSuspended, 0x39c mRegAlloc.
+//
+// The colour pack is MakeColor's: retail scales by 255.0f (lbl_82033A50 =
+// 0x437F0000) via fmuls/fctidz and then splices with
+//   rlwimi r8,r11,8,16,23 ; clrlwi r11,r8,16 ; rlwimi r7,r11,8,0,23
+// which is (red&0xFF)<<16 | (green&0xFF)<<8 | (blue&0xFF).  The Z argument is
+// lbl_82000D78 = 0.0f, i.e. the literal 0 of the existing 8-argument call form
+// already used at lines 426 and 653.
+void DxRnd::BeginDrawing() {
+    static Timer *cpuTimer = AutoTimer::GetTimer("cpu");
+    if (mSuspended) {
+        Resume();
+    }
+    Present();
+    if (MainThread()) {
+        ReleaseAutoRelease();
+    }
+    Rnd::BeginDrawing();
+    DrawPreClear();
+    Hmx::Color clearColor = mClearColor;
+    // NOT MakeColor(): that helper packs alpha as a fourth channel (Rnd.h:248),
+    // and retail loads exactly THREE floats here -- lfs f13,0x60 / f12,0x64 /
+    // f11,0x68 = red/green/blue, three fmuls, three fctidz.  MakeColor's alpha
+    // term shows up as a surplus `lfs f10,0x64(r31)` + `fmuls`.  The splice
+    // rlwimi r8,r11,8,16,23 ; clrlwi r11,r8,16 ; rlwimi r7,r11,8,0,23 is
+    // exactly the RGB expression below.
+    D3DDevice_Clear(
+        mD3DDevice,
+        0,
+        nullptr,
+        0x31,
+        ((unsigned long)(clearColor.red * 255.0f) & 0xFF) << 16
+            | ((unsigned long)(clearColor.green * 255.0f) & 0xFF) << 8
+            | ((unsigned long)(clearColor.blue * 255.0f) & 0xFF),
+        0,
+        0,
+        0
+    );
+    SetShaderRegisterAlloc((RegisterAlloc)1);
+    ResetStats();
+    NgMat::SetCurrent(nullptr);
+}
 
 // COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
 // interleaved these owners' COMDATs into this TU's .text span.

@@ -7075,14 +7075,14 @@ Rnd_Xbox.cpp:
 	.pdata      start:0x8223A7B0 end:0x8223A7B8
 	.pdata      start:0x8223A7B8 end:0x8223A800
 	.pdata      start:0x8223A810 end:0x8223AAE8
-	.pdata      start:0x8223AB10 end:0x8223AB28
+	.pdata      start:0x8223AB10 end:0x8223AB48
 	.text       start:0x8235CC80 end:0x8235CCC8
 	.text       start:0x827378B8 end:0x82738A48
 	.text       start:0x82738A48 end:0x82738AB4
 	.text       start:0x82738AB4 end:0x82739020
 	.text       start:0x82739078 end:0x82739080
 	.text       start:0x827390D8 end:0x8273CA70
-	.text       start:0x8273CC08 end:0x8273CEF0
+	.text       start:0x8273CC08 end:0x8273D658
 
 MidiSynth.cpp:
 	.pdata      start:0x822140C0 end:0x82214230
