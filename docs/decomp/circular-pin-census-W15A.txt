@@ -1,0 +1,75 @@
+# CIRCULAR-PIN CENSUS -- does a function's callee set agree with its unit?
+
+## CONTROLS
+
+functions with `.fn fn_<ADDR>` labels inside .text : 69031
+splits-vs-asm attribution disagreements            : 0
+duplicate .fn labels across units                  : 0
+overlapping .text pin ranges                       : 0
+bl edges decoded from retail bytes                 : 197239
+  of which callee is a known fn start              : 181397 (91.97%)
+map rows (address -> mangled name)                 : 29038
+dc3 ham_xbox_r.map symbols                         : 86644
+
+### (a) units already at 100% (mpn ruler): 165
+units at 100% that are ALSO pinned and fire >=1 finding: 66  (expect ~0)
+    SoundTouch.cpp  findings=11
+    band3/meta_band/SongSelectPanel.cpp  findings=11
+    json_object.c  findings=7
+    band3/game/RealGuitarGemPlayer.cpp  findings=7
+    PitchShiftEffect.cpp  findings=5
+    band3/meta_band/SongSetlistProvider.cpp  findings=5
+    band3/tour/TourQuestGameRules.cpp  findings=5
+    codebook.c  findings=4
+    system/synth_xbox/FxSendDelay.cpp  findings=4
+    NetLoader.cpp  findings=4
+    band3/game/UISyncNetMsgs.cpp  findings=4
+    DrumFillTrackWatcherImpl.cpp  findings=3
+    system/beatmatch/ButtonGuitarController.cpp  findings=3
+    system/synth_xbox/FxSendEQ.cpp  findings=3
+    FlowMultiSetProperty.cpp  findings=3
+
+### (b) recorded priors
+
+non-`network/` real units claiming functions inside the /Od band 0x82A6D168-0x82B54190: 6
+     95  DuplicatedObject.cpp   0x82A70400..0x82AFC2A8
+     26  Scheduler.cpp   0x82AC57F0..0x82AC78B0
+      6  trie.cpp   0x82AB0F70..0x82AB12C8
+      1  ssluse.c   0x82AE51D0..0x82AE51D0
+      1  StringConversion.cpp   0x82AE5FA8..0x82AE5FA8
+      1  ChecksumAlgorithm.cpp   0x82B22720..0x82B22720
+  units claiming EXACTLY ONE function there: 3
+
+### suppressed as ICF / common-pool noise (fan-in >= 20)
+distinct suppressed callees: 638; suppressed cross-unit edges: 66850
+      4283 edges  fan-in 4316  ??1DataNode@@QAA@XZ
+      3555 edges  fan-in 3556  ??0Symbol@@QAA@PBD@Z
+      2064 edges  fan-in 2110  ??3BinStream@@SAXPAX@Z
+      1872 edges  fan-in 1882  ?Release@DataArray@@QAAXXZ
+      1428 edges  fan-in 1437  ??1String@@UAA@XZ
+      1408 edges  fan-in 1408  __RTDynamicCast
+      1383 edges  fan-in 1383  ?MemOrPoolFreeSTL@@YAXHPAX@Z
+      1186 edges  fan-in 1186  ?Int@DataNode@@QBAHPBVDataArray@@@Z
+      1060 edges  fan-in 1061  ?PathName@@YAPBDPBVObject@Hmx@@@Z
+      1051 edges  fan-in 1051  ??1Object@Hmx@@UAA@XZ
+
+## S0 -- ANON-HASH GROUPING (CORROBORATION ONLY -- premise refuted, see anon_scope_hash docstring: 10 of 39 units carry >=2 hashes)
+
+file-static anon-ns hashes (symbol's own scope, unassignable excluded): 60
+hashes whose members span MORE THAN ONE pinned unit: 1
+
+#### `?A0x8a9ffbf2` -- 2 symbols across 2 units
+- `0x8251BBF0` sz=0xe4 fanin=2 **MemcardMgr_Xbox.cpp**  `?XPrivilegeCheck@?A0x8a9ffbf2@@YA_NW4_XPRIVILEGE_TYPE@@0_K@Z`
+- `0x8251C248` sz=0xd0 fanin=2 **MoggClipMap.cpp**  `?GetPadNumFromXuid@?A0x8a9ffbf2@@YAH_K@Z`
+
+## FINDINGS
+
+total findings: 8425  ({'FANIN_1_FOREIGN': 6877, 'SOLE_FOREIGN_CALLER': 1515, 'ANON_NS': 33})
+functions implicated: 5287
+
+### claims (unit -> destination implied by private-shaped callees)
+
+| strength | fns | pinned unit | implied unit | class | kinds |
+|---:|---:|---|---|---|---|
+
+### per-function detail for MISPIN-class claims
