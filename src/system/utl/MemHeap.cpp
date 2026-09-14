@@ -615,6 +615,21 @@ void MemPopTemp() {
 #undef gRev
 #undef gAltRev
 
+// Retail 0x827BB718 (20 B), named in the map.  ODD BUT DELIBERATE HOME: this is
+// a MemMgr class, yet splits.txt pins the address inside `default/MemHeap`
+// (`.text 0x827BB718-0x827BBA20`) while its sibling Lock sits in `default/MemMgr`
+// 0x20 earlier.  objdiff pairs target<->base by NAME WITHIN A UNIT, so the body
+// has to be compiled into MemHeap.obj to pair at all; defining it in MemMgr.cpp
+// would leave this row at 0% however correct the code is.  Whether retail really
+// split the two across TUs or the pin boundary is wrong is a splits question,
+// not a source one -- this follows the pins rather than re-homing them.
+// DECLARED at utl/MemMgr.h:160, defined in NO translation unit before this.
+// Retail body is the bare decrement: the oracle's two MILO_ASSERTs
+// (../rb3/src/system/utl/MemMgr.cpp:838) have pure conditions, so the
+// evaluate-and-discard MILO_ASSERT leaves no trace -- which is exactly why this
+// is 20 B and Lock, with its aliasing reload, is 28 B.
+void MemHandle::Unlock() { --mAlloc->mLockCount; }
+
 // sw2 scatter-include (default/MemHeap <- utl/MakeString.cpp)
 #define gRev gRev_MakeString
 #define gAltRev gAltRev_MakeString
