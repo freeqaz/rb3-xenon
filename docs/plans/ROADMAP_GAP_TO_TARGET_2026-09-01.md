@@ -2242,3 +2242,69 @@ dissolved once the real defect was fixed).
 | **W15-C game-unit crossing grind** | opus | `crossing_worklist` (graded ruler) over RockCentral, VocalTrack, GemManager, NextSongPanel, OvershellSlot; only rows whose charges NAME a source construct; pre-register each | small positive; `mpn`-only wins expected on wrong-callee fixes |
 
 Escalation slots held for Fable: any lane item reported unfixable.
+
+## 7p. Wave 15 results, and the wave 16 dispatch (2026-09-14, coordinator session 3cdd3c)
+
+Four of wave 15's six lanes are landed (each rebased in its worktree, merged
+`--no-ff`, full main build + the four gates re-run by the coordinator, ledger
+row keyed to the merge SHA, pushed). Two are still running.
+
+| lane | merge | Δfns / Δbytes (measured on main) | what it proved |
+|---|---|---|---|
+| **W15-B** real-named-at-0 drain (opus) | `c90f107c` | **+8 / +1,692 B** | 351 rows classified 199 / 87 / 65 / 0 phantom; **`DataArray::Release` had NO definition in the match build** (body inside `#ifdef HX_NATIVE`); `0x8245ee48` = `RndTransAnim::MakeTransform`, a circular pin caught in the act, payout 100 % caller cascade |
+| **W15-C** game-unit crossing grind (opus) | `b9e32547` | **+6 / +4,252 B** (fuzzy −0.000061) | RockCentral sent `SystemLanguage` where retail sends `SystemLocale` — the rb3-Wii DEV oracle is wrong at 7 sites; an undefined MWCC extern on a live path; `Find<UILabel>` vs `BandLabel`; `0x826662e0` = `FriendsProvider::Reload` |
+| **W15-A** circular-pin census (opus) | `5b14bc86` | **Δ0** (as pre-registered; tree hash moved, SPLIT ran) | the plurality-vote form of the census is NOISE (1.38× / 1.51×); internal linkage is the proof; refuted its own anon-hash premise; 2 pins repaired |
+| **W15-F** PlatformMgr_Xbox wiring + region (opus) | `318a09c6` | **+12 / +1,160 B** | `PlatformMgr_Xbox.cpp` (728 lines) was in-tree and absent from `objects.json` — `tools/project.py` drops the edge silently; **5 of 7 dc3 body-ports were byte-exact on the first try**; 2 blocks re-homed, `.pdata` re-derived by dtk unprompted; 11 retail PlatformMgr rows 0 → pairable, 9 at 100 |
+| W15-D coupled thunk permutation (fable) | running | — | the six `Save`-vs-`??_E` rows as one permutation + 81/236 vtordisp disagreements |
+| W15-E RockCentral Handle + Movie map (opus) | running | — | `?Handle@RockCentral@@` 1,296 B; `Init@Movie` ↔ `TickToMs` across 27 sites; `0x825df840` |
+
+Ledger: 42,846 / 3,892,688 B / 37.992 % (`bbcf979b`, wave start) →
+**42,872 / 3,899,792 B / 38.0618 %** (`6e6d8d61`). `total_code` 10,245,956
+throughout — none of it is denominator movement.
+
+### Three corrections to the coordinator's own briefs
+
+1. **"The real-named-at-0 stratum is unpaired" — wrong.** 65 of 351 rows
+   (15 %) are PAIRED and body-divergent. The stratum is four classes, not
+   one, and the fix differs per class (W15-B's table).
+2. **"A plurality vote over callee-set membership is a pin oracle" — wrong.**
+   Measured enrichment 1.38× / 1.51× against its own null; the census is
+   only useful as a *candidate generator* whose hits are adjudicated on
+   internal linkage. The anon-hash premise (that `?A0x<hash>` in the map
+   fingerprints retail's TU) is also false — it fingerprints the ORACLE's TU.
+3. **"Five game units carry the gap" — misdescribed the work.** Across
+   RockCentral, VocalTrack, GemManager, NextSongPanel and OvershellSlot there
+   are only **75 named sub-100 rows / 65,740 B**; the units' headline gaps
+   are placeholder-at-0 rows that naming cannot cross.
+
+And one from W15-F's pre-registration: it predicted *no gain* from the
+MoggClipMap move and measured +644 B, because it assumed a first-try dc3
+body-port would not match. It did, five times out of seven. **Raise the prior
+on engine body-ports from dc3** — the CLAUDE.md thesis "same Milo engine"
+pays out literally, not approximately.
+
+### The class this wave surfaced: source we hold that the match build cannot see
+
+Two independent lanes hit it. The match build compiles but never links, so a
+definition inside `#ifdef HX_NATIVE` (W15-B) or a TU absent from
+`objects.json` (W15-F) is invisible to it — the retail row sits at fuzzy 0
+and every caller carries a wrong-callee charge. Measured size of the second
+half: of 1,211 `.cpp` under `src/`, **17 non-XDK files** are neither declared
+nor `#include`d by any compiled TU (`ninja -t deps`); most are soundtouch
+CLI/DLL code retail never shipped, two are plausible retail TUs
+(`world/BeatClock.cpp` 6.4 kB, `synth/AudioDucker.cpp` 2.9 kB). The
+`HX_NATIVE`-swallowed half is unsized and is wave 16's first lane.
+
+### Wave 16 dispatch
+
+| lane | model | task | expectation |
+|---|---|---|---|
+| **W16-A** swallowed definitions (dispatched) | opus | census every DEFINITION under `src/{system,band3,network}` whose enclosing preprocessor state includes `HX_NATIVE`; classify RETAIL_HAS_IT / NATIVE_ONLY / UNKNOWN on retail evidence; un-gate and port the first class per-site (never blanket); plus wire-and-pin `BeatClock.cpp` / `AudioDucker.cpp` if retail has them. Instrument: `tools/hx_native_swallowed_census.py` with a `--selftest` that can fail | +bytes where a correct body was merely invisible; a NATIVE_ONLY list so nobody re-hunts |
+| queued (fable) | fable | `CountOrCreateExpandedDetails@NextSongPanel` — 12,220 B behind one commuted `add`; `ARITH_COMMUTE` "proved inert" is exactly the label to audit | either the row crosses or the reason it cannot is written on retail bytes |
+| queued (opus) | opus | PlatformMgr follow-ups from W15-F: `GetName` 88.9 (3-arg `Localize` per dc3 vs RB3's verified 2-arg form, `Locale.h`), `ShowGamercard` 35.8, the `0x8251CED0` DingoSvr / DingoSvr_Xbox pin, and the seven COMDAT-hosting blocks under the "which of OUR objects emits it" rule | small positive; one pin repair |
+| queued (opus) | opus | ContextChecker `0x8275B868` sliver (the name is the suspect) and W14-B's six `UNIMPLEMENTED_BODY` rows (body first, then name) | bug exposure |
+| escalation slot | fable | anything an Opus lane reports as unfixable, with the Opus report attached | — |
+
+W15-F's `RunXinputJoypadLoop` item is NOT queued as a body-port: our
+`Joypad_Xbox.cpp` lacks the entire XInput2 raw-HID layer, so it is a
+subsystem port and belongs to the native-port track, not a match lane.
