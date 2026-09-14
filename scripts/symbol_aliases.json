@@ -73967,6 +73967,15 @@
    "evidence": "W16-AL 2026-09-14, installing W16-AJ \u00a76 proposal 5 after re-verification on a fully built worktree. Sides.verdict() = L1_T1 (flat T1, relocation TARGET NAMES compared). Retail bytes at 0x825f58c8 (map row ?Unload@CampaignGoalsLeaderboardPanel@@UAAXXZ) are WORD-FOR-WORD identical to our compiled ?Unload@CampaignSongInfoPanel@@UAAXXZ across all 21 words (both read/write member 0x3c: lwz r3,0x3c(r31) @+0x18, stw r11,0x3c(r31) @+0x3c) with the same single relocation ?Unload@UIPanel@@UAAXXZ @+0x14 -- identity including the relocated target NAME, so this is a fold, not a masked coincidence. This is the body the 0x8261feb8 group wrongly claimed CampaignSongInfoPanel::Unload folded into (that one uses member 0x44); the spelling is re-homed here, where it actually belongs."
   },
   {
+   "name": "Load",
+   "address": "0x825f5920",
+   "survivor": "?Load@SetlistToStorePanel@@UAAXXZ",
+   "folded": [
+    "?Load@CampaignSongInfoPanel@@UAAXXZ"
+   ],
+   "evidence": "W16-AL 2026-09-14, installing W16-AJ \u00a76 proposal 6 after re-verification on a fully built worktree. Sides.verdict() = L3_EXACT (\"every word compared in full; every relocated target name agrees\" -- full-word compare with NO vacuity floor). Both bodies are the 4 B tail-call thunk 48000000 = `b ?Load@UIPanel@@MAAXXZ`, and the single relocation @+0x0 names ?Load@UIPanel@@MAAXXZ on BOTH the retail side (at 0x825f5920, map row ?Load@SetlistToStorePanel@@UAAXXZ) and ours (?Load@CampaignSongInfoPanel@@UAAXXZ). A 4 B thunk is entirely determined by its branch destination, so destination identity IS body identity here -- the whole information content of the function is compared, nothing is masked."
+  },
+  {
    "name": "Replace",
    "address": "0x8239dca0",
    "survivor": "?Replace@RndTransformable@@$4PPPPPPPM@EI@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
