@@ -246,16 +246,28 @@ def adjudicate(tidx, oidx, retail, ours, min_bytes=16):
              retail_size=len(tb), ours_size=len(ob),
              retail_relocs=len(tr), ours_relocs=len(orl),
              retail_note=tn, ours_note=on)
+    decide(r, tb, tr, ob, orl, min_bytes)
+    return r
+
+
+def decide(r, tb, tr, ob, orl, min_bytes=16):
+    """The verdict itself, split out from COFF extraction so --self-test can
+    drive the REAL comparator on synthetic inputs.
+
+    This is deliberately not a reimplementation: --self-test calls THIS
+    function, the same one adjudicate() calls, so a sabotaged comparator makes
+    the control go red.  A control that exercises a copy of the logic proves
+    nothing about the logic that ships."""
     if len(tb) != len(ob):
         r["verdict"] = "DIFFERENT"
         r["why"] = "size differs (%d vs %d) after explicit normalization -- different-size COMDATs cannot fold" % (len(tb), len(ob))
-        return r
+        return
     if normalize(tb, tr) != normalize(ob, orl):
         n = sum(1 for i in range(0, len(tb) - 3, 4)
                 if normalize(tb, tr)[i:i + 4] != normalize(ob, orl)[i:i + 4])
         r["verdict"] = "DIFFERENT"
         r["why"] = "%d/%d non-relocated words differ" % (n, len(tb) // 4)
-        return r
+        return
     # Relocation TARGET NAMES are compared, never masked -- masking them is what
     # makes a wrong callee look identical.  But a PLACEHOLDER retail name
     # (`lbl_`/`fn_`/`data_`/...) carries no identity: retail's anonymous data
@@ -289,7 +301,7 @@ def adjudicate(tidx, oidx, retail, ours, min_bytes=16):
                     "one side (identity unresolved -- NOT a fold proof)" % len(soft_diffs))
         r["name_diffs"] = [{"off": a[0], "retail": a[1], "ours": b[1]}
                            for a, b in soft_diffs[:12]]
-        return r
+        return
     if tnames != onames and diffs:
         r["verdict"] = "SHAPE_ONLY"
         r["why"] = "bodies identical but %d relocation TARGET NAMES differ" % len(diffs)
@@ -299,24 +311,87 @@ def adjudicate(tidx, oidx, retail, ours, min_bytes=16):
         # ⚠ Existing alias coverage is REPORTED, never silently applied.  These
         # groups are the thing under audit; forgiving them here would let a
         # fabricated alias validate itself.
-        return r
+        return
     if len(tb) < min_bytes and not tr:
         r["verdict"] = "TOO_WEAK"
         r["why"] = "body is %dB with zero relocations -- too little content to prove a fold" % len(tb)
-        return r
+        return
     r["verdict"] = "IDENTICAL"
     r["why"] = "relocation-normalized bodies AND all %d relocation target names equal" % len(tr)
-    return r
+    return
+
+
+# --------------------------------------------------------------------------
+# --self-test: an anti-vacuity control with a KNOWN answer in BOTH directions.
+#
+# It was declared in argparse and never referenced (lane W16-O noticed; this is
+# the repair).  A flag that cannot fail is not a control -- it is decoration
+# that makes an unvalidated tool look validated, which is worse than having no
+# flag at all.
+#
+# The cases drive decide() -- the SAME function adjudicate() calls -- with
+# synthetic (body, relocs) inputs, so no build and no COFF file is needed and
+# the test cannot be skipped for an environmental reason.  Each case pins a
+# verdict this tool's whole thesis depends on; the first two are the required
+# MUST-be-SAME / MUST-be-DIFFERENT pair, the last two guard the two traps the
+# module docstring is written around (a wrong callee must NOT read as a fold,
+# and a placeholder must NOT be taken as proof).
+#
+# Proven able to fail: with normalize() sabotaged to mask the whole body, cases
+# DIFF_WORDS and SHAPE_ONLY_WRONG_CALLEE go red and the exit code is 1.
+# --------------------------------------------------------------------------
+_A = b"\x7c\x08\x02\xa6\x90\x01\x00\x08\x94\x21\xff\xd0\x7c\x7f\x1b\x78\x48\x00\x00\x01"
+_B = _A[:12] + b"\x7c\x7e\x1b\x78" + _A[16:]          # one non-relocated word differs
+_R = [(16, 1, "?Foo@@YAXXZ")]                             # the `bl` at +16
+_RW = [(16, 1, "?Bar@@YAXXZ")]                            # same shape, OTHER callee
+_RP = [(16, 1, "lbl_8201BA34")]                           # placeholder target
+
+SELF_TEST_CASES = [
+    ("IDENTICAL_FOLD",            _A, _R,  _A, _R,  "IDENTICAL"),
+    ("DIFF_WORDS",                _A, _R,  _B, _R,  "DIFFERENT"),
+    ("SHAPE_ONLY_WRONG_CALLEE",   _A, _R,  _A, _RW, "SHAPE_ONLY"),
+    ("UNDECIDED_PLACEHOLDER",     _A, _RP, _A, _R,  "UNDECIDED"),
+]
+
+
+def self_test():
+    bad = 0
+    for name, tb, tr, ob, orl, want in SELF_TEST_CASES:
+        r = {}
+        decide(r, tb, tr, ob, orl)
+        got = r.get("verdict")
+        ok = (got == want)
+        bad += (not ok)
+        print("  %-4s %-26s want %-10s got %-10s  %s"
+              % ("ok" if ok else "FAIL", name, want, got, r.get("why", "")))
+    # A size-mismatch case is deliberately included via DIFF_WORDS' sibling:
+    r = {}
+    decide(r, _A, _R, _A[:16], _R)
+    if r.get("verdict") != "DIFFERENT":
+        print("  FAIL SIZE_DIFFERS            want DIFFERENT  got %s" % r.get("verdict"))
+        bad += 1
+    else:
+        print("  ok   SIZE_DIFFERS            want DIFFERENT  got DIFFERENT  %s" % r["why"])
+    if bad:
+        print("\nSELF-TEST FAILED: %d case(s) wrong -- the comparator is not "
+              "behaving as this tool's conclusions assume." % bad)
+        return 1
+    print("\nSELF-TEST PASSED: %d cases, both directions exercised." % (len(SELF_TEST_CASES) + 1))
+    return 0
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--project", default=str(ROOT))
-    ap.add_argument("--pairs", required=True, help="JSON list of {retail, ours}")
+    ap.add_argument("--pairs", help="JSON list of {retail, ours}")
     ap.add_argument("--json-out", default=None)
     ap.add_argument("--self-test", action="store_true",
                     help="prove the comparator can return DIFFERENT (anti-vacuity)")
     args = ap.parse_args()
+    if args.self_test:
+        return self_test()
+    if not args.pairs:
+        ap.error("--pairs is required unless --self-test is given")
     root = Path(args.project)
     tdir = root / "build/45410914/obj"
     odir = root / "build/45410914/src"
