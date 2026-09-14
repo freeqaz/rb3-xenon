@@ -10672,7 +10672,6 @@
  "0x82529ab0": "?JoypadReset@@YAXXZ",
  "0x82529ab8": "?JoypadTerminate@@YAXXZ",
  "0x82529ae0": "?JoypadPoll@@YAXXZ",
- "0x82529ae8": "?ReceiveUpstreamAccelerometerResponse@@YAXHPAE@Z",
  "0x82529af0": "JoypadSendKeepAlive",
  "0x82529af8": "ReadSingleJoypad",
  "0x82529ba0": "?SetupHXKeytar@@YA?AW4JoypadType@@HABU_XINPUT_CAPABILITIES@@@Z",
@@ -30437,5 +30436,8 @@
  "0x8283eae0": "XMountUtilityDrive",
  "0x8251d378": "?Init@PlatformMgr@@QAAXXZ",
  "0x8283d810": "XNotifyCreateListener",
- "0x82531980": "?Init@WinSockSocket@@SAXXZ"
+ "0x82531980": "?Init@WinSockSocket@@SAXXZ",
+ "0x826663f0": "??_GFriendsProvider@@UAAPAXI@Z",
+ "0x826662f0": "??1FriendsProvider@@UAA@XZ",
+ "0x82666288": "??_EFriendsProvider@@W3AAPAXI@Z"
 }
