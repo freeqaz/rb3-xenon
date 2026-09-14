@@ -1,0 +1,110 @@
+{
+ "lane": "W16-AK",
+ "date": "2026-09-14",
+ "unit": "default/OvershellPanel",
+ "branch": "w16-ak",
+ "measured_at_commit": "after 8464433f (map row for 0x825b2ff0 landed separately)",
+ "instrument": "tools/alias_forgiveness_audit.Sides.verdict() -- the same layered L1..L5 adjudicator tools/alias_membership_adjudicate.py uses, run on a FULLY BUILT worktree. Anti-vacuity gate asserted on every run: 27,442 mangled names among 69,411 target bodies (a pre-renamer tree would read 'absent' for everything and return a decisive-looking false negative).",
+ "PROVEN set used": [
+  "L1_T1",
+  "L2_RECURSIVE",
+  "L3_EXACT",
+  "L4_OURSIDE",
+  "L5_INCONSISTENCY"
+ ],
+ "WARNING": "These are PROPOSALS ONLY. W16-AK did not edit scripts/symbol_aliases.json or any icf_alias_* file; that file belongs to lane W16-AE. Installing an alias LIFTS THE SCORE BY CONSTRUCTION, and the `none`-ruler control CANNOT detect a fabricated one, so each proposal below carries its adjudicator verdict rather than an assertion.",
+ "bytes_unlocked_if_all_installed": {
+  "?Handle@OvershellPanel@@": 5768,
+  "?RefreshJoinableUsers@OvershellPanel@@": 852,
+  "?FinishLoad@OvershellPanel@@": 788,
+  "?ResolveReadyToPlayStates@OvershellPanel@@": 568,
+  "?FindSlotForRemoteUser@OvershellPanel@@": 312,
+  "?OnMsg@OvershellPanel@@...RemoteUserLeftMsg": 176,
+  "?QueueUserToJoin@OvershellPanel@@": 124,
+  "TOTAL": 8588,
+  "_excluded_ResolvePartWaitStates_1356": "blocked by a non-alias branch charge, see proposal 4",
+  "_excluded_Enter_204_Exit_132": "the 0x826c3888 empty-function membership, already owned by lane W16-AE"
+ },
+ "proposals": [
+  {
+   "survivor": "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVConnectionStatusChangedMsg@@@Z",
+   "folded": "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVServerStatusChangedMsg@@@Z",
+   "existing_group": "index 65 (name 'OnMsg', address 0x825b7f70, 9 folded spellings)",
+   "verdict": "L1_T1",
+   "verdict_detail": "flat T1 -- retail bytes at 0x825b7f70 byte-identical (modulo relocated fields) to our compiled body",
+   "charged_sites": [
+    "?Handle@OvershellPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z idx 545"
+   ],
+   "note": "VERDICT WAS 'CONTRADICTED: size 76 vs 132' BEFORE commit 0cd974cb. Our body carried a Wii-dev-only guarded block, so the membership would have been a FABRICATED alias forgiving a real source defect. Do not install against a pre-0cd974cb tree."
+  },
+  {
+   "survivor": "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVConnectionStatusChangedMsg@@@Z",
+   "folded": "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVNetStartUtilityFinishedMsg@@@Z",
+   "existing_group": "index 65 (name 'OnMsg', address 0x825b7f70, 9 folded spellings)",
+   "verdict": "L1_T1",
+   "verdict_detail": "flat T1 -- as above",
+   "charged_sites": [
+    "?Handle@OvershellPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z idx 605"
+   ],
+   "note": "Same history as the sibling above: CONTRADICTED (76 vs 132) until commit 0cd974cb."
+  },
+  {
+   "survivor": "?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z",
+   "folded": "?push_back@?$vector@PAVOvershellSlot@@V?$StlNodeAlloc@PAVOvershellSlot@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVOvershellSlot@@@Z",
+   "existing_group": "index 10 (name 'push_back', address 0x82b5f808, 4 folded spellings)",
+   "verdict": "L2_RECURSIVE",
+   "verdict_detail": "ICF fixpoint via chase",
+   "charged_sites": [
+    "?RefreshJoinableUsers@OvershellPanel@@QAAXXZ idx 35, 143",
+    "?FinishLoad@OvershellPanel@@UAAXXZ idx 185",
+    "?ResolveReadyToPlayStates@OvershellPanel@@QAAXXZ idx 32",
+    "?FindSlotForRemoteUser@OvershellPanel@@QAAPAVOvershellSlot@@PAVRemoteBandUser@@@Z idx 26"
+   ],
+   "note": "vector<T*>::push_back is one body for every pointer T; ChatReceiver is the surviving spelling."
+  },
+  {
+   "survivor": "?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z",
+   "folded": "?push_back@?$vector@PAVBandUser@@V?$StlNodeAlloc@PAVBandUser@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVBandUser@@@Z",
+   "existing_group": "index 10",
+   "verdict": "L2_RECURSIVE",
+   "verdict_detail": "ICF fixpoint via chase",
+   "charged_sites": [
+    "?ResolvePartWaitStates@OvershellPanel@@QAAXXZ idx 168, 265"
+   ],
+   "note": "WARNING: installing this does NOT cross ResolvePartWaitStates. That row carries a THIRD, non-alias charge -- idx 161 `beq` branch destination (target 0x4424 vs base 0x1b5c8), with zero insert/delete in the function. Its 1,356 B needs that branch resolved as well."
+  },
+  {
+   "survivor": "?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z",
+   "folded": "?push_back@?$vector@PAVLocalBandUser@@V?$StlNodeAlloc@PAVLocalBandUser@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVLocalBandUser@@@Z",
+   "existing_group": "index 10",
+   "verdict": "L2_RECURSIVE",
+   "verdict_detail": "ICF fixpoint via chase",
+   "charged_sites": [
+    "?QueueUserToJoin@OvershellPanel@@QAAXPAVLocalBandUser@@@Z idx 26"
+   ],
+   "note": ""
+  },
+  {
+   "survivor": "?reserve@?$vector@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
+   "folded": "?reserve@?$vector@PAVOvershellSlot@@V?$StlNodeAlloc@PAVOvershellSlot@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
+   "existing_group": "NONE -- survivor ?reserve@?$vector@PAUDep@CharPollableSorter@@... is not in symbol_aliases.json; a new group is needed",
+   "verdict": "L2_RECURSIVE",
+   "verdict_detail": "ICF fixpoint via chase",
+   "charged_sites": [
+    "?FinishLoad@OvershellPanel@@UAAXXZ idx 87"
+   ],
+   "note": "FinishLoad needs BOTH this and the push_back<OvershellSlot*> membership to cross."
+  },
+  {
+   "survivor": "??__FsLoadedFile@@YAXXZ",
+   "folded": "?GetBandUser@BandUserMgr@@SAPAVBandUser@@PAVUser@@@Z",
+   "existing_group": "NONE -- ??__FsLoadedFile@@YAXXZ is not in symbol_aliases.json; a new group is needed",
+   "verdict": "L3_EXACT",
+   "verdict_detail": "every word compared in full; every relocated target name agrees",
+   "charged_sites": [
+    "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVRemoteUserLeftMsg@@@Z idx 31"
+   ],
+   "note": "Survivor is an atexit-destructor thunk; the folded spelling is a static getter of the same shape."
+  }
+ ]
+}
