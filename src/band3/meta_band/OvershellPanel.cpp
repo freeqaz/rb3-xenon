@@ -336,19 +336,13 @@ DataNode OvershellPanel::OnMsg(const MatchmakerChangedMsg &) {
     return 1;
 }
 
-DataNode OvershellPanel::OnMsg(const ServerStatusChangedMsg &msg) {
-    // RB3-360: was `unk4cc == 2` — unk4cc (a per-frame Poll cache of
-    // mPanelOverrideFlow) is absent in retail (Wii-only); direct
-    // mPanelOverrideFlow read is the natural equivalent but the retail
-    // read here is UNVERIFIED (unpinned — decompile 0x8259xxxx when pinned).
-    if (InOverrideFlow(kOverrideFlow_RegisterOnline)) {
-        if (!msg->Int(2)) {
-            TheBandUI.ShowNetError();
-            if (InOverrideFlow(kOverrideFlow_RegisterOnline)) {
-                EndOverrideFlow(kOverrideFlow_RegisterOnline, true);
-            }
-        }
-    }
+// RB3-360 retail has NO guarded body here: Handle's dispatch site for this
+// message branches to the folded 76-byte `{ UpdateAll(); return 1; }` survivor
+// at 0x825b7f70 (map name OnMsg(ConnectionStatusChangedMsg)), and our 132-byte
+// body could not be that COMDAT. The rb3-Wii DEV oracle's `unk4cc == 2` block
+// (ShowNetError / EndOverrideFlow) is Wii-only -- unk4cc does not exist in the
+// retail layout. Retail bytes outrank the oracle. See W16-AK.
+DataNode OvershellPanel::OnMsg(const ServerStatusChangedMsg &) {
     UpdateAll();
     return 1;
 }
@@ -358,17 +352,10 @@ DataNode OvershellPanel::OnMsg(const ConnectionStatusChangedMsg &) {
     return 1;
 }
 
-DataNode OvershellPanel::OnMsg(const NetStartUtilityFinishedMsg &msg) {
-    // RB3-360: was `unk4cc == 2` — see ServerStatusChangedMsg note above
-    // (retail read UNVERIFIED, unpinned).
-    if (InOverrideFlow(kOverrideFlow_RegisterOnline)) {
-        if (!msg->Int(2)) {
-            TheBandUI.ShowNetError();
-            if (InOverrideFlow(kOverrideFlow_RegisterOnline)) {
-                EndOverrideFlow(kOverrideFlow_RegisterOnline, true);
-            }
-        }
-    }
+// RB3-360 retail: same finding as ServerStatusChangedMsg above -- retail's
+// Handle branches to the folded 76-byte survivor, so this handler carries no
+// guarded body. See W16-AK.
+DataNode OvershellPanel::OnMsg(const NetStartUtilityFinishedMsg &) {
     UpdateAll();
     return 1;
 }
