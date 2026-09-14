@@ -1661,7 +1661,7 @@ JoypadClient.cpp:
 	.pdata      start:0x822194D0 end:0x822194E0
 	.text       start:0x825288F8 end:0x82528970
 	.text       start:0x82528970 end:0x825296D8
-	.text       start:0x825297E0 end:0x825298E0
+	.text       start:0x825297E0 end:0x82529890
 
 Joypad_Xinput.cpp:
 	.pdata      start:0x82219E90 end:0x82219EC8
@@ -4598,7 +4598,7 @@ Anim.cpp:
 
 Joypad_Xbox.cpp:
 	.pdata      start:0x822194E0 end:0x82219578
-	.text       start:0x825298E0 end:0x8252A4A0
+	.text       start:0x82529890 end:0x8252A4A0
 
 SkeletonUpdate.cpp:
 	.pdata      start:0x8223B080 end:0x8223B090
