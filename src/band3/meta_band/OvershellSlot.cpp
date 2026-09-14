@@ -641,15 +641,15 @@ void OvershellSlot::AttemptRemoveUser() {
     // (no loop, no fifth call) -- same Wii-only class W15-E removed from
     // RemoveUser() below/above.  Retail bytes outrank the oracle.  See
     // docs/decomp/ROCKCENTRAL_ONMSG_ESCALATION_2026-09-14.md (lane W16-B).
-    bool b1 = false;
-    if (!mSessionMgr->IsLocal()) {
-        LocalBandUser *host = mSessionMgr->GetLocalHost();
-        if (host == pUser->GetLocalUser()) {
-            b1 = true;
-        }
-    }
-
-    if (b1) {
+    //
+    // Build 3 of lane W16-B (94.29%) had this as `bool b1 = false; if (...) {
+    // if (...) b1 = true; } if (b1)` -- the oracle's shape.  Retail has NO
+    // stored bool: both tests branch straight to the critical-user arm
+    // (`bne .L_824A27E8` after IsLocal, `bne cr6, .L_824A27E8` after the host
+    // compare), and the frame is 0x70 with __savegprlr_29 -- one callee-saved
+    // register fewer than the bool needed.  A short-circuit && is that shape.
+    if (!mSessionMgr->IsLocal()
+        && mSessionMgr->GetLocalHost() == pUser->GetLocalUser()) {
         pUser->SetOvershellSlotState(kState_RemoveUserDisconnectConfirm);
         mOvershell->UpdateAll();
     } else if (mSessionMgr->mCritUserListener->mCriticalUser == pUser) {
