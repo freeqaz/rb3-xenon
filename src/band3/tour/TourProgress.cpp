@@ -21,6 +21,38 @@
 #include "utl/Symbols3.h"
 #include "utl/Symbols4.h"
 
+// W16-AQ 2026-09-14: hash_map BinStream operators, kept TU-local for the same
+// reason SongMgr.cpp states -- BinStream.h need not pull <hash_map> into every
+// consumer. NOTE the tree already carries two DIFFERENT local copies of these
+// (src/system/meta/SongMgr.cpp, no clear(); band3/meta_band/BandSongMetadata.cpp,
+// with clear()), which is a live ODR hazard: MSVC picks one COMDAT arbitrarily.
+// This copy follows the SongMgr form deliberately -- TourProgress::SyncLoad
+// clears both members itself before streaming (retail: two bl 0x8260ffd8 =
+// hashtable::clear before the two operator>> calls), and the std::map
+// instantiation that matched retail 0x82363eb0 at fuzzy 100 has no clear().
+template <class T1, class T2>
+BinStream &operator<<(BinStream &bs, const std::hash_map<T1, T2> &map) {
+    bs << map.size();
+    for (typename std::hash_map<T1, T2>::const_iterator it = map.begin();
+         it != map.end();
+         ++it) {
+        bs << it->first << it->second;
+    }
+    return bs;
+}
+
+template <class T1, class T2>
+BinStream &operator>>(BinStream &bs, std::hash_map<T1, T2> &map) {
+    unsigned int size;
+    bs >> size;
+    for (; size != 0; size--) {
+        T1 key;
+        bs >> key;
+        bs >> map[key];
+    }
+    return bs;
+}
+
 TourProgress::TourProgress()
     : mQuests(*this), mLastTouchTime(0), mOnTour(0), m_symTourDesc(""),
       mNumCompletedGigs(0), mCurrentQuest(gNullStr), mMetaScore(0), mNewStars(0),
@@ -411,7 +443,7 @@ void TourProgress::ClearQuestFilters() {
 
 int TourProgress::GetToursPlayed(Symbol s) const {
     int ret = 0;
-    std::map<Symbol, int>::const_iterator it = unka0.find(s);
+    std::hash_map<Symbol, int>::const_iterator it = unka0.find(s);
     if (it != unka0.end())
         ret = it->second;
     return ret;
@@ -419,7 +451,7 @@ int TourProgress::GetToursPlayed(Symbol s) const {
 
 int TourProgress::GetTourMostStars(Symbol s) const {
     int ret = 0;
-    std::map<Symbol, int>::const_iterator it = unk88.find(s);
+    std::hash_map<Symbol, int>::const_iterator it = unk88.find(s);
     if (it != unk88.end())
         ret = it->second;
     return ret;
@@ -430,12 +462,12 @@ void TourProgress::SetMetaScore(int i) {
     HandleDirty(3);
 }
 
-void TourProgress::SetToursPlayedMap(const std::map<Symbol, int> &map) {
+void TourProgress::SetToursPlayedMap(const std::hash_map<Symbol, int> &map) {
     unka0 = map;
     HandleDirty(3);
 }
 
-void TourProgress::SetTourMostStarsMap(const std::map<Symbol, int> &map) {
+void TourProgress::SetTourMostStarsMap(const std::hash_map<Symbol, int> &map) {
     unk88 = map;
     HandleDirty(3);
 }
