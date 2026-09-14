@@ -363,5 +363,9 @@ main has repaired three times already (`209b007d`, `a467ce21`, `18214665`) — a
 ancestors of this lane's base, so these five are a live remainder, not stale state.
 
 ```
-NATIVE_GATE_RESULT  (pasted verbatim below, run as the lane's last action)
+$ tools/native_build_gate.sh
+NATIVE GATE: PASS  (rc=0, 0 errors, 0 warnings, 18/18 target(s) verified)
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
 ```
+
+`skipped=0`, so this is full coverage, not an INCOMPLETE run reported as PASS.
