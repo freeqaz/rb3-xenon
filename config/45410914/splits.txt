@@ -11038,10 +11038,15 @@ ChordbookPanel.cpp:
 	.text       start:0x826B4FF0 end:0x826B8400
 	.text       start:0x826B858C end:0x826B8598
 
+Shuttle.cpp:
+	.text       start:0x826BBC08 end:0x826BBC28
+
 FreestylePanel.cpp:
-	.pdata      start:0x82233C18 end:0x82233DA0
+	.pdata      start:0x82233C18 end:0x82233D90
+	.pdata      start:0x82233D90 end:0x82233DA0
 	.text       start:0x826B99D4 end:0x826B99E0
-	.text       start:0x826B9ABC end:0x826BBD58
+	.text       start:0x826B9ABC end:0x826BBC08
+	.text       start:0x826BBC28 end:0x826BBD58
 
 GameplayOptions.cpp:
 	.pdata      start:0x8222D6A8 end:0x8222D6B0
