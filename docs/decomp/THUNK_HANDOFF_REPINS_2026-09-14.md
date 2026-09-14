@@ -318,3 +318,118 @@ it never reached a published number.
 - **Did not run the permuter** (standing directive: OFF).
 - **Did not verify** that the 181 no-expectation classes contain further misnamings —
   out of scope; W15-D's list stands as the backlog.
+
+---
+
+## 6. W16-I follow-up on the leads handed on in §3c and §5 (2026-09-14)
+
+Lane W16-I took the three leads this doc handed on. One subsection each, with the
+retail-byte adjudication and the measured Δ. §5 above is left exactly as W16-F
+wrote it — it is a dated record — but **§6.2 corrects one of its claims**, and the
+correction is the most useful thing in this section.
+
+Measurements are whole-binary `report.json` on the shipped `name_check` ruler,
+each after `touch config/45410914/config.yml` + a full `./tools/ninja-locked`.
+
+### 6.1 `0x822d3920` — RESOLVED, and better than the `null` this doc allowed
+
+**Verdict: it is `?Copy@EndingBonus@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z`.** The
+map name `??2SpotlightDrawer@@SAPAXI@Z` is refuted on shape alone: an 8-byte
+`addi r3,r3,-144; b` adjustor cannot be a static `operator new`, which returns
+storage and takes a size. §3c guessed a misnaming in the `0x822d39xx` cluster and
+that guess was right.
+
+Two independent instruments agreed **4-for-4** across the whole `?X@EndingBonus@@$4`
+thunk family:
+
+1. each retail thunk's own branch destination, read from the target obj's relocations;
+2. name-free `(adjustment, final destination)` matching against our four compiled
+   `-144` adjustor COMDATs.
+
+All four were additionally mis-pinned into MatAnim/MoveMgr. Fixed map + pins in ONE
+commit, per this doc's own rename-and-re-home rule. **Predicted +5 matched_functions
+/ +44 matched_code; measured +5 / +44 exactly.** Commit `d170a4ea`.
+
+### 6.2 The three `NODEF` heads — one was NOT undefined, and §5 is wrong about it
+
+§5 says *"`PatchRenderer` has no compiler layout here and `CharWeightable::Replace`
+no definition. Naming them needs source, not pins."* The first half is right. **The
+second half is wrong, and the reason it looked right is worth keeping.**
+
+Our tree defines `CharWeightable::Replace` at `src/system/char/CharWeightable.cpp:16`,
+and `CharWeightable.obj` emits both the body `?Replace@CharWeightable@@MAAX…` and its
+adjustor thunk `?Replace@CharWeightable@@$2PPPPPPPM@A@AAX…`.
+
+**Why the search missed it: the thunk-mangling digit encodes ACCESS.** Every other
+CharWeightable virtual is public and its thunk is spelled `$4PPPPPPPM@A@` — `ClassName`,
+`??_E`, `Copy`, `SetType`, `SyncProperty`, `Save`, `Load`, all already named, all at
+exactly 12 B / 100%. `Replace` is the only **protected** one (`M` in its mangle), so
+MSVC spells its thunk **`$2`**. Looking for the `$4` form finds nothing, and "no `$4`
+form exists" reads exactly like "no definition exists". Same family as the binary-`grep`
+trap: a decisive-looking negative produced by asking with the wrong spelling.
+
+Identification of `0x823aedf0`, three ways: (a) retail is the 12-byte vtordisp thunk
+`lwz r11,-4(r3); subf r3,r11,r3; b <impl>`, whose words 0–1 are **byte-identical** to
+our `$2` COMDAT; (b) by elimination — `fn_823AEDF0` was the only unnamed thunk row in
+the unit and `Replace` the only virtual with an unnamed thunk; (c) W16-F's own vtable
+read (+28, slot 2). **Predicted +1 / +12; measured +1 / +12 exactly.** Commit `73c9ce58`.
+
+The row was unpaired at 0% beforehand, so there was no un-pairing exposure, and
+retail's branch destination `0x823ae888` is unnamed — a placeholder, therefore
+**forgiven** — so the thunk's single relocation is uncharged.
+
+**The other two heads stay `null`, and this is now IDENTIFIED-NO-SOURCE rather than a
+guess.** `0x822af088` (`PatchRenderer::SyncProperty`) and `0x822aec00`
+(`PatchRenderer::Save`) are the same 12-byte vtordisp thunk shape, branching to
+`0x822aedc8` (560 B) and `0x822aea68` (136 B). But **`PatchRenderer` has no `.cpp`
+anywhere in our tree** — the header is marked "Declaration only", `Band.cpp` re-declares
+a local shim for `Init`/`Terminate`, and `BandSwatch.cpp:122` includes it solely to
+force-emit the `StaticClassName()` COMDAT. Naming these would install names no compiled
+obj defines, which pair to nothing and read 0% forever.
+
+The oracle **does** hold both bodies, so this is a bounded port for a future lane, not a
+dead end:
+
+| head | oracle | location | shape |
+|---|---|---|---|
+| `PatchRenderer::SyncProperty` | rb3-Wii | `src/system/bandobj/PatchRenderer.cpp:94-102` | `BEGIN_PROPSYNCS`, 4 props + `SYNC_SUPERCLASS(RndTexRenderer)` |
+| `PatchRenderer::Save` | rb3-Wii | `src/system/bandobj/PatchRenderer.cpp:46` | `SAVE_OBJ(PatchRenderer, 0x5A)` ⇒ `{ MILO_ASSERT(0, 0x5A); }` |
+
+⚠ Two notes for whoever ports it. `PatchRenderer` is **absent from DC3 entirely** (DC3
+has no `bandobj/`), so rb3-Wii is the only oracle. And `SAVE_OBJ` expands to
+`MILO_ASSERT(0, …)`, which in the match build is `((void)(0))` — so `Save` compiles to
+an **empty body**, which is consistent with retail but means it will land in the
+empty-function ICF class and need an alias, not just a name.
+
+### 6.3 `0x8252a598` — W16-F's refusal independently verified on retail bytes
+
+Verified by re-deriving it, not by re-reading W16-F's note. The retail body is 12 bytes:
+
+```
+lis  r11, 0x8200
+addi r3,  r11, 3157      ; r3 = 0x82000C55
+blr
+```
+
+— a nullary function returning a `const char*`. The map names it
+`?ContentPattern@Callback@ContentMgr@@UAAPBDXZ`, i.e. `virtual const char*
+ContentMgr::Callback::ContentPattern()`, and that signature fits the body exactly
+(no args touched, returns a pointer in r3). **And the byte at `0x82000C55` is `0x00`
+— the empty string.** So the function is precisely `return "";`.
+
+That is what makes the refusal correct, and it is stronger than "both candidates are
+12 B". Every `const char* f() { return ""; }` in the program compiles to this identical
+body relocating against the same empty-string COMDAT `??_C@_00CNPNBAHC@?$AA@`. Once the
+relocation is masked there is nothing left to discriminate on — the bodies are identical
+**by construction, not by coincidence**, so byte evidence cannot even in principle say
+which name this address denotes. This is the irreducible class CLAUDE.md names directly:
+the fold is real and *which name the call site meant was destroyed by ICF itself*. A pin
+here would be a coin-flip dressed as an identification. W16-F was right to refuse; do not
+re-litigate it without a **non-byte** oracle.
+
+⚠ One instrument note, because the obvious corroboration is vacuous. "How many other
+retail functions have this shape?" cannot be answered by scanning `.pdata`: a 12-byte
+leaf stub touches neither the stack nor LR, so it gets **no unwind record at all** and is
+excluded from that population by construction. My scan duly returned 0, which is a fact
+about the scan, not about the program — the same sub-`.pdata` blind spot the AUDIT-NC
+scope bound describes. Do not read such a 0 as evidence of uniqueness.
