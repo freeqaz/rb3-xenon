@@ -1,0 +1,26 @@
+{
+  "_comment": "W16-AO proposals for lane W16-AL. REPORT ONLY -- this lane never wrote scripts/symbol_aliases.json or any icf_alias_* file. Each entry is an ICF fold observed on RETAIL BYTES via the caller channel, not a metric-derived guess. Re-confirm before merging: a fabricated alias lifts name_check BY CONSTRUCTION and the `none` control is structurally blind to it (CLAUDE.md, ALIASAUDIT-1).",
+  "_hazard_banner": "STLPORT-1: a *size* test cancels a one-sided reader artifact on both sides. Any size-based membership decision must be re-confirmed against the .pdata extent, not against a COMDAT span that may bill the successor symbol's EH funclet prefix.",
+  "proposals": [
+    {
+      "survivor_address": "0x8246af50",
+      "current_map_name": "?resize@?$list@VTransform@@V?$StlNodeAlloc@VTransform@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVTransform@@@Z",
+      "proposed_folded_spelling": "?resize@?$list@UInstance@RndMultiMesh@@V?$StlNodeAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUInstance@RndMultiMesh@@@Z",
+      "evidence_class": "caller-channel, retail bytes",
+      "evidence": [
+        "0x8246af50 has exactly TWO retail call sites (tools/retail_callers.py).",
+        "Site 1 is inside 0x8246b0e0 = ??$?5VTransform@@V?$StlNodeAlloc@VTransform@@@stlpmtx_std@@@@YAAAVBinStreamRev@@AAV0@AAV?$list@VTransform@@... i.e. operator>>(BinStreamRev&, list<Transform,StlNodeAlloc<Transform> >&).",
+        "Site 2 is inside 0x824e1da0 = ??$?5UInstance@RndMultiMesh@@V?$StlNodeAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@@YAAAVBinStreamRev@@AAV0@AAV?$list@UInstance@RndMultiMesh@@... i.e. operator>>(BinStreamRev&, list<RndMultiMesh::Instance,StlNodeAlloc<Instance> >&).",
+        "Two distinct list<T> stream operators calling ONE resize body is the ICF signature: struct RndMultiMesh::Instance has exactly one member, `Transform mXfm` (src/system/rndobj/MultiMesh.h:94-107), so list<Transform>::resize and list<Instance>::resize are byte-identical INCLUDING relocations and fold.",
+        "Corroborating node size: the erase chain 0x8246af50 -> 0x824e0e40 (range) -> 0x824e0350 (single) has `li r3, 0x48` before MemOrPoolFreeSTL, i.e. node 72 = sizeof(T) 64 + 8, and sizeof(Transform) == sizeof(Instance) == 64 (Matrix3 48 + Vector3 16)."
+      ],
+      "why_not_a_map_repair": "Both spellings are simultaneously true at this address, so there is no wrong name to repair. W16-AO deliberately LEFT THE MAP ROW ALONE. The remaining value is alias-group membership, which is W16-AL's file.",
+      "sibling_addresses_in_the_same_fold_family": {
+        "0x824e0e40": "currently ?erase@?$list@VTransform@@...  (range erase, 0x60)",
+        "0x824e0f00": "currently ?insert@?$list@UInstance@RndMultiMesh@@...  (0x64)",
+        "note": "erase carries the Transform spelling while insert carries the Instance spelling at the SAME fold family -- the arbitrary-survivor-spelling phenomenon, not a defect."
+      },
+      "distinct_non_folded_control": "0x8241b618 = ?resize@?$list@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@@... -- the REAL RndMultiMesh::InstanceList instantiation uses TransformListAlloc, is a different COMDAT, and did NOT fold. It is the control showing the StlNodeAlloc-flavoured Instance list is a genuinely separate instantiation."
+    }
+  ]
+}
