@@ -30526,5 +30526,6 @@
  "0x82695178": "?UpdateNowBar@GamePanel@@QAAXXZ",
  "0x827421b8": "??0Splash@@QAA@XZ",
  "0x824a2008": "?resize@?$ObjList@UProxyCall@EventTrigger@@@@QAAXI@Z",
- "0x823629b0": "??$?6VSymbol@@H@@YAAAVBinStream@@AAV0@ABV?$hash_map@VSymbol@@HU?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@@Z"
+ "0x823629b0": "??$?6VSymbol@@H@@YAAAVBinStream@@AAV0@ABV?$hash_map@VSymbol@@HU?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@@Z",
+ "0x82c78f5c": "?TheTempoMap@@3PAVTempoMap@@A"
 }

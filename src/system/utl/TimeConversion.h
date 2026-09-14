@@ -7,6 +7,7 @@ float TickToMs(float);
 float BeatToMs(float);
 float BeatToTick(float);
 float TickToBeat(int);
+float SecondsToTick(float);
 float SecondsToBeat(float);
 float TickToSeconds(float);
 float BeatToSeconds(float);

@@ -24,6 +24,7 @@
 #include "game/NetGameMsgs.h"
 #include "game/Scoring.h"
 #include "game/SongDB.h"
+#include "math/Utl.h"
 #include "meta/HAQManager.h"
 #include "meta/PreloadPanel.h"
 #include "meta_band/BandSongMetadata.h"
@@ -57,7 +58,9 @@
 #include "utl/Symbols2.h"
 #include "utl/Symbols3.h"
 #include "utl/Symbols4.h"
+#include "utl/TimeConversion.h"
 #include <algorithm>
+#include <cmath>
 
 GamePanel *TheGamePanel;
 LatencyCallback gGamePanelCallback;
@@ -468,33 +471,66 @@ void GamePanel::UpdateNowBar() {
 // va=0x82695178 in retail is a real out-of-line call (Poll() emits `bl
 // fn_82695178`, not an inlined vtable dispatch) despite /Ob2 -- mirror
 // TrackerDisplay.cpp's HasLocalPlayer() precedent and force it noinline.
+//
+// Retail-360 body (lane W16-AT, reconstructed from the 157 retail
+// instructions at 0x82695178; no source oracle -- rb3-Wii's UpdateNowBar above
+// is the dev-build MBT overlay and shares only the TaskMgr/SongDB reads):
+//   * no mTime RndOverlay to write into (stripped member) -- the three
+//     formatted strings go through TrackPanelDir's vtable slot 0xd4 (Unkd4,
+//     signature proved by lane W16-AS), which fans them out to UILabels.
+//   * "%d.%02d.%02d" is min.sec.hundredths of ELAPSED and REMAINING song time
+//     (fmod by 60000.0 / 1000.0 doubles, lbl_820E27C0 / lbl_820E27B8, then
+//     * 0.001f / * 0.1f); "%d.%d.%03d" is measure.beat.tick from
+//     TheTaskMgr's SongPos, 1-based measure/beat, zeroed before the song
+//     starts (t1 < 0).
+//   * the 0x24-byte record vector at TheSongDB+0x20 is mPracticeSections
+//     (game PracticeSection: Symbol unk0 = name, int unk4 = start tick,
+//     int unk8 = end tick); the scan picks the first section containing the
+//     current tick and passes its name as the Symbol argument.
+//   * fn_827C91A0 is SecondsToTick (TimeConversion.cpp) -- seconds -> tick
+//     via TheTempoMap->TimeToTick(sec * 1000), called out of line.
+//   * Max/Min are math/Utl.h's float specialisations: Max(t1, 0) gives
+//     fsel(t1, t1, 0), Max(0, rem) gives the fneg + fsel, Min(rem, t2) gives
+//     fsel(rem - t2, t2, rem) -- retail's exact three clamp shapes.
+// No null check -- retail dereferences GetTrackPanelDir()'s result
+// unconditionally.
 __declspec(noinline) void GamePanel::UpdateNowBar() {
-    // Retail-360: no mTime RndOverlay to write into (stripped member) --
-    // routes through TrackPanelDir's vtable slot 0xd4 instead (see the
-    // Unkd4() declaration/comment in TrackPanelDirBase.h).
-    //
-    // CORRECTION (lane W16-AS, on retail bytes). Two claims that stood here
-    // before were both FALSE and are removed rather than softened:
-    //   1. "that text-formatting body belongs to a different symbol (Unkd4's
-    //      true target, not UpdateNowBar)" -- WRONG. The three MakeString
-    //      calls are INSIDE fn_82695178 itself; their results are what it
-    //      passes to slot 0xd4. The slot's body (0x82303bb8) does no
-    //      formatting at all, it only fans the finished strings out to four
-    //      UILabels.
-    //   2. "formats the same \"MBT %d:%d:%03d [...]\" text seen in the
-    //      debug-HUD variant above" -- WRONG. fn_82695178 references no MBT
-    //      string; its only format strings are "%d.%02d.%02d" (twice) and
-    //      "%d.%d.%03d". With ?Seconds@TaskMgr@@QBAMW4TimeReference@1@@Z and
-    //      fmod alongside them this is a TIME display, not the debug HUD.
-    //
-    // Still not ported (see the W16-AS write-up): the body additionally needs
-    // TheSongDB's 0x24-byte record vector at +0x20, the unidentified
-    // fn_827C91A0, and the unidentified data at lbl_82C71838. matched_code is
-    // all-or-nothing per row, so partial progress here buys zero bytes -- the
-    // signature is landed because it is proved, not because it crosses.
-    // No null check -- retail dereferences GetTrackPanelDir()'s result
-    // unconditionally.
-    GetTrackPanelDir()->Unkd4(NULL, NULL, NULL, Symbol());
+    TaskMgr &tm = TheTaskMgr;
+    float t1 = tm.Seconds(TaskMgr::kRealTime);
+    int curTick = SecondsToTick(t1);
+    int measure = 0;
+    int beat = 0;
+    int tick = 0;
+    if (t1 >= 0.0f) {
+        measure = tm.GetSongPos().GetMeasure() + 1;
+        beat = tm.GetSongPos().GetBeat() + 1;
+        tick = tm.GetSongPos().GetTick();
+    }
+    float t2 = TheSongDB->GetSongDurationMs() * 0.001f;
+    float elapsedMs = Max(t1, 0.0f) * 1000.0f;
+    float remaining = Max(0.0f, t2 - t1);
+    int elapsedMin = elapsedMs * (1.0f / 60000.0f);
+    int elapsedSec = (float)fmod(elapsedMs, 60000.0) * 0.001f;
+    int elapsedHun = (float)fmod(elapsedMs, 1000.0) * 0.1f;
+    float remainingMs = Min(remaining, t2) * 1000.0f;
+    int remainingMin = remainingMs * (1.0f / 60000.0f);
+    int remainingSec = (float)fmod(remainingMs, 60000.0) * 0.001f;
+    int remainingHun = (float)fmod(remainingMs, 1000.0) * 0.1f;
+    std::vector<PracticeSection> &sections = TheSongDB->mPracticeSections;
+    Symbol section(gNullStr);
+    for (int i = 0; i < sections.size(); i++) {
+        const PracticeSection &ps = sections[i];
+        if (curTick >= ps.unk4 && curTick < ps.unk8) {
+            section = ps.unk0;
+            break;
+        }
+    }
+    GetTrackPanelDir()->Unkd4(
+        MakeString("%d.%d.%03d", measure, beat, tick),
+        MakeString("%d.%02d.%02d", elapsedMin, elapsedSec, elapsedHun),
+        MakeString("%d.%02d.%02d", remainingMin, remainingSec, remainingHun),
+        section
+    );
 }
 #endif // RB3_GAMEPANEL_DEBUG_MEMBERS
 
