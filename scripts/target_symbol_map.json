@@ -10672,7 +10672,6 @@
  "0x82529ab0": "?JoypadReset@@YAXXZ",
  "0x82529ab8": "?JoypadTerminate@@YAXXZ",
  "0x82529ae0": "?JoypadPoll@@YAXXZ",
- "0x82529ae8": "?ReceiveUpstreamAccelerometerResponse@@YAXHPAE@Z",
  "0x82529af0": "JoypadSendKeepAlive",
  "0x82529af8": "ReadSingleJoypad",
  "0x82529ba0": "?SetupHXKeytar@@YA?AW4JoypadType@@HABU_XINPUT_CAPABILITIES@@@Z",
