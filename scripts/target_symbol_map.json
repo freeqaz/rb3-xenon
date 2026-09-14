@@ -30430,5 +30430,12 @@
  "0x82486ad0": "?Replace@RndEnvAnim@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x8245e440": "?Replace@RndTransAnim@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x82478128": "?Replace@RndMovie@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
- "0x82b59748": "_tr_stored_block"
+ "0x82b59748": "_tr_stored_block",
+ "0x828450f0": "RtlSleep",
+ "0x8283eb28": "XUnmountUtilityDrive",
+ "0x8283d628": "SleepEx",
+ "0x8283eae0": "XMountUtilityDrive",
+ "0x8251d378": "?Init@PlatformMgr@@QAAXXZ",
+ "0x8283d810": "XNotifyCreateListener",
+ "0x82531980": "?Init@WinSockSocket@@SAXXZ"
 }
