@@ -30522,6 +30522,6 @@
  "0x824cf770": "?resize@?$list@UPresetOverride@WorldDir@@V?$StlNodeAlloc@UPresetOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUPresetOverride@WorldDir@@@Z",
  "0x82694860": "?CreateGame@GamePanel@@QAAXXZ",
  "0x82696b48": "?Handle@GamePanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x82694b00": "?SendRestartGameNetMsg@GamePanel@@QAAX_N@Z",
+ "0x82694b00": "?SendRestartGameNetMsg@GamePanel@@QAAXXZ",
  "0x82695178": "?UpdateNowBar@GamePanel@@QAAXXZ"
 }
