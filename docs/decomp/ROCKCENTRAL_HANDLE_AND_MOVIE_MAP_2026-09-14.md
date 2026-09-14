@@ -14,12 +14,21 @@ matched_code_percent 38.050446  fuzzy           49.200085
 masked_equal        22,997      total_code     10,245,956
 ```
 
-⚠ **W15-C's four commits are NOT in main** (branch `w15-c`, tip `674de886`),
-including a RockCentral source change. This lane based on `main` as briefed, so
-its numbers are deltas against a baseline that does not contain W15-C's work.
-Deltas compose; absolutes do not. The two branches touch different lines of
-`RockCentral.cpp` and should merge cleanly, but **land W15-C first** so its
-`SystemLocale` rows are measured against their own baseline.
+⚠ **Correction I made to myself mid-lane, recorded because the wrong version
+nearly shipped.** My first `git log` put main at `c90f107c`, where `w15-c` was
+an unmerged branch, and I wrote this section warning that W15-C's four commits
+were absent and that landing order mattered. **Main advanced to `b9e32547` —
+the `w15-c` merge — in the minutes between that `git log` and
+`setup_worktree.sh`.** Verified with `git merge-base --is-ancestor`: all four
+of `674de886`, `cae9a76e`, `7d867293`, `3b879bbe` are ancestors of my base, and
+`RockCentral.cpp` already carries W15-C's `SystemLocale()` repairs. So this
+lane's baseline **includes** W15-C's +6 fns / +4,252 B, there is no
+merge-ordering concern, and `docs/decomp/GAME_CROSSING_GRIND_2026-09-14.md` is
+present in-tree.
+
+⇒ **A base SHA read before the worktree exists is not the worktree's base.**
+Read it from the worktree (`git -C <wt> rev-parse HEAD`) after creation; on a
+shared tree with concurrent lanes, main moves under you.
 
 ---
 
