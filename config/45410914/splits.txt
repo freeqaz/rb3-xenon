@@ -4196,10 +4196,8 @@ CheckboxDisplay.cpp:
 FlowTrigger.cpp:
 	.pdata      start:0x821FCFA8 end:0x821FCFB0
 	.pdata      start:0x82205C10 end:0x82205C20
-	.pdata      start:0x822085E8 end:0x82208610
 	.text       start:0x82327878 end:0x823278F0
 	.text       start:0x823C0F48 end:0x823C10A4
-	.text       start:0x823EB7A0 end:0x823EB958
 
 CharIKHand.cpp:
 	.pdata      start:0x82201858 end:0x82201860
@@ -4527,7 +4525,6 @@ CharIKHead.cpp:
 
 Anim.cpp:
 	.pdata      start:0x821F18B8 end:0x821F18D0
-	.pdata      start:0x822085B8 end:0x822085C0
 	.pdata      start:0x822092F8 end:0x82209300
 	.pdata      start:0x822099F8 end:0x82209A18
 	.pdata      start:0x82209A18 end:0x82209CA0
@@ -4541,7 +4538,6 @@ Anim.cpp:
 	.pdata      start:0x82209F60 end:0x82209F70
 	.pdata      start:0x82209F70 end:0x82209F90
 	.text       start:0x82273728 end:0x822737D0
-	.text       start:0x823EB548 end:0x823EB5D8
 	.text       start:0x823F78B0 end:0x823F7964
 	.text       start:0x82400590 end:0x82400698
 	.text       start:0x82400720 end:0x82402F68
@@ -4863,7 +4859,6 @@ PracticeSection.cpp:
 	.pdata      start:0x82202DE8 end:0x82202DF0
 	.pdata      start:0x82206238 end:0x822062A8
 	.pdata      start:0x822062A8 end:0x822062C0
-	.pdata      start:0x822085D8 end:0x822085E8
 	.pdata      start:0x8220BBD0 end:0x8220BBD8
 	.pdata      start:0x8221C4B8 end:0x8221C4C0
 	.pdata      start:0x8221C7F0 end:0x8221C7F8
@@ -4874,7 +4869,6 @@ PracticeSection.cpp:
 	.text       start:0x82389608 end:0x82389680
 	.text       start:0x823C7908 end:0x823C803C
 	.text       start:0x823C8040 end:0x823C8198
-	.text       start:0x823EB72C end:0x823EB798
 	.text       start:0x82424D18 end:0x82424D78
 	.text       start:0x8250D4C0 end:0x8250D4C8
 	.text       start:0x82557060 end:0x8255709C
@@ -4931,9 +4925,6 @@ HamSongData.cpp:
 	.pdata      start:0x82208468 end:0x82208470
 	.text       start:0x823E9D00 end:0x823E9E18
 	.text       start:0x823EA408 end:0x823EA468
-
-FlowLabel.cpp:
-	.text       start:0x823EB798 end:0x823EB7A0
 
 UIComponent.cpp:
 	.pdata      start:0x821FB378 end:0x821FB388
@@ -7444,12 +7435,10 @@ AsyncFileHolmes.cpp:
 BandUI.cpp:
 	.pdata      start:0x82207988 end:0x82207990
 	.pdata      start:0x82207990 end:0x822079A8
-	.pdata      start:0x82208530 end:0x82208548
 	.pdata      start:0x8221A1D0 end:0x8221A748
 	.text       start:0x823E0EA0 end:0x823E0EA8
 	.text       start:0x823E0FA0 end:0x823E1110
 	.text       start:0x823E1110 end:0x823E1360
-	.text       start:0x823EAD68 end:0x823EAE30
 	.text       start:0x82535C90 end:0x8253A7A4
 
 BustAMoveData.cpp:
@@ -7963,8 +7952,6 @@ Group.cpp:
 	.pdata      start:0x821FB600 end:0x821FB608
 	.pdata      start:0x821FB688 end:0x821FB690
 	.pdata      start:0x821FB690 end:0x821FB698
-	.pdata      start:0x82208548 end:0x82208588
-	.pdata      start:0x82208588 end:0x822085B8
 	.pdata      start:0x8220DE08 end:0x8220DE48
 	.pdata      start:0x8220DE50 end:0x8220E060
 	.pdata      start:0x8220FBF8 end:0x8220FC00
@@ -7975,8 +7962,6 @@ Group.cpp:
 	.text       start:0x8230E658 end:0x8230E6C4
 	.text       start:0x8230ED80 end:0x8230EDE4
 	.text       start:0x8230EDE8 end:0x8230EE98
-	.text       start:0x823EAE30 end:0x823EB2A0
-	.text       start:0x823EB2A0 end:0x823EB548
 	.text       start:0x82451FF8 end:0x824523F8
 	.text       start:0x82452494 end:0x82454990
 	.text       start:0x82454990 end:0x8245499C
@@ -9578,6 +9563,14 @@ TrackWidget.cpp:
 NetworkEmulator.cpp:
 	.pdata      start:0x82208610 end:0x82208698
 	.text       start:0x823EB958 end:0x823EC310
+
+network/net/SessionSearcher.cpp:
+	.pdata      start:0x82208530 end:0x82208600
+	.text       start:0x823EAD68 end:0x823EB8E0
+
+network/net/NetLog.cpp:
+	.pdata      start:0x82208600 end:0x82208610
+	.text       start:0x823EB8E0 end:0x823EB958
 
 SessionMessages.cpp:
 	.pdata      start:0x82208BB8 end:0x82208C10
@@ -11739,7 +11732,6 @@ RGGemMatcher.cpp:
 	.text       start:0x8278F568 end:0x8278FB08
 
 VocalNoteList.cpp:
-	.pdata      start:0x822085C0 end:0x822085D8
 	.pdata      start:0x82233B48 end:0x82233B50
 	.pdata      start:0x8223E650 end:0x8223E658
 	.pdata      start:0x8223E658 end:0x8223E660
@@ -11756,7 +11748,6 @@ VocalNoteList.cpp:
 	.pdata      start:0x8223E718 end:0x8223E720
 	.pdata      start:0x8223E720 end:0x8223E768
 	.pdata      start:0x8223E768 end:0x8223E780
-	.text       start:0x823EB5D8 end:0x823EB72C
 	.text       start:0x826B8CA0 end:0x826B8D20
 	.text       start:0x827808C8 end:0x827809E0
 	.text       start:0x827809E0 end:0x82780A50

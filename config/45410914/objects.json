@@ -2056,6 +2056,13 @@
                     "/DRB3_HANDLE_LOCAL_STATIC"
                 ]
             },
+            "network/net/SessionSearcher.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_HANDLE_LOCAL_STATIC"
+                ]
+            },
+            "network/net/NetLog.cpp": "NonMatching",
             "network/net/NetSession.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
