@@ -2145,3 +2145,100 @@ regalloc/stack/funclet shape.
   differ over two working copies unless the sweep states the revision it read.
 - Still-open user decision, carried since wave 3: whether to delete
   `src/system/synth/Sound.cpp`, `ThreeDSound.cpp`, `ThreeDSound.h`.
+
+## 7o. STATUS AT ONE WEEK, and the wave 15 dispatch (2026-09-14, coordinator session 3cdd3c)
+
+Written in answer to the user's check-in ("what is our roadmap to 100%, what
+have we accomplished this week, what remains"). Every number below is read
+from `report.json` at `08860838` or from `docs/decomp/progress_ledger.jsonl`,
+not recalled. Partition by source class was computed by mapping each report
+unit to its `objects.json` path (full path first, basename fallback;
+`auto_*` and `xdk/` handled explicitly — a `default/` prefix scan gets this
+wrong and was discarded).
+
+### What "100%" means — three layers, read the right one
+
+| target | size | status |
+|---|---:|---|
+| whole binary (`total_code`) | 10,245,956 B | **37.99%** matched (42,846 / 69,219 fns). 20.41% is XDK vendor code with no source — out of scope by standing directive, already 100% mapped |
+| in-scope: band3 + system + network + main | 6,464,768 B | **60.21%** matched; gap **2,572,560 B** |
+| identified closable levers (§7 bottom line) | ≈220 kB | ≈2.1 pp of `total_code` **at 100% conversion**, a rate no wave in the record has reached |
+
+**Neither 100% figure is attainable.** The whole-binary one is blocked by the
+XDK directive; the in-scope one by ICF-destroyed pair bytes (129,360 B proven),
+Quazal's `/Od` band (96.8% of network code, unmatchable at `/O1` at any source
+quality), and the ~91%-irreducible relocation-name stratum.
+
+### Where the in-scope bytes are
+
+| class | units | @100 | matched | gap |
+|---|---:|---:|---:|---:|
+| system (engine) | 667 | 107 | 60.14% | 1,626,316 B |
+| band3 (game) | 256 | 57 | 66.67% | 702,848 B |
+| network / quazal | 116 | 1 | 11.68% | 238,144 B |
+| xdk, no source | 229 | 0 | 0% | 2,090,904 B (out of scope) |
+| `auto_*` unattributed | 1,810 | 0 | 0% | 1,686,856 B (~9% attributable-and-portable) |
+
+By work kind, game + engine only:
+
+| stratum | band3 | system | what it is |
+|---|---:|---:|---|
+| partial, `0 < fuzzy < 100` | 302,660 B | 701,872 B | **divergence in code we already hold** — the only real vein, and where "matched but wrong" bugs live |
+| placeholder-named at 0 | 337,176 B | 724,924 B | 82% divergence in held code, 18% unwritten (P1-BODYTRIAGE). **Naming cannot cross a row whose bytes we do not reproduce** |
+| `mpn` 100, `fuzzy` < 100 | 54,580 B | 155,684 B | relocation-name / register charges; ~91% irreducible fold noise |
+| real-named at 0 (unpaired) | 8,432 B | 43,836 B | wrong map name or missing base symbol — 351 rows, small, **highest bug-exposure yield per byte** (the W14-A mechanism) |
+
+Largest per-unit gaps, for the grind lane: band3 — RockCentral 41,200 B,
+VocalTrack 24,568, NextSongPanel 17,368, GemManager 17,260, OvershellSlot
+16,444; system — VocalTrackDir 27,064, BandCharacter 22,592, LightPreset
+21,384, EventTrigger 21,148, CameraShot 19,620.
+
+### The week (2026-09-10 → 09-14), from the ledger
+
+| measure | 09-10 | 09-14 | Δ |
+|---|---:|---:|---:|
+| `matched_functions` | 42,305 | 42,846 | **+541** |
+| `matched_code` | 3,774,924 B | 3,892,688 B | **+117,764 B** |
+| `matched_code_percent` | 36.843% | 37.992% | **+1.149 pp** |
+
+14 waves, 84 lane merges, 460 commits; every wave landed on a full main
+build with the native gate re-run on the merged tree by the coordinator.
+**The score understates the week.** The higher-value output was correctness
+the metric cannot see: quaternion interpolation overwriting its own output
+(`135f6a9e`), an easing curve with both coefficients wrong (`2a531e2f`), MIDI
+messages built pad/value-swapped (`2a531e2f`), a render ring rotated 90°,
+`Rnd::Terminate` calling an empty function instead of releasing a global
+(`afdd72f7`), a rim light on the wrong shader register, a spotlight beam
+occluding its own flare, a sub-loader capturing its parent's root; a 6-cycle of
+misnamed message rows and thunks naming each other's addresses; 69 of 74 alias
+withdrawals shown wrong and restored; `ab_measure` now reports what its
+restore deleted; the crossing ranker prices on the graded ruler; the patcher
+chain proven to have four live passes; and four veins closed *with reasons*
+(fold class, missing-body, vendor band, empty-EXTRN) so no lane re-hunts them.
+One process failure is on the record (§7n): a `--amend` in shared main,
+contained, fixed forward.
+
+### Model routing — user directive 2026-09-14
+
+> "drive opus subagents on specific tasks. if a task is really hard then put
+> fable on the job but prefer opus in general. if opus reports something cant
+> be fixed, that needs digging into. fable is smarter and can likely sniff out
+> the real issues."
+
+Applied as: **Opus by default, one specific task per lane; Fable for the
+genuinely hard ones; and an Opus "can't be fixed" / `AT_LIMIT` is an
+ESCALATION TRIGGER, not a result** — the item is re-dispatched to Fable with
+the Opus report attached. This is the repo's own rule made into a dispatch
+policy: a confident "unfixable" is the claim most worth auditing, because it
+closes veins nobody re-opens (MPNGAP-1; the `REGISTER_SWAP` labels that
+dissolved once the real defect was fixed).
+
+### Wave 15 dispatch (three lanes — API capacity, see §7n)
+
+| lane | model | task | pre-registered expectation |
+|---|---|---|---|
+| **W15-A circular-pin census** | opus | build the instrument "does this function's callee set agree with the unit it is pinned to", run it over every pinned unit, adjudicate the top hits on retail bytes, repair only proven pins | accuracy lever; Δ may be ±; every repair A/B'd with per-unit attribution. Known priors to reproduce: CameraManager's 13 fns inside the Quazal block, nine engine units claiming one fn each there |
+| **W15-B real-named-at-0 drain** | opus | classify all 351 real-named rows at 0 in game+engine (wrong map name / missing base symbol / missing body / phantom carve), fix the provable ones; includes MatAnim `_M_allocate_and_copy` and W14-B's six `Save`-vs-`??_E` map defects | +bytes only where a correct body was merely unpaired; otherwise bug exposure; each name change priced BEFORE edit |
+| **W15-C game-unit crossing grind** | opus | `crossing_worklist` (graded ruler) over RockCentral, VocalTrack, GemManager, NextSongPanel, OvershellSlot; only rows whose charges NAME a source construct; pre-register each | small positive; `mpn`-only wins expected on wrong-callee fixes |
+
+Escalation slots held for Fable: any lane item reported unfixable.
