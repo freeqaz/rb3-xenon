@@ -691,6 +691,7 @@ void OvershellPanel::ResolveSlotStates() {
     ResolveReadyToPlayStates();
     ResolveSignInWaitStates();
     ResolveAutoSignInStates();
+    ResolveChooseProfileStates();
     OvershellSlot *curSlot;
     bool b1 = false;
     for (int i = 0; i < mSlots.size(); i++) {
@@ -764,9 +765,9 @@ void OvershellPanel::ResolveSlotStates() {
                         } else if (curSlot->InOverrideFlow(
                                        kOverrideFlow_RegisterOnline
                                    )) {
-                            if (!curSlot->GetState()->InRegisterOnlineFlow()) {
-                                curSlot->SetOverrideFlowReturnState(theID);
-                            }
+                            // retail calls this unconditionally in this arm --
+                            // no second GetState()->InRegisterOnlineFlow() test.
+                            curSlot->SetOverrideFlowReturnState(theID);
                             // retail: li r4,0x14 -- kState_SignInWait. 0x8B is
                             // kState_AutoSignInNintendo (Wii-only). See W16-AK.
                             curSlot->ShowState(kState_SignInWait);
@@ -784,7 +785,17 @@ void OvershellPanel::ResolveSlotStates() {
                                                   ->Property("kick_user")
                                                   ->Obj<BandUser>();
                             MILO_ASSERT(pUser, 0x632);
-                            if (!mSessionMgr->HasUser(pUser)) {
+                            // retail calls BandUser's own vftable slot 0 --
+                            // IsInSession(SessionMgr*) -- as
+                            // `pUser-><slot0>(mSessionMgr)`, where the rb3-Wii DEV
+                            // oracle has `mSessionMgr->HasUser(pUser)`. Same TU5
+                            // substitution already identified in
+                            // src/band3/game/BandUser.h (lane NCCC-0731-5f08/f76,
+                            // InputMgr::IsActiveAndConnected). Using the BandUser
+                            // receiver also drops the BandUser*->User* virtual-base
+                            // adjust + null check that HasUser's User* parameter
+                            // forced. See W16-AK.
+                            if (!pUser->IsInSession(mSessionMgr)) {
                                 curSlot->LeaveKickConfirmation();
                             }
                         }
@@ -797,7 +808,9 @@ void OvershellPanel::ResolveSlotStates() {
             }
         }
     }
-    static Message msgHideConnectControllerMesh(hide_connect_controller_mesh, 1);
+    // retail constructs the Symbol from the literal here (bl ??0Symbol@@QAA@PBD@Z
+    // into a stack temp) rather than loading the interned global.
+    static Message msgHideConnectControllerMesh(Symbol("hide_connect_controller_mesh"), 1);
     msgHideConnectControllerMesh[0] = !b1 || InGame();
     HandleType(msgHideConnectControllerMesh);
 }
@@ -1024,6 +1037,29 @@ void OvershellPanel::ResolveAutoSignInStates() {
                     curSlot->ShowState(kState_AutoSignInRockCentral);
                 } else if (ossID == 0x12 && TheRockCentral.IsOnline()) {
                     curSlot->ShowState(kState_SignInWait);
+                }
+            }
+        }
+    }
+}
+
+// RB3-360 retail fn_825B2FF0, the 5th call at the head of ResolveSlotStates.
+// Same shape as ResolveAutoSignInStates above. State 0x1f is kState_ChooseProfile;
+// the guard is vtable slot 0x10 on the LocalUser vfptr, which is IsSignedIn():
+// slots 0x8 and 0x14 on that same vfptr are HasOnlinePrivilege() and
+// IsSignedInOnline() (used by ResolveAutoSignInStates, proven byte-identical),
+// and HasOnlinePrivilege/IsGuest/IsSignedIn/IsSignedInOnline are declared
+// consecutively in LocalUser, so 0x10 is IsSignedIn. Callee fn_825D8660 is
+// mapped ?LeaveOptions@OvershellSlot@@QAAXXZ. See W16-AK.
+void OvershellPanel::ResolveChooseProfileStates() {
+    for (int i = 0; i < mSlots.size(); i++) {
+        OvershellSlot *curSlot = mSlots[i];
+        if (curSlot->GetUser()) {
+            if (curSlot->GetUser()->IsLocal()) {
+                LocalBandUser *user = curSlot->GetUser()->GetLocalBandUser();
+                OvershellSlotStateID ossID = curSlot->GetState()->GetStateID();
+                if (ossID == kState_ChooseProfile && user->IsSignedIn()) {
+                    curSlot->LeaveOptions();
                 }
             }
         }

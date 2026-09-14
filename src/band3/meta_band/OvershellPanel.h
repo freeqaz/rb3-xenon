@@ -97,6 +97,10 @@ public:
     bool DoesAnySlotHaveChar(CharData *) const;
     void ResolveSignInWaitStates();
     void ResolveAutoSignInStates();
+    // RB3-360-only 5th resolve helper (retail fn_825B2FF0, called from
+    // ResolveSlotStates). The rb3-Wii DEV oracle has no counterpart, so this
+    // NAME IS OURS, not a proven retail name -- no map row is claimed for it.
+    void ResolveChooseProfileStates();
     bool ShouldSeeRealGuitarPrompt(LocalBandUser *, OvershellSlotStateID &);
     void ExportAll(const Message &);
     void SetPartRestrictedUser(BandUser *);
