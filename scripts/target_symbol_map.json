@@ -15365,7 +15365,7 @@
  "0x82682210": "??_EGameMicManager@@UAAPAXI@Z",
  "0x82682270": "??0GameMicManager@@QAA@XZ",
  "0x82682558": "?Init@GameMicManager@@SAXXZ",
- "0x82682668": "??__FsLoadedFile@@YAXXZ",
+ "0x82682668": "?GetBandUser@BandUserMgr@@SAPAVBandUser@@PAVUser@@@Z",
  "0x82682688": "JsonRealloc",
  "0x826826a8": "?GetRemoteBandUser@BandUserMgr@@SAPAVRemoteBandUser@@PAVRemoteUser@@@Z",
  "0x826826c8": "?GetLocalBandUsers@BandUserMgr@@QAAAAV?$vector@PAVLocalBandUser@@V?$StlNodeAlloc@PAVLocalBandUser@@@stlpmtx_std@@@stlpmtx_std@@XZ",
@@ -30111,7 +30111,10 @@
   "0x8233bea0",
   "0x8233c2c8",
   "0x8233c398",
-  "0x8233c668"
+  "0x8233c668",
+  "0x826100f8",
+  "0x826101b8",
+  "0x82603a78"
  ],
  "_icf_arbitrary_comment": "VAs whose name is an ARBITRARY pick among linker-ICF-folded twins. The bytes are true (retail folded them, so our symbol really is byte-identical there) and only one of N names can be expressed by a VA->name map, so each is worth exactly +1 whichever twin is chosen. But the specific NAME is not asserted evidence. Any tool deriving identity, callers, or unit ownership from these entries must treat them as unresolved. ***CORRECTED 2026-08-13 (lane RULER-SWEEP): 'worth exactly +1 whichever twin is chosen' was a statement about the functionRelocDiffs=none ruler and no longer holds on bytes.*** Since name_check shipped 2026-08-12 (d04c83df) a relocation's target NAME is compared, so if the map spells the folded address as twin A while our source calls twin B, the call site is CHARGED. For a GENUINELY fold-proven pair the honest remedy is an entry in scripts/symbol_aliases.json (objdiff forgives it at diff/code.rs via SymbolEquivalences) -- both names really do denote one retail body. ⚠ The remedy is licensed by the PROVEN FOLD, never by this list's own 'the name is arbitrary' doctrine: admitting an alias merely because a name is listed here lifts name_check BY CONSTRUCTION with no byte evidence. tools/comdat_fold_gate.py's CF4 tier did exactly that; it was DELETED 2026-08-13 (lane CF4-FIX) and all 3 aliases it installed were removed after retail-byte adjudication refuted all 3. Alternates: docs/plans/laneAB-icf-tie-alternates-2026-07-26.json. Landed laneAB 46f95e99. ***ADDED 2026-08-17 (lane W21-CARVE): 0x8233bea0 / 0x8233c2c8 / 0x8233c398 / 0x8233c668.*** These four are the map<int,bool> _Rb_tree chain. The FOLD IS PROVEN, not assumed: map<TrackType,bool> (PerfectSectionTracker.obj) and map<int,bool> (BandList.obj, HamNavList.obj) compile to the SAME FIVE SIZES (84/204/232/488/160), and retail has ONE physical address per member reached from BOTH spellings -- HandleEnterExtent@PerfectSectionTracker (0x826db188, ~5 MB away) and four BandList:: reveal/conceal methods all bl 0x8233cb58. TrackType is an enum: a distinct type for mangling, identical code for a 4-byte key. So the <int,bool> spelling is an arbitrary pick in the sense this list means, and no tool may derive tree IDENTITY from it. It is nevertheless SAFE to name these four, because every call site among them is INTERNAL to the fold group; the group's only external entry is operator[] at 0x8233cb58, which is DELIBERATELY LEFT ANONYMOUS so its callers stay forgiven. Naming 0x8233cb58 is REFUSED: see docs/decomp/w21-carve.md.",
  "_internal_linkage_allow": [
@@ -30514,5 +30517,6 @@
  "0x82620f38": "?OnMsg@MainHubPanel@@QAA?AVDataNode@@ABVOvershellOverrideEndedMsg@@@Z",
  "0x82621c70": "?PrepareProfilesAndMessages@MainHubPanel@@QAAXXZ",
  "0x825f5bf8": "?SelectedScoreType@CampaignSongInfoPanel@@QBA?AW4ScoreType@@XZ",
- "0x825f5c60": "?GetCareerScore@CampaignSongInfoPanel@@QBAHXZ"
+ "0x825f5c60": "?GetCareerScore@CampaignSongInfoPanel@@QBAHXZ",
+ "0x826100f8": "??1?$hashtable@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ"
 }
