@@ -4231,12 +4231,12 @@ HamNavList.cpp:
 	.pdata      start:0x821FE2D8 end:0x821FE2E0
 	.pdata      start:0x82215988 end:0x82215990
 	.pdata      start:0x82236EE0 end:0x82236EE8
-	.pdata      start:0x822471E8 end:0x822471F0
+	.pdata      start:0x822471E8 end:0x822471F8
 	.text       start:0x8233B258 end:0x8233B348
 	.text       start:0x8233B4B0 end:0x8233B4F4
 	.text       start:0x824EA220 end:0x824EA298
 	.text       start:0x826F7CC8 end:0x826F7E50
-	.text       start:0x82817A68 end:0x82817AE8
+	.text       start:0x82817A68 end:0x82817C20
 
 HamLabel.cpp:
 	.pdata      start:0x821FE790 end:0x821FE7A0
@@ -4395,7 +4395,6 @@ UILabel.cpp:
 	.pdata      start:0x82245040 end:0x822450A8
 	.pdata      start:0x822450A8 end:0x822450B0
 	.pdata      start:0x822450B0 end:0x822452A8
-	.pdata      start:0x822471F0 end:0x822471F8
 	.pdata      start:0x8225FCF0 end:0x8225FD00
 	.pdata      start:0x8225FD00 end:0x8225FD20
 	.pdata      start:0x8225FD20 end:0x8225FD38
@@ -4436,7 +4435,6 @@ UILabel.cpp:
 	.text       start:0x827F5550 end:0x827F5A5C
 	.text       start:0x827F5A5C end:0x827F7830
 	.text       start:0x827F7AD8 end:0x827F7AE0
-	.text       start:0x82817AE8 end:0x82817C20
 	.text       start:0x82BF5DD0 end:0x82BF5EC0
 	.text       start:0x82BF5EC0 end:0x82BF6138
 	.text       start:0x82BF6138 end:0x82BF63C8

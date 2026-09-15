@@ -21969,7 +21969,7 @@
  "0x828178b0": "?ResizeSubProviders@UIGridProvider@@QBAXXZ",
  "0x82817a08": "?Provider@UIGridProvider@@UBAPAVUIListProvider@@HHPAVUIListSubList@@@Z",
  "0x82817a68": "?PostLoad@?$ObjDirPtr@VHamListRibbon@@@@QAAXPAVLoader@@@Z",
- "0x82817ae8": null,
+ "0x82817ae8": "??4?$ObjDirPtr@VHamListRibbon@@@@QAAAAV0@PAVHamListRibbon@@@Z",
  "0x82817c20": "?GetResourcesPath@UIFontImporter@@IAAPBDXZ",
  "0x82817d60": "?GenerateBitmapFilename@UIFontImporter@@IAAXXZ",
  "0x82817fc0": "?Replace@?$ObjPtrList@VRndFont@@VObjectDir@@@@EAAXPAVObjRef@@PAVObject@Hmx@@@Z",
