@@ -23,3 +23,20 @@
 // integer stores landing before the float ones is scheduling around the lfs,
 // not a different initialisation order.
 Shuttle::Shuttle() : mMs(0.0f), mEndMs(0.0f), mActive(false), mPadNum(0) {}
+
+// Retail's `~Shuttle` call site in Game::~Game (RELEASE(mShuttle)) is
+//   mr r3,r28 ; bl 0x826c3888 ; mr r3,r28 ; bl <operator delete>
+// and 0x826c3888 disassembles to a single `blr` (4 B, no relocations). A
+// one-argument destructor-then-delete pair cannot be the two-argument
+// StlNodeAlloc copy-ctor the map names at that address; that name is the
+// arbitrary survivor spelling of an ICF fold over every empty function, and
+// scripts/symbol_aliases.json already carries the group (0x826c3888, tier
+// FT-EMPTY, 10 folded spellings).
+//
+// The destructor was DECLARED in Shuttle.h with no definition anywhere in the
+// tree, so ??1Shuttle@@QAA@XZ was an unresolved external and we compiled no
+// COMDAT for it -- which is also why the fold-membership evidence could not be
+// produced for this spelling. The class is four PODs (float, float, bool, int)
+// with no owned resources, so an empty body is the only one consistent with
+// both the retail bytes and the class contents.
+Shuttle::~Shuttle() {}
