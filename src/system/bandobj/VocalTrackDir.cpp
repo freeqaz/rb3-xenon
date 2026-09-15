@@ -465,11 +465,11 @@ void VocalTrackDir::PostLoad(BinStream &bs) {
 
 void VocalTrackDir::SetConfiguration(Hmx::Object *o, HarmonyShowingState state) {
     if (o != mVoxCfg || state != unk4b4) {
+        mVoxCfg = o;
+        unk4b4 = state;
         static Symbol remote("remote");
         static Symbol align("align");
         static Symbol top("top");
-        mVoxCfg = o;
-        unk4b4 = state;
         mRemoteVocals = mVoxCfg->Property(remote, true)->Int();
         unk4b0 = mVoxCfg->Property(align, true)->Sym() == top;
         if (unk2a7 && mPlayerIntro) {
