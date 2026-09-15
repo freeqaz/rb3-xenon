@@ -1368,11 +1368,7 @@ FreeCamera.cpp:
 
 FileChecksum.cpp:
 	.pdata      start:0x82215C60 end:0x82215C70
-	.pdata      start:0x8223EE98 end:0x8223EEA0
-	.pdata      start:0x8223EEA0 end:0x8223EEA8
 	.text       start:0x824EDF08 end:0x824EE01C
-	.text       start:0x8278BB98 end:0x8278BD3C
-	.text       start:0x8278BD3C end:0x8278BD68
 
 Rot.cpp:
 	.pdata      start:0x821FE3E8 end:0x821FE420
@@ -1937,7 +1933,7 @@ StringTable.cpp:
 
 TempoMap.cpp:
 	.pdata      start:0x82243048 end:0x82243050
-	.text       start:0x827D2510 end:0x827D2524
+	.text       start:0x827D2500 end:0x827D2524
 	.text       start:0x827D2528 end:0x827D25C4
 
 MemStream.cpp:
@@ -3495,7 +3491,6 @@ HamMove.cpp:
 	.text       start:0x82714A48 end:0x82714DC8
 	.text       start:0x82714DC8 end:0x827150B8
 	.text       start:0x82715530 end:0x827155A8
-	.text       start:0x8278B7F0 end:0x8278B838
 	.text       start:0x827B7ED0 end:0x827B7EE0
 
 HamNavProvider.cpp:
@@ -6712,7 +6707,7 @@ SongInfoCopy.cpp:
 	.pdata      start:0x82242FD0 end:0x82243048
 	.text       start:0x827D1120 end:0x827D1D98
 	.text       start:0x827D1D98 end:0x827D1EF0
-	.text       start:0x827D1EF0 end:0x827D2510
+	.text       start:0x827D1EF0 end:0x827D2500
 
 JsonUtils.cpp:
 	.pdata      start:0x82243940 end:0x82243948
@@ -11795,6 +11790,7 @@ OutfitConfig.cpp:
 	.pdata      start:0x821F4C60 end:0x821F4C70
 	.pdata      start:0x821F4CD0 end:0x821F4CD8
 	.pdata      start:0x821F4F40 end:0x821F4F50
+	.pdata      start:0x821F52A0 end:0x821F52C0
 	.pdata      start:0x821F52C0 end:0x821F52D0
 	.pdata      start:0x821F52E0 end:0x821F52F0
 	.pdata      start:0x821F5398 end:0x821F53B8
@@ -11835,6 +11831,7 @@ OutfitConfig.cpp:
 	.text       start:0x822A68E0 end:0x822A6A48
 	.text       start:0x822A8BC8 end:0x822A8C40
 	.text       start:0x822ABA10 end:0x822ABA1C
+	.text       start:0x822ABCE0 end:0x822ABE70
 	.text       start:0x822ABE70 end:0x822ABFB8
 	.text       start:0x822AC048 end:0x822AC054
 	.text       start:0x822AC058 end:0x822AC110
@@ -12364,13 +12361,11 @@ MessageTimer.cpp:
 	.text       start:0x8242C568 end:0x8242C770
 
 ClipDistMap.cpp:
-	.pdata      start:0x821F52A0 end:0x821F52C0
 	.pdata      start:0x821FED50 end:0x821FED58
 	.pdata      start:0x8222B198 end:0x8222B1B0
 	.pdata      start:0x8222B1B0 end:0x8222B1C0
 	.pdata      start:0x8222B1C8 end:0x8222B1F0
 	.pdata      start:0x8223EB90 end:0x8223EB98
-	.text       start:0x822ABCE0 end:0x822ABE70
 	.text       start:0x823484F0 end:0x82348598
 	.text       start:0x82634358 end:0x82634690
 	.text       start:0x82634690 end:0x82634760
@@ -12795,6 +12790,8 @@ system/beatmatch/PhraseAnalyzer.cpp:
 	.pdata      start:0x8223EE78 end:0x8223EE88
 	.pdata      start:0x8223EE88 end:0x8223EE90
 	.pdata      start:0x8223EE90 end:0x8223EE98
+	.pdata      start:0x8223EE98 end:0x8223EEA0
+	.pdata      start:0x8223EEA0 end:0x8223EEA8
 	.pdata      start:0x8223EEA8 end:0x8223EEB0
 	.pdata      start:0x8223EEB0 end:0x8223EEC0
 	.pdata      start:0x8223EEC0 end:0x8223EEC8
@@ -12807,11 +12804,14 @@ system/beatmatch/PhraseAnalyzer.cpp:
 	.text       start:0x8278B550 end:0x8278B6D0
 	.text       start:0x8278B6D0 end:0x8278B734
 	.text       start:0x8278B738 end:0x8278B7F0
+	.text       start:0x8278B7F0 end:0x8278B838
 	.text       start:0x8278B838 end:0x8278B8E8
 	.text       start:0x8278B8E8 end:0x8278B988
 	.text       start:0x8278B988 end:0x8278BAA0
 	.text       start:0x8278BAA0 end:0x8278BAF8
 	.text       start:0x8278BAF8 end:0x8278BB98
+	.text       start:0x8278BB98 end:0x8278BD3C
+	.text       start:0x8278BD3C end:0x8278BD68
 	.text       start:0x8278BD68 end:0x8278BDE8
 	.text       start:0x8278BDE8 end:0x8278BF28
 	.text       start:0x8278BF28 end:0x8278BFB0
