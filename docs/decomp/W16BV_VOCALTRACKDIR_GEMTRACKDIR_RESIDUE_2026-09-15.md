@@ -447,7 +447,7 @@ sanity read of the magnitude, not the tool.
 ### Native gate (last action)
 
 ```
-NATIVE_GATE_RESULT_PLACEHOLDER
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
 ```
 
 ---
