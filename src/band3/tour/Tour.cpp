@@ -246,6 +246,10 @@ bool Tour::IsUnderway(BandProfile *i_pProfile) const {
 
 void Tour::InitializeTour() {
     ClearPerformer();
+    // Retail emits an MSVC function-local-static guard here (guard word
+    // 0x82CBE908, Symbol 0x82CBE904, literal 0x82000C50 "tour"); the file-scope
+    // Symbols.h global carries no guard at all -- W16-BU.
+    static Symbol tour("tour");
     TheGameMode->SetMode(tour);
     if (TheSessionMgr->IsLeaderLocal()) {
         m_pTourPerformer = new TourPerformerLocal(mBandUserMgr);
@@ -327,12 +331,11 @@ Symbol Tour::GetTourGigGuideMap() const {
 
 Symbol Tour::GetConclusionText() const {
     if (m_pTourProgress) {
-        Symbol tourSym = m_pTourProgress->GetTourDesc();
-        TourDesc *pTourDesc = GetTourDesc(tourSym);
-        if (pTourDesc)
-            return pTourDesc->GetConclusionText();
-    }
-    return "";
+        TourDesc *pTourDesc = GetTourDesc(m_pTourProgress->GetTourDesc());
+        MILO_ASSERT(pTourDesc, 0x246);
+        return pTourDesc->GetConclusionText();
+    } else
+        return "";
 }
 
 Symbol Tour::GetAnnouncement() const {
