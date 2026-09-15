@@ -7,7 +7,7 @@
 // x4, ChordShapeGenerator). The (this) / (this, 0) spelling below selects
 // per site; these two defines select the inline policy (see obj/Object.h).
 #define RB3_OBJPTR_INLINE_OWNER_CTOR
-#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
+#define RB3_TU_OBJPTR_DEFER_OWNER
 #include "obj/ObjMacros.h"
 #include "bandobj/GemTrackDir.h"
 #include "bandobj/BandButton.h"
@@ -173,7 +173,7 @@ void GemTrackDir::PreLoad(BinStream &bs) {
         bs >> mKickDrummerTrig;
         bs >> mSpotlightPhraseSuccessTrig;
         if (gGemTrackRevs.rev < 0xC) {
-            ObjPtr<EventTrigger> trig(this, 0);
+            ObjPtr<EventTrigger> trig(this);
             bs >> trig;
         }
         bs >> mDrumFillResetTrig;
@@ -189,7 +189,7 @@ void GemTrackDir::PreLoad(BinStream &bs) {
         }
 
         if (gGemTrackRevs.rev >= 6 && gGemTrackRevs.rev <= 10) {
-            ObjPtr<RndAnimatable> anim(this, 0);
+            ObjPtr<RndAnimatable> anim(this);
             bs >> anim;
         }
 
@@ -224,7 +224,7 @@ void GemTrackDir::PreLoad(BinStream &bs) {
             bs >> mChordLabelPosOffset;
         if (gGemTrackRevs.rev >= 8) {
             if (gGemTrackRevs.rev < 10) {
-                ObjPtr<EventTrigger> trig(this, 0);
+                ObjPtr<EventTrigger> trig(this);
                 bs >> trig;
                 bs >> trig;
             }
