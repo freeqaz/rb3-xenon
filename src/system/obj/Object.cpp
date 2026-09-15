@@ -293,13 +293,17 @@ BEGIN_HANDLERS(Hmx::Object)
 #endif
 END_HANDLERS
 
+// W16-BS 2026-09-15: RB3 retail's Hmx::Object::SyncProperty is the EMPTY
+// terminal -- 72 B at 0x8235c2e0, i.e. exactly what BEGIN/END_PROPSYNCS emit
+// with no SYNC_PROP entries. Our 720-byte body carried three DC3-era entries
+// RB3 does not have; rb3-Wii's BEGIN_PROPSYNCS(Hmx::Object) is likewise empty,
+// and the "sinks" string has exactly 2 retail xrefs, both in MsgSource.
+// Kept for the native build, which relies on name/type/sinks propsync.
 BEGIN_PROPSYNCS(Hmx::Object)
+#ifdef HX_NATIVE
     SYNC_PROP_SET(name, mName, SetName(_val.Str(), mDir))
     SYNC_PROP_SET(type, Type(), SetType(_val.Sym()))
-#ifdef HX_NATIVE
     SYNC_PROP(sinks, mSinks ? *mSinks : gSinks)
-#else
-    SYNC_PROP(sinks, gSinks)
 #endif
 END_PROPSYNCS
 
