@@ -51,16 +51,16 @@ public:
     // NOTE: gRev/gAltRev are TU-local statics in ScrollbarDisplay.cpp, not
     // class statics -- see the comment there (retail addresses them off one
     // shared base, which only works for statics the compiler lays out itself).
-    // See MicInputArrow.h: retail inlines the class operator new into
-    // NewObject and still evaluates StaticClassName(); the tree-wide
-    // OBJ_MEM_OVERLOAD is noinline and its name argument is swallowed by the
-    // MemAlloc debug-arg macro, so spell it out locally.
-    static void *operator new(unsigned int s) {
-        StaticClassName();
-        return MemAlloc(s, __FILE__, 0x30, "ScrollbarDisplay", 0);
-    }
-    static void *operator new(unsigned int s, void *place) { return place; }
-    DELETE_OVERLOAD;
+    // See MicInputArrow.h: retail inlines the class operator new into NewObject
+    // (0x82323198) and still evaluates StaticClassName(); retail homes the
+    // Symbol temp at 0x50 and the pointer at 0x54. The local hand-rolled copy
+    // that used to sit here discarded the Symbol with a bare
+    // `StaticClassName();`, merging the two slots -- that was the single
+    // residual charge. The shared OBJ_MEM_OVERLOAD calls `.Str()` on the temp
+    // and names `mem`, the form utl/MemMgr.h records as reproducing retail's
+    // separate-slot placement, and keeps operator delete noinline exactly as
+    // DELETE_OVERLOAD did. Lane W16-BE, 2026-09-15.
+    OBJ_MEM_OVERLOAD(0x3a);
 
     // UIComponent is 0x140 on retail-360 (not the 0x10c the Wii header assumes).
     ObjPtr<BandList> m_pList; // 0x140
