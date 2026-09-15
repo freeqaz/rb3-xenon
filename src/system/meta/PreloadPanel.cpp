@@ -157,10 +157,9 @@ void PreloadPanel::ContentMounted(const char *c1, const char *c2) {
 }
 
 void PreloadPanel::ContentFailed(char const *c) {
-    const char *cc20 = gNullStr;
-    if (TheContentMgr.IsCorrupt(c, cc20)) {
+    if (TheContentMgr.IsCorrupt(c)) {
         mContentCorrupt = true;
-        mCorruptContentName = cc20;
+        mCorruptContentName = c;
     }
     OnContentMountedOrFailed(c);
 }
