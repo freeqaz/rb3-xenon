@@ -557,9 +557,20 @@ entirely the splits change, with zero build nondeterminism.
 
 ### Native gate
 
-_(pasted verbatim below after the run; the gate is this lane's last action and
-only this markdown file is committed after it — a `.md` cannot reach the native
-link, the precedent W16-BI records.)_
+```
+tools/native_build_gate.sh                                     rc=0
+```
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+`skipped=0` and `verified=18` of `expected=18`, so this is **full coverage** and
+not the `PASS (INCOMPLETE: …)` shape the 0-SKIP rule exists to catch. The gate was
+this lane's last action; only this markdown file is committed after it, and a
+`.md` cannot reach the native link. This lane made **no `src/` edit whatsoever**
+— its entire footprint is `config/45410914/splits.txt` (2 `.text` + 2 derived
+`.pdata` lines) and two documents.
 
 ---
 
