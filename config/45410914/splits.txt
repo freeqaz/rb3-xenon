@@ -1933,7 +1933,7 @@ StringTable.cpp:
 
 TempoMap.cpp:
 	.pdata      start:0x82243048 end:0x82243050
-	.text       start:0x827D2510 end:0x827D2524
+	.text       start:0x827D2500 end:0x827D2524
 	.text       start:0x827D2528 end:0x827D25C4
 
 MemStream.cpp:
@@ -6707,7 +6707,7 @@ SongInfoCopy.cpp:
 	.pdata      start:0x82242FD0 end:0x82243048
 	.text       start:0x827D1120 end:0x827D1D98
 	.text       start:0x827D1D98 end:0x827D1EF0
-	.text       start:0x827D1EF0 end:0x827D2510
+	.text       start:0x827D1EF0 end:0x827D2500
 
 JsonUtils.cpp:
 	.pdata      start:0x82243940 end:0x82243948
