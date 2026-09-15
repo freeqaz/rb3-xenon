@@ -114,4 +114,19 @@ public:
 };
 
     DECLARE_MESSAGE(MetadataLoadedMsg, "metadata_loaded")
+    // ADJUDICATED ON RETAIL BYTES (lane W16-CA): retail builds this message from
+    // RAW SCALARS, not from five caller-built DataNodes.  The out-of-line body is
+    // fn_82606020 in BandStorePanel.obj; it takes (r3=this, r4=DataArray*, r5,
+    // r6=const char*, r7, r8), wraps each in a DataNode on ITS OWN frame, calls
+    // the 5-arg Message ctor (fn_822B1918) with the Symbol from
+    // MetadataLoadedMsg::Type() (fn_826050A8 -- a function-local static Symbol
+    // over lbl_820BF1E8 = "metadata_loaded"), then installs its own vftable
+    // (lbl_820BF538) -- i.e. it is a Message SUBCLASS ctor, not a helper.
+    // The three scalar parameters are `bool`, not `int`: the callee applies
+    // `clrlwi rN, rN, 24` to r5/r7/r8 before storing them into the DataNode
+    // integer, which is the bool->int widening and would not be emitted for an
+    // int parameter.  (SetlistToStorePanel.cpp reached the same call-shape
+    // conclusion from the caller side and spelled it `int`; the caller cannot
+    // tell the two apart -- only this callee body can.)
+    MetadataLoadedMsg(DataArray *, bool, const char *, bool, bool);
     END_MESSAGE

@@ -7,6 +7,7 @@
 #include "net_band/DataResults.h"
 #include "net_band/RockCentral.h"
 #include "net_band/RockCentralMsgs.h"
+#include "net/Net.h"
 #include "obj/Data.h"
 #include "obj/ObjMacros.h"
 #include "os/Debug.h"
@@ -79,30 +80,43 @@ void UGCPurchasePanel::Poll() {
         // derives a flags/index value from a global singleton (DAT_82cbfaec in the
         // Ghidra decompile), then constructs an XboxPurchaser via placement new,
         // mirroring the StorePanel::CheckOut idiom (StorePanel.cpp).
+        // RESOLVED (lane W16-CA, 2026-09-15). The "unidentified global singleton"
+        // is `TheNet`: objdiff names retail's two relocations here outright as
+        // ?TheNet@@3VNet@@A@h / @l, and Ghidra's DAT_82cbfaec is simply
+        // TheNet + 0x34 (0x82cbfaec - 0x34 == 0x82cbfab8 == &TheNet).
+        // Net + 0x34 is `Server *mServer` -- VERIFIED by the compiler
+        // (cl /d1reportSingleClassLayoutNet), not by the header comments.
+        // The two vcalls are `lwz r11,0x14(vptr)` = slot 5 and
+        // `lwz r11,0x1c(vptr)` = slot 7 of the PRIMARY (Server@Server@) vtable,
+        // which cl /d1reportSingleClassLayoutServer prints as
+        //   [ 5] Server::IsConnected      [ 7] Server::GetPlayerID
+        // Corroborated three ways: the slot arithmetic agrees with this header's
+        // own retail-attested anchors (GetPersistentStoreClient 0x34 = 13,
+        // GetCompetitionClient 0x38 = 14, recorded by lane W16-G); retail tests
+        // slot 5's result with `clrlwi. r11,r3,24`, i.e. a bool, and IsConnected
+        // is the only bool-returning slot in that neighbourhood; and slot 7 is
+        // handed mUser->GetPadNum() and its result is what feeds the ctor's
+        // trailing flags argument, which is what GetPlayerID(int) is for.
         unsigned int flags = 0;
-        // TODO(unresolved): retail guards this block on a global singleton
-        // (Ghidra DAT_82cbfaec) -- `if (singleton && singleton->vtbl[0x14]())
-        // flags = singleton->vtbl[0x1c](mUser->GetPadNum());`. Singleton's class
-        // could not be identified within budget, so this defaults to flags=0
-        // (matching StorePanel::CheckOut's non-guarded call site). This leaves the
-        // guarded ~9-instruction prefix of case 3 unmatched but should recover the
-        // bulk of the body (OfferStringToID/GetPadNum/alloc/ctor/Initiate).
-        mPurchaseState = 4;
-        void *mem = operator new(sizeof(XboxPurchaser));
-        StorePurchaser *purchaser;
-        if (mem) {
-            purchaser = new (mem) XboxPurchaser(
-                mUser->GetPadNum(),
-                StorePurchaseable::OfferStringToID(mOfferID),
-                0,
-                0,
-                demo_upgrade,
-                flags
-            );
-        } else {
-            purchaser = 0;
+        Server *server = TheNet.GetServer();
+        if (server && server->IsConnected()) {
+            flags = server->GetPlayerID(mUser->GetPadNum());
         }
-        mPurchaser = purchaser;
+        mPurchaseState = 4;
+        // ONE temporary, not two.  The `void *mem` + separate `purchaser` idiom
+        // (copied here from StorePanel.cpp:302) costs a second 4-byte stack slot
+        // at 0x60: retail stores the allocation pointer once (`mr. r25,r3;
+        // stw r25,0x5c(r31)`) where we stored it at 0x5c AND 0x60.  That one
+        // extra slot pushed every later local by +8 and rounded the frame
+        // 0xc0 -> 0xd0, which was 17 of this function's 35 charged sites.
+        mPurchaser = new XboxPurchaser(
+            mUser->GetPadNum(),
+            StorePurchaseable::OfferStringToID(mOfferID),
+            0,
+            0,
+            demo_upgrade,
+            flags
+        );
         mPurchaser->Initiate();
         break;
     }

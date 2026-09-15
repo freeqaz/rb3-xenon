@@ -860,7 +860,7 @@
  "0x82e013b4": "?shell_no_patch@?1??Text@PatchProvider@@UBAXHHPAVUIListLabel@@PAVUILabel@@@Z@4VSymbol@@A",
  "0x82e01734": "?init@?7??OnMsg@UGCPurchasePanel@@QAA?AVDataNode@@ABVSigninChangedMsg@@@Z@4VMessage@@A",
  "0x82e0173c": "?sign_out@?4??OnMsg@UGCPurchasePanel@@QAA?AVDataNode@@ABVSigninChangedMsg@@@Z@4VSymbol@@A",
- "0x82e01810": "?msg@?BO@??Poll@SetlistToStorePanel@@UAAXXZ@4VSetlistMetadataLoadedMsg@@A",
+ "0x82e01810": "?msg@?BO@??Poll@SetlistToStorePanel@@UAAXXZ@4VMetadataLoadedMsg@@A",
  "0x82e01818": "?setlist_upsell@?BO@??Poll@SetlistToStorePanel@@UAAXXZ@4VSymbol@@A",
  "0x82e0181c": "?offers@?BE@??Poll@SetlistToStorePanel@@UAAXXZ@4VSymbol@@A",
  "0x82e01820": "?store@?BK@??Poll@SetlistToStorePanel@@UAAXXZ@4VSymbol@@A",
@@ -29028,6 +29028,7 @@
  "0x82569c98": "?GetTotalCountFromTrainer@LessonMgr@@QAAHVSymbol@@@Z",
  "0x8268e488": "??_DLocalBandUser@@QAAXXZ",
  "0x8268e2d0": "??1LocalBandUser@@UAA@XZ",
+ "0x82606020": "??0MetadataLoadedMsg@@QAA@PAVDataArray@@_NPBD11@Z",
  "_bijection_arbitrary": [
   "0x8227b018",
   "0x8227b028",
