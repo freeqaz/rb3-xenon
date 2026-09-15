@@ -123,6 +123,42 @@ avoidable here, so it was avoided.
   That is a struct-layout lane, and per the standing directive struct/vtable work
   is high value — I recommend it be dispatched as one.
 
+> **CORRECTION (2026-09-15, W16-BK): the recommended `UIPanel` struct-layout lane
+> is WITHDRAWN — the layout divergence does not exist.** Both observations above
+> are accurate and both were made against the **wrong function**. The row at
+> `0x8268b9a0` is not a `UIPanel` factory at all; it is
+> `?NewRemoteBandUser@BandUser@@SAPAVRemoteBandUser@@XZ` (W16-BI corrected that map
+> row, and the map carries that name today). Re-verified from retail bytes in this
+> worktree, independently of either lane's write-up:
+>
+> * `0x8268b9a0` reads `li r3,0x108` (264) → `bl 0x827bd2f0` → `bl 0x8268b4e8` =
+>   `??0RemoteBandUser@@QAA@XZ`, and
+>   `scripts/harvest/class_layout_report.py RemoteBandUser` says
+>   **`sizeof = 264 (0x108)`**. So the **264 is `sizeof(RemoteBandUser)`**, exactly.
+> * `??2CriticalSection@@SAPAXI@Z` at `0x827bd2f0` is the **ICF-survivor spelling of
+>   the global `operator new`** (alias group 1546, 123 members), reached by 13 of the
+>   53 sites W16-BI censused. It is **not** evidence of an embedded `CriticalSection`
+>   member.
+> * The real `?NewObject@UIPanel@@SAPAVObject@Hmx@@XZ` is **`0x82802418`**, and it
+>   reads **`li r3,0x68` (104)** → `operator new` → `bl 0x82812920` =
+>   `??0UIPanel@@QAA@XZ`.
+>   `scripts/harvest/class_layout_report.py UIPanel` says **`sizeof = 104 (0x68)`**
+>   — so **our header is right and retail agrees with it**.
+>
+> ⇒ the 264 − 104 = 160 bytes of "members our header lacks" **do not exist**, and a
+> struct-layout lane would have hunted them. The row was an **identification and
+> pinning** problem: `0x82802418` was pinned inside `UIColor.cpp:`'s `.text` block,
+> whose `UIColor.obj` defines **no `NewObject` symbol at all**, so objdiff had
+> nothing to pair it against. W16-BK re-homed it to `UI.cpp:` (the only TU with
+> `REGISTER_OBJ_FACTORY(UIPanel)`, and the obj that does define the name) and the
+> row went **0 → 100 %**, measured `+1 fn / +100 B`, with the block's two unwind
+> funclets following for a further `+2 fns / +80 B`.
+>
+> Evidence: `docs/decomp/W16BI_NEWREMOTEBANDUSER_UI_ISLAND_UIPANEL_FACTORY_2026-09-15.md`
+> § "Item 4" and its "NOT done" list, plus
+> `docs/decomp/W16BK_UIPANEL_FACTORY_REHOME_UICOLOR_TO_UI_2026-09-15.md`.
+> **Nothing in the paragraph above has been altered** — this note is additive.
+
 ### OutfitConfig COMDAT sizes — for lane W16-BD's masked-compare
 
 Measured properly rather than reasoned about: both header variants compiled to the
@@ -277,6 +313,18 @@ ruler) → `verify_objs_patched.py --verify-manifest` **OK** (1,215 decomp +
 - **`?NewObject@UIPanel@@` (0x8268b9a0)** — outside my file bar **and** a real
   layout defect (`li r3,0x68` vs retail `li r3,0x108`, plus a `CriticalSection`
   ctor call), not an allocation-shape defect. Recommend a struct-layout lane.
+
+> **CORRECTION (2026-09-15, W16-BK): WITHDRAWN — do not dispatch this lane.** The
+> `li r3,0x108` was read from `0x8268b9a0`, which is
+> `?NewRemoteBandUser@BandUser@@`, and `0x108` = 264 = `sizeof(RemoteBandUser)`
+> per the compiler. `sizeof(UIPanel) == 104` is confirmed by
+> `class_layout_report.py` **and** by retail's own `li r3,0x68` at the real factory
+> `0x82802418`; `??2CriticalSection@@SAPAXI@Z` is the ICF-survivor spelling of
+> global `operator new`, not an embedded member. There is no `UIPanel` layout
+> defect. The row was a re-home/identification problem, resolved by W16-BK
+> (`ecda2571`): `0x82802418` moved from `UIColor.cpp:` to `UI.cpp:`, **0 → 100 %**,
+> `+1 fn / +100 B`. See
+> `docs/decomp/W16BK_UIPANEL_FACTORY_REHOME_UICOLOR_TO_UI_2026-09-15.md`.
 - **`??0OutfitConfig@@QAA@XZ`** — 564 B ours vs 588 B retail. A separate row per
   the brief's own pre-check (iii); diagnosed only far enough to establish it is
   separate. Not touched.
