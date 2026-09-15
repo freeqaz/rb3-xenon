@@ -386,3 +386,248 @@ exactly 15 rows.
   still in raw `$S` form rather than `??_B`, i.e. an apparent additional pending
   row for the `guard` obj patcher. Metric-irrelevant here (retail's
   `0x82cc001c` is unnamed ⇒ forgiven), so it is filed for a tooling lane.
+
+---
+
+## §5 MEASURED — prediction vs result
+
+Applied as one commit (`aaff0752`). dtk rewrote `splits.txt` once on the first
+build (the documented split-guard path — `.pdata` is derived output; recovery is
+one build) and the second build was a fixed point, rc=0.
+
+★ **dtk's own `.pdata` derivation independently corroborates the census.** Given
+only my `.text` cut it split `0x82209000–0x82209158` at **`0x822090E0`**:
+`0xE0` = 224 B = **28** RUNTIME_FUNCTIONs to `UI.cpp`, `0x78` = 120 B = **15** to
+`NetSearchResult`. Exactly the head/tail counts I had derived from the retail
+bytes, computed by a different instrument that knew nothing of my census.
+
+### 5.1 Headline
+
+| measure | baseline | measured | Δ | predicted Δ | hit |
+|---|---|---|---|---|---|
+| `matched_functions` | 43,558 | **43,568** | **+10** | +9 | **short by 1** |
+| `matched_code` | 4,040,604 | **4,041,848 B** | **+1,244 B** | +1,196 B | **short by 48 B** |
+| `matched_code_percent` | 39.43181 | **39.443947** | **+0.012137 pp** | +0.011672 | short |
+| `total_functions` | 69,240 | **69,240** | **0** | 0 | **YES** |
+| `total_code` | 10,247,068 | **10,247,068** | **0** | 0 | **YES** |
+| `masked_equal_functions` | 23,080 | **23,081** | **+1** | +1 | **YES** |
+| `fuzzy_match_percent` | 49.6996 | 49.710495 | +0.010895 | — | — |
+
+`total_functions` and `total_code` both **exactly 0** confirms risk 1 from §4.8
+did not fire: the cut at `0x823F56F8` landed on a real symbol boundary and dtk
+did not re-carve a single row.
+
+### 5.2 All 16 pre-registered rows hit 100 / 100
+
+`default/network/net/NetSearchResult` is a **NEW unit at 15/15 rows and
+1,396/1,396 bytes — 100.0%**. `?NewObject@UIScreen@@SAPAVObject@Hmx@@XZ` reached
+fuzzy 100 / mpn 100 at its true home `0x828023A0`. Every row in §4.6's table
+landed where predicted, including the two funclets predicted to cross 99.x → 100
+and the alias-forgiven `fn_823F5C68`.
+
+### 5.3 Set-diff
+
+`python3 tools/rowset_snapshot.py diff ~/tmp/rows_w16bn_base.json`
+
+**CROSSED IN — 16 rows, 1,444 B**
+
+| bytes | row |
+|---|---|
+| 264 | `NetSearchResult::??0NetSearchResult@@QAA@XZ` |
+| 184 | `NetSearchResult::?Handle@NetSearchResult@@UAA?AVDataNode@@PAVDataArray@@_N@Z` |
+| 148 | `NetSearchResult::??1NetSearchResult@@UAA@XZ` |
+| 132 | `NetSearchResult::?Equals@NetSearchResult@@UBA_NPBV1@@Z` |
+| 120 | `NetSearchResult::?Save@NetSearchResult@@UBAXAAVBinStream@@@Z` |
+| 120 | `NetSearchResult::?Load@NetSearchResult@@UAAXAAVBinStream@@@Z` |
+| 76 | `NetSearchResult::??_GNetSearchResult@@UAAPAXI@Z` |
+| 72 | `NetSearchResult::?New@NetSearchResult@@SAPAV1@XZ` |
+| **48** | **`SessionSearcher::?AllocateNetSearchResults@SessionSearcher@@QAAXXZ`** ← unpredicted |
+| 44, 44, 40, 40, 40, 32 | the 7 funclets, re-homed |
+
+**FELL OUT — 5 rows, 200 B:** `default/UI::fn_823F57B4` (44),
+`fn_823F5BC0` (44), `fn_823F578C` (40), `fn_823F5C68` (40), `fn_823F5A68` (32) —
+all five are the *same funclets* leaving `default/UI`, not losses. **NET +1,244 B.**
+
+Only 5 of the 7 funclets appear as fall-outs because `fn_823F5B98` and
+`fn_823F5BEC` were at 99.40 / 99.50 and so were never in the baseline
+fuzzy-100 set.
+
+The row arithmetic closes exactly: 16 in − 5 out = **+11 fuzzy rows**, but
+`matched_functions` is **+10**, because `fn_823F5BEC` already had `mpn == 100`
+(fuzzy 99.50) and merely changed unit — the documented `mpn` / `fuzzy` split
+paying bytes without paying a function.
+
+### 5.4 ★ Why I was short: an uncensused caller cascade
+
+The one unpredicted row is
+**`?AllocateNetSearchResults@SessionSearcher@@QAAXXZ`** (48 B, in
+`default/network/net/SessionSearcher`). It **calls `NetSearchResult::New()`**.
+While the map named `0x823f5c20` `?NewObject@UIScreen@@SAPAVObject@Hmx@@XZ`,
+that call site's relocation name disagreed with our source's
+`?New@NetSearchResult@@SAPAV1@XZ` and was **charged**; naming the address
+truthfully cleared the charge and the row crossed.
+
+This is the documented **"a wrong name is financed by its callers"** mechanism
+running in reverse — repairing a wrong map name pays at the call sites, not just
+at the row. **My error was procedural, not evidential:** I verified the eight
+bodies exhaustively and never asked *who calls the address I am renaming*.
+
+★ **Rule for the next map lane: before pricing a rename, census the `bl` callers
+of the old address and check whether our source already spells the new name.**
+Each such caller is a candidate row, and the cascade is upside the direct
+analysis cannot see. Being short is the safe direction, but it is still a miss.
+
+---
+
+## §6 Item 5 — sweep report (observations only, nothing acted on)
+
+`default/UI` now holds 189 rows. Per remaining `.text` block:
+
+| block | rows | bytes | at 100 | bytes @100 | note |
+|---|---|---|---|---|---|
+| `0x823F4A30–0x823F56F8` | 28 | 3,148 | 5 | 236 | **HEAD — MessageBroker; top candidate** |
+| `0x828023A0–0x828024B0` | 4 | 252 | 4 | 252 | ALL 100 |
+| `0x828024B0–0x82802530` | 2 | 120 | 2 | 120 | ALL 100 |
+| `0x82802530–0x82802588` | 1 | 88 | 1 | 88 | ALL 100 |
+| `0x82802588–0x828025B0` | 1 | 32 | 1 | 32 | ALL 100 |
+| `0x828025B0–0x82802630` | 2 | 120 | 2 | 120 | ALL 100 |
+| `0x82802630–0x828026A8` | 2 | 120 | 2 | 120 | ALL 100 |
+| `0x828027E8–0x82802840` | 3 | 72 | 1 | 28 | mixed |
+| `0x82802840–0x82802978` | 3 | 304 | 3 | 304 | ALL 100 |
+| `0x82802978–0x82802F24` | 20 | 1,376 | 16 | 972 | mixed |
+| `0x82802F28–0x82803030` | 4 | 260 | 1 | 124 | mixed |
+| `0x82803030–0x828030B4` | 1 | 132 | 1 | 132 | ALL 100 |
+| `0x828030B8–0x828030F8` | 2 | 56 | 1 | 36 | mixed |
+| `0x828030F8–0x82803110` | 1 | 16 | 1 | 16 | ALL 100 |
+| `0x82803110–0x828032E0` | 3 | 464 | 3 | 464 | ALL 100 |
+| `0x828032E0–0x828033C8` | 1 | 220 | 1 | 220 | ALL 100 |
+| `0x828033C8–0x82803494` | 1 | 204 | 1 | 204 | ALL 100 |
+| `0x82803494–0x82804E00` | 51 | 6,376 | 32 | 2,640 | mixed (41%) |
+| `0x82804E00–0x82806414` | 36 | 5,620 | 35 | 5,192 | mixed (92%) |
+| `0x82B801D8–0x82B80320` | 3 | 316 | 1 | 40 | **suspicious — vendor address band** |
+| `0x82B8032C–0x82B80FC4` | 20 | 3,172 | 7 | 232 | **suspicious — 7.3%, vendor band** |
+
+**No block is ALL-ZERO**, so the "all rows fuzzy 0 with names clustering
+elsewhere" pattern the brief asked me to look for does **not** occur in `UI.cpp:`
+after this lane.
+
+### 6.1 Candidates for a future lane, in priority order
+
+1. **`0x823F4A30–0x823F56F8` — the HEAD, 28 rows / 3,148 B, only 236 B at 100.**
+   MessageBroker's TU (constructor `0x823f50b0`; destructor `0x823f4fa8`, which
+   stores both `.?AVMessageBroker@@` and `.?AV_DO_MessageBroker@Quazal@@`
+   vptrs; `??_G` at `0x823f5270`). Only 1 of 18 MessageBroker vtable slots is
+   inside the block, so the TU is larger than this span.
+   ⚠ **This needs SOURCE, not a re-home:** `MessageBroker` has **zero** map rows
+   and no header in our tree (Wii-only). Its 236 B at 100 is four 40 B funclets
+   plus the 76 B **false** `??_GAutomator@@` credit.
+2. **`0x82B8032C–0x82B80FC4` (20 rows / 3,172 B, 7.3% at 100)** and
+   **`0x82B801D8–0x82B80320` (3 rows / 316 B)**. These sit in the
+   `0x82B8xxxx` vendor/Quazal address band yet are pinned under `UI.cpp:`. That
+   is the shape of a wrong-unit pin. **Not investigated** — out of this lane's
+   bar and W16-BM owns other headings.
+3. **`?AddCustomSettings@BandMatchmaker@@QAAXPAVMatchmakingSettings@@W4CustomSettingsType@1@@Z`**
+   — 784 B at fuzzy 99.89796 / mpn 99.89796 in `default/Matchmaker`. A large
+   size-if-it-crosses row behind what looks like a single charged site.
+
+### 6.2 Two of the brief's own candidates are REFUTED
+
+The brief flagged `0x82652090 ?ReadStats@MatchmakerPoolStats@@` and
+`0x826527f0 ?HasCompatibleInstruments@BandMatchmaker@@` as possibly pinned
+outside their headings. **Both are correctly homed and already at fuzzy 100** in
+`default/Matchmaker` (MatchmakerPoolStats 3/3 rows at 100; BandMatchmaker 13/14).
+There is nothing to move.
+
+### 6.3 No `NetSearchResult` / `SessionSearcher` row is mis-homed
+
+| class | map rows | where they live |
+|---|---|---|
+| `NetSearchResult` | 17 | 8 in the new unit (1,116 B, **8/8 at 100**), 7 in `SessionSearcher` (548 B, **7/7 at 100**), 2 in `Matchmaker` (632 B, **2/2 at 100**) |
+| `SessionSearcher` | 13 | all 13 in `SessionSearcher` (1,800 B, **13/13 at 100**) |
+
+The 9 `NetSearchResult`-named rows outside the new unit are **not** mis-pins —
+they are callers and `vector<NetSearchResult*>` helpers whose *mangled names*
+mention the class while the functions genuinely belong to those TUs. All are at
+100. **Nothing to move.**
+
+---
+
+## §7 What I did NOT do, and why
+
+- **Did not rename `0x823f5270`** (`??_GAutomator@@UAAPAXI@Z`, 76 B, a **proven
+  false credit** — it is MessageBroker's vtable slot 0). Its true name
+  `??_GMessageBroker@@UAAPAXI@Z` is emitted by **no object of ours**, so the
+  rename is a certain **−76 B** installing nothing and creating a permanently
+  unpairable row. Precondition (b) of the W16-BL rule fails. Verified still at
+  fuzzy 100 after this lane, i.e. deliberately left as known-false credit.
+  **What would change the verdict:** porting a `MessageBroker` header/TU that
+  emits `??_GMessageBroker@@UAAPAXI@Z`. Then the rename is +76 B, not −76 B.
+- **Did not move the HEAD span** `0x823F4A30–0x823F56F8`. Its destination heading
+  is neither `UI.cpp:` nor the new `NetSearchResult.cpp:`, which is outside this
+  lane's splits domain, and **W16-BM is live** and may touch any other heading's
+  `.text`. Filed in §6.1 instead.
+- **Did not touch the two vendor-band blocks** `0x82B801D8–0x82B80320` and
+  `0x82B8032C–0x82B80FC4` despite their being the most suspicious rows in the
+  unit — same domain bound. Filed, not moved.
+- **Did not act on the `$S`→`??_B` guard observation** (§4.9). It is
+  metric-neutral by construction here and belongs to a tooling lane.
+- **Did not census the `bl` callers of `0x823f5c20` before predicting** — this is
+  the omission that caused the §5.4 miss, recorded as a miss rather than
+  absorbed.
+- **Did not byte-diff `0x828023A0`'s 72 B against retail.** I verified only that
+  `UI.obj` *defines* `?NewObject@UIScreen@@` with matching geometry
+  (8 + 72 + 40 = 120). It reached 100, so the shortcut was harmless — but it was
+  a shortcut, and had it missed, the prediction would have been long by 72 B.
+- **Did not run `ab_measure`.** This is a map+splits transaction measured against
+  a committed pre-registration on one settled tree, with `total_code` /
+  `total_functions` unmoved as the neutrality control; a two-leg A/B would add
+  cost without adding a control this lane lacked.
+
+---
+
+## §8 Gates
+
+| gate | result |
+|---|---|
+| full `./tools/ninja-locked` | **rc=0** (`~/tmp/rb3_build_w16bn_2.log`; run 1 rc=1 was the documented split-guard rewrite) |
+| `scripts/verify_ruler_agreement.py --check` | **rc=0** — "both objdiff-cli entry points resolve the same ruler" |
+| `scripts/verify_objs_patched.py --verify-manifest` | **rc=0** — 1,216 decomp + 3,114 target objects match, `tree_sha256=c797628ddedee41c`; denylist OK |
+| `tools/icf_alias_finder.py --validate` | **rc=0** — PASS: 1,404 map-consistent, 247 tolerated, **0 contradicted**, 1,652 total |
+| `tools/funclet_homing.py --validate` | **rc=0** — PASS: 24,221 HOMED, fan-in uniformly 1 |
+| `tools/native_build_gate.sh` (**LAST**) | **rc=0** — verbatim: |
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+`skipped=0` as required (`rb3-milo` and `rb3-render` both relinked this run, so
+the three engine targets really were exercised — the SKIP class that made a
+worktree gate structurally unable to test them did not occur). The only edit
+made after the gate ran is this `docs/*.md` file, which cannot enter
+`ScatterIncludes.cmake`'s scan of `src/`.
+
+---
+
+## §9 Commits on `w16-bn`
+
+| sha | what |
+|---|---|
+| `22653f66` | `network/net`: port `NetSearchResult.cpp` from the rb3-Wii oracle (52 → 71 lines) + `objects.json` wiring. **Measured Δ0** as a control. |
+| `cab417ad` | docs: **pre-registered** prediction, committed before the transaction and before any measuring build |
+| `aaff0752` | map + splits: the coupled transaction — **+10 fns / +1,244 B** |
+| (this commit) | docs: measurement, set-diff, sweep, gates |
+
+## §10 Ledger
+
+**Not booked by this lane, deliberately.** `docs/decomp/progress_ledger.jsonl`
+keys each entry's `snapshot_id` on the **merge** commit (W16-BL's entry was
+written on `main` at `7320abd5` for merge `8c830054`), which does not exist for
+an unmerged branch. Booking it here would require inventing a snapshot id.
+Coordinator step after `git merge --no-ff w16-bn`:
+
+```
+python3 tools/progress_ledger.py     # from main, after the merge
+```
+
+Figures to book: **43,568 fns / 4,041,848 B / 39.443947 % / 69,240 fns /
+10,247,068 B**, Δ **+10 / +1,244 B / +0.012137 pp** vs `7320abd5`.
