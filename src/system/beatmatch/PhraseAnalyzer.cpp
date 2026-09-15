@@ -54,6 +54,18 @@ void PhraseAnalyzer::Analyze() {
         } else {
             if (abs(mRawPhrases[i].start_tick - rawPhrase.start_tick)
                 < mPhraseStartWindow) {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+                // "Phrases don't quite coincide" diagnostic. Absent from retail:
+                // MILO_WARN/MILO_LOG are ((void)0) in the match build, but their
+                // ARGUMENTS are not -- MakeString, SongFullPath, TickFormat and
+                // TrackName are real calls the compiler must still emit, which is
+                // why this block costs codegen despite the macros being no-ops.
+                // Retail fn_8278C160 (408 B, the Analyze body) carries relocations
+                // for exactly __savegprlr_23, RawPhraseCmp, sort<RawPhrase*>,
+                // SetPhraseIDs x3, memcpy, TrimExcess<RawPhrase>, __restgprlr_23 --
+                // and NONE for MakeString, SongFullPath, TickFormat or TrackName.
+                // rb3-Wii cannot adjudicate this: it is the DEV build and our
+                // source is a verbatim copy of it, so retail bytes decide. (W16-BC)
                 if (abs(mRawPhrases[i].end_tick - rawPhrase.end_tick)
                     >= mPhraseStartWindow) {
                     const char *msg = MakeString(
@@ -68,6 +80,7 @@ void PhraseAnalyzer::Analyze() {
                     else
                         MILO_LOG("%s\n", msg);
                 }
+#endif
                 i8 |= 1 << mRawPhrases[i].track;
                 i7 |= 1 << mRawPhrases[i].track_type;
             } else {
@@ -88,7 +101,14 @@ void PhraseAnalyzer::Analyze() {
         ;
     TrimExcess(mRawPhrases);
     mPerformedAnalysis = true;
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+    // Retail's Analyze neither calls NOR inlines Verify: fn_8278C160 has no
+    // relocation for ?Verify@PhraseAnalyzer@@QBAXXZ, and none of Verify's own
+    // callees (GetTrackTypes, String ctors, TrackTypeToSym, operator+=) appear
+    // in it either, which rules out /Ob2 having inlined this single call site.
+    // Dev-build-only consistency check. (W16-BC)
     Verify();
+#endif
 }
 
 void PhraseAnalyzer::Verify() const {
