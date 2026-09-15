@@ -11790,6 +11790,7 @@ OutfitConfig.cpp:
 	.pdata      start:0x821F4C60 end:0x821F4C70
 	.pdata      start:0x821F4CD0 end:0x821F4CD8
 	.pdata      start:0x821F4F40 end:0x821F4F50
+	.pdata      start:0x821F52A0 end:0x821F52C0
 	.pdata      start:0x821F52C0 end:0x821F52D0
 	.pdata      start:0x821F52E0 end:0x821F52F0
 	.pdata      start:0x821F5398 end:0x821F53B8
@@ -11830,6 +11831,7 @@ OutfitConfig.cpp:
 	.text       start:0x822A68E0 end:0x822A6A48
 	.text       start:0x822A8BC8 end:0x822A8C40
 	.text       start:0x822ABA10 end:0x822ABA1C
+	.text       start:0x822ABCE0 end:0x822ABE70
 	.text       start:0x822ABE70 end:0x822ABFB8
 	.text       start:0x822AC048 end:0x822AC054
 	.text       start:0x822AC058 end:0x822AC110
@@ -12359,13 +12361,11 @@ MessageTimer.cpp:
 	.text       start:0x8242C568 end:0x8242C770
 
 ClipDistMap.cpp:
-	.pdata      start:0x821F52A0 end:0x821F52C0
 	.pdata      start:0x821FED50 end:0x821FED58
 	.pdata      start:0x8222B198 end:0x8222B1B0
 	.pdata      start:0x8222B1B0 end:0x8222B1C0
 	.pdata      start:0x8222B1C8 end:0x8222B1F0
 	.pdata      start:0x8223EB90 end:0x8223EB98
-	.text       start:0x822ABCE0 end:0x822ABE70
 	.text       start:0x823484F0 end:0x82348598
 	.text       start:0x82634358 end:0x82634690
 	.text       start:0x82634690 end:0x82634760
