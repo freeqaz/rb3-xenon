@@ -30533,5 +30533,9 @@
  "0x82c78f5c": "?TheTempoMap@@3PAVTempoMap@@A",
  "0x82c78f60": "?gDefaultTempoMap@@3VSimpleTempoMap@@A",
  "0x82e051a0": "?TheTaskMgr@@3VTaskMgr@@A",
- "0x82a478d0": "?SetVolume@DirectInstrument@@QAAXH@Z"
+ "0x82a478d0": "?SetVolume@DirectInstrument@@QAAXH@Z",
+ "0x8278c160": "?Analyze@PhraseAnalyzer@@QAAXXZ",
+ "0x8278b638": "?IsUnisonPhrase@PhraseAnalyzer@@QBA_NH@Z",
+ "0x8278b3d8": "??0PhraseData@PhraseAnalyzer@@QAA@HHH@Z",
+ "0x8278b678": "?NumPhrases@PhraseAnalyzer@@QBAHH@Z"
 }
