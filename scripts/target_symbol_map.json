@@ -27183,7 +27183,7 @@
  "0x82b7ffa8": "??_ETourChar@@WBI@AAPAXI@Z",
  "0x82b7ffb8": "??0TourChar@@QAA@XZ",
  "0x82b801a8": null,
- "0x82b801d8": "??_GLocalePanel@@UAAPAXI@Z",
+ "0x82b801d8": "??_GTourChar@@UAAPAXI@Z",
  "0x82b80768": "??_GChooseProfilePanel@@UAAPAXI@Z",
  "0x82b81400": "?Analyze@VibratoDetector@@QAAHM@Z",
  "0x82b816f0": "?ShiftedDotProduct@@YAXPBMHPAM_N@Z",
@@ -30541,5 +30541,6 @@
  "0x822ecc48": "??0GemTrackDir@@QAA@XZ",
  "0x8227bcc0": "?NewObject@GemTrackDir@@SAPAVObject@Hmx@@XZ",
  "0x8227bea0": "?NewObject@VocalTrackDir@@SAPAVObject@Hmx@@XZ",
- "0x822fc508": "??0VocalTrackDir@@QAA@XZ"
+ "0x822fc508": "??0VocalTrackDir@@QAA@XZ",
+ "0x82b80238": "?Handle@TourChar@@UAA?AVDataNode@@PAVDataArray@@_N@Z"
 }

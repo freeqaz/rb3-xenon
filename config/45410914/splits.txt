@@ -2897,7 +2897,6 @@ UI.cpp:
 	.pdata      start:0x82245E90 end:0x82245E98
 	.pdata      start:0x82245E98 end:0x82246018
 	.pdata      start:0x82246018 end:0x82246128
-	.pdata      start:0x8225C5E0 end:0x8225C5F8
 	.pdata      start:0x8225C5F8 end:0x8225C680
 	.text       start:0x823F4A30 end:0x823F56F8
 	.text       start:0x828023A0 end:0x828024B0
@@ -2918,7 +2917,6 @@ UI.cpp:
 	.text       start:0x828033C8 end:0x82803494
 	.text       start:0x82803494 end:0x82804E00
 	.text       start:0x82804E00 end:0x82806414
-	.text       start:0x82B801D8 end:0x82B80320
 	.text       start:0x82B8032C end:0x82B80FC4
 
 system/rndobj/Utl.cpp:
@@ -12883,9 +12881,8 @@ band3/meta_band/CharSync.cpp:
 	.text       start:0x82564410 end:0x82565088
 
 band3/tour/TourChar.cpp:
-	.pdata      start:0x8225C540 end:0x8225C5E0
-	.text       start:0x82B7FAA8 end:0x82B801D4
-	.text       start:0x82B80320 end:0x82B8032C
+	.pdata      start:0x8225C540 end:0x8225C5F8
+	.text       start:0x82B7FAA8 end:0x82B8032C
 
 band3/tour/TourChallengeResultsPanel.cpp:
 	.pdata      start:0x8225C498 end:0x8225C540
