@@ -531,7 +531,9 @@ BandCharacter.cpp:
 	.pdata      start:0x821F3240 end:0x821F3250
 	.text       start:0x8227A228 end:0x8227A280
 	.text       start:0x8227A528 end:0x8227A5A8
+	.text       start:0x8227A728 end:0x8227A7A8
 	.text       start:0x8227A7A8 end:0x8227A800
+	.text       start:0x8227A800 end:0x8227A948
 	.text       start:0x8227A948 end:0x8227AA48
 	.text       start:0x8227AAC8 end:0x8227AB48
 	.text       start:0x8227ABC8 end:0x8227AC48
@@ -563,6 +565,7 @@ BandCharacter.cpp:
 	.text       start:0x8228A988 end:0x8228C908
 	.text       start:0x8228C960 end:0x8228C9B8
 	.text       start:0x8228CA90 end:0x8228CB10
+	.text       start:0x82545C88 end:0x82545CA0
 
 Console.cpp:
 	.pdata      start:0x8220ED50 end:0x8220ED58
@@ -4542,13 +4545,6 @@ CameraInput.cpp:
 	.pdata      start:0x82200F28 end:0x82200F30
 	.text       start:0x822740C8 end:0x822740D0
 	.text       start:0x82369568 end:0x82369650
-
-Ham.cpp:
-	.pdata      start:0x821F1FC8 end:0x821F1FD8
-	.pdata      start:0x821F1FE0 end:0x821F2000
-	.text       start:0x8227A728 end:0x8227A7A8
-	.text       start:0x8227A800 end:0x8227A948
-	.text       start:0x82545C88 end:0x82545CA0
 
 HamCharacter.cpp:
 	.pdata      start:0x82246BF8 end:0x82246C40
