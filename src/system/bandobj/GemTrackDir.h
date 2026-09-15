@@ -138,8 +138,7 @@ public:
 
     DataNode OnDrawSampleChord(DataArray *);
 
-    NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x8d);
     NEW_OBJ(GemTrackDir)
     static void Init() { Register(); }
     REGISTER_OBJ_FACTORY_FUNC(GemTrackDir)

@@ -92,6 +92,48 @@ VocalTrackDir 37, Font 32.** For such a unit the named-row hull is a 2.3 MB
 interval whose endpoints carry no information, and "inside/outside" is decided
 by whichever scattered block happens to hold a named row.
 
+> **⚠ CORRECTION (2026-09-15, lane W16-BQ) — THE STRING→FUNCTION ATTRIBUTION
+> BELOW IS WRONG, AND THE `VocalTrackDir` REFUTED VERDICT RESTED ON IT.**
+> This section states that "the 2,548 B function at `0x822ECC48` references
+> `front1.grp`, `lead_lyric_scroll.grp`, `phoneme0.grp`, `phoneme2.grp`,
+> `scroller.trans`". It does not. Re-scanned on retail bytes (Python over
+> `orig/45410914/band.exe`, decoding `lis rX,hi` / `addi rY,rX,lo` pairs within
+> 64 B and mapping each pc to its enclosing `.pdata`/`symbols.txt` extent), all
+> five strings have **exactly one reference site each**, and every one of them
+> lies in **`?SyncObjects@VocalTrackDir@@UAAXXZ` @ `0x822F96F0`**:
+>
+> | string | `.rdata` VA | ref pc | enclosing function |
+> |---|---|---|---|
+> | `front1.grp` | `0x82029D64` | `0x822F99C8` | `?SyncObjects@VocalTrackDir@@UAAXXZ` |
+> | `phoneme0.grp` | `0x82029D24` | `0x822F9AA4` | same |
+> | `phoneme2.grp` | `0x82029D04` | `0x822F9AFC` | same |
+> | `scroller.trans` | `0x82029CBA` | `0x822F9B54` | same |
+> | `lead_lyric_scroll.grp` | `0x82029C58` | `0x822F9C88` | same |
+>
+> **Zero** reference sites lie inside `0x822ECC48-0x822EE498`. `0x822F96F0` is
+> 44,712 B above that block and sits in a *different* `splits.txt` block
+> (`0x822F8FF0-0x822FA1D0`), which is genuinely VocalTrackDir's — so this doc's
+> broader point that VocalTrackDir's own code is correctly pinned SURVIVES; what
+> fails is using those strings as evidence about `0x822ECC48`.
+>
+> `0x822ECC48` is in fact **`??0GemTrackDir@@QAA@XZ`**, settled four ways in
+> `docs/decomp/W16BQ_GEMTRACKDIR_CTOR_REHOME_2026-09-15.md`: the factory
+> `fn_8227BCC0` allocates `li r3,0x7f0` = GemTrackDir's compiler-reported
+> `sizeof` 2032 before calling it (the VocalTrackDir twin allocates `0x770` =
+> 1904 and calls `0x822FC508` instead); and the block's own EH funclets unwind a
+> **`TrackDir`** subobject (`bl ??1TrackDir@@UAA@XZ`), a base
+> `VocalTrackDir : RndDir, BandTrack` does not have at all. The block was
+> re-homed to `GemTrackDir.cpp:` for **+51 functions / +620 B**.
+>
+> ★ The durable lesson is about the INSTRUMENT, not this block: a "traced by
+> string" attribution that never decoded the referencing instruction is an
+> attribution to a *neighbourhood*, not to a function — and here the
+> neighbourhood was the right TU while the function was 44 kB away. It produced
+> a confident REFUTED that closed a real vein for five days. Decode the `lis`/
+> `addi` pair and map the pc to a `.pdata` extent, every time.
+>
+> Nothing below is rewritten; it is the dated record of what was believed then.
+
 ⇒ **`VocalTrackDir`'s flagged block IS its own dedicated `splits.txt` line**:
 
 ```
