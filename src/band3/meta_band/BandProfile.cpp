@@ -717,10 +717,15 @@ void BandProfile::GrantCampaignKey(Symbol key) {
 }
 
 bool BandProfile::HasCampaignKey(Symbol key) {
+#ifdef HX_NATIVE
+    // rb3-Wii DEV build has this unlock-all early-out; RB3 retail does NOT.
+    // Retail 0x8258BAB8 is 68 B with no such branch, and a scan of all 589
+    // retail 92-byte functions finds 0 carrying our variant. Kept for the
+    // native build only -- W16-BU.
     if (MetaPanel::sUnlockAll)
         return true;
-    else
-        return mCampaignKeys.find(key) != mCampaignKeys.end();
+#endif
+    return mCampaignKeys.find(key) != mCampaignKeys.end();
 }
 
 void BandProfile::UnlockModifier(Symbol mod) {
