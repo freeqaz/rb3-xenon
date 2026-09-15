@@ -2807,6 +2807,7 @@
  "0x822ee720": "?SyncProperty@GemTrackDir@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x822ee730": "?PostLoad@GemTrackDir@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
  "0x822ee740": "?Copy@GemTrackDir@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
+ "0x822ee768": "??1GemTrackDir@@UAA@XZ",
  "0x822ef370": "??_DGemTrackDir@@QAAXXZ",
  "0x822ef3e0": "??_GGemTrackDir@@UAAPAXI@Z",
  "0x822efb50": "?PreLoad@GemTrackDir@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
