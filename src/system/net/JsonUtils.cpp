@@ -82,8 +82,15 @@ JsonConverter::~JsonConverter() {
 // RockCentral::DataPointToQString calls jc.NewArray() exactly four times.
 JsonArray *JsonConverter::NewArray() {
     JsonArray *arr = new JsonArray();
+    // EXPERIMENT (W16-BO): name the upcast temporary. Retail sinks the
+    // `stw r31,0x50(r1)` that materialises push_back's const-ref argument BEFORE
+    // `bl json_object_get`; we emit it after (the row's 1 insert + 1 delete). A
+    // named JsonObject* lvalue is initialised at its declaration, which should
+    // place that store ahead of the AddRef call. Semantically identical -- the
+    // upcast is offset 0 under single inheritance.
+    JsonObject *entry = arr;
     arr->AddRef();
-    mObjects.push_back(arr);
+    mObjects.push_back(entry);
     return arr;
 }
 

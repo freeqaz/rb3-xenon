@@ -30529,5 +30529,13 @@
  "0x823f5930": "?Load@NetSearchResult@@UAAXAAVBinStream@@@Z",
  "0x823f59b0": "?Handle@NetSearchResult@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x823f5a90": "??0NetSearchResult@@QAA@XZ",
- "0x828023a0": "?NewObject@UIScreen@@SAPAVObject@Hmx@@XZ"
+ "0x828023a0": "?NewObject@UIScreen@@SAPAVObject@Hmx@@XZ",
+ "0x823e3c88": "?NewNetMessage@NewUserMsg@@SAPAVNetMessage@@XZ",
+ "0x82802240": "?Load@UIColor@@UAAXAAVBinStream@@@Z",
+ "0x8253abb8": "?OnLoad@MusicLibrary@@QAAXXZ",
+ "0x82b82260": "?NewArray@JsonConverter@@QAAPAVJsonArray@@XZ",
+ "0x825557e8": "?Init@PrefabMgr@@SAXPAVBandUserMgr@@@Z",
+ "0x82677bd0": "??0UnkTU5GuidePitchOwner@@QAA@VSymbol@@@Z",
+ "0x82b67a00": "?Init@ExternalMic@@SAXXZ",
+ "0x82b6a0e8": "?CreateFx@FxSendPitchShift360@@MAAPAUIUnknown@@XZ"
 }
