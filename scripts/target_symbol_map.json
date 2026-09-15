@@ -30520,5 +30520,6 @@
  "0x824c8dd0": "??0EventCall@EventAnim@@QAA@PAVObject@Hmx@@@Z",
  "0x824c9270": "?PropSync@@YA_NAAVEventCall@EventAnim@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x8278c2f8": "??_GFillInfo@@UAAPAXI@Z",
- "0x8268b4e8": "??0RemoteBandUser@@QAA@XZ"
+ "0x8268b4e8": "??0RemoteBandUser@@QAA@XZ",
+ "0x82802418": "?NewObject@UIPanel@@SAPAVObject@Hmx@@XZ"
 }
