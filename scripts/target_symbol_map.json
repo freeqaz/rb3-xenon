@@ -15398,7 +15398,7 @@
  "0x82684a70": "??1BandUserMgr@@UAA@XZ",
  "0x82684d28": "?BandUserMgrInit@@YAXXZ",
  "0x82684de0": "??_GBandUserMgr@@UAAPAXI@Z",
- "0x82684e90": "?TypeDef@Object@Hmx@@QBAPAVDataArray@@XZ",
+ "0x82684e90": "?TotalBasePoints@SongDB@@QAAHXZ",
  "0x82684ec8": "?GetNumTracks@SongDB@@QBAHXZ",
  "0x82684ed8": "?GetBaseMaxPoints@SongDB@@QBAHABVUserGuid@@@Z",
  "0x82684f08": "?GetBaseMaxStreakPoints@SongDB@@QBAHABVUserGuid@@@Z",
