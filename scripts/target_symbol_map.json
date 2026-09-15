@@ -30537,5 +30537,8 @@
  "0x825557e8": "?Init@PrefabMgr@@SAXPAVBandUserMgr@@@Z",
  "0x82677bd0": "??0UnkTU5GuidePitchOwner@@QAA@VSymbol@@@Z",
  "0x82b67a00": "?Init@ExternalMic@@SAXXZ",
- "0x82b6a0e8": "?CreateFx@FxSendPitchShift360@@MAAPAUIUnknown@@XZ"
+ "0x82b6a0e8": "?CreateFx@FxSendPitchShift360@@MAAPAUIUnknown@@XZ",
+ "0x822ecc48": "??0GemTrackDir@@QAA@XZ",
+ "0x8227bcc0": "?NewObject@GemTrackDir@@SAPAVObject@Hmx@@XZ",
+ "0x8227bea0": "?NewObject@VocalTrackDir@@SAPAVObject@Hmx@@XZ"
 }
