@@ -564,6 +564,104 @@ void CustomizePanel::UpdateAssetProvider() {
 // `!= 0` is range-analysed to 0/1 exactly like the merged tail was -- the
 // mask is not a property of the phi.  Reverted; only the compiler/codegen
 // channel W37 named remains.
+//
+// -- lane W16-CG (2026-09-15): THE COMPILER/CODEGEN CHANNEL IS NOW SWEPT AND
+//    CLOSED, AND IT CLOSES WITH A MECHANISM RATHER THAN A SHRUG.  Delta 0; no
+//    source, flag or map change is proposed.  Nothing above is retracted, but
+//    ONE PRIOR DIAGNOSTIC IS SHOWN TO HAVE BEEN CONFOUNDED (see (3)).
+//
+// W37 set the burden of proof: "the burden is to move the ProbeX transplant,
+// which is a 20-second check."  ★ IT MOVES.  ProbeX is NOT inherently
+// mask-free -- it was SUPPRESSED.  So the codegen channel was real, and the
+// question it answers is not the one anybody expected.
+//
+// INSTRUMENT (validated in BOTH directions before any candidate was believed;
+// a /FAs listing compiled straight through wibo+cl, ~1.7 s, never via ninja so
+// the six obj patchers are untouched and no phantom regression is possible):
+//   + POSITIVE control: ?OnMsg@BandUI@@...ContentReadFailureMsg, src line 259
+//     `init[0] = msg.GetBool();` -> `bl Int / addic / stw / subfe /
+//     clrlwi r11,r11,24 / stw`.  The detector FIRES: 1 site / 187 insns.
+//   + NEGATIVE control: ?Handle@CustomizePanel@@ -> 0 sites / 1760 insns.
+//   Same code, only the PROC name differs.  A detector that had never returned
+//   nonzero would have confirmed whatever it was pointed at.
+//
+// (1) 28 CODEGEN KNOBS SWEPT, EXACTLY ONE MOVES ANYTHING.  Inert on BOTH the
+//     pristine arm and the ProbeX transplant: /O2 /Ox /Os /Ot /Og /Og- /Od
+//     /Ob0 /Ob1 /Ob2 /Oi- /Oy- /GR- /EHs /GX /fp:precise /fp:strict /GS /Gy-
+//     /GF- /Gd /Gz /Gr /Gm /Z7 /Zp1.  These are LIVE, not ignored -- proc_insns
+//     moves 1760 -> 1858 (/O2), 1724 (/Ob1), 2822 (/Og-) -- they reshape the
+//     function wholesale and still never emit the mask.
+//
+// (2) THE OTHER COMPILER BUILD IS ALSO INERT, AND THE LEG IS NOT VACUOUS.
+//     X360/16.00.11886.00 (DC3's cl) gives byte-for-byte the same verdict as
+//     10224: 0 mask sites, proc_insns 1760/1754, identical to 10224's.  ⚠ That
+//     identity is exactly what a silently-ignored env var looks like, so it was
+//     checked rather than assumed: the listing header self-declares
+//     "Version 16.00.11886.00".  The leg is real.  ⇒ the elision is STABLE
+//     across a 1662-build version gap.
+//
+// (3) ⛔ /EHa EMITS THE MASK -- AND IT LANDS ON THE has_patch ARM, WHICH
+//     REFUTES A DIAGNOSTIC RECORDED ABOVE AS SETTLED.
+//     /EHa breaks the has_license<->has_patch cross-jump, and with the arms
+//     separated:
+//        has_patch  `addi r11,r3,1 / addic / subfe / clrlwi r11,r11,24`  MASKS
+//        has_license `bl HasLicense->bool / clrlwi r11,r3,24 / addic / subfe`
+//                                                                  NO MASK
+//        ProbeX      `subfe r11,r11,r3 / clrlwi r11,r11,24`  MASKS -- and note
+//                    that is the BandUI oracle's exact register form.
+//     ⇒ W37's "breaking the cross-jump leaves the standalone has_license arm
+//     ALSO mask-free" is TRUE, but its companion conclusion "so NEITHER ARM
+//     OWNS IT in our source" is FALSE.  That diagnostic broke the cross-jump by
+//     REPLACING has_patch with `mRefreshingContent` -- it deleted the one arm
+//     that does own the mask, so it could not have seen it.  The has_patch arm
+//     owns the mask; only has_license never emits it.
+//     ⚠ /EHa IS NOT A CANDIDATE and was NOT measured whole-binary, deliberately:
+//     it does not close [530] (has_license is still mask-free under it, so the
+//     charged site survives), it inflates Handle 1760 -> 1907 insns against a
+//     target of 5,036 B, and retail is verified /EHs* synchronous by the
+//     FuncInfo EHFlags==1 census on all 8,541 records.  It is a MECHANISM PROBE.
+//
+// ★ THE RULE THAT FITS ALL SIX OBSERVATIONS.  Our cl emits the byte-mask when
+// materialising a bool from an int, EXCEPT when either (a) the source value is
+// ALREADY KNOWN-BOOLEAN (it arrived via a bool->int widening, so MSVC range-
+// analyses it as 0/1 and the narrowing is dead), or (b) the arm was
+// cross-jump-merged with another arm, which drops it.  Check:
+//     BandUI GetBool   int source, not merged  -> MASK   ✓
+//     ProbeX           int source, merged      -> no mask; /EHa unmerged MASK ✓
+//     has_patch        int source, merged      -> no mask; /EHa unmerged MASK ✓
+//     has_license      KNOWN-BOOL source       -> no mask, EVEN UNMERGED       ✓
+// has_license is the ONLY one of the four that stays mask-free once the merge
+// is out of the way, and it is the only one whose value is already a widened
+// bool.
+//
+// ⇒ AND RETAIL VIOLATES CLAUSE (a).  Retail's arm is BYTE-IDENTICAL to ours up
+// to the missing instruction -- `bl fn_82575670 / clrlwi r11,r3,24 /
+// .L_82619778: subic r10,r11,0x1 / stw r25,0x4(r28) / subfe r11,r10,r11` (our
+// `addic r10,r11,-1` IS retail's `subic r10,r11,0x1`: both assemble to
+// 0x314BFFFF, dtk just prints the other extended mnemonic).  So retail ALSO
+// widened a bool with clrlwi r11,r3,24 and then masked the `!= 0` of it ANYWAY.
+// Retail's compiler did NOT propagate the range through that widening; both
+// compilers we possess DO.  The merge structure is isomorphic and exonerated:
+// both tails are `stw r11,0(r28); b <next>` with exactly THREE predecessors,
+// both sited immediately before the clear_current_boutique arm.
+//
+// ⇒⇒ STATUS: THE SOURCE WAS NEVER THE VARIABLE.  That is why ~22 spellings, an
+// explicit phi and a verbatim transplant all measured inert -- they were all
+// varying the one thing that is already right.  The discriminator is the
+// COMPILER BINARY: a 10224 QFE whose int->bool materialisation does not elide
+// the narrowing over a known-boolean operand.  We hold 10224.00 and 11886.00;
+// both elide.  The channel is closed by ABSENCE OF MATERIAL, with a diagnosis.
+//
+// ★ FALSIFIABLE PREDICTION, so this can be settled rather than re-argued: on a
+// different 10224 QFE the mask appears at this site with ZERO source change,
+// and `?Handle@CustomizePanel@@` crosses to 100 / +5,036 B on its own.  If a
+// future lane acquires another 10224 build, compile THIS FILE UNCHANGED and
+// read the has_license arm.  Nothing else is worth trying.
+// ⛔ DO NOT reopen this row for a 23rd spelling, a pragma, or an alias.  The
+// row has ZERO reloc charges (fuzzy == mpn == 99.92057 EXACTLY), so there is
+// nothing for an alias to forgive, and the spelling program is closed twice
+// over -- once by W37's transplant, and now by the transplant being shown to
+// work under a codegen knob while the real arm still refuses.
 void CustomizePanel::UpdateMakeupProvider(Symbol type) {
     // retail fn_82614E60 is 0x80 bytes and is CALLED (not inlined) from the
     // update_makeup_provider arm. Its body is: two guarded function-local
