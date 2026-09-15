@@ -56,7 +56,12 @@ int maxVertsInPlate;
 int maxFacesInPlate;
 int maxNumLyricPlates;
 bool dumpLyricShifts;
-bool sDumpLyricPlates;
+// PROVEN on retail bytes, not inferred: in PollLyricAnimations retail reads this
+// flag as `lis r28, lbl_82E4BCF9@h` / `lbz r11, lbl_82E4BCF9@l(r28)` -- an
+// ANONYMOUS data label, which is what a file-static compiles to, where an extern
+// would carry its own name. Same shape as sDumpPlateStates (ca3e940a, +760 B).
+// Measured worth +92 B / +1 fn: reverting it took ??$MakeString@MPBD@@ 100 -> 0.
+static bool sDumpLyricPlates;
 static bool sDumpPlateStates;
 bool gDebugSpew;
 
@@ -1025,6 +1030,14 @@ void VocalTrack::PollLyricAnimations(
                 && plates.front()->CurrentEndX(plateMs) < mDir->mTrackLeftX - unk78)
                || plates.front()->mInvalidateMs < ms)) {
         LyricPlate *cur = plates.front();
+        // DO NOT guard this block out. Measured, and it cost -92 B: retail HAS
+        // it -- `lbz lbl_82E4BCF9`, the flag test, and `bl DumpLyricPlates` all
+        // appear as `delete` charges (present in target, absent in us) when it
+        // is removed, and our TU stops instantiating ??$MakeString@MPBD@@, a
+        // 92 B row retail's TU defines and which was matching at 100%.
+        // The real residual here is narrower: retail never loads
+        // ?TheDebug@@3VDebug@@A, so retail's spew reaches MakeString by some
+        // other sink. That sink is unidentified -- see the lane report.
         if (sDumpLyricPlates) {
             TheDebug << MakeString(
                 "recycling lyric plate at %.2f sec %s\n",
@@ -2003,7 +2016,11 @@ void VocalTrack::UpdatePitchArrow(float ms, int singerIdx) {
         TheSongDB->GetCommonPhraseID(mTrackConfig.TrackNum(), MsToTickInt(ms));
     VocalPlayer *player = mPlayer;
     bool spotlight = phraseID != -1;
-    bool enabled = player && player->GetEnabledState() == kPlayerEnabled;
+    // Retail tests the player pointer with a SIGNED `cmpwi cr6, r11, 0`; the plain
+    // `player &&` form makes MSVC emit the unsigned `cmplwi`. The (int) cast is the
+    // documented lever (docs/decomp/patterns/fixable-comparison.md, Signed/Unsigned
+    // Cast) and does not change the short-circuit.
+    bool enabled = (int)player != 0 && player->GetEnabledState() == kPlayerEnabled;
     Singer *singer = player->mSingers[singerIdx];
     float pitchFrame = 0;
     int arrowIdx = singerIdx;
@@ -2021,7 +2038,13 @@ void VocalTrack::UpdatePitchArrow(float ms, int singerIdx) {
         // the target function never loads the gDebugSpew global and makes exactly
         // the 20 calls of the non-debug path (the rb3-Wii DEV decomp keeps them).
         if (enabled && inPhonemePhrase) {
+            // The float is read into a NAMED LOCAL up front, exactly as the third
+            // branch below does with mFrameBestHitScore: retail emits
+            // `lwz 0x70(singer)` then `lfs 0x60(singer)` then `part = NULL`, i.e.
+            // the energy load is hoisted ABOVE the assigned-part test's body. With
+            // the read left at the call site MSVC sinks it to the call instead.
             VocalPart *part = NULL;
+            float energy = singer->mLastFrameMicEnergy;
             if (singer->mFrameAssignedPart > -1) {
                 part = mPlayer->mVocalParts[singer->mFrameAssignedPart];
             }
@@ -2029,7 +2052,7 @@ void VocalTrack::UpdatePitchArrow(float ms, int singerIdx) {
             if (part) {
                 color = (VocalHUDColor)part->unkc8;
             }
-            arrow->SetFrameScore(singer->mLastFrameMicEnergy, color, 0.0f);
+            arrow->SetFrameScore(energy, color, 0.0f);
         } else if (matchType != 0 || 0.0f == singer->mFrameMicPitch) {
             arrow->SetFrameScore(0.0f, (VocalHUDColor)-1, 0.0f);
         } else if (enabled && singer->mFrameTargetPitch > 0.0f) {
@@ -2432,6 +2455,12 @@ void VocalTrack::PrepareNoteTubes(
                     }
                     mNoteTube->SetGlowLevel(level);
                 }
+                // Same DEV-build spew as PollLyricAnimations. Retail's frame
+                // here is 0x170; ours is 0x9d0 (2,144 B larger) and we save
+                // five extra GPRs (__savegprlr_14 vs retail's _19) and three
+                // extra FPRs (__savefpr_15 vs _18) -- live state retail does
+                // not carry.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
                 if (sDump) {
                     TheDebug << MakeString(
                         "LINE %d NOTE %d TIME %.2f PITCHES ",
@@ -2440,6 +2469,7 @@ void VocalTrack::PrepareNoteTubes(
                         firstNote.mMs / 1000.0f
                     );
                 }
+#endif
                 float runX = 0;
                 float prevX = -FLT_MAX;
                 int pointIdx = 0;
@@ -2452,6 +2482,7 @@ void VocalTrack::PrepareNoteTubes(
                         if (!unpitched) {
                             z = (float)(beginPitch - 60) * zPerPitch;
                         }
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
                         if (sDump) {
                             if (unpitched) {
                                 TheDebug << MakeString("UNPITCHED ");
@@ -2460,6 +2491,7 @@ void VocalTrack::PrepareNoteTubes(
                                 "tube pitch to z: %d -> %1.2f\n", beginPitch, z
                             );
                         }
+#endif
                         float x = unk78 * (runX / windowDurationMs);
                         if (note.mUnpitchedNote == 0 && pointIdx == 0) {
                             x += 0.75f * zPerPitch;
