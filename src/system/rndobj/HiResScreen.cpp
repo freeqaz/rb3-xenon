@@ -153,6 +153,18 @@ void HiResScreen::BmpCache::SetPixelColor(
 }
 
 void HiResScreen::TakeShot(const char *c, int i) {
+// Retail compiled this body OUT. Two independent channels agree (lane W16-CH):
+// (1) retail bytes -- the call site in Rnd::Handle at 0x82413C68 sets up
+//     r3=TheHiResScreen, r4="ur_hi", r5=_msg->Int(2) and then branches to
+//     0x826C3888, which is a 4-byte bare `blr` with zero relocations (retail's
+//     universal empty-function ICF survivor, 1116 direct callers); and retail's
+//     HiResScreen TU emits no TakeShot extent at all.
+// (2) the rb3-Wii oracle guards this exact body with `#ifdef VERSION_SZBE69_B8`,
+//     its dev-build gate, so the retail configuration compiles it to `{}`.
+// Our DC3-derived port (DC3 is a dev/debug build) inherited the body UNGATED.
+// House pattern: keep the behaviour for the native port, drop it for the match
+// build. See docs/decomp/patterns/milo-debug-force-define.md.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     mFileBase = c;
     mTiling = i;
     mActive = 1;
@@ -176,6 +188,7 @@ void HiResScreen::TakeShot(const char *c, int i) {
             TheRnd.ShowConsole(false);
         }
     }
+#endif
 }
 
 void HiResScreen::GetBorderForTile(int x, int y, int &left, int &right, int &top, int &bottom)
