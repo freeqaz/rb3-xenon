@@ -82,8 +82,17 @@ GemTrackDir::GemTrackDir()
 }
 
 GemTrackDir::~GemTrackDir() {
+#ifdef HX_NATIVE
+    // Retail's ??1GemTrackDir@@ does NOT release these two (W16-BZ, measured):
+    // objdiff shows a 17-instruction insert cluster here with NO compensating
+    // delete anywhere in the function, and the two extra callee-saved registers
+    // the blocks need are exactly why our prologue is `bl __savegprlr_28` and
+    // our frame 0x80 against retail's inline r30/r31 saves and 0x70 frame.
+    // rb3-Wii (the dev-build oracle) DOES release them -- retail bytes outrank
+    // the oracle.  Kept for the native host so it does not leak.
     RELEASE(mArpShapePool);
     RELEASE(mFingerShape);
+#endif
 }
 #pragma pop
 
