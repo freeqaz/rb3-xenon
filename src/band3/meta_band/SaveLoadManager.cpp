@@ -166,6 +166,20 @@ void SaveLoadManager::ManualDelete() {
     mRequestFlags |= 1;
 }
 
+// LINKAGE IS *NOT* THE LEVER HERE -- REFUTED, do not re-run (lane W16-CF).
+// SetState's clusters at idx 516-648 are our `kStrGlobalCacheName.Str()` load
+// sitting ABOVE the `bl Localize` at the three sites that pass both in one
+// argument list (cases 0x2b, 0x2c, 0x3b); retail keeps that load BELOW the call.
+// Hypothesis tested: internal linkage lets MSVC prove Localize() cannot write
+// this global, licensing the hoist.  Removing this anonymous namespace (giving
+// the global external linkage) was BUILT AND MEASURED: the TU recompiled and the
+// mangled name really did change (?kStrGlobalCacheName@?A0x48d882c4@@3VSymbol@@A
+// -> ?kStrGlobalCacheName@@3VSymbol@@A), and codegen came back BIT-IDENTICAL --
+// row fuzzy 96.74512 before and after, whole-binary delta 0 on all three keys.
+// So the hoist is NOT alias-analysis; it is scheduling.  A different lever is
+// needed.  (Natural control worth keeping: of the 16 references to this global
+// in SetState, the 8 that share no argument list with a call sit at
+// byte-identical indices on both sides; only the 3 Localize sites diverge.)
 namespace {
     Symbol kStrGlobalCacheName("globaloptions");
 }
@@ -1215,12 +1229,12 @@ void SaveLoadManager::SetState(State newState) {
     }
     case 0x38:
     {
-        bool moreThanOne;
-        {
-            std::vector<BandProfile *> newProfiles = TheProfileMgr.GetNewlySignedInProfiles();
-            moreThanOne = (newProfiles.size() > 1);
-        }
-        if (moreThanOne) unk7c = 1;
+        // Retail loads _M_finish/_M_start through the RETURNED sret pointer r3
+        // (`lwz 0x4(r3)` / `lwz 0x0(r3)`) and then re-loads _M_start from the
+        // stack slot for the inlined dtor's null check -- i.e. it does NOT CSE
+        // the two reads.  That is what taking size() on the temporary directly
+        // produces; binding the result to a named local lets MSVC CSE them.
+        if (TheProfileMgr.GetNewlySignedInProfiles().size() > 1) unk7c = 1;
         SetState((State)0x3);
         break;
     }
@@ -1288,10 +1302,15 @@ void SaveLoadManager::SetState(State newState) {
         //   (b) testing kMode_AutoSave first (target's fall-through arm is the
         //       0x54 block, which implies that order) aligned the streams 1:1
         //       (0 insert/delete) but produced 57 `replace` mismatches. 96.8 -> 96.1.
-        if (mMode == kMode_AutoLoad) {
+        switch (mMode) {
+        case kMode_AutoLoad:
             SetState((State)0x3);
-        } else if (mMode == kMode_AutoSave) {
+            break;
+        case kMode_AutoSave:
             SetState((State)0x54);
+            break;
+        default:
+            break;
         }
         break;
     }
