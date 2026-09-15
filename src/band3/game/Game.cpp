@@ -52,6 +52,7 @@
 #include "obj/ObjMacros.h"
 #include "obj/Object.h"
 #include "obj/Task.h"
+#include "os/ContentMgr.h"
 #include "os/Debug.h"
 #include "os/PlatformMgr.h"
 #include "os/System.h"
@@ -256,14 +257,33 @@ void Game::LoadSong() {
     Symbol songSym = MetaPerformer::Current()->Song();
     PlayerTrackConfigList *cfgList = TheGameConfig->GetConfigList();
     auto _tmp0 = TheSongMgr.GetSongIDFromShortName(songSym, true);
-    const SongDataValidate& i2 = TheSongMgr.Data(_tmp0)->IsOnDisc()
-        ? kSongData_Validate
-        : kSongData_NoValidation;
+    // Retail computes a THREE-way SongDataValidate, and computes both
+    // predicates unconditionally before selecting between them (the IsCorrupt
+    // call is issued before the IsOnDisc result is ever tested, so this cannot
+    // be a short-circuiting ternary chain).  rb3-Wii's Game.cpp has the 2-way
+    // form our source inherited; retail Xbox TU5 diverges, and retail bytes
+    // outrank the oracle.
+    bool onDisc = TheSongMgr.Data(_tmp0)->IsOnDisc();
+    bool corrupt = TheContentMgr.IsCorrupt(TheSongMgr.ContentName(songSym, true));
+    // Branchy if/else-if over a pre-initialised variable, NOT a nested ternary:
+    // retail sets the 0 case before testing onDisc (`li r27,0` precedes the
+    // `beq`) and reaches the 1 case through a second conditional branch.  A
+    // nested ternary makes the inner `corrupt ? 1 : 0` a branchless bool
+    // normalise (`subic`/`subfe`), which is what our first attempt emitted.
+    SongDataValidate i2 = kSongData_NoValidation;
+    if (onDisc)
+        i2 = kSongData_Validate;
+    else if (corrupt)
+        i2 = kSongData_ValidateUsingNameOnly;
     Fader *fader = TheSynth->Find<Fader>("per_song_sfx_level.fade", false);
     if (fader)
         fader->SetVal(0);
     BeatMaster * &_ref0 = mMaster;
-    _ref0->GetAudio()->SetPracticeMode(TheGameMode->InMode("practice"));
+    // No SetPracticeMode here: retail's LoadSong contains no GetAudio() load
+    // and no SetPracticeMode call at all (it has neither the 0x1c member fetch
+    // nor the Symbol("practice")/TheGameMode vcall that our inherited rb3-Wii
+    // line emits).  Removed on retail bytes; if retail drives practice mode it
+    // does so from some other site, which is a separate lane's finding.
     RELEASE(mSongInfo);
         _ref0->Load(mSongInfo = new SongInfoCopy(TheSongMgr.SongAudioData(songSym)), 4, cfgList, false, i2, nullptr);
 }
