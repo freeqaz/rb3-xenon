@@ -19413,7 +19413,7 @@
  "0x827879f8": "?AddReceiver@SongParser@@QAAXPAVMidiReceiver@@@Z",
  "0x82787c00": "?_M_insert_overflow_aux@?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVVector3@@ABV3@ABU__false_type@2@I_N@Z",
  "0x82787dd0": "??0DifficultyInfo@SongParser@@QAA@ABV01@@Z",
- "0x82787ed0": "?_M_insert_overflow_aux@?$vector@U?$pair@HH@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HH@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAU?$pair@HH@2@ABU32@ABU__false_type@2@I_N@Z",
+ "0x82787ed0": "?_M_insert_overflow_aux@?$vector@VRGRollChord@@V?$StlNodeAlloc@VRGRollChord@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVRGRollChord@@ABV3@ABU__false_type@2@I_N@Z",
  "0x827880a0": "??$_Copy_Construct@VDifficultyInfo@SongParser@@@stlpmtx_std@@YAXPAVDifficultyInfo@SongParser@@ABV12@@Z",
  "0x82788108": "?HandleRollEnd@SongParser@@QAA_NHE@Z",
  "0x82788288": "?push_back@?$vector@UPartInfo@@V?$StlNodeAlloc@UPartInfo@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUPartInfo@@@Z",
@@ -30533,5 +30533,11 @@
  "0x82c78f5c": "?TheTempoMap@@3PAVTempoMap@@A",
  "0x82c78f60": "?gDefaultTempoMap@@3VSimpleTempoMap@@A",
  "0x82e051a0": "?TheTaskMgr@@3VTaskMgr@@A",
- "0x82a478d0": "?SetVolume@DirectInstrument@@QAAXH@Z"
+ "0x82a478d0": "?SetVolume@DirectInstrument@@QAAXH@Z",
+ "0x8278c160": "?Analyze@PhraseAnalyzer@@QAAXXZ",
+ "0x8278b638": "?IsUnisonPhrase@PhraseAnalyzer@@QBA_NH@Z",
+ "0x8278b3d8": "??0PhraseData@PhraseAnalyzer@@QAA@HHH@Z",
+ "0x8278b678": "?NumPhrases@PhraseAnalyzer@@QBAHH@Z",
+ "0x822abce0": "?resize@?$vector@VOldColorOption@@V?$StlNodeAlloc@VOldColorOption@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVOldColorOption@@@Z",
+ "0x822abdd8": "?NewObject@OutfitConfig@@SAPAVObject@Hmx@@XZ"
 }
