@@ -13657,7 +13657,7 @@
  "0x82605778": "?MakeNewOffer@BandStorePanel@@UAAPAVStoreOffer@@PAVDataArray@@@Z",
  "0x82605800": "?IsLoaded@BandStorePanel@@UBA_NXZ",
  "0x82605868": "?GetRequestPrefix@BandStorePanel@@QBAPBDXZ",
- "0x826058e8": "?CreateCameraBufferMat@@YAPAVRndMat@@HHW4Type@RndTex@@@Z",
+ "0x826058e8": "??$MakeString@VSymbol@@VString@@@@YAPBDPBDVSymbol@@VString@@@Z",
  "0x82605970": "?DataDir@UIPanel@@$4PPPPPPPM@KM@AAPAVObjectDir@@XZ",
  "0x82605980": "?SetTypeDef@UIPanel@@$4PPPPPPPM@KM@AAXPAVDataArray@@@Z",
  "0x82605990": "?ClassName@BandStorePanel@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
