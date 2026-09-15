@@ -1,3 +1,13 @@
+// W16-BF (2026-09-15): retail's EventCall(Hmx::Object*) ctor (fn_824C8DD0, 76 B)
+// is a LEAF -- both ObjPtr member ctors are inlined -- and MSVC uses that
+// intra-TU knowledge in PropSync<ObjList<EventCall>> (fn_824C95F8): it keeps
+// i+1 in volatile r6 across the `T item(owner)` call because it can see the
+// callee never writes r6. With the ctor out of line (two `bl ??0?$ObjPtr@`),
+// the compiler must assume r6 clobbered, parks i+1 in r28 and emits two extra
+// `mr r6,r28` (+8 B, 396 vs 388). Same lever as BandCharacter.cpp/GemTrack.cpp;
+// the only two-arg ObjPtr ctor call sites in this TU are inside that ctor, so
+// the define is scoped to it by construction.
+#define RB3_TU_OBJPTR_FORCEINLINE_CTOR
 #include "world/EventAnim.h"
 #include "obj/ObjMacros.h"
 #include "utl/Symbols.h"
