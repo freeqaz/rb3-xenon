@@ -558,8 +558,7 @@ BandCharacter.cpp:
 	.text       start:0x82285D98 end:0x82286D88
 	.text       start:0x8228732C end:0x822896E0
 	.text       start:0x822896E0 end:0x82289710
-	.text       start:0x82289710 end:0x82289748
-	.text       start:0x82289754 end:0x8228A23C
+	.text       start:0x82289710 end:0x8228A23C
 	.text       start:0x8228A240 end:0x8228A2A0
 	.text       start:0x8228A2A0 end:0x8228A648
 	.text       start:0x8228A648 end:0x8228A900
@@ -5153,7 +5152,6 @@ Line.cpp:
 	.pdata      start:0x8220FD28 end:0x8220FEF8
 	.pdata      start:0x82210050 end:0x82210058
 	.pdata      start:0x82210508 end:0x82210510
-	.text       start:0x82289748 end:0x82289754
 	.text       start:0x82479148 end:0x8247C3EC
 	.text       start:0x8247E084 end:0x8247E0A4
 	.text       start:0x82483858 end:0x82483920
