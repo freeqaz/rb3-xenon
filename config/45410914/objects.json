@@ -1901,6 +1901,7 @@
             "band3/tour/TourWeightManager.cpp": "NonMatching",
             "band3/tour/TourDescPanel.cpp": "NonMatching",
             "band3/tour/TourChar.cpp": "NonMatching",
+            "band3/tour/TourCharRemote.cpp": "NonMatching",
             "band3/tour/TourChallengeResultsPanel.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [

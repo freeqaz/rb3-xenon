@@ -27184,7 +27184,7 @@
  "0x82b7ffb8": "??0TourChar@@QAA@XZ",
  "0x82b801a8": null,
  "0x82b801d8": "??_GTourChar@@UAAPAXI@Z",
- "0x82b80768": "??_GChooseProfilePanel@@UAAPAXI@Z",
+ "0x82b80768": "??_GTourCharRemote@@UAAPAXI@Z",
  "0x82b81400": "?Analyze@VibratoDetector@@QAAHM@Z",
  "0x82b816f0": "?ShiftedDotProduct@@YAXPBMHPAM_N@Z",
  "0x82b81860": "?FindCCPeak@@YAHPBM0HH@Z",
@@ -30542,5 +30542,13 @@
  "0x8227bcc0": "?NewObject@GemTrackDir@@SAPAVObject@Hmx@@XZ",
  "0x8227bea0": "?NewObject@VocalTrackDir@@SAPAVObject@Hmx@@XZ",
  "0x822fc508": "??0VocalTrackDir@@QAA@XZ",
- "0x82b80238": "?Handle@TourChar@@UAA?AVDataNode@@PAVDataArray@@_N@Z"
+ "0x82b80238": "?Handle@TourChar@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x82b80668": "??_ETourCharRemote@@$4PPPPPPPM@FM@AAPAXI@Z",
+ "0x82b80460": "?Handle@TourCharRemote@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x82b80660": "??_ETourCharRemote@@WBI@AAPAXI@Z",
+ "0x82b80690": "??1TourCharRemote@@UAA@XZ",
+ "0x82b80550": "??0TourCharRemote@@QAA@XZ",
+ "0x82b80678": "?Handle@TourCharRemote@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x82b803a8": "?GetTexAtPatchIndex@TourCharRemote@@UBAPAVRndTex@@H_N@Z",
+ "0x82b80330": "?SyncLoad@TourCharRemote@@QAAXAAVBinStream@@@Z"
 }
