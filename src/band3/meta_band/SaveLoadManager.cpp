@@ -730,7 +730,33 @@ void SaveLoadManager::Poll() {
 // cascade to be downstream OF, so "fix the cause and the charges dissolve"
 // does not apply to this row -- and because matched_code is all-or-nothing per
 // row, closing any ONE cluster buys exactly ZERO bytes.  Price this row at 13
-// fixes, not one.  (Corroborating micro-instances measured the same day:
+// fixes, not one.
+//
+// ** CORRECTED, WITH EVIDENCE (lane W16-CF, 2026-09-15). "13 INDEPENDENT" IS
+// ** WRONG ON BOTH WORDS, THOUGH THE PRICING CONCLUSION SURVIVES.
+// The count is right and the independence is not: measured cluster-by-cluster,
+// the 13 are FIVE mechanisms, and two of them are now closed.
+//   - 8 of the 13 (idx 516-648) are ONE mechanism at THREE call sites (cases
+//     0x2b, 0x2c, 0x3b) -- the Localize/vptr/global-load coupling written up
+//     at case 0x2b below.  They stand or fall together, and a single source
+//     edit moves all eight at once (proven: the locName leg moved all three
+//     sites simultaneously).
+//   - idx 798-800 was the mMode dispatch: CLOSED, it is a switch (see 0x43).
+//   - idx 742-747 was a CSE in case 0x38: CLOSED (see 0x38).
+//   - idx 760 is a one-instruction tail-duplication of `li r4,0x3`.
+//   - idx 934-936 and 964-966 are SCHEDULING ONLY: both sides hold the
+//     IDENTICAL instruction multiset, merely re-interleaved, so there is no
+//     semantic difference to fix.  Verified by multiset comparison, not by eye.
+// Two claims that were passed downstream from this block are also refuted by
+// census rather than by argument: retail calls Localize FOUR times and so do we
+// (target idx 298/523/578/637 vs ours 298/523/580/639), so "retail does not
+// call Localize at these two sites at all" is false -- the delete/replace rows
+// there are DISPLACEMENT, not absence; and both sides have exactly 30 `mtctr`,
+// so there is no extra indirect call anywhere in this function.
+// The pricing advice stands and is if anything sharper: matched_code is still
+// all-or-nothing, and what remains is 1 coupled mechanism + 1 layout artifact +
+// 2 pure-scheduling clusters, none of which is reachable by the source forms
+// tried.  Do not re-open this row expecting 13 separate wins.  (Corroborating micro-instances measured the same day:
 // FocusTracker::GetNextFocusPlayer -- fixing the loop-flag polarity closed
 // exactly the 3 charges AT that site and left the other 3 untouched at their
 // original indices; GemPlayer::LocalSetEnabledState -- all 3 charges sat at
