@@ -16,6 +16,29 @@ namespace {
     std::vector<ExternalMic *> gMics;
 }
 
+// Retail fn_82B67A00 (120 B), unit `default/ExternalMic`. The header has DECLARED
+// `static void Init()` all along and no TU ever defined it, so the address read
+// fuzzy 0 with nothing of ours to pair against (an EMISSION gap, not a naming one).
+//
+// Retail-byte evidence (lane W16-BO):
+//   bl 0x82B67948            <- ?Init@ExternalMicClientMgr@@SAXXZ, first thing
+//   r30 = 0x82E1218C         <- the anonymous-namespace gMics vector below
+//   loop r31 = 0 .. 3:       <- `cmplwi cr6,r31,4 / blt` back-edge, so exactly 4 mics
+//       li r3, 0x18          <- sizeof(ExternalMic) == 24, confirmed by
+//                               cl /d1reportSingleClassLayout
+//       bl operator new / null guard
+//       mr r4, r31           <- the loop index IS the ctor argument
+//       bl ??0ExternalMic@@QAA@K@Z     (ctor takes unsigned long)
+//       bl vector<T*>::push_back
+// Its one retail caller is ?Init@Synth360@@UAAXXZ at 0x82B5DF40, which is what a
+// static mic-subsystem Init is called from.
+void ExternalMic::Init() {
+    ExternalMicClientMgr::Init();
+    for (unsigned int i = 0; i < 4; i++) {
+        gMics.push_back(new ExternalMic(i));
+    }
+}
+
 int ExternalMic::NumConnectedMics() {
     int count = 0;
     for (unsigned int i = 0; i < gMics.size(); i++) {
