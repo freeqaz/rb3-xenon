@@ -263,7 +263,7 @@
    "address": "0x824b06c8",
    "survivor": "?erase@?$vector@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@QAAPAIPAI0@Z",
    "folded": [
-     "?erase@?$vector@PAVGemSmasher@@V?$StlNodeAlloc@PAVGemSmasher@@@stlpmtx_std@@@stlpmtx_std@@QAAPAPAVGemSmasher@@PAPAV3@0@Z",
+    "?erase@?$vector@PAVGemSmasher@@V?$StlNodeAlloc@PAVGemSmasher@@@stlpmtx_std@@@stlpmtx_std@@QAAPAPAVGemSmasher@@PAPAV3@0@Z",
     "?erase@?$vector@DV?$StlNodeAlloc@D@stlpmtx_std@@@stlpmtx_std@@QAAPADPAD0@Z",
     "?erase@?$vector@EV?$StlNodeAlloc@E@stlpmtx_std@@@stlpmtx_std@@QAAPAEPAE0@Z",
     "?erase@?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@QAAPAFPAF0@Z",
@@ -646,7 +646,7 @@
    "address": "0x82b5f808",
    "survivor": "?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z",
    "folded": [
-     "?push_back@?$vector@PAVGemSmasher@@V?$StlNodeAlloc@PAVGemSmasher@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVGemSmasher@@@Z",
+    "?push_back@?$vector@PAVGemSmasher@@V?$StlNodeAlloc@PAVGemSmasher@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVGemSmasher@@@Z",
     "?push_back@?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@QAAXABH@Z",
     "?push_back@?$vector@PAVFriend@@V?$StlNodeAlloc@PAVFriend@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVFriend@@@Z",
     "?push_back@?$vector@PAUD3DResource@@V?$StlNodeAlloc@PAUD3DResource@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAUD3DResource@@@Z",
@@ -78872,7 +78872,7 @@
    "address": "0x82b5f360",
    "survivor": "?_M_insert_overflow@?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@IAAXPAHABHABU__true_type@2@I_N@Z",
    "folded": [
-     "?_M_insert_overflow@?$vector@PAVGemSmasher@@V?$StlNodeAlloc@PAVGemSmasher@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAPAVGemSmasher@@ABQAV3@ABU__true_type@2@I_N@Z",
+    "?_M_insert_overflow@?$vector@PAVGemSmasher@@V?$StlNodeAlloc@PAVGemSmasher@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAPAVGemSmasher@@ABQAV3@ABU__true_type@2@I_N@Z",
     "?_M_insert_overflow@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAPAVChatReceiver@@ABQAV3@ABU__true_type@2@I_N@Z",
     "?_M_insert_overflow@?$vector@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAPAVObject@Hmx@@ABQAV34@ABU__true_type@2@I_N@Z"
    ],
@@ -80807,7 +80807,7 @@
    "address": "0x827da5e0",
    "survivor": "?GetCacheName@CacheXbox@@UAAPBDXZ",
    "folded": [
-     "?GetGameCymbalLanes@TrackConfig@@QBAIXZ",
+    "?GetGameCymbalLanes@TrackConfig@@QBAIXZ",
     "?GetPreferredScoreType@BandUser@@QBA?AW4ScoreType@@XZ",
     "?GetSize@NetLoader@@QAAHXZ",
     "?GetUniqueTag@Synchronizable@@QBAPBDXZ"
