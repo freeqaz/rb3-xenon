@@ -30537,5 +30537,7 @@
  "0x8278c160": "?Analyze@PhraseAnalyzer@@QAAXXZ",
  "0x8278b638": "?IsUnisonPhrase@PhraseAnalyzer@@QBA_NH@Z",
  "0x8278b3d8": "??0PhraseData@PhraseAnalyzer@@QAA@HHH@Z",
- "0x8278b678": "?NumPhrases@PhraseAnalyzer@@QBAHH@Z"
+ "0x8278b678": "?NumPhrases@PhraseAnalyzer@@QBAHH@Z",
+ "0x822abce0": "?resize@?$vector@VOldColorOption@@V?$StlNodeAlloc@VOldColorOption@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVOldColorOption@@@Z",
+ "0x822abdd8": "?NewObject@OutfitConfig@@SAPAVObject@Hmx@@XZ"
 }
