@@ -1,3 +1,10 @@
+// W16-BZ: same policy as GemTrackDir.cpp -- retail ??0VocalTrackDir@@ inlines
+// the ObjPtr<T> owner ctor for every T with a virtual Hmx::Object base and
+// calls the two-arg ctor out of line only for T = Hmx::Object (mVoxCfg,
+// mTubeStyle, mArrowStyle, mFontStyle: 4x fn_8228D400) and T = RndMat (the
+// 15 *Mat members: 15x fn_8229D9C8). (this) inlines, (this, 0) calls.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR
+#define RB3_TU_OBJPTR_DEFER_OWNER
 #include "bandobj/VocalTrackDir.h"
 #include "bandobj/TrackInterface.h"
 #include "decomp.h"
@@ -20,41 +27,41 @@ VocalTrackDir::RevsT VocalTrackDir::gRevs = {0, 0};
 VocalTrackDir::VocalTrackDir()
     : BandTrack(this), mHiddenPartAlpha(0.3f), mEnableVocalsOptions(1), unk2a5(1), mIsTop(1), unk2a7(0),
       mFeedbackStateLead(0), mFeedbackStateHarm1(0), mFeedbackStateHarm2(0),
-      mVocalMics(this, 0), mVocalistVolume(this, 0), mMinPitchRange(12.0f),
+      mVocalMics(this), mVocalistVolume(this), mMinPitchRange(12.0f),
       mPitchDisplayMargin(3.0f), mArrowSmoothing(0.85f),
       mConfigurableObjects(this, kObjListNoNull), mVoxCfg(this, 0),
-      mTambourineSmasher(this, 0), mTambourineNowShowTrig(this, 0),
-      mTambourineNowHideTrig(this, 0), mLeadPhraseFeedbackBottomLbl(this, 0),
-      mPhraseFeedbackTrig(this, 0), mSpotlightSparklesOnlyTrig(this, 0),
-      mSpotlightPhraseSuccessTrig(this, 0), mPitchArrow1(this, 0), mPitchArrow2(this, 0),
-      mPitchArrow3(this, 0), mPitchWindow(1), mPitchWindowHeight(2.5f),
-      mPitchWindowMesh(this, 0), mPitchWindowOverlay(this, 0), mLeadLyrics(1),
-      mLeadLyricHeight(0.4f), mLeadLyricMesh(this, 0), mHarmLyrics(1),
-      mHarmLyricHeight(0.4f), mHarmLyricMesh(this, 0), mLeftDecoMesh(this, 0),
-      mRightDecoMesh(this, 0), mNowBarWidth(0.2f), mNowBarMesh(this, 0), mRemoteVocals(0),
+      mTambourineSmasher(this), mTambourineNowShowTrig(this),
+      mTambourineNowHideTrig(this), mLeadPhraseFeedbackBottomLbl(this),
+      mPhraseFeedbackTrig(this), mSpotlightSparklesOnlyTrig(this),
+      mSpotlightPhraseSuccessTrig(this), mPitchArrow1(this), mPitchArrow2(this),
+      mPitchArrow3(this), mPitchWindow(1), mPitchWindowHeight(2.5f),
+      mPitchWindowMesh(this), mPitchWindowOverlay(this), mLeadLyrics(1),
+      mLeadLyricHeight(0.4f), mLeadLyricMesh(this), mHarmLyrics(1),
+      mHarmLyricHeight(0.4f), mHarmLyricMesh(this), mLeftDecoMesh(this),
+      mRightDecoMesh(this), mNowBarWidth(0.2f), mNowBarMesh(this), mRemoteVocals(0),
       mTrackLeftX(-20.0f), mTrackRightX(20.0f), mTrackBottomZ(0.0f), mTrackTopZ(10.0f),
       mPitchBottomZ(0.0f), mPitchTopZ(2.0f), mNowBarX(-10.0f), unk42c(0),
       mPitchGuides("harmonic"), mTubeStyle(this, 0), mArrowStyle(this, 0),
-      mFontStyle(this, 0), mLeadText(this, 0), mHarmText(this, 0),
-      mLeadPhonemeText(this, 0), mHarmPhonemeText(this, 0), mLastMin(36.0f),
-      mLastMax(84.0f), mMiddleCZPos(0), mTonic(0x3c), mRangeScaleAnim(this, 0),
-      mRangeOffsetAnim(this, 0), unk4b0(1), unk4b4(2), mLeftTrans(0), mRightTrans(0),
+      mFontStyle(this, 0), mLeadText(this), mHarmText(this),
+      mLeadPhonemeText(this), mHarmPhonemeText(this), mLastMin(36.0f),
+      mLastMax(84.0f), mMiddleCZPos(0), mTonic(0x3c), mRangeScaleAnim(this),
+      mRangeOffsetAnim(this), unk4b0(1), unk4b4(2), mLeftTrans(0), mRightTrans(0),
       mBottomTrans(0), mTopTrans(0), mPitchBottomTrans(0), mPitchTopTrans(0),
-      mPitchMidTrans(0), mNowTrans(0), mTubeRangeGrp(this, 0), mTubeSpotlightGrp(this, 0),
-      mTubeBack0Grp(this, 0), mTubeBack1Grp(this, 0), mTubeBack2Grp(this, 0),
-      mTubeFront0Grp(this, 0), mTubeFront1Grp(this, 0), mTubeFront2Grp(this, 0),
-      mTubeGlow0Grp(this, 0), mTubeGlow1Grp(this, 0), mTubeGlow2Grp(this, 0),
-      mTubePhoneme0Grp(this, 0), mTubePhoneme1Grp(this, 0), mTubePhoneme2Grp(this, 0),
+      mPitchMidTrans(0), mNowTrans(0), mTubeRangeGrp(this), mTubeSpotlightGrp(this),
+      mTubeBack0Grp(this), mTubeBack1Grp(this), mTubeBack2Grp(this),
+      mTubeFront0Grp(this), mTubeFront1Grp(this), mTubeFront2Grp(this),
+      mTubeGlow0Grp(this), mTubeGlow1Grp(this), mTubeGlow2Grp(this),
+      mTubePhoneme0Grp(this), mTubePhoneme1Grp(this), mTubePhoneme2Grp(this),
       mSpotlightMat(this, 0), mLeadBackMat(this, 0), mHarm1BackMat(this, 0),
       mHarm2BackMat(this, 0), mLeadFrontMat(this, 0), mHarm1FrontMat(this, 0),
       mHarm2FrontMat(this, 0), mLeadGlowMat(this, 0), mHarm1GlowMat(this, 0),
       mHarm2GlowMat(this, 0), mLeadPhonemeMat(this, 0), mHarm1PhonemeMat(this, 0),
-      mHarm2PhonemeMat(this, 0), mVocalsGrp(this, 0), mScroller(this, 0),
-      mLeadLyricScroller(this, 0), mHarmonyLyricScroller(this, 0), mBREGrp(this, 0),
-      mLeadBREGrp(this, 0), mHarmonyBREGrp(this, 0), mPitchScrollGroup(this, 0),
-      mLeadLyricScrollGroup(this, 0), mHarmonyLyricScrollGroup(this, 0), unk694(0),
+      mHarm2PhonemeMat(this, 0), mVocalsGrp(this), mScroller(this),
+      mLeadLyricScroller(this), mHarmonyLyricScroller(this), mBREGrp(this),
+      mLeadBREGrp(this), mHarmonyBREGrp(this), mPitchScrollGroup(this),
+      mLeadLyricScrollGroup(this), mHarmonyLyricScrollGroup(this), unk694(0),
       unk698(0), unk69c(0), unk6a0(0), mLeadDeployMat(this, 0), mHarmDeployMat(this, 0),
-      mGlowSize(-1.0f), mGlowAlpha(0.3f), unk6c4(-1), unk6c8(0), mArrowFXDrawGrp(this, 0),
+      mGlowSize(-1.0f), mGlowAlpha(0.3f), unk6c4(-1), unk6c8(0), mArrowFXDrawGrp(this),
       unk6d8(18.0f), unk6dc(48.0f), unk6e0(0) {}
 
 BEGIN_COPYS(VocalTrackDir)
@@ -392,7 +399,7 @@ void VocalTrackDir::PostLoad(BinStream &bs) {
                 // artifact. It is SCORE-INVISIBLE (functionRelocDiffs=none masks
                 // the callee), so expect no match% movement -- landed as a
                 // correctness fix per CLAUDE.md's arg-blindness rule.
-                ObjPtr<OverdriveMeter> streakPtr(this, 0);
+                ObjPtr<OverdriveMeter> streakPtr(this);
                 bs >> streakPtr;
                 bs >> streakPtr;
             }
