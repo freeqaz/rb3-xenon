@@ -59,12 +59,27 @@ public:
     // The body form is MemMgr.h's OBJ_MEM_OVERLOAD verbatim: `.Str()` on the
     // temp plus a named `mem` local is what homes the Symbol at 0x50 and the
     // pointer separately at 0x54, as retail does.
+#ifdef HX_NATIVE
+    // NATIVE (measured: lane W16-BE's first native_build_gate.sh run FAILED here,
+    // rc=1, `'operator new' takes type size_t ('unsigned long') as 1st parameter`
+    // + `too few arguments to function call, expected at least 4, have 2`). On
+    // LP64 `operator new` must take size_t, and MemAlloc is the 5-arg debug form
+    // -- the 2-arg `(MemAlloc)(s, 0)` spelling exists only for the match build.
+    // This mirrors MemMgr.h's own #ifdef HX_NATIVE OBJ_MEM_OVERLOAD verbatim; we
+    // cannot just USE that macro because it also declares operator delete, which
+    // costs a funclet row (see the note above). MemMgr.h is another lane's file.
+    static void *operator new(size_t s) {
+        return MemAlloc(s, __FILE__, 0x3e, StaticClassName().Str(), 0);
+    }
+    static void *operator new(size_t s, void *place) { return place; }
+#else
     static void *operator new(unsigned int s) {
         (void)StaticClassName().Str();
         void *mem = (MemAlloc)(s, 0);
         return mem;
     }
     static void *operator new(unsigned int s, void *place) { return place; }
+#endif
 
     NEW_OBJ(StarDisplay)
 
