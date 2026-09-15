@@ -30539,5 +30539,8 @@
  "0x8278b3d8": "??0PhraseData@PhraseAnalyzer@@QAA@HHH@Z",
  "0x8278b678": "?NumPhrases@PhraseAnalyzer@@QBAHH@Z",
  "0x822abce0": "?resize@?$vector@VOldColorOption@@V?$StlNodeAlloc@VOldColorOption@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVOldColorOption@@@Z",
- "0x822abdd8": "?NewObject@OutfitConfig@@SAPAVObject@Hmx@@XZ"
+ "0x822abdd8": "?NewObject@OutfitConfig@@SAPAVObject@Hmx@@XZ",
+ "0x824c95f8": "??$PropSync@VEventCall@EventAnim@@@@YA_NAAV?$ObjList@VEventCall@EventAnim@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x824c8dd0": "??0EventCall@EventAnim@@QAA@PAVObject@Hmx@@@Z",
+ "0x824c9270": "?PropSync@@YA_NAAVEventCall@EventAnim@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
 }
