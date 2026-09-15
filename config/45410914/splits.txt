@@ -2263,9 +2263,9 @@ FIRFilter.cpp:
 
 UIColor.cpp:
 	.pdata      start:0x82245CF8 end:0x82245D08
-	.pdata      start:0x82245D08 end:0x82245D60
+	.pdata      start:0x82245D08 end:0x82245D40
 	.text       start:0x82801F80 end:0x8280207C
-	.text       start:0x82802080 end:0x828024B0
+	.text       start:0x82802080 end:0x828023A0
 
 UIListProvider.cpp:
 	.pdata      start:0x82245C30 end:0x82245C80
@@ -2923,6 +2923,7 @@ MeterEffect.cpp:
 
 UI.cpp:
 	.pdata      start:0x82209000 end:0x82209158
+	.pdata      start:0x82245D40 end:0x82245D60
 	.pdata      start:0x82245D60 end:0x82245D70
 	.pdata      start:0x82245D70 end:0x82245D78
 	.pdata      start:0x82245D78 end:0x82245D80
@@ -2940,6 +2941,7 @@ UI.cpp:
 	.pdata      start:0x8225C5E0 end:0x8225C5F8
 	.pdata      start:0x8225C5F8 end:0x8225C680
 	.text       start:0x823F4A30 end:0x823F5C98
+	.text       start:0x828023A0 end:0x828024B0
 	.text       start:0x828024B0 end:0x82802530
 	.text       start:0x82802530 end:0x82802588
 	.text       start:0x82802588 end:0x828025B0
