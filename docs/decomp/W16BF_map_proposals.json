@@ -1,0 +1,42 @@
+{
+ "_comment": "W16-BF proposal for W16-BD (THE splits lane). NOTHING here was applied by W16-BF: App.cpp: and RhythmDetector.cpp: are not W16-BF's headings. W16-BF's own splits edit (EventTrigger.cpp: / EventAnim.cpp:, commit 54646f45) is NOT repeated here.",
+ "lane": "W16-BF",
+ "date": "2026-09-15",
+ "base_commit": "5e852e7c1755 (w16-bf tip 54646f45 at filing)",
+ "items": [
+  {
+   "id": "BF-3",
+   "subject": "Re-home the eight EH cleanup funclets 0x822715B0-0x822716E8 (312 B) out of RhythmDetector.cpp and into App.cpp, next to their parent fn_82270E68 (App::App, 1,864 B)",
+   "kind": "splits.txt .text boundary move (re-home, NOT an addition)",
+   "action_required": "splits.txt edit on App.cpp: and RhythmDetector.cpp: -- W16-BF does not own either heading",
+   "closes": "W16-BA NOT-done item 8 ('fn_82271620's parent COMDAT NOT located') and BA Item 4's 'what would change this conclusion' -- answered in the NEGATIVE for RhythmDetector: the parent is App::App, not a RhythmDetector member.",
+   "evidence": {
+    "funcinfo_scan": "Retail .rdata FuncInfo at 0x82000DE0 (magic 0x19930522, maxState 8) has UnwindMap actions exactly [0x822715B0, 0x822715D8, 0x822715F8, 0x82271620, 0x82271648, 0x82271670, 0x82271698, 0x822716C0] with toState [-1,0,0,0,3,0,0,6]. The 8 B EH prefix {0x82829530, 0x82000DE0} sits at 0x82270E60 in .text, so the owning function is 0x82270E68. Scan: Python over orig/45410914/band.exe PE sections (big-endian 32-bit FuncInfo/UnwindMapEntry), exactly ONE FuncInfo hit for action 0x82271620 and exactly ONE prefix word referencing it.",
+    "frame": "All eight funclets open with subi r31,r12,0x250; fn_82270E68 is the only stwu r1,-0x250(r1) function in the whole asm tree (keyed on .fn, 3 such functions tree-wide: App.s fn_82270E68, Memcard_Xbox.s fn_8252BAD8, Mesh.s fn_8241F310).",
+    "identity": "fn_82270E68 (symbols.txt size 0x748 = 1,864 B) calls, via target_symbol_map.json: ?Poll@Splash@@ x22, ??0Splash/??1Splash/?AddScreen@Splash@@/?BeginSplasher/?EndSplasher/?PrepareRemaining/?Suspend@Splash@@, ?GameInit@@YAXXZ, ?BandUserMgrInit@@YAXXZ, ?Init@GameMicManager@@SAXXZ, ?SetArchivePermission@Archive@@ x3, ?SystemConfig@@ x2, ?SplitMs@Timer@@ x2, ?EnableKeyCheats@@, ?OptionBool@@, ??0FilePath@@ x3, ??1String@@ x3, ??0Symbol@@ x6. rb3-Wii oracle ~/code/milohax/rb3/src/App.cpp:169 App::App(int argc, char **argv) has SetArchivePermission (320, 485, 495), BandUserMgrInit (336), a local `ObjDirPtr<ObjectDir> oPtr;` (379) and GameInit (416). fn_82271620 = cleanup of the ObjDirPtr<ObjectDir> at frame +0x68 (calls fn_822709D8, the ObjDirPtr<ObjectDir> dtor per W16-BA Item 4).",
+    "geometry": "Retail COMDAT = 0x82270E60 (prefix) + fn_82270E68 [0x82270E68,0x822715B0) + funclets [0x822715B0,0x822716E8) = 40+32+6*40 = 312 B. splits.txt cuts it at 0x822715B0: App.cpp: has the single-function block 0x82270E68-0x822715B0, RhythmDetector.cpp: starts at 0x822715B0. fn_822716E8 (16 B, stores vtable lbl_82000E8C) and fn_822716F8 (68 B, scalar deleting dtor for the same vtable) are a DIFFERENT COMDAT and are NOT part of this proposal."
+   },
+   "edit": {
+    "file": "config/45410914/splits.txt",
+    "heading_to_change": "App.cpp:",
+    "replace_line": "\t.text       start:0x82270E68 end:0x822715B0",
+    "with_line": "\t.text       start:0x82270E68 end:0x822716E8",
+    "heading_to_edit_also": "RhythmDetector.cpp:",
+    "replace_line_also": "\t.text       start:0x822715B0 end:0x82271748",
+    "with_line_also": "\t.text       start:0x822716E8 end:0x82271748",
+    "pdata_note": "Touch NO .pdata line; it is derived output and re-derives on the split run (W16-BF's own re-home needed exactly one re-split for that: the first build FAILS at verify_split_current --complete with the corrected splits.txt on disk, commit the .pdata rewrite, the second build passes).",
+    "vanishing_unit_hazard": "DOES NOT APPLY to either heading: App.cpp: keeps its other blocks and RhythmDetector.cpp: keeps 0x822716E8-0x82271748 plus its far blocks (0x826342F0.., 0x82657660.., 0x82667FC8..)."
+   },
+   "predicted_effect": {
+    "matched_functions": "-1",
+    "matched_code_bytes": "-32",
+    "total_code_total_functions": "unchanged (no row created or hidden; 312 B move between units)",
+    "mechanism": "App.cpp has NO source in the tree (find src -iname App.cpp is empty; objects.json declares it and tools/project.py drops the compile edge silently -- the no-source class), so default/App has no base obj and the eight rows become UNPAIRABLE. Today they pair by EH-funclet byte signature against RhythmDetector.obj's own funclets (masked_equal class): fn_822715D8 reads 100/100 (32 B, counted in both measures), the other seven read fuzzy 99.3-99.8 / mpn 99.8 (one charged callee-name site each; counted in neither measure). So the move costs exactly the one 32 B row.",
+    "why_land_it_anyway": "Accuracy over headline. Those rows credit RhythmDetector.obj for App::App's cleanups; RhythmDetector's unit denominator is inflated by 312 B of App code, and W16-BA's Item 4 reasoning (which RhythmDetector-body callers the ObjDirPtr dtor has) was contaminated by exactly this mis-carve. It is the same class as b341d7ab's -1/-40 landing."
+   },
+   "map_row_note": {
+    "0x82270e68": "NOT proposed as an edit. The spelling would be ??0App@@QAA@HPAPAD@Z (MSVC mangling of App::App(int, char**) from the rb3-Wii signature) but it is NOT COFF-verified -- there is no App.obj to read it from. With no base obj, naming has zero pairing effect (identification only), and its one caller is `main`, which CLAUDE.md records as structurally unmatchable on this image. Leave None unless BD wants identification-only; a placeholder target is forgiven."
+   }
+  }
+ ]
+}
