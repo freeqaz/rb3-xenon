@@ -209,6 +209,27 @@ void BandStorePanel::Exit() {
     StorePanel::Exit();
 }
 
+// ⚠ HANDOFF (W16-CI): this body is a STUB and retail's is not, but the row is
+// UNREACHABLE from this unit and no source work here can collect it.
+//
+// Retail's OnMsg(LocalUserLeftMsg&) is at 0x826067C0, 232 B, and it is PROVEN
+// by the same dispatch-arm test used for OnMsg(MetadataLoadedMsg&): inside
+// Handle, 0x826084EC calls ?Type@LocalUserLeftMsg@@SA?AVSymbol@@XZ, compares,
+// branches away on mismatch, and falls through to `bl 0x826067C0` at
+// 0x82608528. Its body is NOT `return DataNode(1)` -- it calls
+// DataNode::GetObj and __RTDynamicCast, so ours is a real divergence.
+//
+// ⛔ BUT 0x826067C0 IS MIS-PINNED TO Mat.cpp. This unit's splits block ends
+// exactly at `.text start:0x82606260 end:0x826067C0` and resumes at
+// 0x826068A8; the 232 B between them are pinned to Mat.cpp, which is why the
+// symbol appears in THIS unit's target obj as an undefined external (sec=0).
+// So the row lives in Mat.cpp's target obj, whose base obj can never define
+// ?OnMsg@BandStorePanel@@...LocalUserLeftMsg... -- adding a map entry for it
+// would make the row read 0 % PERMANENTLY, the exact trap that "proving a name
+// wrong does not make renaming safe" describes. The repair is a splits.txt
+// re-home of [0x826067C0, 0x826068A8) into this unit, which W16-CI was banned
+// from and which is NOT metric-neutral (PINHOME-1: +3 fns / +428 B), so it must
+// be measured by whoever does it. Port the body only after the re-home.
 DataNode BandStorePanel::OnMsg(const LocalUserLeftMsg &) {
     return DataNode(1);
 }
@@ -224,6 +245,17 @@ DataNode BandStorePanel::OnMsg(const MetadataLoadedMsg &msg) {
     return DataNode(1);
 }
 
+// ⚠ HANDOFF (W16-CI): fn_82608D38 (88 B, fuzzy 0) is the last anonymous row in
+// this unit and it is NOT a BandStorePanel method -- do not hunt for its source
+// here. Scanning all of .text for callers gives exactly two, both in a
+// different class: ?InitializeVisuals@CalibrationPanel@@ + 0x218 and
+// ?OnInitializeContent@CalibrationPanel@@ + 0x2e0. Its body loads a global,
+// calls one function, returns 5 when the result is null, otherwise makes two
+// chained virtual calls -- a shared-header inline emitted once and laid out
+// inside this unit's pin range, just below CalibrationPanel's own functions at
+// 0x82608D90. Because BandStorePanel.cpp never uses that inline, our obj will
+// never define it, so naming it buys a permanent 0 % row. Left anonymous ON
+// PURPOSE; its 88 B are not collectable by this unit at any source quality.
 Symbol BandStorePanel::SortName() {
     if (mSort == gNullStr) {
         return Symbol("by_song_first_letter");
