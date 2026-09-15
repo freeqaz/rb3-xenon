@@ -32,6 +32,26 @@ float RefinePeriod2(
     const float *buf, const float *autocorr, const float *dp, int vlen, int period
 );
 
+// Retail calls an anonymous-namespace helper here where the Wii source inlines
+// `1.0f - exp(-1.0f / (t * rate))`. AnalyzeBlock's call site is 0x82B80D54 ->
+// 0x82B6EA08 = ?Time2IirA@?A0xa7b3dd7d@@YAMMM@Z, and AnalyzeBlock contains NO
+// exp call at all (its only libm call is log10 at 0x82B80E90). 0x82B6EA08 lies
+// far outside this TU's .text (0x82B807C0-0x82B81228), so it is an ICF fold
+// survivor: the same anon-namespace helper is defined in several TUs and the
+// surviving copy's name is whichever TU owns that address.
+//
+// STATUS: this spelling is currently INERT -- measured Delta 0, with
+// AnalyzeBlock byte-unchanged at fuzzy 85.723595 before and after, because
+// /O1 /Ob2 inlines the helper straight back where retail emits a real `bl`.
+// It is kept because it records WHERE the call belongs; it does not yet
+// reproduce it. The next experiment is to establish why retail did not inline
+// it -- the anon-namespace hash ?A0xa7b3dd7d is NOT this TU's, so the surviving
+// definition lives in another TU, and the retail source may reach it through a
+// shared declaration rather than defining it here.
+namespace {
+    float Time2IirA(float time, float rate) { return exp(-1.0f / (time * rate)); }
+}
+
 void dump(float *data, int len) {
     const char *space = " ";
     for (int i = 0.0f; len > i; i++) {
@@ -191,7 +211,7 @@ void PitchDetector::AnalyzeBlock(
     if (floorSeconds != unk4C) {
         float alpha;
         if (floorSeconds > 0.0f) {
-            alpha = 1.0f - (float)exp(-1.0f / (floorSeconds * 60.0f));
+            alpha = 1.0f - Time2IirA(floorSeconds, 60.0f);
         } else {
             alpha = 1.0f;
         }
