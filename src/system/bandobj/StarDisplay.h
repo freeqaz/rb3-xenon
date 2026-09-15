@@ -42,6 +42,30 @@ public:
     static void Init();
     static void Register() { REGISTER_OBJ_FACTORY(StarDisplay); }
 
+    // Retail's NewObject at 0x8231d220 calls ?StaticClassName@StarDisplay@@,
+    // not @UIComponent: retail gives StarDisplay its OWN class operator new, so
+    // the inlined StaticClassName() binds in StarDisplay's scope. Inheriting
+    // UIComponent's left our only charged site as that one relocation name
+    // (25/28 words equal, fuzzy 99.821).
+    //
+    // operator new ONLY -- deliberately NOT OBJ_MEM_OVERLOAD*, which would also
+    // declare operator delete. MEASURED (lane W16-BE, 2026-09-15): adding
+    // OBJ_MEM_OVERLOAD_INLINE_DEL here won NewObject (+112 B) but LOST the
+    // NewObject unwind funclet fn_8231D290 (-40 B, fuzzy 100 -> below), because
+    // a StarDisplay-owned inlinable delete gets inlined into the funclet as
+    // `bl ?MemFree@@YAXPAX@Z` where retail calls the out-of-line ICF survivor
+    // ??3BinStream@@SAXPAX@Z. Leaving delete inherited from UIComponent keeps
+    // both that funclet and ??_GStarDisplay at 100 and still wins NewObject.
+    // The body form is MemMgr.h's OBJ_MEM_OVERLOAD verbatim: `.Str()` on the
+    // temp plus a named `mem` local is what homes the Symbol at 0x50 and the
+    // pointer separately at 0x54, as retail does.
+    static void *operator new(unsigned int s) {
+        (void)StaticClassName().Str();
+        void *mem = (MemAlloc)(s, 0);
+        return mem;
+    }
+    static void *operator new(unsigned int s, void *place) { return place; }
+
     NEW_OBJ(StarDisplay)
 
     BandLabel *mRsrcStarsLabel; // 0x140
