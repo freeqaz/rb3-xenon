@@ -1901,7 +1901,7 @@
  "0x822aaf00": "?_M_clear_after_move@?$vector@VBandPatchMesh@@V?$StlNodeAlloc@VBandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
  "0x822aaf80": "??1?$vector@VBandPatchMesh@@V?$StlNodeAlloc@VBandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
  "0x822ab030": "?resize@?$vector@VPiercing@OutfitConfig@@V?$StlNodeAlloc@VPiercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVPiercing@OutfitConfig@@@Z",
- "0x822ab0b0": "?_M_fill_insert@?$vector@VTransformCrowd@@V?$StlNodeAlloc@VTransformCrowd@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVTransformCrowd@@IABV3@@Z",
+ "0x822ab0b0": "?_M_fill_insert@?$vector@VOldColorOption@@V?$StlNodeAlloc@VOldColorOption@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVOldColorOption@@IABV3@@Z",
  "0x822ab2b8": "??$_Destroy@UDynamicPropertyEntry@Flow@@@stlpmtx_std@@YAXPAUDynamicPropertyEntry@Flow@@@Z",
  "0x822ab380": "??$?5VPiercing@OutfitConfig@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@VPiercing@OutfitConfig@@@@@Z",
  "0x822ab838": "?ClassName@OutfitConfig@@UBA?AVSymbol@@XZ",
