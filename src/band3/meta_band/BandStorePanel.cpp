@@ -19,6 +19,7 @@
 #include "ui/UIList.h"
 #include "ui/UIListLabel.h"
 #include "ui/UIListProvider.h"
+#include "utl/Locale.h"
 #include "utl/MakeString.h"
 #include "utl/Messages.h"
 #include "utl/Messages4.h"
@@ -234,10 +235,84 @@ DataNode BandStorePanel::OnMsg(const LocalUserLeftMsg &) {
     return DataNode(1);
 }
 
+// Retail fn_82606280 (908 B).  The store index-.dta parser, reconstructed
+// instruction-by-instruction off retail bytes -- the rb3-Wii dev oracle is the
+// packed-StoreMetadata arm and carries only a skeleton of this, so every claim
+// below is read from band.exe, not from the oracle.
+//
+// Node indices: Message::operator[](i) is mData->Node(i + 2), so retail's
+// node[2]/node[4]/node[6] are exactly the msg[0]/msg[2]/msg[4] that Poll fills
+// in -- the metadata DataArray, mLastRequest's path, and (int)!mLastRequestExtra.
+//
+// ⚠ `fn_8274B0F8` is mapped ?Int@DataNode@@ yet node[2]'s result is passed to
+// FindArray as `this`.  That is not a contradiction and NOT a wrong map name:
+// DataNode::Int and DataNode::Array are both `return mValue.<word>` once the
+// MILO_ASSERTs compile out, so they are byte-identical COMDATs and ICF folded
+// them onto one arbitrary survivor.  Array(2)/Int(6) is the correct spelling.
+//
+// Strings, read out of band.exe (VA - 0x82000000 in this region):
+//   0x820BF638 "index_info"  0x820BF628 "previous_chunk"  0x820BF61C "next_chunk"
+//   0x820BF614 "sorted"      0x8205EBF8 "title"           0x820AE0C0 "offers"
+//   0x820116D8 "/"
+// and lbl_82C71838 is a .data `const char *` whose value 0x82000C55 is the empty
+// string == gNullStr, which is what the four resets assign.
+// ⚠ The final lookup is "offers", NOT the "metadata" this function used to
+// spell.  That was invisible to the metric (the target's argument is a
+// placeholder lbl_, which name_check forgives) and wrong all the same.
 DataNode BandStorePanel::OnMsg(const MetadataLoadedMsg &msg) {
     DataArray *data = msg->Array(2);
     String path(msg->Str(4));
-    DataArray *found = data->FindArray(Symbol("metadata"), false);
+    if (!msg->Int(6)) {
+        mPrevChunkPath = gNullStr;
+        mNextChunkPath = gNullStr;
+        mSort = Symbol(gNullStr);
+        mMenuTitle = gNullStr;
+        DataArray *info = data->FindArray(Symbol("index_info"), false);
+        if (info) {
+            // The directory part of the request path: retail calls
+            // find_last_of("/") and feeds pos+1 to substr(0, n) as the count.
+            String dir(path.substr(0, path.find_last_of("/") + 1));
+            DataArray *prev = info->FindArray(Symbol("previous_chunk"), false);
+            if (prev) {
+                const char *s = prev->Str(1);
+                // `lbz r11,0(r3) / cmplwi cr6,r11,0x2f` -- an absolute path is
+                // taken as-is, a relative one is hung off the request's dir.
+                if (*s == '/') {
+                    mPrevChunkPath = s;
+                } else {
+                    mPrevChunkPath = dir + s;
+                }
+            }
+            DataArray *next = info->FindArray(Symbol("next_chunk"), false);
+            if (next) {
+                const char *s = next->Str(1);
+                if (*s == '/') {
+                    mNextChunkPath = s;
+                } else {
+                    mNextChunkPath = dir + s;
+                }
+            }
+            DataArray *sorted = info->FindArray(Symbol("sorted"), false);
+            if (sorted) {
+                mSort = sorted->Sym(1);
+            }
+            DataArray *title = info->FindArray(Symbol("title"), false);
+            if (title) {
+                // One call taking (sret, &node) -- the out-of-line DataNode copy
+                // ctor, not Evaluate() (which would be a call returning a
+                // reference plus a second call to copy it).  The trailing
+                // `rlwinm. r11,r11,0,27,27` + DataArray::Release is ~DataNode
+                // inlined from Data.h, which is why the local is spelled out.
+                DataNode n(title->Node(1));
+                if (n.Type() == kDataString) {
+                    mMenuTitle = n.Str(0);
+                } else {
+                    mMenuTitle = Localize(n.Sym(0), 0);
+                }
+            }
+        }
+    }
+    DataArray *found = data->FindArray(Symbol("offers"), false);
     if (found) {
         PopulateOffers(found, msg->Int(6) != 0);
         EnumerateOffers(msg->Int(6) != 0);
@@ -360,10 +435,27 @@ void BandStorePanel::ExitStore(StoreError err) const {
 BEGIN_HANDLERS(BandStorePanel)
     HANDLE_EXPR(get_request_prefix, GetRequestPrefix())
     HANDLE_ACTION(request, Request(_msg->Str(2), _msg->Int(3)))
-    HANDLE_ACTION(
-        request_prev_chunk,
-        (Request(mPrevChunkPath.c_str(), true), mStartBrowserAtBottom = true)
-    )
+    // HAND-EXPANDED HANDLE_ACTION (local-static dialect -- this TU compiles with
+    // /DRB3_HANDLE_LOCAL_STATIC).  Retail's arm is TWO STATEMENTS, not one
+    // comma expression, and the difference is visible in the byte order:
+    //     retail:  bl Request ; addi r3,r31,0x58 ; bl ~String ; li r11,1 ; stb
+    //     comma :  bl Request ; li r11,1 ; stb ; addi r3,r31,0x58 ; bl ~String
+    // A comma operator keeps both operands inside ONE full-expression, so the
+    // String temporary must outlive the assignment; retail destroys it first.
+    // ObjMacros.h spells the macro body `(action);` -- a STYLE rule ("require
+    // side-actions via comma operator"), not a codegen requirement -- so the
+    // macro cannot express retail's shape.  The general repair is `action;` in
+    // ObjMacros.h, which cascades to every HANDLE_ACTION in the tree and is out
+    // of this lane's scope; this is that repair applied to one arm, and it is
+    // byte-for-byte the macro's own expansion with the parens removed.
+    {
+        static Symbol _hs("request_prev_chunk");
+        if (sym == _hs) {
+            Request(mPrevChunkPath.c_str(), true);
+            mStartBrowserAtBottom = true;
+            return 0;
+        }
+    }
     HANDLE_ACTION(request_next_chunk, Request(mNextChunkPath.c_str(), true))
     HANDLE_EXPR(should_start_browser_at_bottom, mStartBrowserAtBottom)
     // Retail's request_in_progress arm is a bare bool materialization
