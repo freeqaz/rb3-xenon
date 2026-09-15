@@ -10689,6 +10689,7 @@ SongData.cpp:
 	.pdata      start:0x8223E148 end:0x8223E158
 	.pdata      start:0x8223E158 end:0x8223E160
 	.pdata      start:0x8223E160 end:0x8223E1B0
+	.pdata      start:0x8223EEF0 end:0x8223EEF8
 	.text       start:0x823EA958 end:0x823EA984
 	.text       start:0x82770490 end:0x82770498
 	.text       start:0x827704C0 end:0x82770530
@@ -10759,6 +10760,7 @@ SongData.cpp:
 	.text       start:0x827791C8 end:0x827792A0
 	.text       start:0x827792A0 end:0x827792EC
 	.text       start:0x827792F0 end:0x827799AC
+	.text       start:0x8278C2F8 end:0x8278C348
 
 SlipTrack.cpp:
 	.pdata      start:0x8225E818 end:0x8225E820
@@ -12789,7 +12791,7 @@ system/beatmatch/PhraseAnalyzer.cpp:
 	.pdata      start:0x8223EEC0 end:0x8223EEC8
 	.pdata      start:0x8223EEC8 end:0x8223EED0
 	.pdata      start:0x8223EED0 end:0x8223EEE0
-	.pdata      start:0x8223EEE0 end:0x8223EEF8
+	.pdata      start:0x8223EEE0 end:0x8223EEF0
 	.text       start:0x8278B3B8 end:0x8278B438
 	.text       start:0x8278B438 end:0x8278B4A0
 	.text       start:0x8278B4A0 end:0x8278B550
@@ -12809,7 +12811,7 @@ system/beatmatch/PhraseAnalyzer.cpp:
 	.text       start:0x8278BF28 end:0x8278BFB0
 	.text       start:0x8278BFB0 end:0x8278C030
 	.text       start:0x8278C030 end:0x8278C0C0
-	.text       start:0x8278C0C0 end:0x8278C348
+	.text       start:0x8278C0C0 end:0x8278C2F8
 
 system/beatmatch/PlayerTrackConfigList.cpp:
 	.pdata      start:0x8223D808 end:0x8223D820
