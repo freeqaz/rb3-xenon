@@ -1381,6 +1381,11 @@ void MusicLibrary::Text(int, int idx, UIListLabel *slot, UILabel *label) const {
         HeaderSortNode *hsn = dynamic_cast<HeaderSortNode *>(sortNode);
         if (hsn->mCover) {
             if (slot->Matches("famousby")) {
+                // Retail builds this Symbol as a FUNCTION-LOCAL static (guard word
+                // 0x82DFD408 bit 0x1, Symbol at 0x82DFD3F8, string 0x8208FD7C),
+                // not from the file-scope extern in Symbols.h. Same house pattern
+                // as AppLabel.cpp:222/317 and StoreOfferProvider.cpp:287.
+                static Symbol store_famous_by("store_famous_by");
                 label->SetTextToken(store_famous_by);
             } else if (slot->Matches("famousby_group")) {
                 p9_label->SetFromSongSelectNode(sortNode);
@@ -1417,6 +1422,11 @@ void MusicLibrary::Text(int, int idx, UIListLabel *slot, UILabel *label) const {
         } else if (slot->Matches("percentage")) {
             SongRecord *record = osn->GetSongRecord();
             if (record->IsNotBand() && record->GetScore() > 0) {
+                // Retail: function-local static (guard 0x82DFD408 bit 0x2,
+                // Symbol 0x82DFD3FC, string 0x8208FDB0), not the Symbols2.h extern.
+                static Symbol endgame_player_noteshit_fmt(
+                    "endgame_player_noteshit_fmt"
+                );
                 label->SetTokenFmt(endgame_player_noteshit_fmt, record->GetNotesPct());
             }
         }
@@ -1434,6 +1444,35 @@ void MusicLibrary::Text(int, int idx, UIListLabel *slot, UILabel *label) const {
             p9_label->SetSetlistName(setlist);
         } else if (slot->Matches("battle_instrument_rank") && setlist->IsBattle()) {
             p9_label->SetBattleInstrument(ssn->GetSetlistRecord());
+        }
+        break;
+    }
+    case kNodeStoreSong: {
+        // Retail-360-only arm. The rb3-Wii dev oracle has NO store, so this case
+        // exists in no oracle and is reconstructed from retail bytes -- the
+        // `cmpwi cr6, r3, 0x7` arm of ?Text@MusicLibrary@@ at 0x8253CD90:
+        //   __RTDynamicCast target ??_R0 @0x82C72544 = .?AVStoreSongSortNode@@
+        //   slot strings  "song" @0x820010F0, "downloading" @0x8208FE44
+        //   Symbols       "song_select_downloading"        @0x8208FE2C
+        //                 "music_library_upsell_indicator" @0x8208FE0C
+        //   callees 0x825C66F8 SetSongAndArtistName, 0x825C56A0 SetSongName,
+        //           0x827A6D48 StoreOffer::GetSingleSongID, 0x827F3548 SetTextToken
+        StoreSongSortNode *ssn = dynamic_cast<StoreSongSortNode *>(sortNode);
+        if (slot->Matches("song")) {
+            if (unkdc != 1) {
+                p9_label->SetSongAndArtistName(ssn);
+            } else
+                p9_label->SetSongName(ssn);
+        } else if (slot->Matches("downloading")) {
+            if (unk19c->IsDownloading(ssn->mOffer->GetSingleSongID())) {
+                static Symbol song_select_downloading("song_select_downloading");
+                label->SetTextToken(song_select_downloading);
+            } else {
+                static Symbol music_library_upsell_indicator(
+                    "music_library_upsell_indicator"
+                );
+                label->SetTextToken(music_library_upsell_indicator);
+            }
         }
         break;
     }
