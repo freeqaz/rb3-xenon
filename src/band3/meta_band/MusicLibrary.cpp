@@ -397,7 +397,7 @@ void MusicLibrary::OnExit() {
        is MusicLibraryStore*. Retyping it touches ~10 call sites plus mStoreArt and
        the ctor, risks regressing a large matched TU, and pays 0 in both currencies,
        so it was left to a lane that can afford the whole-file A/B. */
-    unk19c->ClearPreview();
+    ((MusicLibraryStore *)unk19c)->ClearPreview();
     if (unke8 != kNumSongSortTypes) {
         TheSongSortMgr->GetSort(unke8)->CancelMakeReady();
         unke8 = kNumSongSortTypes;
@@ -610,7 +610,7 @@ void MusicLibrary::ClearSongPreview() {
        Invisible to the default ruler (relocation args are masked), so this fix is
        worth exactly 0 matched functions and 0 bytes -- it is a correctness repair,
        and a metric that hides a wrong callee is worse than a lower metric. */
-    unk19c->Unk825BC900();
+    ((MusicLibraryStore *)unk19c)->Unk825BC900();
 }
 
 void MusicLibrary::StartSongPreview() {
@@ -1861,7 +1861,11 @@ void MusicLibrary::AppendToSetlist(int i) {
 
 void MusicLibrary::RemoveLastSongFromSetlist() {
     if (mSetlist.size()) {
-        if (ContentDir()) {
+        // Retail 360 guards on HasSyncPermission() (Synchronizable slot 3,
+        // this+0x30, bool return), NOT ContentDir() (Callback slot 11,
+        // this+0x2c, const char* return) as the rb3-Wii dev oracle does --
+        // the same pattern as PlaySetlist and AppendToSetlist above.
+        if (HasSyncPermission()) {
             mSetlist.pop_back();
             unk12c = true;
             SetSyncDirty(-1, false);
