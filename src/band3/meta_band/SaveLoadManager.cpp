@@ -166,6 +166,20 @@ void SaveLoadManager::ManualDelete() {
     mRequestFlags |= 1;
 }
 
+// LINKAGE IS *NOT* THE LEVER HERE -- REFUTED, do not re-run (lane W16-CF).
+// SetState's clusters at idx 516-648 are our `kStrGlobalCacheName.Str()` load
+// sitting ABOVE the `bl Localize` at the three sites that pass both in one
+// argument list (cases 0x2b, 0x2c, 0x3b); retail keeps that load BELOW the call.
+// Hypothesis tested: internal linkage lets MSVC prove Localize() cannot write
+// this global, licensing the hoist.  Removing this anonymous namespace (giving
+// the global external linkage) was BUILT AND MEASURED: the TU recompiled and the
+// mangled name really did change (?kStrGlobalCacheName@?A0x48d882c4@@3VSymbol@@A
+// -> ?kStrGlobalCacheName@@3VSymbol@@A), and codegen came back BIT-IDENTICAL --
+// row fuzzy 96.74512 before and after, whole-binary delta 0 on all three keys.
+// So the hoist is NOT alias-analysis; it is scheduling.  A different lever is
+// needed.  (Natural control worth keeping: of the 16 references to this global
+// in SetState, the 8 that share no argument list with a call sit at
+// byte-identical indices on both sides; only the 3 Localize sites diverge.)
 namespace {
     Symbol kStrGlobalCacheName("globaloptions");
 }
@@ -716,7 +730,33 @@ void SaveLoadManager::Poll() {
 // cascade to be downstream OF, so "fix the cause and the charges dissolve"
 // does not apply to this row -- and because matched_code is all-or-nothing per
 // row, closing any ONE cluster buys exactly ZERO bytes.  Price this row at 13
-// fixes, not one.  (Corroborating micro-instances measured the same day:
+// fixes, not one.
+//
+// ** CORRECTED, WITH EVIDENCE (lane W16-CF, 2026-09-15). "13 INDEPENDENT" IS
+// ** WRONG ON BOTH WORDS, THOUGH THE PRICING CONCLUSION SURVIVES.
+// The count is right and the independence is not: measured cluster-by-cluster,
+// the 13 are FIVE mechanisms, and two of them are now closed.
+//   - 8 of the 13 (idx 516-648) are ONE mechanism at THREE call sites (cases
+//     0x2b, 0x2c, 0x3b) -- the Localize/vptr/global-load coupling written up
+//     at case 0x2b below.  They stand or fall together, and a single source
+//     edit moves all eight at once (proven: the locName leg moved all three
+//     sites simultaneously).
+//   - idx 798-800 was the mMode dispatch: CLOSED, it is a switch (see 0x43).
+//   - idx 742-747 was a CSE in case 0x38: CLOSED (see 0x38).
+//   - idx 760 is a one-instruction tail-duplication of `li r4,0x3`.
+//   - idx 934-936 and 964-966 are SCHEDULING ONLY: both sides hold the
+//     IDENTICAL instruction multiset, merely re-interleaved, so there is no
+//     semantic difference to fix.  Verified by multiset comparison, not by eye.
+// Two claims that were passed downstream from this block are also refuted by
+// census rather than by argument: retail calls Localize FOUR times and so do we
+// (target idx 298/523/578/637 vs ours 298/523/580/639), so "retail does not
+// call Localize at these two sites at all" is false -- the delete/replace rows
+// there are DISPLACEMENT, not absence; and both sides have exactly 30 `mtctr`,
+// so there is no extra indirect call anywhere in this function.
+// The pricing advice stands and is if anything sharper: matched_code is still
+// all-or-nothing, and what remains is 1 coupled mechanism + 1 layout artifact +
+// 2 pure-scheduling clusters, none of which is reachable by the source forms
+// tried.  Do not re-open this row expecting 13 separate wins.  (Corroborating micro-instances measured the same day:
 // FocusTracker::GetNextFocusPlayer -- fixing the loop-flag polarity closed
 // exactly the 3 charges AT that site and left the other 3 untouched at their
 // original indices; GemPlayer::LocalSetEnabledState -- all 3 charges sat at
@@ -1072,6 +1112,24 @@ void SaveLoadManager::SetState(State newState) {
             mCacheID = NULL;
         }
         // Retail order: static-init, THEN GetGlobalOptionsSize, THEN Localize.
+        // ⛔ DO NOT hoist Localize into a `const char *locName` local here, even
+        // though the rb3-Wii oracle spells it that way (its lines 1013/1029/1050
+        // all read `const char *locName = Localize(...);`).  BUILT AND MEASURED
+        // (lane W16-CF): the hoist DOES fix the one thing wrong with this site --
+        // our `kStrGlobalCacheName.Str()` load moves from above the `bl Localize`
+        // to below it, landing directly in the argument register, and goes EQUAL
+        // at all three sites (0x2b, 0x2c, 0x3b).  But it costs more than it buys:
+        //   (a) retail loads TheCacheMgr AND its vptr BEFORE the bl, holding the
+        //       vptr in a callee-saved reg across it.  That only happens while
+        //       Localize is an ARGUMENT; as a statement MSVC sinks the vptr fetch
+        //       below the call, breaking 2 instructions at each of the 3 sites.
+        //   (b) the regalloc shift broke two regions that were previously EQUAL
+        //       and have no Localize at all -- case 0x21 (idx 349-359) and case
+        //       0x32 (idx 670-678).
+        // Net row fuzzy 97.24219 -> 96.12402, so the inline form below is kept.
+        // Retail wants vptr-early (=> inline) AND the string load late (=> hoisted)
+        // and neither pure source form delivers both; that coupling, not 8
+        // separate defects, is what the idx 516-648 clusters are.
         static Symbol global_options_cache_name("global_options_cache_name");
         int sz = TheProfileMgr.GetGlobalOptionsSize();
         if (!TheCacheMgr->ShowUserSelectUIAsync(
@@ -1215,12 +1273,12 @@ void SaveLoadManager::SetState(State newState) {
     }
     case 0x38:
     {
-        bool moreThanOne;
-        {
-            std::vector<BandProfile *> newProfiles = TheProfileMgr.GetNewlySignedInProfiles();
-            moreThanOne = (newProfiles.size() > 1);
-        }
-        if (moreThanOne) unk7c = 1;
+        // Retail loads _M_finish/_M_start through the RETURNED sret pointer r3
+        // (`lwz 0x4(r3)` / `lwz 0x0(r3)`) and then re-loads _M_start from the
+        // stack slot for the inlined dtor's null check -- i.e. it does NOT CSE
+        // the two reads.  That is what taking size() on the temporary directly
+        // produces; binding the result to a named local lets MSVC CSE them.
+        if (TheProfileMgr.GetNewlySignedInProfiles().size() > 1) unk7c = 1;
         SetState((State)0x3);
         break;
     }
@@ -1288,10 +1346,15 @@ void SaveLoadManager::SetState(State newState) {
         //   (b) testing kMode_AutoSave first (target's fall-through arm is the
         //       0x54 block, which implies that order) aligned the streams 1:1
         //       (0 insert/delete) but produced 57 `replace` mismatches. 96.8 -> 96.1.
-        if (mMode == kMode_AutoLoad) {
+        switch (mMode) {
+        case kMode_AutoLoad:
             SetState((State)0x3);
-        } else if (mMode == kMode_AutoSave) {
+            break;
+        case kMode_AutoSave:
             SetState((State)0x54);
+            break;
+        default:
+            break;
         }
         break;
     }
