@@ -20528,7 +20528,7 @@
  "0x827c1c90": "?CallCheatScript@CheatsManager@@QAAX_NPAVDataArray@@PAVLocalUser@@0@Z",
  "0x827c2628": "??1?$vector@ULongJoyCheat@@V?$StlNodeAlloc@ULongJoyCheat@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
  "0x827c26e0": "??$__uninitialized_fill_n@PAULongJoyCheat@@IU1@@stlpmtx_std@@YAPAULongJoyCheat@@PAU1@IABU1@ABU__false_type@0@@Z",
- "0x827c2780": "??0GlitchFinder@@QAA@XZ",
+ "0x827c2780": "??0CheatsManager@@QAA@XZ",
  "0x827c2a30": "??1CheatsManager@@UAA@XZ",
  "0x827c2e38": "?_M_insert_overflow_aux@?$vector@ULongJoyCheat@@V?$StlNodeAlloc@ULongJoyCheat@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAULongJoyCheat@@ABU3@ABU__false_type@2@I_N@Z",
  "0x827c2fc8": "??_GCheatsManager@@UAAPAXI@Z",
@@ -30529,5 +30529,6 @@
  "0x823629b0": "??$?6VSymbol@@H@@YAAAVBinStream@@AAV0@ABV?$hash_map@VSymbol@@HU?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@@Z",
  "0x82c78f5c": "?TheTempoMap@@3PAVTempoMap@@A",
  "0x82c78f60": "?gDefaultTempoMap@@3VSimpleTempoMap@@A",
- "0x82e051a0": "?TheTaskMgr@@3VTaskMgr@@A"
+ "0x82e051a0": "?TheTaskMgr@@3VTaskMgr@@A",
+ "0x82a478d0": "?SetVolume@DirectInstrument@@QAAXH@Z"
 }
