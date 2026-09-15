@@ -2494,6 +2494,66 @@ W15-F's `RunXinputJoypadLoop` item is NOT queued as a body-port: our
 `Joypad_Xbox.cpp` lacks the entire XInput2 raw-HID layer, so it is a
 subsystem port and belongs to the native-port track, not a match lane.
 
+### Coordinator repair, 2026-09-15 — the fold gates were refusing on a reader artifact (`22899f87`)
+
+**My own filed note was right about the disease and wrong about the patient.** It
+named `tools/fold_thunk_gate.py:208` reading `cd["raw"]` where `comdat_bytes.py`
+offers `fn_raw`. Verified literally rather than inherited, and the census widened
+it: **five** tools read the funclet-billed view — `fold_thunk_gate`,
+`comdat_fold_gate` (3 sites), `alloc_fold_gate`, `alias_uniqueness_audit`,
+`ourside_fold_sweep` — while comparing against a retail `.pdata` **function**
+extent. `w16s_alias_census.py` keeps both views on purpose and was left alone.
+
+`raw`/`relocs` run to the end of the section, so an EH-bearing `/Gy` COMDAT bills
+its trailing `__unwind$` funclet into the body; in a **non-`/Gy` monolithic**
+section it bills the rest of the section (`keygen_xbox.obj`: **2,456 B for a
+144 B function**). Measured population: **41,463 of 680,523 compiled COMDATs
+(6.09 %)** have `raw != fn_raw`. Same family as STLPORT-1's phantom "+8 B STLport
+source bug" — a **one-sided** reader error, which is why a size test cannot catch
+it (the artifact cancels on both sides).
+
+⛔ **PREDICTION FAILED, and that is the finding.** I expected the 153
+length-REFUSALs on `comdat_fold_gate`'s 911-pair worklist to be re-adjudicated.
+Measured: **ADMIT 6 → 7 pairs (7 → 8 sites), REFUSE 905 → 904.** The size check
+is only the FIRST screen — once lengths agree, the byte/relocation comparison
+still refuses. `fold_thunk_gate` is **unchanged** (7 ADMIT / 29 REFUSE) because
+retail's survivor there is a 1-word `blr` and our body is hundreds of words
+either way ⇒ **the one tool my note named is the one where the fix changes
+nothing.**
+
+★ **What moved is the EVIDENCE, which is what a gate is for:**
+
+| refusal class | before | after | Δ |
+|---|---:|---:|---:|
+| SIZE (reader artifact) | 673 | 528 | **−145** |
+| RELOC/NAME | 194 | 337 | +143 |
+| BYTE divergence | 22 | 23 | +1 |
+| ADMIT | 6 | 7 | +1 |
+
+**146 pairs left the artifact class** and now refuse (or admit) on real evidence;
+`our_bytes` is corrected on **413 rows**. The surviving **528 size refusals are
+genuine** — our body really is a different length.
+
+The single flip is the case `comdat_bytes.py`'s own note predicted:
+`??$_Copy_Construct@UEyeDesc@CharEyes@@@stlpmtx_std@@` was *"body size 60 bytes
+(retail extent) vs 104 (our COMDAT)"* — the constant −44 B funclet — and is now
+*"identical: 14/15 words compared as FULL 32-bit values, 1 relocated branch
+destination resolved through the map and name-equal"* (CF2).
+
+⚠ **It is NOT installed.** Nothing was aliased by this commit — an admission is
+reported, never written, and installing it is a metric-moving act that needs the
+gate chain and a measurement. **Available, priced, unclaimed** for a future lane.
+
+Safety was checked in the direction that could LOSE bytes: exactly **one** pair
+had `retail == len(raw) != len(fn_raw)` (`??1EventCall@EventAnim@@`), it is in
+**ZERO alias groups**, all three of its rows stayed REFUSE, and **ADMIT →
+non-ADMIT withdrawals: 0** — so nothing installed ever rested on the over-count.
+
+Guard: `tools/test_fold_gate_function_extent.py`, registered in
+`scripts/test_tools.py`, and **proven to fail** — reverting one site in a `~/tmp`
+copy exits 1 naming the site. `comdat_fold_gate --selftest` stays PASS (0
+defects); `test_fold_thunk_gate_install` stays PASS.
+
 ### Coordinator verification while wave 16 ran — the two biggest non-SYMBOL rows are PURE ARITH_COMMUTE, do not fund
 
 Measured 2026-09-15 at main `a1b5e48f`, read-only, from `report.json` and the
