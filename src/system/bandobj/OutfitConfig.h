@@ -159,8 +159,20 @@ public:
     // retail-byte evidence. Re-adding them here would silently make that fix
     // inert (class scope is searched before namespace scope inside a member
     // function, so OutfitConfig::Load would rebind to the class static).
-    NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    // Retail INLINES the class operator new into NewObject and still evaluates
+    // StaticClassName() -- ObjMacros.h's shape (b). Measured on retail bytes at
+    // 0x822abdd8 (lane W16-BE, 2026-09-15):
+    //     addi r3,r31,0x50 ; bl ?StaticClassName@OutfitConfig@@SA?AVSymbol@@XZ
+    //     li r4,0 ; li r3,0xfc ; bl ?MemAlloc@@YAPAXHH@Z ; stw r3,0x54(r31)
+    // 0xfc == 252 == the compiler's sizeof(OutfitConfig), so there is no layout
+    // defect here. NEW_OVERLOAD produced shape (a) -- an out-of-line
+    // ??2OutfitConfig@@SAPAXI@Z and the temp-free 0x50 slot -- which left the
+    // row at 5/25 words equal (fuzzy 86.929). The spelling was inherited from
+    // rb3-Wii, which retail contradicts; see ObjMacros.h's NEW_OBJ record.
+    // Plain OBJ_MEM_OVERLOAD (not _INLINE_DEL): retail's NewObject unwind
+    // funclet at 0x822abe48 loads mem from 0x54 and calls the out-of-line ICF
+    // survivor ??3BinStream@@SAXPAX@Z, i.e. delete stays noinline as it was.
+    OBJ_MEM_OVERLOAD(0xa2);
 
     int mColors[3]; // 0x24, 0x24, 0x28
     ObjVector<MatSwap> mMats; // 0x30
