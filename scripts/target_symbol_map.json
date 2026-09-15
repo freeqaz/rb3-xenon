@@ -30550,5 +30550,8 @@
  "0x82b80550": "??0TourCharRemote@@QAA@XZ",
  "0x82b80678": "?Handle@TourCharRemote@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82b803a8": "?GetTexAtPatchIndex@TourCharRemote@@UBAPAVRndTex@@H_N@Z",
- "0x82b80330": "?SyncLoad@TourCharRemote@@QAAXAAVBinStream@@@Z"
+ "0x82b80330": "?SyncLoad@TourCharRemote@@QAAXAAVBinStream@@@Z",
+ "0x82b81538": "?FilterSlow@IIR4PoleFilter@@QAAMM@Z",
+ "0x82b81228": "??0VibratoDetector@@QAA@HH@Z",
+ "0x82b815b8": "??0IIR4PoleFilter@@QAA@PAM0@Z"
 }
