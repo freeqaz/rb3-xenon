@@ -107,8 +107,7 @@ public:
         __declspec(align(4)) unsigned short altRev, rev;
     };
     static RevsT gRevs;
-    NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x6e);
     NEW_OBJ(VocalTrackDir)
     static void Init() { Register(); }
     REGISTER_OBJ_FACTORY_FUNC(VocalTrackDir)
