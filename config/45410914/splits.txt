@@ -9888,7 +9888,7 @@ BandMachine.cpp:
 
 BandSongMetadata.cpp:
 	.pdata      start:0x821FAF20 end:0x821FAF48
-	.pdata      start:0x82200488 end:0x822004D8
+	.pdata      start:0x82200488 end:0x822004A8
 	.pdata      start:0x82200B00 end:0x82200B08
 	.pdata      start:0x82200B38 end:0x82200B40
 	.pdata      start:0x82212BC8 end:0x82212BD0
@@ -9902,7 +9902,7 @@ BandSongMetadata.cpp:
 	.pdata      start:0x82221798 end:0x822217B8
 	.pdata      start:0x822217B8 end:0x82221800
 	.text       start:0x82307B78 end:0x82308060
-	.text       start:0x8235FBA8 end:0x8235FF14
+	.text       start:0x8235FBA8 end:0x8235FD10
 	.text       start:0x82365510 end:0x82365560
 	.text       start:0x823658F8 end:0x82365974
 	.text       start:0x824B4390 end:0x824B43F8
@@ -10999,6 +10999,7 @@ Tour.cpp:
 	.pdata      start:0x82200100 end:0x82200120
 	.pdata      start:0x82200128 end:0x82200350
 	.pdata      start:0x82200358 end:0x82200380
+	.pdata      start:0x822004A8 end:0x822004D8
 	.pdata      start:0x82200500 end:0x82200520
 	.pdata      start:0x82200520 end:0x82200548
 	.pdata      start:0x82200548 end:0x822005A0
@@ -11015,6 +11016,7 @@ Tour.cpp:
 	.text       start:0x8235CB7C end:0x8235CC80
 	.text       start:0x8235CCC8 end:0x8235E9F4
 	.text       start:0x8235EA60 end:0x8235ECC8
+	.text       start:0x8235FD10 end:0x8235FF14
 	.text       start:0x823600D0 end:0x82360238
 	.text       start:0x82360238 end:0x82360450
 	.text       start:0x82360450 end:0x823608A0
