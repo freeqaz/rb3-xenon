@@ -334,17 +334,17 @@ Symbol StoreOfferProvider::DataSymbol(int i) const {
 
 // Retail (fn_82664418, 52 bytes) likewise has no size() guard.
 bool StoreOfferProvider::IsActive(int i) const {
-    // Not matched (71.9%): retail materialises the result in a scratch register and
-    // byte-masks it at a single return (`clrlwi r3,r11,24`); MSVC here fuses the
-    // returns instead (`beqlr`). Tried: uninitialised bool + explicit else (71.5%),
-    // and `result = (mActive != false)` which went BRANCHLESS (subic/subfe, 51.5%).
-    // BOOL_MASK / permuter-class -- left at the best-scoring shape.
+    // W16-CD: a DIRECT `return a || b;`.  The previous comment here called this
+    // BOOL_MASK / permuter-class after trying an uninitialised bool + explicit
+    // else (71.5%) and `result = (mActive != false)` (branchless, 51.5%) -- but
+    // the plain return expression was never tried, and it is what emits retail's
+    // shape.  Measured in THIS TU on the same compiler minutes earlier:
+    // ShowBrowserPurchased's `return a || b;` produced exactly
+    // `li r11,0 / beq / li r11,1 / clrlwi r3,r11,24`, which is instruction for
+    // instruction what retail's IsActive does.  The `bool result` temporary was
+    // what forced the fused `beqlr` form.
     Element *e = mElements[i];
-    bool result = false;
-    if (e->mOffer != NULL || e->mActive) {
-        result = true;
-    }
-    return result;
+    return e->mOffer != NULL || e->mActive;
 }
 
 // Retail (fn_82664450, 96 bytes) searches ONLY mOffers -- the mPacks fallback
