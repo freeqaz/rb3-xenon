@@ -1926,9 +1926,7 @@ HxGuid.cpp:
 	.text       start:0x827CB778 end:0x827CB7FC
 
 StringTable.cpp:
-	.pdata      start:0x822420D8 end:0x822420E0
 	.pdata      start:0x82242748 end:0x82242808
-	.text       start:0x827C2780 end:0x827C28D4
 	.text       start:0x827C8C88 end:0x827C97C8
 
 TempoMap.cpp:
@@ -6576,14 +6574,12 @@ Cheats.cpp:
 	.pdata      start:0x82208DC8 end:0x82208DD0
 	.pdata      start:0x82241F80 end:0x82241F90
 	.pdata      start:0x82241F90 end:0x82242028
-	.pdata      start:0x82242028 end:0x822420D8
-	.pdata      start:0x822420E0 end:0x822421B8
+	.pdata      start:0x82242028 end:0x822421B8
 	.text       start:0x823F2C10 end:0x823F2C98
 	.text       start:0x827C11D0 end:0x827C11FC
 	.text       start:0x827C1200 end:0x827C12E0
 	.text       start:0x827C1300 end:0x827C1A80
-	.text       start:0x827C1A84 end:0x827C2780
-	.text       start:0x827C28D4 end:0x827C3340
+	.text       start:0x827C1A84 end:0x827C3340
 
 MakeString.cpp:
 	.pdata      start:0x82242290 end:0x82242298
