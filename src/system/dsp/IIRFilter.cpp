@@ -10,21 +10,28 @@ IIR4PoleFilter::IIR4PoleFilter(float *b, float *a) {
     mState1[3] = 1.0f;
     mAccum[0] = 0.0f;
     mState1[0] = 0.0f;
-    mB0[1] = 0.0f;
-    mGain[1] = b[1];
-    mNegA[1] = -a[1];
-    mB0NegA[1] = -b[0] * a[1];
-    mAccum[1] = 0.0f;
-    mB0[2] = 0.0f;
-    mGain[2] = b[2];
-    mNegA[2] = -a[2];
-    mB0NegA[2] = -b[0] * a[2];
-    mAccum[2] = 0.0f;
-    mB0[3] = 0.0f;
-    mGain[3] = b[3];
-    mNegA[3] = -a[3];
-    mB0NegA[3] = -b[0] * a[3];
-    mAccum[3] = 0.0f;
+    // Retail ROLLS poles 1..3 (mtctr r31 / bdnz at 0x82B81634), with one
+    // induction pointer over &a[i] and b[i] reached through the constant
+    // byte difference (b - a); the destinations ride a single `stfsu`
+    // pointer walking mAccum. The previously-unrolled spelling here could
+    // not produce that shape.
+    for (int i = 1; i < 4; i++) {
+        mB0[i] = 0.0f;
+        mGain[i] = b[i];
+        mNegA[i] = -a[i];
+        mB0NegA[i] = -b[0] * a[i];
+        mAccum[i] = 0.0f;
+    }
+    // The SIMD mirror at 0x70..0xDF. See IIRFilter.h for the xref sweep that
+    // identified it: the ctor is the only writer and retail never reads it.
+    IIRQuad zero = { 0.0f, 0.0f, 0.0f, 0.0f };
+    mVState1 = *(__vector4 *)mState1;
+    mQ80 = zero;
+    mVB0 = *(__vector4 *)mB0;
+    mVGain = *(__vector4 *)mGain;
+    mVB0NegA = *(__vector4 *)mB0NegA;
+    mVNegA = *(__vector4 *)mNegA;
+    mQD0 = zero;
 }
 
 void IIR4PoleFilter::Begin() {}
