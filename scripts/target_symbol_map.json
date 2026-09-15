@@ -30560,5 +30560,6 @@
  "0x82b80810": "?AnalyzeBlock@PitchDetector@@QAAXPBDPAFHMMAAM22@Z",
  "0x8235cdb8": "?GetConclusionText@Tour@@QBA?AVSymbol@@XZ",
  "0x8235fd10": "??0Tour@@QAA@PAVDataArray@@ABVSongMgr@@AAVBandUserMgr@@_N@Z",
- "0x82360ba0": "?GetCurrentQuestSuccessMessage@TourPerformerImpl@@QBA?AVSymbol@@XZ"
+ "0x82360ba0": "?GetCurrentQuestSuccessMessage@TourPerformerImpl@@QBA?AVSymbol@@XZ",
+ "0x822ef438": "?PreLoad@GemTrackDir@@UAAXAAVBinStream@@@Z"
 }
