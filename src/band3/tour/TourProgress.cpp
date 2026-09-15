@@ -480,8 +480,8 @@ void TourProgress::FakeFill() {
 
 void TourProgress::DumpProperties() {
     MILO_LOG("\n***** Tour Property Dump *****\n\n");
-    const std::map<Symbol, TourProperty *> &propmap = TheTour->TourProperties();
-    for (std::map<Symbol, TourProperty *>::const_iterator it = propmap.begin();
+    const std::hash_map<Symbol, TourProperty *> &propmap = TheTour->TourProperties();
+    for (std::hash_map<Symbol, TourProperty *>::const_iterator it = propmap.begin();
          it != propmap.end();
          ++it) {
         Symbol name = it->first;

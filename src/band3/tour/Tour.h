@@ -15,6 +15,7 @@ class UILabel;
 #include "game/BandUserMgr.h"
 #include "tour/Quest.h"
 #include "tour/TourPerformer.h"
+#include <hash_map>
 
 enum TourMode {
     kMetaTour_Nil = -1,
@@ -46,7 +47,7 @@ public:
     Symbol GetTourStatusForStarCount(int, int) const;
     int GetStarsForTourStatus(Symbol) const;
     bool DoesTourStatusExist(int, int) const;
-    const std::map<Symbol, TourProperty *> &TourProperties() const {
+    const std::hash_map<Symbol, TourProperty *> &TourProperties() const {
         return m_mapTourProperties;
     }
     TourProgress *GetTourProgress() const;
@@ -115,13 +116,13 @@ public:
     BandUserMgr &mBandUserMgr; // 0x2c
     TourPerformerImpl *m_pTourPerformer; // 0x30
     TourProgress *m_pTourProgress; // 0x34
-    std::map<Symbol, TourProperty *> m_mapTourProperties; // 0x38
-    std::vector<TourStatusEntry> m_vTourStatus; // 0x50
-    TourWeightManager mWeightManager; // 0x5c
-    std::map<Symbol, TourDesc *> m_mapTourDesc; // 0x7c
-    BandProfile *m_pProfile; // 0x94
-    bool unk84; // 0x98
-    bool mTourShowPostSeldiffScreen; // 0x99
+    std::hash_map<Symbol, TourProperty *> m_mapTourProperties; // 0x38
+    std::vector<TourStatusEntry> m_vTourStatus; // 0x54
+    TourWeightManager mWeightManager; // 0x60
+    std::hash_map<Symbol, TourDesc *> m_mapTourDesc; // 0x80
+    BandProfile *m_pProfile; // 0x9c
+    bool unk84; // 0xa0
+    bool mTourShowPostSeldiffScreen; // 0xa1
 };
 
 extern Tour *TheTour;
