@@ -347,9 +347,7 @@ void BandStorePanel::Poll() {
                 static MetadataLoadedMsg msg(metadata, true, nullStr, false, false);
                 msg[0] = DataNode(metadata, kDataArray);
                 msg[2] = DataNode(mLastRequest.c_str());
-                msg[3] = DataNode(
-                    (int)(mLastRequest == MakeString("%d", StoreBuildNum()))
-                );
+                msg[3] = DataNode((int)(mLastRequest == GetIndexFile()));
                 msg[4] = DataNode((int)!mLastRequestExtra);
                 String path(mLastRequest);
                 mLastRequest.erase();
@@ -363,13 +361,15 @@ void BandStorePanel::Poll() {
         }
         if (mMetadataLoader->HasFailed()) {
             MILO_NOTIFY("Request for %s failed.\n", mLastRequest.c_str());
-            DataArray *empty = new DataArray(0);
+            // objdiff resolves retail's callee here to ??0DataArrayPtr@@QAA@XZ,
+            // i.e. the default DataArrayPtr ctor (`mData = new DataArray(0)`),
+            // NOT a bare `new DataArray(0)`. Its inlined dtor supplies the
+            // trailing Release, which is why the explicit one below is gone.
+            DataArrayPtr empty;
             {
                 MetadataLoadedMsg msg(empty, false, gNullStr, false, false);
                 msg[2] = DataNode(mLastRequest.c_str());
-                msg[3] = DataNode(
-                    (int)(mLastRequest == MakeString("%d", StoreBuildNum()))
-                );
+                msg[3] = DataNode((int)(mLastRequest == GetIndexFile()));
                 msg[4] = DataNode((int)!mLastRequestExtra);
                 mLastRequest.erase();
                 if (mMetadataLoader) {
@@ -378,7 +378,6 @@ void BandStorePanel::Poll() {
                 }
                 Export(msg.mData, true);
             }
-            empty->Release();
         }
     }
 }
