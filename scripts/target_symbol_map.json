@@ -30540,5 +30540,6 @@
  "0x82b6a0e8": "?CreateFx@FxSendPitchShift360@@MAAPAUIUnknown@@XZ",
  "0x822ecc48": "??0GemTrackDir@@QAA@XZ",
  "0x8227bcc0": "?NewObject@GemTrackDir@@SAPAVObject@Hmx@@XZ",
- "0x8227bea0": "?NewObject@VocalTrackDir@@SAPAVObject@Hmx@@XZ"
+ "0x8227bea0": "?NewObject@VocalTrackDir@@SAPAVObject@Hmx@@XZ",
+ "0x822fc508": "??0VocalTrackDir@@QAA@XZ"
 }
