@@ -328,6 +328,7 @@
             "system/synth/VoiceBeat.cpp": "NonMatching",
             "system/dsp/SndAnalysis.cpp": "NonMatching",
             "system/dsp/IIRFilter.cpp": "NonMatching",
+            "system/dsp/PitchDetector.cpp": "NonMatching",
             "system/dsp/VibratoDetector.cpp": "NonMatching",
             "system/synth_xbox/FFT.cpp": "NonMatching",
             "system/synth_xbox/SpectralAnalysis.cpp": "NonMatching",

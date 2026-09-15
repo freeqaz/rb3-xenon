@@ -1879,7 +1879,7 @@ PitchCorrectedVoice.cpp:
 	.pdata      start:0x8225BD40 end:0x8225BD50
 	.text       start:0x82B74B28 end:0x82B74E10
 
-PitchDetector.cpp:
+system/synth_xbox/PitchDetector.cpp:
 	.pdata      start:0x8225BC10 end:0x8225BCB0
 	.text       start:0x82B72C50 end:0x82B737BC
 
@@ -2897,7 +2897,6 @@ UI.cpp:
 	.pdata      start:0x82245E90 end:0x82245E98
 	.pdata      start:0x82245E98 end:0x82246018
 	.pdata      start:0x82246018 end:0x82246128
-	.pdata      start:0x8225C640 end:0x8225C680
 	.text       start:0x823F4A30 end:0x823F56F8
 	.text       start:0x828023A0 end:0x828024B0
 	.text       start:0x828024B0 end:0x82802530
@@ -2917,7 +2916,6 @@ UI.cpp:
 	.text       start:0x828033C8 end:0x82803494
 	.text       start:0x82803494 end:0x82804E00
 	.text       start:0x82804E00 end:0x82806414
-	.text       start:0x82B807C0 end:0x82B80FC4
 
 system/rndobj/Utl.cpp:
 	.pdata      start:0x8220CDC0 end:0x8220D018
@@ -12542,6 +12540,10 @@ system/synth/VoiceBeat.cpp:
 	.text       start:0x82718578 end:0x827185CC
 	.text       start:0x827185D0 end:0x82718764
 	.text       start:0x82718768 end:0x827187EC
+
+system/dsp/PitchDetector.cpp:
+	.pdata      start:0x8225C640 end:0x8225C698
+	.text       start:0x82B807C0 end:0x82B81228
 
 system/dsp/VibratoDetector.cpp:
 	.pdata      start:0x8225C698 end:0x8225C6A8
