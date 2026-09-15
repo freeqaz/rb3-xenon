@@ -49,6 +49,55 @@ ChordbookPanel::ChordbookPanel()
 
 ChordbookPanel::~ChordbookPanel() { delete mProgressMeter; }
 
+// W16-CS: retail's Enter carries THREE statements this body does not, and the
+// reconstruction below is verified against retail bytes + compiler ground truth.
+// It is deliberately NOT applied -- see the blocker at the end.
+//
+// Retail 0xadc-0xb48, ahead of the UIPanel::Enter() call:
+//     bl   TrainingMgr::GetTrainingMgr
+//     lwz  r30, 0x28(r3)                  TrainingMgr::mUser  (LocalBandUser*)
+//     <vbase adjust>  lwz r11,0x4(r30); lwz r11,0x8(r11); add r11,r11,r30
+//     lwz  r3, 0x90(r11) ; __RTDynamicCast(src=Player, tgt=GemPlayer)  DISCARDED
+//     lwz  r3, 0x8c(r11) ; __RTDynamicCast(src=Track,  tgt=GemTrack)
+//     if (r3) { lwz r11, 0x84(r3); stw r11, 0x50(r31) }      -> unk4c
+//
+// The two type names are read straight out of retail .data: the ??_R0 type
+// descriptors at 0x82C74FFC/0x82C75014/0x82C75618/0x82C75600 carry
+// ".?AVPlayer@@" / ".?AVGemPlayer@@" / ".?AVTrack@@" / ".?AVGemTrack@@" at +8.
+// __RTDynamicCast is (inptr, VfDelta, SrcType, TargetType, isReference), so
+// r5=src and r6=target.
+//
+// The member offsets look 4 high only until the vtordisp is accounted for: the
+// vbtable entry for a vbase carrying a vtordisp points AT THE VTORDISP WORD, and
+// BandUser.h records vtordisp(BandUser) 0x68 / BandUser 0x6c inside
+// LocalBandUser. So 0x8c = LBU+0xf4 = BandUser+0x88 = mTrack, and 0x90 =
+// LBU+0xf8 = BandUser+0x8c = mPlayer -- both EXACTLY as commented. Confirmed two
+// ways: class_layout_report.py --check-header reports every // 0xHEX comment in
+// BandUser.h and GemTrack.h agreeing with the compiler, and
+// ChordbookPanel::GetChordbookPlayer (scored in default/PracticePanel, 80 B)
+// matches retail at 100.0% while emitting this identical `lwz r3, 0x90(r11)`.
+// There is NO BandUser layout defect here; do not "fix" one.
+// GemTrack::mTrackDir is ObjPtr<GemTrackDir> at 0x7c and --offset 0x84 answers
+// "mTrackDir + 8", i.e. retail's 0x84 load IS GetTrackDir().
+//
+// The first cast's result being discarded is the house MILO_ASSERT shape: this
+// build compiles MILO_ASSERT(cond,line) to ((void)(cond)), so the call is
+// emitted and the value dropped. Both casts share ONE GetTrainingMgr call and
+// ONE 0x28 load, so retail hoists the user once:
+//
+//     LocalBandUser *user = TrainingMgr::GetTrainingMgr()->GetUser();
+//     MILO_ASSERT(dynamic_cast<GemPlayer *>(user->GetPlayer()), <line>);
+//     GemTrack *track = dynamic_cast<GemTrack *>(user->GetTrack());
+//     if (track) unk4c = track->GetTrackDir();
+//
+// and a tail  if (mGemPlayer) fn_826B5848(this, 0);  at 0xbc4-0xbd8.
+//
+// BLOCKER (why this is documented rather than applied): fn_826B5848 is a 316 B
+// ANONYMOUS row in this unit. matched_code is all-or-nothing per row, so Enter
+// cannot reach fuzzy==100 until that callee is IDENTIFIED -- which is map work,
+// not source work. Writing the prologue alone moves Enter off 50.4474 but buys
+// exactly 0 bytes while putting the 28 currently-equal instructions at risk.
+// Name fn_826B5848 and this lands in one shot for 304 B.
 void ChordbookPanel::Enter() {
     UIPanel::Enter();
     mChordLegend = mDir->Find<RndDir>("chord_legend", true);
