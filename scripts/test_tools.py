@@ -193,6 +193,7 @@ SCRIPT_ARM: list[dict] = [
     # shown to be the gate's.
     {"path": "tools/test_icf_alias_survivor_gate.py", "timeout": 120},
     {"path": "tools/test_fold_thunk_gate_install.py", "timeout": 60},
+    {"path": "tools/test_fold_gate_function_extent.py", "timeout": 60},
     # W16-AE (2026-09-14): the DENYLIST EFFECT check in verify_objs_patched.py
     # (tree passes; a sandbox map with 0x82553fc8 re-denylisted must exit 7 and
     # name it; null copy passes; malformed denylist exits 7).

@@ -128,9 +128,9 @@ def our_comdats():
         for n, v in c.items():
             if not v.get("is_code"):
                 continue
-            rel = tuple(sorted((o, s, t) for o, s, t in (v["relocs"] or [])
+            rel = tuple(sorted((o, s, t) for o, s, t in (v["fn_relocs"] or [])
                                if s != "@comp.id"))
-            out[n][(v["raw"], rel)].append(p)
+            out[n][(v["fn_raw"], rel)].append(p)
     return out
 
 

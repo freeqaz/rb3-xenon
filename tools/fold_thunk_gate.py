@@ -205,12 +205,18 @@ def our_index(wanted):
 
 def our_canon(cd):
     """(masked_words, {offset: target_name}, note) for one of our COMDATs."""
-    raw = cd["raw"]
+    # W16-CN 2026-09-15: FUNCTION-ONLY extent.  `raw`/`relocs` bill the
+    # trailing `__unwind$` funclet (and, in a non-/Gy monolithic section,
+    # the rest of the section) into the body, while the retail side of this
+    # comparison is a .pdata FUNCTION extent.  That one-sided read produced
+    # 153 length-REFUSALs on this worklist that never reached a byte
+    # comparison.  See comdat_bytes.py's FUNCTION-EXTENT note.
+    raw = cd["fn_raw"]
     if len(raw) % 4:
         return None, None, "COMDAT size %d is not a multiple of 4" % len(raw)
     words = [mask_word(w) for w in struct.unpack(">%dI" % (len(raw) // 4), raw)]
     targets = {}
-    for off, nm, ty in cd["relocs"]:
+    for off, nm, ty in cd["fn_relocs"]:
         if ty in REL_BRANCH24 or ty in REL_BRANCH14 or ty in REL_IMM16:
             targets[off] = nm
         else:
