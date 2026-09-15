@@ -100,7 +100,9 @@ const char *StringTable::Add(const char *str) {
 #define gRev gRev_GlitchFinder
 #define gAltRev gAltRev_GlitchFinder
 #if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
-#include "utl/GlitchFinder.cpp"
+// GlitchFinder.cpp scatter-include REMOVED (W16-BD). The 340 B it existed to
+// pair (0x827C2780) is ??0CheatsManager@@QAA@XZ, now homed in Cheats.cpp; and
+// GlitchFinder is absent from retail entirely, so it paired with nothing here.
 #endif
 #undef gRev
 #undef gAltRev
