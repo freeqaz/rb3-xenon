@@ -28,8 +28,18 @@ protected:
     virtual void FinishValueChange();
 
 public:
-    NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    // Retail INLINES the class operator new into NewObject and still evaluates
+    // StaticClassName() -- ObjMacros.h shape (b). Retail bytes at 0x82341ff8
+    // (lane W16-BE, 2026-09-15):
+    //     addi r3,r31,0x50 ; bl ?StaticClassName@BandLabel@@SA?AVSymbol@@XZ
+    //     li r4,0 ; li r3,0x290 ; bl ?MemAlloc@@YAPAXHH@Z ; stw r3,0x54(r31)
+    // 0x290 == 656 == the compiler's sizeof(BandLabel), so no layout defect.
+    // NEW_OVERLOAD gave shape (a) and left the row at 5/25 words (fuzzy
+    // 86.929) -- the same rb3-Wii-inherited spelling retail contradicts in
+    // ObjMacros.h's NEW_OBJ record. Plain OBJ_MEM_OVERLOAD, not _INLINE_DEL:
+    // the unwind funclet at 0x82342068 loads mem from 0x54 and calls the
+    // out-of-line ICF survivor ??3BinStream@@SAXPAX@Z.
+    OBJ_MEM_OVERLOAD(0x1f);
     static void LoadOldBandTextComp(BinStream &);
     static void Init();
     static void Register() { REGISTER_OBJ_FACTORY(BandLabel); }
