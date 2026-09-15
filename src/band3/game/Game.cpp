@@ -1690,10 +1690,13 @@ Game::Properties::Properties()
 UnkTU5GuidePitchOwner::UnkTU5GuidePitchOwner(Symbol song) {
     unk10 = 0;
     mGuidePitch = new VocalGuidePitch();
-    mUnkCounts[0] = 0;
-    mUnkCounts[1] = 0;
-    mUnkCounts[2] = 0;
-    mUnkCounts[3] = 0;
+    // EXPERIMENT (W16-BO): indexed loop rather than four direct member stores.
+    // Retail RELOADS `lwz r3,0x14(r30)` before Load(false); with four direct
+    // member stores our build keeps the pointer live in r3 and skips that reload
+    // -- the single remaining `delete` on this row. An indexed store through
+    // `this` is the aliasing fact that would force the reload back.
+    for (int i = 0; i < 4; i++)
+        mUnkCounts[i] = 0;
     mGuidePitch->Load(false);
     mGuidePitch->FinishLoad();
     MILO_ASSERT(mGuidePitch->IsLoaded(), 0x1A);
