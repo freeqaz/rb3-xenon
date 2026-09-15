@@ -1299,7 +1299,7 @@
  "0x8227b028": "?Load@Song@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
  "0x8227b038": "??_EBandSong@@WBA@AAPAXI@Z",
  "0x8227b040": "?SyncProperty@Song@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
- "0x8227b050": "?ClassName@BandCharacter@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
+ "0x8227b050": "?ClassName@BandSong@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
  "0x8227b060": "?Save@Song@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
  "0x8227b368": "?NewObject@BandIKEffector@@SAPAVObject@Hmx@@XZ",
  "0x8227b408": "?NewObject@BandRetargetVignette@@SAPAVObject@Hmx@@XZ",
