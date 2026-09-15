@@ -263,11 +263,33 @@ void PitchDetector::AnalyzeBlock(
             mPeriod = 0.0f;
             return;
         }
-        mPitch = 39.863136f + -36.376316f * (float)log10(pitchHz);
+        // ⚠ THE ORACLE IS WRONG HERE AND RETAIL IS RIGHT. rb3-Wii writes
+        // `39.863136f + -36.376316f * log10(pitchHz)`, which retail refutes on
+        // bytes: retail emits `fmsubs f0, f12, f0, f13` with f0=39.863136 and
+        // f13=36.376316 (read out of .rdata at 0x8219AF54/0x8219AF50), i.e.
+        // `log10 * 39.863136 - 36.376316`, where the oracle's spelling compiles
+        // to `fnmsubs` with the two constants in the opposite roles.
+        // The retail form is also the only one that is MEANINGFUL: it is the
+        // standard Hz->MIDI-note conversion 69 + 12*log2(f/440), since
+        // 12/log10(2) = 39.863136 and 39.863136*log10(440) - 69 = 36.376316.
+        // So this is a behavioural fix, not only a codegen one -- the inherited
+        // spelling returned a quantity that is not a note number at all.
+        mPitch = 39.863136f * (float)log10(pitchHz) - 36.376316f;
     }
     unk14++;
     unk18 += numSamples;
     pitchOut = mPitch;
+    // ⚠ NOT REPRODUCED -- left at the oracle's spelling deliberately. Retail
+    // associates this as ((fixedGain / unk38) * pitchHint) * mAveEnergy:
+    //   lfs f13,0x34(r30); lfs f0,0(r29); fdivs f0,f25,f0; fmuls f0,f0,f24;
+    //   fmuls f0,f0,f13        (f25=fixedGain, f24=pitchHint, f13=mAveEnergy)
+    // i.e. retail divides fixedGain by unk38 FIRST. Writing it literally as
+    // `fixedGain / unk38 * pitchHint * mAveEnergy` does NOT reproduce that --
+    // /fp:fast reassociates it back to putting mAveEnergy in the numerator
+    // (measured: 5 charged sites either way, total charges 122 -> 123). So the
+    // association is being chosen by the scheduler, not by the parentheses, and
+    // the lever is not the spelling of this line. Reverted to the oracle's form
+    // rather than leave an unjustified rewrite in the tree. 5 charges remain.
     confidenceOut = fixedGain * (pitchHint * mAveEnergy) / unk38;
     gateOut = mAveEnergy;
 }

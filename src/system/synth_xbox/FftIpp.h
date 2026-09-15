@@ -38,11 +38,39 @@ public:
     size_type max_size() const { return size_type(-1) / sizeof(T); }
 
     pointer allocate(size_type count, const void *hint = 0) {
-        return (pointer)MemAlloc(count * sizeof(T), __FILE__, __LINE__, "unknown", 0);
+        // Retail/match: this allocator passes align 0x10 and guards count==0.
+        // Both are read off retail bytes at the only two call sites that survive
+        // out-of-line, 0x82B7599C (_Vector_base ctor) and 0x82B75C24
+        // (_M_insert_overflow): `cmplwi cr6,r4,0; beq; li r4,0x10; bl MemAlloc`.
+        // ⚠ The parenthesized `(MemAlloc)` is LOAD-BEARING. MemMgr.h defines
+        // `#define MemAlloc(size, file, line, name, ...) (MemAlloc)((size), 0)`,
+        // and MSVC's traditional preprocessor expands that macro even when it is
+        // invoked with FEWER arguments than it declares -- so the previous
+        // 5-arg debug spelling here had its trailing align swallowed and emitted
+        // `li r4,0` where retail has `li r4,0x10`. It compiled, it looked right,
+        // and only the immediate in the callee's r4 gave it away. See the W16-BT
+        // census doc for the whole-binary sweep of this hazard.
+#ifdef HX_NATIVE
+        if (count != 0)
+            return (pointer)MemAlloc(count * sizeof(T), __FILE__, __LINE__, "unknown", 0x10);
+#else
+        if (count != 0)
+            return (pointer)(MemAlloc)(count * sizeof(T), 0x10);
+#endif
+        return 0;
     }
 
     void deallocate(pointer ptr, size_type) {
-        MemFree(ptr);
+        // Retail/match: this allocator null-guards the free, as it guards the
+        // allocation above. Read off retail _M_insert_overflow (0x82B75BC8),
+        // which does `cmplwi cr6,r3,0; beq cr6; bl MemFree` -- STLport's own
+        // _M_clear() is UNGUARDED here and in retail (the 408 B StlNodeAlloc
+        // _M_insert_overflow_aux rows sit at fuzzy 100 against our unguarded
+        // _M_clear), so the guard cannot be STLport's; it is the allocator's.
+        // ~_Vector_base shows only ONE test because /O1 collapses its own
+        // `if (_M_start != 0)` with this one.
+        if (ptr != 0)
+            MemFree(ptr);
     }
 
     void construct(pointer ptr, const_reference value) { new (ptr) T(value); }
