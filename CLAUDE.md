@@ -1937,8 +1937,18 @@ decoded with `??_R4` RTTI Complete Object Locator parsing.
 through wibo) and prints real offsets, explicit padding rows, vtable slots with
 the supplying class, and `this` adjustors. It is **authoritative**; the `// 0xHEX`
 header comments — and `struct_db.sqlite`/`lookup_struct_offset`, which are
-*derived from those comments* — are measurably wrong in places (`CharEyes.h`: 20
-wrong offsets; `SaveLoadManager.h`: uniformly +4 stale). `lookup_struct_offset`
+*derived from those comments* — **can be wrong, and the rule does not depend on a
+live example being on hand.**
+⚠ **BOTH EXAMPLES THIS NOTE CITED ARE NOW REPAIRED — re-measured 2026-09-15 with
+the compiler, and `--check-header` reports `all // 0xHEX comments agree with the
+compiler` for BOTH `src/system/char/CharEyes.h` (was: 20 wrong offsets) and
+`src/band3/meta_band/SaveLoadManager.h` (was: uniformly +4 stale).** They were
+fixed at some point after the note was written and nobody updated it, so a lane
+briefed off this paragraph would have gone hunting a header defect that does not
+exist. **The methodology is unchanged and still correct — the compiler is
+authoritative and the comments are derived — but do NOT cite either file as a
+current defect, and run `--check-header` rather than inheriting any claim about a
+specific header's staleness, including this one.** `lookup_struct_offset`
 now consults the compiler by default (`verify=true`, `project_dir=<worktree>`) and
 labels comment-derived answers **UNVERIFIED**. `--check-header` audits a header's
 comments against the compiler; `--offset 0x118` answers "which member is here".
