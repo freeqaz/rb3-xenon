@@ -275,3 +275,214 @@ their objects do not emit, and **exposes** that our source for those parents doe
 them (standing directive: a code% drop from a truer attribution is a win, and a metric that hides
 real bugs is worse than a lower metric). PINHOME-1's rule applies — re-homing is **not**
 metric-neutral, unlike adding a pin over `auto_*` code — which is why every row here is priced.
+
+---
+
+## 5. Measurement (recorded AFTER the edit)
+
+### 5.1 Provenance
+
+| | |
+|---|---|
+| worktree | `/home/free/tmp/wt-w16-bj`, branch `w16-bj` |
+| baseline | main `9d2ec6df55ee`, rowset `~/tmp/bj/baseline_bj.json` (= `~/tmp/rows_w16bg_main.json`) |
+| ruler | **graded** — `functionRelocDiffs=name_check`, read from `report.json`'s `provenance.diff_config`; objdiff 4.2.9 `5a51cd51fe0a353f` |
+| build | full `./tools/ninja-locked`, `BUILD rc=0` (`~/tmp/rb3_build_w16bj_4.log`), then a settle build `rc=0` (`_5.log`, check/progress edges only) |
+| edit surface | `config/45410914/splits.txt` only — 16 `.text` lines touched by hand (9 rewritten, 7 deleted); dtk then re-derived `.pdata` (16 removed / 9 added). Final `git diff --stat`: **18 insertions / 32 deletions**. `symbols.txt` did **not** drift. |
+
+⚠ **The first build after the edit returned `rc=1`** on the split guard's *"THE SPLIT REWROTE ITS OWN
+INPUT -- its output is not a fixed point of its input."* That is the documented `.pdata`
+re-derivation (`.pdata` is derived output, never input), symmetric with the `.text` edit; the guard
+states *"Recovery is one build"*, and one rebuild returned `rc=0`. Recorded because a lane reading
+only the final `rc=0` would not know the guard had fired.
+
+### 5.2 Whole-binary measures
+
+```
+matched_functions        43548 ->  43550     delta      +2     predicted +2    EXACT
+matched_code           4039828 -> 4039860    delta     +32 B   predicted +72 B MISS -40 B
+matched_code_percent  39.424236 -> 39.424545 delta +0.000309
+total_functions          69240 ->  69240     delta      +0     as predicted
+total_code            10247068 -> 10247068   delta      +0     as predicted
+masked_equal_functions   23076 ->  23078     delta      +2
+fuzzy_match_percent   49.695950 -> 49.694675 delta -0.001275
+```
+
+★ **The aggregate `fuzzy_match_percent` FELL, and that is the intended direction.** Three rows lose
+a `masked_equal` false-twin credit outright, which drags the aggregate down harder than five genuine
+crossings lift it. Standing directive: a code% drop from a truer attribution is a win.
+
+### 5.3 Set-diff of the `fuzzy == 100` membership
+
+`python3 tools/rowset_snapshot.py diff ~/tmp/bj/baseline_bj.json`:
+
+```
+CROSSED IN : 19 rows, 676 B
+FELL OUT   : 18 rows, 644 B
+NET bytes  : +32
+```
+
+**Decomposed** — the key is `unit::name`, so a re-homed row necessarily appears on *both* sides:
+
+| class | rows | bytes |
+|---|---:|---:|
+| pure `unit::name` **key rename** (fell out of donor, reappeared under receiver) | 14 | 476 B on each side, net 0 |
+| **genuine gains** (5 PartLauncher rows crossing 99.3/99.4 → 100) | 5 | **+200 B** |
+| **genuine losses** (`RGUtl` ×2, `UGCPurchasePanel` ×1, `StandardStream`→`Utl` ×1) | 4 | **−168 B** |
+| **net** | | **+32 B** ✅ reconciles to `matched_code` exactly |
+
+**0 rows vanished and 0 appeared** across the whole funclet population (26,321 → 26,321), and
+**0 collateral rows** — no row outside the 26 changed its `fuzzy == 100` membership. So the entire
+delta is the move, with no offsetting noise.
+
+### 5.4 Prediction vs measurement, per row (all 26)
+
+| addr | size | donor → receiver | fuzzy before→after | mpn before→after | Δ B |
+|---|---:|---|---|---|---:|
+| `82318BBC` | 44 | DepthBuffer3D → RGUtl | 100 → **0** | 100 → 0 | −44 |
+| `82318BE8` | 44 | DepthBuffer3D → RGUtl | 100 → **0** | 100 → 0 | −44 |
+| `82318C14` | 44 | DepthBuffer3D → RGUtl | 99.91 → **0** | 99.91 → 0 | 0 |
+| `82451A20` | 32 | APC → PartLauncher | 100 → 100 | 100 → 100 | 0 |
+| `82451A40` | 40 | APC → PartLauncher | **99.3 → 100** | 99.8 → **100** | **+40** |
+| `82451A68` | 32 | APC → PartLauncher | 100 → 100 | 100 → 100 | 0 |
+| `82451A88` | 32 | APC → PartLauncher | 100 → 100 | 100 → 100 | 0 |
+| `82451AA8` | 40 | APC → PartLauncher | **99.4 → 100** | 99.9 → **100** | **+40** |
+| `82451AD0` | 32 | APC → PartLauncher | 100 → 100 | 100 → 100 | 0 |
+| `82451AF0` | 32 | APC → PartLauncher | 100 → 100 | 100 → 100 | 0 |
+| `82451B10` | 40 | APC → PartLauncher | **99.3 → 100** | 99.8 → **100** | **+40** |
+| `82451B38` | 32 | APC → PartLauncher | 100 → 100 | 100 → 100 | 0 |
+| `82451B58` | 32 | APC → PartLauncher | 100 → 100 | 100 → 100 | 0 |
+| `82451B78` | 40 | APC → PartLauncher | **99.3 → 100** | 99.8 → **100** | **+40** |
+| `82451BA0` | 32 | APC → PartLauncher | 100 → 100 | 100 → 100 | 0 |
+| `82451BC0` | 32 | APC → PartLauncher | 100 → 100 | 100 → 100 | 0 |
+| `82451BE0` | 40 | APC → PartLauncher | **99.3 → 100** | 99.8 → **100** | **+40** |
+| `82451C08` | 32 | APC → PartLauncher | 100 → 100 | 100 → 100 | 0 |
+| `82451C28` | 32 | APC → PartLauncher | 100 → 100 | 100 → 100 | 0 |
+| `824F8244` | 44 | Watcher → RockCentral | 100 → 100 | 100 → 100 | 0 |
+| `8263F2F0` | 40 | BandProfile → UGCPurchasePanel | 100 → **99.3** | 100 → **99.8** | −40 |
+| `82703AD0` | 40 | StandardStream → system/rndobj/Utl | 100 → **99.5** | 100 → **100** | **−40 ⛔ the miss** |
+| `82703B68` | 40 | system/rndobj/Utl → StandardStream | 100 → 100 | 100 → 100 | 0 |
+| `82709BF8` | 40 | DepthBuffer3D → Sequence | 100 → 100 | 100 → 100 | 0 |
+| `827799AC` | 40 | CharLipSync → SongData | 99.3 → 99.8 | 99.8 → 99.8 | 0 |
+| `827799D4` | 40 | CharLipSync → SongData | 99.4 → 99.9 | 99.9 → 99.9 | 0 |
+
+**Function-count reconciliation** (rows crossing the `mpn == 100` boundary):
+`+5` (the five PartLauncher rows) `−3` (`82318BBC`, `82318BE8`, `8263F2F0`) = **+2 exactly.**
+
+Per-edit against §4's pre-registration: **#3 −2 fn / −88 B EXACT · #7 +5 fn / +200 B EXACT ·
+#10 Δ0 EXACT · #13 −1 fn / −40 B EXACT · #15 predicted Δ0, measured −40 B ⛔ MISS ·
+#16 Δ0 EXACT · #17 Δ0 EXACT · #19 Δ0 EXACT.** Eight of nine edits priced exactly.
+
+Two wording corrections to §4, neither affecting a number:
+- #3 said `82318C14` *"already 99.91, stays"* — it did not stay, it fell to **0** (lost its pairing
+  entirely). Byte and function impact are identical (a 99.91 row contributes to neither measure), so
+  the prediction was right on both measures and wrong on the row state. Recorded rather than smoothed.
+- #19's downside branch (*"may fall further, to 0 if left unpaired"*) did not occur: both rows
+  **improved** slightly, 99.3 → 99.8 and 99.4 → 99.9, i.e. `SongData` pairs them better than
+  `CharLipSync` did even though it cannot pair them exactly.
+
+### 5.5 The one miss, explained — a structural limit of the predictor, not a pairing accident
+
+`fn_82703AD0` **did** cross into `system/rndobj/Utl`. It reads **`mpn = 100.0`** — so it keeps its
+`matched_functions` credit, which is exactly why the function delta is the predicted `+2` — and
+**`fuzzy = 99.5`**. `matched_code` keys on `fuzzy == 100` **all-or-nothing per row**, so its 40 B are
+withheld. **40 B is the entire shortfall**; no other row deviates.
+
+Since `mpn = diff_score − arg_diff_score`, a row at `mpn == 100` with `fuzzy < 100`
+**proves** every surviving penalty is argument-level — a relocation-name charge under `name_check`.
+And that is precisely what the predictor cannot see:
+
+> §4's evidence instrument was a **relocation-masked** body comparison — `bl` masked to its opcode,
+> D-forms to their top 16 bits. It masks *exactly* the information `name_check` charges. So the
+> comparator is an `mpn`-grade instrument: it can predict `matched_functions` and is
+> **structurally incapable** of predicting `matched_code`. §4 priced #15 on `fuzzy` with it.
+
+⚠ **Its 8/8 positive control was confounded, and the confound was invisible from the donor side.**
+The control asserted "twin present ⟺ `fuzzy == 100`" against each row's **donor**. But in the donor
+every one of those rows was a `masked_equal` **false byte-signature pairing** — which by
+construction has an exact byte twin, because that is *why* objdiff paired it. So the biconditional
+held there trivially and carried no information about the true home, where the twin exists but its
+relocations name different symbols. **A control drawn from the population the instrument was tuned
+on cannot discriminate** — same family as this tree's other vacuous-control incidents.
+
+⇒ **Durable rule: a relocation-masked twin comparator predicts `matched_functions`, never
+`matched_code`.** To price bytes, the comparator must compare relocation *target names*, i.e. do
+what `name_check` does. State the predicted measure explicitly next time.
+
+**Not run, deliberately:** the charged site on `fn_82703AD0` is not named here. `run_objdiff` (MCP)
+performs a single-`.obj` incremental build that **skips the six obj patchers**, which would leave the
+tree unpatched immediately before the `--verify-manifest` gate. The arg-only nature of the residual
+is established analytically above (`mpn == 100 ∧ fuzzy < 100`), so naming the site is an improvement
+in detail, not in certainty. **Filed** for a lane that can afford a full rebuild afterwards: it is a
+live adjudicable signal — either our source names a different callee than retail, or a legitimate
+fold-alias is missing — and it was **invisible while the row sat in `StandardStream` at a false 100**.
+That is the "a metric that hides real bugs is worse than a lower metric" directive paying out.
+
+### 5.6 Independent confirmation from the classifier
+
+`python3 tools/funclet_homing.py --validate` re-run on the **post-edit** tree:
+
+```
+FuncInfos=8541 funclet targets=26321 .text pins=6685
+fan-in (funclet -> #FuncInfos): {1: 26321}
+verdicts: {'HOMED': 24219, 'MIS-PINNED': 708, 'ORPHAN': 1352, 'UNPINNED-FUNCLET': 42}
+extra EH-prefix sites: 537 catch-funclet + 4 folded-parent (expect 537 + 4)
+ambiguous FuncInfos: 1 (expect 1: the folded no-action record)
+VALIDATE: PASS
+```
+
+**HOMED 24,193 → 24,219 (+26)** and **MIS-PINNED 734 → 708 (−26)**, exactly the 26 rows edited, with
+`ORPHAN` and `UNPINNED-FUNCLET` unmoved. This is an instrument that shares no arithmetic with
+`report.json` agreeing on the size of the move to the row.
+
+### 5.7 Gates
+
+Run in brief order, all in the worktree, native gate **last**:
+
+| gate | result |
+|---|---|
+| full build `./tools/ninja-locked` | **`BUILD rc=0`** (`~/tmp/rb3_build_w16bj_4.log`); settle build `rc=0` (`_5.log`) |
+| `python3 scripts/verify_ruler_agreement.py --check` | **rc=0** — all 4 keys OK, both entry points resolve `name_check` |
+| `python3 scripts/verify_objs_patched.py --verify-manifest` | **rc=0** — 1,215 decomp + 3,114 target objects match, `tree_sha256=b73b5dd1c0f01157`; denylist OK |
+| `python3 tools/icf_alias_finder.py --validate` | **rc=0** — `VALIDATE: PASS`, 1,404 map-consistent, 247 tolerated, **0 contradicted** of 1,652 |
+| `python3 tools/funclet_homing.py --validate` (lane instrument) | **rc=0** — `VALIDATE: PASS` |
+| `tools/native_build_gate.sh` | **rc=0**, verbatim: |
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+`skipped=0`, as required.
+
+### 5.8 Commits on `w16-bj`
+
+| sha | files | what |
+|---|---|---|
+| `0b1f75cf` | `tools/funclet_homing.py` | the reusable classifier; fan-in refutes the ICF hypothesis |
+| `061aa923` | `docs/decomp/W16BJ_…md` | §0–§4, committed **before** the edit so §4 is a real pre-registration |
+| `645e765a` | `config/45410914/splits.txt` | the 9 `.text` edits re-homing 26 funclets |
+| (this) | `docs/decomp/W16BJ_…md` | §5 measurement |
+
+### 5.9 NOT done — deliberately
+
+1. **No tree-wide action.** Re-measured on the post-edit tree, the census now reads
+   **HOMED 24,219 / 937,352 B · MIS-PINNED 708 / 28,248 B · ORPHAN 1,352 / 56,168 B ·
+   UNPINNED-FUNCLET 42 / 1,676 B** (§3's pre-edit figures were 24,193 / 936,384 B and
+   734 / 29,216 B — the 968 B moved transferred exactly, MIS-PINNED → HOMED, with the other two
+   classes unmoved). Of the original 734, **419 rows / 16,548 B read `fuzzy == 100` on a false
+   twin**. Brief says report only; the 26 moved here are the bounded pilot. The pilot's own result
+   prices the remainder: of 26 rows, 5 gained bytes and 4 lost them, so a tree-wide sweep is an
+   **accuracy play, not a byte play**, and should be budgeted as such.
+2. **The 2 ORPHAN rows (`#1`, `#2`) were not moved.** Their parent `fn_822FC508` sits in the unpinned
+   `auto_03_822FC4F8_text`; there is no pinned receiving unit, so no pin move can help. Pinning the
+   parent's cluster is a different lane.
+3. **The 8 anonymous parents were not named**, per the brief's item 4.
+4. **9 census rows inside the concurrency bars were filed, not touched** — the `Ham.cpp:` / `UI.cpp:`
+   / `BandUser.cpp:` headings, W16-BH's `BandCharacter.cpp:` receiver, and the address windows
+   `0x8227A7A8–0x8227A948` (BH) and `0x8268AEC8–0x8268C920` (BI). Listed in §3.2.
+5. **No map row, no alias group, no `src/` file was touched.** The whole lane is one `splits.txt`
+   and two docs/tools files.
+6. **The charged relocation-name site on `fn_82703AD0` was not named** — see §5.5 for why, and it is
+   filed as the lane's single follow-up.
+7. **`report.json`'s per-row `address` is still a section-relative offset**, not a VA. Recorded as a
+   blind spot in `tools/funclet_homing.py`'s docstring; nothing keys on it.
