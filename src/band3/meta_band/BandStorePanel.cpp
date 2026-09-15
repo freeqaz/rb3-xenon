@@ -294,13 +294,35 @@ BEGIN_HANDLERS(BandStorePanel)
     // meaningful rather than arbitrary. (Moving sort_name is metric-neutral
     // today -- Handle is unmapped and this unit's .rdata is not pinned.)
     HANDLE_EXPR(offer_provider, mOfferProvider)
-    HANDLE_EXPR(sort_name, SortName())
-    // rb3-Wii's user_can_do_input tail checked TheWiiCommerceMgr async op state;
-    // there is no CommerceMgr on 360 (Xbox uses XboxEnumeration), so the
-    // Wii-only commerce clause is dropped. (Handle is a deferred funclet wall.)
+    // NOT SortName().  Retail reads the Symbol member straight out of the object
+    // here -- `lwz r11, -0x1c(r26)` == this+0xd0 == mSort, then builds the
+    // DataNode with `li r10, 0x5` (kDataSymbol) -- with no call at all.  Our
+    // SortName() returns Symbol by value, so it gets an sret call that retail
+    // does not make.  SortName() itself stays (it is used elsewhere); it is only
+    // the wrong expression FOR THIS HANDLER.
+    HANDLE_EXPR(sort_name, mSort)
+    // CORRECTED ON RETAIL BYTES (lane W16-CA).  The previous note here read:
+    //   "rb3-Wii's user_can_do_input tail checked TheWiiCommerceMgr async op
+    //    state; there is no CommerceMgr on 360 ... so the Wii-only commerce
+    //    clause is dropped."
+    // The clause is NOT dropped -- it is PORTED, and it was our extra leading
+    // `mUserCanDoInput == 0` that retail does not have.  Retail's guard is
+    // four terms in this order (fn at Handle idx 322-342):
+    //   lwz/lwz 0x30(vptr); bctrl; clrlwi.; beq   -> IsLoaded()      (slot 12)
+    //   bl fn_827B4CC0; clrlwi.; bne              -> !IsEnumerating()
+    //   bl fn_827B4D10; clrlwi.; bne              -> !InCheckout()
+    //   lwz -0x40(r26); lbz 0(r11); cmplwi 0      -> mLastRequest.empty()
+    // The two callees are identified from StorePanel.h's OFFSETS, not from
+    // their vtable slot names: fn_827B4CC0 reads this->0x70 (= XboxEnumeration
+    // *mEnum), null-checks it and vcalls slot 2 == IsEnumerating(); fn_827B4D10
+    // is `return this->0x78 != 0` and 0x78 is StorePurchaser *mPurchaser ==
+    // InCheckout().  (I first read these the other way round off the vtable
+    // slot names and the header offsets corrected it.)  They are the 360
+    // equivalents of the Wii commerce check, so the Wii clause did survive the
+    // port -- it was translated, not deleted.
     HANDLE_EXPR(
         user_can_do_input,
-        mUserCanDoInput == 0 && IsLoaded() && mLastRequest.empty()
+        IsLoaded() && !IsEnumerating() && !InCheckout() && mLastRequest.empty()
     )
     HANDLE_ACTION(set_shortcut_data, SetShortcutData(_msg->Array(2)))
     HANDLE_ACTION(apply_shortcut_provider, ApplyShortcutProvider(_msg->Obj<UIList>(2)))
@@ -310,8 +332,13 @@ BEGIN_HANDLERS(BandStorePanel)
     HANDLE_CHECK(0x2B0)
 END_HANDLERS
 
+// NO SYNC_PROP here.  Retail's SyncProperty is the bare superclass chain: the
+// `waiting` branch we used to emit is ENTIRELY ours-only in the diff -- nine
+// target-absent instructions (lis/lwz ?waiting@@3VSymbol@@A@h/@l, the cmplw
+// against the incoming Symbol, and the PropSync call on this+0xe1) with no
+// counterpart anywhere in retail's 30-instruction body.  The property does not
+// exist on retail's BandStorePanel.
 BEGIN_PROPSYNCS(BandStorePanel)
-    SYNC_PROP(waiting, mUserCanDoInput)
     SYNC_SUPERCLASS(StorePanel)
 END_PROPSYNCS
 
