@@ -27744,7 +27744,7 @@
  "0x82baa300": "?SetDisableHopos@TrackConfig@@QAAX_N@Z",
  "0x82baa308": "?GetSlotColor@TrackConfig@@QBAPBDH@Z",
  "0x82baa3b8": "??0TrackConfig@@QAA@PAVBandUser@@@Z",
- "0x82baa660": "?Register@OutfitConfig@@SAXXZ",
+ "0x82baa660": "?FillHit@NowBar@@QAAXHH@Z",
  "0x82baaf30": "?OnScreen@Gem@@QAA_NM@Z",
  "0x82baaf98": "?UseRGChordStyle@Gem@@QBA_NXZ",
  "0x82baaff8": "?Reset@Gem@@QAAXXZ",
