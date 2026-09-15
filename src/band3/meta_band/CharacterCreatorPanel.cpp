@@ -212,6 +212,8 @@ const char *CharacterCreatorPanel::GetDefaultVKName() {
 }
 
 void CharacterCreatorPanel::SetGender(Symbol gender) {
+    static Symbol male("male");
+    static Symbol female("female");
     MILO_ASSERT(gender == male || gender == female, 0x195);
     mGender = gender;
 }
@@ -263,10 +265,12 @@ void CharacterCreatorPanel::SetOutfit(Symbol outfit) {
 }
 
 void CharacterCreatorPanel::SetEyeColor(int color) {
-    if (mPreviewDesc) {
-        mPreviewDesc->mHead.mEyeColor = color;
-        mClosetMgr->PreviewCharacter(true, false);
-    }
+#ifdef HX_NATIVE
+    if (!mPreviewDesc)
+        return;
+#endif
+    mPreviewDesc->mHead.mEyeColor = color;
+    mClosetMgr->PreviewCharacter(true, false);
 }
 
 // RB3-360 retail dereferences mPreviewDesc UNCONDITIONALLY in all five of these
@@ -407,10 +411,12 @@ int CharacterCreatorPanel::GetBuild() {
 }
 
 void CharacterCreatorPanel::SetSkinTone(int tone) {
-    if (mPreviewDesc) {
-        mPreviewDesc->SetSkinColor(tone);
-        mClosetMgr->PreviewCharacter(true, false);
-    }
+#ifdef HX_NATIVE
+    if (!mPreviewDesc)
+        return;
+#endif
+    mPreviewDesc->SetSkinColor(tone);
+    mClosetMgr->PreviewCharacter(true, false);
 }
 
 int CharacterCreatorPanel::GetSkinTone() {
@@ -521,10 +527,11 @@ void CharacterCreatorPanel::SetEyebrows(Symbol brows) {
 }
 
 Symbol CharacterCreatorPanel::GetEyebrows() {
-    if (mPreviewDesc)
-        return mPreviewDesc->mOutfit.mEyebrows.mName;
-    else
+#ifdef HX_NATIVE
+    if (!mPreviewDesc)
         return gNullStr;
+#endif
+    return mPreviewDesc->mOutfit.mEyebrows.mName;
 }
 
 int CharacterCreatorPanel::GetFeatureIndex(Symbol s) {
