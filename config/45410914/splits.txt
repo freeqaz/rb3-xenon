@@ -2783,7 +2783,6 @@ EventTrigger.cpp:
 	.pdata      start:0x822119A8 end:0x822119B8
 	.pdata      start:0x822119B8 end:0x822119C0
 	.pdata      start:0x822119C0 end:0x822121B8
-	.pdata      start:0x82213DF0 end:0x82213E08
 	.pdata      start:0x82214230 end:0x82214250
 	.pdata      start:0x822142B0 end:0x822142B8
 	.pdata      start:0x8223BA68 end:0x8223BA70
@@ -2804,7 +2803,6 @@ EventTrigger.cpp:
 	.text       start:0x8249C928 end:0x8249C9E0
 	.text       start:0x8249C9E0 end:0x8249CA68
 	.text       start:0x8249CA68 end:0x824A57B0
-	.text       start:0x824C95F0 end:0x824C97D8
 	.text       start:0x824CD738 end:0x824CD818
 	.text       start:0x824CDCE8 end:0x824CDD38
 	.text       start:0x8274DF40 end:0x8274DFA0
@@ -10920,8 +10918,7 @@ EventAnim.cpp:
 	.pdata      start:0x82213DA0 end:0x82213DA8
 	.pdata      start:0x82213DA8 end:0x82213DB0
 	.pdata      start:0x82213DB0 end:0x82213DD8
-	.pdata      start:0x82213DD8 end:0x82213DF0
-	.pdata      start:0x82213E08 end:0x82213E18
+	.pdata      start:0x82213DD8 end:0x82213E18
 	.pdata      start:0x82213E18 end:0x82213E20
 	.pdata      start:0x82213E20 end:0x82213E28
 	.pdata      start:0x82213E28 end:0x82213E30
@@ -10943,8 +10940,7 @@ EventAnim.cpp:
 	.text       start:0x824C9130 end:0x824C919C
 	.text       start:0x824C91A0 end:0x824C9204
 	.text       start:0x824C9208 end:0x824C942C
-	.text       start:0x824C9430 end:0x824C95F0
-	.text       start:0x824C97D8 end:0x824C9878
+	.text       start:0x824C9430 end:0x824C9878
 	.text       start:0x824C9878 end:0x824C9914
 	.text       start:0x824C9918 end:0x824C99A8
 	.text       start:0x824C99A8 end:0x824C99F4
