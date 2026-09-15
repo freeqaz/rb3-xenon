@@ -277,6 +277,15 @@ def main():
     ap.add_argument("--install", action="store_true",
                     help="merge the admitted groups into scripts/symbol_aliases.json")
     ap.add_argument("--aliases", default="scripts/symbol_aliases.json")
+    ap.add_argument("--tier", default=None,
+                    help="with --install, install ONLY admitted pairs in these "
+                         "evidence tiers (comma-separated: FT1,FT2,FT3,FT-EMPTY). "
+                         "Admitted pairs outside the set are printed as HELD BACK "
+                         "and not written. Use it to install the body-proven tiers "
+                         "while leaving an FT3-only (dc3-homonym-witness) or an "
+                         "FT-EMPTY (self-declared vacuous byte comparison) pair for "
+                         "a human decision -- an unproven alias lifts name_check BY "
+                         "CONSTRUCTION and the `none` control cannot catch it.")
     ap.add_argument("--dc3-map", default="../dc3-decomp/orig/373307D9/ham_xbox_r.map",
                     help="dc3's LEAKED ham_xbox_r.map, relative to this repo's PARENT "
                          "directory or absolute. Enables the FT3 homonym tier; without it "
@@ -429,6 +438,26 @@ def main():
     print("-> %s" % args.out)
 
     if args.install:
+        if args.tier:
+            keep = {t.strip().upper() for t in args.tier.split(",") if t.strip()}
+            unknown = keep - {"FT1", "FT2", "FT3", "FT-EMPTY"}
+            if unknown:
+                sys.exit("--tier: unknown tier(s) %s" % ",".join(sorted(unknown)))
+            filt = collections.defaultdict(list)
+            for k, rs in groups.items():
+                sel = [r for r in rs if r["tier"] in keep]
+                if sel:
+                    filt[k] = sel
+            held = [r for r in adm if r["tier"] not in keep]
+            print("\n--tier %s: installing %d of %d admitted pair(s) / %d of %d sites"
+                  % (",".join(sorted(keep)),
+                     sum(len(v) for v in filt.values()), len(adm),
+                     sum(r["sites"] for v in filt.values() for r in v),
+                     sum(r["sites"] for r in adm)))
+            for r in sorted(held, key=lambda x: -x["sites"]):
+                print("  HELD BACK  %-8s %5d sites  %s <- %s"
+                      % (r["tier"], r["sites"], r["survivor"][:46], r["folded"][:46]))
+            groups = filt
         install(groups, Path(ROOT / args.aliases))
 
 
