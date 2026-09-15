@@ -113,7 +113,15 @@ public:
 
     DataArray *StoreOfferData() const { return mStoreOfferData; }
 
-protected:
+    // W16-CD: this block was `protected:`.  BandStorePanel::GetOfferIDsToEnumerate
+    // (retail fn_82608B70) reads mAlbum/mPack directly off a BandStoreOffer *,
+    // from a class that is neither a subclass nor a friend, so on retail they
+    // were reachable.  Widening is LAYOUT-NEUTRAL here and that was verified with
+    // cl /d1reportSingleClassLayoutStoreOffer before and after, not assumed: the
+    // members form a single access section, so declaration order -- and therefore
+    // every offset -- is unchanged.  BandStoreOffer::mDemo/mUpgrade, the exact
+    // analogues probed by the same retail loop, are already public.
+public:
     // RB3-360 retail keeps the nested album/pack purchaseables (DC3 dropped
     // them). Each StorePurchaseable is 0x40 bytes, so they push mStoreOfferData
     // from 0x40 to 0xc0 — verified against the retail binary (?HasData@,
