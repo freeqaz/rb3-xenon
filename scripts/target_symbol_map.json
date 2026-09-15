@@ -13657,7 +13657,7 @@
  "0x82605778": "?MakeNewOffer@BandStorePanel@@UAAPAVStoreOffer@@PAVDataArray@@@Z",
  "0x82605800": "?IsLoaded@BandStorePanel@@UBA_NXZ",
  "0x82605868": "?GetRequestPrefix@BandStorePanel@@QBAPBDXZ",
- "0x826058e8": "?CreateCameraBufferMat@@YAPAVRndMat@@HHW4Type@RndTex@@@Z",
+ "0x826058e8": "??$MakeString@VSymbol@@VString@@@@YAPBDPBDVSymbol@@VString@@@Z",
  "0x82605970": "?DataDir@UIPanel@@$4PPPPPPPM@KM@AAPAVObjectDir@@XZ",
  "0x82605980": "?SetTypeDef@UIPanel@@$4PPPPPPPM@KM@AAXPAVDataArray@@@Z",
  "0x82605990": "?ClassName@BandStorePanel@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
@@ -13676,6 +13676,7 @@
  "0x82606008": "?SetType@BandStorePanel@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
  "0x82606218": "??_GBandStorePanel@@UAAPAXI@Z",
  "0x82606260": "?Instance@BandStorePanel@@SAPAV1@XZ",
+ "0x82606280": "?OnMsg@BandStorePanel@@QAA?AVDataNode@@ABVMetadataLoadedMsg@@@Z",
  "0x82606720": "?LoadArt@BandStorePanel@@UAAXPBDPAVUIPanel@@@Z",
  "0x82606a80": "?ExitStore@BandStorePanel@@UBAXW4StoreError@@@Z",
  "0x82606c28": "?Poll@BandStorePanel@@UAAXXZ",
@@ -30601,5 +30602,9 @@
  "0x82baab38": "?PartialHit@NowBar@@QAAXHI_NH@Z",
  "0x82baac98": "??0NowBar@@QAA@PAVTrackDir@@ABVTrackConfig@@@Z",
  "0x82baae40": "??$DeleteAll@V?$vector@PAVGemSmasher@@V?$StlNodeAlloc@PAVGemSmasher@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVGemSmasher@@V?$StlNodeAlloc@PAVGemSmasher@@@stlpmtx_std@@@stlpmtx_std@@@Z",
- "0x82baaea8": "??1NowBar@@QAA@XZ"
+ "0x82baaea8": "??1NowBar@@QAA@XZ",
+ "0x826068a8": "??$find@U?$_List_iterator@UEnumProduct@@U?$_Const_traits@UEnumProduct@@@stlpmtx_std@@@stlpmtx_std@@VStorePurchaseable@@@stlpmtx_std@@YA?AU?$_List_iterator@UEnumProduct@@U?$_Const_traits@UEnumProduct@@@stlpmtx_std@@@0@U10@0ABVStorePurchaseable@@@Z",
+ "0x82605720": "?StoreUser@BandStorePanel@@UBAPAVLocalUser@@XZ",
+ "0x82605b48": "?FindOffer@BandStorePanel@@UBAPAVStoreOffer@@VSymbol@@@Z",
+ "0x82605878": "?StoreUserProfileSwappedToUser@BandStorePanel@@UAAXPAVLocalUser@@@Z"
 }
