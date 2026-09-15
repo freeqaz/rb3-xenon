@@ -668,7 +668,17 @@ def main():
     # names already aliased somewhere, so we never create a second address for one
     adoc = json.loads((ROOT / args.aliases).read_text())
     placed, alias = {}, {}
+    n_addrless = 0
     for g in adoc["groups"]:
+        # 51 groups in scripts/symbol_aliases.json carry `address: null` -- a group
+        # whose survivor address was never resolved.  It contributes NO address, so
+        # it cannot establish an equivalence class; skipping it keeps the branch-
+        # destination compare in `compare()` STRICTER (the name falls back to a
+        # literal compare), never looser.  Before this guard the gate died with
+        # `int() can't convert non-string with explicit base` on any real run.
+        if not isinstance(g.get("address"), str):
+            n_addrless += 1
+            continue
         for nm in [g["survivor"], *g.get("folded", [])]:
             placed.setdefault(nm, set()).add(int(g["address"], 16))
     # {name: group_id} for the branch-destination compare. A name the file places
@@ -677,9 +687,9 @@ def main():
     for nm, addrs in placed.items():
         if len(addrs) == 1:
             alias[nm] = next(iter(addrs))
-    print("alias file: %d groups, %d names, %d usable as an equivalence class "
-          "(%d sit at more than one address and are ignored)"
-          % (len(adoc["groups"]), len(placed), len(alias), len(placed) - len(alias)))
+    print("alias file: %d groups (%d address-less, skipped), %d names, %d usable as an "
+          "equivalence class (%d sit at more than one address and are ignored)"
+          % (len(adoc["groups"]), n_addrless, len(placed), len(alias), len(placed) - len(alias)))
 
     rows = []
     for r in pairs:
