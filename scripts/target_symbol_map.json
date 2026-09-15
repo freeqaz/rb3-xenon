@@ -30562,5 +30562,11 @@
  "0x8235cdb8": "?GetConclusionText@Tour@@QBA?AVSymbol@@XZ",
  "0x8235fd10": "??0Tour@@QAA@PAVDataArray@@ABVSongMgr@@AAVBandUserMgr@@_N@Z",
  "0x82360ba0": "?GetCurrentQuestSuccessMessage@TourPerformerImpl@@QBA?AVSymbol@@XZ",
- "0x822ef438": "?PreLoad@GemTrackDir@@UAAXAAVBinStream@@@Z"
+ "0x822ef438": "?PreLoad@GemTrackDir@@UAAXAAVBinStream@@@Z",
+ "0x8232b7c0": "?AddDircut@BandWardrobe@@QAA_NPAVBandCharacter@@PAVBandCamShot@@VSymbol@@H@Z",
+ "0x8232c450": "?OnGetMatchingDude@BandWardrobe@@QAA?AVDataNode@@PAVDataArray@@@Z",
+ "0x8232e6d0": "??0Merger@FileMerger@@QAA@ABU01@@Z",
+ "0x8232de80": "??4Merger@FileMerger@@QAAAAU01@ABU01@@Z",
+ "0x8232ba78": "?InstrumentMatch@BandWardrobe@@SAXPAHPBVSlotInfo@1@HAAH22@Z",
+ "0x8232fe00": "?NewObject@BandWardrobe@@SAPAVObject@Hmx@@XZ"
 }

@@ -87,7 +87,7 @@ loop_end:
 
 const char *gGenres[4] = { "rocker", "dramatic", "banger", "spazz" };
 
-int GetGenreGenderFlags(Symbol s1, Symbol s2) {
+static int GetGenreGenderFlags(Symbol s1, Symbol s2) {
     int gv = 0;
     for (int i = 0; i < 4; i++) {
         if (s1 == gGenres[i]) {
@@ -430,9 +430,7 @@ bool BandWardrobe::ValidGenreGender(CamShot *shot) {
     if ((flags & 0xF03) == 0xF03)
         return true;
     else {
-        if (!PowerOf2(flags & 0xF8000)) {
-            MILO_FAIL("%s has bad focus flags", PathName(shot));
-        }
+        MILO_ASSERT(PowerOf2(flags & 0xF8000), 0x3C9);
         int instnum;
         for (instnum = 0; instnum < 4; instnum++) {
             if (flags & gInstFocus[instnum])
@@ -1062,6 +1060,11 @@ int BandWardrobe::FindBestScoringHint(Symbol *hints, SlotInfo *info, int &outSlo
         { 16, 16, 0, 0, 6 },
     };
     static Symbol done("done");
+    static Symbol mic("mic");
+    static Symbol guitar("guitar");
+    static Symbol drum("drum");
+    static Symbol bass("bass");
+    static Symbol keyboard("keyboard");
     int bestScore = 10000;
     outSlot = -1;
     int result = -1;
@@ -1079,8 +1082,9 @@ int BandWardrobe::FindBestScoringHint(Symbol *hints, SlotInfo *info, int &outSlo
             }
             if (!ok)
                 continue;
-            int _tmp0 = HandleType(get_customize_slot_msg).Int();
-            outSlot = _tmp0;
+            static Message get_customize_slot_msg(Symbol("get_customize_slot"));
+            DataNode node = HandleType(get_customize_slot_msg);
+            outSlot = node.Int();
             result = i;
         } else if (strncmp("importance", hint.Str(), 10) == 0) {
             int score = hint.Str()[10] - 0x20;
@@ -1184,13 +1188,13 @@ DataNode BandWardrobe::OnEnterVignette(DataArray *da) {
                 it->Driver()->SetClips(charsDir);
             }
         }
-        if (TheLoadMgr.EditMode()) {
+        if (LOADMGR_EDITMODE) {
             for (int i = 0; i < 4; i++) {
                 mVignetteNames.names[i] = Symbol(player_names[i]);
             }
         } else {
-            static Message msg("get_slot_info", DataNode(0));
             SlotInfo info[4];
+            static Message msg("get_slot_info", DataNode(0));
             bool hasBass = false;
             for (int i = 0; i < 4; i++) {
                 info[i].hint = -1;
