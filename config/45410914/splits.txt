@@ -708,7 +708,6 @@ BandList.cpp:
 
 VocalTrackDir.cpp:
 	.pdata      start:0x821F2090 end:0x821F20A0
-	.pdata      start:0x821F9650 end:0x821F9690
 	.pdata      start:0x821F9BE8 end:0x821F9BF0
 	.pdata      start:0x821F9BF0 end:0x821F9C60
 	.pdata      start:0x821F9C60 end:0x821F9CA8
@@ -738,7 +737,6 @@ VocalTrackDir.cpp:
 	.pdata      start:0x821FAAE0 end:0x821FAB30
 	.pdata      start:0x82245030 end:0x82245038
 	.text       start:0x8227ADC8 end:0x8227AE48
-	.text       start:0x822EF430 end:0x822EFB50
 	.text       start:0x822EFB5C end:0x822EFB68
 	.text       start:0x822F50A0 end:0x822F5118
 	.text       start:0x822F5120 end:0x822F55B0
@@ -10513,6 +10511,7 @@ GemTrackDir.cpp:
 	.pdata      start:0x821F90F0 end:0x821F91A8
 	.pdata      start:0x821F91E8 end:0x821F9498
 	.pdata      start:0x821F9498 end:0x821F9650
+	.pdata      start:0x821F9650 end:0x821F9690
 	.text       start:0x8227AC48 end:0x8227ACC8
 	.text       start:0x822E33E8 end:0x822E3468
 	.text       start:0x822E3468 end:0x822E348C
@@ -10546,6 +10545,7 @@ GemTrackDir.cpp:
 	.text       start:0x822EC56C end:0x822EC868
 	.text       start:0x822ECC48 end:0x822EE498
 	.text       start:0x822EE498 end:0x822EF430
+	.text       start:0x822EF430 end:0x822EFB50
 	.text       start:0x822EFB50 end:0x822EFB5C
 
 DuplicatedObject.cpp:
