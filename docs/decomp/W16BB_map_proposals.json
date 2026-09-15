@@ -1,0 +1,60 @@
+{
+ "_comment": "W16-BB proposals for whichever lane owns config/45410914/splits.txt next. NOTHING here was applied by W16-BB: splits.txt is barred to this lane (see the brief's concurrency bars). The two map/alias rows W16-BB *did* own were applied directly and are NOT repeated here; see docs/decomp/W16BB_GLITCHFINDER_CTOR_SETVOLUME_CALLERS_CLAUDEMD_2026-09-15.md.",
+ "lane": "W16-BB",
+ "date": "2026-09-15",
+ "base_commit": "9f7c571a0204",
+ "items": [
+  {
+   "id": "BB-1",
+   "subject": "Re-home 0x827C2780-0x827C28D4 (??0CheatsManager@@QAA@XZ, 340 B) out of StringTable.cpp and back into Cheats.cpp",
+   "kind": "splits.txt .text boundary move (re-home, NOT an addition)",
+   "action_required": "splits.txt edit -- W16-BB is barred from it",
+   "why": "The 340 B at 0x827C2780 are CheatsManager's constructor. They are currently pinned into StringTable.cpp, whose compiled obj cannot define that spelling, so the target row is structurally unpairable and reads fuzzy 0 no matter how correct our source is. Cheats.cpp's own splits block already carves an exact hole around the range (it ends at 0x827C2780 and resumes at 0x827C28D4), so the move is a merge of two adjacent blocks, not a new pin.",
+   "edit": {
+    "file": "config/45410914/splits.txt",
+    "heading_to_change": "Cheats.cpp: (line 6584 at base_commit)",
+    "replace_two_lines": [
+     "\t.text       start:0x827C1A84 end:0x827C2780",
+     "\t.text       start:0x827C28D4 end:0x827C3340"
+    ],
+    "with_one_line": [
+     "\t.text       start:0x827C1A84 end:0x827C3340"
+    ],
+    "heading_to_edit_also": "StringTable.cpp: (line 1932 at base_commit)",
+    "delete_line": "\t.text       start:0x827C2780 end:0x827C28D4",
+    "pdata_note": "Touch NO .pdata line. .pdata is DERIVED OUTPUT -- every split run clears the whole .pdata set and re-derives one range per .text block (CLAUDE.md, jeff split.rs split_pdata). The current carve is self-corroborating: StringTable holds exactly one 8-byte RUNTIME_FUNCTION (.pdata 0x822420D8-0x822420E0) and Cheats' .pdata carves around precisely that record (... end:0x822420D8, then start:0x822420E0). Both will re-derive automatically.",
+    "vanishing_unit_hazard": "DOES NOT APPLY. StringTable.cpp retains .text start:0x827C8C88 end:0x827C97C8, so the move does not drain its last .text block. (A unit drained to zero blocks must have its whole splits entry deleted in the same edit, or report.json hard-fails on the 42-byte empty obj -- CLAUDE.md, lane DG-2.)"
+   },
+   "predicted_effect": {
+    "matched_functions": "+1",
+    "matched_code_bytes": "+340",
+    "confidence": "HIGH on the function, HIGH-but-not-measured on the bytes -- see residual_risk",
+    "mechanism": "PAIRABILITY, not reattribution. objdiff pairs target<->base BY NAME, so a target row whose base obj cannot define that name reads 0% however correct our code is. Cheats.obj DOES define ??0CheatsManager@@QAA@XZ (verified in COFF: symbol index 8882, section 2181, value 0x8). Re-homing changes WHICH base obj is consulted and therefore changes pairability. CLAUDE.md is explicit that re-homing an already-pinned address is NOT metric-neutral (lane PINHOME-1 measured +3 fns / +428 B for one such move); reattribution over previously-unpinned auto_* code is the neutral case, and this is not that case.",
+    "why_exactly_340_and_not_'up_to'": "Our compiled body is 340 B and is 85/85 instructions relocation-normalized identical to retail's 340 B at 0x827C2780, after commit 9d78af2d guarded the DC3-era SetName that was making our body 364 B. So the row does not merely become pairable, it becomes pairable AT byte identity."
+   },
+   "collectability_audit": {
+    "why_this_audit_exists": "A row's headline prize can be uncollectable by construction: matched_code keys on fuzzy==100, and a single charged relocation-NAME site leaves a row at mpn 100 / fuzzy <100, i.e. +1 function and EXACTLY ZERO bytes (CLAUDE.md, lane RESIDUAL-1). So the 340 B must be priced from the charged-site list, never from an instruction-equality count.",
+    "branch_relocation_class": "MEASURED CLEAN. Our body carries 9 branch relocations (COFF type 0x0006). Retail's body has 8 bl sites plus one b tail-branch, and every offset corresponds one-to-one: +0x004, +0x018, +0x060, +0x0ac, +0x0d0, +0x124, +0x134, +0x144, +0x150. Resolving each retail target through target_symbol_map.json gives 7 AGREE, 2 FORGIVEN, 0 CHARGED.",
+    "branch_table": [
+     {"off": "+0x004", "retail": "0x82829254", "map": null, "ours": "__savegprlr_27", "verdict": "FORGIVEN (unnamed -> placeholder target; also a regalloc save helper, which objdiff's vetted_reloc_name_diff screen excludes by construction)"},
+     {"off": "+0x018", "retail": "0x8275cb88", "map": "??0Object@Hmx@@QAA@XZ", "ours": "??0Object@Hmx@@QAA@XZ", "verdict": "AGREE"},
+     {"off": "+0x060", "retail": "0x8282a690", "map": "??_L@YAXPAXIHP6AX0@Z1@Z", "ours": "??_L@YAXPAXIHP6AX0@Z1@Z", "verdict": "AGREE (EH vector ctor iterator)"},
+     {"off": "+0x0ac", "retail": "0x8282a690", "map": "??_L@YAXPAXIHP6AX0@Z1@Z", "ours": "??_L@YAXPAXIHP6AX0@Z1@Z", "verdict": "AGREE (same iterator, second array)"},
+     {"off": "+0x0d0", "retail": "0x82511548", "map": "??0Timer@@QAA@XZ", "ours": "??0Timer@@QAA@XZ", "verdict": "AGREE"},
+     {"off": "+0x124", "retail": "0x827c0728", "map": "??0Symbol@@QAA@PBD@Z", "ours": "??0Symbol@@QAA@PBD@Z", "verdict": "AGREE"},
+     {"off": "+0x134", "retail": "0x8250fef8", "map": "?SystemConfig@@YAPAVDataArray@@XZ", "ours": "?SystemConfig@@YAPAVDataArray@@XZ", "verdict": "AGREE"},
+     {"off": "+0x144", "retail": "0x8274c7f0", "map": "?FindData@DataArray@@QBA_NVSymbol@@AAH_N@Z", "ours": "?FindData@DataArray@@QBA_NVSymbol@@AAH_N@Z", "verdict": "AGREE"},
+     {"off": "+0x150", "retail": "0x828292a4 (b, tail)", "map": null, "ours": "__restgprlr_27", "verdict": "FORGIVEN (unnamed; regalloc restore helper)"}
+    ],
+    "residual_risk": "The DATA relocation class is NOT measured and cannot be, because a charged-site list only exists once the row pairs -- which requires this very splits edit. Our body's data references are ??_7CheatsManager@@6B@ (HI/LO), two vector dtor / ??_F pairs taken as addresses by the EH vector ctor iterator, ?gNullStr@@3PBDB, sKeyCheatsEnabled and the ??_C@_0O@NMFLFLC@cheats_buffer?$AA@ literal. These are EXPECTED forgiven -- target_symbol_map.json is a FUNCTION map and the corresponding retail data addresses are unnamed, so they render as placeholder data_/lbl_/rdata_ names, which objdiff forgives. Expected, not measured. WORST CASE if one does charge: +1 function / +0 bytes.",
+    "not_a_relocation_note": "The 0x0012 records interleaved in the COFF relocation list are IMAGE_REL_PPC_PAIR, which always trail a REFHI/REFLO and point at the dummy @comp.id symbol. They are not references and must not be counted as charged sites."
+   },
+   "second_order_effect": {
+    "subject": "src/system/utl/StringTable.cpp line 103, #include \"utl/GlitchFinder.cpp\"",
+    "becomes": "dead weight, but do NOT remove it in the same commit",
+    "why": "That scatter-include exists only because the retail linker interleaved other owners' COMDATs into StringTable's .text span, and StringTable.cpp deliberately includes GlitchFinder.cpp, Locale.cpp, TimeConversion.cpp and movie/Movie.cpp for that reason (W16-AX section 3). The GlitchFinder one was pulling in a profiler that is COMPILED OUT OF RETAIL ENTIRELY -- glitch_find/GlitchFinder occur ZERO times in retail -- so it never contributed a pairable body. After this re-home nothing in StringTable's remaining span needs it. Removing it is a separate, independently-measurable commit and it touches shared src/, so it needs its own native gate run."
+   },
+   "what_would_refute_this_proposal": "A measured Δ that is not +1 fn / +340 B after the edit. The two shapes worth distinguishing: +1 fn / +0 B means a data relocation charged (see residual_risk) and the row sits at mpn 100 / fuzzy <100 -- land it anyway, accuracy beats headline %. A Δ of 0 fns would mean Cheats.obj stopped defining the spelling or the pin did not take; check that the split actually re-ran (touch config/45410914/config.yml, then a FULL ./tools/ninja-locked -- an un-resplit map/splits edit is INERT) and that symbols.txt reached a fixed point."
+  }
+ ]
+}
