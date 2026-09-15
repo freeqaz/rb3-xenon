@@ -1002,19 +1002,42 @@ across this lane's sabotage cycles. Two clean builds here do not differ at all.
    after. The value is that the tree is a verified fixed point over the whole
    population instead of a third of it.
 
-   ⚠ **The "3 mispaired" were never a patcher bug — they are a `splits.txt`
-   defect.** `UIStats`, `AccomplishmentProgress` and `Game` each carry **both**
-   a path-qualified and a bare heading, dtk emits two target objects, and
-   `tools/project.py`'s basename alias binds our one compiled object to both.
-   The two halves are one retail TU: address ranges contiguous/interleaved
-   (UIStats `.text` `0x8255F5C8`–`0x825605F4` then `0x825605F4`–`0x82560B08`)
-   and their report.json function sets are **disjoint (overlap 0)**, so nothing
-   is double-counted — but each half is scored against a source file that
-   supplies only half its functions. `configure.py`'s unresolved-heading hard
-   fail does **not** catch this, because both headings resolve. The fix is to
-   merge the bare heading into the path-qualified one; it moves matched bytes
-   and belongs to a splits lane. Until then `obj_pairing` returns **both**
-   targets and each pass runs once per target, and `--check` names them.
+   ✅ **DATED RECORD — the "3 mispaired" were never a patcher bug, they were a
+   `splits.txt` defect, and it was FIXED on 2026-08-31 by `b341d7ab` ("splits:
+   merge the three TUs that carried two headings each", `splits.txt` only,
+   +52/−58).** `UIStats`, `AccomplishmentProgress` and `Game` each carried
+   **both** a path-qualified and a bare heading, so dtk emitted two target
+   objects per retail TU and `tools/project.py`'s basename alias bound our one
+   compiled object to both — `objdiff.json` declared two units with the same
+   `base_path`. The halves were one TU: no range overlapped and they interleaved
+   in address space (UIStats `.text` `0x8255F5C8`–`0x825605F4` then
+   `0x825605F4`–`0x82560B08`; Game's blocks alternated six times). The fix kept
+   the **path-qualified** heading, so the unit resolves by exact path instead of
+   through the alias that `project.py` documents as fragile.
+   ⚠ **And it was a NEGATIVE RESULT — this paragraph used to predict that the
+   merge "moves matched bytes", which the fixing commit refutes.** Both halves
+   already shared one `base_path`, so objdiff paired every named symbol against
+   the full base object whichever half it sat in; nothing was scoring zero for
+   want of a counterpart. Measured: **42,274 → 42,273 matched (−1) /
+   3,772,560 → 3,772,520 B (−40) / 36.819992 → 36.819603%**, with **zero rows
+   vanishing or appearing** and only 7 changing score — the whole −40 being
+   `fn_8267F574`, a 40-byte EH funclet objdiff pairs by byte signature, which
+   re-paired to a different byte-equal counterpart in the larger merged pool
+   (canonical 100.0% with no mismatch rows; fuzzy 100.0 → 99.5, i.e.
+   relocation-name-only). **Landed on accuracy.**
+   ★ **The durable lesson, which is what to carry forward: `configure.py`'s
+   unresolved-heading hard fail CANNOT catch this, because BOTH headings
+   resolve.** The instruments that can are `verify_objs_patched.py --check`'s
+   `N object(s) declared by >1 unit` invariant, duplicate `base_path` in
+   `objdiff.json`, and a bare-vs-path-qualified heading census keyed on **full
+   path** — never `basename()`, which is the trap the bullet above documents.
+   Re-verified green 2026-09-14 (lane W16-AX §3) and again 2026-09-15 (lane
+   W16-BB): **0 exact-duplicate headings of 1,292, 0 bare+path-qualified pairs,
+   0 `base_path`s declared by >1 unit**, and the 23 surviving basename
+   collisions (`Utl.cpp` ×4, `Movie.cpp` ×2, the `FxSend*` family, …) are
+   genuinely distinct source files, not doublings. `obj_pairing` still returns
+   every target a compiled object resolves to and `--check` still names them, so
+   a regression here would surface rather than rot.
 
    The coverage is now **asserted, not printed**: `--check` fails (exit 3, and
    refuses to write the manifest) if any declared compiled object resolves to
