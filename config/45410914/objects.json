@@ -327,6 +327,8 @@
             "system/synth/SampleZone.cpp": "NonMatching",
             "system/synth/VoiceBeat.cpp": "NonMatching",
             "system/dsp/SndAnalysis.cpp": "NonMatching",
+            "system/dsp/IIRFilter.cpp": "NonMatching",
+            "system/dsp/PitchDetector.cpp": "NonMatching",
             "system/dsp/VibratoDetector.cpp": "NonMatching",
             "system/synth_xbox/FFT.cpp": "NonMatching",
             "system/synth_xbox/SpectralAnalysis.cpp": "NonMatching",
@@ -1901,6 +1903,7 @@
             "band3/tour/TourWeightManager.cpp": "NonMatching",
             "band3/tour/TourDescPanel.cpp": "NonMatching",
             "band3/tour/TourChar.cpp": "NonMatching",
+            "band3/tour/TourCharRemote.cpp": "NonMatching",
             "band3/tour/TourChallengeResultsPanel.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
