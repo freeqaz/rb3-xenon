@@ -315,6 +315,25 @@ BEGIN_PROPSYNCS(BandStorePanel)
     SYNC_SUPERCLASS(StorePanel)
 END_PROPSYNCS
 
+// Retail fn_82606020 (264 B), emitted in this translation unit.  Declared in
+// BandSongMetadata.h; defined HERE and not in the header so that MSVC emits one
+// out-of-line body in BandStorePanel.obj exactly as retail does, rather than a
+// COMDAT in every TU that names the type.  Both of Poll's message sites become a
+// single `bl` to this, which is why retail's Poll frame is 0xf0 and ours was
+// 0x140: the five DataNode temporaries live on THIS function's frame, not on
+// Poll's.
+MetadataLoadedMsg::MetadataLoadedMsg(
+    DataArray *arr, bool loaded, const char *name, bool b2, bool b3
+)
+    : Message(
+          MetadataLoadedMsg::Type(),
+          DataNode(arr, kDataArray),
+          DataNode(loaded),
+          DataNode(name),
+          DataNode(b2),
+          DataNode(b3)
+      ) {}
+
 void BandStorePanel::Poll() {
     StorePanel::Poll();
     if (mMetadataLoader && !mLastRequest.empty()) {
@@ -325,14 +344,7 @@ void BandStorePanel::Poll() {
                 metadata->AddRef();
                 MILO_ASSERT(metadata, 0x11C);
                 const char *nullStr = gNullStr;
-                static Message msg(
-                    MetadataLoadedMsg::Type(),
-                    DataNode(metadata, kDataArray),
-                    DataNode(1),
-                    DataNode(nullStr),
-                    DataNode(0),
-                    DataNode(0)
-                );
+                static MetadataLoadedMsg msg(metadata, true, nullStr, false, false);
                 msg[0] = DataNode(metadata, kDataArray);
                 msg[2] = DataNode(mLastRequest.c_str());
                 msg[3] = DataNode(
@@ -353,14 +365,7 @@ void BandStorePanel::Poll() {
             MILO_NOTIFY("Request for %s failed.\n", mLastRequest.c_str());
             DataArray *empty = new DataArray(0);
             {
-                Message msg(
-                    MetadataLoadedMsg::Type(),
-                    DataNode(empty, kDataArray),
-                    DataNode(0),
-                    DataNode(gNullStr),
-                    DataNode(0),
-                    DataNode(0)
-                );
+                MetadataLoadedMsg msg(empty, false, gNullStr, false, false);
                 msg[2] = DataNode(mLastRequest.c_str());
                 msg[3] = DataNode(
                     (int)(mLastRequest == MakeString("%d", StoreBuildNum()))
