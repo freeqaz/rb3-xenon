@@ -198,8 +198,9 @@ void ChordbookPanel::Poll() {
     if (Exiting() || !mGemPlayer)
         return;
     else {
+        GameplayOptions *opts = unk44->GetGameplayOptions();
         bool old = mLefty;
-        if (old != unk44->GetGameplayOptions()->GetLefty()) {
+        if (old != opts->GetLefty()) {
             mLefty = !old;
             mController->mLefty = !old;
         }
