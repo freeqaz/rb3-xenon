@@ -641,3 +641,14 @@ template AllocInfo *const &stlpmtx_std::__median<
 // (0x40 B -- verified: MILO_ASSERT_RANGE + mSlotMats[+0x38][mat+slot]) inside the
 // .text span pinned to default/band3/bandtrack/Gem.
 #include "band3/bandtrack/GemRepTemplate.cpp"
+
+// Lane W16-CE scatter-include: retail placed the whole NowBar class's COMDATs
+// (0x82BAA400-0x82BAAF30, 13 rows / 2,644 B: ctor, dtor, Reset, Hit, Miss,
+// PartialHit, FillHit, PopSmasher, SetSmasherGlowing, StopBurning, FindSmasher,
+// HandleOutOfRangeKey, plus the DeleteAll<GemSmasher*> template COMDAT) inside
+// the .text span already pinned to default/band3/bandtrack/Gem.  objdiff pairs
+// by name within a unit, so those rows were structurally unpairable while no
+// compiled object in this unit defined them.  Scatter-including is what makes
+// them pairable without re-homing an already-pinned address (re-homing is NOT
+// metric-neutral -- measured +3 fns / +428 B in lane PINHOME-1).
+#include "band3/bandtrack/NowBar.cpp"
