@@ -75,7 +75,10 @@ public:
     virtual void GetOfferIDsToEnumerate(std::vector<u64> &, bool) const;
     virtual void LoadArt(const char *, UIPanel *);
     virtual int UpdateOffers(const std::list<EnumProduct> &, bool);
-    virtual void StoreUserProfileSwappedToUser(LocalUser *) {}
+    // Out-of-line and NON-EMPTY on retail 360 (fn_82605878, 104 B, vtable
+    // slot 27) -- see the definition in BandStorePanel.cpp for the byte-level
+    // adjudication.  Both oracles have this as an empty inline; retail does not.
+    virtual void StoreUserProfileSwappedToUser(LocalUser *);
 
     DataNode OnMsg(const MetadataLoadedMsg &);
     DataNode OnMsg(const LocalUserLeftMsg &);

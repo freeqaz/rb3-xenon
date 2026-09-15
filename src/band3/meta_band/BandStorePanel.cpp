@@ -83,26 +83,49 @@ const char *BandStorePanel::GetIndexFile() const {
 
 const char *BandStorePanel::GetRequestPrefix() const { return sRequestPrefix; }
 
+// Retail fn_82605720 (80 B, primary vtable slot 17 / disp 0x44).  The rb3-Wii
+// dev oracle calls TheInputMgr->GetUser() TWICE with a null test between them;
+// retail 360 calls it ONCE and does not test it.  Read off the retail body:
+// there is exactly one `bl` to InputMgr::GetUser and no compare after it -- the
+// `cmplwi r3,0 / beq` that IS there sits AFTER the GetLocalBandUser vcall and
+// guards the compiler-generated LocalBandUser* -> LocalUser* virtual-base
+// adjust (`lwz r11,4(r3)` vbptr, `lwz r11,0xc(r11)` vbtable idx 3 == LocalUser,
+// the second of `class LocalBandUser : public virtual BandUser, public virtual
+// LocalUser`).  So the null check is the conversion's, not the source's.
 LocalUser *BandStorePanel::StoreUser() const {
-    LocalBandUser *l = TheInputMgr->GetUser()
-        ? TheInputMgr->GetUser()->GetLocalBandUser()
-        : 0;
-    return l;
+    return TheInputMgr->GetUser()->GetLocalBandUser();
+}
+
+// Retail fn_82605878 (104 B, primary vtable slot 27 / disp 0x6c).  EMPTY in BOTH
+// oracles (rb3-Wii BandStorePanel.h:46 and our header carried `{}`) and NOT empty
+// in retail 360 -- a real divergence, adjudicated on bytes:
+//   * the body never reads its `this` (r3 is overwritten by `mr r3,r4` before
+//     first use), which is why an override that ignores `this` fits;
+//   * `bl __RTDynamicCast` (fn_8282A0C8) with the two RTTI type descriptors
+//     .rdata 0x82C6E6B0 ".?AVLocalUser@@" (source) and 0x82C72528
+//     ".?AVLocalBandUser@@" (target), VfDelta 0 and isReference 0;
+//   * the result is then put through the vbtable idx-2 adjust (`lwz r11,4(r3)`,
+//     `lwz r11,8(r11)`) == BandUser, the FIRST virtual base of LocalBandUser;
+//   * and handed to fn_825B1598 == ?SetUser@InputMgr@@QAAXPAVBandUser@@@Z on
+//     the global at 0x82DFF3BC, whose parameter type is exactly what that
+//     adjust produces.
+// The null-guard around the adjust is the compiler's, as in StoreUser above.
+void BandStorePanel::StoreUserProfileSwappedToUser(LocalUser *u) {
+    TheInputMgr->SetUser(dynamic_cast<LocalBandUser *>(u));
 }
 
 StoreOffer *BandStorePanel::MakeNewOffer(DataArray *da) {
     return new BandStoreOffer(da, &TheSongMgr);
 }
 
+// Retail fn_82605B48 (100 B, primary vtable slot 19 / disp 0x4c) scans ONE
+// vector, not two: the loop bounds are `lwz r31,0x3c(r3)` and `lwz r11,0x40(r30)`
+// == mOffers.begin()/end() (StorePanel.h puts mOffers at 0x3c and
+// mPendingOffers at 0x48), and there is no second loop in the body at all.
+// The rb3-Wii dev oracle's trailing unk48 pass is not in the retail 360 build.
 StoreOffer *BandStorePanel::FindOffer(Symbol s) const {
     for (std::vector<StoreOffer *>::const_iterator it = unk38.begin();
          it != unk38.end(); ++it) {
-        StoreOffer *o = *it;
-        if (o->ShortName() == s)
-            return o;
-    }
-    for (std::vector<StoreOffer *>::const_iterator it = unk48.begin();
-         it != unk48.end(); ++it) {
         StoreOffer *o = *it;
         if (o->ShortName() == s)
             return o;
