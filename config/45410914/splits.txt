@@ -9115,6 +9115,7 @@ band3/meta_band/BandProfile.cpp:
 	.pdata      start:0x8221FD60 end:0x8221FD68
 	.pdata      start:0x8221FD68 end:0x8221FD78
 	.pdata      start:0x8221FD78 end:0x8221FD80
+	.pdata      start:0x8221FD80 end:0x8221FDB8
 	.pdata      start:0x8221FDB8 end:0x8221FDC0
 	.pdata      start:0x8221FDC0 end:0x8221FDD0
 	.pdata      start:0x8221FDD0 end:0x8221FDD8
@@ -9153,6 +9154,7 @@ band3/meta_band/BandProfile.cpp:
 	.text       start:0x8258B8E0 end:0x8258B928
 	.text       start:0x8258B928 end:0x8258BA4C
 	.text       start:0x8258BA50 end:0x8258BAB4
+	.text       start:0x8258BAB8 end:0x8258BF60
 	.text       start:0x8258BF60 end:0x8258BFB0
 	.text       start:0x8258BFB0 end:0x8258C0D0
 	.text       start:0x8258C0D0 end:0x8258C114
@@ -11004,7 +11006,6 @@ Tour.cpp:
 	.pdata      start:0x82200520 end:0x82200548
 	.pdata      start:0x82200548 end:0x822005A0
 	.pdata      start:0x822005A0 end:0x822005A8
-	.pdata      start:0x8221FD80 end:0x8221FDB8
 	.text       start:0x8235AF50 end:0x8235AFA0
 	.text       start:0x8235AFA8 end:0x8235B9F8
 	.text       start:0x8235BA78 end:0x8235BB48
@@ -11021,7 +11022,6 @@ Tour.cpp:
 	.text       start:0x82360238 end:0x82360450
 	.text       start:0x82360450 end:0x823608A0
 	.text       start:0x823608A0 end:0x82360998
-	.text       start:0x8258BAB8 end:0x8258BF60
 
 TourBand.cpp:
 	.pdata      start:0x8225BE90 end:0x8225BEA8
