@@ -503,7 +503,38 @@ sub-100 rows measured in passing and left alone:
 
 ---
 
-## 7. Gate chain
+## 7. Gate chain — RUN, in order, in the worktree, as the lane's last actions
 
-Run in order, in the worktree, as the last actions of the lane. Results in §8 of
-the lane's final report.
+| # | gate | result |
+|---|---|---|
+| 1 | `./tools/ninja-locked` (full) | **rc=0**, 86-line log (the expected steady state), 0 recompiles |
+| 2 | `scripts/verify_ruler_agreement.py --check` | **rc=0** — both objdiff-cli entry points resolve `name_check` / `combineDataSections=true` / `combineTextSections=true` / `ppc.calculatePoolRelocations=false` |
+| 3 | `scripts/verify_objs_patched.py --verify-manifest` | **rc=0** — 1,219 decomp + 3,105 target objects match `tree_sha256=cee36cb4d0b521e7`; denylist clean (6 addresses, none named in 495,491 symbols) |
+| 4 | `tools/icf_alias_finder.py --validate` | **rc=0** — PASS, 1,407 map-consistent, 249 tolerated, **0 CONTRADICTED**, 1,657 total |
+| 5 | `tools/funclet_homing.py --validate` | **rc=0** — PASS, 25,052 HOMED / 1,226 ORPHAN / 1 MIS-PINNED / 42 UNPINNED-FUNCLET, fan-in uniformly 1 |
+| 6 | `tools/native_build_gate.sh` | **rc=0** — see verbatim line below |
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+`skipped=0` is the load-bearing field, not the word `PASS` — an INCOMPLETE run
+also prints `PASS` one space apart from a full one, and the 0-SKIP rule is what
+has caught every false green so far.
+
+### Figures re-read from `report.json` AFTER the final full build
+
+```
+matched_functions       43703
+matched_code            4069204
+matched_code_percent    39.71091
+total_functions         69240
+total_code              10247068
+fuzzy_match_percent     49.863712
+masked_equal_functions  23132
+provenance.diff_config  functionRelocDiffs=name_check, combineDataSections=true,
+                        combineTextSections=true, ppc.calculatePoolRelocations=false
+```
+
+Identical to §0 to the last digit, so the headline is a post-gate reading, not a
+mid-lane one.
