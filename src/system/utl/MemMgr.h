@@ -233,7 +233,48 @@ void *MemAlloc(int size, int align);
 // align)` form under their own HX_NATIVE guard. The 5-arg debug stub and the
 // definition likewise parenthesize the name. HX_NATIVE keeps the 5-arg debug
 // form above. NOTE: this macro must follow ALL MemAlloc declarations.
-#define MemAlloc(size, file, line, name, ...) (MemAlloc)((size), 0)
+// ⛔ HAZARD THIS REPLACES (lane W16-BT, 2026-09-15). The macro used to be
+// `#define MemAlloc(size, file, line, name, ...) (MemAlloc)((size), 0)`, and
+// the comment above claimed a 2-arg `MemAlloc(n, align)` would "bypass" it.
+// IT DOES NOT. MSVC's traditional preprocessor expands a function-like macro
+// even when it is invoked with FEWER arguments than it declares (the missing
+// parameters simply become empty), so `MemAlloc(n, 0x10)` expanded to
+// `(MemAlloc)((n), 0)`: the alignment was discarded, it COMPILED, and the only
+// symptom was `li r4,0` where retail has `li r4,0x10`. The same swallowing hit
+// the 5-arg debug spelling `MemAlloc(n, __FILE__, line, name, align)` -- no
+// value written in that 5th position could ever reach the callee. Two live
+// instances were found and fixed (PitchDetector::SetSampleRate by W16-BR;
+// XboxAllocator<T>::allocate by W16-BT, worth +3 fns / +560 B).
+//
+// The arity dispatcher below carries the alignment for BOTH the 2-arg retail
+// spelling and the 5-arg debug spelling, and leaves the 4-arg debug spelling
+// (the overwhelming majority, which has no align to carry) forcing 0 exactly
+// as before. MEMALLOC_EXPAND is required: MSVC's traditional preprocessor
+// passes __VA_ARGS__ to a nested macro as a SINGLE token without it, which is
+// what makes most arg-counting tricks fail here.
+//
+// PROVEN, not assumed -- `cl.exe /E` on this exact compiler (X360 16.00.10224,
+// through wibo) before the tree was touched:
+//     MemAlloc(sz, 0x10)                     -> (MemAlloc)((sz), (0x10))
+//     MemAlloc(sz, __FILE__, 0x2C, "n")      -> (MemAlloc)((sz), 0)
+//     MemAlloc(sz, __FILE__, 0x2C, "n", 0x80)-> (MemAlloc)((sz), (0x80))
+//     (MemAlloc)(sz, 0x10)                   -> untouched
+// Whole-tree effect measured at exactly 0 on every headline key: in the match
+// build every live call site passes align 0 (the only three non-zero 5-arg
+// sites -- Memory_Xbox.cpp, BinkReader.cpp, Mic.cpp -- are #ifdef HX_NATIVE,
+// and this macro is #ifndef HX_NATIVE, so they never meet).
+//
+// A 1- or 3-arg call now names an undefined MEMALLOC_1/MEMALLOC_3 and fails to
+// compile, which is the intended loud failure rather than a silent wrong call.
+#define MEMALLOC_EXPAND(x) x
+#define MEMALLOC_PICK(a1, a2, a3, a4, a5, NAME, ...) NAME
+#define MEMALLOC_2(size, align) (MemAlloc)((size), (align))
+#define MEMALLOC_4(size, file, line, name) (MemAlloc)((size), 0)
+#define MEMALLOC_5(size, file, line, name, align) (MemAlloc)((size), (align))
+#define MemAlloc(...)                                                                    \
+    MEMALLOC_EXPAND(MEMALLOC_PICK(                                                       \
+        __VA_ARGS__, MEMALLOC_5, MEMALLOC_4, MEMALLOC_3, MEMALLOC_2, MEMALLOC_1          \
+    )(__VA_ARGS__))
 // Retail/match 2-arg temp allocator (size, align) — no debug strings, mirroring
 // the MemAlloc lever above. The retail RB3-360 XEX strips MemTrack from
 // _MemAllocTemp too: SongMgr::SaveWrite calls it as fn_827979D8(size, align=0)
