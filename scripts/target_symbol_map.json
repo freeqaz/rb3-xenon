@@ -4292,7 +4292,7 @@
  "0x8235bf00": "??$__copy_ptrs@PBHPAH@stlpmtx_std@@YAPAHPBH0PAHABU__true_type@0@@Z",
  "0x8235c020": "?ClearCurrentQuest@Tour@@QAAXXZ",
  "0x8235c288": "?GetCurrentFilterName@Tour@@QBA?AVString@@XZ",
- "0x8235c2e0": "?SyncProperty@Tour@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x8235c2e0": "?SyncProperty@Object@Hmx@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x8235c328": "?_M_create_node@?$_Rb_tree@PAVMoveDetector@@U?$less@PAVMoveDetector@@@stlpmtx_std@@PAV1@U?$_Identity@PAVMoveDetector@@@3@U?$_SetTraitsT@PAVMoveDetector@@@priv@3@V?$StlNodeAlloc@PAVMoveDetector@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABQAVMoveDetector@@@Z",
  "0x8235c378": "?GetTourStatusIndexForFanCount@Tour@@QBAHH@Z",
  "0x8235c3c8": "?DoesTourStatusExist@Tour@@QBA_NHH@Z",
