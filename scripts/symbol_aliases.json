@@ -9432,11 +9432,18 @@
   {
    "name": "_M_fill_insert",
    "address": "0x822abd60",
-   "survivor": "?_M_fill_insert@?$vector@UNode@?$ObjPtrVec@VRndDrawable@@VObjectDir@@@@V?$StlNodeAlloc@UNode@?$ObjPtrVec@VRndDrawable@@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUNode@?$ObjPtrVec@VRndDrawable@@VObjectDir@@@@IABU34@@Z",
-   "folded": [
-    "?_M_fill_insert@?$vector@VBandPatchMesh@@V?$StlNodeAlloc@VBandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVBandPatchMesh@@IABV3@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions."
+   "survivor": "?_M_fill_insert@?$vector@VBandPatchMesh@@V?$StlNodeAlloc@VBandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVBandPatchMesh@@IABV3@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions. REORIENTED by lane W16-AZ 2026-09-15: the recorded survivor spelling (ObjPtrVec<RndDrawable>::Node _M_fill_insert) has 0 definers and 0 referencers across our 1,215 objs, and every ObjPtrVec<X>::Node _M_fill_insert we hold compiles to 108 B vs retail 112 B at 0x822ABD60; the T1 identity can only have been measured against the BandPatchMesh COMDAT (re-measured: 28/28 words equal, 23/28 fully unmasked, bl displacements masked, OutfitConfig.obj). Map row 0x822abd60 renamed to the BandPatchMesh spelling; former survivor moved to withdrawn.",
+   "withdrawn": [
+    {
+     "spelling": "?_M_fill_insert@?$vector@UNode@?$ObjPtrVec@VRndDrawable@@VObjectDir@@@@V?$StlNodeAlloc@UNode@?$ObjPtrVec@VRndDrawable@@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUNode@?$ObjPtrVec@VRndDrawable@@VObjectDir@@@@IABU34@@Z",
+     "lane": "W16-AZ 2026-09-15",
+     "class": "SURVIVOR_SIZE_MISMATCH",
+     "disposition": "withdrawn; map row at 0x822abd60 renamed to the former folded spelling ?_M_fill_insert@?$vector@VBandPatchMesh@@...; .text line 0x822ABCE0-0x822ABE70 re-homed from ClipDistMap.cpp to OutfitConfig.cpp, whose blocks flank it on both sides",
+     "evidence": "0 definers / 0 referencers for this spelling across 1,215 compiled objs; all 12 ObjPtrVec<X>::Node _M_fill_insert instantiations we hold are 108 B; retail fn_822ABD60 is 112 B == our vector<BandPatchMesh>::_M_fill_insert (OutfitConfig.obj, Gem.obj), masked word compare 28/28 equal"
+    }
+   ]
   },
   {
    "name": "Fail",
@@ -69420,11 +69427,18 @@
   {
    "name": "$__uninitialized_copy",
    "address": "0x8278b7f0",
-   "survivor": "??$__uninitialized_copy@PAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@PAU12@@stlpmtx_std@@YAPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@PAU12@00ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_copy@PAVPhraseData@PhraseAnalyzer@@PAV12@@stlpmtx_std@@YAPAVPhraseData@PhraseAnalyzer@@PAV12@00ABU__false_type@0@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "survivor": "??$__uninitialized_copy@PAVPhraseData@PhraseAnalyzer@@PAV12@@stlpmtx_std@@YAPAVPhraseData@PhraseAnalyzer@@PAV12@00ABU__false_type@0@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions. W16-AZ 2026-09-15: orientation reversed, see withdrawn.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_copy@PAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@PAU12@@stlpmtx_std@@YAPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@PAU12@00ABU__false_type@0@@Z",
+     "lane": "W16-AZ 2026-09-15",
+     "class": "SURVIVOR_SIZE_MISMATCH",
+     "disposition": "withdrawn; map row at 0x8278b7f0 renamed to the former folded spelling (the only spelling whose COMDAT matches retail size: 72 B halfword copy, no EH funclet); .text line 0x8278B7F0-0x8278B838 re-homed from HamMove.cpp to system/beatmatch/PhraseAnalyzer.cpp, whose blocks flank it",
+     "evidence": "W16-AZ 2026-09-15: group was mis-oriented. Retail 0x8278b7f0 is a 72 B halfword copy (lhz/sth, 2-byte-aligned 8 B PhraseAnalyzer::PhraseData elements, no EH funclet) that sits inside PhraseAnalyzer.cpp's .text span (0x8278B3B8-0x8278C348); it was pinned to HamMove.cpp and named with the ObjPtrVec<Hmx::Object> spelling, which HamMove.obj defines as a 96 B word-copy WITH an EH catch funclet -- different size and different unwind data, so it cannot be an ICF fold of the retail body. The T1 evidence that installed this group was measured against the PhraseData spelling (the folded member), i.e. it proved the survivor is the PhraseData copy, not that the two spellings fold. Survivor corrected to the PhraseData spelling; the ObjPtrVec spelling is NOT a folded member and must not be re-added without retail-byte proof that a 96 B body folds into a 72 B one (it cannot)."
+    }
+   ]
   },
   {
    "name": "Load",
@@ -83298,6 +83312,15 @@
    ],
    "lane": "W16-AV",
    "evidence": "W16-AV 2026-09-14, T1 on retail bytes. CORRECTION TO W16-AO's FILED EVIDENCE: AO claimed the two COMDATs are 'byte-identical INCLUDING relocations'. Measured, they are NOT -- our two resize COMDATs are byte-identical and both 144 B, but their relocation TARGET NAMES differ at two sites (off 88 erase, off 124 insert), each spelled for its own instantiation. Per CLAUDE.md (CD-7) MSVC folds only COMDATs identical INCLUDING relocations, so the direct-fold claim as filed is refuted -- this is the same shape as _List_base<T>::clear, which has 42 addresses and reloc-identical surplus 0. The fold is nonetheless REAL and TRANSITIVE: /OPT:ICF iterates to a fixed point, the referenced erase and insert families fold first, and the two resize bodies then become reloc-identical and fold. PROVEN ON RETAIL BYTES, not on map absence: (a) each of our two COMDATs is masked-equal to the SAME retail body word-for-word (36 words, 0 unexplained differing words, opcode/AA/LK preserved by the mask, only relocated fields skipped); (b) DECISIVELY, every relocated branch destination resolves to the SAME retail ADDRESS for both spellings (off 88 -> 0x824e0e40, off 124 -> 0x824e0f00), so after folding the two bodies are identical in bytes AND in destinations; (c) retail keeps exactly ONE body per family and names it with an arbitrary member spelling (erase survives as Transform, insert survives as Instance, resize survives as Transform) -- the arbitrary-survivor-spelling signature. Map absence of the rival spellings was NOT used as evidence (CLAUDE.md: absence measures identification coverage, ~1.95x, not folding). Control: 0x8241b618 ?resize@list<Instance,TransformListAlloc<Instance>> is the REAL RndMultiMesh::InstanceList instantiation (MultiMesh.h typedef), a different COMDAT that did NOT fold and sits at its own address at fuzzy 100 -- so the method distinguishes folding from mere same-name similarity. THIS GROUP: the same fold family one level down, and it is the membership W16-AO did NOT propose but which is required for AO's own target row to cross. Retail row 0x8246af50 ?resize@list<Transform> (144 B, unit default/MeshAnim, fuzzy 99.8611) has exactly ONE charged site (graded name_check: 36 instructions, 35 equal, 1 diff_arg, 0 unattributed) and it is this insert name pair -- retail's bl at off 124 goes to 0x824e0f00, which the map spells for the Instance instantiation while our Transform resize references the Transform spelling. Our ?insert@list<Transform> COMDAT is masked-equal to the retail body at 0x824e0f00 over all 100 B (25 words, 0 unexplained differing words). Its single relocated destination resolves to 0x824e0400 _M_create_node for BOTH spellings, i.e. the same one-body-per-family pattern recurs. Installing the resize group alone would have left this row charged."
+  },
+  {
+   "name": "push_back",
+   "address": "0x826cb590",
+   "survivor": "?push_back@?$vector@VSongSection@@V?$StlNodeAlloc@VSongSection@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVSongSection@@@Z",
+   "folded": [
+    "?push_back@?$vector@URawPhrase@@V?$StlNodeAlloc@URawPhrase@@@stlpmtx_std@@@stlpmtx_std@@QAAXABURawPhrase@@@Z"
+   ],
+   "evidence": "ICF fold group added by lane W16-AZ 2026-09-15 (brief Item 4). Evidence tier T1, measured by hand with the same rule as tools/icf_alias_build.py: retail bytes of fn_826CB590 (128 B, SongLayout.cpp .text block 0x826CB590-0x826CB610, from build/45410914/asm/SongLayout.s keyed on the .fn symbol) are word-identical to our compiled COMDAT for the folded spelling (build/45410914/src/system/beatmatch/PhraseAnalyzer.obj, 128 B): 32/32 words equal, 27/32 fully unmasked, bl displacements masked; the survivor spelling (build/45410914/src/system/hamobj/SongLayout.obj, 128 B) reads the same 32/32 as a control. Both COMDATs carry identical relocation shape (memcpy at +48, _M_insert_overflow_aux<T> at +104); SongSection and RawPhrase are both 16 B elements. Motivating charge: ?AddInfo@PhraseAnalyzer@@QAAXHW4TrackType@@HH_N@Z (100 B) had exactly one diff_arg, the bl to this address. 1 folded spelling, 1 census site over 1 function."
   }
  ]
 }
