@@ -723,6 +723,7 @@ VocalTrackDir.cpp:
 	.pdata      start:0x821FA028 end:0x821FA060
 	.pdata      start:0x821FA060 end:0x821FA198
 	.pdata      start:0x821FA198 end:0x821FA1A0
+	.pdata      start:0x821FA1A0 end:0x821FA1A8
 	.pdata      start:0x821FA1A8 end:0x821FA1B8
 	.pdata      start:0x821FA1B8 end:0x821FA590
 	.pdata      start:0x821FA590 end:0x821FA598
@@ -755,6 +756,7 @@ VocalTrackDir.cpp:
 	.text       start:0x822FA7E0 end:0x822FAFF8
 	.text       start:0x822FAFF8 end:0x822FC430
 	.text       start:0x822FC430 end:0x822FC4F8
+	.text       start:0x822FC4F8 end:0x822FD26C
 	.text       start:0x822FD26C end:0x822FD2F4
 	.text       start:0x822FD2F4 end:0x822FE750
 	.text       start:0x822FE750 end:0x822FE780
