@@ -4163,10 +4163,6 @@ HamNavList.cpp:
 	.text       start:0x826F7CC8 end:0x826F7E50
 	.text       start:0x82817A68 end:0x82817C20
 
-HamLabel.cpp:
-	.pdata      start:0x821FE790 end:0x821FE7A0
-	.text       start:0x82340580 end:0x823405F8
-
 SkeletonClip.cpp:
 	.pdata      start:0x821FEC88 end:0x821FEC90
 	.pdata      start:0x821FED80 end:0x821FEDA0
@@ -11968,10 +11964,12 @@ HttpGet.cpp:
 	.text       start:0x827F2630 end:0x827F2680
 
 BandLabel.cpp:
+	.pdata      start:0x821FE790 end:0x821FE7A0
 	.pdata      start:0x821FE7A0 end:0x821FE7A8
 	.pdata      start:0x821FE7A8 end:0x821FE918
 	.pdata      start:0x821FE958 end:0x821FE960
 	.pdata      start:0x8222E920 end:0x8222E948
+	.text       start:0x82340580 end:0x823405F8
 	.text       start:0x823405F8 end:0x8234066C
 	.text       start:0x82340670 end:0x823421A8
 	.text       start:0x82342220 end:0x82342228
