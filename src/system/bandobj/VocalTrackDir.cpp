@@ -4,7 +4,7 @@
 // mTubeStyle, mArrowStyle, mFontStyle: 4x fn_8228D400) and T = RndMat (the
 // 15 *Mat members: 15x fn_8229D9C8). (this) inlines, (this, 0) calls.
 #define RB3_OBJPTR_INLINE_OWNER_CTOR
-#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
+#define RB3_TU_OBJPTR_DEFER_OWNER
 #include "bandobj/VocalTrackDir.h"
 #include "bandobj/TrackInterface.h"
 #include "decomp.h"
