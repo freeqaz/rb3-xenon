@@ -961,42 +961,26 @@ void VocalTrackDir::ApplyArrowStyle(Hmx::Object *o) {
 }
 
 void VocalTrackDir::ApplyFontStyle(Hmx::Object *o) {
-    float r20 = 1.0f, g20 = 1.0f, b20 = 1.0f, a20 = 1.0f;
-    float r30 = 1.0f, g30 = 1.0f, b30 = 1.0f, a30 = 0.75f;
-    float r40 = 1.0f, g40 = 1.0f, b40 = 1.0f, a40 = 1.0f;
-    float r50 = 1.0f, g50 = 1.0f, b50 = 1.0f, a50 = 0.75f;
+    Hmx::Color c20(1.0f, 1.0f, 1.0f, 1.0f);
+    Hmx::Color c30(1.0f, 1.0f, 1.0f, 0.75f);
+    Hmx::Color c40(1.0f, 1.0f, 1.0f, 1.0f);
+    Hmx::Color c50(1.0f, 1.0f, 1.0f, 0.75f);
 
     if (mLeadText) {
         mLeadText->SetShowing(false);
-        int packed20 = (int)mLeadText->GetSingleStyleColor();
-        r20 = (float)(packed20 & 0xFF) / 255.0f;
-        g20 = (float)((packed20 >> 8) & 0xFF) / 255.0f;
-        b20 = (float)((packed20 >> 16) & 0xFF) / 255.0f;
-        a20 = (float)(int)((unsigned)packed20 >> 24) / 255.0f;
+        c20 = mLeadText->StyleColor();
     }
     if (mHarmText) {
         mHarmText->SetShowing(false);
-        int packed30 = (int)mHarmText->GetSingleStyleColor();
-        r30 = (float)(packed30 & 0xFF) / 255.0f;
-        g30 = (float)((packed30 >> 8) & 0xFF) / 255.0f;
-        b30 = (float)((packed30 >> 16) & 0xFF) / 255.0f;
-        a30 = (float)(int)((unsigned)packed30 >> 24) / 255.0f;
+        c30 = mHarmText->StyleColor();
     }
     if (mLeadPhonemeText) {
         mLeadPhonemeText->SetShowing(false);
-        int packed40 = (int)mLeadPhonemeText->GetSingleStyleColor();
-        r40 = (float)(packed40 & 0xFF) / 255.0f;
-        g40 = (float)((packed40 >> 8) & 0xFF) / 255.0f;
-        b40 = (float)((packed40 >> 16) & 0xFF) / 255.0f;
-        a40 = (float)(int)((unsigned)packed40 >> 24) / 255.0f;
+        c40 = mLeadPhonemeText->StyleColor();
     }
     if (mHarmPhonemeText) {
         mHarmPhonemeText->SetShowing(false);
-        int packed50 = (int)mHarmPhonemeText->GetSingleStyleColor();
-        r50 = (float)(packed50 & 0xFF) / 255.0f;
-        g50 = (float)((packed50 >> 8) & 0xFF) / 255.0f;
-        b50 = (float)((packed50 >> 16) & 0xFF) / 255.0f;
-        a50 = (float)(int)((unsigned)packed50 >> 24) / 255.0f;
+        c50 = mHarmPhonemeText->StyleColor();
     }
 
     int type_matched = 0;
@@ -1010,25 +994,25 @@ void VocalTrackDir::ApplyFontStyle(Hmx::Object *o) {
         if (o->Property(lead_text, true)->NotNull()) {
             mLeadText = o->Property(lead_text, true)->Obj<RndText>();
             mLeadText->SetShowing(objexists);
-            mLeadText->SetColor(Hmx::Color(r20, g20, b20, a20));
+            mLeadText->SetColor(c20);
         } else
             mLeadText = 0;
         if (o->Property(harmony_text, true)->NotNull()) {
             mHarmText = o->Property(harmony_text, true)->Obj<RndText>();
             mHarmText->SetShowing(objexists);
-            mHarmText->SetColor(Hmx::Color(r30, g30, b30, a30));
+            mHarmText->SetColor(c30);
         } else
             mHarmText = 0;
         if (o->Property(lead_phoneme_text, true)->NotNull()) {
             mLeadPhonemeText = o->Property(lead_phoneme_text, true)->Obj<RndText>();
             mLeadPhonemeText->SetShowing(objexists);
-            mLeadPhonemeText->SetColor(Hmx::Color(r40, g40, b40, a40));
+            mLeadPhonemeText->SetColor(c40);
         } else
             mLeadPhonemeText = mLeadText;
         if (o->Property(harmony_phoneme_text, true)->NotNull()) {
             mHarmPhonemeText = o->Property(harmony_phoneme_text, true)->Obj<RndText>();
             mHarmPhonemeText->SetShowing(objexists);
-            mHarmPhonemeText->SetColor(Hmx::Color(r50, g50, b50, a50));
+            mHarmPhonemeText->SetColor(c50);
         } else
             mHarmPhonemeText = mHarmText;
     }
