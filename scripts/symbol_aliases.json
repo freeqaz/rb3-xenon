@@ -83368,6 +83368,33 @@
     "??4?$ObjDirPtr@VUILabelDir@@@@QAAAAV0@PAVUILabelDir@@@Z"
    ],
    "evidence": "ICF fold group added by lane W16-BD 2026-09-15 as the REPAIR of a cost this lane's own commit 6ffce478 created, and it is installed with a RETAIL CALLER WITNESS, not merely a byte match. Naming the previously-anonymous 0x82817ae8 ??4?$ObjDirPtr@VHamListRibbon@@@@QAAAAV0@PAVHamListRibbon@@@Z converted a FORGIVEN placeholder call site into a CHECKED one and dropped default/UIFontImporter::??1?$ObjDirPtr@VUILabelDir@@@@UAA@XZ (88 B) off fuzzy 100: its single charged site on the graded ruler is instruction 12 of 22, diff_arg, retail bl ??4?$ObjDirPtr@VHamListRibbon@@... vs our bl ??4?$ObjDirPtr@VUILabelDir@@.... THE WITNESS: the retail caller is ObjDirPtr<UILabelDir>'s OWN DESTRUCTOR, which cannot mean any instantiation but UILabelDir, and it calls the body at 0x82817ae8. So retail kept ONE body for both instantiations -- a genuine ICF fold whose surviving name is arbitrary -- which is the canonical case SymbolEquivalences exists to forgive, and our source spelling is correct. Independently, icf_pair_adjudicate --chase adjudicates retail fn_82817AE8 vs our <UILabelDir> spelling as CHASED T1 PROVEN (its one chased slot resolves to ?PostLoad@?$ObjDirPtr@VHamListRibbon@@..., itself 100% at 0x82817a68); --selftest and --chasetest both pass on this tree. Consistency check the fold implies and which holds: ICF requires identical relocations, so the two operator= COMDATs could only fold if their PostLoad callees folded too, and PostLoad is indeed present once at 0x82817a68. NOT ADDED, deliberately: ??4?$ObjDirPtr@VHamScrollSpeedIndicator@@... is ALSO chased-PROVEN against the same retail body and is also defined by HamNavList.obj, but NO retail caller witnesses it and no row is charged on it, so adding it would be an unwitnessed membership. A charged site naming it, or a retail bl-caller census finding one, is what would justify it. No membership removed, nothing pruned."
+  },
+  {
+   "name": "_GTourChar",
+   "address": "0x82b801d8",
+   "survivor": "??_GTourChar@@UAAPAXI@Z",
+   "folded": [
+    "??_ETourChar@@UAAPAXI@Z"
+   ],
+   "evidence": "COMPILER-DECLARED ALIAS (stronger than an ICF byte inference): in our compiled build/45410914/src/band3/tour/TourChar.obj the symbol ??_ETourChar@@UAAPAXI@Z is IMAGE_SYM_CLASS_WEAK_EXTERNAL (105), SectionNumber 0, with aux TagIndex resolving to ??_GTourChar@@UAAPAXI@Z (Characteristics=2) -- i.e. MSVC itself states the two spellings denote one body, so they necessarily occupy one address after linking. T1 corroboration: our ??_GTourChar COMDAT (84 B) is byte-identical to retail 0x82B801D8 at all 21 words except its 3 relocation sites, whose targets are ??1TourChar@@UAA@XZ (retail 0x82B7FAB0, name-equal), ??1Object@Hmx@@UAA@XZ (retail 0x8275CBF0, name-equal) and ??3@YAXPAX@Z (retail 0x8240DDB0, already folded under survivor ??3BinStream@@SAXPAX@Z, group 0x8240ddb0). Retail's own TourChar adjustor thunks ??_ETourChar@@$4PPPPPPPM@FA@AAPAXI@Z (0x82B7FF98) and ??_ETourChar@@WBI@AAPAXI@Z (0x82B7FFA8) branch to 0x82B801D8, which is referenced by no vtable and by no other code. Lane W16-BR 2026-09-15."
+  },
+  {
+   "name": "GetFret",
+   "address": "0x8277b3f0",
+   "survivor": "?GetFret@RGState@@QBAIH@Z",
+   "folded": [
+    "?Chunk32@HxGuid@@QBAHH@Z"
+   ],
+   "evidence": "T1 on retail bytes, RELOCATION-FREE so byte identity is the entire proof (no masked fields, so the usual T1 vacuity caveat does not apply; and the body is 3 real instructions, not an empty blr). Retail 0x8277B3F0 is 12 B: 548B103A 7C6B182E 4E800020 (slwi r11,r4,2; lwzx r3,r11,r3; blr) with no .pdata BeginAddress. Our ?Chunk32@HxGuid@@QBAHH@Z COMDAT in HxGuid.obj is byte-identical to those 12 B and also relocation-free. EXHAUSTION: exactly ONE function in the whole retail .text has this body, so an EH-free 12 B getter COMDAT can fold only here. CALL-SITE ROLE from retail's own instruction stream, not from our spelling: the four charged sites in ?AddCustomSettings@BandMatchmaker@@ (0x826524B0) are preceded by addi r4,r0,{0,1,2,3} and addi r3,r31,0x70, i.e. an index-by-constant getter over a 4-word object -- exactly guid.Chunk32(0..3). BLAST RADIUS: the folded spelling is the target of exactly 4 relocations tree-wide, all in Matchmaker.obj inside that one row. FT1: Chunk32 has no row in target_symbol_map.json. SAFETY: both bodies are a pure read of the i-th word with no calls, so this alias cannot conceal a behavioural divergence. NOTE the return types differ (retail GetFret is QBAIH@Z / unsigned, ours QBAHH@Z / int); the emitted lwzx is identical for a full word either way, so the fold is unaffected. Lane W16-BR 2026-09-15."
+  },
+  {
+   "name": "_GTourCharRemote",
+   "address": "0x82b80768",
+   "survivor": "??_GTourCharRemote@@UAAPAXI@Z",
+   "folded": [
+    "??_ETourCharRemote@@UAAPAXI@Z"
+   ],
+   "evidence": "COMPILER-DECLARED ALIAS (stronger than an ICF byte inference): in our compiled build/45410914/src/band3/tour/TourCharRemote.obj the symbol ??_ETourCharRemote@@UAAPAXI@Z is IMAGE_SYM_CLASS_WEAK_EXTERNAL (105), SectionNumber 0, with aux TagIndex resolving to ??_GTourCharRemote@@UAAPAXI@Z (Characteristics=2) -- MSVC itself states the two spellings denote one body, so they necessarily occupy one address after linking. T1 corroboration on RETAIL BYTES, independent of the COFF record: retail's two TourCharRemote adjustor thunks branch into this body -- 0x82B80660 holds 0x48000104 (b to 0x82B80664+0x104 = 0x82B80768) and 0x82B80668 holds 0x480000F4 (b to 0x82B80674+0xF4 = 0x82B80768) -- and in OUR object those same two thunks relocate against ??_ETourCharRemote@@UAAPAXI@Z, so the spelling our thunks name and the address retail's thunks reach are one and the same. Our ??_GTourCharRemote COMDAT (84 B) is byte-identical to retail 0x82B80768 at all 21 words except its 3 relocation sites, whose targets are ??1TourCharRemote@@UAA@XZ (retail 0x82B80690, named by this lane), ??1Object@Hmx@@UAA@XZ and ??3@YAXPAX@Z. 0x82B80768 is referenced by no vtable -- its only data-word reference in the whole image is its own .pdata BeginAddress at 0x8225C638 -- and its only code references are the two adjustor thunks above. The map previously named this address ??_GChooseProfilePanel@@UAAPAXI@Z, which was its sole ChooseProfilePanel row and is refuted here: a ??_G calls its own class's ??1, so two classes' ??_G bodies differ in relocations and MSVC/OPT:ICF cannot fold them. Lane W16-BR 2026-09-15."
   }
  ]
 }

@@ -38,6 +38,8 @@ bool HxGuid::IsNull() const {
     return (mData[0] == 0 && mData[1] == 0 && mData[2] == 0 && mData[3] == 0);
 }
 
+int HxGuid::Chunk32(int i) const { return mData[i]; }
+
 const char *HxGuid::ToString() const {
     return MakeString("%08x%08x%08x%08x", mData[0], mData[1], mData[2], mData[3]);
 }
