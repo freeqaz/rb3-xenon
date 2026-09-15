@@ -30529,5 +30529,6 @@
  "0x823629b0": "??$?6VSymbol@@H@@YAAAVBinStream@@AAV0@ABV?$hash_map@VSymbol@@HU?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@@Z",
  "0x82c78f5c": "?TheTempoMap@@3PAVTempoMap@@A",
  "0x82c78f60": "?gDefaultTempoMap@@3VSimpleTempoMap@@A",
- "0x82e051a0": "?TheTaskMgr@@3VTaskMgr@@A"
+ "0x82e051a0": "?TheTaskMgr@@3VTaskMgr@@A",
+ "0x82a478d0": "?SetVolume@DirectInstrument@@QAAXH@Z"
 }
