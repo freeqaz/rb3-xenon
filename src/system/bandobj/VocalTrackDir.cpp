@@ -477,6 +477,9 @@ void VocalTrackDir::SetConfiguration(Hmx::Object *o, HarmonyShowingState state) 
                 Find<RndTransformable>("h2h_player_intro_trans.grp", true)->LocalXfm().v
             );
         }
+        if (unk1e && mVocalistVolume) {
+            mVocalistVolume->DirtyLocalXfm().v.x = 0.0f;
+        }
         ConfigPanels();
         if (BandTrack::mParent)
             BandTrack::mParent->RebuildVocalHUD();
