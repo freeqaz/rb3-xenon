@@ -1281,7 +1281,7 @@
  "0x8227a6a8": "?StaticClassName@BandScoreboard@@SA?AVSymbol@@XZ",
  "0x8227a728": "?StaticClassName@Song@@SA?AVSymbol@@XZ",
  "0x8227a7a8": "?StaticClassName@BandSong@@SA?AVSymbol@@XZ",
- "0x8227a828": "??0HamSong@@QAA@XZ",
+ "0x8227a828": "??0BandSong@@QAA@XZ",
  "0x8227a948": "?StaticClassName@CharKeyHandMidi@@SA?AVSymbol@@XZ",
  "0x8227a9c8": "?StaticClassName@UnisonIcon@@SA?AVSymbol@@XZ",
  "0x8227aa48": "?StaticClassName@EndingBonus@@SA?AVSymbol@@XZ",
@@ -1299,7 +1299,7 @@
  "0x8227b028": "?Load@Song@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
  "0x8227b038": "??_EBandSong@@WBA@AAPAXI@Z",
  "0x8227b040": "?SyncProperty@Song@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
- "0x8227b050": "?ClassName@BandCharacter@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
+ "0x8227b050": "?ClassName@BandSong@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
  "0x8227b060": "?Save@Song@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
  "0x8227b368": "?NewObject@BandIKEffector@@SAPAVObject@Hmx@@XZ",
  "0x8227b408": "?NewObject@BandRetargetVignette@@SAPAVObject@Hmx@@XZ",
@@ -30521,5 +30521,6 @@
  "0x824c9270": "?PropSync@@YA_NAAVEventCall@EventAnim@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x8278c2f8": "??_GFillInfo@@UAAPAXI@Z",
  "0x8268b4e8": "??0RemoteBandUser@@QAA@XZ",
- "0x82802418": "?NewObject@UIPanel@@SAPAVObject@Hmx@@XZ"
+ "0x82802418": "?NewObject@UIPanel@@SAPAVObject@Hmx@@XZ",
+ "0x8227a910": "?ClassName@BandSong@@UBA?AVSymbol@@XZ"
 }
