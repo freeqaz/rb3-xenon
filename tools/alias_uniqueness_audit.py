@@ -121,9 +121,9 @@ def main():
         for nm, v in c.items():
             if not v.get("is_code"):
                 continue
-            rel = tuple(sorted((o, s, t) for o, s, t in (v["relocs"] or [])
+            rel = tuple(sorted((o, s, t) for o, s, t in (v["fn_relocs"] or [])
                                if s != "@comp.id"))
-            ours[nm][(v["raw"], rel)] = True
+            ours[nm][(v["fn_raw"], rel)] = True
 
     groups = json.loads(Path(args.groups).read_text())
     out = []

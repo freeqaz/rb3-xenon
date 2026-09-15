@@ -128,9 +128,9 @@ def main():
         for n, v in c.items():
             if not v.get("is_code"):
                 continue
-            rel = tuple(sorted((o, s, t) for o, s, t in (v["relocs"] or [])
+            rel = tuple(sorted((o, s, t) for o, s, t in (v["fn_relocs"] or [])
                                if s != "@comp.id"))
-            ours[n][(v["raw"], rel)].append(p)
+            ours[n][(v["fn_raw"], rel)].append(p)
 
     rows = json.loads((ROOT / "scripts" / "namecheck_df_census.json").read_text())["rows"]
 

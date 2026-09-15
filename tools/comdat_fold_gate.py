@@ -710,17 +710,17 @@ def main():
         if not defs:
             refuse("no COMDAT for %s in any of our compiled objs" % F)
             continue
-        bodies = {(bytes(cd["raw"]), tuple(sorted(cd["relocs"]))) for _, cd in defs}
+        bodies = {(bytes(cd["fn_raw"]), tuple(sorted(cd["fn_relocs"]))) for _, cd in defs}
         if len(bodies) > 1:
             refuse("our objs disagree on %s: %d distinct COMDATs across %d objs"
                    % (F, len(bodies), len(defs)))
             continue
         objp, cd = defs[0]
         row["our_def"] = objp + ("" if len(defs) == 1 else " (+%d identical)" % (len(defs) - 1))
-        row["our_bytes"] = len(cd["raw"])
-        relocs = {off: (nm, ty) for off, nm, ty in cd["relocs"]}
+        row["our_bytes"] = len(cd["fn_raw"])
+        relocs = {off: (nm, ty) for off, nm, ty in cd["fn_relocs"]}
 
-        ok, why = compare(rw, sa, cd["raw"], relocs, retail.byva, alias)
+        ok, why = compare(rw, sa, cd["fn_raw"], relocs, retail.byva, alias)
         row["body_evidence"] = why
         if not ok:
             refuse("our COMDAT is not the retail body at the survivor address -- " + why)
