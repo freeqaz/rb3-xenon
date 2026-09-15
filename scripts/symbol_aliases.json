@@ -83395,6 +83395,17 @@
     "??_ETourCharRemote@@UAAPAXI@Z"
    ],
    "evidence": "COMPILER-DECLARED ALIAS (stronger than an ICF byte inference): in our compiled build/45410914/src/band3/tour/TourCharRemote.obj the symbol ??_ETourCharRemote@@UAAPAXI@Z is IMAGE_SYM_CLASS_WEAK_EXTERNAL (105), SectionNumber 0, with aux TagIndex resolving to ??_GTourCharRemote@@UAAPAXI@Z (Characteristics=2) -- MSVC itself states the two spellings denote one body, so they necessarily occupy one address after linking. T1 corroboration on RETAIL BYTES, independent of the COFF record: retail's two TourCharRemote adjustor thunks branch into this body -- 0x82B80660 holds 0x48000104 (b to 0x82B80664+0x104 = 0x82B80768) and 0x82B80668 holds 0x480000F4 (b to 0x82B80674+0xF4 = 0x82B80768) -- and in OUR object those same two thunks relocate against ??_ETourCharRemote@@UAAPAXI@Z, so the spelling our thunks name and the address retail's thunks reach are one and the same. Our ??_GTourCharRemote COMDAT (84 B) is byte-identical to retail 0x82B80768 at all 21 words except its 3 relocation sites, whose targets are ??1TourCharRemote@@UAA@XZ (retail 0x82B80690, named by this lane), ??1Object@Hmx@@UAA@XZ and ??3@YAXPAX@Z. 0x82B80768 is referenced by no vtable -- its only data-word reference in the whole image is its own .pdata BeginAddress at 0x8225C638 -- and its only code references are the two adjustor thunks above. The map previously named this address ??_GChooseProfilePanel@@UAAPAXI@Z, which was its sole ChooseProfilePanel row and is refuted here: a ??_G calls its own class's ??1, so two classes' ??_G bodies differ in relocations and MSVC/OPT:ICF cannot fold them. Lane W16-BR 2026-09-15."
+  },
+  {
+   "name": "GetTourDesc_GetAward",
+   "address": "0x8235cc80",
+   "survivor": "?GetAward@AccomplishmentManager@@QBAPAVAward@@VSymbol@@@Z",
+   "folded": [
+    "?GetTourDesc@Tour@@QBAPAVTourDesc@@VSymbol@@@Z"
+   ],
+   "evidence": "T1 (retail bytes). Retail 0x8235cc80 is 72 B / 18 words and our compiled COMDATs for BOTH spellings are byte-identical to it and to each other (1 reloc, type 6, at +28; the single differing word is that relocated bl). Identity of the call site is read directly off retail: ?GetTourGigGuideMap@Tour@@ (0x8235cd38) calls 0x8235cc80 with r3 = Tour 'this' and r4 = Symbol, then feeds the returned pointer to ?GetGigGuideMap@TourDesc@@ as 'this' -- so that call site IS Tour::GetTourDesc(Symbol) -> TourDesc*, while scripts/target_symbol_map.json names the same address GetAward (AccomplishmentManager). Anti-vacuity: retail's own callee at +28 is a THIRD instantiation spelling, ??$_M_find@VSymbol@@@?$hashtable@U?$pair@$$CBVSymbol@@H@... (value type int), inside a body that returns Award*/TourDesc* by loading node+8 as a pointer. That is only possible if /OPT:ICF first folded the hashtable<...>::_M_find instantiations (TourDesc*/Award*/int all emit identical code, find never touches the value), which made the two callers relocation-identical and so folded them in turn. Requires the W16-BS source correction that Tour's m_mapTourDesc is a hash_map, not a std::map -- corroborated independently by retail ??0Tour@@ (0x8235fd10) calling ??0?$hash_map@VSymbol@@H...@Z twice and no _Rb_tree ctor at all, for a class with exactly two map members.",
+   "lane": "W16-BS",
+   "added": "2026-09-15"
   }
  ]
 }

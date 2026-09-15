@@ -70,7 +70,7 @@ Tour::~Tour() {
 }
 
 void Tour::Cleanup() {
-    for (std::map<Symbol, TourProperty *>::iterator it = m_mapTourProperties.begin();
+    for (std::hash_map<Symbol, TourProperty *>::iterator it = m_mapTourProperties.begin();
          it != m_mapTourProperties.end();
          ++it) {
         TourProperty *pProperty = it->second;
@@ -78,7 +78,7 @@ void Tour::Cleanup() {
         delete pProperty;
     }
     m_mapTourProperties.clear();
-    for (std::map<Symbol, TourDesc *>::iterator it = m_mapTourDesc.begin();
+    for (std::hash_map<Symbol, TourDesc *>::iterator it = m_mapTourDesc.begin();
          it != m_mapTourDesc.end();
          ++it) {
         TourDesc *pTourDesc = it->second;
@@ -153,13 +153,7 @@ void Tour::ConfigureTourPropertyData(DataArray *arr) {
             MILO_WARN("%s tour property already exists, skipping", name);
             delete pProperty;
         } else {
-            std::map<Symbol, TourProperty *>::iterator it = m_mapTourProperties.lower_bound(name);
-            bool canInsert = it == m_mapTourProperties.end() || name < it->first;
-            if (canInsert) {
-                std::map<Symbol, TourProperty *>::iterator hint = it;
-                it = m_mapTourProperties.insert(hint, std::map<Symbol, TourProperty *>::value_type(name, (TourProperty *)0));
-                it->second = pProperty;
-            }
+            m_mapTourProperties[name] = pProperty;
         }
     }
 }
@@ -175,13 +169,7 @@ void Tour::ConfigureTourDescData(DataArray *arr) {
             MILO_WARN("%s tour desc already exists, skipping", name);
             delete pTourDesc;
         } else {
-            std::map<Symbol, TourDesc *>::iterator it = m_mapTourDesc.lower_bound(name);
-            bool canInsert = it == m_mapTourDesc.end() || name < it->first;
-            if (canInsert) {
-                std::map<Symbol, TourDesc *>::iterator hint = it;
-                it = m_mapTourDesc.insert(hint, std::map<Symbol, TourDesc *>::value_type(name, (TourDesc *)0));
-                it->second = pTourDesc;
-            }
+            m_mapTourDesc[name] = pTourDesc;
         }
     }
 }
@@ -191,7 +179,7 @@ bool Tour::HasTourProperty(Symbol s) const {
 }
 
 TourProperty *Tour::GetTourProperty(Symbol s) const {
-    std::map<Symbol, TourProperty *>::const_iterator it = m_mapTourProperties.find(s);
+    std::hash_map<Symbol, TourProperty *>::const_iterator it = m_mapTourProperties.find(s);
     if (it != m_mapTourProperties.end())
         return it->second;
     else
@@ -203,7 +191,7 @@ bool Tour::HasTourDesc(Symbol s) const {
 }
 
 TourDesc *Tour::GetTourDesc(Symbol s) const {
-    std::map<Symbol, TourDesc *>::const_iterator it = m_mapTourDesc.find(s);
+    std::hash_map<Symbol, TourDesc *>::const_iterator it = m_mapTourDesc.find(s);
     if (it != m_mapTourDesc.end())
         return it->second;
     else
