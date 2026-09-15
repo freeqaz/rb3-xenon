@@ -32,34 +32,32 @@ public:
     static void Init();
     static void Register() { REGISTER_OBJ_FACTORY(MicInputArrow); }
     NEW_OBJ(MicInputArrow);
-    // NOTE(INSDEL-1): the residual charge in NewObject (`stw r3,0x54(r31)` retail
-    // vs our 0x50) is the FloatKeys stack-slot-merge class in its ADDRESSABLE
-    // direction -- retail keeps the discarded StaticClassName() Symbol temp at
-    // 0x50 and homes the new-expression pointer at 0x54; we reuse the dead
-    // Symbol's slot.  It is NOT source-addressable here, and the reason is
-    // structural: the pair straddles an INLINING BOUNDARY (the Symbol temp is
-    // created inside the inlined `operator new`, the pointer in NewObject), so
-    // the "declare both at one function scope" lever has no handle on it.
-    // Measured, both BYTE-IDENTICAL to this form (99.96429, same single charge):
-    //   naming the pointer   -- `T *o = new T; return o;`
-    //   naming BOTH          -- + `Symbol cn = StaticClassName();`
-    // Decisive against a liveness reading: retail's Symbol temp is dead too and
-    // still gets its own slot ⇒ compiler slot-colouring, not source liveness.
-    // Same shape and same verdict for ScrollbarDisplay::NewObject (112 B).
+    // DATED RECORD -- NOTE(INSDEL-1) used to conclude the `stw r3,0x54(r31)`
+    // retail vs our 0x50 residual was "NOT source-addressable ... compiler
+    // slot-colouring, not source liveness". That verdict is SCOPED TO THE TWO
+    // LEVERS IT TRIED, both at NewObject scope and both measured byte-identical
+    // at 99.96429: naming the pointer (`T *o = new T; return o;`) and
+    // additionally naming the Symbol (`Symbol cn = StaticClassName();`). Its own
+    // reasoning says why those cannot work -- the pair straddles an inlining
+    // boundary, so a NewObject-scope declaration has no handle on it.
+    // It never tested the lever that acts INSIDE operator new, which
+    // utl/MemMgr.h records as measured on the 10 FxSend*360 classes: calling
+    // `.Str()` on the temp and naming the `mem` local. That is what the shared
+    // OBJ_MEM_OVERLOAD spells today, and the "tree-wide OBJ_MEM_OVERLOAD is
+    // __declspec(noinline)" premise of the local copy below is stale -- only its
+    // operator DELETE is noinline now. Lane W16-BE, 2026-09-15.
 
     // Retail's class operator new is INLINED into NewObject and still evaluates
     // StaticClassName(): the target is `addi r3, r31, 0x50; bl
     // ?StaticClassName@MicInputArrow@; li r4, 0; li r3, 0x1f4; bl <MemAlloc>`.
-    // The tree-wide OBJ_MEM_OVERLOAD is __declspec(noinline) AND its
-    // `StaticClassName().Str()` argument is swallowed by the MemAlloc
-    // debug-arg-stripping macro, so neither the call nor the inlining survives.
-    // Spell it out locally instead of perturbing the shared macro.
-    static void *operator new(unsigned int s) {
-        StaticClassName();
-        return MemAlloc(s, __FILE__, 0x21, "MicInputArrow", 0);
-    }
-    static void *operator new(unsigned int s, void *place) { return place; }
-    DELETE_OVERLOAD;
+    // The local hand-rolled copy that used to sit here discarded the Symbol with
+    // a bare `StaticClassName();`, which homes the temp into the SAME slot as
+    // `mem` -- the 0x50-vs-0x54 residual. Plain OBJ_MEM_OVERLOAD keeps operator
+    // delete noinline exactly as DELETE_OVERLOAD did, so ??_GMicInputArrow is
+    // unperturbed; the unwind funclet at 0x82319348 loads mem from 0x54 and
+    // calls the out-of-line ICF survivor ??3BinStream@@SAXPAX@Z, which is what
+    // a noinline delete produces.
+    OBJ_MEM_OVERLOAD(0x39);
 
     // Retail-360 layout, read off the target span 0x82318C70..0x82319810
     // (?Update@ member offsets + ??1MicInputArrow@ vector-free offsets):
