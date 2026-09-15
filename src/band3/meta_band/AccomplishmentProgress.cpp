@@ -536,8 +536,8 @@ void AccomplishmentProgress::FakeFill() {
         mAwards.insert(key);
         mNewAwards.push_back(std::pair<Symbol, Symbol>(key, key));
     }
-    const std::map<Symbol, TourDesc *> &tours = TheTour->m_mapTourDesc;
-    for (std::map<Symbol, TourDesc *>::const_iterator it = tours.begin();
+    const std::hash_map<Symbol, TourDesc *> &tours = TheTour->m_mapTourDesc;
+    for (std::hash_map<Symbol, TourDesc *>::const_iterator it = tours.begin();
          it != tours.end();
          ++it) {
         Symbol key = it->first;

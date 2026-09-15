@@ -150,7 +150,7 @@ public:
 inline void TourDescProvider::UpdateList() {
     MILO_ASSERT(TheTour, 0x49);
     mTours.clear();
-    for (std::map<Symbol, TourDesc *>::const_iterator it =
+    for (std::hash_map<Symbol, TourDesc *>::const_iterator it =
              TheTour->m_mapTourDesc.begin();
          it != TheTour->m_mapTourDesc.end();
          ++it) {
@@ -191,9 +191,9 @@ void TourDescPanel::LoadIcons() {
         false
     );
     {
-        std::map<Symbol, TourDesc *>::const_iterator end =
+        std::hash_map<Symbol, TourDesc *>::const_iterator end =
             TheTour->m_mapTourDesc.end();
-        for (std::map<Symbol, TourDesc *>::const_iterator it =
+        for (std::hash_map<Symbol, TourDesc *>::const_iterator it =
                  TheTour->m_mapTourDesc.begin();
              it != end;
              ++it) {
