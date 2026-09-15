@@ -2940,7 +2940,6 @@ UI.cpp:
 	.pdata      start:0x8225C5E0 end:0x8225C5F8
 	.pdata      start:0x8225C5F8 end:0x8225C680
 	.text       start:0x823F4A30 end:0x823F5C98
-	.text       start:0x8268B9A0 end:0x8268B9EC
 	.text       start:0x828024B0 end:0x82802530
 	.text       start:0x82802530 end:0x82802588
 	.text       start:0x82802588 end:0x828025B0
@@ -10222,8 +10221,7 @@ BandUser.cpp:
 	.text       start:0x824E9F20 end:0x824EA034
 	.text       start:0x82523BF8 end:0x82523EB8
 	.text       start:0x8268AC08 end:0x8268AEC4
-	.text       start:0x8268AEC8 end:0x8268B9A0
-	.text       start:0x8268B9EC end:0x8268C920
+	.text       start:0x8268AEC8 end:0x8268C920
 	.text       start:0x8268C988 end:0x8268C998
 	.text       start:0x8268C9E8 end:0x8268F144
 
