@@ -1,0 +1,180 @@
+{
+ "_comment": "W16-AW proposals for W16-AY (map + aliases). Byte evidence included. NOTHING here was applied by W16-AW: scripts/target_symbol_map.json, scripts/symbol_aliases.json and config/45410914/splits.txt are other lanes' files this wave.",
+ "lane": "W16-AW",
+ "date": "2026-09-14",
+ "base_commit": "ba734115",
+ "items": [
+  {
+   "id": "AW-1",
+   "subject": "?Enabled@DirectInstrument@@QBA_NXZ",
+   "question": "AU filed it as 'defined by our obj but no retail address in the DirectInstrument region'.",
+   "verdict": "FOUND at 0x826CCAF0 -- and ALREADY FULLY HANDLED. NO ACTION PROPOSED.",
+   "action_required": "none",
+   "evidence": {
+    "our_comdat_bytes": "81630010314bffff7c6a59104e800020",
+    "our_comdat_size": 16,
+    "our_comdat_relocs": 0,
+    "retail_bytes_at_0x826CCAF0": "81630010314bffff7c6a59104e800020",
+    "byte_identical": true,
+    "retail_text_match_count": 1,
+    "uniqueness": "exact 16-byte relocation-free signature; EXACTLY ONE match in all of retail .text",
+    "is_pdata_BeginAddress": false,
+    "why_AU_could_not_see_it": "16-byte leaf touching neither stack nor LR gets no unwind record, so it is not a .pdata BeginAddress and every .pdata-keyed instrument is structurally blind to it (the sub-.pdata stub stratum, CLAUDE.md AUDIT-NC)."
+   },
+   "already_handled_because": [
+    "0x826CCAF0-0x826CCB00 is ALREADY PINNED, into PracticePanel.cpp (splits.txt '.text start:0x826CCAF0 end:0x826CCB00').",
+    "It is ALREADY NAMED in target_symbol_map.json as ?InTransition@UIManager@@QAA_NXZ.",
+    "That target row ALREADY MATCHES at fuzzy 100.0 (16 B) in unit default/PracticePanel.",
+    "?Enabled@DirectInstrument@@QBA_NXZ is ALREADY a recorded folded membership, with T1 evidence, of the symbol_aliases.json group {name: InTransition, address: 0x826ccaf0, survivor: ?InTransition@UIManager@@QAA_NXZ}."
+   ],
+   "why_a_map_row_here_would_be_HARMFUL": "The 16 bytes are an ICF survivor shared by UIManager::InTransition, DirectInstrument::Enabled and SampleData::HasData (all compile to the identical relocation-free body). They are one physical copy and are already counted exactly once. Re-homing or renaming the address would attack a row another unit already matches at 100%; CLAUDE.md is explicit that RE-HOMING an already-pinned address is NOT metric-neutral. AU's two-block DirectInstrument carve (ending 0x826CCAF0, resuming 0x826CCB00) was therefore CORRECT and deliberate: it carves around a block PracticePanel already owns.",
+   "expected_value": "0 bytes. The question is closed, not open."
+  },
+  {
+   "id": "AW-2",
+   "subject": "?SetVolume@DirectInstrument@@QAAXH@Z",
+   "question": "Same AU filing: defined by our obj, no retail address in the DirectInstrument region.",
+   "verdict": "IDENTIFIED at 0x82A478D0 as an ICF fold survivor. RECOMMEND *NOT* NAMING THE ADDRESS -- see risk.",
+   "action_required": "record only (no map row, no alias edit) unless W16-AY also lands the full folded-spelling set",
+   "evidence_line_1_byte_signature": {
+    "our_comdat_bytes": "908300004e800020",
+    "disassembly": "stw r4, 0(r3) ; blr",
+    "our_comdat_size": 8,
+    "our_comdat_relocs": 0,
+    "retail_text_match_count": 12,
+    "matches": [
+     "0x82345394",
+     "0x8236E428",
+     "0x824BA5A0",
+     "0x827C0138",
+     "0x827D9638",
+     "0x82A478D0",
+     "0x82A86A6C",
+     "0x82A98CBC",
+     "0x82A98CFC",
+     "0x82ACEE08",
+     "0x82AEDDA8",
+     "0x82B456C0"
+    ],
+    "caveat": "An 8-byte relocation-free signature is NOT identifying on its own. Calibrated against a control: ?IsLoaded@DirectInstrument@@QAA_NXZ (also 8 bytes) matches 58 places in retail. The byte signature alone therefore proves nothing; evidence line 2 is what identifies it."
+   },
+   "evidence_line_2_caller_offset": {
+    "method": "Locate the relocation to ?SetVolume@DirectInstrument@@QAAXH@Z inside our compiled GamePanel.obj, take its offset within the owning function, and read retail's instruction at the same offset.",
+    "owning_function": "?Handle@GamePanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+    "offset_within_function": "0x59C",
+    "owner_retail_address": "0x82696b48",
+    "computed_call_site": "0x82696b48 + 0x59C = 0x826970E4",
+    "retail_instruction_at_call_site": "bl 0x82A478D0",
+    "independently_found": true,
+    "note": "0x826970E4 was located independently by scanning retail .text for bl targets before this offset computation was done; the two agree exactly.",
+    "call_site_shape": "lwz r3, -12(r27) (r27 is a biased base; -12 reaches this+0x150 = mDirectInstrument, matching GamePanel.h) ; r4 = the returned int of the preceding _msg->Int(2) call."
+   },
+   "only_one_of_the_12_candidates_has_any_caller_at_all": "0x82A478D0 (17 callers). The other 11 have zero.",
+   "caller_census_0x82A478D0": {
+    "total": 17,
+    "game_code": [
+     "0x826970E4 in ?Handle@GamePanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+     "0x8267BC5C in unnamed fn 0x8267B808"
+    ],
+    "vendor_xdk_band": 15,
+    "example_vendor_caller": "0x82A3C2C0 in ??0CFG@XGRAPHICS@@QAA@AAVLinkageInfo@1@PAUCompAState@1@PAVCompiler@1@@Z"
+   },
+   "risk_if_named": "0x82A478D0 is currently ABSENT from target_symbol_map.json. Under the shipped name_check ruler objdiff FORGIVES a placeholder target, so all 17 call sites are presently uncharged. Naming the address converts 17 forgiven sites into checked ones while 15 of the 17 callers are XDK/vendor code serving other classes' setters. Byte upside is ZERO (the one game call site is already forgiven), so this is the MAPID-1 shape: naming an anonymous address pays in bug exposure, not bytes. It should only be done together with an alias group enumerating every folded spelling, which requires adjudicating all 17 callers.",
+   "expected_value_if_applied_alone": "0 bytes upside, non-zero downside. Recommend recording the identification only."
+  },
+  {
+   "id": "AW-3",
+   "subject": "?GetLocalBandUser@BandUserMgr@@SAPAVLocalBandUser@@PAVLocalUser@@@Z at 0x82682688",
+   "question": "AU-2 recorded that this thunk's callers were never enumerated (W16-AV installed the name).",
+   "verdict": "ENUMERATED: 11 call sites. ZERO contradict the name. The naming is CORROBORATED.",
+   "action_required": "none -- report only; no finding against W16-AV's installed name",
+   "signature_expected": "static (SA): one pointer argument in r3, no `this`; pointer result used as LocalBandUser*.",
+   "decisive_corroboration": {
+    "site": "0x8258576C",
+    "containing_function": "?GetLocalHost@SessionMgr@@UBAPAVLocalBandUser@@XZ",
+    "why": "This function is DECLARED to return LocalBandUser* and its entire body is a tail call to 0x82682688 (lwz r3,0x38(r3); bl <helper>; bl 0x82682688; epilogue). The RETURN TYPE of the caller matches the proposed return type of the callee exactly -- corroboration from the type, not merely the argument shape."
+   },
+   "all_call_sites": [
+    {
+     "site": "0x8254CBEC",
+     "fn": "?OnMsg@SaveLoadManager@@QAA?AVDataNode@@ABVProfileSwappedMsg@@@Z",
+     "arg": "mr r3, r31 (pointer)",
+     "result": "mr r28, r3 (kept as pointer)",
+     "verdict": "consistent"
+    },
+    {
+     "site": "0x8254CC24",
+     "fn": "?OnMsg@SaveLoadManager@@QAA?AVDataNode@@ABVProfileSwappedMsg@@@Z",
+     "arg": "mr r3, r30 (pointer)",
+     "result": "r3 live across following member load",
+     "verdict": "consistent"
+    },
+    {
+     "site": "0x825672A4",
+     "fn": "?OnMsg@ClosetMgr@@QAA?AVDataNode@@ABVProfileSwappedMsg@@@Z",
+     "arg": "mr r3, r31",
+     "result": "mr r29, r3",
+     "verdict": "consistent"
+    },
+    {
+     "site": "0x825672DC",
+     "fn": "?OnMsg@ClosetMgr@@QAA?AVDataNode@@ABVProfileSwappedMsg@@@Z",
+     "arg": "mr r3, r31",
+     "result": "used",
+     "verdict": "consistent"
+    },
+    {
+     "site": "0x8258576C",
+     "fn": "?GetLocalHost@SessionMgr@@UBAPAVLocalBandUser@@XZ",
+     "arg": "lwz r3, 0x38(r3)",
+     "result": "TAIL CALL -- becomes the caller's LocalBandUser* return value",
+     "verdict": "DECISIVE"
+    },
+    {
+     "site": "0x825871B4",
+     "fn": "?UpdateLeader@SessionMgr@@QAAXXZ",
+     "arg": "lwz r3, 0x0(r11)",
+     "result": "cmplwi r3,0 (null-tested as a pointer)",
+     "verdict": "consistent"
+    },
+    {
+     "site": "0x825A6094",
+     "fn": "(unnamed 0x825A6048)",
+     "arg": "mr r3, r31",
+     "result": "mr r26, r3",
+     "verdict": "consistent"
+    },
+    {
+     "site": "0x825A60CC",
+     "fn": "(unnamed 0x825A6048)",
+     "arg": "mr r3, r31",
+     "result": "mr r31, r3",
+     "verdict": "consistent"
+    },
+    {
+     "site": "0x825ACEEC",
+     "fn": "(unnamed 0x825ACEC0)",
+     "arg": "r3 = returned pointer of the immediately preceding call",
+     "result": "mr r28, r3",
+     "verdict": "consistent"
+    },
+    {
+     "site": "0x825AD224",
+     "fn": "(unnamed 0x825AD1F8)",
+     "arg": "r3 = returned pointer of the immediately preceding call",
+     "result": "mr r27, r3",
+     "verdict": "consistent"
+    },
+    {
+     "site": "0x825EB7F4",
+     "fn": "(unnamed 0x825EB7B0)",
+     "arg": "r3 = returned pointer of the immediately preceding call",
+     "result": "mr r4, r3 (passed on as a pointer)",
+     "verdict": "consistent"
+    }
+   ],
+   "recurring_shape": "Six sites share one idiom: lwz r11,0x5C(r11); mtctr; bctrl; mr r3,<user>; bl 0x82682688 -- a virtual accessor (vtable slot 0x5C) yielding a LocalUser*, immediately mapped to a LocalBandUser*. Four of those six sit in ProfileSwapped message handlers, which is exactly where a LocalUser -> LocalBandUser lookup belongs.",
+   "contradictions": 0
+  }
+ ]
+}
