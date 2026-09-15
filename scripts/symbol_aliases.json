@@ -9432,11 +9432,18 @@
   {
    "name": "_M_fill_insert",
    "address": "0x822abd60",
-   "survivor": "?_M_fill_insert@?$vector@UNode@?$ObjPtrVec@VRndDrawable@@VObjectDir@@@@V?$StlNodeAlloc@UNode@?$ObjPtrVec@VRndDrawable@@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUNode@?$ObjPtrVec@VRndDrawable@@VObjectDir@@@@IABU34@@Z",
-   "folded": [
-    "?_M_fill_insert@?$vector@VBandPatchMesh@@V?$StlNodeAlloc@VBandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVBandPatchMesh@@IABV3@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions."
+   "survivor": "?_M_fill_insert@?$vector@VBandPatchMesh@@V?$StlNodeAlloc@VBandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVBandPatchMesh@@IABV3@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions. REORIENTED by lane W16-AZ 2026-09-15: the recorded survivor spelling (ObjPtrVec<RndDrawable>::Node _M_fill_insert) has 0 definers and 0 referencers across our 1,215 objs, and every ObjPtrVec<X>::Node _M_fill_insert we hold compiles to 108 B vs retail 112 B at 0x822ABD60; the T1 identity can only have been measured against the BandPatchMesh COMDAT (re-measured: 28/28 words equal, 23/28 fully unmasked, bl displacements masked, OutfitConfig.obj). Map row 0x822abd60 renamed to the BandPatchMesh spelling; former survivor moved to withdrawn.",
+   "withdrawn": [
+    {
+     "spelling": "?_M_fill_insert@?$vector@UNode@?$ObjPtrVec@VRndDrawable@@VObjectDir@@@@V?$StlNodeAlloc@UNode@?$ObjPtrVec@VRndDrawable@@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUNode@?$ObjPtrVec@VRndDrawable@@VObjectDir@@@@IABU34@@Z",
+     "lane": "W16-AZ 2026-09-15",
+     "class": "SURVIVOR_SIZE_MISMATCH",
+     "disposition": "withdrawn; map row at 0x822abd60 renamed to the former folded spelling ?_M_fill_insert@?$vector@VBandPatchMesh@@...; .text line 0x822ABCE0-0x822ABE70 re-homed from ClipDistMap.cpp to OutfitConfig.cpp, whose blocks flank it on both sides",
+     "evidence": "0 definers / 0 referencers for this spelling across 1,215 compiled objs; all 12 ObjPtrVec<X>::Node _M_fill_insert instantiations we hold are 108 B; retail fn_822ABD60 is 112 B == our vector<BandPatchMesh>::_M_fill_insert (OutfitConfig.obj, Gem.obj), masked word compare 28/28 equal"
+    }
+   ]
   },
   {
    "name": "Fail",
