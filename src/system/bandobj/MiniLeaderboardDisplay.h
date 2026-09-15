@@ -28,6 +28,27 @@ public:
 
     bool mAllowSoloScores; // 0x10c
 
+    // Retail's ?NewObject@AppMiniLeaderboardDisplay@@ at 0x8264c828 calls
+    // ?StaticClassName@MiniLeaderboardDisplay@@, not @UIComponent, so retail
+    // gives THIS class its own operator new and the derived App class inherits
+    // it. Without it our row's only charged site was that relocation name
+    // (25/28 words equal, fuzzy 99.821). Positive control: the same-named
+    // hamobj/MiniLeaderboardDisplay already carries
+    // OBJ_MEM_OVERLOAD_INLINE_DEL(0x11) and its NewObject row is fuzzy 100.0.
+    //
+    // operator new ONLY, for the reason spelled out in StarDisplay.h: declaring
+    // an owned operator delete here lets MSVC inline it into the NewObject
+    // unwind funclet, where retail calls the out-of-line ICF survivor
+    // ??3BinStream@@SAXPAX@Z. Delete stays inherited from UIComponent, so
+    // ??_GAppMiniLeaderboardDisplay stays at fuzzy 100. Body form is
+    // MemMgr.h's OBJ_MEM_OVERLOAD verbatim (`.Str()` + named `mem`).
+    static void *operator new(unsigned int s) {
+        (void)StaticClassName().Str();
+        void *mem = (MemAlloc)(s, 0);
+        return mem;
+    }
+    static void *operator new(unsigned int s, void *place) { return place; }
+
     NEW_OBJ(MiniLeaderboardDisplay)
     static void Init();
     static void Register() { REGISTER_OBJ_FACTORY(MiniLeaderboardDisplay) }
