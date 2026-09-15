@@ -271,10 +271,23 @@ not assume dc3's version is correct for RB3.
 
 ⚠ **`MILO_DEBUG` is force-defined tree-wide (`src/macros.h:3`) and it does NOT
 gate `MILO_ASSERT`** — the whole `MILO_*` family is `#ifdef HX_NATIVE`, which the
-match build never defines (⚠ corrected 2026-08-13, lane METAMAT-1: cflags carry
-**exactly two `/D`s — `/DCURL_STATICLIB` and `/D_XBOX360` — NOT "no `/D` at all"**
-as this doc claimed for months; the load-bearing point is unchanged, since
-neither is `HX_NATIVE`), so
+match build never defines (⚠ corrected 2026-08-13, lane METAMAT-1, and
+⚠⚠ **RE-CORRECTED 2026-09-15, lane W16-CG — the 08-13 correction was ITSELF
+wrong**: cflags carry **ELEVEN distinct `/D` flags, not two**, measured
+whitespace-delimited off `build.ninja` — `/DRB3_HANDLE_LOCAL_STATIC` 143× ·
+`/DRB3_SYNCPROP_LOCAL_STATIC` 35× · `/DRB3_MAP_0x1C` 11× ·
+`/DRB3_STRIP_CHEAT_HANDLERS` 9× · `/DRB3_NOTIFY_ONCE_EVAL` 5× · `/D_XBOX360` 2× ·
+`/DRB3_LOG_NO_EVAL` 2× · `/DCURL_STATICLIB` 2× · `/DRB3_ONLINEID_PLAYERNAME`,
+`/DRB3_NO_WII_META_MEMBERS`, `/DRB3_HTTPGET_VIRTUAL_DTOR` 1× each.
+⚠ **The two flags this doc named as the WHOLE SET are the two RAREST**, so a
+lane briefed off "exactly two" does not expect a per-TU gate like
+`/DRB3_STRIP_CHEAT_HANDLERS` and will read its codegen effect as noise —
+`CustomizePanel.cpp` alone carries three of them.
+⚠ **Why it was wrong twice: a bare `/D[A-Za-z0-9_]*` regex matches INSIDE paths
+and symbols** (`/DupSpace`, `/Dir`, `/DynamicGatheringDDL` are all false hits).
+Key on a whitespace-delimited `' /D[A-Za-z_][A-Za-z0-9_]*'`.
+★ **The load-bearing point survives BOTH corrections: none of the eleven is
+`HX_NATIVE`** — `command grep -c ' /DHX_NATIVE' build.ninja` = **0**), so
 `MILO_ASSERT(cond,line)` is just `((void)(cond))`. The force-define's only effect
 is to switch ON rb3-Wii **dev-build** code that retail compiled out, so every
 inherited `#ifdef MILO_DEBUG` is a suspect. **Fix per-site with the house
