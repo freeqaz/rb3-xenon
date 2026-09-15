@@ -139,7 +139,7 @@ name that removes its own row cannot be audited by any score.
 
 ---
 
-## 3. Prediction, pre-registered before the edit (commit PREDICT_SHA)
+## 3. Prediction, pre-registered before the edit (commit `661c30b1`)
 
 | key | baseline | predicted | basis |
 |---|---:|---:|---|
@@ -166,7 +166,65 @@ code% move in *either* direction is acceptable here, because the denominator is 
 (standing directive: accuracy beats headline %). The prediction is recorded so that a miss is
 legible.
 
-MEASURE_PLACEHOLDER
+### 3.1 Measurement (build 2, `~/tmp/rb3_build_w16bg_2.log`, `BUILD rc=0`)
+
+Applied: the 24 rows deleted from `scripts/target_symbol_map.json` (`git diff --stat` =
+`1 file changed, 24 deletions(-)`, and the `-U0` diff is exactly those 24 key lines — no
+reformat). `touch config/45410914/config.yml` + full `./tools/ninja-locked`; the re-split left
+`config/45410914/symbols.txt` **undrifted** (a map edit changes the renamer, not the carving),
+and the renamer re-ran: `[APPLIED] 3114 files checked, 1838 files patched, 86288 total symbol
+renames`, `[renamed-check] 25834/29355 map names present … = 88.0% (floor 40%)`.
+
+| key | baseline | predicted | **measured** | delta | prediction error |
+|---|---:|---:|---:|---:|---:|
+| `total_functions` | 69,216 | 69,240 | **69,240** | **+24** | **0 — exact** |
+| `total_code` | 10,246,004 | 10,247,068 | **10,247,068** | **+1,064** | **0 — exact** |
+| `matched_functions` | 43,525 | 43,545 (16–24) | **43,548** | **+23** | +3 (inside range) |
+| `masked_equal_functions` | 23,053 | 23,073 | **23,076** | **+23** | +3 |
+| `matched_code` | 4,038,804 | 4,039,677 (0–1,064) | **4,039,828** | **+1,024** | +151 (inside range) |
+| `matched_code_percent` | 39.418335 | 39.422763 | **39.424236** | **+0.005901 pp** | +0.001473 pp |
+| `fuzzy_match_percent` | 49.690746 | — | **49.695950** | +0.005204 pp | — |
+
+**Set-diff of the `fuzzy == 100` row set** (`tools/rowset_snapshot.py`, baseline saved from this
+same tree before the edit and verified set-identical to `~/tmp/rows_w16bd_main.json`:
+`CROSSED IN 0 / FELL OUT 0`, so the tree was a true main baseline):
+
+```
+CROSSED IN : 23 rows, 1024 B
+FELL OUT   : 0 rows, 0 B
+NET bytes  : +1024
+```
+
+All 23 crossed rows are among the 24 addresses (68 B ×2 VocalTrackDir, 68 B ×2
+InstrumentDifficultyDisplay, 44 B DepthBuffer3D/LightPreset/Watcher/Synapse_dsp, 40 B ×11,
+32 B ×3). **Nothing else in the binary moved in either direction** — the displaced-funclet
+collateral laneAP measured as its own 5 losses, and which §1 note 2 predicted was possible, did
+**not** occur.
+
+### 3.2 The two prediction misses, stated rather than smoothed
+
+1. **+23 matched, not +20; +1,024 B, not +873.** My rate came from the *untreated* population in
+   the same 22 units — 1,364/1,772 = 77.0% of retail EH-funclet placeholder rows score 100. The
+   actual crossing rate was **23/24 = 95.8%**. The error is a **selection effect I under-weighted
+   and should have reasoned about in advance**: laneAP named these 24 precisely *because* each
+   had an exact relocation-masked byte twin in our objects, so they are the funclets with the
+   most stereotyped bodies — exactly the population most likely to find an in-unit twin too. ⇒
+   **an unselected base rate is a FLOOR for a selected population, not an estimate of it.** The
+   control was still worth running: it bounded the answer correctly and made this miss legible.
+2. **`matched_code_percent` went UP (+0.005901 pp); the brief predicted DOWN.** The brief's
+   reasoning — denominator grows faster than numerator — only holds if the added rows match below
+   the binary average. They match at 96% against a whole-binary 39.4%, so they can only lift the
+   ratio. I pre-registered the contradiction (§3) and it held. The accuracy case never depended
+   on the sign: a truer denominator is the point, and this one happened to pay in both.
+
+### 3.3 The one row that did not cross
+
+`default/CharLipSync::fn_827799AC` (40 B) reads **`fuzzy 99.3 / mpn 99.8`, `masked_equal: true`**.
+So **24 of 24 paired by byte signature** — the pairing hypothesis is unanimous — and 23 of them
+land at 100. This row also explains `masked_equal_functions` moving **+23 rather than +24**: that
+counter increments only inside `match_percent_normalized == 100.0` (it discounts *credit*), so a
+flagged-but-99.8 row is disclosed on the row and not in the measure. That is the documented
+superset relationship between the flag and the counter, reproducing exactly.
 
 ---
 
@@ -197,10 +255,69 @@ which is why every scan here flattens lists and guards `int(k, 16)`.
 
 ## 5. Gates
 
-GATES_PLACEHOLDER
+All in the worktree, in the brief's order; the native gate was the last action.
+
+| gate | result |
+|---|---|
+| full build (`~/tmp/rb3_build_w16bg_2.log`) | `BUILD rc=0`; `config/45410914/symbols.txt` undrifted |
+| `python3 scripts/verify_ruler_agreement.py --check` | rc=0 — "OK: both objdiff-cli entry points resolve the same ruler" |
+| `python3 scripts/verify_objs_patched.py --verify-manifest` | rc=0 — "[patch-state] OK: 1215 decomp, 3114 target objects match … tree_sha256=ea4c0761fa8ac8ea"; denylist OK (6 addresses, 495,628 symbols scanned) |
+| `python3 tools/icf_alias_finder.py --validate` | rc=0 — "VALIDATE: PASS -- 1404 map-consistent, 247 tolerated, **0 contradicted**, 1652 total" |
+| `tools/native_build_gate.sh` (LAST) | verbatim below |
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+Commits on `w16-bg`: **`661c30b1`** (adjudication + pre-registered prediction, before the edit)
+and **`c412d8c6`** (the 24-row deletion + measurement), plus this record.
 
 ---
 
 ## 6. NOT done, and why
 
-NOTDONE_PLACEHOLDER
+1. **No `splits.txt` line touched**, though the adjudication found a real defect there: **9 of 24
+   funclets are pinned to a different unit than their parent function** (`0x82451bc0` parent in
+   `PartLauncher` / funclet in `AccomplishmentPlayerConditional`; `0x82703ad0` and `0x82703b68`
+   *swapped* across `StandardStream` and `system/rndobj/Utl`; `0x822fd26c`/`0x822fd2b0` whose
+   parent sits in the unpairable `auto_03_822FC4F8_text`). These are the BF §5 false-pairing
+   shape: the funclet pairs against whatever byte-twin its pinned unit's object happens to
+   supply, not against its own parent's funclet. **Filed, not applied** — the brief bars me from
+   every `splits.txt` line, and W16-BH/W16-BI own adjacent headings. A boundary lane should price
+   these nine; note that a re-home is **not** metric-neutral (PINHOME-1: re-homing changes which
+   base obj is consulted, unlike a pure addition).
+2. **The 4 anonymous parents were not named** (`fn_822FC508`, `fn_823187F0`, `fn_824B14E8`,
+   `fn_82703A68`, `fn_82703B00`, `fn_827796F8`, `fn_82B62CD8`, `fn_8235C678` — 8 rows have no map
+   name). Naming an anonymous address is a *bet* under `name_check`, paying in bug exposure rather
+   than bytes (MAPID-1), and identification was not this lane's item. `fn_822FC508`'s unit has no
+   base obj at all, so a name there could not pair regardless.
+3. **`fn_827799AC` not pushed from 99.3 to 100.** It is a funclet pairing against a near-twin in
+   `CharLipSync`; closing it is a source or pin question, not a map one, and no map edit can
+   reach it.
+4. **The sibling classes were swept and NOT edited** (item 3 is report-only): 0 `except_data_*`,
+   0 `__comdat_gap*`, 0 placeholder-named values. Nothing to act on — the class is closed, not
+   deferred.
+5. **No `none`-ruler control run**, per the brief: `matched_functions` is not ruler-invariant on
+   objdiff 4.2.9 (W16-AR), so a `none` leg would have measured the ruler, not the change. The
+   control that *is* valid here — a same-tree row-set baseline proven set-identical to main's —
+   was run instead.
+6. **No `ab_measure` run.** This is a map-only change measured on one tree with a verified-clean
+   baseline, a full build on both legs, and a 0-collateral set-diff; `ab_measure`'s value is its
+   refusals around settling and re-split convergence, and the re-split here converged with
+   `symbols.txt` undrifted. Stated so the omission is a choice on the record, not an oversight.
+7. **No `src/` file and no alias group touched**, as instructed.
+
+**What would change the verdict.** The claim "all 24 are true EH funclets, so un-naming is the
+uniform treatment" would be overturned by: a retail `.pdata`/`.xdata` reading in which one of the
+24 addresses is *not* reachable from any FuncInfo `UnwindMap.action` or
+`HandlerType.addressOfHandler` (my scan covers all 8,541 FuncInfos in the image, so this would
+have to be a FuncInfo my magic-scan missed, or a non-C++-EH funclet kind); or evidence that one
+of the 24 is *both* a funclet and an independently-callable function (a `bl` to it from outside
+its parent's extent), which would make a mangled name legitimate. Neither appears: no map row of
+the 24 was referenced as a call target in the adjudication, and the crossing behaviour (24/24
+paired by funclet byte signature) is what a pure-funclet population looks like. The weaker claim
+most worth auditing is **§3.2's selection-effect explanation** for the +23-vs-+20 miss: it is a
+post-hoc rationalisation of a 3-row difference and could be tested properly by measuring the
+in-unit twin rate of laneAP-named vs unnamed funclets as two populations — I did not do that,
+because the treatment was already decided by the adjudication and the miss was inside my
+pre-registered range.
