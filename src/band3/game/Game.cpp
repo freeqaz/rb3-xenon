@@ -1611,18 +1611,19 @@ void Game::Poll() {
         CheckRollbackEnd(songMs);
         // TU5-added block (Game::Poll @0x8267c9b8, idx225-231): when a bool at
         // mProperties+0x3 (this+0x2f) is set, drive the MIDI/movie-sync poll
-        // fn_826C91C8 on the object reached via *(this+0x48)->[+0x14], passing
+        // VocalGuidePitch::Poll on the object reached via *(this+0x48)->[+0x14], passing
         // songMs. this+0x48 is a TU5 pointer member not yet modeled in Game's
         // layout (currently Properties tail padding); read it by raw offset so
-        // the emitted `lwz r11,0x48(this); lwz r3,0x14(r11); bl fn_826C91C8`
-        // matches. fn_826C91C8 (0x826C91C8) computes a movie time-delta and
+        // the emitted `lwz r11,0x48(this); lwz r3,0x14(r11); bl Poll`
+        // matches. 0x826C91C8 IS ?Poll@VocalGuidePitch@@QAAXM@Z per the map, so
+        // call it by name: it computes a movie time-delta and
         // drives MidiInstrument PressNote (autoplay guide). NOTE: this is
         // NOT AllowOverdrivePhrases -- that's a separate field at Prop+0x5
         // (this+0x31), proven by GetCommonPhraseID/IsSpotlightGem objdiff.
         if (mProperties.mUnkTU5_movieSync) {
-            extern void fn_826C91C8(void *, float);
-            void *syncObj = *(void **)(*(char **)((char *)this + 0x48) + 0x14);
-            fn_826C91C8(syncObj, songMs);
+            VocalGuidePitch *syncObj =
+                *(VocalGuidePitch **)(*(char **)((char *)this + 0x48) + 0x14);
+            syncObj->Poll(songMs);
         }
         mLastPollMs = songMs;
         if (mResumeTime == 0 && !mIsPaused) {
