@@ -7,7 +7,17 @@
 // copies the five __vector4 members with 16-byte `stvx128`. That is a TYPE
 // distinction in the original source, not a scheduling accident -- see the
 // width sweep in docs/decomp/W16BW_*.
-struct IIRQuad { /* Size=0x10 */
+//
+// The 16-byte alignment is load-bearing, not decoration: retail copies these
+// two members with 8-byte `ld`/`std` PAIRS. A bare `float f[4]` has alignment
+// 4, and MSVC then copies it as FOUR `lwz`/`stw` words -- which additionally
+// costs four more live GPRs and drags in __savegprlr_28, where retail saves
+// only r31.
+#ifdef HX_NATIVE
+struct __attribute__((aligned(16))) IIRQuad { /* Size=0x10 */
+#else
+struct __declspec(align(16)) IIRQuad { /* Size=0x10 */
+#endif
     float f[4];
 };
 
