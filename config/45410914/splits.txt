@@ -12544,8 +12544,12 @@ system/synth/VoiceBeat.cpp:
 	.text       start:0x82718768 end:0x827187EC
 
 system/dsp/VibratoDetector.cpp:
-	.pdata      start:0x8225C6A0 end:0x8225C6B0
-	.text       start:0x82B81400 end:0x82B816F0
+	.pdata      start:0x8225C698 end:0x8225C6A8
+	.text       start:0x82B81228 end:0x82B81538
+
+system/dsp/IIRFilter.cpp:
+	.pdata      start:0x8225C6A8 end:0x8225C6B0
+	.text       start:0x82B81538 end:0x82B816F0
 
 system/dsp/SndAnalysis.cpp:
 	.pdata      start:0x8225C6B0 end:0x8225C6E8

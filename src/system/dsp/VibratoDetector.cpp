@@ -1,8 +1,11 @@
 // Faithful port from the rb3-Wii oracle (../rb3/src/system/dsp/VibratoDetector.cpp).
-// X360-inert: not listed in config/45410914/objects.json, so it is never compiled
-// for the retail build; it exists only to satisfy the native vocal targets. The
-// header (src/system/dsp/VibratoDetector.h) is unchanged from the retail tree, so
-// this file cannot perturb any X360 preprocessed output.
+// NOTE: the banner here used to claim this file was "X360-inert: not listed in
+// config/45410914/objects.json, so it is never compiled for the retail build."
+// That was stale -- it IS listed (as system/dsp/VibratoDetector.cpp, NonMatching)
+// and it IS compiled; ?Analyze@VibratoDetector@@QAAHM@Z matches retail at 100%.
+// Corrected by lane W16-BR, which also re-bound the unit's .text pin: it was
+// 0x82B81400-0x82B816F0, which excluded this class's ctor and Detect while
+// swallowing both IIR4PoleFilter bodies. The TU is 0x82B81228-0x82B81538.
 #include "dsp/VibratoDetector.h"
 #include <string.h>
 #include <math.h>
