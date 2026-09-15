@@ -1,5 +1,6 @@
 #include "game/ChordbookPanel.h"
 #include "bandobj/BandLabel.h"
+#include "bandtrack/GemTrack.h"
 #include "beatmatch/BeatMatchController.h"
 #include "beatmatch/GameGem.h"
 #include "beatmatch/GameGemList.h"
@@ -26,6 +27,7 @@
 #include "obj/Task.h"
 #include "os/Debug.h"
 #include "os/Joypad.h"
+#include "rndobj/Anim.h"
 #include "rndobj/PropAnim.h"
 #include "ui/UI.h"
 #include "ui/UIPanel.h"
@@ -99,6 +101,12 @@ ChordbookPanel::~ChordbookPanel() { delete mProgressMeter; }
 // exactly 0 bytes while putting the 28 currently-equal instructions at risk.
 // Name fn_826B5848 and this lands in one shot for 304 B.
 void ChordbookPanel::Enter() {
+    LocalBandUser *user = TrainingMgr::GetTrainingMgr()->GetUser();
+    MILO_ASSERT(dynamic_cast<GemPlayer *>(user->GetPlayer()), 0x1A5);
+    GemTrack *track = dynamic_cast<GemTrack *>(user->GetTrack());
+    if (track) {
+        unk4c = track->GetTrackDir();
+    }
     UIPanel::Enter();
     mChordLegend = mDir->Find<RndDir>("chord_legend", true);
     mGemPlayer = GetChordbookPlayer();
@@ -110,6 +118,29 @@ void ChordbookPanel::Enter() {
     mState = RGState();
     unk6c5 = false;
     unk6c8 = 0;
+    if (mGemPlayer) {
+        HandleLegendLefty(false);
+    }
+}
+
+void ChordbookPanel::HandleLegendLefty(bool b) {
+    mLefty = mGemPlayer->GetUser()->GetGameplayOptions()->GetLefty();
+    float f2, f12;
+    if (mLefty) {
+        f12 = 1.0f;
+        f2 = 0.0f;
+    } else {
+        f2 = 1.0f;
+        f12 = 0.0f;
+    }
+    RndAnimatable *leftyAnim = mChordLegend->Find<RndAnimatable>("lefty_flip.anim", true);
+    if (b) {
+        leftyAnim->Animate(f2, f12, 0);
+    } else {
+        leftyAnim->SetFrame(0.0f, 1.0f);
+    }
+    GemTrack *track = dynamic_cast<GemTrack *>(mGemPlayer->GetUser()->GetTrack());
+    track->UpdateLeftyFlip();
 }
 
 DECOMP_FORCEACTIVE(
@@ -532,7 +563,7 @@ void ChordbookPanel::DisplayChord(unsigned int idx) {
 }
 #pragma pop
 
-DECOMP_FORCEACTIVE(ChordbookPanel, "string_%02d.lbl", "lefty_flip.anim")
+DECOMP_FORCEACTIVE(ChordbookPanel, "string_%02d.lbl")
 
 void ChordbookPanel::PickFretboardView(const GameGem &gem) {
     if (!TheGemTrainerPanel->GetFretboardView(gem)) {
