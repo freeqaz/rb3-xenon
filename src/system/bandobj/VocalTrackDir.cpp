@@ -1062,11 +1062,17 @@ void VocalTrackDir::SetRange(float min, float max, int tonic, bool b) {
         float bottom = mPitchBottomZ;
         float pitchRange = mPitchTopZ - bottom;
         mMiddleCZPos = bottom + (60.0f - min) * pitchRange / (max - min);
-        RndGroup *grp = mTubeRangeGrp;
-        if (grp) {
-            Vector3 v = grp->LocalXfm().v;
+        // ObjPtr<T> nullness: test the MEMBER, never a bound `T*` local.
+        // Retail emits `cmpwi cr6,rN,0` (signed) at all four ObjPtr+8 tests in
+        // this function; binding to a `T*` local first makes MSVC emit
+        // `cmplwi` (unsigned) instead. The three direct tests above
+        // (mPitchWindowMesh / mRangeScaleAnim / mRangeOffsetAnim, all the same
+        // ObjPtr<T>+8 slot shape) already matched -- which is the in-function
+        // null proving the divergence is the SPELLING, not the field type.
+        if (mTubeRangeGrp) {
+            Vector3 v = mTubeRangeGrp->LocalXfm().v;
             v.z = mMiddleCZPos;
-            grp->SetLocalPos(v);
+            mTubeRangeGrp->SetLocalPos(v);
         }
         mLastMin = min;
         mLastMax = max;
