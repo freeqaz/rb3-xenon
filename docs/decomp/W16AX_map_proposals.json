@@ -1,0 +1,52 @@
+{
+ "lane": "W16-AX",
+ "date": "2026-09-14",
+ "base_commit": "ba734115",
+ "owner_note": "scripts/target_symbol_map.json and scripts/symbol_aliases.json are W16-AY's files. These are PROPOSALS with evidence; W16-AX applied none of them.",
+ "proposals": [
+  {
+   "id": "AX-1",
+   "kind": "map_rename",
+   "address": "0x824c97d8",
+   "size": 116,
+   "current_name": "??$?0U?$_List_iterator@UProxyCall@EventTrigger@@U?$_Const_traits@UProxyCall@EventTrigger@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UProxyCall@EventTrigger@@V?$StlNodeAlloc@UProxyCall@EventTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAA@U?$_List_iterator@UProxyCall@EventTrigger@@U?$_Const_traits@UProxyCall@EventTrigger@@@stlpmtx_std@@@1@0ABV?$StlNodeAlloc@UProxyCall@EventTrigger@@@1@@Z",
+   "proposed_name": "??$?0U?$_List_iterator@VEventCall@EventAnim@@U?$_Const_traits@VEventCall@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@@?$list@VEventCall@EventAnim@@V?$StlNodeAlloc@VEventCall@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@QAA@U?$_List_iterator@VEventCall@EventAnim@@U?$_Const_traits@VEventCall@EventAnim@@@stlpmtx_std@@@1@0ABV?$StlNodeAlloc@VEventCall@EventAnim@@@1@@Z",
+   "confidence": "high",
+   "evidence_class": "retail bytes (relocation target read out of the renamed target obj)",
+   "evidence": [
+    "Retail's body at 0x824c97d8 (section /22 of build/45410914/obj/EventTrigger.obj, size 116 = the report row size) carries exactly 3 relocations: __savegprlr_28 at +0x4, __restgprlr_28 at +0x70, and at +0x58 a call to ?insert@?$list@VEventCall@EventAnim@@V?$StlNodeAlloc@VEventCall@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@...@Z -- the EventAnim instantiation of list::insert.",
+    "A list<ProxyCall@EventTrigger> range-ctor cannot call list<EventCall@EventAnim>::insert. Our EventTrigger.obj's ProxyCall ctor calls ?insert@?$list@UProxyCall@EventTrigger@@...; our EventAnim.obj's EventCall ctor calls the EventAnim insert, matching retail.",
+    "This is the MPNGAP-1 adjudication method (does the named callee's signature match the call site?), which previously proved Handle@GemPlayer's map row wrong while our source was right."
+   ],
+   "not_an_icf_fold": "The two instantiations are byte-identical in code (164 B section incl. EH funclet on both sides) but their relocation TARGETS differ (per-T _List_base dtor, per-T list::insert, per-T __ehfuncinfo$). MSVC folds only COMDATs identical INCLUDING relocations, so these would NOT fold -- this is the documented _List_base<T>::clear shape (42 addresses, reloc-identical surplus 0). So the charge is a wrong map NAME, not a fold alias.",
+   "predicted_effect": "Row 0x824c97d8 currently reads fuzzy 99.82758 in default/EventTrigger (all 3 relocations but one agree). After the rename it should pair against EventAnim.obj's definition with all relocations agreeing => fuzzy 100 => +116 B. REQUIRES the companion splits re-home below, applied in the same change.",
+   "companion_splits_move": {
+    "range": "0x824C97D8-0x824C9878",
+    "from_heading": "EventTrigger.cpp:",
+    "to_heading": "EventAnim.cpp:",
+    "why": "EventAnim.obj defines the proposed name; EventTrigger.obj does not. Without the re-home the renamed row lands in a unit whose base obj cannot define it and reads 0."
+   },
+   "ordering_hazard": "Do NOT apply the splits move without the rename, and do NOT apply the rename without the splits move. Either alone moves the row from 99.83 to 0 (no byte loss, since a 99.83 row already contributes 0 matched_code, but a strict accuracy regression).",
+   "w16ax_action": "NOT APPLIED. The map file is W16-AY's; the splits half is mine but is inert and accuracy-negative without the map half."
+  },
+  {
+   "id": "AX-2",
+   "kind": "icf_alias_candidate",
+   "site": "charged site [8] of ??$_M_splice_insert_dispatch@...VEventCall@EventAnim...  (0x824c9878, 156 B, default/EventAnim)",
+   "target_name": "??$?0H@?$StlNodeAlloc@V?$_List_node@H@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@H@1@@Z",
+   "base_name": "?get_allocator@?$_List_base@VEventCall@EventAnim@@V?$StlNodeAlloc@VEventCall@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@QBA?AV?$StlNodeAlloc@VEventCall@EventAnim@@@2@XZ",
+   "confidence": "high that the bodies fold; IRREDUCIBLE as to which spelling the call site meant",
+   "evidence": [
+    "Both bodies are 4 bytes, 0x4e800020 (a bare blr), with ZERO relocations.",
+    "The target spelling is DEFINED identically (same 4 bytes) in 18 of our compiled objs.",
+    "Identical bytes + no relocations is precisely the condition under which MSVC's /OPT:ICF folds, and precisely the 'relocation-free thunk' class GROUNDED-1 records as irreducible: the fold is provable but which name the call site meant was destroyed by ICF itself."
+   ],
+   "predicted_effect": "Installing the alias would drop the remaining charge on the 0x824c9878 splice row. Combined with AX-1 (which clears that row's other charged site [13]), the splice row could reach fuzzy 100 => +156 B.",
+   "w16ax_action": "NOT APPLIED. symbol_aliases.json is W16-AY's file. Flagged per the standing doctrine that an UNPROVEN alias lifts name_check by construction and is an integrity hazard -- the proof offered here is byte identity + relocation-freedom, not a 'none-ruler unmoved' control, which cannot validate an alias."
+  }
+ ],
+ "combined_potential": "AX-1 + AX-2 together: up to +2 functions / +272 B (116 B for 0x824c97d8, 156 B for 0x824c9878). Neither is collectable alone; AX-1's splits half and map half must land together.",
+ "not_proposed": {
+  "0x824C95F0-0x824C97D8": "Three ANONYMOUS functions (fn_824C95F8 388 B, fn_824C977C 40 B, fn_824C97A4 52 B) plus the 8-byte EH prefix at the block start; 8+388+40+52 = 488 = the block size exactly. No map row names any of them, so they cannot pair in any unit. Naming an anonymous address under name_check pays in BUG EXPOSURE, not bytes (placeholder targets are already forgiven), and no oracle evidence was found in this lane to name them. Left alone."
+ }
+}
