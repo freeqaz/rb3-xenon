@@ -15545,7 +15545,7 @@
  "0x8268b928": "?GetRemoteBandUser@RemoteBandUser@@$4PPPPPPPM@A@AAPAV1@XZ",
  "0x8268b938": "?GetCymbalConfiguration@RemoteBandUser@@$4PPPPPPPM@A@BAHXZ",
  "0x8268b948": "??_DBandUser@@QAAXXZ",
- "0x8268b9a0": "?NewObject@UIPanel@@SAPAVObject@Hmx@@XZ",
+ "0x8268b9a0": "?NewRemoteBandUser@BandUser@@SAPAVRemoteBandUser@@XZ",
  "0x8268ba18": "?SetDifficulty@BandUser@@QAAXW4Difficulty@@@Z",
  "0x8268bab0": "?SetControllerType@BandUser@@QAAXVSymbol@@@Z",
  "0x8268baf0": "?SetOvershellSlotState@BandUser@@QAAXW4OvershellSlotStateID@@@Z",
@@ -30519,5 +30519,7 @@
  "0x824c95f8": "??$PropSync@VEventCall@EventAnim@@@@YA_NAAV?$ObjList@VEventCall@EventAnim@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x824c8dd0": "??0EventCall@EventAnim@@QAA@PAVObject@Hmx@@@Z",
  "0x824c9270": "?PropSync@@YA_NAAVEventCall@EventAnim@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
- "0x8278c2f8": "??_GFillInfo@@UAAPAXI@Z"
+ "0x8278c2f8": "??_GFillInfo@@UAAPAXI@Z",
+ "0x8268b4e8": "??0RemoteBandUser@@QAA@XZ",
+ "0x82802418": "?NewObject@UIPanel@@SAPAVObject@Hmx@@XZ"
 }
