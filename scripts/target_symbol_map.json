@@ -30601,5 +30601,9 @@
  "0x82baab38": "?PartialHit@NowBar@@QAAXHI_NH@Z",
  "0x82baac98": "??0NowBar@@QAA@PAVTrackDir@@ABVTrackConfig@@@Z",
  "0x82baae40": "??$DeleteAll@V?$vector@PAVGemSmasher@@V?$StlNodeAlloc@PAVGemSmasher@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVGemSmasher@@V?$StlNodeAlloc@PAVGemSmasher@@@stlpmtx_std@@@stlpmtx_std@@@Z",
- "0x82baaea8": "??1NowBar@@QAA@XZ"
+ "0x82baaea8": "??1NowBar@@QAA@XZ",
+ "0x826068a8": "??$find@U?$_List_iterator@UEnumProduct@@U?$_Const_traits@UEnumProduct@@@stlpmtx_std@@@stlpmtx_std@@VStorePurchaseable@@@stlpmtx_std@@YA?AU?$_List_iterator@UEnumProduct@@U?$_Const_traits@UEnumProduct@@@stlpmtx_std@@@0@U10@0ABVStorePurchaseable@@@Z",
+ "0x82605720": "?StoreUser@BandStorePanel@@UBAPAVLocalUser@@XZ",
+ "0x82605b48": "?FindOffer@BandStorePanel@@UBAPAVStoreOffer@@VSymbol@@@Z",
+ "0x82605878": "?StoreUserProfileSwappedToUser@BandStorePanel@@UAAXPAVLocalUser@@@Z"
 }
