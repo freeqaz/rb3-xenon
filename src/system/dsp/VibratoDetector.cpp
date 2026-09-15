@@ -50,19 +50,30 @@ int VibratoDetector::Detect() {
     int last = mBuffer[mBufIdx % 5];
     float diffs[4];
     float total = 0.0f;
-    int d = 0;
     float last_pitch = mPitches[mBufIdx % 5];
     float diffs_pitch[4];
-    for (int i = 1; i <= 4; i++) {
-        int idx = (mBufIdx + i) % 5;
+    // `d` IS the induction variable -- it must not be a second counter running
+    // alongside an `i`. Retail carries it out of the loop in a live register
+    // (`extsw r11,r10` -> fcfid -> `fdivs f7,f8,f0`, then `cmpwi r10,0x0`).
+    // With a separate `d++` the compiler proves d == 4 and folds both uses:
+    // the division becomes `fmuls f7,f8,0.25f` and the second loop's bound
+    // becomes the literal `cmpwi r10,0x4`. That fold was the whole residual
+    // on this row -- 69 of its 98 charged sites.
+    int d;
+    for (d = 0; d < 4; d++) {
+        int idx = (mBufIdx + d + 1) % 5;
         int s = mBuffer[idx];
         float p = mPitches[idx];
-        diffs_pitch[i - 1] = fabsf(last_pitch - p);
-        diffs[i - 1] = (float)(s - last);
-        total += diffs[i - 1];
+        // diffs FIRST: retail materialises its base (`subi r5,r1,0x30`)
+        // before diffs_pitch's (`subi r4,r1,0x20`). The stack slots are the
+        // same either way; only the order of the two address computations
+        // follows the source, and the scheduler then emits both stores in
+        // this same order regardless.
+        diffs[d] = (float)(s - last);
+        diffs_pitch[d] = fabsf(last_pitch - p);
+        total += diffs[d];
         last = s;
         last_pitch = p;
-        d++;
     }
     float ave = total / (float)d;
     for (int i = 0; i < d; i++) {
