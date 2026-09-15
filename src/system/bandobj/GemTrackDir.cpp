@@ -1,3 +1,13 @@
+// W16-BZ: retail INLINES the ObjPtr<T> member ctors in ??0GemTrackDir@@ for
+// every T with a virtual Hmx::Object base (RndDir/RndGroup/RndMesh/RndCam/
+// EventTrigger/RndPropAnim/RndAnimatable...) -- three stores in the order
+// {mOwner, vptr-lis, mObject, vptr-addi, vptr-store} with the EH-temp spill of
+// the member address -- and calls the two-arg ctor OUT OF LINE only for the
+// direct non-virtual Hmx::Object children (RndTex, RndMat, RndEnviron x2, Task
+// x4, ChordShapeGenerator). The (this) / (this, 0) spelling below selects
+// per site; these two defines select the inline policy (see obj/Object.h).
+#define RB3_OBJPTR_INLINE_OWNER_CTOR
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
 #include "obj/ObjMacros.h"
 #include "bandobj/GemTrackDir.h"
 #include "bandobj/BandButton.h"
@@ -36,23 +46,23 @@ static struct {
 GemTrackDir::GemTrackDir()
     : BandTrack(this), mNumTracks(1), unk488(-1), mGemTrackDirID(-1), mKickPassCounter(0),
       unk494(0), mStreakMeterOffset(2.25f), mStreakMeterTilt(0), mTrackPitch(0),
-      mEffectSelector(this, 0), mRotater(this, 0), mSurfaceTexture(this, 0),
-      mSurfaceMesh(this, 0), mSurfaceMat(this, 0), mTrackEnv(this, 0),
-      mTrackMissGemsEnv(this, 0), mGameCam(this, 0), mPeakStateOnTrig(this, 0),
-      mPeakStateOffTrig(this, 0), mPeakStopImmediateTrig(this, 0),
-      mBassSuperStreakOnTrig(this, 0), mBassSuperStreakOffTrig(this, 0),
-      mBassSSOffImmediateTrig(this, 0), mKickDrummerTrig(this, 0),
-      mKickDrummerResetTrig(this, 0), mSpotlightPhraseSuccessTrig(this, 0),
-      mDrumFillResetTrig(this, 0), mDrumMash2ndPassActivateAnim(this, 0),
-      mDrumMashHitAnimGrp(this, 0), mFillColorsGrp(this, 0), mLodAnim(this, 0),
-      mSmasherPlate(this, 0), mGlowWidgets(this, kObjListNoNull), unk600(this, 0),
-      unk60c(this, 0), unk618(this, 0), unk624(this, 0), mGemWhiteMesh(this, 0),
-      mMissOutofRangeRightTrig(this, 0), mMissOutofRangeLeftTrig(this, 0),
-      unk654(this, 0), mKeysShiftAnim(this, 0), mKeysMashAnim(this, 0), mKeyRange(-1.0f),
+      mEffectSelector(this), mRotater(this), mSurfaceTexture(this, 0),
+      mSurfaceMesh(this), mSurfaceMat(this, 0), mTrackEnv(this, 0),
+      mTrackMissGemsEnv(this, 0), mGameCam(this), mPeakStateOnTrig(this),
+      mPeakStateOffTrig(this), mPeakStopImmediateTrig(this),
+      mBassSuperStreakOnTrig(this), mBassSuperStreakOffTrig(this),
+      mBassSSOffImmediateTrig(this), mKickDrummerTrig(this),
+      mKickDrummerResetTrig(this), mSpotlightPhraseSuccessTrig(this),
+      mDrumFillResetTrig(this), mDrumMash2ndPassActivateAnim(this),
+      mDrumMashHitAnimGrp(this), mFillColorsGrp(this), mLodAnim(this),
+      mSmasherPlate(this), mGlowWidgets(this, kObjListNoNull), unk600(this, 0),
+      unk60c(this, 0), unk618(this, 0), unk624(this, 0), mGemWhiteMesh(this),
+      mMissOutofRangeRightTrig(this), mMissOutofRangeLeftTrig(this),
+      unk654(this), mKeysShiftAnim(this), mKeysMashAnim(this), mKeyRange(-1.0f),
       mKeyOffset(-1.0f), mFingerShape(0), mChordLabelPosOffset(0),
       mChordShapeGen(this, 0), mArpShapePool(0), unk6e8(0) {
-    ObjPtr<RndPropAnim> propAnim(this, 0);
-    ObjPtr<EventTrigger> trig(this, 0);
+    ObjPtr<RndPropAnim> propAnim(this);
+    ObjPtr<EventTrigger> trig(this);
     for (int i = 0; i < 6; i++) {
         mGemMashAnims.push_back(propAnim);
         mDrumMashAnims.push_back(propAnim);
