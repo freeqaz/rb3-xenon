@@ -30589,5 +30589,17 @@
  "0x8267b000": "?ResetVoiceChatState@Game@@QAAXXZ",
  "0x8267a4c0": "?OnMsg@Game@@QAA?AVDataNode@@ABVRemoteLeaderLeftMsg@@@Z",
  "0x82678bb8": "?SetRealtime@Game@@QAAX_N@Z",
- "0x82679900": "?OnMsg@Game@@QAA?AVDataNode@@ABVButtonUpMsg@@@Z"
+ "0x82679900": "?OnMsg@Game@@QAA?AVDataNode@@ABVButtonUpMsg@@@Z",
+ "0x82baa400": "?HandleOutOfRangeKey@NowBar@@QAA_NPAVGemSmasher@@H_N@Z",
+ "0x82baa490": "?Reset@NowBar@@QAAX_N@Z",
+ "0x82baa4d8": "?FindSmasher@NowBar@@QBAPAVGemSmasher@@H@Z",
+ "0x82baa510": "?Miss@NowBar@@QAAXMH@Z",
+ "0x82baa698": "?PopSmasher@NowBar@@QAAXH@Z",
+ "0x82baa740": "?SetSmasherGlowing@NowBar@@QAAXH_N@Z",
+ "0x82baa7f8": "?StopBurning@NowBar@@QAAXI@Z",
+ "0x82baa8a8": "?Hit@NowBar@@QAAXMH_NH0@Z",
+ "0x82baab38": "?PartialHit@NowBar@@QAAXHI_NH@Z",
+ "0x82baac98": "??0NowBar@@QAA@PAVTrackDir@@ABVTrackConfig@@@Z",
+ "0x82baae40": "??$DeleteAll@V?$vector@PAVGemSmasher@@V?$StlNodeAlloc@PAVGemSmasher@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVGemSmasher@@V?$StlNodeAlloc@PAVGemSmasher@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x82baaea8": "??1NowBar@@QAA@XZ"
 }
