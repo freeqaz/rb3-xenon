@@ -282,8 +282,12 @@ void TourPerformerImpl::UpdateTourPlayerContributionLabel(UILabel *label, BandUs
     // Retail emits an MSVC function-local-static guard here (guard word
     // 0x82CBE9FC, Symbol 0x82CBE9F8, literal 0x8203E6B0 "generic_string") --
     // W16-BU. The Symbols.h file-scope global carries no guard.
+    // Retail materializes the String BEFORE the guard, so only `label` and
+    // &generic_string stay live across the Symbol ctor (3 saved GPRs, frame
+    // 0x80); evaluating it after leaves this/label/user live (5 GPRs, 0x90).
+    String contribution = GetPlayerContributionString(user);
     static Symbol generic_string("generic_string");
-    label->SetTokenFmt(generic_string, GetPlayerContributionString(user).c_str());
+    label->SetTokenFmt(generic_string, contribution.c_str());
 }
 
 String TourPerformerImpl::GetPlayerContributionString(BandUser *user) {

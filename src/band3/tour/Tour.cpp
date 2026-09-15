@@ -331,7 +331,8 @@ Symbol Tour::GetTourGigGuideMap() const {
 
 Symbol Tour::GetConclusionText() const {
     if (m_pTourProgress) {
-        TourDesc *pTourDesc = GetTourDesc(m_pTourProgress->GetTourDesc());
+        Symbol tourSym = m_pTourProgress->GetTourDesc();
+        TourDesc *pTourDesc = GetTourDesc(tourSym);
         MILO_ASSERT(pTourDesc, 0x246);
         return pTourDesc->GetConclusionText();
     } else
