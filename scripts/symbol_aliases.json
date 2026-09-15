@@ -13103,13 +13103,20 @@
   },
   {
    "name": "4?$ObjDirPtr",
-   "address": "0x82817ae8",
+   "address": "0x82270690",
    "survivor": "??4?$ObjDirPtr@VObjectDir@@@@QAAAAV0@PAVObjectDir@@@Z",
-   "folded": [
-    "??4?$ObjDirPtr@VHamListRibbon@@@@QAAAAV0@PAVHamListRibbon@@@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??4?$ObjDirPtr@VHamListRibbon@@@@QAAAAV0@PAVHamListRibbon@@@Z",
+     "lane": "W16-BD 2026-09-15",
+     "class": "REFUTED_BY_MAP_REPAIR",
+     "disposition": "withdrawn",
+     "address_corrected_from": "0x82817ae8",
+     "why": "REFUTED on retail bytes: the two bodies exist at TWO addresses and did NOT fold. ObjDirPtr<ObjectDir>::operator= is 0x82270690 (defined in RhythmDetector.obj) and ObjDirPtr<HamListRibbon>::operator= is 0x82817ae8 (defined in HamNavList.obj). Both are 300 B and reloc-masked byte-identical (0 differing words of 75), which is WHY the T1 generator proposed the fold -- but their relocation at +0x48 differs and IS the discriminator: 0x82270690 -> bl 0x82270340 ?PostLoad@?$ObjDirPtr@VObjectDir@@@@QAAXPAVLoader@@@Z, 0x82817ae8 -> bl 0x82817a68 ?PostLoad@?$ObjDirPtr@VHamListRibbon@@@@QAAXPAVLoader@@@Z, two distinct map-named addresses. /OPT:ICF folds only COMDATs identical INCLUDING relocations, so a differing bl target is proof they were not folded. The fold claim was an ARTIFACT of the old map name: until lane W16-BA nulled it (2026-09-15) the ObjectDir spelling sat on 0x82817ae8, so the group's own address described HamListRibbon's body while carrying ObjectDir's name; W16-BA named the real 0x82270690 and W16-BD then named 0x82817ae8 ??4?$ObjDirPtr@VHamListRibbon@@@@QAAAAV0@PAVHamListRibbon@@@Z, at which point icf_alias_finder --validate flagged the group CONTRADICTED (two map-resident members). The `address` field is corrected to 0x82270690 as part of the withdrawal because it is NOT cosmetic: tools/gen_symbol_alias_map.py buckets equivalences BY ADDRESS, so leaving this group on 0x82817ae8 would have merged ObjectDir into W16-BD's {HamListRibbon, UILabelDir} bucket and kept forgiving the very charge being withdrawn. The prior `restore`/`restored` records (RELOC-RECONCILE 2026-08-20, W9-D 2026-09-13) are left intact: their observation -- our compiled HamListRibbon body matches exactly one retail .pdata start, 0x82817ae8 -- is CORRECT and is now the evidence that 0x82817ae8 is HamListRibbon's OWN body rather than a fold survivor."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -83350,6 +83357,15 @@
     "?_M_insert_overflow_aux@?$vector@VOldColorOption@@V?$StlNodeAlloc@VOldColorOption@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVOldColorOption@@ABV3@ABU__false_type@2@I_N@Z"
    ],
    "evidence": "ICF fold group added by lane W16-BD 2026-09-15, as the RESIDUAL of the 0x822ab0b0 re-home+rename in commit f9ecf043. After that commit ?_M_fill_insert@?$vector@VOldColorOption@@... (108 B, default/OutfitConfig) is pairable and reads fuzzy 99.81481 held by EXACTLY ONE charged site, read from the graded ruler (functionRelocDiffs=name_check, resolved from report.json provenance) and not from a mismatch count: instruction 22 of 27, diff_arg, retail bl target ?_M_insert_overflow_aux@?$vector@UDistEntry@@... vs our <OldColorOption> spelling. ADJUDICATED on retail bytes with tools/icf_pair_adjudicate.py --chase, whose --selftest AND --chasetest controls (including the IN-FAMILY DECOY) both pass on this tree, so the instrument discriminates rather than confirming whatever it is pointed at: CHASED T1 PROVEN, SLOT-FOLD-OK on PoolAlloc, MemOrPoolAlloc, __uninitialized_copy (x2) and _M_clear_after_move. Corroboration that this is a FOLD and not two distinct bodies: <OldColorOption>'s overflow_aux has NO separate address in target_symbol_map.json, while the survivor <DistEntry> is map-resident at 0x822aa578. Our source spelling is correct (OutfitConfig holds a vector<OldColorOption>), so the charge is ICF survivor-naming noise, which is exactly the class SymbolEquivalences exists to forgive. STATED WEAK HALF: the survivor body has 16 retail body-twins and 33 of ours, so masked-body identity ALONE would be vacuous here -- the verdict rests on the CHASED relocation-target agreement, not on the byte match. No membership was removed and nothing was pruned."
+  },
+  {
+   "name": "$ObjDirPtr_assign",
+   "address": "0x82817ae8",
+   "survivor": "??4?$ObjDirPtr@VHamListRibbon@@@@QAAAAV0@PAVHamListRibbon@@@Z",
+   "folded": [
+    "??4?$ObjDirPtr@VUILabelDir@@@@QAAAAV0@PAVUILabelDir@@@Z"
+   ],
+   "evidence": "ICF fold group added by lane W16-BD 2026-09-15 as the REPAIR of a cost this lane's own commit 6ffce478 created, and it is installed with a RETAIL CALLER WITNESS, not merely a byte match. Naming the previously-anonymous 0x82817ae8 ??4?$ObjDirPtr@VHamListRibbon@@@@QAAAAV0@PAVHamListRibbon@@@Z converted a FORGIVEN placeholder call site into a CHECKED one and dropped default/UIFontImporter::??1?$ObjDirPtr@VUILabelDir@@@@UAA@XZ (88 B) off fuzzy 100: its single charged site on the graded ruler is instruction 12 of 22, diff_arg, retail bl ??4?$ObjDirPtr@VHamListRibbon@@... vs our bl ??4?$ObjDirPtr@VUILabelDir@@.... THE WITNESS: the retail caller is ObjDirPtr<UILabelDir>'s OWN DESTRUCTOR, which cannot mean any instantiation but UILabelDir, and it calls the body at 0x82817ae8. So retail kept ONE body for both instantiations -- a genuine ICF fold whose surviving name is arbitrary -- which is the canonical case SymbolEquivalences exists to forgive, and our source spelling is correct. Independently, icf_pair_adjudicate --chase adjudicates retail fn_82817AE8 vs our <UILabelDir> spelling as CHASED T1 PROVEN (its one chased slot resolves to ?PostLoad@?$ObjDirPtr@VHamListRibbon@@..., itself 100% at 0x82817a68); --selftest and --chasetest both pass on this tree. Consistency check the fold implies and which holds: ICF requires identical relocations, so the two operator= COMDATs could only fold if their PostLoad callees folded too, and PostLoad is indeed present once at 0x82817a68. NOT ADDED, deliberately: ??4?$ObjDirPtr@VHamScrollSpeedIndicator@@... is ALSO chased-PROVEN against the same retail body and is also defined by HamNavList.obj, but NO retail caller witnesses it and no row is charged on it, so adding it would be an unwitnessed membership. A charged site naming it, or a retail bl-caller census finding one, is what would justify it. No membership removed, nothing pruned."
   }
  ]
 }
