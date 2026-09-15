@@ -646,8 +646,10 @@ BandCharDesc.cpp:
 	.text       start:0x82459B80 end:0x82459EA0
 
 BandList.cpp:
+	.pdata      start:0x821FE2A0 end:0x821FE2B8
 	.pdata      start:0x821FE2B8 end:0x821FE2D0
 	.pdata      start:0x821FE2D0 end:0x821FE2D8
+	.pdata      start:0x821FE2D8 end:0x821FE2E0
 	.pdata      start:0x821FE2E0 end:0x821FE2E8
 	.pdata      start:0x821FE2E8 end:0x821FE2F0
 	.pdata      start:0x821FE2F0 end:0x821FE308
@@ -673,9 +675,11 @@ BandList.cpp:
 	.pdata      start:0x821FE758 end:0x821FE778
 	.pdata      start:0x821FE778 end:0x821FE780
 	.pdata      start:0x821FE788 end:0x821FE790
+	.text       start:0x8233B258 end:0x8233B348
 	.text       start:0x8233B348 end:0x8233B34C
 	.text       start:0x8233B350 end:0x8233B468
 	.text       start:0x8233B468 end:0x8233B4AC
+	.text       start:0x8233B4B0 end:0x8233B4F4
 	.text       start:0x8233B4F8 end:0x8233B56C
 	.text       start:0x8233B570 end:0x8233B5E4
 	.text       start:0x8233B5E8 end:0x8233B764
@@ -842,6 +846,7 @@ CrowdAudio.cpp:
 	.text       start:0x82313584 end:0x82313DB0
 	.text       start:0x82313E28 end:0x82313F00
 	.text       start:0x82313F98 end:0x8231433C
+	.text       start:0x8231433C end:0x823143A8
 	.text       start:0x823143A8 end:0x823148C0
 	.text       start:0x82315CB8 end:0x82315D38
 	.text       start:0x82315D38 end:0x82315F80
@@ -3196,11 +3201,6 @@ HamCamTransform.cpp:
 	.pdata      start:0x821FEFB0 end:0x821FEFD0
 	.pdata      start:0x821FF018 end:0x821FF030
 	.pdata      start:0x821FF050 end:0x821FF0B8
-	.pdata      start:0x82202BC8 end:0x82202BE8
-	.pdata      start:0x82202C10 end:0x82202C20
-	.pdata      start:0x82202DC8 end:0x82202DD0
-	.pdata      start:0x82202DD0 end:0x82202DD8
-	.pdata      start:0x82202DD8 end:0x82202DE0
 	.pdata      start:0x8220EA90 end:0x8220EAA0
 	.pdata      start:0x822138F8 end:0x82213900
 	.pdata      start:0x82213A38 end:0x82213A48
@@ -3242,11 +3242,6 @@ HamCamTransform.cpp:
 	.text       start:0x8234BA70 end:0x8234BCB0
 	.text       start:0x8234C410 end:0x8234C778
 	.text       start:0x8234CAB8 end:0x8234D080
-	.text       start:0x82387768 end:0x82387890
-	.text       start:0x82387AA0 end:0x82387C50
-	.text       start:0x82389460 end:0x823894D0
-	.text       start:0x823894D0 end:0x82389514
-	.text       start:0x82389518 end:0x823895BC
 	.text       start:0x82462738 end:0x824627C8
 	.text       start:0x824C46B8 end:0x824C4718
 	.text       start:0x824C5650 end:0x824C56FC
@@ -3891,7 +3886,6 @@ HamRibbon.cpp:
 	.pdata      start:0x8223EBE0 end:0x8223EBE8
 	.pdata      start:0x8223EC48 end:0x8223EC50
 	.text       start:0x822F0408 end:0x822F047C
-	.text       start:0x8231433C end:0x823143A8
 	.text       start:0x82788390 end:0x82788408
 	.text       start:0x82788B00 end:0x82788B80
 
@@ -4145,13 +4139,9 @@ PropAnim.cpp:
 	.text       start:0x82461948 end:0x824619D8
 
 HamNavList.cpp:
-	.pdata      start:0x821FE2A0 end:0x821FE2B8
-	.pdata      start:0x821FE2D8 end:0x821FE2E0
 	.pdata      start:0x82215988 end:0x82215990
 	.pdata      start:0x82236EE0 end:0x82236EE8
 	.pdata      start:0x822471E8 end:0x822471F8
-	.text       start:0x8233B258 end:0x8233B348
-	.text       start:0x8233B4B0 end:0x8233B4F4
 	.text       start:0x824EA220 end:0x824EA298
 	.text       start:0x826F7CC8 end:0x826F7E50
 	.text       start:0x82817A68 end:0x82817C20
@@ -6321,11 +6311,16 @@ CharEyes.cpp:
 	.pdata      start:0x822028F0 end:0x82202900
 	.pdata      start:0x82202900 end:0x82202BA0
 	.pdata      start:0x82202BA8 end:0x82202BC8
+	.pdata      start:0x82202BC8 end:0x82202BE8
 	.pdata      start:0x82202BE8 end:0x82202C10
+	.pdata      start:0x82202C10 end:0x82202C20
 	.pdata      start:0x82202C20 end:0x82202C60
 	.pdata      start:0x82202C70 end:0x82202C90
 	.pdata      start:0x82202C90 end:0x82202C98
 	.pdata      start:0x82202C98 end:0x82202DC8
+	.pdata      start:0x82202DC8 end:0x82202DD0
+	.pdata      start:0x82202DD0 end:0x82202DD8
+	.pdata      start:0x82202DD8 end:0x82202DE0
 	.pdata      start:0x82202DE0 end:0x82202DE8
 	.pdata      start:0x82202DE8 end:0x82202DF0
 	.pdata      start:0x82202DF0 end:0x82202EC0
@@ -6342,11 +6337,16 @@ CharEyes.cpp:
 	.text       start:0x823832D8 end:0x82383428
 	.text       start:0x82383428 end:0x823873F8
 	.text       start:0x82387458 end:0x82387768
+	.text       start:0x82387768 end:0x82387890
 	.text       start:0x82387890 end:0x82387AA0
+	.text       start:0x82387AA0 end:0x82387C50
 	.text       start:0x82387C50 end:0x82387EE0
 	.text       start:0x82387F8C end:0x823882D8
 	.text       start:0x823882D8 end:0x82388468
 	.text       start:0x82388468 end:0x82389460
+	.text       start:0x82389460 end:0x823894D0
+	.text       start:0x823894D0 end:0x82389514
+	.text       start:0x82389518 end:0x823895BC
 	.text       start:0x823895C0 end:0x82389604
 	.text       start:0x82389608 end:0x82389680
 	.text       start:0x82389680 end:0x8238A36C
