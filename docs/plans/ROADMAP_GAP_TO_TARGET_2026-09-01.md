@@ -2485,3 +2485,43 @@ nobody has run; queued below.
 W15-F's `RunXinputJoypadLoop` item is NOT queued as a body-port: our
 `Joypad_Xbox.cpp` lacks the entire XInput2 raw-HID layer, so it is a
 subsystem port and belongs to the native-port track, not a match lane.
+
+### Coordinator verification while wave 16 ran — the two biggest non-SYMBOL rows are PURE ARITH_COMMUTE, do not fund
+
+Measured 2026-09-15 at main `a1b5e48f`, read-only, from `report.json` and the
+charged-site lists (never a mismatch count). Ranking the `crossing_worklist
+--adjudicate` top-25 by size-if-it-crosses puts two large non-SYMBOL rows
+directly below the three lanes this wave dispatched, and both are tempting on
+size alone:
+
+| row | size | fuzzy | mpn |
+|---|---:|---:|---:|
+| `?Handle@TourProgress@@UAA?AVDataNode@@PAVDataArray@@_N@Z` | 2,596 B | 99.9692 | **100.000** |
+| `?Poll@CharIKHead@@UAAXXZ` | 1,820 B | 99.9341 | **100.000** |
+
+**`mpn == 100` with `fuzzy < 100` is the arg-only shape**, so before briefing
+either I pulled the actual charged sites. Every charge on both rows is a
+`diff_arg` with the two *source* operands swapped on a **commutative** opcode:
+
+```
+TourProgress  [356] add    r4, r4, r9     vs  add    r4, r9, r4
+              [412] add    r10, r10, r8   vs  add    r10, r8, r10
+CharIKHead    [127] fmadds f13, f30, f0, f11  vs  fmadds f13, f0, f30, f11
+              [129] fmadds f0, f29, f0, f10   vs  fmadds f0, f0, f29, f10
+              [291] fadds  f10, f10, f0       vs  fadds  f10, f0, f10
+```
+
+⇒ Both are **PURE ARITH_COMMUTE**, the vein `crossing_worklist` already rates
+**PROVEN INERT — do not fund** (70 rows / 36,108 B tree-wide). Recording the two
+specific rows because the generic ledger line is invisible to anyone ranking
+candidates by size: **4,416 B that looks like the obvious next target is not
+one.** A future lane that wants to reopen this needs a *codegen* lever for
+operand order, not a source spelling — the same class of channel W16-CG was
+dispatched to test on `CustomizePanel`, so **wait for CG's verdict before
+funding any operand-order work anywhere.**
+
+⚠ Note what did the work here: the **class label alone was not enough**. The
+worklist labels TourProgress `ARITH_COMMUTE` but does not mark it `sym`, and
+`mm=2` looks eminently closeable. It was reading the charged instructions
+literally that settled it — the standing "test a briefed figure literally"
+rule, applied to my own candidate list.
