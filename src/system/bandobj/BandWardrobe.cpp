@@ -1188,13 +1188,13 @@ DataNode BandWardrobe::OnEnterVignette(DataArray *da) {
                 it->Driver()->SetClips(charsDir);
             }
         }
-        if (TheLoadMgr.EditMode()) {
+        if (LOADMGR_EDITMODE) {
             for (int i = 0; i < 4; i++) {
                 mVignetteNames.names[i] = Symbol(player_names[i]);
             }
         } else {
-            static Message msg("get_slot_info", DataNode(0));
             SlotInfo info[4];
+            static Message msg("get_slot_info", DataNode(0));
             bool hasBass = false;
             for (int i = 0; i < 4; i++) {
                 info[i].hint = -1;
