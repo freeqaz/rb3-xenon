@@ -208,14 +208,12 @@ LocalBandUser *Tour::GetUser() const {
 
 bool Tour::HasPerformer() const { return m_pTourPerformer != 0; }
 
-bool Tour::SyncProperty(DataNode &_val, DataArray *_prop, int _i, PropOp _op) {
-    if (_prop->Size() == _i) {
-        return true;
-    } else {
-        Symbol b = _prop->Sym(_i);
-        return false;
-    }
-}
+// W16-BS 2026-09-15: was hand-written with the comparison reversed
+// (_prop->Size() == _i), which emits cmpw cr6,r11,r6 where retail 0x8235c2e0
+// has cmpw cr6,r6,r11. Through the macro the body is byte-identical to retail
+// and to Hmx::Object::SyncProperty -- which is what lets ICF fold them.
+BEGIN_PROPSYNCS(Tour)
+END_PROPSYNCS
 
 void Tour::ClearPerformer() {
     if (m_pTourPerformer) {
