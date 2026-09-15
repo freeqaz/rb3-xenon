@@ -8,6 +8,9 @@
 // the only two-arg ObjPtr ctor call sites in this TU are inside that ctor, so
 // the define is scoped to it by construction.
 #define RB3_TU_OBJPTR_FORCEINLINE_CTOR
+// Leg 2: retail's ctor stores in the order {lis vptr, stw mOwner, li 0, addi,
+// stw mObject, stw vptr}; the default inline ctor emits stw mOwner first.
+#define RB3_TU_OBJPTR_DEFER_OWNER
 #include "world/EventAnim.h"
 #include "obj/ObjMacros.h"
 #include "utl/Symbols.h"
