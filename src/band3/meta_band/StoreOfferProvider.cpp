@@ -44,6 +44,22 @@ void StoreOfferProvider::InitData(RndDir *dir) {
 // ---------------------------------------------------------------------------
 // DEFERRED WORK IN THIS TU (lane BV-1 handover; all read off the retail asm)
 //
+// ✅ RESOLVED by lane W16-CD (2026-09-15): both functions below are now
+// IMPLEMENTED and both rows are at fuzzy 100.0 (+572 B: fn_826635D8 392 B,
+// fn_82663328 180 B).  BV-1's reconstructions were re-verified against the
+// retail bytes rather than taken on trust and were correct in every particular
+// -- including the pack-before-album disjunction order and the re-called
+// OfferType().  Two claims in this block ARE now stale and are corrected here:
+// the functions are no longer absent from this source, and "ShowBrowserPurchased
+// is NOT in splits.txt and is not scored" is false -- both are scored rows in
+// unit default/band3/meta_band/StoreOfferProvider.  They read 0.0% until W16-CD
+// added their `scripts/target_symbol_map.json` entries, because the TARGET rows
+// were anonymous `fn_` symbols: objdiff pairs by NAME, so no amount of correct
+// source can score a row the map does not name.  See the per-function comments
+// at the definitions for the byte-level adjudication of each body's shape.
+//
+// The original handover text follows.
+//
 // Two functions exist in retail that this source does not have at all:
 //
 //  * fn_82663328 (0xB4) StoreOfferProvider::FindSongOffer(int songID)
@@ -318,17 +334,17 @@ Symbol StoreOfferProvider::DataSymbol(int i) const {
 
 // Retail (fn_82664418, 52 bytes) likewise has no size() guard.
 bool StoreOfferProvider::IsActive(int i) const {
-    // Not matched (71.9%): retail materialises the result in a scratch register and
-    // byte-masks it at a single return (`clrlwi r3,r11,24`); MSVC here fuses the
-    // returns instead (`beqlr`). Tried: uninitialised bool + explicit else (71.5%),
-    // and `result = (mActive != false)` which went BRANCHLESS (subic/subfe, 51.5%).
-    // BOOL_MASK / permuter-class -- left at the best-scoring shape.
+    // W16-CD: a DIRECT `return a || b;`.  The previous comment here called this
+    // BOOL_MASK / permuter-class after trying an uninitialised bool + explicit
+    // else (71.5%) and `result = (mActive != false)` (branchless, 51.5%) -- but
+    // the plain return expression was never tried, and it is what emits retail's
+    // shape.  Measured in THIS TU on the same compiler minutes earlier:
+    // ShowBrowserPurchased's `return a || b;` produced exactly
+    // `li r11,0 / beq / li r11,1 / clrlwi r3,r11,24`, which is instruction for
+    // instruction what retail's IsActive does.  The `bool result` temporary was
+    // what forced the fused `beqlr` form.
     Element *e = mElements[i];
-    bool result = false;
-    if (e->mOffer != NULL || e->mActive) {
-        result = true;
-    }
-    return result;
+    return e->mOffer != NULL || e->mActive;
 }
 
 // Retail (fn_82664450, 96 bytes) searches ONLY mOffers -- the mPacks fallback
@@ -426,15 +442,87 @@ StoreOfferProvider::Element *StoreOfferProvider::GetElementAtIndex(int i) const 
     return mElements[i];
 }
 
-// Retail fn_826635D8 (0x188 bytes). Signature-only port: the real body needs
-// FindSongOffer (not implemented -- see the deferred-work block above) plus
-// public access to StoreOffer's protected mPack/mAlbum purchaseables, which
-// would mean a StoreOffer.h header change out of scope for this pass. This
-// stub exists only so Handle()'s show_browser_purchased arm gets a real call
-// target (retail calls this out-of-line) instead of an inline byte load --
-// ShowBrowserPurchased itself is NOT in splits.txt and is not scored.
+// Retail fn_82663328 (0xB4 bytes).  Body read off the retail asm, not ported
+// from an oracle (the rb3-Wii dev build has no counterpart under this name).
+// `mOffers` is a POINTER to the vector: retail loads this+0x30 and only then
+// reads begin/finish off it, and it RE-LOADS this+0x30 every iteration, which
+// is what spelling the condition as `it != mOffers->end()` produces.
+StoreOffer *StoreOfferProvider::FindSongOffer(int songID) const {
+    static Symbol song("song");
+    for (std::vector<StoreOffer *>::const_iterator it = mOffers->begin();
+         it != mOffers->end();
+         ++it) {
+        // Named local, not a repeated `*it`: retail loads the element ONCE into
+        // a callee-saved register and reuses it three times (that extra live
+        // value is also why retail's prologue saves r26-r31 and ours saved
+        // r27-r31).  Spelling it `(*it)->` re-loaded it at all three uses.
+        StoreOffer *offer = *it;
+        if (offer->OfferType() == song && offer->GetSingleSongID() == songID)
+            return offer;
+    }
+    return NULL;
+}
+
+// Retail fn_826635D8 (0x188 bytes).  W16-CD: this was a one-line stub
+// (`return o->IsPurchased();`) whose comment named two blockers -- FindSongOffer
+// being unimplemented, and mPack/mAlbum being protected on StoreOffer.  The
+// second was removed earlier in this same lane (StoreOffer.h's member block was
+// widened to public for BandStorePanel::GetOfferIDsToEnumerate, compiler-verified
+// layout-neutral), and the first is the function directly above.
+//
+// Read off the retail bytes rather than inferred:
+//  * All THREE local statics are constructed UP FRONT, before the first
+//    `lbz 0x29` -- so they are one declaration block at the top of the body, not
+//    point-of-use.  Their DECLARATION ORDER is the guard-bit order in the single
+//    guard word lbl_82E01DA8: 0x1 song, 0x2 album, 0x4 pack.  Each ctor string
+//    was read back out of orig/45410914/band.exe: lbl_820010F0 "song",
+//    lbl_820D6848 "album", lbl_820B08D0 "pack".
+//  * 0xa9 is mPack.isPurchased and 0x69 is mAlbum.isPurchased (mPack@0x80,
+//    mAlbum@0x40, StorePurchaseable::isPurchased@0x29), and retail tests 0xa9
+//    FIRST -- so the disjunction is pack-then-album, not album-then-pack.
+//  * OfferType() is re-called for every comparison, never cached in a local
+//    (three separate `bl fn_8253B238` sites).
+//  * The trailing `subic`/`subfe` pair on NumSongs()'s return is the `!= 0`
+//    to-bool idiom, so the last statement returns a comparison, not the int.
 bool StoreOfferProvider::ShowBrowserPurchased(const StoreOffer *o) const {
-    return o->IsPurchased();
+    static Symbol song("song");
+    static Symbol album("album");
+    static Symbol pack("pack");
+    if (o->IsPurchased())
+        return true;
+    // TWO STANDALONE `if`s, INSIDE AN if/ELSE-IF CHAIN.  Both halves are load
+    // bearing and each was measured alone first (W16-CD; 89.27 -> 95.56 -> 100):
+    //  * two separate `if`s, not `if (a || b)`: retail emits the `li r3, 1`
+    //    BETWEEN the two byte tests and the mAlbum test's `bne` jumps BACKWARD
+    //    into it.  Only a complete first `if` statement places the body there;
+    //    `a || b` puts one `li r3, 1` after both tests.
+    //  * else-if, so the song arm carries NO `return false` of its own: with one
+    //    there, MSVC folds `if (b) return true; return false;` into the
+    //    branchless `subic`/`subfe` to-bool idiom (killing retail's
+    //    `cmplwi`/`bne`) and then places the shared `li r3, 0` at the function
+    //    tail instead of inline after the mAlbum test, which also moved three
+    //    branch destinations.
+    if (o->OfferType() == song) {
+        if (o->mPack.IsPurchased())
+            return true;
+        if (o->mAlbum.IsPurchased())
+            return true;
+    } else if (o->OfferType() == album || o->OfferType() == pack) {
+        // Named reference, not a repeated member access: retail holds
+        // &o->mSongsInOffer in a callee-saved register and re-reads the finish
+        // pointer as 0x4(that), where accessing the member directly reads
+        // 0xd8(o) instead.
+        const std::vector<int> &songs = o->mSongsInOffer;
+        for (std::vector<int>::const_iterator it = songs.begin();
+             it != songs.end();
+             ++it) {
+            StoreOffer *s = FindSongOffer(*it);
+            if (!s || !s->IsPurchased())
+                return false;
+        }
+        return o->NumSongs() != 0;
+    }
+    return false;
 }
 
 // Field offsets in BandStorePanel are protected; access via byte offsets.

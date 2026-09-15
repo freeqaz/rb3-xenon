@@ -66,15 +66,15 @@ public:
     int PosToNextGroupPos(int);
     int PosToPrevGroupPos(int);
     Element *GetElementAtIndex(int) const;
-    // Retail fn_826635D8 (0x188). See the deferred-work comment block in
-    // StoreOfferProvider.cpp for the full retail body (needs FindSongOffer,
-    // which is not implemented yet); this signature-only stub exists so
-    // Handle()'s show_browser_purchased arm can emit a real `bl` (matching
-    // retail's guard-bit-numbered local-static dispatch) instead of an
-    // inline byte load against the global Symbol. noinline: retail's real
-    // body is out-of-line (called via bl, not folded into Handle); our
-    // trivial one-liner stub would otherwise get /Ob2-inlined right back
-    // into the lbz Handle used to emit before this port.
+    // Retail fn_82663328 (0xB4).  Implemented in W16-CD; const because its
+    // only caller, ShowBrowserPurchased, is const and passes `this` straight
+    // through in r3.
+    StoreOffer *FindSongOffer(int) const;
+    // Retail fn_826635D8 (0x188).  W16-CD implemented the real body (row is at
+    // 100.0); it is no longer the signature-only stub this comment described.
+    // noinline is RETAINED: retail's body is out-of-line (Text calls it via
+    // `bl` at three sites and Handle at one), and it is small enough that /Ob2
+    // would otherwise inline it back into those callers.
     __declspec(noinline) bool ShowBrowserPurchased(const StoreOffer *) const;
 
 protected:
