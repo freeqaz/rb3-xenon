@@ -265,6 +265,21 @@ DataNode BandStorePanel::OnMsg(const MetadataLoadedMsg &msg) {
     if (!msg->Int(6)) {
         mPrevChunkPath = gNullStr;
         mNextChunkPath = gNullStr;
+        // NEGATIVE RESULT (W16-CK), measured -- do not re-try the named local.
+        // Retail reads this Symbol back from its FRAME SLOT (`lwz r11, 0x50(r31)`)
+        // where we read it through the ctor's returned `this` (`mr r11,r3` then
+        // `lwz r11,0(r11)`); those are charges [40]/[43].  Spelling it as a named
+        // local `Symbol nullSym(gNullStr); mSort = nullSym;` DOES close that pair
+        // and is still wrong: the named local claims a dedicated 16-byte-aligned
+        // slot, our frame grows 0xf0 -> 0x100, the 8 charges become 29 OFFSET
+        // charges, and the four 40-byte EH funclets -- which objdiff pairs by BYTE
+        // SIGNATURE, and whose signature encodes the parent frame size -- fall back
+        // off 100.  Whole binary measured -96 B (+64 B from fn_826066D4 accidentally
+        // re-pairing onto the WRONG frame, -160 B from the four funclets).
+        // The hypothesis is refuted independently of the metric: retail
+        // re-CONSTRUCTS into 0x50 TWICE (once for gNullStr, once for "index_info"),
+        // which a named local cannot do.  So 0x50 is a reused TEMP slot and the
+        // residue is MSVC temporary-slot rotation, not a missing declaration.
         mSort = Symbol(gNullStr);
         mMenuTitle = gNullStr;
         DataArray *info = data->FindArray(Symbol("index_info"), false);
