@@ -49,9 +49,31 @@ float RefinePeriod2(
 // definition lives in another TU, and the retail source may reach it through a
 // shared declaration rather than defining it here.
 namespace {
-    float Time2IirA(float time, float rate) { return exp(-1.0f / (time * rate)); }
+    // The real retail body, read off 0x82B6EA08 (92 B) rather than guessed:
+    //   fcmpu f1,0.0 / ble -> return 1.0
+    //   fmuls f13,f1,f2      time * rate
+    //   fdivs f1,-1.0,f13    -1.0 / (time * rate)
+    //   bl exp (0x8282ED70)
+    //   frsp f13,f1          narrow to float FIRST...
+    //   fsubs f1,1.0,f13     ...then subtract in float -- hence the cast
+    // The previous one-liner `return exp(-1.0f/(time*rate));` was missing both
+    // the guard and the subtraction (the caller carried the `1.0f -`), and it
+    // divided by zero when time == 0. It was also small and branch-free, which
+    // is why /O1 /Ob2 inlined it straight back where retail emits a real `bl`.
+    float Time2IirA(float time, float rate) {
+        if (time > 0.0f) {
+            return 1.0f - (float)exp(-1.0f / (time * rate));
+        }
+        return 1.0f;
+    }
 }
 
+// DEV-BUILD ONLY -- retail does not have this. Measured, not assumed: the
+// retail PitchDetector TU (0x82B807C0-0x82B81228) contains no `dump` body at
+// all, and AnalyzeBlock's complete `bl` census over its own extent has no
+// call to one. Guarded with the house pattern (see CLAUDE.md) so native
+// keeps the tracer and the match build does not emit the call.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
 void dump(float *data, int len) {
     const char *space = " ";
     for (int i = 0.0f; len > i; i++) {
@@ -67,6 +89,7 @@ void dump(float *data, int len) {
         TheDebug << MakeString("* %d\n", i);
     }
 }
+#endif
 
 PitchDetector::PitchDetector(int sampleRate) {
     mSamplesPerSec = 0;
@@ -118,7 +141,14 @@ void PitchDetector::AnalyzeBlock(
     static float kPropFilter = 0.3f;
     static int sDump = 0;
 
-    int offset = (mDecimRate - mIdx) - (mDecimRate - mIdx) / mDecimRate * mDecimRate;
+    // Spell this as a real `%`. Written out as `x - x/y*y` with the
+    // subexpression repeated, MSVC re-associates it using n == d - i and
+    // emits `(1 - q)*d - i` -- an extra `subfic r9,r9,0x1` and a shifted
+    // operand chain. Retail computes the numerator ONCE and subtracts
+    // (`subf r11,r11,r8` / `divw` / `mullw` / `subf r11,r9,r11`), which is
+    // exactly what `%` lowers to. Same value either way for signed
+    // truncated division.
+    int offset = (mDecimRate - mIdx) % mDecimRate;
     int dec_size = (numSamples - offset - 1) / mDecimRate + 1;
     if (numSamples == 0 || numSamples == offset) {
         dec_size = 0;
@@ -167,9 +197,11 @@ void PitchDetector::AnalyzeBlock(
         sampleIdx += 1;
     }
     mFilter->End();
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (sDump) {
         dump(mDecimBuf, 192);
     }
+#endif
 
     MILO_ASSERT(ixDecim - begIxDecim == dec_size, 0x102);
 
@@ -211,7 +243,7 @@ void PitchDetector::AnalyzeBlock(
     if (floorSeconds != unk4C) {
         float alpha;
         if (floorSeconds > 0.0f) {
-            alpha = 1.0f - Time2IirA(floorSeconds, 60.0f);
+            alpha = Time2IirA(floorSeconds, 60.0f);
         } else {
             alpha = 1.0f;
         }
