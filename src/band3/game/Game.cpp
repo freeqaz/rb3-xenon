@@ -1669,6 +1669,41 @@ Game::Properties::Properties()
       mPlayStarSfx(TheGameMode->Property("play_star_sfx", true)->Int()),
       mUnkTU5_prop19(TheGameMode->Property("allow_drum_fills", true)->Int()) {}
 
+// Retail fn_82677BD0 (Game.cpp span, 0x90 bytes), transcribed statement-for-
+// statement off the retail schedule (lane W16-BO). The five callees are all
+// confirmed from scripts/target_symbol_map.json, not guessed:
+//   stw r29,0x10(r30)          -> unk10 = 0                     (BEFORE the new,
+//                                 so this is a BODY assignment, not an init list:
+//                                 declaration order would put mUnkCounts first)
+//   li r3,0x2c / bl operator new / null guard / bl ??0VocalGuidePitch@@QAA@XZ
+//     -> mGuidePitch = new VocalGuidePitch()   (0x2c == our sizeof)
+//   stw r29,{0x0,0x4,0x8,0xc}(r30)             -> mUnkCounts[0..3] = 0, AFTER the new
+//   bl ?Load@VocalGuidePitch@@QAAX_N@Z with r4=0         -> Load(false)
+//   bl ?FinishLoad@VocalGuidePitch@@QAAXXZ              -> FinishLoad()
+//   bl ?IsLoaded@VocalGuidePitch@@QBA_NXZ, result DISCARDED -> MILO_ASSERT, which
+//     compiles to ((void)(cond)) here (HX_NATIVE undefined) yet still CALLS
+//   bl ?Init@VocalGuidePitch@@QAAXXZ                    -> Init()
+//   stw r4,0x9c(r31) at entry, then addi r4,r31,0x9c     -> the Symbol arrives BY
+//     VALUE, is spilled to its param home, and its ADDRESS is handed to
+//     ?SetSong@VocalGuidePitch@@QAAXABVSymbol@@@Z (const Symbol &)
+// Defined last in the TU for the same reason as the dtor below.
+UnkTU5GuidePitchOwner::UnkTU5GuidePitchOwner(Symbol song) {
+    unk10 = 0;
+    mGuidePitch = new VocalGuidePitch();
+    // EXPERIMENT (W16-BO): indexed loop rather than four direct member stores.
+    // Retail RELOADS `lwz r3,0x14(r30)` before Load(false); with four direct
+    // member stores our build keeps the pointer live in r3 and skips that reload
+    // -- the single remaining `delete` on this row. An indexed store through
+    // `this` is the aliasing fact that would force the reload back.
+    for (int i = 0; i < 4; i++)
+        mUnkCounts[i] = 0;
+    mGuidePitch->Load(false);
+    mGuidePitch->FinishLoad();
+    MILO_ASSERT(mGuidePitch->IsLoaded(), 0x1A);
+    mGuidePitch->Init();
+    mGuidePitch->SetSong(song);
+}
+
 // Retail fn_82677C88 (Game.cpp span, non-virtual, 0x60 bytes):
 //   Terminate(); Unload(); RELEASE(mGuidePitch)
 // Defined last in the TU on purpose -- see the class definition above.

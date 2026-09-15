@@ -51,6 +51,11 @@ public:
     JsonConverter();
     virtual ~JsonConverter();
 
+    /** Retail fn_82B82260 (108 B) in unit `default/JsonUtils`. Declared here (not
+        merely in the parallel src/network/net/JsonUtils.h, which nothing compiles)
+        because retail emits it OUT OF LINE from this TU. */
+    JsonArray *NewArray();
+
     JsonObject *LoadFromString(String const &);
     JsonObject *GetValue(JsonArray *, int);
     const char *Str(JsonArray *, int);

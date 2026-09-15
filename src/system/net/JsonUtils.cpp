@@ -61,6 +61,39 @@ JsonConverter::~JsonConverter() {
     }
 }
 
+// Retail fn_82B82260 (108 B). NOT DEFINED ANYWHERE in this tree before now:
+// src/network/net/JsonUtils.h declares a `NewArray()` on a structurally different
+// JsonConverter, and RockCentral.obj carries the mangled name only as an UNDEFINED
+// external reference -- which is why a byte-scan for the symbol is not a definition
+// test (COFF SectionNumber must be > 0).
+//
+// Retail-byte evidence (lane W16-BO):
+//   li r3, 0x8                <- sizeof(JsonArray) == 8, per cl /d1reportSingleClassLayout
+//   bl operator new / null guard
+//   bl 0x82B81DE0             <- ??0JsonArray@@AAA@XZ  (`AAA` == PRIVATE ctor, which is
+//                                exactly what this header declares; the parallel
+//                                network/ header makes it public, so retail agrees with
+//                                THIS class shape)
+//   lwz r3, 4(r31) / bl json_object_get      <- AddRef() inlined; mObject is at +0x4
+//   addi r3, r30, 8 / bl vector<T*>::push_back  <- mObjects is at +0x8
+//   mr r3, r31                <- returns the new array
+// Independently corroborated by the call graph: exactly FOUR retail `bl` callers, all
+// inside ?DataPointToQString@RockCentral@@SAXABVDataPoint@@AAVString@Quazal@@@Z, and our
+// RockCentral::DataPointToQString calls jc.NewArray() exactly four times.
+JsonArray *JsonConverter::NewArray() {
+    JsonArray *arr = new JsonArray();
+    // EXPERIMENT (W16-BO): name the upcast temporary. Retail sinks the
+    // `stw r31,0x50(r1)` that materialises push_back's const-ref argument BEFORE
+    // `bl json_object_get`; we emit it after (the row's 1 insert + 1 delete). A
+    // named JsonObject* lvalue is initialised at its declaration, which should
+    // place that store ahead of the AddRef call. Semantically identical -- the
+    // upcast is offset 0 under single inheritance.
+    JsonObject *entry = arr;
+    arr->AddRef();
+    mObjects.push_back(entry);
+    return arr;
+}
+
 JsonObject *JsonConverter::LoadFromString(const String &str) {
     printbuf *buf = printbuf_new();
     if (!buf) {

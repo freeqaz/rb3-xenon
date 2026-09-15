@@ -27,6 +27,7 @@
 #include "meta_band/HeaderPerformanceProvider.h"
 #include "meta_band/MetaNetMsgs.h"
 #include "meta_band/MetaPerformer.h"
+#include "meta_band/MusicLibraryStore.h"
 #include "meta_band/ProfileMessages.h"
 #include "meta_band/ProfileMgr.h"
 #include "meta_band/SaveLoadManager.h"
@@ -173,7 +174,27 @@ MusicLibrary::~MusicLibrary() {
     delete mNetSetlists;
 }
 
-void MusicLibrary::OnLoad() {}
+// Retail fn_8253ABB8 (96 B) -- our body was an EMPTY `{}` (4 B, one blr), so the
+// row read fuzzy 0 with nothing wrong in the map. Transcribed off retail:
+//   stb r11(=0), 0x1a0(r30)   -> unk1a0 = false
+//   li r3, 0x64               -> 0x64 == 100 == sizeof(MusicLibraryStore)
+//   bl operator new / null guard
+//   bl 0x825BD458             -> ??0MusicLibraryStore@@QAA@XZ  (from the map, not guessed)
+//   stw r3, 0x19c(r30)        -> unk19c
+// ⚠ THIS IS ALSO THE PROOF THAT MusicLibrary.h:348 IS WRONG. That comment names
+// the op-starter `fn_825276C0`; decoding 0x825276C0 lands inside a
+// _Vector_base<TrackerPlayerDisplay> destructor region, which cannot be it. The
+// real starter is THIS function, fn_8253ABB8.
+// ⚠ AND the allocated type is MusicLibraryStore, NOT the local MusicLibraryUnkOp
+// stub -- corroborating the residual already recorded at MusicLibrary.cpp:375.
+// unk19c is retyped only through this cast, deliberately: retyping the MEMBER
+// would re-point ~20 call sites (Poll/Finish/Unk825BCA38/...) at a class that
+// does not declare them, which is a separate and much larger repair. The cast is
+// a reinterpret and emits no instruction, so the codegen here is retail's exactly.
+void MusicLibrary::OnLoad() {
+    unk1a0 = false;
+    unk19c = (MusicLibraryUnkOp *)new MusicLibraryStore();
+}
 
 void MusicLibrary::OnEnter() {
 #ifdef HX_NATIVE
