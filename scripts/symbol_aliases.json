@@ -83406,6 +83406,16 @@
    "evidence": "T1 (retail bytes). Retail 0x8235cc80 is 72 B / 18 words and our compiled COMDATs for BOTH spellings are byte-identical to it and to each other (1 reloc, type 6, at +28; the single differing word is that relocated bl). Identity of the call site is read directly off retail: ?GetTourGigGuideMap@Tour@@ (0x8235cd38) calls 0x8235cc80 with r3 = Tour 'this' and r4 = Symbol, then feeds the returned pointer to ?GetGigGuideMap@TourDesc@@ as 'this' -- so that call site IS Tour::GetTourDesc(Symbol) -> TourDesc*, while scripts/target_symbol_map.json names the same address GetAward (AccomplishmentManager). Anti-vacuity: retail's own callee at +28 is a THIRD instantiation spelling, ??$_M_find@VSymbol@@@?$hashtable@U?$pair@$$CBVSymbol@@H@... (value type int), inside a body that returns Award*/TourDesc* by loading node+8 as a pointer. That is only possible if /OPT:ICF first folded the hashtable<...>::_M_find instantiations (TourDesc*/Award*/int all emit identical code, find never touches the value), which made the two callers relocation-identical and so folded them in turn. Requires the W16-BS source correction that Tour's m_mapTourDesc is a hash_map, not a std::map -- corroborated independently by retail ??0Tour@@ (0x8235fd10) calling ??0?$hash_map@VSymbol@@H...@Z twice and no _Rb_tree ctor at all, for a class with exactly two map members.",
    "lane": "W16-BS",
    "added": "2026-09-15"
+  },
+  {
+   "name": "0?$hash_map@VSymbol@@ ctor (Tour members)",
+   "address": "0x8255d480",
+   "survivor": "??0?$hash_map@VSymbol@@HU?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAA@XZ",
+   "folded": [
+    "??0?$hash_map@VSymbol@@PAVTourDesc@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVTourDesc@@@stlpmtx_std@@@4@@stlpmtx_std@@QAA@XZ",
+    "??0?$hash_map@VSymbol@@PAVTourProperty@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVTourProperty@@@stlpmtx_std@@@4@@stlpmtx_std@@QAA@XZ"
+   ],
+   "evidence": "W16-BU. T1 on RB3 retail bytes. Retail ??0Tour@@ (0x8235fd10) calls ONE address, 0x8255d480, for BOTH of Tour's hash_map members (+0x38 m_mapTourProperties, +0x80 m_mapTourDesc), which our source instantiates as hash_map<Symbol,TourProperty*> and hash_map<Symbol,TourDesc*> respectively -- retail itself collapsed the two, observed rather than inferred. Our compiled bodies for both spellings are byte-identical to each other and to retail 0x8255d480 (76 B, 19 words, 0 differing words outside the single relocated bl at +0x30). SCOPE IS DELIBERATELY NARROW: hash_map<Symbol,X>::hash_map() does NOT universally fold. Retail holds three distinct bodies -- 0x8255d480, 0x825af9e8 (map: hash_map<Symbol,DataArray*>), 0x82278a20 (map: hash_map<Symbol,vector<PatchSticker*>>) -- identical in 18 of 19 words and differing only at the +0x30 bl, which targets three different hashtable ctors. That is MSVC folding only COMDATs identical INCLUDING relocations. A group covering all 26 spellings our tree defines would have been a fabrication; it was built, tested against the map, and withdrawn."
   }
  ]
 }
