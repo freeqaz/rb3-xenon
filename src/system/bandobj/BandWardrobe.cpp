@@ -1062,6 +1062,11 @@ int BandWardrobe::FindBestScoringHint(Symbol *hints, SlotInfo *info, int &outSlo
         { 16, 16, 0, 0, 6 },
     };
     static Symbol done("done");
+    static Symbol mic("mic");
+    static Symbol guitar("guitar");
+    static Symbol drum("drum");
+    static Symbol bass("bass");
+    static Symbol keyboard("keyboard");
     int bestScore = 10000;
     outSlot = -1;
     int result = -1;
@@ -1079,8 +1084,9 @@ int BandWardrobe::FindBestScoringHint(Symbol *hints, SlotInfo *info, int &outSlo
             }
             if (!ok)
                 continue;
-            int _tmp0 = HandleType(get_customize_slot_msg).Int();
-            outSlot = _tmp0;
+            static Message get_customize_slot_msg(Symbol("get_customize_slot"));
+            DataNode node = HandleType(get_customize_slot_msg);
+            outSlot = node.Int();
             result = i;
         } else if (strncmp("importance", hint.Str(), 10) == 0) {
             int score = hint.Str()[10] - 0x20;
