@@ -1873,8 +1873,11 @@ Symbol SaveLoadManager::GetDialogOpt3() {
 
 BandProfile *SaveLoadManager::GetProfile() {
     // Retail fn_8254C0B0: vbase-adjusts mUser, virtual GetPadNum(), then a
-    // pad-indexed profile lookup on TheProfileMgr (fn_82545E90).
-    return TheProfileMgr.GetProfileForPad(mUser->GetPadNum());
+    // pad-indexed profile lookup on TheProfileMgr.  fn_82545E90 IS
+    // ?GetProfileFromPad@ProfileMgr@@QAAPAVBandProfile@@H@Z -- adjudicated
+    // against scripts/target_symbol_map.json ("0x82545e90"), which is the
+    // already-ported, already-100% ProfileMgr::GetProfileFromPad.
+    return TheProfileMgr.GetProfileFromPad(mUser->GetPadNum());
 }
 
 bool SaveLoadManager::IsReasonToAutoload() {
