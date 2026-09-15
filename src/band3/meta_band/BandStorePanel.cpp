@@ -264,12 +264,12 @@ void BandStorePanel::ExitStore(StoreError err) const {
 // recorded so the next lane starts from the diagnosis and not the symptom.
 BEGIN_HANDLERS(BandStorePanel)
     HANDLE_EXPR(get_request_prefix, GetRequestPrefix())
-    HANDLE_ACTION(request, Request(String(_msg->Str(2)), _msg->Int(3)))
+    HANDLE_ACTION(request, Request(_msg->Str(2), _msg->Int(3)))
     HANDLE_ACTION(
         request_prev_chunk,
-        (Request(String(mPrevChunkPath.c_str()), true), mStartBrowserAtBottom = true)
+        (Request(mPrevChunkPath.c_str(), true), mStartBrowserAtBottom = true)
     )
-    HANDLE_ACTION(request_next_chunk, Request(String(mNextChunkPath.c_str()), true))
+    HANDLE_ACTION(request_next_chunk, Request(mNextChunkPath.c_str(), true))
     HANDLE_EXPR(should_start_browser_at_bottom, mStartBrowserAtBottom)
     // Retail's request_in_progress arm is a bare bool materialization
     // (subic/subfe) with NO TheStoreMetadata.mFlags test: our version emitted
@@ -294,13 +294,35 @@ BEGIN_HANDLERS(BandStorePanel)
     // meaningful rather than arbitrary. (Moving sort_name is metric-neutral
     // today -- Handle is unmapped and this unit's .rdata is not pinned.)
     HANDLE_EXPR(offer_provider, mOfferProvider)
-    HANDLE_EXPR(sort_name, SortName())
-    // rb3-Wii's user_can_do_input tail checked TheWiiCommerceMgr async op state;
-    // there is no CommerceMgr on 360 (Xbox uses XboxEnumeration), so the
-    // Wii-only commerce clause is dropped. (Handle is a deferred funclet wall.)
+    // NOT SortName().  Retail reads the Symbol member straight out of the object
+    // here -- `lwz r11, -0x1c(r26)` == this+0xd0 == mSort, then builds the
+    // DataNode with `li r10, 0x5` (kDataSymbol) -- with no call at all.  Our
+    // SortName() returns Symbol by value, so it gets an sret call that retail
+    // does not make.  SortName() itself stays (it is used elsewhere); it is only
+    // the wrong expression FOR THIS HANDLER.
+    HANDLE_EXPR(sort_name, mSort)
+    // CORRECTED ON RETAIL BYTES (lane W16-CA).  The previous note here read:
+    //   "rb3-Wii's user_can_do_input tail checked TheWiiCommerceMgr async op
+    //    state; there is no CommerceMgr on 360 ... so the Wii-only commerce
+    //    clause is dropped."
+    // The clause is NOT dropped -- it is PORTED, and it was our extra leading
+    // `mUserCanDoInput == 0` that retail does not have.  Retail's guard is
+    // four terms in this order (fn at Handle idx 322-342):
+    //   lwz/lwz 0x30(vptr); bctrl; clrlwi.; beq   -> IsLoaded()      (slot 12)
+    //   bl fn_827B4CC0; clrlwi.; bne              -> !IsEnumerating()
+    //   bl fn_827B4D10; clrlwi.; bne              -> !InCheckout()
+    //   lwz -0x40(r26); lbz 0(r11); cmplwi 0      -> mLastRequest.empty()
+    // The two callees are identified from StorePanel.h's OFFSETS, not from
+    // their vtable slot names: fn_827B4CC0 reads this->0x70 (= XboxEnumeration
+    // *mEnum), null-checks it and vcalls slot 2 == IsEnumerating(); fn_827B4D10
+    // is `return this->0x78 != 0` and 0x78 is StorePurchaser *mPurchaser ==
+    // InCheckout().  (I first read these the other way round off the vtable
+    // slot names and the header offsets corrected it.)  They are the 360
+    // equivalents of the Wii commerce check, so the Wii clause did survive the
+    // port -- it was translated, not deleted.
     HANDLE_EXPR(
         user_can_do_input,
-        mUserCanDoInput == 0 && IsLoaded() && mLastRequest.empty()
+        IsLoaded() && !IsEnumerating() && !InCheckout() && mLastRequest.empty()
     )
     HANDLE_ACTION(set_shortcut_data, SetShortcutData(_msg->Array(2)))
     HANDLE_ACTION(apply_shortcut_provider, ApplyShortcutProvider(_msg->Obj<UIList>(2)))
@@ -310,10 +332,40 @@ BEGIN_HANDLERS(BandStorePanel)
     HANDLE_CHECK(0x2B0)
 END_HANDLERS
 
+// NO SYNC_PROP here.  Retail's SyncProperty is the bare superclass chain: the
+// `waiting` branch we used to emit is ENTIRELY ours-only in the diff -- nine
+// target-absent instructions (lis/lwz ?waiting@@3VSymbol@@A@h/@l, the cmplw
+// against the incoming Symbol, and the PropSync call on this+0xe1) with no
+// counterpart anywhere in retail's 30-instruction body.  The property does not
+// exist on retail's BandStorePanel.
 BEGIN_PROPSYNCS(BandStorePanel)
-    SYNC_PROP(waiting, mUserCanDoInput)
     SYNC_SUPERCLASS(StorePanel)
 END_PROPSYNCS
+
+// Retail fn_82606020 (264 B), emitted in this translation unit.  Declared in
+// BandSongMetadata.h; defined HERE and not in the header so that MSVC emits one
+// out-of-line body in BandStorePanel.obj exactly as retail does, rather than a
+// COMDAT in every TU that names the type.  Both of Poll's message sites become a
+// single `bl` to this, which is why retail's Poll frame is 0xf0 and ours was
+// 0x140: the five DataNode temporaries live on THIS function's frame, not on
+// Poll's.
+MetadataLoadedMsg::MetadataLoadedMsg(
+    DataArray *arr, bool loaded, const char *name, bool b2, bool b3
+)
+    // The four scalar arguments are passed RAW and converted IMPLICITLY -- not
+    // wrapped in explicit DataNode(...) temporaries.  Message's ctor takes
+    // `const DataNode &`, and DataNode(int) / DataNode(const char *) are not
+    // `explicit`, so both spellings compile and are semantically identical --
+    // but they do not generate the same code.  For an explicit functional-cast
+    // temporary MSVC threads the DataNode ctor's returned `this` through a
+    // callee-saved register; for an implicit conversion it re-forms
+    // `addi rN, r31, <slot>` from the temporary's known stack slot, which is
+    // retail's codegen.  Visible as one FEWER callee-saved register (retail
+    // `bl __savegprlr_27` vs our `__savegprlr_26`) and a 16-byte smaller frame
+    // (0xb0 vs 0xc0).  Same lever as the three Request() arms in Handle.
+    // DataNode(arr, kDataArray) stays explicit -- two-argument ctor, no
+    // implicit form.
+    : Message(MetadataLoadedMsg::Type(), DataNode(arr, kDataArray), loaded, name, b2, b3) {}
 
 void BandStorePanel::Poll() {
     StorePanel::Poll();
@@ -325,19 +377,10 @@ void BandStorePanel::Poll() {
                 metadata->AddRef();
                 MILO_ASSERT(metadata, 0x11C);
                 const char *nullStr = gNullStr;
-                static Message msg(
-                    MetadataLoadedMsg::Type(),
-                    DataNode(metadata, kDataArray),
-                    DataNode(1),
-                    DataNode(nullStr),
-                    DataNode(0),
-                    DataNode(0)
-                );
+                static MetadataLoadedMsg msg(metadata, true, nullStr, false, false);
                 msg[0] = DataNode(metadata, kDataArray);
                 msg[2] = DataNode(mLastRequest.c_str());
-                msg[3] = DataNode(
-                    (int)(mLastRequest == MakeString("%d", StoreBuildNum()))
-                );
+                msg[3] = DataNode((int)(mLastRequest == GetIndexFile()));
                 msg[4] = DataNode((int)!mLastRequestExtra);
                 String path(mLastRequest);
                 mLastRequest.erase();
@@ -351,20 +394,15 @@ void BandStorePanel::Poll() {
         }
         if (mMetadataLoader->HasFailed()) {
             MILO_NOTIFY("Request for %s failed.\n", mLastRequest.c_str());
-            DataArray *empty = new DataArray(0);
+            // objdiff resolves retail's callee here to ??0DataArrayPtr@@QAA@XZ,
+            // i.e. the default DataArrayPtr ctor (`mData = new DataArray(0)`),
+            // NOT a bare `new DataArray(0)`. Its inlined dtor supplies the
+            // trailing Release, which is why the explicit one below is gone.
+            DataArrayPtr empty;
             {
-                Message msg(
-                    MetadataLoadedMsg::Type(),
-                    DataNode(empty, kDataArray),
-                    DataNode(0),
-                    DataNode(gNullStr),
-                    DataNode(0),
-                    DataNode(0)
-                );
+                MetadataLoadedMsg msg(empty, false, gNullStr, false, false);
                 msg[2] = DataNode(mLastRequest.c_str());
-                msg[3] = DataNode(
-                    (int)(mLastRequest == MakeString("%d", StoreBuildNum()))
-                );
+                msg[3] = DataNode((int)(mLastRequest == GetIndexFile()));
                 msg[4] = DataNode((int)!mLastRequestExtra);
                 mLastRequest.erase();
                 if (mMetadataLoader) {
@@ -373,7 +411,6 @@ void BandStorePanel::Poll() {
                 }
                 Export(msg.mData, true);
             }
-            empty->Release();
         }
     }
 }

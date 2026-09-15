@@ -35,20 +35,33 @@ void SetlistToStorePanel::LoadSongMetadata() {
     mAllMetadata->Node(0) = DataArrayPtr(DataNode(offers));
 }
 
-/** Retail's payload message for the setlist-upsell store hand-off.
- *  Poll() builds it as a function-local static (guard bit 0x10) from the same
- *  five DataNode values BandStorePanel::Poll uses for MetadataLoadedMsg --
- *  (metadata, 1, gNullStr, 0, 0) -- but hands them over as raw scalars
- *  (r4..r8), so retail's ctor takes scalars and wraps them in DataNodes
- *  itself.  Its out-of-line body lives in BandStorePanel.cpp (fn_82606020,
- *  between ?SetType@BandStorePanel@@ and ?Instance@BandStorePanel@@), which is
- *  why this is a single `bl` rather than an inlined DataArray build-up.
- *  Decl-only ctor: the match build never links, and `functionRelocDiffs=none`
- *  makes the callee address score-invisible -- only the argument shape scores. */
-class SetlistMetadataLoadedMsg : public Message {
-public:
-    SetlistMetadataLoadedMsg(DataArray *, int, const char *, int, int);
-};
+/* THERE IS NO SEPARATE SetlistMetadataLoadedMsg -- it is MetadataLoadedMsg.
+ * This file used to declare a local decl-only class of that name, on the
+ * correct observation that retail's ctor here takes RAW SCALARS (r4..r8) and
+ * that its out-of-line body is fn_82606020 over in BandStorePanel.cpp.  Both
+ * observations were right; the conclusion that it was a DIFFERENT class was
+ * not.  BandStorePanel::Poll's two message sites call THE SAME retail function
+ * fn_82606020, and one function cannot be two classes' constructors, so there
+ * is exactly one message type and MetadataLoadedMsg (BandSongMetadata.h, which
+ * this file already includes) is it.
+ *
+ * This mattered METRICALLY, not just tidily.  Once fn_82606020 is named in
+ * scripts/target_symbol_map.json, name_check stops forgiving it as a
+ * placeholder and starts comparing the callee NAME -- at which point spelling
+ * it SetlistMetadataLoadedMsg here charged this file's Poll (1,196 B) and
+ * knocked it off 100%.  Measured: -1,196 B for the map edit alone, recovered
+ * in full by this change.
+ *
+ * Also note the retired comment's claim that "`functionRelocDiffs=none` makes
+ * the callee address score-invisible" is STALE: name_check has been the
+ * shipped ruler since 2026-08-12, so the callee name is score-VISIBLE and is
+ * precisely what the paragraph above is about.
+ *
+ * The three scalar parameters are bool, not int: fn_82606020 applies
+ * `clrlwi rN, rN, 24` to r5/r7/r8 before storing them into the DataNode
+ * integer, which is the bool->int widening and would not be emitted for int.
+ * A caller cannot tell the two apart -- only that callee body can -- which is
+ * why this file previously spelled them int. */
 
 /** Retail's timeout-screen lookup (fn_82272308).  It begins exactly where
  *  ?FindSym@DataArray@@ ends, so it is a Find*-family sibling in obj/Data.cpp:
@@ -126,7 +139,7 @@ void SetlistToStorePanel::Poll() {
     static Symbol setlist_upsell("setlist_upsell");
     StorePanel::Instance()->SetSource(setlist_upsell, true);
     MILO_ASSERT(mAllMetadata->Array(0), 0x62);
-    static SetlistMetadataLoadedMsg msg(mAllMetadata, 1, gNullStr, 0, 0);
+    static MetadataLoadedMsg msg(mAllMetadata, true, gNullStr, false, false);
     {
         DataNode metaNode(mAllMetadata, kDataArray);
         msg[0] = metaNode;
