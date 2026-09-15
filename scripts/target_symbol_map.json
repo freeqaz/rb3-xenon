@@ -13676,6 +13676,7 @@
  "0x82606008": "?SetType@BandStorePanel@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
  "0x82606218": "??_GBandStorePanel@@UAAPAXI@Z",
  "0x82606260": "?Instance@BandStorePanel@@SAPAV1@XZ",
+ "0x82606280": "?OnMsg@BandStorePanel@@QAA?AVDataNode@@ABVMetadataLoadedMsg@@@Z",
  "0x82606720": "?LoadArt@BandStorePanel@@UAAXPBDPAVUIPanel@@@Z",
  "0x82606a80": "?ExitStore@BandStorePanel@@UBAXW4StoreError@@@Z",
  "0x82606c28": "?Poll@BandStorePanel@@UAAXXZ",
