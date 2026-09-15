@@ -49,7 +49,23 @@ float RefinePeriod2(
 // definition lives in another TU, and the retail source may reach it through a
 // shared declaration rather than defining it here.
 namespace {
-    float Time2IirA(float time, float rate) { return exp(-1.0f / (time * rate)); }
+    // The real retail body, read off 0x82B6EA08 (92 B) rather than guessed:
+    //   fcmpu f1,0.0 / ble -> return 1.0
+    //   fmuls f13,f1,f2      time * rate
+    //   fdivs f1,-1.0,f13    -1.0 / (time * rate)
+    //   bl exp (0x8282ED70)
+    //   frsp f13,f1          narrow to float FIRST...
+    //   fsubs f1,1.0,f13     ...then subtract in float -- hence the cast
+    // The previous one-liner `return exp(-1.0f/(time*rate));` was missing both
+    // the guard and the subtraction (the caller carried the `1.0f -`), and it
+    // divided by zero when time == 0. It was also small and branch-free, which
+    // is why /O1 /Ob2 inlined it straight back where retail emits a real `bl`.
+    float Time2IirA(float time, float rate) {
+        if (time > 0.0f) {
+            return 1.0f - (float)exp(-1.0f / (time * rate));
+        }
+        return 1.0f;
+    }
 }
 
 // DEV-BUILD ONLY -- retail does not have this. Measured, not assumed: the
@@ -227,7 +243,7 @@ void PitchDetector::AnalyzeBlock(
     if (floorSeconds != unk4C) {
         float alpha;
         if (floorSeconds > 0.0f) {
-            alpha = 1.0f - Time2IirA(floorSeconds, 60.0f);
+            alpha = Time2IirA(floorSeconds, 60.0f);
         } else {
             alpha = 1.0f;
         }
