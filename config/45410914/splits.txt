@@ -2871,7 +2871,7 @@ MeterEffect.cpp:
 	.text       start:0x82C43390 end:0x82C43420
 
 UI.cpp:
-	.pdata      start:0x82209000 end:0x82209158
+	.pdata      start:0x82209000 end:0x822090E0
 	.pdata      start:0x82245D40 end:0x82245D60
 	.pdata      start:0x82245D60 end:0x82245D70
 	.pdata      start:0x82245D70 end:0x82245D78
@@ -2889,7 +2889,7 @@ UI.cpp:
 	.pdata      start:0x82246018 end:0x82246128
 	.pdata      start:0x8225C5E0 end:0x8225C5F8
 	.pdata      start:0x8225C5F8 end:0x8225C680
-	.text       start:0x823F4A30 end:0x823F5C98
+	.text       start:0x823F4A30 end:0x823F56F8
 	.text       start:0x828023A0 end:0x828024B0
 	.text       start:0x828024B0 end:0x82802530
 	.text       start:0x82802530 end:0x82802588
@@ -9264,6 +9264,10 @@ NetworkEmulator.cpp:
 network/net/SessionSearcher.cpp:
 	.pdata      start:0x82208530 end:0x82208600
 	.text       start:0x823EAD68 end:0x823EB8E0
+
+network/net/NetSearchResult.cpp:
+	.pdata      start:0x822090E0 end:0x82209158
+	.text       start:0x823F56F8 end:0x823F5C98
 
 network/net/NetLog.cpp:
 	.pdata      start:0x82208600 end:0x82208610
