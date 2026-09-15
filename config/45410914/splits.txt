@@ -1368,11 +1368,7 @@ FreeCamera.cpp:
 
 FileChecksum.cpp:
 	.pdata      start:0x82215C60 end:0x82215C70
-	.pdata      start:0x8223EE98 end:0x8223EEA0
-	.pdata      start:0x8223EEA0 end:0x8223EEA8
 	.text       start:0x824EDF08 end:0x824EE01C
-	.text       start:0x8278BB98 end:0x8278BD3C
-	.text       start:0x8278BD3C end:0x8278BD68
 
 Rot.cpp:
 	.pdata      start:0x821FE3E8 end:0x821FE420
@@ -3495,7 +3491,6 @@ HamMove.cpp:
 	.text       start:0x82714A48 end:0x82714DC8
 	.text       start:0x82714DC8 end:0x827150B8
 	.text       start:0x82715530 end:0x827155A8
-	.text       start:0x8278B7F0 end:0x8278B838
 	.text       start:0x827B7ED0 end:0x827B7EE0
 
 HamNavProvider.cpp:
@@ -12795,6 +12790,8 @@ system/beatmatch/PhraseAnalyzer.cpp:
 	.pdata      start:0x8223EE78 end:0x8223EE88
 	.pdata      start:0x8223EE88 end:0x8223EE90
 	.pdata      start:0x8223EE90 end:0x8223EE98
+	.pdata      start:0x8223EE98 end:0x8223EEA0
+	.pdata      start:0x8223EEA0 end:0x8223EEA8
 	.pdata      start:0x8223EEA8 end:0x8223EEB0
 	.pdata      start:0x8223EEB0 end:0x8223EEC0
 	.pdata      start:0x8223EEC0 end:0x8223EEC8
@@ -12807,11 +12804,14 @@ system/beatmatch/PhraseAnalyzer.cpp:
 	.text       start:0x8278B550 end:0x8278B6D0
 	.text       start:0x8278B6D0 end:0x8278B734
 	.text       start:0x8278B738 end:0x8278B7F0
+	.text       start:0x8278B7F0 end:0x8278B838
 	.text       start:0x8278B838 end:0x8278B8E8
 	.text       start:0x8278B8E8 end:0x8278B988
 	.text       start:0x8278B988 end:0x8278BAA0
 	.text       start:0x8278BAA0 end:0x8278BAF8
 	.text       start:0x8278BAF8 end:0x8278BB98
+	.text       start:0x8278BB98 end:0x8278BD3C
+	.text       start:0x8278BD3C end:0x8278BD68
 	.text       start:0x8278BD68 end:0x8278BDE8
 	.text       start:0x8278BDE8 end:0x8278BF28
 	.text       start:0x8278BF28 end:0x8278BFB0
