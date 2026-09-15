@@ -20837,7 +20837,7 @@
  "0x827d2458": "??_GSongInfoCopy@@UAAPAXI@Z",
  "0x827d24a8": "??0SongInfo@@QAA@XZ",
  "0x827d24b8": "??_GSongInfo@@UAAPAXI@Z",
- "0x827d2500": "?_M_throw_length_error@?$_String_base@DV?$allocator@D@stlpmtx_std@@@stlpmtx_std@@IBAXXZ",
+ "0x827d2500": "?SetTheTempoMap@@YAXPAVTempoMap@@@Z",
  "0x827d2528": "?TickToTime@SimpleTempoMap@@UBAMM@Z",
  "0x827d2538": "?TimeToTick@SimpleTempoMap@@UBAMM@Z",
  "0x827d2548": "?GetTempo@SimpleTempoMap@@UBAMH@Z",
@@ -30527,5 +30527,7 @@
  "0x827421b8": "??0Splash@@QAA@XZ",
  "0x824a2008": "?resize@?$ObjList@UProxyCall@EventTrigger@@@@QAAXI@Z",
  "0x823629b0": "??$?6VSymbol@@H@@YAAAVBinStream@@AAV0@ABV?$hash_map@VSymbol@@HU?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@@Z",
- "0x82c78f5c": "?TheTempoMap@@3PAVTempoMap@@A"
+ "0x82c78f5c": "?TheTempoMap@@3PAVTempoMap@@A",
+ "0x82c78f60": "?gDefaultTempoMap@@3VSimpleTempoMap@@A",
+ "0x82e051a0": "?TheTaskMgr@@3VTaskMgr@@A"
 }
