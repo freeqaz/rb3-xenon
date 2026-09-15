@@ -189,8 +189,13 @@ CheatsManager::CheatsManager()
     if (arr) {
         mCtrlOverriddeMode = arr->Int(1);
     }
-#endif
+    // DC3-era addition, NOT in RB3 retail: retail's 340 B ctor at 0x827C2780 runs
+    // straight from FindData("cheats_buffer") to the epilogue, and the rb3-Wii DEV
+    // oracle's ctor has no SetName either.  The six instructions this emits are
+    // exactly our 364 B - retail's 340 B.  Kept for the native host, which relies
+    // on ObjectDir::Main() lookups.
     SetName("cheats_mgr", ObjectDir::Main());
+#endif
 }
 
 BEGIN_HANDLERS(CheatsManager)
