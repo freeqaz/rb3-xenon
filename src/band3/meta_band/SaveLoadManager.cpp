@@ -61,8 +61,16 @@ public:
     virtual void PreAction();
     virtual void Action();
     virtual void PostAction();
-    int unk24; // 0x24
-    std::vector<BandProfile *> *mProfiles; // 0x28
+    // NO members of its own.  Retail's two `new LoadMemcardAction` sites pass
+    // 0x14 to CriticalSection::operator new (SetState idx 195 and idx 1012,
+    // both `li r3,0x14`), and MemcardAction is exactly 0x14 (vptr + mResult +
+    // unk8 + unkc + mProfile).  The unk24/mProfiles pair came from the rb3-Wii
+    // oracle, whose MemcardAction base is larger and whose ctor takes a
+    // vector<BandProfile*>* where ours takes a BandProfile*.  Neither member
+    // was ever referenced anywhere, and this TU defines no LoadMemcardAction
+    // method bodies, so they did nothing but make sizeof 0x1c and mis-size
+    // both allocations.  (meta_ham/HamMemcardAction.h's LoadMemcardAction is
+    // likewise memberless.)
 };
 
 SaveLoadManager *TheSaveLoadMgr;
@@ -1064,7 +1072,14 @@ void SaveLoadManager::SetState(State newState) {
     }
     case 0x26:
         mCacheID = NULL;
-        SetState((State)0x3);
+        // Retail goes to 0x27, not 0x3 (SetState idx 430: target `li r4,0x27`
+        // against our `li r4,0x3`, both immediately after the same
+        // `stw <zero>,0x5c(r30)` = mCacheID = NULL, so the streams are aligned
+        // on the same construct).  0x27 is the handled state right below that
+        // re-searches the global cache -- the natural successor to clearing
+        // mCacheID -- whereas 0x3 is kS_AutoloadSelectProfile, which has no
+        // business in a song-cache-create flow.
+        SetState((State)0x27);
         break;
     case 0x13:
     {
