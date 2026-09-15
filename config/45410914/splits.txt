@@ -4024,13 +4024,6 @@ band3/meta_band/InterstitialMgr.cpp:
 	.text       start:0x825B0290 end:0x825B03E0
 	.text       start:0x825B03E0 end:0x825B0518
 
-HamScrollSpeedIndicator.cpp:
-	.pdata      start:0x821FC748 end:0x821FC758
-	.text       start:0x8231F00C end:0x8231F010
-	.text       start:0x8231F01C end:0x8231F020
-	.text       start:0x8231F02C end:0x8231F030
-	.text       start:0x8231F03C end:0x8231F0E0
-
 LiveCameraInput.cpp:
 	.pdata      start:0x8220C158 end:0x8220C168
 	.pdata      start:0x8220C320 end:0x8220C328
@@ -4790,12 +4783,6 @@ CharBonesMeshes.cpp:
 
 DingoSvr.cpp:
 	.text       start:0x827AB2C0 end:0x827AB2C8
-
-HamSongData.cpp:
-	.pdata      start:0x822083C8 end:0x822083D0
-	.pdata      start:0x82208468 end:0x82208470
-	.text       start:0x823E9D00 end:0x823E9E18
-	.text       start:0x823EA408 end:0x823EA468
 
 UIComponent.cpp:
 	.pdata      start:0x821FB378 end:0x821FB388
@@ -9304,6 +9291,7 @@ SessionMessages.cpp:
 SyncStore.cpp:
 	.pdata      start:0x82208348 end:0x822083C0
 	.pdata      start:0x822083C0 end:0x822083C8
+	.pdata      start:0x822083C8 end:0x822083D0
 	.pdata      start:0x822083D0 end:0x822083F0
 	.pdata      start:0x822083F0 end:0x82208400
 	.pdata      start:0x82208400 end:0x82208420
@@ -9311,9 +9299,11 @@ SyncStore.cpp:
 	.pdata      start:0x82208430 end:0x82208438
 	.pdata      start:0x82208438 end:0x82208450
 	.pdata      start:0x82208450 end:0x82208468
+	.pdata      start:0x82208468 end:0x82208470
 	.pdata      start:0x82208470 end:0x822084E0
 	.text       start:0x823E9750 end:0x823E9C70
 	.text       start:0x823E9C70 end:0x823E9D00
+	.text       start:0x823E9D00 end:0x823E9E18
 	.text       start:0x823E9E18 end:0x823E9F08
 	.text       start:0x823E9F08 end:0x823E9FC8
 	.text       start:0x823E9FC8 end:0x823EA0D0
@@ -9321,6 +9311,7 @@ SyncStore.cpp:
 	.text       start:0x823EA1C8 end:0x823EA238
 	.text       start:0x823EA238 end:0x823EA300
 	.text       start:0x823EA300 end:0x823EA408
+	.text       start:0x823EA408 end:0x823EA468
 	.text       start:0x823EA468 end:0x823EA958
 	.text       start:0x823F0FA0 end:0x823F0FC0
 
@@ -13147,6 +13138,7 @@ system/bandobj/ReviewDisplay.cpp:
 	.pdata      start:0x821FC690 end:0x821FC6B0
 	.pdata      start:0x821FC6B0 end:0x821FC6B8
 	.pdata      start:0x821FC6C8 end:0x821FC748
+	.pdata      start:0x821FC748 end:0x821FC758
 	.pdata      start:0x821FC758 end:0x821FC7B8
 	.text       start:0x8231E550 end:0x8231E6A4
 	.text       start:0x8231E6A8 end:0x8231E6EC
@@ -13154,9 +13146,13 @@ system/bandobj/ReviewDisplay.cpp:
 	.text       start:0x8231E728 end:0x8231E734
 	.text       start:0x8231E748 end:0x8231E788
 	.text       start:0x8231E8F8 end:0x8231F00C
+	.text       start:0x8231F00C end:0x8231F010
 	.text       start:0x8231F010 end:0x8231F01C
+	.text       start:0x8231F01C end:0x8231F020
 	.text       start:0x8231F020 end:0x8231F02C
+	.text       start:0x8231F02C end:0x8231F030
 	.text       start:0x8231F030 end:0x8231F03C
+	.text       start:0x8231F03C end:0x8231F0E0
 	.text       start:0x8231F0E0 end:0x8231F680
 
 system/char/CharMeshCacheMgr.cpp:
