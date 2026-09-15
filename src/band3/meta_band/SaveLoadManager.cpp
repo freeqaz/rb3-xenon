@@ -1086,6 +1086,24 @@ void SaveLoadManager::SetState(State newState) {
             mCacheID = NULL;
         }
         // Retail order: static-init, THEN GetGlobalOptionsSize, THEN Localize.
+        // ⛔ DO NOT hoist Localize into a `const char *locName` local here, even
+        // though the rb3-Wii oracle spells it that way (its lines 1013/1029/1050
+        // all read `const char *locName = Localize(...);`).  BUILT AND MEASURED
+        // (lane W16-CF): the hoist DOES fix the one thing wrong with this site --
+        // our `kStrGlobalCacheName.Str()` load moves from above the `bl Localize`
+        // to below it, landing directly in the argument register, and goes EQUAL
+        // at all three sites (0x2b, 0x2c, 0x3b).  But it costs more than it buys:
+        //   (a) retail loads TheCacheMgr AND its vptr BEFORE the bl, holding the
+        //       vptr in a callee-saved reg across it.  That only happens while
+        //       Localize is an ARGUMENT; as a statement MSVC sinks the vptr fetch
+        //       below the call, breaking 2 instructions at each of the 3 sites.
+        //   (b) the regalloc shift broke two regions that were previously EQUAL
+        //       and have no Localize at all -- case 0x21 (idx 349-359) and case
+        //       0x32 (idx 670-678).
+        // Net row fuzzy 97.24219 -> 96.12402, so the inline form below is kept.
+        // Retail wants vptr-early (=> inline) AND the string load late (=> hoisted)
+        // and neither pure source form delivers both; that coupling, not 8
+        // separate defects, is what the idx 516-648 clusters are.
         static Symbol global_options_cache_name("global_options_cache_name");
         int sz = TheProfileMgr.GetGlobalOptionsSize();
         if (!TheCacheMgr->ShowUserSelectUIAsync(
