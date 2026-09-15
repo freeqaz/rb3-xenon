@@ -87,7 +87,7 @@ loop_end:
 
 const char *gGenres[4] = { "rocker", "dramatic", "banger", "spazz" };
 
-int GetGenreGenderFlags(Symbol s1, Symbol s2) {
+static int GetGenreGenderFlags(Symbol s1, Symbol s2) {
     int gv = 0;
     for (int i = 0; i < 4; i++) {
         if (s1 == gGenres[i]) {
@@ -430,9 +430,7 @@ bool BandWardrobe::ValidGenreGender(CamShot *shot) {
     if ((flags & 0xF03) == 0xF03)
         return true;
     else {
-        if (!PowerOf2(flags & 0xF8000)) {
-            MILO_FAIL("%s has bad focus flags", PathName(shot));
-        }
+        MILO_ASSERT(PowerOf2(flags & 0xF8000), 0x3C9);
         int instnum;
         for (instnum = 0; instnum < 4; instnum++) {
             if (flags & gInstFocus[instnum])
