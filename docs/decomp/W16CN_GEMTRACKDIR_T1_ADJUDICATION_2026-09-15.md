@@ -74,3 +74,44 @@ an arg-only row.
 
 **Do not** fund the ctor as an alias target. Its only live lever is identifying
 `0x82829258`, which per MAPID-1 pays in **bug exposure, not bytes**.
+
+---
+
+## ⛔ CORRECTION (same day, before anything was installed): 728 B is NOT collectable
+
+The "Action" above is **retracted**. Nothing was installed.
+
+Reading `symbol_aliases.json` to install the three dtor memberships turned up a
+`withdrawn` record on the group at `0x822ec870` for
+`??1?$vector@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@V?$StlNodeAlloc@...@2@@stlpmtx_std@@QAA@XZ`
+— compared **byte-exactly**, not by eye, against the spelling pulled from the JSON:
+**identical, 155 chars.** That is the same membership this lane's T1 passed. It was
+dropped by lane **ALIAS-REPAIR 2026-08-19**, class `UNDER_PARTITIONED_ICF_CLOSURE`,
+disposition `dropped_singleton`.
+
+**Two instruments disagree on one pair:**
+
+| | oracle | verdict |
+|---|---|---|
+| this lane, `comdat_fold_gate.compare()` | branch destinations resolved **through the map** | **PASS** — 32/34 words full 32-bit, both destinations name-equal |
+| ALIAS-REPAIR 2026-08-19 | operands resolved **through the ICF congruence over our own build** | **WITHDRAWN** — members "DISAGREE on their RESOLVED operands … cannot be the same LINKED body" |
+
+Since `matched_code` is all-or-nothing per row and one of the dtor's three pairs is
+under a standing withdrawal, **the 728 B is not collectable as things stand** — the row
+has a blocking pair exactly as the ctor does. The corrected position is:
+
+- ctor 2,548 B — blocked (unnamed destination + chained fold), unchanged.
+- dtor   728 B — **blocked by a policy conflict**, not by evidence. 2 of 3 pairs are
+  cleanly T1; the third is contested.
+- **0 of 3,276 B is collectable today.**
+
+The conflict is worth more than the bytes. These are not two readings of one instrument;
+they are two different resolution oracles, and whichever is wrong is wrong about a whole
+class of alias decisions, not just this pair. Escalated to a dedicated lane rather than
+resolved by preferring the newer run — a fresh instrument agreeing with the hypothesis
+that motivated running it is the weakest possible evidence, and installing over a
+recorded withdrawal on that basis is how a fabricated alias gets in.
+
+**Standing rule this reinforces:** grep `symbol_aliases.json` for the *exact* spelling —
+including its `withdrawn` records — **before** believing any relocation-name find. The
+file records refusals, not just admissions.
