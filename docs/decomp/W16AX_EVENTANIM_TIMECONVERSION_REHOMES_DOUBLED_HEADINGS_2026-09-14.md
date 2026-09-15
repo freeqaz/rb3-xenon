@@ -316,7 +316,13 @@ tools/native_build_gate.sh                   see line below
 
 `NATIVE_GATE_RESULT` line, verbatim:
 
-<!-- NATIVE_GATE_LINE -->
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+Run after commit `ef0e6695`, no source change since; log `~/tmp/w16ax_native_gate.log`.
+Full coverage: 18/18 verified, **0 SKIPs**, rc=0 — the 0-SKIP rule applied, not just the `PASS` word.
+
 
 ## 5. NOT done, and why
 
