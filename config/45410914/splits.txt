@@ -498,7 +498,9 @@ Instarank.cpp:
 BandCharacter.cpp:
 	.pdata      start:0x821F1F28 end:0x821F1F30
 	.pdata      start:0x821F1F88 end:0x821F1F98
+	.pdata      start:0x821F1FC8 end:0x821F1FD8
 	.pdata      start:0x821F1FD8 end:0x821F1FE0
+	.pdata      start:0x821F1FE0 end:0x821F2000
 	.pdata      start:0x821F2000 end:0x821F2020
 	.pdata      start:0x821F2030 end:0x821F2040
 	.pdata      start:0x821F2050 end:0x821F2060
