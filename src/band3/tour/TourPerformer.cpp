@@ -46,8 +46,8 @@ int TourPerformerImpl::GetTotalQuestStars() const { return 5; }
 Symbol TourPerformerImpl::GetCurrentQuestDisplayName() const {
     Symbol quest = GetCurrentQuest();
     Quest *pQuest = TheQuestMgr.GetQuest(quest);
-    if (!pQuest)
-        return quest;
+    // No `if (!pQuest) return quest;` -- retail 0x823609F8 is 88 B and has no
+    // such branch; the rb3-Wii DEV oracle does carry it. Retail bytes win.
     MILO_ASSERT(pQuest, 0x8C);
     return pQuest->GetDisplayName();
 }
@@ -279,6 +279,10 @@ void TourPerformerImpl::UpdateQuestResultLabel(UILabel *label) {
 void TourPerformerImpl::UpdateTourPlayerContributionLabel(UILabel *label, BandUser *user) {
     MILO_ASSERT(label, 0x1F5);
     MILO_ASSERT(user, 0x1F6);
+    // Retail emits an MSVC function-local-static guard here (guard word
+    // 0x82CBE9FC, Symbol 0x82CBE9F8, literal 0x8203E6B0 "generic_string") --
+    // W16-BU. The Symbols.h file-scope global carries no guard.
+    static Symbol generic_string("generic_string");
     label->SetTokenFmt(generic_string, GetPlayerContributionString(user).c_str());
 }
 
