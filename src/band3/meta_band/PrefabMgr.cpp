@@ -55,12 +55,25 @@ void PrefabMgr::Init(BandUserMgr *mgr) {
         MILO_ASSERT(TheBandUserMgr, 0x4C);
         ThePrefabMgr->unk5c = TheBandUserMgr;
     }
-    DataRegisterFunc("prefab_is_customizable", OnPrefabIsCustomizable);
-    DataRegisterFunc("prefab_toggle_customizable", OnPrefabToggleCustomizable);
-    DataRegisterFunc("prefab_uses_profile_patches", OnPrefabUsesProfilePatches);
-    DataRegisterFunc(
-        "prefab_toggle_uses_profile_patches", OnPrefabToggleUsesProfilePatches
-    );
+    // ⛔ FOUR `DataRegisterFunc` CALLS REMOVED HERE (lane W16-BO). Retail
+    // fn_825557E8 is 120 B and ENDS at the unk5c branch: its entire body is
+    //   li r3,0x9c / bl operator new / bl ??0PrefabMgr@@QAA@XZ  (0x9c == 156 ==
+    //     sizeof(PrefabMgr), compiler-verified)
+    //   stw r3, lbl_82DFDA78            -> ThePrefabMgr
+    //   cmplwi cr6,r30,0 / beq          -> if (mgr)
+    //   stw r30, 0x7c(r3)               -> unk5c (0x7c == 124, matches the header)
+    //   else lwz lbl_82E023B8 / stw 0x7c(r3)  -> TheBandUserMgr
+    //   blr
+    // There is no fifth call and no string-pool reference. Ours was 248 B, i.e.
+    // masked-equal for the first 24 words and then 128 B of surplus.
+    // Proved faithful rather than assumed, by a controlled retail-string search:
+    // "prefab_is_customizable", "prefab_toggle_customizable",
+    // "prefab_uses_profile_patches" and "prefab_toggle_uses_profile_patches" occur
+    // ZERO times in orig/45410914/band.exe (positive controls from the same TU are
+    // non-zero, so the search is not vacuous), and the unit carries no `?OnPrefab*`
+    // target row. The handlers below are left DEFINED -- they are declared in
+    // PrefabMgr.h and removing them is a separate, larger claim -- they are simply
+    // no longer registered, which is what retail shows.
 }
 
 void PrefabMgr::Poll() {
