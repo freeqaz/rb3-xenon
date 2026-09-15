@@ -462,9 +462,42 @@ Predicted: `default/HamLabel` disappears (−2 fns / −120 B from that unit),
 **accuracy plus draining a DC3 scaffold**, not bytes. ⚠ Unverified by me — no
 build was run for it, because the edit is outside my scope.
 
-## 11. Gates
+## 11. Gates — all five, in the mandated order, in the worktree
 
-(filled in below)
+1. **Full build** (`./tools/ninja-locked`) — **rc=0**. Five edges, all always-run
+   phonies (`CHECK ICF-ALIAS MAP`, `CHECK SPLIT CURRENT`, `CHECK MAP
+   NAME-INJECTIVITY`, `CHECK TARGET OBJS RENAMED`, `PROGRESS`): **zero compiles,
+   zero SPLIT, zero REPORT** ⇒ a `symbols.txt` fixed point, and `symbols.txt` is
+   clean in `git status`. No `ninja <one>.obj` and no `objdiff-cli --build` was
+   ever run in this lane — both skip the six post-compile patchers and
+   manufacture phantom regressions.
+2. **`python3 scripts/verify_ruler_agreement.py --check`** — **rc=0**, grader
+   config read from `report.json`'s own `provenance.diff_config`:
+   `functionRelocDiffs=name_check`, `combineDataSections=true`,
+   `combineTextSections=true`, `ppc.calculatePoolRelocations=false` all OK.
+   "both objdiff-cli entry points resolve the same ruler."
+3. **`python3 scripts/verify_objs_patched.py --verify-manifest`** — **rc=0**.
+   `[denylist] OK: 6 denylisted address(es), 3 with a live map string, none named
+   in 3113 target objects (495612 symbols scanned)`;
+   `[patch-state] OK: 1215 decomp, 3113 target objects match
+   2026-09-15T04:46:14Z (tree_sha256=67018c24fa136922)`.
+4. **`python3 tools/icf_alias_finder.py --validate`** — **rc=0**,
+   `VALIDATE: PASS -- 1404 map-consistent, 247 tolerated, 0 contradicted, 1652
+   total`. **0 CONTRADICTED (FATAL)**. I touched no alias group, so this is a
+   no-regression check rather than a result of mine.
+5. **`tools/native_build_gate.sh`** — LAST action, verbatim:
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+`skipped=0` as required — full coverage, not an INCOMPLETE run relayed as PASS.
+⚠ Run **twice**: once to capture the line above, then again *after* committing
+this write-up, because CLAUDE.md records a **comment-only docs commit breaking
+the native link** (`6c087cbd`, via `ScatterIncludes.cmake`'s unanchored `#if`
+match). A `docs/decomp/*.md` file cannot enter any build, but the rule earned its
+place, so the second run proves it rather than assuming it. Both runs:
+`verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0`.
 
 ## 12. What I did NOT do, and why
 
