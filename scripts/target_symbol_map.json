@@ -30553,5 +30553,9 @@
  "0x82b80330": "?SyncLoad@TourCharRemote@@QAAXAAVBinStream@@@Z",
  "0x82b81538": "?FilterSlow@IIR4PoleFilter@@QAAMM@Z",
  "0x82b81228": "??0VibratoDetector@@QAA@HH@Z",
- "0x82b815b8": "??0IIR4PoleFilter@@QAA@PAM0@Z"
+ "0x82b815b8": "??0IIR4PoleFilter@@QAA@PAM0@Z",
+ "0x82b80fc8": "?SetSampleRate@PitchDetector@@QAAXH@Z",
+ "0x82b807c0": "??1PitchDetector@@QAA@XZ",
+ "0x82b810e8": "??0PitchDetector@@QAA@H@Z",
+ "0x82b80810": "?AnalyzeBlock@PitchDetector@@QAAXPBDPAFHMMAAM22@Z"
 }
