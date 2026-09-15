@@ -10493,7 +10493,7 @@
  "0x825204b0": "?DeleteContent@XboxContentMgr@@UAA_NVSymbol@@@Z",
  "0x82520540": "?IsDeleteDone@XboxContentMgr@@UAA_NVSymbol@@@Z",
  "0x825205d8": "?GetLicenseBits@XboxContentMgr@@UAA_NVSymbol@@AAK@Z",
- "0x82520668": "?IsCorrupt@XboxContentMgr@@UAA_NVSymbol@@AAPBD@Z",
+ "0x82520668": "?IsCorrupt@XboxContentMgr@@UAA_NVSymbol@@@Z",
  "0x825206f8": "?NotifyMounted@XboxContentMgr@@MAAXPAVContent@@@Z",
  "0x825207a0": "?NotifyUnmounted@XboxContentMgr@@MAAXPAVContent@@@Z",
  "0x82520830": "?NotifyFailed@XboxContentMgr@@MAAXPAVContent@@@Z",
@@ -15398,7 +15398,7 @@
  "0x82684a70": "??1BandUserMgr@@UAA@XZ",
  "0x82684d28": "?BandUserMgrInit@@YAXXZ",
  "0x82684de0": "??_GBandUserMgr@@UAAPAXI@Z",
- "0x82684e90": "?TypeDef@Object@Hmx@@QBAPAVDataArray@@XZ",
+ "0x82684e90": "?TotalBasePoints@SongDB@@QAAHXZ",
  "0x82684ec8": "?GetNumTracks@SongDB@@QBAHXZ",
  "0x82684ed8": "?GetBaseMaxPoints@SongDB@@QBAHABVUserGuid@@@Z",
  "0x82684f08": "?GetBaseMaxStreakPoints@SongDB@@QBAHABVUserGuid@@@Z",
@@ -30569,5 +30569,13 @@
  "0x8232e6d0": "??0Merger@FileMerger@@QAA@ABU01@@Z",
  "0x8232de80": "??4Merger@FileMerger@@QAAAAU01@ABU01@@Z",
  "0x8232ba78": "?InstrumentMatch@BandWardrobe@@SAXPAHPBVSlotInfo@1@HAAH22@Z",
- "0x8232fe00": "?NewObject@BandWardrobe@@SAPAVObject@Hmx@@XZ"
+ "0x8232fe00": "?NewObject@BandWardrobe@@SAPAVObject@Hmx@@XZ",
+ "0x8267bf30": "??0Game@@QAA@XZ",
+ "0x8267b808": "?OnMsg@Game@@QAA?AVDataNode@@ABVButtonDownMsg@@@Z",
+ "0x8267aa48": "?UpdatePausedState@Game@@QAAX_N00@Z",
+ "0x8267b670": "?AddPlayer@Game@@QAAXPAVBandUser@@@Z",
+ "0x8267b000": "?ResetVoiceChatState@Game@@QAAXXZ",
+ "0x8267a4c0": "?OnMsg@Game@@QAA?AVDataNode@@ABVRemoteLeaderLeftMsg@@@Z",
+ "0x82678bb8": "?SetRealtime@Game@@QAAX_N@Z",
+ "0x82679900": "?OnMsg@Game@@QAA?AVDataNode@@ABVButtonUpMsg@@@Z"
 }

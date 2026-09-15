@@ -88,7 +88,7 @@ public:
     virtual const char *ContentPath(int) { return MakeString("UPDATE:"); }
     virtual bool MountContent(Symbol);
     virtual bool IsMounted(Symbol);
-    virtual bool IsCorrupt(Symbol, const char *&);
+    virtual bool IsCorrupt(Symbol);
     virtual bool DeleteContent(Symbol);
     virtual bool IsDeleteDone(Symbol);
     virtual bool GetLicenseBits(Symbol, unsigned long &ul);

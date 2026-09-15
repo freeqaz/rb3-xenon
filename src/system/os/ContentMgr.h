@@ -150,7 +150,20 @@ public:
     // all.  It is a real Xbox entry point (XboxContentMgr overrides it,
     // PreloadPanel::ContentFailed calls it), so keep it virtual but move it
     // past the slots whose retail positions we can prove.
-    virtual bool IsCorrupt(Symbol, const char *&) { return false; }
+    // Signature corrected on retail bytes (lane W16-CB): RB3's IsCorrupt takes
+    // ONLY the Symbol.  Two independent observations, either of which is
+    // sufficient:
+    //   - the body at 0x82520668 (XboxContentMgr::IsCorrupt) reads r3 and r4
+    //     and never reads or writes r5 in its 140 bytes -- already noted in
+    //     ContentMgr_Xbox.cpp, but an UNUSED reference parameter emits no code
+    //     either, so the body alone cannot settle it;
+    //   - the CALLER can: Game::LoadSong (0x82679da4) is the ONLY site in the
+    //     whole retail binary that calls ContentMgr vtable slot 0x88, and it
+    //     sets r3 and r4 only.  A caller must materialise every parameter even
+    //     when the callee ignores it, so a third parameter cannot exist.
+    // The `const char *&` was a DC3-ism carried in with the DC3 header; rb3-Wii
+    // has no IsCorrupt at all, so nothing outside DC3 ever attested it.
+    virtual bool IsCorrupt(Symbol) { return false; }
 
     bool NeverRefreshed() const { return mState == kDone; }
     bool RefreshDone() const;

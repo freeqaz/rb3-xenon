@@ -277,7 +277,7 @@ bool XboxContentMgr::IsMounted(Symbol name) {
 // DC3 has `ret = (*it)->IsCorrupt(); displayName = (*it)->DisplayName();`
 // and needs no cast because DC3 moved IsCorrupt onto the Content base.  RB3
 // is the OLDER form: IsCorrupt lives only on XboxContent, hence the cast.
-bool XboxContentMgr::IsCorrupt(Symbol contentName, const char *&displayName) {
+bool XboxContentMgr::IsCorrupt(Symbol contentName) {
     FOREACH (it, mContents) {
         if (contentName == (*it)->FileName()) {
             return dynamic_cast<XboxContent *>(*it)->IsCorrupt();
