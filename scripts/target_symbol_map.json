@@ -30569,5 +30569,13 @@
  "0x8232e6d0": "??0Merger@FileMerger@@QAA@ABU01@@Z",
  "0x8232de80": "??4Merger@FileMerger@@QAAAAU01@ABU01@@Z",
  "0x8232ba78": "?InstrumentMatch@BandWardrobe@@SAXPAHPBVSlotInfo@1@HAAH22@Z",
- "0x8232fe00": "?NewObject@BandWardrobe@@SAPAVObject@Hmx@@XZ"
+ "0x8232fe00": "?NewObject@BandWardrobe@@SAPAVObject@Hmx@@XZ",
+ "0x8267bf30": "??0Game@@QAA@XZ",
+ "0x8267b808": "?OnMsg@Game@@QAA?AVDataNode@@ABVButtonDownMsg@@@Z",
+ "0x8267aa48": "?UpdatePausedState@Game@@QAAX_N00@Z",
+ "0x8267b670": "?AddPlayer@Game@@QAAXPAVBandUser@@@Z",
+ "0x8267b000": "?ResetVoiceChatState@Game@@QAAXXZ",
+ "0x8267a4c0": "?OnMsg@Game@@QAA?AVDataNode@@ABVRemoteLeaderLeftMsg@@@Z",
+ "0x82678bb8": "?SetRealtime@Game@@QAAX_N@Z",
+ "0x82679900": "?OnMsg@Game@@QAA?AVDataNode@@ABVButtonUpMsg@@@Z"
 }
