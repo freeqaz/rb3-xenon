@@ -11044,7 +11044,7 @@
  "0x8253d940": "?PushSonglistToScreen@MusicLibrary@@QAAXXZ",
  "0x8253da28": "?PushSetlistSaveDialog@MusicLibrary@@QAAXXZ",
  "0x8253db00": "?PushHeaderDataToScreen@MusicLibrary@@QAAXXZ",
- "0x8253dd58": "?ByteCode@RemoveLastSongFromSetlistMsg@@UBAEXZ",
+ "0x8253dd58": "?RemoveLastSongFromSetlist@MusicLibrary@@QAAXXZ",
  "0x8253de30": "?RebuildRestrictedData@MusicLibrary@@QAAXXZ",
  "0x8253df28": "?RebuildSharedSongData@MusicLibrary@@QAAXXZ",
  "0x8253e040": "?SyncProperty@MusicLibrary@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
