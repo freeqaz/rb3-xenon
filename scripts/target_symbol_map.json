@@ -20528,7 +20528,7 @@
  "0x827c1c90": "?CallCheatScript@CheatsManager@@QAAX_NPAVDataArray@@PAVLocalUser@@0@Z",
  "0x827c2628": "??1?$vector@ULongJoyCheat@@V?$StlNodeAlloc@ULongJoyCheat@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
  "0x827c26e0": "??$__uninitialized_fill_n@PAULongJoyCheat@@IU1@@stlpmtx_std@@YAPAULongJoyCheat@@PAU1@IABU1@ABU__false_type@0@@Z",
- "0x827c2780": "??0GlitchFinder@@QAA@XZ",
+ "0x827c2780": "??0CheatsManager@@QAA@XZ",
  "0x827c2a30": "??1CheatsManager@@UAA@XZ",
  "0x827c2e38": "?_M_insert_overflow_aux@?$vector@ULongJoyCheat@@V?$StlNodeAlloc@ULongJoyCheat@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAULongJoyCheat@@ABU3@ABU__false_type@2@I_N@Z",
  "0x827c2fc8": "??_GCheatsManager@@UAAPAXI@Z",
