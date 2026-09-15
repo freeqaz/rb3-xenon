@@ -77398,16 +77398,11 @@
    "name": "1?$vector",
    "address": "0x822ec870",
    "survivor": "??1?$vector@UMoveReplacer@@V?$StlNodeAlloc@UMoveReplacer@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
-   "folded": [],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [
-    {
-     "spelling": "??1?$vector@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    }
+   "folded": [
+    "??1?$vector@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ"
    ],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -77418,7 +77413,24 @@
      1
     ],
     "n_subgroups": 0
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??1?$vector@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-CP 2026-09-15 (adjudicated); installed by coordinator 2026-09-15",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared). Adjudication row in ~/tmp/w16cp_underpart_adjudicated.json reads ['0x822ec870', <survivor>, <this spelling>, 'L1_T1', 'dead', 'dropped_singleton'] -- layer flat, liveness DEAD.",
+     "why_the_original_premise_failed": "Same defect W9-D (c6711597) found in 65 sibling memberships. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so the predicate is unsound in this direction. Re-adjudicated on retail bytes at the flat L1_T1 layer, which does not close over the fold class under test (unlike L2_RECURSIVE 'fixpoint via chase', whose memberships W9-D and W16-CP both left withdrawn). Retail bytes outrank an our-build predicate. W16-CN reported this membership as collectable, was refuted by the standing withdrawal, and retracted; W16-CP then refuted the WITHDRAWAL. Both the original claim and its refutation were wrong, and this record exists so the next lane inherits the adjudicated layer rather than either verdict.",
+     "bytes": "ZERO. CP's artifact records this membership as `dead` (0 census sites; the group's own evidence line reads '0 folded spelling(s), 0 census sites over 1 functions'), so re-admission forgives nothing and is expected to measure Delta 0 on every key. It is installed because it is TRUE, not because it pays -- an alias that pays is the hazard direction, since an unproven alias lifts name_check BY CONSTRUCTION.",
+     "superseded_records": [
+      {
+       "spelling": "??1?$vector@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "1?$_Vector_base",
