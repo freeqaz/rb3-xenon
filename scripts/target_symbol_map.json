@@ -13696,6 +13696,7 @@
  "0x82608a18": "?Handle@BandStorePanel@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82608a28": "??$__introsort_loop@PA_K_KHU?$less@_K@stlpmtx_std@@@stlpmtx_std@@YAXPA_K00HU?$less@_K@0@@Z",
  "0x82608ae8": "??$sort@PA_K@stlpmtx_std@@YAXPA_K0@Z",
+ "0x82608b70": "?GetOfferIDsToEnumerate@BandStorePanel@@UBAXAAV?$vector@_KV?$StlNodeAlloc@_K@stlpmtx_std@@@stlpmtx_std@@_N@Z",
  "0x82608d90": "?UpdateStream@CalibrationPanel@@QAAXXZ",
  "0x82608e48": "?StartAudio@CalibrationPanel@@QAAXXZ",
  "0x82608ef8": "?TerminateHwCalibrationState@CalibrationPanel@@QAAXXZ",

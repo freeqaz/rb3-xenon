@@ -110,6 +110,46 @@ StoreOffer *BandStorePanel::FindOffer(Symbol s) const {
     return 0;
 }
 
+// Retail fn_82608B70 (452 B).  Reconstructed from the retail body, every step
+// adjudicated on bytes rather than inferred:
+//   * the five probed sub-objects are StorePurchaseable instances at +0x0
+//     (the StoreOffer's own StorePurchaseable base), +0x80 mPack, +0x40 mAlbum,
+//     +0xe0 mDemo, +0x120 mUpgrade -- and retail probes them in exactly that
+//     order, which is NOT address order.  Each `ld` is from sub-object +0x30,
+//     i.e. StorePurchaseable::songID.
+//   * the value pushed is a PRVALUE: retail `ld`s into a stack temp and passes
+//     its address to push_back(const u64 &).  Binding the reference straight to
+//     the member would need no temp, so the source calls the by-value accessor
+//     SongID(), not the member.
+//   * the tail is `sort` then `resize(unique(..) - begin())`, not the more usual
+//     `erase(unique(..), end())`: retail has BOTH arms of STLport's resize (an
+//     erase arm and an insert-at-end arm) and materialises the zero u64 default
+//     argument UNCONDITIONALLY before the branch, which is what a defaulted
+//     `const _Tp & = _Tp()` parameter does.
+//   * `lbz r5, 0x50(r1)` before adjacent_find is its empty `equal_to<u64>`
+//     functor passed by value out of an uninitialised slot -- STLport's 2-arg
+//     `unique` forwards to the 3-arg `adjacent_find`.
+void BandStorePanel::GetOfferIDsToEnumerate(std::vector<u64> &ids, bool pending)
+    const {
+    const std::vector<StoreOffer *> &offers = pending ? mPendingOffers : mOffers;
+    for (int i = 0; i < offers.size(); i++) {
+        BandStoreOffer *offer = dynamic_cast<BandStoreOffer *>(offers[i]);
+        if (offer->Exists())
+            ids.push_back(offer->SongID());
+        if (offer->mPack.Exists())
+            ids.push_back(offer->mPack.SongID());
+        if (offer->mAlbum.Exists())
+            ids.push_back(offer->mAlbum.SongID());
+        if (offer->mDemo.Exists())
+            ids.push_back(offer->mDemo.SongID());
+        if (offer->mUpgrade.Exists())
+            ids.push_back(offer->mUpgrade.SongID());
+    }
+    std::sort(ids.begin(), ids.end());
+    u64 *newEnd = std::unique(ids.begin(), ids.end());
+    ids.resize(newEnd - ids.begin());
+}
+
 StoreOffer *BandStorePanel::GetLoneOffer(bool extras) const {
     if (!extras) {
         MILO_ASSERT(unk38.size() == 1, 0xAA);

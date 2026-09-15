@@ -63,6 +63,16 @@ public:
     virtual StoreOffer *MakeNewOffer(DataArray *);
     virtual StoreOffer *FindOffer(Symbol) const;
     virtual bool EnumerateSubsetOfOfferIDs() const { return true; }
+    // Retail fn_82608B70 (452 B).  EnumerateSubsetOfOfferIDs() returning true
+    // obliges this class to supply the IDs; the base default is empty, so
+    // without this override the retail body has no counterpart at all.
+    // Identification is PROVEN, not inferred from the callee set: the retail
+    // body takes (this, r4, r5-as-bool), selects `this+0x48` (mPendingOffers)
+    // when the bool is set and `this+0x3c` (mOffers) when it is not, and
+    // dynamic_casts each element with RTTI type descriptors 0x82C72564
+    // `.?AVStoreOffer@@` -> 0x82C74000 `.?AVBandStoreOffer@@` (read out of
+    // .data, whose file-offset delta is 0x82012400 -- NOT .text's 0x8200B200).
+    virtual void GetOfferIDsToEnumerate(std::vector<u64> &, bool) const;
     virtual void LoadArt(const char *, UIPanel *);
     virtual int UpdateOffers(const std::list<EnumProduct> &, bool);
     virtual void StoreUserProfileSwappedToUser(LocalUser *) {}
