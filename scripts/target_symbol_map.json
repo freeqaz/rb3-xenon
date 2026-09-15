@@ -6548,7 +6548,7 @@
  "0x823f4618": "??0Cheat@CheatProvider@@QAA@AAVString@@0PAVDataArray@@@Z",
  "0x823f4698": "??3Loader@@SAXPAX@Z",
  "0x823f5270": "??_GAutomator@@UAAPAXI@Z",
- "0x823f5c20": "?NewObject@UIScreen@@SAPAVObject@Hmx@@XZ",
+ "0x823f5c20": "?New@NetSearchResult@@SAPAV1@XZ",
  "0x823f5c98": "??0Server@@QAA@XZ",
  "0x823f5dd8": "?Init@Server@@UAAXXZ",
  "0x823f5f40": "?Handle@Server@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
@@ -30521,5 +30521,13 @@
  "0x8278c2f8": "??_GFillInfo@@UAAPAXI@Z",
  "0x8268b4e8": "??0RemoteBandUser@@QAA@XZ",
  "0x82802418": "?NewObject@UIPanel@@SAPAVObject@Hmx@@XZ",
- "0x8227a910": "?ClassName@BandSong@@UBA?AVSymbol@@XZ"
+ "0x8227a910": "?ClassName@BandSong@@UBA?AVSymbol@@XZ",
+ "0x823f56f8": "??1NetSearchResult@@UAA@XZ",
+ "0x823f57e0": "?Equals@NetSearchResult@@UBA_NPBV1@@Z",
+ "0x823f5868": "??_GNetSearchResult@@UAAPAXI@Z",
+ "0x823f58b8": "?Save@NetSearchResult@@UBAXAAVBinStream@@@Z",
+ "0x823f5930": "?Load@NetSearchResult@@UAAXAAVBinStream@@@Z",
+ "0x823f59b0": "?Handle@NetSearchResult@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x823f5a90": "??0NetSearchResult@@QAA@XZ",
+ "0x828023a0": "?NewObject@UIScreen@@SAPAVObject@Hmx@@XZ"
 }
