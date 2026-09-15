@@ -399,7 +399,7 @@ void VocalTrackDir::PostLoad(BinStream &bs) {
                 // artifact. It is SCORE-INVISIBLE (functionRelocDiffs=none masks
                 // the callee), so expect no match% movement -- landed as a
                 // correctness fix per CLAUDE.md's arg-blindness rule.
-                ObjPtr<OverdriveMeter> streakPtr(this, 0);
+                ObjPtr<OverdriveMeter> streakPtr(this);
                 bs >> streakPtr;
                 bs >> streakPtr;
             }
