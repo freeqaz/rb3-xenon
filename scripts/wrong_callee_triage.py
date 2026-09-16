@@ -317,7 +317,21 @@ def main():
         if s["lane"] != "different_function":
             continue
         ta, ba = rev.get(s["target"]), rev.get(s["base"])
-        if ta and ba and set(ta) != set(ba):
+        # `ba` MAY BE ABSENT, and dropping those was a silent population loss
+        # (lane W16-FM).  A charged site whose BASE spelling target_symbol_map.json
+        # names nowhere used to be discarded here, so it never became a pair and
+        # tools/comdat_fold_gate.py never saw it -- which is why the gate's
+        # unconditional `int(r["base_addr"], 16)` never crashed in practice and
+        # the gap stayed invisible.  That population is not a corner case: a name
+        # can be absent from the map BECAUSE ICF folded it away, leaving only the
+        # survivor's arbitrary name, so it contains folds the gate exists to
+        # adjudicate.  It is emitted now with `base_addr: null`, which the gate
+        # reads as "the map is silent about F" and routes to tier CF5.
+        # NOT a warrant by itself: absence measures OUR identification coverage
+        # (~41.7% of functions), never retail's bytes, and "callee absent from the
+        # map => fold" is a model this project REFUTED at ~1.95x enrichment.  CF5
+        # admits on body evidence; see map_silent() in tools/comdat_fold_gate.py.
+        if ta and (not ba or set(ta) != set(ba)):
             charged.append(s)
 
     pc = collections.Counter((s["target"], s["base"]) for s in charged)
@@ -331,29 +345,38 @@ def main():
 
     rows = []
     for (t, b), n in pc.most_common():
-        ta, ba = rev[t][0], rev[b][0]
-        tt, bt = thunk_target(img, ta, size), thunk_target(img, ba, size)
-        mt, mb = masked_body(img, ta, size), masked_body(img, ba, size)
+        ta = rev[t][0]
+        ba = rev[b][0] if rev.get(b) else None          # None => map-silent, tier CF5
+        tt = thunk_target(img, ta, size)
+        bt = thunk_target(img, ba, size) if ba is not None else None
+        mt = masked_body(img, ta, size)
+        mb = masked_body(img, ba, size) if ba is not None else None
         arb_t = "bijection" if ta in bij else "icf" if ta in icf else None
-        arb_b = "bijection" if ba in bij else "icf" if ba in icf else None
+        arb_b = None if ba is None else (
+            "bijection" if ba in bij else "icf" if ba in icf else None)
         r = dict(
             target=t, base=b, sites=n,
             units=len(units[(t, b)]), calling_functions=len(callers[(t, b)]),
-            target_addr="0x%08x" % ta, base_addr="0x%08x" % ba,
-            target_size=size.get(ta), base_size=size.get(ba),
-            target_fanin=fanin[ta], base_fanin=fanin[ba],
+            target_addr="0x%08x" % ta,
+            base_addr=None if ba is None else "0x%08x" % ba,
+            target_size=size.get(ta), base_size=None if ba is None else size.get(ba),
+            target_fanin=fanin[ta], base_fanin=None if ba is None else fanin[ba],
             target_arbitrary=arb_t, base_arbitrary=arb_b,
             target_none_pct=round(nonepct.get(t, -1.0), 2),
             base_none_pct=round(nonepct.get(b, -1.0), 2),
             two_cycle=(t, b) in cyc,
             reloc_masked_identical=(mt is not None and mt == mb),
         )
-        if bt == ta:
+        # `bt`/`ba` are None for a map-silent pair (no addr(F) to thunk-check), and
+        # `tt` is None whenever the survivor is not a thunk -- so an unguarded
+        # `tt == ba` would be None == None => True and misfile a map-silent pair
+        # as `wrapper_inlined_by_us`.  Both arms require a real address.
+        if bt is not None and bt == ta:
             cls = "wrapper_not_inlined"
             v = ("our callee is a 1-instruction thunk that tail-jumps to retail's callee; "
                  "retail inlined the wrapper away at this site. Inlining difference, not a "
                  "wrong callee.")
-        elif tt == ba:
+        elif ba is not None and tt == ba:
             cls = "wrapper_inlined_by_us"
             v = ("retail's callee is a 1-instruction thunk to OUR callee; retail kept the "
                  "wrapper and we inlined it. Inlining difference, not a wrong callee.")

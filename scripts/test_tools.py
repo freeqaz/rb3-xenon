@@ -193,6 +193,17 @@ SCRIPT_ARM: list[dict] = [
     # shown to be the gate's.
     {"path": "tools/test_icf_alias_survivor_gate.py", "timeout": 120},
     {"path": "tools/test_fold_thunk_gate_install.py", "timeout": 60},
+    # W16-FM (2026-09-16): comdat_fold_gate.py's MAP-SILENT tier CF5.  The gate
+    # used to coerce `base_addr` unconditionally, so a folded spelling the map
+    # names NOWHERE had no representable input and the caller had to fabricate an
+    # address -- which then tripped the `same_function(A, A)` vacuum and produced
+    # a REFUSE that was an artifact of the input.  CF5 can only LOOSEN the gate,
+    # so the test pins the refusals that must survive: a map-RESIDENT spelling
+    # resubmitted with the address dropped (the laundering attack), a survivor
+    # body with a relocation-normalised rival, an unreadable survivor, and a
+    # stage-1 mismatch -- plus an ADMIT control so "refuses everything" cannot
+    # pass.  Both guards were shown to turn this test RED by mutation.
+    {"path": "tools/test_comdat_fold_gate_map_silent.py", "timeout": 600},
     {"path": "tools/test_fold_gate_function_extent.py", "timeout": 60},
     # W16-AE (2026-09-14): the DENYLIST EFFECT check in verify_objs_patched.py
     # (tree passes; a sandbox map with 0x82553fc8 re-denylisted must exit 7 and
