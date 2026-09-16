@@ -68,7 +68,7 @@ inline void QuestFilterProvider::UpdateSongLabel(
     UILabel *pAppLabel, Symbol sFilter, TourSetlistType eType, int iSongNum
 ) const {
     int iNumSongs = m_rProgress.GetNumSongsForCurrentGig();
-    if (iNumSongs <= iSongNum) {
+    if (iSongNum >= iNumSongs) {
         pAppLabel->SetTextToken(Symbol(gNullStr));
     } else if (eType == kTourSetlist_Random) {
         static Symbol setlist_song_fmt("setlist_song_fmt");
