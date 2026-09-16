@@ -230,8 +230,37 @@ void BandStorePanel::Exit() {
 // wrong does not make renaming safe" describes. The repair is a splits.txt
 // re-home of [0x826067C0, 0x826068A8) into this unit, which W16-CI was banned
 // from and which is NOT metric-neutral (PINHOME-1: +3 fns / +428 B), so it must
-// be measured by whoever does it. Port the body only after the re-home.
-DataNode BandStorePanel::OnMsg(const LocalUserLeftMsg &) {
+// be measured by whoever does it.
+//
+// PORTED ANYWAY (lane W16-GI, 2026-09-16) -- not for this row's own score, which
+// the mis-pin makes uncollectable here, but because the EMPTY STUB it replaced
+// was a codegen assertion that propagated into Handle.  rb3-Wii's dev body is
+// `return DataNode(1);`; MSVC saw that body earlier in this TU, proved the
+// callee nothrow, dropped the EH region that protects Handle's stack
+// LocalUserLeftMsg temporary across the call, and its scheduler then hoisted
+// the three OnMsg argument set-ups into the Message ctor's stores.  Retail
+// keeps them contiguous before the bl -- exactly as BOTH compilers do for the
+// MetadataLoadedMsg arm three instructions later, whose callee has a real
+// body.  Same mechanism as the QuazalSession(bool) {} two-defect stub
+// (project_oracle_fidelity_has_four_modes: "an empty function body is not
+// neutral -- it is a codegen assertion").
+//
+// Body read off retail 0x826067C0 (r3 = sret, r4 = this, r5 = msg):
+//   lwz r4,4(r5); lwz r11,0(r4); addi r3,r11,0x10; bl ?GetObj@DataNode@@
+//        -> msg.mData->Node(2).GetObj(mData)            == msg.GetUser()
+//   bl __RTDynamicCast(.., ??_R0 Hmx::Object, ??_R0 LocalUser, 0)
+//   lwz r11,0(r30); lwz r11,0x44(r11); bctrl           -> this->StoreUser()
+//   bne -> skip; guard bit @0x82E00810 / static Symbol @0x82E0080C built from
+//   "critical_user_drop_out" (0x820B42A0) via ??0Symbol@@QAA@PBD@Z: a
+//   FUNCTION-LOCAL static, not the Symbols2.h global CriticalUserListener uses
+//   lwz r3,?TheUIEventMgr@@; li r5,0; bl ?TriggerEvent@UIEventMgr@@QAAXVSymbol@@PAVDataArray@@@Z
+//   li r11,1; stw r28(=0),4(sret); stw r11,0(sret)     -> return DataNode(1)
+DataNode BandStorePanel::OnMsg(const LocalUserLeftMsg &msg) {
+    LocalUser *user = msg.GetUser();
+    if (user == StoreUser()) {
+        static Symbol critical_user_drop_out("critical_user_drop_out");
+        TheUIEventMgr->TriggerEvent(critical_user_drop_out, 0);
+    }
     return DataNode(1);
 }
 
