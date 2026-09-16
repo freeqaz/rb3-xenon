@@ -6157,7 +6157,7 @@
  "0x823f2898": "?Load@JoinRequestMsg@@UAAXAAVBinStream@@@Z",
  "0x823f2a18": "??_GJob@@UAAPAXI@Z",
  "0x823f2c10": "?CheatsInitialized@@YA_NXZ",
- "0x823f2c98": "??$_M_allocate_and_copy@PB_K@?$vector@_KV?$StlNodeAlloc@_K@stlpmtx_std@@@stlpmtx_std@@IAAPA_KIPB_K0@Z",
+ "0x823f2c98": "??0MakeQuazalSessionJob@@QAA@PAPAVQuazalSession@@_N@Z",
  "0x823f33e8": "?Type@SettingsChangedMsg@@SA?AVSymbol@@XZ",
  "0x823f38c8": "??1MatchmakingSettings@@UAA@XZ",
  "0x823f3eb8": "?Main@ObjectDir@@SAPAV1@XZ",
