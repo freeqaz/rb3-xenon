@@ -744,6 +744,17 @@ void VocalPart::HandlePhraseEnd(
                     // MSVC canonicalises this call-result multiply to
                     // `mullw r10, r3, r29` regardless of source operand order
                     // (both orders + int/float temps tried). Sole residual.
+                    // W16-EZ 2026-09-16 RE-TESTED and the claim REPLICATES: the
+                    // flip to `indMult * total` recompiled this TU (build log
+                    // edge 5/14) and left idx 132 bit-identical, whole binary
+                    // unmoved (43978 / 4131656 / 40.320374 / 50.014150). Worth
+                    // re-stating because the note predates the 2026-08-12
+                    // name_check ruler flip AND the .end() idiom change to this
+                    // body, so it was not obviously still binding.
+                    // MSVC emits indMult first at this site and at the odPts /
+                    // bandPts multiplies too, whatever the source order; retail
+                    // differs ONLY here. No source lever selects it => this
+                    // 1120 B row is permuter-class, and the permuter is OFF.
                     unk20 = total * indMult;
                     if (mPhraseRank == 0) {
                         mPlayer->AddAccuracyStat(accPts);
