@@ -406,6 +406,51 @@ class Retail:
         w, err = self.words(va)
         return (None if err else [mask_word(x) for x in w]), err
 
+    def norm_body(self, va):
+        """The body at `va` with PC-relative branch displacements RESOLVED.
+
+        Two copies of one function at different addresses are NOT equal as raw
+        bytes -- every PC-relative `b`/`bl` encodes a different displacement --
+        which is why a raw `memcmp` duplicate scan is silently vacuous and would
+        "prove" ICF by finding nothing (see CLAUDE.md).  Resolving each
+        displacement to its ABSOLUTE destination is the relocation-normalised
+        form: two bodies compare equal exactly when they are the same code
+        calling the same targets, which is the condition MSVC's /OPT:ICF folds
+        on.  Returns None if the extent is unreadable.
+        """
+        w, err = self.words(va)
+        if err:
+            return None
+        out = []
+        for i, x in enumerate(w):
+            op = x >> 26
+            if op in (16, 18):
+                m = 0xFC000003 if op == 18 else 0xFFFF0003
+                out.append((x & m, branch_dest(x, va + 4 * i)))
+            else:
+                out.append(x)
+        return tuple(out)
+
+    def rivals(self, va):
+        """Other symbols.txt extents whose body is relocation-normalised IDENTICAL.
+
+        Returns a list (empty => `va` is the only body of its shape in the
+        image), or None if `va` itself is unreadable.  Only extents of exactly
+        the same size are candidates, which is also the only population a fold
+        could ever have drawn from.
+        """
+        ref = self.norm_body(va)
+        if ref is None:
+            return None
+        n = self.size.get(va)
+        out = []
+        for other in self.starts:
+            if other == va or self.size.get(other) != n:
+                continue
+            if self.norm_body(other) == ref:
+                out.append(other)
+        return out
+
 
 def compare(rwords, sa, ourraw, relocs, byva, alias=None):
     """Our COMDAT vs the retail body at `sa`, using OUR relocation table.
@@ -630,6 +675,89 @@ def selftest(retail, sample, verbose=False):
     return 0
 
 
+def map_silent(retail, F, sa, row, refuse):
+    """Stage 2 when target_symbol_map.json does not name F ANYWHERE (tier CF5).
+
+    WHAT STAGE 2 IS.  It is a VETO, not a warrant.  Stage 1 (`compare`) carries
+    the affirmative evidence -- our compiled COMDAT for F is byte-identical to
+    retail's body at addr(S), every unrelocated word compared as a full 32-bit
+    value and every relocated branch destination resolved through the map and
+    name-equal.  Stage 2 exists only to ask whether retail's OWN entry for F
+    contradicts that.  CF1/CF2/CF3 are three ways of answering "it does not".
+
+    WHAT MAP-SILENCE IS NOT.  When the map places F nowhere there is no rival
+    entry to veto on -- so stage 2 has NOTHING TO CONTRIBUTE, and it must not
+    pretend otherwise.  Absence of a map row is a fact about OUR identification
+    coverage (the map names ~41.7% of functions), never about retail's bytes.
+    "Callee absent from the map => fold-alias" is a model this project already
+    REFUTED: it measured identification coverage, not folding, and its
+    enrichment over a null was ~1.95x -- nowhere near a classifier.  Admitting
+    on map-silence alone would be exactly the error that got TIER CF4 deleted,
+    which likewise dressed a statement about OUR confidence up as evidence about
+    retail.  So CF5 does NOT treat silence as a discredit.
+
+    WHAT CF5 ACTUALLY REQUIRES.  It admits on STAGE 1 ALONE, plus one image-based
+    guard that closes stage 1's single loophole.  Stage 1 proves our COMDAT is
+    the body at addr(S); the one way that could still fail to pin the call is if
+    retail contained ANOTHER body our COMDAT is equally identical to, in which
+    case which one our `bl` denotes is undetermined.  So the survivor body must
+    be UNIQUE in the image under relocation-normalised comparison.  That is a
+    positive statement about retail's bytes, which is what THE ADMISSION RULE
+    demands, and it is the instrument that settles ICF (relocation-normalised
+    body hashing) rather than a map-residency proxy.
+
+    ITS SELECTIVITY IS LOW, AND SAYING SO IS PART OF THE GATE.  Measured on this
+    image: of 28,536 named non-funclet map rows with a readable extent, only 46
+    (0.161%) have a relocation-normalised rival, so the guard passes 99.839% of
+    the time.  It is NECESSARY -- it is the only thing standing between stage 1
+    and an ambiguous fold -- but it is not what makes CF5 safe.  Stage 1 is.
+    (Over ALL symbols.txt extents the guard fires on 14.9%, but that population
+    is dominated by the sub-`.pdata` funclet/stub stratum, which is precisely the
+    stratum lane CD-7's ICF proof excluded by construction.  Do not quote the
+    14.9% as this guard's selectivity on functions.)
+
+    CF5 IS WEAKER THAN CF1, BY CONSTRUCTION, AND IS LABELLED SEPARATELY SO IT
+    CANNOT BE READ AS CF1.  CF1 performs a SECOND, independent body comparison
+    (retail's body at addr(F) vs the survivor).  CF5 has no second body to
+    compare, because the map names none.  That is an honest consequence of the
+    evidence available, not a relaxation -- but it is why the tier gets its own
+    name in every report, the way CF4's misreading showed it must.
+    """
+    # Fail-closed: `base_addr: null` asserts the map is silent.  If it is NOT,
+    # the caller built an inconsistent pair and the real tiers must adjudicate
+    # that address -- never this one.
+    placed = sorted(retail.byname.get(F, set()))
+    if placed:
+        refuse("pair declares base_addr=null (map-silent) but target_symbol_map.json "
+               "DOES name %s at %s; the map-silent tier must not adjudicate a spelling "
+               "the map places, so this pair needs a real base_addr and the CF1/CF2/CF3 "
+               "chain" % (F, ",".join("0x%08x" % a for a in placed)))
+        return None, None
+
+    riv = retail.rivals(sa)
+    if riv is None:
+        refuse("survivor body at 0x%08x is unreadable, so its uniqueness cannot be "
+               "established" % sa)
+        return None, None
+    if riv:
+        refuse("target_symbol_map.json is silent about %s, but the survivor body at "
+               "0x%08x is NOT UNIQUE: %d other extent(s) (%s) are relocation-normalised "
+               "IDENTICAL to it. Our COMDAT is equally identical to each, so which body a "
+               "`bl` to %s denotes is undetermined and an alias would pick one arbitrarily"
+               % (F, sa, len(riv), ",".join("0x%08x" % a for a in riv[:4]), F))
+        return None, None
+
+    row["folded_refs"] = ("n/a -- target_symbol_map.json does not name %s at any address" % F)
+    row["survivor_unique"] = True
+    return "CF5", ("target_symbol_map.json names %s NOWHERE, so no map entry contradicts the "
+                   "fold -- and silence is NOT the warrant: the warrant is stage 1 (our COMDAT "
+                   "IS the retail body at 0x%08x) plus the image showing that body is the ONLY "
+                   "one of its shape in the binary (0 relocation-normalised rivals among the "
+                   "%d same-size extents), so the linker had exactly one body our COMDAT could "
+                   "have folded onto" % (F, sa, sum(1 for a in retail.starts
+                                                    if retail.size.get(a) == retail.size.get(sa))))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--worklist", default="docs/plans/wrong-callee-triage-2026-08-12.json")
@@ -694,7 +822,15 @@ def main():
     rows = []
     for r in pairs:
         S, F = r["target"], r["base"]
-        sa, fa = int(r["target_addr"], 16), int(r["base_addr"], 16)
+        # `base_addr` is OPTIONAL.  A folded spelling that target_symbol_map.json
+        # does not name ANYWHERE has no address to put here, and requiring one
+        # forced the caller to fabricate a placeholder -- which then tripped the
+        # documented `same_function(A, A)` vacuum and produced a REFUSE that was
+        # an artifact of the fabricated input rather than evidence (lane W16-FI).
+        # `None` is the honest spelling of "the map is silent about F"; see the
+        # CF5 tier below for what stage 2 can and cannot mean in that case.
+        sa = int(r["target_addr"], 16)
+        fa = int(r["base_addr"], 16) if isinstance(r.get("base_addr"), str) else None
         row = dict(subclass=r["subclass"], survivor=S, folded=F, sites=r["sites"],
                    survivor_addr=r["target_addr"], folded_map_addr=r["base_addr"],
                    survivor_fanin=r["target_fanin"])
@@ -740,6 +876,13 @@ def main():
         # 2,308.  Different functions, admitted as CF1.
         #
         # Tiers now, in evaluation order, discredits FIRST so none is shadowed:
+        if fa is None:
+            tier, disc = map_silent(retail, F, sa, row, refuse)
+            if tier is None:
+                continue
+            row.update(tier=tier, discredit=disc, verdict="ADMIT")
+            rows.append(row)
+            continue
         f_refs = retail.refs["total"][fa]
         row["folded_refs"] = retail.ref_note(fa)
         fw, ferr = retail.words(fa)
@@ -811,7 +954,8 @@ def main():
             # function / CF2 image-discredited / CF3 homonym / CF4 map says its
             # own pick is arbitrary) has answered for that address; any OTHER
             # address the map gives the spelling has not been answered for.
-            answered = {sa} | ({int(r["folded_map_addr"], 16)} if r["tier"] else set())
+            fma = r.get("folded_map_addr")
+            answered = {sa} | ({int(fma, 16)} if (r["tier"] and isinstance(fma, str)) else set())
             elsewhere = sorted(retail.byname.get(nm, set()) - answered)
             if elsewhere:
                 r.update(verdict="REFUSE", tier=None,
