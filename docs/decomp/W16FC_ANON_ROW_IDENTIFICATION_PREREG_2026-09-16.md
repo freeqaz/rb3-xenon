@@ -220,3 +220,49 @@ bytes — the deliverable EW's precedent describes.
   own co-addressed `gRev` at +4 and calls `LoadRev(bs, gRev)` on a fresh `RndPostProc`.
   Fixing this is a re-homing of an existing name (a *pairability* change, measured
   non-neutral by PINHOME-1) plus a Dir.cpp shape port; it needs its own pre-registration.
+
+### 5.6 MEASURED (run `.ab_measure_runs/20260916-083500-from-dirty-1277611`, rc=0, ruler `name_check`, objdiff-cli sha256 c1b7d952…, both legs at a split fixed point, leg B 412 recompiles = the `PostProc.h` cascade)
+
+| # | prediction | measured | verdict |
+|---|---|---|---|
+| P9 | Load pairs, 60 ≤ fuzzy < 100 | `?Load@RndPostProc@@UAAXAAVBinStream@@@Z` 192 B **95.6875** (mpn 95.6875) | **HIT — improved, did not cross** |
+| P10 | LoadRev pairs, 70–100 | `?LoadRev@…BinStream@@H@Z` 1728 B **0 → 94.0** fuzzy / 94.40509 mpn | HIT |
+| P11 | Δfns 0, Δcode 0, Δmatched ∈ {0,+1}, Δmatched_code ∈ {0,+1728} | 69,240 / 10,247,068 unchanged; Δmatched **+0**, Δmatched_code **+0** | HIT |
+| P12 | Δfuzzy +0.008..+0.020 pp | **+0.017710 pp** (50.232610 → 50.250320) | HIT |
+| P13 | same-TU controls to the digit | Save 99.878784, Interp 84.54627, ctor 100.0, Handle, SyncProperty — all identical | HIT |
+| P14 | exactly 3 row-level changes | set-diff of all rows A→B = **3**: `fn_82433268` out, Load in, LoadRev 0→94.0; `?Load@RndDir@@` (8 B, 100.0) and `fn_82404F80` (428 B, 0) identical | HIT |
+
+Committed as `d233018a` (source + map). Surface created: **1,920 B in two rows moved from
+invisible (no base counterpart) to adjudicable**, both sub-100 with charged sites that
+name source constructs (below). Headline bytes: +0, as pre-registered.
+
+### 5.7 What the cascade opened (adjudicated on the leg-B diff against retail bytes; NOT fixed this wave)
+
+`Load` (9 of 49 instructions charged):
+- **Frame 0xa0 retail vs 0xb0 ours (+16 B ours)**, with our locals at different slots
+  (`f30` at 0x58 vs retail 0x70; `v40` at 0x70 vs 0x60; `i5c` at 0x60 vs 0x5c). Same
+  defect class EW found on `OnMsg` (16-byte frame excess), opposite sign of the usual
+  "we hold a local retail lacks" — here it is layout, since the local count matches.
+- **`mr r28,r3` placement**: retail copies the `>> bool` return into `r28` BEFORE the
+  `Vector3` op and feeds the final `int` `ReadEndian` from `r28`; ours copies after the
+  `Vector3` op. The Wii oracle spells the chain exactly as we do
+  (`bs >> x >> v >> f >> i`), so the oracle cannot answer this; it is a retail-only
+  expression shape. Candidate experiments (untested): split the chain after the bool
+  (`bs >> x; bs >> v >> f >> i` vs `(bs >> x) …`), or a different declaration order
+  of the four locals (declaration order controls stack slots).
+
+`LoadRev` (68 of 446 charged; ours 1784 B vs retail 1728 B):
+- **Bloom-color legacy branch: retail emits three `fdivs` by `range`; ours emits one
+  reciprocal `fdivs` + three `fmuls`** (MSVC's `/fp:fast` reciprocal CSE). The Wii
+  oracle spells this block differently from our DC3 copy: `float red = c.red;` hoisted
+  before the min search, `(4.0f - red) / range`, and `mBloomThreshold = c.alpha;`
+  AFTER the three divisions rather than before. That is the first experiment for the
+  next lane; pre-register it as "improves without crossing" since the prologue residue
+  below is independent.
+- **Prologue: retail `__savegprlr_24` / frame 0xf0 vs ours `__savegprlr_26` / 0xe0** —
+  retail keeps two more non-volatile GPRs and 16 more frame bytes. Downstream of that,
+  `r10/r11` and `f29/f30` swaps in the color-store run are the symptom, not the cause
+  (the `REGISTER_SWAP` rule). Retail's extra live values are most plausibly in the
+  `rev > 0xE && rev < 0x11` region, where retail calls two still-unnamed callees
+  (`fn_823A0918`, `fn_823A07A8` — the `ObjPtr<RndDrawable>` dummy's ctor/dtor); those
+  sites are forgiven today and would become checked if named.
