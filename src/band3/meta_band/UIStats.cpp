@@ -53,19 +53,48 @@ void UIStats::DropScreen(UIScreen *screen) {
     mLastDroppedScreen++;
 }
 
-// NOTE (lane DP-2): the ~61 residual "offset diffs" here are STACK SLOT
-// assignments plus a register rotation -- NOT a class-layout defect. Retail's
-// prologue is `lis r12,1 / ori r12,r12,0x2f0 / subf r31, r12, r1` (0x8255F9E0)
-// => r31 is the FRAME BASE of a 0x102f0-byte (66,288 B) frame, not `this`.
-// Measured: 4 user slots DIFFER and 8 are SHIFTED (deltas +0x40/+0x44/+0xc/
-// +0x18/+0x20/-0xc) out of 32; on top of that objdiff reports a 6-register
-// rotation (r22->r20->r18->r22, r21->r19->r25->r21) and an r29<->r4 swap.
-// ==> permuter class, and the permuter is off by directive.
-// CAUTION on the instrument: `run_diff_inspect mode=stack-layout` prints
-// "Frame size TGT 0x0 BASE 0x0 -> Frame sizes match" for this function with
-// "Callee-saved GPRs: TGT 0 BASE 18". It FAILED TO PARSE the target prologue
-// (this `lis/ori/subf` form), so that "match" is vacuous 0==0. The slot table
-// below it is still meaningful; the frame-size line is not.
+// NOTE (lanes DP-2, W16-EI): this row is ALIAS-GATED, NOT SOURCE-GATED.
+// Do not re-fund it as a source-matching target. Measured at ec15a785 on the
+// GRADED (name_check) ruler = report.json's own provenance.diff_config:
+//   size 2604 B | fuzzy 99.57911 | mpn 99.655914 | 65 of 652 instrs charged
+// Charge composition: 54 offset/immediate + 10 register + 8 symbol + 1 insert
+// + 1 replace. Six of the eight symbol diffs (idx 263-268) target lbl_<hex>
+// placeholders, which name_check FORGIVES (objdiff-core code.rs
+// is_placeholder_symbol_name), so they cost only their register component.
+// THE TWO THAT ARE REALLY CHARGED CANNOT BE MOVED BY ANY SOURCE EDIT:
+//   idx 246  target ?GetContainerName@MemcardXbox@@UAAPBDXZ @ 0x82801f78
+//            ours   ?GetBandUsers@BandUserMgr@@...@XZ
+//            0x82801f78 is already a known fold site in symbol_aliases.json
+//            (survivor GetContainerName, folded GetColor@UIColor) -- all three
+//            are `addi r3,r3,N; blr` member-address getters. Our spelling is
+//            simply absent from that group.
+//   idx 249  target ??0?$vector@HV?$StlNodeAlloc@H...@ABV01@@Z @ 0x827c1378
+//            ours   ??0?$vector@PAVBandUser@@...@ABV01@@Z
+//            target_symbol_map.json contains NO spelling of the
+//            vector<BandUser*> copy ctor at all -- retail's map names only the
+//            vector<int> survivor of that ICF fold.
+// matched_code is all-or-nothing on fuzzy == 100, so the 2604 B is collectable
+// only by installing those two alias memberships (PROVEN, e.g. via
+// tools/ourside_fold_sweep.py), never by editing this file. Even then 63
+// charges remain: the stack-slot wall below plus the register rotation.
+// STACK/REGISTER WALL -- DP-2's census REPRODUCES EXACTLY, it is not stale:
+// 4 user slots DIFFER and 8 are SHIFTED of 32, plus 6 PERMUTED (a class the
+// tool gained since). PERMUTED means both sides use the same slot SET with
+// variables assigned differently = MSVC temporary-slot shaping, which a
+// declaration reorder does NOT address. On top: a 6-register rotation
+// (r22->r20->r18->r22, r21->r19->r25->r21) and an r29<->r4 swap => permuter
+// class, and the permuter is off by directive.
+// CORRECTION TO DP-2's INSTRUMENT CAUTION -- IT IS NOW STALE, THE BUG IS FIXED.
+// DP-2 warned that stack-layout printed "Frame size TGT 0x0 BASE 0x0" with
+// "GPRs TGT 0 BASE 18", a vacuous 0==0 from failing to parse this lis/ori/subf
+// prologue. Today it reports `TGT 0x102f0 BASE 0x102f0` with explicit evidence
+// `stwux r1,r1,r12=-0x102f0` on BOTH sides and GPRs 18/18, and it now discloses
+// fingerprint degeneracy ("28 of 32 target slots share a fingerprint").
+// The instrument WORKS -- use it; do not inherit the distrust.
+// ONE REUSABLE TRAP: do NOT infer charge count from fuzzy%. 65 of 652 instrs
+// (10.0%) are charged here yet fuzzy reads 99.58, because a diff_arg is worth
+// ~0.006 pp. Reading 99.58 as "2-3 charges left" is how this row keeps getting
+// re-briefed as nearly-done.
 void UIStats::MaybePublish(UIScreen *from) {
     if (!from) return;
     mLastPublishTime = SystemMs();
