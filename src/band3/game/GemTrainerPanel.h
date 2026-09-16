@@ -41,7 +41,7 @@ public:
     void HandleLooping();
     bool ShouldLoop(int) const;
     void CopyGems(int);
-    bool GetFretboardView(const GameGem &) const;
+    int GetFretboardView(const GameGem &) const;
     int GetPatternSize() const;
     bool IsGemInFutureLoop(int) const;
     void CopyGems(std::vector<GameGem> &, int, int &, int &);
