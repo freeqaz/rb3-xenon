@@ -435,11 +435,14 @@ void RndPostProc::LoadRev(BinStream &bs, int rev) {
             if (minVal > c.blue)
                 minVal = c.blue;
             if (minVal < 4.0f) {
-                float range = 4.0f - minVal;
+                // W16-FH: the divisor must be spelled INLINE at each site. Naming
+                // `4.0f - minVal` in a local lets MSVC /fp:fast apply its
+                // reciprocal-multiply transform (one fdivs by 1.0f + three fmuls);
+                // retail emits three real fdivs. Same finding as dc3 99ac433c2.
                 mBloomThreshold = c.alpha;
-                c.red = (4.0f - c.red) / range;
-                c.green = (4.0f - c.green) / range;
-                c.blue = (4.0f - c.blue) / range;
+                c.red = (4.0f - c.red) / (4.0f - minVal);
+                c.green = (4.0f - c.green) / (4.0f - minVal);
+                c.blue = (4.0f - c.blue) / (4.0f - minVal);
                 c.alpha = 0.0f;
                 mBloomColor = c;
             } else {
