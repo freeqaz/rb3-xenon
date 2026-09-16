@@ -40,3 +40,27 @@ Shuttle::Shuttle() : mMs(0.0f), mEndMs(0.0f), mActive(false), mPadNum(0) {}
 // with no owned resources, so an empty body is the only one consistent with
 // both the retail bytes and the class contents.
 Shuttle::~Shuttle() {}
+
+// Retail has no separate `Shuttle::SetActive` body: it was folded by /OPT:ICF
+// into the survivor at 0x826f07b8, which the map spells
+// `?Enable@Metronome@@QAAX_N@Z` and which disassembles to exactly
+//
+//     826f07b8  stb  r4, 8(r3)
+//     826f07bc  blr
+//
+// -- 8 bytes, ZERO relocations, i.e. maximally foldable: any `void f(bool)`
+// that stores its argument to +0x8 lands there. `Shuttle::mActive` is at 0x8,
+// and retail `Game::OnSetShuttle` reaches it with
+//     8267d1c4  mr   r4, r30        ; the `active` bool
+//     8267d1c8  lwz  r3, 0xe0(r31)  ; mShuttle -- a LOADED POINTER, not this+0xe0
+//     8267d1cc  bl   0x826f07b8
+// which is `mShuttle->SetActive(active)` and nothing else.
+//
+// Like the ctor and dtor above, this method was DECLARED in Shuttle.h with no
+// definition anywhere in the tree, so `?SetActive@Shuttle@@QAAX_N@Z` was an
+// unresolved external and we compiled NO COMDAT for it. That is why
+// tools/fold_thunk_gate.py REFUSED the fold membership outright ("no COMDAT
+// for ?SetActive@Shuttle@@QAAX_N@Z in any of our compiled objs") rather than
+// admitting it at the vacuous FT-EMPTY tier: with no body on our side there is
+// nothing to compare. Defining it is what makes the fold provable on bytes.
+void Shuttle::SetActive(bool active) { mActive = active; }
