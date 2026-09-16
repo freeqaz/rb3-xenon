@@ -505,7 +505,6 @@ bool NetSession::OnMsg(const JoinResponseMsg &msg) {
         FOREACH (it, users) {
             AddLocalToSession(*it);
         }
-        TheVoiceChatMgr->JoinVoiceChannel();
         SetState(kIdle);
         JoinResultMsg jMsg(msg.Error(), msg.CustomError());
         Handle(jMsg, false);
