@@ -989,25 +989,26 @@ void VocalPart::CalculateScore(
 }
 
 void VocalPart::GetNoteRange(float ms, int &startOut, int &endOut) {
-    float slop = mSlop;
-    float lower = ms - slop;
-    float upper = ms + slop;
-    const VocalNoteList *list = mVocalNoteList;
     startOut = -1;
     endOut = -1;
-    const VocalNote *it = std::upper_bound(
-        list->mNotes.data(),
-        list->mNotes.data() + list->mNotes.size(),
-        lower,
-        VocalNoteEndCmp
-    );
-    if (it != list->mNotes.data() + list->mNotes.size()) {
-        while (it->mMs < upper && it != list->mNotes.data() + list->mNotes.size()) {
-            int idx = it - list->mNotes.data();
+    const VocalNoteList *list = mVocalNoteList;
+    int count = list->mNotes.size();
+    int i = unk58;
+    if (i > 0) {
+        float lower = ms - mSlop;
+        while (list->mNotes[i].mMs > lower) {
+            if (--i <= 0)
+                break;
+        }
+    }
+    for (; i < count; i++) {
+        const VocalNote &note = list->mNotes[i];
+        if (note.mMs > ms + mSlop)
+            return;
+        if (note.mMs + note.mDurationMs >= ms - mSlop) {
             if (startOut == -1)
-                startOut = idx;
-            endOut = idx + 1;
-            ++it;
+                startOut = i;
+            endOut = i + 1;
         }
     }
 }
