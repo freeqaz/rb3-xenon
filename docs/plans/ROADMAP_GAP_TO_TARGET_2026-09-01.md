@@ -4832,3 +4832,215 @@ sub-targets I briefed for FX were phantoms read straight out of it.** Any
   the binary; 40+ spellings all give F3; the cause is function-level).
 - **`../objdiff` still has 2 unpushed commits** (`21f3c57`, `a5f0ea9`) plus an
   untracked `modify_url.py`. Pushing it is **not authorized**.
+
+---
+
+## 7s. EXECUTION LOG — 2026-09-16, third wave (lanes FZ, GA; GB and GC in flight)
+
+**Two landings, both pushed, both 0 attribution trailers, both with a written
+pre-registration merged *before* the build that tested it.** This wave is the
+mirror image of §7r's and that contrast is its main finding.
+
+| lane | merge | measured |
+|---|---|---|
+| **W16-FZ** | `160cebb7` | **+3 fns / +2,672 B / Δhonest +3** — the session's first honest gain. Every pre-registered key at **miss 0**. Exactly 3 rows crossed binary-wide: `?Configure@Accomplishment@@QAAXPAVDataArray@@@Z` (2,584 B, 99.99226 → 100), `?AddValidController@OvershellSlot@@QAAXW4ControllerType@@@Z` and `?AddAutoVocalsValidController@OvershellSlot@@…` (44 B each, 99.54546 → 100). **All three `masked_equal=False`.** 0 fell out. |
+| **W16-GA** | `27a60e60` | **+2 fns / +40 B / Δhonest +1.** `?SelectRandomVenue@MetaPerformer@@QAAXXZ` (1,924 B) **58.3285 → 99.9584** fuzzy, **59.5447 → 100** mpn. Exactly 2 rows moved binary-wide. Missed its own prediction twice and said so. |
+
+**State now (measured at `27a60e60`, not inherited):**
+
+```
+matched_functions  44,136      matched_code   4,166,060
+matched_code_pct   40.656116   fuzzy          50.494835
+masked_equal       23,323      honest            20,813
+total_code     10,247,068      total_functions   69,240
+units all-rows mpn==100: 194   units all-rows fuzzy==100: 172
+matched_code = 66.070% of the 61.535% reachable ceiling (6,305,556 B)
+gap to ceiling: 2,139,496
+```
+
+### 7s.1 ★★★★ THIS WAVE IS 80% HONEST. THE PREVIOUS ONE WAS 0% HONEST. SAME SESSION, SAME DAY, SAME METHOD.
+
+Wave 3 against §7r's close (`51d4c06d`):
+
+```
+matched_functions  44,131 -> 44,136   +5
+matched_code    4,163,348 -> 4,166,060  +2,712
+masked_equal       23,322 -> 23,323   +1
+honest             20,809 -> 20,813   +4
+```
+
+⇒ **+5 functions = +4 honest / +1 disclosure.** §7r's wave was **+33 = 0 honest /
++33 disclosure** — Δmasked_equal equalled Δmatched_functions exactly, so honest
+was 20,809 before *and* after.
+
+Across all three waves of this coordinator session (opening baseline `6e42d74e`:
+44,040 / 4,150,676 / masked_equal 23,246 / honest 20,794):
+
+```
+session total  +96 functions = +19 honest / +77 disclosure   (+15,384 B)
+  wave 1 (FQ FV FW FT FU)  +58 = +15 honest / +43 disclosure
+  wave 2 (FX FY FS)        +33 =   0 honest / +33 disclosure
+  wave 3 (FZ GA)            +5 =  +4 honest /  +1 disclosure
+```
+
+★ **The honest share is not a property of the method, the gates, or the lane
+quality — it is a property of WHICH ROWS were in range.** All three waves used
+the same pre-registration discipline and the same fail-closed gates; wave 2's
+lanes were as rigorous as wave 3's and banked zero honest bytes. ⇒ **Never price
+a dispatch on a prior wave's honest ratio**, and never read a low honest share as
+a process failure. Report the split per wave and let it vary.
+
+### 7s.2 ★★★★ A LIVENESS GATE MUST BE KEYED TO THE PIPELINE THE PATCH ACTUALLY TRAVELS
+
+W16-FZ's pre-registered falsifier **F5 FAILED**: it demanded the renamer patch
+`>0` files and the build read **`0 files patched`**. It was investigated rather
+than waved through, and it is a **gate defect, not a run defect**:
+
+- `obj_target_symbol_renamer` consumes `scripts/target_symbol_map.json`. FZ did
+  not touch that file (0 hits on the branch).
+- FZ's edit was to `scripts/symbol_aliases.json`, which reaches the ruler by a
+  **different path entirely**: `objdiff.json` declares
+  `map_file: build/45410914/icf_aliases.map`, and **objdiff reads that map
+  directly**.
+
+⇒ **An alias-only edit never travels through the renamer, so a renamer-liveness
+gate on an alias patch cannot fire.** The F5 clause was inherited from the
+map-class recipe (lane CF-1's forced-re-split rule), where it is correct.
+
+★ The general rule: **before a falsifier is allowed to abort a run, name the
+pipeline stage it observes and check the patch passes through it.** A gate that
+watches the wrong stage fails closed, looks like rigour, and is indistinguishable
+from a real defect. Same family as W16-FP's lowercase `msvc` probe (ninja prints
+`MSVC` uppercase, so the probe read 0 and falsely aborted a healthy lane).
+
+Independent confirmation the run was sound: all six `*_patched.stamp` files carry
+the build's own timestamp (the stamps *were* removed and regenerated), and
+`MANIFEST rc=0` asserts a content fixed point over the whole object population
+without consulting the renamer at all.
+
+### 7s.3 ★★★★ `VALIDATE: PASS` IS NOT A CLEARANCE — FZ's NEW GROUP LANDED IN **TOLERATED**
+
+FZ added one new alias group (+11/−0 in `symbol_aliases.json`, groups
+1,658 → 1,659). The validator returned **PASS**. It must not be read as
+endorsement:
+
+- the new group landed in **TOLERATED** (249 → 250), not in `map-consistent`,
+  which held flat at **1,408**.
+- a passing validator, a rising `name_check`, and a flat `none` control are
+  **produced identically by a fabricated alias**. That triad is the *signature*
+  of the integrity hazard, not a clearance — the standing rule from the
+  `name_check` flip, restated because a lane hit it live.
+
+★★★ **And the counter moves +2 for a NEW group, not +1.**
+`SymbolEquivalences::len()` counts *names in a multi-symbol group*, so a new
+group contributes **two** previously-absent names. **+1 is the reading for a
+membership added to an EXISTING group.** A lane pre-registering +1 for a new
+group will read its own success as a miss.
+
+### 7s.4 ★★★★★ MSVC PACKS UP TO 32 FUNCTION-LOCAL STATICS INTO ONE GUARD INT
+
+W16-GA's durable finding, and it invalidates two screens we have used.
+
+At `.fn fn_82594EF8`: **65 references** to `lbl_82DFEE58`, in the shape
+`lwz / clrlwi.|rlwinm. / bne / ori / stw` — **16 `ori` + 16 `oris`**, their claim
+bits unioning to **`0xFFFFFFFF`**, popcount **32**. One guard integer, 32
+initialise-once flags.
+
+- ⛔ **"There is no `??_B` in this diff, so retail has no local statics here" is
+  NOT a valid inference.** Thirty-two of them hide behind one guard symbol.
+- ⛔ **An `andi.`-keyed guard census reads a FALSE ZERO.** Quantified over the
+  split asm: of **2,086** guard functions, **100%** test the guard with
+  `clrlwi.`/`rlwinm.`, and only **3.7%** contain an `andi.` at all. A screen keyed
+  on the *test* instruction rather than the *claim* cannot fire.
+
+`tools/localstatic_census.py` encodes both lessons by construction: it keys on
+the **claim** (`ori`/`oris`), never the test, and on the **`.fn` symbol**, never
+the `.s` address column (synthetic for multi-block units — the standing rule).
+
+⚠ Declaration order for the conversion was read off retail's **emitted claim
+order**, not execution order: `venues` is guard bit **5** while the
+earlier-*used* `key_video_venues` is bit **11**.
+
+⚠⚠ **`tools/localstatic_census.py` emits one row per guard WORD, not per
+FUNCTION — and the coordinator misread its own tool while auditing this
+section.** `len(rows)` reads **2,118**; the distinct-`fn` count is **2,086**
+(26 functions carry more than one guard word). The two differ by 32, which is
+close enough to the packed-static count to look like a coincidence worth
+chasing. **Quote the figure you computed, and say which one it is.** Every
+number in this subsection was then re-derived on `main` and reproduces exactly:
+65 references to `lbl_82DFEE58`, 16 `ori` + 16 `oris`, union `0xFFFFFFFF`,
+popcount 32, 2,086 guard functions, and `andi.` present in **77 of 2,086 =
+3.7%**.
+
+⚠ A naive line-anchored `^ori\s` regex over the split asm reads **0**: the
+instruction text sits after the byte-dump comment's `*/\t`. The tool parses
+that correctly; a hand-rolled check will silently read zero and look like a
+refutation. Same shape as the `andi.` false zero one paragraph up — **the
+instrument, not the finding.**
+
+### 7s.5 ★★★★ TWO CORRECTIONS THIS WAVE INSTALLED
+
+**(a) W16-FY's +704 B funclet windfall DOES NOT GENERALISE.** FY's payout came
+from *its own* funclets sitting at fuzzy 0 before the change — a property of the
+**pre-state**, not of the lever. GA pre-registered +256..+576 B off that figure
+and measured **+40 B**. ⇒ **Do not brief FY's byte figure as the expected yield
+of a local-static conversion.** Price each candidate on its own pre-state.
+
+**(b) A ROW CAN REACH `mpn` 100 AND BANK ZERO BYTES, and that is the normal case
+for this lever.** `SelectRandomVenue` reaches **mpn 100** while **fuzzy stops at
+99.9584** — both residual charges are `diff_arg`. It therefore counts as a
+matched **function** and contributes **+0** to `matched_code`, which is
+all-or-nothing per row. GA's pre-registration had `mpn` wrong and said so.
+
+⇒ **GA's honest/disclosure split is across two DIFFERENT ROWS:** the honest row
+(`SelectRandomVenue`, `masked_equal=False`) banks **0 bytes**; the disclosure row
+(`fn_82581CC4`, 40 B, `masked_equal=True`) banks **all 40**. Booking
+"+2 fns / +40 B" without that split overstates the lane by the whole of its byte
+figure.
+
+### 7s.6 ★★★ TWO-DOT vs THREE-DOT: A LANDING GATE'S FILE-COUNT CHECK MUST BE THREE-DOT
+
+Caught in the GA driver **before** it ran, not after it fired. The gate asserted
+"3 files touched":
+
+```
+git diff --name-only main..w16-ga    ->  7 files   (WRONG)
+git diff --name-only main...w16-ga   ->  3 files   (correct)
+```
+
+Two-dot diffs **tip against tip**, so it also reports the three merges *main*
+gained while the lane was out (roadmap 7r, the FX adjudication, W16-FZ) — in
+reverse. The gate would have aborted a healthy lane on a file count it computed
+wrongly.
+
+★ It only reads correctly **by accident after a successful rebase**, when main
+*becomes* the merge-base and the two spellings coincide. ⇒ a gate that runs
+pre-rebase, or on a lane whose rebase is skipped, silently changes meaning.
+**Use three-dot for FILE SETS. `git log main..branch` stays two-dot — that one is
+correct, because it means "commits on the branch not on main".**
+
+⚠ The same driver also had its byte-exact GATE A population **hardcoded to 2 of
+the 3 files**. Fixed by deriving the list from the diff. Both defects are the
+§7r.3 lesson recurring: **a generated or hand-copied gate needs a check that its
+population is what it claims to be** — partial coverage looks exactly like
+rigour.
+
+### 7s.7 Open
+
+- **In flight:** **W16-GB** (Fable — `VocalTrack` frame permutation, 8,948 B) and
+  **W16-GC** (Opus — `?OnFileLoaded@BandDirector@@` 3,816 B at 99.589). Neither
+  is in the figures above.
+- **GA handed forward 13 further sub-100 rows**, pre-adjudicated, where retail
+  constructs ≥2 more Symbols in-body than our source does. A vein, not a one-off
+  — price each on its own pre-state per §7s.5(a).
+- **GA's residual** on `SelectRandomVenue` is an `add` operand-order difference:
+  permuter-class, deferred by standing directive. **`at_limit` on the RESIDUAL,
+  not a claim that source work cannot close the row.**
+- FZ left "the other 17 `Accomplishment` rows" and the other five family
+  spellings (0 bytes today). FY left 18 of 89 rows in `default/Accomplishment`.
+- **W16-CX's two open leads** remain: the `ChordbookPanel::Load` ↔
+  `SetlistToStorePanel::Load` fold at `0x825f5920`, and
+  `??$__ucopy_aux@PBQAVBandProfile@@…` in MetaPerformer (4 B at fuzzy 95.0).
+- **Flagged, not acted on:** the alias validator's `1408/249 → 1407/250` shift
+  after W16-FT (mover unidentified); the stale header comment claiming the
+  `BandSongMetadata` ctor is `fn_82584A08` (real `0x825A0B28`).
