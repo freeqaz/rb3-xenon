@@ -931,8 +931,8 @@ void GemManager::UpdateLeftyFlip(bool poll) {
     if (type != real_keys) {
         RndDir *smasher = mTrackDir->SmasherPlate();
         if (smasher) {
-            auto _tmp1 = mTrackConfig.GetBandUser()->GetControllerType();
-            bool isKeys = _tmp1 == kControllerKeys;
+            bool isKeys =
+                mTrackConfig.GetBandUser()->GetControllerType() == kControllerKeys;
             static Message msg("set_lefty", 0);
             msg[0] = mTrackConfig.UseLeftyGems() && !isKeys;
             smasher->Handle(msg, true);
@@ -941,7 +941,8 @@ void GemManager::UpdateLeftyFlip(bool poll) {
     UpdateSlotPositions();
     if (type == "drum") {
         if (mTrackConfig.UseLeftyGems()) {
-            type = Symbol("drum_lefty");
+            Symbol drumLefty("drum_lefty");
+            type = drumLefty;
         }
         Symbol widgetName;
         float crashY = 0.0f;
