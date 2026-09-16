@@ -140,10 +140,15 @@ def main():
     print(f"project_dir={pd}\nTUs total {len(tus)}  already done {len(done)}  "
           f"to audit now {len(todo)}\nledger: {ledger}", flush=True)
 
+    ambiguous = {}          # class -> (reason, candidate headers): NOT audited
     audited_tus = len(done) - len(failed)
     lf = open(ledger, "a")
     for i, tu in enumerate(todo, 1):
         rec = {"tu": tu, "hits": {}, "seen": {}}
+        try:
+            tu_text = open(os.path.join(pd, tu), errors="replace").read()
+        except OSError:
+            tu_text = ""
         parsed, err = audit_tu(pd, tu)
         if parsed is None:
             rec["err"] = err
@@ -155,12 +160,27 @@ def main():
                     continue
                 if not info.get("members"):
                     continue
-                # find_header returns a LIST, sorted best-first (stem==class,
-                # then shortest path).  Take the best hit.
+                # ⛔⛔ WAS `hdr = hdrs[0]`, RATIONALISED AS "take the best hit".
+                # It is not the best hit; it is the SHORTEST PATH once the
+                # stem==class key ties, which is a criterion with no semantic
+                # content.  This sweep already holds the TU the layout came from,
+                # so it can ask which header that TU actually REACHES -- and
+                # REFUSE when that is ambiguous, rather than audit a file the
+                # measured class may not live in.  (Lane W16-EX, 2026-09-16: on
+                # MetaPerformer the old rule audited the near-dead DC3-era
+                # meta_ham copy against the live band3 class and compared 1 of 44
+                # comment rows while printing a clean.)  A false FINDING is the
+                # dangerous direction here: a correct comment flagged wrong is a
+                # human "fix" that corrupts ground truth -- the exact shape
+                # audit_header's own docstring documents twice.
                 hdrs = clr.find_header(pd, cls.split("::")[-1])
                 if not hdrs:
                     continue
-                hdr = hdrs[0]
+                hdr, why, _rej = clr.choose_audit_header(hdrs, tu, tu_text)
+                if hdr is None:
+                    ambiguous[cls] = (why, hdrs)
+                    rec.setdefault("ambiguous", {})[cls] = hdrs
+                    continue
                 # OUR source only -- vendor/CRT/STL carry no // 0xHEX contract
                 if not (hdr.startswith("src/") and "/xdk/" not in hdr
                         and "/stlport/" not in hdr):
@@ -184,6 +204,15 @@ def main():
     print("\n" + "=" * 72)
     print(f"TUs audited     : {audited_tus}/{len(tus)}  (failed {len(failed)})")
     print(f"classes examined: {len(seen_class)}")
+    # ★ A REFUSAL IS A RESULT AND MUST BE VISIBLE.  Replacing a false clean with
+    # a silent skip is the same disease; these classes are UNAUDITED, not clean.
+    print(f"classes REFUSED (ambiguous header, NOT audited): {len(ambiguous)}")
+    for cls, (why, cands) in sorted(ambiguous.items())[:20]:
+        print(f"  {cls}: {why}")
+        for h in cands:
+            print(f"      {h}")
+    if len(ambiguous) > 20:
+        print(f"  ... {len(ambiguous) - 20} more")
     print(f"headers WRONG   : {len(findings)}")
     print(f"wrong comments  : {total_rows}")
     print("=" * 72)
