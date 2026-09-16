@@ -87088,6 +87088,15 @@
     "??0?$hash_map@VSymbol@@PAVTourProperty@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVTourProperty@@@stlpmtx_std@@@4@@stlpmtx_std@@QAA@XZ"
    ],
    "evidence": "W16-BU. T1 on RB3 retail bytes. Retail ??0Tour@@ (0x8235fd10) calls ONE address, 0x8255d480, for BOTH of Tour's hash_map members (+0x38 m_mapTourProperties, +0x80 m_mapTourDesc), which our source instantiates as hash_map<Symbol,TourProperty*> and hash_map<Symbol,TourDesc*> respectively -- retail itself collapsed the two, observed rather than inferred. Our compiled bodies for both spellings are byte-identical to each other and to retail 0x8255d480 (76 B, 19 words, 0 differing words outside the single relocated bl at +0x30). SCOPE IS DELIBERATELY NARROW: hash_map<Symbol,X>::hash_map() does NOT universally fold. Retail holds three distinct bodies -- 0x8255d480, 0x825af9e8 (map: hash_map<Symbol,DataArray*>), 0x82278a20 (map: hash_map<Symbol,vector<PatchSticker*>>) -- identical in 18 of 19 words and differing only at the +0x30 bl, which targets three different hashtable ctors. That is MSVC folding only COMDATs identical INCLUDING relocations. A group covering all 26 spellings our tree defines would have been a fabrication; it was built, tested against the map, and withdrawn."
+  },
+  {
+   "name": "Enable",
+   "address": "0x826f07b8",
+   "survivor": "?Enable@Metronome@@QAAX_N@Z",
+   "folded": [
+    "?SetActive@Shuttle@@QAAX_N@Z"
+   ],
+   "evidence": "Fold-thunk alias group derived by tools/fold_thunk_gate.py. Evidence tier(s) FT-EMPTY. Our compiled COMDAT for each folded spelling below is byte-identical to the RETAIL body at the survivor address 0x826f07b8 once relocation-carrying fields are masked, with every relocated branch destination RESOLVED through the map and NAME-equal rather than masked away; the survivor takes 3 direct branches across .text. FT1=retail's map places the folded spelling on the same body or nowhere. FT2=it places it on a different body the image itself discredits (ZERO REFERENCES -- no branch, no address-taken immediate pair, no .rdata/.data pointer word -- or no symbols.txt extent -- padding or a mid-function word). FT3=it places it on a HOMONYM, a distinct function under another module that legitimately carries the same mangled name, witnessed by dc3's leaked ham_xbox_r.map. FT-EMPTY=the body carries no relocation at all, so every word was compared as a FULL 32-bit literal -- byte identity, the complete /OPT:ICF condition -- but a tiny body is shared by many distinct functions, so it is the lowest-DISCRIMINATING-POWER tier. 1 folded spelling(s), 1 charged name_check sites. Per spelling: [?SetActive@Shuttle@@QAAX_N@Z FT-EMPTY, 1 sites: body carries no relocation, so every word was compared as a FULL 32-bit literal (W16-EK) -- byte identity, the complete /OPT:ICF condition. Held as a separate tier for LOW DISCRIMINATING POWER, not vacuity: a tiny body is shared by many distinct functions and no relocation target corroborates it]"
   }
  ]
 }
