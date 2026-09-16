@@ -219,6 +219,7 @@ import argparse
 import collections
 import glob
 import json
+import re
 import struct
 import sys
 from pathlib import Path
@@ -766,6 +767,10 @@ def main():
     ap.add_argument("-o", "--out")
     ap.add_argument("--aliases", default="scripts/symbol_aliases.json")
     ap.add_argument("--install", action="store_true")
+    ap.add_argument("--allow-drop", action="store_true",
+                    help="permit --install to REMOVE already-installed folded spellings "
+                         "this run did not re-admit (a deliberate withdrawal). Without it "
+                         "such an install is refused and nothing is written.")
     ap.add_argument("--dc3-map", default="dc3-decomp/orig/373307D9/ham_xbox_r.map")
     ap.add_argument("--selftest", action="store_true",
                     help="run the same_function null vector and exit (no gate run, no --out)")
@@ -773,6 +778,8 @@ def main():
                     help="--selftest: how many symbols.txt extents to sample (default: %(default)s)")
     ap.add_argument("--verbose", action="store_true")
     args = ap.parse_args()
+    global ALLOW_DROP
+    ALLOW_DROP = args.allow_drop
 
     if args.selftest:
         sys.exit(selftest(Retail(), args.sample, args.verbose))
@@ -1006,10 +1013,38 @@ def main():
     print("-> %s" % args.out)
 
     if args.install:
-        install(groups, ROOT / args.aliases)
+        if install(groups, ROOT / args.aliases) is False:
+            return 3       # refused: the install would have DROPPED spellings
 
 
 OWNED = "COMDAT-identity alias group derived by tools/comdat_fold_gate.py."
+# set by main() from --allow-drop; see the drop guard in install()
+ALLOW_DROP = False
+
+
+def hand_annotations(old):
+    """Segments of an existing evidence string this tool did not generate.
+
+    The tool's own text always begins with OWNED; other provenances are joined
+    with " | " and hand-written adjudications are appended to a segment with
+    " ++ ".  Both are returned, order-preserved and de-duplicated, so a re-install
+    keeps them without growing without bound.
+    """
+    keep = []
+    for seg in re.split(r"\s\|\|?\s", old or ""):
+        seg = seg.strip()
+        if not seg:
+            continue
+        parts = seg.split(" ++ ")
+        if parts[0].startswith(OWNED):
+            keep.extend(x.strip() for x in parts[1:] if x.strip())
+        else:
+            keep.extend(x.strip() for x in parts if x.strip())
+    out = []
+    for k in keep:
+        if k not in out:
+            out.append(k)
+    return out
 
 
 def install(groups, path):
@@ -1037,9 +1072,31 @@ def install(groups, path):
         if S in existing:
             g = existing[S]
             before = (sorted(g.get("folded", [])), g.get("evidence", ""))
+            # An OWNED group is REPLACED, not unioned, so that a re-run with a
+            # shrunken admitted set can withdraw a spelling.  That is correct only
+            # when the worklist carries the COMPLETE set for this survivor, and it
+            # is silent data loss when it does not -- an incremental run adding one
+            # spelling to 0x823d14c0 would have dropped its four proven siblings
+            # AND the whole-binary population control recorded in its evidence
+            # (lane W16-FM).  Dropping is now refused unless asked for explicitly.
+            dropped = sorted(set(g.get("folded", [])) - set(folded))
+            if dropped and g.get("evidence", "").startswith(OWNED) and not ALLOW_DROP:
+                print("REFUSED: installing %d spelling(s) for %s would DROP %d already-installed "
+                      "one(s) that this run did not re-admit:" % (len(folded), addr, len(dropped)))
+                for d in dropped:
+                    print("    - " + d)
+                print("  Submit the complete set for this survivor, or pass --allow-drop to "
+                      "withdraw them deliberately. Nothing was written.")
+                return False
             if g.get("evidence", "").startswith(OWNED):
                 g["folded"] = sorted(folded)
-                g["evidence"] = ev
+                # PRESERVE anything this tool did not write.  Replacing the whole
+                # string erased lane W10-B's whole-binary population control (and
+                # its list<bool> negative control) from 0x823d14c0 the first time
+                # this lane ran -- the evidence text IS the audit trail, and a
+                # later lane re-running the gate must not be able to delete an
+                # earlier lane's adjudication as a side effect (lane W16-FM).
+                g["evidence"] = " ++ ".join([ev] + hand_annotations(g.get("evidence", "")))
             else:
                 g["folded"] = sorted(set(g.get("folded", [])) | set(folded))
                 if sorted(g["folded"]) != before[0]:
@@ -1069,4 +1126,4 @@ def install(groups, path):
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main() or 0)
