@@ -161,3 +161,73 @@ takes it:
 `0x38` is inherited from the rb3-Wii header, where `Transform` is smaller. Comment fixed —
 per CLAUDE.md, `// 0xHEX` comments are derived and can be wrong; the compiler is
 authoritative.
+
+---
+
+## 9. Addendum — the fold survives a whole-image census, and the census corrects W16-EP
+
+The coordinator blocked the alias half on a fair challenge: my admission rested on
+`FLAT T1 PROVEN, 96/96, reloc_tally {}`, and `retail_bodytwins` counts only
+**pinned** objs, so it cannot see an unpinned retail copy. W16-EL and W16-EP both
+established that **"byte-identical ⇒ folded" is false.** Settled with a new
+instrument, `tools/retail_body_multiplicity.py`.
+
+**Answer: exactly 1.** Three legs:
+
+| probe | result |
+|---|---|
+| every `.text` function extent of size 0x60 (1,002 of them) | **1** masked-equal body — itself |
+| whole-image classes, all sizes (69,056 extents, 0 dropped) | survivor's class has **1** member |
+| **slide**: every 4-byte-aligned `.text` window, symbol boundaries ignored (48,164 candidates by first word) | **1** masked-equal window |
+
+The slide leg is what closes the hole a size-keyed census leaves: a second copy
+carved under a wrong extent would still be found, and none exists.
+
+**`our_bodytwins` = 2** — our `ExtraTail` spelling and our `Point` spelling, nothing
+else. Compare the `--chase` tier rejected this week on this very column (median 14,
+max 568).
+
+★ **And the premise was wrong about this pair.** `reloc_tally {}` with `n_relocs 3`
+does not mean *relocation-free*; it means **three relocations whose target names
+AGREE**: `__savegprlr_27` @4, `memcpy` @64, `__restgprlr_27` @92, identical on both
+sides. Per GROUNDED-1, when relocation names agree the destination is not masked at
+all. (`our_slot0_matches_retail: False` is a cross-universe artifact — `slot0` hashes
+the *callee body*, and all three helpers exist in the retail objs but in none of ours,
+so it compares a hash against a name. It says nothing about the pair.)
+
+### ⛔ The census REFUTES W16-EP's refutation
+
+W16-EP refused its pairs 5 and 7 on:
+
+> retail keeps **eleven** byte-identical 84-byte `list<T*>::erase` bodies — identical
+> **including their `bl` targets** — unfolded at eleven distinct addresses.
+
+The eleven bodies exist. **They are not copies of one another.**
+`--family-recheck erase,list --size 84` ⇒ **11 extents, 11 DISTINCT masked forms.**
+Word-level, `0x822b1e60` (`list<TargetCache>`) vs `0x82447458` (`list<Plane>`):
+
+```
+[ 7] 38600054 != 38600018   <- li r3, 84  vs  li r3, 24   (per-T NODE SIZE)
+[12] 4850abc1 != 483755c9   <- bl (PC-relative, masked)
+```
+
+A **non-branch immediate** differs, so these can never fold under `/OPT:ICF`,
+whatever their `bl` targets do. Ten of the eleven merely share one callee
+(`MemOrPoolFreeSTL`) — which is shape similarity, not identity. This is exactly the
+mechanism CLAUDE.md already records for `_List_base<T>::clear`: 42 addresses,
+reloc-identical surplus **0**, differing in per-`T` node deallocators.
+
+⇒ **A shape-only comparator reads eleven different functions as eleven copies.** The
+correction does not restore EP's pairs (they may still fail on other evidence) but
+its stated *reason* does not hold, and the "eleven unfolded copies" figure must not
+be briefed onward as a fact about ICF.
+
+### The instrument, and why it must be self-controlled
+
+A census reporting "1" is indistinguishable from a broken census, so
+`--control` prints the whole-image multiplicity distribution. It **finds**
+duplicates at scale — 769 two-copy classes, 281 three-copy, ten eleven-copy, and a
+40-byte body at **278** unfolded copies. A "1" from an instrument that tops out at
+278 is a measurement; a "1" from an untested one is a guess. The 40-byte / 278-copy
+stratum is also the vacuity floor to stay away from: our 96-byte body carries two
+`li 0x48` stride immediates and a `memcpy`, so its discriminator does real work.
