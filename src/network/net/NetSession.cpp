@@ -351,10 +351,14 @@ void NetSession::Join(NetSearchResult *res) {
     if (mOnlineEnabled && mData->Equals(res->mSessionData)) {
         static JoinResultMsg msg(kNoSelfJoin, 0);
         Handle(msg, false);
-    } else if (!IsLocal()) {
+        return;
+    }
+    if (!IsLocal()) {
         static JoinResultMsg msg(kAlreadyHosting, 0);
         Handle(msg, false);
-    } else {
+        return;
+    }
+    {
         if (!mOnlineEnabled)
             AssignLocalOwner();
         SetState(kCreatingJoinSession);
