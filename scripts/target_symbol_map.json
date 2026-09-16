@@ -21,6 +21,7 @@
  "0x8251d538": "?EnumerateFriends@PlatformMgr@@QAAXHAAV?$vector@PAVFriend@@V?$StlNodeAlloc@PAVFriend@@@stlpmtx_std@@@stlpmtx_std@@PAVObject@Hmx@@@Z",
  "0x8251dab8": "?Poll@PlatformMgr@@QAAXXZ",
  "0x823ecd70": "??0ServerStatusChangedMsg@@QAA@_N@Z",
+ "0x826b5848": "?HandleLegendLefty@ChordbookPanel@@QAAX_N@Z",
  "0x82812468": "?PreLoad@UILabelDir@@UAAXAAVBinStream@@@Z",
  "0x82491918": "?Tessellate@RndAmbientOcclusion@@QAAXPAM0@Z",
  "0x824f5b68": "?QuatSpline@@YAXABV?$Keys@VQuat@Hmx@@V12@@@PBV?$Key@VQuat@Hmx@@@@1MAAVQuat@Hmx@@@Z",
