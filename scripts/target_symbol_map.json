@@ -16227,7 +16227,7 @@
  "0x826b5408": "?SetTypeDef@UIPanel@@$4PPPPPPPM@GME@AAXPAVDataArray@@@Z",
  "0x826b5420": "?SetType@ChordbookPanel@@UAAXVSymbol@@@Z",
  "0x826b5588": "??1ChordbookPanel@@UAA@XZ",
- "0x826b56c8": "?Load@ChordbookPanel@@UAAXXZ",
+ "0x826b56c8": "?Unload@ChordbookPanel@@UAAXXZ",
  "0x826b56d0": "??0?$_Vector_base@VGameGem@@V?$StlNodeAlloc@VGameGem@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VGameGem@@@1@@Z",
  "0x826b5730": "?SetType@ChordbookPanel@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
  "0x826b5740": "?PushSkipDialog@ChordbookPanel@@QAAXXZ",
