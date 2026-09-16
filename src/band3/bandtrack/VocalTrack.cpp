@@ -1030,14 +1030,51 @@ void VocalTrack::PollLyricAnimations(
                 && plates.front()->CurrentEndX(plateMs) < mDir->mTrackLeftX - unk78)
                || plates.front()->mInvalidateMs < ms)) {
         LyricPlate *cur = plates.front();
-        // DO NOT guard this block out. Measured, and it cost -92 B: retail HAS
-        // it -- `lbz lbl_82E4BCF9`, the flag test, and `bl DumpLyricPlates` all
-        // appear as `delete` charges (present in target, absent in us) when it
-        // is removed, and our TU stops instantiating ??$MakeString@MPBD@@, a
-        // 92 B row retail's TU defines and which was matching at 100%.
-        // The real residual here is narrower: retail never loads
-        // ?TheDebug@@3VDebug@@A, so retail's spew reaches MakeString by some
-        // other sink. That sink is unidentified -- see the lane report.
+        // DO NOT remove the `if (sDumpLyricPlates)` BLOCK -- retail HAS it
+        // (`lbz lbl_82E4BCF9`, the flag test and `bl DumpLyricPlates` all appear
+        // as `delete` charges when the whole block goes). Only the SPEW is ours.
+        //
+        // CORRECTION (lane W16-DA, 2026-09-16). The note that used to sit here
+        // said "retail never loads ?TheDebug@@3VDebug@@A, so retail's spew
+        // reaches MakeString by some other sink. That sink is unidentified."
+        // BOTH HALVES ARE FALSE, measured on retail bytes (orig/45410914/band.exe):
+        //   * retail materializes 0x82cc9874 (= ?TheDebug@@3VDebug@@A, .data) at
+        //     68 sites, and calls ??6TextStream@@QAAAAV0@VSymbol@@@Z -- the ICF
+        //     survivor that scripts/symbol_aliases.json already proves at tier T1
+        //     to be folded with ??6TextStream@@QAAAAV0@PBD@Z -- from 651 sites.
+        //   * the sink IS TheDebug, spelled exactly as we spell it. Witness:
+        //     ?Print@CharBonesSamples@@UAAXXZ+0x2c does
+        //         bl ??$MakeString@HHHH@@ ; addi r27,r11,-0x678c ; bl ??6TextStream
+        //     where r11=lis -0x7d33 so r27 == 0x82cc9874 == TheDebug.
+        // ==> the 185 tree-wide `TheDebug <<` sites are NOT a defect. Do not guard
+        //     them as a class; in the corroborated units retail has MORE stream
+        //     output than we spell, not less (MeshAnim 6 ours / 60 retail).
+        //
+        // THIS SITE is the local exception, and it is proven separately:
+        // ??$MakeString@MPBD@@ (0x827efa60) has exactly ONE retail `bl` caller,
+        // 0x827efd68, inside ?DisplayEvents@@YAMPAVDataEventList@@MM@Z -- not this
+        // function -- and retail's VocalTrack.cpp pin range holds ZERO TheDebug
+        // references and ZERO `bl ??6TextStream` calls. objdiff agrees:
+        // ??$MakeString@MPBD@@ and ??6TextStream@@QAAAAV0@PBD@Z are BASE-ONLY
+        // calls here, and the extra live value costs one more callee-saved GPR
+        // (target __savegprlr_25 vs our __savegprlr_24), which is what drives the
+        // 47-instruction r30<->r31 swap cascade.
+        //
+        // MEASURED, and DELIBERATELY NOT GUARDED. Guarding just this statement
+        // with the house MILO_DEBUG/HX_NATIVE guard (leaving the block and
+        // DumpLyricPlates live) was A/B'd whole-binary on the name_check ruler:
+        //     Delta matched=-1, Delta code_bytes=-92, Delta code%=-0.000900pp
+        //     (default/VocalTrack 179->178; 0 units reached 100, 0 fell off)
+        // i.e. exactly the ??$MakeString@MPBD@@ row leaving, with NO offsetting
+        // gain: PollLyricAnimations does NOT cross to fuzzy 100, because a second
+        // and independent defect survives -- objdiff idx 136/137 show target
+        // reading Track::unk50 where we read Track::mIntroPlaying and vice versa
+        // (a field swap this change does not touch). The 92 B is held by a
+        // hand-placed 0x68-byte splits block, VocalTrack.cpp 0x827efa60-0x827efac8,
+        // that exists only to bind this COMDAT into our unit.
+        // ==> CONDITIONAL FOR A FUTURE LANE: guarding this site is a PREREQUISITE
+        //     for this 744 B function ever reaching 100, but it is -92 B standalone.
+        //     Fix the unk50/mIntroPlaying swap FIRST, then guard, then re-measure.
         if (sDumpLyricPlates) {
             TheDebug << MakeString(
                 "recycling lyric plate at %.2f sec %s\n",
