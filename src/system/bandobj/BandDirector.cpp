@@ -1134,9 +1134,33 @@ DataNode BandDirector::OnFileLoaded(DataArray *da) {
     Symbol sym = da->Sym(2);
     ObjectDir *dir = da->Obj<ObjectDir>(3);
     if (sym == song) {
+        // W16-GC: retail materializes &mPropAnim ONCE before the `if (dir)`
+        // branch (addi r28,r30,0x38 sits between the lfs and the stfs of
+        // mEndOfSongSec=0 at 0x82291590..0x82291598); without the reference
+        // below we rematerialize it in BOTH arms.  RE-VALIDATED 2026-09-16
+        // against the current source state, because the hoist was first
+        // measured before the Symbol fix further down and that state no longer
+        // exists: removing it now still reads base 3820 B / 4 charges / 99.6
+        // canonical vs 3816 B / 3 charges / 99.8 with it.  Keep it.
+        //
+        // NEGATIVE RESULTS, so the next lane does not re-buy them.  The row's
+        // three residual charges are a pure 2-instruction SCHEDULE swap: we
+        // emit `addi r28,r30,0x38` among the leading `lis`es, retail emits it
+        // four instructions later, after `cmplwi cr6,r3,0` and after the
+        // "song.anim" address.  952 of 955 instructions are equal.  Measured
+        // byte-identical (i.e. INERT) and reverted:
+        //   * moving this reference declaration above/below `mEndOfSongSec = 0`
+        //   * spelling it as a pointer (`ObjPtr<RndPropAnim> *`) instead of a
+        //     reference
+        //   * naming the "song.anim" string as a local `const char *`
+        // That is exactly what CLAUDE.md predicts -- declaration order controls
+        // STACK SLOTS and is inert for register assignment and scheduling -- so
+        // this residual is the permuter class, and the permuter is OFF by
+        // standing user directive.  Do not re-open it as a source problem.
         mEndOfSongSec = 0;
+        ObjPtr<RndPropAnim> &pa = mPropAnim;
         if (dir) {
-            mPropAnim = dir->Find<RndPropAnim>("song.anim", false);
+            pa = dir->Find<RndPropAnim>("song.anim", false);
             mSongPref = dir->Find<BandSongPref>("BandSongPref", false);
             // Retail caches all four lip-syncs HERE (0x822915E4/5FC/614/62C),
             // not down in the venue block; SetCharacterLipSyncs reads them
@@ -1150,7 +1174,7 @@ DataNode BandDirector::OnFileLoaded(DataArray *da) {
             }
         } else {
             // Retail .L_82291658: the dir-null arm clears the cached finds.
-            mPropAnim = nullptr;
+            pa = nullptr;
             mSongPref = nullptr;
             mLipSyncs[0] = nullptr;
             mLipSyncs[1] = nullptr;
@@ -1238,7 +1262,8 @@ DataNode BandDirector::OnFileLoaded(DataArray *da) {
                                           "drum_intensity",    "guitar_intensity",
                                           "keyboard_intensity", 0 };
         for (int i = 0; instIntensities[i] != 0; i++) {
-            DataArrayPtr dptr((Symbol(instIntensities[i])));
+            Symbol isym(instIntensities[i]);
+            DataArrayPtr dptr(isym);
             SymbolKeys *skeys =
                 dynamic_cast<SymbolKeys *>(mPropAnim->GetKeys(this, dptr));
             if (skeys)
