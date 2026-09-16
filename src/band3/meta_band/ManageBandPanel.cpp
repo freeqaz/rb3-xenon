@@ -81,63 +81,82 @@ void ManageBandPanel::RefreshToStandinsState() {
     RefreshAll();
 }
 
-void ManageBandPanel::RefreshAll() {
-    if (mProfile) {
-        LocalBandUser *pLocalUser = mProfile->GetAssociatedLocalBandUser();
-        MILO_ASSERT(pLocalUser, 0xB3);
-        mCharProvider->Reload(pLocalUser);
-        mStandInProvider->Reload(mProfile);
+// Retail X360 factors the vignette-list rebuild out of line: RefreshAll ends with
+// `bl <helper>(mHistoryProvider, mProfile, array)` at 0x82625BE4, and the helper body
+// lives at 0x826259E0 with its own static-guard word (lbl_82E011D0). The rb3-Wii dev
+// oracle inlines this loop into RefreshAll; retail does not.
+void VignetteViewerProvider::RefreshVignettes(BandProfile *profile, DataArray *arr) {
+    unk20 = arr;
+    AccomplishmentProgress &accProgress = profile->AccessAccomplishmentProgress();
+    std::list<Symbol> &newRewardVignettes = accProgress.mNewRewardVignettes;
+    std::set<Symbol> &accomplishedVignettes = accProgress.unkb0;
+    int numVignettes = unk20->Size();
 
-        static Symbol reward_vignettes("reward_vignettes");
-        mHistoryProvider->unk20 = Property(reward_vignettes, true)->Array(NULL);
-        VignetteViewerProvider *histProv = mHistoryProvider;
-        AccomplishmentProgress &accProgress = mProfile->AccessAccomplishmentProgress();
-        std::list<Symbol> &newRewardVignettes = accProgress.mNewRewardVignettes;
-        std::set<Symbol> &accomplishedVignettes = accProgress.unkb0;
-        int numVignettes = histProv->unk20->Size();
+    static Symbol vignetteviewer_hidden_title("vignetteviewer_hidden_title");
 
-        histProv->mEntries.clear();
-        for (int i = 0; i < numVignettes; i++) {
-            DataArray *arr = histProv->unk20->Array(i);
-            Symbol vigName = arr->Sym(0);
-            Symbol accName = arr->Sym(1);
+    mEntries.clear();
+    for (int i = 0; i < numVignettes; i++) {
+        DataArray *a = unk20->Array(i);
+        Symbol vigName = a->Sym(0);
+        Symbol accName = a->Sym(1);
 
-            bool isAccomplished =
-                accomplishedVignettes.find(accName) != accomplishedVignettes.end();
+        bool isAccomplished =
+            accomplishedVignettes.find(accName) != accomplishedVignettes.end();
 
-            if (!isAccomplished)
-                isAccomplished = MetaPanel::sUnlockAll;
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+        // Dev-build cheat: retail X360's helper at 0x826259E0 contains no reference to
+        // MetaPanel::sUnlockAll at all, so this arm is compiled out of the match build.
+        if (!isAccomplished)
+            isAccomplished = MetaPanel::sUnlockAll;
+#endif
 
-            if (isAccomplished) {
-                std::list<Symbol>::iterator it = newRewardVignettes.begin();
-                bool keepSearching;
-                do {
-                    keepSearching = false;
-                    if (it != newRewardVignettes.end() && *it != accName) {
-                        keepSearching = true;
-                    }
-                    if (keepSearching)
-                        ++it;
-                } while (keepSearching);
-                isAccomplished = it == newRewardVignettes.end();
-            }
-
-            if (isAccomplished) {
-                histProv->mEntries.push_back(vigName);
-            } else {
-                static Symbol vignetteviewer_hidden_title("vignetteviewer_hidden_title");
-                histProv->mEntries.push_back(vignetteviewer_hidden_title);
-            }
+        if (isAccomplished) {
+            std::list<Symbol>::iterator it = newRewardVignettes.begin();
+            bool keepSearching;
+            do {
+                keepSearching = false;
+                if (it != newRewardVignettes.end() && *it != accName) {
+                    keepSearching = true;
+                }
+                if (keepSearching)
+                    ++it;
+            } while (keepSearching);
+            isAccomplished = it == newRewardVignettes.end();
         }
 
-        TourBand *tourBand = mProfile->GetTourBand();
-        PatchDescriptor *logo = tourBand->GetLogo();
-        if (logo && logo->patchType != 0) {
-            if (mProfile) {
-                LocalBandUser *pUser = mProfile->GetAssociatedLocalBandUser();
-                static Symbol acc_bandlogo("acc_bandlogo");
-                TheAccomplishmentMgr->EarnAccomplishment(pUser, acc_bandlogo);
-            }
+        if (isAccomplished) {
+            mEntries.push_back(vigName);
+        } else {
+            mEntries.push_back(vignetteviewer_hidden_title);
+        }
+    }
+}
+
+// Retail dereferences mProfile unconditionally here (0x82625B64 `lwz r3, 0x50(r3)`
+// feeds `bl GetAssociatedLocalBandUser` with no preceding null test); only the
+// EarnAccomplishment arm below carries an `if (mProfile)` (0x82625C38).
+void ManageBandPanel::RefreshAll() {
+    LocalBandUser *pLocalUser = mProfile->GetAssociatedLocalBandUser();
+    MILO_ASSERT(pLocalUser, 0xB3);
+    mCharProvider->Reload(pLocalUser);
+    mStandInProvider->Reload(mProfile);
+
+    static Symbol reward_vignettes("reward_vignettes");
+    mHistoryProvider->RefreshVignettes(
+        mProfile, Property(reward_vignettes, true)->Array(NULL)
+    );
+
+    TourBand *tourBand = mProfile->GetTourBand();
+    PatchDescriptor *logo = tourBand->GetLogo();
+    if (logo && logo->patchType != 0) {
+        // Retail initialises this static BEFORE the mProfile test (guard bit 0x2 at
+        // 0x82625C08, the `if (mProfile)` at 0x82625C38). Declaring it inside the `if`
+        // forces GetAssociatedLocalBandUser's result to survive the Symbol ctor call,
+        // which costs an extra callee-saved register (prologue r27-r31 vs r28-r31).
+        static Symbol acc_bandlogo("acc_bandlogo");
+        if (mProfile) {
+            LocalBandUser *pUser = mProfile->GetAssociatedLocalBandUser();
+            TheAccomplishmentMgr->EarnAccomplishment(pUser, acc_bandlogo);
         }
     }
     static Message refresh_all_msg("refresh_all");

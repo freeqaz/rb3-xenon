@@ -20,6 +20,7 @@ public:
 
     bool IsLocked(int);
     Symbol GetScreen(int);
+    void RefreshVignettes(BandProfile *, DataArray *);
 
     DataArray *unk20; // 0x2c
     std::vector<Symbol> mEntries; // 0x30
