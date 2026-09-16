@@ -1,3 +1,4 @@
+#define RB3_OBJPTR_INLINE_TWOARG_CTOR_DEFER_BOTH 1
 #include "rndobj/PostProc.h"
 #include "PostProc.h"
 #include "Rnd.h"
@@ -444,7 +445,14 @@ void RndPostProc::LoadRev(BinStream &bs, int rev) {
                 c.green = (4.0f - c.green) / (4.0f - minVal);
                 c.blue = (4.0f - c.blue) / (4.0f - minVal);
                 c.alpha = 0.0f;
-                mBloomColor = c;
+                // W16-FH: copy through a REFERENCE to the destination (dc3's
+                // 100%-matching spelling). Retail materializes &mBloomColor
+                // into r11 (an `addi r11, r30, 0x30` it never uses -- MSVC
+                // folds the four stores back to r30-relative offsets) and so
+                // takes &c in r10; a plain `mBloomColor = c` computes only &c,
+                // in r11, and swaps r10/r11 through the whole 4-word copy.
+                Hmx::Color &bloomColor = mBloomColor;
+                bloomColor = c;
             } else {
                 mBloomColor.red = 1.0f;
                 mBloomColor.green = 1.0f;
