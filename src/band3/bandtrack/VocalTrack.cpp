@@ -1780,12 +1780,12 @@ void VocalTrack::UpdateScrolling(float ms) {
 
             for (int i = 0; i < plate->mSyllables.size(); i++) {
                 Lyric *lyric = plate->mSyllables[i];
-                float lyricX;
+                Vector3 beginPos;
                 if (staticLyrics) {
-                    lyricX = lastLyricX;
+                    beginPos.x = lastLyricX;
                     if (lyric->mDeployIdx != -1) {
-                        if (lyricX < (0.01f + mStaticDeployMarginX)) {
-                            lyricX -= mStaticDeployMarginX;
+                        if (beginPos.x < (0.01f + mStaticDeployMarginX)) {
+                            beginPos.x -= mStaticDeployMarginX;
                         }
                         if (lyric->mDeployIdx < mNextDeployZone[std::min(part, 1)]) {
                             if (!sectionOnly) {
@@ -1799,7 +1799,7 @@ void VocalTrack::UpdateScrolling(float ms) {
                             lyric->mDeployIdx = -1;
                         } else {
                             float deployWidth = mStaticDeployZoneXSize;
-                            lyricX += ((deployWidth + mStaticDeployBufferX)
+                            beginPos.x += ((deployWidth + mStaticDeployBufferX)
                                        * (float)(lyric->mDeployIdx
                                                  - mNextDeployZone[std::min(part, 1)]))
                                 + (deployWidth + mStaticDeployMarginX);
@@ -1808,22 +1808,20 @@ void VocalTrack::UpdateScrolling(float ms) {
                 } else {
                     float startMs = TickToMs((float)lyric->StartTick());
                     MsToTick(startMs - unk74);
-                    lyricX = unk78 * (startMs / unk74);
+                    beginPos.x = unk78 * (startMs / unk74);
                 }
-                Vector3 beginPos;
                 beginPos.y = 0.0f;
                 if (lyric->PitchNote()) {
                     beginPos.z = lead ? mDir->unk694 : mDir->unk698;
                 } else {
                     beginPos.z = lead ? mDir->unk69c : mDir->unk6a0;
                 }
-                if (lyricX < lastLyricX) {
-                    lyricX = lastLyricX;
+                if (beginPos.x < lastLyricX) {
+                    beginPos.x = lastLyricX;
                 }
-                beginPos.x = lyricX;
                 lyric->mBeginPos = beginPos;
                 plate->BakeLyric(lyric);
-                lastLyricX = lyricX + lyric->Width();
+                lastLyricX = beginPos.x + lyric->Width();
                 if (staticLyrics) {
                     std::deque<LyricShift> &shifts =
                         lead ? mLeadLyricShifts : mHarmonyLyricShifts;
