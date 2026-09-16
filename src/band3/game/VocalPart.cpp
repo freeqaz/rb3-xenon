@@ -626,9 +626,11 @@ float VocalPart::CalcPhraseScoreMax(const VocalPhrase *const &phrase) const {
     return result;
 }
 
+// VocalPlayer::kInvalidPitch is a float global retail loads out of .rdata
+// (lbl_820F14B4); no C++ declaration for it survives in any oracle, so it stays
+// an extern "C" shim. objdiff forgives the placeholder target name, so this
+// costs nothing on the metric -- see docs/decomp/W16EO_*.
 extern "C" float kInvalidPitch__11VocalPlayer;
-extern "C" VocalNote *NoteAt__13VocalNoteListCFf(const VocalNoteList *, float);
-extern "C" float PitchAt__13VocalNoteListCFf(const VocalNoteList *, float);
 
 void VocalPart::Poll(float ms, const SongPos &) {
     while (mFreestyleSection
@@ -686,7 +688,7 @@ void VocalPart::Poll(float ms, const SongPos &) {
 #ifdef HX_NATIVE
     VocalFrameSpewData *spew = mPlayer->mFrameSpewData;
     if (spew) {
-        float pitch = PitchAt__13VocalNoteListCFf(mVocalNoteList, ms);
+        float pitch = mVocalNoteList->PitchAt(ms);
         spew->mPartData[mPartIndex].unk0 = pitch;
     }
 #endif
@@ -815,7 +817,7 @@ void VocalPart::ScoreSinger(
     MILO_ASSERT(o_rCache.GetHitPercentage() == 0.0f, 0x2C3);
     o_rCache.unk8 = Min(unk38, mPhraseScoreMax);
     o_rPitchDiff = kInvalidPitch__11VocalPlayer;
-    if (arg1 == 0.0f && NoteAt__13VocalNoteListCFf(mVocalNoteList, ms) == 0) {
+    if (arg1 == 0.0f && mVocalNoteList->NoteAt(ms) == 0) {
         o_rCache.unk0 = 1.0f;
         o_rNote = arg4;
         return;
