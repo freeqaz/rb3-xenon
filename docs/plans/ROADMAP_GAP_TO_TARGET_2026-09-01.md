@@ -3312,3 +3312,42 @@ the JSON calls itself the source of truth yet **its own pipeline cannot re-deriv
 membership**. Landing them would install forgiveness the generator could never reproduce.
 Sized and handed up rather than taken — the correct call, and the single biggest uncollected
 item in the band.
+
+### ⏳ OPEN COORDINATOR DECISION — should `--chase` become a declared alias evidence tier?
+
+**Handed up by W16-EJ (2026-09-16), sized, and deliberately NOT decided yet.**
+
+W16-EJ proved 17 ICF folds via `tools/icf_pair_adjudicate.py --chase` and **did not land
+them**, worth **13 rows / 10,136 B** in the near-crossing band alone. The list is in
+`~/tmp/w16ej/chase.txt`. Its reasoning, which I am recording rather than overriding:
+
+* `--chase` relaxes relocation-target **name** equality to a *recursively verified*
+  equivalence. That is a real proof technique, and its `--selftest` and `--chasetest`
+  controls were both run and both discriminate.
+* But `--chase` is **not one of the declared T1/T2/T3 evidence tiers** that
+  `tools/icf_alias_build.py` implements, and **`icf_alias_build.py` does not pass
+  `--chase`**. So `symbol_aliases.json` — which calls itself the source of truth — **could
+  never re-derive a chase membership**. Landing them installs forgiveness the generator
+  cannot reproduce.
+
+⚠ **Why an alias is not a free win:** an alias is *forgiveness* — objdiff consults
+`SymbolEquivalences` and DROPS the charge — so **an unproven alias lifts the score BY
+CONSTRUCTION**. The `none` control **cannot** catch a fabricated one (`none` ignores
+relocation names, so it reads +0 there by construction), and **that flatness is the SIGNATURE
+of the hazard, not a clearance.** Ablation has sized this whole mechanism at **818,416 B /
+7.93 pp — ~22% of everything we count as matched already rests on it.** That is the reason
+to be slow here, not the reason to refuse.
+
+**What would settle it, in order:**
+1. **W16-EK first** — it is adjudicating a *different* defect in the adjacent fold gate
+   (`fold_thunk_gate.py`'s one-sided relocation derivation). If the fold-gate instrument turns
+   out to be less trustworthy than believed, the `--chase` question changes shape. **Do not
+   decide this before EK reports.**
+2. Then: either teach `icf_alias_build.py` to emit `--chase` as a declared **T4** tier (so the
+   pipeline can re-derive what it ships), or reject `--chase` as evidence and record why.
+   **What is NOT acceptable is landing chase-derived memberships under a T1/T2/T3 label** —
+   that would make the tier labels lie, and the tier labels are the only thing standing
+   between us and metric-fitted forgiveness.
+
+⇒ **Status: OPEN. 10,136 B parked deliberately.** Whoever picks this up: it is a *pipeline*
+task, not a byte grab, and the bytes are the least interesting part of it.
