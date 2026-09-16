@@ -342,7 +342,7 @@ bool VocalPart::IsPhraseMarkerAtEnd(const VocalPhrase *const &p) const {
 
 bool VocalPart::IsEmptyPhrase(const VocalPhrase *const &p) const {
     const VocalPhrase *phrase = p;
-    const VocalPhrase *end = mVocalNoteList->mPhrases.data() + mVocalNoteList->mPhrases.size();
+    const VocalPhrase *end = mVocalNoteList->mPhrases.end();
     if (phrase == end) return true;
     if (phrase->mTambourinePhrase) return false;
     if (phrase->unk10 != phrase->unk14) return false;
@@ -375,23 +375,22 @@ bool VocalPart::PhraseHasUnpitchedNotes() const {
 bool VocalPart::InPlayablePhrase() const { return true; }
 
 bool VocalPart::InTambourinePhrase() const {
-    bool result = false;
     VocalNoteList *list = mVocalNoteList;
     const VocalPhrase *phrase = mThisPhrase;
-    if (phrase != list->mPhrases.data() + list->mPhrases.size() && phrase->mTambourinePhrase)
-        result = true;
-    return result;
+    if (phrase != list->mPhrases.end() && phrase->mTambourinePhrase)
+        return true;
+    return false;
 }
 
 float VocalPart::FramePhraseMeterFrac() const {
     bool _cond = !mPlayer->IsNet();
     if (_cond) {
-        float ratio = 0.0f;
+        float ratio;
         if (mPhraseScoreMax != 0.0f)
             ratio = mPhraseScore / mPhraseScoreMax;
-        if (ratio > 1.0f) return 1.0f;
-        if (ratio < 0.0f) return 0.0f;
-        return ratio;
+        else
+            ratio = 0.0f;
+        return Clamp(0.0f, 1.0f, ratio);
     }
     return mRemotePhraseMeterFrac;
 }
@@ -555,10 +554,9 @@ float VocalPart::GetNoteSliceWeight(float fBegin, float fEnd, int noteIdx) const
     if (note.mBeginPitch == note.mEndPitch) {
         // Loop 1: no pitch bend (unpitched or single pitch)
         float threshold = 0.0f;
-        float frameMs = kFrameTimeMs;
         while (fBeginRel < fEndRel) {
             float spC = fEndRel - fBeginRel;
-            float stepMs = std::min(spC, frameMs);
+            float stepMs = std::min(kFrameTimeMs, spC);
             float weight;
             if (fBeginRel < threshold) {
                 weight = threshold;
