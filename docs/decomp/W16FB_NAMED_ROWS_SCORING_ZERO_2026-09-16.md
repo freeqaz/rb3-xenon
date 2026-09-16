@@ -125,3 +125,58 @@ and must not be hand-edited.
 - **C6 (10 rows / 308 B)** — defined in their own object yet never diffed
   (`?HasMic@GameMicManager@@`, `?CreateVertexShader@DxShader@@`). Recorded, not
   chased: 308 B does not justify the instrument work.
+
+## 7. MEASURED — the re-home alone (A/B, leg A == campaign baseline)
+
+```
+leg A: matched=43991 masked=23228 honest=20763 code%=40.347736
+leg B: matched=43998 masked=23235 honest=20763 code%=40.350900
+Δmatched=+7  Δmasked_equal=+7  Δhonest=+0  Δcode_bytes=+324  Δcode%=+0.003164pp
+unit: default/band3/game/Player 159->166
+```
+
+| prediction | outcome |
+|---|---|
+| **P1** pairing | ✅ **CONFIRMED, and stronger than predicted.** `??0Player` moved `default/GemPlayer` (mpn 0.0) → `default/band3/game/Player` at **mpn 99.43503 / fuzzy 99.43503**. |
+| **P2** Δcode ∈ {0, +708} | ❌ **WRONG — measured +324.** |
+| **P3** `total_code` unchanged | ✅ **CONFIRMED exactly** (10,247,068 / 69,240 on both legs). |
+| **P4a** BeatMatchController declines | ✅ **CONFIRMED** — stays `fuzzy == 0`, unpaired, in RGGemMatcher. |
+| **P4b** `?SetTrack@Player@@` unchanged | ✅ **CONFIRMED** — 100.0 → 100.0; only its unit-relative `address` moved 20976 → 22112 (= +1,136, the block size). My first comparator used whole-object equality and called that a move; the comparator was over-strict, not the result. |
+| **P5** ±1 row | ❌ **WRONG — measured ±9.** GemPlayer 347→338, Player 185→194; `total_code` 50,868→49,732 and 25,468→26,604, conserved to the byte. |
+
+**P2 and P5 failed for one shared reason, and it is the useful part of this
+record: I reasoned about the one NAMED row and forgot the block carries 8 other
+rows.** The moved block is 1,136 B, of which the named ctor is 708 B; the rest is
+EH funclets that objdiff pairs by byte signature. That is why all 7 gains are
+`masked_equal` and Δhonest is exactly 0. **When pricing a pin re-home, price the
+BLOCK, not the row** — the row is what you noticed, the block is what moves.
+
+⚠ Corollary for anyone repricing this vein: the census sizes are *row* sizes, so
+the 3,208 B of unique-home class-3 rows understates what a re-home actually moves.
+
+## 8. The re-home turned an invisible row into a ONE-INSTRUCTION near-miss
+
+Paired at last, `??0Player` showed **1 mismatched instruction out of 177**:
+`[116] delete: stw r29, 0x2f8(r30)` — target 708 B vs our 704 B, exactly one
+missing store.
+
+Adjudicated on retail bytes, not the metric: the target zero-fills a run at
+`0x2e5`–`0x2f8` and stores `r8` at `0x2f4`, `r29(=0)` at `0x2f8`, `r26` at
+`0x2fc`. `scripts/harvest/class_layout_report.py Player` (the compiler, not the
+header comments) puts **`mUnkTU5_tail` at exactly 0x2f8**, between `unk2c0`
+(0x2f4) and `unk2c4` (0x2fc) — so our layout was already right and the
+constructor simply never initialised the member. It is even initialised in
+Player.h:87's other ctor. Fix: add `mUnkTU5_tail(0)` between `unk2c0(-1)` and
+`unk2c4(1)`; MSVC emits member inits in declaration order, so position follows.
+
+### PRE-REGISTERED (written before the second measurement)
+
+- **P6.** `??0Player` reaches `fuzzy == 100` and the combined patch measures
+  **Δmatched = +8** and **Δmatched_code = +1,032 B** (= the re-home's +324 plus
+  the ctor's own 708). Both legs A are the identical clean HEAD, so the two runs
+  decompose legitimately.
+- **P7.** `total_code` remains **10,247,068** — a member init cannot move the
+  denominator.
+- **P8 (must NOT move).** `??0BeatMatchController@@…` stays `fuzzy == 0` and
+  unpaired, again. And `default/GemPlayer`'s `matched_functions` stays **305** —
+  the source edit is confined to Player.cpp and must not touch it.
