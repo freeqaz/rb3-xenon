@@ -1134,9 +1134,14 @@ DataNode BandDirector::OnFileLoaded(DataArray *da) {
     Symbol sym = da->Sym(2);
     ObjectDir *dir = da->Obj<ObjectDir>(3);
     if (sym == song) {
+        // W16-GC probe 1: retail materializes &mPropAnim ONCE at 0x8229... before
+        // the `if (dir)` branch (addi r28,r30,0x38 sits between the lfs and the
+        // stfs of mEndOfSongSec=0); we rematerialize it in both arms, which is
+        // our one surplus instruction (base 3820 B vs target 3816 B).
         mEndOfSongSec = 0;
+        ObjPtr<RndPropAnim> &pa = mPropAnim;
         if (dir) {
-            mPropAnim = dir->Find<RndPropAnim>("song.anim", false);
+            pa = dir->Find<RndPropAnim>("song.anim", false);
             mSongPref = dir->Find<BandSongPref>("BandSongPref", false);
             // Retail caches all four lip-syncs HERE (0x822915E4/5FC/614/62C),
             // not down in the venue block; SetCharacterLipSyncs reads them
@@ -1150,7 +1155,7 @@ DataNode BandDirector::OnFileLoaded(DataArray *da) {
             }
         } else {
             // Retail .L_82291658: the dir-null arm clears the cached finds.
-            mPropAnim = nullptr;
+            pa = nullptr;
             mSongPref = nullptr;
             mLipSyncs[0] = nullptr;
             mLipSyncs[1] = nullptr;
