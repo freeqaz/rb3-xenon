@@ -326,7 +326,9 @@ void NetSession::Poll() {
 }
 
 bool NetSession::IsLocal() const {
-    if (mState - 3U <= 3) {
+    bool joining = mState == kCreatingJoinSession || mState == kConnectingToSession
+        || mState == kRequestingJoin || mState == kRevertingToHost;
+    if (joining) {
         return false;
     } else if (!mOnlineEnabled)
         return true;
@@ -351,10 +353,14 @@ void NetSession::Join(NetSearchResult *res) {
     if (mOnlineEnabled && mData->Equals(res->mSessionData)) {
         static JoinResultMsg msg(kNoSelfJoin, 0);
         Handle(msg, false);
-    } else if (!IsLocal()) {
+        return;
+    }
+    if (!IsLocal()) {
         static JoinResultMsg msg(kAlreadyHosting, 0);
         Handle(msg, false);
-    } else {
+        return;
+    }
+    {
         if (!mOnlineEnabled)
             AssignLocalOwner();
         SetState(kCreatingJoinSession);
@@ -489,12 +495,6 @@ bool NetSession::OnMsg(const JoinResponseMsg &msg) {
         std::vector<LocalUser *> users;
         GetLocalUserList(users);
         FOREACH (it, users) {
-            if (!(*it)->HasOnlinePrivilege()) {
-                JoinResponseMsg respMsg(kCannotConnect, 0);
-                return OnMsg(respMsg);
-            }
-        }
-        FOREACH (it, users) {
             RemoveLocalFromSession(*it);
         }
         mOnlineEnabled = true;
@@ -505,7 +505,6 @@ bool NetSession::OnMsg(const JoinResponseMsg &msg) {
         FOREACH (it, users) {
             AddLocalToSession(*it);
         }
-        TheVoiceChatMgr->JoinVoiceChannel();
         SetState(kIdle);
         JoinResultMsg jMsg(msg.Error(), msg.CustomError());
         Handle(jMsg, false);
