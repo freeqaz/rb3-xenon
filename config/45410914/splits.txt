@@ -2784,7 +2784,9 @@ MeshAnim.cpp:
 	.pdata      start:0x821F6E70 end:0x821F6E90
 	.pdata      start:0x821F6E98 end:0x821F6EA8
 	.pdata      start:0x82207630 end:0x82207638
-	.pdata      start:0x82207E50 end:0x82207E98
+	.pdata      start:0x82207E50 end:0x82207E68
+	.pdata      start:0x82207E70 end:0x82207E78
+	.pdata      start:0x82207E80 end:0x82207E98
 	.pdata      start:0x8220B530 end:0x8220B538
 	.pdata      start:0x8220D2A8 end:0x8220D2B0
 	.pdata      start:0x8220D2D0 end:0x8220D2D8
@@ -2816,7 +2818,9 @@ MeshAnim.cpp:
 	.text       start:0x822C7E08 end:0x822C8130
 	.text       start:0x822C8160 end:0x822C8290
 	.text       start:0x823DCFB0 end:0x823DD010
-	.text       start:0x823E4630 end:0x823E4A98
+	.text       start:0x823E4630 end:0x823E4718
+	.text       start:0x823E47D4 end:0x823E4800
+	.text       start:0x823E4A28 end:0x823E4A98
 	.text       start:0x8241AAC8 end:0x8241AB94
 	.text       start:0x8241C8C8 end:0x8241C96C
 	.text       start:0x824423E8 end:0x8244243C
@@ -9348,6 +9352,8 @@ network/net/NetSession.cpp:
 	.pdata      start:0x82207DF8 end:0x82207E10
 	.pdata      start:0x82207E10 end:0x82207E48
 	.pdata      start:0x82207E48 end:0x82207E50
+	.pdata      start:0x82207E68 end:0x82207E70
+	.pdata      start:0x82207E78 end:0x82207E80
 	.pdata      start:0x82207E98 end:0x82207F28
 	.pdata      start:0x82207F28 end:0x82207F40
 	.pdata      start:0x82207F40 end:0x82207F58
@@ -9404,6 +9410,8 @@ network/net/NetSession.cpp:
 	.text       start:0x823E4020 end:0x823E4180
 	.text       start:0x823E4180 end:0x823E45D8
 	.text       start:0x823E45D8 end:0x823E4630
+	.text       start:0x823E4718 end:0x823E47D4
+	.text       start:0x823E4800 end:0x823E4A28
 	.text       start:0x823E4A98 end:0x823E5410
 	.text       start:0x823E5410 end:0x823E5520
 	.text       start:0x823E5520 end:0x823E5628
