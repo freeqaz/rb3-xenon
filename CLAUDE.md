@@ -1822,6 +1822,24 @@ What it enforces — the manual steps survive here only as the explanation of
   `matched_code` = 0; **zero** rows carry an explicit `0.0`/`false`, and a naive
   `d['matched_code']` **raises `KeyError`**. With the JSON-strings trap, read
   every numeric as `int(x.get(k, 0))`.
+  ⛔⛔ **BUT "ABSENT ⇒ ZERO" HOLDS ONLY FOR BARE SCALARS, AND KEYING A TEST ON A
+  PRESENCE-TRACKED FIELD'S ABSENCE IS STRUCTURALLY VACUOUS** (lane W16-FQ,
+  2026-09-16, re-verified by the coordinator before landing `a3c23166`).
+  `fuzzy_match_percent` is a plain proto3 scalar, so serde writes it only
+  `if self.fuzzy_match_percent != 0.` — absent 21,584 times, **never** present
+  as an explicit `0.0`. Its sibling `match_percent_normalized` is
+  **`#[prost(float, optional, tag = "6")]` ⇒ `Option<f32>`**, i.e. presence-
+  tracked, so it is emitted **even when exactly 0.0** — measured **0 rows absent
+  of 69,240, and 21,545 rows carrying an explicit `0.0`**. ⇒ **The two keys are
+  serialized by DIFFERENT RULES in the same file**, and "protobuf omits
+  defaults" is correct about one and vacuous about the other.
+  ⚠ This is not hypothetical: **W16-FB's classifier for the "our body is larger
+  than retail" class keyed on the ABSENCE of `match_percent_normalized`** — a
+  discriminator present on **100%** of the population, so it could not fire, and
+  it shipped a 43-row / 5,684 B figure that the honest re-derivation put at
+  **50 rows / 4,944 B**. ★ The tell is the family tell: **a screen that cannot
+  fail returns a clean, decisive-looking result.** Before keying anything on a
+  field's absence, count how many rows actually lack it.
   ⚠ **The `masked_equal` ROW-FLAG is a SUPERSET of the MEASURE** — 24,386 flagged
   rows vs `masked_equal_functions` = 22,886. Not a defect: the counter increments
   only inside `match_percent_normalized == 100.0`, since it exists to discount
