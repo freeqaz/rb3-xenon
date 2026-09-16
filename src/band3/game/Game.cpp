@@ -926,8 +926,30 @@ DataNode Game::OnMsg(const UIScreenChangeMsg &) {
 // button_up (fn_8267B808 / fn_82679900). Both fall through to DATA_UNHANDLED so
 // the dispatch chain continues; their presence is what sizes Handle's frame
 // (0x140) and therefore what pairs its 21 EH funclets.
+// Retail 0x8267B808, 1,664 B -- the largest row in this unit. Only the head is
+// written here; the button-driven switch tail is decoded in
+// docs/decomp/W16EH_BUTTONDOWNMSG_DECODE_AND_SHUTTLE_SETACTIVE_2026-09-16.md
+// and deliberately NOT guessed at (see that doc's "what I did NOT do").
+//
+// The head below is proven instruction-for-instruction against retail. Note it
+// is NOT the same shape as OnMsg(ButtonUpMsg) despite the two being the
+// press/release pair: the UP handler guards its decrement with a `> 0` test and
+// RE-LOADS mUnkTU5GuidePitch afterwards (9 instructions), where the DOWN handler
+// increments unconditionally off a single load (5 instructions), and the two
+// spell their lwzx/stwx operands in the opposite order. Copying the UP body and
+// flipping `--` to `++` therefore produces the WRONG code.
+//
+// Fixing a real behavioural asymmetry: the counter this increments is the same
+// per-pad counter OnMsg(ButtonUpMsg) decrements. Our ButtonDown body was a stub,
+// so the release handler has been decrementing a counter nothing ever raised.
 DataNode Game::OnMsg(const ButtonDownMsg &msg) {
-    if (msg.GetUser()) {
+    if (mProperties.mUnkTU5_movieSync) {
+        int pad = msg.GetUser()->GetPadNum();
+        if (pad >= 0 && pad < 4) {
+            if (JoypadGetPadData(pad)->mType == kJoypadAnalog) {
+                ((int *)mUnkTU5GuidePitch)[pad]++;
+            }
+        }
     }
     return DATA_UNHANDLED;
 }
