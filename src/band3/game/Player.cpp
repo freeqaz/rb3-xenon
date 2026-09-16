@@ -72,7 +72,7 @@ Player::Player(BandUser *user, Band *band, int tracknum, BeatMaster *bmaster)
       unk298(0), mDisconnectedAtStart(0), unk2a9(0), unk2ac(0),
       unk2b0(TheGame->mProperties.mEnableOverdrive), mPermanentOverdrive(0),
       mHasFinishedCoda(0), mHasBlownCoda(0), unk2b4(0), unk2b8(0), unk2bc(0), unk2c0(-1),
-      unk2c4(1) {
+      mUnkTU5_tail(0), unk2c4(1) {
     if (user) {
         mRemote = !user->IsLocal();
         mPlayerName = user->UserName();

@@ -8141,6 +8141,7 @@ band3/game/Player.cpp:
 	.pdata      start:0x82232710 end:0x82232718
 	.pdata      start:0x82232718 end:0x82232730
 	.pdata      start:0x82232730 end:0x82232B00
+	.pdata      start:0x82232B00 end:0x82232B48
 	.pdata      start:0x82232B48 end:0x82232B68
 	.pdata      start:0x82232B70 end:0x82232C00
 	.pdata      start:0x82232C30 end:0x82232C38
@@ -8155,6 +8156,7 @@ band3/game/Player.cpp:
 	.text       start:0x826A2770 end:0x826A27E0
 	.text       start:0x826A27E0 end:0x826A2AF8
 	.text       start:0x826A2AF8 end:0x826A7558
+	.text       start:0x826A7558 end:0x826A79D0
 	.text       start:0x826A79D0 end:0x826A7B38
 	.text       start:0x826A7D14 end:0x826A87F8
 	.text       start:0x826A8A84 end:0x826A8AB8
@@ -9576,7 +9578,6 @@ OvershellSlotState.cpp:
 	.text       start:0x8265EFA8 end:0x82660548
 
 GemPlayer.cpp:
-	.pdata      start:0x82232B00 end:0x82232B48
 	.pdata      start:0x82233DA0 end:0x82233DB0
 	.pdata      start:0x82233DB0 end:0x82233DB8
 	.pdata      start:0x82233DB8 end:0x82233DC0
@@ -9625,7 +9626,6 @@ GemPlayer.cpp:
 	.pdata      start:0x82234440 end:0x82234448
 	.pdata      start:0x82234448 end:0x82234690
 	.pdata      start:0x82234698 end:0x82234730
-	.text       start:0x826A7558 end:0x826A79D0
 	.text       start:0x826BBD58 end:0x826BBF48
 	.text       start:0x826BBF48 end:0x826BBFFC
 	.text       start:0x826BC000 end:0x826BC058
