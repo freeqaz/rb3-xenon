@@ -67,9 +67,14 @@ public:
 class NetSavedSetlist : public SavedSetlist {
 public:
     NetSavedSetlist(const char *title, const char *desc) : SavedSetlist(title, desc) {}
+    // Parameter ORDER proven on retail bytes, not taken from the oracle: in
+    // retail's ctor body r5->mGuid(0x60), r6->mOwner(0x34), r7->unk44(0x50),
+    // r8->unk48(0x54) and (r9,r10) are forwarded to SavedSetlist(title, desc).
+    // rb3-Wii (a DEV build) spells this (type,title,desc,validInstr,owner,
+    // artUrl,guid); retail TU5 does not.
     NetSavedSetlist(
-        SetlistType type, const char *title, const char *desc, bool validInstr,
-        const char *owner, const char *artUrl, const char *guid
+        SetlistType type, const char *guid, const char *owner, bool validInstr,
+        const char *artUrl, const char *title, const char *desc
     )
         : SavedSetlist(title, desc), mSetlistType(type), mOwner(owner),
           unk44(validInstr), unk48(artUrl), mGuid(guid) {
@@ -109,7 +114,7 @@ public:
         bool validInstr, const char *desc, const char *owner, const char *artUrl,
         int secondsLeft
     )
-        : NetSavedSetlist(type, title, desc, validInstr, owner, artUrl, gNullStr),
+        : NetSavedSetlist(type, gNullStr, owner, validInstr, artUrl, title, desc),
           mID(id), unk6c(scoreType), mBattleTimeLeft(secondsLeft) {
         MILO_ASSERT(
             mSetlistType == kBattleHarmonix || mSetlistType == kBattleFriend
