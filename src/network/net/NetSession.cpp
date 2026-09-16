@@ -495,12 +495,6 @@ bool NetSession::OnMsg(const JoinResponseMsg &msg) {
         std::vector<LocalUser *> users;
         GetLocalUserList(users);
         FOREACH (it, users) {
-            if (!(*it)->HasOnlinePrivilege()) {
-                JoinResponseMsg respMsg(kCannotConnect, 0);
-                return OnMsg(respMsg);
-            }
-        }
-        FOREACH (it, users) {
             RemoveLocalFromSession(*it);
         }
         mOnlineEnabled = true;
