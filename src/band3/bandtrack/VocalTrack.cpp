@@ -1943,40 +1943,29 @@ void VocalTrack::UpdateScrolling(float ms) {
             }
             int codaTick = TheSongDB->GetCodaStartTick();
             while (*curDeployPtr < freestyles.size()) {
-                const std::pair<float, float> &section = freestyles[*curDeployPtr];
+                const std::pair<float, float> *section = &freestyles[*curDeployPtr];
                 float nextStart =
                     ((*curDeployPtr + 1) < freestyles.size())
                         ? freestyles[*curDeployPtr + 1].first
                         : -1.0f;
-                // Retail (rows 2217-2225): the pointer argument is
-                // materialised in BOTH arms (`addi r5,r1,0xa0; b join` /
-                // `mr r5,r30`) and the call tail is cross-jumped -- the
-                // oracle's two-call + didSplit shape, not a `section` pointer
-                // that the coda arm redirects.
-                bool didSplit = false;
                 if (codaTick != -1) {
                     float codaMs = TickToMs((float)codaTick);
-                    if (section.first < codaMs && codaMs < section.second) {
+                    if (section->first < codaMs && codaMs < section->second) {
                         std::pair<float, float> beforeCoda(
-                            section.first, codaMs
+                            section->first, codaMs
                         );
                         std::pair<float, float> afterCoda(
-                            codaMs, section.second
+                            codaMs, section->second
                         );
                         BuildStaticDeployZone(
                             part, beforeCoda, codaMs, tmpEndPos, shifts
                         );
-                        BuildStaticDeployZone(
-                            part, afterCoda, nextStart, tmpEndPos, shifts
-                        );
-                        didSplit = true;
+                        section = &afterCoda;
                     }
                 }
-                if (!didSplit) {
-                    BuildStaticDeployZone(
-                        part, section, nextStart, tmpEndPos, shifts
-                    );
-                }
+                BuildStaticDeployZone(
+                    part, *section, nextStart, tmpEndPos, shifts
+                );
                 (*curDeployPtr)++;
             }
         }
