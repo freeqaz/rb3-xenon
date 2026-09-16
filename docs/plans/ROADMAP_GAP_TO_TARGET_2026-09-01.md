@@ -2895,3 +2895,48 @@ second alias). `fn_826259E0` 332 B + `fn_82624F88` 272 B are map work. CB handof
 
 ⛔ **CLOSED — do not re-fund:** the `_bijection_arbitrary` vein (2-cycle detector over all
 54 rows returns exactly two; one landed, one priced at 0 by a shared fold survivor).
+
+### ⛔ CORRECTION — my own `decomp.db is STALE` claim is REFUTED TWICE (2026-09-16)
+
+I recorded earlier today that `decomp.db` was **stale for want of a re-ingest**, on the
+evidence that `query_functions(status='workable')` returned rows printed as
+`Match: 100.0%`. **Both halves of that are wrong**, and the correction runs OPPOSITE to
+the claim.
+
+**1. The database was not stale.** I ran the re-ingest
+(`venv/bin/python scripts/ingest_report.py build/45410914/report.json`): **69,239
+symbols, 67,804 updated, 1,436 inserted, 1,722 marked dead, 184 revived** — and the
+symptom was **completely unchanged**. A refreshed DB reproducing the complaint exactly
+refutes staleness as the cause.
+
+**2. The rows were never at 100%.** Read from the DB directly:
+
+| symbol | `current_percent` | displayed |
+|---|---:|---|
+| `?Load@PatchPanel@@UAAXXZ` | **99.99** | `100.0%` |
+| `?NewObject@PracticePanel@@SAPAVObject@Hmx@@XZ` | **99.96** | `100.0%` |
+| `?GetBandLogoTex@BandProfile@@QAAPAVRndTex@@XZ` | **99.95** | `100.0%` |
+
+The listing formats with `.1f` (`mcp_server.py`, `f"{r['percent']:.1f}%"`), so **anything
+at or above 99.95 prints as `100.0%`**.
+
+★★★ **THE HAZARD IS THE OPPOSITE OF WHAT I WROTE.** These are the rows **CLOSEST TO
+CROSSING** — the single best candidate class there is, since `matched_code` is
+all-or-nothing per row and one charge separates them from paying their full size. The
+display renders them **indistinguishable from finished work**, so a coordinator scanning
+candidates skips exactly the rows most worth funding. I did precisely that and then wrote
+down the wrong reason for it.
+
+**What DOES survive, on a different mechanism:** `workable` excludes on **`verdict`**, not
+on percentage (`unworkable_verdict_clause`, `database.py:78`). Over live rows the verdict
+distribution is **60,135 NULL / 6,328 COMPLETE / 2,776 AT_LIMIT**, and **10,350 live rows
+sit at `current_percent >= 100` with `verdict IS NULL`** — genuinely finished rows that
+`workable` therefore returns, because `verdict` is agent-maintained via `report_result`
+and most rows never receive one. ⇒ **"do not use `workable` alone as a candidate filter"
+stands; "because the DB is stale" does not.**
+
+⚠ **This is the same failure I have been crediting lanes for catching, committed by me**:
+a right conclusion resting on wrong evidence (cf. W16-EE correcting W16-EC's
+`PropKeys::Copy` **mechanism** while confirming its **number**). A reproducing symptom is
+not evidence for its proposed cause — the cause has to be tested separately, and here the
+re-ingest was the test that refuted it.
