@@ -892,14 +892,12 @@ void Character::DrawShowing() {
         lod = Clamp<int>(0, mLods.size() - 1, mForceLod);
     }
     bool doSelfShadow = mSelfShadow && TheRnd.DrawMode() == 0 && lod <= 1 && (mDrawMode & 1);
-    if (doSelfShadow) {
-        if (GetGfxMode() == kNewGfx) {
-            if (TheNgRnd.Offscreen())
-                doSelfShadow = false;
-        } else {
-            doSelfShadow = false;
-        }
-    }
+    // RB3 retail has NO GetGfxMode() test here. GetGfxMode() is out-of-line
+    // (System.cpp: `return gGfxMode;`) so it would have to emit a `bl`, and the
+    // retail body (.fn fn_8236ECD0) contains exactly one call in this clause --
+    // the virtual TheNgRnd.Offscreen() through vtable+0x104. DC3 added the
+    // kNewGfx test; DC3 is newer than RB3.
+    doSelfShadow = doSelfShadow && !TheNgRnd.Offscreen();
     if (doSelfShadow) {
         int savedForceLod = mForceLod;
         mForceLod = (LODType)lod;
@@ -909,32 +907,12 @@ void Character::DrawShowing() {
     DrawLod(lod);
     if (doSelfShadow)
         RndShadowMap::EndShadow();
-
-    if (TheLoadMgr.EditMode() && TheRnd.DrawMode() == 0) {
-        mTest->Draw();
-    }
-
-    static DataNode *sShowName = &DataVariable(Symbol("character.show_name"));
-
-    if (sShowName->Int()) {
-        static Symbol sCrowd("crowd");
-        if (Type() != sCrowd) {
-            RndTransformable *bone = CharUtlFindBoneTrans("bone_head", this);
-            if (bone) {
-                const Transform &xfm = bone->WorldXfm();
-                Vector3 worldPos = xfm.v;
-                worldPos.z += 24.0f;
-                Hmx::Color white(1.0f, 1.0f, 1.0f, 1.0f);
-                Vector2 screenPos;
-                RndCam::Current()->WorldToScreen(worldPos, screenPos);
-                screenPos.x *= TheRnd.Width();
-                screenPos.y *= TheRnd.Height();
-                const Vector2 &extent = TheRnd.DrawString(Name(), screenPos, white, false);
-                screenPos.x = screenPos.x - (extent.x - screenPos.x) * 0.5f;
-                TheRnd.DrawString(Name(), screenPos, white, true);
-            }
-        }
-    }
+    // RB3 retail STOPS HERE -- the retail body returns immediately after
+    // EndShadow(). Both the edit-mode `mTest->Draw()` block and the whole
+    // `character.show_name` debug name-draw block are stripped from retail:
+    // "character.show_name" and "char_draw" are ABSENT from the retail XEX
+    // (W16-FL binary string probe), matching the already-stripped
+    // list_interest_objects / debug_draw_interest_objects handlers above.
 }
 
 void Character::FindInterestObjects(ObjectDir *dir) {
