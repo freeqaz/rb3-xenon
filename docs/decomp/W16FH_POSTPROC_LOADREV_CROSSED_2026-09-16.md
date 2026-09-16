@@ -14,7 +14,7 @@ Leg-A assertion (brief §Base): first build of the worktree read LoadRev
 | row | size | base (b3171b99) | final | pays |
 |---|---:|---|---|---|
 | `?LoadRev@RndPostProc@@QAAXAAVBinStream@@H@Z` | 1,728 | fuzzy 97.358795 / mpn 97.671295 | **100.000000 / 100.000000** | **+1,728 B, +1 fn** |
-| `?Load@RndPostProc@@UAAXAAVBinStream@@@Z` | 192 | 99.854164 (7 charged sites) | see §5 | 0 B |
+| `?Load@RndPostProc@@UAAXAAVBinStream@@@Z` | 192 | 99.854164 (7 charged sites) | **99.895836** (5 charged sites, §5) | 0 B |
 | `??0RndPostProc@@IAA@XZ` (mandatory control) | 668 | 100.0 | **100.0** on every build | — |
 
 Whole binary (V2→V3 build, same tree): `matched_functions` 44,011 → **44,012**,
@@ -23,7 +23,9 @@ Whole binary (V2→V3 build, same tree): `matched_functions` 44,011 → **44,012
 `total_code` 10,247,068 / `total_functions` 69,240 (read, not inherited). Unit
 `default/PostProc` 12,480 → 14,208 / 18,564 B, 118 → **119 / 130** fns.
 Whole-report row diff V2→V3: **exactly 1 of 69,240 rows moved** (LoadRev).
-The authoritative `ab_measure` A/B of the whole lane vs `b3171b99` is in §6.
+**Authoritative `ab_measure --patch` A/B of the whole lane vs `b3171b99` (§6):
+Δmatched +1 · Δcode +1,728 B · Δmasked_equal 0 · Δhonest +1 · Δcode% +0.016866 pp ·
+leg B 965 recompiles · exactly 2 of 69,240 rows moved (both PostProc) · control 100.0.**
 
 ## 1. FF's hypothesis — REFUTED on structure before any build
 
@@ -205,9 +207,55 @@ Falsifiers (any one refutes the lane's claim that only the two PostProc rows mov
 5. ab_measure REFUSES (absent-vs-absent, unsettled, ruler swap) — then there is
    no number and this section says so.
 
-### 6.2 Result
+### 6.2 Result — MEASURED, every falsifier held
 
-(filled in after the run)
+Run dir `.ab_measure_runs/20260916-101100-w16fh-lane-1738841` (archived to
+`~/tmp/w16fh_ab_result.json`, `~/tmp/w16fh_report_leg{A,B}.json`, log
+`~/tmp/rb3_ab_w16fh_lane.log`). Tool blob matches HEAD; objdiff-cli stable
+(`sha256:c1b7d952…`); ruler `name_check` from `objdiff.json`; leg A settled in 2
+iterations (first did 965 msvc — the reflinked tree's own settling, discarded),
+leg A report build 0 recompiles; patch applied to exactly the 3 files; leg B first
+iteration **965 msvc / 6 patch steps** (the `Object.h` PCH cascade, as predicted),
+settled in 2; tree restored and verified on exit.
+
+| measure | leg A | leg B | Δ measured | Δ predicted |
+|---|---:|---:|---:|---:|
+| `matched_functions` | 44,011 | 44,012 | **+1** | +1 ✓ |
+| `matched_code` (B) | 4,139,696 | 4,141,424 | **+1,728** | +1,728 ✓ |
+| `masked_equal_functions` | 23,237 | 23,237 | **0** | 0 ✓ |
+| honest | 20,774 | 20,775 | **+1** | +1 ✓ |
+| `matched_code_percent` | 40.398834 | 40.415700 | **+0.016866 pp** | ≈+0.01686 ✓ |
+| `fuzzy_match_percent` | 50.262268 | 50.262665 | **+0.000397 pp** | ≈+0.00012 ✗ (see below) |
+| `total_code` / `total_functions` | 10,247,068 / 69,240 | same | 0 | 0 ✓ |
+| `none` ruler `matched_code` | — | — | +1,728 B (44.534145 → 44.551006 %) | same direction ✓; NOT_APPLICABLE as an alias control (patch kind `source`) |
+| units at 100 (mpn / all-rows-fuzzy) | 191 / 171 | 191 / 171 | 0 / 0 | — |
+
+Falsifiers:
+
+1. **Row-diff of the two leg reports, all 69,240 rows: exactly 2 rows moved** —
+   `?LoadRev@RndPostProc@@…` 97.358795 → 100.000000 (mpn 97.671295 → 100) and
+   `?Load@RndPostProc@@…` 99.854164 → 99.895836. Nothing else; no row appeared
+   or vanished. ⇒ the `Object.h` change, recompiled into 965 TUs, moved nothing
+   outside PostProc (the DEFER-BOTH lever is a per-TU opt-in and only
+   `PostProc.cpp` defines it).
+2. `??0RndPostProc@@IAA@XZ` = **100.000000** in leg B (668 B; the FORCEINLINE
+   leak control).
+3. Δ`matched_code` = +1,728 exactly; Δ`matched_functions` = +1 exactly.
+4. Leg A read **97.358795 / 99.854164** — FF's base, not FC's.
+5. Not refused.
+
+The one miss is my own bookkeeping, not the measurement: the "leg0" aggregate I
+predicted from (50.262543) is **V2's** aggregate (its archived report reads
+exactly that), so the ≈+0.00012 was V2→V3 mis-transcribed as base→V3. Leg A's
+50.262268 → V3/E4's 50.262665 is +0.000397 on both the in-run pair and my
+archived per-build reports. (Side-fact worth keeping: objdiff's whole-binary
+`fuzzy_match_percent` is **not** the byte-weighted row mean — that reads
+50.193259 / 50.193705 on the same reports — so it cannot be derived by hand from
+row scores; predict it only from an archived report.) Δfuzzy was never a
+falsifier and no row-level claim depends on it.
+
+**Verdict: the lane pays +1 function / +1,728 B / +0.016866 pp, exactly as
+pre-registered, with the whole effect localised to the two PostProc rows.**
 
 
 ## 7. What was NOT done, and why
@@ -222,3 +270,17 @@ Falsifiers (any one refutes the lane's claim that only the two PostProc rows mov
   three pre-registered builds is where the lane stopped.
 - Nothing pushed; nothing touched in the main repo; no `function_analysis/`
   staged.
+- The DEFER-BOTH lever was not surveyed for other TUs. It is a per-TU opt-in
+  (`#define RB3_OBJPTR_INLINE_TWOARG_CTOR_DEFER_BOTH 1` on line 1), and the
+  whole-binary row-diff shows it is inert everywhere it is not defined; whether
+  any other row wants retail's `{lis, stw mOwner, addi, stw mObject, stw vptr}`
+  store order is a separate survey lane, not this one.
+- `RB3_OBJPTR_INLINE_TWOARG_CTOR` (FF's moot lever) was not re-opened on any
+  other row.
+- The frame-shape difference between our image and DC3's for `Load` (retail
+  frame 0xa0 here vs 0xc0 there) was noted, not chased — DC3's spelling is the
+  one kept, and its residual is the same residual.
+- The orchestrator DB has no seeded row for either symbol (`report_result`
+  answered "function not found in database" for both; the notes were recorded
+  against the symbol name), so the DB was not updated with a row score — the
+  numbers live in this doc and in `report.json`.
