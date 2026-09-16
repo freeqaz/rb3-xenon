@@ -1516,21 +1516,25 @@ void VocalTrack::UpdateScrolling(float ms) {
                 break;
 
             bool isPast = staticLyrics ? (phEndMs < ms) : (phEndMs < buildAhead);
-            if (sectionOnly && !isPast && phEndMs > sectionStart) {
+            if (sectionOnly && !isPast) {
+                // Retail: a phrase ending before the practice section is
+                // past outright; the straddle scan only runs past its start.
                 isPast = true;
-                for (const VocalNote *skipIt = itT; skipIt != noteVec.end(); skipIt++) {
-                    if (skipIt->mMs > phEndMs)
-                        break;
-                    if (skipIt->mMs + skipIt->mDurationMs > sectionStart) {
-                        isPast = false;
-                    }
-                }
-                if (altNotes) {
-                    for (const VocalNote *skipAlt = altIt; skipAlt != altNotes->mNotes.end(); skipAlt++) {
-                        if (skipAlt->mMs > phEndMs)
+                if (phEndMs > sectionStart) {
+                    for (const VocalNote *skipIt = itT; skipIt != noteVec.end(); skipIt++) {
+                        if (skipIt->mMs > phEndMs)
                             break;
-                        if (skipAlt->mMs + skipAlt->mDurationMs > sectionStart) {
+                        if (skipIt->mMs + skipIt->mDurationMs > sectionStart) {
                             isPast = false;
+                        }
+                    }
+                    if (altNotes) {
+                        for (const VocalNote *skipAlt = altIt; skipAlt != altNotes->mNotes.end(); skipAlt++) {
+                            if (skipAlt->mMs > phEndMs)
+                                break;
+                            if (skipAlt->mMs + skipAlt->mDurationMs > sectionStart) {
+                                isPast = false;
+                            }
                         }
                     }
                 }
