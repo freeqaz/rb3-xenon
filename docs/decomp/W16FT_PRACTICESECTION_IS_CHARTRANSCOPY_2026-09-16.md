@@ -175,3 +175,83 @@ Predicted deltas, from the settled worktree reading against the brief's asserted
    the old pin fails under the new one, the net is smaller than predicted. A result
    between 0 and +1688 is a real possible outcome, not a bug.
 
+## 7. RESULT — authoritative whole-binary A/B
+
+`tools/ab_measure.py --pick ce642dcf`, both legs settled to zero work, both at a
+`symbols.txt` split fixed point, ruler `name_check` (graded).
+
+| measure | leg A | leg B | Δ | predicted |
+|---|---|---|---|---|
+| `matched_functions` | 44040 | 44052 | **+12** | +12 ✅ |
+| `matched_code` | 4150676 | 4152364 | **+1688 B** | +1688 ✅ |
+| `matched_code_percent` | 40.505990 | 40.522460 | **+0.016470 pp** | +0.01647 ✅ |
+| `fuzzy_match_percent` | 50.380030 | 50.389880 | **+0.009850 pp** | +0.00985 ✅ |
+| `masked_equal_functions` | 23246 | 23247 | +1 | — |
+| honest (`matched − masked`) | 20794 | 20805 | +11 | — |
+| `total_code` | 10247068 | 10247068 | **0** | 0 ✅ |
+
+**All five pre-registered falsifiers cleared:**
+
+1. The four rows moved **together**, `0 → 100`, and **under the new `CharTransCopy`
+   names** — `Save` 124 B, `Copy` 136 B, `Load` 160 B, `SyncProperty` 268 B. None moved
+   while still named `PracticeSection`, which is precisely the outcome that separates
+   mis-attribution from the brief's class-shape hypothesis.
+2. `total_code` and `total_functions` are **identical on both legs** (10247068 / 69240).
+3. `default/PracticeSection` shrank **39 → 15 rows** (matched 18 → 6).
+4. `default/CharTransCopy` appeared with **24 rows, 24 matched, 1948/1996 B**.
+5. The net came in **at** +1688, not below it, and decomposes exactly:
+   new unit **+1948 B** − **260 B** of previously-matching rows that left
+   `default/PracticeSection` = **+1688 B**.
+
+Units at 100% (mpn): 192 → 193, mechanism `NEW_UNIT`. Note units and bytes are separate
+measures and neither is being sold as the other.
+
+⚠ The `none`-ruler control reads `NOT_APPLICABLE` by design: the patch carries source,
+so movement on `none` is expected and the alias shape is only adjudicable on a map-only
+patch.
+
+## 8. What I did NOT do, and why
+
+- **I did not fix the remaining 48 B** (`fn_823C7B58`, 99.58%). It is the dtor's EH
+  cleanup funclet, and objdiff reports it as **paired by masked byte signature, not by
+  name** — so its single charge (`~ObjRefConcrete<RndTransformable,ObjectDir>` vs our
+  `~ObjPtr<RndTransformable>`) is *unfalsifiable by construction*, exactly as the
+  `UNVERIFIABLE_PAIRING` detector says. Our obj emits `__ehfuncinfo$` and
+  `__unwindtable$` but no `__unwindfunclet$` symbol, so there is nothing to name. The
+  only real lever would be changing `ObjPtr<T>`'s destructor spelling, which is a
+  tree-wide edit affecting every Milo class — far outside this lane and not worth 48 B.
+- **I did not add `REGISTER_OBJ_FACTORY(CharTransCopy)` to `Char.cpp`.** Retail has it.
+  It is a separate lever in a different TU that needs its own measurement, and folding
+  it into this patch would have made the +1688 unattributable.
+- **I did not touch `PracticeSection.{h,cpp}` at all.** The four rows the brief targeted
+  were never its bodies. Its real remaining rows (the `vector<PracticeStep>` STL
+  template family at 99.6–99.8, `ClearSteps` at 97.0) are ordinary decomp work, not part
+  of this diagnosis.
+- **I did not chase the rest of the old `PracticeSection` pin.** `fn_823C8128` (104 B)
+  is provably *not* `CharTransCopy` (it is past the class's last body) but its true owner
+  is unknown, so it was left pinned where it was rather than moved on a guess. The wider
+  suspicion — that RB3's real `PracticeSection` is the POD in
+  `src/band3/game/PracticeSectionProvider.h` and this DC3-era animatable class may not be
+  the right shape for RB3 at all — is **recorded and unresolved**, not investigated.
+- **I did not price the brief's adjacent rows** (`list<PracticeSectionMapping>::erase`
+  108 B / `::insert` 100 B in `default/Group`, `??1PracticeSectionProvider` 116 B at
+  48.48). They share a *name*, not the defect; the defect here was attribution of a
+  specific address span.
+
+## 9. Transferable lessons
+
+1. **A shared signature does not identify a shared cause.** Four virtuals failing
+   together correctly said "one structural cause", and the obvious structural cause
+   (class shape) was wrong. The cheap discriminator was already on the board: *if the
+   vtable were wrong, the adjustor thunks would not be at 100*.
+2. **objdiff pairs by NAME, so a wrong map name is indistinguishable from a wrong body
+   — except in the bodies that enumerate members.** Macro-generated Milo bodies read
+   98–100% across *different classes*. When a unit shows "everything nearly matches
+   except Save/Load/Copy/SyncProperty", suspect the attribution before the source.
+3. **Read the in-tree record first — again.** The `Load` fix, the span, and even the
+   class's absence from the tree were all already written down in this repository
+   (`reloc_disc/README.md`, `located_spans.json`, `Char.cpp`, and five sibling TUs in
+   the very directory the new file lands in). Nearly every hour of this lane was
+   re-deriving something already recorded.
+4. **Access specifiers are load-bearing for pairability**, not style: `$2` ↔ protected,
+   `$4` ↔ public, and a mismatch is a permanent 0% no matter how correct the code is.
