@@ -85530,7 +85530,9 @@
    "name": "CVEIN1__M_erase",
    "address": "0x8247b020",
    "survivor": "?_M_erase@?$vector@VPoint@RndLine@@V?$StlNodeAlloc@VPoint@RndLine@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVPoint@RndLine@@PAV34@0ABU__false_type@2@@Z",
-   "folded": [],
+   "folded": [
+    "?_M_erase@?$vector@VExtraTail@TrainerGemTab@@V?$StlNodeAlloc@VExtraTail@TrainerGemTab@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVExtraTail@TrainerGemTab@@PAV34@0ABU__false_type@2@@Z"
+   ],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 2,
    "retail_callers": [
@@ -85546,7 +85548,14 @@
      "why": "our(S)=96 B vs our(F)=88 B [retail(S)=96] -- our own build gives them different-sized COMDATs",
      "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
     }
-   ]
+   ],
+   "restored": {
+    "lane": "W16-EN 2026-09-16",
+    "supersedes_withdrawal_class": "SURVIVOR_SIZE_MISMATCH",
+    "why": "The withdrawal is KEPT (its record is still the ledger's, and the denylist still keys on it); this membership is re-admitted deliberately via scripts/alias_withdrawal_overrides.json, because the withdrawal's PREMISE no longer holds. That premise was a statement about OUR build, not retail: 'our(S)=96 B vs our(F)=88 B [retail(S)=96]'. Retail was always 96. Our 88-byte body was a SOURCE defect, now fixed: Transform::operator= and Hmx::Matrix3::operator= are both user-declared, which made ExtraTail's implicit copy-assign MEMBERWISE (a 0x40 memcpy plus two scalar stores) instead of one whole-object memcpy. That fatter loop body is what stopped MSVC inlining STLport's __copy into vector<ExtraTail>::_M_erase. Giving ExtraTail an explicit memcpy operator= (src/band3/game/TrainerGemTab.h) restores the inlined form.",
+    "evidence": "tools/icf_pair_adjudicate.py --survivor <this group's survivor> --ours <spelling>: FLAT T1 PROVEN. retail_size 96, our_size 96, reloc_tally {} over n_relocs 3, survivor_map_resident True. The same run's --selftest passes WITH a REFUTED negative control, so the instrument is shown able to fail. Corroborated by two sibling STL functions on these same two element types already folding in this file: __uninitialized_copy (survivor ExtraTail, Point folded) and __uninitialized_fill_n. The element types are the same size -- both 72 B (0x48), compiler-verified -- and retail's own erase body loads `li r10, 0x48` as its stride.",
+    "note": "The withdrawal record's 'Do NOT re-add' was correct while our body was 88 B: different-sized COMDATs cannot fold. It is superseded by a source change, not overruled by judgment. If TrainerGemTab.h's ExtraTail::operator= is ever reverted, this membership must be withdrawn again -- and the T1 adjudicator would refuse it on its own, independently of the override."
+   }
   },
   {
    "name": "CVEIN1___adjust_heap",
