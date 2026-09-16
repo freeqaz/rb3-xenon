@@ -157,6 +157,26 @@ SCRIPT_ARM: list[dict] = [
     # Safe next to a build fleet: it never writes to the checkout (the sandbox
     # is a fresh temp dir per arm) and it does not build.
     {"path": "scripts/sabotage_project_dir_guard.py", "timeout": 300},
+    # The negative control for scripts/test_offset_resolver_frame.py: it applies
+    # six deliberate defects to a SANDBOX COPY of mcp_server.py and requires a
+    # NAMED check to go red for each, including the vacuity defect (suppress
+    # every base register), which "fixes" the false positives by emitting no
+    # output at all and is indistinguishable from a correct fix unless a
+    # surviving-true-positive check exists. Registered for the same reason as
+    # its two siblings above: it is the only thing proving those checks can
+    # fail, and a control run once by hand is not a control.
+    #
+    # Safe next to a build fleet: the sandbox is a fresh temp dir of SYMLINKS
+    # per arm, it never writes to the checkout, and it does not build.
+    # The frame-pointer guard's known-answer tests (lane W16-GL). Registered
+    # here and NOT left to pytest: it is named test_*.py, so `coverage_gaps`
+    # would count it as covered by the `scripts` root while pytest collects
+    # ZERO tests from it -- the exact trap recorded for
+    # sabotage_verify_split_current.py below. It builds its own struct_db
+    # fixture, so it cannot silently skip on a checkout where the gitignored
+    # struct_db.sqlite has not been generated.
+    {"path": "scripts/test_offset_resolver_frame.py", "timeout": 120},
+    {"path": "scripts/sabotage_offset_resolver.py", "timeout": 300},
     # Sabotage suite for scripts/verify_split_current.py: every GREEN is paired
     # with a RED produced by breaking the specific thing that GREEN covers, and
     # every RED is checked for the RIGHT REASON. Registered 2026-09-11 (lane
