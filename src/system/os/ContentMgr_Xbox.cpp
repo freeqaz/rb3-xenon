@@ -17,7 +17,12 @@ extern "C" {
     unsigned long XEnumerateCrossTitle(void*, void*, int, int, void*);
 }
 
-std::vector<String> gIgnoredContent;
+// Retail's ignored-content list is a static table of 8 C strings in .rdata
+// (lbl_82089578), walked with an /Oi-inlined strcmp in PollRefresh -- NOT
+// DC3's std::vector<String> filled from SystemConfig (see the note on Init).
+static const char *gIgnoredContent[] = { "rbsongcache", "rb2songcache", "band",
+                                         "band3",       "netcache",     "Song Export",
+                                         "globaloptions", "rbdxcache" };
 XboxContentMgr gContentMgr;
 const char *kContentRootFormat = "cnt%08x";
 
@@ -474,57 +479,62 @@ bool XboxContentMgr::MountContent(Symbol name) {
 void XboxContentMgr::PollRefresh() {
     if (mState == kDiscoveryMounting) {
         mState = kDiscoveryLoading;
-        unk7fc = 0;
         for (int i = 0; i < kNumberOfBuffers; i++) {
             if (mOverlappeds[i]) {
-                DWORD numItems = 0;
+                DWORD numItems; // retail: no store to the slot before XGetOverlappedResult
                 DWORD res = XGetOverlappedResult(mOverlappeds[i], &numItems, false);
                 if (res == 0x3E4) {
+                    // retail: sets the state and jumps straight to the
+                    // epilogue -- no ContentMountBegun, no base PollRefresh.
                     mState = kDiscoveryMounting;
-                    continue;
+                    return;
                 }
                 if (res == 0) {
+                    // retail keeps only the filename pointer as the j-loop
+                    // induction variable (created in the loop preheader, after
+                    // the numItems==0 guard; r26 += 0x138) and rematerializes
+                    // the record for the ctor as filename - 0x108. Spelling
+                    // xdatas[j] at both uses made the RECORD the IV (inert);
+                    // hoisting filename above the for created it before the
+                    // guard. Only the in-body folded-base form matches.
                     for (unsigned int j = 0; j < numItems; j++) {
-                        XCONTENT_CROSS_TITLE_DATA *xdata =
-                            (XCONTENT_CROSS_TITLE_DATA *)((char *)&mXDatas[i] + j * 0x138);
-                        // Check if this content is in the ignored list
-                        String *found = std::find(
-                            gIgnoredContent.begin(), gIgnoredContent.end(), xdata->szFileName
-                        );
-                        char *filename = xdata->szFileName;
-                        if (found != gIgnoredContent.end())
+                        char *filename =
+                            mXDatas[i].szFileName + j * sizeof(XCONTENT_CROSS_TITLE_DATA);
+                        bool ignored = false;
+                        for (unsigned int k = 0; k < DIM(gIgnoredContent); k++) {
+                            if (strcmp(filename, gIgnoredContent[k]) == 0) {
+                                ignored = true;
+                                break;
+                            }
+                        }
+                        if (ignored)
                             continue;
 
                         bool discovered = false;
-                        if (xdata->dwContentType == 0x7000) {
-                            FOREACH (it, mCallbacks) {
-                                Symbol sym(filename);
-                                if (!(*it)->ContentTitleDiscovered(
-                                        xdata->dwTitleId, sym
-                                    )
-                                    || discovered) {
-                                    discovered = true;
-                                } else {
-                                    discovered = false;
-                                }
-                            }
-                        } else {
-                            FOREACH (it, mCallbacks) {
-                                Symbol sym(filename);
-                                if (!(*it)->ContentDiscovered(sym) || discovered) {
-                                    discovered = true;
-                                } else {
-                                    discovered = false;
-                                }
-                            }
+                        FOREACH (it, mCallbacks) {
+                            // The implicit const char* -> Symbol conversion here is
+                            // load-bearing (v7..v11, one full build each). DC3's
+                            // explicit temporary `Symbol(filename)` makes the front
+                            // end read (*it)'s vptr BEFORE the Symbol ctor bl and
+                            // keep it live across the call in a callee-saved reg
+                            // (extra __savegprlr_19, frame +0x10, rename cascade:
+                            // 96.67). A named local `Symbol s(filename)` or a
+                            // `const Symbol &` sequences the vptr load after the
+                            // bl but reads the Symbol from a frame slot / address
+                            // instead of via the ctor's returned this (99.33 /
+                            // 96.77). Only parameter copy-initialization gives
+                            // retail's shape: temp at 0x5c, vptr after the bl,
+                            // `mr r10,r3; lwz r4,0(r10)` (100.0). Naming `*it` as
+                            // a local is inert either way.
+                            discovered = !(*it)->ContentDiscovered(filename) || discovered;
                         }
-
                         if (discovered) {
                             unk7fc++;
                         }
-
-                        Content *newContent = new XboxContent(*xdata, unk7f8, i, discovered);
-                        unk7f8++;
+                        Content *newContent =
+                            new XboxContent(
+                                *(XCONTENT_CROSS_TITLE_DATA *)(filename - 0x108), unk7f8++, i, discovered
+                            );
                         std::list<Content *>::iterator end = mContents.end();
                         mContents.insert(end, newContent);
                     }
@@ -534,11 +544,7 @@ void XboxContentMgr::PollRefresh() {
                     );
                     if (enumRes == 0x3E5) {
                         mState = kDiscoveryMounting;
-                    }
-                } else {
-                    DWORD err = XGetOverlappedExtendedError(mOverlappeds[i]);
-                    if ((err & 0xFFFF) != 0x12) {
-                        MILO_NOTIFY("XEnumerateCrossTitle (%d) error: %d", i, err);
+                        return;
                     }
                 }
                 operator delete(mOverlappeds[i]);
@@ -566,11 +572,13 @@ void XboxContentMgr::PollRefresh() {
             if (state == Content::kMounted) {
                 (*it)->Unmount();
                 allDone = false;
-            } else {
-                allDone = (state != Content::kNeedsMounting) && allDone;
+            } else if (state == Content::kNeedsMounting) {
+                // retail: subfic/subfe 0/-1 mask AND'd into the flag (a select)
+                allDone = false;
             }
         }
-        if (allDone) {
+        // retail: bne past the store -- mState is set only when the flag is FALSE
+        if (!allDone) {
             mState = kDiscoveryLoading;
         }
     }
