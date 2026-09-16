@@ -322,7 +322,7 @@ protected:
     T1 *mObject; // 0x8
 public:
     ObjRefConcrete(Hmx::Object *owner, T1 *obj);
-#ifdef RB3_TU_OBJPTR_DEFER_OWNER
+#if defined(RB3_TU_OBJPTR_DEFER_OWNER) || defined(RB3_OBJPTR_INLINE_TWOARG_CTOR_DEFER_BOTH)
     // TU-gated (lane DS-4/C): the DEFER-**BOTH** base ctor. Initializes NOTHING,
     // so the derived ctor body owns the mOwner store as well as the mObject
     // store, and BOTH land after the derived vptr store.
@@ -658,6 +658,29 @@ public:
     // dirs (char/, rndobj/, world/, ui/ are PCH-excluded), otherwise the
     // /FI decomp_pch.h include of this header precedes the .cpp's #define.
     // No layout/ABI change either way -- purely an inline-policy switch.
+#elif defined(RB3_OBJPTR_INLINE_TWOARG_CTOR_DEFER_BOTH)
+    // ---- PER-TU: INLINE two-arg ctor with DS-4/C's DEFER-BOTH body ---------
+    // (lane W16-FH, rndobj/PostProc.cpp). Two existing levers each solve half
+    // of this site and neither solves it alone:
+    //   * RB3_OBJPTR_INLINE_TWOARG_CTOR (in-class, so MSVC inlines it) puts
+    //     mOwner in the BASE mem-init list, so its store floats above the vptr
+    //     materialization: {mOwner, lis, mObject, addi, vptr-stw}.
+    //   * RB3_TU_OBJPTR_DEFER_OWNER (obj/ObjPtr_p.h) pins both stores after
+    //     the vptr store, but is an OUT-OF-LINE template body and is NOT
+    //     inlined at the call site (measured: the site stays a `bl`).
+    // Retail inlines ObjPtr<RndDrawable>(this, 0) in RndPostProc::LoadRev as
+    //     {vptr-lis, mOwner, vptr-addi, mObject, vptr-stw}
+    // i.e. the two member stores fill the lis->addi and addi->stw gaps. An
+    // in-class body over a base ctor that initializes nothing yields exactly
+    // that. The AddRef test folds away for a literal-null ptr after inlining.
+    // Needs the gated ObjRefConcrete() default ctor above. Inert for every TU
+    // that does not define the macro; no layout/ABI change.
+    ObjPtr(Hmx::Object *owner, T *ptr = nullptr) : ObjRefConcrete<T>() {
+        this->mOwner = owner;
+        this->mObject = ptr;
+        if (this->mObject)
+            this->mObject->AddRef(this);
+    }
 #elif defined(RB3_OBJPTR_INLINE_TWOARG_CTOR)
     // ---- PER-TU: inline the TWO-ARG ctor (keeping its AddRef branch) ------
     // Distinct from RB3_OBJPTR_INLINE_OWNER_CTOR above, which inlines a
