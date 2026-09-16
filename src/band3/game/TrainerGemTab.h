@@ -14,9 +14,27 @@ class RndTransformable;
 // size 0x13c
 class TrainerGemTab {
 public:
-    // size 0x38
+    // size 0x48 (compiler-verified via /d1reportSingleClassLayoutExtraTail;
+    // the old "0x38" here was inherited from the rb3-Wii header, where
+    // Transform is smaller. Retail agrees with 0x48: the retail
+    // vector<ExtraTail>::_M_erase body loads `li r10, 0x48` as its stride.)
     class ExtraTail {
     public:
+        // Transform and Hmx::Matrix3 both declare their own operator=, which
+        // makes ExtraTail's implicit copy-assign MEMBERWISE (a 0x40 memcpy plus
+        // two scalar stores) rather than one whole-object memcpy. That fatter
+        // loop body is why MSVC declines to inline STLport's __copy into
+        // vector<ExtraTail>::_M_erase, emitting an 88-byte out-of-line form
+        // where retail emits the 96-byte inlined memcpy loop it shares (via
+        // /OPT:ICF) with vector<RndLine::Point>::_M_erase. Spelling the
+        // assignment as a single memcpy -- the same idiom Transform itself
+        // uses -- restores retail's codegen. Semantically identical; it
+        // additionally copies the 3 tail padding bytes, which are unobservable.
+        ExtraTail &operator=(const ExtraTail &t) {
+            memcpy(this, &t, sizeof(*this));
+            return *this;
+        }
+
         Transform mXfm; // 0x0
         int mSlot; // 0x40
         bool mIsRGChord; // 0x44
