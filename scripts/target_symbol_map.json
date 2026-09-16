@@ -17000,6 +17000,7 @@
  "0x826f3068": "?HandlePhraseEnd@VocalPart@@QAAXAAHAAM10M@Z",
  "0x826f34d0": "??0VocalPart@@QAA@PAVVocalPlayer@@H@Z",
  "0x826f3630": "??1VocalPart@@QAA@XZ",
+ "0x826f3658": "?ScoreSinger@VocalPart@@QAAXMMMMHPAVTalkyMatcher@@AAVVocalScoreCache@@AAHAAM@Z",
  "0x826f3830": "?CalcNoteWeights@VocalPart@@QAAXXZ",
  "0x826f3958": "?SetVocalNoteList@VocalPart@@QAAXPAVVocalNoteList@@@Z",
  "0x826f3990": "?PostLoad@VocalPart@@QAAXXZ",
