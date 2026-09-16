@@ -30638,5 +30638,9 @@
  "0x825216e0": "??_GXboxContentMgr@@UAAPAXI@Z",
  "0x8251fdc8": "?Poll@XboxContent@@UAAXXZ",
  "0x8251f8f0": "?IsCorrupt@XboxContent@@UAA_NXZ",
- "0x825213d0": "??0XboxContentMgr@@QAA@XZ"
+ "0x825213d0": "??0XboxContentMgr@@QAA@XZ",
+ "0x82b7a7d0": "?GetSongSelectScreen@QuestFilterPanel@@QAA?AVSymbol@@XZ",
+ "0x82b7a8e0": "?GetDiffSelectScreen@QuestFilterPanel@@QAA?AVSymbol@@XZ",
+ "0x82b7a3d8": "?GetSelectedFilter@QuestFilterPanel@@QAA?AVSymbol@@XZ",
+ "0x82b7bcb0": "?Refresh@QuestFilterPanel@@QAAXXZ"
 }
