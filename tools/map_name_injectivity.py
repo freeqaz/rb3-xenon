@@ -117,6 +117,7 @@ import contextlib
 import io
 import json
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -274,6 +275,52 @@ def selftest():
     # a stale allow entry is detected but is not a violation
     check("stale allow entry detected",
           stale_allow_entries(injective, ["?A@@YAXXZ"]), ["?A@@YAXXZ"])
+
+    # ★★ SCHEMA-FILTER PIN (lane W16-EX, 2026-09-16).  Every leg above runs on an
+    # ALREADY-PARSED dict, so none of them pinned the one step that three separate
+    # lanes got wrong: WHICH rows of target_symbol_map.json are address->name rows
+    # at all.  The file holds THREE value kinds --
+    #   "0xADDR": "?Mangled@@..."   a real row, the only thing that is a NAME
+    #   "0xADDR": null              deliberately unclaimed; SKIPPED by the renamer
+    #   "_meta":  [...] / "..."     provenance + prose, NEVER address->name rows
+    # -- and a census that flattens the `_`-prefixed metadata into the VALUE
+    # population manufactures defects out of thin air.  Measured: doing so reports
+    # the literal address "0x826101b8" as a duplicate SYMBOL NAME, when it is in
+    # fact a member of `_icf_arbitrary` and `_bijection_arbitrary`, which are
+    # LISTS OF ADDRESSES -- the one place an address belongs.  It likewise counts
+    # `?NodeCmp@@YAHPBX0@Z` three times: twice for its two real rows, and once for
+    # the `_internal_linkage_allow` entry that LICENSES that duplicate.
+    # ⇒ The duplicate-name count is not "convention-dependent" and open to taste.
+    #   THIS is the convention, it is the one the consumers apply, and it is now
+    #   pinned so the number stops depending on who counts.
+    with tempfile.TemporaryDirectory() as td:
+        probe = Path(td) / "probe_map.json"
+        probe.write_text(json.dumps({
+            "0x82000000": "?Real@@YAXXZ",
+            "0x82000010": "?Real@@YAXXZ",      # a GENUINE duplicate name
+            "0x82000020": None,                # unclaimed -- not a name
+            "0x82000030": "",                  # empty -- not a name
+            "_icf_arbitrary": ["0x82000040"],  # a LIST OF ADDRESSES
+            "_internal_linkage_allow": ["?Real@@YAXXZ"],
+            "_comment": "prose, not a symbol name",
+        }))
+        got = raw_name_to_addrs(probe)
+        check("schema filter: only string-valued 0x rows are names",
+              got, {"?Real@@YAXXZ": [0x8200_0000, 0x8200_0010]})
+        check("schema filter: metadata list members are NOT names",
+              "0x82000040" in got, False)
+        check("schema filter: prose is NOT a name",
+              "prose, not a symbol name" in got, False)
+        # self-sabotage: the naive census, reconstructed, so this leg cannot be
+        # vacuous -- it must provably produce the wrong answer on the same input.
+        raw = json.loads(probe.read_text())
+        naive = []
+        for v in raw.values():
+            naive.extend(v if isinstance(v, list) else [v])
+        check("naive flatten provably manufactures a phantom name",
+              "0x82000040" in naive, True)
+        check("naive flatten provably over-counts the licensed duplicate",
+              naive.count("?Real@@YAXXZ"), 3)
 
     print("SELFTEST", "PASS" if ok else "FAIL")
     return 0 if ok else 1

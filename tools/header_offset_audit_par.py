@@ -117,10 +117,17 @@ def layout_for_tu(project_dir, tu, cache_dir):
 
 
 def build_header_index(project_dir):
-    """{class_name: best header} for every `class X`/`struct X` under src/.
+    """{class_name: [header, ...]} for every `class X`/`struct X` under src/.
 
-    ONE walk instead of `grep -rlP` per class.  Ranking mirrors
+    ONE walk instead of `grep -rlP` per class.  Ordering mirrors
     clr.find_header: same-stem header first, then shortest path.
+
+    ⛔⛔ THIS USED TO RETURN ONE HEADER PER CLASS, which made the ambiguity
+    UNREPRESENTABLE: with 110 of 2,910 class names declared by more than one
+    header under find_header's own predicate, the caller could not even see that
+    a second candidate existed, let alone refuse.  It now returns every candidate
+    IN RANK ORDER and the caller resolves against the TU that produced the layout
+    (lane W16-EX, 2026-09-16).
     """
     pat = re.compile(r"^\s*(?:class|struct)\s+(?:[A-Z_][A-Z0-9_]*\s+)?"
                      r"([A-Za-z_][A-Za-z0-9_]*)\s*(?::|\{|$)", re.M)
@@ -141,9 +148,8 @@ def build_header_index(project_dir):
             stem = os.path.splitext(fn)[0]
             for cls in set(pat.findall(txt)):
                 rank = (0 if cls == stem else 1, len(rel))
-                if cls not in idx or rank < idx[cls][0]:
-                    idx[cls] = (rank, rel)
-    return {k: v[1] for k, v in idx.items()}
+                idx.setdefault(cls, []).append((rank, rel))
+    return {k: [rel for _r, rel in sorted(v)] for k, v in idx.items()}
 
 
 def main():
@@ -186,6 +192,7 @@ def main():
     print(f"  {len(hidx)} classes declared in src/ headers", flush=True)
 
     findings, seen_class, no_header, not_ours, stale = {}, {}, set(), set(), []
+    ambiguous = {}          # class -> (reason, candidates): NOT audited, ON PURPOSE
     for tu in tus:
         cp = os.path.join(cache, tu.replace("/", "_") + ".json.gz")
         if not os.path.exists(cp):
@@ -198,13 +205,24 @@ def main():
         if parsed.get("_headers_mtime", 0) < newest_header_mtime(pd):
             stale.append(tu)
             continue
+        try:
+            tu_text = open(os.path.join(pd, tu), errors="replace").read()
+        except OSError:
+            tu_text = ""
         for cls, info in (parsed.get("classes") or {}).items():
             if cls in seen_class:
                 continue
             short = cls.split("::")[-1]
-            hdr = hidx.get(short)
-            if not hdr:
+            cands = hidx.get(short) or []
+            if not cands:
                 no_header.add(cls)
+                continue
+            hdr, why, _rej = clr.choose_audit_header(cands, tu, tu_text)
+            if hdr is None:
+                # REFUSE rather than guess -- see choose_audit_header.  Reported
+                # below, never silently dropped: trading a false clean for a
+                # silent skip is the same disease.
+                ambiguous[cls] = (why, cands)
                 continue
             if not hdr.startswith("src/"):
                 not_ours.add(cls)
@@ -223,6 +241,15 @@ def main():
               f"   Re-run WITHOUT --phase2-only.  First few: {stale[:5]}")
     print(f"classes examined    : {len(seen_class)}")
     print(f"classes w/o header  : {len(no_header)}")
+    # ★ see header_offset_audit.py: a refusal is a result, not a skip.
+    print(f"classes REFUSED     : {len(ambiguous)}  (ambiguous header -- "
+          f"UNAUDITED, not clean)")
+    for cls, (why, cands) in sorted(ambiguous.items())[:20]:
+        print(f"  {cls}: {why}")
+        for h in cands:
+            print(f"      {h}")
+    if len(ambiguous) > 20:
+        print(f"  ... {len(ambiguous) - 20} more")
     print(f"headers with rows   : {len(findings)}")
     print(f"disagreeing comments: {total}")
     print("=" * 72)
@@ -245,6 +272,8 @@ def main():
         json.dump({"findings": findings, "failed": failed,
                    "classes_examined": len(seen_class),
                    "classes_without_header": sorted(no_header),
+                   "classes_refused_ambiguous_header": {
+                       c: cands for c, (_w, cands) in ambiguous.items()},
                    "tus_audited": len(tus) - len(failed)}, fh, indent=1)
     print(f"\nwrote {args.json}")
     return 0
