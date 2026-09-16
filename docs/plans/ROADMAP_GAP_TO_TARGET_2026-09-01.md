@@ -2372,6 +2372,7 @@ row keyed to the merge SHA, pushed). Two are still running.
 | **W16-EH** ButtonDownMsg head + `Shuttle::SetActive` (opus) | `e16ea909` | **+0 / +0 B** | Refuted its brief three ways on retail bytes. **(1)** "prologues identical but for ONE instruction" is FALSE — UP guards its decrement with `> 0` and re-loads `0x48(this)` (9 insns), DOWN increments unconditionally off a single load (5 insns), reversed `lwzx`/`stwx` order, frame `0xe0` vs `0x80`, saves `__savegprlr_23` vs `_28`; **copying UP and flipping `--`→`++` produces WRONG CODE**. **(2)** "call site passes `this+0xe0`" is FALSE — retail `lwz r3, 0xe0(r31)` LOADS the pointer, so `Shuttle *mShuttle` is right (EF's verdict survives, its reason does not). **(3)** construct list incomplete. Two real fixes landed on merit: the per-pad counter ButtonUp decrements was one **nothing ever incremented**, and `Shuttle::SetActive` was declared + called but **defined NOWHERE** (unresolved external). Row moved fuzzy **3.238 → 8.010** for **exactly 0 bytes** — all-or-nothing per row. Gate reproduced Δ0 bytes with Δfuzzy **+0.000795 pp** to 6 dp. |
 | **W16-EJ** the hidden near-crossing band, enumerated (opus) | `5a4dfeef` | **+1 / +572 B** | Dispatched on my claim that all 22 game-layer rows at fuzzy ≥99.95 were source-reachable **because all 22 had `mpn < 100`**. It banks the one crossing and **refutes the rationale entirely**. `VocalGuidePitch.cpp` carried a legacy Metrowerks/Wii `extern "C"` shim (`NoteAt__13VocalNoteListCFf`) and called it instead of `VocalNoteList::NoteAt` — declared, defined, and already called normally at `VocalPlayer.cpp:526`. **THE REFUTATION IS WORTH MORE THAN THE BYTES:** of 26 charged sites across the 22 rows, **24 are relocation-name and only 2 are instruction-level** (both immediates); **20 of 22 rows carry ZERO instruction-level charges** despite every one reading `mpn < 100`. Mechanism: objdiff-core **`b14ba45`** `vetted_reloc_name_diff` excludes a vetted relocation-name diff from `arg_diff_score` while keeping it in `diff_score`, so it no longer cancels out of `mpn = diff_score − arg_diff_score`. ★ Free tell: **`mpn == fuzzy` to the digit ⇒ `arg_diff_score == 0`** — not "no relocation charges" but "every one was vetted and promoted into `mpn`". Also refuted my *third* screen the same day: dropping every row with a class-(c) charge would have discarded **the only row that crossed**. Deliberately did NOT land 17 `--chase`-proven aliases (13 rows / 10,136 B) — `--chase` is not a declared T1/T2/T3 tier and the pipeline cannot re-derive it. |
 | **W16-EL** `AccomplishmentProgress` key type — **REFUTED** (opus) | `a50b1e19` | **+0 / +0 B** | Dispatched on W16-EJ's named top candidate: charge `addi r3, r30, 0x64c` reaches `mGigTypeCompletedMap`, declared `hash_map<int,int>` where retail was claimed to build `hash_map<Symbol,int>` (588 B, single charge). **The claim is refuted on retail's own symbol table, which spells the container outright.** `SaveFixed` (`0x825909b8`) calls `SaveStd<Symbol,H>` three times for the sibling maps and then `fn_82590198` = `SaveStd<H,H>` for `+0x64c`, whose parameter is literally `const hash_map<int,int>&`; `LoadFixed` mirrors it at `0x82591420`; `operator[]` and `_M_find<int>` differ from the siblings' `_M_find<Symbol>`. The three sibling `Symbol` maps are the **untreated control** and they read the other way, so the instrument discriminates. **Our source was right and the brief was wrong.** Economics, had it been true: **2,764 B of already-perfect rows at risk for 588 B**, and `SaveFixed`/`LoadFixed` break **by construction** under a `Symbol` key. ⚠ **No A/B was run because the change is not expressible** — `mGigTypeCompletedMap[i + 0x3E8]` (`:549`) cannot compile with a `Symbol` key. That is a **result, not an omission**. The 588 B is real but blocked elsewhere: our hashtable-ctor spelling is already placed at `0x825a07e0` by an existing 11-member group while retail's `0x8255d480` branches to `0x8255c968`. ★ And **"identical ⇒ folded" is empirically FALSE here** — retail `0x8255c968` and `0x825983d8` are byte-identical *including their `bl` target* and still sit at two addresses. |
+| **W16-EK** fold-thunk gate read one side from COFF, the other from instruction form (opus) | `97f76e42` | **+1 / +260 B** | Dispatched to adjudicate two defects W16-EH *claimed* in `tools/fold_thunk_gate.py`. **Both hold — and EK's own finding is that they are COUPLED**, which EH missed and which is what makes the fix sound rather than a loosening. **(1)** Retail's relocation set was **inferred from instruction form** (`elif op in IMM16_OPS: targets[4*i] = None`) while ours was **read from COFF** (`cd["fn_relocs"]`), and `compare()` refused on the asymmetry — `stb` is in `IMM16_OPS`, so retail recorded a relocation slot where a linked image has none and the `8` is a literal. **(2)** `mask_word` zeroed the low 16 bits, so `stb r4,8(r3)`, `stb r4,0xc(r3)` and `stb r4,0x7ff(r3)` **all** mask to `0x98830000` — the displacement passed **by construction**. ★ Fixing the asymmetry ALONE would have been a real loosening, because the vacuous mask means masked words compare equal for **any** displacement; landed together the gate is **strictly tighter**, and EK proved it can still fail (`+0x8` admits ×2; `+0xc`/`+0x24`/`+0x0` REFUSE **by displacement**). Prize priced from charged sites, not a mismatch count: `?OnSetShuttle@Game@@` is 260 B over 65 rows with **exactly one charged row**. **Two corrections to my brief:** "0 of 29 REFUSEs change" is right but **scope-limited** — it reproduces on the 36-pair worklist (0 of 36) while across all **1,048** triage pairs the defect blocks **8**, **8× my briefed reach** (8/8 REFUSE→ADMIT, 0 the other way); and my precondition was **half-true** — `SetActive` was in source but the worktree's inherited `Shuttle.obj` was **stale with no COMDAT** until a build ran. **EK's own P3 pre-registration FAILED and it records it as failed** (predicted ≤2 flips, measured 8). ⚠ **One mid-lane error, self-caught by measuring:** its first patch threaded the COFF mask through `homonym()` — which is **linked-vs-linked**, where form-inference is correct *because it cancels* — flipping a **1,180-site** pair ADMIT→REFUSE. Gate reproduced the pre-registration to the byte. |
 
 Ledger: 42,846 / 3,892,688 B / 37.992 % (`bbcf979b`, wave start) →
 **43,915 / 4,109,528 B / 40.1044 %** (ledger row `84577bdc`, objdiff **4.2.9** `5a51cd51`; W15-D, W15-E, W15-F, W16-A, W16-B, W16-C, W16-D, W16-E, W16-F, W16-G, W16-H, W16-I, W16-L, W16-K, W16-N, W16-M, W16-O, W16-P, W16-Q, W16-J, W16-S, W16-R, W16-T, W16-U and W16-V each additive to the byte on the 4.2.8 ruler, whose last figure is **43,290 / 3,962,580 B / 38.6746 %** at ledger row `93283bb4`; the +1 / +24,392 B between the two rows is **W16-W's RULER CHANGE**, not additive source work — same code, W16-X, W16-Y, W16-Z, W16-AA additive on the 4.2.9 ruler; W16-AB moved 7 named rows via map/splits/alias repairs, 0 out; W16-AD un-swapped 4 Accomplishment map rows — 7 in / 1 out, net +680 B — and withdrew 20 refuted alias memberships at Δ0; W16-AC wired rnddx9/Utl.cpp and crossed its four rows, +4 / +356 B, 0 out; W16-AG withdrew the 51 refuted alias memberships W16-AD left, Δ0 predicted and measured; W16-AF identified `0x825f32a8` as `GoalCmp::operator()` and rotated the comparator half of 56 map names across two STL bands, 35 in / 3 re-home fall-outs, net +32 / +6,016 B; W16-AI took the GoalCmp local static AF sized — the rb3-Wii oracle is wrong there, retail right — plus two vtordisp thunks and a misplaced TU boundary, +5 / +424 B predicted exactly; W16-AH withdrew 294 no-witness alias memberships by type existence at Δ0, refuting its own Route B map row on retail bytes; W16-AJ identified `0x826100F8` as the survivor of 26 hashtable dtors and completed CampaignSongInfoPanel 50/50 for +17 / +2,812 B; W16-AE refuted all four of W16-AB's "cannot be fixed" items — ported SessionSearcher/NetLog over seven circular pins, re-homed six mis-unit blocks, fixed two alias-tooling gaps — for +35 / +3,572 B; W16-AK refuted its own brief's ICF-fold premise on OvershellPanel — the two OnMsg charges were a Wii-dev-only block, 76 vs 132 B, removed on merit — for +3 / +684 B; W16-AM found the `list<T>` bijection is decidable by relocation TARGET, not arbitrary — 8 rows repaired, `fn_824CE130` identified, 0x823d3918 nulled as a folded `Handle` — for +5 / +980 B; W16-AN closed MainHubPanel 176/176 and CampaignSongInfoPanel 53/53 — retail materialises function-local statics where the Wii source uses externs, and re-homing the PhysicsManager mis-pin exposed a sret-vs-stack-slot divergence that was structurally invisible — for +12 / +2,736 B; W16-AL installed 12 of 20 alias proposals on retail bytes, refused 2 and held 14 — naming the `0x826100f8` hashtable-dtor survivor cost −176 B by design and exposed two real container-type dtor divergences, and AK7's "atexit dtor" was `BandUserMgr::GetBandUser` with six callers — for +14 / +14,820 B; W16-AO repaired 9 wrong list<T> resize rows plus one coupled transposition on retail bytes, leaving 0x8246af50 alone as a true fold, for +8 / +944 B; W16-AP closed GamePanel 91/97 → 93/97 by naming four anonymous rows, dropping RestartGameMsg's phantom payload and reproducing the function-local-static pattern, for +5 / +584 B; W16-AS +1 / +468 B; W16-AR +7 / +1,060 B; W16-AQ +7 / +2,248 B; W16-AU +2 / +216 B; W16-AT +1 / +628 B; W16-AV +12 / +3,500 B; W16-AW +1 / +328 B; W16-AX +2 / +296 B; W16-AY +1 / +144 B; W16-AZ +7 / +884 B; W16-BB +1 / +264 B; W16-BA +5 / +1,012 B; W16-BC +4 / +1,000 B; W16-BF +6 / +816 B; W16-BE +9 / +792 B; W16-BD +4 / +916 B; W16-BG +23 / +1,024 B; W16-BI +2 / +392 B; W16-BH +2 / +160 B; W16-BJ +2 / +32 B; W16-BK +3 / +180 B; W16-BL +1 / +12 B; W16-BM -35 / -1,096 B; W16-BN +10 / +1,244 B; W16-BO +10 / +1,008 B; W16-BP +7 / +220 B; W16-BQ +55 / +924 B; W16-BR +21 / +3,056 B; W16-BS +25 / +9,004 B; W16-BV +0 / +0 B; W16-BT +3 / +560 B; W16-BU +24 / +11,444 B; W16-BX +1 / +528 B; W16-BY +2 / +868 B; W16-BW +1 / +312 B; W16-BZ +92 / +5,320 B; W16-CA +22 / +840 B; W16-CB +4 / +7,280 B; W16-CC +0 / +0 B; W16-CD +16 / +2,732 B; W16-CE +14 / +2,684 B; W16-CF +1 / +40 B; W16-CH +1 / +6,416 B; W16-CI +5 / +892 B; W16-CG Δ0; W16-CJ +78 / +14,648 B on the empty-survivor fold vein). `total_code` 10,247,068
@@ -3314,7 +3315,7 @@ membership**. Landing them would install forgiveness the generator could never r
 Sized and handed up rather than taken — the correct call, and the single biggest uncollected
 item in the band.
 
-### ⏳ OPEN COORDINATOR DECISION — should `--chase` become a declared alias evidence tier?
+### ✅ RESOLVED COORDINATOR DECISION — `--chase` must NOT become a declared alias evidence tier
 
 **Handed up by W16-EJ (2026-09-16), sized, and deliberately NOT decided yet.**
 
@@ -3404,3 +3405,90 @@ rewrite the two consumer sites at `src/band3/net_band/RockCentral.cpp:1193-1194`
 pairs from EJ's handoff (NetSession 460 B; TrainerGemTab 656 B; TourChallengeResultsPanel 1,392 B;
 RGTrainerPanel 1,220 B) are untouched by this and stay queued; `StoreMenuPanel` remains **VACUOUS** (body under
 four words), so its REFUTED verdict is not evidence of anything.
+
+
+### W16-EK landed — a gate that read one side from COFF and the other from instruction form
+
+**Merge `97f76e42`. Pre-registered +1 fn / +260 B; measured 43,957 → 43,958 and 4,124,272 → 4,124,532, code%
+40.248314 → 40.25085, `CROSSED IN` exactly one row (`?OnSetShuttle@Game@@QAA?AVDataNode@@PAVDataArray@@@Z`,
+260 B), `FELL OUT` 0, native `PASS 18/18 skipped=0`.**
+
+**The treatment was proved real before it was priced.** `objdiff.json` carries no `symbolEquivalences` key —
+aliases reach objdiff through `map_file = build/45410914/icf_aliases.map`, and `build.ninja` declares
+`scripts/symbol_aliases.json` as an implicit **dependency** of that edge, with a second `--check` edge asserting
+the rendered map still agrees with the JSON. `SetActive@Shuttle` was measured **absent (0)** from the live map
+before the merge and **present (1)** after the gate. Without that check a ruler-path patch can measure
+absent-vs-absent and report a confident zero.
+
+**Both of W16-EH's claimed defects hold, and the load-bearing finding is that they are COUPLED.** Removing the
+one-sided refusal alone would have been a genuine loosening, because a vacuous `mask_word` makes masked words
+compare equal for *any* displacement. Landed as one change the gate is **strictly tighter** — and EK proved it
+can still fail rather than asserting it: `+0x8` admits twice, `+0xc` / `+0x24` / `+0x0` refuse **by the
+displacement**, i.e. by the very check that used to be vacuous. Made permanent as
+`tools/test_fold_thunk_gate_mask.py`.
+
+★ **The alias was adjudicated on retail bytes, not on the `none` control — and the control's flatness is the
+signature of the hazard, not a clearance.** Retail `0x826f07b8` = `988300084e800020`, zero relocations; our
+`Shuttle::SetActive` COMDAT is byte-identical to it and so is our `Metronome::Enable` COMDAT — two of *our own*
+COMDATs independently meeting the `/OPT:ICF` condition — and `SetActive` is absent from the map, which is why
+the survivor carries the other spelling. ⚠ This has to survive **W16-EL's same-day refutation** that
+"byte-identical ⇒ folded" is false in general (retail `0x8255c968` and `0x825983d8` are byte-identical
+*including their `bl` target* and still sit at two addresses). It does, for a stated reason: this is the
+**relocation-free 8-byte leaf** case, where there is no `bl` target left to disagree about.
+
+**Two corrections back to my brief, both accepted.** My "0 of 29 REFUSEs change" is correct but
+**scope-limited** — it reproduces on the 36-pair worklist (0 of 36 verdict changes) while across all **1,048**
+triage pairs the defect blocks **8**, eight times the reach I briefed, all 8 REFUSE→ADMIT with 0 the other way
+and 8/8 carrying the asymmetry as their before-reason. And my precondition was **half-true**: `SetActive` was
+defined in source, but the worktree's *inherited* `Shuttle.obj` was stale with no `SetActive` COMDAT, so the
+gate would have kept refusing until a build ran — the reflinked-worktree trap, hit again.
+
+**EK's own pre-registration failed on P3 and it records it as failed** (predicted ≤2 REFUSE→ADMIT, measured 8 —
+a 4× miss). Its bound came from the 36-pair subclass where the answer is 0; it never estimated the rate on the
+full population. It did not trip the stop condition for a stated reason — all 8 share one before-reason and each
+then passes a *stricter* comparison — and any ADMIT→REFUSE, or heterogeneous reasons, would have stopped the
+lane.
+
+⚠ **One mid-lane error, self-caught by measuring rather than by reasoning.** EK's first patch threaded the
+COFF-record mask through `homonym()`, flipping a **1,180-site** pair (`??3@YAXPAX@Z`) ADMIT→REFUSE by destroying
+its FT3 witness. `homonym()` is **linked-vs-linked** (retail vs dc3) where *neither* side carries relocation
+records, so form-inference is correct there **precisely because it cancels** — EK had removed a one-sided error
+in one place and reintroduced it in another. Fixed with `canon(relocated=None)`.
+
+**Deliberately NOT done, recorded so silence is not read as coverage:** the 8 newly-unblocked pairs are **not**
+installed (each needs its own adjudication); `tools/comdat_fold_gate.py` is **not** audited for the same
+one-sided read against our COFF objects — named as the obvious follow-up and **UNVERIFIED**;
+`docs/plans/fold-thunk-alias-gate-2026-08-12.json` records 9 ADMIT / 27 REFUSE and no longer reproduces (current
+tree gives 7/29), flagged but not rewritten because it is another lane's dated record; and FT-EMPTY's standing
+was **not** promoted — only its now-false "vacuous" rationale was corrected.
+
+### ✅ THE `--chase` DECISION, RESOLVED — reject the tier, on its own output
+
+W16-EJ parked 17 `--chase`-only pairs (13 rows / 10,136 B) rather than landing them, and I recorded the tier
+question as OPEN behind W16-EK. **EK has reported, so it is decidable — and `--chase`'s own artifact answers it
+against promotion.** Read across all 23 pairs in the lane's `chase.txt`:
+
+| what the artifact says | count |
+|---|---|
+| FLAT T1 **REFUTED** — "masked bodies match but relocation TARGETS disagree — template-twin, not a fold" | 20 of 23 |
+| FLAT T1 **PROVEN** but self-labelled **VACUOUS** (body under 4 words / over half the words masked) | 1 |
+| FLAT T1 **PROVEN** only because "our spelling is in no compiled obj" | 1 |
+| masked bodies **DIFFER** — retail did not keep the code our spelling emits | 3 |
+
+⇒ **zero of 23 are proven folds by any non-vacuous route.** The two PROVENs are a body too small to carry
+information and a spelling we never compiled, neither of which is evidence that the linker folded anything.
+
+★★★ **And the decisive column is one nobody had read: `our_bodytwins`.** For 21 of 22 pairs our side has **more
+than one** symbol sharing that body — median **14**, max **568**, with the `vector<ChatReceiver*>::push_back`
+shape alone carrying **149**. An alias justified by "our COMDAT is byte-identical to the survivor" is therefore
+justified by a property **149 of our own symbols share**, which cannot identify *which* spelling the call site
+meant. That is the same trap as ICF destroying the caller's intent, arriving from the other direction.
+
+**Combined with W16-EL's refutation of "byte-identical ⇒ folded" (retail keeps two byte-identical bodies,
+matching `bl` target included, at two addresses), the case for `--chase` as a declared tier fails twice over.**
+An alias lifts `name_check` **by construction** and the `none` control provably cannot catch a fabrication, so
+the burden of proof sits entirely on the evidence tier — and this one does not carry it.
+
+⇒ **DECIDED: `--chase` is NOT promoted to a declared evidence tier. The 13 rows / 10,136 B stay unclaimed, and
+W16-EJ's refusal to land them was correct.** This is deliberately a decision to forgo bytes that are available:
+~7.9 pp of `matched_code` already rests on alias forgiveness, and accuracy beats headline %.
