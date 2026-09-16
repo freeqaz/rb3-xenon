@@ -116,9 +116,16 @@ void MusicLibraryNetSetlists::FinishGettingSetlistArt(bool b1) {
 void MusicLibraryNetSetlists::ParseDataResultsIntoSetlists(bool archived) {
     std::vector<NetSavedSetlist *> &setlists = archived ? unk28 : unk20;
     DeleteAll(setlists);
+    // Retail RB3-360 (TU5) does NOT dump the result list here: the log string
+    // "Setlists from net:" is absent from the retail image, while every
+    // functional string in this body (art_url / seconds_left / valid_instr)
+    // is present exactly once. This is rb3-Wii DEV-build residue. House
+    // pattern: keep it for the native build, drop it for the match build.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     MILO_LOG("Setlists from net:\n");
     mDataResults.Print(TheDebug);
     MILO_LOG("\n");
+#endif
     FOREACH (it, mDataResults.mDataResultList) {
         DataNode node;
         DataResult &result = *it;
@@ -136,26 +143,36 @@ void MusicLibraryNetSetlists::ParseDataResultsIntoSetlists(bool archived) {
                 artUrl = node.Str(nullptr);
             }
         }
+        // Retail parses an "owner_guid" field that neither oracle (rb3-Wii dev
+        // nor DC3) has: a decimal string converted in-place to a 64-bit XUID.
+        XUID ownerXuid = 0;
         NetSavedSetlist *setlist = nullptr;
         switch (type) {
         case 0:
         case 1: {
             result.GetDataResultValue("owner", node);
             String owner(node.Str(nullptr));
+            result.GetDataResultValue("owner_guid", node);
+            for (const char *g = node.Str(nullptr); *g; g++) {
+                ownerXuid = ownerXuid * 10 + (*g - '0');
+            }
             result.GetDataResultValue("guid", node);
             String guid(node.Str(nullptr));
             MILO_ASSERT(!archived, 0xFC);
             setlist = new NetSavedSetlist(
-                SavedSetlist::kSetlistFriend, title.c_str(), desc.c_str(), validInstr,
-                owner.c_str(), artUrl.c_str(), guid.c_str()
+                SavedSetlist::kSetlistFriend, guid.c_str(), owner.c_str(), validInstr,
+                artUrl.c_str(), title.c_str(), desc.c_str()
             );
             break;
         }
         case 2: {
             MILO_ASSERT(!archived, 0x108);
+            // Retail passes literal nullptr here for guid and owner (li r5,0 /
+            // li r6,0), NOT gNullStr -- gNullStr would be a load from the
+            // global, which is what we emitted before.
             setlist = new NetSavedSetlist(
-                SavedSetlist::kSetlistHarmonix, title.c_str(), desc.c_str(), validInstr,
-                gNullStr, artUrl.c_str(), gNullStr
+                SavedSetlist::kSetlistHarmonix, nullptr, nullptr, validInstr,
+                artUrl.c_str(), title.c_str(), desc.c_str()
             );
             break;
         }
@@ -163,6 +180,10 @@ void MusicLibraryNetSetlists::ParseDataResultsIntoSetlists(bool archived) {
         case 1001: {
             result.GetDataResultValue("owner", node);
             String owner(node.Str(nullptr));
+            result.GetDataResultValue("owner_guid", node);
+            for (const char *g = node.Str(nullptr); *g; g++) {
+                ownerXuid = ownerXuid * 10 + (*g - '0');
+            }
             result.GetDataResultValue("id", node);
             int id = node.Int(nullptr);
             result.GetDataResultValue("valid_instr", node);
@@ -212,12 +233,23 @@ void MusicLibraryNetSetlists::ParseDataResultsIntoSetlists(bool archived) {
             setlist->AddSongTitle(node.Str(nullptr));
             i++;
         }
-        bool keep = true;
-        if (!setlist->GetOwnerOnlineID()->IsInvalid()
-            && !ThePlatformMgr.CanSeeUserCreatedContent(setlist->GetOwnerOnlineID())) {
-            keep = false;
+        if (ownerXuid) {
+            // Bind the const XUID& to a short-lived COPY. Passing ownerXuid
+            // itself makes it address-taken, which pins the accumulator to the
+            // stack: both digit loops then reload/store it every iteration and
+            // the extra 8-byte home shifts every later frame offset by 8.
+            // Retail keeps the accumulator in a callee-saved register and
+            // spills only the temporary (std r23,0x60(r31); addi r4,r31,0x60).
+            XUID ownerXuidArg = ownerXuid;
+            setlist->mOID.SetXUID(ownerXuidArg);
         }
-        if (keep && !setlist->mSongs.empty()) {
+        const OnlineID *ownerID = setlist->GetOwnerOnlineID();
+        bool keep =
+            ownerID->IsInvalid() || ThePlatformMgr.CanSeeUserCreatedContent(ownerID);
+        // Retail tests size(), not empty(): it computes (end - begin) & ~3
+        // (a masked pointer difference). empty() lowers to begin() == end()
+        // (cmplw), which is what we emitted before.
+        if (keep && setlist->mSongs.size() != 0) {
             setlists.push_back(setlist);
         } else {
             RELEASE(setlist);
