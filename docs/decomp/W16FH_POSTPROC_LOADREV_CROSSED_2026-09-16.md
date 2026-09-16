@@ -165,7 +165,50 @@ DC3's, with the comment in `PostProc.cpp` recording the measured facts.
 
 ## 6. Authoritative A/B (`tools/ab_measure.py --patch`, detached at `b3171b99`)
 
+### 6.1 Pre-registration (written and committed BEFORE the run — commit `5fd321bd` is the patch tip)
+
+Patch: `git diff b3171b99 5fd321bd -- src` → `~/tmp/w16fh_lane.patch` (3 files:
+`src/system/obj/Object.h`, `src/system/obj/ObjPtr_p.h`,
+`src/system/rndobj/PostProc.cpp`). Worktree detached at `b3171b99`, then
+`python3 tools/ab_measure.py --worktree ~/tmp/wt-w16-fh --patch ~/tmp/w16fh_lane.patch`.
+
+Leg A assertions (the brief's wrong-base guard): `LoadRev` reads **97.358795**
+and `Load` **99.854164** — FF's state, not FC's 94.0000 / 95.6875.
+
+Predicted DELTAS (leg B − leg A):
+
+| measure | predicted Δ | basis |
+|---|---:|---|
+| `matched_functions` | **+1** | LoadRev mpn 97.671295 → 100 |
+| `matched_code` | **+1,728 B** | LoadRev fuzzy → 100; Load stays < 100 (pays 0) |
+| `masked_equal_functions` | **0** | no funclet pairing touched |
+| honest (`matched − masked_equal`) | **+1** | |
+| `matched_code_percent` | **≈ +0.01686 pp** | 1,728 / `total_code` read from leg A (10,247,068 on my builds) |
+| `fuzzy_match_percent` | **≈ +0.00012** | LoadRev +2.64 pp and Load +0.04 pp over 69,240 rows |
+| `total_code`, `total_functions` | **0** | source-only patch, no pins |
+| leg B recompiles | **≥ 1**, plausibly several hundred | `Object.h` is a PCH input (DS-1 measured 956 on an `Object.h` patch) |
+| `none`-ruler control | moves the SAME direction (LoadRev's residual was real `fdivs`/`fmuls` bytes, not names) | patch kind = `source` ⇒ ALIAS_SUSPECT must NOT fire |
+
+The prediction set is not "multiples of 1,728": the true Δcode is
+`1,728 + Σ size(rows crossing to fuzzy 100) − Σ size(rows falling off)`, and I
+will compute both sums from the row-diff of the two leg `report.json`s rather
+than back out a story from the total.
+
+Falsifiers (any one refutes the lane's claim that only the two PostProc rows moved):
+
+1. Any row other than `?LoadRev@RndPostProc@@…` and `?Load@RndPostProc@@…`
+   changes `fuzzy` or `mpn` between the leg reports (row-diff, all 69,240 rows).
+2. `??0RndPostProc@@IAA@XZ` reads anything but 100.0 in leg B (the
+   FORCEINLINE-leak control).
+3. Δ`matched_code` ≠ +1,728 or Δ`matched_functions` ≠ +1.
+4. Leg A does not read 97.358795 / 99.854164 on the two rows (wrong base).
+5. ab_measure REFUSES (absent-vs-absent, unsettled, ruler swap) — then there is
+   no number and this section says so.
+
+### 6.2 Result
+
 (filled in after the run)
+
 
 ## 7. What was NOT done, and why
 
