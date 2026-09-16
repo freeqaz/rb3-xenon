@@ -1326,19 +1326,19 @@ void VocalTrack::UpdateScrolling(float ms) {
 
     float oldRange = mDir->mLastMax - mDir->mLastMin;
     while (mRangeShifts.size() != 0
-           && mRangeShifts.front().unk0 < ms - mRangeShifts.front().unk4) {
+           && mRangeShifts.front().unk0 < ms - mRangeShifts.front().unk14) {
         RangeShift &rs = mRangeShifts.front();
-        mDir->SetRange(rs.unk8, rs.unkc, unk208, false);
+        mDir->SetRange(rs.unkc, rs.unk10, unk208, false);
         mRangeShifts.pop_front();
     }
     if (mRangeShifts.size() != 0) {
         RangeShift &rs = mRangeShifts.front();
         if (rs.unk0 < ms) {
-            float t = (ms - rs.unk0) / rs.unk4;
+            float t = (ms - rs.unk0) / rs.unk14;
             t = Clamp<float>(0.0f, 1.0f, t);
             mDir->SetRange(
+                t * (rs.unkc - rs.unk4) + rs.unk4,
                 t * (rs.unk10 - rs.unk8) + rs.unk8,
-                t * (rs.unk14 - rs.unkc) + rs.unkc,
                 unk208,
                 false
             );
@@ -1346,7 +1346,7 @@ void VocalTrack::UpdateScrolling(float ms) {
     }
     float newRange = mDir->mLastMax - mDir->mLastMin;
     float rangeDelta = oldRange - newRange;
-    if (rangeDelta < 0.0f)
+    if (rangeDelta <= 0.0f)
         rangeDelta = -rangeDelta;
     if (rangeDelta > 0.1f) {
         for (int p = 0; p < 3; p++) {
@@ -1377,11 +1377,12 @@ void VocalTrack::UpdateScrolling(float ms) {
                 float window = shift.unk8 ? mLyricShiftQuickMs : mLyricShiftMs;
                 if (shift.unk4 >= (lyricMs - window))
                     break;
-                xPos = shift.unk0;
+                float newX = shift.unk0;
+                xPos = newX;
                 Vector3 pos(scroller->LocalXfm().v);
-                pos.x = shift.unk0;
+                pos.x = newX;
                 scroller->SetLocalPos(pos);
-                shiftedX = shift.unk0 + mDir->mNowBarX;
+                shiftedX = newX + mDir->mNowBarX;
                 shifts.pop_front();
             }
             if (shifts.size() != 0) {
@@ -1405,13 +1406,13 @@ void VocalTrack::UpdateScrolling(float ms) {
         const std::vector<int> &tambGems =
             mPlayer->mTambourineManager.TambourineGems();
         int targetTick = (int)MsToTick(lookAhead);
-        int gemIdx = unk100;
-        while (gemIdx < tambGems.size() && tambGems[gemIdx] < targetTick) {
-            float gemMs = TickToMs((float)tambGems[gemIdx]);
-            mTambourineGemPool->NewGem(gemMs, gemIdx);
-            gemIdx++;
+        std::vector<int>::const_iterator it = tambGems.begin() + unk100;
+        while (it != tambGems.end() && *it < targetTick) {
+            float gemMs = TickToMs((float)*it);
+            mTambourineGemPool->NewGem(gemMs, it - tambGems.begin());
+            ++it;
         }
-        unk100 = gemIdx;
+        unk100 = it - tambGems.begin();
     }
 
     UpdateLyricZ();
