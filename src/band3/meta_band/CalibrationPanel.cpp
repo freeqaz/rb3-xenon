@@ -299,7 +299,12 @@ DataNode CalibrationPanel::OnInitializeContent(DataArray *arr) {
     memset(unka4, 0, 0x14);
     memset(unkb8, 0, 0x14);
     RndTransAnim *tabanim = mDir->Find<RndTransAnim>("prog_bar_tab.tnm", true);
-    RndTransAnim *boneanim = mDir->Find<RndTransAnim>("bone_prog_bar.tnm", true);
+    // Retail reloads mDir into a scratch register immediately after the first
+    // Find returns and then moves it into r3 (one extra `mr`, which is the whole
+    // 1668-vs-1664 size delta). Reading the member through a local reproduces
+    // that exactly; folding `dir` back into the call site costs 1,668 B.
+    PanelDir *dir = mDir;
+    RndTransAnim *boneanim = dir->Find<RndTransAnim>("bone_prog_bar.tnm", true);
     tabanim->SetFrame(0, 1);
     boneanim->SetFrame(0, 1);
     static Symbol cal_video_desc_guitar("cal_video_desc_guitar");
@@ -373,7 +378,7 @@ DataNode CalibrationPanel::OnInitializeContent(DataArray *arr) {
     mStream = TheSynth->NewStream(sound, mCycleTimeMs * 0.5f, 2.0f, true);
     MILO_ASSERT(mStream, 0x205);
     if (mStream) {
-        mStream->SetJump(mCycleTimeMs, 1.0f, NULL);
+        mStream->SetJump(mCycleTimeMs, 0.0f, NULL);
         mStream->SetVolume(mVolDb);
         mFader->SetVal(-96.0f);
         mStream->Faders()->Add(mFader);
