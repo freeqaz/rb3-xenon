@@ -250,6 +250,49 @@ void MidiInstrument::PressNote(
     StartSample(note, vel, -1, glideID);
 }
 
+// Retail 0x827141D8 (104 B). Declared in MidiInstrument.h and defined NOWHERE in
+// this tree until now -- the same declared-but-undefined hole W16-EH found for
+// Shuttle::SetActive. Proven against retail bytes: the body loads the list head
+// at 0x58(this) (mActiveVoices is at 0x50, its node pointer at +0x8), zero-extends
+// the argument (`clrlwi r30, r4, 24` => unsigned char), compares it against
+// `lbz r11, 0x34(r3)` (NoteVoiceInst::mTriggerNote, confirmed at 0x34 by
+// /d1reportSingleClassLayout), and vcalls slot 0x58 == slot 22 == Stop().
+void MidiInstrument::ReleaseNote(unsigned char uc) {
+    for (ObjPtrList<NoteVoiceInst>::iterator it = mActiveVoices.begin();
+         it != mActiveVoices.end();
+         ++it) {
+        // Operand order is load-bearing and the oracle has it backwards: retail
+        // emits `cmplw cr6, r11, r30` (TriggerNote first), rb3-Wii's
+        // `uc == (*it)->TriggerNote()` emits `cmplw cr6, r30, r11`. One token,
+        // 104 B.
+        if ((*it)->TriggerNote() == uc) {
+            (*it)->Stop();
+        }
+    }
+}
+
+// Retail 0x82714350 (96 B), which target_symbol_map.json mis-named
+// `?clear@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ`. That name is a void() and
+// CANNOT be this body: the body saves r4 (`mr r30, r4`) and forwards it into the
+// per-node virtual call (`mr r4, r30`), so it consumes an argument the named
+// signature does not have. It is MidiInstrument::Pause(bool) -- same list walk as
+// ReleaseNote above, vcalling slot 0x58 with the bool.
+//
+// NOTE the call is on the SAMPLE, not the voice: retail does `lwz r3, 0x28(r11)`
+// before the vcall, and mSample sits at 0x28 of NoteVoiceInst. SampleInst::Pause
+// is vtable slot 22 == 0x58 (compiler-reported), so this is
+// `(*it)->Sample()->Pause(b)`. The rb3-Wii oracle spells the loop body
+// `(*it)->Pause(b)` via a one-line NoteVoiceInst::Pause that retail INLINES away;
+// writing the oracle's form literally would have emitted a vcall on the voice and
+// not matched. Retail bytes outrank the oracle.
+void MidiInstrument::Pause(bool b) {
+    for (ObjPtrList<NoteVoiceInst>::iterator it = mActiveVoices.begin();
+         it != mActiveVoices.end();
+         ++it) {
+        (*it)->Sample()->Pause(b);
+    }
+}
+
 void MidiInstrument::SetReverbMixDb(float db) {
     mReverbMixDb = db;
     FOREACH (it, mActiveVoices) {

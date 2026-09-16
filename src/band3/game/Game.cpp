@@ -1454,6 +1454,16 @@ void Game::UpdatePausedState(bool allowSfx, bool doRollback, bool) {
             while (!FileDiscSpinUp())
                 ;
         }
+        // TU5 block, proven on retail bytes at the tail of 0x8267AA48:
+        //   cmplwi cr6, r24, 0 / beq cr6, .L_823611A4   (wantPause only)
+        //   lbz r11, 0x2f(r28) / cmplwi r11, 0 / beq    (mUnkTU5_movieSync)
+        //   lwz r11, 0x48(r28) / lwz r3, 0x14(r11) / bl 0x826C9160
+        // i.e. when PAUSING with movie-sync on, release the guide-pitch note.
+        // Our source omitted it entirely, so the guide note kept sounding across
+        // a pause. 0x826C9160 is the VocalGuidePitch helper this lane implemented.
+        if (wantPause && mProperties.mUnkTU5_movieSync) {
+            mUnkTU5GuidePitch->mGuidePitch->StopNote();
+        }
         mIsPaused = wantPause;
     }
 }
