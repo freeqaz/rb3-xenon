@@ -92,3 +92,80 @@ from the fuzzy% or a mismatch count, and grep **both** oracles first (`../rb3` a
 - Did not price `json_tokener_parse_ex`, `?SyncProperty@Spotlight@@`, CSHA1 or Tessellate.
 - Did not adjudicate whether the two ARG-ONLY rows' relocation names are right — that is a map
   question and it was not opened.
+
+---
+
+# Addendum — the GAME-LAYER stratum (the standing priority), screened the same way
+
+The list screened above is mostly engine/vendor. The standing directive puts effort on
+`src/band3/` and `src/network/`, so that stratum was queried directly on main `54aa88f5`:
+rows with **real instruction divergence** (`mpn < 100`), excluding complete rows, arg-only rows
+and `fuzzy == 0` (a different class — absent/unpaired body).
+
+**Population: 256 rows / 89,504 B.** That is the whole game-layer source-fixable surface by this
+definition — consistent with the standing finding that the gap is mostly *not* source work.
+
+| row | size | fuzzy | verdict |
+|---|---:|---:|---|
+| `?transform@MD5@Quazal@@` | 6,068 | 82.19 | KILLED — `/Od` (§2) |
+| `?SetState@SaveLoadManager@@` | 4,096 | 97.32 | DEMOTED — permuter-shaped (§3) |
+| `?MaybePublish@UIStats@@` | 2,604 | 99.58 | already CLOSED — do not re-fund |
+| `?BuildList@StoreOfferProvider@@` | 2,536 | 96.04 | **DEMOTED — regalloc only** (below) |
+| `?ParseDataResultsIntoSetlists@MusicLibraryNetSetlists@@` | 1,968 | 81.93 | **SURVIVES — best next candidate** |
+| `?Handle@BandStorePanel@@` | 1,928 | 98.76 | thin |
+| `?OnMsg@Game@@(ButtonDownMsg)` | 1,664 | 8.01 | **PRICED DEFERRAL — do not re-open as a byte lane** |
+| `??0Game@@QAA@XZ` | 1,504 | 80.80 | unscreened |
+| `?HandleExitExtent@PerfectSectionTracker@@` | 1,256 | 92.09 | unscreened |
+
+## A. `?OnMsg@Game@@(ButtonDownMsg)` — a fuzzy of 8.01 on 1,664 B is NOT an open vein
+
+It is the most tempting row in the stratum and it was **deliberately deferred today** by lane
+W16-EH, with the price written down
+(`docs/decomp/W16EH_BUTTONDOWNMSG_DECODE_AND_SHUTTLE_SETACTIVE_2026-09-16.md` §5):
+
+> *"Did not write the 1,664 B switch tail. It cannot reach 100% as things stand: fold-name
+> charges on `Array`/`Int`, `GetGuideTrack` and `GetSongDurationMs`, plus the unidentified
+> `fn_826C9160`. All-or-nothing scoring means a speculative tail pays 0 bytes either way, while
+> adding a large untested body that the mandatory native gate must survive."*
+
+⇒ The **structural decode of all 1,664 B is already done and recorded** (§3 of that doc: the
+gate, the sparse-switch lowering, all 8 button cases, the shared jump tail). What is missing is
+**one identification**, not understanding. Re-briefing "write the tail" would re-fund a priced
+refusal from the same day. The bounded piece that *is* open is identifying `fn_826C9160` — an
+identification task whose payout is bug exposure, not bytes.
+
+⚠ Also note: **this row has NO ORACLE IN EITHER REPO.** rb3-Wii's `Game.cpp` contains no
+`ButtonDownMsg`/`ButtonUpMsg` overload at all and dc3 has no `Game::OnMsg` — the TU5-era
+no-oracle shape. Anyone briefing it must be told, or they will hunt for source that does not exist.
+
+## B. `?BuildList@StoreOfferProvider@@` — the refutation is in-source, again
+
+`StoreOfferProvider.cpp:103-123` records it as a **completed body-port** (77.2% → 96.1%
+normalized) and states what remains:
+
+> *"What is LEFT on BuildList is regalloc only -- objdiff reports `diff_op: none`."*
+
+Permuter-shaped; the permuter is OFF by standing directive. **Demote.**
+
+## C. What survives: `?ParseDataResultsIntoSetlists@MusicLibraryNetSetlists@@`
+
+1,968 B at fuzzy 81.93 / mpn 83.25, `band3/meta_band/MusicLibraryNetSetlists`, and it clears
+every screen applied above:
+
+- **Game layer** — the standing priority.
+- **Real body divergence**, not arg-only, not regalloc-labelled, no closure record.
+- **Oracle EXISTS in rb3-Wii** (`../rb3/src/band3/meta_band/MusicLibraryNetSetlists.cpp:115`,
+  same signature); absent from dc3, which is expected for game code.
+- It was **anonymous until today** — lane W16-FC identified it (`W16FC_ANON_ROW_IDENTIFICATION_PREREG_2026-09-16.md`,
+  P3 predicted the 60–92 band, measured 81.93293). This is the W16-EW pattern exactly: a naming
+  pays **+0/+0** in its own A/B and makes the row adjudicable for the *next* commit. This is that
+  next commit.
+
+⚠ Not yet priced from its charged-site list. Do that before briefing, and expect the rb3-Wii
+oracle to be a **hypothesis**, not ground truth — five instances of the oracle itself being the
+defect were recorded in a single day, one of them in this very file family.
+
+## D. Not screened
+
+`??0Game@@QAA@XZ` (1,504 B, 80.80), `?HandleExitExtent@PerfectSectionTracker@@` (1,256 B, 92.09),
+`?Handle@BandStorePanel@@` (1,928 B, 98.76), and the remaining ~247 rows of the stratum.
