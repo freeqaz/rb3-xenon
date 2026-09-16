@@ -1254,7 +1254,7 @@ void VocalTrack::UpdateScrolling(float ms) {
             int idx = mNextScrollNote[part];
             while (idx != notes->mNotes.size()) {
                 const VocalNote &n = notes->mNotes[idx];
-                if (!n.mUnpitchedNote) {
+                if (!n.mBends) {
                     mNextScrollNote[part] = idx;
                 }
                 if (sectionOnly && (n.mMs + n.mDurationMs) < sectionStart) {
@@ -1360,7 +1360,7 @@ void VocalTrack::UpdateScrolling(float ms) {
         ClearLyrics();
     }
 
-    if (!InTambourinePhrase()) {
+    if (!IsScrolling()) {
         float lyricMs = TheGame->InRollback() ? unk2a4 : ms;
         for (int side = 0; side < 2; side++) {
             bool sideLead = side == 0;
