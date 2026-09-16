@@ -187,7 +187,8 @@ bool ChordbookPanel::HasChords() const {
     if (!player)
         return false;
     else {
-        std::vector<GameGem> gems = TheSongDB->GetGemList(player->GetTrackNum())->mGems;
+        const GameGemList *list = TheSongDB->GetGemList(player->GetTrackNum());
+        std::vector<GameGem> gems = list->mGems;
         for (int i = 0; i < gems.size(); i++) {
             if (gems[i].IsRealGuitarChord())
                 return true;
@@ -567,17 +568,22 @@ DECOMP_FORCEACTIVE(ChordbookPanel, "string_%02d.lbl")
 
 void ChordbookPanel::PickFretboardView(const GameGem &gem) {
     if (!TheGemTrainerPanel->GetFretboardView(gem)) {
-        mChordLegend->HandleType(show_high_frets_msg);
+        static Message show_high_frets("show_high_frets");
+        mChordLegend->HandleType(show_high_frets);
     } else {
-        mChordLegend->HandleType(show_low_frets_msg);
+        static Message show_low_frets("show_low_frets");
+        mChordLegend->HandleType(show_low_frets);
     }
 }
 
 DataNode ChordbookPanel::OnDisplayChord(const DataArray *a) {
     int i2 = a->Int(2);
-    int idx = mNumChords - 1;
-    if (i2 <= idx) {
-        idx = i2 & ~(i2 >> 31);
+    int last = mNumChords - 1;
+    int idx;
+    if (i2 <= last) {
+        idx = (i2 < 0) ? 0 : i2;
+    } else {
+        idx = last;
     }
     DisplayChord(idx);
     return idx;
