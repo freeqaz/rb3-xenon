@@ -178,3 +178,66 @@ that lane needs.
    not the thing you think it is; re-derive with a real pattern
    (`^\s*static Symbol (\w+)\("…"\);`) before trusting it.
 3. The `| tail; echo $?` vacuity (above).
+
+---
+
+## ⚠ RECORD CORRECTION — the merge commit for this lane is MISLABELLED
+
+**`19564f92` merges `w16-fy`, but it carries W16-FX's merge message verbatim.**
+It describes `?ParseDataResultsIntoSetlists@MusicLibraryNetSetlists@@` and
+`+11 fns / +600 B`. That text belongs to `9bb905a0`. The merge it actually
+records is **this lane** — `?Configure@Accomplishment@@` — and its real figures
+are below.
+
+**Cause (coordinator error, not the lane's):** the landing driver for FY was
+generated from FX's by substituting the branch name. `predict_w16fx.txt` and
+`msg_w16fx.txt` contain the substring `w16fx`, **not** `w16-fx`, so the
+substitution silently missed them and the merge ran with FX's message file.
+The same generator had already mangled a worktree path in a way that *failed
+loudly*; this one failed **silently**, because a merge does not care whether
+its `-F` file describes it.
+
+**Not rewritten.** `19564f92` is already pushed and the standing directive is
+no history rewriting, so the record is corrected forward, here, rather than by
+amending. Anyone reading `19564f92` should read this section instead.
+
+### What `19564f92` actually landed
+
+```
+?Configure@Accomplishment@@QAAXPAVDataArray@@@Z
+  fuzzy 35.36068 -> 99.99226   mpn 36.63003 -> 99.99226
+  our body 1,248 -> 2,592 B against a 2,584 B target
+
+whole binary, measured on main, every key miss 0 vs pre-registration:
+  matched_functions  44,109 -> 44,131   (+22)
+  matched_code    4,162,644 -> 4,163,348 (+704 B)
+  masked_equal       23,300 -> 23,322   (+22)
+  honest             20,809 -> 20,809   (+0)
+  code%          40.622780 -> 40.629654
+  fuzzy          50.449910 -> 50.471287
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+**Δhonest is ZERO.** All 22 crossing rows are 32 B EH funclets in the
+contiguous run `fn_82595A50..fn_82595CF0` (stride `0x20`) — verified at landing
+by a gate that would have reported a real-bodied crosser had one appeared, and
+independently corroborating the lane's own `icf_alias_check.py` exit-1 verdict
+*"ICF-ALIAS INFLATION (22 stub-folds of 22) — zero real-bodied anchors"*. The
+1,336 B of genuinely reconstructed body pays **exactly 0**, because
+`matched_code` keys on `fuzzy == 100` and the row stops one relocation-name
+charge short.
+
+### The correction this lane made to its own brief
+
+The coordinator brief asserted *"32 target-only `??0Symbol` ctors and no `??_B`
+guards ⇒ retail builds Symbol TEMPORARIES"*. The count was right, **the shape
+was wrong**. Re-derived independently before landing, keyed on `.fn fn_82594EF8`
+(never the synthetic `.s` address column): the body references one guard word
+`lbl_82DFEE58` **65 times**, in the shape `lwz / clrlwi.|rlwinm. / bne / ori /
+stw`; there are **16 `ori` + 16 `oris`** immediates whose union is
+**`0xFFFFFFFF`, popcount exactly 32**, with **32** stores back to that one word.
+
+⇒ MSVC packs up to 32 function-local statics into a **single guard int**, which
+is exactly why no per-variable `??_B` exists. A temporary needs no guard at all.
+**"No `??_B` in the diff" is not evidence against local statics** — do not let
+that inference back into a brief.
