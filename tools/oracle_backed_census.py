@@ -122,8 +122,23 @@ def main():
         print(f"  {t:<22} {n:5d} rows  {b:8d} B   {pct:5.1f}%")
     backed_r = by_tier[TIERS[0]][0] + by_tier[TIERS[1]][0]
     backed_b = by_tier[TIERS[0]][1] + by_tier[TIERS[1]][1]
-    print(f"\n  ORACLE-BACKED (>=90): {backed_r} rows / {backed_b} B "
-          f"<- work these first\n")
+    # ---- PRICE BY THE ORACLE'S DISTANCE FROM 100, NOT BY THE ROW'S SIZE ----
+    # W16-FJ's correction, measured. `matched_code` pays only at fuzzy == 100,
+    # so a FAITHFUL port of a sub-100 oracle pays EXACTLY ZERO: it reproduces
+    # the oracle's score, wall and all. Of 3,228 B briefed to FJ as
+    # "oracle-backed", 1,112 B crossed and 2,116 B landed on DC3's wall,
+    # reproducing DC3's scores to four decimals -- which is itself the
+    # strongest available evidence that the port was faithful.
+    solved_r, solved_b = by_tier[TIERS[0]]   # DC3 >= 99.9
+    near_r,   near_b   = by_tier[TIERS[1]]   # DC3 90 - 99.9
+    print(f"\n  ORACLE-BACKED (>=90): {backed_r} rows / {backed_b} B -- but that"
+          f" is NOT the prize:")
+    print(f"    COLLECTABLE  (oracle >=99.9): {solved_r:4d} rows / {solved_b:6d} B"
+          f"  <- work these first")
+    print(f"    ORACLE'S WALL (oracle 90-99.9): {near_r:4d} rows / {near_b:6d} B"
+          f"  <- a faithful port pays 0 B here")
+    print("    Quoting the sum as the prize overprices this vein by the second"
+          " line.\n")
 
     print(f"=== top {args.top} by size ===")
     for size, unit, sym, oracle in rows[:args.top]:
@@ -131,9 +146,17 @@ def main():
              if oracle else "NO DC3 ROW")
         print(f"  {size:6d} B  {unit[:38]:<38} {sym[:46]:<46} {o}")
     print("\nNOTE: a unit's unsolved-byte total silently includes the arg-only")
-    print("DRAINED class (rows at f=99.x, relocation-name-only). Subtract it")
-    print("before quoting a prize. matched_code is all-or-nothing per row:")
-    print("only fuzzy == 100.0 pays.")
+    print("DRAINED class. Subtract it before quoting a prize. matched_code is")
+    print("all-or-nothing per row: only fuzzy == 100.0 pays.")
+    print("")
+    print("  The DRAINED class is `mpn == 100 AND fuzzy < 100` -- a row whose")
+    print("  ONLY penalties are relocation-name args. It is NOT 'fuzzy looks")
+    print("  like 99.x'. W16-FI's correction, measured: of 9 rows / 384 B filed")
+    print("  as drained on the 99.x eyeball, only 6 / 264 B actually were; the")
+    print("  other three read mpn == fuzzy sub-100 on BOTH rulers -- ordinary")
+    print("  broken rows -- and TWO of them crossed as collateral, paying 80 B,")
+    print("  which was 27% of that lane's entire delta. A row misfiled into a")
+    print("  closed class is invisible to the lane told to skip it.")
 
 
 if __name__ == "__main__":
