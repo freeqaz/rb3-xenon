@@ -255,8 +255,14 @@ void BandStorePanel::Exit() {
 //   FUNCTION-LOCAL static, not the Symbols2.h global CriticalUserListener uses
 //   lwz r3,?TheUIEventMgr@@; li r5,0; bl ?TriggerEvent@UIEventMgr@@QAAXVSymbol@@PAVDataArray@@@Z
 //   li r11,1; stw r28(=0),4(sret); stw r11,0(sret)     -> return DataNode(1)
-// T2 ISOLATION EXPERIMENT (temporary): definition moved BELOW Handle, body
-// reverted to the empty stub. See ~/tmp/w16gi_prereg.md P2.
+DataNode BandStorePanel::OnMsg(const LocalUserLeftMsg &msg) {
+    LocalUser *user = msg.GetUser();
+    if (user == StoreUser()) {
+        static Symbol critical_user_drop_out("critical_user_drop_out");
+        TheUIEventMgr->TriggerEvent(critical_user_drop_out, 0);
+    }
+    return DataNode(1);
+}
 
 // Retail fn_82606280 (908 B).  The store index-.dta parser, reconstructed
 // instruction-by-instruction off retail bytes -- the rb3-Wii dev oracle is the
@@ -556,9 +562,6 @@ BEGIN_HANDLERS(BandStorePanel)
     HANDLE_SUPERCLASS(StorePanel)
     HANDLE_CHECK(0x2B0)
 END_HANDLERS
-
-// T2: empty stub, defined AFTER Handle.
-DataNode BandStorePanel::OnMsg(const LocalUserLeftMsg &) { return DataNode(1); }
 
 // NO SYNC_PROP here.  Retail's SyncProperty is the bare superclass chain: the
 // `waiting` branch we used to emit is ENTIRELY ours-only in the diff -- nine
