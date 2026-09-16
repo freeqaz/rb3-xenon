@@ -181,3 +181,36 @@ becomes `lwz r4, 0x54(r31)` (frame-relative) -- same cost as now, still not 100;
 (c) no change at all.
 **If V2 fails: STOP and report at_limit on the residual**, per the pre-registered
 stopping condition. The permuter is OFF by directive and is not an option.
+
+## Attempt V2 result (measured) — REFUTED, reverted
+
+Falsifier (b) fired exactly as written: the load became frame-relative
+`lwz r4, 0x50(r31)` instead of retail's `lwz r4, 0x0(r3)`, and the named local
+additionally displaced slot assignment. Charges 2 -> 12, fuzzy 99.42693 -> ~99.1
+(4-byte shift on [68]/[78]/[85]/[97]/[155]/[206]/[271], OFFSET_SWAP at
+0x50/0x54, and an extra `mr r11,r3` delete). Reverted; score restored to exactly
+99.42693.
+
+**STOPPING CONDITION REACHED.** Reporting at_limit on the [99]/[102] residual.
+
+## Whole-binary A/B (tools/ab_measure.py --patch, base 85b84e32)
+
+Note: `main` advanced from 85b84e32 to 32322eef during this lane, so the A/B is
+based on the lane's ACTUAL parent, not on current main.
+
+```
+leg A: matched=44139 masked=23323 honest=20816 code%=40.692772  (settled, 0 recompiles)
+leg B: matched=44139 masked=23323 honest=20816 code%=40.692772  (1 recompile, settled)
+  dmatched=+0  dmasked_equal=+0  dhonest=+0  dcode%=+0.000000pp  dcode_bytes=+0
+  dfuzzy=+0.000019pp   (legA 50.497276 -> legB 50.497295)
+  units at 100% [mpn]: 195 -> 195 (+0);  [all-rows-fuzzy]: 173 -> 173 (+0)
+```
+
+**Δ0 on both headline measures, as pre-registered.** `matched_code` keys on
+`fuzzy == 100` and is all-or-nothing per row, so a row that moves 99.30373 ->
+99.42693 collects nothing. The only measure that moved is aggregate `fuzzy`, by
+exactly the amount one 1,396 B row improving 0.1232 pp of its own score
+contributes. That is the honest signature of this change and it is NOT a reason
+to withhold it: 43 charges of a real codegen defect (a 16-byte-wrong stack frame)
+were closed, and the row now sits ONE scheduling instruction from collecting
+1,396 B.
