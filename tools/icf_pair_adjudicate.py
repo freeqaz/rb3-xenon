@@ -78,6 +78,88 @@ def adjudicate(tgt, ours, survivor, our_name, mapped, verbose=True):
     return "PROVEN", d
 
 
+# ★ W16-GG.  Set ONLY by --self-break.  When true, chase()'s vacuous branch stops
+# accounting for the relocation DESTINATION and admits any vacuous pair whose
+# masked bytes and relocation SHAPE agree -- i.e. exactly the permissive failure
+# the relaxation must not have.  It exists so the VACUOUS DECOY control can be
+# SHOWN to go red on demand: a control nobody has watched fail is an assumption,
+# not a control.  (House pattern: grep_binary_guard.py --self-break,
+# verify_ruler_agreement.py --selftest, scripts/sabotage_obj_pairing.py.)
+_SELF_BREAK = False
+
+
+def _slots_agree(tgt, ours, rt, ob, survivor, our_name, mapped, depth, stack,
+                 memo, out, maxdepth, tolerate_placeholders):
+    """Pairwise relocation-slot comparison, recursing on differing real names.
+
+    ★ ONE comparator, TWO callers, and the ONLY difference between them is
+    ``tolerate_placeholders``.  That is deliberate: the two call sites used to be
+    two hand-written tests (a literal ``list(rt[1]) == list(ob[1])`` in the
+    vacuous branch and this loop in the general one), and a reviewer had no way
+    to see how they differed except by reading both.  Now the difference is a
+    named boolean with a stated reason at each call site.
+
+    ``tolerate_placeholders=True``  -- the general (non-vacuous) path.  Required:
+    recursing into placeholder slots instead of tolerating them REGRESSED the
+    positive control (see the note at the call site).
+    ``tolerate_placeholders=False`` -- the vacuous path.  In a body whose bytes
+    are (almost) all masked, a tolerated slot means NOTHING was compared, so a
+    placeholder on either side is a refusal.
+    """
+    rr, orr = rt[1], ob[1]
+    if len(rr) != len(orr):
+        out.append((depth, "RELOC-COUNT", survivor, our_name))
+        return False
+
+    stack.append((survivor, our_name))
+    ok = True
+    for (ro, rn, rty), (oo, on, oty) in zip(rr, orr):
+        if ro != oo or rty != oty:
+            out.append((depth, "RELOC-SHAPE", survivor, our_name))
+            ok = False
+            break
+        if rn == on:
+            continue
+        if rn.startswith(("fn_", "lbl_")) and on in mapped:
+            # CD-9: retail spells a callee fn_<B> only when B is absent from the
+            # map; our callee being map-resident at A != B means retail's slot
+            # demonstrably calls a DIFFERENT function. Not a tolerance.
+            out.append((depth, "MAPPED-VS-PLACEHOLDER", rn, on))
+            ok = False
+            break
+        if placeholder(rn) or placeholder(on):
+            # ★ CHASE MUST BE A STRICT SUPERSET OF FLAT T1.  Measured: recursing
+            # into placeholder slots instead of tolerating them REGRESSED the
+            # positive control -- a landed, flat-T1-PROVEN group went REFUTED,
+            # because retail's slot reads `fn_8275B378` whose target-obj body is
+            # not our callee's.  That is a stricter *different* test, not the
+            # relaxation this mode exists to add, and shipping it would have
+            # silently re-litigated every landed group under a rule nobody
+            # gated.  Recursion is applied ONLY to the branch flat T1 refuses:
+            # both sides carry real, differing names.
+            if tolerate_placeholders:
+                continue
+            # ★ W16-GG: the vacuous caller cannot afford this tolerance -- the
+            # destination IS the body there.  Refusing keeps the relaxed vacuous
+            # branch STRICTER than the general path on this axis.
+            out.append((depth, "VACUOUS-PLACEHOLDER-SLOT", rn[:70], on[:70]))
+            ok = False
+            break
+        if _SELF_BREAK and not tolerate_placeholders:
+            # --self-break ONLY: drop the destination proof, keep the shape
+            # check.  This is "the relaxation with its recursion removed".
+            out.append((depth, "SELF-BREAK-TOLERATED", rn[:70], on[:70]))
+            continue
+        if not chase(tgt, ours, rn, on, mapped, depth + 1, stack, memo, out,
+                     maxdepth):
+            out.append((depth, "SLOT-REFUTED", rn[:70], on[:70]))
+            ok = False
+            break
+        out.append((depth + 1, "SLOT-FOLD-OK", rn[:70], on[:70]))
+    stack.pop()
+    return ok
+
+
 def chase(tgt, ours, survivor, our_name, mapped, depth=0, stack=None, memo=None,
           out=None, maxdepth=12):
     """RECURSIVE T1: verify a fold through relocation-target EQUIVALENCE.
@@ -166,52 +248,64 @@ def chase(tgt, ours, survivor, our_name, mapped, depth=0, stack=None, memo=None,
         # STRICTNESS: full equality is required, relocation target names
         # INCLUDED.  A vacuous pair whose reloc names differ still REFUSES, so
         # this cannot admit a template twin -- see --chasetest's in-family decoy.
-        if rt[0] == ob[0] and list(rt[1]) == list(ob[1]):
-            out.append((depth, "VACUOUS-BUT-IDENTICAL", survivor, our_name))
-            return True
+        #
+        # ★★★ W16-GG: A DESTINATION MAY BE ACCOUNTED FOR BY A PROOF, NOT ONLY BY
+        # LITERAL NAME EQUALITY.  The invariant this branch has always maintained
+        # is *every masked field is accounted for*.  For a 4-byte tail-call thunk
+        # (`b <target>`; masked body 0x00000000 because the whole instruction IS
+        # the relocated field) the destination is the entire information content,
+        # so it must be pinned exactly.  Literal name equality pins it -- and so
+        # does a RECURSIVELY PROVEN FOLD of the two destinations, because
+        # /OPT:ICF is a FIXED POINT: if retail folded X and Y then `b X` and
+        # `b Y` resolve to the SAME address, and the two thunks satisfy the
+        # folding condition themselves.  Refusing that is not strictness, it is a
+        # gap: it refuses a fold BECAUSE the linker folded iteratively.
+        #
+        # MEASURED (lane W16-GD, refused by GD on purpose because GD would have
+        # collected the payout; relaxed by W16-GG, which does not install it):
+        # ?CopyTypeProperties@@YAXPAVObject@Hmx@@0@Z, 1,472 B, 4 charges, ALL the
+        # same pair -- retail ??$__destroy_aux@UEntry@LocalePanel@@ vs our
+        # ??1?$list@VSymbol@@, each 4 B / masked 0x00000000 / one type-6 reloc at
+        # offset 0, destinations ?clear@?$_List_base@PAVSynthPollable@@ and
+        # ?clear@?$_List_base@VSymbol@@ -- a pair that is FLAT-T1 PROVEN (88 B
+        # both sides, retail_bodytwins 1).  The destination fold was proven and
+        # the thunk tail-calling it was refused.  Same shape the `list<char*>`
+        # note above records, with one difference: there the thunk named the SAME
+        # symbol on both sides, so literal equality admitted it.
+        #
+        # ⚠ STRICTNESS IS *RAISED* ON THE OTHER AXIS, DELIBERATELY.  The general
+        # path tolerates a placeholder target; this branch must NOT, because in a
+        # vacuous body a tolerated slot means nothing was compared at all.
+        # Measured scope of that hazard on this tree: retail vacuous single-reloc
+        # thunks against ours of the same masked body and relocation shape form
+        # 2,289,106 shape-compatible cross-pairs.  The destination does 100% of
+        # the discriminating -- tolerate it and the comparator admits two
+        # million pairs.  Hence tolerate_placeholders=False.
+        #
+        # NET: strictly WIDER than its old self (literal equality still
+        # short-circuits below, with no recursion at all, so every previously
+        # admitted pair is admitted unchanged) and strictly NARROWER than the
+        # general path.  --chasetest's VACUOUS DECOY proves the widening did not
+        # dissolve the discriminator; --self-break proves that decoy can go red.
+        if rt[0] == ob[0]:
+            if list(rt[1]) == list(ob[1]):
+                out.append((depth, "VACUOUS-BUT-IDENTICAL", survivor, our_name))
+                return True
+            if _slots_agree(tgt, ours, rt, ob, survivor, our_name, mapped, depth,
+                            stack, memo, out, maxdepth,
+                            tolerate_placeholders=False):
+                out.append((depth, "VACUOUS-DESTINATION-FOLD-PROVEN",
+                            survivor, our_name))
+                return True
         out.append((depth, "VACUOUS", survivor, our_name))
         return False
     if rt[0] != ob[0]:
         out.append((depth, "BYTES-DIFFER", survivor, our_name))
         return False
-    rr, orr = rt[1], ob[1]
-    if len(rr) != len(orr):
-        out.append((depth, "RELOC-COUNT", survivor, our_name))
-        return False
-
-    stack.append(key)
-    ok = True
-    for (ro, rn, rty), (oo, on, oty) in zip(rr, orr):
-        if ro != oo or rty != oty:
-            out.append((depth, "RELOC-SHAPE", survivor, our_name))
-            ok = False
-            break
-        if rn == on:
-            continue
-        if rn.startswith(("fn_", "lbl_")) and on in mapped:
-            # CD-9: retail spells a callee fn_<B> only when B is absent from the
-            # map; our callee being map-resident at A != B means retail's slot
-            # demonstrably calls a DIFFERENT function. Not a tolerance.
-            out.append((depth, "MAPPED-VS-PLACEHOLDER", rn, on))
-            ok = False
-            break
-        if placeholder(rn) or placeholder(on):
-            # ★ CHASE MUST BE A STRICT SUPERSET OF FLAT T1.  Measured: recursing
-            # into placeholder slots instead of tolerating them REGRESSED the
-            # positive control -- a landed, flat-T1-PROVEN group went REFUTED,
-            # because retail's slot reads `fn_8275B378` whose target-obj body is
-            # not our callee's.  That is a stricter *different* test, not the
-            # relaxation this mode exists to add, and shipping it would have
-            # silently re-litigated every landed group under a rule nobody
-            # gated.  Recursion is applied ONLY to the branch flat T1 refuses:
-            # both sides carry real, differing names.
-            continue
-        if not chase(tgt, ours, rn, on, mapped, depth + 1, stack, memo, out, maxdepth):
-            out.append((depth, "SLOT-REFUTED", rn[:70], on[:70]))
-            ok = False
-            break
-        out.append((depth + 1, "SLOT-FOLD-OK", rn[:70], on[:70]))
-    stack.pop()
+    # The general path KEEPS its placeholder tolerance -- see the note inside
+    # _slots_agree; removing it regressed a landed positive control.
+    ok = _slots_agree(tgt, ours, rt, ob, survivor, our_name, mapped, depth,
+                      stack, memo, out, maxdepth, tolerate_placeholders=True)
     memo[key] = ok
     return ok
 
@@ -286,6 +380,65 @@ def load_mapped():
     return out
 
 
+def vacuous_pair(tgt, ours, want_fold):
+    """Pick from the LIVE tree a VACUOUS thunk pair for --chasetest.
+
+    Shape, identical for both controls: masked bodies EQUAL, exactly one
+    relocation each at the SAME offset and type, both destination names real
+    (non-placeholder) and DIFFERENT, both destinations resolvable on their own
+    side.  This is precisely the input class W16-GG's relaxation widened, so the
+    two controls differ ONLY in whether the destinations are a fold:
+
+    want_fold=True  -- destination bodies byte-identical AND their own
+                       relocations literally agree (flat T1), so the fold is
+                       proven by the strictest tier available.  EXPECT PROVEN:
+                       without this the relaxation would be inert.
+    want_fold=False -- ★ THE DECOY.  Destination bodies DIFFER while being the
+                       SAME SIZE, so the destinations are demonstrably not one
+                       folded COMDAT and a size test cannot stand in for the byte
+                       test.  EXPECT REFUTED: this is the direction the
+                       relaxation widened, and a widening nobody probed in its
+                       own direction is untested.
+
+    Chosen from the live tree in sorted order rather than hardcoded, so the
+    control survives map repairs and rebuilds (same reason as the W16-AE
+    self-pair controls).  Returns (survivor, ours) or raises.
+    """
+    import collections
+    oidx = collections.defaultdict(list)
+    for n in ours:
+        mb, rl, _sz = ours[n]
+        if len(rl) == 1 and vacuous(ours[n]) and not placeholder(n):
+            oidx[(mb, rl[0][0], rl[0][2])].append(n)
+    for k in oidx:
+        oidx[k].sort()
+
+    for rn_ in sorted(tgt):
+        if placeholder(rn_):
+            continue
+        rmb, rrl, _ = tgt[rn_]
+        if len(rrl) != 1 or not vacuous(tgt[rn_]):
+            continue
+        rdst = rrl[0][1]
+        if placeholder(rdst) or rdst not in tgt:
+            continue
+        rdrec = tgt[rdst]
+        for on_ in oidx.get((rmb, rrl[0][0], rrl[0][2]), ()):
+            odst = ours[on_][1][0][1]
+            if odst == rdst or placeholder(odst) or odst not in ours:
+                continue
+            odrec = ours[odst]
+            if want_fold:
+                if odrec[0] == rdrec[0] and list(odrec[1]) == list(rdrec[1]):
+                    return rn_, on_
+            else:
+                if odrec[0] != rdrec[0] and odrec[2] == rdrec[2]:
+                    return rn_, on_
+    raise SystemExit("REFUSING: no live %s vacuous-thunk pair found -- the "
+                     "control would be VACUOUS, which is worse than absent."
+                     % ("fold" if want_fold else "decoy"))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--survivor")
@@ -300,7 +453,15 @@ def main():
                          "how many retail addresses")
     ap.add_argument("--chasetest", action="store_true",
                     help="controls for --chase, including an IN-FAMILY DECOY")
+    ap.add_argument("--self-break", action="store_true",
+                    help="run --chasetest with the vacuous branch's destination "
+                         "proof REMOVED (shape still checked). The VACUOUS DECOY "
+                         "control MUST go red; exits 0 only if it does. Proves "
+                         "the control can fail instead of assuming it.")
     a = ap.parse_args()
+    if a.self_break:
+        globals()["_SELF_BREAK"] = True
+        a.chasetest = True
 
     mapped = load_mapped()
     tgt, ours = load_sides()
@@ -362,6 +523,22 @@ def main():
                    self_neg, self_neg),
                   ("SELF-PAIR POSITIVE, byte+reloc identical (expect PROVEN)",
                    self_pos, self_pos)]
+        # ★ W16-GG VACUOUS-BRANCH CONTROLS.  chase()'s vacuous branch used to
+        # demand LITERAL relocation-name equality and so refused a thunk pair
+        # whose destinations are a PROVEN fold (W16-GD, ?CopyTypeProperties@@).
+        # Relaxing it to accept a recursively-proven destination widens the
+        # branch in exactly one direction, so it is probed in exactly that
+        # direction: the DECOY is the same input class with destinations that
+        # are NOT a fold (different bodies, identical sizes).  If the decoy ever
+        # reads PROVEN the recursion has dissolved the only discriminator a
+        # 4-byte thunk has, and every verdict the tool produces is worthless.
+        # Run `--self-break` to watch the decoy go red on demand.
+        vd_s, vd_o = vacuous_pair(tgt, ours, want_fold=False)
+        vf_s, vf_o = vacuous_pair(tgt, ours, want_fold=True)
+        pairs += [("VACUOUS DECOY, destinations are NOT a fold (expect REFUTED)",
+                   vd_s, vd_o),
+                  ("VACUOUS FOLD, destinations proven folded (expect PROVEN)",
+                   vf_s, vf_o)]
         a.chase = True
     elif a.pairs:
         pairs = [("", s, o) for s, o in json.load(open(a.pairs))]
@@ -405,6 +582,17 @@ def main():
             if verdict != want:
                 print("  ** CONTROL FAILED: wanted %s **" % want)
                 rc = 1
+    if a.self_break:
+        # Under --self-break the relaxation is deliberately broken, so a GREEN
+        # run is the failure: it would mean the decoy cannot detect the very
+        # permissiveness it exists to detect.
+        if rc:
+            print("\nself-break OK -- the VACUOUS DECOY went RED with the "
+                  "destination proof removed, so the control discriminates.")
+            return 0
+        print("\nself-break FAILED -- controls stayed GREEN with the destination "
+              "proof removed. The decoy control is VACUOUS; do not trust it.")
+        return 1
     if a.selftest or a.chasetest:
         print("\nselftest %s" % ("FAILED" if rc else "PASSED -- the instrument can "
                                                      "both pass and fail"))
