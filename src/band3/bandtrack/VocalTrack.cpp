@@ -1490,12 +1490,9 @@ void VocalTrack::UpdateScrolling(float ms) {
             MILO_WARN("--------\n");
         }
 
+        int curDeploy = mNextDeployZone[std::min(part, 1)];
         int *curPhPtr = &mCurLyricPhrase[std::min(part, 1)];
-        int *curDeployPtr = &mNextDeployZone[std::min(part, 1)];
-        int curDeploy = *curDeployPtr;
-        for (;;) {
-            if (!(*curPhPtr < lyricPhrases.size()))
-                break;
+        while (*curPhPtr < lyricPhrases.size()) {
             VocalPhrase &lyrPh = lyricPhrases[*curPhPtr];
             float phStartMs = TickToMs((float)lyrPh.unk8);
             float phEndMs = TickToMs((float)(lyrPh.unk8 + lyrPh.unkc));
@@ -1552,6 +1549,7 @@ void VocalTrack::UpdateScrolling(float ms) {
                     }
                     unkfc = (int)(altIt - &altNotes->mNotes[0]);
                 }
+                int *curDeployPtr = &mNextDeployZone[std::min(part, 1)];
                 while (*curDeployPtr < freestyles.size()
                        && freestyles[*curDeployPtr].second < phEndMs) {
                     (*curDeployPtr)++;
@@ -1867,6 +1865,7 @@ void VocalTrack::UpdateScrolling(float ms) {
                         }
                         shifts.push_back(LyricShift(shiftStart, shiftX, fast));
                     }
+                    int *curDeployPtr = &mNextDeployZone[std::min(part, 1)];
                     if (*curDeployPtr < freestyles.size()
                         && lyric->mDeployIdx > -1) {
                         while (*curDeployPtr <= lyric->mDeployIdx) {
@@ -1943,9 +1942,10 @@ void VocalTrack::UpdateScrolling(float ms) {
         }
 
         if (staticLyrics && (int)lyricPhrases.size() == *curPhPtr
-            && *curDeployPtr < freestyles.size()) {
+            && mNextDeployZone[std::min(part, 1)] < freestyles.size()) {
             std::deque<LyricShift> &shifts =
                 lead ? mLeadLyricShifts : mHarmonyLyricShifts;
+            int *curDeployPtr = &mNextDeployZone[std::min(part, 1)];
             if (prevBakedLyric) {
                 shifts.push_back(
                     LyricShift(
