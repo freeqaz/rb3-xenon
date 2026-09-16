@@ -140,3 +140,23 @@ Each kept change is A/B'd separately with
 Per-function iteration uses a full `./tools/ninja-locked` with `report.json` +
 `report.cache` wiped before each read — never a targeted `.obj` build, which skips
 the six obj patchers that are part of the ruler.
+
+---
+
+# OUTCOME — prediction vs measured (appended after measurement)
+
+| exp | prediction | measured | verdict |
+|---|---|---|---|
+| E1 `HandlePhraseEnd` | fuzzy -> 100, +1120 B, +0 fns (MEDIUM) | unchanged 99.96429, whole binary byte-identical | ❌ MISS — failure mode (a) as named: AG2's claim replicates. TU recompiled (edge 5/14), so non-vacuous |
+| E2 `CalcNoteWeights` | +292 B, +1 fn, conditional on retail-byte proof | **+1004 B, +3 fns** — proof obtained on all 3 channels | ⚠ MISS IN MY FAVOUR — 2 extra rows crossed; both adjudicated on retail bytes before landing |
+| E3 `SetDifficultyVariables` | a source flip fixes 2 and breaks 6, net -4 (HIGH) | not attempted; structural table stands | ✅ registered negative, honoured |
+| E4 `IsEmptyPhrase` | unsigned/width conversion reproduces the clrrwi (LOW-MED) | explicit `(unsigned int)` cast INERT, 96.55173 unchanged, recompiles=1 | ❌ MISS — and the named failure mode was right: MSVC elides it because `lwz` is already clean |
+| E5 `GetNoteSliceWeight` | not planned | not attempted | unattempted, not refuted |
+| E6 `GetBestHit` | not attempted | not attempted | honoured |
+
+**Net landed: +3 functions / +1004 B / +0.009796 pp**, from E2 alone.
+
+The E2 miss is the one worth reading: an over-delivering prediction is a warning, not a
+win. Two of the three crossings were unplanned, and an unproven crossing is exactly the
+fabricated-alias hazard. Both were proven on retail bytes before landing, and the row that
+reaches the *other* twin is precisely the row that did not cross.
