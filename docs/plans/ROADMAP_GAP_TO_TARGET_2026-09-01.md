@@ -2754,3 +2754,47 @@ shim silently ignored — it printed a "prose(.md)" count while listing `.tsv` f
 conclusion survives only because the listed filenames were visibly all TSVs. **An option
 the tool ignores produces a label that cannot fail**, which is the same vacuity family as
 the `[p]attern` self-match and the unconditional annotation, both also hit today.
+
+### Coordinator adjudication, 2026-09-16 — W16-EB's `0x822a3010` fold-gate flag is REFUTED ON SIGN
+
+W16-EB flagged `comdat-fold-gate-2026-08-12.json`'s refusal at `0x822a3010` — *"body size
+136 bytes (retail extent) vs 128 (our COMDAT)"* — as **"the exact shape of the STLPORT-1
+reader artifact"**, correctly labelling it *flagged, not re-litigated*. Adjudicated today
+from the recorded numbers alone; no gate re-run was needed.
+
+**The artifact inflates OUR side, and this row is the opposite sign.** Per `22899f87`, the
+five gates read our COMDAT's `raw` (definition → end of section, including a trailing
+`__unwind$` funclet) while comparing against retail's `.pdata` **function** extent. So the
+defect can only make our number too LARGE. At `0x822a3010` ours (128) is already SMALLER
+than retail (136). Correcting the artifact shrinks our number further — it **widens** the
+gap, it cannot close it. ⇒ **This refusal is not an instance of the artifact**, and the
+flag should not be carried forward as an open lead.
+
+**The artifact class itself is real, and this file corroborates it independently** — which
+is worth recording because the file predates the fix and so is an uncontaminated witness.
+Of 776 parsed size-refusals:
+
+| direction | rows | share |
+|---|---:|---:|
+| ours BIGGER than retail (artifact-compatible) | 529 | 68.2% |
+| ours SMALLER (artifact **cannot** explain) | 247 | **31.8%** |
+
+and the surplus where ours is bigger peaks at **40 B (86 rows)** and **44 B (20 rows)** —
+precisely the trailing `__unwind$` funclet signature `22899f87` named from the other
+direction. Two independent artifacts agreeing on a mechanism is the strongest form this
+evidence takes.
+
+⚠ **But this JSON is STALE and must not be read for current verdicts.** Its last three
+commits are `b606f610` / `44835bf7` / `1b26376b`; **`22899f87` is not among them**, and its
+population (1,048 pairs, 1,025 REFUSE / 23 ADMIT) does not match the worklist the repair
+re-measured (911 pairs, 905 REFUSE / 6 ADMIT → 904 / 7). The repair regenerated the gate's
+worklist at runtime and left this dated file untouched. ⇒ **its 529 artifact-compatible
+rows still carry PRE-FIX numbers.** Anyone wanting current verdicts must **re-run
+`tools/comdat_fold_gate.py`**, not read this file — the same "dated artifact mistaken for
+current state" trap that W16-EC hit with `NOGROUP1.tsv` (313 rows → 91 live / 102 dead /
+120 absent) and with the renamer docstring.
+
+★ And even a favourable fold signal at `0x822a3010` would be weak: **EB's own §5 measured
+its owner-hit at 400 of 1,219 units — ~33% likely by chance**, so "the owner's obj defines
+a byte-identical body" is very nearly vacuous for this row. EB flagged that itself. The
+row has two independent reasons not to be funded, and neither is "we checked and it folds".
