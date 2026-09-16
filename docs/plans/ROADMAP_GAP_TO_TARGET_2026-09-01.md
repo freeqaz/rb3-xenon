@@ -3134,3 +3134,71 @@ evidence), and the reason must not be reused as an oracle for a neighbouring row
 
 ⚠ **W16-EH deliberately did NOT edit the EF row itself** — another lane's record, outside
 its staged paths. Correct. The correction is recorded here instead, by the coordinator.
+
+### ⛔⛔ THIRD CORRECTION, same rule — `mpn < 100` implies NOTHING, not even that an instruction-level charge exists
+
+**W16-EJ refuted the correction two sections above, which had itself refuted the section
+above that. Three wrong screens in one day, all mine.** Recording the full sequence because
+the *pattern* is the finding, not any one error.
+
+| # | my claim | refuted by | how |
+|---|---|---|---|
+| 1 | `mpn < 100` ⇒ **source-reachable** | W16-EI | row carried unclosable fold-survivor charges |
+| 2 | `mpn < 100` ⇒ **at least one instruction-level charge exists** | W16-EJ | **false on objdiff 4.2.9** — see below |
+| 3 | drop any row with a class-(c) charge | W16-EJ | would have discarded **the only row that crossed** |
+
+**The mechanism, and it was already in our own docs.** objdiff-core **`b14ba45`**
+(2026-08-20) added `vetted_reloc_name_diff`: under `name_check` **only**, a relocation-name
+diff passing three screens is **excluded from `arg_diff_score`** while staying in
+`diff_score`. Since `mpn = diff_score − arg_diff_score`, such a charge **no longer cancels
+and lands squarely in `mpn`**. ⇒ a row can sit at `mpn < 100` with **zero** instruction-level
+charges. Measured across the 22-row band: of **26 charged sites, 24 are relocation-name and
+only 2 are instruction-level** (both immediates); **zero** Replace, **zero** insert/delete.
+**20 of 22 rows have no instruction-level charge at all.**
+
+⚠⚠ **CLAUDE.md ALREADY RECORDS `b14ba45`** — as the reason `matched_functions` stopped being
+ruler-invariant (lane W16-AR, 2026-09-14). Its consequence **for screening** had simply never
+been drawn. ⇒ this was not new information; it was **unread information**, in the file whose
+standing rule is `READ THE IN-TREE RECORD FIRST`. I wrote that rule into two briefs the same
+day I violated it.
+
+★★★ **The tell was FREE and sat in the data I already had: `mpn == fuzzy` to the digit on all
+22 rows.** That means `arg_diff_score == 0` — which does **not** mean "no relocation charges",
+it means **"every relocation charge present was VETTED and promoted into `mpn`."** I read
+`mpn < 100` as a signal and never noticed the two keys were *identical*, which is the actual
+diagnostic.
+
+**⛔ And correction #3 was actively harmful.** I told W16-EJ: *"any row with even one class-(c)
+charge cannot reach fuzzy 100 by source work — drop it immediately."* `VocalGuidePitch` was
+exactly class (c) — real names on both sides (`NoteAt__13VocalNoteListCFf` vs
+`?NoteAt@VocalNoteList@@QBAPBVVocalNote@@M@Z`) — and it closed **in a three-line edit** for
+**+572 B**. ⇒ class (c) MUST be split:
+
+- **fold survivor** — not closable by source;
+- **wrong callee / our own bug** — closable, and per MPNGAP-1 **the most valuable class we
+  have**.
+
+**`tools/icf_pair_adjudicate.py` on retail bytes is the instrument that splits them. A
+name-shape test cannot**, and my rule was a name-shape test.
+
+★ **WHAT ACTUALLY SURVIVES, stated minimally:**
+
+| reading | verdict |
+|---|---|
+| `mpn == 100` | no instruction-level charges ⇒ not source-reachable. **STILL SOUND.** |
+| `mpn < 100` | **CERTIFIES NOTHING.** Not reachability, not even that an instruction-level charge exists. |
+| any percentage pair | **no substitute for per-row charge ENUMERATION**, classified by KIND |
+
+★ **A charge-counting instrument that needs no objdiff run** (W16-EJ, validated to 5 decimals
+on two rows): **`diff_score = (100 − fuzzy) × size / 4`**. ⛔ **Corollary that kills the
+ranking I briefed:** "bytes per charge" ranks **identically** to "fuzzy descending", because
+`diff_score` is already size-normalised. The ranking that matters is **by charge KIND**, which
+only enumeration gives.
+
+⚠⚠ **The pattern, which is the real lesson:** three times in one day I substituted a cheap
+percentage screen for enumeration, and each time the screen **agreed with the data I had** —
+because each was a *necessary* condition read as *sufficient*. **Every one was refuted by a
+lane that did the enumeration.** There is no cheap substitute. Coordinator briefs must ship
+the enumeration requirement, not a percentage rule — and must state that a lane refuting the
+brief is a successful outcome, which is the only reason all three refutations came back
+instead of being quietly worked around.
