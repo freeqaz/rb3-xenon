@@ -2632,3 +2632,41 @@ worklist labels TourProgress `ARITH_COMMUTE` but does not mark it `sym`, and
 `mm=2` looks eminently closeable. It was reading the charged instructions
 literally that settled it — the standing "test a briefed figure literally"
 rule, applied to my own candidate list.
+
+### Coordinator check, 2026-09-16 — the parked `repartitioned` stratum is UNADDRESSABLE
+
+Queued for several waves as "DB's 154 parked `repartitioned` rows — needs an address,
+not an argument". Measured today against the live `scripts/symbol_aliases.json` and
+`scripts/target_symbol_map.json`, read-only:
+
+| measure | value |
+|---|---:|
+| records carrying `disposition: repartitioned` | **222** (206 `restored[].superseded_records[]`, 16 `withdrawn[]`) |
+| distinct spellings | 222 (one record each) |
+| **whose spelling resolves to ANY VA in the map** | **1** (`?Init@BandCharacter@@SAXXZ`) |
+| composition | 157 ordinary symbols · 34 `MakeString` templates · 31 other templates |
+
+⇒ **221 of 222 have no retail address at all**, so there is nothing to adjudicate them
+*against*. The blocker was stated correctly and it is structural, not a matter of
+effort. **Do not re-queue this as an adjudication lane.**
+
+⚠ **Two honest limits on that, both of which I got wrong first and am recording so the
+next reader does not inherit my errors:**
+
+1. **This population does NOT reconcile with DB's.** DB tabulated **213** (154
+   no-address + 2 different-address + 0 same-address + 57 dead); I count **222**. They
+   are different selections — mine keys on the disposition field across all groups,
+   DB's on its own partition classes — and the file has moved since (W16-EC withdrew a
+   group today). **So this does not measure DB's 154**, and any claim that it does is
+   unsupported.
+2. **"Dominated by `MakeString` templates" is FALSE** — I asserted it from a six-item
+   *alphabetically sorted* sample, which biases toward `??$` prefixes. The truth is
+   **157 of 222 are ordinary symbols**, which makes the finding stronger, not weaker:
+   the unaddressability is not a template-folding artifact.
+
+★ The instrument was nearly discarded for the wrong reason. A 1-in-222 hit rate against
+a 29,445-name index looks exactly like a wrongly-keyed lookup, and I called it vacuous
+before testing it. A **positive control** — four names known to be in the map, including
+`?MemAlloc@@YAPAXHH@Z` and the three W16-EC had just written — resolved 4/4, which is
+what promoted the reading from "broken tool" to "finding". **Neither "it confirms my
+prior" nor "it contradicts my prior" is evidence about an instrument; a control is.**
