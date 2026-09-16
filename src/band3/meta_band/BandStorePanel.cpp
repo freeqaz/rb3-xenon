@@ -495,7 +495,7 @@ BEGIN_HANDLERS(BandStorePanel)
     {
         static Symbol _hs("request_prev_chunk");
         if (sym == _hs) {
-            Request(mPrevChunkPath.c_str(), false);
+            Request(mPrevChunkPath.c_str(), true);
             mStartBrowserAtBottom = true;
             return 0;
         }
