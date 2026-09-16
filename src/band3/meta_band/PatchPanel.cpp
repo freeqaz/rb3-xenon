@@ -414,17 +414,15 @@ DataNode PatchPanel::OnMsg(const ButtonUpMsg &msg) {
 #pragma push
 #pragma pool_data on
 void PatchPanel::Poll() {
-    StickerProvider * _mStickerProvider = this->mStickerProvider;
-    PatchDir * _mPatch = this->mPatch;
     int& _mEditLayerIdx = this->mEditLayerIdx;
     float& _mMoveVelX = this->mMoveVelX;
     int& _mMoveX = this->mMoveX;
     UIPanel::Poll();
-    int numLoading = _mPatch->NumLoadingStickers();
+    int numLoading = mPatch->NumLoadingStickers();
     if (numLoading != 0) {
-        _mPatch->Poll();
-        if (_mPatch->NumLoadingStickers() < numLoading) {
-            _mStickerProvider->StickerLoaded();
+        mPatch->Poll();
+        if (mPatch->NumLoadingStickers() < numLoading) {
+            mStickerProvider->StickerLoaded();
             unk51 = true;
         }
     }
@@ -433,7 +431,7 @@ void PatchPanel::Poll() {
         unk51 = false;
         HandleType(update_char_preview_msg);
     }
-    PatchLayer &layer = _mPatch->Layer(_mEditLayerIdx);
+    PatchLayer &layer = mPatch->Layer(_mEditLayerIdx);
     if (layer.HasSticker()) {
         _mMoveVelX = CalcMotion(_mMoveVelX, _mMoveX);
         mMoveVelY = CalcMotion(mMoveVelY, mMoveY);
