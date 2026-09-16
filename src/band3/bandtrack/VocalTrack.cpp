@@ -1828,10 +1828,10 @@ void VocalTrack::UpdateScrolling(float ms) {
                         lead ? mLeadLyricShifts : mHarmonyLyricShifts;
                     if (prevBakedLyric && prevBakedLyric->mChunkEnd) {
                         float shiftStart = prevBakedLyric->mEndMs;
-                        float prevWidth = prevBakedLyric->Width();
-                        float earlyBase = lyric->mActiveMs - mLyricShiftMs;
                         float shiftBase =
                             mStaticDeployMarginX - prevBakedLyric->mBeginPos.x;
+                        float prevWidth = prevBakedLyric->Width();
+                        float earlyBase = lyric->mActiveMs - mLyricShiftMs;
                         float earlyShift = earlyBase - mLyricShiftAnticipationMs;
                         float shiftX = shiftBase - prevWidth;
                         if (earlyShift < shiftStart)
