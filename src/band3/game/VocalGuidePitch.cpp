@@ -12,8 +12,6 @@
 #include "utl/Loader.h"
 #include "utl/TimeConversion.h"
 
-extern "C" VocalNote *NoteAt__13VocalNoteListCFf(const VocalNoteList *self, float ms);
-
 VocalGuidePitch::VocalGuidePitch()
     : mGuideTrack(-1), unk8(0), mGuidePitch(0), mInstrument(0), mTuningOffset(0),
       mPaused(0), mPitchModifier(-12) {}
@@ -46,7 +44,7 @@ void VocalGuidePitch::Poll(float ms) {
         mInstrument->SetFineTune(mTuningOffset);
         VocalNoteList *list = TheSongDB->GetVocalNoteList(mGuideTrack);
         MILO_ASSERT(list, 0x51);
-        VocalNote *note = NoteAt__13VocalNoteListCFf(list, adjMs);
+        VocalNote *note = (VocalNote *)list->NoteAt(adjMs);
         if (note != (VocalNote *)unk8) {
             if (note == nullptr || note->mUnpitchedNote) {
                 if (mGuidePitch != 0) {
