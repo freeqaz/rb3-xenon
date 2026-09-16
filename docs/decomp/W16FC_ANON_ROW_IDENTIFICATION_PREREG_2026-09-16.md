@@ -147,3 +147,76 @@ rows whose retail size differed from ours by only 4 B / 48 B — a small size ga
 does not bound the instruction-level divergence. Neither miss changes an
 identification: SetupGems' callers (5, all 100.0) and ??0CamShot's caller
 (`NewObject@CamShot`, 100.0) all still spell the name and did not move.
+
+## §5 Wave 2 — the LoadRev cascade (pre-registered BEFORE measuring)
+
+Wave 1 left `0x82430fd0` named with retail's TRUE signature
+`?LoadRev@RndPostProc@@QAAXAAVBinStream@@H@Z` and UNPAIRED (fuzzy 0), because our
+base obj defines only the DC3-shaped overload `?LoadRev@RndPostProc@@QAAXAAVBinStreamRev@@@Z`
+(1916 B vs retail 1728 B). This wave changes SOURCE so the base defines the true
+name, and names the one remaining anonymous PostProc row.
+
+### 5.1 Retail-byte adjudication (done before this edit, `build/45410914/asm/PostProc.s`)
+
+- `fn_82433268` (192 B, `.pdata` begin `0x82433268` len 192 next `0x82433328` — exact) is
+  `RndPostProc::Load(BinStream&)` in the **rb3-Wii shape**, not the DC3 shape:
+  `ReadEndian(&rev,4)`; one base register `r30 = lbl_82CC27E8` (dtk: `.data`, size 8,
+  2-byte) with `sth lo16 -> +4` (rev) and `sth hi16 -> +0` (altRev); `rev == 0x10`
+  branch streams `int dRev`, `float f = 0.0` (`lfs lbl_82000D78; stfs 0x70(r1)`),
+  `bool` (`??5BinStream@@QAAAAV0@AA_N@Z`), `Vector3` (free op), `float`, `int`; else
+  `Hmx::Object::Load(bs)`; then `mr r4,r31; lhz r5,0x4(r30); bl fn_82430FD0` =
+  `LoadRev(bs, gRev)` with gRev re-read from memory.
+- `fn_82430FD0` (1728 B, `.pdata` exact) takes `rev` in `r5` (copied to `r27`, compared
+  as a plain int throughout), never reads `r6`, has NO reference to `lbl_82CC27E8`, and
+  in the `rev > 5` region calls
+  `?Load@?$ObjRefConcrete@VRndTex@@VObjectDir@@@@QAA_NAAVBinStream@@_NPAVObjectDir@@@Z`
+  with `li r6,0; li r5,1; addi r3,r30,0x54` = `bs >> mLuminanceMap` (member at +0x54)
+  with **no altRev gate** — our DC3 body gates it on `d.altRev < 1` and streams into a
+  throwaway local. Every other branch is the same rev-threshold sequence our body has.
+- Static layout precedent: `BandCamShot.obj` places two file-static `unsigned short`
+  revs 4 B apart in `.bss` (52/56), and retail BandCamShot co-addresses them exactly
+  like PostProc (`sth +4` rev, `sth +0` alt). Per the co-addressing rule (memory
+  2026-08-17) two internal-linkage statics share one base; declaration order controls
+  `.bss` order only, so `gAltRev` is declared FIRST to land at +0.
+- `RB3_HAS_HUE_CONVERGE` is not in `build.ninja` (0 hits) — the `altRev > 1` tail is
+  dead here, consistent with retail LoadRev never touching altRev.
+
+### 5.2 The change (source + map, one `ab_measure --from-dirty` run)
+
+1. map: `"0x82433268": "?Load@RndPostProc@@UAAXAAVBinStream@@@Z"` (base already defines it).
+2. `PostProc.h:101` `void LoadRev(BinStream &, int);` (rb3-Wii signature).
+3. `PostProc.cpp`: drop `INIT_REVS(0x25, 2)`; add `static unsigned short gAltRev = 0;`
+   then `static unsigned short gRev = 0;`; write `Load` explicitly in the retail shape
+   (`bs >> rev; gRev = getHmxRev(rev); gAltRev = getAltRev(rev); if (gRev == 0x10) {...}
+   else Hmx::Object::Load(bs); LoadRev(bs, gRev);`); port `LoadRev` mechanically
+   (`d.rev`->`rev`, `d >>`->`bs >>`, `d.stream`->`bs`, `if (rev > 5) bs >> mLuminanceMap;`).
+   Logic is otherwise byte-for-byte the body lane CE-1 placed — NOT re-derived from the
+   Wii oracle (which is a dev build).
+4. `Dir.cpp:131` `pp->LoadRev(d.stream, d.rev);` (only other caller; `MultiMesh`/`Crowd`
+   call a different class's LoadRev).
+
+### 5.3 Predictions (bands fixed now; a miss is recorded as a miss)
+
+| # | claim | band |
+|---|---|---|
+| P9 | **designated improve-WITHOUT-crossing row**: `?Load@RndPostProc@@UAAXAAVBinStream@@@Z` (192 B) pairs and lands **60 ≤ fuzzy < 100**. Reason it should not cross: retail streams the final `int` off the `>> bool` return (`r28`), not the `>> Vector3` return — the Wii chain `bs >> x >> v >> f >> i` should leave that one site charged. If it reads 100.0 the shape was wrong and the "improvement" is suspect, not a win. | 60–99.9 |
+| P10 | `?LoadRev@RndPostProc@@QAAXAAVBinStream@@H@Z` (1728 B) PAIRS (0 -> sub-100 or 100): **70 ≤ fuzzy ≤ 100**; 100 is possible for a mechanical port, so a 100 here is NOT flagged — the non-crossing requirement is carried by P9. | 70–100 |
+| P11 | `Δtotal_functions = 0`, `Δtotal_code = 0`; `Δmatched_functions ∈ {0,+1}` (only if P10 = 100), `Δmatched_code ∈ {0, +1728}`. | exact |
+| P12 | `Δfuzzy` whole-binary in **+0.008 .. +0.020 pp** (size-weighted: ~1,920 B at ~0.8). | band |
+| P13 | Same-TU **must-not-move controls, to the digit**: `?Save@RndPostProc@@` 99.878784 (SAVE_REVS uses literals, not gRev), `?Interp@` 84.54627, `?Handle@` 100.0, `?SyncProperty@` 100.0, `??0RndPostProc@@IAA@XZ` 100.0. | exact |
+| P14 | Row-level A->B diff is EXACTLY: `fn_82433268` out, `?Load@RndPostProc@@UAAXAAVBinStream@@@Z` in, `?LoadRev@…BinStream@@H@Z` changed. Zero other rows differ — including the 11 wave-1 named rows and `?Load@RndDir@@UAAXAAVBinStream@@@Z` (8 B, 100.0 in `default/Anim`; Dir.cpp is recompiled but only a call-site argument changes). | exact |
+
+### 5.4 Surface this wave creates (report this, not just the delta)
+
+Two PostProc rows totalling 1,920 B move from invisible (fuzzy 0, no base counterpart)
+to adjudicable. Whatever residual P9/P10 leave is then a source question on retail
+bytes — the deliverable EW's precedent describes.
+
+### 5.5 Deferred, found on the way (NOT done this wave, stated so it is not silence)
+
+- `?Load@RndDir@@UAAXAAVBinStream@@@Z` is mapped to `0x82402fa0`, an **8-byte thunk**
+  (`subi r3,r3,0x13c; b fn_8274E0F0`) that scores 100.0 in `default/Anim`. Retail's real
+  `RndDir::Load` is the anonymous **`fn_82404F80` (428 B, `.pdata` exact)** — it reads its
+  own co-addressed `gRev` at +4 and calls `LoadRev(bs, gRev)` on a fresh `RndPostProc`.
+  Fixing this is a re-homing of an existing name (a *pairability* change, measured
+  non-neutral by PINHOME-1) plus a Dir.cpp shape port; it needs its own pre-registration.
