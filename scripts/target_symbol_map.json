@@ -17623,6 +17623,7 @@
  "0x82714240": "?SetReverbMixDb@MidiInstrument@@QAAXM@Z",
  "0x82714298": "?SetReverbEnable@MidiInstrument@@QAAX_N@Z",
  "0x827142f0": "?SetSend@MidiInstrument@@QAAXPAVFxSend@@@Z",
+ "0x826C9160": "?StopNote@VocalGuidePitch@@QAAXXZ",
  "0x827141D8": "?ReleaseNote@MidiInstrument@@QAAXE@Z",
  "0x82714350": "?Pause@MidiInstrument@@QAAX_N@Z",
  "0x827143b0": "?DeleteAll@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ",
