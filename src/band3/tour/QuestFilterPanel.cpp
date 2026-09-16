@@ -165,35 +165,13 @@ inline RndMat *QuestFilterProvider::Mat(int, int i_iData, UIListMesh *i_pSlot) c
 }
 
 TourSetlistType QuestFilterPanel::GetSelectedSetlistType() {
-    TourSetlistType ret;
     if (kUp != GetState())
         return kTourSetlist_Invalid;
+    static Message get_selected_filter_index_msg("get_selected_filter_index");
     DataNode handled = Handle(get_selected_filter_index_msg, true);
     int i = handled.Int();
     if (m_pQuestFilterProvider->NumData() > 0) {
-        TourProgress *prog = TheTour->GetTourProgress();
-        if (prog) {
-            TourDesc *desc = TheTour->GetTourDesc(prog->GetTourDesc());
-            if (desc) {
-                Symbol gigtype =
-                    desc->GetSetlistTypeForGigNum(prog->GetCurrentGigNum(), i);
-#ifdef HX_NATIVE
-                if (gigtype == Symbol("random")) // `random` collides with POSIX random()
-#else
-                if (gigtype == random)
-#endif
-                    ret = kTourSetlist_Random;
-                else if (gigtype == custom)
-                    ret = kTourSetlist_Custom;
-                else
-                    ret = kTourSetlist_Fixed;
-            } else {
-                ret = kTourSetlist_Fixed;
-            }
-        } else {
-            ret = kTourSetlist_Fixed;
-        }
-        return ret;
+        return m_pQuestFilterProvider->GetSetlistType(i);
     }
     return kTourSetlist_Invalid;
 }
