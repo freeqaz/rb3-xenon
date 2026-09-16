@@ -2710,3 +2710,47 @@ separate worktrees, so the rebase handles the mechanics.
 plain r4/r6 regalloc swap); `fn_8235F858` (a mis-homed Tour body — re-homing a pinned
 address is not metric-neutral); `map_misassignment` and the alias withdrawal ledger (both
 drained); and the parked `repartitioned` stratum (unaddressable — see the subsection above).
+
+### W16-EG dispatched — the rows with no lane document (2026-09-16)
+
+Third lane of wave 16's tail, opus, worktree `~/tmp/wt-w16-eg` off `0351e376`. Target is
+the four sizeable `src/band3/` rows that appear **only in census TSVs and in no lane
+write-up at all**:
+
+| size | fuzzy | row |
+|---:|---:|---|
+| 1256 | 92.0892 | `?HandleExitExtent@PerfectSectionTracker@@QAA_NMH_N@Z` |
+|  980 | 91.4571 | `?Poll@PatchPanel@@UAAXXZ` |
+|  664 | 92.9819 | `?Poll@StoreMainPanel@@UAAXXZ` |
+|  412 |  0.0000 | `?RefreshAll@ManageBandPanel@@QAAXXZ` |
+
+★ **How the target was chosen matters more than the target.** A size-ranked census of the
+game layer (310 named sub-100 rows / 105,140 B) puts `?SetState@SaveLoadManager@@` on top
+at 4,096 B — a row **W16-CQ already closed** as unable to cross. Two more of the top five,
+`?Poll@BandStorePanel@@` (90.22) and `?Handle@BandStorePanel@@` (98.76), are not untouched
+rows at all: they are **W16-CA's output** (it moved them from 45.04 and 93.12). And
+`?MaybePublish@UIStats@@` plus `?Handle@StoreOfferProvider@@` are permuter-bound, which is
+off by standing directive. ⇒ **Ranking by size selects, with high reliability, the rows
+previous lanes already finished with.** The filter that actually found virgin work was
+"has no prose document anywhere in `docs/`".
+
+⚠ **The lane is briefed to expect identification, not decomp.** Every candidate unit
+carries more ANONYMOUS sub-100 bytes than named ones (PatchPanel 3,120 vs 1,788;
+PerfectSectionTracker 2,128 vs 1,256; StoreMainPanel 1,180 vs 1,760). That is the exact
+shape W16-CD measured: briefed ≈2,016 B, measured 2,108 B, and only **472 B of it was
+source** — the other 1,636 B was a map problem, because *when a retail row is anonymous,
+source quality is invisible to the ruler*. EG must split every prediction into "source"
+and "identification" before measuring, and check the 0.0000 row's **byte geometry** first,
+since a phantom row from a dtk mis-carve is indistinguishable from an unidentified one.
+
+⚠ **Collision management, three lanes live:** EG is told to keep off `src/band3/game/Game.cpp`
+(W16-EF owns it) and off `scripts/symbol_aliases.json` / `scripts/target_symbol_map.json`
+(W16-EE may edit both, W16-EF may edit the former), and to declare any such edit
+prominently if it proves unavoidable.
+
+⚠ **A tooling note recorded against myself:** the search that established "no prose
+document" was run with `--include='*.md'` placed after the path, which the shell `grep`
+shim silently ignored — it printed a "prose(.md)" count while listing `.tsv` files. The
+conclusion survives only because the listed filenames were visibly all TSVs. **An option
+the tool ignores produces a label that cannot fail**, which is the same vacuity family as
+the `[p]attern` self-match and the unconditional annotation, both also hit today.
