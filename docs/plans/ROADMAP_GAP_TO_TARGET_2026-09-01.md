@@ -5477,3 +5477,297 @@ of lane quality.** Do not read the trend as improvement.
 - **Newly refused, available as a control:** `?DisplayChord@ChordbookPanel@@`
   (3,436 B @ 97.185100) — GC declined it and it served as the fail-closed control
   for GC's own landing, reading UNMOVED.
+
+---
+
+## §7v — wave 5 (W16-GF, W16-GE, W16-GG): a fourth patch class, and a control nobody else could have run
+
+Three lanes landed after §7u: **W16-GF** (`d958c1b2`, +1 fn / +1,584 B),
+**W16-GE** (`bef7e349`, a measured negative, 0 B) and **W16-GG** (`85b84e32`,
+a tool repair, Δ0 by construction). One of them is a class of lane this
+campaign has not run before.
+
+### 7v.1 THE LIVENESS DISCIPLINE HAS FOUR PATCH CLASSES, NOT THREE — AND "0 COMPILES" MEANS THE OPPOSITE THING IN TWO OF THEM
+
+§7u.1 established that the liveness probe must match the patch class, and named
+three: **source** (MSVC compile edges, no forced re-split), **map/alias**
+(forced re-split, gated on rendered map lines and `Loaded N ICF equivalence
+entries`), and **mixed** (both, as a conjunction).
+
+W16-GG is a fourth: **offline-tool class.** It changes `tools/icf_pair_adjudicate.py`,
+which **no ninja edge invokes.** Verified three ways before landing rather than
+inherited from the lane — `icf_pair_adjudicate` appears **0** times in
+`build.ninja` and **0** times in `configure.py`, and the `GEN`/`CHECK ICF-ALIAS
+MAP` edges both run `tools/gen_symbol_alias_map.py`. (The apparent "imports" in
+`icf_alias_build.py` and `icf_alias_finder.py` are prose inside **comments** —
+a loose probe of mine matched them, which is its own small lesson.)
+
+⇒ **No build probe can show an offline-tool change live. The tool's own control
+suite IS the liveness gate.** For GG that is `--self-break`, `--chasetest`,
+`--selftest`, and `icf_alias_finder --validate`, all four run on main after the
+merge.
+
+★ **And the sign of the build reading inverts across classes:**
+
+| class | MSVC edges = 0 means |
+|---|---|
+| source | ⛔ the patch never reached the compiler — REFUSE |
+| map/alias | ⛔ the split never re-ran — the edit is INERT (lane CF-1) |
+| offline-tool / docs | ✅ **PASS** — it proves no source reached the tree |
+
+W16-GE used exactly that inversion as its landing gate: its branch carries a
+source commit **and its revert**, so `0` compile edges is the positive proof
+that the revert is complete. Backed by a structural check, not the lane's
+claim: the three-dot net diff under `src/` is **0 files and 0 lines** (the
+two-dot view shows 1 file and misleads, which the lane itself warned about).
+
+### 7v.2 ★★★★★ ONLY THE NEW CONTROL COULD TELL — THE FOUR EXISTING ONES ARE STRUCTURALLY BLIND
+
+GG relaxed `chase()`'s vacuous branch and added `--self-break`, which re-runs
+`--chasetest` with the destination proof removed and **exits 0 only if the
+decoy goes red.** It does.
+
+**Only that one control flipped.** The four pre-existing `--chasetest` controls
+returned verdicts identical to baseline — meaning **a permissive relaxation
+would have shipped GREEN under every control that already existed.** W16-GD
+predicted this; GG measured it.
+
+Quantified against a null rather than asserted:
+
+| branch | admits, of 4,000 random shape-compatible vacuous cross-pairs |
+|---|---|
+| shipped | **22 (0.550%)** — all 22 with byte-equal destinations, 0 violations |
+| `--self-break` decoy | **3,489 (87.225%)** |
+
+**158× selectivity.** Regression measured over all 4,838 installed memberships:
+**0 PROVEN → REFUTED**, 59 REFUTED → PROVEN — strict widening demonstrated, not
+claimed. Validator PASS, 0 CONTRADICTED, 1,659 groups, nothing pruned.
+
+⇒ **A control suite that cannot fail on the branch you just changed is not
+evidence about that branch.** Adding the discriminating control is part of the
+change, not a courtesy.
+
+### 7v.3 THE OLD BRANCH REFUSED A FOLD *BECAUSE* THE LINKER FOLDS ITERATIVELY
+
+A 4-byte tail-call thunk (`b <target>`) has masked body `0x00000000`, because
+the whole instruction **is** the relocated field — the destination is the
+entire information content. `chase()` admitted such a pair only on literal
+equality of relocation target **names**.
+
+But `/OPT:ICF` is a **fixed point**: if retail folded X and Y, then `b X` and
+`b Y` resolve to the same address, so the thunks satisfy the folding condition
+themselves. Literal name equality pins the destination — and **so does a
+recursively proven fold of the two destinations.**
+
+The fix is minimal by construction: the relocation-slot loop is factored into
+**one comparator** whose two callers differ by a **single named boolean**
+(general path `tolerate_placeholders=True`, unchanged per CD-9; vacuous path
+`False`), and the old literal-equality test short-circuits **first**, so no
+previously admitted pair changes behaviour. Net: strictly wider than its old
+self, strictly **narrower** than the general path. Strictness was *raised* on
+the placeholder axis on evidence — retail vacuous single-reloc thunks against
+ours of matching shape form **2,289,106 cross-pairs**, so a tolerated slot
+there compares nothing at all.
+
+### 7v.4 "REACHED INSTALLED GROUPS" AND "MOVED THE METRIC" ARE INDEPENDENT
+
+GG's Δ0 is **structural** — no build edge reaches the tool — but the relaxation
+**does** reach installed groups, 59 of them, and is *still* Δ0, because those
+groups were already installed and already forgiven.
+
+⇒ A later lane must not read Δ0 as "the change did not land." These are two
+different propositions and this lane separates them.
+
+### 7v.5 THE LANE CAUGHT ITS OWN VACUOUS COMPARISON
+
+GG's first measurement compared **a file to itself**: the post-edit build did 0
+compiles and therefore never re-ran the `REPORT` edge, so `report.json` was
+untouched and "unchanged" was guaranteed by construction. The reading was
+**discarded** and leg B re-taken after wiping `report.json` and `report.cache`.
+
+Same family as every vacuity trap in this tree, and the same tell: **an
+instrument that cannot fail returns the answer you were hoping for.** Note the
+interaction with 7v.1 — for an offline-tool patch, 0 compiles is the *expected*
+pass signal, which is exactly what makes the vacuous report read plausible.
+
+### 7v.6 THE THIRTEENTH REGISTER_SWAP THAT WAS A SYMPTOM, AND TWO LEVERS POINTING OPPOSITE WAYS
+
+W16-GF crossed `?UpdateLeftyFlip@GemManager@@` 99.416664 → 100.0 on **four
+lines**. Briefed as `1 insert + 1 delete + 5 diff_arg` with a REGISTER_SWAP
+(r8↔r9) label — which reads as five independent register problems plus a stray
+instruction. It was **one**:
+
+```
+retail   subi r10, r3, 3  ->  cntlzw r8, r10     (two registers; r10 dies and is
+                                                  recycled by the next lis &msg@h)
+ours     cntlzw r9, r9                           (in place; needs a separate
+                                                  register, so the lis lands one
+                                                  slot early)
+```
+
+The insert/delete pair is that one `lis` at two positions; the four register
+diffs are its fallout. **Dropping the `_tmp1` named temporary dissolved all six
+at once.** The tool's own recommendation on this row was the permuter.
+
+★ A seventh site needed the **opposite** lever: retail re-materializes a
+just-constructed `Symbol` temp from the frame where we reused the ctor's
+returned `this` in r3, so that one wanted the temporary **named**, to give it a
+stack home. **Both are required and neither suffices** — measured: named-temp
+alone 99.43182, drop-`_tmp1` alone 99.98485.
+
+⇒ "Name the temporary" and "drop the temporary" are both live levers **in the
+same function**, and which one applies is decided per site by what retail did
+with the frame.
+
+### 7v.7 A COMMITTED NEGATIVE WHERE THE INTUITIVE MOVE IS EXACTLY BACKWARDS
+
+Hoisting `static Message msg("set_lefty", 0)` above the `isKeys` computation is
+a **−13.1 pp regression** (99.41666 → 86.29798). The natural reading — "our
+`lis` is early, so move the static earlier" — is inverted: the guard-check
+block relocates **wholesale** ahead of the `GetControllerType` call. Committed
+with its revert so the history carries it.
+
+### 7v.8 ⛔ THE OFFSET RESOLVER ASSUMES `r31 == this` AND SAYS SO UNHEDGED
+
+`run_objdiff`'s "Offset Mismatches (resolved)" reported GF's seventh site as
+**`GemManager::mTrackDir` at 0x70**. That is **wrong**. The prologue is
+`subi r31, r1, 0x1a0` / `mr r30, r3` — **r31 is the FRAME POINTER, r30 is
+`this`** — so `0x70(r31)` is a stack slot holding a `Symbol` temporary, not a
+member.
+
+The resolver prints the attribution with no hedge, so a lane trusting it hunts
+a member-layout defect that does not exist. Same family as every other
+confident-tool-verdict finding in this tree: **a tool's certainty is the claim
+most worth auditing**, because it is what closes veins. **Read the prologue
+before believing any `Class::member at 0xNN`.**
+
+### 7v.9 MSVC CANONICALIZES THIS CFG BEFORE ITS BLOCK-LAYOUT PASS
+
+W16-GE is a **negative with a control**, and it is worth more than the row.
+Both compilers tail-merge the two `curSlot->ShowState(...)` arms of
+`?ResolveSlotStates@OvershellPanel@@` into one `mr r3,r30; bl ShowState`; only
+**which copy survives** differs (retail keeps the then-arm's, branching
+backward; we keep the else-arm's, branching forward). Instruction multiset
+identical — hence exact size identity 1416 == 1416, 350/356 equal, region
+extent 0x48 B both sides. A differing merge *group* was ruled out by
+**counting**: both sides emit exactly 2 `bl ShowState` and 66 `bl` total.
+
+P1 hand-wrote retail's exact CFG — label in the then-arm, backward `goto` from
+the else-arm, value in a **non-address-taken** local (forced by evidence:
+retail's path B is `li r4,0x49` with **no store**, and `ossID` is address-taken,
+so the naive `ossID = 0x49; goto L;` adds `stw`+`lwz` and breaks size identity;
+rb3-Wii's own decomp uses `goto therest;`, so HMX demonstrably wrote gotos
+here). **Result: byte-identical. 98.841805 → 98.841805, 6 charges → 6.**
+
+★ **The control is why that negative is worth anything**, because byte-identical
+is exactly what a dead pipeline produces: changing the immediate `0x49` → `0x4A`
+(an immediate, **not** a relocation arg) moved 98.841805 → 98.83898, equal
+350 → 349, new `diff_arg` at idx 128.
+
+⇒ This is **strictly stronger** than the `permuter-class` label commit
+`2532bfd1` left on the row, which meant only *"not tried"*. This **measured**
+that the most direct structural attack is dead.
+
+### 7v.10 THREE LANES MISREAD `diff_arg` THE SAME WAY ON THE SAME DAY
+
+`diff_arg` is an argument-level **KIND**, not a relocation-name class. In one
+day it was misread by W16-GF's brief, by W16-GE's brief, **and twice by the
+coordinator's own next-wave triage** (§`W16_NEXT_WAVE_TARGETING_2026-09-16.md`).
+
+- GF's five `diff_arg` are all `[reg:]`/`[off:]` — the ICF-fold-alias vs
+  wrong-callee adjudication briefed for it was inapplicable to **every** charged
+  site. The row's genuine fold-aliases sit in objdiff's *Function Call Diff*
+  block and are already forgiven through `icf_aliases.map`, which is precisely
+  **why they carry zero charges.**
+- GE's two `diff_arg` are **branch destinations** (`b 0x4c2c` vs `b 0x1cdac`),
+  with both sides calling the same `?ShowState@OvershellSlot@@`.
+
+⇒ **A brief that says "N diff_arg" invites a reflexive reach for
+`symbol_aliases.json`, and an unproven alias lifts the score BY CONSTRUCTION.**
+Always resolve `diff_arg` into register / offset / branch-dest / relocation-name
+before pricing it. Also recurring: both briefs quoted an "mpn" that was actually
+the **fuzzy** value — `mpn ≥ fuzzy` always, so the two are trivially confusable.
+
+### 7v.11 FIFTH WITHDRAWAL OF THE Δfuzzy MODEL, AND FIVE INSTRUMENT DEFECTS IN A DAY
+
+| lane | modelled Δfuzzy | measured | miss |
+|---|---|---|---|
+| W16-GD | +2.0e−6 | +5.0e−6 | 2.5× |
+| W16-GC | −0.000169 | −0.000187 | +11% |
+| W16-GB | +0.002786 | +0.002550 | −8.5% |
+| **W16-GF** | **+0.000090** | **+0.000076** | **−16%** |
+
+**GATE THE SIGN, REPORT THE MAGNITUDE.** Four withdrawals became five.
+
+★ The instrument-defect tally for the day is now **five**, all in one family —
+something that looks like rigour while measuring the wrong thing — and **all
+five failed CLOSED**, toward false alarm:
+
+1. GATE A population hardcoded to 2 of 3 files;
+2. file-count check two-dot (would have falsely aborted healthy W16-GA);
+3. GATE A whole-file compare (falsely aborted W16-GC);
+4. a `SPLIT ran` probe matching `CHECK SPLIT CURRENT` — read 1 where the truth
+   is 0, and would have aborted W16-GF's healthy landing;
+5. an import probe matching the tool name **inside comments**, which nearly
+   contradicted GG's structural claim.
+
+That they all fail closed is why they are cheap to find: **the false alarm IS
+the signal.** One failing OPEN would have landed silently.
+
+### 7v.12 STATE at `85b84e32`
+
+```
+matched_functions  44,139      matched_code   4,169,816
+matched_code_pct   40.692772   fuzzy          50.497276
+masked_equal       23,323      honest            20,816
+total_code     10,247,068      total_functions   69,240
+units all-rows mpn==100: 195   units all-rows fuzzy==100: 173
+matched_code = 66.129% of the 61.535% reachable ceiling (6,305,556 B)
+gap to ceiling: 2,135,740
+```
+
+Session, by wave:
+
+```
+session total  +99 functions = +22 honest / +77 disclosure   (+19,140 B)
+  wave 1 (FQ FV FW FT FU)  +58 = +15 honest / +43 disclosure
+  wave 2 (FX FY FS)        +33 =   0 honest / +33 disclosure
+  wave 3 (FZ GA)            +5 =  +4 honest /  +1 disclosure
+  wave 4 (GD GC GB)         +2 =  +2 honest /   0 disclosure
+  wave 5 (GF GE GG)         +1 =  +1 honest /   0 disclosure
+```
+
+Waves 4 and 5 are **100% honest**; wave 2 was **0% honest**, under identical
+discipline. As §7u.9 said and this wave confirms: the honest share is a
+property of which rows were in range, **not** of lane quality.
+
+### 7v.13 OPEN
+
+- **BANKED, PROVEN, DELIBERATELY NOT COLLECTED: `?CopyTypeProperties@@YAXPAVObject@Hmx@@0@Z`
+  is now CHASED T1 PROVEN** (was REFUTED), with **0 `CYCLE-ASSUMED` frames** —
+  the entire proof descends by direct byte and relocation comparison. Sizes
+  424/424; 22 slots, 12 identical; slots 11/12/14 are
+  `list<BSPFace>::swap` ↔ `list<Symbol>::swap` and slot 20 is
+  `_List_base<SynthPollable*>::clear` ↔ `_List_base<Symbol>::clear` (flat-T1
+  PROVEN standalone, 88 B, `retail_bodytwins` 1); the four former blockers
+  (1/5/15/17) resolve `VACUOUS-DESTINATION-FOLD-PROVEN` into that same proven
+  pair. **Prize for a later lane: +1 fn / +1,472 B, Δhonest +1.** GG was kept
+  disinterested on purpose so the lane that repaired the instrument is not the
+  lane that collects with it. **Price the BLOCK, not the row.**
+- **In flight:** W16-GH (`?OnMsg@OvershellSlot@@`, 1,396 B — the pure
+  stack-layout row, 43 of 43 charges differing only in a hex immediate),
+  W16-GI (`?Handle@BandStorePanel@@`, 1,928 B — the identical-multiset
+  scheduling row, routed to Fable as the genuinely hard case) and W16-GJ
+  (`?OnInitializeContent@CalibrationPanel@@`, 1,668 B, 8 charges — the smallest
+  charge count on the board). **None is in the figures above.**
+- **Newly drained:** `?ResolveSlotStates@OvershellPanel@@` — for **source work
+  only**. It is the permuter's domain and is the honest place to send it after
+  the ceiling work; `at_limit` here means "source work exhausted", not
+  "unfixable".
+- **Newly priced and refused, with reasons:** `?Hit@GemPlayer@@` (2,724 B —
+  6 of 8 charges are register args, so proving both callee names still banks 0)
+  and `?ParseDataResultsIntoSetlists@MusicLibraryNetSetlists@@` (1,968 B — a
+  single consistent r28↔r29 difference cascading through 46 sites with an
+  otherwise perfect body; the purest regalloc row yet priced). Both are
+  permuter-class: **bank them for the permuter, do not grind them.**
+- Everything still open from §7u.10 carries forward unchanged.
