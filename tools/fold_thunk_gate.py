@@ -38,8 +38,19 @@ unmasked, because a masked `b X` compares equal to every other `b Y`.  This tool
 does not mask the destination away -- it RESOLVES it and compares the name.  For
 a 4-byte tail branch the destination is the entire information content of the
 function, so comparing it is the strongest test available, not the weakest.  A
-body with NO relocation and no resolvable content (a bare `blr`) is genuinely
-vacuous and is reported separately as tier FT-EMPTY.
+body with NO relocation is reported separately as tier FT-EMPTY.
+
+⚠ FT-EMPTY's rationale CHANGED in W16-EK.  It used to be "the byte comparison
+is vacuous", which was true only because `mask_word` zeroed every 16-bit
+displacement unconditionally -- `stb r4,8(r3)` and `stb r4,0x7ff(r3)` masked to
+the same word, so the displacement was never compared.  Masking now follows our
+COFF relocation records, so a body with NO relocation is compared as FULL
+32-bit words: byte identity, which IS the complete /OPT:ICF condition.  It stays
+a separate, held-back-by-default tier for a different reason -- low
+DISCRIMINATING POWER, not vacuity.  Many distinct functions share a tiny body
+(a bare `blr`; 133 of our compiled COMDATs are exactly `stb r4,8(r3); blr`), so
+byte identity alone does not say WHICH of them retail's survivor is, and there
+is no relocation target to corroborate it.
 
 The second gate: retail's own definition of F
 ---------------------------------------------
@@ -106,8 +117,31 @@ REL_BRANCH14 = {5, 7}         # ADDR14, REL14
 REL_IMM16 = {4, 0x10, 0x11}   # ADDR16, REFHI, REFLO
 
 
-def mask_word(w):
-    """Mask the fields a relocation can patch, keeping opcode / AA / LK."""
+def mask_word(w, relocated=True):
+    """Mask the fields a relocation can patch, keeping opcode / AA / LK.
+
+    `relocated` says whether THIS word actually carries a relocation RECORD in
+    our object.  It is not an optimisation -- it is the difference between two
+    measurements (lane W16-EK, 2026-09-16).
+
+    A LINKED image has no relocation records: every field is already patched,
+    so which fields *were* relocated cannot be read back and can only be
+    inferred from the instruction form.  Our COFF object, by contrast, STATES
+    it.  Masking by form on the retail side and by record on ours compares two
+    different things, and the asymmetry does not cancel -- the same disease as
+    the phantom "+8 B STLport source bug", where comdat_bytes.py billed the
+    successor's EH funclet into one side of a COMDAT span.
+
+    So the COFF record is the only ground truth about which fields are
+    link-patched, and it drives BOTH sides.  The consequence is that an
+    UNRELOCATED word is now compared as a full 32-bit value, which is what
+    makes this strictly TIGHTER rather than looser: `w & 0xFFFF0000` used to
+    map `stb r4,8(r3)`, `stb r4,0xc(r3)` and `stb r4,0x7ff(r3)` onto the same
+    masked word, so the displacement a fold-thunk pair turns on was never
+    compared at all.  Masking it away was not conservative; it was vacuous.
+    """
+    if not relocated:
+        return w
     op = w >> 26
     if op == 18:
         return w & 0xFC000003
@@ -168,8 +202,35 @@ class Retail:
                 "%d data pointer word" % (d["total"][va], d["branch"][va],
                                           d["addr_taken"][va], d["data_ptr"][va]))
 
-    def canon(self, va):
-        """(masked_words, {offset: target_name}, note) or (None, None, why)."""
+    def probe(self, va):
+        """The readability check `canon` used to front, without reading words.
+
+        Kept separate so the refusal ORDER is unchanged: a retail body we
+        cannot read is still reported before we look for our COMDAT.
+        """
+        if not self.size.get(va):
+            return "no symbols.txt extent at %08x" % va
+        if self.img.off(va) is None:
+            return "%08x outside the image" % va
+        return None
+
+    def canon(self, va, relocated=None):
+        """(masked_words, {offset: target_name}, note) or (None, None, why).
+
+        `relocated` is the set of byte offsets OUR object carries a relocation
+        record at.  The retail image cannot state this itself (see mask_word),
+        so it is supplied, and a word outside the set is compared whole.
+
+        `relocated=None` means INFER BY INSTRUCTION FORM, which is the right
+        instrument for a LINKED-vs-LINKED comparison (retail vs dc3, the FT3
+        homonym witness): neither side carries relocation records, the two are
+        linked at different addresses so their patched fields legitimately
+        differ, and an inference applied to BOTH sides cancels.  Driving that
+        comparison off our COFF records instead is the same one-sided error
+        this lane exists to remove, merely relocated -- measured: it destroyed
+        the homonym witness for `??3@YAXPAX@Z` and flipped a 1,180-site pair
+        from ADMIT to REFUSE.
+        """
         n = self.size.get(va)
         o = self.img.off(va)
         if not n:
@@ -179,13 +240,33 @@ class Retail:
         words, targets = [], {}
         for i in range(n // 4):
             w = struct.unpack_from(">I", self.img.data, o + 4 * i)[0]
-            words.append(mask_word(w))
+            off = 4 * i
+            if relocated is None:
+                # linked-vs-linked: infer by form, symmetrically (see docstring)
+                words.append(mask_word(w))
+                op = w >> 26
+                if op in (18, 16):
+                    t = branch_target(w, va + off)
+                    targets[off] = self.byva.get(t) or "fn_%08x" % t
+                elif op in IMM16_OPS:
+                    targets[off] = None
+                continue
+            isrel = off in relocated
+            words.append(mask_word(w, isrel))
+            if not isrel:
+                # Not relocated on our side => not a link-patched field, so the
+                # whole word above is the comparison.  Inventing a target entry
+                # here is what made a relocation-free thunk REFUSE against an
+                # empty COFF relocation list.
+                continue
             op = w >> 26
             if op in (18, 16):
-                t = branch_target(w, va + 4 * i)
-                targets[4 * i] = self.byva.get(t) or "fn_%08x" % t
-            elif op in IMM16_OPS:
-                targets[4 * i] = None          # unresolvable in a linked image
+                t = branch_target(w, va + off)
+                targets[off] = self.byva.get(t) or "fn_%08x" % t
+            else:
+                # Ours relocates this field; retail's copy is already patched,
+                # so there is no name to compare.  None => compare() refuses.
+                targets[off] = None
         return words, targets, None
 
 
@@ -214,13 +295,15 @@ def our_canon(cd):
     raw = cd["fn_raw"]
     if len(raw) % 4:
         return None, None, "COMDAT size %d is not a multiple of 4" % len(raw)
-    words = [mask_word(w) for w in struct.unpack(">%dI" % (len(raw) // 4), raw)]
+    # A relocation's VirtualAddress points at the start of the 4-byte
+    # instruction it patches; normalise anyway so a sub-word offset cannot
+    # silently miss its word.
+    reloff = {off & ~3 for off, _nm, _ty in cd["fn_relocs"]}
+    words = [mask_word(w, (4 * i) in reloff)
+             for i, w in enumerate(struct.unpack(">%dI" % (len(raw) // 4), raw))]
     targets = {}
     for off, nm, ty in cd["fn_relocs"]:
-        if ty in REL_BRANCH24 or ty in REL_BRANCH14 or ty in REL_IMM16:
-            targets[off] = nm
-        else:
-            targets[off] = nm
+        targets[off & ~3] = nm
     return words, targets, None
 
 
@@ -238,6 +321,7 @@ def homonym(dc3, dc3img, retail, F, fa, nbytes):
     sites = dc3.get(F, [])
     if len(sites) < 2:
         return None
+    # Form-inference on BOTH legs: this is linked-vs-linked (see Retail.canon).
     want = retail.canon(fa)[0]
     if want is None:
         return None
@@ -263,11 +347,18 @@ def compare(rw, rt, ow, ot):
         bad = [i * 4 for i in range(len(rw)) if rw[i] != ow[i]]
         return False, "masked words differ at offsets %s" % ["0x%x" % b for b in bad[:6]]
     if set(rt) != set(ot):
+        # Defensive invariant only.  Retail's targets are now keyed on OUR
+        # relocation offsets, so the two sets agree by construction; before
+        # W16-EK this fired on pure asymmetry (retail's set was INFERRED from
+        # instruction form, ours READ from COFF) after the words had already
+        # compared equal.
         return False, ("relocated fields at different offsets: retail %s vs ours %s"
                        % (sorted(rt), sorted(ot)))
     for off in sorted(rt):
         if rt[off] is None:
-            return False, "retail field at 0x%x is a 16-bit immediate, unresolvable" % off
+            return False, ("retail field at 0x%x is relocated on our side but "
+                           "already link-patched in the image, so it is "
+                           "unresolvable" % off)
         if rt[off] != ot[off]:
             return False, ("relocation target at 0x%x: retail %s vs ours %s"
                            % (off, rt[off], ot[off]))
@@ -289,7 +380,7 @@ def main():
                          "Admitted pairs outside the set are printed as HELD BACK "
                          "and not written. Use it to install the body-proven tiers "
                          "while leaving an FT3-only (dc3-homonym-witness) or an "
-                         "FT-EMPTY (self-declared vacuous byte comparison) pair for "
+                         "FT-EMPTY (byte-identical but low-discriminating-power) pair for "
                          "a human decision -- an unproven alias lifts name_check BY "
                          "CONSTRUCTION and the `none` control cannot catch it.")
     ap.add_argument("--dc3-map", default="../dc3-decomp/orig/373307D9/ham_xbox_r.map",
@@ -332,7 +423,7 @@ def main():
                    survivor_addr=r["target_addr"], folded_map_addr=r["base_addr"],
                    survivor_fanin=r["target_fanin"])
 
-        rw, rt, err = retail.canon(sa)
+        err = retail.probe(sa)
         if err:
             rows.append({**row, "verdict": "REFUSE", "tier": None,
                          "reason": "retail survivor body unreadable: " + err})
@@ -362,6 +453,14 @@ def main():
         row["our_def"] = objs[0] + ("" if len(objs) == 1 else " (+%d identical)" % (len(objs) - 1))
         row["our_words"] = len(ow)
 
+        # Our relocation offsets drive the retail read -- see mask_word.
+        reloff = set(ot)
+        rw, rt, err = retail.canon(sa, reloff)
+        if err:
+            rows.append({**row, "verdict": "REFUSE", "tier": None,
+                         "reason": "retail survivor body unreadable: " + err})
+            continue
+
         ok, why = compare(rw, rt, ow, ot)
         row["body_evidence"] = why
         if not ok:
@@ -376,7 +475,7 @@ def main():
             tier, disc = "FT1", None
             fw, ft, ferr = None, None, None
         else:
-            fw, ft, ferr = retail.canon(fa)
+            fw, ft, ferr = retail.canon(fa, reloff)
             f_refs = retail.refs["total"][fa]
             row["retail_F_refs"] = retail.ref_note(fa)
         if fa is None:
@@ -406,8 +505,12 @@ def main():
                 continue
         if not rt:
             tier = "FT-EMPTY"
-            disc = (disc or "") + " | body carries no relocation: the fold is real but the " \
-                                  "byte comparison is vacuous"
+            disc = (disc or "") + (" | body carries no relocation, so every word was "
+                                   "compared as a FULL 32-bit literal (W16-EK) -- byte "
+                                   "identity, the complete /OPT:ICF condition. Held as a "
+                                   "separate tier for LOW DISCRIMINATING POWER, not "
+                                   "vacuity: a tiny body is shared by many distinct "
+                                   "functions and no relocation target corroborates it")
         row["tier"] = tier
         row["discredit"] = disc
         row["verdict"] = "ADMIT"
@@ -488,8 +591,10 @@ def install(groups, path):
               "symbols.txt extent -- padding or a mid-function word). FT3=it places it on a "
               "HOMONYM, a distinct function under another module that legitimately carries "
               "the same mangled name, witnessed by dc3's leaked ham_xbox_r.map. "
-              "FT-EMPTY=the body carries no relocation at all, so the fold is real but the "
-              "byte comparison is vacuous. %d folded spelling(s), %d charged name_check "
+              "FT-EMPTY=the body carries no relocation at all, so every word was compared "
+              "as a FULL 32-bit literal -- byte identity, the complete /OPT:ICF condition -- "
+              "but a tiny body is shared by many distinct functions, so it is the "
+              "lowest-DISCRIMINATING-POWER tier. %d folded spelling(s), %d charged name_check "
               "sites. Per spelling: %s"
               % (",".join(tiers), addr, rs[0]["survivor_fanin"], len(folded),
                  sum(r["sites"] for r in rs),
