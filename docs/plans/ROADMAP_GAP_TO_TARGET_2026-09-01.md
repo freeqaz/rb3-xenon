@@ -3097,3 +3097,40 @@ the `vector<BandUser*>` copy construction occurs **exactly once in the tree** �
 ⇒ installing them would have lifted `name_check` **by construction** while creating no
 byte agreement: the documented fabricated-alias integrity hazard, avoided by sizing first.
 A proof path is recorded for a future lane.
+
+### ⛔ CORRECTION — two claims in the W16-EF row are REFUTED on retail bytes (2026-09-16)
+
+**W16-EH decoded the retail bytes the W16-EF row reasoned about, and refutes two of its
+statements.** EF's row is left as written — it is a dated record and its *verdict* stands
+— but the two claims below must not be inherited, because one of them actively invites
+wrong code.
+
+**1. ⛔ "The prologues are identical but for ONE instruction" — FALSE.**
+`OnMsg(ButtonUpMsg)` and `OnMsg(ButtonDownMsg)` are not near-twins:
+
+| | ButtonUp | ButtonDown |
+|---|---|---|
+| guard | tests `> 0` before decrementing, **re-loads `0x48(this)`** | **increments unconditionally**, single load |
+| head length | 9 instructions | **5** |
+| `lwzx`/`stwx` operand order | — | **reversed** |
+| frame size | `0x80` | **`0xe0`** |
+| save range | `__savegprlr_28` | **`__savegprlr_23`** |
+| FPR saves | — | **differ** |
+
+★★★ **The consequence is not cosmetic: copying UP and flipping `--` → `++` produces WRONG
+CODE**, and that is precisely what the row's phrasing invites the next lane to do. A
+"differs by one instruction" claim is a *targeting instruction*, so its falsity costs
+real budget — this is the same failure class as the `fuzzy%`-tracks-mismatch-count
+inference that got `MaybePublish` re-briefed five times (W16-EI, two sections above).
+
+**2. ⛔ "The call site passes `this+0xe0`" — FALSE.** Retail does `lwz r3, 0xe0(r31)` — it
+**LOADS the pointer** rather than passing the address of the field. ⇒ our
+`Shuttle *mShuttle` member is **correct**. ⚠ **EF's verdict survives; EF's stated reason
+does not** — exactly the shape this roadmap keeps recording (right conclusion, wrong
+evidence), and the reason must not be reused as an oracle for a neighbouring row.
+
+**3. Construct list incomplete** — `audition_jump_forward_ms`, `audition_jump_back_ms` and
+`audition_jump_end_buffer_ms` were unnamed in the row's census.
+
+⚠ **W16-EH deliberately did NOT edit the EF row itself** — another lane's record, outside
+its staged paths. Correct. The correction is recorded here instead, by the coordinator.
