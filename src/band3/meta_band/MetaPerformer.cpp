@@ -1000,6 +1000,27 @@ void MetaPerformer::SetBandNoFail(bool b1) {
 }
 
 void MetaPerformer::SelectRandomVenue() {
+    // Retail builds all 15 of these as FUNCTION-LOCAL STATICS, not the
+    // centralized Symbols*.h globals. Proven on retail bytes: fn_82581360
+    // claims 15 bits of ONE packed guard word lbl_82DFEA44 (union 0x7FFF,
+    // popcount 15), with 15 Symbol slots at lbl_82DFEA08..EA40 and a
+    // ??0Symbol@@QAA@PBD@Z call behind each claim. MSVC emits the guard at
+    // the point of DECLARATION, which is why retail lays 12 claims down as
+    // one contiguous block before its first real call and the remaining 3
+    // inside the `if (profile)` block below -- so DECLARATION ORDER IS
+    // LOAD-BEARING (it is the guard-bit assignment order, 0x1 .. 0x4000).
+    static Symbol video_venues("video_venues");
+    static Symbol probability("probability");
+    static Symbol artist_specific_probability("artist_specific_probability");
+    static Symbol mod_auto_vocals("mod_auto_vocals");
+    static Symbol venues("venues");
+    static Symbol subway_venues("subway_venues");
+    static Symbol van_venues("van_venues");
+    static Symbol bus_venues("bus_venues");
+    static Symbol jet_venues("jet_venues");
+    static Symbol venues_video("venues_video");
+    static Symbol key_video_venues("key_video_venues");
+    static Symbol artists("artists");
     DataArray *cfg = SystemConfig(video_venues);
     cfg->FindFloat(probability);
     cfg->FindFloat(artist_specific_probability);
@@ -1020,9 +1041,13 @@ void MetaPerformer::SelectRandomVenue() {
                 FOREACH (it, mSongs) {
                     Symbol cur = *it;
                     bool b1 = false;
-                    BandSongMetadata *data = (BandSongMetadata *)TheSongMgr.Data(
-                        TheSongMgr.GetSongIDFromShortName(cur, false)
-                    );
+                    // Retail evaluates the ARGUMENT first and then re-reads
+                    // TheSongMgrPtr (and reloads its vtable) for the outer
+                    // call. Nested, MSVC hoists the outer object's vtable load
+                    // above the inner bctrl and caches it in a callee-save reg.
+                    int songID = TheSongMgr.GetSongIDFromShortName(cur, false);
+                    BandSongMetadata *data =
+                        (BandSongMetadata *)TheSongMgr.Data(songID);
                     for (int j = 1; j < artistArr->Size(); j++) {
                         if (data && streq(artistArr->Str(j), data->Artist())) {
                             b1 = true;
@@ -1066,6 +1091,9 @@ void MetaPerformer::SelectRandomVenue() {
     }
     Symbol venueSym = subway_venues;
     if (profile) {
+        static Symbol campaignlevel_van("campaignlevel_van");
+        static Symbol campaignlevel_bus("campaignlevel_bus");
+        static Symbol campaignlevel_jet("campaignlevel_jet");
         LocalBandUser *user = profile->GetAssociatedLocalBandUser();
         MILO_ASSERT(user, 0x633);
         if (TheCampaign->HasReachedCampaignLevel(user, campaignlevel_jet)) {
