@@ -247,7 +247,7 @@ UNPOOL_DATA
 void NetSession::Disconnect() {
     if (mState == kRequestingNewUser) {
         SetState(kIdle);
-        static AddUserResultMsg failureMsg(0);
+        static AddUserResultMsg failureMsg(false);
         Handle(failureMsg, false);
     }
     if (mState == kRequestingJoin) {
@@ -547,7 +547,7 @@ void NetSession::AddLocalUser(LocalUser *newUser) {
         AddLocalToSession(newUser);
         NewUserMsg msg(newUser);
         SendToAllClientsExcept(msg, kReliable, -1);
-        static AddUserResultMsg successMsg(1);
+        static AddUserResultMsg successMsg(true);
         Handle(successMsg, false);
     } else {
         SetState(kRequestingNewUser);
@@ -598,7 +598,7 @@ bool NetSession::OnMsg(const AddUserResponseMsg &msg) {
         AddLocalToSession(user);
     }
     SetState(kIdle);
-    static AddUserResultMsg result(1);
+    static AddUserResultMsg result(true);
     result[0] = msg.mSuccess;
     Handle(result, false);
     return true;
