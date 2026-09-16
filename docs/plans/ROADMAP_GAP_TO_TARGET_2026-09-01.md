@@ -4572,3 +4572,63 @@ matches code in those 86 TUs that dispatches virtually on it (the fix is a
 conflicts" as ODR bugs** — they are mostly artifacts of MSVC printing class
 names without namespace qualification (`TourProgress`'s was a parser phantom
 member named `pragma`).
+
+## 7q. EXECUTION LOG — 2026-09-16 coordinator session (lanes FQ, FV, FW, FT, FU; FX dispatched)
+
+**Five landings, all pushed, all with 0 attribution trailers.** Every one carried a
+written pre-registration merged *before* its build, and every one was measured
+against a baseline re-read off `report.json` rather than inherited.
+
+| lane | merge | measured |
+|---|---|---|
+| **W16-FQ** | `a3c23166` | **Δ0 bytes by design.** `?ComputeElbowPullAndQuat@BandIKEffector@@` fuzzy **0 → 92.5**; aggregate fuzzy 50.378403 → 50.380030. A row at 92.5 banks **exactly zero** — `matched_code` is all-or-nothing per row. Also corrected W16-FB's classifier (see §7q.2) and re-derived its census **downward**, 43 rows/5,684 B → 50 rows/4,944 B. |
+| **W16-FV** | `9b2486f8` | **Δ0 on every metric key, certified by two NON-metric instruments.** Withdrew a refuted membership from alias group 859 (`0x82b8c8c8`). Validator **rc=1 → rc=0** (1 contradicted → 0, total held at 1658, nothing pruned) and objdiff's loaded equivalence entries **6102 → 6101**. |
+| **W16-FW** | `54aa88f5`, `e27a0f31` | Docs only — a candidate screen that **killed or demoted 7 pending candidates**. |
+| **W16-FT** | `f5ee976a` | **+12 fns / +1,688 B.** The four "PracticeSection" virtuals are a different class: `CharTransCopy`. New unit 24 rows/1,948 B in, `PracticeSection` 260 B out. |
+| **W16-FU** | `c31808c1` | **+46 fns / +9,680 B.** `??0BandSongMetadata@@…` 42.4826 → **100** (7,948 B), from a ~700-instruction UGC sub-genre remap reconstructed with **no oracle in either repo**. |
+
+**State now (measured at `c31808c1`, not inherited):**
+
+```
+matched_functions  44,098      matched_code   4,162,044
+matched_code_pct   40.616930   fuzzy          50.446686
+masked_equal       23,289      honest            20,809
+total_code     10,247,068      total_functions   69,240
+units all-rows mpn==100: 194   units all-rows fuzzy==100: 172
+matched_code = 66.01% of the 61.535% reachable ceiling (6,305,556 B), up from 65.64%
+```
+
+★ **Session net +58 functions / +11,368 B — but only +15 of those functions are
+HONEST.** The other **+43 are byte-signature DISCLOSURE** (`masked_equal`
+23,246 → 23,289). **74% of the session's headline function gain is disclosure,
+not new matching.** Any recap quoting "+58 functions" without that split
+overstates the work by roughly 4×.
+
+### 7q.1 The alias file reaches the scoring path through a ninja edge — and the entry count is the instrument
+
+`build.ninja` declares `build build/45410914/icf_aliases.map: icf_alias_map | tools/gen_symbol_alias_map.py scripts/symbol_aliases.json`, and `objdiff.json`'s `map_file` is exactly that path. `objdiff.json`'s units carry **no** symbol equivalences. So an edit to `scripts/symbol_aliases.json` is consumed by the grading report, and the build log's `GEN ICF-ALIAS MAP … N symbol lines` plus objdiff's `INFO Loaded N ICF equivalence entries` is a **quantitative, non-metric proof the edit reached the ruler** rather than merely the gate.
+
+Measured in **both directions**, which is what makes it an instrument rather than a coincidence: FV withdrew one membership and read **6102 → 6101**; FU added one and read **6101 → 6102** (rendered map 8532 → 8533 lines). ⇒ **A Δ0 lane's discriminating instrument must not be the metric.**
+
+### 7q.2 `ALIAS_SUSPECT` fired on FU, and the metric cannot clear it — by construction
+
+FU's map-only commit lifted `name_check` **+8,328 B** with the `none` control **flat**. Per CLAUDE.md that is *also* exactly what a **fabricated** alias produces, so neither the alert nor the flat control adjudicates anything. The clearance is retail bytes, and the coordinator **re-derived all four load-bearing claims independently** rather than accepting the lane's:
+
+1. retail `0x825A0B28` reads the `+0x9c` member back as a float — `addi r3, r24, 0x9c ; bl fn_823658F8 ; stfs f31, 0(r3)` — read keyed on `.fn fn_825A0B28`, **never** the synthetic `.s` address column;
+2. the map **contradicts itself** on that one member: `0x823658f8` carries the float `operator[]` spelling, `0x8255d480` the int ctor spelling;
+3. the float ctor spelling is at **no** address in the map (so nothing is contradicted), and there is **no int-valued `operator[]` at all** — the "int" reading rests on exactly one entry, the fold-arbitrary survivor;
+4. **a witness the lane did not cite**: the float-valued hash_map **destructor** is *already* an accepted fold member.
+
+Deliberately **not** rested on our-side COMDAT congruence — that is the ALIAS-REPAIR 2026-08-19 predicate lane W16-CU reversed on a neighbouring group.
+
+### 7q.3 A rebase gate must key on hunk CONTENT, not on positional metadata
+
+FU's first landing attempt **aborted at gate A**, and the gate was wrong, not the branch. FU's base predated FV, which had inserted 7 lines earlier in `scripts/symbol_aliases.json`; comparing raw `git diff` output therefore flagged the blob `index` hashes and the `@@ -87106 → -87113` line numbers as a difference while the five `+`/`-` content lines were byte-identical. **Byte-exactness is the right gate only for files the destination did not touch.** Where it did, the invariant is the hunk's added/removed *content*. The gate **failed closed** and left main untouched at `f5ee976a`, dirty 0 — which is the behaviour to preserve. The replacement comparator also asserts the expected line count so it cannot pass vacuously on an empty diff.
+
+### 7q.4 Open, and deliberately not done
+
+- **W16-FX dispatched** (Opus) on `?ParseDataResultsIntoSetlists@MusicLibraryNetSetlists@@` (1,968 B target vs our **1,784 B** base @ fuzzy 81.93). Priced from the charged-site list, not a mismatch count. Evidence handed over: retail makes **23/17/9** `String`/`GetDataResultValue`/`Str` calls against our **21/15/7** ⇒ we are missing **two whole field parses**; retail allocates via `??2CriticalSection@@SAPAXI@Z` at 4 sites where we emit global `operator new`; retail calls `?SetXUID@OnlineID@@` where we call `CanSeeUserCreatedContent`/`GetOwnerOnlineID`. ★ **Our source is VERBATIM the rb3-Wii oracle here, and the oracle is a DEV build** — proven, not assumed: our `mDataResults.Print(TheDebug)` shows as **base-only** in the call diff, and the log string `"Setlists from net:"` is **absent from retail** while `art_url`/`seconds_left`/`valid_instr` are each present once (the control that makes the absence meaningful).
+- **The alias validator moved 1408/249 → 1407/250 (map-consistent/tolerated) after FT landed, and the mover was NOT identified.** Benign — 0 contradicted, 1658 total intact — and recorded as unexplained rather than smoothed over. A group drifting into `tolerated` is the `STALE_SPELLING` shape, which must **never** be pruned (a prior prune cost +94,616 B to reverse).
+- **FT residuals**: the 48 B EH funclet `fn_823C7B58` (mpn 100 / fuzzy 99.5833, `masked_equal`) — it is simultaneously the +1 `masked_equal` and the reason FT's 24 matched rows bank only 23 rows of bytes; `REGISTER_OBJ_FACTORY` in `Char.cpp`; `fn_823C8128`'s owner; whether the DC3-era `PracticeSection` still in the tree is the right shape for RB3.
+- **FU residual**: the stale header comment claiming the `BandSongMetadata` ctor is `fn_82584A08`. The real address is **`0x825A0B28`**, and `0x82584A08` is absent from the map entirely.
+- **Not re-derived**: FU's ~700-instruction remap decode was accepted on its self-consistency (every decoded group came out alphabetically ordered, which a mis-decode would not produce) plus the absence of any oracle to check it against.
