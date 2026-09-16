@@ -125,3 +125,54 @@ Artifacts from the reverted attempt, if anyone builds that:
   a small, real population and are *not* covered by this closure — but at 391
   live memberships across 17 groups they are an ordinary alias-audit question,
   not the 9,393-row lever this doc closes.
+
+---
+
+## Appendix (coordinator, 2026-09-16, later the same day) — WHOLE-LEDGER COROLLARY
+
+**This doc closed ONE class. A second instrument, run independently while three
+lanes were in flight, closes the ENTIRE withdrawal ledger.** I came back to this
+vein anyway — I was the fourth pickup this doc was written to stop — and the
+measurement is recorded here rather than in a new file so the two cannot drift.
+
+**Instrument:** survivor-keyed, deduplicated liveness over every group in
+`scripts/symbol_aliases.json` carrying a `withdrawn` record, against the current
+`report.json`. Keyed on the group's **survivor** (the name a report row actually
+carries), *not* on the withdrawn spelling.
+
+| measure | value |
+|---|---:|
+| groups with a withdrawn record | 503 |
+| distinct survivors (deduplicated) | 503 |
+| **STILL LIVE (survivor row < 100 fuzzy)** | **33, worth 3,020 B** |
+| DEAD (survivor already at fuzzy 100) | 433, was 54,784 B |
+| UNRESOLVED | 37 (7.4%) |
+
+⇒ **~95% drained by bytes.** The largest live survivor is **164 B**, and several
+top "live" rows sit at **fuzzy 0.0000**, i.e. unpaired/unpairable — not
+forgiveness candidates at all. **Do not fund a lane on the withdrawal ledger in
+any class, not just this one.**
+
+⛔ **Two instrument failures on the coordinator's side, both worth more than the
+result.**
+
+1. **A first pass keyed on the withdrawn SPELLING returned 9,766 UNKNOWN against
+   338 resolved — 96.7% unresolved — and I nearly reported its 136-live / 14,572 B
+   split as a sizing.** It is not a sizing; it was computed on 3.3% of the data,
+   with no deduplication (one 116 B row appeared ten times). The cause is
+   conceptual, not clerical: **a withdrawn spelling is BY DEFINITION a name the
+   row does not carry**, so looking it up among report rows asks the wrong
+   question. The 7.4% unresolved figure above is quoted precisely because the
+   96.7% one disqualified its own pass.
+2. **That same pass used the fallback chain `reason or class or why`** — the
+   exact wrong-key family §0 of this doc already warns about. The warning was in
+   the file I was standing in and I reproduced the error anyway. ⇒ **§0's
+   instrument note is not a historical footnote; re-read it before keying any
+   census on this artifact.**
+
+★ **Why the byte figure above must NOT be reused as a sizing of alias
+forgiveness:** ALIASAUDIT-1 established that this mechanism is sized by
+**ABLATION, never by a name-keyed census** — the name-keyed census booked its own
+blindness as risk. The table above is a **liveness** measurement ("is this
+group's row still open?"), which is a legitimate question for a name key. Pricing
+the bytes is not.
