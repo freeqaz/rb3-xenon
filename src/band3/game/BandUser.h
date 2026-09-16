@@ -351,7 +351,14 @@ int GetPadNum() const { return mData->Int(2); }
 END_MESSAGE
 
 DECLARE_MESSAGE(AddUserResultMsg, "add_user_result")
-AddUserResultMsg(int i) : Message(Type(), i) {}
+// RB3-360 retail's 1-arg ctor takes a BOOL, not an int.  The body at
+// 0x823E1B40 opens with `clrlwi r11, r4, 24` -- an 8-bit zero-extend that a
+// bool parameter produces and an int parameter does not (our own
+// SpeechEnableMsg(bool) emits exactly that word at the same slot, while our
+// AddUserResultMsg(int) emitted `li r11, 0` and stored r4 straight through).
+// That address was mislabelled ??0SpeechEnableMsg in target_symbol_map.json;
+// its Type() accessor interns the retail .rdata string "add_user_result".
+AddUserResultMsg(bool i) : Message(Type(), i) {}
 AddUserResultMsg(int i, User *u) : Message(Type(), i, u) {}
 int GetResult() const { return mData->Int(2); }
 END_MESSAGE
