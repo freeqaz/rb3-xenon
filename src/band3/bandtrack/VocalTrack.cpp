@@ -1851,8 +1851,7 @@ void VocalTrack::UpdateScrolling(float ms) {
                         shifts.push_back(LyricShift(shiftStart, shiftX, fast));
                     }
                     int *curDeployPtr = &mNextDeployZone[std::min(part, 1)];
-                    if (*curDeployPtr < freestyles.size()
-                        && lyric->mDeployIdx > -1) {
+                    if (lyric->mDeployIdx > -1) {
                         while (*curDeployPtr <= lyric->mDeployIdx) {
                             int deployDelta = lyric->mDeployIdx - *curDeployPtr;
                             std::pair<float, float> &freestyle =
