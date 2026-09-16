@@ -654,8 +654,14 @@ DataNode UIFontImporter::OnForgetGened(DataArray *) {
     return 0;
 }
 
+// Retail calls ImportSettingsFromFont DIRECTLY here, not the AttachImporterToFont
+// wrapper the rb3-Wii dev oracle shows: the charged `bl` at index 10 of this row
+// names ?ImportSettingsFromFont@UIFontImporter@@QAAXPAVRndFont@@@Z, and our body of
+// THAT name is byte-exact against retail 0x82818840 (1036 B, fuzzy 100).  Retail
+// bytes outrank the oracle.  AttachImporterToFont is left defined (now uncalled) so
+// the native link is unaffected.  Lane W16-EC.
 DataNode UIFontImporter::OnAttachToImportFont(DataArray *) {
-    AttachImporterToFont(mFontToImportFrom);
+    ImportSettingsFromFont(mFontToImportFrom);
     return 0;
 }
 
