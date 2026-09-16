@@ -1712,11 +1712,14 @@ DataNode OvershellSlot::OnMsg(const ButtonDownMsg &msg) {
     MILO_ASSERT(pUser && pUser->IsLocal(), 0xBC1);
     LocalBandUser *lUser = pUser->GetLocalBandUser();
     static Message btnMsg("button_pulse");
-    btnMsg.SetType(
-        GetState()->GetView() == join || GetState()->GetView() == finding
-            ? "button_pulse_unjoined"
-            : "button_pulse_joined"
-    );
+    const char *pulseType;
+    if (GetState()->GetView() == join)
+        pulseType = "button_pulse_unjoined";
+    else if (GetState()->GetView() == finding)
+        pulseType = "button_pulse_unjoined";
+    else
+        pulseType = "button_pulse_joined";
+    btnMsg.SetType(pulseType);
 
     if (!TheInputMgr->IsValidButtonForShell(msg.GetButton(), lUser)) {
         return 1;
