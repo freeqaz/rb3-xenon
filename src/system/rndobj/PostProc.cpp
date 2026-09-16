@@ -406,8 +406,24 @@ void RndPostProc::Load(BinStream &bs) {
         MILO_ASSERT(dRev == 3, 0x2A8);
         bool b70;
         int i5c;
+        // W16-FH: the discarded float is spelled as the .x of a second Vector3
+        // (DC3's spelling). As a plain `float` it sorts into the scalar bank at
+        // 0x58 and pushes v40 to 0x70 (W16-FF: 7 charged sites, 99.854); hosted
+        // in a Vector3 it moves to the 16-aligned bank and the scalar bank then
+        // matches retail exactly (5 charged sites, 99.896). What remains is
+        // measured, not guessed: retail keeps a 4-BYTE object at 0x70 ABOVE the
+        // Vector3 at 0x60 (its frame is 0xa0 = roundup16(0x74 + 0x28 save area);
+        // ours is 0xb0 because v40's 16-byte slot ends at 0x80). On cl 10224 the
+        // aligned bank puts the zeroed Vector3 LOW whichever is declared first
+        // (E1/E2 byte-identical -- declaration order is inert, as DC3 found on
+        // 11886), and an inlined helper's `float` local is sorted into the
+        // scalar bank like a named one with its zero-store NOT hoisted above
+        // the preceding call (E3, 71.0). Whatever retail's object is, it is
+        // not a named scalar, a Vector3 member, or an inlined temp.
+        Vector3 v30;
+        float &f30 = v30.x;
+        f30 = 0;
         Vector3 v40;
-        float f30 = 0;
         BinStream &s = bs >> b70;
         s >> v40 >> f30;
         s >> i5c;
