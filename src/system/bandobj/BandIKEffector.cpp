@@ -344,31 +344,22 @@ END_CUSTOM_PROPSYNC
 void BandIKEffector::ComputeElbowPullAndQuat(
     QuatXfm &outQuat, const Transform &shoulderXfm, const Vector3 &elbowTarget
 ) {
-    float dx = elbowTarget.x - shoulderXfm.v.x;
-    float dz = elbowTarget.z - shoulderXfm.v.z;
     Vector3 localElbow;
+    MultiplyTranspose(shoulderXfm, elbowTarget, localElbow);
+
+    const Vector3 &armVec = mEffector->TransParent()->mLocalXfm.v;
+    MakeRotQuat(armVec, localElbow, outQuat.q);
+
     float dy = elbowTarget.y - shoulderXfm.v.y;
-
-    localElbow.z = shoulderXfm.m.z.z * dz + (shoulderXfm.m.z.y * dy + shoulderXfm.m.z.x * dx);
-    localElbow.y = shoulderXfm.m.y.z * dz + (shoulderXfm.m.y.y * dy + shoulderXfm.m.y.x * dx);
-    localElbow.x = shoulderXfm.m.x.z * dz + (shoulderXfm.m.x.y * dy + shoulderXfm.m.x.x * dx);
-
-    RndTransformable *parent = mEffector->TransParent();
-    QuatXfm &_ref0 = outQuat;
-    MakeRotQuat(parent->mLocalXfm.v, localElbow, _ref0.q);
-
-    float armLen = parent->mLocalXfm.v.x;
-    _ref0.v.x = elbowTarget.x - shoulderXfm.v.x;
-    _ref0.v.y = elbowTarget.y - shoulderXfm.v.y;
-    _ref0.v.z = elbowTarget.z - shoulderXfm.v.z;
-
-    float len = (float)sqrt(
-        _ref0.v.x * _ref0.v.x + _ref0.v.y * _ref0.v.y + _ref0.v.z * _ref0.v.z
-    );
+    float armLen = armVec.x;
+    float dx = elbowTarget.x - shoulderXfm.v.x;
+    outQuat.v.x = dx;
+    float dz = elbowTarget.z - shoulderXfm.v.z;
+    float len = (float)sqrt(dy * dy + outQuat.v.x * outQuat.v.x + dz * dz);
     float scale = 1.0f - armLen / len;
-    _ref0.v.x *= scale;
-    _ref0.v.y *= scale;
-    _ref0.v.z *= scale;
+    outQuat.v.x *= scale;
+    outQuat.v.y = dy * scale;
+    outQuat.v.z = dz * scale;
 }
 
 void BandIKEffector::ComputeHandPullAndQuat(

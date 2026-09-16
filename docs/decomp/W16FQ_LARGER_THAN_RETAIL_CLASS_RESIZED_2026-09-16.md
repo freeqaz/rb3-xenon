@@ -171,9 +171,14 @@ plus assigning **only** `outQuat.v.x` early (retail stores it and reloads it at
 idx 32; `dy`/`dz` stay in registers until the final scale), and a named `armLen`
 local — retail loads `armVec.x` early, which a named local reproduces.
 
-**Result: fuzzy 0.000000 → 92.5, mpn 0 → 95.108696, and our COMDAT went 288 B →
-184 B, exactly retail's size.** Instructions 0–17 — the entire
+**Result: fuzzy 0.000000 → 92.5, mpn 4.2391305 → 95.108696, and our COMDAT went
+288 B → 180 B against a 184 B target.** Instructions 0–17 — the entire
 `MultiplyTranspose` + `MakeRotQuat` prologue — are byte-exact.
+
+⚠ **Correction to my own draft:** I first wrote "180 B → exactly retail's size".
+It is **180 vs 184**, and the missing 4 bytes are not slack — they are precisely
+the one instruction we fail to emit, `lfs f11, 0x0(r31)` at idx 32, retail's
+reload of `outQuat.v.x`. The size gap and the residual are the same fact.
 
 ### Two measured negatives on the residual
 
@@ -193,8 +198,7 @@ f10↔f9 / f11↔f13), which the standing directive defers rather than grinds.
 ## 5. PRE-REGISTERED PREDICTIONS (written and committed BEFORE the A/B)
 
 - **P1 (row).** `?ComputeElbowPullAndQuat@BandIKEffector@@…` reads
-  `fuzzy = 92.5`, `mpn = 95.108696`, base size **184** (== target) in leg B, vs
-  `fuzzy = 0.0`, base size 288 in leg A.
+  `fuzzy = 92.5`, `mpn = 95.108696` in leg B, vs `fuzzy = 0.0` in leg A.
 - **P2 (metric — the modal outcome).** **Δmatched_code = exactly 0** and
   **Δmatched_functions = exactly 0.** `matched_code` is all-or-nothing per row
   and 92.5 < 100; `matched_functions` counts `mpn == 100` and 95.1 < 100. This
@@ -234,3 +238,36 @@ f10↔f9 / f11↔f13), which the standing directive defers rather than grinds.
   (`HasClip@CharClipGroup`'s retail callee) and `fn_822C12F8` (`Normalize`'s) are
   likewise left anonymous.
 - **No permuter run**, per standing directive.
+
+## 7. MEASURED — the authoritative whole-binary A/B
+
+`tools/ab_measure.py --from-dirty`, both legs settled to zero work, report cache
+wiped per read, ruler `name_check` resolved from `objdiff.json`, objdiff-cli
+pinned stable across both legs (`sha256:c1b7d95240a35cd6`).
+
+```
+leg A: matched=44034 masked=23245 honest=20789 code%=40.488968
+leg B: matched=44034 masked=23245 honest=20789 code%=40.488968
+Δmatched=+0  Δmasked_equal=+0  Δhonest=+0  Δcode_bytes=+0  Δcode%=+0.000000pp
+Δfuzzy=+0.001627pp  (50.361860 -> 50.363487)
+units at 100%: 191 -> 191 (mpn), 171 -> 171 (all-rows-fuzzy)
+```
+
+| prediction | outcome |
+|---|---|
+| **P1** row moves to fuzzy 92.5 / mpn 95.108696 | ✅ **CONFIRMED** — legA `fuzzy 0.0 / mpn 4.2391305` → legB `fuzzy 92.5 / mpn 95.108696`. ⚠ My P1 wording said "mpn 0" in leg A; the measured leg-A value was **4.2391305**, not 0. The leg-B figure was exact. |
+| **P2** Δmatched_code = 0 **and** Δmatched_functions = 0 | ✅ **CONFIRMED EXACTLY.** Both +0. |
+| **P3** denominator unmoved | ✅ **CONFIRMED** — `total_code` 10,247,068 and `total_functions` 69,240 byte-identical on both legs. |
+| **P4** `ComputeHandPullAndQuat` unmoved | ✅ **CONFIRMED** — `fuzzy 89.1982 / mpn 90.00901` on both legs; unit `matched_code` 7,056 and `matched_functions` 94 on both legs. The edit's reach is exactly the one function. |
+| **P5** outcome ∈ {0, +184, negative} | ✅ landed on the **predicted modal value, 0**. No row crossed; nothing regressed. |
+
+**This lane banks 0 bytes and 0 functions, and that was the prediction.** The
+value delivered is (a) the census and the contamination finding, and (b) a row
+that went from an illegible 68-mismatch wall at fuzzy 0 to an 18-mismatch
+single-root-cause residual at 92.5 with a body the right size — the same
+"legibility, not bytes" shape W16-FN measured for its naming increment, and the
+shape W16-EW found understates its own value one commit later.
+
+⚠ **Report the movement in the units it was measured in:** this is **Δfuzzy
++0.001627 pp**, NOT bytes. `matched_code` did not move and I am not claiming it
+did.
