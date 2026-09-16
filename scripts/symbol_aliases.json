@@ -83118,11 +83118,6 @@
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
     },
     {
-     "spelling": "?insert@?$list@PAVContent@@V?$StlNodeAlloc@PAVContent@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVContent@@U?$_Nonconst_traits@PAVContent@@@stlpmtx_std@@@2@U32@ABQAVContent@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
      "spelling": "?insert@?$list@PAVDataArray@@V?$StlNodeAlloc@PAVDataArray@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVDataArray@@U?$_Nonconst_traits@PAVDataArray@@@stlpmtx_std@@@2@U32@ABQAVDataArray@@@Z",
      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
@@ -83524,6 +83519,18 @@
      "why_the_original_premise_failed": "W16-Y 2026-09-14: the withdrawal was recorded against the FABRICATED CLOSURE (class FABRICATED_CLOSURE_NOT_PARTITION, lane ALIAS-CONSOLIDATION 2026-08-19), whose folded list was shared byte-identically across 10 distinct retail addresses and was therefore withdrawn wholesale rather than adjudicated per membership. This membership was LATER re-derived independently by tools/comdat_fold_gate.py at evidence tier CF2 -- our compiled COMDAT compared against the RETAIL body at 0x823d14c0 with every branch relocation resolved through target_symbol_map.json and NAME-compared, not masked. Retail bytes outrank a closure-shaped withdrawal, so the live-and-withdrawn contradiction is resolved in favour of the LIVE membership, exactly as the group at 0x8227d2c8 resolved ??$MakeString@H@@YAPBDPBDH@Z (lane W9-D). Corroborating retail reading: the body at 0x823d14c0 calls _M_create_node@list<CharPollableSorter::Dep*> @0x82520150, which does `li r3,12` = 8 + sizeof(void*) -- a POINTER-element node, which is what every one of this group's four folded spellings is.",
      "withdrawal_record_superseded": {
       "spelling": "?insert@?$list@PADV?$StlNodeAlloc@PAD@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PADU?$_Nonconst_traits@PAD@stlpmtx_std@@@2@U32@ABQAD@Z",
+      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+     }
+    },
+    {
+     "spelling": "?insert@?$list@PAVContent@@V?$StlNodeAlloc@PAVContent@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVContent@@U?$_Nonconst_traits@PAVContent@@@stlpmtx_std@@@2@U32@ABQAVContent@@@Z",
+     "lane": "W16-FM landing audit 2026-09-16",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION",
+     "verdict": "FOLD -- LIVE membership upheld; CF5 retail-byte re-derivation at 0x823d14c0 outranks the closure-shaped withdrawal",
+     "why_the_original_premise_failed": "W16-FM installed this membership at CF5 but left the ALIAS-CONSOLIDATION 2026-08-19 withdrawal live, so the ledger asserted the same membership was simultaneously proven and fabricated and tools/alias_withdrawal_audit.py's live-and-withdrawn count went 4 -> 5. The withdrawal was recorded against the FABRICATED CLOSURE wholesale -- one folded list shared byte-identically across 10 distinct retail addresses -- and was never adjudicated per membership, exactly as for the P6AXXZ and PAD spellings this group already restored (lane W16-Y 2026-09-14). tools/comdat_fold_gate.py re-derived THIS membership independently: our compiled COMDAT for list<Content*>::insert is 25 words, 24 compare as FULL 32-bit values, and the single relocated branch destination resolves through target_symbol_map.json and is name-equal. Confirmed independently at landing on retail bytes: the body at 0x823d14c0 (map: insert<list<Hmx::Object*>>) branches at +0x24 to 0x82520150 (map: _M_create_node<list<Dep<CharPollableSorter>*>>) -- read off build/45410914/asm/CharClipSet.s keyed on the `.fn fn_823D14C0` symbol, NEVER the synthetic address column. A list<Hmx::Object*>::insert calling a list<Dep<CharPollableSorter>*>::_M_create_node is impossible under any typed reading and is precisely the ICF signature; every folded spelling here is a POINTER-element list, whose node is `li r3,12` = 8 + sizeof(void*). And our element type is not the wrong one: class Content has NO base class (src/system/os/ContentMgr.h:13) and class RootContent : public Content (line 50), so list<Hmx::Object*> cannot hold the RootContent* that XboxContentMgr::StartRefresh pushes.",
+     "withdrawal_record_superseded": {
+      "spelling": "?insert@?$list@PAVContent@@V?$StlNodeAlloc@PAVContent@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVContent@@U?$_Nonconst_traits@PAVContent@@@stlpmtx_std@@@2@U32@ABQAVContent@@@Z",
       "lane": "ALIAS-CONSOLIDATION 2026-08-19",
       "class": "FABRICATED_CLOSURE_NOT_PARTITION"
      }
