@@ -1447,8 +1447,9 @@ void VocalTrack::UpdateScrolling(float ms) {
             ? mDir->Find<RndGroup>("lyrics.grp", true)
             : mDir->Find<RndGroup>("lyrics_harmony.grp", true);
         bool staticLyrics = !IsScrolling();
-        VocalNoteList *altNotes =
-            (!lead && isolated < 1) ? GetVocalNoteList(2) : NULL;
+        VocalNoteList *altNotes = NULL;
+        if (!lead && isolated < 1)
+            altNotes = GetVocalNoteList(2);
         ObjPtr<RndTransformable> *scrollerPtr = !staticLyrics
             ? &mDir->mScroller
             : (lead ? &mDir->mLeadLyricScroller
