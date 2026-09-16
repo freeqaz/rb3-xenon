@@ -292,3 +292,62 @@ unmoved. The `+600 B` of `matched_code` is real and is the number to quote.
 `source` in the patch, default-UP/none-FLAT is also the wrong-callee-fix
 signature, so it cannot adjudicate an alias. No alias was installed, so nothing
 rests on it.
+
+---
+
+## ⚠ COORDINATOR ADJUDICATION (appended 2026-09-16) — §5's "surprise" does NOT contradict CLAUDE.md
+
+Correcting forward, not rewriting: **§5's measurement stands and its attribution
+does not.** This section exists so the next lane does not act on the attribution
+— specifically, so nobody "fixes" `CLAUDE.md` on the strength of it.
+
+**What CLAUDE.md actually claims**, quoted exactly from the line §5 cites:
+
+> declaration order controls **stack slots**; it is measured *inert* for
+> **register-only** swaps (12+ **byte-identical** hand variants across 4
+> functions, two zero-gain beam sweeps). Registers follow **liveness** and
+> **scheduling**.
+
+Three scoped clauses, not one general law:
+
+1. declaration order **does** control **stack slots** — asserted, not denied;
+2. it is inert for **register-only** swaps, evidenced by variants that came out
+   **byte-identical**, i.e. nothing moved *at all*;
+3. registers move with **liveness** and **scheduling**.
+
+**Now read §5's three variants against that.** Neither is a register-only swap:
+
+| §5 variant | what it actually changes | which clause predicts movement |
+|---|---|---|
+| `setlist` hoisted to the top of the loop body | its **live range** — declared once outside the `switch` instead of inside | clause 3 (**liveness**) |
+| `DataResult &result` before `DataNode node` | the relative order of a **stack object** (`DataNode node`) | clause 1 (**stack slots**) |
+
+⇒ **Both movements are predicted by the doc, through mechanisms the doc names.**
+The 1.29 pp spread is real, reproducible and well-measured (one variable at a
+time, full builds, `report.json` read each time — better rigour than most
+negative results get). What does not follow is "declaration order moved
+**register assignment** here": §5 never isolated registers from slots or from
+liveness, and the two candidate mechanisms both predict a non-zero spread.
+
+To actually contradict clause 2 you would need variants that are **identical in
+stack layout and identical in liveness** and still differ in register
+assignment — which is what "byte-identical hand variants" was testing, and what
+§5 did not construct.
+
+★ **This is the house pattern `a reproducing count is NOT evidence for its
+mechanism`** (`project_one_sided_instrument_error_invisible_to_two_sided_control`,
+and the "count right, cause wrong" rule). A real effect plus the nearest-to-hand
+explanation is how a doc gets corrected in the wrong direction.
+
+**Standing guidance is UNCHANGED, and §5's own practical conclusion survives
+intact** — it was right about what to do and wrong about why:
+
+- Declaration order is worth trying on **frame-slot** charges (clause 1). It is
+  the aimed lever there.
+- Do **not** reach for it to force a **register** swap. Read
+  `docs/decomp/patterns/fixable-liveness.md` and change **liveness** instead.
+- Do not expect it to pay: **three variants, zero gain**, consistent with every
+  prior sweep.
+
+**No edit to `CLAUDE.md` is warranted, and the pending item to make one is
+CLOSED.** Reopen it only with a variant pair that holds slots and liveness fixed.
