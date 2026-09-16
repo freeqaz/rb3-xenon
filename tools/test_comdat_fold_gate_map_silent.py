@@ -110,7 +110,12 @@ def run_unit():
 
 
 def gate(pairs):
-    """Run the real gate over `pairs`; return {folded: row}."""
+    """Run the real gate over `pairs`; return {(survivor, folded): row}.
+
+    Keyed on the PAIR, not on the folded spelling alone, because the
+    cross-pairing control below submits one spelling against two different
+    survivors and a folded-only key would silently drop one of them.
+    """
     wl = {"generated_by": "test", "build": "45410914",
           "totals": {"pairs": len(pairs)}, "pairs": pairs}
     with tempfile.TemporaryDirectory() as d:
@@ -124,7 +129,7 @@ def gate(pairs):
             print(r.stdout[-2000:], r.stderr[-2000:])
             return None
         with open(outp) as f:
-            return {x["folded"]: x for x in json.load(f)["pairs"]}
+            return {(x["survivor"], x["folded"]): x for x in json.load(f)["pairs"]}
 
 
 def pair(S, sa, F, base_addr=None):
@@ -155,27 +160,39 @@ def run_integration():
     F_LDR = "??3Loader@@SAXPAX@Z"              # map places it at 0x823f4698
 
     got = gate([pair(S_CN, "0x82520150", F_CN),
-                pair(S_INS, "0x823d14c0", F_INS),
+                pair(S_INS, "0x823d14c0", F_CN),
                 pair(S_LDR, "0x8240ddb0", F_LDR)])
     if got is None:
         check("gate ran", False, "non-zero exit")
         return
 
-    r = got.get(F_CN, {})
+    r = got.get((S_CN, F_CN), {})
     check("REAL map-silent pair ADMITs at CF5 (not a refuse-all gate)",
           r.get("verdict") == "ADMIT" and r.get("tier") == "CF5",
           "verdict=%s tier=%s" % (r.get("verdict"), r.get("tier")))
     check("  ... on STAGE-1 body evidence, full 32-bit words",
           "compared as FULL 32-bit values" in (r.get("body_evidence") or ""))
 
-    r = got.get(F_INS, {})
-    check("stage-1 mismatch still REFUSES before CF5 is reached",
+    # CROSS-PAIRING CONTROL.  The SAME spelling that legitimately admits at
+    # 0x82520150 two lines above is resubmitted against the WRONG survivor
+    # 0x823d14c0.  Our COMDAT is 64 B and that body is 100 B, so stage 1 fails
+    # on size -- a mismatch NO amount of alias closure can ever rescue, because
+    # closure only affects relocation-NAME comparison.  That is what makes this
+    # fixture state-independent, and it is the property the previous fixture
+    # lacked: it used insert<Content*>'s then-failing stage 1, which PASSED as
+    # soon as this lane installed the inner _M_create_node<Content*> fold and
+    # the fixpoint closed -- flipping the test red for a CORRECT gate change.
+    # Because the only thing differing between the two submissions is the
+    # survivor, an ADMIT here would prove the gate keys on the NAME rather than
+    # on the BODY, which is the precise failure CF5 must not have.
+    r = got.get((S_INS, F_CN), {})
+    check("stage-1 mismatch still REFUSES before CF5 is reached (cross-paired)",
           r.get("verdict") == "REFUSE" and r.get("tier") is None
           and "not the retail body" in (r.get("reason") or ""),
-          "verdict=%s" % (r.get("verdict"),))
+          "verdict=%s reason=%s" % (r.get("verdict"), (r.get("reason") or "")[:60]))
 
     # a MAP-RESIDENT spelling submitted with the address dropped
-    r = got.get(F_LDR, {})
+    r = got.get((S_LDR, F_LDR), {})
     check("map-RESIDENT spelling submitted as map-silent is REFUSED (laundering)",
           r.get("verdict") == "REFUSE" and "DOES name" in (r.get("reason") or ""),
           "verdict=%s reason=%s" % (r.get("verdict"), (r.get("reason") or "")[:70]))
