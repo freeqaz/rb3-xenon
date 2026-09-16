@@ -326,7 +326,9 @@ void NetSession::Poll() {
 }
 
 bool NetSession::IsLocal() const {
-    if (mState - 3U <= 3) {
+    bool joining = mState == kCreatingJoinSession || mState == kConnectingToSession
+        || mState == kRequestingJoin || mState == kRevertingToHost;
+    if (joining) {
         return false;
     } else if (!mOnlineEnabled)
         return true;
