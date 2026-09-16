@@ -1041,9 +1041,13 @@ void MetaPerformer::SelectRandomVenue() {
                 FOREACH (it, mSongs) {
                     Symbol cur = *it;
                     bool b1 = false;
-                    BandSongMetadata *data = (BandSongMetadata *)TheSongMgr.Data(
-                        TheSongMgr.GetSongIDFromShortName(cur, false)
-                    );
+                    // Retail evaluates the ARGUMENT first and then re-reads
+                    // TheSongMgrPtr (and reloads its vtable) for the outer
+                    // call. Nested, MSVC hoists the outer object's vtable load
+                    // above the inner bctrl and caches it in a callee-save reg.
+                    int songID = TheSongMgr.GetSongIDFromShortName(cur, false);
+                    BandSongMetadata *data =
+                        (BandSongMetadata *)TheSongMgr.Data(songID);
                     for (int j = 1; j < artistArr->Size(); j++) {
                         if (data && streq(artistArr->Str(j), data->Artist())) {
                             b1 = true;
