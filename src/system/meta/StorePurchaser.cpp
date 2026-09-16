@@ -14,6 +14,12 @@ extern "C" DWORD XShowMarketplaceDownloadItemsUI(
 
 #pragma region XboxPurchaser
 
+/* Retail ctor @0x827b2800, in its own store order:
+ *   stw r8,0x4   mSource      stw r9,0x8   mUserIndex  (StorePurchaser)
+ *   std r5,0x10  mOfferID     stw r10,0xc  mState = 0
+ *   stw r11,0x0  vptr         stw r4,0x18  mUserIndex  (XboxPurchaser's own)
+ * Note it leaves mPurchaseMade and mResult UNINITIALISED -- do not add them to
+ * the initialiser list. */
 XboxPurchaser::XboxPurchaser(
     int param1,
     unsigned long long param2,
@@ -24,10 +30,16 @@ XboxPurchaser::XboxPurchaser(
 )
     : StorePurchaser(s, ui), mState(purchasestate0), mOfferID(param2), mUserIndex(param1) {}
 
-XboxPurchaser::~XboxPurchaser() {
-    static Symbol ui_changed("ui_changed");
-    ThePlatformMgr.RemoveSink(this, ui_changed);
-}
+/* Retail's dtor @0x827b28a0 cancels the in-flight marketplace call --
+ *   if (IsPurchasing() && sOverlapped.InternalLow == ERROR_IO_PENDING)
+ *       XCancelOverlapped(&sOverlapped);
+ * -- via a class-static XOVERLAPPED at 0x82e0684c that this port does not
+ * model yet (Initiate below is likewise not the retail body).  NOT ported here
+ * deliberately: that is a body port, not a layout fix, and it would widen this
+ * change past what the retail layout evidence supports.  What retail's dtor
+ * demonstrably does NOT do is remove a message sink -- there is no Hmx::Object
+ * subobject to be one. */
+XboxPurchaser::~XboxPurchaser() {}
 
 void XboxPurchaser::Initiate() {
     MILO_ASSERT(!IsPurchasing(), 0x39a);
@@ -49,10 +61,6 @@ void XboxPurchaser::Initiate() {
         MILO_NOTIFY("Error starting checkout UI: %d", ret);
         mState = purchasestate3;
     }
-
-    // Register for UI changed notifications to detect when purchase UI closes
-    static Symbol ui_changed("ui_changed");
-    ThePlatformMgr.AddSink(this, ui_changed);
 }
 
 bool XboxPurchaser::IsSuccess() const {
@@ -60,30 +68,18 @@ bool XboxPurchaser::IsSuccess() const {
     return mState == kPurchaseSuccess;
 }
 
+/* `lbz r3,0x1c(r3); blr` -- vtable slot 4 of ??_7XboxPurchaser (0x82115268).
+ * This used to `return false` unconditionally, which is a live behavioural bug:
+ * Poll computes the byte at 0x1c on every one of its four exit paths and this
+ * is the only reader of it. */
 bool XboxPurchaser::PurchaseMade() const {
     MILO_ASSERT(mState == kPurchaseSuccess, 0x3c9);
-    return false;
+    return mPurchaseMade;
 }
 
 bool XboxPurchaser::IsPurchasing() const {
     return mState == purchasestate1;
 }
-
-DataNode XboxPurchaser::OnMsg(UIChangedMsg const &msg) {
-    if (mState == purchasestate1) {
-        if (!msg.Showing()) {
-            // UI closed - unregister from notifications and mark as successful
-            static Symbol ui_changed("ui_changed");
-            ThePlatformMgr.RemoveSink(this, ui_changed);
-            mState = kPurchaseSuccess;
-        }
-    }
-    return DataNode();
-}
-
-BEGIN_HANDLERS(XboxPurchaser)
-    HANDLE_MESSAGE(UIChangedMsg)
-END_HANDLERS
 
 #pragma endregion XboxPurchaser
 #pragma region XboxMultipleItemsPurchaser
