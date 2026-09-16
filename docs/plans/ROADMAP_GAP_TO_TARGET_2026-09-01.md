@@ -2988,3 +2988,64 @@ all pointed at map/alias work in the drained stratum while this one sat unread.
 ⚠ **Both briefs carry the standing warning to test the figures literally** rather than
 inherit them — the same rule whose violation produced the correction immediately above
 this section.
+
+### ⛔ CORRECTION (same day, ~1 h later) — my `mpn < 100` screen does NOT certify source-reachability
+
+**W16-EI refuted the section immediately above, on its own largest member class, and the
+error is mine.** I wrote that the near-crossing band is *"100% source-reachable"* because
+every row screened `match_percent_normalized < 100`. **That screen does not support the
+claim.**
+
+**The mechanism, stated correctly this time:**
+
+- `mpn < 100` proves **at least one instruction-level charge EXISTS** (immediates and
+  offsets are charged to `mpn` as well as to `fuzzy`).
+- It proves **nothing** about whether the row *also* carries relocation-name charges.
+- `matched_code` keys on **`fuzzy == 100`**, so **every** charge must close for the bytes
+  to pay. One unclosable relocation-name charge withholds the row's full size no matter
+  how much source work lands.
+
+⇒ the screen is valid in **exactly one direction**:
+
+| reading | verdict |
+|---|---|
+| `mpn == 100` | **all** charges are arg-only ⇒ genuinely not source-reachable. **SOUND.** |
+| `mpn < 100` | instruction-level charges exist. **CERTIFIES NOTHING ELSE.** |
+
+**The evidence (W16-EI, `?MaybePublish@UIStats@@QAAXPAVUIScreen@@@Z`, 2,604 B, fuzzy
+99.57911 / mpn 99.655914):** 65 of 652 instructions charged — 54 offset/immediate, 10
+register, 8 symbol, 1 insert, 1 replace. **Six of the eight symbol diffs target
+`lbl_<hex>` placeholders, which `name_check` forgives** (objdiff-core `code.rs:1006`);
+the **two** that are really charged name **ICF fold survivors**, and no source edit can
+change which name the retail map holds for an address. Verified independently by this
+coordinator: `0x82801f78` → `?GetContainerName@MemcardXbox@@UAAPBDXZ` and `0x827c1378`
+→ the `vector<int>` **copy** ctor (`??0?$vector@HV?$StlNodeAlloc@H@…@@QAA@ABV01@@Z`),
+with **no `??0?$vector@PAVBandUser…` copy-ctor spelling anywhere in the map.**
+⇒ closing every instruction-level charge on that row buys `mpn` 100 (**+1 function**) and
+**exactly 0 bytes** — the documented `CustomizePanel` shape. Reported **AT_LIMIT**, and
+the lane declined to install the two aliases after sizing them at **zero collectable
+rows**.
+
+**What the census actually licensed, restated honestly:** *0% of the band is PURELY
+arg-only.* That is a real and useful result — it excludes the stratum MPNGAP-1 measured
+~91% irreducible — but it is an **exclusion, not a certification**. The band is worth
+working; its yield is **not** 17,052 B and is not yet known.
+
+⚠ **SCOPE, stated precisely so this correction is not itself over-read:** MaybePublish
+sits at fuzzy 99.579, i.e. in the **wider `>= 99.5` band**, not in the 22-row `>= 99.95`
+set. What is refuted is **the screen**, demonstrated on a row the screen admitted. The
+22 rows have **not** been individually adjudicated — W16-EJ is doing exactly that now,
+and was sent this correction mid-flight.
+
+★ **The right screen is a per-row CHARGE CLASSIFICATION**, which `report.json`'s two
+percentages cannot supply: each charge is (a) instruction-level, (b) a relocation name
+targeting a `lbl_`/`fn_`/`data_` **placeholder** — forgiven, costs nothing, or (c) a
+relocation name targeting a **real** name — a fold survivor or wrong callee, **not
+closable by source**. **Any row with one class-(c) charge is alias-gated and pays zero.**
+
+⚠⚠ **This is the SECOND time today I have read a NECESSARY condition as a SUFFICIENT
+one** — the first being the `decomp.db` correction two sections above ("a reproducing
+symptom is not evidence for its cause"). Same family: a screen that establishes
+**existence** was read as establishing **exclusivity**. Recorded as a coordinator failure
+mode, not a lane one: both times the screen was cheap, the conclusion was convenient, and
+**no control was run that could have failed.**
