@@ -1743,12 +1743,13 @@ void VocalTrack::UpdateScrolling(float ms) {
         float nowAlpha = mDir->GetLyricAlpha(colorBase | 2);
         float pastAlpha = mDir->GetLyricAlpha(colorBase | 3);
         Lyric *prevBakedLyric = GetLastBakedLyric(plates);
-        for (std::deque<LyricPlate *>::iterator pit = plates.begin();
-             pit != plates.end();
+        for (std::deque<LyricPlate *>::iterator pit = plates.begin(),
+                                                     pend = plates.end();
+             pit != pend;
              ++pit) {
             LyricPlate *plate = *pit;
             if (plate->Empty())
-                continue;
+                break;
             if (plate->Baked())
                 continue;
             plate->mBaked = true;
