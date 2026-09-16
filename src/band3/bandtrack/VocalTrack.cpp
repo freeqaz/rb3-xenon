@@ -1457,11 +1457,11 @@ void VocalTrack::UpdateScrolling(float ms) {
         RndTransformable *scroller = scrollerPtr->Ptr();
 
         int *itPPtr = lead ? &unkf4 : (part == 1 ? &unkf8 : &unkfc);
-        VocalNote *itT = &notes->mNotes[*itPPtr];
-        VocalNote *notesEnd = &notes->mNotes[notes->mNotes.size()];
-        VocalNote *altIt =
+        const VocalNote *itT = &notes->mNotes[*itPPtr];
+        const VocalNote *notesEnd = &notes->mNotes[notes->mNotes.size()];
+        const VocalNote *altIt =
             altNotes ? &altNotes->mNotes[unkfc] : notesEnd;
-        VocalNote *altEnd =
+        const VocalNote *altEnd =
             altNotes ? &altNotes->mNotes[altNotes->mNotes.size()] : notesEnd;
         if (itT == notesEnd && altIt == altEnd)
             continue;
@@ -1476,6 +1476,7 @@ void VocalTrack::UpdateScrolling(float ms) {
         if (latest) {
             lastLyricX = latest->EndPos();
         }
+        float tmpEndPos = lastLyricX;
 
         if (dumpDeployVectors) {
             MILO_WARN("deploy zones for part %d by song seconds\n", part);
@@ -1504,7 +1505,7 @@ void VocalTrack::UpdateScrolling(float ms) {
                     break;
             }
             if (staticLyrics) {
-                bool tooWide = lastLyricX > scrollerWidth;
+                bool tooWide = tmpEndPos > scrollerWidth;
                 bool highlightStarted =
                     (phStartMs - mMinPhraseHighlightMs) > 0.0f;
                 if (!tooWide)
@@ -1521,7 +1522,7 @@ void VocalTrack::UpdateScrolling(float ms) {
             bool isPast = phEndMs < (staticLyrics ? ms : buildAhead);
             if (sectionOnly && !isPast && phEndMs > sectionStart) {
                 isPast = true;
-                for (VocalNote *skipIt = itT; skipIt != notesEnd; skipIt++) {
+                for (const VocalNote *skipIt = itT; skipIt != notesEnd; skipIt++) {
                     if (skipIt->mMs > phEndMs)
                         break;
                     if (skipIt->mMs + skipIt->mDurationMs > sectionStart) {
@@ -1529,7 +1530,7 @@ void VocalTrack::UpdateScrolling(float ms) {
                     }
                 }
                 if (altNotes) {
-                    for (VocalNote *skipAlt = altIt; skipAlt != altEnd; skipAlt++) {
+                    for (const VocalNote *skipAlt = altIt; skipAlt != altEnd; skipAlt++) {
                         if (skipAlt->mMs > phEndMs)
                             break;
                         if (skipAlt->mMs + skipAlt->mDurationMs > sectionStart) {
@@ -1569,12 +1570,12 @@ void VocalTrack::UpdateScrolling(float ms) {
             Lyric *staticLast = NULL;
             float staticLeftX = lastLyricX;
             float staticY = lastLyricX;
-            float tmpEndPos = lastLyricX;
             while (itT != notesEnd) {
+                const VocalNote *note = itT;
                 if (altNotes) {
-                    VocalNote *curAlt = altIt;
-                    while (curAlt != altEnd && curAlt->mMs < itT->mMs
-                           && !(curAlt->mMs > phEndMs)) {
+                    while (altIt != altEnd && altIt->mMs < itT->mMs
+                           && !(altIt->mMs > phEndMs)) {
+                        const VocalNote *curAlt = altIt;
                         if (!curAlt->mBends && curAlt->mAllowCombine) {
                             if (itT->mAllowCombine && IdenticalLyric(*curAlt, *itT)) {
                             } else if (latest && latest->mVocalNotes.size()
@@ -1583,20 +1584,17 @@ void VocalTrack::UpdateScrolling(float ms) {
                                            *latest->mVocalNotes[0]
                                        )) {
                             } else {
-                                float altMs = curAlt->mMs;
-                                const VocalNote *noteRef = curAlt;
                                 Lyric *newLyric = CreateLyric(
-                                    noteRef,
+                                    altIt,
                                     altNotes->mNotes,
                                     lead,
                                     false,
                                     true
                                 );
-                                curAlt = (VocalNote *)noteRef;
                                 if (newLyric) {
                                     bool deployHit = CheckDeploySections(
                                         newLyric,
-                                        altMs,
+                                        curAlt->mMs,
                                         curDeploy,
                                         freestyles,
                                         staticLyrics,
@@ -1626,25 +1624,22 @@ void VocalTrack::UpdateScrolling(float ms) {
                                 }
                             }
                         }
-                        curAlt++;
+                        altIt++;
                     }
-                    altIt = curAlt;
                     unkfc = (int)(altIt - &altNotes->mNotes[0]);
                 }
 
                 if (itT->mMs > phEndMs)
                     break;
-                const VocalNote *noteRef = itT;
                 Lyric *newLyric =
-                    CreateLyric(noteRef, notes->mNotes, lead, false, false);
-                itT = (VocalNote *)noteRef;
+                    CreateLyric(itT, notes->mNotes, lead, false, false);
                 if (newLyric) {
-                    if (altNotes && !itT->mAllowCombine) {
+                    if (altNotes && !note->mAllowCombine) {
                         delete newLyric;
                     } else {
                         bool deployHit = CheckDeploySections(
                             newLyric,
-                            itT->mMs,
+                            note->mMs,
                             curDeploy,
                             freestyles,
                             staticLyrics,
@@ -1677,26 +1672,23 @@ void VocalTrack::UpdateScrolling(float ms) {
             }
 
             if (altNotes && itT == notesEnd) {
-                VocalNote *curAlt = altIt;
-                while (curAlt != altEnd && !(curAlt->mMs > phEndMs)) {
+                while (altIt != altEnd && !(altIt->mMs > phEndMs)) {
+                    const VocalNote *curAlt = altIt;
                     if (!curAlt->mBends && curAlt->mAllowCombine) {
                         if (latest && latest->mVocalNotes.size()
                             && IdenticalLyric(*curAlt, *latest->mVocalNotes[0])) {
                         } else {
-                            float altMs = curAlt->mMs;
-                            const VocalNote *noteRef = curAlt;
                             Lyric *newLyric = CreateLyric(
-                                noteRef,
+                                altIt,
                                 altNotes->mNotes,
                                 lead,
                                 false,
                                 true
                             );
-                            curAlt = (VocalNote *)noteRef;
                             if (newLyric) {
                                 bool deployHit = CheckDeploySections(
                                     newLyric,
-                                    altMs,
+                                    curAlt->mMs,
                                     curDeploy,
                                     freestyles,
                                     staticLyrics,
@@ -1726,9 +1718,8 @@ void VocalTrack::UpdateScrolling(float ms) {
                             }
                         }
                     }
-                    curAlt++;
+                    altIt++;
                 }
-                altIt = curAlt;
                 unkfc = (int)(altIt - &altNotes->mNotes[0]);
             }
 
@@ -1951,7 +1942,7 @@ void VocalTrack::UpdateScrolling(float ms) {
                     LyricShift(
                         prevBakedLyric->mEndMs,
                         mStaticDeployMarginX
-                            + (-lastLyricX - mStaticDeployBufferX)
+                            - (mStaticDeployBufferX + tmpEndPos)
                     )
                 );
             }
@@ -1972,13 +1963,13 @@ void VocalTrack::UpdateScrolling(float ms) {
                             codaMs, section->second
                         );
                         BuildStaticDeployZone(
-                            std::min(part, 1), beforeCoda, codaMs, lastLyricX, shifts
+                            std::min(part, 1), beforeCoda, codaMs, tmpEndPos, shifts
                         );
                         section = &afterCoda;
                     }
                 }
                 BuildStaticDeployZone(
-                    std::min(part, 1), *section, nextStart, lastLyricX, shifts
+                    std::min(part, 1), *section, nextStart, tmpEndPos, shifts
                 );
                 (*curDeployPtr)++;
             }
