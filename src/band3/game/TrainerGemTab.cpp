@@ -381,6 +381,13 @@ void TrainerGemTab::DrawTails(
     unsigned int slots = gem.GetSlots();
     for (int slot = 0; slot < mLanes; slot++) {
         if (slots & (1 << slot)) {
+            // ★ Do NOT hoist `yRange`/`tickRange` into pre-loop locals, even though
+            // the rb3-Wii oracle spells them that way. Measured: named pre-loop
+            // locals let MSVC perform loop-invariant code motion, computing both
+            // before the loop into callee-saved FPRs and growing the save set
+            // (__savegprlr_24/__savefpr_21 vs retail's _22/_23) -- 17 charged sites
+            // -> 69, fuzzy 99.30 -> 86.15. Retail recomputes both INSIDE the loop,
+            // so retail's source inlines them exactly as written here.
             mVerticalTrans->SetFrame(
                 ((float)gem.GetTick() - (float)startTick) / ((float)endTick - (float)startTick) *
                         (endY - fStartY) +
@@ -411,8 +418,19 @@ void TrainerGemTab::DrawTails(
             float scale = (float)gem.GetDurationTicks() * (2.5f / 480.0f);
             float scaleX10 = 10.0f * scale;
             float endZ = xfm.v.z + scaleX10;
+            // ★ The SECOND syntactic use of `scaleX10` is what suppresses FMA
+            // contraction. MSVC X360 fuses `a*b+c` only when the product has a
+            // single consumer, so the one-use spelling `0.1f * (endZ - unk12c)`
+            // emits `fmadds f12, f0, f26, f12`; retail emits `fmuls f11, f0, f26`
+            // + `fadds f12, f12, f11`. Naming the sum again gives the product two
+            // uses at the fuse decision, and a later CSE merges the two identical
+            // adds back into one -- so this costs no instruction. Measured on the
+            // real compiler (probe v1-v10): five one-use spellings all contract,
+            // every two-use spelling emits fmuls+fadds. `#pragma fp_contract(off)`
+            // is INERT on this toolchain (lane AE2) and `volatile` would add a
+            // stack round-trip retail does not have.
             if (endZ > unk12c) {
-                float overhang = 0.1f * (endZ - unk12c);
+                float overhang = 0.1f * ((xfm.v.z + scaleX10) - unk12c);
                 float drawScale = scale - overhang;
                 xfm.m.y.x *= drawScale;
                 xfm.m.y.y *= drawScale;
