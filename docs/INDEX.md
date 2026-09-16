@@ -230,7 +230,11 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
   48.591938 · masked_equal 22,898 ⇒ honest 21,546**. Carries the four-way
   self-validated partition of **every byte** in the binary (rows sum to
   `total_functions`, bytes to `total_code`), the re-measured ceiling —
-  **62.867% raw / 61.121% corrected, and we stand at 59.03% of it** — the alias
+  **62.867% raw / 61.121% corrected, and we stand at 59.03% of it**
+  (⛔ **SUPERSEDED 2026-09-16** — re-measured at main `3890b450`: **63.291% raw /
+  61.535% corrected, and we stand at 65.64% of it**; the doc's partition is a
+  dated 08-17 record, the ceiling clause is not. See `CLAUDE.md`'s ceiling
+  paragraph) — the alias
   mechanism sized by ablation (**1,528 groups / 818,416 B / 7.93 pp ⇒ ~22% of
   everything we count as matched rests on it**), a one-line-per-arc history of
   the ~130 lanes from 08-01 → 08-16, the W0–W5 roadmap, and a top-20 crossing

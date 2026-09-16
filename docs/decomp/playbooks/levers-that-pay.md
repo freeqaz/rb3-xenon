@@ -641,9 +641,13 @@ systematic, likely the "missing stack temp" family, no source lever found.
 completed long ago; do not read this as live work-in-flight. The **1,024-unit
 ceiling partition in this section is likewise historical** — the reachable
 ceiling has since been re-measured (and moves in BOTH directions; it is
-**61.121%** of `total_code` today, per
-[`CAMPAIGN_STATE_2026-08-17.md`](../CAMPAIGN_STATE_2026-08-17.md) §3). **Re-derive
-the partition before selecting targets from it; never inherit a ceiling.**
+**61.535%** of `total_code` as of 2026-09-16 at main `3890b450`, up from the
+**61.121%** this line used to quote — see `CLAUDE.md`'s ceiling paragraph, which
+supersedes [`CAMPAIGN_STATE_2026-08-17.md`](../CAMPAIGN_STATE_2026-08-17.md) §3).
+**Re-derive the partition before selecting targets from it; never inherit a
+ceiling** — and note that our *share* of the surface moved 16× further than the
+surface did (59.03% → 65.64%), so an inherited share is the more damaging of the
+two stale numbers.
 
 ⏱ **Live as of 2026-08-02 — check the tree before re-funding any of this.**
 Wave **DI** is working these follow-ons right now: **DI-1** the mislabelled
