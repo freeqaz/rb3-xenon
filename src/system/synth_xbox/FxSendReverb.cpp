@@ -4,6 +4,7 @@
 #include "utl/Symbol.h"
 #include "xdk/xaudio2/xaudio2.h"
 #include "xdk/xaudio2/xaudio2fx.h"
+#include <math.h>
 
 FxSendReverb360::FxSendReverb360() : FxSend360(this) {}
 
@@ -17,6 +18,86 @@ namespace {
         Symbol name;
         XAUDIO2FX_REVERB_I3DL2_PARAMETERS params;
     };
+}
+
+// Retail 0x82B67D30 (740 B). Ported from ../dc3-decomp/src/system/synth_xbox/Synth.cpp:106
+// (DC3 keeps it in its Synth TU; RB3 keeps it here, between SetType and
+// SyncEffectParams). DC3's body ends with two extra stores,
+//     pNative->WetDryMix = pI3DL2->WetDryMix;  pNative->WetDryMixPct = 0;
+// RB3's struct has no WetDryMixPct (sizeof 0x34, adjudicated on retail bytes by
+// W16-FG at the caller's `li r6,0x34`, and confirmed here: retail's body ends at
+// `stw r11, 0x0(r31)` -- the WetDryMix copy -- with no 0x34 store). The 8 B size
+// delta (DC3 748 B vs RB3 740 B) is exactly that missing `li` + `stw`.
+//
+// Every float member of both structs is read/written through an integer
+// lwz/stw round-trip via the 0x50(r1) stack slot: that is MSVC's lowering for
+// float members of a `#pragma pack(1)` struct, which both headers carry.
+void ReverbConvertI3DL2ToNative(
+    const XAUDIO2FX_REVERB_I3DL2_PARAMETERS *pI3DL2, XAUDIO2FX_REVERB_PARAMETERS *pNative
+) {
+    pNative->PositionMatrixLeft = 27;
+    pNative->PositionMatrixRight = 27;
+    pNative->PositionLeft = 6;
+    pNative->PositionRight = 6;
+    pNative->RoomSize = 100.0f;
+    pNative->RearDelay = 5;
+    pNative->HighEQCutoff = 6;
+    pNative->LowEQCutoff = 4;
+    pNative->RoomFilterMain = pI3DL2->Room * 0.01f;
+    pNative->RoomFilterHF = pI3DL2->RoomHF * 0.01f;
+
+    if (pI3DL2->DecayHFRatio >= 1.0f) {
+        int gain = (int)((float)log10(pI3DL2->DecayHFRatio) * -4.0);
+        if (gain < -8)
+            gain = -8;
+        pNative->LowEQGain = (gain < 0) ? gain + 8 : 8;
+        pNative->HighEQGain = 8;
+        // The row's only residual (5 diff_arg rows, fuzzy 99.827 / mpn 99.989):
+        // retail emits the DecayHFRatio load group first (f0) and DecayTime
+        // second (f13), `fmuls f0, f13, f0`; we emit DecayTime first. The tuple
+        // order (DT, HF) and the GPR temps (DT->r11, HF->r10) are IDENTICAL on
+        // both sides -- only the emission order of two leaf loads differs.
+        // Measured INERT on cl 10224 (W16-FK, one full build each): operand
+        // swap; a float local assigned in both branches + one store after;
+        // #pragma float_control(precise) (adds `bso` after every fcmpu --
+        // retail is /fp:fast); #pragma optimize("t") (re-schedules the body);
+        // (float)(double)HF; HF * 1.0f. Only a byte-emitting deeper operand
+        // (`(float)fabs((double)HF)`) flips the emission order, and it also
+        // flips the tuple, so it cannot land. DC3's lifted-temp and two-named-
+        // temps spellings were not re-run (refuted there on cl 11886; naming a
+        // value is measured inert house-wide, W16-EY). Do not re-run these.
+        pNative->DecayTime = pI3DL2->DecayTime * pI3DL2->DecayHFRatio;
+    } else {
+        int gain = (int)((float)log10(pI3DL2->DecayHFRatio) * 4.0);
+        if (gain < -8)
+            gain = -8;
+        pNative->LowEQGain = 8;
+        pNative->HighEQGain = (gain < 0) ? 8 + gain : 8;
+        pNative->DecayTime = pI3DL2->DecayTime;
+    }
+
+    float reflectionsDelay = pI3DL2->ReflectionsDelay * 1000.0f;
+    if (reflectionsDelay >= 300.0f) {
+        reflectionsDelay = 299.0f;
+    } else if (reflectionsDelay <= 1.0f) {
+        reflectionsDelay = 1.0f;
+    }
+    pNative->ReflectionsDelay = (unsigned int)reflectionsDelay;
+
+    float reverbDelay = pI3DL2->ReverbDelay * 1000.0f;
+    if (reverbDelay >= 85.0f) {
+        reverbDelay = 84.0f;
+    }
+    pNative->ReverbDelay = (BYTE)reverbDelay;
+
+    pNative->ReflectionsGain = pI3DL2->Reflections * 0.01f;
+    pNative->ReverbGain = pI3DL2->Reverb * 0.01f;
+    int earlyDiffusion = (BYTE)(pI3DL2->Diffusion * 0.15f);
+    pNative->EarlyDiffusion = earlyDiffusion;
+    pNative->LateDiffusion = pNative->EarlyDiffusion;
+    pNative->Density = pI3DL2->Density;
+    pNative->RoomFilterFreq = pI3DL2->HFReference;
+    pNative->WetDryMix = pI3DL2->WetDryMix;
 }
 
 // The I3DL2 preset table is a function-local static, so it is built once behind a
