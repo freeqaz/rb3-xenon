@@ -718,14 +718,18 @@ void OvershellPanel::ResolveSlotStates() {
         OvershellSlotStateID theID = curLocalUser->GetOvershellState();
         if (!curSlot->GetState()->PreventsOverride()) {
             OvershellSlotStateID ossID;
+            OvershellSlotStateID idToShow;
             if (ShouldSeeRealGuitarPrompt(curLocalUser, ossID)) {
                 curLocalUser->SetHasSeenRealGuitarPrompt();
-                curSlot->ShowState(ossID);
+                idToShow = ossID;
+            showstate:
+                curSlot->ShowState(idToShow);
             } else {
                 ClosetMgr *cMgr = ClosetMgr::GetClosetMgr();
                 if (curSlot->GetState()->InChooseCharFlow() && cMgr
                     && cMgr->GetUser() == curLocalUser) {
-                    curSlot->ShowState((OvershellSlotStateID)0x49);
+                    idToShow = (OvershellSlotStateID)0x49;
+                    goto showstate;
                 } else if (!InOverrideFlow(kOverrideFlow_SongSettings)
                            && !SongOptionsRequired()
                            && mSlots[i]->InOverrideFlow(kOverrideFlow_SongSettings)) {
