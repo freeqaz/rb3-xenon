@@ -36,7 +36,7 @@ SessionBusyMsg() : Message(Type()) {}
 END_MESSAGE
 
 DECLARE_MESSAGE(SessionReadyMsg, "session_ready")
-SessionReadyMsg(int i) : Message(Type(), i) {}
+SessionReadyMsg(bool b) : Message(Type(), b) {}
 END_MESSAGE
 
 class SavePlayer {
