@@ -1506,14 +1506,10 @@ void VocalTrack::UpdateScrolling(float ms) {
                 bool tooWide = tmpEndPos > scrollerWidth;
                 bool highlightStarted =
                     (phStartMs - mMinPhraseHighlightMs) > 0.0f;
-                if (!tooWide)
-                    goto window_ok;
-                if (!highlightStarted)
-                    goto window_ok;
-                break;
+                if (tooWide && highlightStarted)
+                    break;
             } else if (phStartMs > lookAhead)
                 break;
-        window_ok:
             if (sectionOnly && phStartMs > (sectionEnd - 100.0f))
                 break;
 
