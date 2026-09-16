@@ -55,7 +55,20 @@ base 8,936 vs target 8,948 = 3 instructions:
 
 ## 6. Build 3 — measured in `~/tmp/wt-w16gb` (full `tools/ninja-locked`, `report.json` + `report.cache` wiped first)
 
-BUILD3_PLACEHOLDER
+Pre-registered (`~/tmp/w16gb_prereg.md`, build 3): row fuzzy 94.51 ± 0.05 (standalone 94.511850), base 8,936, mpn ≈ 95.3 ± 0.3, every aggregate EXACTLY unchanged vs build 2 (inverted gate), no crossing.
+
+| measure | build 2 (GB-2) | build 3 (GB-7 state) | predicted | miss |
+|---|---|---|---|---|
+| row `fuzzy_match_percent` | 92.24765 | **94.52079** | 94.51 ± 0.05 | +0.009 pp |
+| row `match_percent_normalized` | 93.06571 | **95.15109** | ≈ 95.3 ± 0.3 | −0.15 (inside band; mpn−fuzzy offset 0.818 → 0.630) |
+| row target size | 8,948 | 8,948 | | |
+| unit `default/VocalTrack` matched_code / fns | 19,928 / 179 | 19,928 / 179 | unchanged | 0 |
+| whole-binary `matched_functions` | 44,131 | 44,131 | unchanged | 0 |
+| whole-binary `matched_code` | 4,163,348 | 4,163,348 | unchanged | 0 |
+| `masked_equal_functions` / honest | 23,322 / 20,809 | 23,322 / 20,809 | unchanged | 0 |
+| `total_functions` / `total_code` | 69,240 / 10,247,068 | 69,240 / 10,247,068 | | |
+
+Honest vs disclosure: Δhonest 0, Δmasked_equal 0 — this lane moved one row's fuzzy by +2.27 pp (brief baseline 91.33 → 94.52, +3.19 pp) and banked no bytes and no functions. Build log `~/tmp/rb3_build_w16gb_v3.log` (`build rc=0`, 0 FAILED). Whole-binary lane delta vs brief: **+0 B / +0 fns / +0 honest**.
 
 ## 7. Contradictions with the brief
 
