@@ -73,8 +73,13 @@ struct XAUDIO2FX_REVERB_PARAMETERS { /* Size=0x34 */
 extern "C" HRESULT CreateAudioReverb(IUnknown **ppApo);
 
 // Converts I3DL2 environmental parameters into native reverb parameters.
-// XDK-provided (retail fn_82B67D30); its body is Microsoft vendor implementation
-// and is deliberately NOT decompiled here — see docs/decomp/W16FG_*.
+// Retail fn_82B67D30 (740 B). Defined in system/synth_xbox/FxSendReverb.cpp,
+// ported from DC3's Synth.cpp (W16-FK). It is pure field arithmetic on these
+// two structs (no XDK call), so it is ordinary engine porting, not vendor code
+// -- W16-FG's "deliberately NOT decompiled" note was withdrawn by W16-FK; see
+// docs/decomp/W16FK_*. Sits at fuzzy 99.827 behind a 5-row operand-emission
+// residual that transfers exactly from DC3; do not re-run the spellings listed
+// there.
 void ReverbConvertI3DL2ToNative(
     const XAUDIO2FX_REVERB_I3DL2_PARAMETERS *pI3DL2,
     XAUDIO2FX_REVERB_PARAMETERS *pNative
