@@ -1,0 +1,9 @@
+[
+ {
+  "survivor": "?_M_erase@?$vector@VPoint@RndLine@@V?$StlNodeAlloc@VPoint@RndLine@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVPoint@RndLine@@PAV34@0ABU__false_type@2@@Z",
+  "address": "0x8247b020",
+  "spelling": "?_M_erase@?$vector@VExtraTail@TrainerGemTab@@V?$StlNodeAlloc@VExtraTail@TrainerGemTab@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVExtraTail@TrainerGemTab@@PAV34@0ABU__false_type@2@@Z",
+  "overrides_class": "SURVIVOR_SIZE_MISMATCH",
+  "reason": "Lane W16-EN 2026-09-16. The withdrawal recorded 'our(S)=96 B vs our(F)=88 B [retail(S)=96]' -- a size disagreement in OUR build, not in retail's. The 88-byte body was a source defect: Transform::operator= and Hmx::Matrix3::operator= are user-declared, so ExtraTail's implicit copy-assign was memberwise (0x40 memcpy + two scalar stores) rather than one whole-object memcpy, and MSVC therefore declined to inline STLport's __copy into vector<ExtraTail>::_M_erase. Giving ExtraTail an explicit memcpy operator= restores retail's inlined form: our body is now 96 B and instruction-identical to the survivor's, including all three relocations. Re-adjudicated with tools/icf_pair_adjudicate.py: FLAT T1 PROVEN (retail_size 96, our_size 96, reloc_tally {}, survivor_map_resident True), and that tool's --selftest passes with a REFUTED negative control, so the verdict comes from an instrument shown able to fail. This override is valid ONLY while ExtraTail::operator= is present; if it is reverted the T1 gate refuses the pair on its own."
+ }
+]
