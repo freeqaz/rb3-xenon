@@ -1520,6 +1520,14 @@ The 2c threshold is a genuine cliff, not a fitted cut (≤1 sym: 0 units; ≤2:
 
 ## 3. Reachable ceiling — 61.12%, and we stand at 59.0% of it
 
+> ⛔ **SUPERSEDED 2026-09-16 — this section is a DATED 08-17 RECORD, kept as
+> written.** Re-measured at main `3890b450`: PAIRABLE **6,485,504 B = 63.291%**
+> (1,048 units / 54,620 rows), scaffold shells **179,948 B** (104 units / 909
+> rows), **reachable ceiling 6,305,556 B = 61.535%**, `matched_code` **4,139,008
+> B = 40.392% of `total_code` = 65.64% of the ceiling**, gap **2,166,548 B**.
+> The ceiling moved **+0.414 pp** and our share of it **+6.61 pp** — the
+> asymmetry is the point. Live figures: `CLAUDE.md`'s ceiling paragraph.
+
 ```
 PAIRABLE bytes (unit has a base obj)          6,488,248 = 62.867%  raw
   − map-scaffold shells                         180,196

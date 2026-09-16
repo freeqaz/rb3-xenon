@@ -1227,6 +1227,48 @@ across this lane's sabotage cycles. Two clean builds here do not differ at all.
   demonstrating itself: the ceiling moves BOTH WAYS, so re-measure it and NEVER
   inherit a prior lane's figure.** Current partition + provenance:
   `docs/decomp/CAMPAIGN_STATE_2026-08-17.md`.
+  ✅✅ **RE-MEASURED AGAIN 2026-09-16 at main `3890b450` — 61.535%, and IT MOVED
+  UP. Use these figures, not the 08-17 ones above.**
+
+  ```
+  total_code           10,247,068
+  PAIRABLE              6,485,504 = 63.291%   (1,048 units, 54,620 rows)
+  − scaffold shells       179,948             (104 units, 909 rows)
+  = reachable ceiling   6,305,556 = 61.535%
+  matched_code          4,139,008 = 40.392% of total_code = 65.64% of ceiling
+  gap to ceiling        2,166,548
+  ```
+
+  ★ **The two halves moved at wildly different rates, and that asymmetry is the
+  finding**: the ceiling drifted **61.121% → 61.535%** (+0.414 pp) while our
+  share of it went **59.03% → 65.64%** (+6.61 pp) — ~16× further. **The campaign
+  closed real distance; the denominator barely moved.** ⇒ a lane that re-prices
+  its headroom off the *old* ceiling is wrong by a rounding error, but one that
+  inherits the *old share* understates a month of work by 6.6 pp.
+  ★ The scaffold cut remains a **cliff, not a fitted threshold** — measured at
+  four thresholds so it stays visibly one: `thr≤4 = 0 units · ≤5 = 0 · ≤6 = 104
+  · ≤7 = 104`. Scaffold bytes are stable (179,948 B / 104 units vs 08-17's
+  180,196 / 105 — one unit of legitimate drift, not a methodology change).
+  ⚠ **`tools/ceiling_recompute.py` takes FOUR positional args** —
+  `main(report_path, objdiff_path, root, label)`. Fewer raises a bare
+  `IndexError: list index out of range`, which reads like a data problem and is
+  not:
+  ```
+  python3 tools/ceiling_recompute.py build/45410914/report.json objdiff.json . "main 3890b450 (2026-09-16)"
+  ```
+  ⛔ **Do NOT "fix" its `≤6` rule to the published `≤2`** — its own docstring
+  says why: the published rule counts named *function* symbols, the script
+  counts every DEFINED symbol (sclass 2/3), so the same units land at ≤6.
+  Tightening it **selects ZERO units and silently INFLATES the ceiling by
+  180,196 B.**
+  ⚠ Three instruments were run rather than one, because they do **not** share a
+  pairing criterion: an ad-hoc classifier keyed on *"any row diffed"*
+  (self-validating exactly — rows **69,240 == `total_functions`**, bytes
+  **10,247,068 == `total_code`**), then `tools/noobj_census.py` keyed on *"unit
+  has a base obj"* (the criterion the inherited figure came from — PAIRABLE
+  63.291%, `matched_code` = **63.82% of the PAIRABLE surface**), then
+  `ceiling_recompute.py` for the published number. Quoting the middle one as the
+  ceiling would overstate our position by ~1.75 pp.
   ⛔⛔ **AND THE `auto_*` CLASS IS MOSTLY UNREACHABLE TOO — DO NOT FUND
   ATTRIBUTION THERE.** Only **8.9% (1,766 rows / 151,024 B = 1.46% of
   `total_code`)** is attributable-**and-portable**, at a measured 0.64% FP;
