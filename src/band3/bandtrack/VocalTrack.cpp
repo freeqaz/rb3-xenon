@@ -1246,13 +1246,13 @@ void VocalTrack::UpdateScrolling(float ms) {
         lookAhead = sectionEnd;
     }
 
-    if (!mPlayer->InTambourinePhrase()) {
+    if (!mPlayer->IsNet()) {
         for (int part = 0; part < mPlayer->NumVocalParts(); part++) {
             VocalNoteList *notes = GetVocalNoteList(part);
             if (!notes)
                 continue;
             int idx = mNextScrollNote[part];
-            while (idx < notes->mNotes.size()) {
+            while (idx != notes->mNotes.size()) {
                 const VocalNote &n = notes->mNotes[idx];
                 if (!n.mUnpitchedNote) {
                     mNextScrollNote[part] = idx;
@@ -1277,7 +1277,7 @@ void VocalTrack::UpdateScrolling(float ms) {
                 }
             }
             int prepEnd = mNextScrollNote[part];
-            while (prepEnd < notes->mNotes.size()
+            while (prepEnd != notes->mNotes.size()
                    && notes->mNotes[prepEnd].mMs <= lookAhead) {
                 prepEnd++;
             }
@@ -1418,11 +1418,10 @@ void VocalTrack::UpdateScrolling(float ms) {
 
     int isolated = -1;
     int numParts = mPlayer->NumVocalParts();
-    if (!mPlayer->InTambourinePhrase()) {
+    if (!mPlayer->IsNet()) {
         isolated = mDir->unk6c4;
     }
 
-    bool inPractice = !InTambourinePhrase();
     for (int part = 0; part < numParts; part++) {
         if (!(isolated == part || (isolated == -1 && part != 2)))
             continue;
@@ -1778,10 +1777,8 @@ void VocalTrack::UpdateScrolling(float ms) {
             plate->mPastPhonemeColor.alpha = pastAlpha;
             plate->mPreviewPhonemeColor.alpha = previewAlpha;
 
-            for (std::vector<Lyric *>::iterator lit = plate->mSyllables.begin();
-                 lit != plate->mSyllables.end();
-                 ++lit) {
-                Lyric *lyric = *lit;
+            for (int i = 0; i < plate->mSyllables.size(); i++) {
+                Lyric *lyric = plate->mSyllables[i];
                 float lyricX;
                 if (staticLyrics) {
                     lyricX = lastLyricX;
@@ -1961,13 +1958,13 @@ void VocalTrack::UpdateScrolling(float ms) {
                             codaMs, section->second
                         );
                         BuildStaticDeployZone(
-                            std::min(part, 1), beforeCoda, codaMs, tmpEndPos, shifts
+                            part, beforeCoda, codaMs, tmpEndPos, shifts
                         );
                         section = &afterCoda;
                     }
                 }
                 BuildStaticDeployZone(
-                    std::min(part, 1), *section, nextStart, tmpEndPos, shifts
+                    part, *section, nextStart, tmpEndPos, shifts
                 );
                 (*curDeployPtr)++;
             }
