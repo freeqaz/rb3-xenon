@@ -25,7 +25,7 @@ public:
 
     MEM_OVERLOAD(Interpolator, 0x28);
 
-    float mY0, mY1, mX0, mX1; // 0x4 0x8 0xc 0x10
+    float mY0, mY1, mX0, mX1; // 0x10 0x8 0xc 0x10
 };
 
 class LinearInterpolator : public Interpolator {

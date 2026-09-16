@@ -27,10 +27,10 @@ public:
 
         Symbol mTarget; // 0x0
         Transform mXfm; // 0x4
-        Symbol mAnimGroup; // 0x18
-        float mFastForward; // 0x1c
-        Symbol mForwardEvent; // 0x20
-        ObjPtr<RndEnviron> mEnvOverride; // 0x24
+        Symbol mAnimGroup; // 0x44
+        float mFastForward; // 0x48
+        Symbol mForwardEvent; // 0x4c
+        ObjPtr<RndEnviron> mEnvOverride; // 0x50
         // 0x5c: retail keeps mForceLod in its own `int` allocation unit
         // (`srawi r,r,29` => 3 bits at 31..29) and puts the six flags in a
         // separate 1-byte `bool` unit at 0x5c+4 = 0x60 (`lbz` + single-bit

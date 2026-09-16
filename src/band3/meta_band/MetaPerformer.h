@@ -254,25 +254,25 @@ public:
     std::vector<int> mStars; // 0x74
     BandSongMgr *mSongMgr; // 0x80
     Instarank mBattleInstarank; // 0x84
-    Instarank mBandInstarank; // 0xdc
-    Instarank mInstaranks[4]; // 0x134
-    int mSongID; // 0x294
-    int mSongHighscore; // 0x298
-    int mInstarankScores[4]; // 0x29c
-    ScoreType mInstarankScoreTypes[4]; // 0x2ac
-    bool mHasOnlineScoring; // 0x2bc
-    bool mSkippedSong; // 0x2bd
+    Instarank mBandInstarank; // 0xe0
+    Instarank mInstaranks[4]; // 0x13c
+    int mSongID; // 0x2ac
+    int mSongHighscore; // 0x2b0
+    int mInstarankScores[4]; // 0x2b4
+    ScoreType mInstarankScoreTypes[4]; // 0x2c4
+    bool mHasOnlineScoring; // 0x2d4
+    bool mSkippedSong; // 0x2d5
     int unk2c0; // some sort of instrument mask?
-    bool mFestivalReward; // 0x2c4
-    bool mCheatInFinale; // 0x2c5
-    PendingDataInfo mPendingData; // 0x2c8
-    bool mCheating; // 0x334
+    bool mFestivalReward; // 0x2dc
+    bool mCheatInFinale; // 0x2dd
+    PendingDataInfo mPendingData; // 0x2e0
+    bool mCheating; // 0x350
     int unk338;
     int unk33c;
-    int mRecordBattleContextID; // 0x340
-    DataResultList mDataResults; // 0x344
-    bool mHarmonyOverride; // 0x35c
-    bool mRealDrumsOverride; // 0x35d
+    int mRecordBattleContextID; // 0x35c
+    DataResultList mDataResults; // 0x360
+    bool mHarmonyOverride; // 0x378
+    bool mRealDrumsOverride; // 0x379
     int unk360; // 0x37c -- LAST own member in retail; vtordisp follows at 0x380.
 #ifndef RB3_NO_WII_META_MEMBERS
     // Wii/dev-build-only members. Retail Xbox drops all three: the ctor packs

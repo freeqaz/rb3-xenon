@@ -17,8 +17,8 @@ public:
 
     bool GetDataResultValue(String, DataNode &) const;
 
-    String mUrl; // 0x0
-    std::map<String, DataNode> mDataMap; // 0xc
+    String mUrl; // 0x4
+    std::map<String, DataNode> mDataMap; // 0x10
 };
 
 class DataResultList : public Updatable {

@@ -112,9 +112,9 @@ public:
     Symbol mQuestFilters[3]; // 0x84, 0x80, 0x84
     std::hash_map<Symbol, int> unk88;
     std::hash_map<Symbol, int> unka0;
-    int mMetaScore; // 0xc0
-    int mNewStars; // 0xc4
-    bool mWonQuest; // 0xc8
-    int mCurrentGigNum; // 0xcc
-    TourPropertyCollection mPerformanceProperties; // 0xd0
+    int mMetaScore; // 0xc8
+    int mNewStars; // 0xcc
+    bool mWonQuest; // 0xd0
+    int mCurrentGigNum; // 0xd4
+    TourPropertyCollection mPerformanceProperties; // 0xd8
 };

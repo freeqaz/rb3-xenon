@@ -63,11 +63,11 @@ public:
     static LocalBandUser *GetLocalBandUser(LocalUser *);
     static RemoteBandUser *GetRemoteBandUser(RemoteUser *);
 
-    std::vector<BandUser *> mUsers; // 0x1c
-    std::vector<LocalBandUser *> mLocalUsers; // 0x24
-    std::vector<RemoteBandUser *> mRemoteUsers; // 0x2c
-    NullLocalBandUser *mNullUser; // 0x34
-    UserGuid mSlotMap[4]; // 0x38, 0x48, 0x58, 0x68
+    std::vector<BandUser *> mUsers; // 0x28
+    std::vector<LocalBandUser *> mLocalUsers; // 0x34
+    std::vector<RemoteBandUser *> mRemoteUsers; // 0x40
+    NullLocalBandUser *mNullUser; // 0x4c
+    UserGuid mSlotMap[4]; // 0x50, 0x48, 0x58, 0x68
     SessionMgr *mSessionMgr; // 0x90
 };
 

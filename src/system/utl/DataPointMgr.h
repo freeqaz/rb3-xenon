@@ -35,8 +35,8 @@ private:
     const char *mCrucibleProject; // 0x10
     int mCrucibleVersion; // 0x14
     String mCrucibleUser; // 0x18
-    String mCrucibleConfig; // 0x20
-    String mCrucibleWorkingDir; // 0x28
+    String mCrucibleConfig; // 0x24
+    String mCrucibleWorkingDir; // 0x30
 
 public:
     DataPointMgr();
