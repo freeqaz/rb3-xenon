@@ -148,7 +148,13 @@ void NetSession::AssignLocalOwner() {
     MILO_ASSERT(!mLocalHost, 0x89);
     std::vector<LocalUser *> users;
     GetLocalUserList(users);
-    mLocalHost = TheUserMgr->GetLocalUserFromPadNum(ThePlatformMgr.GetOwnerOfGuest(0));
+    for (int i = 0; i < users.size(); i++) {
+        MILO_ASSERT(ThePlatformMgr.UserHasOnlinePrivilege(users[i]), 0x96);
+        if (!ThePlatformMgr.IsUserAGuest(users[i])) {
+            mLocalHost = users[i];
+            break;
+        }
+    }
     MILO_ASSERT(mLocalHost, 0xA5);
 }
 
