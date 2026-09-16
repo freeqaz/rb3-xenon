@@ -1715,10 +1715,10 @@ DataNode OvershellSlot::OnMsg(const ButtonDownMsg &msg) {
     const char *pulseType;
     if (GetState()->GetView() == join)
         pulseType = "button_pulse_unjoined";
-    else if (GetState()->GetView() == finding)
-        pulseType = "button_pulse_unjoined";
-    else
+    else if (GetState()->GetView() != finding)
         pulseType = "button_pulse_joined";
+    else
+        pulseType = "button_pulse_unjoined";
     btnMsg.SetType(pulseType);
 
     if (!TheInputMgr->IsValidButtonForShell(msg.GetButton(), lUser)) {
