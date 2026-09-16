@@ -481,7 +481,7 @@ void XboxContentMgr::PollRefresh() {
         mState = kDiscoveryLoading;
         for (int i = 0; i < kNumberOfBuffers; i++) {
             if (mOverlappeds[i]) {
-                DWORD numItems = 0;
+                DWORD numItems; // retail: no store to the slot before XGetOverlappedResult
                 DWORD res = XGetOverlappedResult(mOverlappeds[i], &numItems, false);
                 if (res == 0x3E4) {
                     // retail: sets the state and jumps straight to the
@@ -490,10 +490,16 @@ void XboxContentMgr::PollRefresh() {
                     return;
                 }
                 if (res == 0) {
+                    // retail keeps only the filename pointer as the j-loop
+                    // induction variable (created in the loop preheader, after
+                    // the numItems==0 guard; r26 += 0x138) and rematerializes
+                    // the record for the ctor as filename - 0x108. Spelling
+                    // xdatas[j] at both uses made the RECORD the IV (inert);
+                    // hoisting filename above the for created it before the
+                    // guard. Only the in-body folded-base form matches.
                     for (unsigned int j = 0; j < numItems; j++) {
-                        XCONTENT_CROSS_TITLE_DATA *xdata =
-                            (XCONTENT_CROSS_TITLE_DATA *)((char *)&mXDatas[i] + j * 0x138);
-                        char *filename = xdata->szFileName;
+                        char *filename =
+                            mXDatas[i].szFileName + j * sizeof(XCONTENT_CROSS_TITLE_DATA);
                         bool ignored = false;
                         for (unsigned int k = 0; k < DIM(gIgnoredContent); k++) {
                             if (strcmp(filename, gIgnoredContent[k]) == 0) {
@@ -513,7 +519,9 @@ void XboxContentMgr::PollRefresh() {
                             unk7fc++;
                         }
                         Content *newContent =
-                            new XboxContent(*xdata, unk7f8++, i, discovered);
+                            new XboxContent(
+                                *(XCONTENT_CROSS_TITLE_DATA *)(filename - 0x108), unk7f8++, i, discovered
+                            );
                         std::list<Content *>::iterator end = mContents.end();
                         mContents.insert(end, newContent);
                     }
@@ -551,11 +559,13 @@ void XboxContentMgr::PollRefresh() {
             if (state == Content::kMounted) {
                 (*it)->Unmount();
                 allDone = false;
-            } else {
-                allDone = (state != Content::kNeedsMounting) & allDone;
+            } else if (state == Content::kNeedsMounting) {
+                // retail: subfic/subfe 0/-1 mask AND'd into the flag (a select)
+                allDone = false;
             }
         }
-        if (allDone) {
+        // retail: bne past the store -- mState is set only when the flag is FALSE
+        if (!allDone) {
             mState = kDiscoveryLoading;
         }
     }
