@@ -1871,13 +1871,11 @@ void VocalTrack::UpdateScrolling(float ms) {
                             }
                             if (deployDelta) {
                                 float nextStart = freestyle.second + mLyricShiftMs;
-                                if ((*curDeployPtr + 1) < freestyles.size()
-                                    && freestyles[*curDeployPtr + 1].first < nextStart) {
-                                    nextStart = freestyles[*curDeployPtr + 1].first;
-                                }
                                 shifts.push_back(
                                     LyricShift(
-                                        nextStart,
+                                        std::max(
+                                            nextStart, freestyles[*curDeployPtr + 1].first
+                                        ),
                                         -tubeEndX - mStaticDeployBufferX
                                     )
                                 );
