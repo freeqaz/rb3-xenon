@@ -128,7 +128,7 @@ void RndDir::PostLoad(BinStream &bs) {
     }
     if (d.rev > 4 && d.rev < 8) {
         RndPostProc *pp = Hmx::Object::New<RndPostProc>();
-        pp->LoadRev(d);
+        pp->LoadRev(d.stream, d.rev);
         delete pp;
     }
 }

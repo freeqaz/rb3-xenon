@@ -7040,6 +7040,7 @@
  "0x82430ef0": "?OnUnselect@RndPostProc@@MAAXXZ",
  "0x82430fd0": "?LoadRev@RndPostProc@@QAAXAAVBinStream@@H@Z",
  "0x824316e8": "?SyncProperty@RndPostProc@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x82433268": "?Load@RndPostProc@@UAAXAAVBinStream@@@Z",
  "0x82433328": "?Multiply@@YAXABVFrustum@@ABVTransform@@AAV1@@Z",
  "0x824333a0": "?WorldToScreen@RndCam@@QBAMABVVector3@@AAVVector2@@@Z",
  "0x82433478": "?ScreenToWorld@RndCam@@QBAXABVVector2@@MAAVVector3@@@Z",

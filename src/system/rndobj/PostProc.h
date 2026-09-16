@@ -98,7 +98,7 @@ public:
     NEW_OBJ(RndPostProc)
 
     void Interp(const RndPostProc *, const RndPostProc *, float);
-    void LoadRev(BinStreamRev &);
+    void LoadRev(BinStream &, int);
     bool BlendPrevious() const;
     float BloomIntensity() const;
     bool HallOfTime() const;
