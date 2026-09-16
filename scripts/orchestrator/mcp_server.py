@@ -58,6 +58,7 @@ from orchestrator.patch_guard import (
     ensure_patched_tree,
 )
 from tools.struct_db import StructDB
+from analysis.stack_layout import frame_base_regs
 from analysis.ruler import (
     RULER_DATA_VALUE,
     RULER_GRADED,
@@ -1213,10 +1214,23 @@ class DecompMCPServer:
     _MEM_ARG_RE = re.compile(r'r(\d+),\s*(-?0x[0-9a-fA-F]+|-?\d+)\(r(\d+)\)')
     # Regex for parsing PPC immediate operands: rX, rY, IMM
     _SHIFT_ARG_RE = re.compile(r'r(\d+),\s*r(\d+),\s*(\d+)')
-    # Base registers that are NEVER a `this`/object pointer, so an offset off
-    # them is NOT a struct field: r1 is the stack pointer (spilled locals,
-    # by-value temporaries), r13 the small-data/TLS base.
-    _NON_STRUCT_BASE_REGS = frozenset(['1', '13'])
+    # Base registers that are NEVER a `this`/object pointer *whatever the
+    # prologue does*, so an offset off them is NOT a struct field: r1 is the
+    # stack pointer (spilled locals, by-value temporaries), r13 the
+    # small-data/TLS base.
+    #
+    # ★ This is only the STATIC FLOOR.  Which register addresses the FRAME is a
+    #   PER-FUNCTION property set by the prologue, so the operative set is
+    #   computed by _non_struct_base_regs() below.  The floor is kept as its own
+    #   constant so the W16-EA guard (r1/r13) survives even if the prologue
+    #   derivation returns nothing at all.
+    #
+    # ⚠ Spelled WITH the `r` prefix.  _MEM_ARG_RE captures the base register as
+    #   group(3) = BARE DIGITS ('31'), so every comparison against this set must
+    #   normalise to f"r{...}" first.  The bare-digit spelling is how the
+    #   original constant was written, and a set that silently never matches is
+    #   precisely the failure mode this guard exists to prevent.
+    _NON_STRUCT_BASE_REGS = frozenset(['r1', 'r13'])
     # Memory opcodes that access struct fields
     _MEM_OPCODES = frozenset([
         'lwz', 'stw', 'lfs', 'stfs', 'lhz', 'sth', 'lbz', 'stb', 'lfd', 'stfd',
@@ -1239,6 +1253,57 @@ class DecompMCPServer:
             return int(s, 16)
         return int(s)
 
+    @staticmethod
+    def _prologue_is_present(instructions: list) -> bool:
+        """True when `instructions` really starts at the function's first
+        instruction, so a prologue scan can decide anything.
+
+        _resolve_offset_mismatches falls back to `mismatch_instructions`, which
+        is FILTERED -- its first entry is whatever the first mismatch happened
+        to be, so a prologue scan over it would find no frame-pointer
+        establishment and silently FAIL OPEN, reinstating the exact false
+        positives this guard removes.  Distinguish "derived: r31 is not a frame
+        base" from "could not look", and hedge the latter instead of asserting
+        it.  (Measured on this tree: the MCP JSON run passes
+        `--include-instructions`, and -C/context does NOT truncate the JSON --
+        `-C 3` and `--full-listing` returned byte-identical 350-entry listings
+        for ?OnMsg@OvershellSlot@@, indices 0..349 -- so the real MCP path
+        always has the prologue.)
+        """
+        if not instructions:
+            return False
+        first = instructions[0].get("index")
+        # index absent entirely => positional list, assume complete.
+        return first == 0 or first is None
+
+    @classmethod
+    def _non_struct_base_regs(cls, instructions: list, side_key: str) -> frozenset:
+        """Per-function set of base registers whose offsets are NOT struct fields.
+
+        = the static floor (r1/r13) UNION whatever the prologue establishes as a
+        frame base on this side.  MSVC X360 commonly aliases r31 to the NEW r1
+        via `subi r31, r1, FRAMESIZE` *before* the `stwu`, after which body code
+        addresses locals through r1 or r31 interchangeably -- so `0x70(r31)` is
+        a STACK SLOT in such a function and must not be resolved as a field.
+
+        The derivation is scripts/analysis/stack_layout.py's `frame_base_regs`,
+        reused rather than re-implemented (it is the same rule as
+        tools/r31_role_census.py, which hard-asserts 4 known positives).  It is
+        SYMMETRIC and both halves matter:
+
+            subi r31, r1, N  => {'r1','r31'}  r31 is a FRAME POINTER  (suppress)
+            mr   r31, r3     => {'r1'}        r31 holds `this`        (RESOLVE)
+
+        Computed per SIDE because target and base need not agree.
+        """
+        regs = set(cls._NON_STRUCT_BASE_REGS)
+        try:
+            for r in frame_base_regs(instructions, side_key):
+                regs.add(r if str(r).startswith('r') else f"r{r}")
+        except Exception:
+            pass  # never let the derivation break the diff report
+        return frozenset(regs)
+
     def _resolve_offset_mismatches(self, data: dict) -> list[dict]:
         """
         Scan instruction diffs for memory offset mismatches and resolve
@@ -1256,6 +1321,15 @@ class DecompMCPServer:
         struct_db_path = self.project_root / "struct_db.sqlite"
         if not struct_db_path.exists():
             return []
+
+        # Frame-pointer role is a PER-FUNCTION property -- derive it once from
+        # this function's own prologue, per side (lane W16-GL, 2026-09-16).
+        prologue_ok = self._prologue_is_present(instructions)
+        if prologue_ok:
+            nonstruct_t = self._non_struct_base_regs(instructions, "target")
+            nonstruct_b = self._non_struct_base_regs(instructions, "base")
+        else:
+            nonstruct_t = nonstruct_b = frozenset(self._NON_STRUCT_BASE_REGS)
 
         mismatches = []
         try:
@@ -1304,8 +1378,32 @@ class DecompMCPServer:
                     # those two rows BIT-IDENTICAL and broke the one field read that
                     # was already matching (lbz 0x70(r3), equal on both sides),
                     # fuzzy 84.26344 -> 84.258064 on the graded ruler.
-                    if (base_reg_t in self._NON_STRUCT_BASE_REGS
-                            or base_reg_b in self._NON_STRUCT_BASE_REGS):
+                    #
+                    # ⛔ AND THE REGISTER THAT ADDRESSES THE FRAME IS NOT FIXED
+                    # (lane W16-GL, 2026-09-16).  The guard above used a STATIC
+                    # {r1, r13}, which is structurally incapable of catching the
+                    # commonest MSVC X360 shape: `subi r31, r1, FRAMESIZE`
+                    # BEFORE the `stwu` aliases r31 to the new r1, so `0x70(r31)`
+                    # is a stack slot.  Measured twice in two days --
+                    # W16-GF (?SetupGems@GemManager@@, `subi r31, r1, 0x260` at
+                    # [4] before `stwu` at [5], `this` in r26) and W16-GH
+                    # (?OnMsg@OvershellSlot@@, `subi r31, r1, 0xf0` at [2] before
+                    # `stwu` at [3]) -- the latter reporting 22 confident
+                    # OvershellSlot::<member> attributions of which ALL 22 were
+                    # false, pointing a lane AWAY from the row's real cause
+                    # (pure stack allocation: three Symbol temp slots where
+                    # retail has one).
+                    #
+                    # Whole-binary census at 828546ac, over the 2,556 named
+                    # sub-100 rows: the resolver emitted 2,294 attributions on
+                    # 340 rows, of which 946 (41.2%) on 130 rows rested on a
+                    # register this function's own prologue establishes as a
+                    # frame base -- 763 of them the (r31, r31) shape.
+                    # 1,348 attributions survive, so this is a DISCRIMINATING
+                    # guard and not a blanket silencer.
+                    reg_t = f"r{base_reg_t}"
+                    reg_b = f"r{base_reg_b}"
+                    if reg_t in nonstruct_t or reg_b in nonstruct_b:
                         continue
 
                     # Resolve field names
@@ -1332,6 +1430,13 @@ class DecompMCPServer:
                         entry["target_field"] = target_field
                     if base_field:
                         entry["base_field"] = base_field
+                    if not prologue_ok:
+                        entry["frame_check"] = (
+                            "UNVERIFIED -- the prologue is absent from this "
+                            "instruction window, so a frame-pointer alias "
+                            "(`subi rN, r1, FRAMESIZE`) could not be excluded; "
+                            "this may be a STACK SLOT, not a field"
+                        )
                     if target_field and base_field:
                         entry["fix_hint"] = (
                             f"Source accesses '{base_field.split('::')[-1].split(' (')[0]}' "
@@ -1731,6 +1836,9 @@ class DecompMCPServer:
                 if hint:
                     line += f" -- {hint}"
                 lines.append(line)
+                fc = om.get("frame_check")
+                if fc:
+                    lines.append(f"  - ⚠ {fc}")
 
         # Shift annotations
         shift_annotations = data.get("shift_annotations", [])
