@@ -387,39 +387,46 @@ BEGIN_COPYS(RndPostProc)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(0x25, 2)
+// Retail (build/45410914/asm/PostProc.s fn_82433268) is the rb3-Wii shape, not the
+// DC3 BinStreamRev shape: two co-addressed file-static shorts (altRev at +0, rev at
+// +4 -- declaration order controls the .bss order) and LoadRev(bs, gRev) with gRev
+// re-read from memory. Adjudicated on retail bytes by lane W16-FC, 2026-09-16.
+static unsigned short gAltRev = 0;
+static unsigned short gRev = 0;
 
-BEGIN_LOADS(RndPostProc)
-    LOAD_REVS(bs)
-    ASSERT_REVS(0x25, 2)
-    if (d.rev == 0x10) {
+void RndPostProc::Load(BinStream &bs) {
+    int rev;
+    bs >> rev;
+    gRev = getHmxRev(rev);
+    gAltRev = getAltRev(rev);
+    if (gRev == 0x10) {
         int dRev;
-        d >> dRev;
+        bs >> dRev;
         MILO_ASSERT(dRev == 3, 0x2A8);
         float f30 = 0;
         bool b70;
         Vector3 v40;
         int i5c;
-        d >> b70 >> v40 >> f30 >> i5c;
+        bs >> b70 >> v40 >> f30 >> i5c;
     } else {
-        LOAD_SUPERCLASS(Hmx::Object)
+        Hmx::Object::Load(bs);
     }
-    LoadRev(d);
-END_LOADS
+    LoadRev(bs, gRev);
+}
 
-void RndPostProc::LoadRev(BinStreamRev &d) {
-    if (d.rev > 4) {
-        if (d.rev > 0xA) {
-            d >> mBloomColor;
-            if (d.rev < 0x18) {
+void RndPostProc::LoadRev(BinStream &bs, int rev) {
+    if (rev > 4) {
+        if (rev > 0xA) {
+            bs >> mBloomColor;
+            if (rev < 0x18) {
                 int dummy;
-                d >> dummy;
+                bs >> dummy;
             }
-            d >> mBloomIntensity;
-            d >> mBloomThreshold;
+            bs >> mBloomIntensity;
+            bs >> mBloomThreshold;
         } else {
             Hmx::Color c;
-            d >> c;
+            bs >> c;
             float minVal = c.red;
             if (minVal > c.green)
                 minVal = c.green;
@@ -441,142 +448,136 @@ void RndPostProc::LoadRev(BinStreamRev &d) {
                 mBloomThreshold = c.alpha;
             }
             int dummy;
-            d >> dummy;
-            d >> mBloomIntensity;
+            bs >> dummy;
+            bs >> mBloomIntensity;
             mBloomIntensity = sqrtf(mBloomIntensity);
-            d >> dummy;
+            bs >> dummy;
         }
     }
-    if (d.rev > 5 && d.altRev < 1) {
-        ObjPtr<RndTex> luminanceMap(this, 0);
-        d >> luminanceMap;
+    if (rev > 5) {
+        bs >> mLuminanceMap;
     }
-    if (d.rev > 6) {
-        if (d.rev < 0x12) {
-            d >> mColorXfm.mColorXfm.m.x >> mColorXfm.mColorXfm.m.y
+    if (rev > 6) {
+        if (rev < 0x12) {
+            bs >> mColorXfm.mColorXfm.m.x >> mColorXfm.mColorXfm.m.y
                 >> mColorXfm.mColorXfm.m.z;
-            d >> mColorXfm.mColorXfm.v;
+            bs >> mColorXfm.mColorXfm.v;
         } else {
-            if (!mColorXfm.Load(d.stream)) {
+            if (!mColorXfm.Load(bs)) {
                 MILO_FAIL(
                     "%s can't load new %s version", PathName(this), ClassName()
                 );
             }
         }
-        d >> (Key<float>&)mFlickerModBounds >> (Key<float>&)mFlickerTimeBounds;
-        if (d.rev < 9) {
+        bs >> (Key<float>&)mFlickerModBounds >> (Key<float>&)mFlickerTimeBounds;
+        if (rev < 9) {
             mFlickerModBounds.x = 1.0f - mFlickerModBounds.x;
             mFlickerModBounds.y = 1.0f - mFlickerModBounds.y;
         }
-        if (d.rev < 0x1D) {
+        if (rev < 0x1D) {
             mFlickerModBounds.x = 0.0f;
         }
-        d >> (Key<float>&)mNoiseBaseScale >> mNoiseTopScale >> mNoiseIntensity;
-        if (d.rev > 0xC) {
-            d >> mNoiseStationary;
+        bs >> (Key<float>&)mNoiseBaseScale >> mNoiseTopScale >> mNoiseIntensity;
+        if (rev > 0xC) {
+            bs >> mNoiseStationary;
         }
-        if (d.rev > 8) {
-            d >> mNoiseMap;
+        if (rev > 8) {
+            bs >> mNoiseMap;
         }
-        if (d.rev > 0x24) {
-            d >> mNoiseMidtone;
+        if (rev > 0x24) {
+            bs >> mNoiseMidtone;
         } else {
             mNoiseMidtone = false;
         }
-        if (d.rev < 0x12) {
-            d >> mColorXfm.mHue >> mColorXfm.mSaturation >> mColorXfm.mLightness
+        if (rev < 0x12) {
+            bs >> mColorXfm.mHue >> mColorXfm.mSaturation >> mColorXfm.mLightness
                 >> mColorXfm.mContrast >> mColorXfm.mBrightness;
         }
     }
-    if (d.rev > 7) {
-        d >> mTrailThreshold >> mTrailDuration >> mEmulateFPS;
+    if (rev > 7) {
+        bs >> mTrailThreshold >> mTrailDuration >> mEmulateFPS;
     }
-    if (d.rev > 9) {
-        if (d.rev < 0x12) {
-            d >> mColorXfm.mLevelInLo >> mColorXfm.mLevelInHi;
-            d >> mColorXfm.mLevelOutLo >> mColorXfm.mLevelOutHi;
+    if (rev > 9) {
+        if (rev < 0x12) {
+            bs >> mColorXfm.mLevelInLo >> mColorXfm.mLevelInHi;
+            bs >> mColorXfm.mLevelOutLo >> mColorXfm.mLevelOutHi;
         }
-        d >> mPosterLevels;
+        bs >> mPosterLevels;
     }
-    if (d.rev > 0xD) {
-        d >> mPosterMin;
+    if (rev > 0xD) {
+        bs >> mPosterMin;
     }
-    if (d.rev > 0xB) {
-        if (d.rev < 0x16) {
+    if (rev > 0xB) {
+        if (rev < 0x16) {
             float complexity;
-            d >> complexity;
+            bs >> complexity;
             if (complexity != 0.0f) {
                 mKaleidoscopeComplexity = 2.0f;
             }
         } else {
-            d >> mKaleidoscopeComplexity >> mKaleidoscopeSize >> mKaleidoscopeAngle
+            bs >> mKaleidoscopeComplexity >> mKaleidoscopeSize >> mKaleidoscopeAngle
                 >> mKaleidoscopeRadius >> mKaleidoscopeFlipUVs;
         }
     }
-    if (d.rev > 0xE && d.rev < 0x1F) {
+    if (rev > 0xE && rev < 0x1F) {
         int dummy;
-        d >> dummy;
-        if (d.rev < 0x11) {
+        bs >> dummy;
+        if (rev < 0x11) {
             int dummy2;
-            d >> dummy2;
+            bs >> dummy2;
             ObjPtr<RndDrawable> dummyDraw(this, 0);
-            d >> dummyDraw;
+            bs >> dummyDraw;
         }
     }
-    if (d.rev > 0x12) {
-        d >> mHallOfTimeRate;
-        d >> mHallOfTimeColor >> mHallOfTimeMix;
-        if (d.rev > 0x13 && d.rev < 0x20) {
+    if (rev > 0x12) {
+        bs >> mHallOfTimeRate;
+        bs >> mHallOfTimeColor >> mHallOfTimeMix;
+        if (rev > 0x13 && rev < 0x20) {
             bool hotType;
-            d >> hotType;
+            bs >> hotType;
             mHallOfTimeType = hotType ? 1 : 0;
-        } else if (d.rev > 0x1F) {
-            d >> mHallOfTimeType;
+        } else if (rev > 0x1F) {
+            bs >> mHallOfTimeType;
         }
     }
-    if (d.rev > 0x14) {
-        d >> mMotionBlurBlend;
-        if (d.rev > 0x1A) {
-            d >> mMotionBlurWeight;
-            if (d.rev > 0x21) {
-                d >> mMotionBlurVelocity;
+    if (rev > 0x14) {
+        bs >> mMotionBlurBlend;
+        if (rev > 0x1A) {
+            bs >> mMotionBlurWeight;
+            if (rev > 0x21) {
+                bs >> mMotionBlurVelocity;
             }
         }
     }
-    if (d.rev > 0x16) {
-        d >> mGradientMap >> mGradientMapOpacity >> mGradientMapIndex
+    if (rev > 0x16) {
+        bs >> mGradientMap >> mGradientMapOpacity >> mGradientMapIndex
             >> mGradientMapStart >> mGradientMapEnd;
     }
-    if (d.rev < 0x18) {
+    if (rev < 0x18) {
         mBloomThreshold *= 4.0f;
     }
-    if (d.rev > 0x18) {
-        d >> mRefractMap >> mRefractDist >> (Key<float>&)mRefractScale
+    if (rev > 0x18) {
+        bs >> mRefractMap >> mRefractDist >> (Key<float>&)mRefractScale
             >> (Key<float>&)mRefractPanning >> mRefractAngle;
-        if (d.rev > 0x1B) {
-            d >> (Key<float>&)mRefractVelocity;
+        if (rev > 0x1B) {
+            bs >> (Key<float>&)mRefractVelocity;
         }
     }
-    if (d.rev > 0x19) {
-        d >> mChromaticAberrationOffset;
-        if (d.rev > 0x22) {
-            d >> mChromaticSharpen;
+    if (rev > 0x19) {
+        bs >> mChromaticAberrationOffset;
+        if (rev > 0x22) {
+            bs >> mChromaticSharpen;
         }
     }
-    if (d.rev > 0x1D) {
-        d >> mVignetteColor >> mVignetteIntensity;
+    if (rev > 0x1D) {
+        bs >> mVignetteColor >> mVignetteIntensity;
     }
-    if (d.rev > 0x20) {
-        d >> mBloomGlare;
+    if (rev > 0x20) {
+        bs >> mBloomGlare;
     }
-    if (d.rev > 0x23) {
-        d >> mBloomStreak >> mBloomStreakAttenuation >> mBloomStreakAngle;
+    if (rev > 0x23) {
+        bs >> mBloomStreak >> mBloomStreakAttenuation >> mBloomStreakAngle;
     }
-#ifdef RB3_HAS_HUE_CONVERGE
-    if (d.altRev > 1) {
-        d >> mHueTarget >> mHueFocus >> mBlendAmount >> mBrightnessPower;
-    }
-#endif
 }
 
 void RndPostProc::Select() {
