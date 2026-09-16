@@ -244,8 +244,8 @@ public:
     int GetSize() const { return mGems.size(); }
 
     std::vector<unsigned char> mGems; // 0x0
-    int mHits; // 0x8
-    int mMisses; // 0xc
+    int mHits; // 0xc
+    int mMisses; // 0x10
 };
 
 class GemPlayer : public Player, public BeatMatchSink {

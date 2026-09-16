@@ -47,15 +47,15 @@ protected:
 
     virtual void PresyncBitmap() { ResetSurfaces(); }
 
-    D3DFORMAT mFormat; // 0x7c
-    D3DTexture *mTexture; // 0x80
+    D3DFORMAT mFormat; // 0x74
+    D3DTexture *mTexture; // 0x78
     int unk84;
-    D3DSurface *mRenderTarget; // 0x88
-    D3DSurface *mDepthRT; // 0x8c
+    D3DSurface *mRenderTarget; // 0x80
+    D3DSurface *mDepthRT; // 0x84
     int mMovieBufIdx;
     D3DTexture *mMovieTextures[2];
-    D3DLOCKED_RECT mLockedRect; // 0x9c
-    D3DSurface *unka4; // 0xa4
+    D3DLOCKED_RECT mLockedRect; // 0x94
+    D3DSurface *unka4; // 0x9c
     int unka8;
     bool unkac;
 };
