@@ -5238,3 +5238,242 @@ model repeating for a third time. Gate the sign; report the magnitude.
   only `TourDesc::Configure` references the folded spelling. Nothing pruned
   (`STALE_SPELLING` 88 / `UNWITNESSED` 101 untouched), per the standing rule that
   a Δ0 prune today licenses a regression later.
+
+---
+
+## §7u — wave 4 (W16-GC, W16-GB): the mixed-class lane, a third gate defect, and a zero that was measured
+
+Two lanes landed after §7t: **W16-GC** (`49705b8b`, +1 fn / +564 B) and
+**W16-GB** (`6159dfd5`, +0 / +0). Between them they produced one new landing
+class, one new gate defect in my own driver, and the cleanest surgical
+measurement of the session.
+
+### 7u.1 A MIXED-CLASS LANE BREAKS THE LIVENESS PROBE, BECAUSE EITHER PROBE ALONE IS A FALSE GREEN
+
+Every landing driver so far has been one of two shapes. **Source class** (GA,
+GB): no forced re-split, liveness = MSVC compile edges. **Alias/map class**
+(FZ, GD): forced re-split, liveness = the rendered `icf_aliases.map` symbol
+lines and objdiff's `Loaded N ICF equivalence entries`.
+
+GC was **both** — `src/system/bandobj/BandDirector.cpp` *and*
+`scripts/target_symbol_map.json` *and* `scripts/symbol_aliases.json`. Neither
+probe covers it:
+
+- a **source probe alone** goes green while the map half sits INERT — that is
+  lane CF-1's failure exactly, and an un-resplit map edit changes nothing while
+  producing a clean-looking run;
+- a **map probe alone** goes green while `BandDirector.cpp` never recompiles.
+
+⇒ **On a mixed-class lane the liveness gate must be a CONJUNCTION, not a
+disjunction, and both halves must be shown reading non-zero before either is
+entitled to abort anything.** Measured on the landing: source **15 MSVC edges,
+1 BandDirector**; map **6,921 → 6,922** rendered symbol lines with
+`Loaded 6105 → 6106`. Both fired.
+
+That `+1` equivalence entry is a **third independent arm** for §7s.3's counter
+model (existing-group membership = **+1**; W16-FZ's new group = **+2**).
+`renamer_patched` was printed as INFORMATION ONLY, per §7s.2 as corrected by GD.
+
+### 7u.2 ⛔ A GATE THAT COMPARES WHOLE-FILE BYTES FALSELY ABORTS ANY LANE THAT SHARES A FILE WITH AN ALREADY-LANDED LANE
+
+GC's first landing run **aborted at GATE A** on `scripts/symbol_aliases.json`.
+It was a defect in the **gate**, not the lane.
+
+GATE A compared whole-file bytes pre-rebase vs post-rebase. That test is only
+valid while the lane **owns every file it touches**. W16-GD had landed an edit
+to the same file hours earlier, so after rebasing onto post-GD main the file
+*must* differ — by exactly GD's content. Verified: the entire difference was
+GD's `TourDescEntry` membership plus its addendum and `lane`/`added_w16gd` keys.
+GC's own hunks were untouched.
+
+**GC's patch BODY was byte-identical across the rebase.** The only difference in
+its patch was the hunk header, `@@ -2139,9` → `@@ -2142,9` — a pure line-offset
+shift because GD inserted 3 lines above it. No `+`, `-`, or context line moved.
+
+⇒ **The gate now compares the LANE'S OWN PATCH BODY** (`index`/`@@` lines
+stripped), and reports file-level identity as information with the reason it
+differs. GA's and GD's lanes each owned their files exclusively, which is the
+only reason the flaw had not surfaced before.
+
+**This is the THIRD gate defect caught in my own drivers this session, and all
+three are one family — a gate that looks like rigour while measuring the wrong
+thing:**
+
+| # | defect | what it would have done |
+|---|---|---|
+| 1 | GATE A population **hardcoded** to 2 of 3 files | silently skipped a file; partial coverage reads as rigour |
+| 2 | file-count check **two-dot** | falsely aborted W16-GA, a healthy lane (two-dot also reports main's merges, in reverse) |
+| 3 | GATE A **whole-file** compare | falsely aborts any lane sharing a file with a landed lane |
+
+★ **All three FAILED CLOSED, which is the right direction and is also why they
+were cheap to find: the abort IS the signal.** A gate defect that failed OPEN
+would have landed silently and been discovered, if ever, much later.
+
+### 7u.3 ⚠ A PROBE THAT CANNOT READ ZERO CANNOT PROVE ARRIVAL
+
+The same run's alias-arrival probe was spelled
+`ObjPtrList@VObject@Hmx@@VObjectDir` and read **3 pre-merge**, where it must
+read 0. It was matching three *other* methods of the same template
+(`QAAXXZ`, `UAA@XZ`, `QBA_NXZ`). Sharpened to the full spelling
+`?Link@?$ObjPtrList@VObject@Hmx@@VObjectDir`, it reads **0** pre-merge and **1**
+post-merge.
+
+⇒ Same family as the vacuity traps in §7s.4 and the `renamer_patched` finding:
+**before a probe is allowed to certify arrival, show it reading the value that
+means "absent."**
+
+### 7u.4 THE ROW THAT PAYS IS NOT THE ROW THAT WAS WORKED
+
+GC was dispatched on `?OnFileLoaded@BandDirector@@` (3,816 B @ 99.589096). That
+row ended at **99.779880 and banked ZERO of its 3,816 bytes** — 3 residual
+charges, 952 of 955 instructions equal, the residual being one 2-instruction
+schedule swap. Permuter class, permuter OFF. NOT drained; **deferred with its
+distance attributed.**
+
+The **+564 B came from `?FinishLoading@FileMerger@@`**, a row the lane never
+opened, whose sole charge was the same relocation name. The alias fell out of
+adjudicating OnFileLoaded's last `bl` and was collected elsewhere.
+
+⇒ **A lane's yield is not confined to its target, in either direction.** Pricing
+a lane by "will the briefed row cross" mis-states it both ways — GC's target did
+not cross and the lane still banked honest bytes.
+
+### 7u.5 "BANKS NO MATCHED BYTES" IS NOT "MOVES NO MEASURE" — AND THE LANDING OBSERVED THE MECHANISM
+
+GC pre-registered Δfuzzy ≥ +0.00007 and measured **−0.000187 — SIGN WRONG** —
+then found why and wrote the correction **into `target_symbol_map.json`**, where
+the next lane pricing a name withdrawal will actually read it, rather than only
+into a commit message.
+
+It had called nulling the map row *"score-free by construction"* because the row
+reads fuzzy 13.778 / mpn 15.556 and is therefore counted by neither
+`matched_code` (all-or-nothing at `fuzzy == 100`) nor `matched_functions`. True
+for the headline keys, and confirmed by A/B. **But `fuzzy_match_percent` is a
+size-weighted mean over ALL rows including sub-100 ones**, so a 180 B row
+carrying 13.778% partial credit that becomes unpaired hands that credit back.
+
+★ **The landing measured the mechanism directly rather than inferring it.** The
+set-diff shows the nulled row
+`?Link@?$ObjPtrList@VObject@Hmx@@VObjectDir…` (180 B, fuzzy 13.777778)
+**VANISH** and reappear as `fn_82400930` at **fuzzy 0.000000**.
+
+And **two rows nobody predicted moved**, both attributable to the withdrawal by
+elimination — neither is in BandDirector's TU, so the source half cannot reach
+them: `?ForEachTarget@RndPropAnim@@` 99.92248 → 99.96124 (`default/PropAnim`)
+and `?SortDraws@RndGroup@@` 99.82353 → 99.882355 (`default/Group`), one charge
+each, **each banking 0 B**. These are **call sites of the wrongly-named symbol
+becoming forgiven placeholders** — the mechanism GC described without
+enumerating the rows. The landing enumerated them.
+
+⇒ The withdrawal stands regardless: per the standing accuracy directive, a fuzzy
+drop bought by deleting a name **proven false** is a truer denominator.
+
+### 7u.6 THE SIBLING CONTROL: EXACTLY ONE ROW MOVED IN THE WHOLE BINARY
+
+GB is a deliberate zero-bytes lane — `?UpdateScrolling@VocalTrack@@` went
+**91.329900 → 94.520790** and banks **0 of its 8,948 B**, because `matched_code`
+is all-or-nothing per row. Every headline key is Δ0.
+
+A lane predicting Δ0 has a gate that **cannot discriminate**: "nothing moved" is
+indistinguishable from "the merge was never built and I read a stale
+`report.json`" (the W16-FK shape). The landing pre-registered an **inverted gate
+as a conjunction** — the row must read 94.520790 **and** aggregate fuzzy must
+strictly exceed 50.494650. Both fired (row EXACT; fuzzy +0.002550), so **the
+zero is a measured zero.**
+
+★ The sharper instrument was the **sibling control**. GB edited one function in a
+TU of 220 rows; the other **219 rows of `default/VocalTrack` were gated
+UNMOVED**, because a source edit *can* perturb neighbours through shared
+template COMDATs and scheduling. Measured: **0 moved, 0 vanished** — and exactly
+**one row moved in the entire binary**. "Surgical" as a measurement, not a claim.
+
+### 7u.7 THE SIZE-WEIGHTED-MEAN Δfuzzy MODEL IS WITHDRAWN A FOURTH TIME
+
+| lane | modelled | measured | miss |
+|---|---|---|---|
+| W16-GD | +2.0e−6 | +5.0e−6 | **2.5×** |
+| W16-GC | −0.000169 | −0.000187 | −11% |
+| W16-GB | +0.002786 | +0.002550 | −8.5% |
+
+⇒ **GATE THE SIGN, REPORT THE MAGNITUDE.** The model is good for direction and
+order of magnitude and for nothing finer. It has now been wrong in both
+directions and by factors between 1.09 and 2.5.
+
+### 7u.8 SIX ORACLE DEFECTS ON ONE ROW, AND WHY THE NEGATIVES ONLY MEAN SOMETHING IN PAIRS
+
+GB found the rb3-Wii oracle wrong at `64.0f`, at `= lastLyricX`, at **both**
+`freestyles.size()` guards, at `min`→`max`, at the `lyricX` scalar, and at the
+pre-section `isPast` — and its three-call deploy shape is not what shipped
+either. **The densest single-row instance recorded** of the standing finding
+that oracle text is a HYPOTHESIS and retail bytes outrank it. Its best lever
+(GB-4, +0.5 pp) works by **removing a scalar the oracle has**.
+
+★ Its two negatives are only informative **as a pair**. GB-8 (the oracle's
+two-call + `didSplit` shape) measured 86.051; GB-9 (a single call with
+`didSplit ? afterCoda : section`) measured 86.012. **Same clusters under both**
+⇒ the cause is a `bool` live across two calls re-colouring r24/r25, **not the
+call count**. GB-8 alone would have been read as "retail makes one call", which
+is wrong. Both are committed-then-reverted so the history carries them.
+
+GB's 12 B size gap is **fully attributed**: 8 B is STLport `_deque.h`
+`operator-` term order (cross-TU, deliberately untouched, needs its own
+whole-binary A/B) and 4 B is the GB-8/GB-9 tail. An unattributed residual would
+have left the row's ceiling unknown.
+
+### 7u.9 STATE at `6159dfd5`
+
+```
+matched_functions  44,138      matched_code   4,168,232
+matched_code_pct   40.677315   fuzzy          50.497200
+masked_equal       23,323      honest            20,815
+total_code     10,247,068      total_functions   69,240
+units all-rows mpn==100: 195   units all-rows fuzzy==100: 173
+matched_code = 66.104% of the 61.535% reachable ceiling (6,305,556 B)
+gap to ceiling: 2,137,324
+```
+
+Session, by wave:
+
+```
+session total  +98 functions = +21 honest / +77 disclosure   (+17,556 B)
+  wave 1 (FQ FV FW FT FU)  +58 = +15 honest / +43 disclosure
+  wave 2 (FX FY FS)        +33 =   0 honest / +33 disclosure
+  wave 3 (FZ GA)            +5 =  +4 honest /  +1 disclosure
+  wave 4 (GD GC GB)         +2 =  +2 honest /   0 disclosure
+```
+
+⚠ Wave 4 is **100% honest** and wave 2 was **0% honest**, under identical
+discipline and identical gates. §7s.1 already records why, and wave 4 confirms
+it: **the honest share is a property of which rows happened to be in range, not
+of lane quality.** Do not read the trend as improvement.
+
+### 7u.10 OPEN
+
+- **`_S_sort` is banked, not dead: +1 fn / +1,472 B.** Dispatched to W16-GG,
+  deliberately **split** so the relaxing lane does not collect: GG relaxes
+  `chase()`'s vacuous branch, re-runs all four `--chasetest` controls, adds a NEW
+  control proving the relaxed branch still REFUSES a vacuous thunk pair whose
+  targets are not a proven fold, and **files** the `?CopyTypeProperties@@` verdict
+  without installing it. Expected whole-binary measurement: **Δ0**.
+- **In flight:** W16-GE (`?ResolveSlotStates@OvershellPanel@@`, 1,416 B @
+  98.84180, 2 insert / 2 delete / 2 diff_arg, size identity exact) and W16-GF
+  (`?UpdateLeftyFlip@GemManager@@`, 1,584 B @ 99.41666, 1 insert / 1 delete /
+  5 diff_arg, size identity exact). Neither is in the figures above.
+- **The game-layer vein is sized:** 60 rows at fuzzy ∈ [90,100) and ≥ 700 B in
+  `src/band3/` + `src/network/`, totalling **72,056 B** of size-if-it-crosses,
+  with the drained ledger already excluded.
+- GA's 13 handed-forward sub-100 rows (retail constructs ≥2 more Symbols in-body
+  than we do) — **price each on its own pre-state**; FY's byte figure does not
+  generalise.
+- Still open from §7t: FZ's other 17 `Accomplishment` rows and five family
+  spellings (0 bytes today); FY's 18 of 89 rows in `default/Accomplishment`;
+  W16-CX's `ChordbookPanel::Load` ↔ `SetlistToStorePanel::Load` fold at
+  `0x825f5920`; the alias validator's `1408/249 → 1407/250` shift after W16-FT
+  (mover unidentified); the stale header comment claiming the `BandSongMetadata`
+  ctor is `fn_82584A08` (real `0x825A0B28`).
+- **Newly deferred, NOT drained:** `?OnFileLoaded@BandDirector@@` (3,816 B, one
+  2-instruction schedule swap) and `?UpdateScrolling@VocalTrack@@` (8,948 B,
+  permuter class with 12 B attributed). Both need the permuter, which is OFF.
+- **Newly refused, available as a control:** `?DisplayChord@ChordbookPanel@@`
+  (3,436 B @ 97.185100) — GC declined it and it served as the fail-closed control
+  for GC's own landing, reading UNMOVED.
