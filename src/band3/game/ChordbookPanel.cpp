@@ -580,10 +580,10 @@ DataNode ChordbookPanel::OnDisplayChord(const DataArray *a) {
     int i2 = a->Int(2);
     int last = mNumChords - 1;
     int idx;
-    if (i2 <= last) {
-        idx = (i2 < 0) ? 0 : i2;
-    } else {
+    if (i2 > last) {
         idx = last;
+    } else {
+        idx = (i2 < 0) ? 0 : i2;
     }
     DisplayChord(idx);
     return idx;
