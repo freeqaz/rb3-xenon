@@ -70798,11 +70798,18 @@
     "??0EndSessionJob@@QAA@PAX@Z",
     "??0StartSessionJob@@QAA@PAX@Z",
     "??0SynthSample360@@QAA@XZ",
-    "??0TexPtr@RndMatAnim@@QAA@ABV01@@Z",
-    "??0XboxContentMgr@@QAA@XZ"
+    "??0TexPtr@RndMatAnim@@QAA@ABV01@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 13 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??0XboxContentMgr@@QAA@XZ",
+     "lane": "W16-FV 2026-09-16",
+     "class": "CONTRADICTED_DIFFERENT_BODY_CANNOT_FOLD",
+     "disposition": "withdrawn",
+     "evidence": "REFUTED ON RETAIL BYTES, not within our build. target_symbol_map.json places ??0XboxContentMgr@@QAA@XZ at 0x825213d0, while this group's survivor sits at 0x82b8c8c8, and the two retail extents are 184 B and 60 B respectively (report.json target sizes, one reader on both sides -- so this is NOT the one-sided COMDAT-span artifact STLPORT-1/ff832b50 found, which was an 8 B EH prefix). /OPT:ICF leaves ONE survivor; it cannot leave two bodies of different size at two addresses, so this membership cannot be a fold. Body shapes from dtk's split asm agree: fn_82B8C8C8 is a 60 B derived-class ctor (bl base ctor fn_82B8D210, store vftable lbl_8219C1C8 at 0x0(r31), blr), the same shape as the other 12 folded spellings, which are all small ctors; fn_825213D0 is a 184 B manager ctor (__savegprlr_29, 0x80 frame, vftable lbl_8208992C, three-plus std::list sentinel inits) sitting inside the coherent 21-row XboxContentMgr block 0x8251FAF8-0x825216E0 and pairing against our compiled ctor at fuzzy 23.5217 / mpn 24.6087 -- a misidentification would read ~0. DELIBERATELY NOT argued from our own build's COMDAT congruence: /OPT:ICF acted on RETAIL's link, so an our-build congruence is neither necessary nor sufficient -- that is the ALIAS-REPAIR 2026-08-19 predicate lane W16-CU reversed on this very group (see restored[] for ??0AnimPtr@@QAA@ABV0@@Z). The other 12 memberships are UNTOUCHED and this group is NOT pruned. FLAGGED, NOT ACTED ON: the survivor LABEL is itself suspect -- the body at 0x82b8c8c8 is a constructor, not a vector deleting destructor, so ??_E?$StandardEffect@VCompressionEffect@@@@UAAPAXI@Z is plausibly the arbitrary spelling ICF's survivor inherited rather than a description of the body. Naming that address correctly is separate work with its own A/B."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
