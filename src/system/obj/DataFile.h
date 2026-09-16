@@ -28,9 +28,9 @@ private:
     void LoadFile();
     void DoneLoading();
 
-    String mFilename; // 0x18
+    String mFilename; // 0x1c
     DataArray *mData; // 0x28
-    File *mFile; // 0x28
+    File *mFile; // 0x2c
     int mBufLen; // 0x30
     char *mBuffer; // 0x34
     bool mDtb; // 0x38

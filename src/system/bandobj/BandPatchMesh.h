@@ -44,9 +44,9 @@ public:
 
         const RndMesh::Vert *mVert; // 0x0
         Vector3 unk4; // 0x4
-        Vector3 unk10; // 0x10
-        Vector2 unk1c; // 0x1c
-        unsigned short unk24; // 0x24
+        Vector3 unk10; // 0x14
+        Vector2 unk1c; // 0x24
+        unsigned short unk24; // 0x2c
         unsigned char unk26;
         unsigned char unk27;
         int unk28;
