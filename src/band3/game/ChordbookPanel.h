@@ -71,6 +71,7 @@ public:
     Symbol RGStringToken(int, bool);
     void DisplayChord(unsigned int);
     void PickFretboardView(const GameGem &);
+    void HandleLegendLefty(bool);
 
     DataNode OnDisplayChord(const DataArray *);
     DataNode OnGetComplete(const DataArray *);
