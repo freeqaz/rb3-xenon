@@ -162,7 +162,7 @@ void NetSession::OnCreateSessionJobComplete(bool b) {
             mJobMgr.QueueJob(job);
         } else {
             SetState(kIdle);
-            static SessionReadyMsg msg(0);
+            static SessionReadyMsg msg(false);
             MsgSource::Handle(msg, false);
         }
     } else if (mState == kCreatingJoinSession) {
