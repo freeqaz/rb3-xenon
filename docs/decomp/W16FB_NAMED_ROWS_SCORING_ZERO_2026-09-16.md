@@ -140,7 +140,7 @@ unit: default/band3/game/Player 159->166
 | **P1** pairing | ✅ **CONFIRMED, and stronger than predicted.** `??0Player` moved `default/GemPlayer` (mpn 0.0) → `default/band3/game/Player` at **mpn 99.43503 / fuzzy 99.43503**. |
 | **P2** Δcode ∈ {0, +708} | ❌ **WRONG — measured +324.** |
 | **P3** `total_code` unchanged | ✅ **CONFIRMED exactly** (10,247,068 / 69,240 on both legs). |
-| **P4a** BeatMatchController declines | ✅ **CONFIRMED** — stays `fuzzy == 0`, unpaired, in RGGemMatcher. |
+| **P4a** BeatMatchController does not move | ✅ **CONFIRMED** — `match_percent_normalized: 0.0`, byte-identical row, in RGGemMatcher on both legs. (⚠ wording corrected — see §9; do NOT read this as a ruler "declining to pay".) |
 | **P4b** `?SetTrack@Player@@` unchanged | ✅ **CONFIRMED** — 100.0 → 100.0; only its unit-relative `address` moved 20976 → 22112 (= +1,136, the block size). My first comparator used whole-object equality and called that a move; the comparator was over-strict, not the result. |
 | **P5** ±1 row | ❌ **WRONG — measured ±9.** GemPlayer 347→338, Player 185→194; `total_code` 50,868→49,732 and 25,468→26,604, conserved to the byte. |
 
@@ -177,6 +177,49 @@ Player.h:87's other ctor. Fix: add `mUnkTU5_tail(0)` between `unk2c0(-1)` and
   decompose legitimately.
 - **P7.** `total_code` remains **10,247,068** — a member init cannot move the
   denominator.
-- **P8 (must NOT move).** `??0BeatMatchController@@…` stays `fuzzy == 0` and
-  unpaired, again. And `default/GemPlayer`'s `matched_functions` stays **305** —
+- **P8 (must NOT move).** `??0BeatMatchController@@…` stays `fuzzy == 0`, again. And `default/GemPlayer`'s `matched_functions` stays **305** —
   the source edit is confined to Player.cpp and must not touch it.
+
+## 9. MEASURED — combined patch, and a CORRECTION to my own control wording
+
+```
+leg A: matched=43991 masked=23228 honest=20763 code%=40.347736
+leg B: matched=43999 masked=23235 honest=20764 code%=40.357807
+Δmatched=+8  Δmasked_equal=+7  Δhonest=+1  Δcode_bytes=+1032  Δcode%=+0.010071pp
+unit: default/band3/game/Player 159->167
+```
+
+| prediction | outcome |
+|---|---|
+| **P6** Δmatched=+8, Δcode=+1,032 B | ✅ **CONFIRMED TO THE BYTE.** `??0Player` `fuzzy=100.0 mpn=100.0 masked_equal=false` — a genuine honest match (Δhonest +1), not a funclet pairing. |
+| **P7** `total_code` unchanged | ✅ **CONFIRMED** — 10,247,068 / 69,240 on both legs. |
+| **P8** controls unmoved | ✅ **CONFIRMED** — `??0BeatMatchController` `mpn 0.0` on both legs, row byte-identical; `default/GemPlayer` `matched_functions` 305 → 305, so the source edit stayed inside Player.cpp. |
+
+### ⚠ CORRECTION — "the ruler declined to pay" is NOT a real mechanism
+
+My §7 table originally said the ruler **declined** to pay the control row. **That
+framing is wrong and must not be propagated.** An address with no row in
+`scripts/target_symbol_map.json` keeps its placeholder `fn_<ADDR>` name, and
+objdiff **forgives placeholder relocation targets by construction**
+(`is_placeholder_symbol_name`, objdiff-core `diff/code.rs`). Such a site is never
+charged at all — so there is nothing for a ruler to decline. Refuted by lane
+W16-FA and independently re-measured by the coordinator.
+
+What my control actually shows is weaker and still worth having: the row **did
+not move**, its `mpn` is 0.0 on both legs, and no pin or source edit of mine
+could bind a symbol our build defines nowhere. Keep the practice; drop the
+explanation.
+
+### The stronger control, which this lane satisfies by measurement
+
+The right form is: name in advance a row that **would cross if the change were
+forgiving wrongness rather than repairing a real defect**, and require it to
+improve *without* reaching 100. This lane has that instance, and it was not
+retrofitted — it is the intermediate state both A/Bs passed through:
+
+**After the re-home alone, `??0Player` improved 0 → 99.43503 and STOPPED.** A
+mechanism that merely forgave wrongness would have delivered 100 for free.
+Instead the last 0.565% required a defect repair adjudicated on retail bytes —
+the missing `stw r29, 0x2f8(r30)` — before the row crossed. The re-home bought
+**legibility**, and the source fix bought the **bytes**. That two-step is the
+evidence that neither step was forgiveness.
