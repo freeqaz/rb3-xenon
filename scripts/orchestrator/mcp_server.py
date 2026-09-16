@@ -1213,6 +1213,10 @@ class DecompMCPServer:
     _MEM_ARG_RE = re.compile(r'r(\d+),\s*(-?0x[0-9a-fA-F]+|-?\d+)\(r(\d+)\)')
     # Regex for parsing PPC immediate operands: rX, rY, IMM
     _SHIFT_ARG_RE = re.compile(r'r(\d+),\s*r(\d+),\s*(\d+)')
+    # Base registers that are NEVER a `this`/object pointer, so an offset off
+    # them is NOT a struct field: r1 is the stack pointer (spilled locals,
+    # by-value temporaries), r13 the small-data/TLS base.
+    _NON_STRUCT_BASE_REGS = frozenset(['1', '13'])
     # Memory opcodes that access struct fields
     _MEM_OPCODES = frozenset([
         'lwz', 'stw', 'lfs', 'stfs', 'lhz', 'sth', 'lbz', 'stb', 'lfd', 'stfd',
@@ -1280,9 +1284,29 @@ class DecompMCPServer:
 
                     off_t = self._parse_hex_or_int(m_t.group(2))
                     off_b = self._parse_hex_or_int(m_b.group(2))
+                    base_reg_t = m_t.group(3)
+                    base_reg_b = m_b.group(3)
 
                     if off_t == off_b:
                         continue  # Same offset, different register — not a struct mismatch
+
+                    # STACK-RELATIVE ACCESSES ARE NOT STRUCT FIELDS (lane W16-EA,
+                    # 2026-09-16).  This resolver captured the base register as
+                    # group(3) of _MEM_ARG_RE and then NEVER READ IT: it compared
+                    # offsets alone and looked both up in StructDB under the class
+                    # parsed out of the demangled name.  So two swapped SPILL SLOTS,
+                    # `lwz r30, 0x60(r1)` vs `lwz r11, 0x70(r1)`, were reported as a
+                    # confident struct field swap -- with a "wrong field?" fix_hint --
+                    # on ?PollLyricAnimations@VocalTrack@@.  That false
+                    # Track::unk50 <-> Track::mIntroPlaying claim was landed in a
+                    # source comment and briefed onward as a blocking defect.
+                    # Measured refutation: swapping the two bool declarations left
+                    # those two rows BIT-IDENTICAL and broke the one field read that
+                    # was already matching (lbz 0x70(r3), equal on both sides),
+                    # fuzzy 84.26344 -> 84.258064 on the graded ruler.
+                    if (base_reg_t in self._NON_STRUCT_BASE_REGS
+                            or base_reg_b in self._NON_STRUCT_BASE_REGS):
+                        continue
 
                     # Resolve field names
                     target_field = None
@@ -1301,6 +1325,8 @@ class DecompMCPServer:
                         "opcode": opcode_t,
                         "target_offset": f"0x{off_t:x}",
                         "base_offset": f"0x{off_b:x}",
+                        "target_base_reg": f"r{base_reg_t}",
+                        "base_base_reg": f"r{base_reg_b}",
                     }
                     if target_field:
                         entry["target_field"] = target_field
