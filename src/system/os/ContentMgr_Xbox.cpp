@@ -17,7 +17,12 @@ extern "C" {
     unsigned long XEnumerateCrossTitle(void*, void*, int, int, void*);
 }
 
-std::vector<String> gIgnoredContent;
+// Retail's ignored-content list is a static table of 8 C strings in .rdata
+// (lbl_82089578), walked with an /Oi-inlined strcmp in PollRefresh -- NOT
+// DC3's std::vector<String> filled from SystemConfig (see the note on Init).
+static const char *gIgnoredContent[] = { "rbsongcache", "rb2songcache", "band",
+                                         "band3",       "netcache",     "Song Export",
+                                         "globaloptions", "rbdxcache" };
 XboxContentMgr gContentMgr;
 const char *kContentRootFormat = "cnt%08x";
 
@@ -474,57 +479,41 @@ bool XboxContentMgr::MountContent(Symbol name) {
 void XboxContentMgr::PollRefresh() {
     if (mState == kDiscoveryMounting) {
         mState = kDiscoveryLoading;
-        unk7fc = 0;
         for (int i = 0; i < kNumberOfBuffers; i++) {
             if (mOverlappeds[i]) {
                 DWORD numItems = 0;
                 DWORD res = XGetOverlappedResult(mOverlappeds[i], &numItems, false);
                 if (res == 0x3E4) {
+                    // retail: sets the state and jumps straight to the
+                    // epilogue -- no ContentMountBegun, no base PollRefresh.
                     mState = kDiscoveryMounting;
-                    continue;
+                    return;
                 }
                 if (res == 0) {
                     for (unsigned int j = 0; j < numItems; j++) {
                         XCONTENT_CROSS_TITLE_DATA *xdata =
                             (XCONTENT_CROSS_TITLE_DATA *)((char *)&mXDatas[i] + j * 0x138);
-                        // Check if this content is in the ignored list
-                        String *found = std::find(
-                            gIgnoredContent.begin(), gIgnoredContent.end(), xdata->szFileName
-                        );
                         char *filename = xdata->szFileName;
-                        if (found != gIgnoredContent.end())
+                        bool ignored = false;
+                        for (unsigned int k = 0; k < DIM(gIgnoredContent); k++) {
+                            if (strcmp(filename, gIgnoredContent[k]) == 0) {
+                                ignored = true;
+                                break;
+                            }
+                        }
+                        if (ignored)
                             continue;
 
                         bool discovered = false;
-                        if (xdata->dwContentType == 0x7000) {
-                            FOREACH (it, mCallbacks) {
-                                Symbol sym(filename);
-                                if (!(*it)->ContentTitleDiscovered(
-                                        xdata->dwTitleId, sym
-                                    )
-                                    || discovered) {
-                                    discovered = true;
-                                } else {
-                                    discovered = false;
-                                }
-                            }
-                        } else {
-                            FOREACH (it, mCallbacks) {
-                                Symbol sym(filename);
-                                if (!(*it)->ContentDiscovered(sym) || discovered) {
-                                    discovered = true;
-                                } else {
-                                    discovered = false;
-                                }
-                            }
+                        FOREACH (it, mCallbacks) {
+                            discovered =
+                                !(*it)->ContentDiscovered(Symbol(filename)) || discovered;
                         }
-
                         if (discovered) {
                             unk7fc++;
                         }
-
-                        Content *newContent = new XboxContent(*xdata, unk7f8, i, discovered);
-                        unk7f8++;
+                        Content *newContent =
+                            new XboxContent(*xdata, unk7f8++, i, discovered);
                         std::list<Content *>::iterator end = mContents.end();
                         mContents.insert(end, newContent);
                     }
@@ -534,11 +523,7 @@ void XboxContentMgr::PollRefresh() {
                     );
                     if (enumRes == 0x3E5) {
                         mState = kDiscoveryMounting;
-                    }
-                } else {
-                    DWORD err = XGetOverlappedExtendedError(mOverlappeds[i]);
-                    if ((err & 0xFFFF) != 0x12) {
-                        MILO_NOTIFY("XEnumerateCrossTitle (%d) error: %d", i, err);
+                        return;
                     }
                 }
                 operator delete(mOverlappeds[i]);
@@ -567,7 +552,7 @@ void XboxContentMgr::PollRefresh() {
                 (*it)->Unmount();
                 allDone = false;
             } else {
-                allDone = (state != Content::kNeedsMounting) && allDone;
+                allDone = (state != Content::kNeedsMounting) & allDone;
             }
         }
         if (allDone) {
