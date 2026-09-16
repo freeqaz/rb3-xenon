@@ -2940,3 +2940,51 @@ a right conclusion resting on wrong evidence (cf. W16-EE correcting W16-EC's
 `PropKeys::Copy` **mechanism** while confirming its **number**). A reproducing symptom is
 not evidence for its proposed cause — the cause has to be tested separately, and here the
 re-ingest was the test that refuted it.
+
+### The near-crossing stratum — the population the `.1f` display concealed (2026-09-16)
+
+Directly downstream of the correction above. Once the display-rounding mechanism was
+understood, the obvious question was **how much sits in the band `.1f` renders as
+`100.0%`**. Censused from `report.json` at `ec15a785`, graded `name_check`:
+
+| band | rows | bytes |
+|---|---:|---:|
+| whole binary, `fuzzy >= 99.95 < 100` (**prints as `100.0%`**) | 147 | **118,340** |
+| whole binary, `fuzzy >= 99.5 < 100` | 4,576 | 580,140 |
+| **game layer** (`band3/`+`network/`), `>= 99.95` | **22** | **17,052** |
+| game layer, `>= 99.5` | 396 | 73,576 |
+
+★★★ **The decisive number is not the size — it is the COMPOSITION.** Splitting the
+game-layer band on `match_percent_normalized`, which separates instruction-level
+penalties from relocation-name (arg-only) ones:
+
+| band | source-reachable (`mpn < 100`) | arg-only (`mpn == 100`) |
+|---|---:|---:|
+| game `>= 99.95` | **22 rows / 17,052 B (100%)** | **0 rows / 0 B** |
+| game `>= 99.5`, named | 209 rows / 60,028 B (90.6% of bytes) | 13 rows / 6,268 B |
+
+⇒ **This stratum is the mirror image of the `mpn==100 / fuzzy<100` stratum**, which
+MPNGAP-1 measured as **~91% irreducible** fold/map noise and explicitly told us not to
+re-fund as a byte lever. Here the ratio inverts: at `>= 99.95` **every single row** is
+instruction-level, i.e. reachable by ordinary source work.
+
+⚠ **And the anonymous rows are worth almost nothing** — in the `>= 99.5` game band the
+174 `fn_*` rows total **7,280 B** against the 222 named rows' **66,296 B**. Rank named.
+
+**Why nobody worked it:** the concealment is *selective in the worst possible
+direction*. A coordinator scanning candidates sees `100.0%` and skips — so the rows
+skipped are precisely the ones **one or two charges from paying their full size**,
+since `matched_code` is all-or-nothing per row. The last three lanes (W16-EE/EF/EG) were
+all pointed at map/alias work in the drained stratum while this one sat unread.
+
+⇒ **Dispatched against it (2026-09-16):**
+- **W16-EI** (opus) — `?MaybePublish@UIStats@@QAAXPAVUIScreen@@@Z`, 2,604 B, fuzzy
+  99.57911 / mpn 99.6559. The largest source-reachable near-crossing row in the game
+  layer; source present (318 lines), no lane doc owned it.
+- **W16-EJ** (opus) — the full 22-row `>= 99.95` band sweep, briefed to rank by
+  **bytes-per-charge-to-close rather than by size**, because a partially improved row
+  pays exactly zero bytes.
+
+⚠ **Both briefs carry the standing warning to test the figures literally** rather than
+inherit them — the same rule whose violation produced the correction immediately above
+this section.
