@@ -1377,12 +1377,11 @@ void VocalTrack::UpdateScrolling(float ms) {
                 float window = shift.unk8 ? mLyricShiftQuickMs : mLyricShiftMs;
                 if (shift.unk4 >= (lyricMs - window))
                     break;
-                float newX = shift.unk0;
-                xPos = newX;
                 Vector3 pos(scroller->LocalXfm().v);
-                pos.x = newX;
+                xPos = shift.unk0;
+                pos.x = xPos;
                 scroller->SetLocalPos(pos);
-                shiftedX = newX + mDir->mNowBarX;
+                shiftedX = pos.x + mDir->mNowBarX;
                 shifts.pop_front();
             }
             if (shifts.size() != 0) {
