@@ -73,3 +73,30 @@ Conservative (IsEmptyPhrase does not close): `Dmatched=+2`, `Dcode_bytes=+180`.
   unverifiable guess. Handed off instead.
 - `?GetBestHit@VocalPart@@` — see the lane doc; its residual is 4 instructions
   of pure scheduling around a **byte-exact** callee, and the permuter is OFF.
+
+---
+
+## Addendum — a FOURTH edit, pre-registered separately (still before any A/B)
+
+Added after the three above were already committed; committed before measuring.
+
+`GetNoteSliceWeight` (484 B, fuzzy 88.1240, 60 charges) — loop 1 held
+`float frameMs = kFrameTimeMs;`, a **local copy of the global**, and passed
+`std::min(spC, frameMs)`. Retail passes `kFrameTimeMs` directly.
+
+One cause explains all four symptoms simultaneously, which is why I believe it:
+
+| symptom | target | ours | explained by |
+|---|---|---|---|
+| FPR save helper | `__savefpr_21` (f21-f31) | `__savefpr_20` (f20-f31) | our extra float local costs one FPR |
+| GPR saves | `r30` **and** `r31` | `r31` only | retail spends a GPR holding `&kFrameTimeMs` |
+| the `min` operand | `mr r11, r31` (global's address) | `addi r11, r1, 0x54` (stack copy) | `std::min` takes `const float&`; a local copy must be spilled |
+| idx 33-36 | absent | `lis`/`lfs`/`stfs` -> `0x50(r1)` | materialising the copy |
+
+Prediction: `88.1240 -> **100**`, `+484 B`, confidence MEDIUM-HIGH (60 charges is
+a lot, and most are FPR renumbering that should follow the pressure change; if
+any real second defect hides under them it will survive).
+
+Revised whole-binary prediction if all four close:
+`Dmatched = +4`, `Dcode_bytes = +780`, `Dcode% = +0.007612 pp`, `Dunits@100 = 0`.
+Conservative (GetNoteSliceWeight and IsEmptyPhrase do not close): `+2 / +180 B`.
