@@ -403,11 +403,13 @@ void RndPostProc::Load(BinStream &bs) {
         int dRev;
         bs >> dRev;
         MILO_ASSERT(dRev == 3, 0x2A8);
-        float f30 = 0;
         bool b70;
-        Vector3 v40;
         int i5c;
-        bs >> b70 >> v40 >> f30 >> i5c;
+        Vector3 v40;
+        float f30 = 0;
+        BinStream &s = bs >> b70;
+        s >> v40 >> f30;
+        s >> i5c;
     } else {
         Hmx::Object::Load(bs);
     }
@@ -451,7 +453,11 @@ void RndPostProc::LoadRev(BinStream &bs, int rev) {
             bs >> dummy;
             bs >> mBloomIntensity;
             mBloomIntensity = sqrtf(mBloomIntensity);
-            bs >> dummy;
+            // Retail uses a THIRD distinct stack slot here (r31+0x60) -- one
+            // `int dummy` read into twice would reuse one slot. rb3-Wii spells
+            // it `int dummy2;` too.
+            int dummy2;
+            bs >> dummy2;
         }
     }
     if (rev > 5) {
@@ -459,15 +465,28 @@ void RndPostProc::LoadRev(BinStream &bs, int rev) {
     }
     if (rev > 6) {
         if (rev < 0x12) {
-            bs >> mColorXfm.mColorXfm.m.x >> mColorXfm.mColorXfm.m.y
-                >> mColorXfm.mColorXfm.m.z;
-            bs >> mColorXfm.mColorXfm.v;
+            // Retail offsets all four member addresses from ONE base held in
+            // a non-volatile: `addi r28,r30,0xb8` then `addi r25,r28,0x20`,
+            // `addi r24,r28,0x10`, `addi r4,r28,0x30`. That is a pointer local
+            // (the rb3-Wii spelling), and it is what makes r24/r25 live and
+            // forces retail's `__savegprlr_24` + 0xf0 frame.
+            Transform *ptxfm = &mColorXfm.mColorXfm;
+            bs >> ptxfm->m.x >> ptxfm->m.y >> ptxfm->m.z;
+            bs >> ptxfm->v;
         } else {
+#ifdef HX_NATIVE
             if (!mColorXfm.Load(bs)) {
                 MILO_FAIL(
                     "%s can't load new %s version", PathName(this), ClassName()
                 );
             }
+#else
+            // Retail (fn_82430FD0, .L_824311B0) does `mr r4,r29; addi r3,r30,0x64;
+            // bl <RndColorXfm::Load>` and falls straight through to .L_824311BC --
+            // no clrlwi./bne, and no PathName/ClassName argument evaluation. The
+            // return is simply not tested. rb3-Wii's check is dev-build-only.
+            mColorXfm.Load(bs);
+#endif
         }
         bs >> (Key<float>&)mFlickerModBounds >> (Key<float>&)mFlickerTimeBounds;
         if (rev < 9) {
@@ -557,8 +576,9 @@ void RndPostProc::LoadRev(BinStream &bs, int rev) {
         mBloomThreshold *= 4.0f;
     }
     if (rev > 0x18) {
-        bs >> mRefractMap >> mRefractDist >> (Key<float>&)mRefractScale
-            >> (Key<float>&)mRefractPanning >> mRefractAngle;
+        bs >> mRefractMap >> mRefractDist >> (Key<float>&)mRefractScale;
+        bs >> (Key<float>&)mRefractPanning;
+        bs >> mRefractAngle;
         if (rev > 0x1B) {
             bs >> (Key<float>&)mRefractVelocity;
         }
