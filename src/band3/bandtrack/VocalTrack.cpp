@@ -1230,7 +1230,7 @@ void VocalTrack::UpdateScrolling(float ms) {
         return;
     float trackScale = unk74;
     float trackWidth = unk78;
-    float lookAhead = trackScale * 64.0f + ms;
+    float lookAhead = trackScale * 2.0f + ms;
     float buildAhead =
         trackScale * ((mDir->mTrackLeftX - trackWidth) / trackWidth) + ms;
     if (mPlayer->IsNet()) {
