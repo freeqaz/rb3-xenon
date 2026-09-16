@@ -32,6 +32,7 @@ Symbol QuestFilterPanel::GetSelectedFilter() {
     if (GetState() != kUp)
         return "";
     else {
+        static Message get_selected_filter_index_msg("get_selected_filter_index");
         DataNode handled = Handle(get_selected_filter_index_msg, true);
         int i = handled.Int();
         if (m_pQuestFilterProvider->NumData() > 0) {
@@ -227,6 +228,7 @@ void QuestFilterPanel::Refresh() {
     MILO_ASSERT(pProgress, 0x187);
     m_symQuest = pProgress->mCurrentQuest;
     UpdateFilters();
+    static Message update_all_msg("update_all");
     Handle(update_all_msg, true);
 }
 
