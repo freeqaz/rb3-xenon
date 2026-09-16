@@ -128,9 +128,15 @@ Symbol StarDisplay::GetSymbolForStarCount(int i) {
     }
 }
 
+// Retail calls the FREE function GetStarsToken (fn_8231C458, defined below in this
+// TU), not the static member GetSymbolForStarCount -- proven by the charged `bl` at
+// index 9 of this row naming ?GetStarsToken@@YA?AVSymbol@@H@Z, and corroborated by
+// the same finding already recorded in SongSortByStars.cpp.  Lane W16-EC.
+Symbol GetStarsToken(int);
+
 int StarDisplay::GetStarCountForSymbol(Symbol s) {
     for (int i = 0; i <= 6; i++) {
-        if (GetSymbolForStarCount(i) == s)
+        if (GetStarsToken(i) == s)
             return i;
     }
     MILO_FAIL("can't set star display to token %s", s.Str());

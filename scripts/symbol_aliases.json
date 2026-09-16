@@ -81436,11 +81436,15 @@
    "name": "SetDifficulty",
    "address": "0x8268bb68",
    "survivor": "?SetDifficulty@BandUser@@QAAXVSymbol@@@Z",
-   "folded": [
-    "?SetTrackType@BandUser@@QAAXVSymbol@@@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "?SetTrackType@BandUser@@QAAXVSymbol@@@Z",
+     "lane": "W16-EC 2026-09-16",
+     "verdict": "NOT A FOLD -- THE MAP NAME AT THIS VA WAS WRONG. Retail 0x8268bb68 calls fn_8277B530 (an unnamed Symbol->enum converter) and then ?SetTrackType@BandUser@@QAAXW4TrackType@@@Z; a body that converts a Symbol and then sets the TRACK TYPE is SetTrackType(Symbol), not SetDifficulty(Symbol). Both enum overloads exist at DISTINCT VAs at fuzzy 100 (SetTrackType(TrackType) 0x8268bb00, SetDifficulty(Difficulty) 0x8268ba18), so they are not folded with each other, and two wrappers calling DIFFERENT callees cannot be ICF-folded at all -- MSVC folds only COMDATs identical INCLUDING relocations. W16-CU's T1 byte-identity finding is CORRECT and was MIS-INTERPRETED: byte-identity between our compiled ?SetTrackType@BandUser@@QAAXVSymbol@@@Z and retail 0x8268bb68 proves that VA *IS* SetTrackType(Symbol), not that it is a fold of two spellings. The map row was repaired instead (0x8268bb68 -> SetTrackType(Symbol), 0x8268bab0 -> SetDifficulty(Symbol)); both VAs left _bijection_arbitrary because their identity is now established on retail relocations. Group kept with folded: [] per the never-prune rule."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
