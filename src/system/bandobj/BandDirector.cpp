@@ -1243,7 +1243,8 @@ DataNode BandDirector::OnFileLoaded(DataArray *da) {
                                           "drum_intensity",    "guitar_intensity",
                                           "keyboard_intensity", 0 };
         for (int i = 0; instIntensities[i] != 0; i++) {
-            DataArrayPtr dptr((Symbol(instIntensities[i])));
+            Symbol isym(instIntensities[i]);
+            DataArrayPtr dptr(isym);
             SymbolKeys *skeys =
                 dynamic_cast<SymbolKeys *>(mPropAnim->GetKeys(this, dptr));
             if (skeys)
