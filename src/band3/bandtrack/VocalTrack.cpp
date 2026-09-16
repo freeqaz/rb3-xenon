@@ -1514,7 +1514,7 @@ void VocalTrack::UpdateScrolling(float ms) {
             if (sectionOnly && phStartMs > (sectionEnd - 100.0f))
                 break;
 
-            bool isPast = phEndMs < (staticLyrics ? ms : buildAhead);
+            bool isPast = staticLyrics ? (phEndMs < ms) : (phEndMs < buildAhead);
             if (sectionOnly && !isPast && phEndMs > sectionStart) {
                 isPast = true;
                 for (const VocalNote *skipIt = itT; skipIt != noteVec.end(); skipIt++) {
