@@ -93,3 +93,48 @@ population. Key oracle lookups on the **name across all units**.
   ≈ two extra stores — corroborates it independently. **The tell separating a
   version delta from an oracle defect is that the oracle's own row scores 100
   with its value.**
+
+## ⚠ CORRECTIONS — measured by the two lanes this census briefed (same day)
+
+Both rules above were *directionally* right and *operationally* wrong, and each
+cost real bytes. Both are now enforced in `tools/oracle_backed_census.py`'s
+output rather than left to the reader.
+
+### 1. Price by the ORACLE'S DISTANCE FROM 100, not by the row's size (W16-FJ)
+
+The census printed `ORACLE-BACKED (>=90): N rows / B bytes <- work these first`,
+and I briefed that byte total to W16-FJ as the prize. **It is not the prize.**
+`matched_code` pays only at `fuzzy == 100`, so **a faithful port of a sub-100
+oracle pays EXACTLY ZERO** — it reproduces the oracle's wall along with the
+oracle's code.
+
+Measured on FJ: of **3,228 B** briefed as oracle-backed, **1,112 B crossed** and
+**2,116 B landed on DC3's wall, reproducing DC3's scores to four decimals.** That
+four-decimal agreement is not a failure — it is the strongest available evidence
+that the port was *faithful*. The failure was the pricing.
+
+⇒ The tool now splits the line into **COLLECTABLE (oracle ≥99.9)** and
+**ORACLE'S WALL (oracle 90–99.9)**, and says so. The third bullet above already
+made this point *for `ReverbConvertI3DL2ToNative` specifically*; what it did not
+do was generalise it into the rule the summary line was printing.
+
+### 2. The DRAINED class is `mpn == 100 AND fuzzy < 100` — never "f looks like 99.x" (W16-FI)
+
+The bullet above describes the drained class by its *symptom* (`f=99.45–99.90`).
+That is not a predicate, and filing on it misclassifies rows in both directions.
+
+Measured on FI: of **9 rows / 384 B** I filed as drained on the 99.x eyeball,
+only **6 rows / 264 B** actually were. The other three read `mpn == fuzzy`
+sub-100 on **both** rulers — ordinary broken rows — and **two of them crossed as
+collateral, paying 80 B, which was 27% of that lane's entire delta.**
+
+⇒ **A row misfiled into a closed class is invisible to the lane told to skip it.**
+The drained class is defined by the two rulers *disagreeing* (`mpn` excludes
+arg-only penalties, `fuzzy` does not); it is not defined by where `fuzzy` lands.
+
+### Not a correction: the population moves
+
+Re-running this census after W16-FG/FJ/FI/FH land returns **smaller** tiers than
+the table in §"The population" — rows left the fuzzy-0 population by crossing.
+That is the instrument working. **Re-run it; never inherit its figures**, exactly
+as with `total_code` and the reachable ceiling.
