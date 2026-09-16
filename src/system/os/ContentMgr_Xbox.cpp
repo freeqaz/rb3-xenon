@@ -14,7 +14,7 @@
 // Forward declarations for XContent functions
 extern "C" {
     long XContentCreateCrossTitleEnumerator(int, void*, int, int, int, int, void*);
-    long XEnumerateCrossTitle(void*, void*, int, int, void*);
+    unsigned long XEnumerateCrossTitle(void*, void*, int, int, void*);
 }
 
 std::vector<String> gIgnoredContent;
@@ -80,6 +80,12 @@ void XboxContent::Poll() {
         }
         mOverlapped = new XOVERLAPPED;
         memset(mOverlapped, 0, sizeof(XOVERLAPPED));
+        // MEASURED NEGATIVE (W16-FI): retail materialises this 8-byte argument on
+        // the stack (`stw 0,0x60(r1)`, `stw 0,0x64(r1)`, `ld r10,0x60(r1)`) while
+        // `QuadPart = 0` keeps it in a register.  Assigning HighPart/LowPart
+        // separately to force the stack form scored WORSE, not better --
+        // 87.764 -> 85.189 fuzzy -- so the stack spill is driven by something
+        // other than the shape of this initialisation.  Left as QuadPart.
         ULARGE_INTEGER contentSize;
         contentSize.QuadPart = 0;
         if (XContentCrossTitleCreate(
@@ -100,10 +106,17 @@ void XboxContent::Poll() {
             mState = kMounting;
         }
     }
+    // Retail (0x8251fdc8) RELEASEs mOverlapped BEFORE branching on the result,
+    // not after, and its failure arm is a bare `mState = kContentDeleting`.
+    // DC3 additionally calls XGetOverlappedExtendedError and records
+    // `mCorrupt = err == 0x570`; retail emits neither -- consistent with the
+    // note on IsCorrupt above, which found NOT ONE access to 0x169 anywhere in
+    // this TU including Poll.  That block was DC3-era and is dropped.
     if (mState == 2 || mState == 3) {
         DWORD res = XGetOverlappedResult(mOverlapped, nullptr, false);
         if (res == 0x3E4)
             return;
+        RELEASE(mOverlapped);
         if (res == 0) {
             mValidLicenseBits = true;
             mState = mState == kMounting ? kMounted : kUnmounted;
@@ -111,17 +124,18 @@ void XboxContent::Poll() {
                 Delete();
             }
         } else {
-            unsigned short err = XGetOverlappedExtendedError(mOverlapped);
             mState = kContentDeleting;
-            mCorrupt = err == 0x570;
         }
-        RELEASE(mOverlapped);
     }
     if (mState == 6) {
         DWORD res = XGetOverlappedResult(mOverlapped, nullptr, false);
         if (res != 0x3E4) {
             RELEASE(mOverlapped);
-            mState = (State)(res == 0);
+            // `xori r11,r11,1 ; addi r11,r11,7` -- kBackingUp(7) on success and
+            // kContentDeleting(8) on failure, NOT the 0/1 this used to compute.
+            // The guard above is mState == kNeedsBackup(6), so the backup states
+            // are the semantically right pair too.
+            mState = res == 0 ? kBackingUp : kContentDeleting;
         }
     }
 }
@@ -173,81 +187,102 @@ BEGIN_HANDLERS(XboxContentMgr)
     HANDLE_SUPERCLASS(ContentMgr)
 END_HANDLERS
 
+// Retail's Init (0x82521a30, 120 B) is the clear-loop, AddSink and the base
+// call -- and NOTHING else.  DC3's copy additionally reads SystemConfig
+// ("content_mgr"), FindData()s `enumerate_save_game_exports` and fills
+// gIgnoredContent from `ignored_content`; retail's 120 bytes contain no
+// SystemConfig/FindData/FindArray/push_back call at all (those 50
+// instructions were pure base-side insert), so that block is DC3-era and is
+// dropped here rather than transcribed.
 void XboxContentMgr::Init() {
-    unk938 = 0;
-    unk93c = 0;
+    unk7f8 = 0;
+    unk7fc = 0;
     for (int i = 0; i < kNumberOfBuffers; i++) {
         mOverlappeds[i] = nullptr;
     }
     ThePlatformMgr.AddSink(this);
-    DataArray *cfg = SystemConfig("content_mgr");
-    cfg->FindData("enumerate_save_game_exports", mEnumerateSaveGameExports);
-    DataArray *ignored = cfg->FindArray("ignored_content");
-    for (int i = 1; i < ignored->Size(); i++) {
-        gIgnoredContent.push_back(ignored->Str(i));
-    }
     ContentMgr::Init();
 }
 
 void XboxContentMgr::Terminate() { ThePlatformMgr.RemoveSink(this); }
 
+// Retail 0x82520fd0.  Two structural differences from DC3, both read off the
+// retail bytes rather than transcribed:
+//   1. the whole body is gated on the 0x70 bool (`lbz r11,0x70(r3) / cmplwi /
+//      beq <epilogue>` before mDirty at 0x44 is ever touched);
+//   2. the enumerator dispatch has THREE arms, not DC3's four -- there is no
+//      i == 6 arm (kNumberOfBuffers is 6 here, so i == 6 is unreachable) and no
+//      `mEnumerateSaveGameExports` test on i == 5.  DC3 emits
+//      `lbz r11,0x800(r30)` for that test; retail emits nothing there, which
+//      agrees with retail's Init never assigning the member.
 void XboxContentMgr::StartRefresh() {
-    bool b10 = mDirty || (unk74 && unk75);
+    if (unk70) {
+        bool b10 = mDirty || (unk74 && unk75);
 
-    if (b10) {
-        mDirty = false;
-        unk74 = false;
-        unk75 = false;
-        if (mState == 2) {
-            for (int i = 0; i < kNumberOfBuffers; i++) {
-                if (mOverlappeds[i]) {
-                    XCancelOverlapped(mOverlappeds[i]);
-                    RELEASE(mOverlappeds[i]);
-                    CloseHandle(mEnumHandles[i]);
+        if (b10) {
+            mDirty = false;
+            unk74 = false;
+            unk75 = false;
+            if (mState == 2) {
+                for (int i = 0; i < kNumberOfBuffers; i++) {
+                    if (mOverlappeds[i]) {
+                        XCancelOverlapped(mOverlappeds[i]);
+                        RELEASE(mOverlappeds[i]);
+                        CloseHandle(mEnumHandles[i]);
+                    }
+                }
+            } else if (mState != 1 && mState != 0) {
+                RELEASE(mLoader);
+                mCallbackFiles.clear();
+            }
+            FOREACH (it, mContents) {
+                if ((*it)->GetState() == 4) {
+                    NotifyUnmounted(*it);
                 }
             }
-        } else if (mState != 1 && mState != 0) {
-            RELEASE(mLoader);
-            mCallbackFiles.clear();
-        }
-        FOREACH (it, mContents) {
-            if ((*it)->GetState() == 4) {
-                NotifyUnmounted(*it);
+            DeleteAll(mContents);
+            unk7fc = 0;
+            mRootLoaded = 0;
+            DataArray *cfg = SystemConfig("content_mgr", "roots");
+            for (int i = 1; i < cfg->Size(); i++) {
+                mContents.push_back(new RootContent(cfg->Str(i)));
+                mRootLoaded++;
             }
-        }
-        DeleteAll(mContents);
-        unk93c = 0;
-        mRootLoaded = 0;
-        DataArray *cfg = SystemConfig("content_mgr", "roots");
-        for (int i = 1; i < cfg->Size(); i++) {
-            mContents.push_back(new RootContent(cfg->Str(i)));
-            mRootLoaded++;
-        }
-        FOREACH (it, mExtraContents) {
-            mContents.push_back(new RootContent(it->c_str()));
-            mRootLoaded++;
-        }
-        mState = kDiscoveryMounting;
-        FOREACH (it, mCallbacks) {
-            (*it)->ContentStarted();
-        }
-        for (int i = 0; i < kNumberOfBuffers; i++) {
-            if (i >= 4
-                || ThePlatformMgr.IsSignedIn(i)
-                    && (i != 5 || mEnumerateSaveGameExports)) {
-                int flags = i == 4 ? 2 : i == 5 ? 1 : i == 6 ? 0x7000 : 2;
-                int param = i == 4 || i == 5 ? 0xff : i;
-                void* dataPtr = &mXDatas[i];
-
-                if (i == 4) dataPtr = &mEnumHandles[4];
-                else if (i == 5) dataPtr = &mEnumHandles[5];
-                else if (i == 6) dataPtr = &mEnumHandles[6];
-
-                void* enumHandle = operator new(0x1c);
-                memset(enumHandle, 0, 0x1c);
-
-                if (XContentCreateCrossTitleEnumerator(param, 0, flags, 0, 1, 0, dataPtr) == 0) {
-                    XEnumerateCrossTitle(enumHandle, &mXDatas[i], 0x138, 0, mOverlappeds[i]);
+            FOREACH (it, mExtraContents) {
+                mContents.push_back(new RootContent(it->c_str()));
+                mRootLoaded++;
+            }
+            mState = kDiscoveryMounting;
+            FOREACH (it, mCallbacks) {
+                (*it)->ContentStarted();
+            }
+            for (int i = 0; i < kNumberOfBuffers; i++) {
+                if (i >= 4 || ThePlatformMgr.IsSignedIn(i)) {
+                    DWORD result;
+                    if (i == 4) {
+                        result = XContentCreateCrossTitleEnumerator(
+                            0xff, 0, 2, 0, 1, 0, &mEnumHandles[4]
+                        );
+                    } else if (i == 5) {
+                        result = XContentCreateCrossTitleEnumerator(
+                            0xff, 0, 1, 0, 1, 0, &mEnumHandles[5]
+                        );
+                    } else {
+                        result = XContentCreateCrossTitleEnumerator(
+                            i, 0, 2, 0, 1, 0, &mEnumHandles[i]
+                        );
+                    }
+                    if (result == 0) {
+                        mOverlappeds[i] = new XOVERLAPPED;
+                        memset(mOverlappeds[i], 0, sizeof(XOVERLAPPED));
+                        if (XEnumerateCrossTitle(
+                                mEnumHandles[i], &mXDatas[i], 0x138, 0, mOverlappeds[i]
+                            )
+                            != 0x3E5) {
+                            RELEASE(mOverlappeds[i]);
+                            CloseHandle(mEnumHandles[i]);
+                        }
+                    }
                 }
             }
         }
@@ -439,7 +474,7 @@ bool XboxContentMgr::MountContent(Symbol name) {
 void XboxContentMgr::PollRefresh() {
     if (mState == kDiscoveryMounting) {
         mState = kDiscoveryLoading;
-        unk93c = 0;
+        unk7fc = 0;
         for (int i = 0; i < kNumberOfBuffers; i++) {
             if (mOverlappeds[i]) {
                 DWORD numItems = 0;
@@ -485,11 +520,11 @@ void XboxContentMgr::PollRefresh() {
                         }
 
                         if (discovered) {
-                            unk93c++;
+                            unk7fc++;
                         }
 
-                        Content *newContent = new XboxContent(*xdata, unk938, i, discovered);
-                        unk938++;
+                        Content *newContent = new XboxContent(*xdata, unk7f8, i, discovered);
+                        unk7f8++;
                         std::list<Content *>::iterator end = mContents.end();
                         mContents.insert(end, newContent);
                     }
@@ -512,7 +547,7 @@ void XboxContentMgr::PollRefresh() {
             }
         }
         FOREACH (it, mCallbacks) {
-            (*it)->ContentMountBegun(unk93c);
+            (*it)->ContentMountBegun(unk7fc);
         }
     } else if (mState == kDiscoveryLoading) {
         int mountedCount = 0;
