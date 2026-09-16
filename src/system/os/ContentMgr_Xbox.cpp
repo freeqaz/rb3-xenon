@@ -512,8 +512,21 @@ void XboxContentMgr::PollRefresh() {
 
                         bool discovered = false;
                         FOREACH (it, mCallbacks) {
-                            discovered =
-                                !(*it)->ContentDiscovered(Symbol(filename)) || discovered;
+                            // The implicit const char* -> Symbol conversion here is
+                            // load-bearing (v7..v11, one full build each). DC3's
+                            // explicit temporary `Symbol(filename)` makes the front
+                            // end read (*it)'s vptr BEFORE the Symbol ctor bl and
+                            // keep it live across the call in a callee-saved reg
+                            // (extra __savegprlr_19, frame +0x10, rename cascade:
+                            // 96.67). A named local `Symbol s(filename)` or a
+                            // `const Symbol &` sequences the vptr load after the
+                            // bl but reads the Symbol from a frame slot / address
+                            // instead of via the ctor's returned this (99.33 /
+                            // 96.77). Only parameter copy-initialization gives
+                            // retail's shape: temp at 0x5c, vptr after the bl,
+                            // `mr r10,r3; lwz r4,0(r10)` (100.0). Naming `*it` as
+                            // a local is inert either way.
+                            discovered = !(*it)->ContentDiscovered(filename) || discovered;
                         }
                         if (discovered) {
                             unk7fc++;
