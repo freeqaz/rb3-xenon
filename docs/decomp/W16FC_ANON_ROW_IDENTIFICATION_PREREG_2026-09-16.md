@@ -66,8 +66,13 @@ P3. Eleven rows pair and read `0 < fuzzy < 100`. Bands (retail/ours sizes drive
     SelectRandomVenue 40–80; ??0BandSongMetadata 30–65.
 P4. **Designed row that must NOT move:** `0x82430fd0` named with the true retail
     signature `?LoadRev@RndPostProc@@QAAXAAVBinStream@@H@Z` reads `fuzzy 0`,
-    unpaired, in the map-only leg — our base obj defines no symbol of that name.
-    The ruler must decline it. It moves only after the SOURCE fix in §3.
+    unpaired, in the map-only leg — our base obj defines no symbol of that name,
+    and objdiff pairs target↔base rows BY NAME, so the row cannot pair. It moves
+    only after the SOURCE fix in §3. (Wording corrected 2026-09-16 per the
+    coordinator: there is no "ruler declines to pay" mechanism — placeholder
+    targets are forgiven by construction, so nothing is ever declined. What this
+    control tests is PAIRING, and the requirement that survives is the practice:
+    a named row that must improve without reaching 100, or here, must not pair.)
 P5. `Δmatched_functions ∈ {0, +1}` and `Δmatched_code ∈ {0, +1052}`: only
     TriggerSongCompletion (exact size) can cross; no other row can.
 P6. Aggregate `fuzzy_match_percent` rises by **+0.10 to +0.28 pp** (≈28,320 B
@@ -105,6 +110,40 @@ C1. `RndPostProc::LoadRev` signature: retail is `(BinStream&, int rev)` (rb3-Wii
 C2. Every other residual is adjudicated on retail bytes per row AFTER the map A/B,
     priced from `report.json`'s charged sites, and recorded in this doc's §4.
 
-## 4. Measured (filled in by later commits)
+## 4. Measured — map-only A/B (run `.ab_measure_runs/20260916-081845-from-dirty-1211668`)
 
-(empty at pre-registration)
+`python3 tools/ab_measure.py --worktree ~/tmp/wt-w16-fc --from-dirty`, rc=0, log
+`~/tmp/w16fc_ab1.log`. Leg A reproduced the campaign baseline to the digit
+(43,991 / 4,134,460 / 40.347736 / fuzzy 50.031284). Leg B: renamer patched
+1,832 files; both legs at a split fixed point after 0 extra re-splits;
+`[control none] FLAT`.
+
+| prediction | measured | verdict |
+|---|---|---|
+| P1 Δtotal_functions 0 / Δtotal_code 0 | 69,240 → 69,240 / 10,247,068 → 10,247,068 | HIT |
+| P2 same size per row | all 12 identical (`fn_` row size == named row size) | HIT |
+| P3 SetupGems 90–99.9 | **87.76616** (mpn 89.46416) | **MISS, 2.2 pp below band** |
+| P3 TriggerSongCompletion ≥95 | 98.326996 (mpn 98.47909) — did NOT cross | HIT |
+| P3 SelectRandomVenue 40–80 | 58.328484 | HIT |
+| P3 CamShot::Load 80–99 | 88.58878 | HIT |
+| P3 ??0CamShot 80–99 | **78.86777** | **MISS, 1.1 pp below band** |
+| P3 RndFont::Load 80–99 | 82.0972 | HIT |
+| P3 RndFont::SyncProperty 80–99 | 94.66192 | HIT |
+| P3 Interp 80–99 | 84.54627 (mpn 87.01806) | HIT |
+| P3 LightPreset::Load 60–92 | 81.27778 | HIT |
+| P3 ParseDataResultsIntoSetlists 60–92 | 81.93293 | HIT |
+| P3 ??0BandSongMetadata 30–65 | 42.482635 | HIT |
+| **P4 LoadRev true name stays UNPAIRED** | 1728 B, fuzzy **0.0**, mpn 0.0, `fn_82430FD0` gone | **HIT — the designed non-mover held: unpaired because no base symbol carries that name (NOT a declined charge)** |
+| P5 Δmatched ∈ {0,+1}, Δcode ∈ {0,+1052} | **+0 / +0** | HIT |
+| P6 Δfuzzy +0.10..+0.28 pp | **+0.201326 pp** (50.031284 → 50.232610) | HIT |
+| P7 15 controls exactly unchanged | all 15 identical (size, fuzzy, mpn), incl. `??0GemManager` 99.92411, `AddSongData` 99.60123/66.07895 | HIT |
+| P8 population 6,679 / 1,198,508 | 6,679 / 1,198,508 | HIT (exact) |
+
+Row-level diff A→B: exactly **24** rows differ = the 12 `fn_` rows removed + the
+12 named rows added. No other row in the binary moved.
+
+Reading: the two band misses are my priors being ~2 pp optimistic on the two
+rows whose retail size differed from ours by only 4 B / 48 B — a small size gap
+does not bound the instruction-level divergence. Neither miss changes an
+identification: SetupGems' callers (5, all 100.0) and ??0CamShot's caller
+(`NewObject@CamShot`, 100.0) all still spell the name and did not move.
