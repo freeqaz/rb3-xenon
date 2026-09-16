@@ -903,6 +903,14 @@ DataNode Game::OnMsg(const RemoteUserLeftMsg &msg) {
 DataNode Game::OnMsg(const RemoteLeaderLeftMsg &msg) {
     if (unkc4) {
         if (!TheUI->InTransition()) {
+            // Retail builds game_outro_msg as a FUNCTION-LOCAL static here, not
+            // as the file-scope `extern Message game_outro_msg` (utl/Messages.h:73):
+            // guard word 0x82E021C8 bit 0, Message storage 0x82E021C0, the Symbol
+            // built as a STACK temporary at r31+0x50 from "game_outro"
+            // (0x8202F40C), then ??0Message@@QAA@VSymbol@@@Z and an atexit thunk.
+            // One guard bit for both, which is the single-static form TrackPanel.cpp
+            // documents (the two-static form would consume guard bits 0x1 and 0x2).
+            static Message game_outro_msg("game_outro");
             TheGamePanel->Handle(game_outro_msg, true);
         }
     }
@@ -925,7 +933,23 @@ DataNode Game::OnMsg(const ButtonDownMsg &msg) {
 }
 
 DataNode Game::OnMsg(const ButtonUpMsg &msg) {
-    if (msg.GetUser()) {
+    // Ported from retail 0x82679900 (156 B). Paired with OnMsg(ButtonDownMsg)
+    // at 0x8267B808, whose prologue is instruction-for-instruction identical
+    // down to the per-pad counter access; the two differ only in that
+    // button-down INCREMENTS the counter (addi r9, r9, 1 @ 0x8267B888) and
+    // button-up DECREMENTS it (addi r9, r9, -1 @ 0x8267997C). mUnkTU5GuidePitch
+    // is used here purely as the `int[4]` at its +0x0, exactly as the class
+    // comment in Game.h already records; it is only forward-declared, so the
+    // access is spelled as a cast rather than by inventing a definition.
+    if (mProperties.mUnkTU5_movieSync) {
+        int pad = msg.GetUser()->GetPadNum();
+        if (pad >= 0 && pad < 4) {
+            if (JoypadGetPadData(pad)->mType == kJoypadAnalog) {
+                if (((int *)mUnkTU5GuidePitch)[pad] > 0) {
+                    ((int *)mUnkTU5GuidePitch)[pad]--;
+                }
+            }
+        }
     }
     return DATA_UNHANDLED;
 }
@@ -1297,10 +1321,22 @@ void Game::SetTimeOffset() {
 }
 
 void Game::SetRealtime(bool realtime) {
+    // Retail opens this function with an UNUSED function-local static Symbol,
+    // the same residue already recorded in GetSongToTaskMgrMs (practice/trainer)
+    // and Poll (drum_trainer): guard word 0x82E021B4 bit 0, Symbol storage
+    // 0x82E021B0, string "drum_trainer" at 0x820DCB94 -- all read off retail
+    // bytes at 0x82678BB8..0x82678BFC. The guard test precedes the
+    // mProperties.mInDrumTrainer load (lbz 0x2d), so it is the first statement.
+    static Symbol drum_trainer("drum_trainer");
     if (mProperties.mInDrumTrainer) {
         realtime = true;
     } else {
-        FOREACH (it, mAllActivePlayers) {
+        // Retail materialises a pointer to the container (addi r29, r28, 0x6c)
+        // and reads _M_finish as 4(r29) on every iteration; FOREACH over the
+        // member directly re-reads 0x70(this) instead. Binding the reference
+        // first is what produces retail's addressing shape.
+        std::vector<Player *> &players = mAllActivePlayers;
+        FOREACH (it, players) {
             (*it)->SetRealtime(realtime);
         }
     }
