@@ -1562,8 +1562,8 @@ void VocalTrack::UpdateScrolling(float ms) {
 
             Lyric *staticFirst = NULL;
             Lyric *staticLast = NULL;
-            float staticLeftX = lastLyricX;
-            float staticY = lastLyricX;
+            float staticLeftX = tmpEndPos;
+            float staticY = tmpEndPos;
             while (itT != noteVec.end()) {
                 const VocalNote *note = itT;
                 if (altNotes) {
