@@ -174,3 +174,73 @@ An honest gain: +3 real-bodied functions, +2,672 B, Δhonest **+3**, zero
 regressions, every liveness instrument moved in the predicted direction and by
 the predicted amount, and the two corrections above are both to the brief rather
 than to the adjudication.
+
+---
+
+## ⚠ COORDINATOR NOTE (appended at landing, 2026-09-16) — two things the landing measured that the lane could not
+
+Landed as `160cebb7`. **Every pre-registered key hit miss 0** (44,134 / 4,166,020
+/ masked_equal 23,322 / honest 20,812 / code% 40.655727 / fuzzy 50.487232), and
+the run was surgical: **exactly 3 rows moved in the whole binary**, the 3
+predicted, 0 fell out. Both liveness instruments fired: map 6,918 → **6,920**
+symbol lines, objdiff `Loaded 6,102` → **`6,104`** equivalence entries — the +2
+model confirmed against the +1 that a membership-into-existing-group would give.
+
+Two things surfaced at landing that are worth carrying forward.
+
+### 1. ⛔ My pre-registered falsifier **F5 FAILED**, and the gate was wrong, not the run
+
+F5 required the build to show *"the renamer patched >0 files"*. It read
+**`0 files patched`**. Reporting this rather than booking past it, because a
+failed falsifier that gets quietly dropped is how a gate stops meaning anything.
+
+**The clause was mis-specified for this patch class.** Checked at landing:
+
+| | |
+|---|---|
+| `obj_target_symbol_renamer` consumes | `scripts/target_symbol_map.json` — **untouched by this branch (0 hits)** |
+| the alias map reaches the ruler via | `objdiff.json` → `map_file: build/45410914/icf_aliases.map`, **read by objdiff directly** |
+
+⇒ **An alias-only edit never passes through the renamer at all.** `0 files
+patched` is the *correct* reading here; a non-zero one would have meant something
+unrelated moved. The `>0` clause belongs to a **`target_symbol_map.json`** map
+edit, and I imported it from a template built for that class without checking
+whether the pipeline applied. (The stamps *were* removed — all six
+`*_patched.stamp` files carry the build's own timestamp — so this is not a
+forced-re-split failure.)
+
+The instruments that actually cover an alias-only patch all fired, and one of
+them is decisive because it was read **from the build that produced the score**:
+the `Loaded 6,104` line. Plus `verify_objs_patched.py --verify-manifest` **rc=0**,
+which asserts every decomp and target object is a verified content fixed point —
+the independent check that "renamer did nothing" left nothing stale.
+
+★ **The durable rule: a liveness gate must be keyed to the pipeline the patch
+actually travels.** A gate copied from an adjacent patch class can fail while the
+run is perfect — and, worse, could pass while a genuinely inert edit sails
+through. Lane CF-1 lost an entire A/B leg to the second version of this.
+
+### 2. ★ The validator classified this group as **TOLERATED, not MAP-CONSISTENT**
+
+```
+before (main 3fff0fb2): 1,408 map-consistent · 249 tolerated · 0 contradicted · 1,658 total
+after  (main 160cebb7): 1,408 map-consistent · 250 tolerated · 0 contradicted · 1,659 total
+```
+
+**`map-consistent` did not move.** The new group landed in `tolerated` — i.e. the
+validator explicitly does **not** vouch for it.
+
+This is the right outcome and it is worth stating loudly, because a green
+`VALIDATE: PASS` is easy to relay as "the fold is verified". It is not.
+`OK (MAP-CONSISTENT)` was already renamed from `OK (grounded)` precisely because
+it means *map-consistency*, not proof — and this group does not even reach that
+bucket. **The only thing standing behind this alias is the retail-byte
+adjudication** (`--chase` with `--chasetest` controls discriminating including
+the in-family decoy; the `--family` pigeonhole; and retail's
+`AddValidController(ControllerType)` calling the address the map names
+`push_back<Symbol>`, which cannot both be true of the same template argument).
+
+⇒ **For any future alias lane: `VALIDATE: PASS` with your group in `tolerated` is
+the EXPECTED reading, not a clearance.** Do not let a passing validator, a rising
+`name_check`, or a flat `none` control be presented as evidence — all three are
+produced identically by a fabricated alias. Only retail bytes separate them.
