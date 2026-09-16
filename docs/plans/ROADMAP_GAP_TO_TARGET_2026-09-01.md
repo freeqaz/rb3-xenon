@@ -2670,3 +2670,43 @@ before testing it. A **positive control** — four names known to be in the map,
 `?MemAlloc@@YAPAXHH@Z` and the three W16-EC had just written — resolved 4/4, which is
 what promoted the reading from "broken tool" to "finding". **Neither "it confirms my
 prior" nor "it contradicts my prior" is evidence about an instrument; a control is.**
+
+### Wave 16 continued — W16-EE and W16-EF dispatched (2026-09-16)
+
+Two lanes in flight, both opus, both with worktrees already created so neither burns
+budget on setup.
+
+**W16-EE — the `_bijection_arbitrary` sub-100 vein** (`~/tmp/wt-w16-ee`, off `af6b35a6`).
+W16-EC landed +5 fns / +432 B out of exactly this census and left it open in its §7. The
+signature that pays is **transposition between two same-shaped siblings**, not size. Told
+to re-derive EC's own figure of 57 rows / 3,728 B rather than inherit it — the renamer
+docstring's "10" is stale, and EC found three other inherited figures that did not survive
+re-measurement. Told to prefer alias **withdrawal** over installation, and that a
+well-evidenced "this vein is drained" is an acceptable deliverable.
+
+**W16-EF — the `Game` rows W16-CB newly PAIRED** (`~/tmp/wt-w16-ef`, off `ace069a9`).
+Measured fresh today: `default/band3/game/Game` carries **15 named sub-100 rows / 7,180 B**
+payable (plus 17 anon `fn_*` rows / 1,740 B with **no byte upside**, since `name_check`
+already forgives placeholder targets). Seven of the fifteen are rows CB named on 09-15 —
+their low scores are previously-invisible source divergence, not neglect. CB's §8 hands
+over five leads with evidence attached; its §6 names what it skipped.
+
+★ **EF's first task is to test W16-CB against its own falsifier.** CB wrote that *"a wrong
+identification lands near 0, because objdiff pairs by name and a misnamed row is compared
+against an unrelated body"* — and the row it named at `0x8267b808` sits at **3.24%**. CB's
+positive evidence (caller-set matching, 3-for-3) is real, so this is not a claim that CB
+erred; it is a claim that the question is open and cheap to settle on retail bytes. Both
+outcomes are deliverables: a right name means 1,664 B of genuine source work, a wrong one
+means **removing a false identification, which is accuracy-positive** — W16-EC dropped
+`?SetControllerType@BandUser@@` on exactly that reasoning at a cost of 0 bytes.
+
+⚠ **Known collision risk, flagged to both lanes:** EE may edit `scripts/symbol_aliases.json`
+and `scripts/target_symbol_map.json`; EF may edit the former if it installs CB's `~Shuttle`
+fold membership (which must go through `tools/fold_thunk_gate.py`, never by hand). Both were
+told to say so prominently so merge order can be managed. They are on separate branches in
+separate worktrees, so the rebase handles the mechanics.
+
+**Explicitly withheld from both:** the permuter (standing directive); `?Reset@Game@@` (a
+plain r4/r6 regalloc swap); `fn_8235F858` (a mis-homed Tour body — re-homing a pinned
+address is not metric-neutral); `map_misassignment` and the alias withdrawal ledger (both
+drained); and the parked `repartitioned` stratum (unaddressable — see the subsection above).
