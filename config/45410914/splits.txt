@@ -4477,6 +4477,12 @@ CharBlendBone.cpp:
 	.text       start:0x823C49C8 end:0x823C49D4
 	.text       start:0x823C4BB8 end:0x823C4BC4
 
+CharTransCopy.cpp:
+	.pdata      start:0x82206238 end:0x822062A8
+	.pdata      start:0x822062A8 end:0x822062B8
+	.text       start:0x823C7908 end:0x823C803C
+	.text       start:0x823C8040 end:0x823C8128
+
 CharTransDraw.cpp:
 	.pdata      start:0x82206330 end:0x82206340
 	.pdata      start:0x82206378 end:0x82206380
@@ -4696,8 +4702,7 @@ HamIKEffector.cpp:
 
 PracticeSection.cpp:
 	.pdata      start:0x821FEC18 end:0x821FEC30
-	.pdata      start:0x82206238 end:0x822062A8
-	.pdata      start:0x822062A8 end:0x822062C0
+	.pdata      start:0x822062B8 end:0x822062C0
 	.pdata      start:0x8220BBD0 end:0x8220BBE0
 	.pdata      start:0x8221C4B8 end:0x8221C4C8
 	.pdata      start:0x8221C7F0 end:0x8221C800
@@ -4705,8 +4710,7 @@ PracticeSection.cpp:
 	.pdata      start:0x82233B30 end:0x82233B40
 	.pdata      start:0x822375D8 end:0x822375E0
 	.text       start:0x82346DE0 end:0x82346EB8
-	.text       start:0x823C7908 end:0x823C803C
-	.text       start:0x823C8040 end:0x823C8198
+	.text       start:0x823C8128 end:0x823C8198
 	.text       start:0x82424D18 end:0x82424DCC
 	.text       start:0x8250D4C0 end:0x8250D4C8
 	.text       start:0x82557060 end:0x825570C8

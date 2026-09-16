@@ -541,6 +541,7 @@
             "system/char/CharIKSliderMidi.cpp": "NonMatching",
             "system/char/CharLipSyncDriver.cpp": "NonMatching",
             "system/char/CharPosConstraint.cpp": "NonMatching",
+            "system/char/CharTransCopy.cpp": "NonMatching",
             "system/char/CharTransDraw.cpp": "NonMatching",
             "system/char/ClipCollide.cpp": "NonMatching",
             "system/char/ClipGraphGen.cpp": "NonMatching",
