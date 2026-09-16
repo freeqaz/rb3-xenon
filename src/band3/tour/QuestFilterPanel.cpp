@@ -239,12 +239,16 @@ Symbol QuestFilterPanel::GetBackScreen() {
 
 Symbol QuestFilterPanel::GetSongSelectScreen() {
     MILO_ASSERT(GetState() == kUp, 0x1A0);
-    return Handle(get_songselect_screen_msg, true).Sym();
+    static Message get_songselect_screen_msg("get_songselect_screen");
+    DataNode dn(Handle(get_songselect_screen_msg, true));
+    return dn.Sym();
 }
 
 Symbol QuestFilterPanel::GetDiffSelectScreen() {
     MILO_ASSERT(GetState() == kUp, 0x1AC);
-    return Handle(get_diffselect_screen_msg, true).Sym();
+    static Message get_diffselect_screen_msg("get_diffselect_screen");
+    DataNode dn(Handle(get_diffselect_screen_msg, true));
+    return dn.Sym();
 }
 
 void QuestFilterPanel::HandleFilterSelected() {
