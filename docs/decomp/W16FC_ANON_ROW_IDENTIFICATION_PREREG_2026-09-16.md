@@ -1,0 +1,268 @@
+# W16-FC — naming anonymous rows inside pairable units: PRE-REGISTRATION
+
+Lane W16-FC, worktree `~/tmp/wt-w16-fc`, branch `w16-fc` off main `1d028679`.
+This document is committed BEFORE any measurement. Every number below that is a
+prediction is labelled as such; measured values are added in a later commit.
+
+## 0. Population reproduced (not inherited)
+
+`build/45410914/report.json` on the built worktree (renamer applied — first full
+build rc=0, log `~/tmp/rb3_build_w16fc_initial.log`), skip `default/auto_*` and
+`/xdk`, keep units with a `base_path` in `objdiff.json`, keep `fn_*` rows at
+`fuzzy == 0`: **6,691 rows / 1,228,556 B** — identical on main and on the
+worktree (`~/tmp/w16fc_pop.py`). Worktree absolutes at measurement start:
+`total_functions 69,240 / matched 43,991 / total_code 10,247,068 /
+matched_code 4,134,460 / 40.347736% / fuzzy 50.031284 / masked_equal 23,228`.
+
+## 1. Picks (12 rows, 30,048 B) — geometry proof and identification
+
+Geometry (`tools/pdata_extent.py`, corrected `>>8` decode, on retail
+`orig/45410914/band.exe`): for EVERY row below, `.pdata` BeginAddress == row
+address, decoded FunctionLength == report size, exactly ONE `.pdata` entry inside
+the extent, first word `7d8802a6` (`mflr r12`). Eleven of twelve have the next
+`.pdata` entry exactly at `addr+size`; `0x8242F020` is followed by an 884 B run of
+unwind-record-free leaf stubs (`lis/lfs/fcmpu/.../blr`, never touching LR), i.e.
+the documented sub-`.pdata` stratum — the row's own extent is exact. **No pick is
+a phantom.**
+
+Identification: callee profile from the split `.s` (callees resolved through
+`scripts/target_symbol_map.json`, keys are LOWERCASE hex), retail size vs the
+size of the unpaired function of that name in OUR compiled base obj
+(`tools/coff_bodies_ext.py`), and prologue argument-register usage vs the
+signature. Duplicate-name census: none of the 12 names has any existing map row,
+`symbols.txt` entry, or report row.
+
+| retail addr | unit | retail B | name (map value) | ours B | evidence |
+|---|---|---:|---|---:|---|
+| 0x82b9e150 | GemManager | 3404 | `?SetupGems@GemManager@@QAAXH@Z` | 3408 | this+int; IsRealGuitarChord/LeftHandSlide/GetLoopTick/EndRepeatedChordPhrase/GetSectionBounds/IsKeyboardTrack/TickToMs; 5 named callers spell it |
+| 0x825827d8 | MetaPerformer | 1052 | `?TriggerSongCompletion@MetaPerformer@@QAAXXZ` | **1052** | void(void), local-static guard; UpdatePerformanceData x2, GetScoreTypeForUser; caller `Handle@MetaPerformer` spells it |
+| 0x82581360 | MetaPerformer | 1924 | `?SelectRandomVenue@MetaPerformer@@QAAXXZ` | 1264 | void(void), f31; SystemConfig x5, RandomFloat/RandomInt, HasReachedCampaignLevel x3; callers `Handle@MetaPerformer`, `SelectVenue@TourPerformerLocal` spell it |
+| 0x824c8010 | CameraShot | 2996 | `?Load@CamShot@@UAAXAAVBinStream@@@Z` | 3100 | (this,BinStream&), first call ReadEndian(&rev,4); ReadEndian x31, >>Vector3/bool/Key<float>, SetObjConcrete<BandCharacter>, LoadSubPart, CamShotFrame ctor, ConvertFov |
+| 0x824c6298 | CameraShot | 968 | `??0CamShot@@IAA@XZ` | 1016 | most-derived flag test on r4 (virtual base), vtable plant; Object ctor, RndAnimatable ctor; caller `NewObject@CamShot` (100.0) spells it |
+| 0x82475a20 | Font | 2140 | `?Load@RndFont@@UAAXAAVBinStream@@@Z` | 2208 | (this,BinStream&), ReadEndian(&rev,4) first; ReadEndian x23, >>bool/String, RndBitmap::Reset x2, floor x2, Key<float>, PathName, Object::Load |
+| 0x82475058 | Font | 1124 | `?SyncProperty@RndFont@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z` | 1164 | `lha r11,8(r5); cmpw r6,r11` = `i==prop->Size()`; PropSync<RndFont>/<RndMat>/<bool>, Symbol x8 |
+| 0x82430fd0 | PostProc | 1728 | `?LoadRev@RndPostProc@@QAAXAAVBinStream@@H@Z` (TRUE retail signature, see §3) | n/a (ours is `…AAVBinStreamRev@@@Z`, 1916) | r5 compared to 0x18,5,6,0x12,9,0x1d,0xc,8,0x24,7 = DC3's LoadRev rev thresholds exactly; both retail call sites pass `lhz r5,4(rX)`; rb3-Wii declares `LoadRev(BinStream&, int)` |
+| 0x8242f020 | PostProc | 1772 | `?Interp@RndPostProc@@QAAXPBV1@0M@Z` | 1848 | (this,p*,p*,float): f31=f1, r30=r4, r29=r5, null checks; SetObjConcrete<Object> x4, Interp(Vector3), AdjustColorXfm; 3 callers at 100.0 spell it |
+| 0x824b7ae8 | LightPreset | 3024 | `?Load@LightPreset@@UAAXAAVBinStream@@@Z` | 2720 | (this,BinStream&); ReadEndian x10, vector<uint>::erase x4, ReadString x4, AddRef x4, >>bool x4, Object::Load; body recovers full object via `this-0xd8` |
+| 0x825d01b8 | MusicLibraryNetSetlists | 1968 | `?ParseDataResultsIntoSetlists@MusicLibraryNetSetlists@@QAAX_N@Z` | 1784 | (this,bool) `clrlwi. r11,r4,24`; String(PBD) x23, GetDataResultValue x17, NetSavedSetlist ctor x4, AddSongTitle; caller `OnMsg` (W16-EW's row, 100.0) spells it; the unit's ONLY anonymous row |
+| 0x825a0b28 | BandSongMetadata | 7948 | `??0BandSongMetadata@@QAA@PAVDataArray@@0_NPAVBandSongMgr@@@Z` | 3656 | r3,r4,r5,r7 kept, r6 passed straight to `??0SongMetadata@@IAA@PAVDataArray@@0_N@Z` (first call), plants vtable `lbl_8209E734`, calls `InitBandSongMetadata`; Symbol x80, FindArray x70, DataNode::Int x21; caller `AddSongData` spells it |
+
+Why these and not others: the brief asks for rows where our source plausibly
+already holds the body. Every pick has an unpaired base function of the same name
+within ~0.5x–1.1x of the retail size, except the BandSongMetadata ctor (2.2x —
+chosen deliberately as the largest row in the population and because the cascade
+it opens is a large missing slice of field parsing) and SelectRandomVenue (1.5x).
+
+## 2. Predictions (map-only patch; `tools/ab_measure.py --from-dirty`)
+
+P1. `Δtotal_functions = 0`, `Δtotal_code = 0` — renaming does not re-carve.
+P2. Each of the 12 `fn_*` rows is replaced by a row of the new name with the
+    SAME size (sizes are asm extents; `report.json` sizes are a hazard elsewhere
+    but here `.pdata` length == report size for all 12).
+P3. Eleven rows pair and read `0 < fuzzy < 100`. Bands (retail/ours sizes drive
+    these): TriggerSongCompletion ≥ 95; SetupGems 90–99.9 (4 B differ ⇒ cannot be
+    100); CamShot::Load, ??0CamShot, RndFont::Load, RndFont::SyncProperty, Interp
+    80–99; LightPreset::Load 60–92; ParseDataResultsIntoSetlists 60–92;
+    SelectRandomVenue 40–80; ??0BandSongMetadata 30–65.
+P4. **Designed row that must NOT move:** `0x82430fd0` named with the true retail
+    signature `?LoadRev@RndPostProc@@QAAXAAVBinStream@@H@Z` reads `fuzzy 0`,
+    unpaired, in the map-only leg — our base obj defines no symbol of that name,
+    and objdiff pairs target↔base rows BY NAME, so the row cannot pair. It moves
+    only after the SOURCE fix in §3. (Wording corrected 2026-09-16 per the
+    coordinator: there is no "ruler declines to pay" mechanism — placeholder
+    targets are forgiven by construction, so nothing is ever declined. What this
+    control tests is PAIRING, and the requirement that survives is the practice:
+    a named row that must improve without reaching 100, or here, must not pair.)
+P5. `Δmatched_functions ∈ {0, +1}` and `Δmatched_code ∈ {0, +1052}`: only
+    TriggerSongCompletion (exact size) can cross; no other row can.
+P6. Aggregate `fuzzy_match_percent` rises by **+0.10 to +0.28 pp** (≈28,320 B
+    of newly paired rows at ~40–95% over `total_code` 10,247,068).
+P7. **Controls that must stay EXACTLY put** (their target side already calls the
+    address; naming converts a forgiven site into a checked one, and our base
+    spells the identical callee at each site — verified by COFF relocation name):
+    `?PostDynamicAdd@GemPlayer@@UAAXXZ` 100.0 · `?Restart@GemPlayer@@UAAX_N@Z`
+    100.0 · `?ChangeDifficulty@GemTrack@@QAAXW4Difficulty@@H@Z` 100.0 ·
+    `?HandleNewSong@GemTrack@@QAAXXZ` 100.0 ·
+    `?Handle@MetaPerformer@@UAA?AVDataNode@@PAVDataArray@@_N@Z` 100.0 ·
+    `?SelectVenue@TourPerformerLocal@@QAAXXZ` 100.0 ·
+    `?NewObject@CamShot@@SAPAVObject@Hmx@@XZ` 100.0 ·
+    `?PostProcsFromPresets@BandDirector@@QAA_NAAPBVRndPostProc@@0AAM@Z` 100.0 ·
+    `?Poll@BandDirector@@UAAXXZ` 100.0 ·
+    `?Handle@RndPostProc@@UAA?AVDataNode@@PAVDataArray@@_N@Z` 100.0 ·
+    `?OnMsg@MusicLibraryNetSetlists@@QAA?AVDataNode@@ABVRockCentralOpCompleteMsg@@@Z` 100.0 ·
+    `??0GemManager@@QAA@ABVTrackConfig@@PAVTrackDir@@@Z` **99.92411** (sub-100, must not move either way) ·
+    `?AddSongData@BandSongMgr@@…` **99.60123** (DX-patched, structurally unmatchable; must not move) ·
+    `??0BandSongMetadata@@QAA@PAVBandSongMgr@@@Z` 99.90909 ·
+    `?InitBandSongMetadata@BandSongMetadata@@QAAXXZ` 100.0.
+    A wrong identification would DROP the callers of that name; this is how the
+    gate can fail.
+P8. The anonymous population becomes 6,679 rows / 1,198,508 B (−12 / −30,048).
+    NOTE the LoadRev row leaves the `fn_*` population but joins the named-zero
+    population (W16-FB's vein) until §3 lands.
+
+## 3. Cascade pre-registered from retail bytes (source, after the map A/B)
+
+C1. `RndPostProc::LoadRev` signature: retail is `(BinStream&, int rev)` (rb3-Wii
+    shape), not DC3's `(BinStreamRev&)`. Fix `src/system/rndobj/PostProc.{h,cpp}`
+    to the rb3-Wii signature and call `LoadRev(bs, d.rev)` from `Load`. Prediction:
+    the row pairs (fuzzy > 0). Its retail callers `0x82433268` (PostProc) and
+    `0x82404f80` (Anim) are anonymous, so no caller row can move.
+C2. Every other residual is adjudicated on retail bytes per row AFTER the map A/B,
+    priced from `report.json`'s charged sites, and recorded in this doc's §4.
+
+## 4. Measured — map-only A/B (run `.ab_measure_runs/20260916-081845-from-dirty-1211668`)
+
+`python3 tools/ab_measure.py --worktree ~/tmp/wt-w16-fc --from-dirty`, rc=0, log
+`~/tmp/w16fc_ab1.log`. Leg A reproduced the campaign baseline to the digit
+(43,991 / 4,134,460 / 40.347736 / fuzzy 50.031284). Leg B: renamer patched
+1,832 files; both legs at a split fixed point after 0 extra re-splits;
+`[control none] FLAT`.
+
+| prediction | measured | verdict |
+|---|---|---|
+| P1 Δtotal_functions 0 / Δtotal_code 0 | 69,240 → 69,240 / 10,247,068 → 10,247,068 | HIT |
+| P2 same size per row | all 12 identical (`fn_` row size == named row size) | HIT |
+| P3 SetupGems 90–99.9 | **87.76616** (mpn 89.46416) | **MISS, 2.2 pp below band** |
+| P3 TriggerSongCompletion ≥95 | 98.326996 (mpn 98.47909) — did NOT cross | HIT |
+| P3 SelectRandomVenue 40–80 | 58.328484 | HIT |
+| P3 CamShot::Load 80–99 | 88.58878 | HIT |
+| P3 ??0CamShot 80–99 | **78.86777** | **MISS, 1.1 pp below band** |
+| P3 RndFont::Load 80–99 | 82.0972 | HIT |
+| P3 RndFont::SyncProperty 80–99 | 94.66192 | HIT |
+| P3 Interp 80–99 | 84.54627 (mpn 87.01806) | HIT |
+| P3 LightPreset::Load 60–92 | 81.27778 | HIT |
+| P3 ParseDataResultsIntoSetlists 60–92 | 81.93293 | HIT |
+| P3 ??0BandSongMetadata 30–65 | 42.482635 | HIT |
+| **P4 LoadRev true name stays UNPAIRED** | 1728 B, fuzzy **0.0**, mpn 0.0, `fn_82430FD0` gone | **HIT — the designed non-mover held: unpaired because no base symbol carries that name (NOT a declined charge)** |
+| P5 Δmatched ∈ {0,+1}, Δcode ∈ {0,+1052} | **+0 / +0** | HIT |
+| P6 Δfuzzy +0.10..+0.28 pp | **+0.201326 pp** (50.031284 → 50.232610) | HIT |
+| P7 15 controls exactly unchanged | all 15 identical (size, fuzzy, mpn), incl. `??0GemManager` 99.92411, `AddSongData` 99.60123/66.07895 | HIT |
+| P8 population 6,679 / 1,198,508 | 6,679 / 1,198,508 | HIT (exact) |
+
+Row-level diff A→B: exactly **24** rows differ = the 12 `fn_` rows removed + the
+12 named rows added. No other row in the binary moved.
+
+Reading: the two band misses are my priors being ~2 pp optimistic on the two
+rows whose retail size differed from ours by only 4 B / 48 B — a small size gap
+does not bound the instruction-level divergence. Neither miss changes an
+identification: SetupGems' callers (5, all 100.0) and ??0CamShot's caller
+(`NewObject@CamShot`, 100.0) all still spell the name and did not move.
+
+## §5 Wave 2 — the LoadRev cascade (pre-registered BEFORE measuring)
+
+Wave 1 left `0x82430fd0` named with retail's TRUE signature
+`?LoadRev@RndPostProc@@QAAXAAVBinStream@@H@Z` and UNPAIRED (fuzzy 0), because our
+base obj defines only the DC3-shaped overload `?LoadRev@RndPostProc@@QAAXAAVBinStreamRev@@@Z`
+(1916 B vs retail 1728 B). This wave changes SOURCE so the base defines the true
+name, and names the one remaining anonymous PostProc row.
+
+### 5.1 Retail-byte adjudication (done before this edit, `build/45410914/asm/PostProc.s`)
+
+- `fn_82433268` (192 B, `.pdata` begin `0x82433268` len 192 next `0x82433328` — exact) is
+  `RndPostProc::Load(BinStream&)` in the **rb3-Wii shape**, not the DC3 shape:
+  `ReadEndian(&rev,4)`; one base register `r30 = lbl_82CC27E8` (dtk: `.data`, size 8,
+  2-byte) with `sth lo16 -> +4` (rev) and `sth hi16 -> +0` (altRev); `rev == 0x10`
+  branch streams `int dRev`, `float f = 0.0` (`lfs lbl_82000D78; stfs 0x70(r1)`),
+  `bool` (`??5BinStream@@QAAAAV0@AA_N@Z`), `Vector3` (free op), `float`, `int`; else
+  `Hmx::Object::Load(bs)`; then `mr r4,r31; lhz r5,0x4(r30); bl fn_82430FD0` =
+  `LoadRev(bs, gRev)` with gRev re-read from memory.
+- `fn_82430FD0` (1728 B, `.pdata` exact) takes `rev` in `r5` (copied to `r27`, compared
+  as a plain int throughout), never reads `r6`, has NO reference to `lbl_82CC27E8`, and
+  in the `rev > 5` region calls
+  `?Load@?$ObjRefConcrete@VRndTex@@VObjectDir@@@@QAA_NAAVBinStream@@_NPAVObjectDir@@@Z`
+  with `li r6,0; li r5,1; addi r3,r30,0x54` = `bs >> mLuminanceMap` (member at +0x54)
+  with **no altRev gate** — our DC3 body gates it on `d.altRev < 1` and streams into a
+  throwaway local. Every other branch is the same rev-threshold sequence our body has.
+- Static layout precedent: `BandCamShot.obj` places two file-static `unsigned short`
+  revs 4 B apart in `.bss` (52/56), and retail BandCamShot co-addresses them exactly
+  like PostProc (`sth +4` rev, `sth +0` alt). Per the co-addressing rule (memory
+  2026-08-17) two internal-linkage statics share one base; declaration order controls
+  `.bss` order only, so `gAltRev` is declared FIRST to land at +0.
+- `RB3_HAS_HUE_CONVERGE` is not in `build.ninja` (0 hits) — the `altRev > 1` tail is
+  dead here, consistent with retail LoadRev never touching altRev.
+
+### 5.2 The change (source + map, one `ab_measure --from-dirty` run)
+
+1. map: `"0x82433268": "?Load@RndPostProc@@UAAXAAVBinStream@@@Z"` (base already defines it).
+2. `PostProc.h:101` `void LoadRev(BinStream &, int);` (rb3-Wii signature).
+3. `PostProc.cpp`: drop `INIT_REVS(0x25, 2)`; add `static unsigned short gAltRev = 0;`
+   then `static unsigned short gRev = 0;`; write `Load` explicitly in the retail shape
+   (`bs >> rev; gRev = getHmxRev(rev); gAltRev = getAltRev(rev); if (gRev == 0x10) {...}
+   else Hmx::Object::Load(bs); LoadRev(bs, gRev);`); port `LoadRev` mechanically
+   (`d.rev`->`rev`, `d >>`->`bs >>`, `d.stream`->`bs`, `if (rev > 5) bs >> mLuminanceMap;`).
+   Logic is otherwise byte-for-byte the body lane CE-1 placed — NOT re-derived from the
+   Wii oracle (which is a dev build).
+4. `Dir.cpp:131` `pp->LoadRev(d.stream, d.rev);` (only other caller; `MultiMesh`/`Crowd`
+   call a different class's LoadRev).
+
+### 5.3 Predictions (bands fixed now; a miss is recorded as a miss)
+
+| # | claim | band |
+|---|---|---|
+| P9 | **designated improve-WITHOUT-crossing row**: `?Load@RndPostProc@@UAAXAAVBinStream@@@Z` (192 B) pairs and lands **60 ≤ fuzzy < 100**. Reason it should not cross: retail streams the final `int` off the `>> bool` return (`r28`), not the `>> Vector3` return — the Wii chain `bs >> x >> v >> f >> i` should leave that one site charged. If it reads 100.0 the shape was wrong and the "improvement" is suspect, not a win. | 60–99.9 |
+| P10 | `?LoadRev@RndPostProc@@QAAXAAVBinStream@@H@Z` (1728 B) PAIRS (0 -> sub-100 or 100): **70 ≤ fuzzy ≤ 100**; 100 is possible for a mechanical port, so a 100 here is NOT flagged — the non-crossing requirement is carried by P9. | 70–100 |
+| P11 | `Δtotal_functions = 0`, `Δtotal_code = 0`; `Δmatched_functions ∈ {0,+1}` (only if P10 = 100), `Δmatched_code ∈ {0, +1728}`. | exact |
+| P12 | `Δfuzzy` whole-binary in **+0.008 .. +0.020 pp** (size-weighted: ~1,920 B at ~0.8). | band |
+| P13 | Same-TU **must-not-move controls, to the digit**: `?Save@RndPostProc@@` 99.878784 (SAVE_REVS uses literals, not gRev), `?Interp@` 84.54627, `?Handle@` 100.0, `?SyncProperty@` 100.0, `??0RndPostProc@@IAA@XZ` 100.0. | exact |
+| P14 | Row-level A->B diff is EXACTLY: `fn_82433268` out, `?Load@RndPostProc@@UAAXAAVBinStream@@@Z` in, `?LoadRev@…BinStream@@H@Z` changed. Zero other rows differ — including the 11 wave-1 named rows and `?Load@RndDir@@UAAXAAVBinStream@@@Z` (8 B, 100.0 in `default/Anim`; Dir.cpp is recompiled but only a call-site argument changes). | exact |
+
+### 5.4 Surface this wave creates (report this, not just the delta)
+
+Two PostProc rows totalling 1,920 B move from invisible (fuzzy 0, no base counterpart)
+to adjudicable. Whatever residual P9/P10 leave is then a source question on retail
+bytes — the deliverable EW's precedent describes.
+
+### 5.5 Deferred, found on the way (NOT done this wave, stated so it is not silence)
+
+- `?Load@RndDir@@UAAXAAVBinStream@@@Z` is mapped to `0x82402fa0`, an **8-byte thunk**
+  (`subi r3,r3,0x13c; b fn_8274E0F0`) that scores 100.0 in `default/Anim`. Retail's real
+  `RndDir::Load` is the anonymous **`fn_82404F80` (428 B, `.pdata` exact)** — it reads its
+  own co-addressed `gRev` at +4 and calls `LoadRev(bs, gRev)` on a fresh `RndPostProc`.
+  Fixing this is a re-homing of an existing name (a *pairability* change, measured
+  non-neutral by PINHOME-1) plus a Dir.cpp shape port; it needs its own pre-registration.
+
+### 5.6 MEASURED (run `.ab_measure_runs/20260916-083500-from-dirty-1277611`, rc=0, ruler `name_check`, objdiff-cli sha256 c1b7d952…, both legs at a split fixed point, leg B 412 recompiles = the `PostProc.h` cascade)
+
+| # | prediction | measured | verdict |
+|---|---|---|---|
+| P9 | Load pairs, 60 ≤ fuzzy < 100 | `?Load@RndPostProc@@UAAXAAVBinStream@@@Z` 192 B **95.6875** (mpn 95.6875) | **HIT — improved, did not cross** |
+| P10 | LoadRev pairs, 70–100 | `?LoadRev@…BinStream@@H@Z` 1728 B **0 → 94.0** fuzzy / 94.40509 mpn | HIT |
+| P11 | Δfns 0, Δcode 0, Δmatched ∈ {0,+1}, Δmatched_code ∈ {0,+1728} | 69,240 / 10,247,068 unchanged; Δmatched **+0**, Δmatched_code **+0** | HIT |
+| P12 | Δfuzzy +0.008..+0.020 pp | **+0.017710 pp** (50.232610 → 50.250320) | HIT |
+| P13 | same-TU controls to the digit | Save 99.878784, Interp 84.54627, ctor 100.0, Handle, SyncProperty — all identical | HIT |
+| P14 | exactly 3 row-level changes | set-diff of all rows A→B = **3**: `fn_82433268` out, Load in, LoadRev 0→94.0; `?Load@RndDir@@` (8 B, 100.0) and `fn_82404F80` (428 B, 0) identical | HIT |
+
+Committed as `d233018a` (source + map). Surface created: **1,920 B in two rows moved from
+invisible (no base counterpart) to adjudicable**, both sub-100 with charged sites that
+name source constructs (below). Headline bytes: +0, as pre-registered.
+
+### 5.7 What the cascade opened (adjudicated on the leg-B diff against retail bytes; NOT fixed this wave)
+
+`Load` (9 of 49 instructions charged):
+- **Frame 0xa0 retail vs 0xb0 ours (+16 B ours)**, with our locals at different slots
+  (`f30` at 0x58 vs retail 0x70; `v40` at 0x70 vs 0x60; `i5c` at 0x60 vs 0x5c). Same
+  defect class EW found on `OnMsg` (16-byte frame excess), opposite sign of the usual
+  "we hold a local retail lacks" — here it is layout, since the local count matches.
+- **`mr r28,r3` placement**: retail copies the `>> bool` return into `r28` BEFORE the
+  `Vector3` op and feeds the final `int` `ReadEndian` from `r28`; ours copies after the
+  `Vector3` op. The Wii oracle spells the chain exactly as we do
+  (`bs >> x >> v >> f >> i`), so the oracle cannot answer this; it is a retail-only
+  expression shape. Candidate experiments (untested): split the chain after the bool
+  (`bs >> x; bs >> v >> f >> i` vs `(bs >> x) …`), or a different declaration order
+  of the four locals (declaration order controls stack slots).
+
+`LoadRev` (68 of 446 charged; ours 1784 B vs retail 1728 B):
+- **Bloom-color legacy branch: retail emits three `fdivs` by `range`; ours emits one
+  reciprocal `fdivs` + three `fmuls`** (MSVC's `/fp:fast` reciprocal CSE). The Wii
+  oracle spells this block differently from our DC3 copy: `float red = c.red;` hoisted
+  before the min search, `(4.0f - red) / range`, and `mBloomThreshold = c.alpha;`
+  AFTER the three divisions rather than before. That is the first experiment for the
+  next lane; pre-register it as "improves without crossing" since the prologue residue
+  below is independent.
+- **Prologue: retail `__savegprlr_24` / frame 0xf0 vs ours `__savegprlr_26` / 0xe0** —
+  retail keeps two more non-volatile GPRs and 16 more frame bytes. Downstream of that,
+  `r10/r11` and `f29/f30` swaps in the color-store run are the symptom, not the cause
+  (the `REGISTER_SWAP` rule). Retail's extra live values are most plausibly in the
+  `rev > 0xE && rev < 0x11` region, where retail calls two still-unnamed callees
+  (`fn_823A0918`, `fn_823A07A8` — the `ObjPtr<RndDrawable>` dummy's ctor/dtor); those
+  sites are forgiven today and would become checked if named.
