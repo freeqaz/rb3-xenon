@@ -410,7 +410,7 @@ ObjPtr<T>::~ObjPtr() {}
 // Under RB3_OBJPTR_INLINE_TWOARG_CTOR the ctor is defined in-class in Object.h
 // (see the #elif chain there) -- this out-of-line body must be compiled out for
 // that TU or the two definitions collide.
-#ifndef RB3_OBJPTR_INLINE_TWOARG_CTOR
+#if !defined(RB3_OBJPTR_INLINE_TWOARG_CTOR) && !defined(RB3_OBJPTR_INLINE_TWOARG_CTOR_DEFER_BOTH)
 template <class T>
 // Must repeat __forceinline on the definition: MSVC honours it here, and the
 // declaration in Object.h carries it only under the RB3_TU_OBJPTR_FORCEINLINE_CTOR
