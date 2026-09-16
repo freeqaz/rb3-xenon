@@ -1838,11 +1838,10 @@ void VocalTrack::UpdateScrolling(float ms) {
                             shiftStart = earlyShift;
                         float minHighlight =
                             prevBakedLyric->mActiveMs + mMinLyricHighlightMs;
-                        float *prevEnd = &prevBakedLyric->mEndMs;
-                        if (minHighlight < prevBakedLyric->mEndMs)
-                            prevEnd = &minHighlight;
-                        if (shiftStart < *prevEnd)
-                            shiftStart = *prevEnd;
+                        float prevEnd =
+                            std::min(prevBakedLyric->mEndMs, minHighlight);
+                        if (shiftStart < prevEnd)
+                            shiftStart = prevEnd;
                         bool fast = false;
                         float preview = lyric->mActiveMs - shiftStart;
                         if ((preview - mLyricShiftMs)
