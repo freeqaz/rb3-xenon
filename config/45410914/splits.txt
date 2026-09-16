@@ -9320,8 +9320,7 @@ network/net/NetSession.cpp:
 	.pdata      start:0x822079F8 end:0x82207A08
 	.pdata      start:0x82207A08 end:0x82207A10
 	.pdata      start:0x82207A10 end:0x82207A18
-	.pdata      start:0x82207A18 end:0x82207A88
-	.pdata      start:0x82207AA0 end:0x82207AB8
+	.pdata      start:0x82207A18 end:0x82207AB8
 	.pdata      start:0x82207AB8 end:0x82207AE8
 	.pdata      start:0x82207AE8 end:0x82207B18
 	.pdata      start:0x82207B18 end:0x82207B20
@@ -9376,8 +9375,7 @@ network/net/NetSession.cpp:
 	.text       start:0x823E15C0 end:0x823E1638
 	.text       start:0x823E1638 end:0x823E166C
 	.text       start:0x823E1670 end:0x823E16A4
-	.text       start:0x823E16A8 end:0x823E1B40
-	.text       start:0x823E1C20 end:0x823E1D20
+	.text       start:0x823E16A8 end:0x823E1D20
 	.text       start:0x823E1D20 end:0x823E1F20
 	.text       start:0x823E1F20 end:0x823E2118
 	.text       start:0x823E2118 end:0x823E2170
@@ -12150,10 +12148,8 @@ system/synth/SynthSample.cpp:
 	.text       start:0x82B6C8F0 end:0x82B6CAF8
 
 SpeechMgr.cpp:
-	.pdata      start:0x82207A88 end:0x82207AA0
 	.pdata      start:0x82214250 end:0x82214260
 	.pdata      start:0x82214260 end:0x82214278
-	.text       start:0x823E1B40 end:0x823E1C20
 	.text       start:0x824CD818 end:0x824CD8B8
 	.text       start:0x824CD8B8 end:0x824CDA48
 
