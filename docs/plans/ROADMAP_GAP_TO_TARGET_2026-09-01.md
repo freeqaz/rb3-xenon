@@ -4907,6 +4907,27 @@ than waved through, and it is a **gate defect, not a run defect**:
 gate on an alias patch cannot fire.** The F5 clause was inherited from the
 map-class recipe (lane CF-1's forced-re-split rule), where it is correct.
 
+⚠⚠ **CORRECTED SAME DAY by lane W16-GD (`c8116c49`) — the paragraph above is
+right about W16-FZ's run and WRONG as a general rule, in the direction that
+matters.** Under a **forced re-split** (which every map/alias-class landing
+performs, per lane CF-1) the same counter reads **1,833 files patched**, not 0 —
+measured on W16-GD's landing, an alias-only edit of exactly the same shape.
+`ab_measure` even hard-refuses on 0 for patch kind `map`.
+
+⇒ **Both readings are correct, and the conclusion is STRONGER than first
+written: `renamer_patched` is VACUOUS AS AN ALIAS-LIVENESS GATE IN BOTH
+DIRECTIONS.** It reads 0 without a forced re-split and ~1,833 with one, and
+**neither number says anything about whether the alias edit reached the ruler** —
+it is measuring the re-split. As first written, this section would have licensed
+the opposite error: reading a non-zero renamer count as confirmation that an
+alias edit is live.
+
+★ **The gate that DOES work sits on the scoring path**, and W16-GD used it:
+the rendered `build/45410914/icf_aliases.map` symbol-line count and objdiff's own
+`Loaded N ICF equivalence entries`. Measured on that landing: **6,920 → 6,921**
+symbol lines and **6,104 → 6,105** loaded equivalences, with rendered ICF groups
+**unchanged at 1,608**. Those are the numbers objdiff actually consults.
+
 ★ The general rule: **before a falsifier is allowed to abort a run, name the
 pipeline stage it observes and check the patch passes through it.** A gate that
 watches the wrong stage fails closed, looks like rigour, and is indistinguishable
@@ -4930,6 +4951,11 @@ endorsement:
   **produced identically by a fabricated alias**. That triad is the *signature*
   of the integrity hazard, not a clearance — the standing rule from the
   `name_check` flip, restated because a lane hit it live.
+
+✅ **CONFIRMED LIVE the same day by W16-GD** (`c8116c49`): an existing-group
+membership measured **+1** (loaded equivalences 6,104 → 6,105) against W16-FZ's
+**+2** for a new group. The model below is no longer an inference from the
+source — it is measured on both arms.
 
 ★★★ **And the counter moves +2 for a NEW group, not +1.**
 `SymbolEquivalences::len()` counts *names in a multi-symbol group*, so a new
@@ -5044,3 +5070,171 @@ rigour.
 - **Flagged, not acted on:** the alias validator's `1408/249 → 1407/250` shift
   after W16-FT (mover unidentified); the stale header comment claiming the
   `BandSongMetadata` ctor is `fn_82584A08` (real `0x825A0B28`).
+
+---
+
+## 7t. EXECUTION LOG — 2026-09-16, W16-GD (a fold installed, a fold REFUSED)
+
+**One landing, pushed, 0 attribution trailers, pre-registration merged before the
+build that tested it.** Lane W16-GD was briefed on two game-layer rows whose only
+charges were relocation-name diffs on a single callee class. It installed one and
+refused the other, and the refusal is the more valuable half of the lane.
+
+| | merge | measured |
+|---|---|---|
+| **W16-GD** | `c8116c49` | **+1 fn / +1,608 B / Δhonest +1 / Δmasked_equal 0.** `?Configure@TourDesc@@UAAXPAVDataArray@@@Z` (1,608 B) **99.987564 → 100** on both rulers, `masked_equal=False`. Exactly 1 row moved binary-wide. Units at all-rows-100: 194 → 195. |
+
+**State now (measured at `c8116c49`, not inherited):**
+
+```
+matched_functions  44,137      matched_code   4,167,668
+matched_code_pct   40.671810   fuzzy          50.494840
+masked_equal       23,323      honest            20,814
+total_code     10,247,068      total_functions   69,240
+units all-rows mpn==100: 195   units all-rows fuzzy==100: 173
+matched_code = 66.095% of the 61.535% reachable ceiling (6,305,556 B)
+gap to ceiling: 2,137,888
+```
+
+★ **The bytes are entirely honest** — `masked_equal=False` on the crossing row, so
+honest **+1 row / +1,608 B**, disclosure **+0 rows / +0 B**. Wave 3 (§7s) plus
+this lane is **+6 functions = +5 honest / +1 disclosure**.
+
+### 7t.1 ★★★★★ THE REFUSAL IS THE FINDING: AN INSTRUMENT MUST NOT BE RELAXED BY THE LANE THAT COLLECTS THE PAYOUT
+
+The second target, `?CopyTypeProperties@@YAXPAVObject@Hmx@@0@Z` (**1,472 B**,
+4 charges on one callee), adjudicated **`CHASED T1: REFUTED`** and was **NOT
+installed**.
+
+The lane first ruled out the dangerous alternative — that the alias would have
+been forgiving a **real source defect**, which is exactly what the eight
+withdrawn memberships of 2026-08-16 turned out to be. It is refuted here:
+retail's body is *named* `_S_sort<unsigned int>` but calls callees named for
+**BSPFace**, **SynthPollable\*** and **LocalePanel::Entry** — three different `T`
+in one function, which is the fold-arbitrary-survivor signature. Sizes are equal
+(424/424, so there is no wrong-overload size tell) and `less<>` is inlined inside
+the masked body and compares identical. **We are not sorting the wrong
+container.**
+
+The blocker is then named exactly: **four identical 4-byte tail-call thunks**,
+masked to `00000000` because the whole instruction *is* the relocation, whose
+targets are retail `_List_base<SynthPollable*>::clear` vs our
+`_List_base<Symbol>::clear` — **the very pair the lane itself proved at slot 20**.
+`chase()`'s vacuous branch demands *literal* relocation-name equality and will
+not recurse, so it cannot express *"differing names that are themselves a proven
+fold"*. One relaxation decides all four.
+
+⛔ **The lane did not relax it.** That would be a change to the **adjudicating
+instrument**, made by the lane that collects the **+1,472 B**. It is left for a
+lane that does not profit from it, with the required new control specified: re-run
+all four `--chasetest` controls **and** add a control proving the relaxed branch
+still **REFUSES** a vacuous thunk pair whose targets are *not* a proven fold.
+
+★ **This is the correct shape for alias work and should be the precedent.** An
+alias is forgiveness: an unproven one lifts `name_check` **by construction**, and
+the `none` control **cannot** catch a fabricated alias — its flatness is the
+hazard's signature, not a clearance. When the instrument that separates real from
+fabricated is the only thing standing between a lane and its number, **the lane
+must not be the one to move it.**
+
+### 7t.2 ★★★★ A GAP IN INSTALLED COVERAGE IS A DIFFERENT (AND MUCH STRONGER) CLAIM THAN A NEW FOLD
+
+The installed membership is `push_back<vector<TourDescEntry*>>` into **existing
+group 10**, whose survivor is exactly the `PAVChatReceiver` spelling retail emits
+at the call site, alongside 11 other `vector<T*>` members.
+
+The prior was strong *before* any adjudication, and that is the transferable
+part: **the same `vector<TourDescEntry*>` instantiation already had its siblings
+folded** — `erase` in group 3, and both `_Vector_base<>` and `vector<>` ctors in
+group 46. Only `push_back` was absent. ⇒ **When hunting alias work, look for a
+family member missing from a group its siblings already belong to**, rather than
+proposing a fold nobody has seen before.
+
+What made it *land*, however, is not the prior:
+
+- **FLAT T1 REFUTED — and that is the EXPECTED reading for this group.** Both
+  COMDATs are 112 B with identical masked bodies, but relocation targets differ
+  because each names its own per-`T` callees. **`/OPT:ICF` is iterative**, so a
+  flat-T1 refusal here carries no information against the fold.
+- **CHASED T1 PROVEN**, bottoming out in the already-landed allocator chain
+  (`_M_insert_overflow` → `MemOrPoolAlloc`/`MemOrPoolAllocSTL` → `PoolAlloc` →
+  `operator new`) whose leaf pair is byte- **and** relocation-name-identical.
+- ★★ **THE FOLD IS READ OFF RETAIL'S OWN RELOCATION, NOT SEARCHED FOR.** Retail's
+  `Configure` carries a `bl` at file offset `0x618` whose relocation **names this
+  survivor**, opposite our `bl` naming the folded spelling. **There is no
+  best-candidate step, so there is no coin flip to lose** — the usual failure mode
+  of fold adjudication (picking the wrong twin) is structurally absent.
+- **Second witness sharing no arithmetic:** `--family` collapses 142 of our
+  `push_back<T>` spellings onto one retail address, and its slot-0 discriminator
+  **EXCLUDES** retail's other masked-body twin (`push_back<Symbol>` @
+  `0x822d16f8`, W16-FZ's separate group) rather than blurring the two survivors
+  together. A discriminator that *separates* two known-distinct survivors is
+  evidence; one that merges everything is not.
+- **Charge-count self-validation:** an independent slot census found 118
+  name-differing relocation slots of 277, only **3** non-placeholder, **2** already
+  forgiven — leaving exactly **ONE** charged site, reproducing objdiff's
+  `diff_score` of 5/40200 **without sharing code with objdiff**.
+
+### 7t.3 ★★★ THE SHARPEST FALSIFIER A LANE CAN LEAVE IS THE TARGET IT REFUSED
+
+The landing gate used `?CopyTypeProperties@@` — **the row the lane declined** — as
+a fail-closed control: it had to read **exactly** 99.945656 after the merge.
+
+Measured: **99.945656 → 99.945656, UNMOVED**, and the binary-wide set-diff shows
+**exactly 1 row moved, 0 fell out**.
+
+★ That is a much stronger statement than "the predicted row crossed". The danger
+with an alias is over-reach — forgiving sites nobody adjudicated. A refused
+target in the *same callee family* is the ideal control for exactly that, and it
+exists **only because the lane refused something**. ⇒ **When a lane declines a
+target, keep it as the control for the target it did land.**
+
+Every pre-registered key measured **miss 0**:
+
+```
+key                      predicted     measured    miss
+matched_functions            44,137       44,137       0
+matched_code              4,167,668    4,167,668       0
+masked_equal_functions       23,323       23,323       0
+honest                       20,814       20,814       0
+total_code               10,247,068   10,247,068       0
+total_functions              69,240       69,240       0
+```
+
+⚠ `fuzzy` magnitude was deliberately **not** predicted, only its sign. The lane's
+own size-weighted-mean model missed Δfuzzy by **2.5×** (predicted +2.0e−6,
+measured +5.0e−6) and said so. **The aggregate is not a size-weighted mean of
+per-row fuzzy** — this is the standing withdrawal of the linear aggregate-fuzzy
+model repeating for a third time. Gate the sign; report the magnitude.
+
+### 7t.4 Corrections this lane made to the record
+
+- **§7s.2 is corrected above** — `renamer_patched` is vacuous as an alias-liveness
+  gate **in both directions** (0 without a forced re-split, ~1,833 with one).
+- **§7s.3's counter arithmetic is now measured on both arms**: +1 for an
+  existing-group membership, +2 for a new group.
+- The coordinator's brief placed `?CopyTypeProperties@@` in unit `default/Utl`;
+  it is **`default/system/obj/Utl`**.
+- ⚠ **A screen that could not fire, caught by the lane itself.** Its first slot
+  comparator read the relocation tuple's **last** element as the name, but the
+  tuple is `(offset, name, type)` — so it compared the *type integer* and returned
+  a confident **"all 22 slots SAME"**, contradicting a verdict it already held. It
+  was re-run keyed correctly **with a control** (12 slots must read SAME). The
+  family tell, again: **a screen that cannot fail returns a clean, decisive-looking
+  result.**
+
+### 7t.5 Open
+
+- **Still in flight:** W16-GB (Fable, `VocalTrack` frame permutation, 8,948 B) and
+  W16-GC (Opus, `?OnFileLoaded@BandDirector@@`, 3,816 B at 99.589). Neither is in
+  the figures above.
+- **`_S_sort` is banked, not dead: +1 fn / +1,472 B** for whichever lane relaxes
+  `chase()`'s vacuous branch **with the new control specified in §7t.1**.
+- **Not funded:** `?Handle@TourProgress@@` (2,596 B) — its 2 charges are
+  `add r4, r4, r9` vs `add r4, r9, r4`, commutative-operand permuter class,
+  deferred by standing directive.
+- **Not installed deliberately:** the other 141 `--family` spellings. They are
+  worth **0 bytes today** and would widen the integrity surface for nothing —
+  only `TourDesc::Configure` references the folded spelling. Nothing pruned
+  (`STALE_SPELLING` 88 / `UNWITNESSED` 101 untouched), per the standing rule that
+  a Δ0 prune today licenses a regression later.
