@@ -80,3 +80,104 @@ licensed.
 ## Stopping condition
 If no local/temporary restructuring brings the frame to 0xf0, report **at_limit**
 with each attempt and its measured score. Permuter is OFF by directive.
+
+---
+
+## Attempt A result (measured)
+
+**P1 CONFIRMED.** Frame 0x100 -> 0xf0 on [2]/[3]/[348]; all three Symbol temps
+now share 0x54 ([68]/[78]/[85]/[97]); instruction count unchanged at 350.
+Charges: 1 ins / 1 del / 43 diff_arg  ->  1 ins / 1 del / 1 diff_arg / 1 diff_op.
+
+New residual, as anticipated in the falsifier list ("branch structure changes"):
+the two literal-loading blocks are SWAPPED in layout.
+- retail: test1 `beq L_unjoined`; test2 `beq L_unjoined`; fall-through = joined;
+  `b L_cont`; L_unjoined: unjoined.
+- ours:   test1 `beq L_unjoined`; test2 `bne L_joined`; fall-through = unjoined;
+  `b L_cont`; L_joined: joined.
+MSVC placed the `else if` branch's `unjoined` assignment inline because it comes
+first textually, and inverted test2 to reach it.
+
+## Pre-registration — attempt A2
+
+Flip the second test's polarity so the `joined` assignment is the middle
+(fall-through) branch and both `unjoined` assignments tail-merge into the
+out-of-line block both tests branch to:
+
+```cpp
+const char *pulseType;
+if (GetState()->GetView() == join)        pulseType = "button_pulse_unjoined";
+else if (GetState()->GetView() != finding) pulseType = "button_pulse_joined";
+else                                       pulseType = "button_pulse_unjoined";
+```
+
+**P3:** [84]'s branch target and [91]'s opcode both match retail; charges drop to
+the [99]/[102] insert/delete pair only.
+**Falsifiers:** [91] stays `bne`; or the blocks stop tail-merging and the
+instruction count leaves 350; or a new charge appears; or the frame leaves 0xf0
+(would mean the temp-slot fix is coupled to block layout, which I do not expect).
+**P4 (uncertain, unchanged):** I do not know whether [99]/[102] is downstream of
+block layout. If it survives A2 the row lands ~99.8 and collects 0 bytes.
+
+## Attempt A2 result (measured)
+
+**P3 CONFIRMED.** [84] and [91] both match. Charges: 2 of 350 (the [99]/[102]
+insert/delete pair only). Frame still 0xf0. **fuzzy 99.30373 -> 99.42693**
+(read from report.json, graded ruler).
+
+**P4 resolved NEGATIVELY: [99]/[102] is orthogonal to statement structure.** It
+was present in the BASELINE (original ternary source) and survived BOTH
+restructures unchanged. It is a scheduling artifact:
+  retail  bl Symbol::Symbol ; lwz r4,0x0(r3) ; mr r11,r3 ; mr r3,r26 ; bl SetType
+  ours    bl Symbol::Symbol ; mr r11,r3 ; mr r3,r26 ; lwz r4,0x0(r11) ; bl SetType
+Retail's `mr r11, r3` is DEAD -- nothing reads r11 afterwards. That is the
+signature of copy-propagation (r11->r3 in the load) plus a scheduler hoist of the
+load above both `mr`s, with the now-dead copy left behind. Decisive context: the
+function contains FIVE structurally identical `bl Symbol::Symbol ; mr r11,r3 ;
+mr r3,rX ; lwz r4,0x0(r11) ; bl <callee taking Symbol by value>` sites
+([70],[157],[208],[273],[98]). Retail hoists at EXACTLY ONE of the five and our
+build hoists at none, so the asymmetry exists WITHIN retail and is not a property
+of the source shape.
+
+## Pre-registration — attempt V1 (last probe before stopping)
+
+`btnMsg.SetType(Symbol(pulseType));` -- make the temporary explicit instead of an
+implicit conversion, to test whether the front-end's temp FORM (not its
+statement) steers the schedule.
+**P5:** no change (I expect the implicit conversion and the explicit temp to
+produce identical IL). **Falsifier for "not source-steerable":** ANY change to
+[99]/[102] would show the form does matter and reopen the vein.
+
+## Attempt V1 result + DISCRIMINATION CONTROL
+
+**P5 CONFIRMED: V1 is a true no-op.** `SetType(Symbol(pulseType))` and
+`SetType(pulseType)` produce byte-identical codegen; charges stayed at 2.
+
+**Control (required, because byte-identical is also what a dead pipeline
+produces):** reverted V1 and injected an immediate-only sabotage in the same
+build -- `mOvershellDir->Handle(msg, false)` -> `true`, i.e. `li r6,0x0` ->
+`li r6,0x1` at [322]. Measured: charges 2 -> 3, the new one being exactly
+`[322] diff_arg: li [off:+1]` -- predicted index, predicted kind. **The witness
+fires.** V1's inertness is therefore a measurement, not a dead pipeline.
+
+## Pre-registration — attempt V2 (final probe)
+
+Give the Symbol a NAME in a dead scope, so it is an object rather than a
+temporary, and see whether MSVC then keeps the ctor's returned pointer in r3 and
+loads through it (retail's `lwz r4, 0x0(r3)`) instead of saving to r11:
+
+```cpp
+{
+    Symbol pulseSym(pulseType);
+    btnMsg.SetType(pulseSym);
+}
+```
+
+**P6:** [99]/[102] resolves and the row reaches fuzzy 100 (+1,396 B).
+**Falsifiers:** (a) the frame leaves 0xf0 -- a named local that does not share
+slot 0x54 with the later on_cancel/on_start/on_view_modify temps at
+[155]/[206]/[271] would re-grow the frame, which is the main risk; (b) the load
+becomes `lwz r4, 0x54(r31)` (frame-relative) -- same cost as now, still not 100;
+(c) no change at all.
+**If V2 fails: STOP and report at_limit on the residual**, per the pre-registered
+stopping condition. The permuter is OFF by directive and is not an option.
