@@ -50,6 +50,11 @@ public:
     void SetFineTune(float);
     int GlideID() const { return mGlideID; }
     SampleInst *Sample() const { return mSample; }
+    // Retail MidiInstrument::ReleaseNote (0x827141D8) reads the trigger note as
+    // an inlined `lbz r11, 0x34(r3)`, i.e. through an accessor the optimiser
+    // folds away. The rb3-Wii oracle declares exactly this accessor; ours was
+    // missing it, which is why ReleaseNote could not be written at all.
+    unsigned char TriggerNote() const { return mTriggerNote; }
 
     POOL_OVERLOAD(NoteVoiceInst, 0x1E);
 
