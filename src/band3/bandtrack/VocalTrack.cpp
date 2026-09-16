@@ -1458,12 +1458,10 @@ void VocalTrack::UpdateScrolling(float ms) {
 
         int *itPPtr = lead ? &unkf4 : (part == 1 ? &unkf8 : &unkfc);
         const VocalNote *itT = &notes->mNotes[*itPPtr];
-        const VocalNote *notesEnd = &notes->mNotes[notes->mNotes.size()];
         const VocalNote *altIt =
-            altNotes ? &altNotes->mNotes[unkfc] : notesEnd;
-        const VocalNote *altEnd =
-            altNotes ? &altNotes->mNotes[altNotes->mNotes.size()] : notesEnd;
-        if (itT == notesEnd && altIt == altEnd)
+            altNotes ? &altNotes->mNotes[unkfc] : notes->mNotes.end();
+        if (itT == notes->mNotes.end()
+            && (!altNotes || altIt == altNotes->mNotes.end()))
             continue;
 
         std::deque<LyricPlate *> &plates = lead ? mLyricsLead : mLyricsHarmony;
@@ -1522,7 +1520,7 @@ void VocalTrack::UpdateScrolling(float ms) {
             bool isPast = phEndMs < (staticLyrics ? ms : buildAhead);
             if (sectionOnly && !isPast && phEndMs > sectionStart) {
                 isPast = true;
-                for (const VocalNote *skipIt = itT; skipIt != notesEnd; skipIt++) {
+                for (const VocalNote *skipIt = itT; skipIt != notes->mNotes.end(); skipIt++) {
                     if (skipIt->mMs > phEndMs)
                         break;
                     if (skipIt->mMs + skipIt->mDurationMs > sectionStart) {
@@ -1530,7 +1528,7 @@ void VocalTrack::UpdateScrolling(float ms) {
                     }
                 }
                 if (altNotes) {
-                    for (const VocalNote *skipAlt = altIt; skipAlt != altEnd; skipAlt++) {
+                    for (const VocalNote *skipAlt = altIt; skipAlt != altNotes->mNotes.end(); skipAlt++) {
                         if (skipAlt->mMs > phEndMs)
                             break;
                         if (skipAlt->mMs + skipAlt->mDurationMs > sectionStart) {
@@ -1541,11 +1539,11 @@ void VocalTrack::UpdateScrolling(float ms) {
             }
 
             if (isPast) {
-                while (itT != notesEnd && !(itT->mMs > phEndMs)) {
+                while (itT != notes->mNotes.end() && !(itT->mMs > phEndMs)) {
                     itT++;
                 }
                 if (altNotes) {
-                    while (altIt != altEnd && !(altIt->mMs > phEndMs)) {
+                    while (altIt != altNotes->mNotes.end() && !(altIt->mMs > phEndMs)) {
                         altIt++;
                     }
                     unkfc = (int)(altIt - &altNotes->mNotes[0]);
@@ -1570,9 +1568,10 @@ void VocalTrack::UpdateScrolling(float ms) {
             Lyric *staticLast = NULL;
             float staticLeftX = lastLyricX;
             float staticY = lastLyricX;
-            while (itT != notesEnd) {
+            while (itT != notes->mNotes.end()) {
                 const VocalNote *note = itT;
                 if (altNotes) {
+                    const VocalNote *altEnd = altNotes->mNotes.end();
                     while (altIt != altEnd && altIt->mMs < itT->mMs
                            && !(altIt->mMs > phEndMs)) {
                         const VocalNote *curAlt = altIt;
@@ -1671,7 +1670,8 @@ void VocalTrack::UpdateScrolling(float ms) {
                 itT++;
             }
 
-            if (altNotes && itT == notesEnd) {
+            if (altNotes && itT == notes->mNotes.end()) {
+                const VocalNote *altEnd = altNotes->mNotes.end();
                 while (altIt != altEnd && !(altIt->mMs > phEndMs)) {
                     const VocalNote *curAlt = altIt;
                     if (!curAlt->mBends && curAlt->mAllowCombine) {
