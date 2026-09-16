@@ -62,9 +62,9 @@ public:
 
 protected:
     String mHostName; // 0x4
-    unsigned int mIPAddr; // 0xc
-    unsigned int mPort; // 0x10
-    String mURL; // 0x14
+    unsigned int mIPAddr; // 0x10
+    unsigned int mPort; // 0x14
+    String mURL; // 0x18
     // NOTE: offsets below are RB3-360 retail (String = 0xc bytes, verified from
     // retail String ctor fn_82798E18). The DC3 header this was ported from had
     // an 8-byte String (class String : public FixedString, public TextStream)

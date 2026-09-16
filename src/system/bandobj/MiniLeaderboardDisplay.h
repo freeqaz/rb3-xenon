@@ -26,7 +26,7 @@ public:
     virtual void PostLoad(BinStream &);
     virtual void DrawShowing();
 
-    bool mAllowSoloScores; // 0x10c
+    bool mAllowSoloScores; // 0x140
 
     // Retail's ?NewObject@AppMiniLeaderboardDisplay@@ at 0x8264c828 calls
     // ?StaticClassName@MiniLeaderboardDisplay@@, not @UIComponent, so retail

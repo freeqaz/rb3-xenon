@@ -83,22 +83,22 @@ public:
         // Dropped to match the retail layout.
         /** "The file you want to merge" */
         FilePath mSelected; // 0x4
-        FilePath loading; // 0xc
+        FilePath loading; // 0x10
         /** "currently loaded file" */
-        FilePath mLoaded; // 0x14
+        FilePath mLoaded; // 0x1c
         /** "If true, merges the Dir in as a proxy, rather than the individual objects" */
-        bool mProxy; // 0x1c
-        bool mForceReload; // 0x1d
+        bool mProxy; // 0x28
+        bool mForceReload; // 0x29
         /** "Delete the old objects right at StartLoad time" */
-        bool mPreClear; // 0x1e
+        bool mPreClear; // 0x2a
         /** "How to treat subdirs in the source" */
-        MergeFilter::Subdirs mSubdirs; // 0x20
+        MergeFilter::Subdirs mSubdirs; // 0x2c
         /** "Dir to merge into, proxy, for instance" */
-        ObjPtr<ObjectDir> mDir; // 0x24
+        ObjPtr<ObjectDir> mDir; // 0x30
         /** "loaded objects that will be deleted when file changes" */
-        ObjPtrList<Hmx::Object> mLoadedObjects; // 0x38
+        ObjPtrList<Hmx::Object> mLoadedObjects; // 0x3c
         /** "moved subdirs that will be removed when file changes" */
-        ObjPtrList<ObjectDir> mLoadedSubdirs; // 0x4c
+        ObjPtrList<ObjectDir> mLoadedSubdirs; // 0x50
     };
     // Hmx::Object
     virtual ~FileMerger();
