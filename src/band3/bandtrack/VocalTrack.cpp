@@ -1437,6 +1437,7 @@ void VocalTrack::UpdateScrolling(float ms) {
         }
         if (!wantLyrics)
             continue;
+        std::vector<VocalNote> &noteVec = notes->mNotes;
 
         VocalNoteList *phraseNotes = (part != 2) ? notes : GetVocalNoteList(1);
         std::vector<VocalPhrase> &lyricPhrases = phraseNotes->mLyricPhrases;
@@ -1448,8 +1449,6 @@ void VocalTrack::UpdateScrolling(float ms) {
         bool staticLyrics = !IsScrolling();
         VocalNoteList *altNotes =
             (!lead && isolated < 1) ? GetVocalNoteList(2) : NULL;
-        std::vector<std::pair<float, float> > &freestyles =
-            notes->mFreestyleSections;
         ObjPtr<RndTransformable> *scrollerPtr = !staticLyrics
             ? &mDir->mScroller
             : (lead ? &mDir->mLeadLyricScroller
@@ -1457,10 +1456,10 @@ void VocalTrack::UpdateScrolling(float ms) {
         RndTransformable *scroller = scrollerPtr->Ptr();
 
         int *itPPtr = lead ? &unkf4 : (part == 1 ? &unkf8 : &unkfc);
-        const VocalNote *itT = &notes->mNotes[*itPPtr];
+        const VocalNote *itT = &noteVec[*itPPtr];
         const VocalNote *altIt =
-            altNotes ? &altNotes->mNotes[unkfc] : notes->mNotes.end();
-        if (itT == notes->mNotes.end()
+            altNotes ? &altNotes->mNotes[unkfc] : noteVec.end();
+        if (itT == noteVec.end()
             && (!altNotes || altIt == altNotes->mNotes.end()))
             continue;
 
@@ -1475,6 +1474,8 @@ void VocalTrack::UpdateScrolling(float ms) {
             lastLyricX = latest->EndPos();
         }
         float tmpEndPos = lastLyricX;
+        std::vector<std::pair<float, float> > &freestyles =
+            notes->mFreestyleSections;
 
         if (dumpDeployVectors) {
             MILO_WARN("deploy zones for part %d by song seconds\n", part);
@@ -1516,7 +1517,7 @@ void VocalTrack::UpdateScrolling(float ms) {
             bool isPast = phEndMs < (staticLyrics ? ms : buildAhead);
             if (sectionOnly && !isPast && phEndMs > sectionStart) {
                 isPast = true;
-                for (const VocalNote *skipIt = itT; skipIt != notes->mNotes.end(); skipIt++) {
+                for (const VocalNote *skipIt = itT; skipIt != noteVec.end(); skipIt++) {
                     if (skipIt->mMs > phEndMs)
                         break;
                     if (skipIt->mMs + skipIt->mDurationMs > sectionStart) {
@@ -1535,7 +1536,7 @@ void VocalTrack::UpdateScrolling(float ms) {
             }
 
             if (isPast) {
-                while (itT != notes->mNotes.end() && !(itT->mMs > phEndMs)) {
+                while (itT != noteVec.end() && !(itT->mMs > phEndMs)) {
                     itT++;
                 }
                 if (altNotes) {
@@ -1564,7 +1565,7 @@ void VocalTrack::UpdateScrolling(float ms) {
             Lyric *staticLast = NULL;
             float staticLeftX = lastLyricX;
             float staticY = lastLyricX;
-            while (itT != notes->mNotes.end()) {
+            while (itT != noteVec.end()) {
                 const VocalNote *note = itT;
                 if (altNotes) {
                     const VocalNote *altEnd = altNotes->mNotes.end();
@@ -1627,7 +1628,7 @@ void VocalTrack::UpdateScrolling(float ms) {
                 if (itT->mMs > phEndMs)
                     break;
                 Lyric *newLyric =
-                    CreateLyric(itT, notes->mNotes, lead, false, false);
+                    CreateLyric(itT, noteVec, lead, false, false);
                 if (newLyric) {
                     if (altNotes && !note->mAllowCombine) {
                         delete newLyric;
@@ -1666,7 +1667,7 @@ void VocalTrack::UpdateScrolling(float ms) {
                 itT++;
             }
 
-            if (altNotes && itT == notes->mNotes.end()) {
+            if (altNotes && itT == noteVec.end()) {
                 const VocalNote *altEnd = altNotes->mNotes.end();
                 while (altIt != altEnd && !(altIt->mMs > phEndMs)) {
                     const VocalNote *curAlt = altIt;
@@ -1726,7 +1727,7 @@ void VocalTrack::UpdateScrolling(float ms) {
             }
             (*curPhPtr)++;
         }
-        *itPPtr = (int)(itT - &notes->mNotes[0]);
+        *itPPtr = (int)(itT - &noteVec[0]);
 
         int colorBase = (staticLyrics ? 8 : 0) | (lead ? 4 : 0);
         Hmx::Color activeColor = mDir->GetLyricColor(colorBase | 1);
