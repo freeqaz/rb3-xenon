@@ -1943,28 +1943,33 @@ void VocalTrack::UpdateScrolling(float ms) {
             }
             int codaTick = TheSongDB->GetCodaStartTick();
             while (*curDeployPtr < freestyles.size()) {
-                const std::pair<float, float> *section = &freestyles[*curDeployPtr];
+                const std::pair<float, float> &section = freestyles[*curDeployPtr];
                 float nextStart =
                     ((*curDeployPtr + 1) < freestyles.size())
                         ? freestyles[*curDeployPtr + 1].first
                         : -1.0f;
+                // Retail (rows 2217-2225) materialises the zone pointer in
+                // BOTH arms at the single call (`addi r5,r1,0xa0; b` /
+                // `mr r5,r30`): select it at the call, do not pre-seed a
+                // pointer and redirect it in the coda arm.
+                std::pair<float, float> afterCoda;
+                bool didSplit = false;
                 if (codaTick != -1) {
                     float codaMs = TickToMs((float)codaTick);
-                    if (section->first < codaMs && codaMs < section->second) {
+                    if (section.first < codaMs && codaMs < section.second) {
                         std::pair<float, float> beforeCoda(
-                            section->first, codaMs
+                            section.first, codaMs
                         );
-                        std::pair<float, float> afterCoda(
-                            codaMs, section->second
-                        );
+                        afterCoda.first = codaMs;
+                        afterCoda.second = section.second;
                         BuildStaticDeployZone(
                             part, beforeCoda, codaMs, tmpEndPos, shifts
                         );
-                        section = &afterCoda;
+                        didSplit = true;
                     }
                 }
                 BuildStaticDeployZone(
-                    part, *section, nextStart, tmpEndPos, shifts
+                    part, didSplit ? afterCoda : section, nextStart, tmpEndPos, shifts
                 );
                 (*curDeployPtr)++;
             }
