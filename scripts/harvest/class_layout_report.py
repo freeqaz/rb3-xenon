@@ -223,6 +223,117 @@ def find_header(project_dir, cls):
     return hits
 
 
+def _include_spellings(header):
+    """Every ``#include "..."`` spelling that could name this header.
+
+    Include roots vary (``/I src``, ``/I src/system``, ``/I src/band3``, ...), so
+    a header is legitimately spelled by any of its trailing path suffixes.  We
+    generate all of them rather than hardcoding the root list, which would rot
+    the moment ``tools/defines_common.py`` changes.
+    """
+    parts = header.replace(os.sep, "/").split("/")
+    return {"/".join(parts[i:]) for i in range(len(parts))}
+
+
+def choose_audit_header(headers, tu_src, tu_text):
+    """WHICH header may ``--check-header`` / ``--fix-header`` audit?
+
+    Returns ``(chosen_or_None, reason, rejected)``.  PURE: takes the TU's text
+    rather than reading it, so the regression pin can run offline (same reason
+    selftest legs D and F are offline -- see their notes).
+
+    ⛔⛔ THE DEFECT THIS EXISTS TO KILL (lane W16-EX, reproduced 2026-09-16).
+    ``resolve_tu`` and the header audit walked the SAME candidate list under
+    DIFFERENT selection rules, and disagreed exactly when the audit's pick had no
+    compiled TU:
+
+      * ``resolve_tu`` scans ALL declaring headers for one with a compiled
+        same-stem ``.cpp``, so it correctly landed on the LIVE
+        ``src/band3/meta_band/MetaPerformer.cpp``;
+      * the audit took ``find_header(...)[0]`` blindly, and ``find_header``'s
+        tiebreak is *stem == class name, then SHORTEST PATH* -- so with both
+        stems equal it picked the near-dead DC3-era ``src/meta_ham/MetaPerformer.h``
+        (27 chars) over the live ``src/band3/meta_band/MetaPerformer.h`` (35).
+
+    The tool then measured one class and audited a different file, printing
+    **"all // 0xHEX comments agree with the compiler"** -- a CONFIDENT CLEAN on a
+    header it had not checked.  That is the worst failure shape this repo
+    recognises: this script is the AUTHORITATIVE layout oracle (the ``// 0xHEX``
+    comments and everything derived from them -- ``struct_db.sqlite``,
+    ``lookup_struct_offset`` -- are merely derived), so a false clean here is
+    load-bearing, and ``--fix-header`` would have WRITTEN to the wrong file.
+
+    ⇒ Rule: a header is eligible only if the TU that produced the layout actually
+    REACHES it (same-dir same-stem, or named by a direct ``#include``).  If that
+    leaves anything other than exactly one candidate we **REFUSE** rather than
+    guess -- the same doctrine as the three-label contract above: a real "I
+    cannot answer" outranks a plausible wrong answer.
+
+    ⚠ Deliberately DIRECT includes only.  A transitively-included header could
+    also complete the class, but resolving that needs the full preprocessor;
+    guessing there would reintroduce exactly the silent mispick this kills.
+    Refusal names every candidate and both escape hatches (``--header``, ``--tu``).
+    """
+    if not headers:
+        return None, "no header declares this class", []
+    if len(headers) == 1:
+        return headers[0], "sole declaring header", []
+
+    reached = []
+    tu = (tu_src or "").replace(os.sep, "/")
+    tu_dir, tu_base = os.path.dirname(tu), os.path.basename(tu)
+    tu_stem = os.path.splitext(tu_base)[0]
+    for h in headers:
+        hh = h.replace(os.sep, "/")
+        if tu and os.path.dirname(hh) == tu_dir and \
+                os.path.splitext(os.path.basename(hh))[0] == tu_stem:
+            reached.append(h)
+            continue
+        if any(f'#include "{s}"' in (tu_text or "") for s in _include_spellings(hh)):
+            reached.append(h)
+
+    if len(reached) == 1:
+        return reached[0], f"the only candidate reached by TU {tu_src}", \
+               [h for h in headers if h != reached[0]]
+    if not reached:
+        return None, (f"{len(headers)} headers declare this class and TU {tu_src} "
+                      f"reaches NONE of them directly"), list(headers)
+    return None, (f"{len(headers)} headers declare this class and TU {tu_src} "
+                  f"reaches {len(reached)} of them"), list(reached)
+
+
+def ambiguity_census(project_dir):
+    """Class names that ``find_header`` resolves AMBIGUOUSLY, tree-wide.
+
+    The blast radius of the defect above: any past ``--check-header`` clean on one
+    of these names is **unproven, not clean**.  Keyed on ``find_header``'s OWN
+    predicate, so it measures THIS TOOL's ambiguity rather than "ambiguity in
+    C++" -- a census on a different regex would be answering a different question.
+    """
+    pat = re.compile(r"^\s*(?:class|struct)\s+(?:[A-Za-z_]+\s+)?([A-Za-z_]\w*)\s*(?::|\{|$)")
+    decl = {}
+    for root, _dirs, files in os.walk(os.path.join(project_dir, "src")):
+        for f in files:
+            if not f.endswith((".h", ".hpp")):
+                continue
+            p = os.path.relpath(os.path.join(root, f), project_dir)
+            try:
+                text = open(os.path.join(project_dir, p), errors="replace").read()
+            except OSError:
+                continue
+            for line in text.split("\n"):
+                m = pat.match(line)
+                if m:
+                    decl.setdefault(m.group(1), set()).add(p)
+    amb = {k: sorted(v) for k, v in decl.items() if len(v) > 1}
+    # the WORST class: >=2 candidates whose stem == the class name, so
+    # find_header's first sort key TIES and the pick is decided by len(path)
+    # alone -- a criterion with no semantic content whatsoever.
+    lenonly = {k: v for k, v in amb.items()
+               if sum(1 for p in v
+                      if os.path.splitext(os.path.basename(p))[0] == k) > 1}
+    return decl, amb, lenonly
+
 def resolve_tu(project_dir, cls, verbose=False):
     """Pick a compiled .cpp in which `cls` is complete."""
     headers = find_header(project_dir, cls)
@@ -381,6 +492,14 @@ CLASS_ABSENT = "CLASS_ABSENT"      # clean compile, class not in this TU
 COMPILE_FAILED = "COMPILE_FAILED"  # compiler could not answer -- NOT a zero
 
 EXIT_FOR = {OK: 0, CLASS_ABSENT: 1, COMPILE_FAILED: 3}
+
+# ★ A FOURTH OUTCOME, AND IT IS A REFUSAL, NOT A LAYOUT VERDICT (lane W16-EX).
+# The layout can be perfectly OK (exit 0) while the header audit is
+# UNANSWERABLE because >1 header declares the class.  Returning 0 there would
+# hand every caller a false clean -- the exact defect this code kills -- so the
+# refusal gets its own code, chosen NOT to collide with the three-label
+# contract above.
+HEADER_AMBIGUOUS_EXIT = 4
 
 # `c1xx : fatal error C1094:`, `foo.cpp(12) : error C2065:`, `LNK1104`, ...
 RE_DIAG = re.compile(r"^.*?\b((?:fatal )?error\s+[A-Z]+\d+)\s*:\s*(.*)$", re.M)
@@ -589,9 +708,27 @@ def class_body_span(lines, cls):
 
 
 def audit_header(project_dir, header, cls_info, cls=None):
+    """Back-compat wrapper: the bad rows only.  See audit_header_counted."""
+    return audit_header_counted(project_dir, header, cls_info, cls)[0]
+
+
+def audit_header_counted(project_dir, header, cls_info, cls=None):
     """Compare `// 0xHEX` trailing comments in a header to the compiler's truth.
 
-    Returns list of (line_no, member, commented_offset, real_offset).
+    Returns ``(bad, n_seen, n_compared)`` where `bad` is a list of
+    (line_no, member, commented_offset, real_offset).
+
+    ★ WHY THE COUNTS EXIST (lane W16-EX, 2026-09-16).  The caller used to print
+    **"all // 0xHEX comments agree with the compiler"** whenever `bad` was empty
+    -- which is the SAME output for a real clean and for a run that compared
+    NOTHING.  Both silent-zero paths are live and reachable here: `class_body_span`
+    returning None bails to an empty list, and a comment row whose trailing
+    identifier is absent from `real` is skipped without a word.  An audit that
+    checked 0 of 53 comment rows must not be reportable as a clean bill of health
+    -- that is the vacuous-instrument family this repo keeps re-learning (a gate
+    that cannot fail; `all([])`; the grep-binary false negative).
+    ⇒ The counts are DISCLOSURE, not a verdict: they let the reader see the
+    denominator the "agree" was measured over.
 
     ⛔⛔ SCOPED TO `cls`'s OWN BODY -- AND IT MUST BE.  This function used to scan
     the WHOLE FILE while comparing against ONE class's offsets, so in any header
@@ -636,10 +773,11 @@ def audit_header(project_dir, header, cls_info, cls=None):
     name_for_span = (cls or cls_info.get("name") or "").split("::")[-1]
     span = class_body_span(text, name_for_span) if name_for_span else None
     if span is None:
-        return []
+        return [], 0, 0
     start, end, _ = span
 
     bad, depth = [], 0
+    n_seen = n_compared = 0
     cond = []          # preprocessor stack: True == this branch is LIVE here
     for i in range(start, min(end + 1, len(text))):
         line = text[i]
@@ -685,9 +823,13 @@ def audit_header(project_dir, header, cls_info, cls=None):
         if not ids:
             continue
         nm = ids[-1]
-        if nm in real and real[nm] != int(cm.group(1), 16):
+        n_seen += 1
+        if nm not in real:
+            continue          # cannot be checked -- counted, never reported clean
+        n_compared += 1
+        if real[nm] != int(cm.group(1), 16):
             bad.append((i + 1, nm, int(cm.group(1), 16), real[nm]))
-    return bad
+    return bad, n_seen, n_compared
 
 
 # ------------------------------------------------------------------- printing
@@ -920,6 +1062,74 @@ def run_selftest(project_dir, sabotage=None, verbose=False):
             f"0x{old_real['mTarget']:x} and would have flagged={old_would_flag} "
             f"(want 0xe4 / True -- i.e. it would have rewritten 0x2dc to 0xe4)")
 
+    # -- G  ★ AMBIGUOUS-HEADER REGRESSION PIN.  Offline, deterministic, and
+    #       SELF-SABOTAGING in the same shape as leg F: it re-implements the OLD
+    #       rule (`find_header(...)[0]`) and REQUIRES it to pick the WRONG file.
+    #       A leg that only asserted the new behaviour would pass on a tool where
+    #       the candidate list happened to be empty.
+    #
+    #       The vector is the real one, reproduced 2026-09-16: two headers declare
+    #       MetaPerformer, the layout came from the LIVE band3 TU, and
+    #       find_header's tiebreak (stem == class name, then SHORTEST PATH) put
+    #       the near-dead meta_ham copy first -- so the tool audited a file the
+    #       measured class does not live in and printed "all comments agree".
+    mp_hdrs = ["src/meta_ham/MetaPerformer.h",          # 27 chars -- old winner
+               "src/band3/meta_band/MetaPerformer.h"]   # 35 chars -- the live one
+    mp_tu = "src/band3/meta_band/MetaPerformer.cpp"
+    mp_txt = '#include "meta_band/MetaPerformer.h"\n'
+    g_chosen, _g_why, g_rej = choose_audit_header(mp_hdrs, mp_tu, mp_txt)
+    # the buggy rule, reconstructed here so the control cannot be vacuous
+    old_pick = sorted(mp_hdrs, key=lambda q: (
+        os.path.splitext(os.path.basename(q))[0] != "MetaPerformer", len(q)))[0]
+    # and the refusal half: a TU that reaches NEITHER must yield no answer at all
+    r_chosen, _r_why, _r_rej = choose_audit_header(mp_hdrs, "src/other/Thing.cpp", "")
+    chk("G. REGRESSION PIN: ambiguous header resolves to the TU's OWN header "
+        "(and the OLD rule provably picked the other one); unreachable => REFUSE",
+        (g_chosen == "src/band3/meta_band/MetaPerformer.h"
+         and g_rej == ["src/meta_ham/MetaPerformer.h"]
+         and old_pick == "src/meta_ham/MetaPerformer.h"
+         and r_chosen is None),
+        f"fixed rule chose {g_chosen!r} (want the band3 header), rejected={g_rej!r}; "
+        f"OLD hdrs[0] rule chose {old_pick!r} (want the meta_ham header -- i.e. it "
+        f"audited a file the measured class does not live in); "
+        f"unreachable-TU => {r_chosen!r} (want None = REFUSE, exit "
+        f"{HEADER_AMBIGUOUS_EXIT})")
+
+    # -- H  ★ VACUOUS-CLEAN REGRESSION PIN.  Offline, deterministic, and
+    #       self-sabotaging: it builds a header whose commented member name
+    #       matches NO real member, so the audit compares ZERO rows and returns
+    #       an empty `bad` list -- which the OLD caller printed as
+    #       "all // 0xHEX comments agree with the compiler".  A clean bill of
+    #       health over a denominator of zero is the vacuous-instrument family
+    #       this repo keeps re-learning; the pin requires the counts to expose it.
+    with tempfile.TemporaryDirectory(dir=os.path.expanduser("~/tmp")) as td:
+        with open(os.path.join(td, "vacuous_probe.h"), "w") as fh:
+            fh.write("class Probe : public Base {\n"
+                     "    int mRenamedAwayFromTheCompiler; // 0x10\n"
+                     "};\n")
+        info_v = {"name": "Probe", "size": 0x20, "members": [
+            {"name": "mSomethingElse", "offset": 0x4, "in_base": []}]}
+        bad_v, seen_v, cmp_v = audit_header_counted(td, "vacuous_probe.h",
+                                                    info_v, "Probe")
+        # ...and the positive control, so the leg is not merely asserting zeros:
+        with open(os.path.join(td, "real_probe.h"), "w") as fh:
+            fh.write("class Probe2 {\n    int mX; // 0x10\n};\n")
+        info_r = {"name": "Probe2", "size": 0x20, "members": [
+            {"name": "mX", "offset": 0x4, "in_base": []}]}
+        bad_r, seen_r, cmp_r = audit_header_counted(td, "real_probe.h",
+                                                    info_r, "Probe2")
+        old_would_say_clean = (not bad_v)      # the OLD predicate, reconstructed
+        chk("H. REGRESSION PIN: 0 rows compared is NOT a clean (and the OLD "
+            "predicate provably called it one)",
+            (bad_v == [] and seen_v == 1 and cmp_v == 0 and old_would_say_clean
+             and bad_r != [] and cmp_r == 1),
+            f"unmatched-name header -> bad={bad_v!r} seen={seen_v} compared={cmp_v} "
+            f"(want []/1/0, i.e. a row was SEEN but could not be checked); OLD "
+            f"predicate `not bad` said clean={old_would_say_clean} (want True -- "
+            f"that is the false clean); positive control -> bad={bad_r!r} "
+            f"compared={cmp_r} (want 1 finding / 1 compared, so the audit really "
+            f"does fire when it can)")
+
     nfail = 0
     for name, ok, detail in rows:
         print(f"  [{'PASS' if ok else 'FAIL'}] {name}\n         {detail}")
@@ -946,6 +1156,12 @@ def main():
     ap.add_argument("--json", action="store_true", help="emit parsed JSON")
     ap.add_argument("--check-header", action="store_true",
                     help="audit the declaring header's // 0xHEX comments against truth")
+    ap.add_argument("--header",
+                    help="audit THIS header explicitly (escape hatch when >1 "
+                         "header declares the class and the tool refuses to guess)")
+    ap.add_argument("--ambiguity-census", action="store_true",
+                    help="list every class name that find_header resolves "
+                         "AMBIGUOUSLY -- the blast radius of a --check-header clean")
     ap.add_argument("--fix-header", action="store_true",
                     help="rewrite wrong // 0xHEX comments in place (comments only, "
                          "never code). Implies --check-header.")
@@ -963,6 +1179,21 @@ def main():
 
     if args.selftest:
         return run_selftest(args.project_dir, args.sabotage, args.verbose)
+
+    if args.ambiguity_census:
+        decl, amb, lenonly = ambiguity_census(args.project_dir)
+        print(f"# class names declared in src/**: {len(decl)}")
+        print(f"# AMBIGUOUS (>1 declaring header): {len(amb)}")
+        print(f"# of those, decided PURELY BY PATH LENGTH (>=2 stems == class "
+              f"name): {len(lenonly)}")
+        print("#\n# Any past --check-header clean on a name below is UNPROVEN, "
+              "not clean.\n")
+        for k in sorted(amb):
+            mark = "  !! len-only" if k in lenonly else ""
+            print(f"{k}{mark}")
+            for h in amb[k]:
+                print(f"    {h}")
+        return 0
 
     off = int(args.offset, 16) if args.offset and args.offset.lower().startswith("0x") \
         else (int(args.offset) if args.offset else None)
@@ -1009,22 +1240,65 @@ def main():
     if args.check_header or args.fix_header:
         hdrs = find_header(args.project_dir, args.cls)
         info = parsed["classes"].get(args.cls)
-        if hdrs and info:
-            bad = audit_header(args.project_dir, hdrs[0], info, args.cls)
-            print(f"\n=== header comment audit: {hdrs[0]} ===")
-            if not bad:
-                print("  all // 0xHEX comments agree with the compiler")
+        # ★ WHICH header may be audited is now a DECISION WITH A REASON, not
+        # `hdrs[0]`.  See choose_audit_header for the measured defect.
+        if args.header:
+            chosen, why = args.header, "explicit --header"
+            rejected = [h for h in hdrs if h != args.header]
+        else:
+            tu_text = ""
+            if src and os.path.exists(os.path.join(args.project_dir, src)):
+                tu_text = open(os.path.join(args.project_dir, src),
+                               errors="replace").read()
+            chosen, why, rejected = choose_audit_header(hdrs, src, tu_text)
+        if info and chosen is None:
+            # REFUSE.  A confident clean on an unverified file is worse than no
+            # answer -- and --fix-header would WRITE to it.
+            print(f"\n=== header comment audit: REFUSED ===")
+            print(f"  !! {why}")
+            print(f"  !! The layout above is real, but WHICH header it describes "
+                  f"is not established,")
+            print(f"  !! so auditing one would be a guess and --fix-header would "
+                  f"write to a guess.")
+            for h in rejected or hdrs:
+                print(f"  !!   candidate: {h}")
+            print(f"  !! Re-run with --header <path> to audit one explicitly, or "
+                  f"--tu <src> to pin the TU.")
+            rc = HEADER_AMBIGUOUS_EXIT
+        elif hdrs and info:
+            bad, n_seen, n_cmp = audit_header_counted(
+                args.project_dir, chosen, info, args.cls)
+            if rejected:
+                print(f"\n# NOTE: {len(rejected)} other header(s) also declare "
+                      f"'{args.cls}' and were NOT audited ({why}):")
+                for h in rejected:
+                    print(f"#   {h}")
+            print(f"\n=== header comment audit: {chosen} ===")
+            if n_cmp == 0:
+                # ⛔ NOT A CLEAN.  Nothing was checked, so nothing is verified.
+                print(f"  !! NOTHING CHECKED: {n_seen} // 0xHEX comment row(s) "
+                      f"found, 0 compared against the compiler.")
+                print( "  !! This is NOT a clean bill of health -- the class body "
+                       "was not located, or")
+                print( "  !! no commented member name matched a real member. "
+                       "Check --tu / --header.")
+                rc = rc or HEADER_AMBIGUOUS_EXIT
+            elif not bad:
+                print(f"  all {n_cmp} // 0xHEX comment row(s) compared agree with "
+                      f"the compiler"
+                      + (f"  ({n_seen - n_cmp} row(s) had no matching member and "
+                         f"could NOT be checked)" if n_seen != n_cmp else ""))
             for ln, name, got, real in bad:
                 print(f"  WRONG line {ln}: {name} commented 0x{got:x} but is really 0x{real:x}")
             if args.fix_header and bad:
-                path = os.path.join(args.project_dir, hdrs[0])
+                path = os.path.join(args.project_dir, chosen)
                 lines = open(path, errors="replace").read().split("\n")
                 for ln, name, got, real in bad:
                     old = lines[ln - 1]
                     lines[ln - 1] = RE_HDR_COMMENT.sub(
                         lambda m, r=real: f"// 0x{r:x}", old, count=1)
                 open(path, "w").write("\n".join(lines))
-                print(f"  -> rewrote {len(bad)} comment(s) in {hdrs[0]} "
+                print(f"  -> rewrote {len(bad)} comment(s) in {chosen} "
                       f"(comments only; no code touched)")
     return rc
 
