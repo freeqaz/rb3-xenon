@@ -466,16 +466,15 @@ Symbol BandSongMgr::RankTierToken(int i) const {
 }
 
 void BandSongMgr::GetRankedSongs(std::vector<int> &vec, bool b1, bool b2) const {
-    if (b1) {
-        TheGameMode->Property("demos_allowed", true)->Int();
-    }
+    bool demosAllowed = b1 && TheGameMode->Property("demos_allowed", true)->Int();
     vec.clear();
     for (std::set<int>::const_iterator it = mAvailableSongs.begin();
          it != mAvailableSongs.end();
          ++it) {
         int cur = *it;
         BandSongMetadata *data = (BandSongMetadata *)Data(cur);
-        if (data->IsRanked() && !data->IsPrivate() && (b2 || !IsRestricted(cur))) {
+        if (data->IsRanked() && !data->IsPrivate() && (demosAllowed || !IsDemo(cur))
+            && (b2 || !IsRestricted(cur))) {
             vec.push_back(*it);
         }
     }
