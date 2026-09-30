@@ -2,6 +2,9 @@
 #include "meta/FixedSizeSaveableStream.h"
 #include "os/Debug.h"
 #include <typeinfo>
+#include <list>
+#include <string.h>
+#include "utl/Str.h"
 
 int FixedSizeSaveable::sCurrentMemcardLoadVer = -1;
 int FixedSizeSaveable::sSaveVersion = -1;
@@ -74,6 +77,31 @@ void FixedSizeSaveable::LoadFixedSymbol(
     fixedStream >> sym;
     MILO_ASSERT(fixedStream.Tell()-start <= kSymbolSize, 0x65);
     DepadStream(fixedStream, start + (kSymbolSize - fixedStream.Tell()));
+}
+
+// Retail 0x827A2C28 (200 B) / 0x827A2A50 (116 B). A string that cannot fit in
+// kStringSize is replaced by a zero block (memset 0x400 with 0, not sPadder, then
+// Write(buf, 0x80)) rather than overrunning the fixed slot.
+void FixedSizeSaveable::SaveFixedString(
+    FixedSizeSaveableStream &fixedStream, const String &str
+) {
+    if (str.length() >= kStringSize) {
+        char buf[0x400];
+        memset(buf, 0, sizeof(buf));
+        fixedStream.Write(buf, kStringSize);
+    } else {
+        int start = fixedStream.Tell();
+        fixedStream << str;
+        MILO_ASSERT(fixedStream.Tell()-start <= kStringSize, 0x6C);
+        PadStream(fixedStream, start + (kStringSize - fixedStream.Tell()));
+    }
+}
+
+void FixedSizeSaveable::LoadFixedString(FixedSizeSaveableStream &fixedStream, String &str) {
+    int start = fixedStream.Tell();
+    fixedStream >> str;
+    MILO_ASSERT(fixedStream.Tell()-start <= kStringSize, 0x73);
+    DepadStream(fixedStream, start + (kStringSize - fixedStream.Tell()));
 }
 
 void FixedSizeSaveable::SaveSymbolID(FixedSizeSaveableStream &stream, Symbol sym) {
@@ -226,6 +254,33 @@ void FixedSizeSaveable::LoadStd(
     vec.resize(size);
     for (int x = 0; x < size; x++) {
         LoadSymbolFromID(fs, vec[x]);
+    }
+    if (max > size)
+        DepadStream(fs, (max - size) * 4);
+}
+
+// Retail 0x827A3078 (136 B) / 0x827A2ED8 (148 B): the std::list<Symbol> overloads.
+void FixedSizeSaveable::SaveStd(
+    FixedSizeSaveableStream &fs, const std::list<Symbol> &list, int max
+) {
+    int size = list.size();
+    fs << size;
+    for (std::list<Symbol>::const_iterator it = list.begin(); it != list.end(); it++) {
+        SaveSymbolID(fs, *it);
+    }
+    if (max > size)
+        PadStream(fs, (max - size) * 4);
+}
+
+void FixedSizeSaveable::LoadStd(
+    FixedSizeSaveableStream &fs, std::list<Symbol> &list, int max
+) {
+    int size;
+    fs >> size;
+    for (int idx = 0; idx < size; idx++) {
+        Symbol s;
+        LoadSymbolFromID(fs, s);
+        list.push_back(s);
     }
     if (max > size)
         DepadStream(fs, (max - size) * 4);

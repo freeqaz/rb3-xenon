@@ -6,6 +6,7 @@
 #include "synth/FxSend.h"
 #include "synth/Synth.h"
 #include "synth/Utl.h"
+#include <algorithm>
 
 #pragma region NoteVoiceInst
 
@@ -101,6 +102,27 @@ void NoteVoiceInst::Poll() {
                 CalcSpeedFromTranspose(mFineTune / 100.0f + (interped - mCenterNote))
             );
         }
+    }
+}
+
+// Retail 0x827131D8 (92 B) and 0x82713608 (108 B): the speed goes through
+// getCalculatedSpeed (bl 0x827130B0) and then CalcSpeedFromTranspose again (bl
+// 0x8270EFE0).
+void NoteVoiceInst::SetFineTune(float tune) {
+    mFineTune = tune;
+    if (mGlideFramesLeft <= 0) {
+        mSample->SetBankSpeed(CalcSpeedFromTranspose(getCalculatedSpeed(mTriggerNote)));
+    }
+}
+
+void NoteVoiceInst::GlideToNote(unsigned char note, int frames) {
+    frames = std::max(1, frames);
+    if (mSample) {
+        mGlideToNote = note;
+        mGlideFromNote = mTriggerNote;
+        mTriggerNote = note;
+        mGlideFrames = frames;
+        mGlideFramesLeft = frames;
     }
 }
 
@@ -299,6 +321,22 @@ void MidiInstrument::ReleaseNote(unsigned char uc) {
 // `(*it)->Pause(b)` via a one-line NoteVoiceInst::Pause that retail INLINES away;
 // writing the oracle's form literally would have emitted a vcall on the voice and
 // not matched. Retail bytes outrank the oracle.
+// Retail 0x82713410 (8 B): `stfs f1, 0x7c(r3)` -- the oracle's range assert is
+// MILO_ASSERT, which compiles away in this build.
+void MidiInstrument::SetFineTune(float cents) {
+    MILO_ASSERT_RANGE(cents, -100.f, 100.f, 0x1F9);
+    mFineTuneCents = cents;
+}
+
+// Retail 0x827147E0 (8 B): `li r7, -1; b StartSample`.
+void MidiInstrument::PlayNote(unsigned char uc1, unsigned char uc2, int i) {
+    StartSample(uc1, uc2, i, -1);
+}
+
+// Retail 0x827145F0 (8 B): `addi r3, r3, 0x50; b <ObjPtrList::DeleteAll>` -- the
+// list is mActiveVoices at 0x50.
+void MidiInstrument::KillAllVoices() { mActiveVoices.DeleteAll(); }
+
 void MidiInstrument::Pause(bool b) {
     for (ObjPtrList<NoteVoiceInst>::iterator it = mActiveVoices.begin();
          it != mActiveVoices.end();
@@ -347,3 +385,25 @@ void MidiInstrument::StartSample(
 #include "band3/bandtrack/GemTrack.cpp"
 #undef gRev
 #undef gAltRev
+
+#pragma region MidiInstrumentMgr
+// Retail places these inside the MidiInstrument .text pin
+// (0x82716240..0x82716324), so they are defined here where the pin pairs them.
+#include "synth/MidiInstrumentMgr.h"
+
+MidiInstrumentMgr::MidiInstrumentMgr() : mObjectDir(), mInstrument(0) {}
+
+void MidiInstrumentMgr::SetInstrument(MidiInstrument *inst) { mInstrument = inst; }
+
+void MidiInstrumentMgr::UnloadInstrument() {
+    if (mInstrument)
+        mInstrument->KillAllVoices();
+    mInstrument = 0;
+}
+
+void MidiInstrumentMgr::Poll() {
+    if (!mInstrument)
+        return;
+    mInstrument->Poll();
+}
+#pragma endregion

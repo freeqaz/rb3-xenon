@@ -32,6 +32,19 @@ Symbol FixedSizeSaveableStream::GetSymbol(int i) const {
         return "";
 }
 
+// Retail 0x827AB250 (52 B) / 0x827AB288 (56 B): declared, never defined.
+int FixedSizeSaveableStream::ReadInt() {
+    int i = 0;
+    *this >> i;
+    return i;
+}
+
+float FixedSizeSaveableStream::ReadFloat() {
+    float f = 0.0f;
+    *this >> f;
+    return f;
+}
+
 FixedSizeSaveableStream::~FixedSizeSaveableStream() {}
 
 void FixedSizeSaveableStream::InitializeTable() {
