@@ -2580,12 +2580,16 @@ void GemPlayer::UpdateGameCymbalLanes() {
         mGameCymbalLanes = mUser->GetCymbalConfiguration();
         bool forceUseCymbals = TheGame->mProperties.mForceUseCymbals;
         bool forceDontUseCymbals = TheGame->mProperties.mForceDontUseCymbals;
-        if (MetaPerformer::Current()->mRealDrumsOverride) {
-            mGameCymbalLanes = 0x1C;
-        } else if (forceUseCymbals) {
+        if (MetaPerformer::Current()->mRealDrumsOverride || forceUseCymbals) {
             mGameCymbalLanes = 0x1C;
         } else if (forceDontUseCymbals) {
             mGameCymbalLanes = 0;
+        } else {
+            // TU5: autoplaying drums in audition mode always get cymbals
+            static Symbol audition("audition");
+            if (TheGameMode->InMode(audition) && (IsAutoplay() || mUser->mAutoplay)) {
+                mGameCymbalLanes = 0x1C;
+            }
         }
         if (mGameCymbalLanes & 4)
             discoUnflip = true;
