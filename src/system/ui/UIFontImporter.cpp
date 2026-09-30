@@ -19,6 +19,22 @@
 #include "utl/UTF8.h"
 #include <vector>
 
+#ifndef HX_NATIVE
+// Retail inlines ObjPtrList::Set into HandmadeFontChanged (Release, store,
+// AddRef with the list as ring owner); the shared template body is out-of-line.
+// A TU-local forceinline specialization reproduces that without touching the
+// header every TU includes.
+template <>
+__forceinline void ObjPtrList<RndFont, ObjectDir>::Set(iterator it, RndFont *obj) {
+    Node *n = it.mNode;
+    if (n->mObject)
+        n->mObject->Release(this);
+    n->mObject = obj;
+    if (n->mObject)
+        n->mObject->AddRef(this);
+}
+#endif
+
 #define HEIGHT_SD 480.0f
 #define HEIGHT_HD 720.0f
 
