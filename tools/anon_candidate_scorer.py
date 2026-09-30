@@ -822,7 +822,13 @@ def cmd_evaluate(args):
     ctrl = json.loads(Path(args.control_json).read_text())
     Ts = [float(x) for x in args.thresholds.split(",")]
     Ms = [float(x) for x in args.margins.split(",")]
-    table = evaluate_control(ctrl, Ts, Ms, args.min_size)
+    if args.spatial:
+        report, cfg = load_report(), load_objdiff_cfg()
+        map_rows, _n, _d = applied_map()
+        table = evaluate_control_spatial(ctrl, Ts, Ms, SpatialIndex(report, cfg, map_rows),
+                                         _pools_by_unit(report, cfg, map_rows))
+    else:
+        table = evaluate_control(ctrl, Ts, Ms, args.min_size)
     print(f"true-name rank in prefilter top-{ctrl['k']}: {dict(ctrl['true_rank_hist'])}")
     print(f"{'br':>5} {'T':>6} {'M':>5} {'n':>5} {'fireIN':>6} {'prec':>7} {'recall':>7} {'fireOUT':>7} {'FP':>6}")
     for t in table:
@@ -888,6 +894,159 @@ def cmd_propose(args):
     }
     Path(args.json_out).write_text(json.dumps(out, indent=1))
     print(f"{len(proposals)} proposals / {out['proposal_bytes']} B; {len(conflicts)} dropped non-bijective; wrote {args.json_out}")
+
+
+class SpatialIndex:
+    """Independent (non-score) evidence from LAYOUT: MSVC emits a TU's COMDATs
+    in obj section order and the linker keeps that order, so a correct
+    candidate's (section, value) position in OUR obj should fall between the
+    positions of the target row's nearest NAMED retail neighbours (the
+    "sandwich"), and the gap between those neighbours in our obj should hold
+    no more unclaimed-pool functions than retail has rows in that gap
+    ("occupancy"). Uses only retail neighbours + our obj -- never the hidden
+    name -- so the control legs cannot leak through it (the hidden row is
+    excluded from the neighbour list and still counted as an occupied retail
+    slot, exactly like a real fn_ target)."""
+
+    def __init__(self, report, cfg, map_rows):
+        self.inv = {v: int(k, 16) for k, v in map_rows.items()}
+        self.units = {u["name"]: u for u in game_units(report, cfg)}
+        self._cache = {}
+
+    def _positions(self, path):
+        d = path.read_bytes()
+        _m, _nsec, _t, psym, nsym, _o, _c = struct.unpack_from("<HHIIIHH", d, 0)
+        strtab = psym + nsym * 18
+        out, i = {}, 0
+        while i < nsym:
+            o = psym + i * 18
+            raw = d[o: o + 8]
+            val, sec, typ, sc, naux = struct.unpack_from("<IhHBB", d, o + 8)
+            if raw[:4] == b"\x00\x00\x00\x00":
+                so = struct.unpack_from("<I", raw, 4)[0]
+                e = d.index(b"\x00", strtab + so)
+                name = d[strtab + so: e].decode("latin1")
+            else:
+                name = raw.rstrip(b"\x00").decode("latin1")
+            if sec > 0 and typ == 0x20 and sc in (2, 3):
+                out.setdefault(name, (sec, val))
+            i += 1 + naux
+        return out
+
+    def addr_of(self, name):
+        if name.startswith(_PLACEHOLDER):
+            return int(name.split("_", 1)[1], 16)
+        return self.inv.get(name)
+
+    def info(self, uname):
+        if uname not in self._cache:
+            u = self.units[uname]
+            pos = self._positions(PROJECT_ROOT / u["base_path"])
+            named = sorted((self.inv[f["name"]], f["name"]) for f in u["functions"]
+                           if not f["name"].startswith(_PLACEHOLDER) and f["name"] in self.inv and f["name"] in pos)
+            addrs = [a for a in (self.addr_of(f["name"]) for f in u["functions"]) if a is not None]
+            self._cache[uname] = (pos, named, addrs)
+        return self._cache[uname]
+
+    def ok(self, uname, target_addr, cand, pool_names, exclude=None):
+        pos, named, addrs = self.info(uname)
+        if cand not in pos:
+            return False
+        nb = [x for x in named if x[1] != exclude]
+        lo = [x for x in nb if x[0] < target_addr][-1:]
+        hi = [x for x in nb if x[0] > target_addr][:1]
+        if not lo or not hi:
+            return False
+        (la, ln), (ha, hn) = lo[0], hi[0]
+        plo, phi = pos[ln], pos[hn]
+        if not (plo < pos[cand] < phi):
+            return False
+        retail_in_gap = sum(1 for a in addrs if la < a < ha)  # includes the (hidden) target slot
+        ours_in_gap = sum(1 for n in pool_names if n in pos and plo < pos[n] < phi)
+        return ours_in_gap <= retail_in_gap
+
+
+def evaluate_control_spatial(ctrl, thresholds, margins, spatial, pools):
+    rows = ctrl["rows"]
+    table = []
+    for br in ("named", "anon"):
+        for T in thresholds:
+            for M in margins:
+                fi = hi = fo = 0
+                for r in rows:
+                    a = spatial.addr_of(r["true"])
+                    sc = r[f"scores_{br}"]
+                    s_in = sorted(((sc[c], c) for c in r["in"] if sc.get(c) is not None), reverse=True)
+                    s_out = sorted(((sc[c], c) for c in r["out"] if sc.get(c) is not None), reverse=True)
+                    pool = pools[r["unit"]]
+                    g = rule_fires(s_in, T, M)
+                    if g and spatial.ok(r["unit"], a, g, pool | {r["true"]}, exclude=r["true"]):
+                        fi += 1
+                        hi += g == r["true"]
+                    g = rule_fires(s_out, T, M)
+                    if g and spatial.ok(r["unit"], a, g, pool - {r["true"]}, exclude=r["true"]):
+                        fo += 1
+                n = len(rows)
+                table.append({"bracket": br, "T": T, "M": M, "n": n, "fires_in": fi, "hits_in": hi,
+                              "precision_in": hi / fi if fi else None, "recall_in": hi / n,
+                              "fires_out": fo, "fp_rate_out": fo / n})
+    return table
+
+
+def _pools_by_unit(report, cfg, map_rows):
+    claimed = global_claimed_names(report, map_rows)
+    out = {}
+    for u in game_units(report, cfg):
+        b = PROJECT_ROOT / u["base_path"]
+        if b.exists():
+            out[u["name"]] = set(candidate_pool_v2(coff_functions_full(b), claimed))
+    return out
+
+
+def apply_rule(meta, T, M, min_size, spatial=None, pools=None):
+    fired = []
+    for m in meta:
+        if m["size"] < min_size:
+            continue
+        sc = [(f, c) for c, f in m["scores"]]
+        got = rule_fires(sc, T, M)
+        if got and spatial is not None and not spatial.ok(m["unit"], int(m["addr"], 16), got, pools[m["unit"]]):
+            got = None
+        if got:
+            fired.append((m, got, sc[0][0]))
+    by_name = collections.Counter(g for _m, g, _s in fired)
+    proposals, conflicts = [], []
+    for m, g, s in fired:
+        rec = {"addr": m["addr"], "target": m["target"], "unit": m["unit"], "size": m["size"],
+               "name": g, "fuzzy": s, "runner_up": (m["scores"][1] if len(m["scores"]) > 1 else None)}
+        (conflicts if by_name[g] > 1 else proposals).append(rec)
+    proposals.sort(key=lambda r: r["addr"])
+    return proposals, conflicts
+
+
+def cmd_apply(args):
+    """Re-apply a rule to a saved `propose` JSON (all candidate scores are
+    kept there), so the threshold can be chosen from the control without
+    re-running objdiff."""
+    raw = json.loads(Path(args.raw_json).read_text())
+    meta = raw["all_scored"]
+    spatial = pools = None
+    if args.spatial:
+        report, cfg = load_report(), load_objdiff_cfg()
+        map_rows, _n, _d = applied_map()
+        spatial = SpatialIndex(report, cfg, map_rows)
+        pools = _pools_by_unit(report, cfg, map_rows)
+    proposals, conflicts = apply_rule(meta, args.threshold, args.margin, args.min_size, spatial, pools)
+    out = {"rule": {"threshold": args.threshold, "margin": args.margin, "min_size": args.min_size,
+                    "k": raw["rule"]["k"], "spatial_sandwich_and_occupancy": bool(args.spatial)},
+           "targets_scored": len(meta), "skipped": raw["skipped"],
+           "proposal_count": len(proposals), "proposal_bytes": sum(p["size"] for p in proposals),
+           "dropped_non_bijective": conflicts, "proposals": proposals}
+    if args.json_out:
+        Path(args.json_out).write_text(json.dumps(out, indent=1))
+    print(f"rule T={args.threshold} M={args.margin} min_size={args.min_size}: "
+          f"{len(proposals)} proposals / {out['proposal_bytes']} B of {len(meta)} scored targets; "
+          f"{len(conflicts)} dropped non-bijective")
 
 
 # --------------------------------------------------------------------------
@@ -1157,6 +1316,7 @@ def main():
     p_ev.add_argument("--thresholds", default="80,90,95,97,98,99,99.5,100")
     p_ev.add_argument("--margins", default="0,0.5,1,2,5")
     p_ev.add_argument("--min-size", type=int, default=0)
+    p_ev.add_argument("--spatial", action="store_true", help="add the layout sandwich + occupancy gate")
     p_ev.set_defaults(func=cmd_evaluate)
 
     p_pr = sub.add_parser("propose", help="v2: score all real fn_ targets and emit proposals at a rule")
@@ -1167,6 +1327,15 @@ def main():
     p_pr.add_argument("--workers", type=int, default=16)
     p_pr.add_argument("--json-out", required=True)
     p_pr.set_defaults(func=cmd_propose)
+
+    p_ap = sub.add_parser("apply", help="v2: re-apply a rule to a saved propose JSON")
+    p_ap.add_argument("raw_json")
+    p_ap.add_argument("--threshold", type=float, required=True)
+    p_ap.add_argument("--margin", type=float, required=True)
+    p_ap.add_argument("--min-size", type=int, default=0)
+    p_ap.add_argument("--spatial", action="store_true", help="add the layout sandwich + occupancy gate")
+    p_ap.add_argument("--json-out")
+    p_ap.set_defaults(func=cmd_apply)
 
     p_verify = sub.add_parser("verify-technique", help="sanity-check the scorer against report.json")
     p_verify.set_defaults(func=cmd_verify_technique)

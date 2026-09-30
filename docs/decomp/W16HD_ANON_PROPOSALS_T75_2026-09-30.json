@@ -1,0 +1,883 @@
+{
+ "rule": {
+  "threshold": 75.0,
+  "margin": 1.0,
+  "min_size": 0,
+  "k": 6,
+  "spatial_sandwich_and_occupancy": true
+ },
+ "targets_scored": 1723,
+ "skipped": {
+  "no_candidate_in_band": 47,
+  "deliberately_null_in_map": 9
+ },
+ "proposal_count": 72,
+ "proposal_bytes": 23176,
+ "dropped_non_bijective": [],
+ "proposals": [
+  {
+   "addr": "0x82360300",
+   "target": "fn_82360300",
+   "unit": "default/Tour",
+   "size": 244,
+   "name": "?InitializeMusicLibraryTaskForArtist@Tour@@QAAXAAVMusicLibraryTask@MusicLibrary@@HPBDVSymbol@@@Z",
+   "fuzzy": 96.39344,
+   "runner_up": [
+    "?GetFilterName@Tour@@QBA?AVString@@VSymbol@@@Z",
+    39.311474
+   ]
+  },
+  {
+   "addr": "0x82361310",
+   "target": "fn_82361310",
+   "unit": "default/TourPerformer",
+   "size": 228,
+   "name": "?HandleSongCompleted@TourPerformerImpl@@QAAXPBVBandStatsInfo@@@Z",
+   "fuzzy": 97.59649,
+   "runner_up": [
+    "?IsQuestWon@TourPerformerImpl@@QBA_NVSymbol@@@Z",
+    39.22807
+   ]
+  },
+  {
+   "addr": "0x823e2db0",
+   "target": "fn_823E2DB0",
+   "unit": "default/network/net/NetSession",
+   "size": 84,
+   "name": "??1AddUserRequestMsg@@UAA@XZ",
+   "fuzzy": 85.190475,
+   "runner_up": [
+    "??1VoiceDataMsg@@UAA@XZ",
+    82.14286
+   ]
+  },
+  {
+   "addr": "0x823e4290",
+   "target": "fn_823E4290",
+   "unit": "default/network/net/NetSession",
+   "size": 296,
+   "name": "?SendMsg@NetSession@@QAAXABV?$vector@PAVRemoteUser@@V?$StlNodeAlloc@PAVRemoteUser@@@stlpmtx_std@@@stlpmtx_std@@AAVNetMessage@@W4PacketType@@@Z",
+   "fuzzy": 93.37838,
+   "runner_up": [
+    "?SendToAllClientsExcept@NetSession@@QAAXABVNetMessage@@W4PacketType@@I@Z",
+    54.945946
+   ]
+  },
+  {
+   "addr": "0x823e43e8",
+   "target": "fn_823E43E8",
+   "unit": "default/network/net/NetSession",
+   "size": 308,
+   "name": "?SendToAllClientsExcept@NetSession@@QAAXABVNetMessage@@W4PacketType@@I@Z",
+   "fuzzy": 94.35065,
+   "runner_up": [
+    "?SendMsg@NetSession@@QAAXABV?$vector@PAVRemoteUser@@V?$StlNodeAlloc@PAVRemoteUser@@@stlpmtx_std@@@stlpmtx_std@@AAVNetMessage@@W4PacketType@@@Z",
+    56.805195
+   ]
+  },
+  {
+   "addr": "0x823e4548",
+   "target": "fn_823E4548",
+   "unit": "default/network/net/NetSession",
+   "size": 144,
+   "name": "?AddLocalToSession@NetSession@@UAAXPAVLocalUser@@@Z",
+   "fuzzy": 100.0,
+   "runner_up": [
+    "?_M_erase@?$vector@PAVUser@@V?$StlNodeAlloc@PAVUser@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVUser@@PAPAV3@ABU__false_type@2@@Z",
+    47.055557
+   ]
+  },
+  {
+   "addr": "0x823e5128",
+   "target": "fn_823E5128",
+   "unit": "default/network/net/NetSession",
+   "size": 328,
+   "name": "?ProcessUserLeftMsg@NetSession@@QAAXABVUserLeftMsg@@@Z",
+   "fuzzy": 76.560974,
+   "runner_up": [
+    "?StartArbitration@NetSession@@QAAXXZ",
+    36.048782
+   ]
+  },
+  {
+   "addr": "0x823e52c8",
+   "target": "fn_823E52C8",
+   "unit": "default/network/net/NetSession",
+   "size": 276,
+   "name": "?StartArbitration@NetSession@@QAAXXZ",
+   "fuzzy": 84.05797,
+   "runner_up": [
+    "?GetRemoteUserList@NetSession@@QBAXAAV?$vector@PAVRemoteUser@@V?$StlNodeAlloc@PAVRemoteUser@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+    48.652172
+   ]
+  },
+  {
+   "addr": "0x823e56b8",
+   "target": "fn_823E56B8",
+   "unit": "default/network/net/NetSession",
+   "size": 192,
+   "name": "?UpdateUserData@NetSession@@QAAXPAVUser@@I@Z",
+   "fuzzy": 76.145836,
+   "runner_up": [
+    "??_EStreamSettings@Quazal@@QAAPAXI@Z",
+    6.4791665
+   ]
+  },
+  {
+   "addr": "0x823e5c68",
+   "target": "fn_823E5C68",
+   "unit": "default/network/net/NetSession",
+   "size": 212,
+   "name": "?RemoveClient@NetSession@@QAAXI@Z",
+   "fuzzy": 95.754715,
+   "runner_up": [
+    "?StartArbitration@NetSession@@QAAXXZ",
+    27.35849
+   ]
+  },
+  {
+   "addr": "0x823e6168",
+   "target": "fn_823E6168",
+   "unit": "default/network/net/NetSession",
+   "size": 300,
+   "name": "?OnConnectSessionJobComplete@NetSession@@QAAX_N@Z",
+   "fuzzy": 100.0,
+   "runner_up": [
+    "?UpdateUserData@NetSession@@QAAXPAVUser@@I@Z",
+    27.746666
+   ]
+  },
+  {
+   "addr": "0x823e6310",
+   "target": "fn_823E6310",
+   "unit": "default/network/net/NetSession",
+   "size": 988,
+   "name": "?Disconnect@NetSession@@QAAXXZ",
+   "fuzzy": 98.56275,
+   "runner_up": [
+    "?CheckJoinable@NetSession@@QAA_NAAW4JoinResponseError@@AAHV?$vector@VUserGuid@@V?$StlNodeAlloc@VUserGuid@@@stlpmtx_std@@@stlpmtx_std@@AAVBinStream@@@Z",
+    24.348179
+   ]
+  },
+  {
+   "addr": "0x823e69a8",
+   "target": "fn_823E69A8",
+   "unit": "default/network/net/NetSession",
+   "size": 488,
+   "name": "?CheckJoinable@NetSession@@QAA_NAAW4JoinResponseError@@AAHV?$vector@VUserGuid@@V?$StlNodeAlloc@VUserGuid@@@stlpmtx_std@@@stlpmtx_std@@AAVBinStream@@@Z",
+   "fuzzy": 83.10656,
+   "runner_up": [
+    "??1NetSession@@UAA@XZ",
+    28.434425
+   ]
+  },
+  {
+   "addr": "0x823e9f40",
+   "target": "fn_823E9F40",
+   "unit": "default/SyncStore",
+   "size": 128,
+   "name": "?RemoveSyncObj@SyncStore@@QAAXAAVString@@@Z",
+   "fuzzy": 80.90625,
+   "runner_up": [
+    "?_M_erase@?$vector@DV?$StlNodeAlloc@D@stlpmtx_std@@@stlpmtx_std@@IAAPADPAD0ABU__false_type@2@@Z",
+    41.96875
+   ]
+  },
+  {
+   "addr": "0x8253d690",
+   "target": "fn_8253D690",
+   "unit": "default/MusicLibrary",
+   "size": 244,
+   "name": "?PushSortToScreen@MusicLibrary@@QAAXXZ",
+   "fuzzy": 75.34426,
+   "runner_up": [
+    "?PushMissingSetlistSongsToScreen@MusicLibrary@@QAAXH@Z",
+    66.95082
+   ]
+  },
+  {
+   "addr": "0x82540790",
+   "target": "fn_82540790",
+   "unit": "default/MusicLibrary",
+   "size": 240,
+   "name": "?ToggleFilter@MusicLibrary@@QAAXW4FilterType@@VSymbol@@@Z",
+   "fuzzy": 91.583336,
+   "runner_up": [
+    "?PushMissingSetlistSongsToScreen@MusicLibrary@@QAAXH@Z",
+    30.4
+   ]
+  },
+  {
+   "addr": "0x82548860",
+   "target": "fn_82548860",
+   "unit": "default/ProfileMgr",
+   "size": 208,
+   "name": "?GetShouldAutosaveProfiles@ProfileMgr@@QAA?AV?$vector@PAVBandProfile@@V?$StlNodeAlloc@PAVBandProfile@@@stlpmtx_std@@@stlpmtx_std@@XZ",
+   "fuzzy": 83.57692,
+   "runner_up": [
+    "?CheckProfileWebSetlistStatus@ProfileMgr@@QAAXXZ",
+    29.25
+   ]
+  },
+  {
+   "addr": "0x82556838",
+   "target": "fn_82556838",
+   "unit": "default/band3/meta_band/AccomplishmentManager",
+   "size": 340,
+   "name": "?UpdateSongStatusFlagsForPerformer@AccomplishmentManager@@QAAXPAVPerformer@@PAVSongStatusMgr@@VSymbol@@W4ScoreType@@W4Difficulty@@@Z",
+   "fuzzy": 79.94118,
+   "runner_up": [
+    "?_M_erase@?$vector@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@V?$StlNodeAlloc@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@2@PAV32@0ABU__true_type@2@@Z",
+    27.62353
+   ]
+  },
+  {
+   "addr": "0x8255ada8",
+   "target": "fn_8255ADA8",
+   "unit": "default/band3/meta_band/AccomplishmentManager",
+   "size": 456,
+   "name": "?HandleSetlistCompletedForUser@AccomplishmentManager@@QAAXVSymbol@@_NPAVLocalBandUser@@W4Difficulty@@H@Z",
+   "fuzzy": 87.307014,
+   "runner_up": [
+    "?UpdateAssetHintLabel@AccomplishmentManager@@QAAXVSymbol@@PAVUILabel@@@Z",
+    30.166666
+   ]
+  },
+  {
+   "addr": "0x8255dc30",
+   "target": "fn_8255DC30",
+   "unit": "default/band3/meta_band/AccomplishmentManager",
+   "size": 412,
+   "name": "?InitializeDiscSongs@AccomplishmentManager@@QAAXXZ",
+   "fuzzy": 82.398056,
+   "runner_up": [
+    "?UpdateAssetHintLabel@AccomplishmentManager@@QAAXVSymbol@@PAVUILabel@@@Z",
+    39.495144
+   ]
+  },
+  {
+   "addr": "0x8256ac50",
+   "target": "fn_8256AC50",
+   "unit": "default/band3/meta_band/AssetMgr",
+   "size": 112,
+   "name": "??1?$hashtable@U?$pair@$$CBHVString@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHVString@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+   "fuzzy": 100.0,
+   "runner_up": [
+    "??1?$hashtable@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+    92.5
+   ]
+  },
+  {
+   "addr": "0x8256b158",
+   "target": "fn_8256B158",
+   "unit": "default/band3/meta_band/AssetMgr",
+   "size": 180,
+   "name": "??A?$hash_map@HVString@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAAAVString@@ABH@Z",
+   "fuzzy": 99.888885,
+   "runner_up": [
+    "??A?$hash_map@VSymbol@@PAVAsset@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAAAPAVAsset@@ABVSymbol@@@Z",
+    49.77778
+   ]
+  },
+  {
+   "addr": "0x82577340",
+   "target": "fn_82577340",
+   "unit": "default/BandSongMgr",
+   "size": 320,
+   "name": "?GetRankedSongs@BandSongMgr@@QBAXAAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@_N1@Z",
+   "fuzzy": 81.475,
+   "runner_up": [
+    "?CreateSongCacheID@BandSongMgr@@QAA_NPAPAVCacheID@@@Z",
+    18.2875
+   ]
+  },
+  {
+   "addr": "0x8257efa8",
+   "target": "fn_8257EFA8",
+   "unit": "default/MetaPerformer",
+   "size": 552,
+   "name": "?RecordBattleScore@MetaPerformer@@QAAXABVBandStatsInfo@@_N@Z",
+   "fuzzy": 97.753624,
+   "runner_up": [
+    "?_M_fill_insert_aux@?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@2@IABV32@ABU__false_type@2@@Z",
+    25.202898
+   ]
+  },
+  {
+   "addr": "0x82580b20",
+   "target": "fn_82580B20",
+   "unit": "default/MetaPerformer",
+   "size": 248,
+   "name": "?PopulatePlayerBandScores@MetaPerformer@@QAAXABVBandStatsInfo@@AAV?$vector@VPlayerScore@@V?$StlNodeAlloc@VPlayerScore@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "fuzzy": 96.20968,
+   "runner_up": [
+    "?PopulatePlayerScores@MetaPerformer@@QAAXABVBandStatsInfo@@AAV?$vector@VPlayerScore@@V?$StlNodeAlloc@VPlayerScore@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+    81.53226
+   ]
+  },
+  {
+   "addr": "0x82580c48",
+   "target": "fn_82580C48",
+   "unit": "default/MetaPerformer",
+   "size": 264,
+   "name": "?PopulatePlayerScores@MetaPerformer@@QAAXABVBandStatsInfo@@AAV?$vector@VPlayerScore@@V?$StlNodeAlloc@VPlayerScore@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "fuzzy": 96.36364,
+   "runner_up": [
+    "?PopulatePlayerBandScores@MetaPerformer@@QAAXABVBandStatsInfo@@AAV?$vector@VPlayerScore@@V?$StlNodeAlloc@VPlayerScore@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+    76.969696
+   ]
+  },
+  {
+   "addr": "0x82580d80",
+   "target": "fn_82580D80",
+   "unit": "default/MetaPerformer",
+   "size": 684,
+   "name": "?SaveAndUploadScores@MetaPerformer@@QAAXAAV?$vector@PAVLocalBandUser@@V?$StlNodeAlloc@PAVLocalBandUser@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@ABVBandStatsInfo@@@Z",
+   "fuzzy": 80.690056,
+   "runner_up": [
+    "?RecordBattleScore@MetaPerformer@@QAAXABVBandStatsInfo@@_N@Z",
+    19.052631
+   ]
+  },
+  {
+   "addr": "0x82581fa8",
+   "target": "fn_82581FA8",
+   "unit": "default/MetaPerformer",
+   "size": 820,
+   "name": "??0MetaPerformer@@QAA@ABVBandSongMgr@@PBD@Z",
+   "fuzzy": 83.687805,
+   "runner_up": [
+    "?RecordBattleScore@MetaPerformer@@QAAXABVBandStatsInfo@@_N@Z",
+    16.585365
+   ]
+  },
+  {
+   "addr": "0x82587478",
+   "target": "fn_82587478",
+   "unit": "default/band3/meta_band/SessionMgr",
+   "size": 440,
+   "name": "?OnMsg@SessionMgr@@QAA?AVDataNode@@ABVRemoteUserLeftMsg@@@Z",
+   "fuzzy": 99.045456,
+   "runner_up": [
+    "?_M_insert_overflow@?$vector@PAVRemoteUser@@V?$StlNodeAlloc@PAVRemoteUser@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAPAVRemoteUser@@ABQAV3@ABU__true_type@2@I_N@Z",
+    21.645454
+   ]
+  },
+  {
+   "addr": "0x8258bb08",
+   "target": "fn_8258BB08",
+   "unit": "default/band3/meta_band/BandProfile",
+   "size": 924,
+   "name": "?OnMsg@BandProfile@@QAA?AVDataNode@@ABVRockCentralOpCompleteMsg@@@Z",
+   "fuzzy": 88.385284,
+   "runner_up": [
+    "?_M_rehash@?$hashtable@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@@stlpmtx_std@@AAAXI@Z",
+    27.731602
+   ]
+  },
+  {
+   "addr": "0x8258c1a8",
+   "target": "fn_8258C1A8",
+   "unit": "default/band3/meta_band/BandProfile",
+   "size": 104,
+   "name": "?GetAllChars@BandProfile@@QBAXAAV?$vector@PAVTourCharLocal@@V?$StlNodeAlloc@PAVTourCharLocal@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "fuzzy": 90.0,
+   "runner_up": [
+    "?resize@?$vector@PAVTourCharLocal@@V?$StlNodeAlloc@PAVTourCharLocal@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABQAVTourCharLocal@@@Z",
+    44.153847
+   ]
+  },
+  {
+   "addr": "0x8258c2e0",
+   "target": "fn_8258C2E0",
+   "unit": "default/band3/meta_band/BandProfile",
+   "size": 268,
+   "name": "?AddSavedSetlist@BandProfile@@QAAPAVLocalSavedSetlist@@PBD0_NABVPatchDescriptor@@ABV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "fuzzy": 80.55224,
+   "runner_up": [
+    "?insert_unique@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@VSymbol@@U?$_SetTraitsT@VSymbol@@@priv@stlpmtx_std@@@stlpmtx_std@@_N@2@ABVSymbol@@@Z",
+    29.119404
+   ]
+  },
+  {
+   "addr": "0x8258e6f8",
+   "target": "fn_8258E6F8",
+   "unit": "default/band3/meta_band/BandProfile",
+   "size": 1020,
+   "name": "??0BandProfile@@QAA@H@Z",
+   "fuzzy": 99.937256,
+   "runner_up": [
+    "?OnMsg@BandProfile@@QAA?AVDataNode@@ABVRockCentralOpCompleteMsg@@@Z",
+    20.066668
+   ]
+  },
+  {
+   "addr": "0x82592f00",
+   "target": "fn_82592F00",
+   "unit": "default/UIEventMgr",
+   "size": 128,
+   "name": "?CurrentDialogEvent@UIEventMgr@@QBA?AVSymbol@@XZ",
+   "fuzzy": 84.15625,
+   "runner_up": [
+    "??$DeleteAll@V?$vector@PAVUIEvent@@V?$StlNodeAlloc@PAVUIEvent@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVUIEvent@@V?$StlNodeAlloc@PAVUIEvent@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+    46.65625
+   ]
+  },
+  {
+   "addr": "0x825c5640",
+   "target": "fn_825C5640",
+   "unit": "default/AppLabel",
+   "size": 96,
+   "name": "?SetProfileName@AppLabel@@QAAXPBVLocalBandUser@@@Z",
+   "fuzzy": 82.708336,
+   "runner_up": [
+    "?SetEditSetlistName@AppLabel@@QAAXPBVUIPanel@@@Z",
+    72.875
+   ]
+  },
+  {
+   "addr": "0x825d3f40",
+   "target": "fn_825D3F40",
+   "unit": "default/SongStatusMgr",
+   "size": 152,
+   "name": "?OnMsg@SongStatusMgr@@QAA?AVDataNode@@ABVRockCentralOpCompleteMsg@@@Z",
+   "fuzzy": 77.3421,
+   "runner_up": [
+    "?_M_insert_noresize@?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@IAA?AU?$_Ht_iterator@V?$_Slist_iterator@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@U?$_NonLocalHashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@23@@priv@2@IABU?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@2@@Z",
+    13.342105
+   ]
+  },
+  {
+   "addr": "0x825e96a8",
+   "target": "fn_825E96A8",
+   "unit": "default/band3/meta_band/AccomplishmentLessonSongListConditional",
+   "size": 88,
+   "name": "??_GAccomplishmentLessonSongListConditional@@UAAPAXI@Z",
+   "fuzzy": 100.0,
+   "runner_up": [
+    "??_Gout_of_range@stlpmtx_std@@UAAPAXI@Z",
+    86.13636
+   ]
+  },
+  {
+   "addr": "0x825f8ea8",
+   "target": "fn_825F8EA8",
+   "unit": "default/AccomplishmentPanel",
+   "size": 100,
+   "name": "?HasAward@AccomplishmentPanel@@QBA_NXZ",
+   "fuzzy": 95.76,
+   "runner_up": [
+    "?HasLeaderboard@AccomplishmentPanel@@QBA_NXZ",
+    71.28
+   ]
+  },
+  {
+   "addr": "0x825f8f10",
+   "target": "fn_825F8F10",
+   "unit": "default/AccomplishmentPanel",
+   "size": 168,
+   "name": "?HasProgress@AccomplishmentPanel@@QBA_NXZ",
+   "fuzzy": 97.35714,
+   "runner_up": [
+    "?GetMaxValue@AccomplishmentPanel@@QBAHXZ",
+    58.0
+   ]
+  },
+  {
+   "addr": "0x825f8fb8",
+   "target": "fn_825F8FB8",
+   "unit": "default/AccomplishmentPanel",
+   "size": 164,
+   "name": "?GetCurrentValue@AccomplishmentPanel@@QBAHXZ",
+   "fuzzy": 97.34146,
+   "runner_up": [
+    "?GetMaxValue@AccomplishmentPanel@@QBAHXZ",
+    91.0
+   ]
+  },
+  {
+   "addr": "0x825f9060",
+   "target": "fn_825F9060",
+   "unit": "default/AccomplishmentPanel",
+   "size": 164,
+   "name": "?GetMaxValue@AccomplishmentPanel@@QBAHXZ",
+   "fuzzy": 97.34146,
+   "runner_up": [
+    "?GetCurrentValue@AccomplishmentPanel@@QBAHXZ",
+    91.0
+   ]
+  },
+  {
+   "addr": "0x825fe2a8",
+   "target": "fn_825FE2A8",
+   "unit": "default/AccomplishmentPanel",
+   "size": 356,
+   "name": "?LoadCampaignIcons@AccomplishmentPanel@@QAAXXZ",
+   "fuzzy": 91.786514,
+   "runner_up": [
+    "?FakeEarnSelectedGroup@AccomplishmentPanel@@QAAXXZ",
+    32.0
+   ]
+  },
+  {
+   "addr": "0x82600478",
+   "target": "fn_82600478",
+   "unit": "default/AccomplishmentPanel",
+   "size": 200,
+   "name": "?SetRandomUnplayedSong@AccomplishmentPanel@@QAAXXZ",
+   "fuzzy": 91.36,
+   "runner_up": [
+    "?IsSecret@AccomplishmentPanel@@QBA_NXZ",
+    45.02
+   ]
+  },
+  {
+   "addr": "0x8260ba80",
+   "target": "fn_8260BA80",
+   "unit": "default/CalibrationPanel",
+   "size": 600,
+   "name": "?OnStartTest@CalibrationPanel@@QAA?AVDataNode@@PAVDataArray@@@Z",
+   "fuzzy": 91.86667,
+   "runner_up": [
+    "?OnMsg@CalibrationPanel@@QAA?AVDataNode@@ABVButtonDownMsg@@@Z",
+    20.946667
+   ]
+  },
+  {
+   "addr": "0x826161b8",
+   "target": "fn_826161B8",
+   "unit": "default/CustomizePanel",
+   "size": 116,
+   "name": "?AssetProviderHasAsset@CustomizePanel@@QAA_NVSymbol@@@Z",
+   "fuzzy": 89.655174,
+   "runner_up": [
+    "??_Gout_of_range@stlpmtx_std@@UAAPAXI@Z",
+    46.896553
+   ]
+  },
+  {
+   "addr": "0x8264bfc0",
+   "target": "fn_8264BFC0",
+   "unit": "default/band3/meta_band/AppMiniLeaderboardDisplay",
+   "size": 80,
+   "name": "?HasRows@AppMiniLeaderboardDisplay@@QAA_NXZ",
+   "fuzzy": 76.45,
+   "runner_up": [
+    "?clear@?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    53.85
+   ]
+  },
+  {
+   "addr": "0x82651ab8",
+   "target": "fn_82651AB8",
+   "unit": "default/Matchmaker",
+   "size": 36,
+   "name": "?IsHostingTour@Matchmaker@@QBA_NXZ",
+   "fuzzy": 77.77778,
+   "runner_up": [
+    "?_M_is_inside@?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@ABA_NABV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@2@@Z",
+    57.11111
+   ]
+  },
+  {
+   "addr": "0x82670d18",
+   "target": "fn_82670D18",
+   "unit": "default/band3/meta_band/AssetProvider",
+   "size": 392,
+   "name": "?Text@AssetProvider@@UBAXHHPAVUIListLabel@@PAVUILabel@@@Z",
+   "fuzzy": 85.38776,
+   "runner_up": [
+    "?UpdateExtendedText@AssetProvider@@UBAXHHPAVUILabel@@@Z",
+    34.55102
+   ]
+  },
+  {
+   "addr": "0x82678dd0",
+   "target": "fn_82678DD0",
+   "unit": "default/band3/game/Game",
+   "size": 84,
+   "name": "?GetPlayerFromTrack@Game@@QBAPAVPlayer@@H_N@Z",
+   "fuzzy": 99.52381,
+   "runner_up": [
+    "??$remove@PAPAVPlayer@@PAV1@@stlpmtx_std@@YAPAPAVPlayer@@PAPAV1@0ABQAV1@@Z",
+    20.333334
+   ]
+  },
+  {
+   "addr": "0x8267b4e8",
+   "target": "fn_8267B4E8",
+   "unit": "default/band3/game/Game",
+   "size": 164,
+   "name": "?PopulatePlayerLists@Game@@QAAXXZ",
+   "fuzzy": 92.29269,
+   "runner_up": [
+    "?erase@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAAXU?$_Rb_tree_iterator@U?$pair@$$CBHM@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@@2@0@Z",
+    45.634148
+   ]
+  },
+  {
+   "addr": "0x826874f8",
+   "target": "fn_826874F8",
+   "unit": "default/SongDB",
+   "size": 576,
+   "name": "?SetupPracticeSections@SongDB@@QAAXXZ",
+   "fuzzy": 89.71528,
+   "runner_up": [
+    "?_M_fill_assign@?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXIABV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@2@@Z",
+    19.5
+   ]
+  },
+  {
+   "addr": "0x826887d0",
+   "target": "fn_826887D0",
+   "unit": "default/GameConfig",
+   "size": 152,
+   "name": "?CanEndGame@GameConfig@@QBA_NXZ",
+   "fuzzy": 82.76316,
+   "runner_up": [
+    "?erase@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAAXU?$_Rb_tree_iterator@U?$pair@$$CBHM@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@@2@@Z",
+    45.973682
+   ]
+  },
+  {
+   "addr": "0x8268b718",
+   "target": "fn_8268B718",
+   "unit": "default/BandUser",
+   "size": 172,
+   "name": "??1RemoteBandUser@@UAA@XZ",
+   "fuzzy": 100.0,
+   "runner_up": [
+    "??1NullLocalBandUser@@UAA@XZ",
+    60.23256
+   ]
+  },
+  {
+   "addr": "0x8269a950",
+   "target": "fn_8269A950",
+   "unit": "default/band3/game/Band",
+   "size": 84,
+   "name": "?GetLongestStreak@Band@@QBAHXZ",
+   "fuzzy": 82.57143,
+   "runner_up": [
+    "??$fill@PAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@0ABV10@@Z",
+    49.0
+   ]
+  },
+  {
+   "addr": "0x826aa630",
+   "target": "fn_826AA630",
+   "unit": "default/band3/game/GemTrainerPanel",
+   "size": 108,
+   "name": "?ClearGems@GemTrainerPanel@@QAAXXZ",
+   "fuzzy": 88.888885,
+   "runner_up": [
+    "?erase@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAAXU?$_Rb_tree_iterator@U?$pair@$$CBHM@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@@2@@Z",
+    52.814816
+   ]
+  },
+  {
+   "addr": "0x826ac9f0",
+   "target": "fn_826AC9F0",
+   "unit": "default/band3/game/GemTrainerPanel",
+   "size": 1472,
+   "name": "?Enter@GemTrainerPanel@@UAAXXZ",
+   "fuzzy": 75.76087,
+   "runner_up": [
+    "?Poll@GemTrainerPanel@@UAAXXZ",
+    28.752718
+   ]
+  },
+  {
+   "addr": "0x826ca648",
+   "target": "fn_826CA648",
+   "unit": "default/band3/game/TrainerPanel",
+   "size": 80,
+   "name": "?ChallengeSuccess@TrainerPanel@@QBA_NXZ",
+   "fuzzy": 91.75,
+   "runner_up": [
+    "??9Symbol@@QBA_NPBD@Z",
+    48.75
+   ]
+  },
+  {
+   "addr": "0x826cdb18",
+   "target": "fn_826CDB18",
+   "unit": "default/band3/game/MultiplayerAnalyzer",
+   "size": 444,
+   "name": "?AddTrack@MultiplayerAnalyzer@@QAAXHW4TrackType@@@Z",
+   "fuzzy": 90.21622,
+   "runner_up": [
+    "?_M_insert_overflow_aux@?$vector@VPlayerScoreInfo@@V?$StlNodeAlloc@VPlayerScoreInfo@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVPlayerScoreInfo@@ABV3@ABU__false_type@2@I_N@Z",
+    27.396397
+   ]
+  },
+  {
+   "addr": "0x826d0bb8",
+   "target": "fn_826D0BB8",
+   "unit": "default/band3/game/Tracker",
+   "size": 72,
+   "name": "?HasPlayerForInstrument@Tracker@@QBA_NVSymbol@@@Z",
+   "fuzzy": 93.888885,
+   "runner_up": [
+    "?NotNull@TrackerPlayerID@@QBA_NXZ",
+    71.55556
+   ]
+  },
+  {
+   "addr": "0x826d9080",
+   "target": "fn_826D9080",
+   "unit": "default/FocusTracker",
+   "size": 760,
+   "name": "?Poll_@FocusTracker@@UAAXM@Z",
+   "fuzzy": 92.63158,
+   "runner_up": [
+    "?swap@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAAXAAV12@@Z",
+    19.652632
+   ]
+  },
+  {
+   "addr": "0x826da6b0",
+   "target": "fn_826DA6B0",
+   "unit": "default/band3/game/PerfectSectionTracker",
+   "size": 500,
+   "name": "?HandleInExtent@PerfectSectionTracker@@QAAXMH@Z",
+   "fuzzy": 87.128,
+   "runner_up": [
+    "?FirstFrame_@PerfectSectionTracker@@UAAXM@Z",
+    15.72
+   ]
+  },
+  {
+   "addr": "0x826e46a0",
+   "target": "fn_826E46A0",
+   "unit": "default/VocalPlayer",
+   "size": 248,
+   "name": "?Start@VocalPlayer@@UAAXXZ",
+   "fuzzy": 94.91936,
+   "runner_up": [
+    "?SetPaused@VocalPlayer@@UAAX_N@Z",
+    58.80645
+   ]
+  },
+  {
+   "addr": "0x826e4828",
+   "target": "fn_826E4828",
+   "unit": "default/VocalPlayer",
+   "size": 232,
+   "name": "?SetPaused@VocalPlayer@@UAAX_N@Z",
+   "fuzzy": 89.706894,
+   "runner_up": [
+    "??$__partial_sort@PAPAVVocalPart@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVVocalPart@@000P6A_NPBV1@1@Z@Z",
+    42.517242
+   ]
+  },
+  {
+   "addr": "0x826f0788",
+   "target": "fn_826F0788",
+   "unit": "default/Metronome",
+   "size": 36,
+   "name": "?PlayBeat@Metronome@@QAAXH@Z",
+   "fuzzy": 77.77778,
+   "runner_up": [
+    "?_S_maximum@_Rb_tree_node_base@stlpmtx_std@@SAPAU12@PAU12@@Z",
+    43.77778
+   ]
+  },
+  {
+   "addr": "0x826f5a10",
+   "target": "fn_826F5A10",
+   "unit": "default/TrackerUtils",
+   "size": 208,
+   "name": "?CountGemsInSong@TrackerUtils@@SAHHW4TrackType@@@Z",
+   "fuzzy": 88.78846,
+   "runner_up": [
+    "?_M_erase@?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@2@PAV32@ABU__true_type@2@@Z",
+    40.53846
+   ]
+  },
+  {
+   "addr": "0x82b97890",
+   "target": "fn_82B97890",
+   "unit": "default/band3/bandtrack/Track",
+   "size": 8,
+   "name": "?GetBandUser@Track@@QBAPBVBandUser@@XZ",
+   "fuzzy": 100.0,
+   "runner_up": [
+    "?GetTrackNum@Track@@QBAHXZ",
+    97.5
+   ]
+  },
+  {
+   "addr": "0x82b97fc0",
+   "target": "fn_82B97FC0",
+   "unit": "default/band3/bandtrack/Track",
+   "size": 96,
+   "name": "?IsScoring@Track@@UBA_NXZ",
+   "fuzzy": 95.416664,
+   "runner_up": [
+    "?erase_unique@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAAIABH@Z",
+    60.541668
+   ]
+  },
+  {
+   "addr": "0x82b98ff0",
+   "target": "fn_82B98FF0",
+   "unit": "default/GemManager",
+   "size": 100,
+   "name": "?IsEndOfFill@GemManager@@QAA_NH@Z",
+   "fuzzy": 92.8,
+   "runner_up": [
+    "??_GNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@UAAPAXI@Z",
+    60.88
+   ]
+  },
+  {
+   "addr": "0x82b9bd40",
+   "target": "fn_82B9BD40",
+   "unit": "default/GemManager",
+   "size": 1600,
+   "name": "?DrawTrackMasks@GemManager@@QAAXHH@Z",
+   "fuzzy": 80.29,
+   "runner_up": [
+    "?Poll@FlowManager@@QAAXXZ",
+    0.0
+   ]
+  },
+  {
+   "addr": "0x82b9cd38",
+   "target": "fn_82B9CD38",
+   "unit": "default/GemManager",
+   "size": 680,
+   "name": "?SetupRealGuitarFretPos@GemManager@@QAAXXZ",
+   "fuzzy": 83.53529,
+   "runner_up": [
+    "?InitRGTuning@GemManager@@QAAXPAVBandUser@@@Z",
+    32.152943
+   ]
+  },
+  {
+   "addr": "0x82ba4110",
+   "target": "fn_82BA4110",
+   "unit": "default/VocalTrack",
+   "size": 344,
+   "name": "?NewGem@TambourineGemPool@@QAAXMH@Z",
+   "fuzzy": 98.72093,
+   "runner_up": [
+    "?FreeOldGems@TambourineGemPool@@QAAXM@Z",
+    43.511627
+   ]
+  },
+  {
+   "addr": "0x82bad5d0",
+   "target": "fn_82BAD5D0",
+   "unit": "default/band3/bandtrack/Gem",
+   "size": 64,
+   "name": "?VertLess@@YA_NABVVert@RndMesh@@0@Z",
+   "fuzzy": 85.9375,
+   "runner_up": [
+    "?_M_is_inside@?$vector@VSeam@MeshAO@OutfitConfig@@V?$StlNodeAlloc@VSeam@MeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@ABA_NABVSeam@MeshAO@OutfitConfig@@@Z",
+    43.75
+   ]
+  }
+ ]
+}
