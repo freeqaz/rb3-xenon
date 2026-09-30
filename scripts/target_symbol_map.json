@@ -16134,7 +16134,6 @@
  "0x826ac808": "??$SendDataPoint@VSymbol@@V1@@@YAXPBDVSymbol@@1@Z",
  "0x826ac8a0": "??$SendDataPoint@VSymbol@@M@@YAXPBDVSymbol@@M@Z",
  "0x826ac958": "??$SendDataPoint@VSymbol@@_N@@YAXPBDVSymbol@@_N@Z",
- "0x826ac9f0": "?Enter@GemTrainerPanel@@UAAXXZ",
  "0x826ad260": "?Handle@GemTrainerPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x826adc28": "?Handle@GemTrainerPanel@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x826adc38": "?Exit@RGTrainerPanel@@UAAXXZ",
