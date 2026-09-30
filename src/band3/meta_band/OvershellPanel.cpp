@@ -303,10 +303,11 @@ DECOMP_FORCEACTIVE(OvershellPanel, "!playableTracks.empty()", "!resolvingUsers.e
 
 DataNode OvershellPanel::OnMsg(const SessionReadyMsg &msg) {
     if (InOverrideFlow(kOverrideFlow_RegisterOnline)) {
-        // RB3-360: the success branch set `unk4c8 = true` to arm the Wii
-        // friends-console-code gather in Poll — member absent in retail
-        // (Wii-only); retail success path here is UNVERIFIED (unpinned).
-        if (!msg->Int(2)) {
+        // Retail fn_825B7EA8: success ends the register-online flow (the Wii
+        // build instead armed its friends-console-code gather).
+        if (msg->Int(2)) {
+            EndOverrideFlow(kOverrideFlow_RegisterOnline, false);
+        } else {
             for (int i = 0; i < mSlots.size(); i++) {
                 if (mSlots[i]->GetUser()) {
                     mSlots[i]->ShowState(kState_SignInFailRetry);
