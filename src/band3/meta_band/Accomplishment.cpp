@@ -267,59 +267,46 @@ bool Accomplishment::InqIncrementalSymbols(BandProfile *, std::vector<Symbol> &)
 bool Accomplishment::IsSymbolEntryFulfilled(BandProfile *, Symbol) const { return false; }
 
 bool Accomplishment::CanBeLaunched() const {
-    if (mName == acc_calibrate) {
+    // Retail: 13 function-local statics, guarded in this order (guard bits
+    // 0x1..0x1000), all constructed before the first compare.
+    static Symbol acc_calibrate("acc_calibrate");
+    static Symbol acc_charactercreate("acc_charactercreate");
+    static Symbol acc_bandcreate("acc_bandcreate");
+    static Symbol acc_bandlogo("acc_bandlogo");
+    static Symbol acc_standins("acc_standins");
+    static Symbol acc_joinalabel("acc_joinalabel");
+    static Symbol acc_startalabel("acc_startalabel");
+    static Symbol acc_createsetlist("acc_createsetlist");
+    static Symbol acc_HMXrecommends("acc_HMXrecommends");
+    static Symbol acc_multiplayersession("acc_multiplayersession");
+    static Symbol acc_guitartutorial01("acc_guitartutorial01");
+    static Symbol acc_guitartutorial02("acc_guitartutorial02");
+    static Symbol acc_guitartutorial03("acc_guitartutorial03");
+    if (mName == acc_calibrate)
         return true;
-    }
-
-    if (mName == acc_charactercreate) {
+    if (mName == acc_charactercreate)
         return true;
-    }
-
-    if (mName == acc_bandcreate) {
+    if (mName == acc_bandcreate)
         return true;
-    }
-
-    if (mName == acc_bandlogo) {
+    if (mName == acc_bandlogo)
         return true;
-    }
-
-    if (mName == acc_standins) {
+    if (mName == acc_standins)
         return true;
-    }
-
-    if (mName == acc_joinalabel) {
+    if (mName == acc_joinalabel)
         return true;
-    }
-
-    if (mName == acc_startalabel) {
+    if (mName == acc_startalabel)
         return true;
-    }
-
-    if (mName == acc_createsetlist) {
+    if (mName == acc_createsetlist)
         return true;
-    }
-
-    if (mName == acc_HMXrecommends) {
+    if (mName == acc_HMXrecommends)
         return true;
-    }
-
-    if (mName == acc_multiplayersession) {
+    if (mName == acc_multiplayersession)
         return true;
-    }
-
-    if (mName == acc_guitartutorial01) {
+    if (mName == acc_guitartutorial01)
         return true;
-    }
-
-    if (mName == acc_guitartutorial02) {
+    if (mName == acc_guitartutorial02)
         return true;
-    }
-
-    if (mName == acc_guitartutorial03) {
-        return true;
-    }
-
-    return false;
+    return mName == acc_guitartutorial03;
 }
 
 bool Accomplishment::HasSpecificSongsToLaunch() const { return false; }
