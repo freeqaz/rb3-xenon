@@ -355,7 +355,7 @@ const char *Accomplishment::GetIconPath() {
 
 bool Accomplishment::IsUserOnValidScoreType(LocalBandUser *i_pUser) const {
     bool returnValue = false;
-    ControllerType controllerType = (*(BandUser **)i_pUser)->GetControllerType();
+    ControllerType controllerType = i_pUser->GetControllerType();
 
     std::set<ScoreType> scoreTypes;
 
@@ -364,16 +364,12 @@ bool Accomplishment::IsUserOnValidScoreType(LocalBandUser *i_pUser) const {
     if (scoreTypes.empty()) {
         returnValue = true;
     } else {
-        std::set<ScoreType>::iterator iterator = scoreTypes.begin();
-        while (iterator != scoreTypes.end()) {
-            TrackType trackType = ScoreTypeToTrackType(*iterator);
-            ControllerType c = TrackTypeToControllerType(trackType);
-
-            if (controllerType == c) {
+        for (std::set<ScoreType>::iterator it = scoreTypes.begin(); it != scoreTypes.end();
+             ++it) {
+            if (controllerType == TrackTypeToControllerType(ScoreTypeToTrackType(*it))) {
                 returnValue = true;
                 break;
             }
-            iterator++;
         }
     }
     return returnValue;
