@@ -607,7 +607,8 @@ void GemTrack::DrawTrackElements(int from_tick, int to_tick) {
     Transform xfm;
     for (int tick = res * ((from_tick + res) / res); tick <= to_tick; tick += res) {
         TickToSeconds(tick);
-        DrawFill(TheSongDB->GetFillInfo(mTrackConfig.TrackNum(), tick), tick, res);
+        FillInfo *fill = TheSongDB->GetFillInfo(mTrackConfig.TrackNum(), tick);
+        DrawFill(fill, tick, res);
         int soloStart = 0;
         int soloEnd = 0;
         if (TheSongDB->GetPhraseExtents(

@@ -309,6 +309,26 @@ DataNode BandStorePanel::OnMsg(const MetadataLoadedMsg &msg) {
         // re-CONSTRUCTS into 0x50 TWICE (once for gNullStr, once for "index_info"),
         // which a named local cannot do.  So 0x50 is a reused TEMP slot and the
         // residue is MSVC temporary-slot rotation, not a missing declaration.
+        //
+        // FIRST PASS (W17-F5, 2026-09-30, Sonnet) -- a record of what was tried,
+        // NOT a verdict. 5 statement-grouping variants, none moved the slot map:
+        //   1. swap mSort/mMenuTitle order            -> REGRESSED 99.3%->96.8%
+        //   2. hoist mSort to top of if-block          -> REGRESSED 99.3%->95.7%
+        //   3. comma-merge prevChunk,nextChunk         -> INERT (byte-identical objdiff)
+        //   4. comma-merge mSort,mMenuTitle            -> INERT (byte-identical objdiff)
+        //   5. comma-merge nextChunk,mSort             -> INERT (byte-identical objdiff)
+        // Comma-merging two statements does NOT change MSVC's per-statement temp
+        // pool reset the way splitting/reordering does -- it appears to still
+        // count as two statements for slot-allocation purposes at every adjacency
+        // tried. Reordering does move codegen but only by disturbing the visible
+        // instruction SCHEDULE, which regresses other charges faster than it fixes
+        // this one. The residual (8 mismatches: 6 diff_arg reloc-offset shifts on
+        // slots 0x50/0x54/0x58, one replace+insert at [40]/[43] where retail
+        // reloads the ctor'd Symbol from its frame slot instead of keeping the
+        // ctor's returned `this` in a register) is untested beyond statement
+        // grouping. Not yet tried: how the Symbol is constructed/assigned (the
+        // [40]/[43] materialisation), and declaration placement that keeps the
+        // frame at 0xf0 (W16-CK's named local grew it and is banned).
         mSort = Symbol(gNullStr);
         mMenuTitle = gNullStr;
         DataArray *info = data->FindArray(Symbol("index_info"), false);
