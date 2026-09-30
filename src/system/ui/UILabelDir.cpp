@@ -1,3 +1,4 @@
+#define RB3_TU_OBJPTR_FORCEINLINE_CTOR
 #include "ui/UILabelDir.h"
 #include "UIColor.h"
 #include "obj/Data.h"
