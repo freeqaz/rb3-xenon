@@ -81928,12 +81928,19 @@
    "survivor": "?ThreadStart@Splash@@KAKPAX@Z",
    "folded": [
     "?Issue@D3DQuery@@QAAJK@Z",
-    "?SwapUserProfile@OvershellSlot@@QAA_NPAVLocalBandUser@@@Z",
     "?Unlock@D3DIndexBuffer@@QAAJXZ",
     "?Unlock@D3DVertexBuffer@@QAAJXZ"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 4 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "?SwapUserProfile@OvershellSlot@@QAA_NPAVLocalBandUser@@@Z",
+     "lane": "W16-IB 2026-09-30",
+     "class": "STUB_SHAPE_COINCIDENCE",
+     "disposition": "withdrawn; the spelling is now the map name of its own retail body at 0x825df9c8",
+     "evidence": "Retail OvershellSlot::SwapUserProfile is the 300 B body at 0x825DF9C8: both of its retail bl callers, AttemptSwapUserProfile and ConfirmSwapUserProfile, call 0x825DF9C8 at the instruction our compiled callers align to `bl ?SwapUserProfile@OvershellSlot` (objdiff caller alignment, match_type equal). Retail 0x82742968 (Splash::ThreadStart) has ZERO bl callers anywhere in retail; it is a thread entry reached by pointer. The W16-CU L1_T1 byte identity holds only because our SwapUserProfile is a Wii-era stub `{ ShowWiiProfileFail(); return false; }`, whose `mflr; bl X; li r3,0; blr` shape equals ThreadStart's; it forgave our stub, not a retail fold. Kept as a record per the never-prune-without-a-record rule (a745039e)."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -90802,6 +90809,18 @@
    "evidence": "Hand-installed by lane W17-BPM. Evidence tier T1: RB3 retail bytes at the survivor address are word-identical (relocated fields masked on both sides, see note for word counts) to our compiled body for each folded spelling. 24/24 words, 23 unmasked. Retail call graph: vector<MeshPair>'s copy ctor (0x8234BA70) calls 0x8236E340 where our source calls _Vector_base<MeshPair>(n, alloc).",
    "added": {
     "lane": "W17-BPM 2026-09-30"
+   }
+  },
+  {
+   "name": "Init@TourCondition",
+   "address": "0x8235a430",
+   "survivor": "?Init@TourCondition@@QAAXPBVDataArray@@@Z",
+   "folded": [
+    "?Init@TourReward@@QAAXPBVDataArray@@@Z"
+   ],
+   "evidence": "Hand-installed by lane W16-IB. Evidence tier T1: retail bytes at 0x8235A430 are 90830004 4E800020 (stw r4,0x4(r3); blr), relocation-free, and our compiled ?Init@TourCondition and ?Init@TourReward are both exactly those 8 bytes with no relocations (mConds and mRewards both sit at +0x4 after the vptr). The address lies inside retail TourCondition.cpp (0x8235A408-0x8235AE68, vtable .?AVTourCondition@@ 0x8203CC6C), so TourCondition's copy is the survivor. Retail Quest::Configure (0x8235B078) calls 0x8235A430 three times, where our source calls TourCondition::Init once and TourReward::Init twice.",
+   "added": {
+    "lane": "W16-IB 2026-09-30"
    }
   }
  ]

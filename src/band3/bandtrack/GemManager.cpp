@@ -1010,6 +1010,17 @@ void GemManager::PollVisibleGems(float f1, float f2) {
 }
 
 Symbol GemManager::GetTypeForGem(int gemId) {
+    // Retail (0x82B9A3D0) builds all nine as function-local statics under one
+    // guard word, in this order; bonus and miss are constructed but unused.
+    static Symbol normal("normal");
+    static Symbol star("star");
+    static Symbol unison("unison");
+    static Symbol invisible("invisible");
+    static Symbol bonus("bonus");
+    static Symbol dim("dim");
+    static Symbol section("section");
+    static Symbol repeat("repeat");
+    static Symbol miss("miss");
     FillLogic fillLogic = TheGame->GetFillLogic();
     const GameGem &gem = TheSongDB->GetGems(mTrackConfig.TrackNum())[gemId];
     int gemTick = gem.GetTick();
@@ -1025,7 +1036,8 @@ Symbol GemManager::GetTypeForGem(int gemId) {
     if (unkb8 && IsInFill(gemTick)) {
         return invisible;
     }
-    if ((unsigned int)(fillLogic - 1) <= 1U && IsEndOfFill(gemTick)) {
+    if ((fillLogic == kFillsDeployGemAndDim || fillLogic == kFillsDeployGemAndInvisible)
+        && IsEndOfFill(gemTick)) {
         switch (fillLogic) {
         case kFillsDeployGemAndDim:
             return dim;

@@ -8,6 +8,14 @@ CymbalSelectionProvider::CymbalSelectionProvider(OvershellSlot *slot) : mSlot(sl
 static void CymbalSelectionPushBack(std::vector<Symbol> &s) { s.push_back(gNullStr); }
 
 void CymbalSelectionProvider::ReloadData() {
+    // Retail (0x82669398) constructs all six tags as function-local statics,
+    // under one guard word, before touching the vector.
+    static Symbol overshell_lefty_flip("overshell_lefty_flip");
+    static Symbol overshell_enable_hihat("overshell_enable_hihat");
+    static Symbol overshell_yellow_cym("overshell_yellow_cym");
+    static Symbol overshell_blue_cym("overshell_blue_cym");
+    static Symbol overshell_green_cym("overshell_green_cym");
+    static Symbol overshell_cymbals_continue("overshell_cymbals_continue");
     MILO_ASSERT(mSlot, 0x16);
     unk20.clear();
     unk20.push_back(overshell_lefty_flip);
