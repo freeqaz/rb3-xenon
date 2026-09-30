@@ -104,11 +104,18 @@ int Hx_snprintf(char *c, unsigned int ui, char const *cc, ...) {
 GfxMode GetGfxMode() { return gGfxMode; }
 
 Symbol PlatformSymbol(Platform pform) {
+#ifdef HX_NATIVE
     static Symbol sym[] = { gNullStr, gNullStr, "xbox", "pc", "ps3", "wii", "3ds" };
     if (pform >= 0 && pform < 7) {
         return sym[pform];
     } else
         return gNullStr;
+#else
+    // RB3 retail (0x8250FDF8): a six-entry table, no 3DS slot and no bounds
+    // check.
+    static Symbol sym[6] = { gNullStr, gNullStr, "xbox", "pc", "ps3", "wii" };
+    return sym[pform];
+#endif
 }
 
 bool UsingCD() { return gUsingCD; }
@@ -216,7 +223,12 @@ int SystemExec(const char *args) {
 
 bool PlatformLittleEndian(Platform p) {
     MILO_ASSERT(p != kPlatformNone, 0x175);
+#ifdef HX_NATIVE
     return p == kPlatformPC || p == kPlatform3DS || p == kPlatformNone;
+#else
+    // RB3 retail (0x8250FEC8) tests PC then None; there is no 3DS platform.
+    return p == kPlatformPC || p == kPlatformNone;
+#endif
 }
 
 Platform ConsolePlatform() { return kPlatformXBox; }
