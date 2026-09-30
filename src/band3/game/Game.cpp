@@ -483,19 +483,17 @@ float Game::GetSongMs() const { return mMaster->GetAudio()->GetTime(); }
 
 Symbol Game::GetSectionAtMs(float ms) const {
     int tick = (int)MsToTick(ms);
-    SongDB *songDB = TheSongDB;
-    const PracticeSection *begin = songDB->mPracticeSections.begin();
-    const PracticeSection *end = begin + songDB->mPracticeSections.size();
-    for (const PracticeSection *it = begin; it != end; it++) {
+    const std::vector<PracticeSection> &secs = TheSongDB->mPracticeSections;
+    for (std::vector<PracticeSection>::const_iterator it = secs.begin(); it != secs.end(); ++it) {
         if (tick < it->unk8) {
             return it->unk0;
         }
     }
-    if (songDB->mPracticeSections.size() == 0) {
+    if (secs.empty()) {
         MILO_WARN("No practice sections!");
         return Symbol();
     }
-    return (end - 1)->unk0;
+    return secs.back().unk0;
 }
 
 void Game::RemovePlayer(Player *p) {

@@ -238,12 +238,8 @@ DataArray *Scoring::GetCrowdConfig(Difficulty diff, BandUser *user) const {
 }
 
 int Scoring::GetBandNumStars(int i) const {
-    int stars = GetBandNumStarsFloat(i);
-    if (stars < 0)
-        stars = 0;
-    else if (stars > 6)
-        stars = 6;
-    return stars;
+    // Retail 0x826A10F8: no clamp, GetBandNumStarsFloat inlined.
+    return GetNumStarsFloat(i, mStarThresholds);
 }
 
 DECOMP_FORCEACTIVE(Scoring, "symbols")
@@ -313,6 +309,11 @@ PlayerScoreInfo *Scoring::GetPlayerScoreInfo(TrackType ty) const {
             return &scores[i];
         }
     }
+    // Retail 0x826A0FF8 (TU5): 22-fret pro tracks fall back to their 17-fret base.
+    if (ty == kTrackRealGuitar22Fret)
+        return GetPlayerScoreInfo(kTrackRealGuitar);
+    if (ty == kTrackRealBass22Fret)
+        return GetPlayerScoreInfo(kTrackRealBass);
     return nullptr;
 }
 
