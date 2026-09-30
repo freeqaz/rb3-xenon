@@ -199,6 +199,7 @@ void Player::Poll(float f, const SongPos &pos) {
     }
 #endif
     if (unk288 && IsLocal() && f >= unk284) {
+        static Symbol intro("intro");
         PopupHelp(intro, false);
         unk288 = false;
     }
