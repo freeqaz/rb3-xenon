@@ -6,6 +6,10 @@
 // HX_NATIVE-gated directly, which is uniform tree-wide, so the #undef is gone.
 // Verified by preprocessing with and without it: the only non-OBJ_SET_TYPE
 // differences were exactly those two blocks.
+// Retail inlines the ObjPtr(owner) ctors in VocalTrack::VocalTrack (mDir, mPlayer,
+// unk1c8): three stores, no `bl`. Per-TU lever, see obj/ObjPtr_p.h.
+#define RB3_TU_OBJPTR_FORCEINLINE_CTOR
+#define RB3_TU_OBJPTR_DEFER_OWNER
 #include "macros.h"
 #include "bandtrack/VocalTrack.h"
 #include "GraphicsUtl.h"
