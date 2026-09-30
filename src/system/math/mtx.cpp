@@ -147,6 +147,7 @@ void Multiply(const Transform &a, const Transform &b, Transform &out) {
 
 
 void FastInvert(const Hmx::Matrix3 &min, Hmx::Matrix3 &mout) {
+#ifdef HX_NATIVE
     float xdot = Dot(min.x, min.x);
     if (xdot != 0)
         xdot = 1.0f / xdot;
@@ -156,6 +157,12 @@ void FastInvert(const Hmx::Matrix3 &min, Hmx::Matrix3 &mout) {
     float zdot = Dot(min.z, min.z);
     if (zdot != 0)
         zdot = 1.0f / zdot;
+#else
+    // retail: three unguarded fdivs (no zero tests)
+    float xdot = 1.0f / Dot(min.x, min.x);
+    float ydot = 1.0f / Dot(min.y, min.y);
+    float zdot = 1.0f / Dot(min.z, min.z);
+#endif
     mout.Set(
         min.x.x * xdot,
         min.y.x * ydot,
