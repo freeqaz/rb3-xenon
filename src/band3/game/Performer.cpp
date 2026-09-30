@@ -117,9 +117,8 @@ int Performer::GetIndividualScore() const {
 
 int Performer::GetPercentComplete() const {
     if (unk1e1 && !unk1e0) return 100;
-    float p = mProgressMs / TheSongDB->GetSongDurationMs();
-    p = (p < 1.0f) ? p : 1.0f;
-    return std::min(99, (int)(p * 100.0f));
+    // retail fn_8269D0B8: the clamped ratio is GetSongFraction (fn_8269D068)
+    return std::min(99, (int)(GetSongFraction() * 100.0f));
 }
 
 int Performer::GetMultiplier(bool b, int &i1, int &i2, int &i3) const {

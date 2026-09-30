@@ -294,21 +294,12 @@ void TrackPanel::AssignTrack(int idx) {
 }
 
 void TrackPanel::Reload() {
-    if (!IsLoaded()) {
-        MILO_FAIL(
-            "This shouldn't be happening - restart after win goes through same code path as next song.\n"
-        );
-    }
-    if (!IsLoaded()) {
-        if (!mLoader)
-            Load();
-        TheLoadMgr.PollUntilLoaded(mLoader, nullptr);
-        CheckIsLoaded();
-        if (!mTrackPanelDir)
-            FinishLoad();
-    }
+    // Retail (TU5): rebuilds the tracks outright; the dev-build load/assert
+    // path is gone.
     CleanUpTracks();
+    CreateTracks();
     mTrackPanelDir->ResetPlayers();
+    AssignAndInitTracks();
     if (mScoreboard)
         mScoreboard->Reset();
 }

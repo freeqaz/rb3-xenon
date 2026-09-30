@@ -474,8 +474,7 @@ void VocalPart::SetVocalNoteList(VocalNoteList *list) {
 }
 
 int VocalPart::NumPracticePhrases(const std::vector<VocalPhrase> &phrases) const {
-    if (!mVocalNoteList) return 0;
-    return mVocalNoteList->GetNumPracticePhrases(phrases);
+    return mVocalNoteList ? mVocalNoteList->GetNumPracticePhrases(phrases) : 0;
 }
 
 float VocalPart::GetOverallPartHitPercentage() const {
@@ -495,10 +494,7 @@ float VocalPart::GetPartHitPercentage(const std::vector<VocalPhrase> &phrases, i
 
 float VocalPart::GetFreestyleSectionDurationMs() const {
     MILO_ASSERT(mInFreestyleSection, 0x6ab);
-    VocalNoteList *list = mVocalNoteList;
-    const std::pair<float, float> *end =
-        list->mFreestyleSections.data() + list->mFreestyleSections.size();
-    if (mFreestyleSection == end)
+    if (mFreestyleSection == mVocalNoteList->mFreestyleSections.end())
         return 0.0f;
     return mFreestyleSection->second - mFreestyleSection->first;
 }
@@ -602,18 +598,12 @@ float VocalPart::CalcPhraseScoreMax(const VocalPhrase *const &phrase) const {
     unsigned int end = p->unk14;
     float result = 0.0f;
     if ((unsigned int)start == end) return result;
-    float phraseStart = p->unk0;
-    float phraseEnd = p->unk0 + p->unk4;
+    // W16-HR: retail clamps with fsel (Max/Min) and re-reads the phrase each pass.
     for (unsigned int i = start; i != end; i++) {
         const VocalNote &note = list->mNotes[i];
-        float noteMs = note.mMs;
-        float noteDurationMs = note.mDurationMs;
-        float clampedStart = (noteMs < phraseStart) ? phraseStart : noteMs;
-        float noteEnd = noteMs + noteDurationMs;
-        float clampedEnd = (phraseEnd < noteEnd) ? phraseEnd : noteEnd;
-        float duration = clampedEnd - clampedStart;
-        float weight = mNoteWeights[i];
-        result += (duration / noteDurationMs) * weight;
+        float clampedStart = Max(note.mMs, p->unk0);
+        float clampedEnd = Min(note.mDurationMs + note.mMs, p->unk4 + p->unk0);
+        result += ((clampedEnd - clampedStart) / note.mDurationMs) * mNoteWeights[i];
     }
     return result;
 }
@@ -991,26 +981,26 @@ void VocalPart::CalculateScore(
 }
 
 void VocalPart::GetNoteRange(float ms, int &startOut, int &endOut) {
-    startOut = -1;
     endOut = -1;
+    startOut = -1;
     const VocalNoteList *list = mVocalNoteList;
     int count = list->mNotes.size();
     int i = unk58;
     if (i > 0) {
         float lower = ms - mSlop;
-        while (list->mNotes[i].mMs > lower) {
-            if (--i <= 0)
+        do {
+            if (list->mNotes[i].mMs <= lower)
                 break;
-        }
+        } while (--i > 0);
     }
-    for (; i < count; i++) {
-        const VocalNote &note = list->mNotes[i];
+    for (int j = i; j < count; j++) {
+        const VocalNote &note = list->mNotes[j];
         if (note.mMs > ms + mSlop)
             return;
         if (note.mMs + note.mDurationMs >= ms - mSlop) {
             if (startOut == -1)
-                startOut = i;
-            endOut = i + 1;
+                startOut = j;
+            endOut = j + 1;
         }
     }
 }

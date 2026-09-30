@@ -713,9 +713,8 @@ void BandProfile::SendBandLogo() {
 
 void BandProfile::GrantCampaignKey(Symbol key) {
     MILO_ASSERT(mCampaignKeys.size() < kMaxSymbols_CampaignKeys, 0x48F);
-    if (!TheCampaign->HasCampaignKey(key)) {
-        MILO_WARN("Trying to grant unknown key: %s", key.Str());
-    } else if (mCampaignKeys.insert(key).second) {
+    // Retail (TU5): no HasCampaignKey validation, just the insert.
+    if (mCampaignKeys.insert(key).second) {
         mDirty = true;
     }
 }
@@ -734,9 +733,8 @@ bool BandProfile::HasCampaignKey(Symbol key) {
 
 void BandProfile::UnlockModifier(Symbol mod) {
     MILO_ASSERT(mUnlockedModifiers.size() < kMaxSymbols_Modifiers, 0x4AF);
-    if (!TheModifierMgr->HasModifier(mod)) {
-        MILO_WARN("Trying to unlock unknown modifier: %s", mod.Str());
-    } else if (mUnlockedModifiers.insert(mod).second) {
+    // Retail (TU5): no HasModifier validation, just the insert.
+    if (mUnlockedModifiers.insert(mod).second) {
         mDirty = true;
     }
 }

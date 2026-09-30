@@ -483,22 +483,24 @@ float Game::GetSongMs() const { return mMaster->GetAudio()->GetTime(); }
 
 Symbol Game::GetSectionAtMs(float ms) const {
     int tick = (int)MsToTick(ms);
-    SongDB *songDB = TheSongDB;
-    const PracticeSection *begin = songDB->mPracticeSections.begin();
-    const PracticeSection *end = begin + songDB->mPracticeSections.size();
-    for (const PracticeSection *it = begin; it != end; it++) {
+    const std::vector<PracticeSection> &secs = TheSongDB->mPracticeSections;
+    for (std::vector<PracticeSection>::const_iterator it = secs.begin(); it != secs.end(); ++it) {
         if (tick < it->unk8) {
             return it->unk0;
         }
     }
-    if (songDB->mPracticeSections.size() == 0) {
+    if (secs.empty()) {
         MILO_WARN("No practice sections!");
         return Symbol();
     }
-    return (end - 1)->unk0;
+    return secs.back().unk0;
 }
 
 void Game::RemovePlayer(Player *p) {
+    // Retail 0x8267B3D8 (TU5): a departing vocalist turns the guide track off.
+    if (mProperties.mUnkTU5_movieSync && p->GetTrackType() == kTrackVocals) {
+        mUnkTU5GuidePitch->mGuidePitch->EnableGuideTrack(-1);
+    }
     mAllActivePlayers.erase(
         std::remove(mAllActivePlayers.begin(), mAllActivePlayers.end(), p),
         mAllActivePlayers.end()
@@ -517,7 +519,6 @@ bool Game::CanUserPause() const {
 
 
 void Game::SetMusicSpeed(float speed) {
-    gDebugFullQuota = speed != 1;
     mMusicSpeed = speed;
     std::vector<Player *> &players = GetActivePlayers();
     FOREACH (it, players) {
@@ -1484,9 +1485,8 @@ DataNode Game::OnAdjustForVocalPhrases(DataArray *a) {
 void Game::OnStatsSynced() { mTrackerManager->OnStatsSynced(); }
 
 void Game::SetTimeOffset() {
-    mTime.Split();
-    float cyclesToMs = mTime.Ms();
-    mTimeOffset = (1000.0f * TheTaskMgr.Seconds(TaskMgr::kRealTime)) - cyclesToMs
+    // Retail 0x82678B40: Seconds first, then an out-of-line Timer::SplitMs.
+    mTimeOffset = TheTaskMgr.Seconds(TaskMgr::kRealTime) * 1000.0f - mTime.SplitMs()
         - TheProfileMgr.GetSongToTaskMgrMs(kGame);
 }
 
@@ -1528,16 +1528,10 @@ void Game::SetNoFail(bool doSave) {
 }
 
 void Game::OvershellSetPaused(bool paused) {
-    if (TheNetSession->IsInGame()) {
-        bool canPause = false;
-        if (!mProperties.mEndWithSong
-            || mLastPollMs < TheSongDB->GetSongDurationMs() - mDisablePauseMs) {
-            canPause = true;
-        }
-        if (canPause && ThePlatformMgr.GetDiskError() == kNoDiskError) {
-            mOvershellWantsPause = paused;
-            UpdatePausedState(true, true);
-        }
+    // Retail 0x8267B478: an out-of-line CanUserPause, no disk-error test.
+    if (TheNetSession->IsInGame() && CanUserPause()) {
+        mOvershellWantsPause = paused;
+        UpdatePausedState(true, true);
     }
 }
 

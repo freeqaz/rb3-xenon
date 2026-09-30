@@ -16,7 +16,7 @@ public:
     OBJ_SET_TYPE(UGCPurchasePanel);
     NEW_OBJ(UGCPurchasePanel);
     virtual DataNode Handle(DataArray *, bool);
-    virtual ~UGCPurchasePanel() {}
+    // Retail: implicit dtor (no vtable re-stores); see patterns/fixable-declarations.md
     virtual void Enter();
     virtual void Exit();
     virtual void Poll();

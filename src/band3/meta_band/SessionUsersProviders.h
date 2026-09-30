@@ -17,6 +17,9 @@ public:
     BandUser *GetUser(int);
     void KickPlayer(int);
     void KickPlayer(BandUser *);
+    // Retail 0x82654440 (X360 TU5, 76 B); called by OvershellSlot::ViewUserGamercard.
+    // Name is ours -- the retail row is anonymous.
+    void ShowGamercard(int, LocalBandUser *);
     void ToggleMuteStatus(int);
     void RefreshUserList(const BandUser *, const BandUserMgr *);
     bool IsMuted(int) const;

@@ -37,6 +37,9 @@ MakeupProvider::MakeupProvider(Symbol gender) : mCurrentMakeupList(0) {
 }
 
 void MakeupProvider::Update(Symbol type) {
+    // Retail: function-local statics, "eyes" then "lips" (guard bits 1, 2).
+    static Symbol eyes("eyes");
+    static Symbol lips("lips");
     MILO_ASSERT(type == eyes || type == lips, 0x3D);
     if (type == eyes) {
         mCurrentMakeupList = &mMakeupEyes;

@@ -1353,6 +1353,7 @@
             },
             "band3/bandtrack/Lyric.cpp": "NonMatching",
             "band3/game/SongDB.cpp": "NonMatching",
+            "band3/game/PlayerBehavior.cpp": "NonMatching",
             "band3/game/Player.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [

@@ -189,13 +189,10 @@ AccomplishmentPanel::AccomplishmentPanel()
 
 Symbol AccomplishmentPanel::SelectedAccomplishment() const {
     if (mState == kUp) {
+        // retail fn_825F7718: no ChildList() test
         UIList *pAccomplishmentList = mDir->Find<UIList>("accomplishments.lst", true);
-        if (!pAccomplishmentList->ChildList())
-            return gNullStr;
-        else {
-            MILO_ASSERT(pAccomplishmentList, 0x372);
-            return mAccomplishmentGridProvider->GetSymbolFromList(pAccomplishmentList);
-        }
+        MILO_ASSERT(pAccomplishmentList, 0x372);
+        return mAccomplishmentGridProvider->GetSymbolFromList(pAccomplishmentList);
     } else
         return gNullStr;
 }

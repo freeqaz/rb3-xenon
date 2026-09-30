@@ -8463,9 +8463,15 @@ band3/meta_band/StoreSongSortNode.cpp:
 	.text       start:0x826758E8 end:0x826758F8
 	.text       start:0x826758F8 end:0x82675900
 
+band3/game/PlayerBehavior.cpp:
+	.pdata      start:0x82236A50 end:0x82236A58
+	.text       start:0x826EEC34 end:0x826EECA0
+	.text       start:0x826EECA8 end:0x826EECD8
+
 band3/game/TrainerGemTab.cpp:
 	.pdata      start:0x82236A58 end:0x82236AB0
-	.text       start:0x826EECA0 end:0x826F0708
+	.text       start:0x826EECA0 end:0x826EECA8
+	.text       start:0x826EECD8 end:0x826F0708
 
 band3/game/TrainerProgressMeter.cpp:
 	.pdata      start:0x82236AD8 end:0x82236AF0
@@ -11932,7 +11938,6 @@ VocalPlayer.cpp:
 	.pdata      start:0x82236330 end:0x82236378
 	.pdata      start:0x82236380 end:0x82236478
 	.pdata      start:0x82236478 end:0x822367C8
-	.pdata      start:0x82236A50 end:0x82236A58
 	.text       start:0x8269CCA8 end:0x8269CCFC
 	.text       start:0x826E3808 end:0x826E381C
 	.text       start:0x826E381C end:0x826E3A38
@@ -11956,7 +11961,6 @@ VocalPlayer.cpp:
 	.text       start:0x826E60C8 end:0x826E7498
 	.text       start:0x826E74B4 end:0x826EBE10
 	.text       start:0x826EEB9C end:0x826EEBA0
-	.text       start:0x826EEC34 end:0x826EEC9C
 
 FlowNode.cpp:
 	.pdata      start:0x821FAF18 end:0x821FAF20
@@ -12129,15 +12133,17 @@ AccomplishmentDiscSongConditional.cpp:
 	.pdata      start:0x82225E30 end:0x82225E38
 	.pdata      start:0x82225E38 end:0x82225E40
 	.pdata      start:0x82225E40 end:0x82225EC0
-	.pdata      start:0x82226390 end:0x822263B0
 	.pdata      start:0x82226408 end:0x82226420
 	.text       start:0x824F9380 end:0x824F9480
 	.text       start:0x825E4EE8 end:0x825E4EF0
 	.text       start:0x825E4EF0 end:0x825E4F50
 	.text       start:0x825E4F50 end:0x825E4F90
 	.text       start:0x825E4F90 end:0x825E5658
-	.text       start:0x825E9500 end:0x825E9668
 	.text       start:0x825E9ABC end:0x825E9C08
+
+band3/meta_band/AccomplishmentLessonDiscSongConditional.cpp:
+	.pdata      start:0x82226390 end:0x822263B0
+	.text       start:0x825E9500 end:0x825E9668
 
 band3/meta_band/AccomplishmentLessonSongListConditional.cpp:
 	.pdata      start:0x822263B0 end:0x822263D8

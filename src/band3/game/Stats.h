@@ -318,6 +318,7 @@ public:
     }
     float GetAverageMultiplier() const { return mAverageMultiplier; }
     int NumSections() const { return mSections.size(); }
+    void SetNumSections(int); // TU5, retail fn_82656B98 (name ours)
     bool HasCoda() const { return mHasCoda; }
     bool HasSolos() const { return mHasSolos; }
     void SetHasSolos(bool solos) { mHasSolos = solos; }

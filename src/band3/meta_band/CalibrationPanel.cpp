@@ -507,17 +507,23 @@ void CalibrationPanel::InitializeVisuals() {
 }
 
 void CalibrationPanel::EndTest() {
+    // W16-HR: dev-build sample dumps; retail has neither loop (they survive
+    // as empty counting loops under MSVC, so they must be compiled out).
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     MILO_LOG("-----------------------------\n");
     MILO_LOG("Pre Sort Calibration samples:\n");
     for (int i = 0; i < mTestSamples.size(); i++) {
         MILO_LOG("%f ms\n", mTestSamples[i]);
     }
+#endif
     std::sort(mTestSamples.begin(), mTestSamples.end());
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     MILO_LOG("------------------------------------------\n");
     MILO_LOG("Sorted Calibration samples, not truncated:\n");
     for (int i = 0; i < mTestSamples.size(); i++) {
         MILO_LOG("%f ms\n", mTestSamples[i]);
     }
+#endif
     SetTestState(tsPostTest);
     mFader->DoFade(-96.0f, 1000.0f);
     unk80 = GetAudioTimeMs();

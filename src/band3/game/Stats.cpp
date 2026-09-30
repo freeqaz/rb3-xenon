@@ -71,27 +71,8 @@ __unguarded_partition<PairIF *, PairIF, SingerStats::PartPercentageSorter>(
     }
 }
 
-template <>
-void __insertion_sort<PairIF *, PairIF, SingerStats::PartPercentageSorter>(
-    PairIF *__first,
-    PairIF *__last,
-    PairIF *,
-    SingerStats::PartPercentageSorter __comp
-) {
-    if (__first == __last) return;
-    int __val_first = 0;
-    for (PairIF *__i = __first + 1; __i != __last; ++__i) {
-        float __val_second = __i->second;
-        __val_first = __i->first;
-        if (__val_second > __first->second) {
-            copy_backward(__first, __i, __i + 1);
-            __first->first = __val_first;
-            __first->second = __val_second;
-        } else {
-            __unguarded_linear_insert(__i, *__i, __comp);
-        }
-    }
-}
+// __insertion_sort: retail TU5 uses the stock STLport template (out-of-line
+// __linear_insert per element), so no specialization here.
 
 } // namespace stlpmtx_std
 #endif // !HX_NATIVE
@@ -228,6 +209,8 @@ int Stats::GetSingerRankedPart(int i, int j) const {
 void Stats::SetSingerPitchDeviationInfo(int i, float f1, float f2) {
     mSingerStats[i].SetPitchDeviationInfo(f1, f2);
 }
+
+void Stats::SetNumSections(int n) { mSections.resize(n); }
 
 void Stats::UpdateBestTambourineSection(int i) { MaxEq(m0x5c, i); }
 
@@ -532,46 +515,24 @@ void SingerStats::Finalize() {
     std::sort(unk0.begin(), unk0.end(), PartPercentageSorter());
 }
 
+namespace {
+    struct PartMatches {
+        PartMatches(int part) : mPart(part) {}
+        bool operator()(const std::pair<int, float> &p) const { return p.first == mPart; }
+        int mPart;
+    };
+}
+
 void SingerStats::SetPartPercentage(int part, float percentage) {
-    // Inlined STL std::find_if Duff's device: unrolled 4-at-a-time loop + switch tail; the 7
-    // gotos to `done:` are the literal MWCC codegen — any restructuring breaks the match.
-    std::pair<int, float> *first = &unk0[0];
-    std::pair<int, float> *last = first + unk0.size();
-    int count = (int)(last - first) >> 2;
-    std::pair<int, float> *foundPart;
-
-    for (; count > 0; --count) {
-        if (first->first == part) { foundPart = first; goto done; }
-        ++first;
-        if (first->first == part) { foundPart = first; goto done; }
-        ++first;
-        if (first->first == part) { foundPart = first; goto done; }
-        ++first;
-        if (first->first == part) { foundPart = first; goto done; }
-        ++first;
-    }
-
-    switch (last - first) {
-    case 3:
-        if (first->first == part) { foundPart = first; goto done; }
-        ++first;
-    case 2:
-        if (first->first == part) { foundPart = first; goto done; }
-        ++first;
-    case 1:
-        if (first->first == part) { foundPart = first; goto done; }
-        ++first;
-    case 0:
-    default:
-        foundPart = last;
-    }
-
-done:
-    if (foundPart == last) {
+    // Retail (TU5): stock std::find_if (out-of-line __find_if), end cached.
+    std::vector<std::pair<int, float> >::iterator end = unk0.end();
+    std::vector<std::pair<int, float> >::iterator it =
+        std::find_if(unk0.begin(), end, PartMatches(part));
+    if (it == end) {
         unk0.push_back(std::pair<int, float>(part, percentage));
     } else {
-        MILO_ASSERT(foundPart->first == part, 0x3B1);
-        foundPart->second = percentage;
+        MILO_ASSERT(it->first == part, 0x3B1);
+        it->second = percentage;
     }
 }
 

@@ -438,12 +438,18 @@ void TrainerChallenge::Enter() {
     Handle(enter, true);
 }
 
-void TrainerChallenge::Exit() { Handle(exit_msg, true); }
+void TrainerChallenge::Exit() {
+    // W16-HR: function-local static Message (retail guard lbl_82E0301C), not a global.
+    static Message exit_msg("exit");
+    Handle(exit_msg, true);
+}
 
 bool TrainerChallenge::Success() { return Handle(success_msg, true).Int(); }
 
 Symbol TrainerChallenge::GetRestrictionToken() {
-    return Handle(restriction_token_msg, true).Sym();
+    static Message restriction_token_msg("restriction_token");
+    DataNode n = Handle(restriction_token_msg, true);
+    return n.Sym();
 }
 
 int GetLoopTick(int tick, int &tickOffset) {

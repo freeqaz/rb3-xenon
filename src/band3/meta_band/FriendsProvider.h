@@ -44,6 +44,9 @@ public:
     // reference is fine, matching the OvershellProfileProvider::Reload precedent
     // (HX_NATIVE-only body) elsewhere in this header family.
     void Reload();
+    // Retail 0x82665DF0 (X360 TU5); called by OvershellSlot::InviteFriend.
+    // Name is ours -- the retail row is anonymous.
+    void InviteFriend(int);
 
     // 0x2c — OWNED Friend* entries; NumData() = size().
     // ⚠ Was `std::vector<int>`. CORRECTED, lane W16-T, on retail bytes: the

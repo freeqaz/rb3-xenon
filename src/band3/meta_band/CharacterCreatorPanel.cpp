@@ -319,13 +319,14 @@ void CharacterCreatorPanel::SetGlasses(Symbol s) {
 }
 
 Symbol CharacterCreatorPanel::GetGlasses() {
-    if (!mPreviewDesc)
-        return gNullStr;
-    Symbol glassesName = mPreviewDesc->mOutfit.mGlasses.mName;
+    // retail fn_8260D690: function-local static, no mPreviewDesc null check
+    static Symbol none_glasses("none_glasses");
+    BandCharDesc *desc = mPreviewDesc;
+    Symbol glassesName = desc->mOutfit.mGlasses.mName;
     if (glassesName == gNullStr)
         return none_glasses;
     else
-        return mPreviewDesc->mOutfit.mHair.mName;
+        return desc->mOutfit.mHair.mName;
 }
 
 void CharacterCreatorPanel::SetHair(Symbol s) {
@@ -341,13 +342,13 @@ void CharacterCreatorPanel::SetHair(Symbol s) {
 }
 
 Symbol CharacterCreatorPanel::GetHair() {
-    if (!mPreviewDesc)
-        return gNullStr;
+    // retail fn_8260D858: function-local static, no mPreviewDesc null check
+    static Symbol none_hair("none_hair");
     Symbol hairName = mPreviewDesc->mOutfit.mHair.mName;
     if (hairName == gNullStr)
         return none_hair;
     else
-        return mPreviewDesc->mOutfit.mHair.mName;
+        return hairName;
 }
 
 void CharacterCreatorPanel::SetFaceHair(Symbol s) {
@@ -363,8 +364,8 @@ void CharacterCreatorPanel::SetFaceHair(Symbol s) {
 }
 
 Symbol CharacterCreatorPanel::GetFaceHair() {
-    if (!mPreviewDesc)
-        return gNullStr;
+    // retail fn_8260DA20: function-local static, no mPreviewDesc null check
+    static Symbol none_facehair("none_facehair");
     Symbol facehairName = mPreviewDesc->mOutfit.mFaceHair.mName;
     if (facehairName == gNullStr)
         return none_facehair;
@@ -373,11 +374,10 @@ Symbol CharacterCreatorPanel::GetFaceHair() {
 }
 
 void CharacterCreatorPanel::SetHeight(int height) {
-    if (mPreviewDesc) {
-        MILO_ASSERT_RANGE_EQ(height, 0, 10, 0x268);
-        mPreviewDesc->SetHeight(height / 10.0f);
-        mClosetMgr->PreviewCharacter(true, false);
-    }
+    // retail: no mPreviewDesc guard, scaled by 0.1f (a multiply, not / 10.0f)
+    MILO_ASSERT_RANGE_EQ(height, 0, 10, 0x268);
+    mPreviewDesc->SetHeight(height * 0.1f);
+    mClosetMgr->PreviewCharacter(true, false);
 }
 
 int CharacterCreatorPanel::GetHeight() {
@@ -391,11 +391,10 @@ int CharacterCreatorPanel::GetHeight() {
 }
 
 void CharacterCreatorPanel::SetWeight(int weight) {
-    if (mPreviewDesc) {
-        MILO_ASSERT_RANGE_EQ(weight, 0, 10, 0x282);
-        mPreviewDesc->SetWeight(weight / 10.0f);
-        mClosetMgr->PreviewCharacter(true, false);
-    }
+    // retail: no mPreviewDesc guard, scaled by 0.1f (a multiply, not / 10.0f)
+    MILO_ASSERT_RANGE_EQ(weight, 0, 10, 0x282);
+    mPreviewDesc->SetWeight(weight * 0.1f);
+    mClosetMgr->PreviewCharacter(true, false);
 }
 
 int CharacterCreatorPanel::GetWeight() {
@@ -409,11 +408,10 @@ int CharacterCreatorPanel::GetWeight() {
 }
 
 void CharacterCreatorPanel::SetBuild(int build) {
-    if (mPreviewDesc) {
-        MILO_ASSERT_RANGE_EQ(build, 0, 10, 0x29C);
-        mPreviewDesc->SetMuscle(build / 10.0f);
-        mClosetMgr->PreviewCharacter(true, false);
-    }
+    // retail: no mPreviewDesc guard, scaled by 0.1f (a multiply, not / 10.0f)
+    MILO_ASSERT_RANGE_EQ(build, 0, 10, 0x29C);
+    mPreviewDesc->SetMuscle(build * 0.1f);
+    mClosetMgr->PreviewCharacter(true, false);
 }
 
 int CharacterCreatorPanel::GetBuild() {
@@ -615,7 +613,11 @@ void CharacterCreatorPanel::RefreshFaceOptionsList() {
 }
 
 void CharacterCreatorPanel::FinalizeCharacter() {
+    // retail fn_8260DD78: no CheckCharacterAssets pass (dev-build validation),
+    // and acc_charactercreate is a function-local static.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     CheckCharacterAssets();
+#endif
     mCharacter->SetFinalized(true);
     BandProfile *pProfile = mClosetMgr->unk28;
     MILO_ASSERT(pProfile, 0x3B1);
@@ -623,6 +625,7 @@ void CharacterCreatorPanel::FinalizeCharacter() {
     mClosetMgr->FinalizeChanges(true, false);
     LocalBandUser *pUser = mClosetMgr->mUser;
     MILO_ASSERT(pUser, 0x3B9);
+    static Symbol acc_charactercreate("acc_charactercreate");
     TheAccomplishmentMgr->EarnAccomplishment(pUser, acc_charactercreate);
 }
 

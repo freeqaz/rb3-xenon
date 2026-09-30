@@ -128,7 +128,7 @@ public:
 class AccomplishmentCategoryProvider : public UIListProvider, public Hmx::Object {
 public:
     AccomplishmentCategoryProvider() {}
-    virtual ~AccomplishmentCategoryProvider() {}
+    // dtor implicit: retail ??1 stores no derived vtables (fixable-declarations.md)
     virtual void Text(int, int, UIListLabel *, UILabel *) const;
     virtual void Custom(int, int, class UIListCustom *, Hmx::Object *) const;
     virtual Symbol DataSymbol(int) const;
