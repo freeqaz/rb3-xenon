@@ -38,3 +38,22 @@ Predictions:
   and cannot fold with a 16 B body). It becomes contradicted by this port; it is
   another lane's file and is NOT touched here. Expected metric effect: 0 (the
   only call site's target is a forgiven placeholder `fn_82429C38`).
+
+## Pre-registration P2 — `BandProfile::GetBandName` local-static Symbol
+
+Written before editing `src/band3/meta_band/BandProfile.cpp`. NOT the nothrow-stub
+mechanism: an EH-deficit hit (retail maxState 2, ours 1) whose retail-only
+calls are one guard-protected `??0Symbol@@QAA@PBD@Z("band_default_name")` at
+function entry. Ours reads the global `?band_default_name@@3VSymbol@@A`
+(`Symbols2.h`), verbatim from rb3-Wii.
+
+Fix: `static Symbol band_default_name("band_default_name");` as the first
+statement of `GetBandName` (the RB3_HANDLE_LOCAL_STATIC dialect GI also saw).
+
+- P2a (confident): the 13 guard/Symbol-ctor deletes (idx 5-20) vanish, and
+  our EH maxState for the row becomes 2.
+- P2b (~60%): the register shift (`__savegprlr_28` vs `_29`) follows from the
+  extra live value and the row crosses: +1 fn / +216 B whole-binary.
+- P2c: exactly 1 leg-B recompile (BandProfile.cpp; no scatter-includes of it);
+  no other row moves.
+- Falsifier F2: deletes survive ⇒ the static is spelled/placed wrong.
