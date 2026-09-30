@@ -336,7 +336,7 @@ int ogg_stream_flush(ogg_stream_state *os,ogg_page *og){
   int maxvals=(os->lacing_fill>255?255:os->lacing_fill);
   int bytes=0;
   long acc=0;
-  ogg_int64_t granule_pos=-1;
+  ogg_int64_t granule_pos=os->granule_vals[0];
 
   if(maxvals==0)return(0);
   
@@ -357,8 +357,7 @@ int ogg_stream_flush(ogg_stream_state *os,ogg_page *og){
     for(vals=0;vals<maxvals;vals++){
       if(acc>4096)break;
       acc+=os->lacing_vals[vals]&0x0ff;
-      if((os->lacing_vals[vals]&0xff)<255)
-        granule_pos=os->granule_vals[vals];
+      granule_pos=os->granule_vals[vals];
     }
   }
   
