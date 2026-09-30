@@ -329,7 +329,7 @@ public:
         for (std::hash_map<int, T *>::const_iterator it = map.begin(); it != map.end();
              ++it) {
             stream << it->first;
-            it->second->SaveFixed(stream);
+            stream << *it->second;
         }
         if (maxsize > lsize)
             PadStream(stream, (savesize * (maxsize - lsize)));
