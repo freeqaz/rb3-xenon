@@ -1303,8 +1303,7 @@ void SongParser::PrepareTrack(const char *track_name, PartInfo *info) {
     static Symbol bass("bass");
     Reset();
     bool b2 = false;
-    std::vector<PartInfo> &_ref0 = mParts;
-    for (std::vector<PartInfo>::iterator it = _ref0.begin(); it != _ref0.end(); ++it) {
+    for (std::vector<PartInfo>::iterator it = mParts.begin(); it != mParts.end(); ++it) {
         if (it->ContainsTrackName(track_name)) {
             if (it->NoSongDataTrack()) {
                 if (it->audio_type == kAudioFake) {
@@ -1335,7 +1334,7 @@ void SongParser::PrepareTrack(const char *track_name, PartInfo *info) {
         if (info->FakeAudio()) {
             mKeyboardDifficulty = 3;
         } else {
-            switch (track_name[strlen(track_name) - 1]) {
+            switch ((signed char)track_name[strlen(track_name) - 1]) {
             case 'E':
                 mKeyboardDifficulty = 0;
                 break;
@@ -1385,20 +1384,21 @@ void SongParser::PrepareTrack(const char *track_name, PartInfo *info) {
     else
         mState = kGems;
 
-    bool drumstyle = mForceDrumStyleGems;
-    if (!drumstyle) {
+    bool drumstyle = true;
+    if (!mForceDrumStyleGems) {
         for (it = mDrumStyleInstruments.begin(); it != mDrumStyleInstruments.end();
              ++it) {
             if (*it == info->type)
                 break;
         }
-        drumstyle = it != mDrumStyleInstruments.end();
+        if (it == mDrumStyleInstruments.end())
+            drumstyle = false;
     }
     bool s9 = false;
     mDrumStyleGems = drumstyle;
-    TrackType newty = (TrackType)(mTrackType - 1);
     mIgnoreGemDurations = mTrackType == kTrackDrum;
-    if ((unsigned)newty <= (unsigned)kTrackRealBass && ((1 << (newty) & 0x1EBU) != 0)) {
+    int ty = mTrackType;
+    if (ty == 1 || ty == 2 || ty == 4 || ty == 6 || ty == 7 || ty == 8 || ty == 9) {
         s9 = true;
     }
     mTrackAllowsHopos = s9;
