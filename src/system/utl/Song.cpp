@@ -108,8 +108,15 @@ END_SAVES
 INIT_REVS(0, 0)
 
 BEGIN_LOADS(Song)
+#ifdef HX_NATIVE
     LOAD_REVS(bs)
     ASSERT_REVS(0, 0)
+#else
+    // RB3-360 retail (and rb3-Wii) read the revision as a plain int and keep
+    // reading from bs; there is no BinStreamRev wrapper on the stack.
+    int rev;
+    bs >> rev;
+#endif
     RndAnimatable::Load(bs);
     static Symbol sSongName;
     bs >> sSongName;
@@ -117,7 +124,11 @@ BEGIN_LOADS(Song)
         SetSong(sSongName);
     }
     static bool sDirty;
+#ifdef HX_NATIVE
     d >> sDirty;
+#else
+    bs >> sDirty;
+#endif
     if (sDirty) {
         mDirty = true;
     }
