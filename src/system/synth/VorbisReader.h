@@ -68,22 +68,13 @@ protected:
     int mSeekTarget; // 0xa4
     int mSamplesToSkip; // 0xa8
     OggMap mOggMap; // 0xac
-    // TU5 grew VorbisReader's tail: everything from here on shifts +44/+45 bytes
-    // vs the TU0-era layout (retail mHdrBuf@0xf0, mCtrState@0xf4, unked@0x11a,
-    // mFail@0x11c, mPcmBuffers@0x120 confirmed from the TU5 binary). The exact
-    // identity of the inserted members is unknown (none are read by the compiled
-    // functions in this TU), so the block is reproduced as layout-correct
-    // placeholders.
-    // ★mHdrSize is at 0xec, NOT 0xc0 -- RETAIL-VERIFIED from the ctor at
-    // 0x82BB41A0, which emits three consecutive zero stores
-    //   stw r29,0xec(r30) / stw r29,0xf0(r30) / stw r29,0xf4(r30)
-    // = mHdrSize / mHdrBuf / mCtrState, i.e. mHdrSize immediately precedes
-    // mHdrBuf exactly as in the rb3-Wii declaration order.  It therefore
-    // shifted +0x2C with the rest of the tail; only the placeholder block sits
-    // at 0xc0.  (Predicted by laneAO 2026-07-26 §7, confirmed by laneAR-3.)
-    char mUnkTU5_0xc0[4]; // 0xc0 : TU5-inserted member (identity TBD)
-    int mVersion; // 0xc4 - mogg version? (moved earlier in TU5)
-    char mUnkTU5_0xc8[36]; // 0xc8 -> 0xec : TU5-inserted members (identity TBD)
+    // TU5 grew VorbisReader's tail by +0x2c: that growth is OggMap itself,
+    // which became 0x40 bytes (a MemStream + two words before the lookup
+    // table; retail OggMap::Read fills the table at +0x34). The block formerly
+    // kept here as "TU5-inserted" placeholders (0xc0..0xec, including a never-
+    // written mVersion) was OggMap's tail. mHdrSize stays retail-verified at
+    // 0xec (VorbisReader ctor 0x82BB41A0: stw 0xec/0xf0/0xf4 = mHdrSize,
+    // mHdrBuf, mCtrState).
     int mHdrSize; // 0xec
     char *mHdrBuf; // 0xf0
     symmetric_CTR *mCtrState; // 0xf4
