@@ -7,6 +7,7 @@
 #include "bandtrack/GemTrack.h"
 
 #ifdef HX_NATIVE
+#include <algorithm>
 #include <cstdio>
 #include <cstdlib>
 #endif
@@ -50,13 +51,6 @@
 
 bool sEnableShift = true;
 bool sUpdateShifting;
-
-static inline void MinEqPtr(int &x, const int &y) {
-    const int *p = &x;
-    if (y < x)
-        p = &y;
-    x = *p;
-}
 
 inline bool GemTrack::ShiftsEnabled() const { return mEnableShifting && sEnableShift; }
 
@@ -234,7 +228,8 @@ void GemTrack::CheckShifts(float ms, int topTick) {
     }
     if (mCurrentRangeShift != mRangeShifts.end()) {
         RangeShift &shift = *mCurrentRangeShift;
-        if (shift.unk0 + tickOffset < topTick && !shift.unk18) {
+        bool upcoming = shift.unk0 + tickOffset < topTick;
+        if (upcoming && !shift.unk18) {
             shift.unk18 = true;
             int delta = (int)(shift.unkc - mOffset);
             int clamped;
@@ -257,7 +252,7 @@ void GemTrack::CheckShifts(float ms, int topTick) {
                 frame = clamped + 5;
                 shift.unk20 = 5;
             }
-            MinEqPtr(key, 24);
+            key = std::min(key, 24);
             mUpcomingShiftMaskAnim->SetFrame((float)frame, 1.0f);
             Transform xfm;
             mTrackDir->MakeWidgetXfm(key, secs, xfm);
