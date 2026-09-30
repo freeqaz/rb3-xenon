@@ -88,8 +88,8 @@ void ManageBandPanel::RefreshToStandinsState() {
 void VignetteViewerProvider::RefreshVignettes(BandProfile *profile, DataArray *arr) {
     unk20 = arr;
     AccomplishmentProgress &accProgress = profile->AccessAccomplishmentProgress();
-    std::list<Symbol> &newRewardVignettes = accProgress.mNewRewardVignettes;
     std::set<Symbol> &accomplishedVignettes = accProgress.unkb0;
+    std::list<Symbol> &newRewardVignettes = accProgress.mNewRewardVignettes;
     int numVignettes = unk20->Size();
 
     static Symbol vignetteviewer_hidden_title("vignetteviewer_hidden_title");
@@ -112,23 +112,15 @@ void VignetteViewerProvider::RefreshVignettes(BandProfile *profile, DataArray *a
 
         if (isAccomplished) {
             std::list<Symbol>::iterator it = newRewardVignettes.begin();
-            bool keepSearching;
-            do {
-                keepSearching = false;
-                if (it != newRewardVignettes.end() && *it != accName) {
-                    keepSearching = true;
-                }
-                if (keepSearching)
-                    ++it;
-            } while (keepSearching);
-            isAccomplished = it == newRewardVignettes.end();
+            while (it != newRewardVignettes.end() && *it != accName) {
+                ++it;
+            }
+            if (it == newRewardVignettes.end()) {
+                mEntries.push_back(vigName);
+                continue;
+            }
         }
-
-        if (isAccomplished) {
-            mEntries.push_back(vigName);
-        } else {
-            mEntries.push_back(vignetteviewer_hidden_title);
-        }
+        mEntries.push_back(vignetteviewer_hidden_title);
     }
 }
 
