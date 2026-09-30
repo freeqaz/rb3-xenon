@@ -1381,6 +1381,7 @@ void MetaPerformer::OnSynchronized(unsigned int ui) {
 }
 
 void MetaPerformer::ExportUpdateMetaPerformer() {
+    static Symbol update_meta_performer("update_meta_performer");
     DataArrayPtr ptr(update_meta_performer);
     ptr->Execute();
 }
