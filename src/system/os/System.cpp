@@ -628,9 +628,11 @@ void PreInitSystem(const char *config) {
 }
 
 void SystemInit(const char *config) {
+#ifdef HX_NATIVE
     if (OptionBool("force_cd", false)) {
         MILO_FAIL("force_cd is deprecated in favor of no_cd");
     }
+#endif
     gSystemTimer.Start();
     Symbol::Init();
     InitSystem(config);
@@ -658,24 +660,18 @@ void SystemInit(const char *config) {
     SpewInit();
     TheLocale.Terminate();
     TheLocale.Init();
+    // RB3 retail 0x825112E8: FileCache::Init before the cache managers; no
+    // DataPointMgr / WebSvcMgr init and no licenses option.
     CheatsInit();
     TheMC.Init();
-    CacheMgrInit();
-#ifndef HX_NATIVE
-    NetCacheMgrInit();
-#endif
     FileCache::Init();
-    TheDataPointMgr.Init();
-    TheWebSvcMgr.Init();
+    CacheMgrInit();
+    NetCacheMgrInit();
     ThePlatformMgr.Init();
     TheVirtualKeyboard.Init();
     TheContentMgr.Init();
     GlitchFinder::Init();
     TheDebug.AddExitCallback(SystemTerminate);
-    if (OptionBool("licenses", false)) {
-        Licenses::PrintAll();
-        TheDebug.Exit(0, true);
-    }
 #endif
 }
 
