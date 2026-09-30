@@ -32055,5 +32055,19 @@
  "0x822aa180": "??$__destroy_range_aux@V?$reverse_iterator@PAVBandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVBandPatchMesh@@@0@0ABU__false_type@0@@Z",
  "0x822aa8d8": "??$__uninitialized_fill_n@PAVBandPatchMesh@@IV1@@stlpmtx_std@@YAPAVBandPatchMesh@@PAV1@IABV1@ABU__false_type@0@@Z",
  "0x822aa970": "??$__uninitialized_copy@PAVBandPatchMesh@@PAV1@@stlpmtx_std@@YAPAVBandPatchMesh@@PAV1@00ABU__false_type@0@@Z",
- "0x822ab128": "?_M_insert_overflow_aux@?$vector@VBandPatchMesh@@V?$StlNodeAlloc@VBandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVBandPatchMesh@@ABV3@ABU__false_type@2@I_N@Z"
+ "0x822ab128": "?_M_insert_overflow_aux@?$vector@VBandPatchMesh@@V?$StlNodeAlloc@VBandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVBandPatchMesh@@ABV3@ABU__false_type@2@I_N@Z",
+ "0x823041a0": "??1?$ObjPtr@VBandTrack@@@@UAA@XZ",
+ "0x822bba10": "??1?$ObjPtr@VCrowdMeterIcon@@@@UAA@XZ",
+ "0x82701db0": "??1?$ObjPtr@VFxSend@@@@UAA@XZ",
+ "0x827628c0": "??_G?$ObjPtr@VObject@Hmx@@@@UAAPAXI@Z",
+ "0x822e43c0": "??1?$ObjPtr@VRndCam@@@@UAA@XZ",
+ "0x823a07a8": "??1?$ObjPtr@VRndDrawable@@@@UAA@XZ",
+ "0x822751b0": "?Replace@?$ObjPtr@VRndEnviron@@@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+ "0x822bbbd0": "??1?$ObjPtr@VRndGroup@@@@UAA@XZ",
+ "0x822bbd68": "??1?$ObjPtr@VRndMatAnim@@@@UAA@XZ",
+ "0x82461df8": "??_G?$ObjPtr@VRndTex@@@@UAAPAXI@Z",
+ "0x8230bfb0": "??1?$ObjPtr@VSongSectionController@@@@UAA@XZ",
+ "0x822e41d0": "?Replace@?$ObjPtr@VStreakMeter@@@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+ "0x822e42e0": "?Replace@?$ObjPtr@VTrackInterface@@@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+ "0x82329ce0": "??1?$ObjPtr@VUILabel@@@@UAA@XZ"
 }
