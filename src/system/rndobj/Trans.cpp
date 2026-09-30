@@ -735,45 +735,78 @@ const Transform &RndTransformable::WorldXfm_Force() {
     return mWorldXfm;
 }
 
+// Retail (TU5) is the OLDER rb3-Wii shape, not DC3's: no mTarget null tests
+// (TargetWorld/ShadowTarget/LookAtTarget dereference it unconditionally), the
+// billboard reference is always the current camera, there are no SkyBox cases,
+// the shadow shear is three plain divides (/fp:fast folds them to one -1/b),
+// and every path ends by setting mDirty (Wii: mCache->SetLastBit(1)) -- a bare
+// `stb 1, 0x9c`, not a SetDirty_Force() call.  The null guards survive for the
+// native build only.
+//
+// Codegen notes (w17-lit, measured with objdiff at the graded ruler):
+//  - the camera-relative cases spell Subtract() out as a direct m.y.Set(...):
+//    the inline call schedules its loads grouped by base register (95.7),
+//    the spelled-out Set gives retail's per-component load/sub order (99.0
+//    together with the next item).  kConstraintLookAtTarget keeps Subtract()
+//    -- its retail block IS the grouped shape.
+//  - kConstraintBillboardXYZ binds a reference to m.z before the copy; that is
+//    retail's dead `addi r11, r31, 0x7c` at the head of the case.
+//  - RESIDUAL (~1%): within the z and x components we load camWorld before
+//    mWorldXfm (retail: mWorldXfm first), and the inlined Scale() tail picks
+//    a different register order.  Tried and INERT or worse: named scalars in
+//    either order, `-c + v`, a const ref to camWorld.v, a ref to m.y,
+//    Vector3 temporaries, copy-then-`-=`.
 void RndTransformable::ApplyDynamicConstraint() {
     if (mConstraint == kConstraintTargetWorld) {
+#ifdef HX_NATIVE
         if (mTarget)
+#endif
             mWorldXfm = mTarget->WorldXfm();
     } else if (mConstraint == kConstraintShadowTarget) {
-        Transform tf;
-        if (mTarget) {
-            Transpose(mTarget->WorldXfm(), tf);
-            Multiply(mWorldXfm, tf, mWorldXfm);
+#ifdef HX_NATIVE
+        if (!mTarget) {
+            mDirty = true;
+            return;
         }
+#endif
+        Transform tf;
+        Transpose(mTarget->WorldXfm(), tf);
+        Multiply(mWorldXfm, tf, mWorldXfm);
         Plane pl;
         Multiply(sShadowPlane, tf, pl);
         float planeB = pl.b;
-        float invPlaneB;
-        if (planeB != 0.0f)
-            invPlaneB = 1.0f / planeB;
-        else
-            invPlaneB = 0.001f;
-        tf.m.Set(1, -pl.a * invPlaneB, 0, 0, 0, 0, 0, -pl.c * invPlaneB, 1);
-        tf.v.Set(0, -pl.d * invPlaneB, 0);
+        tf.m.Set(1, -pl.a / planeB, 0, 0, 0, 0, 0, -pl.c / planeB, 1);
+        tf.v.Set(0, -pl.d / pl.b, 0);
         Multiply(mWorldXfm, tf, mWorldXfm);
         Multiply(mWorldXfm, mTarget->WorldXfm(), mWorldXfm);
     } else if (RndCam::Current()) {
-        const Transform &refWorld = mTarget ? mTarget->WorldXfm() : RndCam::Current()->WorldXfm();
         Vector3 scaleVec;
+        const Transform &camWorld = RndCam::Current()->WorldXfm();
         if (mPreserveScale) {
             MakeScale(mWorldXfm.m, scaleVec);
         }
         switch (mConstraint) {
         case kConstraintFastBillboardXYZ:
-            mWorldXfm.m = refWorld.m;
+            mWorldXfm.m = camWorld.m;
             break;
         case kConstraintBillboardXYZ:
-            Subtract(mWorldXfm.v, refWorld.v, mWorldXfm.m.y);
-            mWorldXfm.m.z = refWorld.m.z;
+            mWorldXfm.m.y.Set(
+                mWorldXfm.v.x - camWorld.v.x,
+                mWorldXfm.v.y - camWorld.v.y,
+                mWorldXfm.v.z - camWorld.v.z
+            );
+            {
+                Vector3 &z = mWorldXfm.m.z;
+                z = camWorld.m.z;
+            }
             Normalize(mWorldXfm.m, mWorldXfm.m);
             break;
         case kConstraintBillboardZ:
-            Subtract(mWorldXfm.v, refWorld.v, mWorldXfm.m.y);
+            mWorldXfm.m.y.Set(
+                mWorldXfm.v.x - camWorld.v.x,
+                mWorldXfm.v.y - camWorld.v.y,
+                mWorldXfm.v.z - camWorld.v.z
+            );
             if (mPreserveScale)
                 Normalize(mWorldXfm.m.z, mWorldXfm.m.z);
             Cross(mWorldXfm.m.y, mWorldXfm.m.z, mWorldXfm.m.x);
@@ -781,29 +814,24 @@ void RndTransformable::ApplyDynamicConstraint() {
             Cross(mWorldXfm.m.z, mWorldXfm.m.x, mWorldXfm.m.y);
             break;
         case kConstraintBillboardXZ:
-            Subtract(mWorldXfm.v, refWorld.v, mWorldXfm.m.y);
+            mWorldXfm.m.y.Set(
+                mWorldXfm.v.x - camWorld.v.x,
+                mWorldXfm.v.y - camWorld.v.y,
+                mWorldXfm.v.z - camWorld.v.z
+            );
             Normalize(mWorldXfm.m.y, mWorldXfm.m.y);
             Cross(mWorldXfm.m.y, mWorldXfm.m.z, mWorldXfm.m.x);
             Normalize(mWorldXfm.m.x, mWorldXfm.m.x);
             Cross(mWorldXfm.m.x, mWorldXfm.m.y, mWorldXfm.m.z);
             break;
         case kConstraintLookAtTarget:
-            if (mTarget) {
+#ifdef HX_NATIVE
+            if (mTarget)
+#endif
+            {
                 Subtract(mTarget->WorldXfm().v, mWorldXfm.v, mWorldXfm.m.y);
                 Normalize(mWorldXfm.m, mWorldXfm.m);
             }
-            break;
-        case kConstraintSkyBox: {
-            Vector3 offset;
-            Add(mLocalXfm.v, refWorld.v, offset);
-            mWorldXfm.v.Set(offset.x, offset.y, mWorldXfm.v.z);
-            mWorldXfm.m = mLocalXfm.m;
-            break;
-        }
-        case kConstraintSkyBoxXY:
-            Add(mLocalXfm.v, refWorld.v, mWorldXfm.v);
-            mWorldXfm.v.z = mLocalXfm.v.z;
-            mWorldXfm.m = mLocalXfm.m;
             break;
         default:
             break;
@@ -811,5 +839,5 @@ void RndTransformable::ApplyDynamicConstraint() {
         if (mPreserveScale)
             Scale(scaleVec, mWorldXfm.m, mWorldXfm.m);
     }
-    SetDirty_Force();
+    mDirty = true;
 }
