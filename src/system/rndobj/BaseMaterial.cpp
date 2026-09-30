@@ -26,6 +26,15 @@ static struct {
     __declspec(align(4)) unsigned short altRev;
     __declspec(align(4)) unsigned short rev;
 } sMatRevs;
+// ⚠ OPEN (lane W17-MAT): retail's MatPerfSettings::Load reads the rev as a DIRECT
+// symbol (`lis; lhz lbl_82CC29DC@l`), where this struct gives `lis; addi; lhz 0x4`
+// -- the one residual keeping that 104 B row at fuzzy 95.96. Two separate
+// align(4) internal statics DO give the direct form (MatPerfSettings::Load -> 100),
+// but MSVC then lays them out rev@+4 / alt@+8, putting rev at -4 from Load's shared
+// base (retail: +4) and costing RndMat::Load (2,312 B) 35 diff_args. Tried and
+// INERT for that layout: swapping the two declarations, moving
+// MatPerfSettings::Load below RndMat::Load. Swapping the two rev stores in Load
+// moves the base but adds a `mr` scheduling diff. Struct kept: Load is the prize.
 
 #pragma region MatPerfSettings
 
