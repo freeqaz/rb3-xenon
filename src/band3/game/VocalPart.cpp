@@ -474,8 +474,7 @@ void VocalPart::SetVocalNoteList(VocalNoteList *list) {
 }
 
 int VocalPart::NumPracticePhrases(const std::vector<VocalPhrase> &phrases) const {
-    if (!mVocalNoteList) return 0;
-    return mVocalNoteList->GetNumPracticePhrases(phrases);
+    return mVocalNoteList ? mVocalNoteList->GetNumPracticePhrases(phrases) : 0;
 }
 
 float VocalPart::GetOverallPartHitPercentage() const {
