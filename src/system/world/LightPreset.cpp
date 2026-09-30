@@ -16,12 +16,11 @@
 #include <algorithm>
 #include <cfloat>
 
-#ifndef HX_NATIVE
-// Explicit template instantiation
-namespace stlpmtx_std {
-    template class vector<ObjPtrVec<Spotlight, ObjectDir>::Node, StlNodeAlloc<ObjPtrVec<Spotlight, ObjectDir>::Node>>;
-}
-#endif
+// W17-ORC: no explicit instantiation of vector<ObjPtrVec<Spotlight>::Node>.
+// It was left over from DC3's ObjPtrVec<Spotlight> member; mSpotlights is a
+// plain std::vector<Spotlight *> (LightPreset.h) and retail has no ObjPtrVec
+// at all (0 RTTI descriptors in band.exe). It was the only thing emitting
+// ~ObjRefConcrete<Spotlight> into this TU and the six TUs that #include it.
 
 LightPreset *gEditPreset;
 std::deque<std::pair<LightPreset::KeyframeCmd, float> > LightPreset::sManualEvents;
