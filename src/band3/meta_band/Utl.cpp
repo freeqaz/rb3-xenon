@@ -19,7 +19,9 @@
 
 static int kMinContentLevel = 2;
 
-static DataNode OnToggleFakeLeaderboardUploadFailure(DataArray *da) {
+// Retail keeps this handler's body (its EH funclets pair) but UtlInit no longer
+// registers it; external linkage keeps it emitted in the match build.
+DataNode OnToggleFakeLeaderboardUploadFailure(DataArray *da) {
     SongStatusMgr::sFakeLeaderboardUploadFailure =
         !SongStatusMgr::sFakeLeaderboardUploadFailure;
     Hmx::Object *cheatObj = ObjectDir::Main()->Find<Hmx::Object>("cheat_display", true);
@@ -46,14 +48,17 @@ void UtlInit() {
     DataRegisterFunc(
         "get_font_char_from_controller_type", OnGetFontCharFromControllerType
     );
+    // Retail fn_825BF0C0 order; the fake-upload-failure cheat is dev-only.
+    DataRegisterFunc("get_font_char_for_harmony_mics", OnGetFontCharForHarmonyMics);
     DataRegisterFunc("get_font_char_from_track_type", OnGetFontCharFromTrackType);
     DataRegisterFunc("get_font_char_from_score_type", OnGetFontCharFromScoreType);
-    DataRegisterFunc("get_font_char_for_harmony_mics", OnGetFontCharForHarmonyMics);
     DataRegisterFunc("is_leader_local", OnIsLeaderLocal);
     DataRegisterFunc("is_vignette", OnIsVignette);
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     DataRegisterFunc(
         "toggle_fake_leaderboard_upload_failure", OnToggleFakeLeaderboardUploadFailure
     );
+#endif
     DataRegisterFunc("safe_name", OnSafeName);
     DataRegisterFunc("allowed_to_access_content", OnAllowedToAccessContent);
 }
@@ -71,6 +76,7 @@ bool IsVignette(UIPanel *panel) {
     if (!panel)
         return false;
     else {
+        static Symbol file("file");
         Hmx::Object *old_this = DataSetThis(panel);
         bool ret = false;
         if (panel->TypeDef()) {
