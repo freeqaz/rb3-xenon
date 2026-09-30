@@ -15,16 +15,17 @@ GigFilter::GigFilter()
 GigFilter::~GigFilter() {}
 
 void GigFilter::Init(const DataArray *i_pConfig) {
-    static Symbol is_internal("is_internal");
-    static Symbol weight("weight");
-    static Symbol part_difficulty_filter("part_difficulty_filter");
-    static Symbol filter("filter");
+    // Retail 0x82364CA0 initialises each static right before its first use.
     MILO_ASSERT(i_pConfig, 0x1E);
     mName = i_pConfig->Sym(0);
+    static Symbol is_internal("is_internal");
     i_pConfig->FindData(is_internal, mIsInternal, false);
+    static Symbol weight("weight");
     i_pConfig->FindData(weight, mWeight, false);
+    static Symbol part_difficulty_filter("part_difficulty_filter");
     mFilteredPartSym = gNullStr;
     i_pConfig->FindData(part_difficulty_filter, mFilteredPartSym, false);
+    static Symbol filter("filter");
     DataArray *filterarr = i_pConfig->FindArray(filter, false);
     if (filterarr) {
         for (int i = 1; i < filterarr->Size(); i++) {
