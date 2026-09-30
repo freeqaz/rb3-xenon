@@ -93,13 +93,12 @@ OvershellPanel::OvershellPanel(SessionMgr *smgr, BandUserMgr *umgr)
     mSessionMgr->GetMachineMgr()->AddSink(this);
     ThePlatformMgr.AddSink(this);
     TheRockCentral.AddSink(this);
+    // Retail fn_825B4AA8 stops here: the typed ThePlatformMgr invite/utility
+    // sinks and the TheServer profanity sink are dev-build (rb3-Wii) only.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     ThePlatformMgr.AddSink(this, InviteReceivedMsg::Type());
     ThePlatformMgr.AddSink(this, InviteExpiredMsg::Type());
     ThePlatformMgr.AddSink(this, NetStartUtilityFinishedMsg::Type());
-#ifndef HX_NATIVE
-    // TheServer (network/ online server) is null on native; profanity-check events
-    // are online-only. Gate the AddSink.
-    TheServer.AddSink(this, UserNameNewlyProfaneMsg::Type());
 #endif
 }
 
@@ -113,10 +112,12 @@ OvershellPanel::~OvershellPanel() {
     if (TheGameMicManager) {
         TheGameMicManager->RemoveSink(this, GameMicsChangedMsg::Type());
     }
+    // Retail fn_825B6188 ends here; the Wii-friend/online sinks are dev-only.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     TheWiiFriendMgr.RemoveSink(this, InviteReceivedMsg::Type());
     TheWiiFriendMgr.RemoveSink(this, InviteExpiredMsg::Type());
     ThePlatformMgr.RemoveSink(this, NetStartUtilityFinishedMsg::Type());
-    TheServer.RemoveSink(this, UserNameNewlyProfaneMsg::Type());
+#endif
 }
 
 bool SignInUser(User *u, unsigned long ul) {
