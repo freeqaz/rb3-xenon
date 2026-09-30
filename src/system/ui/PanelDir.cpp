@@ -820,7 +820,9 @@ void PanelDir::UpdateFocusComponentState() {
 // sw2 scatter-include (default/PanelDir <- ui/UIListWidget.cpp)
 #define gRev gRev_UIListWidget
 #define gAltRev gAltRev_UIListWidget
+#define RB3_UILISTWIDGET_IN_PANELDIR
 #include "ui/UIListWidget.cpp"
+#undef RB3_UILISTWIDGET_IN_PANELDIR
 #undef gRev
 #undef gAltRev
 

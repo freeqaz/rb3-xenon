@@ -195,6 +195,17 @@ inline void MiloStripEval(const char *, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)
 // Find<> fail-paths; (void)(args) keeps it. HX_NATIVE keeps the real fatal path.)
 #define MILO_FAIL(...) ((void)(__VA_ARGS__))
 #endif
+// Some retail MILO_FAIL sites keep their argument setup RIGHT TO LEFT, with
+// by-value copies of class arguments -- a stripped varargs MakeString call, not
+// the comma form above (Object::Property, SyncStore::RemoveSyncObj,
+// UIComponent::SetTypeDef/Update). A blanket switch is measured NEGATIVE
+// (W16-HP: +7 rows / -11 rows, CacheMgrXbox::Poll 100 -> 85.4), so spell only
+// those sites MILO_FAIL_RTL.
+#ifdef HX_NATIVE
+#define MILO_FAIL_RTL(...) MILO_FAIL(__VA_ARGS__)
+#else
+#define MILO_FAIL_RTL(...) MiloStripEval(__VA_ARGS__)
+#endif
 // Retail RB3-360 stripped the debug-OUTPUT family's EMISSION (WARN/NOTIFY/LOG/
 // PRINT_ONCE/NOTIFY_ONCE/WARN_ONCE): their format strings are absent from orig
 // band.exe and no Warn/Notify/Print calls survive. BUT — like MILO_FAIL above —

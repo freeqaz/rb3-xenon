@@ -116,7 +116,7 @@ void UIComponent::SetTypeDef(DataArray *da) {
                 SetTypeDef(defaultArr);
                 return;
             } else {
-                MILO_FAIL(
+                MILO_FAIL_RTL(
                     "No default type for %s, please add to %s (%s)",
                     ClassName(),
                     typesArr->File(),
@@ -154,7 +154,7 @@ void UIComponent::Update() {
             const char *milo_str =
                 MakeString("%s/%s.milo", mResourcePath.c_str(), default_str);
             if (!default_str) {
-                MILO_FAIL(
+                MILO_FAIL_RTL(
                     "No default_resource for %s, please add 'default_resource' block ",
                     ClassName()
                 );
@@ -162,7 +162,7 @@ void UIComponent::Update() {
             }
             int filestat = FileGetStat(milo_str, &stat);
             if (filestat == -1) {
-                MILO_FAIL(
+                MILO_FAIL_RTL(
                     "%s %s (%s) is missing default resource file %s, please fix",
                     ClassName(),
                     Name(),
@@ -221,13 +221,13 @@ void UIComponent::Update() {
                 DataArray *cfg = SystemConfig("objects", ClassName(), "types");
                 DataArray *defaultarr = cfg->FindArray("default", false);
                 if (!defaultarr) {
-                    MILO_FAIL(
+                    MILO_FAIL_RTL(
                         "No default type for %s, please add to %s",
                         ClassName(),
                         cfg->File()
                     );
                 } else if (defaultarr == def) {
-                    MILO_FAIL(
+                    MILO_FAIL_RTL(
                         "%s default type has invalid resource file, please fix %s",
                         ClassName(),
                         cfg->File()

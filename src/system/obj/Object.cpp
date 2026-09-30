@@ -815,7 +815,8 @@ const DataNode *Hmx::Object::Property(DataArray *prop, bool fail) const {
         // which is PCH-wide (36 sites) and needs its own measured lane.
         String str;
         str << prop;
-        MILO_FAIL("%s: property %s not found", PathName(this), str);
+        // W16-HP: MILO_FAIL_DTA is now that stripped varargs call (MiloStripEval).
+        MILO_FAIL_DTA("%s: property %s not found", PathName(this), str);
 #endif
     }
     return nullptr;
