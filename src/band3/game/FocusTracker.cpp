@@ -616,7 +616,8 @@ void AccuracyFocusTracker::TranslateRelativeTargets() {
 bool AccuracyFocusTracker::PlayerWantsFocus(const TrackerPlayerID &pid, float ms) const {
     int tick = MsToTick(ms);
     int section = mSectionManager.FindSectionContainingTick(tick);
-    return mSectionManager.CountGemsInSection(mSource->GetPlayer(pid), section) > 0;
+    Player *player = mSource->GetPlayer(pid);
+    return mSectionManager.CountGemsInSection(player, section) > 0;
 }
 
 void AccuracyFocusTracker::FocusLeaving(FocusFlags flags) {
