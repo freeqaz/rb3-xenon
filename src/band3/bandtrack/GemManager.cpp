@@ -792,20 +792,18 @@ void GemManager::SetupGems(int startTick) {
 
         if (gem.LeftHandSlide()) {
             bool hasNext = false;
-            signed char curFret = gem.GetFret(gem.GetLowestString());
+            int curFret = gem.GetFret(gem.GetLowestString());
             if (i < gems.size() - 1) {
                 const GameGem &nextGem = gems[i + 1];
-                bool tailFlag = false;
                 hasNext = nextGem.mTick - (gem.mTick + gem.mDurationTicks) <= 0x78;
                 bool slotsEqual = ((gem.mSlots - nextGem.mSlots) == 0);
-                if (hasNext && slotsEqual && nextGem.mForceStrum) {
-                    tailFlag = true;
-                }
+                bool tailFlag = hasNext && slotsEqual && nextGem.mForceStrum;
                 if (tailFlag) {
-                    newGem.mTailStart = nextGem.mMs / 1000.0f;
+                    // retail stores Gem+0x24 (mEnd), not mTailStart (+0x28)
+                    newGem.mEnd = nextGem.mMs / 1000.0f;
                 }
                 if (hasNext) {
-                    signed char nextFret = nextGem.GetFret(nextGem.GetLowestString());
+                    int nextFret = nextGem.GetFret(nextGem.GetLowestString());
                     newGem.mSlideUp = (nextFret > curFret);
                 }
             }
