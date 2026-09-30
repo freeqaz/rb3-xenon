@@ -341,18 +341,15 @@ DECOMP_FORCEACTIVE(BandUser, "%d")
 DataNode BandUser::OnSetPrefabChar(DataArray *a) {
     Symbol sym = a->Sym(2);
     int i2 = a->Int(3);
-    bool b1 = false;
     std::vector<PrefabChar *> prefabs;
     PrefabMgr::GetPrefabMgr()->GetPrefabs(prefabs);
-    for (int i = 0; i < (int)prefabs.size(); i++) {
+    for (unsigned int i = 0; i < prefabs.size(); i++) {
         if (prefabs[i]->GetPrefabName() == sym) {
-            b1 = true;
             SetChar(prefabs[i]);
-            break;
+            return 1;
         }
     }
-    if (!b1)
-        SetLoadedPrefabChar(i2);
+    SetLoadedPrefabChar(i2);
     return 1;
 }
 
