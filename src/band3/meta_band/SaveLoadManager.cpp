@@ -149,6 +149,7 @@ void SaveLoadManager::Finish() {
     if (mMode == kMode_AutoLoad) {
         UpdateStatus(kSaveLoadMgrStatus_Finish);
     }
+    TheMemcardMgr.RemoveSink(this); // retail 0x82550460
     SetState(kS_Finish);
 }
 
@@ -1988,8 +1989,9 @@ void SaveLoadManager::PrintoutSaveSizeInfo() {
 }
 
 bool SaveLoadManager::IsReasonToUpload() {
+    static Symbol saveload_skip_upload("saveload_skip_upload"); // retail: local static
     DataNode &var = DataVariable(saveload_skip_upload);
-    int skipUpload = var.Int(NULL) != 0;
+    bool skipUpload = var.Int(NULL) != 0;
     bool isConnected = TheNet.mServer->IsConnected();
     bool needsUpload = TheProfileMgr.NeedsUpload();
     bool allUnlocked = TheProfileMgr.mAllUnlocked;
