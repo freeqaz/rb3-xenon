@@ -1,4 +1,5 @@
 {
+ "0x825c17d8": "?HasProGuitarOrBass@BandMachine@@QBA_NH@Z",
  "0x82651b28": "?IsRanked@BandMatchmaker@@QBA_NXZ",
  "0x82540208": "?RefreshSongLists@MusicLibrary@@QAAXXZ",
  "0x82577610": "?GetValidSongs@BandSongMgr@@QBAHABV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@AAVBandUserMgr@@AAV23@MM_N3@Z",

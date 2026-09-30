@@ -51,7 +51,7 @@ public:
 class SearchSettings : public MatchmakingSettings {
 public:
     SearchSettings(int, bool, int);
-    virtual ~SearchSettings() {}
+    // virtual ~SearchSettings() {}  // retail: implicit dtor (no own-vtable store)
 
     int mQueryID; // 0x28
 };
