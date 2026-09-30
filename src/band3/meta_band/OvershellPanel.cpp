@@ -625,36 +625,22 @@ bool OvershellPanel::IsAutoVocalsAllowed() const {
 }
 END_FORCE_LOCAL_INLINE
 
+// Retail fn_825B72E8 (TU5): no IsAutoVocalsAllowed gate and no Wii
+// JoypadWiiOnUserLeft; the modifier symbol is a function-local static.
 void OvershellPanel::EnableAutoVocals() {
-    bool b2;
-    if (!IsAutoVocalsAllowed() || (TheModifierMgr && TheModifierMgr->IsModifierActive(mod_auto_vocals))) {
-        b2 = true;
-    } else {
-        b2 = false;
+    if (TheModifierMgr) {
+        static Symbol mod_auto_vocals("mod_auto_vocals");
+        MILO_ASSERT(!TheModifierMgr->IsModifierActive(mod_auto_vocals), 0x512);
+        TheModifierMgr->ToggleModifierEnabled(mod_auto_vocals);
     }
-    if (b2) {
-        UpdateAll();
-    } else {
-        MILO_ASSERT(IsAutoVocalsAllowed(), 0x50D);
-        if (TheModifierMgr) {
-            MILO_ASSERT(!TheModifierMgr->IsModifierActive(mod_auto_vocals), 0x512);
-            TheModifierMgr->ToggleModifierEnabled(mod_auto_vocals);
+    mSessionMgr->Disconnect();
+    for (int i = 0; i < mSlots.size(); i++) {
+        BandUser *user = mSlots[i]->GetUser();
+        if (user && user->GetControllerType() == 2) {
+            mSlots[i]->RemoveUser();
         }
-        mSessionMgr->Disconnect();
-        for (int i = 0; i < mSlots.size(); i++) {
-            BandUser *user = mSlots[i]->GetUser();
-            if (user && user->GetControllerType() == 2) {
-                int i6;
-                if (user->GetLocalUser()) {
-                    i6 = user->GetLocalBandUser()->GetPadNum();
-                } else
-                    i6 = -1;
-                mSlots[i]->RemoveUser();
-                JoypadWiiOnUserLeft(i6, true);
-            }
-        }
-        UpdateAll();
     }
+    UpdateAll();
 }
 
 bool OvershellPanel::CanGuitarPlayKeys() const {
