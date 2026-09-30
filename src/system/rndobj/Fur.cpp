@@ -110,25 +110,25 @@ void RndFur::Load(BinStream &bs) {
     }
 }
 
-bool RndFur::LoadOld(BinStreamRev &d) {
+bool RndFur::LoadOld(BinStream &bs, int rev) {
     bool ret;
-    d >> ret;
-    if (ret || d.rev < 0x20) {
-        d >> mLayers;
-        d >> mThickness;
-        d >> mCurvature;
-        d >> mStretch;
-        d >> mSlide;
-        d >> mGravity;
-        d >> mFluidity;
-        d.stream >> mRootsTint >> mEndsTint;
-        if (d.rev > 0x1E) {
-            d.stream >> mFurDetail >> mFurTiling;
+    bs >> ret;
+    if (ret || rev < 0x20) {
+        bs >> mLayers;
+        bs >> mThickness;
+        bs >> mCurvature;
+        bs >> mStretch;
+        bs >> mSlide;
+        bs >> mGravity;
+        bs >> mFluidity;
+        bs >> mRootsTint >> mEndsTint;
+        if (rev > 0x1E) {
+            bs >> mFurDetail >> mFurTiling;
         }
-        if (d.rev < 0x24) {
+        if (rev < 0x24) {
             Vector3 v;
             float f;
-            d.stream >> v >> f;
+            bs >> v >> f;
         }
     }
     return ret;

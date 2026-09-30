@@ -120,7 +120,6 @@ struct MatPerfSettings {
     MatPerfSettings()
         : mRecvProjLights(false), mRecvPointCubeTex(false), mPS3ForceTrilinear(false) {}
     void Save(BinStream &) const;
-    void LoadOld(BinStreamRev &);
     void Load(BinStream &);
 
     /** "Check this option to allow the material to receive projected lighting" */
@@ -348,10 +347,6 @@ protected:
     DataNode OnAllowedNormalMap(const DataArray *);
 
     bool OnGetPropertyDisplay(PropDisplay, Symbol);
-    // Unreferenced since the DC3 rev-0x46 Load layer was removed (retail's Load
-    // reads ONE rev and inlines its own old-version path). Kept, not deleted --
-    // reconstructing retail's inlined old path is a separate lane's job.
-    void LoadOld(BinStreamRev &);
 
     static void SetDefaultMat(RndMat *);
 

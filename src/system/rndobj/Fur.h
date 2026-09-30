@@ -41,7 +41,10 @@ public:
         return false;
     }
 
-    bool LoadOld(BinStreamRev &);
+    // Retail signature is (BinStream &, int rev): fn_8246C4B0 takes the rev in r5 and
+    // tests it SIGNED (`cmpwi cr6, r29, 0x20`); its one caller, RndMat::Load
+    // (0x82438F40), passes `lhz r5` of the material's static rev.
+    bool LoadOld(BinStream &, int);
     RndTex* GetFurDetail() const { return mFurDetail; }
 
     OBJ_MEM_OVERLOAD(0x1A)

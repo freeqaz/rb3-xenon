@@ -304,6 +304,9 @@ public:
     void operator=(const ObjRefConcrete &o) { SetObjConcrete(o); }
 
     void SetObjConcrete(T1 *obj);
+    // Native: same operation as the retail open-coded form, via SetObjConcrete so
+    // the HX_NATIVE ring bookkeeping stays in one place.
+    void ReleaseObjConcrete() { SetObjConcrete(nullptr); }
     void CopyRef(const ObjRefConcrete &);
     Hmx::Object *SetObj(Hmx::Object *root_obj);
     bool Load(BinStream &, bool, ObjectDir *);
@@ -366,6 +369,18 @@ public:
     void operator=(const ObjRefConcrete &o) { SetObjConcrete(o); }
 
     void SetObjConcrete(T1 *obj);
+    // `SetObjConcrete(nullptr)`, open-coded. Retail's compiler inlined a null
+    // assignment into exactly `if (mObject) { mObject->Release(this); mObject = 0; }`
+    // at some sites (RndMat::Load @0x82438F40, the fur-fallback `delete` arm), where
+    // ours keeps the out-of-line call and cross-jumps it with a neighbouring non-null
+    // SetObjConcrete. Semantically identical to SetObjConcrete(nullptr); use it only
+    // where retail bytes show the open-coded form.
+    void ReleaseObjConcrete() {
+        if (mObject) {
+            mObject->Release(this);
+            mObject = nullptr;
+        }
+    }
     void CopyRef(const ObjRefConcrete &);
     Hmx::Object *SetObj(Hmx::Object *root_obj);
     bool Load(BinStream &, bool, ObjectDir *);
