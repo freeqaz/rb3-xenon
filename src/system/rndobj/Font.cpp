@@ -15,7 +15,15 @@
 #include "utl/UTF8.h"
 #include <cmath>
 
-static unsigned short sFontRev;
+// Retail's rev pair: RndFont::Load (0x82475A20) writes altRev+0 / rev+4 off
+// one base register (lbl_82CC648C), and KerningTable::Load (0x82475778) reads
+// rev as its own symbol (lis + lhz lbl_82CC6490@l) -- two separate
+// internal-linkage statics, altRev declared first (.bss order). This is the
+// file-static rev rb3-Wii's LOAD_REVS writes; the old sFontRev copy of a
+// BinStreamRev's rev was DC3's. (BinStreamRev itself does not exist in
+// retail: zero .?AVBinStreamRev@@ type descriptors in band.exe.)
+static unsigned short gAltRev = 0;
+static unsigned short gRev = 0;
 
 KerningTable::KerningTable() : mNumEntries(0), mEntries(0) { memset(mTable, 0, 0x80); }
 KerningTable::~KerningTable() { delete mEntries; }
@@ -95,14 +103,14 @@ void KerningTable::GetKerning(std::vector<RndFont::KernInfo> &info) const {
     }
 }
 
-void KerningTable::Load(BinStreamRev &d, RndFont *f) {
-    if (sFontRev < 7) {
+void KerningTable::Load(BinStream &bs, RndFont *f) {
+    if (gRev < 7) {
         std::vector<RndFont::KernInfo> info;
-        d >> info;
+        bs >> info;
         SetKerning(info, f);
     } else {
         int num;
-        d >> num;
+        bs >> num;
         if (num != mNumEntries) {
             mNumEntries = num;
             delete mEntries;
@@ -111,10 +119,10 @@ void KerningTable::Load(BinStreamRev &d, RndFont *f) {
         memset(&mTable, 0, 0x80);
         for (int i = 0; i < mNumEntries; i++) {
             Entry &curEntry = mEntries[i];
-            d >> curEntry.key;
-            d >> curEntry.kerning;
+            bs >> curEntry.key;
+            bs >> curEntry.kerning;
             unsigned short us4, us3;
-            if (sFontRev < 0x11) {
+            if (gRev < 0x11) {
                 us4 = curEntry.key & 0xFF;
                 us3 = curEntry.key >> 8 & 0xFF;
                 curEntry.key = Key(us4, us3);
@@ -260,9 +268,6 @@ BEGIN_COPYS(RndFont)
     mTextureOwner = obj;
 END_COPYS
 
-static const char theChars[96] =
-    " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-
 struct MatChar {
     float width;
     float height;
@@ -276,8 +281,8 @@ __forceinline BinStream &operator>>(BinStream &bs, MatChar &mc) {
     return bs;
 }
 
-__forceinline BinStreamRev &operator>>(BinStreamRev &d, RndFont::KernInfo &info) {
-    if (sFontRev < 0x11) {
+__forceinline BinStream &operator>>(BinStream &d, RndFont::KernInfo &info) {
+    if (gRev < 0x11) {
         char x;
         d >> x;
         info.mFirstChar = x;
@@ -286,7 +291,7 @@ __forceinline BinStreamRev &operator>>(BinStreamRev &d, RndFont::KernInfo &info)
     } else {
         d >> info.mFirstChar >> info.mSecondChar;
     }
-    if (sFontRev < 6) {
+    if (gRev < 6) {
         char x;
         d >> x >> x;
     }
@@ -311,7 +316,6 @@ BinStream &operator>>(BinStream &bs, std::map<char, MatChar> &m) {
     return bs;
 }
 
-INIT_REVS(0x11, 2)
 
 // Load order follows retail's Save (0x82472EC0) exactly -- they are the two
 // halves of one serialiser and MUST agree. The former DC3 `altRev >= 2` path
@@ -320,40 +324,41 @@ INIT_REVS(0x11, 2)
 // above would have produced a genuinely unbalanced stream. The altRev branches
 // are dropped accordingly (retail's Save emits packRevs(0, 0x11) -- altRev is
 // always 0).
-BEGIN_LOADS(RndFont)
-    LOAD_REVS(bs)
-    ASSERT_REVS(0x11, 2)
-    sFontRev = d.rev;
-    if (d.rev > 7) {
-        Hmx::Object::Load(d.stream);
+void RndFont::Load(BinStream &bs) {
+    int rev;
+    bs >> rev;
+    gRev = getHmxRev(rev);
+    gAltRev = getAltRev(rev);
+    if (gRev > 7) {
+        Hmx::Object::Load(bs);
     }
-    if (d.rev < 3) {
+    if (gRev < 3) {
         String str;
         int a, b, c, e;
         bool dd;
-        d >> a >> b >> c >> dd >> e >> str;
+        bs >> a >> b >> c >> dd >> e >> str;
     }
-    if (d.rev < 1) {
+    if (gRev < 1) {
         std::map<char, MatChar> charMap;
-        d.stream >> charMap;
+        bs >> charMap;
     } else {
-        mMat.Load(d.stream, true, NULL);
-        if (d.rev > 9 && d.rev < 0xc) {
+        mMat.Load(bs, true, NULL);
+        if (gRev > 9 && gRev < 0xc) {
             char buf[0x80];
-            d.stream.ReadString(buf, 0x80);
+            bs.ReadString(buf, 0x80);
             if (!mMat && buf[0] != '\0') {
                 mMat = LookupOrCreateMat(buf, Dir());
             }
         }
-        if (d.rev < 4) {
+        if (gRev < 4) {
             float w, h;
-            if (d.rev < 2) {
+            if (gRev < 2) {
                 int wi, hi;
-                d.stream >> wi >> hi;
+                bs >> wi >> hi;
                 w = wi;
                 h = hi;
             } else {
-                d.stream >> w >> h;
+                bs >> w >> h;
             }
             RndTex *validTex = ValidTexture();
             if (validTex) {
@@ -364,24 +369,27 @@ BEGIN_LOADS(RndFont)
                 validTex->UnlockBitmap();
             }
         } else {
-            d.stream >> mCellSize;
+            bs >> mCellSize;
         }
-        d.stream >> mDeprecatedSize >> mBaseKerning;
-        if (d.rev < 4) {
+        bs >> mDeprecatedSize >> mBaseKerning;
+        if (gRev < 4) {
             mBaseKerning /= mDeprecatedSize;
         }
     }
-    if (d.rev > 1) {
-        if (d.rev < 0x11) {
+    if (gRev > 1) {
+        if (gRev < 0x11) {
             String str;
-            d.stream >> str;
+            bs >> str;
             ASCIItoWideVector(mChars, str.c_str());
         } else {
-            d >> mChars;
+            bs >> mChars;
         }
     } else {
-        char charBuf[96];
-        memcpy(charBuf, theChars, sizeof(theChars));
+        // rb3-Wii's initialized local: retail memcpys the literal and then
+        // LOADS charBuf[0] (lbz + beq); a static const table let MSVC fold
+        // the first character to ' ' and drop the test.
+        char charBuf[96] =
+            " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
         const char *ptr = charBuf;
         if (*ptr != '\0') {
             do {
@@ -390,29 +398,29 @@ BEGIN_LOADS(RndFont)
             } while (*ptr != '\0');
         }
     }
-    if (d.rev > 4) {
+    if (gRev > 4) {
         bool hasKerning;
-        d >> hasKerning;
+        bs >> hasKerning;
         if (hasKerning) {
             mKerningTable = new KerningTable();
-            mKerningTable->Load(d, this);
+            mKerningTable->Load(bs, this);
         }
     }
-    if (d.rev > 8) {
-        mTextureOwner.Load(d.stream, true, NULL);
+    if (gRev > 8) {
+        mTextureOwner.Load(bs, true, NULL);
     }
     if (!mTextureOwner) {
         mTextureOwner = this;
     }
-    if (d.rev > 0xa) {
-        d >> mMonospace;
+    if (gRev > 0xa) {
+        bs >> mMonospace;
     }
-    if (d.rev > 0xe) {
-        d >> mPacked;
+    if (gRev > 0xe) {
+        bs >> mPacked;
     }
-    if (d.rev > 0xc) {
+    if (gRev > 0xc) {
         int bw, bh;
-        d.stream >> bw >> bh;
+        bs >> bw >> bh;
         RndTex *validTex = ValidTexture();
         if (validTex) {
             if (bw && validTex->Width()) {
@@ -423,19 +431,19 @@ BEGIN_LOADS(RndFont)
             }
         }
     }
-    if (d.rev > 0xd) {
-        d.stream >> mTexCellSize;
-        if (d.rev < 0x11) {
+    if (gRev > 0xd) {
+        bs >> mTexCellSize;
+        if (gRev < 0x11) {
             for (int i = 0; i < 0x100; i++) {
                 CharInfo &info = mCharInfoMap[i];
-                d.stream >> info.mU;
-                d.stream >> info.mV;
-                d.stream >> info.mCharWidth;
+                bs >> info.mU;
+                bs >> info.mV;
+                bs >> info.mCharWidth;
                 if (info.mCharWidth < 0) {
                     info.mCharWidth = 0;
                 }
-                if (d.rev > 0xe) {
-                    d.stream >> info.mAdvance;
+                if (gRev > 0xe) {
+                    bs >> info.mAdvance;
                 } else {
                     info.mAdvance = info.mCharWidth;
                 }
@@ -445,15 +453,15 @@ BEGIN_LOADS(RndFont)
             }
         } else {
             unsigned int count;
-            d.stream >> count;
+            bs >> count;
             for (unsigned int i = 0; i < count; i++) {
                 unsigned short keyChar;
-                d.stream >> keyChar;
+                bs >> keyChar;
                 CharInfo &info = mCharInfoMap[keyChar];
-                d.stream >> info.mU;
-                d.stream >> info.mV;
-                d.stream >> info.mCharWidth;
-                d.stream >> info.mAdvance;
+                bs >> info.mU;
+                bs >> info.mV;
+                bs >> info.mCharWidth;
+                bs >> info.mAdvance;
             }
         }
     } else {
@@ -463,16 +471,16 @@ BEGIN_LOADS(RndFont)
     mCharInfoMap[0x20];
     mCharInfoMap[0xa0];
     mCharInfoMap[0xa0] = mCharInfoMap[0x20];
-    if (d.rev < 0x10) {
+    if (gRev < 0x10) {
         std::vector<KernInfo> kernInfos;
         GetKerning(kernInfos);
         SetKerning(kernInfos);
         MILO_LOG("NOTIFY: %s is old version, resave file\n", PathName(this));
     }
-    if (d.rev > 0x10) {
-        mNextFont.Load(d.stream, true, NULL);
+    if (gRev > 0x10) {
+        mNextFont.Load(bs, true, NULL);
     }
-END_LOADS
+}
 
 void RndFont::UpdateChars() {
     if (mPacked) {

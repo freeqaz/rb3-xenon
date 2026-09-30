@@ -237,7 +237,7 @@ public:
     void SetKerning(const std::vector<RndFont::KernInfo> &, RndFont *);
     Entry *Find(unsigned short, unsigned short);
     void Save(BinStream &);
-    void Load(BinStreamRev &, RndFont *);
+    void Load(BinStream &, RndFont *);
     bool Valid(const RndFont::KernInfo &, RndFont *);
 
     int Key(unsigned short us0, unsigned short us2) {

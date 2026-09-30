@@ -1,3 +1,12 @@
+// Retail's Load inlines its owner-only ObjPtr ctors (ObjPtr<BandCamShot>,
+// 2x ObjPtr<EventTrigger>) in {vptr-lis, mOwner, mObject, vptr-addi,
+// vptr-store} order -- the DEFER_OWNER one-arg shape (obj/Object.h). Target's
+// ctor keeps a real `bl` to ObjPtr<RndEnviron>'s two-arg ctor (fn_822B0F08),
+// so that site is spelled two-arg in BandCamShot.h. A TU-wide
+// RB3_OBJPTR_FORCEINLINE_CTOR would inline it too (Target ctor 100 -> 44.9).
+#define RB3_OBJPTR_INLINE_OWNER_CTOR
+#define RB3_TU_OBJPTR_DEFER_OWNER
+
 #include "bandobj/BandCamShot.h"
 #include "char/Character.h"
 #include "char/CharDriver.h"
@@ -29,8 +38,14 @@
 #include "utl/Messages2.h"
 #include <cfloat>
 
-static unsigned short gRev = 0;
+// Retail (Load 0x822B7EB8) reads both rev words through ONE base register at
+// offsets 0/4 (lbl_82CBCE24: altRev+0, rev+4), while operator>>(Target) --
+// which touches only rev -- addresses rev as its own symbol (lis + lhz @l).
+// Two separate internal-linkage statics give exactly that; a struct pair
+// (the BandButton.cpp lever) regresses operator>> to addi + lhz 4(base).
+// Declaration order is the .bss order: altRev must come first.
 static unsigned short gAltRev = 0;
+static unsigned short gRev = 0;
 
 std::list<BandCamShot::TargetCache> BandCamShot::sCache;
 BandCamShot *gBandCamShotOwner;
@@ -203,7 +218,8 @@ BinStream &operator>>(BinStream &bs, OldTrigger &o) {
     return bs;
 }
 
-EventAnim *MakeEventAnim(BandCamShot *shot) {
+// No retail address: inlined at both call sites in Load.
+__forceinline EventAnim *MakeEventAnim(BandCamShot *shot) {
     EventAnim *anim = Hmx::Object::New<EventAnim>();
     anim->SetName(
         MakeString("%s_trigs.evntanm", FileGetBase(shot->Name())), shot->Dir()
@@ -217,7 +233,7 @@ BEGIN_LOADS(BandCamShot)
     if (gRev > 4)
         LOAD_SUPERCLASS(CamShot)
     bs >> mTargets;
-    if (gRev >= 2 && gRev <= 18) {
+    if (gRev > 1 && gRev < 0x13) {
         ObjPtr<BandCamShot> shotPtr(this);
         bs >> shotPtr;
         if (shotPtr)
@@ -227,19 +243,16 @@ BEGIN_LOADS(BandCamShot)
         bs >> mZeroTime;
     if (gRev <= 4)
         LOAD_SUPERCLASS(CamShot)
-    if (gRev == 0xD) {
-        bool b;
-        bs >> b;
-        mPS3PerPixel = b;
-    }
+    if (gRev == 0xD)
+        bs >> mPS3PerPixel;
     EventAnim *anim = nullptr;
-    if (gRev >= 15 && gRev <= 28) {
+    if (gRev > 0xE && gRev < 0x1D) {
         std::vector<OldTrigger> trigs;
         bs >> trigs;
         if (trigs.size() != 0) {
             anim = MakeEventAnim(this);
             ObjList<EventAnim::KeyFrame> &keys = anim->mKeys;
-            for (int i = 0; i < (int)trigs.size(); i++) {
+            for (int i = 0; i < trigs.size(); i++) {
                 ObjList<EventAnim::EventCall> *calls;
                 if (trigs[i].frame == 0) {
                     calls = &anim->mStart;
@@ -255,7 +268,7 @@ BEGIN_LOADS(BandCamShot)
             }
         }
     }
-    if (gRev >= 16 && gRev <= 28) {
+    if (gRev > 0xF && gRev < 0x1D) {
         ObjPtr<EventTrigger> trig1(this);
         ObjPtr<EventTrigger> trig2(this);
         bs >> trig1;
@@ -270,10 +283,14 @@ BEGIN_LOADS(BandCamShot)
                 anim->mStart.back().mEvent = trig1;
             }
             if (trig2) {
+                // Retail (0x822B7EB8) fills the END call from trig1, not trig2:
+                // the block reads 0x78(r31) -- the first-loaded ObjPtr's object
+                // -- for both mDir and mEvent. rb3-Wii's text says trig2;
+                // retail's bytes win, so the RB3 behaviour is kept.
                 ObjList<EventAnim::EventCall> &end = anim->mEnd;
                 end.push_back();
-                anim->mEnd.back().mDir = trig2->Dir();
-                anim->mEnd.back().mEvent = trig2;
+                anim->mEnd.back().mDir = trig1->Dir();
+                anim->mEnd.back().mEvent = trig1;
             }
         }
     }
@@ -283,17 +300,17 @@ BEGIN_LOADS(BandCamShot)
     }
     if (gRev > 0x12)
         bs >> mNextShots;
-    if (gRev >= 20 && gRev <= 30) {
+    if (gRev > 0x13 && gRev < 0x1F) {
         int i;
         bs >> i;
     }
-    if (gRev >= 23 && gRev <= 28) {
+    if (gRev > 0x16 && gRev < 0x1D) {
         bool reset;
         bs >> reset;
         if (anim)
             anim->SetResetStart(reset);
     }
-    if (gRev == 0x1C)
+    if (gRev > 0x1B && gRev < 0x1D)
         bs >> mAnims;
     if (anim)
         mAnims.push_back(anim);
@@ -861,6 +878,8 @@ DataNode BandCamShot::OnListAllNextShots(const DataArray *da) {
 // Guarded so it stays inert when BandCamShot.cpp is itself transitively
 // #include'd as a scatter-owner (HamCamShot's DC3 hamobj headers define
 // Difficulty/PracticeSection which collide with band3/game in such a host TU).
+#undef gRev
+#undef gAltRev
 #ifndef SW_SCATTER_OWNER_INCLUDE
 #define gRev gRev_HamCamShot
 #define gAltRev gAltRev_HamCamShot

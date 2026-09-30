@@ -16,8 +16,11 @@ class BandCamShot : public CamShot {
 public:
     struct Target {
         // (retail mangles this `UTarget@BandCamShot@@` => struct, not class)
+        // mEnvOverride spelled two-arg: retail calls ObjPtr<RndEnviron>'s ctor
+        // out of line here (fn_822B0F08) even though BandCamShot.cpp inlines its
+        // owner-only ObjPtr ctors. Identical codegen in every other TU.
         Target(Hmx::Object *o)
-            : mFastForward(0), mEnvOverride(o), mForceLod(-1), mTeleport(1), mReturn(1),
+            : mFastForward(0), mEnvOverride(o, nullptr), mForceLod(-1), mTeleport(1), mReturn(1),
               mSelfShadow(1), unk1(0), unk2(1), mHide(0) {
             mXfm.Reset();
         }
