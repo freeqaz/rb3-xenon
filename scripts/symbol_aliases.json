@@ -88111,6 +88111,15 @@
     "?clear@?$_List_base@VBoneState@BandCharacter@@V?$StlNodeAlloc@VBoneState@BandCharacter@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ"
    ],
    "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 79, row addr 0x827e1708). \"ours\" spelling ?clear@?$_List_base@VBoneState@BandCharacter@@V?$StlNodeAlloc@VBoneState@BandCharacter@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ is a template/spelling twin of survivor ?clear@?$_List_base@VSetlistArtRecord@MusicLibraryNetSetlists@@V?$StlNodeAlloc@VSetlistArtRecord@MusicLibraryNetSetlists@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ at retail address 0x827e1708. FLAT T1 PROVEN directly -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 named relocation(s) matched at FLAT T1 (no chase recursion required), 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 276 B (276 B honest) across ['default/BandCharacter'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md."
+  },
+  {
+   "name": "4vector_VVector3",
+   "address": "0x82440830",
+   "survivor": "??4?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+   "folded": [
+    "??4?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z"
+   ],
+   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 80, row addr 0x82440830). \"ours\" spelling ??4?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z is a template/spelling twin of survivor ??4?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z at retail address 0x82440830. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 SLOT-FOLD-OK, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 276 B (276 B honest) across ['default/LightPreset'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md."
   }
  ]
 }
