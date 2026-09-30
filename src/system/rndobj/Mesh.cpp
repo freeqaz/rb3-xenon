@@ -329,7 +329,7 @@ static struct {
 #define gMeshAltRev gRevs_Mesh.altRev
 #define gMeshRev gRevs_Mesh.rev
 
-BinStreamRev &operator>>(BinStreamRev &d, RndMesh::Vert &vert) {
+BinStream &operator>>(BinStream &d, RndMesh::Vert &vert) {
     d >> vert.pos;
     float y, z;
     if (gMeshRev != 10 && gMeshRev < 0x17) {
@@ -364,7 +364,7 @@ BinStreamRev &operator>>(BinStreamRev &d, RndMesh::Vert &vert) {
     return d;
 }
 
-BinStream &operator>>(BinStreamRev &d, RndMesh::Face &face) {
+BinStream &operator>>(BinStream &d, RndMesh::Face &face) {
     d >> face.v1;
     d >> face.v2;
     d >> face.v3;
@@ -448,23 +448,22 @@ BEGIN_LOADS(RndMesh)
     bs >> revs;
     gMeshRev = getHmxRev(revs);
     gMeshAltRev = getAltRev(revs);
-    BinStreamRev &d = (BinStreamRev &)bs;
     if (gMeshRev > 0x19) {
-        Hmx::Object::Load(d);
+        Hmx::Object::Load(bs);
     }
-    RndTransformable::Load(d);
-    RndDrawable::Load(d);
+    RndTransformable::Load(bs);
+    RndDrawable::Load(bs);
     if (gMeshRev < 15) {
         ObjPtrList<Hmx::Object> oList(this);
         int dummy;
-        d >> dummy;
-        d >> oList;
+        bs >> dummy;
+        bs >> oList;
     }
     int i22 = 0;
     if (gMeshRev < 0x14) {
         int ib8, ie8;
-        d >> ib8;
-        d >> ie8;
+        bs >> ib8;
+        bs >> ie8;
         if (ib8 == 0 || ie8 == 0) {
             i22 = 0;
         } else if (ib8 == 1) {
@@ -477,17 +476,17 @@ BEGIN_LOADS(RndMesh)
     }
     if (gMeshRev < 3) {
         int dummy;
-        d >> dummy;
+        bs >> dummy;
     }
-    d >> mMat;
+    bs >> mMat;
     if (gMeshRev > 0x1A && gMeshRev < 0x1C) {
         char buf[0x80];
-        d.ReadString(buf, 0x80);
+        bs.ReadString(buf, 0x80);
         if (!mMat && buf[0] != '\0') {
             mMat = LookupOrCreateMat(buf, Dir());
         }
     }
-    d >> mGeomOwner;
+    bs >> mGeomOwner;
     if (!mGeomOwner) {
         mGeomOwner = this;
     }
@@ -496,83 +495,83 @@ BEGIN_LOADS(RndMesh)
     }
     if (gMeshRev < 0xD) {
         ObjOwnerPtr<RndMesh> mesh(this);
-        d >> mesh;
+        bs >> mesh;
         if (mesh != mGeomOwner) {
             MILO_NOTIFY("Combining face and vert owner of %s", Name());
         }
     }
     if (gMeshRev < 0xF) {
         ObjPtr<RndTransformable> trans(this);
-        d >> trans;
+        bs >> trans;
         SetTransParent(trans, false);
         SetTransConstraint((Constraint)2, nullptr, false);
     }
     if (gMeshRev < 0xE) {
         ObjPtr<RndTransformable> trans1(this);
         ObjPtr<RndTransformable> trans2(this);
-        d >> trans1 >> trans2;
+        bs >> trans1 >> trans2;
     }
     if (gMeshRev < 3) {
         Vector3 v;
-        d >> v;
+        bs >> v;
     }
     if (gMeshRev < 0xF) {
         Sphere s;
-        d >> s;
+        bs >> s;
         SetSphere(s);
     }
     if (gMeshRev > 4 && gMeshRev < 8) {
         bool b;
-        d >> b;
+        bs >> b;
     }
     if (gMeshRev > 5 && gMeshRev < 0x15) {
         String str;
         int x;
-        d >> str;
-        d >> x;
+        bs >> str;
+        bs >> x;
     }
     if (gMeshRev > 0xF) {
-        d >> mMutable;
+        bs >> mMutable;
     } else if (gMeshRev > 0xB) {
         bool b;
-        d >> b;
+        bs >> b;
         mMutable = b ? 31 : 0;
     }
     if (gMeshRev > 0x11) {
-        d >> (int &)mVolume;
+        bs >> (int &)mVolume;
     }
     if (gMeshRev > 0x12) {
         RELEASE(mBSPTree);
-        d >> mBSPTree;
+        bs >> mBSPTree;
     }
     if (gMeshRev > 6 && gMeshRev < 8) {
         bool b;
-        d >> b;
+        bs >> b;
     }
     if (gMeshRev > 8 && gMeshRev < 0xB) {
         int x;
-        d >> x;
+        bs >> x;
     }
-    LoadVertices(d);
-    if (d.Cached()) {
-        CachedRead(d, mFaces);
+    LoadVertices(bs);
+    if (bs.Cached()) {
+        CachedRead(bs, mFaces);
     } else {
-        d >> mFaces;
+        bs >> mFaces;
     }
     if (gMeshRev > 4 && gMeshRev < 0x18) {
         int count;
         unsigned short s1, s2;
-        d >> count;
+        bs >> count;
         for (; count != 0; count--) {
-            d >> s1;
-            d >> s2;
+            bs >> s1;
+            bs >> s2;
         }
     }
     if (gMeshRev > 0x17) {
-        if (d.Cached()) {
-            CachedRead(d, mPatches);
+        if (bs.Cached()) {
+            CachedRead(bs, mPatches);
         } else {
-            d >> mPatches;
+            bs >> mPatches;
         }
     } else if (gMeshRev > 0x15) {
         mPatches.clear();
@@ -582,17 +581,17 @@ BEGIN_LOADS(RndMesh)
         for (; count != 0; count--) {
             std::vector<unsigned short> usvec;
             std::vector<unsigned int> uivec;
-            d >> ui >> usvec >> uivec;
+            bs >> ui >> usvec >> uivec;
             mPatches.push_back(ui);
         }
     } else if (gMeshRev > 0x10)
-        d >> mPatches;
+        bs >> mPatches;
     if (gMeshRev > 0x1C) {
-        d >> mBones;
+        bs >> mBones;
         int max = MaxBones();
         if (mBones.size() > max) {
             MILO_NOTIFY(
-                "%s: exceeds bone limit (%d of %d)",
+                "%s: exceeds bone limit (%d of %bs)",
                 PathName(this),
                 mBones.size(),
                 MaxBones()
@@ -601,7 +600,7 @@ BEGIN_LOADS(RndMesh)
         }
     } else if (gMeshRev > 0xD) {
         ObjPtr<RndTransformable> trans(this);
-        d >> trans;
+        bs >> trans;
         if (trans) {
             mBones.resize(4);
             if (gMeshRev > 0x16) {
@@ -644,13 +643,13 @@ BEGIN_LOADS(RndMesh)
     RemoveInvalidBones();
     if (gMeshRev > 0 && gMeshRev < 4) {
         std::vector<std::vector<unsigned short> > usvec;
-        d >> usvec;
+        bs >> usvec;
     }
     if (gMeshRev == 0) {
         bool bd4;
         int ic0, ic4, ic8, icc;
-        d >> bd4 >> ic0 >> ic4 >> ic8;
-        d >> icc;
+        bs >> bd4 >> ic0 >> ic4 >> ic8;
+        bs >> icc;
     }
     if (gMeshRev == 0x12) {
         if (mGeomOwner == this) {
@@ -670,7 +669,7 @@ next:
         SetZeroWeightBones();
     }
     if (gMeshRev > 0x23) {
-        d >> mKeepMeshData;
+        bs >> mKeepMeshData;
     }
     if (gMeshRev < MESH_REV_SEP_COLOR && IsSkinned()) {
         for (auto it = mVerts.begin(); it != mVerts.end(); ++it) {
@@ -681,7 +680,7 @@ next:
         }
     }
     if (gMeshRev > 0x25) {
-        d >> mHasAOCalc;
+        bs >> mHasAOCalc;
     }
     Sync(0xBF);
 END_LOADS
@@ -1747,7 +1746,7 @@ void FillCompressedVertex(CompressedVertex_Xbox &compressed, const RndMesh::Vert
         + (int)vert.boneIndices[0];
 }
 
-void RndMesh::LoadVertices(BinStreamRev &d) {
+void RndMesh::LoadVertices(BinStream &d) {
     int count;
     d.ReadEndian(&count, 4);
     bool b58;
