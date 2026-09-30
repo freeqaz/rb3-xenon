@@ -655,10 +655,14 @@ BandList.cpp:
 	.pdata      start:0x821FE320 end:0x821FE330
 	.pdata      start:0x821FE330 end:0x821FE338
 	.pdata      start:0x821FE338 end:0x821FE360
+	.pdata      start:0x821FE360 end:0x821FE368
 	.pdata      start:0x821FE368 end:0x821FE370
+	.pdata      start:0x821FE370 end:0x821FE380
 	.pdata      start:0x821FE380 end:0x821FE3D0
 	.pdata      start:0x821FE3D0 end:0x821FE3D8
 	.pdata      start:0x821FE3D8 end:0x821FE3E8
+	.pdata      start:0x821FE3E8 end:0x821FE420
+	.pdata      start:0x821FE428 end:0x821FE430
 	.pdata      start:0x821FE430 end:0x821FE440
 	.pdata      start:0x821FE440 end:0x821FE448
 	.pdata      start:0x821FE448 end:0x821FE458
@@ -694,10 +698,14 @@ BandList.cpp:
 	.text       start:0x8233BA00 end:0x8233BAE0
 	.text       start:0x8233BAE0 end:0x8233BBAC
 	.text       start:0x8233BBB0 end:0x8233BE48
+	.text       start:0x8233BE48 end:0x8233BE9C
 	.text       start:0x8233BEA0 end:0x8233BEF4
+	.text       start:0x8233BEF4 end:0x8233BF68
 	.text       start:0x8233BF68 end:0x8233C480
 	.text       start:0x8233C480 end:0x8233C4E0
 	.text       start:0x8233C4E0 end:0x8233C850
+	.text       start:0x8233C850 end:0x8233CAB8
+	.text       start:0x8233CB58 end:0x8233CC00
 	.text       start:0x8233CC00 end:0x8233CCB0
 	.text       start:0x8233CCB0 end:0x8233CD20
 	.text       start:0x8233CD20 end:0x8233CED8
@@ -1372,8 +1380,7 @@ FileChecksum.cpp:
 	.text       start:0x824EDF08 end:0x824EE01C
 
 Rot.cpp:
-	.pdata      start:0x821FE3E8 end:0x821FE420
-	.pdata      start:0x821FE420 end:0x821FE430
+	.pdata      start:0x821FE420 end:0x821FE428
 	.pdata      start:0x821FEB90 end:0x821FEB98
 	.pdata      start:0x821FF938 end:0x821FF948
 	.pdata      start:0x821FF9D8 end:0x821FF9E8
@@ -1386,8 +1393,7 @@ Rot.cpp:
 	.pdata      start:0x82215C70 end:0x82215CA0
 	.pdata      start:0x82215CA0 end:0x82215D28
 	.pdata      start:0x82215D38 end:0x82215D40
-	.text       start:0x8233C850 end:0x8233CAB8
-	.text       start:0x8233CAB8 end:0x8233CC00
+	.text       start:0x8233CAB8 end:0x8233CB58
 	.text       start:0x82345520 end:0x823455B0
 	.text       start:0x823455B0 end:0x82345634
 	.text       start:0x823556E0 end:0x82355758
@@ -4203,7 +4209,6 @@ CharLipSync.cpp:
 	.pdata      start:0x821F86A0 end:0x821F86A8
 	.pdata      start:0x821F86A8 end:0x821F86B0
 	.pdata      start:0x821F8888 end:0x821F8890
-	.pdata      start:0x821FE360 end:0x821FE368
 	.pdata      start:0x821FEDB0 end:0x821FEDC0
 	.pdata      start:0x821FEE50 end:0x821FEE58
 	.pdata      start:0x822011C8 end:0x822011D8
@@ -4228,7 +4233,6 @@ CharLipSync.cpp:
 	.text       start:0x822DFAC0 end:0x822DFCAC
 	.text       start:0x822DFCAC end:0x822DFCD8
 	.text       start:0x822E1238 end:0x822E12B0
-	.text       start:0x8233BE48 end:0x8233BE9C
 	.text       start:0x82348E20 end:0x82348FC4
 	.text       start:0x82349B10 end:0x82349B78
 	.text       start:0x8236AE28 end:0x8236AEA8
@@ -6419,7 +6423,6 @@ MakeString.cpp:
 Song.cpp:
 	.pdata      start:0x821F42D0 end:0x821F4300
 	.pdata      start:0x821FB660 end:0x821FB670
-	.pdata      start:0x821FE370 end:0x821FE380
 	.pdata      start:0x82242420 end:0x82242548
 	.pdata      start:0x82242568 end:0x82242570
 	.pdata      start:0x82242570 end:0x822425D0
@@ -6436,7 +6439,6 @@ Song.cpp:
 	.text       start:0x8230E604 end:0x8230E608
 	.text       start:0x8230E654 end:0x8230E658
 	.text       start:0x8230EBE0 end:0x8230EC88
-	.text       start:0x8233BEF4 end:0x8233BF68
 	.text       start:0x827C55E8 end:0x827C668C
 	.text       start:0x827C6AA8 end:0x827C6B38
 	.text       start:0x827C6B38 end:0x827C70F0
