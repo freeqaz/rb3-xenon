@@ -10,7 +10,10 @@
 #include "utl/Symbol.h"
 #include "utl/Symbols.h"
 
-CurrentOutfitProvider::CurrentOutfitProvider() { unk20.push_back(none); }
+CurrentOutfitProvider::CurrentOutfitProvider() {
+    static Symbol none("none");
+    unk20.push_back(none);
+}
 CurrentOutfitProvider::~CurrentOutfitProvider() {}
 
 void CurrentOutfitProvider::Update() {

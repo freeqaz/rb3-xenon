@@ -7,7 +7,7 @@
 class CampaignGoalsLeaderboardPanel : public Leaderboard::Callback, public UIPanel {
 public:
     CampaignGoalsLeaderboardPanel();
-    virtual ~CampaignGoalsLeaderboardPanel() {}
+    // W16-HR: implicit dtor -- retail's ??1 resets no derived vptrs (fixable-declarations.md)
     virtual void EnumerationStarted();
     virtual void ResultSuccess(bool, bool, bool);
     virtual void ResultFailure();
