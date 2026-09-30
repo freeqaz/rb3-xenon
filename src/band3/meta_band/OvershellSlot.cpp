@@ -1000,6 +1000,10 @@ void OvershellSlot::CancelLinkingCode() {
 
 DataNode OvershellSlot::OnMsg(const RockCentralOpCompleteMsg &msg) {
     MILO_ASSERT(mState->GetStateID() == kState_LinkingCode, 0x777);
+    // Retail fn_825DFDB8: function-local statics; no unk81 reset.
+    static Symbol waiting("waiting");
+    static Symbol success("success");
+    static Symbol code("code");
     mState->SetProperty(waiting, 0);
     mState->SetProperty(success, msg.Success());
     if (msg.Success()) {
@@ -1010,7 +1014,6 @@ DataNode OvershellSlot::OnMsg(const RockCentralOpCompleteMsg &msg) {
     }
     mLinkingCodeResultList.Clear();
     Update();
-    unk81 = false;
     return 1;
 }
 
