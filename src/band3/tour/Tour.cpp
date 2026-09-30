@@ -463,8 +463,9 @@ void Tour::UpdateProgressWithCareerData() {
 }
 
 DataNode Tour::OnMsg(const RemoteLeaderLeftMsg& msg) {
-    if (m_pTourPerformer) {
-        MILO_ASSERT(!m_pTourPerformer->IsLocal(), 0x38b);
+    TourPerformerImpl *pPerformer = m_pTourPerformer;
+    if (pPerformer) {
+        MILO_ASSERT(!pPerformer->IsLocal(), 0x38b);
         TheBandUI.TriggerDisbandEvent(BandUI::kNoLeader);
     }
     return 1;
