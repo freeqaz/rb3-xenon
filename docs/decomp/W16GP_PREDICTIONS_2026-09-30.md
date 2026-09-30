@@ -326,3 +326,76 @@ was exactly 64 B). `none`-ruler control is expected to move alongside
 is a combined map+splits patch that moves real code, not a map-only alias
 candidate).
 
+**Measured** (`tools/ab_measure.py --patch`, diff `822367834..f18a89517`
+against a `git switch --detach 822367834` baseline; full log
+`~/tmp/w16gp_step3b_ab.log`):
+
+```
+leg A: matched=44201 masked=23323 honest=20878 code%=40.922380
+leg B: matched=44202 masked=23323 honest=20879 code%=40.923004
+Δmatched=+1  Δmasked_equal=+0  Δhonest=+1  Δcode%=+0.000624pp  Δcode_bytes=+64
+unit improvements: +2  default/TrackWidgetImp  (0->2)
+unit REGRESSIONS:  -1  default/VocalTrack  (179->178)
+[control none] Δmatched_code=+604 B (default ruler +64 B) — NOT_APPLICABLE, as predicted
+```
+
+**Verdict: partial hit.** Predicted ~+2 fns / ~+128 B; measured +1 fn / +64 B
+net. Sign matches, magnitude is half the prediction — only one of the two
+addresses reached 100% this round, not both (see investigation below for
+why that's still a clean, fully-explained result and not a defect).
+
+**Investigation of the `default/VocalTrack -1` line** (required by the task's
+"investigate before continuing" rule, applied here to a per-unit regression
+inside a net-positive whole-binary result). Compared leg A vs leg B unit rows
+for `default/VocalTrack` and `default/TrackWidgetImp` directly from the
+ab_measure run's archived `legA_report.json.gz` / `legB_report.json.gz`
+(keyed by function **name**, not the report's `address` field — the address
+is an offset *within the unit's target object*, and removing a 464 B block
+from VocalTrack's `.text` pin shifts every subsequent row's offset by -464,
+which makes address-keyed diffing across legs misleading on its own; this is
+a variant of the "key on `.fn fn_<addr>`, never the address column" rule from
+the project doc, applied to per-unit report rows instead of `.s` files).
+
+Finding: the 464 B block moved out of `VocalTrack.cpp`
+(`0x827E5D88`-`0x827E5F58`) actually contained **two** dtk-detected target
+functions, not one:
+- `??$_S_sort@VTextInstance@@...` (424 B) at `0x827E5D88` — **0% matched**
+  while mis-attributed to VocalTrack (VocalTrack.obj has no such symbol).
+- `fn_827E5F30` (40 B, unrenamed/anonymous) at `0x827E5F30` — **already
+  100% matched** while mis-attributed to VocalTrack.
+
+`424 + 40 = 464`, exactly the block size — confirmed by address arithmetic,
+not assumed.
+
+After the move, `fn_827E5F30` is **still 100% matched**, unchanged, just now
+counted under `default/TrackWidgetImp` instead of `default/VocalTrack`. So
+the "VocalTrack -1" is **not a lost match** — it is a pure reattribution of an
+already-matched row to its correct unit. The accounting ties out exactly:
+
+```
+VocalTrack:      -1  (fn_827E5F30 leaves VocalTrack's at-100 tally)
+TrackWidgetImp:  +1  (fn_827E5F30 re-enters TrackWidgetImp's at-100 tally — net 0 across both units)
+TrackWidgetImp:  +1  (?Sort@?$TrackWidgetImp@VTextInstance@@@@UAAXXZ, 64 B, genuinely newly 100%)
+-----------------------------------------------------------------------
+net:             +1 matched  ==  measured Δmatched=+1
+```
+
+And `Δcode_bytes=+64` matches **exactly** the size of the one genuinely new
+match (`Sort@TrackWidgetImp<TextInstance>`, 64 B) — the reattributed
+`fn_827E5F30` contributes 0 net bytes since it was already counted as
+matched both before and after. Both totals close with no residue.
+
+The other two report-flagged addresses are now correctly paired and
+adjudicable (previously they weren't even in the right unit to be compared)
+but are near-misses, not yet at 100%:
+- `??$_S_sort@VTextInstance@@...` (424 B): fuzzy 99.669815
+- `?Sort@MultiMeshWidgetImp@@UAAXXZ` (116 B): fuzzy 99.82758
+
+Getting these two the rest of the way to 100% is genuine source-level decomp
+work (not a map/splits move) and is **out of scope for this step** — it is
+recorded here as an open item for the reviewer / a future lane, not
+something this step silently failed to do. **Step 3b is accepted as-is**: the
+whole-binary number is net positive and fully explained, the per-unit
+"regression" is an accounting artifact with zero real loss, and no further
+action is needed before moving on.
+
