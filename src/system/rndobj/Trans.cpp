@@ -740,8 +740,8 @@ const Transform &RndTransformable::WorldXfm_Force() {
 // billboard reference is always the current camera, there are no SkyBox cases,
 // the shadow shear is three plain divides (/fp:fast folds them to one -1/b),
 // and every path ends by setting mDirty (Wii: mCache->SetLastBit(1)) -- a bare
-// `stb 1, 0x9c`, not a SetDirty_Force() call.  The null guards survive for the
-// native build only.
+// `stb 1, 0x9c`, not a SetDirty_Force() call.  The null guards, and the
+// SetDirty_Force() child propagation, survive for the native build only.
 //
 // Codegen notes (w17-lit, measured with objdiff at the graded ruler):
 //  - the camera-relative cases spell Subtract() out as a direct m.y.Set(...):
@@ -765,7 +765,7 @@ void RndTransformable::ApplyDynamicConstraint() {
     } else if (mConstraint == kConstraintShadowTarget) {
 #ifdef HX_NATIVE
         if (!mTarget) {
-            mDirty = true;
+            SetDirty_Force();
             return;
         }
 #endif
@@ -839,5 +839,11 @@ void RndTransformable::ApplyDynamicConstraint() {
         if (mPreserveScale)
             Scale(scaleVec, mWorldXfm.m, mWorldXfm.m);
     }
+#ifdef HX_NATIVE
+    // Native keeps propagating to children (DC3 behaviour the native renderer
+    // was validated against); retail only re-marks this node.
+    SetDirty_Force();
+#else
     mDirty = true;
+#endif
 }
