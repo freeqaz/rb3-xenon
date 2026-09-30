@@ -715,9 +715,9 @@ void GemManager::SetupGems(int startTick) {
                     newGem.mInArpeggio = true;
                 }
             } else {
-                int searchTick = gem.mTick;
-                if (gem.mTick == lastArpeggioEndTick) {
-                    searchTick = gem.mTick + 1;
+                int searchTick = gem.mTick + 1;
+                if (gem.mTick != lastArpeggioEndTick) {
+                    searchTick = gem.mTick;
                 }
                 if (TheSongDB->GetPhraseExtents(
                         (BeatmatchPhraseType)4, trackNum, searchTick, phraseStart, phraseEnd
@@ -732,12 +732,11 @@ void GemManager::SetupGems(int startTick) {
                         if (TheTrainerPanel && TheGame->mProperties.mInTrainer) {
                             int loopTick = GetLoopTick(phraseStart);
                             int offset = loopTick - TheTrainerPanel->GetCurrentStartTick();
-                            int adjustedEnd =
-                                phraseStart - offset +
-                                TheTrainerPanel->GetLoopTicks(TheTrainerPanel->GetCurrSection());
-                            if (adjustedEnd < phraseEnd) {
-                                phraseEnd = adjustedEnd;
-                            }
+                            phraseEnd = Min(
+                                TheTrainerPanel->GetLoopTicks(TheTrainerPanel->GetCurrSection())
+                                    + (phraseStart - offset),
+                                phraseEnd
+                            );
                         }
                         ArpeggioPhrase phrase(phraseStart, phraseEnd, i);
                         mArpeggioPhrases.push_back(phrase);
@@ -751,13 +750,13 @@ void GemManager::SetupGems(int startTick) {
         }
 
         bool isImmediate = false;
-        if (i > 0) {
+        if ((int)i > 0) {
             const GameGem &prevGem = gems[i - 1];
-            isImmediate = gem.mMs <
-                (1000.0f * mTrackDir->ViewTimeSeconds()) + (prevGem.mMs + (float)prevGem.mDurationMs);
+            float viewMs = mTrackDir->ViewTimeSeconds() * 1000.0f;
+            isImmediate = gem.mMs < prevGem.mMs + (float)prevGem.mDurationMs + viewMs;
         }
         int rgChordID = gem.GetRGChordID();
-        if (rgChordID == unk130 && gem.IsRealGuitarChord() && isImmediate) {
+        if ((unsigned int)rgChordID == unk130 && gem.IsRealGuitarChord() && isImmediate) {
             newGem.mIsRepeatChord = true;
             if (!gem.IsMuted() && gem.mTick >= lastArpeggioEndTick) {
                 int endTick = gem.mTick;
