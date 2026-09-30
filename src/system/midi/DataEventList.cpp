@@ -166,6 +166,8 @@ void DataEventList::InsertEvent(float start, float end, const DataNode &node, in
             mTemplate.Msg()->Node(mElement) = node;
             MILO_ASSERT(mCompType == kDataSymbol || mCompType == kDataInt, 0x43);
         } else if (node.Type() != mCompType) {
+#ifdef HX_NATIVE
+            // Retail compiles the notify (and its String/Print) out entirely.
             String str;
             node.Print(str, false);
             MILO_NOTIFY(
@@ -173,6 +175,7 @@ void DataEventList::InsertEvent(float start, float end, const DataNode &node, in
                 str,
                 (char *)(mCompType == kDataInt ? "kDataInt" : "kDataSymbol")
             );
+#endif
             return;
         }
         mComps.insert(mComps.begin() + idx, event);
