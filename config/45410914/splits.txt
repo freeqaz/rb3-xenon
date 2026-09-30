@@ -2442,6 +2442,9 @@ CharClipGroup.cpp:
 	.pdata      start:0x82203408 end:0x82203410
 	.pdata      start:0x82203410 end:0x82203420
 	.pdata      start:0x82203420 end:0x82203440
+	.pdata      start:0x82203440 end:0x82203448
+	.pdata      start:0x82203448 end:0x822034C0
+	.pdata      start:0x822034C0 end:0x822034C8
 	.pdata      start:0x822034C8 end:0x82203540
 	.text       start:0x8238DB00 end:0x8238DB64
 	.text       start:0x8238DB68 end:0x8238DBD8
@@ -2460,6 +2463,9 @@ CharClipGroup.cpp:
 	.text       start:0x8238F768 end:0x8238F7CC
 	.text       start:0x8238F7D0 end:0x8238F930
 	.text       start:0x8238F930 end:0x8238FB88
+	.text       start:0x8238FB88 end:0x8238FC50
+	.text       start:0x8238FC50 end:0x823902F0
+	.text       start:0x823902F0 end:0x82390368
 	.text       start:0x82390368 end:0x82390B38
 
 CharClipSet.cpp:
@@ -6198,9 +6204,6 @@ CharEyes.cpp:
 	.pdata      start:0x82202EF0 end:0x82202F30
 	.pdata      start:0x82202F38 end:0x82202F50
 	.pdata      start:0x82202F50 end:0x82202F98
-	.pdata      start:0x82203440 end:0x82203448
-	.pdata      start:0x82203448 end:0x822034C0
-	.pdata      start:0x822034C0 end:0x822034C8
 	.pdata      start:0x82204CC0 end:0x82204CD8
 	.text       start:0x823832D8 end:0x82383428
 	.text       start:0x82383428 end:0x823873F8
@@ -6224,9 +6227,6 @@ CharEyes.cpp:
 	.text       start:0x8238A570 end:0x8238AB44
 	.text       start:0x8238ABA8 end:0x8238ACB0
 	.text       start:0x8238ACB0 end:0x8238B130
-	.text       start:0x8238FB88 end:0x8238FC50
-	.text       start:0x8238FC50 end:0x823902F0
-	.text       start:0x823902F0 end:0x82390368
 	.text       start:0x823AE7A0 end:0x823AE918
 
 SongMetadata.cpp:
