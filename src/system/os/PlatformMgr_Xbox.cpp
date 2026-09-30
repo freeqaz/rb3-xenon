@@ -462,7 +462,11 @@ bool PlatformMgr::CanSeeUserCreatedContent(const OnlineID *oid) const {
 }
 
 bool PlatformMgr::IsGuestOnlineID(const OnlineID *oid) const {
-    return (oid->GetXUID() & 0x00C0000000000000) != 0;
+    // Retail materialises the bool straight into r3 (li 1 / bne / li 0, no
+    // clrlwi), the if/return shape rather than a `!= 0` expression.
+    if (oid->GetXUID() & 0x00C0000000000000)
+        return true;
+    return false;
 }
 
 int PlatformMgr::GetOwnerOfGuest(int padNum) {
