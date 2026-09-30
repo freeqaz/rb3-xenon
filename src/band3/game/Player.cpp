@@ -1119,6 +1119,7 @@ void Player::SetQuarantined(bool b) {
 }
 
 void Player::DeterminePerformanceAwards() {
+    static Symbol performance_awards("performance_awards");
     DataArray *cfg = SystemConfig(performance_awards);
     DataNode &playerNode = DataVariable("player");
     DataNode n30(playerNode);
