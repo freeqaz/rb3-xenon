@@ -293,8 +293,11 @@ int TrackWatcherImpl::NextGemAfter(int gemID, bool timeout) {
 
 int TrackWatcherImpl::ClosestUnplayedGem(float ms, int slot) {
     int idx = mGemList->ClosestMarkerIdx(ms + mSyncOffset);
-    if (Playable(idx) && !mGemList->GetGem(idx).GetPlayed())
-        return idx;
+    if (Playable(idx)) {
+        GameGem &gemgem = mGemList->GetGem(idx);
+        if (!gemgem.GetPlayed())
+            return idx;
+    }
     if (idx + 1 < mGemList->NumGems())
         return idx + 1;
     return idx;

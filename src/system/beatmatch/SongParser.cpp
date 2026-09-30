@@ -2100,14 +2100,15 @@ bool SongParser::HandleRGGemStop(
             return true;
         }
         info.mRGGemsInfo[stringnum].unk18 = tick;
+        SongParser::RGGemInfo *gems = info.mRGGemsInfo;
         for (int i = 0; i < 6; i++) {
-            if (info.mRGGemsInfo[i].mGem.mTick != -1 && info.mRGGemsInfo[i].unk18 == -1)
+            if (gems[i].mGem.mTick != -1 && gems[i].unk18 == -1)
                 allStringsEnded = false;
         }
         if (allStringsEnded) {
             int firstEndTick = -1;
             for (unsigned int i = 0; i < 6; i++) {
-                SongParser::RGGemInfo &cur = info.mRGGemsInfo[i];
+                SongParser::RGGemInfo &cur = gems[i];
                 if (firstEndTick == -1 && cur.mGem.mTick != -1)
                     firstEndTick = cur.unk18;
                 else if (cur.mGem.mTick != -1 && firstEndTick != cur.unk18) {
