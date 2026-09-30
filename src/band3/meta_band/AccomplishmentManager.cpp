@@ -1276,9 +1276,10 @@ void AccomplishmentManager::HandleSetlistCompletedForUser(
     ScoreType scoreType = (ScoreType)pPerformer->GetScoreTypeForUser(u);
     Difficulty userDiff = (Difficulty)u->GetDifficulty();
     if (b) {
+        static Symbol acc_hmxrecommends("acc_hmxrecommends");
         EarnAccomplishmentForProfile(pProfile, acc_hmxrecommends);
     }
-    AccomplishmentProgress &prog = pProfile->AccessAccomplishmentProgress();
+    const AccomplishmentProgress &prog = pProfile->GetAccomplishmentProgress();
     for (std::hash_map<Symbol, Accomplishment *>::iterator it = mAccomplishments.begin();
          it != mAccomplishments.end();
          ++it) {
