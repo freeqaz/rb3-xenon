@@ -1985,13 +1985,7 @@ void GemPlayer::ResetController(bool b1) {
 void GemPlayer::GetPlayerState(PlayerState &state) const {
     int streak = mStats.GetCurrentStreak();
     float whammy = unk358;
-    state.warning = IsInCrowdWarning();
-    state.overdriveReady = false;
-    state.whammy = whammy;
-    state.whammyActive = false;
-    state.phraseState = kPhraseNone;
-    state.fillState = 0;
-    state.streak = streak;
+    state = PlayerState(IsInCrowdWarning(), false, whammy, false, kPhraseNone, 0, streak);
 }
 
 void GemPlayer::UpdateCrowdMeter(float noteScore, int gem_id) {
