@@ -199,38 +199,39 @@ void Debug::Fail(const char *msg, void *v) {
         abort();
     return;
 #endif
-    if (!mNoDebug && !mFailing) {
-        mFailing = true;
-        StackString<256> msgStr(msg);
-        StackString<4096> stackTrace;
-        DataAppendStackTrace(stackTrace);
-        MILO_LOG(stackTrace.c_str());
-        static int heap = MemFindHeap("main");
-        MemPushHeap(heap);
+    // RB3 retail (0x8250F6D0): the heap push brackets everything, mNoDebug only
+    // skips the body, a thread fail parks the thread, a try throws, and the fail
+    // callbacks run once. No stack-trace string and no Modal in this build.
+    static int heap = MemFindHeap("main");
+    MemPushHeap(heap);
+    if (mNoDebug)
+        MemPopHeap();
+    else {
         if (!MainThread()) {
-            CaptureStackTrace(0x32, (StackData *)mFailThreadStack, v);
+            CaptureStackTrace(0x32, mFailThreadStack);
             mFailThreadMsg = msg;
-            MILO_LOG("THREAD-FAIL: %s\n", msgStr);
-            while (true) {
+            MILO_LOG("THREAD-FAIL: %s\n", msg);
+            do {
                 Timer::Sleep(200);
                 PlatformDebugBreak();
-            }
+            } while (true);
         }
-        if (mTry) {
+        if (mTry != 0) {
             mTry--;
             throw msg;
         }
-        FOREACH (it, mFailCallbacks) {
-            (*it)();
+        if (mFailing)
+            MemPopHeap();
+        else {
+            mFailing = true;
+            for (std::list<ExitCallbackFunc *>::iterator it = mFailCallbacks.begin();
+                 it != mFailCallbacks.end();
+                 it++) {
+                (*it)();
+            }
+            mFailCallbacks.clear();
+            MemPopHeap();
         }
-        mFailCallbacks.clear();
-        ModalType t = kModalFail;
-        Modal(t, msgStr.c_str(), v);
-        if (t != kModalFail) {
-            mFailing = false;
-        }
-        MemPopHeap();
-        mFailing = false;
     }
 }
 

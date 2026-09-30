@@ -399,6 +399,8 @@ void LanguageInit() {
     SetSystemLanguage(lang, false);
 }
 
+void CaptureStackTrace(int, unsigned int *) {}
+
 #ifndef HX_NATIVE
 void AppendStackTrace(FixedString &str, void *v) {
     StackData data;
