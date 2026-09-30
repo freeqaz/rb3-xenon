@@ -2208,6 +2208,7 @@ DataNode SaveLoadManager::OnMsg(const RockCentralOpCompleteMsg &) {
 }
 
 DataNode SaveLoadManager::OnMsg(const SigninChangedMsg &) {
+    static Symbol saveload_dialog_event("saveload_dialog_event");
     switch (mState) {
     case kS_AutoloadNoSaveFound_Msg:
     case kS_AutoloadMultipleSavesFound:
@@ -2242,20 +2243,10 @@ DataNode SaveLoadManager::OnMsg(const SigninChangedMsg &) {
         if (!mUser)
             break;
         if (ThePlatformMgr.HasUserSigninChanged(mUser)) {
-            bool dismissed = false;
-            if (TheUIEventMgr->HasActiveDialogEvent()) {
-                if (TheUIEventMgr->CurrentDialogEvent() == saveload_dialog_event) {
-                    dismissed = true;
-                }
-            }
-            if (dismissed) {
+            // Retail fn_82551D80: no notify on this path.
+            if (TheUIEventMgr->HasActiveDialogEvent()
+                && TheUIEventMgr->CurrentDialogEvent() == saveload_dialog_event) {
                 TheUIEventMgr->DismissDialogEvent();
-            } else {
-                int padNum = mUser ? mUser->GetPadNum() : -1;
-                MILO_NOTIFY(
-                    "Expected active dialog event during signin change on pad %d while in state %d.\n",
-                    padNum, mState
-                );
             }
             SetState(kS_LoadComplete);
         }
@@ -2270,10 +2261,9 @@ DataNode SaveLoadManager::OnMsg(const SigninChangedMsg &) {
         if (!mUser)
             break;
         if (ThePlatformMgr.HasUserSigninChanged(mUser)) {
-            int padNum = mUser ? mUser->GetPadNum() : -1;
             MILO_NOTIFY(
                 "Expected active dialog event during signin change on pad %d while in state %d.\n",
-                padNum, mState
+                mUser->GetPadNum(), mState
             );
             SetState(kS_Done);
         }
