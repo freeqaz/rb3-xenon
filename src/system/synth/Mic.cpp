@@ -48,8 +48,9 @@ void RingBuffer::Init(int size) {
 int RingBuffer::Peek(void *data, int len) {
     MILO_ASSERT(len <= mSize, 0x62);
     int i2 = ((mWriteIx - len) + mSize) % mSize;
-    int i30 = mSize - i2;
-    i30 = Min(len, i30);
+    int avail = mSize - i2;
+    // Retail selects &len / &avail and loads through it: a reference std::min.
+    int i30 = std::min(avail, len);
     memcpy(data, (char *)mBuffer + i2, i30);
     if (i30 != len) {
         memcpy((char *)data + i30, mBuffer, len - i30);
