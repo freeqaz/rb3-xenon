@@ -11,6 +11,7 @@
 NewAssetProvider::NewAssetProvider(BandProfile *profile, AssetGender gender)
     : mProfile(profile), mGender(gender) {
     MILO_ASSERT(mProfile, 0x16);
+    static Symbol none("none");
     mSymbols.push_back(none);
 }
 
