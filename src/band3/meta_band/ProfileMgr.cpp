@@ -1267,9 +1267,9 @@ void ProfileMgr::ForceMicGain(int i1, float f2) {
 }
 
 void ProfileMgr::ForceMicOutputGain(int i1, float f2) {
-    if (i1 <= 2U) {
+    if (i1 >= 0 && i1 < 3) {
         Mic *mic = TheSynth->GetMic(i1);
-        if (mic && mic->IsRunning()) {
+        if (mic && mic->GetType() != Mic::kDisconnected) {
             mic->SetOutputGain(DbToRatio(f2));
         }
     }
