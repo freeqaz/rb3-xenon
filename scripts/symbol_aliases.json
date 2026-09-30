@@ -12549,12 +12549,18 @@
   {
    "name": "$__make_heap",
    "address": "0x823470c8",
-   "survivor": "??$__make_heap@PAPAVFileCacheEntry@@UPriority@@PAV1@H@stlpmtx_std@@YAXPAPAVFileCacheEntry@@0UPriority@@0PAH@Z",
-   "folded": [
-    "??$__make_heap@PAPAVVert@RndMesh@@USortByZ@@PAV12@H@stlpmtx_std@@YAXPAPAVVert@RndMesh@@0USortByZ@@0PAH@Z"
-   ],
+   "survivor": "??$__make_heap@PAPAVVert@RndMesh@@USortByZ@@PAV12@H@stlpmtx_std@@YAXPAPAVVert@RndMesh@@0USortByZ@@0PAH@Z",
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??$__make_heap@PAPAVFileCacheEntry@@UPriority@@PAV1@H@stlpmtx_std@@YAXPAPAVFileCacheEntry@@0UPriority@@0PAH@Z",
+     "lane": "W17-MVS 2026-09-30",
+     "class": "WRONG_SURVIVOR_IDENTITY",
+     "disposition": "survivor_reassigned",
+     "why": "0x823470c8's only retail caller is __partial_sort<Vert**,SortByZ> 0x82348420 (bl 0x82348448); it calls __adjust_heap<SortByZ> 0x823461C8. The tree roots at sort 0x82349B78 <- WorkVerts::WorkVerts (bl 0x82349F78). FileCache's genuine Priority family is a separate retail tree rooted at 0x82519F38 <- FileCache::EndSet. The map row at this address is now the SortByZ spelling (the member RELOC-RECONCILE already restored as the retail identity), so it becomes the survivor; the Priority spelling was never a member."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -68894,13 +68900,19 @@
     "??$sort@PAPAVFlowNode@@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVFlowNode@@0P6A_NPAV1@1@Z@Z",
     "??$sort@PAPAVObject@Hmx@@UObjNameSort@@@stlpmtx_std@@YAXPAPAVObject@Hmx@@0UObjNameSort@@@Z",
     "??$sort@PAPAVPrefabChar@@USortPrefabByPortraitFileName@@@stlpmtx_std@@YAXPAPAVPrefabChar@@0USortPrefabByPortraitFileName@@@Z",
-    "??$sort@PAPAVVert@RndMesh@@USortByZ@@@stlpmtx_std@@YAXPAPAVVert@RndMesh@@0USortByZ@@@Z",
     "??$sort@PAVSymbol@@P6A_NV1@0@Z@stlpmtx_std@@YAXPAVSymbol@@0P6A_NV1@1@Z@Z",
     "??$sort@PAPAVRndDrawable@@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVRndDrawable@@0P6A_NPAV1@1@Z@Z",
     "??$sort@PAPAVVocalPart@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVVocalPart@@0P6A_NPBV1@1@Z@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 21 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??$sort@PAPAVVert@RndMesh@@USortByZ@@@stlpmtx_std@@YAXPAPAVVert@RndMesh@@0USortByZ@@@Z",
+     "lane": "W17-MVS 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS",
+     "why": "sort<Vert**,SortByZ> is retail 0x82349B78: its only caller is BandPatchMesh::WorkVerts::WorkVerts (bl 0x82349F78) and it calls __introsort_loop<SortByZ> 0x82349770 / __final_insertion_sort<SortByZ> 0x82347B78, both reaching the named SortByZ leaves. 0x822d17f0 has one retail caller, 0x822D1900. The spelling now has its own map row, so it cannot also be folded here."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -71839,7 +71851,7 @@
   {
    "name": "$sort_heap",
    "address": "0x82347db0",
-   "survivor": "??$sort_heap@PAPAUObjEntry@@UObjSort@@@stlpmtx_std@@YAXPAPAUObjEntry@@0UObjSort@@@Z",
+   "survivor": "??$sort_heap@PAPAVMeshVert@BandPatchMesh@@USortByWorkVertZ@@@stlpmtx_std@@YAXPAPAVMeshVert@BandPatchMesh@@0USortByWorkVertZ@@@Z",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 20 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -71942,9 +71954,20 @@
      "spelling": "??$sort_heap@PAVSymbol@@U?$less@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@YAXPAVSymbol@@0U?$less@VSymbol@@@0@@Z",
      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "??$sort_heap@PAPAUObjEntry@@UObjSort@@@stlpmtx_std@@YAXPAPAUObjEntry@@0UObjSort@@@Z",
+     "lane": "W17-MVS 2026-09-30",
+     "class": "WRONG_SURVIVOR_IDENTITY",
+     "disposition": "survivor_reassigned"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 2 other group(s) at 3 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 2 of the 3 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 2 other group(s) at 3 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 2 of the 3 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md.",
+   "repair": {
+    "class": "WRONG_SURVIVOR_IDENTITY",
+    "lane": "W17-MVS 2026-09-30",
+    "why": "0x82347db0 is sort_heap<BandPatchMesh::MeshVert**, SortByWorkVertZ>, not MessageTimer's ObjSort instantiation. Its only retail caller is __partial_sort 0x823484f0, reached only from __introsort_loop 0x82349830 <- sort 0x82349be8 <- BandPatchMesh::ProjectPatches (bl sites 0x8234c0b0 / 0x8234c174); it calls __adjust_heap 0x823462a8, whose leaf compare (and __push_heap 0x82345438's) is lwz 0(p); lwz 0(r); lfs 8(r) = (*p)->mVert->pos.z. ObjSort compares e->maxMs through one dereference, and none of our ObjSort leaf bodies (__linear_insert, __adjust_heap, __push_heap, __median, __unguarded_partition) has a masked-body equal anywhere in retail, so no ObjSort instantiation exists here to fold with. folded[] was already empty; this relabels the survivor to the map row, renamed with the rest of the family and re-homed to BandPatchMesh.cpp."
+   }
   },
   {
    "name": "1?$ObjRefConcrete",
@@ -81712,12 +81735,18 @@
   {
    "name": "$__insertion_sort",
    "address": "0x82347600",
-   "survivor": "??$__insertion_sort@PAPAVAllocInfo@@PAV1@P6A_NABQAV1@0@Z@stlpmtx_std@@YAXPAPAVAllocInfo@@00P6A_NABQAV1@1@Z@Z",
-   "folded": [
-    "??$__insertion_sort@PAPAVVert@RndMesh@@PAV12@USortByZ@@@stlpmtx_std@@YAXPAPAVVert@RndMesh@@00USortByZ@@@Z"
-   ],
+   "survivor": "??$__insertion_sort@PAPAVVert@RndMesh@@PAV12@USortByZ@@@stlpmtx_std@@YAXPAPAVVert@RndMesh@@00USortByZ@@@Z",
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??$__insertion_sort@PAPAVAllocInfo@@PAV1@P6A_NABQAV1@0@Z@stlpmtx_std@@YAXPAPAVAllocInfo@@00P6A_NABQAV1@1@Z@Z",
+     "lane": "W17-MVS 2026-09-30",
+     "class": "WRONG_SURVIVOR_IDENTITY",
+     "disposition": "survivor_reassigned",
+     "why": "0x82347600's only retail callers are the two bl sites in __final_insertion_sort<Vert**,SortByZ> 0x82347B78, reached only from sort 0x82349B78 <- WorkVerts::WorkVerts; it calls __linear_insert<SortByZ> 0x82346EB8. MemTracker's function-pointer-comparator family is elsewhere (0x827D5608 __make_heap, 0x827D5D70 sort_heap, 0x827D6390 __introsort_loop, 0x82BAD670 __median). The map row is now the SortByZ spelling (W16-CU's proven restore), so it becomes the survivor; the AllocInfo spelling was never a member."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -88544,7 +88573,7 @@
   {
    "name": "CVEIN1___adjust_heap",
    "address": "0x82346360",
-   "survivor": "??$__adjust_heap@PAPAVMoveDetector@@HPAV1@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@HHPAV1@UMoveDetectorCmp@@@Z",
+   "survivor": "??$__adjust_heap@PAPAVMeshVert@BandPatchMesh@@HPAV12@USortByPointer@@@stlpmtx_std@@YAXPAPAVMeshVert@BandPatchMesh@@HHPAV12@USortByPointer@@@Z",
    "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 3,
@@ -88561,8 +88590,19 @@
      "class": "INLINED_COMPARATOR_MISMATCH",
      "why": "our(S) and our(F) are the same size but EIGHT non-relocated words differ (0x20,0x24,0x28,0x2c,0x8c,0x94,0x98,0x9c). The comparator is inlined in both and reads a different member offset (`lwz rX,0(rY)` vs `lwz rX,40(rY)`), compares with different signedness (cmplw vs cmpw) and branches on a different CR bit. MoveDetectorCmp and Priority are different predicates.",
      "note": "Refuted WITHIN ONE BUILD on CONTENT, not on a cross-build size comparison (the instrument GROUNDED-1 got 7 of 8 wrong with, and which coff_bodies_ext.py's +8 EH-prefix artifact makes unusable). our(S) reproduces retail(S) on every non-relocated word, so our survivor instantiation is correct and the divergence is FORCED by the template argument. Do NOT re-add without positive fold evidence."
+    },
+    {
+     "spelling": "??$__adjust_heap@PAPAVMoveDetector@@HPAV1@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@HHPAV1@UMoveDetectorCmp@@@Z",
+     "lane": "W17-MVS 2026-09-30",
+     "class": "WRONG_SURVIVOR_IDENTITY",
+     "disposition": "survivor_reassigned"
     }
-   ]
+   ],
+   "repair": {
+    "class": "WRONG_SURVIVOR_IDENTITY",
+    "lane": "W17-MVS 2026-09-30",
+    "why": "0x82346360 is __adjust_heap<BandPatchMesh::MeshVert**, SortByPointer>. MoveDetector does not exist in RB3 (0 occurrences of 'MoveDetector', '.?AVMoveDetector' or 'HamMove' in retail), so the DC3 MoveDetectorCmp spelling cannot name any retail code; it reproduced retail's bytes only because MoveDetectorCmp and SortByPointer both inline to `lwz 0(p); lwz 0(r)` + unsigned compare. Its retail callers (__partial_sort 0x82348598, sort_heap 0x82347E18, __make_heap 0x823471A8) form a closed tree under sort 0x82349C58, whose only caller is 0x8234AE48 (WorkVerts::SetVertsAndFaces, `std::sort(unk10, SortByPointer())`). The genuine FileCache Priority family is a separate retail tree rooted at 0x82519F38 <- FileCache::EndSet. folded[] was already empty; this relabels the survivor to the map row, renamed and re-homed to BandPatchMesh.cpp with the rest of the family."
+   }
   },
   {
    "name": "CVEIN1_clear",
