@@ -649,9 +649,9 @@ void NormalizeSystemArgs() {
 }
 
 void SystemPreInit(const char *config) {
+#ifdef HX_NATIVE
     InitMakeString();
     Symbol::PreInit(640000, 80000);
-#ifdef HX_NATIVE
     ThePlatformMgr.RegionInit();
     OptionInit();
     TimeConversionInit();
@@ -682,15 +682,23 @@ void SystemPreInit(const char *config) {
     ThreadCallPreInit();
     TheTaskMgr.Init();
 #else
+    // RB3 retail 0x82510EC8.  The argument string is built from TheSystemArgs
+    // first (no pristine copy, no reserve(0)); CheckForArchive runs on
+    // force_cd (default true) instead of !no_cd; there is no no_checksum
+    // hook and no GetSystemLocale("usa") (DC3-era, both kept for native).
+    String str;
+    for (int i = 0; i < TheSystemArgs.size(); i++) {
+        str += ' ';
+        str += TheSystemArgs[i];
+    }
+    InitMakeString();
+    Symbol::PreInit(640000, 80000);
     ThePlatformMgr.RegionInit();
     ThePlatformMgr.PreInit();
-    if (!OptionBool("no_cd", false)) {
+    if (OptionBool("force_cd", true)) {
         CheckForArchive();
     }
     OptionInit();
-    if (OptionBool("no_checksum", false)) {
-        ClearFileChecksumData();
-    }
     TimeConversionInit();
     Timer::Init();
     gHostConfig = OptionBool("host_config", false);
@@ -709,17 +717,10 @@ void SystemPreInit(const char *config) {
     TheContentMgr.PreInit();
     ArchiveInit();
     TheDebug.Init();
-    String str;
-    for (int i = 0; i < gPristineSystemArgs.size(); i++) {
-        str += ' ';
-        str += gPristineSystemArgs[i];
-    }
-    gPristineSystemArgs.reserve(0);
-    MILO_LOG("SystemInit Params:%s\n", str);
+    MILO_LOG("SystemInit Params:%s\n", String(str));
     DataInit();
     PreInitSystem(config);
     LanguageInit();
-    gSystemLocale = GetSystemLocale("usa");
     MemInit();
     TheLoadMgr.Init();
     JoypadInit();
