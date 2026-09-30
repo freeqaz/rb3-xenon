@@ -411,7 +411,7 @@ void AccomplishmentProgress::UpdateStats(
     }
     mTotalTimesRevived += stats.mTimesSaved;
     mTotalSaves += stats.mPlayersSaved;
-    if (type == kScoreVocals || type == kScoreHarmony) {
+    if (type == kScoreHarmony || type == kScoreVocals) {
         if (stats.m0x5c > mBestPercussionPercent[diff]) {
             mBestPercussionPercent[diff] = stats.m0x5c;
         }
