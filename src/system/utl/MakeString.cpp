@@ -323,12 +323,20 @@ FormatString &FormatString::operator<<(float f) {
         );
     char tmp = *mFmtEnd;
     *mFmtEnd = '\0';
+    #ifdef HX_NATIVE
     int n = Hx_snprintf(mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, f);
+#else
+    // retail: the CRT _snprintf directly and no bufExceeded latch (as in the
+    // DataNode overload)
+    int n = _snprintf(mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, f);
+#endif
     *mFmtEnd = tmp;
+#ifdef HX_NATIVE
     if (n < 0 && !bufExceeded) {
         bufExceeded = true;
         MILO_NOTIFY("MakeString() buffer size %d exceeded", MAX_BUF_SIZE);
     }
+#endif
     mBufSize -= n;
     UpdateType();
     return *this;
@@ -359,12 +367,20 @@ FormatString &FormatString::operator<<(const String &str) {
         );
     char tmp = *mFmtEnd;
     *mFmtEnd = '\0';
+    #ifdef HX_NATIVE
     int n = Hx_snprintf(mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, str.c_str());
+#else
+    // retail: the CRT _snprintf directly and no bufExceeded latch (as in the
+    // DataNode overload)
+    int n = _snprintf(mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, str.c_str());
+#endif
     *mFmtEnd = tmp;
+#ifdef HX_NATIVE
     if (n < 0 && !bufExceeded) {
         bufExceeded = true;
         MILO_NOTIFY("MakeString() buffer size %d exceeded", MAX_BUF_SIZE);
     }
+#endif
     mBufSize -= n;
     UpdateType();
     return *this;

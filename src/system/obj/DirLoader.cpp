@@ -703,6 +703,7 @@ void DirLoader::SaveObjects(BinStream &bs, ObjectDir *dir) {
     }
 }
 
+#ifdef HX_NATIVE
 bool DirLoader::SaveObjects(const char *file, ObjectDir *dir) {
     if (sCacheMode && dir->InlineSubDirType() != kInlineNever) {
         MILO_LOG("Not caching %s because it is an inlined subdir.\n", file);
@@ -733,14 +734,47 @@ bool DirLoader::SaveObjects(const char *file, ObjectDir *dir) {
         }
     }
 }
+#else
+// RB3 retail (0x82756DE8): the cache platform is a constant (Xbox when caching,
+// PC otherwise -- no TheLoadMgr.GetPlatform), no Wii buffer size, no gNullFiles,
+// and no notify on a failed open.
+bool DirLoader::SaveObjects(const char *file, ObjectDir *dir) {
+    if (sCacheMode && dir->InlineSubDirType() != kInlineNever) {
+        return false;
+    } else {
+        FilePathTracker tracker(FileGetPath(file));
+        file = CachedPath(file, false);
+        if (sCacheMode) {
+            FileMkDir(FileGetPath(file));
+        }
+        ChunkStream cs(
+            file,
+            ChunkStream::kWrite,
+            0x20000,
+            true,
+            sCacheMode ? kPlatformXBox : kPlatformPC,
+            sCacheMode
+        );
+        if (cs.Fail()) {
+            return false;
+        } else {
+            SaveObjects(cs, dir);
+            return true;
+        }
+    }
+}
+#endif
 
 bool DirLoader::SetupDir(Symbol sym) {
+#ifdef HX_NATIVE
     MemPoint begin(MemPoint::kInitType0);
     if (sObjectMemDumpFile || sTypeMemDumpFile) {
         begin = MemPoint(MemPoint::kInitType1);
     }
+#endif
     if (mDir) {
         if (mDir->ClassName() != sym) {
+#ifdef HX_NATIVE
             if (mDir != mDir->Dir()) {
                 MILO_NOTIFY(
                     "%s: Proxy %s class %s not %s, converting",
@@ -757,6 +791,17 @@ bool DirLoader::SetupDir(Symbol sym) {
                     sym
                 );
             }
+#else
+            // RB3 retail (rb3-Wii shape): one MakeString, result discarded --
+            // retail keeps the bl, and has neither DC3's proxy-dir branch nor
+            // the MemPoint tracking around the body.
+            MILO_WARN(MakeString(
+                "%s: Proxy class %s not %s, converting",
+                mFile.c_str(),
+                mDir->ClassName(),
+                sym
+            ));
+#endif
             ObjectDir *newDir =
                 dynamic_cast<ObjectDir *>(Hmx::Object::NewObject(sym));
             if (!newDir) {
@@ -776,6 +821,7 @@ bool DirLoader::SetupDir(Symbol sym) {
         mDir = dynamic_cast<ObjectDir *>(Hmx::Object::NewObject(sym));
     }
     mDir->SetPathName(mFile.c_str());
+#ifdef HX_NATIVE
     if (sObjectMemDumpFile) {
         MemPoint end(MemPoint::kInitType1);
         DumpObjectMemDelta(mDir, end - begin);
@@ -784,6 +830,7 @@ bool DirLoader::SetupDir(Symbol sym) {
         MemPoint end(MemPoint::kInitType1);
         AddTypeObjectMemDelta(mDir, end - begin);
     }
+#endif
     return true;
 }
 

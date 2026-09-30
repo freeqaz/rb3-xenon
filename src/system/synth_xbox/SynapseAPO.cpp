@@ -63,8 +63,13 @@ void SynapseAPO::OnSetParameters(const SynapseAPOParams& params) {
 }
 
 void SynapseAPO::DoProcess(
-    const SynapseAPOParams &, float *__restrict, unsigned int, unsigned int
-) {}
+    const SynapseAPOParams &, float *__restrict buffer, unsigned int numFrames, unsigned int
+) {
+    // retail 0x... : tail-calls Synapse::ProcessInPlace(numFrames, buffer)
+    if (mSynapse) {
+        mSynapse->ProcessInPlace(numFrames, buffer);
+    }
+}
 
 }  // namespace DSP
 

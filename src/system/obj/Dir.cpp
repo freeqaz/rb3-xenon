@@ -674,15 +674,12 @@ bool ObjectDir::HasDirPtrs() const {
     auto it = counts.find((const void *)this);
     return it != counts.end() && it->second > 0;
 #else
-    if (sDeleting == this) {
-        return true;
-    } else {
-        FOREACH (it, mRefs) {
-            if (RefPtrOf(it)->IsDirPtr())
-                return true;
-        }
-        return false;
+    // retail (0x8274EEC0): the ring walk only, no sDeleting short-circuit
+    FOREACH (it, mRefs) {
+        if (RefPtrOf(it)->IsDirPtr())
+            return true;
     }
+    return false;
 #endif
 }
 
@@ -718,6 +715,7 @@ bool ObjectDir::HasSubDir(ObjectDir *dir) {
 }
 
 void ObjectDir::SaveProxy(BinStream &bs) {
+#ifdef HX_NATIVE
     if (ShouldSaveProxy(bs) && InlineProxy(bs)) {
         gLoadingProxyFromDisk = true;
         const char *path = mProxyFile.empty() ? FilePath::Root().c_str()
@@ -725,6 +723,15 @@ void ObjectDir::SaveProxy(BinStream &bs) {
         FilePathTracker tracker(path);
         DirLoader::SaveObjects(bs, this);
     }
+#else
+    // RB3 retail (0x8274E7E8): a proxy with an empty proxy file saves nothing,
+    // and the path is always the proxy file's directory.
+    if (IsProxy() && !mProxyFile.empty() && InlineProxy(bs)) {
+        gLoadingProxyFromDisk = true;
+        FilePathTracker tracker(FileGetPath(mProxyFile.c_str()));
+        DirLoader::SaveObjects(bs, this);
+    }
+#endif
 }
 
 void ObjectDir::ResetViewports() {
@@ -768,7 +775,9 @@ DataNode OnInitObject(DataArray *a) {
 }
 
 void ObjectDir::Reserve(int hashSize, int stringSize) {
-    MemTemp tmp;
+#ifdef HX_NATIVE
+    MemTemp tmp; // retail (0x8274F1F0) makes no heap switch here
+#endif
     if (mHashTable.Size() < hashSize) {
         mHashTable.Resize(hashSize, 0);
     }
@@ -800,6 +809,7 @@ void ObjectDir::LoadSubDir(int i, const FilePath &fp, BinStream &bs, bool b) {
     }
 }
 
+#ifdef HX_NATIVE
 void PreloadArray(DataArray *arr, int idx) {
     for (int i = idx; i < arr->Size(); i++) {
         DataArray *curArr = arr->Array(i);
@@ -829,6 +839,32 @@ void PreloadSharedSubdirs(Symbol s) {
         PreloadArray(arr, 1);
     }
 }
+#else
+// RB3 retail (rb3-Wii shape): a flat loop from 1, an explicit FilePath per
+// entry, no nested-array recursion and no empty-entry test.
+void PreloadSharedSubdirs(Symbol sym) {
+    DataArray *arr = SystemConfig("preload_subdirs")->FindArray(sym, false);
+    if (arr) {
+        for (int i = 1; i < arr->Size(); i++) {
+            DataArray *thisArr = arr->Array(i);
+            const char *thisStr = thisArr->Str(0);
+            bool mem = false;
+            if (thisArr->Size() > 1) {
+                MemPushHeap(MemFindHeap(thisArr->Sym(1).Str()));
+                mem = true;
+            }
+            MILO_ASSERT(gPreloadIdx < DIM(gPreloaded), 0x998);
+            {
+                // retail constructs the path before it reads gPreloadIdx
+                FilePath path(thisStr);
+                gPreloaded[gPreloadIdx++].LoadFile(path, false, true, kLoadFront, false);
+            }
+            if (mem)
+                MemPopHeap();
+        }
+    }
+}
+#endif
 
 void ObjectDir::Terminate() {
     DeleteShared();

@@ -92,6 +92,9 @@ void ReceiveUpstreamLowPriorityOutputResponse(int pad, unsigned char *data) {
 }
 
 void ReceiveUpstreamBreedDataResponse(int pad, unsigned char *data) {
+    // retail (0x825299B8) has no JoypadGetPadData/mConnected test: the logging
+    // block compiled away whole, leaving only the tBreed stores + the handler.
+#ifdef HX_NATIVE
     if (JoypadGetPadData(pad)->mConnected) {
         MILO_LOG("Breed Data Response for controller %d\n", pad);
         MILO_LOG(
@@ -108,6 +111,7 @@ void ReceiveUpstreamBreedDataResponse(int pad, unsigned char *data) {
             data[10]
         );
     }
+#endif
     tBreed[pad].mVendor = data[1];
     tBreed[pad].mProject = data[2];
     tBreed[pad].mPeripheralType = data[3];

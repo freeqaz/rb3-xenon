@@ -131,11 +131,16 @@ void TypeProps::ReplaceObject(DataNode &n, Hmx::Object *from, Hmx::Object *to) {
     if (fromObj == from) {
 #ifdef HX_NATIVE
         mObjects.remove(fromObj);
+#else
+        // retail (0x82766338): the property's ring ref moves with the value
+        fromObj->Release(this);
 #endif
         n = to;
         if (to) {
 #ifdef HX_NATIVE
             mObjects.push_back(to);
+#else
+            to->AddRef(this);
 #endif
         }
     }

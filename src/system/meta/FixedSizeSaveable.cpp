@@ -22,8 +22,13 @@ void FixedSizeSaveable::EnablePrintouts(bool b) { sPrintoutsEnabled = b; }
 
 void FixedSizeSaveable::PadStream(FixedSizeSaveableStream &fixedStream, int padSize) {
     char buf[1024];
+#ifdef HX_NATIVE
     MILO_ASSERT(fixedStream.Tell() + padSize <= fixedStream.Size(), 0x30);
     memset(buf, sPadder, 1024);
+#else
+    // retail (rb3-Wii shape): no Tell/Size assert, zero padding
+    memset(buf, 0, 1024);
+#endif
     for (; padSize > 0x400; padSize -= 0x400) {
         fixedStream.Write(buf, 0x400);
     }
@@ -34,7 +39,9 @@ void FixedSizeSaveable::PadStream(FixedSizeSaveableStream &fixedStream, int padS
 
 void FixedSizeSaveable::DepadStream(FixedSizeSaveableStream &fixedStream, int padSize) {
     char buf[1024];
+#ifdef HX_NATIVE
     MILO_ASSERT(fixedStream.Tell() + padSize <= fixedStream.Size(), 0x46);
+#endif
     for (; padSize > 0x400; padSize -= 0x400) {
         fixedStream.Read(buf, 0x400);
     }
@@ -46,6 +53,14 @@ void FixedSizeSaveable::DepadStream(FixedSizeSaveableStream &fixedStream, int pa
 void FixedSizeSaveable::SaveFixedSymbol(
     FixedSizeSaveableStream &fixedStream, const Symbol &sym
 ) {
+#ifndef HX_NATIVE
+    // retail (0x827A2B60, TU5): a symbol that cannot fit is written as a
+    // zero-padded blank slot instead of overrunning the fixed size
+    if (strlen(sym.Str()) >= kSymbolSize) {
+        PadStream(fixedStream, kSymbolSize);
+        return;
+    }
+#endif
     int start = fixedStream.Tell();
     fixedStream << sym;
     MILO_ASSERT(fixedStream.Tell()-start <= kSymbolSize, 0x5E);

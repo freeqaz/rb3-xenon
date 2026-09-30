@@ -953,9 +953,15 @@ END_CUSTOM_PROPSYNC
 
 CamShot::CamShot()
     : mKeyframes(this), mLooping(false), mLoopKeyframe(0),
+#ifdef HX_NATIVE
       mNearPlane(RndCam::DefaultNearPlane()),
       mFarPlane(mNearPlane * RndCam::MaxFarNearPlaneRatio()), mUseDepthOfField(true),
       mFilter(0.9), mClampHeight(-1), mCrowdStateOverride(gNullStr), mAnims(this),
+#else
+      // RB3 retail: constant planes (rb3-Wii 1 / 1000) and a default Symbol
+      mNearPlane(1.0f), mFarPlane(1000.0f), mUseDepthOfField(true),
+      mFilter(0.9), mClampHeight(-1), mCrowdStateOverride(), mAnims(this),
+#endif
       mPath(this), mPathFrame(-1),
       mPlatform(kPlatformNone), mHideList(this), mShowList(this), mGenHideList(this),
       mParentDir(this), mDrawOverrides(this), mPostProcOverrides(this), mCrowds(this),

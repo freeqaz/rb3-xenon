@@ -53,7 +53,7 @@ public:
 
     struct CharData {
         struct Char3D {
-            Char3D(const Char3D &o) : mXfm(o.mXfm), mIdx(o.mIdx) { mColors = o.mColors; }
+            // retail: implicit copy (memcpy of mXfm+mIdx, vector copy-construct)
             Char3D(const Transform &t, int idx) : mXfm(t), mIdx(idx) {}
 
             Transform mXfm; // 0x0

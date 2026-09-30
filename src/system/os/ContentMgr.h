@@ -124,7 +124,10 @@ public:
         String mName; // 0x14
     };
 
-    ContentMgr() {}
+    // retail 0x825213D0: out of line, called from XboxContentMgr's dynamic
+    // initializer (which then stores XboxContentMgr's vptr itself); it ends
+    // `li r9,1; stb r9,0x70`, so the 0x70 flag is ContentMgr's, initialised true.
+    ContentMgr() : unk70(true) {}
     virtual DataNode Handle(DataArray *, bool);
     virtual void PreInit() {}
     virtual void Init();
@@ -210,6 +213,7 @@ protected:
     int mRootLoaded; // 0x60
     std::list<CallbackFile> mCallbackFiles; // 0x64
     Hmx::Object *mReadFailureHandler; // 0x6c
+    bool unk70; // 0x70 -- set by the ctor; gates XboxContentMgr::StartRefresh
 };
 
 extern ContentMgr &TheContentMgr;

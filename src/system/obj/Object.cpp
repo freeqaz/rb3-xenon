@@ -337,15 +337,16 @@ void Hmx::Object::SaveRest(BinStream &bs) {
     else
         bs << mNote;
 #else
-    // Retail X360: TypeProps is inline, mNote is const char*
-    if (!mTypeProps.HasProps())
-        bs << (DataArray *)nullptr;
-    else
-        mTypeProps.Save(bs);
-    if (!mNote || mNote == gNullStr || bs.Cached())
+    // Retail X360: TypeProps is inline, mNote is const char*. Retail calls
+    // TypeProps::Save unconditionally and tests only mNote's pointer.
+    mTypeProps.Save(bs);
+    if (mNote && !bs.Cached()) {
+        // retail inlines the string write: strlen, the int, then the bytes
+        int len = strlen(mNote);
+        bs << len;
+        bs.Write(mNote, len);
+    } else
         bs << 0;
-    else
-        bs << mNote;
 #endif
 }
 
@@ -1074,10 +1075,12 @@ void Hmx::Object::RemoveFromDir() {
     if (mDir && mDir != sDeleting) {
         mDir->RemovingObject(this);
         ObjectDir::Entry *entry = mDir->FindEntry(mName, false);
+#ifdef HX_NATIVE
+        // retail (0x8275A460) has no entry check: FindEntry, then store
         if (!entry || entry->obj != this) {
             MILO_FAIL("No entry for %s in %s", PathName(this), PathName(mDir));
         }
-
+#endif
         entry->obj = nullptr;
     }
 }
@@ -1253,6 +1256,7 @@ DataNode Hmx::Object::OnGet(const DataArray *a) {
 #endif
 }
 
+#ifdef HX_NATIVE
 DataNode Hmx::Object::OnSet(const DataArray *a) {
     MILO_ASSERT_FMT(
         a->Size() % 2 == 0,
@@ -1282,6 +1286,22 @@ DataNode Hmx::Object::OnSet(const DataArray *a) {
     }
     return 0;
 }
+#else
+// RB3 retail (0x8275B5E8): no size-parity assert, no type test on the array
+// branch -- a non-symbol key is taken as an array unchecked.
+DataNode Hmx::Object::OnSet(const DataArray *a) {
+    for (int i = 2; i < a->Size(); i += 2) {
+        const DataNode &n = a->Evaluate(i);
+        if (n.Type() == kDataSymbol) {
+            // the symbol word is read after Evaluate(i + 1) (mValue is at +0)
+            SetProperty(*reinterpret_cast<const Symbol *>(&n), a->Evaluate(i + 1));
+        } else {
+            SetProperty(n.UncheckedArray(), a->Evaluate(i + 1));
+        }
+    }
+    return 0;
+}
+#endif
 
 DataNode Hmx::Object::OnPropertyAppend(const DataArray *da) {
     DataArray *arr = da->Array(2);

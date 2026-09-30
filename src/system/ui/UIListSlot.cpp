@@ -60,16 +60,38 @@ BEGIN_COPYS(UIListSlot)
     COPY_MEMBER_FROM(s, mSlotDrawType)
 END_COPYS
 
+// RB3 retail (0x82814FB8): plain int rev split into two mutable TU shorts
+// (alt at +0, rev at +4), no guard, no Push/PopRev (ui/LabelShrinkWrapper.cpp).
+#pragma push_macro("INIT_REVS")
+#pragma push_macro("LOAD_REVS")
+#pragma push_macro("ASSERT_REVS")
+#undef INIT_REVS
+#undef LOAD_REVS
+#undef ASSERT_REVS
+#define INIT_REVS(rev, alt)                                                              \
+    static unsigned short gAltRev = alt;                                                 \
+    static unsigned short gRev = rev;
+#define LOAD_REVS(bs)                                                                    \
+    int rev;                                                                             \
+    bs >> rev;                                                                           \
+    gRev = getHmxRev(rev);                                                               \
+    gAltRev = getAltRev(rev);
+#define ASSERT_REVS(rev1, rev2)
+
 INIT_REVS(0, 0)
 
 BEGIN_LOADS(UIListSlot)
     LOAD_REVS(bs)
     ASSERT_REVS(0, 0)
-    LOAD_SUPERCLASS(UIListWidget)
+    UIListWidget::Load(bs);
     int ty;
     bs >> ty;
     mSlotDrawType = (UIListSlotDrawType)ty;
 END_LOADS
+
+#pragma pop_macro("ASSERT_REVS")
+#pragma pop_macro("LOAD_REVS")
+#pragma pop_macro("INIT_REVS")
 
 void UIListSlot::ResourceCopy(const UIListWidget *w) {
     UIListWidget::ResourceCopy(w);

@@ -327,6 +327,7 @@ DEF_DATA_FUNC(DataDo) {
     return ret;
 }
 
+#ifdef HX_NATIVE
 DEF_DATA_FUNC(DataMin) {
     int min = -1;
     float minf; // this matches but wow this is not good
@@ -343,7 +344,20 @@ DEF_DATA_FUNC(DataMin) {
     MILO_FAIL("DataMin: No valid data to compare");
     return 0;
 }
+#else
+// RB3 retail (rb3-Wii shape): two operands only, float if either is.
+DEF_DATA_FUNC(DataMin) {
+    const DataNode &n1 = array->Evaluate(1);
+    const DataNode &n2 = array->Evaluate(2);
+    if (n1.Type() == kDataFloat || n2.Type() == kDataFloat) {
+        return Min<float>(n1.LiteralFloat(array), n2.LiteralFloat(array));
+    } else {
+        return Min<int>(n1.LiteralInt(array), n2.LiteralInt(array));
+    }
+}
+#endif
 
+#ifdef HX_NATIVE
 DEF_DATA_FUNC(DataMax) {
     int max = -1;
     float maxf;
@@ -360,6 +374,18 @@ DEF_DATA_FUNC(DataMax) {
     MILO_FAIL("DataMax: No valid data to compare");
     return 0;
 }
+#else
+// RB3 retail (rb3-Wii shape): two operands only, float if either is.
+DEF_DATA_FUNC(DataMax) {
+    const DataNode &n1 = array->Evaluate(1);
+    const DataNode &n2 = array->Evaluate(2);
+    if (n1.Type() == kDataFloat || n2.Type() == kDataFloat) {
+        return Max<float>(n1.LiteralFloat(array), n2.LiteralFloat(array));
+    } else {
+        return Max<int>(n1.LiteralInt(array), n2.LiteralInt(array));
+    }
+}
+#endif
 
 DEF_DATA_FUNC(DataAbs) {
     const DataNode &n = array->Evaluate(1);
@@ -462,6 +488,7 @@ DEF_DATA_FUNC(DataClampEq) {
     return ret;
 }
 
+#ifdef HX_NATIVE
 DEF_DATA_FUNC(DataMultiply) {
     const DataNode &n1 = array->Evaluate(1);
     const DataNode &n2 = array->Evaluate(2);
@@ -485,6 +512,17 @@ DEF_DATA_FUNC(DataMultiply) {
     }
     return 0;
 }
+#else
+// RB3 retail (rb3-Wii shape): two operands only, float if either is.
+DEF_DATA_FUNC(DataMultiply) {
+    const DataNode &dn1 = array->Evaluate(1);
+    const DataNode &dn2 = array->Evaluate(2);
+    if (dn1.Type() == kDataFloat || dn2.Type() == kDataFloat) {
+        return dn1.LiteralFloat(array) * dn2.LiteralFloat(array);
+    } else
+        return dn1.LiteralInt(array) * dn2.LiteralInt(array);
+}
+#endif
 
 DEF_DATA_FUNC(DataMultiplyEq) {
     DataNode ret = DataMultiply(array);
@@ -1052,10 +1090,11 @@ DEF_DATA_FUNC(DataHandleRet) {
         o = n.UncheckedObj();
     else
         o = gDataDir->FindObject(n.LiteralStr(array), true);
+#ifdef HX_NATIVE
+    // retail (0x82761370) has no not-found test: it dispatches straight to Handle
     if (!o) {
         String str;
         n.Print(str, true);
-#ifdef HX_NATIVE
         MILO_WARN(
             "Object %s not found (file %s, line %d)",
             str.c_str(),
@@ -1063,15 +1102,8 @@ DEF_DATA_FUNC(DataHandleRet) {
             array->Line()
         );
         return DataNode(kDataUnhandled, 0);
-#else
-        MILO_FAIL(
-            "Object %s not found (file %s, line %d)",
-            str.c_str(),
-            array->File(),
-            array->Line()
-        );
-#endif
     }
+#endif
     return o->Handle(a, false);
 }
 

@@ -862,6 +862,7 @@ void Spotlight::PropogateToPresets(int i) {
 }
 
 void Spotlight::Generate() {
+#ifdef HX_NATIVE
     if (!mBeam.mBeam || TheLoadMgr.EditMode()) {
         RELEASE(mBeam.mBeam);
         if (mBeam.HasLength()) {
@@ -876,6 +877,18 @@ void Spotlight::Generate() {
         UpdateBounds();
         UpdateSphere();
     }
+#else
+    // RB3 360 retail: no edit-mode regen and only the NG shaft path
+    // (retail tests mBeam, releases, then calls BuildNGShaft directly).
+    if (!mBeam.mBeam) {
+        RELEASE(mBeam.mBeam);
+        if (mBeam.HasLength()) {
+            BuildNGShaft(mBeam);
+        }
+        UpdateBounds();
+        UpdateSphere();
+    }
+#endif
 }
 
 void Spotlight::BuildNGShaft(Spotlight::BeamDef &def) {

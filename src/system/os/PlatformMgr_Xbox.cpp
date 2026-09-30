@@ -216,6 +216,7 @@ bool PlatformMgr::IsInPartyWithOthers() {
     return result;
 }
 
+#ifdef HX_NATIVE
 void PlatformMgr::ShowFriendsUI(int padNum) {
     unsigned long ul;
 
@@ -227,6 +228,14 @@ void PlatformMgr::ShowFriendsUI(int padNum) {
         }
     }
 }
+#else
+// RB3 retail: no DC3 NUI (sXShowCallback) branch.
+void PlatformMgr::ShowFriendsUI(int padNum) {
+    if (IsSignedIn(padNum)) {
+        XShowFriendsUI(padNum);
+    }
+}
+#endif
 
 void PlatformMgr::SetBackgroundDownloadPriority(bool highPriority) {
     XBackgroundDownloadSetMode(highPriority ?
@@ -236,6 +245,7 @@ void PlatformMgr::SetBackgroundDownloadPriority(bool highPriority) {
 
 // int __cdecl ShowControllerRequiredUIThreaded(void)
 
+#ifdef HX_NATIVE
 bool PlatformMgr::ShowPartyUI(int padNum) {
     unsigned long ul;
     unsigned long ret = 1;
@@ -250,6 +260,16 @@ bool PlatformMgr::ShowPartyUI(int padNum) {
 
     return ret == 0;
 }
+#else
+// RB3 retail: no DC3 NUI (sXShowCallback) branch.
+bool PlatformMgr::ShowPartyUI(int padNum) {
+    bool failed = true; // retail narrows the result to a bool first
+    if (IsSignedIn(padNum)) {
+        failed = XShowPartyUI(padNum);
+    }
+    return !failed;
+}
+#endif
 
 bool PlatformMgr::ShowFitnessBodyProfileUI(int padNum) {
     unsigned long ul;
@@ -301,6 +321,7 @@ bool PlatformMgr::IsPadAGuest(int padNum) const {
     }
 }
 
+#ifdef HX_NATIVE
 void PlatformMgr::ShowOfferUI(int padNum) {
     unsigned long ul;
     unsigned long ret;
@@ -321,6 +342,19 @@ void PlatformMgr::ShowOfferUI(int padNum) {
         }
     }
 }
+#else
+// RB3 retail: no DC3 NUI (sXShowCallback) branch.
+void PlatformMgr::ShowOfferUI(int padNum) {
+    if (IsSignedIn(padNum)) {
+        unsigned long ret = XShowMarketplaceUI(
+            padNum, XSHOWMARKETPLACEUI_ENTRYPOINT_CONTENTLIST_BACKGROUND, 0, -1
+        );
+        if (ret != ERROR_SUCCESS) {
+            MILO_NOTIFY("XShowMarketplaceUI failed (0x%x)", ret);
+        }
+    }
+}
+#endif
 
 DWORD PlatformMgr::ShowDeviceSelectorUI(
     DWORD userIndex,

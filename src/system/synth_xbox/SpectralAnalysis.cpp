@@ -34,8 +34,13 @@ void SpectralAnalysis::Analyze(const float *in, float *out) {
 
     // Spectral window recombination over the first half, using the sin/cos
     // table, accumulating the cosine term into mAccum.
+    // Retail sets up i and both table pointers before the quarter > 1 test
+    // and walks them with BYTE biases off `lo` (no srawi/slwi pair).
     float *data = &mData0[0];
+    unsigned int i = 1;
     int half = (unsigned int)mFftSize >> 1;
+    float *sinT = &mSinTable[0];
+    float *cosT = &mCosTable[0];
     float a0 = data[0];
     float aN = data[half];
     float diff0 = a0 - aN;
@@ -45,19 +50,17 @@ void SpectralAnalysis::Analyze(const float *in, float *out) {
 
     unsigned int quarter = (unsigned int)half >> 1;
     if (quarter > 1) {
-        float *sinT = &mSinTable[0];
-        float *cosT = &mCosTable[0];
-        long sinBias = sinT - data;
-        long cosBias = cosT - data;
         float *lo = data + 1;
         float *hi = data + half;
-        for (unsigned int i = 1; i < quarter; ++i) {
+        long sinBias = (char *)sinT - (char *)data;
+        long cosBias = (char *)cosT - (char *)data;
+        for (; i < quarter; ++i) {
             float a = lo[0];
             float b = hi[-1];
             float diff = a - b;
-            float s = lo[sinBias];
+            float s = *(float *)((char *)lo + sinBias);
             float sum = b + a;
-            float c = lo[cosBias];
+            float c = *(float *)((char *)lo + cosBias);
             double acc = mAccum;
             float ps = s * diff;
             sum = sum * 0.5f;

@@ -301,7 +301,7 @@ __declspec(noinline) bool SongParser::OnMidiMessageCommonOff(int tick, unsigned 
     if (HandlePhraseEnd(tick, uc))
         return true;
     else
-        return HandleFillEnd(tick, uc);
+        return HandleFillEnd(tick, uc) != 0; // retail normalises the byte (clrlwi; subic; subfe)
 }
 
 void SongParser::OnMidiMessageGemOn(int tick, unsigned char pitch, unsigned char uc2) {
@@ -464,7 +464,7 @@ void SongParser::AddPhrase(
 }
 
 bool SongParser::HandleFillEnd(int tick, unsigned char uc) {
-    bool marker = CheckFillMarker(uc, false);
+    bool marker = CheckFillMarker(uc, false) != 0; // retail normalises the byte
     if (marker)
         OnFillEnd(tick, uc);
     return marker;

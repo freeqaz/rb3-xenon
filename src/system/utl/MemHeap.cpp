@@ -24,9 +24,14 @@ namespace {
             }
             ts << str;
             if (info != nullptr) {
+#ifdef HX_NATIVE
                 for (int i = 0; i < 0x10 && info->mStackTrace[i] != 0; i++) {
                     ts << *info;
                 }
+#else
+                // retail (TU5): one line with the alloc type (info+0x8)
+                ts << MakeString(" (type \"%s\")", info->mType);
+#endif
             }
             ts << MakeString(")\n");
         }

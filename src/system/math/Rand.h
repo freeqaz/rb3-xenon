@@ -10,7 +10,13 @@ public:
     int Int(int, int);
     int FastInt(int, int);
     float Float();
+#ifdef HX_NATIVE
     __declspec(noinline) float Float(float, float);
+#else
+    // DC3 marks this noinline; RB3 retail inlines it (and Float()) into
+    // RandomFloat(float, float).
+    float Float(float, float);
+#endif
     float Gaussian();
 
     MEM_OVERLOAD(Rand, 0x16);

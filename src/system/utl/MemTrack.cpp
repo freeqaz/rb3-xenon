@@ -23,13 +23,14 @@ bool gMemoryUsageTest;
 // the log stream). A compile-time +4 displacement is only possible if the two are
 // one aggregate -- two independent globals would each need their own relocation.
 // Same technique as MemTrackStack below.
-struct MemTrackLogState {
-    int numDiffs;       // at +0x0
-    TextFileStream *log; // at +0x4
-};
-MemTrackLogState gMemTrackLogState;
-#define gNumDiffs gMemTrackLogState.numDiffs
-#define gLog gMemTrackLogState.log
+//
+// Refined (W16-HY): they are file statics, not an aggregate. StartLog touches
+// both and gets the shared base; MemTrackReport touches only the log and
+// retail addresses it by its own label (lis/lwz lbl_82E06F04@l), which an
+// aggregate member cannot reproduce. Initialised statics keep declaration
+// order (counter at +0, log at +4).
+static int gNumDiffs = 0;
+static TextFileStream *gLog = 0;
 String gMemTrackSourceFile;
 String gMemTrackSourceObject;
 // Struct packing: array of 65 pointer-sized entries (260 = 0x104 bytes) followed immediately
@@ -185,6 +186,7 @@ void StartLog(const char *base) {
 void MemTrackReport(int i1, bool b2) {
     if (gMemTracker) {
         CritSecTracker tracker(gMemLock);
+#ifdef HX_NATIVE
         if (b2) {
             StartLog("mem_report");
             gMemTracker->Report(i1, *gLog);
@@ -196,6 +198,17 @@ void MemTrackReport(int i1, bool b2) {
         } else {
             gMemTracker->DiffDump(TheDebug);
         }
+#else
+        // Retail (TU5): always the two log files, b2 is not tested, and each
+        // log is closed with a bare RELEASE(gLog) (no gMemTracker->StopLog()).
+        StartLog("mem_report");
+        gMemTracker->Report(i1, *gLog);
+        PoolReport(*gLog);
+        RELEASE(gLog);
+        StartLog("mem_diff");
+        gMemTracker->DiffDump(*gLog);
+        RELEASE(gLog);
+#endif
     }
 }
 

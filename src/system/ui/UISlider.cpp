@@ -42,10 +42,17 @@ BEGIN_PROPSYNCS(UISlider)
 END_PROPSYNCS
 
 BEGIN_SAVES(UISlider)
+#ifdef HX_NATIVE
     SAVE_REVS(3, 0)
     SAVE_SUPERCLASS(UIComponent)
     bs << mSelectToScroll;
     bs << mVertical;
+#else
+    // RB3 retail: rev 1, and mVertical (DC3's rev 3 field) is not written
+    SAVE_REVS(1, 0)
+    SAVE_SUPERCLASS(UIComponent)
+    bs << mSelectToScroll;
+#endif
 END_SAVES
 
 // RB3 retail (0x82809808) is rb3-Wii's: base copy from the cast pointer, then

@@ -45,12 +45,14 @@ void AsyncFileWin::_OpenAsync() {
     DWORD err;
 
     mSize = 0;
+#ifdef HX_NATIVE // RB3 retail has no fake-file-error hook here
     if (gFakeFileErrors) {
         SetLastError(0x20000002);
         ReadError(mFilename.c_str());
         mFail = true;
         return;
     }
+#endif
     mSectorBytes = 0x800;
     if (!(mMode & 0x40002)) {
         fd = _open(mFilename.c_str(), (mMode & ~2) | 0x8000, 0x180);
@@ -219,6 +221,7 @@ void AsyncFileWin::_ReadAsync(void *buf, int count) {
 }
 
 bool AsyncFileWin::_ReadDone() {
+#ifdef HX_NATIVE // RB3 retail has no fake-file-error hook here
     if (gFakeFileErrors) {
         SetLastError(0x20000002);
         ReadError(mFilename.c_str());
@@ -226,23 +229,25 @@ bool AsyncFileWin::_ReadDone() {
         mFail = 1;
         return false;
     }
+#endif
     if (!mReadInProgress) {
         return true;
     }
-    if (mOverlapped.Internal == 0x103) {
-        return false;
-    }
-    DWORD bytesTransferred;
-    if (GetOverlappedResult(mFile, &mOverlapped, &bytesTransferred, false)) {
-        if (unk58 == 0) {
-            memcpy(unk5c, (char *)unk60 + unk68, unk64);
-            MemFree(unk60, "unknown", 0, "unknown");
+    // retail: the pending test and the failure arm share one `return false`
+    if (mOverlapped.Internal != 0x103) {
+        DWORD bytesTransferred;
+        if (!GetOverlappedResult(mFile, &mOverlapped, &bytesTransferred, false)) {
+            ReadError(mFilename.c_str());
+            mReadInProgress = false;
+            mFail = 1;
+        } else {
+            if (unk58 == 0) {
+                memcpy(unk5c, (char *)unk60 + unk68, unk64);
+                MemFree(unk60, "unknown", 0, "unknown");
+            }
+            mReadInProgress = false;
+            return true;
         }
-        mReadInProgress = false;
-        return true;
     }
-    ReadError(mFilename.c_str());
-    mReadInProgress = false;
-    mFail = 1;
     return false;
 }

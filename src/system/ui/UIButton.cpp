@@ -22,6 +22,25 @@ void UIButton::Save(BinStream &bs) {
     SAVE_SUPERCLASS(UILabel)
 }
 
+// RB3 retail (0x8280F888) keeps no BinStreamRev here: the packed rev is split
+// into two mutable TU shorts (alt at +0, rev at +4), no guard, no Push/PopRev --
+// the ui/LabelShrinkWrapper.cpp dialect.
+#pragma push_macro("INIT_REVS")
+#pragma push_macro("LOAD_REVS")
+#pragma push_macro("ASSERT_REVS")
+#undef INIT_REVS
+#undef LOAD_REVS
+#undef ASSERT_REVS
+#define INIT_REVS(rev, alt)                                                              \
+    static unsigned short gAltRev = alt;                                                 \
+    static unsigned short gRev = rev;
+#define LOAD_REVS(bs)                                                                    \
+    int rev;                                                                             \
+    bs >> rev;                                                                           \
+    gRev = getHmxRev(rev);                                                               \
+    gAltRev = getAltRev(rev);
+#define ASSERT_REVS(rev1, rev2)
+
 INIT_REVS(0, 0)
 
 void UIButton::PreLoad(BinStream &bs) {
@@ -29,6 +48,10 @@ void UIButton::PreLoad(BinStream &bs) {
     ASSERT_REVS(0, 0)
     UILabel::PreLoad(bs);
 }
+
+#pragma pop_macro("ASSERT_REVS")
+#pragma pop_macro("LOAD_REVS")
+#pragma pop_macro("INIT_REVS")
 
 BEGIN_PROPSYNCS(UIButton)
     SYNC_SUPERCLASS(UILabel)

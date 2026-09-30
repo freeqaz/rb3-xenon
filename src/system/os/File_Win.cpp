@@ -57,11 +57,17 @@ int FileMkDir(const char *iDirname) {
 void FileQualifiedFilename(char *out, int, const char *in) {
     MILO_ASSERT(in && out, 0x121);
     String str(in);
+#ifdef HX_NATIVE
     const char *inStr = str.c_str();
     const char *path = UsingCD() ? "d:" : HolmesFileShare();
     char buf[256];
     path = FileMakePathBuf(path, inStr, buf);
     strcpy(out, path);
+#else
+    // retail (0x82521910): always rooted at "d:" via FileMakePath -- no
+    // UsingCD() test and no Holmes share
+    strcpy(out, FileMakePath("d:", str.c_str()));
+#endif
     for (char *p = out; *p != '\0'; p++) {
         if (*p == '/') {
             *p = '\\';

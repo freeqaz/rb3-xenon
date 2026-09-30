@@ -494,11 +494,17 @@ void MidiReader::ReadEvent(BinStream &bs) {
 
 void MidiReader::ReadNextEvent() {
     if (sVerify) {
+#ifdef HX_NATIVE
         MILO_TRY { ReadNextEventImpl(); }
         MILO_CATCH(errMsg) {
             Error(errMsg);
             mFail = true;
         }
+#else
+        // Retail 0x827EF848: the sVerify test survives, but the try/catch and
+        // SetTry brackets are gone -- both arms are the inlined Impl.
+        ReadNextEventImpl();
+#endif
     } else {
         ReadNextEventImpl();
     }

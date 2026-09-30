@@ -196,7 +196,7 @@ public:
 class CharWidgetImp : public TrackWidgetImp<TextInstance> {
 public:
     CharWidgetImp(
-        RndFont *, RndText *, int, int, RndText::Alignment, Hmx::Color32, Hmx::Color32, bool
+        RndFont *, RndText *, int, int, RndText::Alignment, Hmx::Color, Hmx::Color, bool
     );
     virtual ~CharWidgetImp() {}
     virtual void Clear();
@@ -267,7 +267,8 @@ public:
 
 class MultiMeshWidgetImp : public TrackWidgetImp<RndMultiMesh::Instance> {
 public:
-    MultiMeshWidgetImp(const ObjPtrList<RndMesh> &, bool);
+    // retail ctor (0x827E58B8) takes only the mesh list; object is 0x14
+    MultiMeshWidgetImp(const ObjPtrList<RndMesh> &);
     virtual ~MultiMeshWidgetImp();
     virtual bool Empty();
     virtual int Size();
@@ -298,7 +299,6 @@ public:
 
     std::vector<RndMultiMesh *> mMultiMeshes; // 0x4
     const ObjPtrList<RndMesh> &mMeshes; // 0x10
-    bool unk10; // 0x14
 };
 
 class ImmediateWidgetImp : public TrackWidgetImp<RndMultiMesh::Instance> {

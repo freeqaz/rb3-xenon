@@ -108,10 +108,8 @@ void BeatMaster::LoaderPoll() {
 }
 
 bool BeatMaster::IsLoaded() {
-    bool b = false;
-    if (unk2d && mAudio->IsLoaded())
-        b = true;
-    return b;
+    // retail (0x8276E270) materialises the && directly (li 1 / li 0), no local
+    return unk2d && mAudio->IsLoaded();
 }
 
 void BeatMaster::AddTrack(

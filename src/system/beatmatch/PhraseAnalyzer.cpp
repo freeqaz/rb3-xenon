@@ -15,7 +15,7 @@ namespace {
 PhraseAnalyzer::PhraseData::PhraseData(int i, int j, int mask)
     : unk0(i), unk2(j), unk4(mask), mUnison(false) {
     int num_instruments = 0;
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < DIM(sEquivalentTrackTypes); i++) { // retail: unsigned bound (cmplwi)
         if (mask & sEquivalentTrackTypes[i]) {
             num_instruments++;
             mask &= ~sEquivalentTrackTypes[i];
@@ -178,9 +178,10 @@ bool PhraseAnalyzer::IsUnisonPhrase(int idx) const {
 
 int PhraseAnalyzer::NumPhrases(int mask) const {
     MILO_ASSERT(mPerformedAnalysis, 0x104);
+    int bit = 1 << mask; // retail (0x8278B678) forms the mask before the size
     int num = 0;
     for (int i = 0; i < mPhrases.size(); i++) {
-        if (mPhrases[i].unk2 & (1 << mask))
+        if (mPhrases[i].unk2 & bit)
             num++;
     }
     return num;

@@ -693,6 +693,7 @@ RndMesh *WorldCrowd::BuildBillboard(Character *c, float height) {
 
 void SetMatColorFlags(ObjPtrList<RndMat, ObjectDir> &, RndMat::ColorModFlags, std::vector<Hmx::Color> *);
 
+#ifdef HX_NATIVE
 void WorldCrowd::Draw3DChars() {
     if (!Crowd3DExists()) return;
     // Use mEnviron3D if it has a pointer, else mEnviron
@@ -753,6 +754,78 @@ void WorldCrowd::Draw3DChars() {
         env->SetUseApproxGlobal(savedApprox);
     }
 }
+#else
+// RB3 retail (0x824E2CD8): the per-char transform is computed inline (there is
+// no out-of-line Apply3DCharXfm call), the camera is always RndCam::sCurrent,
+// and the three Character draw flags at +0x210/+0x212/+0x211 are cleared
+// in-game around a non-virtual RndDrawable::Draw().
+void WorldCrowd::Draw3DChars() {
+    if (!Crowd3DExists())
+        return;
+    ObjPtr<RndEnviron> *envPtr = mEnviron3D ? &mEnviron3D : &mEnviron;
+    RndEnviron *env = *envPtr;
+    bool savedApprox = true;
+    if (env) {
+        savedApprox = env->UsesApproxGlobal();
+        env->SetUseApproxGlobal(false);
+    }
+    RndEnvironTracker tracker(env, nullptr);
+    FOREACH (charIt, mCharacters) {
+        Character *curChar = charIt->mDef.mChar;
+        RndMultiMesh *mmesh = charIt->mMMesh;
+        if (curChar && mmesh) {
+            for (unsigned int i = 0; i != charIt->m3DChars.size(); i++) {
+                Transform xfm;
+                xfm.v = charIt->m3DChars[i].mXfm.v;
+                xfm.v.z -= charIt->mDef.mHeight / 2;
+                if (mCrowdRotate != kCrowdRotateNone || mFocus) {
+                    xfm.m.z = mPlacementMesh->WorldXfm().m.z;
+                    RndCam *cam = RndCam::Current();
+                    if (mCrowdRotate == kCrowdRotateFace) {
+                        Cross(xfm.m.z, cam->WorldXfm().m.y, xfm.m.x);
+                    } else if (mCrowdRotate == kCrowdRotateAway) {
+                        Cross(cam->WorldXfm().m.y, xfm.m.z, xfm.m.x);
+                    } else {
+                        const Vector3 &v = mFocus->WorldXfm().v;
+                        Vector3 diff(v.x - xfm.v.x, v.y - xfm.v.y, 0);
+                        Cross(diff, xfm.m.z, xfm.m.x);
+                    }
+                    Normalize(xfm.m.x, xfm.m.x);
+                    Cross(xfm.m.z, xfm.m.x, xfm.m.y);
+                } else {
+                    xfm.m = mPlacementMesh->WorldXfm().m;
+                }
+                if (charIt->mDef.mUseRandomColor) {
+                    SetMatColorFlags(
+                        charIt->mDef.mMats,
+                        RndMat::kColorModModulate,
+                        &charIt->m3DChars[i].mColors
+                    );
+                }
+                // Character's mSelfShadow / mFloorShadow / mSpotCutout
+                // (protected; char/ is another lane's)
+                bool *flags = (bool *)curChar;
+                bool savedSelfShadow = flags[0x210];
+                bool savedFloorShadow = flags[0x212];
+                bool savedSpotCutout = flags[0x211];
+                if (TheRnd.InGame()) {
+                    flags[0x210] = false;
+                    flags[0x212] = false;
+                    flags[0x211] = false;
+                }
+                curChar->SetWorldXfm(xfm);
+                curChar->Draw();
+                flags[0x210] = savedSelfShadow;
+                flags[0x212] = savedFloorShadow;
+                flags[0x211] = savedSpotCutout;
+            }
+        }
+    }
+    if (env) {
+        env->SetUseApproxGlobal(savedApprox);
+    }
+}
+#endif
 
 void WorldCrowd::AssignRandomColors() {
     FOREACH (it, mCharacters) {
@@ -1275,10 +1348,10 @@ void WorldCrowd::DrawShowing() {
                 // --- Set up impostor camera: position at -dist along camera's Y axis ---
                 const Transform &placementXfm = mPlacementMesh->WorldXfm();
                 const Transform &curCamXfm = curCam->WorldXfm();
-                float dx = curCamXfm.v.x - placementXfm.v.x;
-                float dy = curCamXfm.v.y - placementXfm.v.y;
-                float dz = curCamXfm.v.z - placementXfm.v.z - halfHeight;
-                float dist = std::sqrt(dx * dx + dy * dy + dz * dz);
+                Vector3 diff;
+                Subtract(curCamXfm.v, placementXfm.v, diff);
+                diff.z -= halfHeight;
+                float dist = Length(diff);
                 float minDist = curCam->NearPlane() + halfHeight;
                 dist = (float)__fsel(dist - minDist, dist, minDist);
                 float negDist = -dist;
@@ -1306,42 +1379,12 @@ void WorldCrowd::DrawShowing() {
                     charXfm.m.z = meshXfm2.m.z;
 
                     if (mCrowdRotate == kCrowdRotateFace) {
-                        const Transform &camWXfm = curCam->WorldXfm();
-                        // /fp:fast contracts the MINUEND product into fmsubs
-                        // only when it is spelled inline; a named temporary
-                        // forces a separate fmuls. Retail fuses the minuend and
-                        // pre-computes the subtrahend, so xT6/xT2 stay inline.
-                        float cyx = camWXfm.m.y.x;
-                        float xT7 = charXfm.m.z.y * cyx;
-                        float cyy = camWXfm.m.y.y;
-                        float xT0 = charXfm.m.z.z * cyy;
-                        float xT1 = charXfm.m.z.x * camWXfm.m.y.z;
-                        charXfm.m.x.x = charXfm.m.z.y * camWXfm.m.y.z - xT0;
-                        charXfm.m.x.y = charXfm.m.z.z * cyx - xT1;
-                        charXfm.m.x.z = charXfm.m.z.x * cyy - xT7;
+                        Cross(charXfm.m.z, curCam->WorldXfm().m.y, charXfm.m.x);
                     } else {
-                        const Transform &camWXfm = curCam->WorldXfm();
-                        float czx_b = charXfm.m.z.x;
-                        float xT7 = camWXfm.m.y.y * czx_b;
-                        float cyx_b = camWXfm.m.y.x;
-                        float xT0 = camWXfm.m.y.z * charXfm.m.z.y;
-                        float xT1 = cyx_b * charXfm.m.z.z;
-                        charXfm.m.x.x = camWXfm.m.y.y * charXfm.m.z.z - xT0;
-                        charXfm.m.x.y = camWXfm.m.y.z * czx_b - xT1;
-                        charXfm.m.x.z = cyx_b * charXfm.m.z.y - xT7;
+                        Cross(curCam->WorldXfm().m.y, charXfm.m.z, charXfm.m.x);
                     }
-
                     Normalize(charXfm.m.x, charXfm.m.x);
-
-                    float cxx = charXfm.m.x.x;
-                    float yT7 = charXfm.m.z.y * cxx;
-                    float cxy = charXfm.m.x.y;
-                    float czx = charXfm.m.z.x;
-                    float yT0 = charXfm.m.z.z * cxy;
-                    float yT1 = czx * charXfm.m.x.z;
-                    charXfm.m.y.x = charXfm.m.z.y * charXfm.m.x.z - yT0;
-                    charXfm.m.y.y = charXfm.m.z.z * cxx - yT1;
-                    charXfm.m.y.z = czx * cxy - yT7;
+                    Cross(charXfm.m.z, charXfm.m.x, charXfm.m.y);
                 }
                 charXfm.v.x = 0;
                 charXfm.v.y = 0;

@@ -70,6 +70,8 @@ public:
     virtual void SynthPoll();
 #endif
     SAMPLEINST_NATIVE_VIRTUAL void Play(float);
+    // rb3-Wii / retail 0x8272AA78: Stop, then StartImpl.
+    void Start();
     SAMPLEINST_NATIVE_VIRTUAL void Stop(bool);
     SAMPLEINST_NATIVE_VIRTUAL bool DonePlaying();
     SAMPLEINST_NATIVE_VIRTUAL void EndLoopImpl() {

@@ -20,7 +20,7 @@ void *SampleAlloc(int size) {
 
 #pragma region SynthSample
 
-SynthSample::SynthSample() {}
+SynthSample::SynthSample() : mIsLooped(0), mLoopStartSamp(0), mLoopEndSamp(-1) {}
 
 SynthSample::~SynthSample() {
 #ifdef HX_NATIVE

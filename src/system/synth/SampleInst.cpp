@@ -40,6 +40,11 @@ void SampleInst::Play(float f1) {
     unka0 = true;
 }
 
+void SampleInst::Start() {
+    Stop(false);
+    StartImpl();
+}
+
 void SampleInst::Stop(bool b1) {
     StopImpl(b1);
 #ifdef HX_NATIVE

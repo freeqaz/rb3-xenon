@@ -359,12 +359,21 @@ void StorePanel::HandleNetCacheLoaderFailure(int failType) {
 
     StoreError err;
     switch (failType) {
-    case kNCMFT_StoreServer: {
+    case kNCMFT_StoreServer:
+#ifdef HX_NATIVE
+    {
         Profile *profile = StoreProfile();
         bool signedIn = ThePlatformMgr.IsSignedIntoLive(profile->GetPadNum());
         err = (StoreError)((!signedIn ^ 1) + kStoreErrorCacheNoSpace);
         break;
     }
+#else
+        // retail (0x827B5150): the store-server case shares the default arm --
+        // flat kStoreErrorCacheRemoved, then the ethernet test (as in
+        // HandleNetCacheMgrFailure). No profile / Live sign-in query.
+        err = kStoreErrorCacheRemoved;
+        break;
+#endif
     case kNCMFT_NoSpace:
         return;
     case kNCMFT_StorageDeviceMissing:

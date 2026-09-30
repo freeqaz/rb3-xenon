@@ -42,8 +42,17 @@ BEGIN_PROPSYNCS(SynthEmitter)
 #endif
 END_PROPSYNCS
 
+#ifndef HX_NATIVE
+// rb3-Wii: the save rev is a mutable global, so retail loads it from .data.
+int kEmitterRev = 3;
+#endif
+
 BEGIN_SAVES(SynthEmitter)
+#ifdef HX_NATIVE
     SAVE_REVS(3, 0)
+#else
+    bs << kEmitterRev;
+#endif
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndTransformable)
     SAVE_SUPERCLASS(RndDrawable)
@@ -71,8 +80,16 @@ END_COPYS
 INIT_REVS(3, 0)
 
 BEGIN_LOADS(SynthEmitter)
+#ifdef HX_NATIVE
     LOAD_REVS(bs)
     ASSERT_REVS(3, 0)
+#else
+    // RB3 retail: a plain stack rev, no guard, raw stream to every reader.
+    struct {
+        int rev;
+    } d;
+    bs >> d.rev;
+#endif
     Hmx::Object::Load(bs);
     RndTransformable::Load(bs);
     RndDrawable::Load(bs);
