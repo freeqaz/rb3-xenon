@@ -55,10 +55,20 @@ bool gHostConfig;
 bool gHostLogging;
 bool gHostCached;
 
+#ifdef HX_NATIVE
 DataArray *gSystemConfig;
 DataArray *gSystemTitles;
 
 int gUsingCD;
+#else
+// RB3 retail references these only from the System TU and co-addresses them
+// off one base (PreInitSystem 0x82510BB8 reaches gSystemConfig as -8 off
+// &gUsingCD), which MSVC does only for internal-linkage data.
+static DataArray *gSystemConfig;
+static DataArray *gSystemTitles;
+
+static int gUsingCD;
+#endif
 int gSystemMs;
 float gSystemFrac;
 const char *gHostFile;
@@ -516,6 +526,7 @@ void InitSystem(const char *config) {
 }
 
 void PreInitSystem(const char *config) {
+#ifdef HX_NATIVE
     Archive *oldArchive = TheArchive;
     bool oldCD = UsingCD();
     if (gHostConfig) {
@@ -553,6 +564,46 @@ void PreInitSystem(const char *config) {
         InitSystem(cfgStr);
         gPreconfigOverride = true;
     }
+#else
+    // RB3 retail 0x82510BB8 (with the X360 macros): adds _SHIP,
+    // reads the config with DataReadFile directly, restores gUsingCD to true,
+    // and registers neither system_locale nor switch_system_language.
+    Archive *oldArchive = TheArchive;
+    if (gHostConfig) {
+        gUsingCD = false;
+        TheArchive = nullptr;
+    }
+    DataArrayPtr ptr(1);
+    DataSetMacro("HX_XBOX", ptr);
+    DataSetMacro("HX_WIN", ptr);
+    DataSetMacro("HX_NG", ptr);
+    DataSetMacro("_SHIP", ptr);
+    while (true) {
+        const char *str = OptionStr("define", nullptr);
+        if (!str)
+            break;
+        DataSetMacro(str, ptr);
+    }
+    const char *cfgStr = OptionStr("config", nullptr);
+    if (cfgStr && !gHasPreconfig) {
+        config = cfgStr;
+    }
+    BeginDataRead();
+    gSystemConfig = DataReadFile(config, true);
+    DataVariable("syscfg") = DataNode(gSystemConfig, kDataArray);
+    TheArchive = oldArchive;
+    gUsingCD = true;
+    DataRegisterFunc("system_language", OnSystemLanguage);
+    DataRegisterFunc("system_exec", OnSystemExec);
+    DataRegisterFunc("using_cd", OnUsingCD);
+    DataRegisterFunc("supported_languages", OnSupportedLanguages);
+    DataRegisterFunc("system_ms", OnSystemMs);
+    SetGfxMode(kNewGfx);
+    if (cfgStr && gHasPreconfig) {
+        InitSystem(cfgStr);
+        gPreconfigOverride = true;
+    }
+#endif
 }
 
 void SystemInit(const char *config) {
