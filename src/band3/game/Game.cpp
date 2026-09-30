@@ -499,6 +499,10 @@ Symbol Game::GetSectionAtMs(float ms) const {
 }
 
 void Game::RemovePlayer(Player *p) {
+    // Retail 0x8267B3D8 (TU5): a departing vocalist turns the guide track off.
+    if (mProperties.mUnkTU5_movieSync && p->GetTrackType() == kTrackVocals) {
+        mUnkTU5GuidePitch->mGuidePitch->EnableGuideTrack(-1);
+    }
     mAllActivePlayers.erase(
         std::remove(mAllActivePlayers.begin(), mAllActivePlayers.end(), p),
         mAllActivePlayers.end()
@@ -517,7 +521,6 @@ bool Game::CanUserPause() const {
 
 
 void Game::SetMusicSpeed(float speed) {
-    gDebugFullQuota = speed != 1;
     mMusicSpeed = speed;
     std::vector<Player *> &players = GetActivePlayers();
     FOREACH (it, players) {
@@ -1484,9 +1487,8 @@ DataNode Game::OnAdjustForVocalPhrases(DataArray *a) {
 void Game::OnStatsSynced() { mTrackerManager->OnStatsSynced(); }
 
 void Game::SetTimeOffset() {
-    mTime.Split();
-    float cyclesToMs = mTime.Ms();
-    mTimeOffset = (1000.0f * TheTaskMgr.Seconds(TaskMgr::kRealTime)) - cyclesToMs
+    // Retail 0x82678B40: Seconds first, then an out-of-line Timer::SplitMs.
+    mTimeOffset = TheTaskMgr.Seconds(TaskMgr::kRealTime) * 1000.0f - mTime.SplitMs()
         - TheProfileMgr.GetSongToTaskMgrMs(kGame);
 }
 
@@ -1528,16 +1530,10 @@ void Game::SetNoFail(bool doSave) {
 }
 
 void Game::OvershellSetPaused(bool paused) {
-    if (TheNetSession->IsInGame()) {
-        bool canPause = false;
-        if (!mProperties.mEndWithSong
-            || mLastPollMs < TheSongDB->GetSongDurationMs() - mDisablePauseMs) {
-            canPause = true;
-        }
-        if (canPause && ThePlatformMgr.GetDiskError() == kNoDiskError) {
-            mOvershellWantsPause = paused;
-            UpdatePausedState(true, true);
-        }
+    // Retail 0x8267B478: an out-of-line CanUserPause, no disk-error test.
+    if (TheNetSession->IsInGame() && CanUserPause()) {
+        mOvershellWantsPause = paused;
+        UpdatePausedState(true, true);
     }
 }
 
