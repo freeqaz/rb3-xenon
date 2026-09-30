@@ -21,6 +21,8 @@ Join is by MSVC mangled name via scripts/target_symbol_map.json.
 import json, os, re, struct, sys, glob
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if len(sys.argv) > 2 and sys.argv[1] == '--root':   # W16-GN: run against another tree
+    ROOT = os.path.abspath(sys.argv[2])
 
 # ---------- retail image ----------
 class Image:
@@ -53,7 +55,10 @@ def retail_maxstates(img, asmdir):
     rx_obj = re.compile(r'^\.obj\s+(except_data_[0-9A-Fa-f]+)')
     rx_4b  = re.compile(r'^\s*\.4byte\s+(0x[0-9A-Fa-f]+)')
     rx_fn  = re.compile(r'^\.fn\s+(fn_[0-9A-Fa-f]+)')
-    for p in sorted(glob.glob(os.path.join(asmdir, '*.s'))):
+    # RECURSIVE: 569 split headings are NESTED (asm/band3/meta_band/X.s). A flat
+    # '*.s' glob silently dropped every one of them -- incl. W16-GI's known
+    # positive fn_82607ED8 (lane W16-GN, 2026-09-30).
+    for p in sorted(glob.glob(os.path.join(asmdir, '**', '*.s'), recursive=True)):
         words, inobj = [], False
         for line in open(p, errors='replace'):
             if rx_obj.match(line):
