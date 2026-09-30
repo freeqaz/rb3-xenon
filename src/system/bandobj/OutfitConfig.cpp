@@ -1389,7 +1389,8 @@ BEGIN_CUSTOM_PROPSYNC(OutfitConfig::Piercing)
     SYNC_PROP(pieces, o.mPieces)
 END_CUSTOM_PROPSYNC
 
-void PropSyncTwoColor(OutfitConfig::MatSwap &swap) {
+// Retail inlines this (and SyncTwoColor) into PropSync(MatSwap&) -- no bl.
+inline void PropSyncTwoColor(OutfitConfig::MatSwap &swap) {
     swap.SyncTwoColor();
     gOutfitConfigOwner->Recompose();
 }
