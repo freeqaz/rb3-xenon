@@ -343,8 +343,12 @@ void AddHeap(int i1, int i2, DataArray *arr) {
     );
 }
 
-// Stub: MemHeap::Alloc and ThreadMemStack are not yet decompiled, so route
-// through malloc() which uses the CRT heap (NtAllocateVirtualMemory in Xenia).
+// Stub: this 5-arg debug entry point is still a placeholder that routes
+// through malloc() (CRT heap; NtAllocateVirtualMemory in Xenia) rather than
+// the real heap. MemHeap::Alloc (MemHeap.cpp) and ThreadMemStack (below in
+// this file) are both decompiled; the reconstruction of the retail 2-arg
+// MemAlloc that would call them is written out as a handoff comment further
+// down and has not yet been ported.
 __declspec(noinline) void *
 (MemAlloc)(int size, const char *file, int line, const char *name, int align) {
     if (size <= 0)
@@ -355,7 +359,9 @@ __declspec(noinline) void *
 #ifndef HX_NATIVE
 // Retail/match 2-arg heap allocator: MemAlloc(size, align). The retail XEX's
 // heap fast path takes no __FILE__/line/name — MemTrack is compiled out.
-// Mirrors rb3-Wii _MemAlloc(int, int). STILL A STUB (MemHeap::Alloc TBD).
+// Mirrors rb3-Wii _MemAlloc(int, int). STILL A STUB — the body below is the
+// malloc() placeholder, not the reconstruction (MemHeap::Alloc itself is
+// already decompiled; see MemHeap.cpp).
 //
 // ─── HANDOFF (lane SRCPORT-1): the retail body is fn_827BCD38, 644 B, and its
 // semantics are FULLY reconstructed below from retail bytes. Everything it
@@ -413,15 +419,15 @@ __declspec(noinline) void *
 // plus a separate `ThreadMemStack(false)` for mTempRefs emits TWO calls, and
 // MSVC cannot CSE a call away.
 //
-// ⚠ IT CANNOT SCORE UNTIL 0x827bcd38 IS NAMED. The address is unnamed in
-// target_symbol_map.json, so the row is unpaired and worth 0 B no matter how
-// good the body is. ALLOCGATE-1 declined the name for a sound reason: naming it
-// converts ~104 objs' worth of currently-FORGIVEN placeholder call sites into
-// checked ones. The right order is therefore: port the body, verify it offline
-// by relocation-normalized byte identity (the L3_EXACT comparator in
-// tools/alias_forgiveness_audit.py already does exactly this), and only then add
-// the map name — at which point ab_measure prices the +644 B against the
-// newly-checked sites as a single net number. Do NOT name it first.
+// ⚠ 0x827bcd38 was unnamed when this handoff was written, so the row was
+// unpaired and worth 0 B no matter how good the body was — ALLOCGATE-1 had
+// declined to name it first, since doing so converts ~104 objs' worth of
+// currently-FORGIVEN placeholder call sites into checked ones. It has since
+// been named `?MemAlloc@@YAPAXHH@Z` in target_symbol_map.json (2026-08-16,
+// MAPID-1), which exposed 6 real wrong-callee divergences the alias had been
+// forgiving — see the campaign memory for that reckoning. The body below is
+// still the malloc() placeholder; porting the reconstruction above is what
+// remains.
 __declspec(noinline) void *(MemAlloc)(int size, int align) {
     if (size <= 0)
         return nullptr;
@@ -439,7 +445,8 @@ void *(_MemAllocTemp)(int size, const char *file, int line, const char *name, in
 }
 
 #ifndef HX_NATIVE
-// Retail/match 2-arg temp allocator the X360 XEX actually calls (fn_827979D8):
+// Retail/match 2-arg temp allocator the X360 XEX actually calls
+// (0x827bcff0, `?_MemAllocTemp@@YAPAXHH@Z`):
 // a temp-REFCOUNT scope guard around a 2-arg heap MemAlloc(size, align), no
 // debug strings. Parenthesized name so the call-site macro doesn't recurse.
 //
@@ -786,9 +793,13 @@ MemDoTempAllocations::~MemDoTempAllocations() {
     }
 }
 #else
-// Retail/match no-arg temp-allocation scope guard (fn_82797500 / fn_827975C8).
-// Locks gMemStackLock, captures the current heap's strategy into mOld, forces
-// MemHeap::kLastFit for the scope; the dtor restores mOld. Matches the rb3-Wii
+// Retail/match no-arg temp-allocation scope guard. No retail address is
+// currently identified for this ctor/dtor pair (fn_82797500 / fn_827975C8,
+// once cited here, fall inside TrackWatcherImpl's 0x82797298 in the current
+// split and do not denote this guard — see the header's MemDoTempAllocations
+// comment). Locks gMemStackLock, captures the current heap's strategy into
+// mOld, forces MemHeap::kLastFit for the scope; the dtor restores mOld.
+// Matches the rb3-Wii
 // MemDoTempAllocations ctor/dtor shape (CritSecTracker + GetCurrentHeapNum +
 // gHeaps[]) but with the retail unconditional kLastFit strategy and no
 // `enabled` static (verified byte-for-byte against the retail XEX).

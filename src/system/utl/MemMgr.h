@@ -225,7 +225,8 @@ void *MemAlloc(int size, int align);
 // Retail/match LEAF alloc: rewrite the inherited debug call sites
 // `MemAlloc(size, __FILE__, line, name[, align])` down to the retail 2-arg
 // `(MemAlloc)(size, align)`. The retail XEX strips MemTrack, so the call passes
-// only size + align (verified in Ghidra: Function_827977D0(size, align)). The
+// only size + align (verified in Ghidra: 0x827bcd38, `?MemAlloc@@YAPAXHH@Z`,
+// takes (size, align)). The
 // common debug form omits align (defaulted 0), so the macro forces align 0 and
 // swallows the trailing file/line/name. The handful of sites that pass a real
 // non-zero align (BlockMgr 4, Mic/BinkReader 0x80, operator new
@@ -277,9 +278,10 @@ void *MemAlloc(int size, int align);
     )(__VA_ARGS__))
 // Retail/match 2-arg temp allocator (size, align) — no debug strings, mirroring
 // the MemAlloc lever above. The retail RB3-360 XEX strips MemTrack from
-// _MemAllocTemp too: SongMgr::SaveWrite calls it as fn_827979D8(size, align=0)
-// with NO __FILE__/__LINE__/name string loads (verified via objdiff: target
-// `li r4, 0x0; bl fn_827979D8` vs our 5-arg debug form with the "SongMgr" /
+// _MemAllocTemp too: SongMgr::SaveWrite calls it as 0x827bcff0
+// (`?_MemAllocTemp@@YAPAXHH@Z`)(size, align=0) with NO __FILE__/__LINE__/name
+// string loads (verified via objdiff: target
+// `li r4, 0x0; bl 0x827bcff0` vs our 5-arg debug form with the "SongMgr" /
 // "src/system/meta/SongMgr.cpp" / line-733 literals). Unlike the MemAlloc macro
 // (which forces align 0), this PRESERVES the trailing align arg (StorePacked-
 // Metadata passes 0x20) and swallows the file/line/name. The definition and the
@@ -309,9 +311,11 @@ void MemFree(void *mem);
 #endif
 // Retail/match allocation ABI. The retail RB3-360 XEX strips all MemTrack /
 // MILO_ASSERT debug instrumentation, so its alloc call sites pass NO __FILE__/
-// __LINE__/name args (verified in Ghidra: callers like fn_82798360 invoke the
-// heap allocator as MemAlloc(size, align) — exactly 2 regs, no string loads;
-// the "StringBuf"/__FILE__ literals are absent from the binary). This mirrors
+// __LINE__/name args (verified in Ghidra: retail callers invoke the heap
+// allocator as MemAlloc(size, align) — exactly 2 regs, no string loads; the
+// "StringBuf"/__FILE__ literals are absent from the binary; the address once
+// cited here as an example caller, 0x82798360, no longer denotes a function
+// in the current split). This mirrors
 // rb3-Wii's _MemOrPoolAlloc(int)/_MemAlloc(int,int) form and follows the same
 // precedent as PoolAlloc.h's 2-arg POOL_OVERLOAD win. On HX_NATIVE we keep the
 // debug form (default args carry real host tracking strings); on the X360 match
