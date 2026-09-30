@@ -586,41 +586,44 @@ void SetSystemArgs(const char *commandLine) {
     strncpy(sCommandLineBuffer, commandLine, kCommandLineSz - 1);
     sCommandLineBuffer[kCommandLineSz - 1] = 0;
 
+    char *ptr = sCommandLineBuffer;
+    bool newToken = true;
     if (sCommandLineBuffer[0] != 0) {
-        int inQuotes = 0;
-        char *ptr = sCommandLineBuffer;
-        int newToken = 1;
-
+        unsigned int inQuotes = 0;
         for (;;) {
-            if (!inQuotes) {
+            // Retail 0x825110E0 splits on a SPACE outside quotes; the space test
+            // was missing here, so every unquoted character became NUL.
+            if (!inQuotes && *ptr == ' ') {
                 *ptr = 0;
-                newToken = 1;
+                newToken = true;
                 ptr++;
             } else if (*ptr == '"') {
                 *ptr = 0;
                 ptr++;
-                inQuotes ^= 1;
+                inQuotes = !inQuotes;
                 if (inQuotes) {
                     TheSystemArgs.push_back(ptr);
-                    newToken = 0;
+                    newToken = false;
                 } else {
-                    newToken = 1;
+                    newToken = true;
                 }
             } else {
                 if (newToken) {
                     TheSystemArgs.push_back(ptr);
-                    newToken = 0;
+                    newToken = false;
                 }
                 ptr++;
             }
-
             if (*ptr == 0)
                 break;
         }
     }
 
     NormalizeSystemArgs();
+#ifdef HX_NATIVE
+    // DC3-era; RB3 retail has no pristine copy of the argument vector.
     gPristineSystemArgs = TheSystemArgs;
+#endif
 }
 
 void NormalizeSystemArgs() {
