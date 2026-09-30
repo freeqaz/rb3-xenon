@@ -1431,8 +1431,17 @@ BEGIN_CUSTOM_PROPSYNC(OutfitConfig::MeshAO::Seam)
 END_CUSTOM_PROPSYNC
 
 BEGIN_CUSTOM_PROPSYNC(OutfitConfig::MeshAO)
+    // Retail declares meshname/coeffs/seams as FUNCTION-LOCAL statics sharing one
+    // guard word (lbl_82CBCCE0), claimed in source order (meshname 0x1, coeffs 0x2,
+    // seams 0x4) -- same shape as the Overlay block below, this one just sits above
+    // it in the same TU and also gets obj/ObjMacros.h's plain global-compare
+    // SYNC_PROP, so the fix is the same explicit-interleaved-static spelling.
+    // W16-GZ localstatic lever.
+    static Symbol meshname("meshname");
     SYNC_PROP(meshname, o.mMeshName)
+    static Symbol coeffs("coeffs");
     SYNC_PROP(coeffs, o.mCoeffs)
+    static Symbol seams("seams");
     SYNC_PROP(seams, o.mSeams)
 END_CUSTOM_PROPSYNC
 
