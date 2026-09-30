@@ -365,10 +365,12 @@ bool VorbisReader::CheckHmxHeader() {
         int bytes;
         if (mFile->ReadDone(bytes)) {
             BufStream bs(mHdrBuf, 60000, true);
-            bs >> mVersion;
+            // Retail keeps the mogg version in a stack local; +0xc4 is never written.
+            int version;
+            bs >> version;
             bs >> mHdrSize;
-            MILO_ASSERT(mVersion >= 10, 0x239);
-            MILO_ASSERT(mVersion <= 16, 0x23A);
+            MILO_ASSERT(version >= 10, 0x239);
+            MILO_ASSERT(version <= 16, 0x23A);
             MILO_ASSERT(mHdrSize <= kMaxHeader, 0x23B);
             MILO_ASSERT(mHdrSize >= 0, 0x23C);
             mOggMap.Read(bs);
@@ -376,26 +378,27 @@ bool VorbisReader::CheckHmxHeader() {
             memset(mKeyMask, 0, sizeof(mKeyMask));
             mMagicA = mMagicB = 0;
             mMagicHashA = mMagicHashB = 0;
-            if (mVersion >= 0xC && mVersion <= 0x10) {
+            if (version >= 0xC && version <= 0x10) {
                 bs.Read(mNonce, sizeof(mNonce));
                 s64 idx;
                 bs >> idx;
                 mMagicA = idx;
-                bs >> idx;
-                mMagicB = idx;
+                s64 magicB;
+                bs >> magicB;
+                mMagicB = magicB;
                 unsigned char stuff[16];
                 bs.Read(stuff, sizeof(stuff));
                 bs.Read(stuff, sizeof(stuff));
-                bs >> idx;
-                mKeyIndex = (int)idx % 6 + 6;
-                TheSynth->Grinder().HvDecrypt(stuff, mKeyMask, mVersion);
+                bs >> magicB;
+                mKeyIndex = (int)magicB % 6 + 6;
+                TheSynth->Grinder().HvDecrypt(stuff, mKeyMask, version);
                 gCipher = register_cipher(&rijndael_desc);
                 MILO_ASSERT(gCipher >= 0, 0x268);
                 mCtrState = new symmetric_CTR;
                 int keyIndex = mKeyIndex;
                 MILO_ASSERT_RANGE(keyIndex, 0, KeyChain::getNumKeys(), 0x26D);
-                setupCypher(mVersion);
-            } else if (mVersion == 0xB) {
+                setupCypher(version);
+            } else if (version == 0xB) {
                 bs.Read(mNonce, sizeof(mNonce));
                 gCipher = register_cipher(&rijndael_desc);
                 MILO_ASSERT(gCipher >= 0, 0x276);

@@ -102,8 +102,8 @@ bool Archive::DebugArkOrder() { return gDebugArkOrder; }
 Archive::~Archive() {}
 
 Archive::Archive(const char *name, int heap_headroom)
-    : mNumArkfiles(0), mBasename(name), mMode(kRead), mMaxArkfileSize(0),
-      mIsPatched(false), mPermissionCodes(0), mPermissionCount(0) {
+    : mBasename(name), mMode(kRead),
+      mIsPatched(false) {
     Read(heap_headroom);
 }
 

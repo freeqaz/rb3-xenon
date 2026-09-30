@@ -309,12 +309,11 @@ void CheatsManager::RebuildKeyCheatsForMode() {
 
 int CheatsManager::OnMsg(const ButtonDownMsg &msg) {
     User *user = msg.GetUser();
-    LocalUser *localUser = 0;
-    if (user) {
-        localUser = user->GetLocalUser();
-    }
+    if (!user)
+        return 1;
+    LocalUser *localUser = user->GetLocalUser();
 
-    int padNum = msg.GetPadNum();
+    int padNum = localUser->GetPadNum();
     JoypadData *padData = JoypadGetPadData(padNum);
     unsigned int buttons = padData->mButtons;
 
@@ -342,7 +341,7 @@ int CheatsManager::OnMsg(const ButtonDownMsg &msg) {
 
     mLastButtonTime.Restart();
 
-    padNum = msg.GetPadNum();
+    padNum = localUser->GetPadNum();
     bool isShift = JoypadIsShiftButton(padNum, button);
     if (!isShift) {
         for (std::vector<LongJoyCheat>::iterator it = mLongJoyCheats.begin();
@@ -396,7 +395,7 @@ DataNode CheatsManager::OnMsg(const KeyboardKeyMsg &msg) {
                 KeyCheat *cur = *it;
                 if (key == cur->mKey && msg.GetCtrl() == cur->mCtrl
                     && msg.GetAlt() == cur->mAlt) {
-                    CallCheatScript(true, cur->mScript, nullptr, false);
+                    CallCheatScript(true, cur->mScript, nullptr, true);
                 }
             }
             return 1;

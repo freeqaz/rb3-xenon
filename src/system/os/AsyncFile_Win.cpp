@@ -7,16 +7,22 @@
 #include <errno.h>
 #include <io.h>
 
+namespace {
+    inline void StrippedLog(String) {}
+}
+
 void ReadError(const char *cc) {
     DWORD err = GetLastError();
     String str;
-    if (FileIsLocal(cc) && TheContentMgr.Contains(cc, str)) {
-        MILO_LOG("ReadError in package '%s', err = 0x%08x\n", str, err);
-        int b3 = (err == ERROR_FILE_CORRUPT) || (err == ERROR_DISK_CORRUPT);
-        TheContentMgr.OnReadFailure(b3, str.c_str());
+    if (FileIsLocal(cc)) {
+        if (TheContentMgr.Contains(cc, str)) {
+            // retail keeps the by-value String argument of the stripped log call
+            StrippedLog(String(str));
+            int b3 = (err == ERROR_FILE_CORRUPT) || (err == ERROR_DISK_CORRUPT);
+            TheContentMgr.OnReadFailure(b3, str.c_str());
+        }
+        return;
     } else {
-        if (!UsingCD())
-            return;
         ThePlatformMgr.SetDiskError(kDiskError);
     }
 }
@@ -176,22 +182,16 @@ void AsyncFileWin::_WriteAsync(const void *buf, int count) {
 void AsyncFileWin::_ReadAsync(void *buf, int count) {
     MILO_ASSERT(!mReadInProgress && !mWriteInProgress, 0x139);
     MILO_ASSERT(count >= 0, 0x13a);
-    if (gFakeFileErrors) {
-        SetLastError(0x20000002);
-        ReadError(mFilename.c_str());
-        mFail = true;
-        return;
-    }
     if (count == 0)
         return;
     mReadInProgress = true;
-    memset(&mOverlapped, 0, sizeof(OVERLAPPED));
-    unk64 = count;
-    unk5c = buf;
     bool aligned = false;
+    memset(&mOverlapped, 0, sizeof(OVERLAPPED));
+    unk5c = buf;
+    unk64 = count;
     if (((int)buf & 3) == 0) {
         if (Tell() % mSectorBytes == 0) {
-            if (count % mSectorBytes == 0) {
+            if (unk64 % mSectorBytes == 0) {
                 aligned = true;
             }
         }
@@ -200,16 +200,15 @@ void AsyncFileWin::_ReadAsync(void *buf, int count) {
     int bytesToRead;
     if (aligned) {
         mOverlapped.Offset = Tell();
-        bytesToRead = count;
-        unk60 = buf;
+        unk60 = unk5c;
+        bytesToRead = unk64;
     } else {
-        int alignedStart = (Tell() / mSectorBytes) * mSectorBytes;
-        mOverlapped.Offset = alignedStart;
-        int alignedEnd = ((Tell() + count + mSectorBytes - 1) / mSectorBytes) * mSectorBytes;
-        bytesToRead = alignedEnd - alignedStart;
+        mOverlapped.Offset = (Tell() / mSectorBytes) * mSectorBytes;
+        bytesToRead = ((Tell() + unk64 + mSectorBytes - 1) / mSectorBytes) * mSectorBytes
+            - mOverlapped.Offset;
         MILO_ASSERT(bytesToRead%mSectorBytes == 0, 0x16a);
         unk60 = _MemAllocTemp(bytesToRead, "AsyncFile_Win.cpp", 0x16d, "AsyncFileTempBuf", 0);
-        unk68 = Tell() - alignedStart;
+        unk68 = Tell() - mOverlapped.Offset;
     }
     if (!ReadFile(mFile, unk60, bytesToRead, 0, &mOverlapped)) {
         if (GetLastError() != 0x3e5) {

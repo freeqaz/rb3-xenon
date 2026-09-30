@@ -817,7 +817,6 @@ const char *FileLocalize(const char *iFilename, char *buffer) {
     // HongKongExceptionMet is an extern -- so these are not optimisation
     // artefacts: they are DC3-newer source that RB3-360 retail did not have.
     static char mybuffer[256];
-    const char *result = iFilename;
 
     // Retail emits TWO back-to-back SystemLanguage() calls (0x82510040; mapped
     // ?SystemLocale@@ until W16-HP proved it reads gSystemLanguage) into the same sret
@@ -827,39 +826,39 @@ const char *FileLocalize(const char *iFilename, char *buffer) {
     // the original condition.
     SystemLanguage();
     if (!SystemLanguage().Null()) {
-        for (const char *p = result; *p != '\0'; p++) {
+        for (const char *p = iFilename; *p != '\0'; p++) {
             if (*p == '/' && p[1] == 'e' && p[2] == 'n' && p[3] == 'g'
                 && p[4] == '/') {
                 if (!buffer)
                     buffer = mybuffer;
-                strcpy(buffer, result);
-                char *q = buffer + (p - result);
+                strcpy(buffer, iFilename);
+                char *q = buffer + (p - iFilename) + 1;
                 const char *langStr = SystemLanguage().Str();
-                q[1] = langStr[0];
-                q[2] = langStr[1];
-                q[3] = langStr[2];
-                result = buffer;
+                q[0] = langStr[0];
+                q[1] = langStr[1];
+                q[2] = langStr[2];
+                iFilename = buffer;
                 break;
             }
         }
     }
 
-    for (const char *p = result; *p != '\0'; p++) {
+    for (const char *p = iFilename; *p != '\0'; p++) {
         if (*p == '/' && p[1] == 'o' && p[2] == 'g' && p[3] == '/') {
-            if (buffer == result) {
+            if (buffer == iFilename) {
                 ((char *)p)[1] = 'n';
             } else {
                 if (!buffer)
                     buffer = mybuffer;
-                strcpy(buffer, result);
-                buffer[(p - result) + 1] = 'n';
-                result = buffer;
+                strcpy(buffer, iFilename);
+                buffer[(p - iFilename) + 1] = 'n';
+                iFilename = buffer;
             }
             break;
         }
     }
 
-    return result;
+    return iFilename;
 }
 
 bool FileDiscSpinUp() { return TheBlockMgr.SpinUp(); }

@@ -7,7 +7,7 @@
 #define kMaxRGStrings 6
 
 GameGem::GameGem(const MultiGemInfo &info)
-    : mMs(info.ms), mTick(info.tick), mDurationMs(info.duration_ms),
+    : mMs(info.ms), mTick(info.tick), mDurationMs((int)info.duration_ms),
       mDurationTicks(info.duration_ticks), mSlots(info.slots), mPlayed(false),
       mForceStrum(info.no_strum == kStrumForceOn), mIgnoreDuration(info.ignore_duration),
       mIsCymbal(info.is_cymbal), unk10b1(false), mRealGuitar(false), mLoose(false),
@@ -17,7 +17,7 @@ GameGem::GameGem(const MultiGemInfo &info)
 
 // fn_80460334
 GameGem::GameGem(const RGGemInfo &info)
-    : mMs(info.ms), mTick(info.tick), mDurationMs(info.duration_ms),
+    : mMs(info.ms), mTick(info.tick), mDurationMs((int)info.duration_ms),
       mDurationTicks(info.duration_ticks), mSlots(0), mPlayed(false),
       mForceStrum(info.no_strum == kStrumForceOn), mIgnoreDuration(info.ignore_duration),
       mIsCymbal(0), mShowChordNames(info.show_chord_names),
@@ -28,7 +28,7 @@ GameGem::GameGem(const RGGemInfo &info)
       mHandPosition(info.hand_position), mRootNote(info.root_note), unk18(0),
       mChordNameOverride(), mImportantStrings(0) {
     int slot = 1;
-    for (unsigned int i = 0; i < 6; i++, slot <<= 1) {
+    for (unsigned int i = 0; i < 6; slot <<= 1, i++) {
         mFrets[i] = info.frets[i];
         SetRGNoteTypeEntry(i, info.note_types[i]);
         if (info.frets[i] != -1 && info.note_types[i] != kRGGhost) {
@@ -36,11 +36,8 @@ GameGem::GameGem(const RGGemInfo &info)
         }
     }
     PackRealGuitarData();
-    // rb3-xenon GemInfo.h declares chord_name as a single `char` (not the
-    // rb3-Wii char[64]); take its address as the C-string. Same form under
-    // native and X360 since both build against this header.
-    if (info.chord_name != 0)
-        mChordNameOverride = Symbol(&info.chord_name);
+    if (info.chord_name[0] != 0)
+        mChordNameOverride = info.chord_name;
     mForceStrum |= RightHandTap();
 }
 

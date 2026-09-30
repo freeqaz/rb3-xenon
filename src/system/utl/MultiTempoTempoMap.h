@@ -16,7 +16,7 @@ public:
     };
 
     MultiTempoTempoMap();
-    virtual ~MultiTempoTempoMap();
+    // implicit dtor: retail's ??1 has no own-vtable store (a user-declared dtor adds one)
     virtual float TickToTime(float f) const;
     virtual float TimeToTick(float f) const;
     virtual float GetTempo(int) const;

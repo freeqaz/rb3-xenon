@@ -46,7 +46,7 @@ private:
 
 public:
     StreamChecksum() : mState(0) {}
-    ~StreamChecksum() {}
+    // implicit (trivial) dtor: see ~StreamChecksumValidator
     void Begin();
     void Update(const unsigned char *, unsigned int);
     void End();
@@ -65,7 +65,8 @@ private:
 
 public:
     StreamChecksumValidator() : mStreamChecksum(), mSignature(0), mFile(0) {}
-    ~StreamChecksumValidator() {}
+    // implicit (trivial) dtor: retail's `delete mChecksum` in ~BufStream has no
+    // null test, which MSVC only omits when the destructor is trivial
 
     MEM_OVERLOAD(StreamChecksumValidator, 0x3D);
     bool Begin(const char *, bool);

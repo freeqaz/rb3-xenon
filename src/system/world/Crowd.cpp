@@ -812,28 +812,28 @@ void WorldCrowd::SetFullness(float flatFullness, float charFullness) {
     mFlatFullness = flatFullness;
     Delete3DCrowdHandles();
     FOREACH (it, mCharacters) {
-        RndMultiMesh *multiMesh = it->mMMesh;
-        if (multiMesh) {
-            InstanceList &instances = multiMesh->mInstances;
-            int instanceCount = (int)instances.size();
-            InstanceList &backup = it->mBackup;
-            int backupCount = (int)backup.size();
-            int targetInstances = (int)((float)(instanceCount + backupCount) * mFlatFullness);
+        if (it->mMMesh) {
+            int totalCount = (int)it->mMMesh->mInstances.size() + (int)it->mBackup.size();
+            int instanceCount = (int)it->mMMesh->mInstances.size();
+            int targetInstances = (int)((float)totalCount * mFlatFullness);
             if (instanceCount < targetInstances) {
-                int toMove = targetInstances - instanceCount;
-                InstanceList::iterator backIt = backup.begin();
-                for (int i = 0; i < toMove; i++) {
+                InstanceList::iterator backIt = it->mBackup.begin();
+                for (; instanceCount < targetInstances; instanceCount++) {
                     ++backIt;
                 }
-                instances.splice(instances.end(), backup, backup.begin(), backIt);
+                it->mMMesh->mInstances.splice(
+                    it->mMMesh->mInstances.end(), it->mBackup, it->mBackup.begin(), backIt
+                );
             } else if (targetInstances < instanceCount) {
-                int toRemove = instanceCount - targetInstances;
-                InstanceList::iterator instIt = instances.begin();
-                for (int i = 0; i < toRemove; i++) {
+                InstanceList::iterator instIt = it->mMMesh->mInstances.begin();
+                for (; targetInstances < instanceCount; instanceCount--) {
                     ++instIt;
                 }
-                backup.splice(backup.end(), instances, instances.begin(), instIt);
-                multiMesh->InvalidateProxies();
+                it->mBackup.splice(
+                    it->mBackup.end(), it->mMMesh->mInstances, it->mMMesh->mInstances.begin(),
+                    instIt
+                );
+                it->mMMesh->InvalidateProxies();
             }
             unsigned int totalChars3D = it->m3DCharsCreated.size();
             int targetChars3D = (int)((float)totalChars3D * charFullness);
@@ -842,19 +842,16 @@ void WorldCrowd::SetFullness(float flatFullness, float charFullness) {
             }
             int currentChars3D = (int)it->m3DChars.size();
             if (currentChars3D < targetChars3D) {
-                int toAdd = targetChars3D - currentChars3D;
-                for (int i = 0; i < toAdd; i++) {
+                for (; currentChars3D < targetChars3D; currentChars3D++) {
                     it->m3DChars.push_back(it->m3DCharsCreated[(int)it->m3DChars.size()]);
                 }
             } else if (targetChars3D < currentChars3D) {
-                int toRemove = currentChars3D - targetChars3D;
-                for (int i = 0; i < toRemove; i++) {
+                for (; targetChars3D < currentChars3D; currentChars3D--) {
                     it->m3DChars.pop_back();
                 }
             }
         }
     }
-    AssignRandomColors();
 }
 
 void WorldCrowd::Set3DCharXfm(

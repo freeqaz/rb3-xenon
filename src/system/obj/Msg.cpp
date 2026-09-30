@@ -582,7 +582,10 @@ BEGIN_HANDLERS(MsgSource)
     HANDLE(remove_sink, OnRemoveSink);
     HANDLE_VIRTUAL_SUPERCLASS(Hmx::Object);
     Export(_msg, false);
-END_HANDLERS
+    // Retail has no unhandled-msg PathName(this) tail here: after exporting to
+    // the sinks the handler just returns unhandled.
+    return DATA_UNHANDLED;
+}
 
 DataNode MsgSource::OnAddSink(DataArray *da) {
     if (da->Size() > 3) {

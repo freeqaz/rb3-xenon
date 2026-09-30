@@ -30,9 +30,10 @@ IListChunk::IListChunk(BinStream &bs, bool b)
 }
 
 IListChunk::IListChunk(IListChunk &chunk)
-    : mParent(&chunk), mBaseBinStream(chunk.mBaseBinStream), mHeader(0), mStartMarker(-1),
-      mEndMarker(-1), mLocked(0), mSubHeader(), mSubChunkValid(0), mRecentlyReset(1),
-      mSubChunkMarker(-1) {
+    // retail stores only mHeader/mLocked/mSubHeader/mRecentlyReset here; the
+    // markers and mSubChunkValid are set by Init()/Reset() before any read
+    : mParent(&chunk), mBaseBinStream(chunk.mBaseBinStream), mHeader(0), mLocked(0),
+      mSubHeader(), mRecentlyReset(1) {
     mHeader = new ChunkHeader(*mParent->CurSubChunkHeader());
     mStartMarker = mBaseBinStream.Tell();
     Init();

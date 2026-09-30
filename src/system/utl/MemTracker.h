@@ -19,9 +19,12 @@ public:
         void *memory,
         signed char heap,
         bool pooled,
-        unsigned char strat,
+        unsigned char strat
+#ifdef HX_NATIVE
+        ,
         const char *file,
         int line
+#endif
     );
     void Free(void *);
     void CloseReport();

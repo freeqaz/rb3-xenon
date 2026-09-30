@@ -187,10 +187,18 @@ void MemTracker::Alloc(
     void *memory,
     signed char heap,
     bool pooled,
-    unsigned char strat,
+    unsigned char strat
+#ifdef HX_NATIVE
+    ,
     const char *file,
     int line
+#endif
 ) {
+#ifndef HX_NATIVE
+    // retail's Alloc takes no file/line (Realloc passes 7 register args)
+    const char *const file = nullptr;
+    const int line = 0;
+#endif
     if (!gMemTrackerTracking)
         return;
     MILO_ASSERT(type, 0x6D);
@@ -246,8 +254,7 @@ void MemTracker::Free(void *mem) {
     if (found) {
         AllocInfo *info = *found;
         info->Validate();
-        if (mLog && !info->mPooled && (mHeap == -1 || info->mHeap == mHeap)
-            && info->mStrat == 0) {
+        if (mLog && !info->mPooled && info->mHeap == 0 && info->mStrat == 0) {
             *mLog << " ((com free) " << "(" << mem << ") " << *info << ")\n";
         }
         if (!info->mPooled) {
@@ -255,7 +262,13 @@ void MemTracker::Free(void *mem) {
         }
         mHashTable->Remove(found);
         if (info->mTimeSlice == mTimeSlice) {
+#ifdef HX_NATIVE
             delete info;
+#else
+            // retail releases the block WITHOUT running ~AllocInfo here (a bare
+            // bl ??3AllocInfo), while delete_and_clear does destruct
+            AllocInfo::operator delete(info);
+#endif
         } else {
             mFreedInfos.push_back(info);
         }
@@ -342,7 +355,11 @@ void MemTracker::Realloc(void *key, int reqSize, int actualSize, void *mem) {
         const char *type = info->mType;
         MILO_ASSERT(info->mPooled == 0, 0x100);
         Free(key);
+#ifdef HX_NATIVE
         Alloc(reqSize, actualSize, type, mem, heap, false, strat, __FILE__, 0x102);
+#else
+        Alloc(reqSize, actualSize, type, mem, heap, false, strat);
+#endif
     }
 }
 

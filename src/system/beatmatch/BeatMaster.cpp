@@ -98,10 +98,7 @@ void BeatMaster::LoaderPoll() {
 #endif
     } else if (unk2d) {
         TheSynth->Poll();
-        bool b1 = false;
-        if (unk2d && mAudio->IsLoaded())
-            b1 = true;
-        if (b1) {
+        if (IsLoaded()) {
 #ifdef HX_NATIVE
             MILO_LOG("BEATMASTER_DBG: mAudio->IsLoaded()=true; RELEASE(mLoader)\n");
 #endif
@@ -140,6 +137,7 @@ void BeatMaster::Poll(float f) {
 
 float BeatMaster::SongDurationMs() {
     DataEventList *events = mMidiParserMgr->GetEventsList();
+    static Symbol end("end");
     for (int i = 0; i < events->Size(); i++) {
         const DataEvent &curEvent = events->Event(i);
         Symbol msgSym = curEvent.Msg()->Sym(1);

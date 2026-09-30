@@ -5,7 +5,14 @@
 #include "xdk/XAPILIB.h"
 #include "xdk/XNET.h"
 
-XboxSessionJob::XboxSessionJob(void *v) : mSession(v), mSuccess(true) {
+// retail's ctor stores only mSession (no mSuccess init); native keeps it
+XboxSessionJob::XboxSessionJob(void *v)
+    : mSession(v)
+#ifdef HX_NATIVE
+      ,
+      mSuccess(true)
+#endif
+{
     memset(&mXOverlapped, 0, sizeof(XOVERLAPPED));
 }
 

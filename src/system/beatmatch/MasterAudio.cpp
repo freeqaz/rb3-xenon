@@ -126,8 +126,9 @@ MasterAudio::~MasterAudio() {
 void MasterAudio::Load(SongInfo *info, PlayerTrackConfigList *player_track_config_list) {
     MILO_ASSERT(mSongData, 0x186);
     MILO_ASSERT(player_track_config_list, 0x187);
-    mSongStream = TheSynth->NewStream(info->GetBaseFileName(), 0, 0, false);
-    int count = 1;
+    // TU5: the stream's bool comes from the song info (vtable slot 0x4c)
+    mSongStream =
+        TheSynth->NewStream(info->GetBaseFileName(), 0, 0, info->UnkTU5Virtual_0x4c());
     mStreamEnabled = true;
     mSongStream->Faders()->Add(mMasterFader);
     float vol = info->GetMuteVolume();
@@ -139,9 +140,8 @@ void MasterAudio::Load(SongInfo *info, PlayerTrackConfigList *player_track_confi
 
     SetupChannels(info);
     SetupTracks(info, player_track_config_list);
-    if (player_track_config_list->UseVocalHarmony()) {
-        count = info->GetNumVocalParts();
-    }
+    int count =
+        player_track_config_list->UseVocalHarmony() ? info->GetNumVocalParts() : 1;
 
     for (int i = 1; i < count; i++) {
         mTrackData.mTrackData.push_back(new TrackData());
@@ -324,11 +324,13 @@ void MasterAudio::ResetTrack(AudioTrackNum num, bool b) {
         grp->Remove(mPracticeFader);
         grp->Remove(mRemoteFader);
         grp->Remove(mVocalCueFader);
+        // TU5: retail also drops the faders it looks up by name (fn_8277EC48)
+        grp->Remove(grp->FindLocal("mute", false));
+        grp->Remove(grp->FindLocal("remote", false));
+        grp->Remove(grp->FindLocal("drum_fill", false));
 
-        bool b3 = false;
         bool b1 = mTrackData[num]->Vocals();
-        if (b1 && b)
-            b3 = true;
+        bool b3 = b1 && b;
         float f2 = b3 ? mCueVolume : 0;
         if (b)
             SetupTrackChannel(idx, b1, f2, b3, false);
@@ -357,12 +359,7 @@ bool MasterAudio::IsReady() {
     return mStreamEnabled;
 }
 
-bool MasterAudio::IsFinished() const {
-    bool b = false;
-    if (mSongStream && mSongStream->IsFinished())
-        b = true;
-    return b;
-}
+bool MasterAudio::IsFinished() const { return mSongStream && mSongStream->IsFinished(); }
 
 void MasterAudio::Play() {
     MILO_ASSERT(mSongStream, 0x334);
@@ -541,6 +538,7 @@ void MasterAudio::SetRemoteTrack(int track) {
 
 void MasterAudio::SetTrackFader(AudioTrackNum track, int i, Symbol s, float f1, float f2) {
     MILO_ASSERT(0 <= track.Val() && track.Val() < NumPlayTracks(), 0x457);
+    static Symbol mute("mute");
     std::list<int> chans;
     mTrackData[track]->FillChannelList(chans, i);
     chans.size();

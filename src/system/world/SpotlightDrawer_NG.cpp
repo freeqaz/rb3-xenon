@@ -843,7 +843,9 @@ bool NgSpotlightDrawer::CheckRTs(NgSpotlightDrawer::SpotlightResources *sr) {
         sr->unk4 = (D3DResource *)D3DDevice_CreateTexture(
             createW, createH, 1, 1, 0, fmt, 0, D3DRTYPE_TEXTURE
         );
-        DX_ASSERT(sr->unk4, 0x12C);
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+        DX_ASSERT(sr->unk4, 0x12C); // retail CheckRTs has no check here
+#endif
     }
     if (!sr->unk10) {
         sr->unk10 = TheRnd.GetDefaultTex(Rnd::kDefaultTex_Black);
@@ -854,9 +856,9 @@ bool NgSpotlightDrawer::CheckRTs(NgSpotlightDrawer::SpotlightResources *sr) {
     sr->unk18 = sr->unk10;
     if (!sr->mDensityMap) {
         sr->mDensityMap = Hmx::Object::New<RndTex>();
-        int dh = RTHeight() >> 1;
-        int dw = RTWidth() >> 1;
-        sr->mDensityMap->SetBitmap(dw, dh, 32, RndTex::kDensityMap, false, nullptr);
+        sr->mDensityMap->SetBitmap(
+            RTWidth() >> 1, RTHeight() >> 1, 32, RndTex::kDensityMap, false, nullptr
+        );
     }
     return true;
 }

@@ -75,51 +75,8 @@ public:
         return -1;
     }
 
-    RGNoteType GetRGNoteTypeEntry(int string) const {
-        switch (string) {
-        case 0:
-            return (RGNoteType)mRGNoteTypeStr0;
-        case 1:
-            return (RGNoteType)mRGNoteTypeStr1;
-        case 2:
-            return (RGNoteType)mRGNoteTypeStr2;
-        case 3:
-            return (RGNoteType)mRGNoteTypeStr3;
-        case 4:
-            return (RGNoteType)mRGNoteTypeStr4;
-        case 5:
-            return (RGNoteType)mRGNoteTypeStr5;
-        default:
-            MILO_ASSERT(0, 0xEE);
-            return kRGNormal;
-        }
-    }
-
-    void SetRGNoteTypeEntry(int x, RGNoteType ty) {
-        switch (x) {
-        case 0:
-            mRGNoteTypeStr0 = ty;
-            break;
-        case 1:
-            mRGNoteTypeStr1 = ty;
-            break;
-        case 2:
-            mRGNoteTypeStr2 = ty;
-            break;
-        case 3:
-            mRGNoteTypeStr3 = ty;
-            break;
-        case 4:
-            mRGNoteTypeStr4 = ty;
-            break;
-        case 5:
-            mRGNoteTypeStr5 = ty;
-            break;
-        default:
-            MILO_ASSERT(0, 0xFC);
-            break;
-        }
-    }
+    RGNoteType GetRGNoteTypeEntry(int string) const { return mRGNoteTypes[string]; }
+    void SetRGNoteTypeEntry(int x, RGNoteType ty) { mRGNoteTypes[x] = ty; }
 
     bool GetPlayed() const { return mPlayed != 0; }
     void SetPlayed(bool played) { mPlayed = played; }
@@ -155,9 +112,8 @@ public:
     // dev header puts it (the Wii DEV build genuinely stores it at 0x18).
     // Compiler-verified (/d1reportSingleClassLayout): the only offsets that move
     // are 0x11..0x18 (the bitfield groups each slide +1, mRootNote absorbs the
-    // vacated 0x18); mFrets stays at 0x19 and the whole tail from 0x19 on --
-    // mRGChordID 0x20, mChordNameOverride 0x24, mImportantStrings 0x28 -- and
-    // sizeof 0x44 are all unchanged. Whole-binary A/B: +2 matched, 0 regressed.
+    // vacated 0x18). Whole-binary A/B: +2 matched, 0 regressed.  (The tail
+    // from 0x13 on was later re-laid-out from retail bytes -- see below.)
     unsigned char unk18; // 0x11 (mPlayers?)
 
     // 0x12.  Retail's ladder of one-bit getters over this byte descends
@@ -176,26 +132,20 @@ public:
     unsigned char unk11b2 : 1;
     unsigned char unk11b1 : 1;
 
-    unsigned char mStrumType : 4;
-    unsigned char unk12bot : 4;
+    unsigned char unk13; // 0x13
 
-    unsigned char mHandPosition : 5;
-    unsigned char unk13bot : 3;
-
-    // RGNoteTypes for each guitar string
-    unsigned char mRGNoteTypeStr0 : 4;
-    unsigned char mRGNoteTypeStr1 : 4;
-    unsigned char mRGNoteTypeStr2 : 4;
-    unsigned char mRGNoteTypeStr3 : 4;
-    unsigned char mRGNoteTypeStr4 : 4;
-    unsigned char mRGNoteTypeStr5 : 4;
-
-    unsigned char mRootNote : 8;
-    char mFrets[6];
-    int mRGChordID;
-    Symbol mChordNameOverride;
-    unsigned char mImportantStrings;
-    // Retail X360 GameGem is 0x44 bytes (mulli/stride 0x44 in GemPlayer +
-    // SongDB target asm); rb3-Wii dev header ends at 0x2c. Unknown tail fields.
-    int unk2c[6]; // 0x2c
+    // TU5 layout, read off retail bytes (lane W16-HN): the Wii dev build packed
+    // strum type / hand position / note types into bitfields; retail X360 keeps
+    // them unpacked.  GameGem(const RGGemInfo &) stores note_types[i] as words at
+    // 0x14+4i, strum_type at 0x2c, hand_position at 0x30, root_note at 0x31,
+    // frets at 0x32; GetRGNoteType is `lwzx (i+5)*4`; PackRealGuitarData writes
+    // the chord id at 0x38; Get/SetImportantStrings use 0x40.  sizeof stays 0x44.
+    RGNoteType mRGNoteTypes[6]; // 0x14
+    int mStrumType; // 0x2c
+    unsigned char mHandPosition; // 0x30
+    unsigned char mRootNote; // 0x31
+    char mFrets[6]; // 0x32
+    int mRGChordID; // 0x38
+    Symbol mChordNameOverride; // 0x3c
+    unsigned char mImportantStrings; // 0x40
 };

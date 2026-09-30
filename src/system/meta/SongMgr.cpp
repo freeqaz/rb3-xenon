@@ -341,7 +341,9 @@ bool SongMgr::HasSong(Symbol shortname, bool fail) const {
 
 const char *SongMgr::ContentName(int songID) const {
     const SongMetadata *data = Data(songID);
-    if (data && !data->IsOnDisc()) {
+    // TU5: retail also treats song ID 99000001 (lis 0x5e6; ori 0x9ec1, the
+    // metadata's mID at +0x30) as having no content -- absent from both oracles.
+    if (data && !data->IsOnDisc() && data->mID != 99000001) {
         auto it = mContentUsedForSong.find(songID);
         MILO_ASSERT(it != mContentUsedForSong.end(), 0x158);
         return it->second.Str();

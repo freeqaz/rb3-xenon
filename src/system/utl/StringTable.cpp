@@ -44,7 +44,6 @@ void StringTable::Reserve(int i) {
         } else {
             Buf buf;
             buf.size = (i - size) + 0x40;
-            MemTemp tmp;
             buf.chars = (char *)MemAlloc(buf.size, __FILE__, 0x38, "string table");
             mBuffers.push_back(buf);
         }
@@ -54,7 +53,6 @@ void StringTable::Reserve(int i) {
 void StringTable::AddBuf(int i) {
     Buf buf;
     buf.size = i;
-    MemTemp tmp;
     buf.chars = (char *)MemAlloc(i, __FILE__, 0x1D, "string table");
     mCurChar = buf.chars;
     mCurBuf = mBuffers.size();
@@ -68,18 +66,10 @@ const char *StringTable::Add(const char *str) {
     } else {
         if (len + (mCurChar - mBuffers[mCurBuf].chars)
             > mBuffers[mCurBuf].size) {
-            bool b4 = false;
-            for (; mCurBuf < mBuffers.size() - 1;) {
-                Buf &curBuf = mBuffers[++mCurBuf];
-                mCurChar = curBuf.chars;
-                if (curBuf.size >= len) {
-                    b4 = true;
-                    break;
-                }
-                MILO_WARN("Wasted string table (%d) adding %s\n", curBuf.size, str);
-            }
-            if (!b4) {
-                int newSize = Max(Size(), len);
+            if (mCurBuf < mBuffers.size() - 1) {
+                mCurChar = mBuffers[++mCurBuf].chars;
+            } else {
+                int newSize = Size();
                 AddBuf(newSize);
                 if (!TheLoadMgr.EditMode()) {
                     MILO_WARN("Resizing string table (%d) adding %s", newSize * 2, str);

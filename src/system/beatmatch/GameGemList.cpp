@@ -127,8 +127,9 @@ int GameGemList::ClosestMarkerIdx(float ms) const {
     MILO_ASSERT(ms <= it->GetMs(), 0x83);
     const GameGem *prev_it = it - 1;
     MILO_ASSERT(ms >= prev_it->GetMs(), 0x84);
-    if (fabsf(ms - prev_it->mMs) < fabsf(ms - it->mMs))
-        it--;
+    bool closer = fabsf(ms - it->mMs) < fabsf(ms - prev_it->mMs);
+    if (!closer)
+        it = prev_it;
     return it - mGems.begin();
 }
 
@@ -257,6 +258,8 @@ void GameGemList::Finalize() {
 }
 
 bool GameGemList::WillBeNoStrum(const GameGem &gem) {
+    // retail constructs this local static and never reads it (dev-only use)
+    static Symbol chord_hopos("chord_hopos");
     if (gem.IsRealGuitar() && gem.RightHandTap())
         return true;
     if (mGems.empty() || gem.mTick - mGems.back().mTick > mHopoThreshold)
@@ -268,7 +271,7 @@ bool GameGemList::WillBeNoStrum(const GameGem &gem) {
         if (gem.GetNumStrings() == 1 && last.GetNumStrings() == 1) {
             int str = gem.GetLowestString();
             if (str == (int)last.GetLowestString()) {
-                return gem.GetFret(str) != last.GetFret(str);
+                return last.GetFret(str) != gem.GetFret(str);
             }
         }
         return false;

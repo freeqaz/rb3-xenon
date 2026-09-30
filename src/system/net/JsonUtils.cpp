@@ -120,10 +120,14 @@ JsonObject *JsonConverter::LoadFromString(const String &str) {
 
 JsonObject *JsonConverter::GetValue(JsonArray *inArray, int inIdx) {
     MILO_ASSERT(0 <= inIdx && inIdx <= inArray->GetSize(), 0x10a);
+    // retail takes ONE reference (on the element, still in r3) and pushes --
+    // not AddRef + PushObject's second AddRef
     JsonObject *obj = new JsonObject();
-    obj->Set((*inArray)[inIdx]);
-    obj->AddRef();
-    PushObject(obj);
+    json_object *o = (*inArray)[inIdx];
+    obj->Set(o);
+    JsonObject *temp = obj;
+    json_object_get(o);
+    mObjects.push_back(temp);
     return obj;
 }
 

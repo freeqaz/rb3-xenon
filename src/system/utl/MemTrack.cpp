@@ -47,6 +47,9 @@ static MemTrackStack s_MemTrackFileNameStack;   // CharArrayArray + s_MemTrackFi
 #define s_MemTrackFileNameStackPos s_MemTrackFileNameStack.pos
 
 void StopLog() {
+    // retail: MemTrackLogDF's else-branch is a bare StopLog(); the tracker's
+    // StopLog lives in here
+    gMemTracker->StopLog();
     if (gLog) {
         RELEASE(gLog);
     }
@@ -117,7 +120,11 @@ void MemTrackAlloc(
             heap = MemNumHeaps();
         }
 #endif
+#ifdef HX_NATIVE
         gMemTracker->Alloc(req, act, type, mem, heap, pooled, strat, file, line);
+#else
+        gMemTracker->Alloc(req, act, type, mem, heap, pooled, strat);
+#endif
     }
 }
 
@@ -223,7 +230,6 @@ DataNode MemTrackLogDF(DataArray *a) {
         StartLog("mem_log");
         gMemTracker->StartLog(*gLog);
     } else {
-        gMemTracker->StopLog();
         StopLog();
     }
     return 0;

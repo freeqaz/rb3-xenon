@@ -368,11 +368,11 @@ void SongData::SendPhrases(int track) {
 }
 
 void SongData::ChangeTrackDiff(int track, int newDiff) {
-    if ((unsigned int)track < mTrackDifficulties.size() && track != -1) {
+    if (track != -1) {
         mTrackDifficulties[track] = newDiff;
         PhraseDB *curPhraseDB = mPhraseDBs[track];
         for (int i = 0; i < kNumPhraseTypes; i++) {
-            if ((unsigned int)(i - kArpeggioPhrase) <= 1) {
+            if (i == kArpeggioPhrase || i == kArpeggioPhrase + 1) {
                 const PhraseList &phrases =
                     curPhraseDB->GetPhraseList(newDiff, (BeatmatchPhraseType)i);
                 for (std::vector<Phrase>::const_iterator it = phrases.mPhrases.begin();
@@ -391,9 +391,8 @@ void SongData::ChangeTrackDiff(int track, int newDiff) {
 }
 
 void SongData::SendGems(int track) {
-    const GameGemDB *curDB = mGemDBs[track];
     const std::vector<GameGem> &gems =
-        curDB->GetDiffGemList(mTrackDifficulties[track])->mGems;
+        mGemDBs[track]->GetDiffGemList(mTrackDifficulties[track])->mGems;
     for (std::vector<GameGem>::const_iterator it = gems.begin(); it != gems.end(); ++it) {
         for (std::vector<SongParserSink *>::iterator sit = mSongParserSinks.begin();
              sit != mSongParserSinks.end();
@@ -566,18 +565,11 @@ void SongData::RestoreGems(int i1, int i2, int diff) {
 }
 
 void SongData::TrimOverlappingGems(int i1, int i2, int diff) {
-    GameGemList *backup_gems = mBackupTracks[i2]->mGems->GetDiffGemList(diff);
-    GameGemList *gems = mGemDBs[i1]->GetDiffGemList(diff);
-    std::vector<GameGem> &glist = gems->mGems;
-    std::vector<GameGem> &blist = backup_gems->mGems;
+    std::vector<GameGem> &blist = mBackupTracks[i2]->mGems->GetDiffGemList(diff)->mGems;
+    std::vector<GameGem> &glist = mGemDBs[i1]->GetDiffGemList(diff)->mGems;
 
     glist.clear();
     glist.reserve(blist.size());
-
-    if (blist.size() == 0) {
-        MILO_WARN("Empty track found for SongData::TrimOverlappingGems!");
-        return;
-    }
 
     std::vector<GameGem>::iterator cur = blist.begin();
     while (cur != blist.end()) {
@@ -879,22 +871,25 @@ void SongData::AddPhrase(
     }
 }
 
-static Symbol DrumFillTrackName(const SongData *song, int track, int diff) {
+static __declspec(noinline) Symbol
+DrumFillTrackName(const SongData *song, int track, int diff) {
     SongData::TrackInfo *info = song->mTrackInfos[track];
     if (info->mType == kTrackRealKeys) {
         if (diff == -1) {
-            if (track < (int)song->mTrackDifficulties.size()) {
+            if (song->mTrackDifficulties.size() > (unsigned int)track) {
                 diff = song->mTrackDifficulties[track];
             }
         }
-        if (diff == 0)
+        switch ((unsigned int)diff) {
+        case 0:
             return "PART REAL_KEYS_E";
-        else if (diff == 1)
+        case 1:
             return "PART REAL_KEYS_M";
-        else if (diff < 3)
+        case 2:
             return "PART REAL_KEYS_H";
-        else
+        default:
             return "PART REAL_KEYS_X";
+        }
     }
     return info->mName;
 }
@@ -970,7 +965,7 @@ void SongData::AddLyricEvent(int track, int tick, const char *lyricEvent) {
         MILO_WARN(
             "%s (%s): Error adding lyric event '%s' at %s",
             SongFullPath(),
-            mTrackInfos[track]->mName,
+            DrumFillTrackName(this, track, -1),
             lyricEvent,
             TickFormat(tick, *mMeasureMap)
         );
@@ -1014,7 +1009,7 @@ void SongData::SetDetailedGrid(bool b) { mDetailedGrid = b; }
 void SongData::AddRangeShift(int i, float f) { mRangeShifts[i] = f; }
 
 void SongData::AddKeyboardRangeShift(int i1, int i2, float f3, int i4, int i5) {
-    RangeSection sect(i1, f3);
+    RangeSection sect(i2, f3);
     sect.unk8 = i4;
     sect.unkc = i5;
     std::vector<RangeSection> &curRanges = mKeyboardRangeSections[i1];
@@ -1146,17 +1141,10 @@ void SongData::EnableGems(int i1, float f1, float f2) {
     std::vector<GameGem> &gems = GetGemList(i1)->mGems;
     for (unsigned int i = 0; i < gems.size(); i++) {
         GameGem &gem = gems[i];
-        bool match = false;
-        if (gem.mMs >= f1) {
-            float endTime;
-            if (!gem.mIgnoreDuration)
-                endTime = gem.mMs + (float)(unsigned short)gem.mDurationMs;
-            else
-                endTime = gem.mMs;
-            if (endTime <= f2) {
-                match = true;
-            }
-        }
+        float endTime = gem.mIgnoreDuration
+            ? gem.mMs
+            : gem.mMs + (float)(unsigned short)gem.mDurationMs;
+        bool match = gem.mMs >= f1 && endTime <= f2;
         if (!match) {
             gem.unk18 = 0x80;
         }
@@ -1335,11 +1323,10 @@ void SongData::RestoreAllTracksFromBackup() {
 }
 
 void SongData::RestoreTrackFromBackup(int track) {
-    int backupIdx = 0;
-    for (int i = 0; i < mBackupTracks.size(); i++) {
-        if (mBackupTracks[i]->mOriginalTrack == track)
+    int backupIdx;
+    for (backupIdx = 0; backupIdx < mBackupTracks.size(); backupIdx++) {
+        if (mBackupTracks[backupIdx]->mOriginalTrack == track)
             break;
-        backupIdx++;
     }
     if (backupIdx == mBackupTracks.size())
         MILO_FAIL("Trying to backup track %d with no backup\n", track);

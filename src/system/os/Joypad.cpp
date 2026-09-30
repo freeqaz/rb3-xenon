@@ -53,14 +53,14 @@ namespace {
 
 
 JoypadData::JoypadData()
-    : mButtons(0), mNewPressed(0), mNewReleased(0), mUser(nullptr), mConnected(false),
+    : mButtons(0), mUser(nullptr), mConnected(false),
       mVibrateEnabled(true), mHasCapFlag1(0), mIsWireless(0), unk4c(0), mHasAnalogSticks(false),
       mTranslateSticks(false), mIgnoreButtonMask(0), mGreenCymbalMask(0),
       mYellowCymbalMask(0), mBlueCymbalMask(0), mSecondaryPedalMask(0), mCymbalMask(0),
-      mIsDrum(false), mType(kJoypadNone), mControllerType(), mDistFromRest(0),
+      mIsDrum(false), mType(kJoypadNone), mControllerType(),
       mHasGreenCymbal(false), mHasYellowCymbal(false), mHasBlueCymbal(false),
       mHasSecondaryPedal(false), mBreedCallback(0), mBreedDataDest(0), mEepromBytesLeft(0), mEepromTotalBytes(0),
-      mEepromChunkSize(0), mEepromTimeout(0), unkac(0), mEepromWriteDone(0) {
+      mEepromChunkSize(0), mEepromTimeout(0), unkac(0) {
     for (int i = 0; i < 2; i++) {
         for (int j = 0; j < 2; j++) {
             mSticks[i][j] = 0;
@@ -159,6 +159,25 @@ bool JoypadIsConnectedPadNum(int padNum) {
         return gJoypadData[padNum].mConnected;
 }
 
+// Retail fn_82524D40 / fn_82524DE0 (no oracle; DC3 dropped the stage kit).
+// The names are ours.  0x82524D40 walks the four pads for the first enabled
+// one whose controller type is `stagekit_xbox`; 0x82524DE0 drives its two
+// actuators with each raw value in the high byte and 0xff in the low one.
+int JoypadStageKitPadNum() {
+    static Symbol stagekit_xbox("stagekit_xbox");
+    for (int i = 0; i < kNumJoypads; i++) {
+        if (!gJoypadDisabled[i] && gJoypadData[i].mControllerType == stagekit_xbox)
+            return i;
+    }
+    return -1;
+}
+
+void JoypadStageKitSetRaw(int left, int right) {
+    int pad = JoypadStageKitPadNum();
+    if (pad != -1)
+        JoypadSetActuatorsImp(pad, left << 8 | 0xff, right << 8 | 0xff);
+}
+
 namespace {
     bool IsJoypadDetectMatch(DataArray *detect_cfg, const JoypadData &data) {
         static Symbol type("type");
@@ -171,7 +190,7 @@ namespace {
         static Symbol AND("and");
         Symbol sym = detect_cfg->Sym(0);
         if (sym == type) {
-            return detect_cfg->Int(1) == (int)data.mType;
+            return (int)data.mType == detect_cfg->Int(1);
         } else if (sym == button) {
             return data.IsButtonInMask(detect_cfg->Int(1));
         } else if (sym == stick) {
@@ -185,9 +204,9 @@ namespace {
                 MILO_FAIL("bad axis %s in controller detect array\n", axis_sym);
             int i3 = detect_cfg->Int(1);
             float f7 = detect_cfg->Float(3);
-            return f7 == data.mSticks[i3][i4];
+            return data.mSticks[i3][i4] == f7;
         } else if (sym == trigger) {
-            return detect_cfg->Float(2) == data.mTriggers[detect_cfg->Int(1)];
+            return data.mTriggers[detect_cfg->Int(1)] == detect_cfg->Float(2);
         } else if (sym == OR) {
             for (int i = 1; i < detect_cfg->Size(); i++) {
                 if (IsJoypadDetectMatch(detect_cfg->Array(i), data))
@@ -235,8 +254,7 @@ namespace {
     }
 
     DataNode OnJoypadStageKitRaw(DataArray *arr) {
-        arr->Int(2);
-        arr->Int(1);
+        JoypadStageKitSetRaw(arr->Int(1), arr->Int(2));
         return 1;
     }
 

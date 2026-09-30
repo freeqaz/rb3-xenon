@@ -378,7 +378,7 @@ void Splash::WaitForState(Splash::SplashState state) {
 void Splash::CheckWorkerSuspend(bool b) {
     MILO_ASSERT(!MainThread(), 0x1f0);
     while (mState == kSuspending) {
-        TheNgRnd.Resume();
+        TheNgRnd.Suspend();
         if (mCurrentMovie != NULL) {
             mCurrentMovie->SetShowing(false);
             mCurrentMovie->GetMovie().UnlockThread();
@@ -390,7 +390,7 @@ void Splash::CheckWorkerSuspend(bool b) {
             mWorkerEvent.Set();
         }
         WaitForState(kResuming);
-        TheNgRnd.Suspend();
+        TheNgRnd.Resume();
         {
             CritSecTracker cst(&mStateLock);
             MILO_ASSERT(mState == kResuming, 0x209);
@@ -541,11 +541,13 @@ void Splash::UpdateThread() {
         } while (!SetImmutableState(kWaitingForTerminating));
     }
 
-    TheNgRnd.Resume();
+    TheNgRnd.Suspend();
 
     float elapsed = timer.SplitMs();
     if (TheArchive && Archive::DebugArkOrder()) {
-        TheDebug << MakeString("Splash Time: %f\n", elapsed);
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+        TheDebug << MakeString("Splash Time: %f\n", elapsed); // compiled out in retail
+#endif
     }
 
     WaitForState(kTerminating);

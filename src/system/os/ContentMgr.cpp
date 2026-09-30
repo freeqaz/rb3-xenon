@@ -22,8 +22,11 @@ BEGIN_HANDLERS(ContentMgr)
     HANDLE(add_content, OnAddContent)
     HANDLE(remove_content, OnRemoveContent)
     HANDLE_EXPR(delete_content, DeleteContent(_msg->Sym(2)))
+#ifdef HX_NATIVE
+    // DC3-era handlers; TU5's ContentMgr::Handle stops at delete_content.
     HANDLE_EXPR(is_mounted, IsMounted(_msg->Sym(2)))
     HANDLE_ACTION(refresh_synchronously, RefreshSynchronously())
+#endif
 END_HANDLERS
 
 void ContentMgr::Init() {
@@ -170,11 +173,9 @@ void ContentMgr::PollRefresh() {
                         if ((*cit)->HasContentAltDirs()) {
                             std::vector<String> *altDirs = (*cit)->ContentAltDirs();
                             const char *pattern = (*cit)->ContentPattern();
-                            static DataNode &n = DataVariable("extra_songs");
-                            int num = n.Int() ? altDirs->size() : 2;
-                            auto altDir = altDirs->begin();
-                            for (int i = 0; altDir != altDirs->end() && i < num;
-                                 i++, altDir++) {
+                            for (std::vector<String>::iterator altDir = altDirs->begin();
+                                 altDir != altDirs->end();
+                                 ++altDir) {
                                 String str(FileMakePath((*it)->Root(), altDir->c_str()));
                                 String str2(MakeString("%s/%s", str, pattern));
                                 FileEnumerate(

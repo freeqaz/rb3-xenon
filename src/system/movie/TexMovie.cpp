@@ -23,7 +23,7 @@
 #include <cstddef>
 
 TexMovie::TexMovie()
-    : mTex(this), mLoop(1), mEntered(0), mIsLocalized(0), mPaused(0), sRoot(), mMovie() {}
+    : mTex(this), mLoop(1), mEntered(0), sRoot(), mMovie() {}
 
 TexMovie::~TexMovie() { mMovie.End(); }
 
@@ -295,19 +295,15 @@ void TexMovie::DoBeginMovieFromFile(BinStream *stream) {
     mMovie.End();
     if (!sRoot.empty() && mTex) {
         MILO_ASSERT(mTex->IsRenderTarget(), 0x83);
-        int i = 1;
-        if (mIsLocalized) {
-            i = mMovie.LocalizationTrack();
-        }
         mMovie.SetWidthHeight(mTex->Width(), mTex->Height());
         mMovie.BeginFromFile(
             FileRelativePath(FileRoot(), sRoot.c_str()),
             0.0f,
-            0,
-            true,
-            mLoop,
             false,
-            i,
+            mLoop,
+            true,
+            false,
+            0,
             stream
         );
     }

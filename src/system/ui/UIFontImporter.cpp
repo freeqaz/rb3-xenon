@@ -19,6 +19,22 @@
 #include "utl/UTF8.h"
 #include <vector>
 
+#ifndef HX_NATIVE
+// Retail inlines ObjPtrList::Set into HandmadeFontChanged (Release, store,
+// AddRef with the list as ring owner); the shared template body is out-of-line.
+// A TU-local forceinline specialization reproduces that without touching the
+// header every TU includes.
+template <>
+__forceinline void ObjPtrList<RndFont, ObjectDir>::Set(iterator it, RndFont *obj) {
+    Node *n = it.mNode;
+    if (n->mObject)
+        n->mObject->Release(this);
+    n->mObject = obj;
+    if (n->mObject)
+        n->mObject->AddRef(this);
+}
+#endif
+
 #define HEIGHT_SD 480.0f
 #define HEIGHT_HD 720.0f
 
@@ -191,7 +207,6 @@ BEGIN_COPYS(UIFontImporter)
         COPY_MEMBER(mFontName)
         COPY_MEMBER(mFontPctSize)
         COPY_MEMBER(mFontWeight)
-        COPY_MEMBER(mItalics)
         COPY_MEMBER(mFontQuality)
         COPY_MEMBER(mPitchAndFamily)
         COPY_MEMBER(mFontQuality)
@@ -199,6 +214,7 @@ BEGIN_COPYS(UIFontImporter)
         COPY_MEMBER(mBitmapSavePath)
         COPY_MEMBER(mBitMapSaveName)
         COPY_MEMBER(mFontSupersample)
+        COPY_MEMBER(mItalics)
         COPY_MEMBER(mLeft)
         COPY_MEMBER(mRight)
         COPY_MEMBER(mTop)
@@ -540,47 +556,41 @@ RndFont *UIFontImporter::GetGennedFont(Symbol s) const {
 }
 
 void UIFontImporter::SyncWithGennedFonts() {
-    auto it = mGennedFonts.begin();
-    for (int i = 0; it != mGennedFonts.end(); i++) {
-        RndFont *cur = *it;
-        bool b4 = false;
-        if (i == 0) {
-            b4 = true;
-        } else {
-            FOREACH (mit, mMatVariations) {
-                if (cur->Mat() == *mit) {
-                    b4 = true;
-                }
-            }
+    for (ObjPtrList<RndFont>::iterator it = mGennedFonts.begin(); it != mGennedFonts.end();) {
+        RndFont *font = *it;
+        bool matfound = false;
+        for (ObjPtrList<RndMat>::iterator mit = mMatVariations.begin();
+             mit != mMatVariations.end();
+             ++mit) {
+            if (font->Mat() == *mit)
+                matfound = true;
         }
-        if (!b4) {
-            cur->Mat();
-            RndText *text = FindTextForFont(cur);
+        if (font->Mat() == mDefaultMat)
+            matfound = true;
+        if (!matfound) {
+            RndText *text = FindTextForFont(font);
             it = mGennedFonts.erase(it);
-            delete cur;
-            if (text) {
+            delete font;
+            if (text)
                 delete text;
-            }
-        } else {
-            ++it;
-        }
+        } else
+            it++;
     }
 }
 
 void UIFontImporter::HandmadeFontChanged() {
     if (mHandmadeFont) {
         if (mGennedFonts.size() > 0) {
-            RndFont *font = *mGennedFonts.begin();
-            if (font != mHandmadeFont) {
-                RndText *text = FindTextForFont(font);
-                delete font;
+            RndFont *frontfont = *mGennedFonts.begin();
+            if (frontfont != mHandmadeFont) {
+                RndText *text = FindTextForFont(frontfont);
+                delete frontfont;
                 delete text;
             }
-            // <?>
-            RndFont *next = *mGennedFonts.begin();
-            next = mHandmadeFont;
-            // </?>
-            FOREACH (it, mGennedFonts) {
+            mGennedFonts.Set(mGennedFonts.begin(), mHandmadeFont);
+            for (ObjPtrList<RndFont>::iterator it = ++mGennedFonts.begin();
+                 it != mGennedFonts.end();
+                 it++) {
                 if (*it == mHandmadeFont) {
                     mGennedFonts.erase(it);
                     break;
@@ -599,10 +609,6 @@ void UIFontImporter::HandmadeFontChanged() {
         mMinus = "";
         std::vector<unsigned short> thechars(mHandmadeFont->Chars());
         mPlus = WideVectorToASCII(thechars);
-    }
-    if (mHandmadeFont) {
-        RndFont3d::StaticClassName();
-        mHandmadeFont->ClassName();
     }
 }
 

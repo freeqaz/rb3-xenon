@@ -577,6 +577,7 @@ const char *UILabel::GetDefaultText() const {
 // retail 0x827F4B68. The Wii DEV build has this as an EMPTY stub -- a
 // retail-vs-dev divergence; ported from the retail asm instead.
 void UILabel::SetEditText(const char *cc) {
+    MILO_ASSERT(AllowEditText(), 0x1f5);
     mEditText = cc;
     if (mIcon.c_str()[0] == '\0') {
         if (mEditText.c_str()[0] == '\0') {
@@ -817,10 +818,7 @@ void UILabel::AdjustHeight(bool b) {
         float f24;
         mText->GetStringDimensions(f24, mHeight, lines, "", mTextSize);
         int numlines;
-        bool b1 = false;
-        if (b && mReservedLine > 0)
-            b1 = true;
-        if (b1) {
+        if (b && mReservedLine > 0) {
             numlines = mReservedLine;
         } else
             numlines = mText->NumLines();
@@ -1047,17 +1045,14 @@ DataNode UILabel::OnSetTimeHMS(const DataArray *da) {
 }
 
 void UILabel::CenterWithLabel(UILabel *label, bool b, float f) {
-    int num = 1;
-    if (b)
-        num = -1;
+    int num = b ? -1 : 1;
     Transform xfm = LocalXfm();
-    float otherwidth = label->mText->MaxLineWidth();
-    float spaceBetween = f;
-    Transform otherxfm = label->LocalXfm();
-    float centerX = otherxfm.v.x;
     float width = mText->MaxLineWidth();
-    otherxfm.v.x = (float)num * (otherwidth * 0.5f + spaceBetween * 0.5f) + centerX;
-    xfm.v.x = centerX - (float)num * (width * 0.5f + spaceBetween * 0.5f);
+    Transform otherxfm = label->LocalXfm();
+    float otherwidth = label->mText->MaxLineWidth();
+    float centerX = otherxfm.v.x;
+    xfm.v.x = (float)num * (otherwidth * 0.5f + f * 0.5f) + centerX;
+    otherxfm.v.x = centerX - (float)num * (width * 0.5f + f * 0.5f);
     SetLocalXfm(xfm);
     label->SetLocalXfm(otherxfm);
 }

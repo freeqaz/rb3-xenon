@@ -40,7 +40,16 @@ private:
 
 class DataLoaderThreadObj : public ThreadCallback {
 public:
+#ifdef HX_NATIVE
     DataLoaderThreadObj(DataLoader *, File *, char *, int, bool, const char *);
+#else
+    // Retail TU5 inlines this ctor into DataLoader::LoadFile and never sets mLocal.
+    DataLoaderThreadObj(
+        DataLoader *dl, File *file, char *buffer, int bufSize, bool dtb, const char *filename
+    )
+        : mLoader(dl), mResult(nullptr), mFile(file), mBufLen(bufSize), mBuffer(buffer),
+          mFilename(filename), mDtb(dtb) {}
+#endif
     virtual ~DataLoaderThreadObj() {}
     virtual int ThreadStart();
     virtual void ThreadDone(int);

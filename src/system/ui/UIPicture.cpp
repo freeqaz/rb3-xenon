@@ -113,10 +113,7 @@ void UIPicture::Exit() {
 
 void UIPicture::SetTex(FilePath const &p) {
     if (HasTransitions() || (!(p == mLoadedFile) || !(p == mTexFile))) {
-        if (TheLoadMgr.EditMode()) {
-            mDelayedTexFile = p;
-        } else
-            UpdateTexture(p);
+        UpdateTexture(p);
     }
 }
 

@@ -185,19 +185,17 @@ __declspec(noinline) auto _outline_UISeconds(_T* _obj) -> decltype(_obj->UISecon
 
 void MeterDisplay::DrawShowing() {
     RndDir *dir = mResource->Dir();
-    if (!dir)
-        return;
-
+    MILO_ASSERT(dir, 0xB6);
     float f = 0.0f;
-
     if (mMaxValue > 0) {
         f = (float)mCurrentValue / (float)mMaxValue;
-        float f1 = _outline_UISeconds(&TheTaskMgr) - unk4c;
-        if (mAnimPeriod > 0) {
-            unsigned int itouse = unk50;
+        float f1 = TheTaskMgr.UISeconds() - unk4c;
+        float period = mAnimPeriod;
+        if (period > 0) {
+            int itouse = unk50;
             if (itouse >= 0 && f1 > 0) {
-                if (f1 < mAnimPeriod) {
-                    f = ((f1 / mAnimPeriod) * (float)(itouse - mCurrentValue)
+                if (f1 < period) {
+                    f = ((f1 / period) * (float)(itouse - mCurrentValue)
                          + (float)mCurrentValue)
                         / (float)mMaxValue;
                 } else {
@@ -207,16 +205,13 @@ void MeterDisplay::DrawShowing() {
                 }
             }
         }
-        UpdateDisplay();
     }
     ClampEq(f, 0.0f, 1.0f);
-    mMeterAnim->SetFrame(
-        f * (mMeterAnim->EndFrame() - mMeterAnim->StartFrame())
-            + mMeterAnim->StartFrame(),
-        1.0f
-    );
+    float diff = mMeterAnim->EndFrame() - mMeterAnim->StartFrame();
+    mMeterAnim->SetFrame(diff * f + mMeterAnim->StartFrame(), 1.0f);
     dir->SetWorldXfm(WorldXfm());
     dir->Draw();
     if (mShowText && unk54)
         unk54->Draw();
+    SetWorldXfm(WorldXfm());
 }

@@ -588,8 +588,8 @@ void DirLoader::Cleanup(const char *str) {
             }
         }
         if (IsLoaded() && mDir) {
-            AutoGlitchReport report(50.0f, SyncObjectsGlitchCB, mDir);
 #ifdef HX_NATIVE
+            AutoGlitchReport report(50.0f, SyncObjectsGlitchCB, mDir);
             // DC3-newer (rb3-Wii has no SetSubDirFlag here); native-only.
             mDir->SetSubDirFlag(mSubDir);
             mDir->SyncObjects();
@@ -602,7 +602,12 @@ void DirLoader::Cleanup(const char *str) {
     mState = &DirLoader::DoneLoading;
     mTimer.Stop();
     if (sPrintTimes) {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
         MILO_LOG("%s: %f ms\n", mFile, mTimer.Ms());
+#else
+        // TU5 keeps only the by-value FilePath copy of the log's argument.
+        FilePath file(mFile);
+#endif
     }
     if (mCallback && (str || mForceFailCallback)) {
         mCallback->FailedLoading(this);
@@ -636,14 +641,13 @@ void DirLoader::AddTypeObjectMemDelta(
 }
 
 void DirLoader::SaveObjects(BinStream &bs, ObjectDir *dir) {
-    char name[256];
     MILO_ASSERT(sTopSaveDir != dir, 0x10C);
     if (!sTopSaveDir)
         sTopSaveDir = dir;
     ObjectDir *parentDir = dir->Dir();
-    strcpy(name, dir->Name());
+    // TU5 saves the dir under its own name (no NextName rename, no saved copy).
     if (parentDir != dir) {
-        dir->SetName(NextName(dir->Name(), dir), dir);
+        dir->SetName(dir->Name(), dir);
     }
     int hashSize = dir->HashTableUsedSize();
     int strSize = dir->StrTableUsedSize();
@@ -653,19 +657,18 @@ void DirLoader::SaveObjects(BinStream &bs, ObjectDir *dir) {
         }
     }
     dir->PreSave(bs);
-    bs << 0x20;
+    bs << 0x1c; // retail TU5 writes rev 0x1c (DC3 is 0x20, with a trailing bool)
     bs << dir->ClassName() << dir->Name();
     bs << hashSize * 2;
     bs << strSize;
-    bs << false;
     std::list<Hmx::Object *> objects;
     for (ObjDirItr<Hmx::Object> it(dir, false); it != nullptr; ++it) {
         if (it != dir) {
             objects.push_back(it);
         }
     }
-    auto _tmp2 = ClassAndNameSort();
-    objects.sort(_tmp2);
+    ClassAndNameSort sorter;
+    objects.sort(sorter);
     bs << objects.size();
     for (std::list<Hmx::Object *>::const_iterator it = objects.begin();
          it != objects.end();
@@ -687,14 +690,13 @@ void DirLoader::SaveObjects(BinStream &bs, ObjectDir *dir) {
     }
     if (!bs.Cached()) {
         dir->PostSave(bs);
-        for (std::list<Hmx::Object *>::const_iterator it = objects.begin();
-             it != objects.end();
+        for (std::list<Hmx::Object *>::iterator it = objects.begin(); it != objects.end();
              it++) {
             (*it)->PostSave(bs);
         }
     }
     if (parentDir != dir) {
-        dir->SetName(name, dir);
+        dir->SetName(dir->Name(), parentDir);
     }
     if (sTopSaveDir == dir) {
         sTopSaveDir = nullptr;

@@ -18,7 +18,7 @@ void OggMap::GetSeekPos(int sampTarget, int &seekPos, int &actSamp) {
 
 OggMap::~OggMap() { mLookup.clear(); }
 
-OggMap::OggMap() : mGran(1000), mLookup() {
+OggMap::OggMap() : mGran(1000), mStream(false), unk28(0), unk30(0), mLookup() {
     mLookup.push_back(std::pair<int, int>(0, 0));
 }
 

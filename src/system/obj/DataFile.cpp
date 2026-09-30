@@ -751,11 +751,13 @@ void DataLoader::LoadFile() {
 #pragma endregion
 #pragma region DataLoaderThreadObj
 
+#ifdef HX_NATIVE
 DataLoaderThreadObj::DataLoaderThreadObj(
     DataLoader *dl, File *file, char *buffer, int bufSize, bool dtb, const char *filename
 )
     : mLoader(dl), mResult(nullptr), mFile(file), mBufLen(bufSize), mBuffer(buffer),
       mFilename(filename), mDtb(dtb), mLocal(FileIsLocal(filename)) {}
+#endif
 
 int DataLoaderThreadObj::ThreadStart() {
     BufStream bs(mBuffer, mBufLen, true);
