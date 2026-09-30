@@ -381,15 +381,11 @@ void MergeObjectsRecurse(ObjectDir *fromDir, ObjectDir *toDir, MergeFilter &filt
         default:
             break;
         }
+#ifdef HX_NATIVE
         ObjRef tempRefs;
         tempRefs.Clear();
         for (ObjRef *it = fromDir->mRefs.next; it != &fromDir->mRefs;) {
-#ifdef HX_NATIVE
             Hmx::Object *owner = it->RefOwner();
-#else
-            // X360: ring entries are pool nodes; the ring-ref carries RefOwner().
-            Hmx::Object *owner = RefPtrOf(it)->RefOwner();
-#endif
             if (owner && owner->Dir() == fromDir) {
                 ObjRef *prevRef = it->prev;
                 it->Release(nullptr);
@@ -399,6 +395,22 @@ void MergeObjectsRecurse(ObjectDir *fromDir, ObjectDir *toDir, MergeFilter &filt
             it = it->next;
         }
         tempRefs.ReplaceList(toDir);
+#else
+        // RB3 retail 0x827586A0 (on the X360 pool-node ring):
+        // replace each ref owned by an object of fromDir in place and restart
+        // from the head; no temporary ring.
+        for (ObjRef *it = fromDir->mRefs.next; it != &fromDir->mRefs;) {
+            Hmx::Object *owner = RefPtrOf(it)->RefOwner();
+            if (owner && owner->Dir() == fromDir) {
+                RefPtrOf(it)->Replace(
+                    reinterpret_cast<ObjRef *>(static_cast<Hmx::Object *>(fromDir)), toDir
+                );
+                it = fromDir->mRefs.next;
+            } else {
+                it = it->next;
+            }
+        }
+#endif
     }
 
     for (ObjectDir::Entry *entry = fromDir->mHashTable.Begin(); entry != 0;
@@ -412,6 +424,7 @@ void MergeObjectsRecurse(ObjectDir *fromDir, ObjectDir *toDir, MergeFilter &filt
         }
     }
 
+#ifdef HX_NATIVE
     std::vector<ObjDirPtr<ObjectDir> > &subDirs = fromDir->mSubDirs;
     for (int i = 0; i < subDirs.size();) {
         ObjectDir *sd = subDirs[i];
@@ -434,6 +447,15 @@ void MergeObjectsRecurse(ObjectDir *fromDir, ObjectDir *toDir, MergeFilter &filt
         }
         i++;
     }
+#else
+    // RB3 retail: plain recursion over the subdirs (no DC3 FilterSubdir /
+    // RemovingSubDir / erase pass).
+    for (int i = 0; i < fromDir->mSubDirs.size(); i++) {
+        ObjectDir *sd = fromDir->mSubDirs[i];
+        if (sd)
+            MergeObjectsRecurse(sd, toDir, filt, false);
+    }
+#endif
 }
 
 void MergeDirs(ObjectDir *fromDir, ObjectDir *toDir, MergeFilter &filt) {
