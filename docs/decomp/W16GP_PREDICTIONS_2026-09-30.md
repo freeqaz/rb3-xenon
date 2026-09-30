@@ -43,6 +43,40 @@ genuinely require Step 3 (porting `TrackWidgetImp.cpp`) first** — there is no
 compiled body anywhere yet to pull an exact spelling from, confirming the
 report's own framing for those specifically.
 
+**Correction found while starting Step 2**: adding a `target_symbol_map.json`
+entry for `0x827e48c0` alone is NOT sufficient. Pairing is unit-scoped (a
+target row pairs against the base object *declared for that heading* in
+`objects.json`/`splits.txt`), and `config/45410914/splits.txt` shows
+`TrackWidget.cpp:`'s last `.text` block ends exactly at `0x827E48C0`, while
+`MidiParser.cpp:` immediately claims `.text 0x827E48C0-0x827E5260` (2464 B) —
+confirmed by reading `splits.txt` directly, not the report table. Since the
+64 B `Sort@TrackWidgetImp<MeshInstance>` body (disassembly-confirmed above:
+vtable+0x44 vcall then `bl 0x827e3e10`, the now-correctly-named MeshInstance
+`_S_sort`) is compiled into `TrackWidget.obj`, not any `MidiParser.cpp.obj`,
+the map entry alone would pair a target row against the wrong unit's base
+object (unpaired/0%, not the win I predicted). Step 2 is therefore a
+**splits.txt boundary move + a map entry, done together**: extend
+`TrackWidget.cpp:`'s block from `end:0x827E48C0` to `end:0x827E4900`, shrink
+`MidiParser.cpp:`'s block from `start:0x827E48C0` to `start:0x827E4900`
+(MidiParser.cpp keeps 3 other `.text` blocks, so this does not empty its
+heading), then add the map entry. This is a splits.txt change to an
+already-existing `MidiParser.cpp:` heading's boundary, not an edit to
+`MidiParser.cpp` the source file, so it does not violate the do-not-touch
+list.
+
+**Prediction**: this is the "adding a NEW name to a previously-anonymous
+target address" case (not a repair of a wrong existing name like Step 1), so
+per project map economics this has no guaranteed call-site upside by itself
+— but here the address IS the function body itself, not a callee referenced
+elsewhere, so the expected win is direct: the row becomes newly pairable
+against our own already-100%-quality compiled body. If the compiled body at
+this address is byte-identical to retail (it should be, since it's a stock
+template instantiation shared with the already-matching `RndMultiMesh::Instance`
+sibling at `0x827e4880`, same shape per the report), expect **+1 function /
++64 B**, `none`-ruler unaffected. If it does NOT cross to 100%, that's a
+miss worth checking with `run_diff_inspect` (full build only, not a raw
+single-obj build) before moving on.
+
 Revised commit order:
 1. Goal 1 relabel (this section).
 2. Goal 2 (MeshInstance half only): add `0x827e48c0` = `Sort@TrackWidgetImp<MeshInstance>`.
