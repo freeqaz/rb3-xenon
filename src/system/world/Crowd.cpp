@@ -352,7 +352,7 @@ BEGIN_LOADS(WorldCrowd)
                 std::list<OldMMInst> oldmmiList;
                 if (it->mMMesh) {
                     if (gCrowdRev < 9) {
-                        (BinStreamRev &)bs >> xfmList; // list<Transform> reader is rndobj's (still BinStreamRev-named)
+                        bs >> xfmList;
                         it->mMMesh->Instances().clear();
                         FOREACH (transIt, xfmList) {
                             it->mMMesh->Instances().push_back(
@@ -378,17 +378,15 @@ BEGIN_LOADS(WorldCrowd)
                     }
                 } else if (gCrowdRev > 3) {
                     if (gCrowdRev < 9)
-                        (BinStreamRev &)bs >> xfmList; // list<Transform> reader is rndobj's (still BinStreamRev-named)
+                        bs >> xfmList;
                     else if (gCrowdRev < 0xB)
                         d >> oldmmiList;
                     else
-                        // RndMultiMesh::Instance has only a BinStreamRev reader
-                        // (rndobj/MultiMesh, another lane's file); keep the cast here.
-                        (BinStreamRev &)bs >> instancesList;
+                        bs >> instancesList;
                 }
             } else {
                 std::list<Transform> xfms;
-                (BinStreamRev &)bs >> xfms; // list<Transform> reader is rndobj's (still BinStreamRev-named)
+                bs >> xfms;
                 // Retail dereferences mMMesh UNCONDITIONALLY here -- it emits no
                 // `cmplwi r11,0x0` / `beq` between the `lwz r11,0x38(it)` and the
                 // `clear`. Keep the null guard on native only.
