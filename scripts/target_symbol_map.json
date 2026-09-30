@@ -299,7 +299,6 @@
  "0x82b7c018": "?SelectTour@TourDescPanel@@QAAXVSymbol@@@Z",
  "0x82b7e3a8": "?UpdateExtendedText@TourDescProvider@@UBAXHHPAVUILabel@@@Z",
  "0x82b7ead8": "?UpdateList@TourDescProvider@@QAAXXZ",
- "0x82b90670": "??0TrackPanelInterface@@QAA@XZ",
  "0x82b915c8": "?HandleRemoveUser@TrackPanel@@QAAXPAVBandUser@@@Z",
  "0x82b92458": "?PostHandleRemoveUser@TrackPanel@@QAAXPAVBandUser@@@Z",
  "0x82b949f8": "?CheckShifts@GemTrack@@QAAXMH@Z",
