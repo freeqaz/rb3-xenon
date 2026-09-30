@@ -41,7 +41,7 @@ public:
     OBJ_SET_TYPE_ENGINE(TexLoadPanel);
     NEW_OBJ(TexLoadPanel);
     virtual DataNode Handle(DataArray *, bool);
-    virtual ~TexLoadPanel() {}
+    // implicit dtor: retail ~TexLoadPanel has no own-vtable store
     virtual void Poll();
     virtual void Load();
     virtual void Unload();
