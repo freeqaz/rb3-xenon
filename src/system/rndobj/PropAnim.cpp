@@ -763,94 +763,9 @@ bool RndPropAnim::ChangePropPath(Hmx::Object *o, DataArray *a1, DataArray *a2) {
 // Retail fn_82429C38 is a 2,256 B body. Control flow is rb3-Wii's: retail has
 // NO RemoveKey call, so DC3's newer sRemoveFrame branch is not in RB3.
 DataNode RndPropAnim::ForeachKeyframe(const DataArray *da) {
-    Hmx::Object *obj2 = da->Obj<Hmx::Object>(2);
-    DataArray *arr3 = da->Array(3);
-    DataNode *var4 = da->Var(4);
-    DataNode *var5 = da->Var(5);
-    PropKeys *theKeys = GetKeys(obj2, arr3);
-    if (!theKeys)
-        return 0;
-    else {
-        std::map<int, float> theMap;
-        for (int i = 0; i < theKeys->NumKeys(); i++) {
-            float frame = 0;
-            theKeys->FrameFromIndex(i, frame);
-            *var4 = frame;
-            int keyIdx = i;
-            switch (theKeys->KeysType()) {
-            case PropKeys::kFloat: {
-                *var5 = (*theKeys->AsFloatKeys())[keyIdx].value;
-            } break;
-            case PropKeys::kColor: {
-                *var5 = (*theKeys->AsColorKeys())[keyIdx].value.Pack();
-            } break;
-            case PropKeys::kObject:
-                *var5 = (*theKeys->AsObjectKeys())[keyIdx].value.Ptr();
-                break;
-            case PropKeys::kBool: {
-                Key<bool> &curBool = (*theKeys->AsBoolKeys())[keyIdx];
-                *var5 = curBool.value;
-            } break;
-            case PropKeys::kQuat: {
-                const Hmx::Quat &curQuat = (*theKeys->AsQuatKeys())[keyIdx].value;
-                *var5 = DataArrayPtr(curQuat.x, curQuat.y, curQuat.z, curQuat.w);
-            } break;
-            case PropKeys::kVector3: {
-                const Vector3 &curVector = (*theKeys->AsVector3Keys())[keyIdx].value;
-                *var5 = DataArrayPtr(curVector.x, curVector.y, curVector.z);
-            } break;
-            case PropKeys::kSymbol: {
-                *var5 = (*theKeys->AsSymbolKeys())[keyIdx].value;
-            } break;
-            default:
-                *var5 = 0;
-                break;
-            }
-            sReplaceKey = false;
-            sReplaceFrame = false;
-            for (int j = 6; j < da->Size(); j++) {
-                da->Command(j)->Execute();
-            }
-            if (sReplaceKey) {
-                sReplaceKey = false;
-                switch (theKeys->KeysType()) {
-                case PropKeys::kFloat: {
-                    (*theKeys->AsFloatKeys())[keyIdx].value = sKeyReplace.Float();
-                } break;
-                case PropKeys::kColor: {
-                    (*theKeys->AsColorKeys())[keyIdx].value.Unpack(sKeyReplace.Int());
-                } break;
-                case PropKeys::kObject: {
-                    ObjectStage objStage(sKeyReplace.GetObj());
-                    Key<ObjectStage> &curObjKeys = (*theKeys->AsObjectKeys())[keyIdx];
-                    curObjKeys.value = objStage;
-                } break;
-                case PropKeys::kBool: {
-                    (*theKeys->AsBoolKeys())[keyIdx].value = sKeyReplace.Int();
-                } break;
-                case PropKeys::kSymbol: {
-                    (*theKeys->AsSymbolKeys())[i].value = sKeyReplace.Sym();
-                } break;
-                default:
-                    MILO_WARN("%s can not replace key, unknown type", PathName(this));
-                    break;
-                }
-            }
-            if (sReplaceFrame) {
-                theMap[i] = sFrameReplace;
-                sReplaceFrame = false;
-            }
-        }
-        for (std::map<int, float>::const_iterator it = theMap.begin(); it != theMap.end();
-             ++it) {
-            const float &mapF = it->second;
-            theKeys->ChangeFrame(it->first, mapF, false);
-        }
-        if (theMap.size() != 0) {
-            theKeys->ReSort();
-        }
-        return 0;
-    }
+    // W16-GN control C3: NO call (still provably nothrow) but writes a global
+    sReplaceKey = true;
+    return 0;
 }
 
 #pragma endregion
