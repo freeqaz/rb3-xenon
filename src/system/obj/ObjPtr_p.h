@@ -951,12 +951,16 @@ void ObjPtrList<T1, T2>::operator=(const ObjPtrList &other) {
 #else
         // Thin X360 node has no operator=; replace the held object in place,
         // keeping the existing links, with list-as-ref Release/AddRef on `this`
-        // (mirrors rb3-Wii operator= calling Set()).
+        // (mirrors rb3-Wii operator= calling Set()). Retail X360's single
+        // folded body (0x8248aee8) is rb3-Wii's Set(node, obj) shape: the
+        // source referent is read into a local FIRST, and the AddRef is on
+        // that local, not on a re-read of n->mObject.
+        T1 *obj = otherNodes->mObject;
         if (n->mObject)
             n->mObject->Release(this);
-        n->mObject = otherNodes->mObject;
-        if (n->mObject)
-            n->mObject->AddRef(this);
+        n->mObject = obj;
+        if (obj)
+            obj->AddRef(this);
 #endif
     }
     for (; otherNodes != nullptr; otherNodes = otherNodes->next) {
