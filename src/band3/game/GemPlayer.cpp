@@ -1602,30 +1602,25 @@ void GemPlayer::ChangeDifficulty(Difficulty diff) {
 }
 
 void GemPlayer::SetPitchShiftRatio(float f1) {
-    MILO_ASSERT(mBeatMaster, 0x975);
-    MILO_ASSERT(mBeatMaster->GetAudio(), 0x976);
-    MILO_ASSERT(mBeatMaster->GetAudio()->GetSongStream(), 0x977);
+    // Retail calls an out-of-line FxSendPitchShift ratio setter here
+    // (0x827122A0: mRatio = f1; OnParametersChanged()); that setter belongs in
+    // src/system/synth and is not ported, so go through the synced property.
+    static Symbol pitch_ratio("pitch_ratio");
+    GetPitchShift()->SetProperty(pitch_ratio, f1);
+    // no mBeatMaster/GetAudio/GetSongStream asserts in retail (the last would
+    // evaluate a second virtual GetSongStream call)
     Stream *stream = mBeatMaster->GetAudio()->GetSongStream();
-    StandardStream *sStream = dynamic_cast<StandardStream *>(stream);
-    if (sStream) {
-        std::list<int> chans;
-        mBeatMaster->GetAudio()->FillChannelList(chans, mTrackNum);
-        FOREACH (it, chans) {
-            // sStream->SetPitchShift(*it, true); // Wii-only API
-        }
-    }
     if (f1 == 1.0f || ThePracticePanel->PlayAllTracks()) {
-        for (int i = 0; i < (unsigned int)stream->GetNumChanParams(); i++) {
+        for (unsigned int i = 0; i < stream->GetNumChanParams(); i++) {
             stream->SetVolume(i, 0);
         }
     } else {
         std::list<int> chans;
         mBeatMaster->GetAudio()->FillChannelList(chans, mTrackNum);
         for (unsigned int i = 0; i < stream->GetNumChanParams(); i++) {
-            if (std::find(chans.begin(), chans.end(), i) != chans.end()) {
-                stream->SetVolume(i, 0);
-            } else
-                stream->SetVolume(i, -96.0f);
+            stream->SetVolume(
+                i, std::find(chans.begin(), chans.end(), i) != chans.end() ? 0 : -96.0f
+            );
         }
     }
 }
