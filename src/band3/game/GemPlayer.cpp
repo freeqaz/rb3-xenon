@@ -1308,6 +1308,12 @@ void GemPlayer::JumpReset(float f1) {
     mLastFillHitTick = -1;
     unk2f4 = -1;
     mUpcomingFretReleases.clear();
+    BandTrack *track = GetBandTrack();
+    if (track)
+        track->StopDeploy();
+    IgnoreUntilRollback(f1);
+    if (mTrack)
+        mTrack->JumpReset();
 }
 
 void GemPlayer::SetTrack(int track) {

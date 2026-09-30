@@ -780,6 +780,16 @@ void GemTrack::Jump(float f) {
     }
 }
 
+// Retail 0x82B951D8 (anonymous in the target map). RB3-retail-only, like
+// VocalTrack::JumpReset: GemPlayer::JumpReset calls it on mTrack. Body from
+// retail bytes: three BandTrack calls on mTrackDir's BandTrack base (+0x40c),
+// the middle one virtual through BandTrack vtable slot 2.
+void GemTrack::JumpReset() {
+    mTrackDir->ResetStreakMeter();
+    mTrackDir->ResetSmashers(true);
+    mTrackDir->ResetPlayerFeedback();
+}
+
 GemManager *GemTrack::GetGemManager() { return mGemManager; }
 
 void GemTrack::OnMissPhrase(int i) {
