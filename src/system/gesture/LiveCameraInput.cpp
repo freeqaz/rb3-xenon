@@ -71,10 +71,16 @@ namespace {
                 XGSetTextureHeader(
                     0x140, 0xf0, 1, 4, (D3DFORMAT)0x1a220058, 0, 0, -1, d3dTex
                 );
+#ifdef HX_NATIVE
             void *ptr = PhysicalAllocTracked(
                 (texSize + 0xFFF) & 0xFFFFF000, 4, "LiveCameraInput.cpp", 0x66,
                 "Tex(phys)"
             );
+#else
+            // Retail (0x82735074) passes r3/r4/r5 only -- see Memory.h.
+            void *ptr =
+                PhysicalAllocTracked((texSize + 0xFFF) & 0xFFFFF000, 4, "Tex(phys)");
+#endif
             MILO_ASSERT(ptr, 0x67);
             XGOffsetResourceAddress(d3dTex, ptr);
             tex->SetDeviceTex(d3dTex);
