@@ -7,7 +7,7 @@ instruments apply. Nothing under `src/system/` was touched.
 
 **Result.** 154 rows (28,496 B) now carry names; 74 of them (7,832 B) read fuzzy 100 in-tree. Of the
 139 class-A rows still anonymous at `74ee485ef` (56,684 B), 45 (18,040 B) are among them.
-Whole-binary A/B over the branch diff: see §5.
+Whole-binary A/B over the branch diff: **+91 fns / +72 honest / +8,416 B / fuzzy +0.186985 pp**, 7 more units at 100 (§5).
 
 ## 1. Why class A had "no identity"
 
@@ -257,7 +257,46 @@ bodies.
 
 ## 5. Measurement
 
-AB_RESULT
+`python3 tools/ab_measure.py --worktree ~/tmp/wt-w16-ib-ab --patch <4bb930aee..w16-ib>`, **one run**
+(kinds map + source + splits), both legs re-split to a `symbols.txt` fixed point, ruler `name_check`.
+Result: `~/tmp/wt-w16-ib-ab/.ab_measure_runs/20260930-231649-w16-ib-3218779/result.json`.
+
+**Why a structural base.** The base worktree carries commit `4bb930aee` on top of `74ee485ef`. It
+holds `objects.json` +2, the two new `.cpp` files unpinned, and dtk's seven over-carve merges in
+`symbols.txt`. Two things forced this, and both made the first attempt refuse (no numbers):
+- Leg B of a configgen patch re-runs a bare `configure.py`. In a `~/tmp` worktree that resolves
+  dtk to the stale `~/tmp/jeff` copy (§7), so leg B would have split with a different dtk than
+  leg A.
+- The tool refuses any patch that touches `symbols.txt`, and leg B's first split rewrote it anyway,
+  which trips the split guard.
+The scaffolding cannot score: unpinned TUs have no target rows. W16-IA used the same shape.
+
+| | leg A (structural base) | leg B (branch) | Δ |
+|---|---:|---:|---:|
+| matched_functions | 46,198 | 46,289 | **+91** |
+| masked_equal | 23,660 | 23,679 | +19 |
+| honest (matched − masked_equal) | 22,538 | 22,610 | **+72** |
+| matched_code_percent | 45.400013 | 45.482143 | +0.082130 pp (**+8,416 B**) |
+| fuzzy_match_percent | 54.261955 | 54.448940 | **+0.186985 pp** |
+| units at 100 (mpn) | 232 | 239 | +7 |
+
+- **Prediction, written before the result.** The in-tree readings moved +59 fns / +4,732 B from the
+  post-Quest build to the final one. The Quest/TourReward rows that newly read 100 total about 4 KB.
+  Predicted ≈ +80 fns / +8–9 KB / ≈ +0.2 pp fuzzy. Measured +91 / +8,416 B / +0.187 pp: bytes and
+  fuzzy on target, functions about 14% higher.
+- **Units now at 100:** CampaignSongInfoPanel, CymbalSelectionProvider,
+  AccomplishmentSongListConditional, CharProvider, MetaNetMsgs, TourReward (new unit), and
+  TourCondition. TourCondition completed because its 17 foreign rows left for Quest and TourReward
+  (DENOMINATOR_SHRANK).
+- **The two unit "regressions" are the re-home, not losses.** Tour went 153 → 137 and TourCondition
+  32 → 27. Those rows now sit in Quest (+36) and TourReward (+17), and the all-unit net equals the
+  whole-binary +91.
+- **`none`-ruler control:** +8,668 B. The tool marks it NOT_APPLICABLE because the patch has source.
+
+Gates on the final tree:
+- `tools/map_name_injectivity.py`: **OK** (31,064 applied rows, injective).
+- `tools/icf_alias_finder.py --validate`: **PASS** (1,482 map-consistent, 263 tolerated,
+  0 contradicted, 1,746 total).
 
 ## 6. Left, with identities where known
 
