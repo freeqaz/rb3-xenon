@@ -251,7 +251,9 @@ bool ControllerHasRepresentativePartPriority(ControllerType c, TrackType t) {
     switch (c) {
     case kControllerGuitar:
     case kControllerRealGuitar:
-        return (t - 1U <= 7) && ((1 << (t - 1U)) & 0xA3);
+        // Retail 0x8268F648: a compare chain, not a bitmask.
+        return t == kTrackRealBass || t == kTrackRealGuitar || t == kTrackBass
+            || t == kTrackGuitar;
     case kControllerKeys:
         return t == kTrackKeys || t == kTrackRealKeys;
     case kControllerDrum:
@@ -264,4 +266,11 @@ bool ControllerHasRepresentativePartPriority(ControllerType c, TrackType t) {
     }
 }
 
-void CensorString(String &) {}
+// Retail 0x8268F6C8 (TU5): every non-space character becomes 'X'.
+void CensorString(String &str) {
+    for (unsigned int i = 0; i < str.length(); i++) {
+        if (str[i] != ' ') {
+            str.replace(i, 1, "X");
+        }
+    }
+}
