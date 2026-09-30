@@ -1047,13 +1047,12 @@ DataNode UILabel::OnSetTimeHMS(const DataArray *da) {
 void UILabel::CenterWithLabel(UILabel *label, bool b, float f) {
     int num = b ? -1 : 1;
     Transform xfm = LocalXfm();
-    float otherwidth = label->mText->MaxLineWidth();
-    float spaceBetween = f;
-    Transform otherxfm = label->LocalXfm();
-    float centerX = otherxfm.v.x;
     float width = mText->MaxLineWidth();
-    otherxfm.v.x = (float)num * (otherwidth * 0.5f + spaceBetween * 0.5f) + centerX;
-    xfm.v.x = centerX - (float)num * (width * 0.5f + spaceBetween * 0.5f);
+    Transform otherxfm = label->LocalXfm();
+    float otherwidth = label->mText->MaxLineWidth();
+    float centerX = otherxfm.v.x;
+    xfm.v.x = (float)num * (otherwidth * 0.5f + f * 0.5f) + centerX;
+    otherxfm.v.x = centerX - (float)num * (width * 0.5f + f * 0.5f);
     SetLocalXfm(xfm);
     label->SetLocalXfm(otherxfm);
 }
