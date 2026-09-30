@@ -343,7 +343,7 @@ DataNode ToggleDebugSpew(DataArray *) {
 }
 
 VocalTrack::VocalTrack(BandUser *u)
-    : Track(u), unk68(0), mVocalStyleOverride(kVocalStyleScrolling), unk70(2),
+    : Track(u), unk68(0), mVocalStyleOverride(kVocalStyleScrolling), mScrollOverride(2),
       unk78(24.0f), unk7c(0), mDir(this), mPlayer(this), mPhraseStartMs(0),
       mPhraseEndMs(0), mNextPhraseEndMs(0), unkf4(0), unkf8(0), unkfc(0), unk100(0),
       unk104(1), unk108(0), unk128(0), unk19c(0), unk1c8(this), mTambourineGemPool(0),
@@ -654,11 +654,14 @@ void VocalTrack::SetVocalStyle(VocalStyle style) {
     }
 }
 
+// W17: mScrollOverride is a tri-state cache (see VocalTrack.h) -- 2 means
+// "no override, defer to mVocalStyleOverride"; RebuildHUD is the only writer
+// found in this file (0 = forced not-scrolling for a net player, 2 = unset).
 bool VocalTrack::IsScrolling() const {
-    if (unk70 == 2)
+    if (mScrollOverride == 2)
         return mVocalStyleOverride == kVocalStyleScrolling;
     else
-        return unk70 == 1;
+        return mScrollOverride == 1;
 }
 
 void VocalTrack::UpdateVocalStyle() {
@@ -707,6 +710,19 @@ void VocalTrack::JumpReset() {
     mDir->ResetPlayerFeedback();
 }
 
+// W17 (cleanup pass, no behavior/codegen change -- see
+// docs/decomp/W16GB_UPDATESCROLLING_SIX_ORACLE_DEFECTS_2026-09-16.md and
+// docs/decomp/W16FS_UPDATESCROLLING_RETAIL_REDERIVE_2026-09-16.md for the
+// UpdateScrolling companion function these HUD-state resets feed).
+//
+// Called on song (re)start / section jump to reset every piece of scrolling
+// HUD state that UpdateScrolling advances incrementally: the beat/phrase
+// marker scan cursors (unk108/unk104), the mScrollOverride tri-state (below),
+// the per-side lyric-scroller X caches (unk23c/unk240/unk2ac/unk2b0/unk294/
+// unk298), and the pitch-range shift queue (mRangeShifts, rebuilt below from
+// TheSongDB->GetRangeSections() -- see VocalTrack.h's RangeShift comment for
+// the verified field roles, confirmed against both this function's own debug
+// MILO_LOG dump and UpdateScrolling's lerp usage).
 void VocalTrack::RebuildHUD() {
     static bool sDump;
     for (int i = 0; i < 3; i++) {
@@ -719,8 +735,8 @@ void VocalTrack::RebuildHUD() {
         mCurLyricPhrase[i] = 0;
     }
 
-    unk108 = 0;
-    unk104 = 1;
+    unk108 = 0; // next beat-marker scan index (see VocalTrack.h)
+    unk104 = 1; // next phrase-marker scan index (see VocalTrack.h)
     unk100 = 0;
     unkf4 = 0;
     unkf8 = 0;
@@ -743,10 +759,12 @@ void VocalTrack::RebuildHUD() {
     if (mPlayer) {
         const VocalPhrase *const &cur = mPlayer->CurrentPhrase();
         const VocalPhrase *next = mPlayer->GetNextPhraseMarker(cur);
+        // Networked vocals never scroll -- force IsScrolling() false; else
+        // clear the override so IsScrolling() defers to mVocalStyleOverride.
         if (HasNetPlayer()) {
-            unk70 = 0;
+            mScrollOverride = 0;
         } else {
-            unk70 = 2;
+            mScrollOverride = 2;
         }
         if (mPlayer->AtFirstPhrase()) {
             mPhraseEndMs = 0;
@@ -808,6 +826,13 @@ void VocalTrack::RebuildHUD() {
         mDir->mStreakMeter->SetNumParts(mPlayer->NumVocalParts());
         float margin = mDir->mPitchDisplayMargin;
         mRangeShifts.clear();
+        // Build one RangeShift per song RangeSection (vocal-pitch-range
+        // markers, unrelated to VocalTrack::RangeShift's namesake in
+        // GemTrack -- confirmed by repo-wide grep, no collision) with margin
+        // padding applied. prevMin/prevMax carry the previous section's
+        // (margin-padded) range forward as this shift's "from" pair, so
+        // UpdateScrolling can lerp smoothly across the cut instead of
+        // snapping.
         std::vector<RangeSection> &sections = TheSongDB->GetRangeSections();
         float prevMin = sections[0].unk8 - margin;
         float prevMax = margin + sections[0].unkc;
@@ -822,12 +847,12 @@ void VocalTrack::RebuildHUD() {
             if (!(secMax < secMin)) {
                 float secIntro = section.unk4;
                 RangeShift rs;
-                rs.unk0 = TickToMs((float)section.unk0);
-                rs.unk4 = prevMin;
-                rs.unk8 = prevMax;
-                rs.unkc = secMin - margin;
-                rs.unk10 = secMax + margin;
-                rs.unk14 = secIntro;
+                rs.unk0 = TickToMs((float)section.unk0); // startMs
+                rs.unk4 = prevMin; // rangeMinFrom
+                rs.unk8 = prevMax; // rangeMaxFrom
+                rs.unkc = secMin - margin; // rangeMinTo
+                rs.unk10 = secMax + margin; // rangeMaxTo
+                rs.unk14 = secIntro; // introMs
                 mRangeShifts.push_back(rs);
                 prevMin = section.unk8 - margin;
                 prevMax = section.unkc + margin;
@@ -850,6 +875,10 @@ void VocalTrack::RebuildHUD() {
             }
         }
         if (maxRange > 0) {
+            // Widen any shift whose from/to span is narrower than maxRange
+            // (the widest span seen above) so every RangeShift the HUD lerps
+            // through occupies the same vertical extent -- split the widening
+            // evenly above and below rather than re-centering.
             int idx = 0;
             std::deque<RangeShift>::iterator it = mRangeShifts.begin();
             std::deque<RangeShift>::iterator end = mRangeShifts.end();
@@ -1217,6 +1246,23 @@ void VocalTrack::UpdateLyricZ() {
 
 void PrintLyricOneLine(const Lyric &);
 
+// Per-frame vocal HUD driver, called once per VocalTrack::Poll with the
+// current song time in ms. Builds/advances the lyric and phrase/beat marker
+// queues that scroll across the vocal track, and drains the RangeShift /
+// LyricShift queues RebuildHUD populated so the pitch range and per-side
+// lyric X positions lerp smoothly between song sections instead of
+// snapping. See docs/decomp/W16GB_UPDATESCROLLING_SIX_ORACLE_DEFECTS_2026-09-16.md
+// and docs/decomp/W16FS_UPDATESCROLLING_RETAIL_REDERIVE_2026-09-16.md for the
+// prior matching work this comment summarizes.
+//
+// TODO(W17): two known real residual bytes in this function's compiled body
+// are NOT fixable from this TU and are left as-is rather than papered over:
+//   - 8 B from STLport deque::operator- computing its element-count subtraction
+//     in the opposite term order from retail; the fix needs a cross-TU change
+//     to STLport's <deque> internals, not this file (W16GB finding).
+//   - 4 B from a bool's register liveness spanning TickToMs and
+//     BuildStaticDeployZone in the deploy-zone tail; two attempted source
+//     rewrites here both measured WORSE and were reverted (W16GB finding).
 void VocalTrack::UpdateScrolling(float ms) {
     static bool dumpLyrics;
     static bool dumpDeployVectors;
@@ -1228,6 +1274,10 @@ void VocalTrack::UpdateScrolling(float ms) {
         return;
     if (ms < 0.0f)
         return;
+    // trackScale/trackWidth are local aliases of the mDir-scale (unk74) and
+    // track-width (unk78) members -- see their declarations in VocalTrack.h
+    // for the fuller picture; not renamed at the member level because both
+    // fields have readers/writers outside UpdateScrolling/RebuildHUD.
     float trackScale = unk74;
     float trackWidth = unk78;
     float lookAhead = trackScale * 2.0f + ms;
@@ -1246,6 +1296,10 @@ void VocalTrack::UpdateScrolling(float ms) {
         lookAhead = sectionEnd;
     }
 
+    // Per-part sweep advancing each part's "next note to scroll in" cursor
+    // up to buildAhead, skipping notes entirely outside the current song
+    // section when sectionOnly is set, then preparing note-tube meshes for
+    // every note up to the further-out lookAhead horizon.
     if (!mPlayer->IsNet()) {
         for (int part = 0; part < mPlayer->NumVocalParts(); part++) {
             VocalNoteList *notes = GetVocalNoteList(part);
@@ -1286,6 +1340,17 @@ void VocalTrack::UpdateScrolling(float ms) {
         }
     }
 
+    // Beat-marker sweep: walks forward from the persistent unk108 beat
+    // cursor (see the field comment in VocalTrack.h), skipping beats already
+    // behind buildAhead and stopping once a beat passes lookAhead, spawning
+    // a downbeat/beat marker mesh for each beat in between.
+    //
+    // NOTE (W16-FS, docs/decomp/W16FS_UPDATESCROLLING_RETAIL_REDERIVE_2026-09-16.md):
+    // this unrotated while(true){...continue/break...} shape is retail's own
+    // rare form here (one of only 3 such loops in all of retail RB3) --
+    // rewriting it to the more common rotated for/while shape was tried and
+    // measured to NOT reproduce retail's codegen, so the shape above is
+    // intentional, not unfinished.
     int beat = unk108;
     while (true) {
         int tick = (int)BeatToTick((float)beat);
@@ -1307,6 +1372,9 @@ void VocalTrack::UpdateScrolling(float ms) {
     }
     unk108 = beat;
 
+    // Phrase-marker sweep: same shape as the beat sweep above but walking
+    // the persistent unk104 phrase cursor over the lead part's phrase list,
+    // additionally respecting the section-only window's start/end when set.
     int phraseIdx = unk104;
     VocalNoteList *leadNotes = GetVocalNoteList(0);
     while (phraseIdx < leadNotes->mPhrases.size()) {
@@ -1324,6 +1392,14 @@ void VocalTrack::UpdateScrolling(float ms) {
     }
     unk104 = phraseIdx;
 
+    // Drain/interpolate the RangeShift queue RebuildHUD built (see the field
+    // comments on VocalTrack::RangeShift and the construction block in
+    // RebuildHUD, confirmed via this same MILO_LOG dump's argument order and
+    // the SetRange TO-pair usage below -- W16-FS #9/#10). Any shift whose
+    // intro window (startMs .. startMs+introMs, using introMs as the intro
+    // window's own length) has fully elapsed is popped and applied outright;
+    // the new front shift, if its intro has begun, is applied as a
+    // from->to lerp keyed on elapsed-time-into-intro / introMs.
     float oldRange = mDir->mLastMax - mDir->mLastMin;
     while (mRangeShifts.size() != 0
            && mRangeShifts.front().unk0 < ms - mRangeShifts.front().unk14) {
@@ -1344,6 +1420,10 @@ void VocalTrack::UpdateScrolling(float ms) {
             );
         }
     }
+    // If the pitch range actually changed by a visible amount this frame,
+    // all scrolling state is torn down and rebuilt from scratch next frame
+    // (fresh note-tubes, deploy zones, lyric phrases) rather than trying to
+    // reflow the existing scrolled elements onto the new range.
     float newRange = mDir->mLastMax - mDir->mLastMin;
     float rangeDelta = oldRange - newRange;
     if (rangeDelta <= 0.0f)
@@ -1360,6 +1440,15 @@ void VocalTrack::UpdateScrolling(float ms) {
         ClearLyrics();
     }
 
+    // Drain/interpolate each side's LyricShift queue (only while not
+    // vertically scrolling -- see IsScrolling()/mScrollOverride), moving that
+    // side's lyric scroller transform toward each shift's target local X
+    // (LyricShift::unk0) over the shift's window (unk8's "fast" flag selects
+    // mLyricShiftQuickMs vs mLyricShiftMs). xPos (unk294/unk298) tracks the
+    // last-applied target X so the next shift's lerp starts from where this
+    // one left off; shiftedX (unk2ac/unk2b0) is the resulting on-screen X
+    // with mDir->mNowBarX folded in, cached for readers elsewhere in this
+    // file (see the field comments in VocalTrack.h).
     if (!IsScrolling()) {
         float lyricMs = TheGame->InRollback() ? unk2a4 : ms;
         for (int side = 0; side < 2; side++) {
