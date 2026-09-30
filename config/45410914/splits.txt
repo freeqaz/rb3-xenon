@@ -6200,15 +6200,11 @@ MetaMusic.cpp:
 
 SongCollision.cpp:
 	.pdata      start:0x82215220 end:0x82215230
-	.pdata      start:0x82221778 end:0x82221780
-	.pdata      start:0x82221780 end:0x82221798
 	.pdata      start:0x82233B18 end:0x82233B28
 	.pdata      start:0x82233C00 end:0x82233C08
 	.pdata      start:0x8223E6B0 end:0x8223E6B8
 	.pdata      start:0x8223EB50 end:0x8223EB58
 	.text       start:0x824E1AC0 end:0x824E1C88
-	.text       start:0x825A3DC0 end:0x825A3E30
-	.text       start:0x825A3E30 end:0x825A3F58
 	.text       start:0x826B8A80 end:0x826B8B40
 	.text       start:0x826B98E0 end:0x826B9960
 	.text       start:0x82770498 end:0x827704C0
@@ -6562,14 +6558,10 @@ OriginalChoreoRemixer.cpp:
 	.pdata      start:0x822003A0 end:0x822003A8
 	.pdata      start:0x82202BA0 end:0x82202BA8
 	.pdata      start:0x82202C60 end:0x82202C70
-	.pdata      start:0x822216F8 end:0x82221708
-	.pdata      start:0x82221718 end:0x82221778
 	.text       start:0x8235CA80 end:0x8235CAD4
 	.text       start:0x8235EEB0 end:0x8235EF08
 	.text       start:0x823873F8 end:0x82387458
 	.text       start:0x82387EE0 end:0x82387F8C
-	.text       start:0x825A3650 end:0x825A36B8
-	.text       start:0x825A3770 end:0x825A3DC0
 
 Profile.cpp:
 	.pdata      start:0x822402B8 end:0x822402D0
@@ -8597,6 +8589,7 @@ band3/meta_band/StoreSongSortNode.cpp:
 	.pdata      start:0x8222F988 end:0x8222FA48
 	.text       start:0x82675098 end:0x826758E4
 	.text       start:0x826758E8 end:0x826758F8
+	.text       start:0x826758F8 end:0x82675900
 
 band3/game/TrainerGemTab.cpp:
 	.pdata      start:0x82236A58 end:0x82236AB0
@@ -9532,7 +9525,7 @@ band3/game/Game.cpp:
 	.pdata      start:0x822303E0 end:0x82230430
 	.text       start:0x8235B9F8 end:0x8235BA78
 	.text       start:0x8235F770 end:0x8235F9B8
-	.text       start:0x826758F8 end:0x82675DE8
+	.text       start:0x82675900 end:0x82675DE8
 	.text       start:0x82675DE8 end:0x82676F1C
 	.text       start:0x82676F20 end:0x82676F88
 	.text       start:0x82676F88 end:0x82677000
@@ -9924,7 +9917,11 @@ BandSongMetadata.cpp:
 	.pdata      start:0x822211F8 end:0x82221208
 	.pdata      start:0x82221208 end:0x82221348
 	.pdata      start:0x82221348 end:0x822216F8
+	.pdata      start:0x822216F8 end:0x82221708
 	.pdata      start:0x82221708 end:0x82221718
+	.pdata      start:0x82221718 end:0x82221778
+	.pdata      start:0x82221778 end:0x82221780
+	.pdata      start:0x82221780 end:0x82221798
 	.pdata      start:0x82221798 end:0x822217B8
 	.pdata      start:0x822217B8 end:0x82221800
 	.text       start:0x82307B78 end:0x82308060
@@ -9940,7 +9937,11 @@ BandSongMetadata.cpp:
 	.text       start:0x8259EC40 end:0x8259EC58
 	.text       start:0x8259EC58 end:0x8259FC4C
 	.text       start:0x8259FC50 end:0x825A3650
+	.text       start:0x825A3650 end:0x825A36B8
 	.text       start:0x825A36B8 end:0x825A3770
+	.text       start:0x825A3770 end:0x825A3DC0
+	.text       start:0x825A3DC0 end:0x825A3E30
+	.text       start:0x825A3E30 end:0x825A3F58
 	.text       start:0x825A3F58 end:0x825A4338
 	.text       start:0x825A4340 end:0x825A4778
 
