@@ -57,7 +57,7 @@ JoypadData::JoypadData()
       mVibrateEnabled(true), mHasCapFlag1(0), mIsWireless(0), unk4c(0), mHasAnalogSticks(false),
       mTranslateSticks(false), mIgnoreButtonMask(0), mGreenCymbalMask(0),
       mYellowCymbalMask(0), mBlueCymbalMask(0), mSecondaryPedalMask(0), mCymbalMask(0),
-      mIsDrum(false), mType(kJoypadNone), mControllerType(), mDistFromRest(0),
+      mIsDrum(false), mType(kJoypadNone), mControllerType(),
       mHasGreenCymbal(false), mHasYellowCymbal(false), mHasBlueCymbal(false),
       mHasSecondaryPedal(false), mBreedCallback(0), mBreedDataDest(0), mEepromBytesLeft(0), mEepromTotalBytes(0),
       mEepromChunkSize(0), mEepromTimeout(0), unkac(0) {
