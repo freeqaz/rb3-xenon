@@ -5771,3 +5771,551 @@ property of which rows were in range, **not** of lane quality.
   otherwise perfect body; the purest regalloc row yet priced). Both are
   permuter-class: **bank them for the permuter, do not grind them.**
 - Everything still open from §7u.10 carries forward unchanged.
+
+---
+
+## §7w — wave 6 (utl-brief, W16-GI, W16-GJ, W16-GH, W16-GK, W16-GL): three residuals that were not what their charges said, and a proof that was not a warrant
+
+Six merges landed after §7v, all on 2026-09-16 between 21:28 and 22:10:
+
+| merge | lane | class | result |
+|---|---|---|---|
+| `32322eef` | utl-brief | docs (targeting) | the `obj/Utl` block priced; Δ0 by construction |
+| `2d49cc75` | **W16-GI** | source | `?Handle@BandStorePanel@@` 98.75519 → **100**, **+1 fn / +1,928 B**, all honest |
+| `bcc63ade` | **W16-GJ** | source | `?OnInitializeContent@CalibrationPanel@@` 98.94485 → **100**, **+1 fn / +1,668 B**, all honest |
+| `828546ac` | **W16-GH** | source | `?OnMsg@OvershellSlot@@` 45 charges → 2, fuzzy 99.30373 → 99.42693, **Δ0 B** (pre-registered) |
+| `e67a93a2` | **W16-GK** | alias | T1 `_S_sort` **REFUSED**; T2 `list<Object*>::insert` admitted, **+13 fns / +4,576 B**, all honest |
+| `8af79551` | **W16-GL** | offline tool | offset resolver reads the prologue; `report.json` byte-identical by design |
+
+Wave total **+15 fns / +8,172 B, 100% honest** (Δ`masked_equal` 0 on every lane).
+All three source rows came with a diagnosis ("scheduling", "regalloc-flavoured",
+"declaration order"), and **all three diagnoses were wrong**. The two briefed
+toward a stop (GI's hard AT_LIMIT falsifier, GJ's own "scheduling → AT_LIMIT")
+**both crossed to 100**. The alias lane refused the target that the two prior
+records (§7u.10, §7v.13) had called banked.
+
+### 7w.1 ★★★★★ A CHARGE SITE IS WHERE THE DEFECT SHOWS, NOT WHERE IT LIVES — THREE ROWS, ONE WAVE
+
+The three source rows were chosen by `W16_NEXT_WAVE_TARGETING_2026-09-16.md`
+and each came with a diagnosis read off the charges. **All three diagnoses
+located the defect at the charge site, and none of them was there:**
+
+| row | briefed as | the defect actually was | lever |
+|---|---|---|---|
+| GI `?Handle@BandStorePanel@@` (1,928 B, 3 ins / 3 del, identical multiset) | "instruction SCHEDULING, permuter territory", with a **HARD FALSIFIER: report AT_LIMIT promptly** | the **callee** `OnMsg(const LocalUserLeftMsg&)` was an empty same-TU stub, proven nothrow, so the caller's EH region was elided and the scheduler was free to hoist 3 arg-setup instructions | port the callee's real 232 B body |
+| GJ `?OnInitializeContent@CalibrationPanel@@` (1,668 B, 8 charges) | "regalloc-flavoured"; the lane itself pre-registered H2 as "scheduling → AT_LIMIT" | (a) a **wrong float constant** (`SetJump(..., 1.0f, ...)` where retail passes `0.0f`) that presented as `fmr f2,f30` vs `f2,f31`; (b) a **materialisation** — retail reloads `mDir` into a scratch then `mr r3,r11` | `0.0f`, and `PanelDir *dir = mDir;` |
+| GH `?OnMsg@OvershellSlot@@` (1,396 B, 43 `diff_arg`) | "ONE defect: frame 16 B too large"; lever named as **declaration order** controlling stack slots | three `Symbol` temporaries inside **one full-expression** got three slots (0x54/0x58/0x5c) where retail uses one; 0xf0+8 rounds to 0x100 | **split the full-expression into statements** |
+
+GH's brief got the *symptom* exactly right (frame +0x10, uniform +8 shift, 43 of
+43 charges immediate-only) and the *lever* wrong. Declaration order was not what
+moved it. MSVC resets its temporary-slot pool **per statement** and gives
+distinct slots to temporaries **within one full-expression**. The lane confirmed
+this in the unedited baseline: temp [68], in a separate statement, already
+shared 0x54 with temp [78].
+
+★ **The durable rule.** "Identical multiset / identical end state ⇒ scheduling ⇒
+permuter" is a valid stopping rule **only after three source questions have been
+asked**, and this wave supplies one instance of each:
+
+1. **Is a same-TU callee an empty stub?** An empty body is proven nothrow, and
+   that changes the *caller's* EH regions and so its schedule (GI).
+2. **Which register was the value materialised into?** Source controls this: a
+   named local forces materialisation, while a member expression folds into the
+   call site (GJ).
+3. **Are the temporaries in one full-expression or several statements?** That
+   decides the stack slot count and so the frame size (GH).
+
+GJ's own record states it plainly: *"the one instrument that settled it was a
+single cheap SOURCE PROBE, not any amount of further charge analysis."* GI's doc
+counts itself the **fourteenth** recorded instance of a scheduling/regalloc
+residual dissolving into a source defect (§7v.6 recorded GF as the thirteenth).
+The permuter is still OFF. What changes is that **the AT_LIMIT stopping rule
+now has preconditions.**
+
+### 7w.2 THE EMPTY-STUB → NOTHROW MECHANISM, ISOLATED AND CONTROLLED (W16-GI)
+
+The discriminating evidence was a **within-function sibling**, not a theory.
+`Handle` has two `HANDLE_MESSAGE` arms with the same macro, the same
+`Message(DataArray*)` ctor, the same non-trivial `~Message` and the same sret
+return. The `MetadataLoadedMsg` arm already matched retail byte-for-byte, and
+**the only difference between the arms is the callee.**
+
+Two controls, both able to fail:
+
+- **T2, isolation:** keeping the empty stub but moving it *below* `Handle` gave a
+  result **byte-identical to baseline** (98.75519, the same 3+3 charges at the
+  same indices). Definition order is **not** the lever. The nothrow proof is
+  whole-TU, and this control stops the fix from being retro-explained as a
+  declaration-order effect.
+- **C1, witness:** on the fixed tree, flipping one immediate
+  (`Request(..., true)` → `false`) took the row 100 → 99.997925 and the whole
+  binary **−1 fn / −1,928 B**. The gate can fail.
+
+A/B (`ab_measure --from-dirty`, graded `name_check`, both legs settled, exactly
+one leg-B MSVC recompile): 44,139 → 44,140, 4,169,816 → 4,171,744 B, Δhonest +1,
+Δ`masked_equal` 0, unit net over all units = whole-binary delta. **Four builds
+reproduced it to the last digit.**
+
+⚠ **The oracle was the defect.** rb3-Wii's `BandStorePanel.cpp:126-128` *is* the
+empty stub. Retail TU5 has a real 232 B body at **`0x826067C0`**, which is
+**mis-pinned inside `Mat.cpp`'s unit** (Mat's `.text` block ends exactly there
+and resumes at `0x826068A8`). The lane **deliberately booked only the caller's
+1,928 B**. Naming `0x826067C0` would create a row that Mat's base obj can never
+define, so it would read permanently 0%. Re-homing an already-pinned address is
+not metric-neutral (PINHOME-1). The ported body compiles and is correct, but it
+stays **unscored** until a map lane re-homes it (see 7w.13).
+
+### 7w.3 W16-GH: A STRUCTURAL AT_LIMIT ARGUMENT, AND THE OPPOSITE OF W16-GF'S LEVER
+
+GH closed 43 of 45 charges and banked **0 B**. That was pre-registered, not
+rationalised afterwards, because `matched_code` is all-or-nothing at
+`fuzzy == 100`. A second fix, `!= finding` with the joined assignment as the
+then-branch, restored retail's block layout ([91] `beq`/`bne`).
+
+★ **Its residual is argued at_limit STRUCTURALLY, not by exhaustion.** Retail
+does `bl Symbol::Symbol ; lwz r4,0x0(r3) ; mr r11,r3 ; mr r3,r26`, leaving a
+**dead** `mr r11,r3`, where we do `mr r11,r3 ; mr r3,r26 ; lwz r4,0x0(r11)`. The
+function has **five** structurally identical
+`bl Symbol::Symbol ; mr r11,r3 ; mr r3,rX ; lwz r4,0x0(r11) ; bl <by-value Symbol>`
+sites. **Retail hoists at exactly one of five and we hoist at none.** The
+asymmetry lives *inside retail*, and five identical constructs cannot compile
+five different ways from one spelling. So no source spelling selects it. That is
+a stronger at_limit than "tried and failed", and it is the form future at_limit
+claims should take.
+
+Negatives, committed with their reverts:
+
+- **V1** `SetType(Symbol(pulseType))` was a byte-identical no-op. Its inertness is
+  **measured**: the discrimination control `Handle(msg,false)→true` moved charges
+  2 → 3 with exactly `[322] diff_arg li [off:+1]`, the predicted index *and* kind.
+- **V2**, a *named* `Symbol pulseSym` in a dead scope, was **worse, 2 → 12
+  charges**, and the pre-registered falsifier fired as written (the load went
+  frame-relative `lwz r4,0x50(r31)`).
+
+★ V2 is **the opposite sign of W16-GF** (§7v.6), where *naming* a temporary was
+the fix. "Name the temporary" and "don't" are both live levers, and **only the
+measurement says which** applies at a site. GF showed this within one function;
+GH shows it across two.
+
+A/B at the lane's actual parent `85b84e32`: every headline key Δ0, fuzzy
+**+0.000019**. That fuzzy movement is the only evidence a Δ0 lane has that the
+patch is live (the W16-FK shape).
+
+### 7w.4 W16-GJ: A LINE WITH NO ORACLE, A Δ0 FIX THAT WAS LOAD-BEARING, AND AN INERT COMMUTATION
+
+- **No oracle for the constant.** rb3-Wii has no `SetJump` in this function at
+  all. An earlier lane reverse-engineered the line from asm and picked the wrong
+  half of an f30/f31 pair. Retail bytes settled it directly: `0x82000D78` = 0.0f,
+  `0x820009FC` = 1.0f. DC3's twin `SetJump(mBeatIntervalMs, 0, 0)` and every
+  other `SetJump` in the three repos passing 0 are **corroboration, not proof**.
+- ★ **A Δ0 accuracy fix can be load-bearing for a later crossing.** GJ
+  pre-registered the constant fix as banking exactly 0 B, and in isolation it
+  did (fuzzy +0.01198). Without it, though, the materialisation fix leaves the
+  row short of 100. **This is the W16-EW shape** ("a naming A/B understates its
+  own value"), now recurring in a *source* fix. Do not skip or de-prioritise a
+  proven-correct Δ0 edit because its solo A/B is flat.
+- **The 2 `replace` charges were never two instructions.** Both sides carry
+  `addi r4,<str>@l` and `li r5,0x1`, reordered, and the aligner paired them
+  crosswise. This is the third instance that day of a charge *class* being
+  refuted by its operand delta. Price from operand deltas, not charge classes.
+- **Magnitude miss.** The lane predicted fuzzy ~99.0-99.2 from the constant fix
+  and measured +0.012. `diff_score` is **charge-weighted, not
+  instruction-weighted**: one register-arg `diff_arg` was 440 of 41,700 here.
+- ★ **Committed negative: commuting a source multiply does NOT move an
+  `fmsubs` operand-order charge.** On `?UpdateAnimation@CalibrationPanel@@`
+  (648 B, mpn 100 / fuzzy 99.93827, one charge), `f1 * cycle` → `cycle * f1`
+  recompiled the TU (15 edges, `[6/15] MSVC … CalibrationPanel.obj`) and emitted
+  a byte-identical instruction. MSVC canonicalises commutative FP operand order
+  here. The lane's pre-test argument against that ("the sides already differ, so
+  source controls it") **does not follow**: canonicalisation keys on expression
+  *structure*, not textual order. The oracle (`f1 = f1 * cycle`) agrees with our
+  wrong-for-retail order. Left open, with the textual-order lever marked
+  REFUTED.
+
+A/B: Δmatched +1, Δhonest +1, Δ`masked_equal` 0, **+1,668 B**, +0.016278 pp.
+Unit net = whole-binary, 0 units fell off 100, and the tree is a verified fixed
+point of all six patchers (1,049/1,049 objects paired).
+
+### 7w.5 ★★★★★ A CHASE PROOF IS NOT A WARRANT — THE "BANKED" `_S_sort` ROW WAS REFUSED (W16-GK)
+
+**This corrects §7u.10** ("`_S_sort` is banked, not dead: +1 fn / +1,472 B")
+**and §7v.13** ("BANKED, PROVEN, DELIBERATELY NOT COLLECTED … Prize for a later
+lane: +1 fn / +1,472 B, Δhonest +1"). Both were accurate about the *chase*, and
+both were wrong to call it a *prize*. The utl-brief then ranked it "lowest risk
+in the block". Those dated records stand as written. This section is the
+correction.
+
+GK reproduced W16-GG's chase **exactly**: PROVEN, 12 `SLOT-FOLD-OK`, 4
+`VACUOUS-DESTINATION-FOLD-PROVEN`, 0 `CYCLE-ASSUMED`. GK checked that
+`CYCLE-ASSUMED` is a live label at `icf_pair_adjudicate.py:194`, so the zero is
+a real negative. It refused anyway, on three independent grounds:
+
+1. **Map residency (decisive, mechanical).** Our spelling
+   `_S_sort<Symbol,less<Symbol>>` is map-resident at **its own real 424 B body
+   `0x827e5d88`** (22 relocations), while the survivor is `0x824e1858`. GK
+   installed the alias as an experiment and the validator exited 1 with
+   `CONTRADICTED (FATAL) 1 -- target objs name 2 members`. The
+   `contradiction_exempt` precedent does **not** transfer, because it rests on
+   the rival being a 4-byte `b` thunk. That describes the *neighbour*
+   `0x827e5d78`, not this row, and checking the neighbour instead of the row is
+   an easy way to talk yourself into the exemption.
+2. **The chase is non-discriminating for this pair.** Our `_S_sort<I>` *and* our
+   `_S_sort<Symbol>` both chase-prove against the same survivor. It is not a
+   blanket admitter: the in-family decoy over all 9 of our `_S_sort` body-twins
+   REFUTED 7. But it cannot separate these two, which is the tool's own
+   documented uniqueness caveat (`retail_bodytwins 9`, `our_bodytwins 9`).
+3. **Two live readings with opposite remedies.** The two retail bodies have
+   identical masked bytes but differ at **7 of 22 relocation slots**, so
+   `/OPT:ICF` could not have folded them. Yet `0x824e1858` (labelled `<I>`)
+   calls `_S_merge<Symbol,less<Symbol>>`, the CVEIN-1 shape. And a depth-0
+   self-pair of our `_S_sort<Symbol>` against `0x827e5d88` is REFUTED.
+   - **Reading A** (label arbitrary): the remedy is an alias.
+   - **Reading B** (our source calls the wrong instantiation): an alias would
+     **permanently hide a real wrong callee.**
+
+   Picking between them would be a coin flip on exactly the outcome the standing
+   rule forbids, so GK did not pick.
+
+⇒ **Before any installation, the chase answers "are these bodies
+fold-compatible?", and the map-residency check answers "can the fold be
+real?".** GK's T2 was admitted on the *same* test that refused T1: neither of
+our `list<...>::insert` spellings is map-resident anywhere. The experiment
+commits are on the branch as `201e9159` (install) and `c8b181b6` (revert).
+⚠ GK's doc cites them as `95ae14e7`/`f75f62dc`. Those are the **pre-rebase**
+SHAs, reachable only from `w16-gk-prerebase`; the rebase rewrote them. Same
+commits, different hashes.
+
+Refusing costs 1,472 B and keeps the defect visible. The question is now with
+**lane W17-SSORT** (7w.13).
+
+### 7w.6 ★★★★ PRICE THE SPELLING — NOT THE ROW, NOT THE BLOCK
+
+The pricing unit has now widened twice in one day:
+
+| step | unit | figure | source |
+|---|---|---|---|
+| §7v.13 | the **row** `?CopyTypeProperties@@` | 1,472 B | banked by GG |
+| utl-brief `32322eef` | the **block** (honest rows in `obj/Utl`) | 2,384 B = **1.62×** | `W16_UTL_BLOCK_TARGETING` |
+| GK `e67a93a2` | the **spelling** (every caller) | T2 alone: pre-registered +2 / +912 B, measured **+13 / +4,576 B = 5.0×** | GK A/B |
+
+An alias membership pays at **every caller of that spelling**. Only 3 of GK's
+13 crossing rows (912 B) are in `obj/Utl`. **80% of the payout is in eight other
+units**: EventTrigger (948 + 352 + 144), UITrigger 424, DirLoader 416,
+BandWardrobe 388, MoviePanel 292, MetaMusicScene 280, AccomplishmentManager 220,
+UIListProvider (100 + 100). The block was **where the rows were noticed, not
+where the value was.** Before an alias candidate is ranked, price it over its
+whole caller population.
+
+⚠ **"MetaMusicScene reaches 100%" (GK merge) is true on the `mpn` ruler only.**
+Measured on main's `report.json`: units at all-rows-`mpn`==100 went **195 → 196**,
+while all-rows-`fuzzy`==100 **held at 173**. `default/MetaMusicScene` has 18 rows
+and not all are at fuzzy 100. GK's doc does say `MATCHED_ROSE, mpn ruler`, but
+the merge message drops the qualifier.
+
+★ **The utl-brief's second finding generalises: a `withdrawn[]` entry is not a
+verdict until you read its CLASS.** The two T2 rows sat in a group with 83
+withdrawn memberships, which reads as decisively refuted. Their class was
+`FABRICATED_CLOSURE_NOT_PARTITION`, a **procedural** withdrawal of an invalid
+transitive closure that carries no retail-byte evidence either way. The sibling
+group `0x828043a8`'s withdrawals instead say *"Do NOT re-add … needs a POSITIVE
+warrant"*. The field is the same and the operational meaning is opposite.
+GK strengthened this: group `0x823d14c0` had **already restored three**
+memberships from the same class on retail bytes (W16-Y ×2, W16-FM). The tool's
+own source comment records this very pair falsely blocking W8-D and W9-B on the
+vacuity guard.
+
+Gates, all measured: `GEN ICF-ALIAS MAP` **6,922 → 6,924** symbol lines, objdiff
+`Loaded 6106 → 6108` ICF equivalence entries (+2, exactly the two memberships),
+validator **PASS before and after** (1,659 groups, 1,408 MAP-CONSISTENT, 250
+tolerated, 0 CONTRADICTED, nothing pruned), `alias_withdrawal_audit`
+live-and-withdrawn **holds at 4**.
+
+### 7w.7 ⚠ THE `ALIAS_SUSPECT` GUARD HAS A DIRECTION — MEASURE BOTH
+
+`ALIAS_SUSPECT` fired on GK's forward leg ("default ruler UP (+4576 B) while
+`none` is FLAT on a map-only patch"). That is expected: it fires on **every**
+alias addition, because `none` is blind to relocation names, so flatness is the
+*signature of the hazard* and never a clearance. It is answered only by 7w.5's
+retail-byte warrant.
+
+★ **Measured as a revert, the same guard is SILENT** ("`none` UNMOVED and
+default not up"), because its predicate requires the default ruler to go *up*.
+A lane measuring only one direction learns nothing about what the guard
+thinks. GK ran both directions. Leg A reproduced then-main to the digit (44,140 /
+4,171,744 / 40.711586 / 50.49751 / 23,323), and the revert leg was the exact
+mirror (−13 / −4,576 B).
+
+### 7w.8 ⛔ THE OFFSET RESOLVER NOW READS THE PROLOGUE — CLOSES §7v.8, WITH TWO CORRECTIONS OF ITS OWN (W16-GL)
+
+§7v.8 recorded that `run_objdiff`'s "Offset Mismatches (resolved)" assumes
+`r31 == this`. W16-GH hit the same defect independently the next lane over. GL
+fixed it.
+
+- **Why the old guard could not catch it:** `_NON_STRUCT_BASE_REGS` was the
+  static `{r1, r13}`, but which register is the frame pointer is a
+  **per-function** property set by the prologue. *The guard was the wrong kind
+  of object, not too small.*
+- **The fix reuses** `scripts/analysis/stack_layout.py::frame_base_regs`, the
+  rule `tools/r31_role_census.py` already hard-asserts against, instead of adding
+  a third prologue parser. It runs per function, per side. The static set is kept
+  as an explicit floor so W16-EA's guard survives. A filtered instruction list
+  with no prologue is now **hedged** rather than silently failing open.
+  ⚠ `group(3)` captures bare digits (`'31'`), so the derived set is r-prefixed
+  and every comparison normalises. That mismatch is named sabotage
+  `bare_digit_comparison`, and it is the shape of the original W16-EA bug.
+- ★ **Discrimination in both directions.** This matters because a guard that
+  suppresses everything removes the false positives perfectly. Whole-binary
+  census over all **2,556** named sub-100 rows: **2,294 → 1,348 attributions**
+  (946 removed, 41.2%, on 130 rows; 763 of them the `(r31,r31)` shape).
+  **1,348 survive**, including hand-verified true positives:
+  `?Eof@ChunkStream@@` 6 → 6 (`mr r31,r3` puts `this` in r31, corroborated by
+  `lbz r11,0x8a8(r3)` on the same row), `??0NetLoaderRef@@` 1 → 1 (a ctor), and
+  W16-EA's `?PollLyricAnimations@VocalTrack@@` 3 → 3, still suppressed and
+  non-vacuously (instruction [136] is its documented pair).
+- **The test can fail.** `scripts/sabotage_offset_resolver.py` applies **6**
+  defects in a symlink sandbox and catches **6/6**, including
+  `suppress_everything` (caught by `this_pointer_r31_resolves`). The test builds
+  its **own** `struct_db` fixture, because the repo's is gitignored and a missing
+  DB makes every "suppressed" assertion pass vacuously.
+  ★ With the harness vacuity probe on, total suppression aborts **before** the
+  named check runs. *A safety net firing first can hide whether the thing it
+  protects works*, so the runner proves each named check with
+  `--no-vacuity-probe`, then re-runs once with it on.
+- **Tooling-only, verified here rather than inherited.** GL's diff is
+  `mcp_server.py`, two new scripts, `test_tools.py` and its doc, with **0** files
+  under `src/`, `config/`, the map or the aliases. None of the four scripts is
+  named in `build.ninja` or `configure.py`. GL reports `report.json`
+  byte-identical across the change (sha256 `614a1825…`, full build both sides,
+  at its base `828546ac`).
+- **Residual, reported and deliberately not fixed:** **220 of the 1,348
+  survivors (16.3%, 23 rows)** sit on a register derived from r1 earlier in the
+  function (`addi r4,r1,0x50`, address-of-a-local). `frame_base_regs` models only
+  r31, and closing this needs local dataflow with kill-on-redefinition. ⚠ Do
+  **not** quote GL's adjacent "1,007 of 1,348 (74.7%) not demonstrably `this`" as
+  a false-positive rate. The detector is deliberately narrow, so its complement
+  describes the detector.
+
+⚠ **Two disagreements between sources, adjudicated here:**
+
+1. **22 vs 24.** GH's doc and merge both say the resolver printed **22** false
+   `OvershellSlot::<member>` attributions. GL reconstructed GH's pre-fix state
+   in a scratch worktree at `bcc63ade`, reproducing fuzzy 99.30373 / 43
+   `diff_arg` verbatim, and counted **24 emitted, all `(r31,r31)`, 19 of them
+   naming a member**. GL's figure is a direct count on the reconstructed state.
+   GH's is a reading of the rendered block. **Use 24 / 19.** All are false
+   either way.
+2. **Which row was "the GF sighting".** GL's doc and its test fixture
+   (`scripts/test_offset_resolver_frame.py`, `DEMANGLED_GEM`) give W16-GF's
+   sighting as `?SetupGems@GemManager@@QAAXH@Z`. GL then "corrects" the brief:
+   *"`this` is in r26, not r30."* **But GF's own record
+   (`W16GF_UPDATELEFTYFLIP_2026-09-16.md`, site [172]) and §7v.8 place the
+   `GemManager::mTrackDir at 0x70` sighting on `?UpdateLeftyFlip@GemManager@@`.**
+   I checked both prologues on retail bytes, keyed on `.fn fn_<addr>` in
+   `build/45410914/asm/GemManager.s` and not on the synthetic address column:
+   - `UpdateLeftyFlip` @ `0x82B9D908`: `subi r31,r1,0x1a0` ; `stwu r1,-0x1a0(r1)` ;
+     … ; **`mr r30,r3`**. The brief's "r30" was **correct for GF's row**.
+   - `SetupGems` @ `0x82B9E150`: decoy `subi r12,r1,0x98` ; `subi r31,r1,0x260` ;
+     `stwu` ; **`mr r26,r3`**. That matches GL's description, for a **different
+     row**.
+
+   GL's third "refutation of the brief" is therefore a **row substitution**, not
+   a correction. `UpdateLeftyFlip` had crossed to 100 in wave 5 and carries no
+   charges, so GL's substitute is a reasonable live fixture of the same shape,
+   and its 66 → 5 result on SetupGems is valid evidence **as an independent third
+   sighting**. The fix is unaffected. Only the attribution to GF, and the
+   "r30 was wrong" claim, are wrong.
+
+⚠ **GL also found its designated fixture already drained.** GH's source fix had
+landed, so the live GH row has 0 `diff_arg` and "22 → 0" could not be measured
+on the tree. GL reconstructed the state rather than measuring an empty
+population, which is the right response to a vacuous fixture.
+
+### 7w.9 THE INSTRUMENT DEFECTS THIS WAVE FAILED OPEN — UNLIKE §7v.11's FIVE
+
+§7v.11 tallied five instrument defects, **all failing closed** (toward false
+alarm), and warned that "one failing OPEN would have landed silently." This
+wave produced the open-failing kind:
+
+| # | defect | direction | how it was caught |
+|---|---|---|---|
+| 6 | charge census keyed on a **non-existent `diff_kind` field** returned a clean "charged rows = 0" | **OPEN**, toward "nothing to fix" | GK ran it on rows **provably below 100**, a known-answer population. The coordinator's own triage made the identical error the same day. The real key is `match_type`. |
+| 7 | offset resolver attributed stack slots as struct fields, unhedged (24 on one row, 946 whole-binary) | **OPEN**, pointing a lane at a layout defect that does not exist | two independent sightings (GF, GH), then GL's fix |
+| 8 | harness vacuity probe **aborting before** the named check, so its firing could mask whether the check works | would read "caught" for the wrong reason | GL ran the named checks with the probe off, then once with it on |
+
+★ **All three were caught by a known-answer, and none by a control that could
+only fail closed.** A census that returns zero must first be shown returning
+non-zero on rows known to be charged. Same family as §7u.3's "a probe that
+cannot read zero cannot prove arrival", in the opposite direction.
+
+### 7w.10 SIXTH DATA POINT FOR THE Δfuzzy MODEL
+
+Checked arithmetically here: model = size × Δrow-fuzzy / `total_code`
+(10,247,068).
+
+| lane | modelled | measured | ratio |
+|---|---|---|---|
+| W16-GI | +0.0002342 | +0.000234 | **0.999** |
+| W16-GH | +0.0000168 | +0.000019 | **1.13** (1.07-1.19 given 6-decimal print rounding) |
+
+GH's doc says the fuzzy move is *"exactly the amount one 1,396 B row improving
+0.1232 pp of its own score contributes"*. **It is not exact, it is ~13% over.**
+GI is exact to print precision. GJ and GK reported no separate Δfuzzy. Their
+combined residual on main is +0.000197 (50.497726 − 50.497276 − GI − GH), and it
+is not separable without GK's per-row pre-states. The verdict is unchanged
+from §7u.7/§7v.11: **gate the sign, report the magnitude.**
+
+### 7w.11 THE BRIEFS WERE WRONG IN SIX PLACES AND EVERY LANE CAUGHT ITS OWN
+
+The pattern is worth recording because it held across every lane of the wave.
+Each brief error was caught by the lane that received it, **through
+pre-registration plus measurement**, and none by review:
+
+- GI: "scheduling, AT_LIMIT promptly" → callee (7w.1).
+- GJ: "regalloc-flavoured" → wrong constant + materialisation (7w.1).
+- GH: "declaration order controls the slots" → per-statement temp pool (7w.1).
+- utl-brief/GK: priority order backwards. T1 ("lowest risk") was refused and T2
+  ("a refusal is fine") paid 5× (7w.5, 7w.6).
+- GL: fixture already drained; 22 → actually 24 (7w.8).
+- GL's own correction of the brief was itself a row substitution (7w.8). So
+  **the lane-level correction needed correcting too.** This is why the
+  write-up re-checks on retail bytes rather than picking the latest source.
+
+⇒ Consistent with the standing memory that coordinator briefs are repeatedly
+wrong: **a brief is a hypothesis with a price attached.** The lanes whose
+pre-registration named a falsifier are the ones that reported the error cleanly,
+not the ones that retro-fitted.
+
+### 7w.12 STATE at `8af79551`
+
+Read-only from main's `build/45410914/report.json` (mtime 2026-09-16 22:06:37,
+47 s after the GK merge; W16-GL at 22:10 is tooling-only per 7w.8). Ruler
+**`functionRelocDiffs=name_check`**, from `provenance.diff_config`; objdiff
+4.2.9, `tool_commit a5f0ea903ec1`. `matched_code` and `total_code` are JSON
+strings in this file and were `int()`-coerced.
+
+```
+matched_functions  44,154      matched_code   4,177,988
+matched_code_pct   40.772522   fuzzy          50.497726
+masked_equal       23,323      honest            20,831
+total_code     10,247,068      total_functions   69,240
+units all-rows mpn==100: 196   units all-rows fuzzy==100: 173
+matched_code = 66.259% of the 61.535% reachable ceiling (6,305,556 B)
+gap to ceiling: 2,127,568
+```
+
+**Composition check.** The state equals §7v.12 plus the lanes' own A/B deltas
+**exactly**: 44,139 + 1 + 1 + 0 + 13 = 44,154, and 4,169,816 + 1,928 + 1,668 + 0
++ 4,576 = 4,177,988. Code% +0.079750 against a lane sum of +0.018814 + 0.016278 +
+0.044659 = +0.079751, a difference within rounding. The lanes were measured
+against **different** parents: GH at `85b84e32`, GI and GJ at `85b84e32`, GK at
+post-GI `2d49cc75` (its leg A lacks GJ). The deltas compose because the crossing
+rows are disjoint, and the landed state confirms it. The ceiling figure is the
+2026-09-16 `3890b450` re-measurement. No later one exists in the tree, and wave 6
+moved no denominator (`total_code`/`total_functions` unchanged).
+
+Session, by wave:
+
+```
+session total  +114 functions = +37 honest / +77 disclosure   (+27,312 B)
+  wave 1 (FQ FV FW FT FU)          +58 = +15 honest / +43 disclosure
+  wave 2 (FX FY FS)                +33 =   0 honest / +33 disclosure
+  wave 3 (FZ GA)                    +5 =  +4 honest /  +1 disclosure
+  wave 4 (GD GC GB)                 +2 =  +2 honest /   0 disclosure
+  wave 5 (GF GE GG)                 +1 =  +1 honest /   0 disclosure
+  wave 6 (utl GI GJ GH GK GL)      +15 = +15 honest /   0 disclosure   (+8,172 B)
+```
+
+Session totals are cross-checked against absolutes: the §7u.9 start implied by
+its own tally is 44,040 fns / 4,150,676 B, and now 44,154 / 4,177,988 gives
++114 / +27,312. Honest share over the session is now **32%** (37/114), and waves
+4 through 6 are **100% honest**. As §7u.9 and §7v.12 said: this is a property of
+which rows were in range, **not** of lane quality. Wave 6's volume came mostly
+from one alias whose caller population nobody had priced (7w.6).
+
+### 7w.13 OPEN
+
+**Changed status this wave:**
+
+- **`?CopyTypeProperties@@YAXPAVObject@Hmx@@0@Z` (1,472 B @ 99.945656): NO
+  LONGER BANKED.** GK REFUSED it (7w.5), and **lane W17-SSORT** now owns the
+  adjudication of `_S_sort` at `0x824e1858` / `0x827e5d88`. Reading A (arbitrary
+  label ⇒ alias) and Reading B (wrong instantiation ⇒ source fix) are both live.
+  The family has **15 map rows at 15 distinct addresses, zero collisions**.
+  **Do not install the alias until Reading B is excluded on retail bytes.**
+- **W16-GH, GI, GJ are no longer in flight**, and all three landed (7w.1-7w.4).
+- **`?OnMsg@OvershellSlot@@…ButtonDownMsg` (1,396 B @ 99.42693): at_limit,
+  structurally** (7w.3). Two charges remain, one dead-`mr` scheduling hoist,
+  and **the asymmetry is within retail**. Permuter-bound, permuter OFF. Bank it.
+- **§7v.8's resolver defect is FIXED** (W16-GL). Its residual is **220
+  attributions / 23 rows** on r1-derived registers, which needs local dataflow
+  with kill-on-redefinition and equal two-directional evidence. The spec is in
+  `W16GL_…_2026-09-16.md` §6.2.
+
+**New this wave:**
+
+- **`0x826067C0`, `BandStorePanel::OnMsg(const LocalUserLeftMsg&)` (232 B):**
+  the body is ported and correct but **unscored**, because it is mis-pinned
+  inside `Mat.cpp`'s unit (`0x826067C0`–`0x826068A8`). This is a map-lane
+  re-home, and it is **not** metric-neutral (PINHOME-1), so it needs its own A/B.
+  Do not add a map name before the re-home, or the row reads permanently 0%.
+- **`?UpdateAnimation@CalibrationPanel@@` (648 B, mpn 100 / fuzzy 99.93827):**
+  one `fmsubs` operand-order charge. The textual-commutation lever is **REFUTED**
+  (7w.4). The remaining hypothesis is a structural difference in `ReshapeTime`
+  (parameterisation, or loaded-local vs computed operand). Worth **+648 B at
+  Δfunctions 0**.
+- **T3 `__destroy_aux<LocalePanel::Entry>` (5 × 40 B = 200 B, all
+  disclosure):** unfunded. GK's T1 chase surfaced the pair as
+  `VACUOUS-DESTINATION-FOLD-PROVEN` en route. That is **a hint, not** the
+  positive warrant group `0x828043a8` demands.
+- **`?PathCompare@@` (244 B, mpn 100 / fuzzy 99.83607):** commutative-`add`
+  operand order. GA's drained residual, permuter-class.
+- GK side-movers that improved without crossing:
+  `BandDirector::OnGetFaceOverrideClips` 99.074 → 99.136,
+  `BandWardrobe::OnSelectExtras` 99.957 → 99.978. Each carries other charges.
+- From the next-wave brief, never picked up: `?QueueEnumJob@PlatformMgr@@` inside
+  `GemPlayer::Hit` is "almost certainly an ICF fold-alias, worth FILING" (0 B
+  there, since the row is permuter-class). `?DrawTrackElements@GemTrack@@`
+  (1,432 B) and `?Poll@PracticePanel@@` (1,656 B) are "worth a look, not yet
+  priced", and each shows an offset component alongside register charges, so run
+  the operand-delta split first. `?GetRandomSongs@SongSortMgr@@` produces no
+  objdiff JSON (the brief says it is the same template-argument failure it saw
+  on four symbols in the previous triage), not chased.
+- ⚠ **Naming collision.** The "W17" lane prefix was already used by an August
+  series (`docs/decomp/w17-familysweep.md`, 2026-08-17; `w17-cascade-fixture.json`).
+  The current W17 wave (W17-SSORT, W17-ROADMAP) is unrelated. Cite by full lane
+  name and date.
+
+**The game-layer vein, re-measured.** Rows ≥ 700 B at fuzzy ∈ [90,100) in
+`src/band3/` + `src/network/`, source path from `objdiff.json`, read-only on
+main's `report.json`: **raw 66 rows / 106,964 B**, against the brief's 69 /
+112,144 at `5848c081`. The difference is −3 rows / **−5,180 B = GF 1,584 + GI
+1,928 + GJ 1,668 exactly**, with nothing else entering or leaving. Deriving LIVE
+from the brief's 60 / 72,056 B requires removing the three crossings and the four
+rows newly drained or refused since (`ResolveSlotStates` 1,416, `Hit@GemPlayer`
+2,724, `ParseDataResultsIntoSetlists` 1,968, `OnMsg@OvershellSlot` 1,396). That
+gives **LIVE ≈ 53 rows / 59,372 B**. This is a **derivation** from the brief's
+ledger, not a fresh census, because the ledger is not mechanised.
+
+**Carried forward unchanged.** Verified: the net `src/` + map + alias diff
+`85b84e32..8af79551` is exactly `BandStorePanel.cpp`, `CalibrationPanel.cpp`,
+`OvershellSlot.cpp` and `symbol_aliases.json`, so nothing below was touched.
+
+- `?ResolveSlotStates@OvershellPanel@@`: drained for source work (§7v.13).
+- `?Hit@GemPlayer@@` and `?ParseDataResultsIntoSetlists@MusicLibraryNetSetlists@@`:
+  priced and refused, permuter-class (§7v.13).
+- `?OnFileLoaded@BandDirector@@` (3,816 B) and `?UpdateScrolling@VocalTrack@@`
+  (8,948 B): deferred, permuter (§7u.10).
+- `?DisplayChord@ChordbookPanel@@` (3,436 B): refused, available as a
+  fail-closed control (§7u.10).
+- GA's 13 handed-forward sub-100 rows: price each on its own pre-state (§7u.10).
+- FZ's other 17 `Accomplishment` rows and five family spellings; FY's 18 of 89
+  rows in `default/Accomplishment`; W16-CX's `ChordbookPanel::Load` ↔
+  `SetlistToStorePanel::Load` fold at `0x825f5920` (§7u.10).
+- The alias validator's class-count drift. §7u.10 recorded `1408/249 → 1407/250`
+  after W16-FT with the mover unidentified. GK measured **1,408 MAP-CONSISTENT /
+  250 tolerated / 1,659 groups** before and after its own edit, so the
+  MAP-CONSISTENT count moved again (+1) somewhere between W16-FT and `2d49cc75`,
+  **also unattributed**.
+- The stale header comment claiming the `BandSongMetadata` ctor is
+  `fn_82584A08` (real `0x825A0B28`) is **still present** at
+  `src/band3/meta_band/BandSongMetadata.h:67`.
