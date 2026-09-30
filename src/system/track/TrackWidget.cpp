@@ -314,8 +314,8 @@ void TrackWidget::SyncImp() {
             mCharsPerInst,
             mMaxTextInstances,
             mTextAlignment,
-            Hmx::Color32(mTextColor),
-            Hmx::Color32(mAltTextColor),
+            mTextColor,
+            mAltTextColor,
             mAllowLineRotation
         );
         break;
@@ -323,15 +323,18 @@ void TrackWidget::SyncImp() {
         mImp = new MatWidgetImp(mMat);
         break;
     case kMultiMeshWidget:
-        mImp = new MultiMeshWidgetImp(mMeshes, mAllowRotation);
+        mImp = new MultiMeshWidgetImp(mMeshes);
         break;
     default:
         mImp = new ImmediateWidgetImp(mAllowRotation);
         break;
     }
+#ifdef HX_NATIVE
+    // retail ends at the switch: no CheckValid, no edit-mode Init
     CheckValid();
     if (LOADMGR_EDITMODE)
         Init();
+#endif
 }
 
 void TrackWidget::SetScale(float f) { mImp->SetScale(f); }

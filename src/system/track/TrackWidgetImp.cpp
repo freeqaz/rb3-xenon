@@ -64,8 +64,8 @@ void ImmediateWidgetImp::DrawInstances(const ObjPtrList<RndMesh> &meshes, int i2
 // every such access below goes through the public `Instances()` accessor
 // instead -- a trivial one-line inline expected to codegen identically.
 
-MultiMeshWidgetImp::MultiMeshWidgetImp(const ObjPtrList<RndMesh> &meshlist, bool b)
-    : mMeshes(meshlist), unk10(b) {
+MultiMeshWidgetImp::MultiMeshWidgetImp(const ObjPtrList<RndMesh> &meshlist)
+    : mMeshes(meshlist) {
     for (int i = 0; i < mMeshes.size(); i++) {
         mMultiMeshes.push_back(Hmx::Object::New<RndMultiMesh>());
     }
@@ -107,8 +107,8 @@ void MultiMeshWidgetImp::DrawInstances(const ObjPtrList<RndMesh> &meshes, int i2
     // here carries no unk34-shaped field). Dropped outright, same as
     // TrackWidgetImpBase's removed CheckValid() and TrackWidget::CheckValid()'s
     // no-op reduction elsewhere in this file family -- `unk10` is kept as a
-    // stored member (see TrackWidgetImp.h) for layout/ABI parity with callers
-    // that construct MultiMeshWidgetImp, it is just never acted on here.
+    // member; retail's ctor (0x827E58B8) takes no bool and the object is 0x14,
+    // so the member is gone too.
     int count = 0;
     for (int i = 0; i < mMultiMeshes.size(); i++) {
         RndMultiMesh *mesh = mMultiMeshes[i];
@@ -240,8 +240,8 @@ CharWidgetImp::CharWidgetImp(
     int i1,
     int i2,
     RndText::Alignment a,
-    Hmx::Color32 c1,
-    Hmx::Color32 c2,
+    Hmx::Color c1,
+    Hmx::Color c2,
     bool b7
 )
     : mNeedRebuild(true), mNeedSync(false), mCharsPerInst(i1), mMaxInstances(i2),
@@ -251,15 +251,12 @@ CharWidgetImp::CharWidgetImp(
         mText->ReserveLines(mMaxInstances);
         mReusableLines.reserve(mMaxInstances);
         mText->SetAlignment(a);
-        Hmx::Color col1;
-        col1.UnpackAlpha(c1.FullColor());
-        mText->SetColor(col1);
-        Hmx::Color col2;
-        col2.UnpackAlpha(c2.FullColor());
+        // retail passes both colours as Hmx::Color by value (r9:r10 + stack)
+        mText->SetColor(c1);
         mText->SetAltStyle(
             mText->mStyle.mFont,
             mText->mStyle.mSize,
-            &col2,
+            &c2,
             mText->mStyle.mZOffset,
             mText->mStyle.mItalics,
             true
