@@ -3515,6 +3515,7 @@ VorbisReader.cpp:
 	.pdata      start:0x8223DC10 end:0x8223DC28
 	.pdata      start:0x8225E860 end:0x8225E868
 	.pdata      start:0x8225E868 end:0x8225E878
+	.pdata      start:0x8225E878 end:0x8225E880
 	.pdata      start:0x8225E880 end:0x8225E888
 	.pdata      start:0x8225E888 end:0x8225E8A0
 	.pdata      start:0x8225E8A0 end:0x8225E8A8
@@ -3527,6 +3528,7 @@ VorbisReader.cpp:
 	.text       start:0x82BB28BC end:0x82BB28D8
 	.text       start:0x82BB28D8 end:0x82BB2934
 	.text       start:0x82BB2938 end:0x82BB2A20
+	.text       start:0x82BB2A20 end:0x82BB2BCC
 	.text       start:0x82BB2BD0 end:0x82BB2D44
 	.text       start:0x82BB2D48 end:0x82BB3110
 	.text       start:0x82BB3110 end:0x82BB3228
@@ -5414,9 +5416,7 @@ IdentityInfo.cpp:
 
 OSCMessenger.cpp:
 	.pdata      start:0x82223CD8 end:0x82223CE8
-	.pdata      start:0x8225E878 end:0x8225E880
 	.text       start:0x825C5F00 end:0x825C5FD8
-	.text       start:0x82BB2A20 end:0x82BB2BCC
 
 SongStatusMgr.cpp:
 	.pdata      start:0x82224978 end:0x82224C60
@@ -6488,7 +6488,7 @@ PreloadPanel.cpp:
 	.pdata      start:0x82241290 end:0x82241308
 	.pdata      start:0x82241308 end:0x82241350
 	.pdata      start:0x82241350 end:0x82241390
-	.pdata      start:0x82241390 end:0x822413C8
+	.pdata      start:0x82241390 end:0x822413D8
 	.pdata      start:0x82245DA0 end:0x82245DB0
 	.text       start:0x827B36E8 end:0x827B3738
 	.text       start:0x827B3738 end:0x827B37D0
@@ -6496,7 +6496,7 @@ PreloadPanel.cpp:
 	.text       start:0x827B3888 end:0x827B3EC8
 	.text       start:0x827B3EC8 end:0x827B4218
 	.text       start:0x827B4218 end:0x827B45A0
-	.text       start:0x827B45A0 end:0x827B4880
+	.text       start:0x827B45A0 end:0x827B4AE0
 	.text       start:0x828026A8 end:0x82802730
 
 PanelDir.cpp:
@@ -7787,7 +7787,7 @@ MoviePanel.cpp:
 StorePanel.cpp:
 	.pdata      start:0x82227968 end:0x82227970
 	.pdata      start:0x82227FF0 end:0x82228078
-	.pdata      start:0x822413C8 end:0x822413F0
+	.pdata      start:0x822413D8 end:0x822413F0
 	.pdata      start:0x822413F0 end:0x82241410
 	.pdata      start:0x82241410 end:0x82241450
 	.pdata      start:0x82241450 end:0x822415F0
@@ -7795,7 +7795,7 @@ StorePanel.cpp:
 	.pdata      start:0x82241628 end:0x82241670
 	.text       start:0x825FE5B8 end:0x825FE5EC
 	.text       start:0x82604868 end:0x826050A8
-	.text       start:0x827B4880 end:0x827B4C68
+	.text       start:0x827B4AE0 end:0x827B4C68
 	.text       start:0x827B4C68 end:0x827B4EB8
 	.text       start:0x827B4EB8 end:0x827B53A4
 	.text       start:0x827B53A4 end:0x827B7170
