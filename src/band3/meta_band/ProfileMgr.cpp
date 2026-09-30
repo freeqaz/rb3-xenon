@@ -449,7 +449,7 @@ bool ProfileMgr::GlobalOptionsNeedsSave() {
         return mGlobalOptionsDirty;
 }
 
-int ProfileMgr::GetGlobalOptionsSize() { return TheModifierMgr->SaveSize(gRev) + 0x52; }
+int ProfileMgr::GetGlobalOptionsSize() { return TheModifierMgr->SaveSize(8) + 0x35; }
 
 void ProfileMgr::SaveGlobalOptions(FixedSizeSaveableStream &bs) {
     bs << packRevs(0, 8);
