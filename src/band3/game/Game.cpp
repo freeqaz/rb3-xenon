@@ -958,12 +958,12 @@ DataNode Game::OnMsg(const ButtonDownMsg &msg) {
         int pad = msg.GetUser()->GetPadNum();
         if (pad >= 0 && pad < 4) {
             if (JoypadGetPadData(pad)->mType == kJoypadAnalog) {
-                ((int *)mUnkTU5GuidePitch)[pad]++;
+                mUnkTU5GuidePitch->mUnkCounts[pad]++;
                 // Tail decoded in docs/decomp/W16EH_BUTTONDOWNMSG_DECODE_AND_SHUTTLE_SETACTIVE_2026-09-16.md
                 // (retail 0x8267B808). Only the first press of an analog pad
                 // (counter == 1) acts, and only while nothing else holds the game.
                 if (!mOvershellWantsPause && !mRealtime
-                    && ((int *)mUnkTU5GuidePitch)[pad] == 1) {
+                    && mUnkTU5GuidePitch->mUnkCounts[pad] == 1) {
                     bool stopped = mMusicSpeed == 0.0f;
                     // Retail lowers this as button -> dense action index (a
                     // value-mapping decision tree, each leaf `li r11,N`) and then
@@ -1037,10 +1037,10 @@ DataNode Game::OnMsg(const ButtonDownMsg &msg) {
                         DataArray *vols =
                             TheGamePanel->Property("audition_keyboard_synth_volumes", true)
                                 ->Array();
-                        mUnkTU5GuidePitch->unk10 =
-                            (mUnkTU5GuidePitch->unk10 + 1) % vols->Size();
                         DirectInstrument *inst = TheGamePanel->GetDirectInstrument();
-                        int vol = vols->Int(mUnkTU5GuidePitch->unk10);
+                        int idx = (mUnkTU5GuidePitch->unk10 + 1) % vols->Size();
+                        mUnkTU5GuidePitch->unk10 = idx;
+                        int vol = vols->Int(idx);
                         if (vol == 0) {
                             inst->Disable();
                         } else {
@@ -1061,8 +1061,8 @@ DataNode Game::OnMsg(const ButtonDownMsg &msg) {
                         static float back = TheGamePanel->Property("audition_jump_back_ms", true)
                                                 ->Float();
                         Jump(
-                            Max(TheTaskMgr.Seconds(TaskMgr::kRealTime) * 1000.0f - back,
-                                0.0f),
+                            Max(0.0f,
+                                TheTaskMgr.Seconds(TaskMgr::kRealTime) * 1000.0f - back),
                             true
                         );
                         if (stopped) {
