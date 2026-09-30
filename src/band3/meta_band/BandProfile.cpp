@@ -674,6 +674,10 @@ void BandProfile::SetHardcoreIconLevel(int level) {
 TourBand *BandProfile::GetTourBand() { return mTourBand; }
 
 String BandProfile::GetBandName() const {
+    // W16-GN: retail constructs a guard-protected FUNCTION-LOCAL static here
+    // (lbl_82DFECA8 guard, ??0Symbol@@QAA@PBD@Z at entry), not the Symbols2.h
+    // global that the rb3-Wii oracle reads.
+    static Symbol band_default_name("band_default_name");
     if (strlen(mTourBand->GetName()) == 0) {
         String strName = GetName();
         return MakeString(Localize(band_default_name, nullptr), strName.c_str());
