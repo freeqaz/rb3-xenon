@@ -966,10 +966,12 @@ void CustomizePanel::GotoCustomizeClothingScreen() {
 }
 
 Symbol CustomizePanel::GetCurrentMakeup(Symbol type) {
+    static Symbol eyes("eyes");
+    static Symbol lips("lips");
     MILO_ASSERT(type == eyes || type == lips, 0x3A9);
-    BandCharDesc *desc = mPreviewDesc;
-    for (int i = 0; i < desc->mPatches.size(); i++) {
-        BandCharDesc::Patch &curPatch = desc->mPatches[i];
+    std::vector<BandCharDesc::Patch> &patches = mPreviewDesc->mPatches;
+    for (int i = 0; i < patches.size(); i++) {
+        BandCharDesc::Patch &curPatch = patches[i];
         if (curPatch.mCategory == BandCharDesc::Patch::kPatchMakeup) {
             String meshName = curPatch.mMeshName;
             std::vector<String> subStrings;
