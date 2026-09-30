@@ -20,12 +20,15 @@ void AccomplishmentTourConditional::UpdateConditionOptionalData(
 ) {
     MILO_ASSERT(i_pConditionEntryArray->Size() >= 2, 0x1D);
     for (int i = 2; i < i_pConditionEntryArray->Size(); i++) {
+        static Symbol tour("tour");
+        static Symbol game_type("game_type");
         DataArray *pEntry = i_pConditionEntryArray->Node(i).Array();
         MILO_ASSERT(pEntry, 0x26);
         MILO_ASSERT(pEntry->Size() == 2, 0x27);
         Symbol key = pEntry->Node(0).Sym();
         if (key == tour) {
-            cond.mTourDesc = pEntry->Node(1).Sym();
+            Symbol desc = pEntry->Node(1).Sym();
+            cond.mTourDesc = desc;
         } else if (key == game_type) {
             cond.mGameType = (TourGameType)pEntry->Node(1).Int();
         } else
@@ -102,15 +105,23 @@ bool AccomplishmentTourConditional::InqProgressValues(
 bool AccomplishmentTourConditional::InqConditionProgress(
     BandProfile *profile, const AccomplishmentTourCondition &cond, int &i1, int &i2
 ) const {
+    // Retail: four function-local statics (guard bits 0x1..0x8), and no
+    // HasTourDesc() validity check -- that is dev-build only.
+    static Symbol tour_total_played("tour_total_played");
+    static Symbol tour_most_stars("tour_most_stars");
+    static Symbol tour_times_maxed_stars("tour_times_maxed_stars");
+    static Symbol tour_quest_type_times_completed("tour_quest_type_times_completed");
+    Symbol symcond = cond.mCondition;
     i2 = cond.mValue;
     Symbol desc = cond.mTourDesc;
-    Symbol symcond = cond.mCondition;
     TourGameType ty = cond.mGameType;
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (!TheTour->HasTourDesc(desc)) {
         MILO_WARN(
             MakeString("A Tour goal is referring to an invalid tour desc: %s", desc.Str())
         );
     }
+#endif
     i1 = 0;
     if (profile) {
         const AccomplishmentProgress &prog = profile->GetAccomplishmentProgress();
