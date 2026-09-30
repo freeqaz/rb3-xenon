@@ -40,7 +40,7 @@ namespace {
     class OpenGateData : public LockData {
     public:
         OpenGateData() {}
-        virtual ~OpenGateData() {}
+        // implicit dtor: retail (0x825AE830) has no vptr re-store
         void Save(BinStream &) const;
         virtual void Load(BinStream &);
 
