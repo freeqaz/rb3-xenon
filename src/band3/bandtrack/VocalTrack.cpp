@@ -521,23 +521,15 @@ LyricPlate *VocalTrack::GetNextLyricPlate(std::deque<LyricPlate *> &plates, bool
     }
     RndText *text = b2 ? mDir->mLeadText : mDir->mHarmText;
     RndText *phonemeText = b2 ? mDir->mLeadPhonemeText : mDir->mHarmPhonemeText;
-    RndText *newText = NewRndCopy(text);
+    // Retail inlines the copy (NewObject + dynamic_cast + Copy vcall) and has
+    // no maxNumLyricPlates high-water bookkeeping after the dump.
+    RndText *newText =
+        dynamic_cast<RndText *>(Hmx::Object::NewObject(RndText::StaticClassName()));
+    newText->Copy(text, Hmx::Object::kCopyShallow);
     plates.push_back(new LyricPlate(newText, text, phonemeText));
     if (sDumpLyricPlates) {
         MILO_LOG("creating new %s lyric plate\n", b2 ? "lead" : "harmony");
         DumpLyricPlates(plates, b2);
-    }
-    int numplates = plates.size();
-    bool grew;
-    if (maxNumLyricPlates < numplates) {
-        maxNumLyricPlates = numplates;
-        grew = true;
-    } else {
-        grew = false;
-    }
-    bool doDump = grew && sDumpLyricPlates;
-    if (doDump) {
-        MILO_LOG("Max Lyric Plates: %d\n", maxNumLyricPlates);
     }
     return plates.back();
 }
