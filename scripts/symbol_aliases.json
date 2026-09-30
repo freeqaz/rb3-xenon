@@ -3456,6 +3456,7 @@
     "??$__destroy_range_aux@PAV?$ObjOwnerPtr@VWaypoint@@@@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VWaypoint@@@@0ABU__false_type@0@@Z",
     "??$__destroy_range_aux@PAV?$ObjPtr@VBandTrack@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VBandTrack@@@@0ABU__false_type@0@@Z",
     "??$__destroy_range_aux@PAV?$ObjPtr@VEventTrigger@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@0ABU__false_type@0@@Z",
+    "??$__destroy_range_aux@PAV?$ObjPtr@VGemTrackDir@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VGemTrackDir@@@@0ABU__false_type@0@@Z",
     "??$__destroy_range_aux@PAV?$ObjPtr@VObject@Hmx@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VObject@Hmx@@@@0ABU__false_type@0@@Z",
     "??$__destroy_range_aux@PAV?$ObjPtr@VRndAnimatable@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndAnimatable@@@@0ABU__false_type@0@@Z",
     "??$__destroy_range_aux@PAV?$ObjPtr@VRndDir@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndDir@@@@0ABU__false_type@0@@Z",
@@ -3470,7 +3471,15 @@
     "??$__destroy_range_aux@PAV?$ObjPtr@VUIColor@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VUIColor@@@@0ABU__false_type@0@@Z",
     "??$__destroy_range_aux@PAVFilePath@@@stlpmtx_std@@YAXPAVFilePath@@0ABU__false_type@0@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 20, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 19 folded spelling(s), 10 census sites over 3 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 20, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 19 folded spelling(s), 10 census sites over 3 functions.",
+   "added": [
+    {
+     "spelling": "??$__destroy_range_aux@PAV?$ObjPtr@VGemTrackDir@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VGemTrackDir@@@@0ABU__false_type@0@@Z",
+     "lane": "W17-TPD 2026-09-30",
+     "verdict": "FOLD -- PROVEN on retail bytes, FLAT T1 (tools/icf_pair_adjudicate.py --chase; 92 B vs 92 B, zero relocations)",
+     "evidence": "TrackPanelDirBase::mGemTracks is ObjVector<ObjPtr<GemTrackDir> > (retail vtable 0x8202C1E4, Replace 0x82304000 casts to .?AVGemTrackDir@@). Retail's catch funclets 0x82307550 / 0x823075F8, whose parents 0x82307590 / 0x823074E8 call _Param_Construct<ObjPtr<GemTrackDir>> (0x823048e0 -> copy ctor 0x82304720, which stores 0x8202C1E4), call this survivor. Our GemTrackDir body is byte-identical to the RndDir spelling it replaces in TrackPanelDir.obj (virtual dtor call, no relocations)."
+    }
+   ]
   },
   {
    "name": "IsLoaded",
@@ -31400,7 +31409,7 @@
   {
    "name": "$_Param_Construct",
    "address": "0x823048e0",
-   "survivor": "??$_Param_Construct@V?$ObjPtr@VRndDir@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndDir@@@@ABV1@@Z",
+   "survivor": "??$_Param_Construct@V?$ObjPtr@VGemTrackDir@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VGemTrackDir@@@@ABV1@@Z",
    "folded": [
     "??$_Copy_Construct@U?$pair@$$CBVString@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@V1@@0@ABU10@@Z",
     "??$_Copy_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",

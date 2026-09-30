@@ -1,3 +1,9 @@
+// W17-TPD: retail inlines the owner-only ObjPtr ctor in ObjVector<ObjPtr<T> >::resize(unsigned)
+// (0x823090E0 / 0x82309030: {vptr-lis, mOwner, mObject, vptr-addi, vptr-store}, the
+// DEFER_OWNER order, then the vector resize).
+// The per-TU define binds `T(mOwner)` to the inline one-arg ctor (obj/Object.h).
+#define RB3_OBJPTR_INLINE_OWNER_CTOR
+#define RB3_TU_OBJPTR_DEFER_OWNER
 #include "bandobj/TrackPanelDir.h"
 #include "bandobj/TrackPanelInterface.h"
 #include "bandobj/GemTrackDir.h"
@@ -22,10 +28,6 @@
 static unsigned short gAltRev = 0;
 static unsigned short gRev = 0;
 
-// Base TrackPanelDirBase stores mGemTracks as ObjVector<ObjPtr<RndDir> > (to keep
-// layout without pulling GemTrackDir.h there). GemTrackDir IS-A TrackDir IS-A
-// RndDir, so a stored RndDir* in slot i is always a GemTrackDir.
-static inline GemTrackDir *AsGemTrack(RndDir *d) { return static_cast<GemTrackDir *>(d); }
 
 TrackPanelDir::TrackPanelDir()
     : unk244(1), mTestMultiplier(1), unk24c(0), unk250(0), mVocalTrack(this, 0),
@@ -36,7 +38,7 @@ TrackPanelDir::TrackPanelDir()
       unk348(this, 0), unk354(this, 0), unk360(this, 0), unk36c(this, 0),
       unk378(0) {
     for (int i = 0; i < 4; i++) {
-        mGemTracks.push_back(ObjPtr<RndDir>(this, 0));
+        mGemTracks.push_back(ObjPtr<GemTrackDir>(this, 0));
         mGemNet[i] = 0;
     }
     mGemInst[0] = 0;
@@ -99,19 +101,19 @@ void TrackPanelDir::SyncObjects() {
         mPulseAnimGrp = Find<RndGroup>("beat_anims.grp", false);
     if (!mGemTracks[0]) {
         mGemTracks[0] = Find<GemTrackDir>("track_0", true);
-        AsGemTrack(mGemTracks[0])->SetGemTrackID(0);
+        mGemTracks[0]->SetGemTrackID(0);
     }
     if (!mGemTracks[1]) {
         mGemTracks[1] = Find<GemTrackDir>("track_1", true);
-        AsGemTrack(mGemTracks[1])->SetGemTrackID(1);
+        mGemTracks[1]->SetGemTrackID(1);
     }
     if (!mGemTracks[2]) {
         mGemTracks[2] = Find<GemTrackDir>("track_2", true);
-        AsGemTrack(mGemTracks[2])->SetGemTrackID(2);
+        mGemTracks[2]->SetGemTrackID(2);
     }
     if (!mGemTracks[3]) {
         mGemTracks[3] = Find<GemTrackDir>("track_3", true);
-        AsGemTrack(mGemTracks[3])->SetGemTrackID(3);
+        mGemTracks[3]->SetGemTrackID(3);
     }
     if (!mVocalTrack->mEndgameFeedback)
         mVocalTrack->mEndgameFeedback = Find<RndDir>("endgame_feedback_vox", false);
@@ -138,11 +140,11 @@ void TrackPanelDir::AssignTracks() {
             mInstruments[i + 1] = gemInst;
         else
             mInstruments[i] = gemInst;
-        AsGemTrack(mGemTracks[i])->SetSimulatedNet(mGemNet[i]);
+        mGemTracks[i]->SetSimulatedNet(mGemNet[i]);
     }
     mVocalTrack->SetUsed(false);
     for (int i = 0; i < mGemTracks.size(); i++) {
-        AsGemTrack(mGemTracks[i])->SetUsed(false);
+        mGemTracks[i]->SetUsed(false);
     }
     mTracks.clear();
     unk24c = 0;
@@ -162,7 +164,7 @@ void TrackPanelDir::AssignTracks() {
             } else {
                 if (i11 >= mGemTracks.size())
                     MILO_FAIL("too many gem tracks");
-                GemTrackDir *trackdir = AsGemTrack(mGemTracks[i11]);
+                GemTrackDir *trackdir = mGemTracks[i11];
                 trackdir->unk488 = unk24c;
                 mTracks[i] = trackdir;
                 i11++;
@@ -200,7 +202,7 @@ void TrackPanelDir::AssignTrack(int iSlot, TrackInstrument iInstrument, bool b) 
             unk250++;
         } else {
             MILO_ASSERT(!ReservedVocalPlayerSlot(iSlot), 0x112);
-            GemTrackDir *gemTrackDir = AsGemTrack(mGemTracks[iSlot]);
+            GemTrackDir *gemTrackDir = mGemTracks[iSlot];
             MILO_ASSERT(wasPending || !gemTrackDir->InUse(), 0x115);
             mTracks[iSlot] = gemTrackDir;
             gemTrackDir->unk488 = unk24c;
@@ -281,7 +283,7 @@ void TrackPanelDir::ConfigureTracks(bool b) {
     }
     unk224 = unk24c > 2;
     for (int i = 0; i < mGemTracks.size(); i++) {
-        SetPlayerLocal(AsGemTrack(mGemTracks[i]));
+        SetPlayerLocal(mGemTracks[i]);
     }
     if (unk250 && b) {
         mVocalTrack->unk2a7 = false;
@@ -303,7 +305,7 @@ void TrackPanelDir::ConfigureTracks(bool b) {
 }
 
 void TrackPanelDir::ConfigureTrack(int i) {
-    GemTrackDir *cur = AsGemTrack(mGemTracks[i]);
+    GemTrackDir *cur = mGemTracks[i];
     if (cur->mInUse)
         cur->mNumTracks = unk24c;
 }
@@ -427,7 +429,7 @@ void TrackPanelDir::FadeBotbBandNames(bool b) {
 
 void TrackPanelDir::CleanUpChordMeshes() {
     for (int i = 0; i < mGemTracks.size(); i++) {
-        AsGemTrack(mGemTracks[i])->FreeChordMeshes();
+        mGemTracks[i]->FreeChordMeshes();
     }
 }
 
@@ -522,7 +524,7 @@ void TrackPanelDir::ResetAll() {
     Find<EventTrigger>("reset_all.trig", true)->Trigger();
     mVocalTrack->Retract(true);
     for (int i = 0; i < mGemTracks.size(); i++) {
-        GemTrackDir *track = AsGemTrack(mGemTracks[i]);
+        GemTrackDir *track = mGemTracks[i];
         // Retail null-checks these BandTrack*/GemTrackDir* with a SIGNED cmpwi,
         // not the pointer-natural cmplwi -- the (int) cast reproduces it.
         if ((int)track)
@@ -537,7 +539,7 @@ void TrackPanelDir::ResetPlayers() {
     unk24c = 0;
     unk250 = 0;
     for (int i = 0; i < mGemTracks.size(); i++) {
-        AsGemTrack(mGemTracks[i])->SetUsed(false);
+        mGemTracks[i]->SetUsed(false);
     }
     mVocalTrack->SetUsed(false);
 }
@@ -662,7 +664,7 @@ void TrackPanelDir::UnisonStart(int i) {
     if (!mPerformanceMode) {
         mEndingBonus->UnisonStart(i);
         for (int x = 0; x < mGemTracks.size(); x++) {
-            GemTrackDir *track = AsGemTrack(mGemTracks[x]);
+            GemTrackDir *track = mGemTracks[x];
             if (track->mInUse)
                 track->UnisonStart();
         }
@@ -673,7 +675,7 @@ void TrackPanelDir::UnisonEnd() {
     if (!mPerformanceMode) {
         mEndingBonus->UnisonEnd();
         for (int x = 0; x < mGemTracks.size(); x++) {
-            GemTrackDir *track = AsGemTrack(mGemTracks[x]);
+            GemTrackDir *track = mGemTracks[x];
             if (track->mInUse)
                 track->UnisonEnd();
         }

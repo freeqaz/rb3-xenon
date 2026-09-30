@@ -30,10 +30,6 @@ static struct {
 #define gAltRev gRevs.altRev
 #define gRev gRevs.rev
 
-// Base TrackPanelDirBase stores mGemTracks as ObjVector<ObjPtr<RndDir> > (to keep
-// layout without pulling GemTrackDir.h into the widely-included header).
-// GemTrackDir IS-A TrackDir IS-A RndDir, so a stored RndDir* is a GemTrackDir.
-static inline GemTrackDir *AsGemTrack(RndDir *d) { return static_cast<GemTrackDir *>(d); }
 
 // TrackPanelDirBase::TrackPanelDirBase() -- mApplauseMeter.
 //
@@ -224,7 +220,7 @@ void TrackPanelDirBase::UpdateTrackSpeed() {
         float f1 = mDoubleSpeedActive ? 1.5f : 1.0f;
         if (mIndependentTrackSpeeds) {
             for (int i = 0; i < mGemTracks.size(); i++) {
-                GemTrackDir *tdir = AsGemTrack(mGemTracks[i]);
+                GemTrackDir *tdir = mGemTracks[i];
                 TrackInstrument inst = tdir->GetInstrument();
                 Symbol diffsym = tdir->GetPlayerDifficultySym();
                 bool ok = tdir->InUse();
@@ -242,7 +238,7 @@ void TrackPanelDirBase::UpdateTrackSpeed() {
             float f11 = f15;
             float f14 = f15;
             for (int i = 0; i < mGemTracks.size(); i++) {
-                GemTrackDir *tdir = AsGemTrack(mGemTracks[i]);
+                GemTrackDir *tdir = mGemTracks[i];
                 TrackInstrument inst = tdir->GetInstrument();
                 Symbol diffsym = tdir->GetPlayerDifficultySym();
                 bool ok = tdir->InUse();
@@ -268,7 +264,7 @@ void TrackPanelDirBase::UpdateTrackSpeed() {
                 }
                 speed /= f1;
                 for (int i = 0; i < mGemTracks.size(); i++) {
-                    AsGemTrack(mGemTracks[i])->SetScrollSpeed(speed);
+                    mGemTracks[i]->SetScrollSpeed(speed);
                 }
             }
         }
@@ -289,14 +285,14 @@ void TrackPanelDirBase::FailedJoinInProgress() {
 
 void TrackPanelDirBase::ToggleSurface() {
     for (int i = 0; i < mGemTracks.size(); i++) {
-        RndMesh *d = AsGemTrack(mGemTracks[i])->mSurfaceMesh;
+        RndMesh *d = mGemTracks[i]->mSurfaceMesh;
         d->SetShowing(!d->Showing());
     }
 }
 
 void TrackPanelDirBase::ToggleNowbar() {
     for (int i = 0; i < mGemTracks.size(); i++) {
-        RndGroup *grp = AsGemTrack(mGemTracks[i])->Find<RndGroup>("now_bar.grp", true);
+        RndGroup *grp = mGemTracks[i]->Find<RndGroup>("now_bar.grp", true);
         grp->SetShowing(!grp->Showing());
     }
 }
