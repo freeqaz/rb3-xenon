@@ -62,42 +62,38 @@ void CheckShadow();
 void CheckExtrude();
 
 void RndShader::Init() {
-    sShaders[kBlurShader] = &gShaderSimple;
     sShaders[kBloomShader] = &gShaderSimple;
     sShaders[kDepthVolumeShader] = &gShaderDepthVolume;
     sShaders[kBloomGlareShader] = &gShaderSimple;
-    sShaders[kDrawRectShader] = &gShaderDrawRect;
-    sShaders[kDownsampleShader] = &gShaderSimple;
+    sShaders[kBlurShader] = &gShaderSimple;
     sShaders[kDownsampleDepthShader] = &gShaderSimple;
-    sShaders[kDownsample4xShader] = &gShaderSimple;
     sShaders[kMultimeshShader] = &gShaderMultimesh;
+    sShaders[kDownsample4xShader] = &gShaderSimple;
+    sShaders[kDownsampleShader] = &gShaderSimple;
+    sShaders[kDrawRectShader] = &gShaderDrawRect;
     sShaders[kFurShader] = &gShaderFur;
     sShaders[kErrorShader] = &gShaderSimple;
+    sShaders[kMultimeshBBShader] = &gShaderMultimesh;
     sShaders[kLineNozShader] = &gShaderSimple;
     sShaders[kMovieShader] = &gShaderSimple;
-    sShaders[kMultimeshBBShader] = &gShaderMultimesh;
     sShaders[kLineShader] = &gShaderSimple;
-    sShaders[kShadowmapShader] = &gShaderSimple;
     sShaders[kPostprocessErrorShader] = &gShaderSimple;
+    sShaders[kShadowmapShader] = &gShaderSimple;
     sShaders[kPlayerDepthVisShader] = &gShaderSimple;
     sShaders[kParticlesShader] = &gShaderParticles;
+    sShaders[kStandardShader] = &gShaderStandard;
+    sShaders[kPostprocessShader] = &gShaderPostProc;
+    sShaders[kStandardBBShader] = &gShaderStandard;
     sShaders[kPlayerDepthShellShader] = &gShaderSimple;
+    sShaders[kUnwrapUVShader] = &gShaderUnwrapUV;
+    sShaders[kVelocityCameraShader] = &gShaderVelocityCamera;
+    sShaders[kVelocityObjectShader] = &gShaderVelocity;
 #ifdef HX_NATIVE
     sShaders[kSyncTrackShader] = &gShaderSyncTrack;
-#endif
-    sShaders[kStandardShader] = &gShaderStandard;
-    sShaders[kStandardBBShader] = &gShaderStandard;
-    sShaders[kPostprocessShader] = &gShaderPostProc;
-#ifdef HX_NATIVE
     sShaders[kPlayerDepthShell2Shader] = &gShaderSimple;
     sShaders[kDepthBuffer3DShader] = &gShaderSimple;
     sShaders[kYUVtoRGBShader] = &gShaderSimple;
     sShaders[kSyncTrackChargeEffectShader] = &gShaderSyncTrack;
-#endif
-    sShaders[kVelocityCameraShader] = &gShaderVelocityCamera;
-    sShaders[kUnwrapUVShader] = &gShaderUnwrapUV;
-    sShaders[kVelocityObjectShader] = &gShaderVelocity;
-#ifdef HX_NATIVE
     sShaders[kYUVtoBlackAndWhiteShader] = &gShaderSimple;
     sShaders[kPlayerGreenScreenShader] = &gShaderSimple;
     sShaders[kPlayerDepthGreenScreenShader] = &gShaderSimple;
