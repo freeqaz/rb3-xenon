@@ -816,7 +816,7 @@ void WorldCrowd::SetFullness(float flatFullness, float charFullness) {
             int totalCount = (int)it->mMMesh->mInstances.size() + (int)it->mBackup.size();
             int instanceCount = (int)it->mMMesh->mInstances.size();
             int targetInstances = (int)((float)totalCount * mFlatFullness);
-            if (targetInstances > instanceCount) {
+            if (instanceCount < targetInstances) {
                 InstanceList::iterator backIt = it->mBackup.begin();
                 for (; instanceCount < targetInstances; instanceCount++) {
                     ++backIt;
