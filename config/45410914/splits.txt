@@ -1197,7 +1197,7 @@ GuitarController.cpp:
 	.pdata      start:0x8223FC40 end:0x8223FC58
 	.pdata      start:0x8223FC58 end:0x8223FCC0
 	.pdata      start:0x82240038 end:0x82240040
-	.text       start:0x8279C284 end:0x8279C630
+	.text       start:0x8279C404 end:0x8279C630
 	.text       start:0x8279C630 end:0x8279C7C0
 	.text       start:0x8279C7C0 end:0x8279C85C
 	.text       start:0x8279C85C end:0x8279CE28
@@ -1266,6 +1266,7 @@ JoypadController.cpp:
 	.pdata      start:0x8223FBF0 end:0x8223FC00
 	.text       start:0x8279B280 end:0x8279B2C8
 	.text       start:0x8279B390 end:0x8279B498
+	.text       start:0x8279B498 end:0x8279B688
 	.text       start:0x8279B688 end:0x8279B774
 	.text       start:0x8279B778 end:0x8279B85C
 	.text       start:0x8279B860 end:0x8279BC88
@@ -1273,6 +1274,7 @@ JoypadController.cpp:
 	.text       start:0x8279BD28 end:0x8279BDC8
 	.text       start:0x8279BDC8 end:0x8279BE54
 	.text       start:0x8279BE54 end:0x8279C284
+	.text       start:0x8279C284 end:0x8279C404
 
 system/beatmatch/JoypadMidiController.cpp:
 	.pdata      start:0x8223F7B0 end:0x8223F890
@@ -2518,10 +2520,12 @@ MidiParser.cpp:
 	.pdata      start:0x822442D8 end:0x822442E0
 	.pdata      start:0x822442E0 end:0x82244688
 	.pdata      start:0x82244690 end:0x82244768
-	.text       start:0x827E4098 end:0x827E4568
+	.text       start:0x827E4358 end:0x827E4568
 	.text       start:0x827E4900 end:0x827E5260
-	.text       start:0x827E5314 end:0x827E5D88
-	.text       start:0x827E5F58 end:0x827E63F8
+	.text       start:0x827E5314 end:0x827E5660
+	.text       start:0x827E5818 end:0x827E5D88
+	.text       start:0x827E60F4 end:0x827E6188
+	.text       start:0x827E6284 end:0x827E63F8
 	.text       start:0x827E64B8 end:0x827E6530
 	.text       start:0x827E6530 end:0x827E658C
 	.text       start:0x827E6590 end:0x827E6598
@@ -3035,9 +3039,13 @@ LightPreset.cpp:
 	.text       start:0x82380A44 end:0x82380CB8
 	.text       start:0x82381088 end:0x82381100
 	.text       start:0x824AA460 end:0x824AA4E0
-	.text       start:0x824AA6D8 end:0x824AA8A8
-	.text       start:0x824AA930 end:0x824AAA70
-	.text       start:0x824AAB10 end:0x824AAEA4
+	.text       start:0x824AA734 end:0x824AA75C
+	.text       start:0x824AA7D8 end:0x824AA800
+	.text       start:0x824AA878 end:0x824AA8A8
+	.text       start:0x824AA9A0 end:0x824AA9C8
+	.text       start:0x824AAA40 end:0x824AAA70
+	.text       start:0x824AAB10 end:0x824AABA8
+	.text       start:0x824AACB0 end:0x824AAEA4
 	.text       start:0x824AAEA8 end:0x824B4390
 	.text       start:0x824B43F8 end:0x824B5570
 	.text       start:0x824B55A0 end:0x824B885C
@@ -3425,7 +3433,8 @@ Flow.cpp:
 	.text       start:0x823A94F0 end:0x823A9540
 	.text       start:0x823AAD78 end:0x823AB020
 	.text       start:0x823AB598 end:0x823AB618
-	.text       start:0x82574D90 end:0x825754B0
+	.text       start:0x82574D90 end:0x82574E1C
+	.text       start:0x825754AC end:0x825754B0
 	.text       start:0x82715C88 end:0x82715CF4
 
 BandSwatch.cpp:
@@ -5280,7 +5289,7 @@ UIList.cpp:
 	.text       start:0x82776698 end:0x827767F0
 	.text       start:0x827767F0 end:0x82776838
 	.text       start:0x82777658 end:0x82777748
-	.text       start:0x827778C0 end:0x82777D78
+	.text       start:0x82777C5C end:0x82777D78
 	.text       start:0x827A37B0 end:0x827A3804
 	.text       start:0x827F7830 end:0x827F7AD8
 	.text       start:0x827F7AE0 end:0x827F7B60
@@ -7097,6 +7106,7 @@ system/synth_xbox/SynthSample.cpp:
 	.text       start:0x82B6C6F8 end:0x82B6C7C0
 	.text       start:0x82B6C7C0 end:0x82B6C830
 	.text       start:0x82B6C850 end:0x82B6C8F0
+	.text       start:0x82B6C8F0 end:0x82B6CA0C
 
 CrazeHollaback.cpp:
 	.pdata      start:0x821F6860 end:0x821F6878
@@ -7299,7 +7309,8 @@ DrivenPropertyEntry.cpp:
 	.text       start:0x822CE258 end:0x822CE3F4
 	.text       start:0x822CECE0 end:0x822CED50
 	.text       start:0x822CEDA0 end:0x822CEEE8
-	.text       start:0x82781548 end:0x82781660
+	.text       start:0x82781548 end:0x827815E4
+	.text       start:0x82781654 end:0x82781660
 
 HamIKSkeleton.cpp:
 	.pdata      start:0x821F6928 end:0x821F6968
@@ -9059,6 +9070,7 @@ TrackWidget.cpp:
 	.text       start:0x827E1400 end:0x827E1560
 	.text       start:0x827E1560 end:0x827E1708
 	.text       start:0x827E1768 end:0x827E4098
+	.text       start:0x827E4098 end:0x827E4358
 	.text       start:0x827E4568 end:0x827E4858
 	.text       start:0x827E4858 end:0x827E487C
 	.text       start:0x827E487C end:0x827E4900
@@ -9067,7 +9079,10 @@ TrackWidget.cpp:
 TrackWidgetImp.cpp:
 	.pdata      start:0x82244230 end:0x82244240
 	.pdata      start:0x82244298 end:0x822442A8
+	.text       start:0x827E5660 end:0x827E5818
 	.text       start:0x827E5D88 end:0x827E5F58
+	.text       start:0x827E5F58 end:0x827E60F4
+	.text       start:0x827E6188 end:0x827E6284
 	.text       start:0x827E63F8 end:0x827E64B8
 
 NetworkEmulator.cpp:
@@ -10090,7 +10105,6 @@ TrackWatcherImpl.cpp:
 	.text       start:0x82606004 end:0x82606008
 	.text       start:0x82794730 end:0x82797760
 	.text       start:0x8279B2C8 end:0x8279B390
-	.text       start:0x8279B498 end:0x8279B688
 	.text       start:0x8279B774 end:0x8279B778
 
 SongParser.cpp:
@@ -10428,6 +10442,7 @@ SongData.cpp:
 	.text       start:0x82777170 end:0x82777268
 	.text       start:0x82777268 end:0x82777658
 	.text       start:0x82777748 end:0x827778C0
+	.text       start:0x827778C0 end:0x82777C5C
 	.text       start:0x82777D78 end:0x82777DA0
 	.text       start:0x82777DA0 end:0x82778790
 	.text       start:0x82778790 end:0x827788F8
@@ -11165,6 +11180,7 @@ MetaPanel.cpp:
 	.text       start:0x825744E4 end:0x825748A0
 	.text       start:0x825748A0 end:0x825748E4
 	.text       start:0x825748E8 end:0x82574D90
+	.text       start:0x82574E1C end:0x825754AC
 
 BaseGuitarTrackWatcherImpl.cpp:
 	.pdata      start:0x8223FFB0 end:0x82240008
@@ -11391,6 +11407,7 @@ VocalNoteList.cpp:
 	.text       start:0x82780E80 end:0x827810F4
 	.text       start:0x827810F8 end:0x82781160
 	.text       start:0x827812F8 end:0x82781548
+	.text       start:0x827815E4 end:0x82781654
 	.text       start:0x82781660 end:0x82781A74
 	.text       start:0x82781A78 end:0x82782958
 
@@ -12150,7 +12167,7 @@ system/synth/SynthSample.cpp:
 	.text       start:0x82728E38 end:0x82729004
 	.text       start:0x82729080 end:0x82729244
 	.text       start:0x82B6C844 end:0x82B6C850
-	.text       start:0x82B6C8F0 end:0x82B6CAF8
+	.text       start:0x82B6CA0C end:0x82B6CAF8
 
 SpeechMgr.cpp:
 	.pdata      start:0x82214250 end:0x82214260
@@ -12638,6 +12655,7 @@ system/beatmatch/Submix.cpp:
 	.pdata      start:0x8223F548 end:0x8223F550
 	.text       start:0x82793768 end:0x82793908
 	.text       start:0x82793AA8 end:0x82793B80
+	.text       start:0x82793CCC end:0x82793E44
 	.text       start:0x82793E98 end:0x82793F64
 
 system/obj/Utl.cpp:
@@ -12998,7 +13016,8 @@ system/beatmatch/SlotChannelMapping.cpp:
 	.pdata      start:0x8223F528 end:0x8223F548
 	.pdata      start:0x8223F550 end:0x8223F558
 	.pdata      start:0x8223F558 end:0x8223F600
-	.text       start:0x82793C58 end:0x82793E98
+	.text       start:0x82793C58 end:0x82793CCC
+	.text       start:0x82793E44 end:0x82793E98
 	.text       start:0x82793F64 end:0x82793F8C
 	.text       start:0x82793F8C end:0x82794730
 
@@ -13283,8 +13302,14 @@ system/meta/StoreArtLoaderPanel.cpp:
 system/world/World.cpp:
 	.pdata      start:0x82212408 end:0x82212418
 	.pdata      start:0x82212438 end:0x82212448
+	.text       start:0x824AA6D8 end:0x824AA734
+	.text       start:0x824AA75C end:0x824AA7D8
+	.text       start:0x824AA800 end:0x824AA878
 	.text       start:0x824AA8A8 end:0x824AA930
+	.text       start:0x824AA930 end:0x824AA9A0
+	.text       start:0x824AA9C8 end:0x824AAA40
 	.text       start:0x824AAA70 end:0x824AAB10
+	.text       start:0x824AABA8 end:0x824AACB0
 
 xdk/xgraphics/optimize.cpp:
 	.pdata      start:0x8224DD90 end:0x8224DDC0
