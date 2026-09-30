@@ -1987,6 +1987,7 @@ UsbMidiKeyboard.cpp:
 	.pdata      start:0x822186C8 end:0x82218738
 	.pdata      start:0x82218740 end:0x82218798
 	.text       start:0x8251AA60 end:0x8251AB74
+	.text       start:0x8251AB74 end:0x8251AC08
 	.text       start:0x8251AC08 end:0x8251B09C
 	.text       start:0x8251B09C end:0x8251B3D8
 	.text       start:0x8251B410 end:0x8251B848
@@ -2270,6 +2271,7 @@ HeadsetXferEffect.cpp:
 	.pdata      start:0x8225B580 end:0x8225B5B0
 	.pdata      start:0x82261AD8 end:0x82261AE0
 	.text       start:0x82B6B764 end:0x82B6BA10
+	.text       start:0x82B6BA10 end:0x82B6BA74
 	.text       start:0x82B6BA74 end:0x82B6BA78
 	.text       start:0x82C43420 end:0x82C434B0
 
@@ -2989,7 +2991,6 @@ MeterEffect.cpp:
 	.pdata      start:0x8225B5B0 end:0x8225B5B8
 	.pdata      start:0x82261AD0 end:0x82261AD8
 	.text       start:0x82B6B4F0 end:0x82B6B764
-	.text       start:0x82B6BA10 end:0x82B6BA74
 	.text       start:0x82C43390 end:0x82C43420
 
 UI.cpp:
@@ -4719,6 +4720,7 @@ ByteGrinder.cpp:
 	.text       start:0x82728CFC end:0x82728E38
 	.text       start:0x82729004 end:0x82729080
 	.text       start:0x82729244 end:0x827296BC
+	.text       start:0x827296BC end:0x82729704
 	.text       start:0x82729704 end:0x82729710
 
 UsbMidiKeyboardMsgs.cpp:
@@ -6384,6 +6386,7 @@ Loader.cpp:
 	.text       start:0x827BF940 end:0x827BFA28
 	.text       start:0x827BFA28 end:0x827BFB98
 	.text       start:0x827BFB98 end:0x827BFBF8
+	.text       start:0x827BFC48 end:0x827BFC94
 	.text       start:0x827BFC94 end:0x827BFCF8
 	.text       start:0x827BFCF8 end:0x827BFEC0
 	.text       start:0x827BFEC0 end:0x827BFF58
@@ -6709,12 +6712,12 @@ UIListSlot.cpp:
 	.pdata      start:0x82246EF0 end:0x82246EF8
 	.pdata      start:0x82246EF8 end:0x82246F00
 	.pdata      start:0x82246F00 end:0x82246FF0
-	.text       start:0x82814B3C end:0x82814B8C
 	.text       start:0x82814DA0 end:0x82814E00
 	.text       start:0x82814E00 end:0x82814E38
 	.text       start:0x82814E38 end:0x82814EA0
 	.text       start:0x82814EA0 end:0x82814EFC
 	.text       start:0x82814F00 end:0x82815C4C
+	.text       start:0x82815C4C end:0x82815C9C
 	.text       start:0x82815C9C end:0x82815CB0
 
 DataPointMgr.cpp:
@@ -7038,9 +7041,9 @@ UIListMesh.cpp:
 	.text       start:0x828149B0 end:0x82814A58
 	.text       start:0x82814A58 end:0x82814AC8
 	.text       start:0x82814AC8 end:0x82814B3C
+	.text       start:0x82814B3C end:0x82814B8C
 	.text       start:0x82814B8C end:0x82814C30
 	.text       start:0x82814C30 end:0x82814DA0
-	.text       start:0x82815C4C end:0x82815C9C
 
 WahEffect.cpp:
 	.pdata      start:0x8225EA68 end:0x8225EA70
@@ -7264,7 +7267,6 @@ MicNull.cpp:
 	.pdata      start:0x8223A0F0 end:0x8223A100
 	.pdata      start:0x8223A100 end:0x8223A108
 	.pdata      start:0x8223A108 end:0x8223A120
-	.text       start:0x827296BC end:0x82729704
 	.text       start:0x82729710 end:0x827297B0
 	.text       start:0x827297BC end:0x82729808
 	.text       start:0x82729808 end:0x82729974
@@ -12736,7 +12738,6 @@ system/os/UsbMidiGuitar.cpp:
 	.text       start:0x8251A138 end:0x8251A2DC
 	.text       start:0x8251A2E0 end:0x8251A9B8
 	.text       start:0x8251A9B8 end:0x8251AA60
-	.text       start:0x8251AB74 end:0x8251AC08
 	.text       start:0x8276AA00 end:0x8276AADC
 	.text       start:0x82C3F8EC end:0x82C3FB78
 
@@ -12940,7 +12941,6 @@ system/synth/Utl.cpp:
 	.text       start:0x8270EFE0 end:0x8270F01C
 	.text       start:0x8270F020 end:0x8270F108
 	.text       start:0x827BFBF8 end:0x827BFC48
-	.text       start:0x827BFC48 end:0x827BFC94
 
 system/world/Reflection.cpp:
 	.pdata      start:0x822123A8 end:0x822123B8
