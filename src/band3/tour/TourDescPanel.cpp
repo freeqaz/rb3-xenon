@@ -154,7 +154,8 @@ inline void TourDescProvider::UpdateList() {
              TheTour->m_mapTourDesc.begin();
          it != TheTour->m_mapTourDesc.end();
          ++it) {
-        mTours.push_back(it->first);
+        Symbol s = it->first;
+        mTours.push_back(s);
     }
     TourDescCmp cmp(TheTour);
     std::stable_sort(mTours.begin(), mTours.end(), cmp);
