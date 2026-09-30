@@ -1,4 +1,7 @@
 {
+ "0x82616230": "?MovePatch@CustomizePanel@@QAAXMM@Z",
+ "0x826d45a0": "?SetSuccessState@TrackerBandDisplay@@QBAX_N@Z",
+ "0x826d4290": "?SetType@TrackerBandDisplay@@QBAXW4TrackerBandDisplayType@@@Z",
  "0x82615440": "?PreviewAsset@CustomizePanel@@QAAXVSymbol@@@Z",
  "0x8264b328": "?FillExpandedDetails@NextSongPanel@@QAAXH@Z",
  "0x82640288": "?OnMsg@TokenRedemptionPanel@@QAA?AVDataNode@@ABVRockCentralOpCompleteMsg@@@Z",
