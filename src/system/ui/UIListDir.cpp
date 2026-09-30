@@ -463,7 +463,7 @@ void UIListDir::BuildDrawState(
         UIListWidgetState elemState;
         if (!state.Provider()->IsActive(data)) {
             elemState = kUIListWidgetInactive;
-        } else if (showing == selected && allowHighlight) {
+        } else if (showing == selected) {
             elemState = kUIListWidgetHighlight;
         } else {
             elemState = kUIListWidgetActive;
@@ -474,6 +474,7 @@ void UIListDir::BuildDrawState(
             drawState.mHighlightElementState = widgetState;
         }
 
+        UIListProvider *prov = state.Provider();
         UIListElementDrawState elem;
 #ifdef HX_NATIVE
         memset(&elem, 0, sizeof(elem));
@@ -482,14 +483,14 @@ void UIListDir::BuildDrawState(
         *(Vector3 *)&elem.mPosX = elemPos;
         elem.mAlpha = alpha;
         elem.mElementState = widgetState;
-        elem.mComponentState = state.Provider()->ComponentStateOverride(showing, data, compState);
+        elem.mComponentState = prov->ComponentStateOverride(showing, data, compState);
         elem.mDisplay = dispIndex;
         elem.mShowing = showing;
         elem.mData = data;
         drawState.mElements.push_back(elem);
 
         totalGap += gap;
-        if (dispIndex > 0 && dispIndex < state.NumDisplay() - 1) {
+        if (dispIndex > 0 && dispIndex < numDisplay - 1) {
             lastPosBase += gap;
         }
         if (dispIndex < selectedDisplay) {
