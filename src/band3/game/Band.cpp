@@ -432,8 +432,12 @@ Player *Band::AddPlayerDynamically(BeatMaster *m, BandUser *u) {
     GetTrackPanel()->PostHandleAddPlayer(p);
     p->PostDynamicAdd();
     UpdateBonusLevel(TheTaskMgr.Seconds(TaskMgr::kRealTime) * 1000.0f);
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+    // rb3-Wii dev build only: retail TU5 (0x8269C760) returns straight after
+    // UpdateBonusLevel.
     p->SetMultiplierActive(mMultiplierActive);
     p->SetCrowdMeterActive(mBandPerformer->GetCrowdMeterActive());
+#endif
     return p;
 }
 
