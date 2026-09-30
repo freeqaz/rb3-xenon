@@ -200,7 +200,7 @@ RockCentral.cpp:
 	.pdata      start:0x82234E88 end:0x82234EB0
 	.pdata      start:0x82235900 end:0x822359B0
 	.text       start:0x822CEEE8 end:0x822CEF8C
-	.text       start:0x823450B8 end:0x82345280
+	.text       start:0x823450B8 end:0x82345100
 	.text       start:0x82348048 end:0x8234820C
 	.text       start:0x823EC310 end:0x823EC398
 	.text       start:0x823EC538 end:0x823EC788
@@ -2999,18 +2999,12 @@ system/rndobj/Utl.cpp:
 
 MemTracker.cpp:
 	.pdata      start:0x821F1750 end:0x821F1760
-	.pdata      start:0x821FEC90 end:0x821FEC98
-	.pdata      start:0x821FECD0 end:0x821FECD8
-	.pdata      start:0x821FEE58 end:0x821FEE60
 	.pdata      start:0x8221C220 end:0x8221C228
 	.pdata      start:0x82233B50 end:0x82233B60
 	.pdata      start:0x82243228 end:0x82243238
 	.pdata      start:0x82243238 end:0x82243320
 	.pdata      start:0x82243328 end:0x822433D0
 	.text       start:0x82271748 end:0x822717BC
-	.text       start:0x82347600 end:0x82347650
-	.text       start:0x82347B78 end:0x82347BE4
-	.text       start:0x82349B78 end:0x82349BE8
 	.text       start:0x82554CB0 end:0x82554D0C
 	.text       start:0x826B8D20 end:0x826B8EE8
 	.text       start:0x827D44C8 end:0x827D4550
@@ -4808,16 +4802,12 @@ DataNode.cpp:
 	.text       start:0x82C3FFAC end:0x82C40BA8
 
 FileCache.cpp:
-	.pdata      start:0x821FEC48 end:0x821FEC50
 	.pdata      start:0x821FECB0 end:0x821FECB8
-	.pdata      start:0x821FECF0 end:0x821FECF8
 	.pdata      start:0x82218488 end:0x82218490
 	.pdata      start:0x82218490 end:0x82218498
 	.pdata      start:0x82218498 end:0x82218610
 	.text       start:0x82276828 end:0x82276888
-	.text       start:0x823470C8 end:0x82347138
 	.text       start:0x82347850 end:0x82347930
-	.text       start:0x82347D48 end:0x82347DB0
 	.text       start:0x82518358 end:0x82518430
 	.text       start:0x82518430 end:0x825184C4
 	.text       start:0x825184C8 end:0x8251A004
@@ -5707,14 +5697,12 @@ App.cpp:
 	.text       start:0x82270E68 end:0x822716E8
 
 UIListDir.cpp:
-	.pdata      start:0x821FEE30 end:0x821FEE38
 	.pdata      start:0x82246590 end:0x82246790
 	.pdata      start:0x82246790 end:0x82246798
 	.pdata      start:0x82246798 end:0x822467D0
 	.pdata      start:0x822467D0 end:0x822467E0
 	.pdata      start:0x822467E0 end:0x822467F0
 	.pdata      start:0x822467F0 end:0x82246810
-	.text       start:0x82349770 end:0x8234982C
 	.text       start:0x8280AD68 end:0x8280CFA0
 	.text       start:0x8280CFA0 end:0x8280D078
 	.text       start:0x8280D078 end:0x8280D380
@@ -10161,17 +10149,21 @@ BandPatchMesh.cpp:
 	.pdata      start:0x821FEC18 end:0x821FEC38
 	.pdata      start:0x821FEC38 end:0x821FEC40
 	.pdata      start:0x821FEC40 end:0x821FEC48
+	.pdata      start:0x821FEC48 end:0x821FEC50
 	.pdata      start:0x821FEC50 end:0x821FEC58
 	.pdata      start:0x821FEC58 end:0x821FEC60
 	.pdata      start:0x821FEC60 end:0x821FEC68
 	.pdata      start:0x821FEC68 end:0x821FEC88
+	.pdata      start:0x821FEC90 end:0x821FEC98
 	.pdata      start:0x821FEC98 end:0x821FECA0
 	.pdata      start:0x821FECA0 end:0x821FECA8
 	.pdata      start:0x821FECA8 end:0x821FECB0
 	.pdata      start:0x821FECC8 end:0x821FECD0
+	.pdata      start:0x821FECD0 end:0x821FECD8
 	.pdata      start:0x821FECD8 end:0x821FECE0
 	.pdata      start:0x821FECE0 end:0x821FECE8
 	.pdata      start:0x821FECE8 end:0x821FECF0
+	.pdata      start:0x821FECF0 end:0x821FECF8
 	.pdata      start:0x821FECF8 end:0x821FED00
 	.pdata      start:0x821FED00 end:0x821FED08
 	.pdata      start:0x821FED08 end:0x821FED10
@@ -10184,9 +10176,11 @@ BandPatchMesh.cpp:
 	.pdata      start:0x821FEDC0 end:0x821FEE08
 	.pdata      start:0x821FEE08 end:0x821FEE18
 	.pdata      start:0x821FEE20 end:0x821FEE30
+	.pdata      start:0x821FEE30 end:0x821FEE38
 	.pdata      start:0x821FEE38 end:0x821FEE40
 	.pdata      start:0x821FEE40 end:0x821FEE48
 	.pdata      start:0x821FEE48 end:0x821FEE50
+	.pdata      start:0x821FEE58 end:0x821FEE60
 	.pdata      start:0x821FEE60 end:0x821FEE68
 	.pdata      start:0x821FEE68 end:0x821FEE70
 	.pdata      start:0x821FEE70 end:0x821FEE78
@@ -10209,6 +10203,7 @@ BandPatchMesh.cpp:
 	.pdata      start:0x821FF050 end:0x821FF0B8
 	.pdata      start:0x821FF0B8 end:0x821FF0D8
 	.text       start:0x82345030 end:0x82345034
+	.text       start:0x82345100 end:0x82345280
 	.text       start:0x82345280 end:0x82345330
 	.text       start:0x82345330 end:0x8234539C
 	.text       start:0x823453A0 end:0x82345520
@@ -10223,21 +10218,25 @@ BandPatchMesh.cpp:
 	.text       start:0x82346DE0 end:0x82346F64
 	.text       start:0x82346F68 end:0x82347030
 	.text       start:0x82347030 end:0x823470C8
+	.text       start:0x823470C8 end:0x82347138
 	.text       start:0x82347138 end:0x823471A8
 	.text       start:0x823471A8 end:0x82347214
 	.text       start:0x82347218 end:0x82347284
 	.text       start:0x82347284 end:0x82347478
 	.text       start:0x823474D0 end:0x82347528
 	.text       start:0x82347530 end:0x823475FC
+	.text       start:0x82347600 end:0x82347650
 	.text       start:0x82347650 end:0x823476D0
 	.text       start:0x823476D0 end:0x82347720
 	.text       start:0x82347720 end:0x82347770
 	.text       start:0x82347770 end:0x823477C0
 	.text       start:0x823477C0 end:0x82347850
 	.text       start:0x82347A18 end:0x82347B74
+	.text       start:0x82347B78 end:0x82347BE4
 	.text       start:0x82347BE8 end:0x82347C48
 	.text       start:0x82347C48 end:0x82347CF8
 	.text       start:0x82347CF8 end:0x82347D48
+	.text       start:0x82347D48 end:0x82347DB0
 	.text       start:0x82347DB0 end:0x82347E14
 	.text       start:0x82347E18 end:0x82347E7C
 	.text       start:0x82347E80 end:0x82347EE8
@@ -10250,9 +10249,11 @@ BandPatchMesh.cpp:
 	.text       start:0x82348FC4 end:0x823493D0
 	.text       start:0x823493D0 end:0x82349470
 	.text       start:0x823495D8 end:0x82349770
+	.text       start:0x82349770 end:0x8234982C
 	.text       start:0x8234982C end:0x823498F0
 	.text       start:0x823498F0 end:0x823499F0
 	.text       start:0x823499F0 end:0x82349B10
+	.text       start:0x82349B78 end:0x82349BE8
 	.text       start:0x82349BE8 end:0x82349C58
 	.text       start:0x82349C58 end:0x82349CC8
 	.text       start:0x82349CC8 end:0x82349D50
