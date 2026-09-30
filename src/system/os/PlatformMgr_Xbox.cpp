@@ -430,6 +430,74 @@ namespace {
     }
 }
 
+namespace {
+    // Retail 0x8251BCD8 (unnamed in the map): an OnlineID overload that forwards
+    // the XUID into XPrivilegeCheck. CanSeeUserCreatedContent calls it.
+    bool XPrivilegeCheck(_XPRIVILEGE_TYPE priv1, _XPRIVILEGE_TYPE priv2, const OnlineID *oid) {
+        return XPrivilegeCheck(priv1, priv2, oid->GetXUID());
+    }
+}
+
+// Retail 0x8251C778 (88 B), 0x8251C7D0 (96 B), 0x8251C208 (64 B), 0x8251CB20
+// (132 B), 0x8251CBA8 (32 B): declared in PlatformMgr.h, never defined for the
+// Xbox build. DC3 shapes, minus DC3's GlitchPoker in HasOnlinePrivilege (retail
+// goes straight to IsSignedIntoLive).
+bool PlatformMgr::HasOnlinePrivilege(int padNum) const {
+    MILO_ASSERT(padNum >= 0, 0x693);
+    if (!IsSignedIntoLive(padNum)) {
+        return false;
+    }
+    BOOL result;
+    XUserCheckPrivilege(padNum, XPRIVILEGE_MULTIPLAYER_SESSIONS, &result);
+    return result != 0;
+}
+
+bool PlatformMgr::CanSeeUserCreatedContent(const OnlineID *oid) const {
+    if (oid->GetIsValid() && GetPadNumFromXuid(oid->GetXUID()) >= 0) {
+        return true;
+    }
+    return XPrivilegeCheck(
+        XPRIVILEGE_USER_CREATED_CONTENT, XPRIVILEGE_USER_CREATED_CONTENT_FRIENDS_ONLY, oid
+    );
+}
+
+bool PlatformMgr::IsGuestOnlineID(const OnlineID *oid) const {
+    return (oid->GetXUID() & 0x00C0000000000000) != 0;
+}
+
+int PlatformMgr::GetOwnerOfGuest(int padNum) {
+    MILO_ASSERT(padNum != -1, 0x8F9);
+    XUSER_SIGNIN_INFO signinInfo;
+    DWORD ret = XUserGetSigninInfo(padNum, 0, &signinInfo);
+    int result = -1;
+    if (ret == ERROR_NO_SUCH_USER) {
+        XUID xuid;
+        if (XUserGetXUID(padNum, &xuid) == 0) {
+            result = GetPadNumFromXuid(xuid & 0xff3fffffffffffff);
+        }
+    } else {
+        MILO_ASSERT(ret == ERROR_SUCCESS, 0x911);
+        result = signinInfo.dwSponsorUserIndex;
+    }
+    return result;
+}
+
+void PlatformMgr::SetNotifyUILocation(NotifyLocation location) {
+    DWORD position;
+    switch (location) {
+    case kNotify0:
+        position = 9;
+        break;
+    case kNotify1:
+        position = 2;
+        break;
+    default:
+        MILO_FAIL("Unknown NotifyLocation %d", location);
+        return;
+    }
+    XNotifyPositionUI(position);
+}
+
 const char *PlatformMgr::GetName(int padNum) const {
     if (IsSignedIn(padNum)) {
         char name[16];

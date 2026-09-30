@@ -160,6 +160,14 @@ void Interp(const Hmx::Matrix3 &m1, const Hmx::Matrix3 &m2, float r, Hmx::Matrix
     MakeRotMatrix(q60, res);
 }
 
+// Retail 0x824EE5F0 (148 B).
+void MakeVertical(Hmx::Matrix3 &m) {
+    m.z.Set(0.0f, 0.0f, 1.0f);
+    m.y.z = 0.0f;
+    Normalize(m.y, m.y);
+    Cross(m.y, m.z, m.x);
+}
+
 void MakeEuler(const Hmx::Quat &q, Vector3 &v) {
     Hmx::Matrix3 m;
     MakeRotMatrix(q, m);

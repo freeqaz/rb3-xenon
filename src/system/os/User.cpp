@@ -3,6 +3,7 @@
 #include "obj/Data.h"
 #include "obj/Object.h"
 #include "os/PlatformMgr.h"
+#include "xdk/xapilibi/xbox.h"
 
 #pragma region User
 
@@ -24,6 +25,13 @@ END_PROPSYNCS
 
 void User::Reset() { mMachineID = -1; }
 
+// Retail 0x825236F0 (100 B): the assert's IsLocal() vcall survives because
+// MILO_ASSERT keeps its operand.
+void User::SetUserGuid(const UserGuid &id) {
+    MILO_ASSERT(!IsLocal(), 0x2F);
+    mUserGuid = id;
+}
+
 void User::SyncSave(BinStream &bs, unsigned int ui) const {
     bs << mMachineID;
     bs << UserName();
@@ -42,6 +50,14 @@ BEGIN_HANDLERS(LocalUser)
 END_HANDLERS
 
 int LocalUser::GetPadNum() const { return JoypadGetUsersPadNum(this); }
+
+// Retail 0x82523768 (112 B): reads the XUID for the user's pad.
+void LocalUser::UpdateOnlineID() {
+    mHasOnlineID = ThePlatformMgr.IsUserSignedIn(this);
+    XUID xuid;
+    XUserGetXUID(GetPadNum(), &xuid);
+    mOnlineID->SetXUID(xuid);
+}
 
 bool LocalUser::IsJoypadConnected() const {
     static DataNode &n = DataVariable("fake_controllers");

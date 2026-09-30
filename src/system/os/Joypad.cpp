@@ -354,6 +354,31 @@ bool JoypadIsCalbertGuitar(int padNum) {
 // immediately before UserHasGHDrums, as here.
 bool UserHasController(LocalUser *user) { return GetUsersPadNum(user) != -1; }
 
+// Retail 0x82524C20 (180 B) / 0x82524CD8 (104 B): explicit equality chains
+// (cmpwi 0x1f/0x25/0x2b, then 0x1e/0x24/0x2a), not a (type - 31) bitmask.
+bool UserHas22FretGuitar(LocalUser *user) {
+    int padNum = GetUsersPadNum(user);
+    if (padNum != -1) {
+        JoypadType ty = gJoypadData[padNum].mType;
+        return ty == kJoypadXboxRealGuitar22Fret || ty == kJoypadPs3RealGuitar22Fret
+            || ty == kJoypadWiiRealGuitar22Fret
+            || (DataVariable("auto_22_fret").Int()
+                && (ty == kJoypadXboxButtonGuitar || ty == kJoypadPs3ButtonGuitar
+                    || ty == kJoypadWiiButtonGuitar));
+    }
+    return false;
+}
+
+bool UserHasButtonGuitar(LocalUser *user) {
+    int padNum = GetUsersPadNum(user);
+    if (padNum != -1) {
+        JoypadType ty = gJoypadData[padNum].mType;
+        return ty == kJoypadXboxButtonGuitar || ty == kJoypadPs3ButtonGuitar
+            || ty == kJoypadWiiButtonGuitar;
+    }
+    return false;
+}
+
 bool UserHasGHDrums(LocalUser *user) {
     int padNum = GetUsersPadNum(user);
     if (padNum != -1) {

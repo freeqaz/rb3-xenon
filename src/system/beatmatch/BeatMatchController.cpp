@@ -31,6 +31,16 @@ int BeatMatchController::ButtonToSlot(JoypadButton btn) const {
     return slot;
 }
 
+// Retail 0x827900C8 (136 B).
+int BeatMatchController::SlotToButton(int slot) const {
+    int thresh = (mSlots->Size() - 1) / 2;
+    for (int i = 0; i < thresh; i++) {
+        if (slot == mSlots->Int(i * 2 + 2))
+            return mSlots->Int(i * 2 + 1);
+    }
+    return 0x18;
+}
+
 void BeatMatchController::RegisterHit(HitType ty) const {
     if (mHitSink)
         mHitSink->Hit(ty);

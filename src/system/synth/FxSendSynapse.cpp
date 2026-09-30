@@ -67,6 +67,33 @@ BEGIN_COPYS(FxSendSynapse)
     END_COPYING_MEMBERS
 END_COPYS
 
+// Retail 0x82712270..0x827122D0 (20 B each): each stores its member and
+// tail-calls OnParametersChanged (vtable +0x6c).
+void FxSendSynapse::SetAttackSmoothing(float as) {
+    mAttackSmoothing = as;
+    OnParametersChanged();
+}
+
+void FxSendSynapse::SetReleaseSmoothing(float rs) {
+    mReleaseSmoothing = rs;
+    OnParametersChanged();
+}
+
+void FxSendSynapse::SetAmount(float amt) {
+    mAmount = amt;
+    OnParametersChanged();
+}
+
+void FxSendSynapse::SetProximityEffect(float pe) {
+    mProximityEffect = pe;
+    OnParametersChanged();
+}
+
+void FxSendSynapse::SetProximityFocus(float pf) {
+    mProximityFocus = pf;
+    OnParametersChanged();
+}
+
 void FxSendSynapse::Save(BinStream &bs) {
     bs << 5;
     SAVE_SUPERCLASS(FxSend)
