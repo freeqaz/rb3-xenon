@@ -60,17 +60,25 @@ BEGIN_COPYS(CharClipGroup)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(2, 0)
+// RB3 retail rev dialect (rb3-Wii LOAD_REVS / gRev): Load (0x823901e8) splits
+// the packed rev into two halfword file statics -- alt at the base (retail
+// 0x82CBF164), rev at +4 -- and reads mFlags only when rev > 1. No
+// BinStreamRev on the stack, no clamp on mWhich. Same shape as EventTrigger:
+// two SEPARATE align(4) statics, initialised to 0 so they are laid out in
+// declaration order (alt first).
+static __declspec(align(4)) unsigned short gAltRev_CharClipGroup = 0;
+static __declspec(align(4)) unsigned short gRev_CharClipGroup = 0;
 
 BEGIN_LOADS(CharClipGroup)
-    LOAD_REVS(bs)
-    ASSERT_REVS(2, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    d.stream >> mClips;
-    d >> mWhich;
-    mWhich = Max(mWhich, 0);
-    if (d.rev > 1) {
-        d >> mFlags;
+    int revs;
+    bs >> revs;
+    gRev_CharClipGroup = getHmxRev(revs);
+    gAltRev_CharClipGroup = getAltRev(revs);
+    Hmx::Object::Load(bs);
+    bs >> mClips;
+    bs >> mWhich;
+    if (gRev_CharClipGroup > 1) {
+        bs >> mFlags;
     } else {
         mFlags = 0;
     }
