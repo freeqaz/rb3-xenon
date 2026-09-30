@@ -1866,8 +1866,17 @@ void BandDirector::SetFog(Symbol s) {
         StageKitSetFog(s == on);
 }
 
+// Retail declares coop_bk/coop_gk/keyboard as FUNCTION-LOCAL statics sharing
+// one guard word, claimed in that order (coop_bk 0x1, coop_gk 0x2, keyboard
+// 0x4) -- all three guard blocks run consecutively right after the outer
+// "guitar"/"bass" check and before GetPlayMode(), confirming they are
+// declared together at the top of this block, not the utl/Symbols.h
+// globals -- W16-GZ localstatic lever.
 Symbol BandDirector::GetModeInst(Symbol s) {
     if (s == "guitar" || s == "bass") {
+        static Symbol coop_bk("coop_bk");
+        static Symbol coop_gk("coop_gk");
+        static Symbol keyboard("keyboard");
         Symbol playmode = TheBandWardrobe->GetPlayMode();
         if (s == "guitar" && playmode == coop_bk)
             return keyboard;
