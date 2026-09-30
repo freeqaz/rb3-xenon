@@ -6,7 +6,7 @@
 class PresenceMgr : public Hmx::Object {
 public:
     PresenceMgr();
-    virtual ~PresenceMgr() {}
+    // implicit dtor: retail ~PresenceMgr has no own-vtable store
     virtual DataNode Handle(DataArray *, bool);
 
     void UpdatePresence();
