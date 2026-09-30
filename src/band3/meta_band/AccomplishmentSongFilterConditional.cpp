@@ -25,7 +25,7 @@ AccomplishmentSongFilterConditional::~AccomplishmentSongFilterConditional() {}
 void AccomplishmentSongFilterConditional::Configure(DataArray *i_pConfig) {
     MILO_ASSERT(i_pConfig, 0x22);
     static Symbol num_songs("num_songs");
-    i_pConfig->FindData(num_songs, mNumSongs, false);
+    i_pConfig->FindData(num_songs, mNumSongs, true);
     static Symbol part_difficulty_sym("part_difficulty_sym");
     i_pConfig->FindData(part_difficulty_sym, mPartDifficultySym, false);
     static Symbol filter("filter");
