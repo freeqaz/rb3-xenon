@@ -625,7 +625,8 @@ void MasterAudio::SeeGem(int i1, float f2, int i3) {
 void MasterAudio::FillSwing(int idx, int, int, int, bool) {
     AudioTrackNum num = TrackNumAt(idx);
     if (mTrackData[num]->InButtonMashingMode()) {
-        mTrackData[num]->SetLastMashTime(GetTime());
+        float now = GetTime();
+        mTrackData[num]->SetLastMashTime(now);
         SetTrackMuteFader(num, -1, 0, 10.0f);
     }
 }
