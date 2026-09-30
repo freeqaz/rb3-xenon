@@ -1047,8 +1047,7 @@ int MemFindHeap(const char *name) {
 }
 static SIZE_T sMinPhysFree = (SIZE_T)-1;
 
-void MemPrintOverview(int heapId, char *const buf) {
-    char *p = buf;
+void MemPrintOverview(int heapId, TextStream &stream) {
     if ((int)-2 == heapId || heapId == -3) {
         MEMORYSTATUS status;
         GlobalMemoryStatus(&status);
@@ -1059,13 +1058,10 @@ void MemPrintOverview(int heapId, char *const buf) {
         unsigned long minFreeKB = sMinPhysFree >> 10;
         unsigned long availKB = status.dwAvailPhys >> 10;
         int usageKB = usage >> 10;
-        const char *str = MakeString(
+        stream << MakeString(
             " [%5s] KB free:%7u(%7u) usage:%5i\n",
             "physical", availKB, minFreeKB, usageKB
         );
-        strcpy(p, str);
-        auto _tmp0 = strlen(p);
-        p += _tmp0;
     }
     for (int i = 0; i < gNumHeaps; i++) {
         if (heapId == -3 || heapId == i) {
@@ -1076,13 +1072,10 @@ void MemPrintOverview(int heapId, char *const buf) {
             int freeKB = biggestFree >> 10;
             int totalFreeKB = numFreeBytes >> 10;
             const char *name = MemHeapName(i);
-            const char *str = MakeString(
+            stream << MakeString(
                 " [%5s] KB free:%7d(%7d) big:%7d lfrag:%5d rfrag:%5d waste:%5d\n",
                 name, totalFreeKB, freeKB, bigKB, leftFrag, rightFrag, wasteKB
             );
-            strcpy(p, str);
-            auto _tmp1 = strlen(p);
-            p += _tmp1;
         }
     }
 }

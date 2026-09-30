@@ -293,11 +293,12 @@ namespace {
             allocType = "XMV";
         }
 
-        char buf[0x800];
-        Hx_snprintf(buf, 0x800, "Allocation failure, \"%s\", want %d, have %d, total phys %d",
-            allocType, size, memStatus.dwAvailPhys, gPhysicalUsage);
-        MemPrintOverview(kNoHeap, buf + strlen(buf));
-        MILO_FAIL(buf);
+        String msg(MakeString(
+            "Allocation failure, \"%s\", want %d, have %d, total phys %d",
+            allocType, size, memStatus.dwAvailPhys, gPhysicalUsage
+        ));
+        MemPrintOverview(kNoHeap, msg);
+        MILO_FAIL(msg.c_str());
 #else
         (void)size;
         (void)physical;

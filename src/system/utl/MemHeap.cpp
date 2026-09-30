@@ -412,19 +412,16 @@ int *MemHeap::Alloc(int sizeWords, int align, int &allocSize) {
             }
         }
         int wantBytes = sizeWords * 4;
-        char buf[2048];
-        const char *msg = MakeString(
+        String msg(MakeString(
             "Allocation failure, heap \"%s\", want %d bytes\n"
             "   lFrags=  %8d\n"
             "   rFrags=  %8d\n"
             "   Biggest Block=%8d\n"
             "   Free Bytes=   %8d\n",
             mName, wantBytes, lFrags, rFrags, maxFreeBlock, freeBytes
-        );
-        strcpy(buf, msg);
-        int len = strlen(buf);
-        MemPrintOverview(-3, buf + len);
-        MILO_FAIL(buf);
+        ));
+        MemPrintOverview(-3, msg);
+        MILO_FAIL(msg.c_str());
     }
     return result;
 }
