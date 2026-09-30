@@ -368,16 +368,27 @@ bool UIManager::OverloadHorizontalNav(JoypadAction act, JoypadButton btn, Symbol
     return ret;
 }
 
+// RB3 retail (0x82804268) is rb3-Wii's Terminate without the two calls RB3
+// never needs: CheatProvider is never Init'd here and the Automator is never
+// allocated (see Init). It force-releases and deletes the UI resources, and it
+// removes the callback Init actually added (UITerminateCallback; the old body
+// removed TerminateCallback, which was never registered).
 void UIManager::Terminate() {
-    CheatProvider::Terminate();
     UILabel::Terminate();
     SetName(0, 0);
     KeyboardUnsubscribe(this);
     RELEASE(mCam);
     RELEASE(mEnv);
     RELEASE(mJoyClient);
-    TheDebug.RemoveExitCallback(TerminateCallback);
-    RELEASE(mAutomator);
+    for (std::list<UIResource *>::iterator it = mResources.begin(); it != mResources.end();
+         ++it) {
+        (*it)->ForceRelease();
+    }
+    for (std::list<UIResource *>::iterator it = mResources.begin(); it != mResources.end();
+         ++it) {
+        delete *it;
+    }
+    TheDebug.RemoveExitCallback(UITerminateCallback);
 }
 
 bool UIManager::IsGameScreenActive() {
