@@ -73976,10 +73976,17 @@
    "name": "SongSectionOnly",
    "address": "0x826e3ce8",
    "survivor": "?DoneWithSong@VocalPlayer@@UBA_NXZ",
-   "folded": [
-    "?SongSectionOnly@VocalPlayer@@QBA_NAAM0@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions. W16-U 2026-09-14: survivor re-homed to the spelling whose COMDAT equals the retail body at 0x826e3ce8 (masked bytes + branch relocations adjudicated by name); the previous survivor is demoted to folded. The membership SET is unchanged, so this asserts no new fold -- gen_symbol_alias_map.py renders [survivor, *folded] at one bucket address, order-independent."
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions. W16-U 2026-09-14: survivor re-homed to the spelling whose COMDAT equals the retail body at 0x826e3ce8 (masked bytes + branch relocations adjudicated by name); the previous survivor is demoted to folded. The membership SET is unchanged, so this asserts no new fold -- gen_symbol_alias_map.py renders [survivor, *folded] at one bucket address, order-independent.",
+   "withdrawn": [
+    {
+     "spelling": "?SongSectionOnly@VocalPlayer@@QBA_NAAM0@Z",
+     "lane": "W16-GT 2026-09-30",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "why": "W16-GT 2026-09-30. Both spellings are map-resident at DISTINCT retail addresses: survivor ?DoneWithSong@VocalPlayer@@UBA_NXZ at 0x826e3ce8 and ?SongSectionOnly@VocalPlayer@@QBA_NAAM0@Z at 0x826e4208 (named by W17-CLEAN-VP 63f5467a, where our compiled body pairs at fuzzy ~71.52 -- a distinct real body, not a fold). A linked image resolves each COMDAT to one address, so this membership cannot be an ICF fold. Validator reported CONTRADICTED (FATAL) on main 025aeb87. Withdrawn, not pruned."
+    }
+   ]
   },
   {
    "name": "_M_erase",
@@ -75233,11 +75240,17 @@
    "name": "Sort",
    "address": "0x827e4880",
    "survivor": "?Sort@?$TrackWidgetImp@UInstance@RndMultiMesh@@@@UAAXXZ",
-   "folded": [
-    "?Sort@?$TrackWidgetImp@VMeshInstance@@@@UAAXXZ"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "?Sort@?$TrackWidgetImp@VMeshInstance@@@@UAAXXZ",
+     "lane": "W16-GT 2026-09-30",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "why": "W16-GT 2026-09-30. Both spellings are map-resident at DISTINCT retail addresses: this group's survivor ?Sort@?$TrackWidgetImp@UInstance@RndMultiMesh@@@@UAAXXZ at 0x827e4880 and the folded ?Sort@?$TrackWidgetImp@VMeshInstance@@@@UAAXXZ at 0x827e48c0 (named by W16-GP 025aeb87, where our compiled COMDAT pairs at fuzzy 100.0). A linked image resolves each COMDAT to one address, so two distinct resident bodies cannot be one ICF fold. The bodies call different _S_sort instantiations (0x827e3c38 RndMultiMesh::Instance vs 0x827e3e10 MeshInstance), so their relocations differ and /OPT:ICF could not have folded them -- consistent with this group's own 2026-08-19 UNDER_PARTITIONED_ICF_CLOSURE repair note, which already recorded that the members disagree on resolved operands. Validator reported CONTRADICTED (FATAL) on main 025aeb87. Withdrawn, not pruned."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
