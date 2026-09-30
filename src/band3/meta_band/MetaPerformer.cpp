@@ -493,7 +493,13 @@ bool MetaPerformer::VocalHarmonyInSong() const {
     return data && data->HasVocalHarmony();
 }
 
+// Retail declares any/random as FUNCTION-LOCAL statics sharing one guard
+// word, claimed in source order (any 0x1, random 0x2), not the
+// utl/Symbols.h globals -- W16-GZ localstatic lever. gNullStr is a plain
+// global (not guarded) and is left as-is.
 int MetaPerformer::GetSetlistMaxVocalParts() const {
+    static Symbol any("any");
+    static Symbol random("random");
     int parts = 1;
     for (std::vector<Symbol>::const_iterator it = mSongs.begin(); it != mSongs.end();
          ++it) {
