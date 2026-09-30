@@ -821,39 +821,35 @@ void Player::SetEnergyAutomatically(float f) {
     bool oldCanDeploy = CanDeployOverdrive();
     mBandEnergy = f;
     BandTrack *track = GetBandTrack();
-    if (!track)
-        return;
-    OverdriveMeter *meter = track->mStarPowerMeter;
-    if (!meter)
-        return;
-    if (mTrackType == kTrackDrum) {
-        if (!oldCanDeploy) {
-            if (CanDeployOverdrive()) {
-                EnableDrumFills(true);
+    if (track) {
+        OverdriveMeter *meter = track->mStarPowerMeter;
+        if (meter) {
+            if (mTrackType == kTrackDrum) {
+                if (!oldCanDeploy && CanDeployOverdrive()) {
+                    EnableDrumFills(true);
+                } else if (!CanDeployOverdrive()) {
+                    EnableDrumFills(false);
+                }
             }
-        } else {
-            if (!CanDeployOverdrive()) {
-                EnableDrumFills(false);
+            OverdriveMeter::State state;
+            if (mDeployingBandEnergy) {
+                state = OverdriveMeter::kDeploying;
+            } else {
+                if (!CanDeployOverdrive())
+                    state = OverdriveMeter::kFilling;
+                else
+                    state = OverdriveMeter::kReady;
             }
+            float pulseDelay = 0.0f;
+            if (state == OverdriveMeter::kReady) {
+                pulseDelay = GetTrackPanelDir()->GetPulseAnimStartDelay(true);
+            }
+            meter->SetEnergy(f, state, TrackTypeToSym(mTrackType), pulseDelay, false);
         }
     }
-    OverdriveMeter::State state;
-    if (mDeployingBandEnergy) {
-        state = OverdriveMeter::kDeploying;
-    } else {
-        if (!CanDeployOverdrive())
-            state = OverdriveMeter::kFilling;
-        else
-            state = OverdriveMeter::kReady;
-    }
-    float pulseDelay = 0.0f;
-    if (state == OverdriveMeter::kReady) {
-        pulseDelay = GetTrackPanelDir()->GetPulseAnimStartDelay(true);
-    }
-    meter->SetEnergy(f, state, TrackTypeToSym(mTrackType), pulseDelay, false);
 
     bool newCanDeploy = CanDeployOverdrive();
-    if (newCanDeploy != oldCanDeploy) {
+    if (oldCanDeploy != newCanDeploy) {
         if (mUser) {
             Track *userTrack = mUser->GetTrack();
             if (userTrack) {
