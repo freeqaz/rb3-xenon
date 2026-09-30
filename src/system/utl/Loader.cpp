@@ -403,11 +403,14 @@ void LoadMgr::Poll() {
 }
 
 void LoadMgr::RegisterFactory(const char *cc, LoaderFactoryFunc *func) {
+#ifdef HX_NATIVE
+    // DC3's duplicate-extension scan; retail (RB3) registers unconditionally.
     FOREACH (it, mFactories) {
         if (it->first == cc) {
             MILO_NOTIFY("More than one LoadMgr factory for extension \"%s\"!", cc);
         }
     }
+#endif
     mFactories.push_back(std::pair<String, LoaderFactoryFunc *>(cc, func));
 }
 
@@ -523,7 +526,12 @@ DataNode OnSetLoaderPeriod(DataArray *a) {
 }
 
 DataNode OnSysPlatformSym(DataArray *a) {
+#ifdef HX_NATIVE
     return PlatformSymbol(TheLoadMgr.GetPlatform());
+#else
+    // retail passes the constant (li r4, 2 = kPlatformXBox), like "sysplatform"
+    return PlatformSymbol(kPlatformXBox);
+#endif
 }
 
 DataNode OnLoadMgrPrint(DataArray *a) {
