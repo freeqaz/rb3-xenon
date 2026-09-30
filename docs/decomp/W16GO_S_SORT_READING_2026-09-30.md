@@ -244,7 +244,34 @@ would mean the rename did not take (inert map edit), not that it was harmless.
 
 ## 8. Measured result
 
-*(pending)*
+`tools/ab_measure.py --worktree ~/tmp/wt-w16-go --from-dirty --label w16go-rename-0x827e5d88`,
+run dir `.ab_measure_runs/20260930-013548-w16go-rename-0x827e5d88-3698072`, tool
+blob `9c5dec33` == HEAD, objdiff-cli `sha256:c1b7d952…` stable across legs, both legs
+settled (leg A: 381 msvc + 1 split + 7 patch on the forced re-split, then 0 work;
+leg B: split=1, `renamer_patched=1833`, then 0 work), `symbols.txt` at its split
+fixed point on both legs after **0** extra re-splits (sha chain `1e8375f9 -> 1e8375f9`).
+
+| measure | predicted | measured |
+|---|---|---|
+| `matched_functions` | 0 | **+0** (44,154 → 44,154) |
+| `matched_code` | 0 B | **+0 B** (40.772522 % → 40.772522 %) |
+| `masked_equal_functions` | 0 | **+0** (23,323) |
+| `honest` | 0 | +0 (20,831) |
+| `fuzzy_match_percent` | ≈ −0.0041 pp | **−0.004126 pp** (50.497726 → 50.493600) |
+| the row (`default/VocalTrack`, 424 B) | 99.81 → 0, still in the unit | **99.81132 → 0**, unit 220 rows / 179 matched unchanged, unit fuzzy 90.7703 → 89.81655 |
+| units at 100 (mpn / all-rows-fuzzy) | unchanged | 196 → 196 / 173 → 173 |
+| `none` control leg | Δ0 / Δ0 / ≈ −0.0041 | `matched` **45,574 → 45,573**, `matched_code` **−424 B** (Δcode% −0.004138) |
+
+Every prediction held. The one thing the prediction table under-stated is the
+`none` control: under the `none` ruler the mislabelled row had been counted as a
+**matched function with 424 B of matched code** — a false 100 — and only
+`name_check`'s charge on the `<MidiParser*>` dtor-thunk name kept it out of the
+graded count. The rename removes that false credit on `none` and costs nothing on
+the graded ruler. `ab_measure` classified the `none` movement as `REAL_PAIRING`
+("a nulling removes false byte credit"), which is the correct reading.
+
+The worktree was handed back with the map edit as its dirty state and the edit was
+then committed on `w16-go`.
 
 ## 9. What this lane did not do, and why
 
