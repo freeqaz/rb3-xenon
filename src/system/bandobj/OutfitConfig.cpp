@@ -317,8 +317,7 @@ void OutfitConfig::Piercing::Deform(SyncMeshCB *cb) {
     const std::vector<SyncMeshCB::Vert> *beforeVerts = &cb->GetVerts(headMesh);
     if (!beforeVerts)
         return;
-    if ((unsigned short)beforeVerts->size()
-        != (unsigned int)headMesh->Verts().size()) {
+    if (beforeVerts->size() != headMesh->Verts().size()) {
         MILO_WARN(
             "%s can't apply piercing deformation, before verts different than head "
             "(0x%x) vert count (%d v %d)",
@@ -342,12 +341,12 @@ void OutfitConfig::Piercing::Deform(SyncMeshCB *cb) {
                     PathName(mPiercing.Owner()),
                     i
                 );
-                continue;
+                return;
             }
             for (int j = 0; j < reskinMesh->Verts().size(); j++) {
                 unsigned short faceIdx = piece.unk14[j * 2];
                 RndMesh::Vert &dst = reskinMesh->Verts(j);
-                if (faceIdx >= (unsigned short)headMesh->Faces().size()) {
+                if (faceIdx >= headMesh->Faces().size()) {
                     MILO_WARN(
                         "%s can't do piercing piece %d deform, head verts out of "
                         "date, need to re-ao",
@@ -361,15 +360,14 @@ void OutfitConfig::Piercing::Deform(SyncMeshCB *cb) {
                 weights[0] = (float)(packed & 0xff) / 255.0f;
                 weights[1] = (float)((packed >> 8) & 0xff) / 255.0f;
                 weights[2] = 1.0f - weights[0] - weights[1];
+                unsigned short *faceVerts = &headMesh->Faces(faceIdx).v1;
                 for (int k = 0; k < 3; k++) {
-                    unsigned short *faceVerts = &headMesh->Faces(faceIdx).v1;
                     unsigned short srcIdx = faceVerts[k];
                     RndMesh::Vert &cur = headMesh->Verts(srcIdx);
                     const SyncMeshCB::Vert &before = (*beforeVerts)[srcIdx];
-                    float w = weights[k];
-                    dst.pos.x += (cur.pos.x - before.pos.x) * w;
-                    dst.pos.y += (cur.pos.y - before.pos.y) * w;
-                    dst.pos.z += (cur.pos.z - before.pos.z) * w;
+                    Vector3 d;
+                    Subtract(cur.pos, before.pos, d);
+                    ScaleAddEq(dst.pos, d, weights[k]);
                 }
             }
         } else {
@@ -380,13 +378,12 @@ void OutfitConfig::Piercing::Deform(SyncMeshCB *cb) {
                     PathName(mPiercing.Owner()),
                     i
                 );
-                continue;
+                return;
             }
             const SyncMeshCB::Vert &before = (*beforeVerts)[piece.mVert];
             RndMesh::Vert &headVert = headMesh->Verts(piece.mVert);
-            float dx = headVert.pos.x - before.pos.x;
-            float dy = headVert.pos.y - before.pos.y;
-            float dz = headVert.pos.z - before.pos.z;
+            Vector3 delta;
+            Subtract(headVert.pos, before.pos, delta);
             if (reskinMesh) {
                 for (int j = 0; j < piece.unk14.size(); j++) {
                     unsigned short dstIdx = piece.unk14[j];
@@ -403,16 +400,12 @@ void OutfitConfig::Piercing::Deform(SyncMeshCB *cb) {
                         break;
                     }
                     RndMesh::Vert &dst = reskinMesh->Verts(dstIdx);
-                    dst.pos.x += dx;
-                    dst.pos.y += dy;
-                    dst.pos.z += dz;
+                    Add(delta, dst.pos, dst.pos);
                 }
             } else {
                 RndTransformable *attach = mPiercing;
                 Transform &xfm = attach->DirtyLocalXfm();
-                xfm.v.x = unkc.v.x + dx;
-                xfm.v.y = unkc.v.y + dy;
-                xfm.v.z = unkc.v.z + dz;
+                Add(unkc.v, delta, xfm.v);
             }
         }
     }
