@@ -211,10 +211,11 @@ void SpotlightDrawer::DrawAdditional(
     SpotlightDrawer::SpotlightEntry *const &spotEnd
 ) {
     MILO_ASSERT(spotIter != spotEnd, 0x298);
-    for (; spotEnd != spotIter; ++spotIter) {
+    // retail walks the spotlight's list in place (no by-value copy) and
+    // tests spotIter != spotEnd (rb3-Wii shape)
+    for (; spotIter != spotEnd; ++spotIter) {
         Spotlight *sl = spotIter->mSpotlight;
-        auto _tmp0 = sl->GetAdditionalObjects();
-        FOREACH (it, _tmp0) {
+        FOREACH (it, sl->mAdditionalObjects) {
             RndDrawable *add = *it;
             MILO_ASSERT(add != sl, 0x2a3);
             if (add != sl)
