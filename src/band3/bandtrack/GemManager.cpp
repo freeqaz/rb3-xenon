@@ -540,7 +540,6 @@ void GemManager::SetupGems(int startTick) {
     int repeatedChordEndTick = -1;
     mTrackDir->ClearChordMeshRefCounts();
 
-    bool anyRG = false;
     bool anyRGChord = false;
 
     for (unsigned int i = 0; i < gems.size(); i++) {
@@ -682,10 +681,6 @@ void GemManager::SetupGems(int startTick) {
                 MILO_WARN("No track dir in setup gems, so chord meshes can't be built");
             }
         }
-        if (gem.IsRealGuitar()) {
-            anyRG = true;
-        }
-
         int phraseStart = -1;
         int phraseEnd = -1;
         if (gem.IsRealGuitar() && slots != 0) {
@@ -814,10 +809,10 @@ void GemManager::SetupGems(int startTick) {
     }
 
     mTrackDir->DeleteUnusedChordMeshes();
+    // Retail has no IsRealGuitar()/SyncFingerFeedback path here (the Wii
+    // oracle's anyRG flag is absent from TU5 SetupGems).
     if (anyRGChord) {
         mTrackDir->SyncObjects();
-    } else if (anyRG) {
-        mTrackDir->SyncFingerFeedback();
     }
 
     mEnd = 0;
