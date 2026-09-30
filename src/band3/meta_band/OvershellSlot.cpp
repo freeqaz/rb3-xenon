@@ -1633,16 +1633,10 @@ void OvershellSlot::DeleteCharacter() {
     MILO_ASSERT(pUser->IsLocal(), 0xB40);
     LocalBandUser *localUser = pUser->GetLocalBandUser();
     BandProfile *pProfile = TheProfileMgr.GetProfileForUser(localUser);
-    if (TheNetSync->GetUIState() == kNetUI_MetaLoadingPreSave) {
-        ShowState(kState_ChooseCharDeleteDenial);
-    } else if (!pProfile) {
-        MILO_WARN("illegal attempt made to delete guest character\n");
-    } else {
-        MILO_ASSERT(pProfile, 0xB53);
-        pProfile->DeleteChar(mCharForEdit);
-        mCharForEdit = 0;
-        mCharProvider->Reload(localUser);
-    }
+    MILO_ASSERT(pProfile, 0xB53);
+    pProfile->DeleteChar(mCharForEdit);
+    mCharForEdit = 0;
+    mCharProvider->Reload(localUser);
 }
 
 void OvershellSlot::AttemptShowCharDelete() {
@@ -1673,17 +1667,13 @@ void OvershellSlot::SelectChar(int i1) {
     LocalBandUser *pLocalUser = pUser->GetLocalBandUser();
     MILO_ASSERT(pLocalUser, 0xB85);
     BandProfile *profile = TheProfileMgr.GetProfileForUser(pLocalUser);
-    if (TheNetSync->GetUIState() == kNetUI_MetaLoadingPreSave) {
-        ShowState(kState_ChooseCharDenial);
-    } else if (mCharProvider->IsIndexNewChar(i1)) {
-        if (!mSessionMgr->IsLocal()) {
-            ShowState(kState_ChooseCharDenial);
-        } else if (!profile || !profile->HasValidSaveData()) {
+    if (mCharProvider->IsIndexNewChar(i1)) {
+        if (!profile || !profile->HasValidSaveData()) {
             ShowState(kState_CharCreatorDenialNoProfile);
         } else if (profile->NumChars() >= 10) {
-            ShowEnterFlowPrompt(kState_CharCreatorDenialMaxChars);
+            ShowState(kState_CharCreatorDenialMaxChars);
         } else
-            ShowState(kState_EnterCharCreator);
+            ShowEnterFlowPrompt(kState_EnterCharCreator);
     } else if (mCharProvider->GetCharData(i1)) {
         pUser->SetChar(mCharProvider->GetCharData(i1));
         LeaveOptions();
