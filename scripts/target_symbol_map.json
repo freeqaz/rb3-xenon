@@ -7216,7 +7216,7 @@
  "0x82438868": "?SetType@RndMat@@UAAXVSymbol@@@Z",
  "0x82438990": "??1RndMat@@UAA@XZ",
  "0x82438c28": "?Copy@RndMat@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
- "0x82438ee8": "??_GModalKeyListener@@UAAPAXI@Z",
+ "0x82438ee8": "??_GRndMat@@UAAPAXI@Z",
  "0x82438f40": "?Load@RndMat@@UAAXAAVBinStream@@@Z",
  "0x82439910": "??MEdge@RndAmbientOcclusion@@QBA_NABU01@@Z",
  "0x82439968": "?MovieExtension@@YAPBDPBDW4Platform@@@Z",
