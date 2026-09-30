@@ -2060,35 +2060,24 @@ float VocalPlayer::GetNumPhrases(int startTick, int endTick, int isolatedPart) {
         startPart = endPart = isolatedPart;
     }
     int count = 0;
-    unsigned int phraseIdx = 0;
-    int byteOffset = 0;
-    while (phraseIdx < phraseVec.size()) {
-        VocalPhrase *phrase = (VocalPhrase *)((char *)&phraseVec[0] + byteOffset);
-        int clampedStart = phrase->unk8;
-        if (clampedStart < startTick) clampedStart = startTick;
-        int clampedEnd = phrase->unk8 + phrase->unkc;
-        if (endTick < clampedEnd) clampedEnd = endTick;
-        int part = startPart;
+    for (unsigned int i = 0; i < phraseVec.size(); i++) {
+        int clampedStart = Max(phraseVec[i].unk8, startTick);
+        int clampedEnd = Min(phraseVec[i].unk8 + phraseVec[i].unkc, endTick);
         bool found = false;
-        while (part <= endPart && !found) {
-            if (phrase && part == 0) {
-                if (phrase->unk10 != phrase->unk14) {
+        for (int part = startPart; part <= endPart && !found; part++) {
+            if (part == 0) {
+                if (phraseVec[i].unk10 != phraseVec[i].unk14) {
                     found = true;
                     count++;
                 }
             } else {
                 VocalNoteList *vnl = TheSongDB->GetVocalNoteList(part);
-                if (vnl != NULL && vnl->HasNoteInRange(clampedStart, clampedEnd) != -1) {
-                    if (part != 0 || phrase->unk10 != phrase->unk14) {
-                        found = true;
-                        count++;
-                    }
+                if (vnl && vnl->HasNoteInRange(clampedStart, clampedEnd) != -1) {
+                    found = true;
+                    count++;
                 }
             }
-            part++;
         }
-        phraseIdx++;
-        byteOffset += 0x38;
     }
     return (float)count;
 }
