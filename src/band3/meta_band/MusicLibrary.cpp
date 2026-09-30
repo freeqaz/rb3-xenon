@@ -1854,6 +1854,7 @@ void MusicLibrary::PushHeaderDataToScreen() {
 }
 
 void MusicLibrary::PushMissingSetlistSongsToScreen(int idx) {
+    static Symbol show_missing_setlist_songs_dialog("show_missing_setlist_songs_dialog");
     static Message msg(show_missing_setlist_songs_dialog, 0);
     msg[0] = idx;
     SendMessageToSongSelectPanel(msg);
@@ -2159,9 +2160,20 @@ DataNode MusicLibrary::OnMsg(const AddLocalUserResultMsg &msg) {
     return 1;
 }
 
+// Retail fn_82540208: rebuild the filtered song list and sort, re-highlight.
+void MusicLibrary::RefreshSongLists() {
+    TheSongSortMgr->BuildFilteredSongList(&mTask.filter, PartForFilter());
+    TheSongSortMgr->BuildSortTree(unkdc);
+    TheSongSortMgr->BuildSortList(unkdc);
+    TryToSetHighlight(unkd4, unkd8, true);
+    PushHighlightToScreen(true);
+}
+
 DataNode MusicLibrary::OnMsg(const NewRemoteUserMsg &) {
     SwitchOffRankedSort();
     RebuildUserConfigData();
+    RefreshSongLists();
+    static Symbol qp_coop("qp_coop");
     if (TheGameMode->InMode(qp_coop)) {
         MILO_ASSERT(!TheSessionMgr->IsLocal(), 0xA74);
         mTask.setlistMode = kSetlistForced;
