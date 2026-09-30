@@ -365,7 +365,7 @@ void VocalPlayer::LocalSetEnabledState(EnabledState state, int i1, BandUser *use
         int tick = (int)MsToTick(GetSongMs());
         bool enabled = (state == kPlayerEnabled);
         mCommonPhraseCapturer->Enabled(this, mTrackNum, tick, enabled);
-    } else if ((unsigned)(state - kPlayerBeingSaved) <= 1U) {
+    } else if (state == kPlayerBeingSaved || state == kPlayerDroppingIn) {
         std::vector<VocalPhrase> &phrases = mVocalParts[0]->mVocalNoteList->mPhrases;
         for (std::vector<VocalPhrase>::iterator it = phrases.begin(); it != phrases.end(); ++it) {
             if (mEnableMs <= it->unk0) {
@@ -380,9 +380,10 @@ void VocalPlayer::LocalSetEnabledState(EnabledState state, int i1, BandUser *use
             mTrack->RebuildHUD();
         }
     }
-    bool vocalState = ((unsigned)state <= (unsigned)kPlayerDisconnected) &&
-                      ((1 << state) & 0x19) != 0;
-    mBeatMaster->GetAudio()->SetVocalState(vocalState);
+    mBeatMaster->GetAudio()->SetVocalState(
+        state == kPlayerEnabled || state == kPlayerDisconnected
+        || state == kPlayerDroppingIn
+    );
 }
 
 int VocalPlayer::LocalDeployBandEnergy() {
