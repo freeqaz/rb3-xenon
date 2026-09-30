@@ -8,7 +8,17 @@ public:
     AsyncFileWin(const char *, int);
     virtual ~AsyncFileWin();
 
+#ifdef HX_NATIVE
     MEM_OVERLOAD(AsyncFile, 0x17);
+#else
+    // RB3-360 retail inlines both: new -> _MemAllocTemp(s, 0) at the
+    // AsyncFile::New call site, delete -> MemFree(v) in ??_GAsyncFileWin.
+    static void *operator new(unsigned int s) {
+        return _MemAllocTemp(s, __FILE__, 0x17, "AsyncFile", 0);
+    }
+    static void *operator new(unsigned int s, void *place) { return place; }
+    static void operator delete(void *v) { MemFree(v, __FILE__, 0x17, "AsyncFile"); }
+#endif
 
 protected:
     virtual bool Truncate(int);
