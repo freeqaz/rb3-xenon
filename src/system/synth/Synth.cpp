@@ -644,7 +644,10 @@ void SynthInit() {
     TheSynth->Init();
     TheSynth->SetMic(cfg->FindArray("mic"));
     TheSynth->SetFX(cfg->FindArray("fx"));
+#ifdef HX_NATIVE
+    // DC3-era; retail 0x82701710 does not read master_vol here.
     TheSynth->MasterFader()->SetVal(cfg->FindFloat("master_vol"));
+#endif
     TheDebug.AddExitCallback(SynthTerminate);
     PreloadSharedSubdirs("synth");
 }
