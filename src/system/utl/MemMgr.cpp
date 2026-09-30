@@ -40,8 +40,16 @@ int gThreadIds[MAX_BUF_THREADS];
 
 bool gInitted;
 
+#ifdef HX_NATIVE
 MemHeap gHeaps[MAX_HEAPS];
 int gNumHeaps;
+#else
+// Retail addresses both off ONE anchor (lbl_82E06BA8: gHeaps at +0, gNumHeaps
+// at +0x254) in MemAllocSize/MemFree/MemTruncate/MemFindHeap -- the signature of
+// internal-linkage statics co-addressed by MSVC, not two externals.
+static MemHeap gHeaps[MAX_HEAPS];
+static int gNumHeaps;
+#endif
 
 #ifdef HX_NATIVE
 // On native, do NOT override global operator new/delete.
@@ -142,13 +150,13 @@ void(MemFree)(void *mem) {
 #ifdef HX_NATIVE
         free(mem);
 #else
+        // Retail (0x827BC430): no gMemTracker test and no HeapStats update --
+        // MemTrackFree is called unconditionally after the heap walk.
         CritSecTracker tracker(gMemLock);
         int i;
-        int freed = 0;
         MemHeap *heap = gHeaps;
         for (i = 0; i < gNumHeaps; i++, heap++) {
-            freed = heap->Free((int *)mem);
-            if (freed)
+            if (heap->Free((int *)mem))
                 break;
         }
         if (i == gNumHeaps) {
@@ -158,17 +166,7 @@ void(MemFree)(void *mem) {
                 free(mem);
             }
         }
-        if (gMemTracker) {
-            MemTrackFree(mem);
-#ifdef HX_NATIVE
-            // On LP64, mHeapOnly is at a different offset and mHeapStats shifts
-            // Skip heap stats tracking on native — not critical for functionality
-#else
-            if (((char *)gMemTracker)[0x18195]) {
-                ((HeapStats *)((char *)gMemTracker + 0xC))[(signed char)i].Free(freed, freed);
-            }
-#endif
-        }
+        MemTrackFree(mem);
 #endif
     }
 }
@@ -188,7 +186,10 @@ void *MemTruncate(void *mem, int size, const char *file, int line, const char *n
         void *truncated = nullptr;
         int i;
         for (i = 0; i < gNumHeaps; i++) {
-            if (gHeaps[i].Truncate((int *)mem, allocSize, i60))
+            // retail keeps the heap's result (mr. r30, r3): a heap truncate
+            // returns that block, not nullptr
+            truncated = gHeaps[i].Truncate((int *)mem, allocSize, i60);
+            if (truncated)
                 break;
         }
         if (i == gNumHeaps) {
@@ -682,13 +683,31 @@ void MemInit() {
     gInitted = true;
 }
 
+#ifndef HX_NATIVE
+static inline int MemHeapAllocSizeInline(const MemHeap &heap, int *ptr) {
+    if ((ptr >= heap.Start()) && (ptr < heap.Start() + heap.SizeWords())) {
+        unsigned int header = *(unsigned int *)(ptr - 1);
+        unsigned int blockSizeWords = header >> 8;
+        unsigned int blockSizeControl = (header >> 4) & 0xF;
+        return (blockSizeWords - blockSizeControl - 1) * 4;
+    }
+    return 0;
+}
+#endif
+
 int MemAllocSize(void *mem) {
     CritSecTracker tracker(gMemLock);
     if (!mem)
         return 0;
     else {
         for (int i = 0; i < gNumHeaps; i++) {
+#ifdef HX_NATIVE
             int size = gHeaps[i].AllocSize((int *)mem);
+#else
+            // retail inlines MemHeap::AllocSize here (MemMgr and MemHeap are one
+            // TU in retail)
+            int size = MemHeapAllocSizeInline(gHeaps[i], (int *)mem);
+#endif
             if (size != 0) {
                 return size;
             }
@@ -1096,6 +1115,7 @@ void MemDelta(const char *name, int heapNum) {
              << " fragmentation:" << fragmentation << " delta:" << delta << "\n";
     gPrevFree[heapNum] = numFreeBytes;
 }
+#ifdef HX_NATIVE
 int MemFindHeap(const char *name) {
     for (int i = 0; i < gNumHeaps; i++) {
         if (gHeaps[i].Name() && strcmp(gHeaps[i].Name(), name) == 0) {
@@ -1116,6 +1136,24 @@ int MemFindHeap(const char *name) {
     }
     return -1;
 }
+#else
+// Retail (0x827BC780): no null-name test in the loop, no "char" alias, and no
+// fail -- "physical" maps to -2, otherwise gSingleHeap ? 0 : -1.
+int MemFindHeap(const char *name) {
+    for (int i = 0; i < gNumHeaps; i++) {
+        if (strcmp(gHeaps[i].Name(), name) == 0) {
+            return i;
+        }
+    }
+    if (strcmp(name, "physical") == 0) {
+        return -2;
+    }
+    if (gSingleHeap) {
+        return 0;
+    }
+    return -1;
+}
+#endif
 // Retail (fn_827BC838) is RB3's own text, not DC3's: the physical line has no
 // running minimum (no sMinPhysFree static exists), the usage figure is a signed
 // `/ 1024` (srawi+addze), and the per-heap line comes from the 4-ref
