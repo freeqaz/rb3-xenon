@@ -15387,11 +15387,17 @@
   {
    "name": "$?5UConstraintSystem",
    "address": "0x822a7a10",
-   "survivor": "??$?5UConstraintSystem@CharBlendBone@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@UConstraintSystem@CharBlendBone@@@@@Z",
-   "folded": [
-    "??$?5VOverlay@OutfitConfig@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@VOverlay@OutfitConfig@@@@@Z"
+   "survivor": "??$?5VOverlay@OutfitConfig@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@VOverlay@OutfitConfig@@@@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$?5UConstraintSystem@CharBlendBone@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@UConstraintSystem@CharBlendBone@@@@@Z",
+     "lane": "W17-BSR 2026-09-30",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION"
+    }
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "withdrawn_reason": "W17-BSR 2026-09-30: retail 0x822A7A10 calls ObjVector<OutfitConfig::Overlay>::resize (0x822A77E8) and the Overlay element reader (0x822A1C00), and its only caller is in OutfitConfig -- it is the ObjVector<Overlay> reader, which is what this group's T1 evidence matched. The BinStreamRev ObjVector<CharBlendBone::ConstraintSystem> survivor was a misname (our CharBlendBone keeps ConstraintSystems in an ObjList, and RB3 has no BinStreamRev); withdrawn, not folded."
   },
   {
    "name": "E?$ObjDirItr",
