@@ -473,11 +473,10 @@ void RGUnpackChordShapeID(
     unsigned int ui, std::vector<int> &ivec, std::vector<bool> *bvec
 ) {
     ivec.clear();
-    unsigned int shift = 0;
-    for (unsigned int i = 0; i < 6; i++) {
+    // Retail (fn_8277B2E8): the shift is the only induction variable.
+    for (unsigned int shift = 0; shift < 24; shift += 4) {
         int push = ((ui >> shift) & 0xF) - 1;
         ivec.push_back(push);
-        shift += 4;
     }
     if (bvec) {
         bvec->clear();
