@@ -116,7 +116,7 @@ protected:
     void TriggerSelf();
     void ConvertParticleTriggerType();
     void LoadOldAnim(BinStream &, RndAnimatable *);
-    void LoadOldEvent(BinStreamRev &, Hmx::Object *, const char *, ObjectDir *);
+    void LoadOldEvent(BinStream &, Hmx::Object *, const char *, ObjectDir *);
 
     DataNode OnTrigger(DataArray *);
     DataNode OnProxyCalls(DataArray *);
