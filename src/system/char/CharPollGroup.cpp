@@ -1,3 +1,10 @@
+// Retail ??0CharPollGroup@@ (0x823afc08) inlines both owner-only
+// ObjPtr<CharPollable>(this) members (mChangedBy, mChanges) as raw {mOwner,
+// mObject=0, vtable} stores, each preceded by a live &member spill to the EH
+// $T frame temp -- no `bl ??0?$ObjPtr@VCharPollable@@`. Same shape as
+// CharIKFoot; see the per-TU gate in obj/Object.h.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR
+#define RB3_OBJPTR_INLINE_OWNER_CTOR_EH
 #include "char/CharPollGroup.h"
 #include "char/CharPollable.h"
 #include "char/CharWeightable.h"

@@ -208,24 +208,32 @@ bool RndVelocityBuffer::Draw(RndCam *cam, ObjPtrList<RndDrawable> &drawList) {
     float scale = 41.666668f / (splitMs + 1.0f);
         unk36be8 = scale = Min(2.0f, scale);
 
-    if (cam != nullptr & cam == mCam) {
+    if (cam && cam == mCam) {
         mMat->SetBlend(RndMat::kBlendSrc);
         mMat->SetZMode(kZModeDisable);
 
-        int cacheIdx = mActiveXfmCacheIndex;
-        memcpy(&unk36bec[cacheIdx], &mViewProjXfm, 0x40);
-
-
+        // Retail forms the previous-frame address before the memcpy and holds
+        // it (r25) across every call below. Read the index INLINE in both
+        // subscripts: a named index local makes MSVC sink prevXfm and
+        // rematerialise it from callee-saved copies of the index and the
+        // 0x36bec base (one extra saved register, 0xf0 frame). Same finding
+        // as dc3-decomp's copy of this function (lane w7-as).
+        ViewProjXfm &curXfm = unk36bec[mActiveXfmCacheIndex];
+        ViewProjXfm &prevXfm = unk36bec[mActiveXfmCacheIndex ^ 1];
+        memcpy(&curXfm, &mViewProjXfm, 0x40);
+        // Retail advances the frame BEFORE asking for the pre-depth texture,
+        // unconditionally (0x82b855f0: bl AdvanceFrame, then the vtable 0x110
+        // PreDepthTexture call); the result is only published inside the branch.
+        bool frameReady = AdvanceFrame(cam);
         RndTex *depthTex = TheNgRnd.PreDepthTexture();
         if (depthTex != nullptr) {
             cam->SetTargetTex(mVelocityTex);
             cam->Select();
             TheShaderMgr.SetPConstant((PShaderConstant)9, depthTex);
-            bool frameReady = AdvanceFrame(cam);
             TheRenderState.SetTextureFilter(9, (RndRenderState::FilterMode)0, false);
             TheRenderState.SetTextureClamp(9, (RndRenderState::ClampMode)2);
             TheShaderMgr.SetVConstant(kVS_ViewProjMatrix, mViewProjXfm);
-            TheShaderMgr.SetPConstant((PShaderConstant)0x86, unk36bec[cacheIdx ^ 1]);
+            TheShaderMgr.SetPConstant((PShaderConstant)0x86, prevXfm);
             TheNgRnd.DrawRectDepth(
                 mFrustumNear,
                 (Vector3 (&)[4])mFrustumCorners,
@@ -237,13 +245,22 @@ bool RndVelocityBuffer::Draw(RndCam *cam, ObjPtrList<RndDrawable> &drawList) {
             auto _tmp0 = drawList.size();
             if (_tmp0 != 0) {
                 Rnd::Mode savedDrawMode = TheRnd.DrawMode();
+#ifdef HX_NATIVE
                 TheRnd.SetDrawMode(Rnd::kDrawVelocity);
+#else
+                // RB3 retail stores 5: its Rnd::Mode has no DC3
+                // kDrawOcclusionDepth, so velocity is 5, not 6 (same drift as
+                // RndShader::SelectConfig's raw compare).
+                TheRnd.SetDrawMode((Rnd::Mode)5);
+#endif
                 mMat->SetBlend((RndMat::Blend)3);
                 mMat->SetZMode(kZModeNormal);
                 auto _tmp1 = drawList.end();
                 for (ObjPtrList<RndDrawable>::iterator it = drawList.begin();
                      it != _tmp1; ++it) {
-                    (*it)->DrawShowing();
+                    // Retail calls the non-virtual RndDrawable::Draw (showing
+                    // test + cull), not the DrawShowing vcall.
+                    (*it)->Draw();
                 }
                 TheRnd.SetDrawMode(savedDrawMode);
             }
