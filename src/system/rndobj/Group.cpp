@@ -148,41 +148,35 @@ END_COPYS
 
 INIT_REVS(0x10, 0)
 
-BEGIN_LOADS(RndGroup)
-    LOAD_REVS(bs)
-    ASSERT_REVS(0x10, 0)
-    if (d.rev > 7) {
-        LOAD_SUPERCLASS(Hmx::Object)
-    }
-    LOAD_SUPERCLASS(RndAnimatable)
-    LOAD_SUPERCLASS(RndTransformable)
-    LOAD_SUPERCLASS(RndDrawable)
-    if (d.rev > 10) {
-        bs >> mObjects;
-        if (d.rev < 0x10) {
-            ObjPtr<RndEnviron> env(this);
-            bs >> env;
-            if (env) {
-                mObjects.push_back(env);
-            }
-        }
-        if (d.rev > 0xC) {
+// Retail (0x82453A40) is rb3-Wii's RB3-era body branch for branch: a plain
+// local `int rev` (no altRev, no BinStreamRev), mEnv loaded directly for
+// rev > 10, mLod + mLodScreenSize for rev > 11, and UpdateLODState() inlined
+// at the tail. The previous body was DC3's (env pushed into mObjects for
+// rev < 0x10, a String/float skip for 0xC..0xE) -- DC3 postdates RB3.
+void RndGroup::Load(BinStream &bs) {
+    int rev;
+    bs >> rev;
+    if (rev > 7)
+        Hmx::Object::Load(bs);
+    RndAnimatable::Load(bs);
+    RndTransformable::Load(bs);
+    RndDrawable::Load(bs);
+    if (rev > 10) {
+        bs >> mObjects >> mEnv;
+        if (rev > 12)
             bs >> mDrawOnly;
-        } else {
+        else
             mDrawOnly = nullptr;
-        }
         Update();
     }
-    if (d.rev > 0xB && d.rev < 0xF) {
-        String str;
-        float x;
-        bs >> str;
-        bs >> x;
+    if (rev > 11) {
+        bs >> mLod >> mLodScreenSize;
     }
-    if (d.rev > 0xD) {
-        d >> mSortInWorld;
+    if (rev > 13) {
+        bs >> mSortInWorld;
     }
-END_LOADS
+    UpdateLODState();
+}
 
 void RndGroup::StartAnim() {
     for (std::vector<RndAnimatable *>::iterator it = mAnims.begin(); it != mAnims.end();
