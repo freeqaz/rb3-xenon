@@ -1297,6 +1297,7 @@
  "0x8229d6b0": "?RecomposePatches@OutfitConfig@@QAAXH@Z",
  "0x8229d718": "?OutfitConfigGender@@YA?AVSymbol@@PAVOutfitConfig@@@Z",
  "0x8229d830": "?Replace@?$ObjPtr@VRndTex@@@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+ "0x8229d898": "??0?$ObjPtr@VRndTex@@@@QAA@ABV0@@Z",
  "0x8229d930": "??1?$ObjRefConcrete@VRndTex@@VObjectDir@@@@UAA@XZ",
  "0x8229da58": "?Replace@?$ObjPtr@VRndMat@@@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x8229dac0": "??1?$ObjRefConcrete@VRndMat@@VObjectDir@@@@UAA@XZ",
