@@ -10,6 +10,7 @@
 #include "os/Debug.h"
 #include "os/File.h"
 #include "rndobj/Mat.h"
+#include "rndobj/MeshDeform.h"
 #include "utl/BinStream.h"
 #include "utl/MemMgr.h"
 #include <algorithm>
@@ -36,6 +37,27 @@ double __frsqrte(double);
 static const size_t kMVFaceList = 0x3a;
 static const size_t kMVTwinFlag = 0x2f;
 static const size_t kMVSlotBase = 0x40;
+
+void BandPatchMesh::MeshVert::SetVert(
+    const BandPatchMesh::MeshVert *mvert, const RndMesh::Vert *vert
+) {
+    mVert = vert;
+    unk4 = mvert->unk4;
+    unk10 = mvert->unk10;
+    unk1c = mvert->unk1c;
+    unk26 = mvert->unk26;
+}
+
+void BandPatchMesh::MeshVert::SetVert(const RndMesh::Vert *vert) {
+    mVert = vert;
+    ZeroOut();
+}
+
+void BandPatchMesh::MeshVert::ZeroOut() {
+    unk1c.Zero();
+    unk4.Zero();
+    unk10.Zero();
+}
 
 int BandPatchMesh::MeshVert::AddUV(
     const BandPatchMesh::MeshVert *mv, const Vector2 &vr, const Vector2 *vp
@@ -419,6 +441,180 @@ void BandPatchMesh::ConstructQuad(RndTex *tex) {
         );
     } else
         Construct(mMeshes[0], tex, true, false, 0);
+}
+#endif
+
+// Retail 0x823460D0 (rb3-Wii BandPatchMesh.cpp:1428). Defined ahead of Construct:
+// retail Construct keeps its 1.0 / 0.0 loop constants in volatile f9 / f10 across
+// the call, which the compiler does only for a callee whose register use it has
+// already seen in this TU.
+void BandPatchMesh::SetRenderToVert(
+    RndMesh::Vert &vert, const Vector2 &pos, const Vector2 &uv
+) {
+    vert.tex = uv;
+    vert.pos.Set((pos.x - 0.5f) * 2.0f, (pos.y - 0.5f) * 2.0f, 0);
+    vert.norm.Set(0, 0, -1.0f);
+    vert.boneWeights.Set(0, 0, 0, 0);
+    vert.color.Set(1, 1, 1, 1);
+}
+
+struct SortByWorkVertZ {
+    bool operator()(BandPatchMesh::MeshVert *v1, BandPatchMesh::MeshVert *v2) {
+        return v1->mVert->pos.z < v2->mVert->pos.z;
+    }
+};
+
+// Inlined into ProjectPatches in retail (the std::sort call carries a zeroed
+// comparator byte), so it is defined ahead of it.
+void BandPatchMesh::WorkVerts::SortWorkVertsByZ() {
+    std::sort(unk10.begin(), unk10.end(), SortByWorkVertZ());
+}
+
+#ifndef HX_NATIVE
+// Retail 0x8234BD68 (rb3-Wii BandPatchMesh.cpp:981). Retail-vs-oracle, read off
+// retail bytes: the scale is (0.5 / |x|, -0.5 / |y|); the hit point is clipped
+// with the out-of-line Interp(start, end, t, end); the seed vertex takes the
+// collision plane as its normal and no uv; SortWorkVertsByZ is inlined.
+void BandPatchMesh::ProjectPatches(const Transform &xfm, RndTex *tex, bool perm) {
+    Segment seg;
+    seg.start = xfm.v;
+    ScaleAdd(seg.start, xfm.m.z, -100.0f, seg.end);
+    Vector2 scale(0.5f / Length(xfm.m.x), -0.5f / Length(xfm.m.y));
+    MILO_ASSERT(64 > mMeshes.size(), 0x60A);
+    int meshCount = mMeshes.size();
+    int meshIndices[64];
+    for (int i = 0; i < mMeshes.size(); i++) {
+        meshIndices[i] = i;
+    }
+    RndMesh::sRawCollide = true;
+    int hitMeshIdx = -1;
+    int hitFaceIdx = 0;
+    float t;
+    Plane plane;
+    for (int i = 0; i < mMeshes.size(); i++) {
+        RndMesh *mesh = mMeshes[i].mesh;
+        if (mesh) {
+            if (!mesh->GetKeepMeshData()) {
+                MILO_WARN(
+                    "%s patch trying to collide against mesh with no keep_mesh_data",
+                    PathName(mesh)
+                );
+            }
+            if (mesh->CollideShowing(seg, t, plane)) {
+                hitMeshIdx = i;
+                hitFaceIdx = RndMesh::sLastCollide;
+                Interp(seg.start, seg.end, t, seg.end);
+            }
+        }
+    }
+    RndMesh::sRawCollide = false;
+    if (hitMeshIdx == -1)
+        return;
+    meshCount--;
+    meshIndices[hitMeshIdx] = meshIndices[meshCount];
+    MeshPair *hitPair = &mMeshes[hitMeshIdx];
+    WorkVerts *wv = new WorkVerts(hitPair->mesh, scale);
+    wv->SetMeshVerts();
+    RndMesh::Vert seedVert;
+    MeshVert seedMV;
+    seedMV.SetVert(&seedVert);
+    seedMV.unk1c.Set(0.5f, 0.5f);
+    seedVert.pos = seg.end;
+    seedVert.norm = *(Vector3 *)&plane;
+    seedMV.unk4 = xfm.m.x;
+    seedMV.unk10 = xfm.m.y;
+    seedMV.Normalize(1);
+    wv->AddFace(hitFaceIdx, &seedMV);
+    wv->Project();
+    wv->SortWorkVertsByZ();
+    WorkVerts *workVerts[64];
+    MeshPair *meshPairs[64];
+    meshPairs[0] = hitPair;
+    workVerts[0] = wv;
+    int wvCount = 1;
+    for (int j = 0; j < meshCount; j++) {
+        MeshPair *cur = &mMeshes[meshIndices[j]];
+        if (cur->mesh) {
+            WorkVerts *nwv = new WorkVerts(cur->mesh, scale);
+            for (int k = 0; k < wvCount; k++) {
+                if (nwv->SetSameVerts(workVerts[k])) {
+                    nwv->Project();
+                    nwv->SortWorkVertsByZ();
+                    workVerts[wvCount] = nwv;
+                    meshPairs[wvCount] = cur;
+                    wvCount++;
+                    meshIndices[j--] = meshIndices[--meshCount];
+                    break;
+                }
+            }
+            if (nwv->mMeshVerts.size() == 0)
+                delete nwv;
+        }
+    }
+    for (int i = 0; i < wvCount; i++) {
+        Construct(*meshPairs[i], tex, false, perm, workVerts[i]);
+        delete workVerts[i];
+    }
+}
+
+// Retail 0x8234B6F0 (rb3-Wii BandPatchMesh.cpp:1372). Retail-vs-oracle, read off
+// retail bytes: with `perm`, the patch mesh and the generated deform are tagged
+// with SetNote (strings 0x82039B1C / 0x82039AE8), which the oracle's bare
+// MakeString discards.
+void BandPatchMesh::Construct(
+    MeshPair &meshpair, RndTex *tex, bool quad, bool perm, WorkVerts *wv
+) {
+    MILO_ASSERT(quad || wv, 0x77D);
+    MeshPair::PatchPair &patchpair = meshpair.AddPatch(perm);
+    patchpair.mTex = tex;
+    if (mRenderTo) {
+        patchpair.mPatch->SetTransParent(0, false);
+        patchpair.mPatch->CopyBones(0);
+        patchpair.mPatch->SetHasAOCalc(false);
+    } else {
+        patchpair.mPatch->SetOrder(0.01f);
+        patchpair.mPatch->CopyBones(meshpair.mesh);
+        patchpair.mPatch->RndTransformable::Copy(meshpair.mesh, Hmx::Object::kCopyDeep);
+        patchpair.mPatch->SetHasAOCalc(meshpair.mesh->HasAOCalc());
+    }
+    if (quad) {
+        if (!mRenderTo)
+            MILO_WARN("Generating quad patch for non render to!");
+        patchpair.mPatch->Verts().resize(4);
+        patchpair.mPatch->Faces().resize(2);
+        for (int i = 0; i < 4; i++) {
+            float y = (i == 1 || i == 2) ? 1.0f : 0.0f;
+            float x = (i < 2) ? 1.0f : 0.0f;
+            Vector2 v(x, y);
+            SetRenderToVert(patchpair.mPatch->Verts(i), v, v);
+        }
+        patchpair.mPatch->Faces()[0].Set(0, 1, 2);
+        patchpair.mPatch->Faces()[1].Set(0, 2, 3);
+    } else
+        wv->SetVertsAndFaces(patchpair.mPatch, mRenderTo);
+    patchpair.mPatch->Sync(0x13F);
+    delete RndMeshDeform::FindDeform(patchpair.mPatch);
+    if (perm) {
+        patchpair.mPatch->SetNote(
+            MakeString("Generated by OutfitConfig patch port to %s", meshpair.mesh->Name())
+        );
+        if (!quad && !mRenderTo) {
+            RndMeshDeform *df = RndMeshDeform::FindDeform(meshpair.mesh);
+            if (df) {
+                RndMeshDeform *newdef = Hmx::Object::New<RndMeshDeform>();
+                RndMesh *patch = patchpair.mPatch;
+                newdef->SetName(
+                    MakeString("%s.deform", FileGetBase(patch->Name())),
+                    patchpair.mPatch->Dir()
+                );
+                newdef->Copy(df, Hmx::Object::kCopyDeep);
+                newdef->SetMesh(patchpair.mPatch);
+                wv->CopyDeformWeights(newdef, df);
+                newdef->SetNote("Generated by OutfitConfig patch porting");
+                newdef->SetNote("Generated by OutfitConfig patch porting");
+            }
+        }
+    }
 }
 #endif
 

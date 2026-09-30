@@ -103,6 +103,11 @@ public:
 
     RndMesh *Mesh() const { return mMesh; }
     void Reskin(SyncMeshCB *, bool);
+    // RB3 members DC3 dropped (rb3-Wii MeshDeform.h:60-73). Retail calls all
+    // three from BandPatchMesh::Construct / WorkVerts::CopyDeformWeights.
+    void CopyWeights(int, int, RndMeshDeform *);
+    void SetMesh(RndMesh *);
+    static RndMeshDeform *FindDeform(RndMesh *);
 
 protected:
     RndMeshDeform();

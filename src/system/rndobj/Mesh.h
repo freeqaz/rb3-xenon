@@ -314,10 +314,12 @@ protected:
     DataNode OnPointCollide(const DataArray *);
     DataNode OnConfigureMesh(const DataArray *);
 
+public:
+    // Public as in the rb3-Wii oracle (Mesh.h): BandPatchMesh::ProjectPatches
+    // sets sRawCollide around its CollideShowing loop and reads sLastCollide.
     static bool sRawCollide;
     static int sLastCollide;
 
-public:
     // Public to mirror the rb3-Wii oracle, where sUpdateApproxLight and its setter
     // are public (Mesh.h:345-347) -- Character::DrawLodOrShadow and
     // NgSpotlightDrawer::DoPost both suppress it from outside RndMesh. Statics have
