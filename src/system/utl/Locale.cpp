@@ -71,6 +71,10 @@ const char *Locale::Localize(Symbol token, bool success) const {
     if (token.Null()) {
         return "";
     }
+    // RB3 retail (fn_827C96D8) is just the null check and the table lookup: the
+    // Magnu-string override and the UsingCD() datapoint are dev/DC3-era code that
+    // retail does not carry (same for both oracles). Kept for the native port.
+#ifdef HX_NATIVE
     if (!mSymTable) {
         MILO_ASSERT(mSymTable, 0x1D8);
     }
@@ -85,15 +89,18 @@ const char *Locale::Localize(Symbol token, bool success) const {
             }
         }
     }
+#endif
 
     int idx;
     if (FindDataIndex(token, idx, success)) {
         return mStrTable[idx];
     }
 
+#ifdef HX_NATIVE
     if (UsingCD()) {
         SendDebugDataPoint("debug/locale/token", "token", token, "success", false);
     }
+#endif
 
     return nullptr;
 }
