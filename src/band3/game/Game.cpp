@@ -616,6 +616,7 @@ void Game::Jump(float f1, bool b2) {
     }
     unkd8 = f1;
     CheckRollbackEnd(unkdc);
+    GetTrackPanel()->ResetEndingBonus();
 }
 
 void Game::Replay() { unk120 = true; }

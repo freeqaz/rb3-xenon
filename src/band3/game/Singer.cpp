@@ -509,8 +509,7 @@ void Singer::ResolveAmbiguity() {
     }
 }
 
-static int sMinVibratoFrames = 0;
-static float sMaxVibratoFrameBonus = 20.0f;
+static const int sMinVibratoFrames = 0;
 
 void Singer::Poll_(float ms, const SongPos &, float micPitch, float micEnergy, float, float) {
     bool isLocal = mPlayer->IsLocal();
@@ -542,7 +541,7 @@ void Singer::Poll_(float ms, const SongPos &, float micPitch, float micEnergy, f
                 micPitch += mDetune;
                 micEnergy = 1.0f;
                 micPitch += mAutoplayVariationMagnitude *
-                                (float)sin(6.2831f * t + 0.5f * (3.1415f * (float)mSingerIndex)) +
+                                (float)sin(6.2831f * t + 0.5f * 3.1415f * (float)mSingerIndex) +
                             mAutoplayOffset;
             } else {
                 micEnergy = 0.0f;
@@ -583,7 +582,7 @@ void Singer::Poll_(float ms, const SongPos &, float micPitch, float micEnergy, f
         }
     }
 
-    float bonus = std::min(mAccumulatedVibratoBonusPoints, sMaxVibratoFrameBonus);
+    float bonus = std::min(mAccumulatedVibratoBonusPoints, 20.0f); // max vibrato frame bonus (retail: literal)
     mVibratoFrameBonus = bonus;
     mFrameMicPitch = micPitch;
     mAccumulatedVibratoBonusPoints -= bonus;

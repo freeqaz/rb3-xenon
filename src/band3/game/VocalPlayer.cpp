@@ -2028,18 +2028,18 @@ float VocalPlayer::GetNumPhrases(int startTick, int endTick, int isolatedPart) {
         int clampedEnd = phrase->unk8 + phrase->unkc;
         if (endTick < clampedEnd) clampedEnd = endTick;
         int part = startPart;
-        int found = 0;
+        bool found = false;
         while (part <= endPart && !found) {
             if (phrase && part == 0) {
                 if (phrase->unk10 != phrase->unk14) {
-                    found = 1;
+                    found = true;
                     count++;
                 }
             } else {
                 VocalNoteList *vnl = TheSongDB->GetVocalNoteList(part);
                 if (vnl != NULL && vnl->HasNoteInRange(clampedStart, clampedEnd) != -1) {
                     if (part != 0 || phrase->unk10 != phrase->unk14) {
-                        found = 1;
+                        found = true;
                         count++;
                     }
                 }
