@@ -242,7 +242,11 @@ const char *ObjectDir::ProxyName() const {
     return Loader() ? (Loader()->ProxyName() ? Loader()->ProxyName() : "") : "";
 }
 
-ObjectDir *SyncSubDir(const FilePath &fp, ObjectDir *dir) {
+// RB3 retail has no out-of-line SyncSubDir: it is expanded at both PropSyncSubDirs
+// call sites (fn_82752668), and neither expansion carries the "exists in dir and
+// subdir" replace loop that both oracles have -- after GetDir() retail goes
+// straight to the ObjDirPtr ctor/assignment. The loop is kept for the native port.
+inline ObjectDir *SyncSubDir(const FilePath &fp, ObjectDir *dir) {
     Loader *loader = TheLoadMgr.GetLoader(fp);
     DirLoader *dirLoader = dir->IsProxy()
         ? dynamic_cast<DirLoader *>(loader)
@@ -250,6 +254,7 @@ ObjectDir *SyncSubDir(const FilePath &fp, ObjectDir *dir) {
     if (!dirLoader)
         return nullptr;
     ObjectDir *retDir = dirLoader->GetDir();
+#ifdef HX_NATIVE
     if (retDir) {
         for (ObjDirItr<Hmx::Object> it(dir, false); it != nullptr; ++it) {
             Hmx::Object *found = retDir->FindObject(it->Name(), false);
@@ -265,6 +270,7 @@ ObjectDir *SyncSubDir(const FilePath &fp, ObjectDir *dir) {
             }
         }
     }
+#endif
     return retDir;
 }
 
@@ -275,57 +281,61 @@ bool PropSyncSubDirs(
     int i,
     PropOp op
 ) {
+    // RB3 retail fn_82752668: explicit DataNode temporaries and
+    // no DC3-era duplicate-subdir check before the switch (kept for native).
     ObjectDir *theGDir = gDir;
     if (op == kPropSize) {
         MILO_ASSERT(i == prop->Size(), 0x947);
-        val = (int)subdirs.size();
+        val = DataNode((int)subdirs.size());
         return true;
-    } else {
-        MILO_ASSERT(i == prop->Size() - 1, 0x94D);
-        std::vector<ObjDirPtr<ObjectDir> >::iterator subdirIt =
-            subdirs.begin() + prop->Int(i);
-        ObjDirPtr<ObjectDir> &ptr = *subdirIt;
-        if (op == kPropSet || op == kPropInsert) {
-            FilePath valPath = val.Str();
-            FilePath relative =
-                FileRelativePath(FilePath::Root().c_str(), valPath.c_str());
-            FOREACH (it, subdirs) {
-                if (it != subdirIt) {
-                    const char *curRelative =
-                        FileRelativePath(FilePath::Root().c_str(), it->GetFile().c_str());
-                    if (streq(relative.c_str(), curRelative)) {
-                        MILO_NOTIFY(
-                            "Subdir '%s' can't be added to '%s' more than once!",
-                            relative,
-                            PathName(theGDir)
-                        );
-                        return true;
-                    }
+    }
+    MILO_ASSERT(i == prop->Size() - 1, 0x94D);
+    std::vector<ObjDirPtr<ObjectDir> >::iterator subdirIt =
+        subdirs.begin() + prop->Int(i);
+    ObjDirPtr<ObjectDir> &ptr = *subdirIt;
+#ifdef HX_NATIVE
+    if (op == kPropSet || op == kPropInsert) {
+        FilePath valPath = val.Str();
+        FilePath relative = FileRelativePath(FilePath::Root().c_str(), valPath.c_str());
+        FOREACH (it, subdirs) {
+            if (it != subdirIt) {
+                const char *curRelative =
+                    FileRelativePath(FilePath::Root().c_str(), it->GetFile().c_str());
+                if (streq(relative.c_str(), curRelative)) {
+                    MILO_NOTIFY(
+                        "Subdir '%s' can't be added to '%s' more than once!",
+                        relative,
+                        PathName(theGDir)
+                    );
+                    return true;
                 }
             }
         }
-        switch (op) {
-        case kPropGet:
-            val = FileRelativePath(FilePath::Root().c_str(), ptr.GetFile().c_str());
-            break;
-        case kPropSet:
-            theGDir->RemovingSubDir(ptr);
-            ptr = SyncSubDir(val.Str(), theGDir);
-            theGDir->AddedSubDir(ptr);
-            break;
-        case kPropRemove:
-            theGDir->RemovingSubDir(ptr);
-            subdirs.erase(subdirIt);
-            break;
-        case kPropInsert:
-            subdirIt = subdirs.insert(subdirIt, SyncSubDir(val.Str(), theGDir));
-            theGDir->AddedSubDir(*subdirIt);
-            break;
-        default:
-            return false;
-        }
-        return true;
     }
+#endif
+    switch (op) {
+    case kPropGet:
+        val = DataNode(FileRelativePath(FilePath::Root().c_str(), ptr.GetFile().c_str()));
+        break;
+    case kPropSet:
+        theGDir->RemovingSubDir(ptr);
+        ptr = SyncSubDir(FilePath(val.Str()), theGDir);
+        theGDir->AddedSubDir(ptr);
+        break;
+    case kPropRemove:
+        theGDir->RemovingSubDir(ptr);
+        subdirs.erase(subdirIt);
+        break;
+    case kPropInsert:
+        subdirIt = subdirs.insert(
+            subdirIt, ObjDirPtr<ObjectDir>(SyncSubDir(FilePath(val.Str()), theGDir))
+        );
+        theGDir->AddedSubDir(*subdirIt);
+        break;
+    default:
+        return false;
+    }
+    return true;
 }
 
 BEGIN_PROPSYNCS(ObjectDir)
