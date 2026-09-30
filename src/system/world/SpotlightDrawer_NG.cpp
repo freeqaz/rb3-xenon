@@ -856,9 +856,9 @@ bool NgSpotlightDrawer::CheckRTs(NgSpotlightDrawer::SpotlightResources *sr) {
     sr->unk18 = sr->unk10;
     if (!sr->mDensityMap) {
         sr->mDensityMap = Hmx::Object::New<RndTex>();
-        int dh = RTHeight() >> 1;
-        int dw = RTWidth() >> 1;
-        sr->mDensityMap->SetBitmap(dw, dh, 32, RndTex::kDensityMap, false, nullptr);
+        sr->mDensityMap->SetBitmap(
+            RTWidth() >> 1, RTHeight() >> 1, 32, RndTex::kDensityMap, false, nullptr
+        );
     }
     return true;
 }
