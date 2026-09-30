@@ -194,6 +194,7 @@ void GameMicManager::HookUpFxForMicId(GameMic *gmic) {
 void GameMicManager::SetOverdriveEffectEnable(bool b1) {
     if (unk20) {
         FxSend *send = unk20->Find<FxSend>("delay.send", true);
+        static Symbol wet_gain("wet_gain");
         send->SetProperty(wet_gain, b1 ? 0.0f : -96.0f);
     }
 }
