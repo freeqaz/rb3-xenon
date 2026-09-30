@@ -278,9 +278,7 @@ DataNode PatchPanel::OnMsg(const ButtonDownMsg &msg) {
     if (!layer.HasSticker()) {
         return DataNode(kDataUnhandled, 0);
     }
-    float rot = (float)fmod((double)layer.Rotation(), 360.0);
-    if (rot < 0.0f)
-        rot += 360.0f;
+    float rot = Mod(layer.Rotation(), 360.0f);
     int action = msg.GetAction();
     if (mMode == "move") {
         switch (action) {
