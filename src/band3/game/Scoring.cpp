@@ -305,7 +305,7 @@ int Scoring::GetSoloScoreForStars(int stars, TrackType ty) const {
 PlayerScoreInfo *Scoring::GetPlayerScoreInfo(TrackType ty) const {
     std::vector<PlayerScoreInfo> &scores = TheSongDB->GetBaseScores();
     for (int i = 0; i < scores.size(); i++) {
-        if (ty == scores[i].mTrackType) {
+        if (scores[i].mTrackType == ty) {
             return &scores[i];
         }
     }
