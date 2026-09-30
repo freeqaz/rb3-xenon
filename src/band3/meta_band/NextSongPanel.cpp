@@ -802,6 +802,12 @@ int NextSongPanel::CountOrCreateExpandedDetails(int slot, DataArrayPtr &ptr, boo
 #pragma pop
 
 void NextSongPanel::SetupDetailLine(DataArray *detail, int slot, const char *cc, float f) {
+    static Symbol header("header");
+    static Symbol header_continued("header_continued");
+    static Symbol score("score");
+    static Symbol label("label");
+    static Symbol left_label("left_label");
+    static Symbol right_label("right_label");
     Symbol sym = detail->Sym(0);
     RndDir *rdir = mDir->Find<RndDir>(MakeString("slot%i", slot), true);
     std::hash_map<Symbol, int>::iterator it = mDetailCounts.find(sym);
@@ -838,6 +844,7 @@ void NextSongPanel::SetupDetailLine(DataArray *detail, int slot, const char *cc,
         AppLabel *lbl = dynamic_cast<AppLabel *>(t);
         MILO_ASSERT(lbl, 0x2FF);
         MILO_ASSERT(detail->Size() >= 3, 0x300);
+        static Symbol songresults_header_continued("songresults_header_continued");
         lbl->SetTokenFmt(songresults_header_continued, detail->Sym(1), detail->Int(2));
     } else if (sym == label || sym == left_label || sym == right_label || sym == header) {
         AppLabel *lbl = dynamic_cast<AppLabel *>(t);
@@ -848,9 +855,10 @@ void NextSongPanel::SetupDetailLine(DataArray *detail, int slot, const char *cc,
                 lbl->SetTextToken(node.Sym());
             } else {
                 detail->Remove(0);
+                static Symbol set_token_fmt("set_token_fmt");
                 static Message msg(set_token_fmt, 0);
                 msg[0] = DataNode(detail, kDataArray);
-                Handle(msg, false);
+                lbl->Handle(msg, false);
             }
         } else if (node.Type() == kDataString) {
             lbl->SetTextToken(node.Str());
