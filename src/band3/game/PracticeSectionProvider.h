@@ -20,7 +20,8 @@ public:
 class PracticeSectionProvider : public UIListProvider, public Hmx::Object {
 public:
     PracticeSectionProvider();
-    virtual ~PracticeSectionProvider() {}
+    // No user-declared dtor: retail 0x826CFEF0 is the implicit one (it frees
+    // mSections and runs ~Object without re-storing the derived vptrs).
     virtual void Text(int, int, UIListLabel *, UILabel *) const;
     virtual Symbol DataSymbol(int) const;
     virtual int DataIndex(Symbol) const;

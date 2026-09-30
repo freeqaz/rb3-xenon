@@ -357,10 +357,9 @@ int TrainerPanel::GetSectionLoopEnd(int idx) const {
     int end = sect.mEndTick;
     int measure = TheSongDB->GetBeatsPerMeasure(end - 0x1e0) * 0x1e0;
     int remainder = (end - sect.mStartTick) % measure;
-    int result = end + (measure - remainder);
     if (remainder == 0)
-        result = end;
-    return result;
+        return end;
+    return end + (measure - remainder);
 }
 
 void TrainerPanel::UpdateProgressMeter() { MILO_ASSERT(false, 0x207); }

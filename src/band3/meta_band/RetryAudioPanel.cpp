@@ -17,7 +17,8 @@ void RetryAudioPanel::PollForLoading() {
     bool done = !DoneLoading();
     if (!mFinished && done) {
         mFinished = true;
-        Handle(handle_audio_finished_msg, true);
+        static Message msg("handle_audio_finished"); // retail: local static
+        Handle(msg, true);
     }
 }
 

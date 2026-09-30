@@ -208,6 +208,12 @@ inline const char *GetFontCharForProDrums(int idx) {
 // };
 
 const char *GetUserFontChar(BandUser *user, MetaPerformer *perf, int idx) {
+    // Retail 0x825BE9A0 guards four function-local statics (bits 1/2/4/8)
+    // before anything else, rather than using the Symbols*.h globals.
+    static Symbol instrument_icons("instrument_icons");
+    static Symbol harmony_2("harmony_2");
+    static Symbol harmony_3("harmony_3");
+    static Symbol drum_pro("drum_pro");
     Symbol inst(gNullStr);
     TrackType ty = user->GetTrackType();
     if (ty == kTrackNone || ty == kTrackPending || ty == kTrackPendingVocals) {

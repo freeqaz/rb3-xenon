@@ -87,7 +87,8 @@ extern GemTrainerPanel *TheGemTrainerPanel;
 
 class GemTrainerLoopPanel : public UIPanel {
 public:
-    GemTrainerLoopPanel() {}
+    // NO constructor declared either: retail 0x826765F0 stores a literal 0 to
+    // the vtordisp slot, where a user-declared `{}` ctor computes vboff - 0x3c.
     OBJ_CLASSNAME(GemTrainerLoopPanel);
     OBJ_SET_TYPE(GemTrainerLoopPanel);
     static Hmx::Object *NewObject();

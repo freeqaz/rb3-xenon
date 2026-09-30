@@ -104,10 +104,12 @@ void TokenRedemptionPanel::Poll() {
 }
 END_UNPOOL_DATA
 
+// Retail fn_8263FDE8 (entered through the UIPanel subobject, so offsets read
+// -4): no RockCentral cancel, and the 360-only mOfferIDs list is cleared too.
 void TokenRedemptionPanel::Unload() {
-    TheRockCentral.CancelOutstandingCalls(this);
     mResultList.Clear();
     mListData.clear();
+    mOfferIDs.clear();
     RELEASE(mEnumeration);
     RELEASE(mPurchaser);
     UIPanel::Unload();
@@ -182,12 +184,21 @@ void TokenRedemptionPanel::ShowPurchaseUIForOffer(int ix, LocalBandUser *user) {
     MILO_ASSERT(mListData.size() > ix, 0x15B);
     MILO_ASSERT(!mPurchaser, 0x15C);
     MILO_ASSERT(user, 0x15F);
+    // Retail fn_8263FB98: the rb3-Wii dev body stubs the purchaser to NULL;
+    // the 360 build constructs an XboxPurchaser for the chosen offer ID
+    // (`ldx` from mOfferIDs@0x74, li r3,0x28 -> ctor 0x827B2800) and
+    // Initiate()s it (vtable slot 1), exactly as UGCPurchasePanel::Poll does.
+    static Symbol token_redemption("token_redemption");
+    unsigned int flags = 0;
     Server *server = TheNet.GetServer();
     if (server && server->IsConnected()) {
-        server->GetPlayerID(user->GetPadNum());
+        flags = server->GetPlayerID(user->GetPadNum());
     }
-    mPurchaser = NULL;
+    mPurchaser = new XboxPurchaser(
+        user->GetPadNum(), mOfferIDs[ix], 0, 0, token_redemption, flags
+    );
     mRedemptionState = kPurchasing; // retail fn_8263FB98 stores 5
+    mPurchaser->Initiate();
 }
 
 DataNode TokenRedemptionPanel::OnMsg(const ButtonDownMsg &msg) {

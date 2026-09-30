@@ -45,13 +45,16 @@ extern Symbol song_info_cache_corrupt;
 
 class SaveMemcardAction : public MemcardAction {
 public:
-    SaveMemcardAction(std::vector<BandProfile *> *);
+    // Takes one BandProfile* and adds no members: retail's only allocation
+    // (StartSaveAction, 0x82550658) is `li r3,0x14` == sizeof(MemcardAction),
+    // and it passes GetProfile()'s result straight to the ctor (0x825D77D8).
+    // Same correction as LoadMemcardAction below; the vector* ctor and the
+    // unk24/unk28 pair were rb3-Wii-oracle shape.
+    SaveMemcardAction(BandProfile *);
     virtual ~SaveMemcardAction();
     virtual void PreAction();
     virtual void Action();
     virtual void PostAction();
-    int unk24;
-    int unk28;
 };
 
 class LoadMemcardAction : public MemcardAction {
@@ -146,6 +149,7 @@ void SaveLoadManager::Finish() {
     if (mMode == kMode_AutoLoad) {
         UpdateStatus(kSaveLoadMgrStatus_Finish);
     }
+    TheMemcardMgr.RemoveSink(this); // retail 0x82550460
     SetState(kS_Finish);
 }
 
@@ -1985,26 +1989,25 @@ void SaveLoadManager::PrintoutSaveSizeInfo() {
 }
 
 bool SaveLoadManager::IsReasonToUpload() {
+    static Symbol saveload_skip_upload("saveload_skip_upload"); // retail: local static
     DataNode &var = DataVariable(saveload_skip_upload);
-    int skipUpload = var.Int(NULL) != 0;
+    bool skipUpload = var.Int(NULL) != 0;
     bool isConnected = TheNet.mServer->IsConnected();
     bool needsUpload = TheProfileMgr.NeedsUpload();
     bool allUnlocked = TheProfileMgr.mAllUnlocked;
     return !skipUpload && !allUnlocked && isConnected && needsUpload;
 }
 
+// Retail 0x82550658: no Wii profile locking and no MemcardMgr sink -- the
+// 360 build saves the single current profile.
 void SaveLoadManager::StartSaveAction(bool b) {
     UpdateStatus(kSaveLoadMgrStatus_Saving);
-    MILO_ASSERT(mState == kS_SaveOverwrite || mState == kS_SaveNoOverwrite, 0x9c9);
-    for (BandProfile **p = (BandProfile **)mUploadProfiles.begin(); p != (BandProfile **)mUploadProfiles.end(); p++) {
-        TheWiiProfileMgr.SetLocked(*p, true);
-    }
+    BandProfile *profile = GetProfile();
     mWaiting = true;
     delete mAction;
     mAction = NULL;
-    mAction = new SaveMemcardAction(&mUploadProfiles);
-    TheMemcardMgr.AddSink(this);
-    TheMemcardMgr.OnSaveGame(NULL, mAction, b);
+    mAction = new SaveMemcardAction(profile);
+    TheMemcardMgr.OnSaveGame(profile, mAction, b);
 }
 
 DataNode SaveLoadManager::OnMsg(const DeviceChosenMsg &msg) {

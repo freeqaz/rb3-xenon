@@ -72,15 +72,19 @@ namespace Quazal {
 END_UNPOOL_DATA
 
 MemoryManager *MemoryManager::GetDefaultMemoryManager() {
-    MemoryManager *mgr = s_poDefaultMemoryManager;
-    if (mgr)
-        return mgr;
+    // /Od TU (retail 0x82A6D8C0): the static is read at every use, never
+    // cached in a local.
+    // The if/else spelling is what leaves /Od's dead `b` after each return.
     static bool s_bConstructionInProgress;
-    if (s_bConstructionInProgress)
+    if (s_poDefaultMemoryManager) {
+        return s_poDefaultMemoryManager;
+    } else if (s_bConstructionInProgress) {
         return nullptr;
-    s_bConstructionInProgress = true;
-    mgr = new (__FILE__, 0x162) MemoryManager("Default memory manager");
-    s_poDefaultMemoryManager = mgr;
-    return mgr;
+    } else {
+        s_bConstructionInProgress = true;
+        s_poDefaultMemoryManager =
+            new (__FILE__, 0x162) MemoryManager("Default memory manager");
+        return s_poDefaultMemoryManager;
+    }
 }
 }

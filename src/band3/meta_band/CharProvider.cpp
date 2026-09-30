@@ -181,10 +181,9 @@ bool CharProvider::IsActive(int data) const {
 CharData *CharProvider::GetCharData(int idx) {
     MILO_ASSERT_RANGE(idx, 0, mCharacters.size(), 0x11F);
     CharacterEntry entry = mCharacters[idx];
-    CharData *ret = entry.unk4;
     if (entry.mType == kCharacterEntryNew || entry.mType == kCharacterEntryHeader)
-        ret = nullptr;
-    return ret;
+        return nullptr;
+    return entry.unk4;
 }
 
 bool CharProvider::IsIndexNewChar(int idx) {

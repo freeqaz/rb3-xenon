@@ -61,15 +61,36 @@ BandUserMgr::BandUserMgr(int num_local, int num_remote) : mNullUser(0), mSession
 }
 
 BandUserMgr::~BandUserMgr() {
+    // Retail 0x82684A70 guards each static right before its RemoveSink.
     static Symbol profile_pre_delete_msg("profile_pre_delete_msg");
-    static Symbol signin_changed("signin_changed");
     TheProfileMgr.RemoveSink(this, profile_pre_delete_msg);
+    static Symbol signin_changed("signin_changed");
     ThePlatformMgr.RemoveSink(this, signin_changed);
     TheBandUserMgr = nullptr;
     mLocalUsers.clear();
     mRemoteUsers.clear();
+    RemoveNullUsers();
     DeleteAll(mUsers);
     RELEASE(mNullUser);
+}
+
+// Retail 0x82682E00: erase every null user (User vtable +0x70, IsNullUser)
+// from mLocalUsers, then from mUsers. In the dtor this keeps DeleteAll(mUsers)
+// from deleting mNullUser, which RELEASE(mNullUser) then frees exactly once.
+void BandUserMgr::RemoveNullUsers() {
+    for (std::vector<LocalBandUser *>::iterator it = mLocalUsers.begin();
+         it != mLocalUsers.end();) {
+        if ((*it)->IsNullUser())
+            it = mLocalUsers.erase(it);
+        else
+            ++it;
+    }
+    for (std::vector<BandUser *>::iterator it = mUsers.begin(); it != mUsers.end();) {
+        if ((*it)->IsNullUser())
+            it = mUsers.erase(it);
+        else
+            ++it;
+    }
 }
 
 User *BandUserMgr::GetUser(const UserGuid &guid, bool fail) const {

@@ -179,9 +179,12 @@ public:
 };
 
 Game::Game()
-    : mSongDB(new SongDB()), mSongInfo(0), mIsPaused(0), mGameWantsPause(0),
-      mOvershellWantsPause(0), unk6b(0), unk6c(0), mPauseTime(0), mRealtime(0), unk6f(0),
-      mTimeOffset(0), mLastPollMs(0), mMuckWithPitch(0), mMusicSpeed(1.0f),
+    // Retail 0x8267BF30 stores 0 to 0x48 (mUnkTU5GuidePitch), bytes 0x78..0x7d
+    // only (unk6b/unk6c at 0x7e/0x7f are NOT initialised), and 0 / 1 to
+    // 0xc4 / 0xc5 with 0xc6 untouched -- hence no mMuckWithPitch init here.
+    : mUnkTU5GuidePitch(0), mSongDB(new SongDB()), mSongInfo(0), mIsPaused(0),
+      mGameWantsPause(0), mOvershellWantsPause(0), mPauseTime(0), mRealtime(0), unk6f(0),
+      mTimeOffset(0), mLastPollMs(0), mMusicSpeed(1.0f),
       mNeverAllowInput(0), unkb9(1), mDemoMaxPctComplete(0), mDemoMaxMs(0), unkc4(0),
       mLoadState(kLoadingSong), mResult(kRestart), mBand(0), mShuttle(new Shuttle()),
       unkdc(-1), unk11c(-1), unk120(0), mSkippedSong(0), unk124(0), mResumeTime(0),
@@ -198,9 +201,8 @@ Game::Game()
     TheSessionMgr->AddSink(this, LocalUserLeftMsg::Type());
     TheSessionMgr->AddSink(this, RemoteUserLeftMsg::Type());
     TheSessionMgr->AddSink(this, RemoteLeaderLeftMsg::Type());
-    OvershellPanel *overshell = TheBandUI.mOvershell;
-    overshell->AddSink(this, "required_song_options_chosen");
-    TheBandUI.mOvershell->AddSink(this, NewOvershellLocalUserMsg::Type());
+    TheBandUI.GetOvershell()->AddSink(this, "required_song_options_chosen");
+    TheBandUI.GetOvershell()->AddSink(this, NewOvershellLocalUserMsg::Type());
     TheBandUI.AddSink(this, UIScreenChangeMsg::Type());
 
     SetBackgroundVolume(TheProfileMgr.GetBackgroundVolumeDb());
@@ -211,12 +213,21 @@ Game::Game()
         TheSynth->GetMic(i)->Stop();
         TheSynth->GetMic(i)->Start();
     }
-    mBand = new Band(false, 0, BandUserMgr::GetBandUser(nullptr), mMaster);
+    mBand = new Band(false, 0, nullptr, mMaster);
     PopulatePlayerLists();
     mTrackerManager = new TrackerManager(mBand);
-    auto _tmp1 = SystemConfig(demo)->FindInt(max_pct_complete);
-    mDemoMaxPctComplete = _tmp1;
+    static Symbol demo("demo");
+    static Symbol max_pct_complete("max_pct_complete");
+    static Symbol max_ms("max_ms");
+    mDemoMaxPctComplete = SystemConfig(demo)->FindInt(max_pct_complete);
     mDemoMaxMs = SystemConfig(demo)->FindFloat(max_ms);
+    // TU5, retail 0x8267BF30 tail: the movie-sync helper is created here (and
+    // released in ~Game under the same guard, which our dtor already did --
+    // it was deleting a pointer this ctor never set).
+    if (mProperties.mUnkTU5_movieSync) {
+        JoypadSubscribe(this);
+        mUnkTU5GuidePitch = new UnkTU5GuidePitchOwner(MetaPerformer::Current()->Song());
+    }
     LoadSong();
 }
 
@@ -947,7 +958,142 @@ DataNode Game::OnMsg(const ButtonDownMsg &msg) {
         int pad = msg.GetUser()->GetPadNum();
         if (pad >= 0 && pad < 4) {
             if (JoypadGetPadData(pad)->mType == kJoypadAnalog) {
-                ((int *)mUnkTU5GuidePitch)[pad]++;
+                mUnkTU5GuidePitch->mUnkCounts[pad]++;
+                // Tail decoded in docs/decomp/W16EH_BUTTONDOWNMSG_DECODE_AND_SHUTTLE_SETACTIVE_2026-09-16.md
+                // (retail 0x8267B808). Only the first press of an analog pad
+                // (counter == 1) acts, and only while nothing else holds the game.
+                if (!mOvershellWantsPause && !mRealtime
+                    && mUnkTU5GuidePitch->mUnkCounts[pad] == 1) {
+                    bool stopped = mMusicSpeed == 0.0f;
+                    // Retail lowers this as button -> dense action index (a
+                    // value-mapping decision tree, each leaf `li r11,N`) and then
+                    // an mtctr/bdz chain over the index: two stacked switches.
+                    int action;
+                    switch (msg.GetButton()) {
+                    case kPad_L1:
+                        action = 0;
+                        break;
+                    case kPad_R1:
+                        action = 1;
+                        break;
+                    case kPad_DLeft:
+                        action = 2;
+                        break;
+                    case kPad_DRight:
+                        action = 3;
+                        break;
+                    case kPad_R2:
+                        action = 4;
+                        break;
+                    case kPad_L2:
+                        action = 5;
+                        break;
+                    case kPad_DUp:
+                        action = 6;
+                        break;
+                    case kPad_DDown:
+                        action = 7;
+                        break;
+                    default:
+                        return DATA_UNHANDLED;
+                    }
+                    switch (action) {
+                    case 5: { // kPad_L2
+                        static Message camToggle("audition_cam_toggle");
+                        TheGamePanel->Handle(camToggle, true);
+                        break;
+                    }
+                    case 4: { // kPad_R2
+                        static Message deploy("deploy_if_possible");
+                        for (int i = 0; i < mAllActivePlayers.size(); i++) {
+                            mAllActivePlayers[i]->Handle(deploy, true);
+                        }
+                        break;
+                    }
+                    case 2: { // kPad_DLeft
+                        float speed =
+                            mMusicSpeed == 0.25f ? 0.0f : mMusicSpeed * 0.5f;
+                        if (speed == 0.0f && !stopped) {
+                            mMusicSpeed = 0.0f;
+                            mGameWantsPause = true;
+                            UpdatePausedState(true, true, true);
+                        } else {
+                            SetMusicSpeed(speed);
+                        }
+                        break;
+                    }
+                    case 3: { // kPad_DRight
+                        float speed = stopped ? 0.25f : mMusicSpeed * 2.0f;
+                        if (stopped) {
+                            mGameWantsPause = false;
+                            UpdatePausedState(true, false, true);
+                        }
+                        if (speed <= 2.0f) {
+                            SetMusicSpeed(speed);
+                        }
+                        break;
+                    }
+                    case 6: { // kPad_DUp
+                        DataArray *vols =
+                            TheGamePanel->Property("audition_keyboard_synth_volumes", true)
+                                ->Array();
+                        DirectInstrument *inst = TheGamePanel->GetDirectInstrument();
+                        int idx = (mUnkTU5GuidePitch->unk10 + 1) % vols->Size();
+                        mUnkTU5GuidePitch->unk10 = idx;
+                        int vol = vols->Int(idx);
+                        if (vol == 0) {
+                            inst->Disable();
+                        } else {
+                            inst->Enable();
+                            inst->SetVolume(vol);
+                        }
+                        break;
+                    }
+                    case 7: { // kPad_DDown
+                        int track = mUnkTU5GuidePitch->mGuidePitch->GetGuideTrack() + 1;
+                        if (track == TheSongDB->GetVocalNoteListCount()) {
+                            track = -1;
+                        }
+                        mUnkTU5GuidePitch->mGuidePitch->EnableGuideTrack(track);
+                        break;
+                    }
+                    case 0: { // kPad_L1
+                        static float back = TheGamePanel->Property("audition_jump_back_ms", true)
+                                                ->Float();
+                        Jump(
+                            Max(0.0f,
+                                TheTaskMgr.Seconds(TaskMgr::kRealTime) * 1000.0f - back),
+                            true
+                        );
+                        if (stopped) {
+                            mGameWantsPause = false;
+                            UpdatePausedState(true, false, true);
+                            SetMusicSpeed(0.25f);
+                        }
+                        mUnkTU5GuidePitch->mGuidePitch->StopNote();
+                        break;
+                    }
+                    case 1: { // kPad_R1
+                        static float fwd =
+                            TheGamePanel->Property("audition_jump_forward_ms", true)->Float();
+                        static float endBuffer =
+                            TheGamePanel->Property("audition_jump_end_buffer_ms", true)
+                                ->Float();
+                        float now = TheTaskMgr.Seconds(TaskMgr::kRealTime) * 1000.0f;
+                        float limit = TheSongDB->GetSongDurationMs() - endBuffer;
+                        if (now < limit) {
+                            Jump(Min(now + fwd, limit), true);
+                        }
+                        if (stopped) {
+                            mGameWantsPause = false;
+                            UpdatePausedState(true, false, true);
+                            SetMusicSpeed(0.25f);
+                        }
+                        mUnkTU5GuidePitch->mGuidePitch->StopNote();
+                        break;
+                    }
+                    }
+                }
             }
         }
     }
@@ -1022,7 +1168,8 @@ void Game::ResetVoiceChatState() {
     LocalBandUser **it = users.begin();
     for (; it != users.end(); it++) {
         LocalBandUser *user = *it;
-        if (user->GetTrackType() == kTrackVocals) {
+        // Retail 0x8267B000 skips null users first (User vtable +0x70).
+        if (!user->IsNullUser() && user->GetTrackType() == kTrackVocals) {
             TheSynth->RequirePushToTalk(true, user->GetPadNum());
             break;
         }
@@ -1393,28 +1540,28 @@ void Game::OvershellSetPaused(bool paused) {
     }
 }
 
-void Game::UpdatePausedState(bool allowSfx, bool doRollback, bool) {
+// Retail 0x8267AA48. Two differences from the rb3-Wii dev source, both read
+// off retail bytes: the Wii-era screen-saver save/restore at the head is absent
+// (the first call is TheSynth->PauseAllSfx), and the third bool parameter --
+// which our source had left unnamed and unused -- gates SetNoFail (r6 -> r27,
+// `clrlwi. r11, r27, 24` after IsNoFailActive).
+void Game::UpdatePausedState(bool allowSfx, bool doRollback, bool allowNoFail) {
     bool wantPause = mGameWantsPause | mOvershellWantsPause;
     if ((bool)wantPause != mIsPaused) {
-        if (wantPause) {
-            unk6c = ThePlatformMgr.ScreenSaver();
-            ThePlatformMgr.SetScreenSaver(true);
-        } else if (TheGamePanel) {
-            ThePlatformMgr.SetScreenSaver(unk6c);
-        }
         if (!wantPause || allowSfx) {
             TheSynth->PauseAllSfx(wantPause);
         }
         if (!wantPause) {
             TheTaskMgr.SetAVOffset(GetSongToTaskMgrMs() / 1000.0f);
         }
-        FOREACH (it, mAllActivePlayers) {
+        std::vector<Player *> &players = GetActivePlayers();
+        FOREACH (it, players) {
             (*it)->SetPaused(wantPause);
         }
         if (!wantPause && mProperties.mInTrainer) {
             GetTrackPanelDir()->UpdateTrackSpeed();
         }
-        if (!wantPause && MetaPerformer::Current()->IsNoFailActive()) {
+        if (!wantPause && MetaPerformer::Current()->IsNoFailActive() && allowNoFail) {
             SetNoFail(true);
         }
         if (unk148) {
@@ -1446,9 +1593,11 @@ void Game::UpdatePausedState(bool allowSfx, bool doRollback, bool) {
             SetTimeOffset();
         }
         if (wantPause) {
-            TheGamePanel->Export(world_pause_msg, true);
+            static Message pauseMsg("world_pause");
+            TheGamePanel->Export(pauseMsg, true);
         } else {
-            TheGamePanel->Export(world_unpause_msg, true);
+            static Message unpauseMsg("world_unpause");
+            TheGamePanel->Export(unpauseMsg, true);
         }
         if (!wantPause) {
             while (!FileDiscSpinUp())

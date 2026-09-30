@@ -17,9 +17,11 @@ BinStream &operator<<(BinStream &bs, const std::hash_map<K, V> &m) {
 
 template <class K, class V>
 BinStream &operator>>(BinStream &bs, std::hash_map<K, V> &m) {
-    int size;
+    // Retail counts an unsigned size down in memory (cmplwi / subic. / stw),
+    // the same loop SongUpgradeMgr.cpp's reader uses.
+    unsigned int size;
     bs >> size;
-    for (int i = 0; i < size; i++) {
+    for (; size != 0; size--) {
         K key;
         bs >> key;
         bs >> m[key];
