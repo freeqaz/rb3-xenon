@@ -26379,7 +26379,7 @@
   {
    "name": "$_Copy_Construct",
    "address": "0x82346e50",
-   "survivor": "??$_Copy_Construct@UUnlockable@?A0xf8e4b4b5@@@stlpmtx_std@@YAXPAUUnlockable@?A0xf8e4b4b5@@ABU12@@Z",
+   "survivor": "??$_Copy_Construct@VPatchPair@MeshPair@BandPatchMesh@@@stlpmtx_std@@YAXPAVPatchPair@MeshPair@BandPatchMesh@@ABV123@@Z",
    "folded": [
     "??$_Copy_Construct@U?$pair@$$CBVString@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@V1@@0@ABU10@@Z",
     "??$_Copy_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
@@ -26426,7 +26426,8 @@
     "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z"
+    "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+    "??$_Param_Construct@VPatchPair@MeshPair@BandPatchMesh@@V123@@stlpmtx_std@@YAXPAVPatchPair@MeshPair@BandPatchMesh@@ABV123@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -26683,9 +26684,35 @@
      "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
      "disposition": "withdrawn; the spelling's retail body is 0x8233bf00 (new group $_Param_Construct@0x8233bf00)",
      "evidence": "REFUTED ON RETAIL BYTES. HighlightObject's _Copy_Construct/_Param_Construct (60 B each, byte- and relocation-identical in our BandList.obj) is the 60 B body at 0x8233bf00, which calls 0x8233be48 = ??0HighlightObject@@QAA@ABV0@@Z at +0x24. Its callers are BandList's __uninitialized_fill_n 0x8233c990, __uninitialized_copy 0x8233ca28 and 0x8233de90. This group's survivor at 0x82346e50 calls a different copy constructor at the same offset, so /OPT:ICF cannot have folded them (it folds only COMDATs identical including relocations). These memberships were a masked-closure artifact: the one spelling was listed as folded into 15 different addresses."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UUnlockable@?A0xf8e4b4b5@@@stlpmtx_std@@YAXPAUUnlockable@?A0xf8e4b4b5@@ABU12@@Z",
+     "lane": "W17-PRAC 2026-09-30",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+     "disposition": "withdrawn; the group survivor is rebound to _Copy_Construct<BandPatchMesh::MeshPair::PatchPair> and the map is rebound at 0x82346e50 in the same commit; the folded list is unchanged",
+     "absent_types": [
+      "Unlockable"
+     ],
+     "type_evidence": {
+      "Unlockable": {
+       "declared_in": "dc3-decomp src/lazer/meta_ham/MetagameRank.cpp only (anonymous namespace, Dance Central 3 game code)",
+       "rb3_xenon_files": 0,
+       "rb3wii_files": 0,
+       "polymorphic_in_our_source": "n/a -- we do not declare it at all; the name came from the dc3 map transfer"
+      }
+     },
+     "evidence": "TYPE DOES NOT EXIST IN RB3, AND THE BODY IS TYPED BY ITS CALLEE AND ITS CALLER CHAIN. Retail 0x82346e50 (60 B) null-checks r3 and calls 0x823465b8, which copy-constructs an ObjPtr at +0 (0x822cdb70: ObjRefConcrete vtable, owner, AddRef) and ObjPtr<RndTex> at +0xc (0x8229d898) -- BandPatchMesh::MeshPair::PatchPair {ObjPtr<RndMesh> mPatch; ObjPtr<RndTex> mTex} = 0x18. Its callers are the 0x18-stride vector helpers 0x82348390 (fill_n), 0x82348b28 (uninitialized_copy) and 0x823495e0 (_M_insert_overflow_aux); that family's _M_fill_insert (0x8234a148) is called from ??$PropSync@VPatchPair@MeshPair@BandPatchMesh@@@@...(ObjVector<PatchPair>&) at 0x8234a3c0. Unlockable is an anonymous-namespace struct in DC3's lazer/meta_ham/MetagameRank.cpp and appears in neither rb3 tree. Survivor rebound to _Copy_Construct<PatchPair> (BandPatchMesh.obj defines it); the group's folded list, part of the closure cluster ALIAS-CONSOLIDATION 2026-08-19 deliberately left in place, is not touched."
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md.",
+   "added": [
+    {
+     "spelling": "??$_Param_Construct@VPatchPair@MeshPair@BandPatchMesh@@V123@@stlpmtx_std@@YAXPAVPatchPair@MeshPair@BandPatchMesh@@ABV123@@Z",
+     "lane": "W17-PRAC 2026-09-30",
+     "verdict": "FOLD -- PROVEN on retail bytes, FLAT T1 (tools/icf_pair_adjudicate.py --chase; 60 B vs 60 B, one tolerated placeholder relocation: the element copy ctor 0x823465b8 is anonymous in retail)",
+     "evidence": "_Param_Construct<PatchPair> is the same placement-new copy as _Copy_Construct<PatchPair>, the survivor rebound at this address in the same commit. Our __uninitialized_fill_n<PatchPair> calls the _Param_Construct spelling where retail 0x82348390 calls 0x82346e50. Same pair shape as the proven groups at 0x825570d0, 0x82557060, 0x82685840 and 0x8228eff8."
+    }
+   ]
   },
   {
    "name": "$Find",
