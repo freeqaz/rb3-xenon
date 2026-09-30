@@ -106,8 +106,6 @@ public:
     static bool FindXfm(RndMesh *, const Vector2 &, Transform &);
 
     static void SetRenderToVert(RndMesh::Vert &, const Vector2 &, const Vector2 &);
-    static unsigned short gRev;
-    static unsigned short gAltRev;
 
     ObjVector<MeshPair> mMeshes; // 0x0
     bool mRenderTo; // 0x10
@@ -115,11 +113,16 @@ public:
     int mCategory; // 0x20
 };
 
+bool PropSync(
+    BandPatchMesh::MeshPair::PatchPair &, DataNode &, DataArray *, int, PropOp
+);
+bool PropSync(BandPatchMesh::MeshPair &, DataNode &, DataArray *, int, PropOp);
 bool PropSync(BandPatchMesh &, DataNode &, DataArray *, int, PropOp);
 
+BinStream &operator>>(BinStream &bs, BandPatchMesh::MeshPair &mp);
 BinStream &operator>>(BinStream &bs, BandPatchMesh &mesh);
-// Needed by OutfitConfig::Save (`bs << mPatches`). DEFINED in the .cpp, unlike
-// the operator>> above it: a declaration alone compiles for the X360 match
-// build but fails the NATIVE link, which actually resolves the symbol.
+// Needed by OutfitConfig::Save (`bs << mPatches`). All of these are DEFINED in
+// the .cpp: a declaration alone compiles for the X360 match build but fails the
+// NATIVE link, which actually resolves the symbol.
 BinStream &operator<<(BinStream &bs, const BandPatchMesh::MeshPair &mp);
 BinStream &operator<<(BinStream &bs, const BandPatchMesh &mesh);

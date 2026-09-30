@@ -25,10 +25,12 @@
 //       tree.  Retired for free by compiling OutfitConfig.cpp with the existing
 //       RB3_SYNCPROP_LOCAL_STATIC / RB3_HANDLE_LOCAL_STATIC macro arms -- see
 //       native/CMakeLists.txt.  Cost: two compile definitions, no code.
-//   11  BandPatchMesh members.  src/system/bandobj/BandPatchMesh.cpp is a
-//       191-line PARTIAL port (its own header says so: "Only the worklist
-//       target functions and the helpers required to compile + emit them").
-//       The class's ordinary members were never ported.  Supplied below.
+//   11  BandPatchMesh members.  src/system/bandobj/BandPatchMesh.cpp was a
+//       191-line PARTIAL port, so X20 supplied nine faithful ports of the
+//       ordinary members here.  ⚠ W17-BPM (2026-09-30) MOVED THOSE NINE INTO
+//       THE REAL TU -- they are matched to retail bytes there -- and deleted
+//       the copies below, so native now links the real ones.  Still here:
+//       the two COUNTED stubs (ReProject, PreRender) described next.
 //    1  gRB3OutfitComposeActive.  Supplied below.
 //
 // ⚠ X9's recorded blocker ("BandPatchMesh.cpp is NOT compiled standalone ...
@@ -55,7 +57,9 @@
 // BandPatchMesh::ReProject() and ::PreRender() reach ProjectPatches() ->
 // Construct/ConstructQuad/FindXfm/WorkVerts::Project -- the patch PROJECTION
 // subsystem, ~570 further lines that the partial port also omits.  Porting it
-// is its own lane.  Rather than let a silent no-op make this lane's frame
+// is its own lane.  (W17-BPM: PreRender and ConstructQuad ARE now ported in
+// BandPatchMesh.cpp, but under `#ifndef HX_NATIVE` -- they call the unported
+// projection functions -- so the native build keeps the counted PreRender stub.)  Rather than let a silent no-op make this lane's frame
 // partly fictional (the exact failure milo_link_stubs.cpp's header warns about,
 // measured in lane CC-5), each keeps a counter that
 // Rb3X20ReportBandPatchMeshStubs() prints on EVERY run.  If the printed counts
@@ -78,16 +82,6 @@
 
 #include <cstdio>
 
-// The partial port DEFINES these two (BandPatchMesh.cpp:183-191, via
-// BEGIN_CUSTOM_PROPSYNC) but BandPatchMesh.h DECLARES neither, so they are
-// invisible to any other TU. Declared here rather than in the shared header:
-// the header is scatter-included into the X360 scoring TU and this lane keeps
-// its shared-`src/` surface empty.
-bool PropSync(BandPatchMesh::MeshPair &, DataNode &, DataArray *, int, PropOp);
-bool PropSync(
-    BandPatchMesh::MeshPair::PatchPair &, DataNode &, DataArray *, int, PropOp
-);
-
 // ---------------------------------------------------------------------------
 // (1) REAL IMPLEMENTATION -- a global the tree only ever DECLARES here.
 //
@@ -107,163 +101,11 @@ bool PropSync(
 bool gRB3OutfitComposeActive = false;
 
 // ---------------------------------------------------------------------------
-// (2) FAITHFUL PORTS -- nine ordinary BandPatchMesh members.
+// (2) FAITHFUL PORTS -- moved to src/system/bandobj/BandPatchMesh.cpp (W17-BPM):
+// MeshPair::OutputTex, the BandPatchMesh ctors and operator=, PostRender,
+// ListDrawChildren, Compress, Render, both operator>>, PropSync(BandPatchMesh&),
+// and the rev pair (file-scope statics there, as retail has them).
 // ---------------------------------------------------------------------------
-
-// The two class statics BandPatchMesh.h:106-107 declares. Nothing in the tree
-// defines them (grep over src/ + native/): the partial port never did, and the
-// scatter-include host's `#define gRev gRev_BandPatchMesh` renames a FILE-scope
-// gRev, not these. Both are written by operator>> from the stream's rev word
-// before any read, so zero-init is the whole of the correct initial state.
-unsigned short BandPatchMesh::gRev = 0;
-unsigned short BandPatchMesh::gAltRev = 0;
-
-RndTex *BandPatchMesh::MeshPair::OutputTex() const {
-    if (mesh && mesh->Mat())
-        return mesh->Mat()->GetDiffuseTex();
-    else
-        return 0;
-}
-
-BandPatchMesh::BandPatchMesh(Hmx::Object *o)
-    : mMeshes(o), mRenderTo(true), mSrc(o, 0), mCategory(0) {}
-
-BandPatchMesh::BandPatchMesh(const BandPatchMesh &mesh)
-    : mMeshes(mesh.mMeshes), mRenderTo(mesh.mRenderTo), mSrc(mesh.mSrc),
-      mCategory(mesh.mCategory) {}
-
-BandPatchMesh &BandPatchMesh::operator=(const BandPatchMesh &mesh) {
-    mSrc = mesh.mSrc;
-    mMeshes = mesh.mMeshes;
-    mRenderTo = mesh.mRenderTo;
-    mCategory = mesh.mCategory;
-    return *this;
-}
-
-void BandPatchMesh::PostRender() {
-    for (ObjVector<MeshPair>::iterator mp = mMeshes.begin(); mp != mMeshes.end(); ++mp) {
-        for (ObjVector<MeshPair::PatchPair>::iterator pp = mp->patches.begin();
-             pp != mp->patches.end();
-             ++pp) {
-            RndMesh *patch = pp->mPatch;
-            if (patch && !patch->Dir()) {
-                delete patch;
-            }
-        }
-        mp->patches.clear();
-    }
-}
-
-void BandPatchMesh::ListDrawChildren(std::list<RndDrawable *> &list) {
-    if (mRenderTo) {
-        for (int i = 0; i < mMeshes.size(); i++) {
-            for (int j = 0; j < mMeshes[i].patches.size(); j++) {
-                list.push_back(mMeshes[i].patches[j].mPatch);
-            }
-        }
-    }
-}
-
-void BandPatchMesh::Compress(BandCharDesc *desc) {
-    ObjectDir *pdir = desc->GetPatchDir();
-    for (int i = 0; i < mMeshes.size(); i++) {
-        for (int j = 0; j < mMeshes[i].patches.size(); j++) {
-            RndMesh *patch = mMeshes[i].patches[j].mPatch;
-            if (patch) {
-                RndTex *tex = mMeshes[i].patches[j].mTex;
-                if (tex && pdir && tex->Dir() == pdir) {
-                    delete tex;
-                }
-                if (!patch->Dir())
-                    delete patch;
-            }
-        }
-    }
-}
-
-void BandPatchMesh::Render(RndTex *tex, RndMat *mat) {
-    for (int i = 0; i < mMeshes.size(); i++) {
-        RndTex *outputtex = mMeshes[i].OutputTex();
-        if (outputtex == tex) {
-            for (int j = 0; j < mMeshes[i].patches.size(); j++) {
-                BandPatchMesh::MeshPair::PatchPair &ppair = mMeshes[i].patches[j];
-                RndMesh *patch = ppair.mPatch;
-                if (patch) {
-                    RndMat *patchmat = patch->Mat();
-                    if (patchmat) {
-                        // Wii oracle reads `patchmat->mColor` directly; that
-                        // member is protected on X360's RndMat, and
-                        // GetColor() (BaseMaterial.h:203) returns exactly it.
-                        mat->SetColor(patchmat->GetColor());
-                        mat->SetTexWrap(patchmat->GetTexWrap());
-                        mat->SetBlend(patchmat->GetBlend());
-                        mat->SetDiffuseTex(patchmat->GetDiffuseTex());
-                    } else {
-                        mat->SetColor(1, 1, 1);
-                        mat->SetTexWrap(kTexBorderBlack);
-                        mat->SetBlend(RndMat::kPreMultAlpha);
-                        mat->SetDiffuseTex(mMeshes[i].patches[j].mTex);
-                    }
-                    Transform tf88;
-                    tf88.Reset();
-                    tf88.m.y *= (float)tex->Height() / (float)tex->Width();
-                    patch->SetLocalXfm(tf88);
-                    patch->SetMat(mat);
-                    if (mat->GetDiffuseTex())
-                        patch->DrawShowing();
-                    patch->SetMat(patchmat);
-                    patch->DirtyLocalXfm().Reset();
-                }
-            }
-        }
-    }
-}
-
-BinStream &operator>>(BinStream &bs, BandPatchMesh::MeshPair &mp) {
-    bs >> mp.mesh;
-    return bs;
-}
-
-BinStream &operator>>(BinStream &bs, BandPatchMesh &mesh) {
-    int rev;
-    bs >> rev;
-    BandPatchMesh::gRev = getHmxRev(rev);
-    BandPatchMesh::gAltRev = getAltRev(rev);
-    bs >> mesh.mSrc;
-    if (BandPatchMesh::gRev > 3)
-        bs >> mesh.mMeshes;
-    else {
-        mesh.mMeshes.resize(1);
-        bs >> mesh.mMeshes[0].mesh;
-    }
-    if (BandPatchMesh::gRev < 1) {
-        Symbol s;
-        bs >> s;
-    }
-    if (BandPatchMesh::gRev < 4) {
-        Symbol s;
-        bs >> s;
-    }
-    if (BandPatchMesh::gRev > 1) {
-        if (BandPatchMesh::gRev > 2)
-            bs >> mesh.mRenderTo;
-        else {
-            Symbol s;
-            bs >> s;
-            mesh.mRenderTo = !s.Null();
-        }
-    }
-    if (BandPatchMesh::gRev > 3)
-        bs >> mesh.mCategory;
-    return bs;
-}
-
-BEGIN_CUSTOM_PROPSYNC(BandPatchMesh)
-    SYNC_PROP(meshes, o.mMeshes)
-    SYNC_PROP(src, o.mSrc)
-    SYNC_PROP(render_to, o.mRenderTo)
-    SYNC_PROP(category, o.mCategory)
-END_CUSTOM_PROPSYNC
 
 // ---------------------------------------------------------------------------
 // (3) ⛔ NOT PORTED -- counted, never silent.  See the header note.

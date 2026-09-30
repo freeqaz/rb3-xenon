@@ -73152,11 +73152,27 @@
   {
    "name": "_M_clear",
    "address": "0x8234b2c0",
-   "survivor": "?_M_clear@?$vector@ULabelStyle@UILabel@@V?$StlNodeAlloc@ULabelStyle@UILabel@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+   "survivor": "?_M_clear@?$vector@VMeshPair@BandPatchMesh@@V?$StlNodeAlloc@VMeshPair@BandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
    "folded": [
-    "?_M_clear_after_move@?$vector@ULabelStyle@UILabel@@V?$StlNodeAlloc@ULabelStyle@UILabel@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
+    "?_M_clear_after_move@?$vector@VMeshPair@BandPatchMesh@@V?$StlNodeAlloc@VMeshPair@BandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "?_M_clear@?$vector@ULabelStyle@UILabel@@V?$StlNodeAlloc@ULabelStyle@UILabel@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W17-BPM 2026-09-30",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION"
+    },
+    {
+     "spelling": "?_M_clear_after_move@?$vector@ULabelStyle@UILabel@@V?$StlNodeAlloc@ULabelStyle@UILabel@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W17-BPM 2026-09-30",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION"
+    }
+   ],
+   "respelled": {
+    "lane": "W17-BPM 2026-09-30",
+    "why": "UILabel::LabelStyle is DC3-only (0 rb3-Wii hits, no retail string); the address is BandPatchMesh::MeshPair code (element stride 0x1C, calls ~MeshPair 0x822A4A20) in BandPatchMesh's retail TU. Same fold, true type."
+   }
   },
   {
    "name": "0?$list",
@@ -77081,11 +77097,27 @@
   {
    "name": "$_Destroy_Range",
    "address": "0x8234b270",
-   "survivor": "??$_Destroy_Range@PAULabelStyle@UILabel@@@stlpmtx_std@@YAXPAULabelStyle@UILabel@@0@Z",
+   "survivor": "??$_Destroy_Range@PAVMeshPair@BandPatchMesh@@@stlpmtx_std@@YAXPAVMeshPair@BandPatchMesh@@0@Z",
    "folded": [
-    "??$__destroy_range@PAULabelStyle@UILabel@@U12@@stlpmtx_std@@YAXPAULabelStyle@UILabel@@00@Z"
+    "??$__destroy_range@PAVMeshPair@BandPatchMesh@@V12@@stlpmtx_std@@YAXPAVMeshPair@BandPatchMesh@@00@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$_Destroy_Range@PAULabelStyle@UILabel@@@stlpmtx_std@@YAXPAULabelStyle@UILabel@@0@Z",
+     "lane": "W17-BPM 2026-09-30",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION"
+    },
+    {
+     "spelling": "??$__destroy_range@PAULabelStyle@UILabel@@U12@@stlpmtx_std@@YAXPAULabelStyle@UILabel@@00@Z",
+     "lane": "W17-BPM 2026-09-30",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION"
+    }
+   ],
+   "respelled": {
+    "lane": "W17-BPM 2026-09-30",
+    "why": "UILabel::LabelStyle is DC3-only (0 rb3-Wii hits, no retail string); the address is BandPatchMesh::MeshPair code (element stride 0x1C, calls ~MeshPair 0x822A4A20) in BandPatchMesh's retail TU. Same fold, true type."
+   }
   },
   {
    "name": "$__destroy_range",
@@ -82223,11 +82255,27 @@
   {
    "name": "$_Copy_Construct",
    "address": "0x8234a1c0",
-   "survivor": "??$_Copy_Construct@U?$pair@$$CBVString@@V?$vector@VChallengeRow@@V?$StlNodeAlloc@VChallengeRow@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@V?$vector@VChallengeRow@@V?$StlNodeAlloc@VChallengeRow@@@stlpmtx_std@@@stlpmtx_std@@@0@ABU10@@Z",
+   "survivor": "??$_Copy_Construct@VMeshPair@BandPatchMesh@@@stlpmtx_std@@YAXPAVMeshPair@BandPatchMesh@@ABV12@@Z",
    "folded": [
-    "??$_Copy_Construct@UCheat@CheatProvider@@@stlpmtx_std@@YAXPAUCheat@CheatProvider@@ABU12@@Z"
+    "??$_Param_Construct@VMeshPair@BandPatchMesh@@V12@@stlpmtx_std@@YAXPAVMeshPair@BandPatchMesh@@ABV12@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$_Copy_Construct@U?$pair@$$CBVString@@V?$vector@VChallengeRow@@V?$StlNodeAlloc@VChallengeRow@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@V?$vector@VChallengeRow@@V?$StlNodeAlloc@VChallengeRow@@@stlpmtx_std@@@stlpmtx_std@@@0@ABU10@@Z",
+     "lane": "W17-BPM 2026-09-30",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION"
+    },
+    {
+     "spelling": "??$_Copy_Construct@UCheat@CheatProvider@@@stlpmtx_std@@YAXPAUCheat@CheatProvider@@ABU12@@Z",
+     "lane": "W17-BPM 2026-09-30",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION"
+    }
+   ],
+   "respelled": {
+    "lane": "W17-BPM 2026-09-30",
+    "why": "ChallengeRow and CheatProvider::Cheat are DC3-only (0 rb3-Wii hits; CheatProvider's retail TU is 0x823EF5F8+). 0x8234A1C0 calls the MeshPair copy ctor 0x82349D50 and is called by __uninitialized_fill_n<MeshPair> (0x8234B340, _Param_Construct in source) and _M_insert_overflow_aux<MeshPair> (0x8234BB18, _Copy_Construct in source). T1: 15/15 words, 14 unmasked, for both spellings."
+   }
   },
   {
    "name": "_M_clear",
@@ -90656,6 +90704,42 @@
    ],
    "evidence": "W17-HCT 2026-09-30: retail 0x8229E3C0 has two callers: the MatSwap writer (0x822A00A8, OutfitConfig) and CharClipGroup::Save (0x8238EB2C). Bodies of the vector<ObjPtr<RndTex>> and vector<ObjOwnerPtr<CharClip>> writers are word-identical modulo the element-writer callee, which retail resolves to ONE function (fn_8238B5B8) -- a real ICF fold. Survivor is the OutfitConfig spelling (the address sits in OutfitConfig's COMDAT pool); the CharClip spelling is kept as folded because CharClipGroup::Save really calls here.",
    "withdrawn_reason": "W17-HCT 2026-09-30: retail 0x8229E3C0 has two callers: the MatSwap writer (0x822A00A8, OutfitConfig) and CharClipGroup::Save (0x8238EB2C). Bodies of the vector<ObjPtr<RndTex>> and vector<ObjOwnerPtr<CharClip>> writers are word-identical modulo the element-writer callee, which retail resolves to ONE function (fn_8238B5B8) -- a real ICF fold. Survivor is the OutfitConfig spelling (the address sits in OutfitConfig's COMDAT pool); the CharClip spelling is kept as folded because CharClipGroup::Save really calls here."
+  },
+  {
+   "name": "$__uninitialized_copy",
+   "address": "0x8234b438",
+   "survivor": "??$__uninitialized_copy@PAVMeshPair@BandPatchMesh@@PAV12@@stlpmtx_std@@YAPAVMeshPair@BandPatchMesh@@PAV12@00ABU__false_type@0@@Z",
+   "folded": [
+    "??$__uninitialized_copy@PBVMeshPair@BandPatchMesh@@PAV12@@stlpmtx_std@@YAPAVMeshPair@BandPatchMesh@@PBV12@0PAV12@ABU__false_type@0@@Z"
+   ],
+   "evidence": "Hand-installed by lane W17-BPM. Evidence tier T1: RB3 retail bytes at the survivor address are word-identical (relocated fields masked on both sides, see note for word counts) to our compiled body for each folded spelling. 24/24 words, 21 unmasked. Retail call graph: the one body at 0x8234B438 is called by vector<MeshPair>'s copy ctor (0x8234BA70) and _M_allocate_and_copy (0x8234B4D0), whose source instantiates the const-source (PBV) spelling, and by _M_insert_overflow_aux (0x8234BB18), which instantiates PAV.",
+   "added": {
+    "lane": "W17-BPM 2026-09-30"
+   }
+  },
+  {
+   "name": "$__copy_ptrs",
+   "address": "0x8234c2d8",
+   "survivor": "??$__copy_ptrs@PAVMeshPair@BandPatchMesh@@PAV12@@stlpmtx_std@@YAPAVMeshPair@BandPatchMesh@@PAV12@00ABU__false_type@0@@Z",
+   "folded": [
+    "??$__copy_ptrs@PBVMeshPair@BandPatchMesh@@PAV12@@stlpmtx_std@@YAPAVMeshPair@BandPatchMesh@@PBV12@0PAV12@ABU__false_type@0@@Z"
+   ],
+   "evidence": "Hand-installed by lane W17-BPM. Evidence tier T1: RB3 retail bytes at the survivor address are word-identical (relocated fields masked on both sides, see note for word counts) to our compiled body for each folded spelling. 23/23 words, 19 unmasked. Retail call graph: 0x8234C2D8 is called by _M_erase (0x8234C338, PAV in source) and twice by vector<MeshPair>::operator= (0x8234C778, PBV in source).",
+   "added": {
+    "lane": "W17-BPM 2026-09-30"
+   }
+  },
+  {
+   "name": "0?$_Vector_base",
+   "address": "0x8236e340",
+   "survivor": "??0?$_Vector_base@ULod@Character@@V?$StlNodeAlloc@ULod@Character@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@ULod@Character@@@1@@Z",
+   "folded": [
+    "??0?$_Vector_base@VMeshPair@BandPatchMesh@@V?$StlNodeAlloc@VMeshPair@BandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VMeshPair@BandPatchMesh@@@1@@Z"
+   ],
+   "evidence": "Hand-installed by lane W17-BPM. Evidence tier T1: RB3 retail bytes at the survivor address are word-identical (relocated fields masked on both sides, see note for word counts) to our compiled body for each folded spelling. 24/24 words, 23 unmasked. Retail call graph: vector<MeshPair>'s copy ctor (0x8234BA70) calls 0x8236E340 where our source calls _Vector_base<MeshPair>(n, alloc).",
+   "added": {
+    "lane": "W17-BPM 2026-09-30"
+   }
   }
  ]
 }
