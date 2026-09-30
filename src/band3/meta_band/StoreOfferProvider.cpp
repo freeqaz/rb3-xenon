@@ -550,13 +550,21 @@ void StoreOfferProvider::BuildList(DataArray *grouping) {
     // BandStorePanel::Instance() call at 0x82664774 -- so the static is declared
     // outside the `if`, not inside it.
     static Symbol store_previous_chunk("store_previous_chunk");
-    // Retail tests the DEREFERENCE first and the pointer second (0x82664784
-    // lbz / cmplwi / beq, then 0x82664790 cmplwi / beq). Writing this as
-    // `if (*p == 0) p = NULL; if (p)` instead makes MSVC select branchlessly
-    // (subfic / subfe / and) and costs five instructions. The two forms are
-    // equivalent here because the dereference is unconditional either way.
-    const char *prevPath = PrevChunkPath(BandStorePanel::Instance()).c_str();
-    if (*prevPath != 0 && prevPath != NULL) {
+    // Retail tests the DEREFERENCE first and the pointer second, as two
+    // separate compares (0x82664784 lbz r10 / cmplwi r10 / beq, then
+    // 0x82664790 cmplwi r11 / beq). Spellings measured (lane W17-W78):
+    //  - `*p != 0 && p != NULL` on one local: MSVC treats the deref as proof
+    //    of non-null and DELETES the pointer test (one compare, and the
+    //    r15/r22 + `this`-spill cascade through the rest of the body).
+    //  - rb3-Wii's `if (*p == 0) p = NULL; if (p)` (and `*p ? p : NULL`, and
+    //    a switch): branchless subfic / subfe / and select.
+    //  - String::empty() then a SECOND c_str() read (this form): both
+    //    compares survive, both on cr0. Cost: one dead `stw r11,0x50(r31)`
+    //    temp between them that retail does not have.
+    //  - the same but with c_str() hoisted into a named local: no stray store,
+    //    exact size, but the pointer compare moves to cr6 -- scores lower.
+    BandStorePanel *prevPanel = BandStorePanel::Instance();
+    if (!PrevChunkPath(prevPanel).empty() && PrevChunkPath(prevPanel).c_str()) {
         Element *prev = new Element(NULL, store_previous_chunk, true, false, true);
         mElements.push_back(prev);
         mElements.back()->mShortcut = store_previous_chunk;
@@ -586,7 +594,12 @@ void StoreOfferProvider::BuildList(DataArray *grouping) {
         DataArray *groupArr = grouping->FindArray(browser_group, true);
         DataArray *subgroupArr = grouping->FindArray(browser_subgroup, false);
         DataArray *shortcutArr = grouping->FindArray(shortcut_group, false);
-        bool localize = grouping->FindArray(localize_heading, true)->Int(1) != 0;
+        // The explicit Symbol(...) copy is load-bearing: retail spills the
+        // by-value Symbol argument of THIS FindArray (and only this one) to a
+        // stack temp before the call (`stw r4,0x50(r31)`); passing the static
+        // directly keeps it in r4 only.
+        bool localize =
+            grouping->FindArray(Symbol(localize_heading), true)->Int(1) != 0;
         MILO_ASSERT(sortName != shortcut_groups, 0x1FA);
         Element *lastGroup = NULL;
         Element *lastSubgroup = NULL;
@@ -677,9 +690,10 @@ void StoreOfferProvider::BuildList(DataArray *grouping) {
     // Guard bit 0x100 is tested at 0x82664FFC, BEFORE the Instance() call at
     // 0x8266501C -- same shape as store_previous_chunk above.
     static Symbol store_next_chunk("store_next_chunk");
-    // Same deref-then-pointer test order as prevPath (0x82665024 / 0x82665030).
-    const char *nextPath = NextChunkPath(BandStorePanel::Instance()).c_str();
-    if (*nextPath != 0 && nextPath != NULL) {
+    // Same deref-then-pointer test order and spelling as prevPath
+    // (0x82665024 / 0x82665030).
+    BandStorePanel *nextPanel = BandStorePanel::Instance();
+    if (!NextChunkPath(nextPanel).empty() && NextChunkPath(nextPanel).c_str()) {
         Element *next = new Element(NULL, store_next_chunk, true, false, true);
         mElements.push_back(next);
         mElements.back()->mShortcut = store_next_chunk;
