@@ -449,7 +449,8 @@ int TambourineManager::TambourineSwing(int tick) {
         return 0;
     int diff = tick - TambourineGems()[idx];
     if (unk4c >= 8) {
-        mPlayerRef.PopupHelp(Symbol("tambourine"), false);
+        Symbol help("tambourine");
+        mPlayerRef.PopupHelp(help, false);
     }
     unk4c = 0;
     int window = mTambourineWindowTicks;
