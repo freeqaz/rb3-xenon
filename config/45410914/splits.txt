@@ -330,16 +330,12 @@ BandCamShot.cpp:
 	.pdata      start:0x821F5708 end:0x821F5718
 	.pdata      start:0x821F5718 end:0x821F5F38
 	.pdata      start:0x821F5F38 end:0x821F5F60
-	.pdata      start:0x82213890 end:0x822138A0
-	.pdata      start:0x822138E8 end:0x822138F8
 	.text       start:0x822782D0 end:0x82278384
 	.text       start:0x8227A1A8 end:0x8227A228
 	.text       start:0x8227A2A0 end:0x8227A2A8
 	.text       start:0x822B0A38 end:0x822B0AB0
 	.text       start:0x822B0AB0 end:0x822B88F0
 	.text       start:0x822B8900 end:0x822B8BE8
-	.text       start:0x824C3E08 end:0x824C3E98
-	.text       start:0x824C4528 end:0x824C46B4
 
 BandDirector.cpp:
 	.pdata      start:0x821F3210 end:0x821F3220
@@ -810,6 +806,7 @@ BandCrowdMeter.cpp:
 	.pdata      start:0x821F6478 end:0x821F6538
 	.pdata      start:0x821F6598 end:0x821F65A0
 	.pdata      start:0x821F65A0 end:0x821F6648
+	.pdata      start:0x821F6650 end:0x821F6658
 	.pdata      start:0x821F6750 end:0x821F6760
 	.pdata      start:0x821F6760 end:0x821F6770
 	.pdata      start:0x821F6770 end:0x821F6778
@@ -827,6 +824,7 @@ BandCrowdMeter.cpp:
 	.text       start:0x822BE2EC end:0x822BE370
 	.text       start:0x822BE370 end:0x822BEAB4
 	.text       start:0x822BEAB8 end:0x822BEB04
+	.text       start:0x822BEB88 end:0x822BECD8
 	.text       start:0x822BF678 end:0x822BF980
 	.text       start:0x822BF980 end:0x822BFAE8
 	.text       start:0x822BFAE8 end:0x822BFB40
@@ -4947,7 +4945,6 @@ HamMaster.cpp:
 
 CameraShot.cpp:
 	.pdata      start:0x821F6538 end:0x821F6540
-	.pdata      start:0x821F6650 end:0x821F6658
 	.pdata      start:0x821F6658 end:0x821F6660
 	.pdata      start:0x82201880 end:0x82201888
 	.pdata      start:0x82201888 end:0x82201890
@@ -4959,9 +4956,11 @@ CameraShot.cpp:
 	.pdata      start:0x82213428 end:0x82213430
 	.pdata      start:0x82213430 end:0x82213448
 	.pdata      start:0x82213448 end:0x82213890
+	.pdata      start:0x82213890 end:0x822138A0
 	.pdata      start:0x822138A0 end:0x822138C8
 	.pdata      start:0x822138C8 end:0x822138D0
 	.pdata      start:0x822138D0 end:0x822138E8
+	.pdata      start:0x822138E8 end:0x822138F8
 	.pdata      start:0x822138F8 end:0x82213900
 	.pdata      start:0x82213900 end:0x82213938
 	.pdata      start:0x82213940 end:0x82213A38
@@ -4974,7 +4973,6 @@ CameraShot.cpp:
 	.pdata      start:0x82213CD8 end:0x82213CF0
 	.pdata      start:0x82213CF8 end:0x82213D50
 	.text       start:0x822BDCB0 end:0x822BDD10
-	.text       start:0x822BEB88 end:0x822BECD8
 	.text       start:0x822BECD8 end:0x822BED14
 	.text       start:0x82371320 end:0x82371388
 	.text       start:0x82371388 end:0x823713B8
@@ -4989,9 +4987,11 @@ CameraShot.cpp:
 	.text       start:0x824BDB80 end:0x824BE030
 	.text       start:0x824BE030 end:0x824BE2B0
 	.text       start:0x824BE2B0 end:0x824C3E08
+	.text       start:0x824C3E08 end:0x824C3E98
 	.text       start:0x824C3E98 end:0x824C4058
 	.text       start:0x824C4058 end:0x824C41E0
 	.text       start:0x824C41E0 end:0x824C4528
+	.text       start:0x824C4528 end:0x824C46B4
 	.text       start:0x824C46B4 end:0x824C46B8
 	.text       start:0x824C46B8 end:0x824C4718
 	.text       start:0x824C4718 end:0x824C4998

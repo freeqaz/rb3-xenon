@@ -1914,7 +1914,8 @@
     "?clear@?$ObjPtrList@VUILabel@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VCharMeshHide@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VObject@Hmx@@VObjectDir@@@@QAAXXZ",
-    "?clear@?$ObjPtrList@VRndMeshDeform@@VObjectDir@@@@QAAXXZ"
+    "?clear@?$ObjPtrList@VRndMeshDeform@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 34, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 46 folded spelling(s), 16 census sites over 4 functions.",
    "withdrawn": [],
@@ -2127,6 +2128,14 @@
        "disposition": "repartitioned"
       }
      ]
+    }
+   ],
+   "added": [
+    {
+     "spelling": "?clear@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ",
+     "lane": "W17-PRAC 2026-09-30",
+     "verdict": "FOLD -- PROVEN on retail bytes, FLAT T1 (tools/icf_pair_adjudicate.py --chase; 96 B vs 96 B, one tolerated placeholder relocation)",
+     "evidence": "Retail 0x8249f438, whose stored vtable 0x820734f4 resolves (retail_rtti) to .?AV?$ObjPtrList@VTask@@VObjectDir@@@@ and which is renamed ~ObjPtrList<Task,ObjectDir> in the same commit, calls this body at +0x2c where our compiled dtor calls ObjPtrList<Task>::clear. Joins the group's 28 other ObjPtrList<T>::clear spellings on the one body."
     }
    ]
   },
@@ -28008,7 +28017,7 @@
   {
    "name": "insert",
    "address": "0x824a06c8",
-   "survivor": "?insert@?$list@UPropTriggerDefn@FlowTrigger@@V?$StlNodeAlloc@UPropTriggerDefn@FlowTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UPropTriggerDefn@FlowTrigger@@U?$_Nonconst_traits@UPropTriggerDefn@FlowTrigger@@@stlpmtx_std@@@2@U32@ABUPropTriggerDefn@FlowTrigger@@@Z",
+   "survivor": "?insert@?$list@UAnim@EventTrigger@@V?$StlNodeAlloc@UAnim@EventTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UAnim@EventTrigger@@U?$_Nonconst_traits@UAnim@EventTrigger@@@stlpmtx_std@@@2@U32@ABUAnim@EventTrigger@@@Z",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 86 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -28441,6 +28450,24 @@
      "spelling": "?insert@?$list@W4TrackType@@V?$StlNodeAlloc@W4TrackType@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@W4TrackType@@U?$_Nonconst_traits@W4TrackType@@@stlpmtx_std@@@2@U32@ABW4TrackType@@@Z",
      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UPropTriggerDefn@FlowTrigger@@V?$StlNodeAlloc@UPropTriggerDefn@FlowTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UPropTriggerDefn@FlowTrigger@@U?$_Nonconst_traits@UPropTriggerDefn@FlowTrigger@@@stlpmtx_std@@@2@U32@ABUPropTriggerDefn@FlowTrigger@@@Z",
+     "lane": "W17-PRAC 2026-09-30",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+     "disposition": "withdrawn; the group survivor is rebound to the retail identity at 0x824a06c8, and the map is rebound there in the same commit",
+     "absent_types": [
+      "FlowTrigger"
+     ],
+     "type_evidence": {
+      "FlowTrigger": {
+       "declared_in": "src/system/flow only (Dance Central flow)",
+       "rb3wii_files": 0,
+       "retail_rtti_hits": 0,
+       "polymorphic_in_our_source": "yes"
+      }
+     },
+     "evidence": "TYPE DOES NOT EXIST IN RB3 RETAIL, AND THE BODY IS TYPED BY ITS CALLERS. Retail 0x824a06c8 (100 B) is a list<T>::insert(iterator, const T&) whose callers are PropSync<EventTrigger::Anim>(ObjList<Anim>&) (0x824a0b00), list<EventTrigger::Anim>::resize (0x824a1ab0) and list<Anim>'s range ctor (0x824a1c68). The Anim spelling (EventTrigger.obj) is the survivor; no fold is asserted. FlowTrigger::PropTriggerDefn is Dance Central flow code."
     }
    ],
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 9 other group(s) at 10 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 9 of the 10 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
@@ -88394,12 +88421,20 @@
   {
    "name": "__uninitialized_fill_n_PAVCamShotFrame",
    "address": "0x824b0c60",
-   "survivor": "??$__uninitialized_fill_n@PAVCamShotFrame@@IV1@@stlpmtx_std@@YAPAVCamShotFrame@@PAV1@IABV1@ABU__false_type@0@@Z",
+   "survivor": "??$__uninitialized_copy@PAUSpotlightEntry@LightPreset@@PAU12@@stlpmtx_std@@YAPAUSpotlightEntry@LightPreset@@PAU12@00ABU__false_type@0@@Z",
    "folded": [
-    "??$__uninitialized_copy@PBUSpotlightEntry@LightPreset@@PAU12@@stlpmtx_std@@YAPAUSpotlightEntry@LightPreset@@PBU12@0PAU12@ABU__false_type@0@@Z",
-    "??$__uninitialized_copy@PAUSpotlightEntry@LightPreset@@PAU12@@stlpmtx_std@@YAPAUSpotlightEntry@LightPreset@@PAU12@00ABU__false_type@0@@Z"
+    "??$__uninitialized_copy@PBUSpotlightEntry@LightPreset@@PAU12@@stlpmtx_std@@YAPAUSpotlightEntry@LightPreset@@PBU12@0PAU12@ABU__false_type@0@@Z"
    ],
-   "evidence": "W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x824b0c60). \"ours\" spelling ??$__uninitialized_copy@PBUSpotlightEntry@LightPreset@@PAU12@@stlpmtx_std@@YAPAUSpotlightEntry@LightPreset@@PBU12@0PAU12@ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_fill_n@PAVCamShotFrame@@IV1@@stlpmtx_std@@YAPAVCamShotFrame@@PAV1@IABV1@ABU__false_type@0@@Z at retail address 0x824b0c60. FLAT T1 PROVEN directly -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 2 named relocation(s) matched at FLAT T1 (no chase recursion required), 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 3 row(s) / 544 B (544 B honest) across ['default/LightPreset'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md. W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 22, row addr 0x824b0c60). \"ours\" spelling ??$__uninitialized_copy@PAUSpotlightEntry@LightPreset@@PAU12@@stlpmtx_std@@YAPAUSpotlightEntry@LightPreset@@PAU12@00ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_fill_n@PAVCamShotFrame@@IV1@@stlpmtx_std@@YAPAVCamShotFrame@@PAV1@IABV1@ABU__false_type@0@@Z at retail address 0x824b0c60. FLAT T1 PROVEN directly -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 2 named relocation(s) matched at FLAT T1 (no chase recursion required), 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 392 B (392 B honest) across ['default/LightPreset'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md."
+   "evidence": "W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x824b0c60). \"ours\" spelling ??$__uninitialized_copy@PBUSpotlightEntry@LightPreset@@PAU12@@stlpmtx_std@@YAPAUSpotlightEntry@LightPreset@@PBU12@0PAU12@ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_fill_n@PAVCamShotFrame@@IV1@@stlpmtx_std@@YAPAVCamShotFrame@@PAV1@IABV1@ABU__false_type@0@@Z at retail address 0x824b0c60. FLAT T1 PROVEN directly -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 2 named relocation(s) matched at FLAT T1 (no chase recursion required), 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 3 row(s) / 544 B (544 B honest) across ['default/LightPreset'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md. W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 22, row addr 0x824b0c60). \"ours\" spelling ??$__uninitialized_copy@PAUSpotlightEntry@LightPreset@@PAU12@@stlpmtx_std@@YAPAUSpotlightEntry@LightPreset@@PAU12@00ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_fill_n@PAVCamShotFrame@@IV1@@stlpmtx_std@@YAPAVCamShotFrame@@PAV1@IABV1@ABU__false_type@0@@Z at retail address 0x824b0c60. FLAT T1 PROVEN directly -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 2 named relocation(s) matched at FLAT T1 (no chase recursion required), 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 392 B (392 B honest) across ['default/LightPreset'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_fill_n@PAVCamShotFrame@@IV1@@stlpmtx_std@@YAPAVCamShotFrame@@PAV1@IABV1@ABU__false_type@0@@Z",
+     "lane": "W17-PRAC 2026-09-30",
+     "class": "WRONG_MAP_NAME_AT_ADDRESS",
+     "disposition": "withdrawn; the group survivor is rebound to the retail identity at 0x824b0c60, and the map is rebound there in the same commit",
+     "evidence": "Retail 0x824b0c60 (96 B) is a (first, last, result) loop with stride 0x58 calling the element copy 0x824adbd0 -- an __uninitialized_copy, not an __uninitialized_fill_n -- and its callers are LightPreset::SpotlightEntry vector members (copy ctor 0x824b0aa8, _M_fill_insert_aux 0x824b1b48, _M_allocate_and_copy 0x824b1d00, operator= 0x824b2250). CamShotFrame is 0x108 and its real __uninitialized_fill_n is 0x824c3e08 (named in the same commit, which forced this adjudication through map name-injectivity). The non-const SpotlightEntry spelling, previously folded, is the survivor; the const-source spelling stays folded."
+    }
+   ]
   },
   {
    "name": "GetObj_VMoggClip",
