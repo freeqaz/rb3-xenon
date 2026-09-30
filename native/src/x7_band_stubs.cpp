@@ -94,12 +94,8 @@ void CharBoneOffset::ApplyToLocal() {}
 void RndMeshDeform::Reskin(SyncMeshCB *, bool) {}
 void CharMeshHide::HideAll(const ObjPtrList<CharMeshHide, ObjectDir> &, int) {}
 
-// --- MakeVertical(Hmx::Matrix3&) — declared in math/Mtx.h, never defined.
-// Orthonormalizes a basis about world-up. Inert leaves the caller's matrix
-// exactly as passed, which is the identity transformation ON THE MATRIX — the
-// one case where "do nothing" is genuinely the neutral answer rather than an
-// approximation of one.
-void MakeVertical(Hmx::Matrix3 &) {}
+// (MakeVertical(Hmx::Matrix3&) used to be an inert stub here; lane W16-HZ wrote the real
+// body in src/system/math/Rot.cpp from retail 0x824EE5F0, so that links instead.)
 
 // --- Rnd::CompressTextureCancel — declared, never defined. It withdraws a
 // pending async texture-compression request. This backend performs no async
@@ -129,14 +125,8 @@ Symbol BandCharacter::NameToDrumVenue(const char *name) {
 // the patch-projection subsystem, so the real member in
 // src/system/bandobj/BandPatchMesh.cpp links instead.)
 
-// FixedSizeSaveable::{Save,Load}FixedString (meta/FixedSizeSaveable.h:40-41).
-// Declared, never defined. These are the SAVEGAME serializer, reached from
-// BandCharDesc::OutfitPiece's fixed-size save/load (BandCharDesc.cpp:335, :353)
-// — NOT from BandCharDesc::Load(BinStream&), which is the .milo path this lane
-// exercises. Load clears the string rather than leaving it undefined, so a
-// caller sees "empty" and not stale memory.
-void FixedSizeSaveable::SaveFixedString(FixedSizeSaveableStream &, const String &) {}
-void FixedSizeSaveable::LoadFixedString(FixedSizeSaveableStream &, String &s) { s = ""; }
+// (FixedSizeSaveable::{Save,Load}FixedString are defined in
+// src/system/meta/FixedSizeSaveable.cpp, retail 0x827A2C28/0x827A2A50, and link from there.)
 
 // --- CharKeyHandMidi: an ENTIRELY UNDECOMPILED CLASS.
 //

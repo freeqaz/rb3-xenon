@@ -136,7 +136,9 @@ GetPropSize forceinline). Behaviour-relevant: `SetSystemArgs` had no space split
 plausible original source.
 
 After the rebase, FxSendSynapse.cpp held two copies of five setters (main's W16-HX4 and fork X both wrote them);
-main's block was kept.
+main's block was kept. The first native gate run then FAILED (16/18: rb3-milo, rb3-render) on duplicate definitions of
+`MakeVertical` and `FixedSizeSaveable::{Save,Load}FixedString`: `native/src/x7_band_stubs.cpp` carried inert link
+stubs for them from when no source defined them. Fork X's real bodies replace the stubs, which were removed.
 
 ## 5. Gates (rebased tip, full build)
 
