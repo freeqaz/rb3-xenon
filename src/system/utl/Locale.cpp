@@ -153,7 +153,9 @@ void Locale::Init() {
     MILO_ASSERT(!mSize, 0x5A);
     MILO_ASSERT(!mStringData, 0x5B);
     MILO_ASSERT(!mNumFilesLoaded, 0x5C);
+#ifdef HX_NATIVE
     mSize = 0;
+#endif
     int totalStrLen = 0;  // Total length of all unique localized strings
     int numChunks = 0;     // Number of locale entries loaded from files
     LocaleChunkSort::OrderedLocaleChunk *chunks = 0;
@@ -174,12 +176,17 @@ void Locale::Init() {
     DataArrayPtr altCfg((DataNode(locale)), DataNode(devkitPath));
 #endif
 
+#ifdef HX_NATIVE
     DataArray *cfg = SystemConfig();
     if (!cfg) {
         goto done;
     }
 
     cfg = SystemConfig("locale");
+#else
+    // retail (TU5): straight to SystemConfig("locale"), no null-config exit
+    DataArray *cfg = SystemConfig("locale");
+#endif
 
 #ifdef HX_NATIVE
     if (DmMapDevkitDrive() >= 0) {
@@ -198,7 +205,11 @@ void Locale::Init() {
         int totalChunks = 0;
         // NOTE: mInitialized is uninitialized here (UB). RB3 doesn't have this check.
         // This appears to be dead code or a bug, but matches the original binary.
-        if (mInitialized) {
+        // retail has no mInitialized test around the file reads
+#ifdef HX_NATIVE
+        if (mInitialized)
+#endif
+        {
             auto _tmp10 = cfg->Size();
             for (int i = 1; i < _tmp10; i++) {
                 const char *path = FileMakePath(FileGetPath(cfg->File()), cfg->Str(i));
