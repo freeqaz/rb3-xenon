@@ -90824,6 +90824,18 @@
    "added": {
     "lane": "W16-IB 2026-09-30"
    }
+  },
+  {
+   "name": "$__uninitialized_copy",
+   "address": "0x82348b28",
+   "survivor": "??$__uninitialized_copy@PAVPatchPair@MeshPair@BandPatchMesh@@PAV123@@stlpmtx_std@@YAPAVPatchPair@MeshPair@BandPatchMesh@@PAV123@00ABU__false_type@0@@Z",
+   "folded": [
+    "??$__uninitialized_copy@PBVPatchPair@MeshPair@BandPatchMesh@@PAV123@@stlpmtx_std@@YAPAVPatchPair@MeshPair@BandPatchMesh@@PBV123@0PAV123@ABU__false_type@0@@Z"
+   ],
+   "evidence": "Hand-installed by lane W17-BPM3. Evidence tier T1: RB3 retail bytes at the survivor address are word-identical (relocated fields masked on both sides) to our compiled body for each spelling: 24/24 words, 21 unmasked (our COMDAT span reads 104 B only because the reader bills the successor's 8-byte EH prefix; the 96-byte body is identical). Retail call graph: the one body at 0x82348B28 is called by vector<PatchPair>'s copy ctor (0x823493D0) and _M_allocate_and_copy (0x82348D80), whose source instantiates the const-source (PBV) spelling, and by _M_fill_insert_aux (0x82348BC0), operator= (0x82349470) and _M_insert_overflow_aux (0x823495E0), which instantiate PAV. Same shape as the MeshPair group at 0x8234b438.",
+   "added": {
+    "lane": "W17-BPM3 2026-09-30"
+   }
   }
- ]
+]
 }

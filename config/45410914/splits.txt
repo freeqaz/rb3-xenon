@@ -204,7 +204,6 @@ RockCentral.cpp:
 	.pdata      start:0x82235900 end:0x822359B0
 	.text       start:0x822CEEE8 end:0x822CEF8C
 	.text       start:0x823450B8 end:0x82345100
-	.text       start:0x82348048 end:0x8234820C
 	.text       start:0x823EC310 end:0x823EC398
 	.text       start:0x823EC538 end:0x823EC788
 	.text       start:0x823F0F84 end:0x823F0F88
@@ -3898,7 +3897,7 @@ Font.cpp:
 	.text       start:0x822DF250 end:0x822DF300
 	.text       start:0x822DF548 end:0x822DF704
 	.text       start:0x822FA1D0 end:0x822FA24C
-	.text       start:0x82347930 end:0x82347A18
+	.text       start:0x82347930 end:0x823479A0
 	.text       start:0x82380598 end:0x823806D8
 	.text       start:0x82469388 end:0x824693F4
 	.text       start:0x824723A0 end:0x824726C8
@@ -4217,11 +4216,6 @@ SkeletonClip.cpp:
 	.pdata      start:0x82237B68 end:0x82237B70
 	.pdata      start:0x82237B70 end:0x82237B78
 	.pdata      start:0x8223D848 end:0x8223D850
-	.text       start:0x82347478 end:0x823474D0
-	.text       start:0x82348B28 end:0x82348D80
-	.text       start:0x82348D80 end:0x82348DEC
-	.text       start:0x82348DEC end:0x82348E20
-	.text       start:0x8234ADC8 end:0x8234AE48
 	.text       start:0x82703890 end:0x827039C8
 	.text       start:0x82704058 end:0x827041A8
 	.text       start:0x827041A8 end:0x827041E4
@@ -4282,9 +4276,6 @@ MoveMgr.cpp:
 	.text       start:0x822CFD10 end:0x822D16F8
 	.text       start:0x822D1768 end:0x822D2C28
 	.text       start:0x822D2C80 end:0x822D2D58
-	.text       start:0x82347EE8 end:0x82348048
-	.text       start:0x82348310 end:0x82348388
-	.text       start:0x823486B8 end:0x823489F0
 	.text       start:0x82C122D8 end:0x82C122E4
 
 Watcher.cpp:
@@ -4293,7 +4284,7 @@ Watcher.cpp:
 	.pdata      start:0x82208D00 end:0x82208D18
 	.pdata      start:0x82208D18 end:0x82208D28
 	.text       start:0x822B8F08 end:0x822B91CC
-	.text       start:0x823489F0 end:0x82348B28
+	.text       start:0x82348A60 end:0x82348B28
 	.text       start:0x823F20C0 end:0x823F21E0
 	.text       start:0x823F21E0 end:0x823F2280
 
@@ -4567,7 +4558,6 @@ Morph.cpp:
 	.pdata      start:0x82210678 end:0x82210680
 	.pdata      start:0x82210688 end:0x82210740
 	.text       start:0x822A9BC8 end:0x822A9C58
-	.text       start:0x82349470 end:0x823495D8
 	.text       start:0x82398798 end:0x82398A10
 	.text       start:0x82399140 end:0x823991BC
 	.text       start:0x82482F50 end:0x8248303C
@@ -4974,7 +4964,6 @@ FileCache.cpp:
 	.pdata      start:0x82218490 end:0x82218498
 	.pdata      start:0x82218498 end:0x82218610
 	.text       start:0x82276828 end:0x82276888
-	.text       start:0x82347850 end:0x82347930
 	.text       start:0x82518358 end:0x82518430
 	.text       start:0x82518430 end:0x825184C4
 	.text       start:0x825184C8 end:0x8251A004
@@ -10500,12 +10489,14 @@ BandPatchMesh.cpp:
 	.text       start:0x82345330 end:0x8234539C
 	.text       start:0x823453A0 end:0x82345520
 	.text       start:0x82345638 end:0x82345824
+	.text       start:0x82345824 end:0x82346160
 	.text       start:0x82346160 end:0x823461C4
 	.text       start:0x823461C8 end:0x823462A4
 	.text       start:0x823462A4 end:0x82346360
 	.text       start:0x82346360 end:0x8234642C
 	.text       start:0x8234642C end:0x823464F8
 	.text       start:0x823464F8 end:0x823465B0
+	.text       start:0x823465B0 end:0x823468E8
 	.text       start:0x823468E8 end:0x82346DE0
 	.text       start:0x82346DE0 end:0x82346F64
 	.text       start:0x82346F68 end:0x82347030
@@ -10515,6 +10506,7 @@ BandPatchMesh.cpp:
 	.text       start:0x823471A8 end:0x82347214
 	.text       start:0x82347218 end:0x82347284
 	.text       start:0x82347284 end:0x82347478
+	.text       start:0x82347478 end:0x823474D0
 	.text       start:0x823474D0 end:0x82347528
 	.text       start:0x82347530 end:0x823475FC
 	.text       start:0x82347600 end:0x82347650
@@ -10523,6 +10515,8 @@ BandPatchMesh.cpp:
 	.text       start:0x82347720 end:0x82347770
 	.text       start:0x82347770 end:0x823477C0
 	.text       start:0x823477C0 end:0x82347850
+	.text       start:0x82347850 end:0x82347930
+	.text       start:0x823479A0 end:0x82347A18
 	.text       start:0x82347A18 end:0x82347B74
 	.text       start:0x82347B78 end:0x82347BE4
 	.text       start:0x82347BE8 end:0x82347C48
@@ -10532,14 +10526,23 @@ BandPatchMesh.cpp:
 	.text       start:0x82347DB0 end:0x82347E14
 	.text       start:0x82347E18 end:0x82347E7C
 	.text       start:0x82347E80 end:0x82347EE8
+	.text       start:0x82347EE8 end:0x82348048
+	.text       start:0x82348048 end:0x8234820C
 	.text       start:0x82348210 end:0x82348260
 	.text       start:0x82348260 end:0x82348310
+	.text       start:0x82348310 end:0x82348388
 	.text       start:0x82348388 end:0x823484EC
 	.text       start:0x823484F0 end:0x82348598
 	.text       start:0x82348598 end:0x82348628
 	.text       start:0x82348628 end:0x823486B8
+	.text       start:0x823486B8 end:0x823489F0
+	.text       start:0x823489F0 end:0x82348A60
+	.text       start:0x82348B28 end:0x82348D80
+	.text       start:0x82348D80 end:0x82348DEC
+	.text       start:0x82348DEC end:0x82348E20
 	.text       start:0x82348FC4 end:0x823493D0
 	.text       start:0x823493D0 end:0x82349470
+	.text       start:0x82349470 end:0x823495D8
 	.text       start:0x823495D8 end:0x82349770
 	.text       start:0x82349770 end:0x8234982C
 	.text       start:0x8234982C end:0x823498F0
@@ -10557,6 +10560,8 @@ BandPatchMesh.cpp:
 	.text       start:0x8234A288 end:0x8234A44C
 	.text       start:0x8234A44C end:0x8234AC78
 	.text       start:0x8234AC78 end:0x8234ADC8
+	.text       start:0x8234ADC8 end:0x8234AE48
+	.text       start:0x8234AE48 end:0x8234B270
 	.text       start:0x8234B270 end:0x8234B3D0
 	.text       start:0x8234B3D0 end:0x8234B4D0
 	.text       start:0x8234B4D0 end:0x8234BA70
@@ -12363,7 +12368,6 @@ MessageTimer.cpp:
 	.text       start:0x82272638 end:0x822726A8
 	.text       start:0x82272C00 end:0x82272CF8
 	.text       start:0x82272CF8 end:0x82272DB4
-	.text       start:0x823465B0 end:0x823468E8
 	.text       start:0x8242C568 end:0x8242C770
 
 ClipDistMap.cpp:
