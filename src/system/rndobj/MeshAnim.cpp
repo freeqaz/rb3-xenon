@@ -302,7 +302,7 @@ void RndMeshAnim::ShrinkKeys(int num) {
 //   * synth_xbox/Voice.cpp does not compile off-Xbox (XAUDIO2 send descriptors,
 //     CreateThread) -- MEASURED, 2 errors under this build's exact flags.
 //   * band3/game/NetGameMsgs.cpp is a game TU no rndobj target compiles.
-//   * MultiMesh.cpp / Fur.cpp / ShaderMgr.cpp / mtx.cpp are ALREADY emitted by
+//   * MultiMesh.cpp / ShaderMgr.cpp / mtx.cpp are ALREADY emitted by
 //     other TUs in the native rndobj source set, so emitting them here as well
 //     is a duplicate definition, not a gap.
 //
@@ -327,15 +327,9 @@ void RndMeshAnim::ShrinkKeys(int num) {
 #undef gRev
 #undef gAltRev
 
-// laneW homing scan: RndFur's ctor/Save/Copy COMDATs were scattered by the retail
-// linker into this TU's pinned .text span (0x8246BEF0, 0x8246C250, 0x8246C3B0).
-// Must sit here, BEFORE ShaderMgr/NetGameMsgs/Voice: those pull in obj/ObjMacros.h,
-// which redefines INIT_REVS to the 1-arg dialect and breaks Fur.cpp's INIT_REVS(3, 0).
-#define gRev gRev_Fur
-#define gAltRev gAltRev_Fur
-#include "rndobj/Fur.cpp"
-#undef gRev
-#undef gAltRev
+// (W17-PIN: rndobj/Fur.cpp is no longer scatter-included here. RndFur's block
+// 0x8246BEF0-0x8246CDF0 is its own TU on retail bytes and is pinned to
+// system/rndobj/Fur.cpp, which compiles standalone.)
 #include "rndobj/ShaderMgr.cpp"
 #include "math/mtx.cpp"
 
