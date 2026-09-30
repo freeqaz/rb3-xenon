@@ -231,7 +231,7 @@ bool KeyboardTrackWatcherImpl::CheckForFatFinger(
                 }
                 FatFingerData *unused = FindUnusedFatFingerData();
                 unused->gemID = gem;
-                unused->gemPlayed = fatGem.GetPlayed();
+                unused->gemPlayed = fatGem.mPlayed; // retail copies the bit (srwi 7)
                 unused->unk8 = ms;
                 unused->slot = slot;
                 unused->slots = slots;
