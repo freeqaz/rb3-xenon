@@ -40,7 +40,13 @@ NoteVoiceInst::~NoteVoiceInst() { RELEASE(mSample); }
 void NoteVoiceInst::Start() {
     mStarted = true;
     mSample->SetStartProgress(mStartProgress);
+#ifdef HX_NATIVE
     mSample->Play(mOwner->Faders().GetVal() + mVolume);
+#else
+    // RB3 retail (rb3-Wii): the non-virtual SampleInst::Start (stop, then
+    // StartImpl); no volume is pushed here.
+    mSample->Start();
+#endif
 }
 
 void NoteVoiceInst::Stop() {
