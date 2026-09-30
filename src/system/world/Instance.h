@@ -44,7 +44,7 @@ public:
     OBJ_MEM_OVERLOAD(0x3F)
     NEW_OBJ(WorldInstance)
 private:
-    void LoadPersistentObjects(BinStreamRev &);
+    void LoadPersistentObjects(BinStream &);
     void SavePersistentObjects(BinStream &);
     void DeleteTransientObjects();
     void SyncDir();

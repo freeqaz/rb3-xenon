@@ -10007,7 +10007,7 @@
  "0x824eb690": "??1SharedGroup@@UAA@XZ",
  "0x824eb738": "??0WorldInstance@@IAA@XZ",
  "0x824eb940": "??_DWorldInstance@@QAAXXZ",
- "0x824eb9b8": "?LoadPersistentObjects@WorldInstance@@AAAXAAVBinStreamRev@@@Z",
+ "0x824eb9b8": "?LoadPersistentObjects@WorldInstance@@AAAXAAVBinStream@@@Z",
  "0x824ebcf0": "??$_S_sort@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@UClassAndNameSort@DirLoader@@@stlpmtx_std@@YAXAAV?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@0@UClassAndNameSort@DirLoader@@@Z",
  "0x824ebf00": "??_GWorldInstance@@UAAPAXI@Z",
  "0x824ec168": "?SyncDir@WorldInstance@@AAAXXZ",

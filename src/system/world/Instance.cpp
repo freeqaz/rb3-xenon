@@ -183,7 +183,13 @@ INIT_REVS(3, 0)
 // refactor replaced with an explicit parameter. Reproduced here as a private
 // TU-static (not a class member -- no layout change) rather than porting the
 // full rb3-Wii static-member mechanism tree-wide.
-static unsigned short sPersistRev = 0;
+// W16-HM: one TU aggregate for the load rev, shared by PreLoad (writes it),
+// PostLoad (re-writes it from the popped rev, rb3-Wii) and LoadPersistentObjects
+// (reads the rev half, retail lbl_82CC7AA8 = base+4). Was PreLoad's local
+// static plus a separate sPersistRev that PostLoad filled from a BinStreamRev.
+static unsigned short sLoadAltRev = 0;
+static __declspec(align(4)) unsigned short sLoadRev = 0;
+#define sPersistRev sLoadRev
 
 void WorldInstance::PreLoad(BinStream &bs) {
     if (IsProxy())
@@ -202,19 +208,11 @@ void WorldInstance::PreLoad(BinStream &bs) {
     // Combined into one aggregate (rather than two independent statics) so
     // both fields share a single base-address relocation, matching retail's
     // one-`lis`-plus-two-halfword-offsets shape instead of two separate ones.
-    static struct {
-        unsigned short altRev;
-        // 4-byte stride to `rev` (not the naturally-packed 2) — matches
-        // retail's observed +0/+4 field offsets (DAT_82cc7aa4/DAT_82cc7aa8),
-        // same __declspec(align(4)) idiom Object.h's INIT_REVS already uses
-        // for this class of rev field.
-        __declspec(align(4)) unsigned short rev;
-    } sLoad;
     int revs;
     bs >> revs;
-    sLoad.rev = getHmxRev(revs);
-    sLoad.altRev = getAltRev(revs);
-    if (sLoad.rev > 0) {
+    sLoadRev = getHmxRev(revs);
+    sLoadAltRev = getAltRev(revs);
+    if (sLoadRev > 0) {
         FilePath fp;
         bs >> fp;
         PreLoadInlined(fp, true, kInlineCachedShared);
@@ -238,7 +236,7 @@ void WorldInstance::PreLoad(BinStream &bs) {
     // not a body content change. Switching to rb3-Wii's push-before-superclass
     // order collapsed that pair. Measured via run_objdiff in worktree
     // ~/tmp/nc-wave4/f307s: 87.9% -> (see next measurement) normalized.
-    bs.PushRev(packRevs(sLoad.altRev, sLoad.rev), this);
+    bs.PushRev(packRevs(sLoadAltRev, sLoadRev), this);
     RndDir::PreLoad(bs);
     if (mProxyFile.length() != 0) {
         MILO_NOTIFY(
@@ -248,7 +246,7 @@ void WorldInstance::PreLoad(BinStream &bs) {
     }
 }
 
-void WorldInstance::LoadPersistentObjects(BinStreamRev &bs) {
+void WorldInstance::LoadPersistentObjects(BinStream &bs) {
     if (IsProxy()) {
         if (sPersistRev > 2) {
             // allocate more hashtable and stringtable space
@@ -443,18 +441,20 @@ void WorldInstance::PostLoad(BinStream &bs) {
     // after). X4a's theory that it corrupted the venue stream is REFUTED —
     // PopRev does not read the stream — and swapping it was measured to change
     // nothing at runtime. Left as-is; open as a match question, not a bug fix.
-    int revs = bs.PopRev(this);
-    BinStreamRev d(bs, revs);
-    sPersistRev = d.rev;
+    // RB3 retail (0x824ED000) is rb3-Wii's order: base PostLoad first, then pop
+    // the rev into the TU rev statics.
     RndDir::PostLoad(bs);
-    if (d.rev > 0) {
+    int revs = bs.PopRev(this);
+    sLoadRev = getHmxRev(revs);
+    sLoadAltRev = getAltRev(revs);
+    if (sLoadRev != 0) {
         ObjDirPtr<ObjectDir> dirPtr = PostLoadInlined();
         mDir = dynamic_cast<WorldInstance *>((ObjectDir *)dirPtr);
     } else {
         mDir.PostLoad(0);
     }
-    if (d.rev > 1) {
-        LoadPersistentObjects(d);
+    if (sLoadRev > 1) {
+        LoadPersistentObjects(bs);
     }
     SyncDir();
 }
