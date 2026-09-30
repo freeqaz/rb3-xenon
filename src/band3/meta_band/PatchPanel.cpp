@@ -260,7 +260,7 @@ float PatchPanel::CalcMotion(float vel, int dir) {
             vel = deadzone * (float)sign;
         }
     } else {
-        vel = vel * -(unk6c * dt - 1.0f);
+        vel = vel * (1.0f - unk6c * dt);
     }
     float maxVel = unk78;
     float negMaxVel = -maxVel;
