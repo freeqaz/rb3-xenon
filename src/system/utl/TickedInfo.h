@@ -60,6 +60,8 @@ public:
     int Size() const { return mInfos.size(); }
     void CopyFrom(const TickedInfoCollection &other) {
         mInfos.clear();
+        // retail (TickedInfoCollection<String>) reserves before the range insert
+        mInfos.reserve(other.mInfos.size());
         mInfos.insert(mInfos.begin(), other.mInfos.begin(), other.mInfos.end());
     }
     std::vector<TickedInfo<T> > mInfos;
