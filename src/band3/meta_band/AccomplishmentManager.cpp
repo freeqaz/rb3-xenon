@@ -216,8 +216,12 @@ void AccomplishmentManager::InitializeDiscSongs() {
         int songid = *it;
         BandSongMetadata *pSongData = (BandSongMetadata *)TheSongMgr.Data(songid);
         MILO_ASSERT(pSongData, 0xEB);
+        // Retail constructs this static and never reads it (its use is
+        // compiled out).
+        static Symbol rb3("rb3");
         if (!pSongData->IsDownload()) {
-            mDiscSongs.push_back(TheSongMgr.GetShortNameFromSongID(songid, true));
+            Symbol shortname = TheSongMgr.GetShortNameFromSongID(songid, true);
+            mDiscSongs.push_back(shortname);
         }
     }
     std::stable_sort(mDiscSongs.begin(), mDiscSongs.end(), SongDifficultyCmp(gNullStr));
