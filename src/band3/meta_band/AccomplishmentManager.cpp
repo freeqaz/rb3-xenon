@@ -1419,17 +1419,20 @@ void AccomplishmentManager::UpdateSongStatusFlagsForPerformer(
     }
     int rollCount = stats.GetRollCount();
     int rollPercent = rollCount > 0 ? (stats.GetRollsHitCompletely() * 100) / rollCount : 0;
-    if (rollPercent >= 100) {
+    bool perfectRolls = rollPercent >= 100;
+    if (perfectRolls) {
         pSongStatusMgr->SetSongStatusFlag(
             s, kSongStatusFlag_PerfectDrumRolls, scoreType, diff
         );
     }
-    if (stats.GetDoubleHarmonyHit() >= stats.GetDoubleHarmonyPhraseCount()) {
+    bool allDoubles = stats.GetDoubleHarmonyHit() >= stats.GetDoubleHarmonyPhraseCount();
+    if (allDoubles) {
         pSongStatusMgr->SetSongStatusFlag(
             s, kSongStatusFlag_AllDoubleAwesomes, scoreType, diff
         );
     }
-    if (stats.GetTripleHarmonyHit() >= stats.GetTripleHarmonyPhraseCount()) {
+    bool allTriples = stats.GetTripleHarmonyHit() >= stats.GetTripleHarmonyPhraseCount();
+    if (allTriples) {
         pSongStatusMgr->SetSongStatusFlag(
             s, kSongStatusFlag_AllTripleAwesomes, scoreType, diff
         );
