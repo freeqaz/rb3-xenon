@@ -142,6 +142,18 @@ namespace {
         return 0;
     }
 
+    // Retail fn_827DC3F0 / fn_827DC450 / fn_827DC4B0: the status line is
+    // classified by prefix, not parsed into a number.
+    bool IsStatusOK(String const &line) {
+        return StrIStartsWith(line, "HTTP/1.0 200") || StrIStartsWith(line, "HTTP/1.1 200");
+    }
+    bool IsStatusClientError(String const &line) {
+        return StrIStartsWith(line, "HTTP/1.0 4") || StrIStartsWith(line, "HTTP/1.1 4");
+    }
+    bool IsStatusServerError(String const &line) {
+        return StrIStartsWith(line, "HTTP/1.0 5") || StrIStartsWith(line, "HTTP/1.1 5");
+    }
+
     int GetContentLength(std::vector<String> const &lines) {
         int count = (int)lines.size();
         for (int i = 1; i < count; i++) {
@@ -158,7 +170,7 @@ namespace {
 };
 
 HttpGet::HttpGet(unsigned int ip, unsigned short port, const char *c1, const char *c2)
-    : mSocket(nullptr), mPath(c1), mPort(port), mState(-1), mFlags(false),
+    : mSocket(nullptr), mPath(c1), mPort(port), mState(-1), mHeaderOnly(false), mFlags(false),
       mTimeoutMs(kDefaultTimeoutMs), mIP(ip), mRecvBuf(nullptr), mRecvBufPos(0),
       mFileBuf(nullptr), mFileBufSize(0), mFileBufRecvPos(0), mRetryCount(0), mFailType(),
       mPrevState(kHttpGet_Nil) {
@@ -170,7 +182,7 @@ HttpGet::HttpGet(unsigned int ip, unsigned short port, const char *c1, const cha
 HttpGet::HttpGet(
     unsigned int ip, unsigned short port, const char *c1, unsigned char uc, const char *c2
 )
-    : mSocket(nullptr), mPath(c1), mPort(port), mState(-1), mFlags(uc & 3),
+    : mSocket(nullptr), mPath(c1), mPort(port), mState(-1), mHeaderOnly((uc & 1) != 0), mFlags(uc & 3),
       mTimeoutMs(kDefaultTimeoutMs), mIP(ip), mRecvBuf(nullptr), mRecvBufPos(0),
       mFileBuf(nullptr), mFileBufSize(0), mFileBufRecvPos(0), mRetryCount(0), mFailType() {
     (void)c2;
@@ -360,123 +372,70 @@ void HttpGet::Poll() {
             SetState(kHttpGet_Sending);
             return;
         }
-        if (HasTimedOut()) {
-            mFailType = kHttpFail_Timeout;
-            SetState(kHttpGet_FailedSend);
-        }
-        return;
-    case kHttpGet_SendingBody:
-        Sending();
-        return;
-    case kHttpGet_ReceivingHeaders:
+        break;
+    case kHttpGet_Sending:
         if (mSocket->CanRead()) {
-            if (mFlags & 1) {
+            if (mHeaderOnly) {
                 SetState(kHttpGet_Downloaded);
             } else {
                 SetState(kHttpGet_ReceivingBody);
             }
             return;
         }
-        if (HasTimedOut()) {
-            mFailType = kHttpFail_Timeout;
-            SetState(kHttpGet_FailedSend);
-        }
-        return;
+        break;
     case kHttpGet_ReceivingBody: {
         int recvd = mSocket->Recv(
             (char *)mRecvBuf + mRecvBufPos, kRecvBufSize - mRecvBufPos
         );
-        if (HasTimedOut()) {
-            mFailType = kHttpFail_Timeout;
-            SetState(kHttpGet_FailedSend);
-            return;
-        }
-        if (recvd == 0) return;
+        if (recvd <= 0) break;
         mTimer.Restart();
-        mRecvBufPos = recvd + mRecvBufPos;
+        mRecvBufPos += recvd;
 
-        if ((u32)mFileBuf == 0U) {
+        if (!mFileBuf) {
             int headerEnd = 0;
             int lineCount = 0;
             if (!ValidateHeader((char *)mRecvBuf, mRecvBufPos, &headerEnd, &lineCount)) {
                 return;
             }
-
             std::vector<String> lines;
-            {
-                String empty;
-                lines.resize(lineCount, empty);
-            }
+            lines.resize(lineCount, String());
             ParseHeader((char *)mRecvBuf, headerEnd, &lines);
-            int statusCode = ParseStatusCode(lines);
-            mHttpStatus = statusCode;
-
-            if (statusCode != 200) {
-                bool is4xx;
-                if (statusCode >= 400 && statusCode <= 499) {
-                    is4xx = true;
-                } else {
-                    is4xx = false;
-                }
-                if (is4xx) {
+            if (!IsStatusOK(lines[0])) {
+                if (IsStatusClientError(lines[0])) {
                     mFailType = kHttpFail_ClientError;
+                } else if (IsStatusServerError(lines[0])) {
+                    mFailType = kHttpFail_ServerError;
                 } else {
-                    bool is5xx;
-                    if (statusCode >= 500 && statusCode <= 599) {
-                        is5xx = true;
-                    } else {
-                        is5xx = false;
-                    }
-                    if (is5xx) {
-                        mFailType = kHttpFail_ServerError;
-                    } else {
-                        mFailType = kHttpFail_None;
-                    }
+                    mFailType = kHttpFail_None;
                 }
                 SetState(kHttpGet_Failed);
-            } else {
-                if (mFlags & 2) {
+                return;
+            }
+            int contentLen = GetContentLength(lines);
+            mFileBufSize = contentLen;
+            if (contentLen == 0) {
+                mFailType = kHttpFail_None;
+                SetState(kHttpGet_Failed);
+                return;
+            }
+            mFileBuf = (char *)MemAlloc(contentLen, __FILE__, 0x2BB, "HttpGet", 0);
+            MILO_ASSERT(mFileBuf, 0x2BC);
+            int bodyStart = headerEnd + 1;
+            if (mRecvBufPos > bodyStart) {
+                int len = mRecvBufPos - bodyStart;
+                memcpy(mFileBuf, (char *)mRecvBuf + bodyStart, len);
+                mFileBufRecvPos = len;
+                mRecvBufPos = 0;
+                if (len == mFileBufSize) {
                     SetState(kHttpGet_Downloaded);
-                } else {
-                    int contentLen = GetContentLength(lines);
-                    mFileBufSize = contentLen;
-                    if (contentLen < 0) {
-                        mFailType = kHttpFail_None;
-                        SetState(kHttpGet_Failed);
-                    } else if (contentLen == 0) {
-                        SetState(kHttpGet_Downloaded);
-                    } else {
-                        mFileBuf = (char *)MemAlloc(
-                            contentLen, __FILE__, 0x2BB, "HttpGet", 0
-                        );
-                        MILO_ASSERT(mFileBuf, 0x2BC);
-
-                        int bodyStart = headerEnd + 1;
-                        if (mRecvBufPos > bodyStart) {
-                            int len = mRecvBufPos - bodyStart;
-                            MILO_ASSERT(len <= mFileBufSize, 0x2C8);
-                            memcpy(
-                                mFileBuf,
-                                (char *)mRecvBuf + bodyStart,
-                                len
-                            );
-                            mRecvBufPos = 0;
-                            mFileBufRecvPos = len;
-                            MILO_ASSERT(mFileBufRecvPos <= mFileBufSize, 0x2CE);
-                            if (mFileBufRecvPos == mFileBufSize) {
-                                SetState(kHttpGet_Downloaded);
-                            }
-                        } else {
-                            mRecvBufPos = 0;
-                            mFileBufRecvPos = 0;
-                        }
-                    }
                 }
+            } else {
+                mRecvBufPos = 0;
+                mFileBufRecvPos = 0;
             }
             return;
         }
 
-        MILO_ASSERT(mFileBufSize >= mFileBufRecvPos + mRecvBufPos, 0x2E1);
         memcpy(mFileBuf + mFileBufRecvPos, mRecvBuf, mRecvBufPos);
         mFileBufRecvPos += mRecvBufPos;
         mRecvBufPos = 0;
@@ -486,8 +445,12 @@ void HttpGet::Poll() {
         return;
     }
     default:
-        MILO_FAIL("Bad State (%d) in HttpGet::Poll\n", mState);
         return;
+    }
+
+    if (HasTimedOut()) {
+        mFailType = kHttpFail_Timeout;
+        SetState(kHttpGet_FailedSend);
     }
 }
 
