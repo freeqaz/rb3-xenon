@@ -64,19 +64,24 @@ BEGIN_COPYS(Screenshot)
     //  (2) The note at the top of this file records a prior lane finding the
     //      SAME divergence at an adjacent site: retail's Screenshot::SyncProperty
     //      also has no Sync() call where dc3/rb3-Wii do.
-    // Load() keeps its Sync() -- retail's Load is anonymous in the map so it
-    // could not be used as the control, and it was left untouched.
+    // Load() (retail 0x82824E10, named by lane W16-HS) has no Sync() either;
+    // it is kept native-only there too.
 END_COPYS
 
 INIT_REVS(1, 0)
 
+// Retail Screenshot::Load (0x82824E10) reads the rev word whole into one 4-byte
+// file global and never splits or checks it, and does not Sync() afterwards.
+static int gScreenshotRev;
+
 BEGIN_LOADS(Screenshot)
-    LOAD_REVS(bs);
-    ASSERT_REVS(1, 0);
-    LOAD_SUPERCLASS(Hmx::Object)
-    LOAD_SUPERCLASS(RndDrawable)
+    bs >> gScreenshotRev;
+    Hmx::Object::Load(bs);
+    RndDrawable::Load(bs);
     bs >> mTexPath;
+#ifdef HX_NATIVE
     Sync();
+#endif
 END_LOADS
 
 void Screenshot::DrawShowing() {

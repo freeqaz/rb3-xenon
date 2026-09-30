@@ -20,7 +20,8 @@
 class UIProxy : public UIComponent {
 public:
     // Hmx::Object
-    virtual ~UIProxy() {}
+    // No user-declared dtor: retail ~UIProxy (0x828238B8) is the implicit one --
+    // member and base dtors only, no vtable restores.
     OBJ_CLASSNAME(UIProxy)
     OBJ_SET_TYPE(UIProxy)
     virtual DataNode Handle(DataArray *, bool);

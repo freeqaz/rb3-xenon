@@ -69,22 +69,31 @@ void UIPicture::SetTypeDef(DataArray *da) {
     }
 }
 
-INIT_REVS(2, 0)
+// Retail UIPicture::PreLoad (0x828171A8) uses the rb3-Wii rev dialect: the rev
+// word is split into file-static gAltRev (+0) / gRev (+4) globals, and there is
+// no edit-mode SetTex path. gAltRev is declared first for that .bss order.
+static unsigned short gAltRev = 0;
+static unsigned short gRev = 0;
 
 void UIPicture::PreLoad(BinStream &bs) {
-    LOAD_REVS(bs)
-    ASSERT_REVS(2, 0)
-    if (d.rev > 0) {
+    int rev;
+    bs >> rev;
+    gRev = getHmxRev(rev);
+    gAltRev = getAltRev(rev);
+    if (gRev != 0) {
+#ifdef HX_NATIVE
         if (TheLoadMgr.EditMode()) {
             FilePath fp;
             bs >> fp;
             SetTex(fp);
-        } else {
+        } else
+#endif
+        {
             bs >> mTexFile;
         }
         bs >> mMesh;
     }
-    if (d.rev >= 2)
+    if (gRev >= 2)
         UITransitionHandler::LoadHandlerData(bs);
     UIComponent::PreLoad(bs);
 }
