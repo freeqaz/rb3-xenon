@@ -140,30 +140,46 @@ END_COPYS
 
 INIT_REVS(2, 0)
 
-BEGIN_LOADS(UIListWidget)
-    LOAD_REVS(bs);
-    ASSERT_REVS(2, 0);
-    LOAD_SUPERCLASS(Hmx::Object)
-    d >> mDrawOrder;
-    if (d.rev < 1) {
-        int i, j;
-        d >> i >> j;
+// RB3 retail (fn_828210C8): the packed rev is split into two TU shorts in one
+// aligned aggregate (alt at +0, rev at +4) and every field is read through the
+// plain BinStream -- no BinStreamRev (the MeterDisplay::PreLoad form).
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_UIListWidget = { 0, 2 };
+
+void UIListWidget::Load(BinStream &bs) {
+    int revs;
+    bs >> revs;
+    gRevs_UIListWidget.rev = getHmxRev(revs);
+    gRevs_UIListWidget.altRev = getAltRev(revs);
+#ifdef HX_NATIVE
+    if (gRevs_UIListWidget.rev > 2 || gRevs_UIListWidget.altRev > 0) {
+        fprintf(stderr, "ASSERT_REVS WARNING: UIListWidget '%s' version %d > 2 (or alt %d > 0)\n",
+                Name(), gRevs_UIListWidget.rev, gRevs_UIListWidget.altRev);
     }
-    d >> mDefaultColor;
+#endif
+    Hmx::Object::Load(bs);
+    bs >> mDrawOrder;
+    if (gRevs_UIListWidget.rev < 1) {
+        int i, j;
+        bs >> i >> j;
+    }
+    bs >> mDefaultColor;
     int x;
-    d >> x;
+    bs >> x;
     mWidgetDrawType = (UIListWidgetDrawType)x;
-    if (d.rev >= 2) {
-        d >> mDisabledAlphaScale;
+    if (gRevs_UIListWidget.rev >= 2) {
+        bs >> mDisabledAlphaScale;
     }
     for (int i = 0; i < kNumUIListWidgetStates; i++) {
         for (int j = 0; j < UIComponent::kNumStates; j++) {
             ObjPtr<UIColor> color(this);
-            d >> color;
+            bs >> color;
             mColors[i][j] = color;
         }
     }
-END_LOADS
+}
 
 void UIListWidget::ResourceCopy(const UIListWidget *w) { Copy(w, kCopyShallow); }
 

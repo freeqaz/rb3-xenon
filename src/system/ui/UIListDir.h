@@ -52,6 +52,17 @@ public:
         Box *,
         bool
     );
+    // RB3 retail fn_8280DB70: the
+    // draw state is built here, not by the caller. UIList's two call sites use it;
+    // the DC3 7-arg form above stays for HamNavList and the edit-mode test path.
+    void DrawWidgets(
+        UIListState const &,
+        std::vector<UIListWidget *> &,
+        class Transform const &,
+        UIComponent::State,
+        Box *,
+        bool
+    );
     void PollWidgets(std::vector<UIListWidget *> &);
     void FillElement(UIListState const &, std::vector<UIListWidget *> &, int);
     void StartScroll(UIListState const &, std::vector<UIListWidget *> &, int, bool);
