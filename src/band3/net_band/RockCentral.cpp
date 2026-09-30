@@ -1861,7 +1861,10 @@ void RockCentral::RecordDataPoint(
                 delete u;
             } else {
                 u->SetWrapper(wrapper);
-                AddBuildInfoToDP(dataPoint);
+                static Symbol region("region");
+                static Symbol machine_id("machine_id");
+                static Symbol system_ms("system_ms");
+                static Symbol session_guid("session_guid");
                 ADD_DATA_PAIR(machine_id, g_szMachineIdString);
                 auto _tmp4 = SystemMs();
                 ADD_DATA_PAIR(system_ms, _tmp4);
@@ -1874,14 +1877,12 @@ void RockCentral::RecordDataPoint(
                     *gDataPointLog << qString.m_szContent << "\n";
                     gDataPointLog->File().Flush();
                 }
-                if (mRBData) {
-                    if (o) {
-                        mRBData->CallDataPoint(
-                            wrapper->mContext, qString, results.mQDataResultString
-                        );
-                    } else {
-                        mRBData->CallDataPointNoRet(wrapper->mContext, qString);
-                    }
+                if (o) {
+                    mRBData->CallDataPoint(
+                        wrapper->mContext, qString, results.mQDataResultString
+                    );
+                } else {
+                    mRBData->CallDataPointNoRet(wrapper->mContext, qString);
                 }
             }
         }
