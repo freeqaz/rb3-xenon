@@ -1,6 +1,7 @@
 #include "meta_band/TokenRedemptionPanel.h"
 #include "decomp.h"
 #include "game/BandUser.h"
+#include "meta/StoreOffer.h"
 #include "meta/StorePackedMetadata.h"
 #include "meta/StoreEnumeration.h"
 #include "meta/StorePurchaser.h"
@@ -149,21 +150,20 @@ void TokenRedemptionPanel::GetPreviousOffersForUser(LocalBandUser *user) {
     TheRockCentral.GetRedeemedTokensByPlayer(id, mResultList, this);
 }
 
+// Retail fn_8263FEB0: the 360 body fills the member mOfferIDs (0x74) from each
+// result's "offer" string and hands it to XboxEnumeration; no null check on user.
 void TokenRedemptionPanel::EnumerateOffers(LocalBandUser *user) {
-    // Xbox commerce drift: retail uses XboxEnumeration + a private redemptions
-    // table rather than the Wii oracle's WiiEnumeration/StoreRedemptionsTable.
-    // Compile-only adaptation; this body is not byte-matched (see report notes).
     std::list<DataResult> &dataList = mResultList.mDataResultList;
+    mOfferIDs.clear();
     DataNode node(0);
-    std::vector<unsigned long long> offerIds;
-    std::list<DataResult>::iterator end = dataList.end();
-    std::list<DataResult>::iterator it = dataList.begin();
-    for (; it != end; ++it) {
+    for (std::list<DataResult>::iterator it = dataList.begin(); it != dataList.end();
+         ++it) {
         it->GetDataResultValue(String("offer"), node);
-        offerIds.push_back(0);
+        mOfferIDs.push_back(StorePurchaseable::OfferStringToID(node.Str(NULL)));
     }
-    int count = offerIds.size();
-    if (count == 0) {
+    if (mOfferIDs.empty()) {
+        static Symbol token_error_no_previous_offers("token_error_no_previous_offers");
+        static Symbol token_redemption_error("token_redemption_error");
         static Message token_msg("token_redemption_msg", gNullStr);
         if (mRedemptionState == kEnumeratingPreviousOffers) {
             token_msg[0] = token_error_no_previous_offers;
@@ -172,11 +172,11 @@ void TokenRedemptionPanel::EnumerateOffers(LocalBandUser *user) {
         }
         HandleType(token_msg);
         mRedemptionState = 0;
-        return;
+    } else {
+        MILO_ASSERT(!mEnumeration, 0x14A);
+        mEnumeration = new XboxEnumeration(user->GetPadNum(), &mOfferIDs);
+        mEnumeration->Start();
     }
-    MILO_ASSERT(!mEnumeration, 0x14A);
-    mEnumeration = new XboxEnumeration(user ? user->GetPadNum() : 0, &offerIds);
-    mEnumeration->Start();
 }
 
 void TokenRedemptionPanel::ShowPurchaseUIForOffer(int ix, LocalBandUser *user) {
