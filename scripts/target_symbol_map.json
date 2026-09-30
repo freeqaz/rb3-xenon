@@ -8813,6 +8813,7 @@
  "0x824a4c60": "?ShaderRecurseCB@@YAXPBD0@Z",
  "0x824a4cb8": "?InitModTime@RndShaderProgram@@SAKXZ",
  "0x824a5630": "?Init@RndShader@@SAXXZ",
+ "0x824a5740": "?SelectConfig@RndShader@@SAXPAVRndMat@@W4ShaderType@@_N@Z",
  "0x824a57b0": "?CheckForceCull@RndShader@@IAAXW4ShaderType@@@Z",
  "0x824a5980": "?CheckError@RndShaderParticles@@UAA_NW4MatFlagErrorType@RndShader@@@Z",
  "0x824a59e0": "?Select@RndShaderPostProc@@MAAXPAVRndMat@@W4ShaderType@@_N@Z",
