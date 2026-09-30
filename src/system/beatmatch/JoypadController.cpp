@@ -142,10 +142,15 @@ bool JoypadController::IsCymbal(int i) const {
                     || !thePadData->IsButtonInMask(mPadShiftButton));
             break;
         case 4:
-            ret = thePadData->IsButtonInMask(mCymbalShiftButton)
-                && !((thePadData->IsButtonInMask(kPad_DUp)
-                      || thePadData->IsButtonInMask(kPad_DDown))
-                     && thePadData->IsButtonInMask(mPadShiftButton));
+            // RB3 retail 0x8279B390 (TU5): with no cymbal shift button the green
+            // cymbal is read straight off R1.
+            if (mCymbalShiftButton == kPad_NumButtons)
+                ret = thePadData->IsButtonInMask(kPad_R1);
+            else
+                ret = thePadData->IsButtonInMask(mCymbalShiftButton)
+                    && !((thePadData->IsButtonInMask(kPad_DUp)
+                          || thePadData->IsButtonInMask(kPad_DDown))
+                         && thePadData->IsButtonInMask(mPadShiftButton));
             break;
         default:
             break;

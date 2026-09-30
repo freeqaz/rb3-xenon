@@ -48,7 +48,13 @@ class MemcardXbox : public Memcard {
 public:
     MemcardXbox() : mSelectorPending(0), mSelectorCallback(0), mSelectedDevice(0) {}
     virtual ~MemcardXbox() {}
+#ifdef HX_NATIVE
     virtual void Init() { Memcard::Init(); }
+#else
+    // Out of line in RB3 retail (0x8252A898, a `b Memcard::Init` thunk that
+    // SystemInit calls rather than inlining).
+    virtual void Init();
+#endif
     virtual void Terminate() { Memcard::Terminate(); }
     virtual void Poll();
     virtual void SetContainerName(const char *);

@@ -55,10 +55,20 @@ bool gHostConfig;
 bool gHostLogging;
 bool gHostCached;
 
+#ifdef HX_NATIVE
 DataArray *gSystemConfig;
 DataArray *gSystemTitles;
 
 int gUsingCD;
+#else
+// RB3 retail references these only from the System TU and co-addresses them
+// off one base (PreInitSystem 0x82510BB8 reaches gSystemConfig as -8 off
+// &gUsingCD), which MSVC does only for internal-linkage data.
+static DataArray *gSystemConfig;
+static DataArray *gSystemTitles;
+
+static int gUsingCD;
+#endif
 int gSystemMs;
 float gSystemFrac;
 const char *gHostFile;
@@ -104,11 +114,18 @@ int Hx_snprintf(char *c, unsigned int ui, char const *cc, ...) {
 GfxMode GetGfxMode() { return gGfxMode; }
 
 Symbol PlatformSymbol(Platform pform) {
+#ifdef HX_NATIVE
     static Symbol sym[] = { gNullStr, gNullStr, "xbox", "pc", "ps3", "wii", "3ds" };
     if (pform >= 0 && pform < 7) {
         return sym[pform];
     } else
         return gNullStr;
+#else
+    // RB3 retail (0x8250FDF8): a six-entry table, no 3DS slot and no bounds
+    // check.
+    static Symbol sym[6] = { gNullStr, gNullStr, "xbox", "pc", "ps3", "wii" };
+    return sym[pform];
+#endif
 }
 
 bool UsingCD() { return gUsingCD; }
@@ -216,7 +233,12 @@ int SystemExec(const char *args) {
 
 bool PlatformLittleEndian(Platform p) {
     MILO_ASSERT(p != kPlatformNone, 0x175);
+#ifdef HX_NATIVE
     return p == kPlatformPC || p == kPlatform3DS || p == kPlatformNone;
+#else
+    // RB3 retail (0x8250FEC8) tests PC then None; there is no 3DS platform.
+    return p == kPlatformPC || p == kPlatformNone;
+#endif
 }
 
 Platform ConsolePlatform() { return kPlatformXBox; }
@@ -262,6 +284,7 @@ int SystemMs() {
 }
 
 void SystemPoll(bool b1) {
+#ifdef HX_NATIVE
     static Timer *_t = AutoTimer::GetTimer("system_poll");
     AutoTimer _at(_t, 50.0f, nullptr, nullptr);
     Timer::ClearSlowFrame();
@@ -294,6 +317,34 @@ void SystemPoll(bool b1) {
     ThePlatformMgr.Poll();
     TheVirtualKeyboard.Poll();
     TheContentMgr.PollRefresh();
+#else
+    // RB3 retail 0x82510270: no system_poll AutoTimer, no gUsingCD-gated
+    // HolmesClientPoll and no WebSvcMgr poll (DC3-era, kept for native).
+    // Retail ends with an unidentified stage-kit poll (fn_82521ED0, which feeds
+    // JoypadStageKitSetRaw from a 32-entry ring) that no oracle defines; it is
+    // not called here.
+    Timer::ClearSlowFrame();
+    SystemMs();
+    TheDebug.Poll();
+    TheMC.Poll();
+    JoypadPoll();
+    JoypadClientPoll();
+    KeyboardPoll();
+    ThreadCallPoll();
+    FileCache::PollAll();
+    TheLoadMgr.Poll();
+    TheCacheMgr->Poll();
+    TheNetCacheMgr->Poll();
+    if (TheAppChild != nullptr) {
+        TheAppChild->Poll();
+    }
+    if (b1) {
+        TheTaskMgr.Poll();
+    }
+    ThePlatformMgr.Poll();
+    TheVirtualKeyboard.Poll();
+    TheContentMgr.PollRefresh();
+#endif
 }
 
 DataArray *SupportedLanguages(bool cheats) {
@@ -341,6 +392,7 @@ void SetSystemLanguage(Symbol lang, bool cheats) {
         }
     }
 
+#ifdef HX_NATIVE
     // Only reinitialize locale if language is actually changing
     if (gSystemLanguage.Null() || lang == gSystemLanguage) {
         gSystemLanguage = lang;
@@ -349,6 +401,16 @@ void SetSystemLanguage(Symbol lang, bool cheats) {
         gSystemLanguage = lang;
         TheLocale.Init();
     }
+#else
+    // RB3 retail 0x82510590: a single compare, no Null() guard.
+    if (lang != gSystemLanguage) {
+        TheLocale.Terminate();
+        gSystemLanguage = lang;
+        TheLocale.Init();
+    } else {
+        gSystemLanguage = lang;
+    }
+#endif
 }
 
 void SetGfxMode(GfxMode mode) {
@@ -377,9 +439,12 @@ DataNode OnSwitchSystemLanguage(DataArray *a) {
 }
 
 void LanguageInit() {
+#ifdef HX_NATIVE
+    // RB3 retail 0x825108B8 has no region check (the warning compiled out).
     if (ThePlatformMgr.GetRegion() == kRegionNone) {
         MILO_NOTIFY("LanguageInit called, but region has not been initialized");
     }
+#endif
     DataArray *cfg = SystemConfig("system", "language");
     Symbol lang = GetSystemLanguage("eng");
     DataArray *remapArr = cfg->FindArray("remap", false);
@@ -460,6 +525,7 @@ void InitSystem(const char *config) {
             gUsingCD = false;
             TheArchive = nullptr;
         }
+#ifdef HX_NATIVE
         DataArray *systemConfig = ReadSystemConfig(config);
         MILO_ASSERT(systemConfig, 0x267);
         DataMergeTags(systemConfig, gSystemConfig);
@@ -468,13 +534,31 @@ void InitSystem(const char *config) {
         gSystemConfig = systemConfig;
         DataVariable("syscfg") = gSystemConfig;
         gUsingCD = oldCD;
+#else
+        // RB3 retail 0x82510A08: DataReadFile directly, and gUsingCD is
+        // restored to true (as in PreInitSystem), not to the saved value.
+        DataArray *systemConfig = DataReadFile(config, true);
+        DataMergeTags(systemConfig, gSystemConfig);
+        DataReplaceTags(systemConfig, gSystemConfig);
+        gSystemConfig->Release();
+        gSystemConfig = systemConfig;
+        {
+            DataNode cfgNode(systemConfig, kDataArray);
+            DataVariable("syscfg") = cfgNode;
+        }
         TheArchive = oldArchive;
+        gUsingCD = true;
+#endif
+#ifdef HX_NATIVE
+        TheArchive = oldArchive;
+#endif
         StripEditorData();
     }
     FinishDataRead();
 }
 
 void PreInitSystem(const char *config) {
+#ifdef HX_NATIVE
     Archive *oldArchive = TheArchive;
     bool oldCD = UsingCD();
     if (gHostConfig) {
@@ -512,12 +596,57 @@ void PreInitSystem(const char *config) {
         InitSystem(cfgStr);
         gPreconfigOverride = true;
     }
+#else
+    // RB3 retail 0x82510BB8 (with the X360 macros): adds _SHIP,
+    // reads the config with DataReadFile directly, restores gUsingCD to true,
+    // and registers neither system_locale nor switch_system_language.
+    Archive *oldArchive = TheArchive;
+    if (gHostConfig) {
+        gUsingCD = false;
+        TheArchive = nullptr;
+    }
+    DataArrayPtr ptr(1);
+    DataSetMacro("HX_XBOX", ptr);
+    DataSetMacro("HX_WIN", ptr);
+    DataSetMacro("HX_NG", ptr);
+    DataSetMacro("_SHIP", ptr);
+    while (true) {
+        const char *str = OptionStr("define", nullptr);
+        if (!str)
+            break;
+        DataSetMacro(str, ptr);
+    }
+    const char *cfgStr = OptionStr("config", nullptr);
+    if (cfgStr && !gHasPreconfig) {
+        config = cfgStr;
+    }
+    BeginDataRead();
+    gSystemConfig = DataReadFile(config, true);
+    {
+        DataNode cfgNode(gSystemConfig, kDataArray);
+        DataVariable("syscfg") = cfgNode;
+    }
+    TheArchive = oldArchive;
+    gUsingCD = true;
+    DataRegisterFunc("system_language", OnSystemLanguage);
+    DataRegisterFunc("system_exec", OnSystemExec);
+    DataRegisterFunc("using_cd", OnUsingCD);
+    DataRegisterFunc("supported_languages", OnSupportedLanguages);
+    DataRegisterFunc("system_ms", OnSystemMs);
+    SetGfxMode(kNewGfx);
+    if (cfgStr && gHasPreconfig) {
+        InitSystem(cfgStr);
+        gPreconfigOverride = true;
+    }
+#endif
 }
 
 void SystemInit(const char *config) {
+#ifdef HX_NATIVE
     if (OptionBool("force_cd", false)) {
         MILO_FAIL("force_cd is deprecated in favor of no_cd");
     }
+#endif
     gSystemTimer.Start();
     Symbol::Init();
     InitSystem(config);
@@ -545,24 +674,18 @@ void SystemInit(const char *config) {
     SpewInit();
     TheLocale.Terminate();
     TheLocale.Init();
+    // RB3 retail 0x825112E8: FileCache::Init before the cache managers; no
+    // DataPointMgr / WebSvcMgr init and no licenses option.
     CheatsInit();
     TheMC.Init();
-    CacheMgrInit();
-#ifndef HX_NATIVE
-    NetCacheMgrInit();
-#endif
     FileCache::Init();
-    TheDataPointMgr.Init();
-    TheWebSvcMgr.Init();
+    CacheMgrInit();
+    NetCacheMgrInit();
     ThePlatformMgr.Init();
     TheVirtualKeyboard.Init();
     TheContentMgr.Init();
     GlitchFinder::Init();
     TheDebug.AddExitCallback(SystemTerminate);
-    if (OptionBool("licenses", false)) {
-        Licenses::PrintAll();
-        TheDebug.Exit(0, true);
-    }
 #endif
 }
 
@@ -574,41 +697,44 @@ void SetSystemArgs(const char *commandLine) {
     strncpy(sCommandLineBuffer, commandLine, kCommandLineSz - 1);
     sCommandLineBuffer[kCommandLineSz - 1] = 0;
 
+    char *ptr = sCommandLineBuffer;
+    bool newToken = true;
     if (sCommandLineBuffer[0] != 0) {
-        int inQuotes = 0;
-        char *ptr = sCommandLineBuffer;
-        int newToken = 1;
-
+        unsigned int inQuotes = 0;
         for (;;) {
-            if (!inQuotes) {
+            // Retail 0x825110E0 splits on a SPACE outside quotes; the space test
+            // was missing here, so every unquoted character became NUL.
+            if (!inQuotes && *ptr == ' ') {
                 *ptr = 0;
-                newToken = 1;
+                newToken = true;
                 ptr++;
             } else if (*ptr == '"') {
                 *ptr = 0;
                 ptr++;
-                inQuotes ^= 1;
+                inQuotes = !inQuotes;
                 if (inQuotes) {
                     TheSystemArgs.push_back(ptr);
-                    newToken = 0;
+                    newToken = false;
                 } else {
-                    newToken = 1;
+                    newToken = true;
                 }
             } else {
                 if (newToken) {
                     TheSystemArgs.push_back(ptr);
-                    newToken = 0;
+                    newToken = false;
                 }
                 ptr++;
             }
-
             if (*ptr == 0)
                 break;
         }
     }
 
     NormalizeSystemArgs();
+#ifdef HX_NATIVE
+    // DC3-era; RB3 retail has no pristine copy of the argument vector.
     gPristineSystemArgs = TheSystemArgs;
+#endif
 }
 
 void NormalizeSystemArgs() {
@@ -634,9 +760,9 @@ void NormalizeSystemArgs() {
 }
 
 void SystemPreInit(const char *config) {
+#ifdef HX_NATIVE
     InitMakeString();
     Symbol::PreInit(640000, 80000);
-#ifdef HX_NATIVE
     ThePlatformMgr.RegionInit();
     OptionInit();
     TimeConversionInit();
@@ -667,15 +793,23 @@ void SystemPreInit(const char *config) {
     ThreadCallPreInit();
     TheTaskMgr.Init();
 #else
+    // RB3 retail 0x82510EC8.  The argument string is built from TheSystemArgs
+    // first (no pristine copy, no reserve(0)); CheckForArchive runs on
+    // force_cd (default true) instead of !no_cd; there is no no_checksum
+    // hook and no GetSystemLocale("usa") (DC3-era, both kept for native).
+    String str;
+    for (int i = 0; i < TheSystemArgs.size(); i++) {
+        str += ' ';
+        str += TheSystemArgs[i];
+    }
+    InitMakeString();
+    Symbol::PreInit(640000, 80000);
     ThePlatformMgr.RegionInit();
     ThePlatformMgr.PreInit();
-    if (!OptionBool("no_cd", false)) {
+    if (OptionBool("force_cd", true)) {
         CheckForArchive();
     }
     OptionInit();
-    if (OptionBool("no_checksum", false)) {
-        ClearFileChecksumData();
-    }
     TimeConversionInit();
     Timer::Init();
     gHostConfig = OptionBool("host_config", false);
@@ -694,17 +828,10 @@ void SystemPreInit(const char *config) {
     TheContentMgr.PreInit();
     ArchiveInit();
     TheDebug.Init();
-    String str;
-    for (int i = 0; i < gPristineSystemArgs.size(); i++) {
-        str += ' ';
-        str += gPristineSystemArgs[i];
-    }
-    gPristineSystemArgs.reserve(0);
-    MILO_LOG("SystemInit Params:%s\n", str);
+    MILO_LOG("SystemInit Params:%s\n", String(str));
     DataInit();
     PreInitSystem(config);
     LanguageInit();
-    gSystemLocale = GetSystemLocale("usa");
     MemInit();
     TheLoadMgr.Init();
     JoypadInit();
@@ -737,9 +864,18 @@ void SystemTerminate() {
     ObjectDir::Terminate();
     TheContentMgr.Terminate();
     TrigTableTerminate();
+#ifndef HX_NATIVE
+    // RB3 retail 0x82511208: FileTerminate before the config
+    // release, MemTerminate after Symbol::Terminate.
+    FileTerminate();
+#endif
     gSystemConfig->Release();
     DataTerminate();
     Symbol::Terminate();
+#ifndef HX_NATIVE
+    void MemTerminate(); // utl/MemMgr.cpp
+    MemTerminate();
+#endif
     AppChild::Terminate();
     TheSystemArgs.erase(TheSystemArgs.begin(), TheSystemArgs.end());
     TerminateMakeString();
