@@ -1332,8 +1332,7 @@ void GemPlayer::PostLoad(bool b1) {
         mBeatMaster->GetAudio()->FillChannelList(chans, mTrackNum);
         Stream *stream = mBeatMaster->GetAudio()->GetSongStream();
         FOREACH (it, chans) {
-            FxSend *send = mGuitarFx->GetFxSend();
-            stream->SetFXSend(*it, send);
+            stream->SetFXSend(*it, mGuitarFx->GetFxSend());
         }
     }
     if (mKeysFx && !TheGame->mProperties.mDisableKeysFx) {
@@ -1342,8 +1341,7 @@ void GemPlayer::PostLoad(bool b1) {
         mBeatMaster->GetAudio()->FillChannelList(chans, mTrackNum);
         Stream *stream = mBeatMaster->GetAudio()->GetSongStream();
         FOREACH (it, chans) {
-            FxSend *send = mKeysFx->GetFxSend();
-            stream->SetFXSend(*it, send);
+            stream->SetFXSend(*it, mKeysFx->GetFxSend());
         }
     }
 
