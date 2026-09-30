@@ -18,9 +18,12 @@ void AccomplishmentGroup::Configure(DataArray *i_pConfig) {
 
     mName = i_pConfig->Sym(0);
 
+    static Symbol award("award");
     i_pConfig->FindData(award, mAward, false);
+    static Symbol instrument_icon("instrument_icon");
     String instrumentIcon;
     i_pConfig->FindData(instrument_icon, instrumentIcon, true);
+    static Symbol preferred_scoretype("preferred_scoretype");
     int scoreType;
     i_pConfig->FindData(preferred_scoretype, scoreType, true);
     mScoreType = (ScoreType)scoreType;
