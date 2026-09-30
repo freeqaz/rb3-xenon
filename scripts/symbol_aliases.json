@@ -117,94 +117,97 @@
   {
    "name": "SetObjConcrete",
    "address": "0x8227ce58",
-   "survivor": "?SetObjConcrete@?$ObjRefConcrete@VBandCharacter@@VObjectDir@@@@QAAXPAVBandCharacter@@@Z",
+   "survivor": "?SetObjConcrete@?$ObjPtr@VBandCharacter@@@@QAAXPAVBandCharacter@@@Z",
    "folded": [
-    "?SetObjConcrete@?$ObjRefConcrete@VBandCamShot@@VObjectDir@@@@QAAXPAVBandCamShot@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VBandCrowdMeter@@VObjectDir@@@@QAAXPAVBandCrowdMeter@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VBandIKEffector@@VObjectDir@@@@QAAXPAVBandIKEffector@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VBandLabel@@VObjectDir@@@@QAAXPAVBandLabel@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VBandList@@VObjectDir@@@@QAAXPAVBandList@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VBandScoreboard@@VObjectDir@@@@QAAXPAVBandScoreboard@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VBandStarDisplay@@VObjectDir@@@@QAAXPAVBandStarDisplay@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VBandTrack@@VObjectDir@@@@QAAXPAVBandTrack@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VCamShot@@VObjectDir@@@@QAAXPAVCamShot@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VCharCollide@@VObjectDir@@@@QAAXPAVCharCollide@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VCharDriver@@VObjectDir@@@@QAAXPAVCharDriver@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VCharEyes@@VObjectDir@@@@QAAXPAVCharEyes@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VCharFaceServo@@VObjectDir@@@@QAAXPAVCharFaceServo@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VCharIKFingers@@VObjectDir@@@@QAAXPAVCharIKFingers@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VBandCamShot@@@@QAAXPAVBandCamShot@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VBandCrowdMeter@@@@QAAXPAVBandCrowdMeter@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VBandIKEffector@@@@QAAXPAVBandIKEffector@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VBandLabel@@@@QAAXPAVBandLabel@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VBandList@@@@QAAXPAVBandList@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VBandScoreboard@@@@QAAXPAVBandScoreboard@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VBandStarDisplay@@@@QAAXPAVBandStarDisplay@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VBandTrack@@@@QAAXPAVBandTrack@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VCamShot@@@@QAAXPAVCamShot@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VCharCollide@@@@QAAXPAVCharCollide@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VCharDriver@@@@QAAXPAVCharDriver@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VCharEyes@@@@QAAXPAVCharEyes@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VCharFaceServo@@@@QAAXPAVCharFaceServo@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VCharIKFingers@@@@QAAXPAVCharIKFingers@@@Z",
     "?SetObjConcrete@?$ObjRefConcrete@VCharIKFoot@@VObjectDir@@@@QAAXPAVCharIKFoot@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VCharInterest@@VObjectDir@@@@QAAXPAVCharInterest@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VCharLipSyncDriver@@VObjectDir@@@@QAAXPAVCharLipSyncDriver@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VCharLookAt@@VObjectDir@@@@QAAXPAVCharLookAt@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VCharPollable@@VObjectDir@@@@QAAXPAVCharPollable@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VCharServoBone@@VObjectDir@@@@QAAXPAVCharServoBone@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VCharWeightSetter@@VObjectDir@@@@QAAXPAVCharWeightSetter@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VCharWeightable@@VObjectDir@@@@QAAXPAVCharWeightable@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VCharacter@@VObjectDir@@@@QAAXPAVCharacter@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VCrowdMeterIcon@@VObjectDir@@@@QAAXPAVCrowdMeterIcon@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VDancerSequence@@VObjectDir@@@@QAAXPAVDancerSequence@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VCharInterest@@@@QAAXPAVCharInterest@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VCharLipSyncDriver@@@@QAAXPAVCharLipSyncDriver@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VCharLookAt@@@@QAAXPAVCharLookAt@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VCharPollable@@@@QAAXPAVCharPollable@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VCharServoBone@@@@QAAXPAVCharServoBone@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VCharWeightSetter@@@@QAAXPAVCharWeightSetter@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VCharWeightable@@@@QAAXPAVCharWeightable@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VCharacter@@@@QAAXPAVCharacter@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VCrowdMeterIcon@@@@QAAXPAVCrowdMeterIcon@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VDancerSequence@@@@QAAXPAVDancerSequence@@@Z",
     "?SetObjConcrete@?$ObjRefConcrete@VDepthBuffer3D@@VObjectDir@@@@QAAXPAVDepthBuffer3D@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VEndingBonus@@VObjectDir@@@@QAAXPAVEndingBonus@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VEventTrigger@@VObjectDir@@@@QAAXPAVEventTrigger@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VEndingBonus@@@@QAAXPAVEndingBonus@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VEventTrigger@@@@QAAXPAVEventTrigger@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VFlow@@@@QAAXPAVFlow@@@Z",
     "?SetObjConcrete@?$ObjRefConcrete@VFlow@@VObjectDir@@@@QAAXPAVFlow@@@Z",
     "?SetObjConcrete@?$ObjRefConcrete@VFlowLabel@@VObjectDir@@@@QAAXPAVFlowLabel@@@Z",
     "?SetObjConcrete@?$ObjRefConcrete@VFlowNode@@VObjectDir@@@@QAAXPAVFlowNode@@@Z",
     "?SetObjConcrete@?$ObjRefConcrete@VFlowOutPort@@VObjectDir@@@@QAAXPAVFlowOutPort@@@Z",
     "?SetObjConcrete@?$ObjRefConcrete@VFlowTimer@@VObjectDir@@@@QAAXPAVFlowTimer@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VGemTrackDir@@VObjectDir@@@@QAAXPAVGemTrackDir@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VHamCamShot@@VObjectDir@@@@QAAXPAVHamCamShot@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VHamCharacter@@VObjectDir@@@@QAAXPAVHamCharacter@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VHamIKEffector@@VObjectDir@@@@QAAXPAVHamIKEffector@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VHamIKSkeleton@@VObjectDir@@@@QAAXPAVHamIKSkeleton@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VHamLabel@@VObjectDir@@@@QAAXPAVHamLabel@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VGemTrackDir@@@@QAAXPAVGemTrackDir@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VHamCamShot@@@@QAAXPAVHamCamShot@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VHamCharacter@@@@QAAXPAVHamCharacter@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VHamIKEffector@@@@QAAXPAVHamIKEffector@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VHamIKSkeleton@@@@QAAXPAVHamIKSkeleton@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VHamLabel@@@@QAAXPAVHamLabel@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VHamMove@@@@QAAXPAVHamMove@@@Z",
     "?SetObjConcrete@?$ObjRefConcrete@VHamMove@@VObjectDir@@@@QAAXPAVHamMove@@@Z",
     "?SetObjConcrete@?$ObjRefConcrete@VHamPhraseMeter@@VObjectDir@@@@QAAXPAVHamPhraseMeter@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VHamVisDir@@VObjectDir@@@@QAAXPAVHamVisDir@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VLightPreset@@VObjectDir@@@@QAAXPAVLightPreset@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VObjectDir@@V1@@@QAAXPAVObjectDir@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VOverdriveMeter@@VObjectDir@@@@QAAXPAVOverdriveMeter@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VPitchArrow@@VObjectDir@@@@QAAXPAVPitchArrow@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRhythmBattlePlayer@@VObjectDir@@@@QAAXPAVRhythmBattlePlayer@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRhythmDetector@@VObjectDir@@@@QAAXPAVRhythmDetector@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRhythmDetectorGroup@@VObjectDir@@@@QAAXPAVRhythmDetectorGroup@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRndAnimatable@@VObjectDir@@@@QAAXPAVRndAnimatable@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRndCam@@VObjectDir@@@@QAAXPAVRndCam@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VHamVisDir@@@@QAAXPAVHamVisDir@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VLightPreset@@@@QAAXPAVLightPreset@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VObjectDir@@@@QAAXPAVObjectDir@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VOverdriveMeter@@@@QAAXPAVOverdriveMeter@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VPitchArrow@@@@QAAXPAVPitchArrow@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRhythmBattlePlayer@@@@QAAXPAVRhythmBattlePlayer@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRhythmDetector@@@@QAAXPAVRhythmDetector@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRhythmDetectorGroup@@@@QAAXPAVRhythmDetectorGroup@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRndAnimatable@@@@QAAXPAVRndAnimatable@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRndCam@@@@QAAXPAVRndCam@@@Z",
     "?SetObjConcrete@?$ObjRefConcrete@VRndCamAnim@@VObjectDir@@@@QAAXPAVRndCamAnim@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRndDir@@VObjectDir@@@@QAAXPAVRndDir@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRndDrawable@@VObjectDir@@@@QAAXPAVRndDrawable@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRndDir@@@@QAAXPAVRndDir@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRndDrawable@@@@QAAXPAVRndDrawable@@@Z",
     "?SetObjConcrete@?$ObjRefConcrete@VRndEnvAnim@@VObjectDir@@@@QAAXPAVRndEnvAnim@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRndGroup@@VObjectDir@@@@QAAXPAVRndGroup@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRndLight@@VObjectDir@@@@QAAXPAVRndLight@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRndGroup@@@@QAAXPAVRndGroup@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRndLight@@@@QAAXPAVRndLight@@@Z",
     "?SetObjConcrete@?$ObjRefConcrete@VRndLightAnim@@VObjectDir@@@@QAAXPAVRndLightAnim@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRndLine@@VObjectDir@@@@QAAXPAVRndLine@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRndMatAnim@@VObjectDir@@@@QAAXPAVRndMatAnim@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRndMesh@@VObjectDir@@@@QAAXPAVRndMesh@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRndLine@@@@QAAXPAVRndLine@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRndMatAnim@@@@QAAXPAVRndMatAnim@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRndMesh@@@@QAAXPAVRndMesh@@@Z",
     "?SetObjConcrete@?$ObjRefConcrete@VRndMeshAnim@@VObjectDir@@@@QAAXPAVRndMeshAnim@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRndMultiMesh@@VObjectDir@@@@QAAXPAVRndMultiMesh@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRndPartLauncher@@VObjectDir@@@@QAAXPAVRndPartLauncher@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRndParticleSys@@VObjectDir@@@@QAAXPAVRndParticleSys@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRndMultiMesh@@@@QAAXPAVRndMultiMesh@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRndPartLauncher@@@@QAAXPAVRndPartLauncher@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRndParticleSys@@@@QAAXPAVRndParticleSys@@@Z",
     "?SetObjConcrete@?$ObjRefConcrete@VRndParticleSysAnim@@VObjectDir@@@@QAAXPAVRndParticleSysAnim@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRndPropAnim@@VObjectDir@@@@QAAXPAVRndPropAnim@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRndTexBlender@@VObjectDir@@@@QAAXPAVRndTexBlender@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRndTexRenderer@@VObjectDir@@@@QAAXPAVRndTexRenderer@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRndText@@VObjectDir@@@@QAAXPAVRndText@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRndTransAnim@@VObjectDir@@@@QAAXPAVRndTransAnim@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRndTransformable@@VObjectDir@@@@QAAXPAVRndTransformable@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VSkeletonClip@@VObjectDir@@@@QAAXPAVSkeletonClip@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VSongSectionController@@VObjectDir@@@@QAAXPAVSongSectionController@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRndPropAnim@@@@QAAXPAVRndPropAnim@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRndTexBlender@@@@QAAXPAVRndTexBlender@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRndTexRenderer@@@@QAAXPAVRndTexRenderer@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRndText@@@@QAAXPAVRndText@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRndTransAnim@@@@QAAXPAVRndTransAnim@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRndTransformable@@@@QAAXPAVRndTransformable@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VSkeletonClip@@@@QAAXPAVSkeletonClip@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VSongSectionController@@@@QAAXPAVSongSectionController@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VSpotlight@@@@QAAXPAVSpotlight@@@Z",
     "?SetObjConcrete@?$ObjRefConcrete@VSpotlight@@VObjectDir@@@@QAAXPAVSpotlight@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VStreakMeter@@VObjectDir@@@@QAAXPAVStreakMeter@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VStreakMeter@@@@QAAXPAVStreakMeter@@@Z",
     "?SetObjConcrete@?$ObjRefConcrete@VTransConstraint@@VObjectDir@@@@QAAXPAVTransConstraint@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VUIComponent@@VObjectDir@@@@QAAXPAVUIComponent@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VUIList@@VObjectDir@@@@QAAXPAVUIList@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VUnisonIcon@@VObjectDir@@@@QAAXPAVUnisonIcon@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VVocalPlayer@@VObjectDir@@@@QAAXPAVVocalPlayer@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VVocalTrackDir@@VObjectDir@@@@QAAXPAVVocalTrackDir@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VWaypoint@@VObjectDir@@@@QAAXPAVWaypoint@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VWorldCrowd@@VObjectDir@@@@QAAXPAVWorldCrowd@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VWorldDir@@VObjectDir@@@@QAAXPAVWorldDir@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VWorldInstance@@VObjectDir@@@@QAAXPAVWorldInstance@@@Z"
+    "?SetObjConcrete@?$ObjPtr@VUIComponent@@@@QAAXPAVUIComponent@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VUIList@@@@QAAXPAVUIList@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VUnisonIcon@@@@QAAXPAVUnisonIcon@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VVocalPlayer@@@@QAAXPAVVocalPlayer@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VVocalTrackDir@@@@QAAXPAVVocalTrackDir@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VWaypoint@@@@QAAXPAVWaypoint@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VWorldCrowd@@@@QAAXPAVWorldCrowd@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VWorldDir@@@@QAAXPAVWorldDir@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VWorldInstance@@@@QAAXPAVWorldInstance@@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 88, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 86 folded spelling(s), 698 census sites over 17 functions."
   },
@@ -220,41 +223,42 @@
   {
    "name": "SetObjConcrete",
    "address": "0x8238b130",
-   "survivor": "?SetObjConcrete@?$ObjRefConcrete@VObject@Hmx@@VObjectDir@@@@QAAXPAVObject@Hmx@@@Z",
+   "survivor": "?SetObjConcrete@?$ObjPtr@VObject@Hmx@@@@QAAXPAVObject@Hmx@@@Z",
    "folded": [
-    "?SetObjConcrete@?$ObjRefConcrete@VAnimTask@@VObjectDir@@@@QAAXPAVAnimTask@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VCharBone@@VObjectDir@@@@QAAXPAVCharBone@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VCharClip@@VObjectDir@@@@QAAXPAVCharClip@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VCharEyeDartRuleset@@VObjectDir@@@@QAAXPAVCharEyeDartRuleset@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VCharLipSync@@VObjectDir@@@@QAAXPAVCharLipSync@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VChordShapeGenerator@@VObjectDir@@@@QAAXPAVChordShapeGenerator@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VColorPalette@@VObjectDir@@@@QAAXPAVColorPalette@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VDetectionVolume@@VObjectDir@@@@QAAXPAVDetectionVolume@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VFileMerger@@VObjectDir@@@@QAAXPAVFileMerger@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VFxSend@@VObjectDir@@@@QAAXPAVFxSend@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VAnimTask@@@@QAAXPAVAnimTask@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VCharBone@@@@QAAXPAVCharBone@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VCharClip@@@@QAAXPAVCharClip@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VCharEyeDartRuleset@@@@QAAXPAVCharEyeDartRuleset@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VCharLipSync@@@@QAAXPAVCharLipSync@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VChordShapeGenerator@@@@QAAXPAVChordShapeGenerator@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VColorPalette@@@@QAAXPAVColorPalette@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VDetectionVolume@@@@QAAXPAVDetectionVolume@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VFileMerger@@@@QAAXPAVFileMerger@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VFxSend@@@@QAAXPAVFxSend@@@Z",
     "?SetObjConcrete@?$ObjRefConcrete@VFxSendMeterEffect@@VObjectDir@@@@QAAXPAVFxSendMeterEffect@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VHamNavProvider@@VObjectDir@@@@QAAXPAVHamNavProvider@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VLightHue@@VObjectDir@@@@QAAXPAVLightHue@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VMoggClip@@VObjectDir@@@@QAAXPAVMoggClip@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VPropertyTask@@VObjectDir@@@@QAAXPAVPropertyTask@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRndCubeTex@@VObjectDir@@@@QAAXPAVRndCubeTex@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VHamNavProvider@@@@QAAXPAVHamNavProvider@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VLightHue@@@@QAAXPAVLightHue@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VMoggClip@@@@QAAXPAVMoggClip@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VPropertyTask@@@@QAAXPAVPropertyTask@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRndCubeTex@@@@QAAXPAVRndCubeTex@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRndEnviron@@@@QAAXPAVRndEnviron@@@Z",
     "?SetObjConcrete@?$ObjRefConcrete@VRndEnviron@@VObjectDir@@@@QAAXPAVRndEnviron@@@Z",
     "?SetObjConcrete@?$ObjRefConcrete@VRndFont3d@@VObjectDir@@@@QAAXPAVRndFont3d@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRndFont@@VObjectDir@@@@QAAXPAVRndFont@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRndFur@@VObjectDir@@@@QAAXPAVRndFur@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRndMat@@VObjectDir@@@@QAAXPAVRndMat@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRndPostProc@@VObjectDir@@@@QAAXPAVRndPostProc@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRndTex@@VObjectDir@@@@QAAXPAVRndTex@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VRndWind@@VObjectDir@@@@QAAXPAVRndWind@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VSeqInst@@VObjectDir@@@@QAAXPAVSeqInst@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VSequence@@VObjectDir@@@@QAAXPAVSequence@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VSfx@@VObjectDir@@@@QAAXPAVSfx@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VSfxInst@@VObjectDir@@@@QAAXPAVSfxInst@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VSongCollision@@VObjectDir@@@@QAAXPAVSongCollision@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VSynthSample@@VObjectDir@@@@QAAXPAVSynthSample@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VTask@@VObjectDir@@@@QAAXPAVTask@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VTrackInterface@@VObjectDir@@@@QAAXPAVTrackInterface@@@Z",
-    "?SetObjConcrete@?$ObjRefConcrete@VUIColor@@VObjectDir@@@@QAAXPAVUIColor@@@Z"
+    "?SetObjConcrete@?$ObjPtr@VRndFont@@@@QAAXPAVRndFont@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRndFur@@@@QAAXPAVRndFur@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRndMat@@@@QAAXPAVRndMat@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRndPostProc@@@@QAAXPAVRndPostProc@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRndTex@@@@QAAXPAVRndTex@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VRndWind@@@@QAAXPAVRndWind@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VSeqInst@@@@QAAXPAVSeqInst@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VSequence@@@@QAAXPAVSequence@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VSfx@@@@QAAXPAVSfx@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VSfxInst@@@@QAAXPAVSfxInst@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VSongCollision@@@@QAAXPAVSongCollision@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VSynthSample@@@@QAAXPAVSynthSample@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VTask@@@@QAAXPAVTask@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VTrackInterface@@@@QAAXPAVTrackInterface@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VUIColor@@@@QAAXPAVUIColor@@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 36, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 34 folded spelling(s), 270 census sites over 13 functions."
   },
@@ -6627,7 +6631,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x82395650",
-   "survivor": "??1?$ObjRefConcrete@VObjectDir@@V1@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VObjectDir@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 2 census sites over 2 functions.",
    "withdrawn": [
@@ -12128,7 +12132,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x824be710",
-   "survivor": "??1?$ObjRefConcrete@VSpotlight@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VSpotlight@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 1 census sites over 2 functions.",
    "withdrawn": [
@@ -14574,7 +14578,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x82435858",
-   "survivor": "??1?$ObjRefConcrete@VRndCubeTex@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VRndCubeTex@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 12 folded spelling(s), 1 census sites over 2 functions.",
    "withdrawn": [
@@ -16616,7 +16620,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x822b96a8",
-   "survivor": "??1?$ObjRefConcrete@VBandLabel@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VBandLabel@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 1 census sites over 2 functions.",
    "withdrawn": [
@@ -18244,7 +18248,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x822e4250",
-   "survivor": "??1?$ObjRefConcrete@VChordShapeGenerator@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VChordShapeGenerator@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 12 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -19039,7 +19043,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x822f6f88",
-   "survivor": "??1?$ObjRefConcrete@VPitchArrow@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VPitchArrow@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -20592,7 +20596,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x823842e8",
-   "survivor": "??1?$ObjRefConcrete@VCharFaceServo@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VCharFaceServo@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -20782,7 +20786,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x824ba270",
-   "survivor": "??1?$ObjRefConcrete@VCamShot@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VCamShot@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -22001,7 +22005,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x823a5350",
-   "survivor": "??1?$ObjRefConcrete@VRndWind@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VRndWind@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 12 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -22501,7 +22505,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x8229d930",
-   "survivor": "??1?$ObjRefConcrete@VRndTex@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VRndTex@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 12 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -22561,7 +22565,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x82ba04e0",
-   "survivor": "??1?$ObjRefConcrete@VVocalPlayer@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VVocalPlayer@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -22946,7 +22950,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x82384408",
-   "survivor": "??1?$ObjRefConcrete@VCharInterest@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VCharInterest@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -23136,7 +23140,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x8227f490",
-   "survivor": "??1?$ObjRefConcrete@VCharEyes@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VCharEyes@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -24927,7 +24931,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x8244f9b8",
-   "survivor": "??1?$ObjRefConcrete@VRndMultiMesh@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VRndMultiMesh@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -27109,7 +27113,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x824caf60",
-   "survivor": "??1?$ObjRefConcrete@VLightPreset@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VLightPreset@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -28589,7 +28593,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x82311878",
-   "survivor": "??1?$ObjRefConcrete@VMoggClip@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VMoggClip@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 12 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -28658,7 +28662,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x8229df50",
-   "survivor": "??1?$ObjRefConcrete@VRndTexBlender@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VRndTexBlender@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -31072,7 +31076,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x8228e8f8",
-   "survivor": "??1?$ObjRefConcrete@VWorldDir@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VWorldDir@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -32297,7 +32301,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x8238b478",
-   "survivor": "??1?$ObjRefConcrete@VCharLipSyncDriver@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VCharLipSyncDriver@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -32732,7 +32736,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x823219b8",
-   "survivor": "??1?$ObjRefConcrete@VBandList@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VBandList@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -37499,7 +37503,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x8229dd18",
-   "survivor": "??1?$ObjRefConcrete@VRndTransformable@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VRndTransformable@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -38800,7 +38804,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x8229dac0",
-   "survivor": "??1?$ObjRefConcrete@VRndMat@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VRndMat@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 12 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -39105,7 +39109,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x827fe958",
-   "survivor": "??1?$ObjRefConcrete@VUIComponent@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VUIComponent@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -40218,7 +40222,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x8227f370",
-   "survivor": "??1?$ObjRefConcrete@VCharDriver@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VCharDriver@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -40443,7 +40447,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x8227f7f0",
-   "survivor": "??1?$ObjRefConcrete@VWaypoint@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VWaypoint@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -41465,7 +41469,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x823bda20",
-   "survivor": "??1?$ObjRefConcrete@VCharEyeDartRuleset@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VCharEyeDartRuleset@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 12 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -41525,7 +41529,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x82303d20",
-   "survivor": "??1?$ObjRefConcrete@VBandCrowdMeter@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VBandCrowdMeter@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -44541,7 +44545,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x822e4130",
-   "survivor": "??1?$ObjRefConcrete@VOverdriveMeter@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VOverdriveMeter@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -47168,7 +47172,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x82303f60",
-   "survivor": "??1?$ObjRefConcrete@VEndingBonus@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VEndingBonus@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -48325,7 +48329,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x822cd918",
-   "survivor": "??1?$ObjRefConcrete@VEventTrigger@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VEventTrigger@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -48527,7 +48531,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x824359e8",
-   "survivor": "??1?$ObjRefConcrete@VRndFur@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VRndFur@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 12 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -51722,7 +51726,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x823af318",
-   "survivor": "??1?$ObjRefConcrete@VCharPollable@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VCharPollable@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -52785,7 +52789,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x8227f250",
-   "survivor": "??1?$ObjRefConcrete@VCharLookAt@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VCharLookAt@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -53910,7 +53914,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x8227f5b0",
-   "survivor": "??1?$ObjRefConcrete@VCharWeightable@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VCharWeightable@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -55016,7 +55020,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x8228e648",
-   "survivor": "??1?$ObjRefConcrete@VRndPropAnim@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VRndPropAnim@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -55206,7 +55210,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x8229e258",
-   "survivor": "??1?$ObjRefConcrete@VRndDir@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VRndDir@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -55396,7 +55400,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x8227f910",
-   "survivor": "??1?$ObjRefConcrete@VCharacter@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VCharacter@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -59462,7 +59466,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x8228e438",
-   "survivor": "??1?$ObjRefConcrete@VRndPostProc@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VRndPostProc@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 12 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -60755,7 +60759,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x822b97c8",
-   "survivor": "??1?$ObjRefConcrete@VRndAnimatable@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VRndAnimatable@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -61190,7 +61194,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x82304080",
-   "survivor": "??1?$ObjRefConcrete@VVocalTrackDir@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VVocalTrackDir@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -64561,7 +64565,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x8244f898",
-   "survivor": "??1?$ObjRefConcrete@VRndMesh@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VRndMesh@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -64751,7 +64755,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x8227f6d0",
-   "survivor": "??1?$ObjRefConcrete@VCharWeightSetter@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VCharWeightSetter@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -64971,7 +64975,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x8227fa30",
-   "survivor": "??1?$ObjRefConcrete@VGemTrackDir@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VGemTrackDir@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -66877,7 +66881,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x822d3b78",
-   "survivor": "??1?$ObjRefConcrete@VTask@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VTask@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 12 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -67927,7 +67931,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x82400d38",
-   "survivor": "??1?$ObjRefConcrete@VAnimTask@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VAnimTask@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 12 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -67987,7 +67991,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x8228e7e8",
-   "survivor": "??1?$ObjRefConcrete@VFileMerger@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VFileMerger@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 12 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -68754,7 +68758,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x822d3cb0",
-   "survivor": "??1?$ObjRefConcrete@VUnisonIcon@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VUnisonIcon@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -69129,7 +69133,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x82820460",
-   "survivor": "??1?$ObjRefConcrete@VUIList@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VUIList@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -69599,7 +69603,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x822e4010",
-   "survivor": "??1?$ObjRefConcrete@VStreakMeter@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VStreakMeter@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -70303,7 +70307,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x822b0c28",
-   "survivor": "??1?$ObjRefConcrete@VBandCamShot@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VBandCamShot@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -70713,7 +70717,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x8227fce0",
-   "survivor": "??1?$ObjRefConcrete@VBandCharacter@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VBandCharacter@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -71148,7 +71152,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x8228d498",
-   "survivor": "??1?$ObjRefConcrete@VObject@Hmx@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VObject@Hmx@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 12 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -71235,7 +71239,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x824ea550",
-   "survivor": "??1?$ObjRefConcrete@VWorldInstance@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VWorldInstance@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 36 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -72216,7 +72220,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x823d6b08",
-   "survivor": "??1?$ObjRefConcrete@VCharBone@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VCharBone@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 12 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -72330,7 +72334,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x8238b368",
-   "survivor": "??1?$ObjRefConcrete@VCharLipSync@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VCharLipSync@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 12 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -72793,7 +72797,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x82472a40",
-   "survivor": "??1?$ObjRefConcrete@VRndFont@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VRndFont@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 12 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -72978,7 +72982,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x82275120",
-   "survivor": "??1?$ObjRefConcrete@VRndEnviron@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VRndEnviron@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 12 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -73730,7 +73734,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x8229de58",
-   "survivor": "??1?$ObjRefConcrete@VColorPalette@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VColorPalette@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 12 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -74729,7 +74733,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x82314ae0",
-   "survivor": "??1?$ObjRefConcrete@VUIColor@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VUIColor@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 12 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -75808,7 +75812,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x823772f0",
-   "survivor": "??1?$ObjRefConcrete@VCharClip@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VCharClip@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 12 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -76267,7 +76271,7 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x822e4570",
-   "survivor": "??1?$ObjRefConcrete@VTrackInterface@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtr@VTrackInterface@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 12 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -85319,10 +85323,17 @@
    "name": "ourside_comdat_identity",
    "address": "0x8243dd20",
    "survivor": "??1?$ObjPtr@VRndTex@@@@UAA@XZ",
-   "folded": [
-    "??1?$Key@VTexPtr@RndMatAnim@@@@QAA@XZ"
-   ],
-   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x8243dd20 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 5 against 2 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+   "folded": [],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x8243dd20 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 5 against 2 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies.",
+   "withdrawn": [
+    {
+     "spelling": "??1?$Key@VTexPtr@RndMatAnim@@@@QAA@XZ",
+     "lane": "W17-OPTR 2026-09-30",
+     "class": "PREMISE_CHANGED_OURSIDE_BODIES_DIFFER",
+     "disposition": "withdrawn",
+     "evidence": "Group rested on our ~Key<TexPtr> COMDAT being byte-identical to our ~ObjPtr<RndTex> COMDAT (both a 4-byte b ~ObjRefConcrete<RndTex>). W17-OPTR makes ~ObjPtr<RndTex> the real 100 B body (retail 0x8229d930, which now carries the name); retail 0x8243dd20 is a 4-byte b 0x8229d930, i.e. a wrapper dtor, and is left unnamed."
+    }
+   ]
   },
   {
    "name": "ourside_comdat_identity",
