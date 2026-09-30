@@ -57,3 +57,53 @@ Same rule: Δ = Σ full_bytes of the restored spellings from the price table, ro
 likewise, `masked_equal` 0 except `~ObjPtrList<UILabel>` (one 44 B `masked_equal`
 row, `fn_827FD814`), and +336 B / +1 row extra iff BOTH `list<UIComponent*>` and
 `list<UITrigger*>` are restored (`PanelDir::SyncObjects`).
+
+## Batch 2 — 22 memberships (written BEFORE its `ab_measure` run; batch 1 had already measured exactly)
+
+Baseline for batch 2 = the committed batch-1 tree: matched **44,172** · matched_code
+**4,185,252 B** · code% **40.843410** · masked_equal **23,323** · `Loaded 6114`.
+
+### 2a — seventeen more `list<T>::insert` into `0x823d14c0` (all CHASED T1 PROVEN 0/0/0)
+
+| element | Δcode B | Δrows |
+|---|---:|---:|
+| `RndPollable*` | +904 | +7 |
+| `PropKeys*` | +780 | +1 |
+| `VorbisReader*` | +508 | +1 |
+| `DataArray*` | +464 | +1 |
+| `UIResource*` | +428 | +1 |
+| `int` | +400 | +3 |
+| `Waypoint*` | +400 | +1 |
+| `GamerAwardStatus*` | +364 | +2 |
+| `RndDir*` | +296 | +1 |
+| `Job*` | +156 | +1 |
+| `PassiveMessage*` | +132 | +1 |
+| `RndGroup*` | +124 | +1 |
+| `SynthPollable*` | +116 | +1 |
+| `Voice*` | +108 | +1 |
+| `ContentMgr::Callback*` | +56 | +1 |
+| `UIComponent*` + `UITrigger*` (jointly: `PanelDir::SyncObjects`) | +336 | +1 |
+| **2a** | **+5,572** | **+25** |
+
+### 2b — five husk groups (FLAT T1 PROVEN strict + CHASED PROVEN; group address == survivor map address)
+
+| spelling | group | Δcode B | Δrows | masked_equal rows |
+|---|---|---:|---:|---:|
+| `vector<ObjPtr<RndTex>>::_M_fill_insert` | 0x822a4fb8 | +368 | +1 | 0 |
+| `operator>>(BinStream&, ObjVector<ObjOwnerPtr<Waypoint>>&)` | 0x823dcde0 | +356 | +1 | 0 |
+| `operator<<(BinStream&, const list<LayerDir::Layer>&)` | 0x82327878 | +152 | +1 | 0 |
+| `~ObjPtrList<UILabel>` | 0x827fa298 | +120 | +2 | **1** (`fn_827FD814`, 44 B) |
+| `list<OldMatOption>::list(const list&)` | 0x822a7f60 | +84 | +1 | 0 |
+| **2b** | | **+1,080** | **+6** | 1 |
+
+### Batch 2 totals
+
+- Δ`matched_code` = **+6,652 B**; Δ`matched_code_percent` = 6,652 / 10,247,068 =
+  **+0.064916 pp**.
+- Δ`matched_functions` = **+31**; Δ`masked_equal_functions` = **+1** (the one
+  disclosure row crosses); Δhonest = **+30**.
+- Alias map: symbol lines **6,930 → 6,952**; `Loaded 6114 → 6136`.
+- Validator PASS, 0 contradicted, 1,659 groups; live-and-withdrawn stays 4.
+  Five husk groups go from `folded: []` to one live member each.
+- `ALIAS_SUSPECT` fires forward, silent on revert; revert = **−6,652 B / −31 / −1**.
+- Partial rows improve but do not cross (e.g. `TrackData::FillChannelListWithInactiveSlots` 424 B).
