@@ -207,34 +207,42 @@ END_LOADS
 void FileMerger::PreSave(BinStream &) { Clear(); }
 void FileMerger::PostSave(BinStream &) { StartLoadInternal(false, false); }
 
-BinStreamRev &operator>>(BinStreamRev &d, FileMerger::Merger &fm) {
-    d >> fm.mName;
-    d >> fm.mSelected;
-    d >> fm.mLoaded;
-    d >> fm.mDir;
-    if (d.rev > 0) {
-        if (d.rev != 4) {
-            d >> fm.mProxy;
+// Retail's rev pair: PreLoad (0x823952B8) writes altRev +0 / rev +4 off one
+// base register (lbl_82CBF190), and the Merger reader (fn_82391DB0) reads rev as
+// its own symbol (lis + lhz lbl_82CBF194) -- two separate internal statics,
+// altRev declared first. No rev wrapper exists (band.exe has no
+// `.?AVBinStreamRev@@` descriptor); every read takes the raw stream.
+static __declspec(align(4)) unsigned short gAltRev_FileMerger = 0;
+static __declspec(align(4)) unsigned short gRev_FileMerger = 0;
+
+BinStream &operator>>(BinStream &bs, FileMerger::Merger &fm) {
+    bs >> fm.mName;
+    bs >> fm.mSelected;
+    bs >> fm.mLoaded;
+    bs >> fm.mDir;
+    if (gRev_FileMerger > 0) {
+        if (gRev_FileMerger != 4) {
+            bs >> fm.mProxy;
         }
-        d >> (int &)fm.mSubdirs;
-        if (d.rev > 2) {
-            d >> fm.mPreClear;
+        bs >> (int &)fm.mSubdirs;
+        if (gRev_FileMerger > 2) {
+            bs >> fm.mPreClear;
         }
     }
-    return d;
+    return bs;
 }
 
-INIT_REVS(5, 0)
-
 void FileMerger::PreLoad(BinStream &bs) {
-    LOAD_REVS(bs)
-    ASSERT_REVS(5, 0)
+    int revs;
+    bs >> revs;
+    gRev_FileMerger = getHmxRev(revs);
+    gAltRev_FileMerger = getAltRev(revs);
     Hmx::Object::Load(bs);
-    if (d.rev < 2) {
+    if (gRev_FileMerger < 2) {
         String str;
-        d >> str;
+        bs >> str;
     }
-    d >> mMergers;
+    bs >> mMergers;
     // StartLoadInternal fires change_files (which lets DTA type handlers
     // wire merger properties, e.g. {$hamdirector set merger $this}),
     // then iterates mergers to start loading any files that were selected

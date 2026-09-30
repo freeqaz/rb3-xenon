@@ -100,7 +100,7 @@ public:
         }
 
         void Save(BinStream &) const;
-        void Load(BinStreamRev &);
+        void Load(BinStream &);
         void LoadRev(BinStream &, int);
 
         Transform mXfm; // 0x0
@@ -180,7 +180,7 @@ protected:
 typedef std::list<RndMultiMesh::Instance, std::TransformListAlloc<RndMultiMesh::Instance> >
     InstanceList;
 
-inline BinStreamRev &operator>>(BinStreamRev &d, RndMultiMesh::Instance &inst) {
-    inst.Load(d);
-    return d;
+inline BinStream &operator>>(BinStream &bs, RndMultiMesh::Instance &inst) {
+    inst.Load(bs);
+    return bs;
 }

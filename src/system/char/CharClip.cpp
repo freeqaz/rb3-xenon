@@ -61,6 +61,10 @@ const char *CharClip::BeatAlignString(int mask) {
     }
 }
 
+static int gOldRev = 0;
+static __declspec(align(4)) unsigned short gAltRev_CharClip = 0;
+static __declspec(align(4)) unsigned short gRev_CharClip = 0;
+
 #pragma region Transitions
 
 void CharClip::Transitions::Replace(ObjRef *from, Hmx::Object *to) {
@@ -193,12 +197,12 @@ void CharClip::Transitions::Save(BinStream &bs) {
     }
 }
 
-void CharClip::Transitions::Load(BinStreamRev &d, int oldRev) {
+void CharClip::Transitions::Load(BinStream &bs) {
     Clear();
     static ObjectDir *sDir;
-    if (oldRev < 8) {
+    if (gOldRev < 8) {
         int num;
-        d >> num;
+        bs >> num;
         if (num > 0 && mOwner->Dir() != sDir) {
             MILO_LOG(
                 "NOTIFY: %s has old clip format, should resave\n", PathName(mOwner->Dir())
@@ -207,14 +211,14 @@ void CharClip::Transitions::Load(BinStreamRev &d, int oldRev) {
         }
         for (int i = 0; i < num; i++) {
             char buf[0x100];
-            d.stream.ReadString(buf, 0x100);
+            bs.ReadString(buf, 0x100);
             CharClip *clip = mOwner->Dir()->Find<CharClip>(buf, false);
             int num2;
-            d >> num2;
+            bs >> num2;
             for (int j = 0; j < num2; j++) {
                 CharGraphNode node;
-                d >> node.curBeat;
-                d >> node.nextBeat;
+                bs >> node.curBeat;
+                bs >> node.nextBeat;
                 if (clip) {
                     AddNode(clip, node);
                 }
@@ -222,11 +226,8 @@ void CharClip::Transitions::Load(BinStreamRev &d, int oldRev) {
         }
     } else {
         int temp, numNodes;
-        d >> temp;
-        d >> numNodes;
-        if (d.rev < 0x14) {
-            temp /= 8;
-        }
+        bs >> temp;
+        bs >> numNodes;
 #ifdef HX_NATIVE
         // On LP64, NodeVector is ~2x larger (8-byte pointers), need more space
         // temp from file is Xbox byte count; scale up generously
@@ -241,23 +242,23 @@ void CharClip::Transitions::Load(BinStreamRev &d, int oldRev) {
 
         for (int i = 0; i < numNodes; i++) {
             char buf[0x100];
-            d.stream.ReadString(buf, 0x100);
+            bs.ReadString(buf, 0x100);
             CharClip *clip = mOwner->Dir()->Find<CharClip>(buf, false);
             if (clip) {
                 it->clip = clip;
-                d >> it->size;
+                bs >> it->size;
                 for (int j = 0; j < it->size; j++) {
-                    d >> it->nodes[j].curBeat;
-                    d >> it->nodes[j].nextBeat;
+                    bs >> it->nodes[j].curBeat;
+                    bs >> it->nodes[j].nextBeat;
                 }
                 it = it->Next();
             } else {
                 int count;
-                d >> count;
+                bs >> count;
                 for (int j = 0; j < count; j++) {
                     int x, y;
-                    d >> x;
-                    d >> y;
+                    bs >> x;
+                    bs >> y;
                 }
             }
         }
@@ -504,89 +505,92 @@ BEGIN_COPYS(CharClip)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(0x16, 0)
-
+// Retail's rev storage (CharClip::Load 0x82382AC8): one base register
+// (lbl_82CBEF00) addresses gOldRev +0 (lwz/stw), altRev +4 and rev +8 (sth);
+// Transitions::Load reads gOldRev as its own symbol (lis + lwz). No rev wrapper
+// exists -- band.exe has no `.?AVBinStreamRev@@` descriptor -- and every read
+// takes the raw stream (rb3-Wii's shape: `int gOldRev;` + LOAD_REVS statics).
 BEGIN_LOADS(CharClip)
     static int _x = MemFindHeap("char");
     MemHeapTracker temp(_x);
-    int oldRev, x, y, oldVer, tv;
-    LOAD_REVS(bs)
-    ASSERT_REVS(0x16, 0)
-    oldRev = 0;
-    if (d.rev < 0x10)
-        d >> oldRev;
+    int x, y, oldVer, tv;
+    int revs;
+    bs >> revs;
+    gRev_CharClip = getHmxRev(revs);
+    gAltRev_CharClip = getAltRev(revs);
+    if (gRev_CharClip < 0x10)
+        bs >> gOldRev;
     else
-        oldRev = 0xD;
-    MILO_ASSERT(oldRev > 1, 0x531);
-    LOAD_SUPERCLASS(Hmx::Object)
-    if (d.rev < 0x12) {
-        d >> x;
-        d >> y;
+        gOldRev = 0xD;
+    MILO_ASSERT(gOldRev > 1, 0x531);
+    Hmx::Object::Load(bs);
+    if (gRev_CharClip < 0x12) {
+        bs >> x;
+        bs >> y;
     }
-    d >> mFramesPerSec;
-    d >> mFlags;
-    d >> mPlayFlags;
-    if (oldRev < 0xD) {
+    bs >> mFramesPerSec;
+    bs >> mFlags;
+    bs >> mPlayFlags;
+    if (gOldRev < 0xD) {
         int x;
-        d >> x;
+        bs >> x;
     }
-    if (oldRev > 3) {
-        d >> mRange;
+    if (gOldRev > 3) {
+        bs >> mRange;
     }
-    if (oldRev > 5) {
-        char _relBuf[128];
-        d.stream.ReadString(_relBuf, 128);
-        mRelative = Dir() ? Dir()->Find<CharClip>(_relBuf, false) : nullptr;
-    } else if (oldRev > 4) {
+    if (gOldRev > 5) {
+        // retail: bl ObjRefConcrete<CharClip, ObjectDir>::Load (rb3-Wii's form)
+        mRelative.Load(bs, false, nullptr);
+    } else if (gOldRev > 4) {
         bool isRelativeToSelf;
-        d >> isRelativeToSelf;
+        bs >> isRelativeToSelf;
         mRelative = isRelativeToSelf ? this : nullptr;
     } else {
         mRelative = nullptr;
     }
-    if (oldRev > 8 && oldRev < 0xB) {
+    if (gOldRev > 8 && gOldRev < 0xB) {
         bool unused;
-        d >> unused;
+        bs >> unused;
     }
-    if (oldRev > 9) {
-        d >> mOldVer;
+    if (gOldRev > 9) {
+        bs >> mOldVer;
     }
-    if (oldRev > 0xB) {
-        d >> mDoNotCompress;
+    if (gOldRev > 0xB) {
+        bs >> mDoNotCompress;
     }
-    mTransitions.Load(d, oldRev);
-    if (oldRev < 3) {
+    mTransitions.Load(bs);
+    if (gOldRev < 3) {
         int count;
-        d >> count;
+        bs >> count;
         String str;
         for (int i = 0; i < count; i++) {
-            d >> str;
+            bs >> str;
         }
     }
-    if (oldRev > 6) {
+    if (gOldRev > 6) {
         int count;
-        d >> count;
+        bs >> count;
         mBeatEvents.resize(count);
         for (int i = 0; i < mBeatEvents.size(); i++) {
-            mBeatEvents[i].Load(d.stream);
+            mBeatEvents[i].Load(bs);
         }
     } else {
         String eventName;
-        d >> eventName;
+        bs >> eventName;
         if (!eventName.empty()) {
             MILO_NOTIFY("%s has old enter event %s, must port", PathName(this), eventName);
         }
-        d >> eventName;
+        bs >> eventName;
         if (!eventName.empty()) {
             MILO_NOTIFY("%s has old exit event %s, must port", PathName(this), eventName);
         }
         int count;
         float lastFrame = -kHugeFloat;
-        d >> count;
+        bs >> count;
         for (int i = 0; i < count; i++) {
             float frameNum;
-            d >> frameNum;
-            d >> eventName;
+            bs >> frameNum;
+            bs >> eventName;
             if (!eventName.empty()) {
                 MILO_NOTIFY(
                     "%s has old frame %.2f event %s, must port", PathName(this), frameNum, eventName
@@ -605,26 +609,26 @@ BEGIN_LOADS(CharClip)
         mOldVer = tv;
         mDirty = true;
     }
-    if (d.rev > 0xC) {
-        mFull.Load(d.stream);
-        mOne.Load(d.stream);
+    if (gRev_CharClip > 0xC) {
+        mFull.Load(bs);
+        mOne.Load(bs);
     } else {
-        CharBonesSamples::SetVer(d.rev);
-        mFull.LoadHeader(d.stream);
-        mOne.LoadHeader(d.stream);
-        if (d.rev > 7) {
+        CharBonesSamples::SetVer(gRev_CharClip);
+        mFull.LoadHeader(bs);
+        mOne.LoadHeader(bs);
+        if (gRev_CharClip > 7) {
             CharBonesSamples samples;
-            samples.LoadHeader(d.stream);
+            samples.LoadHeader(bs);
         }
-        mFull.LoadData(d.stream);
-        mOne.LoadData(d.stream);
+        mFull.LoadData(bs);
+        mOne.LoadData(bs);
     }
-    if (d.rev > 0xE) {
-        d >> mZeros;
+    if (gRev_CharClip > 0xE) {
+        bs >> mZeros;
     }
     mFacing.Set(mFull);
-    if (d.rev > 0x11) {
-        d >> mBeatTrack;
+    if (gRev_CharClip > 0x11) {
+        bs >> mBeatTrack;
     } else {
         if (NumFrames() > 1) {
             mBeatTrack.resize(2);
@@ -637,7 +641,7 @@ BEGIN_LOADS(CharClip)
             Key<float> &key0 = mBeatTrack[0];
             key0 = Key<float>(key0.value, 0);
         }
-        if (d.rev < 0x11) {
+        if (gRev_CharClip < 0x11) {
             float oldFPS = mFramesPerSec;
             if (LengthBeats() > 0) {
                 mFramesPerSec = (NumFrames() - 1) * (oldFPS / LengthBeats());
@@ -646,8 +650,8 @@ BEGIN_LOADS(CharClip)
             }
         }
     }
-    if (d.rev > 0x12) {
-        d >> mSyncAnim;
+    if (gRev_CharClip > 0x12) {
+        bs >> mSyncAnim;
     }
     if (EndBeat() == StartBeat() && mFull.NumSamples() > 1) {
         MILO_NOTIFY(

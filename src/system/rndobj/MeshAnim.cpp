@@ -195,21 +195,28 @@ BEGIN_COPYS(RndMeshAnim)
     }
 END_COPYS
 
-INIT_REVS(2, 0)
+// Retail RndMeshAnim::Load (0x82470A60) builds no rev wrapper (band.exe has no
+// `.?AVBinStreamRev@@` descriptor): it writes altRev +0 / rev +4 off one base
+// register (lbl_82CC6464) and hands the raw stream to every read, calling the
+// vector<Key<vector<T>>> readers directly (no Keys thunks).
+static __declspec(align(4)) unsigned short gAltRev_MeshAnim = 0;
+static __declspec(align(4)) unsigned short gRev_MeshAnim = 0;
 
 BEGIN_LOADS(RndMeshAnim)
-    LOAD_REVS(bs)
-    ASSERT_REVS(2, 0)
-    if (d.rev > 0)
-        LOAD_SUPERCLASS(Hmx::Object)
-    LOAD_SUPERCLASS(RndAnimatable)
-    d >> mMesh;
-    d >> mVertPointsKeys;
-    if (d.rev > 1)
-        d >> mVertNormalsKeys;
-    d >> mVertTexsKeys;
-    d >> mVertColorsKeys;
-    d >> mKeysOwner;
+    int revs;
+    bs >> revs;
+    gRev_MeshAnim = getHmxRev(revs);
+    gAltRev_MeshAnim = getAltRev(revs);
+    if (gRev_MeshAnim > 0)
+        Hmx::Object::Load(bs);
+    RndAnimatable::Load(bs);
+    bs >> mMesh;
+    bs >> mVertPointsKeys;
+    if (gRev_MeshAnim > 1)
+        bs >> mVertNormalsKeys;
+    bs >> mVertTexsKeys;
+    bs >> mVertColorsKeys;
+    bs >> mKeysOwner;
     if (!mKeysOwner)
         mKeysOwner = this;
 END_LOADS

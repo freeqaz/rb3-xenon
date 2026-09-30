@@ -133,14 +133,14 @@ void Attractor::Save(BinStream &bs) const {
     bs << mStrength;
 }
 
-void Attractor::Load(BinStreamRev &d) {
-    d >> mAttractor;
-    d >> mStrength;
+void Attractor::Load(BinStream &bs) {
+    bs >> mAttractor;
+    bs >> mStrength;
 }
 
-BinStreamRev &operator>>(BinStreamRev &d, Attractor &a) {
-    a.Load(d);
-    return d;
+BinStream &operator>>(BinStream &bs, Attractor &a) {
+    a.Load(bs);
+    return bs;
 }
 
 RndParticleSys::RndParticleSys()
@@ -655,8 +655,9 @@ void RndParticleSys::Mats(std::list<RndMat *> &mats, bool) {
     }
 }
 
-// Retail RB3-360 CASTS a raw BinStream& here rather than constructing a
-// BinStreamRev, and keeps the revision in ONE aligned(4) aggregate addressed
+// Retail RB3-360 passes the raw BinStream& to every read (RB3 has no
+// BinStreamRev: 0 x `.?AVBinStreamRev@@` in band.exe), and keeps the revision
+// in ONE aligned(4) aggregate addressed
 // off a SINGLE base -- read off the target bytes, not assumed:
 //     sth r11, 0x4, r28, lbl_82CC2C70   <- rev    @ +4
 //     sth r10, 0x0, r28, lbl_82CC2C70   <- altRev @ +0
@@ -676,7 +677,6 @@ BEGIN_LOADS(RndParticleSys)
     bs >> revs;
     gPartRev = getHmxRev(revs);
     gPartAltRev = getAltRev(revs);
-    BinStreamRev &d = (BinStreamRev &)bs;
     if (gPartRev > 0x16)
         Hmx::Object::Load(bs);
     if (gPartRev > 0x1B)
@@ -775,7 +775,7 @@ BEGIN_LOADS(RndParticleSys)
         }
     } else {
         std::list<Plane> planes;
-        d >> planes;
+        bs >> planes;
     }
     bs >> mForceDir;
     bs >> mMat;
@@ -874,14 +874,14 @@ BEGIN_LOADS(RndParticleSys)
     if (gPartRev > 0x26) {
 #ifdef HX_NATIVE
         // DC3-era UV-tile-animation load (absent in retail RB3).
-        d >> mAnimateUVs;
+        bs >> mAnimateUVs;
         bs >> mTileHoldTime;
         bs >> mNumTilesAcross;
         bs >> mNumTilesDown;
         bs >> mNumTilesTotal;
         bs >> mStartingTile;
-        d >> mLoopUVAnim;
-        d >> mRandomAnimStart;
+        bs >> mLoopUVAnim;
+        bs >> mRandomAnimStart;
         mTotalTileTime = (float)mNumTilesTotal * mTileHoldTime;
         if (mTotalTileTime - 0.0001f < 0.0f) {
             mTotalTileTime = 0.0001f;
@@ -892,12 +892,12 @@ BEGIN_LOADS(RndParticleSys)
     if (gPartRev > 0x27) {
 #ifdef HX_NATIVE
         // DC3-era particle attractors (absent in retail RB3).
-        d >> mAttractors;
+        bs >> mAttractors;
 #endif
     }
     if (gPartRev > 0x28) {
 #ifdef HX_NATIVE
-        d >> mBirthMomentum;
+        bs >> mBirthMomentum;
         bs >> mBirthMomentumAmount;
 #endif
     }

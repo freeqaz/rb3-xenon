@@ -524,18 +524,14 @@ static __declspec(align(4)) unsigned short sHairAltRev;
 static __declspec(align(4)) unsigned short sHairRev;
 
 void CharHair::Load(BinStream &bs) {
-    // Retail does NOT construct a BinStreamRev here: there is no ??_7BinStreamRev@@6B@,
-    // no ??0BinStream/??1BinStream call, and `.?AVBinStreamRev@@` is absent from the
-    // retail RTTI pool (while BinStream/MemStream/FileStream are all present). The
-    // rev wrapper is reached by a CAST and the loaded revision lives in file statics.
+    // Retail does NOT construct a rev wrapper here: there is no ??0BinStream/??1BinStream
+    // call, and band.exe has no `.?AVBinStreamRev@@` descriptor (BinStreamRev does not
+    // exist in RB3). The raw stream goes to every reader and the loaded revision lives
+    // in the two file statics above.
     int revs;
     bs >> revs;
     sHairRev = getHmxRev(revs);
     sHairAltRev = getAltRev(revs);
-    BinStreamRev &d = (BinStreamRev &)bs;
-    // NOT LOAD_SUPERCLASS: Object.h defines it as `parent::Load(d.stream)`, but
-    // under the cast model there is no real `stream` member -- retail passes the
-    // raw stream (`mr r4,r30`), matching the ObjMacros.h dialect's `parent::Load(bs)`.
     Hmx::Object::Load(bs);
     bs >> mStiffness >> mTorsion >> mInertia >> mGravity >> mWeight >> mFriction;
     if (sHairRev < 8) {
@@ -543,7 +539,7 @@ void CharHair::Load(BinStream &bs) {
         mMaxSlack = 0.0f;
     } else
         bs >> mMinSlack >> mMaxSlack;
-    d >> mStrands;
+    bs >> mStrands;
     bs >> mSimulate;
     if (sHairRev > 10)
         bs >> mWind;
@@ -571,7 +567,7 @@ void operator<<(BinStream &bs, const CharHair::Point &p) {
     bs << p.unk5c;
 }
 
-void operator>>(BinStreamRev &d, CharHair::Point &pt) {
+void operator>>(BinStream &d, CharHair::Point &pt) {
     char buf[0x100];
     char buf2[0x100];
     d >> pt.pos;
@@ -579,11 +575,11 @@ void operator>>(BinStreamRev &d, CharHair::Point &pt) {
     d >> pt.length;
     if (sHairRev < 3) {
         int i;
-        d.stream >> i;
-        d.stream.ReadString(buf, 0xFF);
+        d >> i;
+        d.ReadString(buf, 0xFF);
     } else if (sHairRev == 3) {
         int i;
-        d.stream >> i;
+        d >> i;
     }
     d >> pt.radius;
     if (sHairRev > 1)
@@ -597,13 +593,13 @@ void operator>>(BinStreamRev &d, CharHair::Point &pt) {
         pt.outerRadius += f;
     }
     if (sHairRev == 6) {
-        d.stream.ReadString(buf2, 0xFF);
+        d.ReadString(buf2, 0xFF);
     }
     if (sHairRev < 8) {
         pt.sideLength = -1.0f;
         if (sHairRev > 5) {
             int i;
-            d.stream >> i >> i;
+            d >> i >> i;
         }
     } else {
         bool b = false;
@@ -719,7 +715,7 @@ void CharHair::Strand::SetAngle(float angle) {
     Multiply(m38, mBaseMat, mRootMat);
 }
 
-void CharHair::Strand::Load(BinStreamRev &d) {
+void CharHair::Strand::Load(BinStream &d) {
     d >> mRoot;
     d >> mAngle;
     d >> mPoints;
@@ -758,8 +754,8 @@ void ObjVector<CharHair::Strand>::resize(unsigned int n) {
     std::vector<CharHair::Strand>::resize(n, CharHair::Strand(mOwner));
 }
 
-void operator>>(BinStreamRev &bsrev, CharHair::Strand &strand) {
-    strand.Load(bsrev);
+void operator>>(BinStream &bs, CharHair::Strand &strand) {
+    strand.Load(bs);
 }
 
 #pragma endregion ObjVector_Strand

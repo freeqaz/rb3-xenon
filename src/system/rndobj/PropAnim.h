@@ -157,7 +157,7 @@ protected:
     // retail vtable in Anim.h, so this override is a non-virtual shadow there too.
     ANIM_DC3_VIRTUAL DataNode OnListFlowLabels(DataArray *);
 
-    void LoadPre7(BinStreamRev &);
+    void LoadPre7(BinStream &);
 
     /** Get the position of the PropKeys collection containing a PropKeys with the
      * supplied target and prop.

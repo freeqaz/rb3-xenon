@@ -251,11 +251,9 @@ void Character::PreLoad(BinStream &bs) {
 }
 
 // Retail reads the revision out of the file-static gRevs aggregate (set by
-// PostLoad), not out of the rev wrapper: `lhz -0x4(base)` off the same base
-// register that addresses gRevs.charMe.  Under the cast model (see PostLoad)
-// `d` is the raw stream, so only its BinStream part may be touched here.
-BinStreamRev &operator>>(BinStreamRev &d, Character::Lod &lod) {
-    BinStream &bs = d;
+// PostLoad): `lhz -0x4(base)` off the same base register that addresses
+// gRevs.charMe. The reader takes the raw stream (RB3 has no BinStreamRev).
+BinStream &operator>>(BinStream &bs, Character::Lod &lod) {
     bs >> lod.mScreenSize;
     if (gRevs.rev < 6) {
         lod.mScreenSize *= (4.0f / 3.0f);
@@ -274,7 +272,7 @@ BinStreamRev &operator>>(BinStreamRev &d, Character::Lod &lod) {
             bs >> lod.mTransGroup;
         }
     }
-    return d;
+    return bs;
 }
 
 void Character::PostLoad(BinStream &bs) {
@@ -283,12 +281,14 @@ void Character::PostLoad(BinStream &bs) {
     // written into the file-scope gRevs aggregate (`sth rev,0x4(r21)` /
     // `sth altRev,0x0(r21)` off one base register) and the rev is cached and
     // RE-STORED after each nested super PostLoad, which may clobber gRevs.
-    // The ObjVector readers are reached through the house cast model
-    // (char/CharHair.cpp) so they receive the raw stream (`mr r3,r20`).
+    // The ObjVector readers receive the raw stream (`mr r3,r20`).
     int revs = bs.PopRev(this);
     gRevs.rev = getHmxRev(revs);
     gRevs.altRev = getAltRev(revs);
-    BinStreamRev &d = (BinStreamRev &)bs;
+    // A plain alias of the raw stream. Codegen-only: dropping it swaps the
+    // operands of the commutative fmuls in the rev<8 screen-size loop at the end
+    // (measured 99.694 -> 99.667); it is NOT a rev wrapper.
+    BinStream &d = bs;
     int oldRev = gRevs.rev;
     if (gRevs.rev > 1) {
         RndDir::PostLoad(bs);

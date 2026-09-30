@@ -36,10 +36,6 @@ ObjRefConcrete<RndParticleSys, ObjectDir>::~ObjRefConcrete() {
 
 #pragma region Hmx::Object
 
-// RB3-360 retail: the Load reads the archive rev from a file-scope static
-// halfword (lbl_82CCxxxx, `lhz`) populated once at Load entry, not from the
-// BinStreamRev member. Mirror that so the rev comparisons match.
-static unsigned short sPartAnimRev;
 
 RndParticleSysAnim::RndParticleSysAnim() : mParticleSys(this), mKeysOwner(this, this) {}
 
@@ -106,23 +102,24 @@ BEGIN_COPYS(RndParticleSysAnim)
     }
 END_COPYS
 
-INIT_REVS(3, 0)
-
+// Retail RndParticleSysAnim::Load (0x82480D88) reads the revision word whole
+// into a stack local (`bs >> rev`, then lwz/cmpwi against 2/1) -- rb3-Wii's
+// shape -- and passes the raw stream to every read. No rev wrapper exists
+// (band.exe has no `.?AVBinStreamRev@@` descriptor).
 BEGIN_LOADS(RndParticleSysAnim)
-    LOAD_REVS(bs)
-    ASSERT_REVS(3, 0)
-    sPartAnimRev = d.rev;
-    if (sPartAnimRev > 2) {
-        LOAD_SUPERCLASS(Hmx::Object)
+    int rev;
+    bs >> rev;
+    if (rev > 2) {
+        Hmx::Object::Load(bs);
     }
-    LOAD_SUPERCLASS(RndAnimatable)
-    d >> mParticleSys >> mStartColorKeys >> mEndColorKeys;
-    if (sPartAnimRev < 2) {
+    RndAnimatable::Load(bs);
+    bs >> mParticleSys >> mStartColorKeys >> mEndColorKeys;
+    if (rev < 2) {
         float scale = 1.0f;
         Keys<float, float> floatKeys;
-        d >> floatKeys >> mKeysOwner;
-        if (sPartAnimRev == 1) {
-            d >> scale;
+        bs >> floatKeys >> mKeysOwner;
+        if (rev == 1) {
+            bs >> scale;
         }
         mEmitRateKeys.clear();
         mEmitRateKeys.reserve(floatKeys.size());
@@ -134,12 +131,12 @@ BEGIN_LOADS(RndParticleSysAnim)
             mEmitRateKeys.push_back(vecKey);
         }
     } else {
-        d >> mEmitRateKeys >> mKeysOwner;
+        bs >> mEmitRateKeys >> mKeysOwner;
     }
     if (!mKeysOwner)
         mKeysOwner = this;
-    if (sPartAnimRev > 1) {
-        d >> mSpeedKeys >> mLifeKeys >> mStartSizeKeys;
+    if (rev > 1) {
+        bs >> mSpeedKeys >> mLifeKeys >> mStartSizeKeys;
     }
 END_LOADS
 

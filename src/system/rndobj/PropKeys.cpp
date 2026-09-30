@@ -66,18 +66,18 @@ void PropKeys::Save(BinStream &bs) {
     bs << unk34;
 }
 
-void PropKeys::Load(BinStreamRev &d) {
+void PropKeys::Load(BinStream &bs) {
     if (sPropKeysLoadRev < 7)
         MILO_FAIL("PropKeys::Load should not be called before version 7");
     else {
         int iVal;
-        d >> iVal;
+        bs >> iVal;
         mKeysType = (AnimKeysType)iVal;
-        d >> mTarget;
-        d >> mProp;
+        bs >> mTarget;
+        bs >> mProp;
 
         if (sPropKeysLoadRev >= 8)
-            d >> iVal;
+            bs >> iVal;
         else if (mKeysType == kObject || mKeysType == kBool)
             iVal = 0;
         else
@@ -91,19 +91,19 @@ void PropKeys::Load(BinStreamRev &d) {
 
         if (sPropKeysLoadRev > 9) {
             Symbol sym;
-            d >> sym;
+            bs >> sym;
             if (!sym.Null()) {
                 SetInterpHandler(sym);
             }
         }
 
         if (sPropKeysLoadRev > 10) {
-            d >> iVal;
+            bs >> iVal;
             mPropExceptionID = (ExceptionID)iVal;
         }
 
         if (sPropKeysLoadRev > 0xC) {
-            d >> unk34;
+            bs >> unk34;
         }
         SetPropExceptionID();
     }
@@ -505,14 +505,16 @@ BinStream &operator<<(BinStream &bs, const ObjectStage &stage) {
     return bs;
 }
 
-BinStreamRev &operator>>(BinStreamRev &bs, ObjectStage &stage) {
+// Retail (fn_82422E88) tests PropKeys' class-static load rev, not a wrapper
+// field (RB3 has no BinStreamRev), and reads both pointers off the raw stream.
+BinStream &operator>>(BinStream &bs, ObjectStage &stage) {
     ObjectDir *dir = nullptr;
-    if (bs.rev > 8) {
+    if (PropKeys::sPropKeysLoadRev > 8) {
         ObjPtr<ObjectDir> dirPtr(stage.Owner(), nullptr);
-        dirPtr.Load(bs.stream, true, dir);
+        dirPtr.Load(bs, true, dir);
         dir = dirPtr.Ptr();
     }
-    stage.Load(bs.stream, true, dir);
+    stage.Load(bs, true, dir);
     return bs;
 }
 

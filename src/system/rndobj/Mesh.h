@@ -177,7 +177,7 @@ public:
     virtual RndDrawable *CollideShowing(const Segment &, float &, Plane &);
     virtual int CollidePlane(const Plane &);
     virtual void Highlight() { RndDrawable::Highlight(); }
-    virtual void LoadVertices(BinStreamRev &);
+    virtual void LoadVertices(BinStream &);
     virtual void SaveVertices(BinStream &);
     virtual void DrawFacesInRange(int, int) {}
     // Retail X360 RB3 keeps NumFaces()/NumVerts() NON-VIRTUAL; they are DC3-only

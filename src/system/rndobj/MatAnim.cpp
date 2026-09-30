@@ -89,47 +89,51 @@ BEGIN_COPYS(RndMatAnim)
     }
 END_COPYS
 
-INIT_REVS(7, 0)
+// Retail's rev storage: RndMatAnim::Load (0x824639C0) reads the revision word
+// whole into a file-static int (`bs >> gRev`: lwz/cmpwi, no hmx/alt split) and
+// LoadStage (0x824637E8) reads it as its own symbol (lis + lwz lbl_82CC5060).
+// No rev wrapper exists -- band.exe has no `.?AVBinStreamRev@@` descriptor --
+// and every read takes the raw stream (rb3-Wii's shape).
+static int gRev_MatAnim = 0;
 
 BEGIN_LOADS(RndMatAnim)
-    LOAD_REVS(bs)
-    ASSERT_REVS(0, 7)
-    if (d.rev > 5) {
-        LOAD_SUPERCLASS(Hmx::Object)
+    bs >> gRev_MatAnim;
+    if (gRev_MatAnim > 5) {
+        Hmx::Object::Load(bs);
     }
-    LOAD_SUPERCLASS(RndAnimatable)
+    RndAnimatable::Load(bs);
     sOwner = this;
-    d >> mMat;
-    if (d.rev < 7) {
-        LoadStages(d);
+    bs >> mMat;
+    if (gRev_MatAnim < 7) {
+        LoadStages(bs);
     }
-    d >> mKeysOwner;
+    bs >> mKeysOwner;
     if (!mKeysOwner) {
         mKeysOwner = this;
     }
-    if (d.rev > 1) {
+    if (gRev_MatAnim > 1) {
         Keys<Hmx::Color, Hmx::Color> k1;
         Keys<Hmx::Color, Hmx::Color> k2;
-        if (d.rev < 5)
-            d >> k1;
-        if (d.rev < 3)
-            d >> k2;
-        d >> mColorKeys;
-        if (d.rev < 4) {
+        if (gRev_MatAnim < 5)
+            bs >> k1;
+        if (gRev_MatAnim < 3)
+            bs >> k2;
+        bs >> mColorKeys;
+        if (gRev_MatAnim < 4) {
             Keys<Hmx::Color, Hmx::Color> k3;
-            d >> k3;
+            bs >> k3;
         }
-        d >> mAlphaKeys;
-        if (d.rev < 5 && mColorKeys.empty()) {
+        bs >> mAlphaKeys;
+        if (gRev_MatAnim < 5 && mColorKeys.empty()) {
             if (!k1.empty())
                 mColorKeys = k1;
             else if (!k2.empty())
                 mColorKeys = k2;
         }
     }
-    if (d.rev > 6) {
-        d >> mTransKeys >> mScaleKeys >> mRotKeys;
-        d >> mTexKeys;
+    if (gRev_MatAnim > 6) {
+        bs >> mTransKeys >> mScaleKeys >> mRotKeys;
+        bs >> mTexKeys;
     }
 END_LOADS
 
@@ -229,7 +233,7 @@ void RndMatAnim::SetKey(float frame) {
 #pragma endregion
 #pragma region RndMatAnim
 
-void RndMatAnim::LoadStages(BinStreamRev &d) {
+void RndMatAnim::LoadStages(BinStream &d) {
     unsigned int stageCount;
     d >> stageCount;
     if (stageCount != 0) {
@@ -257,27 +261,17 @@ void RndMatAnim::LoadStages(BinStreamRev &d) {
     }
 }
 
-#ifndef HX_NATIVE
-template <>
-BinStreamRev &operator>><RndMatAnim::TexPtr>(BinStreamRev &bs, Key<RndMatAnim::TexPtr> &key) {
-    BinStream &s = bs.stream;
-    key.value.Load(s, true, nullptr);
-    s.ReadEndian(&key.frame, sizeof(float));
-    return bs;
-}
-#endif
-
-void RndMatAnim::LoadStage(BinStreamRev &d) {
-    if (d.rev < 2) {
+void RndMatAnim::LoadStage(BinStream &d) {
+    if (gRev_MatAnim < 2) {
         MILO_NOTIFY("Can't convert old MatAnim stages");
     }
-    if (d.rev > 0) {
+    if (gRev_MatAnim > 0) {
         Keys<Vector3, Vector3> &t = TransKeys();
         Keys<Vector3, Vector3> &s = ScaleKeys();
         Keys<Vector3, Vector3> &r = RotKeys();
         d >> t >> s >> r;
     }
-    if (d.rev > 1) {
+    if (gRev_MatAnim > 1) {
         d >> (Keys<TexPtr, RndTex *> &)mTexKeys;
     }
 }

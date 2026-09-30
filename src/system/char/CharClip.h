@@ -46,7 +46,7 @@ public:
         int BytesInMemory() const { return (intptr_t)mNodeEnd - (intptr_t)mNodeStart; }
         void RemoveNodes(NodeVector *);
         void Save(BinStream &);
-        void Load(BinStreamRev &, int);
+        void Load(BinStream &);
         void RemoveClip(CharClip *);
         void AddNode(CharClip *, const CharGraphNode &);
 

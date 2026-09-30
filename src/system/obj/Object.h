@@ -2599,7 +2599,7 @@ Interp(const ObjectStage &stage1, const ObjectStage &stage2, float f, Hmx::Objec
 }
 
 BinStream &operator<<(BinStream &, const ObjectStage &);
-BinStreamRev &operator>>(BinStreamRev &, ObjectStage &);
+BinStream &operator>>(BinStream &, ObjectStage &);
 
 #pragma endregion
 #pragma region ObjVersion

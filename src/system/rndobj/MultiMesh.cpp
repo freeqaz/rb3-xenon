@@ -72,34 +72,36 @@ BEGIN_COPYS(RndMultiMesh)
     UpdateMesh();
 END_COPYS
 
-// Retail keeps the in-flight load revision in a file-scope mutable short (the
-// rb3-Wii oracle spells it `RndMultiMesh::gRev`) and hands the BinStreamRev
-// straight through as its BinStream base (base@0 => identity upcast, no insn).
-// That is why the target reads `lhz r5, <data>` instead of extracting bs.rev.
-unsigned short gInstanceLoadRev;
-
-INIT_REVS(5, 0)
+// Retail's rev pair: RndMultiMesh::Load (0x8246B470) writes altRev +0 / rev +4
+// off one base register (lbl_82CC63CC), and Instance::Load (0x8246B3B0) reads
+// the rev as its own symbol (lis + lhz lbl_82CC63D0) -- so gInstanceLoadRev IS
+// the loaded rev (rb3-Wii spells it RndMultiMesh::gRev). No rev wrapper exists
+// (band.exe has no `.?AVBinStreamRev@@` descriptor); every read takes the raw
+// stream.
+static __declspec(align(4)) unsigned short gAltRev_MultiMeshLoad = 0;
+static __declspec(align(4)) unsigned short gInstanceLoadRev = 0;
 
 BEGIN_LOADS(RndMultiMesh)
-    LOAD_REVS(bs)
-    ASSERT_REVS(5, 0)
-    gInstanceLoadRev = d.rev;
-    if (d.rev > 0)
-        LOAD_SUPERCLASS(Hmx::Object)
-    LOAD_SUPERCLASS(RndDrawable)
+    int revs;
+    bs >> revs;
+    gInstanceLoadRev = getHmxRev(revs);
+    gAltRev_MultiMeshLoad = getAltRev(revs);
+    if (gInstanceLoadRev > 0)
+        Hmx::Object::Load(bs);
+    RndDrawable::Load(bs);
     bs >> mMesh;
-    if (d.rev < 2) {
+    if (gInstanceLoadRev < 2) {
         std::list<Transform> xfms;
-        d >> xfms;
+        bs >> xfms;
         mInstances.clear();
         for (std::list<Transform>::iterator it = xfms.begin(); it != xfms.end(); ++it) {
             mInstances.push_back(Instance(*it));
         }
     } else {
-        d >> mInstances;
-        if (d.rev < 4) {
+        bs >> mInstances;
+        if (gInstanceLoadRev < 4) {
             bool dump;
-            d >> dump;
+            bs >> dump;
         }
     }
 END_LOADS
@@ -200,7 +202,7 @@ void RndMultiMesh::Instance::Save(BinStream &bs) const {
     bs << mXfm;
 }
 
-void RndMultiMesh::Instance::Load(BinStreamRev &bs) { LoadRev(bs, gInstanceLoadRev); }
+void RndMultiMesh::Instance::Load(BinStream &bs) { LoadRev(bs, gInstanceLoadRev); }
 
 void RndMultiMesh::Instance::LoadRev(BinStream &bs, int rev) {
     bs >> mXfm;

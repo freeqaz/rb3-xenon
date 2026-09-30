@@ -17,7 +17,13 @@ static bool sReplaceKey = false;
 static bool sReplaceFrame = false;
 static float sFrameReplace = 0;
 static DataNode sKeyReplace;
-static unsigned short sLoadPre7Rev;
+// Retail's rev pair: RndPropAnim::Load (0x8242EA88) writes altRev +0 / rev +4
+// off one base register (lbl_82CC2768), and LoadPre7 (0x8242E580) reads rev as
+// its own symbol (lis + lhz lbl_82CC276C) -- two separate internal statics,
+// altRev declared first. (The old gRev_PropAnim copy was this rev.) No rev
+// wrapper exists: band.exe has no `.?AVBinStreamRev@@` descriptor.
+static __declspec(align(4)) unsigned short gAltRev_PropAnim = 0;
+static __declspec(align(4)) unsigned short gRev_PropAnim = 0;
 
 #pragma region Hmx::Object
 
@@ -224,58 +230,57 @@ BEGIN_COPYS(RndPropAnim)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(15, 0)
-
 BEGIN_LOADS(RndPropAnim)
-    LOAD_REVS(bs)
-    ASSERT_REVS(15, 0)
+    int revs;
+    bs >> revs;
+    gRev_PropAnim = getHmxRev(revs);
+    gAltRev_PropAnim = getAltRev(revs);
     // Retail sets PropKeys' class-static "current load rev" here (rb3-Wii:
     // SetPropKeysRev(gRev)) before any nested PropKeys::Load() call — see the
     // PropKeys.h comment on PropKeys::sPropKeysLoadRev (named to dodge this
     // TU's scatter-include gRev macro wrapping).
-    PropKeys::sPropKeysLoadRev = d.rev;
-    LOAD_SUPERCLASS(Hmx::Object)
-    LOAD_SUPERCLASS(RndAnimatable)
+    PropKeys::sPropKeysLoadRev = gRev_PropAnim;
+    Hmx::Object::Load(bs);
+    RndAnimatable::Load(bs);
 
     // RAII guard for proper object lifecycle during load
     ObjOwnerPtr<Hmx::Object> obj(this);
     mLastFrame = GetFrame();
     RemoveKeys();
 
-    if (d.rev < 7) {
+    if (gRev_PropAnim < 7) {
         // Legacy format (pre-revision 7)
-        sLoadPre7Rev = d.rev;
-        LoadPre7(d);
+        LoadPre7(bs);
     } else {
         // Modern format: read PropKeys count and load each
         int count;
-        d >> count;
+        bs >> count;
         for (int i = 0; i < count; i++) {
             int type;
-            d >> type;
-            AddKeys(nullptr, nullptr, (PropKeys::AnimKeysType)type)->Load(d);
+            bs >> type;
+            AddKeys(nullptr, nullptr, (PropKeys::AnimKeysType)type)->Load(bs);
         }
 
         // Revision 12+: loop flag
-        if (d.rev > 0xB) {
-            d >> mLoop;
+        if (gRev_PropAnim > 0xB) {
+            bs >> mLoop;
         }
 #ifdef HX_NATIVE
         // Revision 14+: flow labels
-        if (d.rev > 0xD) {
-            d >> mFlowLabels;
+        if (gRev_PropAnim > 0xD) {
+            bs >> mFlowLabels;
         }
         // Revision 15+: intensity
-        if (d.rev > 0xE) {
-            d >> mIntensity;
+        if (gRev_PropAnim > 0xE) {
+            bs >> mIntensity;
         }
 #endif
     }
 END_LOADS
 
-void RndPropAnim::LoadPre7(BinStreamRev &bs) {
+void RndPropAnim::LoadPre7(BinStream &bs) {
     ObjOwnerPtr<Hmx::Object> objPtr(this);
-    if (sLoadPre7Rev < 2)
+    if (gRev_PropAnim < 2)
         bs >> objPtr;
     int count;
     bs >> count;
@@ -287,15 +292,15 @@ void RndPropAnim::LoadPre7(BinStreamRev &bs) {
         ObjKeys objKeys(this);
         Keys<bool, bool> boolKeys;
         Keys<Hmx::Quat, Hmx::Quat> quatKeys;
-        if (sLoadPre7Rev >= 2)
+        if (gRev_PropAnim >= 2)
             bs >> objPtr;
-        if (sLoadPre7Rev < 1) {
+        if (gRev_PropAnim < 1) {
             Symbol sym;
             bs >> sym;
             arr = DataArrayPtr(sym);
         } else
             bs >> arr;
-        if (sLoadPre7Rev < 3)
+        if (gRev_PropAnim < 3)
             bs >> floatKeys;
         else {
             int animtype;
@@ -303,15 +308,15 @@ void RndPropAnim::LoadPre7(BinStreamRev &bs) {
             ty = (PropKeys::AnimKeysType)animtype;
             bs >> floatKeys;
             bs >> colorKeys;
-            if (sLoadPre7Rev > 3) {
+            if (gRev_PropAnim > 3) {
                 Hmx::Object *oldowner = ObjectStage::sOwner;
                 ObjectStage::sOwner = this;
                 bs >> objKeys;
                 ObjectStage::sOwner = oldowner;
             }
-            if (sLoadPre7Rev > 4)
+            if (gRev_PropAnim > 4)
                 bs >> boolKeys;
-            if (sLoadPre7Rev > 5)
+            if (gRev_PropAnim > 5)
                 bs >> quatKeys;
         }
         PropKeys *addedKeys = AddKeys(objPtr.Ptr(), arr, ty);
