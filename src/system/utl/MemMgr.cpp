@@ -428,6 +428,23 @@ __declspec(noinline) void *
 // forgiving — see the campaign memory for that reckoning. The body below is
 // still the malloc() placeholder; porting the reconstruction above is what
 // remains.
+static inline int MemAlignWords(int align) {
+    if (align == 0)
+        return 1;
+    int bits = 0;
+    int extra = 0;
+    while (align > 1) {
+        if (align & 1)
+            extra = 1;
+        bits++;
+        align >>= 1;
+    }
+    int result = bits + extra - 2;
+    if (0 > result)
+        result = 0;
+    return result;
+}
+
 __declspec(noinline) void *(MemAlloc)(int size, int align) {
     CritSecTracker tracker(gMemLock);
     MemHeapStack &s = ThreadMemStack(false);
@@ -465,22 +482,7 @@ __declspec(noinline) void *(MemAlloc)(int size, int align) {
     int sizeWords = ((size + 3) >> 2) + 1;
     if ((unsigned int)sizeWords < 3)
         sizeWords = 3;
-    int alignShift;
-    if (align == 0) {
-        alignShift = 1;
-    } else {
-        int bits = 0;
-        int extra = 0;
-        while (align > 1) {
-            if (align & 1)
-                extra = 1;
-            bits++;
-            align >>= 1;
-        }
-        alignShift = bits + extra - 2;
-        if (0 > alignShift)
-            alignShift = 0;
-    }
+    int alignShift = MemAlignWords(align);
     // Retail computes the effective strategy first and stores it
     // unconditionally around the Alloc call, then restores the original.
     MemHeap::Strategy strategy = temp ? MemHeap::kLastFit : heap->mStrategy;
