@@ -191,3 +191,11 @@ committed.
 - `tools/map_name_injectivity.py`: `OK: 30909 applied rows, 30908 distinct names, injective (+1 enumerated internal-linkage exception(s))`.
 - `tools/icf_alias_finder.py --validate`: `VALIDATE: PASS -- 1487 map-consistent, 257 tolerated, 0 contradicted, 1745 total`, rc=0.
 - `tools/native_build_gate.sh`: run last. Its result line is appended below.
+
+Native gate, run on `ff5d9bc8a` after the A/B and the tip build; it was the last build action:
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+Only this docs-only commit follows it. It touches no build input.
