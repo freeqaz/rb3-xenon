@@ -253,6 +253,60 @@ void RndMeshDeform::VertArray::Copy(const RndMeshDeform::VertArray &a) {
     memcpy(mData, a.mData, mSize);
 }
 
+// RB3 members DC3 dropped, needed by BandPatchMesh's patch projection (lane
+// W17-BPM2). Ported from rb3-Wii rndobj/MeshDeform.cpp:56-82 and 150-194; not
+// named in the target map yet (retail CopyVert 0x8240B2A8, SetMesh 0x8240B6B8,
+// CopyWeights 0x8240B6F8, FindDeform 0x8240B9F8, all anonymous there).
+void *RndMeshDeform::VertArray::FindVert(int vert) {
+    u8 *buf = (u8 *)mData;
+    while (vert != 0) {
+        buf += (buf[0] << 1) + 1;
+        vert--;
+    }
+    MILO_ASSERT(buf <= (u8 *)mData + mSize, 0x37);
+    return buf;
+}
+
+void RndMeshDeform::VertArray::CopyVert(int to, int from, RndMeshDeform::VertArray &fromArr) {
+    MILO_ASSERT(from >= 0 && from < fromArr.NumVerts(), 0x41);
+    u8 buf[VertArray::kMaxWeights * 2 + 1];
+    u8 *src = (u8 *)fromArr.FindVert(from);
+    memcpy(buf, src, *src * 2 + 1);
+    if (to > NumVerts()) {
+        MILO_FAIL("can't copy vert past end");
+        return;
+    }
+    u8 *dst = (u8 *)FindVert(to);
+    int insertLength = *buf * 2 + 1;
+    int cutLength = (dst == (u8 *)mData + mSize) ? 0 : *dst * 2 + 1;
+    void *out = MemResizeElem(
+        mData, mSize, dst, cutLength, insertLength, __FILE__, 0x4B, "RndMeshDeform"
+    );
+    memcpy(out, buf, *buf * 2 + 1);
+}
+
+void RndMeshDeform::CopyWeights(int to, int from, RndMeshDeform *fromMd) {
+    mVerts.CopyVert(to, from, fromMd ? fromMd->mVerts : mVerts);
+}
+
+void RndMeshDeform::SetMesh(RndMesh *mesh) {
+    mMesh = mesh;
+    mVerts.Clear();
+}
+
+// Retail walks the mesh's ref ring forward (the oracle's copy walks a reverse
+// vector of refs, which is the Wii Object's layout).
+RndMeshDeform *RndMeshDeform::FindDeform(RndMesh *m) {
+    for (ObjRef::iterator it = m->Refs().begin(); it != m->Refs().end(); ++it) {
+        RndMeshDeform *md = dynamic_cast<RndMeshDeform *>(RefPtrOf(it)->RefOwner());
+        if (md) {
+            MILO_ASSERT(md->Mesh() == m, 0x125);
+            return md;
+        }
+    }
+    return 0;
+}
+
 // ---------------------------------------------------------------------------
 // SCATTER TAIL -- X360 ONLY. Same reasoning as rndobj/MeshAnim.cpp's tail:
 // obj/Dir.cpp is already emitted by the native obj/ source set (duplicate), and

@@ -125,11 +125,9 @@ Symbol BandCharacter::NameToDrumVenue(const char *name) {
     return BandCharDesc::NameToDrumVenue(name);
 }
 
-// BandPatchMesh::ConstructQuad builds the unit quad the patch mesh renders
-// into. Declared, never defined. Inert leaves the mesh with no geometry, so a
-// patch quad DRAWS NOTHING rather than drawing something wrong — which is the
-// correct failure direction for an evidence frame.
-void BandPatchMesh::ConstructQuad(RndTex *) {}
+// (BandPatchMesh::ConstructQuad used to be an inert stub here; W17-BPM2 ported
+// the patch-projection subsystem, so the real member in
+// src/system/bandobj/BandPatchMesh.cpp links instead.)
 
 // FixedSizeSaveable::{Save,Load}FixedString (meta/FixedSizeSaveable.h:40-41).
 // Declared, never defined. These are the SAVEGAME serializer, reached from
