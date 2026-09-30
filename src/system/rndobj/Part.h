@@ -140,7 +140,7 @@ public:
     Attractor(const Attractor &a, Hmx::Object *owner)
         : mAttractor(owner, a.mAttractor), mStrength(a.mStrength) {}
     void Save(BinStream &) const;
-    void Load(BinStreamRev &);
+    void Load(BinStream &);
 
     /** "Attracts/repulses particles" */
     ObjPtr<RndTransformable> mAttractor; // 0x0
