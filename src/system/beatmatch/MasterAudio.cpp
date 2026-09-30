@@ -348,10 +348,10 @@ void MasterAudio::ConfigureVocalFaders(int i, bool b) {
 }
 
 bool MasterAudio::Fail() {
-    if (mSongStream)
-        return mSongStream->Fail();
-    else
+    // retail (0x8277B800) tests the null case first
+    if (!mSongStream)
         return true;
+    return mSongStream->Fail();
 }
 
 bool MasterAudio::IsReady() {
