@@ -15,6 +15,7 @@ AccomplishmentTrainerConditional::~AccomplishmentTrainerConditional() {}
 void AccomplishmentTrainerConditional::Configure(DataArray *i_pConfig) {
     MILO_ASSERT(i_pConfig, 0x1c);
 
+    static Symbol conditions("conditions");
     DataArray *pConditionArray = i_pConfig->FindArray(conditions);
     MILO_ASSERT(pConditionArray->Size() > 1, 0x23);
 

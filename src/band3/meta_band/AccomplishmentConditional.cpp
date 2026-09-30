@@ -32,6 +32,7 @@ void AccomplishmentConditional::UpdateConditionOptionalData(
 
 void AccomplishmentConditional::Configure(DataArray *i_pConfig) {
     MILO_ASSERT(i_pConfig, 0x43);
+    static Symbol conditions("conditions");
     DataArray *pConditionArray = i_pConfig->FindArray(conditions);
     if (pConditionArray != NULL) {
         MILO_ASSERT(pConditionArray->Size() > 1, 0x4b);
