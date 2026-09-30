@@ -11,6 +11,10 @@
 #include "utl/Symbols4.h"
 
 MakeupProvider::MakeupProvider(Symbol gender) : mCurrentMakeupList(0) {
+    static Symbol none_makeup("none_makeup");
+    static Symbol male("male");
+    static Symbol female("female");
+    MILO_ASSERT(gender == male || gender == female, 0x1d);
     mMakeupEyes.push_back(none_makeup);
     mMakeupLips.push_back(none_makeup);
     int eyecount, lipcount;
@@ -22,11 +26,11 @@ MakeupProvider::MakeupProvider(Symbol gender) : mCurrentMakeupList(0) {
         lipcount = 17;
     }
     for (int i = 1; i <= eyecount; i++) {
-        Symbol eyeSym(MakeString("%s_makeup_eyes_%i", gender.Str(), i));
+        Symbol eyeSym(MakeString("%s_makeup_eyes_%i", gender, i));
         mMakeupEyes.push_back(eyeSym);
     }
     for (int i = 1; i <= lipcount; i++) {
-        Symbol lipSym(MakeString("%s_makeup_lips_%i", gender.Str(), i));
+        Symbol lipSym(MakeString("%s_makeup_lips_%i", gender, i));
         mMakeupLips.push_back(lipSym);
     }
     mCurrentMakeupList = &mMakeupEyes;
