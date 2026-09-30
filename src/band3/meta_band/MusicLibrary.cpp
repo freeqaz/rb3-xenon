@@ -1386,6 +1386,9 @@ void MusicLibrary::Text(int, int idx, UIListLabel *slot, UILabel *label) const {
 #else
     MILO_ASSERT(p9_label, 0x638);
 #endif
+    // RB3-360 shape (retail 0x8253CD90): every arm returns once it has written
+    // the slot, and every unmatched path -- including the default case -- falls
+    // through to one shared `label->SetTextToken(gNullStr)` after the switch.
     SortNode *sortNode = GetCurrentSort()->GetNode(idx);
     switch (sortNode->GetType()) {
     case kNodeHeader: {
@@ -1398,13 +1401,19 @@ void MusicLibrary::Text(int, int idx, UIListLabel *slot, UILabel *label) const {
                 // as AppLabel.cpp:222/317 and StoreOfferProvider.cpp:287.
                 static Symbol store_famous_by("store_famous_by");
                 label->SetTextToken(store_famous_by);
-            } else if (slot->Matches("famousby_group")) {
+                return;
+            }
+            if (slot->Matches("famousby_group")) {
                 p9_label->SetFromSongSelectNode(sortNode);
+                return;
             }
         } else if (slot->Matches("group") && unkdc != 3 && unkdc != 7) {
             p9_label->SetFromSongSelectNode(sortNode);
-        } else if (slot->Matches("song_count") && !SongSortMgr::IsSetlistSort(unkdc)) {
+            return;
+        }
+        if (slot->Matches("song_count") && !SongSortMgr::IsSetlistSort(unkdc)) {
             p9_label->SetSongCount(hsn->GetSongCount());
+            return;
         }
         break;
     }
@@ -1412,9 +1421,12 @@ void MusicLibrary::Text(int, int idx, UIListLabel *slot, UILabel *label) const {
         SubheaderSortNode *subheaderNode = dynamic_cast<SubheaderSortNode *>(sortNode);
         if (slot->Matches("song_count") && !SongSortMgr::IsSetlistSort(unkdc)) {
             p9_label->SetSongCount(subheaderNode->GetSongCount());
-        } else if (slot->Matches("subgroup")) {
+            return;
+        }
+        if (slot->Matches("subgroup")) {
             MILO_ASSERT(!subheaderNode->mCover, 0x671);
             p9_label->SetFromSongSelectNode(sortNode);
+            return;
         }
         break;
     }
@@ -1425,10 +1437,12 @@ void MusicLibrary::Text(int, int idx, UIListLabel *slot, UILabel *label) const {
                 p9_label->SetSongAndArtistName(osn);
             } else
                 p9_label->SetSongName(osn);
+            return;
         } else if (slot->Matches("difficulty")) {
             SongRecord *record = osn->GetSongRecord();
             if (record->IsNotBand() && record->GetScore() > 0) {
                 label->SetTextToken(record->GetShortDifficultySym());
+                return;
             }
         } else if (slot->Matches("percentage")) {
             SongRecord *record = osn->GetSongRecord();
@@ -1439,6 +1453,7 @@ void MusicLibrary::Text(int, int idx, UIListLabel *slot, UILabel *label) const {
                     "endgame_player_noteshit_fmt"
                 );
                 label->SetTokenFmt(endgame_player_noteshit_fmt, record->GetNotesPct());
+                return;
             }
         }
         break;
@@ -1446,6 +1461,7 @@ void MusicLibrary::Text(int, int idx, UIListLabel *slot, UILabel *label) const {
     case kNodeFunction:
         if (slot->Matches("function")) {
             p9_label->SetFromSongSelectNode(sortNode);
+            return;
         }
         break;
     case kNodeSetlist: {
@@ -1453,8 +1469,10 @@ void MusicLibrary::Text(int, int idx, UIListLabel *slot, UILabel *label) const {
         SavedSetlist *setlist = ssn->GetSetlistRecord()->GetSetlist();
         if (slot->Matches("setlist_name")) {
             p9_label->SetSetlistName(setlist);
+            return;
         } else if (slot->Matches("battle_instrument_rank") && setlist->IsBattle()) {
             p9_label->SetBattleInstrument(ssn->GetSetlistRecord());
+            return;
         }
         break;
     }
@@ -1468,29 +1486,33 @@ void MusicLibrary::Text(int, int idx, UIListLabel *slot, UILabel *label) const {
         //                 "music_library_upsell_indicator" @0x8208FE0C
         //   callees 0x825C66F8 SetSongAndArtistName, 0x825C56A0 SetSongName,
         //           0x827A6D48 StoreOffer::GetSingleSongID, 0x827F3548 SetTextToken
+        // The downloading token goes through the AppLabel (r26), the upsell one
+        // through the plain UILabel (r25).
         StoreSongSortNode *ssn = dynamic_cast<StoreSongSortNode *>(sortNode);
         if (slot->Matches("song")) {
             if (unkdc != 1) {
                 p9_label->SetSongAndArtistName(ssn);
             } else
                 p9_label->SetSongName(ssn);
+            return;
         } else if (slot->Matches("downloading")) {
             if (unk19c->IsDownloading(ssn->mOffer->GetSingleSongID())) {
                 static Symbol song_select_downloading("song_select_downloading");
-                label->SetTextToken(song_select_downloading);
+                p9_label->SetTextToken(song_select_downloading);
             } else {
                 static Symbol music_library_upsell_indicator(
                     "music_library_upsell_indicator"
                 );
                 label->SetTextToken(music_library_upsell_indicator);
             }
+            return;
         }
         break;
     }
     default:
-        label->SetTextToken(gNullStr);
         break;
     }
+    label->SetTextToken(gNullStr);
 }
 
 RndMat *MusicLibrary::Mat(int, int idx, UIListMesh *slot) const {
