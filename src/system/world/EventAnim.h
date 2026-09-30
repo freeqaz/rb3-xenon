@@ -34,7 +34,8 @@ public:
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
-    virtual ~EventAnim() {}
+    // Implicit destructor: retail ??1EventAnim (fn_824CA0C8) stores no
+    // EventAnim vtables before destroying the members.
     virtual void StartAnim();
     virtual void EndAnim();
     virtual void SetFrame(float frame, float blend);
