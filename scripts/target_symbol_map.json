@@ -8855,7 +8855,7 @@
  "0x8249a0c0": "?SyncProperty@RndLight@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x8249a0d0": "??_GRndLight@@UAAPAXI@Z",
  "0x8249a120": "?InitShaderOptions@@YAXXZ",
- "0x8249a3a8": "?RateToTaskUnits@RndAnimatable@@SA?AW4TaskUnits@@W4Rate@1@@Z",
+ "0x8249a3a8": "?ShaderTypeName@@YAPBDW4ShaderType@@@Z",
  "0x8249a480": "?ShaderSourcePath@@YAPBDPBD@Z",
  "0x8249a4e0": "?ShaderCachedPath@@YAPBDPBD_K_N@Z",
  "0x8249a570": "?GenerateMacros@ShaderOptions@@QBAXW4ShaderType@@AAV?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@@Z",
