@@ -178,7 +178,7 @@ void UITrigger::PlayStartOfAnims() {
                     f4 *= -1;
                 }
             }
-            anim->Animate(f3 + f4, f3, kTaskUISeconds, 0, 0, 0, kEaseLinear, 0, 0);
+            anim->Animate(f3 + f4, f3, kTaskUISeconds, 0, 0);
         }
     }
 }
@@ -196,7 +196,7 @@ void UITrigger::PlayEndOfAnims() {
                     f4 *= -1;
                 }
             }
-            anim->Animate(f3 - f4, f3, kTaskUISeconds, 0, 0, 0, kEaseLinear, 0, 0);
+            anim->Animate(f3 - f4, f3, kTaskUISeconds, 0, 0);
         }
     }
 }

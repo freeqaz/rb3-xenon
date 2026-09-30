@@ -1,3 +1,4 @@
+#define RB3_TU_OBJPTR_FORCEINLINE_CTOR
 #include "ui/UIListMesh.h"
 #include "obj/Object.h"
 #include "rndobj/Cam.h"
@@ -26,6 +27,11 @@ bool DebugChooseModeMesh() {
 #endif
 
 #pragma region UIListMesh
+
+// Retail inlines ObjPtr<RndMesh>(this) but calls ObjPtr<RndMat>'s ctor
+// out-of-line; the declared-only specialization forces that call.
+template <>
+ObjPtr<RndMat>::ObjPtr(Hmx::Object *, RndMat *);
 
 UIListMesh::UIListMesh() : mMesh(this), mDefaultMat(this) {}
 

@@ -12,8 +12,9 @@
 extern float gUnitsPerMeter;
 
 FreeCamera::FreeCamera(WorldDir *dir, float f1, float f2, int i)
-    : mParent(0), mFrozen(0), mPadNum(i), mRotateRate(f1), mSlewRate(gUnitsPerMeter * f2),
-      mUseParentRotateX(1), mUseParentRotateY(1), mUseParentRotateZ(1), mWorld(dir) {
+    : mParent(0), mFrozen(0), mPadNum(i), mRotateRate(f1), mSlewRate(f2),
+      mUseParentRotateX(1), mUseParentRotateY(1), mUseParentRotateZ(1), mWorld(dir),
+      mEnableDOF(1) {
     UpdateFromCamera();
 }
 

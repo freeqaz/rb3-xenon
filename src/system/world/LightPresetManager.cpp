@@ -89,7 +89,9 @@ void LightPresetManager::StartPreset(LightPreset *preset, bool b) {
     else
         mTimePrev = time;
     mSingleBlend = false;
-    UpdateOverlay();
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+    UpdateOverlay(); // not in retail StartPreset
+#endif
 }
 
 void LightPresetManager::ForcePreset(LightPreset *p, float f) {

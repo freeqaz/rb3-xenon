@@ -145,14 +145,13 @@ void CameraManager::RandomizeCategory(ObjPtrList<CamShot> &camlist) {
 }
 
 void CameraManager::PrePoll() {
-    if (!MiloCamera()) {
-        if (mNextShot) {
-            StartShot_(mNextShot);
-            mNextShot = nullptr;
-        }
-        if (mCurrentShot) {
-            mCurrentShot->SetPreFrame(CalcFrame(), 1.0f);
-        }
+    // Retail has no MiloCamera() gate here (Poll keeps it).
+    if (mNextShot) {
+        StartShot_(mNextShot);
+        mNextShot = nullptr;
+    }
+    if (mCurrentShot) {
+        mCurrentShot->SetPreFrame(CalcFrame(), 1.0f);
     }
 }
 
