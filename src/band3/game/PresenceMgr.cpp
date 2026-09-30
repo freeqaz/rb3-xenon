@@ -145,6 +145,11 @@ int PresenceMgr::GetPlayModeContextFromUser(const LocalBandUser *pUser, bool bLe
         return -1;
     if (unk39)
         return unk3c;
+    static Symbol drums("drums");
+    static Symbol guitar("guitar");
+    static Symbol bass("bass");
+    static Symbol vocals("vocals");
+    static Symbol keys("keys");
     bool is_pro = false;
     Symbol trackSym;
     TrackType tt = pUser->GetTrackType();
@@ -190,6 +195,10 @@ int PresenceMgr::GetPlayModeContextFromUser(const LocalBandUser *pUser, bool bLe
         return unk24->FindInt(symDefault);
     }
     DataArray *trackArr = unk24->FindArray(trackSym, true);
+    static Symbol play("play");
+    static Symbol play_pro("play_pro");
+    static Symbol learn("learn");
+    static Symbol learn_pro("learn_pro");
     Symbol modeSym = is_pro ? (bLearn ? learn_pro : play_pro) : (bLearn ? learn : play);
     return trackArr->FindArray(modeSym, true)->Int(1);
 }
