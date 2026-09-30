@@ -947,7 +947,8 @@ void UIList::DrawShowing() {
         mDrawManuallyControlledWidgets = false;
     }
     bool b = mAllowHighlight;
-    if (mParent) {
+    // (int): retail fn_827F8140 tests mParent with a signed cmpwi.
+    if ((int)mParent) {
         if (mParent->ChildList() == this) {
             b = mParent->mAllowHighlight;
         }
