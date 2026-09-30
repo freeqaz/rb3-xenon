@@ -2,6 +2,7 @@
 #include "utl/MemMgr.h"
 #include "IPP_basicmath_xbox.h"
 #include <math.h>
+#include <algorithm>
 
 namespace DSP {
 
@@ -54,11 +55,19 @@ void PitchDetector::Detect(unsigned int frame) {
     // Locate the analysis window inside the circular input buffer.
     unsigned int pos = (size - span + frame + 1) % size;
     unsigned int start = size - pos;
-    unsigned int firstLen = (start >= span) ? span : start;
+    // std::min by const reference: retail spills both operands to the stack
+    // and loads the winner back; after the first Mul it re-reads the window
+    // size from the member rather than reusing the local.
+    unsigned int firstLen = std::min(start, span);
 
     IPP::Mul(firstLen, &mInput->begin()[pos], &mWindow[0], &mSpectrum[0]);
-    if (firstLen != span) {
-        IPP::Mul(span - firstLen, &mWindow[firstLen], mInput->begin(), &mSpectrum[firstLen]);
+    if (firstLen != mSpectral.mWindowSize) {
+        IPP::Mul(
+            mSpectral.mWindowSize - firstLen,
+            &mWindow[firstLen],
+            mInput->begin(),
+            &mSpectrum[firstLen]
+        );
     }
 
     mSpectral.Analyze(&mSpectrum[0], &mSpectrum[0]);
