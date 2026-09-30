@@ -611,11 +611,8 @@ void CalibrationPanel::ScanHardwareModeInputs() {
 }
 
 void CalibrationPanel::TriggerCalibration(int pad) {
-    float sample = 0;
-    float &_ref0 = mCycleTimeMs;
-    float halfCycle = _ref0 / 2.0f;
-    float cycleOff = std::fmod(halfCycle + GetAudioTimeMs(), _ref0);
-    sample = cycleOff - halfCycle;
+    float cycleOff = std::fmod(mCycleTimeMs * 0.5f + GetAudioTimeMs(), mCycleTimeMs);
+    float sample = cycleOff - mCycleTimeMs * 0.5f;
     float nowMs = GetAudioTimeMs();
     float lastMs = unkd0;
     if (nowMs > lastMs && (nowMs - lastMs) < 210.0f && lastMs != -1.0f)
@@ -629,27 +626,18 @@ void CalibrationPanel::TriggerCalibration(int pad) {
         if (mEnableVideo)
             lag = TheProfileMgr.GetPlatformVideoLatency();
         sample -= 16.666666f;
-        if (!mEnableVideo) {
+        if (mEnableVideo) {
             sample -= 20.0f;
         } else {
             sample -= 24.0f;
         }
-    } else {
-        if (mEnableVideo) {
-            sample += kAnimPerceptualOffset;
-        } else {
-            sample += -6.0f;
-        }
+    } else if (!mEnableVideo) {
+        sample -= 6.0f;
     }
     switch (JoypadGetPadData(pad)->mType) {
-    case kJoypadWiiButtonGuitar:
-        if (mEnableVideo)
-            sample += 7.0f;
-        else
-            sample -= 14.0f;
-        break;
     case kJoypadXboxButtonGuitar:
     case kJoypadPs3ButtonGuitar:
+    case kJoypadWiiButtonGuitar:
         if (mEnableVideo)
             sample -= 12.0f;
         else
@@ -658,10 +646,8 @@ void CalibrationPanel::TriggerCalibration(int pad) {
     default:
         break;
     }
-    int repAdvance = 10;
     sample -= lag;
-    if (mHardwareMode)
-        repAdvance = 40;
+    int repAdvance = mHardwareMode ? 40 : 10;
     unk90 = GetTestRep() + repAdvance;
     mTestSamples.push_back(sample);
     if (mTestSamples.size() >= mNumHits)
