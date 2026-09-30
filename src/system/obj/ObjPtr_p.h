@@ -99,65 +99,22 @@ ObjRefConcrete<T1, T2>::~ObjRefConcrete() {
         mObject->Release(this);
 }
 
-// Explicit specialization for RndParticleSys: retail's compiled dtor for
-// ObjRefConcrete<RndParticleSys, ObjectDir> passes mOwner (not this) as the
-// ring-ref to Release. Verified via objdiff on
-// ??1?$ObjRefConcrete@VRndParticleSys@@VObjectDir@@@@UAA@XZ (default/PartAnim):
-// target loads offset+4 (mOwner) into the arg register, base (generic `this`
-// body) emits a plain register copy -- one-instruction replace, 97.9%->100%.
-// NOT generalized to the primary template: an A/B (same worktree, clean
-// report.cache, isolated to this one header line) measured applying `mOwner`
-// GLOBALLY at -64 matched_functions (41415 -> 41351), so most other T1
-// instantiations genuinely need `this`. This is a real per-(T1,T2) divergence,
-// not a template-wide bug -- scope the fix with an explicit specialization so
-// only the RndParticleSys instantiation (shared by every ObjPtr<RndParticleSys>
-// / ObjOwnerPtr<RndParticleSys> / ObjDirPtr<RndParticleSys> site) is affected.
-// Declared here (not defined -- RndParticleSys is only forward-declared in
-// this header, and mObject->Release() needs its complete type) so every TU
-// that instantiates ObjPtr<RndParticleSys>/ObjOwnerPtr<RndParticleSys>/
-// ObjDirPtr<RndParticleSys> sees the specialization and emits an external
-// reference instead of the primary template. Defined once, out-of-line, in
-// PartAnim.cpp (which already includes rndobj/Part.h for RndParticleSys).
-class RndParticleSys;
-template <>
-ObjRefConcrete<RndParticleSys, ObjectDir>::~ObjRefConcrete();
-
-// Lane DR-2: the same per-(T1,T2) mOwner divergence, found by censusing EVERY
-// sub-100 ObjRefConcrete dtor row in the binary for the exact RndParticleSys
-// signature -- target `lwz r4, 4(r3)` (mOwner) paired against base `mr r4, r3`
-// (`this`) as the row's SOLE mismatch.  Exactly four dtor rows are sub-100 and
-// exactly these three carry that signature (the fourth, ObjRefConcrete<LightHue,
-// ObjectDir> in default/Sequence, is a branch-distance diff_arg -- a different
-// class, deliberately left alone).  Each is 116 B at fuzzy 97.931 with one
-// mismatched instruction out of 29.
-//
-// ⚠ COLLATERAL, and the rule that follows from it: declaring the specialization
-// suppresses IMPLICIT INSTANTIATION of the dtor in every other TU, and MSVC ties
-// emission of the compiler-generated scalar deleting dtor `??_G` to that
-// instantiation.  So a TU that used to emit `??_G?$ObjRefConcrete@T...` stops
-// doing so.  That is free only when retail placed `??1` and `??_G` in the SAME
-// unit -- true for RndParticleSys (both in PartAnim) and RndGroup (both in
-// Spotlight), FALSE for RndCam, whose `??1` row is in default/CamAnim while its
-// `??_G` row is in default/Rnd_Xbox.  Measured: the RndCam arm is +116 B (??1
-// crosses) -76 B (??_G in Rnd_Xbox drops to 0) = net +40 B and 0 functions.
-// ⇒ Before adding another instantiation here, check which unit owns its `??_G`
-// row; if it differs from the `??1` unit, the arm buys bytes but no function.
-//
-// Still scoped per-instantiation rather than applied to the primary template,
-// for the reason recorded above: the global change was measured at -64
-// matched_functions, so most T1 genuinely pass `this`.  Definitions live in the
-// TU whose pinned .text range retail put the COMDAT in -- MeshAnim.cpp,
-// world/Spotlight.cpp, CamAnim.cpp respectively -- each guarded #ifndef
-// HX_NATIVE for the ODR reason given in PartAnim.cpp.
-class BandIKEffector;
-class RndGroup;
-class RndCam;
-template <>
-ObjRefConcrete<BandIKEffector, ObjectDir>::~ObjRefConcrete();
-template <>
-ObjRefConcrete<RndGroup, ObjectDir>::~ObjRefConcrete();
-template <>
-ObjRefConcrete<RndCam, ObjectDir>::~ObjRefConcrete();
+// W17-OWN: there are NO per-T specialisations of this dtor any more. Six used
+// to exist (RndParticleSys, BandIKEffector, RndGroup, RndCam here; BandCharDesc
+// in bandobj/BandCharacter.h; RndEnvAnim in rndobj/EnvAnim.h), each releasing
+// with mOwner instead of `this`. On retail bytes every one of the 91
+// ~ObjPtr<T,ObjectDir> bodies -- which is what this dtor compiles to --
+// releases `this`, the six T included (RndCam 0x822e43c0, RndGroup 0x822bbbd0,
+// BandIKEffector 0x822c2348, RndParticleSys 0x8244f898), and retail has no
+// ObjPtr<BandCharDesc> or ObjPtr<RndEnvAnim> at all. Four of them had been
+// matched against mOwner bodies that are really ~ObjOwnerPtr<T> (0x824859a0
+// RndCamAnim, 0x824d8ad0 Spotlight, 0x8227fad8 BandCharDesc, 0x824868f8
+// RndEnvAnim), which the old ObjOwnerPtr-inherits-ObjRefConcrete model could
+// not produce under its own name; the BandIKEffector / RndParticleSys rows
+// mapped today are the `this` bodies above, which their specialisations could
+// never match. With ObjOwnerPtr on ObjRefOwner directly the owner dtors compile
+// correctly, and the specialisations only made ObjPtr<T> release the wrong
+// ring node.
 
 template <class T1, class T2>
 void ObjRefConcrete<T1, T2>::SetObjConcrete(T1 *obj) {
@@ -552,7 +509,7 @@ Hmx::Object *ObjOwnerPtr<T>::RefOwner() const {
 // longer gated on RB3_TU_OBJPTR_DEFER_OWNER (which still gates ObjPtr's).
 // The mem-init form put `stw mOwner` first in every TU that lacked the define.
 template <class T>
-ObjOwnerPtr<T>::ObjOwnerPtr(ObjRefOwner *owner, T *ptr) : ObjRefConcrete<T>() {
+ObjOwnerPtr<T>::ObjOwnerPtr(ObjRefOwner *owner, T *ptr) {
     mOwner = reinterpret_cast<Hmx::Object *>(owner);
     mObject = ptr;
     if (mObject)
@@ -561,18 +518,22 @@ ObjOwnerPtr<T>::ObjOwnerPtr(ObjRefOwner *owner, T *ptr) : ObjRefConcrete<T>() {
 
 template <class T>
 ObjOwnerPtr<T>::ObjOwnerPtr(const ObjOwnerPtr &o)
-    : ObjRefConcrete<T>(o.mOwner, nullptr) {
+    : mOwner(o.mOwner), mObject(nullptr) {
     mObject = o.mObject;
     if (mObject)
         mObject->AddRef(OwnerRef());
 }
 
+// W17-OWN: retail's whole ~ObjOwnerPtr<T,ObjectDir> (all 27 T; 100 B, or 116 B
+// with the vbase adjustment when T reaches Hmx::Object through a virtual base)
+// is this release followed by the inlined ~ObjRef vptr store. The old
+// `mObject = nullptr` existed only to stop the ObjRefConcrete base dtor from
+// releasing a second time with `this`; with ObjRefOwner as the direct base
+// there is no second release to suppress.
 template <class T>
 ObjOwnerPtr<T>::~ObjOwnerPtr() {
     if (mObject)
         mObject->Release(OwnerRef());
-    // Prevent the base dtor from releasing again with the wrong (this) ring-ref.
-    mObject = nullptr;
 }
 
 template <class T>
