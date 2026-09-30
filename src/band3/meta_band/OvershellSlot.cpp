@@ -366,36 +366,22 @@ void OvershellSlot::SelectPartImpl(TrackType track, bool harmony, bool proDrums)
     bool b2 = false;
     MetaPerformer *perf = MetaPerformer::Current();
     if (perf) {
-        b3 = true;
-        if (!perf->SetHasMissingPart(TrackTypeToSym(track))) {
-            bool bMissingVocalHarmony = false;
-            if (harmony && perf->SetHasMissingVocalHarmony())
-                bMissingVocalHarmony = true;
-            if (!bMissingVocalHarmony)
-                b3 = false;
-        }
-        b1 = true;
-        if (perf->PartPlaysInSet(TrackTypeToSym(track))) {
-            bool bSetlistHarmony = false;
-            if (harmony && !perf->SetlistHasVocalHarmony()) {
-                bSetlistHarmony = true;
-            }
-            if (!bSetlistHarmony)
-                b1 = false;
-        }
+        b3 = perf->SetHasMissingPart(TrackTypeToSym(track))
+            || (harmony && perf->SetHasMissingVocalHarmony());
+        b1 = !perf->PartPlaysInSet(TrackTypeToSym(track))
+            || (harmony && !perf->SetlistHasVocalHarmony());
         ScoreType s5 = TrackTypeToScoreType(track, harmony, proDrums);
-        b2 = false;
-        if (perf->HasBattle() && perf->GetBattleInstrument() != kScoreBand
-            && s5 != perf->GetBattleInstrument()) {
-            b2 = true;
-        }
+        b2 = perf->HasBattle() && perf->GetBattleInstrument() != kScoreBand
+            && perf->GetBattleInstrument() != s5;
     }
+    static Symbol audition("audition");
+    bool inAudition = TheGameMode->InMode(audition);
     BandUser *pUser = GetUser();
     MILO_ASSERT(pUser, 0x325);
     MILO_ASSERT(pUser->IsLocal(), 0x326);
     if (mSessionMgr->mCritUserListener->mCriticalUser == pUser && b3) {
         pUser->SetOvershellSlotState(kState_ChoosePartDenial);
-    } else if (b1) {
+    } else if (b1 && !inAudition) {
         pUser->SetOvershellSlotState(kState_ChoosePartDenial);
     } else {
         pUser->SetTrackType(track);
