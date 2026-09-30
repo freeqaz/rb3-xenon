@@ -1019,8 +1019,8 @@ bool BandSongMgr::InqAvailableSongSources(std::set<Symbol> &sourceSet) {
 }
 
 int BandSongMgr::GetPartDifficulty(Symbol s1, Symbol s2) const {
-    BandSongMetadata *songMetaData =
-        (BandSongMetadata *)Data(GetSongIDFromShortName(s1, true));
+    int songID = GetSongIDFromShortName(s1, true);
+    BandSongMetadata *songMetaData = (BandSongMetadata *)Data(songID);
     MILO_ASSERT(songMetaData, 0x5D6);
     float rank = songMetaData->Rank(s2);
     return RankTier(rank, s2);
