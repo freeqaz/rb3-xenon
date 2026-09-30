@@ -511,6 +511,7 @@ void InitSystem(const char *config) {
             gUsingCD = false;
             TheArchive = nullptr;
         }
+#ifdef HX_NATIVE
         DataArray *systemConfig = ReadSystemConfig(config);
         MILO_ASSERT(systemConfig, 0x267);
         DataMergeTags(systemConfig, gSystemConfig);
@@ -519,7 +520,24 @@ void InitSystem(const char *config) {
         gSystemConfig = systemConfig;
         DataVariable("syscfg") = gSystemConfig;
         gUsingCD = oldCD;
+#else
+        // RB3 retail 0x82510A08: DataReadFile directly, and gUsingCD is
+        // restored to true (as in PreInitSystem), not to the saved value.
+        DataArray *systemConfig = DataReadFile(config, true);
+        DataMergeTags(systemConfig, gSystemConfig);
+        DataReplaceTags(systemConfig, gSystemConfig);
+        gSystemConfig->Release();
+        gSystemConfig = systemConfig;
+        {
+            DataNode cfgNode(systemConfig, kDataArray);
+            DataVariable("syscfg") = cfgNode;
+        }
         TheArchive = oldArchive;
+        gUsingCD = true;
+#endif
+#ifdef HX_NATIVE
+        TheArchive = oldArchive;
+#endif
         StripEditorData();
     }
     FinishDataRead();
@@ -590,7 +608,10 @@ void PreInitSystem(const char *config) {
     }
     BeginDataRead();
     gSystemConfig = DataReadFile(config, true);
-    DataVariable("syscfg") = DataNode(gSystemConfig, kDataArray);
+    {
+        DataNode cfgNode(gSystemConfig, kDataArray);
+        DataVariable("syscfg") = cfgNode;
+    }
     TheArchive = oldArchive;
     gUsingCD = true;
     DataRegisterFunc("system_language", OnSystemLanguage);
