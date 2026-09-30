@@ -351,15 +351,15 @@ Symbol CharacterCreatorPanel::GetHair() {
 }
 
 void CharacterCreatorPanel::SetFaceHair(Symbol s) {
+    static Symbol none_facehair("none_facehair");
     BandCharDesc *desc = mPreviewDesc;
-    if (desc) {
-        if (s != none_facehair)
-            desc->mOutfit.mFaceHair.mName = s;
-        else
-            desc->mOutfit.mFaceHair.mName = gNullStr;
-        mClosetMgr->SetCurrentOutfitPiece(facehair);
-        mClosetMgr->PreviewCharacter(true, false);
-    }
+    if (s != none_facehair)
+        desc->mOutfit.mFaceHair.mName = s;
+    else
+        desc->mOutfit.mFaceHair.mName = gNullStr;
+    static Symbol facehair("facehair");
+    mClosetMgr->SetCurrentOutfitPiece(facehair);
+    mClosetMgr->PreviewCharacter(true, false);
 }
 
 Symbol CharacterCreatorPanel::GetFaceHair() {
@@ -450,25 +450,27 @@ void CharacterCreatorPanel::RandomizeFace() {
     static Symbol nose("nose");
     static Symbol mouth("mouth");
     BandCharDesc *desc = mPreviewDesc;
-    desc->mHead.mShape = RandomInt(0, BandHeadShaper::GetCount(shape));
-    desc->mHead.mChin = RandomInt(0, BandHeadShaper::GetCount(chin));
-    desc->mHead.mEye = RandomInt(0, BandHeadShaper::GetCount(eye));
-    desc->mHead.mNose = RandomInt(0, BandHeadShaper::GetCount(nose));
-    desc->mHead.mMouth = RandomInt(0, BandHeadShaper::GetCount(mouth));
-    desc->mHead.mBrowHeight = 0.5f;
-    desc->mHead.mBrowSeparation = 0.5f;
-    desc->mHead.mChinHeight = 0.5f;
-    desc->mHead.mChinWidth = 0.5f;
-    desc->mHead.mEyeHeight = 0.5f;
-    desc->mHead.mEyeRotation = 0.5f;
-    desc->mHead.mEyeSeparation = 0.5f;
-    desc->mHead.mJawHeight = 0.5f;
-    desc->mHead.mJawWidth = 0.5f;
-    desc->mHead.mMouthHeight = 0.5f;
-    desc->mHead.mMouthWidth = 0.5f;
-    desc->mHead.mNoseHeight = 0.5f;
-    desc->mHead.mNoseWidth = 0.5f;
-    desc->mOutfit.mEyebrows.mName = GetRandomEyebrows();
+    BandCharDesc::Outfit &outfit = desc->mOutfit;
+    BandCharDesc::Head &head = desc->mHead;
+    head.mShape = RandomInt(0, BandHeadShaper::GetCount(shape));
+    head.mChin = RandomInt(0, BandHeadShaper::GetCount(chin));
+    head.mEye = RandomInt(0, BandHeadShaper::GetCount(eye));
+    head.mNose = RandomInt(0, BandHeadShaper::GetCount(nose));
+    head.mMouth = RandomInt(0, BandHeadShaper::GetCount(mouth));
+    head.mBrowHeight = 0.5f;
+    head.mBrowSeparation = 0.5f;
+    head.mChinHeight = 0.5f;
+    head.mChinWidth = 0.5f;
+    head.mEyeHeight = 0.5f;
+    head.mEyeRotation = 0.5f;
+    head.mEyeSeparation = 0.5f;
+    head.mJawHeight = 0.5f;
+    head.mJawWidth = 0.5f;
+    head.mMouthHeight = 0.5f;
+    head.mMouthWidth = 0.5f;
+    head.mNoseHeight = 0.5f;
+    head.mNoseWidth = 0.5f;
+    outfit.mEyebrows.mName = GetRandomEyebrows();
     mClosetMgr->PreviewCharacter(true, false);
     mClosetMgr->FinalizeCharCreatorChanges();
 }
@@ -535,16 +537,16 @@ void CharacterCreatorPanel::SetFaceOption(int option) {
 }
 
 void CharacterCreatorPanel::SetEyebrows(Symbol brows) {
+    static Symbol none_eyebrows("none_eyebrows");
     BandCharDesc *desc = mPreviewDesc;
-    if (desc) {
+    desc->mOutfit.mEyebrows.mName = brows;
+    if (brows != none_eyebrows)
         desc->mOutfit.mEyebrows.mName = brows;
-        if (brows != none_eyebrows)
-            desc->mOutfit.mEyebrows.mName = brows;
-        else
-            desc->mOutfit.mEyebrows.mName = gNullStr;
-        mClosetMgr->SetCurrentOutfitPiece(eyebrows);
-        mClosetMgr->PreviewCharacter(true, false);
-    }
+    else
+        desc->mOutfit.mEyebrows.mName = gNullStr;
+    static Symbol eyebrows("eyebrows");
+    mClosetMgr->SetCurrentOutfitPiece(eyebrows);
+    mClosetMgr->PreviewCharacter(true, false);
 }
 
 Symbol CharacterCreatorPanel::GetEyebrows() {
