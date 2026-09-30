@@ -993,12 +993,32 @@ void VocalTrackDir::ApplyFontStyle(Hmx::Object *o) {
         c50 = mHarmPhonemeText->StyleColor();
     }
 
+    // Retail packs one guard word (lbl_82CBD71C) with five function-local static
+    // Symbols, claimed bit0..bit4 in this order (read off the full 299-instruction
+    // target listing: clrlwi./rlwinm. extract bits 31,30,29,28,27 respectively --
+    // i.e. mask 0x1,0x2,0x4,0x8,0x10 -- one Symbol ctor (??0Symbol@@QAA@PBD@Z)
+    // per bit, straight into the guarded static storage):
+    //   bit0 0x1  font_style          -- constructed unconditionally, right here,
+    //                                    BEFORE the `if (o)` null check below
+    //   bit1 0x2  lead_text           -- these four are constructed unconditionally
+    //   bit2 0x4  harmony_text        -- at the top of the type_matched block, all
+    //   bit3 0x8  lead_phoneme_text   -- four BEFORE the FindObject("milo",...)
+    //   bit4 0x10 harmony_phoneme_text -- lookup even though each is first USED later
+    // Our current source compares against the centralized utl/Symbols2.h/
+    // Symbols3.h globals of the same names; shadow them with function-local
+    // statics of the same identifiers (legal -- the local hides the extern for
+    // the rest of this function).
+    static Symbol font_style("font_style");
     int type_matched = 0;
     if (o) {
         if (o->Type() == font_style)
             type_matched = 1;
     }
     if (type_matched) {
+        static Symbol lead_text("lead_text");
+        static Symbol harmony_text("harmony_text");
+        static Symbol lead_phoneme_text("lead_phoneme_text");
+        static Symbol harmony_phoneme_text("harmony_phoneme_text");
         Hmx::Object *miloObj = ObjectDir::sMainDir->FindObject("milo", false);
         bool objexists = (miloObj != 0);
         if (o->Property(lead_text, true)->NotNull()) {
