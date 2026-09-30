@@ -12129,15 +12129,17 @@ AccomplishmentDiscSongConditional.cpp:
 	.pdata      start:0x82225E30 end:0x82225E38
 	.pdata      start:0x82225E38 end:0x82225E40
 	.pdata      start:0x82225E40 end:0x82225EC0
-	.pdata      start:0x82226390 end:0x822263B0
 	.pdata      start:0x82226408 end:0x82226420
 	.text       start:0x824F9380 end:0x824F9480
 	.text       start:0x825E4EE8 end:0x825E4EF0
 	.text       start:0x825E4EF0 end:0x825E4F50
 	.text       start:0x825E4F50 end:0x825E4F90
 	.text       start:0x825E4F90 end:0x825E5658
-	.text       start:0x825E9500 end:0x825E9668
 	.text       start:0x825E9ABC end:0x825E9C08
+
+band3/meta_band/AccomplishmentLessonDiscSongConditional.cpp:
+	.pdata      start:0x82226390 end:0x822263B0
+	.text       start:0x825E9500 end:0x825E9668
 
 band3/meta_band/AccomplishmentLessonSongListConditional.cpp:
 	.pdata      start:0x822263B0 end:0x822263D8

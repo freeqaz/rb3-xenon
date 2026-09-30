@@ -60,6 +60,15 @@ void PresenceMgr::SetNotInGame() {
     UpdatePresence();
 }
 
+// retail 0x82680CB8, the SetNotInGame twin (GamePanel::Enter's caller)
+void PresenceMgr::SetSongID(int id) {
+    if (!unk1c)
+        return;
+    unk38 = true;
+    unk34 = id;
+    UpdatePresence();
+}
+
 Symbol PresenceMgr::GetPresenceMode() {
     if (!unk1c)
         return gNullStr;

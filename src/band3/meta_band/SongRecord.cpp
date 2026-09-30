@@ -167,6 +167,18 @@ bool SongRecord::UpdateRestricted() {
         return false;
 }
 
+// retail 0x825BAE40 (TU5; no oracle has it). Unlike its siblings the store is
+// unconditional, and a change re-runs UpdatePerformanceData.
+bool SongRecord::UpdateDemo() {
+    bool old = mDemo;
+    mDemo = TheSongMgr.IsDemo(mData->ID());
+    if (mDemo != old) {
+        UpdatePerformanceData();
+        return true;
+    } else
+        return false;
+}
+
 BEGIN_HANDLERS(SongRecord)
     HANDLE_EXPR_STATIC(get_active_score_type, mActiveScoreType)
     HANDLE_EXPR_STATIC(get_score, GetScore())

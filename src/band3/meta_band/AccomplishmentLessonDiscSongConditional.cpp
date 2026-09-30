@@ -56,6 +56,8 @@ bool AccomplishmentLessonDiscSongConditional::CheckLessonCompleteCondition(
 bool AccomplishmentLessonDiscSongConditional::CheckConditionsForSong(
     SongStatusMgr *mgr, Symbol s
 ) const {
+    // retail builds the symbol in a function-local static (guard word + ??0Symbol)
+    static Symbol lesson_complete("lesson_complete");
     for (std::list<AccomplishmentCondition>::const_iterator it = m_lConditions.begin();
          it != m_lConditions.end();
          ++it) {
