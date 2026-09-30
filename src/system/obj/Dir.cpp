@@ -246,7 +246,7 @@ const char *ObjectDir::ProxyName() const {
 // call sites (fn_82752668), and neither expansion carries the "exists in dir and
 // subdir" replace loop that both oracles have -- after GetDir() retail goes
 // straight to the ObjDirPtr ctor/assignment. The loop is kept for the native port.
-inline ObjectDir *SyncSubDir(const FilePath &fp, ObjectDir *dir) {
+__forceinline ObjectDir *SyncSubDir(const FilePath &fp, ObjectDir *dir) {
     Loader *loader = TheLoadMgr.GetLoader(fp);
     DirLoader *dirLoader = dir->IsProxy()
         ? dynamic_cast<DirLoader *>(loader)
@@ -1083,7 +1083,9 @@ ObjDirPtr<ObjectDir> ObjectDir::PostLoadInlined() {
         mInlinedDirs.swap(empty);
     }
     if (iDir.shared && iDir.file.length() > 0 && !iDir.dir) {
-        MILO_NOTIFY("Couldn't load shared inlined file %s\n", iDir.file);
+        // MILO_WARN (MiloStripEval), not NOTIFY: retail fn_82751510 still copies
+        // iDir.file into a String temp at this stripped site.
+        MILO_WARN("Couldn't load shared inlined file %s\n", iDir.file);
     }
     return iDir.dir;
 }
