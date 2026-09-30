@@ -163,6 +163,7 @@ void NextSongPanel::DeterminePerformanceAwards(int i) {
 }
 
 void NextSongPanel::HideAllDetailComponents(int i) {
+    static Symbol detail_component_parent("detail_component_parent");
     const DataArray *t = TypeDef();
     MILO_ASSERT(t, 0xB6);
     const char *parentstr = t->FindStr(detail_component_parent);
