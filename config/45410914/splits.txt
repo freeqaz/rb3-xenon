@@ -9419,6 +9419,7 @@ OvershellSlotState.cpp:
 	.text       start:0x8265EFA8 end:0x82660548
 
 GemPlayer.cpp:
+	.pdata      start:0x82233D98 end:0x82233DA0
 	.pdata      start:0x82233DA0 end:0x82233DB0
 	.pdata      start:0x82233DB0 end:0x82233DB8
 	.pdata      start:0x82233DB8 end:0x82233DC0
@@ -9467,6 +9468,7 @@ GemPlayer.cpp:
 	.pdata      start:0x82234440 end:0x82234448
 	.pdata      start:0x82234448 end:0x82234690
 	.pdata      start:0x82234698 end:0x82234730
+	.text       start:0x826BBC7C end:0x826BBCEC
 	.text       start:0x826BBCEC end:0x826BBD58
 	.text       start:0x826BBD58 end:0x826BBF48
 	.text       start:0x826BBF48 end:0x826BBFFC
@@ -10606,10 +10608,10 @@ Shuttle.cpp:
 
 FreestylePanel.cpp:
 	.pdata      start:0x82233C78 end:0x82233D90
-	.pdata      start:0x82233D90 end:0x82233DA0
+	.pdata      start:0x82233D90 end:0x82233D98
 	.text       start:0x826B99D4 end:0x826B99E0
 	.text       start:0x826BA880 end:0x826BBC08
-	.text       start:0x826BBC28 end:0x826BBCEC
+	.text       start:0x826BBC28 end:0x826BBC7C
 
 GameplayOptions.cpp:
 	.pdata      start:0x8222D6A8 end:0x8222D6B0

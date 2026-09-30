@@ -106,6 +106,18 @@ void DeltaTrackerInit() {
     once = false;
 }
 
+// Retail emits this out-of-line at the head of GemPlayer's TU (0x826BBC80, just
+// before GetPhraseExtents) and GemPlayer::Poll reaches it with a direct bl. The
+// name is ours; there is no oracle for it.
+void CheckControllerReenable(BeatMatchController *ctrl) {
+    if (ctrl->unk25) {
+        if (ctrl->IsDisabled()) {
+            ctrl->Disable(false);
+        }
+        ctrl->unk25 = false;
+    }
+}
+
 bool GetPhraseExtents(BeatmatchPhraseType ty, int i2, int i3, int &i4, int &i5) {
     if (!TheSongDB->GetPhraseExtents(ty, i2, i3, i4, i5))
         return false;
@@ -1119,8 +1131,6 @@ bool GemPlayer::DoneWithSong() const {
         }
     }
 }
-
-void CheckControllerReenable(BeatMatchController *ctrl);
 
 void GemPlayer::Poll(float ms, const SongPos &pos) {
     BeatMatchController *ctrl = mController;

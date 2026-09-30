@@ -1,4 +1,5 @@
 {
+ "0x826bbc80": "?CheckControllerReenable@@YAXPAVBeatMatchController@@@Z",
  "0x82275068": "?NumLayersUsed@PatchDir@@QBAHXZ",
  "0x82277018": "?GetStickers@PatchDir@@QAAPAV?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@@Z",
  "0x82277050": "?LoadStickerTex@PatchDir@@QAAXPAVPatchSticker@@_N@Z",
