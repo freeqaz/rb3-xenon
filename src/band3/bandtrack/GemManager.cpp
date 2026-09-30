@@ -540,18 +540,14 @@ void GemManager::SetupGems(int startTick) {
     int repeatedChordEndTick = -1;
     mTrackDir->ClearChordMeshRefCounts();
 
-    bool anyRGChord = false;
     bool anyRG = false;
+    bool anyRGChord = false;
 
     for (unsigned int i = 0; i < gems.size(); i++) {
         const GameGem &gem = gems[i];
         float startMs = gem.mMs;
-        bool noTail = false;
-        if (gem.mIgnoreDuration && !gem.LeftHandSlide()) {
-            noTail = true;
-        }
         float endMs;
-        if (noTail) {
+        if (gem.mIgnoreDuration && !gem.LeftHandSlide()) {
             endMs = startMs;
         } else {
             endMs = startMs + gem.mDurationMs;
@@ -560,18 +556,13 @@ void GemManager::SetupGems(int startTick) {
         unsigned int slots = 0;
         int gemTick = gem.mTick;
         bool isHopo = false;
-        bool isInFill = false;
-        if (((unkb8 && bandUser->GetTrackType() != 0) ||
-             TheSongDB->IsInCoda(gemTick)) &&
-            TheGame->mProperties.mEnableCoda) {
-            isInFill = true;
-        }
+        bool isInFill = ((unkb8 && bandUser->GetTrackType() != 0)
+                         || TheSongDB->IsInCoda(gemTick))
+            && TheGame->mProperties.mEnableCoda;
         if (!isInFill ||
             !TheSongDB->GetFillInfo(trackNum, gemTick)->FillAt(gem.mTick, false)) {
             slots = gem.mSlots;
-            if (gem.mForceStrum && ((int)i >= 1 || gem.IsRealGuitar())) {
-                isHopo = true;
-            }
+            isHopo = gem.mForceStrum && ((int)i >= 1 || gem.IsRealGuitar());
             if (!TheGame->mProperties.mInPracticeMode &&
                 !TheGame->mProperties.mInTrainer && gem.mTick < startTick) {
                 slots = 0;
@@ -686,18 +677,10 @@ void GemManager::SetupGems(int startTick) {
 
         if (gem.IsRealGuitarChord() && slots != 0) {
             if (mTrackDir != NULL) {
-                int chordA = newGem.unk_0x44;
-                int chordB = newGem.unk_0x48;
-                bool chordAOk = false;
-                if (mTrackDir->PrepareChordMesh(chordA) != 0 || anyRGChord) {
-                    chordAOk = true;
-                }
+                bool chordAOk = mTrackDir->PrepareChordMesh(newGem.unk_0x44) || anyRGChord;
                 anyRGChord = chordAOk;
-                if (chordB != chordA) {
-                    anyRGChord = false;
-                    if (mTrackDir->PrepareChordMesh(chordB) != 0 || chordAOk) {
-                        anyRGChord = true;
-                    }
+                if (newGem.unk_0x48 != newGem.unk_0x44) {
+                    anyRGChord = mTrackDir->PrepareChordMesh(newGem.unk_0x48) || chordAOk;
                 }
             } else {
                 MILO_WARN("No track dir in setup gems, so chord meshes can't be built");
@@ -862,7 +845,7 @@ void GemManager::SetupGems(int startTick) {
 }
 
 void TrackDir::ClearChordMeshRefCounts() {}
-int TrackDir::PrepareChordMesh(unsigned int) { return 0; }
+bool TrackDir::PrepareChordMesh(unsigned int) { return false; }
 void TrackDir::DeleteUnusedChordMeshes() {}
 void TrackDir::SyncFingerFeedback() {}
 
