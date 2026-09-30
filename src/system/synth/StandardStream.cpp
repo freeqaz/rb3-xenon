@@ -724,7 +724,9 @@ void StandardStream::Destroy() {
 
 int StandardStream::MsToSamp(float ms) const {
     MILO_ASSERT(mSampleRate, 0x459);
-    return mSampleRate * ms / 1000.0f;
+    // rb3-Wii parenthesisation: retail scales ms first (fmuls ms, 0.001f),
+    // then by the rate (/fp:fast keeps the paren order).
+    return mSampleRate * (ms / 1000.0f);
 }
 
 float StandardStream::SampToMs(int samples) const {
@@ -956,12 +958,38 @@ void StandardStream::setJumpSamplesFromMs(float fromMs, float toMs) {
     if (kStreamEndMs != fromMs) {
         mJumpFromSamples = MsToSamp(fromMs);
     }
+#ifdef HX_NATIVE
     if (toMs != 0.0f) {
         mJumpToSamples = MsToSamp(toMs);
         if (SampToMs(mJumpToSamples) < toMs) {
             mJumpToSamples++;
         }
     }
+#else
+    // RB3 retail (rb3-Wii shape): no round-up of the jump-to sample, and the
+    // two stream-length warnings (their String temp survives the strip).
+    if (toMs != 0.0f) {
+        mJumpToSamples = MsToSamp(toMs);
+    }
+    if (unk154 != -1) {
+        if (mJumpFromSamples >= unk154) {
+            MILO_WARN(
+                "%s: JumpFromSamples (%g sec) exceeds the length of the stream (%g sec)!",
+                mFile ? mFile->Filename() : String("SynthStream"),
+                fromMs / 1000.0f,
+                SampToMs(unk154) / 1000.0f
+            );
+        }
+        if (mJumpToSamples >= unk154) {
+            MILO_WARN(
+                "%s: JumpToSamples (%g sec) exceeds the length of the stream (%g sec)!",
+                mFile ? mFile->Filename() : String("SynthStream:"),
+                toMs / 1000.0f,
+                SampToMs(unk154) / 1000.0f
+            );
+        }
+    }
+#endif
 }
 
 bool StandardStream::IsPastStreamJumpPointOfNoReturn() {
