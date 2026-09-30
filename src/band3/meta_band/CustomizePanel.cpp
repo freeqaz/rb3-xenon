@@ -1112,7 +1112,7 @@ bool CustomizePanel::AssetProviderHasAsset(Symbol s) {
     if (nameType != GetAssetTypeFromCurrentState()) {
         return false;
     } else
-        return mAssetProvider->HasAsset(s);
+        return mAssetProvider->HasAsset(s) != 0;
 }
 
 void CustomizePanel::SetupCurrentOutfit(Symbol s) {
