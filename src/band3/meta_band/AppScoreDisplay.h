@@ -3,7 +3,7 @@
 
 class AppScoreDisplay : public ScoreDisplay {
 public:
-    AppScoreDisplay() {}
+    // implicit ctor: retail stores a literal 0 to the vtordisp slots
     OBJ_CLASSNAME(ScoreDisplay);
     OBJ_SET_TYPE(AppScoreDisplay);
     NEW_OBJ(AppScoreDisplay);
