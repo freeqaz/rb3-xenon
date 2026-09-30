@@ -30,33 +30,49 @@ public:
 protected:
     XOVERLAPPED mXOverlapped; // 0x8
     HANDLE mSession; // 0x24
-    bool mSuccess; // 0x28
+#ifdef HX_NATIVE
+    // Not in retail: derived members start at 0x28 (AddLocalPlayerJob::Start
+    // fn_823F6D90 reads mUserIndex at 0x28, WriteCareerLeaderboardJob::Start
+    // fn_823F6FE8 the XUID at 0x28), and the XboxSessionJob-derived vtables
+    // all carry the empty base OnCompletion (fn_826C3888), so nothing reads it.
+    bool mSuccess;
+#endif
 };
 
 class StartSessionJob : public XboxSessionJob {
 public:
     StartSessionJob(void *v);
     virtual void Start();
+#ifdef HX_NATIVE
     virtual void OnCompletion(Hmx::Object *);
+#endif
 };
 
 class EndSessionJob : public XboxSessionJob {
 public:
     EndSessionJob(void *v);
     virtual void Start();
+#ifdef HX_NATIVE
     virtual void OnCompletion(Hmx::Object *);
+#endif
 };
 
 class WriteCareerLeaderboardJob : public XboxSessionJob {
 public:
     WriteCareerLeaderboardJob(void *, int, int, u64, u64);
     virtual void Start();
+#ifdef HX_NATIVE
     virtual void OnCompletion(Hmx::Object *);
+#endif
 
 protected:
-    XUID mXUID; // 0x30;
-    XUSER_PROPERTY mUserProp; // 0x38
-    XSESSION_VIEW_PROPERTIES mSessionViewProp; // 0x50
+    // Retail TU5 ctor fn_823F6680 is (void*, XUID, int, int, int) and fills
+    // TWO properties (ids 0x1000800A / 0x1000800B, type 1) with
+    // dwNumProperties = 2; that caller (a vector loop in the DingoSvr flow) is
+    // not ported, so our ctor still fills [0] only. The layout is retail's.
+    XUID mXUID; // 0x28
+    XUSER_PROPERTY mUserProps[2]; // 0x30
+    XSESSION_VIEW_PROPERTIES mSessionViewProp; // 0x60
 };
 
 class MakeSessionJob : public Job {
@@ -81,14 +97,18 @@ class DeleteSessionJob : public XboxSessionJob {
 public:
     DeleteSessionJob(void *v);
     virtual void Start();
+#ifdef HX_NATIVE
     virtual void OnCompletion(Hmx::Object *);
+#endif
 };
 
 class AddLocalPlayerJob : public XboxSessionJob {
 public:
     AddLocalPlayerJob(void *, int, bool);
     virtual void Start();
+#ifdef HX_NATIVE
     virtual void OnCompletion(Hmx::Object *);
+#endif
 
 protected:
     DWORD mUserIndex; // 0x2c
@@ -99,7 +119,9 @@ class RemoveLocalPlayerJob : public XboxSessionJob {
 public:
     RemoveLocalPlayerJob(void *, int);
     virtual void Start();
+#ifdef HX_NATIVE
     virtual void OnCompletion(Hmx::Object *);
+#endif
 
 protected:
     DWORD mUserIndex; // 0x2c

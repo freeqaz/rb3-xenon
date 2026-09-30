@@ -39,7 +39,9 @@ void XboxSessionJob::CheckError(DWORD err, XOVERLAPPED *overlapped) {
         MILO_NOTIFY(
             "Error %i in Xbox Session: %x ", err, XGetOverlappedExtendedError(overlapped)
         );
+#ifdef HX_NATIVE
         mSuccess = false;
+#endif
     }
 }
 
@@ -50,9 +52,11 @@ void StartSessionJob::Start() {
     CheckError(res, &mXOverlapped);
 }
 
+#ifdef HX_NATIVE
 void StartSessionJob::OnCompletion(Hmx::Object *obj) {
     TheServer.StartSessionComplete(mSuccess);
 }
+#endif
 
 EndSessionJob::EndSessionJob(void *v) : XboxSessionJob(v) {}
 
@@ -61,20 +65,22 @@ void EndSessionJob::Start() {
     CheckError(res, &mXOverlapped);
 }
 
+#ifdef HX_NATIVE
 void EndSessionJob::OnCompletion(Hmx::Object *) {
     TheServer.EndSessionComplete(mSuccess);
 }
+#endif
 
 WriteCareerLeaderboardJob::WriteCareerLeaderboardJob(
     void *v, int i1, int i2, XUID u3, u64 u4
 )
     : XboxSessionJob(v), mXUID(u3) {
-    mUserProp.dwPropertyId = i2;
-    mUserProp.value.i64Data = u4;
+    mUserProps[0].dwPropertyId = i2;
+    mUserProps[0].value.i64Data = u4;
     mSessionViewProp.dwViewId = i1;
-    mUserProp.value.type = 2;
+    mUserProps[0].value.type = 2;
     mSessionViewProp.dwNumProperties = 1;
-    mSessionViewProp.pProperties = &mUserProp;
+    mSessionViewProp.pProperties = &mUserProps[0];
 }
 
 void WriteCareerLeaderboardJob::Start() {
@@ -82,9 +88,11 @@ void WriteCareerLeaderboardJob::Start() {
     CheckError(res, &mXOverlapped);
 }
 
+#ifdef HX_NATIVE
 void WriteCareerLeaderboardJob::OnCompletion(Hmx::Object *) {
     TheServer.WriteCareerLeaderboardComplete(mSuccess);
 }
+#endif
 
 MakeSessionJob::MakeSessionJob(HANDLE *v, DWORD dw, int idx)
     : mSession(v), mSessionFlags(dw), mUserIndex(idx), mSuccess(true) {
@@ -144,10 +152,12 @@ void DeleteSessionJob::Start() {
     CheckError(res, &mXOverlapped);
 }
 
+#ifdef HX_NATIVE
 void DeleteSessionJob::OnCompletion(Hmx::Object *) {
     CloseHandle(mSession);
     TheServer.DeleteSessionComplete(mSuccess);
 }
+#endif
 
 AddLocalPlayerJob::AddLocalPlayerJob(void *v, int i, bool b)
     : XboxSessionJob(v), mUserIndex(i), mPrivateSlot(b) {}
@@ -157,9 +167,11 @@ void AddLocalPlayerJob::Start() {
     CheckError(res, &mXOverlapped);
 }
 
+#ifdef HX_NATIVE
 void AddLocalPlayerJob::OnCompletion(Hmx::Object *) {
     TheServer.JoinSessionComplete(mSuccess);
 }
+#endif
 
 RemoveLocalPlayerJob::RemoveLocalPlayerJob(void *v, int i)
     : XboxSessionJob(v), mUserIndex(i) {}
@@ -169,6 +181,8 @@ void RemoveLocalPlayerJob::Start() {
     CheckError(res, &mXOverlapped);
 }
 
+#ifdef HX_NATIVE
 void RemoveLocalPlayerJob::OnCompletion(Hmx::Object *) {
     TheServer.LeaveSessionComplete(mSuccess);
 }
+#endif
