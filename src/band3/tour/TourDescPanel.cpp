@@ -85,7 +85,7 @@ class TourDescProvider : public UIListProvider, public Hmx::Object {
 public:
     TourDescProvider(std::vector<DynamicTex *> *texs)
         : mTexs(texs), mUnearnedMat(0), mEarnedMat(0) {}
-    virtual ~TourDescProvider();
+    // W16-HR: implicit dtor (retail ??1 resets no derived vptrs)
     virtual void Text(int, int, UIListLabel *, UILabel *) const;
     virtual RndMat *Mat(int, int, UIListMesh *) const;
     virtual void UpdateExtendedText(int, int, UILabel *) const;
@@ -521,7 +521,6 @@ UIComponent::State TourDescProvider::ComponentStateOverride(
     return i_eState;
 }
 
-TourDescProvider::~TourDescProvider() {}
 
 inline int TourDescProvider::NumData() const { return mTours.size(); }
 

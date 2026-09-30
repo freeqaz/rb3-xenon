@@ -10,7 +10,7 @@ public:
     OBJ_SET_TYPE(SetlistToStorePanel);
     NEW_OBJ(SetlistToStorePanel);
     virtual DataNode Handle(DataArray *, bool);
-    virtual ~SetlistToStorePanel() {}
+    // W16-HR: implicit dtor (retail ??1 resets no derived vptrs)
     virtual void Enter();
     virtual void Poll();
     virtual void Load();
