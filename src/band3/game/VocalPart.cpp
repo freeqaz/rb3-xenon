@@ -985,26 +985,26 @@ void VocalPart::CalculateScore(
 }
 
 void VocalPart::GetNoteRange(float ms, int &startOut, int &endOut) {
-    startOut = -1;
     endOut = -1;
+    startOut = -1;
     const VocalNoteList *list = mVocalNoteList;
     int count = list->mNotes.size();
     int i = unk58;
     if (i > 0) {
         float lower = ms - mSlop;
-        while (list->mNotes[i].mMs > lower) {
-            if (--i <= 0)
+        do {
+            if (list->mNotes[i].mMs <= lower)
                 break;
-        }
+        } while (--i > 0);
     }
-    for (; i < count; i++) {
-        const VocalNote &note = list->mNotes[i];
+    for (int j = i; j < count; j++) {
+        const VocalNote &note = list->mNotes[j];
         if (note.mMs > ms + mSlop)
             return;
         if (note.mMs + note.mDurationMs >= ms - mSlop) {
             if (startOut == -1)
-                startOut = i;
-            endOut = i + 1;
+                startOut = j;
+            endOut = j + 1;
         }
     }
 }
