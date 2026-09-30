@@ -57,70 +57,116 @@ RndTex *NgLight::CreateShadowTex() {
     return tex;
 }
 
+// Ported from DC3's newer body (dc3-decomp rndobj/Lit_NG.cpp, whose RESIDUAL
+// note explains the rest): it replaces an older hand spelling here (single
+// `proj` scalar, plain perp/topPoint arithmetic) and lifts the row 50.0 ->
+// 63.2 canonical against retail 0x82B8A128.  Retail agrees with it on the
+// prologue, both early-outs, the `sc -= xfm1.v` write-back to 0x50, the
+// dirTop-then-dirBot copy order and the reciprocal `1.0f / Dot`
+// (lbl_820009FC).  RESIDUAL is liveness: ours saves r24-r31 + f26-f31 in a
+// 0x140 frame, retail only r27-r31 + f30/f31 in 0x100 -- after Normalize
+// retail keeps every float in f0-f13.
+// NEGATIVE RESULT (w17-lit, 2026-09-30): a 200-step random reorder of the
+// eighteen post-Normalize statements reached 68.4, but only with orders the
+// retail copy sequence contradicts (toSphere declared first although retail
+// copies sphereCenter into 0x60 after botPoint; closest copied after edgeDir
+// although retail copies 0x60 -> 0xb0 first).  Not kept: a score fit, not a
+// source.
 bool NgLight::SphereConeTest(const Vector3 &sphereCenter, float sphereRadius) {
     const Transform &xfm1 = WorldXfm();
     const Transform &xfm2 = WorldXfm();
+
     Vector3 sc = sphereCenter;
+    sc -= xfm1.v;
 
-    float proj = xfm2.m.y.x * (sc.x - xfm1.v.x)
-        + xfm2.m.y.z * (sc.z - xfm1.v.z)
-        + xfm2.m.y.y * (sc.y - xfm1.v.y);
+    // MSVC materialises each of the three products once and re-derives the
+    // sum at every use site; naming the products is what stops it contracting
+    // them into fmadds.
+    float py = xfm2.m.y.y * sc.y;
+    float pz = xfm2.m.y.z * sc.z;
+    float px = xfm2.m.y.x * sc.x;
 
-    if (proj < -sphereRadius) {
+    if (px + pz + py < -sphereRadius) {
         return false;
     }
 
     float range = mRange;
-    if (proj > range + sphereRadius) {
+    if (px + pz + py > range + sphereRadius) {
         return false;
     }
 
-    Vector3 axis = xfm2.m.y;
-    Vector3 origin = xfm1.v;
+    Vector3 axisProj = xfm2.m.y;
+    axisProj *= pz + (px + py);
 
-    Vector3 perp;
-    perp.y = (sc.y - origin.y) - axis.y * proj;
-    perp.x = (sc.x - origin.x) - axis.x * proj;
-    perp.z = (sc.z - origin.z) - axis.z * proj;
+    Vector3 perp = sc;
+    perp -= axisProj;
 
-    Normalize(perp, perp);
+    Vector3 dir = perp;
+    Normalize(dir, dir);
 
     float topR = mTopRadius;
     float botR = mBotRadius;
 
-    Vector3 perpTop = perp;
-    perpTop *= topR;
-
-    Vector3 perpBot = perp;
-    perpBot *= botR;
-
-    Vector3 topPoint = origin;
-    topPoint += perpTop;
-
+    Vector3 topPoint = xfm1.v;
+    // dirTop is declared first because the image claims its slot first: the
+    // two 16-byte copies out of `dir` go 0x70 -> 0xa0 (dirTop, the one later
+    // scaled by mTopRadius at 0xa4/0xa8) and only then 0x70 -> 0xb0 (dirBot).
+    // Worth one callee-saved FPR and 0x10 of frame: with this order the
+    // prologue is __savefpr_26 and the frame Δ is +0x40, the other way round
+    // it is __savefpr_25 and +0x50.
+    Vector3 dirTop = dir;
+    Vector3 dirBot = dir;
+    Vector3 axisRange = xfm2.m.y;
+    Vector3 botPoint = xfm1.v;
     Vector3 toSphere = sphereCenter;
+
+    dirTop *= topR;
+    topPoint += dirTop;
+
+    axisRange *= range;
+    botPoint += axisRange;
+
     toSphere -= topPoint;
 
-    Vector3 botPoint = origin;
-    botPoint.x += (float)((double)axis.x * range);
-    botPoint.y += (float)((double)axis.y * range);
-    botPoint.z += (float)((double)axis.z * range);
-    botPoint += perpBot;
-
-    Vector3 edgeDir = botPoint;
-    edgeDir -= topPoint;
-
-    float t = (1.0f / Dot(edgeDir, edgeDir)) * Dot(toSphere, edgeDir);
+    dirBot *= botR;
+    Vector3 conePoint = botPoint;
+    conePoint += dirBot;
 
     Vector3 closest = toSphere;
-    closest.x -= t * edgeDir.x;
-    closest.y -= t * edgeDir.y;
-    closest.z -= t * edgeDir.z;
 
-    bool _result = true;
-    if (Dot(perp, closest) >= 0.0f) {
-        _result = Length(closest) < sphereRadius;
+    Vector3 edgeDir = conePoint;
+    edgeDir -= topPoint;
+
+    // The image divides ONE into the squared length and multiplies; it does
+    // NOT divide numerator by denominator.  0x826B9414 `lis r8,
+    // __real@3f800000@ha` / 0x826B9424 `lfs f7, __real@3f800000@l(r8)`, then
+    // `fdivs f12, f7, f12` and `fmuls f12, f12, f13`.  A plain `a / b` emits a
+    // single `fdivs f12, f12, f13` here and the 1.0f literal never appears at
+    // all -- /fp:fast does NOT introduce the reciprocal on its own (we are
+    // built with it, and it did not), so the reciprocal is in the source.
+    // Different arithmetic, not just different instructions.
+    //
+    // NEGATIVE RESULT (w7-as, 2026-09-14): this is a deliberate LOSS.  Faithful
+    // reciprocal + faithful dirTop/dirBot order = 63.1 canonical; the unfaithful
+    // `Dot(a,b) / Dot(b,b)` + reversed order scored 65.6.  Measured 4 ways:
+    //   plain divide, dirBot first  65.6   (single fdivs, no 1.0f -- unfaithful)
+    //   plain divide, dirTop first  62.3
+    //   reciprocal,   dirBot first  61.9
+    //   reciprocal,   dirTop first  63.1   <- kept
+    // The reciprocal row itself MATCHES in the kept spelling; the 2.5pp is
+    // paid in where MSVC schedules the `lis`/`lfs` pair and the regalloc that
+    // follows it.
+    float invEdgeLenSq = 1.0f / Dot(edgeDir, edgeDir);
+    float t = Dot(toSphere, edgeDir) * invEdgeLenSq;
+
+    Vector3 scaled = edgeDir;
+    scaled *= t;
+    closest -= scaled;
+
+    if (Dot(dir, closest) < 0.0f) {
+        return true;
     }
-    return _result;
+    return Length(closest) < sphereRadius;
 }
 
 namespace Hmx {
