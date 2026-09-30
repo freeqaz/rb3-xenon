@@ -121,8 +121,13 @@ const char *g_pStatusStrings[3] = { "Offline", "Channel", "Online" };
 const char *g_WiiMessageDelimiter = ":";
 
 RockCentral::RockCentral()
-    : mRBTest(0), mState(0), mJobMgr(this), mLoginBlocked(0), unk85(0), unk98(0),
-      unk9c(0), unka0(0), unka4(0), unkd8(0), unk110(0), unk111(0), unk112(0) {}
+    : mRBTest(0), mState(0), mJobMgr(this), mLoginBlocked(0), unk85(0) {
+#ifdef HX_NATIVE
+    unk110 = false;
+    unk111 = false;
+    unk112 = false;
+#endif
+}
 
 RockCentral::~RockCentral() { delete mContextWrapperPool; }
 
@@ -135,12 +140,8 @@ void RockCentral::Terminate() {
     ThePlatformMgr.RemoveSink(this, InviteReceivedMsg::Type());
     // rb3-Wii sinks on WiiProfileMgr's DeleteQueueUpdatedMsg; the dc3-derived
     // WiiProfileMgr in this tree has no MsgSource RemoveSink. Non-pinned.
-    if (unk98)
-        RELEASE(unk98);
-    if (unk9c)
-        RELEASE(unk9c);
-    if (unkd8)
-        RELEASE(unkd8);
+    // rb3-Wii also released its WiiFriendList / WiiMessageList members here;
+    // those members do not exist in the Xbox layout (0x98 is mXNetAddr).
 }
 
 // NOTE (rb3-xenon port): RockCentral::Init is Wii-platform setup (WiiProfileMgr,
@@ -232,9 +233,12 @@ DataNode RockCentral::OnMsg(const ServerStatusChangedMsg &msg) {
         if (!client->RegisterExtraProtocol(mRBBinaryData, 'v')) {
             MILO_WARN("Couldn't register RB binary data protocol\n");
         }
+        XNetGetTitleXnAddr(&mXNetAddr);
+        XNetXnAddrToMachineId(&mXNetAddr, &mMachineID);
+        _snprintf(g_szMachineIdString, 20, "%llu", mMachineID);
         DP_KEYS1(locale)
         INIT_DATAPOINT("config/get");
-        ADD_DATA_PAIR(locale, SystemLanguage());
+        ADD_DATA_PAIR(locale, SystemLocale());
         RecordDataPoint(dataPoint, 0, mConfigResultList, this);
         DeleteNextUser();
     } else if (!msg.Success()) {
@@ -300,7 +304,9 @@ DataNode RockCentral::OnMsg(const DeleteUserCompleteMsg &msg) {
 }
 
 DataNode RockCentral::OnMsg(const EnumerateMessagesCompleteMsg &) {
+#ifdef HX_NATIVE
     unk110 = false;
+#endif
     return 1;
 }
 
@@ -310,7 +316,9 @@ DataNode RockCentral::OnMsg(const SigninChangedMsg &) {
 }
 
 DataNode RockCentral::OnMsg(const InviteReceivedMsg &) {
+#ifdef HX_NATIVE
     unk111 = true;
+#endif
     return 1;
 }
 
@@ -322,8 +330,6 @@ void RockCentral::UpdateOnlineStatus() {}
 bool RockCentral::EnumerateFriends(
     int i1, std::vector<Friend *> &friends, Hmx::Object *obj
 ) {
-    if (TheRockCentral.unka0 != 0)
-        return false;
     if (obj) {
         PlatformMgrOpCompleteMsg msg(1);
         obj->Handle(msg, true);
