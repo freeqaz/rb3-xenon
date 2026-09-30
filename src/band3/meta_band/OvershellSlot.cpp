@@ -1828,16 +1828,18 @@ void OvershellSlot::UpdateFriendsList() {
     mOvershellDir->HandleType(updateFriendsMsg);
 }
 
+// Retail 0x825D8FD0 / 0x825D9040 (X360 TU5): the Wii-era script messages are
+// replaced by direct calls into the X360-only gamercard / friends providers.
 void OvershellSlot::ViewUserGamercard(int i) {
-    static Message viewUserGamercardMsg("view_user_gamercard", 0);
-    viewUserGamercardMsg[0] = i;
-    mOvershellDir->HandleType(viewUserGamercardMsg);
+    BandUser *pUser = GetUser();
+    MILO_ASSERT(pUser->IsLocal(), 0x9A0);
+    mGamercardUsersProvider->ShowGamercard(i, pUser->GetLocalBandUser());
 }
 
 void OvershellSlot::InviteFriend(int i) {
-    static Message inviteFriendMsg("invite_friend", 0);
-    inviteFriendMsg[0] = i;
-    mOvershellDir->HandleType(inviteFriendMsg);
+    BandUser *pUser = GetUser();
+    MILO_ASSERT(pUser->IsLocal(), 0x9A8);
+    mFriendsProvider->InviteFriend(i);
 }
 
 
@@ -1857,10 +1859,9 @@ void OvershellSlot::InviteFriend(int i) {
 //   return !p->IsNowUsingVocalHarmony();           // bl fn_8257E170 =
 //                                                  //   ?IsNowUsingVocalHarmony@MetaPerformer@@QBA_NXZ
 //
-// The two UNRESOLVED steps depend on a Tour accessor and a global Symbol we cannot
-// yet name (0x8235BA70 is an anonymous 8-byte getter immediately preceding
-// ?GetMode@Tour@@QAA?AW4TourMode@@XZ; 0x82C71838 is an unnamed .data Symbol), so they
-// are omitted rather than invented.  The identified calls are reproduced verbatim.
+// ✅ RESOLVED (W16-HR-A): 0x8235BA70 is an 8-byte `lwz r3,0x34(r3)` getter called on
+// TheGameMicManager (0x82E02394), i.e. GameMicManager::GetMicCount(); 0x82C71838 is
+// gNullStr, i.e. Song().Null(). The body below now reproduces all four steps.
 //
 // ★ Do NOT collapse this to a leaf expression.  Measured on the retail compiler
 // (16.00.10224.00, /O1 /Oi /GR /EHsc): OvershellSlot::Handle's
@@ -1871,7 +1872,7 @@ void OvershellSlot::InviteFriend(int i) {
 // `__declspec(noinline)` does NOT substitute for this -- it was measured to have no
 // effect on the call-site tail (a noinline leaf still loses the merge, a non-noinline
 // non-leaf still wins it); only the callee's leaf-ness matters.  The noinline is here
-// for a separate reason: because the two UNRESOLVED steps are omitted this body is
+// for a separate reason (written when two steps were still omitted): this body was
 // short enough that /Ob2 inlines it outright, which would delete the `bl` the arm
 // needs.  Retail's full 140-byte body would not have been inlined on its own.
 __declspec(noinline) bool OvershellSlot::CanChangeSynapseOption() {
