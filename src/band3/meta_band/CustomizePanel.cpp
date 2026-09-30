@@ -956,20 +956,27 @@ void CustomizePanel::PreviewFinish(Symbol s) {
     Asset *pAsset = pAssetMgr->GetAsset(stripped);
     MILO_ASSERT(pAsset, 800);
     Symbol s1c = MakeString("%s_%s", stripped.Str(), s.Str());
+    static Symbol none("none");
     Symbol outfit = none;
     switch (pAsset->GetType()) {
-    case kAssetType_Guitar:
+    case kAssetType_Guitar: {
+        static Symbol guitar("guitar");
         desc->mInstruments.mGuitar.mName = s1c;
         outfit = guitar;
         break;
-    case kAssetType_Bass:
+    }
+    case kAssetType_Bass: {
+        static Symbol bass("bass");
         desc->mInstruments.mBass.mName = s1c;
         outfit = bass;
         break;
-    case kAssetType_Drum:
+    }
+    case kAssetType_Drum: {
+        static Symbol drum("drum");
         desc->mInstruments.mDrum.mName = s1c;
         outfit = drum;
         break;
+    }
     default:
         break;
     }
