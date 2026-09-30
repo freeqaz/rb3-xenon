@@ -8216,7 +8216,6 @@ band3/bandtrack/Gem.cpp:
 	.pdata      start:0x821F52F0 end:0x821F5380
 	.pdata      start:0x821FE078 end:0x821FE088
 	.pdata      start:0x82205F68 end:0x82205F78
-	.pdata      start:0x82206508 end:0x82206510
 	.pdata      start:0x8225E2A0 end:0x8225E3F8
 	.pdata      start:0x8225E400 end:0x8225E4E8
 	.pdata      start:0x8225E8A8 end:0x8225E8B0
@@ -8273,7 +8272,6 @@ band3/bandtrack/Gem.cpp:
 	.text       start:0x82338E20 end:0x82338FD0
 	.text       start:0x823C4A90 end:0x823C4BB8
 	.text       start:0x823C4BC4 end:0x823C4BC8
-	.text       start:0x823CA8F8 end:0x823CA95C
 	.text       start:0x823CAAFC end:0x823CAB00
 	.text       start:0x82BAA400 end:0x82BAC148
 	.text       start:0x82BAC284 end:0x82BAD714
@@ -12524,6 +12522,7 @@ CharIKMidi.cpp:
 	.pdata      start:0x82206430 end:0x82206480
 	.pdata      start:0x82206480 end:0x822064C0
 	.pdata      start:0x822064C0 end:0x82206508
+	.pdata      start:0x82206508 end:0x82206510
 	.pdata      start:0x82206510 end:0x82206528
 	.text       start:0x823C9010 end:0x823C9540
 	.text       start:0x823C9540 end:0x823C9570
@@ -12532,6 +12531,7 @@ CharIKMidi.cpp:
 	.text       start:0x823C9880 end:0x823C9FD8
 	.text       start:0x823C9FD8 end:0x823CA488
 	.text       start:0x823CA488 end:0x823CA8F8
+	.text       start:0x823CA8F8 end:0x823CA95C
 	.text       start:0x823CA95C end:0x823CAAF0
 	.text       start:0x823CAAF0 end:0x823CAAFC
 
