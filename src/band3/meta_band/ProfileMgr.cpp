@@ -185,8 +185,9 @@ std::vector<BandProfile *> ProfileMgr::GetShouldAutosaveProfiles() {
     FOREACH (it, mProfiles) {
         BandProfile *cur = *it;
         int pad = cur->GetPadNum();
-        if (ThePlatformMgr.IsSignedIn(pad) && TheWiiProfileMgr.GetIndexForPad(pad) >= 0
-            && cur->GetSaveState() == 1 && cur->IsUnsaved()) {
+        // Retail has no Wii profile-index check here.
+        if (ThePlatformMgr.IsSignedIn(pad) && cur->GetSaveState() == 1
+            && cur->IsUnsaved()) {
             profiles.push_back(cur);
         }
     }
