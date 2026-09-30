@@ -2517,13 +2517,12 @@ void VocalTrack::BuildScrollingDeployZone(
 void VocalTrack::BuildScrollingDeployZones(float ms) {
     int codaTick = TheSongDB->GetCodaStartTick();
     int numParts = std::min(2, (int)mPlayer->mVocalParts.size());
-    int *deployIdx = &mNextDeployZone[0];
-    for (int part = 0; part < numParts; deployIdx++, part++) {
+    for (int part = 0; part < numParts; part++) {
         VocalNoteList *notes = GetVocalNoteList(part);
-        while (*deployIdx < notes->mFreestyleSections.size()
-               && notes->mFreestyleSections[*deployIdx].first < ms) {
+        while (mNextDeployZone[part] < notes->mFreestyleSections.size()
+               && notes->mFreestyleSections[mNextDeployZone[part]].first < ms) {
             const std::pair<float, float> &section =
-                notes->mFreestyleSections[*deployIdx];
+                notes->mFreestyleSections[mNextDeployZone[part]];
             float codaMs;
             if (codaTick != -1 && section.first < (codaMs = TickToMs(codaTick))
                 && codaMs < section.second) {
@@ -2534,7 +2533,7 @@ void VocalTrack::BuildScrollingDeployZones(float ms) {
             } else {
                 BuildScrollingDeployZone(part, section);
             }
-            (*deployIdx)++;
+            mNextDeployZone[part]++;
         }
     }
 }
