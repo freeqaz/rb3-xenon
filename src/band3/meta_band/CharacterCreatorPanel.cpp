@@ -74,8 +74,11 @@ void CharacterCreatorPanel::Load() {
     mClosetMgr = ClosetMgr::GetClosetMgr();
     LocalBandUser *closetUser = mClosetMgr->mUser;
     BandProfile *profile = TheProfileMgr.GetProfileForUser(closetUser);
-    if (!profile || !closetUser || !mClosetMgr || profile != mClosetMgr->unk28) return;
+    if (!profile)
+        return;
     CreateNewCharacter();
+    static Symbol male("male");
+    static Symbol female("female");
     AddGridThumbnails(male);
     AddGridThumbnails(female);
     SetGender(male);
