@@ -665,7 +665,13 @@ bool MetaPerformer::CanUpdateScoreLeaderboards() {
         return true;
 }
 
+// Retail declares any/random as FUNCTION-LOCAL statics sharing one guard
+// word, claimed in source order (any 0x1, random 0x2), not the
+// utl/Symbols.h globals -- W16-GZ localstatic lever. gNullStr is a plain
+// global (not guarded) and is left as-is.
 int MetaPerformer::GetHighestDifficultyForPart(Symbol s) const {
+    static Symbol any("any");
+    static Symbol random("random");
     int diff = 0;
     FOREACH (it, mSongs) {
         if (*it == gNullStr || *it == any || *it == random)
