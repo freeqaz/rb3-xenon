@@ -10994,7 +10994,7 @@
  "0x82552660": "?Handle@SaveLoadManager@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82553478": "?Handle@MemcardMgr@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82553490": "?Poll@SaveLoadManager@@QAAXXZ",
- "0x82553f28": "?PrefabIsCustomizable@PrefabMgr@@SA_NXZ",
+ "0x82553f28": "?GetPrefabMgr@PrefabMgr@@SAPAV1@XZ",
  "0x82553f40": "??0CharCreatorPrefab@PrefabMgr@@QAA@PAVBandCharDesc@@VSymbol@@@Z",
  "0x82553fc8": "??1CharCreatorPrefab@PrefabMgr@@QAA@XZ",
  "0x82554028": "?GetPrefab@PrefabMgr@@QAAPAVPrefabChar@@VSymbol@@@Z",
