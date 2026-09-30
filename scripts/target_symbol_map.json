@@ -11753,7 +11753,7 @@
  "0x825297e0": "??0JoypadClient@@QAA@PAVObject@Hmx@@@Z",
  "0x82529890": "?InitXinputJoypadThreadData@?A0x439b694a@@YAXXZ",
  "0x825298e0": "?GetXinputSinceLastFrame@@YAXHPAU_XINPUT_STATE@@PAI@Z",
- "0x825299b8": "?ReceiveUpstreamEEPROMWriteResponse@@YAXHPAE@Z",
+ "0x825299b8": "?ReceiveUpstreamBreedDataResponse@@YAXHPAE@Z",
  "0x82529a60": "?XinputJoypadThreadDestruction@@YAXXZ",
  "0x82529ab0": "?JoypadReset@@YAXXZ",
  "0x82529ab8": "?JoypadTerminate@@YAXXZ",
