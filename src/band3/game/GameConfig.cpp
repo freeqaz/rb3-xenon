@@ -114,7 +114,9 @@ bool GameConfig::CanEndGame() const {
         BandUser *user = TheSessionMgr->GetLeaderUser();
         if (!user)
             return true;
-        else if (!TheNetSession->HasUser(user))
+        // TU5: BandUser vtable slot 1 (UnkTU5Virtual) replaces
+        // TheNetSession->HasUser(user), as in AutoAssignMissingSlots.
+        else if (!user->UnkTU5Virtual())
             return false;
         else
             return user->IsLocal();
