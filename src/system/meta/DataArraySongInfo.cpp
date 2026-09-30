@@ -156,27 +156,23 @@ DataArraySongInfo::DataArraySongInfo(
 }
 
 void DataArraySongInfo::Load(BinStream &bs) {
+    // Retail (fn_827A4D00): the revision is read and ignored, then every
+    // member is read unconditionally. The DC3 rev < 2 skip blocks are absent.
     int rev;
     bs >> rev;
     bs >> mName;
     bs >> mBaseFileName;
     bs >> mPackageName;
-    if (rev < 2) {
-        int x, y, z;
-        bs >> x;
-        bs >> y;
-        bs >> z;
-    }
+    bs >> mNumVocalParts;
+    bs >> mHopoThreshold;
+    bs >> mMuteVolume;
+    bs >> mVocalMuteVolume;
     bs >> mPans;
     bs >> mVols;
     bs >> mCores;
-    if (rev < 2) {
-        std::vector<int> ivec;
-        bs >> ivec;
-        std::vector<Symbol> s1, s2;
-        bs >> s1;
-        bs >> s2;
-    }
+    bs >> mCrowdChannels;
+    bs >> mDrumSoloSamples;
+    bs >> mDrumFreestyleSamples;
     bs >> mTrackChannels;
     bs >> mExtraMidiFiles;
 }
