@@ -26,5 +26,5 @@ protected:
 
 private:
     Voice *mVoice; // 0x54
-    int unk_ac; // 0x58
+    // sizeof 0x58: retail ??_G passes 0x58 to the pool delete.
 };
