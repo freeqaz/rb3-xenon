@@ -263,8 +263,9 @@ bool ChordbookPanel::ProfileCheckComplete(Symbol s, GemPlayer *player) {
     if (profile) {
         SongStatusMgr *mgr = profile->GetSongStatusMgr();
         if (mgr) {
+            Symbol song = MetaPerformer::Current()->Song();
             return mgr->GetSongStatusFlag(
-                MetaPerformer::Current()->Song(),
+                song,
                 kSongStatusFlag_ChordbookComplete,
                 kScoreRealGuitar,
                 user->GetDifficulty()
