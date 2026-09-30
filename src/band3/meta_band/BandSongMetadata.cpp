@@ -383,25 +383,22 @@ bool BandSongMetadata::HasPart(Symbol s) const {
     return it != mRanks.end() && it->second > 0;
 }
 
+// Retail 0x8259f980 (mapped as the one-arg HasPart, but it reads r5 -- it is
+// this two-arg body): the statics are claimed before the machine-mgr test.
 bool BandSongMetadata::HasPart(Symbol s, bool b) const {
+    static Symbol real_guitar("real_guitar");
+    static Symbol real_bass("real_bass");
     BandMachineMgr *mgr = TheSessionMgr ? TheSessionMgr->mMachineMgr : nullptr;
-    if (mgr && !b && !mgr->IsSongAllowedToHavePart(ID(), s)) {
+    if (mgr && !b && !mgr->IsSongAllowedToHavePart(ID(), s))
         return false;
-    } else {
-        static Symbol real_guitar("real_guitar");
-        static Symbol real_bass("real_bass");
-        if (s == real_guitar || s == real_bass) {
-            SongUpgradeData *upgradeData = mSongMgr->GetUpgradeData(ID());
-            if (upgradeData) {
-                return upgradeData->HasPart(s);
-            }
+    if (s == real_guitar || s == real_bass) {
+        SongUpgradeData *upgradeData = mSongMgr->GetUpgradeData(ID());
+        if (upgradeData) {
+            return upgradeData->HasPart(s);
         }
-        std::hash_map<Symbol, float>::const_iterator it = mRanks.find(s);
-        if (it != mRanks.end() && it->second > 0) {
-            return true;
-        } else
-            return false;
     }
+    std::hash_map<Symbol, float>::const_iterator it = mRanks.find(s);
+    return it != mRanks.end() && it->second > 0;
 }
 
 // Retail declares real_guitar/real_bass as FUNCTION-LOCAL statics sharing one
