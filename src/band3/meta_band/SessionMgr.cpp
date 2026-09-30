@@ -422,21 +422,16 @@ void SessionMgr::ChangeRandomSeed() {
 }
 
 bool SessionMgr::AreInvitesAllowed() const {
+    // Retail 0x82585988: the second static is guarded only after the
+    // in-transition early-out.
     static Symbol joining_allowed_in_transition("joining_allowed_in_transition");
-    static Symbol joining_allowed("joining_allowed");
-    bool blocked = false;
-    if (!TheGameMode->Property(joining_allowed_in_transition, true)->Int())
-        if (TheUI->InTransition())
-            blocked = true;
-    if (blocked)
+    if (!TheGameMode->Property(joining_allowed_in_transition, true)->Int()
+        && TheUI->InTransition())
         return false;
-    bool allowed;
+    static Symbol joining_allowed("joining_allowed");
     UIFlowType ft = TheBandUI.GetCurrentFlowType();
-    allowed = false;
-    if (TheGameMode->Property(joining_allowed, true)->Int())
-        if (TheBandUI.GetJoinEntryPointForFlowType(ft))
-            allowed = true;
-    return allowed;
+    return TheGameMode->Property(joining_allowed, true)->Int()
+        && TheBandUI.GetJoinEntryPointForFlowType(ft);
 }
 
 void SessionMgr::UpdateInvitesAllowed() {
