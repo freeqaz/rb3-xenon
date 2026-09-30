@@ -1531,8 +1531,9 @@ void CustomizePanel::ScalePatch(float dx, float dy) {
     );
     if (idx != -1) {
         BandCharDesc::Patch *patch = mPreviewDesc->GetPatch(idx);
-        float oldX = patch->mScale.x;
-        float oldY = patch->mScale.y;
+        Vector2 oldScale = patch->mScale;
+        float oldX = oldScale.x;
+        float oldY = oldScale.y;
         Vector2 newScale;
         newScale.x = oldX + dx;
         newScale.y = oldY + dy;
@@ -1548,8 +1549,7 @@ void CustomizePanel::ScalePatch(float dx, float dy) {
         if (newScale.x != oldX || newScale.y != oldY)
             changed = true;
         if (changed) {
-            patch->mScale.x = newScale.x;
-            patch->mScale.y = newScale.y;
+            patch->mScale = newScale;
             RefreshPatchEdit();
         }
     }
