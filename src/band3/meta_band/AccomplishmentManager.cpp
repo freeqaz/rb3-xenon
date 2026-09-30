@@ -1671,13 +1671,15 @@ Symbol AccomplishmentManager::GetNameForFirstNewRewardVignette() const {
     BandProfile *pProfile = TheProfileMgr.GetPrimaryProfile();
     MILO_ASSERT(pProfile, 0xA31);
     const AccomplishmentProgress &prog = pProfile->GetAccomplishmentProgress();
+    Symbol ret;
     if (prog.HasNewRewardVignettes())
-        return prog.GetFirstNewRewardVignette();
+        ret = prog.GetFirstNewRewardVignette();
     else {
         MILO_ASSERT(false, 0xA3B);
-        Symbol ret = "";
-        return ret;
+        Symbol empty("");
+        ret = empty;
     }
+    return ret;
 }
 
 void AccomplishmentManager::ClearFirstNewRewardVignette() {
