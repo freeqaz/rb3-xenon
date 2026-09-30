@@ -11,7 +11,9 @@
 
 // Retail RB3-360 layout (verified vs ctor fn_82787030 + OnMsg/Init/ThreadCall
 // targets in build/45410914/asm/MemcardMgr_Xbox.s):
-//   MemcardMgr : ThreadCallback, MsgSource
+//   MemcardMgr : MsgSource, ThreadCallback (declared in rb3-Wii's order; MSVC
+//   still lays ThreadCallback out first, as the first base with a vfptr, but
+//   constructs MsgSource first, so the ThreadCallback vptr store is dead)
 //   - ThreadCallback vfptr @ 0x0 (primary base; ThreadCall(this) is passed
 //     this+0, e.g. fn_82786DD8 `mr r3,r31; bl ThreadCall`).
 //   - MsgSource subobject @ 0x4 {vbptr@4, mSinks@8, mEventSinks@0x10,
@@ -19,7 +21,7 @@
 //   - MemcardMgr's own members start @ 0x1c (mState).
 //   - Hmx::Object virtual base trails @ 0x8c (ctor: addi r3,r3,0x8c; bl
 //     Object::Object).
-class MemcardMgr : public ThreadCallback, public MsgSource {
+class MemcardMgr : public MsgSource, public ThreadCallback {
     friend class SaveMemcardAction; // hack
     friend class LoadMemcardAction; // hack
 
@@ -85,7 +87,8 @@ protected:
     MCContainer *mContainers[4]; // 0x60
     bool mValidDevices[4]; // 0x70
     int mPendingDeviceSelectorIndex; // 0x74
-    bool mSelectDeviceWaiting; // 0x78 (ctor also zeroes 0x79 padding byte)
+    bool mSelectDeviceWaiting; // 0x78
+    bool mSelectDeviceForce; // 0x79 - SelectDevice's bool, replayed by OnMsg(UIChangedMsg)
     Hmx::Object *mSelectDeviceCallBackObj; // 0x7c
     int mPadNum; // 0x80
     Profile *mProfile; // 0x84
