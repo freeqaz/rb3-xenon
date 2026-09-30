@@ -1104,6 +1104,7 @@ bool AccomplishmentProgress::InqGoalLeaderboardData(
     std::hash_map<Symbol, int> &o_rLeaderboardGoalToValueMap
 ) const {
     MILO_ASSERT(o_rLeaderboardGoalToValueMap.empty(), 0x719);
+    static Symbol campaign_metascore("campaign_metascore");
     int fanvalue = TheAccomplishmentMgr->GetScaledFanValue(
         TheCampaign->GetCampaignMetaScoreForProfile(mParentProfile)
     );
