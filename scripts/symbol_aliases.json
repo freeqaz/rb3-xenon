@@ -75256,12 +75256,19 @@
    "address": "0x8252a758",
    "survivor": "??1MCContainerXbox@@UAA@XZ",
    "folded": [
-    "??1LocationCmp@@UAA@XZ",
     "??1SetUserDifficultyMsg@@UAA@XZ",
     "??1SetUserTrackTypeMsg@@UAA@XZ"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??1LocationCmp@@UAA@XZ",
+     "lane": "W16-HU 2026-09-30",
+     "class": "CONTRADICTED_RETAIL_RTTI_DIFFERENT_VTABLE",
+     "disposition": "withdrawn",
+     "evidence": "W16-HU 2026-09-30. Retail keeps LocationCmp's dtor as its own body: fn_825C4A98 (76 B, plus funclet), which installs vtable 0x820AFB94 whose retail RTTI COL reads .?AVSongSortCmp@@ (LocationCmp's base) and is called by the adjacent ??_GLocationCmp at 0x825C4B10. The survivor 0x8252A758 (88 B) installs 0x8208B49C / 0x8208B43C = .?AVMCContainerXbox@@ / .?AVMCContainer@@. Dtors installing different vtables cannot be one linked body. The flat-T1 PROVEN verdict rests only on tolerated placeholder relocations (tools/icf_pair_adjudicate.py reloc_tally {'tolerated_placeholder': 2}), i.e. shape. Surfaced as FATAL CONTRADICTED once 0x825C4A98 was named (re-homed BandMachineMgr -> SetlistSortByLocation)."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -76116,11 +76123,17 @@
    "name": "1AsyncFile",
    "address": "0x8252d7e8",
    "survivor": "??1AsyncFile@@UAA@XZ",
-   "folded": [
-    "??1LockResponseMsg@@UAA@XZ"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??1LockResponseMsg@@UAA@XZ",
+     "lane": "W16-HU 2026-09-30",
+     "class": "CONTRADICTED_RETAIL_RTTI_DIFFERENT_VTABLE",
+     "disposition": "withdrawn",
+     "evidence": "W16-HU 2026-09-30. Retail keeps LockResponseMsg's dtor as its own body: fn_825AACE8 (76 B, plus funclet), which installs vtable 0x8203D19C = .?AVNetMessage@@ (its base), between ??0LockResponseMsg (0x825AAC28, installs .?AVLockResponseMsg@@) and ??0EndLockMsg. The survivor 0x8252D7E8 (88 B) installs .?AVAsyncFile@@ / .?AVFile@@. Different vtables cannot fold; the flat-T1 PROVEN verdict rests only on tolerated placeholder relocations ({'tolerated_placeholder': 2}). Surfaced as FATAL CONTRADICTED once 0x825AACE8 was named (re-homed SetlistMergePanel -> LockStepMgr)."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -80139,12 +80152,24 @@
    "name": "$_Destroy_Range",
    "address": "0x826ffb58",
    "survivor": "??$_Destroy_Range@PAVSfxMap@@@stlpmtx_std@@YAXPAVSfxMap@@0@Z",
-   "folded": [
-    "??$_Destroy_Range@PAVGameGem@@@stlpmtx_std@@YAXPAVGameGem@@0@Z",
-    "??$__destroy_range@PAVGameGem@@V1@@stlpmtx_std@@YAXPAVGameGem@@00@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??$_Destroy_Range@PAVGameGem@@@stlpmtx_std@@YAXPAVGameGem@@0@Z",
+     "lane": "W16-HU 2026-09-30",
+     "class": "CONTRADICTED_RETAIL_SEPARATE_BODY_DIFFERENT_CALLEE",
+     "disposition": "withdrawn",
+     "evidence": "W16-HU 2026-09-30. Retail has a separate _Destroy_Range<GameGem*> body at fn_826AAF28 (80 B, GemTrainerPanel's TU; callers in GemTrainerPanel and GameGemList bind that name). Its only bl goes to 0x826C3888; the survivor 0x826FFB58's only bl goes to 0x826FCCE8. /OPT:ICF folds only relocation-identical COMDATs, and two linked addresses exist, so the GameGem class did not fold into the SfxMap survivor. This agrees with ALIAS-REPAIR 2026-08-19, which had already partitioned the GameGem spellings into their own class for disagreeing resolved operands. Surfaced as FATAL CONTRADICTED once 0x826AAF28 was named."
+    },
+    {
+     "spelling": "??$__destroy_range@PAVGameGem@@V1@@stlpmtx_std@@YAXPAVGameGem@@00@Z",
+     "lane": "W16-HU 2026-09-30",
+     "class": "CONTRADICTED_RETAIL_SEPARATE_BODY_DIFFERENT_CALLEE",
+     "disposition": "withdrawn",
+     "evidence": "W16-HU 2026-09-30. Retail has a separate _Destroy_Range<GameGem*> body at fn_826AAF28 (80 B, GemTrainerPanel's TU; callers in GemTrainerPanel and GameGemList bind that name). Its only bl goes to 0x826C3888; the survivor 0x826FFB58's only bl goes to 0x826FCCE8. /OPT:ICF folds only relocation-identical COMDATs, and two linked addresses exist, so the GameGem class did not fold into the SfxMap survivor. This agrees with ALIAS-REPAIR 2026-08-19, which had already partitioned the GameGem spellings into their own class for disagreeing resolved operands. Surfaced as FATAL CONTRADICTED once 0x826AAF28 was named."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
