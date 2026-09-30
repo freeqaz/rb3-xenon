@@ -9174,7 +9174,7 @@
  "0x824b19e0": "??4?$vector@UEnvLightEntry@LightPreset@@V?$StlNodeAlloc@UEnvLightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
  "0x824b1b48": "?_M_fill_insert_aux@?$vector@USpotlightEntry@LightPreset@@V?$StlNodeAlloc@USpotlightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUSpotlightEntry@LightPreset@@IABU34@ABU__false_type@2@@Z",
  "0x824b1d00": "??$_M_allocate_and_copy@PBUSpotlightEntry@LightPreset@@@?$vector@USpotlightEntry@LightPreset@@V?$StlNodeAlloc@USpotlightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUSpotlightEntry@LightPreset@@IPBU23@0@Z",
- "0x824b1d98": "??$?5MM@@YAAAVBinStreamRev@@AAV0@AAV?$Keys@MM@@@Z",
+ "0x824b1d98": "??1?$ObjVector@USpotlightEntry@LightPreset@@@@QAA@XZ",
  "0x824b1da8": "??1Keyframe@LightPreset@@QAA@XZ",
  "0x824b21c0": "?OnKeyframeCmd@LightPreset@@QAAXW4KeyframeCmd@1@@Z",
  "0x824b2250": "??4?$vector@USpotlightEntry@LightPreset@@V?$StlNodeAlloc@USpotlightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
