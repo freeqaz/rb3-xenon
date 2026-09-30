@@ -173,8 +173,10 @@ std::vector<Player *> &Band::GetActivePlayers() { return mActivePlayers; }
 void Band::SetAccumulatedScore(int score) { mAccumulatedScore = score; }
 
 int Band::GetLongestStreak() const {
+    const std::vector<Player *> &players = mActivePlayers;
     int ret = unk3c;
-    FOREACH (it, mActivePlayers) {
+    for (std::vector<Player *>::const_iterator it = players.begin(); it != players.end();
+         ++it) {
         int curStreak = (*it)->mStats.GetLongestStreak();
         if (ret < curStreak)
             ret = curStreak;
