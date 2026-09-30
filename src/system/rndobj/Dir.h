@@ -87,8 +87,6 @@ protected:
     virtual void RemovingObject(Hmx::Object *);
     virtual void OldLoadProxies(BinStream &, int);
 
-    void HarvestPollables(std::vector<RndPollable *> &);
-
     DataNode OnShowObjects(DataArray *);
     DataNode OnSupportedEvents(DataArray *);
 

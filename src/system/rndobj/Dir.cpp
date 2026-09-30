@@ -140,21 +140,15 @@ void RndDir::SetSubDir(bool b1) {
     mAnims.clear();
 }
 
+// Retail 0x82405ef0 is rb3-Wii's shape. DC3's leading mSubDirs loop (reset
+// + SetTransParent on inlined subdirs via dynamic_cast<RndTransformable *>) is
+// absent from retail, and the pollable harvest is inline here -- there is no
+// out-of-line HarvestPollables (and no MemTemp) in retail. The proxy chain
+// casts Dir() to MsgSource (ObjectDir -> MsgSource RTTI pair) and passes the
+// result straight through; see ChainSourceSubdir below for the parameter type.
 void RndDir::SyncObjects() {
     mAnims.clear();
     mPolls.clear();
-    for (int i = 0; i < mSubDirs.size(); i++) {
-        ObjectDir *curSubDir = mSubDirs[i];
-        if (curSubDir
-            && (curSubDir->InlineSubDirType() == kInlineCached
-                || curSubDir->InlineSubDirType() == kInlineAlways)) {
-            RndTransformable *t = dynamic_cast<RndTransformable *>(curSubDir);
-            if (t) {
-                t->DirtyLocalXfm().Reset();
-                t->SetTransParent(this, false);
-            }
-        }
-    }
     if (!IsSubDir()) {
         SyncDrawables();
         std::list<RndAnimatable *> animchildren;
@@ -169,9 +163,23 @@ void RndDir::SyncObjects() {
              ++it) {
             VectorRemove(mAnims, *it);
         }
-        HarvestPollables(mPolls);
-        if (IsProxy() && Dir()) {
-            ChainSourceSubdir(Dir(), this);
+        std::list<RndPollable *> pollchildren;
+        for (ObjDirItr<RndPollable> it(this, true); it != nullptr; ++it) {
+            if (it != this) {
+                mPolls.push_back(it);
+                it->ListPollChildren(pollchildren);
+            }
+        }
+        for (std::list<RndPollable *>::const_iterator it = pollchildren.begin();
+             it != pollchildren.end();
+             ++it) {
+            VectorRemove(mPolls, *it);
+        }
+        std::sort(mPolls.begin(), mPolls.end(), SortPolls);
+        if (IsProxy()) {
+            MsgSource *src = dynamic_cast<MsgSource *>(Dir());
+            if (src)
+                ChainSourceSubdir(reinterpret_cast<Hmx::Object *>(src), this);
         }
         ObjectDir::SyncObjects();
     }
@@ -456,23 +464,6 @@ void RndDir::SyncDrawables() {
         }
         std::sort(mDraws.begin(), mDraws.end(), SortDraws);
     }
-}
-
-void RndDir::HarvestPollables(std::vector<RndPollable *> &polls) {
-    MemTemp tmp;
-    std::list<RndPollable *> pollchildren;
-    for (ObjDirItr<RndPollable> it(this, true); it != nullptr; ++it) {
-        if (it != this) {
-            polls.push_back(it);
-            it->ListPollChildren(pollchildren);
-        }
-    }
-    for (std::list<RndPollable *>::const_iterator it = pollchildren.begin();
-         it != pollchildren.end();
-         ++it) {
-        VectorRemove(polls, *it);
-    }
-    std::sort(polls.begin(), polls.end(), SortPolls);
 }
 
 DataNode RndDir::OnShowObjects(DataArray *da) {
