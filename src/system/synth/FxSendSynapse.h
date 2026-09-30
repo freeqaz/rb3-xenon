@@ -18,6 +18,8 @@ public:
     void SetAmount(float);
     void SetProximityEffect(float);
     void SetProximityFocus(float);
+    void SetUnisonTrio(bool);
+    void SetNoteHz(float, float, float);
 
     OBJ_MEM_OVERLOAD(0x10);
     NEW_OBJ(FxSendSynapse)

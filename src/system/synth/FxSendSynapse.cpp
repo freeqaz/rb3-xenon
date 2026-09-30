@@ -10,6 +10,47 @@ FxSendSynapse::FxSendSynapse()
       mNote2Hz(0.0f), mNote3Hz(0.0f), mUnisonTrio(0), mAttackSmoothing(30.0f),
       mReleaseSmoothing(60.0f) {}
 
+// Setters: rb3-Wii oracle order. Retail keeps all seven out of line in this TU
+// (0x82712270..0x82712300, each `stfs/stb` + tail-call OnParametersChanged). The
+// last two are TU5-only (no oracle); their names are ours (lane W16-HX4) --
+// GameMicManager::SetPitchCorrectionTarget is their one caller.
+void FxSendSynapse::SetAttackSmoothing(float as) {
+    mAttackSmoothing = as;
+    OnParametersChanged();
+}
+
+void FxSendSynapse::SetReleaseSmoothing(float rs) {
+    mReleaseSmoothing = rs;
+    OnParametersChanged();
+}
+
+void FxSendSynapse::SetAmount(float amt) {
+    mAmount = amt;
+    OnParametersChanged();
+}
+
+void FxSendSynapse::SetProximityEffect(float pe) {
+    mProximityEffect = pe;
+    OnParametersChanged();
+}
+
+void FxSendSynapse::SetProximityFocus(float pf) {
+    mProximityFocus = pf;
+    OnParametersChanged();
+}
+
+void FxSendSynapse::SetUnisonTrio(bool unison) {
+    mUnisonTrio = unison;
+    OnParametersChanged();
+}
+
+void FxSendSynapse::SetNoteHz(float n1, float n2, float n3) {
+    mNote1Hz = n1;
+    mNote2Hz = n2;
+    mNote3Hz = n3;
+    OnParametersChanged();
+}
+
 BEGIN_COPYS(FxSendSynapse)
     COPY_SUPERCLASS(FxSend)
     CREATE_COPY(FxSendSynapse)

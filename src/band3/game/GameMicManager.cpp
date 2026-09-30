@@ -188,6 +188,8 @@ void GameMicManager::HookUpFxForMicId(GameMic *gmic) {
     if (mic) {
         FxSend *send = unk20->Find<FxSend>("mic.send", false);
         mic->SetFxSend(send);
+        // TU5: retail resets the synapse to its neutral target here.
+        SetPitchCorrectionTarget(false, false, 0.5f, 0.5f, 0.0f, 0.0f, 0.0f);
     }
 }
 
@@ -213,9 +215,46 @@ void GameMicManager::Poll(float f1) {
     }
 }
 
+// TU5 body, rebuilt from retail bytes (fn_826818D0); the rb3-Wii oracle is an
+// empty stub. Notes are MIDI pitches, converted with 8.1758 Hz * 2^(n/12).
+// The second range test overwriting `prox` (not `focus`) is retail's own: both
+// `fmr f24, f0`, and `focus` still reaches SetProximityFocus unmodified.
 void GameMicManager::SetPitchCorrectionTarget(
-    bool, bool, float, float, float, float, float
-) {}
+    bool enable, bool unison, float prox, float focus, float n1, float n2, float n3
+) {
+    if (mSynapseProximity >= 0.0f && mSynapseProximity <= 1.0f)
+        prox = mSynapseProximity;
+    if (mSynapseFocus >= 0.0f && mSynapseFocus <= 1.0f)
+        prox = mSynapseFocus;
+    if (!unk20)
+        return;
+    if (!unk2f) {
+        for (int i = 0; i < 3; i++) {
+            if (unk20)
+                unk20->Find<FxSendSynapse>("mic.send", true)->SetAmount(0.0f);
+        }
+        return;
+    }
+    FxSendSynapse *send = unk20->Find<FxSendSynapse>("mic.send", false);
+    if (send) {
+        if (enable) {
+            float hz1 = (float)pow(2.0, n1 / 12.0f) * 8.1758f;
+            float hz2 = (float)pow(2.0, n2 / 12.0f) * 8.1758f;
+            if (n2 == 0.0f)
+                hz2 = 0.0f;
+            float hz3 = (float)pow(2.0, n3 / 12.0f) * 8.1758f;
+            if (n3 == 0.0f)
+                hz3 = 0.0f;
+            send->SetProximityEffect(prox);
+            send->SetProximityFocus(focus);
+            send->SetNoteHz(hz1, hz2, hz3);
+            send->SetUnisonTrio(unison);
+            send->SetAmount(1.0f);
+        } else {
+            send->SetAmount(0.0f);
+        }
+    }
+}
 
 void GameMicManager::SetSynapseProximity(float f1) {
     mSynapseProximity = f1;
