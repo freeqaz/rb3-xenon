@@ -48,6 +48,7 @@ void NewAssetProvider::UpdateExtendedText(int i, int i_iData, UILabel *label) co
     MILO_ASSERT(i_iData < NumData(), 0x4f);
 
     Symbol symbol = DataSymbol(i_iData);
+    static Symbol none("none");
     if (symbol != none) {
         AssetMgr *pAssetMgr = AssetMgr::GetAssetMgr();
         MILO_ASSERT(pAssetMgr, 0x5b);
@@ -57,6 +58,7 @@ void NewAssetProvider::UpdateExtendedText(int i, int i_iData, UILabel *label) co
             Symbol description = pAsset->GetDescription();
             label->SetTextToken(description);
         } else if (strcmp(label->Name(), "asset_progress_new.lbl") == 0) {
+            static Symbol customize_asset_progress("customize_asset_progress");
             label->SetTokenFmt(customize_asset_progress, i_iData + 1, NumData());
         } else {
             label->SetTextToken(gNullStr);
