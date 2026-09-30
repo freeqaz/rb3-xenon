@@ -532,23 +532,22 @@ void SongDB::SetupPhrasesForTrack(
 ) {
     if (extents.empty())
         return;
-    GameGemList *gemList = mSongData->GetGemList(trackNum);
+    std::vector<GameGem> &gems = mSongData->GetGemList(trackNum)->mGems;
     int phraseIdx = 0;
     int phraseOffset = 0;
     gemStates.clear();
-    gemStates.reserve(gemList->mGems.size());
-    for (int gemIdx = 0; (unsigned)gemIdx < (unsigned)gemList->NumGems(); gemIdx++) {
-        int gemTick = gemList->mGems[gemIdx].mTick;
+    gemStates.reserve(gems.size());
+    for (int gemIdx = 0; gemIdx < gems.size(); gemIdx++) {
+        int gemTick = gems[gemIdx].mTick;
         unsigned char state = 0;
         if (phraseIdx < extents.size()) {
             if (gemTick >= extents[phraseIdx].unk0) {
-                // goto skips the 0x1 bit set while still entering the 0x2 set; rewrite with merged conds shifts branch polarity.
                 if (gemIdx != 0) {
-                    bool prevInPhrase = gemStates.size() > (unsigned)(gemIdx - 1)
-                        && (gemStates[gemIdx - 1] & 0x2);
+                    unsigned int prev = gemIdx - 1;
+                    bool prevInPhrase = gemStates.size() > prev && (gemStates[prev] & 0x2);
                     if (prevInPhrase) {
-                        bool prevEndOfPhrase = gemStates.size() > (unsigned)(gemIdx - 1)
-                            && (gemStates[gemIdx - 1] & 0x4);
+                        bool prevEndOfPhrase =
+                            gemStates.size() > prev && (gemStates[prev] & 0x4);
                         if (!prevEndOfPhrase) goto skip_start_bit;
                     }
                 }
@@ -556,8 +555,8 @@ void SongDB::SetupPhrasesForTrack(
             skip_start_bit:
                 state |= 0x2;
             }
-            if ((unsigned)gemIdx == (unsigned)(gemList->NumGems() - 1)
-                || gemList->mGems[gemIdx + 1].mTick >= extents[phraseIdx].unk4) {
+            if (gemIdx == gems.size() - 1
+                || gems[gemIdx + 1].mTick >= extents[phraseIdx].unk4) {
                 state = (unsigned char)(state | 0x4);
                 phraseOffset += sizeof(Extent);
                 phraseIdx++;
@@ -565,7 +564,7 @@ void SongDB::SetupPhrasesForTrack(
         }
         gemStates.push_back(state);
     }
-    MILO_ASSERT(gemStates.size() == gemList->NumGems(), 0x37d);
+    MILO_ASSERT(gemStates.size() == gems.size(), 0x37d);
 }
 
 const std::vector<unsigned char> &SongDB::TrackData::GetGemStates(BeatmatchPhraseType ty) const {
