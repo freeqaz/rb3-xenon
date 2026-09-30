@@ -287,6 +287,8 @@ bool BandMachineMgr::IsSongShared(int songid) const {
 }
 
 bool BandMachineMgr::IsSongAllowedToHavePart(int songid, Symbol part) const {
+    static Symbol real_guitar("real_guitar");
+    static Symbol real_bass("real_bass");
     if (part != real_guitar && part != real_bass)
         return true;
     if (mSessionMgr->IsLocal())
