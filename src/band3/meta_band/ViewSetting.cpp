@@ -1,4 +1,5 @@
 #include "meta_band/ViewSetting.h"
+#include "utl/Std.h"
 
 #include "bandobj/BandLabel.h"
 #include "bandobj/CheckboxDisplay.h"
@@ -374,14 +375,9 @@ ViewSettingsProvider::ViewSettingsProvider() : mActiveSetting(nullptr),
     }
 }
 
-ViewSettingsProvider::~ViewSettingsProvider() {
-    std::vector<ViewSetting *>::iterator it = mSettings.begin();
-    std::vector<ViewSetting *>::iterator end = mSettings.end();
-    for (; it != end; ++it) {
-        delete *it;
-    }
-    mSettings.clear();
-}
+// retail fn_825D6728: an out-of-line DeleteAll<vector<ViewSetting *>> (folded
+// by ICF with the vector<NetSavedSetlist *> instance)
+ViewSettingsProvider::~ViewSettingsProvider() { DeleteAll(mSettings); }
 
 void ViewSettingsProvider::InitData(RndDir *dir) {
     if (dir) {
