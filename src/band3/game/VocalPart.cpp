@@ -601,8 +601,8 @@ float VocalPart::CalcPhraseScoreMax(const VocalPhrase *const &phrase) const {
     // W16-HR: retail clamps with fsel (Max/Min) and re-reads the phrase each pass.
     for (unsigned int i = start; i != end; i++) {
         const VocalNote &note = list->mNotes[i];
-        float clampedStart = Max(note.mMs, p->unk0);
-        float clampedEnd = Min(note.mDurationMs + note.mMs, p->unk4 + p->unk0);
+        float clampedStart = Max(note.mMs, phrase->unk0);
+        float clampedEnd = Min(note.mDurationMs + note.mMs, phrase->unk4 + phrase->unk0);
         result += ((clampedEnd - clampedStart) / note.mDurationMs) * mNoteWeights[i];
     }
     return result;
