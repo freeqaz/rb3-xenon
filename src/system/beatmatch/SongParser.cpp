@@ -1185,9 +1185,10 @@ void SongParser::OnMidiMessageBeat(
     int tick, unsigned char status, unsigned char data1, unsigned char data2
 ) {
     if (MidiGetType(status) == 0x90) {
-        switch (data1) {
-        case 12:
-        case 13:
+        if (data1 != 13 && data1 != 12) {
+            if (data1 == 11)
+                mSink->SetDetailedGrid(true);
+        } else {
             mSink->AddBeat(tick, data1 == 0xC);
             if (mLastBeatTick != -1 && !mHaveBeatFailure) {
                 if (tick - mLastBeatTick < 0xF0) {
@@ -1213,10 +1214,6 @@ void SongParser::OnMidiMessageBeat(
             }
             mLastBeatTick = tick;
             mLastBeatType = data1;
-            break;
-        case 11:
-            mSink->SetDetailedGrid(true);
-            break;
         }
     }
 }
@@ -1300,6 +1297,10 @@ bool SongParser::OnTrackName(int tick, const char *name) {
 
 // TODO: check out retail and add inlines where appropriate
 void SongParser::PrepareTrack(const char *track_name, PartInfo *info) {
+    // retail initialises these two local statics (one guard word) and never
+    // reads them
+    static Symbol guitar("guitar");
+    static Symbol bass("bass");
     Reset();
     bool b2 = false;
     std::vector<PartInfo> &_ref0 = mParts;
@@ -2667,8 +2668,9 @@ bool SongParser::HandleRGRollStop(int tick, unsigned char pitch) {
     MILO_ASSERT(mRollInProgress != -1, 0xDA1);
     for (int i = 0; i < mNumDifficulties; i++) {
         int count = 0;
+        const int *str = mRGRollArray[i].mString;
         for (int j = 0; j < 6; j++) {
-            if (mRGRollArray[i].mString[j] != -1)
+            if (str[j] != -1)
                 count++;
         }
         if (GetRollIntervalMs(mRollIntervals, mTrackType, i, count > 1) > 0.0f
