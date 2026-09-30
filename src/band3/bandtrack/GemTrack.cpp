@@ -383,16 +383,9 @@ void GemTrack::DrawFill(FillInfo *info, int i2, int i3) {
         float startSecs = TickToSeconds(ext154.start);
         float endSecs = TickToSeconds(ext154.end);
         float f15 = endSecs - startSecs;
-        bool b9 = false;
-        if (ext154.start < i11) {
-            bool cond = (i2 <= ext154.start || mResetFills);
-            if (cond)
-                b9 = true;
-        }
+        bool b9 = ext154.start < i11 && (i2 <= ext154.start || mResetFills);
         if (!inCoda || TheGame->mProperties.mEnableCoda) {
-            bool b1 = false;
-            if (!inCoda && isDrum)
-                b1 = true;
+            bool b1 = !inCoda && isDrum;
             bool bi2 = !TheGame->DrumFillsMod();
             if (b9) {
                 if (b1) {
@@ -415,6 +408,8 @@ void GemTrack::DrawFill(FillInfo *info, int i2, int i3) {
                         w->Clear();
                         w->AddInstance(tf88, f15);
                     } else {
+                        static Symbol mash("mash");
+                        static Symbol fill("fill");
                         Symbol s15c(b1 ? fill : mash);
                         for (int i = 0; i < mTrackConfig.GetMaxSlots(); i++) {
                             Symbol s160;
@@ -427,6 +422,7 @@ void GemTrack::DrawFill(FillInfo *info, int i2, int i3) {
                         }
                     }
                 } else {
+                    static Symbol beard("beard");
                     Symbol s164;
                     if (mGemManager->GetWidgetName(s164, 4, beard)) {
                         mTrackDir->MakeWidgetXfm(4, startSecs, tf88);
@@ -443,6 +439,8 @@ void GemTrack::DrawFill(FillInfo *info, int i2, int i3) {
             }
             if (b1 && i2 < ext154.end && ext154.end <= i11) {
                 mTrackDir->MakeWidgetXfm(4, endSecs, tf88);
+                static Symbol crash("crash");
+                static Symbol crash_cymbal("crash_cymbal");
                 Symbol s168 =
                     mTrackConfig.GetGameCymbalLanes() & 0x10 ? crash_cymbal : crash;
                 Symbol s16c;
