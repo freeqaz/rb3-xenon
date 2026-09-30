@@ -67,16 +67,41 @@ static __declspec(align(4)) unsigned short gRev_CharClip = 0;
 
 #pragma region Transitions
 
+// Retail (fn_8237D470): each NodeVector's clip is ref-counted against mOwner
+// (AddRef in AddNode / Load, Release in Clear / RemoveClip), so the clip ring
+// dispatches Replace(dying clip, replacement) here via CharClip::Replace.
 void CharClip::Transitions::Replace(ObjRef *from, Hmx::Object *to) {
+#ifdef HX_NATIVE
     NodeVector *vector = reinterpret_cast<NodeVector *>(from);
     vector->clip = (CharClip *)to;
     if (!vector->clip) {
         RemoveNodes(vector);
     }
     return;
+#else
+    for (NodeVector *it = mNodeStart; it < mNodeEnd; it = it->Next()) {
+        if (it->clip == reinterpret_cast<Hmx::Object *>(from)) {
+            CharClip *toClip = dynamic_cast<CharClip *>(to);
+            if (!toClip) {
+                RemoveClip(it->clip);
+            } else {
+                it->clip->Release(mOwner);
+                it->clip = toClip;
+                it->clip->AddRef(mOwner);
+            }
+            return;
+        }
+    }
+#endif
 }
 
+// Retail (fn_8237D1E8): Release every clip, then drop the storage.
 void CharClip::Transitions::Clear() {
+#ifndef HX_NATIVE
+    for (NodeVector *it = mNodeStart; it < mNodeEnd; it = it->Next()) {
+        it->clip->Release(mOwner);
+    }
+#endif
     Resize(0, 0);
 }
 
@@ -144,6 +169,9 @@ void CharClip::Transitions::AddNode(CharClip *clip, const CharGraphNode &node) {
             (intptr_t)end - (intptr_t)next
         );
     } else {
+#ifndef HX_NATIVE
+        clip->AddRef(mOwner);
+#endif
         resized = Resize(BytesInMemory() + 0x10, mNodeEnd);
         resized->clip = clip;
         resized->size = 0;
@@ -165,18 +193,32 @@ void CharClip::Transitions::AddNode(CharClip *clip, const CharGraphNode &node) {
     resized->size++;
 }
 
+// Retail (fn_8237D3C8, rb3-Wii's RemoveNodes(CharClip *)): Release the clip
+// before dropping its node vector.
 void CharClip::Transitions::RemoveClip(CharClip *clip) {
+#ifdef HX_NATIVE
     NodeVector *node = FindNodes(clip);
     if (node)
         RemoveNodes(node);
+#else
+    NodeVector *found = FindNodes(clip);
+    if (found) {
+        clip->Release(mOwner);
+        NodeVector *next = found->Next();
+        memmove(found, next, (int)mNodeEnd - (int)next);
+        Resize(BytesInMemory() - ((int)next - (int)found), nullptr);
+    }
+#endif
 }
 
+#ifdef HX_NATIVE
 void CharClip::Transitions::RemoveNodes(NodeVector *n) {
     MILO_ASSERT(n, 0xEC);
     NodeVector *next = n->Next();
     memmove(n, next, (intptr_t)mNodeEnd - (intptr_t)next);
     Resize(BytesInMemory() - ((intptr_t)next - (intptr_t)n), nullptr);
 }
+#endif
 
 void CharClip::Transitions::Save(BinStream &bs) {
     // Load() reads this first value as a raw BYTE count (it is handed straight to
@@ -225,7 +267,7 @@ void CharClip::Transitions::Load(BinStream &bs) {
             }
         }
     } else {
-        int temp, numNodes;
+        int numNodes, temp;
         bs >> temp;
         bs >> numNodes;
 #ifdef HX_NATIVE
@@ -245,6 +287,9 @@ void CharClip::Transitions::Load(BinStream &bs) {
             bs.ReadString(buf, 0x100);
             CharClip *clip = mOwner->Dir()->Find<CharClip>(buf, false);
             if (clip) {
+#ifndef HX_NATIVE
+                clip->AddRef(mOwner);
+#endif
                 it->clip = clip;
                 bs >> it->size;
                 for (int j = 0; j < it->size; j++) {
@@ -256,9 +301,9 @@ void CharClip::Transitions::Load(BinStream &bs) {
                 int count;
                 bs >> count;
                 for (int j = 0; j < count; j++) {
-                    int x, y;
-                    bs >> x;
-                    bs >> y;
+                    CharGraphNode skip;
+                    bs >> skip.curBeat;
+                    bs >> skip.nextBeat;
                 }
             }
         }
@@ -267,6 +312,10 @@ void CharClip::Transitions::Load(BinStream &bs) {
         MemFree(start);
     }
 }
+
+#ifndef HX_NATIVE
+void CharClip::Replace(ObjRef *from, Hmx::Object *to) { mTransitions.Replace(from, to); }
+#endif
 
 #pragma endregion
 #pragma region FacingSet
@@ -513,7 +562,10 @@ END_COPYS
 BEGIN_LOADS(CharClip)
     static int _x = MemFindHeap("char");
     MemHeapTracker temp(_x);
-    int x, y, oldVer, tv;
+    // Old clips (rev < 0x12) store their start/end beat here; retail feeds them
+    // into the synthesized mBeatTrack below.
+    float startBeat, endBeat;
+    int tv;
     int revs;
     bs >> revs;
     gRev_CharClip = getHmxRev(revs);
@@ -525,8 +577,8 @@ BEGIN_LOADS(CharClip)
     MILO_ASSERT(gOldRev > 1, 0x531);
     Hmx::Object::Load(bs);
     if (gRev_CharClip < 0x12) {
-        bs >> x;
-        bs >> y;
+        bs >> startBeat;
+        bs >> endBeat;
     }
     bs >> mFramesPerSec;
     bs >> mFlags;
@@ -546,7 +598,7 @@ BEGIN_LOADS(CharClip)
         bs >> isRelativeToSelf;
         mRelative = isRelativeToSelf ? this : nullptr;
     } else {
-        mRelative = nullptr;
+        mRelative.ReleaseObjConcrete();
     }
     if (gOldRev > 8 && gOldRev < 0xB) {
         bool unused;
@@ -578,28 +630,20 @@ BEGIN_LOADS(CharClip)
         String eventName;
         bs >> eventName;
         if (!eventName.empty()) {
-            MILO_NOTIFY("%s has old enter event %s, must port", PathName(this), eventName);
+            MILO_WARN("%s has old enter event %s, must port", PathName(this), eventName);
         }
         bs >> eventName;
         if (!eventName.empty()) {
-            MILO_NOTIFY("%s has old exit event %s, must port", PathName(this), eventName);
+            MILO_WARN("%s has old exit event %s, must port", PathName(this), eventName);
         }
+        // retail evaluates nothing per frame: the old frame events are read and
+        // dropped.
         int count;
-        float lastFrame = -kHugeFloat;
         bs >> count;
         for (int i = 0; i < count; i++) {
             float frameNum;
             bs >> frameNum;
             bs >> eventName;
-            if (!eventName.empty()) {
-                MILO_NOTIFY(
-                    "%s has old frame %.2f event %s, must port", PathName(this), frameNum, eventName
-                );
-            }
-            if (frameNum < lastFrame) {
-                MILO_NOTIFY("Keyframes in %s are out of order.", (char *)Name());
-            }
-            lastFrame = frameNum;
         }
     }
     mDirty = false;
@@ -632,14 +676,11 @@ BEGIN_LOADS(CharClip)
     } else {
         if (NumFrames() > 1) {
             mBeatTrack.resize(2);
-            Key<float> &key0 = mBeatTrack[0];
-            key0 = Key<float>(key0.value, 0);
-            Key<float> &key1 = mBeatTrack[1];
-            key1 = Key<float>(key1.value, NumFrames() - 1);
+            mBeatTrack[0] = Key<float>(startBeat, 0);
+            mBeatTrack[1] = Key<float>(endBeat, NumFrames() - 1);
         } else {
             mBeatTrack.resize(1);
-            Key<float> &key0 = mBeatTrack[0];
-            key0 = Key<float>(key0.value, 0);
+            mBeatTrack[0] = Key<float>(startBeat, 0);
         }
         if (gRev_CharClip < 0x11) {
             float oldFPS = mFramesPerSec;
