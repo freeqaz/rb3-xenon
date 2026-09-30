@@ -276,7 +276,6 @@
  "0x827f8628": "?NewObject@UIListSubList@@SAPAVObject@Hmx@@XZ",
  "0x827f8be8": "?NewObject@UIListSlot@@SAPAVObject@Hmx@@XZ",
  "0x824d1a38": "??$New@VSpotlightDrawer@@@Object@Hmx@@SAPAVSpotlightDrawer@@XZ",
- "0x827cdae8": "?_M_create_node@?$list@VSetlistArtRecord@MusicLibraryNetSetlists@@V?$StlNodeAlloc@VSetlistArtRecord@MusicLibraryNetSetlists@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABVSetlistArtRecord@MusicLibraryNetSetlists@@@Z",
  "0x826fcdc8": "??$New@VFxSendPitchShift@@@Object@Hmx@@SAPAVFxSendPitchShift@@XZ",
  "0x827f27a8": "?InqMinMaxFromWidthAndHeight@UILabel@@QAAHMMW4Alignment@RndText@@AAVVector3@@1@Z",
  "0x824adbd0": "??$_Param_Construct@USpotlightEntry@LightPreset@@U12@@stlpmtx_std@@YAXPAUSpotlightEntry@LightPreset@@ABU12@@Z",
