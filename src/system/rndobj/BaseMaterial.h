@@ -201,7 +201,10 @@ public:
 
     // Tag 0x3C (BaseMaterial's), NOT the DC3 RndMat's 69: retail's material factory
     // ?NewObject@...@0x8240f5d0 pairs at mpn 100 with the 0x3C-tagged allocation.
-    OBJ_MEM_OVERLOAD(0x3C);
+    // INLINE_DEL: every retail deleting dtor in this hierarchy calls MemFree
+    // directly -- ??_GRndMat 0x82438EE8 (+0x2C), ??_GNgMat 0x824AA2C0 (+0x54),
+    // DxMat's slot-0 0x827412B0 (+0x38) -- never an out-of-line ??3RndMat.
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x3C);
     NEW_OBJ(RndMat)
 
     static void Init();
