@@ -18,4 +18,7 @@ reach an unnamed retail body, and objdiff already forgives placeholder callees. 
 means the alias was hiding a real charge; it would be recorded as measured.
 
 ## Measured
-(filled in after the A/B)
+`ab_measure --from-dirty`, map class, forced re-split both legs, both at a `symbols.txt` fixed point,
+0 recompiles: matched 44,240 / masked 23,324 / honest 20,916 / code% 41.128994 / fuzzy 50.513783 on
+**both** legs; units 201 / 177 unchanged. **Δ0 on every key, as predicted** — the alias was not hiding a
+charge. The `none` control was flat, which for a withdrawal is the expected shape, not evidence either way.
