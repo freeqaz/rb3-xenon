@@ -658,24 +658,36 @@ bool DxRnd::CanModal(Debug::ModalType t) {
 void DxRnd::ModalDraw(Debug::ModalType t, const char *cc) {
     bool wasSuspended = mSuspended;
     Resume();
-    D3DSurface *savedStencilSurface = D3DDevice_GetDepthStencilSurface(mD3DDevice);
+    // Retail order: GetRenderTarget(dev, 0) first (fn_82852828, r4=0), then
+    // GetDepthStencilSurface (fn_82852870).
     D3DSurface *savedRenderTarget = D3DDevice_GetRenderTarget(mD3DDevice, 0);
+    // Device() rather than mD3DDevice (DC3 w7-br): the accessor's copy hoists
+    // the device load into r11 ahead of `mr r27, r3`.
+    D3DSurface *savedStencilSurface = D3DDevice_GetDepthStencilSurface(Device());
     D3DDevice_SetRenderTarget_External(mD3DDevice, 0, mBackBuffer);
     D3DDevice_SetDepthStencilSurface(mD3DDevice, 0);
-    Hmx::Color color(0, 0.1f, 0.5f, 0);
+    // Retail colour, read off the constants: default is blue (red 0.0 @82000D78,
+    // blue 0.5 @82075090); a notify/fail modal is dark red (red 0.25 @82014B98,
+    // blue 0). Green and alpha are constant-folded into the packed word
+    // (`lis r8,0xff00` + `rlwimi` for red only), i.e. green 0 and alpha 1.
+    // The zeros that retail LOADS (red, the fail arm's blue, Clear's Z and
+    // Resolve's ClearZ) are one function-local static const, as in DC3: its
+    // page base is held in r30 and the value re-loaded after the calls, where
+    // a literal is CSE'd into callee-saved f31.
+    static const float zero = 0.0f;
+    Hmx::Color color(zero, 0, 0.5f);
     // Retail tests t as a byte (clrlwi. r10,r25,24), same truthiness idiom as
     // DxRnd::CanModal above -- true for kModalNotify(1) and kModalFail(2), not
     // an equality check against kModalFail specifically.
     if ((unsigned char)t) {
-        color.alpha = 0.25f;
-        color.green = 0;
-        color.blue = 0;
+        color.red = 0.25f;
+        color.blue = zero;
     }
-    D3DDevice_Clear(mD3DDevice, 0, nullptr, 0x31, MakeColor(color), 0, 0, 0);
+    D3DDevice_Clear(mD3DDevice, 0, nullptr, 0x31, MakeColor(color), zero, 0, 0);
     Rnd::DrawStringScreen(cc, Vector2(0.025f, 0.025f), Hmx::Color(1, 1, 1, 1), true);
     RndOverlay::DrawAll(true);
     D3DDevice_Resolve(
-        mD3DDevice, 0, nullptr, FrontBuffer(), nullptr, 0, 0, nullptr, 0, 0, nullptr
+        mD3DDevice, 0, nullptr, FrontBuffer(), nullptr, 0, zero, nullptr, 0, 0, nullptr
     );
     if (mRegAlloc != 0) {
         mRegAlloc = (RegisterAlloc)0;
