@@ -121,7 +121,8 @@ BEGIN_LOADS(Song)
     static Symbol sSongName;
     bs >> sSongName;
     if (mSongName != sSongName) {
-        SetSong(sSongName);
+        mSongName = sSongName;
+        Load();
     }
     static bool sDirty;
 #ifdef HX_NATIVE
