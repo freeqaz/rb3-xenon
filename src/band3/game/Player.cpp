@@ -12,6 +12,7 @@
 #include "utl/SongPos.h"
 #include "beatmatch/TrackType.h"
 #include "decomp.h"
+#include "synth_xbox/Mic.h"
 #include "game/BandUser.h"
 #include "game/BandUserMgr.h"
 #include "game/Defines.h"
@@ -265,11 +266,21 @@ void Player::PollEnabledState(float f) {
 }
 
 void Player::PollTalking(int i) {
-    if (i % 5 == 0 && unk290) {
+    // Retail (Xbox TU5): asks XHV2 whether this remote talker is talking and
+    // only pushes the change to the track.
+    if (i % 5 != 0)
+        return;
+    BandUser *user = mUser;
+    bool talking = false;
+    if (user) {
+        IXHV2Engine *xhv = MicManagerXbox::GetInstance()->unk1c;
+        talking = xhv->IsRemoteTalking(user->GetOnlineID()->GetXUID()) != 0;
+    }
+    if (talking != unk290) {
         BandTrack *track = GetBandTrack();
         if (track)
-            track->SetNetTalking(false);
-        unk290 = false;
+            track->SetNetTalking(talking);
+        unk290 = talking;
     }
 }
 
@@ -282,6 +293,8 @@ void Player::AddPoints(float f, bool b1, bool b2) {
 
 void Player::StartIntro() {
     if (IsLocal()) {
+        // Retail: function-local static, constructed before the user lookup.
+        static Symbol intro("intro");
         LocalBandUser *user = mUser->GetLocalBandUser();
         if (!user->HasShownIntroHelp(mTrackType)) {
             PopupHelp(intro, true);
@@ -488,15 +501,10 @@ void Player::LocalSetEnabledState(EnabledState estate, int i, BandUser *causer, 
 #pragma pop
 
 bool Player::Saveable() const {
-    bool ret = false;
-    bool result = false;
-    if (mEnabledState == kPlayerDisabled && mTimesFailed < 3 && !unk298)
-        ret = true;
-    if (ret) {
-        MetaPerformer::Current();
-        result = true;
-    }
-    return result;
+    // Retail: one bool expression (li 1 / li 0 join); the MetaPerformer
+    // lookup survives only as a call whose result is unused.
+    return mEnabledState == kPlayerDisabled && mTimesFailed < 3 && !unk298
+        && (MetaPerformer::Current(), true);
 }
 
 void Player::Save(BandUser *user, bool b) { SetEnabledState(kPlayerBeingSaved, user, b); }
@@ -706,8 +714,9 @@ DECOMP_FORCEACTIVE(Player, "Non-local player trying to deploy locally\n", "send_
 
 int Player::LocalDeployBandEnergy() {
     int playersSaved = mBand->DeployBandEnergy(mUser);
-    mStats.mDeployCount++;
-    mStats.AddToPlayersSaved(playersSaved, mBand->MainPerformer()->Crowd()->GetValue());
+    Stats &stats = mStats; // retail materialises &mStats before the crowd lookup
+    stats.mDeployCount++;
+    stats.AddToPlayersSaved(playersSaved, mBand->MainPerformer()->Crowd()->GetValue());
     PerformDeployBandEnergy(playersSaved, true);
     return playersSaved;
 }
@@ -996,39 +1005,28 @@ void Player::FinalizeStats() {
 }
 
 void Player::HandleNewSection(const PracticeSection &section, int sectionIdx, int totalSections) {
-    if (TheGame->unkdc != -1.0f || mQuarantined)
+    if (TheGame->InRollback() || mQuarantined)
         return;
     unk2c0 = sectionIdx;
-    if (totalSections != (int)mStats.mSections.size()) {
-        Stats::SectionInfo info;
-        if ((unsigned long)totalSections < mStats.mSections.size()) {
-            mStats.mSections.erase(
-                mStats.mSections.begin() + totalSections,
-                mStats.mSections.end()
-            );
-        } else {
-            mStats.mSections.insert(
-                mStats.mSections.end(),
-                (unsigned long)totalSections - mStats.mSections.size(),
-                info
-            );
-        }
-    }
+    // Retail (TU5) resizes through an out-of-line Stats helper (fn_82656B98).
+    if (mStats.NumSections() != totalSections)
+        mStats.SetNumSections(totalSections);
     mStats.SetSectionInfo(unk2c0, section.unk0, -1.0f, 0.0f);
 }
 
 void Player::UpdateSectionStats(float hitFraction, float percentComplete) {
-    if (TheGame->unkdc != -1.0f)
+    if (TheGame->InRollback()) // retail materialises the bool (li 1 / li 0)
         return;
     if (!mQuarantined) {
-        if (TheSongDB->mPracticeSections.size() == 0)
+        std::vector<PracticeSection> &sections = TheSongDB->mPracticeSections;
+        if (sections.empty())
             return;
         if (unk2c0 < 0)
             return;
-        if ((unsigned int)unk2c0 >= TheSongDB->mPracticeSections.size())
+        if ((unsigned int)unk2c0 >= sections.size())
             return;
         int sectionIdx = unk2c0;
-        Symbol sectionSym = TheSongDB->mPracticeSections[sectionIdx].unk0;
+        Symbol sectionSym = sections[sectionIdx].unk0;
         mStats.SetSectionInfo(sectionIdx, sectionSym, hitFraction, percentComplete);
     }
 }

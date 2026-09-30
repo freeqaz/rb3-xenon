@@ -334,6 +334,9 @@ DataNode Leaderboard::OnMsg(const RockCentralOpCompleteMsg &msg) {
 }
 
 Symbol Leaderboard::GetModeSymbol() {
+    // Retail: function-local statics (guard bits 1, 2).
+    static Symbol lb_global("lb_global");
+    static Symbol lb_friends("lb_friends");
     switch (mMode) {
     case kPercentile:
         return lb_global;
