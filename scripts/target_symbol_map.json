@@ -8988,6 +8988,8 @@
  "0x824a4c10": "?MainThread@@YA_NXZ",
  "0x824a4c60": "?ShaderRecurseCB@@YAXPBD0@Z",
  "0x824a4cb8": "?InitModTime@RndShaderProgram@@SAKXZ",
+ "0x824a4d30": "?Cache@RndShaderProgram@@QAA_NW4ShaderType@@ABUShaderOptions@@PAVRndShaderBuffer@@2@Z",
+ "0x824a5168": "?CopyErrorShader@RndShaderProgram@@IAAXW4ShaderType@@ABUShaderOptions@@@Z",
  "0x824a5630": "?Init@RndShader@@SAXXZ",
  "0x824a5740": "?SelectConfig@RndShader@@SAXPAVRndMat@@W4ShaderType@@_N@Z",
  "0x824a57b0": "?CheckForceCull@RndShader@@IAAXW4ShaderType@@@Z",
