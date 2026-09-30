@@ -808,9 +808,8 @@ int AccomplishmentPanel::GetTotalAccomplishments() {
 // +0x2c/+0x30 directly). The rb3-Wii dev oracle has it on the panel.
 int AccomplishmentProvider::GetNumCompleted() {
     int count = 0;
-    std::vector<Symbol> &goals = mGoals;
     BandProfile *profile = TheCampaign->GetProfile();
-    for (std::vector<Symbol>::iterator it = goals.begin(); it != goals.end(); ++it) {
+    for (std::vector<Symbol>::iterator it = mGoals.begin(); it != mGoals.end(); ++it) {
         if (IsAccomplished(*it, profile))
             count++;
     }
