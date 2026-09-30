@@ -1018,15 +1018,15 @@ void Player::UpdateSectionStats(float hitFraction, float percentComplete) {
     if (TheGame->InRollback()) // retail materialises the bool (li 1 / li 0)
         return;
     if (!mQuarantined) {
-        SongDB *db = TheSongDB;
-        if (db->mPracticeSections.empty())
+        std::vector<PracticeSection> &sections = TheSongDB->mPracticeSections;
+        if (sections.empty())
             return;
         if (unk2c0 < 0)
             return;
-        if ((unsigned int)unk2c0 >= db->mPracticeSections.size())
+        if ((unsigned int)unk2c0 >= sections.size())
             return;
         int sectionIdx = unk2c0;
-        Symbol sectionSym = db->mPracticeSections[sectionIdx].unk0;
+        Symbol sectionSym = sections[sectionIdx].unk0;
         mStats.SetSectionInfo(sectionIdx, sectionSym, hitFraction, percentComplete);
     }
 }
