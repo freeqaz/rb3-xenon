@@ -565,7 +565,7 @@ int Player::GetMultiplier(bool b, int &i1, int &i2, int &i3) const {
             i1ret = 1;
         i1 = i1ret;
         i2 = mBand->EnergyMultiplier();
-        i3 = (mDeployingBandEnergy != 0) + 1;
+        i3 = mDeployingBandEnergy ? 2 : 1;
         i2 /= i3;
         return i1 * i2 * i3;
     } else {
