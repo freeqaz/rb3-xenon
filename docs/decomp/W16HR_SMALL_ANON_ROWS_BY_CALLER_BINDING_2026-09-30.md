@@ -122,7 +122,7 @@ Leg A = main `c0fa121ca` + the lane's two `symbols.txt` over-carve commits (HK's
 guard rejects a patch that rewrites `symbols.txt`; in leg A those rows are anonymous and unpaired,
 so the merges move no matched figure there). Patch kinds: configgen, map, source, splits. Both legs
 read at a split fixed point on `name_check`. Result:
-`~/tmp/wt-w16-hr-ab/.ab_measure_runs/20260930-182350-branch-952062/result.json`.
+`~/tmp/w16hr/ab_result.json` (copied from the run dir `.ab_measure_runs/20260930-182350-branch-952062/`; the tool reported its tree restore unverified — `tree_restore.ok = false` — so the scratch A/B worktree was discarded after the copy).
 
 | | leg A | leg B | Δ |
 |---|---:|---:|---:|
