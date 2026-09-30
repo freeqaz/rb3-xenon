@@ -735,12 +735,15 @@ bool DirLoader::SaveObjects(const char *file, ObjectDir *dir) {
 }
 
 bool DirLoader::SetupDir(Symbol sym) {
+#ifdef HX_NATIVE
     MemPoint begin(MemPoint::kInitType0);
     if (sObjectMemDumpFile || sTypeMemDumpFile) {
         begin = MemPoint(MemPoint::kInitType1);
     }
+#endif
     if (mDir) {
         if (mDir->ClassName() != sym) {
+#ifdef HX_NATIVE
             if (mDir != mDir->Dir()) {
                 MILO_NOTIFY(
                     "%s: Proxy %s class %s not %s, converting",
@@ -757,6 +760,17 @@ bool DirLoader::SetupDir(Symbol sym) {
                     sym
                 );
             }
+#else
+            // RB3 retail (rb3-Wii shape): one MakeString, result discarded --
+            // retail keeps the bl, and has neither DC3's proxy-dir branch nor
+            // the MemPoint tracking around the body.
+            MILO_WARN(MakeString(
+                "%s: Proxy class %s not %s, converting",
+                mFile.c_str(),
+                mDir->ClassName(),
+                sym
+            ));
+#endif
             ObjectDir *newDir =
                 dynamic_cast<ObjectDir *>(Hmx::Object::NewObject(sym));
             if (!newDir) {
@@ -776,6 +790,7 @@ bool DirLoader::SetupDir(Symbol sym) {
         mDir = dynamic_cast<ObjectDir *>(Hmx::Object::NewObject(sym));
     }
     mDir->SetPathName(mFile.c_str());
+#ifdef HX_NATIVE
     if (sObjectMemDumpFile) {
         MemPoint end(MemPoint::kInitType1);
         DumpObjectMemDelta(mDir, end - begin);
@@ -784,6 +799,7 @@ bool DirLoader::SetupDir(Symbol sym) {
         MemPoint end(MemPoint::kInitType1);
         AddTypeObjectMemDelta(mDir, end - begin);
     }
+#endif
     return true;
 }
 
