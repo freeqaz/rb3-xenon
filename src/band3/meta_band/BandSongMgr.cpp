@@ -1082,35 +1082,20 @@ void BandSongMgr::SyncSharedSongs() {
          it != mAvailableSongs.end();
          ++it) {
         int id = *it;
-        if (!IsRestricted(id)) {
+        if (!IsDemo(id) && !IsRestricted(id)) {
             availableSongs.insert(id);
         }
     }
+    static Symbol real_guitar("real_guitar");
+    static Symbol real_bass("real_bass");
     std::set<int> proGuitarBassSongs;
     for (std::set<int>::const_iterator it = availableSongs.begin();
          it != availableSongs.end();
          ++it) {
         int id = *it;
         BandSongMetadata *data = (BandSongMetadata *)Data(id);
-        bool isProGuitarOrBass = false;
-        bool isDownload = false;
-        if (data) {
-            if (data->IsDownload()) {
-                isDownload = true;
-            }
-        }
-        if (isDownload) {
-            bool hasProGuitarOrBass = true;
-            if (!data->HasPart(real_guitar, true)) {
-                if (!data->HasPart(real_bass, true)) {
-                    hasProGuitarOrBass = false;
-                }
-            }
-            if (hasProGuitarOrBass) {
-                isProGuitarOrBass = true;
-            }
-        }
-        if (isProGuitarOrBass) {
+        if (data && data->IsDownload()
+            && (data->HasPart(real_guitar, true) || data->HasPart(real_bass, true))) {
             proGuitarBassSongs.insert(id);
         }
     }
