@@ -795,6 +795,8 @@ DataNode BandProfile::OnMsg(const RockCentralOpCompleteMsg &msg) {
                 if (node.Int()) {
                     LocalBandUser *localUser = GetAssociatedLocalBandUser();
                     MILO_ASSERT(localUser, 0x518);
+                    // Retail: function-local statics (guard bits 1, 2).
+                    static Symbol acc_accountlink("acc_accountlink");
                     TheAccomplishmentMgr->EarnAccomplishment(localUser, acc_accountlink);
                 }
             }
@@ -810,6 +812,7 @@ DataNode BandProfile::OnMsg(const RockCentralOpCompleteMsg &msg) {
                 if (node.Int()) {
                     LocalBandUser *localUser = GetAssociatedLocalBandUser();
                     MILO_ASSERT(localUser, 0x530);
+                    static Symbol acc_createsetlist("acc_createsetlist");
                     TheAccomplishmentMgr->EarnAccomplishment(localUser, acc_createsetlist);
                 }
             } else
