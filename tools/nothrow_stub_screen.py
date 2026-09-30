@@ -16,6 +16,20 @@ argument setup.  So a stub body copied from the rb3-Wii DEV oracle
 itself may not even be a scored row.  In W16-GI the retail body of the stub
 (0x826067C0, 200 B by .pdata) is pinned inside Mat.cpp's unit.
 
+TWO SUB-MECHANISMS, ONE PREDICATE (lane W16-GN, measured)
+  A same-TU LEAF callee is fully analyzable, and MSVC exploits that twice:
+  (1) NOTHROW -> the caller's EH region around a live temporary is elided
+      (W16-GI: Handle@BandStorePanel, retail maxState 25 vs ours 23);
+  (2) MEMORY-INERT -> the caller keeps a global (a local-static guard word)
+      live across the call instead of reloading it, and regalloc diverges
+      (W16-GN: Handle@RndPropAnim, maxState 33 == 33 on BOTH trees, i.e.
+      invisible to the EH pass).  Control C3: a leaf that writes a DIFFERENT
+      global did not restore retail's codegen; a minimal body that makes ANY
+      opaque call (C2) did.  So leaf-vs-non-leaf is the discriminator, and
+      body size is only a guard.  The --eh pass sees (1) even when the stub
+      was INLINED, but is blind to (2); this screen's bl pass sees both when
+      the stub is out of line.
+
 WHY THE EXISTING SCREENS COULD NOT SEE IT
 -----------------------------------------
 * tools/stub_sweep.py keys on the STUB'S OWN ROW (retail size from report
@@ -507,6 +521,11 @@ def main():
     print("ruler=%s  layers=%s  base_max=%d  min_ratio=%.1f" % (res["ruler"], a.layers, a.base_max, a.min_ratio))
     print("population:", json.dumps(pop))
     print("paired same-obj bl sites examined: %d" % res["n_sites"])
+    named = {h["caller"] for h in res["hits"] if not h["anon_caller"]}
+    res["named_hit_callers"] = sorted(named)
+    print("NAMED-caller hits: %d  (anonymous fn_ callers are EH funclets objdiff pairs by "
+          "byte signature; on 8af79551 all 45 paired OUR trivial dtor/placement-delete with an "
+          "UNRELATED class's dtor in retail: cross-function mispairs, false-positive shape (d))" % len(named))
     print("hit sites: %d  hit callers: %d (%.2f%% of %d PAIRED sub-100 rows)  stub groups: %d" % (
         len(res["hits"]), len(hit_callers),
         100.0 * len(hit_callers) / max(1, pop.get("rows_paired", 0)),
