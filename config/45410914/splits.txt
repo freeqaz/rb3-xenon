@@ -4704,7 +4704,7 @@ HamIKEffector.cpp:
 	.text       start:0x823C35D8 end:0x823C3728
 
 PracticeSection.cpp:
-	.pdata      start:0x821FEC18 end:0x821FEC30
+	.pdata      start:0x821FEC20 end:0x821FEC30
 	.pdata      start:0x822062B8 end:0x822062C0
 	.pdata      start:0x8220BBD0 end:0x8220BBE0
 	.pdata      start:0x8221C4B8 end:0x8221C4C8
@@ -4712,7 +4712,7 @@ PracticeSection.cpp:
 	.pdata      start:0x8221C9D0 end:0x8221C9D8
 	.pdata      start:0x82233B30 end:0x82233B40
 	.pdata      start:0x822375D8 end:0x822375E0
-	.text       start:0x82346DE0 end:0x82346EB8
+	.text       start:0x82346E48 end:0x82346EB8
 	.text       start:0x823C8128 end:0x823C8198
 	.text       start:0x82424D18 end:0x82424DCC
 	.text       start:0x8250D4C0 end:0x8250D4C8
@@ -10324,6 +10324,7 @@ BandPatchMesh.cpp:
 	.pdata      start:0x821FEB98 end:0x821FEBA0
 	.pdata      start:0x821FEBD0 end:0x821FEBD8
 	.pdata      start:0x821FEBE0 end:0x821FEBF8
+	.pdata      start:0x821FEC18 end:0x821FEC20
 	.pdata      start:0x821FEC30 end:0x821FEC38
 	.pdata      start:0x821FEC68 end:0x821FEC70
 	.pdata      start:0x821FEC70 end:0x821FEC88
@@ -10340,6 +10341,7 @@ BandPatchMesh.cpp:
 	.text       start:0x82345638 end:0x82345824
 	.text       start:0x823461C8 end:0x823462A4
 	.text       start:0x823464F8 end:0x823465B0
+	.text       start:0x82346DE0 end:0x82346E48
 	.text       start:0x82346EB8 end:0x82346F64
 	.text       start:0x82347284 end:0x82347320
 	.text       start:0x82347320 end:0x82347478

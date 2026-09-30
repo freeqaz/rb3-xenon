@@ -77793,7 +77793,7 @@
   {
    "name": "$?6VPracticeStep",
    "address": "0x82346de0",
-   "survivor": "??$?6VPracticeStep@@V?$StlNodeAlloc@VPracticeStep@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VPracticeStep@@V?$StlNodeAlloc@VPracticeStep@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "survivor": "??$?6VMeshPair@BandPatchMesh@@V?$StlNodeAlloc@VMeshPair@BandPatchMesh@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VMeshPair@BandPatchMesh@@V?$StlNodeAlloc@VMeshPair@BandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@@Z",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -77802,6 +77802,25 @@
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
      "disposition": "dropped_singleton"
+    },
+    {
+     "spelling": "??$?6VPracticeStep@@V?$StlNodeAlloc@VPracticeStep@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VPracticeStep@@V?$StlNodeAlloc@VPracticeStep@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+     "lane": "W17-PIN2 2026-09-30",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+     "disposition": "withdrawn; the group's survivor is rebound to the vector<BandPatchMesh::MeshPair> spelling, and the map is rebound at 0x82346de0 in the same commit",
+     "absent_types": [
+      "PracticeSection"
+     ],
+     "type_evidence": {
+      "PracticeSection": {
+       "rtti_mangled": ".?AVPracticeSection@@",
+       "retail_rtti_hits": 0,
+       "polymorphic_in_our_source": "yes (hamobj/PracticeSection.h, Hmx::Object-derived; PracticeStep is its element type)",
+       "rb3wii_files": 0,
+       "dc3_files": 11
+      }
+     },
+     "evidence": "TYPE DOES NOT EXIST IN RB3 RETAIL, AND THE BODY IS TYPED BY ITS ONLY CALLER. tools/retail_rtti.py hierarchy_of_class('PracticeSection') is empty, and rb3-Wii has 0 files mentioning PracticeStep (Dance Central hamobj code). Retail 0x82346de0 (100 B) iterates with stride 0x1c and calls 0x8229e5d0 per element; its ONLY retail caller is 0x82347288, operator<<(BinStream&, const BandPatchMesh&), at +0x44, which streams BandPatchMesh::mMeshes (ObjVector<MeshPair>, sizeof(MeshPair) = ObjPtr<RndMesh> 0xc + ObjVector<PatchPair> 0x10 = 0x1c). The address sits inside BandPatchMesh's contiguous .text span. Our PracticeStep writer calls ??6@...PracticeStep, a different relocation target from the MeshPair writer's ObjPtr<RndMesh> operator<<, so the two could not be one COMDAT under /OPT:ICF even if both types existed. No fold is asserted."
     }
    ],
    "repair": {

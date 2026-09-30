@@ -3737,7 +3737,7 @@
  "0x823461c8": "??$__adjust_heap@PAPAVVert@RndMesh@@HPAV12@USortByZ@@@stlpmtx_std@@YAXPAPAVVert@RndMesh@@HHPAV12@USortByZ@@@Z",
  "0x82346360": "??$__adjust_heap@PAPAVMoveDetector@@HPAV1@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@HHPAV1@UMoveDetectorCmp@@@Z",
  "0x82346500": "??0PatchPair@MeshPair@BandPatchMesh@@QAA@PAVObject@Hmx@@@Z",
- "0x82346de0": "??$?6VPracticeStep@@V?$StlNodeAlloc@VPracticeStep@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VPracticeStep@@V?$StlNodeAlloc@VPracticeStep@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x82346de0": "??$?6VMeshPair@BandPatchMesh@@V?$StlNodeAlloc@VMeshPair@BandPatchMesh@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VMeshPair@BandPatchMesh@@V?$StlNodeAlloc@VMeshPair@BandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x82346e50": "??$_Copy_Construct@UUnlockable@?A0xf8e4b4b5@@@stlpmtx_std@@YAXPAUUnlockable@?A0xf8e4b4b5@@ABU12@@Z",
  "0x82346eb8": "??$__linear_insert@PAPAVVert@RndMesh@@PAV12@USortByZ@@@stlpmtx_std@@YAXPAPAVVert@RndMesh@@0PAV12@USortByZ@@@Z",
  "0x82346f68": "??$__linear_insert@PAPAUObjEntry@@PAU1@UObjSort@@@stlpmtx_std@@YAXPAPAUObjEntry@@0PAU1@UObjSort@@@Z",
