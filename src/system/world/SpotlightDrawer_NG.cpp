@@ -254,27 +254,38 @@ void NgSpotlightDrawer::RenderBeams(const Hmx::Matrix4 &viewProj) {
             Spotlight *sl = it->mSpotlight;
             bool hasLength = sl->mBeam.mLength > zero;
             if (hasLength) {
-                unsigned int shape = sl->mBeam.mShape;
+                // retail lowers both of these as switch compare trees
                 int shaderShape;
-                if (shape < 2) {
+                switch (sl->mBeam.mShape) {
+                case 0:
+                case 1:
                     shaderShape = 0;
-                } else if (shape == 2) {
+                    break;
+                case 2:
                     shaderShape = 1;
-                } else if (shape >= 5) {
+                    break;
+                case 3:
+                case 4:
+                    shaderShape = 2;
+                    break;
+                default:
                     MILO_ASSERT(false, 0x456);
                     shaderShape = 0;
-                } else {
-                    shaderShape = 2;
+                    break;
                 }
                 TheShaderMgr.unk1c = shaderShape;
 
-                int shapeVal = sl->mBeam.mShape;
-                if (shapeVal == 2) {
+                switch (sl->mBeam.mShape) {
+                case 2:
                     RenderSheet(sl);
-                } else if (shapeVal < 3 || shapeVal > 4) {
-                    RenderCone(sl);
-                } else {
+                    break;
+                case 3:
+                case 4:
                     RenderSphere(sl);
+                    break;
+                default:
+                    RenderCone(sl);
+                    break;
                 }
 
                 TheShaderMgr.SetPConstant((PShaderConstant)0xc, sr.unk18);
