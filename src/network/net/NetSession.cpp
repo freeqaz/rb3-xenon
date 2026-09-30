@@ -823,7 +823,8 @@ RemoteUser *NetSession::GetNewRemoteUser() {
 void NetSession::UpdateUserData(User *user, unsigned int ui) {
     MILO_ASSERT(user, 0x4A6);
     MILO_ASSERT(user->IsLocal(), 0x4A7);
-    if (HasUser(user) && !IsBusy()) {
+    // Retail has no HasUser() test here.
+    if (!IsBusy()) {
         UpdateUserDataMsg msg(user, ui);
         if (IsHost()) {
             SendToAllClientsExcept(msg, kReliable, -1);
