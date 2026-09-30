@@ -351,11 +351,18 @@ int TourProgress::GetTotalStarsForTour() const {
 
 int TourProgress::GetNumStars() const {
     int num = mNewStars;
+    // NOTE (lane W17-F4b): unused; exists only to reproduce retail's operand
+    // order at the two call sites where this loop is inlined into Handle()
+    // (does_tour_status_exist, get_num_stars) -- see W17-F4's Asset::Asset /
+    // SongUpgradeData::SongUpgradeData for the same lever. Corrects the old
+    // lane CB-7a note below, which only tried rewording the add itself.
+    int steerNum = mNewStars;
     for (std::vector<int>::const_iterator it = unk70.begin(); it != unk70.end(); ++it) {
-        // NOTE (lane CB-7a): retail emits `add rD,rD,rElem`, we emit
-        // `add rD,rElem,rD`. `+=`, `num + *it`, `*it + num` and a hoisted temp
-        // all produce byte-identical code — MSVC canonicalises the commutative
-        // operand order, so this is not source-drivable. 2 diff_arg, both here.
+        // (lane CB-7a) retail emits `add rD,rD,rElem`, we emitted
+        // `add rD,rElem,rD` here before the steering copy above; `+=`,
+        // `num + *it`, `*it + num` and a hoisted temp are all inert at the
+        // site itself -- MSVC's operand order for this add depends on the
+        // surrounding function, not this expression's spelling.
         num += *it;
     }
     return num;
