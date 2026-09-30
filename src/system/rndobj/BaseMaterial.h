@@ -323,6 +323,15 @@ public:
         mDiffuseTex = tex;
         mDirty |= 2;
     }
+    // SetDiffuseTex(nullptr) with the null store open-coded
+    // (`if (mObject) { mObject->Release(this); mObject = 0; }`), as retail
+    // inlines it at some sites -- e.g. both sMat resets in
+    // OutfitConfig::MatSwap::Compose. Same semantics as SetDiffuseTex(nullptr).
+    // __forceinline: /Ob2 declines the second Compose site on its own.
+    __forceinline void ClearDiffuseTex() {
+        mDiffuseTex.ReleaseObjConcrete();
+        mDirty |= 2;
+    }
     void SetNormalMap(RndTex *tex) {
         mNormalMap = tex;
         mDirty |= 2;

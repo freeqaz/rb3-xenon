@@ -180,7 +180,7 @@ void OutfitConfig::MatSwap::Compose(
     if (!diffTex || (diffTex->GetType() & RndTex::kRenderedNoZ) != RndTex::kRenderedNoZ) {
         if (mTwoColor)
             return;
-        if (!mTextures.empty()) {
+        if (mTextures.size() != 0) {
             int idx = colors[mColor1Option] % mTextures.size();
             mMat->SetDiffuseTex(mTextures[idx]);
         } else if (mColor1Palette) {
@@ -216,7 +216,7 @@ void OutfitConfig::MatSwap::Compose(
         sMat->SetBlend(RndMat::kBlendSrc);
         sMat->SetZMode(kZModeDisable);
         sMat->SetTexWrap(kTexWrapClamp);
-        sMat->SetDiffuseTex(nullptr);
+        sMat->ClearDiffuseTex();
         sMat->SetAlpha(1.0f);
         {
             const Hmx::Color *col = &baseColor;
@@ -271,7 +271,7 @@ void OutfitConfig::MatSwap::Compose(
         }
         sCam->SetTargetTex(nullptr);
         prevCam->Select();
-        sMat->SetDiffuseTex(nullptr);
+        sMat->ClearDiffuseTex();
     }
 }
 
