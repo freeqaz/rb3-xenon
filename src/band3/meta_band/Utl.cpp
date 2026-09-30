@@ -193,6 +193,9 @@ const char *GetFontCharForHarmonyMics(int num_mics, int idx) {
 }
 
 inline const char *GetFontCharForProDrums(int idx) {
+    // Retail 0x825BE8B8: two function-local statics under one guard word.
+    static Symbol instrument_icons("instrument_icons");
+    static Symbol drum_pro("drum_pro");
     return SystemConfig(instrument_icons, drum_pro)->Str(idx + 1);
 }
 
