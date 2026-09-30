@@ -525,14 +525,15 @@ int MetaPerformer::GetSetlistMaxVocalParts() const {
 }
 
 bool MetaPerformer::SetlistHasVocalHarmony() const {
+    static Symbol any("any");
+    static Symbol random("random");
     for (std::vector<Symbol>::const_iterator it = mSongs.begin(); it != mSongs.end();
          ++it) {
         if (*it == gNullStr || *it == any || *it == random)
             continue;
         else {
-            BandSongMetadata *data = (BandSongMetadata *)mSongMgr->Data(
-                mSongMgr->GetSongIDFromShortName(*it, true)
-            );
+            int songID = mSongMgr->GetSongIDFromShortName(*it, true);
+            BandSongMetadata *data = (BandSongMetadata *)mSongMgr->Data(songID);
             if (data && data->HasVocalHarmony())
                 return true;
         }
@@ -1141,8 +1142,20 @@ void MetaPerformer::SetVenue(Symbol s) {
     if (changed && TheSessionMgr && HasSyncPermission()) {
         SetSyncDirty(-1, false);
     }
-    mFestivalReward = GetVenueClass() == festival
-        && TheAccomplishmentMgr->HasNewRewardVignetteFestival();
+    // TU5 (retail 0x8257D1C0): no festival reward in audition mode, and a
+    // non-reward venue is loaded here directly (kLoadStayBack).
+    static Symbol audition("audition");
+    if (TheGameMode->InMode(audition)) {
+        mFestivalReward = false;
+    } else {
+        static Symbol festival("festival");
+        mFestivalReward = GetVenueClass() == festival
+            && TheAccomplishmentMgr->HasNewRewardVignetteFestival();
+    }
+    if (!mFestivalReward) {
+        TheBandDirector->LoadVenue(mVenue, kLoadStayBack);
+        mFestivalReward = false;
+    }
 }
 
 void MetaPerformer::LoadFestival() {
