@@ -154,7 +154,7 @@ SampleInst ctor fix removed our only instantiation of it (masked_equal −1).
 files: configgen, map and source. Both legs were read at a split fixed point (0 extra re-splits)
 on `name_check`. Leg B recompiled 155 TUs. Result:
 `~/tmp/w16hs/ab_result.json` (run dir
-`~/tmp/wt-w16-hs-ab/.ab_measure_runs/20260930-185330-branch-1222033/`; tree restore verified).
+archived to `~/tmp/w16hs/ab_run/20260930-185330-branch-1222033/` before the scratch worktree was removed; tree restore verified).
 
 | | leg A | leg B | Δ |
 |---|---:|---:|---:|
