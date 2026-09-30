@@ -91,8 +91,10 @@ Symbol CampaignGoalsLeaderboardPanel::GetGoalUnits() const {
         Accomplishment *pGoal = TheAccomplishmentMgr->GetAccomplishment(mGoal);
         MILO_ASSERT(pGoal, 0x94);
         return pGoal->GetUnitsToken(0);
-    } else
+    } else {
+        static Symbol fans("fans");
         return fans;
+    }
 }
 
 const char *CampaignGoalsLeaderboardPanel::GetGoalIcon() const {
