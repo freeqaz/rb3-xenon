@@ -612,18 +612,14 @@ void GemManager::SetupGems(int startTick) {
                 if (gem.IsRealGuitar()) {
                     RGTrill trill;
                     songData->GetRGTrillAtTick(trackNum, GetLoopTick(gem.mTick), trill);
-                    nextFretForTrill = trill.mFrets[0];
-                    if (gem.GetFret() == trill.mFrets[0]) {
-                        nextFretForTrill = trill.mFrets[1];
-                    }
+                    nextFretForTrill = (signed char)gem.GetFret() == trill.mFrets[0]
+                        ? trill.mFrets[1]
+                        : trill.mFrets[0];
                     trillString = gem.GetLowestString();
                 } else {
                     songData->GetTrillSlotsAtTick(trackNum, GetLoopTick(gem.mTick), trillSlots);
-                    int slotIdx = gem.GetSlot();
-                    nextSlotForTrill = trillSlots.first;
-                    if (slotIdx == nextSlotForTrill) {
-                        nextSlotForTrill = trillSlots.second;
-                    }
+                    nextSlotForTrill = gem.GetSlot() == trillSlots.first ? trillSlots.second
+                                                                         : trillSlots.first;
                 }
                 arrhythmicEndTick = otherSlot;
                 MILO_ASSERT(inTrill == false, 0x3EE);
