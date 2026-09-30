@@ -426,6 +426,9 @@ void OvershellSlot::ToggleHiHatPedal() {
 }
 
 void OvershellSlot::ToggleCymbal(Symbol s) {
+    static Symbol overshell_yellow_cym("overshell_yellow_cym");
+    static Symbol overshell_blue_cym("overshell_blue_cym");
+    static Symbol overshell_green_cym("overshell_green_cym");
     unsigned int cymBit = 0;
     if (s == overshell_yellow_cym)
         cymBit = 4;
@@ -947,17 +950,17 @@ void OvershellSlot::AttemptToggleAutoVocals() {
     if (MetaPerformer::Current()) {
         BandUser *pUser = GetUser();
         MILO_ASSERT(pUser->IsLocal(), 0x715);
+        static Symbol mod_auto_vocals("mod_auto_vocals");
         if (TheModifierMgr->IsModifierActive(mod_auto_vocals)) {
             if (mOvershell->IsNonVocalistInVocalsSlot() || mInGame) {
                 pUser->SetOvershellSlotState(kState_AutoVocalsDenial);
             } else
                 TheModifierMgr->DisableAutoVocals();
         } else {
-            bool b1 = false;
-            if (mBandUserMgr->GetNumLocalParticipants() == 1
-                && pUser->GetControllerType() == 2)
-                b1 = true;
+            bool b1 = mBandUserMgr->GetNumLocalParticipants() == 1
+                && pUser->GetControllerType() == 2;
             if (mOvershell->IsAutoVocalsAllowed() && !b1) {
+                static Symbol auto_vocals_confirm("auto_vocals_confirm");
                 TheUIEventMgr->TriggerEvent(auto_vocals_confirm, nullptr);
             } else
                 pUser->SetOvershellSlotState(kState_AutoVocalsDenial);
