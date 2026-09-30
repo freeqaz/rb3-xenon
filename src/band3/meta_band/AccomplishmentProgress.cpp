@@ -731,7 +731,32 @@ void AccomplishmentProgress::SendHardCoreStatusUpdateToRockCentral() {
     SetHardCoreStatusUpdatePending(true);
 }
 
-void AccomplishmentProgress::HandlePendingGamerRewards() {}
+void AccomplishmentProgress::HandlePendingGamerRewards() {
+    // TU5 (retail fn_8258FE88): retry every award write that never went
+    // pending. The Wii build had no async award path, so this is rebuilt from
+    // retail bytes; the avatar asset is a stack copy, not status->mAsset.
+    for (std::list<GamerAwardStatus *>::iterator it = mGamerAwardStatusList.begin();
+         it != mGamerAwardStatusList.end();
+         ++it) {
+        GamerAwardStatus *status = *it;
+        if (!status->unk10) {
+            DWORD res;
+            if (status->unkc == 1) {
+                res = XUserAwardGamerPicture(
+                    mParentProfile->GetPadNum(), status->unk8, 0, &status->mOverlapped
+                );
+            } else if (status->unkc == 2) {
+                XUSER_AVATARASSET asset;
+                asset.dwUserIndex = mParentProfile->GetPadNum();
+                asset.dwAwardId = status->unk8;
+                res = XUserAwardAvatarAssets(1, &asset, &status->mOverlapped);
+            } else
+                continue;
+            if (res == ERROR_IO_PENDING)
+                status->unk10 = true;
+        }
+    }
+}
 
 int AccomplishmentProgress::GetNumCompleted() const { return mAccomplishments.size(); }
 
