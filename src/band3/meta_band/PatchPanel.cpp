@@ -538,8 +538,8 @@ inline void StickerProvider::SetStickers(std::vector<PatchSticker *> *stickers, 
         mat->Copy(mStickerMat, kCopyDeep);
         sticker->SetIconOnMat(mat);
         float scaleHW = 1.0f, scaleWH = 1.0f;
-        float h = sticker->unk1c;
         float w = sticker->unk18;
+        float h = sticker->unk1c;
         if (w > h) scaleWH = w / h;
         if (!(w > h)) scaleHW = h / w;
         Transform tf;
