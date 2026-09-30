@@ -12477,11 +12477,11 @@
   {
    "name": "$?5UCharInterestState",
    "address": "0x8238a570",
-   "survivor": "??$?5UCharInterestState@CharEyes@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@UCharInterestState@CharEyes@@@@@Z",
+   "survivor": "??$?5UCharInterestState@CharEyes@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@UCharInterestState@CharEyes@@@@@Z",
    "folded": [
-    "??$?5UCharInterestState@CharEyes@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@UCharInterestState@CharEyes@@@@@Z"
+    "??$?5UCharInterestState@CharEyes@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@UCharInterestState@CharEyes@@@@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "evidence": "Survivor respelled 2026-09-30 (lane W17-BSR): BinStreamRev has no retail type descriptor (0 x .?AVBinStreamRev@@ in band.exe) and retail's body takes the raw stream, so the BinStream spelling is the retail name; the equivalence itself is unchanged. ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
   },
   {
    "name": "_GCharGuitarString",
@@ -12658,11 +12658,11 @@
   {
    "name": "$?5UIKTarget",
    "address": "0x82399288",
-   "survivor": "??$?5UIKTarget@CharIKHand@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@UIKTarget@CharIKHand@@@@@Z",
+   "survivor": "??$?5UIKTarget@CharIKHand@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@UIKTarget@CharIKHand@@@@@Z",
    "folded": [
-    "??$?5UIKTarget@CharIKHand@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@UIKTarget@CharIKHand@@@@@Z"
+    "??$?5UIKTarget@CharIKHand@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@UIKTarget@CharIKHand@@@@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "evidence": "Survivor respelled 2026-09-30 (lane W17-BSR): BinStreamRev has no retail type descriptor (0 x .?AVBinStreamRev@@ in band.exe) and retail's body takes the raw stream, so the BinStream spelling is the retail name; the equivalence itself is unchanged. ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
   },
   {
    "name": "$__destroy_range",
@@ -12772,11 +12772,11 @@
   {
    "name": "$?5VHide",
    "address": "0x823a2200",
-   "survivor": "??$?5VHide@CharMeshHide@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@VHide@CharMeshHide@@@@@Z",
+   "survivor": "??$?5VHide@CharMeshHide@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@VHide@CharMeshHide@@@@@Z",
    "folded": [
-    "??$?5VHide@CharMeshHide@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@VHide@CharMeshHide@@@@@Z"
+    "??$?5VHide@CharMeshHide@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@VHide@CharMeshHide@@@@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "evidence": "Survivor respelled 2026-09-30 (lane W17-BSR): BinStreamRev has no retail type descriptor (0 x .?AVBinStreamRev@@ in band.exe) and retail's body takes the raw stream, so the BinStream spelling is the retail name; the equivalence itself is unchanged. ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
   },
   {
    "name": "_GCharPosConstraint",
@@ -17167,9 +17167,9 @@
   {
    "name": "$?5V?$ObjOwnerPtr",
    "address": "0x823dcde0",
-   "survivor": "??$?5V?$ObjOwnerPtr@VWaypoint@@@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@V?$ObjOwnerPtr@VWaypoint@@@@@@@Z",
+   "survivor": "??$?5V?$ObjOwnerPtr@VWaypoint@@@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@V?$ObjOwnerPtr@VWaypoint@@@@@@@Z",
    "folded": [],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "evidence": "Survivor respelled 2026-09-30 (lane W17-BSR): BinStreamRev has no retail type descriptor (0 x .?AVBinStreamRev@@ in band.exe) and retail's body takes the raw stream, so the BinStream spelling is the retail name; the equivalence itself is unchanged. ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
    "withdrawn": [
     {
      "spelling": "??$?5V?$ObjOwnerPtr@VWaypoint@@@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@V?$ObjOwnerPtr@VWaypoint@@@@@@@Z",
@@ -83583,11 +83583,11 @@
   {
    "name": "$?5UWeightContext",
    "address": "0x823d80e8",
-   "survivor": "??$?5UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@@YAAAVBinStreamRev@@AAV0@AAV?$list@UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "survivor": "??$?5UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$list@UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@@Z",
    "folded": [
-    "??$?5UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$list@UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@@Z"
+    "??$?5UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@@YAAAVBinStreamRev@@AAV0@AAV?$list@UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@@Z"
    ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+   "evidence": "Survivor respelled 2026-09-30 (lane W17-BSR): BinStreamRev has no retail type descriptor (0 x .?AVBinStreamRev@@ in band.exe) and retail's body takes the raw stream, so the BinStream spelling is the retail name; the equivalence itself is unchanged. ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
    "name": "$PropSync",
@@ -88254,11 +88254,11 @@
   {
    "name": "shr_UEyeDesc_CharEyes",
    "address": "0x8238a450",
-   "survivor": "??$?5UEyeDesc@CharEyes@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@UEyeDesc@CharEyes@@@@@Z",
+   "survivor": "??$?5UEyeDesc@CharEyes@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@UEyeDesc@CharEyes@@@@@Z",
    "folded": [
-    "??$?5UEyeDesc@CharEyes@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@UEyeDesc@CharEyes@@@@@Z"
+    "??$?5UEyeDesc@CharEyes@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@UEyeDesc@CharEyes@@@@@Z"
    ],
-   "evidence": "W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x8238a450). \"ours\" spelling ??$?5UEyeDesc@CharEyes@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@UEyeDesc@CharEyes@@@@@Z is a template/spelling twin of survivor ??$?5UEyeDesc@CharEyes@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@UEyeDesc@CharEyes@@@@@Z at retail address 0x8238a450. FLAT T1 PROVEN directly -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 4 named relocation(s) matched at FLAT T1 (no chase recursion required), 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 1084 B (1084 B honest) across ['default/CharEyes'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md."
+   "evidence": "Survivor respelled 2026-09-30 (lane W17-BSR): BinStreamRev has no retail type descriptor (0 x .?AVBinStreamRev@@ in band.exe) and retail's body takes the raw stream, so the BinStream spelling is the retail name; the equivalence itself is unchanged. W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x8238a450). \"ours\" spelling ??$?5UEyeDesc@CharEyes@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@UEyeDesc@CharEyes@@@@@Z is a template/spelling twin of survivor ??$?5UEyeDesc@CharEyes@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@UEyeDesc@CharEyes@@@@@Z at retail address 0x8238a450. FLAT T1 PROVEN directly -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 4 named relocation(s) matched at FLAT T1 (no chase recursion required), 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 1084 B (1084 B honest) across ['default/CharEyes'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md."
   },
   {
    "name": "PropSync_Flow",
