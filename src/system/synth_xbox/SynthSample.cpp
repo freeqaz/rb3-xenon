@@ -23,7 +23,11 @@
 
 
 void *SampleAlloc(int size) {
+#ifdef HX_NATIVE
     void *ret = PhysicalAllocTracked(size, 4, 0, 0, "SampleData(phys)");
+#else
+    void *ret = PhysicalAllocTracked(size, 4, "SampleData(phys)");
+#endif
     MILO_ASSERT(ret, 0x19);
     return ret;
 }

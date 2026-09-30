@@ -432,6 +432,18 @@ void *PhysicalAlloc(int size) {
     return ptr;
 }
 
+// Retail 0x82273350 (100 bytes) is PhysicalAllocTracked, although the map
+// used to name it ??1CXLrcTransport@@QAA@XZ (a BinDiff structural hit; DC3's
+// ~CXLrcTransport is a 16-byte `vptr = ...; b Close`). Its three retail
+// callers -- 0x82734C50 (0x404, "Tex(phys)"), 0x82735074 (LiveCameraInput's
+// "Tex(phys)") and 0x82B6AC44 ("XMABuffer(phys)") -- set up r3/r4/r5 only, and
+// the body forwards the incoming r5 to MemTrackAlloc as its name, so retail's
+// signature is (size, alignment, name): the file/line pair is dev-only, like
+// MemTrackAlloc's (see MemMgr.h). The body is XPhysicalAlloc(size, -1, 0,
+// alignment) -> XPhysicalSize(ptr) -> gPhysicalUsage += -> MemTrackAlloc, with
+// NO null test and no MemAllocFailed call. The failure branch and file/line are
+// kept for the native build only.
+#ifdef HX_NATIVE
 void *PhysicalAllocTracked(unsigned long size, unsigned long alignment, const char *file, int line, const char *name) {
     int allocSize = 0;
     void *ptr = XPhysicalAlloc(size, -1, 0, alignment);
@@ -443,14 +455,18 @@ void *PhysicalAllocTracked(unsigned long size, unsigned long alignment, const ch
             MemAllocFailed(size, true);
         }
     }
-#ifdef HX_NATIVE
     MemTrackAlloc(size, allocSize, name, ptr, false, 0, file, line);
-#else
-    // Retail's fn_82273350 sets up r3..r8 only. See MemMgr.h.
-    MemTrackAlloc(size, allocSize, name, ptr, false, 0);
-#endif
     return ptr;
 }
+#else
+void *PhysicalAllocTracked(unsigned long size, unsigned long alignment, const char *name) {
+    void *ptr = XPhysicalAlloc(size, -1, 0, alignment);
+    int allocSize = XPhysicalSize(ptr);
+    gPhysicalUsage += allocSize;
+    MemTrackAlloc(size, allocSize, name, ptr, false, 0);
+    return ptr;
+}
+#endif
 
 // Retail 0x822733B8 is 84 bytes and makes THREE calls -- XPhysicalSize,
 // XPhysicalFree and MemTrackFree.  Ours was 76 bytes / two calls (no

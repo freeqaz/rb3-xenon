@@ -541,7 +541,7 @@
  "0x82272e68": "main",
  "0x82272ee0": "?ForceLinkXMemFuncs@@YAHXZ",
  "0x822732c0": "XMemFree",
- "0x82273350": "??1CXLrcTransport@@QAA@XZ",
+ "0x82273350": "?PhysicalAllocTracked@@YAPAXKKPBD@Z",
  "0x822733b8": "?PhysicalFreeTracked@@YAXPAXPBDH1@Z",
  "0x82273410": "?PhysicalUsage@@YAHXZ",
  "0x82273420": "?PhysicalAlloc@@YAPAXH@Z",
