@@ -477,7 +477,8 @@ void MetaPanel::UpdateMusicMuteState() {
 }
 
 DataNode MetaPanel::OnMsg(const CurrentScreenChangedMsg &msg) {
-    UpdateMetaMusic(msg.GetScreen());
+    Symbol screen = msg.GetScreen();
+    UpdateMetaMusic(screen);
     return DataNode(kDataUnhandled, 0);
 }
 
