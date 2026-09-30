@@ -95,17 +95,14 @@ JsonArray *JsonConverter::NewArray() {
 }
 
 JsonObject *JsonConverter::LoadFromString(const String &str) {
+#ifdef HX_NATIVE
     printbuf *buf = printbuf_new();
     if (!buf) {
         return nullptr;
     }
     printbuf_memappend(buf, str.c_str(), str.length());
     json_object *obj = json_tokener_parse(buf->buf);
-#ifdef HX_NATIVE
     if (!obj) {
-#else
-    if ((int)obj > 0xfffff060) { // ???
-#endif
         printbuf_free(buf);
         return nullptr;
     }
@@ -116,6 +113,21 @@ JsonObject *JsonConverter::LoadFromString(const String &str) {
     json_object_get(obj);
     mObjects.push_back(temp);
     return jObj;
+#else
+    // Retail (fn_82B82440): the object is allocated first, the parse result is
+    // stored without an error check, and the length is a strlen of the text.
+    JsonObject *jObj = new JsonObject();
+    printbuf *buf = printbuf_new();
+    if (!buf) {
+        return nullptr;
+    }
+    printbuf_memappend(buf, str.c_str(), strlen(str.c_str()));
+    jObj->Set(json_tokener_parse(buf->buf));
+    printbuf_free(buf);
+    jObj->AddRef();
+    mObjects.push_back(jObj);
+    return jObj;
+#endif
 }
 
 JsonObject *JsonConverter::GetValue(JsonArray *inArray, int inIdx) {
