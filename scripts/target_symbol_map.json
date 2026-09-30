@@ -4978,11 +4978,11 @@
  "0x82381100": "??$PropSync@VBeatEvent@CharClip@@@@YA_NAAV?$vector@VBeatEvent@CharClip@@V?$StlNodeAlloc@VBeatEvent@CharClip@@@stlpmtx_std@@@stlpmtx_std@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x82381278": "?SyncProperty@CharClip@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x82382358": "?resize@?$vector@VBeatEvent@CharClip@@V?$StlNodeAlloc@VBeatEvent@CharClip@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVBeatEvent@CharClip@@@Z",
- "0x823823c8": "??$?5V?$Key@M@@V?$StlNodeAlloc@V?$Key@M@@@stlpmtx_std@@@@YAAAVBinStreamRev@@AAV0@AAV?$vector@V?$Key@M@@V?$StlNodeAlloc@V?$Key@M@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x823823c8": "??$?5V?$Key@M@@V?$StlNodeAlloc@V?$Key@M@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@V?$Key@M@@V?$StlNodeAlloc@V?$Key@M@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x82382438": "?resize@?$vector@UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUBone@CharBones@@@Z",
  "0x823824b8": "??0CharClip@@IAA@XZ",
  "0x823827c8": "?Copy@CharClip@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
- "0x823829d0": "??$?5UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@@YAAAVBinStreamRev@@AAV0@AAV?$vector@UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x823829d0": "??$?5UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x82382a50": "?NewObject@CharClip@@SAPAVObject@Hmx@@XZ",
  "0x82383280": "?Init@CharClip@@SAXXZ",
  "0x823832d8": "?ForceBlink@CharEyes@@QAAXXZ",
@@ -31253,5 +31253,7 @@
  "0x823c8088": "?PollDeps@CharTransCopy@@UAAXAAV?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@0@Z",
  "0x823c8128": "?DrawShowing@CharTransDraw@@UAAXXZ",
  "0x8233f5a0": "??$PropSync@VHighlightObject@@@@YA_NAAV?$ObjVector@VHighlightObject@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
- "0x8233f4e0": "?Init@BandList@@SAXXZ"
+ "0x8233f4e0": "?Init@BandList@@SAXXZ",
+ "0x82382ac8": "?Load@CharClip@@UAAXAAVBinStream@@@Z",
+ "0x8237e258": "?Load@Transitions@CharClip@@QAAXAAVBinStream@@@Z"
 }

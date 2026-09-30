@@ -88968,6 +88968,15 @@
     "??$__copy_ptrs@PBUPose@RndMorph@@PAU12@@stlpmtx_std@@YAPAUPose@RndMorph@@PBU12@0PAU12@ABU__false_type@0@@Z"
    ],
    "evidence": "W17-PRAC 2026-09-30: retail 0x82483a88 (92 B) is __copy_ptrs<RndMorph::Pose*> (map-named, Morph.cpp). Our vector<RndMorph::Pose>::operator= (retail 0x824843f0, renamed from vector<DrivenPropertyEntry> in the same commit) calls the const-source spelling __copy_ptrs<const RndMorph::Pose*> at +0xa0/+0xc4 where retail calls this body. tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED only on relocation names, CHASED T1 PROVEN (92 B vs 92 B)."
+  },
+  {
+   "name": "w17bsr_0x823823c8",
+   "address": "0x823823c8",
+   "survivor": "??$?5V?$Key@M@@V?$StlNodeAlloc@V?$Key@M@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@V?$Key@M@@V?$StlNodeAlloc@V?$Key@M@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "folded": [
+    "??$?5V?$Key@M@@V?$StlNodeAlloc@V?$Key@M@@@stlpmtx_std@@@@YAAAVBinStreamRev@@AAV0@AAV?$vector@V?$Key@M@@V?$StlNodeAlloc@V?$Key@M@@@stlpmtx_std@@@stlpmtx_std@@@Z"
+   ],
+   "evidence": "W17-BSR 2026-09-30: spelling-twin adjudication. The folded spelling(s) are the BinStreamRev instantiation of the same template body as the survivor; BinStreamRev does not exist in RB3 (0 x .?AVBinStreamRev@@ in band.exe), so retail has only the survivor. tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED only on relocation target names (masked bodies and sizes equal), CHASED T1 PROVEN -- every differing relocation slot is an already-proven fold (SLOT-FOLD-OK). Kept so not-yet-converted callers that still spell the BinStreamRev twin stay forgiven."
   }
  ]
 }
