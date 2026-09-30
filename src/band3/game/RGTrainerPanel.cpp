@@ -517,27 +517,20 @@ Symbol RGTrainerPanel::RGStringToken(int str, bool abbrev) {
 
 void RGTrainerPanel::HandleLegendLefty(bool b) {
     mLefty = mGemPlayer->GetUser()->GetGameplayOptions()->GetLefty();
-    float f2, f12;
+    float start, end;
     if (mLefty) {
-        f12 = 1.0f;
-        f2 = 0.0f;
+        start = 0.0f;
+        end = 1.0f;
     } else {
-        f2 = 1.0f;
-        f12 = 0.0f;
+        start = 1.0f;
+        end = 0.0f;
     }
     RndDir *legendDir = mDir->Find<RndDir>("chord_legend", true);
     RndAnimatable *leftyAnim = legendDir->Find<RndAnimatable>("lefty_flip.anim", true);
-    // TODO(W8-argswap): asm diff suggests the decomp transcribed both calls with
-    // their float args duplicated/swapped; retail asm implies
-    //   Animate(f12, f2, kTaskUISeconds, 0, 0)
-    //   SetFrame(f2,  1.0f)
-    // The current 97.7% match hides the mistranscription. Not visible on the
-    // W3c boot path (Pro/Real-Guitar trainer is not entered); fix when the
-    // RG trainer panel is exercised. See docs/plans/web-port/W8_MWCC_ARG_SWAP.md.
     if (b) {
-        leftyAnim->Animate(f12, f12, kTaskUISeconds, 0, 0);
+        leftyAnim->Animate(start, end, kTaskUISeconds, 0, 0);
     } else {
-        leftyAnim->SetFrame(f12, f2);
+        leftyAnim->SetFrame(end, 1.0f);
     }
     GemTrack *track = dynamic_cast<GemTrack *>(mGemPlayer->GetUser()->GetTrack());
     track->UpdateLeftyFlip();
