@@ -218,7 +218,6 @@
  "0x826ab020": "?_M_erase@?$vector@VGameGem@@V?$StlNodeAlloc@VGameGem@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVGameGem@@PAV3@0ABU__false_type@2@@Z",
  "0x824b0bc8": "??$__uninitialized_fill_n@PAUSpotlightEntry@LightPreset@@IU12@@stlpmtx_std@@YAPAUSpotlightEntry@LightPreset@@PAU12@IABU12@ABU__false_type@0@@Z",
  "0x8271b9a0": "??$__uninitialized_copy@PBVSfxMap@@PAV1@@stlpmtx_std@@YAPAVSfxMap@@PBV1@0PAV1@ABU__false_type@0@@Z",
- "0x824cb940": "??0PresetOverride@WorldDir@@QAA@PAVObject@Hmx@@@Z",
  "0x824cb860": "??0MatOverride@WorldDir@@QAA@PAVObject@Hmx@@@Z",
  "0x824e42f0": "??0CharData@WorldCrowd@@QAA@PAVObject@Hmx@@@Z",
  "0x82524de0": "?JoypadStageKitSetRaw@@YAXHH@Z",
