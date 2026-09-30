@@ -3,7 +3,8 @@
 
 class ProTrainerPanel : public GemTrainerPanel {
 public:
-    ProTrainerPanel() {}
+    // NO constructor declared: an implicit ctor stores retail's literal 0 to the
+    // vtordisp slot (cf. GemTrainerLoopPanel).
     virtual DataNode Handle(DataArray *, bool);
     // NO destructor declared: retail ??1ProTrainerPanel (retail row fn_826AF*) has no derived
     // vptr-restore, which a user-declared `{}` dtor would emit (cf. GemTrainerLoopPanel).
