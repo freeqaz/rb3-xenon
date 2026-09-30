@@ -887,23 +887,20 @@ void BandSongMgr::ClearSongCacheNeedsWrite() {
 }
 
 void BandSongMgr::ReadCachedMetadataFromStream(BinStream &bs, int rev) {
+    // Retail builds one scratch metadata up front and reuses it to skip every
+    // entry that no longer fits.
+    BandSongMetadata scratch(this);
     int count;
     bs >> count;
     for (int i = 0; i < count; i++) {
         int i40;
         bs >> i40;
-        bool remove;
-        int maxCount;
-        do {
-            maxCount = mMaxSongCount;
-            if (maxCount <= GetCurSongCount())
+        while (GetCurSongCount() >= mMaxSongCount) {
+            if (!RemoveOldestCachedContent())
                 break;
-            remove = RemoveOldestCachedContent();
-        } while (remove);
-        maxCount = mMaxSongCount;
-        if (maxCount <= GetCurSongCount()) {
-            BandSongMetadata data(this);
-            data.Load(bs);
+        }
+        if (GetCurSongCount() >= mMaxSongCount) {
+            scratch.Load(bs);
         } else {
             BandSongMetadata *data = new BandSongMetadata(this);
             data->Load(bs);
