@@ -88555,7 +88555,7 @@
   {
    "name": "CVEIN1___adjust_heap",
    "address": "0x82346360",
-   "survivor": "??$__adjust_heap@PAPAVMoveDetector@@HPAV1@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@HHPAV1@UMoveDetectorCmp@@@Z",
+   "survivor": "??$__adjust_heap@PAPAVMeshVert@BandPatchMesh@@HPAV12@USortByPointer@@@stlpmtx_std@@YAXPAPAVMeshVert@BandPatchMesh@@HHPAV12@USortByPointer@@@Z",
    "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 3,
@@ -88572,8 +88572,19 @@
      "class": "INLINED_COMPARATOR_MISMATCH",
      "why": "our(S) and our(F) are the same size but EIGHT non-relocated words differ (0x20,0x24,0x28,0x2c,0x8c,0x94,0x98,0x9c). The comparator is inlined in both and reads a different member offset (`lwz rX,0(rY)` vs `lwz rX,40(rY)`), compares with different signedness (cmplw vs cmpw) and branches on a different CR bit. MoveDetectorCmp and Priority are different predicates.",
      "note": "Refuted WITHIN ONE BUILD on CONTENT, not on a cross-build size comparison (the instrument GROUNDED-1 got 7 of 8 wrong with, and which coff_bodies_ext.py's +8 EH-prefix artifact makes unusable). our(S) reproduces retail(S) on every non-relocated word, so our survivor instantiation is correct and the divergence is FORCED by the template argument. Do NOT re-add without positive fold evidence."
+    },
+    {
+     "spelling": "??$__adjust_heap@PAPAVMoveDetector@@HPAV1@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@HHPAV1@UMoveDetectorCmp@@@Z",
+     "lane": "W17-MVS 2026-09-30",
+     "class": "WRONG_SURVIVOR_IDENTITY",
+     "disposition": "survivor_reassigned"
     }
-   ]
+   ],
+   "repair": {
+    "class": "WRONG_SURVIVOR_IDENTITY",
+    "lane": "W17-MVS 2026-09-30",
+    "why": "0x82346360 is __adjust_heap<BandPatchMesh::MeshVert**, SortByPointer>. MoveDetector does not exist in RB3 (0 occurrences of 'MoveDetector', '.?AVMoveDetector' or 'HamMove' in retail), so the DC3 MoveDetectorCmp spelling cannot name any retail code; it reproduced retail's bytes only because MoveDetectorCmp and SortByPointer both inline to `lwz 0(p); lwz 0(r)` + unsigned compare. Its retail callers (__partial_sort 0x82348598, sort_heap 0x82347E18, __make_heap 0x823471A8) form a closed tree under sort 0x82349C58, whose only caller is 0x8234AE48 (WorkVerts::SetVertsAndFaces, `std::sort(unk10, SortByPointer())`). The genuine FileCache Priority family is a separate retail tree rooted at 0x82519F38 <- FileCache::EndSet. folded[] was already empty; this relabels the survivor to the map row, renamed and re-homed to BandPatchMesh.cpp with the rest of the family."
+   }
   },
   {
    "name": "CVEIN1_clear",
