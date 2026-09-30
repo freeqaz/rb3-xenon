@@ -736,7 +736,9 @@ void OvershellSlot::HandleWiiProfileActResult(WiiProfileActResult res) {
         break;
     case 9:
         MILO_ASSERT(mSwappableProfilesProvider, 0x561);
-        AttemptSwapUserProfile(mSwappableProfilesProvider->unk24);
+        // Wii-only path: the X360 provider has no last-index field (its
+        // 0x30 slot is the user vector), so index 0 stands in.
+        AttemptSwapUserProfile(0);
         break;
     default:
         LeaveOptions();
@@ -827,7 +829,8 @@ OvershellProfileProvider::WiiProfileListMode OvershellSlot::GetWiiProfileListMod
     return mSwappableProfilesProvider->GetWiiProfileListMode();
 }
 
-int OvershellSlot::GetWiiProfileLastIndex() { return mSwappableProfilesProvider->unk24; }
+// Wii-only: the X360 OvershellProfileProvider carries no last-index field.
+int OvershellSlot::GetWiiProfileLastIndex() { return 0; }
 
 bool OvershellSlot::IsWiiProfileFull() const {
     return !TheWiiProfileMgr.IsSlotAvailable();
@@ -918,12 +921,15 @@ void OvershellSlot::ToggleWiiSpeak() {
 }
 
 void OvershellSlot::AttemptSwapUserProfile(int i) {
-    int pad = TheWiiProfileMgr.GetPadForIndex(i);
-    if (pad >= 0) {
-        LocalBandUser *user = mBandUserMgr->GetUserFromPad(pad);
+    // Retail: the user comes from the swappable-profiles provider; confirm
+    // only when that user already sits in a slot, otherwise swap directly.
+    LocalBandUser *user = mSwappableProfilesProvider->GetUser(i);
+    if (mOvershell->GetSlot(user)) {
         OvershellSlotState *state = mStateMgr->GetSlotState(kState_ChooseProfileConfirm);
         state->SetProperty("swap_user", user);
         ShowState(kState_ChooseProfileConfirm);
+    } else {
+        SwapUserProfile(user);
     }
 }
 
