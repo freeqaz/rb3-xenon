@@ -35,4 +35,17 @@ is a real wrong-callee the alias was hiding and is recorded as measured.
 
 ## Measured
 
-(filled in after the A/B)
+`tools/ab_measure.py --from-dirty`, map class, forced re-split on both legs (leg B split=1,
+renamer_patched=1,834), both legs at a `symbols.txt` fixed point, 0 recompiles:
+
+| | leg A | leg B | Δ |
+|---|---|---|---|
+| matched_functions | 44,237 | 44,237 | **+0** |
+| masked_equal | 23,323 | 23,323 | **+0** |
+| honest | 20,914 | 20,914 | **+0** |
+| code% | 41.125480 | 41.125480 | **+0.000000** |
+| fuzzy | 50.507107 | 50.507107 | **+0.000000** |
+| units at 100% (mpn / fuzzy) | 201 / 177 | 201 / 177 | 0 / 0 |
+
+Prediction held exactly: neither withdrawal exposed a charge. The validator result is recorded in the
+merge commit (run on main after landing, with the push conditional on it).
