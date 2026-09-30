@@ -992,20 +992,20 @@ static void RotateByMultiply(const Hmx::Quat &a, const Hmx::Quat &b, Hmx::Quat &
 static void RotateByMultiplyUncompressed(
     const Hmx::Quat &a, const Hmx::Quat &b, Hmx::Quat &out
 ) {
+    float rw = a.w * b.w - a.x * b.x;
+    rw -= a.y * b.y;
+    rw -= a.z * b.z;
+    float rz = a.x * b.y;
+    rz += a.z * b.w;
+    rz += a.w * b.z;
+    rz -= a.y * b.x;
     float ry = a.z * b.x;
     ry += a.y * b.w;
     ry += a.w * b.y;
     ry -= a.x * b.z;
-    float rz = a.w * b.z;
-    rz += a.z * b.w;
-    rz += a.x * b.y;
-    rz -= a.y * b.x;
-    float rw = a.w * b.w - a.x * b.x;
-    rw -= a.y * b.y;
-    rw -= a.z * b.z;
-    float rx = a.x * b.w;
+    float rx = a.y * b.z;
+    rx += a.x * b.w;
     rx += a.w * b.x;
-    rx += a.y * b.z;
     rx -= a.z * b.y;
     out.Set(rx, ry, rz, rw);
 }
