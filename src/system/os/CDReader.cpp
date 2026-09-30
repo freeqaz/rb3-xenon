@@ -84,6 +84,7 @@ bool CDReadDone() {
 }
 
 int CDRead(int arkFile, int offset, int size, void *buffer) {
+#ifdef HX_NATIVE
     if (gFakeFileErrors || !UsingCD()) {
         gErrorCode = 0x45D;
         DiskErrorLoop();
@@ -108,6 +109,26 @@ int CDRead(int arkFile, int offset, int size, void *buffer) {
         }
         return 0;
     }
+#else
+    // RB3-360 retail: no fake-error/UsingCD prelude and no IO_INCOMPLETE case;
+    // a completed or pending read both record the pending file.
+    int err = ArkFilesInit();
+    if (err) {
+        return err;
+    }
+    u64 pos = (u64)offset << 0xB;
+    gOverlapped.OffsetHigh = pos >> 0x20;
+    gOverlapped.Offset = pos;
+    if (!ReadFile(gArkFiles[arkFile], buffer, size << 0xB, nullptr, &gOverlapped)) {
+        if (GetLastError() != ERROR_IO_PENDING) {
+            gErrorCode = GetLastError();
+            DiskErrorLoop();
+            return 1;
+        }
+    }
+    gPendingFile = arkFile;
+    return 0;
+#endif
 }
 
 bool CDReadExternal(void *&v, int i, u64 u) {
