@@ -948,6 +948,111 @@ DataNode Game::OnMsg(const ButtonDownMsg &msg) {
         if (pad >= 0 && pad < 4) {
             if (JoypadGetPadData(pad)->mType == kJoypadAnalog) {
                 ((int *)mUnkTU5GuidePitch)[pad]++;
+                // Tail decoded in docs/decomp/W16EH_BUTTONDOWNMSG_DECODE_AND_SHUTTLE_SETACTIVE_2026-09-16.md
+                // (retail 0x8267B808). Only the first press of an analog pad
+                // (counter == 1) acts, and only while nothing else holds the game.
+                if (!mOvershellWantsPause && !mRealtime
+                    && ((int *)mUnkTU5GuidePitch)[pad] == 1) {
+                    bool stopped = mMusicSpeed == 0.0f;
+                    switch (msg.GetButton()) {
+                    case kPad_L2: {
+                        static Message camToggle("audition_cam_toggle");
+                        TheGamePanel->Handle(camToggle, true);
+                        break;
+                    }
+                    case kPad_R2: {
+                        static Message deploy("deploy_if_possible");
+                        for (int i = 0; i < mAllActivePlayers.size(); i++) {
+                            mAllActivePlayers[i]->Handle(deploy, true);
+                        }
+                        break;
+                    }
+                    case kPad_DLeft: {
+                        float speed =
+                            mMusicSpeed == 0.25f ? 0.0f : mMusicSpeed * 0.5f;
+                        if (speed == 0.0f && !stopped) {
+                            mMusicSpeed = 0.0f;
+                            mGameWantsPause = true;
+                            UpdatePausedState(true, true, true);
+                        } else {
+                            SetMusicSpeed(speed);
+                        }
+                        break;
+                    }
+                    case kPad_DRight: {
+                        float speed = stopped ? 0.25f : mMusicSpeed * 2.0f;
+                        if (stopped) {
+                            mGameWantsPause = false;
+                            UpdatePausedState(true, false, true);
+                        }
+                        if (speed <= 2.0f) {
+                            SetMusicSpeed(speed);
+                        }
+                        break;
+                    }
+                    case kPad_DUp: {
+                        DataArray *vols =
+                            TheGamePanel->Property("audition_keyboard_synth_volumes", true)
+                                ->Array();
+                        mUnkTU5GuidePitch->unk10 =
+                            (mUnkTU5GuidePitch->unk10 + 1) % vols->Size();
+                        DirectInstrument *inst = TheGamePanel->GetDirectInstrument();
+                        int vol = vols->Int(mUnkTU5GuidePitch->unk10);
+                        if (vol == 0) {
+                            inst->Disable();
+                        } else {
+                            inst->Enable();
+                            inst->SetVolume(vol);
+                        }
+                        break;
+                    }
+                    case kPad_DDown: {
+                        int track = mUnkTU5GuidePitch->mGuidePitch->GetGuideTrack() + 1;
+                        if (track == TheSongDB->GetVocalNoteListCount()) {
+                            track = -1;
+                        }
+                        mUnkTU5GuidePitch->mGuidePitch->EnableGuideTrack(track);
+                        break;
+                    }
+                    case kPad_L1: {
+                        static float back = TheGamePanel->Property("audition_jump_back_ms", true)
+                                                ->Float();
+                        Jump(
+                            Max(TheTaskMgr.Seconds(TaskMgr::kRealTime) * 1000.0f - back,
+                                0.0f),
+                            true
+                        );
+                        if (stopped) {
+                            mGameWantsPause = false;
+                            UpdatePausedState(true, false, true);
+                            SetMusicSpeed(0.25f);
+                        }
+                        mUnkTU5GuidePitch->mGuidePitch->StopNote();
+                        break;
+                    }
+                    case kPad_R1: {
+                        static float fwd =
+                            TheGamePanel->Property("audition_jump_forward_ms", true)->Float();
+                        static float endBuffer =
+                            TheGamePanel->Property("audition_jump_end_buffer_ms", true)
+                                ->Float();
+                        float now = TheTaskMgr.Seconds(TaskMgr::kRealTime) * 1000.0f;
+                        float limit = TheSongDB->GetSongDurationMs() - endBuffer;
+                        if (now < limit) {
+                            Jump(Min(now + fwd, limit), true);
+                        }
+                        if (stopped) {
+                            mGameWantsPause = false;
+                            UpdatePausedState(true, false, true);
+                            SetMusicSpeed(0.25f);
+                        }
+                        mUnkTU5GuidePitch->mGuidePitch->StopNote();
+                        break;
+                    }
+                    default:
+                        break;
+                    }
+                }
             }
         }
     }
