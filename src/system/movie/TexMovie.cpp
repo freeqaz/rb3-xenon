@@ -250,6 +250,7 @@ void TexMovie::Reset() {
 
 bool TexMovie::IsEmpty() const { return sRoot.empty(); }
 
+#if defined(HX_NATIVE) || defined(__EMSCRIPTEN__)
 void TexMovie::DrawToTexture() {
     bool b = (mTex != nullptr && mTex->Width() && mTex->Height());
 
@@ -276,14 +277,21 @@ void TexMovie::DrawToTexture() {
             }
             mMovie.Draw(); // marks frame as consumed
         }
+#endif
+    }
+}
 #else
+void TexMovie::DrawToTexture() {
+    // RB3-360 retail (and rb3-Wii): gated on a set file, a texture, and a
+    // ready, open movie -- not on the texture's dimensions.
+    if (!sRoot.empty() && mTex && mMovie.Ready() && mMovie.IsOpen()) {
         mTex->MakeDrawTarget();
         mMovie.Draw();
         mTex->FinishDrawTarget();
         TheRnd.MakeDrawTarget();
-#endif
     }
 }
+#endif
 
 void TexMovie::SetFile(FilePath const &fp) {
     mMovie.End();
