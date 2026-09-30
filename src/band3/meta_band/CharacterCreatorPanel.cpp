@@ -156,6 +156,12 @@ void CharacterCreatorPanel::Unload() {
 LocalBandUser *CharacterCreatorPanel::GetUser() { return mClosetMgr->mUser; }
 
 void CharacterCreatorPanel::AddGridThumbnails(Symbol s) {
+    static Symbol shape("shape");
+    static Symbol chin("chin");
+    static Symbol eye("eye");
+    static Symbol eyebrows("eyebrows");
+    static Symbol nose("nose");
+    static Symbol mouth("mouth");
     AddGridThumbnails(s, shape);
     AddGridThumbnails(s, chin);
     AddGridThumbnails(s, eye);
@@ -202,16 +208,22 @@ void CharacterCreatorPanel::SetName(const char *name) {
 const char *CharacterCreatorPanel::GetName() { return mCharacter->GetCharacterName(); }
 
 const char *CharacterCreatorPanel::GetDefaultVKName() {
-    GetName();
-    if (mGender == male) {
-        Symbol random_name =
-            TheNameGenerator->GetRandomNameFromList(character_names_male);
-        return Localize(random_name, 0);
-    } else {
-        Symbol random_name =
-            TheNameGenerator->GetRandomNameFromList(character_names_female);
-        return Localize(random_name, 0);
+    const char *name = GetName();
+    if (strcmp(name, "") == 0) {
+        static Symbol male("male");
+        if (mGender == male) {
+            static Symbol character_names_male("character_names_male");
+            Symbol random_name =
+                TheNameGenerator->GetRandomNameFromList(character_names_male);
+            name = Localize(random_name, 0);
+        } else {
+            static Symbol character_names_female("character_names_female");
+            Symbol random_name =
+                TheNameGenerator->GetRandomNameFromList(character_names_female);
+            name = Localize(random_name, 0);
+        }
     }
+    return name;
 }
 
 void CharacterCreatorPanel::SetGender(Symbol gender) {
@@ -432,6 +444,11 @@ int CharacterCreatorPanel::GetSkinTone() {
 }
 
 void CharacterCreatorPanel::RandomizeFace() {
+    static Symbol shape("shape");
+    static Symbol chin("chin");
+    static Symbol eye("eye");
+    static Symbol nose("nose");
+    static Symbol mouth("mouth");
     BandCharDesc *desc = mPreviewDesc;
     desc->mHead.mShape = RandomInt(0, BandHeadShaper::GetCount(shape));
     desc->mHead.mChin = RandomInt(0, BandHeadShaper::GetCount(chin));
