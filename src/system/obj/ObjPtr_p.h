@@ -103,7 +103,8 @@ ObjRefConcrete<T1, T2>::~ObjRefConcrete() {
 // to exist (RndParticleSys, BandIKEffector, RndGroup, RndCam here; BandCharDesc
 // in bandobj/BandCharacter.h; RndEnvAnim in rndobj/EnvAnim.h), each releasing
 // with mOwner instead of `this`. On retail bytes every one of the 91
-// ~ObjPtr<T,ObjectDir> bodies -- which is what this dtor compiles to --
+// ~ObjPtr<T,ObjectDir> bodies -- which this dtor compiled to until W17-OPTR
+// gave ObjPtr its own (see ~ObjPtr below) --
 // releases `this`, the six T included (RndCam 0x822e43c0, RndGroup 0x822bbbd0,
 // BandIKEffector 0x822c2348, RndParticleSys 0x8244f898), and retail has no
 // ObjPtr<BandCharDesc> or ObjPtr<RndEnvAnim> at all. Four of them had been
@@ -114,7 +115,7 @@ ObjRefConcrete<T1, T2>::~ObjRefConcrete() {
 // mapped today are the `this` bodies above, which their specialisations could
 // never match. With ObjOwnerPtr on ObjRefOwner directly the owner dtors compile
 // correctly, and the specialisations only made ObjPtr<T> release the wrong
-// ring node.
+// ring node. (The addresses above are all named ~ObjPtr<T> in the map now.)
 
 template <class T1, class T2>
 void ObjRefConcrete<T1, T2>::SetObjConcrete(T1 *obj) {
