@@ -39,7 +39,7 @@ class LockResponseMsg : public NetMessage {
 public:
     LockResponseMsg() {}
     LockResponseMsg(bool, LocalBandMachine *, const char *);
-    virtual ~LockResponseMsg() {}
+    // implicit dtor (retail: no own-vptr store)
     virtual void Save(BinStream &) const;
     virtual void Load(BinStream &);
     virtual void Dispatch();
@@ -57,7 +57,7 @@ class EndLockMsg : public NetMessage {
 public:
     EndLockMsg() {}
     EndLockMsg(const char *, bool);
-    virtual ~EndLockMsg() {}
+    // implicit dtor (retail: no own-vptr store)
     virtual void Save(BinStream &) const;
     virtual void Load(BinStream &);
     virtual void Dispatch();

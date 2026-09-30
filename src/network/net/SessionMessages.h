@@ -84,7 +84,7 @@ class NewUserMsg : public SessionMsg {
 public:
     NewUserMsg() {}
     NewUserMsg(const User *);
-    virtual ~NewUserMsg() {}
+    // implicit dtor (retail: no own-vptr store)
     virtual void Save(BinStream &) const;
     virtual void Load(BinStream &);
     NETMSG_BYTECODE(NewUserMsg);
@@ -117,7 +117,7 @@ class AddUserRequestMsg : public SessionMsg {
 public:
     AddUserRequestMsg() {}
     AddUserRequestMsg(const User *);
-    virtual ~AddUserRequestMsg() {}
+    // implicit dtor (retail: no own-vptr store)
     virtual void Save(BinStream &) const;
     virtual void Load(BinStream &);
     NETMSG_BYTECODE(AddUserRequestMsg);
@@ -252,7 +252,7 @@ class DataArrayMsg : public NetMessage {
 public:
     DataArrayMsg() {}
     DataArrayMsg(DataArray *);
-    virtual ~DataArrayMsg() {}
+    // implicit dtor (retail: no own-vptr store)
     virtual void Save(BinStream &) const;
     virtual void Load(BinStream &);
     virtual void Dispatch();
