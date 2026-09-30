@@ -1407,31 +1407,31 @@ END_LOADS
 
 void CamShot::StartAnim() {
     CAMERA_LOG("** %s CamShot::StartAnim() start\n", Name());
-    START_AUTO_TIMER("cam_switch");
+    // RB3 retail (0x824C1620): HandleType, not Export; the crowd dir is
+    // dynamic_cast<WorldDir *>(Dir()) and there is no HamWardrobe call.
     static Message msg("start_shot");
-    Export(msg, true);
-    WorldDir *crowdDir = GetCrowdDir();
+    HandleType(msg);
+    WorldDir *crowdDir = dynamic_cast<WorldDir *>(Dir());
     if (crowdDir) {
         crowdDir->SetCrowds(mCrowds);
-        if (TheHamWardrobe) {
-            TheHamWardrobe->ForceCrowdAnimationStart(mCrowdStateOverride);
-        }
     }
+    mShotStarted = true;
     mShotOver = false;
     mLastNext = 0;
     mLastPrev = 0;
-    mShotStarted = true;
-    mLastDesiredShakeOffset.Zero();
     mLastShakeOffset.Zero();
+    mLastDesiredShakeOffset.Zero();
     mShakeVelocity.Zero();
-    mLastDesiredShakeAngOffset.Zero();
     mLastShakeAngOffset.Zero();
+    mLastDesiredShakeAngOffset.Zero();
     mShakeAngVelocity.Zero();
-    StartAnims(mAnims);
-    for (int i = 0; i != mCrowds.size(); i++) {
-        CamShotCrowd &cur = mCrowds[i];
-        if (cur.mCrowd) {
-            cur.mCrowd->Set3DCharList(cur.m3DCharIndices, cur.mCamShot);
+    FOREACH (it, mAnims) {
+        (*it)->StartAnim();
+    }
+    for (unsigned int i = 0; i != mCrowds.size(); i++) {
+        CamShotCrowd *cur = &mCrowds[i];
+        if (cur->mCrowd) {
+            cur->mCrowd->Set3DCharList(cur->m3DCharIndices, cur->mCamShot);
         }
     }
     RndVelocityBuffer::Singleton().ResetFrame();
@@ -1442,12 +1442,13 @@ void CamShot::StartAnim() {
 void CamShot::EndAnim() {
     CAMERA_LOG("** %s CamShot::EndAnim() start\n", Name());
     UnHide();
-    if (TheHamWardrobe) {
-        TheHamWardrobe->ForceCrowdAnimationEnd();
-    }
+    // RB3 retail (0x824C1870): no HamWardrobe call, HandleType not Export,
+    // and the EndAnim loop is inline.
     static Message msg("stop_shot");
-    Export(msg, true);
-    EndAnims(mAnims);
+    HandleType(msg);
+    FOREACH (it, mAnims) {
+        (*it)->EndAnim();
+    }
     CAMERA_LOG("** %s CamShot::EndAnim() stop\n", Name());
 }
 
