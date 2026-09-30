@@ -37,7 +37,6 @@ static std::map<std::pair<Symbol, Symbol>, bool> sSuperClassMap;
 // Retail keeps the *current* dir revision in a mutable TU-static (16-bit,
 // read with `lhz` + unsigned compare) rather than re-reading `d.rev` off the
 // BinStreamRev — same shape as sEventTriggerRev in rndobj/EventTrigger.cpp.
-static unsigned short sObjectDirRev;
 // ObjectDir::PostLoad reuses the same TU-static pattern for BOTH halves of the
 // packed rev (not just rev): retail's PostLoad reads/writes a fixed pair of
 // globals repeatedly across the whole function body (confirmed via objdiff --
@@ -48,7 +47,10 @@ static unsigned short sObjectDirRev;
 // around the recursive `iDir.dir.PostLoad(mLoader)` call already present in
 // this ported source only makes sense if the storage is SHARED across
 // recursive re-entry -- i.e. it was already anticipating this.
-static unsigned short sObjectDirAltRev;
+// W16-HP: retail PreLoad addresses the pair off one base with the rev at +4
+// (`lhz 0x4(r15)`); initialised statics declared alt-first land that way.
+static unsigned short sObjectDirAltRev = 0;
+static unsigned short sObjectDirRev = 0;
 
 // Retail RB3 keeps the object-version stack as FREE functions (the rb3-Wii
 // obj/ObjVersion.h pair `inline int PopRev(Hmx::Object *o)`): the target calls
@@ -645,17 +647,14 @@ void ObjectDir::SetInlineProxyType(InlineDirType t) {
 #endif
 }
 
-BinStreamRev &operator>>(BinStreamRev &bs, ObjectDir::Viewport &v) {
+// Retail has no BinStreamRev (0 x .?AVBinStreamRev@@ in band.exe): PreLoad hands
+// the raw stream to the vector reader, and the rev comes from the TU static.
+BinStream &operator>>(BinStream &bs, ObjectDir::Viewport &v) {
     bs >> v.mXfm;
     if (sObjectDirRev < 0x12) {
         int x;
         bs >> x;
     }
-    return bs;
-}
-
-BinStream &operator>>(BinStream &bs, ObjectDir::Viewport &v) {
-    bs >> v.mXfm;
     return bs;
 }
 
@@ -1255,27 +1254,29 @@ FilePath ObjectDir::GetSubDirPath(const FilePath &fp, const BinStream &bs) {
     return ret;
 }
 
-INIT_REVS(0x1C, 0)
-
 void ObjectDir::PreLoad(BinStream &bs) {
-    LOAD_REVS(bs)
-    ASSERT_REVS(0x1C, 0)
-    sObjectDirRev = d.rev;
+    // Retail has no BinStreamRev (0 x .?AVBinStreamRev@@ in band.exe): the
+    // packed rev goes to the TU pair and every reader gets the raw stream.
+    int revs;
+    bs >> revs;
+    sObjectDirRev = getHmxRev(revs);
+    sObjectDirAltRev = getAltRev(revs);
+    BinStream &d = bs;
 
-    if (d.rev > 0x15) {
+    if (sObjectDirRev > 0x15) {
         LoadType(bs);
-    } else if (d.rev > 1 && d.rev < 17) {
+    } else if (sObjectDirRev > 1 && sObjectDirRev < 17) {
         Hmx::Object::Load(bs);
     }
 
-    if (d.rev < 3) {
+    if (sObjectDirRev < 3) {
         int hashSize, strSize;
         bs >> hashSize >> strSize;
         Reserve(hashSize, strSize);
     }
 
-    if (d.rev > 0x19) {
-        if (d.rev < 0x1B) {
+    if (sObjectDirRev > 0x19) {
+        if (sObjectDirRev < 0x1B) {
             bool b;
             d >> b;
             mAlwaysInlined = b != 0;
@@ -1297,20 +1298,20 @@ void ObjectDir::PreLoad(BinStream &bs) {
         }
     }
 
-    if (d.rev > 1) {
-        d >> mViewports;
+    if (sObjectDirRev > 1) {
+        bs >> mViewports;
         d >> (int &)mCurViewportID;
-        if (d.rev == 3 && mCurViewportID > 6) {
+        if (sObjectDirRev == 3 && mCurViewportID > 6) {
             mCurViewportID = (ViewportId)6;
         }
     }
 
-    if (d.rev > 0xC) {
-        if (d.rev > 0x13) {
+    if (sObjectDirRev > 0xC) {
+        if (sObjectDirRev > 0x13) {
 #ifdef HX_NATIVE
             InlineDirType proxyType;
             int offBefore = bs.Tell();
-            if (d.rev > 0x1B) {
+            if (sObjectDirRev > 0x1B) {
                 d >> proxyType;
             } else {
                 bool b;
@@ -1320,7 +1321,7 @@ void ObjectDir::PreLoad(BinStream &bs) {
             if (getenv("RB3_STREAM_AUDIT")) {
                 MILO_LOG("PROXY_AUDIT: PreLoad '%s' d.rev=%d read=%d bytes "
                          "proxyType=%d fromDisk=%d off=%d\n",
-                         Name(), d.rev, bs.Tell() - offBefore, (int)proxyType,
+                         Name(), sObjectDirRev, bs.Tell() - offBefore, (int)proxyType,
                          (int)gLoadingProxyFromDisk, offBefore);
             }
             if (!gLoadingProxyFromDisk) {
@@ -1329,7 +1330,7 @@ void ObjectDir::PreLoad(BinStream &bs) {
 #else
             // RB3 retail (rb3-Wii oracle Dir.cpp) reads a single bool here:
             //   if (!gLoadingProxyFromDisk) bs >> mInlineProxy; else { bool b; bs >> b; }
-            // The 4-byte InlineDirType path (d.rev > 0x1B) is a DC3-era rev that
+            // The 4-byte InlineDirType path (sObjectDirRev > 0x1B) is a DC3-era rev that
             // retail never reaches; inline-proxy is the bool mInlineProxy.
             if (!gLoadingProxyFromDisk) {
                 d >> mInlineProxy;
@@ -1360,12 +1361,12 @@ void ObjectDir::PreLoad(BinStream &bs) {
         }
     }
 
-    if (d.rev > 1 && d.rev < 11) {
+    if (sObjectDirRev > 1 && sObjectDirRev < 11) {
         char buf[0x80];
         bs.ReadString(buf, 0x80);
         unk8c = FindObject(buf, false);
     }
-    if (d.rev > 3 && d.rev < 11) {
+    if (sObjectDirRev > 3 && sObjectDirRev < 11) {
         char buf[0x80];
         bs.ReadString(buf, 0x80);
         mCurCam = FindObject(buf, false);
@@ -1373,7 +1374,7 @@ void ObjectDir::PreLoad(BinStream &bs) {
             mCurViewportID = (ViewportId)0;
         }
     }
-    if (d.rev == 5) {
+    if (sObjectDirRev == 5) {
         char buf[0x80];
         bs.ReadString(buf, 0x80);
     }
@@ -1381,7 +1382,7 @@ void ObjectDir::PreLoad(BinStream &bs) {
     static std::vector<FilePath> inlinedSubDirs;
     static std::vector<FilePath> notInlinedSubDirs;
 
-    if (d.rev > 2) {
+    if (sObjectDirRev > 2) {
         d >> notInlinedSubDirs;
         {
             std::vector<FilePath>::iterator endIter = notInlinedSubDirs.end();
@@ -1393,10 +1394,10 @@ void ObjectDir::PreLoad(BinStream &bs) {
             }
         }
         std::vector<int> intVec;
-        if (d.rev == 0x17) {
+        if (sObjectDirRev == 0x17) {
             d >> intVec;
         }
-        if (d.rev > 0x14) {
+        if (sObjectDirRev > 0x14) {
             d >> mInlineSubDirType;
             d >> inlinedSubDirs;
             {
@@ -1440,12 +1441,12 @@ void ObjectDir::PreLoad(BinStream &bs) {
             }
         }
 
-        if (d.rev > 0x17) {
+        if (sObjectDirRev > 0x17) {
             int numNotInlined = notInlinedSubDirs.size();
             for (int i = 0; i < inlinedSubDirs.size(); i++) {
                 bool getfileres = mSubDirs[i + numNotInlined].GetFile() != inlinedSubDirs[i];
                 InlineDirType dType;
-                if (d.rev > 0x18) {
+                if (sObjectDirRev > 0x18) {
                     unsigned char b;
                     d >> b;
                     MILO_ASSERT_RANGE_EQ(b, kInlineCached, kInlineCachedShared, 0x3BE);
@@ -1466,16 +1467,16 @@ void ObjectDir::PreLoad(BinStream &bs) {
         }
     }
 
-    if (d.rev > 11 && d.rev < 14) {
-        OldLoadProxies(bs, d.rev);
+    if (sObjectDirRev > 11 && sObjectDirRev < 14) {
+        OldLoadProxies(bs, sObjectDirRev);
     }
 
-    if (d.rev < 0x13) {
-        if (d.rev > 0xF) {
+    if (sObjectDirRev < 0x13) {
+        if (sObjectDirRev > 0xF) {
             int inlineProxy;
             d >> inlineProxy;
             MILO_ASSERT(inlineProxy != 1, 0x3DC);
-        } else if (d.rev > 0xE) {
+        } else if (sObjectDirRev > 0xE) {
             bool inlineProxy;
             d >> inlineProxy;
             MILO_ASSERT(!inlineProxy, 0x3E1);
@@ -1485,7 +1486,7 @@ void ObjectDir::PreLoad(BinStream &bs) {
     std::vector<bool> boolVec;
     boolVec.resize(mInlinedDirs.size());
     for (int i = 0; i < mInlinedDirs.size(); i++) {
-        if (d.rev < 0x19 && !bs.Cached()) {
+        if (sObjectDirRev < 0x19 && !bs.Cached()) {
             boolVec[i] = true;
         } else {
             bool b;
@@ -1512,7 +1513,7 @@ void ObjectDir::PreLoad(BinStream &bs) {
         }
     }
 
-    if (d.rev > 20 && d.rev < 24) {
+    if (sObjectDirRev > 20 && sObjectDirRev < 24) {
         int offset = notInlinedSubDirs.size();
         MILO_ASSERT(mSubDirs.capacity() >= offset + inlinedSubDirs.size(), 0x415);
         for (int i = 0; i < inlinedSubDirs.size(); i++) {
@@ -1525,7 +1526,7 @@ void ObjectDir::PreLoad(BinStream &bs) {
     }
 
     mIsSubDir = false;
-    bs.PushRev(packRevs(d.altRev, d.rev), this);
+    bs.PushRev(packRevs(sObjectDirAltRev, sObjectDirRev), this);
 }
 
 void ObjectDir::PostLoad(BinStream &bs) {

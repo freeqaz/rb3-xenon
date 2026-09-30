@@ -53,7 +53,7 @@ void SyncStore::RemoveSyncObj(String &str) {
             return;
         }
     }
-    MILO_FAIL("Cannot find obj %s to remove from sync obj store", str);
+    MILO_FAIL_RTL("Cannot find obj %s to remove from sync obj store", str);
 }
 
 Synchronizable *SyncStore::GetSyncObj(String &str) {

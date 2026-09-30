@@ -76,7 +76,7 @@ public:
 
         SpotlightEntry(Hmx::Object *owner);
         void Save(BinStream &) const;
-        void Load(BinStreamRev &);
+        void Load(BinStream &);
         bool operator!=(const SpotlightEntry &) const;
         void CalculateDirection(Spotlight *, Hmx::Quat &) const;
         void Animate(Spotlight *, const SpotlightEntry &, float);
@@ -92,7 +92,7 @@ public:
     struct SpotlightDrawerEntry {
         SpotlightDrawerEntry();
         void Save(BinStream &) const;
-        void Load(BinStreamRev &);
+        void Load(BinStream &);
         bool operator!=(const SpotlightDrawerEntry &) const;
 
         /** "Global intensity scale" */
@@ -108,8 +108,8 @@ public:
     struct Keyframe {
         Keyframe(Hmx::Object *);
         void Save(BinStream &) const;
-        void Load(BinStreamRev &);
-        void LegacyLoadP9(BinStreamRev &);
+        void Load(BinStream &);
+        void LegacyLoadP9(BinStream &);
         void LegacyLoadStageKit(BinStream &);
 
         /** "Description of the keyframe" */

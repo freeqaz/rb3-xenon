@@ -630,7 +630,7 @@ void AppLabel::SetBattleInstrument(const SetlistRecord *slr) {
 void AppLabel::SetRatingIcon(int i) {
     static Symbol song_select("song_select");
     static Symbol rating_icons("rating_icons");
-    Symbol locale = SystemLocale();
+    Symbol locale = SystemLanguage();
     SetIcon(SystemConfig(song_select, rating_icons, locale)->Str(i)[0]);
 }
 

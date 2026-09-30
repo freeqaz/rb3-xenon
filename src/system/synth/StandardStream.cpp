@@ -605,6 +605,38 @@ void StandardStream::Init(float f1, float f2, Symbol s, bool b4) {
 }
 
 void StandardStream::InitInfo(int i1, int sampleRate, bool floatSamples, int i4) {
+#ifndef HX_NATIVE
+    // RB3 retail is rb3-Wii's front half: unkec is i4 / sampleRate in float, the
+    // buffer size rounds up to a 2 * 0xC000 multiple and is counted in 0xC000
+    // blocks, and every channel gets StreamReceiver::New (no file receiver).
+    unk154 = i4;
+    unkec = (float)i4 / (float)sampleRate;
+    int numChannels = i1 + mVirtualChans;
+    mInfoChannels = numChannels;
+    auto &_ref2 = mSampleRate;
+    if (!mGetInfoOnly) {
+        if (_ref2 == 0) {
+            const int kRB3StreamBufSize = 0xC000;
+            int bufBytes = (mBufSecs * (float)sampleRate * 2.0f);
+            _ref2 = sampleRate;
+            mFloatSamples = floatSamples;
+            bufBytes = bufBytes + (2 * kRB3StreamBufSize - bufBytes % (2 * kRB3StreamBufSize));
+            int numBufs = bufBytes / kRB3StreamBufSize;
+            SystemConfig("synth", "iop")->FindInt("max_slip");
+            for (int i = 0; i < numChannels; i++) {
+                mChannels.push_back(
+                    StreamReceiver::New(numBufs, sampleRate, mChanParams[i]->mSlipEnabled, i)
+                );
+            }
+            for (int i = 0; i < mVirtualChans; i++) {
+                void *buf = MemAlloc(
+                    (mFloatSamples ? 4 : 2) << 0xB, __FILE__, 0x159, "stream mVirtBufs"
+                );
+                mVirtBufs.push_back(buf);
+            }
+            mState = kBuffering;
+        } else {
+#else
     unk154 = i4;
     int numChannels = mVirtualChans + i1;
     unkec = (mInfoChannels / sampleRate);
@@ -644,6 +676,7 @@ void StandardStream::InitInfo(int i1, int sampleRate, bool floatSamples, int i4)
             }
             mState = kBuffering;
         } else {
+#endif
             MILO_ASSERT(numChannels == mChannels.size(), 0x161);
             MILO_ASSERT(_ref2 == sampleRate, 0x162);
             MILO_ASSERT(mFloatSamples == floatSamples, 0x163);

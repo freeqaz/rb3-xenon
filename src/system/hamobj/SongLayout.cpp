@@ -107,7 +107,7 @@ BEGIN_COPYS(SongLayout)
     END_COPYING_MEMBERS
 END_COPYS
 
-BinStreamRev &operator>>(BinStreamRev &d, SongPattern &s) {
+BinStream &operator>>(BinStream &d, SongPattern &s) {
     d >> s.mName;
     d >> s.mInitialMeasureRange.start;
     d >> s.mInitialMeasureRange.end;
@@ -115,7 +115,7 @@ BinStreamRev &operator>>(BinStreamRev &d, SongPattern &s) {
     return d;
 }
 
-BinStreamRev &operator>>(BinStreamRev &d, SongSection &s) {
+BinStream &operator>>(BinStream &d, SongSection &s) {
     d >> s.mMeasureRange.start;
     d >> s.mMeasureRange.end;
     d >> s.mPatternRange.start;
@@ -124,14 +124,14 @@ BinStreamRev &operator>>(BinStreamRev &d, SongSection &s) {
     return d;
 }
 
-INIT_REVS(2, 0)
-
 BEGIN_LOADS(SongLayout)
-    LOAD_REVS(bs)
-    ASSERT_REVS(2, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    d >> mSongPatterns;
-    d >> mSongSections;
+    // Retail has no BinStreamRev: the rev is read and unused, and the vector
+    // readers get the raw stream.
+    int rev;
+    bs >> rev;
+    Hmx::Object::Load(bs);
+    bs >> mSongPatterns;
+    bs >> mSongSections;
     FOREACH (it, mSongSections) {
         FOREACH (pit, mSongPatterns) {
             if (pit->mName == it->mPattern) {

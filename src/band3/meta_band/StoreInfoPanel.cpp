@@ -149,6 +149,9 @@ bool StoreInfoPanel::ParseRecommendations(DataArray *data) {
 void StoreInfoPanel::GetRecommendationIndexPath(const char *cc, String &str) {
     static const char *pathFmt = "dlc_store/%s/%s/related/%s.dta";
     Symbol regionSym = PlatformRegionToSymbol(ThePlatformMgr.GetRegion());
+    // (W16-HP: the callee at 0x82510040 is SystemLanguage() -- it reads the global
+    // SetSystemLanguage writes; W16-L read the then-wrong map name.  The
+    // const char* conversion below still stands.)
     // RETAIL-PROVEN, lane W16-L: the second %s is SystemLocale(), converted to
     // const char*, not SystemLanguage() passed as a Symbol.  Two independent
     // charges said so: the callee relocation names ?SystemLocale@@YA?AVSymbol@@XZ
@@ -158,7 +161,7 @@ void StoreInfoPanel::GetRecommendationIndexPath(const char *cc, String &str) {
     // const char*) against our ??$MakeString@VSymbol@@V1@PBD@@ (Symbol, Symbol,
     // const char*).  Symbol::Str() is inline `return mStr`, so the instruction
     // stream is unchanged -- only the two relocation names move.
-    str = MakeString(pathFmt, regionSym, SystemLocale().Str(), cc);
+    str = MakeString(pathFmt, regionSym, SystemLanguage().Str(), cc);
     Server *server = TheNet.GetServer();
     if (server && server->IsConnected()) {
         // RETAIL-PROVEN CALLEE (lane W16-L, 2026-09-14).  The rb3-Wii oracle has

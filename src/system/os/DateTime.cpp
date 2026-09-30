@@ -123,7 +123,7 @@ void DateTime::Format(class String &str) const {
     static Symbol fre("fre");
     static Symbol ita("ita");
     static Symbol esl("esl");
-    Symbol lang = SystemLocale();
+    Symbol lang = SystemLanguage();
     if (lang == fre || lang == ita || lang == esl) {
         if (SearchReplace(str.c_str(), "%e", MakeString("%d", mDay), buf)) {
             str = buf;

@@ -66,9 +66,11 @@ public:
     void Exit(int, bool);
     void Warn(const char *msg);
     void Notify(const char *msg);
-    void Fail(const char *msg, void *);
-    // rb3-Wii uses 1-arg Fail; inline wrapper for portability
-    inline void Fail(const char *msg) { Fail(msg, nullptr); }
+    // RB3 retail's Fail (0x8250F6D0) takes only the message: it reads r3/r4
+    // and never r5, and Poll calls it without loading r5. The two-arg form is
+    // DC3's; keep it as a forwarder for the call sites that still spell it.
+    void Fail(const char *msg);
+    inline void Fail(const char *msg, void *) { Fail(msg); }
     TextStream *Reflect() const { return mReflect; }
     TextStream *SetReflect(TextStream *ts) {
         TextStream *ret = mReflect;
@@ -193,6 +195,17 @@ inline void MiloStripEval(const char *, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)
 // Find<> fail-paths; (void)(args) keeps it. HX_NATIVE keeps the real fatal path.)
 #define MILO_FAIL(...) ((void)(__VA_ARGS__))
 #endif
+// Some retail MILO_FAIL sites keep their argument setup RIGHT TO LEFT, with
+// by-value copies of class arguments -- a stripped varargs MakeString call, not
+// the comma form above (Object::Property, SyncStore::RemoveSyncObj,
+// UIComponent::SetTypeDef/Update). A blanket switch is measured NEGATIVE
+// (W16-HP: +7 rows / -11 rows, CacheMgrXbox::Poll 100 -> 85.4), so spell only
+// those sites MILO_FAIL_RTL.
+#ifdef HX_NATIVE
+#define MILO_FAIL_RTL(...) MILO_FAIL(__VA_ARGS__)
+#else
+#define MILO_FAIL_RTL(...) MiloStripEval(__VA_ARGS__)
+#endif
 // Retail RB3-360 stripped the debug-OUTPUT family's EMISSION (WARN/NOTIFY/LOG/
 // PRINT_ONCE/NOTIFY_ONCE/WARN_ONCE): their format strings are absent from orig
 // band.exe and no Warn/Notify/Print calls survive. BUT — like MILO_FAIL above —
@@ -272,7 +285,13 @@ inline void MiloStripEval(const char *, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)
 #ifdef HX_NATIVE
 #define MILO_FAIL_DTA(...) TheDebugWarner << MakeString(__VA_ARGS__)
 #else
-#define MILO_FAIL_DTA(...) TheDebugFailer << MakeString(__VA_ARGS__)
+// Retail has exactly one bl to Debug::Fail (from Debug::Poll), so no DTA fail
+// site reaches it: like MILO_FAIL, the args are evaluated and the emission is
+// gone (Hmx::Object::HandleProperty keeps PathName(this) and the Sym, drops
+// MakeString + Fail). The args are evaluated right to left -- the Sym before
+// PathName -- i.e. as call arguments, so this is MILO_WARN's MiloStripEval,
+// not a comma expression.
+#define MILO_FAIL_DTA(...) MiloStripEval(__VA_ARGS__)
 #endif
 #ifdef HX_NATIVE
 #define MILO_NOTIFY(...) TheDebugNotifier << MakeString(__VA_ARGS__)
@@ -348,7 +367,7 @@ extern DebugNotifier TheDebugNotifier;
 
 class DebugFailer {
 public:
-    void operator<<(const char *cc) { TheDebug.Fail(cc, nullptr); }
+    void operator<<(const char *cc) { TheDebug.Fail(cc); }
 };
 
 extern DebugFailer TheDebugFailer;

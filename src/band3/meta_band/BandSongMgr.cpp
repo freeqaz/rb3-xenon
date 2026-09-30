@@ -879,13 +879,13 @@ void BandSongMgr::ReadCachedMetadataFromStream(BinStream &bs, int rev) {
             mCachedSongMetadata[i40] = data;
         }
     }
+    // Retail has no BinStreamRev (0 x .?AVBinStreamRev@@ in band.exe): the
+    // list/vector readers get the raw stream.
     if (rev >= 5) {
-        BinStreamRev d(bs, rev);
-        d >> unk114;
+        bs >> unk114;
     }
     if (rev >= 11) {
-        BinStreamRev d(bs, rev);
-        d >> unk11c;
+        bs >> unk11c;
     }
     if (rev >= 6) {
         mUpgradeMgr->ReadCachedMetadataFromStream(bs, rev);

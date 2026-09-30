@@ -71,6 +71,9 @@ void UIListMesh::Draw(
     DrawCommand cmd
 ) {
     if (mMesh) {
+        // RB3 retail (UIListMesh::Draw) has no edit-mode material save/restore:
+        // it only brackets the slot draw with the mesh's local transform.
+#ifdef HX_NATIVE
         float somefloat = 1.0f;
         RndMat *themat = 0;
         if (TheLoadMgr.EditMode()) {
@@ -78,15 +81,18 @@ void UIListMesh::Draw(
             if (themat)
                 somefloat = themat->Alpha();
         }
+#endif
         Transform xfm1 = mMesh->LocalXfm();
         UIListSlot::Draw(drawstate, liststate, tf, compstate, box, cmd);
         mMesh->SetLocalXfm(xfm1);
+#ifdef HX_NATIVE
         if (TheLoadMgr.EditMode()) {
             mMesh->SetMat(themat);
             if (themat) {
                 themat->SetAlpha(somefloat);
             }
         }
+#endif
     }
 }
 

@@ -242,8 +242,13 @@ void UIListWidget::DrawMesh(
 UIList *UIListWidget::ParentList() { return mParentList; }
 
 // sw2 scatter-include (default/UIListWidget <- ui/Utl.cpp)
+// Not when PanelDir.cpp scatter-includes this file: none of Utl's rows live in
+// PanelDir's span, and with IsNavAction's body visible MSVC dead-codes the
+// `bl IsNavAction` retail keeps in PanelDir::DisableComponent's assert.
+#ifndef RB3_UILISTWIDGET_IN_PANELDIR
 #define gRev gRev_Utl
 #define gAltRev gAltRev_Utl
 #include "ui/Utl.cpp"
 #undef gRev
 #undef gAltRev
+#endif

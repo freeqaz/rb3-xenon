@@ -37,7 +37,7 @@ public:
         void OnSetMat(RndMat *);
         Vector2 NGRadii() const;
         void Save(BinStream &) const;
-        void Load(BinStreamRev &);
+        void Load(BinStream &);
         bool IsCone() const { return mIsCone; }
         bool HasLength() const { return mLength > 0; }
 

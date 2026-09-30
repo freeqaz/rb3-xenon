@@ -172,14 +172,18 @@ void Debug::Notify(const char *msg) {
                 mNotifyThreadMsg = msg;
                 gNotifyThreadSync.Wait(200);
             }
-        } else {
+        }
+#ifdef HX_NATIVE
+        // RB3 retail (0x8250F538) has no main-thread Modal here: it returns.
+        else {
             ModalType type = kModalNotify;
             Modal(type, msg, nullptr);
         }
+#endif
     }
 }
 
-void Debug::Fail(const char *msg, void *v) {
+void Debug::Fail(const char *msg) {
 #ifdef HX_NATIVE
     fprintf(stderr, "FAIL: %s\n", msg);
 #ifdef HX_WEB
@@ -243,7 +247,7 @@ void Debug::Poll() {
         MILO_FAIL("TRY conditional not exited %d", oldTry);
     }
     if (mFailThreadMsg) {
-        Fail(mFailThreadMsg, nullptr);
+        Fail(mFailThreadMsg);
     }
     if (mNotifyThreadMsg) {
         String notifyStr(mNotifyThreadMsg);
@@ -456,7 +460,7 @@ static int gSystemMs;
 extern Timer gSystemTimer;
 extern DataArray *gSystemConfig;
 extern DataArray *gSystemTitles;
-extern Symbol gSystemLocale;
+extern Symbol gSystemLanguage;
 
 void SetUsingCD(bool b) { gUsingCD = b; }
 
@@ -488,7 +492,9 @@ DataArray *SystemConfig(Symbol s1, Symbol s2, Symbol s3, Symbol s4, Symbol s5) {
         ->FindArray(s5);
 }
 
-Symbol SystemLocale() { return gSystemLocale; }
+// 0x82510040 reads the global SetSystemLanguage writes (0x82CC99A8): this is
+// SystemLanguage(), which the map had as ?SystemLocale@@ (W16-HP).
+Symbol SystemLanguage() { return gSystemLanguage; }
 
 DataArray *SystemTitles() { return gSystemTitles; }
 

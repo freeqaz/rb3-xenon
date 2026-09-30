@@ -36,7 +36,7 @@ public:
             : mChar(owner), mHeight(75), mDensity(1), mRadius(10), mUseRandomColor(false),
               mMats(owner) {}
         void Save(BinStream &) const;
-        void Load(BinStreamRev &);
+        void Load(BinStream &);
 
         /** "The character to use as the archetype" */
         ObjPtr<Character> mChar; // 0x0
@@ -62,7 +62,7 @@ public:
         };
         CharData(Hmx::Object *owner) : mDef(owner), mMMesh(nullptr) {}
         void Save(BinStream &) const;
-        void Load(BinStreamRev &);
+        void Load(BinStream &);
 
         CharDef mDef; // 0x0
         RndMultiMesh *mMMesh; // 0x38
