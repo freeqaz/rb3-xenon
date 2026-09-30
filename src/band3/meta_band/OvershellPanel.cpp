@@ -645,11 +645,13 @@ void OvershellPanel::EnableAutoVocals() {
 }
 
 bool OvershellPanel::CanGuitarPlayKeys() const {
+    static Symbol key_keys_on_guitar("key_keys_on_guitar");
     std::vector<BandProfile *> profiles = TheProfileMgr.GetSignedInProfiles();
     for (int i = 0; i < profiles.size(); i++) {
         if (profiles[i]->HasCampaignKey(key_keys_on_guitar))
             return true;
     }
+    static Symbol mod_auto_vocals("mod_auto_vocals");
     if (TheModifierMgr && TheModifierMgr->IsModifierActive(mod_auto_vocals))
         return true;
     else
