@@ -122,11 +122,10 @@ NetSession::~NetSession() {
     RELEASE(mGameStartTime);
     RELEASE(mQNet);
     RELEASE(mSettings);
-    QuazalSession::KillSession();
+    // retail: no KillSession() and no gLocalUsersRemovedThisFrame.clear() here
     while (QuazalSession::StillDeleting()) {
         QuazalSession::Poll();
     }
-    gLocalUsersRemovedThisFrame.clear();
     TheNetSession = nullptr;
 }
 
