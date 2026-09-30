@@ -14259,7 +14259,7 @@
  "0x8263cce0": "?SetType@StoreMenuPanel@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
  "0x8263ccf8": "??1StoreMenuPanel@@UAA@XZ",
  "0x8263cd98": "?AddMenu@StoreMenuPanel@@QAAXPAVDataArray@@PBDH@Z",
- "0x8263cf28": "?OnMsg@StoreMenuPanel@@QAA?AVDataNode@@ABVMultipleItemsEnumCompleteMsg@@@Z",
+ "0x8263cf28": "?OnMsg@StoreMenuPanel@@QAA?AVDataNode@@ABVMetadataLoadedMsg@@@Z",
  "0x8263d0c0": "?Handle@StoreMenuPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x8263d548": "?Handle@StoreMenuPanel@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x8263d558": "??_GStoreMenuPanel@@UAAPAXI@Z",
