@@ -161,12 +161,11 @@ void CharClip::Transitions::AddNode(CharClip *clip, const CharGraphNode &node) {
     if (nodes) {
         int bytes = BytesInMemory();
         NodeVector *next = nodes->Next();
-        NodeVector *end = mNodeEnd;
+        // retail computes the tail size before Resize moves the storage
+        intptr_t moveSize = (intptr_t)mNodeEnd - (intptr_t)next;
         resized = Resize(bytes + 8, nodes);
         memmove(
-            (char *)resized->Next() + 8,
-            resized->Next(),
-            (intptr_t)end - (intptr_t)next
+            &resized->nodes[resized->size + 1], &resized->nodes[resized->size], moveSize
         );
     } else {
 #ifndef HX_NATIVE
@@ -176,18 +175,13 @@ void CharClip::Transitions::AddNode(CharClip *clip, const CharGraphNode &node) {
         resized->clip = clip;
         resized->size = 0;
     }
-    int size = resized->size;
     int i = 0;
-    if (size > 0) {
-        for (; i < size; i++) {
-            if (resized->nodes[i].curBeat > node.curBeat)
-                break;
-        }
+    for (; i < resized->size; i++) {
+        if (resized->nodes[i].curBeat > node.curBeat)
+            break;
     }
-    if (i < size) {
-        for (int j = size; j > i; j--) {
-            resized->nodes[j] = resized->nodes[j - 1];
-        }
+    for (int j = resized->size; j > i; j--) {
+        resized->nodes[j] = resized->nodes[j - 1];
     }
     resized->nodes[i] = node;
     resized->size++;
