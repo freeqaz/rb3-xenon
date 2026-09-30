@@ -43,6 +43,7 @@ bool SelectDifficultyPanel::IsLoaded() const {
 
 void SelectDifficultyPanel::PollForLoading() {
     UIPanel::PollForLoading();
+    static Symbol party_shuffle("party_shuffle");
     if (TheContentMgr.RefreshDone() && TheGameMode->InMode(party_shuffle)
         && MetaPerformer::Current()->NumSongs() == 0
         && (TheSessionMgr->IsLocal() || TheSessionMgr->IsLeaderLocal())) {
