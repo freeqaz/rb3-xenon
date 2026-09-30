@@ -330,7 +330,11 @@ void BlockMgr::Poll() {
 
 bool BlockMgr::SpinUp() {
     TheBlockMgr.Poll();
-    if (UsingCD()) {
+    // RB3 retail (BlockMgr::SpinUp) tests no UsingCD() here.
+#ifdef HX_NATIVE
+    if (UsingCD())
+#endif
+    {
         if (mSpinDownTimer.Ms() > 120000.0f) {
             if (mReadingBlock == nullptr) {
                 MILO_LOG("BlockMgr spinning up...\n");
@@ -339,12 +343,23 @@ bool BlockMgr::SpinUp() {
                 AsyncTask at(blk->ArkFileNum(), blk->BlockNum());
                 AddTask(at);
                 gReadHD = false;
+#ifdef HX_NATIVE
                 bool x = CDRead(
                     mReadingBlock->ArkFileNum(),
                     (mReadingBlock->BlockNum() << 5),
                     2,
                     (void *)gTempBlock
                 );
+#else
+                // Retail reads the block's last sector into its own buffer
+                // (rb3-Wii's arguments).
+                bool x = CDRead(
+                    mReadingBlock->ArkFileNum(),
+                    ((mReadingBlock->BlockNum() + 1) << 5) - 1,
+                    1,
+                    (void *)(mReadingBlock->Buffer() + 0xF800)
+                );
+#endif
                 if (!x) {
                     mReadingBlock->UpdateTimestamp();
                 } else {
