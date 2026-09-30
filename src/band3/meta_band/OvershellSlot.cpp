@@ -968,17 +968,19 @@ void OvershellSlot::AttemptToggleAutoVocals() {
 
 void OvershellSlot::FetchLinkingCode() {
     MILO_ASSERT(mState->GetStateID() == kState_LinkingCode, 0x744);
+    // Retail fn_825DFB00: function-local statics, no TheServer player-ID gate
+    // and no unk80/unk81 bookkeeping.
+    static Symbol waiting("waiting");
+    static Symbol success("success");
+    static Symbol code("code");
     mState->SetProperty(waiting, 1);
     mState->SetProperty(success, 0);
     mState->SetProperty(code, "");
     BandUser *pUser = GetUser();
     if (pUser->IsLocal()) {
-        int padnum = pUser->GetLocalBandUser()->GetPadNum();
-        if (TheServer.GetPlayerID(padnum) != 0) {
-            TheRockCentral.GetLinkingCode(padnum, mLinkingCodeResultList, this);
-            unk81 = true;
-        } else
-            unk80 = true;
+        TheRockCentral.GetLinkingCode(
+            pUser->GetLocalBandUser()->GetPadNum(), mLinkingCodeResultList, this
+        );
         Update();
     }
 }
