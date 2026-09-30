@@ -252,7 +252,7 @@ float Scoring::GetNumStarsFloat(int i1, std::vector<int> &thresholds) const {
         int last = thresholds.size() - 1;
         for (int i = last; i >= 0; i--) {
             if (i1 >= thresholds[i]) {
-                if ((unsigned int)i < (unsigned int)last) {
+                if (i < thresholds.size() - 1) {
                     int thresh = thresholds[i];
                     return i + (float)(i1 - thresh) / (float)(thresholds[i + 1] - thresh);
                 } else {
