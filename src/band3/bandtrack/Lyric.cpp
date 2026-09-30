@@ -60,8 +60,9 @@ void LyricPlate::Poll(float f) {
             } else if (curLyric->mHighlightMs < f) {
                 Hmx::Color &color =
                     curLyric->mPitched ? mActiveColor : mActivePhonemeColor;
-                curLyric->UpdateColor(color);
-                mText->UpdateLineColor(curLyric->mIdx, color, &mNeedSync);
+                if (curLyric->UpdateColor(color)) {
+                    mText->UpdateLineColor(curLyric->mIdx, color, &mNeedSync);
+                }
             } else {
                 Hmx::Color &color =
                     curLyric->mPitched ? mPreviewColor : mPreviewPhonemeColor;
