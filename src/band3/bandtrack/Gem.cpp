@@ -344,22 +344,20 @@ void Gem::AddStrumInstance(Symbol s1, Symbol s2) {
         } else {
             int range = (highString - lowString) + 1;
             bool lefty = _ref0->mTrackConfig.IsLefty();
+            static Symbol area_strum("area_strum");
+            static Symbol muted_strum("muted_strum");
             if (s2 == area_strum) {
                 MILO_ASSERT_RANGE_EQ(range, 4, 6, 0x250);
                 char u6 = ' ';
                 switch (mGameGem.GetRGStrumType()) {
                 case 3:
-                    u6 = 'L';
-                    if (lefty)
-                        u6 = 'R';
+                    u6 = lefty ? 'R' : 'L';
                     break;
                 case 1:
                     u6 = 'M';
                     break;
                 case 2:
-                    u6 = 'R';
-                    if (lefty)
-                        u6 = 'L';
+                    u6 = lefty ? 'L' : 'R';
                     break;
                 default:
                     MILO_FAIL("Invalid RG strum type");
@@ -372,10 +370,10 @@ void Gem::AddStrumInstance(Symbol s1, Symbol s2) {
             } else
                 MILO_FAIL("Invalid strum type for real guitar strum gem");
             TrackWidget *w8c = _ref0->GetWidgetByName(s88);
-            if (lefty)
-                lowString = highString;
             Transform tf48;
-            _ref0->mTrackDir->MakeWidgetXfm(lowString, mGameGem.mMs / 1000.0f, tf48);
+            _ref0->mTrackDir->MakeWidgetXfm(
+                lefty ? highString : lowString, mGameGem.mMs / 1000.0f, tf48
+            );
             w8c->AddInstance(tf48, 0);
             mWidgets.insert(w8c);
         }
