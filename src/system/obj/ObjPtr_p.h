@@ -552,7 +552,7 @@ Hmx::Object *ObjOwnerPtr<T>::RefOwner() const {
 // longer gated on RB3_TU_OBJPTR_DEFER_OWNER (which still gates ObjPtr's).
 // The mem-init form put `stw mOwner` first in every TU that lacked the define.
 template <class T>
-ObjOwnerPtr<T>::ObjOwnerPtr(ObjRefOwner *owner, T *ptr) : ObjRefConcrete<T>() {
+ObjOwnerPtr<T>::ObjOwnerPtr(ObjRefOwner *owner, T *ptr) {
     mOwner = reinterpret_cast<Hmx::Object *>(owner);
     mObject = ptr;
     if (mObject)
@@ -561,18 +561,22 @@ ObjOwnerPtr<T>::ObjOwnerPtr(ObjRefOwner *owner, T *ptr) : ObjRefConcrete<T>() {
 
 template <class T>
 ObjOwnerPtr<T>::ObjOwnerPtr(const ObjOwnerPtr &o)
-    : ObjRefConcrete<T>(o.mOwner, nullptr) {
+    : mOwner(o.mOwner), mObject(nullptr) {
     mObject = o.mObject;
     if (mObject)
         mObject->AddRef(OwnerRef());
 }
 
+// W17-OWN: retail's whole ~ObjOwnerPtr<T,ObjectDir> (all 27 T; 100 B, or 116 B
+// with the vbase adjustment when T reaches Hmx::Object through a virtual base)
+// is this release followed by the inlined ~ObjRef vptr store. The old
+// `mObject = nullptr` existed only to stop the ObjRefConcrete base dtor from
+// releasing a second time with `this`; with ObjRefOwner as the direct base
+// there is no second release to suppress.
 template <class T>
 ObjOwnerPtr<T>::~ObjOwnerPtr() {
     if (mObject)
         mObject->Release(OwnerRef());
-    // Prevent the base dtor from releasing again with the wrong (this) ring-ref.
-    mObject = nullptr;
 }
 
 template <class T>

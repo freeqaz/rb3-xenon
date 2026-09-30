@@ -872,9 +872,25 @@ public:
 // ObjOwnerPtr size (Retail X360): 0xc {vtable@0, mOwner@4, mObject@8}. The
 // ring-ref is mOwner (an ObjRefOwner) — AddRef/Release/Replace dispatch on the
 // owner, not on this. So ObjOwnerPtr::Replace is empty (retail fn_82465928).
-// mOwner is stored in the base mOwner@4 slot (reinterpreted ObjRefOwner*).
+//
+// W17-OWN: ObjOwnerPtr derives from ObjRefOwner (retail's `ObjRef`) DIRECTLY,
+// not from ObjRefConcrete. Retail RTTI (band.exe, tools/retail_rtti.py) has
+// exactly ONE non-template ref base, `.?AVObjRef@@`, and every smart pointer
+// class -- all 27 ObjOwnerPtr<T,ObjectDir>, 91 ObjPtr, 45 ObjPtrList, 4
+// ObjDirPtr -- carries the two-entry hierarchy {Self, ObjRef}; there is no
+// ObjRefConcrete class in the image at all. rb3-Wii says the same
+// (`class ObjOwnerPtr : public ObjRef`, its own mOwner/mPtr, its own dtor).
+// The layer mattered for the DESTRUCTOR: inheriting ObjRefConcrete forced ours
+// to null mObject so the base dtor would not Release(this) a second time,
+// while every one of the 27 retail ~ObjOwnerPtr bodies (e.g. RndCamAnim
+// 0x824859a0) is just {own vptr; if (mObject) mObject->Release(mOwner); ObjRef
+// vptr}. ObjPtr/ObjDirPtr/ObjPtrList nodes keep ObjRefConcrete: their retail
+// dtors release `this`, which is exactly ~ObjRefConcrete's body.
 template <class T>
-class ObjOwnerPtr : public ObjRefConcrete<T> {
+class ObjOwnerPtr : public ObjRefOwner {
+protected:
+    Hmx::Object *mOwner; // 0x4 (really the ObjRefOwner ring-ref; see OwnerRef)
+    T *mObject; // 0x8
 public:
 #if defined(RB3_OBJOWNERPTR_INLINE_OWNER_CTOR)                                 \
     && defined(RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT)
@@ -916,7 +932,7 @@ public:
     // the gate is on, so the one-arg call is unambiguous and a site wanting
     // retail's out-of-line form opts back out with `mFoo(this, nullptr)`.
     ObjOwnerPtr(ObjRefOwner *owner)
-        : ObjRefConcrete<T>(reinterpret_cast<Hmx::Object *>(owner)) {
+        : mOwner(reinterpret_cast<Hmx::Object *>(owner)) {
         this->mObject = nullptr;
         if (this->mObject)
             this->mObject->AddRef(OwnerRef());
@@ -933,9 +949,27 @@ public:
     virtual Hmx::Object *RefOwner() const { return OwnerRef()->RefOwner(); }
     // Vtable slot +8: empty — the ring dispatches Replace on mOwner, not this.
     virtual void Replace(ObjRef *, Hmx::Object *) {}
+    // Formerly inherited from ObjRefConcrete.
+    Hmx::Object *GetObj() const { return mObject; }
+    T *operator->() const { return mObject; }
+    operator T *() const { return mObject; }
     // Ring-ref is mOwner (not this), so manage the ring directly here.
     void SetOwnerObj(T *obj);
     void operator=(T *obj) { SetOwnerObj(obj); }
+    // Compatibility spelling for DC3-era callers (MsgSinks, obj/Msg.cpp) that
+    // named the formerly inherited ObjRefConcrete setter. That setter managed
+    // the ring on `this`; for an owner pointer the ring-ref is mOwner, so it
+    // is SetOwnerObj (the mirror of HX_NATIVE, whose SetOwnerObj delegates to
+    // SetObjConcrete because there the ring-ref IS this).
+    void SetObjConcrete(T *obj) { SetOwnerObj(obj); }
+    // Formerly inherited ObjRefConcrete::SetObj, which re-registered on `this`.
+    // Kept for DC3-shaped callers (AnimTask::Replace); same guard and cast, but
+    // the ring-ref is mOwner. Retail's RB3 bodies never call it.
+    Hmx::Object *SetObj(Hmx::Object *root_obj) {
+        if (mObject != root_obj)
+            SetOwnerObj(dynamic_cast<T *>(root_obj));
+        return mObject;
+    }
     // Retail has its own Load (rb3-Wii's ObjOwnerPtr<T1,T2>::Load): the same
     // body as ObjRefConcrete::Load but assigning through SetOwnerObj. Without
     // it the inherited Load managed the ring on `this`. See obj/ObjPtr_p.h.
