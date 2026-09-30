@@ -2462,7 +2462,7 @@ CharClipSet.cpp:
 
 MidiParser.cpp:
 	.pdata      start:0x822440B0 end:0x82244110
-	.pdata      start:0x82244120 end:0x82244190
+	.pdata      start:0x82244128 end:0x82244190
 	.pdata      start:0x822441A0 end:0x82244230
 	.pdata      start:0x82244240 end:0x822442B8
 	.pdata      start:0x822442B8 end:0x822442C0
@@ -9208,7 +9208,7 @@ TrackWidget.cpp:
 	.pdata      start:0x82243DD8 end:0x82243DF0
 	.pdata      start:0x82243DF8 end:0x822440B0
 	.pdata      start:0x82244110 end:0x82244118
-	.pdata      start:0x82244118 end:0x82244120
+	.pdata      start:0x82244118 end:0x82244128
 	.pdata      start:0x82244190 end:0x822441A0
 	.text       start:0x827AA5D0 end:0x827AA5F0
 	.text       start:0x827DCE58 end:0x827DCED0
