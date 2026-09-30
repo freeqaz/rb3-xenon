@@ -74,6 +74,17 @@ void BandMachine::SyncLoad(BinStream &bs, unsigned char mask) {
             mAvailableSongs.insert(key);
         }
     }
+    if (mask & 8) {
+        // Retail mirrors SyncSave's mask-8 block (missing from the Wii load).
+        int size;
+        bs >> size;
+        mProGuitarOrBassSongs.clear();
+        for (int i = 0; i < size; i++) {
+            int key;
+            bs >> key;
+            mProGuitarOrBassSongs.insert(key);
+        }
+    }
     if (mask & 4) {
         bs >> mPrimaryBandName;
         bs >> mPrimaryProfileName;
