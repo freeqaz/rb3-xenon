@@ -172,10 +172,14 @@ void Debug::Notify(const char *msg) {
                 mNotifyThreadMsg = msg;
                 gNotifyThreadSync.Wait(200);
             }
-        } else {
+        }
+#ifdef HX_NATIVE
+        // RB3 retail (0x8250F538) has no main-thread Modal here: it returns.
+        else {
             ModalType type = kModalNotify;
             Modal(type, msg, nullptr);
         }
+#endif
     }
 }
 
