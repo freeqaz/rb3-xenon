@@ -325,9 +325,10 @@ protected:
     T1 *mObject; // 0x8
 public:
     ObjRefConcrete(Hmx::Object *owner, T1 *obj);
-    // (W17-TMPL: no longer TU-gated. ObjOwnerPtr's out-of-line two-arg ctor
-    // uses it on every X360 TU -- see obj/ObjPtr_p.h -- so it is declared
-    // unconditionally; the ObjPtr users below are still opted in per TU.)
+    // (W17-TMPL: no longer TU-gated; declared unconditionally. ObjOwnerPtr's
+    // out-of-line two-arg ctor was its unconditional user until W17-OWN
+    // re-based ObjOwnerPtr on ObjRefOwner; the ObjPtr users below are still
+    // opted in per TU.)
     // Formerly TU-gated (lane DS-4/C): the DEFER-**BOTH** base ctor. Initializes NOTHING,
     // so the derived ctor body owns the mOwner store as well as the mObject
     // store, and BOTH land after the derived vptr store.
@@ -923,10 +924,12 @@ public:
     // obj/ObjPtr_p.h). Dead either way, but a reader should not learn the
     // wrong ring discipline from it.
     //
-    // Gated on BOTH defines: the owner-only ObjRefConcrete base ctor this
-    // needs exists only under RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT, so
-    // requiring it makes a half-opted-in TU a compile error rather than a
-    // silent fallback to the out-of-line call.
+    // Gated on BOTH defines (kept as-is by W17-OWN). It originally needed the
+    // owner-only ObjRefConcrete base ctor, which exists only under
+    // RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT; since W17-OWN ObjOwnerPtr owns
+    // mOwner itself and initialises it in its own mem-init list, which is
+    // what finally gave EventTrigger::Anim's ctor retail's store order
+    // (95.74 -> 100).
     //
     // As with ObjPtr, the two-arg overload LOSES its default argument while
     // the gate is on, so the one-arg call is unambiguous and a site wanting
