@@ -10348,7 +10348,7 @@
  "0x8250ff20": "?SystemConfig@@YAPAVDataArray@@VSymbol@@0@Z",
  "0x8250ff78": "?SystemConfig@@YAPAVDataArray@@VSymbol@@00@Z",
  "0x8250ffc8": "?SystemConfig@@YAPAVDataArray@@VSymbol@@0000@Z",
- "0x82510040": "?SystemLocale@@YA?AVSymbol@@XZ",
+ "0x82510040": "?SystemLanguage@@YA?AVSymbol@@XZ",
  "0x82510050": "?SystemTitles@@YAPAVDataArray@@XZ",
  "0x825100c8": "?StripEditorData@@YAXXZ",
  "0x825101f0": "?SystemMs@@YAHXZ",

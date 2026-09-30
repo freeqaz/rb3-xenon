@@ -83,7 +83,24 @@ void MoviePanel::Load() {
     bool localize = false;
     config->FindData("localize", localize, false);
     if (localize) {
+#ifdef HX_NATIVE
         mLanguage = Movie::LocalizationTrack();
+#else
+        // RB3 retail (0x827B0A20) is rb3-Wii's inline lookup: SystemLanguage()
+        // against SupportedLanguages(false), 1-based, 0 falls back to the first.
+        Symbol language = SystemLanguage();
+        DataArray *supported = SupportedLanguages(false);
+        int i = 0;
+        for (; i < supported->Size(); i++) {
+            if (supported->Sym(i) == language) {
+                break;
+            }
+        }
+        if (i >= supported->Size()) {
+            i = 0;
+        }
+        mLanguage = i + 1;
+#endif
     } else {
         mLanguage = 0;
     }
@@ -101,7 +118,7 @@ void MoviePanel::Load() {
             );
         }
 
-        if (FileExists(subtitlesPath, 0, nullptr)) {
+        if (FileExists(subtitlesPath, 0)) {
             // bug? pathBuffer should probably be subtitlesPath
             mSubtitlesLoader = new DataLoader(pathBuffer, kLoadFront, true);
         }

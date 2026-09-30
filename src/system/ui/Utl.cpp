@@ -10,7 +10,11 @@ int PageDirection(JoypadAction act) {
     return 0;
 }
 
-bool IsNavAction(JoypadAction act) {
+// Out of line in RB3 retail: PanelDir::DisableComponent's assert condition
+// keeps a `bl IsNavAction`. PanelDir.cpp sees this body through its
+// UIListWidget.cpp scatter-include, and inlining it let the unused condition
+// be dead-coded.
+__declspec(noinline) bool IsNavAction(JoypadAction act) {
     return act == kAction_Up || act == kAction_Down || act == kAction_Left
         || act == kAction_Right;
 }

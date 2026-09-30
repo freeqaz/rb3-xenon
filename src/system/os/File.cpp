@@ -819,13 +819,14 @@ const char *FileLocalize(const char *iFilename, char *buffer) {
     static char mybuffer[256];
     const char *result = iFilename;
 
-    // Retail emits TWO back-to-back ?SystemLocale@@ calls into the same sret
+    // Retail emits TWO back-to-back SystemLanguage() calls (0x82510040; mapped
+    // ?SystemLocale@@ until W16-HP proved it reads gSystemLanguage) into the same sret
     // slot (r1+0x50) at +0x18 and +0x20 and tests only the second.  The first
     // is evaluated and discarded; an extern call returning by value cannot be
     // elided.  Reproduced literally rather than reconstructed from a guess at
     // the original condition.
-    SystemLocale();
-    if (!SystemLocale().Null()) {
+    SystemLanguage();
+    if (!SystemLanguage().Null()) {
         for (const char *p = result; *p != '\0'; p++) {
             if (*p == '/' && p[1] == 'e' && p[2] == 'n' && p[3] == 'g'
                 && p[4] == '/') {
@@ -833,7 +834,7 @@ const char *FileLocalize(const char *iFilename, char *buffer) {
                     buffer = mybuffer;
                 strcpy(buffer, result);
                 char *q = buffer + (p - result);
-                const char *langStr = SystemLocale().Str();
+                const char *langStr = SystemLanguage().Str();
                 q[1] = langStr[0];
                 q[2] = langStr[1];
                 q[3] = langStr[2];

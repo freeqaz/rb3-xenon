@@ -230,7 +230,7 @@ DataNode RockCentral::OnMsg(const ServerStatusChangedMsg &msg) {
         _snprintf(g_szMachineIdString, 20, "%llu", mMachineID);
         DP_KEYS1(locale)
         INIT_DATAPOINT("config/get");
-        ADD_DATA_PAIR(locale, SystemLocale());
+        ADD_DATA_PAIR(locale, SystemLanguage());
         RecordDataPoint(dataPoint, 0, mConfigResultList, this);
         DeleteNextUser();
     } else if (!msg.Success()) {
@@ -416,7 +416,7 @@ void RockCentral::GetTickerInfo(
         INIT_DATAPOINT("ticker/info/get");
         ADD_DATA_PAIR(pid, server->GetPlayerID(profile->GetPadNum()));
         ADD_DATA_PAIR(role_id, (char)s);
-        ADD_DATA_PAIR(locale, SystemLocale());
+        ADD_DATA_PAIR(locale, SystemLanguage());
         RECORD_DATA_POINT(0, results, o);
     }
 }
@@ -428,7 +428,7 @@ void RockCentral::GetSongFullOffer(int i1, DataResultList &results, Hmx::Object 
         INIT_DATAPOINT("entities/song_offer/get");
         ADD_DATA_PAIR(song_id, i1);
         DP_KEY(locale);
-        ADD_DATA_PAIR(locale, SystemLocale());
+        ADD_DATA_PAIR(locale, SystemLanguage());
         DP_KEY(region);
         PlatformRegion regionEnum = ThePlatformMgr.GetRegion();
         if (regionEnum == kRegionNA || regionEnum == kRegionEurope) {
@@ -788,7 +788,7 @@ void RockCentral::RecordScore(
             // Retail declares locale and region as two SEPARATE later statements,
             // each right before its own use (guard bits are checked there).
             static Symbol locale("locale");
-            ADD_DATA_PAIR(locale, SystemLocale());
+            ADD_DATA_PAIR(locale, SystemLanguage());
             static Symbol region("region");
             PlatformRegion regionEnum = ThePlatformMgr.GetRegion();
             if (regionEnum == kRegionNA || regionEnum == kRegionEurope) {
@@ -1322,7 +1322,7 @@ void RockCentral::GetAllSonglists(
             ADD_BUFFER_PAIR(buf, playerIds[i], "pid%03d", i);
         }
         DP_KEY(locale);
-        ADD_DATA_PAIR(locale, SystemLocale());
+        ADD_DATA_PAIR(locale, SystemLanguage());
         DP_KEY(region);
         PlatformRegion regionEnum = ThePlatformMgr.GetRegion();
         if (regionEnum == kRegionNA || regionEnum == kRegionEurope) {
@@ -1350,7 +1350,7 @@ void RockCentral::GetClosedBattles(
             ADD_BUFFER_PAIR(buf, playerIds[i], "pid%03d", i);
         }
         DP_KEY(locale);
-        ADD_DATA_PAIR(locale, SystemLocale());
+        ADD_DATA_PAIR(locale, SystemLanguage());
         DP_KEY(region);
         PlatformRegion regionEnum = ThePlatformMgr.GetRegion();
         if (regionEnum == kRegionNA || regionEnum == kRegionEurope) {

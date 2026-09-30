@@ -274,7 +274,11 @@ inline void MiloStripEval(const char *, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)
 #ifdef HX_NATIVE
 #define MILO_FAIL_DTA(...) TheDebugWarner << MakeString(__VA_ARGS__)
 #else
-#define MILO_FAIL_DTA(...) TheDebugFailer << MakeString(__VA_ARGS__)
+// Retail has exactly one bl to Debug::Fail (from Debug::Poll), so no DTA fail
+// site reaches it: like MILO_FAIL, the args are evaluated and the emission is
+// gone (Hmx::Object::HandleProperty keeps PathName(this) and the Sym, drops
+// MakeString + Fail).
+#define MILO_FAIL_DTA(...) ((void)(__VA_ARGS__))
 #endif
 #ifdef HX_NATIVE
 #define MILO_NOTIFY(...) TheDebugNotifier << MakeString(__VA_ARGS__)

@@ -26,7 +26,7 @@ const char *LocalizeOrdinal(
     static Symbol esl("esl");
     static Symbol ita("ita");
 
-    Symbol lang = SystemLocale();
+    Symbol lang = SystemLanguage();
     if (lang != jpn) {
         if (lang == eng) {
             if (superscriptMarkup)

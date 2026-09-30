@@ -182,7 +182,7 @@ void Archive::Enumerate(
 
         if (isDtb) {
             const char *path = FileGetPath(curPath);
-            char *base = (char *)FileGetBase(curName);
+            const char *base = FileGetBase(curName);
             const char *dtaName = MakeString("%s.dta", base);
             cb(path, dtaName);
         } else {
