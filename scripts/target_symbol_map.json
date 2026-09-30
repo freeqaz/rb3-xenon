@@ -32099,5 +32099,14 @@
  "0x8234a458": "?SetMeshVerts@WorkVerts@BandPatchMesh@@QAAXXZ",
  "0x8234a978": "?SetSameVerts@WorkVerts@BandPatchMesh@@QAA_NPAV12@@Z",
  "0x823468e8": "?FindXfm@BandPatchMesh@@SA_NPAVRndMesh@@ABVVector2@@AAVTransform@@@Z",
- "0x823471a8": "??$__make_heap@PAPAVMeshVert@BandPatchMesh@@USortByPointer@@PAV12@H@stlpmtx_std@@YAXPAPAVMeshVert@BandPatchMesh@@0USortByPointer@@0PAH@Z"
+ "0x823471a8": "??$__make_heap@PAPAVMeshVert@BandPatchMesh@@USortByPointer@@PAV12@H@stlpmtx_std@@YAXPAPAVMeshVert@BandPatchMesh@@0USortByPointer@@0PAH@Z",
+ "0x82349cc8": "??$sort@PAG@stlpmtx_std@@YAXPAG0@Z",
+ "0x823499f0": "??$__introsort_loop@PAGGHU?$less@G@stlpmtx_std@@@stlpmtx_std@@YAXPAG00HU?$less@G@0@@Z",
+ "0x82348260": "??$__final_insertion_sort@PAGU?$less@G@stlpmtx_std@@@stlpmtx_std@@YAXPAG0U?$less@G@0@@Z",
+ "0x82347cf8": "??$__insertion_sort@PAGGU?$less@G@stlpmtx_std@@@stlpmtx_std@@YAXPAG00U?$less@G@0@@Z",
+ "0x823477c0": "??$__linear_insert@PAGGU?$less@G@stlpmtx_std@@@stlpmtx_std@@YAXPAG0GU?$less@G@0@@Z",
+ "0x82348628": "??$__partial_sort@PAGGU?$less@G@stlpmtx_std@@@stlpmtx_std@@YAXPAG000U?$less@G@0@@Z",
+ "0x82347218": "??$__make_heap@PAGU?$less@G@stlpmtx_std@@GH@stlpmtx_std@@YAXPAG0U?$less@G@0@0PAH@Z",
+ "0x82347e80": "??$sort_heap@PAGU?$less@G@stlpmtx_std@@@stlpmtx_std@@YAXPAG0U?$less@G@0@@Z",
+ "0x82346430": "??$__adjust_heap@PAGHGU?$less@G@stlpmtx_std@@@stlpmtx_std@@YAXPAGHHGU?$less@G@0@@Z"
 }
