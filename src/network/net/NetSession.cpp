@@ -400,9 +400,7 @@ bool NetSession::CheckJoinable(
         err = kBusy;
         return false;
     } else {
-        int numUsers = mUsers.size();
-        int numAllowedPlayers = TheNet.GetGameData()->GetNumPlayersAllowed();
-        if (numAllowedPlayers - numUsers < users.size()) {
+        if (NumOpenSlots() < users.size()) {
             err = kNoRoom;
             return false;
         } else {
