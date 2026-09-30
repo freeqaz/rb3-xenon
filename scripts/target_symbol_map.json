@@ -302,6 +302,7 @@
  "0x82b915c8": "?HandleRemoveUser@TrackPanel@@QAAXPAVBandUser@@@Z",
  "0x82b92458": "?PostHandleRemoveUser@TrackPanel@@QAAXPAVBandUser@@@Z",
  "0x82b949f8": "?CheckShifts@GemTrack@@QAAXMH@Z",
+ "0x82b951d8": "?JumpReset@GemTrack@@QAAXXZ",
  "0x82b95570": "?DrawFill@GemTrack@@QAAXPAVFillInfo@@HH@Z",
  "0x82b96e58": "??1Track@@UAA@XZ",
  "0x82b973d0": "?UpdateShifts@GemTrack@@UAAXXZ",
