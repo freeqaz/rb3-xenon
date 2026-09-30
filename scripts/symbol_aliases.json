@@ -15032,12 +15032,28 @@
   {
    "name": "1?$vector",
    "address": "0x82484070",
-   "survivor": "??1?$vector@VDrivenPropertyEntry@@V?$StlNodeAlloc@VDrivenPropertyEntry@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
-   "folded": [
-    "??1?$vector@UPose@RndMorph@@V?$StlNodeAlloc@UPose@RndMorph@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
-   ],
+   "survivor": "??1?$vector@UPose@RndMorph@@V?$StlNodeAlloc@UPose@RndMorph@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??1?$vector@VDrivenPropertyEntry@@V?$StlNodeAlloc@VDrivenPropertyEntry@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "lane": "W17-PRAC 2026-09-30",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ELEMENT",
+     "disposition": "withdrawn; the group survivor is rebound to the retail identity at 0x82484070, and the map is rebound there in the same commit",
+     "absent_types": [
+      "DrivenPropertyEntry"
+     ],
+     "type_evidence": {
+      "DrivenPropertyEntry": {
+       "declared_in": "src/system/flow only (Dance Central flow)",
+       "rb3wii_files": 0,
+       "note": "every body here strides 0x18 and calls ~RndMorph::Pose (0x82483920) or __copy_ptrs<RndMorph::Pose> (0x82483a88); Pose = ObjPtr<RndMesh> 0xc + Keys<float,float> 0xc = 0x18"
+      }
+     },
+     "evidence": "THE ELEMENT IS RndMorph::Pose. Retail 0x82484070 is one of Morph.cpp's 0x18-stride vector helpers (0x82483d40 _Destroy_Range calls ??1Pose@RndMorph@@QAA@XZ at 0x82483920 per element; erase 0x82484398 and operator= 0x824843f0 call __copy_ptrs<RndMorph::Pose> 0x82483a88 and _M_allocate_and_copy<const RndMorph::Pose*> 0x824842f8). RndMorph::Pose = ObjPtr<RndMesh> mesh + Keys<float,float> weights = 0x18. The Pose spelling (defined by Morph.obj) is the survivor; DrivenPropertyEntry is Dance Central flow code."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -74088,13 +74104,30 @@
   {
    "name": "_M_clear",
    "address": "0x82483d90",
-   "survivor": "?_M_clear@?$vector@VDrivenPropertyEntry@@V?$StlNodeAlloc@VDrivenPropertyEntry@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+   "survivor": "?_M_clear@?$vector@UPose@RndMorph@@V?$StlNodeAlloc@UPose@RndMorph@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
    "folded": [
-    "?_M_clear@?$vector@UPose@RndMorph@@V?$StlNodeAlloc@UPose@RndMorph@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
     "?_M_clear_after_move@?$vector@UPose@RndMorph@@V?$StlNodeAlloc@UPose@RndMorph@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "?_M_clear@?$vector@VDrivenPropertyEntry@@V?$StlNodeAlloc@VDrivenPropertyEntry@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W17-PRAC 2026-09-30",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ELEMENT",
+     "disposition": "withdrawn; the group survivor is rebound to the retail identity at 0x82483d90, and the map is rebound there in the same commit",
+     "absent_types": [
+      "DrivenPropertyEntry"
+     ],
+     "type_evidence": {
+      "DrivenPropertyEntry": {
+       "declared_in": "src/system/flow only (Dance Central flow)",
+       "rb3wii_files": 0,
+       "note": "every body here strides 0x18 and calls ~RndMorph::Pose (0x82483920) or __copy_ptrs<RndMorph::Pose> (0x82483a88); Pose = ObjPtr<RndMesh> 0xc + Keys<float,float> 0xc = 0x18"
+      }
+     },
+     "evidence": "THE ELEMENT IS RndMorph::Pose. Retail 0x82483d90 is one of Morph.cpp's 0x18-stride vector helpers (0x82483d40 _Destroy_Range calls ??1Pose@RndMorph@@QAA@XZ at 0x82483920 per element; erase 0x82484398 and operator= 0x824843f0 call __copy_ptrs<RndMorph::Pose> 0x82483a88 and _M_allocate_and_copy<const RndMorph::Pose*> 0x824842f8). RndMorph::Pose = ObjPtr<RndMesh> mesh + Keys<float,float> weights = 0x18. The Pose spelling (defined by Morph.obj) is the survivor; DrivenPropertyEntry is Dance Central flow code."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -78613,13 +78646,30 @@
   {
    "name": "$_Destroy_Range",
    "address": "0x82483d40",
-   "survivor": "??$_Destroy_Range@PAVDrivenPropertyEntry@@@stlpmtx_std@@YAXPAVDrivenPropertyEntry@@0@Z",
+   "survivor": "??$_Destroy_Range@PAUPose@RndMorph@@@stlpmtx_std@@YAXPAUPose@RndMorph@@0@Z",
    "folded": [
-    "??$_Destroy_Range@PAUPose@RndMorph@@@stlpmtx_std@@YAXPAUPose@RndMorph@@0@Z",
     "??$__destroy_range@PAUPose@RndMorph@@U12@@stlpmtx_std@@YAXPAUPose@RndMorph@@00@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??$_Destroy_Range@PAVDrivenPropertyEntry@@@stlpmtx_std@@YAXPAVDrivenPropertyEntry@@0@Z",
+     "lane": "W17-PRAC 2026-09-30",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ELEMENT",
+     "disposition": "withdrawn; the group survivor is rebound to the retail identity at 0x82483d40, and the map is rebound there in the same commit",
+     "absent_types": [
+      "DrivenPropertyEntry"
+     ],
+     "type_evidence": {
+      "DrivenPropertyEntry": {
+       "declared_in": "src/system/flow only (Dance Central flow)",
+       "rb3wii_files": 0,
+       "note": "every body here strides 0x18 and calls ~RndMorph::Pose (0x82483920) or __copy_ptrs<RndMorph::Pose> (0x82483a88); Pose = ObjPtr<RndMesh> 0xc + Keys<float,float> 0xc = 0x18"
+      }
+     },
+     "evidence": "THE ELEMENT IS RndMorph::Pose. Retail 0x82483d40 is one of Morph.cpp's 0x18-stride vector helpers (0x82483d40 _Destroy_Range calls ??1Pose@RndMorph@@QAA@XZ at 0x82483920 per element; erase 0x82484398 and operator= 0x824843f0 call __copy_ptrs<RndMorph::Pose> 0x82483a88 and _M_allocate_and_copy<const RndMorph::Pose*> 0x824842f8). RndMorph::Pose = ObjPtr<RndMesh> mesh + Keys<float,float> weights = 0x18. The Pose spelling (defined by Morph.obj) is the survivor; DrivenPropertyEntry is Dance Central flow code."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -88193,13 +88243,30 @@
   {
    "name": "assign_UHamSupereasyMeasure",
    "address": "0x82480018",
-   "survivor": "??4?$vector@UHamSupereasyMeasure@@V?$StlNodeAlloc@UHamSupereasyMeasure@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+   "survivor": "??4?$vector@V?$Key@VVector2@@@@V?$StlNodeAlloc@V?$Key@VVector2@@@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
    "folded": [
     "??4?$vector@VSectionInfo@Stats@@V?$StlNodeAlloc@VSectionInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
-    "??4?$vector@V?$Key@VVector2@@@@V?$StlNodeAlloc@V?$Key@VVector2@@@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
     "??4?$vector@UGemInProgress@@V?$StlNodeAlloc@UGemInProgress@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z"
    ],
-   "evidence": "W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x82480018). \"ours\" spelling ??4?$vector@VSectionInfo@Stats@@V?$StlNodeAlloc@VSectionInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z is a template/spelling twin of survivor ??4?$vector@UHamSupereasyMeasure@@V?$StlNodeAlloc@UHamSupereasyMeasure@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z at retail address 0x82480018. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 6 SLOT-FOLD-OK, 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 924 B (924 B honest) across ['default/CampaignLevel'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md. W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x82480018). \"ours\" spelling ??4?$vector@V?$Key@VVector2@@@@V?$StlNodeAlloc@V?$Key@VVector2@@@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z is a template/spelling twin of survivor ??4?$vector@UHamSupereasyMeasure@@V?$StlNodeAlloc@UHamSupereasyMeasure@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z at retail address 0x82480018. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 6 SLOT-FOLD-OK, 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 2 row(s) / 480 B (480 B honest) across ['default/EnvAnim', 'default/PartAnim'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md. W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x82480018). \"ours\" spelling ??4?$vector@UGemInProgress@@V?$StlNodeAlloc@UGemInProgress@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z is a template/spelling twin of survivor ??4?$vector@UHamSupereasyMeasure@@V?$StlNodeAlloc@UHamSupereasyMeasure@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z at retail address 0x82480018. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 6 SLOT-FOLD-OK, 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 2 row(s) / 448 B (448 B honest) across ['default/TrackWatcherImpl'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md."
+   "evidence": "W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x82480018). \"ours\" spelling ??4?$vector@VSectionInfo@Stats@@V?$StlNodeAlloc@VSectionInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z is a template/spelling twin of survivor ??4?$vector@UHamSupereasyMeasure@@V?$StlNodeAlloc@UHamSupereasyMeasure@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z at retail address 0x82480018. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 6 SLOT-FOLD-OK, 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 924 B (924 B honest) across ['default/CampaignLevel'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md. W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x82480018). \"ours\" spelling ??4?$vector@V?$Key@VVector2@@@@V?$StlNodeAlloc@V?$Key@VVector2@@@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z is a template/spelling twin of survivor ??4?$vector@UHamSupereasyMeasure@@V?$StlNodeAlloc@UHamSupereasyMeasure@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z at retail address 0x82480018. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 6 SLOT-FOLD-OK, 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 2 row(s) / 480 B (480 B honest) across ['default/EnvAnim', 'default/PartAnim'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md. W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x82480018). \"ours\" spelling ??4?$vector@UGemInProgress@@V?$StlNodeAlloc@UGemInProgress@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z is a template/spelling twin of survivor ??4?$vector@UHamSupereasyMeasure@@V?$StlNodeAlloc@UHamSupereasyMeasure@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z at retail address 0x82480018. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 6 SLOT-FOLD-OK, 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 2 row(s) / 448 B (448 B honest) across ['default/TrackWatcherImpl'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md.",
+   "withdrawn": [
+    {
+     "spelling": "??4?$vector@UHamSupereasyMeasure@@V?$StlNodeAlloc@UHamSupereasyMeasure@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+     "lane": "W17-PRAC 2026-09-30",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ELEMENT",
+     "disposition": "withdrawn; the group survivor is rebound to the retail identity at 0x82480018, and the map is rebound there in the same commit",
+     "absent_types": [
+      "HamSupereasyMeasure"
+     ],
+     "type_evidence": {
+      "HamSupereasyMeasure": {
+       "declared_in": "src/system/hamobj only (Dance Central)",
+       "rb3wii_files": 0
+      }
+     },
+     "evidence": "HamSupereasyMeasure is Dance Central hamobj code. Retail 0x82480018 (340 B) is a 0xc-stride trivially-copyable vector operator= shared by ICF across several RB3 element types; the PartAnim.cpp row is RndParticleSysAnim's: RndParticleSysAnim::Copy (0x824809a0) calls it four times (0x82480a68/78/88/98), once per Keys<Vector2,Vector2> member (mEmitRateKeys, mSpeedKeys, mLifeKeys, mStartSizeKeys; Key<Vector2> = Vector2 + float = 0xc). vector<Key<Vector2>>::operator= (defined by PartAnim.obj, EnvAnim.obj and TrackWatcherImpl.obj) becomes the survivor; the group's other folded RB3 spellings (vector<Stats::SectionInfo>, vector<GemInProgress>) are kept."
+    }
+   ]
   },
   {
    "name": "ctor_vector_int",
@@ -88600,9 +88667,35 @@
    "address": "0x82b87b70",
    "survivor": "??$_M_allocate_and_copy@PAURndPointTest@NgRnd@@@?$vector@URndPointTest@NgRnd@@V?$StlNodeAlloc@URndPointTest@NgRnd@@@stlpmtx_std@@@stlpmtx_std@@IAAPAURndPointTest@NgRnd@@IPAU23@0@Z",
    "folded": [
-    "??$_M_allocate_and_copy@PBUHamSupereasyMeasure@@@?$vector@UHamSupereasyMeasure@@V?$StlNodeAlloc@UHamSupereasyMeasure@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUHamSupereasyMeasure@@IPBU2@0@Z"
+    "??$_M_allocate_and_copy@PBV?$Key@VVector2@@@@@?$vector@V?$Key@VVector2@@@@V?$StlNodeAlloc@V?$Key@VVector2@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$Key@VVector2@@@@IPBV2@0@Z"
    ],
-   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 44, row addr 0x82b87b70). \"ours\" spelling ??$_M_allocate_and_copy@PBUHamSupereasyMeasure@@@?$vector@UHamSupereasyMeasure@@V?$StlNodeAlloc@UHamSupereasyMeasure@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUHamSupereasyMeasure@@IPBU2@0@Z is a template/spelling twin of survivor ??$_M_allocate_and_copy@PAURndPointTest@NgRnd@@@?$vector@URndPointTest@NgRnd@@V?$StlNodeAlloc@URndPointTest@NgRnd@@@stlpmtx_std@@@stlpmtx_std@@IAAPAURndPointTest@NgRnd@@IPAU23@0@Z at retail address 0x82b87b70. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 4 SLOT-FOLD-OK, 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 340 B (340 B honest) across ['default/PartAnim'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md."
+   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 44, row addr 0x82b87b70). \"ours\" spelling ??$_M_allocate_and_copy@PBUHamSupereasyMeasure@@@?$vector@UHamSupereasyMeasure@@V?$StlNodeAlloc@UHamSupereasyMeasure@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUHamSupereasyMeasure@@IPBU2@0@Z is a template/spelling twin of survivor ??$_M_allocate_and_copy@PAURndPointTest@NgRnd@@@?$vector@URndPointTest@NgRnd@@V?$StlNodeAlloc@URndPointTest@NgRnd@@@stlpmtx_std@@@stlpmtx_std@@IAAPAURndPointTest@NgRnd@@IPAU23@0@Z at retail address 0x82b87b70. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 4 SLOT-FOLD-OK, 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 340 B (340 B honest) across ['default/PartAnim'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md.",
+   "withdrawn": [
+    {
+     "spelling": "??$_M_allocate_and_copy@PBUHamSupereasyMeasure@@@?$vector@UHamSupereasyMeasure@@V?$StlNodeAlloc@UHamSupereasyMeasure@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUHamSupereasyMeasure@@IPBU2@0@Z",
+     "lane": "W17-PRAC 2026-09-30",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ELEMENT",
+     "disposition": "withdrawn",
+     "absent_types": [
+      "HamSupereasyMeasure"
+     ],
+     "type_evidence": {
+      "HamSupereasyMeasure": {
+       "declared_in": "src/system/hamobj only (Dance Central)",
+       "rb3wii_files": 0
+      }
+     },
+     "evidence": "HamSupereasyMeasure is Dance Central hamobj code (0 rb3-Wii files). Its only in-tree user was the vector<HamSupereasyMeasure>::operator= name at 0x82480018, which is rebound to vector<Key<Vector2>>::operator= in the same commit; the Key<Vector2> spelling of this callee replaces it here."
+    }
+   ],
+   "added": [
+    {
+     "spelling": "??$_M_allocate_and_copy@PBV?$Key@VVector2@@@@@?$vector@V?$Key@VVector2@@@@V?$StlNodeAlloc@V?$Key@VVector2@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$Key@VVector2@@@@IPBV2@0@Z",
+     "lane": "W17-PRAC 2026-09-30",
+     "verdict": "FOLD -- PROVEN on retail bytes, CHASED T1 (tools/icf_pair_adjudicate.py --chase; 100 B vs 100 B; slots MemOrPoolAlloc/PoolAlloc/operator new and __uninitialized_copy fold-OK)",
+     "evidence": "Retail 0x82480018 (vector<Key<Vector2>>::operator=, RndParticleSysAnim::Copy's four Keys<Vector2,Vector2> members) calls this 0xc-stride _M_allocate_and_copy at +0x48; our compiled operator= calls the _M_allocate_and_copy<const Key<Vector2>*> spelling there."
+    }
+   ]
   },
   {
    "name": "4vector_VTransform",
@@ -88829,6 +88922,15 @@
     "??$_Param_Construct@V?$Key@VObjectStage@@@@V1@@stlpmtx_std@@YAXPAV?$Key@VObjectStage@@@@ABV1@@Z"
    ],
    "evidence": "W17-PRAC 2026-09-30: retail 0x8228eff8 (60 B) null-checks r3 and calls ??0?$Key@VObjectStage@@@@QAA@ABV0@@Z (0x8228efa0). _Param_Construct<Key<ObjectStage>> is the same source body (placement-new copy); tools/icf_pair_adjudicate.py --chase reports FLAT T1 PROVEN (60 B vs 60 B, relocation target names compared). Needed once 0x82424d18 was renamed from __uninitialized_copy<PracticeStep> to __uninitialized_copy<const Key<ObjectStage>*>: our compiled body calls the _Param_Construct spelling where retail calls this address. Same shape as the proven pairs at 0x825570d0, 0x82557060 and 0x82685840."
+  },
+  {
+   "name": "__copy_ptrs_Pose_RndMorph",
+   "address": "0x82483a88",
+   "survivor": "??$__copy_ptrs@PAUPose@RndMorph@@PAU12@@stlpmtx_std@@YAPAUPose@RndMorph@@PAU12@00ABU__false_type@0@@Z",
+   "folded": [
+    "??$__copy_ptrs@PBUPose@RndMorph@@PAU12@@stlpmtx_std@@YAPAUPose@RndMorph@@PBU12@0PAU12@ABU__false_type@0@@Z"
+   ],
+   "evidence": "W17-PRAC 2026-09-30: retail 0x82483a88 (92 B) is __copy_ptrs<RndMorph::Pose*> (map-named, Morph.cpp). Our vector<RndMorph::Pose>::operator= (retail 0x824843f0, renamed from vector<DrivenPropertyEntry> in the same commit) calls the const-source spelling __copy_ptrs<const RndMorph::Pose*> at +0xa0/+0xc4 where retail calls this body. tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED only on relocation names, CHASED T1 PROVEN (92 B vs 92 B)."
   }
  ]
 }
