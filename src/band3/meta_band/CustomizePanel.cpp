@@ -973,10 +973,21 @@ void CustomizePanel::PreviewFinish(Symbol s) {
 
 void CustomizePanel::SelectAsset(Symbol s) {
     if (!mClosetMgr->IsCharacterLoading()) {
+        static Symbol none("none");
+        static Symbol none_bandana("none_bandana");
+        static Symbol none_earrings("none_earrings");
+        static Symbol none_eyebrows("none_eyebrows");
+        static Symbol none_facehair("none_facehair");
+        static Symbol none_glasses("none_glasses");
+        static Symbol none_hair("none_hair");
+        static Symbol none_hat("none_hat");
+        static Symbol none_piercings("none_piercings");
+        static Symbol none_rings("none_rings");
+        static Symbol none_wrists("none_wrists");
         if (s == none_bandana || s == none_earrings || s == none_eyebrows
             || s == none_facehair || s == none_glasses || s == none_hair || s == none_hat
             || s == none_piercings || s == none_rings || s == none_wrists) {
-            mClosetMgr->FinalizeChanges(true, InClothingState());
+            mClosetMgr->FinalizeChanges(true, mCustomizeState >= kCustomizeState_BrowseTorso && mCustomizeState <= kCustomizeState_BrowseFeet);
             LeaveState(false);
         } else {
             AssetMgr *pAssetMgr = AssetMgr::GetAssetMgr();
