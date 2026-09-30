@@ -392,6 +392,7 @@ void SetSystemLanguage(Symbol lang, bool cheats) {
         }
     }
 
+#ifdef HX_NATIVE
     // Only reinitialize locale if language is actually changing
     if (gSystemLanguage.Null() || lang == gSystemLanguage) {
         gSystemLanguage = lang;
@@ -400,6 +401,16 @@ void SetSystemLanguage(Symbol lang, bool cheats) {
         gSystemLanguage = lang;
         TheLocale.Init();
     }
+#else
+    // RB3 retail 0x82510590: a single compare, no Null() guard.
+    if (lang != gSystemLanguage) {
+        TheLocale.Terminate();
+        gSystemLanguage = lang;
+        TheLocale.Init();
+    } else {
+        gSystemLanguage = lang;
+    }
+#endif
 }
 
 void SetGfxMode(GfxMode mode) {
@@ -428,9 +439,12 @@ DataNode OnSwitchSystemLanguage(DataArray *a) {
 }
 
 void LanguageInit() {
+#ifdef HX_NATIVE
+    // RB3 retail 0x825108B8 has no region check (the warning compiled out).
     if (ThePlatformMgr.GetRegion() == kRegionNone) {
         MILO_NOTIFY("LanguageInit called, but region has not been initialized");
     }
+#endif
     DataArray *cfg = SystemConfig("system", "language");
     Symbol lang = GetSystemLanguage("eng");
     DataArray *remapArr = cfg->FindArray("remap", false);
