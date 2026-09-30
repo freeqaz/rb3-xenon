@@ -49,7 +49,7 @@ public:
         void SetRoot(RndTransformable *);
         void SetAngle(float);
         void Save(BinStream &) const;
-        void Load(BinStreamRev &);
+        void Load(BinStream &);
         RndTransformable *Root() { return mRoot; }
         Hmx::Matrix3 &RootMat() { return mRootMat; }
         ObjVector<Point> &Points() { return mPoints; }
