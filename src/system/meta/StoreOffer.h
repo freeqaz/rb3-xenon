@@ -67,9 +67,9 @@ public:
     // instantiates `__find` over `StoreOffer**` but no sort-family algorithm.
 
     Symbol OfferType() const {
+        // Retail (0x8253B238): a single DataArray::FindSym call.
         static Symbol type("type");
-        Symbol s = type;
-        return mStoreOfferData->FindArray(s)->Sym(1);
+        return mStoreOfferData->FindSym(type);
     }
     bool HasData(Symbol) const;
     Symbol FirstChar(Symbol, bool) const;
