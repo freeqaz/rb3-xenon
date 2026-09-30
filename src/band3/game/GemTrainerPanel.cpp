@@ -342,11 +342,9 @@ void GemTrainerPanel::SetLoopPoints() {
         int end = GetSectionLoopEnd(GetCurrSection());
         TrainerSection &sect = GetSection(GetCurrSection());
         TheGame->GetBeatMaster()->GetAudio()->GetSongStream()->ClearJump();
+        Stream *stream = TheGame->GetBeatMaster()->GetAudio()->GetSongStream();
         float startMs = TickToMs(start);
-        float endMs = TickToMs(end);
-        TheGame->GetBeatMaster()->GetAudio()->GetSongStream()->SetJump(
-            endMs, startMs, nullptr
-        );
+        stream->SetJump(TickToMs(end), startMs, nullptr);
         TheSongDB->GetData()->GetTempoMap()->SetLoopPoints(start, end);
     }
 }
