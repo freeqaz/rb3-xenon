@@ -1,9 +1,11 @@
 #pragma once
 // Ported from rb3-Wii src/system/bandobj/TrackPanelDirBase.h.
-// ObjPtr<T,ObjectDir> -> ObjPtr<T>; GemTrackDir & friends forward-declared
-// (used only via pointer/ObjPtr/ObjVector) to avoid pulling GemTrackDir.h
-// (not present in src/system) and its transitive tail.
+// ObjPtr<T,ObjectDir> -> ObjPtr<T>. Like rb3-Wii, this header includes
+// GemTrackDir.h: mGemTracks is ObjVector<ObjPtr<GemTrackDir> >, and MSVC
+// instantiates ObjPtr<T>::Replace (a dynamic_cast<T *>) with the class, so every
+// includer needs the complete type.
 #include "ui/PanelDir.h"
+#include "bandobj/GemTrackDir.h"
 #include "bandobj/TrackInstruments.h"
 #include "rndobj/Group.h" // RndGroup used inline in Showing()
 #include "obj/ObjMacros.h" // DECLARE_REVS / NEW_OVERLOAD / DELETE_OVERLOAD
@@ -133,7 +135,10 @@ public:
     ObjPtrList<RndTransformable> mConfigurableObjects; // 0x254
     std::vector<TrackInstrument> mInstruments; // 0x268
     ObjVector<ObjPtr<BandTrack> > mTracks; // 0x274
-    ObjVector<ObjPtr<RndDir> > mGemTracks; // 0x284  (GemTrackDir; RndDir keeps layout, avoids header tail)
+    // Retail element type is ObjPtr<GemTrackDir> (W17-TPD): the ctor's push_back
+    // temp stores vtable 0x8202C1E4, whose Replace (0x82304000) casts to
+    // .?AVGemTrackDir@@ (rb3-Wii declares the same type).
+    ObjVector<ObjPtr<GemTrackDir> > mGemTracks; // 0x284
     bool unk224; // 0x294
     TrackPanelInterface *mTrackPanel; // 0x298
     ObjPtr<RndDir> mApplauseMeter; // 0x29c

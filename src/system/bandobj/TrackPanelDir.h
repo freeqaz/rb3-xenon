@@ -1,8 +1,6 @@
 #pragma once
 // Ported from rb3-Wii src/system/bandobj/TrackPanelDir.h.
-// Uses single-arg ObjPtr<T> (rb3-xenon convention); base TrackPanelDirBase
-// keeps mGemTracks as ObjVector<ObjPtr<RndDir> > (GemTrackDir IS-A RndDir),
-// so GemTrackDir-typed access in the .cpp goes through a cast.
+// Uses single-arg ObjPtr<T> (rb3-xenon convention).
 #include "bandobj/TrackPanelDirBase.h"
 #include "bandobj/VocalTrackDir.h"
 #include "bandobj/BandCrowdMeter.h"
