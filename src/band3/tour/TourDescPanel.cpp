@@ -341,10 +341,12 @@ void TourDescProvider::UpdateExtendedText(int, int iData, UILabel *i_pLabel) con
     Symbol s = DataSymbol(iData);
     TourDesc *pTourDesc = TheTour->GetTourDesc(s);
     MILO_ASSERT(pTourDesc, 0x104);
+    static Symbol tourdesc_stars_needed("tourdesc_stars_needed");
     TourProgress *pProgress = TheTour->GetTourProgress();
     MILO_ASSERT(pProgress, 0x109);
-    bool bPlayed = pProgress->GetToursPlayed(s) != 0
-        || pProgress->GetTourMostStars(s) > 0;
+    bool bPlayed = pProgress->GetToursPlayed(s) > 0;
+    if (!bPlayed && pProgress->GetTourMostStars(s) > 0)
+        bPlayed = true;
     const char *pName = i_pLabel->Name();
     if (strcmp(pName, "tour_bronze.lbl") == 0) {
         i_pLabel->SetTokenFmt(
@@ -359,7 +361,7 @@ void TourDescProvider::UpdateExtendedText(int, int iData, UILabel *i_pLabel) con
             tourdesc_stars_needed, pTourDesc->GetTourStarsGoldGoalValue()
         );
     } else if (strcmp(pName, "tour_desc.lbl") == 0) {
-        bool bAvailable = MetaPanel::sUnlockAll ? true : IsTourDescAvailable(s);
+        bool bAvailable = IsTourDescAvailable(s);
         if (bAvailable) {
             i_pLabel->SetTextToken(pTourDesc->GetDescription());
         } else {
@@ -367,12 +369,13 @@ void TourDescProvider::UpdateExtendedText(int, int iData, UILabel *i_pLabel) con
         }
     } else if (strcmp(pName, "total.lbl") == 0) {
         if (bPlayed) {
+            static Symbol tour_gig_total("tour_gig_total");
             i_pLabel->SetTextToken(tour_gig_total);
         } else {
             i_pLabel->SetTextToken(Symbol(gNullStr));
         }
     } else if (strcmp(pName, "tour_unlockinfo.lbl") == 0) {
-        bool bAvailable = MetaPanel::sUnlockAll ? true : IsTourDescAvailable(s);
+        bool bAvailable = IsTourDescAvailable(s);
         if (bAvailable) {
             i_pLabel->SetTextToken(Symbol(gNullStr));
         } else {
