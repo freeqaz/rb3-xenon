@@ -605,6 +605,7 @@ int SongDB::NextPhraseIndexAfter(int i1, int i2) {
 }
 
 void SongDB::SetupPracticeSections() {
+    static Symbol section("section");
     DataEventList *events = TheGame->GetBeatMaster()->GetMidiParserMgr()->GetEventsList();
     for (int i = 0; i < events->Size(); i++) {
         const DataEvent &curEvent = events->Event(i);
@@ -620,7 +621,8 @@ void SongDB::SetupPracticeSections() {
         } else if (strncmp(sym.Str(), "prc_", 4) == 0) {
             MemDoTempAllocations m;
             PracticeSection sect;
-            sect.unk0 = Symbol(sym.Str());
+            Symbol prcSym(sym.Str());
+            sect.unk0 = prcSym;
             sect.unk4 = BeatToTickInt(curEvent.start);
             sect.unk8 = -1;
             mPracticeSections.push_back(sect);
