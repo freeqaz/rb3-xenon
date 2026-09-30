@@ -1,4 +1,5 @@
 #define RB3_TU_OBJPTR_FORCEINLINE_CTOR
+#define RB3_TU_OBJPTR_DEFER_OWNER
 #include "ui/UIListMesh.h"
 #include "obj/Object.h"
 #include "rndobj/Cam.h"
