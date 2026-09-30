@@ -294,42 +294,27 @@ DataNode BandStorePanel::OnMsg(const MetadataLoadedMsg &msg) {
     if (!msg->Int(6)) {
         mPrevChunkPath = gNullStr;
         mNextChunkPath = gNullStr;
-        // NEGATIVE RESULT (W16-CK), measured -- do not re-try the named local.
-        // Retail reads this Symbol back from its FRAME SLOT (`lwz r11, 0x50(r31)`)
-        // where we read it through the ctor's returned `this` (`mr r11,r3` then
-        // `lwz r11,0(r11)`); those are charges [40]/[43].  Spelling it as a named
-        // local `Symbol nullSym(gNullStr); mSort = nullSym;` DOES close that pair
-        // and is still wrong: the named local claims a dedicated 16-byte-aligned
-        // slot, our frame grows 0xf0 -> 0x100, the 8 charges become 29 OFFSET
-        // charges, and the four 40-byte EH funclets -- which objdiff pairs by BYTE
-        // SIGNATURE, and whose signature encodes the parent frame size -- fall back
-        // off 100.  Whole binary measured -96 B (+64 B from fn_826066D4 accidentally
-        // re-pairing onto the WRONG frame, -160 B from the four funclets).
-        // The hypothesis is refuted independently of the metric: retail
-        // re-CONSTRUCTS into 0x50 TWICE (once for gNullStr, once for "index_info"),
-        // which a named local cannot do.  So 0x50 is a reused TEMP slot and the
-        // residue is MSVC temporary-slot rotation, not a missing declaration.
-        //
-        // FIRST PASS (W17-F5, 2026-09-30, Sonnet) -- a record of what was tried,
-        // NOT a verdict. 5 statement-grouping variants, none moved the slot map:
-        //   1. swap mSort/mMenuTitle order            -> REGRESSED 99.3%->96.8%
-        //   2. hoist mSort to top of if-block          -> REGRESSED 99.3%->95.7%
-        //   3. comma-merge prevChunk,nextChunk         -> INERT (byte-identical objdiff)
-        //   4. comma-merge mSort,mMenuTitle            -> INERT (byte-identical objdiff)
-        //   5. comma-merge nextChunk,mSort             -> INERT (byte-identical objdiff)
-        // Comma-merging two statements does NOT change MSVC's per-statement temp
-        // pool reset the way splitting/reordering does -- it appears to still
-        // count as two statements for slot-allocation purposes at every adjacency
-        // tried. Reordering does move codegen but only by disturbing the visible
-        // instruction SCHEDULE, which regresses other charges faster than it fixes
-        // this one. The residual (8 mismatches: 6 diff_arg reloc-offset shifts on
-        // slots 0x50/0x54/0x58, one replace+insert at [40]/[43] where retail
-        // reloads the ctor'd Symbol from its frame slot instead of keeping the
-        // ctor's returned `this` in a register) is untested beyond statement
-        // grouping. Not yet tried: how the Symbol is constructed/assigned (the
-        // [40]/[43] materialisation), and declaration placement that keeps the
-        // frame at 0xf0 (W16-CK's named local grew it and is banned).
-        mSort = Symbol(gNullStr);
+        // RESOLVED (W17-BSP, 2026-09-30): a named Symbol in its OWN braced
+        // scope.  Retail reads the Symbol back from its frame slot
+        // (`lwz r11, 0x50(r31)`), which is what a NAMED object does -- a
+        // temporary `mSort = Symbol(gNullStr)` reads it through the ctor's
+        // returned `this` (`mr r11,r3; lwz r11,0(r11)`).  W16-CK's named local
+        // (`Symbol nullSym(gNullStr); mSort = nullSym;` at if-block scope) was
+        // right about the name and wrong about the LIFETIME: living to the end
+        // of the if-block it claimed a dedicated slot and grew the frame
+        // 0xf0 -> 0x100 (-96 B whole-binary).  Closing its scope immediately
+        // frees 0x50 for the "index_info" temp -- exactly the reuse retail
+        // shows -- keeps the frame at 0xf0, and also puts the Sym() return temp
+        // (0x54) and the return-value flag (0x58) in retail's slots.
+        // Measured (ab_measure, name_check): +2 fns / +972 B -- this row
+        // 99.27 -> 100 (908 B) and fn_826066D4 99.81 -> 100 (64 B); 0 rows down.
+        // The five statement-grouping variants W17-F5 tried first (swap/hoist
+        // mSort, three comma-merges) regressed or were inert; with the scope
+        // fix none of them is needed.
+        {
+            Symbol nullSym(gNullStr);
+            mSort = nullSym;
+        }
         mMenuTitle = gNullStr;
         DataArray *info = data->FindArray(Symbol("index_info"), false);
         if (info) {
