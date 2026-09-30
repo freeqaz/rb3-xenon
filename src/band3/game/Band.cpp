@@ -317,12 +317,14 @@ void Band::CheckCoda(SongPos &pos) {
 void Band::BlowCoda(Player *p) {
     if (p->IsLocal()) {
         LocalBlowCoda(p);
+        static Message send_blow_coda_msg("send_blow_coda");
         p->Handle(send_blow_coda_msg, true);
     }
 }
 
 void Band::LocalBlowCoda(Player *p) {
     if (!p->mHasBlownCoda) {
+        static Message coda_blown_msg("coda_blown");
         TheGamePanel->Handle(coda_blown_msg, false);
         for (int i = 0; i < mActivePlayers.size(); i++) {
             BandTrack *bandtrack = mActivePlayers[i]->GetBandTrack();
@@ -381,6 +383,7 @@ bool Band::EveryoneFinishedCoda() {
 }
 
 void Band::WinCoda() {
+    static Message coda_success_msg("coda_success");
     TheGamePanel->Handle(coda_success_msg, false);
     for (int i = 0; i < mActivePlayers.size(); i++) {
         BandTrack *bt = mActivePlayers[i]->GetBandTrack();

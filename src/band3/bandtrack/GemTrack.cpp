@@ -900,6 +900,7 @@ void GemTrack::PlayKeyIntros() {
                 unsigned int slots = mGemManager->EnabledSlots();
                 if (slots & 1 << i) {
                     Hmx::Object *obj = mGemManager->GetSmasherObj(i);
+                    static Message intro_msg("intro");
                     MessageTask *task = new MessageTask(obj, intro_msg);
                     TheTaskMgr.Start(task, (TaskUnits)2, ((float)(j)*f8 + f9) / 1000.0f);
                     mKeyIntroTasks.push_back(task);

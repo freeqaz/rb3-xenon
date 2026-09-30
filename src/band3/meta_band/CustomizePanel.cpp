@@ -764,9 +764,16 @@ Symbol CustomizePanel::StripFinish(Symbol s) {
     return pAssetMgr->StripFinish(s);
 }
 
-void CustomizePanel::RefreshNewAssetsList() { Handle(refresh_new_assets_list_msg, true); }
-void CustomizePanel::RefreshAssetsList() { Handle(refresh_assets_list_msg, true); }
+void CustomizePanel::RefreshNewAssetsList() {
+    static Message refresh_new_assets_list_msg("refresh_new_assets_list");
+    Handle(refresh_new_assets_list_msg, true);
+}
+void CustomizePanel::RefreshAssetsList() {
+    static Message refresh_assets_list_msg("refresh_assets_list");
+    Handle(refresh_assets_list_msg, true);
+}
 void CustomizePanel::RefreshCurrentOutfitList() {
+    static Message refresh_current_outfit_list_msg("refresh_current_outfit_list");
     Handle(refresh_current_outfit_list_msg, true);
 }
 
@@ -941,10 +948,20 @@ void CustomizePanel::SelectAsset(Symbol s) {
     }
 }
 
-void CustomizePanel::ShowLockedDialog() { Handle(show_locked_dialog_msg, true); }
-void CustomizePanel::ChooseFinish() { Handle(choose_finish_msg, true); }
-void CustomizePanel::ChooseColors() { Handle(choose_colors_msg, true); }
+void CustomizePanel::ShowLockedDialog() {
+    static Message show_locked_dialog_msg("show_locked_dialog");
+    Handle(show_locked_dialog_msg, true);
+}
+void CustomizePanel::ChooseFinish() {
+    static Message choose_finish_msg("choose_finish");
+    Handle(choose_finish_msg, true);
+}
+void CustomizePanel::ChooseColors() {
+    static Message choose_colors_msg("choose_colors");
+    Handle(choose_colors_msg, true);
+}
 void CustomizePanel::GotoCustomizeClothingScreen() {
+    static Message goto_customize_clothing_screen_msg("goto_customize_clothing_screen");
     Handle(goto_customize_clothing_screen_msg, true);
 }
 
@@ -1046,8 +1063,14 @@ bool CustomizePanel::HasPatch() {
         != -1;
 }
 
-void CustomizePanel::EnableFaceHair() { Handle(enable_facehair_msg, true); }
-void CustomizePanel::DisableFaceHair() { Handle(disable_facehair_msg, true); }
+void CustomizePanel::EnableFaceHair() {
+    static Message enable_facehair_msg("enable_facehair");
+    Handle(enable_facehair_msg, true);
+}
+void CustomizePanel::DisableFaceHair() {
+    static Message disable_facehair_msg("disable_facehair");
+    Handle(disable_facehair_msg, true);
+}
 // RB3-360 retail (lane DQ-1): the return type here is `int`, not `bool`, and the
 // has_license arm spells the test out as `... != 0`.  That is not cosmetic — it
 // is what produces retail's four-instruction bool chain at 0x82619808:

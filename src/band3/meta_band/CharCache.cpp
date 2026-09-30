@@ -206,7 +206,7 @@ DataNode CharCache::OnGetPatchTex(DataArray *arr) {
                 PatchDir *patchDir =
                     patchPanel->Property("editing_patch")->Obj<PatchDir>();
                 MILO_ASSERT(patchDir, 0xCC);
-                if ((profile && patchIdx == profile->GetPatchIndex(patchDir))
+                if ((profile && profile->GetPatchIndex(patchDir) == patchIdx)
                     || patchName == customizePanel->mPatchName.c_str()) {
                     return DataNode(
                         patchPanel->LoadedDir()->Find<RndTex>("patch_preview.tex", true)
@@ -221,6 +221,7 @@ DataNode CharCache::OnGetPatchTex(DataArray *arr) {
         if (selectPanel->GetState() == UIPanel::kUp) {
             if (user->IsLocal()
                 && patchName == customizePanel->mPatchName.c_str()) {
+                static Message highlighted_tex_msg("highlighted_tex");
                 return DataNode(
                     selectPanel->HandleType(highlighted_tex_msg).Obj<RndTex>()
                 );
@@ -230,6 +231,10 @@ DataNode CharCache::OnGetPatchTex(DataArray *arr) {
         // Otherwise resolve the patch from the user's character data.
         CharData *charData = user->GetChar();
         if (!bchar->mPrefab.Null()) {
+            // Retail fn_8256BEC8 has NO prefab-customizable path here: it goes
+            // straight to the null return. The rb3-Wii dev build's block is
+            // kept for native only (house pattern, see os/Timer.h).
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
             if (PrefabMgr::GetPrefabMgr()->PrefabIsCustomizable()
                 && PrefabMgr::GetPrefabMgr()->PrefabUsesProfilePatches()
                 && dynamic_cast<PrefabChar *>(charData)) {
@@ -241,6 +246,7 @@ DataNode CharCache::OnGetPatchTex(DataArray *arr) {
                     return DataNode(profile->GetTexAtPatchIndex(patchIdx));
                 }
             }
+#endif
             return DataNode((Hmx::Object *)nullptr);
         }
         return DataNode(charData->GetTexAtPatchIndex(patchIdx, true));

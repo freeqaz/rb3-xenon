@@ -210,6 +210,7 @@ void Performer::EndMissStreak() {
 void Performer::SendStreak() {
     MILO_ASSERT(IsLocal(), 0x170);
     if (unk1fe) {
+        static Message send_streak_msg("send_streak");
         Handle(send_streak_msg, false);
     }
 }
@@ -290,6 +291,7 @@ void Performer::WinGame(int i) {
     }
     if (IsLocal()) {
         unk1e2 = true;
+        static Message send_finished_song_msg("send_finished_song");
         Handle(send_finished_song_msg, false);
     }
 }

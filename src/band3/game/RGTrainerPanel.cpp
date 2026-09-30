@@ -293,6 +293,7 @@ void RGTrainerPanel::Swing(int i) {
             )) {
             GameGem &gem = mGameGemLists[GetDifficulty()]->GetGem(mLegendGemID);
             gem.mPlayed = true;
+            static Message end_chord_legend_msg("end_chord_legend");
             Handle(end_chord_legend_msg, true);
         }
     }
@@ -580,13 +581,17 @@ void RGTrainerPanel::SetLegendGemID(int id) { mLegendGemID = id; }
 void RGTrainerPanel::PickFretboardView(const GameGem &gem) {
     if (!GetFretboardView(gem)) {
         if (mLefty) {
+            static Message show_high_frets_lefty_msg("show_high_frets_lefty");
             mChordLegend->HandleType(show_high_frets_lefty_msg);
         } else {
+            static Message show_high_frets_msg("show_high_frets");
             mChordLegend->HandleType(show_high_frets_msg);
         }
     } else if (mLefty) {
+        static Message show_low_frets_lefty_msg("show_low_frets_lefty");
         mChordLegend->HandleType(show_low_frets_lefty_msg);
     } else {
+        static Message show_low_frets_msg("show_low_frets");
         mChordLegend->HandleType(show_low_frets_msg);
     }
 }
