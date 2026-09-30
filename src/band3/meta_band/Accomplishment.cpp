@@ -242,10 +242,16 @@ int Accomplishment::GetContextID() const { return mContextId; }
 
 const char *Accomplishment::GetIconArt() const {
     // retail fn_82594858: one format string, out-of-line Symbol::operator==
-    return MakeString(
-        "ui/accomplishments/accomplishment_art/%s_keep.png",
-        !(mIconOverride == gNullStr) ? mIconOverride.Str() : mName.Str()
-    );
+    // Two MakeString calls sharing the format string: retail materialises it
+    // before the branch.
+    if (!(mIconOverride == gNullStr))
+        return MakeString(
+            "ui/accomplishments/accomplishment_art/%s_keep.png", mIconOverride.Str()
+        );
+    else
+        return MakeString(
+            "ui/accomplishments/accomplishment_art/%s_keep.png", mName.Str()
+        );
 }
 
 DECOMP_FORCEACTIVE(Accomplishment, "%s_gray")
