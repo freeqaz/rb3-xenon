@@ -113,20 +113,24 @@ UIListSlotElement *UIListSubList::CreateElement(UIList *parent) {
 UIListSubListElement::~UIListSubListElement() { delete mList; }
 
 void UIListSubListElement::Fill(const UIListProvider &prov, int i, int j) {
+#ifdef HX_NATIVE
     UIListProvider *theProvider;
     if (TheLoadMgr.EditMode())
         theProvider = mList;
     else
         theProvider = prov.Provider(i, j, mSlot);
-    if (theProvider) {
-        mList->SetProvider(theProvider);
-        if (0 <= UIListSubList::sNextFillSelection) {
-            mList->SetSelected(
-                Clamp(0, theProvider->NumData() - 1, UIListSubList::sNextFillSelection),
-                -1
-            );
-            UIListSubList::sNextFillSelection = -1;
-        }
+    if (!theProvider)
+        return;
+#else
+    // retail 0x828201C0: no edit-mode path and no null check
+    UIListProvider *theProvider = prov.Provider(i, j, mSlot);
+#endif
+    mList->SetProvider(theProvider);
+    if (0 <= UIListSubList::sNextFillSelection) {
+        mList->SetSelected(
+            Clamp(0, theProvider->NumData() - 1, UIListSubList::sNextFillSelection), -1
+        );
+        UIListSubList::sNextFillSelection = -1;
     }
 }
 

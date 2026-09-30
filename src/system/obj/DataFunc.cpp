@@ -996,10 +996,11 @@ DEF_DATA_FUNC(DataHandleTypeRet) {
     } else {
         obj = gDataDir->FindObject(n.LiteralStr(array), true);
     }
+    // Retail (fn_82761160) has no not-found report; it is native-only.
+#ifdef HX_NATIVE
     if (!obj) {
         String str;
         n.Print(str, true);
-#ifdef HX_NATIVE
         MILO_WARN(
             "Object %s not found (file %s, line %d)",
             str.c_str(),
@@ -1007,15 +1008,8 @@ DEF_DATA_FUNC(DataHandleTypeRet) {
             array->Line()
         );
         return DataNode(kDataUnhandled, 0);
-#else
-        MILO_FAIL(
-            "Object %s not found (file %s, line %d)",
-            str.c_str(),
-            array->File(),
-            array->Line()
-        );
-#endif
     }
+#endif
     return obj->HandleType(arr);
 }
 

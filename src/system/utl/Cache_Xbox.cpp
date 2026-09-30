@@ -345,6 +345,7 @@ int CacheXbox::ThreadGetFileSize() {
     HANDLE file = CreateFileA(mThreadStr.c_str(), 0, 1, nullptr, 3, 0x80, nullptr);
     if (file == INVALID_HANDLE_VALUE) {
         DWORD err = GetLastError();
+#ifdef HX_NATIVE
         if (!IsDeviceConnected(mCacheID.DeviceID())) {
             return 8;
         } else if (err == 2) {
@@ -356,26 +357,21 @@ int CacheXbox::ThreadGetFileSize() {
             );
             return -1;
         }
+#else
+        // RB3-360 retail (fn_827DA7C0): no file-not-found (6) case.
+        return IsDeviceConnected(mCacheID.DeviceID()) ? -1 : 8;
+#endif
     } else {
         int ret = 0;
         DWORD fileSize = 0;
         DWORD res = GetFileSize(file, &fileSize);
-        if (!(res != -1)) {
-            // Byte-verified against retail fn_827DA7C0 (this function; still
-            // unpinned in target_symbol_map.json, so objdiff cannot score it):
-            // `lwz r11, 0x160(r30); stw r31, 0x0(r11)` -- the size is written
-            // through mData (0x160), which is where GetFileSizeAsync parks it.
+        // Retail: the size is parked through mData (0x160) unless GetFileSize
+        // failed with a real error (res == -1 AND GetLastError() != 0).
+        if (res != -1 || GetLastError() == 0) {
             int *data = (int *)mData;
             *data = res;
         } else {
-            DWORD err = GetLastError();
-            if (err != 0) {
-                MILO_NOTIFY(
-                    "CacheXbox::GetFileSizeAsync() - Unhandled error from GetFileSize(): %d\n",
-                    err
-                );
-                ret = -1;
-            }
+            ret = -1;
         }
         CloseHandle(file);
         return !IsDeviceConnected(mCacheID.DeviceID()) ? 8 : ret;

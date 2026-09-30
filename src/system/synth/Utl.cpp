@@ -18,6 +18,30 @@ const char *WavFileCacheHelper::CacheFile(const char *file) {
 
 static char sCacheWavBuf[0x100];
 
+#ifndef HX_NATIVE
+// Retail (X360 TU5) is compiled for the Xbox only: no platform query, no
+// UsingCD/Holmes cache request -- the gen path is formatted, copied into the
+// static buffer and returned (MSVC evaluates the MakeString args right to left,
+// hence PlatformSymbol first, then ext/base/path).
+const char *CacheWav(const char *file, CacheResourceResult &result) {
+    result = (CacheResourceResult)0;
+    if (!file || *file == '\0') {
+        return nullptr;
+    }
+    const char *localized = FileLocalize(file, nullptr);
+    strcpy(
+        sCacheWavBuf,
+        MakeString(
+            "%s/gen/%s.%s_%s",
+            FileGetPath(localized),
+            FileGetBase(localized),
+            FileGetExt(localized),
+            PlatformSymbol(kPlatformXBox)
+        )
+    );
+    return sCacheWavBuf;
+}
+#else
 const char *CacheWav(const char *file, CacheResourceResult &result) {
     result = (CacheResourceResult)0;
     Platform platform = TheLoadMgr.GetPlatform();
@@ -52,6 +76,7 @@ const char *CacheWav(const char *file, CacheResourceResult &result) {
         dst = nullptr;
     return dst;
 }
+#endif
 
 void SynthUtlInit() {
     FileCache::RegisterWavCacheHelper(&gWavFileCacheHelper);

@@ -61,28 +61,54 @@ BEGIN_LOADS(MeterDisplay)
     PostLoad(bs);
 END_LOADS
 
+// RB3 retail keeps no BinStreamRev here: the packed rev is split into two TU
+// shorts in one aligned aggregate (alt at +0, rev at +4), there is no version
+// guard, and every field is read through the plain BinStream -- the same form as
+// MiniLeaderboardDisplay::PreLoad in this directory.
+#pragma push_macro("INIT_REVS")
+#pragma push_macro("LOAD_REVS")
+#pragma push_macro("ASSERT_REVS")
+#undef INIT_REVS
+#undef LOAD_REVS
+#undef ASSERT_REVS
+#define INIT_REVS(r_, a_)                                                                \
+    static struct {                                                                      \
+        __declspec(align(4)) unsigned short altRev;                                      \
+        __declspec(align(4)) unsigned short rev;                                         \
+    } gRevs_MeterDisplay = { a_, r_ };
+#define LOAD_REVS(bs)                                                                    \
+    int rev;                                                                             \
+    bs >> rev;                                                                           \
+    gRevs_MeterDisplay.rev = getHmxRev(rev);                                             \
+    gRevs_MeterDisplay.altRev = getAltRev(rev);
+#define ASSERT_REVS(rev1, rev2)
+
 INIT_REVS(4, 0)
 
 void MeterDisplay::PreLoad(BinStream &bs) {
     LOAD_REVS(bs)
     ASSERT_REVS(4, 0)
-    d >> mShowText;
-    if (d.rev >= 1) {
+    bs >> mShowText;
+    if (gRevs_MeterDisplay.rev >= 1) {
         bs >> mCurrentValue;
         bs >> mMaxValue;
     }
-    if (d.rev >= 2) {
-        d >> mPercentageText;
+    if (gRevs_MeterDisplay.rev >= 2) {
+        bs >> mPercentageText;
     }
-    if (d.rev >= 3) {
+    if (gRevs_MeterDisplay.rev >= 3) {
         bs >> mAnimPeriod;
     }
-    if (d.rev >= 4) {
-        d >> mHideDenominator;
+    if (gRevs_MeterDisplay.rev >= 4) {
+        bs >> mHideDenominator;
         bs >> mWrapperText;
     }
     UIComponent::PreLoad(bs);
 }
+
+#pragma pop_macro("ASSERT_REVS")
+#pragma pop_macro("LOAD_REVS")
+#pragma pop_macro("INIT_REVS")
 
 void MeterDisplay::PostLoad(BinStream &bs) {
     UIComponent::PostLoad(bs);

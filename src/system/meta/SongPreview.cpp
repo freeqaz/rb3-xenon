@@ -390,8 +390,14 @@ void SongPreview::Poll() {
         break;
     }
     case kPlayingSong: {
+#ifdef HX_NATIVE
         if (HasMovie() || mStream && mStream->GetTime() < mEndMs)
             return;
+#else
+        // Retail (fn_827A6200): no mStream null test here.
+        if (HasMovie() || mStream->GetTime() < mEndMs)
+            return;
+#endif
         MILO_LOG("mSong in Poll is %s\n", mSong);
         mState = kFadingOutSong;
         mFader->DoFade(kSilenceVal, mFadeTime);

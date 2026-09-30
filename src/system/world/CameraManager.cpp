@@ -156,13 +156,19 @@ void CameraManager::PrePoll() {
 }
 
 void CameraManager::Poll() {
-    if (!MiloCamera()) {
-        if (mCurrentShot) {
-            mCurrentShot->SetFrame(CalcFrame(), 1.0f);
-        }
-        if (mFreeCam) {
-            mFreeCam->Poll();
-        }
+    // Retail (fn_824BA100) constructs two unused local statics and has no
+    // MiloCamera() gate; the gate is kept for native.
+    static Symbol shot("shot");
+    static Symbol category("category");
+#ifdef HX_NATIVE
+    if (MiloCamera())
+        return;
+#endif
+    if (mCurrentShot) {
+        mCurrentShot->SetFrame(CalcFrame(), 1.0f);
+    }
+    if (mFreeCam) {
+        mFreeCam->Poll();
     }
 }
 

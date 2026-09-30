@@ -97,11 +97,7 @@ void MetaMusicLoader::LoadFile() {
 #pragma push
 #pragma force_active on
 inline bool MetaMusic::Loaded() {
-    bool isLoaded = 0;
-    if (mPlayFromBuffer == 0 || (mBuf != 0 && mFile == 0)) {
-        isLoaded = 1;
-    }
-    return isLoaded;
+    return !mPlayFromBuffer || (mBuf && !mFile);
 }
 #pragma pop
 

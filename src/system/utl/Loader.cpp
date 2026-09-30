@@ -123,6 +123,7 @@ void FileLoader::DoneLoading() {}
 
 void FileLoader::AllocBuffer() {
     const char *filename = mFilename.c_str();
+#ifdef HX_NATIVE
     MemHeapTracker tmp(MemFindHeap("main"));
     BeginMemTrackFileName(filename);
     if (mTemp) {
@@ -134,6 +135,17 @@ void FileLoader::AllocBuffer() {
         );
     }
     EndMemTrackFileName();
+#else
+    // RB3-360 retail: no heap push or mem-track bracketing; the allocation
+    // name is still built (Symbol of the extension) and then dropped.
+    if (mTemp) {
+        mBuffer =
+            (const char *)_MemAllocTemp(mBufLen, __FILE__, 0x241, "Temp Resource", 0);
+    } else {
+        Symbol ext(FileGetExt(filename));
+        mBuffer = (const char *)MemAlloc(mBufLen, __FILE__, 0x243, ext.Str());
+    }
+#endif
 }
 
 void FileLoader::LoadFile() {

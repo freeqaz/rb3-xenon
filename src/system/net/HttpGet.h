@@ -112,7 +112,10 @@ protected:
     int mFileBufSize; // 0x5c
     int mFileBufRecvPos; // 0x60
     int mRetryCount; // 0x64 - compared against kMaxRetries
-    u32 mHttpStatus; // 0x68
+    // Retail: a BYTE at 0x68 (ctor fn_827DC9E8 `stb r11,0x68`); Poll's Sending
+    // state reads it to go straight to Downloaded once the headers arrive.
+    // There is no stored HTTP status code in retail.
+    bool mHeaderOnly; // 0x68
     HttpGetFailType mFailType; // 0x6c
     State mPrevState; // 0x70
     bool mFlags; // 0x74

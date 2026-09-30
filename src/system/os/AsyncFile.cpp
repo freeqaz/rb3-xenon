@@ -61,6 +61,7 @@ AsyncFile *AsyncFile::New(const char *cc, int i) {
     if (Archive::DebugArkOrder())
         PrintDiscFile(cc);
 
+#ifdef HX_NATIVE
     if (UsingHolmes(1) && (i & 1U) && !FileIsLocal(cc)) {
         AsyncFile *result = new AsyncFileHolmes(cc, i);
         if (result) {
@@ -77,7 +78,8 @@ AsyncFile *AsyncFile::New(const char *cc, int i) {
             }
         }
     }
-
+#endif
+    // RB3-360 retail: no Holmes paths, straight to AsyncFileWin.
     AsyncFile *result = new AsyncFileWin(cc, i);
     result->Init();
     return result;

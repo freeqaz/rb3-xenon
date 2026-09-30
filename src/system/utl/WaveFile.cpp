@@ -74,6 +74,7 @@ void WaveFile::ReadMarkers() {
     if (mRiffList.Next(kWaveAdditionalChunkID)) {
         IListChunk iChunk(mRiffList);
         for (i = 0; i < cuesize; i++) {
+#ifdef HX_NATIVE
             iChunk.Next();
             IDataChunk dataChunk(iChunk);
             ChunkHeader *hdr = dataChunk.Header();
@@ -96,6 +97,18 @@ void WaveFile::ReadMarkers() {
                 dataChunk.Read((char *)str.c_str(), len);
                 labelvec.push_back(Label(str, unk1));
             }
+#else
+            // RB3-360 retail (and rb3-Wii): labels only, found by chunk ID.
+            iChunk.Next(kWaveLabelChunkID);
+            IDataChunk dataChunk(iChunk);
+            int len = dataChunk.Header()->Length() - 4;
+            int labelid;
+            dataChunk >> labelid;
+            String str;
+            str.resize(len);
+            dataChunk.Read((char *)str.c_str(), len);
+            labelvec.push_back(Label(str, labelid));
+#endif
         }
     }
 

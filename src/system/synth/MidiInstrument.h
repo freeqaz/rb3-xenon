@@ -94,7 +94,10 @@ class MidiInstrument : public Hmx::Object
 {
 public:
     // Hmx::Object
+#ifdef HX_NATIVE
     virtual ~MidiInstrument();
+#endif
+    // Retail's dtor is implicit (members and base only, no vptr store).
     OBJ_CLASSNAME(MidiInstrument);
     OBJ_SET_TYPE_ENGINE(MidiInstrument);
     virtual DataNode Handle(DataArray *, bool);

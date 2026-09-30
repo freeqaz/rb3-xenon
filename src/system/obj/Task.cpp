@@ -321,19 +321,17 @@ void TaskTimeline::ResetTaskTime(float time) {
 }
 
 void TaskTimeline::AddTask(const TaskInfo &info) {
-    if (info.mStartTime > mTime || info.mTask) {
-        if (mPollingTask) {
-            mAddedTasks.push_back(info);
-        } else {
-            for (std::list<TaskInfo>::iterator it = mTasks.begin(); it != mTasks.end();
-                 ++it) {
-                if (info.mStartTime < (*it).mStartTime) {
-                    mTasks.insert(it, info);
-                    return;
-                }
+    // Retail (fn_82749738): no start-time/task guard.
+    if (mPollingTask) {
+        mAddedTasks.push_back(info);
+    } else {
+        for (std::list<TaskInfo>::iterator it = mTasks.begin(); it != mTasks.end(); ++it) {
+            if (info.mStartTime < (*it).mStartTime) {
+                mTasks.insert(it, info);
+                return;
             }
-            mTasks.push_back(info);
         }
+        mTasks.push_back(info);
     }
 }
 
@@ -477,10 +475,14 @@ void TaskMgr::Poll() {
     for (int i = 0; i < kTaskNumUnits; i++) {
         mTimelines[i].Poll();
     }
+#ifdef HX_NATIVE
+    // DC3's QueueTaskDelete drain; retail TaskMgr::Poll (fn_82749B10) ends
+    // after polling the four timelines.
     for (int i = 0; i < unk84.size(); i++) {
         delete unk84[i].Ptr();
     }
     unk84.clear();
+#endif
 }
 
 void TaskMgr::ClearTasks() {

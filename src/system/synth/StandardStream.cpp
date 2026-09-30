@@ -105,11 +105,16 @@ void StandardStream::Play() {
         }
     }
 #endif
+#ifdef HX_NATIVE
     if (!IsReady() && mState != kSuspended) {
         MILO_FAIL(
             "StandardStream::Play() failed. IsReady=%d mState=%d", IsReady(), mState
         );
     }
+#else
+    // Retail evaluates IsReady() once and discards it: an assert, not a fail.
+    MILO_ASSERT(IsReady() || mState == kSuspended, 0);
+#endif
     UpdateVolumes();
 #ifdef HX_NATIVE
     // Pre-fill ring buffers before registering with AudioDevice.
@@ -981,19 +986,22 @@ void StandardStream::DoJump() {
         ClearJump();
     } else {
         if (mJumpFromSamples != mJumpToSamples) {
+#ifdef HX_NATIVE
             if (mRdr)
+#endif
                 mRdr->Seek(mJumpToSamples);
         }
         mCurrentSamp = mJumpToSamples;
     }
-    // PROVISIONAL -- see the note in GetJumpBackTotalTime.
+    // Retail records the whole start/end markers of the jump and resets the
+    // jump cursor and accumulated loopback when this is the first jump.
     JumpInstance ji;
-    ji.mFrom.posMS = mJumpFromMs;
-    ji.mTo.posMS = mJumpToMs;
-    if (mJumpInstances.empty()) {
-        ji.mTotal = mJumpToMs - mJumpFromMs;
-    } else {
-        ji.mTotal = (mJumpToMs - mJumpFromMs) + mJumpInstances.back().mTotal;
-    }
+    ji.mFrom = mStartMarker;
+    ji.mTo = mEndMarker;
+    ji.mTotal = mEndMarker.posMS - mStartMarker.posMS;
     mJumpInstances.push_back(ji);
+    if (mJumpInstances.size() == 1) {
+        unk160 = 0;
+        mAccumulatedLoopbacks = 0;
+    }
 }

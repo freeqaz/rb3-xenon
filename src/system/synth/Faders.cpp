@@ -290,42 +290,15 @@ void FaderTask::PollAll() {
     }
 }
 
-// Our verified-360 Interpolator base (see math/Interp.h) carries no mX1/mY1
-// fields and doesn't expose them virtually — unlike rb3-Wii's base, which
-// stored those endpoints directly on Interpolator and let FaderTask::Poll
-// read mInterp->mX1/mInterp->mY1 without knowing the concrete type. Since we
-// can't add fields or virtuals to the shared Interpolator/ATanInterpolator
-// classes without a layout/vtable change, resolve the concrete interpolator
-// type via Fader::mMode (set once in Fader::DoFade, read-only here) and pull
-// X1()/Y1() off the concrete class instead.
+// The Interpolator base carries mX1/mY1 (math/Interp.h), so the endpoints are
+// read straight off mInterp, and retail inlines Timer::Split + Ms.
 void FaderTask::Poll() {
     MILO_ASSERT(!mDone, 0x1DE);
     MILO_ASSERT(mInterp != NULL, 0x1DF);
-    float f = mTimer.SplitMs();
-    float x1, y1;
-    switch (mFader->mMode) {
-    case Fader::kExp: {
-        ExpInterpolator *interp = static_cast<ExpInterpolator *>(mInterp);
-        x1 = interp->X1();
-        y1 = interp->Y1();
-        break;
-    }
-    case Fader::kInvExp: {
-        InvExpInterpolator *interp = static_cast<InvExpInterpolator *>(mInterp);
-        x1 = interp->X1();
-        y1 = interp->Y1();
-        break;
-    }
-    case Fader::kLinear:
-    default: {
-        LinearInterpolator *interp = static_cast<LinearInterpolator *>(mInterp);
-        x1 = interp->X1();
-        y1 = interp->Y1();
-        break;
-    }
-    }
-    if (f > x1) {
-        mFader->UpdateValue(y1);
+    mTimer.Split();
+    float f = mTimer.Ms();
+    if (f > mInterp->X1()) {
+        mFader->UpdateValue(mInterp->Y1());
         mFader->CancelFade();
     } else {
         mFader->UpdateValue(mInterp->Eval(f));

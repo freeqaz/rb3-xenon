@@ -20,6 +20,9 @@
 // implicit instantiation emitted by other TUs.
 template <>
 ObjPtr<UIColor>::ObjPtr(Hmx::Object *, UIColor *);
+// Same for the gRev 3..8 legacy font in PostLoad (retail 0x82810ED0 calls it).
+template <>
+ObjPtr<RndFont>::ObjPtr(Hmx::Object *, RndFont *);
 
 UIColor *gColor = nullptr;
 
@@ -36,7 +39,10 @@ UILabelDir::UILabelDir()
 }
 
 BEGIN_HANDLERS(UILabelDir)
+#ifdef HX_NATIVE
+    // not in retail 0x82810048: TU5 forwards straight to the superclasses
     HANDLE_EXPR(font_obj, FontObj(_msg->Sym(2)))
+#endif
     HANDLE_SUPERCLASS(UIFontImporter)
     HANDLE_SUPERCLASS(RndDir)
 END_HANDLERS
@@ -106,11 +112,17 @@ END_SAVES
 
 BEGIN_COPYS(UILabelDir)
     COPY_SUPERCLASS(RndDir)
-    COPY_SUPERCLASS(UIFontImporter)
+    // retail 0x828114A8 (rb3-Wii shape): no UIFontImporter::Copy; the highlight
+    // group and its four bones are copied.
     CREATE_COPY(UILabelDir)
     BEGIN_COPYING_MEMBERS
         COPY_MEMBER(mDefaultColor)
         COPY_MEMBER(mColors)
+        COPY_MEMBER(mHighlightMeshGroup)
+        COPY_MEMBER(mTopLeftHighlightBone)
+        COPY_MEMBER(mTopRightHighlightBone)
+        COPY_MEMBER(mBottomLeftHighlightBone)
+        COPY_MEMBER(mBottomRightHighlightBone)
         COPY_MEMBER(mAllowEditText)
     END_COPYING_MEMBERS
 END_COPYS
@@ -125,8 +137,8 @@ END_LOADS
 // base+0 (`sth r11, lbl_82E07A3C@l(r10)`) and gRev at base+4 (`sth r3, 0x4(r8)`)
 // -- and pushes the rev BEFORE calling RndDir::PreLoad (rb3-Wii order), not
 // obj/Object.h's local BinStreamRev + PushRev-after. Same bracketed install as
-// ui/UILabel.cpp so the dialect cannot leak into PostLoad (which keeps the
-// BinStreamRev `d` form) or into any COMDAT-scatter includer of this file.
+// ui/UILabel.cpp so the dialect cannot leak into any COMDAT-scatter includer of
+// this file. PostLoad (below) reads the same file-static gRev/gAltRev pair.
 // gAltRev is declared FIRST: declaration order fixes .bss placement and retail
 // reads gAltRev at +0, gRev at +4. (lane W16-G, 2026-09-14)
 // ---------------------------------------------------------------------------
@@ -160,43 +172,47 @@ void UILabelDir::PreLoad(BinStream &bs) {
 #pragma pop_macro("INIT_REVS")
 
 void UILabelDir::PostLoad(BinStream &bs) {
-    BinStreamRev d(bs, bs.PopRev(this));
-    RndDir::PostLoad(d.stream);
-    d >> mTextObj;
-    if (d.rev >= 3 && d.rev <= 8) {
+    // retail 0x82810ED0: rb3-Wii shape -- superclass first, then PopRev into the
+    // file-static gRev/gAltRev pair (no BinStreamRev local).
+    RndDir::PostLoad(bs);
+    int revs = bs.PopRev(this);
+    gRev = getHmxRev(revs);
+    gAltRev = getAltRev(revs);
+    bs >> mTextObj;
+    if (gRev >= 3 && gRev < 9) {
         ObjPtr<RndFont> font(this);
-        d >> font;
+        bs >> font;
     }
-    if (d.rev >= 1) {
-        d >> mFocusAnim;
+    if (gRev >= 1) {
+        bs >> mFocusAnim;
     }
-    if (d.rev >= 2) {
-        d >> mPulseAnim;
+    if (gRev >= 2) {
+        bs >> mPulseAnim;
     }
-    if (d.rev >= 4) {
-        d >> mHighlightMeshGroup;
-        d >> mTopLeftHighlightBone;
-        d >> mTopRightHighlightBone;
+    if (gRev >= 4) {
+        bs >> mHighlightMeshGroup;
+        bs >> mTopLeftHighlightBone;
+        bs >> mTopRightHighlightBone;
     }
-    if (d.rev >= 5) {
-        d >> mBottomLeftHighlightBone;
-        d >> mBottomRightHighlightBone;
+    if (gRev >= 5) {
+        bs >> mBottomLeftHighlightBone;
+        bs >> mBottomRightHighlightBone;
     }
-    if (d.rev >= 6) {
-        d >> mFocusedBackgroundGroup;
-        d >> mUnfocusedBackgroundGroup;
+    if (gRev >= 6) {
+        bs >> mFocusedBackgroundGroup;
+        bs >> mUnfocusedBackgroundGroup;
     }
-    if (d.rev >= 7) {
-        d >> mAllowEditText;
+    if (gRev >= 7) {
+        bs >> mAllowEditText;
     }
-    d >> mDefaultColor;
+    bs >> mDefaultColor;
     for (int i = 0; i < UIComponent::kNumStates; i++) {
         ObjPtr<UIColor> color(this);
-        d >> color;
+        bs >> color;
         mColors[i] = color;
     }
-    if (d.rev >= 8) {
-        UIFontImporter::Load(d.stream);
+    if (gRev >= 8) {
+        UIFontImporter::Load(bs);
     }
 }
 

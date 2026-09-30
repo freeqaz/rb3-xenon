@@ -242,7 +242,10 @@ BEGIN_COPYS(PanelDir)
         COPY_MEMBER(mFrontFilenames)
         COPY_MEMBER(mShowEditModePanels)
         COPY_MEMBER(mUseSpecifiedCam)
+#ifdef HX_NATIVE
+        // not in retail 0x828093B0
         SyncEditModePanels();
+#endif
     END_COPYING_MEMBERS
 END_COPYS
 

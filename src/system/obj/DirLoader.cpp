@@ -1059,6 +1059,7 @@ void DirLoader::CreateObjects() {
         if (mRev > 0 && mRev < 8) {
             *mStream >> b8;
         }
+#ifdef HX_NATIVE
         if (!Hmx::Object::RegisteredFactory(classSym)) {
 #ifdef HX_NATIVE
             // X4c: this format string is BYTE-IDENTICAL to the one in
@@ -1113,6 +1114,16 @@ void DirLoader::CreateObjects() {
                 AddTypeObjectMemDelta(obj, end - begin);
             }
         }
+#else
+        // Retail (fn_82756F38): no factory check and no memory tracking --
+        // NewObject straight away, then the rev 0x16 ObjectDir drop or SetName.
+        obj = Hmx::Object::NewObject(classSym);
+        if (mRev == 0x16 && dynamic_cast<ObjectDir *>(obj)) {
+            RELEASE(obj);
+        } else {
+            obj->SetName(buf, mDir);
+        }
+#endif
         mObjects.push_back(obj);
         if (TheLoadMgr.CheckSplit())
             return;

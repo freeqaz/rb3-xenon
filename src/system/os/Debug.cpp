@@ -131,6 +131,19 @@ void Debug::Print(const char *msg) {
 }
 
 void Debug::Exit(int exitCode, bool call_exit) {
+#ifndef HX_NATIVE
+    // RB3-360 retail (rb3-Wii shape): unconditional, no memory-usage-test gate,
+    // and the log is stopped before the optional relaunch.
+    mExiting = true;
+    FOREACH (it, mExitCallbacks) {
+        (*it)();
+    }
+    mExitCallbacks.clear();
+    StopLog();
+    if (call_exit) {
+        XLaunchNewImage("", 0);
+    }
+#else
     if (!mExiting) {
         mExiting = true;
         MILO_LOG("APP EXITING\n");
@@ -145,6 +158,7 @@ void Debug::Exit(int exitCode, bool call_exit) {
             XLaunchNewImage("", 0);
         }
     }
+#endif
 }
 
 void Debug::Warn(const char *msg) {

@@ -152,9 +152,12 @@ void SongMetadata::Load(BinStream &d) {
     }
 }
 
+// Retail (fn_827AB080): only the `version` handler; `id` is native-only.
 BEGIN_HANDLERS(SongMetadata)
     HANDLE_EXPR(version, mVersion)
+#ifdef HX_NATIVE
     HANDLE_EXPR(id, mID)
+#endif
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
 

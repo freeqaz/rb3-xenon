@@ -253,25 +253,45 @@ void HDCache::OpenFiles(int numCachedArkfiles) {
     }
     if (!hdrValid) {
         RELEASE(mHdr[0]);
-    } else {
-        while (pendingArkfiles.size() != 0) {
-            int i5 = -1;
-            auto max = pendingArkfiles.begin();
-            MILO_ASSERT(max != pendingArkfiles.end(), 0x26F);
-            // there's a pendingArkfiles iteration somewhere here
-            const char *fileFmt = MakeString(mFileFmt.c_str(), i5);
-            File *file = NewFile(fileFmt, 0x50101);
-            pendingArkfiles.erase(max);
-        }
-        for (int i = 0; i < numArkfiles; i++) {
-            const char *fileFmt = MakeString(mFileFmt.c_str(), i);
-            File *write = NewFile(fileFmt, 0x50002);
-            File *read = NewFile(fileFmt, 0x50001);
-            if (write && read && !write->Fail() && !read->Fail()) {
-                mReadArkFiles[i] = read;
-                mWriteArkFiles[i] = write;
+        return;
+    }
+    while (pendingArkfiles.size() != 0) {
+        int maxPrio = -1;
+        std::vector<int>::iterator max = pendingArkfiles.end();
+        for (std::vector<int>::iterator it = pendingArkfiles.begin();
+             it != pendingArkfiles.end();
+             ++it) {
+            int prio = TheArchive->GetArkfileCachePriority(*it);
+            if (prio > maxPrio) {
+                maxPrio = prio;
+                max = it;
             }
         }
+        MILO_ASSERT(max != pendingArkfiles.end(), 0x26F);
+        int idx = *max;
+        const char *fileFmt = MakeString(mFileFmt.c_str(), idx);
+        File *file = NewFile(fileFmt, 0x50101);
+        bool ok =
+            file && file->Truncate(TheArchive->GetArkfileNumBlocks(idx) * kArkBlockSize);
+        if (file) {
+            delete file;
+            if (!ok)
+                FileDelete(fileFmt);
+        }
+        pendingArkfiles.erase(max);
+    }
+    for (int i = 0; i < numArkfiles; i++) {
+        const char *fileFmt = MakeString(mFileFmt.c_str(), i);
+        File *read = NewFile(fileFmt, 0x50002);
+        File *write = NewFile(fileFmt, 0x50001);
+        if (!read || !write || read->Fail() || write->Fail()) {
+            delete read;
+            read = nullptr;
+            delete write;
+            write = nullptr;
+        }
+        mReadArkFiles[i] = read;
+        mWriteArkFiles[i] = write;
     }
 }
 

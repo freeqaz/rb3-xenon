@@ -6,25 +6,17 @@
 
 SampleInst::SampleInst(SynthSample *sample)
     : mVolume(1), mBankVolume(1), mPan(0), mBankPan(0), mSpeed(1), mBankSpeed(1),
-      mSend(this), unka0(0), unka1(0)
+      mSend(this)
 #ifdef HX_NATIVE
       ,
-      mEventReceiver(this), unk98(-1), mSample(this, sample)
+      unka0(0), unka1(0), mEventReceiver(this), unk98(-1), mSample(this, sample)
 #endif
 {
+    // Retail's ctor inits nothing past mSend: unka0/unka1 are left to Play(),
+    // and there is no mSample (see SampleInst.h).
 #ifdef HX_NATIVE
     if (mSample) {
         mSample->RegisterChild(this);
-    }
-#else
-    // The default/SampleInst split owns a std::vector<SampleMarker> copy COMDAT
-    // (target fn_822A2E10 + its 0x28-byte unwind funclet). DC3 instantiated it
-    // from SynthPoll via mSample->AccessMarkers(); retail has no mSample (see
-    // SampleInst.h), so anchor the same instantiation on the ctor's argument.
-    // The ctor is an anonymous target (fn_8272A940) that can never pair under
-    // the objdiff funclet-naming gate, so this costs no match.
-    if (sample) {
-        std::vector<SampleMarker> markers = sample->AccessMarkers();
     }
 #endif
 }

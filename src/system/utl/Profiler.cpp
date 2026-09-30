@@ -11,15 +11,20 @@ void Profiler::Start() { mTimer.Start(); }
 
 void Profiler::Stop() {
     mTimer.Stop();
+    // RB3-360 retail (rb3-Wii form): Ms() re-evaluated per use, float compares,
+    // and the elapsed time accumulated into mSum.
     float ms = mTimer.Ms();
-    if (mMin > (int)ms) {
+    if (ms < mMin) {
         mMin = ms;
     }
-    if (ms > mMax) {
+    ms = mTimer.Ms();
+    if (mMax < ms) {
         mMax = ms;
     }
+    mSum += mTimer.Ms();
     mCount++;
     if (mCount == mCountMax) {
+#ifdef HX_NATIVE
         if (mCountMax == 1U) {
             TheDebug << MakeString("%s: %s\n", mName, FormatTime(mMin));
         } else {
@@ -31,10 +36,21 @@ void Profiler::Stop() {
                 FormatTime(mSum / (float)mCount)
             );
         }
+#else
+        // RB3-360 retail: the print is stripped; only the FormatTime argument
+        // calls survive, in argument (right-to-left) evaluation order.
+        if (mCountMax == 1U) {
+            FormatTime(mMin);
+        } else {
+            FormatTime(mSum / (float)mCount);
+            FormatTime(mMax);
+            FormatTime(mMin);
+        }
+#endif
         mCount = 0;
         mMin = 3.4028235e+38;
         mMax = 0;
-        mSum = ms = 0;
+        mSum = 0;
     }
     mTimer.Reset();
 }
