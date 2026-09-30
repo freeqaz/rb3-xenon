@@ -625,6 +625,7 @@ BandCharDesc.cpp:
 	.pdata      start:0x821FE298 end:0x821FE2A0
 	.pdata      start:0x8220E2E8 end:0x8220E2F8
 	.text       start:0x82280CE8 end:0x82280D3C
+	.text       start:0x8229D098 end:0x8229D0A0
 	.text       start:0x823332E0 end:0x82336E58
 	.text       start:0x82336E58 end:0x82338D1C
 	.text       start:0x82338D20 end:0x82338D9C
@@ -11472,7 +11473,8 @@ VocalNoteList.cpp:
 	.text       start:0x82782168 end:0x82782958
 
 OutfitConfig.cpp:
-	.pdata      start:0x821F4300 end:0x821F4368
+	.pdata      start:0x821F4300 end:0x821F4338
+	.pdata      start:0x821F4338 end:0x821F4368
 	.pdata      start:0x821F4380 end:0x821F44B8
 	.pdata      start:0x821F44C0 end:0x821F44C8
 	.pdata      start:0x821F44D0 end:0x821F45D0
@@ -11511,7 +11513,8 @@ OutfitConfig.cpp:
 	.pdata      start:0x821F52E0 end:0x821F52F0
 	.pdata      start:0x821F5398 end:0x821F53B8
 	.text       start:0x8229CC08 end:0x8229CC10
-	.text       start:0x8229CE30 end:0x8229D350
+	.text       start:0x8229CE30 end:0x8229D098
+	.text       start:0x8229D0A0 end:0x8229D350
 	.text       start:0x8229D434 end:0x8229E3C0
 	.text       start:0x8229E424 end:0x8229E498
 	.text       start:0x8229E504 end:0x8229FF2C
