@@ -105,29 +105,13 @@ private:
     DataNode OnMsg(const StorageChangedMsg &);
     DataNode OnMsg(const ContentInstalledMsg &);
 
-    // 0x70 is XboxContentMgr's FIRST member -- ContentMgr ends there, its last
-    // member being mReadFailureHandler at 0x6c.
-    //
-    // It is a BYTE, not the `unsigned int` filler that used to hold this slot.
-    // StartRefresh (0x82520fd0) opens with
-    //     lbz r11,0x70(r3) / cmplwi r11,0x0 / beq <epilogue>
-    // i.e. a bool gating the entire body, and the constructor (fn_825213D0)
-    // closes with `li r9,0x1 ; stb r9,0x70(r30)` -- initialised true.  A 4-byte
-    // load would have been `lwz`; it is `lbz`, so the type is byte-sized.
-    //
-    // The 0x74/0x75 pair below is unchanged and still correct (NotifyFailed
-    // fn_82520830 stores this+0x75; StartRefresh reads both with lbz and clears
-    // both with stb).  DC3 has no 0x70 member at all -- ITS unk70/unk71 are our
-    // unk74/unk75, carrying the same `mDirty || (unk74 && unk75)` expression,
-    // which retail places four bytes later.
-    //
-    // 0x71-0x73 are UNOBSERVED anywhere in this TU.  They are spelled as bools
-    // purely to reproduce the measured 0x74 offset -- any three bytes would do,
-    // and nothing here should be read as a claim that three more flags exist.
-    bool unk70; // 0x70
-    bool unk71; // 0x71  (unobserved -- padding to the measured 0x74)
-    bool unk72; // 0x72  (unobserved)
-    bool unk73; // 0x73  (unobserved)
+    // 0x70 (unk70) is ContentMgr's last member, not ours: retail's
+    // ContentMgr::ContentMgr (0x825213D0) initialises it (`li r9,1; stb r9,0x70`)
+    // and StartRefresh (0x82520fd0) opens with `lbz r11,0x70(r3)` gating its
+    // body. sizeof(ContentMgr) is therefore 0x74 and our first member is 0x74.
+    // The 0x74/0x75 pair is unchanged (NotifyFailed fn_82520830 stores this+0x75;
+    // StartRefresh reads both with lbz and clears both with stb). DC3's
+    // unk70/unk71 are our unk74/unk75.
     bool unk74; // 0x74
     bool unk75; // 0x75
     void *mEnumHandles[kNumberOfBuffers]; // 0x78
