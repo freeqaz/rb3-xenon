@@ -1715,7 +1715,8 @@ void BandCharacter::DrawLodOrShadowMode(int i, DrawMode mode) {
 }
 
 // Retail X360 (0x82280f98): the two SetEnv(nullptr) calls below inline
-// ObjRefConcrete<RndEnviron,ObjectDir>::SetObjConcrete fully -- RndEnviron
+// ObjPtr<RndEnviron>::SetObjConcrete fully (formerly spelled on the removed
+// ObjRefConcrete base, W17-OPTR) -- RndEnviron
 // reaches Hmx::Object through single (non-virtual) inheritance, so per the
 // SetObjConcrete-inlining trait documented in obj/ObjPtr_p.h it should always
 // be cheap enough to inline. Our compiler's per-callsite /Ob2 cost heuristic
@@ -1727,7 +1728,7 @@ void BandCharacter::DrawLodOrShadowMode(int i, DrawMode mode) {
 // other translation unit's SetObjConcrete<RndEnviron,ObjectDir> calls.
 #ifndef HX_NATIVE
 template <>
-__forceinline void ObjRefConcrete<RndEnviron, ObjectDir>::SetObjConcrete(RndEnviron *obj) {
+__forceinline void ObjPtr<RndEnviron>::SetObjConcrete(RndEnviron *obj) {
     if (obj != mObject) {
         if (mObject)
             mObject->Release(this);

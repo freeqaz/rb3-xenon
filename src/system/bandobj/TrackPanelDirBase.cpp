@@ -62,7 +62,7 @@ static struct {
 // template in obj/ObjPtr_p.h; see the note there.
 template <>
 inline ObjPtr<RndDir>::ObjPtr(Hmx::Object *owner, RndDir *ptr)
-    : ObjRefConcrete<RndDir>(owner, ptr) {
+    : mOwner(owner), mObject(ptr) {
     mObject = ptr;
     if (mObject)
         mObject->AddRef(this);

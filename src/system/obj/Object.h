@@ -312,7 +312,10 @@ public:
     bool Load(BinStream &, bool, ObjectDir *);
 };
 #else
-// Retail X360: the standalone smart-pointer base. Polymorphic, vtable-first:
+// Retail X360: NO retail class corresponds to this (W17-OWN/W17-OPTR: retail
+// RTTI has only ObjRef under every smart pointer). Its one remaining X360 user
+// is ObjPtrVec::Node, a DC3 container; ObjPtr and ObjOwnerPtr derive
+// ObjRefOwner directly and restate these members. Polymorphic, vtable-first:
 // {vtable@0, mOwner@4, mObject@8} = 0xc. The ring is separate (pool nodes), so
 // there is NO inline next/prev here. RefOwner() returns mOwner@4 (vtable slot
 // +4). Replace(from,to) is left pure (overridden by ObjPtr/ObjOwnerPtr). The
@@ -415,8 +418,22 @@ public:
     T *Ptr() const { return mObject; }
 };
 #else
-// ObjPtr size (Retail X360): 0xc {vtable@0, mOwner@4, mObject@8}. mOwner lives
-// in the ObjRefConcrete base; the ring-ref is `this`.
+// ObjPtr size (Retail X360): 0xc {vtable@0, mOwner@4, mObject@8}; the
+// ring-ref is `this`.
+//
+// W17-OPTR: ObjPtr derives from ObjRefOwner (retail's `ObjRef`) DIRECTLY and
+// owns mOwner/mObject itself -- the ObjPtr half of what W17-OWN did for
+// ObjOwnerPtr. Retail RTTI (tools/retail_rtti.py) gives every one of the 91
+// ObjPtr<T,ObjectDir> classes the two-entry hierarchy {Self, ObjRef}; there is
+// no ObjRefConcrete in the image, and rb3-Wii has `class ObjPtr : public
+// ObjRef` with its own mOwner/mPtr, dtor, Load and operator=. The layer
+// mattered for the DESTRUCTOR: with ObjRefConcrete in between, ~ObjPtr<T> was
+// an implicit 4-byte `b ~ObjRefConcrete<T>` and the real body stored
+// ObjRefConcrete's vtable, while retail's one ~ObjPtr<T> body (e.g.
+// OverdriveMeter 0x822e4010) stores ObjPtr<T>'s own vtable, releases `this`,
+// then stores ObjRef's -- so our objects never referenced some ObjPtr<T>
+// vtables at all (no Replace / ??_G emitted), and EH funclets called the jump.
+// ObjRefConcrete survives on X360 only as ObjPtrVec's node base.
 //
 // The two-arg ctor has an out-of-line body that stores all three fields and
 // conditionally AddRef(this). Verified example (lane BY-1, TU5 image) --
@@ -439,11 +456,29 @@ public:
 // entry, let alone an ObjPtr ctor. The prose description was right; only the
 // addresses were stale.
 template <class T>
-class ObjPtr : public ObjRefConcrete<T> {
+class ObjPtr : public ObjRefOwner {
 protected:
+    Hmx::Object *mOwner; // 0x4
+    T *mObject; // 0x8
     struct DeferOwner {};
-    ObjPtr(DeferOwner, T *ptr) : ObjRefConcrete<T>(nullptr, ptr) {}
+    ObjPtr(DeferOwner, T *ptr) : mOwner(nullptr), mObject(ptr) {}
 public:
+    // W17-OPTR: with ObjRefOwner as the direct base, mOwner/mObject are
+    // ObjPtr's OWN members, so none of the spellings below can store them
+    // before the derived vptr store any more (the old "base mem-init list"
+    // position). Each gate keeps its shape with the base-ctor argument moved
+    // into ObjPtr's own mem-init: ObjRefConcrete<T>(owner, p) -> mOwner(owner),
+    // mObject(p); ObjRefConcrete<T>(owner) -> mOwner(owner);
+    // ObjRefConcrete<T>() -> nothing. Measured (with the W17-OPTR map renames
+    // that follow, so callers pair by name) the re-base
+    // takes retail's out-of-line copy ctors 73.1 -> 100 and two-arg
+    // ctors 91.8/92.6 -> 100, and eleven inlining ctors (CamShotCrowd,
+    // CamShotFrame, CharIKFingers, CharLipSyncDriver, WorldCrowd::CharDef,
+    // RndEnviron, EventTrigger, PitchArrow, UILabelDir, ...) to 100. Two TUs
+    // lost ground and no documented per-TU setting recovers them (each tried
+    // once): RndTexRenderer's ctor (two later bool stores swap; DEFER_OBJECT,
+    // _EH and DEFER_OWNER all give 99.91, plain gives 86.7) and RndGroup's
+    // (95.6 -> 93.9; the per-site out-of-line mEnv retail shows gives 68.1).
     // ---- PER-SITE: inline owner-only ctor ----------------------------------
     // ★★★ Retail's policy is PER-SITE, not per-TU. Proven inside a SINGLE
     // function (lane BY-1): retail ??0RndParticleSys@@ constructs FOUR
@@ -533,7 +568,7 @@ public:
     // temp. Dropping it costs the match (measured on CharClipSet: 100.0 ->
     // 96.6). Inert for every TU that does not define BOTH macros -- as of this
     // lane, no TU in the tree does, so adding it is a no-op by construction.
-    ObjPtr(Hmx::Object *owner) : ObjRefConcrete<T>() {
+    ObjPtr(Hmx::Object *owner) {
         this->mOwner = owner;
         this->mObject = nullptr;
         if (this->mObject)
@@ -573,7 +608,7 @@ public:
     //     ctor (`: mOwner(owner) { mObject = obj; }`) is also inert -- the
     //     scheduler hoists the constant store across it anyway. Only moving the
     //     store past the derived VPTR store pins it.
-    ObjPtr(Hmx::Object *owner) : ObjRefConcrete<T>(owner) {
+    ObjPtr(Hmx::Object *owner) : mOwner(owner) {
         this->mObject = nullptr;
         if (this->mObject)
             this->mObject->AddRef(this);
@@ -605,13 +640,13 @@ public:
     // lis->addi gap -- a 3-instruction rotation, the last 1.6%. Assigning it
     // again in the body makes the base's store dead, so the surviving store
     // lands after the vtable and the schedule matches exactly. 98.4% -> 100.0%.
-    ObjPtr(Hmx::Object *owner) : ObjRefConcrete<T>(owner, nullptr) {
+    ObjPtr(Hmx::Object *owner) : mOwner(owner), mObject(nullptr) {
         this->mObject = nullptr;
         if (this->mObject)
             this->mObject->AddRef(this);
     }
 #else
-    ObjPtr(Hmx::Object *owner) : ObjRefConcrete<T>(owner, nullptr) {}
+    ObjPtr(Hmx::Object *owner) : mOwner(owner), mObject(nullptr) {}
 #endif
 #endif
     ObjPtr(Hmx::Object *owner, T *ptr);
@@ -692,7 +727,7 @@ public:
     // that. The AddRef test folds away for a literal-null ptr after inlining.
     // Needs the gated ObjRefConcrete() default ctor above. Inert for every TU
     // that does not define the macro; no layout/ABI change.
-    ObjPtr(Hmx::Object *owner, T *ptr = nullptr) : ObjRefConcrete<T>() {
+    ObjPtr(Hmx::Object *owner, T *ptr = nullptr) {
         this->mOwner = owner;
         this->mObject = ptr;
         if (this->mObject)
@@ -710,7 +745,7 @@ public:
     // vtable and the member float constants ~30 instructions early, which is
     // what wrecks ??0ScrollbarDisplay@@ (92.2% -> 70.3%) even though its
     // instruction multiset is correct.
-    ObjPtr(Hmx::Object *owner, T *ptr = nullptr) : ObjRefConcrete<T>(owner, ptr) {
+    ObjPtr(Hmx::Object *owner, T *ptr = nullptr) : mOwner(owner), mObject(ptr) {
         // Redundant re-assignment is LOAD-BEARING -- see the identical note on
         // the primary template body in obj/ObjPtr_p.h. Without it the base
         // mem-init's mObject store floats up into the addi->stw load-use stall
@@ -753,17 +788,16 @@ public:
     // compiles and objdiffs .obj files and never links the game -- but a TU
     // that must LINK cannot use this macro without providing a definition.
     //
-    // Do NOT un-gate this. A globally user-declared ~ObjPtr makes MSVC store
-    // ??_7ObjPtr@@6B@ before the inlined base ??1ObjRefConcrete call in every
-    // containing destructor (see the "NO user dtor" note below).
-#ifdef RB3_TU_OBJPTR_OUTOFLINE_DTOR
+    // W17-OPTR: ~ObjPtr is now ALWAYS user-declared -- it is the release
+    // (`if (mObject) mObject->Release(this);`), retail's one ~ObjPtr<T> body.
+    // Under this gate the out-of-line definition in obj/ObjPtr_p.h is compiled
+    // out, which keeps the "declared, body not visible" property the packing
+    // needs. (The old "NO user dtor" rule below this gate described the
+    // ObjRefConcrete-based hierarchy, where the release lived in the base and a
+    // user-declared ~ObjPtr only added a vtable store; with ObjRef as the
+    // direct base the release has nowhere else to live.)
     ~ObjPtr();
-#endif
-    // NO user dtor: retail's ~ObjPtr is compiler-generated (implicit). A
-    // user-declared empty dtor makes MSVC store ??_7ObjPtr@@6B@ before the
-    // inlined base ??1ObjRefConcrete call in every containing dtor
-    // (implicit-destructor vtable-store elision,
-    // docs/decomp/patterns/fixable-declarations.md).
+    virtual Hmx::Object *RefOwner() const { return mOwner; }
     // Vtable slot +8: Replace(from, to). The ring dispatches with the *dying
     // Hmx::Object* * in `from` (the declared ObjRef* is a modelling artefact of
     // this tree — rb3-Wii's ObjRef declares `Replace(Hmx::Object*, Hmx::Object*)`,
@@ -782,14 +816,40 @@ public:
     }
     Hmx::Object *Owner() const { return mOwner; }
 
+    // Formerly inherited from ObjRefConcrete (definitions in obj/ObjPtr_p.h).
+    Hmx::Object *GetObj() const { return mObject; }
+    T *operator->() const { return mObject; }
+    operator T *() const { return mObject; }
+    void SetObjConcrete(T *obj);
+    // `SetObjConcrete(nullptr)`, open-coded. Retail's compiler inlined a null
+    // assignment into exactly `if (mObject) { mObject->Release(this); mObject = 0; }`
+    // at some sites (RndMat::Load @0x82438F40, the fur-fallback `delete` arm), where
+    // ours keeps the out-of-line call and cross-jumps it with a neighbouring non-null
+    // SetObjConcrete. Semantically identical to SetObjConcrete(nullptr); use it only
+    // where retail bytes show the open-coded form.
+    void ReleaseObjConcrete() {
+        if (mObject) {
+            mObject->Release(this);
+            mObject = nullptr;
+        }
+    }
+    void CopyRef(const ObjPtr &);
+    Hmx::Object *SetObj(Hmx::Object *root_obj);
+    bool Load(BinStream &, bool, ObjectDir *);
+
     void operator=(T *obj) { SetObjConcrete(obj); }
     void operator=(const ObjPtr &p) { CopyRef(p); }
     T *Ptr() const { return mObject; }
 };
 #endif
 
-// template <class T1>
-// BinStream &operator<<(BinStream &bs, const ObjPtr<T1> &ptr);
+#ifndef HX_NATIVE
+// W17-OPTR: ObjPtr no longer converts to ObjRefConcrete<T>&, so it carries
+// its own name-based save (rb3-Wii: operator<<(BinStream&, const
+// ObjPtr<T1,ObjectDir>&)); the body is ObjRefConcrete's, see obj/ObjPtr_p.h.
+template <class T1>
+BinStream &operator<<(BinStream &bs, const ObjPtr<T1> &f);
+#endif
 
 template <class T1>
 BinStream &operator>>(BinStream &bs, ObjPtr<T1> &ptr);
@@ -885,8 +945,9 @@ public:
 // to null mObject so the base dtor would not Release(this) a second time,
 // while every one of the 27 retail ~ObjOwnerPtr bodies (e.g. RndCamAnim
 // 0x824859a0) is just {own vptr; if (mObject) mObject->Release(mOwner); ObjRef
-// vptr}. ObjPtr/ObjDirPtr/ObjPtrList nodes keep ObjRefConcrete: their retail
-// dtors release `this`, which is exactly ~ObjRefConcrete's body.
+// vptr}. (W17-OPTR then re-based ObjPtr the same way; ObjDirPtr and ObjPtrList
+// already derived ObjRefOwner directly, so ObjRefConcrete is now only
+// ObjPtrVec's node base on X360.)
 template <class T>
 class ObjOwnerPtr : public ObjRefOwner {
 protected:
