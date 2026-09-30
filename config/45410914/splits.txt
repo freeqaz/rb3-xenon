@@ -3712,11 +3712,8 @@ CharMeshHide.cpp:
 	.pdata      start:0x822133F0 end:0x822133F8
 	.pdata      start:0x82213CF0 end:0x82213CF8
 	.pdata      start:0x8222CE90 end:0x8222CE98
-	.pdata      start:0x822375B0 end:0x822375D8
-	.pdata      start:0x822375E0 end:0x822376D8
-	.pdata      start:0x822376D8 end:0x822376E8
-	.pdata      start:0x82237730 end:0x82237740
-	.pdata      start:0x82237740 end:0x82237760
+	.pdata      start:0x822375B0 end:0x822376E8
+	.pdata      start:0x82237730 end:0x82237760
 	.pdata      start:0x822377A8 end:0x822377B8
 	.text       start:0x822D4088 end:0x822D408C
 	.text       start:0x8238DEB0 end:0x8238E2D0
@@ -3725,11 +3722,8 @@ CharMeshHide.cpp:
 	.text       start:0x824BD788 end:0x824BD7E0
 	.text       start:0x824C7CA8 end:0x824C7D10
 	.text       start:0x8264D058 end:0x8264D08C
-	.text       start:0x826FE8A8 end:0x826FED98
-	.text       start:0x826FEDF8 end:0x826FFB58
-	.text       start:0x826FFB58 end:0x826FFC18
-	.text       start:0x826FFFE8 end:0x827000A0
-	.text       start:0x827000A0 end:0x82700270
+	.text       start:0x826FE8A8 end:0x826FFC18
+	.text       start:0x826FFFE8 end:0x82700270
 	.text       start:0x82700938 end:0x827009E4
 
 AmbientOcclusion.cpp:
@@ -4718,12 +4712,10 @@ PracticeSection.cpp:
 	.pdata      start:0x821FEC20 end:0x821FEC30
 	.pdata      start:0x822062B8 end:0x822062C0
 	.pdata      start:0x8220BBD0 end:0x8220BBE0
-	.pdata      start:0x822375D8 end:0x822375E0
 	.text       start:0x82346E48 end:0x82346EB8
 	.text       start:0x823C8128 end:0x823C8198
 	.text       start:0x82424D18 end:0x82424DCC
 	.text       start:0x8250D4C0 end:0x8250D4C8
-	.text       start:0x826FED98 end:0x826FEDF8
 
 RhythmBattle.cpp:
 	.pdata      start:0x8221FE60 end:0x8221FE70

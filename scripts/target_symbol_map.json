@@ -17595,7 +17595,7 @@
  "0x826fe958": "??0?$ObjDirItr@VSynthSample@@@@QAA@PAVObjectDir@@_N@Z",
  "0x826fea28": "?UpdateOverlay@Synth@@UAAMPAVRndOverlay@@M@Z",
  "0x826fed30": "?GetSampleMem@Synth@@QAAHPAVObjectDir@@W4Platform@@@Z",
- "0x826fed98": "??$__destroy_range_aux@V?$reverse_iterator@PAVPracticeStep@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVPracticeStep@@@0@0ABU__false_type@0@@Z",
+ "0x826fed98": "??$__destroy_range_aux@V?$reverse_iterator@PAULevelData@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAULevelData@@@0@0ABU__false_type@0@@Z",
  "0x826fedf8": "??$__destroy_range_aux@V?$reverse_iterator@PAVSfxMap@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVSfxMap@@@0@0ABU__false_type@0@@Z",
  "0x826fee60": "?Handle@Synth@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x826ffb58": "??$_Destroy_Range@PAVSfxMap@@@stlpmtx_std@@YAXPAVSfxMap@@0@Z",

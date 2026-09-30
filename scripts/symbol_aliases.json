@@ -6314,11 +6314,30 @@
   {
    "name": "$__destroy_range_aux",
    "address": "0x826fed98",
-   "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAVPracticeStep@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVPracticeStep@@@0@0ABU__false_type@0@@Z",
-   "folded": [
-    "??$__destroy_range_aux@V?$reverse_iterator@PAULevelData@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAULevelData@@@0@0ABU__false_type@0@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions."
+   "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAULevelData@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAULevelData@@@0@0ABU__false_type@0@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAVPracticeStep@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVPracticeStep@@@0@0ABU__false_type@0@@Z",
+     "lane": "W17-PRAC 2026-09-30",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+     "disposition": "withdrawn; the group survivor is rebound to the retail identity at 0x826fed98, and the map is rebound there in the same commit",
+     "absent_types": [
+      "PracticeStep"
+     ],
+     "type_evidence": {
+      "PracticeSection": {
+       "rtti_mangled": ".?AVPracticeSection@@",
+       "retail_rtti_hits": 0,
+       "polymorphic_in_our_source": "yes (hamobj/PracticeSection.h, RndAnimatable-derived; PracticeStep is its element type)",
+       "rb3wii_files_mentioning_PracticeStep": 0,
+       "dc3_files": 11
+      }
+     },
+     "evidence": "TYPE DOES NOT EXIST IN RB3 RETAIL, AND THE BODY IS TYPED BY ITS CALLERS. Retail 0x826fed98 (96 B) walks a reverse_iterator back by 0x1c and runs ??1String@@UAA@XZ on element+0x10 -- LevelData {float mRMS, mPeak, mPeakHold; int mPeakAge; String mName @0x10} = 0x1c (synth/FxSend.h). Its only retail callers are ~vector<LevelData> (0x826ffff0, CharMeshHide.cpp) and vector<LevelData>::_M_clear_after_move (0x82b5c940, synth_xbox/Synth.cpp). PracticeStep also happens to be 0x1c with a String at +0x10, which is why the shape matcher bound it; the LevelData spelling, previously listed as folded, is the only identity and no fold is asserted. Split re-homed PracticeSection.cpp -> CharMeshHide.cpp (whose obj defines it; the block sits inside CharMeshHide's span)."
+    }
+   ]
   },
   {
    "name": "$_Destroy_Range",
@@ -81415,10 +81434,29 @@
    "name": "1?$vector",
    "address": "0x826ffff0",
    "survivor": "??1?$vector@ULevelData@@V?$StlNodeAlloc@ULevelData@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
-   "folded": [
-    "??1?$vector@VPracticeStep@@V?$StlNodeAlloc@VPracticeStep@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??1?$vector@VPracticeStep@@V?$StlNodeAlloc@VPracticeStep@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "lane": "W17-PRAC 2026-09-30",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ELEMENT",
+     "disposition": "withdrawn",
+     "absent_types": [
+      "PracticeStep"
+     ],
+     "type_evidence": {
+      "PracticeSection": {
+       "rtti_mangled": ".?AVPracticeSection@@",
+       "retail_rtti_hits": 0,
+       "polymorphic_in_our_source": "yes (hamobj/PracticeSection.h, RndAnimatable-derived; PracticeStep is its element type)",
+       "rb3wii_files_mentioning_PracticeStep": 0,
+       "dc3_files": 11
+      }
+     },
+     "evidence": "PracticeStep is Dance Central hamobj code (no rb3-Wii source; its enclosing PracticeSection has no retail COL), so no retail body can be ~vector<PracticeStep>. The survivor ~vector<LevelData> is untouched; its destroy-range callee 0x826fed98 is renamed to the LevelData spelling in the same commit."
+    }
+   ]
   },
   {
    "name": "1?$_Vector_base",
