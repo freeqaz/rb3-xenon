@@ -2473,7 +2473,7 @@ MidiParser.cpp:
 	.pdata      start:0x822442E0 end:0x82244688
 	.pdata      start:0x82244690 end:0x82244768
 	.text       start:0x827E4098 end:0x827E4568
-	.text       start:0x827E48C0 end:0x827E5260
+	.text       start:0x827E4900 end:0x827E5260
 	.text       start:0x827E5314 end:0x827E5D88
 	.text       start:0x827E5F58 end:0x827E6530
 	.text       start:0x827E6530 end:0x827E658C
@@ -9230,7 +9230,7 @@ TrackWidget.cpp:
 	.text       start:0x827E1768 end:0x827E4098
 	.text       start:0x827E4568 end:0x827E4858
 	.text       start:0x827E4858 end:0x827E487C
-	.text       start:0x827E487C end:0x827E48C0
+	.text       start:0x827E487C end:0x827E4900
 	.text       start:0x827E5260 end:0x827E5314
 
 NetworkEmulator.cpp:

@@ -21192,6 +21192,7 @@
  "0x827e4858": "?SetTextAlignment@TrackWidget@@QAAXW4Alignment@RndText@@@Z",
  "0x827e4870": "?Load@TrackWidget@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
  "0x827e4880": "?Sort@?$TrackWidgetImp@UInstance@RndMultiMesh@@@@UAAXXZ",
+ "0x827e48c0": "?Sort@?$TrackWidgetImp@VMeshInstance@@@@UAAXXZ",
  "0x827e5260": "?Empty@?$TrackWidgetImp@UInstance@RndMultiMesh@@@@UAA_NXZ",
  "0x827e52a0": "?RemoveAt@?$TrackWidgetImp@UInstance@RndMultiMesh@@@@UAAXMMM@Z",
  "0x827e5c48": "??1?$_List_base@PAVMidiParser@@V?$StlNodeAlloc@PAVMidiParser@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
