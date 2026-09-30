@@ -75,7 +75,8 @@ SongUpgradeData::SongUpgradeData(DataArray *da) {
     DataArray *rgtuningarr = da->FindArray(real_guitar_tuning, false);
     if (rgtuningarr) {
         for (int i = 0; i < 6; i++) {
-            mRealGuitarTuning[i] = rgtuningarr->Array(1)->Int(i);
+            int gi = i;
+            mRealGuitarTuning[i] = rgtuningarr->Array(1)->Int(gi);
         }
     }
     static Symbol real_bass_tuning("real_bass_tuning");
