@@ -199,12 +199,21 @@ void DxRnd::DoWorldEnd() {
 
 void DxRnd::FinishPostProcess() {
     SetFrameBuffersAsSource();
+    // Retail sets Mip/AddressU inline after each of samplers 3, 0xA and 0xF
+    // (pending-mask bits 28/21/16 == 1 << (31 - sampler)); sampler 0xF is
+    // point-min with Mip/AddressU cleared to 0.
     D3DDevice_SetSamplerState_MinFilter(TheDxRnd.Device(), 3, 1);
     D3DDevice_SetSamplerState_MagFilter(TheDxRnd.Device(), 3, 1);
+    D3DDevice_SetSamplerState_MipFilter(TheDxRnd.Device(), 3, 2, 0x10000000);
+    D3DDevice_SetSamplerState_AddressU(TheDxRnd.Device(), 3, 2, 0x10000000);
     D3DDevice_SetSamplerState_MinFilter(TheDxRnd.Device(), 0xA, 1);
     D3DDevice_SetSamplerState_MagFilter(TheDxRnd.Device(), 0xA, 1);
-    D3DDevice_SetSamplerState_MinFilter(TheDxRnd.Device(), 0xF, 1);
+    D3DDevice_SetSamplerState_MipFilter(TheDxRnd.Device(), 0xA, 2, 0x200000);
+    D3DDevice_SetSamplerState_AddressU(TheDxRnd.Device(), 0xA, 2, 0x200000);
+    D3DDevice_SetSamplerState_MinFilter(TheDxRnd.Device(), 0xF, 0);
     D3DDevice_SetSamplerState_MagFilter(TheDxRnd.Device(), 0xF, 1);
+    D3DDevice_SetSamplerState_MipFilter(TheDxRnd.Device(), 0xF, 0, 0x10000);
+    D3DDevice_SetSamplerState_AddressU(TheDxRnd.Device(), 0xF, 0, 0x10000);
     D3DDevice_SetSamplerState_MinFilter(TheDxRnd.Device(), 0xD, 1);
     D3DDevice_SetSamplerState_MagFilter(TheDxRnd.Device(), 0xD, 1);
     D3DDevice_SetRenderTarget_External(mD3DDevice, 0, mBackBuffer);
@@ -426,7 +435,7 @@ void DxRnd::BeginTiling(const Hmx::Color &c, float f, unsigned int ui) {
         D3DDevice_Clear(mD3DDevice, 0, nullptr, 0x31, MakeColor(c), f, ui, 0);
     } else {
         XMVECTOR v = {c.red, c.green, c.blue, c.alpha};
-        D3DDevice_BeginTiling(mD3DDevice, 0, mNumTiles, &mTileRect, &v, f, ui);
+        D3DDevice_BeginTiling(mD3DDevice, 0, mNumTiles, mTileRects, &v, f, ui);
         mTilingActive = true;
     }
 }
@@ -674,6 +683,9 @@ void DxRnd::ModalDraw(Debug::ModalType t, const char *cc) {
 }
 
 void DxRnd::InitBuffers() {
+    // Retail InitBuffers makes no Begin/EndMemTrackObjectName calls and has no
+    // DX_ASSERT fail paths (no MakeString/Debug::Fail); the results of
+    // CreateDevice/CreateTexture are discarded.
     PhysMemTypeTracker tracker("D3D(phys):Global");
     memset(&mPresentParams, 0, sizeof(D3DPRESENT_PARAMETERS));
     memset(&mVideoMode, 0, sizeof(XVIDEO_MODE));
@@ -681,32 +693,54 @@ void DxRnd::InitBuffers() {
     static Symbol rnd("rnd");
     static Symbol low_res("low_res");
     static Symbol force_hd("force_hd");
-    auto& _ref0 = mVideoMode.fIsHiDef;
     if (SystemConfig(rnd)->FindInt(force_hd) != 0) {
-        _ref0 = true;
+        mVideoMode.fIsHiDef = true;
         mVideoMode.fIsWideScreen = true;
     } else if (SystemConfig(rnd)->FindInt(low_res) != 0) {
         mFlags |= 1;
     }
-    mLowRes = mFlags & 1;
-    mAspect = mLowRes ? kWidescreen : kRegular;
-    mHeight = mLowRes ? 540 : 720;
-    int i11, i10;
-    if (_ref0 != 0 || mLowRes != 0) {
-        i11 = (mHeight << 4) / 9;
-        i10 = (mHeight << 4) / 9;
+    // Retail (same shape as DC3's matched version): mLowRes is read from
+    // mVideoMode.fIsWideScreen (0x2c8), mAspect is kWidescreen/kLetterbox
+    // (`addi r11, r11, 0x2`), and mHeight keys off the low_res bit in mFlags.
+    mLowRes = mVideoMode.fIsWideScreen != 0;
+    mAspect = mLowRes ? kWidescreen : kLetterbox;
+    unsigned int lowResFlag = mFlags & 1;
+    if (!lowResFlag) {
+        mHeight = 720;
     } else {
-        i11 = (mHeight << 2) / 3;
-        i10 = (mHeight << 2) / 3;
+        mHeight = 540;
     }
-    mWidth = i11;
-    if (!(mFlags & 1)) {
+    int tileHeight = mHeight;
+    int tileWidth;
+    // mWidth stored in both arms: MSVC tail-merges the two stores (DC3 w7-br).
+    if (mVideoMode.fIsHiDef != 0 || mLowRes != 0) {
+        mWidth = (mHeight << 4) / 9;
+        tileWidth = (tileHeight << 4) / 9;
+    } else {
+        mWidth = (mHeight << 2) / 3;
+        tileWidth = (tileHeight << 2) / 3;
+    }
+    if (!lowResFlag) {
         mNumTiles = 2;
+        // Bit 1 of mFlags: stacked tiles (full width, half height) instead of
+        // side-by-side (half width, full height).  Edges are `i * tile` and
+        // `(i + 1) * tile` -- a strength-reduced IV plus a separate add.
         if (mFlags & 2) {
-            i11 = i11 / 2;
-            i10 = i10 / 2;
+            tileHeight = tileHeight / 2;
+            for (int i = 0; i < mNumTiles; i++) {
+                mTileRects[i].x1 = 0;
+                mTileRects[i].y1 = i * tileHeight;
+                mTileRects[i].x2 = tileWidth;
+                mTileRects[i].y2 = (i + 1) * tileHeight;
+            }
         } else {
-            i10 = i10 / 2;
+            tileWidth = tileWidth / 2;
+            for (int i = 0; i < mNumTiles; i++) {
+                mTileRects[i].x1 = i * tileWidth;
+                mTileRects[i].y1 = 0;
+                mTileRects[i].x2 = (i + 1) * tileWidth;
+                mTileRects[i].y2 = tileHeight;
+            }
         }
     }
     mPresentParams.Windowed = 0;
@@ -716,75 +750,62 @@ void DxRnd::InitBuffers() {
     mPresentParams.BackBufferHeight = mHeight;
     mPresentParams.PresentationInterval = 0;
     mPresentParams.SwapEffect = D3DSWAPEFFECT_DISCARD;
+    // RB3 retail: 32 MB secondary ring buffer in 64 segments (DC3: 6 MB / 12).
+    mPresentParams.RingBufferParameters.SecondarySize = 0x2000000;
+    mPresentParams.RingBufferParameters.SegmentCount = 0x40;
+    D3DVIDEO_SCALER_PARAMETERS &scaler = mPresentParams.VideoScalerParameters;
+    scaler.ScalerSourceRect.x1 = 0;
+    scaler.ScalerSourceRect.y1 = 0;
+    scaler.ScalerSourceRect.x2 = mWidth;
+    scaler.ScalerSourceRect.y2 = mHeight;
+    scaler.FilterProfile = 0;
     UpdateScalerParams();
     mRenderThreadId = GetCurrentThreadId();
-    {
-        BeginMemTrackObjectName("D3D->CreateDevice");
-        HRESULT hr = Direct3D_CreateDevice(
-            0, mDeviceType, &mFocusWindow, 1, &mPresentParams, &mD3DDevice
-        );
-        DX_ASSERT_CODE(hr, 0x367);
-        EndMemTrackObjectName();
-    }
+    Direct3D_CreateDevice(0, mDeviceType, mFocusWindow, 1, &mPresentParams, &mD3DDevice);
     if (!(mFlags & 1)) {
         MILO_ASSERT(mNumTiles > 0, 0x36D);
-        BeginMemTrackObjectName("CreateBackBuffers:World");
         CreateBackBuffers(
             mWidth, mHeight, D3DMULTISAMPLE_NONE, mEdramBase, mEdramHzBase, mBackBuffer, mWorldDepth
         );
-        EndMemTrackObjectName();
-        BeginMemTrackObjectName("CreateBackBuffers:UI");
         CreateBackBuffers(
-            i10, i11, D3DMULTISAMPLE_2_SAMPLES, mEdramBase, mEdramHzBase, mOffscreenRT, mOffscreenDepth
+            tileWidth, tileHeight, D3DMULTISAMPLE_2_SAMPLES, mEdramBase, mEdramHzBase, mOffscreenRT, mOffscreenDepth
         );
     } else {
         MILO_ASSERT(mNumTiles == 0, 0x37E);
-        BeginMemTrackObjectName("CreateBackBuffers:World");
         CreateBackBuffers(
             mWidth, mHeight, D3DMULTISAMPLE_2_SAMPLES, mEdramBase, mEdramHzBase, mBackBuffer, mWorldDepth
         );
-        EndMemTrackObjectName();
-        BeginMemTrackObjectName("CreateBackBuffers:UI");
         CreateBackBuffers(
             mWidth, mHeight, D3DMULTISAMPLE_2_SAMPLES, mEdramBase, mEdramHzBase, mOffscreenRT, mOffscreenDepth
         );
     }
-    EndMemTrackObjectName();
-    {
-        BeginMemTrackObjectName("CreateTexture:PreProcessBuffer");
-        mPreProcessBuffer = static_cast<D3DTexture *>(D3DDevice_CreateTexture(
-            mWidth, mHeight, 1, 1, 0, D3DFMT_A8R8G8B8, 0, D3DRTYPE_TEXTURE
-        ));
-        DX_ASSERT(mPreProcessBuffer, 0x390);
-        EndMemTrackObjectName();
-    }
-    {
-        BeginMemTrackObjectName("CreateTexture:PostProcessBuffer");
-        mPostProcessBuffer = static_cast<D3DTexture *>(D3DDevice_CreateTexture(
-            mWidth, mHeight, 1, 1, 0, D3DFMT_A8R8G8B8, 0, D3DRTYPE_TEXTURE
-        ));
-        DX_ASSERT(mPostProcessBuffer, 0x394);
-        EndMemTrackObjectName();
-    }
+    // XDK inline wrapper with `&member` as the out pointer: the tracker's EH
+    // state gives each computed `&member` a dead home-slot store
+    // (`stw r11, 0x58(r31)`), as in retail.
+    IDirect3DDevice9_CreateTexture(
+        mD3DDevice, mWidth, mHeight, 1, 0, D3DFMT_A8R8G8B8, 0, &mPreProcessBuffer, NULL
+    );
+    IDirect3DDevice9_CreateTexture(
+        mD3DDevice, mWidth, mHeight, 1, 0, D3DFMT_A8R8G8B8, 0, &mPostProcessBuffer, NULL
+    );
     for (int i = 0; i < 2; i++) {
-        BeginMemTrackObjectName("CreateTexture:FrontBuffer");
-        mFrontBuffers[i] = static_cast<D3DTexture *>(D3DDevice_CreateTexture(
-            mWidth, mHeight, 1, 1, 0, D3DFMT_A8R8G8B8, 0, D3DRTYPE_TEXTURE
-        ));
-        DX_ASSERT(mFrontBuffers[i], 0x39C);
-        EndMemTrackObjectName();
+        // Front buffers are D3DFMT_LE_A8R8G8B8 (`ori r8, r8, 0x106`).
+        IDirect3DDevice9_CreateTexture(
+            mD3DDevice, mWidth, mHeight, 1, 0, D3DFMT_LE_A8R8G8B8, 0, &mFrontBuffers[i], NULL
+        );
     }
-
-    BeginMemTrackObjectName("CreateTexture:FrontBufferDepth");
-    mFrontBufferDepth = static_cast<D3DTexture *>(D3DDevice_CreateTexture(
-        mWidth, mHeight, 1, 1, 0, D3DFMT_D24FS8, 0, D3DRTYPE_TEXTURE
-    ));
-    DX_ASSERT(mFrontBufferDepth, 0x3A2);
-    EndMemTrackObjectName();
+    IDirect3DDevice9_CreateTexture(
+        mD3DDevice, mWidth, mHeight, 1, 0, D3DFMT_D24FS8, 0, &mFrontBufferDepth, NULL
+    );
     PostDeviceReset();
-    int temp27 = ((((mHeight + 0x1F) >> 5) * ((mWidth + 0x1F) >> 5)) << 0xC);
+    // Signed divides by 32 (srawi+addze on both terms); mWidth's term written
+    // first so mHeight loads first, as in retail.
+    int clearSize = ((((mWidth + 0x1F) / 32) * ((mHeight + 0x1F) / 32)) << 0xC);
+    D3DLOCKED_RECT rect;
     for (int i = 0; i < 2; i++) {
-        memset(mFrontBuffers[i], 0, temp27);
+        D3DTexture_LockRect(mFrontBuffers[i], 0, &rect, nullptr, 0);
+        memset(rect.pBits, 0, clearSize);
+        D3DTexture_UnlockRect(mFrontBuffers[i], 0);
     }
     mRegAlloc = (RegisterAlloc)0;
     D3DDevice_SetShaderGPRAllocation(mD3DDevice, 0, 0, 0);

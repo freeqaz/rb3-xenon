@@ -208,19 +208,9 @@ private:
     unsigned int mEdramBase;
     unsigned int mEdramHzBase;
     int mNumTiles; // 0x350
-    D3DRECT mTileRect; // 0x354
-    int unk3c4;
-    int unk3c8;
-    int unk3cc;
-    int unk3d0;
-    int unk3d4;
-    int unk3d8;
-    int unk3dc;
-    int unk3e0;
-    int unk3e4;
-    int unk3e8;
-    int unk3ec;
-    int unk3f0;
+    // Retail InitBuffers fills these as an array (`stwu r8, 0x10(r11)` off
+    // 0x350, i.e. 0x354 + 16*i); 4 rects run up to mColorRampTex at 0x394.
+    D3DRECT mTileRects[4]; // 0x354
     D3DTexture *mColorRampTex; // 0x394 (retail only; removed in DC3)
     bool mSuspended;
     bool mPrintGlitches;
