@@ -403,6 +403,7 @@ void AppLabel::SetFromSongSelectNode(const Node *n) {
 void AppLabel::SetFromCharacter(const CharData *cd) {
     const char *s = cd->GetCharacterName();
     if (strcmp(s, "") == 0) {
+        static Symbol character_emptyname("character_emptyname");
         SetTextToken(character_emptyname);
     } else
         SetDisplayText(s, 1);
