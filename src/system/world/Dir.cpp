@@ -99,6 +99,33 @@ BEGIN_CUSTOM_PROPSYNC(WorldDir::PresetOverride)
     SYNC_PROP_OVERRIDE(hue, o.hue, o.Sync)
 END_CUSTOM_PROPSYNC
 
+#ifndef HX_NATIVE
+// Retail (0x824CC038): walk the target texture's ref ring directly (next saved
+// before the call) and Replace each foreign-dir ref through ObjRefOwner.
+void WorldDir::BitmapOverride::Sync(bool b) {
+    if (!original || !replacement)
+        return;
+    if (!b) {
+        for (ObjRef::iterator it = replacement->Refs().begin();
+             it != replacement->Refs().end();) {
+            ObjRef *cur = it;
+            ++it;
+            ObjRefOwner *ref = RefPtrOf(cur);
+            if (ref->RefOwner()->Dir() != replacement->Dir())
+                ref->Replace(reinterpret_cast<ObjRef *>((RndTex *)replacement), original);
+        }
+    } else {
+        for (ObjRef::iterator it = original->Refs().begin();
+             it != original->Refs().end();) {
+            ObjRef *cur = it;
+            ++it;
+            ObjRefOwner *ref = RefPtrOf(cur);
+            if (ref->RefOwner() && ref->RefOwner()->Dir() != replacement->Dir())
+                ref->Replace(reinterpret_cast<ObjRef *>((RndTex *)original), replacement);
+        }
+    }
+}
+#else
 void WorldDir::BitmapOverride::Sync(bool b) {
     if (!original)
         return;
@@ -132,6 +159,7 @@ void WorldDir::BitmapOverride::Sync(bool b) {
         localRing.ReplaceList(replacement);
     }
 }
+#endif
 
 BEGIN_CUSTOM_PROPSYNC(WorldDir::BitmapOverride)
     SYNC_PROP_OVERRIDE(original, o.original, o.Sync)
