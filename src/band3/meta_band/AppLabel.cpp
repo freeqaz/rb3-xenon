@@ -470,9 +470,11 @@ void AppLabel::SetSetlistOwner(const SetlistRecord *setlist) {
 }
 
 void AppLabel::SetEditSetlistName(const UIPanel *panel) {
+    static Symbol setlist_name("setlist_name");
     SetDisplayText(panel->Property(setlist_name, true)->Str(nullptr), true);
 }
 void AppLabel::SetEditSetlistDesc(const UIPanel *panel) {
+    static Symbol setlist_desc("setlist_desc");
     SetDisplayText(panel->Property(setlist_desc, true)->Str(nullptr), true);
 }
 
