@@ -54,6 +54,11 @@ public:
 
     // The temp-allocation scope guard pushes/restores mStrategy directly.
     friend struct MemTemp;
+#ifndef HX_NATIVE
+    // The retail 2-arg allocator (MemMgr.cpp) reads mStrategy/mAllowTemp and
+    // overrides mStrategy around Alloc.
+    friend void *(MemAlloc)(int, int); // parenthesized: bypass the MemAlloc macro
+#endif
 
 private:
     void InsertFreeBlock(FreeBlock *, int, FreeBlock *, FreeBlock *, int);
