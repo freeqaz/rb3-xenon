@@ -87516,6 +87516,15 @@
     "?insert@?$list@UCollision@RndDrawable@@V?$StlNodeAlloc@UCollision@RndDrawable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UCollision@RndDrawable@@U?$_Nonconst_traits@UCollision@RndDrawable@@@stlpmtx_std@@@2@U32@ABUCollision@RndDrawable@@@Z"
    ],
    "evidence": "W16-GV 2026-09-30: FCNP-tail adjudication, pair #30 from the W16-GQ scout (docs/decomp/W16GQ_FCNP_NONMEMBER_ADJUDICATION_2026-09-30.md). insert<list<Collision@RndDrawable>>::insert(iterator,T const&) and insert<list<DecompressTask>>::insert are template twins of the STLport list node-splice-insert body over a StlNodeAlloc<T>, differing only in the (opaque, uninspected) element type being copy-constructed into the new node. FLAT T1 REFUTED (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 10 named relocations compared, 0 SLOT-REFUTED / 0 BYTES-DIFFER / 0 CYCLE-ASSUMED, 0 placeholder relocations. 'ours' spelling not map-resident at its own address; no prior co-withdrawal with the retail spelling. See docs/decomp/W16GV_FCNP_TAIL_2026-09-30.md."
+  },
+  {
+   "name": "insert_list_DataNode",
+   "address": "0x8251f060",
+   "survivor": "?insert@?$list@VDataNode@@V?$StlNodeAlloc@VDataNode@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VDataNode@@U?$_Nonconst_traits@VDataNode@@@stlpmtx_std@@@2@U32@ABVDataNode@@@Z",
+   "folded": [
+    "?insert@?$list@UCallbackFile@ContentMgr@@V?$StlNodeAlloc@UCallbackFile@ContentMgr@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UCallbackFile@ContentMgr@@U?$_Nonconst_traits@UCallbackFile@ContentMgr@@@stlpmtx_std@@@2@U32@ABUCallbackFile@ContentMgr@@@Z"
+   ],
+   "evidence": "W16-GV 2026-09-30: FCNP-tail adjudication, pair #34 from the W16-GQ scout (docs/decomp/W16GQ_FCNP_NONMEMBER_ADJUDICATION_2026-09-30.md). insert<list<CallbackFile@ContentMgr>>::insert(iterator,T const&) and insert<list<DataNode>>::insert are template twins of the STLport list node-splice-insert body over a StlNodeAlloc<T>. FLAT T1 REFUTED (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 10 named relocations compared, 0 SLOT-REFUTED / 0 BYTES-DIFFER / 0 CYCLE-ASSUMED, 0 placeholder relocations. 'ours' spelling not map-resident at its own address; no prior co-withdrawal with the retail spelling. See docs/decomp/W16GV_FCNP_TAIL_2026-09-30.md."
   }
  ]
 }
