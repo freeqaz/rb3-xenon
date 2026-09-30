@@ -477,10 +477,14 @@ void TaskMgr::Poll() {
     for (int i = 0; i < kTaskNumUnits; i++) {
         mTimelines[i].Poll();
     }
+#ifdef HX_NATIVE
+    // DC3's QueueTaskDelete drain; retail TaskMgr::Poll (fn_82749B10) ends
+    // after polling the four timelines.
     for (int i = 0; i < unk84.size(); i++) {
         delete unk84[i].Ptr();
     }
     unk84.clear();
+#endif
 }
 
 void TaskMgr::ClearTasks() {
