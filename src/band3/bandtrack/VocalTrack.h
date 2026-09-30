@@ -38,6 +38,8 @@ public:
     }
     void FreeOldGems(float oldTime);
     void NewGem(float time, int gemIdx);
+    // W16-HR: TU5 helper, retail fn_82BA29A0 (name ours; no oracle has it).
+    TambourineGem *SetGemState(int id, int state);
     void SetTambourineManager(TambourineManager *mgr) { mTambourineManager = mgr; }
 
     std::deque<TambourineGem *> mFreeGems; // 0x0
