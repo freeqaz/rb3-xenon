@@ -853,9 +853,12 @@ void AccomplishmentManager::UpdateAssetHintLabel(Symbol s, UILabel *i_pLabel) {
         String srcstr = GetHintStringForSource(*it);
         if (str.empty())
             str = srcstr;
-        else
+        else {
+            static Symbol career_asset_or("career_asset_or");
             str = MakeString(Localize(career_asset_or, 0), str.c_str(), srcstr.c_str());
+        }
     }
+    static Symbol career_asset_hint("career_asset_hint");
     i_pLabel->SetTokenFmt(career_asset_hint, str);
 }
 
