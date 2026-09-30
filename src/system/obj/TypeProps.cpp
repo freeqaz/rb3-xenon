@@ -363,7 +363,7 @@ void TypeProps::Load(BinStreamRev &d) {
     Hmx::Object *theThis = nullptr;
     if (def)
         theThis = DataSetThis(mOwner);
-    if (mMap && gLoadingProxyFromDisk) {
+    if (mMap && gLoadingProxyFromDisk && def) {
         DataArray *oldMap = mMap;
         d >> mMap;
         int oldMapSize = oldMap->Size();
@@ -387,6 +387,8 @@ void TypeProps::Load(BinStreamRev &d) {
         d >> mMap;
     }
     if (def) {
+        // Retail (fn_827661C0) has no edit-mode outdated-property report.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
         if (mMap && TheLoadMgr.EditMode()) {
             for (int i = 0; mMap && i < mMap->Size(); i += 2) {
                 DataArray *found = def->FindArray(mMap->Sym(i), false);
@@ -401,6 +403,7 @@ void TypeProps::Load(BinStreamRev &d) {
                 }
             }
         }
+#endif
         DataSetThis(theThis);
         AddRefObjects();
     }
