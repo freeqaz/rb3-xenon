@@ -1545,9 +1545,7 @@ void CustomizePanel::ScalePatch(float dx, float dy) {
             newScale.y = 0.0f;
         else if (newScale.y > 5.0f)
             newScale.y = 5.0f;
-        bool changed = false;
-        if (newScale.x != oldX || newScale.y != oldY)
-            changed = true;
+        bool changed = newScale.x != oldX || newScale.y != oldY;
         if (changed) {
             patch->mScale = newScale;
             RefreshPatchEdit();
@@ -1569,6 +1567,7 @@ bool CustomizePanel::IsCurrentAssetPatchable() {
 }
 
 void CustomizePanel::SetupAssetPatchData(Symbol sym) {
+    static Symbol none("none");
     if (sym == none) {
         ClearAssetPatchData();
         return;
