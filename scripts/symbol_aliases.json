@@ -71839,7 +71839,7 @@
   {
    "name": "$sort_heap",
    "address": "0x82347db0",
-   "survivor": "??$sort_heap@PAPAUObjEntry@@UObjSort@@@stlpmtx_std@@YAXPAPAUObjEntry@@0UObjSort@@@Z",
+   "survivor": "??$sort_heap@PAPAVMeshVert@BandPatchMesh@@USortByWorkVertZ@@@stlpmtx_std@@YAXPAPAVMeshVert@BandPatchMesh@@0USortByWorkVertZ@@@Z",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 20 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -71942,9 +71942,20 @@
      "spelling": "??$sort_heap@PAVSymbol@@U?$less@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@YAXPAVSymbol@@0U?$less@VSymbol@@@0@@Z",
      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "??$sort_heap@PAPAUObjEntry@@UObjSort@@@stlpmtx_std@@YAXPAPAUObjEntry@@0UObjSort@@@Z",
+     "lane": "W17-MVS 2026-09-30",
+     "class": "WRONG_SURVIVOR_IDENTITY",
+     "disposition": "survivor_reassigned"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 2 other group(s) at 3 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 2 of the 3 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 2 other group(s) at 3 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 2 of the 3 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md.",
+   "repair": {
+    "class": "WRONG_SURVIVOR_IDENTITY",
+    "lane": "W17-MVS 2026-09-30",
+    "why": "0x82347db0 is sort_heap<BandPatchMesh::MeshVert**, SortByWorkVertZ>, not MessageTimer's ObjSort instantiation. Its only retail caller is __partial_sort 0x823484f0, reached only from __introsort_loop 0x82349830 <- sort 0x82349be8 <- BandPatchMesh::ProjectPatches (bl sites 0x8234c0b0 / 0x8234c174); it calls __adjust_heap 0x823462a8, whose leaf compare (and __push_heap 0x82345438's) is lwz 0(p); lwz 0(r); lfs 8(r) = (*p)->mVert->pos.z. ObjSort compares e->maxMs through one dereference, and none of our ObjSort leaf bodies (__linear_insert, __adjust_heap, __push_heap, __median, __unguarded_partition) has a masked-body equal anywhere in retail, so no ObjSort instantiation exists here to fold with. folded[] was already empty; this relabels the survivor to the map row, renamed with the rest of the family and re-homed to BandPatchMesh.cpp."
+   }
   },
   {
    "name": "1?$ObjRefConcrete",
