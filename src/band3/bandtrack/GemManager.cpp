@@ -269,6 +269,8 @@ void GemManager::ClearTrackMasks() {
     }
 }
 void GemManager::SetupRealGuitarFretPos() {
+    static Symbol real_guitar("real_guitar");
+    static Symbol real_bass("real_bass");
     const BandUser *bandUser = mTrackConfig.GetBandUser();
     bool isRG = bandUser->GetTrack()->GetType() == real_guitar;
     bool isRB = bandUser->GetTrack()->GetType() == real_bass;
@@ -294,14 +296,13 @@ void GemManager::SetupRealGuitarFretPos() {
                 ProcessRealGuitarRun(gameGems, i38);
                 i2 = curGameGem.GetLowestString();
                 i38++;
-            } else if (i2 != (int)curGameGem.GetLowestString()) {
+            } else if ((int)curGameGem.GetLowestString() != i2) {
                 ProcessRealGuitarRun(gameGems, i38);
                 i2 = curGameGem.GetLowestString();
                 gameGems.push_back(curGameGem);
             } else {
                 if (!gameGems.empty()) {
-                    GameGem &last = gameGems.back();
-                    if (curGameGem.GetTick() - last.GetTick() > unk134) {
+                    if (curGameGem.GetTick() - gameGems.back().GetTick() > unk134) {
                         ProcessRealGuitarRun(gameGems, i38);
                         i2 = curGameGem.GetLowestString();
                         gameGems.push_back(curGameGem);
