@@ -2412,9 +2412,8 @@ Lyric *VocalTrack::CreateLyric(
 
 void TambourineGemPool::FreeOldGems(float oldTime) {
     while (!mUsedGems.empty() && mUsedGems.front()->unk0 < oldTime) {
-        TambourineGem *g = mUsedGems.front();
-        mFreeGems.push_back(g);
-        g->unk8 = 2;
+        mFreeGems.push_back(mUsedGems.front());
+        mUsedGems.front()->unk8 = 2;
         mUsedGems.pop_front();
     }
 }
