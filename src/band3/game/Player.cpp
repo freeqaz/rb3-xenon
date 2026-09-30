@@ -193,6 +193,7 @@ void Player::Poll(float f, const SongPos &pos) {
     // Periodic net energy-broadcast leaf (same handler as SetEnergy's); skipped
     // headless (no net session / BandUser). X360 keeps the real broadcast.
     if (IsLocal() && f >= unk2a4 + 2000.0f && !unk1e2) {
+        static Message send_update_energy_msg("send_update_energy");
         Handle(send_update_energy_msg, true);
         unk2a4 = f;
     }
@@ -318,6 +319,7 @@ void Player::BroadcastScore() {
         float sub = poll - unk29c;
         int isub = (int)mScore - unk2a0;
         if ((isub > 0x13U) || (isub != 0) && (sub >= 250.0f)) {
+            static Message send_update_score_msg("send_update_score");
             HandleType(send_update_score_msg);
             unk29c = poll;
             unk2a0 = mScore;
@@ -883,7 +885,8 @@ void Player::Deploy() {
     GetMultiplier(true, i1, i2, i3);
     mStats.DeployOverdrive(GetSongMs(), i1 * i3);
     if (TheGame->mProperties.mInTrainer) {
-        Handle(deploy_msg.mData, false);
+        static Message deploy_msg("deploy");
+        Handle(deploy_msg, false);
     }
 }
 
@@ -1086,6 +1089,7 @@ void Player::SetFinishedCoda() {
     MILO_ASSERT(!mHasBlownCoda, 0x5A8);
     mHasFinishedCoda = true;
     if (TheGame->InTrainer()) {
+        static Message finished_coda_msg("finished_coda");
         Export(finished_coda_msg, true);
     }
 }
