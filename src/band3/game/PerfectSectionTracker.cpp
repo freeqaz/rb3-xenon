@@ -38,6 +38,7 @@ void PerfectSectionTracker::HandlePlayerSaved_(const TrackerPlayerID &pid) {
 }
 
 void PerfectSectionTracker::FirstFrame_(float) {
+    static Symbol perfect_section_tracker_description("perfect_section_tracker_description");
     mBandDisplay.Initialize(perfect_section_tracker_description);
     mSectionData.clear();
     mSectionData.resize(unk104.GetSectionCount());
