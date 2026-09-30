@@ -44,7 +44,9 @@ public:
         NodeVector *Resize(int, const NodeVector *);
         NodeVector *FindNodes(CharClip *) const;
         int BytesInMemory() const { return (intptr_t)mNodeEnd - (intptr_t)mNodeStart; }
+#ifdef HX_NATIVE
         void RemoveNodes(NodeVector *);
+#endif
         void Save(BinStream &);
         void Load(BinStream &);
         void RemoveClip(CharClip *);
@@ -145,6 +147,10 @@ public:
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
+#ifndef HX_NATIVE
+    // retail fn_8237D810 (vtable slot +8): forwards to mTransitions.Replace
+    virtual void Replace(ObjRef *, Hmx::Object *);
+#endif
     virtual void PreSave(BinStream &);
     virtual void PostSave(BinStream &) {}
     virtual void Print();
