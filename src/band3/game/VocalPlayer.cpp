@@ -2057,7 +2057,7 @@ float VocalPlayer::GetNumPhrases(int startTick, int endTick, int isolatedPart) {
     if (isolatedPart < 0) {
         endPart = 2;
     } else if (isolatedPart != 0) {
-        startPart = endPart = isolatedPart;
+        endPart = startPart = isolatedPart;
     }
     int count = 0;
     for (unsigned int i = 0; i < phraseVec.size(); i++) {
@@ -2067,14 +2067,14 @@ float VocalPlayer::GetNumPhrases(int startTick, int endTick, int isolatedPart) {
         for (int part = startPart; part <= endPart && !found; part++) {
             if (part == 0) {
                 if (phraseVec[i].unk10 != phraseVec[i].unk14) {
-                    found = true;
                     count++;
+                    found = true;
                 }
             } else {
                 VocalNoteList *vnl = TheSongDB->GetVocalNoteList(part);
                 if (vnl && vnl->HasNoteInRange(clampedStart, clampedEnd) != -1) {
-                    found = true;
                     count++;
+                    found = true;
                 }
             }
         }
