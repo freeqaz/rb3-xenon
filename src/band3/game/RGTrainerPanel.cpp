@@ -51,10 +51,8 @@ void ProTrainerPanel::Enter() {
     if (mGemPlayer) {
         LocalBandUser *localuser = mGemPlayer->GetUser()->GetLocalBandUser();
         BandProfile *profile = TheProfileMgr.GetProfileForUser(localuser);
-        if (!profile)
-            return;
-        int songID =
-            TheSongMgr.GetSongIDFromShortName(MetaPerformer::Current()->Song(), true);
+        Symbol song = MetaPerformer::Current()->Song();
+        int songID = TheSongMgr.GetSongIDFromShortName(song, true);
         Difficulty diff = localuser->GetDifficulty();
         mSpeedCompleted.resize(GetNumSections());
         for (int i = 0; i < GetNumSections(); i++) {
