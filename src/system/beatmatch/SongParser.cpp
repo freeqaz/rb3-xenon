@@ -2101,8 +2101,8 @@ bool SongParser::HandleRGGemStop(
         }
         info.mRGGemsInfo[stringnum].unk18 = tick;
         for (int i = 0; i < 6; i++) {
-            if (info.mRGGemsInfo[i].mGem.mTick != -1)
-                allStringsEnded &= info.mRGGemsInfo[i].unk18 != -1;
+            if (info.mRGGemsInfo[i].mGem.mTick != -1 && info.mRGGemsInfo[i].unk18 == -1)
+                allStringsEnded = false;
         }
         if (allStringsEnded) {
             int firstEndTick = -1;
