@@ -193,6 +193,7 @@ public:
     void AddBonusPoints(int);
     EnabledState GetEnabledStateAt(float) const;
     void SetEnergy(float);
+    void CountPause();
     void DelayReturn(bool);
     bool Saveable() const;
     void Save(BandUser *, bool);

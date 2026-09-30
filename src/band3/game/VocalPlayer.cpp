@@ -308,6 +308,8 @@ void VocalPlayer::Restart(bool b1) {
 }
 
 void VocalPlayer::SetPaused(bool b1) {
+    if (b1)
+        CountPause();
     mTambourineManager.SetPaused(b1);
     FOREACH (it, mVocalParts) {
         (*it)->SetPaused(b1);

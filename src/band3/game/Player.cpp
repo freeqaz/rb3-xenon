@@ -790,6 +790,18 @@ void Player::SetEnergy(float f) {
     }
 }
 
+// TU5-only (retail fn_826A5260, no oracle; the name is ours, lane W16-HX4).
+// Counts pauses in mUnkTU5_tail; the tenth one quarantines the player and drains
+// its energy. Called from GemPlayer::SetPaused and VocalPlayer::SetPaused when
+// pausing.
+void Player::CountPause() {
+    if (++mUnkTU5_tail >= 10) {
+        SetQuarantined(true);
+        SetEnergy(0.0f);
+        UnkTU5Virtual();
+    }
+}
+
 void Player::SetEnergyFromNet(float f, bool b) {
     SetEnergyAutomatically(f);
     if (mDeployingBandEnergy && !b) {
