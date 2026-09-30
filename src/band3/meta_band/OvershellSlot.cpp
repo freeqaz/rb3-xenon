@@ -272,7 +272,6 @@ DataNode OvershellSlot::OnMsg(const LocalUserLeftMsg &msg) {
             mSongOptionsRequired = false;
             mBandUserMgr->ClearSlot(user);
             SetOverrideType(kOverrideFlow_None, false);
-            JoypadWiiOnUserLeft(user->GetLocalBandUser()->GetPadNum(), false);
             mOvershell->UpdateAll();
         }
     }
