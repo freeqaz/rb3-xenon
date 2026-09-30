@@ -3462,6 +3462,7 @@
  "0x82308f10": "?resize@?$vector@V?$ObjPtr@VGemTrackDir@@@@V?$StlNodeAlloc@V?$ObjPtr@VGemTrackDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABV?$ObjPtr@VGemTrackDir@@@@@Z",
  "0x82308f90": "?PreLoad@TrackPanelDir@@UAAXAAVBinStream@@@Z",
  "0x82309188": "?push_back@?$ObjVector@V?$ObjPtr@VBandTrack@@@@@@QAAXABV?$ObjPtr@VBandTrack@@@@@Z",
+ "0x82309030": "?resize@?$ObjVector@V?$ObjPtr@VBandTrack@@@@@@QAAXI@Z",
  "0x823091e8": "?push_back@?$ObjVector@V?$ObjPtr@VGemTrackDir@@@@@@QAAXABV?$ObjPtr@VGemTrackDir@@@@@Z",
  "0x823090e0": "?resize@?$ObjVector@V?$ObjPtr@VGemTrackDir@@@@@@QAAXI@Z",
  "0x82309b20": "?ClassName@TrackPanelDir@@UBA?AVSymbol@@XZ",

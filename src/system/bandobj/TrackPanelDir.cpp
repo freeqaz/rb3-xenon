@@ -1,3 +1,9 @@
+// W17-TPD: retail inlines the owner-only ObjPtr ctor in ObjVector<ObjPtr<T> >::resize(unsigned)
+// (0x823090E0 / 0x82309030: {vptr-lis, mOwner, mObject, vptr-addi, vptr-store}, the
+// DEFER_OWNER order, then the vector resize).
+// The per-TU define binds `T(mOwner)` to the inline one-arg ctor (obj/Object.h).
+#define RB3_OBJPTR_INLINE_OWNER_CTOR
+#define RB3_TU_OBJPTR_DEFER_OWNER
 #include "bandobj/TrackPanelDir.h"
 #include "bandobj/TrackPanelInterface.h"
 #include "bandobj/GemTrackDir.h"
