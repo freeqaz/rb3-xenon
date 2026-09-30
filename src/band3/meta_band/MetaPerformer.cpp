@@ -198,10 +198,12 @@ MetaPerformer *MetaPerformer::Current() { return sMetaPerformer; }
 MetaPerformerImpl *MetaPerformer::CurrentImpl() const {
     // W16-HR: retail builds `tour` as a function-local static (guard lbl_82DFE96C).
     static Symbol tour("tour");
-    MetaPerformerImpl *ret;
-    return TheTour && TheGameMode->InMode(tour) && (ret = TheTour->m_pTourPerformer, ret)
-        ? ret
-        : mQpPerformer;
+    if (TheTour && TheGameMode->InMode(tour)) {
+        MetaPerformerImpl *ret = TheTour->m_pTourPerformer;
+        if (ret)
+            return ret;
+    }
+    return mQpPerformer;
 }
 
 FORCE_LOCAL_INLINE
@@ -629,13 +631,7 @@ bool MetaPerformer::IsPlayingDemo() const {
 
 bool MetaPerformer::IsNoFailActive() const {
     static Symbol nofail_allowed("nofail_allowed");
-    bool set = IsBandNoFailSet();
-    bool ret = false;
-    if (set) {
-        if (TheGameMode->Property(nofail_allowed, true)->Int())
-            ret = true;
-    }
-    return ret;
+    return IsBandNoFailSet() && TheGameMode->Property(nofail_allowed, true)->Int() != 0;
 }
 
 // laneAY-B: retail's `is_band_no_fail_set` handler is a bare
@@ -1015,7 +1011,7 @@ DataNode MetaPerformer::OnMsg(const ModeChangedMsg &) {
 }
 
 void MetaPerformer::SetBandNoFail(bool b1) {
-    if (b1 != IsBandNoFailSet()) {
+    if (IsBandNoFailSet() != b1) {
         static Symbol mod_no_fail_band("mod_no_fail_band");
         TheModifierMgr->ToggleModifierEnabled(mod_no_fail_band);
         SetSyncDirty(-1, false);
