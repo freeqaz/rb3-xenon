@@ -546,18 +546,10 @@ DataNode CalibrationPanel::OnMsg(const ButtonDownMsg &msg) {
             return 0;
         } else {
             if (mTestState == tsTesting && GetTestRep() >= 5) {
-                bool b3 = true;
-                bool b4 = true;
-                if (msg.GetButton() != kPad_DUp && msg.GetButton() != kPad_DDown) {
-                    b4 = false;
-                }
-                if (!b4) {
-                    if (msg.GetAction() != kAction_Confirm) {
-                        b3 = false;
-                    }
-                }
+                bool b3 = msg.GetButton() == kPad_DUp || msg.GetButton() == kPad_DDown
+                    || msg.GetAction() == kAction_Confirm;
                 if (msg.GetButton() == kPad_Xbox_A)
-                    b3 = unka0;
+                    b3 = unka0 != 0;
                 if (b3) {
                     auto _tmp0 = msg.GetPadNum();
                     TriggerCalibration(_tmp0);
