@@ -756,7 +756,9 @@ bool BandSongMgr::AllowContentToBeAdded(DataArray *a, ContentLocT lt) {
     return !full;
 }
 
-int BandSongMgr::GetValidSongs(
+// Retail 0x82577610 returns void: its epilogue frees the ranked temp and never
+// sets r3, and none of its three callers reads r3 (W16-IA).
+void BandSongMgr::GetValidSongs(
     const std::vector<int> &excludeList,
     BandUserMgr &mgr,
     std::vector<int> &outSongs,
@@ -800,7 +802,6 @@ int BandSongMgr::GetValidSongs(
                 outSongs.push_back(songID);
         }
     }
-    return outSongs.size();
 }
 
 int BandSongMgr::GetPosInRecentList(int songID) {
