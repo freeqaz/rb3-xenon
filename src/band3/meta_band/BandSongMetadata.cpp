@@ -575,10 +575,12 @@ BinStream &operator<<(BinStream &bs, const std::hash_map<T1, T2> &map) {
 
 template <class T1, class T2>
 BinStream &operator>>(BinStream &bs, std::hash_map<T1, T2> &map) {
+    // Retail (fn_825A03C0 for <Symbol,float>, fn_825A0760 for <Symbol,String>)
+    // does NOT clear the map first, and counts down with the same loop shape as
+    // BinStream.h's std::map reader.
     unsigned int size;
     bs >> size;
-    map.clear();
-    while (size-- != 0) {
+    for (; size != 0; size--) {
         T1 key;
         bs >> key;
         bs >> map[key];
@@ -668,7 +670,7 @@ void BandSongMetadata::Load(BinStream &bs) {
         bs >> mSongTonality;
     }
     if (rev >= 2 && rev < 0xE) {
-        std::vector<std::map<Symbol, String> > gross;
+        std::vector<std::hash_map<Symbol, String> > gross;
         bs >> gross;
     }
     if (rev >= 3)

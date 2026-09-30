@@ -9922,6 +9922,7 @@ BandSongMetadata.cpp:
 	.pdata      start:0x822211F8 end:0x82221208
 	.pdata      start:0x82221208 end:0x82221348
 	.pdata      start:0x82221348 end:0x822216F8
+	.pdata      start:0x82221708 end:0x82221718
 	.pdata      start:0x82221798 end:0x822217B8
 	.pdata      start:0x822217B8 end:0x82221800
 	.text       start:0x82307B78 end:0x82308060
@@ -9937,6 +9938,7 @@ BandSongMetadata.cpp:
 	.text       start:0x8259EC40 end:0x8259EC58
 	.text       start:0x8259EC58 end:0x8259FC4C
 	.text       start:0x8259FC50 end:0x825A3650
+	.text       start:0x825A36B8 end:0x825A3770
 	.text       start:0x825A3F58 end:0x825A4338
 	.text       start:0x825A4340 end:0x825A4778
 
@@ -9956,7 +9958,6 @@ BandUser.cpp:
 Leaderboard.cpp:
 	.pdata      start:0x822003A8 end:0x822003B0
 	.pdata      start:0x822003B0 end:0x822003E8
-	.pdata      start:0x82221708 end:0x82221718
 	.pdata      start:0x8222EF08 end:0x8222EF60
 	.pdata      start:0x8222EF60 end:0x8222EF68
 	.pdata      start:0x8222EF68 end:0x8222EF78
@@ -9964,7 +9965,6 @@ Leaderboard.cpp:
 	.pdata      start:0x82234C00 end:0x82234C20
 	.text       start:0x8235EF08 end:0x8235EF70
 	.text       start:0x8235EF70 end:0x8235F160
-	.text       start:0x825A36B8 end:0x825A3770
 	.text       start:0x8266BDD0 end:0x8266C270
 	.text       start:0x8266C270 end:0x8266C30C
 	.text       start:0x8266C30C end:0x8266C440

@@ -77587,12 +77587,29 @@
   {
    "name": "$_Destroy_Range",
    "address": "0x825a36b8",
-   "survivor": "??$_Destroy_Range@PAVLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@0@Z",
-   "folded": [
-    "??$_Destroy_Range@PAUCheat@CheatProvider@@@stlpmtx_std@@YAXPAUCheat@CheatProvider@@0@Z",
-    "??$__destroy_range@PAUCheat@CheatProvider@@U12@@stlpmtx_std@@YAXPAUCheat@CheatProvider@@00@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions."
+   "survivor": "??$_Destroy_Range@PAV?$hash_map@VSymbol@@VString@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$hash_map@VSymbol@@VString@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@0@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$_Destroy_Range@PAVLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@0@Z",
+     "lane": "W16-HJ 2026-09-30",
+     "class": "WRONG_MAP_NAME_AT_ADDRESS",
+     "evidence": "Retail 0x825a36b8 strides 0x1c and calls 0x8256ac50, a STLport hashtable destructor (clear; free bucket vector +8..+0x10; _M_erase_after on +4), and its callers are the vector<hash_map<Symbol,String>> helpers reached only from BandSongMetadata::Load's `gross` reader (fn_825A3EB8: hash_map default ctor li r4,100 -> resize -> per-element fn_825A0760). Our LeaderboardRow instantiation strides 0x40 and calls ??1String@@UAA@XZ; its retail body is the stride-0x40 ~String loop at 0x8266d2e0 (the only such 20-instruction loop in retail), where our __destroy_range<LeaderboardRow*,LeaderboardRow> scores 100. Survivor relabelled to the retail name at this address."
+    },
+    {
+     "spelling": "??$_Destroy_Range@PAUCheat@CheatProvider@@@stlpmtx_std@@YAXPAUCheat@CheatProvider@@0@Z",
+     "lane": "W16-HJ 2026-09-30",
+     "class": "CALLEE_CONTRADICTED",
+     "evidence": "Retail 0x825a36b8 strides 0x1c and calls 0x8256ac50, a STLport hashtable destructor (clear; free bucket vector +8..+0x10; _M_erase_after on +4), and its callers are the vector<hash_map<Symbol,String>> helpers reached only from BandSongMetadata::Load's `gross` reader (fn_825A3EB8: hash_map default ctor li r4,100 -> resize -> per-element fn_825A0760). Our spelling calls ??1Cheat@CheatProvider@@QAA@XZ (two ~String), which cannot fold with a hashtable destructor; the T1 tier that installed it masked the relocation. Group forgave 0 census sites."
+    },
+    {
+     "spelling": "??$__destroy_range@PAUCheat@CheatProvider@@U12@@stlpmtx_std@@YAXPAUCheat@CheatProvider@@00@Z",
+     "lane": "W16-HJ 2026-09-30",
+     "class": "CALLEE_CONTRADICTED",
+     "evidence": "Retail 0x825a36b8 strides 0x1c and calls 0x8256ac50, a STLport hashtable destructor (clear; free bucket vector +8..+0x10; _M_erase_after on +4), and its callers are the vector<hash_map<Symbol,String>> helpers reached only from BandSongMetadata::Load's `gross` reader (fn_825A3EB8: hash_map default ctor li r4,100 -> resize -> per-element fn_825A0760). Our spelling calls ??1Cheat@CheatProvider@@QAA@XZ (two ~String), which cannot fold with a hashtable destructor; the T1 tier that installed it masked the relocation. Group forgave 0 census sites."
+    }
+   ]
   },
   {
    "name": "Name",
