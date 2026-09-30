@@ -235,32 +235,28 @@ BinStream &operator<<(BinStream &bs, const ObjRefConcrete<T1, class ObjectDir> &
 //
 // The predicate is EXACT over the whole ObjRefConcrete<T,ObjectDir>::Load
 // population: a transitive-virtual-base scan of all 1,457 parsed classes
-// separates the two groups 27/27 (the 9 below all have a virtual base; the 18
-// that retail open-codes all have none).  So to extend this correctly, add a
-// type here iff it reaches Hmx::Object through `virtual` inheritance --
-// directly (BandCharDesc, CharWeightable, RndTransformable) or transitively
-// (RndGroup / RndMesh / RndTexBlender via RndDrawable+RndTransformable,
-// UIComponent -> UIList -> BandList).
+// separated the (then mapped) two groups 27/27 -- virtual-base T all call,
+// the others all open-code -- directly (BandCharDesc, CharWeightable,
+// RndTransformable) or transitively (RndGroup / RndMesh / RndTexBlender via
+// RndDrawable+RndTransformable, UIComponent -> UIList -> BandList).
 // ---------------------------------------------------------------------------
+//
+// W17-TMPL2: the predicate is now COMPUTED from T instead of hand-listed. The
+// 9-entry list covered only the MAPPED rows; retail compiles 50 distinct T to
+// the 232 B call-SetObjConcrete shape and 20 to the 248 B open-coded one, and
+// every one of the 41 that were missing from the list compiled here to 264 B
+// (open-coded WITH the vbase lookup) -- e.g. RndAnimatable, 0x822c8e68.
+// MSVC sizes a pointer-to-data-member by T's inheritance model: 4 bytes
+// without a virtual base, 8 with one, so the comparison below is exactly
+// "T has a virtual base". Only a complete T can be asked, which Load's
+// dynamic_cast<T1 *> already requires. On the Itanium ABI (native) every data
+// member pointer has the same size, so the trait is 0 there, as it was for
+// every type not in the old list; both arms are the same operation anyway.
+struct ObjRefPlainClass {};
 template <class T>
 struct ObjRefVirtualBaseObject {
-    enum { value = 0 };
+    enum { value = sizeof(int T::*) > sizeof(int ObjRefPlainClass::*) };
 };
-#define RB3_OBJREF_VIRTUAL_BASE(T)                                                       \
-    class T;                                                                             \
-    template <>                                                                          \
-    struct ObjRefVirtualBaseObject<T> {                                                  \
-        enum { value = 1 };                                                              \
-    };
-RB3_OBJREF_VIRTUAL_BASE(BandCharDesc)
-RB3_OBJREF_VIRTUAL_BASE(BandList)
-RB3_OBJREF_VIRTUAL_BASE(CharWeightable)
-RB3_OBJREF_VIRTUAL_BASE(RndGroup)
-RB3_OBJREF_VIRTUAL_BASE(RndMesh)
-RB3_OBJREF_VIRTUAL_BASE(RndTexBlender)
-RB3_OBJREF_VIRTUAL_BASE(RndTransformable)
-RB3_OBJREF_VIRTUAL_BASE(UIComponent)
-RB3_OBJREF_VIRTUAL_BASE(UIList)
 
 template <class T1, class T2>
 bool ObjRefConcrete<T1, T2>::Load(BinStream &bs, bool print, ObjectDir *dir) {
