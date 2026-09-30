@@ -213,7 +213,8 @@ __declspec(noinline) bool TrackerPlayerDisplay::HasLocalPlayer() const {
 }
 
 void TrackerPlayerDisplay::Enable() const {
-    static Message enable_msg("enable");
+    static Symbol enable("enable");
+    static Message enable_msg(enable);
     SendMsg(enable_msg);
     bool cansend = HasLocalPlayer();
     if (cansend) {
@@ -222,7 +223,8 @@ void TrackerPlayerDisplay::Enable() const {
 }
 
 void TrackerPlayerDisplay::Disable() const {
-    static Message disable_msg("disable");
+    static Symbol disable("disable");
+    static Message disable_msg(disable);
     return SendMsg(disable_msg);
 }
 

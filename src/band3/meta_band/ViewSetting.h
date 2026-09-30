@@ -122,7 +122,7 @@ public:
 
     FilterViewSetting(FilterType ft)
         : ViewSetting(FilterTypeToSym(ft)), mFilterType(ft) {}
-    virtual ~FilterViewSetting() {}
+    // implicit dtor: retail ~FilterViewSetting has no own-vtable store
 
     virtual int NumData() const;
     virtual void Text(int, int, UIListLabel *, UILabel *) const;

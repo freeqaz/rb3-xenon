@@ -23,6 +23,7 @@ extern bool gShowAssetName;
 AssetProvider::AssetProvider(BandProfile *profile, AssetGender gender)
     : mProfile(profile), mGender(gender) {
     MILO_ASSERT(mProfile, 0x1d);
+    static Symbol none("none");
     mAssets.push_back(none);
 }
 
@@ -77,6 +78,7 @@ void AssetProvider::Update(AssetType assetType, AssetBoutique assetBoutique) {
         AssetMgr *pAssetMgr = AssetMgr::GetAssetMgr();
         MILO_ASSERT(pAssetMgr, 0x80);
         if (assetType == kAssetType_Hat) {
+            static Symbol none_hat("none_hat");
             Symbol name = pPreviewDesc->mOutfit.mHair.mName;
             if (name != gNullStr) {
                 if (pAssetMgr->GetTypeFromName(name) == kAssetType_Hair) {
@@ -86,6 +88,7 @@ void AssetProvider::Update(AssetType assetType, AssetBoutique assetBoutique) {
             } else
                 mAssets.push_back(none_hat);
         } else if (assetType == kAssetType_Bandana) {
+            static Symbol none_bandana("none_bandana");
             Symbol name = pPreviewDesc->mOutfit.mFaceHair.mName;
             if (name != gNullStr) {
                 if (pAssetMgr->GetTypeFromName(name) == kAssetType_FaceHair) {
@@ -175,10 +178,14 @@ void AssetProvider::UpdateExtendedText(int, int i_iData, UILabel *label) const {
         if (pAssetMgr->HasAsset(sym)) {
             Asset *pAsset = pAssetMgr->GetAsset(sym);
             MILO_ASSERT(pAsset, 0x139);
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
             if (gShowAssetName) {
                 label->SetTextToken(pAsset->GetHint());
-            } else if (assets.HasAsset(sym)) {
-                label->SetTextToken(pAsset->GetDescription());
+            } else
+#endif
+            if (assets.HasAsset(sym)) {
+                Symbol desc = pAsset->GetDescription();
+                label->SetTextToken(desc);
             } else {
                 MILO_ASSERT(TheAccomplishmentMgr, 0x14B);
                 TheAccomplishmentMgr->UpdateAssetHintLabel(pAsset->GetName(), label);
@@ -186,6 +193,7 @@ void AssetProvider::UpdateExtendedText(int, int i_iData, UILabel *label) const {
         } else
             label->SetTextToken(gNullStr);
     } else if (strcmp(label->Name(), "asset_progress.lbl") == 0) {
+        static Symbol customize_asset_progress("customize_asset_progress");
         label->SetTokenFmt(customize_asset_progress, i_iData + 1, NumData());
     } else
         label->SetTextToken(gNullStr);

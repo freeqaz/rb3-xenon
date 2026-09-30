@@ -74,8 +74,11 @@ void CharacterCreatorPanel::Load() {
     mClosetMgr = ClosetMgr::GetClosetMgr();
     LocalBandUser *closetUser = mClosetMgr->mUser;
     BandProfile *profile = TheProfileMgr.GetProfileForUser(closetUser);
-    if (!profile || !closetUser || !mClosetMgr || profile != mClosetMgr->unk28) return;
+    if (!profile)
+        return;
     CreateNewCharacter();
+    static Symbol male("male");
+    static Symbol female("female");
     AddGridThumbnails(male);
     AddGridThumbnails(female);
     SetGender(male);
@@ -251,15 +254,16 @@ void CharacterCreatorPanel::SetOutfit(Symbol outfit) {
     MILO_ASSERT(pPrefabChar, 0x1C7);
     BandCharDesc *pPrefabBandCharDesc = pPrefabChar->GetBandCharDesc();
     MILO_ASSERT(pPrefabBandCharDesc, 0x1CA);
-    BandCharDesc *target = mPreviewDesc;
-    target->mOutfit.mTorso = pPrefabBandCharDesc->mOutfit.mTorso;
-    target->mOutfit.mLegs = pPrefabBandCharDesc->mOutfit.mLegs;
-    target->mOutfit.mFeet = pPrefabBandCharDesc->mOutfit.mFeet;
-    target->mOutfit.mEarrings = pPrefabBandCharDesc->mOutfit.mEarrings;
-    target->mOutfit.mHands = pPrefabBandCharDesc->mOutfit.mHands;
-    target->mOutfit.mPiercings = pPrefabBandCharDesc->mOutfit.mPiercings;
-    target->mOutfit.mRings = pPrefabBandCharDesc->mOutfit.mRings;
-    target->mOutfit.mWrist = pPrefabBandCharDesc->mOutfit.mWrist;
+    BandCharDesc::Outfit &dst = mPreviewDesc->mOutfit;
+    BandCharDesc::Outfit &src = pPrefabBandCharDesc->mOutfit;
+    dst.mTorso = src.mTorso;
+    dst.mLegs = src.mLegs;
+    dst.mFeet = src.mFeet;
+    dst.mEarrings = src.mEarrings;
+    dst.mHands = src.mHands;
+    dst.mPiercings = src.mPiercings;
+    dst.mRings = src.mRings;
+    dst.mWrist = src.mWrist;
     mClosetMgr->PreviewCharacter(true, true);
     UpdateOutfitList();
 }
@@ -535,14 +539,16 @@ Symbol CharacterCreatorPanel::GetEyebrows() {
 }
 
 int CharacterCreatorPanel::GetFeatureIndex(Symbol s) {
+    // Retail-360: no mPreviewDesc null check (rb3-Wii dev build has one).
+#ifdef HX_NATIVE
     if (!mPreviewDesc)
         return 0;
-    else {
-        DataArrayPtr ptr(head, s);
-        const DataNode *featureIndex = mPreviewDesc->Property(ptr, true);
-        MILO_ASSERT(featureIndex, 0x36D);
-        return featureIndex->Int();
-    }
+#endif
+    static Symbol head("head");
+    DataArrayPtr ptr(head, s);
+    const DataNode *featureIndex = mPreviewDesc->Property(ptr, true);
+    MILO_ASSERT(featureIndex, 0x36D);
+    return featureIndex->Int();
 }
 
 void CharacterCreatorPanel::ModifyFeature(Symbol s, float f) {

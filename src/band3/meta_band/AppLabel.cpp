@@ -551,8 +551,11 @@ void AppLabel::SetLinkingCode(const char *cc) {
     String s(cc);
     if (s.length() != 10)
         MILO_WARN("linking code is not 10 characters!\n");
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+    // retail TU5 (0x825C5D70) makes no String::find call here
     if (s.find(' ') != String::npos)
         MILO_WARN("linking code has spaces!\n");
+#endif
     SetDisplayText(cc, 1);
 }
 

@@ -493,9 +493,8 @@ bool MetaPerformer::PartPlaysInSong(Symbol s) const {
 }
 
 bool MetaPerformer::VocalHarmonyInSong() const {
-    BandSongMetadata *data =
-        (BandSongMetadata *)mSongMgr->Data(mSongMgr->GetSongIDFromShortName(Song(), true)
-        );
+    int songID = mSongMgr->GetSongIDFromShortName(Song(), true);
+    BandSongMetadata *data = (BandSongMetadata *)mSongMgr->Data(songID);
     return data && data->HasVocalHarmony();
 }
 
@@ -555,9 +554,8 @@ bool MetaPerformer::SetHasMissingPart(Symbol s) const {
 bool MetaPerformer::SetHasMissingVocalHarmony() const {
     for (std::vector<Symbol>::const_iterator it = mSongs.begin(); it != mSongs.end();
          ++it) {
-        BandSongMetadata *data =
-            (BandSongMetadata *)mSongMgr->Data(mSongMgr->GetSongIDFromShortName(*it, true)
-            );
+        int songID = mSongMgr->GetSongIDFromShortName(*it, true);
+        BandSongMetadata *data = (BandSongMetadata *)mSongMgr->Data(songID);
         if (data && !data->HasVocalHarmony())
             return true;
     }
@@ -1381,6 +1379,7 @@ void MetaPerformer::OnSynchronized(unsigned int ui) {
 }
 
 void MetaPerformer::ExportUpdateMetaPerformer() {
+    static Symbol update_meta_performer("update_meta_performer");
     DataArrayPtr ptr(update_meta_performer);
     ptr->Execute();
 }
@@ -1475,7 +1474,9 @@ void MetaPerformer::PotentiallyUpdateLeaderboards(
 
 int MetaPerformer::TotalStars(bool b1) const {
     int stars = 0;
-    FOREACH (it, mStars) {
+    for (std::vector<int>::const_iterator end = mStars.end(), it = mStars.begin();
+         it != end;
+         ++it) {
         if (b1) {
             stars += Min(5, *it);
         } else

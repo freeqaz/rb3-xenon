@@ -355,7 +355,7 @@ const char *Accomplishment::GetIconPath() {
 
 bool Accomplishment::IsUserOnValidScoreType(LocalBandUser *i_pUser) const {
     bool returnValue = false;
-    ControllerType controllerType = (*(BandUser **)i_pUser)->GetControllerType();
+    ControllerType controllerType = i_pUser->GetControllerType();
 
     std::set<ScoreType> scoreTypes;
 
@@ -364,16 +364,12 @@ bool Accomplishment::IsUserOnValidScoreType(LocalBandUser *i_pUser) const {
     if (scoreTypes.empty()) {
         returnValue = true;
     } else {
-        std::set<ScoreType>::iterator iterator = scoreTypes.begin();
-        while (iterator != scoreTypes.end()) {
-            TrackType trackType = ScoreTypeToTrackType(*iterator);
-            ControllerType c = TrackTypeToControllerType(trackType);
-
-            if (controllerType == c) {
+        for (std::set<ScoreType>::iterator it = scoreTypes.begin(); it != scoreTypes.end();
+             ++it) {
+            if (controllerType == TrackTypeToControllerType(ScoreTypeToTrackType(*it))) {
                 returnValue = true;
                 break;
             }
-            iterator++;
         }
     }
     return returnValue;
@@ -484,6 +480,8 @@ Symbol Accomplishment::GetPassiveMsgChannel() const { return mPassiveMsgChannel;
 int Accomplishment::GetPassiveMsgPriority() const { return mPassiveMsgPriority; }
 int Accomplishment::GetGamerpicReward() const { return mGamerpicReward; }
 int Accomplishment::GetAvatarAssetReward() const { return mAvatarAssetReward; }
+bool Accomplishment::HasGamerpicReward() const { return mGamerpicReward != -1; }
+bool Accomplishment::HasAvatarAssetReward() const { return mAvatarAssetReward != -1; }
 
 // sw2 scatter-include (default/Accomplishment <- bandobj/BandCrowdMeter.cpp)
 #define gRev gRev_BandCrowdMeter

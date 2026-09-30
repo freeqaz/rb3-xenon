@@ -260,7 +260,7 @@ float PatchPanel::CalcMotion(float vel, int dir) {
             vel = deadzone * (float)sign;
         }
     } else {
-        vel = vel * -(unk6c * dt - 1.0f);
+        vel = vel * (1.0f - unk6c * dt);
     }
     float maxVel = unk78;
     float negMaxVel = -maxVel;
@@ -278,9 +278,7 @@ DataNode PatchPanel::OnMsg(const ButtonDownMsg &msg) {
     if (!layer.HasSticker()) {
         return DataNode(kDataUnhandled, 0);
     }
-    float rot = (float)fmod((double)layer.Rotation(), 360.0);
-    if (rot < 0.0f)
-        rot += 360.0f;
+    float rot = Mod(layer.Rotation(), 360.0f);
     int action = msg.GetAction();
     if (mMode == "move") {
         switch (action) {
@@ -389,21 +387,30 @@ DataNode PatchPanel::OnMsg(const ButtonUpMsg &msg) {
             return 1;
         }
     } else if (mMode == "rotate") {
-        if (action == kAction_Up || action == kAction_Down || action == kAction_Right
-            || action == kAction_Left) {
+        switch (action) {
+        case kAction_Up:
+        case kAction_Down:
+        case kAction_Right:
+        case kAction_Left:
             mRot = 0;
             return 1;
         }
     } else if (mMode == "scale") {
-        if (action == kAction_Up || action == kAction_Down || action == kAction_Right
-            || action == kAction_Left) {
+        switch (action) {
+        case kAction_Up:
+        case kAction_Down:
+        case kAction_Right:
+        case kAction_Left:
             mScaleX = 0;
             mScaleY = 0;
             return 1;
         }
     } else if (mMode == "warp") {
-        if (action == kAction_Up || action == kAction_Down || action == kAction_Right
-            || action == kAction_Left) {
+        switch (action) {
+        case kAction_Up:
+        case kAction_Down:
+        case kAction_Right:
+        case kAction_Left:
             mDeform = 0;
             return 1;
         }

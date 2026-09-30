@@ -363,4 +363,8 @@ float Scoring::GetSoloGemPenalty(Symbol s) {
     return GetSoloBlock(s)->FindArray("penalty")->Float(1);
 }
 
-void Scoring::PrintStarThresholds() const {}
+void Scoring::PrintStarThresholds() const {
+    for (int i = 0; i < mStarThresholds.size(); i++) {
+        MILO_LOG("%d\n", mStarThresholds[i]);
+    }
+}

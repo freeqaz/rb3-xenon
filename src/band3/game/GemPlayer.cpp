@@ -1308,6 +1308,12 @@ void GemPlayer::JumpReset(float f1) {
     mLastFillHitTick = -1;
     unk2f4 = -1;
     mUpcomingFretReleases.clear();
+    BandTrack *track = GetBandTrack();
+    if (track)
+        track->StopDeploy();
+    IgnoreUntilRollback(f1);
+    if (mTrack)
+        mTrack->JumpReset();
 }
 
 void GemPlayer::SetTrack(int track) {
@@ -1332,8 +1338,7 @@ void GemPlayer::PostLoad(bool b1) {
         mBeatMaster->GetAudio()->FillChannelList(chans, mTrackNum);
         Stream *stream = mBeatMaster->GetAudio()->GetSongStream();
         FOREACH (it, chans) {
-            FxSend *send = mGuitarFx->GetFxSend();
-            stream->SetFXSend(*it, send);
+            stream->SetFXSend(*it, mGuitarFx->GetFxSend());
         }
     }
     if (mKeysFx && !TheGame->mProperties.mDisableKeysFx) {
@@ -1342,8 +1347,7 @@ void GemPlayer::PostLoad(bool b1) {
         mBeatMaster->GetAudio()->FillChannelList(chans, mTrackNum);
         Stream *stream = mBeatMaster->GetAudio()->GetSongStream();
         FOREACH (it, chans) {
-            FxSend *send = mKeysFx->GetFxSend();
-            stream->SetFXSend(*it, send);
+            stream->SetFXSend(*it, mKeysFx->GetFxSend());
         }
     }
 
@@ -1981,13 +1985,7 @@ void GemPlayer::ResetController(bool b1) {
 void GemPlayer::GetPlayerState(PlayerState &state) const {
     int streak = mStats.GetCurrentStreak();
     float whammy = unk358;
-    state.warning = IsInCrowdWarning();
-    state.overdriveReady = false;
-    state.whammy = whammy;
-    state.whammyActive = false;
-    state.phraseState = kPhraseNone;
-    state.fillState = 0;
-    state.streak = streak;
+    state = PlayerState(IsInCrowdWarning(), false, whammy, false, kPhraseNone, 0, streak);
 }
 
 void GemPlayer::UpdateCrowdMeter(float noteScore, int gem_id) {

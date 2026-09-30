@@ -193,11 +193,13 @@ void Player::Poll(float f, const SongPos &pos) {
     // Periodic net energy-broadcast leaf (same handler as SetEnergy's); skipped
     // headless (no net session / BandUser). X360 keeps the real broadcast.
     if (IsLocal() && f >= unk2a4 + 2000.0f && !unk1e2) {
+        static Message send_update_energy_msg("send_update_energy");
         Handle(send_update_energy_msg, true);
         unk2a4 = f;
     }
 #endif
     if (unk288 && IsLocal() && f >= unk284) {
+        static Symbol intro("intro");
         PopupHelp(intro, false);
         unk288 = false;
     }
@@ -317,7 +319,8 @@ void Player::BroadcastScore() {
         float poll = PollMs();
         float sub = poll - unk29c;
         int isub = (int)mScore - unk2a0;
-        if ((isub > 0x13U) || (isub != 0) && (sub >= 250.0f)) {
+        if (isub < 0 || isub >= 20 || (isub != 0 && sub >= 250.0f)) {
+            static Message send_update_score_msg("send_update_score");
             HandleType(send_update_score_msg);
             unk29c = poll;
             unk2a0 = mScore;
@@ -563,7 +566,7 @@ int Player::GetMultiplier(bool b, int &i1, int &i2, int &i3) const {
             i1ret = 1;
         i1 = i1ret;
         i2 = mBand->EnergyMultiplier();
-        i3 = (mDeployingBandEnergy != 0) + 1;
+        i3 = mDeployingBandEnergy ? 2 : 1;
         i2 /= i3;
         return i1 * i2 * i3;
     } else {
@@ -645,10 +648,13 @@ void Player::CompleteCommonPhrase(bool b1, bool b2) {
     AddEnergy(energy);
     if (b1) {
         if (b2) {
-            mStats.mUnisonPhraseCompleted++;
+            Stats *stats = &mStats;
+            stats->mUnisonPhraseCompleted++;
         }
-    } else
-        mStats.mOverdrivePhrasesCompleted++;
+    } else {
+        Stats *stats = &mStats;
+        stats->mOverdrivePhrasesCompleted++;
+    }
 }
 
 int Player::GetIndividualMultiplier() const {
@@ -819,39 +825,35 @@ void Player::SetEnergyAutomatically(float f) {
     bool oldCanDeploy = CanDeployOverdrive();
     mBandEnergy = f;
     BandTrack *track = GetBandTrack();
-    if (!track)
-        return;
-    OverdriveMeter *meter = track->mStarPowerMeter;
-    if (!meter)
-        return;
-    if (mTrackType == kTrackDrum) {
-        if (!oldCanDeploy) {
-            if (CanDeployOverdrive()) {
-                EnableDrumFills(true);
+    if (track) {
+        OverdriveMeter *meter = track->mStarPowerMeter;
+        if (meter) {
+            if (mTrackType == kTrackDrum) {
+                if (!oldCanDeploy && CanDeployOverdrive()) {
+                    EnableDrumFills(true);
+                } else if (!CanDeployOverdrive()) {
+                    EnableDrumFills(false);
+                }
             }
-        } else {
-            if (!CanDeployOverdrive()) {
-                EnableDrumFills(false);
+            OverdriveMeter::State state;
+            if (mDeployingBandEnergy) {
+                state = OverdriveMeter::kDeploying;
+            } else {
+                if (!CanDeployOverdrive())
+                    state = OverdriveMeter::kFilling;
+                else
+                    state = OverdriveMeter::kReady;
             }
+            float pulseDelay = 0.0f;
+            if (state == OverdriveMeter::kReady) {
+                pulseDelay = GetTrackPanelDir()->GetPulseAnimStartDelay(true);
+            }
+            meter->SetEnergy(f, state, TrackTypeToSym(mTrackType), pulseDelay, false);
         }
     }
-    OverdriveMeter::State state;
-    if (mDeployingBandEnergy) {
-        state = OverdriveMeter::kDeploying;
-    } else {
-        if (!CanDeployOverdrive())
-            state = OverdriveMeter::kFilling;
-        else
-            state = OverdriveMeter::kReady;
-    }
-    float pulseDelay = 0.0f;
-    if (state == OverdriveMeter::kReady) {
-        pulseDelay = GetTrackPanelDir()->GetPulseAnimStartDelay(true);
-    }
-    meter->SetEnergy(f, state, TrackTypeToSym(mTrackType), pulseDelay, false);
 
     bool newCanDeploy = CanDeployOverdrive();
-    if (newCanDeploy != oldCanDeploy) {
+    if (oldCanDeploy != newCanDeploy) {
         if (mUser) {
             Track *userTrack = mUser->GetTrack();
             if (userTrack) {
@@ -870,10 +872,10 @@ void Player::Deploy() {
     GetTrackPanel()->PlaySequence(
         MakeString("rp_deployed_%s.cue", TrackTypeToSym(mTrackType).Str()), 0, 0, 0
     );
-    BandTrack *track = GetBandTrack();
-    if (track) {
-        track->Deploy();
+    if (GetBandTrack()) {
+        GetBandTrack()->Deploy();
     }
+    static Symbol deploy("deploy");
     PopupHelp(deploy, false);
     if (mTrackType == kTrackDrum && !mIsInCoda) {
         EnableDrumFills(false);
@@ -883,7 +885,8 @@ void Player::Deploy() {
     GetMultiplier(true, i1, i2, i3);
     mStats.DeployOverdrive(GetSongMs(), i1 * i3);
     if (TheGame->mProperties.mInTrainer) {
-        Handle(deploy_msg.mData, false);
+        static Message deploy_msg("deploy");
+        Handle(deploy_msg, false);
     }
 }
 
@@ -1086,6 +1089,7 @@ void Player::SetFinishedCoda() {
     MILO_ASSERT(!mHasBlownCoda, 0x5A8);
     mHasFinishedCoda = true;
     if (TheGame->InTrainer()) {
+        static Message finished_coda_msg("finished_coda");
         Export(finished_coda_msg, true);
     }
 }
@@ -1115,6 +1119,7 @@ void Player::SetQuarantined(bool b) {
 }
 
 void Player::DeterminePerformanceAwards() {
+    static Symbol performance_awards("performance_awards");
     DataArray *cfg = SystemConfig(performance_awards);
     DataNode &playerNode = DataVariable("player");
     DataNode n30(playerNode);

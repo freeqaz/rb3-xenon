@@ -52,7 +52,7 @@ void Band::NativeLoadBonuses() {
 Band::Band(bool bbb, int i2, BandUser *user, BeatMaster *bm)
     : mBandPerformer(0), unk30(0), mAccumulatedScore(0), mTotalStars(0), unk3c(0),
       unk40(0), unk44(0), mBonusLevel(0), mMultiplier(1), mMaxMultiplier(1),
-      mMsWithMultiplier(0), mMsWhenMultiplierStarted(0), mMultiplierActive(1), unk60(0) {
+      mMsWithMultiplier(0), mMsWhenMultiplierStarted(0), mMultiplierActive(1) {
     DataArray *cfg = SystemConfig("scoring", "bonuses");
     mMaxBonusLevel = cfg->FindInt("max_bonus");
     DataArray *multArr = cfg->FindArray("multiplier")->Array(1);
@@ -72,9 +72,10 @@ Band::Band(bool bbb, int i2, BandUser *user, BeatMaster *bm)
     FOREACH (it, users) {
         BandUser *pUser = *it;
         MILO_ASSERT(pUser, 0x57);
-        bool b2 = perf && !perf->PartPlaysInSong(pUser->GetTrackSym());
-        if (!b2 && (!bbb || pUser == user)) {
-            AddPlayer(bm, pUser);
+        if (!perf || perf->PartPlaysInSong(pUser->GetTrackSym())) {
+            if (!bbb || pUser == user) {
+                AddPlayer(bm, pUser);
+            }
         }
     }
     if (TheGameConfig->GetConfigList()->GetAutoVocals()) {
@@ -431,8 +432,12 @@ Player *Band::AddPlayerDynamically(BeatMaster *m, BandUser *u) {
     GetTrackPanel()->PostHandleAddPlayer(p);
     p->PostDynamicAdd();
     UpdateBonusLevel(TheTaskMgr.Seconds(TaskMgr::kRealTime) * 1000.0f);
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+    // rb3-Wii dev build only: retail TU5 (0x8269C760) returns straight after
+    // UpdateBonusLevel.
     p->SetMultiplierActive(mMultiplierActive);
     p->SetCrowdMeterActive(mBandPerformer->GetCrowdMeterActive());
+#endif
     return p;
 }
 

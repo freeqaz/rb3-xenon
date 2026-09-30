@@ -12,7 +12,6 @@
 class Track : public TrackInterface {
 public:
     Track(BandUser *);
-    virtual ~Track() {}
     virtual DataNode Handle(DataArray *, bool);
 
     virtual bool ShouldDisablePopupHelp() const;

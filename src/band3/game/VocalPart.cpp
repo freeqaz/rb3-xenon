@@ -307,7 +307,7 @@ void VocalPart::AddPhrasePoints(float pts) {
     float newScore = oldScore + pts;
     float cap = mPhraseScoreMax;
     cap = Min(unk38, cap);
-        cap = Min(cap, newScore);
+    cap = Min(newScore, cap);
     mPhraseScore = cap;
     float delta = mPhraseScore - oldScore;
     int i1, i2, i3;
@@ -398,7 +398,7 @@ float VocalPart::FramePhraseMeterFrac() const {
 void VocalPart::UpdateMinMaxPitch(const VocalPhrase *const &phraseRef) {
     VocalNoteList *list = mVocalNoteList;
     const VocalPhrase *cur = phraseRef;
-    const VocalPhrase *end = list->mPhrases.data() + list->mPhrases.size();
+    const VocalPhrase *end = list->mPhrases.end();
     if (cur == end) {
         unka8 = 0.0f;
         unka4 = 0.0f;
@@ -408,18 +408,12 @@ void VocalPart::UpdateMinMaxPitch(const VocalPhrase *const &phraseRef) {
     unka4 = FLT_MAX;
     unka8 = -FLT_MAX;
     while (cur != end) {
-        int lastNote = cur->unk14;
-        int noteIdx = cur->unk10;
-        if (noteIdx != lastNote) {
-            int noteCount = lastNote - noteIdx;
-            for (int i = 0; i < noteCount; ++i) {
-                if (!list->mNotes[noteIdx].mUnpitchedNote) {
-                    foundPitchedNote = true;
-                    unka4 = (cur->unk24 < unka4) ? cur->unk24 : unka4;
-                    unka8 = (unka8 < cur->unk28) ? cur->unk28 : unka8;
-                    break;
-                }
-                ++noteIdx;
+        for (int i = cur->unk10; i < cur->unk14; i++) {
+            if (!list->mNotes[i].mUnpitchedNote) {
+                foundPitchedNote = true;
+                unka4 = Min(unka4, cur->unk24);
+                unka8 = Max(unka8, cur->unk28);
+                break;
             }
         }
         if (cur->unk1a)
@@ -517,7 +511,7 @@ void VocalPart::AfterPoll(float ms) {
     int beginNote;
     int endNote;
     GetNoteRange(ms, beginNote, endNote);
-    unk58 = beginNote & ~(beginNote >> 31);
+    unk58 = beginNote < 0 ? 0 : beginNote;
     unk54 = ms;
 }
 
@@ -632,18 +626,16 @@ extern "C" float kInvalidPitch__11VocalPlayer;
 
 void VocalPart::Poll(float ms, const SongPos &) {
     while (mFreestyleSection
-               != mVocalNoteList->mFreestyleSections.data()
-                   + mVocalNoteList->mFreestyleSections.size()
+               != mVocalNoteList->mFreestyleSections.end()
            && ms > mFreestyleSection->second) {
         mFreestyleSection++;
     }
     if ((mPlayer->CanDeployOverdrive() || mPlayer->mIsInCoda
          || mPlayer->IsDeployingBandEnergy())
         && (mThisPhrase
-                == mVocalNoteList->mPhrases.data() + mVocalNoteList->mPhrases.size()
+                == mVocalNoteList->mPhrases.end()
             || (mFreestyleSection
-                    != mVocalNoteList->mFreestyleSections.data()
-                        + mVocalNoteList->mFreestyleSections.size()
+                    != mVocalNoteList->mFreestyleSections.end()
                 && ms >= mFreestyleSection->first
                 && ms < mFreestyleSection->second))) {
         mInFreestyleSection = true;
@@ -974,7 +966,8 @@ void VocalPart::CalculateScore(
     }
     if (note.mDurationMs < mShortNoteThresh)
         noteMult *= mShortNoteMult;
-    float framePoints = noteMult * (mult * sliceWeight);
+    float weighted = noteMult * sliceWeight;
+    float framePoints = weighted * mult;
 #ifdef HX_NATIVE
     VocalFrameSpewData *spew = mPlayer->mFrameSpewData;
     if (spew) {
@@ -986,11 +979,11 @@ void VocalPart::CalculateScore(
     }
 #endif
     cache.unkc = framePoints;
-    if (unk38 < mPhraseScore + framePoints)
+    if (mPhraseScore + framePoints > unk38)
         framePoints = unk38 - mPhraseScore;
     cache.unk4 = framePoints;
-    float capped =
-        Min(Min(unk38, mPhraseScoreMax), sliceWeight * noteMult + mPhraseScore);
+    float sum = weighted + mPhraseScore;
+    float capped = Min(sum, Min(unk38, mPhraseScoreMax));
     float delta = capped - mPhraseScore;
     if (delta < 0.0f)
         delta = 0.0f;

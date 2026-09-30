@@ -342,11 +342,9 @@ void GemTrainerPanel::SetLoopPoints() {
         int end = GetSectionLoopEnd(GetCurrSection());
         TrainerSection &sect = GetSection(GetCurrSection());
         TheGame->GetBeatMaster()->GetAudio()->GetSongStream()->ClearJump();
+        Stream *stream = TheGame->GetBeatMaster()->GetAudio()->GetSongStream();
         float startMs = TickToMs(start);
-        float endMs = TickToMs(end);
-        TheGame->GetBeatMaster()->GetAudio()->GetSongStream()->SetJump(
-            endMs, startMs, nullptr
-        );
+        stream->SetJump(TickToMs(end), startMs, nullptr);
         TheSongDB->GetData()->GetTempoMap()->SetLoopPoints(start, end);
     }
 }
@@ -358,10 +356,16 @@ void GemTrainerPanel::CopyGems(int tick) {
         Difficulty diff = mLocalUser->GetDifficulty();
         TrainerSection &sect = GetSection(GetCurrSection());
         GameGemList **gemListPtr = &mGameGemLists[diff];
-        int i5 = GetLoopTicks(GetCurrSection());
-        int i1 = mWriteTick - i5;
-        int startTick = sect.GetStartTick();
-        (*gemListPtr)->SetGems(startTick, i1, mWriteTick, mPattern, 4);
+        (*gemListPtr)
+            ->SetGems(
+                sect.GetStartTick(),
+                mWriteTick - GetLoopTicks(GetCurrSection()),
+                mWriteTick,
+                mPattern,
+                4
+            );
+        int i5;
+        int i1;
         mGemManager->ClearAllGems();
         mGemManager->ClearMissedPhrases();
         mTrack->GetTrackDir()->ClearAllGemWidgets();
@@ -411,6 +415,7 @@ const GameGem &GemTrainerPanel::GetLastGameGemInSection(int &gemID) const {
 void GemTrainerPanel::HandleTrackShifting() {
     if (TheGame->IsPaused())
         return;
+    static Symbol real_keys("real_keys");
     if (mTrack->GetType() != real_keys)
         return;
     TrainerSection &sect = GetSection(GetCurrSection());

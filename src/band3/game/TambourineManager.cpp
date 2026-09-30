@@ -375,6 +375,7 @@ void TambourineManager::TambourineFail(int index, bool swing) {
     int pct = (int)((float)unk68 * 100.0f / (float)unk60);
     msg[1] = pct;
     mPlayerRef.HandleType(msg);
+    static Message tambourine_miss_msg("tambourine_miss");
     Handle(tambourine_miss_msg, false);
 }
 

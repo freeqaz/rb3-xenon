@@ -368,6 +368,7 @@ void SongDB::AddTrack(int, Symbol, SongInfoAudioType, TrackType ty, bool) {
 #pragma pop
 
 void SongDB::AddPhrase(BeatmatchPhraseType ty, int i2, const Phrase &phrase) {
+    static Symbol vocals("vocals");
     if (ty != kCommonPhrase || TheGame->AllowOverdrivePhrases()) {
         int startTick = phrase.GetTick();
         int endTick = phrase.GetDurationTicks() + startTick;
@@ -466,8 +467,9 @@ void SongDB::SetupCommonPhrasesForTrack(int i1) {
 
         const std::vector<RawPhrase> &rawPhrases = a->GetRawPhrases();
         int i7 = NextPhraseIndexAfter(i1, -1);
+        int i2 = 0;
         int i11 = 0;
-        for (int i2 = 0; i7 != -1; i7 = NextPhraseIndexAfter(i1, i7)) {
+        for (; i7 != -1; i7 = NextPhraseIndexAfter(i1, i7)) {
             const RawPhrase &curRawPhrase = rawPhrases[i7];
             int phraseID = curRawPhrase.id;
             while (data3c.size() < phraseID) {
@@ -488,6 +490,9 @@ void SongDB::SetupCommonPhrasesForTrack(int i1) {
 
         for (; i11 < gems.size(); i11++) {
             data34.push_back(-1);
+        }
+        for (int i = 0; i < data34.size(); i++) {
+            MILO_ASSERT(data34[i] < (int)data3c.size(), 0);
         }
     }
 }
@@ -636,7 +641,7 @@ void SongDB::RecalculateGemTimes(int i1) { mSongData->RecalculateGemTimes(i1); }
 
 float SongDB::GetPitchOffsetForTick(int tick) const {
     const TuningOffsetList *list = mSongData->mTuningOffsetList;
-    return list->IteratorAt(tick, true)->mInfo;
+    return list->IteratorAt(tick < 0 ? 0 : tick, true)->mInfo;
 }
 
 void SongDB::EnableGems(int i1, float f2, float f3) { mSongData->EnableGems(i1, f2, f3); }

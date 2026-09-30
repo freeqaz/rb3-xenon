@@ -272,7 +272,6 @@ DataNode OvershellSlot::OnMsg(const LocalUserLeftMsg &msg) {
             mSongOptionsRequired = false;
             mBandUserMgr->ClearSlot(user);
             SetOverrideType(kOverrideFlow_None, false);
-            JoypadWiiOnUserLeft(user->GetLocalBandUser()->GetPadNum(), false);
             mOvershell->UpdateAll();
         }
     }
@@ -367,36 +366,22 @@ void OvershellSlot::SelectPartImpl(TrackType track, bool harmony, bool proDrums)
     bool b2 = false;
     MetaPerformer *perf = MetaPerformer::Current();
     if (perf) {
-        b3 = true;
-        if (!perf->SetHasMissingPart(TrackTypeToSym(track))) {
-            bool bMissingVocalHarmony = false;
-            if (harmony && perf->SetHasMissingVocalHarmony())
-                bMissingVocalHarmony = true;
-            if (!bMissingVocalHarmony)
-                b3 = false;
-        }
-        b1 = true;
-        if (perf->PartPlaysInSet(TrackTypeToSym(track))) {
-            bool bSetlistHarmony = false;
-            if (harmony && !perf->SetlistHasVocalHarmony()) {
-                bSetlistHarmony = true;
-            }
-            if (!bSetlistHarmony)
-                b1 = false;
-        }
+        b3 = perf->SetHasMissingPart(TrackTypeToSym(track))
+            || (harmony && perf->SetHasMissingVocalHarmony());
+        b1 = !perf->PartPlaysInSet(TrackTypeToSym(track))
+            || (harmony && !perf->SetlistHasVocalHarmony());
         ScoreType s5 = TrackTypeToScoreType(track, harmony, proDrums);
-        b2 = false;
-        if (perf->HasBattle() && perf->GetBattleInstrument() != kScoreBand
-            && s5 != perf->GetBattleInstrument()) {
-            b2 = true;
-        }
+        b2 = perf->HasBattle() && perf->GetBattleInstrument() != kScoreBand
+            && perf->GetBattleInstrument() != s5;
     }
+    static Symbol audition("audition");
+    bool inAudition = TheGameMode->InMode(audition);
     BandUser *pUser = GetUser();
     MILO_ASSERT(pUser, 0x325);
     MILO_ASSERT(pUser->IsLocal(), 0x326);
     if (mSessionMgr->mCritUserListener->mCriticalUser == pUser && b3) {
         pUser->SetOvershellSlotState(kState_ChoosePartDenial);
-    } else if (b1) {
+    } else if (b1 && !inAudition) {
         pUser->SetOvershellSlotState(kState_ChoosePartDenial);
     } else {
         pUser->SetTrackType(track);
@@ -1648,16 +1633,10 @@ void OvershellSlot::DeleteCharacter() {
     MILO_ASSERT(pUser->IsLocal(), 0xB40);
     LocalBandUser *localUser = pUser->GetLocalBandUser();
     BandProfile *pProfile = TheProfileMgr.GetProfileForUser(localUser);
-    if (TheNetSync->GetUIState() == kNetUI_MetaLoadingPreSave) {
-        ShowState(kState_ChooseCharDeleteDenial);
-    } else if (!pProfile) {
-        MILO_WARN("illegal attempt made to delete guest character\n");
-    } else {
-        MILO_ASSERT(pProfile, 0xB53);
-        pProfile->DeleteChar(mCharForEdit);
-        mCharForEdit = 0;
-        mCharProvider->Reload(localUser);
-    }
+    MILO_ASSERT(pProfile, 0xB53);
+    pProfile->DeleteChar(mCharForEdit);
+    mCharForEdit = 0;
+    mCharProvider->Reload(localUser);
 }
 
 void OvershellSlot::AttemptShowCharDelete() {
@@ -1688,17 +1667,13 @@ void OvershellSlot::SelectChar(int i1) {
     LocalBandUser *pLocalUser = pUser->GetLocalBandUser();
     MILO_ASSERT(pLocalUser, 0xB85);
     BandProfile *profile = TheProfileMgr.GetProfileForUser(pLocalUser);
-    if (TheNetSync->GetUIState() == kNetUI_MetaLoadingPreSave) {
-        ShowState(kState_ChooseCharDenial);
-    } else if (mCharProvider->IsIndexNewChar(i1)) {
-        if (!mSessionMgr->IsLocal()) {
-            ShowState(kState_ChooseCharDenial);
-        } else if (!profile || !profile->HasValidSaveData()) {
+    if (mCharProvider->IsIndexNewChar(i1)) {
+        if (!profile || !profile->HasValidSaveData()) {
             ShowState(kState_CharCreatorDenialNoProfile);
         } else if (profile->NumChars() >= 10) {
-            ShowEnterFlowPrompt(kState_CharCreatorDenialMaxChars);
+            ShowState(kState_CharCreatorDenialMaxChars);
         } else
-            ShowState(kState_EnterCharCreator);
+            ShowEnterFlowPrompt(kState_EnterCharCreator);
     } else if (mCharProvider->GetCharData(i1)) {
         pUser->SetChar(mCharProvider->GetCharData(i1));
         LeaveOptions();

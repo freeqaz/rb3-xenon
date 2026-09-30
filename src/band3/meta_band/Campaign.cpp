@@ -444,10 +444,12 @@ int Campaign::GetCurrentPointsForNextCampaignLevelForUser(LocalBandUser *i_pUser
 int Campaign::GetTotalPointsForNextMajorCampaignLevelForMetaScore(int i_iMetaScore) {
     int iCurrentMajorLevel = 0;
     int iNextMajorLevel = 0;
-    CampaignLevel *cur = GetCampaignLevel(GetMajorLevelForMetaScore(i_iMetaScore));
+    Symbol curLevel = GetMajorLevelForMetaScore(i_iMetaScore);
+    CampaignLevel *cur = GetCampaignLevel(curLevel);
     if (cur)
         iCurrentMajorLevel = cur->GetValue();
-    CampaignLevel *next = GetCampaignLevel(GetNextMajorLevelForMetaScore(i_iMetaScore));
+    Symbol nextLevel = GetNextMajorLevelForMetaScore(i_iMetaScore);
+    CampaignLevel *next = GetCampaignLevel(nextLevel);
     if (next)
         iNextMajorLevel = next->GetValue();
     MILO_ASSERT(iNextMajorLevel >= iCurrentMajorLevel, 0x2D7);
@@ -480,10 +482,12 @@ int Campaign::GetTotalPointsForNextMajorCampaignLevelForUser(LocalBandUser *user
 int Campaign::GetCurrentPointsForNextMajorCampaignLevelForMetaScore(int i_iMetaScore) {
     int iCurrentMajorLevel = 0;
     int iNextMajorLevel = 0;
-    CampaignLevel *cur = GetCampaignLevel(GetMajorLevelForMetaScore(i_iMetaScore));
+    Symbol curLevel = GetMajorLevelForMetaScore(i_iMetaScore);
+    CampaignLevel *cur = GetCampaignLevel(curLevel);
     if (cur)
         iCurrentMajorLevel = cur->GetValue();
-    CampaignLevel *next = GetCampaignLevel(GetNextMajorLevelForMetaScore(i_iMetaScore));
+    Symbol nextLevel = GetNextMajorLevelForMetaScore(i_iMetaScore);
+    CampaignLevel *next = GetCampaignLevel(nextLevel);
     if (next)
         iNextMajorLevel = next->GetValue();
     MILO_ASSERT(iNextMajorLevel >= iCurrentMajorLevel, 0x30E);
@@ -641,15 +645,13 @@ Symbol Campaign::GetNextMajorLevelForMetaScore(int score) {
 void Campaign::UpdateProgressMeter(MeterDisplay *i_pMeter, LocalBandUser *i_pUser) {
     MILO_ASSERT(i_pUser, 0x42C);
     MILO_ASSERT(i_pMeter, 0x42D);
-    // Retail calls Total FIRST and passes it as SetValues' first argument:
-    // the two bl targets in Campaign::Handle (this fn is inlined there) are
-    // exactly transposed against ours, and the surrounding register flow
-    // (bl A / mr r27,r3 / bl B / mr r4,r27 / mr r5,r3) is byte-identical, so
-    // r4 == the FIRST call's result. MeterDisplay::SetValues(int,int) has
-    // unnamed params and no body in-tree, so retail's order is the authority.
-    int total = GetTotalPointsForNextMajorCampaignLevelForUser(i_pUser);
+    // Oracle order. MPNGAP-1 (ebec38819) had transposed these to fit the
+    // 0x825a6f08..0x825a7158 map names, which were themselves crossed
+    // (Current/Total); W16-HK corrected the names, and this order matches
+    // retail under them (Campaign::Handle inlines this function).
     int current = GetCurrentPointsForNextMajorCampaignLevelForUser(i_pUser);
-    i_pMeter->SetValues(total, current);
+    int total = GetTotalPointsForNextMajorCampaignLevelForUser(i_pUser);
+    i_pMeter->SetValues(current, total);
 }
 
 void Campaign::UpdatePrimaryProgressMeter(MeterDisplay *i_pMeter) {

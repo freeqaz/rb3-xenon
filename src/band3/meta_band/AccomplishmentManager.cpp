@@ -565,7 +565,7 @@ DECOMP_FORCEACTIVE(
 )
 
 void AccomplishmentManager::ConfigurePrecachedFilterData(DataArray *arr) {
-    for (int i = 1; arr->Size() > i; i++) {
+    for (int i = 1; i < arr->Size(); i++) {
         DataArray *pDataArray = arr->Array(i);
         MILO_ASSERT(pDataArray, 0x2CA);
         Symbol key = pDataArray->Sym(0);
@@ -853,9 +853,12 @@ void AccomplishmentManager::UpdateAssetHintLabel(Symbol s, UILabel *i_pLabel) {
         String srcstr = GetHintStringForSource(*it);
         if (str.empty())
             str = srcstr;
-        else
+        else {
+            static Symbol career_asset_or("career_asset_or");
             str = MakeString(Localize(career_asset_or, 0), str.c_str(), srcstr.c_str());
+        }
     }
+    static Symbol career_asset_hint("career_asset_hint");
     i_pLabel->SetTokenFmt(career_asset_hint, str);
 }
 
@@ -1668,13 +1671,15 @@ Symbol AccomplishmentManager::GetNameForFirstNewRewardVignette() const {
     BandProfile *pProfile = TheProfileMgr.GetPrimaryProfile();
     MILO_ASSERT(pProfile, 0xA31);
     const AccomplishmentProgress &prog = pProfile->GetAccomplishmentProgress();
+    Symbol ret;
     if (prog.HasNewRewardVignettes())
-        return prog.GetFirstNewRewardVignette();
+        ret = prog.GetFirstNewRewardVignette();
     else {
         MILO_ASSERT(false, 0xA3B);
-        Symbol ret = "";
-        return ret;
+        Symbol empty("");
+        ret = empty;
     }
+    return ret;
 }
 
 void AccomplishmentManager::ClearFirstNewRewardVignette() {

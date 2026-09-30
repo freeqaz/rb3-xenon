@@ -463,8 +463,9 @@ void Tour::UpdateProgressWithCareerData() {
 }
 
 DataNode Tour::OnMsg(const RemoteLeaderLeftMsg& msg) {
-    if (m_pTourPerformer) {
-        MILO_ASSERT(!m_pTourPerformer->IsLocal(), 0x38b);
+    TourPerformerImpl *pPerformer = m_pTourPerformer;
+    if (pPerformer) {
+        MILO_ASSERT(!pPerformer->IsLocal(), 0x38b);
         TheBandUI.TriggerDisbandEvent(BandUI::kNoLeader);
     }
     return 1;
@@ -507,6 +508,7 @@ String Tour::GetFilterName(Symbol filter) const {
         return String(Localize(filter, nullptr));
     }
     if (TheQuestMgr.HasFixedSetlist(filter)) {
+        static Symbol fixedset1("fixedset1");
         return String(Localize(fixedset1, nullptr));
     }
     if (strncmp("filter_artist_", filter.Str(), 14) == 0) {

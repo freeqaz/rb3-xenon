@@ -808,9 +808,8 @@ int AccomplishmentPanel::GetTotalAccomplishments() {
 // +0x2c/+0x30 directly). The rb3-Wii dev oracle has it on the panel.
 int AccomplishmentProvider::GetNumCompleted() {
     int count = 0;
-    std::vector<Symbol> &goals = mGoals;
     BandProfile *profile = TheCampaign->GetProfile();
-    for (std::vector<Symbol>::iterator it = goals.begin(); it != goals.end(); ++it) {
+    for (std::vector<Symbol>::iterator it = mGoals.begin(); it != mGoals.end(); ++it) {
         if (IsAccomplished(*it, profile))
             count++;
     }
@@ -881,8 +880,8 @@ bool AccomplishmentPanel::HasCorrectPlayerCount() {
 }
 
 bool AccomplishmentPanel::HasLeaderboard() const {
-    Accomplishment *acc =
-        TheAccomplishmentMgr->GetAccomplishment(SelectedAccomplishment());
+    Symbol selacc = SelectedAccomplishment();
+    Accomplishment *acc = TheAccomplishmentMgr->GetAccomplishment(selacc);
     if (acc)
         return acc->IsTrackedInLeaderboard();
     else
@@ -1037,8 +1036,8 @@ bool AccomplishmentPanel::HasProgress() const {
 }
 
 bool AccomplishmentPanel::GetCurrentShouldShowDenominator() const {
-    Accomplishment *acc =
-        TheAccomplishmentMgr->GetAccomplishment(SelectedAccomplishment());
+    Symbol selacc = SelectedAccomplishment();
+    Accomplishment *acc = TheAccomplishmentMgr->GetAccomplishment(selacc);
     bool ret = false;
     if (acc)
         ret = acc->GetShouldShowDenominator();
@@ -1046,8 +1045,8 @@ bool AccomplishmentPanel::GetCurrentShouldShowDenominator() const {
 }
 
 Symbol AccomplishmentPanel::GetCurrentUnits(int i) const {
-    Accomplishment *acc =
-        TheAccomplishmentMgr->GetAccomplishment(SelectedAccomplishment());
+    Symbol selacc = SelectedAccomplishment();
+    Accomplishment *acc = TheAccomplishmentMgr->GetAccomplishment(selacc);
     Symbol ret = gNullStr;
     if (acc)
         ret = acc->GetUnitsToken(i);
@@ -1108,8 +1107,8 @@ bool AccomplishmentPanel::ShouldShowBest() const {
 }
 
 bool AccomplishmentPanel::IsSecret() const {
-    Accomplishment *acc =
-        TheAccomplishmentMgr->GetAccomplishment(SelectedAccomplishment());
+    Symbol selacc = SelectedAccomplishment();
+    Accomplishment *acc = TheAccomplishmentMgr->GetAccomplishment(selacc);
     if (acc) {
         BandProfile *pProfile = TheCampaign->GetProfile();
         MILO_ASSERT(pProfile, 0x8C8);
@@ -1155,7 +1154,7 @@ bool AccomplishmentPanel::CanLaunchSelectedEntry() const {
         return false;
     if (!TheAccomplishmentMgr->IsAvailableToEarn(selacc))
         return false;
-    return acc->CanBeLaunched();
+    return acc->CanBeLaunched() != false;
 }
 
 void AccomplishmentPanel::LaunchSelectedEntry(LocalBandUser *user) {

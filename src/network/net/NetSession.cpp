@@ -122,11 +122,10 @@ NetSession::~NetSession() {
     RELEASE(mGameStartTime);
     RELEASE(mQNet);
     RELEASE(mSettings);
-    QuazalSession::KillSession();
+    // retail: no KillSession() and no gLocalUsersRemovedThisFrame.clear() here
     while (QuazalSession::StillDeleting()) {
         QuazalSession::Poll();
     }
-    gLocalUsersRemovedThisFrame.clear();
     TheNetSession = nullptr;
 }
 
@@ -714,7 +713,7 @@ void NetSession::SetDoneArbitrating(int id) {
         std::find(mStillArbitrating.begin(), mStillArbitrating.end(), id);
     MILO_ASSERT(it != mStillArbitrating.end(), 0x400);
     mStillArbitrating.erase(it);
-    if (mStillArbitrating.empty()) {
+    if (mStillArbitrating.size() == 0) {
         SetState(kHostArbitrating);
         Job *job = PrepareRegisterArbitrationJob();
         mCurrentStateJobID = job->ID();

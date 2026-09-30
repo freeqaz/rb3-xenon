@@ -36,7 +36,6 @@ void CharCache::Init() {
     TheCharCache->InitMe();
 }
 
-CharCache::~CharCache() {}
 
 CharCache::CharCache() : unk28(0) {}
 
@@ -109,8 +108,9 @@ void CharCache::RecomposeCharsWithPatchIx(int idx) {
             BandCharacter *c = GetCharacter(i);
             MILO_ASSERT(c, 0x60);
             int recomp = 0;
-            for (std::vector<BandCharDesc::Patch>::iterator it = c->mPatches.begin();
-                 it != c->mPatches.end();
+            std::vector<BandCharDesc::Patch> &patches = c->mPatches;
+            for (std::vector<BandCharDesc::Patch>::iterator it = patches.begin();
+                 it != patches.end();
                  ++it) {
                 if (it->mTexture == idx) {
                     recomp |= it->mCategory;

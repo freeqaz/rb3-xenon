@@ -7,7 +7,7 @@
 class CharCache : public Hmx::Object {
 public:
     CharCache();
-    virtual ~CharCache();
+    // implicit dtor: retail ~CharCache has no own-vtable store
     virtual DataNode Handle(DataArray *, bool);
 
     void InitMe();

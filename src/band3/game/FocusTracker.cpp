@@ -482,6 +482,10 @@ void StreakFocusTracker::CheckCondition(float f1, bool b1, bool &bref1, bool &br
             bref1 = true;
             bref2 = true;
             int val = unk88 + 1;
+            static Symbol streak_focus_tracker_progress("streak_focus_tracker_progress");
+            static Symbol streak_focus_tracker_progress_1(
+                "streak_focus_tracker_progress_1"
+            );
             Symbol toUse = val == 1 ? streak_focus_tracker_progress_1
                                     : streak_focus_tracker_progress;
             mBroadcastDisplay.ShowBriefBandMessage(DataArrayPtr(toUse, val));
@@ -610,11 +614,10 @@ void AccuracyFocusTracker::TranslateRelativeTargets() {
 }
 
 bool AccuracyFocusTracker::PlayerWantsFocus(const TrackerPlayerID &pid, float ms) const {
-    return mSectionManager.CountGemsInSection(
-               mSource->GetPlayer(pid),
-               mSectionManager.FindSectionContainingTick(MsToTick(ms))
-           )
-        > 0;
+    int tick = MsToTick(ms);
+    int section = mSectionManager.FindSectionContainingTick(tick);
+    Player *player = mSource->GetPlayer(pid);
+    return mSectionManager.CountGemsInSection(player, section) > 0;
 }
 
 void AccuracyFocusTracker::FocusLeaving(FocusFlags flags) {

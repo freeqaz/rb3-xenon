@@ -32,6 +32,9 @@
 #include "xdk/xapilibi/winerror.h"
 #include <cstring>
 
+// defined at the end of BandProfile.cpp: retail calls it out of line (fn_8258EF20)
+int GetKickPercent(const Stats &stats);
+
 DataNode RockCentralOpCompleteMsg::Arg2() const { return mData->Node(4); }
 
 GamerAwardStatus::GamerAwardStatus() : unk8(-1), unkc(0), unk10(0) {
@@ -155,9 +158,8 @@ bool AccomplishmentProgress::AddAccomplishment(Symbol s) {
         MILO_ASSERT(pUser, 199);
         MetaPerformer *pPerformer = MetaPerformer::Current();
         MILO_ASSERT(pPerformer, 0xCB);
-        TheAccomplishmentMgr->AddGoalAcquisitionInfo(
-            s, pUser->UserName(), pPerformer->Song()
-        );
+        Symbol song = pPerformer->Song();
+        TheAccomplishmentMgr->AddGoalAcquisitionInfo(s, pUser->UserName(), song);
         if (pAccomplishment->HasAward()) {
             Symbol award = pAccomplishment->GetAward();
             AddAward(award, s);
@@ -190,17 +192,17 @@ bool AccomplishmentProgress::AddAccomplishment(Symbol s) {
         }
 
         Symbol oldLevel = TheCampaign->GetCampaignLevelForMetaScore(mMetaScore);
-        SetMetaScore(
-            mMetaScore
-            + TheAccomplishmentMgr->GetMetaScoreValue(pAccomplishment->GetMetaScoreValue()
-              )
-        );
+        Symbol metaScoreValue = pAccomplishment->GetMetaScoreValue();
+        int metaScoreDelta = TheAccomplishmentMgr->GetMetaScoreValue(metaScoreValue);
+        SetMetaScore(mMetaScore + metaScoreDelta);
         Symbol newLevel = TheCampaign->GetCampaignLevelForMetaScore(mMetaScore);
         if (newLevel != oldLevel) {
             CampaignLevel *pLevel = TheCampaign->GetCampaignLevel(newLevel);
             MILO_ASSERT(pLevel, 0x112);
             NotifyPlayerOfCampaignLevel(pLevel->GetEarnedText());
             MILO_ASSERT(mParentProfile, 0x11A);
+            static Symbol pid("pid");
+            static Symbol career_level("career_level");
             int padNum = mParentProfile->GetPadNum();
             SendDataPoint(
                 "career/levelup",
@@ -214,9 +216,16 @@ bool AccomplishmentProgress::AddAccomplishment(Symbol s) {
                 AddAward(award, newLevel);
             }
         }
-        if (oldLbHcStatus
-            != TheAccomplishmentMgr->GetLeaderboardHardcoreStatus(mAccomplishments.size())) {
+        if (TheAccomplishmentMgr->GetLeaderboardHardcoreStatus(mAccomplishments.size())
+            != oldLbHcStatus) {
             SendHardCoreStatusUpdateToRockCentral();
+        }
+        // Xbox retail hands out the gamerpic / avatar-asset rewards here
+        if (pAccomplishment->HasGamerpicReward()) {
+            GiveGamerpic(pAccomplishment);
+        }
+        if (pAccomplishment->HasAvatarAssetReward()) {
+            GiveAvatarAsset(pAccomplishment);
         }
         MILO_ASSERT(mParentProfile, 0x13E);
         mParentProfile->MakeDirty();
@@ -408,31 +417,20 @@ void AccomplishmentProgress::UpdateStats(
     }
     mTotalTimesRevived += stats.mTimesSaved;
     mTotalSaves += stats.mPlayersSaved;
-    if (type == kScoreVocals || type == kScoreHarmony) {
+    if (type == kScoreHarmony || type == kScoreVocals) {
         if (stats.m0x5c > mBestPercussionPercent[diff]) {
             mBestPercussionPercent[diff] = stats.m0x5c;
         }
     }
     if (type == kScoreDrum) {
-        if (stats.m0x68 != 0) {
-            kickPercent =
-                (int)(100.0f * ((float)stats.m0x6c / (float)stats.m0x68));
-        } else {
-            kickPercent = 0;
-        }
+        kickPercent = GetKickPercent(stats);
         if (kickPercent > mBestKickPercent[diff]) {
             mBestKickPercent[diff] = kickPercent;
         }
         mTotalDrumRollCount[diff] += stats.mRollsHitCompletely;
     }
     if (type == kScoreRealDrum) {
-        int proKickPercent;
-        if (stats.m0x68 != 0) {
-            proKickPercent =
-                (int)(100.0f * ((float)stats.m0x6c / (float)stats.m0x68));
-        } else {
-            proKickPercent = 0;
-        }
+        int proKickPercent = GetKickPercent(stats);
         if (proKickPercent > mBestProKickPercent[diff]) {
             mBestProKickPercent[diff] = proKickPercent;
         }

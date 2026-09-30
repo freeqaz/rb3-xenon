@@ -154,7 +154,8 @@ inline void TourDescProvider::UpdateList() {
              TheTour->m_mapTourDesc.begin();
          it != TheTour->m_mapTourDesc.end();
          ++it) {
-        mTours.push_back(it->first);
+        Symbol s = it->first;
+        mTours.push_back(s);
     }
     TourDescCmp cmp(TheTour);
     std::stable_sort(mTours.begin(), mTours.end(), cmp);
@@ -341,43 +342,45 @@ void TourDescProvider::UpdateExtendedText(int, int iData, UILabel *i_pLabel) con
     Symbol s = DataSymbol(iData);
     TourDesc *pTourDesc = TheTour->GetTourDesc(s);
     MILO_ASSERT(pTourDesc, 0x104);
+    static Symbol tourdesc_stars_needed("tourdesc_stars_needed");
     TourProgress *pProgress = TheTour->GetTourProgress();
     MILO_ASSERT(pProgress, 0x109);
-    bool bPlayed = pProgress->GetToursPlayed(s) != 0
-        || pProgress->GetTourMostStars(s) > 0;
-    const char *pName = i_pLabel->Name();
-    if (strcmp(pName, "tour_bronze.lbl") == 0) {
+    bool bPlayed = pProgress->GetToursPlayed(s) > 0;
+    if (!bPlayed && pProgress->GetTourMostStars(s) > 0)
+        bPlayed = true;
+    if (strcmp(i_pLabel->Name(), "tour_bronze.lbl") == 0) {
         i_pLabel->SetTokenFmt(
             tourdesc_stars_needed, pTourDesc->GetTourStarsBronzeGoalValue()
         );
-    } else if (strcmp(pName, "tour_silver.lbl") == 0) {
+    } else if (strcmp(i_pLabel->Name(), "tour_silver.lbl") == 0) {
         i_pLabel->SetTokenFmt(
             tourdesc_stars_needed, pTourDesc->GetTourStarsSilverGoalValue()
         );
-    } else if (strcmp(pName, "tour_gold.lbl") == 0) {
+    } else if (strcmp(i_pLabel->Name(), "tour_gold.lbl") == 0) {
         i_pLabel->SetTokenFmt(
             tourdesc_stars_needed, pTourDesc->GetTourStarsGoldGoalValue()
         );
-    } else if (strcmp(pName, "tour_desc.lbl") == 0) {
-        bool bAvailable = MetaPanel::sUnlockAll ? true : IsTourDescAvailable(s);
+    } else if (strcmp(i_pLabel->Name(), "tour_desc.lbl") == 0) {
+        bool bAvailable = IsTourDescAvailable(s);
         if (bAvailable) {
             i_pLabel->SetTextToken(pTourDesc->GetDescription());
         } else {
             i_pLabel->SetTextToken(Symbol(gNullStr));
         }
-    } else if (strcmp(pName, "total.lbl") == 0) {
+    } else if (strcmp(i_pLabel->Name(), "total.lbl") == 0) {
         if (bPlayed) {
+            static Symbol tour_gig_total("tour_gig_total");
             i_pLabel->SetTextToken(tour_gig_total);
         } else {
             i_pLabel->SetTextToken(Symbol(gNullStr));
         }
-    } else if (strcmp(pName, "tour_unlockinfo.lbl") == 0) {
-        bool bAvailable = MetaPanel::sUnlockAll ? true : IsTourDescAvailable(s);
+    } else if (strcmp(i_pLabel->Name(), "tour_unlockinfo.lbl") == 0) {
+        bool bAvailable = IsTourDescAvailable(s);
         if (bAvailable) {
             i_pLabel->SetTextToken(Symbol(gNullStr));
         } else {
-            CampaignLevel *pCampaignLevel =
-                TheCampaign->GetCampaignLevel(pTourDesc->GetRequiredCampaignLevel());
+            Symbol level = pTourDesc->GetRequiredCampaignLevel();
+            CampaignLevel *pCampaignLevel = TheCampaign->GetCampaignLevel(level);
             MILO_ASSERT(pCampaignLevel, 0x140);
             i_pLabel->SetTextToken(pCampaignLevel->GetRequirementToken());
         }
@@ -491,18 +494,19 @@ void TourDescProvider::Text(
 void TourDescPanel::SelectTour(Symbol s) {
     int index = 0;
     if (s != "") {
-        index = 0;
         std::vector<Symbol> &tours = m_pTourDescProvider->mTours;
-        std::vector<Symbol>::iterator it = tours.begin();
-        for (; it != tours.end(); ++it, ++index) {
-            if (*it != s)
-                continue;
-            goto lFound;
+        int i = 0;
+        for (std::vector<Symbol>::iterator it = tours.begin(); it != tours.end();
+             ++it, ++i) {
+            if (s == *it) {
+                index = i;
+                goto lFound;
+            }
         }
         index = 0;
-        lFound:;
+    lFound:;
     }
-    UIList *pList = mDir->Find<UIList>("pTourList", true);
+    UIList *pList = mDir->Find<UIList>("tours.lst", true);
     MILO_ASSERT(pList, 0x30B);
     pList->SetSelected(index, -1);
 }

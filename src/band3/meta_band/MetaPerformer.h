@@ -59,6 +59,7 @@ public:
 class MetaPerformerImpl : public Hmx::Object {
 public:
     MetaPerformerImpl() {}
+    virtual ~MetaPerformerImpl() {}
     virtual void CompleteSong(std::vector<BandUser *> &, const BandStatsInfo *, bool) {}
     virtual bool IsRandomSetList() const = 0;
     virtual bool IsWinning() const { return false; }

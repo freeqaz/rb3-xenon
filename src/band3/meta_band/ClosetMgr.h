@@ -75,6 +75,10 @@ public:
     void SetPatches();
     void ResetPatches();
     bool IsAlreadyLoaded();
+    // TU5-only (retail 0x82566988, unnamed; absent from the rb3-Wii oracle):
+    // out-of-line `mAssetStore.unk34 != 0`, called by CustomizePanel's
+    // ButtonDownMsg handler. The name is ours, not retail's.
+    bool IsPurchaseUIActive() const;
     void SetDefaultColors();
     void HideClothes();
     void ShowClothes();

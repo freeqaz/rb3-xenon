@@ -38,6 +38,7 @@ public:
     virtual float NextKickNoteMs() const;
     virtual Hmx::Object *GetSmasher(int);
     virtual void ResetSmashers(bool);
+    void JumpReset();
     virtual bool Lefty() const { return mTrackConfig.IsLefty(); }
     virtual void RebuildBeats();
     virtual void UpdateSlotXfms();

@@ -62,8 +62,9 @@ namespace {
 }
 
 ProfileMgr::ProfileMgr()
-    : mPlatformAudioLatency(0), mPlatformVideoLatency(50.0f),
-      mInGameExtraVideoLatency(70.0f), mInGameSyncOffsetAdjustment(0),
+    // retail X360 defaults (the rb3-Wii dev values were 0 / 50 / 70 / 0)
+    : mPlatformAudioLatency(5.0f), mPlatformVideoLatency(22.0f),
+      mInGameExtraVideoLatency(22.0f), mInGameSyncOffsetAdjustment(50.0f),
       mGlobalOptionsSaveState(kMetaProfileUnloaded), mGlobalOptionsDirty(0),
       mBackgroundVolume(11), mForegroundVolume(11), mFxVolume(11), mCrowdVolume(11),
       mVocalCueVolume(11), mVoiceChatVolume(11), mHasSeenFirstTimeCalibration(0),
@@ -76,15 +77,19 @@ ProfileMgr::ProfileMgr()
       // 4-bools+int layout 0x6b would be mSecondPedalHiHat, which is 0 here, but retail
       // stores 1 there -- only the 5-bool layout is consistent.
       unk58b(1), mSecondPedalHiHat(0), mCymbalConfiguration(0),
-      mPrimaryProfile(0), mAllUnlocked(0), mHasLoaded(0), mProfileSaveBuffer(0) {
+      mPrimaryProfile(0), mAllUnlocked(0), mProfileSaveBuffer(0) {
     mSyncOffset = -mPlatformVideoLatency;
     mSongToTaskMgrMs = mPlatformVideoLatency - mPlatformAudioLatency;
     for (int i = 0; i < 3; i++) {
         mMicVolumes.push_back(8);
         mForcedMicGains.push_back(kNotForcingGain);
     }
+    // retail allocates 47 rows (0xbc bytes), each a float[kNumLagContexts]
+    const int kNumLagJoypadTypes = 47;
+    mJoypadExtraLagOffsets = new float *[kNumLagJoypadTypes];
     ProfileMgr *pThis = this;
-    for (int i = 0; i < kJoypadNumTypes; i++) {
+    for (int i = 0; i < kNumLagJoypadTypes; i++) {
+        mJoypadExtraLagOffsets[i] = new float[kNumLagContexts];
         for (int j = 0; j < kNumLagContexts; j++) {
             pThis->mJoypadExtraLagOffsets[i][j] =
                 GetJoypadExtraLagInits((JoypadType)i, (LagContext)j);
@@ -1267,9 +1272,9 @@ void ProfileMgr::ForceMicGain(int i1, float f2) {
 }
 
 void ProfileMgr::ForceMicOutputGain(int i1, float f2) {
-    if (i1 <= 2U) {
+    if (i1 >= 0 && i1 < 3) {
         Mic *mic = TheSynth->GetMic(i1);
-        if (mic && mic->IsRunning()) {
+        if (mic && mic->GetType() != Mic::kDisconnected) {
             mic->SetOutputGain(DbToRatio(f2));
         }
     }

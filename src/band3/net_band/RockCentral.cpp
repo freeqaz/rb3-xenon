@@ -155,28 +155,20 @@ void RockCentral::Init(bool b1) {
     unk85 = b1;
 }
 
-// NOTE (rb3-xenon port): RockCentral::Poll drives the Wii friend/messenger
-// enumeration loop (WiiFriendMgr / WiiMessenger / WiiProfileMgr, private
-// Timer::mCycles). Not in the pinned retail-Xbox range; stubbed to the
-// platform-neutral skeleton so the TU compiles.
+// Retail Xbox: no skipIt toggle, no IsLoginMandatory() test, and none of the
+// dev build's Wii friend/messenger polling.
 void RockCentral::Poll() {
-    static bool skipIt;
-    skipIt = !skipIt;
-    if (!skipIt) {
-        mTime.Split();
-        if ((mState == 4 || mState == 0) && ThePlatformMgr.IsConnected()
-            && (mTime.Ms() < mRetryTime && !IsLoginMandatory())
-            && (!mLoginBlocked
-                && (!TheGamePanel || TheGamePanel->GetState() == UIPanel::kUnloaded))) {
+    mTime.Split();
+    // retail compares the state unsigned (cmplwi 1 / cmplwi 4)
+    if ((unsigned int)mState < 1 || (unsigned int)mState == 4) {
+        if (ThePlatformMgr.IsConnected() && mTime.Ms() >= mRetryTime && !mLoginBlocked
+            && (!TheGamePanel || TheGamePanel->GetState() == UIPanel::kUnloaded)) {
             mState = 1;
             TheNet.GetServer()->Login();
-        } else {
-            MILO_FAIL("Bad Rock Central state");
         }
-
-        mContextWrapperPool->Poll();
-        mJobMgr.Poll();
     }
+    mContextWrapperPool->Poll();
+    mJobMgr.Poll();
 }
 
 DataNode RockCentral::OnMsg(const RockCentralOpCompleteMsg &msg) {
@@ -1869,7 +1861,10 @@ void RockCentral::RecordDataPoint(
                 delete u;
             } else {
                 u->SetWrapper(wrapper);
-                AddBuildInfoToDP(dataPoint);
+                static Symbol region("region");
+                static Symbol machine_id("machine_id");
+                static Symbol system_ms("system_ms");
+                static Symbol session_guid("session_guid");
                 ADD_DATA_PAIR(machine_id, g_szMachineIdString);
                 auto _tmp4 = SystemMs();
                 ADD_DATA_PAIR(system_ms, _tmp4);
@@ -1882,14 +1877,12 @@ void RockCentral::RecordDataPoint(
                     *gDataPointLog << qString.m_szContent << "\n";
                     gDataPointLog->File().Flush();
                 }
-                if (mRBData) {
-                    if (o) {
-                        mRBData->CallDataPoint(
-                            wrapper->mContext, qString, results.mQDataResultString
-                        );
-                    } else {
-                        mRBData->CallDataPointNoRet(wrapper->mContext, qString);
-                    }
+                if (o) {
+                    mRBData->CallDataPoint(
+                        wrapper->mContext, qString, results.mQDataResultString
+                    );
+                } else {
+                    mRBData->CallDataPointNoRet(wrapper->mContext, qString);
                 }
             }
         }

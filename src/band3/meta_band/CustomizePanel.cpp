@@ -966,10 +966,12 @@ void CustomizePanel::GotoCustomizeClothingScreen() {
 }
 
 Symbol CustomizePanel::GetCurrentMakeup(Symbol type) {
+    static Symbol eyes("eyes");
+    static Symbol lips("lips");
     MILO_ASSERT(type == eyes || type == lips, 0x3A9);
-    BandCharDesc *desc = mPreviewDesc;
-    for (int i = 0; i < desc->mPatches.size(); i++) {
-        BandCharDesc::Patch &curPatch = desc->mPatches[i];
+    std::vector<BandCharDesc::Patch> &patches = mPreviewDesc->mPatches;
+    for (int i = 0; i < patches.size(); i++) {
+        BandCharDesc::Patch &curPatch = patches[i];
         if (curPatch.mCategory == BandCharDesc::Patch::kPatchMakeup) {
             String meshName = curPatch.mMeshName;
             std::vector<String> subStrings;
@@ -1261,6 +1263,11 @@ DataNode CustomizePanel::OnMsg(const SigninChangedMsg &msg) {
 DataNode CustomizePanel::OnMsg(const ButtonDownMsg &msg) {
     if (mWaitingToLeave)
         return 1;
+    // TU5: ignore input while the purchase UI is up or before a state is set.
+    if (mClosetMgr->IsPurchaseUIActive())
+        return 1;
+    if (mCustomizeState == 0)
+        return 1;
     if (mPendingState != 0)
         return 1;
     JoypadAction action = msg.GetAction();
@@ -1518,8 +1525,9 @@ bool CustomizePanel::IsAssetPatchable() {
         return false;
     BandCharDesc::Patch::Category cat =
         GetPatchCategoryFromAssetType(GetAssetTypeFromSymbol(mClosetMgr->unk44));
-    for (int i = 0; i < cfg->mPatches.size(); i++) {
-        if (cfg->mPatches[i].mCategory == cat)
+    const ObjVector<BandPatchMesh> &patches = cfg->mPatches;
+    for (int i = 0; i < patches.size(); i++) {
+        if (patches[i].mCategory == cat)
             return true;
     }
     return false;

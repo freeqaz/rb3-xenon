@@ -477,7 +477,8 @@ void MetaPanel::UpdateMusicMuteState() {
 }
 
 DataNode MetaPanel::OnMsg(const CurrentScreenChangedMsg &msg) {
-    UpdateMetaMusic(msg.GetScreen());
+    Symbol screen = msg.GetScreen();
+    UpdateMetaMusic(screen);
     return DataNode(kDataUnhandled, 0);
 }
 
@@ -494,8 +495,12 @@ void MetaPanel::UpdateMetaMusic(Symbol screen) {
         if (scene != gNullStr) {
             MetaMusicScene *pScene = TheMetaMusicManager->GetScene(scene);
             MILO_ASSERT(pScene, 0x224);
+            // retail X360 toggles XMP (user soundtrack) with the scene
+            if (pScene->GetMix())
+                ThePlatformMgr.EnableXMP();
             mMusic->SetScene(pScene);
         } else {
+            ThePlatformMgr.DisableXMP();
             mMusic->SetScene(0);
         }
     }

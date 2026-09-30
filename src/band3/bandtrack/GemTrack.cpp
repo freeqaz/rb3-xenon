@@ -7,6 +7,7 @@
 #include "bandtrack/GemTrack.h"
 
 #ifdef HX_NATIVE
+#include <algorithm>
 #include <cstdio>
 #include <cstdlib>
 #endif
@@ -50,13 +51,6 @@
 
 bool sEnableShift = true;
 bool sUpdateShifting;
-
-static inline void MinEqPtr(int &x, const int &y) {
-    const int *p = &x;
-    if (y < x)
-        p = &y;
-    x = *p;
-}
 
 inline bool GemTrack::ShiftsEnabled() const { return mEnableShifting && sEnableShift; }
 
@@ -234,7 +228,8 @@ void GemTrack::CheckShifts(float ms, int topTick) {
     }
     if (mCurrentRangeShift != mRangeShifts.end()) {
         RangeShift &shift = *mCurrentRangeShift;
-        if (shift.unk0 + tickOffset < topTick && !shift.unk18) {
+        bool upcoming = shift.unk0 + tickOffset < topTick;
+        if (upcoming && !shift.unk18) {
             shift.unk18 = true;
             int delta = (int)(shift.unkc - mOffset);
             int clamped;
@@ -257,7 +252,7 @@ void GemTrack::CheckShifts(float ms, int topTick) {
                 frame = clamped + 5;
                 shift.unk20 = 5;
             }
-            MinEqPtr(key, 24);
+            key = std::min(key, 24);
             mUpcomingShiftMaskAnim->SetFrame((float)frame, 1.0f);
             Transform xfm;
             mTrackDir->MakeWidgetXfm(key, secs, xfm);
@@ -383,16 +378,9 @@ void GemTrack::DrawFill(FillInfo *info, int i2, int i3) {
         float startSecs = TickToSeconds(ext154.start);
         float endSecs = TickToSeconds(ext154.end);
         float f15 = endSecs - startSecs;
-        bool b9 = false;
-        if (ext154.start < i11) {
-            bool cond = (i2 <= ext154.start || mResetFills);
-            if (cond)
-                b9 = true;
-        }
+        bool b9 = ext154.start < i11 && (i2 <= ext154.start || mResetFills);
         if (!inCoda || TheGame->mProperties.mEnableCoda) {
-            bool b1 = false;
-            if (!inCoda && isDrum)
-                b1 = true;
+            bool b1 = !inCoda && isDrum;
             bool bi2 = !TheGame->DrumFillsMod();
             if (b9) {
                 if (b1) {
@@ -415,6 +403,8 @@ void GemTrack::DrawFill(FillInfo *info, int i2, int i3) {
                         w->Clear();
                         w->AddInstance(tf88, f15);
                     } else {
+                        static Symbol mash("mash");
+                        static Symbol fill("fill");
                         Symbol s15c(b1 ? fill : mash);
                         for (int i = 0; i < mTrackConfig.GetMaxSlots(); i++) {
                             Symbol s160;
@@ -427,6 +417,7 @@ void GemTrack::DrawFill(FillInfo *info, int i2, int i3) {
                         }
                     }
                 } else {
+                    static Symbol beard("beard");
                     Symbol s164;
                     if (mGemManager->GetWidgetName(s164, 4, beard)) {
                         mTrackDir->MakeWidgetXfm(4, startSecs, tf88);
@@ -443,6 +434,8 @@ void GemTrack::DrawFill(FillInfo *info, int i2, int i3) {
             }
             if (b1 && i2 < ext154.end && ext154.end <= i11) {
                 mTrackDir->MakeWidgetXfm(4, endSecs, tf88);
+                static Symbol crash("crash");
+                static Symbol crash_cymbal("crash_cymbal");
                 Symbol s168 =
                     mTrackConfig.GetGameCymbalLanes() & 0x10 ? crash_cymbal : crash;
                 Symbol s16c;
@@ -483,8 +476,9 @@ void GemTrack::UpdateShifts() {
                     i1 = i6 + 10;
                 }
                 if (i1 > 16) {
-                    i6 -= i1 - 16;
-                    i1 -= i1 - 16;
+                    int over = i1 - 16;
+                    i6 -= over;
+                    i1 -= over;
                     MILO_WARN(
                         "Authored range section exceeds displayable keyboard range: %.0f - %.0f @ tick %d",
                         curSect.unk8,
@@ -492,14 +486,13 @@ void GemTrack::UpdateShifts() {
                         curSect.unk0
                     );
                 }
-                int i8 = curSect.unk0;
-                mRangeShifts.push_back(
-                    RangeShift(i8, i8 + MsToTickInt(curSect.unk4), i6, i1 - i6)
-                );
+                mRangeShifts.push_back(RangeShift(
+                    curSect.unk0, curSect.unk0 + MsToTickInt(curSect.unk4), i6, i1 - i6
+                ));
             }
         } else {
-            int i90 = 0;
             int i8c = 16;
+            int i90 = 0;
             for (int i = 0; i < rangeSects.size(); i++) {
                 RangeSection &curSect = rangeSects[i];
                 MinEq(i8c, SemitoneToWhiteKey(Round(curSect.unk8)));
@@ -785,6 +778,16 @@ void GemTrack::Jump(float f) {
         }
         mCurrentRangeShift = mRangeShifts.begin();
     }
+}
+
+// Retail 0x82B951D8 (anonymous in the target map). RB3-retail-only, like
+// VocalTrack::JumpReset: GemPlayer::JumpReset calls it on mTrack. Body from
+// retail bytes: three BandTrack calls on mTrackDir's BandTrack base (+0x40c),
+// the middle one virtual through BandTrack vtable slot 2.
+void GemTrack::JumpReset() {
+    mTrackDir->ResetStreakMeter();
+    mTrackDir->ResetSmashers(true);
+    mTrackDir->ResetPlayerFeedback();
 }
 
 GemManager *GemTrack::GetGemManager() { return mGemManager; }

@@ -100,16 +100,20 @@ void BandSongMgr::Init() {
     TheContentMgr.RegisterCallback(this, false);
     mSongNameLookup.clear();
     mSongIDLookup.clear();
+    static Symbol song_mgr("song_mgr");
+    static Symbol alt_dirs("alt_dirs");
     DataArray *cfg = SystemConfig(song_mgr);
     DataArray *altarr = cfg->FindArray(alt_dirs, false);
     if (altarr) {
         for (int i = 1; i < altarr->Size(); i++) {
             const char *str = altarr->Array(i)->Str(0);
             if (strlen(str) != 0) {
-                mContentAltDirs.push_back(String(str));
+                String dir(str);
+                mContentAltDirs.push_back(dir);
             }
         }
     }
+    static Symbol max_song_count("max_song_count");
     mMaxSongCount = cfg->FindInt(max_song_count);
     mUpgradeMgr = new SongUpgradeMgr();
     mLicenseMgr = new LicenseMgr();
@@ -801,14 +805,7 @@ bool BandSongMgr::IsDemo(int songID) const {
 
 bool BandSongMgr::IsRestricted(int songID) const {
     BandSongMetadata *data = (BandSongMetadata *)Data(songID);
-    int rating = data->Rating();
-    bool notAllowed = !AllowedToAccessContent(rating);
-    if (notAllowed) {
-        MILO_WARN(
-            "Song %d has rating %d, which should mean it is restricted", songID, rating
-        );
-    }
-    return false;
+    return !AllowedToAccessContent(data->Rating());
 }
 
 SongUpgradeData *BandSongMgr::GetUpgradeData(int i) const {
@@ -915,13 +912,12 @@ bool BandSongMgr::RemoveOldestCachedContent() {
     if (mCachedSongMetadata.size() < 1)
         return false;
 
-    std::hash_map<int, SongMetadata *>::iterator oldest = mCachedSongMetadata.begin();
-    int maxAge = oldest->second->Age();
-    for (std::hash_map<int, SongMetadata *>::iterator it = mCachedSongMetadata.begin();
-         it != mCachedSongMetadata.end();
-         ++it) {
-        if (it->second->Age() > maxAge) {
-            maxAge = it->second->Age();
+    std::hash_map<int, SongMetadata *>::iterator it = mCachedSongMetadata.begin();
+    std::hash_map<int, SongMetadata *>::iterator oldest = it;
+    int maxAge = (*oldest).second->Age();
+    for (; it != mCachedSongMetadata.end(); ++it) {
+        if ((*it).second->Age() > maxAge) {
+            maxAge = (*it).second->Age();
             oldest = it;
         }
     }
@@ -929,11 +925,11 @@ bool BandSongMgr::RemoveOldestCachedContent() {
     if (maxAge < 1)
         return false;
 
-    int songID = oldest->second->ID();
+    int songID = (*oldest).second->ID();
     if (songID == 0) {
         MILO_WARN(
             "Invalid SongID for song %s\n",
-            dynamic_cast<BandSongMetadata *>(oldest->second)->Title()
+            dynamic_cast<BandSongMetadata *>((*oldest).second)->Title()
         );
         return false;
     }
@@ -947,7 +943,7 @@ bool BandSongMgr::RemoveOldestCachedContent() {
             for (std::vector<int>::iterator vit = mit->second.begin();
                  vit != mit->second.end();
                  ++vit) {
-                if (*vit == songID) {
+                if (songID == *vit) {
                     contentName = mit->first;
                     break;
                 }
@@ -960,16 +956,25 @@ bool BandSongMgr::RemoveOldestCachedContent() {
     }
 
     if (contentName.Null()) {
-        mContentUsedForSong.erase(songID);
-        mCachedSongMetadata.erase(songID);
+        std::hash_map<int, Symbol>::iterator cit = mContentUsedForSong.find(songID);
+        if (cit != mContentUsedForSong.end())
+            mContentUsedForSong.erase(cit);
+        std::hash_map<int, SongMetadata *>::iterator mit = mCachedSongMetadata.find(songID);
+        if (mit != mCachedSongMetadata.end())
+            mCachedSongMetadata.erase(mit);
     } else {
         std::vector<int> songsToRemove = mSongIDsInContent[contentName];
         ClearFromCache(contentName);
         for (std::vector<int>::iterator vit = songsToRemove.begin();
              vit != songsToRemove.end();
              ++vit) {
-            mContentUsedForSong.erase(*vit);
-            mCachedSongMetadata.erase(*vit);
+            int id = *vit;
+            std::hash_map<int, Symbol>::iterator cit = mContentUsedForSong.find(id);
+            if (cit != mContentUsedForSong.end())
+                mContentUsedForSong.erase(cit);
+            std::hash_map<int, SongMetadata *>::iterator mit = mCachedSongMetadata.find(id);
+            if (mit != mCachedSongMetadata.end())
+                mCachedSongMetadata.erase(mit);
         }
     }
 
@@ -1019,8 +1024,8 @@ bool BandSongMgr::InqAvailableSongSources(std::set<Symbol> &sourceSet) {
 }
 
 int BandSongMgr::GetPartDifficulty(Symbol s1, Symbol s2) const {
-    BandSongMetadata *songMetaData =
-        (BandSongMetadata *)Data(GetSongIDFromShortName(s1, true));
+    int songID = GetSongIDFromShortName(s1, true);
+    BandSongMetadata *songMetaData = (BandSongMetadata *)Data(songID);
     MILO_ASSERT(songMetaData, 0x5D6);
     float rank = songMetaData->Rank(s2);
     return RankTier(rank, s2);

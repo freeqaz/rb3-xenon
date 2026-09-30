@@ -413,22 +413,25 @@ void TrackPanel::HandleRemoveUser(BandUser *user) {
         for (int i = 0; i < mTrackSlots.size(); i++) {
             TrackSlot &curslot = mTrackSlots[i];
             if (curslot.mTrack == track) {
+                idx = i;
                 curslot.mTrack = nullptr;
                 curslot.mInstrument = kInstNone;
-                idx = i;
                 break;
             }
         }
         if (idx == -1)
             MILO_FAIL("Couldn't find slot for removed user!");
         mTrackPanelDir->RemoveTrack(idx);
-        mTrackPanelDir->ConfigureTracks(!IsGameOver());
+        bool gameOver = IsGameOver();
+        mTrackPanelDir->ConfigureTracks(!gameOver);
     }
 }
 
 void TrackPanel::PostHandleRemoveUser(BandUser *user) {
-    if (std::find(mTracks.begin(), mTracks.end(), user->GetTrack()) != mTracks.end()) {
-        Track *track = user->GetTrack();
+    std::vector<Track *>::iterator it =
+        std::find(mTracks.begin(), mTracks.end(), user->GetTrack());
+    if (it != mTracks.end()) {
+        Track *track = *it;
         mTracks.erase(std::remove(mTracks.begin(), mTracks.end(), track));
         delete track;
     }

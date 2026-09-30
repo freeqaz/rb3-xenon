@@ -58,12 +58,16 @@ void OverdriveTracker::FirstFrame_(float) {
     unka4 = 1.0f;
     unka8 = -1;
     unkac = 0;
+    static Symbol overdrive_tracker_description("overdrive_tracker_description");
     mBandDisplay.Initialize(overdrive_tracker_description);
+    DeployData data;
+    data.unk0 = false;
+    data.unk1 = false;
     for (TrackerPlayerID id = mSource->GetFirstPlayer(); id.NotNull();
          id = mSource->GetNextPlayer(id)) {
-        DeployData data;
         unk58[id] = data;
     }
+    static Symbol overdrive_chain("overdrive_chain"); // referenced only by a stripped log
     mBroadcastDisplay.SetType((TrackerBroadcastDisplay::BroadcastDisplayType)1);
     mBroadcastDisplay.SetSecondaryStateLevel(0);
     mBroadcastDisplay.Hide();
@@ -190,7 +194,8 @@ void OverdriveTracker::SavePlayerStats() const {
          id = mSource->GetNextPlayer(id)) {
         Player *pPlayer = mSource->GetPlayer(id);
         MILO_ASSERT(pPlayer, 0x157);
-        pPlayer->mStats.unk1c0 = pPlayer->mStats.mTotalOverdriveDurationMs;
+        Stats *stats = &pPlayer->mStats;
+        stats->unk1c0 = stats->mTotalOverdriveDurationMs;
     }
 }
 
