@@ -322,7 +322,12 @@
             "system/obj/Utl.cpp": "NonMatching",
             "system/synth/Synth.cpp": "NonMatching",
             "system/synth/DelayEffect.cpp": "NonMatching",
-            "system/synth/MetaMusic.cpp": "NonMatching",
+            "system/synth/MetaMusic.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_HANDLE_LOCAL_STATIC"
+                ]
+            },
             "system/synth/Sequence.cpp": "NonMatching",
             "system/synth/FlangerEffect.cpp": "NonMatching",
             "system/synth/CompressionEffect.cpp": "NonMatching",
