@@ -104,6 +104,21 @@ RULER_FLAGS = [
 
 SKIP_UNIT_PREFIXES = ("default/TrackWidget", "default/MidiParser")  # owned by W16-HB
 
+# Scope (source-path prefixes) -- default is the W16-HD game layer; override
+# with the top-level `--scope src/system/bandobj/,src/system/char/` (W17-ANON).
+DEFAULT_SCOPE = ("src/band3/", "src/network/")
+SCOPE_PREFIXES = DEFAULT_SCOPE
+SCOPE_EXCLUDE = ("src/network/quazal/",)
+SKIP_ADDRS = set()  # lower-case "0x..." addresses owned by other lanes
+
+
+def scope_dir(src):
+    """The scope prefix a source path falls under (per-dir control reporting)."""
+    for pre in SCOPE_PREFIXES:
+        if src.startswith(pre):
+            return pre
+    return "?"
+
 
 # --------------------------------------------------------------------------
 # COFF parsing (function-symbol extraction + generic rename, reused from
@@ -190,9 +205,9 @@ def game_units(report=None, cfg=None, skip_prefixes=SKIP_UNIT_PREFIXES):
         if not cu or not cu.get("base_path"):
             continue
         src = (cu.get("metadata") or {}).get("source_path", "")
-        if not (src.startswith("src/band3/") or src.startswith("src/network/")):
+        if not src.startswith(tuple(SCOPE_PREFIXES)):
             continue
-        if src.startswith("src/network/quazal/"):
+        if src.startswith(SCOPE_EXCLUDE):
             continue
         out.append(
             {
@@ -822,6 +837,20 @@ def cmd_evaluate(args):
     ctrl = json.loads(Path(args.control_json).read_text())
     Ts = [float(x) for x in args.thresholds.split(",")]
     Ms = [float(x) for x in args.margins.split(",")]
+    groups = [("ALL", ctrl)]
+    if args.by_dir:
+        report, cfg = load_report(), load_objdiff_cfg()
+        u2d = {u["name"]: scope_dir(u["source_path"]) for u in game_units(report, cfg)}
+        by = collections.defaultdict(list)
+        for r in ctrl["rows"]:
+            by[u2d.get(r["unit"], "?")].append(r)
+        groups += [(d, dict(ctrl, rows=rs)) for d, rs in sorted(by.items())]
+    for gname, gctrl in groups:
+        print(f"===== {gname}: {len(gctrl['rows'])} control rows")
+        _print_eval(gctrl, Ts, Ms, args)
+
+
+def _print_eval(ctrl, Ts, Ms, args):
     if args.spatial:
         report, cfg = load_report(), load_objdiff_cfg()
         map_rows, _n, _d = applied_map()
@@ -854,6 +883,8 @@ def cmd_propose(args):
                 skipped["deliberately_null_in_map"] += 1; continue
             if addr in deny:
                 skipped["denylisted"] += 1; continue
+            if addr in SKIP_ADDRS:
+                skipped["owned_by_other_lane"] += 1; continue
             tf = u["tgt_fns"].get(t["name"])
             if tf is None:
                 skipped["no_target_symbol"] += 1; continue
@@ -988,8 +1019,8 @@ def evaluate_control_spatial(ctrl, thresholds, margins, spatial, pools):
                         fo += 1
                 n = len(rows)
                 table.append({"bracket": br, "T": T, "M": M, "n": n, "fires_in": fi, "hits_in": hi,
-                              "precision_in": hi / fi if fi else None, "recall_in": hi / n,
-                              "fires_out": fo, "fp_rate_out": fo / n})
+                              "precision_in": hi / fi if fi else None, "recall_in": hi / n if n else 0.0,
+                              "fires_out": fo, "fp_rate_out": fo / n if n else 0.0})
     return table
 
 
@@ -1281,6 +1312,9 @@ args_verify_limit = 15
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--selftest", action="store_true", help="run the fast self-test and exit")
+    ap.add_argument("--scope", help="comma-separated source-path prefixes (default: src/band3/,src/network/)")
+    ap.add_argument("--skip-addr", default="", help="comma-separated target addresses owned by other lanes")
+    ap.add_argument("--scratch-dir", help="scratch dir for renamed obj copies (default ~/tmp/w16hd/scratch_objs)")
     sub = ap.add_subparsers(dest="cmd")
 
     p_control = sub.add_parser("control", help="precision control (hide known names, measure top-1 recovery)")
@@ -1317,6 +1351,7 @@ def main():
     p_ev.add_argument("--margins", default="0,0.5,1,2,5")
     p_ev.add_argument("--min-size", type=int, default=0)
     p_ev.add_argument("--spatial", action="store_true", help="add the layout sandwich + occupancy gate")
+    p_ev.add_argument("--by-dir", action="store_true", help="also report per scope-prefix (per source dir)")
     p_ev.set_defaults(func=cmd_evaluate)
 
     p_pr = sub.add_parser("propose", help="v2: score all real fn_ targets and emit proposals at a rule")
@@ -1341,6 +1376,12 @@ def main():
     p_verify.set_defaults(func=cmd_verify_technique)
 
     args = ap.parse_args()
+    global SCOPE_PREFIXES, SKIP_ADDRS, SCRATCH_DIR
+    if args.scope:
+        SCOPE_PREFIXES = tuple(x.strip() for x in args.scope.split(",") if x.strip())
+    SKIP_ADDRS = {x.strip().lower() for x in args.skip_addr.split(",") if x.strip()}
+    if args.scratch_dir:
+        SCRATCH_DIR = Path(args.scratch_dir)
     if args.selftest:
         run_selftest()
         return
