@@ -108,15 +108,15 @@ MidiInstrument::MidiInstrument()
     mFaders.Add(TheSynth->InstFader());
 }
 
-MidiInstrument::~MidiInstrument() {
 #ifdef HX_NATIVE
+MidiInstrument::~MidiInstrument() {
     if (ObjectDir::InDeleteObjects()) {
         mActiveVoices.clear();
         return;
     }
-#endif
     mActiveVoices.DeleteAll();
 }
+#endif
 
 BEGIN_HANDLERS(MidiInstrument)
     HANDLE_ACTION(add_map, mMultiSampleMap.push_back())
