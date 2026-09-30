@@ -1089,10 +1089,24 @@ bool ObjPtrList<T1, T2>::Load(BinStream &bs, bool print) {
     clear();
     int count;
     bs >> count;
+#ifdef HX_NATIVE
     Hmx::Object *refOwner = mOwner ? mOwner->RefOwner() : nullptr;
     ObjectDir *dir = nullptr;
     if (refOwner)
         dir = refOwner->Dir();
+#else
+    // Retail X360 (all 23 ObjPtrList<T>::Load bodies, e.g. 0x823af9e8
+    // CharPollable, 0x8270c040, 0x82819278): the owner is read straight from
+    // mOwner@0xc and its dir from 0x1c(mOwner) -- no virtual RefOwner() call
+    // (0 bctrl in every body) -- and mOwner is re-read for the PathName in the
+    // notify. rb3-Wii's shape: `if (mOwner) dir = mOwner->Dir();` with an
+    // Hmx::Object *mOwner. ObjRefOwner is Hmx::Object's first base (offset 0),
+    // so the downcast is free. Native keeps the virtual chain: there an owner
+    // need not be an Hmx::Object.
+    ObjectDir *dir = nullptr;
+    if (mOwner)
+        dir = static_cast<Hmx::Object *>(mOwner)->Dir();
+#endif
     if (print) {
         MILO_ASSERT(dir, 0x210);
     }
@@ -1122,10 +1136,26 @@ bool ObjPtrList<T1, T2>::Load(BinStream &bs, bool print) {
             }
 #endif
             if (!casted && buf[0] != '\0') {
+#ifdef HX_NATIVE
                 if (print)
                     MILO_NOTIFY(
                         "%s couldn't find %s in %s", PathName(refOwner), buf, PathName(dir)
                     );
+#else
+                if (print) {
+                    // Retail X360: PathName(dir) is evaluated before
+                    // PathName(mOwner), same as ObjRefConcrete::Load above; the
+                    // match build's MILO_NOTIFY is a left-to-right comma
+                    // expression, so pin the order explicitly.
+                    const char *dirPath = PathName(dir);
+                    MILO_NOTIFY(
+                        "%s couldn't find %s in %s",
+                        PathName(static_cast<Hmx::Object *>(mOwner)),
+                        buf,
+                        dirPath
+                    );
+                }
+#endif
                 ret = false;
             } else if (casted) {
                 push_back(casted);
@@ -1279,9 +1309,13 @@ typename ObjPtrList<T1, T2>::iterator ObjPtrList<T1, T2>::erase(iterator it) {
     return iterator(next);
 }
 
+// Retail X360: `lwz r3, 0xc(r3); blr` (ObjPtrList<Fader> vtable 0x820f88a4
+// slot 1 -> 0x822e4460, ICF-folded with RndAnimatable::GetRate) -- the raw
+// mOwner, no null check and no virtual RefOwner() chain. rb3-Wii: Hmx::Object
+// *mOwner, returned as is.
 template <class T1, class T2>
 Hmx::Object *ObjPtrList<T1, T2>::RefOwner() const {
-    return mOwner ? mOwner->RefOwner() : 0;
+    return static_cast<Hmx::Object *>(mOwner);
 }
 
 template <class T1, class T2>
