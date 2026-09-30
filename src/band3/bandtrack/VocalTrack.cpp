@@ -2798,6 +2798,10 @@ void VocalTrack::ClearLyrics() {
 }
 
 void VocalTrack::BuildPhrase(float f1, float f2) {
+    // Retail (fn_82B9F460) evaluates `TheSongDB->GetVocalNoteList(0)` only when
+    // mAlternateNoteList[0] is null and discards it: the `||` of a compiled-out
+    // assert (MILO_ASSERT is `((void)(cond))`). Condition text is ours.
+    MILO_ASSERT(mAlternateNoteList[0] || TheSongDB->GetVocalNoteList(0), 0);
     mPhraseStartMs = mPhraseEndMs;
     mPhraseEndMs = f1;
     mNextPhraseEndMs = f2;
