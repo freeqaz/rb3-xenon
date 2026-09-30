@@ -140,6 +140,15 @@ public:
               mWidth(0) {
             xfm.Reset();
         }
+        // Retail's vector<Line>::_M_erase (0x82456378) and _M_fill_insert_aux
+        // (0x824564b8) copy elements in a loop that calls memcpy(dst, src,
+        // 0x78) per element: a user-declared, memcpy-bodied operator= (the
+        // house style of Matrix3/Matrix4/Transform::operator=). The implicit
+        // one would be memcpy(0x24) + words + Transform's memcpy(0x40).
+        Line &operator=(const Line &l) {
+            memcpy(this, &l, sizeof(*this));
+            return *this;
+        }
         Style lineStyle; // 0x00  (0x24)
         /** mText.c_str() + startIdx */
         const char *mStart; // 0x24

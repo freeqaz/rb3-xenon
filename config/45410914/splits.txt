@@ -330,7 +330,6 @@ BandCamShot.cpp:
 	.pdata      start:0x821F5708 end:0x821F5718
 	.pdata      start:0x821F5718 end:0x821F5F38
 	.pdata      start:0x821F5F38 end:0x821F5F60
-	.pdata      start:0x8220E1A0 end:0x8220E1A8
 	.pdata      start:0x82213890 end:0x822138A0
 	.pdata      start:0x822138E8 end:0x822138F8
 	.text       start:0x822782D0 end:0x82278384
@@ -339,7 +338,6 @@ BandCamShot.cpp:
 	.text       start:0x822B0A38 end:0x822B0AB0
 	.text       start:0x822B0AB0 end:0x822B88F0
 	.text       start:0x822B8900 end:0x822B8BE8
-	.text       start:0x82456BE8 end:0x82456CA4
 	.text       start:0x824C3E08 end:0x824C3E98
 	.text       start:0x824C4528 end:0x824C46B4
 
@@ -3941,61 +3939,26 @@ Text.cpp:
 	.pdata      start:0x821F4808 end:0x821F4818
 	.pdata      start:0x821FC4F8 end:0x821FC508
 	.pdata      start:0x82201BF0 end:0x82201BF8
-	.pdata      start:0x82203ED8 end:0x82203EE0
-	.pdata      start:0x82203EE0 end:0x82203EE8
-	.pdata      start:0x8220E068 end:0x8220E070
-	.pdata      start:0x8220E070 end:0x8220E080
-	.pdata      start:0x8220E080 end:0x8220E090
-	.pdata      start:0x8220E090 end:0x8220E0D8
-	.pdata      start:0x8220E0D8 end:0x8220E108
-	.pdata      start:0x8220E108 end:0x8220E130
-	.pdata      start:0x8220E130 end:0x8220E138
-	.pdata      start:0x8220E158 end:0x8220E160
-	.pdata      start:0x8220E178 end:0x8220E180
-	.pdata      start:0x8220E180 end:0x8220E190
-	.pdata      start:0x8220E1A8 end:0x8220E1D8
-	.pdata      start:0x8220E1D8 end:0x8220E228
-	.pdata      start:0x8220E228 end:0x8220E230
-	.pdata      start:0x8220E238 end:0x8220E248
-	.pdata      start:0x8220E248 end:0x8220E268
-	.pdata      start:0x8220E270 end:0x8220E280
-	.pdata      start:0x8220E288 end:0x8220E2D0
-	.pdata      start:0x8220E2D0 end:0x8220E2D8
-	.pdata      start:0x8220E2D8 end:0x8220E2E8
+	.pdata      start:0x82203ED8 end:0x82203EE8
+	.pdata      start:0x8220E068 end:0x8220E138
+	.pdata      start:0x8220E138 end:0x8220E228
+	.pdata      start:0x8220E228 end:0x8220E2E8
 	.pdata      start:0x8220E2F8 end:0x8220E318
 	.pdata      start:0x8220E320 end:0x8220E4E8
 	.pdata      start:0x8220E518 end:0x8220E528
 	.pdata      start:0x8220E528 end:0x8220E538
 	.pdata      start:0x82213CD0 end:0x82213CD8
-	.pdata      start:0x822224E8 end:0x822224F0
-	.pdata      start:0x822224F0 end:0x822224F8
+	.pdata      start:0x822224E8 end:0x822224F8
 	.pdata      start:0x82232E30 end:0x82232E38
 	.pdata      start:0x82243A98 end:0x82243BE0
 	.text       start:0x822A2BD8 end:0x822A2C70
 	.text       start:0x8231CFC8 end:0x8231D060
 	.text       start:0x82374C28 end:0x82374C94
-	.text       start:0x8239C558 end:0x8239C5D8
-	.text       start:0x8239C5D8 end:0x8239C640
+	.text       start:0x8239C558 end:0x8239C640
 	.text       start:0x824549B0 end:0x824549C4
-	.text       start:0x82454B70 end:0x82454D98
-	.text       start:0x82454D98 end:0x824553D0
-	.text       start:0x824553D0 end:0x82455508
-	.text       start:0x82455508 end:0x82455928
-	.text       start:0x82455928 end:0x82455E90
-	.text       start:0x82455E90 end:0x82456190
-	.text       start:0x82456190 end:0x8245625C
-	.text       start:0x824563D8 end:0x824564B8
-	.text       start:0x824566E8 end:0x824568C0
-	.text       start:0x824568C0 end:0x824569F0
-	.text       start:0x82456CA4 end:0x82457060
-	.text       start:0x82457060 end:0x824575C8
-	.text       start:0x824575D0 end:0x82457680
-	.text       start:0x824576F8 end:0x82457790
-	.text       start:0x82457790 end:0x82457D18
-	.text       start:0x82457D98 end:0x82457EF0
-	.text       start:0x82457F70 end:0x82459820
-	.text       start:0x82459820 end:0x82459958
-	.text       start:0x82459958 end:0x82459B80
+	.text       start:0x82454B70 end:0x8245625C
+	.text       start:0x82456260 end:0x824575C8
+	.text       start:0x824575D0 end:0x82459B80
 	.text       start:0x82459EA0 end:0x82459FC8
 	.text       start:0x8245A02C end:0x8245C068
 	.text       start:0x8245C2C4 end:0x8245C2D8
@@ -4004,8 +3967,7 @@ Text.cpp:
 	.text       start:0x8245C490 end:0x8245C510
 	.text       start:0x824C7B40 end:0x824C7BBC
 	.text       start:0x82588D68 end:0x82588D7C
-	.text       start:0x825AF290 end:0x825AF2E0
-	.text       start:0x825AF2E0 end:0x825AF30C
+	.text       start:0x825AF290 end:0x825AF30C
 	.text       start:0x8269CF90 end:0x8269CF98
 	.text       start:0x826AAFC8 end:0x826AB01C
 	.text       start:0x827DE868 end:0x827DF498
@@ -4170,13 +4132,6 @@ SkeletonClip.cpp:
 	.pdata      start:0x821FEEC8 end:0x821FEEE0
 	.pdata      start:0x821FEEF8 end:0x821FEF10
 	.pdata      start:0x821FEF28 end:0x821FEF30
-	.pdata      start:0x8220E138 end:0x8220E140
-	.pdata      start:0x8220E140 end:0x8220E150
-	.pdata      start:0x8220E150 end:0x8220E158
-	.pdata      start:0x8220E160 end:0x8220E178
-	.pdata      start:0x8220E230 end:0x8220E238
-	.pdata      start:0x8220E268 end:0x8220E270
-	.pdata      start:0x8220E280 end:0x8220E288
 	.pdata      start:0x82237AC8 end:0x82237AE8
 	.pdata      start:0x82237B68 end:0x82237B70
 	.pdata      start:0x82237B70 end:0x82237B78
@@ -4188,14 +4143,6 @@ SkeletonClip.cpp:
 	.text       start:0x8234A148 end:0x8234A288
 	.text       start:0x8234A44C end:0x8234AC78
 	.text       start:0x8234ADC8 end:0x8234AE48
-	.text       start:0x82456260 end:0x824562B0
-	.text       start:0x824562B0 end:0x82456378
-	.text       start:0x82456378 end:0x824563D8
-	.text       start:0x824564B8 end:0x824566E8
-	.text       start:0x824569F0 end:0x82456A20
-	.text       start:0x82457680 end:0x824576F8
-	.text       start:0x82457D18 end:0x82457D98
-	.text       start:0x82457EF0 end:0x82457F70
 	.text       start:0x82703890 end:0x827039C8
 	.text       start:0x82704058 end:0x827041A8
 	.text       start:0x827041A8 end:0x827041E4
@@ -4674,11 +4621,9 @@ CharUtl.cpp:
 	.pdata      start:0x82204510 end:0x82204518
 	.pdata      start:0x82204520 end:0x82204530
 	.pdata      start:0x82204530 end:0x822045A8
-	.pdata      start:0x8220E190 end:0x8220E1A0
 	.text       start:0x823A38B0 end:0x823A393C
 	.text       start:0x823A3988 end:0x823A3B2C
 	.text       start:0x823A3B30 end:0x823A451C
-	.text       start:0x82456A20 end:0x82456BE8
 
 CharWeightSetter.cpp:
 	.pdata      start:0x822054F0 end:0x82205500

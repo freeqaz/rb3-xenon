@@ -51962,11 +51962,28 @@
   {
    "name": "$__uninitialized_copy",
    "address": "0x824562b0",
-   "survivor": "??$__uninitialized_copy@PAURecordedFrame@@PAU1@@stlpmtx_std@@YAPAURecordedFrame@@PAU1@00ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_copy@PAVLine@RndText@@PAV12@@stlpmtx_std@@YAPAVLine@RndText@@PAV12@00ABU__false_type@0@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "survivor": "??$__uninitialized_copy@PAVLine@RndText@@PAV12@@stlpmtx_std@@YAPAVLine@RndText@@PAV12@00ABU__false_type@0@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_copy@PAURecordedFrame@@PAU1@@stlpmtx_std@@YAPAURecordedFrame@@PAU1@00ABU__false_type@0@@Z",
+     "lane": "W17-PRAC 2026-09-30",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ELEMENT",
+     "disposition": "withdrawn; the group survivor is rebound to the retail identity at 0x824562b0, and the map is rebound there in the same commit",
+     "absent_types": [
+      "RecordedFrame"
+     ],
+     "type_evidence": {
+      "RecordedFrame": {
+       "declared_in": "src/system/gesture/SkeletonClip.h only (Dance Central gesture)",
+       "rb3wii_files": 0,
+       "note": "POD, so its own RTTI absence is not probative; the element size is: every body in this family strides 0x78 = sizeof(RndText::Line), and every caller is RndText (Text.cpp) or UILabel"
+      }
+     },
+     "evidence": "THE ELEMENT IS RndText::Line. Retail 0x824562b0 belongs to the 0x78-stride POD vector family 0x82456260/0x824562b0/0x82456378/0x824564b8/0x824569f0/0x82456be8/0x82457680/0x82457d18/0x82457ef0 (mulli/li 0x78 in reserve, _M_fill_insert_aux and _Vector_base), whose callers are RndText functions in Text.cpp (0x82457008, 0x824573e4, 0x82457f70, 0x82458b38, 0x82459318) and UILabel (0x827f551c, 0x827f5a84, 0x827f5b24). RndText::Line is 0x78 (Style 0x24, two const char*, two uint, Transform at 0x34, float width at 0x74; compiler-verified per rndobj/Text.h). The Line spelling, previously listed as folded, is the survivor; RecordedFrame is Dance Central gesture code."
+    }
+   ]
   },
   {
    "name": "$Find",
@@ -78472,13 +78489,47 @@
   {
    "name": "1?$_Vector_base",
    "address": "0x824569f0",
-   "survivor": "??1?$_Vector_base@URecordedFrame@@V?$StlNodeAlloc@URecordedFrame@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "survivor": "??1?$_Vector_base@VLine@RndText@@V?$StlNodeAlloc@VLine@RndText@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
    "folded": [
-    "??1?$_Vector_base@VLine@RndText@@V?$StlNodeAlloc@VLine@RndText@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
-    "??1?$vector@URecordedFrame@@V?$StlNodeAlloc@URecordedFrame@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
     "??1?$vector@VLine@RndText@@V?$StlNodeAlloc@VLine@RndText@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 4, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 4, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??1?$_Vector_base@URecordedFrame@@V?$StlNodeAlloc@URecordedFrame@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "lane": "W17-PRAC 2026-09-30",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ELEMENT",
+     "disposition": "withdrawn; the group survivor is rebound to the retail identity at 0x824569f0, and the map is rebound there in the same commit",
+     "absent_types": [
+      "RecordedFrame"
+     ],
+     "type_evidence": {
+      "RecordedFrame": {
+       "declared_in": "src/system/gesture/SkeletonClip.h only (Dance Central gesture)",
+       "rb3wii_files": 0,
+       "note": "POD, so its own RTTI absence is not probative; the element size is: every body in this family strides 0x78 = sizeof(RndText::Line), and every caller is RndText (Text.cpp) or UILabel"
+      }
+     },
+     "evidence": "THE ELEMENT IS RndText::Line. Retail 0x824569f0 belongs to the 0x78-stride POD vector family 0x82456260/0x824562b0/0x82456378/0x824564b8/0x824569f0/0x82456be8/0x82457680/0x82457d18/0x82457ef0 (mulli/li 0x78 in reserve, _M_fill_insert_aux and _Vector_base), whose callers are RndText functions in Text.cpp (0x82457008, 0x824573e4, 0x82457f70, 0x82458b38, 0x82459318) and UILabel (0x827f551c, 0x827f5a84, 0x827f5b24). RndText::Line is 0x78 (Style 0x24, two const char*, two uint, Transform at 0x34, float width at 0x74; compiler-verified per rndobj/Text.h). The Line spelling, previously listed as folded, is the survivor; RecordedFrame is Dance Central gesture code."
+    },
+    {
+     "spelling": "??1?$vector@URecordedFrame@@V?$StlNodeAlloc@URecordedFrame@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "lane": "W17-PRAC 2026-09-30",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ELEMENT",
+     "disposition": "withdrawn",
+     "absent_types": [
+      "RecordedFrame"
+     ],
+     "type_evidence": {
+      "RecordedFrame": {
+       "declared_in": "src/system/gesture/SkeletonClip.h only (Dance Central gesture)",
+       "rb3wii_files": 0,
+       "note": "POD, so its own RTTI absence is not probative; the element size is: every body in this family strides 0x78 = sizeof(RndText::Line), and every caller is RndText (Text.cpp) or UILabel"
+      }
+     },
+     "evidence": "RecordedFrame is Dance Central gesture code (src/system/gesture/SkeletonClip.h only, 0 rb3-Wii files); the body at this address is vector<RndText::Line>'s, whose own spelling stays folded."
+    }
+   ]
   },
   {
    "name": "IsUserSignedIntoLive",
@@ -80027,11 +80078,28 @@
   {
    "name": "$__uninitialized_fill_n",
    "address": "0x82456260",
-   "survivor": "??$__uninitialized_fill_n@PAURecordedFrame@@IU1@@stlpmtx_std@@YAPAURecordedFrame@@PAU1@IABU1@ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_fill_n@PAVLine@RndText@@IV12@@stlpmtx_std@@YAPAVLine@RndText@@PAV12@IABV12@ABU__false_type@0@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "survivor": "??$__uninitialized_fill_n@PAVLine@RndText@@IV12@@stlpmtx_std@@YAPAVLine@RndText@@PAV12@IABV12@ABU__false_type@0@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_fill_n@PAURecordedFrame@@IU1@@stlpmtx_std@@YAPAURecordedFrame@@PAU1@IABU1@ABU__false_type@0@@Z",
+     "lane": "W17-PRAC 2026-09-30",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ELEMENT",
+     "disposition": "withdrawn; the group survivor is rebound to the retail identity at 0x82456260, and the map is rebound there in the same commit",
+     "absent_types": [
+      "RecordedFrame"
+     ],
+     "type_evidence": {
+      "RecordedFrame": {
+       "declared_in": "src/system/gesture/SkeletonClip.h only (Dance Central gesture)",
+       "rb3wii_files": 0,
+       "note": "POD, so its own RTTI absence is not probative; the element size is: every body in this family strides 0x78 = sizeof(RndText::Line), and every caller is RndText (Text.cpp) or UILabel"
+      }
+     },
+     "evidence": "THE ELEMENT IS RndText::Line. Retail 0x82456260 belongs to the 0x78-stride POD vector family 0x82456260/0x824562b0/0x82456378/0x824564b8/0x824569f0/0x82456be8/0x82457680/0x82457d18/0x82457ef0 (mulli/li 0x78 in reserve, _M_fill_insert_aux and _Vector_base), whose callers are RndText functions in Text.cpp (0x82457008, 0x824573e4, 0x82457f70, 0x82458b38, 0x82459318) and UILabel (0x827f551c, 0x827f5a84, 0x827f5b24). RndText::Line is 0x78 (Style 0x24, two const char*, two uint, Transform at 0x34, float width at 0x74; compiler-verified per rndobj/Text.h). The Line spelling, previously listed as folded, is the survivor; RecordedFrame is Dance Central gesture code."
+    }
+   ]
   },
   {
    "name": "$_Copy_Construct",
