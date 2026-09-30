@@ -54,11 +54,14 @@ BEGIN_HANDLERS(Song)
     HANDLE_ACTION(pause, Pause())
     HANDLE_EXPR(song_name, mSongName)
     HANDLE(mbt_from_seconds, OnMBTFromSeconds)
+#ifdef HX_NATIVE
+    // DC3-era handlers; RB3-360 retail (and rb3-Wii) go straight to add_section.
     HANDLE_EXPR(
         seconds_from_mbt, GetFrameFromMBT(_msg->Int(2), _msg->Int(3), _msg->Int(4))
     )
     HANDLE(mbt_from_tick, OnMBTFromTick)
     HANDLE_EXPR(tick_from_mbt, GetTickFromMBT(_msg->Int(2), _msg->Int(3), _msg->Int(4)))
+#endif
     HANDLE_ACTION(add_section, AddSection(_msg->Sym(2), _msg->Float(3)))
     HANDLE_SUPERCLASS(RndAnimatable)
     HANDLE_SUPERCLASS(Hmx::Object)
