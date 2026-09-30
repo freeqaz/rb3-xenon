@@ -76,7 +76,7 @@ public:
     virtual void WriteCachedMetadataToStream(BinStream &) const;
     virtual const char *ContentPattern();
     virtual const char *ContentDir();
-    virtual bool HasContentAltDirs() { return !mContentAltDirs.empty(); }
+    virtual bool HasContentAltDirs() { return mContentAltDirs.size() != 0; }
     virtual std::vector<String> *ContentAltDirs() { return &mContentAltDirs; }
 
     void AddSongs(DataArray *songs);
