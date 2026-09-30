@@ -16793,6 +16793,7 @@
  "0x826e4110": "?CanDeployCoda@VocalPlayer@@QBA_NXZ",
  "0x826e4160": "?AutoplaysCoda@VocalPlayer@@UBA_NXZ",
  "0x826e41b0": "?NeedsToOverrideBasePoints@VocalPlayer@@UBA_NXZ",
+ "0x826e4208": "?SongSectionOnly@VocalPlayer@@QBA_NAAM0@Z",
  "0x826e42e0": "?AddAccuracyStat@VocalPlayer@@QAAXH@Z",
  "0x826e42e8": "?AddScoreStreakStat@VocalPlayer@@QAAXM@Z",
  "0x826e42f0": "?AddBandContributionStat@VocalPlayer@@QAAXM@Z",
