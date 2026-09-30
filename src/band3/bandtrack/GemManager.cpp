@@ -123,6 +123,7 @@ void GemManager::DrawTrackMasks(int i1, int i2) {
                 if (TheSongDB->GetCommonPhraseExtent(
                         mTrackConfig.TrackNum(), i3, ext170
                     )) {
+                    static Symbol unison("unison");
                     Symbol nameSym = mGemData->FindArray(unison, false)->Sym(1);
                     TrackWidget *w = GetWidgetByName(nameSym);
                     Transform tf98;
@@ -139,7 +140,7 @@ void GemManager::DrawTrackMasks(int i1, int i2) {
 
     for (; mNextArpeggioPhrase < mArpeggioPhrases.size(); mNextArpeggioPhrase++) {
         ArpeggioPhrase *curPhrase = &mArpeggioPhrases[mNextArpeggioPhrase];
-        if (curPhrase->mEndTick >= i2)
+        if (curPhrase->mEndTick < i2)
             continue;
         if (curPhrase->mStartTick > i1)
             break;
@@ -151,6 +152,7 @@ void GemManager::DrawTrackMasks(int i1, int i2) {
         if (curPhrase->unk10) {
             poolShape->ShowChordShape(false);
         } else {
+            static Symbol arpeggio("arpeggio");
             Symbol nameSym = mGemData->FindArray(arpeggio, false)->Sym(1);
             TrackWidget *w5 = GetWidgetByName(nameSym);
             Transform tfc8;
@@ -158,12 +160,12 @@ void GemManager::DrawTrackMasks(int i1, int i2) {
             tfc8.v.y = f11;
             int i10 = curPhrase->mEndTick;
             if (TheTrainerPanel && TheGame->InTrainer()) {
+                int loopOfs = GetLoopTick(curPhrase->mStartTick)
+                    - TheTrainerPanel->GetCurrentStartTick();
                 i10 = Min(
                     curPhrase->mEndTick,
-                    (curPhrase->mStartTick
-                     - (GetLoopTick(curPhrase->mStartTick)
-                        - TheTrainerPanel->GetCurrentStartTick()))
-                        + TheTrainerPanel->GetLoopTicks(TheTrainerPanel->GetCurrSection())
+                    TheTrainerPanel->GetLoopTicks(TheTrainerPanel->GetCurrSection())
+                        + (curPhrase->mStartTick - loopOfs)
                 );
                 curPhrase->mEndTick = i10;
             }
@@ -179,6 +181,8 @@ void GemManager::DrawTrackMasks(int i1, int i2) {
             Transform tff8;
             mTrackDir->MakeSlotXfm(i180, tff8);
             Symbol s184;
+            static Symbol normal("normal");
+            static Symbol chord_fret("chord_fret");
             if (GetChordWidgetName(normal, chord_fret, s184)) {
                 TrackWidget *w10 = GetWidgetByName(s184);
                 if (w10)
@@ -192,7 +196,8 @@ void GemManager::DrawTrackMasks(int i1, int i2) {
         );
         poolShape->HookupToParentGroup();
         curPhrase->mShape = poolShape;
-        mActiveArpeggios.push_back(curPhrase);
+        ArpeggioPhrase *active = curPhrase;
+        mActiveArpeggios.push_back(active);
     }
 }
 
