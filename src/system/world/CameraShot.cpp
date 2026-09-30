@@ -964,7 +964,10 @@ CamShot::CamShot()
 #endif
       mPath(this), mPathFrame(-1),
       mPlatform(kPlatformNone), mHideList(this), mShowList(this), mGenHideList(this),
-      mParentDir(this), mDrawOverrides(this), mPostProcOverrides(this), mCrowds(this),
+#ifdef HX_NATIVE
+      mParentDir(this),
+#endif
+      mDrawOverrides(this), mPostProcOverrides(this), mCrowds(this),
       mPS3PerPixel(true), mGlowSpot(this), mFlags(0),
       mEndHideList(this), mEndShowList(this), mLastShakeOffset(0, 0, 0),
       mLastShakeAngOffset(0, 0, 0), mLastDesiredShakeOffset(0, 0, 0),
@@ -1001,7 +1004,11 @@ BEGIN_HANDLERS(CamShot)
 END_HANDLERS
 
 WorldDir *CamShot::GetCrowdDir() const {
+#ifdef HX_NATIVE
     ObjectDir *dir = mParentDir.Ptr() ? mParentDir.Ptr() : Dir();
+#else
+    ObjectDir *dir = Dir();
+#endif
     return dynamic_cast<WorldDir *>(dir);
 }
 
@@ -1077,9 +1084,7 @@ BEGIN_SAVES(CamShot)
     bs << mCategory;
     bs << mPlatform;
     bs << mHideList;
-#ifdef HX_NATIVE
     MILO_ASSERT(mGenHideVector.empty(), 0x3CE);
-#endif
     if (bs.Cached()) {
         FOREACH (it, mHideList) {
             mGenHideList.remove(*it);
@@ -1123,9 +1128,7 @@ BEGIN_COPYS(CamShot)
         COPY_MEMBER(mCategory)
         COPY_MEMBER(mHideList)
         COPY_MEMBER(mGenHideList)
-#ifdef HX_NATIVE
         COPY_MEMBER(mGenHideVector)
-#endif
         COPY_MEMBER(mShowList)
         COPY_MEMBER(mLooping)
         COPY_MEMBER(mLoopKeyframe)
@@ -1320,9 +1323,7 @@ BEGIN_LOADS(CamShot)
     if (sCamShotRev >= 8 && sCamShotRev < 42)
         d >> crowdModifyStamp;
     if (sCamShotRev > 5) {
-#ifdef HX_NATIVE
         mGenHideVector.clear();
-#endif
         mGenHideList.clear();
         mHideList.clear();
         if (sCamShotRev <= 0x2F || (bs.Cached() && sCamShotRev < 0x32)) {
@@ -1878,7 +1879,6 @@ void CamShot::DoHide() {
                 CAMERA_LOG("   ** %s hide from mEndShowList\n", cur->Name());
             }
         }
-#ifdef HX_NATIVE
         FOREACH (it, mGenHideVector) {
             RndDrawable *cur = *it;
             if (cur->Showing()) {
@@ -1887,7 +1887,6 @@ void CamShot::DoHide() {
                 mEndShowList.push_back(cur);
             }
         }
-#endif
         FOREACH (it, mShowList) {
             RndDrawable *cur = *it;
             if (!cur->Showing()) {
