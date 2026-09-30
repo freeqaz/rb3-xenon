@@ -105,20 +105,28 @@ Stream *Synth::mDebugStream;
 ADSRImpl *Synth::mADSR;
 String Synth::unka8;
 
-Synth::Synth() : mMuted(false), mMicClientMapper(nullptr) {
-    mTrackLevels = false;
+Synth::Synth()
+    : mMuted(false), mMicClientMapper(nullptr), mMidiInstrumentMgr(nullptr), unk7c(0),
+      unk80(0) {
+    // Retail (0x82700e18) follows the rb3-Wii oracle: no track_levels lookup and
+    // no ADSRImpl; it allocates the MidiInstrumentMgr (0x18) into +0x78 here.
     SetName("synth", ObjectDir::Main());
     DataArray *cfg = SystemConfig("synth");
     cfg->FindData("mics", mNumMics, true);
+#ifdef HX_NATIVE
     cfg->FindData("track_levels", mTrackLevels, false);
+#endif
     mMidiSynth = new MidiSynth();
     gDebugGraphs.push_back(DebugGraph(Hmx::Color(1, 0, 0)));
     gDebugGraphs.push_back(DebugGraph(Hmx::Color(0, 1, 0)));
     gDebugGraphs.push_back(DebugGraph(Hmx::Color(1, 1, 0)));
     gDebugGraphs.push_back(DebugGraph(Hmx::Color(1, 1, 1)));
     mMicClientMapper = new MicClientMapper();
+    mMidiInstrumentMgr = new MidiInstrumentMgr();
     MILO_ASSERT(!TheSynth, 0xC0);
+#ifdef HX_NATIVE
     mADSR = new ADSRImpl();
+#endif
 }
 
 BEGIN_HANDLERS(Synth)
