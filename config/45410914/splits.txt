@@ -599,6 +599,7 @@ BandCharDesc.cpp:
 	.pdata      start:0x821FDE58 end:0x821FE068
 	.pdata      start:0x821FE068 end:0x821FE070
 	.pdata      start:0x821FE070 end:0x821FE078
+	.pdata      start:0x821FE078 end:0x821FE088
 	.pdata      start:0x821FE088 end:0x821FE0B0
 	.pdata      start:0x821FE0B0 end:0x821FE0B8
 	.pdata      start:0x821FE0B8 end:0x821FE0C0
@@ -617,6 +618,7 @@ BandCharDesc.cpp:
 	.text       start:0x82336E58 end:0x82338D1C
 	.text       start:0x82338D20 end:0x82338D9C
 	.text       start:0x82338DA0 end:0x82338E20
+	.text       start:0x82338E20 end:0x82338FD0
 	.text       start:0x82338FD0 end:0x823392B0
 	.text       start:0x823392B0 end:0x823392F4
 	.text       start:0x823392F8 end:0x82339380
@@ -3215,13 +3217,9 @@ SkeletonViz.cpp:
 	.text       start:0x82275260 end:0x82275500
 
 HamCamTransform.cpp:
-	.pdata      start:0x821F4D80 end:0x821F4D90
-	.pdata      start:0x821F4FF8 end:0x821F5000
 	.pdata      start:0x821FEFB0 end:0x821FEFD0
 	.pdata      start:0x821FF018 end:0x821FF030
 	.pdata      start:0x821FF050 end:0x821FF0B8
-	.text       start:0x822A70A0 end:0x822A7250
-	.text       start:0x822A96A8 end:0x822A9718
 	.text       start:0x8234BA70 end:0x8234BCB0
 	.text       start:0x8234C410 end:0x8234C778
 	.text       start:0x8234CAB8 end:0x8234D080
@@ -8161,7 +8159,6 @@ band3/bandtrack/Gem.cpp:
 	.pdata      start:0x821F5298 end:0x821F52A0
 	.pdata      start:0x821F52D0 end:0x821F52E0
 	.pdata      start:0x821F52F0 end:0x821F5380
-	.pdata      start:0x821FE078 end:0x821FE088
 	.pdata      start:0x82205F68 end:0x82205F78
 	.pdata      start:0x8225E2A0 end:0x8225E3F8
 	.pdata      start:0x8225E400 end:0x8225E4E8
@@ -8216,7 +8213,6 @@ band3/bandtrack/Gem.cpp:
 	.text       start:0x822ABC80 end:0x822ABCE0
 	.text       start:0x822ABFB8 end:0x822AC048
 	.text       start:0x822AC110 end:0x822ACA10
-	.text       start:0x82338E20 end:0x82338FD0
 	.text       start:0x823C4A90 end:0x823C4BB8
 	.text       start:0x823C4BC4 end:0x823C4BC8
 	.text       start:0x823CAAFC end:0x823CAB00
@@ -11290,6 +11286,7 @@ OutfitConfig.cpp:
 	.pdata      start:0x821F4D20 end:0x821F4D48
 	.pdata      start:0x821F4D60 end:0x821F4D70
 	.pdata      start:0x821F4D70 end:0x821F4D80
+	.pdata      start:0x821F4D80 end:0x821F4D90
 	.pdata      start:0x821F4D98 end:0x821F4DB0
 	.pdata      start:0x821F4DC8 end:0x821F4DE0
 	.pdata      start:0x821F4E10 end:0x821F4E18
@@ -11301,6 +11298,7 @@ OutfitConfig.cpp:
 	.pdata      start:0x821F4F70 end:0x821F4F80
 	.pdata      start:0x821F4F90 end:0x821F4FE8
 	.pdata      start:0x821F4FF0 end:0x821F4FF8
+	.pdata      start:0x821F4FF8 end:0x821F5000
 	.pdata      start:0x821F5000 end:0x821F5020
 	.pdata      start:0x821F5058 end:0x821F5070
 	.pdata      start:0x821F50A0 end:0x821F50D0
@@ -11358,6 +11356,7 @@ OutfitConfig.cpp:
 	.text       start:0x822A6CE8 end:0x822A6E60
 	.text       start:0x822A6F70 end:0x822A7008
 	.text       start:0x822A7008 end:0x822A70A0
+	.text       start:0x822A70A0 end:0x822A7250
 	.text       start:0x822A72B0 end:0x822A73D0
 	.text       start:0x822A7610 end:0x822A7730
 	.text       start:0x822A7A10 end:0x822A7A68
@@ -11370,6 +11369,7 @@ OutfitConfig.cpp:
 	.text       start:0x822A8ED8 end:0x822A8F78
 	.text       start:0x822A902C end:0x822A95E0
 	.text       start:0x822A9644 end:0x822A96A8
+	.text       start:0x822A96A8 end:0x822A9718
 	.text       start:0x822A9718 end:0x822A9938
 	.text       start:0x822A9BC0 end:0x822A9BC8
 	.text       start:0x822A9C58 end:0x822A9D70
