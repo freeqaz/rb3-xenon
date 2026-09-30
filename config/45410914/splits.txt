@@ -5882,7 +5882,7 @@ system/synth/FxSend.cpp:
 	.text       start:0x827164B0 end:0x82716650
 	.text       start:0x82716650 end:0x82717748
 	.text       start:0x82717748 end:0x82717800
-	.text       start:0x82717800 end:0x82717A28
+	.text       start:0x82717800 end:0x827178F0
 
 WebSvcMgr.cpp:
 	.text       start:0x827187F0 end:0x827187F4
@@ -7332,7 +7332,6 @@ DrivenPropertyEntry.cpp:
 	.text       start:0x822CE258 end:0x822CE3F4
 	.text       start:0x822CECE0 end:0x822CED50
 	.text       start:0x822CEDA0 end:0x822CEEE8
-	.text       start:0x82781548 end:0x827815E4
 	.text       start:0x82781654 end:0x82781660
 
 HamIKSkeleton.cpp:
@@ -11436,6 +11435,7 @@ VocalNoteList.cpp:
 	.text       start:0x82780E80 end:0x827810F4
 	.text       start:0x827810F8 end:0x82781160
 	.text       start:0x827812F8 end:0x82781548
+	.text       start:0x82781548 end:0x827815E4
 	.text       start:0x827815E4 end:0x82781654
 	.text       start:0x82781660 end:0x82781A74
 	.text       start:0x82781A78 end:0x82782958
@@ -12590,6 +12590,7 @@ system/synth/VoiceBeat.cpp:
 	.pdata      start:0x82238FB8 end:0x82238FC0
 	.pdata      start:0x82238FC0 end:0x82238FD0
 	.pdata      start:0x82238FD0 end:0x82238FE0
+	.text       start:0x827178F0 end:0x82717A28
 	.text       start:0x82717A28 end:0x82717CC0
 	.text       start:0x82717CC0 end:0x827182B8
 	.text       start:0x827182B8 end:0x827183CC
