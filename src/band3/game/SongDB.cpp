@@ -663,10 +663,9 @@ void SongDB::ChangeDifficulty(int i, Difficulty diff) {
 
 void SongDB::GetBandFailCue(String &str) const {
     Symbol song = MetaPerformer::Current()->Song();
-    BandSongMetadata *data = (BandSongMetadata *)TheSongMgr.Data(
-        TheSongMgr.GetSongIDFromShortName(song, true)
-    );
-    str = data->BandFailCue().Str();
+    int songID = TheSongMgr.GetSongIDFromShortName(song, true);
+    BandSongMetadata *data = (BandSongMetadata *)TheSongMgr.Data(songID);
+    str = data->BandFailCue();
 }
 
 void SongDB::SetTrainerGems(int i, int j) {

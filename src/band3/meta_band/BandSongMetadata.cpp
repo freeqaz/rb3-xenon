@@ -345,7 +345,7 @@ const char *BandSongMetadata::VocalPercussionBank() const {
 const char *BandSongMetadata::DrumKitBank() const { return mDrumKitBank.c_str(); }
 bool BandSongMetadata::HasAlbumArt() const { return mHasAlbumArt; }
 bool BandSongMetadata::IsMasterRecording() const { return mIsMasterRecording; }
-Symbol BandSongMetadata::BandFailCue() const { return mBandFailCue.c_str(); }
+const char *BandSongMetadata::BandFailCue() const { return mBandFailCue.c_str(); }
 
 int BandSongMetadata::RealGuitarTuning(int i) const {
     SongUpgradeData *data = mSongMgr->GetUpgradeData(ID());
