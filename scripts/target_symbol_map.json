@@ -544,6 +544,7 @@
  "0x82273350": "??1CXLrcTransport@@QAA@XZ",
  "0x822733b8": "?PhysicalFreeTracked@@YAXPAXPBDH1@Z",
  "0x82273410": "?PhysicalUsage@@YAHXZ",
+ "0x82273420": "?PhysicalAlloc@@YAPAXH@Z",
  "0x822734b8": "??1PhysMemTypeTracker@@QAA@XZ",
  "0x822734d8": "??2Node@?$ObjPtrList@VRndGroup@@VObjectDir@@@@SAPAXI@Z",
  "0x82273580": "?CamOverride@RndDrawable@@UAAPAVRndCam@@XZ",

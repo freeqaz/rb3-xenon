@@ -410,16 +410,25 @@ PhysMemTypeTracker::~PhysMemTypeTracker() {
     }
 }
 
+// Retail 0x82273420 (80 bytes), reached only from MemAlloc's `heap == -2`
+// branch (fn_827BCD38: `cmpwi r11,-2` -> `mr r3,size; bl 0x82273420`), is
+// XPhysicalAlloc(size, -1, 0, 4) -> XPhysicalSize(ptr) -> gPhysicalUsage +=,
+// with NO null test and no MemAllocFailed call: the dev-build failure branch
+// was never compiled into retail. Callee identities come from the named
+// neighbours in the same TU: fn_8283C8D8 has PhysicalAllocTracked's
+// (-1, 0, align) argument shape, and fn_8283C960 feeds PhysicalFree's
+// `gPhysicalUsage -=`. The failure branch is kept for the native build only.
 void *PhysicalAlloc(int size) {
     void *ptr = XPhysicalAlloc(size, -1, 0, 4);
-    if (ptr) {
-        auto _tmp0 = XPhysicalSize(ptr);
-        gPhysicalUsage += _tmp0;
-    } else {
+#ifdef HX_NATIVE
+    if (!ptr) {
         if (size != 0) {
             MemAllocFailed(size, true);
         }
+        return ptr;
     }
+#endif
+    gPhysicalUsage += XPhysicalSize(ptr);
     return ptr;
 }
 
