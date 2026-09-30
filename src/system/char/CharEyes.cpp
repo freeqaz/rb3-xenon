@@ -1546,10 +1546,16 @@ DataNode CharEyes::OnAddInterest(DataArray *arr) {
 // structurally incompatible prologue (91.3% -> 57.8%). AT_LIMIT.
 // Native build: NormalizeScale is provided inline in src/system/math/Vec.h.
 
-// laneO-wrongunit scatter-include (CharEyes <- char/CharClipGroup.cpp): retail
-// emitted ObjVector<ObjOwnerPtr<CharClip>>::resize/push_back at 0x82390110 /
-// 0x82390290, inside CharEyes' .text span (CharClipGroup::Sort is at 0x8238fee8,
-// already inside it too).
+// scatter-include (CharEyes <- char/CharClipGroup.cpp). Its original reason is
+// gone: W17-CCG re-homed 0x8238FB88-0x82390368 (Sort, the ObjOwnerPtr<CharClip>
+// vector resize/push_back, ...) to CharClipGroup, whose own obj defines them.
+// It is still load-bearing, measured (W17-CCG2, ab_measure, name_check):
+// removing it costs -1 fn / -140 B, because HamCamTransform.cpp scatter-includes
+// THIS file, and through it CharClipGroup.cpp supplies two retail rows in
+// HamCamTransform's span -- operator<<(BinStream&, vector<ObjOwnerPtr<CharClip>>)
+// at 0x8229e3c0 (100 -> 0) and its _M_fill_insert_aux at 0x822a70a0
+// (94.4 -> 0) -- plus three CharEyes EH funclets drift (fn_8238B0F8 fuzzy
+// 100 -> 99.5). Moving the include to HamCamTransform.cpp was not measured.
 // ⚠ NATIVE: guarded so char/CharClipGroup.cpp is compiled STANDALONE.
 // cmake/ScatterIncludes.cmake classifies this edge as CONDITIONAL (it warns
 // about it at configure time) even though the preprocessor nesting depth here
