@@ -65,7 +65,7 @@ BEGIN_COPYS(RndMorph)
     COPY_MEMBER_FROM(f, mIntensity)
 END_COPYS
 
-BinStreamRev &operator>>(BinStreamRev &bs, RndMorph::Pose &pose) {
+BinStream &operator>>(BinStream &bs, RndMorph::Pose &pose) {
     bs >> pose.mesh;
     if (sMorphRev < 2) {
         Keys<Weight, Weight> weightKeys;
@@ -85,22 +85,23 @@ BinStreamRev &operator>>(BinStreamRev &bs, RndMorph::Pose &pose) {
     return bs;
 }
 
-INIT_REVS(4, 0)
-
+// Retail RndMorph::Load (0x82484E58) reads the revision word whole into
+// sMorphRev (`bs >> sMorphRev`: the read targets the static itself, then
+// lwz/cmpwi) and passes the raw stream to every read; the Pose reader reads
+// sMorphRev as its own symbol. No rev wrapper exists (band.exe has no
+// `.?AVBinStreamRev@@` descriptor).
 BEGIN_LOADS(RndMorph)
-    LOAD_REVS(bs)
-    sMorphRev = d.rev;
-    ASSERT_REVS(4, 0)
-    if (d.rev > 3) {
-        LOAD_SUPERCLASS(Hmx::Object)
+    bs >> sMorphRev;
+    if (sMorphRev > 3) {
+        Hmx::Object::Load(bs);
     }
-    LOAD_SUPERCLASS(RndAnimatable)
-    d >> mPoses >> mTarget;
-    if (d.rev > 0) {
-        d >> mNormals >> mSpline;
+    RndAnimatable::Load(bs);
+    bs >> mPoses >> mTarget;
+    if (sMorphRev > 0) {
+        bs >> mNormals >> mSpline;
     }
-    if (d.rev > 2) {
-        d >> mIntensity;
+    if (sMorphRev > 2) {
+        bs >> mIntensity;
     }
 END_LOADS
 
