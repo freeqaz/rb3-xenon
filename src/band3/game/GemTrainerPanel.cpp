@@ -70,23 +70,41 @@ void GemTrainerPanel::Enter() {
     if (mLocalUser) {
         mDifficulty = mLocalUser->GetDifficulty();
     }
+    // Retail fn_826AC9F0 (TU5): the gem-manager / gem-list / tab setup the
+    // Wii dev build did lazily in Poll() is done here up front.
+    if (mTrack) {
+        mGemManager = mTrack->GetGemManager();
+    }
+    if (mGemPlayer) {
+        for (int i = 0; i < 4; i++) {
+            mGameGemLists[i] =
+                (GameGemList *)TheSongDB->GetGemListByDiff(mGemPlayer->GetTrackNum(), i);
+            mSongGems[i] = mGameGemLists[i]->mGems;
+        }
+    }
 
     Message resetScoreMsg("reset_score");
     Handle(resetScoreMsg, true);
 
     TrainerPanel::Enter();
-    Sfx *hiSfx = DataDir()->Find<Sfx>("metronome_hi.cue", true);
-    Sfx *loSfx = DataDir()->Find<Sfx>("metronome_lo.cue", true);
-    mMetronome->Enter(hiSfx, loSfx);
+    if (mTrack) {
+        mTab->Init(
+            DataDir()->Find<RndDir>("gem_preview", true),
+            SymToTrackType(mTrack->GetType())
+        );
+    }
+    mMetronome->Enter(
+        DataDir()->Find<Sfx>("metronome_hi.cue", true),
+        DataDir()->Find<Sfx>("metronome_lo.cue", true)
+    );
 
     mDrawTab = false;
     unkc9 = 0;
     unkcc = -1;
     if (mGemPlayer) {
         Symbol mpsong = MetaPerformer::Current()->Song();
-        BandSongMetadata *data = (BandSongMetadata *)TheSongMgr.Data(
-            TheSongMgr.GetSongIDFromShortName(mpsong, true)
-        );
+        int songID = TheSongMgr.GetSongIDFromShortName(mpsong, true);
+        BandSongMetadata *data = (BandSongMetadata *)TheSongMgr.Data(songID);
         int key = data->SongKey();
         int tone = data->SongTonality();
         if (key >= 0) {
@@ -99,8 +117,10 @@ void GemTrainerPanel::Enter() {
                 Handle(msg, true);
             }
         } else {
+            static Message hide_key_msg("hide_key");
             Handle(hide_key_msg, true);
         }
+        static Symbol song_name("song_name");
         SendDataPoint("trainers/song_name", song_name, mpsong);
     }
 }
@@ -196,6 +216,7 @@ void GemTrainerPanel::HandleLooping() {
     else {
         int tick = GetTick();
         if (GetCurrSection() >= 0 && ShouldLoop(tick) != 0) {
+            static Message score_msg("score");
             Handle(score_msg, true);
             if (mAddBeatMask) {
                 AddBeatMask(mWriteTick + GetLoopTicks(GetCurrSection()));

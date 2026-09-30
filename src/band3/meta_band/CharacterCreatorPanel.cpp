@@ -564,7 +564,10 @@ void CharacterCreatorPanel::ModifyFeature(Symbol s, float f) {
     }
 }
 
-void CharacterCreatorPanel::SetProviders() { Handle(set_providers_msg, true); }
+void CharacterCreatorPanel::SetProviders() {
+    static Message set_providers_msg("set_providers");
+    Handle(set_providers_msg, true);
+}
 
 void CharacterCreatorPanel::UpdateNameLabel() {
     if (mCharacter) {
@@ -576,9 +579,13 @@ void CharacterCreatorPanel::UpdateNameLabel() {
     }
 }
 
-void CharacterCreatorPanel::UpdateOutfitList() { Handle(update_outfit_list_msg, true); }
+void CharacterCreatorPanel::UpdateOutfitList() {
+    static Message update_outfit_list_msg("update_outfit_list");
+    Handle(update_outfit_list_msg, true);
+}
 
 void CharacterCreatorPanel::RefreshFaceOptionsList() {
+    static Message refresh_face_options_list_msg("refresh_face_options_list");
     Handle(refresh_face_options_list_msg, true);
 }
 

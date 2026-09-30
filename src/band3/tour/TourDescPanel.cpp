@@ -587,6 +587,7 @@ void TourDescPanel::Unload() {
 Symbol TourDescPanel::GetSelectedTourDesc(UIComponent *) {
     if (GetState() != kUp)
         return Symbol("");
+    static Message get_selected_tourdesc_index_msg("get_selected_tourdesc_index");
     DataNode handled = Handle(get_selected_tourdesc_index_msg, true);
     int index = handled.Int();
     if (m_pTourDescProvider->NumData() > 0)
@@ -595,10 +596,13 @@ Symbol TourDescPanel::GetSelectedTourDesc(UIComponent *) {
 }
 
 Symbol TourDescPanel::GetInitiallySelectedTour() {
-    return Handle(get_initially_selected_tour_msg, true).Sym();
+    static Message get_initially_selected_tour_msg("get_initially_selected_tour");
+    DataNode handled = Handle(get_initially_selected_tour_msg, true);
+    return handled.Sym();
 }
 
 void TourDescPanel::ClearInitiallySelectedTour() {
+    static Message clear_initially_selected_tour_msg("clear_initially_selected_tour");
     Handle(clear_initially_selected_tour_msg, true);
 }
 

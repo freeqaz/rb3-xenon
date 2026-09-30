@@ -229,6 +229,10 @@ DataNode SetlistMergePanel::OnMsg(const LockStepStartMsg &) {
 
 DataNode SetlistMergePanel::OnMsg(const LockStepCompleteMsg &msg) {
     if (msg->Int(2)) {
+        // Retail fn_826340C0: a static Symbol (guard bit 1) feeding a static
+        // Message (guard bit 2 + atexit).
+        static Symbol move_on("move_on");
+        static Message move_on_msg(move_on);
         HandleType(move_on_msg);
     }
     return 1;

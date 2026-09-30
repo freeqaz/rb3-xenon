@@ -861,25 +861,32 @@ void GemPlayer::FilteredWhammyBar(float val) {
             int phraseID = TheSongDB->GetPhraseID(mTrackNum, note->unk_0x4);
             if (phraseID != -1
                 && !mCommonPhraseCapturer->DidTrackFail(phraseID, mTrackNum)) {
-                float ms = PollMs();
-                float denominator = ms - unk35c;
+                // Retail fn_826C17D8 evaluates the numerator (val - unk358)
+                // BEFORE the PollMs() call, so it is the left operand here.
+                float speed = std::fabs((val - unk358) / (PollMs() - unk35c));
                 bool movingFast = false;
-                if (std::fabs((val - unk358) / denominator) > mWhammySpeedThreshold) {
+                if (speed > mWhammySpeedThreshold) {
                     movingFast = true;
                     mLastTimeWhammyVelWasHigh = PollMs();
                 }
                 bool active = movingFast
                     || ((PollMs() - mLastTimeWhammyVelWasHigh) < mWhammySpeedTimeout);
                 active &= TheGame->mProperties.mEnableWhammy;
+                // Retail builds three FUNCTION-LOCAL statics here (one guard
+                // word, bits 1/2/4, each with its own atexit), not the
+                // Messages4.h globals the Wii dev build used.
                 if (active && !unk348) {
+                    static Message whammy_start_msg("whammy_start");
                     Handle(whammy_start_msg, false);
                 } else if (!active && unk348) {
+                    static Message whammy_end_msg("whammy_end");
                     Handle(whammy_end_msg, false);
                 }
                 unk348 = active;
             }
         } else if (unk348) {
             unk348 = false;
+            static Message whammy_end_msg("whammy_end");
             Handle(whammy_end_msg, false);
         }
         SendWhammyBar(val);
@@ -889,19 +896,26 @@ void GemPlayer::FilteredWhammyBar(float val) {
 }
 
 void GemPlayer::SwingAtHopo(int, float, int) {
+    // Retail fn_826BFD30: function-local static (guard + atexit), not the global.
+    static Message swingAtHopo_msg("swingAtHopo");
     HandleType(swingAtHopo_msg);
-    mStats.mHopoGemCount++;
+    // retail materializes &mStats (subi rX, this, 0x2f0) before the bump
+    Stats *stats = &mStats;
+    stats->mHopoGemCount++;
 }
 
 void GemPlayer::Hopo(int i1, float ms, int gem_id) {
     if (!mGemStatus->Get0x40(gem_id)) {
+        // Retail fn_826BFE00: function-local static (guard + atexit).
+        static Message hopo_msg("hopo");
         Export(hopo_msg, true);
         const GameGemList *gemList = TheSongDB->GetGemList(mTrackNum);
         const GameGem &gem = gemList->GetGem(gem_id);
         if (gem.GetForceStrum()) {
             mGemStatus->SetHopoed(gem_id);
             mStats.mHopoGemsHopoed++;
-            mStats.mHopoGemCount++;
+            Stats *stats = &mStats;
+            stats->mHopoGemCount++;
         }
     }
 }
@@ -2500,39 +2514,54 @@ bool GemPlayer::IsCodaMiss(float ms) {
 }
 
 void GemPlayer::CheckSolo(float ms) {
-    int startTick;
+    // Retail fn_826C1E28 (TU5-era, absent from the rb3-Wii oracle): when a
+    // solo phrase is newly entered, it is only treated as started if the next
+    // gem at/after (ms + mSyncOffset) still lies before the phrase's end tick.
+    // endTick is declared first: retail keeps it at the lower stack slot.
     int endTick;
-    int inSolo;
-    unsigned inSoloBool;
-    float tickF;
-    if (!mQuarantined && TheGame->mProperties.mCanSolo &&
-        (tickF = MsToTick(ms),
-         startTick = 0,
-         inSolo = (int)tickF, endTick = 0,
-         inSolo = GetPhraseExtents(kSoloPhrase, mTrackNum, inSolo, startTick, endTick),
-         inSolo = TheGame->mProperties.mCanSolo & inSolo,
-         inSoloBool = (unsigned)(-inSolo | inSolo) >> 31U,
-         (inSoloBool != (((unsigned)unk310 >> 31U) ^ 1U)))) {
-        if (inSoloBool) {
-            if (mEnabledState != kPlayerEnabled) {
-                unk314 = true;
-            } else if (IsLocal() && !unk315) {
-                unk404 = -1;
-                LocalSoloStart();
-                HandleType(send_solo_start_msg);
+    int startTick;
+    if (!mQuarantined && TheGame->mProperties.mCanSolo) {
+        float tickF = MsToTick(ms);
+        startTick = 0;
+        endTick = 0;
+        bool inSolo = GetPhraseExtents(kSoloPhrase, mTrackNum, (int)tickF, startTick, endTick)
+            & TheGame->mProperties.mCanSolo;
+        bool wasInSolo = !((int)unk310 < 0);
+        if (inSolo && !wasInSolo) {
+            int idx = TheSongDB->GetGemList(mTrackNum)->ClosestMarkerIdxAtOrAfter(
+                mSyncOffset + ms
+            );
+            if (idx != -1) {
+                // Residual (98.4): retail if-converts this to a 0/-1 mask
+                // (xoris/subf/addc/subfe); no spelling tried reproduces it
+                // (&=, &&, `if (...) inSolo = false`, either operand order).
+                if (endTick <= TheSongDB->GetGem(mTrackNum, idx).GetTick())
+                    inSolo = false;
             }
-            unk315 = true;
-            mStats.SetHasSolos(true);
-            unk310 = startTick;
-            return;
         }
-        if (unk316) {
-            if (!unk314) {
-                SoloEnd();
+        if (inSolo != wasInSolo) {
+            if (inSolo) {
+                if (mEnabledState != kPlayerEnabled) {
+                    unk314 = true;
+                } else if (IsLocal() && !unk315) {
+                    unk404 = -1;
+                    LocalSoloStart();
+                    static Message send_solo_start_msg("send_solo_start");
+                    HandleType(send_solo_start_msg);
+                }
+                unk315 = true;
+                mStats.SetHasSolos(true);
+                unk310 = startTick;
+                return;
             }
-            unk314 = false;
-            unk315 = false;
-            unk310 = -1U;
+            if (unk316) {
+                if (!unk314) {
+                    SoloEnd();
+                }
+                unk314 = false;
+                unk315 = false;
+                unk310 = -1U;
+            }
         }
     }
 }
