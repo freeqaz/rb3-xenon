@@ -224,12 +224,8 @@ Symbol TourProgress::GetSetlistTypeForCurrentGig(int i) const {
 
 int TourProgress::GetNumSongsForCurrentGig() const {
     TourDesc *pTourDesc = TheTour->GetTourDesc(m_symTourDesc);
-    if (!pTourDesc)
-        return 0;
-    else {
-        MILO_ASSERT(pTourDesc, 0x15D);
-        return pTourDesc->GetNumSongsForGigNum(mCurrentGigNum);
-    }
+    MILO_ASSERT(pTourDesc, 0x15D);
+    return pTourDesc->GetNumSongsForGigNum(mCurrentGigNum);
 }
 
 Symbol TourProgress::GetVenueForCurrentGig() const {
