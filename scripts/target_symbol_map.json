@@ -10295,7 +10295,7 @@
  "0x8250d238": "??0EntityUploader@@QAA@XZ",
  "0x8250d2a8": "?BuildStringCheckOp@EntityUploader@@QAAHAAPAPAVEntityData@@PBDHPAVTourSavable@@@Z",
  "0x8250d398": "?BuildUpdateCharOp@EntityUploader@@QAAHAAPAPAVEntityData@@PAVTourCharLocal@@@Z",
- "0x8250d4c0": "?ClearSteps@PracticeSection@@QAAXXZ",
+ "0x8250d4c0": "?RecordSubmissionTime@EntityUploader@@QAAXXZ",
  "0x8250d588": "?Init@EntityUploader@@UAAXXZ",
  "0x8250d640": "?BuildUpdateSetlistOp@EntityUploader@@QAAHAAPAPAVEntityData@@PAVLocalSavedSetlist@@@Z",
  "0x8250d748": "?BeginRockCentralOps@EntityUploader@@QAAHH@Z",

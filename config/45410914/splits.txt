@@ -137,10 +137,8 @@ ContextWrapper.cpp:
 	.text       start:0x8250C1C8 end:0x8250C808
 
 EntityUploader.cpp:
-	.pdata      start:0x82217AB8 end:0x82217B08
-	.pdata      start:0x82217B08 end:0x82217CC8
-	.text       start:0x8250D0D8 end:0x8250D4C0
-	.text       start:0x8250D4C8 end:0x8250F4E0
+	.pdata      start:0x82217AB8 end:0x82217CC8
+	.text       start:0x8250D0D8 end:0x8250F4E0
 
 band3/net_band/DataResults.cpp:
 	.pdata      start:0x82217808 end:0x82217970
@@ -4713,7 +4711,6 @@ HamIKEffector.cpp:
 PracticeSection.cpp:
 	.pdata      start:0x821FEC20 end:0x821FEC30
 	.text       start:0x82346E48 end:0x82346EB8
-	.text       start:0x8250D4C0 end:0x8250D4C8
 
 RhythmBattle.cpp:
 	.pdata      start:0x8221FE60 end:0x8221FE70
