@@ -36,7 +36,7 @@ public:
     const char *DrumKitBank() const;
     bool HasAlbumArt() const;
     bool IsMasterRecording() const;
-    Symbol BandFailCue() const;
+    const char *BandFailCue() const;
     int RealGuitarTuning(int) const;
     int RealBassTuning(int) const;
     Symbol Decade() const;

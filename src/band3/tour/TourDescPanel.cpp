@@ -98,6 +98,7 @@ public:
     ComponentStateOverride(int, int, UIComponent::State) const;
 
     inline bool IsTourDescAvailable(Symbol) const;
+    RndMat *FindMat(const String &) const;
     inline void UpdateList();
 
     std::vector<DynamicTex *> *mTexs; // 0x20
@@ -246,91 +247,103 @@ void TourDescProvider::UpdateExtendedCustom(int, int iData, Hmx::Object *i_pObj)
     MILO_ASSERT(pTourDesc, 0x168);
     TourProgress *pProgress = TheTour->GetTourProgress();
     MILO_ASSERT(pProgress, 0x16B);
-    const char *pName = i_pObj->Name();
-    if (strcmp(pName, "total.sd") == 0) {
+    if (streq(i_pObj->Name(), "total.sd")) {
         StarDisplay *pStarDisplay = dynamic_cast<StarDisplay *>(i_pObj);
         MILO_ASSERT(pStarDisplay, 0x170);
-        if (pProgress->GetToursPlayed(s) == 0)
+        bool bPlayed = pProgress->GetToursPlayed(s) > 0;
+        if (!bPlayed)
             pProgress->GetTourMostStars(s);
         int iStars = pProgress->GetTourMostStars(s);
         pStarDisplay->SetValues(iStars, iStars);
         pStarDisplay->SetShowDenominator(false);
         pStarDisplay->SetForceMixedMode(true);
-    } else if (TheTour && strcmp(pName, "bronze.pic") == 0) {
+    } else if (streq(i_pObj->Name(), "bronze.pic")) {
         UIPicture *pPicture = dynamic_cast<UIPicture *>(i_pObj);
         MILO_ASSERT(pPicture, 0x184);
         if (TheTour->HasBronzeMedal(s)) {
-            Accomplishment *pGoal =
-                TheAccomplishmentMgr->GetAccomplishment(pTourDesc->GetTourBronzeGoal());
+            Symbol goal = pTourDesc->GetTourBronzeGoal();
+            Accomplishment *pGoal = TheAccomplishmentMgr->GetAccomplishment(goal);
             MILO_ASSERT(pGoal, 0x18B);
-            pPicture->SetTex(FilePath(pGoal->GetIconArt()));
+            FilePath path(pGoal->GetIconArt());
+            pPicture->SetTex(path);
         } else {
-            pPicture->SetTex(FilePath(""));
+            FilePath path("");
+            pPicture->SetTex(path);
         }
-    } else if (strcmp(pName, "bronze_unearned.pic") == 0) {
+    } else if (streq(i_pObj->Name(), "bronze_unearned.pic")) {
         UIPicture *pPicture = dynamic_cast<UIPicture *>(i_pObj);
         MILO_ASSERT(pPicture, 0x197);
         if (!TheTour->HasBronzeMedal(s)) {
-            Accomplishment *pGoal =
-                TheAccomplishmentMgr->GetAccomplishment(pTourDesc->GetTourBronzeGoal());
+            Symbol goal = pTourDesc->GetTourBronzeGoal();
+            Accomplishment *pGoal = TheAccomplishmentMgr->GetAccomplishment(goal);
             MILO_ASSERT(pGoal, 0x19E);
-            pPicture->SetTex(FilePath(pGoal->GetIconArt()));
+            FilePath path(pGoal->GetIconArt());
+            pPicture->SetTex(path);
         } else {
-            pPicture->SetTex(FilePath(""));
+            FilePath path("");
+            pPicture->SetTex(path);
         }
-    } else if (strcmp(pName, "silver.pic") == 0) {
+    } else if (streq(i_pObj->Name(), "silver.pic")) {
         UIPicture *pPicture = dynamic_cast<UIPicture *>(i_pObj);
         MILO_ASSERT(pPicture, 0x1AA);
         if (TheTour->HasSilverMedal(s)) {
-            Accomplishment *pGoal =
-                TheAccomplishmentMgr->GetAccomplishment(pTourDesc->GetTourSilverGoal());
+            Symbol goal = pTourDesc->GetTourSilverGoal();
+            Accomplishment *pGoal = TheAccomplishmentMgr->GetAccomplishment(goal);
             MILO_ASSERT(pGoal, 0x1B1);
-            pPicture->SetTex(FilePath(pGoal->GetIconArt()));
+            FilePath path(pGoal->GetIconArt());
+            pPicture->SetTex(path);
         } else {
-            pPicture->SetTex(FilePath(""));
+            FilePath path("");
+            pPicture->SetTex(path);
         }
-    } else if (strcmp(pName, "silver_unearned.pic") == 0) {
+    } else if (streq(i_pObj->Name(), "silver_unearned.pic")) {
         UIPicture *pPicture = dynamic_cast<UIPicture *>(i_pObj);
         MILO_ASSERT(pPicture, 0x1BD);
         if (!TheTour->HasSilverMedal(s)) {
-            Accomplishment *pGoal =
-                TheAccomplishmentMgr->GetAccomplishment(pTourDesc->GetTourSilverGoal());
+            Symbol goal = pTourDesc->GetTourSilverGoal();
+            Accomplishment *pGoal = TheAccomplishmentMgr->GetAccomplishment(goal);
             MILO_ASSERT(pGoal, 0x1C4);
-            pPicture->SetTex(FilePath(pGoal->GetIconArt()));
+            FilePath path(pGoal->GetIconArt());
+            pPicture->SetTex(path);
         } else {
-            pPicture->SetTex(FilePath(""));
+            FilePath path("");
+            pPicture->SetTex(path);
         }
-    } else if (strcmp(pName, "gold.pic") == 0) {
+    } else if (streq(i_pObj->Name(), "gold.pic")) {
         UIPicture *pPicture = dynamic_cast<UIPicture *>(i_pObj);
         MILO_ASSERT(pPicture, 0x1D0);
         if (TheTour->HasGoldMedal(s)) {
-            Accomplishment *pGoal =
-                TheAccomplishmentMgr->GetAccomplishment(pTourDesc->GetTourGoldGoal());
+            Symbol goal = pTourDesc->GetTourGoldGoal();
+            Accomplishment *pGoal = TheAccomplishmentMgr->GetAccomplishment(goal);
             MILO_ASSERT(pGoal, 0x1D7);
-            pPicture->SetTex(FilePath(pGoal->GetIconArt()));
+            FilePath path(pGoal->GetIconArt());
+            pPicture->SetTex(path);
         } else {
-            pPicture->SetTex(FilePath(""));
+            FilePath path("");
+            pPicture->SetTex(path);
         }
-    } else if (strcmp(pName, "gold_unearned.pic") == 0) {
+    } else if (streq(i_pObj->Name(), "gold_unearned.pic")) {
         UIPicture *pPicture = dynamic_cast<UIPicture *>(i_pObj);
         MILO_ASSERT(pPicture, 0x1E3);
         if (!TheTour->HasGoldMedal(s)) {
-            Accomplishment *pGoal =
-                TheAccomplishmentMgr->GetAccomplishment(pTourDesc->GetTourGoldGoal());
+            Symbol goal = pTourDesc->GetTourGoldGoal();
+            Accomplishment *pGoal = TheAccomplishmentMgr->GetAccomplishment(goal);
             MILO_ASSERT(pGoal, 0x1EA);
-            pPicture->SetTex(FilePath(pGoal->GetIconArt()));
+            FilePath path(pGoal->GetIconArt());
+            pPicture->SetTex(path);
         } else {
-            pPicture->SetTex(FilePath(""));
+            FilePath path("");
+            pPicture->SetTex(path);
         }
-    } else if (strcmp(pName, "bronze_prize_overlay.mesh") == 0) {
+    } else if (streq(i_pObj->Name(), "bronze_prize_overlay.mesh")) {
         RndMesh *pMesh = dynamic_cast<RndMesh *>(i_pObj);
         MILO_ASSERT(pMesh, 0x1F6);
         pMesh->SetShowing(TheTour->HasBronzeMedal(s));
-    } else if (strcmp(pName, "silver_prize_overlay.mesh") == 0) {
+    } else if (streq(i_pObj->Name(), "silver_prize_overlay.mesh")) {
         RndMesh *pMesh = dynamic_cast<RndMesh *>(i_pObj);
         MILO_ASSERT(pMesh, 0x1FD);
         pMesh->SetShowing(TheTour->HasSilverMedal(s));
-    } else if (strcmp(pName, "gold_prize_overlay.mesh") == 0) {
+    } else if (streq(i_pObj->Name(), "gold_prize_overlay.mesh")) {
         RndMesh *pMesh = dynamic_cast<RndMesh *>(i_pObj);
         MILO_ASSERT(pMesh, 0x204);
         pMesh->SetShowing(TheTour->HasGoldMedal(s));
@@ -389,12 +402,19 @@ void TourDescProvider::UpdateExtendedText(int, int iData, UILabel *i_pLabel) con
     }
 }
 
+// W16-HX: retail keeps this lookup out of line (fn_82B7DC18, called 4x from Mat)
+RndMat *TourDescProvider::FindMat(const String &name) const {
+    std::vector<DynamicTex *>::iterator it = std::find(mTexs->begin(), mTexs->end(), name);
+    RndMat *pMat = (it != mTexs->end()) ? (*it)->mMat : (RndMat *)0;
+    return pMat;
+}
+
 RndMat *TourDescProvider::Mat(int, int iData, UIListMesh *i_pSlot) const {
     MILO_ASSERT(iData < NumData(), 0xAD);
     Symbol s = DataSymbol(iData);
     TourProgress *pProgress = TheTour->GetTourProgress();
     MILO_ASSERT(pProgress, 0xB2);
-    bool bSelected = pProgress->GetTourDesc() == s;
+    bool bSelected = s == pProgress->GetTourDesc();
     bool bPlayed = pProgress->GetToursPlayed(s) > 0;
     bPlayed = bPlayed || pProgress->GetTourMostStars(s) > 0;
     (void)bPlayed;
@@ -402,10 +422,7 @@ RndMat *TourDescProvider::Mat(int, int iData, UIListMesh *i_pSlot) const {
         if (!bSelected) {
             if (TheTour->HasBronzeMedal(s)) {
                 String str("tourprize_bronze");
-                std::vector<DynamicTex *>::iterator it =
-                    std::find(mTexs->begin(), mTexs->end(), str);
-                RndMat *pMat = (it != mTexs->end()) ? (*it)->mMat : (RndMat *)0;
-                return pMat;
+                return FindMat(str);
             }
         }
         return 0;
@@ -414,10 +431,7 @@ RndMat *TourDescProvider::Mat(int, int iData, UIListMesh *i_pSlot) const {
         if (!bSelected) {
             if (TheTour->HasSilverMedal(s)) {
                 String str("tourprize_silver");
-                std::vector<DynamicTex *>::iterator it =
-                    std::find(mTexs->begin(), mTexs->end(), str);
-                RndMat *pMat = (it != mTexs->end()) ? (*it)->mMat : (RndMat *)0;
-                return pMat;
+                return FindMat(str);
             }
         }
         return 0;
@@ -426,10 +440,7 @@ RndMat *TourDescProvider::Mat(int, int iData, UIListMesh *i_pSlot) const {
         if (!bSelected) {
             if (TheTour->HasGoldMedal(s)) {
                 String str("tourprize_gold");
-                std::vector<DynamicTex *>::iterator it =
-                    std::find(mTexs->begin(), mTexs->end(), str);
-                RndMat *pMat = (it != mTexs->end()) ? (*it)->mMat : (RndMat *)0;
-                return pMat;
+                return FindMat(str);
             }
         }
         return 0;
@@ -442,11 +453,9 @@ RndMat *TourDescProvider::Mat(int, int iData, UIListMesh *i_pSlot) const {
     if (i_pSlot->Matches("vehicle")) {
         TourDesc *pTourDesc = TheTour->GetTourDesc(s);
         MILO_ASSERT(pTourDesc, 0xF3);
-        String str(pTourDesc->GetRequiredCampaignLevel().Str());
-        std::vector<DynamicTex *>::iterator it =
-            std::find(mTexs->begin(), mTexs->end(), str);
-        RndMat *pMat = (it != mTexs->end()) ? (*it)->mMat : (RndMat *)0;
-        return pMat;
+        Symbol level = pTourDesc->GetRequiredCampaignLevel();
+        String str(level.Str());
+        return FindMat(str);
     }
     return i_pSlot->DefaultMat();
 }

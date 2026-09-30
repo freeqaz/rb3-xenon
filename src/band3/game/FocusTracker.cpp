@@ -27,7 +27,9 @@ FocusTracker::FocusTracker(
 FocusTracker::~FocusTracker() {}
 
 void FocusTracker::ConfigureTrackerSpecificData(const DataArray *arr) {
+    static Symbol focus_delay_ms("focus_delay_ms");
     arr->FindData(focus_delay_ms, mFocusDelayMs, false);
+    static Symbol chain_multipliers("chain_multipliers");
     unka8.InitFromDataArray(arr->FindArray(chain_multipliers, false));
 }
 

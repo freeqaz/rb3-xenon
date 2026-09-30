@@ -124,15 +124,16 @@ inline void QuestFilterProvider::Text(
 
 inline TourSetlistType QuestFilterProvider::GetSetlistType(int i_iData) const {
     TourProgress *pProg = TheTour->GetTourProgress();
-    TourDesc *pTourDesc = TheTour->GetTourDesc(pProg->GetTourDesc());
-    Symbol gigtype = pTourDesc->GetSetlistTypeForGigNum(pProg->GetCurrentGigNum(), i_iData);
-#ifdef HX_NATIVE
-    if (gigtype == Symbol("random")) // `random` collides with POSIX random()
-#else
-    if (gigtype == random)
-#endif
+    Symbol tour = pProg->GetTourDesc();
+    TourDesc *pTourDesc = TheTour->GetTourDesc(tour);
+    int gig = pProg->GetCurrentGigNum();
+    Symbol gigtype = pTourDesc->GetSetlistTypeForGigNum(gig, i_iData);
+    // W16-HX: retail guards both as function-local statics (one guard word, bits 1/2)
+    static Symbol s_random("random");
+    static Symbol s_custom("custom");
+    if (gigtype == s_random)
         return kTourSetlist_Random;
-    else if (gigtype == custom)
+    else if (gigtype == s_custom)
         return kTourSetlist_Custom;
     return kTourSetlist_Fixed;
 }

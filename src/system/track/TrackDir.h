@@ -62,7 +62,7 @@ public:
     virtual float GetFretPosOffset(int) const { return 0; }
     virtual int GetNumFretPosOffsets() const { return 0; }
     virtual float GetCurrentChordLabelPosOffset() const;
-    virtual int PrepareChordMesh(unsigned int);
+    virtual bool PrepareChordMesh(unsigned int);
     virtual RndMesh *GetChordMesh(unsigned int, bool) { return nullptr; }
     virtual void SetUnisonProgress(float) {}
     virtual void ClearChordMeshRefCounts();

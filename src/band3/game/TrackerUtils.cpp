@@ -240,16 +240,16 @@ int TrackerUtils::CountGemsInSong(int iPlayer, TrackType iTrackType) {
     if (iTrackType != kTrackDrum) {
         return count;
     }
-    DrumFillInfo *pFillInfo = TheSongDB->GetDrumFillInfo(iPlayer);
-    const GameGemList *pGemList = TheSongDB->GetGemList(iPlayer);
-    std::vector<FillExtent>::iterator fillIt = pFillInfo->mFills.begin();
-    std::vector<FillExtent>::iterator fillEnd = pFillInfo->mFills.end();
-    std::vector<GameGem>::const_iterator gemIt = pGemList->mGems.begin();
+    std::vector<FillExtent> &fills = TheSongDB->GetDrumFillInfo(iPlayer)->mFills;
+    const std::vector<GameGem> &gems = TheSongDB->GetGemList(iPlayer)->mGems;
+    std::vector<FillExtent>::iterator fillIt = fills.begin();
+    std::vector<FillExtent>::iterator fillEnd = fills.end();
+    std::vector<GameGem>::const_iterator gemIt = gems.begin();
     for (; fillIt != fillEnd; ++fillIt) {
-        while (gemIt != pGemList->mGems.end() && gemIt->mTick < fillIt->start) {
+        while (gemIt != gems.end() && gemIt->mTick < fillIt->start) {
             ++gemIt;
         }
-        while (gemIt != pGemList->mGems.end() && gemIt->mTick <= fillIt->end) {
+        while (gemIt != gems.end() && gemIt->mTick <= fillIt->end) {
             count--;
             ++gemIt;
         }

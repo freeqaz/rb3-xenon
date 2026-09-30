@@ -25,7 +25,9 @@ private:
     bool mValid; // 0x8 (0x10 with player-name variant)
 public:
     OnlineID();
-    OnlineID(const OnlineID &);
+    // No user-declared copy ctor: retail copies OnlineID member-wise inline
+    // (LeaderboardRow's copy ctor moves its 4 words; no ??0OnlineID@@QAA@ABV0@@Z
+    // exists in the retail map).
     OnlineID(const XUID &);
     void Clear();
     void SetXUID(const XUID &);

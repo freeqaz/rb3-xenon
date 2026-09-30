@@ -99,6 +99,7 @@ public:
 class SongStatus : public FixedSizeSaveable {
 public:
     SongStatus();
+    SongStatus(int id);
     virtual ~SongStatus();
     virtual void SaveFixed(FixedSizeSaveableStream &) const;
     virtual void LoadFixed(FixedSizeSaveableStream &, int);
@@ -218,6 +219,9 @@ public:
     void UpdateCachedTotalStars(ScoreType);
     bool UpdateSong(int, const PerformerStatsInfo &, bool);
     int UpdateCachedTotalDiscScore(ScoreType);
+    void CacheTotalDiscScore(ScoreType ty) {
+        mCachedTotalDiscScores[ty] = UpdateCachedTotalDiscScore(ty);
+    }
     void UpdateCachedTotalScore(ScoreType);
     unsigned short GetBandInstrumentMask(int) const;
     Difficulty GetHighScoreDifficulty(int, ScoreType) const;

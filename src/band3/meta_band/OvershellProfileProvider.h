@@ -38,10 +38,13 @@ public:
     void Reload();
     const char *GetWiiProfileSelectedName() const;
 
-    int unk20;
-    int unk24;
-    int unk28;
-    BandUserMgr *unk2c;
+    // Retail X360 layout (ctor 0x82668278 / Reload 0x826681A0): the
+    // BandUserMgr* at 0x2c and the swappable-profile user list at 0x30,
+    // sizeof 0x3c.
+    __declspec(noinline) LocalBandUser *GetUser(int i) const { return mUsers[i]; }
+
+    BandUserMgr *mBandUserMgr; // 0x2c
+    std::vector<LocalBandUser *> mUsers; // 0x30
     // NOTE: the rb3-Wii DEV oracle carries two std::vector<int> Wii-profile
     // lists here (12 bytes each under STLport). RB3-360 retail does NOT: the
     // OvershellSlot ctor allocates sizeof(OvershellProfileProvider) == 0x3c

@@ -101,21 +101,16 @@ void AppLabel::SetLeaderboardName(const LeaderboardRow &lb) {
 }
 
 void AppLabel::SetLeaderboardRankAndName(const LeaderboardRow &lb) {
+    // Retail: pick the name first (function-local static band_default_name),
+    // then one shared "%s) %s" format.
+    const char *name;
     if (lb.mUnnamedBand) {
-        SetDisplayText(
-            MakeString(
-                "%s) %s",
-                LocalizeSeparatedInt(lb.mRank),
-                MakeString(Localize(band_default_name, nullptr), lb.mName.c_str())
-            ),
-            true
-        );
+        static Symbol band_default_name("band_default_name");
+        name = MakeString(Localize(band_default_name, nullptr), lb.mName.c_str());
     } else {
-        SetDisplayText(
-            MakeString("%s) %s", LocalizeSeparatedInt(lb.mRank), lb.mName.c_str()),
-            true
-        );
+        name = lb.mName.c_str();
     }
+    SetDisplayText(MakeString("%s) %s", LocalizeSeparatedInt(lb.mRank), name), true);
 }
 
 void AppLabel::SetCreditsText(DataArray *arr, UIListSlot *slot) {
@@ -168,9 +163,9 @@ void AppLabel::SetUserName(BandTrack *track) { SetDisplayText(track->UserName(),
 void AppLabel::SetIntroName(BandUser *user) { SetDisplayText(user->IntroName(), true); }
 
 void AppLabel::SetProfileName(const LocalBandUser *user) {
-    if (user) {
-        SetDisplayText(user->ProfileName(), true);
-    }
+    // Retail has no null test here (not even on the virtual-base adjust).
+    MILO_ASSERT(user, 0x8E);
+    SetDisplayText(user->ProfileName(), true);
 }
 
 void AppLabel::SetIconAndProfileName(ScoreType ty, const BandProfile *profile) {
@@ -390,6 +385,8 @@ DataNode AppLabel::OnSetUserName(const DataArray *_msg) {
 void AppLabel::SetFromSongSelectNode(const Node *n) {
     DateTime *dt = n->GetDateTime();
     if (dt) {
+        // Retail: function-local static (guard 0x82DFF758), not the Symbols extern.
+        static Symbol year_format("year_format");
         SetDateTime(*dt, year_format);
     } else {
         if (n->LocalizeToken()) {

@@ -164,10 +164,7 @@ inline bool UIEventMgr::HasDialogEvent(Symbol s) const {
 
 Symbol UIEventMgr::CurrentDialogEvent() const {
     UIEvent *event = mDialogEventQueue.CurrentEvent();
-    if (event)
-        return event->Type();
-    else
-        return gNullStr;
+    return event ? event->Type() : Symbol(gNullStr);
 }
 
 Symbol UIEventMgr::CurrentTransitionEvent() const {

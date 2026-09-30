@@ -34,6 +34,8 @@ void TriggerBackSoundMsg::Dispatch() {
 }
 
 VerifyBuildVersionMsg::VerifyBuildVersionMsg() {
+    // Retail: function-local static here too (its own guard word).
+    static Symbol version("version");
     SystemConfig()->FindData(version, mVersion, true);
 }
 

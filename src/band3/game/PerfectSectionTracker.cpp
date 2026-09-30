@@ -243,10 +243,11 @@ void PerfectSectionTracker::HandleInExtent(float f, int i) {
             TrackType key = pPlayer->GetTrackType();
             std::map<TrackType, PlayerStreakData>::iterator it = unk5c.find(key);
             if (it != unk5c.end()) {
-                int total = it->second.unkc;
+                PlayerStreakData &data = it->second;
+                int total = data.unkc;
                 if (total) {
-                    int gemsLeft = total - (pPlayer->mStats.m0x0c - it->second.unk8);
-                    int hits = pPlayer->mStats.mHitCount - it->second.unk4;
+                    int gemsLeft = total - (pPlayer->mStats.m0x0c - data.unk8);
+                    int hits = pPlayer->mStats.mHitCount - data.unk4;
                     float fGemsLeft = (float)gemsLeft;
                     float progress;
                     if (0.0f == fGemsLeft) {
@@ -254,16 +255,13 @@ void PerfectSectionTracker::HandleInExtent(float f, int i) {
                     } else {
                         progress = (float)hits / fGemsLeft;
                     }
-                    if (progress != it->second.unk10) {
-                        float scaled = progress / unkb0;
-                        if (scaled > 1.0f) scaled = 1.0f;
-                        else if (scaled < 0.0f) scaled = 0.0f;
-                        SetPlayerProgress(id, scaled);
-                        if (progress >= unkb0 && !it->second.unk18) {
+                    if (progress != data.unk10) {
+                        SetPlayerProgress(id, Clamp(0.0f, 1.0f, progress / unkb0));
+                        if (progress >= unkb0 && !data.unk18) {
                             GetPlayerDisplay(id).SetSuccessState(true);
-                            it->second.unk18 = true;
+                            data.unk18 = true;
                         }
-                        it->second.unk10 = progress;
+                        data.unk10 = progress;
                     }
                 }
             }

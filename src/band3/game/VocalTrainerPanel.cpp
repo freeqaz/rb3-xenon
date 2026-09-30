@@ -79,6 +79,7 @@ void VocalTrainerPanel::Poll() {
         }
         if (tick >= unka0 && unka0 != 0) {
             if (unkc4 > 0) {
+                static Message loop_msg("loop");
                 Handle(loop_msg, true);
                 Loop();
             }

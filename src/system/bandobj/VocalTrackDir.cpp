@@ -646,6 +646,15 @@ void VocalTrackDir::SetStreakPct(float f) {
         mStreakMeter->SetWipe(f);
 }
 
+// Retail fn_822F6168 (unmapped; TU5-only, no oracle -- the name is ours, lane
+// W16-HX4). Hides the vocalist-volume widget unless another param is still the
+// track's current one. Sole caller: VocalPlayer::HandleDeactivateVolume.
+void VocalTrackDir::DeactivateVolume(VocalParam param) {
+    if (param == kVocalParamAny || BandTrack::mParent->IsCurrentVocalParam(param)) {
+        mVocalistVolume->SetShowing(false);
+    }
+}
+
 void VocalTrackDir::SetEnableVocalsOptions(bool b) {
     mEnableVocalsOptions = b;
     if (!b)

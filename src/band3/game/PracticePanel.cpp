@@ -65,7 +65,9 @@ void PracticePanel::Enter() {
             TheSynth->Find<Sfx>("metronome_lo.cue", true)
         );
     } else {
-        ObjectDir::Main()->Find<MidiParser>("practice_metronome", true)->AddSink(this);
+        MidiParser *parser =
+            ObjectDir::Main()->Find<MidiParser>("practice_metronome", true);
+        parser->AddSink(this);
     }
     unk54 = false;
     mScorePart = -1;
@@ -75,6 +77,16 @@ void PracticePanel::Enter() {
     // unk60 (restart-allowed flag) absent in retail (Wii-only).
     unk57 = false;
     MarkGemsAsProcessed();
+    // RB3-360 (retail 0x826B1FF8 tail, absent in the Wii oracle): seed the
+    // last-controller Symbol from the first active player's controller.
+    unk64 = gNullStr;
+    std::vector<Player *> &players = TheGame->GetActivePlayers();
+    if (!players.empty()) {
+        GemPlayer *gemPlayer = dynamic_cast<GemPlayer *>(players.front());
+        if (gemPlayer) {
+            unk64 = TheGameConfig->GetController(gemPlayer->GetUser());
+        }
+    }
 }
 
 void PracticePanel::Exit() {
@@ -83,8 +95,9 @@ void PracticePanel::Exit() {
         mMetronome->Exit();
         RELEASE(mMetronome);
     } else {
-        ObjectDir::Main()->Find<MidiParser>("practice_metronome", true)
-            ->RemoveSink(this);
+        MidiParser *parser =
+            ObjectDir::Main()->Find<MidiParser>("practice_metronome", true);
+        parser->RemoveSink(this);
     }
     mGuidePitch->EnableGuideTrack(-1);
     mGuidePitch->Terminate();

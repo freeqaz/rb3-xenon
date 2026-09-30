@@ -29,7 +29,7 @@ namespace {
     public:
         SyncMachineMsg() : mMachineData(false) {}
         SyncMachineMsg(unsigned int, unsigned char, BandMachine *);
-        virtual ~SyncMachineMsg() {}
+        // implicit dtor (retail: no own-vptr store)
         virtual void Save(BinStream &) const;
         virtual void Load(BinStream &);
         virtual void Dispatch();

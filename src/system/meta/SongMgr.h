@@ -89,7 +89,8 @@ enum SongMgrState {
 // this header, causing a redefinition error. Removing from engine base.
 class SongMgr : public MsgSource, public ContentMgr::Callback {
 public:
-    SongMgr() {}
+    // No user-declared ctor: retail stores a literal 0 to the vtordisp slot
+    // (the implicit-ctor tell, see W16HE 4.2).
     // MsgSource / Hmx::Object
     virtual DataNode Handle(DataArray *, bool);
     virtual ~SongMgr();

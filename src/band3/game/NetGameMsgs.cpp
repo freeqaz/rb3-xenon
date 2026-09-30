@@ -205,8 +205,8 @@ void TourMostStarsMsg::Load(BinStream &bs) {
 }
 
 void TourMostStarsMsg::Dispatch() {
-    static Message client_update_goal_info_msg("client_update_goal_info");
     TheAccomplishmentMgr->UpdateMostStarsForAllParticipants(unk4, unk8);
+    static Message client_update_goal_info_msg("client_update_goal_info");
     DataNode result = TheBandUI.Handle(client_update_goal_info_msg, false);
 }
 

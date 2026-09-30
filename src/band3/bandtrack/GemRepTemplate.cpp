@@ -162,8 +162,8 @@ RndMat *GemRepTemplate::GetMatByTag(const char *c, int slot) {
 }
 
 bool VertLess(const RndMesh::Vert &v1, const RndMesh::Vert &v2) {
-    float y2 = v2.pos.y;
     float y1 = v1.pos.y;
+    float y2 = v2.pos.y;
     if (std::fabs(y1 - y2) < 0.1f) {
         return v1.pos.x < v2.pos.x;
     } else

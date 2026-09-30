@@ -65,19 +65,9 @@ void NextSongPanel::Exit() {
 }
 
 bool NextSongPanel::Exiting() const {
-    // Boolean-accumulator goto: `ret=false; ...goto done; ret=true; done: return ret;` keeps
-    // `ret` materialized in r31. Rewrite to multi-return collapses the var to inline `li r3, 0/1`,
-    // drops the r31 save, cascades regswap r30<->r31, flips bge<->blt (100% -> 79.1%). Leave as-is.
-    bool ret = false;
-    if (!UIPanel::Exiting()) {
-        float mintimeprop = Property("min_time", true)->Float();
-        float uisecs = TheTaskMgr.UISeconds();
-        if (!(uisecs - mEnterTime < mintimeprop))
-            goto done;
-    }
-    ret = true;
-done:
-    return ret;
+    // Retail: elapsed UI time is computed before the min_time property read.
+    return UIPanel::Exiting()
+        || TheTaskMgr.UISeconds() - mEnterTime < Property("min_time", true)->Float();
 }
 
 void NextSongPanel::FinishLoad() {

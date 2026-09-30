@@ -290,9 +290,11 @@ bool SongSortMgr::DoesSongMatchFilter(int songID, const SongFilter *filter, Symb
         case 1:
             found = curSet.find(data->Decade()) != curSet.end();
             break;
-        case 9:
-            found = curSet.find(Symbol(data->Artist())) != curSet.end();
+        case 9: {
+            Symbol artistSym = data->Artist();
+            found = curSet.find(artistSym) != curSet.end();
             break;
+        }
         case 6: {
             MILO_ASSERT(partSym != "", 0x1B5);
             if (!data->HasPart(partSym, false)) {
@@ -300,21 +302,20 @@ bool SongSortMgr::DoesSongMatchFilter(int songID, const SongFilter *filter, Symb
                 break;
             }
             int tier = TheSongMgr.RankTier(data->Rank(partSym), partSym);
-            Symbol tierTok = TheSongMgr.RankTierToken(tier);
-            found = curSet.find(tierTok) != curSet.end();
+            found = curSet.find(TheSongMgr.RankTierToken(tier)) != curSet.end();
             break;
         }
         case 7:
-            found = curSet.find(data->RatingSym()) != curSet.end();
+            found = curSet.find(data->LengthSym()) != curSet.end();
             break;
         case 8:
-            found = curSet.find(data->VocalPartsSym()) != curSet.end();
+            found = curSet.find(data->RatingSym()) != curSet.end();
             break;
         case 5:
             found = curSet.find(data->SourceSym()) != curSet.end();
             break;
         case 4:
-            found = curSet.find(data->LengthSym()) != curSet.end();
+            found = curSet.find(data->VocalPartsSym()) != curSet.end();
             break;
         case 3:
             found = curSet.find(data->HasProGuitarSym()) != curSet.end();
@@ -366,10 +367,11 @@ bool SongSortMgr::DoesOfferMatchFilter(
         case 1:
             found = curSet.find(offer->Decade()) != curSet.end();
             break;
-        case 9:
-            found = curSet.find(Symbol(offer->GetData(DataArrayPtr(artist), false).Str(0)))
-                != curSet.end();
+        case 9: {
+            Symbol artistSym = offer->GetData(DataArrayPtr(artist), false).Str(0);
+            found = curSet.find(artistSym) != curSet.end();
             break;
+        }
         case 6: {
             MILO_ASSERT(partSym != "", 0x219);
             if (offer->PartRank(partSym) == 0.0f) {
@@ -377,15 +379,14 @@ bool SongSortMgr::DoesOfferMatchFilter(
                 break;
             }
             int tier = TheSongMgr.RankTier(offer->PartRank(partSym), partSym);
-            Symbol tierTok = TheSongMgr.RankTierToken(tier);
-            found = curSet.find(tierTok) != curSet.end();
+            found = curSet.find(TheSongMgr.RankTierToken(tier)) != curSet.end();
             break;
         }
         case 7:
-            found = curSet.find(offer->RatingSym()) != curSet.end();
+            found = curSet.find(offer->LengthSym()) != curSet.end();
             break;
         case 8:
-            found = curSet.find(offer->VocalPartsSym()) != curSet.end();
+            found = curSet.find(offer->RatingSym()) != curSet.end();
             break;
         case 5: {
             static Symbol author("author");
@@ -396,19 +397,21 @@ bool SongSortMgr::DoesOfferMatchFilter(
             break;
         }
         case 4:
-            found = curSet.find(offer->LengthSym()) != curSet.end();
+            found = curSet.find(offer->VocalPartsSym()) != curSet.end();
             break;
         case 3: {
-            found = offer->PartRank(real_guitar) == 0.0f
-                && offer->PartRank(real_bass) == 0.0f;
-            Symbol key = found ? has_part_no : has_part_yes;
+            Symbol key = offer->PartRank(real_guitar) == 0.0f
+                    && offer->PartRank(real_bass) == 0.0f
+                ? has_part_no
+                : has_part_yes;
             found = curSet.find(key) != curSet.end();
             break;
         }
         case 2: {
-            found = offer->PartRank(real_keys) == 0.0f
-                && offer->PartRank(keys) == 0.0f;
-            Symbol key = found ? has_part_no : has_part_yes;
+            Symbol key = offer->PartRank(real_keys) == 0.0f
+                    && offer->PartRank(keys) == 0.0f
+                ? has_part_no
+                : has_part_yes;
             found = curSet.find(key) != curSet.end();
             break;
         }

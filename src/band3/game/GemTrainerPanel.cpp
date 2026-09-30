@@ -461,7 +461,7 @@ bool GemTrainerPanel::ShouldLoop(int i1) const {
 }
 
 void GemTrainerPanel::ClearGems() {
-    if (mTrack && mGemManager) {
+    if (mGemManager) {
         mGemManager->ClearAllGems();
         mTrack->GetTrackDir()->ResetSmashers(true);
         mTrack->RebuildBeats();

@@ -6,6 +6,10 @@
 // HX_NATIVE-gated directly, which is uniform tree-wide, so the #undef is gone.
 // Verified by preprocessing with and without it: the only non-OBJ_SET_TYPE
 // differences were exactly those two blocks.
+// Retail inlines the ObjPtr(owner) ctors in VocalTrack::VocalTrack (mDir, mPlayer,
+// unk1c8): three stores, no `bl`. Per-TU lever, see obj/ObjPtr_p.h.
+#define RB3_TU_OBJPTR_FORCEINLINE_CTOR
+#define RB3_TU_OBJPTR_DEFER_OWNER
 #include "macros.h"
 #include "bandtrack/VocalTrack.h"
 #include "GraphicsUtl.h"
@@ -521,23 +525,15 @@ LyricPlate *VocalTrack::GetNextLyricPlate(std::deque<LyricPlate *> &plates, bool
     }
     RndText *text = b2 ? mDir->mLeadText : mDir->mHarmText;
     RndText *phonemeText = b2 ? mDir->mLeadPhonemeText : mDir->mHarmPhonemeText;
-    RndText *newText = NewRndCopy(text);
+    // Retail inlines the copy (NewObject + dynamic_cast + Copy vcall) and has
+    // no maxNumLyricPlates high-water bookkeeping after the dump.
+    RndText *newText =
+        dynamic_cast<RndText *>(Hmx::Object::NewObject(RndText::StaticClassName()));
+    newText->Copy(text, Hmx::Object::kCopyShallow);
     plates.push_back(new LyricPlate(newText, text, phonemeText));
     if (sDumpLyricPlates) {
         MILO_LOG("creating new %s lyric plate\n", b2 ? "lead" : "harmony");
         DumpLyricPlates(plates, b2);
-    }
-    int numplates = plates.size();
-    bool grew;
-    if (maxNumLyricPlates < numplates) {
-        maxNumLyricPlates = numplates;
-        grew = true;
-    } else {
-        grew = false;
-    }
-    bool doDump = grew && sDumpLyricPlates;
-    if (doDump) {
-        MILO_LOG("Max Lyric Plates: %d\n", maxNumLyricPlates);
     }
     return plates.back();
 }
@@ -2802,6 +2798,10 @@ void VocalTrack::ClearLyrics() {
 }
 
 void VocalTrack::BuildPhrase(float f1, float f2) {
+    // Retail (fn_82B9F460) evaluates `TheSongDB->GetVocalNoteList(0)` only when
+    // mAlternateNoteList[0] is null and discards it: the `||` of a compiled-out
+    // assert (MILO_ASSERT is `((void)(cond))`). Condition text is ours.
+    MILO_ASSERT(mAlternateNoteList[0] || TheSongDB->GetVocalNoteList(0), 0);
     mPhraseStartMs = mPhraseEndMs;
     mPhraseEndMs = f1;
     mNextPhraseEndMs = f2;

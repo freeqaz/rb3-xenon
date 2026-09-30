@@ -40,7 +40,7 @@ namespace {
     class OpenGateData : public LockData {
     public:
         OpenGateData() {}
-        virtual ~OpenGateData() {}
+        // implicit dtor: retail (0x825AE830) has no vptr re-store
         void Save(BinStream &) const;
         virtual void Load(BinStream &);
 
@@ -114,10 +114,9 @@ NetMessage *EnterFlowMsg::NewNetMessage() { return new EnterFlowMsg(); }
 
 void OpenGateData::Save(BinStream &bs) const {
     bs << mWaitingUsers;
-    int n = (unsigned char)mCurrentScreenState.size();
-    unsigned char nb = (unsigned char)n;
+    unsigned char nb = mCurrentScreenState.size();
     bs.Write(&nb, 1);
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < nb; i++) {
         String name(mCurrentScreenState[i]->Name());
         bs << name;
     }

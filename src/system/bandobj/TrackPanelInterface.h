@@ -5,7 +5,8 @@ class TrackPanelDirBase; // forward declare (avoids GemTrackDir/TrackDir chain)
 
 class TrackPanelInterface : public UIPanel {
 public:
-    TrackPanelInterface() {}
+    // Implicit ctor: retail stores a literal 0 to the vtordisp slot
+    // (0x82b90670), which a user-declared {} ctor does not produce.
     virtual void GetTrackOrder(std::vector<TrackInstrument> *, bool) const = 0;
     virtual int GetTrackCount() const = 0;
     virtual int GetNumPlayers() const = 0;

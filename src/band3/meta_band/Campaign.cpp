@@ -80,6 +80,7 @@ void Campaign::Init(DataArray *arr) {
 }
 
 void Campaign::ConfigureCampaignLevelData(DataArray *arr) {
+    int i6 = -1;
     Symbol s = gNullStr;
     for (int i = 1; i < arr->Size(); i++) {
         CampaignLevel *pCampaignLevel = new CampaignLevel(arr->Array(i), i - 1);
@@ -90,31 +91,34 @@ void Campaign::ConfigureCampaignLevelData(DataArray *arr) {
         if (levelExists) {
             MILO_WARN("%s campaign level already exists, skipping", levelname);
             delete pCampaignLevel;
-        } else {
-            if (pCampaignLevel->HasAward()) {
-                Symbol campaignAward = pCampaignLevel->GetAward();
-                if (!TheAccomplishmentMgr->HasAward(campaignAward)) {
-                    MILO_WARN(
-                        "%s campaign level  is using unknown award: %s!",
-                        levelname.Str(),
-                        campaignAward.Str()
-                    );
-                    delete pCampaignLevel;
-                    goto lol;
-                }
-                TheAccomplishmentMgr->AddAwardSource(
-                    pCampaignLevel->GetAward(), pCampaignLevel->GetName()
-                );
-            }
-            m_mapCampaignLevels[levelname] = pCampaignLevel;
-            m_vCampaignLevels.push_back(levelname);
-            if (pCampaignLevel->IsMajorLevel()) {
-                s = levelname;
-                unk64.push_back(s);
-            }
-            unk4c[levelname] = s;
-        lol:;
+            continue;
         }
+        int value = pCampaignLevel->GetValue();
+        if (value <= i6) {
+            MILO_WARN("%s campaign level has decreasing value from last one", levelname);
+        }
+        if (pCampaignLevel->HasAward()) {
+            Symbol campaignAward = pCampaignLevel->GetAward();
+            if (!TheAccomplishmentMgr->HasAward(campaignAward)) {
+                MILO_WARN(
+                    "%s campaign level  is using unknown award: %s!",
+                    levelname.Str(),
+                    campaignAward.Str()
+                );
+                delete pCampaignLevel;
+                continue;
+            }
+            TheAccomplishmentMgr->AddAwardSource(
+                pCampaignLevel->GetAward(), pCampaignLevel->GetName()
+            );
+        }
+        m_mapCampaignLevels[levelname] = pCampaignLevel;
+        m_vCampaignLevels.push_back(levelname);
+        if (pCampaignLevel->IsMajorLevel()) {
+            s = levelname;
+            unk64.push_back(s);
+        }
+        unk4c[levelname] = s;
     }
 }
 
@@ -284,7 +288,11 @@ bool Campaign::IsLastCampaignLevel(Symbol level) const {
 }
 
 Symbol Campaign::GetNextCampaignLevel(Symbol i_symCampaignLevel) const {
+    // Retail's codegen shows no trace of this check: even a dead-stripped
+    // inlined IsLastCampaignLevel() perturbs the loop's register use.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     MILO_ASSERT(!IsLastCampaignLevel( i_symCampaignLevel ), 0x1EF);
+#endif
     int iNumLevels = m_vCampaignLevels.size();
     for (int iIndex = 0; iIndex < iNumLevels; iIndex++) {
         if (i_symCampaignLevel == m_vCampaignLevels[iIndex]) {

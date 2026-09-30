@@ -28,6 +28,7 @@
 #include "os/System.h"
 #include "os/User.h"
 #include "os/UserMgr.h"
+#include "utl/Std.h"
 #include "utl/BinStream.h"
 #include "utl/HxGuid.h"
 #include "utl/MemStream.h"
@@ -400,9 +401,7 @@ bool NetSession::CheckJoinable(
         err = kBusy;
         return false;
     } else {
-        int numUsers = mUsers.size();
-        int numAllowedPlayers = TheNet.GetGameData()->GetNumPlayersAllowed();
-        if (numAllowedPlayers - numUsers < users.size()) {
+        if (NumOpenSlots() < users.size()) {
             err = kNoRoom;
             return false;
         } else {
@@ -653,18 +652,17 @@ bool NetSession::OnMsg(const UserLeftMsg &msg) {
 }
 
 void NetSession::ProcessUserLeftMsg(const UserLeftMsg &msg) {
+    // Retail has no HasUser() guard here.
     RemoteUser *ruser = TheUserMgr->GetRemoteUser(msg.mUserGuid, true);
-    if (HasUser(ruser)) {
-        unsigned int machineID = ruser->GetMachineID();
-        RemovingRemoteUserMsg rmsg(ruser);
-        Handle(rmsg, false);
-        RemoveRemoteFromSession(ruser);
-        if (IsHost()) {
-            SendToAllClientsExcept(msg, kReliable, machineID);
-        }
-        RemoteUserLeftMsg rleftmsg(ruser);
-        Handle(rleftmsg, false);
+    unsigned int machineID = ruser->GetMachineID();
+    RemovingRemoteUserMsg rmsg(ruser);
+    Handle(rmsg, false);
+    RemoveRemoteFromSession(ruser);
+    if (IsHost()) {
+        SendToAllClientsExcept(msg, kReliable, machineID);
     }
+    RemoteUserLeftMsg rleftmsg(ruser);
+    Handle(rleftmsg, false);
 }
 
 void NetSession::StartGame() {
@@ -681,11 +679,8 @@ void NetSession::StartArbitration() {
     SetState(kClientsArbitrating);
     for (int i = 0; i < mUsers.size(); i++) {
         if (!mUsers[i]->IsLocal()) {
-            unsigned int target = mUsers[i]->mMachineID;
-            std::vector<int>::iterator it =
-                std::find(mStillArbitrating.begin(), mStillArbitrating.end(), target);
-            if (it == mStillArbitrating.end())
-                mStillArbitrating.push_back(target);
+            if (!VectorFind<int>(mStillArbitrating, mUsers[i]->mMachineID))
+                mStillArbitrating.push_back(mUsers[i]->mMachineID);
         }
     }
     BeginArbitrationMsg amsg;
@@ -828,7 +823,8 @@ RemoteUser *NetSession::GetNewRemoteUser() {
 void NetSession::UpdateUserData(User *user, unsigned int ui) {
     MILO_ASSERT(user, 0x4A6);
     MILO_ASSERT(user->IsLocal(), 0x4A7);
-    if (HasUser(user) && !IsBusy()) {
+    // Retail has no HasUser() test here.
+    if (!IsBusy()) {
         UpdateUserDataMsg msg(user, ui);
         if (IsHost()) {
             SendToAllClientsExcept(msg, kReliable, -1);

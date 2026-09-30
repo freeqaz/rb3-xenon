@@ -44,12 +44,13 @@ public:
         mInfos[idx] = item;
     }
     static bool Cmp(int tick, const TickedInfo<T> &info) { return tick < info.mTick; }
+    // Retail (TickedInfoCollection<float>, 0x82686100) searches with the
+    // tick parameter itself and never reads clamp: callers clamp (see
+    // SongDB::GetPitchOffsetForTick).
     const TickedInfo<T> *IteratorAt(int tick, bool clamp) const {
-        int clampedTick = clamp ? (tick & ~(tick >> 31)) : tick;
-        const TickedInfo<T> *it =
-            std::upper_bound(mInfos.begin(), mInfos.end(), clampedTick, Cmp);
+        const TickedInfo<T> *it = std::upper_bound(mInfos.begin(), mInfos.end(), tick, Cmp);
         if (it == mInfos.begin()) {
-            MILO_FAIL("No information available at tick %d, fix MIDI file", clampedTick);
+            MILO_FAIL("No information available at tick %d, fix MIDI file", tick);
         } else {
             --it;
         }

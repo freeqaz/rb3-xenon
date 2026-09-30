@@ -216,8 +216,12 @@ void AccomplishmentManager::InitializeDiscSongs() {
         int songid = *it;
         BandSongMetadata *pSongData = (BandSongMetadata *)TheSongMgr.Data(songid);
         MILO_ASSERT(pSongData, 0xEB);
+        // Retail constructs this static and never reads it (its use is
+        // compiled out).
+        static Symbol rb3("rb3");
         if (!pSongData->IsDownload()) {
-            mDiscSongs.push_back(TheSongMgr.GetShortNameFromSongID(songid, true));
+            Symbol shortname = TheSongMgr.GetShortNameFromSongID(songid, true);
+            mDiscSongs.push_back(shortname);
         }
     }
     std::stable_sort(mDiscSongs.begin(), mDiscSongs.end(), SongDifficultyCmp(gNullStr));
@@ -1272,9 +1276,10 @@ void AccomplishmentManager::HandleSetlistCompletedForUser(
     ScoreType scoreType = (ScoreType)pPerformer->GetScoreTypeForUser(u);
     Difficulty userDiff = (Difficulty)u->GetDifficulty();
     if (b) {
+        static Symbol acc_hmxrecommends("acc_hmxrecommends");
         EarnAccomplishmentForProfile(pProfile, acc_hmxrecommends);
     }
-    AccomplishmentProgress &prog = pProfile->AccessAccomplishmentProgress();
+    const AccomplishmentProgress &prog = pProfile->GetAccomplishmentProgress();
     for (std::hash_map<Symbol, Accomplishment *>::iterator it = mAccomplishments.begin();
          it != mAccomplishments.end();
          ++it) {
@@ -1415,17 +1420,20 @@ void AccomplishmentManager::UpdateSongStatusFlagsForPerformer(
     }
     int rollCount = stats.GetRollCount();
     int rollPercent = rollCount > 0 ? (stats.GetRollsHitCompletely() * 100) / rollCount : 0;
-    if (rollPercent >= 100) {
+    bool perfectRolls = rollPercent >= 100;
+    if (perfectRolls) {
         pSongStatusMgr->SetSongStatusFlag(
             s, kSongStatusFlag_PerfectDrumRolls, scoreType, diff
         );
     }
-    if (stats.GetDoubleHarmonyHit() >= stats.GetDoubleHarmonyPhraseCount()) {
+    bool allDoubles = stats.GetDoubleHarmonyHit() >= stats.GetDoubleHarmonyPhraseCount();
+    if (allDoubles) {
         pSongStatusMgr->SetSongStatusFlag(
             s, kSongStatusFlag_AllDoubleAwesomes, scoreType, diff
         );
     }
-    if (stats.GetTripleHarmonyHit() >= stats.GetTripleHarmonyPhraseCount()) {
+    bool allTriples = stats.GetTripleHarmonyHit() >= stats.GetTripleHarmonyPhraseCount();
+    if (allTriples) {
         pSongStatusMgr->SetSongStatusFlag(
             s, kSongStatusFlag_AllTripleAwesomes, scoreType, diff
         );

@@ -185,8 +185,9 @@ std::vector<BandProfile *> ProfileMgr::GetShouldAutosaveProfiles() {
     FOREACH (it, mProfiles) {
         BandProfile *cur = *it;
         int pad = cur->GetPadNum();
-        if (ThePlatformMgr.IsSignedIn(pad) && TheWiiProfileMgr.GetIndexForPad(pad) >= 0
-            && cur->GetSaveState() == 1 && cur->IsUnsaved()) {
+        // Retail has no Wii profile-index check here.
+        if (ThePlatformMgr.IsSignedIn(pad) && cur->GetSaveState() == 1
+            && cur->IsUnsaved()) {
             profiles.push_back(cur);
         }
     }
@@ -448,7 +449,7 @@ bool ProfileMgr::GlobalOptionsNeedsSave() {
         return mGlobalOptionsDirty;
 }
 
-int ProfileMgr::GetGlobalOptionsSize() { return TheModifierMgr->SaveSize(gRev) + 0x52; }
+int ProfileMgr::GetGlobalOptionsSize() { return TheModifierMgr->SaveSize(8) + 0x35; }
 
 void ProfileMgr::SaveGlobalOptions(FixedSizeSaveableStream &bs) {
     bs << packRevs(0, 8);
@@ -476,49 +477,49 @@ void ProfileMgr::SaveGlobalOptions(FixedSizeSaveableStream &bs) {
 }
 
 void ProfileMgr::LoadGlobalOptions(FixedSizeSaveableStream &bs) {
-    LOAD_REVS(bs);
-    ASSERT_REVS(7, 2);
-    bs >> mSyncOffset;
-    bs >> mSongToTaskMgrMs;
-    if (gRev != 0) {
-        bs >> mBackgroundVolume;
-        bs >> mForegroundVolume;
-    } else {
-        bs >> mBackgroundVolume;
-        mForegroundVolume = mBackgroundVolume;
-    }
-    bs >> mFxVolume;
-    if (gRev != 0)
-        bs >> mVocalCueVolume;
-    bs >> mBassBoost;
-    bs >> mCrowdVolume;
-    bs >> mDolby;
-    bs >> mSyncPresetIx;
-    bs >> mOverscan;
-    if (gRev > 1) {
-        if (gRev > 2)
-            bs >> mSynapseEnabled;
-        else {
-            bool b;
-            bs >> b;
+    // Retail reads the rev into a local (no gRev store), skips the whole body
+    // for a rev newer than 8, reads unk58b from rev 8 on, and has none of the
+    // Wii tail (String / bool / int64) nor the mHasLoaded store.
+    int rev;
+    bs >> rev;
+    if (rev <= 8) {
+        bs >> mSyncOffset;
+        bs >> mSongToTaskMgrMs;
+        if (rev > 0) {
+            bs >> mBackgroundVolume;
+            bs >> mForegroundVolume;
+        } else {
+            bs >> mBackgroundVolume;
+            mForegroundVolume = mBackgroundVolume;
         }
+        bs >> mFxVolume;
+        if (rev > 0)
+            bs >> mVocalCueVolume;
+        bs >> mBassBoost;
+        bs >> mCrowdVolume;
+        bs >> mDolby;
+        bs >> mSyncPresetIx;
+        bs >> mOverscan;
+        if (rev > 1) {
+            if (rev > 2)
+                bs >> mSynapseEnabled;
+            else {
+                bool b;
+                bs >> b;
+            }
+        }
+        bs >> mVoiceChatVolume;
+        bs >> mHasSeenFirstTimeCalibration;
+        bs >> mHasConnectedProGuitar;
+        bs >> mCymbalConfiguration;
+        bs >> unk58a;
+        if (rev >= 8)
+            bs >> unk58b;
+        if (rev > 4)
+            bs >> mSecondPedalHiHat;
+        if (rev >= 7)
+            TheModifierMgr->Load(bs, rev);
     }
-    bs >> mVoiceChatVolume;
-    bs >> mHasSeenFirstTimeCalibration;
-    bs >> mHasConnectedProGuitar;
-    bs >> mCymbalConfiguration;
-    bs >> unk58a;
-    if (gRev > 4)
-        bs >> mSecondPedalHiHat;
-    if (gRev >= 7)
-        TheModifierMgr->Load(bs, gRev);
-    String str;
-    bs >> str;
-    bool b46;
-    bs >> b46;
-    long long lol;
-    bs >> lol;
-    mHasLoaded = true;
     mGlobalOptionsDirty = false;
     PushAllOptions();
 }
@@ -690,6 +691,22 @@ void ProfileMgr::SetOverscan(bool b) {
     if (b != mOverscan) {
         mOverscan = b;
         TheRnd.SetShrinkToSafeArea(!mOverscan);
+        mGlobalOptionsDirty = true;
+    }
+}
+
+// RB3-360 (TU5) setters, retail 0x82545988 / 0x825459A0 (between SetOverscan
+// and GetHasConnectedProGuitar).
+void ProfileMgr::SetMusicLibraryUpsell(bool b) {
+    if (b != unk58a) {
+        unk58a = b;
+        mGlobalOptionsDirty = true;
+    }
+}
+
+void ProfileMgr::SetShowBadReviews(bool b) {
+    if (b != unk58b) {
+        unk58b = b;
         mGlobalOptionsDirty = true;
     }
 }
@@ -1292,6 +1309,10 @@ void ProfileMgr::SetPrimaryProfile(BandProfile *profile) {
 }
 
 void ProfileMgr::HandleProfileLoadComplete() {
+    // Retail (0x825490A0) re-checks both web statuses before the pending work;
+    // HandleProfileSaveComplete (0x825490E8) does not.
+    CheckProfileWebLinkStatus();
+    CheckProfileWebSetlistStatus();
     HandlePendingProfileUploads();
     HandlePendingGamerpicRewards();
 }

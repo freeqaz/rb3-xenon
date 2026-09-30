@@ -110,6 +110,34 @@ protected:
     ScoreType mScoreType; // 0x10
 };
 
+// RB3-360 (TU5) on/off toggles, absent from the rb3-Wii oracle and rebuilt
+// from retail bytes (ctors 0x825D4498 / 0x825D44F8, methods 0x825D4948..
+// 0x825D4DE8, vtables 0x820B36AC / 0x820B3744). Row 0 = "on", row 1 = "off";
+// the state lives in TheProfileMgr (bytes 0x6a / 0x6b). Class names are ours.
+class MusicLibraryUpsellViewSetting : public ViewSetting {
+public:
+    MusicLibraryUpsellViewSetting() : ViewSetting("music_library_upsell") {}
+    virtual ~MusicLibraryUpsellViewSetting() {}
+
+    virtual int NumData() const { return 2; }
+    virtual void Text(int, int, UIListLabel *, UILabel *) const;
+    virtual const char *GetCurrentStatus() const;
+    virtual void SelectOption(int);
+    virtual int StartingOption() const;
+};
+
+class BadReviewViewSetting : public ViewSetting {
+public:
+    BadReviewViewSetting() : ViewSetting("bad_review_showing") {}
+    virtual ~BadReviewViewSetting() {}
+
+    virtual int NumData() const { return 2; }
+    virtual void Text(int, int, UIListLabel *, UILabel *) const;
+    virtual const char *GetCurrentStatus() const;
+    virtual void SelectOption(int);
+    virtual int StartingOption() const;
+};
+
 // Setting that toggles individual entries within one filter category
 // (genre, decade, difficulty, etc.).
 class FilterViewSetting : public ViewSetting {

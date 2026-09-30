@@ -159,7 +159,7 @@ MetaPerformer::MetaPerformer(const BandSongMgr &mgr, const char *cc)
 #endif
       mSetlist(gNullStr), mSetlistIsLocal(0), mSetlistIsHmx(0),
       mSongMgr((BandSongMgr *)&mgr), mHasOnlineScoring(0), mSkippedSong(0), unk2c0(0),
-      mFestivalReward(0), mCheatInFinale(0), mCheating(0), unk338(0), unk33c(-1),
+      mFestivalReward(0), mCheating(0), unk338(0), unk33c(-1),
       mRecordBattleContextID(-1), mHarmonyOverride(0), mRealDrumsOverride(0), unk360(2)
 #ifndef RB3_NO_WII_META_MEMBERS
       ,
@@ -168,8 +168,10 @@ MetaPerformer::MetaPerformer(const BandSongMgr &mgr, const char *cc)
 {
     SetName(cc, ObjectDir::Main());
     mQpPerformer = new QuickplayPerformerImpl();
+    static Symbol mode_changed("mode_changed");
     if (TheGameMode)
         TheGameMode->AddSink(this, mode_changed);
+    static Symbol new_remote_user("new_remote_user");
     if (TheSessionMgr)
         TheSessionMgr->AddSink(this, new_remote_user);
 #ifndef RB3_NO_WII_META_MEMBERS
@@ -788,7 +790,7 @@ void MetaPerformer::UpdateLastOfflineScores(Symbol s, const BandStatsInfo &info)
 void MetaPerformer::SaveAndUploadScores(
     std::vector<LocalBandUser *> &users, Symbol s, const BandStatsInfo &info
 ) {
-    if (users.empty())
+    if (users.size() == 0)
         return;
     if (!TheGame->IsInvalidScore()) {
         // Retail builds this dispatch Symbol as a FUNCTION-LOCAL STATIC, not the
@@ -799,8 +801,13 @@ void MetaPerformer::SaveAndUploadScores(
         // we emit no funclet here at all. Same lever as RB3_HANDLE_LOCAL_STATIC.
         static Symbol insta_rank("insta_rank");
         bool instaRankProp = TheGameMode->Property(insta_rank, true)->Int();
+        // W16-HX: TU5 always insta-ranks tour gigs (absent from the Wii oracle;
+        // retail calls GameMode vslot 0 = InMode(Symbol("tour"))).
+        if (TheGameMode->InMode("tour"))
+            instaRankProp = true;
+        bool bOffline = !instaRankProp;
         UpdateLastOfflineScores(s, info);
-        UpdateScores(s, info, !instaRankProp);
+        UpdateScores(s, info, bOffline);
         if (instaRankProp) {
             int songID = mSongMgr->GetSongIDFromShortName(s, true);
             mPendingData.friendMode = true;
@@ -821,13 +828,13 @@ void MetaPerformer::SaveAndUploadScores(
                 );
             }
             if (TheNet.GetServer() && TheNet.GetServer()->IsConnected()
-                && scores.size()) {
+                && !scores.empty()) {
                 mHasOnlineScoring = true;
-                int old = unk338++;
-                unk33c = old;
+                int id = unk338++;
+                unk33c = id;
                 TheRockCentral.RecordScore(
                     songID,
-                    unk33c,
+                    id,
                     scores,
                     pID,
                     info.GetBandStats().mInstrumentMask,

@@ -155,11 +155,7 @@ bool AppMiniLeaderboardDisplay::UpdateLeaderboard(int songID, ScoreType scoreTyp
 bool AppMiniLeaderboardDisplay::IsReady() { return mStatus == kLeaderboardReady; }
 
 bool AppMiniLeaderboardDisplay::HasRows() {
-    bool result = false;
-    if (mLeaderboard && mLeaderboard->NumData()) {
-        result = true;
-    }
-    return result;
+    return mLeaderboard && mLeaderboard->NumData();
 }
 
 void AppMiniLeaderboardDisplay::ResultSuccess(bool, bool, bool) {

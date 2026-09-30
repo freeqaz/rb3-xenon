@@ -10,66 +10,33 @@
 #include "utl/Symbols2.h"
 #include "utl/Symbols4.h"
 
+namespace {
+    // Retail keeps this as its own function (fn_823EBC90, between
+    // SetPacketDropProbability and the ctor) and calls it twice: the delegator
+    // of Quazal instance type 1 in the current context.
+    void *GetInstanceType1Delegator() {
+        Quazal::InstanceControl *ic =
+            (Quazal::InstanceControl *)Quazal::InstanceControl::s_oInstanceTable
+                .GetInstanceFromVector(1, Quazal::PseudoSingleton::GetCurrentContext());
+        return ic ? ic->m_pDelegatorInstance : nullptr;
+    }
+}
+
 NetworkEmulator::NetworkEmulator()
     : mInBandwidth(-1), mOutBandwidth(-1), mInJitter(0), mOutJitter(0), mInLatency(0),
       mOutLatency(0), mInDropProb(0), mOutDropProb(0), mEnabled(0) {
     SetName("emulator", ObjectDir::Main());
 
-    // Resolve mInDevice
-    {
-        unsigned int ctx = Quazal::PseudoSingleton::GetCurrentContext();
-        Quazal::InstanceControl *ic;
-        if (ctx == 0) {
-            ic = (Quazal::InstanceControl *)Quazal::InstanceControl::s_oInstanceTable
-                     .m_oDefaultContext.GetInstance(1);
-        } else {
-            if (!(ctx
-                  < Quazal::InstanceControl::s_oInstanceTable.m_pvContextVector->size())) {
-                Quazal::SystemError::SignalError(0, 0, 0xe0000003, 0);
-                ic = (Quazal::InstanceControl *)-1;
-            } else {
-                ic = (Quazal::InstanceControl *)(*Quazal::InstanceControl::s_oInstanceTable
-                                                      .m_pvContextVector)[ctx]
-                         ->GetInstance(1);
-            }
-        }
-        void *delegator = ic ? ic->m_pDelegatorInstance : nullptr;
-        void *ptr;
-        if (delegator == nullptr) {
-            ptr = nullptr;
-        } else {
-            ptr = *(void **)((char *)delegator + 0x4c);
-        }
-        mInDevice = (Quazal::EmulationDevice *)((char *)ptr + 0x4ac);
-    }
-
-    // Resolve mOutDevice
-    {
-        unsigned int ctx = Quazal::PseudoSingleton::GetCurrentContext();
-        Quazal::InstanceControl *ic;
-        if (ctx == 0) {
-            ic = (Quazal::InstanceControl *)Quazal::InstanceControl::s_oInstanceTable
-                     .m_oDefaultContext.GetInstance(1);
-        } else {
-            if (!(ctx
-                  < Quazal::InstanceControl::s_oInstanceTable.m_pvContextVector->size())) {
-                Quazal::SystemError::SignalError(0, 0, 0xe0000003, 0);
-                ic = (Quazal::InstanceControl *)-1;
-            } else {
-                ic = (Quazal::InstanceControl *)(*Quazal::InstanceControl::s_oInstanceTable
-                                                      .m_pvContextVector)[ctx]
-                         ->GetInstance(1);
-            }
-        }
-        void *delegator = ic ? ic->m_pDelegatorInstance : nullptr;
-        void *ptr;
-        if (delegator == nullptr) {
-            ptr = nullptr;
-        } else {
-            ptr = *(void **)((char *)delegator + 0x4c);
-        }
-        mOutDevice = (Quazal::EmulationDevice *)((char *)ptr + 0x490);
-    }
+    void *delegator = GetInstanceType1Delegator();
+    void *owner = nullptr;
+    if (delegator)
+        owner = *(void **)((char *)delegator + 0x4c);
+    mInDevice = (Quazal::EmulationDevice *)((char *)owner + 0x4b4);
+    delegator = GetInstanceType1Delegator();
+    owner = nullptr;
+    if (delegator)
+        owner = *(void **)((char *)delegator + 0x4c);
+    mOutDevice = (Quazal::EmulationDevice *)((char *)owner + 0x498);
 
     // assigning emulation devices here
     DataArray *cfg = SystemConfig("net", "emulator");

@@ -1180,7 +1180,7 @@ DECOMP_FORCEACTIVE(
     "chord_bracket_miss.mat"
 )
 
-int GemTrackDir::PrepareChordMesh(unsigned int chord) {
+bool GemTrackDir::PrepareChordMesh(unsigned int chord) {
     std::map<unsigned int, std::pair<int, RndMesh *> >::iterator it
         = unk6b4.find(chord);
     const ObjPtr<ChordShapeGenerator> &_ref0 = mChordShapeGen;

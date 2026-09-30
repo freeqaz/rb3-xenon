@@ -17,7 +17,7 @@ enum VocalParam {
 class TrackInterface : public Hmx::Object {
 public:
     TrackInterface() {}
-    virtual ~TrackInterface() {}
+    // implicit (virtual via Hmx::Object) dtor: retail ~Track has no TrackInterface vptr re-store
     virtual void Init() {}
     virtual void PlayerInit() {}
     virtual void PostInit() {}

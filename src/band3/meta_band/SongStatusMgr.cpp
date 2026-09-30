@@ -304,6 +304,13 @@ SongStatus::SongStatus() {
     Clear();
 }
 
+// Retail fn_825D1238: the id-taking ctor used by CreateOrAccessSongStatus.
+SongStatus::SongStatus(int id) {
+    mSaveSizeMethod = &SaveSize;
+    Clear();
+    mSongID = id;
+}
+
 SongStatus::~SongStatus() {}
 
 SongStatusMgr::SongStatusMgr(LocalBandUser *u, BandSongMgr *mgr)
@@ -366,18 +373,13 @@ void SongStatusMgr::ClearLeastImportantSongStatusEntry() {
 }
 
 SongStatus *SongStatusMgr::CreateOrAccessSongStatus(int id) const {
-    std::hash_map<int, SongStatus *>::iterator it = mSongStatusCache.find(id);
-    if (it == mSongStatusCache.end()) {
+    if (!HasSongStatus(id)) {
         if (mSongStatusCache.size() >= 3000) {
             const_cast<SongStatusMgr *>(this)->ClearLeastImportantSongStatusEntry();
         }
-        SongStatus *status = new SongStatus();
-        if (status) {
-            status->SetID(id);
-        }
-        mSongStatusCache[id] = status;
+        mSongStatusCache[id] = new SongStatus(id);
     }
-    return mSongStatusCache.find(id)->second;
+    return GetSongStatus(id);
 }
 
 bool SongStatusMgr::UpdateSongStats(
@@ -977,9 +979,12 @@ void SongStatusMgr::UploadDirtyScores() {
 
 DataNode SongStatusMgr::OnMsg(const RockCentralOpCompleteMsg &msg) {
     int arg2 = msg->Int(2);
-    bool fail = sFakeLeaderboardUploadFailure;
     bool upload = arg2;
-    if (fail) upload = false;
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+    // Dev-build cheat; retail never reads sFakeLeaderboardUploadFailure here.
+    if (sFakeLeaderboardUploadFailure)
+        upload = false;
+#endif
     MILO_ASSERT(mUpdatingStatus, 0x85B);
     mUpdatingStatus->SetDirty(mUpdatingScoreType, mUpdatingDifficulty, !upload);
     mUpdatingStatus = 0;
@@ -1008,23 +1013,16 @@ void SongStatusMgr::SaveFixed(FixedSizeSaveableStream &stream) const {
 }
 
 void SongStatusMgr::LoadFixed(FixedSizeSaveableStream &stream, int rev) {
-    Clear();
-    int count;
-    stream >> count;
-    for (int i = 0; i < count; i++) {
-        int songID;
-        stream >> songID;
-        SongStatus *status = new SongStatus();
-        status->LoadFixed(stream, rev);
-        mSongStatusCache[songID] = status;
-    }
+    FixedSizeSaveable::LoadStdPtr(
+        stream, mSongStatusCache, 3000, SongStatus::SaveSize(rev) + 4
+    );
     for (ScoreType i = (ScoreType)0; i < 11; i = (ScoreType)(i + 1)) {
         if (rev >= 0x92) {
             stream >> mCachedTotalScores[i];
             stream >> mCachedTotalDiscScores[i];
         } else {
             UpdateCachedTotalScore(i);
-            mCachedTotalDiscScores[i] = UpdateCachedTotalDiscScore(i);
+            CacheTotalDiscScore(i);
         }
         if (rev >= 0x93) {
             stream >> mCachedTotalStars[i];

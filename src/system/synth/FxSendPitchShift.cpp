@@ -6,6 +6,11 @@
 
 FxSendPitchShift::FxSendPitchShift() : mRatio(1.0f) {}
 
+void FxSendPitchShift::SetRatio(float ratio) {
+    mRatio = ratio;
+    OnParametersChanged();
+}
+
 BEGIN_COPYS(FxSendPitchShift)
     COPY_SUPERCLASS(FxSend)
     CREATE_COPY(FxSendPitchShift)

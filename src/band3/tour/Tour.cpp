@@ -36,7 +36,7 @@
 class MusicLibraryTaskMsg : public NetMessage {
 public:
     MusicLibraryTaskMsg(MusicLibrary::MusicLibraryTask &);
-    virtual ~MusicLibraryTaskMsg() {}
+    // W16-HX: implicit dtor (retail ??1 does not re-store the derived vptr)
     virtual void Save(BinStream &) const;
     virtual void Load(BinStream &);
     virtual void Dispatch();
@@ -94,6 +94,7 @@ void Tour::Init(DataArray *arr) {
     ConfigureTourStatusData(arr->FindArray("tour_status_info"));
     ConfigureTourDescData(arr->FindArray("tour_desc_info"));
     mWeightManager.Init(arr->FindArray("tour_weight_info"));
+    static Symbol tour_show_post_seldiff_screen("tour_show_post_seldiff_screen");
     arr->FindData(tour_show_post_seldiff_screen, mTourShowPostSeldiffScreen, false);
 }
 
@@ -302,7 +303,8 @@ Symbol Tour::GetGigSpecificOutro() const {
 Quest *Tour::GetQuest() {
     Quest *ret = 0;
     if (m_pTourPerformer) {
-        ret = TheQuestMgr.GetQuest(m_pTourPerformer->GetCurrentQuest());
+        Symbol quest = m_pTourPerformer->GetCurrentQuest();
+        ret = TheQuestMgr.GetQuest(quest);
     }
     return ret;
 }
@@ -555,6 +557,7 @@ void Tour::CheatReloadTourData() {
 
 Symbol Tour::CombinePartSymbols(Symbol part1, Symbol part2) {
     Symbol result = part1;
+    static Symbol band("band");
     if (part2 != gNullStr && part1 != band) {
         if (part1 == gNullStr) result = part2;
         else result = band;

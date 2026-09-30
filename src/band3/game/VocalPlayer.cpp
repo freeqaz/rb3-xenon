@@ -201,15 +201,18 @@ void VocalPlayer::ConfigureBehavior() {
     mBehavior->SetMaxMultiplier(4);
 }
 
+// Retail keeps this test out of line (fn_826E3AA8, one caller: SetTrack); the
+// name is ours (lane W16-HX4). The oracle spells it inline in SetTrack.
+#pragma auto_inline(off)
+bool VocalPlayer::IsNetOrSpoofed() const { return IsNet() || mSpoofed; }
+#pragma auto_inline(on)
+
 void VocalPlayer::SetTrack(int trk) {
     if (mTrackNum != trk) {
         MILO_ASSERT(mTrackNum == -1, 0x128);
         mBeatMaster->GetAudio()->SetTrack(GetUserGuid(), trk);
         mTrackNum = trk;
-        bool b1 = false;
-        if (IsNet() || mSpoofed)
-            b1 = true;
-        if (b1) {
+        if (IsNetOrSpoofed()) {
             mBeatMaster->GetAudio()->SetNonmutable(trk);
         }
     }
@@ -305,6 +308,8 @@ void VocalPlayer::Restart(bool b1) {
 }
 
 void VocalPlayer::SetPaused(bool b1) {
+    if (b1)
+        CountPause();
     mTambourineManager.SetPaused(b1);
     FOREACH (it, mVocalParts) {
         (*it)->SetPaused(b1);
@@ -362,7 +367,7 @@ void VocalPlayer::LocalSetEnabledState(EnabledState state, int i1, BandUser *use
         int tick = (int)MsToTick(GetSongMs());
         bool enabled = (state == kPlayerEnabled);
         mCommonPhraseCapturer->Enabled(this, mTrackNum, tick, enabled);
-    } else if ((unsigned)(state - kPlayerBeingSaved) <= 1U) {
+    } else if (state == kPlayerBeingSaved || state == kPlayerDroppingIn) {
         std::vector<VocalPhrase> &phrases = mVocalParts[0]->mVocalNoteList->mPhrases;
         for (std::vector<VocalPhrase>::iterator it = phrases.begin(); it != phrases.end(); ++it) {
             if (mEnableMs <= it->unk0) {
@@ -377,9 +382,10 @@ void VocalPlayer::LocalSetEnabledState(EnabledState state, int i1, BandUser *use
             mTrack->RebuildHUD();
         }
     }
-    bool vocalState = ((unsigned)state <= (unsigned)kPlayerDisconnected) &&
-                      ((1 << state) & 0x19) != 0;
-    mBeatMaster->GetAudio()->SetVocalState(vocalState);
+    mBeatMaster->GetAudio()->SetVocalState(
+        state == kPlayerEnabled || state == kPlayerDisconnected
+        || state == kPlayerDroppingIn
+    );
 }
 
 int VocalPlayer::LocalDeployBandEnergy() {
@@ -1184,13 +1190,10 @@ void VocalPlayer::UnpackFloats(
     o_rFractionArray.resize(4);
     float fDifference = f2 - f1;
     MILO_ASSERT(fDifference > 0.0f, 0x6F3);
-    o_rFractionArray[0] = (float)(int)(unsigned char)i1 / 255.0f * fDifference + f1;
-    i1 >>= 8;
-    o_rFractionArray[1] = (float)(int)(unsigned char)i1 / 255.0f * fDifference + f1;
-    i1 >>= 8;
-    o_rFractionArray[2] = (float)(int)(unsigned char)i1 / 255.0f * fDifference + f1;
-    i1 >>= 8;
-    o_rFractionArray[3] = (float)(int)(unsigned char)i1 / 255.0f * fDifference + f1;
+    for (int i = 0; i < 4; i++) {
+        o_rFractionArray[i] = fDifference * ((float)(int)(unsigned char)i1 / 255.0f) + f1;
+        i1 >>= 8;
+    }
 }
 
 unsigned int VocalPlayer::PackBools(const std::vector<int> &i_rBoolArray) const {
@@ -1723,9 +1726,47 @@ bool VocalPlayer::OnMsg(const ButtonUpMsg &msg) {
     return false;
 }
 
-// Retail fn_826E50C0, 72 B, unpaired (the map does not name it) -- body NOT ported
-// and NOT invented. Kept out of line so OnMsg above retains retail's call shape.
-void VocalPlayer::HandleDeactivateVolume(JoypadButton) {}
+// Retail fn_826E3C88 (unmapped; the name is ours, lane W16-HX4): maps a volume
+// button to the VocalParam it edits. `this` is unused but it is a member (r3 is
+// passed through). Shared with the HandleChangeVolume-shaped fn_826E5FB0.
+bool VocalPlayer::GetVolumeParam(JoypadButton but, VocalParam &param) const {
+    switch (but) {
+    case kPad_R2:
+        param = kVocalParamCueVolume;
+        break;
+    case kPad_R1:
+        param = kVocalParamMicVolume;
+        break;
+    case kPad_Tri:
+        param = kVocalParamMic2Gain;
+        break;
+    case kPad_Circle:
+        param = kVocalParamMic3Gain;
+        break;
+    case kPad_Square:
+        param = kVocalParamMic1Gain;
+        break;
+    default:
+        return false;
+    }
+    return true;
+}
+
+// Retail fn_826E50C0, 72 B, unpaired (the map does not name it). Ported from retail
+// bytes (lane W16-HX4): look up the button's VocalParam, then have the track's
+// VocalTrackDir hide the vocalist-volume widget. The previous empty stub let MSVC
+// delete OnMsg's whole compare chain + call (OnMsg 71.75%).
+void VocalPlayer::HandleDeactivateVolume(JoypadButton but) {
+    VocalParam param;
+    if (!GetVolumeParam(but, param)) {
+        MILO_WARN(
+            "HandleDeactivateVolume: Couldn't get a VocalParam for supposed volume button %d!\n",
+            but
+        );
+    } else if (mTrack) {
+        mTrack->GetVocalTrackDir()->DeactivateVolume(param);
+    }
+}
 #pragma auto_inline(on)
 
 bool VocalPlayer::AllowPitchCorrection() const {
@@ -2016,38 +2057,28 @@ float VocalPlayer::GetNumPhrases(int startTick, int endTick, int isolatedPart) {
     if (isolatedPart < 0) {
         endPart = 2;
     } else if (isolatedPart != 0) {
-        startPart = endPart = isolatedPart;
+        endPart = startPart = isolatedPart;
     }
     int count = 0;
-    unsigned int phraseIdx = 0;
-    int byteOffset = 0;
-    while (phraseIdx < phraseVec.size()) {
-        VocalPhrase *phrase = (VocalPhrase *)((char *)&phraseVec[0] + byteOffset);
-        int clampedStart = phrase->unk8;
-        if (clampedStart < startTick) clampedStart = startTick;
-        int clampedEnd = phrase->unk8 + phrase->unkc;
-        if (endTick < clampedEnd) clampedEnd = endTick;
-        int part = startPart;
+    for (unsigned int i = 0; i < phraseVec.size(); i++) {
+        int clampedStart = Max(phraseVec[i].unk8, startTick);
+        int clampedEnd = Min(phraseVec[i].unk8 + phraseVec[i].unkc, endTick);
         bool found = false;
-        while (part <= endPart && !found) {
-            if (phrase && part == 0) {
-                if (phrase->unk10 != phrase->unk14) {
-                    found = true;
+        for (int part = startPart; part <= endPart && !found; part++) {
+            if (part == 0) {
+                VocalPhrase &phrase = phraseVec[i];
+                if (phrase.unk10 != phrase.unk14) {
                     count++;
+                    found = true;
                 }
             } else {
                 VocalNoteList *vnl = TheSongDB->GetVocalNoteList(part);
-                if (vnl != NULL && vnl->HasNoteInRange(clampedStart, clampedEnd) != -1) {
-                    if (part != 0 || phrase->unk10 != phrase->unk14) {
-                        found = true;
-                        count++;
-                    }
+                if (vnl && vnl->HasNoteInRange(clampedStart, clampedEnd) != -1) {
+                    count++;
+                    found = true;
                 }
             }
-            part++;
         }
-        phraseIdx++;
-        byteOffset += 0x38;
     }
     return (float)count;
 }

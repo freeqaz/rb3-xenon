@@ -186,15 +186,15 @@ finalize:
 }
 
 void CalibrationPanel::UpdateLabel() {
-    UILabel *countdownlabel = mDir->Find<UILabel>("cal_countdown.lbl", true);
-    UILabel *repslabel = mDir->Find<UILabel>("cal_reps.lbl", true);
-    RndGroup *progbargrp = mDir->Find<RndGroup>("prog_bar.grp", true);
-    RndGroup *calvidlabelsgrp = mDir->Find<RndGroup>("cal_video_labels.grp", true);
+    UILabel *countdownlabel = LoadedDir()->Find<UILabel>("cal_countdown.lbl", true);
+    UILabel *repslabel = LoadedDir()->Find<UILabel>("cal_reps.lbl", true);
+    RndGroup *progbargrp = LoadedDir()->Find<RndGroup>("prog_bar.grp", true);
+    RndGroup *calvidlabelsgrp = LoadedDir()->Find<RndGroup>("cal_video_labels.grp", true);
     RndGroup *calhwvidgrp =
-        mDir->Find<RndGroup>("cal_hardware_video_illustration.grp", true);
+        LoadedDir()->Find<RndGroup>("cal_hardware_video_illustration.grp", true);
     RndGroup *calhwaudgrp =
-        mDir->Find<RndGroup>("cal_hardware_audio_illustration.grp", true);
-    RndGroup *calhwdarkgrp = mDir->Find<RndGroup>("cal_hardware_darkness.grp", true);
+        LoadedDir()->Find<RndGroup>("cal_hardware_audio_illustration.grp", true);
+    RndGroup *calhwdarkgrp = LoadedDir()->Find<RndGroup>("cal_hardware_darkness.grp", true);
     if (mTestState == tsTesting) {
         if (mHardwareMode) {
             progbargrp->SetShowing(true);

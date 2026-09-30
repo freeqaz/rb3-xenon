@@ -35,8 +35,10 @@ BandUser::BandUser()
     : mDifficulty(DefaultDifficulty()), unk_0xC(0), mTrackType(kTrackNone),
       mControllerType(kControllerNone), mHasButtonGuitar(0), mHas22FretGuitar(0),
       mPreferredScoreType(kScoreBand), mOvershellState(kState_JoinedDefault), mChar(0),
-      mAutoplay(0), mLastHitFraction(0), mTrack(0), mPlayer(0), mParticipating(0),
-      mIsWiiRemoteController(0), mJustDisconnected(0) {
+      mAutoplay(0), mLastHitFraction(0), mTrack(0), mPlayer(0), mParticipating(0) {
+    // Retail leaves 0x91/0x92 (mIsWiiRemoteController, mJustDisconnected)
+    // unset, and "none" is a function-local static here too.
+    static Symbol none("none");
     mPreviousAward = none;
 }
 

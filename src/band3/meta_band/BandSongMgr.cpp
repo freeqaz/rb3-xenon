@@ -314,6 +314,15 @@ SongInfo *BandSongMgr::SongAudioData(int i) const {
         MILO_ASSERT(songInfo, 0x1a0);
         RELEASE(unkc0);
         unkc0 = new DataArraySongInfo(songInfo);
+        // TU5: a mounted content package re-roots the song's base file name.
+        const char *name = ContentName(i);
+        if (name && TheContentMgr.IsMounted(name)) {
+            const char *root = ContentNameRoot(name);
+            if (root) {
+                const char *base = unkc0->GetBaseFileName();
+                unkc0->SetBaseFileName(FileMakePath(root, base));
+            }
+        }
         const char *update = ((BandSongMetadata *)data)->MidiUpdate(); // lol can you
                                                                        // actually do this
         if (update)
@@ -321,7 +330,8 @@ SongInfo *BandSongMgr::SongAudioData(int i) const {
         if (mUpgradeMgr->HasUpgrade(i)) {
             SongUpgradeData *upgrade = mUpgradeMgr->UpgradeData(i);
             MILO_ASSERT(upgrade, 0x1C3);
-            unkc0->AddExtraMidiFile(UpgradeMidiFile(i), 0);
+            const char *upgradeMidi = UpgradeMidiFile(i);
+            unkc0->AddExtraMidiFile(upgradeMidi, 0);
         }
         return unkc0;
     }
@@ -456,16 +466,15 @@ Symbol BandSongMgr::RankTierToken(int i) const {
 }
 
 void BandSongMgr::GetRankedSongs(std::vector<int> &vec, bool b1, bool b2) const {
-    if (b1) {
-        TheGameMode->Property("demos_allowed", true)->Int();
-    }
+    bool demosAllowed = b1 && TheGameMode->Property("demos_allowed", true)->Int();
     vec.clear();
     for (std::set<int>::const_iterator it = mAvailableSongs.begin();
          it != mAvailableSongs.end();
          ++it) {
         int cur = *it;
         BandSongMetadata *data = (BandSongMetadata *)Data(cur);
-        if (data->IsRanked() && !data->IsPrivate() && (b2 || !IsRestricted(cur))) {
+        if (data->IsRanked() && !data->IsPrivate() && (demosAllowed || !IsDemo(cur))
+            && (b2 || !IsRestricted(cur))) {
             vec.push_back(*it);
         }
     }
@@ -589,7 +598,7 @@ bool BandSongMgr::IsSongUnplayable(int songID, BandUserMgr &mgr, bool bvar3) con
 // attempt to replace it with GetValidSongCount() was refuted the same way:
 // retail's AllowContentToBeAdded calls GetValidSongCount ZERO times.
 int BandSongMgr::GetCurSongCount() const {
-    return mUncachedSongMetadata.size() + mCachedSongMetadata.size();
+    return mCachedSongMetadata.size() + mUncachedSongMetadata.size();
 }
 bool BandSongMgr::CanAddSong() const {
     int maxSongCount = mMaxSongCount;
@@ -726,15 +735,14 @@ bool BandSongMgr::IsInExclusionList(const char *name, int songID) const {
 }
 
 bool BandSongMgr::AllowContentToBeAdded(DataArray *a, ContentLocT lt) {
-    if (lt == kLocationRoot)
-        return true;
-    unsigned int count = CountSongsInArray(a);
+    int count = CountSongsInArray(a);
     while (count + GetCurSongCount() >= mMaxSongCount) {
         if (!RemoveOldestCachedContent())
             break;
     }
-    int maxCount = mMaxSongCount;
-    int full = (count + GetCurSongCount() >= maxCount);
+    if (lt == kLocationRoot)
+        return true;
+    bool full = count + GetCurSongCount() >= mMaxSongCount;
     if (full) {
         if (!unk13c) {
             static Symbol song_mgr_full("song_mgr_full");
@@ -745,7 +753,7 @@ bool BandSongMgr::AllowContentToBeAdded(DataArray *a, ContentLocT lt) {
     } else {
         unk13c = false;
     }
-                                                                return !(full);
+    return !full;
 }
 
 int BandSongMgr::GetValidSongs(
@@ -760,6 +768,7 @@ int BandSongMgr::GetValidSongs(
     outSongs.clear();
     std::vector<int> ranked;
     GetRankedSongs(ranked, false, false);
+    static Symbol band("band");
     FOREACH (it, ranked) {
         int songID = *it;
         BandSongMetadata *songData = (BandSongMetadata *)Data(songID);
@@ -878,23 +887,20 @@ void BandSongMgr::ClearSongCacheNeedsWrite() {
 }
 
 void BandSongMgr::ReadCachedMetadataFromStream(BinStream &bs, int rev) {
+    // Retail builds one scratch metadata up front and reuses it to skip every
+    // entry that no longer fits.
+    BandSongMetadata scratch(this);
     int count;
     bs >> count;
     for (int i = 0; i < count; i++) {
         int i40;
         bs >> i40;
-        bool remove;
-        int maxCount;
-        do {
-            maxCount = mMaxSongCount;
-            if (maxCount <= GetCurSongCount())
+        while (GetCurSongCount() >= mMaxSongCount) {
+            if (!RemoveOldestCachedContent())
                 break;
-            remove = RemoveOldestCachedContent();
-        } while (remove);
-        maxCount = mMaxSongCount;
-        if (maxCount <= GetCurSongCount()) {
-            BandSongMetadata data(this);
-            data.Load(bs);
+        }
+        if (GetCurSongCount() >= mMaxSongCount) {
+            scratch.Load(bs);
         } else {
             BandSongMetadata *data = new BandSongMetadata(this);
             data->Load(bs);
@@ -1054,8 +1060,8 @@ int BandSongMgr::GetPartDifficulty(Symbol s1, Symbol s2) const {
 }
 
 int BandSongMgr::GetNumVocalParts(Symbol s) const {
-    BandSongMetadata *songData =
-        (BandSongMetadata *)Data(GetSongIDFromShortName(s, true));
+    int songID = GetSongIDFromShortName(s, true);
+    BandSongMetadata *songData = (BandSongMetadata *)Data(songID);
     MILO_ASSERT(songData, 0x5E4);
     return songData->NumVocalParts();
 }
