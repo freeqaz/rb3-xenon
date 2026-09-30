@@ -84,6 +84,7 @@ bool PlatformMgr::IsPadNumSignedIn(int padnum) const { return IsSignedIn(padnum)
 bool PlatformMgr::HasPadNumsSigninChanged(int padnum) const {
     if (padnum < 0) {
         MILO_FAIL("PadNum = %d", padnum);
+        return false;
     }
     return 1 << padnum & mSigninChangeMask;
 }

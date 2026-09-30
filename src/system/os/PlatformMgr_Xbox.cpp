@@ -674,7 +674,7 @@ DataNode PlatformMgr::OnSignInUsers(DataArray *msg) {
             flags = 2;
         }
     }
-    SignInUsers(msg->Int(2), flags);
+    XShowSigninUI(msg->Int(2), flags);
     return DataNode(0);
 }
 
