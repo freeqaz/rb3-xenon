@@ -74,14 +74,13 @@ void PitchDetector::Detect(unsigned int frame) {
     IPP::Mul_InPlace(mHop + 1, &mWeight[0], &mSpectrum[0]);
 
     // Skip the initial monotonically-decreasing region of the spectrum.
+    // A plain for loop: MSVC rotates it, so the (sum & ~1) > 2 guard is the
+    // compiler's first-trip test, and /O1 re-reads the bound every trip.
     unsigned int lo = 0;
-    unsigned int i = 1;
-    if (((mWindowSize + mHop) & ~1u) > 2) {
-        while (mSpectrum[i] < mSpectrum[i - 1]) {
-            lo = i;
-            i++;
-            if (i >= ((mHop + mWindowSize) >> 1)) break;
-        }
+    for (unsigned int i = 1;
+         i < (mWindowSize + mHop) / 2 && mSpectrum[i] < mSpectrum[i - 1];
+         i++) {
+        lo = i;
     }
     if (lo < mWindowSize) {
         lo = mWindowSize;
