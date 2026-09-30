@@ -1090,10 +1090,11 @@ DEF_DATA_FUNC(DataHandleRet) {
         o = n.UncheckedObj();
     else
         o = gDataDir->FindObject(n.LiteralStr(array), true);
+#ifdef HX_NATIVE
+    // retail (0x82761370) has no not-found test: it dispatches straight to Handle
     if (!o) {
         String str;
         n.Print(str, true);
-#ifdef HX_NATIVE
         MILO_WARN(
             "Object %s not found (file %s, line %d)",
             str.c_str(),
@@ -1101,15 +1102,8 @@ DEF_DATA_FUNC(DataHandleRet) {
             array->Line()
         );
         return DataNode(kDataUnhandled, 0);
-#else
-        MILO_FAIL(
-            "Object %s not found (file %s, line %d)",
-            str.c_str(),
-            array->File(),
-            array->Line()
-        );
-#endif
     }
+#endif
     return o->Handle(a, false);
 }
 
