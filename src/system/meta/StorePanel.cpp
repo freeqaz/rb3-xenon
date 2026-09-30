@@ -228,7 +228,6 @@ void StorePanel::Poll() {
 void StorePanel::FinishCheckout() {
     static Message msg("checkout_finished", DataNode(0));
     msg[0] = mUnk75;
-    HandleType(msg.mData);
     TheUI->Handle(msg.mData, false);
     RELEASE(mPurchaser);
 }
@@ -327,28 +326,28 @@ void StorePanel::ExitError(StoreError e) {
 }
 
 void StorePanel::HandleNetCacheMgrFailure() {
-    StoreError err;
-    NetCacheMgrFailType failTy;
-
-    err = kStoreErrorSuccess;
-    failTy = TheNetCacheMgr->GetFailType();
+    // Retail: DC3's shape (default kStoreErrorCacheRemoved, the device-missing
+    // case jumps straight to kStoreErrorNoMetadata, ExitError unconditional),
+    // but the store-server/no-space cases assign a flat kStoreErrorCacheRemoved.
+    StoreError err = kStoreErrorCacheRemoved;
+    NetCacheMgrFailType failTy = TheNetCacheMgr->GetFailType();
     switch (failTy) {
     case kNCMFT_StoreServer:
     case kNCMFT_NoSpace:
         MILO_WARN("Failure %d in NetCacheMgr.\n", failTy);
+        err = kStoreErrorCacheRemoved;
         break;
     case kNCMFT_StorageDeviceMissing:
-        err = kStoreErrorNoMetadata;
-        break;
+        goto no_metadata;
     default:
         MILO_WARN("Unknown failure %d in NetCacheMgr.\n", failTy);
         break;
     }
-    if (err != kStoreErrorNoMetadata && !ThePlatformMgr.IsEthernetCableConnected()) {
+    if (!ThePlatformMgr.IsEthernetCableConnected()) {
+    no_metadata:
         err = kStoreErrorNoMetadata;
     }
-    if (err != kStoreErrorSuccess)
-        ExitError(err);
+    ExitError(err);
 }
 
 void StorePanel::HandleNetCacheLoaderFailure(int failType) {
@@ -405,9 +404,7 @@ void StorePanel::PopulateOffers(DataArray *arr, bool b) {
                     DataArray *child_arr = arr->Array(i);
                     StoreOffer *offer = MakeNewOffer(child_arr);
 
-                    if ((mShowTestOffers == 0) && offer->IsTest()) {
-                        delete offer;
-                    } else if (!offer->ValidTitle()) {
+                    if (((mShowTestOffers == 0) && offer->IsTest()) || !offer->ValidTitle()) {
                         delete offer;
                     } else {
                         offerVec->push_back(offer);
@@ -417,7 +414,10 @@ void StorePanel::PopulateOffers(DataArray *arr, bool b) {
                 } while (i < arr->Size());
             }
 
+#ifdef HX_NATIVE
+            // DC3-era: retail RB3 has no ValidateOffers (no retail row, no call here)
             ValidateOffers(*offerVec);
+#endif
             arr->Release();
         }
     }

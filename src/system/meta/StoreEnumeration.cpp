@@ -61,7 +61,7 @@ void XboxEnumeration::Start() {
             mContentList.clear();
         }
         if (mOfferIDsBegin == 0) {
-            error = XMarketplaceCreateOfferEnumerator(mUserIndex, 0x100002, 0xFFFFFFFFFFFFFFFFULL, 99, &mBufferSize, &mHandle);
+            error = XMarketplaceCreateOfferEnumerator(mUserIndex, 2, 0xFFFFFFFFFFFFFFFFULL, 99, &mBufferSize, &mHandle);
         } else {
             int remaining = (int)(mOfferIDCount - (u32)(mCurOffers - mOfferIDsBegin));
             if (remaining >= 99) remaining = 99;

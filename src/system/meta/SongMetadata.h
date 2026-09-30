@@ -5,6 +5,7 @@
 #include "meta/DataArraySongInfo.h"
 
 class SongMetadata : public Hmx::Object {
+    friend class SongMgr; // ContentName reads mID directly in retail
 public:
     virtual ~SongMetadata();
     virtual DataNode Handle(DataArray *, bool);

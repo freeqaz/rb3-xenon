@@ -86,9 +86,12 @@ private:
     float mEndMs;
     float mStartPreviewMs;
     float mEndPreviewMs;
-    bool mRegisteredWithCM;
-    bool mSameSongRequested;
-    bool mSecurePreview;
+    bool mRegisteredWithCM; // 0x6c
+    // Retail has ONE bool at 0x6d: OnStart writes arg 5 to it and PreparePreview
+    // passes it to Synth::NewStream; retail Poll never touches 0x6c..0x6f. So it
+    // is mSecurePreview, and DC3's mSameSongRequested (Poll's fade-out request)
+    // does not exist in RB3 -- native-only below.
+    bool mSecurePreview; // 0x6d
     // ^ mSecurePreview is the LAST member in retail RB3-360: sizeof(SongPreview)
     // is 112 (0x70) there, proved by MetaPanel (mMusic @0x60 matches, and the
     // bool right after the embedded `SongPreview mSongPreview` @0x64 sits at
@@ -105,6 +108,7 @@ private:
     // stores nothing at 0x6e/0x6f. The rb3-Wii oracle agrees (no such member,
     // no guards in Init/Terminate/SetMusicVol/SetCrowdSingVol/Start).
 #ifdef HX_NATIVE
+    bool mSameSongRequested;
     bool mInitted;
     float mPreviewDb;
     ObjPtr<TexMovie> mTexMovie;

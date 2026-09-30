@@ -24,14 +24,13 @@ const float SongPreview::kSilenceVal = -48;
 SongPreview::SongPreview(const SongMgr &mgr)
     : mSongMgr(mgr), mStream(0),
 #ifdef HX_NATIVE
-      mTexMovie(this), mPreviewDb(0.0f), mInitted(0), mSecurePreview(0),
+      mTexMovie(this), mPreviewDb(0.0f), mInitted(0), mSameSongRequested(0),
 #endif
       mFader(0), mMusicFader(0),
       mCrowdSingFader(0), mNumChannels(0), mAttenuation(0.0f),
       mState(kIdle), mStartMs(0.0f), mEndMs(0.0f), mStartPreviewMs(0.0f),
-      // Retail's ctor stores nothing at 0x6e (mSecurePreview) or 0x6f; every
-      // read of mSecurePreview is preceded by OnStart's `mSecurePreview = false`.
-      mEndPreviewMs(0.0f), mRegisteredWithCM(0), mSameSongRequested(0) {}
+      // Retail's ctor stores 0x6c and 0x6d and nothing at 0x6e/0x6f.
+      mEndPreviewMs(0.0f), mRegisteredWithCM(0), mSecurePreview(0) {}
 
 SongPreview::~SongPreview() { Terminate(); }
 
@@ -254,9 +253,11 @@ DataNode SongPreview::OnStart(DataArray *arr) {
     if (arr->Size() == 3) {
         mStartPreviewMs = 0;
         mEndPreviewMs = 0;
+#ifdef HX_NATIVE
         MILO_LOG(
             "start called in upper OnStart here : sym='%s'\n", arr->ForceSym(2).Str()
         );
+#endif
         Start(arr->ForceSym(2));
     } else {
         mStartPreviewMs = arr->Float(3);
@@ -265,9 +266,11 @@ DataNode SongPreview::OnStart(DataArray *arr) {
             mSecurePreview = arr->Int(5);
         }
         mSong = gNullStr;
+#ifdef HX_NATIVE
         MILO_LOG(
             "start called in lower OnStart here : sym='%s'\n", arr->ForceSym(2).Str()
         );
+#endif
         Start(arr->ForceSym(2));
     }
     return 1;
@@ -316,7 +319,7 @@ void SongPreview::PrepareSong(Symbol song) {
 #endif
     }
 #endif // HX_NATIVE
-    mStream = TheSynth->NewStream(filename, mStartMs, 0, mSameSongRequested);
+    mStream = TheSynth->NewStream(filename, mStartMs, 0, mSecurePreview);
     const std::vector<float> &pans = songInfo->GetPans();
     const std::vector<float> &vols = songInfo->GetVols();
     mNumChannels = pans.size();
@@ -351,11 +354,14 @@ void SongPreview::Poll() {
             } else {
                 PreparePreview();
             }
-        } else if (mSameSongRequested) {
+        }
+#ifdef HX_NATIVE
+        else if (mSameSongRequested) {
             mState = kFadingOutSong;
             mFader->DoFade(kSilenceVal, mFadeTime);
             mSameSongRequested = false;
         }
+#endif
         break;
     }
     case kMountingSong: {
