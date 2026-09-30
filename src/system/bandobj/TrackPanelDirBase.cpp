@@ -168,8 +168,12 @@ void TrackPanelDirBase::ReapplyConfiguration(bool b) {
         static Message apply("apply", b);
         apply[0] = b;
         mConfiguration->Handle(apply, true);
+#ifdef HX_NATIVE
+        // rb3-Wii re-shows the HUD here; retail TU5 (0x82357640) returns right
+        // after Handle -- no mPerformanceMode test, no SetShowing.
         if (!mPerformanceMode)
             SetShowing(gShowHUD);
+#endif
     }
 }
 
