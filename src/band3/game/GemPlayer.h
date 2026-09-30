@@ -310,6 +310,9 @@ public:
     virtual void EnterAnnoyingMode() { mAnnoyingMode = true; }
     virtual void ChangeDifficulty(Difficulty);
     virtual void HandleNewSection(const PracticeSection &, int, int);
+    // Retail 0x826BC9A8 overrides the TU5-inserted Player slot (vtable +0x180):
+    // GetBandTrack() then ResetPlayerFeedback(). ChangeDifficulty dispatches it.
+    virtual void UnkTU5Virtual();
     virtual void LocalSetEnabledState(EnabledState, int, BandUser *, bool);
     virtual void EnableSwings(bool);
     virtual void IgnoreUntilRollback(float);

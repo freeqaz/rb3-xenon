@@ -250,7 +250,7 @@ void GemPlayer::DynamicAddBeatmatch() {
     UpdateGameCymbalLanes();
     mMatcher->PostDynamicAdd(mTrackNum, ms);
     Player::DynamicAddBeatmatch();
-    mGemStatus->mGems.resize(TheSongDB->GetTotalGems(mTrackNum));
+    mGemStatus->Resize(TheSongDB->GetTotalGems(mTrackNum));
 }
 
 void GemPlayer::PostDynamicAdd() {
@@ -1473,24 +1473,18 @@ void GemPlayer::DisableFillsCompletely() {
 }
 
 void GemPlayer::EnableDrumFills(bool b1) {
-    if (b1) {
+    // TU5: also gated on a late Properties bool (Game+0x47).
+    if (b1 && TheGame->mProperties.mUnkTU5_prop19) {
         if (mTrack && mTrack->GetTrackDir()) {
-            EnableFills(mTrack->GetTrackDir()->TopSeconds() * 1000.0f, false);
+            float ms = mTrack->GetTrackDir()->TopSeconds() * 1000.0f;
+            EnableFills(ms, false);
         }
     } else
         DisableFills();
 }
 
 bool GemPlayer::FillsEnabled(int i1) {
-    bool ret = true;
-    if (!TheSongDB->IsInCoda(i1)) {
-        bool fills = false;
-        if (mMatcher && mMatcher->FillsEnabled(i1))
-            fills = true;
-        if (!fills)
-            ret = false;
-    }
-    return ret;
+    return TheSongDB->IsInCoda(i1) || (mMatcher && mMatcher->FillsEnabled(i1));
 }
 
 void GemPlayer::EnterCoda() {
@@ -1596,15 +1590,12 @@ void GemPlayer::ChangeDifficulty(Difficulty diff) {
     TheSongDB->ChangeDifficulty(mTrackNum, diff);
     TheSongDB->ClearQuarantinedPhrases(mTrackNum);
     ResetGemStates(ms);
-    if (mTrack)
-        mTrack->ChangeDifficulty(diff, tick);
+    mTrack->ChangeDifficulty(diff, tick);
     mGemStatus->Clear();
     mGemStatus->Resize(TheSongDB->GetTotalGems(mTrackNum));
     IgnoreGemsUntil(tick);
     DisableFillsCompletely();
-    BandTrack *trk = GetBandTrack();
-    if (trk)
-        trk->ResetPlayerFeedback();
+    UnkTU5Virtual();
     if (TheGame->InTrainer()) {
         TheSongDB->SetupTrackPhrases(mTrackNum);
         TheGemTrainerPanel->RestartSection();
@@ -1612,11 +1603,9 @@ void GemPlayer::ChangeDifficulty(Difficulty diff) {
 }
 
 void GemPlayer::SetPitchShiftRatio(float f1) {
-    // Retail calls an out-of-line FxSendPitchShift ratio setter here
-    // (0x827122A0: mRatio = f1; OnParametersChanged()); that setter belongs in
-    // src/system/synth and is not ported, so go through the synced property.
-    static Symbol pitch_ratio("pitch_ratio");
-    GetPitchShift()->SetProperty(pitch_ratio, f1);
+    // Retail calls the out-of-line setter 0x827122A0 (mRatio = f1;
+    // OnParametersChanged()), not the synced property.
+    GetPitchShift()->SetRatio(f1);
     // no mBeatMaster/GetAudio/GetSongStream asserts in retail (the last would
     // evaluate a second virtual GetSongStream call)
     Stream *stream = mBeatMaster->GetAudio()->GetSongStream();
@@ -1738,6 +1727,12 @@ void GemPlayer::UpdateSectionStats() {
     } else
         f1 = -1.0f;
     Player::UpdateSectionStats(f1, scorediff);
+}
+
+void GemPlayer::UnkTU5Virtual() {
+    BandTrack *trk = GetBandTrack();
+    if (trk)
+        trk->ResetPlayerFeedback();
 }
 
 void GemPlayer::HandleNewSection(const PracticeSection &s, int i1, int i2) {
