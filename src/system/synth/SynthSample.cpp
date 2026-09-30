@@ -136,7 +136,12 @@ int SynthSample::GetPlatformSize(Platform) {
 void SynthSample::Sync(SyncType ty) {
     if (ty == sync0) {
         mSampleData.Reset();
+#ifdef HX_NATIVE
         if (!sDisabled && !mFile.empty()) {
+#else
+        // Retail 0x82728170: no sDisabled test and no PC WAV branch.
+        if (!mFile.empty()) {
+#endif
             FileLoader *fl = dynamic_cast<FileLoader *>(TheLoadMgr.ForceGetLoader(mFile));
             int i80;
             const char *cc;
@@ -147,9 +152,12 @@ void SynthSample::Sync(SyncType ty) {
             delete fl;
             if (cc) {
                 BufStream bs((void *)cc, i80, true);
+#ifdef HX_NATIVE
                 if (TheLoadMgr.GetPlatform() == kPlatformPC) {
                     mSampleData.LoadWAV(bs, mFile, false);
-                } else {
+                } else
+#endif
+                {
                     mSampleData.Load(bs, mFile);
                 }
                 delete cc;
