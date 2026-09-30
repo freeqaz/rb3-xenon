@@ -87498,6 +87498,15 @@
     "??$__destroy_range@PAU?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@0@00@Z"
    ],
    "evidence": "W16-GV 2026-09-30: FCNP-tail adjudication, pair #24 from the W16-GQ scout (docs/decomp/W16GQ_FCNP_NONMEMBER_ADJUDICATION_2026-09-30.md). __destroy_range<pair<vector<int,StlNodeAlloc<int>>,int>>::__destroy_range and __destroy_range<DistEntry>::__destroy_range are template twins of the STLport array-destroy-range helper over trivially-destructible element types (a pointer-pair aggregate vs a POD struct). FLAT T1 REFUTED (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 6 named relocations compared, 0 SLOT-REFUTED / 0 BYTES-DIFFER / 0 CYCLE-ASSUMED, 0 placeholder relocations. 'ours' spelling not map-resident at its own address; no prior co-withdrawal with the retail spelling. See docs/decomp/W16GV_FCNP_TAIL_2026-09-30.md."
+  },
+  {
+   "name": "list_Dep_CharPollableSorter_ctor",
+   "address": "0x82370c80",
+   "survivor": "??0?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
+   "folded": [
+    "??0?$list@PAVJob@@V?$StlNodeAlloc@PAVJob@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z"
+   ],
+   "evidence": "W16-GV 2026-09-30: FCNP-tail adjudication, pair #29 from the W16-GQ scout (docs/decomp/W16GQ_FCNP_NONMEMBER_ADJUDICATION_2026-09-30.md). list<Job*>::list(list const&) and list<Dep@CharPollableSorter*>::list(list const&) are template twins of the STLport list copy-constructor over a raw-pointer element type (Job* vs Dep*), so the per-node copy-construct call degenerates to the same trivial pointer-bitcopy node insert. FLAT T1 REFUTED (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 12 named relocations compared, 0 SLOT-REFUTED / 0 BYTES-DIFFER / 0 CYCLE-ASSUMED, 0 placeholder relocations. 'ours' spelling not map-resident at its own address; no prior co-withdrawal with the retail spelling. See docs/decomp/W16GV_FCNP_TAIL_2026-09-30.md."
   }
  ]
 }
