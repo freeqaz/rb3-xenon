@@ -2024,9 +2024,12 @@ Flare.cpp:
 Debug.cpp:
 	.pdata      start:0x82217CC8 end:0x82217D80
 	.pdata      start:0x82217D90 end:0x82217DB0
-	.pdata      start:0x82217DB8 end:0x82217DF0
-	.pdata      start:0x82217E20 end:0x82217E78
-	.pdata      start:0x82217E90 end:0x82217EA8
+	.pdata      start:0x82217DB8 end:0x82217DC0
+	.pdata      start:0x82217DC8 end:0x82217DF0
+	.pdata      start:0x82217E20 end:0x82217E40
+	.pdata      start:0x82217E50 end:0x82217E58
+	.pdata      start:0x82217E60 end:0x82217E78
+	.pdata      start:0x82217E90 end:0x82217E98
 	.pdata      start:0x82241DB8 end:0x82241DC8
 	.text       start:0x8250F4E0 end:0x8250FDEC
 	.text       start:0x8250FEE8 end:0x825100C8
@@ -5182,9 +5185,13 @@ Sequence.cpp:
 System.cpp:
 	.pdata      start:0x82217D80 end:0x82217D90
 	.pdata      start:0x82217DB0 end:0x82217DB8
+	.pdata      start:0x82217DC0 end:0x82217DC8
 	.pdata      start:0x82217DF0 end:0x82217DF8
 	.pdata      start:0x82217DF8 end:0x82217E20
+	.pdata      start:0x82217E40 end:0x82217E50
+	.pdata      start:0x82217E58 end:0x82217E60
 	.pdata      start:0x82217E78 end:0x82217E90
+	.pdata      start:0x82217E98 end:0x82217EA8
 	.pdata      start:0x822619D8 end:0x822619E0
 	.text       start:0x8250FDEC end:0x8250FEE8
 	.text       start:0x825100C8 end:0x825101EC
