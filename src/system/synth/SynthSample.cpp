@@ -78,6 +78,9 @@ BEGIN_COPYS(SynthSample)
     BEGIN_COPYING_MEMBERS
         if (ty != kCopyFromMax) {
             COPY_MEMBER(mFile)
+            COPY_MEMBER(mIsLooped)
+            COPY_MEMBER(mLoopStartSamp)
+            COPY_MEMBER(mLoopEndSamp)
         }
     END_COPYING_MEMBERS
     Sync(sync0);
@@ -116,7 +119,7 @@ void SynthSample::PreLoad(BinStream &bs) {
 void SynthSample::PostLoad(BinStream &bs) {
     sLoader = nullptr;
     sLoading = nullptr;
-    Sync(bs.Cached() ? sync1 : sync0);
+    Sync(bs.Cached() ? sync2 : sync0); // retail: cached -> 2
 }
 
 void SynthSample::Disable() { sDisabled = true; }
