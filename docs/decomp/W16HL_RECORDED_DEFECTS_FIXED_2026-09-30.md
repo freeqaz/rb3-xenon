@@ -180,4 +180,4 @@ identification job, and the row stays at 0.
   +5 / +456 B measured between builds. Measured **+23 / +2,360 B**. The shortfall is in step 1,
   whose funclet re-pairings (e.g. the two 44 B HolmesClient funclets now paired in Scoring) were
   not all counted by hand. No row moved against its prediction's sign.
-- `tools/native_build_gate.sh`: NATIVE_PLACEHOLDER
+- `tools/native_build_gate.sh`: the first run **FAILED**, `verdict=FAIL expected=18 verified=17 failed=1 rc=1`. `rb3-song` links `BandSongMgr.cpp` but takes LicenseMgr from weak stubs, so the new `LicenseMgr::ClearLicenseCacheNeedsWrite()` call was undefined. Fixed with a weak stub in `native/src/m1_link_stubs.s` beside `LicenseCacheNeedsWrite`'s (native-only, no effect on the match build). The re-run is the lane's last action, and its `NATIVE_GATE_RESULT` line is in the lane report.
