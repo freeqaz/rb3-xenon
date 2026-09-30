@@ -26,6 +26,7 @@
 #include "utl/HxGuid.h"
 #include "utl/JobMgr.h"
 #include "utl/MemStream.h"
+#include "xdk/XNET.h"
 
 class PerformanceData;
 class PlayerScore;
@@ -133,7 +134,11 @@ public:
     void VerifyBandName(const char *, DataResultList &, Hmx::Object *, int, int);
     bool GetIsDiskSong(int);
 
-    void ClearPendingInvitations() { unk111 = false; }
+    void ClearPendingInvitations() {
+#ifdef HX_NATIVE
+        unk111 = false;
+#endif
+    }
     bool IsOnline() { return mState == 2; }
     bool BlockLoginToggle() { return mLoginBlocked = !mLoginBlocked; }
     void BlockLogin(bool b) { mLoginBlocked = b; }
@@ -177,21 +182,24 @@ public:
     bool mLoginBlocked; // 0x84
     bool unk85;
     HxGuid unk88;
-    WiiFriendList *unk98; // 0x98
-    WiiFriendList *unk9c; // 0x9c
-    std::vector<Friend *> *unka0;
-    Hmx::Object *unka4;
-    // TU5/Xbox layout: the Wii friend/messenger tail is 0x50 bytes smaller than
-    // the Wii-derived header (retail's Hmx::Object virtual base sits at object
-    // offset 0xcc, not 0x11c). unka8 (Wii Timer, 0x30) shrinks to 0x10 and unke0
-    // (Wii Timer, 0x30) is dropped -- both are unreferenced in this TU. This
-    // re-bases the vbtable displacement so ~RockCentral matches retail. See
-    // fixwave-2.
-    int mPadTU5_a8[6]; // was Timer unka8 (0x30); Wii-only, unreferenced
-    WiiMessageList *unkd8; // 0xc0
+    // Xbox layout (TU5): RockCentral::OnMsg(const ServerStatusChangedMsg &)
+    // passes this+0x98 to XNetGetTitleXnAddr and (this+0x98, this+0xc0) to
+    // XNetXnAddrToMachineId, then prints the u64 at 0xc0 into
+    // g_szMachineIdString -- the same members DC3 names mXNetAddr / mMachineID.
+    // The rb3-Wii friend/messenger pointers (unk98..unka4, unka8 Timer, unkd8)
+    // that the Wii header put here do not exist on Xbox. The Hmx::Object
+    // virtual base must stay at 0xcc (vtordisp at 0xc8) for ~RockCentral.
+    XNADDR mXNetAddr; // 0x98
+    ULONGLONG mMachineID; // 0xc0
+#ifdef HX_NATIVE
+    // rb3-Wii messenger/invite flags. The Xbox object has no room for them
+    // (mMachineID ends at 0xc8, where the vbase's vtordisp sits), retail's
+    // Handle dispatches neither message that sets them, and their only reader
+    // (OvershellSlot::UpdateView) is itself HX_NATIVE-only.
     bool unk110;
     bool unk111;
     bool unk112;
+#endif
 };
 
 extern RockCentral TheRockCentral;
