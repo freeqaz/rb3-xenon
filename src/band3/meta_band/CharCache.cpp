@@ -36,7 +36,6 @@ void CharCache::Init() {
     TheCharCache->InitMe();
 }
 
-CharCache::~CharCache() {}
 
 CharCache::CharCache() : unk28(0) {}
 
