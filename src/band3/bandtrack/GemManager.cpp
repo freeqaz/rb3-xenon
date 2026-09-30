@@ -696,8 +696,8 @@ void GemManager::SetupGems(int startTick) {
                 bool matches = true;
                 const GameGem &prevGem = gems[phrase.mGemId];
                 for (int s = 0; s < 6; s++) {
-                    signed char curFret = gem.GetFret(s);
-                    signed char prevFret = prevGem.GetFret(s);
+                    int curFret = gem.GetFret(s);
+                    int prevFret = prevGem.GetFret(s);
                     if (curFret != -1 && curFret != prevFret) {
                         matches = false;
                         break;
@@ -728,11 +728,10 @@ void GemManager::SetupGems(int startTick) {
                         if (TheTrainerPanel && TheGame->mProperties.mInTrainer) {
                             int loopTick = GetLoopTick(phraseStart);
                             int offset = loopTick - TheTrainerPanel->GetCurrentStartTick();
-                            phraseEnd = Min(
+                            int adjustedEnd =
                                 TheTrainerPanel->GetLoopTicks(TheTrainerPanel->GetCurrSection())
-                                    + (phraseStart - offset),
-                                phraseEnd
-                            );
+                                + (phraseStart - offset);
+                            phraseEnd = adjustedEnd < phraseEnd ? adjustedEnd : phraseEnd;
                         }
                         ArpeggioPhrase phrase(phraseStart, phraseEnd, i);
                         mArpeggioPhrases.push_back(phrase);
