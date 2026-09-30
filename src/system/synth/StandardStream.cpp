@@ -705,10 +705,10 @@ void StandardStream::InitInfo(int i1, int sampleRate, bool floatSamples, int i4)
 }
 
 void StandardStream::ClearJumpMarkers() {
-    mStartMarker.position = 0;
-    mStartMarker.name = "";
     mEndMarker.position = 0;
     mEndMarker.name = "";
+    mStartMarker.position = 0;
+    mStartMarker.name = "";
     mJumpInstances.clear();
 }
 
