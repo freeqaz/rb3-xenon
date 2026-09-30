@@ -115,7 +115,7 @@ static struct {
 #define gSpotlightAltRev gRevs_Spotlight.altRev
 #define gSpotlightRev gRevs_Spotlight.rev
 
-void Spotlight::BeamDef::Load(BinStreamRev &d) {
+void Spotlight::BeamDef::Load(BinStream &d) {
     d >> mIsCone;
     d >> mLength;
     d >> mBottomRadius;
@@ -378,7 +378,7 @@ BEGIN_COPYS(Spotlight)
     END_COPYING_MEMBERS
 END_COPYS
 
-BinStreamRev &operator>>(BinStreamRev &d, Spotlight::BeamDef &bd) {
+BinStream &operator>>(BinStream &d, Spotlight::BeamDef &bd) {
     bd.Load(d);
     return d;
 }
@@ -390,7 +390,7 @@ BEGIN_LOADS(Spotlight)
     bs >> revs;
     gSpotlightRev = getHmxRev(revs);
     gSpotlightAltRev = getAltRev(revs);
-    BinStreamRev &d = (BinStreamRev &)bs;
+    BinStream &d = bs; // retail passes the raw stream (no BinStreamRev in RB3)
     if (gSpotlightRev < 9) {
         MILO_FAIL("Unsupported spotlight version");
     } else {

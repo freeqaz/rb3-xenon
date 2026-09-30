@@ -98,7 +98,7 @@ void WorldCrowd::CharDef::Save(BinStream &bs) const {
     bs << mUseRandomColor;
 }
 
-void WorldCrowd::CharDef::Load(BinStreamRev &d) {
+void WorldCrowd::CharDef::Load(BinStream &d) {
     d >> mChar;
     d >> mHeight;
     d >> mDensity;
@@ -120,7 +120,7 @@ BinStream &operator<<(BinStream &bs, const WorldCrowd::CharData &cd) {
     return bs;
 }
 
-BinStreamRev &operator>>(BinStreamRev &d, WorldCrowd::CharData &cd) {
+BinStream &operator>>(BinStream &d, WorldCrowd::CharData &cd) {
     cd.mDef.Load(d);
     return d;
 }
@@ -315,7 +315,7 @@ BEGIN_LOADS(WorldCrowd)
     bs >> revs;
     gCrowdRev = getHmxRev(revs);
     gCrowdAltRev = getAltRev(revs);
-    BinStreamRev &d = (BinStreamRev &)bs;
+    BinStream &d = bs; // retail passes the raw stream (no BinStreamRev in RB3)
     RndDrawable::Load(bs);
 #ifdef HX_NATIVE
     // DC3 added this reset; RB3-360 retail's Load has NO such call -- it does not
@@ -352,7 +352,7 @@ BEGIN_LOADS(WorldCrowd)
                 std::list<OldMMInst> oldmmiList;
                 if (it->mMMesh) {
                     if (gCrowdRev < 9) {
-                        d >> xfmList;
+                        (BinStreamRev &)bs >> xfmList; // list<Transform> reader is rndobj's (still BinStreamRev-named)
                         it->mMMesh->Instances().clear();
                         FOREACH (transIt, xfmList) {
                             it->mMMesh->Instances().push_back(
@@ -378,15 +378,17 @@ BEGIN_LOADS(WorldCrowd)
                     }
                 } else if (gCrowdRev > 3) {
                     if (gCrowdRev < 9)
-                        d >> xfmList;
+                        (BinStreamRev &)bs >> xfmList; // list<Transform> reader is rndobj's (still BinStreamRev-named)
                     else if (gCrowdRev < 0xB)
                         d >> oldmmiList;
                     else
-                        d >> instancesList;
+                        // RndMultiMesh::Instance has only a BinStreamRev reader
+                        // (rndobj/MultiMesh, another lane's file); keep the cast here.
+                        (BinStreamRev &)bs >> instancesList;
                 }
             } else {
                 std::list<Transform> xfms;
-                d >> xfms;
+                (BinStreamRev &)bs >> xfms; // list<Transform> reader is rndobj's (still BinStreamRev-named)
                 // Retail dereferences mMMesh UNCONDITIONALLY here -- it emits no
                 // `cmplwi r11,0x0` / `beq` between the `lwz r11,0x38(it)` and the
                 // `clear`. Keep the null guard on native only.

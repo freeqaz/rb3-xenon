@@ -31,7 +31,7 @@ public:
     CamShotFrame(Hmx::Object *, const CamShotFrame &);
 
     void Save(BinStream &) const;
-    void Load(BinStreamRev &);
+    void Load(BinStream &);
     bool SameTargets(const CamShotFrame &) const;
     void GetCurrentTargetPosition(Vector3 &) const;
     void ApplyScreenOffset(Transform &, RndCam *) const;

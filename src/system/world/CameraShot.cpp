@@ -51,7 +51,12 @@ Hmx::Object *CamShot::sAnimTarget;
 // RB3-360 retail: this TU's Load family reads the archive rev from a file-scope
 // static halfword (lbl_82CC7494, `lhz`) that the outer CamShot::Load populates
 // once — not from the BinStreamRev member. Mirror that so inner sub-Loads match.
-static unsigned short sCamShotRev;
+// W16-HP: retail has no BinStreamRev at all (0 x .?AVBinStreamRev@@ in band.exe);
+// Load writes altRev at lbl_82CC7490 (+0) and the rev at +4 off one base, and
+// the readers load lbl_82CC7494 directly -- two initialised statics, alt first
+// (the placement HM measured for world/Instance and ui/InlineHelp).
+static unsigned short sCamShotAltRev = 0;
+static unsigned short sCamShotRev = 0;
 
 inline float ComputeFOVScale(float fov) {
     return 24.0f / (float(std::tan(fov / 2.0f)) * 2.0f);
@@ -147,7 +152,7 @@ void CamShotFrame::Save(BinStream &bs) const {
     bs << mParentFirstFrame;
 }
 
-RndTransformable *LoadSubPart(BinStreamRev &d, CamShot *shot) {
+RndTransformable *LoadSubPart(BinStream &d, CamShot *shot) {
     if (sCamShotRev < 0x2B) {
         int dummy;
         d >> dummy;
@@ -188,7 +193,7 @@ RndTransformable *LoadSubPart(BinStreamRev &d, CamShot *shot) {
     return proxy;
 }
 
-void CamShotFrame::Load(BinStreamRev &d) {
+void CamShotFrame::Load(BinStream &d) {
     d >> mDuration;
     d >> mBlend;
     d >> mBlendEase;
@@ -267,7 +272,7 @@ void CamShotFrame::Load(BinStreamRev &d) {
     }
 }
 
-BinStreamRev &operator>>(BinStreamRev &d, CamShotFrame &csf) {
+BinStream &operator>>(BinStream &d, CamShotFrame &csf) {
     csf.Load(d);
     return d;
 }
@@ -814,9 +819,9 @@ void CamShotCrowd::Load(BinStream &bs) {
     }
 }
 
-BinStream &operator>>(BinStreamRev &d, CamShotCrowd &c) {
-    c.Load(d.stream);
-    return d.stream;
+BinStream &operator>>(BinStream &d, CamShotCrowd &c) {
+    c.Load(d);
+    return d;
 }
 
 void CamShotCrowd::AddCrowdChars() {
@@ -1146,12 +1151,13 @@ void LoadDrawables(BinStream &bs, std::vector<RndDrawable *> &draws, ObjectDir *
     }
 }
 
-INIT_REVS(0x34, 0)
 
 BEGIN_LOADS(CamShot)
-    LOAD_REVS(bs)
-    ASSERT_REVS(0x34, 0)
-    sCamShotRev = d.rev;
+    int revs;
+    bs >> revs;
+    sCamShotRev = getHmxRev(revs);
+    sCamShotAltRev = getAltRev(revs);
+    BinStream &d = bs;
     bool hidden = mHidden;
     if (hidden) {
         UnHide();

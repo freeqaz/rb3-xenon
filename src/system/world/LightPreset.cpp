@@ -26,8 +26,15 @@ namespace stlpmtx_std {
 LightPreset *gEditPreset;
 std::deque<std::pair<LightPreset::KeyframeCmd, float> > LightPreset::sManualEvents;
 
-static bool sLoading;
-static unsigned short sPresetRev;
+// W16-HP: retail has no BinStreamRev (0 x .?AVBinStreamRev@@ in band.exe).
+// LightPreset::Load keeps altRev at lbl_82CC6E8C+0, the rev at +4 and the
+// loading flag at +6 off ONE base (`stb r11, 0x6(r21)`), while the element
+// readers and ~AutoLoading address lbl_82CC6E90 / lbl_82CC6E92 directly --
+// separate initialised statics in declaration order (an aggregate turned
+// those direct reads into addi + offset: SpotlightDrawerEntry 100 -> 97.2).
+static unsigned short sPresetAltRev = 0;
+static unsigned short sPresetRev = 0;
+static bool sLoading = false;
 class AutoLoading {
 public:
     AutoLoading() { sLoading = true; }
@@ -77,7 +84,7 @@ BinStream &operator<<(BinStream &bs, const LightPreset::EnvironmentEntry &e) {
     return bs;
 }
 
-BinStreamRev &operator>>(BinStreamRev &d, LightPreset::EnvironmentEntry &e) {
+BinStream &operator>>(BinStream &d, LightPreset::EnvironmentEntry &e) {
     // Retail passes the BinStreamRev itself (BinStream base@0 upcast) rather
     // than the inner `stream` member.
     e.Load(d);
@@ -129,7 +136,7 @@ BinStream &operator<<(BinStream &bs, const LightPreset::EnvLightEntry &e) {
     return bs;
 }
 
-BinStreamRev &operator>>(BinStreamRev &d, LightPreset::EnvLightEntry &e) {
+BinStream &operator>>(BinStream &d, LightPreset::EnvLightEntry &e) {
     e.Load(d);
     return d;
 }
@@ -152,7 +159,7 @@ void LightPreset::SpotlightEntry::Save(BinStream &bs) const {
     bs << (bool)(mFlags & 1);
 }
 
-void LightPreset::SpotlightEntry::Load(BinStreamRev &d) {
+void LightPreset::SpotlightEntry::Load(BinStream &d) {
     float intensity;
     d >> intensity;
     mIntensity = intensity;
@@ -161,7 +168,7 @@ void LightPreset::SpotlightEntry::Load(BinStreamRev &d) {
     d >> color;
     color.alpha = 1;
     mColor = color.Pack();
-    if (!mTarget.Load(d.stream, false, nullptr)) {
+    if (!mTarget.Load(d, false, nullptr)) {
         mFlags &= ~2;
     }
     if (sPresetRev < 0x13) {
@@ -196,7 +203,7 @@ BinStream &operator<<(BinStream &bs, const LightPreset::SpotlightEntry &e) {
     return bs;
 }
 
-BinStreamRev &operator>>(BinStreamRev &d, LightPreset::SpotlightEntry &e) {
+BinStream &operator>>(BinStream &d, LightPreset::SpotlightEntry &e) {
     e.Load(d);
     return d;
 }
@@ -214,7 +221,7 @@ void LightPreset::SpotlightDrawerEntry::Save(BinStream &bs) const {
     bs << mLightInfluence;
 }
 
-void LightPreset::SpotlightDrawerEntry::Load(BinStreamRev &d) {
+void LightPreset::SpotlightDrawerEntry::Load(BinStream &d) {
     d >> mBaseIntensity;
     d >> mSmokeIntensity;
     d >> mTotalIntensity;
@@ -245,7 +252,7 @@ BinStream &operator<<(BinStream &bs, const LightPreset::SpotlightDrawerEntry &e)
     return bs;
 }
 
-BinStreamRev &operator>>(BinStreamRev &d, LightPreset::SpotlightDrawerEntry &e) {
+BinStream &operator>>(BinStream &d, LightPreset::SpotlightDrawerEntry &e) {
     e.Load(d);
     return d;
 }
@@ -280,28 +287,28 @@ void LightPreset::Keyframe::Save(BinStream &bs) const {
     bs << mTriggers;
 }
 
-void LightPreset::Keyframe::Load(BinStreamRev &d) {
-    MILO_ASSERT(d.rev != 14, 0x5A3);
+void LightPreset::Keyframe::Load(BinStream &d) {
+    MILO_ASSERT(sPresetRev != 14, 0x5A3);
     d >> mDuration;
     d >> mFadeOutTime;
     d >> mSpotlightEntries;
     d >> mEnvironmentEntries;
     d >> mLightEntries;
-    if (d.rev > 5) {
+    if (sPresetRev > 5) {
         d >> mDescription;
     }
-    if (d.rev > 9) {
+    if (sPresetRev > 9) {
         d >> mSpotlightDrawerEntries;
     }
-    if (d.rev > 0x11 && d.rev < 0x16) {
+    if (sPresetRev > 0x11 && sPresetRev < 0x16) {
         ObjPtr<RndPostProc> pp(mSpotlightEntries.Owner());
         d >> pp;
     }
-    if (d.rev > 0x13) {
+    if (sPresetRev > 0x13) {
         d >> mTriggers;
     }
-    if (d.rev > 0xB && d.rev < 0x16) {
-        LegacyLoadStageKit(d.stream);
+    if (sPresetRev > 0xB && sPresetRev < 0x16) {
+        LegacyLoadStageKit(d);
     }
 }
 
@@ -312,8 +319,8 @@ void LightPreset::Keyframe::LegacyLoadStageKit(BinStream &bs) {
     }
 }
 
-void LightPreset::Keyframe::LegacyLoadP9(BinStreamRev &d) {
-    MILO_ASSERT(d.rev == 14, 0x596);
+void LightPreset::Keyframe::LegacyLoadP9(BinStream &d) {
+    MILO_ASSERT(sPresetRev == 14, 0x596);
     // TU5 reads the StageKit LED fields straight off the BinStream base of the
     // rev stream (bypassing the rev-delegating operator>>): ReadEndian is called
     // with `&d` as the BinStream `this`, in the field order below.
@@ -1272,22 +1279,22 @@ void LightPreset::SyncNewSpotlights() {
     }
 }
 
-BinStreamRev &operator>>(BinStreamRev &bs, LightPreset::Keyframe &kf) {
+BinStream &operator>>(BinStream &bs, LightPreset::Keyframe &kf) {
     kf.Load(bs);
     return bs;
 }
 
-INIT_REVS(0x16, 0)
-
 BEGIN_LOADS(LightPreset)
     AutoLoading al;
     Clear();
-    LOAD_REVS(bs)
-    ASSERT_REVS(0x16, 0)
-    sPresetRev = d.rev;
-    LOAD_SUPERCLASS(Hmx::Object)
-    if (d.rev != 0xE) {
-        LOAD_SUPERCLASS(RndAnimatable)
+    int revs;
+    bs >> revs;
+    sPresetRev = getHmxRev(revs);
+    sPresetAltRev = getAltRev(revs);
+    BinStream &d = bs;
+    Hmx::Object::Load(bs);
+    if (sPresetRev != 0xE) {
+        RndAnimatable::Load(bs);
         d >> mKeyframes;
     } else {
         mKeyframes.resize(1);
@@ -1315,7 +1322,7 @@ BEGIN_LOADS(LightPreset)
         bs.ReadString(buf, 0x80);
         mLights[i] = Dir()->Find<RndLight>(buf, false);
     }
-    if (d.rev < 5) {
+    if (sPresetRev < 5) {
         bool b;
         d >> b;
         if (b) {
@@ -1323,10 +1330,10 @@ BEGIN_LOADS(LightPreset)
             k.Load(d);
         }
     }
-    if (d.rev != 0xE)
+    if (sPresetRev != 0xE)
         d >> mLooping;
     bs >> mCategory;
-    if (d.rev != 0xE && d.rev < 0x11) {
+    if (sPresetRev != 0xE && sPresetRev < 0x11) {
         std::vector<Symbol> symvec;
         d >> symvec;
         if (symvec.size() > 0) {
@@ -1338,13 +1345,13 @@ BEGIN_LOADS(LightPreset)
     String str(mCategory.Str());
     str.ToLower();
     mCategory = Symbol(str.c_str());
-    if (d.rev < 7) {
+    if (sPresetRev < 7) {
         String str2;
         bs >> str2;
         if (!str2.empty()) {
             MILO_NOTIFY("%s: %s", Name(), str2);
         }
-    } else if (d.rev < 0x15) {
+    } else if (sPresetRev < 0x15) {
         ObjPtr<EventTrigger> trigPtr(this, 0);
         bs >> trigPtr;
         if (trigPtr)
@@ -1352,27 +1359,27 @@ BEGIN_LOADS(LightPreset)
     } else {
         bs >> mSelectTriggers;
     }
-    if (d.rev < 5) {
+    if (sPresetRev < 5) {
         String strdummy;
         bs >> strdummy;
     }
-    if (d.rev != 0xE && d.rev < 0x16) {
+    if (sPresetRev != 0xE && sPresetRev < 0x16) {
         int legacyFade;
         bs >> legacyFade;
         int dummy;
-        if (d.rev > 0 && d.rev < 0x11)
+        if (sPresetRev > 0 && sPresetRev < 0x11)
             bs >> dummy;
-        if (d.rev > 2 && d.rev < 0x11)
+        if (sPresetRev > 2 && sPresetRev < 0x11)
             bs >> dummy;
     }
-    if (d.rev > 3) {
-        if (d.rev != 0xE)
+    if (sPresetRev > 3) {
+        if (sPresetRev != 0xE)
             d >> mManual;
         d >> mLocked;
     }
-    if (d.rev > 0xC)
+    if (sPresetRev > 0xC)
         bs >> (int &)mPlatformOnly;
-    if (d.rev > 9) {
+    if (sPresetRev > 9) {
         unsigned int sdrawercount;
         bs >> sdrawercount;
         mSpotlightDrawers.resize(sdrawercount);
@@ -1381,7 +1388,7 @@ BEGIN_LOADS(LightPreset)
             mSpotlightDrawers[i] = Dir()->Find<SpotlightDrawer>(buf, false);
         }
     }
-    if (d.rev == 0xB) {
+    if (sPresetRev == 0xB) {
         int dummy;
         for (int i = 0; i < 8; i++)
             bs >> dummy;
