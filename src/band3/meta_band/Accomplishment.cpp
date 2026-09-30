@@ -244,7 +244,7 @@ const char *Accomplishment::GetIconArt() const {
     // retail fn_82594858: one format string, out-of-line Symbol::operator==
     return MakeString(
         "ui/accomplishments/accomplishment_art/%s_keep.png",
-        mIconOverride == gNullStr ? mName.Str() : mIconOverride.Str()
+        !(mIconOverride == gNullStr) ? mIconOverride.Str() : mName.Str()
     );
 }
 
