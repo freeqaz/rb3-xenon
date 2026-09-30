@@ -297,6 +297,8 @@ Gates on the final tree:
 - `tools/map_name_injectivity.py`: **OK** (31,064 applied rows, injective).
 - `tools/icf_alias_finder.py --validate`: **PASS** (1,482 map-consistent, 263 tolerated,
   0 contradicted, 1,746 total).
+- `tools/native_build_gate.sh`, run last on the final source tree (`8eea060bf`):
+  `NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0`
 
 ## 6. Left, with identities where known
 
