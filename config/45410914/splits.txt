@@ -2795,6 +2795,14 @@ EventTrigger.cpp:
 	.text       start:0x824CDCE8 end:0x824CDD60
 	.text       start:0x8274DF40 end:0x8274DFC8
 
+system/rndobj/ShaderMgr.cpp:
+	.pdata      start:0x8220F210 end:0x8220F218
+	.pdata      start:0x8220F220 end:0x8220F240
+	.pdata      start:0x8220F248 end:0x8220F278
+	.text       start:0x8246B5F0 end:0x8246B740
+	.text       start:0x8246B7F8 end:0x8246B9A0
+	.text       start:0x8246BAA0 end:0x8246BEF0
+
 system/rndobj/Fur.cpp:
 	.pdata      start:0x8220F278 end:0x8220F358
 	.text       start:0x8246BEF0 end:0x8246CDF0
@@ -2821,8 +2829,8 @@ MeshAnim.cpp:
 	.pdata      start:0x8220D2A8 end:0x8220D2B0
 	.pdata      start:0x8220D2D0 end:0x8220D2D8
 	.pdata      start:0x8220D2E8 end:0x8220D2F0
-	.pdata      start:0x8220EFD8 end:0x8220F240
-	.pdata      start:0x8220F248 end:0x8220F278
+	.pdata      start:0x8220EFD8 end:0x8220F210
+	.pdata      start:0x8220F218 end:0x8220F220
 	.pdata      start:0x8220F358 end:0x8220F470
 	.pdata      start:0x8220F478 end:0x8220F680
 	.pdata      start:0x8220F680 end:0x8220F708
@@ -2856,8 +2864,8 @@ MeshAnim.cpp:
 	.text       start:0x824423E8 end:0x8244243C
 	.text       start:0x82442C78 end:0x82442CCC
 	.text       start:0x82442DF8 end:0x82442E68
-	.text       start:0x82469580 end:0x8246B9A0
-	.text       start:0x8246BAA0 end:0x8246BEF0
+	.text       start:0x82469580 end:0x8246B5F0
+	.text       start:0x8246B740 end:0x8246B7F8
 	.text       start:0x8246CDF0 end:0x8246EBE0
 	.text       start:0x8246EC44 end:0x82470CA8
 	.text       start:0x82470CA8 end:0x824712A8
