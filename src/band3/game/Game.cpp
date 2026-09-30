@@ -1498,28 +1498,28 @@ void Game::OvershellSetPaused(bool paused) {
     }
 }
 
-void Game::UpdatePausedState(bool allowSfx, bool doRollback, bool) {
+// Retail 0x8267AA48. Two differences from the rb3-Wii dev source, both read
+// off retail bytes: the Wii-era screen-saver save/restore at the head is absent
+// (the first call is TheSynth->PauseAllSfx), and the third bool parameter --
+// which our source had left unnamed and unused -- gates SetNoFail (r6 -> r27,
+// `clrlwi. r11, r27, 24` after IsNoFailActive).
+void Game::UpdatePausedState(bool allowSfx, bool doRollback, bool allowNoFail) {
     bool wantPause = mGameWantsPause | mOvershellWantsPause;
     if ((bool)wantPause != mIsPaused) {
-        if (wantPause) {
-            unk6c = ThePlatformMgr.ScreenSaver();
-            ThePlatformMgr.SetScreenSaver(true);
-        } else if (TheGamePanel) {
-            ThePlatformMgr.SetScreenSaver(unk6c);
-        }
         if (!wantPause || allowSfx) {
             TheSynth->PauseAllSfx(wantPause);
         }
         if (!wantPause) {
             TheTaskMgr.SetAVOffset(GetSongToTaskMgrMs() / 1000.0f);
         }
-        FOREACH (it, mAllActivePlayers) {
+        std::vector<Player *> &players = GetActivePlayers();
+        FOREACH (it, players) {
             (*it)->SetPaused(wantPause);
         }
         if (!wantPause && mProperties.mInTrainer) {
             GetTrackPanelDir()->UpdateTrackSpeed();
         }
-        if (!wantPause && MetaPerformer::Current()->IsNoFailActive()) {
+        if (!wantPause && MetaPerformer::Current()->IsNoFailActive() && allowNoFail) {
             SetNoFail(true);
         }
         if (unk148) {
@@ -1551,9 +1551,11 @@ void Game::UpdatePausedState(bool allowSfx, bool doRollback, bool) {
             SetTimeOffset();
         }
         if (wantPause) {
-            TheGamePanel->Export(world_pause_msg, true);
+            static Message pauseMsg("world_pause");
+            TheGamePanel->Export(pauseMsg, true);
         } else {
-            TheGamePanel->Export(world_unpause_msg, true);
+            static Message unpauseMsg("world_unpause");
+            TheGamePanel->Export(unpauseMsg, true);
         }
         if (!wantPause) {
             while (!FileDiscSpinUp())
