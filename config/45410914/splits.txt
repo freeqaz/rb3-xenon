@@ -137,10 +137,8 @@ ContextWrapper.cpp:
 	.text       start:0x8250C1C8 end:0x8250C808
 
 EntityUploader.cpp:
-	.pdata      start:0x82217AB8 end:0x82217B08
-	.pdata      start:0x82217B08 end:0x82217CC8
-	.text       start:0x8250D0D8 end:0x8250D4C0
-	.text       start:0x8250D4C8 end:0x8250F4E0
+	.pdata      start:0x82217AB8 end:0x82217CC8
+	.text       start:0x8250D0D8 end:0x8250F4E0
 
 band3/net_band/DataResults.cpp:
 	.pdata      start:0x82217808 end:0x82217970
@@ -323,28 +321,21 @@ GemTrackResourceManager.cpp:
 	.text       start:0x82356F64 end:0x82356F98
 	.text       start:0x823571F8 end:0x82357218
 
+BandConfiguration.cpp:
+	.text       start:0x822B88F0 end:0x822B8900
+
 BandCamShot.cpp:
 	.pdata      start:0x821F1D40 end:0x821F1D48
 	.pdata      start:0x821F1F18 end:0x821F1F28
 	.pdata      start:0x821F5708 end:0x821F5718
-	.pdata      start:0x821F5718 end:0x821F5F60
-	.pdata      start:0x8220E1A0 end:0x8220E1A8
-	.pdata      start:0x82213890 end:0x822138A0
-	.pdata      start:0x822138E8 end:0x822138F8
-	.pdata      start:0x82230A00 end:0x82230A08
-	.pdata      start:0x82230B78 end:0x82230B88
-	.pdata      start:0x82233B40 end:0x82233B48
+	.pdata      start:0x821F5718 end:0x821F5F38
+	.pdata      start:0x821F5F38 end:0x821F5F60
 	.text       start:0x822782D0 end:0x82278384
 	.text       start:0x8227A1A8 end:0x8227A228
 	.text       start:0x8227A2A0 end:0x8227A2A8
 	.text       start:0x822B0A38 end:0x822B0AB0
-	.text       start:0x822B0AB0 end:0x822B8BE8
-	.text       start:0x82456BE8 end:0x82456CA4
-	.text       start:0x824C3E08 end:0x824C3E98
-	.text       start:0x824C4528 end:0x824C46B4
-	.text       start:0x826856F0 end:0x82685750
-	.text       start:0x826870D0 end:0x82687170
-	.text       start:0x826B8C38 end:0x826B8C9C
+	.text       start:0x822B0AB0 end:0x822B88F0
+	.text       start:0x822B8900 end:0x822B8BE8
 
 BandDirector.cpp:
 	.pdata      start:0x821F3210 end:0x821F3220
@@ -815,6 +806,7 @@ BandCrowdMeter.cpp:
 	.pdata      start:0x821F6478 end:0x821F6538
 	.pdata      start:0x821F6598 end:0x821F65A0
 	.pdata      start:0x821F65A0 end:0x821F6648
+	.pdata      start:0x821F6650 end:0x821F6658
 	.pdata      start:0x821F6750 end:0x821F6760
 	.pdata      start:0x821F6760 end:0x821F6770
 	.pdata      start:0x821F6770 end:0x821F6778
@@ -832,6 +824,7 @@ BandCrowdMeter.cpp:
 	.text       start:0x822BE2EC end:0x822BE370
 	.text       start:0x822BE370 end:0x822BEAB4
 	.text       start:0x822BEAB8 end:0x822BEB04
+	.text       start:0x822BEB88 end:0x822BECD8
 	.text       start:0x822BF678 end:0x822BF980
 	.text       start:0x822BF980 end:0x822BFAE8
 	.text       start:0x822BFAE8 end:0x822BFB40
@@ -2970,7 +2963,7 @@ system/rndobj/Utl.cpp:
 	.pdata      start:0x8220D2F0 end:0x8220D310
 	.pdata      start:0x8220D310 end:0x8220D330
 	.pdata      start:0x82237AF8 end:0x82237B08
-	.pdata      start:0x82237B18 end:0x82237B28
+	.pdata      start:0x82237B18 end:0x82237B20
 	.pdata      start:0x8223AD40 end:0x8223AD50
 	.pdata      start:0x8223AD68 end:0x8223AD70
 	.text       start:0x82439910 end:0x8243E108
@@ -2980,7 +2973,7 @@ system/rndobj/Utl.cpp:
 	.text       start:0x82442E68 end:0x824434D0
 	.text       start:0x824434D0 end:0x82443784
 	.text       start:0x82703A60 end:0x82703AF8
-	.text       start:0x82703B90 end:0x82703C58
+	.text       start:0x82703B90 end:0x82703BF8
 	.text       start:0x8273FD30 end:0x8273FDA8
 	.text       start:0x8273FF80 end:0x8273FFB0
 
@@ -3718,11 +3711,8 @@ CharMeshHide.cpp:
 	.pdata      start:0x822133F0 end:0x822133F8
 	.pdata      start:0x82213CF0 end:0x82213CF8
 	.pdata      start:0x8222CE90 end:0x8222CE98
-	.pdata      start:0x822375B0 end:0x822375D8
-	.pdata      start:0x822375E0 end:0x822376D8
-	.pdata      start:0x822376D8 end:0x822376E8
-	.pdata      start:0x82237730 end:0x82237740
-	.pdata      start:0x82237740 end:0x82237760
+	.pdata      start:0x822375B0 end:0x822376E8
+	.pdata      start:0x82237730 end:0x82237760
 	.pdata      start:0x822377A8 end:0x822377B8
 	.text       start:0x822D4088 end:0x822D408C
 	.text       start:0x8238DEB0 end:0x8238E2D0
@@ -3731,11 +3721,8 @@ CharMeshHide.cpp:
 	.text       start:0x824BD788 end:0x824BD7E0
 	.text       start:0x824C7CA8 end:0x824C7D10
 	.text       start:0x8264D058 end:0x8264D08C
-	.text       start:0x826FE8A8 end:0x826FED98
-	.text       start:0x826FEDF8 end:0x826FFB58
-	.text       start:0x826FFB58 end:0x826FFC18
-	.text       start:0x826FFFE8 end:0x827000A0
-	.text       start:0x827000A0 end:0x82700270
+	.text       start:0x826FE8A8 end:0x826FFC18
+	.text       start:0x826FFFE8 end:0x82700270
 	.text       start:0x82700938 end:0x827009E4
 
 AmbientOcclusion.cpp:
@@ -3950,61 +3937,26 @@ Text.cpp:
 	.pdata      start:0x821F4808 end:0x821F4818
 	.pdata      start:0x821FC4F8 end:0x821FC508
 	.pdata      start:0x82201BF0 end:0x82201BF8
-	.pdata      start:0x82203ED8 end:0x82203EE0
-	.pdata      start:0x82203EE0 end:0x82203EE8
-	.pdata      start:0x8220E068 end:0x8220E070
-	.pdata      start:0x8220E070 end:0x8220E080
-	.pdata      start:0x8220E080 end:0x8220E090
-	.pdata      start:0x8220E090 end:0x8220E0D8
-	.pdata      start:0x8220E0D8 end:0x8220E108
-	.pdata      start:0x8220E108 end:0x8220E130
-	.pdata      start:0x8220E130 end:0x8220E138
-	.pdata      start:0x8220E158 end:0x8220E160
-	.pdata      start:0x8220E178 end:0x8220E180
-	.pdata      start:0x8220E180 end:0x8220E190
-	.pdata      start:0x8220E1A8 end:0x8220E1D8
-	.pdata      start:0x8220E1D8 end:0x8220E228
-	.pdata      start:0x8220E228 end:0x8220E230
-	.pdata      start:0x8220E238 end:0x8220E248
-	.pdata      start:0x8220E248 end:0x8220E268
-	.pdata      start:0x8220E270 end:0x8220E280
-	.pdata      start:0x8220E288 end:0x8220E2D0
-	.pdata      start:0x8220E2D0 end:0x8220E2D8
-	.pdata      start:0x8220E2D8 end:0x8220E2E8
+	.pdata      start:0x82203ED8 end:0x82203EE8
+	.pdata      start:0x8220E068 end:0x8220E138
+	.pdata      start:0x8220E138 end:0x8220E228
+	.pdata      start:0x8220E228 end:0x8220E2E8
 	.pdata      start:0x8220E2F8 end:0x8220E318
 	.pdata      start:0x8220E320 end:0x8220E4E8
 	.pdata      start:0x8220E518 end:0x8220E528
 	.pdata      start:0x8220E528 end:0x8220E538
 	.pdata      start:0x82213CD0 end:0x82213CD8
-	.pdata      start:0x822224E8 end:0x822224F0
-	.pdata      start:0x822224F0 end:0x822224F8
+	.pdata      start:0x822224E8 end:0x822224F8
 	.pdata      start:0x82232E30 end:0x82232E38
 	.pdata      start:0x82243A98 end:0x82243BE0
 	.text       start:0x822A2BD8 end:0x822A2C70
 	.text       start:0x8231CFC8 end:0x8231D060
 	.text       start:0x82374C28 end:0x82374C94
-	.text       start:0x8239C558 end:0x8239C5D8
-	.text       start:0x8239C5D8 end:0x8239C640
+	.text       start:0x8239C558 end:0x8239C640
 	.text       start:0x824549B0 end:0x824549C4
-	.text       start:0x82454B70 end:0x82454D98
-	.text       start:0x82454D98 end:0x824553D0
-	.text       start:0x824553D0 end:0x82455508
-	.text       start:0x82455508 end:0x82455928
-	.text       start:0x82455928 end:0x82455E90
-	.text       start:0x82455E90 end:0x82456190
-	.text       start:0x82456190 end:0x8245625C
-	.text       start:0x824563D8 end:0x824564B8
-	.text       start:0x824566E8 end:0x824568C0
-	.text       start:0x824568C0 end:0x824569F0
-	.text       start:0x82456CA4 end:0x82457060
-	.text       start:0x82457060 end:0x824575C8
-	.text       start:0x824575D0 end:0x82457680
-	.text       start:0x824576F8 end:0x82457790
-	.text       start:0x82457790 end:0x82457D18
-	.text       start:0x82457D98 end:0x82457EF0
-	.text       start:0x82457F70 end:0x82459820
-	.text       start:0x82459820 end:0x82459958
-	.text       start:0x82459958 end:0x82459B80
+	.text       start:0x82454B70 end:0x8245625C
+	.text       start:0x82456260 end:0x824575C8
+	.text       start:0x824575D0 end:0x82459B80
 	.text       start:0x82459EA0 end:0x82459FC8
 	.text       start:0x8245A02C end:0x8245C068
 	.text       start:0x8245C2C4 end:0x8245C2D8
@@ -4013,8 +3965,7 @@ Text.cpp:
 	.text       start:0x8245C490 end:0x8245C510
 	.text       start:0x824C7B40 end:0x824C7BBC
 	.text       start:0x82588D68 end:0x82588D7C
-	.text       start:0x825AF290 end:0x825AF2E0
-	.text       start:0x825AF2E0 end:0x825AF30C
+	.text       start:0x825AF290 end:0x825AF30C
 	.text       start:0x8269CF90 end:0x8269CF98
 	.text       start:0x826AAFC8 end:0x826AB01C
 	.text       start:0x827DE868 end:0x827DF498
@@ -4179,13 +4130,6 @@ SkeletonClip.cpp:
 	.pdata      start:0x821FEEC8 end:0x821FEEE0
 	.pdata      start:0x821FEEF8 end:0x821FEF10
 	.pdata      start:0x821FEF28 end:0x821FEF30
-	.pdata      start:0x8220E138 end:0x8220E140
-	.pdata      start:0x8220E140 end:0x8220E150
-	.pdata      start:0x8220E150 end:0x8220E158
-	.pdata      start:0x8220E160 end:0x8220E178
-	.pdata      start:0x8220E230 end:0x8220E238
-	.pdata      start:0x8220E268 end:0x8220E270
-	.pdata      start:0x8220E280 end:0x8220E288
 	.pdata      start:0x82237AC8 end:0x82237AE8
 	.pdata      start:0x82237B68 end:0x82237B70
 	.pdata      start:0x82237B70 end:0x82237B78
@@ -4197,14 +4141,6 @@ SkeletonClip.cpp:
 	.text       start:0x8234A148 end:0x8234A288
 	.text       start:0x8234A44C end:0x8234AC78
 	.text       start:0x8234ADC8 end:0x8234AE48
-	.text       start:0x82456260 end:0x824562B0
-	.text       start:0x824562B0 end:0x82456378
-	.text       start:0x82456378 end:0x824563D8
-	.text       start:0x824564B8 end:0x824566E8
-	.text       start:0x824569F0 end:0x82456A20
-	.text       start:0x82457680 end:0x824576F8
-	.text       start:0x82457D18 end:0x82457D98
-	.text       start:0x82457EF0 end:0x82457F70
 	.text       start:0x82703890 end:0x827039C8
 	.text       start:0x82704058 end:0x827041A8
 	.text       start:0x827041A8 end:0x827041E4
@@ -4263,7 +4199,7 @@ MoveMgr.cpp:
 	.pdata      start:0x821F7940 end:0x821F7948
 	.pdata      start:0x821FEC60 end:0x821FEC68
 	.pdata      start:0x821FED08 end:0x821FED18
-	.pdata      start:0x821FED28 end:0x821FED48
+	.pdata      start:0x821FED28 end:0x821FED38
 	.pdata      start:0x821FED60 end:0x821FED70
 	.pdata      start:0x821FEE70 end:0x821FEE78
 	.text       start:0x822CFD10 end:0x822D16F8
@@ -4271,19 +4207,17 @@ MoveMgr.cpp:
 	.text       start:0x822D2C80 end:0x822D2D58
 	.text       start:0x82347218 end:0x82347284
 	.text       start:0x82347E80 end:0x82348048
-	.text       start:0x82348260 end:0x82348420
+	.text       start:0x82348260 end:0x82348388
 	.text       start:0x82348628 end:0x823489F0
 	.text       start:0x82349CC8 end:0x82349D50
 	.text       start:0x82C122D8 end:0x82C122E4
 
 Watcher.cpp:
 	.pdata      start:0x821F5F88 end:0x821F5FC0
-	.pdata      start:0x821FED20 end:0x821FED28
 	.pdata      start:0x821FED70 end:0x821FED80
 	.pdata      start:0x82208D00 end:0x82208D18
 	.pdata      start:0x82208D18 end:0x82208D28
 	.text       start:0x822B8F08 end:0x822B91CC
-	.text       start:0x82348210 end:0x82348260
 	.text       start:0x823489F0 end:0x82348B28
 	.text       start:0x823F20C0 end:0x823F21E0
 	.text       start:0x823F21E0 end:0x823F2280
@@ -4291,77 +4225,49 @@ Watcher.cpp:
 UILabel.cpp:
 	.pdata      start:0x821F4CC8 end:0x821F4CD0
 	.pdata      start:0x821FEF48 end:0x821FEF68
-	.pdata      start:0x821FEF80 end:0x821FEF88
-	.pdata      start:0x821FEF88 end:0x821FEFB0
-	.pdata      start:0x821FF000 end:0x821FF010
-	.pdata      start:0x821FF010 end:0x821FF018
+	.pdata      start:0x821FEF80 end:0x821FEFB0
+	.pdata      start:0x821FF000 end:0x821FF018
 	.pdata      start:0x821FF030 end:0x821FF048
 	.pdata      start:0x821FF0B8 end:0x821FF0D8
 	.pdata      start:0x821FF948 end:0x821FF958
 	.pdata      start:0x82202290 end:0x82202298
-	.pdata      start:0x82244DD0 end:0x82244DF0
-	.pdata      start:0x82244DF0 end:0x82244DF8
-	.pdata      start:0x82244DF8 end:0x82244E00
-	.pdata      start:0x82244E00 end:0x82244E10
+	.pdata      start:0x82244DD0 end:0x82244DF8
+	.pdata      start:0x82244DF8 end:0x82244E10
 	.pdata      start:0x82244E18 end:0x82244E20
 	.pdata      start:0x82244E20 end:0x82244E30
 	.pdata      start:0x82244E38 end:0x82244E58
-	.pdata      start:0x82244E58 end:0x82244E68
-	.pdata      start:0x82244E68 end:0x82244E78
-	.pdata      start:0x82244E78 end:0x82244EC0
-	.pdata      start:0x82244EC0 end:0x82244EC8
+	.pdata      start:0x82244E58 end:0x82244EC8
 	.pdata      start:0x82244EC8 end:0x82244ED0
 	.pdata      start:0x82244ED0 end:0x82244FC8
 	.pdata      start:0x82244FC8 end:0x82244FD8
 	.pdata      start:0x82244FD8 end:0x82245030
 	.pdata      start:0x82245038 end:0x82245040
-	.pdata      start:0x82245040 end:0x822450A8
-	.pdata      start:0x822450A8 end:0x822450B0
-	.pdata      start:0x822450B0 end:0x822452A8
-	.pdata      start:0x8225FCF0 end:0x8225FD00
-	.pdata      start:0x8225FD00 end:0x8225FD20
-	.pdata      start:0x8225FD20 end:0x8225FD38
-	.pdata      start:0x8225FD38 end:0x8225FDA0
+	.pdata      start:0x82245040 end:0x822452A8
+	.pdata      start:0x8225FCF0 end:0x8225FDA0
 	.text       start:0x822A6878 end:0x822A68E0
 	.text       start:0x8234B270 end:0x8234B3D0
-	.text       start:0x8234B4D0 end:0x8234B53C
-	.text       start:0x8234B53C end:0x8234BA70
-	.text       start:0x8234C298 end:0x8234C3A8
-	.text       start:0x8234C3A8 end:0x8234C410
+	.text       start:0x8234B4D0 end:0x8234BA70
+	.text       start:0x8234C298 end:0x8234C410
 	.text       start:0x8234C778 end:0x8234CA60
 	.text       start:0x8234D080 end:0x8234D2F0
 	.text       start:0x82355760 end:0x823557D8
 	.text       start:0x8237C328 end:0x8237C398
-	.text       start:0x827F2148 end:0x827F2240
-	.text       start:0x827F2240 end:0x827F22A4
-	.text       start:0x827F22A8 end:0x827F2338
-	.text       start:0x827F2338 end:0x827F23B8
-	.text       start:0x827F2438 end:0x827F2440
-	.text       start:0x827F2440 end:0x827F2494
+	.text       start:0x827F2148 end:0x827F22A4
+	.text       start:0x827F22A8 end:0x827F23B8
+	.text       start:0x827F2438 end:0x827F2494
 	.text       start:0x827F2498 end:0x827F2630
-	.text       start:0x827F2680 end:0x827F27A8
-	.text       start:0x827F27A8 end:0x827F2868
-	.text       start:0x827F2868 end:0x827F288C
-	.text       start:0x827F2890 end:0x827F2960
-	.text       start:0x827F2960 end:0x827F29F0
-	.text       start:0x827F29F0 end:0x827F3180
-	.text       start:0x827F3180 end:0x827F33D4
+	.text       start:0x827F2680 end:0x827F288C
+	.text       start:0x827F2890 end:0x827F33D4
 	.text       start:0x827F33D8 end:0x827F3544
 	.text       start:0x827F3568 end:0x827F4278
 	.text       start:0x827F4288 end:0x827F4298
 	.text       start:0x827F42E0 end:0x827F443C
-	.text       start:0x827F4450 end:0x827F4460
-	.text       start:0x827F4460 end:0x827F446C
+	.text       start:0x827F4450 end:0x827F446C
 	.text       start:0x827F4478 end:0x827F4778
 	.text       start:0x827F4910 end:0x827F4B64
-	.text       start:0x827F4B68 end:0x827F5550
-	.text       start:0x827F5550 end:0x827F5A5C
-	.text       start:0x827F5A5C end:0x827F7830
+	.text       start:0x827F4B68 end:0x827F7830
 	.text       start:0x827F7AD8 end:0x827F7AE0
-	.text       start:0x82BF5DD0 end:0x82BF5EC0
-	.text       start:0x82BF5EC0 end:0x82BF6138
-	.text       start:0x82BF6138 end:0x82BF63C8
-	.text       start:0x82BF63C8 end:0x82BF6B78
+	.text       start:0x82BF5DD0 end:0x82BF6B78
 
 CharBones.cpp:
 	.pdata      start:0x82204BB0 end:0x82204BB8
@@ -4523,8 +4429,10 @@ CharTransCopy.cpp:
 	.text       start:0x823C8040 end:0x823C8128
 
 CharTransDraw.cpp:
+	.pdata      start:0x822062B8 end:0x822062C0
 	.pdata      start:0x82206330 end:0x82206340
 	.pdata      start:0x82206378 end:0x82206380
+	.text       start:0x823C8128 end:0x823C8190
 	.text       start:0x823C88D0 end:0x823C88DC
 	.text       start:0x823C88E0 end:0x823C88EC
 	.text       start:0x823C8908 end:0x823C8A64
@@ -4562,50 +4470,38 @@ CharForeTwist.cpp:
 
 Morph.cpp:
 	.pdata      start:0x821F5048 end:0x821F5058
-	.pdata      start:0x821FEE08 end:0x821FEE30
+	.pdata      start:0x821FEE08 end:0x821FEE20
 	.pdata      start:0x821FEE38 end:0x821FEE40
 	.pdata      start:0x82202F30 end:0x82202F38
 	.pdata      start:0x82203BD8 end:0x82203C00
 	.pdata      start:0x82203C78 end:0x82203C80
-	.pdata      start:0x82204568 end:0x82204570
-	.pdata      start:0x822104B8 end:0x822104C0
-	.pdata      start:0x822104C0 end:0x822104D0
+	.pdata      start:0x822104B8 end:0x822104D0
 	.pdata      start:0x822104D0 end:0x822104E0
 	.pdata      start:0x822104E0 end:0x822104E8
 	.pdata      start:0x822104E8 end:0x822104F0
-	.pdata      start:0x822104F0 end:0x822104F8
-	.pdata      start:0x822104F8 end:0x82210500
-	.pdata      start:0x82210500 end:0x82210508
-	.pdata      start:0x82210510 end:0x82210530
-	.pdata      start:0x82210530 end:0x82210540
-	.pdata      start:0x82210540 end:0x82210650
+	.pdata      start:0x822104F0 end:0x82210508
+	.pdata      start:0x82210510 end:0x82210650
 	.pdata      start:0x82210650 end:0x82210658
+	.pdata      start:0x82210678 end:0x82210680
 	.pdata      start:0x82210688 end:0x82210740
 	.text       start:0x822A9BC8 end:0x822A9C58
-	.text       start:0x823493D0 end:0x82349770
+	.text       start:0x823493D0 end:0x823495D8
 	.text       start:0x8234982C end:0x823498F0
 	.text       start:0x8238AB44 end:0x8238ABA4
 	.text       start:0x82398798 end:0x82398A10
 	.text       start:0x82399140 end:0x823991BC
-	.text       start:0x823A40F0 end:0x823A4144
-	.text       start:0x82482F50 end:0x82482F98
-	.text       start:0x82482F98 end:0x8248303C
+	.text       start:0x82482F50 end:0x8248303C
 	.text       start:0x82483040 end:0x82483144
 	.text       start:0x82483148 end:0x82483264
 	.text       start:0x82483268 end:0x824833FC
-	.text       start:0x82483400 end:0x82483470
-	.text       start:0x82483470 end:0x82483548
-	.text       start:0x82483548 end:0x82483854
-	.text       start:0x82483920 end:0x82483A20
-	.text       start:0x82483A20 end:0x82483A88
-	.text       start:0x82483A88 end:0x82484B3C
+	.text       start:0x82483400 end:0x82483854
+	.text       start:0x82483920 end:0x82484B3C
 	.text       start:0x82484B40 end:0x82484B84
+	.text       start:0x82484D00 end:0x82484D60
 	.text       start:0x82484DB8 end:0x8248583C
 	.text       start:0x82485870 end:0x8248587C
 
 FileMerger.cpp:
-	.pdata      start:0x821FEF68 end:0x821FEF80
-	.pdata      start:0x821FF048 end:0x821FF050
 	.pdata      start:0x822011F8 end:0x82201280
 	.pdata      start:0x82203540 end:0x82203570
 	.pdata      start:0x82203570 end:0x82203AC0
@@ -4614,8 +4510,6 @@ FileMerger.cpp:
 	.pdata      start:0x82203B58 end:0x82203B68
 	.pdata      start:0x82203B68 end:0x82203B70
 	.pdata      start:0x82203B70 end:0x82203BD0
-	.text       start:0x8234B3D0 end:0x8234B4D0
-	.text       start:0x8234CA60 end:0x8234CAB8
 	.text       start:0x8236AFA8 end:0x8236B4C0
 	.text       start:0x82390B38 end:0x82390B50
 	.text       start:0x82390B50 end:0x82390F40
@@ -4683,17 +4577,11 @@ CharHair.cpp:
 
 CharUtl.cpp:
 	.pdata      start:0x82204510 end:0x82204518
-	.pdata      start:0x82204520 end:0x82204528
-	.pdata      start:0x82204528 end:0x82204530
-	.pdata      start:0x82204530 end:0x82204568
-	.pdata      start:0x82204570 end:0x822045A8
-	.pdata      start:0x8220E190 end:0x8220E1A0
+	.pdata      start:0x82204520 end:0x82204530
+	.pdata      start:0x82204530 end:0x822045A8
 	.text       start:0x823A38B0 end:0x823A393C
-	.text       start:0x823A3988 end:0x823A3AB8
-	.text       start:0x823A3AB8 end:0x823A3B2C
-	.text       start:0x823A3B30 end:0x823A40F0
-	.text       start:0x823A4144 end:0x823A451C
-	.text       start:0x82456A20 end:0x82456BE8
+	.text       start:0x823A3988 end:0x823A3B2C
+	.text       start:0x823A3B30 end:0x823A451C
 
 CharWeightSetter.cpp:
 	.pdata      start:0x822054F0 end:0x82205500
@@ -4719,25 +4607,6 @@ HamIKEffector.cpp:
 	.pdata      start:0x82205DF8 end:0x82205E10
 	.text       start:0x823C3300 end:0x823C3354
 	.text       start:0x823C35D8 end:0x823C3728
-
-PracticeSection.cpp:
-	.pdata      start:0x821FEC20 end:0x821FEC30
-	.pdata      start:0x822062B8 end:0x822062C0
-	.pdata      start:0x8220BBD0 end:0x8220BBE0
-	.pdata      start:0x8221C4B8 end:0x8221C4C8
-	.pdata      start:0x8221C7F0 end:0x8221C800
-	.pdata      start:0x8221C9D0 end:0x8221C9D8
-	.pdata      start:0x82233B30 end:0x82233B40
-	.pdata      start:0x822375D8 end:0x822375E0
-	.text       start:0x82346E48 end:0x82346EB8
-	.text       start:0x823C8128 end:0x823C8198
-	.text       start:0x82424D18 end:0x82424DCC
-	.text       start:0x8250D4C0 end:0x8250D4C8
-	.text       start:0x82557060 end:0x825570C8
-	.text       start:0x8255A340 end:0x8255A4CC
-	.text       start:0x8255C8E8 end:0x8255C95C
-	.text       start:0x826B8BA8 end:0x826B8C38
-	.text       start:0x826FED98 end:0x826FEDF8
 
 RhythmBattle.cpp:
 	.pdata      start:0x8221FE60 end:0x8221FE70
@@ -4916,13 +4785,11 @@ WaveFile.cpp:
 	.pdata      start:0x821F4860 end:0x821F4868
 	.pdata      start:0x821F4868 end:0x821F4870
 	.pdata      start:0x8220DE00 end:0x8220DE08
-	.pdata      start:0x8221C5F0 end:0x8221C600
 	.pdata      start:0x82243088 end:0x822431D0
 	.pdata      start:0x82243320 end:0x82243328
 	.text       start:0x822A2F18 end:0x822A2F78
 	.text       start:0x822A2F80 end:0x822A2FA8
 	.text       start:0x82451F98 end:0x82451FF8
-	.text       start:0x825584D8 end:0x82558568
 	.text       start:0x827C1A80 end:0x827C1A84
 	.text       start:0x827D2E70 end:0x827D3FAC
 	.text       start:0x827D5BB0 end:0x827D5C00
@@ -5078,7 +4945,6 @@ HamMaster.cpp:
 
 CameraShot.cpp:
 	.pdata      start:0x821F6538 end:0x821F6540
-	.pdata      start:0x821F6650 end:0x821F6658
 	.pdata      start:0x821F6658 end:0x821F6660
 	.pdata      start:0x82201880 end:0x82201888
 	.pdata      start:0x82201888 end:0x82201890
@@ -5090,9 +4956,11 @@ CameraShot.cpp:
 	.pdata      start:0x82213428 end:0x82213430
 	.pdata      start:0x82213430 end:0x82213448
 	.pdata      start:0x82213448 end:0x82213890
+	.pdata      start:0x82213890 end:0x822138A0
 	.pdata      start:0x822138A0 end:0x822138C8
 	.pdata      start:0x822138C8 end:0x822138D0
 	.pdata      start:0x822138D0 end:0x822138E8
+	.pdata      start:0x822138E8 end:0x822138F8
 	.pdata      start:0x822138F8 end:0x82213900
 	.pdata      start:0x82213900 end:0x82213938
 	.pdata      start:0x82213940 end:0x82213A38
@@ -5105,7 +4973,6 @@ CameraShot.cpp:
 	.pdata      start:0x82213CD8 end:0x82213CF0
 	.pdata      start:0x82213CF8 end:0x82213D50
 	.text       start:0x822BDCB0 end:0x822BDD10
-	.text       start:0x822BEB88 end:0x822BECD8
 	.text       start:0x822BECD8 end:0x822BED14
 	.text       start:0x82371320 end:0x82371388
 	.text       start:0x82371388 end:0x823713B8
@@ -5120,9 +4987,11 @@ CameraShot.cpp:
 	.text       start:0x824BDB80 end:0x824BE030
 	.text       start:0x824BE030 end:0x824BE2B0
 	.text       start:0x824BE2B0 end:0x824C3E08
+	.text       start:0x824C3E08 end:0x824C3E98
 	.text       start:0x824C3E98 end:0x824C4058
 	.text       start:0x824C4058 end:0x824C41E0
 	.text       start:0x824C41E0 end:0x824C4528
+	.text       start:0x824C4528 end:0x824C46B4
 	.text       start:0x824C46B4 end:0x824C46B8
 	.text       start:0x824C46B8 end:0x824C4718
 	.text       start:0x824C4718 end:0x824C4998
@@ -5832,17 +5701,13 @@ PropKeys.cpp:
 	.pdata      start:0x821F1648 end:0x821F1658
 	.pdata      start:0x821F1778 end:0x821F1790
 	.pdata      start:0x821F5040 end:0x821F5048
-	.pdata      start:0x82203EE8 end:0x82203EF0
-	.pdata      start:0x82203EF0 end:0x82203EF8
-	.pdata      start:0x8220B988 end:0x8220BBD0
-	.pdata      start:0x8220BBE0 end:0x8220BC98
+	.pdata      start:0x82203EE8 end:0x82203EF8
+	.pdata      start:0x8220B988 end:0x8220BC98
 	.pdata      start:0x8220BCA0 end:0x8220BCD0
-	.pdata      start:0x8222B678 end:0x8222B680
-	.pdata      start:0x8222B680 end:0x8222B690
+	.pdata      start:0x8222B678 end:0x8222B690
 	.pdata      start:0x8222BE10 end:0x8222BE20
 	.pdata      start:0x8222D7A0 end:0x8222D7A8
-	.pdata      start:0x8222D7C8 end:0x8222D7D0
-	.pdata      start:0x8222D7D0 end:0x8222D7D8
+	.pdata      start:0x8222D7C8 end:0x8222D7D8
 	.pdata      start:0x8222EA78 end:0x8222EAE0
 	.pdata      start:0x82231100 end:0x82231108
 	.pdata      start:0x82231108 end:0x82231110
@@ -5850,22 +5715,17 @@ PropKeys.cpp:
 	.pdata      start:0x82261498 end:0x822614D8
 	.text       start:0x82270438 end:0x82270510
 	.text       start:0x82270560 end:0x82270580
-	.text       start:0x82271B08 end:0x82271B68
-	.text       start:0x82271B68 end:0x82271C50
+	.text       start:0x82271B08 end:0x82271C50
 	.text       start:0x822907F0 end:0x822908A8
 	.text       start:0x822A9B70 end:0x822A9BC0
-	.text       start:0x8239C640 end:0x8239C6AC
-	.text       start:0x8239C6AC end:0x8239C6D8
-	.text       start:0x82421758 end:0x82424D18
-	.text       start:0x82424DCC end:0x82425BC8
+	.text       start:0x8239C640 end:0x8239C6D8
+	.text       start:0x82421758 end:0x82425BC8
 	.text       start:0x82425C28 end:0x82425FCC
-	.text       start:0x82638C10 end:0x82638C60
-	.text       start:0x82638C60 end:0x82638CC0
+	.text       start:0x82638C10 end:0x82638CC0
 	.text       start:0x8263FD2C end:0x8263FD30
 	.text       start:0x8263FD60 end:0x8263FDE8
 	.text       start:0x82656180 end:0x82656350
-	.text       start:0x82656630 end:0x826567D4
-	.text       start:0x826567D4 end:0x82656800
+	.text       start:0x82656630 end:0x82656800
 	.text       start:0x82667FE0 end:0x8266849C
 	.text       start:0x8268C920 end:0x8268C988
 	.text       start:0x8268C998 end:0x8268C9E8
@@ -6009,13 +5869,11 @@ CameraManager.cpp:
 	.pdata      start:0x82213068 end:0x82213248
 	.pdata      start:0x82213258 end:0x822133E0
 	.pdata      start:0x822149F0 end:0x822149F8
-	.pdata      start:0x8221C5E0 end:0x8221C5F0
 	.pdata      start:0x82222218 end:0x82222220
 	.pdata      start:0x82222220 end:0x822222B0
 	.text       start:0x824B9F00 end:0x824BBE38
 	.text       start:0x824BBED0 end:0x824BD6C0
 	.text       start:0x824D6F68 end:0x824D6FDC
-	.text       start:0x82558440 end:0x825584D0
 	.text       start:0x825ACD30 end:0x825ACEC0
 	.text       start:0x825ACEC0 end:0x825AD768
 	.text       start:0x825AD7A4 end:0x825AD7A8
@@ -7307,7 +7165,7 @@ Screenshot.cpp:
 	.pdata      start:0x82206340 end:0x82206378
 	.pdata      start:0x82247EF8 end:0x82247F00
 	.pdata      start:0x82247F10 end:0x82247F70
-	.text       start:0x823C8198 end:0x823C88D0
+	.text       start:0x823C8190 end:0x823C88D0
 	.text       start:0x823C88DC end:0x823C88E0
 	.text       start:0x823C88EC end:0x823C8908
 	.text       start:0x823C8A64 end:0x823C8A68
@@ -8620,17 +8478,8 @@ band3/meta_band/PrefabMgr.cpp:
 	.text       start:0x82554D0C end:0x82555E64
 
 band3/meta_band/AccomplishmentManager.cpp:
-	.pdata      start:0x8221C378 end:0x8221C4B8
-	.pdata      start:0x8221C4C8 end:0x8221C5E0
-	.pdata      start:0x8221C600 end:0x8221C7F0
-	.pdata      start:0x8221C800 end:0x8221C9D0
-	.pdata      start:0x8221C9D8 end:0x8221CCF8
-	.text       start:0x82555E68 end:0x82557060
-	.text       start:0x825570C8 end:0x82558440
-	.text       start:0x825584D0 end:0x825584D8
-	.text       start:0x82558568 end:0x8255A340
-	.text       start:0x8255A4CC end:0x8255C8E8
-	.text       start:0x8255C95C end:0x8255F5C8
+	.pdata      start:0x8221C378 end:0x8221CCF8
+	.text       start:0x82555E68 end:0x8255F5C8
 
 band3/meta_band/AccomplishmentProgress.cpp:
 	.pdata      start:0x82216108 end:0x82216118
@@ -10333,36 +10182,40 @@ BandPatchMesh.cpp:
 	.pdata      start:0x821FEB98 end:0x821FEBA0
 	.pdata      start:0x821FEBD0 end:0x821FEBD8
 	.pdata      start:0x821FEBE0 end:0x821FEBF8
-	.pdata      start:0x821FEC18 end:0x821FEC20
-	.pdata      start:0x821FEC30 end:0x821FEC38
-	.pdata      start:0x821FEC68 end:0x821FEC70
-	.pdata      start:0x821FEC70 end:0x821FEC88
+	.pdata      start:0x821FEC18 end:0x821FEC38
+	.pdata      start:0x821FEC68 end:0x821FEC88
 	.pdata      start:0x821FECC8 end:0x821FECD0
-	.pdata      start:0x821FED48 end:0x821FED50
+	.pdata      start:0x821FED20 end:0x821FED28
+	.pdata      start:0x821FED38 end:0x821FED50
 	.pdata      start:0x821FEDC0 end:0x821FEE08
+	.pdata      start:0x821FEE20 end:0x821FEE30
 	.pdata      start:0x821FEE88 end:0x821FEEC8
 	.pdata      start:0x821FEEE0 end:0x821FEEF8
 	.pdata      start:0x821FEF10 end:0x821FEF28
+	.pdata      start:0x821FEF68 end:0x821FEF80
 	.pdata      start:0x821FEFD0 end:0x821FF000
+	.pdata      start:0x821FF048 end:0x821FF050
 	.text       start:0x82345030 end:0x82345034
 	.text       start:0x82345330 end:0x8234539C
 	.text       start:0x823453A0 end:0x82345520
 	.text       start:0x82345638 end:0x82345824
 	.text       start:0x823461C8 end:0x823462A4
 	.text       start:0x823464F8 end:0x823465B0
-	.text       start:0x82346DE0 end:0x82346E48
-	.text       start:0x82346EB8 end:0x82346F64
-	.text       start:0x82347284 end:0x82347320
-	.text       start:0x82347320 end:0x82347478
+	.text       start:0x82346DE0 end:0x82346F64
+	.text       start:0x82347284 end:0x82347478
 	.text       start:0x823474D0 end:0x82347528
 	.text       start:0x82347530 end:0x823475FC
 	.text       start:0x82347A18 end:0x82347B74
-	.text       start:0x82348420 end:0x823484EC
+	.text       start:0x82348210 end:0x82348260
+	.text       start:0x82348388 end:0x823484EC
 	.text       start:0x82348FC4 end:0x823493D0
+	.text       start:0x823495D8 end:0x82349770
 	.text       start:0x82349DC0 end:0x8234A148
 	.text       start:0x8234A288 end:0x8234A44C
 	.text       start:0x8234AC78 end:0x8234ADC8
+	.text       start:0x8234B3D0 end:0x8234B4D0
 	.text       start:0x8234BCB0 end:0x8234C298
+	.text       start:0x8234CA60 end:0x8234CAB8
 
 SongData.cpp:
 	.pdata      start:0x822084E0 end:0x822084E8
@@ -11313,83 +11166,34 @@ SongPreview.cpp:
 
 StandardStream.cpp:
 	.pdata      start:0x822378F8 end:0x82237900
-	.pdata      start:0x82237900 end:0x82237908
-	.pdata      start:0x82237908 end:0x82237910
-	.pdata      start:0x82237910 end:0x82237920
-	.pdata      start:0x82237920 end:0x82237928
+	.pdata      start:0x82237900 end:0x82237910
+	.pdata      start:0x82237910 end:0x82237928
 	.pdata      start:0x82237928 end:0x82237958
-	.pdata      start:0x82237970 end:0x82237990
-	.pdata      start:0x82237990 end:0x822379B8
-	.pdata      start:0x822379B8 end:0x822379C8
-	.pdata      start:0x822379C8 end:0x822379D8
+	.pdata      start:0x82237970 end:0x822379D8
 	.pdata      start:0x822379D8 end:0x82237A28
-	.pdata      start:0x82237A28 end:0x82237A30
-	.pdata      start:0x82237A30 end:0x82237A40
-	.pdata      start:0x82237A40 end:0x82237A48
-	.pdata      start:0x82237A48 end:0x82237A60
-	.pdata      start:0x82237A60 end:0x82237A68
-	.pdata      start:0x82237A68 end:0x82237A70
-	.pdata      start:0x82237A70 end:0x82237A78
-	.pdata      start:0x82237A78 end:0x82237A90
-	.pdata      start:0x82237A90 end:0x82237A98
+	.pdata      start:0x82237A28 end:0x82237A98
 	.pdata      start:0x82237A98 end:0x82237AC0
 	.pdata      start:0x82237AC0 end:0x82237AC8
 	.pdata      start:0x82237AE8 end:0x82237AF8
 	.pdata      start:0x82237B08 end:0x82237B18
-	.pdata      start:0x82237B28 end:0x82237B48
-	.pdata      start:0x82237B48 end:0x82237B58
-	.pdata      start:0x82237B58 end:0x82237B60
-	.pdata      start:0x82237B60 end:0x82237B68
-	.pdata      start:0x82237B78 end:0x82237B80
-	.pdata      start:0x82237B80 end:0x82237C10
-	.pdata      start:0x82237C10 end:0x82237C18
-	.pdata      start:0x82237C20 end:0x82237C28
-	.pdata      start:0x82237C28 end:0x82237C48
-	.pdata      start:0x82237C48 end:0x82237C68
-	.pdata      start:0x82237C68 end:0x82237CD8
-	.pdata      start:0x82237CD8 end:0x82237CE0
-	.text       start:0x82701A28 end:0x82701A78
-	.text       start:0x82701A78 end:0x82701AA4
-	.text       start:0x82701AA8 end:0x82701AD8
-	.text       start:0x82701AD8 end:0x82701AEC
-	.text       start:0x82701AF0 end:0x82701B70
-	.text       start:0x82701B70 end:0x82701BEC
-	.text       start:0x82701BF0 end:0x82701CA0
-	.text       start:0x82701CA0 end:0x82701CFC
+	.pdata      start:0x82237B20 end:0x82237B68
+	.pdata      start:0x82237B78 end:0x82237C18
+	.pdata      start:0x82237C20 end:0x82237CE0
+	.text       start:0x82701A28 end:0x82701AA4
+	.text       start:0x82701AA8 end:0x82701AEC
+	.text       start:0x82701AF0 end:0x82701BEC
+	.text       start:0x82701BF0 end:0x82701CFC
 	.text       start:0x82701D00 end:0x82701EF8
-	.text       start:0x82701FF8 end:0x827020F0
-	.text       start:0x827020F0 end:0x82702288
-	.text       start:0x82702288 end:0x82702380
-	.text       start:0x82702380 end:0x827023F8
-	.text       start:0x827023F8 end:0x8270240C
-	.text       start:0x82702410 end:0x82702430
-	.text       start:0x82702430 end:0x82702A9C
-	.text       start:0x82702AA0 end:0x82702B08
-	.text       start:0x82702B08 end:0x82702B40
-	.text       start:0x82702B40 end:0x82702C20
-	.text       start:0x82702C20 end:0x82702C90
-	.text       start:0x82702C90 end:0x82702E70
-	.text       start:0x82702E70 end:0x82702F18
-	.text       start:0x82702F18 end:0x82703040
-	.text       start:0x82703040 end:0x827030A0
-	.text       start:0x827030A0 end:0x82703428
-	.text       start:0x82703428 end:0x8270347C
+	.text       start:0x82701FF8 end:0x8270240C
+	.text       start:0x82702410 end:0x82702A9C
+	.text       start:0x82702AA0 end:0x8270347C
 	.text       start:0x82703480 end:0x82703814
 	.text       start:0x82703818 end:0x82703890
 	.text       start:0x827039C8 end:0x82703A60
 	.text       start:0x82703AF8 end:0x82703B90
-	.text       start:0x82703C58 end:0x82703E08
-	.text       start:0x82703E08 end:0x82703EC0
-	.text       start:0x82703EC0 end:0x82704010
-	.text       start:0x82704010 end:0x82704058
-	.text       start:0x827041E8 end:0x82704248
-	.text       start:0x82704248 end:0x82704B40
-	.text       start:0x82704B40 end:0x82704BB4
-	.text       start:0x82704C38 end:0x82704ED8
-	.text       start:0x82704ED8 end:0x82705058
-	.text       start:0x82705058 end:0x827052B8
-	.text       start:0x827052B8 end:0x82705690
-	.text       start:0x82705690 end:0x82705838
+	.text       start:0x82703BF8 end:0x82704058
+	.text       start:0x827041E8 end:0x82704BB4
+	.text       start:0x82704C38 end:0x82705838
 	.text       start:0x82772870 end:0x827728D0
 
 TrackConfig.cpp:
@@ -11448,40 +11252,28 @@ RGGemMatcher.cpp:
 	.text       start:0x8278F568 end:0x8278FB08
 
 VocalNoteList.cpp:
+	.pdata      start:0x82230A00 end:0x82230A08
+	.pdata      start:0x82230B78 end:0x82230B88
+	.pdata      start:0x82233B30 end:0x82233B48
 	.pdata      start:0x82233B48 end:0x82233B50
-	.pdata      start:0x8223E650 end:0x8223E658
-	.pdata      start:0x8223E658 end:0x8223E660
-	.pdata      start:0x8223E660 end:0x8223E668
-	.pdata      start:0x8223E668 end:0x8223E678
-	.pdata      start:0x8223E678 end:0x8223E680
-	.pdata      start:0x8223E680 end:0x8223E6A0
-	.pdata      start:0x8223E6A0 end:0x8223E6A8
+	.pdata      start:0x8223E650 end:0x8223E668
+	.pdata      start:0x8223E668 end:0x8223E680
+	.pdata      start:0x8223E680 end:0x8223E6A8
 	.pdata      start:0x8223E6A8 end:0x8223E6B0
-	.pdata      start:0x8223E6B8 end:0x8223E6C8
-	.pdata      start:0x8223E6C8 end:0x8223E6D0
-	.pdata      start:0x8223E6D8 end:0x8223E708
-	.pdata      start:0x8223E708 end:0x8223E718
-	.pdata      start:0x8223E718 end:0x8223E720
-	.pdata      start:0x8223E720 end:0x8223E768
-	.pdata      start:0x8223E768 end:0x8223E780
+	.pdata      start:0x8223E6B8 end:0x8223E6D0
+	.pdata      start:0x8223E6D8 end:0x8223E720
+	.pdata      start:0x8223E720 end:0x8223E780
+	.text       start:0x826856F0 end:0x82685750
+	.text       start:0x826870D0 end:0x82687170
+	.text       start:0x826B8BA8 end:0x826B8C9C
 	.text       start:0x826B8CA0 end:0x826B8D20
-	.text       start:0x827808C8 end:0x827809E0
-	.text       start:0x827809E0 end:0x82780A50
-	.text       start:0x82780A50 end:0x82780AC8
-	.text       start:0x82780AC8 end:0x82780B74
-	.text       start:0x82780B78 end:0x82780BC0
-	.text       start:0x82780BC0 end:0x82780E08
-	.text       start:0x82780E08 end:0x82780E7C
-	.text       start:0x82780E80 end:0x82781078
-	.text       start:0x82781078 end:0x827810F4
+	.text       start:0x827808C8 end:0x82780B74
+	.text       start:0x82780B78 end:0x82780E7C
+	.text       start:0x82780E80 end:0x827810F4
 	.text       start:0x827810F8 end:0x82781160
-	.text       start:0x827812F8 end:0x827814A8
-	.text       start:0x827814A8 end:0x82781548
-	.text       start:0x82781660 end:0x827818E0
-	.text       start:0x827818E0 end:0x827819C0
-	.text       start:0x827819C0 end:0x82781A74
-	.text       start:0x82781A78 end:0x82782168
-	.text       start:0x82782168 end:0x82782958
+	.text       start:0x827812F8 end:0x82781548
+	.text       start:0x82781660 end:0x82781A74
+	.text       start:0x82781A78 end:0x82782958
 
 OutfitConfig.cpp:
 	.pdata      start:0x821F4300 end:0x821F4338
@@ -12152,13 +11944,11 @@ FlowNode.cpp:
 	.pdata      start:0x821FAF68 end:0x821FAF70
 	.pdata      start:0x821FAFB8 end:0x821FAFE8
 	.pdata      start:0x821FAFE8 end:0x821FAFF0
-	.pdata      start:0x82210678 end:0x82210680
 	.text       start:0x82307630 end:0x82307B74
 	.text       start:0x823082D0 end:0x82308420
 	.text       start:0x82308420 end:0x82308478
 	.text       start:0x82308710 end:0x82308C88
 	.text       start:0x82308CEC end:0x82308D60
-	.text       start:0x82484D00 end:0x82484D60
 
 Campaign.cpp:
 	.pdata      start:0x821F8E28 end:0x821F8E40

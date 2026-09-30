@@ -702,12 +702,12 @@ void RndFont::SetKerning(const std::vector<KernInfo> &kernInfo) {
     }
 }
 
+// Retail 0x82475a00 (24 B, no .pdata) reads this->mKerningTable directly and
+// tail-branches to KerningTable::GetKerning or vector::clear -- no DataOwner()
+// walk (that loop is DC3-era). Same body as rb3-Wii's RndFont::GetKerning.
 void RndFont::GetKerning(std::vector<KernInfo> &kernInfo) const {
-    const RndFont *owner;
-    for (owner = this; owner->DataOwner() != owner; owner = owner->DataOwner())
-        ;
-    if (owner->mKerningTable) {
-        owner->mKerningTable->GetKerning(kernInfo);
+    if (mKerningTable) {
+        mKerningTable->GetKerning(kernInfo);
     } else {
         kernInfo.clear();
     }
