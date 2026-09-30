@@ -16,6 +16,8 @@ AccomplishmentTrainerListConditional::~AccomplishmentTrainerListConditional() {}
 
 void AccomplishmentTrainerListConditional::Configure(DataArray *i_pConfig) {
     MILO_ASSERT(i_pConfig, 0x1B);
+    // retail fn_825E8890: function-local static
+    static Symbol lessons("lessons");
     DataArray *pEntryArray = i_pConfig->FindArray(lessons);
     MILO_ASSERT(pEntryArray->Size() > 1, 0x22);
     for (int i = 1; i < pEntryArray->Size(); i++) {
