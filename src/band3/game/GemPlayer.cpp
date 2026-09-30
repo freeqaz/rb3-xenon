@@ -2281,11 +2281,14 @@ void GemPlayer::AddHeadPoints(float f1, int i2, int i3, GemHitFlags flags) {
     ivar2 += i5;
     AddPoints(ivar2, true, true);
     mStats.AddAccuracy(ivar2);
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+    // dev-build timing stats; absent from TU5 retail
     int rounded = Round(gem.GetMs() - (f1 + mSyncOffset));
     unk390 -= rounded;
     unk394 += rounded;
     unk398++;
     PrintAddHead(rounded, i3, ivar2, unk394 / unk398, unk390 + 0.5);
+#endif
 }
 
 void GemPlayer::SetFilling(bool b1, int i2) {
