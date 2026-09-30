@@ -189,11 +189,13 @@ BEGIN_SAVES(RndText)
     // the base reference removes the ObjOwnerPtr<T1> candidate from overload
     // resolution (no ObjRefConcrete-argument -> ObjOwnerPtr<T1> deduction
     // exists) so the name-based overload is selected instead, matching retail.
+    // W17-OPTR: ObjPtr now carries that overload itself (no ObjRefConcrete
+    // base), so the reinterpreting cast names ObjPtr<RndFont>; same body.
     // Chained (not two statements) to match retail: the font-save call's
     // returned BinStream& is reused directly as the receiver for mAlign's
     // write (target keeps it live in r29 across the call), vs re-fetching
     // `bs` from r30 for a second statement.
-    bs << (const ObjRefConcrete<RndFont> &)mFont << mAlign << mText;
+    bs << (const ObjPtr<RndFont> &)mFont << mAlign << mText;
     // Retail streams this field via operator<<(BinStream&, Vector4 const&),
     // not Hmx::Color's own operator<< (measured: target callee is
     // `??6@YAAAVBinStream@@AAV0@ABVVector4@@@Z`, ours was

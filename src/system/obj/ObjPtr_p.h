@@ -103,7 +103,8 @@ ObjRefConcrete<T1, T2>::~ObjRefConcrete() {
 // to exist (RndParticleSys, BandIKEffector, RndGroup, RndCam here; BandCharDesc
 // in bandobj/BandCharacter.h; RndEnvAnim in rndobj/EnvAnim.h), each releasing
 // with mOwner instead of `this`. On retail bytes every one of the 91
-// ~ObjPtr<T,ObjectDir> bodies -- which is what this dtor compiles to --
+// ~ObjPtr<T,ObjectDir> bodies -- which this dtor compiled to until W17-OPTR
+// gave ObjPtr its own (see ~ObjPtr below) --
 // releases `this`, the six T included (RndCam 0x822e43c0, RndGroup 0x822bbbd0,
 // BandIKEffector 0x822c2348, RndParticleSys 0x8244f898), and retail has no
 // ObjPtr<BandCharDesc> or ObjPtr<RndEnvAnim> at all. Four of them had been
@@ -114,7 +115,7 @@ ObjRefConcrete<T1, T2>::~ObjRefConcrete() {
 // mapped today are the `this` bodies above, which their specialisations could
 // never match. With ObjOwnerPtr on ObjRefOwner directly the owner dtors compile
 // correctly, and the specialisations only made ObjPtr<T> release the wrong
-// ring node.
+// ring node. (The addresses above are all named ~ObjPtr<T> in the map now.)
 
 template <class T1, class T2>
 void ObjRefConcrete<T1, T2>::SetObjConcrete(T1 *obj) {
@@ -385,7 +386,7 @@ template <class T>
 __forceinline
 #endif
 #ifdef RB3_TU_OBJPTR_DEFER_OWNER
-ObjPtr<T>::ObjPtr(Hmx::Object *owner, T *ptr) : ObjRefConcrete<T>() {
+ObjPtr<T>::ObjPtr(Hmx::Object *owner, T *ptr) {
     // DEFER-BOTH (lane DS-4/C). Same reasoning as the redundant `mObject`
     // re-assignment below, applied to mOwner as well: a member store emitted
     // from the BASE mem-init list sits in the base ctor's scheduling region and
@@ -401,7 +402,7 @@ ObjPtr<T>::ObjPtr(Hmx::Object *owner, T *ptr) : ObjRefConcrete<T>() {
         this->mObject->AddRef(this);
 }
 #else
-ObjPtr<T>::ObjPtr(Hmx::Object *owner, T *ptr) : ObjRefConcrete<T>(owner, ptr) {
+ObjPtr<T>::ObjPtr(Hmx::Object *owner, T *ptr) : mOwner(owner), mObject(ptr) {
     // The redundant re-assignment is LOAD-BEARING, exactly as documented for
     // RB3_OBJPTR_INLINE_OWNER_CTOR_EH at the gate in obj/Object.h. Initialising
     // mObject in the BASE mem-init emits its store BEFORE the derived vptr
@@ -435,7 +436,7 @@ ObjPtr<T>::ObjPtr(Hmx::Object *owner, T *ptr) : ObjRefConcrete<T>(owner, ptr) {
 // the point where the derived vptr store would land -- removes the base's
 // provably-dead stores.
 template <class T>
-ObjPtr<T>::ObjPtr(const ObjPtr &p) : ObjRefConcrete<T>() {
+ObjPtr<T>::ObjPtr(const ObjPtr &p) {
     this->mOwner = p.mOwner;
     this->mObject = p.mObject;
     if (this->mObject)
@@ -443,15 +444,96 @@ ObjPtr<T>::ObjPtr(const ObjPtr &p) : ObjRefConcrete<T>() {
 }
 #else
 template <class T>
-ObjPtr<T>::ObjPtr(const ObjPtr &p) : ObjRefConcrete<T>(p) {
+ObjPtr<T>::ObjPtr(const ObjPtr &p) : mOwner(p.mOwner), mObject(p.mObject) {
     if (this->mObject)
         this->mObject->AddRef(this);
 }
 #endif
 
-// ~ObjPtr: intentionally NOT user-declared on the retail path — retail's dtor
-// is implicit, which elides the ??_7ObjPtr vtable store at inlined dtor entry
-// (implicit-destructor vtable-store elision pattern).
+// W17-OPTR: retail's one ~ObjPtr<T,ObjectDir> body per T (all 72 mapped
+// bodies read: e.g. OverdriveMeter 0x822e4010, RndTex 0x8229d930): own vptr;
+// if (mObject) mObject->Release(this); ObjRef vptr -- 100 B, 116 B when T
+// reaches Hmx::Object through a virtual base. This is ~ObjRefConcrete's body
+// under ObjPtr's name and vtable. Compiled out under
+// RB3_TU_OBJPTR_OUTOFLINE_DTOR (see the gate in obj/Object.h).
+#ifndef RB3_TU_OBJPTR_OUTOFLINE_DTOR
+template <class T>
+ObjPtr<T>::~ObjPtr() {
+    if (mObject)
+        mObject->Release(this);
+}
+#endif
+
+// W17-OPTR: formerly inherited from ObjRefConcrete; same bodies (rb3-Wii
+// spells SetObjConcrete as ObjPtr::operator=(T1*)).
+template <class T>
+void ObjPtr<T>::SetObjConcrete(T *obj) {
+    if (obj != mObject) {
+        if (mObject)
+            mObject->Release(this);
+        mObject = obj;
+        if (mObject)
+            mObject->AddRef(this);
+    }
+}
+
+template <class T>
+void ObjPtr<T>::CopyRef(const ObjPtr &o) {
+    SetObjConcrete(o.mObject);
+}
+
+template <class T>
+Hmx::Object *ObjPtr<T>::SetObj(Hmx::Object *root_obj) {
+    // Same guard as ObjRefConcrete::SetObj: identity of the current referent.
+    if (mObject != root_obj) {
+        SetObjConcrete(dynamic_cast<T *>(root_obj));
+    }
+    return mObject;
+}
+
+// Same body as ObjRefConcrete::Load's retail arm above (every comment there
+// applies verbatim); rb3-Wii has it as ObjPtr<T1,T2>::Load.
+template <class T>
+bool ObjPtr<T>::Load(BinStream &bs, bool print, ObjectDir *dir) {
+    char buf[128];
+    bs.ReadString(buf, 128);
+    if (!dir && mOwner) {
+        dir = mOwner->Dir();
+    }
+    if (mOwner && dir) {
+        SetObjConcrete(dynamic_cast<T *>(dir->FindObject(buf, false)));
+        if (!mObject && buf[0] != '\0') {
+            if (print) {
+                const char *dirPath = PathName(dir);
+                MILO_NOTIFY("%s couldn't find %s in %s", PathName(mOwner), buf, dirPath);
+            }
+            return false;
+        }
+    } else {
+        if (ObjRefVirtualBaseObject<T>::value) {
+            SetObjConcrete(nullptr);
+        } else {
+            if (mObject) {
+                mObject->Release(this);
+                mObject = nullptr;
+            }
+        }
+        if (buf[0] != '\0') {
+            if (print)
+                MILO_NOTIFY("No dir to find %s", buf);
+        }
+    }
+    return true;
+}
+
+// Same body as the ObjRefConcrete overload above (retail's four out-of-line
+// survivors 0x8238b5b8 / 0x8229e5d0 / 0x82280148 / 0x82377698).
+template <class T1>
+BinStream &operator<<(BinStream &bs, const ObjPtr<T1> &f) {
+    const char *objName = f ? f->Name() : "";
+    bs << objName;
+    return bs;
+}
 #endif
 
 template <class T>
