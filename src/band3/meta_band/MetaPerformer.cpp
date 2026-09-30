@@ -159,7 +159,7 @@ MetaPerformer::MetaPerformer(const BandSongMgr &mgr, const char *cc)
 #endif
       mSetlist(gNullStr), mSetlistIsLocal(0), mSetlistIsHmx(0),
       mSongMgr((BandSongMgr *)&mgr), mHasOnlineScoring(0), mSkippedSong(0), unk2c0(0),
-      mFestivalReward(0), mCheatInFinale(0), mCheating(0), unk338(0), unk33c(-1),
+      mFestivalReward(0), mCheating(0), unk338(0), unk33c(-1),
       mRecordBattleContextID(-1), mHarmonyOverride(0), mRealDrumsOverride(0), unk360(2)
 #ifndef RB3_NO_WII_META_MEMBERS
       ,
@@ -168,8 +168,10 @@ MetaPerformer::MetaPerformer(const BandSongMgr &mgr, const char *cc)
 {
     SetName(cc, ObjectDir::Main());
     mQpPerformer = new QuickplayPerformerImpl();
+    static Symbol mode_changed("mode_changed");
     if (TheGameMode)
         TheGameMode->AddSink(this, mode_changed);
+    static Symbol new_remote_user("new_remote_user");
     if (TheSessionMgr)
         TheSessionMgr->AddSink(this, new_remote_user);
 #ifndef RB3_NO_WII_META_MEMBERS
