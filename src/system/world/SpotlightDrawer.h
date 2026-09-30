@@ -17,7 +17,7 @@ public:
     SpotDrawParams(SpotlightDrawer *);
     SpotDrawParams &operator=(const SpotDrawParams &);
     void Save(BinStream &);
-    void Load(BinStreamRev &);
+    void Load(BinStream &, int);
 
     float mIntensity; // 0x0
     Hmx::Color mColor; // 0x4
