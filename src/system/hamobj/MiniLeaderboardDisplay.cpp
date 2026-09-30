@@ -39,14 +39,42 @@ BEGIN_LOADS(MiniLeaderboardDisplay)
     PostLoad(bs);
 END_LOADS
 
+// RB3 retail keeps no BinStreamRev here: the packed rev is split into two TU
+// shorts (alt at +0, rev at +4), there is no version guard, and the bool is
+// read only from rev 1 on -- the same dialect as ui/LabelShrinkWrapper.cpp.
+#pragma push_macro("INIT_REVS")
+#pragma push_macro("LOAD_REVS")
+#pragma push_macro("ASSERT_REVS")
+#undef INIT_REVS
+#undef LOAD_REVS
+#undef ASSERT_REVS
+// Separate statics are not co-addressed here (measured: two relocs), so they
+// live in one aligned(4) aggregate, as in ui/LabelNumberTicker.cpp.
+#define INIT_REVS(r_, a_)                                                                \
+    static struct {                                                                      \
+        __declspec(align(4)) unsigned short altRev;                                      \
+        __declspec(align(4)) unsigned short rev;                                         \
+    } gRevs_MiniLeaderboardDisplay = { a_, r_ };
+#define LOAD_REVS(bs)                                                                    \
+    int rev;                                                                             \
+    bs >> rev;                                                                           \
+    gRevs_MiniLeaderboardDisplay.rev = getHmxRev(rev);                                   \
+    gRevs_MiniLeaderboardDisplay.altRev = getAltRev(rev);
+#define ASSERT_REVS(rev1, rev2)
+
 INIT_REVS(1, 0)
 
 void MiniLeaderboardDisplay::PreLoad(BinStream &bs) {
     LOAD_REVS(bs)
     ASSERT_REVS(1, 0)
-    bs >> mAllowSoloScores;
+    if (gRevs_MiniLeaderboardDisplay.rev >= 1)
+        bs >> mAllowSoloScores;
     UIComponent::PreLoad(bs);
 }
+
+#pragma pop_macro("ASSERT_REVS")
+#pragma pop_macro("LOAD_REVS")
+#pragma pop_macro("INIT_REVS")
 
 void MiniLeaderboardDisplay::PostLoad(BinStream &bs) {
     UIComponent::PostLoad(bs);
