@@ -271,9 +271,10 @@ void RealGuitarTrackWatcherImpl::CheckForTrills(float fff, int iii, unsigned int
 
 bool RealGuitarTrackWatcherImpl::InTrill(int i) const {
     RGTrill trill;
-    int track = Track();
-    int tick = mSongData->GetTempoMap()->GetLoopTick(i);
-    return mSongData->GetRGTrillAtTick(track, tick, trill);
+    // retail evaluates the tick before reading the track (right-to-left args)
+    return mSongData->GetRGTrillAtTick(
+        Track(), mSongData->GetTempoMap()->GetLoopTick(i), trill
+    );
 }
 
 // sw2 scatter-include (default/RealGuitarTrackWatcherImpl <- hamobj/HamRibbon.cpp)
