@@ -234,7 +234,7 @@ DataNode RockCentral::OnMsg(const ServerStatusChangedMsg &msg) {
         }
         DP_KEYS1(locale)
         INIT_DATAPOINT("config/get");
-        ADD_DATA_PAIR(locale, SystemLanguage());
+        ADD_DATA_PAIR(locale, SystemLocale());
         RecordDataPoint(dataPoint, 0, mConfigResultList, this);
         DeleteNextUser();
     } else if (!msg.Success()) {
