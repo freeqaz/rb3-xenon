@@ -4497,7 +4497,7 @@
  "0x82357170": "?ToggleNowbar@TrackPanelDirBase@@QAAXXZ",
  "0x82357218": "?DataForEachConfigObj@TrackPanelDirBase@@QAA?AVDataNode@@PAVDataArray@@@Z",
  "0x823573f0": "?Advance@?$ObjDirItr@VObject@Hmx@@@@AAAXXZ",
- "0x82357640": "??4?$ObjPtrList@VRndTransformable@@VObjectDir@@@@QAAXABV0@@Z",
+ "0x82357640": "?ReapplyConfiguration@TrackPanelDirBase@@UAAX_N@Z",
  "0x823577c0": "?ModifierActive@TrackPanelDirBase@@QAA_NVSymbol@@@Z",
  "0x82357dd0": "?Handle@TrackPanelDirBase@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x823587b0": "??E?$ObjDirItr@VObject@Hmx@@@@QAAAAV0@XZ",
