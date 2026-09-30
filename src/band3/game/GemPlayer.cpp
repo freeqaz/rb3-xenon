@@ -2733,14 +2733,23 @@ void GemPlayer::ConfigureBehavior() {
     TrackType ty = mUser->GetTrackType();
     mBehavior->SetMaxMultiplier(ty == kTrackBass || ty == kTrackRealBass ? 6 : 4);
     mBehavior->SetCanDeployOverdrive(single && c1);
-    bool tilt = false;
-    if ((unsigned)(ty - 1) <= 7U && ((1 << (ty - 1)) & 0xBBU) && c1)
-        tilt = true;
-    mBehavior->SetTiltDeploysBandEnergy(tilt);
+    mBehavior->SetTiltDeploysBandEnergy(
+        (ty == kTrackGuitar || ty == kTrackRealGuitar || ty == kTrackBass
+         || ty == kTrackRealBass || ty == kTrackKeys || ty == kTrackRealKeys)
+        && c1
+    );
     mBehavior->SetFillsDeployBandEnergy(ty == kTrackDrum && c1);
-    mBehavior->SetRequireAllCodaLanes(ty > 9U || !((1 << ty) & 0x3E1U));
+    mBehavior->SetRequireAllCodaLanes(
+        !(ty == kTrackDrum || ty == kTrackRealKeys || ty == kTrackRealGuitar
+          || ty == kTrackRealGuitar22Fret || ty == kTrackRealBass
+          || ty == kTrackRealBass22Fret)
+    );
     mBehavior->SetCanFreestyleBeforeGems(false);
-    mBehavior->SetHasSolos(ty <= 8U && ((1 << ty) & 0x177U));
+    mBehavior->SetHasSolos(
+        ty == kTrackGuitar || ty == kTrackRealGuitar || ty == kTrackBass
+        || ty == kTrackRealBass || ty == kTrackRealKeys || ty == kTrackKeys
+        || ty == kTrackDrum
+    );
     mBehavior->SetStreakType(mUser->GetTrackSym());
 }
 

@@ -85,6 +85,8 @@ GemManager::~GemManager() {
 
 void GemManager::InitRGTuning(BandUser *bandUser) {
     MILO_ASSERT(bandUser, 0xAE);
+    static Symbol real_guitar("real_guitar");
+    static Symbol real_bass("real_bass");
     bool isRG = bandUser->GetTrack()->GetType() == real_guitar;
     bool isRB = bandUser->GetTrack()->GetType() == real_bass;
     if (isRG || isRB) {

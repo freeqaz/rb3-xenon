@@ -186,6 +186,7 @@ String OverdriveTracker::GetPlayerContributionString(Symbol s) const {
     }
     int min, sec;
     TrackerDisplay::MsToMinutesSeconds(f1, min, sec);
+    static Symbol tour_goal_od_timer_result_format("tour_goal_od_timer_result_format");
     return MakeString(Localize(tour_goal_od_timer_result_format, 0), min, sec);
 }
 
@@ -209,6 +210,7 @@ void OverdriveTracker::UpdateTimeRemainingDisplay() {
     if (unk9c != unkac) {
         int min, sec;
         TrackerDisplay::MsToMinutesSeconds(unk9c, min, sec);
+        static Symbol overdrive_deploy_tracker_progress("overdrive_deploy_tracker_progress");
         mBroadcastDisplay.SetBandMessage(
             DataArrayPtr(overdrive_deploy_tracker_progress, min, sec)
         );
