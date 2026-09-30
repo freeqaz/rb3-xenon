@@ -75,7 +75,11 @@ SongUpgradeData::SongUpgradeData(DataArray *da) {
     DataArray *rgtuningarr = da->FindArray(real_guitar_tuning, false);
     if (rgtuningarr) {
         for (int i = 0; i < 6; i++) {
-            mRealGuitarTuning[i] = rgtuningarr->Array(1)->Int(i);
+            // gi is a redundant copy of i. It changes no behaviour; it reproduces
+            // retail's operand order for the inlined Node(i) add in BOTH tuning
+            // loops (W16-C's lever; see NEXTSONGPANEL_COMMUTE_AUDIT_2026-09-14).
+            int gi = i;
+            mRealGuitarTuning[i] = rgtuningarr->Array(1)->Int(gi);
         }
     }
     static Symbol real_bass_tuning("real_bass_tuning");
