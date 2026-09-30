@@ -161,6 +161,11 @@ DataArray *MidiParserMgr::ParseText(const char *str, int tick) {
     MILO_ASSERT(strlen(str) < 256, 0xF3);
     char buf[256];
     StripEndBracket(buf, str + 1);
+#ifndef HX_NATIVE
+    // RB3 retail (fn_827EB4D8): StripEndBracket inlined, then a bare
+    // DataReadString -- no MILO_TRY/CATCH around it.
+    return DataReadString(buf);
+#else
     DataArray *parsed = nullptr;
     MILO_TRY { parsed = DataReadString(buf); }
     MILO_CATCH(errMsg) {
@@ -175,6 +180,7 @@ DataArray *MidiParserMgr::ParseText(const char *str, int tick) {
         ));
     }
     return parsed;
+#endif
 }
 
 void MidiParserMgr::FinishLoad() {

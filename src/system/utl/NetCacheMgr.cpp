@@ -320,25 +320,13 @@ bool NetLoaderRef::IsDownloading() {
 
 bool NetLoaderRef::IsLoadedOrFailed() {
     MILO_ASSERT(IsValid(), 0x327);
-
-    if (!mCacheLoader) {
-        if (mNetLoader) {
-            return true;
-        }
-        return false;
+    // RB3 retail (fn_827CD830): whichever loader this ref holds is asked
+    // IsLoaded() || HasFailed().
+    if (mCacheLoader) {
+        return mCacheLoader->IsLoaded() || mCacheLoader->HasFailed();
+    } else {
+        return mNetLoader->IsLoaded() || mNetLoader->HasFailed();
     }
-
-    if (!mNetLoader) {
-        return true;
-    }
-
-    bool loaded = mCacheLoader->IsLoaded();
-    if (loaded) {
-        return true;
-    }
-
-    char failed = mCacheLoader->HasFailed();
-    return failed != '\0';
 }
 
 void NetCacheMgr::PollLoaders() {

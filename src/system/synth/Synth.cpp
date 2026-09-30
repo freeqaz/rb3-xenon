@@ -508,10 +508,13 @@ void Synth::PauseAllSfx(bool pause) {
         if (sfx) {
             sfx->Pause(pause);
         }
+#ifdef HX_NATIVE
+        // DC3-era: RB3 retail (fn_826FE780) pauses Sfx only.
         Sound *sound = dynamic_cast<Sound *>(*it);
         if (sound) {
             sound->Pause(pause);
         }
+#endif
     }
 }
 

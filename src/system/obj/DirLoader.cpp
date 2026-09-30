@@ -1492,7 +1492,9 @@ void ReserveToFit(ObjectDir *src, ObjectDir *dst, int extraObjects) {
     dst->Reserve(hashSize, stringSize);
 }
 
-int GetPropSize(Hmx::Object *o, DataArray *arr, int size) {
+// Retail has no out-of-line GetPropSize: it is expanded inside IsPropPathValid
+// (fn_827584F8, new DataArray + node-copy loop + PropertySize).
+__forceinline int GetPropSize(Hmx::Object *o, DataArray *arr, int size) {
     DataArrayPtr ptr(new DataArray(size));
     for (int x = 0; x < size; x++) {
         ptr->Node(x) = arr->Node(x);
