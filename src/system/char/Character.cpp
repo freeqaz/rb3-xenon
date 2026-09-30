@@ -1102,10 +1102,15 @@ bool CharPollableSorter::ChangedByRecurse(Dep *dep) {
     return false;
 }
 
+// Is a reachable by walking b's changed-by chain? A dep is never "changed by"
+// itself. Matches retail (the a == b early-out and the a/b roles are both
+// visible in Sort's inlined copy), rb3-Wii and DC3.
 bool CharPollableSorter::ChangedBy(Dep *a, Dep *b) {
-    mTarget = b;
+    if (a == b)
+        return false;
     sSearchID++;
-    return ChangedByRecurse(a);
+    mTarget = a;
+    return ChangedByRecurse(b);
 }
 
 void CharPollableSorter::Sort(std::vector<RndPollable *> &polls) {
