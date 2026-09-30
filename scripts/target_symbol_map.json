@@ -215,6 +215,8 @@
  "0x82bb1c78": "??0OggMap@@QAA@XZ",
  "0x82bb2e70": "?CheckHmxHeader@VorbisReader@@AAA_NXZ",
  "0x82bb3288": "?TryDecode@VorbisReader@@AAA_NXZ",
+ "0x82714418": "?Replace@?$ObjPtrList@VNoteVoiceInst@@VObjectDir@@@@EAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+ "0x8241b170": "?Load@?$ObjPtrList@VObject@Hmx@@VObjectDir@@@@QAA_NAAVBinStream@@_N@Z",
  "0x822bbe08": "??_G?$ObjPtr@VCrowdMeterIcon@@@@UAAPAXI@Z",
  "0x822bbe58": "??_G?$ObjPtr@VRndGroup@@@@UAAPAXI@Z",
  "0x822bbea8": "??_G?$ObjPtr@VRndMatAnim@@@@UAAPAXI@Z",
