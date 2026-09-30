@@ -109,7 +109,13 @@ void MoviePanel::Load() {
         sprintf(pathBuffer, "ui/subtitles/eng/%s_keep.dta", FileGetBase(mMovies[0]));
         const char *subtitlesPath;
         bool local = FileIsLocal(pathBuffer);
+#ifdef HX_NATIVE
         bool cd = UsingCD();
+#else
+        // RB3 retail (0x827B0A20) makes no UsingCD() call here: a non-local
+        // path always goes to its gen/ .dtb.
+        const bool cd = true;
+#endif
         if (!cd || local) {
             subtitlesPath = pathBuffer;
         } else {
