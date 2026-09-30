@@ -2818,7 +2818,7 @@ Task.cpp:
 	.text       start:0x82749A78 end:0x82749C40
 	.text       start:0x82749C40 end:0x8274A060
 	.text       start:0x8274A060 end:0x8274A974
-	.text       start:0x8274A99C end:0x8274A9B0
+	.text       start:0x8274A9A4 end:0x8274A9B0
 	.text       start:0x8278E968 end:0x8278E9A8
 	.text       start:0x827919C8 end:0x82791A24
 
@@ -4868,6 +4868,7 @@ DataNode.cpp:
 	.text       start:0x824F90A8 end:0x824F9188
 	.text       start:0x82744E48 end:0x82745354
 	.text       start:0x8274A974 end:0x8274A99C
+	.text       start:0x8274A99C end:0x8274A9A4
 	.text       start:0x8274A9B0 end:0x8274AA08
 	.text       start:0x8274AA08 end:0x8274BB88
 	.text       start:0x8274BBE4 end:0x8274C4E0
