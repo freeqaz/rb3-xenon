@@ -632,18 +632,16 @@ extern "C" float kInvalidPitch__11VocalPlayer;
 
 void VocalPart::Poll(float ms, const SongPos &) {
     while (mFreestyleSection
-               != mVocalNoteList->mFreestyleSections.data()
-                   + mVocalNoteList->mFreestyleSections.size()
+               != mVocalNoteList->mFreestyleSections.end()
            && ms > mFreestyleSection->second) {
         mFreestyleSection++;
     }
     if ((mPlayer->CanDeployOverdrive() || mPlayer->mIsInCoda
          || mPlayer->IsDeployingBandEnergy())
         && (mThisPhrase
-                == mVocalNoteList->mPhrases.data() + mVocalNoteList->mPhrases.size()
+                == mVocalNoteList->mPhrases.end()
             || (mFreestyleSection
-                    != mVocalNoteList->mFreestyleSections.data()
-                        + mVocalNoteList->mFreestyleSections.size()
+                    != mVocalNoteList->mFreestyleSections.end()
                 && ms >= mFreestyleSection->first
                 && ms < mFreestyleSection->second))) {
         mInFreestyleSection = true;
