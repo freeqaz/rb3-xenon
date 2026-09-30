@@ -128,15 +128,14 @@ void DoDebugDraws(CharIKMidi *mid, float f) {
 }
 
 void CharIKMidi::NewSpot(RndTransformable *t, float f) {
-    float f18 = f;
     if (mNewSpot != t) {
-        if (!mNewSpot && f18 <= 0)
+        if (!mNewSpot && f <= 0)
             mFracPerBeat = kHugeFloat;
         else {
-            MaxEq(f18, 0.1f);
-            mFracPerBeat = 1.0f / f18;
-            if (f18 > 0.2) {
-                mAnimFracPerBeat = mMaxAnimBlend / f18;
+            MaxEq(f, 0.1f);
+            mFracPerBeat = 1.0f / f;
+            if (f > 0.2) {
+                mAnimFracPerBeat = mMaxAnimBlend / f;
             }
         }
         mFrac = 0;
