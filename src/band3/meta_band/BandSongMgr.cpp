@@ -100,16 +100,20 @@ void BandSongMgr::Init() {
     TheContentMgr.RegisterCallback(this, false);
     mSongNameLookup.clear();
     mSongIDLookup.clear();
+    static Symbol song_mgr("song_mgr");
+    static Symbol alt_dirs("alt_dirs");
     DataArray *cfg = SystemConfig(song_mgr);
     DataArray *altarr = cfg->FindArray(alt_dirs, false);
     if (altarr) {
         for (int i = 1; i < altarr->Size(); i++) {
             const char *str = altarr->Array(i)->Str(0);
             if (strlen(str) != 0) {
-                mContentAltDirs.push_back(String(str));
+                String dir(str);
+                mContentAltDirs.push_back(dir);
             }
         }
     }
+    static Symbol max_song_count("max_song_count");
     mMaxSongCount = cfg->FindInt(max_song_count);
     mUpgradeMgr = new SongUpgradeMgr();
     mLicenseMgr = new LicenseMgr();
@@ -801,14 +805,7 @@ bool BandSongMgr::IsDemo(int songID) const {
 
 bool BandSongMgr::IsRestricted(int songID) const {
     BandSongMetadata *data = (BandSongMetadata *)Data(songID);
-    int rating = data->Rating();
-    bool notAllowed = !AllowedToAccessContent(rating);
-    if (notAllowed) {
-        MILO_WARN(
-            "Song %d has rating %d, which should mean it is restricted", songID, rating
-        );
-    }
-    return false;
+    return !AllowedToAccessContent(data->Rating());
 }
 
 SongUpgradeData *BandSongMgr::GetUpgradeData(int i) const {
