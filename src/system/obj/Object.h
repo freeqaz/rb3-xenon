@@ -325,8 +325,10 @@ protected:
     T1 *mObject; // 0x8
 public:
     ObjRefConcrete(Hmx::Object *owner, T1 *obj);
-#if defined(RB3_TU_OBJPTR_DEFER_OWNER) || defined(RB3_OBJPTR_INLINE_TWOARG_CTOR_DEFER_BOTH)
-    // TU-gated (lane DS-4/C): the DEFER-**BOTH** base ctor. Initializes NOTHING,
+    // (W17-TMPL: no longer TU-gated. ObjOwnerPtr's out-of-line two-arg ctor
+    // uses it on every X360 TU -- see obj/ObjPtr_p.h -- so it is declared
+    // unconditionally; the ObjPtr users below are still opted in per TU.)
+    // Formerly TU-gated (lane DS-4/C): the DEFER-**BOTH** base ctor. Initializes NOTHING,
     // so the derived ctor body owns the mOwner store as well as the mObject
     // store, and BOTH land after the derived vptr store.
     //
@@ -349,7 +351,6 @@ public:
     // so all three were the SAME experiment for this store, and they duly came
     // out byte-identical. Deferring mOwner was never among them.
     ObjRefConcrete() {}
-#endif
 #ifdef RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
     // TU-gated (lane NCCC f70): owner-only base ctor leaving mObject to the
     // DERIVED ctor body, so the mObject store lands AFTER the derived vptr

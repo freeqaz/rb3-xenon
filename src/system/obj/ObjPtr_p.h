@@ -191,9 +191,22 @@ Hmx::Object *ObjRefConcrete<T1, T2>::SetObj(Hmx::Object *root_obj) {
 
 template <class T1>
 BinStream &operator<<(BinStream &bs, const ObjRefConcrete<T1, class ObjectDir> &f) {
+#ifdef HX_NATIVE
     MILO_ASSERT(f.RefOwner(), 0x4D1);
     T1 *obj = f;
     const char *objName = obj ? obj->Name() : "";
+#else
+    // Retail X360 (the four out-of-line bodies, one per referent layout and
+    // each an ICF survivor: 0x8238b5b8 plain T, 0x8229e5d0 / 0x82280148 /
+    // 0x82377698 virtual-base T; 419 call sites between them): no call before
+    // the null test. RefOwner() is virtual here, so the match build's
+    // MILO_ASSERT(f.RefOwner()) -- ((void)(cond)) -- left a dead bctrl that
+    // retail does not have; rb3-Wii asserts on the non-virtual f.Owner().
+    // The referent is read through the smart pointer twice, as rb3-Wii's
+    // `f.Ptr() ? f.Ptr()->Name() : ""` does -- that is what gives retail's
+    // signed `cmpwi` null test (a `T1 *` local gives `cmplwi`).
+    const char *objName = f ? f->Name() : "";
+#endif
     bs << objName;
     return bs;
 }
@@ -530,10 +543,18 @@ Hmx::Object *ObjOwnerPtr<T>::RefOwner() const {
 // Retail X360: the ring-ref is mOwner (an ObjRefOwner), NOT this. We pass a null
 // object to the base ctor (so it does not AddRef(this)), then AddRef(mOwner).
 // The base ctor stores mOwner (as Hmx::Object*, reinterpreted) and mObject.
-#ifdef RB3_TU_OBJPTR_DEFER_OWNER
 // DEFER-BOTH (lane DS-4/C): base ctor initializes nothing, so BOTH the mOwner
 // and mObject stores land after the derived vptr store, matching retail's
 // {lis, mOwner, mObject, cmplwi, addi, vptr-store}. See obj/Object.h.
+// W17-TMPL: this is the ONLY shape retail's out-of-line ObjOwnerPtr<T> two-arg
+// ctor has. Every retail body carries the vtable `lis` before the mOwner
+// store -- all 13 read (CharWeightable 0x823ae9a8, Hmx::Object 0x82422928,
+// RndTransformable 0x8236dd58, RndMesh 0x82418f18, RndTransAnim 0x8245e068,
+// RndMatAnim 0x82461498, RndMeshAnim 0x8246d0f0, RndLightAnim 0x82471168,
+// RndParticleSysAnim 0x8247edf8, RndCamAnim 0x82485900, RndEnvAnim
+// 0x82486858, RndLight 0x82497f68, Spotlight 0x824d8a30) -- so it is no
+// longer gated on RB3_TU_OBJPTR_DEFER_OWNER (which still gates ObjPtr's).
+// The mem-init form put `stw mOwner` first in every TU that lacked the define.
 template <class T>
 ObjOwnerPtr<T>::ObjOwnerPtr(ObjRefOwner *owner, T *ptr) : ObjRefConcrete<T>() {
     mOwner = reinterpret_cast<Hmx::Object *>(owner);
@@ -541,15 +562,6 @@ ObjOwnerPtr<T>::ObjOwnerPtr(ObjRefOwner *owner, T *ptr) : ObjRefConcrete<T>() {
     if (mObject)
         mObject->AddRef(owner);
 }
-#else
-template <class T>
-ObjOwnerPtr<T>::ObjOwnerPtr(ObjRefOwner *owner, T *ptr)
-    : ObjRefConcrete<T>(reinterpret_cast<Hmx::Object *>(owner), nullptr) {
-    mObject = ptr;
-    if (mObject)
-        mObject->AddRef(owner);
-}
-#endif
 
 template <class T>
 ObjOwnerPtr<T>::ObjOwnerPtr(const ObjOwnerPtr &o)
@@ -938,12 +950,16 @@ void ObjPtrList<T1, T2>::operator=(const ObjPtrList &other) {
 #else
         // Thin X360 node has no operator=; replace the held object in place,
         // keeping the existing links, with list-as-ref Release/AddRef on `this`
-        // (mirrors rb3-Wii operator= calling Set()).
+        // (mirrors rb3-Wii operator= calling Set()). Retail X360's single
+        // folded body (0x8248aee8) is rb3-Wii's Set(node, obj) shape: the
+        // source referent is read into a local FIRST, and the AddRef is on
+        // that local, not on a re-read of n->mObject.
+        T1 *obj = otherNodes->mObject;
         if (n->mObject)
             n->mObject->Release(this);
-        n->mObject = otherNodes->mObject;
-        if (n->mObject)
-            n->mObject->AddRef(this);
+        n->mObject = obj;
+        if (obj)
+            obj->AddRef(this);
 #endif
     }
     for (; otherNodes != nullptr; otherNodes = otherNodes->next) {
