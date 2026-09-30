@@ -32,8 +32,7 @@ void Tracker::Restart() {
     int idx = 0;
     for (TrackerPlayerID id = mSource->GetFirstPlayer(); id.NotNull();
          id = mSource->GetNextPlayer(id)) {
-        Player *p = mSource->GetPlayer(id);
-        mPlayerDisplays[idx++].mPlayer = p;
+        mPlayerDisplays[idx++].mPlayer = mSource->GetPlayer(id);
     }
     mFirstPoll = true;
     mTargets = mDesc.unk18;
