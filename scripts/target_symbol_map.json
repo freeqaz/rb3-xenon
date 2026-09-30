@@ -31502,5 +31502,11 @@
  "0x8233f5a0": "??$PropSync@VHighlightObject@@@@YA_NAAV?$ObjVector@VHighlightObject@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x8233f4e0": "?Init@BandList@@SAXXZ",
  "0x82382ac8": "?Load@CharClip@@UAAXAAVBinStream@@@Z",
- "0x8237e258": "?Load@Transitions@CharClip@@QAAXAAVBinStream@@@Z"
+ "0x8237e258": "?Load@Transitions@CharClip@@QAAXAAVBinStream@@@Z",
+ "0x8237cb30": "?Resize@Transitions@CharClip@@QAAPAVNodeVector@2@HPBV32@@Z",
+ "0x8237d1e8": "?Clear@Transitions@CharClip@@QAAXXZ",
+ "0x8237d258": "?AddNode@Transitions@CharClip@@QAAXPAV2@ABUCharGraphNode@@@Z",
+ "0x8237d3c8": "?RemoveClip@Transitions@CharClip@@QAAXPAV2@@Z",
+ "0x8237d470": "?Replace@Transitions@CharClip@@QAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+ "0x8237d810": "?Replace@CharClip@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z"
 }
