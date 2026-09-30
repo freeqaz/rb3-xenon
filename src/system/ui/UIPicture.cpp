@@ -101,7 +101,11 @@ void UIPicture::PreLoad(BinStream &bs) {
 void UIPicture::PostLoad(BinStream &bs) {
     UIComponent::PostLoad(bs);
     CancelLoading();
+#ifdef HX_NATIVE
     if (!TheLoadMgr.EditMode() && mMesh) {
+#else
+    if (mMesh) { // retail (0x82815D00) has no edit-mode test
+#endif
         mMesh->SetShowing(false);
     }
 }
@@ -160,11 +164,14 @@ void UIPicture::HookupMesh() {
             } else {
                 mat->SetDiffuseTex(0);
             }
-        } else {
+        }
+#ifdef HX_NATIVE
+        else {
             if (mLoader || TheLoadMgr.EditMode()) {
                 MILO_NOTIFY("%s does not have material", mMesh->Name());
             }
         }
+#endif
         mMesh->SetShowing(true);
     }
 }
