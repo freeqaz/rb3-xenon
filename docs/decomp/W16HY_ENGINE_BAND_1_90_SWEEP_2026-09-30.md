@@ -321,8 +321,11 @@ spelling but are not mapped yet.
 
 ## 6. Native gate
 
-`tools/native_build_gate.sh` on the lane tip, run after the A/B as the last build action:
+`tools/native_build_gate.sh` on the lane tip `fbff3d3e3` (all source commits in place), run
+after the A/B as the last build action:
 
 ```
-NATIVE_GATE_RESULT (filled in below)
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
 ```
+
+Only this docs-only commit follows it. It touches no build input.
