@@ -104,10 +104,12 @@ void TokenRedemptionPanel::Poll() {
 }
 END_UNPOOL_DATA
 
+// Retail fn_8263FDE8 (entered through the UIPanel subobject, so offsets read
+// -4): no RockCentral cancel, and the 360-only mOfferIDs list is cleared too.
 void TokenRedemptionPanel::Unload() {
-    TheRockCentral.CancelOutstandingCalls(this);
     mResultList.Clear();
     mListData.clear();
+    mOfferIDs.clear();
     RELEASE(mEnumeration);
     RELEASE(mPurchaser);
     UIPanel::Unload();
