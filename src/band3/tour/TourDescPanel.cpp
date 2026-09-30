@@ -98,6 +98,7 @@ public:
     ComponentStateOverride(int, int, UIComponent::State) const;
 
     inline bool IsTourDescAvailable(Symbol) const;
+    RndMat *FindMat(const String &) const;
     inline void UpdateList();
 
     std::vector<DynamicTex *> *mTexs; // 0x20
@@ -389,12 +390,19 @@ void TourDescProvider::UpdateExtendedText(int, int iData, UILabel *i_pLabel) con
     }
 }
 
+// W16-HX: retail keeps this lookup out of line (fn_82B7DC18, called 4x from Mat)
+RndMat *TourDescProvider::FindMat(const String &name) const {
+    std::vector<DynamicTex *>::iterator it = std::find(mTexs->begin(), mTexs->end(), name);
+    RndMat *pMat = (it != mTexs->end()) ? (*it)->mMat : (RndMat *)0;
+    return pMat;
+}
+
 RndMat *TourDescProvider::Mat(int, int iData, UIListMesh *i_pSlot) const {
     MILO_ASSERT(iData < NumData(), 0xAD);
     Symbol s = DataSymbol(iData);
     TourProgress *pProgress = TheTour->GetTourProgress();
     MILO_ASSERT(pProgress, 0xB2);
-    bool bSelected = pProgress->GetTourDesc() == s;
+    bool bSelected = s == pProgress->GetTourDesc();
     bool bPlayed = pProgress->GetToursPlayed(s) > 0;
     bPlayed = bPlayed || pProgress->GetTourMostStars(s) > 0;
     (void)bPlayed;
@@ -402,10 +410,7 @@ RndMat *TourDescProvider::Mat(int, int iData, UIListMesh *i_pSlot) const {
         if (!bSelected) {
             if (TheTour->HasBronzeMedal(s)) {
                 String str("tourprize_bronze");
-                std::vector<DynamicTex *>::iterator it =
-                    std::find(mTexs->begin(), mTexs->end(), str);
-                RndMat *pMat = (it != mTexs->end()) ? (*it)->mMat : (RndMat *)0;
-                return pMat;
+                return FindMat(str);
             }
         }
         return 0;
@@ -414,10 +419,7 @@ RndMat *TourDescProvider::Mat(int, int iData, UIListMesh *i_pSlot) const {
         if (!bSelected) {
             if (TheTour->HasSilverMedal(s)) {
                 String str("tourprize_silver");
-                std::vector<DynamicTex *>::iterator it =
-                    std::find(mTexs->begin(), mTexs->end(), str);
-                RndMat *pMat = (it != mTexs->end()) ? (*it)->mMat : (RndMat *)0;
-                return pMat;
+                return FindMat(str);
             }
         }
         return 0;
@@ -426,10 +428,7 @@ RndMat *TourDescProvider::Mat(int, int iData, UIListMesh *i_pSlot) const {
         if (!bSelected) {
             if (TheTour->HasGoldMedal(s)) {
                 String str("tourprize_gold");
-                std::vector<DynamicTex *>::iterator it =
-                    std::find(mTexs->begin(), mTexs->end(), str);
-                RndMat *pMat = (it != mTexs->end()) ? (*it)->mMat : (RndMat *)0;
-                return pMat;
+                return FindMat(str);
             }
         }
         return 0;
@@ -442,11 +441,9 @@ RndMat *TourDescProvider::Mat(int, int iData, UIListMesh *i_pSlot) const {
     if (i_pSlot->Matches("vehicle")) {
         TourDesc *pTourDesc = TheTour->GetTourDesc(s);
         MILO_ASSERT(pTourDesc, 0xF3);
-        String str(pTourDesc->GetRequiredCampaignLevel().Str());
-        std::vector<DynamicTex *>::iterator it =
-            std::find(mTexs->begin(), mTexs->end(), str);
-        RndMat *pMat = (it != mTexs->end()) ? (*it)->mMat : (RndMat *)0;
-        return pMat;
+        Symbol level = pTourDesc->GetRequiredCampaignLevel();
+        String str(level.Str());
+        return FindMat(str);
     }
     return i_pSlot->DefaultMat();
 }
