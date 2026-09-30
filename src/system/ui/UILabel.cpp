@@ -208,7 +208,12 @@ BEGIN_SAVES(UILabel)
     SAVE_REVS(0x18, 0)
     SAVE_SUPERCLASS(UIComponent)
     bs << mTextToken;
-    bs << mEditText;
+    // retail (and DC3): a cached stream drops edit text the label may not keep
+    if (bs.Cached() && !AllowEditText()) {
+        bs << gNullStr;
+    } else {
+        bs << mEditText;
+    }
     bs << mIcon;
     bs << mTextSize;
     bs << (int)mAlignment;
@@ -494,21 +499,19 @@ void UILabel::UpdateAndDrawHighlightMesh() {
             mText->GetCurrentStringDimensions(f1, f2);
             Vector3 v80, v74;
             InqMinMaxFromWidthAndHeight(f1, f2, Alignment(), v74, v80);
-            float x1 = v74.x;
-            float x2 = v80.x;
-            float z2 = v80.z;
-            float z1 = v74.z;
             mLabelDir->SetWorldXfm(WorldXfm());
-            topleft->SetLocalPos(x1, 0, z2);
-            topright->SetLocalPos(x2, 0, z2);
-            botleft->SetLocalPos(x1, 0, z1);
-            botright->SetLocalPos(x2, 0, z1);
+            // retail copies whole Vector3 temporaries (SetLocalPos(const Vector3&))
+            topleft->SetLocalPos(Vector3(v74.x, 0, v80.z));
+            topright->SetLocalPos(Vector3(v80.x, 0, v80.z));
+            botleft->SetLocalPos(Vector3(v74.x, 0, v74.z));
+            botright->SetLocalPos(Vector3(v80.x, 0, v74.z));
         }
         RndEnviron *env = meshgroup->GetEnv();
         if (env) {
             env->SetAmbientAlpha(mAlpha);
         }
-        meshgroup->Draw();
+        // retail calls the non-virtual RndDrawable::Draw on the group's base
+        static_cast<RndDrawable *>(meshgroup)->Draw();
     }
 }
 
