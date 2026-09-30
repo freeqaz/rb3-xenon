@@ -587,11 +587,11 @@ Defines.cpp:
 	.text       start:0x8268F8F8 end:0x8268F9A8
 	.text       start:0x8268F9A8 end:0x8268FA80
 	.text       start:0x8268FA80 end:0x8268FB30
-	.text       start:0x8268FB30 end:0x8268FC38
+	.text       start:0x8268FB30 end:0x8268FC14
 
 GameMode.cpp:
 	.pdata      start:0x822313F0 end:0x822314A0
-	.text       start:0x8268FC60 end:0x826907B8
+	.text       start:0x8268FC14 end:0x826907B8
 
 BandCharDesc.cpp:
 	.pdata      start:0x821F26D0 end:0x821F26D8
@@ -6974,7 +6974,6 @@ system/synth_xbox/FxSendSynapse.cpp:
 
 PropertyEventProvider.cpp:
 	.pdata      start:0x8223D200 end:0x8223D208
-	.text       start:0x8268FC38 end:0x8268FC60
 	.text       start:0x826F0F78 end:0x826F0F98
 	.text       start:0x82768F98 end:0x82768FF4
 
@@ -8486,7 +8485,7 @@ band3/meta_band/NewAwardPanel.cpp:
 	.pdata      start:0x8222A660 end:0x8222A700
 	.text       start:0x82627A54 end:0x82628C38
 	.text       start:0x82628D94 end:0x82628F40
-	.text       start:0x82628F84 end:0x82629878
+	.text       start:0x82628F84 end:0x82629860
 
 band3/meta_band/CampaignGoalsLeaderboardPanel.cpp:
 	.pdata      start:0x82226AE8 end:0x82226AF8
@@ -8540,7 +8539,7 @@ band3/meta_band/BandStorePanel.cpp:
 band3/meta_band/PatchPanel.cpp:
 	.pdata      start:0x8222A700 end:0x8222A9D0
 	.pdata      start:0x8222A9D0 end:0x8222AAC0
-	.text       start:0x82629878 end:0x8262CA88
+	.text       start:0x82629860 end:0x8262CA88
 	.text       start:0x8262CA88 end:0x8262D908
 
 band3/game/TrackerDisplay.cpp:
