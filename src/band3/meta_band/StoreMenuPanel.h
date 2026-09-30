@@ -4,7 +4,7 @@
 #include <vector>
 
 class BandList;
-class MultipleItemsEnumCompleteMsg;
+class MetadataLoadedMsg;
 
 class StoreMenuPanel : public UIPanel {
 public:
@@ -28,7 +28,7 @@ public:
     // current); OnMsg passes 0 to replace the root menu.
     void AddMenu(DataArray *, const char *, int);
     DataNode OnBack(const DataArray *);
-    DataNode OnMsg(const MultipleItemsEnumCompleteMsg &);
+    DataNode OnMsg(const MetadataLoadedMsg &);
     const char *GetCrumbText() const;
     void SetPendingMenuIx(int);
 
