@@ -71936,11 +71936,18 @@
    "address": "0x827ba020",
    "survivor": "??0ConnectionStatusPanel@@QAA@XZ",
    "folded": [
-    "??0BandStoreUIPanel@@QAA@XZ",
-    "??0TrackPanelInterface@@QAA@XZ"
+    "??0BandStoreUIPanel@@QAA@XZ"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??0TrackPanelInterface@@QAA@XZ",
+     "lane": "W16-HR 2026-09-30",
+     "class": "CONTRADICTED_RETAIL_RTTI_DIFFERENT_VTABLE",
+     "disposition": "withdrawn",
+     "evidence": "W16-HR 2026-09-30. Retail keeps TrackPanelInterface's ctor as its own body: fn_82B90670 (140 B) stores vtable lbl_8219D694 and vbase vtable lbl_8219D63C, whose retail RTTI COL both read .?AVTrackPanelInterface@@, and a matched mpn-100 TrackPanel caller binds ??0TrackPanelInterface@@QAA@XZ at exactly that address (binding table). The survivor 0x827ba020 stores lbl_82116C94 / lbl_82116C3C = .?AVConnectionStatusPanel@@. Two ctors installing different vtables cannot be one linked body. W16-CU's flat-T1 restore passed because every vtable relocation at the survivor is a tolerated placeholder (tools/icf_pair_adjudicate.py reports reloc_tally {'tolerated_placeholder': 6}), so the compared bytes were shape only. Our 168 B ctor matching the survivor's shape is body drift in our TrackPanelInterface ctor, not a fold. Surfaced as a FATAL CONTRADICTED once 0x82B90670 was named."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -74258,7 +74265,6 @@
     "??$_Param_Construct@VOverlay@OutfitConfig@@V12@@stlpmtx_std@@YAXPAVOverlay@OutfitConfig@@ABV12@@Z",
     "??$_Copy_Construct@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@0@ABU10@@Z",
     "??$_Copy_Construct@U?$pair@$$CBVSymbol@@VDataNode@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVSymbol@@VDataNode@@@0@ABU10@@Z",
-    "??$_Copy_Construct@VSongRanking@BandSongMgr@@@stlpmtx_std@@YAXPAVSongRanking@BandSongMgr@@ABV12@@Z",
     "??$_Param_Construct@VStreakList@Scoring@@V12@@stlpmtx_std@@YAXPAVStreakList@Scoring@@ABV12@@Z",
     "??$_Copy_Construct@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@0@ABU10@@Z",
     "??$_Copy_Construct@U?$pair@PAVDataArray@@VDataNode@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@PAVDataArray@@VDataNode@@@0@ABU10@@Z",
@@ -74290,6 +74296,13 @@
      "guard_adjudication": "W16-AD's guard called this INCONCLUSIVE_TWIN because the two retail bodies compare identical under masked_body, which masks branch displacements AND imm16. The guard exists for CD-7's 51-surplus class: bodies identical INCLUDING call targets, which /OPT:ICF could have folded and did not, and for which two addresses prove nothing. That criterion is NOT met here -- 1 of 26 words differ once branch displacements are resolved to absolute destinations (first at +0x24) -> the two COMDATs are NOT identical including call targets, so /OPT:ICF could not have folded them: NOT the CD-7 51-surplus class Measured with branches landing inside the extent compared by offset-from-base and branches leaving it compared by absolute destination, because raw words are vacuous for duplicates (PC-relative displacements differ at different addresses) and plain absolute resolution mislabels internal control flow as a changed callee. The strict test is shown able to return TWIN: over 57,733 retail .pdata functions it finds 1,529 distinct-address groups identical including call targets.",
      "guard_strict_verdict": "SEPARATE",
      "guard_diff_words": 1
+    },
+    {
+     "spelling": "??$_Copy_Construct@VSongRanking@BandSongMgr@@@stlpmtx_std@@YAXPAVSongRanking@BandSongMgr@@ABV12@@Z",
+     "lane": "W16-HR 2026-09-30",
+     "class": "CONTRADICTED_DIFFERENT_BODY_CANNOT_FOLD",
+     "disposition": "withdrawn",
+     "evidence": "W16-HR 2026-09-30. Retail keeps a separate 80 B _Copy_Construct<SongRanking> at fn_82578D28, bound by a matched mpn-100 BandSongMgr caller (binding table), whose element copy is bl fn_82576F18 -- not the survivor's callee. tools/icf_pair_adjudicate.py --survivor <Overlay> --ours <SongRanking> now returns FLAT T1 REFUTED: 'masked bodies match but relocation TARGETS disagree -- template-twin, not a fold'. W16-CU's restore compared this callee while it was an unnamed placeholder. Surfaced as a FATAL CONTRADICTED once 0x82578D28 was named."
     }
    ],
    "repair": {
