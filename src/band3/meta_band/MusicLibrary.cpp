@@ -1853,15 +1853,17 @@ void MusicLibrary::PushFilterToScreen() {
 }
 
 void MusicLibrary::PushSortToScreen() {
+    static Symbol refresh_sort("refresh_sort");
     static Message msg(refresh_sort, 0);
-    msg[0] = unke8 != 9U;
+    bool b = unke8 != 9U;
+    msg[0] = b;
     SendMessageToSongSelectPanel(msg);
 }
 
 void MusicLibrary::PushSetlistToScreen() {
     unk12c = false;
-    TheSessionMgr->GetMachineMgr()->GetLocalMachine()->SetNetUIStateParam(-mSetlist.size()
-    );
+    LocalBandMachine *machine = TheSessionMgr->GetMachineMgr()->GetLocalMachine();
+    machine->SetNetUIStateParam(-mSetlist.size());
     if (!TheContentMgr.RefreshInProgress()) {
         static Symbol refresh_setlist("refresh_setlist");
         static Message refresh_setlist_msg(refresh_setlist);
