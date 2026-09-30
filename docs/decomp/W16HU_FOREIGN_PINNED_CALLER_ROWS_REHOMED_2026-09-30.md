@@ -11,7 +11,8 @@ and **69 were named**: 50 of them read fuzzy 100 (3,820 B) and 19 read 28–99.9
 Resolving them also required 3 `symbols.txt` carve merges, 3 withdrawn ICF fold memberships, 2 replaced map nulls
 and 1 function relocated in source. One whole-binary `tools/ab_measure.py` run over the branch diff:
 **+55 fns / +51 honest / +4,392 B / fuzzy +0.055000 pp**, exactly the in-tree figure predicted
-before the run.
+before the run. **After rebasing onto main `cad191b18` (§5a), the fresh A/B reads +57 fns / +53 honest /
++4,688 B / fuzzy +0.055126 pp.** The extra +2 / +296 B is two of this lane's rows reaching 100 thanks to other lanes' fixes.
 
 ## 1. Population, re-derived
 
@@ -176,6 +177,45 @@ start, the commit is 0 fns / 0 B / fuzzy −0.000020 pp. Patch kinds: map, sourc
   not at 100 yet (CrowdRating, RGTutor, MetaNetMsgs, QuestJournal, SetlistSortByLocation,
   AccomplishmentSongListConditional, CampaignSongInfoPanel). That is a truer denominator, not a
   regression.
+
+## 5a. Rebase onto `cad191b18` (W16-HS + W17-HCT) and the fresh A/B
+
+Before resolving anything I checked for collisions. None of the 69 map rows or their names changed on
+main, and all 53 ranges still sit inside a single main block under the same source heading. So
+nothing was dropped or adjusted. The `splits.txt` conflict against HCT was textual adjacency.
+Resolution:
+- `splits.txt`: HEAD's file with the commit's own moves re-applied by `apply_splits.py`, 0 overlaps.
+- map: `~/tmp/resolve_map_delta.py` replayed the commit's +66 / ~2 delta, 0 duplicate keys.
+- `symbol_aliases.json`: auto-merged, HCT's 2 appended groups plus these 3 withdrawals (1,742 groups).
+
+After the rebase:
+- The split rewrote stale `.pdata` lines once (0 `.text` lines changed), committed separately.
+- 0 duplicate split headings (1,295) and 0 duplicate map keys.
+- `map_name_injectivity` OK (30,829 applied rows).
+- `icf_alias_finder --validate` PASS (1,479 / 262 / 0 contradicted, 1,742).
+
+`ab_measure --patch <0cc76f411..w16-hu>`, leg A = `cad191b18` + the structural commit (same recipe
+as §5), both legs at a split fixed point, tree restored. Result: `~/tmp/w16hu/ab_result_rebased.json`.
+
+| | leg A | leg B | Δ |
+|---|---:|---:|---:|
+| matched_functions | 45,860 | 45,917 | **+57** |
+| masked_equal | 23,600 | 23,604 | +4 |
+| honest | 22,260 | 22,313 | **+53** |
+| matched_code_percent | 44.439950 | 44.485700 | +0.045750 pp (**+4,688 B**) |
+| fuzzy_match_percent | 53.943546 | 53.998672 | **+0.055126 pp** |
+
+**Failed prediction, explained.** I predicted +55 / +4,392 B, unchanged by the rebase. The measurement
+is +2 fns / +296 B higher. A per-unit diff of the two runs isolates it to two rows, 116 + 180 = 296 B
+exactly:
+- `??1ObjOwnerPtr<RndDrawable>` (M16, 116 B): 87.6 → **100**. W17-OWN `2f3b5ff17` re-based
+  `ObjOwnerPtr<T>` on `ObjRefOwner`, the RETAIL_ONLY `ObjRefOwner` vtable divergence the
+  adjudicator flagged here.
+- `Copy@CharBlendBone` (M12, 180 B): 99.9 → **100**. HCT `14b98ef3f` freed its neighbour
+  `0x823C4A90` from the wrong `ObjList<OldMatOption>` name. That is probably what removed Copy's last
+  relocation-name charge; I inferred this from adjacency and did not diff it.
+
+Units at 100 (`mpn`): 225 → 225, with the same 7 reached and 7 fallen off as §5.
 
 ## 6. Not moved (8 rows), held (3 rows), residue
 
