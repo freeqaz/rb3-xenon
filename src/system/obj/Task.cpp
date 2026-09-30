@@ -321,19 +321,17 @@ void TaskTimeline::ResetTaskTime(float time) {
 }
 
 void TaskTimeline::AddTask(const TaskInfo &info) {
-    if (info.mStartTime > mTime || info.mTask) {
-        if (mPollingTask) {
-            mAddedTasks.push_back(info);
-        } else {
-            for (std::list<TaskInfo>::iterator it = mTasks.begin(); it != mTasks.end();
-                 ++it) {
-                if (info.mStartTime < (*it).mStartTime) {
-                    mTasks.insert(it, info);
-                    return;
-                }
+    // Retail (fn_82749738): no start-time/task guard.
+    if (mPollingTask) {
+        mAddedTasks.push_back(info);
+    } else {
+        for (std::list<TaskInfo>::iterator it = mTasks.begin(); it != mTasks.end(); ++it) {
+            if (info.mStartTime < (*it).mStartTime) {
+                mTasks.insert(it, info);
+                return;
             }
-            mTasks.push_back(info);
         }
+        mTasks.push_back(info);
     }
 }
 
