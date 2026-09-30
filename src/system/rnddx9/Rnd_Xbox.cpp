@@ -218,6 +218,13 @@ void DxRnd::FinishPostProcess() {
     D3DDevice_SetSamplerState_MagFilter(TheDxRnd.Device(), 0xD, 1);
     D3DDevice_SetRenderTarget_External(mD3DDevice, 0, mBackBuffer);
     D3DDevice_SetDepthStencilSurface(mD3DDevice, mWorldDepth);
+    // Residual (~14% of this row): retail calls MakeColor OUT OF LINE here
+    // (`bl ?MakeColor@@YAKABVColor@Hmx@@@Z`, its only call site in the image;
+    // the body sits in the Rnd.cpp unit) while ModalDraw/BeginTiling in this
+    // TU inline it.  We inline and fold it to 0xff00004c.  Inert: a named
+    // Color local hoisted to the top of the function (w17-dxr), plus the
+    // spellings/inline-budget probes recorded on dc3-decomp's copy of this
+    // function.  Global noinline costs neighbours (dc3).
     D3DDevice_Clear(
         mD3DDevice, 0, nullptr, 0x31, MakeColor(Hmx::Color(0, 0, 0.3f)), 0, 0, 0
     );
