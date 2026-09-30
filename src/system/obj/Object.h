@@ -398,6 +398,16 @@ BinStream &operator<<(BinStream &bs, const ObjRefConcrete<T1, class ObjectDir> &
 #pragma endregion
 #pragma region ObjPtr
 
+// PER-SITE inline owner-only ObjPtr ctor tag (lane W17-PIERCE). Spelling
+// `mFoo(ObjPtrInlineOwner(), owner)` binds an in-class ctor that /Ob2 always
+// inlines to retail's three stores, WITHOUT a per-TU macro -- so it works in a
+// TU whose Object.h include precedes the .cpp that wants it (scatter-includes:
+// band3/bandtrack/Gem.cpp pulls in bandobj/OutfitConfig.cpp at line ~616, long
+// after Object.h, so no #define in OutfitConfig.cpp can reach that copy).
+// Inert everywhere it is not spelled: a class-template member is instantiated
+// only when used.
+struct ObjPtrInlineOwner {};
+
 #ifdef HX_NATIVE
 // ObjPtr size (HX_NATIVE): 0x14 (adds mOwner@0x10 for explicit owner tracking)
 template <class T>
@@ -406,6 +416,8 @@ protected:
     struct DeferOwner {};
     ObjPtr(DeferOwner, T *ptr) : ObjRefConcrete<T>(ptr) {}
 public:
+    ObjPtr(ObjPtrInlineOwner, Hmx::Object *owner)
+        : ObjRefConcrete<T>(nullptr), mOwner(owner) {}
     ObjPtr(Hmx::Object *owner, T *ptr = nullptr);
     ObjPtr(const ObjPtr &p);
     ~ObjPtr();
@@ -463,6 +475,16 @@ protected:
     struct DeferOwner {};
     ObjPtr(DeferOwner, T *ptr) : mOwner(nullptr), mObject(ptr) {}
 public:
+    // PER-SITE inline owner-only ctor; see ObjPtrInlineOwner above. Same body
+    // as the RB3_OBJPTR_INLINE_OWNER_CTOR_EH one-arg ctor: the redundant
+    // mObject store and the constant-folded AddRef arm keep retail's store
+    // order {mOwner, vptr-lis, mObject, vptr-addi, vptr-store} and its EH
+    // region for the partially-constructed member.
+    ObjPtr(ObjPtrInlineOwner, Hmx::Object *owner) : mOwner(owner), mObject(nullptr) {
+        this->mObject = nullptr;
+        if (this->mObject)
+            this->mObject->AddRef(this);
+    }
     // W17-OPTR: with ObjRefOwner as the direct base, mOwner/mObject are
     // ObjPtr's OWN members, so none of the spellings below can store them
     // before the derived vptr store any more (the old "base mem-init list"

@@ -21,7 +21,10 @@ public:
             std::vector<unsigned short> unk14; // 0x14
         };
 
-        Piercing(Hmx::Object *);
+        // Defined in-class: retail inlines it into PropSync<Piercing> (0x822aaa70)
+        // and emits no out-of-line copy.
+        Piercing(Hmx::Object *o)
+            : mPiercing(ObjPtrInlineOwner(), o), mReskin(0), mPieces(o) {}
         RndMesh *GetHeadMesh();
         void Deform(SyncMeshCB *);
 

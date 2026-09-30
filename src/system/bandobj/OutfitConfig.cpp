@@ -298,9 +298,6 @@ bool OutfitConfig::MatSwap::Compress(BandCharDesc *desc) {
     return true;
 }
 
-OutfitConfig::Piercing::Piercing(Hmx::Object *o)
-    : mPiercing(o, 0), mReskin(0), mPieces(o) {}
-
 RndMesh *OutfitConfig::Piercing::GetHeadMesh() {
     return mPiercing.Owner()->Dir()->Find<RndMesh>("head.mesh", false);
 }
@@ -472,7 +469,8 @@ void OutfitConfig::Terminate() {
 
 OutfitConfig::OutfitConfig()
     : mMats(this), unk38(0), unk3c(0), mComputeAO(1), mPatches(this), mPermaProject(0),
-      mPiercings(this), mTexBlender(this, 0), mWrinkleBlender(this, 0), mOverlays(this),
+      mPiercings(this), mTexBlender(ObjPtrInlineOwner(), this),
+      mWrinkleBlender(ObjPtrInlineOwner(), this), mOverlays(this),
       mBandLogo(this, 0) {
     for (int i = 0; i < 3; i++)
         mColors[i] = i;
