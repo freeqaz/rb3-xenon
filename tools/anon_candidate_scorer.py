@@ -443,6 +443,454 @@ def bijective_assign(scored, threshold):
 
 
 # --------------------------------------------------------------------------
+# v2 (lane W16-HD measurement pass): full candidate pool (EXTERNAL + STATIC),
+# extent-based sizes, shape prefilter, parallel scoring, two-leg x two-bracket
+# control, global-bijective proposal.
+# --------------------------------------------------------------------------
+
+import os
+import random
+import itertools
+from multiprocessing import Pool
+
+FUNCLET_PREFIXES = ("__unwind$", "__catch$")
+_PLACEHOLDER = ("fn_", "lbl_")
+
+
+def coff_functions_full(path: Path):
+    """Every defined function symbol (type 0x20, section > 0, storage class
+    EXTERNAL=2 or STATIC=3) with its EXTENT, i.e. value -> next function-typed
+    symbol in the same section (or section end), and its body bytes + the set
+    of relocated word offsets inside it.
+
+    Why extent, not section size: 29,700 base-obj function symbols share a
+    COMDAT section with their own `__unwind$` funclets (measured 2026-09-30),
+    so section size over-states the function by the funclet bytes."""
+    d = path.read_bytes()
+    _m, nsec, _t, psym, nsym, _o, _c = struct.unpack_from("<HHIIIHH", d, 0)
+    secs = {}
+    for i in range(nsec):
+        o = 20 + i * 40
+        _vs, _va, size, ptr, prel, _pl, nrel, _nl, _ch = struct.unpack_from("<IIIIIIHHI", d, o + 8)
+        relocs = set()
+        for k in range(nrel):
+            va_, _sym, _typ = struct.unpack_from("<IIH", d, prel + k * 10)
+            relocs.add(va_)
+        secs[i + 1] = (d[ptr: ptr + size] if ptr else b"", relocs)
+    strtab = psym + nsym * 18
+    syms, i = [], 0
+    while i < nsym:
+        o = psym + i * 18
+        raw = d[o: o + 8]
+        val, sec, typ, sclass, naux = struct.unpack_from("<IhHBB", d, o + 8)
+        if raw[:4] == b"\x00\x00\x00\x00":
+            soff = struct.unpack_from("<I", raw, 4)[0]
+            end = d.index(b"\x00", strtab + soff)
+            name = d[strtab + soff: end].decode("latin1")
+        else:
+            name = raw.rstrip(b"\x00").decode("latin1")
+        if sec > 0 and typ == 0x20 and sclass in (2, 3):
+            syms.append((name, sec, sclass, val))
+        i += 1 + naux
+    by_sec = collections.defaultdict(list)
+    for s in syms:
+        by_sec[s[1]].append(s)
+    out = {}
+    for sec, lst in by_sec.items():
+        lst.sort(key=lambda s: s[3])
+        data, relocs = secs.get(sec, (b"", set()))
+        for j, (name, _sec, sclass, val) in enumerate(lst):
+            end = lst[j + 1][3] if j + 1 < len(lst) else len(data)
+            body = data[val:end]
+            rel = {r - val for r in relocs if val <= r < end}
+            out[name] = {"sclass": sclass, "size": end - val, "body": body, "relocs": rel}
+    return out
+
+
+def target_body(target_fns_all, target_obj_bytes_cache, name, size):
+    """Body of a target row: symbol value + report size (target objs pack
+    fn_ rows into shared sections, and report `size` is authoritative)."""
+    f = target_fns_all.get(name)
+    if f is None:
+        return None, set()
+    return f["body"][:size], {r for r in f["relocs"] if r < size}
+
+
+def shape_tokens(body: bytes, relocs: set):
+    """Bag of instruction-shape tokens for the cheap prefilter. Per word:
+    primary opcode (+ extended opcode for 4/19/31/59/63), plus the 16-bit
+    immediate for D-form ops (struct offsets / constants) unless that word is
+    relocated, plus opcode bigrams. Registers are deliberately ignored
+    (regalloc noise)."""
+    c = collections.Counter()
+    prev = None
+    for off in range(0, len(body) - 3, 4):
+        w = struct.unpack_from(">I", body, off)[0]
+        op = w >> 26
+        tok = (op << 10) | ((w >> 1) & 0x3FF) if op in (4, 19, 31, 59, 63) else (op << 10)
+        c[("o", tok)] += 1
+        if off in relocs:
+            c[("r", op)] += 1
+        elif op in (7, 8, 10, 11, 12, 13, 14, 15, 24, 25, 26, 27, 28, 29) or 32 <= op <= 55 or op in (58, 62):
+            c[("i", op, w & 0xFFFF)] += 1
+        if prev is not None:
+            c[("b", prev, tok)] += 1
+        prev = tok
+    return c
+
+
+def shape_sim(a, b):
+    if not a or not b:
+        return 0.0
+    inter = sum(min(v, b[k]) for k, v in a.items() if k in b)
+    union = sum(a.values()) + sum(b.values()) - inter
+    return inter / union if union else 0.0
+
+
+def applied_map():
+    m = json.loads(TARGET_MAP_PATH.read_text())
+    rows = {k.lower(): v for k, v in m.items() if k.lower().startswith("0x") and isinstance(v, str) and v}
+    nulls = {k.lower() for k, v in m.items() if k.lower().startswith("0x") and v is None}
+    deny = set()
+    for key in ("_denylist", "_denylist_unadjudicated"):
+        for a in m.get(key, []) or []:
+            if isinstance(a, str):
+                deny.add(a.lower())
+    return rows, nulls, deny
+
+
+def global_claimed_names(report, map_rows):
+    """Names that must never be proposed: every map value (the map is
+    injective) and every non-placeholder row name anywhere in report.json."""
+    claimed = set(map_rows.values())
+    for u in report["units"]:
+        for f in u.get("functions", []):
+            if not f["name"].startswith(_PLACEHOLDER):
+                claimed.add(f["name"])
+    return claimed
+
+
+def candidate_pool_v2(base_fns, claimed):
+    return {n: f for n, f in base_fns.items()
+            if not n.startswith(FUNCLET_PREFIXES) and n not in claimed and f["size"] > 0}
+
+
+def prefilter(tsize, ttok, pool, k, lo=0.5, hi=2.0):
+    """Size band, then rank by shape similarity (ties: size closeness)."""
+    band = []
+    for n, f in pool.items():
+        if tsize <= 0 or not (lo <= f["size"] / tsize <= hi):
+            continue
+        band.append((shape_sim(ttok, f["tok"]), -abs(f["size"] - tsize), n))
+    band.sort(reverse=True)
+    return [n for _s, _d, n in band[:k]], len(band)
+
+
+_JOB_COUNTER = itertools.count()
+
+
+def _score_job(job):
+    """Worker: job = (key, target_obj, base_obj, target_renames|None,
+    base_renames, symname). Writes private scratch copies, runs objdiff-cli at
+    report.json's ruler, returns (key, fuzzy|None)."""
+    key, target_obj, base_obj, t_ren, b_ren, sym = job
+    SCRATCH_DIR.mkdir(parents=True, exist_ok=True)
+    tag = f"{os.getpid()}_{next(_JOB_COUNTER)}"
+    b_path = SCRATCH_DIR / f"{tag}_b.obj"
+    t_path = Path(target_obj)
+    tmp = [b_path]
+    data = bytearray(Path(base_obj).read_bytes())
+    if b_ren:
+        rename_symbols(data, b_ren)
+    b_path.write_bytes(data)
+    if t_ren:
+        t_path = SCRATCH_DIR / f"{tag}_t.obj"
+        tdata = bytearray(Path(target_obj).read_bytes())
+        rename_symbols(tdata, t_ren)
+        t_path.write_bytes(tdata)
+        tmp.append(t_path)
+    try:
+        proc = subprocess.run(
+            [str(OBJDIFF_CLI), "diff", "-1", str(t_path), "-2", str(b_path), sym, "-f", "json",
+             *RULER_FLAGS, "--map-file", str(MAP_FILE)],
+            cwd=PROJECT_ROOT, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, timeout=120, check=True)
+        out = json.loads(proc.stdout.decode("utf-8"))
+        res = float(out.get("fuzzy_match_percent", 0.0) or 0.0)
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired, json.JSONDecodeError):
+        res = None
+    finally:
+        for p in tmp:
+            p.unlink(missing_ok=True)
+    return key, res
+
+
+def run_jobs(jobs, workers, label):
+    results = {}
+    n = len(jobs)
+    with Pool(workers) as pool:
+        for i, (key, res) in enumerate(pool.imap_unordered(_score_job, jobs, chunksize=4), 1):
+            results[key] = res
+            if i % 500 == 0 or i == n:
+                print(f"  [{label}] {i}/{n} scored", file=sys.stderr, flush=True)
+    return results
+
+
+def load_units_v2(report, cfg, map_rows):
+    """Game units with parsed base/target function tables and shape tokens."""
+    claimed = global_claimed_names(report, map_rows)
+    units = []
+    for u in game_units(report, cfg):
+        b, t = PROJECT_ROOT / u["base_path"], PROJECT_ROOT / u["target_path"]
+        if not b.exists() or not t.exists():
+            continue
+        base_fns = coff_functions_full(b)
+        tgt_fns = coff_functions_full(t)
+        for f in base_fns.values():
+            f["tok"] = shape_tokens(f["body"], f["relocs"])
+        u = dict(u)
+        u["base_fns"], u["tgt_fns"] = base_fns, tgt_fns
+        u["pool"] = candidate_pool_v2(base_fns, claimed)
+        units.append(u)
+    return units, claimed
+
+
+def size_bucket(s):
+    for lim in (8, 16, 32, 64, 128, 512):
+        if s <= lim:
+            return f"<={lim}"
+    return ">512"
+
+
+def cmd_census(args):
+    report, cfg = load_report(), load_objdiff_cfg()
+    map_rows, _nulls, _deny = applied_map()
+    units, claimed = load_units_v2(report, cfg, map_rows)
+    ext = st = fun = 0
+    pool_ext = pool_st = 0
+    names_ext, names_st, pool_names = set(), set(), set()
+    ntg = ntb = 0
+    band_counts = []
+    for u in units:
+        for n, f in u["base_fns"].items():
+            if n.startswith(FUNCLET_PREFIXES):
+                fun += 1
+                continue
+            if f["sclass"] == 2:
+                ext += 1; names_ext.add(n)
+            else:
+                st += 1; names_st.add(n)
+        for n, f in u["pool"].items():
+            pool_names.add(n)
+            if f["sclass"] == 2:
+                pool_ext += 1
+            else:
+                pool_st += 1
+        for t in unit_targets(u):
+            ntg += 1; ntb += t["size"]
+            nb = sum(1 for f in u["pool"].values() if t["size"] > 0 and 0.5 <= f["size"] / t["size"] <= 2.0)
+            band_counts.append(nb)
+    band_counts.sort()
+    med = band_counts[len(band_counts) // 2] if band_counts else 0
+    out = {
+        "units": len(units),
+        "defined_function_symbols": {"external": ext, "static": st, "funclets_dropped": fun,
+                                     "distinct_external_names": len(names_ext), "distinct_static_names": len(names_st)},
+        "candidate_pool_after_claim_filter": {"external": pool_ext, "static": pool_st, "distinct_names": len(pool_names)},
+        "globally_claimed_names": len(claimed),
+        "targets": {"rows": ntg, "bytes": ntb},
+        "in_size_band_candidates_per_target": {"median": med, "min": band_counts[0] if band_counts else 0,
+                                               "max": band_counts[-1] if band_counts else 0,
+                                               "zero": sum(1 for x in band_counts if x == 0)},
+    }
+    print(json.dumps(out, indent=2))
+    if args.json_out:
+        Path(args.json_out).write_text(json.dumps(out, indent=2))
+
+
+def cmd_control2(args):
+    """Two legs x two brackets on hidden-name control rows.
+
+    Leg IN  : pool + true name; precision = P(top1 == true | rule fires).
+    Leg OUT : pool without true name; FP rate = P(rule fires).
+    Bracket NAMED : target obj as built (callees named -> name_check charges
+                    wrong callees; STRICT).
+    Bracket ANON  : every map-named symbol in the target copy renamed back to
+                    fn_<addr> (placeholder callees are forgiven; LENIENT, the
+                    worst case for false positives).
+    Real fn_ targets sit between the two brackets."""
+    report, cfg = load_report(), load_objdiff_cfg()
+    map_rows, _nulls, _deny = applied_map()
+    inv = {v: "fn_" + k[2:].upper() for k, v in map_rows.items()}
+    units, _claimed = load_units_v2(report, cfg, map_rows)
+    rng = random.Random(args.seed)
+
+    # target size distribution -> stratified control sample
+    tgt_bucket = collections.Counter(size_bucket(t["size"]) for u in units for t in unit_targets(u))
+    ntg = sum(tgt_bucket.values())
+    rows_by_bucket = collections.defaultdict(list)
+    for u in units:
+        for r in unit_named_rows(u):
+            if r["fuzzy"] <= 0 or r["name"] not in u["base_fns"] or r["name"] not in u["tgt_fns"]:
+                continue
+            if r["name"].startswith(FUNCLET_PREFIXES):
+                continue
+            rows_by_bucket[size_bucket(r["size"])].append((u["name"], r))
+    sample = []
+    for b, cnt in tgt_bucket.items():
+        want = max(1, round(args.rows * cnt / ntg))
+        pop = rows_by_bucket.get(b, [])
+        sample += rng.sample(pop, min(want, len(pop)))
+    ubyname = {u["name"]: u for u in units}
+
+    jobs, meta = [], []
+    rank_of_true = []
+    for ci, (uname, r) in enumerate(sample):
+        u = ubyname[uname]
+        T, size = r["name"], r["size"]
+        tf = u["tgt_fns"][T]
+        ttok = shape_tokens(tf["body"][:size], {x for x in tf["relocs"] if x < size})
+        pool_in = dict(u["pool"])
+        pool_in[T] = u["base_fns"][T]
+        cands_in, _ = prefilter(size, ttok, pool_in, args.k)
+        pool_out = dict(u["pool"])
+        pool_out.pop(T, None)
+        cands_out, nband = prefilter(size, ttok, pool_out, args.k)
+        rank_of_true.append(cands_in.index(T) if T in cands_in else None)
+        allc = list(dict.fromkeys(cands_in + cands_out))
+        meta.append({"unit": uname, "true": T, "size": size, "in": cands_in, "out": cands_out, "nband": nband})
+        base = str(PROJECT_ROOT / u["base_path"])
+        tgt = str(PROJECT_ROOT / u["target_path"])
+        anon_t = {n: inv[n] for n in u["tgt_fns"] if n in inv}
+        for c in allc:
+            b_named = {} if c == T else {T: "__w16hd_hidden__", c: T}
+            jobs.append(((ci, c, "named"), tgt, base, None, b_named, T))
+            anon_name = anon_t[T] if T in anon_t else "fn_W16HDCTRL"
+            t_ren = dict(anon_t)
+            t_ren[T] = anon_name
+            b_anon = {c: anon_name} if c == T else {T: "__w16hd_hidden__", c: anon_name}
+            jobs.append(((ci, c, "anon"), tgt, base, t_ren, b_anon, anon_name))
+    print(f"control: {len(sample)} rows, {len(jobs)} objdiff jobs, workers={args.workers}", file=sys.stderr)
+    res = run_jobs(jobs, args.workers, "control")
+    for ci, m in enumerate(meta):
+        for br in ("named", "anon"):
+            m[f"scores_{br}"] = {c: res.get((ci, c, br)) for c in dict.fromkeys(m["in"] + m["out"])}
+    out = {"seed": args.seed, "k": args.k, "rows": meta,
+           "true_rank_hist": collections.Counter("absent" if x is None else str(x) for x in rank_of_true)}
+    Path(args.json_out).write_text(json.dumps(out, indent=1))
+    print(f"wrote {args.json_out}", file=sys.stderr)
+
+
+def rule_fires(scores, T, M):
+    """scores: [(fuzzy, name)] sorted desc. Fires iff top >= T and it beats the
+    runner-up by >= M (a lone candidate counts as margin = top)."""
+    if not scores:
+        return None
+    top, name = scores[0]
+    second = scores[1][0] if len(scores) > 1 else 0.0
+    if top >= T and (top - second) >= M:
+        return name
+    return None
+
+
+def evaluate_control(ctrl, thresholds, margins, min_size=0):
+    rows = [r for r in ctrl["rows"] if r["size"] >= min_size]
+    table = []
+    for br in ("named", "anon"):
+        for T in thresholds:
+            for M in margins:
+                fires_in = hits_in = fires_out = 0
+                for r in rows:
+                    sc = r[f"scores_{br}"]
+                    s_in = sorted(((sc[c], c) for c in r["in"] if sc.get(c) is not None), reverse=True)
+                    s_out = sorted(((sc[c], c) for c in r["out"] if sc.get(c) is not None), reverse=True)
+                    got = rule_fires(s_in, T, M)
+                    if got:
+                        fires_in += 1
+                        hits_in += got == r["true"]
+                    if rule_fires(s_out, T, M):
+                        fires_out += 1
+                n = len(rows)
+                table.append({"bracket": br, "T": T, "M": M, "n": n,
+                              "fires_in": fires_in, "hits_in": hits_in,
+                              "precision_in": hits_in / fires_in if fires_in else None,
+                              "recall_in": hits_in / n if n else None,
+                              "fires_out": fires_out, "fp_rate_out": fires_out / n if n else None})
+    return table
+
+
+def cmd_evaluate(args):
+    ctrl = json.loads(Path(args.control_json).read_text())
+    Ts = [float(x) for x in args.thresholds.split(",")]
+    Ms = [float(x) for x in args.margins.split(",")]
+    table = evaluate_control(ctrl, Ts, Ms, args.min_size)
+    print(f"true-name rank in prefilter top-{ctrl['k']}: {dict(ctrl['true_rank_hist'])}")
+    print(f"{'br':>5} {'T':>6} {'M':>5} {'n':>5} {'fireIN':>6} {'prec':>7} {'recall':>7} {'fireOUT':>7} {'FP':>6}")
+    for t in table:
+        p = f"{100*t['precision_in']:.2f}" if t["precision_in"] is not None else "  n/a"
+        print(f"{t['bracket']:>5} {t['T']:>6} {t['M']:>5} {t['n']:>5} {t['fires_in']:>6} {p:>7} "
+              f"{100*t['recall_in']:>6.2f} {t['fires_out']:>7} {100*t['fp_rate_out']:>5.2f}")
+
+
+def cmd_propose(args):
+    report, cfg = load_report(), load_objdiff_cfg()
+    map_rows, nulls, deny = applied_map()
+    units, _claimed = load_units_v2(report, cfg, map_rows)
+    jobs, meta = [], []
+    skipped = collections.Counter()
+    for u in units:
+        base = str(PROJECT_ROOT / u["base_path"])
+        tgt = str(PROJECT_ROOT / u["target_path"])
+        for t in unit_targets(u):
+            addr = "0x" + t["name"].split("_", 1)[1].lower()
+            if addr in map_rows:
+                skipped["already_in_map"] += 1; continue
+            if addr in nulls:
+                skipped["deliberately_null_in_map"] += 1; continue
+            if addr in deny:
+                skipped["denylisted"] += 1; continue
+            tf = u["tgt_fns"].get(t["name"])
+            if tf is None:
+                skipped["no_target_symbol"] += 1; continue
+            ttok = shape_tokens(tf["body"][: t["size"]], {x for x in tf["relocs"] if x < t["size"]})
+            cands, nband = prefilter(t["size"], ttok, u["pool"], args.k)
+            if not cands:
+                skipped["no_candidate_in_band"] += 1; continue
+            ti = len(meta)
+            meta.append({"unit": u["name"], "target": t["name"], "addr": addr, "size": t["size"],
+                         "cands": cands, "nband": nband})
+            for c in cands:
+                jobs.append(((ti, c), tgt, base, None, {c: t["name"]}, t["name"]))
+    print(f"propose: {len(meta)} targets, {len(jobs)} jobs, skipped={dict(skipped)}", file=sys.stderr)
+    res = run_jobs(jobs, args.workers, "propose")
+    fired = []
+    for ti, m in enumerate(meta):
+        sc = sorted(((res.get((ti, c)), c) for c in m["cands"] if res.get((ti, c)) is not None), reverse=True)
+        m["scores"] = [[c, f] for f, c in sc]
+        got = rule_fires(sc, args.threshold, args.margin) if m["size"] >= args.min_size else None
+        if got:
+            fired.append((m, got, sc[0][0]))
+    # global bijection: a name proposed for >1 address is dropped everywhere
+    by_name = collections.Counter(g for _m, g, _s in fired)
+    proposals, conflicts = [], []
+    for m, g, s in fired:
+        rec = {"addr": m["addr"], "target": m["target"], "unit": m["unit"], "size": m["size"],
+               "name": g, "fuzzy": s,
+               "runner_up": (m["scores"][1] if len(m["scores"]) > 1 else None)}
+        (conflicts if by_name[g] > 1 else proposals).append(rec)
+    proposals.sort(key=lambda r: r["addr"])
+    out = {
+        "rule": {"threshold": args.threshold, "margin": args.margin, "min_size": args.min_size, "k": args.k},
+        "skipped": dict(skipped), "targets_scored": len(meta),
+        "proposal_count": len(proposals), "proposal_bytes": sum(p["size"] for p in proposals),
+        "dropped_non_bijective": conflicts,
+        "proposals": proposals,
+        "all_scored": meta,
+    }
+    Path(args.json_out).write_text(json.dumps(out, indent=1))
+    print(f"{len(proposals)} proposals / {out['proposal_bytes']} B; {len(conflicts)} dropped non-bijective; wrote {args.json_out}")
+
+
+# --------------------------------------------------------------------------
 # CLI
 # --------------------------------------------------------------------------
 
@@ -691,6 +1139,34 @@ def main():
     p_score.add_argument("--threshold", type=float, required=True)
     p_score.add_argument("--json-out")
     p_score.set_defaults(func=cmd_score)
+
+    p_c = sub.add_parser("census", help="v2: count targets and the candidate pool (EXTERNAL + STATIC)")
+    p_c.add_argument("--json-out")
+    p_c.set_defaults(func=cmd_census)
+
+    p_c2 = sub.add_parser("control2", help="v2: parallel two-leg x two-bracket hidden-name control")
+    p_c2.add_argument("--rows", type=int, default=2000)
+    p_c2.add_argument("--k", type=int, default=6)
+    p_c2.add_argument("--seed", type=int, default=20260930)
+    p_c2.add_argument("--workers", type=int, default=16)
+    p_c2.add_argument("--json-out", required=True)
+    p_c2.set_defaults(func=cmd_control2)
+
+    p_ev = sub.add_parser("evaluate", help="v2: precision / FP table from a control2 JSON")
+    p_ev.add_argument("control_json")
+    p_ev.add_argument("--thresholds", default="80,90,95,97,98,99,99.5,100")
+    p_ev.add_argument("--margins", default="0,0.5,1,2,5")
+    p_ev.add_argument("--min-size", type=int, default=0)
+    p_ev.set_defaults(func=cmd_evaluate)
+
+    p_pr = sub.add_parser("propose", help="v2: score all real fn_ targets and emit proposals at a rule")
+    p_pr.add_argument("--threshold", type=float, required=True)
+    p_pr.add_argument("--margin", type=float, required=True)
+    p_pr.add_argument("--min-size", type=int, default=0)
+    p_pr.add_argument("--k", type=int, default=6)
+    p_pr.add_argument("--workers", type=int, default=16)
+    p_pr.add_argument("--json-out", required=True)
+    p_pr.set_defaults(func=cmd_propose)
 
     p_verify = sub.add_parser("verify-technique", help="sanity-check the scorer against report.json")
     p_verify.set_defaults(func=cmd_verify_technique)
