@@ -1261,6 +1261,11 @@ DataNode CustomizePanel::OnMsg(const SigninChangedMsg &msg) {
 DataNode CustomizePanel::OnMsg(const ButtonDownMsg &msg) {
     if (mWaitingToLeave)
         return 1;
+    // TU5: ignore input while the purchase UI is up or before a state is set.
+    if (mClosetMgr->IsPurchaseUIActive())
+        return 1;
+    if (mCustomizeState == 0)
+        return 1;
     if (mPendingState != 0)
         return 1;
     JoypadAction action = msg.GetAction();

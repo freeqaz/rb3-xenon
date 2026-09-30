@@ -482,6 +482,8 @@ void ClosetMgr::TakePortrait() { mCurrentClosetPanel->TakePortrait(); }
 
 void ClosetMgr::SetReturnScreen(Symbol screen) { mReturnScreen = screen; }
 
+bool ClosetMgr::IsPurchaseUIActive() const { return mAssetStore.unk34 != 0; }
+
 int ClosetMgr::GetUserSlot() const {
     if (mNoUserMode)
         return 0;
