@@ -428,10 +428,70 @@ __declspec(noinline) void *
 // forgiving — see the campaign memory for that reckoning. The body below is
 // still the malloc() placeholder; porting the reconstruction above is what
 // remains.
+static inline int MemAlignWords(int align) {
+    if (align == 0)
+        return 1;
+    int bits = 0;
+    int extra = 0;
+    while (align > 1) {
+        if (align & 1)
+            extra = 1;
+        bits++;
+        align >>= 1;
+    }
+    int result = bits + extra - 2;
+    if (0 > result)
+        result = 0;
+    return result;
+}
+
 __declspec(noinline) void *(MemAlloc)(int size, int align) {
-    if (size <= 0)
-        return nullptr;
-    return malloc(size);
+    CritSecTracker tracker(gMemLock);
+    MemHeapStack &s = ThreadMemStack(false);
+    int heapNum = s.mSize ? s.mStack[s.mSize - 1] : MemHeapStack::sDefaultHeap;
+    MemHeap *heap = heapNum > -1 ? &gHeaps[heapNum] : NULL;
+    bool temp = s.mTempRefs != 0
+        || (heap != NULL && heap->mStrategy == MemHeap::kLastFit);
+    if (temp && heap != NULL && !heap->mAllowTemp) {
+        // The current heap refuses temp allocations: walk down the heap stack
+        // to the first one that allows them, allocate there, then restore.
+        MemHeapStack &s2 = ThreadMemStack(true);
+        int depth = s2.mSize;
+        int savedSize = depth;
+        while (depth > 0) {
+            s2.mSize = --depth;
+            int h = depth ? s2.mStack[depth - 1] : MemHeapStack::sDefaultHeap;
+            MemHeap *hp = h > -1 ? &gHeaps[h] : NULL;
+            if (hp->mAllowTemp) // retail dereferences without a null check
+                break;
+        }
+        s2.mTempRefs++;
+        void *r = (MemAlloc)(size, align);
+        s2.mSize = savedSize;
+        s2.mTempRefs--;
+        return r;
+    }
+    if (heap == NULL) {
+        // Retail re-evaluates the heap-number select here (reusing the already
+        // loaded mSize / sDefaultHeap) rather than keeping heapNum live.
+        int curHeap = s.mSize ? s.mStack[s.mSize - 1] : MemHeapStack::sDefaultHeap;
+        return curHeap == -2 ? PhysicalAlloc(size) : malloc(size);
+    }
+    // MemHeap::GetSizeWords / GetAlignWords are inlined by retail (no bl);
+    // they live out-of-line in MemHeap.cpp, so their bodies are written here.
+    int sizeWords = ((size + 3) >> 2) + 1;
+    if ((unsigned int)sizeWords < 3)
+        sizeWords = 3;
+    int alignShift = MemAlignWords(align);
+    // Retail computes the effective strategy first and stores it
+    // unconditionally around the Alloc call, then restores the original.
+    MemHeap::Strategy strategy = temp ? MemHeap::kLastFit : heap->mStrategy;
+    MemHeap::Strategy saved = heap->mStrategy;
+    heap->mStrategy = strategy;
+    int out;
+    void *r = heap->Alloc(sizeWords, alignShift, out);
+    heap->mStrategy = saved;
+    return r;
 }
 #endif
 
