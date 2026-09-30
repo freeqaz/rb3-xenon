@@ -642,7 +642,14 @@ def run_control(a, P):
     for un, true, addr, sz, wrong in rows:
         u = units[un]
         pb = pcache.setdefault(u["base_path"], coff(u["base_path"]))
-        ctx = {"fwd": fwd, "rev": rev, "smap": smap, "smap_rev": smap_rev, "retail": retail, "pbase": pb,
+        # A real proposal is an UNCLAIMED name, so NAME_MAPPED_ELSEWHERE can never fire on one. The
+        # control's wrong sibling, though, is by construction mapped at its OWN address, so leaving
+        # its row in smap_rev made that negative fire on 100% of WRONG rows -- a rejection the real
+        # run can never produce (found 2026-09-30 by the W17 session; the "200/200 WRONG rejected"
+        # it printed was vacuous). Hide both names' own rows so both legs look like real proposals.
+        # NAME_BOUND_ELSEWHERE is already neutralised by `exclude` in build_bindings above.
+        ctl_rev = collections.defaultdict(list, {k: v for k, v in smap_rev.items() if k not in (true, wrong)})
+        ctx = {"fwd": fwd, "rev": rev, "smap": smap, "smap_rev": ctl_rev, "retail": retail, "pbase": pb,
                "props": {}, "cfg": cfg, "pcache": pcache}
         for leg, nm in (("TRUE", true), ("WRONG", wrong)):
             o = L[(addr, nm)]
@@ -655,6 +662,8 @@ def run_control(a, P):
             pos = c.get("AGREE", 0) + c.get("FOLD", 0) + c.get("CALLER_AGREE", 0)
             res[leg]["n"] += 1
             res[leg]["neg>0"] += neg > 0
+            # the real run's pre_verdict: SUPPORTED iff no negative and some support
+            res[leg]["accepted(SUPPORTED)"] += (neg == 0 and pos > 0)
             res[leg]["pos>neg"] += pos > neg
             res[leg]["pos>=2*neg_and_pos>0"] += (pos > 0 and pos >= 2 * neg)
             res[leg]["strong_neg"] += any(k in ("OURS_ONLY",) or (k == "RETAIL_ONLY" and (d.split()[1] if len(d.split()) > 1 else "").startswith("lbl_") and ("str:" in d or "vt:" in d))
