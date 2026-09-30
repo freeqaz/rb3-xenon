@@ -7,8 +7,14 @@
 // transitive include of obj/Object.h -- CharIKMidi.h pulls it in via
 // char/CharPollable.h / char/CharWeightable.h, so the defines sit above even
 // that include.
+// RB3_TU_OBJPTR_DEFER_OWNER (which takes precedence over DEFER_OBJECT for the
+// one-arg ctor, see obj/Object.h) gives retail's {vptr-lis, mOwner, mObject,
+// vptr-addi, vptr-store} order inside ObjVector<ObjPtr<RndTransformable>>::resize
+// (0x823ca850, the temp ObjPtr(mOwner)); the ctor's four members come out
+// byte-identical either way.
 #define RB3_OBJPTR_INLINE_OWNER_CTOR
 #define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
+#define RB3_TU_OBJPTR_DEFER_OWNER
 #include "char/CharIKMidi.h"
 #include "char/Char.h"
 #include "math/Easing.h"
