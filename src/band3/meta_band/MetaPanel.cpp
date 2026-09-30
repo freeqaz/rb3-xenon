@@ -443,18 +443,15 @@ void MetaPanel::UpdatePostProc() {
         for (std::list<PanelRef>::iterator it = screen->PanelList().begin();
              it != screen->PanelList().end();
              ++it) {
-            bool hasProp = false;
-            const DataNode *prop;
-            bool active = it->mActive && it->mPanel->LoadedDir();
-            if (active) {
-                prop = it->mPanel->LoadedDir()->Property(postprocess, false);
-                if (prop)
-                    hasProp = true;
-            }
-            if (hasProp) {
-                RndPostProc *pp = dynamic_cast<RndPostProc *>(prop->GetObj());
-                if (pp)
-                    found = pp;
+            static Symbol postprocess("postprocess");
+            if (it->mActive && it->mPanel->LoadedDir()) {
+                const DataNode *prop =
+                    it->mPanel->LoadedDir()->Property(postprocess, false);
+                if (prop) {
+                    RndPostProc *pp = dynamic_cast<RndPostProc *>(prop->GetObj());
+                    if (pp)
+                        found = pp;
+                }
             }
         }
     }

@@ -27,6 +27,7 @@ void NewAssetProvider::Text(int param_1, int index, UIListLabel *slot, UILabel *
     MILO_ASSERT(slot, 0x2b);
     MILO_ASSERT(label, 0x2c);
     Symbol symbol = DataSymbol(index);
+    static Symbol none("none");
     if (symbol != none) {
         AssetMgr *pAssetMgr = AssetMgr::GetAssetMgr();
         MILO_ASSERT(pAssetMgr, 0x38);
@@ -38,6 +39,7 @@ void NewAssetProvider::Text(int param_1, int index, UIListLabel *slot, UILabel *
         if (slot->Matches("name")) {
             label->SetTextToken(pAsset->mName);
         } else if (slot->Matches("new")) {
+            static Symbol customize_new("customize_new");
             label->SetTextToken(customize_new);
         } else {
             label->SetTextToken(gNullStr);
