@@ -182,6 +182,7 @@ void JoypadClient::Poll() {
 
 void JoypadClient::Init() {
     JoypadSubscribe(this);
+#ifdef HX_NATIVE
     if (gDefaultHoldMs < 0) {
         if (SystemConfig()) {
             SystemConfig("joypad")->FindData("hold_ms", gDefaultHoldMs, true);
@@ -196,6 +197,15 @@ void JoypadClient::Init() {
             gDefaultRepeatMs = 50;
         }
     }
+#else
+    // retail (0x825296D8, rb3-Wii shape): no SystemConfig() null fallback
+    if (gDefaultHoldMs < 0.0f) {
+        SystemConfig("joypad")->FindData("hold_ms", gDefaultHoldMs, true);
+    }
+    if (gDefaultRepeatMs < 0.0f) {
+        SystemConfig("joypad")->FindData("repeat_ms", gDefaultRepeatMs, true);
+    }
+#endif
     mHoldMs = gDefaultHoldMs;
     mRepeatMs = gDefaultRepeatMs;
     gClients.push_back(this);
