@@ -238,7 +238,7 @@ public:
     }
     bool DrumFillsMod() const { return mDrumFillsMod; }
     bool IsPaused() const { return mIsPaused; }
-    bool InRollback() const { return unkdc != -1.0f ? true : false; }
+    bool InRollback() const { return unkdc != -1.0f; }
 
     DataNode OnJump(const DataArray *);
     DataNode OnLocalUserReadyToPlay(const DataArray *);
