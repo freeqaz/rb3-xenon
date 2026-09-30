@@ -36,7 +36,7 @@ public:
 
     BandSongMgr();
     virtual DataNode Handle(DataArray *, bool);
-    virtual ~BandSongMgr() {}
+    // implicit dtor: retail ~BandSongMgr has no own-vtable store
     virtual void Init();
     virtual void Terminate();
     virtual SongMetadata *Data(int) const; // fix return type
