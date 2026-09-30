@@ -14,6 +14,13 @@
 #include "utl/Str.h"
 #include "utl/Symbol.h"
 
+// Retail inlines every ObjPtr<T>(this) in this TU except ObjPtr<UIColor>, which
+// stays an out-of-line call (mDefaultColor and the mColors fill loop). Declaring
+// the specialization without defining it here forces that call; the body is the
+// implicit instantiation emitted by other TUs.
+template <>
+ObjPtr<UIColor>::ObjPtr(Hmx::Object *, UIColor *);
+
 UIColor *gColor = nullptr;
 
 UILabelDir::UILabelDir()
@@ -23,7 +30,8 @@ UILabelDir::UILabelDir()
       mHighlightMeshGroup(this), mFocusedBackgroundGroup(this),
       mUnfocusedBackgroundGroup(this), mAllowEditText(false) {
     for (int i = 0; i < UIComponent::kNumStates; i++) {
-        mColors.push_back(ObjPtr<UIColor>(this));
+        ObjPtr<UIColor> color(this);
+        mColors.push_back(color);
     }
 }
 
