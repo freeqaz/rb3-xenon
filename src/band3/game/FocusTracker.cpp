@@ -482,6 +482,10 @@ void StreakFocusTracker::CheckCondition(float f1, bool b1, bool &bref1, bool &br
             bref1 = true;
             bref2 = true;
             int val = unk88 + 1;
+            static Symbol streak_focus_tracker_progress("streak_focus_tracker_progress");
+            static Symbol streak_focus_tracker_progress_1(
+                "streak_focus_tracker_progress_1"
+            );
             Symbol toUse = val == 1 ? streak_focus_tracker_progress_1
                                     : streak_focus_tracker_progress;
             mBroadcastDisplay.ShowBriefBandMessage(DataArrayPtr(toUse, val));
