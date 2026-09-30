@@ -17095,7 +17095,9 @@
    "name": "0?$list",
    "address": "0x822a7f60",
    "survivor": "??0?$list@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
-   "folded": [],
+   "folded": [
+    "??0?$list@VOldMatOption@@V?$StlNodeAlloc@VOldMatOption@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 5 folded spelling(s), 1 census sites over 2 functions.",
    "withdrawn": [
     {
@@ -17114,17 +17116,26 @@
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
     },
     {
-     "spelling": "??0?$list@VOldMatOption@@V?$StlNodeAlloc@VOldMatOption@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
      "spelling": "??0?$list@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 2 other group(s) at 3 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 2 of the 3 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 2 other group(s) at 3 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 2 of the 3 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md.",
+   "restored": [
+    {
+     "spelling": "??0?$list@VOldMatOption@@V?$StlNodeAlloc@VOldMatOption@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
+     "lane": "W16-GM 2026-09-30",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION",
+     "verdict": "FOLD -- FLAT T1 PROVEN (strict relocation-name equality) and CHASED T1 PROVEN on retail bytes at 0x822a7f60; retail-byte adjudication outranks a closure-shaped withdrawal",
+     "why_the_original_premise_failed": "W16-GM 2026-09-30: the withdrawal was recorded by lane ALIAS-CONSOLIDATION 2026-08-19 against the FABRICATED CLOSURE wholesale (class FABRICATED_CLOSURE_NOT_PARTITION), withdrawn without per-membership adjudication and carrying NO retail-byte evidence in either direction; after it this group was a HUSK (folded []) forgiving nothing. Re-adjudicated independently here with tools/icf_pair_adjudicate.py --chase against the retail body at 0x822a7f60 (the survivor's map address -- checked equal to this group's address field, which is NOT true of two sibling husk groups this lane declined): FLAT T1 PROVEN -- masked bytes identical AND every relocation target NAME-equal under strict comparison, nothing masked -- and CHASED T1 PROVEN with 0 CYCLE-ASSUMED / 0 SLOT-REFUTED / 0 BYTES-DIFFER (33-pair run, ~/tmp/w16gm_chase.log). In that same run four in-family struct-element list<T>::insert decoys were CHASED T1 REFUTED, so the instrument refuses in-family. CF1 map residency: this spelling is resident NOWHERE in scripts/target_symbol_map.json; the survivor is resident at exactly 0x822a7f60, so retail placed our spelling on the survivor's body or nowhere and no validator contradiction is possible. The call sites' retail-side name is exactly the survivor (??0?$list@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@...). Instrument gates run in THIS tree first: --selftest PASS, --chasetest in-family decoy REFUTED, --self-break 'the control discriminates' rc=0. PRICE (tools/fcnp_spelling_price.py over all 6,333 sub-100 paired rows): restoring this spelling alone clears 1 row(s) / 84 B: 84 B ??0OldColorOption@@QAA@ABV0@@Z (default/band3/bandtrack/Gem, fuzzy 99.762, masked_equal False).",
+     "withdrawal_record_superseded": {
+      "spelling": "??0?$list@VOldMatOption@@V?$StlNodeAlloc@VOldMatOption@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
+      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+     }
+    }
+   ]
   },
   {
    "name": "$_Destroy_Range",
