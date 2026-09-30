@@ -5834,6 +5834,7 @@
  "0x823d3878": "?Save@CharLipSync@@UAAXAAVBinStream@@@Z",
  "0x823d3918": "?Handle@CharLipSync@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x823d39e8": "?_M_erase@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVString@@PAV3@ABU__false_type@2@@Z",
+ "0x823d3a68": "??0Weight@PlayBack@CharLipSync@@QAA@ABU012@@Z",
  "0x823d3ac8": "??$_Copy_Construct@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z",
  "0x823d3b38": "??$__uninitialized_fill_n@PAVString@@IV1@@stlpmtx_std@@YAPAVString@@PAV1@IABV1@ABU__false_type@0@@Z",
  "0x823d3c80": "??1?$_Vector_base@EV?$StlNodeAlloc@E@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
