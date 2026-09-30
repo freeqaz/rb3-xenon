@@ -99,6 +99,7 @@ public:
 class SongStatus : public FixedSizeSaveable {
 public:
     SongStatus();
+    SongStatus(int id);
     virtual ~SongStatus();
     virtual void SaveFixed(FixedSizeSaveableStream &) const;
     virtual void LoadFixed(FixedSizeSaveableStream &, int);

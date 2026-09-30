@@ -304,6 +304,13 @@ SongStatus::SongStatus() {
     Clear();
 }
 
+// Retail fn_825D1238: the id-taking ctor used by CreateOrAccessSongStatus.
+SongStatus::SongStatus(int id) {
+    mSaveSizeMethod = &SaveSize;
+    Clear();
+    mSongID = id;
+}
+
 SongStatus::~SongStatus() {}
 
 SongStatusMgr::SongStatusMgr(LocalBandUser *u, BandSongMgr *mgr)
@@ -366,18 +373,13 @@ void SongStatusMgr::ClearLeastImportantSongStatusEntry() {
 }
 
 SongStatus *SongStatusMgr::CreateOrAccessSongStatus(int id) const {
-    std::hash_map<int, SongStatus *>::iterator it = mSongStatusCache.find(id);
-    if (it == mSongStatusCache.end()) {
+    if (!HasSongStatus(id)) {
         if (mSongStatusCache.size() >= 3000) {
             const_cast<SongStatusMgr *>(this)->ClearLeastImportantSongStatusEntry();
         }
-        SongStatus *status = new SongStatus();
-        if (status) {
-            status->SetID(id);
-        }
-        mSongStatusCache[id] = status;
+        mSongStatusCache[id] = new SongStatus(id);
     }
-    return mSongStatusCache.find(id)->second;
+    return GetSongStatus(id);
 }
 
 bool SongStatusMgr::UpdateSongStats(
