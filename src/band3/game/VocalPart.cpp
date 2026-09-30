@@ -495,10 +495,7 @@ float VocalPart::GetPartHitPercentage(const std::vector<VocalPhrase> &phrases, i
 
 float VocalPart::GetFreestyleSectionDurationMs() const {
     MILO_ASSERT(mInFreestyleSection, 0x6ab);
-    VocalNoteList *list = mVocalNoteList;
-    const std::pair<float, float> *end =
-        list->mFreestyleSections.data() + list->mFreestyleSections.size();
-    if (mFreestyleSection == end)
+    if (mFreestyleSection == mVocalNoteList->mFreestyleSections.end())
         return 0.0f;
     return mFreestyleSection->second - mFreestyleSection->first;
 }

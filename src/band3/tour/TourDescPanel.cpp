@@ -537,7 +537,8 @@ inline void TourDescProvider::InitData(RndDir *i_pDir) {
 bool TourDescPanel::IsTourAvailable() {
     MILO_ASSERT(m_pTourDescProvider, 0x2D6);
     Symbol s = GetSelectedTourDesc(0);
-    return MetaPanel::sUnlockAll ? true : m_pTourDescProvider->IsTourDescAvailable(s);
+    // W16-HR: retail has no sUnlockAll cheat test here.
+    return m_pTourDescProvider->IsTourDescAvailable(s);
 }
 
 void TourDescPanel::CheatWinTour() {
