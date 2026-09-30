@@ -839,6 +839,27 @@ D3DBaseTexture *D3DDevice_CreateTexture(
     UINT Pool,
     D3DRESOURCETYPE D3DType
 );
+// The XDK's inline IDirect3DDevice9::CreateTexture wrapper (ported from
+// dc3-decomp): stores the new texture through ppTexture and turns a null
+// result into E_OUTOFMEMORY.  DxRnd::InitBuffers needs this shape: with a
+// destructible local in scope (EH state), MSVC gives the `&member`
+// out-pointer a dead home-slot store before the call (`stw r11, 0x58(r31)`).
+inline HRESULT IDirect3DDevice9_CreateTexture(
+    D3DDevice *pDevice,
+    UINT Width,
+    UINT Height,
+    UINT Levels,
+    DWORD Usage,
+    D3DFORMAT Format,
+    UINT Pool,
+    D3DTexture **ppTexture,
+    HANDLE *pSharedHandle
+) {
+    *ppTexture = (D3DTexture *)D3DDevice_CreateTexture(
+        Width, Height, 1, Levels, Usage, Format, Pool, D3DRTYPE_TEXTURE
+    );
+    return (*ppTexture != 0) ? 0 : (HRESULT)0x8007000E; // S_OK : E_OUTOFMEMORY
+}
 
 D3DVertexDeclaration *
 D3DDevice_CreateVertexDeclaration(const D3DVERTEXELEMENT9 *pVertexElements);
