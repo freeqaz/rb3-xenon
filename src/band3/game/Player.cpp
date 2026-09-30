@@ -273,8 +273,13 @@ void Player::PollTalking(int i) {
     BandUser *user = mUser;
     bool talking = false;
     if (user) {
+#ifdef HX_NATIVE
+        // the native targets do not link synth_xbox's XHV2 voice engine
+        talking = false;
+#else
         IXHV2Engine *xhv = MicManagerXbox::GetInstance()->unk1c;
         talking = xhv->IsRemoteTalking(user->GetOnlineID()->GetXUID()) != 0;
+#endif
     }
     if (talking != unk290) {
         BandTrack *track = GetBandTrack();
