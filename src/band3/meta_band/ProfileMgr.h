@@ -27,7 +27,8 @@ class ProfileMgr : public MsgSource {
 public:
     ProfileMgr();
     virtual DataNode Handle(DataArray *, bool);
-    virtual ~ProfileMgr() {}
+    // Implicit dtor: retail ~ProfileMgr (0x82547A08) has no vptr re-store.
+
     virtual void SetMicVol(int, int);
     virtual int GetMicVol(int) const;
 
