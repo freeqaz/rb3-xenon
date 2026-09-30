@@ -55,24 +55,33 @@ BEGIN_SAVES(CharIKMidi)
     bs << mMaxAnimBlend;
 END_SAVES
 
-INIT_REVS(5, 0)
+// RB3 retail (0x823ca968) is rb3-Wii's Load: the raw incoming BinStream is
+// passed to every read (no BinStreamRev decorator -- no ??0BinStream /
+// ??1BinStream on the stack, mMaxAnimBlend read by a direct ReadEndian), and
+// the rev lives in two separate align(4) file statics (retail 0x82CBF804
+// altRev / 0x82CBF808 rev, co-addressed off one base register). Initialised
+// so they lay out in declaration order: alt at +0, rev at +4.
+static __declspec(align(4)) unsigned short gAltRev_CharIKMidi = 0;
+static __declspec(align(4)) unsigned short gRev_CharIKMidi = 0;
 
 BEGIN_LOADS(CharIKMidi)
-    LOAD_REVS(bs)
-    ASSERT_REVS(5, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    d >> mBone;
-    if (d.rev < 3) {
-        ObjPtrVec<RndTransformable> vec(this);
-        d >> vec;
+    int revs;
+    bs >> revs;
+    gRev_CharIKMidi = getHmxRev(revs);
+    gAltRev_CharIKMidi = getAltRev(revs);
+    Hmx::Object::Load(bs);
+    bs >> mBone;
+    if (gRev_CharIKMidi < 3) {
+        ObjVector<ObjPtr<RndTransformable> > vec(this);
+        bs >> vec;
     }
-    if (d.rev == 2 || d.rev == 3) {
+    if (gRev_CharIKMidi == 2 || gRev_CharIKMidi == 3) {
         String asdf;
-        d >> asdf;
+        bs >> asdf;
     }
-    if (d.rev > 4) {
-        d >> mAnimBlender;
-        d >> mMaxAnimBlend;
+    if (gRev_CharIKMidi > 4) {
+        bs >> mAnimBlender;
+        bs >> mMaxAnimBlend;
     }
 END_LOADS
 
