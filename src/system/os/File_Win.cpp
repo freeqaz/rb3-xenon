@@ -15,9 +15,13 @@ bool FileIsLocal(const char *file) {
 int FileGetStat(const char *iFilename, FileStat *iBuffer) {
     String fullName;
     FileQualifiedFilename(fullName, iFilename);
+#ifdef HX_NATIVE
     if (!UsingCD() && !FileIsLocal(fullName.c_str())) {
         return HolmesClientGetStat(fullName.c_str(), *iBuffer);
-    } else {
+    } else
+#endif
+    {
+        // RB3-360 retail: no Holmes path; always the local attribute query.
         WIN32_FILE_ATTRIBUTE_DATA attrData;
         BOOL res =
             GetFileAttributesExA(fullName.c_str(), GetFileExInfoStandard, &attrData);
