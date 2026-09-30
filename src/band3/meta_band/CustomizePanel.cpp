@@ -1575,7 +1575,8 @@ void CustomizePanel::SetupAssetPatchData(Symbol sym) {
     AssetMgr *pAssetMgr = AssetMgr::GetAssetMgr();
     MILO_ASSERT(pAssetMgr, 0x65F);
     AssetType ty = pAssetMgr->GetTypeFromName(sym);
-    if (mClosetMgr->GetAssetFromAssetType(ty) != sym) {
+    Symbol asset = mClosetMgr->GetAssetFromAssetType(ty);
+    if (asset != sym) {
         ClearAssetPatchData();
         return;
     }
@@ -1585,8 +1586,9 @@ void CustomizePanel::SetupAssetPatchData(Symbol sym) {
         return;
     }
     BandCharDesc::Patch::Category cat = GetPatchCategoryFromAssetType(ty);
-    for (int i = 0; i < cfg->mPatches.size(); i++) {
-        if (cfg->mPatches[i].mCategory == cat) {
+    ObjVector<BandPatchMesh> &patches = cfg->mPatches;
+    for (int i = 0; i < patches.size(); i++) {
+        if (patches[i].mCategory == cat) {
             unk90 = sym;
             mPatchCategory = cat;
             return;

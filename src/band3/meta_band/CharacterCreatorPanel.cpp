@@ -638,6 +638,12 @@ void CharacterCreatorPanel::CheckCharacterAssets() {
 }
 
 void CharacterCreatorPanel::SetCharCreatorState(CharCreatorState state) {
+    static Symbol shape("shape");
+    static Symbol chin("chin");
+    static Symbol eye("eye");
+    static Symbol eyebrows("eyebrows");
+    static Symbol nose("nose");
+    static Symbol mouth("mouth");
     Symbol bodypart = gNullStr;
     switch (state) {
     case kCharCreatorState_FaceMakerChooseCheeks:
