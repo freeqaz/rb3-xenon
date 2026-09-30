@@ -507,6 +507,7 @@ String Tour::GetFilterName(Symbol filter) const {
         return String(Localize(filter, nullptr));
     }
     if (TheQuestMgr.HasFixedSetlist(filter)) {
+        static Symbol fixedset1("fixedset1");
         return String(Localize(fixedset1, nullptr));
     }
     if (strncmp("filter_artist_", filter.Str(), 14) == 0) {
