@@ -149,14 +149,7 @@ float Tracker::CalcProgressPercentage() const {
     float last = mTargets.back();
     float ret = 0.0f;
     if (last > 0.0f) {
-        float ratio = val / last;
-        if (ratio > 1.0f) {
-            ret = 1.0f;
-        } else if (ratio < 0.0f) {
-            ret = 0.0f;
-        } else {
-            ret = ratio;
-        }
+        ret = Clamp(0.0f, 1.0f, val / last);
     }
     return ret;
 }
