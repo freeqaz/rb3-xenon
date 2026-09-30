@@ -12,6 +12,7 @@
 #include "utl/SongPos.h"
 #include "beatmatch/TrackType.h"
 #include "decomp.h"
+#include "synth_xbox/Mic.h"
 #include "game/BandUser.h"
 #include "game/BandUserMgr.h"
 #include "game/Defines.h"
@@ -265,11 +266,20 @@ void Player::PollEnabledState(float f) {
 }
 
 void Player::PollTalking(int i) {
-    if (i % 5 == 0 && unk290) {
+    // Retail (Xbox TU5): asks XHV2 whether this remote talker is talking and
+    // only pushes the change to the track.
+    if (i % 5 != 0)
+        return;
+    bool talking = false;
+    if (mUser) {
+        MicManagerXbox *mgr = MicManagerXbox::GetInstance();
+        talking = mgr->unk1c->IsRemoteTalking(mUser->GetOnlineID()->GetXUID()) != 0;
+    }
+    if (talking != unk290) {
         BandTrack *track = GetBandTrack();
         if (track)
-            track->SetNetTalking(false);
-        unk290 = false;
+            track->SetNetTalking(talking);
+        unk290 = talking;
     }
 }
 
@@ -282,6 +292,8 @@ void Player::AddPoints(float f, bool b1, bool b2) {
 
 void Player::StartIntro() {
     if (IsLocal()) {
+        // Retail: function-local static, constructed before the user lookup.
+        static Symbol intro("intro");
         LocalBandUser *user = mUser->GetLocalBandUser();
         if (!user->HasShownIntroHelp(mTrackType)) {
             PopupHelp(intro, true);
@@ -489,14 +501,11 @@ void Player::LocalSetEnabledState(EnabledState estate, int i, BandUser *causer, 
 
 bool Player::Saveable() const {
     bool ret = false;
-    bool result = false;
-    if (mEnabledState == kPlayerDisabled && mTimesFailed < 3 && !unk298)
-        ret = true;
-    if (ret) {
+    if (mEnabledState == kPlayerDisabled && mTimesFailed < 3 && !unk298) {
         MetaPerformer::Current();
-        result = true;
+        ret = true;
     }
-    return result;
+    return ret;
 }
 
 void Player::Save(BandUser *user, bool b) { SetEnabledState(kPlayerBeingSaved, user, b); }
@@ -996,29 +1005,17 @@ void Player::FinalizeStats() {
 }
 
 void Player::HandleNewSection(const PracticeSection &section, int sectionIdx, int totalSections) {
-    if (TheGame->unkdc != -1.0f || mQuarantined)
+    if (TheGame->InRollback() || mQuarantined)
         return;
     unk2c0 = sectionIdx;
-    if (totalSections != (int)mStats.mSections.size()) {
-        Stats::SectionInfo info;
-        if ((unsigned long)totalSections < mStats.mSections.size()) {
-            mStats.mSections.erase(
-                mStats.mSections.begin() + totalSections,
-                mStats.mSections.end()
-            );
-        } else {
-            mStats.mSections.insert(
-                mStats.mSections.end(),
-                (unsigned long)totalSections - mStats.mSections.size(),
-                info
-            );
-        }
-    }
+    // Retail (TU5) resizes through an out-of-line Stats helper (fn_82656B98).
+    if (mStats.NumSections() != totalSections)
+        mStats.SetNumSections(totalSections);
     mStats.SetSectionInfo(unk2c0, section.unk0, -1.0f, 0.0f);
 }
 
 void Player::UpdateSectionStats(float hitFraction, float percentComplete) {
-    if (TheGame->unkdc != -1.0f)
+    if (TheGame->InRollback()) // retail materialises the bool (li 1 / li 0)
         return;
     if (!mQuarantined) {
         if (TheSongDB->mPracticeSections.size() == 0)

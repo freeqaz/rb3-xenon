@@ -49,6 +49,7 @@ RemoteBandUser *BandUser::NewRemoteBandUser() { return new RemoteBandUser(); }
 NullLocalBandUser *BandUser::NewNullLocalBandUser() { return new NullLocalBandUser(); }
 
 void BandUser::Reset() {
+    static Symbol none("none"); // retail: function-local static
     User::Reset();
     mOvershellState = kState_JoinedDefault;
     mDifficulty = DefaultDifficulty();
@@ -81,11 +82,7 @@ void BandUser::SetDifficulty(Difficulty d) {
 }
 
 bool BandUser::IsFullyInGame() const {
-    bool ret = false;
-    if (unk_0xC && mTrackType != kTrackPending && mTrackType != kTrackPendingVocals) {
-        ret = true;
-    }
-    return ret;
+    return unk_0xC && mTrackType != kTrackPending && mTrackType != kTrackPendingVocals;
 }
 
 void BandUser::SetDifficulty(Symbol s) { SetDifficulty(SymToDifficulty(s)); }

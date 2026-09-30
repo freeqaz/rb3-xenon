@@ -471,6 +471,7 @@ void GemTrainerPanel::ClearGems() {
 void GemTrainerPanel::SetSpeedRatio(float f1) {
     TheGame->SetMusicSpeed(f1);
     mGemPlayer->SetPitchShiftRatio(1.0f / f1);
+    static Symbol speed_ratio("speed_ratio"); // retail: function-local static
     SendDataPoint("trainers/speed", speed_ratio, f1);
 }
 
@@ -528,6 +529,9 @@ void GemTrainerPanel::NewDifficulty(int i1, int i2) {
 
 void GemTrainerPanel::EnableMetronome(bool b1) {
     mMetronome->Enable(b1);
+    // Retail: two function-local statics; the second is built but unused.
+    static Symbol enable_metronome("enable_metronome");
+    static Symbol speed_ratio("speed_ratio");
     SendDataPoint("trainers/metronome", enable_metronome, b1);
 }
 

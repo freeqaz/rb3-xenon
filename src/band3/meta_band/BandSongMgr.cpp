@@ -344,7 +344,12 @@ const char *BandSongMgr::UpgradeMidiFile(int i) const {
     if (mUpgradeMgr->HasUpgrade(i)) {
         SongUpgradeData *upgrade = mUpgradeMgr->UpgradeData(i);
         MILO_ASSERT(upgrade, 0x20A);
-        file = upgrade->MidiFile();
+        // Retail (TU5): prefix the upgrade's content root when it has one.
+        const char *root = ContentNameRoot(Symbol(mUpgradeMgr->ContentName(i)));
+        if (root)
+            file = MakeString("%s/%s", root, upgrade->MidiFile());
+        else
+            file = upgrade->MidiFile();
     }
     return file;
 }
@@ -789,7 +794,15 @@ int BandSongMgr::GetValidSongs(
     return outSongs.size();
 }
 
-int BandSongMgr::GetPosInRecentList(int) { return -1; }
+int BandSongMgr::GetPosInRecentList(int songID) {
+    // Retail (fn_82575F30): linear walk of the recent-song list.
+    int pos = 0;
+    for (std::list<int>::iterator it = unk114.begin(); it != unk114.end(); ++it, ++pos) {
+        if (*it == songID)
+            return pos;
+    }
+    return -1;
+}
 // Retail fn_82575F68 (0xA4 B). rb3-Wii's DEV decomp has `return false;` here and
 // so did we -- BYTE-IDENTICAL to the oracle, so a source diff showed NOTHING.
 // The tell was in the CALLER: retail's `is_demo` handler in Handle() emits

@@ -1595,19 +1595,9 @@ void SaveLoadManager::UpdateStatus(SaveLoadMgrStatus status) {
 }
 
 bool SaveLoadManager::IsReasonToAutosave() {
-    if (GetAutosavableProfile()) {
-        return true;
-    }
-    if (IsReasonToUpload()) {
-        return true;
-    }
-    if (TheProfileMgr.GlobalOptionsNeedsSave()) {
-        return true;
-    }
-    if (NeedsSongCacheWrite()) {
-        return true;
-    }
-    return false;
+    // Retail: one short-circuit expression (single li 1 / li 0 join).
+    return GetAutosavableProfile() || IsReasonToUpload()
+        || TheProfileMgr.GlobalOptionsNeedsSave() || NeedsSongCacheWrite();
 }
 
 bool SaveLoadManager::NeedsSongCacheWrite() {
@@ -1938,31 +1928,15 @@ bool SaveLoadManager::IsAutosaveEnabled(LocalBandUser *user) {
 }
 
 void SaveLoadManager::EnableAutosave(LocalBandUser *user) {
-    Profile *profile = TheProfileMgr.GetProfileForUser(user);
-    if (!profile) {
-        MILO_WARN("Tried to enable autosave without a valid profile.\n");
-        return;
-    }
-    TheMemcardMgr.DisableWriting(false);
-    profile->SetSaveState(kMetaProfileLoaded);
-    ManualSave(user);
+    // Retail (TU5): just a manual save when the user has a profile.
+    if (TheProfileMgr.GetProfileForUser(user))
+        ManualSave(user);
 }
 
 void SaveLoadManager::DisableAutosave(LocalBandUser *user) {
     Profile *profile = TheProfileMgr.GetProfileForUser(user);
-    if (!profile) {
-        MILO_WARN("Tried to disable autosave without a valid profile.\n");
-        return;
-    }
-    bool idle = false;
-    if (mState == kS_Idle && mRequestFlags == 0) {
-        idle = true;
-    }
-    if (!idle) {
-        MILO_WARN("Tried to disable autosave while saveloadmgr is not idle.\n");
-        return;
-    }
-    profile->SetSaveState(kMetaProfileError);
+    if (profile && IsIdle())
+        profile->SetSaveState(kMetaProfileError);
 }
 
 void SaveLoadManager::ManualSave(LocalBandUser *user) {
@@ -2013,7 +1987,7 @@ void SaveLoadManager::StartSaveAction(bool b) {
 DataNode SaveLoadManager::OnMsg(const DeviceChosenMsg &msg) {
     MILO_ASSERT(mWaiting, 0xa41);
     mWaiting = false;
-    TheMemcardMgr.RemoveSink(this);
+    // Retail (TU5) no longer removes the memcard sink here.
     switch (mState) {
     case kS_AutoloadSetDevice:
     case kS_AutoloadSelectDevice2:
@@ -2048,7 +2022,7 @@ DataNode SaveLoadManager::OnMsg(const DeviceChosenMsg &msg) {
 DataNode SaveLoadManager::OnMsg(const NoDeviceChosenMsg &) {
     MILO_ASSERT(mWaiting, 0xa73);
     mWaiting = false;
-    TheMemcardMgr.RemoveSink(this);
+    // Retail (TU5) no longer removes the memcard sink here.
     switch (mState) {
     case kS_AutoloadSetDevice:
         SetState(kS_AutoloadNoSaveFound_Msg);
@@ -2197,13 +2171,10 @@ DataNode SaveLoadManager::OnMsg(const MCResultMsg &msg) {
 DataNode SaveLoadManager::OnMsg(const RockCentralOpCompleteMsg &) {
     MILO_ASSERT(mWaiting, 0xb55);
     mWaiting = false;
-    if ((unsigned int)(mState - 0x69) <= 2) {
-        // Done/LoadComplete/Finish states - do nothing
-    } else if (mState == (State)0x58) {
+    // Retail: only the upload-wait state reacts (the Done/Finish no-op range
+    // existed only to guard the compiled-out MILO_FAIL).
+    if (mState == (State)0x58)
         SetState((State)0x57);
-    } else {
-        MILO_FAIL("Unhandled RockCentralOpCompleteMsg\n");
-    }
     return DataNode(0);
 }
 

@@ -9,8 +9,10 @@
 #include "utl/Symbols3.h"
 
 bool IsWaitingNetUIState(NetUIState state) {
-    if ((unsigned int)(state - 3) > 5U) return false;
-    return true;
+    // Retail: a compare chain over the six waiting states, not a range check.
+    return state == kNetUI_WaitingPartyShuffle || state == kNetUI_WaitingChooseSong
+        || state == kNetUI_WaitingChooseSetlist || state == kNetUI_WaitingQpFindPlayers
+        || state == kNetUI_WaitingTour || state == kNetUI_WaitingTourFindPlayers;
 }
 
 BandMachine::BandMachine()
