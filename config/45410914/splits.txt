@@ -1256,6 +1256,7 @@ GuitarTrackWatcherImpl.cpp:
 
 JoypadController.cpp:
 	.pdata      start:0x8223FB58 end:0x8223FB60
+	.pdata      start:0x8223FB68 end:0x8223FB70
 	.pdata      start:0x8223FB78 end:0x8223FB80
 	.pdata      start:0x8223FB80 end:0x8223FB88
 	.pdata      start:0x8223FB88 end:0x8223FBD0
@@ -2017,9 +2018,11 @@ Flare.cpp:
 	.text       start:0x82477FA0 end:0x82478034
 
 Debug.cpp:
-	.pdata      start:0x82217CC8 end:0x82217DB0
+	.pdata      start:0x82217CC8 end:0x82217D80
+	.pdata      start:0x82217D90 end:0x82217DB0
 	.pdata      start:0x82217DB8 end:0x82217DF0
-	.pdata      start:0x82217E20 end:0x82217EA8
+	.pdata      start:0x82217E20 end:0x82217E78
+	.pdata      start:0x82217E90 end:0x82217EA8
 	.pdata      start:0x82241DB8 end:0x82241DC8
 	.text       start:0x8250F4E0 end:0x8250FDEC
 	.text       start:0x8250FEE8 end:0x825100C8
@@ -5156,9 +5159,11 @@ Sequence.cpp:
 	.text       start:0x82743B68 end:0x82743BD0
 
 System.cpp:
+	.pdata      start:0x82217D80 end:0x82217D90
 	.pdata      start:0x82217DB0 end:0x82217DB8
 	.pdata      start:0x82217DF0 end:0x82217DF8
 	.pdata      start:0x82217DF8 end:0x82217E20
+	.pdata      start:0x82217E78 end:0x82217E90
 	.pdata      start:0x822619D8 end:0x822619E0
 	.text       start:0x8250FDEC end:0x8250FEE8
 	.text       start:0x825100C8 end:0x825101EC
@@ -5251,7 +5256,8 @@ UIList.cpp:
 	.pdata      start:0x8223DDE8 end:0x8223DDF8
 	.pdata      start:0x8223DE48 end:0x8223DE50
 	.pdata      start:0x8223DE50 end:0x8223DE58
-	.pdata      start:0x8223DF90 end:0x8223DFE8
+	.pdata      start:0x8223DF90 end:0x8223DFA0
+	.pdata      start:0x8223DFA8 end:0x8223DFE8
 	.pdata      start:0x82240190 end:0x82240198
 	.pdata      start:0x822452A8 end:0x822452F8
 	.pdata      start:0x822452F8 end:0x82245308
@@ -5296,11 +5302,15 @@ DirLoader.cpp:
 	.pdata      start:0x8223BA78 end:0x8223BA88
 	.pdata      start:0x8223BFE8 end:0x8223C010
 	.pdata      start:0x8223C010 end:0x8223C270
-	.pdata      start:0x8223C278 end:0x8223C2A8
-	.pdata      start:0x8223C2B0 end:0x8223C318
+	.pdata      start:0x8223C278 end:0x8223C288
+	.pdata      start:0x8223C290 end:0x8223C2A8
+	.pdata      start:0x8223C2B0 end:0x8223C2C8
+	.pdata      start:0x8223C2D0 end:0x8223C2F8
+	.pdata      start:0x8223C300 end:0x8223C318
 	.pdata      start:0x8223C338 end:0x8223C348
 	.pdata      start:0x8223C380 end:0x8223C3D0
-	.pdata      start:0x8223C3D8 end:0x8223C3F8
+	.pdata      start:0x8223C3D8 end:0x8223C3E0
+	.pdata      start:0x8223C3F0 end:0x8223C3F8
 	.pdata      start:0x8223F158 end:0x8223F160
 	.text       start:0x8274DFD0 end:0x8274E054
 	.text       start:0x82754A00 end:0x82754C78
@@ -5335,7 +5345,8 @@ Bitmap.cpp:
 LightPresetManager.cpp:
 	.pdata      start:0x82212F20 end:0x82213008
 	.pdata      start:0x82213008 end:0x82213038
-	.pdata      start:0x82213038 end:0x82213068
+	.pdata      start:0x82213038 end:0x82213058
+	.pdata      start:0x82213060 end:0x82213068
 	.text       start:0x824B8860 end:0x824B98F8
 	.text       start:0x824B98F8 end:0x824B9BC8
 	.text       start:0x824B9BC8 end:0x824B9E60
@@ -5805,6 +5816,7 @@ CheatProvider.cpp:
 	.text       start:0x82700270 end:0x827008DC
 
 CameraManager.cpp:
+	.pdata      start:0x82213058 end:0x82213060
 	.pdata      start:0x82213068 end:0x82213248
 	.pdata      start:0x82213258 end:0x822133E0
 	.pdata      start:0x822149F0 end:0x822149F8
@@ -10069,7 +10081,8 @@ TrackWatcherImpl.cpp:
 	.pdata      start:0x822102A8 end:0x822102C8
 	.pdata      start:0x82228188 end:0x82228190
 	.pdata      start:0x8223F600 end:0x8223F7B0
-	.pdata      start:0x8223FB60 end:0x8223FB78
+	.pdata      start:0x8223FB60 end:0x8223FB68
+	.pdata      start:0x8223FB70 end:0x8223FB78
 	.text       start:0x823ABD20 end:0x823ABD90
 	.text       start:0x82480BF8 end:0x82480FAC
 	.text       start:0x82480FB0 end:0x82480FBC
@@ -10343,6 +10356,7 @@ SongData.cpp:
 	.pdata      start:0x8223DE68 end:0x8223DF40
 	.pdata      start:0x8223DF40 end:0x8223DF50
 	.pdata      start:0x8223DF50 end:0x8223DF90
+	.pdata      start:0x8223DFA0 end:0x8223DFA8
 	.pdata      start:0x8223DFE8 end:0x8223E078
 	.pdata      start:0x8223E078 end:0x8223E0B8
 	.pdata      start:0x8223E0B8 end:0x8223E0E0
@@ -10663,7 +10677,6 @@ BeatMatcher.cpp:
 	.pdata      start:0x8223F318 end:0x8223F388
 	.pdata      start:0x8223F3A0 end:0x8223F3A8
 	.pdata      start:0x8223F3B8 end:0x8223F420
-	.pdata      start:0x8223F4E8 end:0x8223F4F8
 	.text       start:0x827904D8 end:0x82790DF4
 	.text       start:0x82790DF8 end:0x82790E7C
 	.text       start:0x82790E80 end:0x82790F54
@@ -12620,18 +12633,24 @@ system/beatmatch/GameGemDB.cpp:
 	.text       start:0x82793078 end:0x82793470
 
 system/beatmatch/Submix.cpp:
+	.pdata      start:0x8223F4E8 end:0x8223F4F8
 	.pdata      start:0x8223F508 end:0x8223F518
+	.pdata      start:0x8223F548 end:0x8223F550
 	.text       start:0x82793768 end:0x82793908
 	.text       start:0x82793AA8 end:0x82793B80
 	.text       start:0x82793E98 end:0x82793F64
 
 system/obj/Utl.cpp:
 	.pdata      start:0x8223C270 end:0x8223C278
+	.pdata      start:0x8223C288 end:0x8223C290
 	.pdata      start:0x8223C2A8 end:0x8223C2B0
+	.pdata      start:0x8223C2C8 end:0x8223C2D0
+	.pdata      start:0x8223C2F8 end:0x8223C300
 	.pdata      start:0x8223C318 end:0x8223C330
 	.pdata      start:0x8223C330 end:0x8223C338
 	.pdata      start:0x8223C348 end:0x8223C380
 	.pdata      start:0x8223C3D0 end:0x8223C3D8
+	.pdata      start:0x8223C3E0 end:0x8223C3F0
 	.pdata      start:0x8223C3F8 end:0x8223C488
 	.pdata      start:0x8223C488 end:0x8223C490
 	.text       start:0x82757CC0 end:0x82757D9C
@@ -12976,7 +12995,8 @@ band3/game/HitTracker.cpp:
 	.text       start:0x826E34D0 end:0x826E3808
 
 system/beatmatch/SlotChannelMapping.cpp:
-	.pdata      start:0x8223F528 end:0x8223F558
+	.pdata      start:0x8223F528 end:0x8223F548
+	.pdata      start:0x8223F550 end:0x8223F558
 	.pdata      start:0x8223F558 end:0x8223F600
 	.text       start:0x82793C58 end:0x82793E98
 	.text       start:0x82793F64 end:0x82793F8C
