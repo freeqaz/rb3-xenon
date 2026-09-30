@@ -302,14 +302,13 @@ void OvershellSlot::ShowProfiles() {
 void OvershellSlot::AttemptRegisterOnline() {
     BandUser *pUser = GetUser();
     MILO_ASSERT(pUser->IsLocal(), 0x2B0);
+    // Retail 0x825D86A0: function-local static, no mPanelOverrideFlow test.
+    static Symbol mod_auto_vocals("mod_auto_vocals");
     if (TheModifierMgr && TheModifierMgr->IsModifierActive(mod_auto_vocals)) {
         pUser->SetOvershellSlotState(kState_RegisterOnlineDenial);
         mOvershell->UpdateAll();
     } else {
-        if (mOvershell->mPanelOverrideFlow != 0) {
-            mOvershell->UpdateAll();
-        } else
-            mOvershell->BeginOverrideFlow(kOverrideFlow_RegisterOnline);
+        mOvershell->BeginOverrideFlow(kOverrideFlow_RegisterOnline);
     }
 }
 
@@ -1613,13 +1612,10 @@ DataNode OvershellSlot::OnMsg(const VirtualKeyboardResultMsg &msg) {
 }
 
 void OvershellSlot::ShowCharEdit(int i) {
-    if (TheNetSync->GetUIState() == kNetUI_MetaLoadingPreSave) {
-        ShowState(kState_ChooseCharDenial);
-    } else {
-        mCharForEdit = dynamic_cast<TourCharLocal *>(mCharProvider->GetCharData(i));
-        MILO_ASSERT(mCharForEdit != NULL, 0xB23);
-        ShowState(kState_ChooseCharEdit);
-    }
+    // Retail 0x825D94E0: no net UI-state denial branch.
+    mCharForEdit = dynamic_cast<TourCharLocal *>(mCharProvider->GetCharData(i));
+    MILO_ASSERT(mCharForEdit != NULL, 0xB23);
+    ShowState(kState_ChooseCharEdit);
 }
 
 bool OvershellSlot::CanEditCharacter(int idx) const {
@@ -1659,14 +1655,9 @@ void OvershellSlot::RenameCharacter(const char *cc) {
     BandUser *pUser = GetUser();
     MILO_ASSERT(pUser->IsLocal(), 0xB6A);
     BandProfile *pProfile = TheProfileMgr.GetProfileForUser(pUser->GetLocalBandUser());
-    if (TheNetSync->GetUIState() != 0xF) {
-        if (!pProfile) {
-            MILO_WARN("illegal attempt made to rename guest character to %s\n", cc);
-        } else {
-            MILO_ASSERT(pProfile, 0xB7C);
-            pProfile->RenameCharacter(mCharForEdit, cc);
-        }
-    }
+    // Retail 0x825D9750: no UI-state or guest-profile test.
+    MILO_ASSERT(pProfile, 0xB7C);
+    pProfile->RenameCharacter(mCharForEdit, cc);
 }
 
 void OvershellSlot::SelectChar(int i1) {
@@ -1887,7 +1878,10 @@ __declspec(noinline) bool OvershellSlot::CanChangeSynapseOption() {
     MetaPerformer *pPerformer = MetaPerformer::Current();
     if (!pPerformer)
         return true;
-    return !pPerformer->IsNowUsingVocalHarmony();
+    // Retail 0x825D97E8 (TU5): no change while two mics are connected, and
+    // no song selected counts as changeable.
+    return TheGameMicManager->GetMicCount() < 2
+        && (pPerformer->Song().Null() || !pPerformer->IsNowUsingVocalHarmony());
 }
 
 void OvershellSlot::UpdateProfilesList() {
