@@ -77,9 +77,12 @@ public:
     //   brk@0x12c pre@0x12d zOffset@0x130
     class Style {
     public:
+        // Retail's default ctor leaves mTextColor unset: LyricPlate::LyricPlate
+        // (Lyric.cpp) stores only mFont/mSize/mItalics/nobreak/pre/mZOffset for
+        // its two Style members, no 1.0f colour stores (lane W16-HX4).
         Style()
-            : mFont(nullptr), mSize(0), mItalics(0), mTextColor(1, 1, 1, 1),
-              nobreak(true), pre(false), mZOffset(0) {}
+            : mFont(nullptr), mSize(0), mItalics(0), nobreak(true), pre(false),
+              mZOffset(0) {}
         // rb3-Wii-lineage ctor. Wii passes Color32(-1) (opaque white); the
         // 360 widening makes that Hmx::Color(1,1,1,1) — the ctor default the
         // retail RndText ctor was measured to store.
