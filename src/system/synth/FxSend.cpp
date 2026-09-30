@@ -148,11 +148,14 @@ void FxSend::RebuildChain() {
 void FxSend::BuildChainVector(std::vector<FxSend *> &sends) {
     sends.push_back(this);
     FOREACH (it, Refs()) {
-        FxSend *send = dynamic_cast<FxSend *>(RefPtrOf(it)->RefOwner());
+        // Retail (and rb3-Wii) load the ref once and reuse it in both branches;
+        // DC3 recomputes it per branch, which does not match retail here.
+        auto ref = RefPtrOf(it); // ObjRefOwner* in the match build, const ObjRef* natively
+        FxSend *send = dynamic_cast<FxSend *>(ref->RefOwner());
         if (send && send->mNextSend == this) {
             send->BuildChainVector(sends);
         } else {
-            Sfx *sfx = dynamic_cast<Sfx *>(RefPtrOf(it)->RefOwner());
+            Sfx *sfx = dynamic_cast<Sfx *>(ref->RefOwner());
             if (sfx) {
                 sfx->Stop(false);
             }
