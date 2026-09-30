@@ -132,9 +132,26 @@ void SongData::Load(
         MemDoTempAllocations m;
         mMemStream->Resize(fs.Size());
         fs.Read((void *)mMemStream->Buffer(), fs.Size());
+#ifdef HX_NATIVE
         if (v == kSongData_ValidateUsingNameOnly || v == kSongData_Validate) {
             Validate(mMemStream, midi, v == kSongData_ValidateUsingNameOnly);
         }
+#else
+        // Retail (fn_827796F8) inlines the checksum check with no
+        // UsingCD()/HasFileChecksumData() gate.
+        if (v == kSongData_Validate || v == kSongData_ValidateUsingNameOnly) {
+            MemStream *ms = mMemStream;
+            StreamChecksumValidator sv;
+            StreamChecksumValidator *vptr = &sv;
+            int began = vptr->Begin(midi, v == kSongData_ValidateUsingNameOnly);
+            if (began) {
+                int size = ms->Size();
+                vptr->Update((const unsigned char *)ms->Buffer(), size);
+                vptr->End();
+                vptr->Validate();
+            }
+        }
+#endif
     }
     Load(midi, info, numDifficulties, pList, midircvrs, bb);
     FileStream fs88(FakeSongMgr::GetPath(info, ".vfv"), FileStream::kRead, true);
