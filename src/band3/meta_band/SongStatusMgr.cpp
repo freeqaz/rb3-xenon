@@ -1008,23 +1008,16 @@ void SongStatusMgr::SaveFixed(FixedSizeSaveableStream &stream) const {
 }
 
 void SongStatusMgr::LoadFixed(FixedSizeSaveableStream &stream, int rev) {
-    Clear();
-    int count;
-    stream >> count;
-    for (int i = 0; i < count; i++) {
-        int songID;
-        stream >> songID;
-        SongStatus *status = new SongStatus();
-        status->LoadFixed(stream, rev);
-        mSongStatusCache[songID] = status;
-    }
+    FixedSizeSaveable::LoadStdPtr(
+        stream, mSongStatusCache, 3000, SongStatus::SaveSize(rev) + 4
+    );
     for (ScoreType i = (ScoreType)0; i < 11; i = (ScoreType)(i + 1)) {
         if (rev >= 0x92) {
             stream >> mCachedTotalScores[i];
             stream >> mCachedTotalDiscScores[i];
         } else {
             UpdateCachedTotalScore(i);
-            mCachedTotalDiscScores[i] = UpdateCachedTotalDiscScore(i);
+            CacheTotalDiscScore(i);
         }
         if (rev >= 0x93) {
             stream >> mCachedTotalStars[i];

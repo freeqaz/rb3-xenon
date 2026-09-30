@@ -218,6 +218,9 @@ public:
     void UpdateCachedTotalStars(ScoreType);
     bool UpdateSong(int, const PerformerStatsInfo &, bool);
     int UpdateCachedTotalDiscScore(ScoreType);
+    void CacheTotalDiscScore(ScoreType ty) {
+        mCachedTotalDiscScores[ty] = UpdateCachedTotalDiscScore(ty);
+    }
     void UpdateCachedTotalScore(ScoreType);
     unsigned short GetBandInstrumentMask(int) const;
     Difficulty GetHighScoreDifficulty(int, ScoreType) const;

@@ -335,6 +335,37 @@ public:
             PadStream(stream, (savesize * (maxsize - lsize)));
     }
 
+    // Load counterpart of the int-keyed hash_map SaveStdPtr above. Retail keeps
+    // the SongStatus instantiation out of line (fn_825D32A8, called from
+    // SongStatusMgr::LoadFixed): purge-and-clear if non-empty, then read
+    // (key, new T, stream >> *obj, map[key] = obj) pairs, then depad.
+    template <class T>
+    static void LoadStdPtr(
+        FixedSizeSaveableStream &stream,
+        std::hash_map<int, T *> &map,
+        int maxsize,
+        int savesize
+    ) {
+        if (map.size() != 0) {
+            MILO_NOTIFY("hash_map is not empty!");
+            FOREACH (it, map) {
+                RELEASE(it->second);
+            }
+            map.clear();
+        }
+        int mapsize;
+        stream >> mapsize;
+        for (int i = 0; i < mapsize; i++) {
+            int key;
+            stream >> key;
+            T *obj = new T();
+            stream >> *obj;
+            map[key] = obj;
+        }
+        if (maxsize > mapsize)
+            DepadStream(stream, savesize * (maxsize - mapsize));
+    }
+
     template <class T>
     static void LoadStd(
         FixedSizeSaveableStream &stream,
