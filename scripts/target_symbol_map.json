@@ -1,4 +1,6 @@
 {
+ "0x82651b28": "?IsRanked@BandMatchmaker@@QBA_NXZ",
+ "0x82540208": "?RefreshSongLists@MusicLibrary@@QAAXXZ",
  "0x82577610": "?GetValidSongs@BandSongMgr@@QBAHABV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@AAVBandUserMgr@@AAV23@MM_N3@Z",
  "0x82686f38": "?SetupPhrasesForTrack@SongDB@@QAAXHAAV?$vector@VExtent@@V?$StlNodeAlloc@VExtent@@@stlpmtx_std@@@stlpmtx_std@@AAV?$vector@EV?$StlNodeAlloc@E@stlpmtx_std@@@3@@Z",
  "0x826d1fc0": "?_M_insert_overflow_aux@?$vector@VTrackerPlayerDisplay@@V?$StlNodeAlloc@VTrackerPlayerDisplay@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVTrackerPlayerDisplay@@ABV3@ABU__false_type@2@I_N@Z",
