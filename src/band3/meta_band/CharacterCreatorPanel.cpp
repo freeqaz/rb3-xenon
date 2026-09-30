@@ -251,15 +251,16 @@ void CharacterCreatorPanel::SetOutfit(Symbol outfit) {
     MILO_ASSERT(pPrefabChar, 0x1C7);
     BandCharDesc *pPrefabBandCharDesc = pPrefabChar->GetBandCharDesc();
     MILO_ASSERT(pPrefabBandCharDesc, 0x1CA);
-    BandCharDesc *target = mPreviewDesc;
-    target->mOutfit.mTorso = pPrefabBandCharDesc->mOutfit.mTorso;
-    target->mOutfit.mLegs = pPrefabBandCharDesc->mOutfit.mLegs;
-    target->mOutfit.mFeet = pPrefabBandCharDesc->mOutfit.mFeet;
-    target->mOutfit.mEarrings = pPrefabBandCharDesc->mOutfit.mEarrings;
-    target->mOutfit.mHands = pPrefabBandCharDesc->mOutfit.mHands;
-    target->mOutfit.mPiercings = pPrefabBandCharDesc->mOutfit.mPiercings;
-    target->mOutfit.mRings = pPrefabBandCharDesc->mOutfit.mRings;
-    target->mOutfit.mWrist = pPrefabBandCharDesc->mOutfit.mWrist;
+    BandCharDesc::Outfit &dst = mPreviewDesc->mOutfit;
+    BandCharDesc::Outfit &src = pPrefabBandCharDesc->mOutfit;
+    dst.mTorso = src.mTorso;
+    dst.mLegs = src.mLegs;
+    dst.mFeet = src.mFeet;
+    dst.mEarrings = src.mEarrings;
+    dst.mHands = src.mHands;
+    dst.mPiercings = src.mPiercings;
+    dst.mRings = src.mRings;
+    dst.mWrist = src.mWrist;
     mClosetMgr->PreviewCharacter(true, true);
     UpdateOutfitList();
 }
