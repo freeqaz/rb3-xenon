@@ -552,196 +552,121 @@ u64 RndShaderParticles::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     return -(s64)(bool)(TheRnd.DrawMode() - (Rnd::Mode)3) & opts;
 }
 
+// The two bodies below were previously scored against each other's retail
+// address: the map had RndShaderMultimesh's name on 0x824A66E8, but the RTTI
+// Complete Object Locator in front of the vtable that holds 0x824A66E8 names
+// RndShaderStandard, and the one in front of the vtable holding 0x824A6070
+// names RndShaderMultimesh.  Both are written as ShaderOptions bitfield
+// assignments (see ShaderOptions.h), which is what produces retail's
+// `and ~mask` + `rldimi` pairs.
 u64 RndShaderMultimesh::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
+    // Retail RB3 X360: occlusion is raw Rnd::Mode 3.
+    if (TheRnd.DrawMode() == (Rnd::Mode)3)
+        return 0;
     NgEnviron *env = (NgEnviron *)RndEnviron::Current();
-    if (TheRnd.DrawMode() == Rnd::kDrawOcclusion) return 0;
-    int hasDiffuse = mat->GetDiffuseTex() != nullptr;
-    bool prelit = mat->Prelit();
-    u64 hasRealLights;
-    if (!mat->UseEnviron()) {
-        hasRealLights = 0;
-    } else {
-        hasRealLights = (env->NumLights_Real() >= 1) ? 1 : 0;
-    }
-    u64 hasApproxLights;
-    if (!mat->UseEnviron()) {
-        hasApproxLights = 0;
-    } else {
-        hasApproxLights = (env->NumLights_Approx() >= 1) ? 1 : 0;
-    }
-    u64 opts = hasApproxLights << 0x11
-        | hasRealLights << 0x10
-        | (((u64)(prelit & 1) << 4 | (u64)hasDiffuse) << 4);
-    if (hasRealLights || hasApproxLights) {
-        u64 hasSpecular = ((int)(mat->GetSpecularRGB().blue * 255.0f) & 0xff) != 0
-            || ((int)(mat->GetSpecularRGB().green * 255.0f) & 0xff) != 0
-            || ((int)(mat->GetSpecularRGB().red * 255.0f) & 0xff) != 0;
-        opts |= hasSpecular << 2;
+    ShaderOptions opts(0);
+    bool hasDiffuse = mat->GetDiffuseTex() != nullptr;
+    opts.mDiffuseMap = hasDiffuse;
+    opts.mPrelit = mat->Prelit();
+    opts.mRealLights = mat->UseEnviron() && env->NumLights_Real() > 0;
+    opts.mApproxLights = mat->UseEnviron() && env->NumLights_Approx() > 0;
+    if (opts.mRealLights || opts.mApproxLights) {
+        opts.mSpecular = mat->GetSpecularRGB().Pack() != 0;
         if (TheShaderMgr.AllowPerPixel() && mat->GetPerPixelLit()) {
-            u64 hasNormDetail;
-            if (mat->GetNormDetailMap() == nullptr || mat->GetNormDetailStrength() <= 0.0f) {
-                hasNormDetail = 0;
-            } else {
-                hasNormDetail = 1;
-            }
-            u64 hasSpecMap;
-            if (!hasSpecular || mat->GetSpecularMap() == nullptr) {
-                hasSpecMap = 0;
-            } else {
-                hasSpecMap = 1;
-            }
-            int cull = mat->GetCull();
-            u64 hasRim = ((int)(mat->GetRimRGB().blue * 255.0f) & 0xff) != 0
-                || ((int)(mat->GetRimRGB().green * 255.0f) & 0xff) != 0
-                || ((int)(mat->GetRimRGB().red * 255.0f) & 0xff) != 0;
-            u64 rimLightUnder;
-            if (!hasRim || !mat->GetRimLightUnder()) {
-                rimLightUnder = 0;
-            } else {
-                rimLightUnder = 1;
-            }
-            u64 hasRimMap;
-            if (!hasRim || mat->GetRimMap() == nullptr) {
-                hasRimMap = 0;
-            } else {
-                hasRimMap = 1;
-            }
             int hasNormal = mat->NormalMap() != nullptr;
-            opts = hasRimMap << 0xf
-                | rimLightUnder << 0xe
-                | hasRim << 0x25
-                | hasSpecMap << 1
-                | (((u64)(cull == kCullBackwards) << 0x1e | hasNormDetail) << 0x18
-                | (s64)(int)(uint)(hasNormal != 0) << 5 | opts
-                | 1);
+            opts.mNormalMap = hasNormal;
+            opts.mPerPixelLighting = 1;
+            bool normDetail = mat->GetNormDetailMap() != nullptr
+                && mat->GetNormDetailStrength() > 0.0f;
+            opts.mNormDetail = normDetail;
+            // Retail RB3 X360 has no mFlipNormal here (dc3 adds it).
+            opts.mSpecularMap = opts.mSpecular && mat->GetSpecularMap() != nullptr;
+            opts.mRimLight = mat->GetRimRGB().Pack() != 0;
+            opts.mRimLightUnder = opts.mRimLight && mat->GetRimLightUnder();
+            opts.mRimLightMap = opts.mRimLight && mat->GetRimMap() != nullptr;
         }
         if (mat->GetEnvironMap() != nullptr) {
-            u64 environSpecMask;
-            if (!(opts & 2) || !mat->GetEnvironMapSpecMask()) {
-                environSpecMask = 0;
-            } else {
-                environSpecMask = 1;
-            }
-            opts = environSpecMask << 0x31
-                | ((u64)(mat->GetEnvironMapFalloff() & 1)) << 0x2b
-                | opts | 8;
+            opts.mEnvironMapFalloff = mat->GetEnvironMapFalloff();
+            opts.mEnvironMap = 1;
+            opts.mEnvironMapSpecMask = opts.mSpecularMap && mat->GetEnvironMapSpecMask();
         }
-        int numPointLights = env->NumLights_Point();
-        opts |= ((s64)numPointLights & 3U) << 0x28;
+        opts.mNumPoint = env->NumLights_Point();
     }
-    int emissiveMap = mat->GetEmissiveMap() != nullptr;
-    bool intensify = mat->GetIntensify();
-    int texGen = mat->GetTexGen();
-    uint texGenVal;
-    if (texGen == kTexGenSphere) {
+    bool hasEmissive = mat->GetEmissiveMap() != nullptr;
+    opts.mGlowMap = hasEmissive;
+    opts.mIntensify = mat->GetIntensify();
+    int texGenVal;
+    switch (mat->GetTexGen()) {
+    case kTexGenSphere:
         texGenVal = 1;
-    } else if (texGen == kTexGenProjected) {
+        break;
+    case kTexGenProjected:
         texGenVal = 2;
-    } else {
-        texGenVal = -(uint)(texGen == kTexGenEnviron) & 3;
+        break;
+    case kTexGenEnviron:
+        texGenVal = 3;
+        break;
+    default:
+        texGenVal = 0;
+        break;
     }
+    opts.mTexGen = texGenVal;
     bool fadeOut;
-    if (!b) {
-        if (!env->FadeOut() || env->FadeEnd() == env->FadeStart()) {
-            fadeOut = false;
-        } else {
-            fadeOut = true;
-        }
-    } else {
+    if (b) {
         fadeOut = mat->FadeOut();
-    }
-    u64 pseudoHDR;
-    if (!fadeOut) {
-        bool offscreen;
-        if (!b) {
-            offscreen = TheNgRnd.Offscreen();
-        } else {
-            offscreen = TheShaderMgr.GetUnk41();
-        }
-        if (!offscreen && mat->AllowHDR()) {
-            pseudoHDR = 1;
-        } else {
-            pseudoHDR = 0;
-        }
     } else {
-        pseudoHDR = 0;
+        fadeOut = env->FadeOut() && env->FadeEnd() != env->FadeStart();
     }
-    bool fog;
-    if (mat->AllowFog() && mat->GetFog()) {
-        fog = true;
-    } else {
-        fog = false;
-    }
+    opts.mPseudoHDR = !fadeOut
+        && !(b ? TheShaderMgr.GetUnk41() : TheNgRnd.Offscreen()) && mat->AllowHDR();
+    // Retail RB3 X360: no fog term for multimesh.
+    opts.mBillboard = s == kMultimeshBBShader;
     bool colorAdjust;
-    if (!b) {
-        colorAdjust = env->UseColorAdjust();
-    } else {
+    if (b) {
         colorAdjust = mat->ColorAdjust();
+    } else {
+        colorAdjust = env->UseColorAdjust();
     }
-    u64 shaderOpts = ((((s64)mat->GetColorModFlags() & 3U) << 2
-        | (u64)(uint)mat->GetShaderVariation() & 0xffffffff00000003) << 9
-        | (u64)(colorAdjust & 1)) << 0x15
-        | (u64)(s == kMultimeshBBShader) << 0x19
-        | (u64)fog << 0x12
-        | pseudoHDR << 0x16
-        | (s64)(int)texGenVal << 10
-        | (((u64)(intensify & 1) << 0x2e | (u64)(emissiveMap != 0)) << 7 | opts);
-    if (!(opts & 0x100) && TheShaderMgr.UseAO()
-        && env->AOEnabled() && 0.003f < env->AOStrength()) {
-        shaderOpts |= 0x4000000000;
+    opts.mColorXfm = colorAdjust;
+    opts.mColorMod = mat->GetColorModFlags();
+    opts.mCustomVariation = mat->GetShaderVariation();
+    if (!opts.mPrelit && TheShaderMgr.UseAO() && env->AOEnabled()
+        && env->AOStrength() > 0.003f) {
+        opts.mEnableAO = 1;
     }
-    shaderOpts |= ((u64)env->UseToneMapping() & 1) << 0x27;
+    opts.mToneMapping = env->UseToneMapping();
     if (fadeOut) {
         Vector4 fadeParams(mat->unk238, mat->unk23c, mat->unk240, mat->unk244);
         TheShaderMgr.SetPConstant((PShaderConstant)0x68, fadeParams);
-        shaderOpts |= ((s64)mat->unk234 & 3U) << 0x1a;
+        opts.mFadeOut = mat->unk234;
     }
-    CheckDistortionOpts((RndMat *)mat, (ShaderOptions &)shaderOpts);
-    bool hasRecvProjLights;
-    if (mat->GetRecvProjLights()) {
-        hasRecvProjLights = (env->NumLights_Proj() >= 1);
-    } else {
-        hasRecvProjLights = false;
-    }
-    u64 projBlend;
-    if (hasRecvProjLights) {
-        projBlend = env->NumLights_Proj();
-    } else {
-        projBlend = 0;
-    }
-    return ((((u64)(TheHiResScreen.IsActive() & 1) << 2
-        | (u64)(TheRnd.ResourceCached() & 1)) << 0x16 | projBlend & 3) << 0x1c)
-        | (shaderOpts & 0xffebffffcfffffff);
+    // Retail carries no CheckDistortionOpts, projected-light count,
+    // ShowShaderCost or HiResScreen bits here (dc3 adds them).
+    return opts.flags;
 }
 
 u64 RndShaderStandard::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     NgEnviron *env = (NgEnviron *)RndEnviron::Current();
-    u64 skinned = (u64)(TheShaderMgr.BoneCount() != 0) << 0xc;
-    if (TheRnd.DrawMode() == Rnd::kDrawOcclusion) return skinned;
-    if (TheRnd.DrawMode() == Rnd::kDrawShadowDepth) {
-        u64 base = (((u64)(mat->Prelit() & 1) << 4
-            | (u64)(mat->GetDiffuseTex() != nullptr)) << 4) | skinned;
-        if (!mat->UseEnviron()) return base;
-        return base | 0x2000000000000000;
-    }
+    bool skinned = TheShaderMgr.BoneCount() != 0;
+    ShaderOptions opts(0);
+    opts.mSkinned = skinned;
+    // Retail RB3 X360: occlusion is raw Rnd::Mode 3, and there is no
+    // shadow-depth early-out (dc3 adds one).
+    if (TheRnd.DrawMode() == (Rnd::Mode)3)
+        return opts.flags;
     bool fadeOut;
-    if (!b) {
-        if (!env->FadeOut() || env->FadeEnd() == env->FadeStart()) {
-            fadeOut = false;
-        } else {
-            fadeOut = true;
-        }
-    } else {
+    if (b) {
         fadeOut = mat->FadeOut();
+    } else {
+        fadeOut = env->FadeOut() && env->FadeEnd() != env->FadeStart();
     }
-    bool allowHDR = mat->AllowHDR();
     u64 pseudoHDR;
-    if (allowHDR && !fadeOut) {
+    if (mat->AllowHDR() && !fadeOut) {
         bool offscreen;
-        if (!b) {
-            offscreen = TheNgRnd.Offscreen();
-        } else {
+        if (b) {
             offscreen = TheShaderMgr.GetUnk41();
+        } else {
+            offscreen = TheNgRnd.Offscreen();
         }
         if (!offscreen) {
             pseudoHDR = 1;
@@ -751,158 +676,92 @@ u64 RndShaderStandard::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     } else {
         pseudoHDR = 0;
     }
-    int hasDiffuse = mat->GetDiffuseTex() != nullptr;
-    bool prelit = mat->Prelit();
-    u64 hasRealLights;
-    if (!mat->UseEnviron()) {
-        hasRealLights = 0;
-    } else {
-        hasRealLights = (env->NumLights_Real() >= 1) ? 1 : 0;
-    }
-    u64 hasApproxLights;
-    if (!mat->UseEnviron()) {
-        hasApproxLights = 0;
-    } else {
-        hasApproxLights = (env->NumLights_Approx() >= 1) ? 1 : 0;
-    }
-    u64 opts = hasApproxLights << 0x11
-        | hasRealLights << 0x10
-        | ((pseudoHDR << 0xe | (u64)(prelit & 1)) << 4 | (u64)hasDiffuse) << 4 | skinned;
-    if (hasRealLights || hasApproxLights) {
-        u64 hasSpecular = ((int)(mat->GetSpecularRGB().blue * 255.0f) & 0xff) != 0
-            || ((int)(mat->GetSpecularRGB().green * 255.0f) & 0xff) != 0
-            || ((int)(mat->GetSpecularRGB().red * 255.0f) & 0xff) != 0;
-        opts |= hasSpecular << 2;
-        double dZero = 0.0;
+    bool hasDiffuse = mat->GetDiffuseTex() != nullptr;
+    opts.mDiffuseMap = hasDiffuse;
+    opts.mPrelit = mat->Prelit();
+    opts.mPseudoHDR = pseudoHDR;
+    opts.mRealLights = mat->UseEnviron() && env->NumLights_Real() > 0;
+    opts.mApproxLights = mat->UseEnviron() && env->NumLights_Approx() > 0;
+    if (opts.mRealLights || opts.mApproxLights) {
+        opts.mSpecular = mat->GetSpecularRGB().Pack() != 0;
         if (TheShaderMgr.AllowPerPixel() && mat->GetPerPixelLit()) {
             int hasNormal = mat->NormalMap() != nullptr;
-            u64 hasNormDetail;
-            if (mat->GetNormDetailMap() == nullptr || mat->GetNormDetailStrength() <= 0.0f) {
-                hasNormDetail = 0;
-            } else {
-                hasNormDetail = 1;
-            }
-            int cull = mat->GetCull();
-            u64 hasSpecMap;
-            if (!hasSpecular || mat->GetSpecularMap() == nullptr) {
-                hasSpecMap = 0;
-            } else {
-                hasSpecMap = 1;
-            }
-            u64 hasRim = ((int)(mat->GetRimRGB().blue * 255.0f) & 0xff) != 0
-                || ((int)(mat->GetRimRGB().green * 255.0f) & 0xff) != 0
-                || ((int)(mat->GetRimRGB().red * 255.0f) & 0xff) != 0;
-            u64 rimLightUnder;
-            if (!hasRim || !mat->GetRimLightUnder()) {
-                rimLightUnder = 0;
-            } else {
-                rimLightUnder = 1;
-            }
-            u64 hasRimMap;
-            if (!hasRim || mat->GetRimMap() == nullptr) {
-                hasRimMap = 0;
-            } else {
-                hasRimMap = 1;
-            }
-            u64 shadowMap = TheRnd.GetShadowMap() != nullptr;
-            opts = ((s64)(int)(uint)(shadowMap != 0) << 4 | hasRimMap) << 0xf
-                | rimLightUnder << 0xe
-                | hasRim << 0x25
-                | hasSpecMap << 1
-                | (((u64)(cull == kCullBackwards) << 0x1e | hasNormDetail) << 0x18
-                | (s64)(int)(uint)(hasNormal != 0) << 5 | opts
-                | 1);
+            opts.mNormalMap = hasNormal;
+            opts.mPerPixelLighting = 1;
+            bool normDetail = mat->GetNormDetailMap() != nullptr
+                && mat->GetNormDetailStrength() > 0.0f;
+            opts.mNormDetail = normDetail;
+            // Retail RB3 X360 has no mFlipNormal here (dc3 adds it).
+            opts.mSpecularMap = opts.mSpecular && mat->GetSpecularMap() != nullptr;
+            opts.mRimLight = mat->GetRimRGB().Pack() != 0;
+            opts.mRimLightUnder = opts.mRimLight && mat->GetRimLightUnder();
+            opts.mRimLightMap = opts.mRimLight && mat->GetRimMap() != nullptr;
+            int hasShadowMap = TheRnd.GetShadowCam() != nullptr;
+            opts.mShadowBuffer = hasShadowMap;
         }
         if (mat->GetEnvironMap() != nullptr) {
-            u64 environSpecMask;
-            if (!(opts & 2) || !mat->GetEnvironMapSpecMask()) {
-                environSpecMask = 0;
-            } else {
-                environSpecMask = 1;
-            }
-            opts = environSpecMask << 0x31
-                | ((u64)(mat->GetEnvironMapFalloff() & 1)) << 0x2b
-                | opts | 8;
+            opts.mEnvironMapFalloff = mat->GetEnvironMapFalloff();
+            opts.mEnvironMap = 1;
+            opts.mEnvironMapSpecMask = opts.mSpecularMap && mat->GetEnvironMapSpecMask();
         }
-        bool hasRecvProjLights;
-        if (!mat->GetRecvProjLights()) {
-            hasRecvProjLights = false;
-        } else {
-            hasRecvProjLights = (env->NumLights_Proj() >= 1);
-        }
-        u64 hasPointCubeTex;
-        if (!mat->GetRecvPointCubeTex() || env->NumLights_Point() < 1) {
-            hasPointCubeTex = 0;
-        } else {
-            hasPointCubeTex = env->HasPointCubeTex() ? 1 : 0;
-        }
-        float aniso = mat->GetAnisotropy();
-        int numPointLights = env->NumLights_Point();
-        int numProjLights;
-        if (hasRecvProjLights) {
-            numProjLights = env->NumLights_Proj();
-        } else {
-            numProjLights = 0;
-        }
-        u64 projBlend;
-        if (hasRecvProjLights) {
-            projBlend = (env->GetProjectedBlend() == 1) ? 1 : 0;
-        } else {
-            projBlend = 0;
-        }
-        opts = (hasPointCubeTex << 4 | projBlend) << 0x2c
-            | ((s64)numProjLights & 3U) << 0x1c
-            | (((s64)numPointLights & 3U) << 0x14 | (u64)(dZero < (double)aniso)) << 0x14 | opts;
+        bool recvProjLights = mat->GetRecvProjLights() && env->NumLights_Proj() > 0;
+        bool pointCubeTex = mat->GetRecvPointCubeTex() && env->NumLights_Point() > 0
+            && env->HasPointCubeTex();
+        opts.mAnisotropic = mat->GetAnisotropy() > 0.0f;
+        opts.mNumPoint = env->NumLights_Point();
+        opts.mNumProj = recvProjLights ? env->NumLights_Proj() : 0;
+        opts.mProjLightMultiply = recvProjLights && env->GetProjectedBlend() == 1;
+        opts.mPointCubeTex = pointCubeTex;
     }
     if (mat->GetRefractEnabled(b) && mat->GetRefractNormalMap() != nullptr) {
-        opts |= 0x400000000000;
+        opts.mRefractWorld = 1;
     }
-    int emissiveMap = mat->GetEmissiveMap() != nullptr;
-    bool screenAligned = mat->GetScreenAligned();
-    bool intensify = mat->GetIntensify();
-    int texGen = mat->GetTexGen();
-    uint texGenVal;
-    if (texGen == kTexGenSphere) {
+    bool hasEmissive = mat->GetEmissiveMap() != nullptr;
+    opts.mGlowMap = hasEmissive;
+    opts.mScreenAligned = mat->GetScreenAligned();
+    opts.mIntensify = mat->GetIntensify();
+    int texGenVal;
+    switch (mat->GetTexGen()) {
+    case kTexGenSphere:
         texGenVal = 1;
-    } else if (texGen == kTexGenProjected) {
+        break;
+    case kTexGenProjected:
         texGenVal = 2;
-    } else {
-        texGenVal = -(uint)(texGen == kTexGenEnviron) & 3;
+        break;
+    case kTexGenEnviron:
+        texGenVal = 3;
+        break;
+    default:
+        texGenVal = 0;
+        break;
     }
-    bool fog;
-    if (mat->AllowFog() && mat->GetFog()) {
-        fog = true;
-    } else {
-        fog = false;
-    }
+    opts.mTexGen = texGenVal;
+    // Retail RB3 X360: the fog source follows `b` (material vs environment),
+    // as in the fur shader; dc3 reads the material flag unconditionally.
+    opts.mFog = mat->AllowFog() && (b ? mat->GetFog() : env->FogEnable());
+    opts.mBillboard = s == kStandardBBShader;
     bool colorAdjust;
-    if (!b) {
-        colorAdjust = env->UseColorAdjust();
-    } else {
+    if (b) {
         colorAdjust = mat->ColorAdjust();
+    } else {
+        colorAdjust = env->UseColorAdjust();
     }
-    u64 shaderOpts = ((((s64)mat->GetColorModFlags() & 3U) << 2
-        | (u64)(uint)mat->GetShaderVariation() & 0xffffffff00000003) << 9
-        | (u64)(colorAdjust & 1)) << 0x15
-        | (u64)(s == kStandardBBShader) << 0x19
-        | (u64)fog << 0x12
-        | (s64)(int)texGenVal << 10
-        | ((((u64)(intensify & 1) << 0x28 | (u64)(screenAligned & 1)) << 6 | (u64)(emissiveMap != 0))
-        << 7 | opts);
-    if (!(opts & 0x100) && TheShaderMgr.UseAO()
-        && env->AOEnabled() && 0.003f < env->AOStrength()) {
-        shaderOpts |= 0x4000000000;
+    opts.mColorXfm = colorAdjust;
+    opts.mColorMod = mat->GetColorModFlags();
+    opts.mCustomVariation = mat->GetShaderVariation();
+    if (!opts.mPrelit && TheShaderMgr.UseAO() && env->AOEnabled()
+        && env->AOStrength() > 0.003f) {
+        opts.mEnableAO = 1;
     }
-    shaderOpts |= ((u64)env->UseToneMapping() & 1) << 0x27;
-    if (fadeOut && !(shaderOpts & 0x40000)) {
+    opts.mToneMapping = env->UseToneMapping();
+    if (fadeOut && !opts.mFog) {
         Vector4 fadeParams(mat->unk238, mat->unk23c, mat->unk240, mat->unk244);
         TheShaderMgr.SetPConstant((PShaderConstant)0x68, fadeParams);
-        shaderOpts |= ((s64)mat->unk234 & 3U) << 0x1a;
+        opts.mFadeOut = mat->unk234;
     }
-    CheckDistortionOpts((RndMat *)mat, (ShaderOptions &)shaderOpts);
-    return (((u64)(TheHiResScreen.IsActive() & 1) << 2
-        | (u64)(TheRnd.ResourceCached() & 1)) << 0x32)
-        | (shaderOpts & 0xffebffffffffffff);
+    // Retail carries no CheckDistortionOpts, ShowShaderCost or HiResScreen
+    // bits here (dc3 adds them).
+    return opts.flags;
 }
 
 u64 RndShaderPostProc::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
@@ -958,103 +817,69 @@ u64 RndShaderPostProc::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
 }
 
 u64 RndShaderFur::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
-    RndEnviron *env = RndEnviron::Current();
-    u64 skinned = (u64)(TheShaderMgr.BoneCount() != 0) << 0xc;
+    NgEnviron *env = (NgEnviron *)RndEnviron::Current();
+    bool skinned = TheShaderMgr.BoneCount() != 0;
+    ShaderOptions opts(0);
+    opts.mSkinned = skinned;
     // Retail RB3 X360: occlusion is raw Rnd::Mode 3.
-    if (TheRnd.DrawMode() == (Rnd::Mode)3) return skinned;
-    int hasDiffuse = mat->GetDiffuseTex() != nullptr;
-    bool prelit = mat->Prelit();
-    u64 hasRealLights;
-    if (!mat->UseEnviron()) {
-        hasRealLights = 0;
-    } else {
-        hasRealLights = (((NgEnviron *)env)->NumLights_Real() >= 1) ? 1 : 0;
-    }
-    u64 hasApproxLights;
-    if (!mat->UseEnviron()) {
-        hasApproxLights = 0;
-    } else {
-        hasApproxLights = (((NgEnviron *)env)->NumLights_Approx() >= 1) ? 1 : 0;
-    }
-    u64 opts = hasApproxLights << 0x11
-        | hasRealLights << 0x10
-        | (((u64)(prelit & 1) << 4 | (u64)(hasDiffuse != 0)) << 4) | skinned;
-    if (hasRealLights || hasApproxLights) {
+    if (TheRnd.DrawMode() == (Rnd::Mode)3)
+        return opts.flags;
+    bool hasDiffuse = mat->GetDiffuseTex() != nullptr;
+    opts.mDiffuseMap = hasDiffuse;
+    opts.mPrelit = mat->Prelit();
+    opts.mRealLights = mat->UseEnviron() && env->NumLights_Real() > 0;
+    opts.mApproxLights = mat->UseEnviron() && env->NumLights_Approx() > 0;
+    if (opts.mRealLights || opts.mApproxLights) {
         if (TheShaderMgr.AllowPerPixel() && mat->GetPerPixelLit()) {
-            u64 shadowMap = TheRnd.GetShadowMap() != nullptr;
-            opts |= (s64)(int)(uint)(shadowMap != 0) << 0x13;
+            // fur is never per-pixel lit; the target clears the bit here anyway
+            opts.mPerPixelLighting = 0;
+            int hasShadowMap = TheRnd.GetShadowCam() != nullptr;
+            opts.mShadowBuffer = hasShadowMap;
         }
-        bool hasRecvProjLights;
-        if (!mat->GetRecvProjLights()) {
-            hasRecvProjLights = false;
-        } else {
-            hasRecvProjLights = (((NgEnviron *)env)->NumLights_Proj() >= 1);
-        }
-        u64 hasPointCubeTex;
-        if (!mat->GetRecvPointCubeTex() || ((NgEnviron *)env)->NumLights_Point() < 1) {
-            hasPointCubeTex = 0;
-        } else {
-            hasPointCubeTex = ((NgEnviron *)env)->HasPointCubeTex() ? 1 : 0;
-        }
-        float aniso = mat->GetAnisotropy();
-        int numPointLights = ((NgEnviron *)env)->NumLights_Point();
-        int numProjLights;
-        if (hasRecvProjLights) {
-            numProjLights = ((NgEnviron *)env)->NumLights_Proj();
-        } else {
-            numProjLights = 0;
-        }
-        u64 projBlend;
-        if (hasRecvProjLights) {
-            projBlend = (((NgEnviron *)env)->GetProjectedBlend() == 1) ? 1 : 0;
-        } else {
-            projBlend = 0;
-        }
-        opts = (hasPointCubeTex << 4 | projBlend) << 0x2c
-            | ((s64)numProjLights & 3U) << 0x1c
-            | (((s64)numPointLights & 3U) << 0x14 | (u64)(0.0f < aniso)) << 0x14 | opts;
+        bool recvProjLights = mat->GetRecvProjLights() && env->NumLights_Proj() > 0;
+        bool pointCubeTex = mat->GetRecvPointCubeTex() && env->NumLights_Point() > 0
+            && env->HasPointCubeTex();
+        opts.mAnisotropic = mat->GetAnisotropy() > 0.0f;
+        opts.mNumPoint = env->NumLights_Point();
+        opts.mNumProj = recvProjLights ? env->NumLights_Proj() : 0;
+        opts.mProjLightMultiply = recvProjLights && env->GetProjectedBlend() == 1;
+        opts.mPointCubeTex = pointCubeTex;
     }
-    bool screenAligned = mat->GetScreenAligned();
+    opts.mScreenAligned = mat->GetScreenAligned();
     bool fog;
-    if (!b) {
-        fog = env->FogEnable();
-    } else {
+    if (b) {
         fog = mat->GetFog();
-    }
-    if (fog) {
+    } else {
         fog = env->FogEnable();
     }
+    opts.mFog = fog && env->FogEnable();
     bool colorAdjust;
-    if (!b) {
-        colorAdjust = env->UseColorAdjust();
-    } else {
+    if (b) {
         colorAdjust = mat->ColorAdjust();
-    }
-    u64 hasFurTex;
-    if (mat->GetFur() == nullptr || mat->GetFur()->GetFurDetail() == nullptr) {
-        hasFurTex = 0;
     } else {
-        hasFurTex = 1;
+        colorAdjust = env->UseColorAdjust();
     }
-    opts |= hasFurTex << 0x22
-        | ((u64)(colorAdjust & 1)) << 0x15 | (u64)fog << 0x12 | ((u64)(screenAligned & 1)) << 0xd;
+    opts.mColorXfm = colorAdjust;
+    bool furDetail;
+    if (mat->GetFur() != nullptr && mat->GetFur()->GetFurDetail() != nullptr) {
+        furDetail = true;
+    } else {
+        furDetail = false;
+    }
+    opts.mFurDetail = furDetail;
     bool fadeOut;
-    if (!b) {
-        if (!env->FadeOut() || env->FadeEnd() == env->FadeStart()) {
-            fadeOut = false;
-        } else {
-            fadeOut = true;
-        }
-    } else {
+    if (b) {
         fadeOut = mat->FadeOut();
+    } else {
+        fadeOut = env->FadeOut() && env->FadeEnd() != env->FadeStart();
     }
-    if (fadeOut && !fog) {
+    if (fadeOut && !opts.mFog) {
         Vector4 fadeParams(mat->unk238, mat->unk23c, mat->unk240, mat->unk244);
         TheShaderMgr.SetPConstant((PShaderConstant)0x68, fadeParams);
-        opts = (opts & ~(3ULL << 0x1a)) | (((s64)mat->unk234 & 3) << 0x1a);
+        opts.mFadeOut = mat->unk234;
     }
-    // Retail carries no HiResScreen / ResourceCached bits.
-    return opts;
+    // Retail carries no ShowShaderCost / HiResScreen bits (dc3 adds them).
+    return opts.flags;
 }
 
 u64 RndShaderSyncTrack::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
@@ -1264,21 +1089,23 @@ void RndShaderParticles::Select(RndMat *mat, ShaderType s, bool b) {
 void RndShaderMultimesh::Select(RndMat *mat, ShaderType s, bool b) {
     if (!mat) mat = TheRnd.DefaultMat();
     TheRenderState.SetFillMode((RndRenderState::FillMode)0);
-    bool skinned = TheShaderMgr.BoneCount() != 0;
-    if (!RedundantState(mat, s, skinned, TheShaderMgr.UseAO(), b)) {
+    if (!RedundantState(mat, s, false, TheShaderMgr.UseAO(), b)) {
 #ifdef HX_NATIVE
         TheNgStats->mMats++;
 #endif
         ((NgMat *)mat)->SetupShader(TheShaderMgr.AllowPerPixel(), true);
-        CheckShadow();
         u64 optsVal = CalcShaderOpts((NgMat *)mat, s, b);
         SetColorWriteMask(ShaderOptions(optsVal), mat);
-        CheckExtrude();
-        CheckForceCull(kStandardShader);
-        Cache(kStandardShader, ShaderOptions(optsVal), mat);
+        // Retail RB3 X360: no CheckDistortion here (dc3 adds it).
+        CheckForceCull(kMultimeshShader);
+        Cache(kMultimeshShader, ShaderOptions(optsVal), mat);
     }
 }
 
+// Retail RB3 X360 (0x824A8080, identified as RndShaderStandard by the RTTI
+// locator in front of its vtable): the shader type is hard-wired to
+// kStandardShader and there is no CheckDistortion.  The native build keeps
+// dc3's type-preserving body, which the AllWhite shader relies on.
 void RndShaderStandard::Select(RndMat *mat, ShaderType shader_type, bool b) {
     if (!mat) mat = TheRnd.DefaultMat();
     TheRenderState.SetFillMode((RndRenderState::FillMode)0);
@@ -1286,15 +1113,10 @@ void RndShaderStandard::Select(RndMat *mat, ShaderType shader_type, bool b) {
     if (!RedundantState(mat, shader_type, skinned, TheShaderMgr.UseAO(), b)) {
 #ifdef HX_NATIVE
         TheNgStats->mMats++;
-#endif
         ((NgMat *)mat)->SetupShader(TheShaderMgr.AllowPerPixel(), true);
         CheckShadow();
         ShaderOptions opts(CalcShaderOpts((NgMat *)mat, shader_type, b));
-#ifdef HX_NATIVE
         MILO_ASSERT((shader_type == kStandardShader || shader_type == kStandardBBShader || shader_type == kAllWhiteShader), 0x4BB);
-#else
-        MILO_ASSERT((shader_type == kStandardShader || shader_type == kStandardBBShader), 0x4BB);
-#endif
         if (shader_type == kStandardBBShader) {
             shader_type = kStandardShader;
         }
@@ -1303,6 +1125,15 @@ void RndShaderStandard::Select(RndMat *mat, ShaderType shader_type, bool b) {
         CheckForceCull(shader_type);
         CheckDistortion(mat);
         Cache(shader_type, opts, mat);
+#else
+        ((NgMat *)mat)->SetupShader(TheShaderMgr.AllowPerPixel(), true);
+        CheckShadow();
+        u64 optsVal = CalcShaderOpts((NgMat *)mat, shader_type, b);
+        SetColorWriteMask(ShaderOptions(optsVal), mat);
+        CheckExtrude();
+        CheckForceCull(kStandardShader);
+        Cache(kStandardShader, ShaderOptions(optsVal), mat);
+#endif
     }
 }
 
