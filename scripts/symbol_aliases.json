@@ -15492,11 +15492,17 @@
   {
    "name": "$?5VString",
    "address": "0x82279a00",
-   "survivor": "??$?5VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@@Z",
-   "folded": [
-    "??$?5VPatchLayer@@V?$StlNodeAlloc@VPatchLayer@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@VPatchLayer@@V?$StlNodeAlloc@VPatchLayer@@@stlpmtx_std@@@stlpmtx_std@@@Z"
+   "survivor": "??$?5VPatchLayer@@V?$StlNodeAlloc@VPatchLayer@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@VPatchLayer@@V?$StlNodeAlloc@VPatchLayer@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$?5VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+     "lane": "W17-BSR 2026-09-30",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION"
+    }
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "withdrawn_reason": "W17-BSR 2026-09-30: the T1 evidence below matched OUR vector<PatchLayer> reader to retail 0x82279A00, which identifies that address as the PatchLayer reader (stride 0x50, element reader ??5..PatchLayer, ctor ??0PatchLayer, only caller in PatchDir). vector<String> is a different retail body at 0x823D54A8 (stride 0xC, String ctor/dtor), so it cannot fold here; the map now names each address directly and the String spelling is withdrawn from this group, not moved into `folded`."
   },
   {
    "name": "1?$vector",
