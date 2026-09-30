@@ -29,8 +29,7 @@ void PerformanceData::Initialize(
     bool b
 ) {
     m0x24 = 0;
-    if (MetaPanel::sIsPlaytest)
-        mIsPlaytest = true;
+    // Retail never reads MetaPanel::sIsPlaytest here (Wii dev-build only).
     mIsOnline = !TheNetSession->IsLocal();
     m0x28 = true;
     mMode = mode;
