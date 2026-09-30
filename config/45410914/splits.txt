@@ -2442,7 +2442,7 @@ CharClipGroup.cpp:
 	.pdata      start:0x82203408 end:0x82203410
 	.pdata      start:0x82203410 end:0x82203420
 	.pdata      start:0x82203420 end:0x82203440
-	.pdata      start:0x822034D8 end:0x82203540
+	.pdata      start:0x822034C8 end:0x82203540
 	.text       start:0x8238DB00 end:0x8238DB64
 	.text       start:0x8238DB68 end:0x8238DBD8
 	.text       start:0x8238DBD8 end:0x8238DCB8
@@ -2460,7 +2460,7 @@ CharClipGroup.cpp:
 	.text       start:0x8238F768 end:0x8238F7CC
 	.text       start:0x8238F7D0 end:0x8238F930
 	.text       start:0x8238F930 end:0x8238FB88
-	.text       start:0x8239040C end:0x82390B38
+	.text       start:0x82390368 end:0x82390B38
 
 CharClipSet.cpp:
 	.pdata      start:0x821FB2C8 end:0x821FB2D0
@@ -3220,7 +3220,7 @@ HamCamTransform.cpp:
 	.pdata      start:0x821F4D80 end:0x821F4D90
 	.pdata      start:0x821F4D98 end:0x821F4DB0
 	.pdata      start:0x821F4DC8 end:0x821F4DE0
-	.pdata      start:0x821F4E08 end:0x821F4E48
+	.pdata      start:0x821F4E10 end:0x821F4E48
 	.pdata      start:0x821F4E50 end:0x821F4E70
 	.pdata      start:0x821F4E78 end:0x821F4F20
 	.pdata      start:0x821F4F58 end:0x821F4F68
@@ -3252,7 +3252,7 @@ HamCamTransform.cpp:
 	.text       start:0x822A70A0 end:0x822A7250
 	.text       start:0x822A72B0 end:0x822A73D0
 	.text       start:0x822A7610 end:0x822A7730
-	.text       start:0x822A79A4 end:0x822A7D10
+	.text       start:0x822A7A10 end:0x822A7D10
 	.text       start:0x822A7DBC end:0x822A8000
 	.text       start:0x822A8064 end:0x822A8970
 	.text       start:0x822A8BC0 end:0x822A8BC8
@@ -7383,9 +7383,7 @@ CharGuitarString.cpp:
 	.text       start:0x823D5878 end:0x823D6704
 
 HAQManager.cpp:
-	.pdata      start:0x822034C8 end:0x822034D8
 	.pdata      start:0x8225E778 end:0x8225E7B0
-	.text       start:0x82390368 end:0x8239040C
 	.text       start:0x82BB1260 end:0x82BB197C
 
 TransConstraint.cpp:
@@ -8190,7 +8188,7 @@ band3/bandtrack/Gem.cpp:
 	.pdata      start:0x821F4DE0 end:0x821F4DF0
 	.pdata      start:0x821F4DF0 end:0x821F4DF8
 	.pdata      start:0x821F4DF8 end:0x821F4E00
-	.pdata      start:0x821F4E00 end:0x821F4E08
+	.pdata      start:0x821F4E00 end:0x821F4E10
 	.pdata      start:0x821F4E48 end:0x821F4E50
 	.pdata      start:0x821F4E70 end:0x821F4E78
 	.pdata      start:0x821F4F20 end:0x821F4F38
@@ -8243,7 +8241,7 @@ band3/bandtrack/Gem.cpp:
 	.text       start:0x822A77E0 end:0x822A77E8
 	.text       start:0x822A77E8 end:0x822A7838
 	.text       start:0x822A7838 end:0x822A7860
-	.text       start:0x822A7860 end:0x822A79A4
+	.text       start:0x822A7860 end:0x822A7A10
 	.text       start:0x822A7D10 end:0x822A7DBC
 	.text       start:0x822A8000 end:0x822A8064
 	.text       start:0x822A8970 end:0x822A8B64

@@ -79993,7 +79993,7 @@
   {
    "name": "$?5V?$ObjOwnerPtr",
    "address": "0x822a79a8",
-   "survivor": "??$?5V?$ObjOwnerPtr@VCharClip@@@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@V?$ObjOwnerPtr@VCharClip@@@@@@@Z",
+   "survivor": "??$?5V?$ObjPtr@VRndDir@@@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@V?$ObjPtr@VRndDir@@@@@@@Z",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
