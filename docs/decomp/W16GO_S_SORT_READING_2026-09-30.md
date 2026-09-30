@@ -297,3 +297,26 @@ then committed on `w16-go`.
   measured; the other two are filed here for the §5 re-pin lane (the MultiMesh one
   also needs the allocator question settled before its spelling is known). The
   remaining 12 family rows were not opened.
+
+---
+
+## Addendum (coordinator, 2026-09-30 01:5x UTC) — W17-SSORT landed first
+
+A concurrent coordinator session's lane **W17-SSORT** landed the same verdict on main
+(`876abdd5`, 01:30 UTC) before this lane reported: the identical `0x827e5d88` rename
+(byte-identical mangled name) **plus** the `0x824e1858` fold alias, measured there at
+**+2 fns / +2,392 B** (`CopyTypeProperties` 1,472 + `BandWardrobe::OnSelectExtras` 920).
+This lane's map commit is therefore a no-op on rebase and is **not** what put the rename
+on main; its measurements above are an **independent replication** on the same ruler
+(same Δ0/Δ0/Δfuzzy −0.004126 pp for the rename leg), reached without knowledge of W17-SSORT.
+
+What this doc adds beyond W17-SSORT, all UNACTIONED:
+- `TrackWidgetImp.cpp` is a TU our tree lacks entirely; its code (`0x827E5314–0x827E64B8`) is
+  mis-pinned inside `MidiParser.cpp`'s range, which alternates with `TrackWidget.cpp` pins
+  through `0x827E1768–0x827E64B8`.
+- ⚠ **CONFLICT TO ADJUDICATE:** this lane claims the map labels at `0x827e3c38` / `0x827e3e10`
+  are swapped; W17-SSORT used `0x827e3c38`'s MeshInstance name as a *passing* control. Both can
+  hold — W17 compared the compiler-emitted SPELLING to the row's name string, not which body sits
+  at which address — so neither result refutes the other yet.
+- `0x827e5c48` labelled `~_List_base<MidiParser*>` is the TextInstance list dtor thunk.
+- Retail's MultiMesh widget list uses `TransformListAlloc` where ours uses `StlNodeAlloc`.
