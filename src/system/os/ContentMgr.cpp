@@ -170,11 +170,9 @@ void ContentMgr::PollRefresh() {
                         if ((*cit)->HasContentAltDirs()) {
                             std::vector<String> *altDirs = (*cit)->ContentAltDirs();
                             const char *pattern = (*cit)->ContentPattern();
-                            static DataNode &n = DataVariable("extra_songs");
-                            int num = n.Int() ? altDirs->size() : 2;
-                            auto altDir = altDirs->begin();
-                            for (int i = 0; altDir != altDirs->end() && i < num;
-                                 i++, altDir++) {
+                            for (std::vector<String>::iterator altDir = altDirs->begin();
+                                 altDir != altDirs->end();
+                                 ++altDir) {
                                 String str(FileMakePath((*it)->Root(), altDir->c_str()));
                                 String str2(MakeString("%s/%s", str, pattern));
                                 FileEnumerate(
