@@ -22701,7 +22701,7 @@
  "0x827ef598": "?ReadFileHeader@MidiReader@@AAAXAAVBinStream@@@Z",
  "0x827ef6b0": "?ReadSystemEvent@MidiReader@@AAAXHEAAVBinStream@@@Z",
  "0x827ef730": "?ReadEvent@MidiReader@@AAAXAAVBinStream@@@Z",
- "0x827ef848": "?ReadNextEventImpl@MidiReader@@AAAXXZ",
+ "0x827ef848": "?ReadNextEvent@MidiReader@@AAAXXZ",
  "0x827ef8d0": "?ReadSomeEvents@MidiReader@@QAA_NH@Z",
  "0x827ef930": "?ReadTrack@MidiReader@@AAA_NXZ",
  "0x827ef990": "?ReadAllTracks@MidiReader@@QAAXXZ",
