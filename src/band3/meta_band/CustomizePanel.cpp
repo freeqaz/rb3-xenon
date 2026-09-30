@@ -1523,8 +1523,9 @@ bool CustomizePanel::IsAssetPatchable() {
         return false;
     BandCharDesc::Patch::Category cat =
         GetPatchCategoryFromAssetType(GetAssetTypeFromSymbol(mClosetMgr->unk44));
-    for (int i = 0; i < cfg->mPatches.size(); i++) {
-        if (cfg->mPatches[i].mCategory == cat)
+    const ObjVector<BandPatchMesh> &patches = cfg->mPatches;
+    for (int i = 0; i < patches.size(); i++) {
+        if (patches[i].mCategory == cat)
             return true;
     }
     return false;
