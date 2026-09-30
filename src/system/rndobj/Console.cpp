@@ -489,7 +489,11 @@ bool RndConsole::OnMsg(const KeyboardKeyMsg &msg) {
     if (!mShowing)
         return 0;
     if (msg.GetKey() == 0x12E) {
+        // rb3-Wii guards this with #ifdef MILO_DEBUG; retail (0x82467158)
+        // branches straight to the tail with no call.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
         SetShowing(false);
+#endif
     } else if (msg.GetKey() == 9) {
         if (mTabLen == 0)
             mTabLen = mInput->CurrentLine().length();
@@ -555,19 +559,17 @@ bool RndConsole::OnMsg(const KeyboardKeyMsg &msg) {
         mCursor = 0;
     } else if (msg.GetKey() == 10) {
         mCursor = 0;
-        MILO_TRY { ExecuteLine(); }
-        MILO_CATCH(errMsg) {
-            mInput->CurrentLine().erase();
-            *mInput << errMsg << "\n";
-            MILO_LOG("%s\n", errMsg);
-        }
+        // Retail (TU5 0x82467554) calls ExecuteLine() bare: no EH frame, no
+        // SetTry -- the dev build's MILO_TRY/MILO_CATCH is compiled out here.
+        ExecuteLine();
     } else if (msg.GetKey() == 0x7D && msg.GetCtrl()) {
         String &curLine = mInput->CurrentLine();
         curLine.insert(0, 1, '{');
         curLine.insert(curLine.length(), "} ");
         mCursor = curLine.length();
-    } else if (msg.GetKey() != 0x10) {
-        char buf[2] = { '\0', '\0' };
+    } else {
+        // Retail has no `!= 0x10` guard: the fallthrough inserts unconditionally.
+        char buf[2] = { 0 };
         buf[0] = msg.GetKey();
         if (mCursor > mInput->CurrentLine().length()) {
             mCursor = mInput->CurrentLine().length();
