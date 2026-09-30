@@ -173,6 +173,10 @@ void VocalTrack::MissTambourineGem(int, bool) {}
 void VocalTrackDir::ShowPhraseFeedback(int, int, int, bool) {}
 void VocalTrackDir::UpdateVocalMeters(bool, bool, bool, bool) {}
 void VocalTrackDir::TambourineNote() {}
+// W16-HX: VocalPlayer::HandleDeactivateVolume now calls the retail-only
+// VocalTrackDir::DeactivateVolume (bandobj/VocalTrackDir.cpp), a HUD leaf on
+// mTrack's dir; VocalTrackDir.cpp is not a source of rb3-vocal2 / rb3-harmony.
+void VocalTrackDir::DeactivateVolume(VocalParam) {}
 
 // Fader::DoFade — the guarded (always-null-in-native) tambourine audio-duck call
 // still emits a reference; provide a no-op body. Fader is never instantiated.
