@@ -1,4 +1,6 @@
 #include "synth/StreamReceiver.h"
+
+#define kStreamRcvrSendSize 0xC000
 #include "os/Debug.h"
 #ifdef HX_NATIVE
 #include "platform/StreamReceiver_Native.h"
@@ -97,36 +99,40 @@ void StreamReceiver::Poll() {
         mDoneBufferCounter++;
     }
 #else
-    if (kInit != (unsigned int)mState) {
-        if (mState == kReady) {
-            goto ready;
-        }
-        if (mState > kStopped) {
-            MILO_FAIL("bad state logic.\n");
-            goto ready;
-        }
+    // Retail RB3-360 (0x8272a5b8): a switch on the state, 0xC000-byte send
+    // blocks (hence divw, not a shift) and a 100000 wrap limit, as rb3-Wii.
+    switch ((unsigned int)mState) {
+    case kInit:
+        mWantToSend = true;
+        break;
+    case kReady:
+        break;
+    case kPlaying:
+    case kStopped: {
         int playCursor = GetPlayCursor();
-        int activeBuf = playCursor / 0x4000;
+        int activeBuf = playCursor / kStreamRcvrSendSize;
         mLastPlayCursor = playCursor;
         MILO_ASSERT(activeBuf >= 0 && activeBuf < mNumBuffers, 0xc2);
         if (!mSlipEnabled && activeBuf != mSendTarget) {
             mWantToSend = true;
         }
-        int halfBufs = mNumBuffers / 2;
         int diff = activeBuf - mSendTarget;
-        if (diff != halfBufs && diff != -halfBufs) {
-            goto ready;
+        if (diff == mNumBuffers / 2 || diff == -(mNumBuffers / 2)) {
+            mWantToSend = true;
         }
+        break;
     }
-    mWantToSend = true;
-ready:
-    if (mWantToSend && mState != kInit && mRingFreeSpace != kStreamRcvrBufSize) {
+    default:
+        MILO_FAIL("bad state logic.\n");
+        break;
+    }
+    if (mWantToSend && mState != kInit && kStreamRcvrBufSize - mRingFreeSpace != 0) {
         mStarving = true;
     }
-    if (mWantToSend && mRingFreeSpace >= 0x4000 && !mSending) {
-        StartSendImpl(mBuffer, 0x4000, mSendTarget);
+    if (mWantToSend && mRingFreeSpace >= kStreamRcvrSendSize && !mSending) {
+        StartSendImpl(mBuffer, kStreamRcvrSendSize, mSendTarget);
         mBuffersSent++;
-        if (mBuffersSent >= 700000) {
+        if (mBuffersSent >= 100000) {
             mBuffersSent -= mNumBuffers;
         }
         int sendTarget = mSendTarget;
@@ -145,15 +151,15 @@ ready:
                 mState = kReady;
                 mWantToSend = false;
             }
-            int overflow = mRingFreeSpace - 0x4000;
+            int overflow = mRingFreeSpace - kStreamRcvrSendSize;
             MILO_ASSERT(overflow >= 0, 0x134);
             if (overflow != 0) {
-                XMemCpy(mBuffer, mBuffer + 0x4000, overflow);
+                XMemCpy(mBuffer, mBuffer + kStreamRcvrSendSize, overflow);
             }
-            int ringFreeSpace = mRingFreeSpace;
-            mRingFreeSpace = ringFreeSpace - 0x4000;
+            int ringFreeSpace = mRingFreeSpace - kStreamRcvrSendSize;
+            mRingFreeSpace = ringFreeSpace;
             if (mEndData) {
-                memset(&mBuffer[ringFreeSpace - 0x4000], 0, kStreamRcvrBufSize - (ringFreeSpace - 0x4000));
+                memset(&mBuffer[ringFreeSpace], 0, kStreamRcvrBufSize - ringFreeSpace);
                 mRingFreeSpace = kStreamRcvrBufSize;
                 mDoneBufferCounter++;
             }
