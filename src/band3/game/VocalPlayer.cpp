@@ -1185,7 +1185,7 @@ void VocalPlayer::UnpackFloats(
     float fDifference = f2 - f1;
     MILO_ASSERT(fDifference > 0.0f, 0x6F3);
     for (int i = 0; i < 4; i++) {
-        o_rFractionArray[i] = (float)(int)(unsigned char)i1 / 255.0f * fDifference + f1;
+        o_rFractionArray[i] = fDifference * ((float)(int)(unsigned char)i1 / 255.0f) + f1;
         i1 >>= 8;
     }
 }
