@@ -442,17 +442,31 @@ DataNode EntityUploader::OnRockCentralOpComplete(DataArray *arr) {
 }
 
 int EntityUploader::BeginRockCentralOps(int maxOps) {
+    // Retail re-reads mUploadOps[i] for the op type/ID and in the name/band
+    // branches; only the char and setlist branches reuse the first read.
     int numStarted = 0;
     for (int i = 0; i < mNumUploadOps; i++) {
         EntityData *op = mUploadOps[i];
         if (op->mRetCode == 0) {
-            int opType = op->mOpType;
-            int opID = op->mOpID;
+            int opType = mUploadOps[i]->mOpType;
+            int opID = mUploadOps[i]->mOpID;
             if (opType == 1) {
-                TheRockCentral.VerifyBandName(op->mString.c_str(), op->mDataResultList, this, opID, maxOps);
+                TheRockCentral.VerifyBandName(
+                    mUploadOps[i]->mString.c_str(),
+                    mUploadOps[i]->mDataResultList,
+                    this,
+                    opID,
+                    maxOps
+                );
                 numStarted++;
             } else if (opType == 0) {
-                TheRockCentral.VerifyCharName(op->mString.c_str(), op->mDataResultList, this, opID, maxOps);
+                TheRockCentral.VerifyCharName(
+                    mUploadOps[i]->mString.c_str(),
+                    mUploadOps[i]->mDataResultList,
+                    this,
+                    opID,
+                    maxOps
+                );
                 numStarted++;
             } else if (opType == 2) {
                 TourCharLocal *c = static_cast<TourCharLocal *>(op->mSavableObject);
@@ -460,8 +474,8 @@ int EntityUploader::BeginRockCentralOps(int maxOps) {
                 numStarted++;
             } else if (opType == 3) {
                 TheRockCentral.UpdateBand(
-                    static_cast<TourBand *>(op->mSavableObject),
-                    op->mDataResultList,
+                    static_cast<TourBand *>(mUploadOps[i]->mSavableObject),
+                    mUploadOps[i]->mDataResultList,
                     this,
                     opID,
                     maxOps
