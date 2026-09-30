@@ -703,6 +703,7 @@ void DirLoader::SaveObjects(BinStream &bs, ObjectDir *dir) {
     }
 }
 
+#ifdef HX_NATIVE
 bool DirLoader::SaveObjects(const char *file, ObjectDir *dir) {
     if (sCacheMode && dir->InlineSubDirType() != kInlineNever) {
         MILO_LOG("Not caching %s because it is an inlined subdir.\n", file);
@@ -733,6 +734,36 @@ bool DirLoader::SaveObjects(const char *file, ObjectDir *dir) {
         }
     }
 }
+#else
+// RB3 retail (0x82756DE8): the cache platform is a constant (Xbox when caching,
+// PC otherwise -- no TheLoadMgr.GetPlatform), no Wii buffer size, no gNullFiles,
+// and no notify on a failed open.
+bool DirLoader::SaveObjects(const char *file, ObjectDir *dir) {
+    if (sCacheMode && dir->InlineSubDirType() != kInlineNever) {
+        return false;
+    } else {
+        FilePathTracker tracker(FileGetPath(file));
+        file = CachedPath(file, false);
+        if (sCacheMode) {
+            FileMkDir(FileGetPath(file));
+        }
+        ChunkStream cs(
+            file,
+            ChunkStream::kWrite,
+            0x20000,
+            true,
+            sCacheMode ? kPlatformXBox : kPlatformPC,
+            sCacheMode
+        );
+        if (cs.Fail()) {
+            return false;
+        } else {
+            SaveObjects(cs, dir);
+            return true;
+        }
+    }
+}
+#endif
 
 bool DirLoader::SetupDir(Symbol sym) {
 #ifdef HX_NATIVE
