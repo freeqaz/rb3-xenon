@@ -965,20 +965,52 @@ DataNode Game::OnMsg(const ButtonDownMsg &msg) {
                 if (!mOvershellWantsPause && !mRealtime
                     && ((int *)mUnkTU5GuidePitch)[pad] == 1) {
                     bool stopped = mMusicSpeed == 0.0f;
+                    // Retail lowers this as button -> dense action index (a
+                    // value-mapping decision tree, each leaf `li r11,N`) and then
+                    // an mtctr/bdz chain over the index: two stacked switches.
+                    int action;
                     switch (msg.GetButton()) {
-                    case kPad_L2: {
+                    case kPad_L1:
+                        action = 0;
+                        break;
+                    case kPad_R1:
+                        action = 1;
+                        break;
+                    case kPad_DLeft:
+                        action = 2;
+                        break;
+                    case kPad_DRight:
+                        action = 3;
+                        break;
+                    case kPad_R2:
+                        action = 4;
+                        break;
+                    case kPad_L2:
+                        action = 5;
+                        break;
+                    case kPad_DUp:
+                        action = 6;
+                        break;
+                    case kPad_DDown:
+                        action = 7;
+                        break;
+                    default:
+                        return DATA_UNHANDLED;
+                    }
+                    switch (action) {
+                    case 5: { // kPad_L2
                         static Message camToggle("audition_cam_toggle");
                         TheGamePanel->Handle(camToggle, true);
                         break;
                     }
-                    case kPad_R2: {
+                    case 4: { // kPad_R2
                         static Message deploy("deploy_if_possible");
                         for (int i = 0; i < mAllActivePlayers.size(); i++) {
                             mAllActivePlayers[i]->Handle(deploy, true);
                         }
                         break;
                     }
-                    case kPad_DLeft: {
+                    case 2: { // kPad_DLeft
                         float speed =
                             mMusicSpeed == 0.25f ? 0.0f : mMusicSpeed * 0.5f;
                         if (speed == 0.0f && !stopped) {
@@ -990,7 +1022,7 @@ DataNode Game::OnMsg(const ButtonDownMsg &msg) {
                         }
                         break;
                     }
-                    case kPad_DRight: {
+                    case 3: { // kPad_DRight
                         float speed = stopped ? 0.25f : mMusicSpeed * 2.0f;
                         if (stopped) {
                             mGameWantsPause = false;
@@ -1001,7 +1033,7 @@ DataNode Game::OnMsg(const ButtonDownMsg &msg) {
                         }
                         break;
                     }
-                    case kPad_DUp: {
+                    case 6: { // kPad_DUp
                         DataArray *vols =
                             TheGamePanel->Property("audition_keyboard_synth_volumes", true)
                                 ->Array();
@@ -1017,7 +1049,7 @@ DataNode Game::OnMsg(const ButtonDownMsg &msg) {
                         }
                         break;
                     }
-                    case kPad_DDown: {
+                    case 7: { // kPad_DDown
                         int track = mUnkTU5GuidePitch->mGuidePitch->GetGuideTrack() + 1;
                         if (track == TheSongDB->GetVocalNoteListCount()) {
                             track = -1;
@@ -1025,7 +1057,7 @@ DataNode Game::OnMsg(const ButtonDownMsg &msg) {
                         mUnkTU5GuidePitch->mGuidePitch->EnableGuideTrack(track);
                         break;
                     }
-                    case kPad_L1: {
+                    case 0: { // kPad_L1
                         static float back = TheGamePanel->Property("audition_jump_back_ms", true)
                                                 ->Float();
                         Jump(
@@ -1041,7 +1073,7 @@ DataNode Game::OnMsg(const ButtonDownMsg &msg) {
                         mUnkTU5GuidePitch->mGuidePitch->StopNote();
                         break;
                     }
-                    case kPad_R1: {
+                    case 1: { // kPad_R1
                         static float fwd =
                             TheGamePanel->Property("audition_jump_forward_ms", true)->Float();
                         static float endBuffer =
@@ -1060,8 +1092,6 @@ DataNode Game::OnMsg(const ButtonDownMsg &msg) {
                         mUnkTU5GuidePitch->mGuidePitch->StopNote();
                         break;
                     }
-                    default:
-                        break;
                     }
                 }
             }
