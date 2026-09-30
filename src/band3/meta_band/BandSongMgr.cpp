@@ -435,7 +435,14 @@ int BandSongMgr::NumRankTiers(Symbol s) const {
     return r->mTierRanges.size();
 }
 
+// Retail declares song_groupings/rank/band as FUNCTION-LOCAL statics sharing
+// one guard word, claimed in that order (song_groupings 0x1, rank 0x2,
+// band 0x4 -- matches left-to-right expression evaluation), not the
+// utl/Symbols.h globals -- W16-GZ localstatic lever.
 Symbol BandSongMgr::RankTierToken(int i) const {
+    static Symbol song_groupings("song_groupings");
+    static Symbol rank("rank");
+    static Symbol band("band");
     return SystemConfig(song_groupings, rank)->Array(i + 1)->FindSym(band);
 }
 
