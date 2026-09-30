@@ -428,8 +428,10 @@ void TrackPanel::HandleRemoveUser(BandUser *user) {
 }
 
 void TrackPanel::PostHandleRemoveUser(BandUser *user) {
-    if (std::find(mTracks.begin(), mTracks.end(), user->GetTrack()) != mTracks.end()) {
-        Track *track = user->GetTrack();
+    std::vector<Track *>::iterator it =
+        std::find(mTracks.begin(), mTracks.end(), user->GetTrack());
+    if (it != mTracks.end()) {
+        Track *track = *it;
         mTracks.erase(std::remove(mTracks.begin(), mTracks.end(), track));
         delete track;
     }
