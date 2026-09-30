@@ -1488,11 +1488,11 @@ void CustomizePanel::MovePatch(float dx, float dy) {
     );
     if (idx != -1) {
         BandCharDesc::Patch *patch = mPreviewDesc->GetPatch(idx);
-        float oldX = patch->mUV.x;
-        float oldY = patch->mUV.y;
-        Vector2 newUV;
-        newUV.x = oldX + dx;
-        newUV.y = oldY + dy;
+        Vector2 newUV = patch->mUV;
+        float oldX = newUV.x;
+        float oldY = newUV.y;
+        newUV.x += dx;
+        newUV.y += dy;
         if (newUV.x < 0.0f)
             newUV.x = 0.0f;
         else if (newUV.x > 1.0f)
@@ -1501,12 +1501,9 @@ void CustomizePanel::MovePatch(float dx, float dy) {
             newUV.y = 0.0f;
         else if (newUV.y > 1.0f)
             newUV.y = 1.0f;
-        bool changed = false;
-        if (newUV.x != oldX || newUV.y != oldY)
-            changed = true;
+        bool changed = newUV.x != oldX || newUV.y != oldY;
         if (changed) {
-            patch->mUV.x = newUV.x;
-            patch->mUV.y = newUV.y;
+            patch->mUV = newUV;
             RefreshPatchEdit();
         }
     }
