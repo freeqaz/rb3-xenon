@@ -32,18 +32,126 @@ void BandLabel::Save(BinStream &) { MILO_ASSERT(0, 0x44); }
 
 void BandLabel::Load(BinStream &bs) {
     PreLoad(bs);
+    PostLoad(bs);
 }
 
+// Retail stores the rev words through ONE base register (lbl_82CBE3A8:
+// altRev+0, rev+4) -- the ObjMacros.h gRev dialect with internal-linkage,
+// align(4) file-scope statics, not this TU's Object.h BinStreamRev dialect.
+// Same lever as BandButton.cpp / BandCrowdMeter.cpp.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gBandLabelRevs;
+#define gAltRev gBandLabelRevs.altRev
+#define gRev gBandLabelRevs.rev
+
 void BandLabel::PreLoad(BinStream &bs) {
-    LOAD_REVS(bs)
-    ASSERT_REVS(0x11, 0)
-    if (d.rev >= 0x11) {
-        UILabel::PreLoad(d.stream);
-        LoadHandlerData(d.stream);
+    Hmx::Color col;
+    int rev;
+    bs >> rev;
+    gRev = getHmxRev(rev);
+    gAltRev = getAltRev(rev);
+    bool b87 = false;
+    if (gRev < 0xB) {
+        if (gRev <= 6) {
+            RndTransformable::Load(bs);
+            RndDrawable::Load(bs);
+        } else
+            UILabel::PreLoad(bs);
+
+        if (gRev > 5) {
+            if (gRev < 10) {
+                bool b88;
+                bs >> b88 >> mWidth >> mHeight;
+                if (b88)
+                    mFitType = kFitStretch;
+                else
+                    mFitType = kFitWrap;
+            } else {
+                int i50;
+                bs >> i50;
+                bs >> mWidth;
+                bs >> mHeight;
+                mFitType = (FitType)i50;
+            }
+        } else
+            mFitType = kFitWrap;
+
+        if (gRev < 8 && mFitType == kFitStretch) {
+            Hmx::Matrix3 m;
+            m.Identity();
+            SetLocalRot(m);
+        }
+        if (gRev > 4)
+            bs >> mLeading;
+        if (gRev > 3)
+            bs >> (int &)mAlignment;
+        if (gRev < 2) {
+            int i, j, k, l;
+            bs >> i >> j >> k >> l;
+        }
+        if (gRev <= 6) {
+            Symbol s;
+            bs >> s;
+            SetType(s);
+        }
+        if (gRev != 0)
+            bs >> b87;
+        else
+            b87 = false;
+        if (gRev <= 6)
+            bs >> mTextToken;
+        if (gRev < 10) {
+            int i;
+            bs >> i;
+        }
+        if (gRev > 8)
+            bs >> col;
+        if (gRev > 9) {
+            bs >> mKerning;
+            bs >> mTextSize;
+        }
     } else {
-        MILO_FAIL("Can't load BandLabel older than rev %d", 0x11);
+        UILabel::PreLoad(bs);
+        if (gRev < 0xE) {
+            int i6c;
+            bs >> i6c;
+            mFitType = (FitType)i6c;
+            bs >> mWidth;
+            bs >> mHeight;
+            if (mFitType == kFitWrap) {
+                mHeight = 0;
+                mWidth = 0;
+            }
+        }
+        if (gRev < 0xD) {
+            bs >> mLeading;
+            bs >> (int &)mAlignment;
+        }
+        if (gRev < 0xF) {
+            int i, j, k, l;
+            bs >> i >> j >> k >> l;
+        }
+        if (gRev < 0xD) {
+            bs >> b87 >> mKerning >> mTextSize;
+        }
+        if (gRev < 0xE) {
+            int i;
+            bs >> i;
+        }
+        if (gRev < 0xF)
+            bs >> col;
     }
+    if (gRev < 0xD)
+        mCapsMode = (RndText::CapsMode)(b87 ? 2 : 0);
+    if (gRev == 0xF)
+        LoadOldBandTextComp(bs);
+    if (gRev >= 0x11)
+        LoadHandlerData(bs);
 }
+#undef gRev
+#undef gAltRev
 
 void BandLabel::LoadOldBandTextComp(BinStream &bs) {
     int rev;

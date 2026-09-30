@@ -35,14 +35,110 @@ BEGIN_LOADS(BandButton)
     PostLoad(bs);
 END_LOADS
 
-// NOTE: the faithful rb3-Wii PreLoad body touches UILabel members that this
-// tree has not reconstructed yet (they live inside UILabel::mUnkTU5Tail):
-// mFitType/mWidth/mHeight/mLeading/mAlignment/mKerning/mTextSize/mCapsMode.
-// Reduced to the parts that compile; this one function is expected NOT to match.
+// Retail folds both rev words onto ONE base register with offsets 0/4
+// (lbl_82CBE414: altRev+0, rev+4), which only happens for internal-linkage,
+// align(4) file-scope statics -- not for the DECLARE_REVS/INIT_REVS class
+// statics. Same lever as BandCrowdMeter.cpp / BandWardrobe.cpp.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs;
+#define gAltRev gRevs.altRev
+#define gRev gRevs.rev
+
 void BandButton::PreLoad(BinStream &bs) {
     LOAD_REVS(bs);
     ASSERT_REVS(0x10, 0);
-    UIButton::PreLoad(bs);
+    bool bbb = false;
+    if (gRev < 8) {
+        if (gRev <= 4) {
+            LOAD_SUPERCLASS(RndTransformable)
+            LOAD_SUPERCLASS(RndDrawable)
+        } else
+            UIButton::PreLoad(bs);
+        if (gRev > 2) {
+            int i, j, k, l;
+            bs >> i >> j >> k >> l;
+        }
+        if (gRev <= 4) {
+            Symbol s;
+            bs >> s;
+            SetType(s);
+        }
+        if (gRev < 8) {
+            bool b8;
+            bs >> b8;
+            if (b8)
+                mFitType = kFitStretch;
+            else
+                mFitType = kFitWrap;
+        }
+        if (gRev < 7 && mFitType == kFitStretch) {
+            Hmx::Matrix3 mtx;
+            mtx.Identity();
+            SetLocalRot(mtx);
+        }
+        if (gRev != 0)
+            bs >> bbb;
+        else
+            bbb = false;
+        bs >> mWidth;
+        bs >> mHeight;
+        if (gRev <= 4)
+            bs >> mTextToken;
+        if (gRev > 5)
+            bs >> (int &)mAlignment;
+    } else if (gRev == 8) {
+        UIButton::PreLoad(bs);
+        int i;
+        bs >> i;
+        mFitType = (FitType)i;
+        bs >> mWidth;
+        bs >> mHeight;
+        bs >> mLeading;
+        bs >> (int &)mAlignment;
+        int w, x, y, z;
+        bs >> w >> x >> y >> z;
+        bs >> bbb;
+        Hmx::Color col;
+        bs >> col;
+        bs >> mKerning;
+        bs >> mTextSize;
+    } else {
+        UIButton::PreLoad(bs);
+        if (gRev < 0xC) {
+            int i;
+            bs >> i;
+            mFitType = (FitType)i;
+            bs >> mWidth;
+            bs >> mHeight;
+            if (mFitType == kFitWrap) {
+                mHeight = 0;
+                mWidth = 0;
+            }
+        }
+        if (gRev < 0xB) {
+            bs >> mLeading;
+            bs >> (int &)mAlignment;
+        }
+        if (gRev < 0xE) {
+            int i, j, k, l;
+            bs >> i >> j >> k >> l;
+        }
+        if (gRev < 0xB) {
+            bs >> bbb >> mKerning >> mTextSize;
+        }
+    }
+    if (gRev < 0xC) {
+        int i;
+        bs >> i;
+    }
+    if (gRev < 0xB) {
+        mCapsMode = (RndText::CapsMode)(bbb ? 2 : 0);
+    }
+    if (gRev == 0xE) {
+        BandLabel::LoadOldBandTextComp(bs);
+    }
 }
 
 void BandButton::PostLoad(BinStream &bs) {
@@ -52,6 +148,8 @@ void BandButton::PostLoad(BinStream &bs) {
         bs >> meshPtr;
     }
 }
+#undef gRev
+#undef gAltRev
 
 void BandButton::DrawShowing() {
     bool focusanimating = mFocusAnim && mFocusAnim->IsAnimating();
