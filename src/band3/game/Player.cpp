@@ -318,7 +318,7 @@ void Player::BroadcastScore() {
         float poll = PollMs();
         float sub = poll - unk29c;
         int isub = (int)mScore - unk2a0;
-        if ((isub > 0x13U) || (isub != 0) && (sub >= 250.0f)) {
+        if (isub < 0 || isub >= 20 || (isub != 0 && sub >= 250.0f)) {
             static Message send_update_score_msg("send_update_score");
             HandleType(send_update_score_msg);
             unk29c = poll;
