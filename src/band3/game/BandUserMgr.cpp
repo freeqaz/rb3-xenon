@@ -61,9 +61,10 @@ BandUserMgr::BandUserMgr(int num_local, int num_remote) : mNullUser(0), mSession
 }
 
 BandUserMgr::~BandUserMgr() {
+    // Retail 0x82684A70 guards each static right before its RemoveSink.
     static Symbol profile_pre_delete_msg("profile_pre_delete_msg");
-    static Symbol signin_changed("signin_changed");
     TheProfileMgr.RemoveSink(this, profile_pre_delete_msg);
+    static Symbol signin_changed("signin_changed");
     ThePlatformMgr.RemoveSink(this, signin_changed);
     TheBandUserMgr = nullptr;
     mLocalUsers.clear();
