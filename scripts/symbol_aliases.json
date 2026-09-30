@@ -4985,7 +4985,6 @@
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Copy_Construct@UMoveReplacer@@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Param_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
@@ -4994,8 +4993,7 @@
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z"
+    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 3 census sites over 3 functions.",
    "withdrawn": [
@@ -5789,9 +5787,19 @@
      "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
      "disposition": "withdrawn; the spelling's retail body is 0x8233bf00 (new group $_Param_Construct@0x8233bf00)",
      "evidence": "REFUTED ON RETAIL BYTES. HighlightObject's _Copy_Construct/_Param_Construct (60 B each, byte- and relocation-identical in our BandList.obj) is the 60 B body at 0x8233bf00, which calls 0x8233be48 = ??0HighlightObject@@QAA@ABV0@@Z at +0x24. Its callers are BandList's __uninitialized_fill_n 0x8233c990, __uninitialized_copy 0x8233ca28 and 0x8233de90. This group's survivor at 0x823d3ac8 calls a different copy constructor at the same offset, so /OPT:ICF cannot have folded them (it folds only COMDATs identical including relocations). These memberships were a masked-closure artifact: the one spelling was listed as folded into 15 different addresses."
+    },
+    {
+     "spelling": "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
+    },
+    {
+     "spelling": "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350."
   },
   {
    "name": "$__uninitialized_copy",
@@ -9009,7 +9017,6 @@
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Param_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
@@ -9019,7 +9026,6 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Param_Construct@VSongPattern@@V1@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 2 census sites over 2 functions.",
@@ -9814,9 +9820,19 @@
      "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
      "disposition": "withdrawn; the spelling's retail body is 0x8233bf00 (new group $_Param_Construct@0x8233bf00)",
      "evidence": "REFUTED ON RETAIL BYTES. HighlightObject's _Copy_Construct/_Param_Construct (60 B each, byte- and relocation-identical in our BandList.obj) is the 60 B body at 0x8233bf00, which calls 0x8233be48 = ??0HighlightObject@@QAA@ABV0@@Z at +0x24. Its callers are BandList's __uninitialized_fill_n 0x8233c990, __uninitialized_copy 0x8233ca28 and 0x8233de90. This group's survivor at 0x822e5040 calls a different copy constructor at the same offset, so /OPT:ICF cannot have folded them (it folds only COMDATs identical including relocations). These memberships were a masked-closure artifact: the one spelling was listed as folded into 15 different addresses."
+    },
+    {
+     "spelling": "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
+    },
+    {
+     "spelling": "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350."
   },
   {
    "name": "erase",
@@ -13251,7 +13267,6 @@
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Param_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
@@ -13261,7 +13276,6 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Copy_Construct@VFlowMathOp@@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 1 census sites over 2 functions.",
@@ -14059,9 +14073,19 @@
      "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
      "disposition": "withdrawn; the spelling's retail body is 0x8233bf00 (new group $_Param_Construct@0x8233bf00)",
      "evidence": "REFUTED ON RETAIL BYTES. HighlightObject's _Copy_Construct/_Param_Construct (60 B each, byte- and relocation-identical in our BandList.obj) is the 60 B body at 0x8233bf00, which calls 0x8233be48 = ??0HighlightObject@@QAA@ABV0@@Z at +0x24. Its callers are BandList's __uninitialized_fill_n 0x8233c990, __uninitialized_copy 0x8233ca28 and 0x8233de90. This group's survivor at 0x822cdc18 calls a different copy constructor at the same offset, so /OPT:ICF cannot have folded them (it folds only COMDATs identical including relocations). These memberships were a masked-closure artifact: the one spelling was listed as folded into 15 different addresses."
+    },
+    {
+     "spelling": "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
+    },
+    {
+     "spelling": "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350."
   },
   {
    "name": "1?$ObjRefConcrete",
@@ -15243,12 +15267,16 @@
   {
    "name": "4?$ObjVector",
    "address": "0x822a82e0",
-   "survivor": "??4?$ObjVector@UCharInterestState@CharEyes@@@@QAAXABV0@@Z",
-   "folded": [
-    "??4?$ObjVector@VOverlay@OutfitConfig@@@@QAAXABV0@@Z"
-   ],
+   "survivor": "??4?$ObjVector@VOverlay@OutfitConfig@@@@QAAXABV0@@Z",
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??4?$ObjVector@UCharInterestState@CharEyes@@@@QAAXABV0@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION"
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -15282,12 +15310,13 @@
       }
      ]
     }
-   ]
+   ],
+   "withdrawn_reason": "W17-HCT 2026-09-30: address is in OutfitConfig's retail COMDAT pool (0x8229D350-0x822AC110); its callers/callees are OutfitConfig types (MatSwap/MeshAO/Piercing/Piece/Overlay/OldMatOption/OldColorOption/BandPatchMesh). Name-aware body identity against OutfitConfig.obj: same .pdata length, 0 differing unrelocated words, every disagreeing named callee is itself a block stand-in or a proven fold survivor. The old survivor's own type has no retail caller at this address (every bl/b caller is OutfitConfig-family code) -- withdrawn, not folded."
   },
   {
    "name": "1?$vector",
    "address": "0x822aa258",
-   "survivor": "??1?$vector@VTransformCrowd@@V?$StlNodeAlloc@VTransformCrowd@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "survivor": "??1?$vector@VOldColorOption@@V?$StlNodeAlloc@VOldColorOption@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 20 folded spelling(s), 1 census sites over 2 functions.",
    "withdrawn": [
@@ -15390,9 +15419,14 @@
      "spelling": "??1?$vector@VSampleMarker@@V?$StlNodeAlloc@VSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "??1?$vector@VTransformCrowd@@V?$StlNodeAlloc@VTransformCrowd@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 3 other group(s) at 4 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 3 of the 4 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 3 other group(s) at 4 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 3 of the 4 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: address is in OutfitConfig's retail COMDAT pool (0x8229D350-0x822AC110); its callers/callees are OutfitConfig types (MatSwap/MeshAO/Piercing/Piece/Overlay/OldMatOption/OldColorOption/BandPatchMesh). Name-aware body identity against OutfitConfig.obj: same .pdata length, 0 differing unrelocated words, every disagreeing named callee is itself a block stand-in or a proven fold survivor. The old survivor names a type absent from RB3 (TransformArea/TransformCrowd are HamCamTransform members, Flow and UILabel::LabelStyle are DC3-only; retail has no .?AVFlow@@ or HamCamTransform RTTI) -- withdrawn."
   },
   {
    "name": "$?5UConstraintSystem",
@@ -17288,13 +17322,18 @@
   {
    "name": "_M_clear_after_move",
    "address": "0x822a6d38",
-   "survivor": "?_M_clear_after_move@?$vector@VTransformArea@@V?$StlNodeAlloc@VTransformArea@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+   "survivor": "?_M_clear_after_move@?$vector@VMatSwap@OutfitConfig@@V?$StlNodeAlloc@VMatSwap@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
    "folded": [
-    "?_M_clear@?$vector@VMatSwap@OutfitConfig@@V?$StlNodeAlloc@VMatSwap@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
-    "?_M_clear_after_move@?$vector@VMatSwap@OutfitConfig@@V?$StlNodeAlloc@VMatSwap@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
+    "?_M_clear@?$vector@VMatSwap@OutfitConfig@@V?$StlNodeAlloc@VMatSwap@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 1 census sites over 2 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "?_M_clear_after_move@?$vector@VTransformArea@@V?$StlNodeAlloc@VTransformArea@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION"
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -17335,7 +17374,8 @@
       }
      ]
     }
-   ]
+   ],
+   "withdrawn_reason": "W17-HCT 2026-09-30: address is in OutfitConfig's retail COMDAT pool (0x8229D350-0x822AC110); its callers/callees are OutfitConfig types (MatSwap/MeshAO/Piercing/Piece/Overlay/OldMatOption/OldColorOption/BandPatchMesh). Name-aware body identity against OutfitConfig.obj: same .pdata length, 0 differing unrelocated words, every disagreeing named callee is itself a block stand-in or a proven fold survivor. The old survivor names a type absent from RB3 (TransformArea/TransformCrowd are HamCamTransform members, Flow and UILabel::LabelStyle are DC3-only; retail has no .?AVFlow@@ or HamCamTransform RTTI) -- withdrawn."
   },
   {
    "name": "_M_clear_after_move",
@@ -17355,13 +17395,18 @@
   {
    "name": "$_Destroy_Range",
    "address": "0x822a6ce8",
-   "survivor": "??$_Destroy_Range@PAVTransformArea@@@stlpmtx_std@@YAXPAVTransformArea@@0@Z",
+   "survivor": "??$_Destroy_Range@PAVMatSwap@OutfitConfig@@@stlpmtx_std@@YAXPAVMatSwap@OutfitConfig@@0@Z",
    "folded": [
-    "??$_Destroy_Range@PAVMatSwap@OutfitConfig@@@stlpmtx_std@@YAXPAVMatSwap@OutfitConfig@@0@Z",
     "??$__destroy_range@PAVMatSwap@OutfitConfig@@V12@@stlpmtx_std@@YAXPAVMatSwap@OutfitConfig@@00@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 1 census sites over 2 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??$_Destroy_Range@PAVTransformArea@@@stlpmtx_std@@YAXPAVTransformArea@@0@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION"
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -17402,7 +17447,8 @@
       }
      ]
     }
-   ]
+   ],
+   "withdrawn_reason": "W17-HCT 2026-09-30: address is in OutfitConfig's retail COMDAT pool (0x8229D350-0x822AC110); its callers/callees are OutfitConfig types (MatSwap/MeshAO/Piercing/Piece/Overlay/OldMatOption/OldColorOption/BandPatchMesh). Name-aware body identity against OutfitConfig.obj: same .pdata length, 0 differing unrelocated words, every disagreeing named callee is itself a block stand-in or a proven fold survivor. The old survivor names a type absent from RB3 (TransformArea/TransformCrowd are HamCamTransform members, Flow and UILabel::LabelStyle are DC3-only; retail has no .?AVFlow@@ or HamCamTransform RTTI) -- withdrawn."
   },
   {
    "name": "$_Destroy_Range",
@@ -17422,7 +17468,7 @@
   {
    "name": "0?$list",
    "address": "0x822a7f60",
-   "survivor": "??0?$list@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
+   "survivor": "??0?$list@VOldMatOption@@V?$StlNodeAlloc@VOldMatOption@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 5 folded spelling(s), 1 census sites over 2 functions.",
    "withdrawn": [
@@ -17450,20 +17496,32 @@
      "spelling": "??0?$list@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "??0?$list@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 2 other group(s) at 3 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 2 of the 3 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 2 other group(s) at 3 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 2 of the 3 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: address is in OutfitConfig's retail COMDAT pool (0x8229D350-0x822AC110); its callers/callees are OutfitConfig types (MatSwap/MeshAO/Piercing/Piece/Overlay/OldMatOption/OldColorOption/BandPatchMesh). Name-aware body identity against OutfitConfig.obj: same .pdata length, 0 differing unrelocated words, every disagreeing named callee is itself a block stand-in or a proven fold survivor. The old survivor's own type has no retail caller at this address (every bl/b caller is OutfitConfig-family code) -- withdrawn, not folded."
   },
   {
    "name": "$_Destroy_Range",
    "address": "0x822aa520",
-   "survivor": "??$_Destroy_Range@PAUCharInterestState@CharEyes@@@stlpmtx_std@@YAXPAUCharInterestState@CharEyes@@0@Z",
+   "survivor": "??$_Destroy_Range@PAVBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@0@Z",
    "folded": [
-    "??$_Destroy_Range@PAVBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@0@Z",
     "??$__destroy_range@PAVBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@00@Z",
     "??$__destroy_range@PAVRecommendedEntry@StoreInfoPanel@@V12@@stlpmtx_std@@YAXPAVRecommendedEntry@StoreInfoPanel@@00@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 1 census sites over 2 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 1 census sites over 2 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$_Destroy_Range@PAUCharInterestState@CharEyes@@@stlpmtx_std@@YAXPAUCharInterestState@CharEyes@@0@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION"
+    }
+   ],
+   "withdrawn_reason": "W17-HCT 2026-09-30: address is in OutfitConfig's retail COMDAT pool (0x8229D350-0x822AC110); its callers/callees are OutfitConfig types (MatSwap/MeshAO/Piercing/Piece/Overlay/OldMatOption/OldColorOption/BandPatchMesh). Name-aware body identity against OutfitConfig.obj: same .pdata length, 0 differing unrelocated words, every disagreeing named callee is itself a block stand-in or a proven fold survivor. The old survivor's own type has no retail caller at this address (every bl/b caller is OutfitConfig-family code) -- withdrawn, not folded."
   },
   {
    "name": "$_Destroy_Range",
@@ -19577,7 +19635,6 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
     "??$_Param_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
     "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
@@ -19594,8 +19651,7 @@
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z"
+    "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -20174,9 +20230,19 @@
      "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
      "disposition": "withdrawn; the spelling's retail body is 0x8233bf00 (new group $_Param_Construct@0x8233bf00)",
      "evidence": "REFUTED ON RETAIL BYTES. HighlightObject's _Copy_Construct/_Param_Construct (60 B each, byte- and relocation-identical in our BandList.obj) is the 60 B body at 0x8233bf00, which calls 0x8233be48 = ??0HighlightObject@@QAA@ABV0@@Z at +0x24. Its callers are BandList's __uninitialized_fill_n 0x8233c990, __uninitialized_copy 0x8233ca28 and 0x8233de90. This group's survivor at 0x82706100 calls a different copy constructor at the same offset, so /OPT:ICF cannot have folded them (it folds only COMDATs identical including relocations). These memberships were a masked-closure artifact: the one spelling was listed as folded into 15 different addresses."
+    },
+    {
+     "spelling": "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
+    },
+    {
+     "spelling": "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350."
   },
   {
    "name": "1?$ObjPtrList",
@@ -21113,7 +21179,6 @@
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Param_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
@@ -21122,8 +21187,7 @@
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z"
+    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -21920,9 +21984,19 @@
      "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
      "disposition": "withdrawn; the spelling's retail body is 0x8233bf00 (new group $_Param_Construct@0x8233bf00)",
      "evidence": "REFUTED ON RETAIL BYTES. HighlightObject's _Copy_Construct/_Param_Construct (60 B each, byte- and relocation-identical in our BandList.obj) is the 60 B body at 0x8233bf00, which calls 0x8233be48 = ??0HighlightObject@@QAA@ABV0@@Z at +0x24. Its callers are BandList's __uninitialized_fill_n 0x8233c990, __uninitialized_copy 0x8233ca28 and 0x8233de90. This group's survivor at 0x82706208 calls a different copy constructor at the same offset, so /OPT:ICF cannot have folded them (it folds only COMDATs identical including relocations). These memberships were a masked-closure artifact: the one spelling was listed as folded into 15 different addresses."
+    },
+    {
+     "spelling": "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
+    },
+    {
+     "spelling": "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350."
   },
   {
    "name": "1?$ObjRefConcrete",
@@ -26466,7 +26540,6 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
     "??$_Param_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
     "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
@@ -26491,7 +26564,6 @@
     "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Param_Construct@VPatchPair@MeshPair@BandPatchMesh@@V123@@stlpmtx_std@@YAXPAVPatchPair@MeshPair@BandPatchMesh@@ABV123@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
@@ -26767,9 +26839,19 @@
       }
      },
      "evidence": "TYPE DOES NOT EXIST IN RB3, AND THE BODY IS TYPED BY ITS CALLEE AND ITS CALLER CHAIN. Retail 0x82346e50 (60 B) null-checks r3 and calls 0x823465b8, which copy-constructs an ObjPtr at +0 (0x822cdb70: ObjRefConcrete vtable, owner, AddRef) and ObjPtr<RndTex> at +0xc (0x8229d898) -- BandPatchMesh::MeshPair::PatchPair {ObjPtr<RndMesh> mPatch; ObjPtr<RndTex> mTex} = 0x18. Its callers are the 0x18-stride vector helpers 0x82348390 (fill_n), 0x82348b28 (uninitialized_copy) and 0x823495e0 (_M_insert_overflow_aux); that family's _M_fill_insert (0x8234a148) is called from ??$PropSync@VPatchPair@MeshPair@BandPatchMesh@@@@...(ObjVector<PatchPair>&) at 0x8234a3c0. Unlockable is an anonymous-namespace struct in DC3's lazer/meta_ham/MetagameRank.cpp and appears in neither rb3 tree. Survivor rebound to _Copy_Construct<PatchPair> (BandPatchMesh.obj defines it); the group's folded list, part of the closure cluster ALIAS-CONSOLIDATION 2026-08-19 deliberately left in place, is not touched."
+    },
+    {
+     "spelling": "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
+    },
+    {
+     "spelling": "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md.",
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350.",
    "added": [
     {
      "spelling": "??$_Param_Construct@VPatchPair@MeshPair@BandPatchMesh@@V123@@stlpmtx_std@@YAXPAVPatchPair@MeshPair@BandPatchMesh@@ABV123@@Z",
@@ -27227,7 +27309,6 @@
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Param_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
@@ -27236,8 +27317,7 @@
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z"
+    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -28034,9 +28114,19 @@
      "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
      "disposition": "withdrawn; the spelling's retail body is 0x8233bf00 (new group $_Param_Construct@0x8233bf00)",
      "evidence": "REFUTED ON RETAIL BYTES. HighlightObject's _Copy_Construct/_Param_Construct (60 B each, byte- and relocation-identical in our BandList.obj) is the 60 B body at 0x8233bf00, which calls 0x8233be48 = ??0HighlightObject@@QAA@ABV0@@Z at +0x24. Its callers are BandList's __uninitialized_fill_n 0x8233c990, __uninitialized_copy 0x8233ca28 and 0x8233de90. This group's survivor at 0x822cb4d8 calls a different copy constructor at the same offset, so /OPT:ICF cannot have folded them (it folds only COMDATs identical including relocations). These memberships were a masked-closure artifact: the one spelling was listed as folded into 15 different addresses."
+    },
+    {
+     "spelling": "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
+    },
+    {
+     "spelling": "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350."
   },
   {
    "name": "insert",
@@ -28878,7 +28968,6 @@
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Param_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
@@ -28887,8 +28976,7 @@
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z"
+    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -29685,9 +29773,19 @@
      "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
      "disposition": "withdrawn; the spelling's retail body is 0x8233bf00 (new group $_Param_Construct@0x8233bf00)",
      "evidence": "REFUTED ON RETAIL BYTES. HighlightObject's _Copy_Construct/_Param_Construct (60 B each, byte- and relocation-identical in our BandList.obj) is the 60 B body at 0x8233bf00, which calls 0x8233be48 = ??0HighlightObject@@QAA@ABV0@@Z at +0x24. Its callers are BandList's __uninitialized_fill_n 0x8233c990, __uninitialized_copy 0x8233ca28 and 0x8233de90. This group's survivor at 0x822bc3d8 calls a different copy constructor at the same offset, so /OPT:ICF cannot have folded them (it folds only COMDATs identical including relocations). These memberships were a masked-closure artifact: the one spelling was listed as folded into 15 different addresses."
+    },
+    {
+     "spelling": "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
+    },
+    {
+     "spelling": "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350."
   },
   {
    "name": "$Find",
@@ -31421,7 +31519,6 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Param_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
     "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
@@ -31434,8 +31531,7 @@
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z"
+    "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -32175,9 +32271,19 @@
      "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
      "disposition": "withdrawn; the spelling's retail body is 0x8233bf00 (new group $_Param_Construct@0x8233bf00)",
      "evidence": "REFUTED ON RETAIL BYTES. HighlightObject's _Copy_Construct/_Param_Construct (60 B each, byte- and relocation-identical in our BandList.obj) is the 60 B body at 0x8233bf00, which calls 0x8233be48 = ??0HighlightObject@@QAA@ABV0@@Z at +0x24. Its callers are BandList's __uninitialized_fill_n 0x8233c990, __uninitialized_copy 0x8233ca28 and 0x8233de90. This group's survivor at 0x823048e0 calls a different copy constructor at the same offset, so /OPT:ICF cannot have folded them (it folds only COMDATs identical including relocations). These memberships were a masked-closure artifact: the one spelling was listed as folded into 15 different addresses."
+    },
+    {
+     "spelling": "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
+    },
+    {
+     "spelling": "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350."
   },
   {
    "name": "$MakeString",
@@ -36527,12 +36633,10 @@
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
-    "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z"
+    "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -37289,11 +37393,22 @@
      "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0HighlightObject@@QAA@ABV0@@Z | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0HighlightObject@@QAA@ABV0@@Z",
      "callee_layer": "CALLEE_BYTES_DIFFER",
      "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
+    },
+    {
+     "spelling": "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
     }
    ],
    "repair": {
     "w11d_moved_out": "Lane W11-D moved `??$_Param_Construct@VCacheDirEntry@@V1@@stlpmtx_std@@YAXPAVCacheDirEntry@@ABV1@@Z` OUT of this group to 0x827dacf0, where it is PROVEN on retail bytes (FLAT T1). This group's address is not where that body lives. The membership forgave 0 charged sites at the time of the move."
-   }
+   },
+   "withdrawn_reason": "W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350."
   },
   {
    "name": "0ColorPalette",
@@ -39199,7 +39314,6 @@
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Param_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
@@ -39208,8 +39322,7 @@
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z"
+    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -40003,9 +40116,19 @@
      "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
      "disposition": "withdrawn; the spelling's retail body is 0x8233bf00 (new group $_Param_Construct@0x8233bf00)",
      "evidence": "REFUTED ON RETAIL BYTES. HighlightObject's _Copy_Construct/_Param_Construct (60 B each, byte- and relocation-identical in our BandList.obj) is the 60 B body at 0x8233bf00, which calls 0x8233be48 = ??0HighlightObject@@QAA@ABV0@@Z at +0x24. Its callers are BandList's __uninitialized_fill_n 0x8233c990, __uninitialized_copy 0x8233ca28 and 0x8233de90. This group's survivor at 0x8237b938 calls a different copy constructor at the same offset, so /OPT:ICF cannot have folded them (it folds only COMDATs identical including relocations). These memberships were a masked-closure artifact: the one spelling was listed as folded into 15 different addresses."
+    },
+    {
+     "spelling": "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
+    },
+    {
+     "spelling": "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350."
   },
   {
    "name": "1?$ObjPtrList",
@@ -40520,7 +40643,6 @@
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Param_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
@@ -40529,8 +40651,7 @@
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z"
+    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -41327,9 +41448,19 @@
      "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
      "disposition": "withdrawn; the spelling's retail body is 0x8233bf00 (new group $_Param_Construct@0x8233bf00)",
      "evidence": "REFUTED ON RETAIL BYTES. HighlightObject's _Copy_Construct/_Param_Construct (60 B each, byte- and relocation-identical in our BandList.obj) is the 60 B body at 0x8233bf00, which calls 0x8233be48 = ??0HighlightObject@@QAA@ABV0@@Z at +0x24. Its callers are BandList's __uninitialized_fill_n 0x8233c990, __uninitialized_copy 0x8233ca28 and 0x8233de90. This group's survivor at 0x822bc368 calls a different copy constructor at the same offset, so /OPT:ICF cannot have folded them (it folds only COMDATs identical including relocations). These memberships were a masked-closure artifact: the one spelling was listed as folded into 15 different addresses."
+    },
+    {
+     "spelling": "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
+    },
+    {
+     "spelling": "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350."
   },
   {
    "name": "1?$ObjRefConcrete",
@@ -46002,7 +46133,6 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Param_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
     "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
@@ -46015,8 +46145,7 @@
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z"
+    "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -46756,9 +46885,19 @@
      "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
      "disposition": "withdrawn; the spelling's retail body is 0x8233bf00 (new group $_Param_Construct@0x8233bf00)",
      "evidence": "REFUTED ON RETAIL BYTES. HighlightObject's _Copy_Construct/_Param_Construct (60 B each, byte- and relocation-identical in our BandList.obj) is the 60 B body at 0x8233bf00, which calls 0x8233be48 = ??0HighlightObject@@QAA@ABV0@@Z at +0x24. Its callers are BandList's __uninitialized_fill_n 0x8233c990, __uninitialized_copy 0x8233ca28 and 0x8233de90. This group's survivor at 0x8266c470 calls a different copy constructor at the same offset, so /OPT:ICF cannot have folded them (it folds only COMDATs identical including relocations). These memberships were a masked-closure artifact: the one spelling was listed as folded into 15 different addresses."
+    },
+    {
+     "spelling": "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
+    },
+    {
+     "spelling": "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350."
   },
   {
    "name": "GetPadNum",
@@ -48458,7 +48597,6 @@
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Param_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
@@ -48468,7 +48606,6 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Copy_Construct@UMerger@FileMerger@@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
@@ -49263,9 +49400,19 @@
      "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
      "disposition": "withdrawn; the spelling's retail body is 0x8233bf00 (new group $_Param_Construct@0x8233bf00)",
      "evidence": "REFUTED ON RETAIL BYTES. HighlightObject's _Copy_Construct/_Param_Construct (60 B each, byte- and relocation-identical in our BandList.obj) is the 60 B body at 0x8233bf00, which calls 0x8233be48 = ??0HighlightObject@@QAA@ABV0@@Z at +0x24. Its callers are BandList's __uninitialized_fill_n 0x8233c990, __uninitialized_copy 0x8233ca28 and 0x8233de90. This group's survivor at 0x8232fb50 calls a different copy constructor at the same offset, so /OPT:ICF cannot have folded them (it folds only COMDATs identical including relocations). These memberships were a masked-closure artifact: the one spelling was listed as folded into 15 different addresses."
+    },
+    {
+     "spelling": "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
+    },
+    {
+     "spelling": "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md.",
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350.",
    "repair": {
     "w11d": "Lane W11-D (2026-09-13). SAME-T _Param_Construct/_Copy_Construct fold, adjudicated FLAT T1 PROVEN on retail bytes (60 B, 1 relocation, reloc_tally {}); 13 cross-T decoys from the same family all REFUTED, so the verdict rests on the per-T copy-ctor relocation target and not on the family's shared masked body (112 retail / 270 our bodytwins). The moved spelling was previously parked in an UNANCHORED group (its survivor is absent from target_symbol_map.json), i.e. at a GUESSED address; a body lives at exactly one address, and this one is proven. The old membership forgave 0 charged sites, verified before the move."
    }
@@ -50511,7 +50658,6 @@
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Param_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
@@ -50520,8 +50666,7 @@
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z"
+    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -51315,9 +51460,19 @@
      "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
      "disposition": "withdrawn; the spelling's retail body is 0x8233bf00 (new group $_Param_Construct@0x8233bf00)",
      "evidence": "REFUTED ON RETAIL BYTES. HighlightObject's _Copy_Construct/_Param_Construct (60 B each, byte- and relocation-identical in our BandList.obj) is the 60 B body at 0x8233bf00, which calls 0x8233be48 = ??0HighlightObject@@QAA@ABV0@@Z at +0x24. Its callers are BandList's __uninitialized_fill_n 0x8233c990, __uninitialized_copy 0x8233ca28 and 0x8233de90. This group's survivor at 0x827cda78 calls a different copy constructor at the same offset, so /OPT:ICF cannot have folded them (it folds only COMDATs identical including relocations). These memberships were a masked-closure artifact: the one spelling was listed as folded into 15 different addresses."
+    },
+    {
+     "spelling": "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
+    },
+    {
+     "spelling": "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350."
   },
   {
    "name": "$Find",
@@ -52834,7 +52989,6 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
     "??$_Param_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
@@ -52848,7 +53002,6 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Copy_Construct@V?$ObjPtr@VRndTransformable@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndTransformable@@@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions. RE-ANCHORED 2026-09-30 (lane W17-IKM): the survivor was the ObjPtrVec<RndTransformable>::Node spelling only because that was the map name here, and it came from our DC3-era CharIKMidi::Load (which built an ObjPtrVec). Retail Load builds ObjVector<ObjPtr<RndTransformable>>, and all three retail callers of 0x823c9178 are CharIKMidi's vector<ObjPtr<RndTransformable>> helpers (__uninitialized_fill_n 0x823c9e58, __uninitialized_copy 0x823c9f00, _M_insert_overflow_aux 0x823ca5b8), so the map row is now _Param_Construct<ObjPtr<RndTransformable>> and the survivor follows it. The old Node spelling is NOT carried as a folded member: Node is 16 B (ObjPtrVec stride 0x10) vs ObjPtr's 12 B and its copy ctor is a different relocation, and no obj of ours references it at a site retail resolves here. ADDED _Copy_Construct<ObjPtr<RndTransformable>>: SAME-T fold (W11-D rule), tools/icf_pair_adjudicate.py FLAT T1 PROVEN (60 B both sides, reloc_tally {tolerated_placeholder: 1}); cross-T decoy _Copy_Construct<ObjPtr<RndDir>> REFUTED (refuted_mapped_callee_vs_placeholder). Our only call site is _M_insert_overflow_aux, whose retail bl at the same offset lands here.",
@@ -53495,9 +53648,19 @@
       }
      },
      "evidence": "TYPE DOES NOT EXIST IN RB3 RETAIL: raw scan of orig/45410914/band.exe finds 0 '.?AV?$ObjPtrVec@' type descriptors while the same probe finds 45 ObjPtrList and 27 ObjOwnerPtr ones; rb3-Wii (RB3's own dev decomp) mentions ObjPtrVec in 0 files -- it is DC3-only, as merge 835ab028 (W17-TMPL) recorded. The spelling's enclosing type Node<ObjPtrVec<RndTransformable>> therefore never existed in a retail COMDAT, so this could never have been the survivor. In 0 of 1,223 compiled objs on W17-TMPL2's built tree rebased on 0e53192e (control: the new survivor spelling is referenced by 1), so metric-neutral by construction."
+    },
+    {
+     "spelling": "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
+    },
+    {
+     "spelling": "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350."
   },
   {
    "name": "$Find",
@@ -69913,12 +70076,16 @@
   {
    "name": "resize",
    "address": "0x822a8340",
-   "survivor": "?resize@?$vector@UDistEntry@@V?$StlNodeAlloc@UDistEntry@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUDistEntry@@@Z",
-   "folded": [
-    "?resize@?$vector@VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVPiece@Piercing@OutfitConfig@@@Z"
-   ],
+   "survivor": "?resize@?$vector@VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVPiece@Piercing@OutfitConfig@@@Z",
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "?resize@?$vector@UDistEntry@@V?$StlNodeAlloc@UDistEntry@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUDistEntry@@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION"
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -69945,7 +70112,8 @@
       }
      ]
     }
-   ]
+   ],
+   "withdrawn_reason": "W17-HCT 2026-09-30: address is in OutfitConfig's retail COMDAT pool (0x8229D350-0x822AC110); its callers/callees are OutfitConfig types (MatSwap/MeshAO/Piercing/Piece/Overlay/OldMatOption/OldColorOption/BandPatchMesh). Name-aware body identity against OutfitConfig.obj: same .pdata length, 0 differing unrelocated words, every disagreeing named callee is itself a block stand-in or a proven fold survivor. The old survivor's own type has no retail caller at this address (every bl/b caller is OutfitConfig-family code) -- withdrawn, not folded."
   },
   {
    "name": "$?0U?$_List_iterator",
@@ -72227,7 +72395,7 @@
   {
    "name": "_M_clear_after_move",
    "address": "0x822aa1e0",
-   "survivor": "?_M_clear_after_move@?$vector@VTransformCrowd@@V?$StlNodeAlloc@VTransformCrowd@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+   "survivor": "?_M_clear_after_move@?$vector@VOldColorOption@@V?$StlNodeAlloc@VOldColorOption@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 35 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -72405,9 +72573,14 @@
      "spelling": "?_M_clear_after_move@?$vector@VTrackChannels@@V?$StlNodeAlloc@VTrackChannels@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?_M_clear_after_move@?$vector@VTransformCrowd@@V?$StlNodeAlloc@VTransformCrowd@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 2 other group(s) at 3 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 2 of the 3 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 2 other group(s) at 3 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 2 of the 3 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: address is in OutfitConfig's retail COMDAT pool (0x8229D350-0x822AC110); its callers/callees are OutfitConfig types (MatSwap/MeshAO/Piercing/Piece/Overlay/OldMatOption/OldColorOption/BandPatchMesh). Name-aware body identity against OutfitConfig.obj: same .pdata length, 0 differing unrelocated words, every disagreeing named callee is itself a block stand-in or a proven fold survivor. The old survivor names a type absent from RB3 (TransformArea/TransformCrowd are HamCamTransform members, Flow and UILabel::LabelStyle are DC3-only; retail has no .?AVFlow@@ or HamCamTransform RTTI) -- withdrawn."
   },
   {
    "name": "1?$ObjPtrList",
@@ -73792,7 +73965,7 @@
   {
    "name": "$?0U?$_List_iterator",
    "address": "0x822a7330",
-   "survivor": "??$?0U?$_List_iterator@VSymbol@@U?$_Const_traits@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@QAA@U?$_List_iterator@VSymbol@@U?$_Const_traits@VSymbol@@@stlpmtx_std@@@1@0ABV?$StlNodeAlloc@VSymbol@@@1@@Z",
+   "survivor": "??$?0U?$_List_iterator@VOldMatOption@@U?$_Const_traits@VOldMatOption@@@stlpmtx_std@@@stlpmtx_std@@@?$list@VOldMatOption@@V?$StlNodeAlloc@VOldMatOption@@@stlpmtx_std@@@stlpmtx_std@@QAA@U?$_List_iterator@VOldMatOption@@U?$_Const_traits@VOldMatOption@@@stlpmtx_std@@@1@0ABV?$StlNodeAlloc@VOldMatOption@@@1@@Z",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 3, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 8 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -73835,9 +74008,14 @@
      "spelling": "??$?0U?$_List_iterator@VVector3@@U?$_Const_traits@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@?$list@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@QAA@U?$_List_iterator@VVector3@@U?$_Const_traits@VVector3@@@stlpmtx_std@@@1@0ABV?$StlNodeAlloc@VVector3@@@1@@Z",
      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "??$?0U?$_List_iterator@VSymbol@@U?$_Const_traits@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@QAA@U?$_List_iterator@VSymbol@@U?$_Const_traits@VSymbol@@@stlpmtx_std@@@1@0ABV?$StlNodeAlloc@VSymbol@@@1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 1 other group(s) at 2 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 1 of the 2 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 1 other group(s) at 2 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 1 of the 2 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: address is in OutfitConfig's retail COMDAT pool (0x8229D350-0x822AC110); its callers/callees are OutfitConfig types (MatSwap/MeshAO/Piercing/Piece/Overlay/OldMatOption/OldColorOption/BandPatchMesh). Name-aware body identity against OutfitConfig.obj: same .pdata length, 0 differing unrelocated words, every disagreeing named callee is itself a block stand-in or a proven fold survivor. The old survivor's own type has no retail caller at this address (every bl/b caller is OutfitConfig-family code) -- withdrawn, not folded."
   },
   {
    "name": "Save",
@@ -78505,9 +78683,19 @@
   {
    "name": "$_Copy_Construct",
    "address": "0x8229d350",
-   "survivor": "??$_Copy_Construct@VTransformArea@@@stlpmtx_std@@YAXPAVTransformArea@@ABV1@@Z",
-   "folded": [],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "survivor": "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
+   "folded": [
+    "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z"
+   ],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions. W17-HCT 2026-09-30: survivor re-derived as _Copy_Construct<BandPatchMesh> (callers are the vector<BandPatchMesh> helpers); _Param_Construct<BandPatchMesh> folded (our body is word-identical and retail's __uninitialized_fill_n<BandPatchMesh>, which calls it, calls 0x8229D350).",
+   "withdrawn": [
+    {
+     "spelling": "??$_Copy_Construct@VTransformArea@@@stlpmtx_std@@YAXPAVTransformArea@@ABV1@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION"
+    }
+   ],
+   "withdrawn_reason": "W17-HCT 2026-09-30: address is in OutfitConfig's retail COMDAT pool (0x8229D350-0x822AC110); its callers/callees are OutfitConfig types (MatSwap/MeshAO/Piercing/Piece/Overlay/OldMatOption/OldColorOption/BandPatchMesh). Name-aware body identity against OutfitConfig.obj: same .pdata length, 0 differing unrelocated words, every disagreeing named callee is itself a block stand-in or a proven fold survivor. The old survivor names a type absent from RB3 (TransformArea/TransformCrowd are HamCamTransform members, Flow and UILabel::LabelStyle are DC3-only; retail has no .?AVFlow@@ or HamCamTransform RTTI) -- withdrawn."
   },
   {
    "name": "1?$_Vector_base",
@@ -79024,12 +79212,16 @@
   {
    "name": "1?$vector",
    "address": "0x822a7678",
-   "survivor": "??1?$vector@VTransformArea@@V?$StlNodeAlloc@VTransformArea@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
-   "folded": [
-    "??1?$vector@VMatSwap@OutfitConfig@@V?$StlNodeAlloc@VMatSwap@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
-   ],
+   "survivor": "??1?$vector@VMatSwap@OutfitConfig@@V?$StlNodeAlloc@VMatSwap@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??1?$vector@VTransformArea@@V?$StlNodeAlloc@VTransformArea@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION"
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -79056,7 +79248,8 @@
       }
      ]
     }
-   ]
+   ],
+   "withdrawn_reason": "W17-HCT 2026-09-30: address is in OutfitConfig's retail COMDAT pool (0x8229D350-0x822AC110); its callers/callees are OutfitConfig types (MatSwap/MeshAO/Piercing/Piece/Overlay/OldMatOption/OldColorOption/BandPatchMesh). Name-aware body identity against OutfitConfig.obj: same .pdata length, 0 differing unrelocated words, every disagreeing named callee is itself a block stand-in or a proven fold survivor. The old survivor names a type absent from RB3 (TransformArea/TransformCrowd are HamCamTransform members, Flow and UILabel::LabelStyle are DC3-only; retail has no .?AVFlow@@ or HamCamTransform RTTI) -- withdrawn."
   },
   {
    "name": "PoolFree",
@@ -80556,11 +80749,15 @@
    "name": "5",
    "address": "0x824c99a8",
    "survivor": "??5@YAAAVBinStream@@AAV0@AAVKeyFrame@EventAnim@@@Z",
-   "folded": [
-    "??5@YAAAVBinStream@@AAV0@AAVOldColorOption@@@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??5@YAAAVBinStream@@AAV0@AAVOldColorOption@@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -80587,7 +80784,8 @@
       }
      ]
     }
-   ]
+   ],
+   "withdrawn_reason": "W17-HCT 2026-09-30: retail 0x822A9718 is operator>>(BinStream&, OldColorOption&): word-identical to our body, 1/1 named callee agrees, its only caller is the ObjVector<OldColorOption> reader in OutfitConfig's COMDAT pool; the spelling therefore cannot also be folded at 0x824c99a8 -- withdrawn here."
   },
   {
    "name": "$sort_heap",
@@ -83275,12 +83473,16 @@
   {
    "name": "1MeshPair",
    "address": "0x8229e1d8",
-   "survivor": "??1MeshPair@BandPatchMesh@@QAA@XZ",
-   "folded": [
-    "??1PatchPair@MeshPair@BandPatchMesh@@QAA@XZ"
-   ],
+   "survivor": "??1PatchPair@MeshPair@BandPatchMesh@@QAA@XZ",
+   "folded": [],
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. ",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??1MeshPair@BandPatchMesh@@QAA@XZ",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION"
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -83307,7 +83509,8 @@
       }
      ]
     }
-   ]
+   ],
+   "withdrawn_reason": "W17-HCT 2026-09-30: retail 0x8229E1D8 destroys an ObjPtr<RndTex> then an ObjPtr<RndMesh> (bl 0x8229D930, bl 0x8227F250) and is called by _Destroy_Range<PatchPair> (0x82348238) and PropSync<PatchPair> (0x8234A3C8) -- it is ~PatchPair {mPatch, mTex}. Word-identical to our ~PatchPair with 2/2 named callees; ~MeshPair disagrees on the first callee (it destroys ObjVector<PatchPair>, not an ObjPtr<RndTex>). ~MeshPair is the distinct function at 0x822A4A20, so it cannot be folded here -- withdrawn."
   },
   {
    "name": "0?$_Vector_base",
@@ -88091,11 +88294,17 @@
   {
    "name": "_M_insert_overflow_aux",
    "address": "0x822aa578",
-   "survivor": "?_M_insert_overflow_aux@?$vector@UDistEntry@@V?$StlNodeAlloc@UDistEntry@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUDistEntry@@ABU3@ABU__false_type@2@I_N@Z",
-   "folded": [
-    "?_M_insert_overflow_aux@?$vector@VOldColorOption@@V?$StlNodeAlloc@VOldColorOption@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVOldColorOption@@ABV3@ABU__false_type@2@I_N@Z"
+   "survivor": "?_M_insert_overflow_aux@?$vector@VOldColorOption@@V?$StlNodeAlloc@VOldColorOption@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVOldColorOption@@ABV3@ABU__false_type@2@I_N@Z",
+   "folded": [],
+   "evidence": "ICF fold group added by lane W16-BD 2026-09-15, as the RESIDUAL of the 0x822ab0b0 re-home+rename in commit f9ecf043. After that commit ?_M_fill_insert@?$vector@VOldColorOption@@... (108 B, default/OutfitConfig) is pairable and reads fuzzy 99.81481 held by EXACTLY ONE charged site, read from the graded ruler (functionRelocDiffs=name_check, resolved from report.json provenance) and not from a mismatch count: instruction 22 of 27, diff_arg, retail bl target ?_M_insert_overflow_aux@?$vector@UDistEntry@@... vs our <OldColorOption> spelling. ADJUDICATED on retail bytes with tools/icf_pair_adjudicate.py --chase, whose --selftest AND --chasetest controls (including the IN-FAMILY DECOY) both pass on this tree, so the instrument discriminates rather than confirming whatever it is pointed at: CHASED T1 PROVEN, SLOT-FOLD-OK on PoolAlloc, MemOrPoolAlloc, __uninitialized_copy (x2) and _M_clear_after_move. Corroboration that this is a FOLD and not two distinct bodies: <OldColorOption>'s overflow_aux has NO separate address in target_symbol_map.json, while the survivor <DistEntry> is map-resident at 0x822aa578. Our source spelling is correct (OutfitConfig holds a vector<OldColorOption>), so the charge is ICF survivor-naming noise, which is exactly the class SymbolEquivalences exists to forgive. STATED WEAK HALF: the survivor body has 16 retail body-twins and 33 of ours, so masked-body identity ALONE would be vacuous here -- the verdict rests on the CHASED relocation-target agreement, not on the byte match. No membership was removed and nothing was pruned.",
+   "withdrawn": [
+    {
+     "spelling": "?_M_insert_overflow_aux@?$vector@UDistEntry@@V?$StlNodeAlloc@UDistEntry@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUDistEntry@@ABU3@ABU__false_type@2@I_N@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION"
+    }
    ],
-   "evidence": "ICF fold group added by lane W16-BD 2026-09-15, as the RESIDUAL of the 0x822ab0b0 re-home+rename in commit f9ecf043. After that commit ?_M_fill_insert@?$vector@VOldColorOption@@... (108 B, default/OutfitConfig) is pairable and reads fuzzy 99.81481 held by EXACTLY ONE charged site, read from the graded ruler (functionRelocDiffs=name_check, resolved from report.json provenance) and not from a mismatch count: instruction 22 of 27, diff_arg, retail bl target ?_M_insert_overflow_aux@?$vector@UDistEntry@@... vs our <OldColorOption> spelling. ADJUDICATED on retail bytes with tools/icf_pair_adjudicate.py --chase, whose --selftest AND --chasetest controls (including the IN-FAMILY DECOY) both pass on this tree, so the instrument discriminates rather than confirming whatever it is pointed at: CHASED T1 PROVEN, SLOT-FOLD-OK on PoolAlloc, MemOrPoolAlloc, __uninitialized_copy (x2) and _M_clear_after_move. Corroboration that this is a FOLD and not two distinct bodies: <OldColorOption>'s overflow_aux has NO separate address in target_symbol_map.json, while the survivor <DistEntry> is map-resident at 0x822aa578. Our source spelling is correct (OutfitConfig holds a vector<OldColorOption>), so the charge is ICF survivor-naming noise, which is exactly the class SymbolEquivalences exists to forgive. STATED WEAK HALF: the survivor body has 16 retail body-twins and 33 of ours, so masked-body identity ALONE would be vacuous here -- the verdict rests on the CHASED relocation-target agreement, not on the byte match. No membership was removed and nothing was pruned."
+   "withdrawn_reason": "W17-HCT 2026-09-30: address is in OutfitConfig's retail COMDAT pool (0x8229D350-0x822AC110); its callers/callees are OutfitConfig types (MatSwap/MeshAO/Piercing/Piece/Overlay/OldMatOption/OldColorOption/BandPatchMesh). Name-aware body identity against OutfitConfig.obj: same .pdata length, 0 differing unrelocated words, every disagreeing named callee is itself a block stand-in or a proven fold survivor. The old survivor's own type has no retail caller at this address (every bl/b caller is OutfitConfig-family code) -- withdrawn, not folded."
   },
   {
    "name": "$ObjDirPtr_assign",
@@ -88858,11 +89067,19 @@
   {
    "name": "__uninitialized_copy_PAVTransformArea",
    "address": "0x822a7008",
-   "survivor": "??$__uninitialized_copy@PAVTransformArea@@PAV1@@stlpmtx_std@@YAPAVTransformArea@@PAV1@00ABU__false_type@0@@Z",
+   "survivor": "??$__uninitialized_copy@PAVMatSwap@OutfitConfig@@PAV12@@stlpmtx_std@@YAPAVMatSwap@OutfitConfig@@PAV12@00ABU__false_type@0@@Z",
    "folded": [
     "??$__uninitialized_copy@PBVMatSwap@OutfitConfig@@PAV12@@stlpmtx_std@@YAPAVMatSwap@OutfitConfig@@PBV12@0PAV12@ABU__false_type@0@@Z"
    ],
-   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 54, row addr 0x822a7008). \"ours\" spelling ??$__uninitialized_copy@PBVMatSwap@OutfitConfig@@PAV12@@stlpmtx_std@@YAPAVMatSwap@OutfitConfig@@PBV12@0PAV12@ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_copy@PAVTransformArea@@PAV1@@stlpmtx_std@@YAPAVTransformArea@@PAV1@00ABU__false_type@0@@Z at retail address 0x822a7008. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 SLOT-FOLD-OK, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 324 B (324 B honest) across ['default/band3/bandtrack/Gem'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md."
+   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 54, row addr 0x822a7008). \"ours\" spelling ??$__uninitialized_copy@PBVMatSwap@OutfitConfig@@PAV12@@stlpmtx_std@@YAPAVMatSwap@OutfitConfig@@PBV12@0PAV12@ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_copy@PAVTransformArea@@PAV1@@stlpmtx_std@@YAPAVTransformArea@@PAV1@00ABU__false_type@0@@Z at retail address 0x822a7008. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 SLOT-FOLD-OK, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 324 B (324 B honest) across ['default/band3/bandtrack/Gem'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_copy@PAVTransformArea@@PAV1@@stlpmtx_std@@YAPAVTransformArea@@PAV1@00ABU__false_type@0@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION"
+    }
+   ],
+   "withdrawn_reason": "W17-HCT 2026-09-30: address is in OutfitConfig's retail COMDAT pool (0x8229D350-0x822AC110); its callers/callees are OutfitConfig types (MatSwap/MeshAO/Piercing/Piece/Overlay/OldMatOption/OldColorOption/BandPatchMesh). Name-aware body identity against OutfitConfig.obj: same .pdata length, 0 differing unrelocated words, every disagreeing named callee is itself a block stand-in or a proven fold survivor. The old survivor names a type absent from RB3 (TransformArea/TransformCrowd are HamCamTransform members, Flow and UILabel::LabelStyle are DC3-only; retail has no .?AVFlow@@ or HamCamTransform RTTI) -- withdrawn."
   },
   {
    "name": "resize_VTrackerPlayerDisplay",
@@ -89067,6 +89284,16 @@
     "??1?$pair@PBDVDataNode@@@stlpmtx_std@@QAA@XZ"
    ],
    "evidence": "W16-HS 2026-09-30: ICF fold of five 24-byte DataNode-at-+4 destructors (test the type at +8, call DataArray::Release). tools/icf_pair_adjudicate.py --pairs --chase --family, fn_82768B18 against each of the five spellings: FLAT T1 PROVEN for all five (masked bodies equal, the single relocation ?Release@DataArray@@QAAXXZ agrees by NAME, not just shape), CHASED T1 PROVEN, FAMILY 5 of ours -> 1 retail address; retail_bodytwins 1 across all 3,115 pinned target objs. Retail corroboration: 281 retail call sites land on 0x82768B18, 280 of them EH funclets (273 in RockCentral) unwinding pair<const Symbol,DataNode>. Survivor ~VarStack: W16-HN identity (3 agrees, 2 matched-caller witnesses). Every folded spelling is referenced by our objs (pair<const Symbol,DataNode> in 22). --chasetest and --self-break controls passed on the same tree."
+  },
+  {
+   "name": "W17-HCT 2026-09-30 0x8229e3c0",
+   "address": "0x8229e3c0",
+   "survivor": "??$?6V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "folded": [
+    "??$?6V?$ObjOwnerPtr@VCharClip@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VCharClip@@@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@V?$ObjOwnerPtr@VCharClip@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VCharClip@@@@@stlpmtx_std@@@stlpmtx_std@@@Z"
+   ],
+   "evidence": "W17-HCT 2026-09-30: retail 0x8229E3C0 has two callers: the MatSwap writer (0x822A00A8, OutfitConfig) and CharClipGroup::Save (0x8238EB2C). Bodies of the vector<ObjPtr<RndTex>> and vector<ObjOwnerPtr<CharClip>> writers are word-identical modulo the element-writer callee, which retail resolves to ONE function (fn_8238B5B8) -- a real ICF fold. Survivor is the OutfitConfig spelling (the address sits in OutfitConfig's COMDAT pool); the CharClip spelling is kept as folded because CharClipGroup::Save really calls here.",
+   "withdrawn_reason": "W17-HCT 2026-09-30: retail 0x8229E3C0 has two callers: the MatSwap writer (0x822A00A8, OutfitConfig) and CharClipGroup::Save (0x8238EB2C). Bodies of the vector<ObjPtr<RndTex>> and vector<ObjOwnerPtr<CharClip>> writers are word-identical modulo the element-writer callee, which retail resolves to ONE function (fn_8238B5B8) -- a real ICF fold. Survivor is the OutfitConfig spelling (the address sits in OutfitConfig's COMDAT pool); the CharClip spelling is kept as folded because CharClipGroup::Save really calls here."
   }
  ]
 }
