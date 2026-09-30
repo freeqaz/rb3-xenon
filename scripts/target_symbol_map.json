@@ -10332,7 +10332,7 @@
  "0x8250eff0": "?Handle@EntityUploader@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x8250f4e0": "?StopLog@Debug@@QAAXXZ",
  "0x8250f5e0": "?StartLog@Debug@@QAAXPBD_N@Z",
- "0x8250f6d0": "?Fail@Debug@@QAAXPBDPAX@Z",
+ "0x8250f6d0": "?Fail@Debug@@QAAXPBD@Z",
  "0x8250f538": "?Notify@Debug@@QAAXPBD@Z",
  "0x8250f898": "?Poll@Debug@@QAAXXZ",
  "0x8250f940": "?RemoveExitCallback@Debug@@QAAXP6AXXZ@Z",

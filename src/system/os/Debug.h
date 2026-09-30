@@ -66,9 +66,11 @@ public:
     void Exit(int, bool);
     void Warn(const char *msg);
     void Notify(const char *msg);
-    void Fail(const char *msg, void *);
-    // rb3-Wii uses 1-arg Fail; inline wrapper for portability
-    inline void Fail(const char *msg) { Fail(msg, nullptr); }
+    // RB3 retail's Fail (0x8250F6D0) takes only the message: it reads r3/r4
+    // and never r5, and Poll calls it without loading r5. The two-arg form is
+    // DC3's; keep it as a forwarder for the call sites that still spell it.
+    void Fail(const char *msg);
+    inline void Fail(const char *msg, void *) { Fail(msg); }
     TextStream *Reflect() const { return mReflect; }
     TextStream *SetReflect(TextStream *ts) {
         TextStream *ret = mReflect;
@@ -348,7 +350,7 @@ extern DebugNotifier TheDebugNotifier;
 
 class DebugFailer {
 public:
-    void operator<<(const char *cc) { TheDebug.Fail(cc, nullptr); }
+    void operator<<(const char *cc) { TheDebug.Fail(cc); }
 };
 
 extern DebugFailer TheDebugFailer;

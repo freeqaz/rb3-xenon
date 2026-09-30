@@ -179,7 +179,7 @@ void Debug::Notify(const char *msg) {
     }
 }
 
-void Debug::Fail(const char *msg, void *v) {
+void Debug::Fail(const char *msg) {
 #ifdef HX_NATIVE
     fprintf(stderr, "FAIL: %s\n", msg);
 #ifdef HX_WEB
@@ -243,7 +243,7 @@ void Debug::Poll() {
         MILO_FAIL("TRY conditional not exited %d", oldTry);
     }
     if (mFailThreadMsg) {
-        Fail(mFailThreadMsg, nullptr);
+        Fail(mFailThreadMsg);
     }
     if (mNotifyThreadMsg) {
         String notifyStr(mNotifyThreadMsg);
