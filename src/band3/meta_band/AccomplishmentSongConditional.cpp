@@ -77,39 +77,25 @@ bool AccomplishmentSongConditional::CheckSoloPercentCondition(
 bool AccomplishmentSongConditional::CheckAwesomesCondition(
     SongStatusMgr *mgr, Symbol s, const AccomplishmentCondition &cond
 ) const {
-    if (cond.mScoreType != kScoreVocals && cond.mScoreType != kScoreHarmony) {
-        MILO_WARN("awesome condition can only be used with vocals or harmony!");
-        return false;
-    } else {
-        int id = TheSongMgr.GetSongIDFromShortName(s, true);
-        return cond.mValue <= mgr->GetBestAwesomes(id, cond.mScoreType, cond.mDifficulty);
-    }
+    // Retail has no vocals/harmony score-type guard here.
+    int id = TheSongMgr.GetSongIDFromShortName(s, true);
+    return cond.mValue <= mgr->GetBestAwesomes(id, cond.mScoreType, cond.mDifficulty);
 }
 
 bool AccomplishmentSongConditional::CheckDoubleAwesomesCondition(
     SongStatusMgr *mgr, Symbol s, const AccomplishmentCondition &cond
 ) const {
-    if (cond.mScoreType != kScoreVocals && cond.mScoreType != kScoreHarmony) {
-        MILO_WARN("double_awesome condition can only be used with vocals or harmony!");
-        return false;
-    } else {
-        int id = TheSongMgr.GetSongIDFromShortName(s, true);
-        return cond.mValue
-            <= mgr->GetBestDoubleAwesomes(id, cond.mScoreType, cond.mDifficulty);
-    }
+    // Retail has no vocals/harmony score-type guard here.
+    int id = TheSongMgr.GetSongIDFromShortName(s, true);
+    return cond.mValue <= mgr->GetBestDoubleAwesomes(id, cond.mScoreType, cond.mDifficulty);
 }
 
 bool AccomplishmentSongConditional::CheckTripleAwesomesCondition(
     SongStatusMgr *mgr, Symbol s, const AccomplishmentCondition &cond
 ) const {
-    if (cond.mScoreType != kScoreVocals && cond.mScoreType != kScoreHarmony) {
-        MILO_WARN("triple awesome condition can only be used with vocals or harmony!");
-        return false;
-    } else {
-        int id = TheSongMgr.GetSongIDFromShortName(s, true);
-        return cond.mValue
-            <= mgr->GetBestTripleAwesomes(id, cond.mScoreType, cond.mDifficulty);
-    }
+    // Retail has no vocals/harmony score-type guard here.
+    int id = TheSongMgr.GetSongIDFromShortName(s, true);
+    return cond.mValue <= mgr->GetBestTripleAwesomes(id, cond.mScoreType, cond.mDifficulty);
 }
 
 bool AccomplishmentSongConditional::CheckHitBRECondition(
