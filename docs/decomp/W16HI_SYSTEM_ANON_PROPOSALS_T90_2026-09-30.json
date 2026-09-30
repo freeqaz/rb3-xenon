@@ -1,0 +1,399 @@
+{
+ "rule": {
+  "threshold": 90.0,
+  "margin": 1.0,
+  "min_size": 0,
+  "k": 6,
+  "spatial_sandwich_and_occupancy": true
+ },
+ "targets_scored": 1993,
+ "skipped": {
+  "no_candidate_in_band": 49,
+  "deliberately_null_in_map": 52,
+  "already_in_map": 3
+ },
+ "proposal_count": 30,
+ "proposal_bytes": 6116,
+ "dropped_non_bijective": [
+  {
+   "addr": "0x823f64b0",
+   "target": "fn_823F64B0",
+   "unit": "default/SessionJobs_Xbox",
+   "size": 64,
+   "name": "??0AddLocalPlayerJob@@QAA@PAXH_N@Z",
+   "fuzzy": 99.875,
+   "runner_up": [
+    "??0WriteCareerLeaderboardJob@@QAA@PAXHH_K1@Z",
+    25.9375
+   ]
+  },
+  {
+   "addr": "0x823f64f0",
+   "target": "fn_823F64F0",
+   "unit": "default/SessionJobs_Xbox",
+   "size": 64,
+   "name": "??0AddLocalPlayerJob@@QAA@PAXH_N@Z",
+   "fuzzy": 96.25,
+   "runner_up": [
+    "??0WriteCareerLeaderboardJob@@QAA@PAXHH_K1@Z",
+    28.4375
+   ]
+  }
+ ],
+ "proposals": [
+  {
+   "addr": "0x8231a980",
+   "target": "fn_8231A980",
+   "unit": "default/MeterDisplay",
+   "size": 16,
+   "name": "?Replace@RndTransformable@@$4PPPPPPPM@IM@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
+   "fuzzy": 100.0,
+   "runner_up": [
+    "?Print@RndTransformable@@$4PPPPPPPM@IM@AAXXZ",
+    98.75
+   ]
+  },
+  {
+   "addr": "0x824c7c48",
+   "target": "fn_824C7C48",
+   "unit": "default/CameraShot",
+   "size": 92,
+   "name": "??$?5VCamShotCrowd@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@VCamShotCrowd@@@@@Z",
+   "fuzzy": 96.95652,
+   "runner_up": [
+    "??$?5U?$pair@HH@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HH@stlpmtx_std@@@1@@@YAAAVBinStreamRev@@AAV0@AAV?$vector@U?$pair@HH@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HH@stlpmtx_std@@@2@@stlpmtx_std@@@Z",
+    66.26087
+   ]
+  },
+  {
+   "addr": "0x824d5028",
+   "target": "fn_824D5028",
+   "unit": "default/SpotlightDrawer",
+   "size": 444,
+   "name": "?ApplyLightingApprox@SpotlightDrawer@@QBAXAAVBoxMapLighting@@M@Z",
+   "fuzzy": 92.97298,
+   "runner_up": [
+    "?_M_fill_assign@?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXIABV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@2@@Z",
+    10.756757
+   ]
+  },
+  {
+   "addr": "0x824ecd20",
+   "target": "fn_824ECD20",
+   "unit": "default/Instance",
+   "size": 676,
+   "name": "?SavePersistentObjects@WorldInstance@@AAAXAAVBinStream@@@Z",
+   "fuzzy": 91.76331,
+   "runner_up": [
+    "?DeleteTransientObjects@WorldInstance@@AAAXXZ",
+    29.698225
+   ]
+  },
+  {
+   "addr": "0x82527f08",
+   "target": "fn_82527F08",
+   "unit": "default/VirtualKeyboard",
+   "size": 384,
+   "name": "?OnShowKeyboardUI@VirtualKeyboard@@QAA?AVDataNode@@PBVDataArray@@@Z",
+   "fuzzy": 92.65625,
+   "runner_up": null
+  },
+  {
+   "addr": "0x82725b18",
+   "target": "fn_82725B18",
+   "unit": "default/ByteGrinder",
+   "size": 96,
+   "name": "?op9@@YA?AVDataNode@@PAVDataArray@@@Z",
+   "fuzzy": 92.208336,
+   "runner_up": [
+    "?op53@@YA?AVDataNode@@PAVDataArray@@@Z",
+    74.083336
+   ]
+  },
+  {
+   "addr": "0x82741b18",
+   "target": "fn_82741B18",
+   "unit": "default/Splash",
+   "size": 268,
+   "name": "?Resume@Splash@@QAAXXZ",
+   "fuzzy": 98.477615,
+   "runner_up": [
+    "?EaseExpoInOut@@YAMMMM@Z",
+    17.0
+   ]
+  },
+  {
+   "addr": "0x82741ce0",
+   "target": "fn_82741CE0",
+   "unit": "default/Splash",
+   "size": 332,
+   "name": "?PrepareNext@Splash@@QAA_NXZ",
+   "fuzzy": 93.01205,
+   "runner_up": [
+    "?EaseExpoInOut@@YAMMMM@Z",
+    20.445784
+   ]
+  },
+  {
+   "addr": "0x82771500",
+   "target": "fn_82771500",
+   "unit": "default/SongData",
+   "size": 136,
+   "name": "?GetVocalNoteList@SongData@@QAAPAVVocalNoteList@@H@Z",
+   "fuzzy": 95.882355,
+   "runner_up": [
+    "??_GTuningOffsetList@@QAAPAXI@Z",
+    57.14706
+   ]
+  },
+  {
+   "addr": "0x82779a10",
+   "target": "fn_82779A10",
+   "unit": "default/RGUtl",
+   "size": 488,
+   "name": "?AddChordLevel@@YA_NPADHHAAHPBD_N@Z",
+   "fuzzy": 93.196724,
+   "runner_up": null
+  },
+  {
+   "addr": "0x8277d4f0",
+   "target": "fn_8277D4F0",
+   "unit": "default/MasterAudio",
+   "size": 532,
+   "name": "?SetupChannels@MasterAudio@@QAAXPAVSongInfo@@@Z",
+   "fuzzy": 96.80451,
+   "runner_up": [
+    "?ResetTrack@MasterAudio@@QAAXUAudioTrackNum@@_N@Z",
+    31.932331
+   ]
+  },
+  {
+   "addr": "0x8277f338",
+   "target": "fn_8277F338",
+   "unit": "default/MasterAudio",
+   "size": 264,
+   "name": "?SetMapping@TrackData@@QAAXABV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "fuzzy": 90.666664,
+   "runner_up": [
+    "?_M_insert_overflow@?$vector@PAVTrackData@@V?$StlNodeAlloc@PAVTrackData@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAPAVTrackData@@ABQAV3@ABU__true_type@2@I_N@Z",
+    18.742424
+   ]
+  },
+  {
+   "addr": "0x82781b00",
+   "target": "fn_82781B00",
+   "unit": "default/VocalNoteList",
+   "size": 116,
+   "name": "?AddNote@VocalNoteList@@QAAXABVVocalNote@@@Z",
+   "fuzzy": 100.0,
+   "runner_up": [
+    "?EndPlayerPhrase@VocalNoteList@@QAAXHH@Z",
+    28.62069
+   ]
+  },
+  {
+   "addr": "0x82781d58",
+   "target": "fn_82781D58",
+   "unit": "default/VocalNoteList",
+   "size": 236,
+   "name": "?StartPlayerPhrase@VocalNoteList@@QAAXHH@Z",
+   "fuzzy": 99.91525,
+   "runner_up": [
+    "?EndPlayerPhrase@VocalNoteList@@QAAXHH@Z",
+    36.525425
+   ]
+  },
+  {
+   "addr": "0x82789808",
+   "target": "fn_82789808",
+   "unit": "default/SongParser",
+   "size": 96,
+   "name": "??$__uninitialized_copy@PAVDifficultyInfo@SongParser@@PAV12@@stlpmtx_std@@YAPAVDifficultyInfo@SongParser@@PAV12@00ABU__false_type@0@@Z",
+   "fuzzy": 100.0,
+   "runner_up": [
+    "??$__uninitialized_fill_n@PAVDifficultyInfo@SongParser@@IV12@@stlpmtx_std@@YAPAVDifficultyInfo@SongParser@@PAV12@IABV12@ABU__false_type@0@@Z",
+    86.0
+   ]
+  },
+  {
+   "addr": "0x82789fd0",
+   "target": "fn_82789FD0",
+   "unit": "default/SongParser",
+   "size": 96,
+   "name": "??$__uninitialized_fill_n@PAVDifficultyInfo@SongParser@@IV12@@stlpmtx_std@@YAPAVDifficultyInfo@SongParser@@PAV12@IABV12@ABU__false_type@0@@Z",
+   "fuzzy": 100.0,
+   "runner_up": [
+    "??$__uninitialized_copy@PAVDifficultyInfo@SongParser@@PAV12@@stlpmtx_std@@YAPAVDifficultyInfo@SongParser@@PAV12@00ABU__false_type@0@@Z",
+    86.166664
+   ]
+  },
+  {
+   "addr": "0x8278a2e0",
+   "target": "fn_8278A2E0",
+   "unit": "default/SongParser",
+   "size": 328,
+   "name": "?_M_insert_overflow_aux@?$vector@VDifficultyInfo@SongParser@@V?$StlNodeAlloc@VDifficultyInfo@SongParser@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVDifficultyInfo@SongParser@@ABV34@ABU__false_type@2@I_N@Z",
+   "fuzzy": 100.0,
+   "runner_up": [
+    "?_M_insert_overflow_aux@?$vector@UPartInfo@@V?$StlNodeAlloc@UPartInfo@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUPartInfo@@ABU3@ABU__false_type@2@I_N@Z",
+    57.23171
+   ]
+  },
+  {
+   "addr": "0x8278eac8",
+   "target": "fn_8278EAC8",
+   "unit": "default/system/beatmatch/GameGem",
+   "size": 12,
+   "name": "?GetFret@GameGem@@QBACI@Z",
+   "fuzzy": 99.666664,
+   "runner_up": [
+    "?SetFret@GameGem@@QAAXIC@Z",
+    80.0
+   ]
+  },
+  {
+   "addr": "0x8278ec80",
+   "target": "fn_8278EC80",
+   "unit": "default/system/beatmatch/GameGem",
+   "size": 52,
+   "name": "?GetFret@GameGem@@QBAHXZ",
+   "fuzzy": 99.92308,
+   "runner_up": [
+    "?GetNumStrings@GameGem@@QBAHXZ",
+    95.23077
+   ]
+  },
+  {
+   "addr": "0x8278ecb8",
+   "target": "fn_8278ECB8",
+   "unit": "default/system/beatmatch/GameGem",
+   "size": 48,
+   "name": "?GetNumStrings@GameGem@@QBAHXZ",
+   "fuzzy": 91.583336,
+   "runner_up": [
+    "?GetFret@GameGem@@QBAHXZ",
+    86.5
+   ]
+  },
+  {
+   "addr": "0x8278ed28",
+   "target": "fn_8278ED28",
+   "unit": "default/system/beatmatch/GameGem",
+   "size": 12,
+   "name": "?SetFret@GameGem@@QAAXIC@Z",
+   "fuzzy": 99.666664,
+   "runner_up": [
+    "?GetFret@GameGem@@QBACI@Z",
+    80.0
+   ]
+  },
+  {
+   "addr": "0x827a3948",
+   "target": "fn_827A3948",
+   "unit": "default/DataArraySongInfo",
+   "size": 96,
+   "name": "??$__uninitialized_fill_n@PAVTrackChannels@@IV1@@stlpmtx_std@@YAPAVTrackChannels@@PAV1@IABV1@ABU__false_type@0@@Z",
+   "fuzzy": 100.0,
+   "runner_up": [
+    "??$__uninitialized_copy@PAVTrackChannels@@PAV1@@stlpmtx_std@@YAPAVTrackChannels@@PAV1@00ABU__false_type@0@@Z",
+    86.166664
+   ]
+  },
+  {
+   "addr": "0x827a3cf8",
+   "target": "fn_827A3CF8",
+   "unit": "default/DataArraySongInfo",
+   "size": 324,
+   "name": "?_M_insert_overflow_aux@?$vector@VTrackChannels@@V?$StlNodeAlloc@VTrackChannels@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVTrackChannels@@ABV3@ABU__false_type@2@I_N@Z",
+   "fuzzy": 99.93827,
+   "runner_up": [
+    "?_M_insert_overflow_aux@?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVSymbol@@ABV3@ABU__false_type@2@I_N@Z",
+    58.802467
+   ]
+  },
+  {
+   "addr": "0x827c91a0",
+   "target": "fn_827C91A0",
+   "unit": "default/StringTable",
+   "size": 36,
+   "name": "?SecondsToTick@@YAMM@Z",
+   "fuzzy": 100.0,
+   "runner_up": [
+    "?Terminate@Movie@@SAXXZ",
+    65.55556
+   ]
+  },
+  {
+   "addr": "0x827cc8f0",
+   "target": "fn_827CC8F0",
+   "unit": "default/UTF8",
+   "size": 128,
+   "name": "?UTF8toASCIIs@@YAXPADHPBDD@Z",
+   "fuzzy": 96.25,
+   "runner_up": [
+    "?erase@?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@QAAPAGPAG0@Z",
+    46.8125
+   ]
+  },
+  {
+   "addr": "0x827d7b38",
+   "target": "fn_827D7B38",
+   "unit": "default/CacheMgr_Xbox",
+   "size": 304,
+   "name": "?MountAsync@CacheMgrXbox@@UAA_NPAVCacheID@@PAPAVCache@@PAVObject@Hmx@@@Z",
+   "fuzzy": 97.89474,
+   "runner_up": [
+    "?UnmountAsync@CacheMgrXbox@@UAA_NPAPAVCache@@PAVObject@Hmx@@@Z",
+    61.407894
+   ]
+  },
+  {
+   "addr": "0x827d7c68",
+   "target": "fn_827D7C68",
+   "unit": "default/CacheMgr_Xbox",
+   "size": 228,
+   "name": "?UnmountAsync@CacheMgrXbox@@UAA_NPAPAVCache@@PAVObject@Hmx@@@Z",
+   "fuzzy": 97.192986,
+   "runner_up": [
+    "?MountAsync@CacheMgrXbox@@UAA_NPAVCacheID@@PAPAVCache@@PAVObject@Hmx@@@Z",
+    50.894737
+   ]
+  },
+  {
+   "addr": "0x827d7d50",
+   "target": "fn_827D7D50",
+   "unit": "default/CacheMgr_Xbox",
+   "size": 220,
+   "name": "?DeleteAsync@CacheMgrXbox@@UAA_NPAVCacheID@@@Z",
+   "fuzzy": 97.09091,
+   "runner_up": [
+    "?UnmountAsync@CacheMgrXbox@@UAA_NPAPAVCache@@PAVObject@Hmx@@@Z",
+    50.345455
+   ]
+  },
+  {
+   "addr": "0x82811e30",
+   "target": "fn_82811E30",
+   "unit": "default/system/ui/UILabelDir",
+   "size": 16,
+   "name": "?Export@RndDir@@$4PPPPPPPM@BHI@AAXPAVDataArray@@_N@Z",
+   "fuzzy": 100.0,
+   "runner_up": [
+    "?WriteImpl@BinStreamRev@@EAAXPBXH@Z",
+    47.25
+   ]
+  },
+  {
+   "addr": "0x828175c0",
+   "target": "fn_828175C0",
+   "unit": "default/system/ui/UIGridProvider",
+   "size": 40,
+   "name": "?UpdateExtendedText@UIGridSubProvider@@UBAXHHPAVUILabel@@@Z",
+   "fuzzy": 90.0,
+   "runner_up": [
+    "?IsHidden@UIGridSubProvider@@UBA_NH@Z",
+    78.5
+   ]
+  }
+ ]
+}
