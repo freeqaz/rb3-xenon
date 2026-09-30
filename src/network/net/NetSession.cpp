@@ -651,18 +651,17 @@ bool NetSession::OnMsg(const UserLeftMsg &msg) {
 }
 
 void NetSession::ProcessUserLeftMsg(const UserLeftMsg &msg) {
+    // Retail has no HasUser() guard here.
     RemoteUser *ruser = TheUserMgr->GetRemoteUser(msg.mUserGuid, true);
-    if (HasUser(ruser)) {
-        unsigned int machineID = ruser->GetMachineID();
-        RemovingRemoteUserMsg rmsg(ruser);
-        Handle(rmsg, false);
-        RemoveRemoteFromSession(ruser);
-        if (IsHost()) {
-            SendToAllClientsExcept(msg, kReliable, machineID);
-        }
-        RemoteUserLeftMsg rleftmsg(ruser);
-        Handle(rleftmsg, false);
+    unsigned int machineID = ruser->GetMachineID();
+    RemovingRemoteUserMsg rmsg(ruser);
+    Handle(rmsg, false);
+    RemoveRemoteFromSession(ruser);
+    if (IsHost()) {
+        SendToAllClientsExcept(msg, kReliable, machineID);
     }
+    RemoteUserLeftMsg rleftmsg(ruser);
+    Handle(rleftmsg, false);
 }
 
 void NetSession::StartGame() {
