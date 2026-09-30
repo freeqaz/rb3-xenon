@@ -763,7 +763,8 @@ BinStream &operator>>(BinStream &bs, OutfitConfig::Piercing &piercing) {
             bool b;
             bs >> b;
         }
-        if (gRev == 0x10) {
+        // Retail tests a RANGE (cmplwi 0xf/ble; cmplwi 0x11/bge), not `== 0x10`.
+        if (gRev > 0xF && gRev < 0x11) {
             bool b;
             bs >> b;
         }
