@@ -6268,6 +6268,7 @@ DataArraySongInfo.cpp:
 	.pdata      start:0x82240158 end:0x82240160
 	.pdata      start:0x82240160 end:0x82240168
 	.pdata      start:0x82240198 end:0x82240210
+	.pdata      start:0x82240210 end:0x82240218
 	.pdata      start:0x82240218 end:0x822402B8
 	.text       start:0x827A3228 end:0x827A32A8
 	.text       start:0x827A32A8 end:0x827A33A8
@@ -6275,6 +6276,7 @@ DataArraySongInfo.cpp:
 	.text       start:0x827A3400 end:0x827A3460
 	.text       start:0x827A3460 end:0x827A3594
 	.text       start:0x827A3808 end:0x827A3FA0
+	.text       start:0x827A3FA0 end:0x827A4014
 	.text       start:0x827A4014 end:0x827A4E10
 
 StorePreviewMgr.cpp:
@@ -6387,19 +6389,9 @@ ButtonHolder.cpp:
 	.text       start:0x827B9F10 end:0x827B9F18
 
 HolmesClient.cpp:
-	.pdata      start:0x82232638 end:0x82232640
-	.pdata      start:0x82232640 end:0x82232648
-	.pdata      start:0x82232658 end:0x82232660
-	.pdata      start:0x82232660 end:0x82232668
 	.pdata      start:0x82234B48 end:0x82234B50
-	.pdata      start:0x82240210 end:0x82240218
 	.pdata      start:0x82241A20 end:0x82241A30
-	.text       start:0x826A1808 end:0x826A1868
-	.text       start:0x826A1870 end:0x826A189C
-	.text       start:0x826A1960 end:0x826A19C0
-	.text       start:0x826A19C8 end:0x826A19F4
 	.text       start:0x826CD438 end:0x826CD4E0
-	.text       start:0x827A3FA0 end:0x827A4014
 	.text       start:0x827BADB0 end:0x827BAE5C
 
 Symbol.cpp:
@@ -8126,13 +8118,21 @@ band3/meta_band/NetSync.cpp:
 
 band3/game/Scoring.cpp:
 	.pdata      start:0x82232580 end:0x82232638
+	.pdata      start:0x82232638 end:0x82232640
+	.pdata      start:0x82232640 end:0x82232648
 	.pdata      start:0x82232648 end:0x82232658
+	.pdata      start:0x82232658 end:0x82232660
+	.pdata      start:0x82232660 end:0x82232668
 	.pdata      start:0x82232668 end:0x822326C8
 	.text       start:0x826A06A0 end:0x826A06AC
 	.text       start:0x826A06B0 end:0x826A1808
+	.text       start:0x826A1808 end:0x826A1868
 	.text       start:0x826A1868 end:0x826A1870
+	.text       start:0x826A1870 end:0x826A189C
 	.text       start:0x826A189C end:0x826A1960
+	.text       start:0x826A1960 end:0x826A19C0
 	.text       start:0x826A19C0 end:0x826A19C8
+	.text       start:0x826A19C8 end:0x826A19F4
 	.text       start:0x826A19F4 end:0x826A228C
 
 band3/game/Band.cpp:

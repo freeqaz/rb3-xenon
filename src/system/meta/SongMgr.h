@@ -124,8 +124,8 @@ public:
      * @param [out] names The collection of song content names.
      */
     virtual void GetContentNames(Symbol shortname, std::vector<Symbol> &names) const;
-    virtual bool SongCacheNeedsWrite() const { return mSongCacheNeedsWrite; }
-    virtual void ClearSongCacheNeedsWrite() { mSongCacheNeedsWrite = false; }
+    virtual bool SongCacheNeedsWrite() const;
+    virtual void ClearSongCacheNeedsWrite();
     virtual void ClearCachedContent();
     /** Get the song shortname associated with the supplied song ID.
      * @param [in] songID The song ID.

@@ -855,6 +855,7 @@ bool BandSongMgr::SongCacheNeedsWrite() const {
 void BandSongMgr::ClearSongCacheNeedsWrite() {
     SongMgr::ClearSongCacheNeedsWrite();
     mUpgradeMgr->ClearSongCacheNeedsWrite();
+    mLicenseMgr->ClearLicenseCacheNeedsWrite();
 }
 
 void BandSongMgr::ReadCachedMetadataFromStream(BinStream &bs, int rev) {

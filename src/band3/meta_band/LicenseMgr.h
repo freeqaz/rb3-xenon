@@ -38,6 +38,7 @@ public:
     bool HasLicense(Symbol) const;
     void AddLicenses(DataArray *, DataLoader *, ContentLocT, Symbol);
     bool LicenseCacheNeedsWrite() const;
+    void ClearLicenseCacheNeedsWrite();
     bool WriteCachedMetadataToStream(BinStream &) const;
     bool ReadCachedMetadataFromStream(BinStream &, int);
     void ClearCachedContent();
