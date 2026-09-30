@@ -427,6 +427,32 @@ float VocalPlayer::RemoteVocalVolume() const {
         return 1.0f - ret / 0.33f;
 }
 
+// W17-CLEAN-VP (2026-09-30): cleanup-only pass, no codegen changes. This
+// function was called "too diffuse to price as a single-defect row" in
+// docs/decomp/W16_NEXT_WAVE_TARGETING_2026-09-16.md (lane X3, 3,388 B,
+// fuzzy ~93.84%). Re-examined block by block via objdiff's auto-diagnosis;
+// verified findings (each also commented at its own site below):
+//   - Several residuals are the same systemic MSVC instruction-selection
+//     choice (record-form `clrrwi.` vs retail's separate compare+branch for
+//     `vector::size() != 0`-shaped conditions), not logic bugs.
+//   - One residual (singer-score-loop energy read) is a confirmed benign
+//     register-allocation/scheduling artifact: retail spills a live value to
+//     the stack at this point, we don't need to -- verified against
+//     Singer.h's own 0x5c/0x60/0x64 offset comments, not a member-confusion
+//     bug.
+//   - One residual (solo pitch-correction target) is an unresolved, flagged
+//     compiler CSE/scheduling question -- see the TODO(W17) comment at its
+//     site. Not fixed here; left for a future matching lane.
+//   - Register-swap and prologue/register-save-helper (__savegprlr_14 vs
+//     __savegprlr_15) residuals are permuter-class noise, out of scope per
+//     standing project directive (permuter OFF).
+//   - Several retail callees at this row's Function Call Diff are ICF-folded
+//     template instantiations (objdiff shows an arbitrary survivor spelling,
+//     not a wrong callee) or genuinely unidentified fn_XXXXXXXX addresses;
+//     one candidate (SongSectionOnly) was identified and named this pass --
+//     see scripts/target_symbol_map.json and the W17-CLEAN-VP report for the
+//     COFF evidence. The remaining ~19 target-only addresses are unverified
+//     and left for a future identification pass.
 void VocalPlayer::Poll(float ms, const SongPos &pos) {
     if (mGameOver)
         return;
@@ -486,7 +512,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
     // scoredPartIndices initialized before SongSectionOnly, reserve mVocalParts.size()
     std::vector<int> scoredPartIndices;
 
-    float var_f24 = 0.0f;
+    float fBestFreestyleDeployAmt = 0.0f;
     int iMaximumFreestyleDeploymentSinger = -1;
     scoredPartIndices.reserve(mVocalParts.size());
 
@@ -519,9 +545,14 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
         pPart->Poll(fCompMS, pos);
         pPart->ClearSingerCandidates();
 
-        int dimState = pPart->unk98;
-        bSomePitched = bSomePitched | (dimState == 0);
-        bSomeUnpitched = bSomeUnpitched | ((dimState - 1) == 0);
+        // pPart->unk98 is an un-named VocalPart field (no verified member name or
+        // offset comment in VocalPart.h) that appears to hold a per-part pitch
+        // mode: usage below implies 0 == pitched, 1 == unpitched. Inferred from
+        // context only -- not confirmed against retail or the class layout, so
+        // the field itself is left as unk98 rather than guessed at.
+        int partPitchMode = pPart->unk98;
+        bSomePitched = bSomePitched | (partPitchMode == 0);
+        bSomeUnpitched = bSomeUnpitched | ((partPitchMode - 1) == 0);
 
         VocalNote *pNote = (VocalNote *)pPart->mVocalNoteList->NoteAt(fCompMS);
         if (pNote && pNote->mUnpitchedNote && !pUnpitchedPart) {
@@ -589,13 +620,21 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
         }
 
         // Score singer against each part
-        float var_f22 = -1000.0f;
+        float fBestPitchDeviation = -1000.0f;
         FOREACH (pIt, mVocalParts) {
             VocalPart *pPart = *pIt;
             bool bScoringAllowed = mScoringEnabled && !InRollback();
 
             if (bScoringAllowed && pPart->ScoringEnabled()) {
                 VocalScoreCache &cache = pSinger->AccessScoreCache(pPart->mPartIndex);
+                // W17: objdiff flags a mismatch here (retail spills a live value to
+                // a stack slot with `stfs`, ours instead loads straight from
+                // pSinger->mLastFrameMicEnergy at the same positional index) --
+                // confirmed benign register-allocation/scheduling noise, not a
+                // member-confusion bug: mFrameMicPitch/mLastFrameMicEnergy/
+                // mSmoothedMicEnergy below are read at 0x5c/0x60/0x64 respectively,
+                // an exact match for Singer.h's own `// 0xHEX` comments on those
+                // three members. No source change indicated.
                 float fEnergy = pSinger->mLastFrameMicEnergy;
                 int iRating;
                 float fDev;
@@ -610,8 +649,8 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                     iRating,
                     fDev
                 );
-                if (-1000.0f != fDev && fabs(fDev) < fabsf(var_f22)) {
-                    var_f22 = fDev;
+                if (-1000.0f != fDev && fabs(fDev) < fabsf(fBestPitchDeviation)) {
+                    fBestPitchDeviation = fDev;
                 }
 
                 float fScore = cache.unk0;
@@ -621,8 +660,8 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                 pSinger->AppendToScoreHistory(fCompMS, pPart->mPartIndex, fScore, iRating);
             }
         }
-        if (-1000.0f != var_f22) {
-            pSinger->UpdatePitchDeviation(var_f22);
+        if (-1000.0f != fBestPitchDeviation) {
+            pSinger->UpdatePitchDeviation(fBestPitchDeviation);
         }
 
         // Check ambiguity between pairs of parts
@@ -730,6 +769,13 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                 ),
                 singersArray.end()
             );
+        // W17: this loop condition is one of several confirmed sites in Poll
+        // (also the two vector-size checks feeding the octave-offset loop below)
+        // where retail emits a plain compare (`srawi`/`srawi.` + `cmpwi cr6` +
+        // branch) but our compiled code folds the comparison into a record-form
+        // instruction (`clrrwi.`) that sets CR0 implicitly. This is a systemic
+        // MSVC instruction-selection choice for "vector::size() != 0"-shaped
+        // comparisons, not a logic difference -- do not chase it as a source bug.
         } while (partsArray.size() != 0 && singersArray.size() != 0);
     }
 
@@ -801,8 +847,8 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
 
             if (!IsNet() && InFreestyleSection()) {
                 float fDeployAmt = pSinger->AddToFreestyleDeployment(fCompMS);
-                if (fDeployAmt > var_f24) {
-                    var_f24 = fDeployAmt;
+                if (fDeployAmt > fBestFreestyleDeployAmt) {
+                    fBestFreestyleDeployAmt = fDeployAmt;
                     iMaximumFreestyleDeploymentSinger = pSinger->mSingerIndex;
                 }
             }
@@ -898,7 +944,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
     }
 
     float fRequiredMs;
-    if (GetFreestyleDeploymentRequiredMs(fRequiredMs) && var_f24 > fRequiredMs) {
+    if (GetFreestyleDeploymentRequiredMs(fRequiredMs) && fBestFreestyleDeployAmt > fRequiredMs) {
         DeployBandEnergyIfPossible(false);
         mLastDeploymentSinger = iMaximumFreestyleDeploymentSinger;
     }
@@ -938,6 +984,12 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
         if (0.0f == fHitPct) {
             fAdjusted = 0.0f;
         }
+        // TODO(W17): objdiff shows retail materializing `(0.0f != fAdjusted)` via
+        // an unconditional register copy plus an inverted-polarity branch (looks
+        // CSE'd with the `0.0f == fHitPct` test above), where our compiled code
+        // does a fresh fcmpu+branch here. Working hypothesis is a benign
+        // compiler CSE/scheduling divergence, NOT yet proven -- flagged for a
+        // future matching lane rather than asserted as safe.
         TheGameMicManager->SetPitchCorrectionTarget(
             (0.0f != fAdjusted), false,
             mSynapseProximitySolo, mSynapseFocusSolo,
@@ -1169,6 +1221,25 @@ int VocalPlayer::GetSpotlightPhraseID() const {
     return -1;
 }
 
+// W17-CLEAN-VP (2026-09-30): cleanup-only pass, no codegen changes. This
+// function had no prior cleanup applied (2 recorded attempts, 2,332 B, fuzzy
+// ~97.94%). Only local/parameter renames applied here -- no source-level
+// findings to report beyond the note at fPartPhraseStartMs/fPartPhraseEndMs
+// below. Rename basis, in case a future lane needs to re-derive confidence:
+//   - iPartRating/fPartPhraseStartMs/fPartPhraseEndMs/iPartPrevScore are the
+//     out-parameter names of the callee this calls into,
+//     VocalPart::HandlePhraseEnd(int &o_rRating, float &o_rStartMs,
+//     float &o_rEndMs, int &o_rPrevScore, float ms) -- read directly from its
+//     definition in src/band3/game/VocalPart.cpp.
+//   - fPitchDeviationMean/fPitchDeviationDev are read directly from
+//     Singer::GetPitchDeviation(float &mean, float &dev)'s definition in
+//     src/band3/game/Singer.cpp.
+//   - iPrevScoreSum is the running sum of each part's iPartPrevScore this
+//     phrase; it flows into VocalTrack::OnPhraseComplete's third (int)
+//     parameter, which VocalTrack.cpp only uses in a "last: %i\n" debug
+//     string.
+//   - iCappedRating/idx and the retail-vs-Wii-dev-build idx-1 note were
+//     already present before this pass and are unchanged.
 void VocalPlayer::HandlePhraseEnd(float f1) {
     std::vector<VocalPart *> voxParts = mVocalParts;
     std::sort(voxParts.begin(), voxParts.end(), VocalPart::FramePhraseMeterFracSorter);
@@ -1177,51 +1248,58 @@ void VocalPlayer::HandlePhraseEnd(float f1) {
         cur->SetPhraseScoreMultiplier(mPartScoreMultipliers->Float(i + 1));
         cur->SetPhraseRank(i);
     }
-    int i4 = GetSpotlightPhraseID();
-    float fc4 = -1.0f;
-    int ic8 = -1;
-    int i16 = 0;
-    int i15 = 0;
-    int i14 = mPhraseActivePartCount;
+    int iSpotlightPhraseID = GetSpotlightPhraseID();
+    float fMaxPhraseMeterFrac = -1.0f;
+    int iPhraseRating = -1;
+    int iPrevScoreSum = 0;
+    int iHighRatingPartCount = 0;
+    int iPrevActivePartCount = mPhraseActivePartCount;
     mPhraseActivePartCount = 0;
-    float fcc;
-    float fd0;
-    std::vector<float> vec58;
-    std::vector<int> vec60(3, 0);
+    // W17: these two are declared once here, outside the per-part FOREACH
+    // below, and each iteration's cur->HandlePhraseEnd(...) call overwrites
+    // them -- so by the time mTrack->OnPhraseComplete(fPartPhraseStartMs,
+    // fPartPhraseEndMs, ...) reads them further down, only the LAST iterated
+    // VocalPart's start/end-ms survive. Matches retail's own structure
+    // (single stack slot pair, not per-part accumulation), so this is very
+    // likely intentional -- noted here rather than treated as a defect.
+    float fPartPhraseStartMs;
+    float fPartPhraseEndMs;
+    std::vector<float> partMaxScores;
+    std::vector<int> partActiveFlags(3, 0);
     FOREACH (it, mVocalParts) {
         VocalPart *cur = *it;
-        int id8;
-        int idc;
-        vec58.push_back(cur->MaxPhraseScore());
-        float fd4 = FramePhraseMeterFrac(cur->PartIndex());
+        int iPartRating;
+        int iPartPrevScore;
+        partMaxScores.push_back(cur->MaxPhraseScore());
+        float fPartMeterFrac = FramePhraseMeterFrac(cur->PartIndex());
         if (!cur->InEmptyPhrase() && cur->InPlayablePhrase()
             && !cur->mThisPhrase->mTambourinePhrase && cur->ScoringEnabled()
             && cur->ScoringEnabled()) {
-            MaxEq(fc4, fd4);
+            MaxEq(fMaxPhraseMeterFrac, fPartMeterFrac);
         }
 
-        cur->HandlePhraseEnd(id8, fcc, fd0, idc, f1);
+        cur->HandlePhraseEnd(iPartRating, fPartPhraseStartMs, fPartPhraseEndMs, iPartPrevScore, f1);
         if (!cur->InEmptyPhrase() && cur->InPlayablePhrase() && cur->ScoringEnabled()) {
-            vec60[cur->PartIndex()] = 1;
+            partActiveFlags[cur->PartIndex()] = 1;
             mPhraseActivePartCount++;
         }
-        i16 += idc;
-        if (id8 > ic8 && ScoringEnabled() && cur->ScoringEnabled()) {
-            ic8 = id8;
+        iPrevScoreSum += iPartPrevScore;
+        if (iPartRating > iPhraseRating && ScoringEnabled() && cur->ScoringEnabled()) {
+            iPhraseRating = iPartRating;
         }
-        if (id8 >= 4)
-            i15++;
+        if (iPartRating >= 4)
+            iHighRatingPartCount++;
         mStats.SetVocalPartPercentage(
             cur->PartIndex(), cur->GetOverallPartHitPercentage()
         );
     }
-    if (fc4 >= 0 && ScoringEnabled()) {
+    if (fMaxPhraseMeterFrac >= 0 && ScoringEnabled()) {
         mPhrasePercentageCount++;
-        mPhrasePercentageTotal += fc4;
+        mPhrasePercentageTotal += fMaxPhraseMeterFrac;
     }
     FOREACH (it, mSingers) {
         Singer *cur = *it;
-        cur->HandlePhraseEnd(f1, vec58);
+        cur->HandlePhraseEnd(f1, partMaxScores);
         FOREACH (it2, mVocalParts) {
             VocalPart *curPart = *it2;
             float pct = cur->GetPartPercentage(curPart->PartIndex());
@@ -1229,33 +1307,33 @@ void VocalPlayer::HandlePhraseEnd(float f1) {
                 cur->GetSingerIndex(), curPart->PartIndex(), pct
             );
         }
-        float fe0, fe4;
-        cur->GetPitchDeviation(fe0, fe4);
-        mStats.SetSingerPitchDeviationInfo(cur->GetSingerIndex(), fe0, fe4);
+        float fPitchDeviationMean, fPitchDeviationDev;
+        cur->GetPitchDeviation(fPitchDeviationMean, fPitchDeviationDev);
+        mStats.SetSingerPitchDeviationInfo(cur->GetSingerIndex(), fPitchDeviationMean, fPitchDeviationDev);
     }
-    if (i14 >= 2) {
+    if (iPrevActivePartCount >= 2) {
         mStats.mDoubleHarmonyPhraseCount++;
-        if (i15 >= 2) {
+        if (iHighRatingPartCount >= 2) {
             mStats.mDoubleHarmonyHit++;
         }
-        if (!(i14 - 3)) {
+        if (!(iPrevActivePartCount - 3)) {
             mStats.mTripleHarmonyPhraseCount++;
-            if (i15 == 3) {
+            if (iHighRatingPartCount == 3) {
                 mStats.mTripleHarmonyHit++;
             }
         }
     }
-    if (i15 > 1)
-        ic8 = i15 + 3;
-    if (ic8 != -1) {
+    if (iHighRatingPartCount > 1)
+        iPhraseRating = iHighRatingPartCount + 3;
+    if (iPhraseRating != -1) {
         int idx = mVocalParts.front()->CurrentPhraseIndex();
         // Retail passes idx-1 (`subi r5, r3, 0x1` right before the call); the
         // Wii dev build passes idx.
-        int min = std::min(ic8, 4);
-        UpdateCrowdMeter(min, idx - 1);
+        int iCappedRating = std::min(iPhraseRating, 4);
+        UpdateCrowdMeter(iCappedRating, idx - 1);
     }
     mTambourineManager.SetTambourine(mVocalParts.front()->InTambourinePhrase());
-    bool b14 = i4 != -1 && ic8 >= 4;
+    bool bSpotlightPhraseHit = iSpotlightPhraseID != -1 && iPhraseRating >= 4;
 #ifdef HX_NATIVE
     // Headless: mTrack is a non-null sentinel with no VocalTrackDir render object
     // and no net session, so the retail render/net phrase-end leaves
@@ -1264,19 +1342,19 @@ void VocalPlayer::HandlePhraseEnd(float f1) {
     // arbiter which needs mTrack->mTrackConfig) are skipped. The REAL per-part
     // rating / stats / points accumulation above (cur->HandlePhraseEnd,
     // CalculatePhraseRating, AddPoints, UpdateCrowdMeter) still runs.
-    (void)b14;
+    (void)bSpotlightPhraseHit;
 #else
     if (mTrack) {
         if (ScoringEnabled()) {
-            mTrack->OnPhraseComplete(fcc, fd0, i16);
+            mTrack->OnPhraseComplete(fPartPhraseStartMs, fPartPhraseEndMs, iPrevScoreSum);
         }
         if (IsLocal()) {
-            LocalScorePhrase(ic8, vec60, b14);
-            int packedBools = PackBools(vec60);
+            LocalScorePhrase(iPhraseRating, partActiveFlags, bSpotlightPhraseHit);
+            int packedBools = PackBools(partActiveFlags);
             static Message msg("send_score_phrase", 0, 0, 0);
-            msg[0] = ic8;
+            msg[0] = iPhraseRating;
             msg[1] = packedBools;
-            msg[2] = i14;
+            msg[2] = iPrevActivePartCount;
             HandleType(msg);
         }
     }
@@ -1289,13 +1367,13 @@ void VocalPlayer::HandlePhraseEnd(float f1) {
     HandleType(send_vocal_phrase_over_msg);
     static Message phrase_end_msg("phrase_end");
     Handle(phrase_end_msg, false);
-    if (ScoringEnabled() && ic8 != -1) {
-        Message msg("phrase_rating", ic8);
+    if (ScoringEnabled() && iPhraseRating != -1) {
+        Message msg("phrase_rating", iPhraseRating);
         Handle(msg, false);
     }
-    if (b14 && ScoringEnabled() && mTrack) {
+    if (bSpotlightPhraseHit && ScoringEnabled() && mTrack) {
         mCommonPhraseCapturer->HandleVocalPhrase(
-            this, mTrack->mTrackConfig.TrackNum(), i4, b14
+            this, mTrack->mTrackConfig.TrackNum(), iSpotlightPhraseID, bSpotlightPhraseHit
         );
     }
 #endif
