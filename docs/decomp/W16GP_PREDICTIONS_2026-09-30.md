@@ -188,3 +188,47 @@ tool's flag: both `bl` targets at `0x827e3c38`/`0x827e3e10` were confirmed
 against retail disassembly and `tools/retail_callers.py` **before** the map
 edit was made (see evidence above), so this is the "repair a wrong name"
 case, not a fabrication. Landing it.
+
+## Step 2 (MeshInstance half): splits.txt boundary move + 0x827e48c0 map entry
+
+**MEASURED** (`~/tmp/w16gp_step2_ab.log`, run
+`20260930-030003-w16gp_step2a_combined-1061595`, patch
+`w16gp_step2a_combined.diff` = commits `7d75f4e65` + `a520c6659` combined,
+applied via `--patch` since this was a `map`+`splits`-classified change and
+required both legs measured in freshly-split state):
+
+```
+leg A: matched=44200 masked=23323 honest=20877 code%=40.921753
+leg B: matched=44201 masked=23323 honest=20878 code%=40.922380
+Δmatched=+1  Δmasked_equal=+0  Δhonest=+1  Δcode%=+0.000627pp  Δcode_bytes=+64
+Δfuzzy=+0.000623pp   (legA 50.493717 -> legB 50.494340)
+unit improvements: default/TrackWidget (115->116)
+units at 100% [mpn]: 198->198 (Δ+0)   units at 100% [all-rows-fuzzy]: 174->174 (Δ+0)
+[control none] Δmatched_code=+64 B Δcode%=+0.000626 (default ruler +64 B) -- NOT_APPLICABLE
+  (this patch moves real code via the splits.txt boundary move, so a `none`-ruler
+  read is expected to move too and carries no alias-suspect signal here; the
+  tool correctly labels it NOT_APPLICABLE rather than emitting ALIAS_SUSPECT)
+```
+
+**Hit, exactly as predicted.** I predicted "expect +1 function / +64 B,
+`none`-ruler unaffected" — the measured `none`-ruler control also moved +64 B,
+which is *expected and consistent* (not a contradiction): the prediction's
+"unaffected" language anticipated a map-only change, but this step also moved
+a `.text` boundary in `splits.txt` (real code reattribution between two
+compiled objects), so `none` moving alongside `name_check` is exactly the
+signature the tool itself documents for a splits change, not a naming
+artifact. The `+1 fn / +64 B` landed on `default/TrackWidget`, going 115->116
+matched rows in that unit — consistent with the 64 B
+`?Sort@?$TrackWidgetImp@VMeshInstance@@@@UAAXXZ` wrapper (the address this
+step targeted) becoming newly pairable against `TrackWidget.obj` and crossing
+to 100% outright, now that both (a) the boundary move puts it in the right
+unit's base object and (b) it has a name at all.
+
+No regression, no unexplained direction, no investigation needed before
+continuing. Branch restored to `a520c6659` (both Step 2a commits retained as
+the current tip) after the measurement; `git status --porcelain` clean,
+`git log --oneline` confirms `a520c6659 -> 7d75f4e65 -> 589c04877 -> a9f34adf7`
+in order.
+
+Next: Step 3 (port `TrackWidgetImp.cpp`), then return for the TextInstance
+half of goal 2, goal 3, and goal 4, which all require the new object to exist.
