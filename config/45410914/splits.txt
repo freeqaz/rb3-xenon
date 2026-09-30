@@ -4083,7 +4083,6 @@ SkeletonClip.cpp:
 	.pdata      start:0x821FED80 end:0x821FEDA0
 	.pdata      start:0x821FEDA0 end:0x821FEDA8
 	.pdata      start:0x821FEDA8 end:0x821FEDB0
-	.pdata      start:0x821FEEF8 end:0x821FEF10
 	.pdata      start:0x821FEF28 end:0x821FEF30
 	.pdata      start:0x82237AC8 end:0x82237AE8
 	.pdata      start:0x82237B68 end:0x82237B70
@@ -4093,7 +4092,6 @@ SkeletonClip.cpp:
 	.text       start:0x82348B28 end:0x82348D80
 	.text       start:0x82348D80 end:0x82348DEC
 	.text       start:0x82348DEC end:0x82348E20
-	.text       start:0x8234A44C end:0x8234AC78
 	.text       start:0x8234ADC8 end:0x8234AE48
 	.text       start:0x82703890 end:0x827039C8
 	.text       start:0x82704058 end:0x827041A8
@@ -10175,6 +10173,7 @@ BandPatchMesh.cpp:
 	.pdata      start:0x821FEBD0 end:0x821FEBD8
 	.pdata      start:0x821FEBD8 end:0x821FEBE0
 	.pdata      start:0x821FEBE0 end:0x821FEBF8
+	.pdata      start:0x821FEC10 end:0x821FEC18
 	.pdata      start:0x821FEC18 end:0x821FEC38
 	.pdata      start:0x821FEC38 end:0x821FEC40
 	.pdata      start:0x821FEC50 end:0x821FEC58
@@ -10196,6 +10195,7 @@ BandPatchMesh.cpp:
 	.pdata      start:0x821FEEC8 end:0x821FEED0
 	.pdata      start:0x821FEED0 end:0x821FEEE0
 	.pdata      start:0x821FEEE0 end:0x821FEEF8
+	.pdata      start:0x821FEEF8 end:0x821FEF10
 	.pdata      start:0x821FEF10 end:0x821FEF28
 	.pdata      start:0x821FEF48 end:0x821FEF68
 	.pdata      start:0x821FEF68 end:0x821FEF80
@@ -10217,6 +10217,7 @@ BandPatchMesh.cpp:
 	.text       start:0x823461C8 end:0x823462A4
 	.text       start:0x823462A4 end:0x82346360
 	.text       start:0x823464F8 end:0x823465B0
+	.text       start:0x823468E8 end:0x82346DE0
 	.text       start:0x82346DE0 end:0x82346F64
 	.text       start:0x82346F68 end:0x82347030
 	.text       start:0x82347138 end:0x823471A8
@@ -10242,6 +10243,7 @@ BandPatchMesh.cpp:
 	.text       start:0x8234A1C0 end:0x8234A228
 	.text       start:0x8234A228 end:0x8234A288
 	.text       start:0x8234A288 end:0x8234A44C
+	.text       start:0x8234A44C end:0x8234AC78
 	.text       start:0x8234AC78 end:0x8234ADC8
 	.text       start:0x8234B270 end:0x8234B3D0
 	.text       start:0x8234B3D0 end:0x8234B4D0
@@ -11987,7 +11989,7 @@ MessageTimer.cpp:
 	.pdata      start:0x821F1808 end:0x821F1810
 	.pdata      start:0x821F1858 end:0x821F1868
 	.pdata      start:0x821F1868 end:0x821F1870
-	.pdata      start:0x821FEBF8 end:0x821FEC18
+	.pdata      start:0x821FEBF8 end:0x821FEC10
 	.pdata      start:0x8220C360 end:0x8220C378
 	.text       start:0x822722B0 end:0x82272404
 	.text       start:0x82272408 end:0x822724E8
@@ -11996,7 +11998,7 @@ MessageTimer.cpp:
 	.text       start:0x82272C00 end:0x82272CF8
 	.text       start:0x82272CF8 end:0x82272DB4
 	.text       start:0x8234642C end:0x823464F8
-	.text       start:0x823465B0 end:0x82346DE0
+	.text       start:0x823465B0 end:0x823468E8
 	.text       start:0x8242C568 end:0x8242C770
 
 ClipDistMap.cpp:

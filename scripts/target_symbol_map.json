@@ -32095,5 +32095,8 @@
  "0x82347650": "??$__unguarded_partition@PAPAVMeshVert@BandPatchMesh@@PAV12@USortByWorkVertZ@@@stlpmtx_std@@YAPAPAVMeshVert@BandPatchMesh@@PAPAV12@0PAV12@USortByWorkVertZ@@@Z",
  "0x82347138": "??$__make_heap@PAPAVMeshVert@BandPatchMesh@@USortByWorkVertZ@@PAV12@H@stlpmtx_std@@YAXPAPAVMeshVert@BandPatchMesh@@0USortByWorkVertZ@@0PAH@Z",
  "0x823462a8": "??$__adjust_heap@PAPAVMeshVert@BandPatchMesh@@HPAV12@USortByWorkVertZ@@@stlpmtx_std@@YAXPAPAVMeshVert@BandPatchMesh@@HHPAV12@USortByWorkVertZ@@@Z",
- "0x82345438": "??$__push_heap@PAPAVMeshVert@BandPatchMesh@@HPAV12@USortByWorkVertZ@@@stlpmtx_std@@YAXPAPAVMeshVert@BandPatchMesh@@HHPAV12@USortByWorkVertZ@@@Z"
+ "0x82345438": "??$__push_heap@PAPAVMeshVert@BandPatchMesh@@HPAV12@USortByWorkVertZ@@@stlpmtx_std@@YAXPAPAVMeshVert@BandPatchMesh@@HHPAV12@USortByWorkVertZ@@@Z",
+ "0x8234a458": "?SetMeshVerts@WorkVerts@BandPatchMesh@@QAAXXZ",
+ "0x8234a978": "?SetSameVerts@WorkVerts@BandPatchMesh@@QAA_NPAV12@@Z",
+ "0x823468e8": "?FindXfm@BandPatchMesh@@SA_NPAVRndMesh@@ABVVector2@@AAVTransform@@@Z"
 }
