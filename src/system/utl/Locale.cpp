@@ -210,8 +210,7 @@ void Locale::Init() {
         if (mInitialized)
 #endif
         {
-            auto _tmp10 = cfg->Size();
-            for (int i = 1; i < _tmp10; i++) {
+            for (int i = 1; i < cfg->Size(); i++) { // retail re-reads Size()
                 const char *path = FileMakePath(FileGetPath(cfg->File()), cfg->Str(i));
                 arrVec[i - 1] = DataReadFile(path, true);
                 if (!arrVec[i - 1]) {
