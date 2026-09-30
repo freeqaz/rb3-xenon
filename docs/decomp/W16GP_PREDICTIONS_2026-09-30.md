@@ -101,4 +101,56 @@ reason unrelated to naming (i.e. a real body mismatch elsewhere in the
 function), in which case renaming corrects identity but may not immediately
 cross to 100%.
 
-<!-- MEASURED RESULT APPENDED BELOW AFTER RUNNING ab_measure.py -->
+**MEASURED** (`~/tmp/w16gp_step1_ab.log`, run `20260930-024209-from-dirty-653893`):
+
+```
+leg A: matched=44199 masked=23323 honest=20876 code%=40.921130
+leg B: matched=44200 masked=23323 honest=20877 code%=40.921753
+Δmatched=+1  Δmasked_equal=+0  Δhonest=+1  Δcode%=+0.000623pp  Δcode_bytes=+64
+Δfuzzy=+0.000000pp
+unit improvements: default/TrackWidget (114->115)
+[control none] Δmatched_code=+0 B Δcode%=+0.000000 (default ruler +64 B)
+[control none] ALIAS_SUSPECT: default ruler UP (+64 B) while `none` is FLAT
+```
+
+**Partial miss — magnitude and mechanism, not direction.** I predicted ~2
+functions / ~800 B on the assumption that both 424 B `_S_sort` rows would
+cross to fuzzy==100 outright once correctly named. Pulling the actual
+per-row diff from `legA_report.json.gz`/`legB_report.json.gz` (via the
+archived reports under `.ab_measure_runs/20260930-024209-from-dirty-653893/`,
+not by rebuilding) shows that did NOT happen:
+
+- `??$_S_sort@UInstance@RndMultiMesh@@...` (newly-named at `0x827e3c38`):
+  **99.76415% fuzzy in leg B** — a real row now exists where before there was
+  none (leg A: not found, because nothing named this symbol), but it does not
+  reach 100.
+- `??$_S_sort@VMeshInstance@@...` (moved `0x827e3c38 -> 0x827e3e10`): **stayed
+  at 99.76415% fuzzy in BOTH legs**, unchanged score, just re-addressed.
+- The Waypoint-typed row that used to sit at `0x827e3e10` **disappears** in
+  leg B (was 99.76415%, never 100%, so its removal costs nothing on the byte
+  ruler).
+- The actual `+1 fn / +64 B` came from a row I did not predict at all:
+  `?Sort@?$TrackWidgetImp@UInstance@RndMultiMesh@@@@UAAXXZ` (the 64 B `Sort()`
+  wrapper), which moved **99.6875 -> 100.0**. Its own body contains the `bl`
+  to the `_S_sort` helper; fixing the callee's name at `0x827e3c38` let that
+  one relocation-name check pass under `name_check`, crossing the wrapper to
+  100 even though the renamed `_S_sort` bodies themselves did not cross.
+
+So the fix is real and its direction was right (small positive, no
+regression), but the mechanism is "a caller's reloc-name check clears,"
+not "the renamed rows themselves become byte-exact." The residual ~0.24%
+on both 424 B `_S_sort` rows is a separate, still-open mismatch (roughly one
+instruction) that this map fix does not touch — flagged below as an open
+question rather than chased now, since it's STL-internal codegen noise
+territory and outside this step's scope.
+
+**On `ALIAS_SUSPECT`**: this fires on every map-only patch shaped
+`name_check up / none flat`, and per project history
+(`docs/decomp/patterns/...` map-economics note) that shape is structurally
+identical for a legitimate "repair a wrong existing name" (MAPDEF-3
+precedent: +108 B, `none` unmoved) and for a fabricated alias — it cannot be
+resolved by shape alone. Adjudicating on retail bytes, independent of this
+tool's flag: both `bl` targets at `0x827e3c38`/`0x827e3e10` were confirmed
+against retail disassembly and `tools/retail_callers.py` **before** the map
+edit was made (see evidence above), so this is the "repair a wrong name"
+case, not a fabrication. Landing it.
