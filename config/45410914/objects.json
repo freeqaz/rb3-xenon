@@ -261,6 +261,7 @@
                     "/DRB3_SYNCPROP_LOCAL_STATIC"
                 ]
             },
+            "system/track/TrackWidgetImp.cpp": "NonMatching",
             "system/beatmatch/GuitarController.cpp": "NonMatching",
             "system/beatmatch/RGState.cpp": "NonMatching",
             "system/beatmatch/RGUtl.cpp": "NonMatching",
