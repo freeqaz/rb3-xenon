@@ -871,22 +871,25 @@ void SongData::AddPhrase(
     }
 }
 
-static Symbol DrumFillTrackName(const SongData *song, int track, int diff) {
+static __declspec(noinline) Symbol
+DrumFillTrackName(const SongData *song, int track, int diff) {
     SongData::TrackInfo *info = song->mTrackInfos[track];
     if (info->mType == kTrackRealKeys) {
         if (diff == -1) {
-            if ((unsigned int)track < song->mTrackDifficulties.size()) {
+            if (song->mTrackDifficulties.size() > (unsigned int)track) {
                 diff = song->mTrackDifficulties[track];
             }
         }
-        if ((unsigned int)diff == 0)
+        switch ((unsigned int)diff) {
+        case 0:
             return "PART REAL_KEYS_E";
-        else if ((unsigned int)diff == 1)
+        case 1:
             return "PART REAL_KEYS_M";
-        else if ((unsigned int)diff < 3)
+        case 2:
             return "PART REAL_KEYS_H";
-        else
+        default:
             return "PART REAL_KEYS_X";
+        }
     }
     return info->mName;
 }

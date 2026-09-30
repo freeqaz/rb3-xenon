@@ -293,11 +293,8 @@ int TrackWatcherImpl::NextGemAfter(int gemID, bool timeout) {
 
 int TrackWatcherImpl::ClosestUnplayedGem(float ms, int slot) {
     int idx = mGemList->ClosestMarkerIdx(ms + mSyncOffset);
-    if (Playable(idx)) {
-        GameGem &gemgem = mGemList->GetGem(idx);
-        if (!gemgem.GetPlayed())
-            return idx;
-    }
+    if (Playable(idx) && !mGemList->GetGem(idx).GetPlayed())
+        return idx;
     if (idx + 1 < mGemList->NumGems())
         return idx + 1;
     return idx;
@@ -673,8 +670,10 @@ bool TrackWatcherImpl::IsFillCompletion(float ms, int tick, int &solo_end_tick) 
         int i38 = 0;
         int loopTick = mSongData->GetTempoMap()->GetLoopTick(tick, i38);
         if (mSongData->GetFillInfo(mTrack)->FillExtentAtOrBefore(loopTick, extent)) {
-            float time = mSongData->GetTempoMap()->TickToTime(extent.end + i38);
-            if (std::fabs(ms + mSyncOffset - time) <= mSlop) {
+            int endTick = extent.end + i38;
+            float time = mSongData->GetTempoMap()->TickToTime(endTick);
+            bool within = std::fabs(ms + mSyncOffset - time) <= mSlop;
+            if (within) {
                 solo_end_tick = mSongData->GetTempoMap()->TimeToTick(time);
                 return true;
             }

@@ -28,7 +28,7 @@ GameGem::GameGem(const RGGemInfo &info)
       mHandPosition(info.hand_position), mRootNote(info.root_note), unk18(0),
       mChordNameOverride(), mImportantStrings(0) {
     int slot = 1;
-    for (unsigned int i = 0; i < 6; i++, slot <<= 1) {
+    for (unsigned int i = 0; i < 6; slot <<= 1, i++) {
         mFrets[i] = info.frets[i];
         SetRGNoteTypeEntry(i, info.note_types[i]);
         if (info.frets[i] != -1 && info.note_types[i] != kRGGhost) {
@@ -40,7 +40,7 @@ GameGem::GameGem(const RGGemInfo &info)
     // rb3-Wii char[64]); take its address as the C-string. Same form under
     // native and X360 since both build against this header.
     if (info.chord_name != 0)
-        mChordNameOverride = Symbol(&info.chord_name);
+        mChordNameOverride = &info.chord_name;
     mForceStrum |= RightHandTap();
 }
 

@@ -47,10 +47,10 @@ bool RGGemMatcher::FretMatch(
     bool matchimpl = FretMatchImpl(gem, f1, f2, f3, f4, b1, b2, ty);
     if (TheBeatMatchOutput.IsActive()) {
         const char *str;
-        if (matchimpl)
-            str = MakeString("(%2d%10.1f MATCH_SUCCESS)\n", 0, f4 + f3);
-        else
+        if (!matchimpl)
             str = MakeString("(%2d%10.1f MATCH_FAIL)\n", 0, f4 + f3);
+        else
+            str = MakeString("(%2d%10.1f MATCH_SUCCESS)\n", 0, f4 + f3);
         TheBeatMatchOutput.Print(str);
     }
     return matchimpl;

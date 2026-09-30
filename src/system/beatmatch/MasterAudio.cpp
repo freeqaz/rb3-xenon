@@ -129,7 +129,6 @@ void MasterAudio::Load(SongInfo *info, PlayerTrackConfigList *player_track_confi
     // TU5: the stream's bool comes from the song info (vtable slot 0x4c)
     mSongStream =
         TheSynth->NewStream(info->GetBaseFileName(), 0, 0, info->UnkTU5Virtual_0x4c());
-    int count = 1;
     mStreamEnabled = true;
     mSongStream->Faders()->Add(mMasterFader);
     float vol = info->GetMuteVolume();
@@ -141,9 +140,8 @@ void MasterAudio::Load(SongInfo *info, PlayerTrackConfigList *player_track_confi
 
     SetupChannels(info);
     SetupTracks(info, player_track_config_list);
-    if (player_track_config_list->UseVocalHarmony()) {
-        count = info->GetNumVocalParts();
-    }
+    int count =
+        player_track_config_list->UseVocalHarmony() ? info->GetNumVocalParts() : 1;
 
     for (int i = 1; i < count; i++) {
         mTrackData.mTrackData.push_back(new TrackData());

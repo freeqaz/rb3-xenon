@@ -1185,7 +1185,9 @@ void SongParser::OnMidiMessageBeat(
     int tick, unsigned char status, unsigned char data1, unsigned char data2
 ) {
     if (MidiGetType(status) == 0x90) {
-        if ((data1 + 0xF4 & 0xFF) <= 1U) {
+        switch (data1) {
+        case 12:
+        case 13:
             mSink->AddBeat(tick, data1 == 0xC);
             if (mLastBeatTick != -1 && !mHaveBeatFailure) {
                 if (tick - mLastBeatTick < 0xF0) {
@@ -1211,8 +1213,10 @@ void SongParser::OnMidiMessageBeat(
             }
             mLastBeatTick = tick;
             mLastBeatType = data1;
-        } else if (data1 == 0xB) {
+            break;
+        case 11:
             mSink->SetDetailedGrid(true);
+            break;
         }
     }
 }
@@ -1606,9 +1610,11 @@ bool SongParser::CheckFillMarker(int pitch, bool b) {
 }
 
 bool SongParser::CheckDrumCymbalMarker(int tick, int pitch, bool b) {
+    // retail initialises this local static and never reads it
+    static Symbol drum("drum");
     if (mTrackType != kTrackDrum)
         return false;
-    if (pitch == 110 || pitch == 111 || pitch == 112) {
+    if (pitch >= 110 && pitch <= 112) {
         unsigned int u7 = 1 << (pitch - 108);
         if (b) {
             float tickms = TickToMs(tick);
@@ -2003,7 +2009,7 @@ bool SongParser::HandleRGGemStart(
     unsigned char channel,
     int difflevel
 ) {
-    if ((unsigned char)(uc + 0xE8) <= 5U) {
+    if (uc >= 24 && uc <= 29) {
         info.mRGGemsInfo[uc - 24] =
             RGGemInfo(tick, info.mActivePlayers, GetFret(data), channel);
         if (mSoloPhraseInProgress != -1) {
@@ -2661,18 +2667,10 @@ bool SongParser::HandleRGRollStop(int tick, unsigned char pitch) {
     MILO_ASSERT(mRollInProgress != -1, 0xDA1);
     for (int i = 0; i < mNumDifficulties; i++) {
         int count = 0;
-        if (mRGRollArray[i].mString[0] != -1)
-            count = 1;
-        if (mRGRollArray[i].mString[1] != -1)
-            count++;
-        if (mRGRollArray[i].mString[2] != -1)
-            count++;
-        if (mRGRollArray[i].mString[3] != -1)
-            count++;
-        if (mRGRollArray[i].mString[4] != -1)
-            count++;
-        if (mRGRollArray[i].mString[5] != -1)
-            count++;
+        for (int j = 0; j < 6; j++) {
+            if (mRGRollArray[i].mString[j] != -1)
+                count++;
+        }
         if (GetRollIntervalMs(mRollIntervals, mTrackType, i, count > 1) > 0.0f
             && (mRollMask & (1 << i))) {
             mSink->AddRGRoll(mTrack, i, mRGRollArray[i], mRollInProgress, tick);
