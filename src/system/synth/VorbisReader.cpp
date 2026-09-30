@@ -308,7 +308,9 @@ bool VorbisReader::TryDecode() {
                 return true;
             }
         }
-    } else if (mEof && !mReadBuffer && QueuedOutputSamples() == 0 && !mDone) {
+    } else if (mEof && !mReadBuffer && QueuedOutputSamples() == 0 && !mDone
+               // retail also waits until the first channel's PCM is drained
+               && mPcmReadPos >= mPcmBuffers[0].size()) {
         EndData();
         mDone = true;
     }
