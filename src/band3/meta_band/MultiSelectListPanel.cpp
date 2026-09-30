@@ -57,11 +57,10 @@ DataNode MultiSelectListPanel::OnMsg(const UIComponentSelectMsg &) {
             mSelectionMesh->SetShowing(false);
         } else {
             mSelectionMesh->SetShowing(true);
-            float vx = mSelectionStart.x;
-            float vy = mSelectionStart.y;
-            float vz = mSelectionStart.z;
-            float disp = (float)mScrollList->GetListState().SelectedDisplay();
-            mSelectionMesh->SetLocalPos(vx, vy, -(mSpacing * disp - vz));
+            // Retail: whole-Vector3 copy, UIList::SelectedPos(), SetLocalPos(Vector3).
+            Vector3 pos = mSelectionStart;
+            pos.z = -((float)mScrollList->SelectedPos() * mSpacing - pos.z);
+            mSelectionMesh->SetLocalPos(pos);
             ResetSelectRect(1);
         }
     }
@@ -74,16 +73,13 @@ DataNode MultiSelectListPanel::OnMsg(const UIComponentScrollMsg &) {
         mSelectionMesh->SetShowing(false);
         return 1;
     } else if (mStartSection != -1) {
-        int i1 = mScrollList->FirstShowing();
-        i1 = (mStartSection - i1) + 2;
+        int i1 = mStartSection - mScrollList->FirstShowing() + 2;
         if (i1 < 0)
             i1 = 0;
-        int i2 = mScrollList->GetListState().SelectedDisplay();
-        float y = mSelectionStart.y;
-        float fi1 = (float)i1;
-        float z = mSelectionStart.z;
-        z = -(mSpacing * fi1 - z);
-        mSelectionMesh->SetLocalPos(mSelectionStart.x, y, z);
+        int i2 = mScrollList->SelectedPos();
+        Vector3 pos = mSelectionStart;
+        pos.z = -(mSpacing * (float)i1 - pos.z);
+        mSelectionMesh->SetLocalPos(pos);
         ResetSelectRect((i2 - i1) + 1);
     }
     return DataNode(kDataUnhandled, 0);
