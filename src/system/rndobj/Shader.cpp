@@ -576,8 +576,9 @@ u64 RndShaderMultimesh::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
             int hasNormal = mat->NormalMap() != nullptr;
             opts.mNormalMap = hasNormal;
             opts.mPerPixelLighting = 1;
-            opts.mNormDetail = mat->GetNormDetailMap() != nullptr
+            bool normDetail = mat->GetNormDetailMap() != nullptr
                 && mat->GetNormDetailStrength() > 0.0f;
+            opts.mNormDetail = normDetail;
             // Retail RB3 X360 has no mFlipNormal here (dc3 adds it).
             opts.mSpecularMap = opts.mSpecular && mat->GetSpecularMap() != nullptr;
             opts.mRimLight = mat->GetRimRGB().Pack() != 0;
@@ -616,23 +617,8 @@ u64 RndShaderMultimesh::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     } else {
         fadeOut = env->FadeOut() && env->FadeEnd() != env->FadeStart();
     }
-    u64 pseudoHDR;
-    if (!fadeOut) {
-        bool offscreen;
-        if (b) {
-            offscreen = TheShaderMgr.GetUnk41();
-        } else {
-            offscreen = TheNgRnd.Offscreen();
-        }
-        if (!offscreen && mat->AllowHDR()) {
-            pseudoHDR = 1;
-        } else {
-            pseudoHDR = 0;
-        }
-    } else {
-        pseudoHDR = 0;
-    }
-    opts.mPseudoHDR = pseudoHDR;
+    opts.mPseudoHDR = !fadeOut
+        && !(b ? TheShaderMgr.GetUnk41() : TheNgRnd.Offscreen()) && mat->AllowHDR();
     // Retail RB3 X360: no fog term for multimesh.
     opts.mBillboard = s == kMultimeshBBShader;
     bool colorAdjust;
@@ -702,8 +688,9 @@ u64 RndShaderStandard::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
             int hasNormal = mat->NormalMap() != nullptr;
             opts.mNormalMap = hasNormal;
             opts.mPerPixelLighting = 1;
-            opts.mNormDetail = mat->GetNormDetailMap() != nullptr
+            bool normDetail = mat->GetNormDetailMap() != nullptr
                 && mat->GetNormDetailStrength() > 0.0f;
+            opts.mNormDetail = normDetail;
             // Retail RB3 X360 has no mFlipNormal here (dc3 adds it).
             opts.mSpecularMap = opts.mSpecular && mat->GetSpecularMap() != nullptr;
             opts.mRimLight = mat->GetRimRGB().Pack() != 0;
