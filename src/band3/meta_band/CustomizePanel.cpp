@@ -779,6 +779,17 @@ void CustomizePanel::RefreshCurrentOutfitList() {
 
 void CustomizePanel::PreviewAsset(Symbol s) {
     if (InPreviewState()) {
+        static Symbol none("none");
+        static Symbol none_bandana("none_bandana");
+        static Symbol none_earrings("none_earrings");
+        static Symbol none_eyebrows("none_eyebrows");
+        static Symbol none_facehair("none_facehair");
+        static Symbol none_glasses("none_glasses");
+        static Symbol none_hair("none_hair");
+        static Symbol none_hat("none_hat");
+        static Symbol none_piercings("none_piercings");
+        static Symbol none_rings("none_rings");
+        static Symbol none_wrists("none_wrists");
         BandCharDesc *desc = mPreviewDesc;
         AssetMgr *pAssetMgr = AssetMgr::GetAssetMgr();
         MILO_ASSERT(pAssetMgr, 0x255);
@@ -791,93 +802,131 @@ void CustomizePanel::PreviewAsset(Symbol s) {
         } else {
             Asset *pAsset = pAssetMgr->GetAsset(s);
             MILO_ASSERT(pAsset, 0x269);
-            BandProfile *p = mProfile;
-            p->mProfileAssets.SetOld(s);
+            mProfile->mProfileAssets.SetOld(s);
             ty = pAsset->GetType();
             if (pAsset->HasFinishes()) {
-                s = MakeString("%s_%s", s.Str(), pAsset->GetFinish(0).Str());
+                Symbol finish = pAsset->GetFinish(0);
+                s = MakeString("%s_%s", s.Str(), finish.Str());
             }
         }
         Symbol ret = none;
         switch (ty) {
         case kAssetType_None:
             break;
-        case kAssetType_Bandana:
+        case kAssetType_Bandana: {
+            static Symbol facehair("facehair");
             desc->mOutfit.mFaceHair.mName = s;
             ret = facehair;
             break;
-        case kAssetType_Bass:
+        }
+        case kAssetType_Bass: {
+            static Symbol bass("bass");
             desc->mInstruments.mBass.mName = s;
             ret = bass;
             break;
-        case kAssetType_Drum:
+        }
+        case kAssetType_Drum: {
+            static Symbol drum("drum");
             desc->mInstruments.mDrum.mName = s;
             ret = drum;
             break;
-        case kAssetType_Earrings:
+        }
+        case kAssetType_Earrings: {
+            static Symbol earrings("earrings");
             desc->mOutfit.mEarrings.mName = s;
             ret = earrings;
             break;
-        case kAssetType_Eyebrows:
+        }
+        case kAssetType_Eyebrows: {
+            static Symbol eyebrows("eyebrows");
             desc->mOutfit.mEyebrows.mName = s;
             ret = eyebrows;
             break;
-        case kAssetType_FaceHair:
+        }
+        case kAssetType_FaceHair: {
+            static Symbol facehair("facehair");
             desc->mOutfit.mFaceHair.mName = s;
             ret = facehair;
             break;
-        case kAssetType_Feet:
+        }
+        case kAssetType_Feet: {
+            static Symbol feet("feet");
             desc->mOutfit.mFeet.mName = s;
             ret = feet;
             break;
-        case kAssetType_GlassesAndMasks:
+        }
+        case kAssetType_GlassesAndMasks: {
+            static Symbol glasses("glasses");
             desc->mOutfit.mGlasses.mName = s;
             ret = glasses;
             break;
-        case kAssetType_Gloves:
+        }
+        case kAssetType_Gloves: {
+            static Symbol hands("hands");
             desc->mOutfit.mHands.mName = s;
             ret = hands;
             break;
-        case kAssetType_Guitar:
+        }
+        case kAssetType_Guitar: {
+            static Symbol guitar("guitar");
             desc->mInstruments.mGuitar.mName = s;
             ret = guitar;
             break;
-        case kAssetType_Hair:
+        }
+        case kAssetType_Hair: {
+            static Symbol hair("hair");
             desc->mOutfit.mHair.mName = s;
             ret = hair;
             break;
-        case kAssetType_Hat:
+        }
+        case kAssetType_Hat: {
+            static Symbol hair("hair");
             desc->mOutfit.mHair.mName = s;
             ret = hair;
             break;
-        case kAssetType_Keyboard:
+        }
+        case kAssetType_Keyboard: {
+            static Symbol keyboard("keyboard");
             desc->mInstruments.mKeyboard.mName = s;
             ret = keyboard;
             break;
-        case kAssetType_Legs:
+        }
+        case kAssetType_Legs: {
+            static Symbol legs("legs");
             desc->mOutfit.mLegs.mName = s;
             ret = legs;
             break;
-        case kAssetType_Mic:
+        }
+        case kAssetType_Mic: {
+            static Symbol mic("mic");
             desc->mInstruments.mMic.mName = s;
             ret = mic;
             break;
-        case kAssetType_Piercings:
+        }
+        case kAssetType_Piercings: {
+            static Symbol piercings("piercings");
             desc->mOutfit.mPiercings.mName = s;
             ret = piercings;
             break;
-        case kAssetType_Rings:
+        }
+        case kAssetType_Rings: {
+            static Symbol rings("rings");
             desc->mOutfit.mRings.mName = s;
             ret = rings;
             break;
-        case kAssetType_Torso:
+        }
+        case kAssetType_Torso: {
+            static Symbol torso("torso");
             desc->mOutfit.mTorso.mName = s;
             ret = torso;
             break;
-        case kAssetType_Wrists:
+        }
+        case kAssetType_Wrists: {
+            static Symbol wrist("wrist");
             desc->mOutfit.mWrist.mName = s;
             ret = wrist;
             break;
+        }
         default:
             MILO_ASSERT(false, 0x304);
             break;
