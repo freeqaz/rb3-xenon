@@ -617,6 +617,9 @@ END_PROPSYNCS
 
 inline void
 LayerProvider::Custom(int, int idx, UIListCustom *slot, Hmx::Object *obj) const {
+    static Symbol create_layer("create_layer");
+    static Symbol modify_layer("modify_layer");
+    static Symbol layer_options("layer_options");
     if (slot->Matches("layer_help")) {
         InlineHelp *help = dynamic_cast<InlineHelp *>(obj);
         MILO_ASSERT(help, 0x182);
