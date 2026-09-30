@@ -12,6 +12,12 @@ public:
         VertexBufferData() : buffer(0), size(0) {}
         ~VertexBufferData() { Release(); }
         void Release();
+        // Inline in retail: DxMesh::OnSync stores both words through the
+        // &unk1a4 register (stw r3,0(r27) / stw r11,4(r27)).
+        void SetData(D3DVertexBuffer *b, unsigned int s) {
+            buffer = b;
+            size = s;
+        }
 
         D3DVertexBuffer *buffer;
         unsigned int size;
@@ -43,7 +49,6 @@ public:
     // (RndMesh's own bodies). So the surplus is unambiguously the tail pair.
     MESH_DC3_VIRTUAL int NumFaces() const { return mNumFaces; }
     MESH_DC3_VIRTUAL int NumVerts() const { return mNumVerts; }
-    virtual void OnSync(int);
 
     D3DVertexBuffer *GetMultimeshFaces();
     u32 VertFVF() const;
@@ -54,6 +59,11 @@ public:
 
 protected:
     DxMesh();
+    // Retail DxMesh vtable @0x82101b14 slot 15 -> 0x82738768; protected, as in
+    // RndMesh (DC3 map: ?OnSync@DxMesh@@MAAXH@Z).
+    virtual void OnSync(int);
+    void FillCompressedVerts();
+    void Fill(RndMesh::Vert *, RndMesh::Vert *);
 
     static D3DVertexDeclaration *sVertexDecl;
     static D3DVertexDeclaration *sMutableVertexDecl;

@@ -5,6 +5,7 @@
 #include "rnddx9/Utl.h"
 #include "xdk/D3D9.h"
 #include "xdk/d3d9i/d3d9.h"
+#include "../../Memory.h"
 
 DxMesh::DxMesh() : mNumVerts(0), mNumFaces(0), unk1ac(0), unk1b0(0) {
     if (!sVertexDecl) {
@@ -170,7 +171,124 @@ void FillCompressedVertex(
         + (int)vert.boneIndices[0];
 }
 
-void DxMesh::OnSync(int) {}
+// Retail 0x82738768 (DxMesh vtable slot 15), frame 0xD0, one EH funclet
+// (0x82738A1C, destroys the tracker at 0x50). Read off the retail bytes; DC3's
+// body is the oracle but RB3 differs in three places: the compressed-vert path
+// does NOT store mNumVerts, the vertex buffer is set through an inline
+// SetData (both words stored off the &unk1a4 register), and there is no
+// mNumFaces <= 0xFFFF assert.
+//
+// RESIDUAL (97.40 fuzzy): (1) retail emits TWO dead `stw r24,0x58(r31)` around
+// `li r23,0` / `addi r25,r24,0xd8`; this spelling emits none, and the missing
+// pair renames verts/fromCompressed r25<->r26. Measured and refuted (each a
+// full build, fuzzy): RndMesh* geom + Verts() 96.50, + GetGeomOwner()->mVerts
+// 96.50, + mGeomOwner->mVerts 96.50, + geom->mVerts 96.13, reversed decl order
+// 96.50, an extra inline `return mVerts` level (DC3's hypothesis) 96.50,
+// DxMesh* geom + Verts() 96.50, double static_cast 96.50. The DxMesh* cast
+// with geom->mVerts is the best found. (2) the face loop's
+// `add r10,begin,r8; add r10,r10,r11` operand order (retail rederives
+// &mFaces[i] from the +4-biased dst IV; `dst[i*3+k]` is what gets that IV at
+// all -- `dst += 3` 93.39, `dst[i] = face` as Face* 94.45, `*dst++` 93.96).
+// (3) `stw r23,0xe8(r30)` two slots late in the vector swap (swap spellings
+// `empty.swap`/`mFaces.swap(empty)` 96.13, `mFaces.swap(tmp())` 97.40).
+void DxMesh::OnSync(int flags) {
+    PhysMemTypeTracker tracker("D3D(phys):Mesh");
+    if (this != mGeomOwner) {
+        if (Mutable() & 0x1f) {
+            mGeomOwner->Sync(flags);
+        }
+        return;
+    }
+    RndMesh::OnSync(flags);
+    if (mMutable) {
+        return;
+    }
+    // DxMesh*, not RndMesh*: also what lets this read geom->mFaces/mVerts
+    // (protected) without friendship.
+    DxMesh *geom = static_cast<DxMesh *>(GetGeomOwner());
+    VertVector &verts = geom->mVerts;
+    if (flags & 0x1f) {
+        unsigned int numVerts = 0;
+        unsigned int vertSize = 0;
+        bool fromCompressed = false;
+        int n = verts.size();
+        mNumVerts = n;
+        if (n != 0) {
+            numVerts = n;
+            vertSize = sizeof(CompressedVertex_Xbox);
+        } else if (mNumCompressedVerts != 0) {
+            numVerts = mNumCompressedVerts;
+            vertSize = sizeof(CompressedVertex_Xbox);
+            fromCompressed = true;
+        } else {
+            unk1a4.Release();
+        }
+        if (unk1a4.buffer == NULL || unk1a4.size != vertSize * numVerts) {
+            unk1a4.Release();
+            if (numVerts != 0) {
+                unk1a4.SetData(
+                    MakeVertexBuffer(numVerts, vertSize, VertFVF(), false),
+                    vertSize * numVerts
+                );
+            }
+        }
+        if (unk1a4.buffer != NULL) {
+            if (fromCompressed) {
+                FillCompressedVerts();
+            } else {
+                Fill(verts.begin(), verts.end());
+            }
+        }
+    }
+    if (flags & 0x20) {
+        TheDxRnd.AutoRelease(unk1ac);
+        unk1ac = NULL;
+        mNumFaces = geom->mFaces.size();
+        if (mNumFaces != 0) {
+            unk1ac = (D3DResource *)MakeIndexBuffer(mNumFaces, 6, D3DFMT_INDEX16);
+            IBLock<> lock((D3DIndexBuffer *)unk1ac, 0);
+            unsigned short *dst = (unsigned short *)lock.mDataAddr;
+            for (int i = 0; i < mNumFaces; i++) {
+                RndMesh::Face &face = geom->mFaces[i];
+                dst[i * 3] = face.v1;
+                dst[i * 3 + 1] = face.v2;
+                dst[i * 3 + 2] = face.v3;
+            }
+        }
+    }
+    if ((flags & 0x200) == 0) {
+        if ((mMutable & 0x1f) == 0) {
+            mVerts.resize(0);
+            ClearCompressedVerts();
+        }
+        if ((mMutable & 0x20) == 0) {
+            std::vector<RndMesh::Face>().swap(mFaces);
+        }
+    }
+}
+
+// Retail 0x82737958.
+void DxMesh::Fill(RndMesh::Vert *begin, RndMesh::Vert *end) {
+    VBLock<CompressedVertex_Xbox> lock(unk1a4.buffer, 0);
+    if (begin != end) {
+        CompressedVertex_Xbox *dst = (CompressedVertex_Xbox *)lock.mDataAddr;
+        do {
+            FillCompressedVertex(*dst, *begin, false);
+            begin++;
+            dst++;
+        } while (begin != end);
+    }
+}
+
+// Retail 0x827379B8.
+void DxMesh::FillCompressedVerts() {
+    VBLock<CompressedVertex_Xbox> lock(unk1a4.buffer, 0);
+    memcpy(
+        lock.mDataAddr,
+        mCompressedVerts,
+        mNumCompressedVerts * sizeof(CompressedVertex_Xbox)
+    );
+}
 
 void _fake(void) {
     BufLock<struct D3DVertexBuffer> buf(nullptr, 0);
