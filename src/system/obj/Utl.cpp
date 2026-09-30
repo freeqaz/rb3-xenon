@@ -480,12 +480,24 @@ void ReplaceObject(
     const char *name = from->Name();
     ObjectDir *dir = from->Dir();
     from->SetName(nullptr, nullptr);
+#ifdef HX_NATIVE
     if (to) {
         to->SetName(name, dir);
         if (copyDeep)
             CopyObject(from, to, Hmx::Object::kCopyDeep, setProxyFile);
     }
     from->ReplaceRefs(to);
+#else
+    // RB3 retail (0x8275A388, rb3-Wii shape): no null test on `to`, and the
+    // ring is drained inline -- each owner's Replace unlinks its own node.
+    to->SetName(name, dir);
+    if (copyDeep)
+        CopyObject(from, to, Hmx::Object::kCopyDeep, setProxyFile);
+    const ObjRef &refs = from->Refs();
+    while (!refs.empty()) {
+        RefPtrOf(refs.begin())->Replace(reinterpret_cast<ObjRef *>(from), to);
+    }
+#endif
     if (deleteFrom)
         delete from;
 }
