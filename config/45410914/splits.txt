@@ -2030,9 +2030,13 @@ Debug.cpp:
 	.pdata      start:0x82241DB8 end:0x82241DC8
 	.text       start:0x8250F4E0 end:0x8250FDEC
 	.text       start:0x8250FEE8 end:0x825100C8
-	.text       start:0x825101EC end:0x82510510
-	.text       start:0x82510798 end:0x82510EBC
-	.text       start:0x825111D0 end:0x8251142C
+	.text       start:0x825101EC end:0x8251026C
+	.text       start:0x82510388 end:0x82510510
+	.text       start:0x82510798 end:0x825108B4
+	.text       start:0x82510AEC end:0x82510BB0
+	.text       start:0x82510E44 end:0x82510EBC
+	.text       start:0x825111D0 end:0x82511204
+	.text       start:0x82511428 end:0x8251142C
 	.text       start:0x827BF4F0 end:0x827BF5B8
 
 FileStream.cpp:
@@ -5184,9 +5188,13 @@ System.cpp:
 	.pdata      start:0x822619D8 end:0x822619E0
 	.text       start:0x8250FDEC end:0x8250FEE8
 	.text       start:0x825100C8 end:0x825101EC
+	.text       start:0x8251026C end:0x82510388
 	.text       start:0x82510510 end:0x82510588
 	.text       start:0x82510588 end:0x82510798
+	.text       start:0x825108B4 end:0x82510AEC
+	.text       start:0x82510BB0 end:0x82510E44
 	.text       start:0x82510EBC end:0x825111D0
+	.text       start:0x82511204 end:0x82511428
 	.text       start:0x82C42910 end:0x82C42958
 
 DataEventList.cpp:
