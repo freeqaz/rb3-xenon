@@ -228,7 +228,10 @@ void Leaderboard::ShowData() {
             row.mIsFriend = node.Int();
         }
         if (datares->GetDataResultValue("pid", node)) {
-            row.mIsSelf = node.Int() == mEntityID.GetPlayerID();
+            // Retail (0x8266DF40) tests the entity first: an invalid entity is
+            // never "self".
+            row.mIsSelf =
+                !mEntityID.IsInvalid() && node.Int() == mEntityID.GetPlayerID();
         }
         if (datares->GetDataResultValue("diff_id", node)) {
             row.mDiffID = (Difficulty)(node.Int() - 1);
@@ -244,11 +247,11 @@ void Leaderboard::ShowData() {
         }
         if (datares->GetDataResultValue("pguid", node)) {
             const char *pguid = node.Str();
-            static const char *sZeroPguid = "0";
-            if (strcmp(pguid, sZeroPguid) != 0) {
+            // Retail compares against gNullStr (lbl_82C71838), i.e. "non-empty".
+            if (strcmp(pguid, gNullStr) != 0) {
                 unsigned long long xuid = 0;
-                for (const char *p = pguid; *p != '\0'; p++) {
-                    xuid = xuid * 10 + (*p - '0');
+                for (; *pguid != '\0'; pguid++) {
+                    xuid = xuid * 10 + (*pguid - '0');
                 }
                 row.mLBOnlineID.SetXUID(xuid);
             }
