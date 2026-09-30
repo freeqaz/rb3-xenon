@@ -19,9 +19,56 @@ PlayerLeaderboard::PlayerLeaderboard(Profile *p, Callback *cb)
     }
 }
 
-Symbol PlayerLeaderboard::OnSelectRow(int, BandUser *) {
-    if (IsEnumComplete())
-        NumData();
+// Retail guard word lbl_82E020C8 packs three local-static Symbols, claimed
+// bit0..bit2 in declaration order: pad_error, privilege_error, gamertag_error
+// (all constructed unconditionally, before the sign-in gate, right after the
+// two early-return bounds checks). The NotSignedIn (-3) and the fallback
+// (ShowGamercard result == -1) branches share identical retail code -- both
+// return gamertag_error -- which reads as an explicit NotSignedIn check
+// followed by a catch-all default, not a coding oddity.
+// Note: kShowGamercardResult_Offline and kShowGamercardResult_Failed are both
+// -1 in PlatformMgr.h; retail bytes only prove the numeric value -1 reaches
+// this path, not which enumerator name the original source spelled.
+//
+// Both early-return bounds checks share ONE physical destination in retail
+// (a single far shared tail that constructs Symbol(gNullStr) once) rather
+// than each getting its own inline reconstruction -- combining them into one
+// `&&` condition (instead of two sequential `if (...) return gNullStr;`
+// statements) is what reproduces that: 82.0% -> 87.0% fuzzy. The same
+// mechanism applies to the NotSignedIn/fallback pair below: writing them as
+// two sequential returns gives each its own local reconstruction, while
+// folding NotSignedIn into the "not-Success" condition (so both paths funnel
+// through the single trailing `return gamertag_error;`) reproduces retail's
+// shared destination there too: 87.0% -> 92.7% fuzzy, diff_op: none.
+//
+// Residual (92.7%, not chased further): retail's `OnlineID oid = ...` copy
+// compiles to a raw 5-instruction ld/std struct copy with NO constructor
+// call, which is what a compiler-IMPLICIT (trivial) OnlineID copy ctor would
+// produce. Our shared os/OnlineID.h explicitly declares
+// `OnlineID(const OnlineID &);` (out-of-line, in OnlineID.cpp), which forces
+// a real `bl ??0OnlineID@@QAA@ABV0@@Z` at every call site in the whole
+// binary, not just here. Making OnlineID's copy ctor implicit/trivial would
+// fix this row but is a shared-header change with unknown blast radius
+// across every other OnlineID user -- out of scope for this lane (one named
+// row); flagged for whoever next touches OnlineID.h.
+Symbol PlayerLeaderboard::OnSelectRow(int row, BandUser *user) {
+    if (IsEnumComplete() && NumData() > row) {
+        static Symbol pad_error("display_gamercard_pad_error");
+        static Symbol privilege_error("display_gamercard_privilege_error");
+        static Symbol gamertag_error("on_select_gamertag_error");
+
+        LocalBandUser *localBandUser = user->GetLocalBandUser();
+        if (!localBandUser->IsSignedInOnline())
+            return pad_error;
+
+        OnlineID oid = mLeaderboardRows[row].mLBOnlineID;
+        ShowGamercardResult result = ThePlatformMgr.ShowGamercard(localBandUser, &oid);
+        if (result == kShowGamercardResult_PrivilegeFailed)
+            return privilege_error;
+        if (result != kShowGamercardResult_NotSignedIn && result >= kShowGamercardResult_Success)
+            return gNullStr;
+        return gamertag_error;
+    }
     return gNullStr;
 }
 
