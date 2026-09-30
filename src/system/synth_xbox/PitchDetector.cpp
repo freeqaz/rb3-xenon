@@ -49,12 +49,12 @@ void PitchDetector::Detect(unsigned int frame) {
     // sequence is the unsigned one.  Do not "fix" this back to match dc3 --
     // dc3's own PitchDetector unit is only 9.1% matched, i.e. it is NOT an
     // oracle for this function, just a sibling reconstruction.
-    unsigned int size = mInput->end() - mInput->begin();
     unsigned int span = mSpectral.mWindowSize;
 
-    // Locate the analysis window inside the circular input buffer.
-    unsigned int pos = (size - span + frame + 1) % size;
-    unsigned int start = size - pos;
+    // Locate the analysis window inside the circular input buffer.  Retail
+    // re-derives the buffer length (end - begin) at each use.
+    unsigned int pos = (mInput->size() - span + frame + 1) % mInput->size();
+    unsigned int start = mInput->size() - pos;
     // std::min by const reference: retail spills both operands to the stack
     // and loads the winner back; after the first Mul it re-reads the window
     // size from the member rather than reusing the local.
