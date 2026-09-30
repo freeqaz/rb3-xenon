@@ -978,54 +978,62 @@ void WorldCrowd::Set3DCharList(
     const std::vector<std::pair<int, int> > &pairVec, Hmx::Object *obj
 ) {
     START_AUTO_TIMER("crowd_set3d");
+    // Retail (0x824E57E8): forced-3D returns at once and the
+    // bounds-check notifies are absent (dev-build MILO_DEBUG code).
     if (mForce3DCrowd) {
+#ifdef HX_NATIVE
         AssignRandomColors();
-    } else {
-        float oldFullness = mFlatFullness;
-        Reset3DCrowd();
-        std::vector<std::pair<RndMultiMesh *, InstanceList::iterator> > grosserPairs;
-        grosserPairs.reserve(pairVec.size());
-        for (int i = 0; (unsigned int)i != pairVec.size(); i++) {
-            int meshIdx = pairVec[i].first;
-            if ((unsigned int)meshIdx >= (int)mCharacters.size()) {
+#endif
+        return;
+    }
+    float oldFullness = mFlatFullness;
+    Reset3DCrowd();
+    std::vector<std::pair<RndMultiMesh *, InstanceList::iterator> > grosserPairs;
+    grosserPairs.reserve(pairVec.size());
+    for (unsigned int i = 0; i != pairVec.size(); i++) {
+        int meshIdx = pairVec[i].first;
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+        if ((unsigned int)meshIdx >= (int)mCharacters.size()) {
+            MILO_NOTIFY(
+                "%s setting bad mesh %d, only has %d",
+                PathName(obj),
+                meshIdx,
+                mCharacters.size()
+            );
+            continue;
+        }
+#endif
+        ObjList<CharData>::iterator charIt = mCharacters.begin();
+        for (int n = 0; n < meshIdx; ++n, ++charIt)
+            ;
+        if (charIt->mMMesh) {
+            int charInstIdx = pairVec[i].second;
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+            if ((unsigned int)charInstIdx >= charIt->mMMesh->Instances().size()) {
                 MILO_NOTIFY(
-                    "%s setting bad mesh %d, only has %d",
+                    "%s setting bad 3d char %d on mmesh %s, only has %d chars",
                     PathName(obj),
-                    meshIdx,
-                    mCharacters.size()
+                    charInstIdx,
+                    charIt->mMMesh->Name(),
+                    charIt->mMMesh->Instances().size()
                 );
                 continue;
             }
-            ObjList<CharData>::iterator charIt = mCharacters.begin();
-            for (int n = 0; n < meshIdx; ++n, ++charIt)
+#endif
+            InstanceList::iterator instIt = charIt->mMMesh->Instances().begin();
+            for (int n = 0; n < charInstIdx; ++instIt, ++n)
                 ;
-            if (charIt->mMMesh) {
-                int charInstIdx = pairVec[i].second;
-                if ((unsigned int)charInstIdx >= charIt->mMMesh->Instances().size()) {
-                    MILO_NOTIFY(
-                        "%s setting bad 3d char %d on mmesh %s, only has %d chars",
-                        PathName(obj),
-                        charInstIdx,
-                        charIt->mMMesh->Name(),
-                        charIt->mMMesh->Instances().size()
-                    );
-                } else {
-                    InstanceList::iterator instIt = charIt->mMMesh->Instances().begin();
-                    for (int n = 0; n < charInstIdx; ++instIt, ++n)
-                        ;
-                    charIt->m3DChars.push_back(CharData::Char3D(instIt->mXfm, charInstIdx));
-                    grosserPairs.push_back(std::make_pair(charIt->mMMesh, instIt));
-                }
-            }
+            charIt->m3DChars.push_back(CharData::Char3D(instIt->mXfm, charInstIdx));
+            grosserPairs.push_back(std::make_pair(charIt->mMMesh, instIt));
         }
-        for (int i = 0; (unsigned int)i != grosserPairs.size(); i++) {
-            grosserPairs[i].first->Instances().erase(grosserPairs[i].second);
-            grosserPairs[i].first->InvalidateProxies();
-        }
-        Sort3DCharList();
-        SetFullness(oldFullness, mCharFullness);
-        AssignRandomColors();
     }
+    for (unsigned int i = 0; i != grosserPairs.size(); i++) {
+        grosserPairs[i].first->Instances().erase(grosserPairs[i].second);
+        grosserPairs[i].first->InvalidateProxies();
+    }
+    Sort3DCharList();
+    SetFullness(oldFullness, mCharFullness);
+    AssignRandomColors();
 }
 
 void WorldCrowd::Mats(std::list<RndMat *> &mats, bool additive) {
