@@ -1,3 +1,8 @@
+// Retail ??0UIListHighlight (0x8281F2C0) inlines ObjPtr<RndMesh>(this) and stores
+// the owner after the vtable materialization (same levers as UIListMesh.cpp).
+#define RB3_TU_OBJPTR_FORCEINLINE_CTOR
+#define RB3_TU_OBJPTR_DEFER_OWNER
+
 #include "ui/UIListHighlight.h"
 #include "obj/Object.h"
 #include "os/Debug.h"
