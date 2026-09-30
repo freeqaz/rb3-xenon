@@ -444,10 +444,12 @@ int Campaign::GetCurrentPointsForNextCampaignLevelForUser(LocalBandUser *i_pUser
 int Campaign::GetTotalPointsForNextMajorCampaignLevelForMetaScore(int i_iMetaScore) {
     int iCurrentMajorLevel = 0;
     int iNextMajorLevel = 0;
-    CampaignLevel *cur = GetCampaignLevel(GetMajorLevelForMetaScore(i_iMetaScore));
+    Symbol curLevel = GetMajorLevelForMetaScore(i_iMetaScore);
+    CampaignLevel *cur = GetCampaignLevel(curLevel);
     if (cur)
         iCurrentMajorLevel = cur->GetValue();
-    CampaignLevel *next = GetCampaignLevel(GetNextMajorLevelForMetaScore(i_iMetaScore));
+    Symbol nextLevel = GetNextMajorLevelForMetaScore(i_iMetaScore);
+    CampaignLevel *next = GetCampaignLevel(nextLevel);
     if (next)
         iNextMajorLevel = next->GetValue();
     MILO_ASSERT(iNextMajorLevel >= iCurrentMajorLevel, 0x2D7);
