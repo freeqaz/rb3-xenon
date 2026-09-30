@@ -238,12 +238,8 @@ DataArray *Scoring::GetCrowdConfig(Difficulty diff, BandUser *user) const {
 }
 
 int Scoring::GetBandNumStars(int i) const {
-    int stars = GetBandNumStarsFloat(i);
-    if (stars < 0)
-        stars = 0;
-    else if (stars > 6)
-        stars = 6;
-    return stars;
+    // Retail 0x826A10F8: no clamp, GetBandNumStarsFloat inlined.
+    return GetNumStarsFloat(i, mStarThresholds);
 }
 
 DECOMP_FORCEACTIVE(Scoring, "symbols")
@@ -256,7 +252,7 @@ float Scoring::GetNumStarsFloat(int i1, std::vector<int> &thresholds) const {
         int last = thresholds.size() - 1;
         for (int i = last; i >= 0; i--) {
             if (i1 >= thresholds[i]) {
-                if ((unsigned int)i < (unsigned int)last) {
+                if (i < thresholds.size() - 1) {
                     int thresh = thresholds[i];
                     return i + (float)(i1 - thresh) / (float)(thresholds[i + 1] - thresh);
                 } else {
@@ -309,10 +305,15 @@ int Scoring::GetSoloScoreForStars(int stars, TrackType ty) const {
 PlayerScoreInfo *Scoring::GetPlayerScoreInfo(TrackType ty) const {
     std::vector<PlayerScoreInfo> &scores = TheSongDB->GetBaseScores();
     for (int i = 0; i < scores.size(); i++) {
-        if (ty == scores[i].mTrackType) {
+        if (scores[i].mTrackType == ty) {
             return &scores[i];
         }
     }
+    // Retail 0x826A0FF8 (TU5): 22-fret pro tracks fall back to their 17-fret base.
+    if (ty == kTrackRealGuitar22Fret)
+        return GetPlayerScoreInfo(kTrackRealGuitar);
+    if (ty == kTrackRealBass22Fret)
+        return GetPlayerScoreInfo(kTrackRealBass);
     return nullptr;
 }
 

@@ -1071,6 +1071,7 @@ void OvershellPanel::ResolveChooseProfileStates() {
 }
 
 void OvershellPanel::ExportAll(const Message &msg) {
+    static Symbol update("update"); // retail 0x825B7410: function-local static
     if (msg.Type() == update) {
         UpdateAll();
     } else {
@@ -1248,31 +1249,23 @@ bool OvershellPanel::HasSyncPermission() const { return mSessionMgr->IsLeaderLoc
 void OvershellPanel::OnSynchronized(unsigned int) { UpdateAll(); }
 
 DataNode OvershellPanel::OnMsg(const ButtonDownMsg &msg) {
-    if (ThePlatformMgr.mHomeMenuWii->mHomeMenuActive
-        || TheVirtualKeyboard.IsKeyboardShowing()) {
+    // Retail X360: no Wii home-menu / virtual-keyboard test.
+    BandUser *pUser = BandUserMgr::GetBandUser(msg.GetUser());
+    MILO_ASSERT(pUser->IsLocal(), 0x80C);
+    if (TheUIEventMgr->HasActiveDialogEvent()) {
         return DataNode(kDataUnhandled, 0);
-    } else {
-        BandUser *pUser = BandUserMgr::GetBandUser(msg.GetUser());
-        MILO_ASSERT(pUser->IsLocal(), 0x80C);
-        if (TheUIEventMgr->HasActiveDialogEvent()) {
-            return DataNode(kDataUnhandled, 0);
-        } else
-            return ExportButtonMsg(msg, pUser, true);
-    }
+    } else
+        return ExportButtonMsg(msg, pUser, true);
 }
 
 DataNode OvershellPanel::OnMsg(const ButtonUpMsg &msg) {
-    if (ThePlatformMgr.mHomeMenuWii->mHomeMenuActive
-        || TheVirtualKeyboard.IsKeyboardShowing()) {
+    // Retail X360: no Wii home-menu / virtual-keyboard test.
+    BandUser *pUser = BandUserMgr::GetBandUser(msg.GetUser());
+    MILO_ASSERT(pUser->IsLocal(), 0x81E);
+    if (TheUIEventMgr->HasActiveDialogEvent()) {
         return DataNode(kDataUnhandled, 0);
-    } else {
-        BandUser *pUser = BandUserMgr::GetBandUser(msg.GetUser());
-        MILO_ASSERT(pUser->IsLocal(), 0x81E);
-        if (TheUIEventMgr->HasActiveDialogEvent()) {
-            return DataNode(kDataUnhandled, 0);
-        } else
-            return ExportButtonMsg(msg, pUser, false);
-    }
+    } else
+        return ExportButtonMsg(msg, pUser, false);
 }
 
 DataNode OvershellPanel::OnMsg(const UIComponentScrollMsg &msg) {

@@ -104,7 +104,11 @@ void SongDB::RunMultiplayerAnalyzer() {
 }
 
 void SongDB::RebuildPhrases(int i) {
-    ClearTrackPhrases(i);
+    // Retail 0x826872A8: ClearTrackPhrases inlined (direct ClearQuarantinedPhrases call).
+    ClearQuarantinedPhrases(i);
+    TrackData &data = mTrackData[i];
+    data.mArpeggioPhraseExtents.clear();
+    data.mChordMarkupPhraseExtents.clear();
     mSongData->SendPhrases(i);
 }
 
@@ -657,8 +661,9 @@ void SongDB::ChangeDifficulty(int i, Difficulty diff) {
 }
 
 void SongDB::GetBandFailCue(String &str) const {
+    Symbol song = MetaPerformer::Current()->Song();
     BandSongMetadata *data = (BandSongMetadata *)TheSongMgr.Data(
-        TheSongMgr.GetSongIDFromShortName(MetaPerformer::Current()->Song(), true)
+        TheSongMgr.GetSongIDFromShortName(song, true)
     );
     str = data->BandFailCue().Str();
 }

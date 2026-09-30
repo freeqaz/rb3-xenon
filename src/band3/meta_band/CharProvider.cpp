@@ -169,7 +169,7 @@ Symbol CharProvider::DataSymbol(int data) const {
 }
 
 bool CharProvider::IsActive(int data) const {
-    if (mCharacters.empty())
+    if (mCharacters.size() == 0) // retail: size(), not empty()
         return false;
     else {
         MILO_ASSERT_RANGE(data, 0, mCharacters.size(), 0x117);
@@ -187,7 +187,7 @@ CharData *CharProvider::GetCharData(int idx) {
 }
 
 bool CharProvider::IsIndexNewChar(int idx) {
-    if (mCharacters.empty())
+    if (mCharacters.size() == 0) // retail: size(), not empty()
         return false;
     else {
         MILO_ASSERT_RANGE(idx, 0, mCharacters.size(), 0x134);
@@ -197,7 +197,7 @@ bool CharProvider::IsIndexNewChar(int idx) {
 }
 
 bool CharProvider::IsIndexNone(int idx) {
-    if (mCharacters.empty())
+    if (mCharacters.size() == 0) // retail: size(), not empty()
         return false;
     else {
         MILO_ASSERT_RANGE(idx, 0, mCharacters.size(), 0x141);
@@ -207,7 +207,7 @@ bool CharProvider::IsIndexNone(int idx) {
 }
 
 bool CharProvider::IsIndexCustomChar(int idx) {
-    if (mCharacters.empty())
+    if (mCharacters.size() == 0) // retail: size(), not empty()
         return false;
     else {
         MILO_ASSERT_RANGE(idx, 0, mCharacters.size(), 0x14E);
@@ -217,7 +217,7 @@ bool CharProvider::IsIndexCustomChar(int idx) {
 }
 
 bool CharProvider::IsIndexPrefab(int idx) {
-    if (mCharacters.empty())
+    if (mCharacters.size() == 0) // retail: size(), not empty()
         return false;
     else {
         MILO_ASSERT_RANGE(idx, 0, mCharacters.size(), 0x15B);

@@ -796,6 +796,8 @@ void ProfileMgr::SetSongToTaskMgrMsRaw(float ms) {
     }
 }
 
+// Retail 0x82545AC8 (X360): Wii pad types share their PS3 twin's values, and
+// every other type defaults to 14 ms (decoded from the retail jump table).
 float ProfileMgr::GetJoypadExtraLagInits(JoypadType type, LagContext ctx) const {
     float ret = 0.0f;
     switch (type) {
@@ -826,6 +828,7 @@ float ProfileMgr::GetJoypadExtraLagInits(JoypadType type, LagContext ctx) const 
         }
         break;
     case kJoypadPs3ButtonGuitar:
+    case kJoypadWiiButtonGuitar:
         switch (ctx) {
         case kVCal:
             ret = 35.0f;
@@ -839,6 +842,7 @@ float ProfileMgr::GetJoypadExtraLagInits(JoypadType type, LagContext ctx) const 
         }
         break;
     case kJoypadPs3RealGuitar22Fret:
+    case kJoypadWiiRealGuitar22Fret:
         switch (ctx) {
         case kVCal:
             ret = 74.0f;
@@ -867,6 +871,7 @@ float ProfileMgr::GetJoypadExtraLagInits(JoypadType type, LagContext ctx) const 
         }
         break;
     case kJoypadPs3RoGuitar:
+    case kJoypadWiiGuitar:
         switch (ctx) {
         case kVCal:
             ret = 10.0f;
@@ -880,6 +885,7 @@ float ProfileMgr::GetJoypadExtraLagInits(JoypadType type, LagContext ctx) const 
         }
         break;
     case kJoypadPs3HxGuitar:
+    case kJoypadWiiHxGuitar:
         switch (ctx) {
         case kVCal:
             ret = 25.0f;
@@ -893,6 +899,7 @@ float ProfileMgr::GetJoypadExtraLagInits(JoypadType type, LagContext ctx) const 
         }
         break;
     case kJoypadPs3HxGuitarRb2:
+    case kJoypadWiiHxGuitarRb2:
         switch (ctx) {
         case kVCal:
             ret = 35.0f;
@@ -924,6 +931,9 @@ float ProfileMgr::GetJoypadExtraLagInits(JoypadType type, LagContext ctx) const 
     case kJoypadPs3HxDrumsRb2:
     case kJoypadPs3RoDrums:
     case kJoypadPs3KonamiDrums:
+    case kJoypadWiiDrums:
+    case kJoypadWiiHxDrums:
+    case kJoypadWiiHxDrumsRb2:
         switch (ctx) {
         case kVCal:
             ret = 24.0f;
@@ -952,6 +962,8 @@ float ProfileMgr::GetJoypadExtraLagInits(JoypadType type, LagContext ctx) const 
         break;
     case kJoypadPs3MidiBoxKeyboard:
     case kJoypadPs3Keytar:
+    case kJoypadWiiMidiBoxKeyboard:
+    case kJoypadWiiKeytar:
         switch (ctx) {
         case kVCal:
             ret = 22.0f;
@@ -964,115 +976,8 @@ float ProfileMgr::GetJoypadExtraLagInits(JoypadType type, LagContext ctx) const 
             break;
         }
         break;
-    case kJoypadWiiGuitar:
-        switch (ctx) {
-        case kVCal:
-            ret = 1.0f;
-            break;
-        case kACal:
-            ret = -14.0f;
-            break;
-        default:
-            ret = -14.0f;
-            break;
-        }
-        break;
-    case kJoypadWiiHxGuitar:
-        switch (ctx) {
-        case kVCal:
-            ret = 5.0f;
-            break;
-        case kACal:
-            ret = 10.0f;
-            break;
-        default:
-            ret = 10.0f;
-            break;
-        }
-        break;
-    case kJoypadWiiHxGuitarRb2:
-    case kJoypadWiiCoreGuitar:
-        switch (ctx) {
-        case kVCal:
-            ret = 42.0f;
-            break;
-        case kACal:
-            ret = 42.0f;
-            break;
-        default:
-            ret = 0.0f;
-            break;
-        }
-        break;
-    case kJoypadWiiDrums:
-        switch (ctx) {
-        case kVCal:
-            ret = 17.0f;
-            break;
-        case kACal:
-            ret = 5.0f;
-            break;
-        default:
-            ret = 0.0f;
-            break;
-        }
-        break;
-    case kJoypadWiiHxDrums:
-    case kJoypadWiiHxDrumsRb2:
-        switch (ctx) {
-        case kVCal:
-            ret = 37.0f;
-            break;
-        case kACal:
-            ret = 14.0f;
-            break;
-        default:
-            ret = 14.0f;
-            break;
-        }
-        break;
-    case kJoypadWiiButtonGuitar:
-        switch (ctx) {
-        case kVCal:
-            ret = 37.0f;
-            break;
-        case kACal:
-            ret = 10.0f;
-            break;
-        default:
-            ret = -15.0f;
-            break;
-        }
-        break;
-    case kJoypadWiiRealGuitar22Fret:
-        switch (ctx) {
-        case kVCal:
-            ret = 56.0f;
-            break;
-        case kACal:
-            ret = 44.0f;
-            break;
-        default:
-            ret = 44.0f;
-            break;
-        }
-        break;
-    case kJoypadWiiMidiBoxKeyboard:
-    case kJoypadWiiKeytar:
-        switch (ctx) {
-        case kVCal:
-            ret = 10.0f;
-            break;
-        case kACal:
-            ret = 20.0f;
-            break;
-        default:
-            ret = -24.0f;
-            break;
-        }
-        break;
     default:
-        ret = 0.0f;
+        ret = 14.0f;
         break;
     }
     return ret;
