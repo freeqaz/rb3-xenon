@@ -48,14 +48,22 @@ void SongStatusData::SaveToStream(BinStream &bs, ScoreType ty) const {
     }
 }
 
-void SongStatusData::LoadFromStream(BinStream &bs, ScoreType) {
+void SongStatusData::LoadFromStream(BinStream &bs, ScoreType ty) {
     bs >> mStars;
     bs >> mAccuracy;
     bs >> mStreak;
     bs >> mFlags;
-    bs >> mShared.mVocals.mAwesomes;
-    bs >> mShared.mVocals.mDoubleAwesomes;
-    bs >> mShared.mVocals.mTripleAwesomes;
+    // Retail 0x825D1360 keeps `ty` live in r29 without reading it: the two arms
+    // below read the same addresses and are tail-merged, as in SaveToStream.
+    if (ty == kScoreVocals || ty == kScoreHarmony) {
+        bs >> mShared.mVocals.mAwesomes;
+        bs >> mShared.mVocals.mDoubleAwesomes;
+        bs >> mShared.mVocals.mTripleAwesomes;
+    } else {
+        bs >> mShared.mGuitarDrums.mHoposPercentage;
+        bs >> mShared.mGuitarDrums.mSoloPercentage;
+        bs >> mShared.mVocals.mTripleAwesomes;
+    }
 }
 
 void SongStatus::Clear() {
@@ -657,7 +665,9 @@ int SongStatusMgr::GetCachedTotalStars(ScoreType ty) const {
 }
 
 int SongStatusMgr::UpdateCachedTotalDiscScore(ScoreType ty) {
-    return mCachedTotalDiscScores[ty] = CalculateTotalScore(ty, rb3);
+    // Retail 0x825D2C90: function-local static, and no cache store.
+    static Symbol rb3("rb3");
+    return CalculateTotalScore(ty, rb3);
 }
 
 void SongStatusMgr::UpdateCachedTotalScore(ScoreType ty) {
