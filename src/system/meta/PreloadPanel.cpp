@@ -61,7 +61,10 @@ void PreloadPanel::SetTypeDef(DataArray *d) {
 
 void PreloadPanel::Load() {
     UIPanel::Load();
+#ifdef HX_NATIVE
+    // DC3 addition; RB3 retail (0x827B4880) goes straight to mPreloadResult.
     TheLoadMgr.SetLoaderPeriod(14.0f);
+#endif
     mPreloadResult = kPreloadInProgress;
     TheContentMgr.RegisterCallback(this, false);
     mAppReadFailureHandler = TheContentMgr.SetReadFailureHandler(this);
@@ -123,7 +126,9 @@ void PreloadPanel::PollForLoading() {
             if (mSongDoesNotExist) {
                 mPreloadResult = kPreloadFailure;
             } else {
-                FileCache::PollAll();
+#ifdef HX_NATIVE
+                FileCache::PollAll(); // DC3 addition; absent in RB3 retail
+#endif
                 FOREACH (it, mPreloadedFiles) {
                     if (!CheckFileCached(it->c_str())) {
                         mPreloadResult = kPreloadFailure;
@@ -238,7 +243,9 @@ void PreloadPanel::StartCache() {
     mMounted = true;
     MILO_ASSERT(sCache, 0xFB);
     sCache->Clear();
-    sCache->SetSize(gMaxCacheSize);
+#ifdef HX_NATIVE
+    sCache->SetSize(gMaxCacheSize); // DC3 addition; absent in RB3 retail
+#endif
     sCache->StartSet(0);
     if (!mSongDoesNotExist) {
         static Symbol preload_files("preload_files");
@@ -248,7 +255,7 @@ void PreloadPanel::StartCache() {
             const char *path = arr->Str(0);
             MILO_ASSERT(path, 0x109);
             bool b1 = arr->Int(1);
-            if (!b1 || FileExists(DirLoader::CachedPath(path, false), 0, nullptr)) {
+            if (!b1 || FileExists(DirLoader::CachedPath(path, false), 0)) {
                 sCache->Add(path, 1, path);
                 mPreloadedFiles.push_back(path);
             }
