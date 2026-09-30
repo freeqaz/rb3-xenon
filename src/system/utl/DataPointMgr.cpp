@@ -74,7 +74,14 @@ void DataPoint::AddPair(const char *name, DataNode value) {
     }
 }
 
-void DataPoint::AddPair(Symbol name, DataNode value) { AddPair(name.Str(), value); }
+void DataPoint::AddPair(Symbol name, DataNode value) {
+    // retail: the insert is spelled out here, not a call to the
+    // const char* overload
+    auto it = mNameValPairs.insert(std::make_pair(name.Str(), value));
+    if (!it.second) {
+        MILO_FAIL("Duplicate name [%s] in DP %s.", name, mType);
+    }
+}
 
 #pragma endregion
 #pragma region DataPointMgr
