@@ -3743,6 +3743,7 @@
  "0x82346f68": "??$__linear_insert@PAPAUObjEntry@@PAU1@UObjSort@@@stlpmtx_std@@YAXPAPAUObjEntry@@0PAU1@UObjSort@@@Z",
  "0x82347030": "??$__linear_insert@PAPAVMoveDetector@@PAV1@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@0PAV1@UMoveDetectorCmp@@@Z",
  "0x823470c8": "??$__make_heap@PAPAVFileCacheEntry@@UPriority@@PAV1@H@stlpmtx_std@@YAXPAPAVFileCacheEntry@@0UPriority@@0PAH@Z",
+ "0x82347288": "??6@YAAAVBinStream@@AAV0@ABVBandPatchMesh@@@Z",
  "0x82347328": "?PropSync@@YA_NAAVPatchPair@MeshPair@BandPatchMesh@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x823474d0": "??$__uninitialized_fill_n@PAVMeshFace@BandPatchMesh@@IV12@@stlpmtx_std@@YAPAVMeshFace@BandPatchMesh@@PAV12@IABV12@ABU__false_type@0@@Z",
  "0x82347528": "?Write@NullFile@@UAAHPBXH@Z",

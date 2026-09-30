@@ -3901,7 +3901,6 @@ HamRibbon.cpp:
 
 MoveAsyncDetector.cpp:
 	.pdata      start:0x821FBFE8 end:0x821FBFF0
-	.pdata      start:0x821FEC68 end:0x821FEC70
 	.pdata      start:0x82200080 end:0x82200088
 	.pdata      start:0x822000A0 end:0x822000A8
 	.pdata      start:0x82234690 end:0x82234698
@@ -3912,7 +3911,6 @@ MoveAsyncDetector.cpp:
 	.text       start:0x823180EC end:0x823180F0
 	.text       start:0x82318164 end:0x82318170
 	.text       start:0x82347214 end:0x82347218
-	.text       start:0x82347284 end:0x82347320
 	.text       start:0x82347720 end:0x82347770
 	.text       start:0x8235C328 end:0x8235C374
 	.text       start:0x8235C538 end:0x8235C604
@@ -10327,6 +10325,7 @@ BandPatchMesh.cpp:
 	.pdata      start:0x821FEBD0 end:0x821FEBD8
 	.pdata      start:0x821FEBE0 end:0x821FEBF8
 	.pdata      start:0x821FEC30 end:0x821FEC38
+	.pdata      start:0x821FEC68 end:0x821FEC70
 	.pdata      start:0x821FEC70 end:0x821FEC88
 	.pdata      start:0x821FECC8 end:0x821FECD0
 	.pdata      start:0x821FED48 end:0x821FED50
@@ -10342,6 +10341,7 @@ BandPatchMesh.cpp:
 	.text       start:0x823461C8 end:0x823462A4
 	.text       start:0x823464F8 end:0x823465B0
 	.text       start:0x82346EB8 end:0x82346F64
+	.text       start:0x82347284 end:0x82347320
 	.text       start:0x82347320 end:0x82347478
 	.text       start:0x823474D0 end:0x82347528
 	.text       start:0x82347530 end:0x823475FC
