@@ -64,6 +64,10 @@ Symbol PresenceMgr::GetPresenceMode() {
     if (!unk1c)
         return gNullStr;
     else {
+        static Symbol in_game("in_game");
+        static Symbol screens("screens");
+        static Symbol gamemode("gamemode");
+        static Symbol override_play_mode("override_play_mode");
         int size = unk1c->Size();
         unk39 = false;
         for (int i = 1; i < size; i++) {
