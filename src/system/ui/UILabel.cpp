@@ -611,9 +611,8 @@ void UILabel::SetFloat(const char *cc, float f) {
 
 void UILabel::SetIcon(char c) {
     mIcon = MakeString("%c", c);
-    if (!mIcon.empty() || !TheLoadMgr.EditMode()) {
-        SetDisplayText(mIcon.c_str(), !TheLoadMgr.EditMode());
-    }
+    // retail 0x827F4C18: no edit-mode gate
+    SetDisplayText(mIcon.c_str(), true);
 }
 
 void UILabel::AppendIcon(char c) {
@@ -730,12 +729,10 @@ void UILabel::LabelUpdate(bool b1, bool b2) {
                 mCapsMode,
                 mFixedLength
             );
-            Hmx::Color color;
-            Hmx::Color *cPtr = nullptr;
-            if (mAltTextColor) {
-                color = mAltTextColor->GetColor();
-                cPtr = &color;
-            }
+            // retail passes GetColor()'s own storage, no local copy
+            Hmx::Color *cPtr = mAltTextColor
+                ? const_cast<Hmx::Color *>(&mAltTextColor->GetColor())
+                : nullptr;
             mText->SetAltStyle(
                 altfont, mAltTextSize, cPtr, mAltZOffset, mAltItalics, mAltStyleEnabled
             );
@@ -748,7 +745,10 @@ void UILabel::LabelUpdate(bool b1, bool b2) {
         if (altfont && altfont != mainfont) {
             altfont->TextureOwner()->SetBaseKerning(altkern);
         }
+#ifdef HX_NATIVE
+        // not in retail 0x827F6258
         CheckValid(!TheLoadMgr.EditMode());
+#endif
     }
 }
 
