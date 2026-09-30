@@ -30,14 +30,12 @@ const float InlineHelp::sRotateDuration = 1;
 // InlineHelp::PreLoad (0x823179A8) reads the packed rev off a plain BinStream
 // and splits it into these two shorts; every later version test, including the
 // ActionElement sub-loader's, re-reads the rev.
-// Residue (W16-HM): retail puts alt at +0 / rev at +4, we get the reverse.
-// Measured inert: declaration order (both orders, with and without align(4)),
-// store order, and referencing alt first from an earlier function. One
-// aligned(4) aggregate (ui/UIListArrow.cpp's fix) does place them right, but it
-// turns the sub-loader's direct `lhz lbl_82CBDC14` into addi+lhz 4 and costs
-// that row 2.6 pp, so the two separate statics are kept.
-static __declspec(align(4)) unsigned short sInlineHelpRev;
-static __declspec(align(4)) unsigned short sInlineHelpAltRev;
+// Initialised (= 0) so .bss follows declaration order -- alt at +0, rev at +4
+// (W16-HM, measured in world/Instance.cpp: uninitialised statics were placed rev
+// first whatever the declaration order; an aligned aggregate places them right
+// but turns the sub-loader's direct `lhz lbl_82CBDC14` into addi+lhz 4).
+static __declspec(align(4)) unsigned short sInlineHelpAltRev = 0;
+static __declspec(align(4)) unsigned short sInlineHelpRev = 0;
 
 #pragma region InlineHelp::ActionElement
 
