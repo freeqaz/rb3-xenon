@@ -269,6 +269,28 @@ public:
     static const Transform &IDXfm() { return sID; }
 };
 
+// W17-PIN2 (DC3 w8-e): an inline member, body verbatim from mtx.cpp. Retail
+// emits it as a per-TU COMDAT; its single body at 0x8246b770 lies inside
+// RndShaderMgr's .text span (0x8246b5f0-0x8246bee8), not in math/mtx.cpp's.
+inline Hmx::Matrix4::Matrix4(const Transform &tf) {
+    x.x = tf.m.x.x;
+    x.y = tf.m.x.y;
+    x.z = tf.m.x.z;
+    x.w = 0.0f;
+    y.x = tf.m.y.x;
+    y.y = tf.m.y.y;
+    y.z = tf.m.y.z;
+    y.w = 0.0f;
+    z.x = tf.m.z.x;
+    z.y = tf.m.z.y;
+    z.z = tf.m.z.z;
+    z.w = 0.0f;
+    w.x = tf.v.x;
+    w.y = tf.v.y;
+    w.z = tf.v.z;
+    w.w = 1.0f;
+}
+
 inline void Interp(const Transform &a, const Transform &b, float t, Transform &dst) {
     Interp(a.v, b.v, t, dst.v);
     // Linear interpolation of rotation matrix rows (approximate but sufficient)

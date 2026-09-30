@@ -2799,6 +2799,7 @@ system/rndobj/ShaderMgr.cpp:
 	.pdata      start:0x8220F240 end:0x8220F248
 	.pdata      start:0x8220F248 end:0x8220F278
 	.text       start:0x8246B5F0 end:0x8246B740
+	.text       start:0x8246B770 end:0x8246B7F8
 	.text       start:0x8246B7F8 end:0x8246B9A0
 	.text       start:0x8246B9A0 end:0x8246BAA0
 	.text       start:0x8246BAA0 end:0x8246BEF0
@@ -2865,7 +2866,7 @@ MeshAnim.cpp:
 	.text       start:0x82442C78 end:0x82442CCC
 	.text       start:0x82442DF8 end:0x82442E68
 	.text       start:0x82469580 end:0x8246B5F0
-	.text       start:0x8246B740 end:0x8246B7F8
+	.text       start:0x8246B740 end:0x8246B770
 	.text       start:0x8246CDF0 end:0x8246EBE0
 	.text       start:0x8246EC44 end:0x82470CA8
 	.text       start:0x82470CA8 end:0x824712A8
