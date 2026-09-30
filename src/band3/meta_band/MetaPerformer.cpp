@@ -1474,7 +1474,9 @@ void MetaPerformer::PotentiallyUpdateLeaderboards(
 
 int MetaPerformer::TotalStars(bool b1) const {
     int stars = 0;
-    FOREACH (it, mStars) {
+    for (std::vector<int>::const_iterator end = mStars.end(), it = mStars.begin();
+         it != end;
+         ++it) {
         if (b1) {
             stars += Min(5, *it);
         } else
