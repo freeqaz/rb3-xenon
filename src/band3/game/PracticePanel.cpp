@@ -100,19 +100,19 @@ END_FORCE_LOCAL_INLINE
 bool PracticePanel::IsDrums() const {
     if (!HasPlayer())
         return false;
-    else {
-        Player *p = TheGame->GetActivePlayer(0);
-        return !p ? false : p->GetTrackType() == kTrackDrum;
-    }
+    Player *p = TheGame->GetActivePlayer(0);
+    if (!p)
+        return false;
+    return p->GetTrackType() == kTrackDrum;
 }
 
 bool PracticePanel::IsVocals() const {
     if (!HasPlayer())
         return false;
-    else {
-        Player *p = TheGame->GetActivePlayer(0);
-        return !p ? false : p->GetTrackType() == kTrackVocals;
-    }
+    Player *p = TheGame->GetActivePlayer(0);
+    if (!p)
+        return false;
+    return p->GetTrackType() == kTrackVocals;
 }
 
 void PracticePanel::Load() {
