@@ -444,11 +444,12 @@ void SpotDrawParams::Load(BinStream &bs, int rev) {
         }
         bs >> mColor;
         if (rev < 4) {
+            // retail reads the obsolete Key<float> fields without zero-initializing them
             int a;
-            Key<float> b, c;
+            float b[2], c[2];
             bs >> a;
-            bs >> b;
-            bs >> c;
+            bs >> *reinterpret_cast<Key<float> *>(b);
+            bs >> *reinterpret_cast<Key<float> *>(c);
         }
         bs >> mTexture;
         bs >> mProxy;
