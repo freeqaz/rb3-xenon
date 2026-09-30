@@ -3,7 +3,7 @@
 // RB3_OBJPTR_FORCEINLINE_CTOR signature (see obj/ObjPtr_p.h). The
 // extent census shows delta ~= -16 * (surplus bl) for this TU's ctor,
 // i.e. one un-inlined ObjPtr ctor per surplus call.
-#define RB3_OBJPTR_FORCEINLINE_CTOR
+#define RB3_OBJPTR_INLINE_OWNER_CTOR
 // PER-TU (lane W11-C): retail also inlines this TU's owner-only ObjOwnerPtr
 // site. ??0Anim@EventTrigger@@: `bl` retail 2 vs our 3, the single ours-only
 // callee being ??0?$ObjOwnerPtr@VRndAnimatable@@@@ -- i.e. Anim::mAnim(o).
@@ -33,7 +33,15 @@
 #include "utl/MakeString.h"
 
 static DataArray *gSupportedEvents = nullptr;
-static unsigned short sEventTriggerRev;
+// RB3 retail rev dialect: Load splits the packed rev into two halfwords, two
+// separate align(4) file statics (retail 0x82CC6C1C altRev / 0x82CC6C20 rev).
+// Load co-addresses them off one base register; the element readers and
+// LoadOldEvent reach the rev halfword by its own symbol, so they must stay
+// SEPARATE statics (an aggregate turns `lhz sym` into addi+lhz 4). Initialised
+// (= 0) so they are laid out in declaration order, alt at +0 and rev at +4
+// (uninitialised, they landed rev at +0 / alt at +0x10 in either order).
+static __declspec(align(4)) unsigned short gAltRev_EventTrigger = 0;
+static __declspec(align(4)) unsigned short gRev_EventTrigger = 0;
 
 #pragma region EventTrigger Structs
 
@@ -90,32 +98,59 @@ EventTrigger::EventTrigger()
     RegisterEvents();
 }
 
+// RefIs with retail's operand order for THIS body: `cmplw cr6, from, upcast`
+// (the dying object on the left), the reverse of RefIs's spelling.
+template <class P>
+static inline bool FromIs(ObjRef *from, const P &member) {
+#ifdef HX_NATIVE
+    return RefIs(from, member);
+#else
+    return reinterpret_cast<Hmx::Object *>(from)
+        == static_cast<Hmx::Object *>(const_cast<P &>(member).Ptr());
+#endif
+}
+
+// Retail 0x824a0870 (636 B): each list is walked to the end (no early return).
+// A ref that points at the dying object is either re-pointed at `to` (through
+// dynamic_cast + ObjOwnerPtr::SetOwnerObj) or, when `to` is null, its element
+// is erased. ProxyCalls test mEvent before mProxy. There is no base-class call
+// of any kind (the body ends `addi r1,r1,160; b __restgprlr`).
 void EventTrigger::Replace(ObjRef *from, Hmx::Object *to) {
-    FOREACH (it, mAnims) {
-        if (RefIs(from, it->mAnim)) {
-            if (!it->mAnim.SetObj(to)) {
-                mAnims.erase(it);
+    for (ObjList<Anim>::iterator it = mAnims.begin(); it != mAnims.end();) {
+        if (FromIs(from, it->mAnim)) {
+            if (!to) {
+                it = mAnims.erase(it);
+                continue;
             }
-            return;
+            it->mAnim = dynamic_cast<RndAnimatable *>(to);
         }
+        ++it;
     }
-    FOREACH (it, mHideDelays) {
-        if (RefIs(from, it->mHide)) {
-            if (!it->mHide.SetObj(to)) {
-                mHideDelays.erase(it);
+    for (ObjList<HideDelay>::iterator it = mHideDelays.begin();
+         it != mHideDelays.end();) {
+        if (FromIs(from, it->mHide)) {
+            if (!to) {
+                it = mHideDelays.erase(it);
+                continue;
             }
-            return;
+            it->mHide = dynamic_cast<RndDrawable *>(to);
         }
+        ++it;
     }
-    FOREACH (it, mProxyCalls) {
-        if ((RefIs(from, it->mEvent) && !it->mEvent.SetObj(to))
-            || (RefIs(from, it->mProxy) && !it->mProxy.SetObj(to))) {
-            mProxyCalls.erase(it);
-            return;
+    for (ObjList<ProxyCall>::iterator it = mProxyCalls.begin();
+         it != mProxyCalls.end();) {
+        if (FromIs(from, it->mEvent) || FromIs(from, it->mProxy)) {
+            if (!to) {
+                it = mProxyCalls.erase(it);
+                continue;
+            }
+            if (FromIs(from, it->mEvent))
+                it->mEvent = dynamic_cast<EventTrigger *>(to);
+            else
+                it->mProxy = dynamic_cast<ObjectDir *>(to);
         }
+        ++it;
     }
-    // Retail 0x824a0870 (636 B) ends `addi r1,r1,160; b __restgprlr` -- there is
-    // no base-class call of any kind.
 #ifdef HX_NATIVE
     Hmx::Object::Replace(from, to);
 #endif
@@ -282,21 +317,22 @@ BinStream &operator>>(BinStream &bs, EventTrigger::HideDelay &hd) {
     return bs;
 }
 
-BinStreamRev &operator>>(BinStreamRev &d, EventTrigger::Anim &anim) {
+BinStream &operator>>(BinStream &d, EventTrigger::Anim &anim) {
     d >> anim.mAnim >> anim.mBlend >> anim.mWait >> anim.mDelay;
-    if (sEventTriggerRev > 9) {
+    if (gRev_EventTrigger > 9) {
         d >> anim.mEnable >> (int &)anim.mRate >> anim.mStart;
-        d >> anim.mEnd >> anim.mPeriod >> anim.mType >> anim.mScale;
+        d >> anim.mEnd >> anim.mPeriod >> anim.mType;
+        d >> anim.mScale;
     } else {
         ResetAnim(anim);
     }
     return d;
 }
 
-BinStreamRev &operator>>(BinStreamRev &d, EventTrigger::ProxyCall &pc) {
+BinStream &operator>>(BinStream &d, EventTrigger::ProxyCall &pc) {
     d >> pc.mProxy;
     d >> pc.mCall;
-    if (sEventTriggerRev > 10) {
+    if (gRev_EventTrigger > 10) {
         pc.mEvent.Load(d, true, pc.mProxy);
     }
     return d;
@@ -312,104 +348,106 @@ void RemoveNullEvents(std::list<Symbol> &vec) {
     }
 }
 
-INIT_REVS(0x11, 0)
-
+// RB3 retail (0x824a3e20) is rb3-Wii's Load: the raw incoming BinStream is
+// forwarded to every read (no BinStreamRev decorator -- no ??0BinStream /
+// ??1BinStream and no vtable store on the stack), the rev lives in the TU's
+// static pair, and the edit mode is forced back to false rather than restored.
 BEGIN_LOADS(EventTrigger)
-    LOAD_REVS(bs)
-    ASSERT_REVS(0x11, 0)
-    sEventTriggerRev = d.rev;
-    LOAD_SUPERCLASS(Hmx::Object)
-    if (d.rev > 0xF) {
-        LOAD_SUPERCLASS(RndAnimatable)
-    }
+    int revs;
+    bs >> revs;
+    gRev_EventTrigger = getHmxRev(revs);
+    gAltRev_EventTrigger = getAltRev(revs);
+    Hmx::Object::Load(bs);
+    if (gRev_EventTrigger > 0xF)
+        RndAnimatable::Load(bs);
     UnregisterEvents();
     std::list<EventTrigger *> triggers;
-    if (d.rev > 9)
-        d >> mTriggerEvents;
-    else if (d.rev > 6) {
+    if (gRev_EventTrigger > 9)
+        bs >> mTriggerEvents;
+    else if (gRev_EventTrigger > 6) {
         mTriggerEvents.clear();
         Symbol sym;
-        d >> sym;
+        bs >> sym;
         if (!sym.Null())
             mTriggerEvents.push_back(sym);
     }
-    if (d.rev > 6) {
-        d >> mAnims >> mSounds >> mShows;
-    }
+    if (gRev_EventTrigger > 6)
+        bs >> mAnims >> mSounds >> mShows;
 
-    if (d.rev > 0xC)
-        d >> mHideDelays;
-    else if (d.rev > 8) {
+    if (gRev_EventTrigger > 0xC)
+        bs >> mHideDelays;
+    else if (gRev_EventTrigger > 8) {
         mHideDelays.clear();
         int count;
-        d >> count;
+        bs >> count;
         mHideDelays.resize(count);
         FOREACH (it, mHideDelays) {
-            d >> it->mHide >> it->mDelay;
+            HideDelay &hd = *it;
+            bs >> hd.mHide;
+            bs >> hd.mDelay;
         }
-    } else if (d.rev > 6) {
+    } else if (gRev_EventTrigger > 6) {
         ObjPtrList<RndDrawable> drawList(this);
-        d >> drawList;
+        bs >> drawList;
         mHideDelays.clear();
         FOREACH (it, drawList) {
             mHideDelays.push_back();
             mHideDelays.back().mHide = *it;
         }
     } else {
-        ObjPtr<Hmx::Object> objPtr(this);
-        d >> objPtr;
+        ObjPtr<Hmx::Object> objPtr(this, nullptr);
+        bs >> objPtr;
         unsigned int count;
-        d >> count;
+        bs >> count;
         EventTrigger *curTrig = this;
         String str(FileGetBase(Name()));
-        bool oldMode = TheLoadMgr.EditMode();
         TheLoadMgr.SetEditMode(true);
         while (count-- != 0) {
             bool b = (count != 0 || curTrig != this);
-            curTrig->LoadOldEvent(d, objPtr, b ? str.c_str() : nullptr, Dir());
+            curTrig->LoadOldEvent(bs, objPtr, b ? str.c_str() : nullptr, Dir());
             if (count != 0) {
                 curTrig = new EventTrigger();
                 triggers.push_back(curTrig);
             }
         }
-        TheLoadMgr.SetEditMode(oldMode);
+        TheLoadMgr.SetEditMode(false);
     }
-    if (d.rev > 2) {
-        d >> mEnableEvents;
-        d >> mDisableEvents;
+    if (gRev_EventTrigger > 2) {
+        bs >> mEnableEvents;
+        bs >> mDisableEvents;
     }
-    if (d.rev > 5)
-        d >> mWaitForEvents;
-    if (d.rev > 6)
-        d >> mNextLink;
-    if (d.rev < 10) {
+    if (gRev_EventTrigger > 5)
+        bs >> mWaitForEvents;
+    if (gRev_EventTrigger > 6)
+        bs >> mNextLink;
+    if (gRev_EventTrigger < 10) {
         RemoveNullEvents(mEnableEvents);
         RemoveNullEvents(mDisableEvents);
         RemoveNullEvents(mWaitForEvents);
     }
-    if (d.rev < 7) {
+    if (gRev_EventTrigger < 7) {
         FOREACH (it, triggers) {
             (*it)->mEnableEvents = mEnableEvents;
             (*it)->mDisableEvents = mDisableEvents;
             (*it)->mWaitForEvents = mWaitForEvents;
         }
     }
-    if (d.rev > 7)
-        d >> mProxyCalls;
-    if (d.rev > 0xB) {
+    if (gRev_EventTrigger > 7)
+        bs >> mProxyCalls;
+    if (gRev_EventTrigger > 0xB) {
         int i = 0;
-        d >> i;
+        bs >> i;
         mTriggerOrder = (TriggerOrder)i;
     }
-    if (d.rev > 0xD)
-        d >> mResetTriggers;
-    if (d.rev > 0xE)
-        d >> mEnabledAtStart;
-    if (d.rev > 0xF) {
-        d >> (int &)mAnimTrigger >> mAnimFrame;
+    if (gRev_EventTrigger > 0xD)
+        bs >> mResetTriggers;
+    if (gRev_EventTrigger > 0xE)
+        bs >> mEnabledAtStart;
+    if (gRev_EventTrigger > 0xF) {
+        bs >> (int &)mAnimTrigger >> mAnimFrame;
     }
-    if (d.rev > 0x10)
-        d >> mPartLaunchers;
+    if (gRev_EventTrigger > 0x10)
+        bs >> mPartLaunchers;
     CleanupEventCase(mTriggerEvents);
     CleanupEventCase(mEnableEvents);
     CleanupEventCase(mDisableEvents);
@@ -826,7 +864,7 @@ void EventTrigger::LoadOldAnim(BinStream &bs, RndAnimatable *anim) {
 }
 
 void EventTrigger::LoadOldEvent(
-    BinStreamRev &d, Hmx::Object *obj, const char *trigName, ObjectDir *dir
+    BinStream &d, Hmx::Object *obj, const char *trigName, ObjectDir *dir
 ) {
     mTriggerEvents.clear();
     Symbol s;
@@ -839,7 +877,7 @@ void EventTrigger::LoadOldEvent(
         SetName(NextName(trigFileName, dir), dir);
     }
     RndAnimatable *anim = dynamic_cast<RndAnimatable *>(obj);
-    if (sEventTriggerRev < 5) {
+    if (gRev_EventTrigger < 5) {
         bool b58;
         d >> b58;
         LoadOldAnim(d, b58 ? anim : nullptr);
@@ -876,7 +914,7 @@ void EventTrigger::LoadOldEvent(
     } else if (whichVec == 4) {
         MILO_NOTIFY("%s: can't disable %s", Name(), obj ? obj->Name() : "''");
     }
-    if (sEventTriggerRev > 1) {
+    if (gRev_EventTrigger > 1) {
         float f50;
         d >> f50;
         if (f50) {
@@ -889,7 +927,7 @@ void EventTrigger::LoadOldEvent(
             }
         }
     }
-    if (sEventTriggerRev > 3) {
+    if (gRev_EventTrigger > 3) {
         String str;
         d >> str;
         if (!str.empty()) {
