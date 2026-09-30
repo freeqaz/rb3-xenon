@@ -88,21 +88,24 @@ void StoreInfoPanel::ClearData() {
 }
 
 void StoreInfoPanel::FetchRecommendations() {
-    if (!mLoader) {
-        MILO_ASSERT(mOffer, 0x98);
-        BandStoreOffer *offer = dynamic_cast<BandStoreOffer *>(mOffer);
-        MILO_ASSERT(offer, 0x9C);
-        String str20;
-        if (offer->Exists()) {
-            str20 = offer->StoreOfferData()->Sym(0);
-        } else {
-            PushRecommendationFailure();
-            return;
-        }
-        String path;
-        GetRecommendationIndexPath(str20.c_str(), path);
-        mLoader = new DataNetLoader(path);
+    // TU5: no mLoader re-entry test, and the offer id comes from the offer
+    // itself or, failing that, its upgrade purchaseable.
+    static Symbol song("song"); // only referenced by a compiled-out check
+    MILO_ASSERT(mOffer, 0x98);
+    BandStoreOffer *offer = dynamic_cast<BandStoreOffer *>(mOffer);
+    MILO_ASSERT(offer, 0x9C);
+    String offerStr;
+    if (offer->Exists()) {
+        StorePurchaseable::IDToOfferString(offer->SongID(), offerStr);
+    } else if (offer->mUpgrade.Exists()) {
+        StorePurchaseable::IDToOfferString(offer->mUpgrade.SongID(), offerStr);
+    } else {
+        PushRecommendationFailure();
+        return;
     }
+    String path;
+    GetRecommendationIndexPath(offerStr.c_str(), path);
+    mLoader = new DataNetLoader(path);
 }
 
 void StoreInfoPanel::RotateRecommendation() {
