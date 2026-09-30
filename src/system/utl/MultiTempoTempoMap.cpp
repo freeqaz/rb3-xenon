@@ -185,8 +185,6 @@ float MultiTempoTempoMap::TimeToTick(float time) const {
 
 MultiTempoTempoMap::MultiTempoTempoMap() : mStartLoopTick(-1.0f), mEndLoopTick(-1.0f) {}
 
-MultiTempoTempoMap::~MultiTempoTempoMap() {}
-
 void MultiTempoTempoMap::Finalize() { TrimExcess(mTempoPoints); }
 
 bool MultiTempoTempoMap::AddTempoInfoPoint(int tick, int tempo) {

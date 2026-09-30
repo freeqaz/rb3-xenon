@@ -1,4 +1,5 @@
 #include "utl/MakeString.h"
+#include <stdio.h>
 #include "obj/Data.h"
 #include "os/Debug.h"
 #include "os/System.h"
@@ -433,19 +434,15 @@ FormatString &FormatString::operator<<(const DataNode &node) {
     char tmp = *mFmtEnd;
     *mFmtEnd = '\0';
 
+    // Retail: no float->int conversion case, and the CRT _snprintf directly
+    // (bl 0x8282d540), not the Hx_snprintf wrapper.
     int n;
-    if (mType == kInt && node.Type() == kDataFloat) {
-        n = Hx_snprintf(
-            mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, (int)node.LiteralFloat()
-        );
-    } else if (mType == kInt) {
-        n = Hx_snprintf(mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, node.LiteralInt());
+    if (mType == kInt) {
+        n = _snprintf(mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, node.LiteralInt());
     } else if (mType == kFloat) {
-        n = Hx_snprintf(
-            mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, node.LiteralFloat()
-        );
+        n = _snprintf(mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, node.LiteralFloat());
     } else if (mType == kStr) {
-        n = Hx_snprintf(mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, node.LiteralStr());
+        n = _snprintf(mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, node.LiteralStr());
     } else {
         MILO_NOTIFY("FormatString: Couldn't convert DataNode to '%s'", mFmt);
         n = 0;

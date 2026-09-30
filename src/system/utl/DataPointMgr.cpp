@@ -67,11 +67,10 @@ void DataPoint::ToJSON(String &str) const {
 }
 
 void DataPoint::AddPair(const char *name, DataNode value) {
-    if (strlen(name) != 0) {
-        auto it = mNameValPairs.insert(std::make_pair(name, value));
-        if (!it.second) {
-            MILO_FAIL("Duplicate name [%s] in DP %s.", name, mType);
-        }
+    // retail: no empty-name guard
+    auto it = mNameValPairs.insert(std::make_pair(name, value));
+    if (!it.second) {
+        MILO_FAIL("Duplicate name [%s] in DP %s.", name, mType);
     }
 }
 

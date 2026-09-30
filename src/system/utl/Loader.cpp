@@ -53,17 +53,18 @@ Loader::Loader(const FilePath &fp, LoaderPos pos)
 #ifdef HX_NATIVE
       mLoadCount(0), mPos(pos), mFile(fp), mLoadStartMs(-1), mHeap(GetCurrentHeapNum()) {
 #else
-      mPos(pos), mFile(fp), mHeap(GetCurrentHeapNum()) {
+      mLoadCount(0), mPos(pos), mFile(fp), mHeap(GetCurrentHeapNum()) {
 #endif
     MILO_ASSERT(MemNumHeaps() == 0 || (mHeap != kNoHeap && mHeap != kSystemHeap), 0x1F0);
     TheLoadMgr.Loaders().push_front(this);
     if (mPos == kLoadFront) {
         TheLoadMgr.Loading().push_front(this);
-    } else if (!(!(mPos == kLoadStayBack))) {
+    } else if (mPos == kLoadStayBack) {
         TheLoadMgr.Loading().push_back(this);
     } else {
-        auto it = TheLoadMgr.Loading().begin();
-        for (; it != TheLoadMgr.Loading().end();) {
+        std::list<Loader *>::iterator it = TheLoadMgr.Loading().end();
+        while (it != TheLoadMgr.Loading().begin()) {
+            --it;
             if ((*it)->GetPos() <= kLoadBack) {
                 ++it;
                 break;
@@ -183,7 +184,6 @@ void FileLoader::LoadStream() {
 void FileLoader::OpenFile() {
     Archive *old = TheArchive;
     const char *fname = mFilename.c_str();
-    bool oldusingcd = UsingCD();
     bool b1 = gHostFile && FileMatch(fname, gHostFile);
     if (b1) {
         SetUsingCD(false);
@@ -191,7 +191,7 @@ void FileLoader::OpenFile() {
     }
     mFile = NewFile(fname, mFlags | 2);
     if (b1) {
-        SetUsingCD(oldusingcd);
+        SetUsingCD(true);
         TheArchive = old;
     }
 
@@ -242,9 +242,15 @@ void FileLoader::SaveData(BinStream &bs, void *v, int size) {
 #pragma endregion
 #pragma region LoadMgr
 
+// Retail's ctor leaves mPlatform/mEditMode/mCacheMode to TheLoadMgr's static
+// zero-init (no stores at +0x58/+0x5c/+0x5d); native keeps the oracle's inits.
 LoadMgr::LoadMgr()
-    : mPlatform(kPlatformXBox), mEditMode(false), mCacheMode(false), mPeriod(10.0f),
-      mAsyncUnload(0), mLoaderPos(kLoadFront) {}
+    :
+#ifdef HX_NATIVE
+      mPlatform(kPlatformXBox), mEditMode(false), mCacheMode(false),
+#endif
+      mPeriod(10.0f), mAsyncUnload(0), mLoaderPos(kLoadFront) {
+}
 
 LoadMgr::~LoadMgr() {}
 
