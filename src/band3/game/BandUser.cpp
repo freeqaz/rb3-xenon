@@ -178,6 +178,9 @@ void BandUser::SetChar(CharData *cd) {
         mChar = nullptr;
         if (cd) {
             mChar = cd;
+            // TU5: retail builds this and never reads it (the consumer is compiled out).
+            std::vector<BandCharDesc *> descs;
+            descs.push_back(cd->GetBandCharDesc());
             if (TheCharSync && TheBandUserMgr->GetSlot(mUserGuid) != -1) {
                 TheCharSync->UpdateCharCache();
             }
@@ -196,9 +199,11 @@ void BandUser::SetChar(CharData *cd) {
             }
         }
         UpdateData(2);
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
         if (DataVariable("send_fake_patches").Int()) {
             SendJunkPatchesToAll();
         }
+#endif
     }
 }
 
