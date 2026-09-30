@@ -82,12 +82,11 @@ void CharClipGroup::AddClip(CharClip *clip) {
     }
 }
 
+// Retail HasClip (0x8238E3C8) and its inlined copy in AddClip (0x82390368) both
+// call STLport's out-of-line random-access __find (0x8238DA40: 4-way unrolled,
+// comparing ObjOwnerPtr::mObject at +8 against *(&clip)), not an index loop.
 bool CharClipGroup::HasClip(CharClip *clip) const {
-    for (int i = 0; i < mClips.size(); i++) {
-        if ((CharClip *)mClips[i] == clip)
-            return true;
-    }
-    return false;
+    return std::find(mClips.begin(), mClips.end(), clip) != mClips.end();
 }
 
 CharClip *CharClipGroup::GetClip() {
