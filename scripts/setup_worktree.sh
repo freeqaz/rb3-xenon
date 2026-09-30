@@ -404,13 +404,36 @@ if [ "$WARM_CACHE" -eq 1 ]; then
     # files a 225-function eval roster spans had changed, and the tree reported
     # no work to do (dc3-decomp `154c365b`). Include main's HEAD-vs-base delta
     # in the same count. No-op when BASE_REF is HEAD, which is the default.
+    #
+    # ⛔ AND COMPARE THE WORKTREE'S *CHECKED-OUT* COMMIT WITH MAIN'S HEAD (lane
+    # W16-OC, 2026-09-30). The four terms above never do: when $BRANCH already
+    # exists, `git worktree add <path> <branch>` checks out the branch's OWN tip
+    # and ignores $BASE_REF (likewise "reconfiguring in place" on an existing
+    # path), and with the default BASE_REF=HEAD every term is then trivially 0 --
+    # "HEAD" means the worktree's HEAD in one command and main's in the other.
+    # Measured: wt-w16-ib-ab at 74ee485ef was validated against main at e9cf2796b
+    # (66 src/ files apart), stamped 2020, seeded, and held main's post-fix 232 B
+    # mtx.obj beside pre-fix source until something touched it; a full build did
+    # not recompile it. Also count the worktree's OWN uncommitted work (tracked
+    # diffs incl. staged, and untracked src/|config/ files -- a new header can
+    # shadow an included one, which objcache does not key on). Fail CLOSED if the
+    # worktree's HEAD cannot be resolved.
+    _wt_head="$(git -C "$WORKTREE_PATH" rev-parse --verify -q HEAD 2>/dev/null || true)"
     _changed="$( { git -C "$MAIN_REPO" diff --name-only 2>/dev/null;
                    git -C "$MAIN_REPO" diff --name-only --cached 2>/dev/null;
                    git -C "$WORKTREE_PATH" diff --name-only "$BASE_REF" 2>/dev/null;
-                   git -C "$MAIN_REPO" diff --name-only "$BASE_REF" HEAD 2>/dev/null; } \
+                   git -C "$MAIN_REPO" diff --name-only "$BASE_REF" HEAD 2>/dev/null;
+                   if [ -n "$_wt_head" ]; then
+                       git -C "$MAIN_REPO" diff --name-only "$_wt_head" HEAD 2>/dev/null
+                   else
+                       echo "src/<worktree HEAD unresolvable>"
+                   fi
+                   git -C "$WORKTREE_PATH" diff --name-only HEAD 2>/dev/null;
+                   git -C "$WORKTREE_PATH" ls-files --others --exclude-standard \
+                       -- src config 2>/dev/null; } \
                  | grep -cE '^(src/|config/)' || true )"
     if [ "$_changed" -eq 0 ]; then
-        echo "==> Validating warm object cache (worktree == $BASE_REF; marking outputs current)"
+        echo "==> Validating warm object cache (worktree ${_wt_head:0:9} == main HEAD, no local changes; marking outputs current)"
         # Set every tracked source OLDER than the reflinked outputs. The output
         # touch below can't reach tracked INPUTS to non-object targets — notably
         # tools/download_tool.py, which feeds the build/compilers rule. A fresh
@@ -441,7 +464,7 @@ if [ "$WARM_CACHE" -eq 1 ]; then
         # intact is correct for both paths.
         echo "  reflinked cache marked current (reflink mtimes preserved — seed-compatible)"
     else
-        echo "==> Warm cache NOT validated: worktree differs from $BASE_REF ($_changed path(s)); first build will rebuild"
+        echo "==> Warm cache NOT validated: worktree ${_wt_head:0:9} differs from main HEAD / $BASE_REF or has local changes ($_changed path(s)); first build will rebuild"
     fi
 fi
 
@@ -602,7 +625,7 @@ if [ "$WARM_CACHE" -ne 1 ]; then
     _seed_reason="cold-cache (--cold-cache): warm seeding disabled by design"
 elif [ "${_changed:-1}" -ne 0 ]; then
     _seed_ok=0
-    _seed_reason="main/worktree has src/|config/ diffs vs $BASE_REF (_changed=${_changed:-unset})"
+    _seed_reason="worktree ${_wt_head:0:9} differs from main HEAD / $BASE_REF, or main/worktree has local src/|config/ changes (_changed=${_changed:-unset})"
 else
     # Gate a (wiring): no uncommitted configure.py / tools/project.py diffs in main.
     _wiring_changed="$( { git -C "$MAIN_REPO" diff --name-only 2>/dev/null;
