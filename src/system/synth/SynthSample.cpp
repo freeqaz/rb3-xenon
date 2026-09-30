@@ -122,6 +122,9 @@ void SynthSample::PostLoad(BinStream &bs) {
 void SynthSample::Disable() { sDisabled = true; }
 int SynthSample::GetNumChannels() const { return mSampleData.NumChannels(); }
 int SynthSample::GetSampleRate() const { return mSampleData.GetSampleRate(); }
+bool SynthSample::GetIsLooped() const { return mIsLooped; }
+int SynthSample::GetLoopStartSamp() const { return mLoopStartSamp; }
+int SynthSample::GetLoopEndSamp() const { return mLoopEndSamp; }
 std::vector<SampleMarker> &SynthSample::AccessMarkers() {
     return mSampleData.AccessMarkers();
 }

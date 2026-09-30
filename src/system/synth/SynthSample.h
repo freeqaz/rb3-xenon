@@ -37,6 +37,10 @@ public:
 
     int GetNumChannels() const;
     int GetSampleRate() const;
+    // Out of line in retail (SampleInst360's ctor calls them; rb3-Wii names).
+    bool GetIsLooped() const;
+    int GetLoopStartSamp() const;
+    int GetLoopEndSamp() const;
     const SampleData &GetSampleData() const { return mSampleData; }
     int NumMarkers() const;
     int GetPlatformSize(Platform);

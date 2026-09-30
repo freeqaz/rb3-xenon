@@ -7,8 +7,9 @@ SampleInst360::SampleInst360(SynthSample360 *sample, bool loop, int startSample,
     mVoice = new Voice(sample->IsXMA(), false, false);
     mVoice->SetSampleRate(sample->GetSampleRate());
     mVoice->SetData((const void *)sample->GetDataAddr(), sample->GetNumBytes(), sample->GetNumSamples());
-    if (loop) {
-        mVoice->SetLoopRegion(startSample, endSample);
+    // Retail ignores the NewInst loop arguments and reads the sample's own loop.
+    if (sample->GetIsLooped()) {
+        mVoice->SetLoopRegion(sample->GetLoopStartSamp(), sample->GetLoopEndSamp());
     }
 }
 
