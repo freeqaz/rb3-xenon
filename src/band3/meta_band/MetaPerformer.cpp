@@ -196,6 +196,8 @@ MetaPerformer::~MetaPerformer() {
 MetaPerformer *MetaPerformer::Current() { return sMetaPerformer; }
 
 MetaPerformerImpl *MetaPerformer::CurrentImpl() const {
+    // W16-HR: retail builds `tour` as a function-local static (guard lbl_82DFE96C).
+    static Symbol tour("tour");
     MetaPerformerImpl *ret;
     return TheTour && TheGameMode->InMode(tour) && (ret = TheTour->m_pTourPerformer, ret)
         ? ret
@@ -386,6 +388,7 @@ int MetaPerformer::GetBattleScore() {
 }
 
 void MetaPerformer::UpdateBattleTypeLabel(UILabel *label) {
+    static Symbol battle_instrument_fmt("battle_instrument_fmt");
     MILO_ASSERT(label, 0x244);
     MILO_ASSERT(HasBattle(), 0x245);
     ScoreType inst = GetBattleInstrument();
@@ -625,6 +628,7 @@ bool MetaPerformer::IsPlayingDemo() const {
 }
 
 bool MetaPerformer::IsNoFailActive() const {
+    static Symbol nofail_allowed("nofail_allowed");
     bool set = IsBandNoFailSet();
     bool ret = false;
     if (set) {
@@ -640,6 +644,8 @@ bool MetaPerformer::IsNoFailActive() const {
 // retail call shape (6 base-only instructions in Handle).
 #pragma auto_inline(off)
 bool MetaPerformer::IsBandNoFailSet() const {
+    // W16-HR: function-local static (guard lbl_82DFE974), not the Symbols.h global.
+    static Symbol mod_no_fail_band("mod_no_fail_band");
     if (TheModifierMgr)
         return TheModifierMgr->IsModifierActive(mod_no_fail_band);
     else
@@ -1010,6 +1016,7 @@ DataNode MetaPerformer::OnMsg(const ModeChangedMsg &) {
 
 void MetaPerformer::SetBandNoFail(bool b1) {
     if (b1 != IsBandNoFailSet()) {
+        static Symbol mod_no_fail_band("mod_no_fail_band");
         TheModifierMgr->ToggleModifierEnabled(mod_no_fail_band);
         SetSyncDirty(-1, false);
         ExportUpdateMetaPerformer();
