@@ -22796,7 +22796,7 @@
  "0x82852980": "D3DDevice_SetPWLGamma",
  "0x82852a50": "?ResetAllState@D3D@@YAXPAVCDevice@1@H@Z",
  "0x82852b48": "?SetViewport@D3D@@YAXPAUD3DDevice@@MMMMMMK@Z",
- "0x82853648": "?SetPlayerScale@ST@@YAXIIM@Z",
+ "0x82853648": "D3DTexture_UnlockRect",
  "0x82853798": "?AlignTextureDimensions@D3D@@YAKPAK00KKKH@Z",
  "0x828538b8": "?FindTextureSize@D3D@@YAKKKKKKKHHKHKPAK00@Z",
  "0x82853c28": "?GetMipTailLevelOffsetCoords@D3D@@YAKKKKKKKKPAI00@Z",
