@@ -484,6 +484,8 @@ Symbol Accomplishment::GetPassiveMsgChannel() const { return mPassiveMsgChannel;
 int Accomplishment::GetPassiveMsgPriority() const { return mPassiveMsgPriority; }
 int Accomplishment::GetGamerpicReward() const { return mGamerpicReward; }
 int Accomplishment::GetAvatarAssetReward() const { return mAvatarAssetReward; }
+bool Accomplishment::HasGamerpicReward() const { return mGamerpicReward != -1; }
+bool Accomplishment::HasAvatarAssetReward() const { return mAvatarAssetReward != -1; }
 
 // sw2 scatter-include (default/Accomplishment <- bandobj/BandCrowdMeter.cpp)
 #define gRev gRev_BandCrowdMeter

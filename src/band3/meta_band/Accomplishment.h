@@ -86,6 +86,8 @@ public:
     int GetPassiveMsgPriority() const;
     int GetGamerpicReward() const;
     int GetAvatarAssetReward() const;
+    bool HasGamerpicReward() const;
+    bool HasAvatarAssetReward() const;
     static const char *GetIconPath();
 
     // ------------------------------------------------------------------
