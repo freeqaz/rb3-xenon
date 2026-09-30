@@ -966,7 +966,8 @@ void VocalPart::CalculateScore(
     }
     if (note.mDurationMs < mShortNoteThresh)
         noteMult *= mShortNoteMult;
-    float framePoints = noteMult * (mult * sliceWeight);
+    float weighted = noteMult * sliceWeight;
+    float framePoints = weighted * mult;
 #ifdef HX_NATIVE
     VocalFrameSpewData *spew = mPlayer->mFrameSpewData;
     if (spew) {
@@ -978,11 +979,11 @@ void VocalPart::CalculateScore(
     }
 #endif
     cache.unkc = framePoints;
-    if (unk38 < mPhraseScore + framePoints)
+    if (mPhraseScore + framePoints > unk38)
         framePoints = unk38 - mPhraseScore;
     cache.unk4 = framePoints;
-    float capped =
-        Min(Min(unk38, mPhraseScoreMax), sliceWeight * noteMult + mPhraseScore);
+    float sum = weighted + mPhraseScore;
+    float capped = Min(sum, Min(unk38, mPhraseScoreMax));
     float delta = capped - mPhraseScore;
     if (delta < 0.0f)
         delta = 0.0f;
