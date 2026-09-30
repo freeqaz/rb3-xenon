@@ -403,6 +403,7 @@ void AppLabel::SetFromSongSelectNode(const Node *n) {
 void AppLabel::SetFromCharacter(const CharData *cd) {
     const char *s = cd->GetCharacterName();
     if (strcmp(s, "") == 0) {
+        static Symbol character_emptyname("character_emptyname");
         SetTextToken(character_emptyname);
     } else
         SetDisplayText(s, 1);
@@ -470,9 +471,11 @@ void AppLabel::SetSetlistOwner(const SetlistRecord *setlist) {
 }
 
 void AppLabel::SetEditSetlistName(const UIPanel *panel) {
+    static Symbol setlist_name("setlist_name");
     SetDisplayText(panel->Property(setlist_name, true)->Str(nullptr), true);
 }
 void AppLabel::SetEditSetlistDesc(const UIPanel *panel) {
+    static Symbol setlist_desc("setlist_desc");
     SetDisplayText(panel->Property(setlist_desc, true)->Str(nullptr), true);
 }
 

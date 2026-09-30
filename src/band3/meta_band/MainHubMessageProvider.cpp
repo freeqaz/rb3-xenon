@@ -137,27 +137,23 @@ void MainHubMessageProvider::AddUnlinkedMotd(const char *cc) { mUnlinkedMotd = c
 void MainHubMessageProvider::AddTickerData(
     TickerDataType ty, int i1, int i2, bool b1, bool b2
 ) {
+    // W16-HR: retail builds one TickerData and copies it whole (the three
+    // bools move as a single word).
+    TickerData d;
+    d.unk0 = (ScoreType)i1;
+    d.unk4 = i2;
+    d.unk8 = b1;
+    d.unk9 = b2;
+    d.isSet = true;
     switch (ty) {
     case 0:
-        mRoleStanding.unk0 = (ScoreType)i1;
-        mRoleStanding.unk4 = i2;
-        mRoleStanding.unk8 = b1;
-        mRoleStanding.unk9 = b2;
-        mRoleStanding.isSet = true;
+        mRoleStanding = d;
         break;
     case 1:
-        mBandStanding.unk0 = (ScoreType)i1;
-        mBandStanding.unk4 = i2;
-        mBandStanding.unk8 = b1;
-        mBandStanding.unk9 = b2;
-        mBandStanding.isSet = true;
+        mBandStanding = d;
         break;
     case 2:
-        mBattleStanding.unk0 = (ScoreType)i1;
-        mBattleStanding.unk4 = i2;
-        mBattleStanding.unk8 = b1;
-        mBattleStanding.unk9 = b2;
-        mBattleStanding.isSet = true;
+        mBattleStanding = d;
         break;
     default:
         MILO_FAIL("Invalid Ticker Data Type!\n");

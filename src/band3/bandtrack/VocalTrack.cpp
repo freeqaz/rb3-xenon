@@ -2750,15 +2750,23 @@ void VocalTrack::Restart(VocalPlayer *player, float f1, float f2) {
     UpdateVocalStyle();
 }
 
-void VocalTrack::HitTambourineGem(int id) {
-    std::deque<TambourineGem *> &gems = mTambourineGemPool->mUsedGems;
-    for (int i = 0; i != gems.size(); i++) {
-        if (id == gems[i]->unk4) {
-            gems[i]->unk8 = 1;
-            gems[i];
-            break;
+// W16-HR: retail keeps the used-gem search out of line (fn_82BA29A0) and
+// HitTambourineGem only calls it; `hit` is a function-local static.
+#pragma auto_inline(off)
+TambourineGem *TambourineGemPool::SetGemState(int id, int state) {
+    for (unsigned int i = 0; i != mUsedGems.size(); i++) {
+        if (mUsedGems[i]->unk4 == id) {
+            mUsedGems[i]->unk8 = state;
+            return mUsedGems[i];
         }
     }
+    return nullptr;
+}
+#pragma auto_inline(on)
+
+void VocalTrack::HitTambourineGem(int id) {
+    mTambourineGemPool->SetGemState(id, 1);
+    static Symbol hit("hit");
     mDir->Tambourine(hit);
 }
 

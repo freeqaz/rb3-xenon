@@ -69,7 +69,8 @@ inline RndMat *LayerProvider::GetMatForData(int idx) const {
 
 inline void LayerProvider::SetLabelForData(UILabel *label, int idx) const {
     mPatch->Layer(ConvertToLayerIndex(mPatch, idx));
-    int numLayers = (mPatch->NumLayersUsed() - idx) + 1;
+    int numLayers = mPatch->NumLayersUsed() + (1 - idx);
+    static Symbol patch_layer_fmt("patch_layer_fmt");
     label->SetTokenFmt(patch_layer_fmt, numLayers);
 }
 

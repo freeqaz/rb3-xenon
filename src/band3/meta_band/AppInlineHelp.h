@@ -15,7 +15,7 @@ public:
     OBJ_SET_TYPE(AppInlineHelp)
     NEW_OBJ(AppInlineHelp)
     virtual DataNode Handle(DataArray *, bool);
-    virtual ~AppInlineHelp() {}
+    // W16-HR: implicit dtor -- retail ??_D calls ??1InlineHelp directly
     virtual void Enter();
     virtual void Exit();
     virtual void UpdateIconTypes(bool);
