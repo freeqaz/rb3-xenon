@@ -127,8 +127,8 @@ void ChordbookPanel::HandleLegendLefty(bool b) {
     mLefty = mGemPlayer->GetUser()->GetGameplayOptions()->GetLefty();
     float f2, f12;
     if (mLefty) {
-        f12 = 1.0f;
         f2 = 0.0f;
+        f12 = 1.0f;
     } else {
         f2 = 1.0f;
         f12 = 0.0f;
