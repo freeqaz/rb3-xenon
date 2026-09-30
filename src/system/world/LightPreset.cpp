@@ -668,6 +668,7 @@ void LightPreset::RemoveEnvironment(int idx) {
 }
 
 void LightPreset::AddLight(RndLight *lit) {
+    lit->AddRef(this);
     mLights.push_back(lit);
     EnvLightEntry e;
     FillLightPresetData(lit, e);
@@ -691,10 +692,11 @@ void LightPreset::OnKeyframeCmd(LightPreset::KeyframeCmd cmd) {
 }
 
 void LightPreset::AddEnvironment(RndEnviron *env) {
+    env->AddRef(this);
     mEnvironments.push_back(env);
     EnvironmentEntry e;
     FillEnvPresetData(env, e);
-    for (int i = 0; i != mKeyframes.size(); i++) {
+    for (uint i = 0; i != mKeyframes.size(); i++) {
         mKeyframes[i].mEnvironmentEntries.push_back(e);
         MILO_ASSERT(mKeyframes[i].mEnvironmentEntries.size() == mEnvironments.size(), 0x40A);
     }
@@ -711,10 +713,11 @@ void LightPreset::FillSpotlightDrawerPresetData(
 }
 
 void LightPreset::AddSpotlightDrawer(SpotlightDrawer *sd) {
+    sd->AddRef(this);
     mSpotlightDrawers.push_back(sd);
     SpotlightDrawerEntry e;
     FillSpotlightDrawerPresetData(sd, e);
-    for (int i = 0; i != mKeyframes.size(); i++) {
+    for (uint i = 0; i != mKeyframes.size(); i++) {
         mKeyframes[i].mSpotlightDrawerEntries.push_back(e);
         MILO_ASSERT(mKeyframes[i].mSpotlightDrawerEntries.size() == mSpotlightDrawers.size(), 0x42A);
     }
@@ -722,6 +725,7 @@ void LightPreset::AddSpotlightDrawer(SpotlightDrawer *sd) {
 }
 
 void LightPreset::AddSpotlight(Spotlight *s, bool b) {
+    s->AddRef(this);
     mSpotlights.push_back(s);
     SpotlightEntry e(this);
     FillSpotPresetData(s, e, -1);
@@ -729,7 +733,7 @@ void LightPreset::AddSpotlight(Spotlight *s, bool b) {
         e.mIntensity = 0;
         e.mColor = 0;
     }
-    for (int i = 0; i != mKeyframes.size(); i++) {
+    for (uint i = 0; i != mKeyframes.size(); i++) {
         mKeyframes[i].mSpotlightEntries.push_back(e);
         MILO_ASSERT(mKeyframes[i].mSpotlightEntries.size() == mSpotlights.size(), 0x3FA);
     }
@@ -909,16 +913,15 @@ void LightPreset::CacheFrames() {
 }
 
 void LightPreset::GetKey(float frame, int &prevIdx, int &curIdx, float &blend) const {
-    float theframe = frame;
-    if (theframe <= 0.0f || mEndFrame <= 0.0f) {
+    if (frame <= 0.0f || mEndFrame <= 0.0f) {
         prevIdx = -1;
         curIdx = 0;
         blend = 1.0f;
         return;
     } else {
         if (mLooping) {
-            theframe = std::fmod(frame, mEndFrame);
-            if (theframe >= mKeyframes.back().mFrame) {
+            frame = std::fmod(frame, mEndFrame);
+            if (frame >= mKeyframes.back().mFrame) {
                 if (mKeyframes.back().mFadeOutTime <= 0.0f) {
                     prevIdx = -1;
                     curIdx = mKeyframes.size() - 1;
@@ -926,11 +929,11 @@ void LightPreset::GetKey(float frame, int &prevIdx, int &curIdx, float &blend) c
                     return;
                 }
                 float framedur = mKeyframes.back().mFrame + mKeyframes.back().mDuration;
-                if (theframe > framedur) {
+                if (frame > framedur) {
                     MILO_ASSERT(mKeyframes.back().mFadeOutTime > 0, 0x2e8);
                     prevIdx = mKeyframes.size() - 1;
                     curIdx = 0;
-                    blend = (theframe - framedur) / mKeyframes.back().mFadeOutTime;
+                    blend = (frame - framedur) / mKeyframes.back().mFadeOutTime;
                     return;
                 }
                 prevIdx = -1;
@@ -938,7 +941,7 @@ void LightPreset::GetKey(float frame, int &prevIdx, int &curIdx, float &blend) c
                 blend = 1.0f;
                 return;
             }
-        } else if (theframe >= mKeyframes.back().mFrame) {
+        } else if (frame >= mKeyframes.back().mFrame) {
             prevIdx = -1;
             curIdx = mKeyframes.size() - 1;
             blend = 1.0f;
@@ -948,27 +951,27 @@ void LightPreset::GetKey(float frame, int &prevIdx, int &curIdx, float &blend) c
         int after = mKeyframes.size() - 1;
         int before;
         for (before = 0; after > before + 1;) {
-            int mid = (before + after) >> 1;
-            if (theframe == mKeyframes[mid].mFrame) {
+            int mid = (after + before) >> 1;
+            if (frame == mKeyframes[mid].mFrame) {
                 prevIdx = -1;
                 curIdx = mid;
                 blend = 1.0f;
                 return;
             }
-            if (!(theframe <= mKeyframes[mid].mFrame)) {
+            if (!(frame <= mKeyframes[mid].mFrame)) {
                 before = mid;
             } else {
                 after = mid;
             }
         }
 
-        MILO_ASSERT(theframe >= mKeyframes[before].mFrame && theframe < mKeyframes[after].mFrame, 0x317);
+        MILO_ASSERT(frame >= mKeyframes[before].mFrame && frame < mKeyframes[after].mFrame, 0x317);
         float dur = mKeyframes[before].mFrame + mKeyframes[before].mDuration;
-        if (theframe > dur) {
+        if (frame > dur) {
             MILO_ASSERT(mKeyframes[before].mFadeOutTime > 0, 0x31c);
             prevIdx = before;
             curIdx = after;
-            blend = (theframe - dur) / mKeyframes[before].mFadeOutTime;
+            blend = (frame - dur) / mKeyframes[before].mFadeOutTime;
         } else {
             prevIdx = -1;
             curIdx = before;
