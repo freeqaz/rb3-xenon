@@ -936,6 +936,10 @@ public:
     // Ring-ref is mOwner (not this), so manage the ring directly here.
     void SetOwnerObj(T *obj);
     void operator=(T *obj) { SetOwnerObj(obj); }
+    // Retail has its own Load (rb3-Wii's ObjOwnerPtr<T1,T2>::Load): the same
+    // body as ObjRefConcrete::Load but assigning through SetOwnerObj. Without
+    // it the inherited Load managed the ring on `this`. See obj/ObjPtr_p.h.
+    bool Load(BinStream &, bool, ObjectDir *);
     // Copy-assign MUST be user-declared and MUST route through SetOwnerObj.
     // Without it the implicit copy-assignment is used, which memberwise-assigns
     // the base and therefore calls ObjRefConcrete::operator=(const

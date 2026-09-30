@@ -585,6 +585,49 @@ void ObjOwnerPtr<T>::SetOwnerObj(T *obj) {
             mObject->AddRef(OwnerRef());
     }
 }
+
+// W17-TMPL2: retail carries a SECOND Load body per T beside
+// ObjRefConcrete<T>::Load, word-identical to it except that both assignments
+// call SetOwnerObj instead of SetObjConcrete (e.g. RndAnimatable: 0x822c8e68
+// calls SetObjConcrete, 0x8249bc30 calls SetOwnerObj). Its callers are the
+// ObjOwnerPtr members -- EventTrigger::Anim::mAnim, RndMesh::mGeomOwner,
+// BandCharacter::mTestPrefab -- and retail's RTTI has ObjOwnerPtr<T,ObjectDir>
+// as its own class, as rb3-Wii does, with its own Load. Inheriting
+// ObjRefConcrete::Load put the loaded object on the ring under `this` instead of
+// mOwner, the discipline SetOwnerObj exists for.
+template <class T>
+bool ObjOwnerPtr<T>::Load(BinStream &bs, bool print, ObjectDir *dir) {
+    char buf[128];
+    bs.ReadString(buf, 128);
+    if (!dir && mOwner) {
+        dir = mOwner->Dir();
+    }
+    if (mOwner && dir) {
+        SetOwnerObj(dynamic_cast<T *>(dir->FindObject(buf, false)));
+        if (!mObject && buf[0] != '\0') {
+            if (print) {
+                const char *dirPath = PathName(dir);
+                MILO_NOTIFY("%s couldn't find %s in %s", PathName(mOwner), buf, dirPath);
+            }
+            return false;
+        }
+    } else {
+        // Same per-T inline split as ObjRefConcrete::Load's no-dir arm.
+        if (ObjRefVirtualBaseObject<T>::value) {
+            SetOwnerObj(nullptr);
+        } else {
+            if (mObject) {
+                mObject->Release(OwnerRef());
+                mObject = nullptr;
+            }
+        }
+        if (buf[0] != '\0') {
+            if (print)
+                MILO_NOTIFY("No dir to find %s", buf);
+        }
+    }
+    return true;
+}
 #endif
 
 // template <class T1>
