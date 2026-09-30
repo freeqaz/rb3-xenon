@@ -327,6 +327,7 @@ LocalSavedSetlist *BandProfile::AddSavedSetlist(
     LocalBandUser *localUser = GetAssociatedLocalBandUser();
     MILO_ASSERT(localUser, 500);
     if (b3) {
+        static Symbol acc_createsetlist("acc_createsetlist");
         TheAccomplishmentMgr->EarnAccomplishment(localUser, acc_createsetlist);
     }
     MILO_ASSERT(mSavedSetlists.size() < kMaxSavedSetlists, 0x1FC);
