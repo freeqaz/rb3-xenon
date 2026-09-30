@@ -11,7 +11,7 @@
 class UIStats : public Hmx::Object {
 public:
     UIStats();
-    virtual ~UIStats() {}
+    // implicit dtor: retail ~UIStats stores no own vptr
     virtual DataNode Handle(DataArray *, bool);
 
     void Init();
