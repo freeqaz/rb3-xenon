@@ -395,8 +395,10 @@ void VocalNoteList::GenerateLegalFreestyleSections(
 ) const {
     float sectionStart = 0.0f;
     float pad = mFreestylePad->Float(0);
-    for (const VocalNote *note = mNotes.data();
-         note != mNotes.data() + mNotes.size();
+    // retail: iterator loop against end(), and the next start sums ms + pad
+    // before the duration
+    for (std::vector<VocalNote>::const_iterator note = mNotes.begin();
+         note != mNotes.end();
          ++note) {
         if (note->IsUnpitched()) {
             float sectionEnd = note->GetMs() - pad;
@@ -404,7 +406,7 @@ void VocalNoteList::GenerateLegalFreestyleSections(
             if (p.second - p.first > 0.0f) {
                 out.push_back(p);
             }
-            sectionStart = pad + note->EndMs();
+            sectionStart = note->GetMs() + pad + note->GetDurationMs();
         }
     }
     out.push_back(std::make_pair(sectionStart, FLT_MAX));
@@ -540,7 +542,7 @@ void VocalNoteList::CapLastFreestyleSection(float ms) {
 bool VocalNoteCmp(float ms, const VocalNote &note) { return ms < note.GetMs(); }
 
 VocalNote *VocalNoteList::NextNote(float ms) const {
-    if (0 == mNotes.size())
+    if (mNotes.empty()) // retail compares begin/end, no size divide
         return NULL;
     std::vector<VocalNote>::const_iterator it =
         std::upper_bound(mNotes.begin(), mNotes.end(), ms, VocalNoteCmp);
@@ -556,13 +558,14 @@ VocalNote *VocalNoteList::NextNote(float ms) const {
         return NULL;
     return const_cast<VocalNote *>(&*it);
 #else
+    // retail steps the iterator back and forward rather than indexing [-1]
     if (it == mNotes.begin())
         return (VocalNote *)it;
-    if (ms <= it[-1].GetDurationMs() + it[-1].GetMs())
-        return (VocalNote *)(it - 1);
-    if (it == mNotes.end())
-        return NULL;
-    return (VocalNote *)it;
+    --it;
+    if (ms <= it->GetDurationMs() + it->GetMs())
+        return (VocalNote *)it;
+    ++it;
+    return it == mNotes.end() ? NULL : (VocalNote *)it;
 #endif
 }
 
@@ -627,8 +630,9 @@ void VocalNoteList::GetPracticePhrases2(
 
 int VocalNoteList::GetNumPracticePhrases(const std::vector<VocalPhrase> &phrases) const {
     int count = 0;
-    for (const VocalPhrase *phrase = phrases.data();
-         phrase != phrases.data() + phrases.size();
+    // retail compares against end() directly (no size() * stride rebuild)
+    for (std::vector<VocalPhrase>::const_iterator phrase = phrases.begin();
+         phrase != phrases.end();
          ++phrase) {
         if (HasNoteInRange(phrase->unk8, phrase->unk8 + phrase->unkc) != -1)
             count++;
