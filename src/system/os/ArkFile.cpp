@@ -70,9 +70,16 @@ bool ArkFile::ReadDone(int &i) {
 }
 
 ArkFile::ArkFile(const char *iFilename, int iMode)
+#ifdef HX_NATIVE
     : mArkfileNum(0), mByteStart(0), mReadStartTime(0), mSize(0), mUCSize(0),
       mNumOutstandingTasks(0), mBytesRead(0), mTell(0), mFail(false), mReadAhead(true),
       mFilename(iFilename) {
+#else
+    // RB3 retail (0x8252E120) is rb3-Wii's initialiser list: GetFileInfo fills
+    // the rest, and mReadStartTime is left alone.
+    : mNumOutstandingTasks(0), mBytesRead(0), mTell(0), mFail(0), mReadAhead(true),
+      mFilename(iFilename) {
+#endif
     if (!TheArchive->GetFileInfo(
             FileMakePath(".", iFilename), mArkfileNum, mByteStart, mSize, mUCSize
         )

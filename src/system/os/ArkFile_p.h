@@ -48,7 +48,7 @@ public:
     int mNumOutstandingTasks; // 0x18
     int mBytesRead; // 0x1C
     int mTell; // 0x20
-    bool mFail; // 0x24
+    int mFail; // 0x24 -- int in RB3 retail (stw 0/1; rb3-Wii agrees)
     float mReadStartTime; // 0x28
     bool mReadAhead; // 0x2C
     String mFilename; // 0x30
