@@ -1720,9 +1720,47 @@ bool VocalPlayer::OnMsg(const ButtonUpMsg &msg) {
     return false;
 }
 
-// Retail fn_826E50C0, 72 B, unpaired (the map does not name it) -- body NOT ported
-// and NOT invented. Kept out of line so OnMsg above retains retail's call shape.
-void VocalPlayer::HandleDeactivateVolume(JoypadButton) {}
+// Retail fn_826E3C88 (unmapped; the name is ours, lane W16-HX4): maps a volume
+// button to the VocalParam it edits. `this` is unused but it is a member (r3 is
+// passed through). Shared with the HandleChangeVolume-shaped fn_826E5FB0.
+bool VocalPlayer::GetVolumeParam(JoypadButton but, VocalParam &param) const {
+    switch (but) {
+    case kPad_R2:
+        param = kVocalParamCueVolume;
+        break;
+    case kPad_R1:
+        param = kVocalParamMicVolume;
+        break;
+    case kPad_Tri:
+        param = kVocalParamMic2Gain;
+        break;
+    case kPad_Circle:
+        param = kVocalParamMic3Gain;
+        break;
+    case kPad_Square:
+        param = kVocalParamMic1Gain;
+        break;
+    default:
+        return false;
+    }
+    return true;
+}
+
+// Retail fn_826E50C0, 72 B, unpaired (the map does not name it). Ported from retail
+// bytes (lane W16-HX4): look up the button's VocalParam, then have the track's
+// VocalTrackDir hide the vocalist-volume widget. The previous empty stub let MSVC
+// delete OnMsg's whole compare chain + call (OnMsg 71.75%).
+void VocalPlayer::HandleDeactivateVolume(JoypadButton but) {
+    VocalParam param;
+    if (!GetVolumeParam(but, param)) {
+        MILO_WARN(
+            "HandleDeactivateVolume: Couldn't get a VocalParam for supposed volume button %d!\n",
+            but
+        );
+    } else if (mTrack) {
+        mTrack->GetVocalTrackDir()->DeactivateVolume(param);
+    }
+}
 #pragma auto_inline(on)
 
 bool VocalPlayer::AllowPitchCorrection() const {

@@ -229,6 +229,7 @@ public:
     // -- retail keeps the button live in r4 via `mr r4,r3` across the predicate.
     // Named by the DECOMP_FORCEACTIVE string in VocalPlayer.cpp. Body NOT ported.
     void HandleDeactivateVolume(JoypadButton);
+    bool GetVolumeParam(JoypadButton, VocalParam &) const;
     bool AllowPitchCorrection() const;
     void OnGameOver();
     void OnDisableController();
