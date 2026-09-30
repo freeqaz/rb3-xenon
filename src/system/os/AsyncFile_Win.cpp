@@ -7,16 +7,21 @@
 #include <errno.h>
 #include <io.h>
 
+namespace {
+    inline void StrippedLog(String) {}
+}
+
 void ReadError(const char *cc) {
     DWORD err = GetLastError();
     String str;
     if (FileIsLocal(cc)) {
         if (TheContentMgr.Contains(cc, str)) {
             // retail keeps the by-value String argument of the stripped log call
-            (void)String(str);
+            StrippedLog(String(str));
             int b3 = (err == ERROR_FILE_CORRUPT) || (err == ERROR_DISK_CORRUPT);
             TheContentMgr.OnReadFailure(b3, str.c_str());
         }
+        return;
     } else {
         ThePlatformMgr.SetDiskError(kDiskError);
     }
@@ -180,10 +185,10 @@ void AsyncFileWin::_ReadAsync(void *buf, int count) {
     if (count == 0)
         return;
     mReadInProgress = true;
+    bool aligned = false;
     memset(&mOverlapped, 0, sizeof(OVERLAPPED));
     unk5c = buf;
     unk64 = count;
-    bool aligned = false;
     if (((int)buf & 3) == 0) {
         if (Tell() % mSectorBytes == 0) {
             if (unk64 % mSectorBytes == 0) {
