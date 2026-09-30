@@ -23,6 +23,7 @@ extern bool gShowAssetName;
 AssetProvider::AssetProvider(BandProfile *profile, AssetGender gender)
     : mProfile(profile), mGender(gender) {
     MILO_ASSERT(mProfile, 0x1d);
+    static Symbol none("none");
     mAssets.push_back(none);
 }
 
@@ -177,9 +178,12 @@ void AssetProvider::UpdateExtendedText(int, int i_iData, UILabel *label) const {
         if (pAssetMgr->HasAsset(sym)) {
             Asset *pAsset = pAssetMgr->GetAsset(sym);
             MILO_ASSERT(pAsset, 0x139);
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
             if (gShowAssetName) {
                 label->SetTextToken(pAsset->GetHint());
-            } else if (assets.HasAsset(sym)) {
+            } else
+#endif
+            if (assets.HasAsset(sym)) {
                 label->SetTextToken(pAsset->GetDescription());
             } else {
                 MILO_ASSERT(TheAccomplishmentMgr, 0x14B);
@@ -188,6 +192,7 @@ void AssetProvider::UpdateExtendedText(int, int i_iData, UILabel *label) const {
         } else
             label->SetTextToken(gNullStr);
     } else if (strcmp(label->Name(), "asset_progress.lbl") == 0) {
+        static Symbol customize_asset_progress("customize_asset_progress");
         label->SetTokenFmt(customize_asset_progress, i_iData + 1, NumData());
     } else
         label->SetTextToken(gNullStr);
