@@ -91,7 +91,7 @@ public:
     Symbol RankTierToken(int) const;
     void GetRankedSongs(std::vector<int> &, bool, bool) const;
     int GetValidSongCount(const std::hash_map<int, SongMetadata *> &) const;
-    int GetValidSongs(
+    void GetValidSongs(
         const std::vector<int> &,
         BandUserMgr &,
         std::vector<int> &,

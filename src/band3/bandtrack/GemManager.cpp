@@ -1649,16 +1649,9 @@ template RndText::Line *
 stlpmtx_std::vector<RndText::Line, stlpmtx_std::StlNodeAlloc<RndText::Line> >::
     erase(RndText::Line *, RndText::Line *);
 
-// ??$_Param_Construct@UChar3D@CharData@WorldCrowd@@U123@@stlpmtx_std@@YAXPAUChar3D@CharData@WorldCrowd@@ABU123@@Z
-template void stlpmtx_std::_Param_Construct<
-    WorldCrowd::CharData::Char3D,
-    WorldCrowd::CharData::Char3D>(
-    WorldCrowd::CharData::Char3D *, const WorldCrowd::CharData::Char3D &);
-
-// ??0Entry@LocalePanel@@QAA@ABU01@@Z -- implicit copy ctor; a by-value pass
-// cannot be elided from an lvalue reference, so this odr-uses it.
-static void sw3_Sink3_LocalePanelEntry(LocalePanel::Entry) {}
-void sw3_ForceEmit3_LocalePanelEntry(const LocalePanel::Entry &e) {
-    sw3_Sink3_LocalePanelEntry(e);
-}
+// W16-IA: the _Param_Construct<WorldCrowd::CharData::Char3D> instantiation and
+// the ??0Entry@LocalePanel force-emit that used to sit here were removed. Both
+// existed only to pair two wrong map names: retail 0x82b9b3f8 is Gem's implicit
+// copy ctor and 0x82b9b590 is _Param_Construct<Gem> (it calls 0x82b9b3f8), and
+// both are emitted by this TU's own vector<Gem> code.
 #endif // !HX_NATIVE

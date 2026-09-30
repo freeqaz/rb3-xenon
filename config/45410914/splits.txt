@@ -396,7 +396,6 @@ MusicLibrary.cpp:
 	.pdata      start:0x8221AE00 end:0x8221AE08
 	.pdata      start:0x8221AE08 end:0x8221AE10
 	.pdata      start:0x8221AE10 end:0x8221B1E0
-	.pdata      start:0x8222F730 end:0x8222F740
 	.pdata      start:0x822303D0 end:0x822303E0
 	.text       start:0x824F6548 end:0x824F6550
 	.text       start:0x8253A7A8 end:0x8253B238
@@ -404,7 +403,6 @@ MusicLibrary.cpp:
 	.text       start:0x82541C18 end:0x82541CC0
 	.text       start:0x82541CC0 end:0x82541CE8
 	.text       start:0x82541CE8 end:0x82545690
-	.text       start:0x826730F0 end:0x8267317C
 	.text       start:0x8267F3B0 end:0x8267F420
 
 MusicLibraryStore.cpp:
@@ -930,8 +928,7 @@ PatchDir.cpp:
 	.text       start:0x822741B0 end:0x82274210
 	.text       start:0x82274210 end:0x82274290
 	.text       start:0x822745A0 end:0x8227500C
-	.text       start:0x82275010 end:0x82275050
-	.text       start:0x82275068 end:0x822750A8
+	.text       start:0x82275010 end:0x822750A8
 	.text       start:0x822750C0 end:0x822750D0
 	.text       start:0x82275500 end:0x822756A0
 	.text       start:0x822759C8 end:0x82276138
@@ -6981,7 +6978,6 @@ system/synth_xbox/FxSendSynapse.cpp:
 
 PropertyEventProvider.cpp:
 	.pdata      start:0x8223D200 end:0x8223D208
-	.text       start:0x826F0F78 end:0x826F0F98
 	.text       start:0x82768F98 end:0x82768FF4
 
 Poll.cpp:
@@ -7879,7 +7875,6 @@ Accomplishment.cpp:
 	.text       start:0x822743F0 end:0x82274538
 	.text       start:0x8227459C end:0x822745A0
 	.text       start:0x8227500C end:0x82275010
-	.text       start:0x82275050 end:0x82275068
 	.text       start:0x822750BC end:0x822750C0
 	.text       start:0x822750D0 end:0x82275210
 	.text       start:0x82275808 end:0x8227587C
@@ -8439,8 +8434,7 @@ band3/game/RGTutor.cpp:
 	.pdata      start:0x82236AF0 end:0x82236AF8
 	.pdata      start:0x82236AF8 end:0x82236B08
 	.text       start:0x826F0E88 end:0x826F0F18
-	.text       start:0x826F0F20 end:0x826F0F78
-	.text       start:0x826F0F98 end:0x826F10A8
+	.text       start:0x826F0F20 end:0x826F10A8
 
 band3/meta_band/PrefabMgr.cpp:
 	.pdata      start:0x82208E98 end:0x82208EB8
@@ -10679,12 +10673,10 @@ GameplayOptions.cpp:
 	.text       start:0x82654CC0 end:0x8265508C
 
 MainHubMessageProvider.cpp:
-	.pdata      start:0x8222F6A0 end:0x8222F730
-	.pdata      start:0x8222F740 end:0x8222F758
+	.pdata      start:0x8222F6A0 end:0x8222F758
 	.text       start:0x8267274C end:0x82672758
 	.text       start:0x82672758 end:0x8267276C
-	.text       start:0x82672770 end:0x826730F0
-	.text       start:0x8267317C end:0x826732D8
+	.text       start:0x82672770 end:0x826732D8
 	.text       start:0x82673320 end:0x82673334
 
 Metronome.cpp:
@@ -12135,7 +12127,6 @@ ProfileMgr.cpp:
 	.pdata      start:0x8221B7E0 end:0x8221B800
 	.pdata      start:0x82241680 end:0x82241688
 	.pdata      start:0x82241688 end:0x82241698
-	.pdata      start:0x822416B0 end:0x822416C8
 	.pdata      start:0x8225D040 end:0x8225D068
 	.pdata      start:0x82261BA0 end:0x82261BA8
 	.text       start:0x823EC398 end:0x823EC418
@@ -12161,7 +12152,6 @@ ProfileMgr.cpp:
 	.text       start:0x8254BC20 end:0x8254BE08
 	.text       start:0x827B7970 end:0x827B79B0
 	.text       start:0x827B79C0 end:0x827B7B38
-	.text       start:0x827B7C94 end:0x827B7D88
 	.text       start:0x82B8FC88 end:0x82B8FED8
 	.text       start:0x82C45E88 end:0x82C45EC4
 
@@ -13196,8 +13186,7 @@ system/meta/StoreArtLoaderPanel.cpp:
 	.pdata      start:0x82241670 end:0x82241680
 	.pdata      start:0x82241698 end:0x822416A0
 	.pdata      start:0x822416A0 end:0x822416A8
-	.pdata      start:0x822416A8 end:0x822416B0
-	.pdata      start:0x822416C8 end:0x822416D0
+	.pdata      start:0x822416A8 end:0x822416D0
 	.pdata      start:0x822416D0 end:0x822416E8
 	.text       start:0x827B7170 end:0x827B72EC
 	.text       start:0x827B72F0 end:0x827B7344
@@ -13208,8 +13197,7 @@ system/meta/StoreArtLoaderPanel.cpp:
 	.text       start:0x827B7B38 end:0x827B7B44
 	.text       start:0x827B7B44 end:0x827B7BA8
 	.text       start:0x827B7BA8 end:0x827B7C20
-	.text       start:0x827B7C20 end:0x827B7C94
-	.text       start:0x827B7D88 end:0x827B7DC8
+	.text       start:0x827B7C20 end:0x827B7DC8
 	.text       start:0x827B7DC8 end:0x827B7ED0
 
 system/world/World.cpp:
