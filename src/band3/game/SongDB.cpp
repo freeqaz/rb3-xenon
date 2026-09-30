@@ -640,7 +640,7 @@ void SongDB::RecalculateGemTimes(int i1) { mSongData->RecalculateGemTimes(i1); }
 
 float SongDB::GetPitchOffsetForTick(int tick) const {
     const TuningOffsetList *list = mSongData->mTuningOffsetList;
-    return list->IteratorAt(tick, true)->mInfo;
+    return list->IteratorAt(tick < 0 ? 0 : tick, true)->mInfo;
 }
 
 void SongDB::EnableGems(int i1, float f2, float f3) { mSongData->EnableGems(i1, f2, f3); }
