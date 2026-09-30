@@ -143,6 +143,7 @@
  "0x8278ddf8": "??$TrimExcess@VGameGem@@@@YAXAAV?$vector@VGameGem@@V?$StlNodeAlloc@VGameGem@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x827566f0": "?LoadDir@DirLoader@@AAAXXZ",
  "0x8274ffc8": "?PreloadSharedSubdirs@@YAXVSymbol@@@Z",
+ "0x8274e7e8": "?SaveProxy@ObjectDir@@QAAXAAVBinStream@@@Z",
  "0x8278db80": "??$_M_range_insert_realloc@PBVGameGem@@@?$vector@VGameGem@@V?$StlNodeAlloc@VGameGem@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVGameGem@@PBV2@1I@Z",
  "0x82772f70": "??$_M_range_insert_realloc@PBV?$TickedInfo@VString@@@@@?$vector@V?$TickedInfo@VString@@@@V?$StlNodeAlloc@V?$TickedInfo@VString@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$TickedInfo@VString@@@@PBV2@1I@Z",
  "0x824ef600": "?FastInvert@@YAXABVMatrix3@Hmx@@AAV12@@Z",
