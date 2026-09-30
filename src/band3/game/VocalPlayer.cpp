@@ -2188,6 +2188,12 @@ float VocalPlayer::UpdateOverlay(RndOverlay *o, float f2) {
 }
 
 bool VocalPlayer::SongSectionOnly(float &f1, float &f2) const {
+    // Retail (TU5) constructs a function-local static Symbol here that is never
+    // read again: guard lbl_82E03500, storage lbl_82E034FC, string
+    // "has_song_sections" (lbl_820DCB18), plus the guard-clear thunk
+    // fn_826E42C0 after the function. Neither rb3-Wii nor DC3 has it. Its
+    // register pressure is also why retail uses r31 as a frame pointer here.
+    static Symbol has_song_sections("has_song_sections");
     if (!TheGame->mProperties.mHasSongSections) {
         return false;
     } else {
