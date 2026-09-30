@@ -62,7 +62,7 @@ void *MemResizeElem(
 void MemFreeBlockStats(int, int &, int &, int &, int &, int &);
 // Retail/match 4-ref overload — see MemMgr.cpp.
 void MemFreeBlockStats(int, int &, int &, int &, int &);
-void MemPrintOverview(int, char *const);
+void MemPrintOverview(int, class TextStream &);
 MemHeapStack &ThreadMemStack(bool);
 
 #define kNoHeap -3

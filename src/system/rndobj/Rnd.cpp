@@ -111,7 +111,7 @@ void *sCompressData;
 extern int lbl_82F14008;
 extern DataArray *lbl_830A4100;
 extern int lbl_830A4104;
-void MemPrintOverview(int, char *const);
+void MemPrintOverview(int, TextStream &);
 
 DataNode ModalKeyListener::OnMsg(const KeyboardKeyMsg &k) {
     if (k.GetKey() == 0x12e) {
@@ -1542,9 +1542,7 @@ void Rnd::UpdateHeap() {
         heapNum = lbl_82F14008;
     }
 
-    char buf[2056];
-    MemPrintOverview(heapNum, buf);
-    *mHeapOverlay << buf;
+    MemPrintOverview(heapNum, *mHeapOverlay);
 }
 
 void Rnd::Modal(Debug::ModalType &type, FixedString &str, bool bb) {
