@@ -28,6 +28,7 @@
 #include "os/System.h"
 #include "os/User.h"
 #include "os/UserMgr.h"
+#include "utl/Std.h"
 #include "utl/BinStream.h"
 #include "utl/HxGuid.h"
 #include "utl/MemStream.h"
@@ -678,11 +679,8 @@ void NetSession::StartArbitration() {
     SetState(kClientsArbitrating);
     for (int i = 0; i < mUsers.size(); i++) {
         if (!mUsers[i]->IsLocal()) {
-            unsigned int target = mUsers[i]->mMachineID;
-            std::vector<int>::iterator it =
-                std::find(mStillArbitrating.begin(), mStillArbitrating.end(), target);
-            if (it == mStillArbitrating.end())
-                mStillArbitrating.push_back(target);
+            if (!VectorFind<int>(mStillArbitrating, mUsers[i]->mMachineID))
+                mStillArbitrating.push_back(mUsers[i]->mMachineID);
         }
     }
     BeginArbitrationMsg amsg;
