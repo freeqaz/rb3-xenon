@@ -281,8 +281,9 @@ bool PropSyncSubDirs(
     int i,
     PropOp op
 ) {
-    // RB3 retail fn_82752668: explicit DataNode temporaries and
-    // no DC3-era duplicate-subdir check before the switch (kept for native).
+    // RB3 retail (fn_82752668): no DC3-era duplicate-subdir check before the switch
+    // (kept for native). The get/set/insert conversions stay IMPLICIT: retail
+    // re-addresses each temporary's slot instead of reusing the ctor's return.
     ObjectDir *theGDir = gDir;
     if (op == kPropSize) {
         MILO_ASSERT(i == prop->Size(), 0x947);
@@ -315,11 +316,11 @@ bool PropSyncSubDirs(
 #endif
     switch (op) {
     case kPropGet:
-        val = DataNode(FileRelativePath(FilePath::Root().c_str(), ptr.GetFile().c_str()));
+        val = FileRelativePath(FilePath::Root().c_str(), ptr.GetFile().c_str());
         break;
     case kPropSet:
         theGDir->RemovingSubDir(ptr);
-        ptr = SyncSubDir(FilePath(val.Str()), theGDir);
+        ptr = SyncSubDir(val.Str(), theGDir);
         theGDir->AddedSubDir(ptr);
         break;
     case kPropRemove:
@@ -327,9 +328,7 @@ bool PropSyncSubDirs(
         subdirs.erase(subdirIt);
         break;
     case kPropInsert:
-        subdirIt = subdirs.insert(
-            subdirIt, ObjDirPtr<ObjectDir>(SyncSubDir(FilePath(val.Str()), theGDir))
-        );
+        subdirIt = subdirs.insert(subdirIt, SyncSubDir(val.Str(), theGDir));
         theGDir->AddedSubDir(*subdirIt);
         break;
     default:

@@ -136,8 +136,8 @@ void UIListDir::PostLoad(BinStream &bs) {
     // in the same TU aggregate PreLoad wrote; fields read through the plain stream.
     RndDir::PostLoad(bs);
     int revs = BinStream::PopRev(this);
-    gRevs_UIListDir.altRev = getAltRev(revs);
     gRevs_UIListDir.rev = getHmxRev(revs);
+    gRevs_UIListDir.altRev = getAltRev(revs);
     int orientation, numdisplay, compstate;
     float speed;
     bs >> orientation >> mFadeOffset;
