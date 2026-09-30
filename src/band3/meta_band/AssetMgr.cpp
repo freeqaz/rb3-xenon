@@ -29,6 +29,8 @@ inline less<Symbol> __less<Symbol>(Symbol*) { return less<Symbol>(); }
 AssetMgr::AssetMgr() {
     AddAssets();
     ConfigureAssetTypeToIconPathMap();
+    // retail fn_8256B740 has no VerifyAssets calls: dev-build validation only
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     VerifyAssets("earrings");
     VerifyAssets("eyebrows");
     VerifyAssets("facehair");
@@ -43,6 +45,7 @@ AssetMgr::AssetMgr() {
     VerifyAssets("torso");
     VerifyAssets("keyboard");
     VerifyAssets("mic");
+#endif
 }
 
 DECOMP_FORCEACTIVE(AssetMgr, "")

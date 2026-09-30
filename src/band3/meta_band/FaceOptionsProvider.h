@@ -9,7 +9,7 @@ class FaceOptionsProvider : public UIListProvider, public Hmx::Object {
 public:
     FaceOptionsProvider(const std::vector<DynamicTex *> &vec)
         : mIcons(vec), mGender(gNullStr), mFaceOptionCount(0) {}
-    virtual ~FaceOptionsProvider() {}
+    // dtor implicit: retail ??1 stores no FaceOptionsProvider vtables (fixable-declarations.md)
     virtual RndMat *Mat(int, int, UIListMesh *) const;
     virtual int NumData() const;
 

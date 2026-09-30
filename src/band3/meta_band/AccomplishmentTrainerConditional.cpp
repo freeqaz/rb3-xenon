@@ -51,6 +51,8 @@ bool AccomplishmentTrainerConditional::CheckConditionsForLesson(
     for (std::list<TrainerCondition>::const_iterator it = mConditions.begin();
          it != mConditions.end();
          it++) {
+        // retail fn_8266B0F0: the static is built inside the loop body
+        static Symbol complete_lesson("complete_lesson");
         TrainerCondition condition = *it;
         if (condition.mCondition == complete_lesson) {
             bool result =

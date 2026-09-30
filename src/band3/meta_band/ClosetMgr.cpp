@@ -244,15 +244,13 @@ void ClosetMgr::ResetNewCharacterPreview(Symbol s) {
 }
 
 void ClosetMgr::PreviewCharacter(bool b1, bool b2) {
+    // retail fn_825677F8: no `slot >= 0` guard around the request
     if (TheCharCache) {
-        int slot = GetUserSlot();
-        if (slot >= 0) {
-            std::vector<BandCharDesc *> descs;
-            descs.push_back(unk3c);
-            TheCharCache->Request(slot, descs, b1, b2);
-            mCharacterLoading = true;
-            unk61 = true;
-        }
+        std::vector<BandCharDesc *> descs;
+        descs.push_back(unk3c);
+        TheCharCache->Request(GetUserSlot(), descs, b1, b2);
+        mCharacterLoading = true;
+        unk61 = true;
     }
 }
 

@@ -21,10 +21,20 @@ Modifier::Modifier(DataArray *da) : mData(da), mDefaultEnabled(0) {
 
 bool Modifier::IsHidden() const { return mData->Contains(hidden); }
 bool Modifier::CustomLocation() const { return mData->Contains(custom_location); }
-bool Modifier::SaveValue() const { return mData->Contains(save_value); }
-bool Modifier::UseSaveValue() const { return mData->Contains(use_save_value); }
+// retail fn_82588F58 / fn_82589030 / fn_825891E0: function-local Symbol statics
+bool Modifier::SaveValue() const {
+    static Symbol save_value("save_value");
+    return mData->Contains(save_value);
+}
+bool Modifier::UseSaveValue() const {
+    static Symbol use_save_value("use_save_value");
+    return mData->Contains(use_save_value);
+}
 bool Modifier::DefaultEnabled() const { return mData->Contains(default_enabled); }
-bool Modifier::DelayedEffect() const { return mData->Contains(delayed_effect); }
+bool Modifier::DelayedEffect() const {
+    static Symbol delayed_effect("delayed_effect");
+    return mData->Contains(delayed_effect);
+}
 
 DECOMP_FORCEACTIVE(ModifierMgr, "!TheModifierMgr", "TheModifierMgr")
 
@@ -154,6 +164,8 @@ Modifier *ModifierMgr::GetModifierAtListData(int data) const {
 }
 
 void ModifierMgr::DisableAutoVocals() const {
+    // retail fn_82588DF0: function-local static
+    static Symbol mod_auto_vocals("mod_auto_vocals");
     Modifier *mod = GetModifier(mod_auto_vocals, true);
     mod->mDefaultEnabled = false;
 }

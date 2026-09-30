@@ -222,16 +222,8 @@ const std::vector<Symbol> &Accomplishment::GetSecretPrereqs() const {
 }
 
 bool Accomplishment::IsDynamic() const {
-    bool noFilter = !mDynamicPrereqsSongs.empty();
-    if (!noFilter) {
-        if (gNullStr) {
-            noFilter = !strcmp(mDynamicPrereqsFilter.Str(), gNullStr);
-        } else {
-            noFilter = (mDynamicPrereqsFilter.Str() == gNullStr);
-        }
-        noFilter = !noFilter;
-    }
-    return noFilter;
+    // retail fn_82594808: out-of-line Symbol::operator==(const char *), no strcmp
+    return !mDynamicPrereqsSongs.empty() || !(mDynamicPrereqsFilter == gNullStr);
 }
 
 bool Accomplishment::GetDynamicAlwaysVisible() const { return mDynamicAlwaysVisible; }
@@ -249,22 +241,11 @@ Symbol Accomplishment::GetCategory() const { return mCategory; }
 int Accomplishment::GetContextID() const { return mContextId; }
 
 const char *Accomplishment::GetIconArt() const {
-    bool noIconArt;
-    if (gNullStr) {
-        noIconArt = !strcmp(mIconOverride.Str(), gNullStr);
-    } else {
-        noIconArt = (mIconOverride.Str() == gNullStr);
-    }
-
-    if (!noIconArt) {
-        return MakeString(
-            "ui/accomplishments/accomplishment_art/%s_keep.png", mIconOverride.Str()
-        );
-    } else {
-        return MakeString(
-            "ui/accomplishments/accomplishment_art/%s_keep.png", mName.Str()
-        );
-    }
+    // retail fn_82594858: one format string, out-of-line Symbol::operator==
+    return MakeString(
+        "ui/accomplishments/accomplishment_art/%s_keep.png",
+        !(mIconOverride == gNullStr) ? mIconOverride.Str() : mName.Str()
+    );
 }
 
 DECOMP_FORCEACTIVE(Accomplishment, "%s_gray")

@@ -413,7 +413,15 @@ void MusicLibrary::OnExit() {
 #endif
 }
 
-bool MusicLibrary::IsExiting() { return false; }
+bool MusicLibrary::IsExiting() {
+    // TU5 (retail fn_8253AC40): a failed store op is reaped here, then the
+    // library is "exiting" while the op is clearing (state 3).
+    if (unk19c && unk19c->mState == 4) {
+        delete unk19c;
+        unk19c = 0;
+    }
+    return unk19c && unk19c->mState == 3;
+}
 
 void MusicLibrary::OnSynchronized(unsigned int) {
     if (unk40)
@@ -557,9 +565,13 @@ void MusicLibrary::SetTaskScoreType(ScoreType ty) {
 }
 
 void MusicLibrary::SetupTaskForTrainer(ControllerType ty) {
+    // retail fn_82540888: function-local has_part_yes, requiresStandardParts
+    // cleared, and no MILO_FAIL default arm.
+    static Symbol has_part_yes("has_part_yes");
     mTask.Reset();
     mTask.filterLocked = true;
     mTask.setlistMode = kSetlistForbidden;
+    mTask.requiresStandardParts = false;
     switch (ty) {
     // Byte-neutral rename: the constants stay 3 and 2, only the names change.
     // These two sites are what proved the enum renumber semantically -- a real
@@ -571,7 +583,6 @@ void MusicLibrary::SetupTaskForTrainer(ControllerType ty) {
         mTask.filter.AddFilter(kFilterKeys, has_part_yes);
         break;
     default:
-        MILO_FAIL("Bad ControllerType %i in MusicLibrary::SetupTaskForTrainer!", ty);
         break;
     }
 }
@@ -1805,6 +1816,9 @@ void MusicLibrary::PushHighlightToScreen(bool b1) {
 }
 
 void MusicLibrary::PushMakingSetlistToScreen() {
+    // retail fn_8253F140: function-local Symbol + Message statics, not the Wii globals
+    static Symbol on_change_setlist_mode("on_change_setlist_mode");
+    static Message on_change_setlist_mode_msg(on_change_setlist_mode);
     SendMessageToSongSelectPanel(on_change_setlist_mode_msg);
     PushSonglistToScreen();
     PushHighlightToScreen(true);
@@ -2072,22 +2086,18 @@ void SavedSetlist::SetDescription(const char *desc) { mDescription = desc; }
 RndTex *SavedSetlist::GetArtTex() const { return nullptr; }
 
 void MusicLibrary::GetNetSetlists(std::vector<NetSavedSetlist *> &setlists) const {
-    WiiFriendList friends;
-    TheWiiFriendMgr.GetCachedFriends(&friends);
+    // retail fn_82540CF0: no Wii friend-list filter on 360 -- every cached
+    // friend setlist and every harmony setlist is returned.
     setlists.clear();
     const std::vector<NetSavedSetlist *> &friendSetlists = mNetSetlists->unk20;
     FOREACH (it, friendSetlists) {
         NetSavedSetlist *nsl = *it;
-        if (FilterSetlist(&friends, nsl)) {
-            setlists.push_back(nsl);
-        }
+        setlists.push_back(nsl);
     }
     const std::vector<NetSavedSetlist *> &harmSetlists = mNetSetlists->unk28;
     FOREACH (it, harmSetlists) {
         NetSavedSetlist *nsl = *it;
-        if (FilterSetlist(&friends, nsl)) {
-            setlists.push_back(nsl);
-        }
+        setlists.push_back(nsl);
     }
 }
 
@@ -2190,8 +2200,11 @@ DataNode MusicLibrary::OnMsg(const RemoteMachineUpdatedMsg &msg) {
 }
 
 DataNode MusicLibrary::OnMsg(const RemoteMachineLeftMsg &) {
+    // retail fn_82540ED8: TU5 refreshes the song lists before the qp_coop test
     RebuildSharedSongData();
     if (TheSessionMgr->IsLocal()) {
+        RefreshSongLists();
+        static Symbol qp_coop("qp_coop");
         if (TheGameMode->InMode(qp_coop)) {
             mTask.setlistMode = kSetlistOptional;
         }
