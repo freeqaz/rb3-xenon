@@ -187,8 +187,14 @@ void ScriptTask::UpdateVarsObjects(DataArray *d) {
 #pragma region ThreadTask
 
 ThreadTask::ThreadTask(DataArray *script, DataArray *updateVarsObjs)
+#ifdef HX_NATIVE
     : ScriptTask(script, false, updateVarsObjs), mWait(false), mCurrent(1), mTime(0),
       mExecuting(false), mTimeout(-1) {}
+#else
+    // TU5 leaves mWait uninitialised here.
+    : ScriptTask(script, false, updateVarsObjs), mCurrent(1), mTime(0), mExecuting(false),
+      mTimeout(-1) {}
+#endif
 
 void ThreadTask::Replace(ObjRef *from, Hmx::Object *to) {
     if (mExecuting) {

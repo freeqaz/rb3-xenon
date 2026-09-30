@@ -22,8 +22,8 @@ void Triangle::Set(const Vector3 &v0, const Vector3 &v1, const Vector3 &v2) {
 float gUnitsPerMeter = 39.370079f;
 static float gBSPPosTol = 0.01f;
 static float gBSPDirTol = 0.985f;
-static int gBSPMaxCandidates = 40;
 static int gBSPMaxDepth = 20;
+static int gBSPMaxCandidates = 40;
 static float gBSPCheckScale = 1.1f;
 
 void NumNodes(const BSPNode *node, int &num, int &maxDepth) {
@@ -173,8 +173,8 @@ void Plane::Set(const Vector3 &v1, const Vector3 &v2, const Vector3 &v3) {
 
 void SetBSPParams(float f1, float f2, int r3, int r4, float f3) {
     gBSPDirTol = f2;
-    gBSPMaxCandidates = r4;
     gBSPMaxDepth = r3;
+    gBSPMaxCandidates = r4;
     gBSPCheckScale = f3;
     gBSPPosTol = f1;
 }
@@ -762,6 +762,17 @@ void Sphere::GrowToContain(const Sphere &s) {
     }
 }
 
+// Retail 0x824791A0: a Vector2 normalize the image keeps out of line (a COMDAT
+// that lands in RndLine's object). A zero vector is left untouched; y is written
+// before x.
+inline void Normalize(const Vector2 &in, Vector2 &out) {
+    if (in.x == 0 && in.y == 0)
+        return;
+    float inv = 1.0f / std::sqrt(in.x * in.x + in.y * in.y);
+    out.y = in.y * inv;
+    out.x = in.x * inv;
+}
+
 void Frustum::Set(float near, float far, float fovY, float ratio) {
     front.Set(0, 1, 0, -near);
     back.Set(0, -1, 0, far);
@@ -769,14 +780,10 @@ void Frustum::Set(float near, float far, float fovY, float ratio) {
     float cy = std::cos((fovY * 0.5f));
     top.Set(0, sy, -cy, 0);
     bottom.Set(0, sy, cy, 0);
-    float len = std::sqrt(cy * cy + (sy / ratio) * (sy / ratio));
-    if (len != 0.0f) {
-        len = 1.0f / len;
-    }
-    float la = len * cy;
-    float lb = len * (sy / ratio);
-    left.Set(la, lb, 0, 0);
-    right.Set(-la, lb, 0, 0);
+    Vector2 v(cy, sy / ratio);
+    Normalize(v, v);
+    left.Set(v.x, v.y, 0, 0);
+    right.Set(-v.x, v.y, 0, 0);
     if (fovY == 0.0f) {
         right.d = 1.0f;
         left.d = 1.0f;

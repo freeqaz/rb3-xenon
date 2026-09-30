@@ -845,7 +845,7 @@ DataNode Hmx::Object::HandleProperty(DataArray *prop, DataArray *a2, bool fail) 
 }
 
 DataNode Hmx::Object::PropertyArray(Symbol sym) {
-    static DataArrayPtr d(new DataArray(1));
+    static DataArrayPtr d(DataNode(1));
     d->Node(0) = sym;
     int size = PropertySize(d);
     DataArray *newArr = new DataArray(size);
@@ -879,9 +879,13 @@ int Hmx::Object::PropertySize(DataArray *prop) {
         if (mTypeDef) {
             a = &mTypeDef->FindArray(name)->Evaluate(1);
         } else {
-            MILO_FAIL_DTA("%s: property %s not found", PathName(this), name);
 #ifdef HX_NATIVE
+            MILO_FAIL_DTA("%s: property %s not found", PathName(this), name);
             return 0; // MILO_FAIL_DTA warns on native, so we must bail before null deref
+#else
+            // TU5 keeps only the PathName(this) argument evaluation; the
+            // MakeString + Debug::Fail are gone.
+            PathName(this);
 #endif
         }
     }
@@ -1050,7 +1054,7 @@ void Hmx::Object::SetNote(const char *note) {
         MemOrPoolFreeSTL(strlen(mNote) + 1, (void *)mNote);
     }
     if (note && *note) {
-        char *buf = (char *)MemOrPoolAllocSTL(strlen(note) + 1);
+        char *buf = (char *)MemOrPoolAlloc(strlen(note) + 1);
         mNote = buf;
         strcpy(buf, note);
     } else {
@@ -1112,17 +1116,17 @@ DataNode Hmx::Object::OnIterateRefs(const DataArray *da) {
     DataNode *var = da->Var(2);
     DataNode node(*var);
     ObjRef *end = &mRefs;
-    for (ObjRef *it = mRefs.next; it != end;) {
-        ObjRef *next_it = it->next;
+    for (ObjRef *it = end->next; it != end;) {
+        ObjRef *cur = it;
+        it = it->next;
 #ifdef HX_NATIVE
-        *var = it->RefOwner();
+        *var = cur->RefOwner();
 #else
-        *var = RefPtrOf(it)->RefOwner();
+        *var = RefPtrOf(cur)->RefOwner();
 #endif
         for (int i = 3; i < da->Size(); i++) {
             da->Command(i)->Execute();
         }
-        it = next_it;
     }
     *var = node;
     return 0;

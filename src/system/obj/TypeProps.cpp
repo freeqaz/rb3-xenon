@@ -85,6 +85,8 @@ void TypeProps::SetKeyValue(Symbol key, const DataNode &value, bool b) {
         if (o) {
 #ifdef HX_NATIVE
             mObjects.push_back(o);
+#else
+            o->AddRef(this); // retail: the TypeProps is the ObjRefOwner
 #endif
         }
     }
@@ -109,6 +111,8 @@ void TypeProps::SetKeyValue(Symbol key, const DataNode &value, bool b) {
                     if (o) {
 #ifdef HX_NATIVE
                         mObjects.remove(o);
+#else
+                        o->Release(this);
 #endif
                     }
                 }

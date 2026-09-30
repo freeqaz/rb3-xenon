@@ -29,13 +29,13 @@ bool SwitchMatch(const DataNode &n1, const DataNode &n2) {
         DataArray *arr = n1.UncheckedArray();
         for (int i = 0; i < arr->Size(); i++) {
             DataNode &cur = arr->Node(i);
-            if (cur.Equal(n2, nullptr, true)) {
+            if (cur == n2) {
                 return true;
             }
         }
         return false;
     } else
-        return n1.Equal(n2, nullptr, true);
+        return n1 == n2;
 }
 
 DataNode DataFuncObj::New(DataArray *arr) {
@@ -131,7 +131,7 @@ DEF_DATA_FUNC(DataUnless) {
 DEF_DATA_FUNC(DataEq) {
     const DataNode &dn1 = array->Evaluate(1);
     const DataNode &dn2 = array->Evaluate(2);
-    return dn1.Equal(dn2, array, true);
+    return dn1 == dn2;
 }
 
 DEF_DATA_FUNC(DataFindElem) {
@@ -140,7 +140,7 @@ DEF_DATA_FUNC(DataFindElem) {
     const DataNode &dn = array->Evaluate(2);
     for (int i = 0; i < arr->Size(); i++) {
         DataNode &arrNode = arr->Node(i);
-        if (arrNode.Equal(dn, nullptr, true)) {
+        if (arrNode == dn) {
             if (array->Size() > 3) {
                 *array->Var(3) = i;
             }
@@ -1117,7 +1117,7 @@ DEF_DATA_FUNC(OnWriteStringToFile) {
     return 0;
 }
 
-DEF_DATA_FUNC(OnFileExists) { return FileExists(array->Str(1), 0, nullptr); }
+DEF_DATA_FUNC(OnFileExists) { return FileExists(array->Str(1), 0); }
 
 DEF_DATA_FUNC(OnFileMkDir) { return FileMkDir(array->Str(1)); }
 
