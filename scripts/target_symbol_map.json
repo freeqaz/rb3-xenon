@@ -3,6 +3,7 @@
  "0x822bbc70": "?Replace@?$ObjPtr@VRndGroup@@@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x822b10a0": "??_G?$ObjPtr@VObjectDir@@@@UAAPAXI@Z",
  "0x82390180": "??$?5V?$ObjOwnerPtr@VCharClip@@@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@V?$ObjOwnerPtr@VCharClip@@@@@@@Z",
+ "0x82768b18": "??1VarStack@@QAA@XZ",
  "0x822c11a8": "?SetDeformClip@BandIKEffector@@SAXPAVObject@Hmx@@@Z",
  "0x8253ac40": "?IsExiting@MusicLibrary@@QAA_NXZ",
  "0x8256b740": "??0AssetMgr@@QAA@XZ",
