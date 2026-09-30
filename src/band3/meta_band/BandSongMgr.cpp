@@ -599,7 +599,7 @@ bool BandSongMgr::IsSongUnplayable(int songID, BandUserMgr &mgr, bool bvar3) con
 // attempt to replace it with GetValidSongCount() was refuted the same way:
 // retail's AllowContentToBeAdded calls GetValidSongCount ZERO times.
 int BandSongMgr::GetCurSongCount() const {
-    return mUncachedSongMetadata.size() + mCachedSongMetadata.size();
+    return mCachedSongMetadata.size() + mUncachedSongMetadata.size();
 }
 bool BandSongMgr::CanAddSong() const {
     int maxSongCount = mMaxSongCount;
@@ -736,15 +736,14 @@ bool BandSongMgr::IsInExclusionList(const char *name, int songID) const {
 }
 
 bool BandSongMgr::AllowContentToBeAdded(DataArray *a, ContentLocT lt) {
-    if (lt == kLocationRoot)
-        return true;
-    unsigned int count = CountSongsInArray(a);
+    int count = CountSongsInArray(a);
     while (count + GetCurSongCount() >= mMaxSongCount) {
         if (!RemoveOldestCachedContent())
             break;
     }
-    int maxCount = mMaxSongCount;
-    int full = (count + GetCurSongCount() >= maxCount);
+    if (lt == kLocationRoot)
+        return true;
+    bool full = count + GetCurSongCount() >= mMaxSongCount;
     if (full) {
         if (!unk13c) {
             static Symbol song_mgr_full("song_mgr_full");
@@ -755,7 +754,7 @@ bool BandSongMgr::AllowContentToBeAdded(DataArray *a, ContentLocT lt) {
     } else {
         unk13c = false;
     }
-                                                                return !(full);
+    return !full;
 }
 
 int BandSongMgr::GetValidSongs(
