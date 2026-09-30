@@ -693,6 +693,7 @@ RndMesh *WorldCrowd::BuildBillboard(Character *c, float height) {
 
 void SetMatColorFlags(ObjPtrList<RndMat, ObjectDir> &, RndMat::ColorModFlags, std::vector<Hmx::Color> *);
 
+#ifdef HX_NATIVE
 void WorldCrowd::Draw3DChars() {
     if (!Crowd3DExists()) return;
     // Use mEnviron3D if it has a pointer, else mEnviron
@@ -753,6 +754,78 @@ void WorldCrowd::Draw3DChars() {
         env->SetUseApproxGlobal(savedApprox);
     }
 }
+#else
+// RB3 retail (0x824E2CD8): the per-char transform is computed inline (there is
+// no out-of-line Apply3DCharXfm call), the camera is always RndCam::sCurrent,
+// and the three Character draw flags at +0x210/+0x212/+0x211 are cleared
+// in-game around a non-virtual RndDrawable::Draw().
+void WorldCrowd::Draw3DChars() {
+    if (!Crowd3DExists())
+        return;
+    ObjPtr<RndEnviron> *envPtr = mEnviron3D ? &mEnviron3D : &mEnviron;
+    RndEnviron *env = *envPtr;
+    bool savedApprox = true;
+    if (env) {
+        savedApprox = env->UsesApproxGlobal();
+        env->SetUseApproxGlobal(false);
+    }
+    RndEnvironTracker tracker(env, nullptr);
+    FOREACH (charIt, mCharacters) {
+        Character *curChar = charIt->mDef.mChar;
+        RndMultiMesh *mmesh = charIt->mMMesh;
+        if (curChar && mmesh) {
+            for (unsigned int i = 0; i != charIt->m3DChars.size(); i++) {
+                Transform xfm;
+                xfm.v = charIt->m3DChars[i].mXfm.v;
+                xfm.v.z -= charIt->mDef.mHeight / 2;
+                if (mCrowdRotate != kCrowdRotateNone || mFocus) {
+                    xfm.m.z = mPlacementMesh->WorldXfm().m.z;
+                    RndCam *cam = RndCam::Current();
+                    if (mCrowdRotate == kCrowdRotateFace) {
+                        Cross(xfm.m.z, cam->WorldXfm().m.y, xfm.m.x);
+                    } else if (mCrowdRotate == kCrowdRotateAway) {
+                        Cross(cam->WorldXfm().m.y, xfm.m.z, xfm.m.x);
+                    } else {
+                        const Vector3 &v = mFocus->WorldXfm().v;
+                        Vector3 diff(v.x - xfm.v.x, v.y - xfm.v.y, 0);
+                        Cross(diff, xfm.m.z, xfm.m.x);
+                    }
+                    Normalize(xfm.m.x, xfm.m.x);
+                    Cross(xfm.m.z, xfm.m.x, xfm.m.y);
+                } else {
+                    xfm.m = mPlacementMesh->WorldXfm().m;
+                }
+                if (charIt->mDef.mUseRandomColor) {
+                    SetMatColorFlags(
+                        charIt->mDef.mMats,
+                        RndMat::kColorModModulate,
+                        &charIt->m3DChars[i].mColors
+                    );
+                }
+                // Character's mSelfShadow / mFloorShadow / mSpotCutout
+                // (protected; char/ is another lane's)
+                bool *flags = (bool *)curChar;
+                bool savedSelfShadow = flags[0x210];
+                bool savedFloorShadow = flags[0x212];
+                bool savedSpotCutout = flags[0x211];
+                if (TheRnd.InGame()) {
+                    flags[0x210] = false;
+                    flags[0x212] = false;
+                    flags[0x211] = false;
+                }
+                curChar->SetWorldXfm(xfm);
+                curChar->Draw();
+                flags[0x210] = savedSelfShadow;
+                flags[0x212] = savedFloorShadow;
+                flags[0x211] = savedSpotCutout;
+            }
+        }
+    }
+    if (env) {
+        env->SetUseApproxGlobal(savedApprox);
+    }
+}
+#endif
 
 void WorldCrowd::AssignRandomColors() {
     FOREACH (it, mCharacters) {
