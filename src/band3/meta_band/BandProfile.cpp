@@ -512,7 +512,7 @@ bool BandProfile::HasSomethingToUpload() {
             if (pTourCharLocal->IsDirtyUpload())
                 return true;
         }
-        return mTourBand->IsDirtyUpload();
+        return mTourBand->IsDirtyUpload() != 0;
     }
 }
 
