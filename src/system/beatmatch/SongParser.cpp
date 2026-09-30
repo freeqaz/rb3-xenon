@@ -481,6 +481,15 @@ void SongParser::OnFillStart(int tick, unsigned char pitch) {
                     mTrackName,
                     PrintTick(tick)
                 );
+            } else if (mCodaStartTick != tick) {
+                // TU5: retail evaluates PrintTick(tick) before PrintTick(mCodaStartTick) here
+                MILO_WARN(
+                    "%s (%s): Big Rock Ending at %s appears before [coda] event at %s",
+                    mFilename,
+                    mTrackName,
+                    PrintTick(mCodaStartTick),
+                    PrintTick(tick)
+                );
             } else {
                 MILO_WARN(
                     "%s (%s): Big Rock Ending at %s appears before [coda] event at %s",
