@@ -348,40 +348,39 @@ void TourDescProvider::UpdateExtendedText(int, int iData, UILabel *i_pLabel) con
     bool bPlayed = pProgress->GetToursPlayed(s) > 0;
     if (!bPlayed && pProgress->GetTourMostStars(s) > 0)
         bPlayed = true;
-    const char *pName = i_pLabel->Name();
-    if (strcmp(pName, "tour_bronze.lbl") == 0) {
+    if (strcmp(i_pLabel->Name(), "tour_bronze.lbl") == 0) {
         i_pLabel->SetTokenFmt(
             tourdesc_stars_needed, pTourDesc->GetTourStarsBronzeGoalValue()
         );
-    } else if (strcmp(pName, "tour_silver.lbl") == 0) {
+    } else if (strcmp(i_pLabel->Name(), "tour_silver.lbl") == 0) {
         i_pLabel->SetTokenFmt(
             tourdesc_stars_needed, pTourDesc->GetTourStarsSilverGoalValue()
         );
-    } else if (strcmp(pName, "tour_gold.lbl") == 0) {
+    } else if (strcmp(i_pLabel->Name(), "tour_gold.lbl") == 0) {
         i_pLabel->SetTokenFmt(
             tourdesc_stars_needed, pTourDesc->GetTourStarsGoldGoalValue()
         );
-    } else if (strcmp(pName, "tour_desc.lbl") == 0) {
+    } else if (strcmp(i_pLabel->Name(), "tour_desc.lbl") == 0) {
         bool bAvailable = IsTourDescAvailable(s);
         if (bAvailable) {
             i_pLabel->SetTextToken(pTourDesc->GetDescription());
         } else {
             i_pLabel->SetTextToken(Symbol(gNullStr));
         }
-    } else if (strcmp(pName, "total.lbl") == 0) {
+    } else if (strcmp(i_pLabel->Name(), "total.lbl") == 0) {
         if (bPlayed) {
             static Symbol tour_gig_total("tour_gig_total");
             i_pLabel->SetTextToken(tour_gig_total);
         } else {
             i_pLabel->SetTextToken(Symbol(gNullStr));
         }
-    } else if (strcmp(pName, "tour_unlockinfo.lbl") == 0) {
+    } else if (strcmp(i_pLabel->Name(), "tour_unlockinfo.lbl") == 0) {
         bool bAvailable = IsTourDescAvailable(s);
         if (bAvailable) {
             i_pLabel->SetTextToken(Symbol(gNullStr));
         } else {
-            CampaignLevel *pCampaignLevel =
-                TheCampaign->GetCampaignLevel(pTourDesc->GetRequiredCampaignLevel());
+            Symbol level = pTourDesc->GetRequiredCampaignLevel();
+            CampaignLevel *pCampaignLevel = TheCampaign->GetCampaignLevel(level);
             MILO_ASSERT(pCampaignLevel, 0x140);
             i_pLabel->SetTextToken(pCampaignLevel->GetRequirementToken());
         }
