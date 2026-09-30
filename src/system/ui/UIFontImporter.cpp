@@ -540,47 +540,41 @@ RndFont *UIFontImporter::GetGennedFont(Symbol s) const {
 }
 
 void UIFontImporter::SyncWithGennedFonts() {
-    auto it = mGennedFonts.begin();
-    for (int i = 0; it != mGennedFonts.end(); i++) {
-        RndFont *cur = *it;
-        bool b4 = false;
-        if (i == 0) {
-            b4 = true;
-        } else {
-            FOREACH (mit, mMatVariations) {
-                if (cur->Mat() == *mit) {
-                    b4 = true;
-                }
-            }
+    for (ObjPtrList<RndFont>::iterator it = mGennedFonts.begin(); it != mGennedFonts.end();) {
+        RndFont *font = *it;
+        bool matfound = false;
+        for (ObjPtrList<RndMat>::iterator mit = mMatVariations.begin();
+             mit != mMatVariations.end();
+             ++mit) {
+            if (font->Mat() == *mit)
+                matfound = true;
         }
-        if (!b4) {
-            cur->Mat();
-            RndText *text = FindTextForFont(cur);
+        if (font->Mat() == mDefaultMat)
+            matfound = true;
+        if (!matfound) {
+            RndText *text = FindTextForFont(font);
             it = mGennedFonts.erase(it);
-            delete cur;
-            if (text) {
+            delete font;
+            if (text)
                 delete text;
-            }
-        } else {
-            ++it;
-        }
+        } else
+            it++;
     }
 }
 
 void UIFontImporter::HandmadeFontChanged() {
     if (mHandmadeFont) {
         if (mGennedFonts.size() > 0) {
-            RndFont *font = *mGennedFonts.begin();
-            if (font != mHandmadeFont) {
-                RndText *text = FindTextForFont(font);
-                delete font;
+            RndFont *frontfont = *mGennedFonts.begin();
+            if (frontfont != mHandmadeFont) {
+                RndText *text = FindTextForFont(frontfont);
+                delete frontfont;
                 delete text;
             }
-            // <?>
-            RndFont *next = *mGennedFonts.begin();
-            next = mHandmadeFont;
-            // </?>
-            FOREACH (it, mGennedFonts) {
+            mGennedFonts.Set(mGennedFonts.begin(), mHandmadeFont);
+            for (ObjPtrList<RndFont>::iterator it = ++mGennedFonts.begin();
+                 it != mGennedFonts.end();
+                 it++) {
                 if (*it == mHandmadeFont) {
                     mGennedFonts.erase(it);
                     break;
@@ -599,10 +593,6 @@ void UIFontImporter::HandmadeFontChanged() {
         mMinus = "";
         std::vector<unsigned short> thechars(mHandmadeFont->Chars());
         mPlus = WideVectorToASCII(thechars);
-    }
-    if (mHandmadeFont) {
-        RndFont3d::StaticClassName();
-        mHandmadeFont->ClassName();
     }
 }
 
