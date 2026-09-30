@@ -871,10 +871,10 @@ void Player::Deploy() {
     GetTrackPanel()->PlaySequence(
         MakeString("rp_deployed_%s.cue", TrackTypeToSym(mTrackType).Str()), 0, 0, 0
     );
-    BandTrack *track = GetBandTrack();
-    if (track) {
-        track->Deploy();
+    if (GetBandTrack()) {
+        GetBandTrack()->Deploy();
     }
+    static Symbol deploy("deploy");
     PopupHelp(deploy, false);
     if (mTrackType == kTrackDrum && !mIsInCoda) {
         EnableDrumFills(false);
