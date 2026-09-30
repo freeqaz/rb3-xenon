@@ -303,8 +303,10 @@ public:
     // so mLoadState lands at 0xcc rather than 0xd0.
     float mMusicSpeed; // 0xc0
     bool mNeverAllowInput; // 0xc4
-    bool mMuckWithPitch; // 0xc5
-    bool unkb9; // 0xc6
+    // The ctor stores 1 to 0xc5 and leaves 0xc6 alone (retail 0x8267BF30), so
+    // the 1-initialised unkb9 sits at 0xc5. Neither is read elsewhere in retail.
+    bool unkb9; // 0xc5
+    bool mMuckWithPitch; // 0xc6
     int mDemoMaxPctComplete; // 0xc8
     float mDemoMaxMs; // 0xcc
     bool unkc4; // 0xd0

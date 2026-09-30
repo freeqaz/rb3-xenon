@@ -179,9 +179,12 @@ public:
 };
 
 Game::Game()
-    : mSongDB(new SongDB()), mSongInfo(0), mIsPaused(0), mGameWantsPause(0),
-      mOvershellWantsPause(0), unk6b(0), unk6c(0), mPauseTime(0), mRealtime(0), unk6f(0),
-      mTimeOffset(0), mLastPollMs(0), mMuckWithPitch(0), mMusicSpeed(1.0f),
+    // Retail 0x8267BF30 stores 0 to 0x48 (mUnkTU5GuidePitch), bytes 0x78..0x7d
+    // only (unk6b/unk6c at 0x7e/0x7f are NOT initialised), and 0 / 1 to
+    // 0xc4 / 0xc5 with 0xc6 untouched -- hence no mMuckWithPitch init here.
+    : mUnkTU5GuidePitch(0), mSongDB(new SongDB()), mSongInfo(0), mIsPaused(0),
+      mGameWantsPause(0), mOvershellWantsPause(0), mPauseTime(0), mRealtime(0), unk6f(0),
+      mTimeOffset(0), mLastPollMs(0), mMusicSpeed(1.0f),
       mNeverAllowInput(0), unkb9(1), mDemoMaxPctComplete(0), mDemoMaxMs(0), unkc4(0),
       mLoadState(kLoadingSong), mResult(kRestart), mBand(0), mShuttle(new Shuttle()),
       unkdc(-1), unk11c(-1), unk120(0), mSkippedSong(0), unk124(0), mResumeTime(0),
@@ -198,9 +201,8 @@ Game::Game()
     TheSessionMgr->AddSink(this, LocalUserLeftMsg::Type());
     TheSessionMgr->AddSink(this, RemoteUserLeftMsg::Type());
     TheSessionMgr->AddSink(this, RemoteLeaderLeftMsg::Type());
-    OvershellPanel *overshell = TheBandUI.mOvershell;
-    overshell->AddSink(this, "required_song_options_chosen");
-    TheBandUI.mOvershell->AddSink(this, NewOvershellLocalUserMsg::Type());
+    TheBandUI.GetOvershell()->AddSink(this, "required_song_options_chosen");
+    TheBandUI.GetOvershell()->AddSink(this, NewOvershellLocalUserMsg::Type());
     TheBandUI.AddSink(this, UIScreenChangeMsg::Type());
 
     SetBackgroundVolume(TheProfileMgr.GetBackgroundVolumeDb());
@@ -211,12 +213,21 @@ Game::Game()
         TheSynth->GetMic(i)->Stop();
         TheSynth->GetMic(i)->Start();
     }
-    mBand = new Band(false, 0, BandUserMgr::GetBandUser(nullptr), mMaster);
+    mBand = new Band(false, 0, nullptr, mMaster);
     PopulatePlayerLists();
     mTrackerManager = new TrackerManager(mBand);
-    auto _tmp1 = SystemConfig(demo)->FindInt(max_pct_complete);
-    mDemoMaxPctComplete = _tmp1;
+    static Symbol demo("demo");
+    static Symbol max_pct_complete("max_pct_complete");
+    static Symbol max_ms("max_ms");
+    mDemoMaxPctComplete = SystemConfig(demo)->FindInt(max_pct_complete);
     mDemoMaxMs = SystemConfig(demo)->FindFloat(max_ms);
+    // TU5, retail 0x8267BF30 tail: the movie-sync helper is created here (and
+    // released in ~Game under the same guard, which our dtor already did --
+    // it was deleting a pointer this ctor never set).
+    if (mProperties.mUnkTU5_movieSync) {
+        JoypadSubscribe(this);
+        mUnkTU5GuidePitch = new UnkTU5GuidePitchOwner(MetaPerformer::Current()->Song());
+    }
     LoadSong();
 }
 
