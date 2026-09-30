@@ -97,11 +97,16 @@ public:
     // permitted (by the standard's guaranteed member layout) to CSE the base
     // address across both fields into a single addi+sth/sth pair, matching
     // retail's measured .data layout (base+0 = altRev, base+4 = rev).
+    // +8 is the load-time "old flat-drawable Lod" owner (rb3-Wii's file-scope
+    // gCharMe): retail co-addresses it with the revs off ONE base register
+    // (PostLoad `stw ...,0x8(r21)`; operator>>(Lod) anchors on it and reads the
+    // rev at -4), which MSVC only does for a single aggregate or internal statics.
+    // The instance itself (gRevs) is a FILE-STATIC in Character.cpp -- see there.
     struct RevState {
         __declspec(align(4)) unsigned short altRev;
         __declspec(align(4)) unsigned short rev;
+        Character *charMe;
     };
-    static RevState gRevs;
     // RndDrawable
     virtual void UpdateSphere();
     virtual void DrawShowing();
