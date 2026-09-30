@@ -1122,9 +1122,13 @@ void CustomizePanel::SetupCurrentOutfit(Symbol s) {
         Asset *pAsset = pAssetMgr->GetAsset(s);
         MILO_ASSERT(pAsset, 0x443);
         Symbol assetSym = GetSymbolFromAssetType(pAsset->GetType());
+        static Symbol bandana("bandana");
+        static Symbol hat("hat");
         if (assetSym == bandana) {
+            static Symbol facehair("facehair");
             assetSym = facehair;
         } else if (assetSym == hat) {
+            static Symbol hair("hair");
             assetSym = hair;
         }
         mClosetMgr->SetCurrentOutfitPiece(assetSym);
