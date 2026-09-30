@@ -53464,6 +53464,28 @@
      "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
      "disposition": "withdrawn; the spelling's retail body is 0x8233bf00 (new group $_Param_Construct@0x8233bf00)",
      "evidence": "REFUTED ON RETAIL BYTES. HighlightObject's _Copy_Construct/_Param_Construct (60 B each, byte- and relocation-identical in our BandList.obj) is the 60 B body at 0x8233bf00, which calls 0x8233be48 = ??0HighlightObject@@QAA@ABV0@@Z at +0x24. Its callers are BandList's __uninitialized_fill_n 0x8233c990, __uninitialized_copy 0x8233ca28 and 0x8233de90. This group's survivor at 0x823c9178 calls a different copy constructor at the same offset, so /OPT:ICF cannot have folded them (it folds only COMDATs identical including relocations). These memberships were a masked-closure artifact: the one spelling was listed as folded into 15 different addresses."
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W17-TMPL2 2026-09-30",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+     "disposition": "withdrawn; record only -- W17-IKM (0e53192e) rebound this group's survivor from this spelling to ??$_Param_Construct@V?$ObjPtr@VRndTransformable@@@@V1@@... at 0x823c9178 and dropped it without a record; the no-prune rule requires one",
+     "absent_types": [
+      "ObjPtrVec"
+     ],
+     "type_evidence": {
+      "ObjPtrVec": {
+       "rtti_mangled": ".?AV?$ObjPtrVec@",
+       "retail_rtti_hits": 0,
+       "controls_present": {
+        ".?AV?$ObjPtrList@": 45,
+        ".?AV?$ObjOwnerPtr@": 27
+       },
+       "rb3wii_files": 0,
+       "dc3_only": true
+      }
+     },
+     "evidence": "TYPE DOES NOT EXIST IN RB3 RETAIL: raw scan of orig/45410914/band.exe finds 0 '.?AV?$ObjPtrVec@' type descriptors while the same probe finds 45 ObjPtrList and 27 ObjOwnerPtr ones; rb3-Wii (RB3's own dev decomp) mentions ObjPtrVec in 0 files -- it is DC3-only, as merge 835ab028 (W17-TMPL) recorded. The spelling's enclosing type Node<ObjPtrVec<RndTransformable>> therefore never existed in a retail COMDAT, so this could never have been the survivor. In 0 of 1,223 compiled objs on W17-TMPL2's built tree rebased on 0e53192e (control: the new survivor spelling is referenced by 1), so metric-neutral by construction."
     }
    ],
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
