@@ -10917,7 +10917,7 @@ QuestManager.cpp:
 	.pdata      start:0x821FFDC8 end:0x821FFDD8
 	.pdata      start:0x821FFDD8 end:0x821FFDE8
 	.pdata      start:0x821FFDE8 end:0x821FFDF8
-	.pdata      start:0x821FFDF8 end:0x821FFE08
+	.pdata      start:0x821FFDF8 end:0x821FFE00
 	.text       start:0x82359760 end:0x823598F0
 	.text       start:0x823598F0 end:0x82359BC0
 	.text       start:0x82359BC0 end:0x82359D28
@@ -10926,7 +10926,7 @@ QuestManager.cpp:
 	.text       start:0x8235A020 end:0x8235A130
 	.text       start:0x8235A130 end:0x8235A240
 	.text       start:0x8235A240 end:0x8235A340
-	.text       start:0x8235A340 end:0x8235A480
+	.text       start:0x8235A340 end:0x8235A408
 
 SongSortNode.cpp:
 	.pdata      start:0x8222E348 end:0x8222E5D8
@@ -10956,8 +10956,7 @@ StatCollector.cpp:
 	.text       start:0x826F5840 end:0x826F5850
 
 Tour.cpp:
-	.pdata      start:0x821FFED8 end:0x821FFEE0
-	.pdata      start:0x821FFEE0 end:0x821FFFC0
+	.pdata      start:0x821FFFB0 end:0x821FFFC0
 	.pdata      start:0x821FFFD0 end:0x821FFFD8
 	.pdata      start:0x821FFFD8 end:0x821FFFE0
 	.pdata      start:0x821FFFE0 end:0x82200040
@@ -10975,8 +10974,7 @@ Tour.cpp:
 	.pdata      start:0x82200520 end:0x82200548
 	.pdata      start:0x82200548 end:0x822005A0
 	.pdata      start:0x822005A0 end:0x822005A8
-	.text       start:0x8235AF50 end:0x8235AFA0
-	.text       start:0x8235AFA8 end:0x8235B9F8
+	.text       start:0x8235B978 end:0x8235B9F8
 	.text       start:0x8235BA78 end:0x8235BB48
 	.text       start:0x8235BB48 end:0x8235BBF8
 	.text       start:0x8235BBF8 end:0x8235C01C
@@ -11010,21 +11008,31 @@ TourBand.cpp:
 	.text       start:0x82B79420 end:0x82B79590
 	.text       start:0x82B79590 end:0x82B799B8
 
+band3/tour/Quest.cpp:
+	.pdata      start:0x821FFEB8 end:0x821FFEE0
+	.pdata      start:0x821FFEE0 end:0x821FFFB0
+	.text       start:0x8235AE68 end:0x8235AFA0
+	.text       start:0x8235AFA8 end:0x8235B978
+
+band3/tour/TourReward.cpp:
+	.pdata      start:0x822009D0 end:0x82200A48
+	.text       start:0x82364428 end:0x82364AA0
+
 band3/tour/TourCondition.cpp:
+	.pdata      start:0x821FFE00 end:0x821FFE08
 	.pdata      start:0x821FFE08 end:0x821FFE10
 	.pdata      start:0x821FFE10 end:0x821FFE18
 	.pdata      start:0x821FFE18 end:0x821FFE48
 	.pdata      start:0x821FFE48 end:0x821FFE80
 	.pdata      start:0x821FFE80 end:0x821FFEB0
-	.pdata      start:0x821FFEB0 end:0x821FFED8
-	.pdata      start:0x822009D0 end:0x82200A48
+	.pdata      start:0x821FFEB0 end:0x821FFEB8
+	.text       start:0x8235A408 end:0x8235A480
 	.text       start:0x8235A480 end:0x8235A4FC
 	.text       start:0x8235A500 end:0x8235A57C
 	.text       start:0x8235A580 end:0x8235A8A0
 	.text       start:0x8235A8A0 end:0x8235AB70
 	.text       start:0x8235AB70 end:0x8235AE00
-	.text       start:0x8235AE00 end:0x8235AF50
-	.text       start:0x82364428 end:0x82364AA0
+	.text       start:0x8235AE00 end:0x8235AE68
 
 TourPerformer.cpp:
 	.pdata      start:0x822005A8 end:0x822005F8

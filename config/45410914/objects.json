@@ -1900,6 +1900,8 @@
             "band3/tour/FixedSetlist.cpp": "NonMatching",
             "band3/tour/QuestManager.cpp": "NonMatching",
             "band3/tour/TourCondition.cpp": "NonMatching",
+            "band3/tour/Quest.cpp": "NonMatching",
+            "band3/tour/TourReward.cpp": "NonMatching",
             "band3/tour/TourDesc.cpp": "NonMatching",
             "band3/tour/TourGameRules.cpp": "NonMatching",
             "band3/tour/TourGameModifier.cpp": "NonMatching",

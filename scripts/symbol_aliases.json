@@ -90803,6 +90803,18 @@
    "added": {
     "lane": "W17-BPM 2026-09-30"
    }
+  },
+  {
+   "name": "Init@TourCondition",
+   "address": "0x8235a430",
+   "survivor": "?Init@TourCondition@@QAAXPBVDataArray@@@Z",
+   "folded": [
+    "?Init@TourReward@@QAAXPBVDataArray@@@Z"
+   ],
+   "evidence": "Hand-installed by lane W16-IB. Evidence tier T1: retail bytes at 0x8235A430 are 90830004 4E800020 (stw r4,0x4(r3); blr), relocation-free, and our compiled ?Init@TourCondition and ?Init@TourReward are both exactly those 8 bytes with no relocations (mConds and mRewards both sit at +0x4 after the vptr). The address lies inside retail TourCondition.cpp (0x8235A408-0x8235AE68, vtable .?AVTourCondition@@ 0x8203CC6C), so TourCondition's copy is the survivor. Retail Quest::Configure (0x8235B078) calls 0x8235A430 three times, where our source calls TourCondition::Init once and TourReward::Init twice.",
+   "added": {
+    "lane": "W16-IB 2026-09-30"
+   }
   }
  ]
 }
