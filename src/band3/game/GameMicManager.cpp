@@ -149,8 +149,10 @@ void GameMicManager::ApplyPlayback(bool b1, GameMic *iMic) const {
 }
 
 void GameMicManager::DeleteMic(int idx) {
-    if (mMics[idx]) {
-        RELEASE(mMics[idx]);
+    GameMic *mic = mMics[idx];
+    if (mic) {
+        delete mic;
+        mMics[idx] = nullptr;
         mMicCount--;
     }
 }
