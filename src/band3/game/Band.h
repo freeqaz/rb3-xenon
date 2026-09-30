@@ -64,6 +64,9 @@ public:
     Player *NewPlayer(BeatMaster *, BandUser *);
     bool EveryoneDoneWithSong() const;
     bool EveryoneFinishedCoda();
+    // TU5 out-of-line helpers (retail 0x8269A5A8 / 0x8269A610; names ours).
+    bool PlayerDoneWithCoda(Player *);
+    bool PlayerDoneOrBlewCoda(Player *);
     void DealWithCodaGem(Player *, int, bool, bool);
     bool AnyoneSaveable() const;
     void SetGameOver();

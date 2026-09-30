@@ -260,47 +260,20 @@ void Band::CheckCoda(SongPos &pos) {
     }
     int tick = (int)pos.GetTotalTick();
     int codaStart = TheSongDB->GetCodaStartTick();
-    bool past_start_of_coda = false;
-    if (codaStart > 0 && tick > TheSongDB->GetCodaStartTick()) {
-        past_start_of_coda = true;
-    }
-    bool end_of_coda = IsEndOfCoda(tick);
-    if (past_start_of_coda) {
-        if (end_of_coda && unk60 == 1) {
-            unk60 = 2;
-            TheBandDirector->SetCharacterHideHackEnabled(false);
-        } else if (!end_of_coda && unk60 == 0 && (int)mActivePlayers.size() > 2) {
-            unk60 = 1;
-            TheBandDirector->SetCharacterHideHackEnabled(true);
-        }
-    }
-    if (!unk40 && past_start_of_coda && end_of_coda) {
-        Player *p;
-        bool blown;
+    // TU5: no BandDirector character-hide-hack toggling here.
+    if (!unk40 && codaStart > 0 && tick > TheSongDB->GetCodaStartTick()
+        && IsEndOfCoda(tick)) {
         for (int i = 0; i < mActivePlayers.size(); i++) {
-            p = mActivePlayers[i];
-            if (p->mTrackType == kTrackVocals) {
-                blown = false;
-                if (p->AutoplaysCoda() || p->mHasFinishedCoda
-                    || p->mQuarantined || p->mHasBlownCoda) {
-                    blown = true;
-                }
-                if (!blown) {
+            if (mActivePlayers[i]->mTrackType == kTrackVocals) {
+                if (!PlayerDoneOrBlewCoda(mActivePlayers[i])) {
                     BlowCoda(mActivePlayers[i]);
                 }
                 break;
             }
         }
         bool allDone = true;
-        bool done;
         for (int i = 0; i < mActivePlayers.size(); i++) {
-            p = mActivePlayers[i];
-            done = false;
-            if (p->AutoplaysCoda() || p->mHasFinishedCoda
-                || p->mQuarantined || p->mHasBlownCoda) {
-                done = true;
-            }
-            if (!done) {
+            if (!PlayerDoneOrBlewCoda(mActivePlayers[i])) {
                 allDone = false;
                 break;
             }
@@ -366,18 +339,19 @@ bool Band::IsEndOfCoda(int i1) {
     }
 }
 
+bool Band::PlayerDoneWithCoda(Player *p) {
+    return p->AutoplaysCoda() || p->mHasFinishedCoda || p->mQuarantined;
+}
+
+bool Band::PlayerDoneOrBlewCoda(Player *p) {
+    return PlayerDoneWithCoda(p) || p->mHasBlownCoda;
+}
+
 bool Band::EveryoneFinishedCoda() {
     if (unk44 == 2)
         return false;
-    bool b;
-    Player *p;
     for (int i = 0; i < mActivePlayers.size(); i++) {
-        p = mActivePlayers[i];
-        b = false;
-        if (p->AutoplaysCoda() || p->mHasFinishedCoda || p->mQuarantined) {
-            b = true;
-        }
-        if (!b)
+        if (!PlayerDoneWithCoda(mActivePlayers[i]))
             return false;
     }
     return true;
