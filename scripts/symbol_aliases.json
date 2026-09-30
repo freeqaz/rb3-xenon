@@ -5885,13 +5885,32 @@
   {
    "name": "$_Param_Construct",
    "address": "0x82557060",
-   "survivor": "??$_Param_Construct@VPracticeStep@@V1@@stlpmtx_std@@YAXPAVPracticeStep@@ABV1@@Z",
+   "survivor": "??$_Copy_Construct@UGoalAcquisitionInfo@@@stlpmtx_std@@YAXPAUGoalAcquisitionInfo@@ABU1@@Z",
    "folded": [
-    "??$_Copy_Construct@UGoalAcquisitionInfo@@@stlpmtx_std@@YAXPAUGoalAcquisitionInfo@@ABU1@@Z",
     "??$_Param_Construct@UGoalAcquisitionInfo@@U1@@stlpmtx_std@@YAXPAUGoalAcquisitionInfo@@ABU1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 3 census sites over 2 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??$_Param_Construct@VPracticeStep@@V1@@stlpmtx_std@@YAXPAVPracticeStep@@ABV1@@Z",
+     "lane": "W17-PRAC 2026-09-30",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+     "disposition": "withdrawn; the group survivor is rebound to the retail identity at 0x82557060, and the map is rebound there in the same commit",
+     "absent_types": [
+      "PracticeStep"
+     ],
+     "type_evidence": {
+      "PracticeSection": {
+       "rtti_mangled": ".?AVPracticeSection@@",
+       "retail_rtti_hits": 0,
+       "polymorphic_in_our_source": "yes (hamobj/PracticeSection.h, RndAnimatable-derived; PracticeStep is its element type). RB3's own band3/game PracticeSection is a different, non-polymorphic 0x24 struct and has no PracticeStep member",
+       "rb3wii_files_mentioning_PracticeStep": 0,
+       "dc3_files": 11
+      }
+     },
+     "evidence": "TYPE DOES NOT EXIST IN RB3 RETAIL, AND THE BODY IS TYPED BY ITS CALLEE AND CALLERS. Retail 0x82557060 (60 B) null-checks r3 and calls 0x82556e60 = ??0GoalAcquisitionInfo@@QAA@ABU0@@Z (Symbol at +0, String copy-ctor at +4, word at +0x10). Its four retail callers are all vector<GoalAcquisitionInfo> helpers in AccomplishmentManager's span: __uninitialized_fill_n<GoalAcquisitionInfo> (0x82558310), __uninitialized_copy<GoalAcquisitionInfo> (0x82558440), vector<GoalAcquisitionInfo>::_M_insert_overflow_aux (0x8255a1a8) and ::push_back (0x8255c870). It is the exact twin of 0x825570d0 _Copy_Construct<GoalProgressionInfo>. Our PracticeStep constructor calls PracticeStep's copy ctor, a different relocation target, so it could never be this COMDAT. _Copy_Construct<GoalAcquisitionInfo> is the survivor (twin naming); _Param_Construct<GoalAcquisitionInfo> stays folded (same body, both spellings are defined by AccomplishmentManager.obj; RELOC-RECONCILE 2026-08-20 already proved retail holds a single body for them)."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -88391,11 +88410,18 @@
   {
    "name": "__uninitialized_copy_CameraManager",
    "address": "0x82558440",
-   "survivor": "??$__uninitialized_copy@PAUPropertyFilter@CameraManager@@PAU12@@stlpmtx_std@@YAPAUPropertyFilter@CameraManager@@PAU12@00ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_copy@PAUGoalAcquisitionInfo@@PAU1@@stlpmtx_std@@YAPAUGoalAcquisitionInfo@@PAU1@00ABU__false_type@0@@Z"
-   ],
-   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 51, row addr 0x82558440). \"ours\" spelling ??$__uninitialized_copy@PAUGoalAcquisitionInfo@@PAU1@@stlpmtx_std@@YAPAUGoalAcquisitionInfo@@PAU1@00ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_copy@PAUPropertyFilter@CameraManager@@PAU12@@stlpmtx_std@@YAPAUPropertyFilter@CameraManager@@PAU12@00ABU__false_type@0@@Z at retail address 0x82558440. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 SLOT-FOLD-OK, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 328 B (328 B honest) across ['default/band3/meta_band/AccomplishmentManager'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md."
+   "survivor": "??$__uninitialized_copy@PAUGoalAcquisitionInfo@@PAU1@@stlpmtx_std@@YAPAUGoalAcquisitionInfo@@PAU1@00ABU__false_type@0@@Z",
+   "folded": [],
+   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 51, row addr 0x82558440). \"ours\" spelling ??$__uninitialized_copy@PAUGoalAcquisitionInfo@@PAU1@@stlpmtx_std@@YAPAUGoalAcquisitionInfo@@PAU1@00ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_copy@PAUPropertyFilter@CameraManager@@PAU12@@stlpmtx_std@@YAPAUPropertyFilter@CameraManager@@PAU12@00ABU__false_type@0@@Z at retail address 0x82558440. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 SLOT-FOLD-OK, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 328 B (328 B honest) across ['default/band3/meta_band/AccomplishmentManager'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_copy@PAUPropertyFilter@CameraManager@@PAU12@@stlpmtx_std@@YAPAUPropertyFilter@CameraManager@@PAU12@00ABU__false_type@0@@Z",
+     "lane": "W17-PRAC 2026-09-30",
+     "class": "WRONG_MAP_NAME_AT_ADDRESS",
+     "disposition": "withdrawn; the group survivor is rebound to the retail identity at 0x82558440, and the map is rebound there in the same commit",
+     "evidence": "Retail 0x82558440 (96 B) strides 0x14 and calls 0x82557060 (_Copy_Construct<GoalAcquisitionInfo>) per element; its only retail callers are two bl sites in 0x8255a1a8 vector<GoalAcquisitionInfo>::_M_insert_overflow_aux, and it sits inside AccomplishmentManager's span. CameraManager::PropertyFilter is also 0x14 (DataNode, DataNode, int) but its copy runs two DataNode copy ctors, so its __uninitialized_copy calls a different element constructor and cannot fold with this body. Survivor relabelled to __uninitialized_copy<GoalAcquisitionInfo>, which AccomplishmentManager.obj defines; the split is re-homed CameraManager.cpp -> AccomplishmentManager.cpp."
+    }
+   ]
   },
   {
    "name": "_Destroy_Range_PAVCartRow",

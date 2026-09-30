@@ -4724,18 +4724,12 @@ PracticeSection.cpp:
 	.pdata      start:0x821FEC20 end:0x821FEC30
 	.pdata      start:0x822062B8 end:0x822062C0
 	.pdata      start:0x8220BBD0 end:0x8220BBE0
-	.pdata      start:0x8221C4B8 end:0x8221C4C8
-	.pdata      start:0x8221C7F0 end:0x8221C800
-	.pdata      start:0x8221C9D0 end:0x8221C9D8
 	.pdata      start:0x82233B30 end:0x82233B40
 	.pdata      start:0x822375D8 end:0x822375E0
 	.text       start:0x82346E48 end:0x82346EB8
 	.text       start:0x823C8128 end:0x823C8198
 	.text       start:0x82424D18 end:0x82424DCC
 	.text       start:0x8250D4C0 end:0x8250D4C8
-	.text       start:0x82557060 end:0x825570C8
-	.text       start:0x8255A340 end:0x8255A4CC
-	.text       start:0x8255C8E8 end:0x8255C95C
 	.text       start:0x826B8BA8 end:0x826B8C38
 	.text       start:0x826FED98 end:0x826FEDF8
 
@@ -4916,13 +4910,11 @@ WaveFile.cpp:
 	.pdata      start:0x821F4860 end:0x821F4868
 	.pdata      start:0x821F4868 end:0x821F4870
 	.pdata      start:0x8220DE00 end:0x8220DE08
-	.pdata      start:0x8221C5F0 end:0x8221C600
 	.pdata      start:0x82243088 end:0x822431D0
 	.pdata      start:0x82243320 end:0x82243328
 	.text       start:0x822A2F18 end:0x822A2F78
 	.text       start:0x822A2F80 end:0x822A2FA8
 	.text       start:0x82451F98 end:0x82451FF8
-	.text       start:0x825584D8 end:0x82558568
 	.text       start:0x827C1A80 end:0x827C1A84
 	.text       start:0x827D2E70 end:0x827D3FAC
 	.text       start:0x827D5BB0 end:0x827D5C00
@@ -6009,13 +6001,11 @@ CameraManager.cpp:
 	.pdata      start:0x82213068 end:0x82213248
 	.pdata      start:0x82213258 end:0x822133E0
 	.pdata      start:0x822149F0 end:0x822149F8
-	.pdata      start:0x8221C5E0 end:0x8221C5F0
 	.pdata      start:0x82222218 end:0x82222220
 	.pdata      start:0x82222220 end:0x822222B0
 	.text       start:0x824B9F00 end:0x824BBE38
 	.text       start:0x824BBED0 end:0x824BD6C0
 	.text       start:0x824D6F68 end:0x824D6FDC
-	.text       start:0x82558440 end:0x825584D0
 	.text       start:0x825ACD30 end:0x825ACEC0
 	.text       start:0x825ACEC0 end:0x825AD768
 	.text       start:0x825AD7A4 end:0x825AD7A8
@@ -8620,17 +8610,8 @@ band3/meta_band/PrefabMgr.cpp:
 	.text       start:0x82554D0C end:0x82555E64
 
 band3/meta_band/AccomplishmentManager.cpp:
-	.pdata      start:0x8221C378 end:0x8221C4B8
-	.pdata      start:0x8221C4C8 end:0x8221C5E0
-	.pdata      start:0x8221C600 end:0x8221C7F0
-	.pdata      start:0x8221C800 end:0x8221C9D0
-	.pdata      start:0x8221C9D8 end:0x8221CCF8
-	.text       start:0x82555E68 end:0x82557060
-	.text       start:0x825570C8 end:0x82558440
-	.text       start:0x825584D0 end:0x825584D8
-	.text       start:0x82558568 end:0x8255A340
-	.text       start:0x8255A4CC end:0x8255C8E8
-	.text       start:0x8255C95C end:0x8255F5C8
+	.pdata      start:0x8221C378 end:0x8221CCF8
+	.text       start:0x82555E68 end:0x8255F5C8
 
 band3/meta_band/AccomplishmentProgress.cpp:
 	.pdata      start:0x82216108 end:0x82216118
