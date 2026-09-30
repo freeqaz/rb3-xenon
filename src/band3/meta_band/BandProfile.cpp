@@ -1033,3 +1033,13 @@ RndTex *BandProfile::GetPictureTex() { return mProfilePicture->mUserPicture; }
 // nowhere in the tree) and existed only to pad the gap the smaller
 // std::map left ahead of mScores. Dropping it is behaviour-preserving.
 void BandProfile::AutoFakeFill(int) {}
+
+// Retail emits this at the tail of this TU (fn_8258EF20) and calls it out of
+// line from AccomplishmentProgress::UpdateStats.
+int GetKickPercent(const Stats &stats) {
+    if (stats.m0x68 != 0) {
+        return (int)(100.0f * ((float)stats.m0x6c / (float)stats.m0x68));
+    } else {
+        return 0;
+    }
+}

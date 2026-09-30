@@ -32,6 +32,9 @@
 #include "xdk/xapilibi/winerror.h"
 #include <cstring>
 
+// defined at the end of BandProfile.cpp: retail calls it out of line (fn_8258EF20)
+int GetKickPercent(const Stats &stats);
+
 DataNode RockCentralOpCompleteMsg::Arg2() const { return mData->Node(4); }
 
 GamerAwardStatus::GamerAwardStatus() : unk8(-1), unkc(0), unk10(0) {
@@ -414,25 +417,14 @@ void AccomplishmentProgress::UpdateStats(
         }
     }
     if (type == kScoreDrum) {
-        if (stats.m0x68 != 0) {
-            kickPercent =
-                (int)(100.0f * ((float)stats.m0x6c / (float)stats.m0x68));
-        } else {
-            kickPercent = 0;
-        }
+        kickPercent = GetKickPercent(stats);
         if (kickPercent > mBestKickPercent[diff]) {
             mBestKickPercent[diff] = kickPercent;
         }
         mTotalDrumRollCount[diff] += stats.mRollsHitCompletely;
     }
     if (type == kScoreRealDrum) {
-        int proKickPercent;
-        if (stats.m0x68 != 0) {
-            proKickPercent =
-                (int)(100.0f * ((float)stats.m0x6c / (float)stats.m0x68));
-        } else {
-            proKickPercent = 0;
-        }
+        int proKickPercent = GetKickPercent(stats);
         if (proKickPercent > mBestProKickPercent[diff]) {
             mBestProKickPercent[diff] = proKickPercent;
         }
