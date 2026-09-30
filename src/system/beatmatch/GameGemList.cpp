@@ -196,7 +196,7 @@ void GameGemList::SetGems(
 }
 
 void GameGemList::MergeChordGems() {
-    if (mGems.empty())
+    if (mGems.size() == 0) // retail divides (end - begin) by 0x44
         return;
     std::vector<GameGem> merged;
     std::vector<GameGem>::iterator it = mGems.begin();
@@ -208,7 +208,7 @@ void GameGemList::MergeChordGems() {
         std::vector<GameGem>::iterator next = it + 1;
         while (next != mGems.end() && abs(next->mTick - tick) < 10) {
             if (abs(next->mDurationTicks - durTicks) < 10) {
-                chord.mSlots |= next->mSlots;
+                chord.mSlots = next->GetSlots() | chord.GetSlots();
             } else {
                 keep = false;
             }
@@ -254,7 +254,8 @@ bool GameGemList::AddGameGem(const GameGem &gem, NoStrumState noStrum) {
 }
 
 void GameGemList::Finalize() {
-    std::vector<GameGem>(mGems).swap(mGems);
+    // retail: `addi r3, r3, 4; b TrimExcess<GameGem>` (0x8278DEE8 -> 0x8278DDF8)
+    TrimExcess(mGems);
 }
 
 bool GameGemList::WillBeNoStrum(const GameGem &gem) {
