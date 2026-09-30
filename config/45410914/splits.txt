@@ -2920,7 +2920,7 @@ UI.cpp:
 	.text       start:0x82804E00 end:0x82806414
 
 system/rndobj/Utl.cpp:
-	.pdata      start:0x8220CDC0 end:0x8220D018
+	.pdata      start:0x8220CE78 end:0x8220D018
 	.pdata      start:0x8220D020 end:0x8220D2A8
 	.pdata      start:0x8220D2B0 end:0x8220D2D0
 	.pdata      start:0x8220D2D8 end:0x8220D2E8
@@ -2930,7 +2930,7 @@ system/rndobj/Utl.cpp:
 	.pdata      start:0x82237B18 end:0x82237B28
 	.pdata      start:0x8223AD40 end:0x8223AD50
 	.pdata      start:0x8223AD68 end:0x8223AD70
-	.text       start:0x8243882C end:0x8243E108
+	.text       start:0x82439910 end:0x8243E108
 	.text       start:0x8243E15C end:0x824423E8
 	.text       start:0x8244243C end:0x82442C78
 	.text       start:0x82442CCC end:0x82442DF8
@@ -4932,10 +4932,10 @@ Env.cpp:
 
 BaseMaterial.cpp:
 	.pdata      start:0x8220CA60 end:0x8220CB00
-	.pdata      start:0x8220CD58 end:0x8220CDC0
+	.pdata      start:0x8220CD58 end:0x8220CE78
 	.text       start:0x82435520 end:0x82435528
 	.text       start:0x82435528 end:0x8243619C
-	.text       start:0x8243838C end:0x8243882C
+	.text       start:0x8243838C end:0x82439910
 
 MetaMaterial.cpp:
 	.pdata      start:0x8221EA58 end:0x8221EA68
