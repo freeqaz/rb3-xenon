@@ -4511,8 +4511,10 @@ CharTransCopy.cpp:
 	.text       start:0x823C8040 end:0x823C8128
 
 CharTransDraw.cpp:
+	.pdata      start:0x822062B8 end:0x822062C0
 	.pdata      start:0x82206330 end:0x82206340
 	.pdata      start:0x82206378 end:0x82206380
+	.text       start:0x823C8128 end:0x823C8190
 	.text       start:0x823C88D0 end:0x823C88DC
 	.text       start:0x823C88E0 end:0x823C88EC
 	.text       start:0x823C8908 end:0x823C8A64
@@ -4710,9 +4712,7 @@ HamIKEffector.cpp:
 
 PracticeSection.cpp:
 	.pdata      start:0x821FEC20 end:0x821FEC30
-	.pdata      start:0x822062B8 end:0x822062C0
 	.text       start:0x82346E48 end:0x82346EB8
-	.text       start:0x823C8128 end:0x823C8198
 	.text       start:0x8250D4C0 end:0x8250D4C8
 
 RhythmBattle.cpp:
@@ -7270,7 +7270,7 @@ Screenshot.cpp:
 	.pdata      start:0x82206340 end:0x82206378
 	.pdata      start:0x82247EF8 end:0x82247F00
 	.pdata      start:0x82247F10 end:0x82247F70
-	.text       start:0x823C8198 end:0x823C88D0
+	.text       start:0x823C8190 end:0x823C88D0
 	.text       start:0x823C88DC end:0x823C88E0
 	.text       start:0x823C88EC end:0x823C8908
 	.text       start:0x823C8A64 end:0x823C8A68

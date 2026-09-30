@@ -31040,6 +31040,7 @@
  "0x82b7bcb0": "?Refresh@QuestFilterPanel@@QAAXXZ",
  "0x823c7ad8": "??1CharTransCopy@@UAA@XZ",
  "0x823c8088": "?PollDeps@CharTransCopy@@UAAXAAV?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@0@Z",
+ "0x823c8128": "?DrawShowing@CharTransDraw@@UAAXXZ",
  "0x8233f5a0": "??$PropSync@VHighlightObject@@@@YA_NAAV?$ObjVector@VHighlightObject@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x8233f4e0": "?Init@BandList@@SAXXZ"
 }
