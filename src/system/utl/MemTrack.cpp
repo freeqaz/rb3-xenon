@@ -293,17 +293,24 @@ void EndMemTrackFileName() {
 void MemTrackInit(int heap, int numAllocs, bool heapOnly) {
     CritSecTracker tracker(gMemLock);
     MILO_ASSERT(!gMemTracker, 0x82);
+#ifdef HX_NATIVE
     if (heapOnly) {
         numAllocs = 1;
     }
+#endif
     gMemTracker = new MemTracker(heap, numAllocs);
+#ifdef HX_NATIVE
+    // DC3-era; RB3-360 retail's MemTrackInit ignores heapOnly.
     gMemTracker->SetHeapOnly(heapOnly);
+#endif
     gAllocInfoHeap = (AllocInfo *)malloc(numAllocs * sizeof(AllocInfo));
     MILO_ASSERT(gAllocInfoHeap, 0x89);
     AllocInfo::SetPoolMemory(gAllocInfoHeap, numAllocs * sizeof(AllocInfo));
     DataRegisterFunc("heap_report", MemTrackReportDF);
     DataRegisterFunc("heap_dump", MemTrackHeapDumpDF);
     DataRegisterFunc("mem_log", MemTrackLogDF);
+#ifdef HX_NATIVE
+    // DC3-era tail; RB3-360 retail returns after registering the DataFuncs.
     MemTrackReport(0, false);
     AllocInfoInit();
     int i = 0;
@@ -316,4 +323,5 @@ void MemTrackInit(int heap, int numAllocs, bool heapOnly) {
         memset(mem, 0, 0x80);
         i += 4;
     } while (i <= 0x100);
+#endif
 }
