@@ -8,24 +8,10 @@ Hmx::Matrix4 Hmx::Matrix4::sID(
 
 Transform Transform::sID(Hmx::Matrix3::GetIdentity(), Vector3(0, 0, 0));
 
-Hmx::Matrix4::Matrix4(const Transform &tf) {
-    x.x = tf.m.x.x;
-    x.y = tf.m.x.y;
-    x.z = tf.m.x.z;
-    x.w = 0.0f;
-    y.x = tf.m.y.x;
-    y.y = tf.m.y.y;
-    y.z = tf.m.y.z;
-    y.w = 0.0f;
-    z.x = tf.m.z.x;
-    z.y = tf.m.z.y;
-    z.z = tf.m.z.z;
-    z.w = 0.0f;
-    w.x = tf.v.x;
-    w.y = tf.v.y;
-    w.z = tf.v.z;
-    w.w = 1.0f;
-}
+// W17-PIN2: Matrix4(const Transform &) moved into Mtx.h as an inline member
+// (the DC3 w8-e move). Retail emits it as a per-TU COMDAT: its one body sits at
+// 0x8246b770 inside RndShaderMgr's .text span, far from this TU's own functions
+// (Zero@Matrix4 0x824ee358, Det 0x824ee390, Invert 0x824ef6e8).
 
 // Computes determinant of 3x3 matrix and returns its reciprocal (1/det)
 // Used for matrix inversion - returns 0 if matrix is singular

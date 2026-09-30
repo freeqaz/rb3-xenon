@@ -1495,6 +1495,7 @@ END_PROPSYNCS
 //   bandobj/BandCamShot.cpp        <- ALSO emitted by bandobj/BandCharDesc.cpp:1144
 //   rndobj/FontBase.cpp            <- a target source, compiled standalone
 //   char/CharSignalApplier.cpp     <- a target source, compiled standalone
+//                                     (include since removed, W17-PIN2)
 //   band3/meta_band/ContextChecker.cpp  <- band3; no target needs it
 //
 // 130 duplicate definitions between them. OutfitConfig's own body needs none
@@ -1546,13 +1547,11 @@ END_PROPSYNCS
 #undef gRev
 #undef gAltRev
 
-#define gRev gRev_CharSignalApplier
-#define gAltRev gAltRev_CharSignalApplier
-#include "obj/dialect_object_push.h"
-#include "char/CharSignalApplier.cpp"
-#include "obj/dialect_object_pop.h"
-#undef gRev
-#undef gAltRev
+// char/CharSignalApplier.cpp owner-include REMOVED (W17-PIN2): CharSignalApplier
+// is Dance Central code with no retail RTTI, and every row it paired in this
+// unit was a shape match. 0x8229d098 is ~OutfitPiece, 0x8229e568 is
+// operator<<(vector<BandPatchMesh>), and 0x8229ee08 is
+// _Copy_Construct<ObjPtr<RndTex>>. No map row names BoneOp any more.
 
 #undef SW_SCATTER_OWNER_INCLUDE
 #endif // ifndef gRev (OutfitConfig-as-owner inert guard)

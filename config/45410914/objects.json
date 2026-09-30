@@ -1023,6 +1023,7 @@
             "system/rnddx9/TexMgr.cpp": "NonMatching",
             "system/rndobj/Enter.cpp": "NonMatching",
             "system/rndobj/Fur.cpp": "NonMatching",
+            "system/rndobj/ShaderMgr.cpp": "NonMatching",
             "system/rndobj/Fur_NG.cpp": "NonMatching",
             "system/rndobj/PostProcMgr.cpp": "NonMatching",
             "system/rndobj/wordwrap.cpp": "NonMatching",
