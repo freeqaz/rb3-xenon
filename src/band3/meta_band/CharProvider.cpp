@@ -197,7 +197,7 @@ bool CharProvider::IsIndexNewChar(int idx) {
 }
 
 bool CharProvider::IsIndexNone(int idx) {
-    if (mCharacters.empty())
+    if (mCharacters.size() == 0) // retail: size(), not empty()
         return false;
     else {
         MILO_ASSERT_RANGE(idx, 0, mCharacters.size(), 0x141);
@@ -207,7 +207,7 @@ bool CharProvider::IsIndexNone(int idx) {
 }
 
 bool CharProvider::IsIndexCustomChar(int idx) {
-    if (mCharacters.empty())
+    if (mCharacters.size() == 0) // retail: size(), not empty()
         return false;
     else {
         MILO_ASSERT_RANGE(idx, 0, mCharacters.size(), 0x14E);
