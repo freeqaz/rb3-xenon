@@ -271,10 +271,8 @@ void HDCache::OpenFiles(int numCachedArkfiles) {
         int idx = *max;
         const char *fileFmt = MakeString(mFileFmt.c_str(), idx);
         File *file = NewFile(fileFmt, 0x50101);
-        bool ok = false;
-        if (file && file->Truncate(TheArchive->GetArkfileNumBlocks(idx) * kArkBlockSize)) {
-            ok = true;
-        }
+        bool ok =
+            file && file->Truncate(TheArchive->GetArkfileNumBlocks(idx) * kArkBlockSize);
         if (file) {
             delete file;
             if (!ok)
