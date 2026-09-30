@@ -288,7 +288,11 @@ bool Campaign::IsLastCampaignLevel(Symbol level) const {
 }
 
 Symbol Campaign::GetNextCampaignLevel(Symbol i_symCampaignLevel) const {
+    // Retail's codegen shows no trace of this check: even a dead-stripped
+    // inlined IsLastCampaignLevel() perturbs the loop's register use.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     MILO_ASSERT(!IsLastCampaignLevel( i_symCampaignLevel ), 0x1EF);
+#endif
     int iNumLevels = m_vCampaignLevels.size();
     for (int iIndex = 0; iIndex < iNumLevels; iIndex++) {
         if (i_symCampaignLevel == m_vCampaignLevels[iIndex]) {
