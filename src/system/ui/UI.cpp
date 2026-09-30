@@ -37,6 +37,7 @@
 #include "ui/UIScreen.h"
 #include "ui/UIPanel.h"
 #include "ui/UIResource.h"
+#include <algorithm>
 #include "ui/UISlider.h"
 #include "ui/UITrigger.h"
 #include "utl/Cheats.h"
@@ -350,22 +351,10 @@ void UIManager::CancelTransition() {
 }
 
 bool UIManager::OverloadHorizontalNav(JoypadAction act, JoypadButton btn, Symbol s) const {
-    bool ret = false;
-    if (mOverloadHorizontalNav) {
-        bool b2 = true;
-        if (act == NavButtonToNavAction(btn)) {
-            bool b1 = false;
-            if (s != none) {
-                if (JoypadTypeHasLeftyFlip(s))
-                    b1 = true;
-            }
-            if (!b1)
-                b2 = false;
-        }
-        if (b2)
-            ret = true;
-    }
-    return ret;
+    // retail 0x82802978: function-local static Symbol, one boolean expression
+    static Symbol none("none");
+    return mOverloadHorizontalNav
+        && (NavButtonToNavAction(btn) != act || (s != none && JoypadTypeHasLeftyFlip(s)));
 }
 
 // RB3 retail (0x82804268) is rb3-Wii's Terminate without the two calls RB3
@@ -555,11 +544,13 @@ UIResource *UIManager::FindResource(const DataArray *array) {
     DataArray *fileArray = array->FindArray(resource_file, false);
     if (fileArray) {
         FilePath path(FileGetPath(fileArray->File()), fileArray->Str(1));
-        for (std::list<UIResource *>::iterator it = mResources.begin();
-             it != mResources.end();
-             ++it) {
-            if (strcmp((*it)->mResourcePath.c_str(), path.c_str()) == 0)
-                return *it;
+        // retail 0x82804C98 (rb3-Wii shape): equal_range over the sorted list
+        std::pair<std::list<UIResource *>::iterator, std::list<UIResource *>::iterator>
+            range = std::equal_range(
+                mResources.begin(), mResources.end(), path.c_str(), UIResource::Compare()
+            );
+        if (range.first != range.second) {
+            return *range.first;
         }
     }
     return nullptr;
