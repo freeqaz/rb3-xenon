@@ -5,7 +5,8 @@ class ProTrainerPanel : public GemTrainerPanel {
 public:
     ProTrainerPanel() {}
     virtual DataNode Handle(DataArray *, bool);
-    virtual ~ProTrainerPanel() {}
+    // NO destructor declared: retail ??1ProTrainerPanel (retail row fn_826AF*) has no derived
+    // vptr-restore, which a user-declared `{}` dtor would emit (cf. GemTrainerLoopPanel).
     virtual void Enter();
     virtual void SetLessonComplete(int);
     virtual bool AllSectionsFinished() const;
