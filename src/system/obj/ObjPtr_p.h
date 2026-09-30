@@ -191,9 +191,22 @@ Hmx::Object *ObjRefConcrete<T1, T2>::SetObj(Hmx::Object *root_obj) {
 
 template <class T1>
 BinStream &operator<<(BinStream &bs, const ObjRefConcrete<T1, class ObjectDir> &f) {
+#ifdef HX_NATIVE
     MILO_ASSERT(f.RefOwner(), 0x4D1);
     T1 *obj = f;
     const char *objName = obj ? obj->Name() : "";
+#else
+    // Retail X360 (the four out-of-line bodies, one per referent layout and
+    // each an ICF survivor: 0x8238b5b8 plain T, 0x8229e5d0 / 0x82280148 /
+    // 0x82377698 virtual-base T; 419 call sites between them): no call before
+    // the null test. RefOwner() is virtual here, so the match build's
+    // MILO_ASSERT(f.RefOwner()) -- ((void)(cond)) -- left a dead bctrl that
+    // retail does not have; rb3-Wii asserts on the non-virtual f.Owner().
+    // The referent is read through the smart pointer twice, as rb3-Wii's
+    // `f.Ptr() ? f.Ptr()->Name() : ""` does -- that is what gives retail's
+    // signed `cmpwi` null test (a `T1 *` local gives `cmplwi`).
+    const char *objName = f ? f->Name() : "";
+#endif
     bs << objName;
     return bs;
 }
