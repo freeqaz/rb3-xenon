@@ -710,6 +710,13 @@ config.custom_build_rules = [
         "description": "$desc",
     },
 ]
+# What a post-compile patcher reads besides our own object: the renamed target
+# objects (their stamp) and the target<->base pairing.  See the W16-HW note in
+# the "post-compile" block below.
+_target_side_inputs = [
+    str(stamp_dir / "target_symbol_renames.stamp"),
+    "objdiff.json",
+]
 config.custom_build_steps = {
     "pre-compile": [
         # Rename anonymous fn_<addr> symbols in dtk-split target .obj files to
@@ -776,6 +783,27 @@ config.custom_build_steps = {
     # this lane, obj_anon_ns bumped 27 objs and obj_dynamic_init bumped 188
     # (198 unique) and the next build recompiled exactly those 198. All six
     # patchers now write via _write_preserving_mtime(); do not remove that.
+    #
+    # ★★ FOUR OF THE SIX ALSO READ THE SPLIT'S OUTPUT, SO THEY DEPEND ON IT
+    # (lane W16-HW).  anon_ns, guard, bool_mangle and atexit_scope decide what
+    # to write by reading the RENAMED TARGET objects and objdiff.json's
+    # target<->base pairing -- not just our object.  With only `all_source` as
+    # an input, a change on the TARGET side (a splits.txt re-home, a
+    # target_symbol_map.json rename -- e.g. switching a worktree between two
+    # commits that differ only there) re-split and re-renamed the targets but
+    # never re-ran these passes, because no decomp object changed.  The tree
+    # then carried a pending patch that NO NUMBER OF FULL BUILDS cleared, and
+    # the VERIFY edge below failed on every build.  Measured on 20a1b2120 <->
+    # cad191b18 (map/splits-only commits): anon_ns left 17 hash occurrences
+    # unpatched in system/hamobj/HamCamTransform.obj, rc=1 on two consecutive
+    # builds.  Record: docs/decomp/patch-stamps-depend-on-split-2026-09-30.md.
+    #
+    # target_symbol_renames.stamp is the right input: its own edge depends on
+    # split_current_checked.stamp (moves on every split RUN), config.json and
+    # the map, and it is touched only when that edge runs -- so a quiet tree
+    # sees no change and a no-op build stays a no-op.  dynamic_init and
+    # eh_boundary read only the object in front of them and need nothing more
+    # than `all_source`; the stamp chain re-runs them behind the others anyway.
     "post-compile": [
         {
             "outputs": str(stamp_dir / "anon_ns_patched.stamp"),
@@ -783,6 +811,7 @@ config.custom_build_steps = {
             "implicit": [
                 "scripts/obj_anon_ns_patcher.py",
                 "all_source",
+                *_target_side_inputs,
             ],
             "variables": {
                 "cmd": "python3 scripts/obj_anon_ns_patcher.py --batch --apply",
@@ -809,6 +838,8 @@ config.custom_build_steps = {
                 "scripts/obj_guard_patcher.py",
                 str(stamp_dir / "dynamic_init_patched.stamp"),
                 "all_source",
+                *_target_side_inputs,
+                "scripts/obj_pairing.py",
             ],
             "variables": {
                 "cmd": "python3 scripts/obj_guard_patcher.py --batch --apply",
@@ -829,6 +860,8 @@ config.custom_build_steps = {
                 "scripts/obj_bool_mangle_patcher.py",
                 str(stamp_dir / "guard_patched.stamp"),
                 "all_source",
+                *_target_side_inputs,
+                "scripts/obj_pairing.py",
             ],
             "variables": {
                 "cmd": "python3 scripts/obj_bool_mangle_patcher.py --batch --apply",
@@ -842,6 +875,8 @@ config.custom_build_steps = {
                 "scripts/obj_atexit_scope_patcher.py",
                 str(stamp_dir / "bool_mangle_patched.stamp"),
                 "all_source",
+                *_target_side_inputs,
+                "scripts/obj_pairing.py",
             ],
             "variables": {
                 "cmd": "python3 scripts/obj_atexit_scope_patcher.py --batch --apply",

@@ -809,7 +809,9 @@ def run_check(repo: Path, quiet: bool = False,
         for line in tail:
             print(f"    {line}", file=sys.stderr)
     print("\nFix: run a full `./tools/ninja-locked` (the patch stamps take "
-          "`all_source` as a real input, so they re-run behind any recompile). "
+          "`all_source` as a real input, so they re-run behind any recompile, "
+          "and the four target-reading passes also take the renamer stamp + "
+          "objdiff.json, so they re-run behind any split/map change). "
           "If this fires during a FULL build, the dependency graph in "
           "configure.py has regressed.", file=sys.stderr)
     return 1
