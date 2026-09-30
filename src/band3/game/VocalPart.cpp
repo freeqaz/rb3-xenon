@@ -398,7 +398,7 @@ float VocalPart::FramePhraseMeterFrac() const {
 void VocalPart::UpdateMinMaxPitch(const VocalPhrase *const &phraseRef) {
     VocalNoteList *list = mVocalNoteList;
     const VocalPhrase *cur = phraseRef;
-    const VocalPhrase *end = list->mPhrases.data() + list->mPhrases.size();
+    const VocalPhrase *end = list->mPhrases.end();
     if (cur == end) {
         unka8 = 0.0f;
         unka4 = 0.0f;
@@ -408,18 +408,12 @@ void VocalPart::UpdateMinMaxPitch(const VocalPhrase *const &phraseRef) {
     unka4 = FLT_MAX;
     unka8 = -FLT_MAX;
     while (cur != end) {
-        int lastNote = cur->unk14;
-        int noteIdx = cur->unk10;
-        if (noteIdx != lastNote) {
-            int noteCount = lastNote - noteIdx;
-            for (int i = 0; i < noteCount; ++i) {
-                if (!list->mNotes[noteIdx].mUnpitchedNote) {
-                    foundPitchedNote = true;
-                    unka4 = (cur->unk24 < unka4) ? cur->unk24 : unka4;
-                    unka8 = (unka8 < cur->unk28) ? cur->unk28 : unka8;
-                    break;
-                }
-                ++noteIdx;
+        for (int i = cur->unk10; i < cur->unk14; i++) {
+            if (!list->mNotes[i].mUnpitchedNote) {
+                foundPitchedNote = true;
+                unka4 = Min(unka4, cur->unk24);
+                unka8 = Max(unka8, cur->unk28);
+                break;
             }
         }
         if (cur->unk1a)
