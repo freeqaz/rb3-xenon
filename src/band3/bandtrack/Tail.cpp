@@ -207,12 +207,32 @@ void Tail::Poll(float, float whammy, float) {
     }
 }
 
+// Retail 0x82BB0660: out-of-line vertex-row writer shared by UpdateVerts'
+// three rows (base, mid sections, cap). Name is ours.
+__declspec(noinline) static void WriteTailVerts(
+    RndMesh::Vert *&out,
+    const RndMesh::Vert *src,
+    const RndMesh::Vert *end,
+    float y,
+    float ofs,
+    float zScale,
+    float scaleX
+) {
+    for (; src != end; ++src) {
+        out->pos.y = y;
+        out->pos.x = (src->pos.x + ofs) * scaleX;
+        out->pos.z = src->pos.z * zScale;
+        out->tex.x = src->tex.x;
+        out->tex.y = src->tex.y;
+        ++out;
+    }
+}
+
 void Tail::UpdateVerts(float alpha, bool active) {
     if (!unk28) return;
 
-    int tailFlag = 0;
-    if (active || mSlideInfo.unk0) tailFlag = 1;
-    GemRepTemplate::TailType tailType = (GemRepTemplate::TailType) !tailFlag;
+    GemRepTemplate::TailType tailType =
+        (GemRepTemplate::TailType)(active || mSlideInfo.unk0 ? 0 : 1);
     float scaleX = mTemplate.mTailScaleX;
     int total_sections = mTemplate.GetNumTailSections(tailType);
     float sectionLen = mTemplate.GetTailSectionLength(tailType);
@@ -233,7 +253,7 @@ void Tail::UpdateVerts(float alpha, bool active) {
     int vertCount = templ.GetRequiredVertCount(used_sections);
     bool resized = false;
     RndMesh::VertVector &verts = mTailGeomOwner->Verts();
-    if (vertCount != verts.size()) {
+    if (verts.size() != vertCount) {
         verts.resize(vertCount);
         resized = true;
     }
@@ -245,6 +265,7 @@ void Tail::UpdateVerts(float alpha, bool active) {
     float curY = 0;
 
     float baseOfs = 0;
+    int i = 0;
     if (active) {
         baseOfs = baseOfs + mWhammy[0];
     }
@@ -253,18 +274,12 @@ void Tail::UpdateVerts(float alpha, bool active) {
     }
 
     float zScale = 1.0f;
-    for (RndMesh::Vert *src = tailBegin; src != tailEnd; ++src, ++out) {
-        out->pos.y = 0;
-        out->pos.x = scaleX * (src->pos.x + baseOfs);
-        out->pos.z = src->pos.z * zScale;
-        out->tex.x = src->tex.x;
-        out->tex.y = src->tex.y;
-    }
+    WriteTailVerts(out, tailBegin, tailEnd, 0, baseOfs, zScale, scaleX);
 
     curY += midStart;
     yWorld += midStart;
 
-    for (int i = 0; i < midSections; ) {
+    for (; i < midSections;) {
         float ofs = 0;
         if (active) {
             int idx = (int) (0.5f * curY);
@@ -273,13 +288,7 @@ void Tail::UpdateVerts(float alpha, bool active) {
         if (mSlideInfo.unk0) {
             ofs += mInterpolator.Eval(yWorld);
         }
-        for (RndMesh::Vert *src = tailBegin; src != tailEnd; ++src, ++out) {
-            out->pos.y = curY;
-            out->pos.x = scaleX * (src->pos.x + ofs);
-            out->pos.z = src->pos.z * zScale;
-            out->tex.x = src->tex.x;
-            out->tex.y = src->tex.y;
-        }
+        WriteTailVerts(out, tailBegin, tailEnd, curY, ofs, zScale, scaleX);
         ++i;
         if (i == midSections) break;
         curY += sectionLen;
@@ -297,15 +306,9 @@ void Tail::UpdateVerts(float alpha, bool active) {
         if (mSlideInfo.unk0) {
             ofs += mInterpolator.Eval(yWorld);
         }
-        RndMesh::Vert *csrc = &templ.mCapVerts[0];
-        RndMesh::Vert *cend = &templ.mCapVerts[templ.mCapVerts.size()];
-        for (; csrc != cend; ++csrc, ++out) {
-            out->pos.y = curY;
-            out->pos.x = scaleX * (csrc->pos.x + ofs);
-            out->pos.z = csrc->pos.z * zScale;
-            out->tex.x = csrc->tex.x;
-            out->tex.y = csrc->tex.y;
-        }
+        RndMesh::Vert *csrc = &mTemplate.mCapVerts[0];
+        RndMesh::Vert *cend = &mTemplate.mCapVerts[mTemplate.mCapVerts.size()];
+        WriteTailVerts(out, csrc, cend, curY, ofs, zScale, scaleX);
     }
     MILO_ASSERT(out == verts.end(), 0x219);
 
@@ -320,11 +323,15 @@ void Tail::UpdateVerts(float alpha, bool active) {
         } else {
             faces.insert(faces.end(), faceCount - faces.size(), zeroFace);
         }
-        unsigned short v = 0;
-        for (int i = 0; i < used_sections; i++) {
-            faces[i*2].Set(v, v + 1, v + 2);
-            faces[i*2 + 1].Set(v + 2, v + 1, v + 3);
+        int f = 0;
+        int v = 0;
+        for (int j = 0; j < used_sections; j++) {
+            unsigned short a = v;
             v += 2;
+            unsigned short b = a + 1;
+            unsigned short c = a + 2;
+            faces[f++].Set(a, b, c);
+            faces[f++].Set(c, b, c + 1);
         }
         syncFlags |= 0x20;
     }
