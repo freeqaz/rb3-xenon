@@ -238,9 +238,13 @@ bool BandCharacter::InVignetteOrCloset() const {
 DECOMP_FORCEACTIVE(BandCharacter, "BandCharacter.no_anim")
 
 CharClipDriver *BandCharacter::PlayMainClip(int i, bool b) {
+    // Dev-only: retail (fn_822804E8) opens straight on mGroupName[0], and the
+    // string "no_anim" does not occur anywhere in the retail image.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     static DataNode &noAnim = DataVariable("BandCharacter.no_anim" + 14);
     if (noAnim.Int())
         return 0;
+#endif
     if (mGroupName[0] == 0 || !unk454)
         return 0;
     else {
@@ -266,8 +270,13 @@ CharClipDriver *BandCharacter::PlayMainClip(int i, bool b) {
                     mask = mask & 0xFFF80FFF | 0x1000;
                 }
                 CharClip *clp = 0;
-                if (mUseMicStandClips
-                    || mInstrumentType == keyboard && ((i & 0xF) != 2) && !b) {
+                // Retail: a FUNCTION-LOCAL static (guard 0x82CBC850, string
+                // "keyboard" @0x8201165C), and the whole block is skipped in
+                // vignette/closet -- the rb3-Wii condition lacks `!invorc` and
+                // binds `&& (i & 0xF) != 2 && !b` to the keyboard arm only.
+                static Symbol keyboard("keyboard");
+                if (!invorc && (mUseMicStandClips || mInstrumentType == keyboard)
+                    && (i & 0xF) != 2 && !b) {
                     CharClip *firstclip = unk454->FirstClip();
                     if (firstclip) {
                         if (firstclip->InGroup(grp)) {
@@ -301,9 +310,8 @@ CharClipDriver *BandCharacter::PlayMainClip(int i, bool b) {
                     else {
                         bool hasDriver = AddDriverClipDir();
                         if (hasDriver) {
-                            int imask = 1;
-                            if ((i & 0xF) == 2)
-                                imask = 2;
+                            // Retail: cntlzw/extrwi/addi 1 -- a bool plus one.
+                            int imask = ((i & 0xF) == 2) + 1;
                             CharDriver *drv;
                             if ((CharDriver *)unk454 == mDriver)
                                 drv = mAddDriver;
