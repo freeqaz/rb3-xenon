@@ -203,37 +203,35 @@ NetCacheLoader *NetCacheMgr::AddNetCacheLoader(const char *cc, NetLoaderPos pos)
 }
 
 void NetCacheMgr::SetState(NetCacheMgrState state) {
-    if (mState != state) {
-        while (true) {
-            if (mState == kNCMS_UnloadWaitForWrite) {
-                mHasFailed = false;
-            }
-            if (mState == kNCMS_Nil && state == kNCMS_UnloadWaitForWrite) {
-                MILO_FAIL("NetCacheMgr attempted to move straight from kNCMS_Nil to kNCMS_Unload!\n");
-            }
-            mState = state;
-            if (state != kNCMS_Nil)
-                break;
-            MILO_ASSERT(mNetLoaderRefs.empty(), 0x28B);
-            if (mLoadCount <= 0)
-                return;
-            state = kNCMS_Load;
-            if (mState == kNCMS_Load)
-                return;
-        }
-        switch (state) {
-        case kNCMS_Load:
-            EnterLoadState();
-            break;
-        case kNCMS_Ready:
-            ReadyInit();
-            break;
-        case kNCMS_UnloadWaitForWrite:
-            EnterUnloadState();
-            break;
-        default:
-            break;
-        }
+    // Retail (0x827CE820) is the recursive form: Poll inlines SetState(Nil) and
+    // keeps the nested SetState(kNCMS_Load) as a call; the body's own copy is a
+    // tail-recursion loop.
+    if (mState == state)
+        return;
+    if (mState == kNCMS_UnloadWaitForWrite) {
+        mHasFailed = false;
+    }
+    if (mState == kNCMS_Nil && state == kNCMS_UnloadWaitForWrite) {
+        MILO_FAIL("NetCacheMgr attempted to move straight from kNCMS_Nil to kNCMS_Unload!\n");
+    }
+    mState = state;
+    switch (state) {
+    case kNCMS_Nil:
+        MILO_ASSERT(mNetLoaderRefs.empty(), 0x28B);
+        if (mLoadCount > 0)
+            SetState(kNCMS_Load);
+        break;
+    case kNCMS_Load:
+        EnterLoadState();
+        break;
+    case kNCMS_Ready:
+        ReadyInit();
+        break;
+    case kNCMS_UnloadWaitForWrite:
+        EnterUnloadState();
+        break;
+    default:
+        break;
     }
 }
 
