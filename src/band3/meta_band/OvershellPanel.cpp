@@ -93,13 +93,12 @@ OvershellPanel::OvershellPanel(SessionMgr *smgr, BandUserMgr *umgr)
     mSessionMgr->GetMachineMgr()->AddSink(this);
     ThePlatformMgr.AddSink(this);
     TheRockCentral.AddSink(this);
+    // Retail fn_825B4AA8 stops here: the typed ThePlatformMgr invite/utility
+    // sinks and the TheServer profanity sink are dev-build (rb3-Wii) only.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     ThePlatformMgr.AddSink(this, InviteReceivedMsg::Type());
     ThePlatformMgr.AddSink(this, InviteExpiredMsg::Type());
     ThePlatformMgr.AddSink(this, NetStartUtilityFinishedMsg::Type());
-#ifndef HX_NATIVE
-    // TheServer (network/ online server) is null on native; profanity-check events
-    // are online-only. Gate the AddSink.
-    TheServer.AddSink(this, UserNameNewlyProfaneMsg::Type());
 #endif
 }
 
@@ -113,10 +112,12 @@ OvershellPanel::~OvershellPanel() {
     if (TheGameMicManager) {
         TheGameMicManager->RemoveSink(this, GameMicsChangedMsg::Type());
     }
+    // Retail fn_825B6188 ends here; the Wii-friend/online sinks are dev-only.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     TheWiiFriendMgr.RemoveSink(this, InviteReceivedMsg::Type());
     TheWiiFriendMgr.RemoveSink(this, InviteExpiredMsg::Type());
     ThePlatformMgr.RemoveSink(this, NetStartUtilityFinishedMsg::Type());
-    TheServer.RemoveSink(this, UserNameNewlyProfaneMsg::Type());
+#endif
 }
 
 bool SignInUser(User *u, unsigned long ul) {
@@ -302,10 +303,11 @@ DECOMP_FORCEACTIVE(OvershellPanel, "!playableTracks.empty()", "!resolvingUsers.e
 
 DataNode OvershellPanel::OnMsg(const SessionReadyMsg &msg) {
     if (InOverrideFlow(kOverrideFlow_RegisterOnline)) {
-        // RB3-360: the success branch set `unk4c8 = true` to arm the Wii
-        // friends-console-code gather in Poll — member absent in retail
-        // (Wii-only); retail success path here is UNVERIFIED (unpinned).
-        if (!msg->Int(2)) {
+        // Retail fn_825B7EA8: success ends the register-online flow (the Wii
+        // build instead armed its friends-console-code gather).
+        if (msg->Int(2)) {
+            EndOverrideFlow(kOverrideFlow_RegisterOnline, false);
+        } else {
             for (int i = 0; i < mSlots.size(); i++) {
                 if (mSlots[i]->GetUser()) {
                     mSlots[i]->ShowState(kState_SignInFailRetry);
@@ -625,44 +627,32 @@ bool OvershellPanel::IsAutoVocalsAllowed() const {
 }
 END_FORCE_LOCAL_INLINE
 
+// Retail fn_825B72E8 (TU5): no IsAutoVocalsAllowed gate and no Wii
+// JoypadWiiOnUserLeft; the modifier symbol is a function-local static.
 void OvershellPanel::EnableAutoVocals() {
-    bool b2;
-    if (!IsAutoVocalsAllowed() || (TheModifierMgr && TheModifierMgr->IsModifierActive(mod_auto_vocals))) {
-        b2 = true;
-    } else {
-        b2 = false;
+    if (TheModifierMgr) {
+        static Symbol mod_auto_vocals("mod_auto_vocals");
+        MILO_ASSERT(!TheModifierMgr->IsModifierActive(mod_auto_vocals), 0x512);
+        TheModifierMgr->ToggleModifierEnabled(mod_auto_vocals);
     }
-    if (b2) {
-        UpdateAll();
-    } else {
-        MILO_ASSERT(IsAutoVocalsAllowed(), 0x50D);
-        if (TheModifierMgr) {
-            MILO_ASSERT(!TheModifierMgr->IsModifierActive(mod_auto_vocals), 0x512);
-            TheModifierMgr->ToggleModifierEnabled(mod_auto_vocals);
+    mSessionMgr->Disconnect();
+    for (int i = 0; i < mSlots.size(); i++) {
+        BandUser *user = mSlots[i]->GetUser();
+        if (user && user->GetControllerType() == 2) {
+            mSlots[i]->RemoveUser();
         }
-        mSessionMgr->Disconnect();
-        for (int i = 0; i < mSlots.size(); i++) {
-            BandUser *user = mSlots[i]->GetUser();
-            if (user && user->GetControllerType() == 2) {
-                int i6;
-                if (user->GetLocalUser()) {
-                    i6 = user->GetLocalBandUser()->GetPadNum();
-                } else
-                    i6 = -1;
-                mSlots[i]->RemoveUser();
-                JoypadWiiOnUserLeft(i6, true);
-            }
-        }
-        UpdateAll();
     }
+    UpdateAll();
 }
 
 bool OvershellPanel::CanGuitarPlayKeys() const {
+    static Symbol key_keys_on_guitar("key_keys_on_guitar");
     std::vector<BandProfile *> profiles = TheProfileMgr.GetSignedInProfiles();
     for (int i = 0; i < profiles.size(); i++) {
         if (profiles[i]->HasCampaignKey(key_keys_on_guitar))
             return true;
     }
+    static Symbol mod_auto_vocals("mod_auto_vocals");
     if (TheModifierMgr && TheModifierMgr->IsModifierActive(mod_auto_vocals))
         return true;
     else

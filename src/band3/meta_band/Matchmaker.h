@@ -118,6 +118,9 @@ public:
     virtual ~BandMatchmaker();
     virtual void Poll();
     virtual bool IsFinding() const;
+    // Retail fn_82651B28 (TU5, absent from the rb3-Wii oracle; name is ours):
+    // out-of-line `ranked` game-mode property read with a local static Symbol.
+    bool IsRanked() const;
     virtual void UpdateMatchmakingSettings();
     virtual void FindPlayersImpl();
     virtual void CancelFindImpl();

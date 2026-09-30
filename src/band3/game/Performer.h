@@ -76,6 +76,8 @@ public:
     void SetLost();
     bool GetMultiplierActive() const;
     float PollMs() const;
+    // TU5 out-of-line helper (retail 0x8269D068; name ours)
+    float GetSongFraction() const;
     void SetCrowdMeterActive(bool);
     bool GetCrowdMeterActive();
     void SetStats(int, const Stats &);

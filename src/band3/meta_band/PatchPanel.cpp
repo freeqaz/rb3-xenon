@@ -538,8 +538,8 @@ inline void StickerProvider::SetStickers(std::vector<PatchSticker *> *stickers, 
         mat->Copy(mStickerMat, kCopyDeep);
         sticker->SetIconOnMat(mat);
         float scaleHW = 1.0f, scaleWH = 1.0f;
-        float h = sticker->unk1c;
         float w = sticker->unk18;
+        float h = sticker->unk1c;
         if (w > h) scaleWH = w / h;
         if (!(w > h)) scaleHW = h / w;
         Transform tf;
@@ -617,6 +617,9 @@ END_PROPSYNCS
 
 inline void
 LayerProvider::Custom(int, int idx, UIListCustom *slot, Hmx::Object *obj) const {
+    static Symbol create_layer("create_layer");
+    static Symbol modify_layer("modify_layer");
+    static Symbol layer_options("layer_options");
     if (slot->Matches("layer_help")) {
         InlineHelp *help = dynamic_cast<InlineHelp *>(obj);
         MILO_ASSERT(help, 0x182);

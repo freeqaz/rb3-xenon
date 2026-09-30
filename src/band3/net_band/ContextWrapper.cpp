@@ -43,8 +43,7 @@ int ContextWrapper::Poll() {
         case 0:
             break;
         case 1:
-            mTimeout.Split();
-            if (mTimeout.Ms() > 30000.0f)
+            if (mTimeout.SplitMs() > 30000.0f)
                 ret = 2;
             break;
         case 2: {
@@ -58,6 +57,8 @@ int ContextWrapper::Poll() {
         } break;
         case 3:
         case 4: {
+            // Retail fn_8250C280 has no qError log (dev build only).
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
             MILO_LOG(
                 "Encountered qError [%s]\n",
                 (const char *)Quazal::BackEndServices::FormatQErrorCodeString(
@@ -65,6 +66,7 @@ int ContextWrapper::Poll() {
                 )
                     .m_szContent
             );
+#endif
             RockCentralOpCompleteMsg msg(false, 0, mId);
             if (mCallbackObject) {
                 mCallbackObject->Handle(msg, true);

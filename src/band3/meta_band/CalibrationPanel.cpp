@@ -789,6 +789,9 @@ void CalibrationModesProvider::InitData(RndDir *dir) {
     mAutoCalibrateDisabledMat = dir->Find<RndMat>("auto_calibrate_disabled.mat", true);
     mManualCalibrateMat = dir->Find<RndMat>("manual_calibrate.mat", true);
     mEnterNumbersMat = dir->Find<RndMat>("enter_numbers.mat", true);
+    static Symbol cal_auto("cal_auto");
+    static Symbol cal_manual("cal_manual");
+    static Symbol cal_numbers("cal_numbers");
     mModes.clear();
     mModes.push_back(cal_auto);
     mModes.push_back(cal_manual);

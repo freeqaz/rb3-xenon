@@ -304,6 +304,17 @@ void NextSongPanel::FillExpandedDetails(int slot) {
     ptr->Resize(numDetails);
     int newNumDetails = CountOrCreateExpandedDetails(slot, ptr, false);
     MILO_ASSERT(newNumDetails == numDetails, 0x18B);
+    static Symbol detail_types("detail_types");
+    static Symbol default_type("default_type");
+    static Symbol height("height");
+    static Symbol margin_top("margin_top");
+    static Symbol margin_bottom("margin_bottom");
+    static Symbol resource_fmt("resource_fmt");
+    static Symbol required_padding_override("required_padding_override");
+    static Symbol page_break("page_break");
+    static Symbol header("header");
+    static Symbol header_continued("header_continued");
+    static Symbol pad("pad");
     f1 = 0;
     const DataArray *t = TypeDef();
     MILO_ASSERT(t, 0x19A);

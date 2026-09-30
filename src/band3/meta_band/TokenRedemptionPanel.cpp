@@ -1,6 +1,7 @@
 #include "meta_band/TokenRedemptionPanel.h"
 #include "decomp.h"
 #include "game/BandUser.h"
+#include "meta/StoreOffer.h"
 #include "meta/StorePackedMetadata.h"
 #include "meta/StoreEnumeration.h"
 #include "meta/StorePurchaser.h"
@@ -149,21 +150,20 @@ void TokenRedemptionPanel::GetPreviousOffersForUser(LocalBandUser *user) {
     TheRockCentral.GetRedeemedTokensByPlayer(id, mResultList, this);
 }
 
+// Retail fn_8263FEB0: the 360 body fills the member mOfferIDs (0x74) from each
+// result's "offer" string and hands it to XboxEnumeration; no null check on user.
 void TokenRedemptionPanel::EnumerateOffers(LocalBandUser *user) {
-    // Xbox commerce drift: retail uses XboxEnumeration + a private redemptions
-    // table rather than the Wii oracle's WiiEnumeration/StoreRedemptionsTable.
-    // Compile-only adaptation; this body is not byte-matched (see report notes).
     std::list<DataResult> &dataList = mResultList.mDataResultList;
+    mOfferIDs.clear();
     DataNode node(0);
-    std::vector<unsigned long long> offerIds;
-    std::list<DataResult>::iterator end = dataList.end();
-    std::list<DataResult>::iterator it = dataList.begin();
-    for (; it != end; ++it) {
+    for (std::list<DataResult>::iterator it = dataList.begin(); it != dataList.end();
+         ++it) {
         it->GetDataResultValue(String("offer"), node);
-        offerIds.push_back(0);
+        mOfferIDs.push_back(StorePurchaseable::OfferStringToID(node.Str(NULL)));
     }
-    int count = offerIds.size();
-    if (count == 0) {
+    if (mOfferIDs.empty()) {
+        static Symbol token_error_no_previous_offers("token_error_no_previous_offers");
+        static Symbol token_redemption_error("token_redemption_error");
         static Message token_msg("token_redemption_msg", gNullStr);
         if (mRedemptionState == kEnumeratingPreviousOffers) {
             token_msg[0] = token_error_no_previous_offers;
@@ -172,11 +172,11 @@ void TokenRedemptionPanel::EnumerateOffers(LocalBandUser *user) {
         }
         HandleType(token_msg);
         mRedemptionState = 0;
-        return;
+    } else {
+        MILO_ASSERT(!mEnumeration, 0x14A);
+        mEnumeration = new XboxEnumeration(user->GetPadNum(), &mOfferIDs);
+        mEnumeration->Start();
     }
-    MILO_ASSERT(!mEnumeration, 0x14A);
-    mEnumeration = new XboxEnumeration(user ? user->GetPadNum() : 0, &offerIds);
-    mEnumeration->Start();
 }
 
 void TokenRedemptionPanel::ShowPurchaseUIForOffer(int ix, LocalBandUser *user) {
@@ -208,6 +208,11 @@ DataNode TokenRedemptionPanel::OnMsg(const ButtonDownMsg &msg) {
     return 1;
 }
 
+// Retail fn_82640288 (TU5): no leading state gate. Success + non-empty result
+// list -> status switch; otherwise the "no previous offers" message only when a
+// successful previous-offers request came back empty. All ten statics are
+// function-local (one guard word); token_redemption_ready is constructed but
+// unused here.
 DataNode TokenRedemptionPanel::OnMsg(const RockCentralOpCompleteMsg &msg) {
     static Message token_msg("token_redemption_msg", gNullStr);
     static Symbol token_redemption_ready("token_redemption_ready");
@@ -219,104 +224,56 @@ DataNode TokenRedemptionPanel::OnMsg(const RockCentralOpCompleteMsg &msg) {
     static Symbol token_redemption_wrong_platform("token_redemption_wrong_platform");
     static Symbol token_redemption_error("token_redemption_error");
     static Symbol token_error_no_previous_offers("token_error_no_previous_offers");
-    int state = mRedemptionState;
-    if (state != kRequestingOffers && state != kRequestingPreviousOffers) {
-        return 1;
-    }
-    Symbol errSym = (state == kRequestingPreviousOffers)
-        ? token_error_no_previous_offers
-        : token_redemption_error;
-    if (msg.Success()) {
-        DataNode statusNode(0);
+    bool success = msg.Success();
+    int count = 0;
+    if (success) {
         mResultList.Update(NULL);
-        if (mResultList.mDataResultList.empty()
-            && mRedemptionState == kRequestingPreviousOffers) {
-            LocalBandUser *u = TheInputMgr->GetUser()
-                ? TheInputMgr->GetUser()->GetLocalBandUser()
-                : NULL;
-            mRedemptionState = kEnumeratingPreviousOffers;
-            EnumerateOffers(u);
-            return 1;
-        }
+        count = mResultList.mDataResultList.size();
+    }
+    if (success && count != 0) {
+        DataNode statusNode(0);
         mResultList.GetDataResult(0)->GetDataResultValue(String("status"), statusNode);
-        int status = statusNode.Int(NULL);
-        switch (status) {
+        switch (statusNode.Int(NULL)) {
         case 0xA0002:
-            MILO_ASSERT(mRedemptionState == kRequestingPreviousOffers, 0x1D1);
             mRedemptionState = kEnumeratingPreviousOffers;
-            {
-                LocalBandUser *u = TheInputMgr->GetUser()
-                    ? TheInputMgr->GetUser()->GetLocalBandUser()
-                    : NULL;
-                EnumerateOffers(u);
-            }
+            EnumerateOffers(TheInputMgr->GetUser()->GetLocalBandUser());
             return 1;
         case 0xA0005:
         case 0xA0007:
-            MILO_ASSERT(mRedemptionState == kRequestingOffers, 0x1DF);
             mRedemptionState = kEnumeratingOffers;
-            {
-                LocalBandUser *u = TheInputMgr->GetUser()
-                    ? TheInputMgr->GetUser()->GetLocalBandUser()
-                    : NULL;
-                EnumerateOffers(u);
-            }
+            EnumerateOffers(TheInputMgr->GetUser()->GetLocalBandUser());
             return 1;
-        case 0xA0006: {
-            static Symbol token_redemption_purchased("token_redemption_purchased");
-            MILO_ASSERT(mRedemptionState == kReportingPurchase, 0x1EA);
+        case 0xA0006:
             token_msg[0] = token_redemption_purchased;
             break;
-        }
-        case 0x800A0003: {
-            static Symbol token_redemption_not_found("token_redemption_not_found");
-            MILO_ASSERT(mRedemptionState == kRequestingOffers, 0x1F1);
+        case 0x800A0003:
             mResultList.Clear();
             token_msg[0] = token_redemption_not_found;
             break;
-        }
-        case 0x800A0005: {
-            static Symbol token_redemption_other_player("token_redemption_other_player");
-            MILO_ASSERT(mRedemptionState == kRequestingOffers, 0x1F7);
+        case 0x800A0005:
             mResultList.Clear();
             token_msg[0] = token_redemption_other_player;
             break;
-        }
-        case 0x800A0008: {
-            static Symbol token_redemption_too_late("token_redemption_too_late");
-            MILO_ASSERT(mRedemptionState == kRequestingOffers, 0x1FD);
+        case 0x800A0008:
             mResultList.Clear();
             token_msg[0] = token_redemption_too_late;
             break;
-        }
-        case 0x800A0009: {
-            static Symbol token_redemption_too_early("token_redemption_too_early");
-            MILO_ASSERT(mRedemptionState == kRequestingOffers, 0x203);
+        case 0x800A0009:
             mResultList.Clear();
             token_msg[0] = token_redemption_too_early;
             break;
-        }
-        case 0x800A000B: {
-            static Symbol token_redemption_wrong_platform("token_redemption_wrong_platform");
-            MILO_ASSERT(mRedemptionState == kRequestingOffers, 0x209);
+        case 0x800A000B:
             mResultList.Clear();
             token_msg[0] = token_redemption_wrong_platform;
             break;
-        }
         default:
-            token_msg[0] = errSym;
+            token_msg[0] = token_redemption_error;
             break;
         }
+    } else if (success && count == 0 && mRedemptionState == kRequestingPreviousOffers) {
+        token_msg[0] = token_error_no_previous_offers;
     } else {
-        if (mRedemptionState == kRequestingPreviousOffers) {
-            LocalBandUser *u = TheInputMgr->GetUser()
-                ? TheInputMgr->GetUser()->GetLocalBandUser()
-                : NULL;
-            mRedemptionState = kEnumeratingPreviousOffers;
-            EnumerateOffers(u);
-            return 1;
-        }
-        token_msg[0] = errSym;
+        token_msg[0] = token_redemption_error;
     }
     mRedemptionState = kIdle;
     HandleType(token_msg);

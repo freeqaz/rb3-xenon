@@ -744,14 +744,11 @@ int SongStatusMgr::GetCompletedSongs(ScoreType ty, Difficulty diff, Symbol s) co
     for (std::hash_map<int, SongStatus *>::const_iterator it = mSongStatusCache.begin();
          it != mSongStatusCache.end(); ++it) {
         int songID = it->first;
-        if (songID && mSongMgr->HasSong(songID)) {
-            if (s != gNullStr) {
-                BandSongMetadata *metaData = (BandSongMetadata *)mSongMgr->Data(songID);
-                MILO_ASSERT(metaData, 0x701);
-                if (s != metaData->SourceSym())
-                    continue;
-            }
-            if (IsSongPlayedAtMinDifficulty(songID, ty, diff))
+        if (mSongMgr->HasSong(songID)) {
+            BandSongMetadata *metaData = (BandSongMetadata *)mSongMgr->Data(songID);
+            MILO_ASSERT(metaData, 0x701);
+            if ((s == gNullStr || s == metaData->SourceSym())
+                && IsSongPlayedAtMinDifficulty(songID, ty, diff))
                 ret++;
         }
     }

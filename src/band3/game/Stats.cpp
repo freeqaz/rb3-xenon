@@ -127,7 +127,7 @@ Stats::Stats()
       mTambourine(0), mHarmony(0), mFullCombo(0), mNoScorePercent(0), mHitStreaks(3),
       mMissStreaks(3), mFailurePoints(3, -1.0f), mSavedPoints(3, -1.0f), mPlayersSaved(0),
       mClosestPlayersSaved(3, 2.0f), mTimesSaved(0), mClosestTimesSaved(3, 2.0f),
-      mBestSolos(3U, -1), mBestOverdriveDeployments(3), mTotalOverdriveDurationMs(0),
+      mBestSolos(3, -1), mBestOverdriveDeployments(3), mTotalOverdriveDurationMs(0),
       mBestStreakMultipliers(3), mTotalMultiplierDuration(0), m0x14c(0), m0x150(0),
       mEndGameScore(0), mEndGameCrowdLevel(0), mEndGameOverdrive(0),
       mOverdrivePhrasesCompleted(0), mOverdrivePhraseCount(0), mUnisonPhraseCompleted(0),

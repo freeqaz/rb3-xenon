@@ -1602,30 +1602,25 @@ void GemPlayer::ChangeDifficulty(Difficulty diff) {
 }
 
 void GemPlayer::SetPitchShiftRatio(float f1) {
-    MILO_ASSERT(mBeatMaster, 0x975);
-    MILO_ASSERT(mBeatMaster->GetAudio(), 0x976);
-    MILO_ASSERT(mBeatMaster->GetAudio()->GetSongStream(), 0x977);
+    // Retail calls an out-of-line FxSendPitchShift ratio setter here
+    // (0x827122A0: mRatio = f1; OnParametersChanged()); that setter belongs in
+    // src/system/synth and is not ported, so go through the synced property.
+    static Symbol pitch_ratio("pitch_ratio");
+    GetPitchShift()->SetProperty(pitch_ratio, f1);
+    // no mBeatMaster/GetAudio/GetSongStream asserts in retail (the last would
+    // evaluate a second virtual GetSongStream call)
     Stream *stream = mBeatMaster->GetAudio()->GetSongStream();
-    StandardStream *sStream = dynamic_cast<StandardStream *>(stream);
-    if (sStream) {
-        std::list<int> chans;
-        mBeatMaster->GetAudio()->FillChannelList(chans, mTrackNum);
-        FOREACH (it, chans) {
-            // sStream->SetPitchShift(*it, true); // Wii-only API
-        }
-    }
     if (f1 == 1.0f || ThePracticePanel->PlayAllTracks()) {
-        for (int i = 0; i < (unsigned int)stream->GetNumChanParams(); i++) {
+        for (unsigned int i = 0; i < stream->GetNumChanParams(); i++) {
             stream->SetVolume(i, 0);
         }
     } else {
         std::list<int> chans;
         mBeatMaster->GetAudio()->FillChannelList(chans, mTrackNum);
         for (unsigned int i = 0; i < stream->GetNumChanParams(); i++) {
-            if (std::find(chans.begin(), chans.end(), i) != chans.end()) {
-                stream->SetVolume(i, 0);
-            } else
-                stream->SetVolume(i, -96.0f);
+            stream->SetVolume(
+                i, std::find(chans.begin(), chans.end(), i) != chans.end() ? 0 : -96.0f
+            );
         }
     }
 }
@@ -2281,11 +2276,14 @@ void GemPlayer::AddHeadPoints(float f1, int i2, int i3, GemHitFlags flags) {
     ivar2 += i5;
     AddPoints(ivar2, true, true);
     mStats.AddAccuracy(ivar2);
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+    // dev-build timing stats; absent from TU5 retail
     int rounded = Round(gem.GetMs() - (f1 + mSyncOffset));
     unk390 -= rounded;
     unk394 += rounded;
     unk398++;
     PrintAddHead(rounded, i3, ivar2, unk394 / unk398, unk390 + 0.5);
+#endif
 }
 
 void GemPlayer::SetFilling(bool b1, int i2) {
@@ -2568,13 +2566,8 @@ void GemPlayer::UpdateGameCymbalLanes() {
     if (mUser->GetTrackType() != kTrackDrum)
         return;
     bool discoUnflip = false;
-    bool hasGHDrums = false;
-    if (IsLocal()) {
-        LocalBandUser *lu = mUser->GetLocalBandUser();
-        if (lu && UserHasGHDrums(lu))
-            hasGHDrums = true;
-    }
-    if (hasGHDrums && !mUser->GetGameplayOptions()->GetLefty()) {
+    if (IsLocal() && UserHasGHDrums(mUser->GetLocalBandUser())
+        && !mUser->GetGameplayOptions()->GetLefty()) {
         discoUnflip = true;
     }
     SongData *data = TheSongDB->GetData();
@@ -2582,12 +2575,16 @@ void GemPlayer::UpdateGameCymbalLanes() {
         mGameCymbalLanes = mUser->GetCymbalConfiguration();
         bool forceUseCymbals = TheGame->mProperties.mForceUseCymbals;
         bool forceDontUseCymbals = TheGame->mProperties.mForceDontUseCymbals;
-        if (MetaPerformer::Current()->mRealDrumsOverride) {
-            mGameCymbalLanes = 0x1C;
-        } else if (forceUseCymbals) {
+        if (MetaPerformer::Current()->mRealDrumsOverride || forceUseCymbals) {
             mGameCymbalLanes = 0x1C;
         } else if (forceDontUseCymbals) {
             mGameCymbalLanes = 0;
+        } else {
+            // TU5: autoplaying drums in audition mode always get cymbals
+            static Symbol audition("audition");
+            if (TheGameMode->InMode(audition) && (IsAutoplay() || mUser->mAutoplay)) {
+                mGameCymbalLanes = 0x1C;
+            }
         }
         if (mGameCymbalLanes & 4)
             discoUnflip = true;
@@ -2736,14 +2733,23 @@ void GemPlayer::ConfigureBehavior() {
     TrackType ty = mUser->GetTrackType();
     mBehavior->SetMaxMultiplier(ty == kTrackBass || ty == kTrackRealBass ? 6 : 4);
     mBehavior->SetCanDeployOverdrive(single && c1);
-    bool tilt = false;
-    if ((unsigned)(ty - 1) <= 7U && ((1 << (ty - 1)) & 0xBBU) && c1)
-        tilt = true;
-    mBehavior->SetTiltDeploysBandEnergy(tilt);
+    mBehavior->SetTiltDeploysBandEnergy(
+        (ty == kTrackGuitar || ty == kTrackRealGuitar || ty == kTrackBass
+         || ty == kTrackRealBass || ty == kTrackKeys || ty == kTrackRealKeys)
+        && c1
+    );
     mBehavior->SetFillsDeployBandEnergy(ty == kTrackDrum && c1);
-    mBehavior->SetRequireAllCodaLanes(ty > 9U || !((1 << ty) & 0x3E1U));
+    mBehavior->SetRequireAllCodaLanes(
+        !(ty == kTrackDrum || ty == kTrackRealKeys || ty == kTrackRealGuitar
+          || ty == kTrackRealGuitar22Fret || ty == kTrackRealBass
+          || ty == kTrackRealBass22Fret)
+    );
     mBehavior->SetCanFreestyleBeforeGems(false);
-    mBehavior->SetHasSolos(ty <= 8U && ((1 << ty) & 0x177U));
+    mBehavior->SetHasSolos(
+        ty == kTrackGuitar || ty == kTrackRealGuitar || ty == kTrackBass
+        || ty == kTrackRealBass || ty == kTrackRealKeys || ty == kTrackKeys
+        || ty == kTrackDrum
+    );
     mBehavior->SetStreakType(mUser->GetTrackSym());
 }
 

@@ -15,6 +15,19 @@
 #include "ui/UIPanel.h"
 #include <hash_map>
 
+// Xbox-360 TU5 provider, absent from the rb3-Wii oracle. Retail RTTI
+// ".?AVPremiumAssetProvider@@" (UIListProvider, Hmx::Object), sizeof 0x38,
+// ctor @0x82670A88 (a Symbol vector at +0x2c filled from AssetMgr). Declared
+// here only for CustomizePanel::Load's allocation; the class body is unported.
+class PremiumAssetProvider : public UIListProvider, public Hmx::Object {
+public:
+    PremiumAssetProvider(AssetGender);
+    virtual ~PremiumAssetProvider();
+    virtual int NumData() const;
+
+    std::vector<Symbol> mAssets; // 0x2c
+};
+
 class CustomizePanel : public UIPanel, public ContentMgr::Callback {
 public:
     enum CustomizeState {
@@ -170,7 +183,7 @@ public:
     NewAssetProvider *mNewAssetProvider; // 0x7c
     CurrentOutfitProvider *mCurrentOutfitProvider; // 0x80
     AssetProvider *mAssetProvider; // 0x84
-    AssetProvider *mPremiumAssetProvider; // 0x88
+    PremiumAssetProvider *mPremiumAssetProvider; // 0x88
     MakeupProvider *mMakeupProvider; // 0x8c
     InstrumentFinishProvider *mInstrumentFinishProvider; // 0x90
     AssetBoutique mCurrentBoutique; // 0x94

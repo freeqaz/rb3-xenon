@@ -392,6 +392,10 @@ inline ChordbookPanel::ChordInfo &ChordbookPanel::CurrentChord() {
 }
 
 Symbol ChordbookPanel::RGFingerStep(int finger) {
+    static Symbol rg_chordbook_finger_1("rg_chordbook_finger_1");
+    static Symbol rg_chordbook_finger_2("rg_chordbook_finger_2");
+    static Symbol rg_chordbook_finger_3("rg_chordbook_finger_3");
+    static Symbol rg_chordbook_finger_4("rg_chordbook_finger_4");
     switch (finger) {
     case 1:
         return rg_chordbook_finger_1;
@@ -408,6 +412,18 @@ Symbol ChordbookPanel::RGFingerStep(int finger) {
 }
 
 Symbol ChordbookPanel::RGStringToken(int string, bool is_short) {
+    static Symbol rg_chordbook_low_e_string("rg_chordbook_low_e_string");
+    static Symbol rg_chordbook_a_string("rg_chordbook_a_string");
+    static Symbol rg_chordbook_d_string("rg_chordbook_d_string");
+    static Symbol rg_chordbook_g_string("rg_chordbook_g_string");
+    static Symbol rg_chordbook_b_string("rg_chordbook_b_string");
+    static Symbol rg_chordbook_high_e_string("rg_chordbook_high_e_string");
+    static Symbol rg_chordbook_low_e_short("rg_chordbook_low_e_short");
+    static Symbol rg_chordbook_a_short("rg_chordbook_a_short");
+    static Symbol rg_chordbook_d_short("rg_chordbook_d_short");
+    static Symbol rg_chordbook_g_short("rg_chordbook_g_short");
+    static Symbol rg_chordbook_b_short("rg_chordbook_b_short");
+    static Symbol rg_chordbook_high_e_short("rg_chordbook_high_e_short");
     switch (string) {
     case 0:
         return is_short ? rg_chordbook_low_e_short : rg_chordbook_low_e_string;

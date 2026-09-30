@@ -20,7 +20,7 @@ public:
     NetUIState GetNetUIState() const;
     int GetNetUIStateParam() const;
     bool HasSong(int) const;
-    bool HasProGuitarOrBass(int) const { return false; }
+    bool HasProGuitarOrBass(int) const;
 
     NetUIState mNetUIState; // 0x28
     int mNetUIStateParam; // 0x2c

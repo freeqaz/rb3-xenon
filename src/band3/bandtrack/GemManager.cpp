@@ -85,12 +85,14 @@ GemManager::~GemManager() {
 
 void GemManager::InitRGTuning(BandUser *bandUser) {
     MILO_ASSERT(bandUser, 0xAE);
+    static Symbol real_guitar("real_guitar");
+    static Symbol real_bass("real_bass");
     bool isRG = bandUser->GetTrack()->GetType() == real_guitar;
     bool isRB = bandUser->GetTrack()->GetType() == real_bass;
     if (isRG || isRB) {
-        BandSongMetadata *metadata = (BandSongMetadata *)TheSongMgr.Data(
-            TheSongMgr.GetSongIDFromShortName(MetaPerformer::Current()->Song(), true)
-        );
+        int songID =
+            TheSongMgr.GetSongIDFromShortName(MetaPerformer::Current()->Song(), true);
+        BandSongMetadata *metadata = (BandSongMetadata *)TheSongMgr.Data(songID);
         std::vector<int> vec18;
         if (isRG) {
             vec18.reserve(6);

@@ -239,11 +239,16 @@ void SetlistSort::BuildSetlistTree(std::map<Symbol, SetlistRecord> &records) {
     FunctionSortNode *fsn = nullptr;
     if (TheMusicLibrary->NetSetlistsFailed()) {
         if (TheRockCentral.mState != 2) {
+            static Symbol net_setlists_connect("net_setlists_connect");
             fsn = NewFunctionNode(net_setlists_connect);
-        } else
+        } else {
+            static Symbol net_setlists_error("net_setlists_error");
             fsn = NewFunctionNode(net_setlists_error);
-    } else if (!TheMusicLibrary->NetSetlistsSucceeded())
+        }
+    } else if (!TheMusicLibrary->NetSetlistsSucceeded()) {
+        static Symbol net_setlists_getting("net_setlists_getting");
         fsn = NewFunctionNode(net_setlists_getting);
+    }
 
     if (fsn) {
         std::pair<ShortcutNode **, ShortcutNode **> found;

@@ -156,6 +156,12 @@ void CharacterCreatorPanel::Unload() {
 LocalBandUser *CharacterCreatorPanel::GetUser() { return mClosetMgr->mUser; }
 
 void CharacterCreatorPanel::AddGridThumbnails(Symbol s) {
+    static Symbol shape("shape");
+    static Symbol chin("chin");
+    static Symbol eye("eye");
+    static Symbol eyebrows("eyebrows");
+    static Symbol nose("nose");
+    static Symbol mouth("mouth");
     AddGridThumbnails(s, shape);
     AddGridThumbnails(s, chin);
     AddGridThumbnails(s, eye);
@@ -202,16 +208,22 @@ void CharacterCreatorPanel::SetName(const char *name) {
 const char *CharacterCreatorPanel::GetName() { return mCharacter->GetCharacterName(); }
 
 const char *CharacterCreatorPanel::GetDefaultVKName() {
-    GetName();
-    if (mGender == male) {
-        Symbol random_name =
-            TheNameGenerator->GetRandomNameFromList(character_names_male);
-        return Localize(random_name, 0);
-    } else {
-        Symbol random_name =
-            TheNameGenerator->GetRandomNameFromList(character_names_female);
-        return Localize(random_name, 0);
+    const char *name = GetName();
+    if (strcmp(name, "") == 0) {
+        static Symbol male("male");
+        if (mGender == male) {
+            static Symbol character_names_male("character_names_male");
+            Symbol random_name =
+                TheNameGenerator->GetRandomNameFromList(character_names_male);
+            name = Localize(random_name, 0);
+        } else {
+            static Symbol character_names_female("character_names_female");
+            Symbol random_name =
+                TheNameGenerator->GetRandomNameFromList(character_names_female);
+            name = Localize(random_name, 0);
+        }
     }
+    return name;
 }
 
 void CharacterCreatorPanel::SetGender(Symbol gender) {
@@ -339,15 +351,15 @@ Symbol CharacterCreatorPanel::GetHair() {
 }
 
 void CharacterCreatorPanel::SetFaceHair(Symbol s) {
+    static Symbol none_facehair("none_facehair");
     BandCharDesc *desc = mPreviewDesc;
-    if (desc) {
-        if (s != none_facehair)
-            desc->mOutfit.mFaceHair.mName = s;
-        else
-            desc->mOutfit.mFaceHair.mName = gNullStr;
-        mClosetMgr->SetCurrentOutfitPiece(facehair);
-        mClosetMgr->PreviewCharacter(true, false);
-    }
+    if (s != none_facehair)
+        desc->mOutfit.mFaceHair.mName = s;
+    else
+        desc->mOutfit.mFaceHair.mName = gNullStr;
+    static Symbol facehair("facehair");
+    mClosetMgr->SetCurrentOutfitPiece(facehair);
+    mClosetMgr->PreviewCharacter(true, false);
 }
 
 Symbol CharacterCreatorPanel::GetFaceHair() {
@@ -432,26 +444,33 @@ int CharacterCreatorPanel::GetSkinTone() {
 }
 
 void CharacterCreatorPanel::RandomizeFace() {
+    static Symbol shape("shape");
+    static Symbol chin("chin");
+    static Symbol eye("eye");
+    static Symbol nose("nose");
+    static Symbol mouth("mouth");
     BandCharDesc *desc = mPreviewDesc;
-    desc->mHead.mShape = RandomInt(0, BandHeadShaper::GetCount(shape));
-    desc->mHead.mChin = RandomInt(0, BandHeadShaper::GetCount(chin));
-    desc->mHead.mEye = RandomInt(0, BandHeadShaper::GetCount(eye));
-    desc->mHead.mNose = RandomInt(0, BandHeadShaper::GetCount(nose));
-    desc->mHead.mMouth = RandomInt(0, BandHeadShaper::GetCount(mouth));
-    desc->mHead.mBrowHeight = 0.5f;
-    desc->mHead.mBrowSeparation = 0.5f;
-    desc->mHead.mChinHeight = 0.5f;
-    desc->mHead.mChinWidth = 0.5f;
-    desc->mHead.mEyeHeight = 0.5f;
-    desc->mHead.mEyeRotation = 0.5f;
-    desc->mHead.mEyeSeparation = 0.5f;
-    desc->mHead.mJawHeight = 0.5f;
-    desc->mHead.mJawWidth = 0.5f;
-    desc->mHead.mMouthHeight = 0.5f;
-    desc->mHead.mMouthWidth = 0.5f;
-    desc->mHead.mNoseHeight = 0.5f;
-    desc->mHead.mNoseWidth = 0.5f;
-    desc->mOutfit.mEyebrows.mName = GetRandomEyebrows();
+    BandCharDesc::Outfit &outfit = desc->mOutfit;
+    BandCharDesc::Head &head = desc->mHead;
+    head.mShape = RandomInt(0, BandHeadShaper::GetCount(shape));
+    head.mChin = RandomInt(0, BandHeadShaper::GetCount(chin));
+    head.mEye = RandomInt(0, BandHeadShaper::GetCount(eye));
+    head.mNose = RandomInt(0, BandHeadShaper::GetCount(nose));
+    head.mMouth = RandomInt(0, BandHeadShaper::GetCount(mouth));
+    head.mBrowHeight = 0.5f;
+    head.mBrowSeparation = 0.5f;
+    head.mChinHeight = 0.5f;
+    head.mChinWidth = 0.5f;
+    head.mEyeHeight = 0.5f;
+    head.mEyeRotation = 0.5f;
+    head.mEyeSeparation = 0.5f;
+    head.mJawHeight = 0.5f;
+    head.mJawWidth = 0.5f;
+    head.mMouthHeight = 0.5f;
+    head.mMouthWidth = 0.5f;
+    head.mNoseHeight = 0.5f;
+    head.mNoseWidth = 0.5f;
+    outfit.mEyebrows.mName = GetRandomEyebrows();
     mClosetMgr->PreviewCharacter(true, false);
     mClosetMgr->FinalizeCharCreatorChanges();
 }
@@ -518,16 +537,16 @@ void CharacterCreatorPanel::SetFaceOption(int option) {
 }
 
 void CharacterCreatorPanel::SetEyebrows(Symbol brows) {
+    static Symbol none_eyebrows("none_eyebrows");
     BandCharDesc *desc = mPreviewDesc;
-    if (desc) {
+    desc->mOutfit.mEyebrows.mName = brows;
+    if (brows != none_eyebrows)
         desc->mOutfit.mEyebrows.mName = brows;
-        if (brows != none_eyebrows)
-            desc->mOutfit.mEyebrows.mName = brows;
-        else
-            desc->mOutfit.mEyebrows.mName = gNullStr;
-        mClosetMgr->SetCurrentOutfitPiece(eyebrows);
-        mClosetMgr->PreviewCharacter(true, false);
-    }
+    else
+        desc->mOutfit.mEyebrows.mName = gNullStr;
+    static Symbol eyebrows("eyebrows");
+    mClosetMgr->SetCurrentOutfitPiece(eyebrows);
+    mClosetMgr->PreviewCharacter(true, false);
 }
 
 Symbol CharacterCreatorPanel::GetEyebrows() {
@@ -638,6 +657,12 @@ void CharacterCreatorPanel::CheckCharacterAssets() {
 }
 
 void CharacterCreatorPanel::SetCharCreatorState(CharCreatorState state) {
+    static Symbol shape("shape");
+    static Symbol chin("chin");
+    static Symbol eye("eye");
+    static Symbol eyebrows("eyebrows");
+    static Symbol nose("nose");
+    static Symbol mouth("mouth");
     Symbol bodypart = gNullStr;
     switch (state) {
     case kCharCreatorState_FaceMakerChooseCheeks:

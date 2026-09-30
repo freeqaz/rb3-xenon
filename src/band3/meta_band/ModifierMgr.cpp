@@ -36,6 +36,7 @@ void ModifierMgr::Init() {
 ModifierMgr::ModifierMgr() {
     MILO_ASSERT(!TheModifierMgr, 100);
     SetName("modifier_mgr", ObjectDir::Main());
+    static Symbol modifiers("modifiers");
     DataArray *allModifiersArray = SystemConfig(modifiers, modifiers);
     MILO_ASSERT(allModifiersArray, 0x6A);
     mModifiers.reserve(allModifiersArray->Size() - 1);
@@ -66,6 +67,7 @@ Symbol ModifierMgr::DataSymbol(int idx) const {
 int ModifierMgr::NumData() const { return mModifiersList.size(); }
 
 void ModifierMgr::Text(int i1, int i2, UIListLabel *listlabel, UILabel *label) const {
+    static Symbol modifier_locked_name("modifier_locked_name");
     Modifier *mod = GetModifierAtListData(i2);
     if (listlabel->Matches("name")) {
         if (IsModifierUnlocked(mod)) {

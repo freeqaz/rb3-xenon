@@ -63,6 +63,8 @@ public:
     const BandUser *GetUserFromTrackNum(int);
     void Reload();
     void CleanUpTracks();
+    // TU5 (retail 0x82B907F8, called from Game::Jump; name ours)
+    void ResetEndingBonus();
     void UpdateReservedVocalSlot();
     void CreateTracks();
     void Reset();

@@ -768,6 +768,7 @@ std::vector<Symbol> *AccomplishmentManager::GetAwardSourceList(Symbol s) const {
 void AccomplishmentManager::AddAwardSource(Symbol s1, Symbol s2) {
     Symbol src = GetAwardSource(s1);
     if (src != gNullStr) {
+        static Symbol awardsource_multiple("awardsource_multiple");
         std::vector<Symbol> *srclist = GetAwardSourceList(s1);
         if (!srclist) {
             srclist = new std::vector<Symbol>();
@@ -789,6 +790,7 @@ bool AccomplishmentManager::InqAssetSourceList(
     Symbol s, std::vector<Symbol> &o_rSourceList
 ) const {
     MILO_ASSERT(o_rSourceList.empty(), 0x41C);
+    static Symbol awardsource_multiple("awardsource_multiple");
     Symbol award = GetAssetAward(s);
     if (award == gNullStr)
         return false;

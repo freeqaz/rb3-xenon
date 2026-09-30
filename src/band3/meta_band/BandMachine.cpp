@@ -86,6 +86,10 @@ bool BandMachine::HasSong(int i) const {
     return mAvailableSongs.find(i) != mAvailableSongs.end();
 }
 
+bool BandMachine::HasProGuitarOrBass(int i) const {
+    return mProGuitarOrBassSongs.find(i) != mProGuitarOrBassSongs.end();
+}
+
 BEGIN_HANDLERS(BandMachine)
     HANDLE_EXPR(get_primary_profile_name, GetPrimaryProfileName())
     HANDLE_EXPR(get_primary_band_name, GetPrimaryBandName())

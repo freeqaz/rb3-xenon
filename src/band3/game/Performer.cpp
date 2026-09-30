@@ -13,6 +13,7 @@
 #include "net/NetSession.h"
 #include "utl/Symbols.h"
 #include "utl/Messages.h"
+#include "math/Utl.h"
 #include <algorithm>
 
 DECOMP_FORCEACTIVE(
@@ -357,9 +358,12 @@ void Performer::CheckGameWon() {
     }
 }
 
+float Performer::GetSongFraction() const {
+    return Min(mProgressMs / TheSongDB->GetSongDurationMs(), 1.0f);
+}
+
 void Performer::Poll(float ms, const SongPos &pos) {
-    float frac = mProgressMs / TheSongDB->GetSongDurationMs();
-    mCrowd->Poll((frac < 1.0f) ? frac : 1.0f);
+    mCrowd->Poll(GetSongFraction());
     if (TheGame->mProperties.mEndWithSong) {
         float dur = TheSongDB->GetSongDurationMs();
         if (!unk1e2 && !unk1e0 && ms > dur) {

@@ -249,26 +249,25 @@ void TrackPanel::Reset() {
     mAutoVocals = TheModifierMgr->IsModifierActive("mod_auto_vocals");
 }
 
+void TrackPanel::ResetEndingBonus() {
+    EndingBonus *bonus = mTrackPanelDir->GetEndingBonus();
+    if (bonus)
+        bonus->Reset();
+}
+
 void TrackPanel::CleanUpTracks() {
-    unk5c = false;
-    if (unk5d) {
-        for (int i = 0; i < mTracks.size(); i++) {
-            BandUser *user = mTracks[i] ? (BandUser *)mTracks[i]->GetBandUser() : nullptr;
-            if (user) {
-                user->mTrack = nullptr;
-                if (user->GetPlayer()) {
-                    user->GetPlayer()->UnHookTrack();
-                }
-            }
+    // TU5: no unk5c/unk5d gating and no null tests (rb3-Wii had both).
+    for (int i = 0; i < mTracks.size(); i++) {
+        BandUser *user = (BandUser *)mTracks[i]->GetBandUser();
+        user->mTrack = nullptr;
+        if (user->GetPlayer()) {
+            user->GetPlayer()->UnHookTrack();
         }
-        DeleteAll(mTracks);
-        TrimExcess(mTracks);
-        if (unk5d) {
-            for (int i = 0; i < mTrackSlots.size(); i++) {
-                mTrackPanelDir->RemoveTrack(i);
-            }
-            unk5d = false;
-        }
+    }
+    DeleteAll(mTracks);
+    TrimExcess(mTracks);
+    for (int i = 0; i < mTrackSlots.size(); i++) {
+        mTrackPanelDir->RemoveTrack(i);
     }
 }
 

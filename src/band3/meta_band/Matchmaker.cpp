@@ -122,11 +122,13 @@ BandMatchmaker::BandMatchmaker() : mSearching(0), unk32(0), unk6c(0), mDevChanne
            (void*)TheNetSession, (void*)TheGameMode);
 #endif
     MILO_ASSERT(TheNetSession, 0x108);
+    static Symbol join_result("join_result");
     TheNetSession->AddSink(this, join_result);
 #ifdef __EMSCRIPTEN__
     printf("RB3 Web boot: [BandMatchmaker ctor] NetSession AddSink done\n");
 #endif
     MILO_ASSERT(TheGameMode, 0x10C);
+    static Symbol mode_changed("mode_changed");
     TheGameMode->AddSink(this, mode_changed);
 #ifdef __EMSCRIPTEN__
     printf("RB3 Web boot: [BandMatchmaker ctor] GameMode AddSink done\n");
@@ -136,6 +138,7 @@ BandMatchmaker::BandMatchmaker() : mSearching(0), unk32(0), unk6c(0), mDevChanne
     // network/ subsystem is off the link). The matchmaker only matters for online
     // play, so skip the searcher AddSink — its events never fire offline.
     MILO_ASSERT(TheNet.GetSearcher(), 0x110);
+    static Symbol search_finished("search_finished");
     TheNet.GetSearcher()->AddSink(this, search_finished);
 #endif
     DataArray *cfg = SystemConfig("net", "matchmaker");
@@ -143,9 +146,12 @@ BandMatchmaker::BandMatchmaker() : mSearching(0), unk32(0), unk6c(0), mDevChanne
 }
 
 BandMatchmaker::~BandMatchmaker() {
+    static Symbol join_result("join_result");
     TheNetSession->RemoveSink(this, join_result);
+    static Symbol mode_changed("mode_changed");
     TheGameMode->RemoveSink(this, mode_changed);
 #ifndef HX_NATIVE
+    static Symbol search_finished("search_finished");
     TheNet.GetSearcher()->RemoveSink(this, search_finished); // null searcher on native
 #endif
     SetName(nullptr, ObjectDir::Main());
@@ -273,7 +279,7 @@ DataNode BandMatchmaker::OnMsg(const ModeChangedMsg &msg) {
 #endif
     if (settings->HasSyncPermission()) {
         settings->SetMode(TheGameMode->mMode, 0);
-        settings->SetRanked(TheGameMode->Property(ranked, true)->Int());
+        settings->SetRanked(IsRanked());
     }
     return 1;
 }
@@ -291,17 +297,21 @@ void BandMatchmaker::UpdateMatchmakingSettings() {
 #endif
     if (settings->HasSyncPermission()) {
         settings->SetMode(TheGameMode->mMode, 0);
-        settings->SetRanked(TheGameMode->Property(ranked, true)->Int());
+        settings->SetRanked(IsRanked());
         AddCustomSettings(settings, (CustomSettingsType)0);
     }
+}
+
+bool BandMatchmaker::IsRanked() const {
+    static Symbol ranked("ranked");
+    return TheGameMode->Property(ranked, true)->Int(NULL);
 }
 
 void BandMatchmaker::StartSearch(bool b) {
     MILO_ASSERT(mMode, 0x1E5);
     unk31 = b;
     int ty = mMode->GetNextQueryType();
-    bool prop = TheGameMode->Property(ranked, true)->Int();
-    SearchSettings settings(0, prop, ty);
+    SearchSettings settings(0, IsRanked(), ty);
     AddCustomSettings(&settings, unk31 ? kGeneralSearch : (CustomSettingsType)1);
     TheNet.GetSearcher()->StartSearching(TheNetSession->GetLocalHost(), settings);
 }

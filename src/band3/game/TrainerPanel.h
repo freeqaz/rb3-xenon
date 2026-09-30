@@ -85,6 +85,13 @@ public:
     Symbol GetChallengeRestriction(int);
     void SetProgressMeterShowing(bool);
     void InternalInitSections(const DataEventList *);
+    // TU5 out-of-line token getters (retail 0x826C9818..0x826C99D8, 112 B each;
+    // no oracle -- names are ours).
+    Symbol BeginToken() const;
+    Symbol EndToken() const;
+    Symbol ChallengeToken() const;
+    Symbol StartEarlyToken() const;
+    Symbol StartNormToken() const;
     void OnSuccess(int);
     Symbol GetNameForSection(int) const;
     BandProfile *GetBandProfile() const;

@@ -16,9 +16,10 @@ TrackerMultiplierMap::~TrackerMultiplierMap() {}
 void TrackerMultiplierMap::InitFromDataArray(const DataArray *iDataArray) {
     unk4.clear();
     int idx = 0;
-    MultiplierEntry &entry = unk4[0.0f];
+    MultiplierEntry entry;
     entry.unk0 = 1.0f;
-    entry.unk4 = 0;
+    entry.unk4 = idx;
+    unk4[0.0f] = entry;
     if (iDataArray) {
         MILO_ASSERT(!iDataArray->Sym(0).Null(), 0x2B);
         for (int i = 1; i < iDataArray->Size(); i++) {
@@ -26,9 +27,10 @@ void TrackerMultiplierMap::InitFromDataArray(const DataArray *iDataArray) {
             float f10 = arr->Float(0);
             float f11 = arr->Float(1);
             idx++;
-            MultiplierEntry &curentry = unk4[f10];
+            MultiplierEntry curentry;
             curentry.unk0 = f11;
             curentry.unk4 = idx;
+            unk4[f10] = curentry;
             if (unk0 < f10) {
                 unk0 = f10;
             }

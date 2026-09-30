@@ -396,6 +396,8 @@ void SongDB::SpewTrackSizes() const {}
 
 void SongDB::ParseEvents(DataEventList *events) {
     for (int i = 0; i < events->Size(); i++) {
+        static Symbol coda("coda");
+        static Symbol end("end");
         const DataEvent &curEvent = events->Event(i);
         Symbol sym = curEvent.Msg()->Sym(1);
         if (sym == end) {

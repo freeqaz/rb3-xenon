@@ -225,6 +225,8 @@ public:
     bool IsExiting();
     void OnUnload();
     void ResetFilters();
+    // Retail fn_82540208 (TU5, absent from the rb3-Wii oracle; name is ours).
+    void RefreshSongLists();
     void ToggleFilter(FilterType, Symbol);
     const char *GetStatusText();
     Symbol GetCurrentSortName(bool);

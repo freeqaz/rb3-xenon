@@ -24,6 +24,8 @@ ContentLoadingPanel::~ContentLoadingPanel() {
 
 void ContentLoadingPanel::ContentStarted() {
     unk3c = 0;
+    static Symbol finding_additional_content("finding_additional_content");
+    static Symbol finding_additional_progress("finding_additional_progress");
     mMessageLabel->SetTextToken(finding_additional_content);
     mProgressLabel->SetTokenFmt(finding_additional_progress, LocalizeSeparatedInt(unk3c));
     mFindingTrig->Trigger();
@@ -43,6 +45,8 @@ void ContentLoadingPanel::ContentMountBegun(int n) {
     if (n > 0) {
         mLoadingTrig->Trigger();
         UpdateMeterValues();
+        static Symbol loading_additional_content("loading_additional_content");
+        static Symbol loading_additional_progress("loading_additional_progress");
         mMessageLabel->SetTextToken(loading_additional_content);
         mProgressLabel->SetTokenFmt(
             loading_additional_progress,

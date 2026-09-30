@@ -341,18 +341,15 @@ DECOMP_FORCEACTIVE(BandUser, "%d")
 DataNode BandUser::OnSetPrefabChar(DataArray *a) {
     Symbol sym = a->Sym(2);
     int i2 = a->Int(3);
-    bool b1 = false;
     std::vector<PrefabChar *> prefabs;
     PrefabMgr::GetPrefabMgr()->GetPrefabs(prefabs);
-    for (int i = 0; i < (int)prefabs.size(); i++) {
+    for (unsigned int i = 0; i < prefabs.size(); i++) {
         if (prefabs[i]->GetPrefabName() == sym) {
-            b1 = true;
             SetChar(prefabs[i]);
-            break;
+            return 1;
         }
     }
-    if (!b1)
-        SetLoadedPrefabChar(i2);
+    SetLoadedPrefabChar(i2);
     return 1;
 }
 
@@ -435,20 +432,25 @@ ControllerType LocalBandUser::ConnectedControllerType() const {
     if (!IsJoypadConnected()) {
         return kControllerNone;
     } else {
+        static Symbol joypad("joypad");
+        static Symbol instrument_mapping("instrument_mapping");
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+        // Dev build only: retail 0x8268BF78 has no override or fake_controllers.
         ControllerType tyOverride =
             TheBandUserMgr->DebugGetControllerTypeOverride(GetPadNum());
         if (tyOverride != kControllerNone)
             return tyOverride;
-        else {
-            Symbol joypadType = JoypadControllerTypePadNum(GetPadNum());
-            DataArray *cfg = SystemConfig(joypad, instrument_mapping);
-            int ct = cfg->FindArray(joypadType)->Int(1);
-            MILO_ASSERT_RANGE_EQ(ct, 0, kNumControllerTypes, 0x337);
-            static DataNode &fake_controllers = DataVariable("fake_controllers");
-            if (fake_controllers.Int() != 0 && ct == 5)
-                ct = 2;
-            return (ControllerType)ct;
-        }
+#endif
+        Symbol joypadType = JoypadControllerTypePadNum(GetPadNum());
+        DataArray *cfg = SystemConfig(joypad, instrument_mapping);
+        int ct = cfg->FindArray(joypadType)->Int(1);
+        MILO_ASSERT_RANGE_EQ(ct, 0, kNumControllerTypes, 0x337);
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+        static DataNode &fake_controllers = DataVariable("fake_controllers");
+        if (fake_controllers.Int() != 0 && ct == 5)
+            ct = 2;
+#endif
+        return (ControllerType)ct;
     }
 }
 

@@ -625,7 +625,9 @@ BEGIN_HANDLERS(TourDescPanel)
     HANDLE_ACTION(refresh, Refresh())
     HANDLE_EXPR(get_selected_tour, GetSelectedTourDesc(0))
     HANDLE_EXPR(is_tour_available, IsTourAvailable())
+#ifndef RB3_STRIP_CHEAT_HANDLERS // retail X360 stripped this dev handler
     HANDLE_ACTION(cheat_win_tour, CheatWinTour())
+#endif
     HANDLE_SUPERCLASS(TexLoadPanel)
     HANDLE_CHECK(0x345)
 END_HANDLERS

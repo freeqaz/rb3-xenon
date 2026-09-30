@@ -67,9 +67,11 @@ void CustomizePanel::Load() {
     MILO_ASSERT(mUser, 0x85);
     mCharData = mUser->GetChar();
     MILO_ASSERT(mCharData, 0x88);
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (PrefabMgr::PrefabIsCustomizable()) {
         mProfile = TheProfileMgr.GetProfileForUser(mUser);
     } else
+#endif
         mProfile = mClosetMgr->GetProfile();
     mPreviewDesc = mClosetMgr->GetPreviewDesc();
     MILO_ASSERT(mPreviewDesc, 0x93);
@@ -81,11 +83,15 @@ void CustomizePanel::Load() {
     mCurrentOutfitProvider = new CurrentOutfitProvider();
     MILO_ASSERT(!mAssetProvider, 0x9E);
     mAssetProvider = new AssetProvider(mProfile, assetGender);
+    mPremiumAssetProvider = new PremiumAssetProvider(assetGender);
     MILO_ASSERT(!mMakeupProvider, 0xA6);
     mMakeupProvider = new MakeupProvider(genderSym);
     MILO_ASSERT(!mInstrumentFinishProvider, 0xA9);
     mInstrumentFinishProvider = new InstrumentFinishProvider();
+    mClosetMgr->RefreshAssetOffers();
+    static Symbol key_unlocked_face_paint("key_unlocked_face_paint");
     mUnlockedFacePaint = mProfile->HasCampaignKey(key_unlocked_face_paint);
+    static Symbol key_unlocked_tattoos("key_unlocked_tattoos");
     mUnlockedTattoos = mProfile->HasCampaignKey(key_unlocked_tattoos);
 }
 
@@ -779,6 +785,17 @@ void CustomizePanel::RefreshCurrentOutfitList() {
 
 void CustomizePanel::PreviewAsset(Symbol s) {
     if (InPreviewState()) {
+        static Symbol none("none");
+        static Symbol none_bandana("none_bandana");
+        static Symbol none_earrings("none_earrings");
+        static Symbol none_eyebrows("none_eyebrows");
+        static Symbol none_facehair("none_facehair");
+        static Symbol none_glasses("none_glasses");
+        static Symbol none_hair("none_hair");
+        static Symbol none_hat("none_hat");
+        static Symbol none_piercings("none_piercings");
+        static Symbol none_rings("none_rings");
+        static Symbol none_wrists("none_wrists");
         BandCharDesc *desc = mPreviewDesc;
         AssetMgr *pAssetMgr = AssetMgr::GetAssetMgr();
         MILO_ASSERT(pAssetMgr, 0x255);
@@ -791,93 +808,131 @@ void CustomizePanel::PreviewAsset(Symbol s) {
         } else {
             Asset *pAsset = pAssetMgr->GetAsset(s);
             MILO_ASSERT(pAsset, 0x269);
-            BandProfile *p = mProfile;
-            p->mProfileAssets.SetOld(s);
+            mProfile->mProfileAssets.SetOld(s);
             ty = pAsset->GetType();
             if (pAsset->HasFinishes()) {
-                s = MakeString("%s_%s", s.Str(), pAsset->GetFinish(0).Str());
+                Symbol finish = pAsset->GetFinish(0);
+                s = MakeString("%s_%s", s.Str(), finish.Str());
             }
         }
         Symbol ret = none;
         switch (ty) {
         case kAssetType_None:
             break;
-        case kAssetType_Bandana:
+        case kAssetType_Bandana: {
+            static Symbol facehair("facehair");
             desc->mOutfit.mFaceHair.mName = s;
             ret = facehair;
             break;
-        case kAssetType_Bass:
+        }
+        case kAssetType_Bass: {
+            static Symbol bass("bass");
             desc->mInstruments.mBass.mName = s;
             ret = bass;
             break;
-        case kAssetType_Drum:
+        }
+        case kAssetType_Drum: {
+            static Symbol drum("drum");
             desc->mInstruments.mDrum.mName = s;
             ret = drum;
             break;
-        case kAssetType_Earrings:
+        }
+        case kAssetType_Earrings: {
+            static Symbol earrings("earrings");
             desc->mOutfit.mEarrings.mName = s;
             ret = earrings;
             break;
-        case kAssetType_Eyebrows:
+        }
+        case kAssetType_Eyebrows: {
+            static Symbol eyebrows("eyebrows");
             desc->mOutfit.mEyebrows.mName = s;
             ret = eyebrows;
             break;
-        case kAssetType_FaceHair:
+        }
+        case kAssetType_FaceHair: {
+            static Symbol facehair("facehair");
             desc->mOutfit.mFaceHair.mName = s;
             ret = facehair;
             break;
-        case kAssetType_Feet:
+        }
+        case kAssetType_Feet: {
+            static Symbol feet("feet");
             desc->mOutfit.mFeet.mName = s;
             ret = feet;
             break;
-        case kAssetType_GlassesAndMasks:
+        }
+        case kAssetType_GlassesAndMasks: {
+            static Symbol glasses("glasses");
             desc->mOutfit.mGlasses.mName = s;
             ret = glasses;
             break;
-        case kAssetType_Gloves:
+        }
+        case kAssetType_Gloves: {
+            static Symbol hands("hands");
             desc->mOutfit.mHands.mName = s;
             ret = hands;
             break;
-        case kAssetType_Guitar:
+        }
+        case kAssetType_Guitar: {
+            static Symbol guitar("guitar");
             desc->mInstruments.mGuitar.mName = s;
             ret = guitar;
             break;
-        case kAssetType_Hair:
+        }
+        case kAssetType_Hair: {
+            static Symbol hair("hair");
             desc->mOutfit.mHair.mName = s;
             ret = hair;
             break;
-        case kAssetType_Hat:
+        }
+        case kAssetType_Hat: {
+            static Symbol hair("hair");
             desc->mOutfit.mHair.mName = s;
             ret = hair;
             break;
-        case kAssetType_Keyboard:
+        }
+        case kAssetType_Keyboard: {
+            static Symbol keyboard("keyboard");
             desc->mInstruments.mKeyboard.mName = s;
             ret = keyboard;
             break;
-        case kAssetType_Legs:
+        }
+        case kAssetType_Legs: {
+            static Symbol legs("legs");
             desc->mOutfit.mLegs.mName = s;
             ret = legs;
             break;
-        case kAssetType_Mic:
+        }
+        case kAssetType_Mic: {
+            static Symbol mic("mic");
             desc->mInstruments.mMic.mName = s;
             ret = mic;
             break;
-        case kAssetType_Piercings:
+        }
+        case kAssetType_Piercings: {
+            static Symbol piercings("piercings");
             desc->mOutfit.mPiercings.mName = s;
             ret = piercings;
             break;
-        case kAssetType_Rings:
+        }
+        case kAssetType_Rings: {
+            static Symbol rings("rings");
             desc->mOutfit.mRings.mName = s;
             ret = rings;
             break;
-        case kAssetType_Torso:
+        }
+        case kAssetType_Torso: {
+            static Symbol torso("torso");
             desc->mOutfit.mTorso.mName = s;
             ret = torso;
             break;
-        case kAssetType_Wrists:
+        }
+        case kAssetType_Wrists: {
+            static Symbol wrist("wrist");
             desc->mOutfit.mWrist.mName = s;
             ret = wrist;
             break;
+        }
         default:
             MILO_ASSERT(false, 0x304);
             break;
@@ -901,20 +956,27 @@ void CustomizePanel::PreviewFinish(Symbol s) {
     Asset *pAsset = pAssetMgr->GetAsset(stripped);
     MILO_ASSERT(pAsset, 800);
     Symbol s1c = MakeString("%s_%s", stripped.Str(), s.Str());
+    static Symbol none("none");
     Symbol outfit = none;
     switch (pAsset->GetType()) {
-    case kAssetType_Guitar:
+    case kAssetType_Guitar: {
+        static Symbol guitar("guitar");
         desc->mInstruments.mGuitar.mName = s1c;
         outfit = guitar;
         break;
-    case kAssetType_Bass:
+    }
+    case kAssetType_Bass: {
+        static Symbol bass("bass");
         desc->mInstruments.mBass.mName = s1c;
         outfit = bass;
         break;
-    case kAssetType_Drum:
+    }
+    case kAssetType_Drum: {
+        static Symbol drum("drum");
         desc->mInstruments.mDrum.mName = s1c;
         outfit = drum;
         break;
+    }
     default:
         break;
     }
@@ -924,10 +986,21 @@ void CustomizePanel::PreviewFinish(Symbol s) {
 
 void CustomizePanel::SelectAsset(Symbol s) {
     if (!mClosetMgr->IsCharacterLoading()) {
+        static Symbol none("none");
+        static Symbol none_bandana("none_bandana");
+        static Symbol none_earrings("none_earrings");
+        static Symbol none_eyebrows("none_eyebrows");
+        static Symbol none_facehair("none_facehair");
+        static Symbol none_glasses("none_glasses");
+        static Symbol none_hair("none_hair");
+        static Symbol none_hat("none_hat");
+        static Symbol none_piercings("none_piercings");
+        static Symbol none_rings("none_rings");
+        static Symbol none_wrists("none_wrists");
         if (s == none_bandana || s == none_earrings || s == none_eyebrows
             || s == none_facehair || s == none_glasses || s == none_hair || s == none_hat
             || s == none_piercings || s == none_rings || s == none_wrists) {
-            mClosetMgr->FinalizeChanges(true, InClothingState());
+            mClosetMgr->FinalizeChanges(true, mCustomizeState >= kCustomizeState_BrowseTorso && mCustomizeState <= kCustomizeState_BrowseFeet);
             LeaveState(false);
         } else {
             AssetMgr *pAssetMgr = AssetMgr::GetAssetMgr();
@@ -1049,9 +1122,13 @@ void CustomizePanel::SetupCurrentOutfit(Symbol s) {
         Asset *pAsset = pAssetMgr->GetAsset(s);
         MILO_ASSERT(pAsset, 0x443);
         Symbol assetSym = GetSymbolFromAssetType(pAsset->GetType());
+        static Symbol bandana("bandana");
+        static Symbol hat("hat");
         if (assetSym == bandana) {
+            static Symbol facehair("facehair");
             assetSym = facehair;
         } else if (assetSym == hat) {
+            static Symbol hair("hair");
             assetSym = hair;
         }
         mClosetMgr->SetCurrentOutfitPiece(assetSym);
@@ -1454,8 +1531,9 @@ void CustomizePanel::ScalePatch(float dx, float dy) {
     );
     if (idx != -1) {
         BandCharDesc::Patch *patch = mPreviewDesc->GetPatch(idx);
-        float oldX = patch->mScale.x;
-        float oldY = patch->mScale.y;
+        Vector2 oldScale = patch->mScale;
+        float oldX = oldScale.x;
+        float oldY = oldScale.y;
         Vector2 newScale;
         newScale.x = oldX + dx;
         newScale.y = oldY + dy;
@@ -1467,12 +1545,9 @@ void CustomizePanel::ScalePatch(float dx, float dy) {
             newScale.y = 0.0f;
         else if (newScale.y > 5.0f)
             newScale.y = 5.0f;
-        bool changed = false;
-        if (newScale.x != oldX || newScale.y != oldY)
-            changed = true;
+        bool changed = newScale.x != oldX || newScale.y != oldY;
         if (changed) {
-            patch->mScale.x = newScale.x;
-            patch->mScale.y = newScale.y;
+            patch->mScale = newScale;
             RefreshPatchEdit();
         }
     }
@@ -1492,6 +1567,7 @@ bool CustomizePanel::IsCurrentAssetPatchable() {
 }
 
 void CustomizePanel::SetupAssetPatchData(Symbol sym) {
+    static Symbol none("none");
     if (sym == none) {
         ClearAssetPatchData();
         return;
@@ -1499,7 +1575,8 @@ void CustomizePanel::SetupAssetPatchData(Symbol sym) {
     AssetMgr *pAssetMgr = AssetMgr::GetAssetMgr();
     MILO_ASSERT(pAssetMgr, 0x65F);
     AssetType ty = pAssetMgr->GetTypeFromName(sym);
-    if (mClosetMgr->GetAssetFromAssetType(ty) != sym) {
+    Symbol asset = mClosetMgr->GetAssetFromAssetType(ty);
+    if (asset != sym) {
         ClearAssetPatchData();
         return;
     }
@@ -1509,8 +1586,9 @@ void CustomizePanel::SetupAssetPatchData(Symbol sym) {
         return;
     }
     BandCharDesc::Patch::Category cat = GetPatchCategoryFromAssetType(ty);
-    for (int i = 0; i < cfg->mPatches.size(); i++) {
-        if (cfg->mPatches[i].mCategory == cat) {
+    ObjVector<BandPatchMesh> &patches = cfg->mPatches;
+    for (int i = 0; i < patches.size(); i++) {
+        if (patches[i].mCategory == cat) {
             unk90 = sym;
             mPatchCategory = cat;
             return;

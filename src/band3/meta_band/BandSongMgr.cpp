@@ -479,6 +479,17 @@ int BandSongMgr::GetValidSongCount(const std::hash_map<int, SongMetadata *> &son
 }
 
 bool BandSongMgr::IsSongUnplayable(int songID, BandUserMgr &mgr, bool bvar3) const {
+    // Retail: function-local statics, one guard word (0x82DFE724); real_keys
+    // is initialized but unused.
+    static Symbol none("none");
+    static Symbol guitar("guitar");
+    static Symbol bass("bass");
+    static Symbol drum("drum");
+    static Symbol vocals("vocals");
+    static Symbol keys("keys");
+    static Symbol real_guitar("real_guitar");
+    static Symbol real_keys("real_keys");
+    static Symbol real_bass("real_bass");
     BandSongMetadata *data = (BandSongMetadata *)Data(songID);
     Symbol shortname = GetShortNameFromSongID(songID, true);
     if (data->IsPrivate()) {
@@ -512,11 +523,9 @@ bool BandSongMgr::IsSongUnplayable(int songID, BandUserMgr &mgr, bool bvar3) con
         bool b1 = false;
         bool b11 = true;
         if (i12 == 1) {
-            b1 = true;
-            if (!data->HasPart(guitar, false) && !data->HasPart(bass, false)) {
-                b1 = false;
-            }
-            if (!b1)
+            if (data->HasPart(guitar, false) || data->HasPart(bass, false))
+                b1 = true;
+            else
                 b11 = false;
         }
         if (i12 > 1) {
@@ -528,10 +537,10 @@ bool BandSongMgr::IsSongUnplayable(int songID, BandUserMgr &mgr, bool bvar3) con
             }
         }
         if (i7 == 1) {
-            if (data->HasPart(real_guitar, false) || data->HasPart(real_bass, false)) {
-                b11 = false;
-            } else
+            if (data->HasPart(real_guitar, false) || data->HasPart(real_bass, false))
                 b1 = true;
+            else
+                b11 = false;
         }
         if (i7 > 1) {
             if (!data->HasPart(real_guitar, false) || !data->HasPart(real_bass, false)) {
@@ -1073,35 +1082,20 @@ void BandSongMgr::SyncSharedSongs() {
          it != mAvailableSongs.end();
          ++it) {
         int id = *it;
-        if (!IsRestricted(id)) {
+        if (!IsDemo(id) && !IsRestricted(id)) {
             availableSongs.insert(id);
         }
     }
+    static Symbol real_guitar("real_guitar");
+    static Symbol real_bass("real_bass");
     std::set<int> proGuitarBassSongs;
     for (std::set<int>::const_iterator it = availableSongs.begin();
          it != availableSongs.end();
          ++it) {
         int id = *it;
         BandSongMetadata *data = (BandSongMetadata *)Data(id);
-        bool isProGuitarOrBass = false;
-        bool isDownload = false;
-        if (data) {
-            if (data->IsDownload()) {
-                isDownload = true;
-            }
-        }
-        if (isDownload) {
-            bool hasProGuitarOrBass = true;
-            if (!data->HasPart(real_guitar, true)) {
-                if (!data->HasPart(real_bass, true)) {
-                    hasProGuitarOrBass = false;
-                }
-            }
-            if (hasProGuitarOrBass) {
-                isProGuitarOrBass = true;
-            }
-        }
-        if (isProGuitarOrBass) {
+        if (data && data->IsDownload()
+            && (data->HasPart(real_guitar, true) || data->HasPart(real_bass, true))) {
             proGuitarBassSongs.insert(id);
         }
     }

@@ -457,14 +457,16 @@ int TambourineManager::TambourineSwing(int tick) {
         TambourineFail(-1, true);
         return 1;
     }
+    int ret;
     if (diff <= window) {
         TambourineSucceed(mTambourineIdx);
-        mTambourineIdx++;
-        return 2;
+        ret = 2;
+    } else {
+        TambourineFail(mTambourineIdx, true);
+        ret = 3;
     }
-    TambourineFail(mTambourineIdx, true);
     mTambourineIdx++;
-    return 3;
+    return ret;
 }
 
 // These empty inline-emitted definitions live in this TU to match link order

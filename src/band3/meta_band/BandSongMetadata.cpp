@@ -1,4 +1,5 @@
 #include "meta_band/BandSongMetadata.h"
+#include "utl/Locale.h"
 #include "decomp.h"
 #include "meta_band/BandMachineMgr.h"
 #include "meta_band/SessionMgr.h"
@@ -438,6 +439,8 @@ bool BandSongMetadata::IsVersionOK() const {
 }
 
 Symbol BandSongMetadata::LengthSym() const {
+    static Symbol song_select("song_select");
+    static Symbol song_lengths("song_lengths");
     DataArray *cfg = SystemConfig(song_select, song_lengths);
     for (int i = 1; i < cfg->Size(); i++) {
         DataArray *arr = cfg->Array(i);
@@ -454,11 +457,20 @@ Symbol BandSongMetadata::RatingSym() const {
 }
 
 Symbol BandSongMetadata::SourceSym() const {
-    bool official_dlc = GameOrigin() == rb3_dlc || GameOrigin() == rb1_dlc;
-    if (official_dlc)
+    static Symbol ugc("ugc");
+    static Symbol ugc_plus("ugc_plus");
+    static Symbol dlc("dlc");
+    static Symbol rb1_dlc("rb1_dlc");
+    static Symbol rb3_dlc("rb3_dlc");
+    if (GameOrigin() == rb3_dlc || GameOrigin() == rb1_dlc)
         return dlc;
-    else
-        return GameOrigin() == ugc_plus ? ugc : GameOrigin();
+    if (GameOrigin() == ugc_plus)
+        return ugc;
+    // TU5: an origin with no localized name is reported as plain dlc
+    // (retail 0x8259DD70 calls TheLocale.Localize(origin, false)).
+    if (!TheLocale.Localize(GameOrigin(), false))
+        return dlc;
+    return GameOrigin();
 }
 
 Symbol BandSongMetadata::VocalPartsSym() const {

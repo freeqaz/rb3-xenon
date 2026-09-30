@@ -624,12 +624,16 @@ void Tour::UpdateFinishedMedalLabel(UILabel *label) {
     TourDesc *pTourDesc = GetTourDesc(tourDescSym);
     MILO_ASSERT(pTourDesc, 0x41e);
     if (numStars < pTourDesc->GetTourStarsBronzeGoalValue()) {
+        static Symbol tour_finished_no_medal("tour_finished_no_medal");
         label->SetTokenFmt(tour_finished_no_medal, pTourDesc->GetTourStarsBronzeGoalValue() - numStars);
     } else if (numStars < pTourDesc->GetTourStarsSilverGoalValue()) {
+        static Symbol tour_finished_bronze_medal("tour_finished_bronze_medal");
         label->SetTokenFmt(tour_finished_bronze_medal, pTourDesc->GetTourStarsSilverGoalValue() - numStars);
     } else if (numStars < pTourDesc->GetTourStarsGoldGoalValue()) {
+        static Symbol tour_finished_silver_medal("tour_finished_silver_medal");
         label->SetTokenFmt(tour_finished_silver_medal, pTourDesc->GetTourStarsGoldGoalValue() - numStars);
     } else {
+        static Symbol tour_finished_gold_medal("tour_finished_gold_medal");
         label->SetTextToken(tour_finished_gold_medal);
     }
 }
@@ -643,12 +647,16 @@ void Tour::UpdateNextMedalLabel(UILabel *label) {
     TourDesc *pTourDesc = GetTourDesc(tourDescSym);
     MILO_ASSERT(pTourDesc, 0x448);
     if (numStars < pTourDesc->GetTourStarsBronzeGoalValue()) {
+        static Symbol tourdesc_bronze_starcount_needed("tourdesc_bronze_starcount_needed");
         label->SetTokenFmt(tourdesc_bronze_starcount_needed, pTourDesc->GetTourStarsBronzeGoalValue() - numStars);
     } else if (numStars < pTourDesc->GetTourStarsSilverGoalValue()) {
+        static Symbol tourdesc_silver_starcount_needed("tourdesc_silver_starcount_needed");
         label->SetTokenFmt(tourdesc_silver_starcount_needed, pTourDesc->GetTourStarsSilverGoalValue() - numStars);
     } else if (numStars < pTourDesc->GetTourStarsGoldGoalValue()) {
+        static Symbol tourdesc_gold_starcount_needed("tourdesc_gold_starcount_needed");
         label->SetTokenFmt(tourdesc_gold_starcount_needed, pTourDesc->GetTourStarsGoldGoalValue() - numStars);
     } else {
+        static Symbol tourdesc_max_starcount_needed("tourdesc_max_starcount_needed");
         label->SetTextToken(tourdesc_max_starcount_needed);
     }
 }

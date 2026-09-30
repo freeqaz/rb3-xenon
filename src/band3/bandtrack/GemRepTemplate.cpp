@@ -75,6 +75,12 @@ void GemRepTemplate::Init(ObjectDir *dir) {
     mTailMiss = mObjectDir->Find<RndMat>("tail_miss.mat", true);
     mTailBonus = mObjectDir->Find<RndMat>("tail_bonus.mat", true);
     mTailChord = mObjectDir->Find<RndMat>("tail_chord.mat", true);
+    static Symbol guitar_sustain_y_pos("guitar_sustain_y_pos");
+    static Symbol real_guitar_sustain_y_pos("real_guitar_sustain_y_pos");
+    static Symbol real_keys_sustain_y_pos("real_keys_sustain_y_pos");
+    static Symbol guitar_sustain_x_scale("guitar_sustain_x_scale");
+    static Symbol real_guitar_sustain_x_scale("real_guitar_sustain_x_scale");
+    static Symbol real_keys_sustain_x_scale("real_keys_sustain_x_scale");
     TrackType ty = mTrackCfg.GetBandUser()->GetTrackType();
     Symbol clipPropSym(gNullStr);
     Symbol scalePropSym(gNullStr);

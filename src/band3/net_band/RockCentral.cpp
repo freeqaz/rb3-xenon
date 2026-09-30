@@ -182,19 +182,11 @@ DataNode RockCentral::OnMsg(const RockCentralOpCompleteMsg &msg) {
         str50 = na8.Str();
         res.GetDataResultValue("version", na8);
         str5c = na8.Str();
-        if (strcmp(kServerVer.c_str(), str5c.c_str()) != 0) {
-            MILO_WARN(
-                "Can't log in to Rock Central version %s, we're version %s",
-                str5c.c_str(),
-                kServerVer
-            );
-            mLoginBlocked = true;
-            ForceLogout();
-        } else {
-            const char *cc = str50.c_str();
-            if (strlen(cc) > 1) {
-                ExecuteConfig(cc);
-            }
+        // Retail fn_824FA138 (TU5): the server-version gate is gone; the
+        // version string is still read but unused.
+        const char *cc = str50.c_str();
+        if (strlen(cc) > 1) {
+            ExecuteConfig(cc);
         }
     }
     return 1;

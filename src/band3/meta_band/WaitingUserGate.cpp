@@ -211,10 +211,10 @@ DataNode WaitingUserGate::OnMsg(const LockStepStartMsg &msg) {
     OpenGateData *gd = dynamic_cast<OpenGateData *>(ld);
     std::vector<BandUser *> waiting;
     gd->GetWaitingUsers(waiting);
-    int anyLocal = 0;
+    bool anyLocal = false;
     for (int i = 0; (unsigned int)i < waiting.size(); i++) {
         if (waiting[i]->IsLocal()) {
-            anyLocal = 1;
+            anyLocal = true;
             break;
         }
     }

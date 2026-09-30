@@ -168,14 +168,12 @@ void ManageBandPanel::Enter() {
 }
 
 void ManageBandPanel::CheckForKickoutCondition() {
-    if (mProfile) {
-        int padNum = mProfile->GetPadNum();
-        if (!TheWiiProfileMgr.IsPadAGuest(padNum))
-            return;
-    }
+    // RB3-360 retail: the Wii guest-pad test is a save-data test here.
+    if (mProfile && mProfile->HasValidSaveData())
+        return;
+    static Symbol sign_out("sign_out");
     static Message init("init", 0);
     init[0] = 0;
-    static Symbol sign_out("sign_out");
     TheUIEventMgr->TriggerEvent(sign_out, init);
 }
 

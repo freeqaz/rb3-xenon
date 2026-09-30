@@ -629,6 +629,7 @@ void AccuracyFocusTracker::BroadcastFocusSuccess() const {
     Player *pPlayer = mSource->GetPlayer(mFocusPlayer);
     MILO_ASSERT(pPlayer, 0x43B);
     const char *fontchar = GetFontCharFromTrackType(pPlayer->GetTrackType(), 0);
+    static Symbol accuracy_focus_tracker_progress("accuracy_focus_tracker_progress");
     mBroadcastDisplay.ShowBriefBandMessage(
         DataArrayPtr(accuracy_focus_tracker_progress, fontchar)
     );
