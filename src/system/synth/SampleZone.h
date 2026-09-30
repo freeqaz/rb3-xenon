@@ -11,7 +11,7 @@ class SampleZone {
 public:
     SampleZone(Hmx::Object *);
     void Save(BinStream &) const;
-    void Load(BinStreamRev &);
+    void Load(BinStream &);
     bool Includes(unsigned char, unsigned char);
 
     static int gRev;
@@ -46,4 +46,4 @@ private:
 };
 
 BinStream &operator<<(BinStream &, const SampleZone &);
-BinStreamRev &operator>>(BinStreamRev &, SampleZone &);
+BinStream &operator>>(BinStream &, SampleZone &);

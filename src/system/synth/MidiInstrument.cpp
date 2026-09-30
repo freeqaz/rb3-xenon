@@ -176,17 +176,25 @@ END_COPYS
 
 INIT_REVS(3, 0)
 
+// RB3 retail (0x82715D50) is rb3-Wii's Load: a plain int rev, a too-new rev
+// skips the body, and the rev reaches the sample zones through SampleZone::gRev
+// rather than a BinStreamRev -- the zone readers take the raw BinStream.
 BEGIN_LOADS(MidiInstrument)
-    LOAD_REVS(bs)
-    ASSERT_REVS(3, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    d >> mMultiSampleMap;
-    d >> mSend;
-    d >> mPatchNumber;
-    mFaders.Load(d.stream);
-    if (d.rev >= 3) {
-        d >> mReverbMixDb;
-        d >> mReverbEnable;
+    int rev;
+    bs >> rev;
+    if (rev > 3)
+        MILO_WARN("Can't load new MidiInstrument");
+    else {
+        SampleZone::gRev = rev;
+        Hmx::Object::Load(bs);
+        bs >> mMultiSampleMap;
+        bs >> mSend;
+        bs >> mPatchNumber;
+        mFaders.Load(bs);
+        if (rev >= 3) {
+            bs >> mReverbMixDb;
+            bs >> mReverbEnable;
+        }
     }
 #ifdef HX_NATIVE
     StartPolling();
