@@ -22,8 +22,11 @@ BEGIN_HANDLERS(ContentMgr)
     HANDLE(add_content, OnAddContent)
     HANDLE(remove_content, OnRemoveContent)
     HANDLE_EXPR(delete_content, DeleteContent(_msg->Sym(2)))
+#ifdef HX_NATIVE
+    // DC3-era handlers; TU5's ContentMgr::Handle stops at delete_content.
     HANDLE_EXPR(is_mounted, IsMounted(_msg->Sym(2)))
     HANDLE_ACTION(refresh_synchronously, RefreshSynchronously())
+#endif
 END_HANDLERS
 
 void ContentMgr::Init() {
