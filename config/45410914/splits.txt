@@ -2967,7 +2967,7 @@ system/rndobj/Utl.cpp:
 	.pdata      start:0x8220D2F0 end:0x8220D310
 	.pdata      start:0x8220D310 end:0x8220D330
 	.pdata      start:0x82237AF8 end:0x82237B08
-	.pdata      start:0x82237B18 end:0x82237B28
+	.pdata      start:0x82237B18 end:0x82237B20
 	.pdata      start:0x8223AD40 end:0x8223AD50
 	.pdata      start:0x8223AD68 end:0x8223AD70
 	.text       start:0x82439910 end:0x8243E108
@@ -2977,7 +2977,7 @@ system/rndobj/Utl.cpp:
 	.text       start:0x82442E68 end:0x824434D0
 	.text       start:0x824434D0 end:0x82443784
 	.text       start:0x82703A60 end:0x82703AF8
-	.text       start:0x82703B90 end:0x82703C58
+	.text       start:0x82703B90 end:0x82703BF8
 	.text       start:0x8273FD30 end:0x8273FDA8
 	.text       start:0x8273FF80 end:0x8273FFB0
 
@@ -4558,7 +4558,6 @@ Morph.cpp:
 	.pdata      start:0x82202F30 end:0x82202F38
 	.pdata      start:0x82203BD8 end:0x82203C00
 	.pdata      start:0x82203C78 end:0x82203C80
-	.pdata      start:0x82204568 end:0x82204570
 	.pdata      start:0x822104B8 end:0x822104C0
 	.pdata      start:0x822104C0 end:0x822104D0
 	.pdata      start:0x822104D0 end:0x822104E0
@@ -4578,7 +4577,6 @@ Morph.cpp:
 	.text       start:0x8238AB44 end:0x8238ABA4
 	.text       start:0x82398798 end:0x82398A10
 	.text       start:0x82399140 end:0x823991BC
-	.text       start:0x823A40F0 end:0x823A4144
 	.text       start:0x82482F50 end:0x82482F98
 	.text       start:0x82482F98 end:0x8248303C
 	.text       start:0x82483040 end:0x82483144
@@ -4674,16 +4672,12 @@ CharHair.cpp:
 
 CharUtl.cpp:
 	.pdata      start:0x82204510 end:0x82204518
-	.pdata      start:0x82204520 end:0x82204528
-	.pdata      start:0x82204528 end:0x82204530
-	.pdata      start:0x82204530 end:0x82204568
-	.pdata      start:0x82204570 end:0x822045A8
+	.pdata      start:0x82204520 end:0x82204530
+	.pdata      start:0x82204530 end:0x822045A8
 	.pdata      start:0x8220E190 end:0x8220E1A0
 	.text       start:0x823A38B0 end:0x823A393C
-	.text       start:0x823A3988 end:0x823A3AB8
-	.text       start:0x823A3AB8 end:0x823A3B2C
-	.text       start:0x823A3B30 end:0x823A40F0
-	.text       start:0x823A4144 end:0x823A451C
+	.text       start:0x823A3988 end:0x823A3B2C
+	.text       start:0x823A3B30 end:0x823A451C
 	.text       start:0x82456A20 end:0x82456BE8
 
 CharWeightSetter.cpp:
@@ -11263,83 +11257,34 @@ SongPreview.cpp:
 
 StandardStream.cpp:
 	.pdata      start:0x822378F8 end:0x82237900
-	.pdata      start:0x82237900 end:0x82237908
-	.pdata      start:0x82237908 end:0x82237910
-	.pdata      start:0x82237910 end:0x82237920
-	.pdata      start:0x82237920 end:0x82237928
+	.pdata      start:0x82237900 end:0x82237910
+	.pdata      start:0x82237910 end:0x82237928
 	.pdata      start:0x82237928 end:0x82237958
-	.pdata      start:0x82237970 end:0x82237990
-	.pdata      start:0x82237990 end:0x822379B8
-	.pdata      start:0x822379B8 end:0x822379C8
-	.pdata      start:0x822379C8 end:0x822379D8
+	.pdata      start:0x82237970 end:0x822379D8
 	.pdata      start:0x822379D8 end:0x82237A28
-	.pdata      start:0x82237A28 end:0x82237A30
-	.pdata      start:0x82237A30 end:0x82237A40
-	.pdata      start:0x82237A40 end:0x82237A48
-	.pdata      start:0x82237A48 end:0x82237A60
-	.pdata      start:0x82237A60 end:0x82237A68
-	.pdata      start:0x82237A68 end:0x82237A70
-	.pdata      start:0x82237A70 end:0x82237A78
-	.pdata      start:0x82237A78 end:0x82237A90
-	.pdata      start:0x82237A90 end:0x82237A98
+	.pdata      start:0x82237A28 end:0x82237A98
 	.pdata      start:0x82237A98 end:0x82237AC0
 	.pdata      start:0x82237AC0 end:0x82237AC8
 	.pdata      start:0x82237AE8 end:0x82237AF8
 	.pdata      start:0x82237B08 end:0x82237B18
-	.pdata      start:0x82237B28 end:0x82237B48
-	.pdata      start:0x82237B48 end:0x82237B58
-	.pdata      start:0x82237B58 end:0x82237B60
-	.pdata      start:0x82237B60 end:0x82237B68
-	.pdata      start:0x82237B78 end:0x82237B80
-	.pdata      start:0x82237B80 end:0x82237C10
-	.pdata      start:0x82237C10 end:0x82237C18
-	.pdata      start:0x82237C20 end:0x82237C28
-	.pdata      start:0x82237C28 end:0x82237C48
-	.pdata      start:0x82237C48 end:0x82237C68
-	.pdata      start:0x82237C68 end:0x82237CD8
-	.pdata      start:0x82237CD8 end:0x82237CE0
-	.text       start:0x82701A28 end:0x82701A78
-	.text       start:0x82701A78 end:0x82701AA4
-	.text       start:0x82701AA8 end:0x82701AD8
-	.text       start:0x82701AD8 end:0x82701AEC
-	.text       start:0x82701AF0 end:0x82701B70
-	.text       start:0x82701B70 end:0x82701BEC
-	.text       start:0x82701BF0 end:0x82701CA0
-	.text       start:0x82701CA0 end:0x82701CFC
+	.pdata      start:0x82237B20 end:0x82237B68
+	.pdata      start:0x82237B78 end:0x82237C18
+	.pdata      start:0x82237C20 end:0x82237CE0
+	.text       start:0x82701A28 end:0x82701AA4
+	.text       start:0x82701AA8 end:0x82701AEC
+	.text       start:0x82701AF0 end:0x82701BEC
+	.text       start:0x82701BF0 end:0x82701CFC
 	.text       start:0x82701D00 end:0x82701EF8
-	.text       start:0x82701FF8 end:0x827020F0
-	.text       start:0x827020F0 end:0x82702288
-	.text       start:0x82702288 end:0x82702380
-	.text       start:0x82702380 end:0x827023F8
-	.text       start:0x827023F8 end:0x8270240C
-	.text       start:0x82702410 end:0x82702430
-	.text       start:0x82702430 end:0x82702A9C
-	.text       start:0x82702AA0 end:0x82702B08
-	.text       start:0x82702B08 end:0x82702B40
-	.text       start:0x82702B40 end:0x82702C20
-	.text       start:0x82702C20 end:0x82702C90
-	.text       start:0x82702C90 end:0x82702E70
-	.text       start:0x82702E70 end:0x82702F18
-	.text       start:0x82702F18 end:0x82703040
-	.text       start:0x82703040 end:0x827030A0
-	.text       start:0x827030A0 end:0x82703428
-	.text       start:0x82703428 end:0x8270347C
+	.text       start:0x82701FF8 end:0x8270240C
+	.text       start:0x82702410 end:0x82702A9C
+	.text       start:0x82702AA0 end:0x8270347C
 	.text       start:0x82703480 end:0x82703814
 	.text       start:0x82703818 end:0x82703890
 	.text       start:0x827039C8 end:0x82703A60
 	.text       start:0x82703AF8 end:0x82703B90
-	.text       start:0x82703C58 end:0x82703E08
-	.text       start:0x82703E08 end:0x82703EC0
-	.text       start:0x82703EC0 end:0x82704010
-	.text       start:0x82704010 end:0x82704058
-	.text       start:0x827041E8 end:0x82704248
-	.text       start:0x82704248 end:0x82704B40
-	.text       start:0x82704B40 end:0x82704BB4
-	.text       start:0x82704C38 end:0x82704ED8
-	.text       start:0x82704ED8 end:0x82705058
-	.text       start:0x82705058 end:0x827052B8
-	.text       start:0x827052B8 end:0x82705690
-	.text       start:0x82705690 end:0x82705838
+	.text       start:0x82703BF8 end:0x82704058
+	.text       start:0x827041E8 end:0x82704BB4
+	.text       start:0x82704C38 end:0x82705838
 	.text       start:0x82772870 end:0x827728D0
 
 TrackConfig.cpp:

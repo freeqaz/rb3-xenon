@@ -12898,11 +12898,27 @@
   {
    "name": "$__uninitialized_copy",
    "address": "0x823a40f0",
-   "survivor": "??$__uninitialized_copy@PAVMoveFrame@@PAV1@@stlpmtx_std@@YAPAVMoveFrame@@PAV1@00ABU__false_type@0@@Z",
-   "folded": [
-    "??E?$ObjDirItr@VCharHair@@@@QAAAAV0@XZ"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "survivor": "??E?$ObjDirItr@VCharHair@@@@QAAAAV0@XZ",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_copy@PAVMoveFrame@@PAV1@@stlpmtx_std@@YAPAVMoveFrame@@PAV1@00ABU__false_type@0@@Z",
+     "lane": "W17-PRAC 2026-09-30",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ELEMENT",
+     "disposition": "withdrawn; the group survivor is rebound to the retail identity at 0x823a40f0, and the map is rebound there in the same commit",
+     "absent_types": [
+      "MoveFrame"
+     ],
+     "type_evidence": {
+      "MoveFrame": {
+       "declared_in": "src/system/hamobj only (Dance Central)",
+       "rb3wii_files": 0
+      }
+     },
+     "evidence": "THE BODY IS NOT AN __uninitialized_copy AT ALL. Retail 0x823a40f0 (84 B): if (this->+8) { this->+8 = KeylessHash<const char*,ObjectDir::Entry>::FirstFrom(&(this->+4)->+8, this->+8 + 8); ObjDirItr<CharHair>::Advance(this); } return this; -- ObjDirItr<CharHair>::operator++ (mEntry = mDir->mHashTable.FirstFrom(mEntry + 1); Advance()). Its only retail caller is CharUtlResetHair (0x823a4298), the ObjDirItr<CharHair> loop. The operator++ spelling, previously listed as folded, is the only identity; no fold is asserted. MoveFrame is Dance Central code. Split re-homed Morph.cpp -> CharUtl.cpp (CharUtl.obj defines it; the block sits between two CharUtl blocks)."
+    }
+   ]
   },
   {
    "name": "_GCharWeightSetter",
@@ -88271,11 +88287,28 @@
   {
    "name": "_M_erase_VCartRow",
    "address": "0x82703bf8",
-   "survivor": "?_M_erase@?$vector@VCartRow@@V?$StlNodeAlloc@VCartRow@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVCartRow@@PAV3@0ABU__false_type@2@@Z",
-   "folded": [
-    "??$DeleteAll@V?$vector@PAUChannelParams@StandardStream@@V?$StlNodeAlloc@PAUChannelParams@StandardStream@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAUChannelParams@StandardStream@@V?$StlNodeAlloc@PAUChannelParams@StandardStream@@@stlpmtx_std@@@stlpmtx_std@@@Z"
-   ],
-   "evidence": "W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x82703bf8). \"ours\" spelling ??$DeleteAll@V?$vector@PAUChannelParams@StandardStream@@V?$StlNodeAlloc@PAUChannelParams@StandardStream@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAUChannelParams@StandardStream@@V?$StlNodeAlloc@PAUChannelParams@StandardStream@@@stlpmtx_std@@@stlpmtx_std@@@Z is a template/spelling twin of survivor ?_M_erase@?$vector@VCartRow@@V?$StlNodeAlloc@VCartRow@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVCartRow@@PAV3@0ABU__false_type@2@@Z at retail address 0x82703bf8. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 2 SLOT-FOLD-OK, 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 492 B (492 B honest) across ['default/StandardStream'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md."
+   "survivor": "??$DeleteAll@V?$vector@PAUChannelParams@StandardStream@@V?$StlNodeAlloc@PAUChannelParams@StandardStream@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAUChannelParams@StandardStream@@V?$StlNodeAlloc@PAUChannelParams@StandardStream@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "folded": [],
+   "evidence": "W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x82703bf8). \"ours\" spelling ??$DeleteAll@V?$vector@PAUChannelParams@StandardStream@@V?$StlNodeAlloc@PAUChannelParams@StandardStream@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAUChannelParams@StandardStream@@V?$StlNodeAlloc@PAUChannelParams@StandardStream@@@stlpmtx_std@@@stlpmtx_std@@@Z is a template/spelling twin of survivor ?_M_erase@?$vector@VCartRow@@V?$StlNodeAlloc@VCartRow@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVCartRow@@PAV3@0ABU__false_type@2@@Z at retail address 0x82703bf8. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 2 SLOT-FOLD-OK, 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 492 B (492 B honest) across ['default/StandardStream'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md.",
+   "withdrawn": [
+    {
+     "spelling": "?_M_erase@?$vector@VCartRow@@V?$StlNodeAlloc@VCartRow@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVCartRow@@PAV3@0ABU__false_type@2@@Z",
+     "lane": "W17-PRAC 2026-09-30",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ELEMENT",
+     "disposition": "withdrawn; the group survivor is rebound to the retail identity at 0x82703bf8, and the map is rebound there in the same commit",
+     "absent_types": [
+      "CartRow"
+     ],
+     "type_evidence": {
+      "CartRow": {
+       "declared_in": "dc3-decomp src/lazer/net_ham/HamStoreCartJobs.h only (Dance Central 3 store code)",
+       "rb3_xenon_files": 0,
+       "rb3wii_files": 0
+      }
+     },
+     "evidence": "THE BODY IS NOT A vector::_M_erase. Retail 0x82703bf8 (92 B) walks a vector of 4-byte pointers, and for each non-null one calls ??1ChannelParams@StandardStream@@QAA@XZ (0x82702380) then operator delete, then erases [begin,end) -- DeleteAll(mChanParams). Its only retail caller is ~StandardStream (0x82704248), whose source is `DeleteAll(mChanParams)`. The DeleteAll<vector<ChannelParams*>> spelling, previously listed as folded, is the only identity; no fold is asserted. CartRow is DC3 store code (lazer/net_ham). Split re-homed system/rndobj/Utl.cpp -> StandardStream.cpp (StandardStream.obj defines it)."
+    }
+   ]
   },
   {
    "name": "AddReceiver_SongParser",
