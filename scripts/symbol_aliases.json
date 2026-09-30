@@ -63842,7 +63842,6 @@
     "??_GFxSendBitCrush360@@UAAPAXI@Z",
     "??_GKerningTable@@QAAPAXI@Z",
     "??_GAppScoreDisplay@@UAAPAXI@Z",
-    "??_GBandScreen@@UAAPAXI@Z",
     "??_GBinkClip@@UAAPAXI@Z",
     "??_GBmpCache@HiResScreen@@UAAPAXI@Z",
     "??_GBustAMoveData@@UAAPAXI@Z",
@@ -64097,6 +64096,13 @@
      "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
      "disposition": "withdrawn; map rebound to this spelling at 0x82438ee8 in the same commit",
      "evidence": "REFUTED ON RETAIL BYTES. RndMat's own scalar deleting destructor is at 0x82438ee8, not at this group's address: retail RTTI (tools/retail_rtti.py) resolves the vtable at 0x8206571c through its COL 0x821da200 to .?AVRndMat@@, and slot 0 of that vtable is 0x82438ee8 (the only .rdata reference to that address). The 0x4c body at 0x82438ee8 calls 0x82438990, which the map names ??1RndMat@@UAA@XZ (W17-MAT, RndMat vtable slot order), then MemFree 0x827bc430. This group's address 0x823f5270 is slot 0 of a DIFFERENT vtable, 0x8205982c, whose COL 0x821d8988 names .?AVMessageBroker@@; its body calls 0x823f4fa8, a dtor that installs vtable 0x8205982c, and a different operator delete at 0x82a99258. A linked image resolves each COMDAT to one definition, so a spelling that owns its own retail address did not fold here, and the two bodies differ in both relocation targets besides. The map previously named 0x82438ee8 ??_GModalKeyListener@@UAAPAXI@Z, which is also wrong: ModalKeyListener's vtable 0x8205e18c (COL 0x821d9234) has slot 0 = 0x8250d530. Map rebound to ??_GRndMat@@UAAPAXI@Z at 0x82438ee8 in the same commit. NOT addressed here: the group's survivor spelling ??_GAutomator@@UAAPAXI@Z itself names MessageBroker's slot-0 function (retail has no .?AVAutomator@@ descriptor); the remaining memberships are untouched."
+    },
+    {
+     "spelling": "??_GBandScreen@@UAAPAXI@Z",
+     "lane": "W17-OPTR 2026-09-30",
+     "class": "CONTRADICTED_RETAIL_VTABLE_SLOT0_ELSEWHERE",
+     "disposition": "withdrawn",
+     "evidence": "Retail BandScreen's vtable (0x8209d634, RTTI .?AVBandScreen@@, tools/retail_rtti.py) holds 0x825738b8 in slot 0, not this group's address; 0x823f5270 is slot 0 of MessageBroker's vtable. The membership rested on T1 masked byte identity, which masks the one bl that distinguishes one ??_G from another. W17-OPTR names 0x825738b8 ??_GBandScreen (it carried the fictional ??_G?$ObjRefConcrete<UIComponent> name); map_name_injectivity and icf_alias_finder --validate then contradicted this membership."
     }
    ],
    "repair": {
