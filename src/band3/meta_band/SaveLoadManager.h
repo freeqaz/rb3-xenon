@@ -152,8 +152,16 @@ protected:
     // after it, which shifted every vector access by -4.
     BandProfile *mProfile; // 0x30
     std::vector<BandProfile *> mUploadProfiles; // 0x34 (8B -> 0x3c)
-    DataArrayPtr unk44; // 0x40
-    int unk48; // 0x44
+    DataArrayPtr unk40; // 0x40
+    int unk44; // 0x44
+    // Confirmed usage (W17-CLEAN-SLM cleanup, cpp grep): exclusively the
+    // current SONG cache lookup name (set from TheSongMgr.GetCachedSongInfoName(),
+    // read by every Cache/CacheMgr call in the song-cache-create case block).
+    // Distinct from the GLOBAL options cache, which uses kStrGlobalCacheName
+    // directly and never touches this field. Not renamed here (out of scope
+    // for this pass -- inferred-name licence in this task is for State enum
+    // values only, not struct members) but a safe candidate would be
+    // `mSongCacheName`.
     String unk4c; // 0x48 (12B -> 0x54)
     int mSaveSize; // 0x54
     unsigned char unk58; // 0x58

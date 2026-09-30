@@ -78,7 +78,7 @@ SaveLoadManager *TheSaveLoadMgr;
 SaveLoadManager::SaveLoadManager()
     : mActivated(false), mInitialLoadNotDone(true), mState(kS_Idle),
       mStateAtSelectStart(kS_Idle), mUser(NULL), mLocalUser(NULL),
-      mProfile(NULL), unk44(), unk48(0), mSaveSize(0), unk58(0), mCacheID(NULL), mCache(NULL),
+      mProfile(NULL), unk40(), unk44(0), mSaveSize(0), unk58(0), mCacheID(NULL), mCache(NULL),
       mData(NULL), unk68(false), mWaiting(false), unk6c(0), unk70(0),
       mRequestFlags(0), unk75(0), unk78(0), unk7c(0), mAction(NULL) {
     mUploadProfiles.reserve(4);
@@ -771,14 +771,21 @@ void SaveLoadManager::Poll() {
 // one site and all 3 closed together.  Charges close where their cause is;
 // they do not dissolve at a distance.)
 //
-// TWO REAL DEFECTS LOCATED HERE, both still open, for whoever funds the 13:
+// ONE REAL DEFECT LOCATED HERE, still open, for whoever funds the 13:
 //   1. idx 580 and 639: retail loads a static (`lis r10, lbl_82C72830@h`)
 //      where we `bl ?Localize@@YAPBDVSymbol@@PA_N@Z`.  Retail does not call
 //      Localize at these two sites at all.
-//   2. idx 798-799: retail dispatches off ONE unsigned compare --
-//      `lwz r11,0x1c(r30); cmplwi cr6,r11,0x1; blt (==0); bne (exit); (==1)`
-//      -- i.e. a SWITCH on mMode (0x1c) with cases 0 and 1.  We emit a signed
-//      `cmpwi cr6,r11,0x0; beq`, i.e. an if/else chain that re-compares.
+// (A second item used to be listed here -- an mMode dispatch at idx 798-799
+// claimed to still be an if/else chain against retail's unsigned-compare
+// switch. That directly contradicted "idx 798-800 was the mMode dispatch:
+// CLOSED, it is a switch (see 0x43)" a few lines above IN THIS SAME BLOCK.
+// Re-checked W17-CLEAN-SLM, 2026-09-30, via a fresh full-listing objdiff:
+// idx 797-800 on the CURRENT tree read
+//   lwz r11,0x1c(r30); cmplwi cr6,r11,0x1; blt cr6,<L>; bne cr6,<L>
+// IDENTICAL on both target and base, no mismatch charge on any of the four.
+// The "we emit a signed cmpwi cr6,r11,0x0; beq" description matches no code
+// present now -- it was already fixed by an earlier lane and this second
+// mention was never updated. The CLOSED line above is the correct one.)
 void SaveLoadManager::SetState(State newState) {
     if (mState == newState) return;
 
@@ -792,37 +799,37 @@ void SaveLoadManager::SetState(State newState) {
     // here (lwz r11,0x20(r30) after the static init) rather than caching it in a
     // callee-saved reg -- caching it costs a whole-function regalloc cascade.
     switch ((int)mState) {
-    case 0x0:
+    case kS_Idle:
         wasIdle = true;
         break;
-    case 0x1f:
-    case 0x21:
-    case 0x32:
+    case kS_SongCacheCreateSearch:
+    case kS_SongCacheCreateNotFound_Msg:
+    case kS_SongCacheCreateMissing_Msg:
     case 0x33:
-    case 0x3e:
-        if (newState != (State)0x6b) {
+    case kS_SongCacheCreateMountRead2:
+        if (newState != kS_Finish) {
             if (mData != NULL) {
                 MemFree(mData);
                 mData = NULL;
             }
         }
         break;
-    case 0xb:
-    case 0x46:
-    case 0x47:
-    case 0x64:
-        if (newState != (State)0x69) {
+    case kS_AutoloadStartLoad:
+    case kS_SaveOverwrite:
+    case kS_SaveNoOverwrite:
+    case kS_ManualLoadChooseDevice:
+        if (newState != kS_Done) {
             delete mAction;
             mAction = NULL;
         }
         break;
-    case 0x6b:
+    case kS_Finish:
         if (mData != NULL) {
             MemFree(mData);
             mData = NULL;
         }
         break;
-    case 0x69:
+    case kS_Done:
         delete mAction;
         mAction = NULL;
         break;
@@ -835,25 +842,25 @@ void SaveLoadManager::SetState(State newState) {
         UpdateStatus((SaveLoadMgrStatus)0);
     }
     switch ((int)mState) {
-    case 0x0: // kS_Idle
+    case kS_Idle:
         UpdateStatus((SaveLoadMgrStatus)5);
         break;
-    case 0x1: // kS_Start
+    case kS_Start:
         unk7c = 0;
         break;
     case 0x2:
         if (mInitialLoadNotDone) {
             SetState((State)0x14);
         } else {
-            SetState((State)0x3);
+            SetState(kS_AutoloadSelectProfile);
         }
         break;
-    case 0x3: // kS_AutoloadSelectProfile
+    case kS_AutoloadSelectProfile:
         // Retail (Ghidra TU5 0x82550880 case 3): no vector churn, no IsDisableWriting.
         mProfile = GetNewSigninProfile();
         if (mProfile == NULL) {
             mUser = NULL;
-            SetState((State)0x12);
+            SetState(kS_AutoloadDeviceMissing);
         } else {
             mUser = mProfile->GetLocalBandUser();
             SetState((State)0x4);
@@ -871,9 +878,9 @@ void SaveLoadManager::SetState(State newState) {
     }
     case 0x5:
         if (unk7c == 2) {
-            SetState((State)0x9);
+            SetState(kS_AutoloadSelectDevice2);
         } else {
-            SetState((State)0x6);
+            SetState(kS_AutoloadNoSaveFound_Msg);
         }
         break;
     // Retail (Ghidra TU5) has 8 = SelectDevice and 9 = SetDevice -- our port had
@@ -881,12 +888,12 @@ void SaveLoadManager::SetState(State newState) {
     // (profile, bool, sink, padNum) and never calls AddSink here.
     // retail emits case 9's body BEFORE case 8's, so its source declares them
     // in that order (MSVC lays case bodies out in source order)
-    case 0x9: // kS_AutoloadSetDevice
+    case kS_AutoloadSelectDevice2:
         MILO_ASSERT(unk7c == 2, 0x559);
         TheMemcardMgr.SetDevice(unk78);
-        SetState((State)0xb);
+        SetState(kS_AutoloadStartLoad);
         break;
-    case 0x8: // kS_AutoloadSelectDevice2
+    case kS_AutoloadSetDevice:
     {
         BandProfile *pProfile = GetProfile();
         int devId = -1;
@@ -895,9 +902,9 @@ void SaveLoadManager::SetState(State newState) {
         TheMemcardMgr.SelectDevice(pProfile, false, this, devId);
         break;
     }
-    case 0xa: // kS_AutoloadSelectDevice3
-    case 0xd:
-    case 0x4d:
+    case kS_AutoloadSelectDevice3:
+    case kS_AutoloadStartLoad2:
+    case kS_GlobalCreateMissing_Msg:
     {
         BandProfile *pProfile = GetProfile();
         int devId = -1;
@@ -906,7 +913,7 @@ void SaveLoadManager::SetState(State newState) {
         TheMemcardMgr.SelectDevice(pProfile, true, this, devId);
         break;
     }
-    case 0xb: // kS_AutoloadStartLoad
+    case kS_AutoloadStartLoad:
     {
         BandProfile *pProfile = GetProfile();
         mWaiting = true;
@@ -917,7 +924,7 @@ void SaveLoadManager::SetState(State newState) {
         TheMemcardMgr.OnLoadGame(pProfile, mAction);
         break;
     }
-    case 0x12:
+    case kS_AutoloadDeviceMissing:
     {
         // Retail (Ghidra TU5 0x82550880 case 0x12): NO IsDisableWriting() check here
         // (that belongs to a different case) -- just a straight branch on
@@ -928,11 +935,12 @@ void SaveLoadManager::SetState(State newState) {
             SetState((State)0x13);
         } else {
             TheProfileMgr.HandleProfileLoadComplete();
-            SetState((State)0x6a);
+            SetState(kS_LoadComplete);
         }
         break;
     }
-    case 0x14: // kS_SongCacheCreateSearch (entry-like)
+    case 0x14: // no State enum entry at 0x14; prior comment wrongly borrowed
+               // kS_SongCacheCreateSearch's name (that value is really 0x1F)
     {
         // Retail (Ghidra TU5 0x82550880 case 0x14): goes straight from clearing
         // mCacheID to the SearchAsync vtable call (offset+8) -- there is NO
@@ -952,7 +960,8 @@ void SaveLoadManager::SetState(State newState) {
         }
         break;
     }
-    case 0x15: // kS_SongCacheCreateNotFound_Msg
+    case 0x15: // no State enum entry at 0x15; prior comment wrongly borrowed
+               // kS_SongCacheCreateNotFound_Msg's name (that value is really 0x21)
     case 0x16:
     {
         SetState((State)0x19);
@@ -976,7 +985,7 @@ void SaveLoadManager::SetState(State newState) {
                 NULL, 0x25800ULL, cacheName, Localize(song_info_cache_name, NULL), &mCacheID
             )) {
             if (TheCacheMgr->GetLastResult() != 0) {
-                SetState((State)0x1a);
+                SetState(kS_SongCacheCreateMountRead);
             }
         }
         break;
@@ -991,7 +1000,7 @@ void SaveLoadManager::SetState(State newState) {
         }
         break;
     }
-    case 0x20:
+    case kS_SongCacheCreateMountWrite:
     {
         UpdateStatus((SaveLoadMgrStatus)1);
         if (!TheCacheMgr->MountAsync(mCacheID, &mCache, NULL)) {
@@ -1011,7 +1020,7 @@ void SaveLoadManager::SetState(State newState) {
         }
         break;
     }
-    case 0x1f:
+    case kS_SongCacheCreateSearch:
     {
         mData = (_MemAllocTemp)(mSaveSize, 0);
         if (!mCache->ReadAsync(unk4c.c_str(), mData, (unsigned int)mSaveSize, NULL)) {
@@ -1030,7 +1039,7 @@ void SaveLoadManager::SetState(State newState) {
         }
         break;
     }
-    case 0x21:
+    case kS_SongCacheCreateNotFound_Msg:
     {
         int sz = TheSongMgr.GetCachedSongInfoSize();
         mData = (_MemAllocTemp)(sz, 0);
@@ -1121,6 +1130,15 @@ void SaveLoadManager::SetState(State newState) {
     }
     case 0x2b:
     {
+        // TODO(W17): open divergence, not fixed in this cleanup pass (see the
+        // W1-GAME/W16-CF writeup above SetState and the coupling analysis
+        // immediately below). Charged clusters (fresh `bin/objdiff-cli diff`,
+        // W17-CLEAN-SLM, 2026-09-30): idx 516-533, 573-586, 631-649 -- 8
+        // insert/delete + several diff_arg rows across this site, case 0x2c,
+        // and case 0x3b, all one Localize/vptr/global-cache-name-load
+        // ordering coupling. No pure source form found so far delivers both
+        // retail properties (vptr held early + string load late) at once;
+        // see the measured hoist attempt and its cost below.
         if (mCacheID != NULL) {
             TheCacheMgr->RemoveCacheID(mCacheID);
             delete mCacheID;
@@ -1231,7 +1249,7 @@ void SaveLoadManager::SetState(State newState) {
         }
         break;
     }
-    case 0x32:
+    case kS_SongCacheCreateMissing_Msg:
     {
         int sz = TheProfileMgr.GetGlobalOptionsSize();
         mData = (_MemAllocTemp)(sz, 0);
@@ -1243,7 +1261,7 @@ void SaveLoadManager::SetState(State newState) {
         break;
     }
     case 0x33:
-    case 0x3e:
+    case kS_SongCacheCreateMountRead2:
     {
         UpdateStatus((SaveLoadMgrStatus)1);
         int sz = TheProfileMgr.GetGlobalOptionsSize();
@@ -1257,7 +1275,7 @@ void SaveLoadManager::SetState(State newState) {
         }
         break;
     }
-    case 0x34:
+    case kS_SongCacheCreateCorrupt:
     case 0x35:
     case 0x3f:
     {
@@ -1294,7 +1312,7 @@ void SaveLoadManager::SetState(State newState) {
         // the two reads.  That is what taking size() on the temporary directly
         // produces; binding the result to a named local lets MSVC CSE them.
         if (TheProfileMgr.GetNewlySignedInProfiles().size() > 1) unk7c = 1;
-        SetState((State)0x3);
+        SetState(kS_AutoloadSelectProfile);
         break;
     }
     // State 0x3c has no entry body in target (async-wait, polled).
@@ -1307,19 +1325,19 @@ void SaveLoadManager::SetState(State newState) {
         break;
     }
     case 0x41:
-        SetState((State)0x54);
+        SetState(kS_SaveCheckProfile);
         break;
     case 0x42:
         unk7c = 0;
         TheMemcardMgr.SaveLoadProfileComplete(GetProfile(), 2);
         // fall through into the shared dialog-event block
-    case 0x6: // kS_AutoloadNoSaveFound_Msg
-    case 0x7: // kS_AutoloadMultipleSavesFound
-    case 0xc: // kS_AutoloadNotOwner
-    case 0xe:
-    case 0xf:
-    case 0x10: // kS_AutoloadDeviceMissing
-    case 0x11:
+    case kS_AutoloadNoSaveFound_Msg:
+    case kS_AutoloadMultipleSavesFound:
+    case kS_AutoloadNotOwner:
+    case kS_AutoloadCorrupt:
+    case kS_AutoloadObsolete:
+    case kS_AutoloadFuture:
+    case kS_AutoloadFuture2:
     case 0x17:
     case 0x18:
     case 0x1c:
@@ -1327,17 +1345,17 @@ void SaveLoadManager::SetState(State newState) {
     case 0x2a:
     case 0x2f:
     case 0x3a:
-    case 0x48:
+    case kS_SaveDeviceInvalid:
     case 0x49:
-    case 0x4a:
-    case 0x4c:
-    case 0x4e:
+    case kS_SaveNotEnoughSpacePS3:
+    case kS_GlobalCreateNotFound_Msg:
+    case kS_GlobalCreateCorrupt:
     case 0x4f:
-    case 0x50:
-    case 0x5c:
-    case 0x5f:
-    case 0x60:
-    case 0x62:
+    case kS_SaveFailed:
+    case kS_ManualLoadNoDevice:
+    case kS_ManualLoadConfirm_Yes:
+    case kS_ManualLoadConfirm:
+    case kS_GlobalOptionsMissing_Msg:
     case 0x63:
     case 0x65:
     case 0x66:
@@ -1363,30 +1381,37 @@ void SaveLoadManager::SetState(State newState) {
         //       (0 insert/delete) but produced 57 `replace` mismatches. 96.8 -> 96.1.
         switch (mMode) {
         case kMode_AutoLoad:
-            SetState((State)0x3);
+            SetState(kS_AutoloadSelectProfile);
             break;
         case kMode_AutoSave:
-            SetState((State)0x54);
+            SetState(kS_SaveCheckProfile);
             break;
         default:
             break;
         }
         break;
     }
-    case 0x45:
+    case kS_SaveChooseDeviceInvalid:
     {
         BandProfile *pProfile = GetProfile();
         mWaiting = true;
         TheMemcardMgr.OnCheckForSaveContainer(pProfile);
         break;
     }
-    case 0x46:
+    case kS_SaveOverwrite:
         StartSaveAction(true);
         break;
-    case 0x47:
+    case kS_SaveNoOverwrite:
         StartSaveAction(false);
         break;
-    case 0x4b: // kS_ManualDeleteStart (retail numbering)
+    // UNRESOLVED (W17-CLEAN-SLM, cleanup pass, not fixed here): the header
+    // names 0x4B `kS_SaveChooseDevice`, but a prior in-file comment called it
+    // "kS_ManualDeleteStart (retail numbering)" -- and the body below deletes
+    // saves (OnDeleteSaves), which reads more like a delete-flow state than a
+    // device-choose one. Left as the header's own name (never override a
+    // header enum from a bare comment); a matching lane should settle which
+    // name is right before trusting either in commentary.
+    case kS_SaveChooseDevice:
     {
         BandProfile *pProfile = GetProfile();
         mWaiting = true;
@@ -1405,7 +1430,7 @@ void SaveLoadManager::SetState(State newState) {
         } else if (TheProfileMgr.GlobalOptionsNeedsSave()) {
             SetState((State)0x53);
         } else {
-            SetState((State)0x54);
+            SetState(kS_SaveCheckProfile);
         }
         break;
     }
@@ -1424,7 +1449,7 @@ void SaveLoadManager::SetState(State newState) {
         }
         break;
     }
-    case 0x54:
+    case kS_SaveCheckProfile:
         // Retail (Ghidra TU5 case 0x54): mirrors case 3 but with the autosavable
         // profile, then branches on a MemcardMgr predicate (fn_827ABB60).
         // Retail lays the non-NULL arm out FIRST (beq to the NULL arm), unlike
@@ -1433,17 +1458,17 @@ void SaveLoadManager::SetState(State newState) {
         if (mProfile != NULL) {
             mUser = mProfile->GetLocalBandUser();
             if (TheMemcardMgr.IsStorageDeviceValid(mProfile)) {
-                SetState((State)0x46);
+                SetState(kS_SaveOverwrite);
             } else {
-                SetState((State)0x4c);
+                SetState(kS_GlobalCreateNotFound_Msg);
             }
         } else {
             mUser = NULL;
-            SetState((State)0x55);
+            SetState(kS_SaveCheckAutosave);
         }
         break;
-    case 0x55:
-        SetState((State)0x6a);
+    case kS_SaveCheckAutosave:
+        SetState(kS_LoadComplete);
         TheProfileMgr.HandleProfileSaveComplete();
         break;
     case 0x56:
@@ -1490,11 +1515,11 @@ void SaveLoadManager::SetState(State newState) {
     case 0x59:
         SetState((State)0x51);
         break;
-    case 0x5a:
-        SetState((State)0x5b);
+    case kS_ManualLoadInit:
+        SetState(kS_ManualSaveNoDevice);
         break;
-    case 0x5b:
-    case 0x61:
+    case kS_ManualSaveNoDevice:
+    case kS_ManualSaveChooseDevice:
     {
         // Retail: same as case 8 but with NO null-check on mLocalUser.
         BandProfile *pProfile = GetProfile();
@@ -1502,21 +1527,21 @@ void SaveLoadManager::SetState(State newState) {
         TheMemcardMgr.SelectDevice(pProfile, false, this, mLocalUser->GetPadNum());
         break;
     }
-    case 0x5d:
-        SetState((State)0x6a);
+    case kS_ManualLoadStartLoad:
+        SetState(kS_LoadComplete);
         break;
-    case 0x5e:
+    case kS_ManualLoadConfirmUnsaved:
     {
         int padNum = 0;
         if (mUser != NULL) padNum = mUser->GetPadNum();
         if (TheProfileMgr.HasUnsavedDataForPad(padNum)) {
-            SetState((State)0x5f);
+            SetState(kS_ManualLoadConfirm_Yes);
         } else {
-            SetState((State)0x60);
+            SetState(kS_ManualLoadConfirm);
         }
         break;
     }
-    case 0x64:
+    case kS_ManualLoadChooseDevice:
     {
         BandProfile *pProfile = GetProfile();
         mWaiting = true;
@@ -1528,10 +1553,10 @@ void SaveLoadManager::SetState(State newState) {
         break;
     }
     case 0x68:
-        SetState((State)0x6a);
+        SetState(kS_LoadComplete);
         break;
     // State 0x69 has no entry body in target (async-wait, polled).
-    case 0x6a:
+    case kS_LoadComplete:
     {
         TheMemcardMgr.SaveLoadAllComplete();
         Finish();
