@@ -547,12 +547,10 @@ Console.cpp:
 	.pdata      start:0x8220ED58 end:0x8220ED60
 	.pdata      start:0x8220ED60 end:0x8220EFB8
 	.pdata      start:0x8220EFC0 end:0x8220EFD8
-	.pdata      start:0x8220F240 end:0x8220F248
 	.text       start:0x82466298 end:0x824662D4
 	.text       start:0x824662D8 end:0x82466334
 	.text       start:0x82466338 end:0x82469388
 	.text       start:0x824693F4 end:0x82469580
-	.text       start:0x8246B9A0 end:0x8246BAA0
 
 ShaderOptions.cpp:
 	.pdata      start:0x822117E0 end:0x82211800
@@ -2798,9 +2796,11 @@ EventTrigger.cpp:
 system/rndobj/ShaderMgr.cpp:
 	.pdata      start:0x8220F210 end:0x8220F218
 	.pdata      start:0x8220F220 end:0x8220F240
+	.pdata      start:0x8220F240 end:0x8220F248
 	.pdata      start:0x8220F248 end:0x8220F278
 	.text       start:0x8246B5F0 end:0x8246B740
 	.text       start:0x8246B7F8 end:0x8246B9A0
+	.text       start:0x8246B9A0 end:0x8246BAA0
 	.text       start:0x8246BAA0 end:0x8246BEF0
 
 system/rndobj/Fur.cpp:
