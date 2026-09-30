@@ -25,6 +25,7 @@
 #include "ui/UIListArrow.h"
 #include "ui/UIListCustom.h"
 #include "ui/UIListDir.h"
+#include "ui/UIResource.h"
 #include "ui/UIListHighlight.h"
 #include "ui/UIListLabel.h"
 #include "ui/UIListMesh.h"
@@ -730,16 +731,17 @@ bool UIList::SetSelectedSimulateScroll(Symbol sym, bool b) {
     }
 }
 
+// RB3 retail (0x827F9188): the base Update, then mListDir is recovered from the
+// resource dir, then the widgets are built. No edit-mode refresh.
 void UIList::Update() {
     if (!gLoading) {
+        UIComponent::Update();
+        mListDir = dynamic_cast<UIListDir *>(mResource->Dir());
 #ifdef HX_NATIVE
         if (!mListDir) return;
 #endif
         MILO_ASSERT(mListDir, 0x238);
         mListDir->CreateElements(this, mWidgets, mListState.NumDisplay());
-
-        if (TheLoadMgr.EditMode())
-            Refresh(false);
     }
 }
 
