@@ -230,6 +230,7 @@ public:
     // Named by the DECOMP_FORCEACTIVE string in VocalPlayer.cpp. Body NOT ported.
     void HandleDeactivateVolume(JoypadButton);
     bool GetVolumeParam(JoypadButton, VocalParam &) const;
+    bool IsNetOrSpoofed() const;
     bool AllowPitchCorrection() const;
     void OnGameOver();
     void OnDisableController();

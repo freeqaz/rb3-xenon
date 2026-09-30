@@ -201,15 +201,18 @@ void VocalPlayer::ConfigureBehavior() {
     mBehavior->SetMaxMultiplier(4);
 }
 
+// Retail keeps this test out of line (fn_826E3AA8, one caller: SetTrack); the
+// name is ours (lane W16-HX4). The oracle spells it inline in SetTrack.
+#pragma auto_inline(off)
+bool VocalPlayer::IsNetOrSpoofed() const { return IsNet() || mSpoofed; }
+#pragma auto_inline(on)
+
 void VocalPlayer::SetTrack(int trk) {
     if (mTrackNum != trk) {
         MILO_ASSERT(mTrackNum == -1, 0x128);
         mBeatMaster->GetAudio()->SetTrack(GetUserGuid(), trk);
         mTrackNum = trk;
-        bool b1 = false;
-        if (IsNet() || mSpoofed)
-            b1 = true;
-        if (b1) {
+        if (IsNetOrSpoofed()) {
             mBeatMaster->GetAudio()->SetNonmutable(trk);
         }
     }
