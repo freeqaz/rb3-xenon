@@ -1,0 +1,527 @@
+{
+ "rule": {
+  "threshold": 75.0,
+  "margin": 1.0,
+  "min_size": 0,
+  "k": 6,
+  "spatial_sandwich_and_occupancy": true
+ },
+ "targets_scored": 1679,
+ "skipped": {
+  "no_candidate_in_band": 12,
+  "deliberately_null_in_map": 26,
+  "owned_by_other_lane": 1
+ },
+ "proposal_count": 43,
+ "proposal_bytes": 18092,
+ "dropped_non_bijective": [],
+ "proposals": [
+  {
+   "addr": "0x8227d4c0",
+   "target": "fn_8227D4C0",
+   "unit": "default/BandCharacter",
+   "size": 128,
+   "name": "??$sort@UByRadius@@@?$ObjPtrList@VCharCollide@@VObjectDir@@@@QAAXABUByRadius@@@Z",
+   "fuzzy": 99.6875,
+   "runner_up": [
+    "?IsLoading@BandCharacter@@QAA_NXZ",
+    29.375
+   ]
+  },
+  {
+   "addr": "0x8227e5c0",
+   "target": "fn_8227E5C0",
+   "unit": "default/BandCharacter",
+   "size": 32,
+   "name": "?SetInterestFilterFlags@BandCharacter@@UAAXH@Z",
+   "fuzzy": 75.0,
+   "runner_up": [
+    "?pop_back@?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    45.375
+   ]
+  },
+  {
+   "addr": "0x82290930",
+   "target": "fn_82290930",
+   "unit": "default/BandDirector",
+   "size": 120,
+   "name": "?Replace@?$ObjDirPtr@VRndDir@@@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+   "fuzzy": 77.5,
+   "runner_up": [
+    "?SetObj@?$ObjRefConcrete@VFlowNode@@VObjectDir@@@@QAAPAVObject@Hmx@@PAV23@@Z",
+    68.8
+   ]
+  },
+  {
+   "addr": "0x8229f960",
+   "target": "fn_8229F960",
+   "unit": "default/OutfitConfig",
+   "size": 1012,
+   "name": "?Deform@Piercing@OutfitConfig@@QAAXPAVSyncMeshCB@@@Z",
+   "fuzzy": 77.652176,
+   "runner_up": [
+    "?Apply@MeshAO@OutfitConfig@@QAAXPAV2@PAVSyncMeshCB@@@Z",
+    25.304348
+   ]
+  },
+  {
+   "addr": "0x822b4040",
+   "target": "fn_822B4040",
+   "unit": "default/BandCamShot",
+   "size": 148,
+   "name": "?Freeze@BandCamShot@@QAAXXZ",
+   "fuzzy": 85.08108,
+   "runner_up": [
+    "?GetFlipTarget@HamCamShot@@IAAPAUTarget@1@PAU21@@Z",
+    44.567566
+   ]
+  },
+  {
+   "addr": "0x822b7eb8",
+   "target": "fn_822B7EB8",
+   "unit": "default/BandCamShot",
+   "size": 1588,
+   "name": "?Load@BandCamShot@@UAAXAAVBinStream@@@Z",
+   "fuzzy": 80.032745,
+   "runner_up": [
+    "?DuplicateChild@FlowNode@@SAPAV1@PAV1@@Z",
+    25.896725
+   ]
+  },
+  {
+   "addr": "0x822bc580",
+   "target": "fn_822BC580",
+   "unit": "default/BandCrowdMeter",
+   "size": 108,
+   "name": "?GetPeakValue@BandCrowdMeter@@QAAMXZ",
+   "fuzzy": 76.44444,
+   "runner_up": [
+    "?remove@?$ObjPtrList@VRndGroup@@VObjectDir@@@@QAA_NPAVRndGroup@@@Z",
+    0.0
+   ]
+  },
+  {
+   "addr": "0x822c5658",
+   "target": "fn_822C5658",
+   "unit": "default/BandIKEffector",
+   "size": 256,
+   "name": "?Load@BandIKEffector@@UAAXAAVBinStream@@@Z",
+   "fuzzy": 88.96875,
+   "runner_up": [
+    "?Load@?$ObjRefConcrete@VBandIKEffector@@VObjectDir@@@@QAA_NAAVBinStream@@_NPAVObjectDir@@@Z",
+    22.890625
+   ]
+  },
+  {
+   "addr": "0x822c9ce0",
+   "target": "fn_822C9CE0",
+   "unit": "default/BandLeadMeter",
+   "size": 716,
+   "name": "??0BandLeadMeter@@QAA@XZ",
+   "fuzzy": 81.21788,
+   "runner_up": [
+    "?SyncScores@BandLeadMeter@@QAAXXZ",
+    11.122905
+   ]
+  },
+  {
+   "addr": "0x822ce860",
+   "target": "fn_822CE860",
+   "unit": "default/BandScoreboard",
+   "size": 564,
+   "name": "??0BandScoreboard@@QAA@XZ",
+   "fuzzy": 83.86525,
+   "runner_up": [
+    "?_M_fill_insert_aux@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndMesh@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjPtr@VRndMesh@@@@IABV3@ABU__false_type@2@@Z",
+    6.0141845
+   ]
+  },
+  {
+   "addr": "0x822d5168",
+   "target": "fn_822D5168",
+   "unit": "default/EndingBonus",
+   "size": 740,
+   "name": "??0EndingBonus@@QAA@XZ",
+   "fuzzy": 81.36216,
+   "runner_up": [
+    "?SetIconOrder@EndingBonus@@QAAXH_N@Z",
+    8.767568
+   ]
+  },
+  {
+   "addr": "0x822dc0b0",
+   "target": "fn_822DC0B0",
+   "unit": "default/OverdriveMeter",
+   "size": 700,
+   "name": "??0OverdriveMeter@@QAA@XZ",
+   "fuzzy": 77.56,
+   "runner_up": null
+  },
+  {
+   "addr": "0x822e1388",
+   "target": "fn_822E1388",
+   "unit": "default/ChordShapeGenerator",
+   "size": 424,
+   "name": "?GetCrossSection@ChordShapeGenerator@@QAAXMAAVCrossSec@1@@Z",
+   "fuzzy": 75.48113,
+   "runner_up": [
+    "?_M_fill_insert_aux@?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@AAAXPAMIABMABU__false_type@2@@Z",
+    16.886793
+   ]
+  },
+  {
+   "addr": "0x822e2280",
+   "target": "fn_822E2280",
+   "unit": "default/ChordShapeGenerator",
+   "size": 424,
+   "name": "?ConnectVertProfiles@ChordShapeGenerator@@QAAXPAVRndMesh@@ABV?$map@GGU?$less@G@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBGG@stlpmtx_std@@@2@@stlpmtx_std@@1ABVCrossSec@1@@Z",
+   "fuzzy": 80.62264,
+   "runner_up": [
+    "??4?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+    26.254717
+   ]
+  },
+  {
+   "addr": "0x8231f478",
+   "target": "fn_8231F478",
+   "unit": "default/system/bandobj/ReviewDisplay",
+   "size": 268,
+   "name": "?SyncProperty@ReviewDisplay@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+   "fuzzy": 93.8806,
+   "runner_up": [
+    "?GetSymbolForReviewScore@ReviewDisplay@@SA?AVSymbol@@H@Z",
+    18.402985
+   ]
+  },
+  {
+   "addr": "0x82324fe8",
+   "target": "fn_82324FE8",
+   "unit": "default/PlayerDiffIcon",
+   "size": 28,
+   "name": "?CollidePlane@PlayerDiffIcon@@UAAHABVPlane@@@Z",
+   "fuzzy": 100.0,
+   "runner_up": [
+    "?size@?$vector@V?$ObjDirPtr@VObjectDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@QBAIXZ",
+    49.714287
+   ]
+  },
+  {
+   "addr": "0x8232afb0",
+   "target": "fn_8232AFB0",
+   "unit": "default/BandWardrobe",
+   "size": 120,
+   "name": "?MostImportantHuman@BandWardrobe@@SAHPBVSlotInfo@1@@Z",
+   "fuzzy": 90.0,
+   "runner_up": [
+    "?FindTarget@TargetNames@BandWardrobe@@QBAHVSymbol@@@Z",
+    18.8
+   ]
+  },
+  {
+   "addr": "0x8233d8e0",
+   "target": "fn_8233D8E0",
+   "unit": "default/BandList",
+   "size": 320,
+   "name": "?StartFocusAnim@BandList@@QAAXHW4AnimState@1@@Z",
+   "fuzzy": 89.225,
+   "runner_up": [
+    "?UpdatePulseAnim@BandList@@QAAXHAAVTransform@@@Z",
+    41.7375
+   ]
+  },
+  {
+   "addr": "0x8233dac0",
+   "target": "fn_8233DAC0",
+   "unit": "default/BandList",
+   "size": 268,
+   "name": "?UpdatePulseAnim@BandList@@QAAXHAAVTransform@@@Z",
+   "fuzzy": 92.597015,
+   "runner_up": [
+    "?StartFocusAnim@BandList@@QAAXHW4AnimState@1@@Z",
+    22.686567
+   ]
+  },
+  {
+   "addr": "0x8233de90",
+   "target": "fn_8233DE90",
+   "unit": "default/BandList",
+   "size": 328,
+   "name": "?_M_insert_overflow_aux@?$vector@VHighlightObject@@V?$StlNodeAlloc@VHighlightObject@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVHighlightObject@@ABV3@ABU__false_type@2@I_N@Z",
+   "fuzzy": 99.939026,
+   "runner_up": [
+    "?UpdateConcealState@BandList@@QAAXHAAVTransform@@@Z",
+    23.182926
+   ]
+  },
+  {
+   "addr": "0x8233e028",
+   "target": "fn_8233E028",
+   "unit": "default/BandList",
+   "size": 1128,
+   "name": "??0BandList@@QAA@XZ",
+   "fuzzy": 89.702126,
+   "runner_up": null
+  },
+  {
+   "addr": "0x8233ec90",
+   "target": "fn_8233EC90",
+   "unit": "default/BandList",
+   "size": 396,
+   "name": "?UpdateFocusAndPulseAnims@BandList@@QAAXHAAVTransform@@@Z",
+   "fuzzy": 94.393936,
+   "runner_up": [
+    "?UpdatePulseAnim@BandList@@QAAXHAAVTransform@@@Z",
+    41.242424
+   ]
+  },
+  {
+   "addr": "0x8233f220",
+   "target": "fn_8233F220",
+   "unit": "default/BandList",
+   "size": 112,
+   "name": "?NewObject@BandList@@SAPAVObject@Hmx@@XZ",
+   "fuzzy": 86.92857,
+   "runner_up": [
+    "?SetObjConcrete@?$ObjRefConcrete@VRndTransformable@@VObjectDir@@@@QAAXPAVRndTransformable@@@Z",
+    45.285713
+   ]
+  },
+  {
+   "addr": "0x8233f5a0",
+   "target": "fn_8233F5A0",
+   "unit": "default/CharSignalApplier",
+   "size": 392,
+   "name": "??$PropSync@UBoneOp@CharSignalApplier@@@@YA_NAAV?$ObjVector@UBoneOp@CharSignalApplier@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+   "fuzzy": 86.091835,
+   "runner_up": [
+    "??$PropSync@VRndTransformable@@@@YA_NAAV?$ObjPtr@VRndTransformable@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+    30.55102
+   ]
+  },
+  {
+   "addr": "0x82343558",
+   "target": "fn_82343558",
+   "unit": "default/BandHighlight",
+   "size": 112,
+   "name": "?NewObject@BandHighlight@@SAPAVObject@Hmx@@XZ",
+   "fuzzy": 86.92857,
+   "runner_up": [
+    "??_GUIComponentFocusChangeMsg@@UAAPAXI@Z",
+    42.392857
+   ]
+  },
+  {
+   "addr": "0x82350fd8",
+   "target": "fn_82350FD8",
+   "unit": "default/system/bandobj/BandTrack",
+   "size": 696,
+   "name": "?PopupHelp@BandTrack@@QAAXVSymbol@@_N@Z",
+   "fuzzy": 97.10919,
+   "runner_up": [
+    "?SetupPlayerIntro@BandTrack@@QAAXXZ",
+    36.011494
+   ]
+  },
+  {
+   "addr": "0x82371f48",
+   "target": "fn_82371F48",
+   "unit": "default/Character",
+   "size": 716,
+   "name": "??0Character@@QAA@XZ",
+   "fuzzy": 84.910614,
+   "runner_up": [
+    "??1WorldDir@@UAA@XZ",
+    26.206703
+   ]
+  },
+  {
+   "addr": "0x823780e8",
+   "target": "fn_823780E8",
+   "unit": "default/CharDriver",
+   "size": 176,
+   "name": "?PlayGroup@CharDriver@@QAAPAVCharClipDriver@@PBDHMMM@Z",
+   "fuzzy": 93.068184,
+   "runner_up": [
+    "?PlayGroup@CharDriver@@QAAPAVCharClipDriver@@PAVCharClipGroup@@HMMM@Z",
+    64.431816
+   ]
+  },
+  {
+   "addr": "0x823c4230",
+   "target": "fn_823C4230",
+   "unit": "default/CharBlendBone",
+   "size": 288,
+   "name": "??0CharBlendBone@@IAA@XZ",
+   "fuzzy": 86.291664,
+   "runner_up": [
+    "?Unlink@?$ObjPtrList@VWorldCrowd@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+    17.472221
+   ]
+  },
+  {
+   "addr": "0x823d7d70",
+   "target": "fn_823D7D70",
+   "unit": "default/CharBone",
+   "size": 152,
+   "name": "??0CharBone@@IAA@XZ",
+   "fuzzy": 83.552635,
+   "runner_up": [
+    "??$_M_insert_dispatch@U?$_List_iterator@UWeightContext@CharBone@@U?$_Const_traits@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@UWeightContext@CharBone@@U?$_Nonconst_traits@UWeightContext@CharBone@@@stlpmtx_std@@@1@U?$_List_iterator@UWeightContext@CharBone@@U?$_Const_traits@UWeightContext@CharBone@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
+    29.31579
+   ]
+  },
+  {
+   "addr": "0x823dda08",
+   "target": "fn_823DDA08",
+   "unit": "default/CharacterTest",
+   "size": 524,
+   "name": "??0CharacterTest@@QAA@PAVCharacter@@@Z",
+   "fuzzy": 90.1145,
+   "runner_up": [
+    "?Load@?$ObjPtrList@VWaypoint@@VObjectDir@@@@QAA_NAAVBinStream@@_N@Z",
+    26.053434
+   ]
+  },
+  {
+   "addr": "0x823fa038",
+   "target": "fn_823FA038",
+   "unit": "default/Trans",
+   "size": 1580,
+   "name": "?Load@RndTransformable@@UAAXAAVBinStream@@@Z",
+   "fuzzy": 84.005066,
+   "runner_up": null
+  },
+  {
+   "addr": "0x8241dc80",
+   "target": "fn_8241DC80",
+   "unit": "default/Mesh",
+   "size": 1304,
+   "name": "?OnCompareEdgeVerts@RndMesh@@IAA?AVDataNode@@PBVDataArray@@@Z",
+   "fuzzy": 82.80675,
+   "runner_up": [
+    "?InstanceGeomOwnerBones@RndMesh@@QAAXXZ",
+    20.20552
+   ]
+  },
+  {
+   "addr": "0x82455f50",
+   "target": "fn_82455F50",
+   "unit": "default/Text",
+   "size": 176,
+   "name": "?GetDistanceToPlane@RndText@@UAAMABVPlane@@AAVVector3@@@Z",
+   "fuzzy": 80.704544,
+   "runner_up": [
+    "?insert_unique@?$_Rb_tree@PAVRndText@@U?$less@PAVRndText@@@stlpmtx_std@@PAV1@U?$_Identity@PAVRndText@@@3@U?$_SetTraitsT@PAVRndText@@@priv@3@V?$StlNodeAlloc@PAVRndText@@@3@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@PAVRndText@@U?$_SetTraitsT@PAVRndText@@@priv@stlpmtx_std@@@stlpmtx_std@@_N@2@ABQAVRndText@@@Z",
+    3.3863637
+   ]
+  },
+  {
+   "addr": "0x824574a8",
+   "target": "fn_824574A8",
+   "unit": "default/Text",
+   "size": 284,
+   "name": "?NumCharsInBytes@RndText@@QAAHABVString@@ABVStyle@1@AAMH@Z",
+   "fuzzy": 99.97183,
+   "runner_up": [
+    "?ReplaceLineText@RndText@@QAAXIABVString@@ABVTransform@@ABVStyle@1@PAMPA_NH@Z",
+    0.0
+   ]
+  },
+  {
+   "addr": "0x824575d0",
+   "target": "fn_824575D0",
+   "unit": "default/Text",
+   "size": 176,
+   "name": "??A?$map@IVMeshInfo@RndText@@U?$less@I@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBIVMeshInfo@RndText@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAAAVMeshInfo@RndText@@ABI@Z",
+   "fuzzy": 100.0,
+   "runner_up": [
+    "??$_M_find@PAVRndText@@@?$_Rb_tree@PAVRndText@@U?$less@PAVRndText@@@stlpmtx_std@@PAV1@U?$_Identity@PAVRndText@@@3@U?$_SetTraitsT@PAVRndText@@@priv@3@V?$StlNodeAlloc@PAVRndText@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABQAVRndText@@@Z",
+    47.272728
+   ]
+  },
+  {
+   "addr": "0x8245a088",
+   "target": "fn_8245A088",
+   "unit": "default/Text",
+   "size": 72,
+   "name": "?OnSetText@RndText@@QAA?AVDataNode@@PAVDataArray@@@Z",
+   "fuzzy": 100.0,
+   "runner_up": [
+    "?erase@?$ObjPtrList@VObject@Hmx@@VObjectDir@@@@QAA?AViterator@1@V21@@Z",
+    71.888885
+   ]
+  },
+  {
+   "addr": "0x8245f658",
+   "target": "fn_8245F658",
+   "unit": "default/TransAnim",
+   "size": 312,
+   "name": "??0RndTransAnim@@IAA@XZ",
+   "fuzzy": 89.71795,
+   "runner_up": [
+    "?Add@?$Keys@VQuat@Hmx@@V12@@@QAAHABVQuat@Hmx@@M_N@Z",
+    17.358974
+   ]
+  },
+  {
+   "addr": "0x8246b680",
+   "target": "fn_8246B680",
+   "unit": "default/MeshAnim",
+   "size": 192,
+   "name": "?AllocShader@RndShaderMgr@@QAAPAXXZ",
+   "fuzzy": 76.25,
+   "runner_up": [
+    "??1?$vector@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    37.354168
+   ]
+  },
+  {
+   "addr": "0x8246fe80",
+   "target": "fn_8246FE80",
+   "unit": "default/MeshAnim",
+   "size": 312,
+   "name": "??0RndMeshAnim@@IAA@XZ",
+   "fuzzy": 90.42308,
+   "runner_up": [
+    "?SetDeformClip@BandIKEffector@@SAXPAVObject@Hmx@@@Z",
+    22.064102
+   ]
+  },
+  {
+   "addr": "0x82472200",
+   "target": "fn_82472200",
+   "unit": "default/LitAnim",
+   "size": 320,
+   "name": "?Load@RndLightAnim@@UAAXAAVBinStream@@@Z",
+   "fuzzy": 78.625,
+   "runner_up": [
+    "?Load@?$ObjRefConcrete@VRndLightAnim@@VObjectDir@@@@QAA_NAAVBinStream@@_NPAVObjectDir@@@Z",
+    24.2
+   ]
+  },
+  {
+   "addr": "0x82486440",
+   "target": "fn_82486440",
+   "unit": "default/CamAnim",
+   "size": 240,
+   "name": "??0RndCamAnim@@IAA@XZ",
+   "fuzzy": 87.55,
+   "runner_up": [
+    "?AtFrame@?$Keys@MM@@QBAHMAAPBV?$Key@M@@0AAM@Z",
+    14.466666
+   ]
+  },
+  {
+   "addr": "0x824a5830",
+   "target": "fn_824A5830",
+   "unit": "default/Shader",
+   "size": 140,
+   "name": "?RedundantState@RndShader@@IAA_NPBVRndMat@@W4ShaderType@@_N22@Z",
+   "fuzzy": 80.0,
+   "runner_up": [
+    "??$_M_find@I@?$_Rb_tree@IU?$less@I@stlpmtx_std@@IU?$_Identity@I@2@U?$_SetTraitsT@I@priv@2@V?$StlNodeAlloc@I@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABI@Z",
+    34.82857
+   ]
+  }
+ ]
+}
