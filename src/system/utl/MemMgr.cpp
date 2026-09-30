@@ -1180,3 +1180,9 @@ void MemPrintOverview(int heapId, TextStream &stream) {
         }
     }
 }
+
+#ifndef HX_NATIVE
+// RB3 retail SystemTerminate calls it (an empty body, ICF-folded with the
+// other empty terminators).
+void MemTerminate() {}
+#endif

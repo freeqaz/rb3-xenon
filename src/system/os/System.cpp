@@ -850,9 +850,18 @@ void SystemTerminate() {
     ObjectDir::Terminate();
     TheContentMgr.Terminate();
     TrigTableTerminate();
+#ifndef HX_NATIVE
+    // RB3 retail 0x82511208: FileTerminate before the config
+    // release, MemTerminate after Symbol::Terminate.
+    FileTerminate();
+#endif
     gSystemConfig->Release();
     DataTerminate();
     Symbol::Terminate();
+#ifndef HX_NATIVE
+    void MemTerminate(); // utl/MemMgr.cpp
+    MemTerminate();
+#endif
     AppChild::Terminate();
     TheSystemArgs.erase(TheSystemArgs.begin(), TheSystemArgs.end());
     TerminateMakeString();
