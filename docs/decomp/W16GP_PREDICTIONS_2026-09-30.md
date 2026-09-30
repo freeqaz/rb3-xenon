@@ -232,3 +232,97 @@ in order.
 
 Next: Step 3 (port `TrackWidgetImp.cpp`), then return for the TextInstance
 half of goal 2, goal 3, and goal 4, which all require the new object to exist.
+
+## Step 3b: TextInstance half of goal 2, goal 3, goal 4 (post-TrackWidgetImp.cpp)
+
+With `TrackWidgetImp.cpp` compiling (Step 3, `822367834`), its object now
+contains ground-truth compiled symbols for the remaining report goals. Rather
+than trust the report's guessed manglings, I scanned
+`build/45410914/src/system/track/TrackWidgetImp.obj`'s COFF symbol table
+directly (Python regex over printable-ASCII runs, filtering for "Sort"/
+"MultiMeshWidgetImp") to get the compiler's own spellings. Full result set is
+recorded in the session transcript; the two load-bearing hits:
+
+```
+?Sort@?$TrackWidgetImp@VTextInstance@@@@UAAXXZ
+?Sort@MultiMeshWidgetImp@@UAAXXZ
+```
+
+Both match the report's predicted spellings for goal 2 (TextInstance half)
+and goal 3 exactly. A third Sort symbol,
+`?Sort@?$TrackWidgetImp@UInstance@RndMultiMesh@@@@UAAXXZ` (the base
+template's own version, reachable via `ImmediateWidgetImp` per
+`TrackWidgetImp.h:286`), was also present but is **out of scope** — the
+report gives no confirmed retail address for it and none of goals 2-4
+reference it.
+
+**Why `TrackWidgetImp<TextInstance>::Sort()` compiles with no override
+needed**: `src/system/track/TrackWidgetImp.h:223` declares
+`std::list<TextInstance> mInstances` with the plain default allocator (unlike
+`MultiMeshWidgetImp`'s `InstanceList`, which needed the allocator-mismatch
+fix in Step 2). `CharWidgetImp` (line 179) inherits
+`TrackWidgetImp<TextInstance>` without overriding `Sort()`, and its
+constructor is defined in this TU (`TrackWidgetImp.cpp:248`) — MSVC's
+implicit-instantiation rule emits every virtual of a class template base once
+a derived class's vtable is built in that TU, which is why the template's
+`Sort()` appears in the object despite never being called explicitly in
+source.
+
+**Goal 3** (`MultiMeshWidgetImp::Sort`, `0x827e63f8`) is a non-template
+override declared at `TrackWidgetImp.h:258`; ground-truth spelling confirmed
+above.
+
+**Goal 4 — REFUTED, no action taken.** The report hypothesized the two thunks
+at `0x827e5c48`/`0x827e5d78` needed renaming to `_List_base<TextInstance,...>`/
+`list<TextInstance,...>` destructor spellings. Querying
+`scripts/target_symbol_map.json` before editing showed both addresses are
+**already correctly named**:
+
+```
+0x827e5c48 -> ??1?$_List_base@PAVMidiParser@@V?$StlNodeAlloc@PAVMidiParser@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ
+0x827e5d78 -> ??1?$list@PAVMidiParser@@V?$StlNodeAlloc@PAVMidiParser@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ
+```
+
+These are `_List_base<MidiParser*,...>`/`list<MidiParser*,...>` destructors —
+a list of `MidiParser` **pointers** (an unrelated internal registry), not
+`TextInstance`. Renaming them per the report would have broken an
+already-correct mapping. This is exactly the "re-check every finding against
+the tree" discipline the task requires: the report's goal-4 hypothesis does
+not hold, and no map edit was made for it.
+
+**Splits.txt restructuring applied** (mirrors the Step 2 methodology — narrow
+function-sized carve-outs, no heading emptied):
+- Removed `.text 0x827E5D88-0x827E5F58` from `VocalTrack.cpp:` (the
+  pre-granted exception block — its start address is independently confirmed
+  by the pre-existing map row `??$_S_sort@VTextInstance@@...` to be
+  TrackWidgetImp/TextInstance content, not VocalTrack content, so the
+  exception grant is validated by evidence, not just trusted).
+- Narrowed `MidiParser.cpp:`'s `.text 0x827E5F58-0x827E6530` block into two
+  sub-ranges (`0x827E5F58-0x827E63F8`, `0x827E64B8-0x827E6530`), carving out
+  the middle span.
+- New heading `TrackWidgetImp.cpp:` with
+  `.text 0x827E5D88-0x827E5F58` (TextInstance `Sort` wrapper) and
+  `.text 0x827E63F8-0x827E64B8` (`MultiMeshWidgetImp::Sort`).
+- Verified via full-file overlap scan: 6,564 total `.text` ranges, 0 overlaps.
+  `VocalTrack.cpp` retains 3 `.text` blocks, `MidiParser.cpp` retains many —
+  neither heading emptied.
+
+**Map entries added** (minimal targeted insertion preserving the file's
+existing 1-space-indent formatting and address-sorted order — an earlier
+attempt via `json.dump(indent=2)` was reverted because it reformatted the
+*entire* file to 2-space indent, a 30,650-line diff for a 2-line change):
+
+```
+"0x827e63f8": "?Sort@MultiMeshWidgetImp@@UAAXXZ",
+"0x827e6470": "?Sort@?$TrackWidgetImp@VTextInstance@@@@UAAXXZ",
+```
+
+**Prediction**: both addresses become newly pairable against
+`TrackWidgetImp.obj` once the splits.txt boundary puts them in that unit.
+Expect roughly **+2 functions / ~+128 B** (2 small wrapper/override
+functions, each in the same size class as the Step 2 MeshInstance hit, which
+was exactly 64 B). `none`-ruler control is expected to move alongside
+`name_check` (NOT_APPLICABLE label expected, same reasoning as Step 2: this
+is a combined map+splits patch that moves real code, not a map-only alias
+candidate).
+

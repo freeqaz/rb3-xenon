@@ -417,7 +417,6 @@ VocalTrack.cpp:
 	.pdata      start:0x82244B98 end:0x82244BA0
 	.pdata      start:0x8225DC68 end:0x8225E280
 	.text       start:0x826E74A0 end:0x826E74B4
-	.text       start:0x827E5D88 end:0x827E5F58
 	.text       start:0x827EFA60 end:0x827EFAC8
 	.text       start:0x82B9F510 end:0x82BAA230
 
@@ -2475,7 +2474,8 @@ MidiParser.cpp:
 	.text       start:0x827E4098 end:0x827E4568
 	.text       start:0x827E4900 end:0x827E5260
 	.text       start:0x827E5314 end:0x827E5D88
-	.text       start:0x827E5F58 end:0x827E6530
+	.text       start:0x827E5F58 end:0x827E63F8
+	.text       start:0x827E64B8 end:0x827E6530
 	.text       start:0x827E6530 end:0x827E658C
 	.text       start:0x827E6590 end:0x827E6598
 	.text       start:0x827E6598 end:0x827E660C
@@ -9232,6 +9232,10 @@ TrackWidget.cpp:
 	.text       start:0x827E4858 end:0x827E487C
 	.text       start:0x827E487C end:0x827E4900
 	.text       start:0x827E5260 end:0x827E5314
+
+TrackWidgetImp.cpp:
+	.text       start:0x827E5D88 end:0x827E5F58
+	.text       start:0x827E63F8 end:0x827E64B8
 
 NetworkEmulator.cpp:
 	.pdata      start:0x82208610 end:0x82208698
