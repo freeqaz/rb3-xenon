@@ -7,7 +7,7 @@
 #define kMaxRGStrings 6
 
 GameGem::GameGem(const MultiGemInfo &info)
-    : mMs(info.ms), mTick(info.tick), mDurationMs(info.duration_ms),
+    : mMs(info.ms), mTick(info.tick), mDurationMs((int)info.duration_ms),
       mDurationTicks(info.duration_ticks), mSlots(info.slots), mPlayed(false),
       mForceStrum(info.no_strum == kStrumForceOn), mIgnoreDuration(info.ignore_duration),
       mIsCymbal(info.is_cymbal), unk10b1(false), mRealGuitar(false), mLoose(false),
@@ -17,7 +17,7 @@ GameGem::GameGem(const MultiGemInfo &info)
 
 // fn_80460334
 GameGem::GameGem(const RGGemInfo &info)
-    : mMs(info.ms), mTick(info.tick), mDurationMs(info.duration_ms),
+    : mMs(info.ms), mTick(info.tick), mDurationMs((int)info.duration_ms),
       mDurationTicks(info.duration_ticks), mSlots(0), mPlayed(false),
       mForceStrum(info.no_strum == kStrumForceOn), mIgnoreDuration(info.ignore_duration),
       mIsCymbal(0), mShowChordNames(info.show_chord_names),

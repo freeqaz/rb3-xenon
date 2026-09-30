@@ -126,7 +126,9 @@ MasterAudio::~MasterAudio() {
 void MasterAudio::Load(SongInfo *info, PlayerTrackConfigList *player_track_config_list) {
     MILO_ASSERT(mSongData, 0x186);
     MILO_ASSERT(player_track_config_list, 0x187);
-    mSongStream = TheSynth->NewStream(info->GetBaseFileName(), 0, 0, false);
+    // TU5: the stream's bool comes from the song info (vtable slot 0x4c)
+    mSongStream =
+        TheSynth->NewStream(info->GetBaseFileName(), 0, 0, info->UnkTU5Virtual_0x4c());
     int count = 1;
     mStreamEnabled = true;
     mSongStream->Faders()->Add(mMasterFader);
@@ -329,10 +331,8 @@ void MasterAudio::ResetTrack(AudioTrackNum num, bool b) {
         grp->Remove(grp->FindLocal("remote", false));
         grp->Remove(grp->FindLocal("drum_fill", false));
 
-        bool b3 = false;
         bool b1 = mTrackData[num]->Vocals();
-        if (b1 && b)
-            b3 = true;
+        bool b3 = b1 && b;
         float f2 = b3 ? mCueVolume : 0;
         if (b)
             SetupTrackChannel(idx, b1, f2, b3, false);
