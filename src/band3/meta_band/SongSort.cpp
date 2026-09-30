@@ -148,10 +148,16 @@ void SongSort::BuildSongTree(
     }
 }
 
+// Retail calls IsLeaderLocal out of line: Utl.cpp is its own TU there and only
+// reaches this unit through the scatter-include at the bottom of the file.
+__declspec(noinline) bool IsLeaderLocal();
+
 void SongSort::BuildSongList() {
     if (IsReady()) {
         DeleteList();
         if (TheMusicLibrary->GetMakingSetlist(true) && IsLeaderLocal()) {
+            static Symbol play_setlist("play_setlist");
+            static Symbol play_setlist_by_line("play_setlist_by_line");
             mFunctions.push_front(new FunctionSortNode(
                 nullptr,
                 true,
@@ -162,6 +168,8 @@ void SongSort::BuildSongList() {
             ));
         }
 
+        static Symbol random_song("random_song");
+        static Symbol random_song_by_line("random_song_by_line");
         mFunctions.push_front(new FunctionSortNode(
             nullptr,
             true,
@@ -171,7 +179,10 @@ void SongSort::BuildSongList() {
             "highlight_function_random.mat"
         ));
 
+        static Symbol qp_coop("qp_coop");
         if (TheGameMode->InMode(qp_coop)) {
+            static Symbol party_setlist("party_setlist");
+            static Symbol party_setlist_by_line("party_setlist_by_line");
             mFunctions.push_front(new FunctionSortNode(
                 nullptr,
                 true,
@@ -180,6 +191,8 @@ void SongSort::BuildSongList() {
                 "ui/image/song_select_setlist_keep.png",
                 "highlight_function.mat"
             ));
+            static Symbol view_setlists("view_setlists");
+            static Symbol view_setlists_by_line("view_setlists_by_line");
             mFunctions.push_front(new FunctionSortNode(
                 nullptr,
                 true,
@@ -273,6 +286,8 @@ void SetlistSort::BuildSetlistTree(std::map<Symbol, SetlistRecord> &records) {
 
 void SetlistSort::BuildSetlistList() {
     DeleteList();
+    static Symbol make_a_setlist("make_a_setlist");
+    static Symbol make_a_setlist_by_line("make_a_setlist_by_line");
     mFunctions.push_front(new FunctionSortNode(
         nullptr,
         true,
@@ -281,6 +296,8 @@ void SetlistSort::BuildSetlistList() {
         "ui/image/song_select_setlist_keep.png",
         "highlight_function_setlist.mat"
     ));
+    static Symbol view_songs("view_songs");
+    static Symbol view_songs_by_line("view_songs_by_line");
     mFunctions.push_front(new FunctionSortNode(
         nullptr,
         true,
