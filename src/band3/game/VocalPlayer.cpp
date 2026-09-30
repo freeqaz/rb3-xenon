@@ -2066,7 +2066,8 @@ float VocalPlayer::GetNumPhrases(int startTick, int endTick, int isolatedPart) {
         bool found = false;
         for (int part = startPart; part <= endPart && !found; part++) {
             if (part == 0) {
-                if (phraseVec[i].unk10 != phraseVec[i].unk14) {
+                VocalPhrase &phrase = phraseVec[i];
+                if (phrase.unk10 != phrase.unk14) {
                     count++;
                     found = true;
                 }
