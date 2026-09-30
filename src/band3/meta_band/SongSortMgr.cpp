@@ -290,9 +290,11 @@ bool SongSortMgr::DoesSongMatchFilter(int songID, const SongFilter *filter, Symb
         case 1:
             found = curSet.find(data->Decade()) != curSet.end();
             break;
-        case 9:
-            found = curSet.find(Symbol(data->Artist())) != curSet.end();
+        case 9: {
+            Symbol artistSym = data->Artist();
+            found = curSet.find(artistSym) != curSet.end();
             break;
+        }
         case 6: {
             MILO_ASSERT(partSym != "", 0x1B5);
             if (!data->HasPart(partSym, false)) {
@@ -300,21 +302,20 @@ bool SongSortMgr::DoesSongMatchFilter(int songID, const SongFilter *filter, Symb
                 break;
             }
             int tier = TheSongMgr.RankTier(data->Rank(partSym), partSym);
-            Symbol tierTok = TheSongMgr.RankTierToken(tier);
-            found = curSet.find(tierTok) != curSet.end();
+            found = curSet.find(TheSongMgr.RankTierToken(tier)) != curSet.end();
             break;
         }
         case 7:
-            found = curSet.find(data->RatingSym()) != curSet.end();
+            found = curSet.find(data->LengthSym()) != curSet.end();
             break;
         case 8:
-            found = curSet.find(data->VocalPartsSym()) != curSet.end();
+            found = curSet.find(data->RatingSym()) != curSet.end();
             break;
         case 5:
             found = curSet.find(data->SourceSym()) != curSet.end();
             break;
         case 4:
-            found = curSet.find(data->LengthSym()) != curSet.end();
+            found = curSet.find(data->VocalPartsSym()) != curSet.end();
             break;
         case 3:
             found = curSet.find(data->HasProGuitarSym()) != curSet.end();
