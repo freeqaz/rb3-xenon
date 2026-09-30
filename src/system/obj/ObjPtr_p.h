@@ -543,10 +543,18 @@ Hmx::Object *ObjOwnerPtr<T>::RefOwner() const {
 // Retail X360: the ring-ref is mOwner (an ObjRefOwner), NOT this. We pass a null
 // object to the base ctor (so it does not AddRef(this)), then AddRef(mOwner).
 // The base ctor stores mOwner (as Hmx::Object*, reinterpreted) and mObject.
-#ifdef RB3_TU_OBJPTR_DEFER_OWNER
 // DEFER-BOTH (lane DS-4/C): base ctor initializes nothing, so BOTH the mOwner
 // and mObject stores land after the derived vptr store, matching retail's
 // {lis, mOwner, mObject, cmplwi, addi, vptr-store}. See obj/Object.h.
+// W17-TMPL: this is the ONLY shape retail's out-of-line ObjOwnerPtr<T> two-arg
+// ctor has. Every retail body carries the vtable `lis` before the mOwner
+// store -- all 13 read (CharWeightable 0x823ae9a8, Hmx::Object 0x82422928,
+// RndTransformable 0x8236dd58, RndMesh 0x82418f18, RndTransAnim 0x8245e068,
+// RndMatAnim 0x82461498, RndMeshAnim 0x8246d0f0, RndLightAnim 0x82471168,
+// RndParticleSysAnim 0x8247edf8, RndCamAnim 0x82485900, RndEnvAnim
+// 0x82486858, RndLight 0x82497f68, Spotlight 0x824d8a30) -- so it is no
+// longer gated on RB3_TU_OBJPTR_DEFER_OWNER (which still gates ObjPtr's).
+// The mem-init form put `stw mOwner` first in every TU that lacked the define.
 template <class T>
 ObjOwnerPtr<T>::ObjOwnerPtr(ObjRefOwner *owner, T *ptr) : ObjRefConcrete<T>() {
     mOwner = reinterpret_cast<Hmx::Object *>(owner);
@@ -554,15 +562,6 @@ ObjOwnerPtr<T>::ObjOwnerPtr(ObjRefOwner *owner, T *ptr) : ObjRefConcrete<T>() {
     if (mObject)
         mObject->AddRef(owner);
 }
-#else
-template <class T>
-ObjOwnerPtr<T>::ObjOwnerPtr(ObjRefOwner *owner, T *ptr)
-    : ObjRefConcrete<T>(reinterpret_cast<Hmx::Object *>(owner), nullptr) {
-    mObject = ptr;
-    if (mObject)
-        mObject->AddRef(owner);
-}
-#endif
 
 template <class T>
 ObjOwnerPtr<T>::ObjOwnerPtr(const ObjOwnerPtr &o)
