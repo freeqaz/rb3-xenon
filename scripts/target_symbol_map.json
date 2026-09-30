@@ -1,4 +1,11 @@
 {
+ "0x826c9818": "?BeginToken@TrainerPanel@@QBA?AVSymbol@@XZ",
+ "0x826c9888": "?EndToken@TrainerPanel@@QBA?AVSymbol@@XZ",
+ "0x826c98f8": "?ChallengeToken@TrainerPanel@@QBA?AVSymbol@@XZ",
+ "0x826c9968": "?StartEarlyToken@TrainerPanel@@QBA?AVSymbol@@XZ",
+ "0x826c99d8": "?StartNormToken@TrainerPanel@@QBA?AVSymbol@@XZ",
+ "0x8269d068": "?GetSongFraction@Performer@@QBAMXZ",
+ "0x82b907f8": "?ResetEndingBonus@TrackPanel@@QAAXXZ",
  "0x825c17d8": "?HasProGuitarOrBass@BandMachine@@QBA_NH@Z",
  "0x82651b28": "?IsRanked@BandMatchmaker@@QBA_NXZ",
  "0x82540208": "?RefreshSongLists@MusicLibrary@@QAAXXZ",
