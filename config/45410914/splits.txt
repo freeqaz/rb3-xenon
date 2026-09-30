@@ -321,11 +321,15 @@ GemTrackResourceManager.cpp:
 	.text       start:0x82356F64 end:0x82356F98
 	.text       start:0x823571F8 end:0x82357218
 
+BandConfiguration.cpp:
+	.text       start:0x822B88F0 end:0x822B8900
+
 BandCamShot.cpp:
 	.pdata      start:0x821F1D40 end:0x821F1D48
 	.pdata      start:0x821F1F18 end:0x821F1F28
 	.pdata      start:0x821F5708 end:0x821F5718
-	.pdata      start:0x821F5718 end:0x821F5F60
+	.pdata      start:0x821F5718 end:0x821F5F38
+	.pdata      start:0x821F5F38 end:0x821F5F60
 	.pdata      start:0x8220E1A0 end:0x8220E1A8
 	.pdata      start:0x82213890 end:0x822138A0
 	.pdata      start:0x822138E8 end:0x822138F8
@@ -333,7 +337,8 @@ BandCamShot.cpp:
 	.text       start:0x8227A1A8 end:0x8227A228
 	.text       start:0x8227A2A0 end:0x8227A2A8
 	.text       start:0x822B0A38 end:0x822B0AB0
-	.text       start:0x822B0AB0 end:0x822B8BE8
+	.text       start:0x822B0AB0 end:0x822B88F0
+	.text       start:0x822B8900 end:0x822B8BE8
 	.text       start:0x82456BE8 end:0x82456CA4
 	.text       start:0x824C3E08 end:0x824C3E98
 	.text       start:0x824C4528 end:0x824C46B4
