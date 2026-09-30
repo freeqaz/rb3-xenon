@@ -494,18 +494,19 @@ void TourDescProvider::Text(
 void TourDescPanel::SelectTour(Symbol s) {
     int index = 0;
     if (s != "") {
-        index = 0;
         std::vector<Symbol> &tours = m_pTourDescProvider->mTours;
-        std::vector<Symbol>::iterator it = tours.begin();
-        for (; it != tours.end(); ++it, ++index) {
-            if (*it != s)
-                continue;
-            goto lFound;
+        int i = 0;
+        for (std::vector<Symbol>::iterator it = tours.begin(); it != tours.end();
+             ++it, ++i) {
+            if (s == *it) {
+                index = i;
+                goto lFound;
+            }
         }
         index = 0;
-        lFound:;
+    lFound:;
     }
-    UIList *pList = mDir->Find<UIList>("pTourList", true);
+    UIList *pList = mDir->Find<UIList>("tours.lst", true);
     MILO_ASSERT(pList, 0x30B);
     pList->SetSelected(index, -1);
 }
