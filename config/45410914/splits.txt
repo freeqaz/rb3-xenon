@@ -1720,6 +1720,10 @@ TexBlender.cpp:
 	.text       start:0x8266C440 end:0x8266C464
 	.text       start:0x82698B98 end:0x82698C08
 
+system/rndobj/ShaderProgram.cpp:
+	.pdata      start:0x82212150 end:0x822121B0
+	.text       start:0x824A4A38 end:0x824A5630
+
 Shader.cpp:
 	.pdata      start:0x822121B0 end:0x82212270
 	.text       start:0x824A5630 end:0x824A8404
@@ -2768,7 +2772,7 @@ EventTrigger.cpp:
 	.pdata      start:0x82211978 end:0x822119A8
 	.pdata      start:0x822119A8 end:0x822119B8
 	.pdata      start:0x822119B8 end:0x822119C0
-	.pdata      start:0x822119C0 end:0x822121B0
+	.pdata      start:0x822119C0 end:0x82212150
 	.pdata      start:0x82214230 end:0x82214250
 	.pdata      start:0x822142B0 end:0x822142C0
 	.pdata      start:0x8223BA68 end:0x8223BA78
@@ -2788,7 +2792,7 @@ EventTrigger.cpp:
 	.text       start:0x8249C560 end:0x8249C928
 	.text       start:0x8249C928 end:0x8249C9E0
 	.text       start:0x8249C9E0 end:0x8249CA68
-	.text       start:0x8249CA68 end:0x824A5630
+	.text       start:0x8249CA68 end:0x824A4A38
 	.text       start:0x824CD738 end:0x824CD818
 	.text       start:0x824CDCE8 end:0x824CDD60
 	.text       start:0x8274DF40 end:0x8274DFC8

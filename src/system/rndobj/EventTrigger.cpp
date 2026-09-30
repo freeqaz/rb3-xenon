@@ -934,13 +934,6 @@ void EventTrigger::ConvertParticleTriggerType() {
 #undef gRev
 #undef gAltRev
 
-// sw2 scatter-include (default/EventTrigger <- rndobj/ShaderProgram.cpp)
-#define gRev gRev_ShaderProgram
-#define gAltRev gAltRev_ShaderProgram
-#include "rndobj/ShaderProgram.cpp"
-#undef gRev
-#undef gAltRev
-
 // sw2 scatter-include (default/EventTrigger <- gesture/SkeletonClip.cpp)
 #define gRev gRev_SkeletonClip
 #define gAltRev gAltRev_SkeletonClip
