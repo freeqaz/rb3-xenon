@@ -2566,13 +2566,8 @@ void GemPlayer::UpdateGameCymbalLanes() {
     if (mUser->GetTrackType() != kTrackDrum)
         return;
     bool discoUnflip = false;
-    bool hasGHDrums = false;
-    if (IsLocal()) {
-        LocalBandUser *lu = mUser->GetLocalBandUser();
-        if (lu && UserHasGHDrums(lu))
-            hasGHDrums = true;
-    }
-    if (hasGHDrums && !mUser->GetGameplayOptions()->GetLefty()) {
+    if (IsLocal() && UserHasGHDrums(mUser->GetLocalBandUser())
+        && !mUser->GetGameplayOptions()->GetLefty()) {
         discoUnflip = true;
     }
     SongData *data = TheSongDB->GetData();
