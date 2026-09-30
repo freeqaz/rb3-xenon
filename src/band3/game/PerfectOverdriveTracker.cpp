@@ -113,21 +113,22 @@ void PerfectOverdriveTracker::HandlePlayerSaved_(const TrackerPlayerID &pid) {
 void PerfectOverdriveTracker::FirstFrame_(float) {
     mBandDisplay.Initialize(gNullStr);
     unk70.clear();
+    PlayerStreakData init;
+    init.unk0 = -1.0f;
+    init.unk4 = 0;
+    init.unk5 = 0;
+    init.unk6 = 0;
+    init.unk8 = 0;
+    init.unkc = 0;
+    init.unk10 = 0;
+    init.unk14 = -1;
+    init.unk18 = -1.0f;
+    init.unk1c = 0;
     for (TrackerPlayerID id = mSource->GetFirstPlayer(); id.NotNull();
          id = mSource->GetNextPlayer(id)) {
         Player *player = mSource->GetPlayer(id);
         MILO_ASSERT(player, 0xF1);
-        PlayerStreakData &data = unk70[player->GetTrackType()];
-        data.unk0 = -1.0f;
-        data.unk4 = 0;
-        data.unk5 = 0;
-        data.unk6 = 0;
-        data.unk8 = 0;
-        data.unkc = 0;
-        data.unk10 = 0;
-        data.unk14 = -1;
-        data.unk18 = -1.0f;
-        data.unk1c = 0;
+        unk70[player->GetTrackType()] = init;
         GetPlayerDisplay(id).Enable();
     }
     unk88 = 0;
