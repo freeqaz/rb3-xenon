@@ -136,18 +136,19 @@ bool AsyncFile::WriteAsync(const void *v, int i) {
     } else {
         // Buffered write: split across buffer boundaries if needed
         int remaining = i;
+        const char *src = (const char *)v;
         while ((mOffset + remaining) > gBufferSize) {
             int size = gBufferSize - mOffset;
-            memcpy(mBuffer + mOffset, v, size);
+            memcpy(mBuffer + mOffset, src, size);
             mOffset = gBufferSize;
             remaining -= size;
             mTell += size;
-            v = (void *)((intptr_t)v + size);
+            src += size;
             Flush();
             if (mFail)
                 return false;
         }
-        memcpy(mBuffer + mOffset, v, remaining);
+        memcpy(mBuffer + mOffset, src, remaining);
         mTell += remaining;
         mOffset += remaining;
         if (mTell > mSize)
