@@ -55,8 +55,7 @@ Symbol TourPerformerImpl::GetCurrentQuestDisplayName() const {
 Symbol TourPerformerImpl::GetCurrentQuestDescription() const {
     Symbol quest = GetCurrentQuest();
     Quest *pQuest = TheQuestMgr.GetQuest(quest);
-    if (!pQuest)
-        return quest;
+    // W16-HR: no null fallback in retail (dev-oracle branch), as DisplayName.
     MILO_ASSERT(pQuest, 0x9F);
     return pQuest->GetDescription();
 }
@@ -64,8 +63,7 @@ Symbol TourPerformerImpl::GetCurrentQuestDescription() const {
 Symbol TourPerformerImpl::GetCurrentQuestLongDescription() const {
     Symbol quest = GetCurrentQuest();
     Quest *pQuest = TheQuestMgr.GetQuest(quest);
-    if (!pQuest)
-        return quest;
+    // W16-HR: no null fallback in retail (dev-oracle branch), as DisplayName.
     MILO_ASSERT(pQuest, 0xB2);
     return pQuest->GetLongDescription();
 }

@@ -204,22 +204,16 @@ void TourProgress::SetTourDesc(Symbol s) {
 
 Symbol TourProgress::GetFilterForCurrentGig() const {
     TourDesc *pTourDesc = TheTour->GetTourDesc(m_symTourDesc);
-    if (!pTourDesc)
-        return gNullStr;
-    else {
-        MILO_ASSERT(pTourDesc, 0x13F);
-        return pTourDesc->GetFilterForGigNum(mCurrentGigNum);
-    }
+    // W16-HR: retail has no null fallback (dev-oracle branch).
+    MILO_ASSERT(pTourDesc, 0x13F);
+    return pTourDesc->GetFilterForGigNum(mCurrentGigNum);
 }
 
 Symbol TourProgress::GetSetlistTypeForCurrentGig(int i) const {
     TourDesc *pTourDesc = TheTour->GetTourDesc(m_symTourDesc);
-    if (!pTourDesc)
-        return gNullStr;
-    else {
-        MILO_ASSERT(pTourDesc, 0x14E);
-        return pTourDesc->GetSetlistTypeForGigNum(mCurrentGigNum, i);
-    }
+    // W16-HR: retail has no null fallback (dev-oracle branch).
+    MILO_ASSERT(pTourDesc, 0x14E);
+    return pTourDesc->GetSetlistTypeForGigNum(mCurrentGigNum, i);
 }
 
 int TourProgress::GetNumSongsForCurrentGig() const {
@@ -230,12 +224,9 @@ int TourProgress::GetNumSongsForCurrentGig() const {
 
 Symbol TourProgress::GetVenueForCurrentGig() const {
     TourDesc *pTourDesc = TheTour->GetTourDesc(m_symTourDesc);
-    if (!pTourDesc)
-        return gNullStr;
-    else {
-        MILO_ASSERT(pTourDesc, 0x16C);
-        return pTourDesc->GetVenueForGigNum(mCurrentGigNum);
-    }
+    // W16-HR: retail has no null fallback (dev-oracle branch).
+    MILO_ASSERT(pTourDesc, 0x16C);
+    return pTourDesc->GetVenueForGigNum(mCurrentGigNum);
 }
 
 bool TourProgress::IsTourComplete() const {
