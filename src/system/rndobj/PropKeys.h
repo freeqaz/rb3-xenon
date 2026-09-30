@@ -92,7 +92,7 @@ public:
 
     // Retail PropKeys::Load reads a class-static "current load revision"
     // (rb3-Wii idiom: PropKeys::gRev, set via SetPropKeysRev before the
-    // nested Load() calls) instead of the BinStreamRev& parameter's own
+    // nested Load() calls) instead of a rev wrapper's own
     // `rev` member — verified from retail disasm: every rev comparison in
     // ?Load@PropKeys@@ reads a single fixed .data address (lis/lwz to a
     // literal label), never `lwz off(r4)` off the parameter. RndPropAnim::Load
@@ -162,7 +162,7 @@ public:
     /** Save the keys to a BinStream. */
     virtual void Save(BinStream &);
     /** Load the keys from a BinStream. */
-    virtual void Load(BinStreamRev &);
+    virtual void Load(BinStream &);
     /** Copy the supplied PropKeys metadata into this. */
     virtual void Copy(const PropKeys *);
     /** Get these keys, as a collection of float keys. */
@@ -361,7 +361,7 @@ public:
         PropKeys::Save(bs);
         bs << *this;
     }
-    virtual void Load(BinStreamRev &bs) {
+    virtual void Load(BinStream &bs) {
         PropKeys::Load(bs);
         Keys<float, float> &me = *this;
         bs >> me;
@@ -412,7 +412,7 @@ public:
         PropKeys::Save(bs);
         bs << *this;
     }
-    virtual void Load(BinStreamRev &bs) {
+    virtual void Load(BinStream &bs) {
         PropKeys::Load(bs);
         Keys<Hmx::Color, Hmx::Color> &me = *this;
         bs >> me;
@@ -464,7 +464,7 @@ public:
         PropKeys::Save(bs);
         bs << *this;
     }
-    virtual void Load(BinStreamRev &bs) {
+    virtual void Load(BinStream &bs) {
         PropKeys::Load(bs);
         Hmx::Object *oldOwner = ObjectStage::sOwner;
         ObjectStage::sOwner = mOwner;
@@ -519,7 +519,7 @@ public:
         PropKeys::Save(bs);
         bs << *this;
     }
-    virtual void Load(BinStreamRev &bs) {
+    virtual void Load(BinStream &bs) {
         PropKeys::Load(bs);
         Keys<bool, bool> &me = *this;
         bs >> me;
@@ -570,7 +570,7 @@ public:
         PropKeys::Save(bs);
         bs << *this;
     }
-    virtual void Load(BinStreamRev &bs) {
+    virtual void Load(BinStream &bs) {
         PropKeys::Load(bs);
         Keys<Hmx::Quat, Hmx::Quat> &me = *this;
         bs >> me;
@@ -623,7 +623,7 @@ public:
         PropKeys::Save(bs);
         bs << *this;
     }
-    virtual void Load(BinStreamRev &bs) {
+    virtual void Load(BinStream &bs) {
         PropKeys::Load(bs);
         Keys<Vector3, Vector3> &me = *this;
         bs >> me;
@@ -678,7 +678,7 @@ public:
         PropKeys::Save(bs);
         bs << *this;
     }
-    virtual void Load(BinStreamRev &bs) {
+    virtual void Load(BinStream &bs) {
         PropKeys::Load(bs);
         Keys<Symbol, Symbol> &me = *this;
         bs >> me;

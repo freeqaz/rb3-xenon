@@ -88977,6 +88977,24 @@
     "??$?5V?$Key@M@@V?$StlNodeAlloc@V?$Key@M@@@stlpmtx_std@@@@YAAAVBinStreamRev@@AAV0@AAV?$vector@V?$Key@M@@V?$StlNodeAlloc@V?$Key@M@@@stlpmtx_std@@@stlpmtx_std@@@Z"
    ],
    "evidence": "W17-BSR 2026-09-30: spelling-twin adjudication. The folded spelling(s) are the BinStreamRev instantiation of the same template body as the survivor; BinStreamRev does not exist in RB3 (0 x .?AVBinStreamRev@@ in band.exe), so retail has only the survivor. tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED only on relocation target names (masked bodies and sizes equal), CHASED T1 PROVEN -- every differing relocation slot is an already-proven fold (SLOT-FOLD-OK). Kept so not-yet-converted callers that still spell the BinStreamRev twin stay forgiven."
+  },
+  {
+   "name": "w17bsr_0x8242e210",
+   "address": "0x8242e210",
+   "survivor": "??$?5V?$Key@VColor@Hmx@@@@V?$StlNodeAlloc@V?$Key@VColor@Hmx@@@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@V?$Key@VColor@Hmx@@@@V?$StlNodeAlloc@V?$Key@VColor@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "folded": [
+    "??$?5V?$Key@VQuat@Hmx@@@@V?$StlNodeAlloc@V?$Key@VQuat@Hmx@@@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@V?$Key@VQuat@Hmx@@@@V?$StlNodeAlloc@V?$Key@VQuat@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@@Z"
+   ],
+   "evidence": "W17-BSR 2026-09-30: ICF fold of the vector<Key<Quat>> reader onto vector<Key<Color>> (both elements are 4 floats + frame, stride 0x14). tools/icf_pair_adjudicate.py --chase: FLAT T1 refuted only on relocation target names (sizes 168/168, masked bodies equal), CHASED T1 PROVEN -- every differing slot is an already-proven fold. Retail corroboration: RndPropAnim::LoadPre7 (0x8242E580) reads both its colorKeys and its quatKeys through this one address."
+  },
+  {
+   "name": "w17bsr_0x8242e488",
+   "address": "0x8242e488",
+   "survivor": "?Load@ColorKeys@@UAAXAAVBinStream@@@Z",
+   "folded": [
+    "?Load@QuatKeys@@UAAXAAVBinStream@@@Z"
+   ],
+   "evidence": "W17-BSR 2026-09-30: ICF fold of QuatKeys::Load onto ColorKeys::Load. RTTI proof: the ColorKeys vtable (0x82062CA4, COL -> .?AVColorKeys@@) and the QuatKeys vtable (0x82062EE4, COL -> .?AVQuatKeys@@) both hold 0x8242E488 in their Load slot. tools/icf_pair_adjudicate.py --chase: FLAT T1 refuted only on relocation target names, CHASED T1 PROVEN."
   }
  ]
 }
