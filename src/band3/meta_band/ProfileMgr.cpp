@@ -694,6 +694,22 @@ void ProfileMgr::SetOverscan(bool b) {
     }
 }
 
+// RB3-360 (TU5) setters, retail 0x82545988 / 0x825459A0 (between SetOverscan
+// and GetHasConnectedProGuitar).
+void ProfileMgr::SetMusicLibraryUpsell(bool b) {
+    if (b != unk58a) {
+        unk58a = b;
+        mGlobalOptionsDirty = true;
+    }
+}
+
+void ProfileMgr::SetShowBadReviews(bool b) {
+    if (b != unk58b) {
+        unk58b = b;
+        mGlobalOptionsDirty = true;
+    }
+}
+
 void ProfileMgr::SetSynapseEnabled(bool b) {
     mSynapseEnabled = b;
     mGlobalOptionsDirty = true;

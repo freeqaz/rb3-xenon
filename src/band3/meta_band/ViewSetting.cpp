@@ -361,6 +361,70 @@ ScoreType ScoreTypeViewSetting::GetAlternateScoreType() const {
 // ViewSettingsProvider
 // ------------------------------------------------------------------
 
+const char *MusicLibraryUpsellViewSetting::GetCurrentStatus() const {
+    static Symbol music_library_upsell_on("music_library_upsell_on");
+    static Symbol music_library_upsell_off("music_library_upsell_off");
+    return Localize(
+        TheProfileMgr.GetMusicLibraryUpsell() ? music_library_upsell_on
+                                              : music_library_upsell_off,
+        nullptr
+    );
+}
+
+void MusicLibraryUpsellViewSetting::Text(
+    int, int row, UIListLabel *slot, UILabel *label
+) const {
+    static Symbol music_library_upsell_on("music_library_upsell_on");
+    static Symbol music_library_upsell_off("music_library_upsell_off");
+    if (slot->Matches("name")) {
+        label->SetTextToken(
+            row == 0 ? music_library_upsell_on : music_library_upsell_off
+        );
+    } else {
+        label->SetTextToken(gNullStr);
+    }
+}
+
+void MusicLibraryUpsellViewSetting::SelectOption(int idx) {
+    TheProfileMgr.SetMusicLibraryUpsell(idx == 0);
+    TheMusicLibrary->RefreshSongLists();
+}
+
+int MusicLibraryUpsellViewSetting::StartingOption() const {
+    return !TheProfileMgr.GetMusicLibraryUpsell();
+}
+
+const char *BadReviewViewSetting::GetCurrentStatus() const {
+    static Symbol music_library_upsell_on("music_library_upsell_on");
+    static Symbol music_library_upsell_off("music_library_upsell_off");
+    return Localize(
+        TheProfileMgr.GetShowBadReviews() ? music_library_upsell_on
+                                          : music_library_upsell_off,
+        nullptr
+    );
+}
+
+void BadReviewViewSetting::Text(int, int row, UIListLabel *slot, UILabel *label) const {
+    static Symbol music_library_upsell_on("music_library_upsell_on");
+    static Symbol music_library_upsell_off("music_library_upsell_off");
+    if (slot->Matches("name")) {
+        label->SetTextToken(
+            row == 0 ? music_library_upsell_on : music_library_upsell_off
+        );
+    } else {
+        label->SetTextToken(gNullStr);
+    }
+}
+
+void BadReviewViewSetting::SelectOption(int idx) {
+    TheProfileMgr.SetShowBadReviews(idx == 0);
+    TheMusicLibrary->RefreshSongLists();
+}
+
+int BadReviewViewSetting::StartingOption() const {
+    return !TheProfileMgr.GetShowBadReviews();
+}
+
 ViewSettingsProvider::ViewSettingsProvider() : mActiveSetting(nullptr),
     mDisabledColor(nullptr), mHeaderMat(nullptr), mEvenMat(nullptr),
     mOddMat(nullptr) {
@@ -369,6 +433,8 @@ ViewSettingsProvider::ViewSettingsProvider() : mActiveSetting(nullptr),
     mSettings.push_back(new HeaderViewSetting(options));
     mSettings.push_back(new SortViewSetting());
     mSettings.push_back(new ScoreTypeViewSetting());
+    mSettings.push_back(new MusicLibraryUpsellViewSetting());
+    mSettings.push_back(new BadReviewViewSetting());
     mSettings.push_back(new HeaderViewSetting(filters));
     for (int i = 0; i < kNumFilterTypes - 2; i++) {
         mSettings.push_back(new FilterViewSetting((FilterType)i));

@@ -59,6 +59,11 @@ public:
     void SetDolby(bool);
     void SetOverscan(bool);
     void SetSynapseEnabled(bool);
+    // RB3-360 (TU5): retail 0x82545988 / 0x825459A0, read by the view settings.
+    void SetMusicLibraryUpsell(bool);
+    void SetShowBadReviews(bool);
+    bool GetMusicLibraryUpsell() const { return unk58a; }
+    bool GetShowBadReviews() const { return unk58b; }
     // retail X360 strips the WiiSpeak feature (setters absent)
     bool GetHasSeenFirstTimeCalibration() const;
     void SetHasSeenFirstTimeCalibration(bool);
