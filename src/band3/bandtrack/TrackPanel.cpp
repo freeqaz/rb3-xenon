@@ -413,16 +413,17 @@ void TrackPanel::HandleRemoveUser(BandUser *user) {
         for (int i = 0; i < mTrackSlots.size(); i++) {
             TrackSlot &curslot = mTrackSlots[i];
             if (curslot.mTrack == track) {
+                idx = i;
                 curslot.mTrack = nullptr;
                 curslot.mInstrument = kInstNone;
-                idx = i;
                 break;
             }
         }
         if (idx == -1)
             MILO_FAIL("Couldn't find slot for removed user!");
         mTrackPanelDir->RemoveTrack(idx);
-        mTrackPanelDir->ConfigureTracks(!IsGameOver());
+        bool gameOver = IsGameOver();
+        mTrackPanelDir->ConfigureTracks(!gameOver);
     }
 }
 
