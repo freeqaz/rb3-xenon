@@ -76,7 +76,7 @@ BEGIN_HANDLERS(RndPropAnim)
         )
     )
     HANDLE_ACTION(
-        set_key, SetKey(_msg->Obj<Hmx::Object>(2), _msg->Array(3), _msg->Float(5))
+        set_key, SetKey(_msg->Obj<Hmx::Object>(2), _msg->Array(3), _msg->Float(4))
     )
     HANDLE_ACTION(
         set_key_val,
