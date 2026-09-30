@@ -389,21 +389,30 @@ DataNode PatchPanel::OnMsg(const ButtonUpMsg &msg) {
             return 1;
         }
     } else if (mMode == "rotate") {
-        if (action == kAction_Up || action == kAction_Down || action == kAction_Right
-            || action == kAction_Left) {
+        switch (action) {
+        case kAction_Up:
+        case kAction_Down:
+        case kAction_Right:
+        case kAction_Left:
             mRot = 0;
             return 1;
         }
     } else if (mMode == "scale") {
-        if (action == kAction_Up || action == kAction_Down || action == kAction_Right
-            || action == kAction_Left) {
+        switch (action) {
+        case kAction_Up:
+        case kAction_Down:
+        case kAction_Right:
+        case kAction_Left:
             mScaleX = 0;
             mScaleY = 0;
             return 1;
         }
     } else if (mMode == "warp") {
-        if (action == kAction_Up || action == kAction_Down || action == kAction_Right
-            || action == kAction_Left) {
+        switch (action) {
+        case kAction_Up:
+        case kAction_Down:
+        case kAction_Right:
+        case kAction_Left:
             mDeform = 0;
             return 1;
         }
