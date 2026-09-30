@@ -1323,7 +1323,15 @@ public:
     ObjListMode Mode() const { return mListMode; }
     int size() const { return mSize; }
     bool empty() const { return mSize == 0; }
+#ifdef HX_NATIVE
     Hmx::Object *Owner() const { return mOwner ? mOwner->RefOwner() : nullptr; }
+#else
+    // Retail X360: the raw mOwner (rb3-Wii: `return mOwner;`). The only caller
+    // is operator<<'s MILO_ASSERT(c.Owner()), i.e. ((void)(cond)) here; with a
+    // virtual call inside, that cannot be dropped, and retail's single folded
+    // operator<< body (0x8249bbb0) has no call at all.
+    Hmx::Object *Owner() const { return static_cast<Hmx::Object *>(mOwner); }
+#endif
 
     void clear() {
         while (mSize != 0)
