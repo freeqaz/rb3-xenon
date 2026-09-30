@@ -1,5 +1,8 @@
 #include "rndobj/BaseMaterial.h"
 #include "Utl.h"
+#include "os/File.h"
+#include "rndobj/Fur.h"
+#include "utl/Loader.h"
 #include "obj/Data.h"
 #include "obj/Dir.h"
 
@@ -13,6 +16,26 @@ namespace {
     bool IsMat(RndMat *mat) { return mat && mat->ClassName() == "Mat"; }
 }
 
+// The material's load revision. Retail keeps it in a file-static pair, NOT on the
+// stack: RndMat::Load (0x82438F40) stores `sth rev, 0x4(r24)` / `sth alt, 0x0(r24)`
+// through one base register (lbl_82CC29D8) and re-reads `lhz r11, 0x4(r24)` before
+// every rev test, and MatPerfSettings::Load (0x82435608) reads the same rev word
+// directly (lbl_82CC29DC). altRev at +0 / rev at +4 on one base is the
+// internal-linkage align(4) co-addressing shape (cf. bandobj/BandButton.cpp).
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} sMatRevs;
+// ⚠ OPEN (lane W17-MAT): retail's MatPerfSettings::Load reads the rev as a DIRECT
+// symbol (`lis; lhz lbl_82CC29DC@l`), where this struct gives `lis; addi; lhz 0x4`
+// -- the one residual keeping that 104 B row at fuzzy 95.96. Two separate
+// align(4) internal statics DO give the direct form (MatPerfSettings::Load -> 100),
+// but MSVC then lays them out rev@+4 / alt@+8, putting rev at -4 from Load's shared
+// base (retail: +4) and costing RndMat::Load (2,312 B) 35 diff_args. Tried and
+// INERT for that layout: swapping the two declarations, moving
+// MatPerfSettings::Load below RndMat::Load. Swapping the two rev stores in Load
+// moves the base but adds a `mr` scheduling diff. Struct kept: Load is the prize.
+
 #pragma region MatPerfSettings
 
 void MatPerfSettings::Save(BinStream &bs) const {
@@ -21,17 +44,13 @@ void MatPerfSettings::Save(BinStream &bs) const {
     bs << mRecvPointCubeTex;
 }
 
-void MatPerfSettings::LoadOld(BinStreamRev &bs) {
-    bs >> mRecvProjLights;
-    bs >> mPS3ForceTrilinear;
-    if (bs.rev > 0x41)
-        bs >> mRecvPointCubeTex;
-}
-
+// Retail 0x82435608: one argument, and the rev test reads the material's static rev.
+// (There is no separate old-version overload; this is the only perf-settings Load.)
 void MatPerfSettings::Load(BinStream &bs) {
     bs >> mRecvProjLights;
     bs >> mPS3ForceTrilinear;
-    bs >> mRecvPointCubeTex;
+    if (sMatRevs.rev > 0x41)
+        bs >> mRecvPointCubeTex;
 }
 
 #pragma endregion
@@ -186,107 +205,253 @@ BEGIN_COPYS(RndMat)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(0x44, 0)
-
-// Retail's material Load is fn_82438F40 (pinned, unnamed, inside rndobj/Utl.cpp's
-// span). Read directly, it settles the serialization shape that the two-class split
-// obscured: it reads the rev EXACTLY ONCE, then loads members inline at the
-// BaseMaterial offsets in this order (r30+0x28 mBlend, +0x2c mColor, +0x99
-// mUseEnviron, +0x9a mPrelit), stores mDirty at +0x188 and takes &mColorMod at
-// +0x158. There is NO second rev read, no minVer assert and no out-of-line LoadOld
-// call -- retail inlined its old-version path (its tail is the mRefractEnabled
-// *= 0.15f code). So the DC3 rev-0x46 outer layer in Mat.cpp is scaffolding, exactly
-// like RndMat::Save was, and dropping BOTH keeps save/load symmetric on rev 0x44 --
-// the rev retail's byte-exact 988 B Save at 0x82435dc0 actually writes.
+// Retail's material Load is fn_82438F40 (vtable slot 10 of RndMat's vtable at
+// 0x8206572C, after Save 0x82435DC0 and Copy 0x82438C28). It reads the rev EXACTLY
+// ONCE into the file-static pair above, then loads every member with the
+// old-version handling INLINE -- there is no out-of-line LoadOld, no minVer assert
+// (ASSERT_REVS is compiled out) and no CheckBlendMode. Reconstructed instruction by
+// instruction against retail (lane W17-MAT); DC3's rev-0x46 two-layer Load and our
+// former RndMat::LoadOld(BinStreamRev &) were the same code split in two.
+//
+// Statement boundaries are load-bearing: an out-of-line operator>> (bool, Color,
+// Vector3, Symbol) returns the stream in r3, so a CHAINED read passes that r3 on
+// while a separate statement reloads the saved stream register. Retail chains
+// exactly mUseEnviron>>mPrelit, mCull>>mEmissiveMultiplier>>mSpecularRGB>>mNormalMap,
+// the unused bool>>Color pair, and mFog>>mFadeout; everything else is re-read from
+// the saved `bs`.
 BEGIN_LOADS(RndMat)
-    LOAD_REVS(bs)
-    ASSERT_REVS(0x44, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
+    int revs;
+    bs >> revs;
+    sMatRevs.rev = getHmxRev(revs);
+    sMatRevs.altRev = getAltRev(revs);
+    Hmx::Object::Load(bs);
+    bs >> (int &)mBlend;
+    bs >> mColor;
+    bs >> mUseEnviron >> mPrelit;
+    bs >> (int &)mZMode;
+    bs >> mAlphaCut;
+    if (sMatRevs.rev > 0x25) {
+        bs >> mAlphaThreshold;
+    }
+    bs >> mAlphaWrite;
+    bs >> (int &)mTexGen;
+    bs >> (int &)mTexWrap;
+    bs >> mTexXfm;
+    bs >> mDiffuseTex;
+    bs >> mNextPass;
+    bs >> mIntensify;
     mDirty = 3;
+    // `cull` loads as a BOOL, unconditionally. Adjudicated on RETAIL BYTES: at
+    // 0x8243909C retail does `addi r4, r30, 0x11c` then `bl fn_8227DB80` =
+    // `BinStream::operator>>(bool &)` with NO `li r5, N` size argument (read ONE byte,
+    // then the subic/subfe b = uc != 0 normalization). mCull is one byte at 0x11c
+    // (compiler-verified; mPerPixelLit sits at 0x11d), so the old `int &` read was a
+    // memory bug that clobbered 0x11d-0x11f. Save writes `bs << mCull` = one byte.
+    // ⚠ `Cull` has three values, so this clamps kCullBackwards to 1 -- as retail does.
+    bs >> (bool &)mCull >> mEmissiveMultiplier >> mSpecularRGB >> mNormalMap;
+    bs >> mEmissiveMap >> mSpecularMap;
+    if (sMatRevs.rev < 0x33) {
+        ObjPtr<RndTex> tex(this);
+        bs >> tex;
+    }
+    bs >> mEnvironMap;
+    if (sMatRevs.rev > 0x3C) {
+        bs >> mEnvironMapFalloff;
+        if (sMatRevs.rev > 0x42) {
+            bs >> mEnvironMapSpecMask;
+        }
+    }
+    if (sMatRevs.rev < 0x25 && mSpecularMap) {
+        mSpecularRGB.Set(1, 1, 1, mSpecularRGB.alpha);
+    }
+    if (sMatRevs.rev > 0x19) {
+        bs >> mPerPixelLit;
+    }
+    if (sMatRevs.rev > 0x1A && sMatRevs.rev < 0x32) {
+        bool unused;
+        bs >> unused;
+    }
+    if (sMatRevs.rev > 0x1B) {
+        bs >> (int &)mStencilMode;
+    }
+    if (sMatRevs.rev < 0x29 && sMatRevs.rev > 0x1C) {
+        Symbol unused;
+        bs >> unused;
+    }
+    if (sMatRevs.rev > 0x20) {
+        bs >> mFur;
+    } else if (sMatRevs.rev > 0x1D) {
+        // Retail does NOT save/restore the edit mode here: SetEditMode(1) ...
+        // SetEditMode(0), both literal (same as LookupOrCreateMat).
+        TheLoadMgr.SetEditMode(true);
+        const char *name = MakeString("%s.fur", FileGetBase(Name()));
+        ObjectDir *dir = Dir();
+        RndFur *fur = Hmx::Object::New<RndFur>();
+        if (name) {
+            fur->SetName(name, dir);
+        }
+        TheLoadMgr.SetEditMode(false);
+        if (fur->LoadOld(bs, sMatRevs.rev)) {
+            mFur = fur;
+        } else {
+            delete fur;
+            // = `mFur = nullptr`, open-coded as retail has it (0x82439314: lwz
+            // 0x10c / beq / bl Hmx::Object::Release / stw r23(=0), 0x8) -- our
+            // compiler otherwise emits bl SetObjConcrete(0) and cross-jumps it with
+            // the `mFur = fur` call above, which costs r23 and 8 instructions.
+            mFur.ReleaseObjConcrete();
+        }
+    }
+    if (sMatRevs.rev > 0x21 && sMatRevs.rev < 0x31) {
+        bool unusedBool;
+        Hmx::Color unusedColor;
+        bs >> unusedBool >> unusedColor;
+        if (sMatRevs.rev > 0x22) {
+            ObjPtr<RndTex> tex(this);
+            bs >> tex;
+        }
+    }
+    if (sMatRevs.rev > 0x23) {
+        bs >> mDeNormal;
+        bs >> mAnisotropy;
+    }
+    if (sMatRevs.rev > 0x26) {
+        if (sMatRevs.rev < 0x2A) {
+            bool unused;
+            bs >> unused;
+        }
+        bs >> mNormDetailTiling;
+        bs >> mNormDetailStrength;
+        if (sMatRevs.rev < 0x2A) {
+            int unusedInt;
+            Hmx::Color unusedColor;
+            bs >> unusedInt;
+            bs >> unusedColor;
+        }
+        bs >> mNormDetailMap;
+        if (sMatRevs.rev < 0x2A) {
+            ObjPtr<RndTex> tex(this);
+            bs >> tex;
+        }
+        if (sMatRevs.rev < 0x28) {
+            mNormDetailStrength = 0;
+        }
+    }
+    if (sMatRevs.rev > 0x2A) {
+        if (sMatRevs.rev > 0x2C) {
+            bs >> mPointLights;
+        } else {
+            int pointLights;
+            bs >> pointLights;
+            mPointLights = pointLights > 1;
+        }
+        if (sMatRevs.rev < 0x3F) {
+            bool unused;
+            bs >> unused;
+        }
+        bs >> mFog >> mFadeout;
+        if (sMatRevs.rev > 0x2B && sMatRevs.rev < 0x2E) {
+            bool unused;
+            bs >> unused;
+        }
+        if (sMatRevs.rev > 0x2E) {
+            bs >> mColorAdjust;
+        }
+    }
+    if (sMatRevs.rev > 0x2F) {
+        bs >> mRimRGB;
+        bs >> mRimMap;
+        if (sMatRevs.rev > 0x39) {
+            bs >> mRimLightUnder;
+        } else {
+            bool unused;
+            bs >> unused;
+            float red = mRimRGB.red * 2.857143f;
+            float green = mRimRGB.green * 2.857143f;
+            float blue = mRimRGB.blue * 2.857143f;
+            mRimRGB.red = Min(red, 1.0f);
+            mRimRGB.green = Min(green, 1.0f);
+            mRimRGB.blue = Min(blue, 1.0f);
+        }
+        if (sMatRevs.rev < 0x3B) {
+            mRimRGB.red = 0;
+            mRimRGB.green = 0;
+            mRimRGB.blue = 0;
+        }
+    }
+    if (sMatRevs.rev > 0x30) {
+        bs >> mScreenAligned;
+    }
+    if (sMatRevs.rev > 0x31 && sMatRevs.rev < 0x33) {
+        bool isSkinned;
+        bs >> isSkinned;
+        if (isSkinned) {
+            mShaderVariation = kShaderVariationSkin;
+        }
+    }
+    if (sMatRevs.rev > 0x32) {
+        bs >> (int &)mShaderVariation;
+        bs >> mSpecular2RGB;
+    }
+    // Unconditional, and HERE: retail calls ResetColors(&mColorMod, 3) at 0x82439668,
+    // after the rev>0x32 block (the rb3-Wii position, not DC3's top-of-Load one).
     ResetColors(mColorMod, 3);
-    d >> (int &)mBlend;
-    mBlend = CheckBlendMode(mBlend, this);
-    d.stream >> mColor >> mUseEnviron >> mPrelit;
-    d >> (int &)mZMode;
-    d >> mAlphaCut >> mAlphaThreshold >> mAlphaWrite;
-    d >> (int &)mTexGen >> (int &)mTexWrap >> mTexXfm >> mDiffuseTex >> mNextPass;
-    d >> mIntensify;
-    // `cull` loads as a BOOL, unconditionally. Was `if (d.rev < 3) {...} else
-    // { d >> (int &)mCull; }` -- the else branch was a REAL MEMORY BUG, and the
-    // branch itself does not exist in retail.
-    //
-    // Adjudicated on RETAIL BYTES (not on the header comment, and not on an oracle):
-    // retail's material Load is fn_82438F40, and at 0x8243909C it does
-    //     addi r4, r30, 0x11c   <- &mCull
-    //     bl   fn_8227DB80      <- NO `li r5, N` size argument
-    // fn_8227DB80 is `BinStream::operator>>(bool &)`: `li r5,1` (read ONE byte),
-    // `lbz`, `subic`/`subfe` (the b = uc != 0 normalization), `stb` (store ONE byte).
-    // The sized helper fn_827C5058 (= ReadEndian(void*, int)) is what retail uses for
-    // the 4-byte members, always preceded by `li r5, 0x4` (+0x110 mDeNormal,
-    // +0x114 mAnisotropy, +0x118 mShaderVariation). mCull is read with the SAME
-    // sizeless 1-byte helper as its four 1-byte neighbours at +0x11d/+0x11e/+0x11f/
-    // +0x120 -- so the field is one byte and the overload is `bool &`.
-    //
-    // Why the old form was a memory bug: mCull is ONE byte at 0x11c (compiler-
-    // verified via /d1reportSingleClassLayout -- mPerPixelLit sits at 0x11d), so an
-    // `int &` read wrote 0x11c-0x11f, clobbering mPerPixelLit (0x11d), mScreenAligned
-    // (0x11e) and mEnvironMapFalloff (0x11f) on every rev>=3 load, and consumed 3
-    // bytes too many from the stream. It also broke save/load symmetry: the matching
-    // half of the pair, `?Save@BaseMaterial@@UAAXAAVBinStream@@@Z` (988 B, fuzzy/mpn
-    // 100.0 -- its bytes ARE retail), writes `bs << mCull` = one byte.
-    //
-    // The rev<3 branch is dropped because retail has NO rev guard here (contrast the
-    // genuinely guarded later reads, which all carry `lhz r11,0x4(r24); cmplwi; ble`).
-    // It is also semantically redundant: the old path read a bool and normalized it,
-    // which is exactly what the bool& overload does. It was almost certainly
-    // inherited from DC3, which is NEWER than RB3 and renumbers these revs.
-    //
-    // ⚠ `Cull` has three values (kCullNone/kCullRegular/kCullBackwards), so this read
-    // clamps kCullBackwards to 1 -- but retail's own subic/subfe does exactly that.
-    // Member type left `unsigned char` deliberately: retyping ripples into
-    // Save/Copy/propsync with no retail evidence for those bodies (SYNCPROP-1's call).
-    d >> (bool &)mCull;
-    d >> mEmissiveMultiplier;
-    d.stream >> mSpecularRGB >> mNormalMap;
-    d.stream >> mEmissiveMap >> mSpecularMap;
-    d.stream >> mEnvironMap >> mEnvironMapFalloff >> mEnvironMapSpecMask;
-    d >> mPerPixelLit >> (int &)mStencilMode;
-    d.stream >> mFur >> mDeNormal >> mAnisotropy;
-    d >> mNormDetailTiling >> mNormDetailStrength >> mNormDetailMap;
-    d >> mPointLights >> mFog >> mFadeout >> mColorAdjust;
-    d.stream >> mRimRGB >> mRimMap >> mRimLightUnder;
-    d >> mScreenAligned;
-    d >> (int &)mShaderVariation;
-    d >> mSpecular2RGB;
-    mPerfSettings.Load(d.stream);
-    d >> mRefractEnabled;
-    d >> mRefractStrength;
-    d >> mRefractNormalMap;
+    if (sMatRevs.rev > 0x33 && sMatRevs.rev < 0x44) {
+        std::vector<Hmx::Color> colors;
+        if (sMatRevs.rev < 0x35) {
+            bool unused;
+            bs >> unused;
+        } else {
+            int unused;
+            bs >> unused;
+        }
+        if (sMatRevs.rev > 0x34 && sMatRevs.rev < 0x3C) {
+            Hmx::Color unused;
+            bs >> unused;
+        }
+        if (sMatRevs.rev >= 0x3C) {
+            bs >> colors;
+        }
+    }
+    if (sMatRevs.rev > 0x35 && sMatRevs.rev < 0x3E) {
+        ObjPtr<Hmx::Object> obj(this);
+        bs >> obj;
+    }
+    if (sMatRevs.rev > 0x36 && sMatRevs.rev < 0x3F) {
+        bool forceTrilinear;
+        bs >> forceTrilinear;
+        mPerfSettings.mPS3ForceTrilinear = forceTrilinear;
+    }
+    if (sMatRevs.rev > 0x37 && sMatRevs.rev < 0x39) {
+        int unusedX, unusedY;
+        bs >> unusedX;
+        bs >> unusedY;
+    }
+    if (sMatRevs.rev > 0x3E) {
+        mPerfSettings.Load(bs);
+    }
+    if (sMatRevs.rev > 0x3F) {
+        bs >> mRefractEnabled;
+        bs >> mRefractStrength;
+        bs >> mRefractNormalMap;
+        if (sMatRevs.rev < 0x41) {
+            if (mRefractEnabled) {
+                mRefractStrength *= 0.15f;
+            } else {
+                mRefractStrength = 0;
+            }
+        }
+    }
 #ifdef RB3_DC3_MAT
-    if (d.rev > 1) {
-        d >> mBloomMultiplier;
-    }
-    if (d.rev > 3) {
-        d >> mNeverFitToSpline;
-        if (d.rev < 5) {
-            bool b1;
-            d >> b1;
-            d >> b1;
-        }
-        if (d.rev >= 6) {
-            d >> mAllowDistortionEffects;
-            d >> mShockwaveMult;
-        }
-    }
-    if (d.rev > 6) {
-        d >> mWorldProjectionTiling;
-        d >> mWorldProjectionStartBlend;
-        d >> mWorldProjectionEndBlend;
-        d >> mDiffuseTex2;
-    }
-    if (d.rev > 7) {
-        d >> mForceAlphaWrite;
-    }
+    // DC3-only members (not in retail RB3; the flag is defined by no build). Kept
+    // symmetric with the RB3_DC3_MAT tail of Save above.
+    bs >> mBloomMultiplier >> mNeverFitToSpline;
+    bs >> mAllowDistortionEffects >> mShockwaveMult;
+    bs >> mWorldProjectionTiling;
+    bs >> mWorldProjectionStartBlend;
+    bs >> mWorldProjectionEndBlend;
+    bs >> mDiffuseTex2;
+    bs >> mForceAlphaWrite;
 #endif
 END_LOADS
 
