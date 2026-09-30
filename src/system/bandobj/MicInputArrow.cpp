@@ -166,6 +166,34 @@ void MicInputArrow::Update() {
     mMicEnergyNormalizer = t->FindFloat(mic_energy_normalizer);
 }
 
+// Retail Handle() packs one guard word (lbl_82CBDCD8) with five function-local
+// static Symbols, claimed bit0..bit4 in this SAME top-to-bottom order (read off
+// the full 178-instruction target listing: clrlwi./rlwinm. extract bits
+// 31,30,29,28,27 respectively -- i.e. mask 0x1,0x2,0x4,0x8,0x10 -- one per
+// HANDLE_ACTION below, each built via ??0Symbol@@QAA@PBD@Z directly into the
+// guarded static storage (no Message wrapper, no atexit -- Symbol's dtor is
+// trivial)):
+//   bit0 0x1  set_mic_mgr
+//   bit1 0x2  set_mic_connected
+//   bit2 0x4  set_mic_extended
+//   bit3 0x8  set_mic_preview
+//   bit4 0x10 set_mic_hidden
+// Our HANDLE_ACTION currently expands to a compare against the centralized
+// utl/Symbols.h globals of the same names -- this is exactly the
+// RB3_HANDLE_LOCAL_STATIC dialect (ObjMacros.h), but that gate is a per-TU
+// /D flag set in config/45410914/objects.json, which this lane's scope does
+// not touch. Override HANDLE_ACTION TU-locally instead (same lever as the
+// SYNC_PROP override below, lane CT-4 precedent).
+#undef HANDLE_ACTION
+#define HANDLE_ACTION(symbol, action)                                                    \
+    {                                                                                    \
+        static Symbol _hs(#symbol);                                                      \
+        if (sym == _hs) {                                                                \
+            (action);                                                                    \
+            return 0;                                                                    \
+        }                                                                                \
+    }
+
 BEGIN_HANDLERS(MicInputArrow)
     HANDLE_ACTION(set_mic_mgr, SetMicMgr(_msg->Obj<MicManagerInterface>(2)))
     HANDLE_ACTION(set_mic_connected, SetMicConnected(_msg->Int(2), _msg->Int(3)))

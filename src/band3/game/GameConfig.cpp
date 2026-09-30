@@ -66,6 +66,16 @@ Difficulty GameConfig::GetAverageDifficulty() const {
 }
 
 Symbol GameConfig::GetController(BandUser *user) const {
+    // Retail declares joypad/controller_mapping as FUNCTION-LOCAL statics sharing
+    // one guard word (lbl_82E02424), claimed in that order (joypad 0x1,
+    // controller_mapping 0x2) -- not the utl/Symbols.h globals -- confirmed by
+    // tracing each storage pointer (lbl_82E02420/lbl_82E0241C) forward to the
+    // SystemConfig() call site. The guard/construction code sits at the very top
+    // of retail's function body (before the GetGameplayOptions() call), so the
+    // declaration must be textually first -- MSVC emits the guard check at the
+    // declaration point, not at first use. W16-GZ localstatic lever.
+    static Symbol joypad("joypad");
+    static Symbol controller_mapping("controller_mapping");
     bool lefty = false;
     GameplayOptions *options = user->GetGameplayOptions();
     MILO_ASSERT(options, 0x7E);
