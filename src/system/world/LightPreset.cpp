@@ -668,7 +668,9 @@ void LightPreset::RemoveEnvironment(int idx) {
 }
 
 void LightPreset::AddLight(RndLight *lit) {
-    lit->AddRef(this);
+#ifndef HX_NATIVE
+    lit->AddRef(this); // retail: the preset is the ObjRefOwner (house idiom, cf. TypeProps.cpp)
+#endif
     mLights.push_back(lit);
     EnvLightEntry e;
     FillLightPresetData(lit, e);
@@ -692,7 +694,9 @@ void LightPreset::OnKeyframeCmd(LightPreset::KeyframeCmd cmd) {
 }
 
 void LightPreset::AddEnvironment(RndEnviron *env) {
-    env->AddRef(this);
+#ifndef HX_NATIVE
+    env->AddRef(this); // retail: the preset is the ObjRefOwner (house idiom, cf. TypeProps.cpp)
+#endif
     mEnvironments.push_back(env);
     EnvironmentEntry e;
     FillEnvPresetData(env, e);
@@ -713,7 +717,9 @@ void LightPreset::FillSpotlightDrawerPresetData(
 }
 
 void LightPreset::AddSpotlightDrawer(SpotlightDrawer *sd) {
-    sd->AddRef(this);
+#ifndef HX_NATIVE
+    sd->AddRef(this); // retail: the preset is the ObjRefOwner (house idiom, cf. TypeProps.cpp)
+#endif
     mSpotlightDrawers.push_back(sd);
     SpotlightDrawerEntry e;
     FillSpotlightDrawerPresetData(sd, e);
@@ -725,7 +731,9 @@ void LightPreset::AddSpotlightDrawer(SpotlightDrawer *sd) {
 }
 
 void LightPreset::AddSpotlight(Spotlight *s, bool b) {
-    s->AddRef(this);
+#ifndef HX_NATIVE
+    s->AddRef(this); // retail: the preset is the ObjRefOwner (house idiom, cf. TypeProps.cpp)
+#endif
     mSpotlights.push_back(s);
     SpotlightEntry e(this);
     FillSpotPresetData(s, e, -1);
