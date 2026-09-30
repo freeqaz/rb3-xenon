@@ -7174,6 +7174,7 @@
  "0x82438830": "?ClassName@RndMat@@UBA?AVSymbol@@XZ",
  "0x82438868": null,
  "0x82438ee8": "??_GModalKeyListener@@UAAPAXI@Z",
+ "0x82438f40": "?Load@RndMat@@UAAXAAVBinStream@@@Z",
  "0x82439910": "??MEdge@RndAmbientOcclusion@@QBA_NABU01@@Z",
  "0x82439968": "?MovieExtension@@YAPBDPBDW4Platform@@@Z",
  "0x82439a30": "?ConvertFov@@YAMMM@Z",
