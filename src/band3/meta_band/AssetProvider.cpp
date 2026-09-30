@@ -77,6 +77,7 @@ void AssetProvider::Update(AssetType assetType, AssetBoutique assetBoutique) {
         AssetMgr *pAssetMgr = AssetMgr::GetAssetMgr();
         MILO_ASSERT(pAssetMgr, 0x80);
         if (assetType == kAssetType_Hat) {
+            static Symbol none_hat("none_hat");
             Symbol name = pPreviewDesc->mOutfit.mHair.mName;
             if (name != gNullStr) {
                 if (pAssetMgr->GetTypeFromName(name) == kAssetType_Hair) {
@@ -86,6 +87,7 @@ void AssetProvider::Update(AssetType assetType, AssetBoutique assetBoutique) {
             } else
                 mAssets.push_back(none_hat);
         } else if (assetType == kAssetType_Bandana) {
+            static Symbol none_bandana("none_bandana");
             Symbol name = pPreviewDesc->mOutfit.mFaceHair.mName;
             if (name != gNullStr) {
                 if (pAssetMgr->GetTypeFromName(name) == kAssetType_FaceHair) {
