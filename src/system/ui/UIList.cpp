@@ -198,43 +198,33 @@ BEGIN_LOADS(UIList)
     PostLoad(bs);
 END_LOADS
 
-void UIList::Copy(const Hmx::Object *obj, CopyType ty) {
-    UIComponent::Copy(obj, ty);
-
-    const UIList *c = dynamic_cast<const UIList *>(obj);
-    if (c) {
-        mListDir = c->mListDir;
-
-        mListState.SetCircular(c->mListState.Circular(), true);
-        mListState.SetNumDisplay(c->mListState.NumDisplay(), true);
-        mListState.SetGridSpan(c->mListState.GridSpan(), true);
-        mListState.SetSpeed(c->mListState.Speed());
-        mPaginate = c->mPaginate;
-        mSelectToScroll = c->mSelectToScroll;
-        mListState.SetMinDisplay(c->mListState.MinDisplay());
-        mListState.SetScrollPastMinDisplay(c->mListState.ScrollPastMinDisplay());
-        mListState.SetMaxDisplay(c->mListState.MaxDisplay());
-        mListState.SetScrollPastMaxDisplay(c->mListState.ScrollPastMaxDisplay());
-
-        mNumData = c->mNumData;
-        mAutoScrollPause = c->mAutoScrollPause;
-        mAutoScrollSendMsgs = c->mAutoScrollSendMsgs;
-
-        mExtendedLabelEntries = c->mExtendedLabelEntries;
-        mExtendedMeshEntries = c->mExtendedMeshEntries;
-        mExtendedCustomEntries = c->mExtendedCustomEntries;
-
-        mLimitCircularDisplayNumToDataNum = c->mLimitCircularDisplayNumToDataNum;
+// RB3 retail (0x827FA780) is rb3-Wii's Copy: assert on the cast, base copy,
+// the UIList setters, and CopyHandlerData from a second cast. It does not copy
+// mListDir or mLimitCircularDisplayNumToDataNum and does not call Update().
+void UIList::Copy(const Hmx::Object *o, CopyType ty) {
+    CREATE_COPY_AS(UIList, l)
+    MILO_ASSERT(l, 103);
+    COPY_SUPERCLASS(UIComponent)
+    SetCircular(l->Circular());
+    SetNumDisplay(l->NumDisplay());
+    SetGridSpan(l->GridSpan());
+    SetSpeed(l->Speed());
+    COPY_MEMBER_FROM(l, mPaginate)
+    COPY_MEMBER_FROM(l, mSelectToScroll)
+    mListState.SetMinDisplay(l->mListState.MinDisplay());
+    mListState.SetScrollPastMinDisplay(l->mListState.ScrollPastMinDisplay());
+    mListState.SetMaxDisplay(l->mListState.MaxDisplay());
+    mListState.SetScrollPastMaxDisplay(l->mListState.ScrollPastMaxDisplay());
+    COPY_MEMBER_FROM(l, mNumData)
+    COPY_MEMBER_FROM(l, mAutoScrollPause)
+    COPY_MEMBER_FROM(l, mAutoScrollSendMsgs)
+    COPY_MEMBER_FROM(l, mExtendedLabelEntries)
+    COPY_MEMBER_FROM(l, mExtendedMeshEntries)
+    COPY_MEMBER_FROM(l, mExtendedCustomEntries)
 #ifdef HX_NATIVE
-        mUncappedNumDisplay = c->mUncappedNumDisplay;
+    mUncappedNumDisplay = l->mUncappedNumDisplay;
 #endif
-    }
-
-    const UIList *c2 = dynamic_cast<const UIList *>(obj);
-    if (c2) {
-        CopyHandlerData(c2);
-    }
-    Update();
+    CopyHandlerData(dynamic_cast<const UIList *>(o));
 }
 
 UIListDir *UIList::GetUIListDir() const { return mListDir; }
@@ -567,10 +557,26 @@ DataNode UIList::OnSetSelected(DataArray *da) {
     }
 }
 
+// RB3 retail (0x827F86A8): rb3-Wii's PreLoad with PreLoadWithRev(bs, gRev)
+// inlined -- the packed rev is split into two TU shorts (alt +0, rev +4, one
+// aligned aggregate as in ui/UIListArrow.cpp), mUIListRev takes the rev, no
+// version guard and no PushRev (PostLoad pops nothing).
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_UIList;
+
 void UIList::PreLoad(BinStream &bs) {
-    LOAD_REVS(bs)
-    ASSERT_REVS(0x15, 0)
-    PreLoadWithRev(d);
+    int revs;
+    bs >> revs;
+    gRevs_UIList.rev = getHmxRev(revs);
+    gRevs_UIList.altRev = getAltRev(revs);
+    PreLoadWithRev(bs, gRevs_UIList.rev);
+}
+
+void UIList::PreLoadWithRev(BinStream &bs, int rev) {
+    mUIListRev = rev;
+    UIComponent::PreLoad(bs);
 }
 
 void UIList::PostLoad(BinStream &bs) {
