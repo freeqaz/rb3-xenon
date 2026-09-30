@@ -647,10 +647,13 @@ void Player::CompleteCommonPhrase(bool b1, bool b2) {
     AddEnergy(energy);
     if (b1) {
         if (b2) {
-            mStats.mUnisonPhraseCompleted++;
+            Stats *stats = &mStats;
+            stats->mUnisonPhraseCompleted++;
         }
-    } else
-        mStats.mOverdrivePhrasesCompleted++;
+    } else {
+        Stats *stats = &mStats;
+        stats->mOverdrivePhrasesCompleted++;
+    }
 }
 
 int Player::GetIndividualMultiplier() const {
