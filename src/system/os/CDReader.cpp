@@ -64,9 +64,14 @@ namespace {
 }
 
 bool CDReadDone() {
+#ifdef HX_NATIVE
     if (gFakeFileErrors || !UsingCD()) {
         gErrorCode = 0x45D;
-    } else {
+    } else
+#endif
+    {
+        // retail (0x82533870): straight to the overlapped result -- no
+        // fake-error / UsingCD() branch
         DWORD bytes;
         if (GetOverlappedResult(gArkFiles[gPendingFile], &gOverlapped, &bytes, false)) {
             return true;
