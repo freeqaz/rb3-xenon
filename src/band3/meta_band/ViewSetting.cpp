@@ -363,6 +363,8 @@ ScoreType ScoreTypeViewSetting::GetAlternateScoreType() const {
 ViewSettingsProvider::ViewSettingsProvider() : mActiveSetting(nullptr),
     mDisabledColor(nullptr), mHeaderMat(nullptr), mEvenMat(nullptr),
     mOddMat(nullptr) {
+    static Symbol options("options");
+    static Symbol filters("filters");
     mSettings.push_back(new HeaderViewSetting(options));
     mSettings.push_back(new SortViewSetting());
     mSettings.push_back(new ScoreTypeViewSetting());
