@@ -149,18 +149,25 @@ const char *NextName(const char *old_name, ObjectDir *dir) {
     char *ptr;
     for (ptr = (char *)base + len; (ptr > base && ptr[-1] >= '0' && ptr[-1] <= '9'); ptr--)
         ;
+#ifdef HX_NATIVE
     int numDigits = (int)(base + len - ptr);
-    int atoied = 0;
     if (numDigits <= 1)
         numDigits = 1;
+#endif
+    int atoied = 0;
     if (*ptr != '\0')
         atoied = atoi(ptr);
     char buf[128];
     do {
-        char fmt[] = "%02d";
         atoied++;
+#ifdef HX_NATIVE
+        char fmt[] = "%02d";
         fmt[2] = '0' + numDigits;
         sprintf(ptr, fmt, atoied);
+#else
+        // RB3 retail 0x82757E68: fixed "%02d" (no DC3 digit-width carry).
+        sprintf(ptr, "%02d", atoied);
+#endif
         if (*ext != '\0') {
             sprintf(buf, "%s.%s", base, ext);
         } else {
