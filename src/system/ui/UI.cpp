@@ -368,16 +368,27 @@ bool UIManager::OverloadHorizontalNav(JoypadAction act, JoypadButton btn, Symbol
     return ret;
 }
 
+// RB3 retail (0x82804268) is rb3-Wii's Terminate without the two calls RB3
+// never needs: CheatProvider is never Init'd here and the Automator is never
+// allocated (see Init). It force-releases and deletes the UI resources, and it
+// removes the callback Init actually added (UITerminateCallback; the old body
+// removed TerminateCallback, which was never registered).
 void UIManager::Terminate() {
-    CheatProvider::Terminate();
     UILabel::Terminate();
     SetName(0, 0);
     KeyboardUnsubscribe(this);
     RELEASE(mCam);
     RELEASE(mEnv);
     RELEASE(mJoyClient);
-    TheDebug.RemoveExitCallback(TerminateCallback);
-    RELEASE(mAutomator);
+    for (std::list<UIResource *>::iterator it = mResources.begin(); it != mResources.end();
+         ++it) {
+        (*it)->ForceRelease();
+    }
+    for (std::list<UIResource *>::iterator it = mResources.begin(); it != mResources.end();
+         ++it) {
+        delete *it;
+    }
+    TheDebug.RemoveExitCallback(UITerminateCallback);
 }
 
 bool UIManager::IsGameScreenActive() {
@@ -645,10 +656,15 @@ void UIManager::FakeKeyboardAction(JoypadButton btn, JoypadAction action) {
     Handle(downMsg, false);
 }
 
+// RB3 retail (0x82803F00) is DC3's Poll without the DC3 extras (auto timer,
+// Automator poll, load-time overlay line, KnownIssues/OSCMessenger); those are
+// kept for native only.
 void UIManager::Poll() {
+#ifdef HX_NATIVE
     START_AUTO_TIMER("ui_poll_raw");
     if (mAutomator)
         mAutomator->Poll();
+#endif
 #ifdef HX_NATIVE
     // Headless mode: advance UI seconds by fixed 1/30s per frame (see TaskMgr::Poll).
     // Uses a file-scope variable so the screen-transition reset can zero it.
@@ -818,7 +834,7 @@ void UIManager::Poll() {
             mPushedScreens.pop_back();
             mTransitionState = kTransitionNone;
             if (mTransitionScreen == mCurrentScreen) {
-                mTransitionScreen = nullptr;
+                // Retail (and rb3-Wii) leave mTransitionScreen set here.
                 UITransitionCompleteMsg completeMsg(mCurrentScreen, oldCurScreen);
                 Handle(completeMsg, false);
             } else {
@@ -849,6 +865,7 @@ void UIManager::Poll() {
             !mCurrentScreen || !mCurrentScreen->Entering()
 #endif
             ) {
+#ifdef HX_NATIVE
             if (mOverlay && mOverlay->Showing() && mLoadTimer.Running()
                 && mCurrentScreen) {
                 mLoadTimer.Stop();
@@ -859,10 +876,11 @@ void UIManager::Poll() {
                 );
                 TheDebug << MakeString("%s\n", mOverlay->CurrentLine());
             }
+#endif
             UIScreen *oldTrans = mTransitionScreen;
             UITransitionCompleteMsg completeMsg2(mCurrentScreen, oldTrans);
-            mTransitionState = kTransitionNone;
             mTransitionScreen = nullptr;
+            mTransitionState = kTransitionNone;
 #ifdef HX_NATIVE
             if (DebugUIFlow()) printf("DC3 UI: Transition complete -> '%s' (from '%s')\n",
                    mCurrentScreen ? mCurrentScreen->Name() : "<null>",
@@ -871,8 +889,10 @@ void UIManager::Poll() {
             Handle(completeMsg2, false);
         }
     }
+#ifdef HX_NATIVE
     TheKnownIssues.Draw();
     TheOSCMessenger.Poll();
+#endif
 }
 
 void UIManager::PushScreen(UIScreen *screen) {

@@ -46,18 +46,23 @@ void Invert(const Hmx::Matrix3 &min, Hmx::Matrix3 &mout) {
     );
 }
 
+// RB3 retail (0x822C13A8): row by row through the Vector3 x Matrix3 inline,
+// with a separate path when `out` aliases `b` (whose rows are still needed).
 void Multiply(const Hmx::Matrix3 &a, const Hmx::Matrix3 &b, Hmx::Matrix3 &out) {
-    out.Set(
-        a.x.x * b.x.x + a.x.y * b.y.x + a.x.z * b.z.x,
-        a.x.x * b.x.y + a.x.y * b.y.y + a.x.z * b.z.y,
-        a.x.x * b.x.z + a.x.y * b.y.z + a.x.z * b.z.z,
-        a.y.x * b.x.x + a.y.y * b.y.x + a.y.z * b.z.x,
-        a.y.x * b.x.y + a.y.y * b.y.y + a.y.z * b.z.y,
-        a.y.x * b.x.z + a.y.y * b.y.z + a.y.z * b.z.z,
-        a.z.x * b.x.x + a.z.y * b.y.x + a.z.z * b.z.x,
-        a.z.x * b.x.y + a.z.y * b.y.y + a.z.z * b.z.y,
-        a.z.x * b.x.z + a.z.y * b.y.z + a.z.z * b.z.z
-    );
+    if (&b != &out) {
+        Multiply(a.x, b, out.x);
+        Multiply(a.y, b, out.y);
+        Multiply(a.z, b, out.z);
+    } else {
+        // out aliases b: every row must be computed before any row is stored.
+        Vector3 x, y, z;
+        Multiply(a.x, b, x);
+        Multiply(a.y, b, y);
+        Multiply(a.z, b, z);
+        out.x = x;
+        out.y = y;
+        out.z = z;
+    }
 }
 
 void Multiply(const Transform &a, const Transform &b, Transform &out) {

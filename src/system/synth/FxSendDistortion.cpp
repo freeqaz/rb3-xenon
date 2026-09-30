@@ -23,10 +23,20 @@ void FxSendDistortion::Save(BinStream &bs) {
 
 INIT_REVS(1, 0)
 
+// RB3 retail (0x82721370): the packed rev is split into two TU shorts -- here
+// rev at +0 and alt at +4 (retail lbl_82E03CE4) -- with no version guard, and
+// FxSend::Load gets the raw stream (rb3-Wii shape).
+static struct {
+    __declspec(align(4)) unsigned short rev;
+    __declspec(align(4)) unsigned short altRev;
+} gRevs_FxSendDistortion;
+
 BEGIN_LOADS(FxSendDistortion)
-    LOAD_REVS(bs)
-    ASSERT_REVS(1, 0)
-    LOAD_SUPERCLASS(FxSend)
+    int revs;
+    bs >> revs;
+    gRevs_FxSendDistortion.rev = getHmxRev(revs);
+    gRevs_FxSendDistortion.altRev = getAltRev(revs);
+    FxSend::Load(bs);
     bs >> mDrive;
     OnParametersChanged();
 END_LOADS

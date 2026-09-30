@@ -128,6 +128,7 @@ protected:
     void HandleSelectionUpdated();
     void UpdateExtendedEntries(UIListState const &);
     void PreLoadWithRev(BinStreamRev &);
+    void PreLoadWithRev(BinStream &, int); // RB3 (rb3-Wii) form, used by PreLoad
     void BoundingBoxTriangles(std::vector<std::vector<Vector3> > &);
 
     // RB3 retail (rb3-Wii oracle): mListDir is a raw UIListDir* assigned from

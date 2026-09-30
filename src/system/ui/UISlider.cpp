@@ -48,13 +48,13 @@ BEGIN_SAVES(UISlider)
     bs << mVertical;
 END_SAVES
 
+// RB3 retail (0x82809808) is rb3-Wii's: base copy from the cast pointer, then
+// mSelectToScroll only (mVertical is not copied).
 BEGIN_COPYS(UISlider)
-    COPY_SUPERCLASS(UIComponent)
-    CREATE_COPY_AS(UISlider, c)
-    BEGIN_COPYING_MEMBERS_FROM(c)
-        COPY_MEMBER(mSelectToScroll)
-        COPY_MEMBER(mVertical)
-    END_COPYING_MEMBERS
+    CREATE_COPY_AS(UISlider, s)
+    MILO_ASSERT(s, 0x2B);
+    UIComponent::Copy(s, ty);
+    COPY_MEMBER_FROM(s, mSelectToScroll)
 END_COPYS
 
 BEGIN_LOADS(UISlider)

@@ -422,54 +422,62 @@ void SpotlightDrawer::UpdateBoxMap() {
     }
 }
 
-void SpotDrawParams::Load(BinStreamRev &d) {
-    d >> mIntensity;
-    if (d.rev > 3) {
-        d >> mBaseIntensity >> mSmokeIntensity >> mHalfDistance;
-    } else {
-        float i, j, k, l;
-        d >> i >> j >> k >> l;
-        if (k < 0.5f) {
-            mSmokeIntensity = 0.5f;
-            mBaseIntensity = 0.1f;
+// RB3 retail fn_824D63D0: DC3's field list, but on the raw BinStream with the
+// owner's rev passed in (rb3-Wii's signature) and a too-new rev guard.
+void SpotDrawParams::Load(BinStream &bs, int rev) {
+    if (rev > 5)
+        MILO_WARN("Can't load new Params");
+    else {
+        bs >> mIntensity;
+        if (rev > 3) {
+            bs >> mBaseIntensity >> mSmokeIntensity >> mHalfDistance;
         } else {
-            mBaseIntensity = 0.15f;
-            mSmokeIntensity = 1.0f;
+            float i, j, k, l;
+            bs >> i >> j >> k >> l;
+            if (k < 0.5f) {
+                mSmokeIntensity = 0.5f;
+                mBaseIntensity = 0.1f;
+            } else {
+                mBaseIntensity = 0.15f;
+                mSmokeIntensity = 1.0f;
+            }
         }
+        bs >> mColor;
+        if (rev < 4) {
+            int a;
+            Key<float> b, c;
+            bs >> a;
+            bs >> b;
+            bs >> c;
+        }
+        bs >> mTexture;
+        bs >> mProxy;
+        if (rev < 3) {
+            bool b;
+            bs >> b;
+        }
+        if (rev > 4)
+            bs >> mLightingInfluence;
     }
-    d >> mColor;
-    if (d.rev < 4) {
-        int a;
-        Key<float> b, c;
-        d >> a;
-        d.stream >> b;
-        d.stream >> c;
-    }
-    d >> mTexture;
-    d >> mProxy;
-    if (d.rev < 3) {
-        bool b;
-        d >> b;
-    }
-    if (d.rev > 4)
-        d >> mLightingInfluence;
 }
 
 INIT_REVS(6, 0)
 
+// RB3 retail (0x824D6E08) is rb3-Wii's Load: plain int rev, max 5 (DC3's
+// rev 6 Object::Load does not exist), SetOrder inlined, params take the rev.
 BEGIN_LOADS(SpotlightDrawer)
-    LOAD_REVS(bs)
-    ASSERT_REVS(6, 0)
-    if (d.rev > 0) {
-        if (d.rev > 5) {
-            Hmx::Object::Load(d.stream);
-        }
-        RndDrawable::Load(d.stream);
-    } else {
-        Hmx::Object::Load(d.stream);
+    int rev;
+    bs >> rev;
+    if (rev > 5)
+        MILO_FAIL("DxSpotlightDrawer: not forward compatable!");
+    else {
+        if (rev > 0)
+            RndDrawable::Load(bs);
+        else
+            Hmx::Object::Load(bs);
+        mOrder = -100000;
+        mParams.Load(bs, rev);
     }
-    mOrder = -100000;
-    mParams.Load(d);
 END_LOADS
 
 class LensExtract {};

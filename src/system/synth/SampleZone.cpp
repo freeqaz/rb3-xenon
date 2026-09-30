@@ -22,7 +22,7 @@ void SampleZone::Save(BinStream &bs) const {
     bs << mMaxVel;
 }
 
-void SampleZone::Load(BinStreamRev &d) {
+void SampleZone::Load(BinStream &d) {
     d >> mSample;
     d >> mVolume;
     d >> mPan;
@@ -48,7 +48,7 @@ BinStream &operator<<(BinStream &bs, const SampleZone &sz) {
     return bs;
 }
 
-BinStreamRev &operator>>(BinStreamRev &d, SampleZone &sz) {
+BinStream &operator>>(BinStream &d, SampleZone &sz) {
     sz.Load(d);
     return d;
 }

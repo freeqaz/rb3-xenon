@@ -47,6 +47,7 @@ public:
     // SKIPS UIComponent::SetTypeDef; rb3-Wii has none. Lane W3-E 2026-09-11.
     virtual void PreLoad(BinStream &);
     virtual void PostLoad(BinStream &);
+    virtual void CopyMembers(const UIComponent *, Hmx::Object::CopyType);
     // RndDrawable
     virtual void DrawShowing();
     // RndPollable

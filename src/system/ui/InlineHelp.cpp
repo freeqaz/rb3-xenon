@@ -1,4 +1,5 @@
 #include "ui/InlineHelp.h"
+#include "bandobj/BandLabel.h"
 #include "math/Mtx.h"
 #include "math/Rot.h"
 #include "math/Trig.h"
@@ -10,6 +11,7 @@
 #include "ui/UI.h"
 #include "ui/UIComponent.h"
 #include "ui/UILabel.h"
+#include "ui/UIResource.h"
 #include "utl/BinStream.h"
 #include "utl/Locale.h"
 #include "utl/Std.h"
@@ -24,10 +26,16 @@ bool InlineHelp::sRotated = false;
 const float InlineHelp::sRotateDelay = 5;
 const float InlineHelp::sRotateDuration = 1;
 
-// Per-TU streaming rev static (retail lbl_82CBDC14): the outer Load (PreLoad)
-// populates it from the popped archive rev; the ActionElement sub-loader reads
-// it instead of d.rev, reproducing retail's `lhz lbl_82CBDC14` codegen.
-static unsigned short sInlineHelpRev;
+// Per-TU load revs (retail lbl_82CBDC10 alt / lbl_82CBDC14 rev). RB3's
+// InlineHelp::PreLoad (0x823179A8) reads the packed rev off a plain BinStream
+// and splits it into these two shorts; every later version test, including the
+// ActionElement sub-loader's, re-reads the rev.
+// Initialised (= 0) so .bss follows declaration order -- alt at +0, rev at +4
+// (W16-HM, measured in world/Instance.cpp: uninitialised statics were placed rev
+// first whatever the declaration order; an aligned aggregate places them right
+// but turns the sub-loader's direct `lhz lbl_82CBDC14` into addi+lhz 4).
+static __declspec(align(4)) unsigned short sInlineHelpAltRev = 0;
+static __declspec(align(4)) unsigned short sInlineHelpRev = 0;
 
 #pragma region InlineHelp::ActionElement
 
@@ -48,7 +56,7 @@ BinStream &operator<<(BinStream &bs, const InlineHelp::ActionElement &a) {
     return bs;
 }
 
-BinStream &operator>>(BinStreamRev &d, InlineHelp::ActionElement &a) {
+BinStream &operator>>(BinStream &d, InlineHelp::ActionElement &a) {
     int action;
     d >> action;
     a.mAction = (JoypadAction)action;
@@ -174,20 +182,27 @@ BEGIN_SAVES(InlineHelp)
     SAVE_SUPERCLASS(UIComponent)
 END_SAVES
 
+// RB3 retail (0x82313F00): the members are copied by the CopyMembers override,
+// which UIComponent::Copy dispatches to; Copy itself only re-runs Update().
 BEGIN_COPYS(InlineHelp)
-    COPY_SUPERCLASS(UIComponent)
-    CREATE_COPY(InlineHelp)
-    BEGIN_COPYING_MEMBERS
-        COPY_MEMBER(mHorizontal)
-        COPY_MEMBER(mSpacing)
-        COPY_MEMBER(mConfig)
-        COPY_MEMBER(mTextColor)
-        COPY_MEMBER(mUseConnectedControllers)
-        COPY_MEMBER(mResourceDir)
-    END_COPYING_MEMBERS
+    CREATE_COPY_AS(InlineHelp, h)
+    MILO_ASSERT(h, 129);
+    COPY_SUPERCLASS_FROM(UIComponent, h)
     Update();
-    UpdateIconTypes(false);
 END_COPYS
+
+// RB3 retail fn_82316840.
+void InlineHelp::CopyMembers(const UIComponent *o, Hmx::Object::CopyType ty) {
+    UIComponent::CopyMembers(o, ty);
+    CREATE_COPY_AS(InlineHelp, h);
+    MILO_ASSERT(h, 139);
+    COPY_MEMBER_FROM(h, mHorizontal)
+    COPY_MEMBER_FROM(h, mSpacing)
+    COPY_MEMBER_FROM(h, mConfig)
+    COPY_MEMBER_FROM(h, mTextColor)
+    COPY_MEMBER_FROM(h, mUseConnectedControllers)
+    UpdateIconTypes(false);
+}
 
 BEGIN_LOADS(InlineHelp)
     PreLoad(bs);
@@ -197,32 +212,30 @@ END_LOADS
 INIT_REVS(5, 0)
 
 void InlineHelp::PreLoad(BinStream &bs) {
-    LOAD_REVS(bs)
-    ASSERT_REVS(5, 0)
-    sInlineHelpRev = d.rev;
-    d >> mHorizontal;
-    d >> mSpacing;
-    d >> mConfig;
-    if (d.rev >= 1) {
-        d >> mTextColor;
+    // RB3 retail (0x823179A8): plain-BinStream rev dialect, no version guard, no
+    // PushRev, and no rev-5 resource dir (that is DC3's addition).
+    int rev;
+    bs >> rev;
+    sInlineHelpRev = getHmxRev(rev);
+    sInlineHelpAltRev = getAltRev(rev);
+    bs >> mHorizontal;
+    bs >> mSpacing;
+    bs >> mConfig;
+    if (sInlineHelpRev >= 1) {
+        bs >> mTextColor;
     }
-    if (d.rev >= 2 && d.rev < 4) {
+    if (sInlineHelpRev >= 2 && sInlineHelpRev < 4) {
         int x;
-        d >> x;
+        bs >> x;
     }
-    if (d.rev >= 3) {
-        d >> mUseConnectedControllers;
+    if (sInlineHelpRev >= 3) {
+        bs >> mUseConnectedControllers;
     }
-    if (d.rev >= 5) {
-        d >> mResourceDir;
-    }
-    UIComponent::PreLoad(d.stream);
-    d.PushRev(this);
+    UIComponent::PreLoad(bs);
 }
 
 void InlineHelp::PostLoad(BinStream &bs) {
-    bs.PopRev(this);
-    mResourceDir.PostLoad(nullptr);
+    // RB3 retail (0x82314010): nothing was pushed, so nothing is popped.
     UIComponent::PostLoad(bs);
     Update();
 }
@@ -321,25 +334,32 @@ void InlineHelp::ResetRotation() {
     sLabelRot = -0.0f;
 }
 
+// RB3 retail (0x82314EB0): the template label comes from the component's
+// UIResource dir, unconditionally, after the base Update.
 void InlineHelp::Update() {
-    const DataArray *pTypeDef = TypeDef();
-    if (pTypeDef && mResourceDir) {
-        static Symbol text_label("text_label");
-        mTemplateLabel = mResourceDir->Find<UILabel>(pTypeDef->FindStr(text_label), true);
-        SyncLabelsToConfig();
-    }
+    UIComponent::Update();
+    const DataArray *t = TypeDef();
+    MILO_ASSERT(t, 0x187);
+    RndDir *dir = mResource->Dir();
+    MILO_ASSERT(dir, 0x18A);
+    static Symbol text_label("text_label");
+    // Retail instantiates Find<BandLabel> (rb3-Wii: BandLabel); not an ICF fold of
+    // Find<UILabel>, whose dynamic_cast target differs.
+    mTemplateLabel = dir->Find<BandLabel>(t->FindStr(text_label), true);
+    SyncLabelsToConfig();
 }
 
-void InlineHelp::UpdateIconTypes(bool b) {
+// RB3 retail fn_82316F08: a fixed instrument list, not DC3's typedef lookup.
+void InlineHelp::UpdateIconTypes(bool) {
+    static Symbol vocals("vocals");
+    static Symbol guitar("guitar");
+    static Symbol drums("drums");
+    static Symbol keys("keys");
     mIconTypes.clear();
-    const DataArray *pTypeDef = TypeDef();
-    if (pTypeDef) {
-        static Symbol action_chars("action_chars");
-        DataArray *charArray = pTypeDef->FindArray(action_chars);
-        for (int i = 1; i < charArray->Size(); i++) {
-            mIconTypes.push_back(charArray->Array(i)->Sym(0));
-        }
-    }
+    mIconTypes.push_back(vocals);
+    mIconTypes.push_back(guitar);
+    mIconTypes.push_back(drums);
+    mIconTypes.push_back(keys);
 }
 
 void InlineHelp::SetLabelRotationPcts(float f) {

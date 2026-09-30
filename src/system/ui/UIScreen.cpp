@@ -249,13 +249,17 @@ void UIScreen::Enter(UIScreen *scr) {
 #ifdef HX_NATIVE
     printf("DC3 UI: Screen '%s' Enter (from '%s')\n", Name(), scr ? scr->Name() : "<null>");
 #endif
+    // RB3 retail (0x827F1178) is rb3-Wii's Enter: no DC3 post-proc panel count,
+    // no glitch report. Those stay native-only (the native renderer is DC3's).
     if (scr) {
         sUnloadingScreen = scr;
         scr->UnloadPanels();
     }
+#ifdef HX_NATIVE
     Rnd::sPostProcPanelCount = 0;
     std::vector<const char *> vec;
     int i5 = 0;
+#endif
     FOREACH (it, mPanelList) {
         if (it->Active() && it->mPanel->GetState() == UIPanel::kDown) {
 #ifdef HX_NATIVE
@@ -269,18 +273,23 @@ void UIScreen::Enter(UIScreen *scr) {
             fprintf(stderr, "DC3 Web: UIScreen '%s' entering panel '%s'...\n", Name(), it->mPanel->Name());
             fflush(stderr);
 #endif
+#ifdef HX_NATIVE
             AutoGlitchReport report(17, EnterGlitchCB, it->mPanel);
+#endif
             it->mPanel->Enter();
 #ifdef HX_WEB
             fprintf(stderr, "DC3 Web: UIScreen '%s' panel '%s' entered OK\n", Name(), it->mPanel->Name());
             fflush(stderr);
 #endif
+#ifdef HX_NATIVE
             if (Rnd::sPostProcPanelCount != i5) {
                 vec.push_back(it->mPanel->Name());
                 i5 = Rnd::sPostProcPanelCount;
             }
+#endif
         }
     }
+#ifdef HX_NATIVE
     if (Rnd::sPostProcPanelCount != 1) {
         if (Rnd::sPostProcPanelCount == 0) {
             MILO_LOG(
@@ -299,6 +308,7 @@ void UIScreen::Enter(UIScreen *scr) {
         }
         Rnd::sPostProcPanelCount = 0;
     }
+#endif
 #ifdef HX_WEB
     fprintf(stderr, "DC3 Web: UIScreen '%s' all panels entered, sending 'enter' msg...\n", Name());
     fflush(stderr);

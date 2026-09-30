@@ -44,17 +44,26 @@ BinStreamRev &operator>>(BinStreamRev &d, ColorSet &cs) {
 
 INIT_REVS(1, 0)
 
+// RB3 retail (0x824DFEB0): the packed rev is split into two TU shorts (alt +0,
+// rev +4), no version guard, and both vector readers get the raw BinStream.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_ColorPalette;
+
 BEGIN_LOADS(ColorPalette)
-    LOAD_REVS(bs)
-    ASSERT_REVS(1, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    if (d.rev < 1) {
+    int revs;
+    bs >> revs;
+    gRevs_ColorPalette.rev = getHmxRev(revs);
+    gRevs_ColorPalette.altRev = getAltRev(revs);
+    Hmx::Object::Load(bs);
+    if (gRevs_ColorPalette.rev < 1) {
         std::vector<ColorSet> vec;
-        d >> vec;
+        bs >> vec;
         mColors.clear();
         FOREACH (it, vec) {
             mColors.push_back(it->mPrimary);
         }
     } else
-        d >> mColors;
+        bs >> mColors;
 END_LOADS

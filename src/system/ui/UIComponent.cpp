@@ -72,15 +72,17 @@ BEGIN_PROPSYNCS(UIComponent)
 #endif
 END_PROPSYNCS
 
+// RB3 retail (0x827FF3D0) is rb3-Wii's shape: copy the resource triple, then
+// Hmx::Object::Copy, then dispatch the virtual CopyMembers (which copies the
+// Trans/Draw bases and the nav links, and which UILabel/InlineHelp override).
 BEGIN_COPYS(UIComponent)
-    COPY_SUPERCLASS(Hmx::Object)
-    COPY_SUPERCLASS(RndTransformable)
-    COPY_SUPERCLASS(RndDrawable)
-    CREATE_COPY_AS(UIComponent, c)
-    BEGIN_COPYING_MEMBERS_FROM(c)
-        COPY_MEMBER(mNavRight)
-        COPY_MEMBER(mNavDown)
-    END_COPYING_MEMBERS
+    CREATE_COPY(UIComponent)
+    MILO_ASSERT(c, 134);
+    COPY_MEMBER(mResourceName)
+    COPY_MEMBER(mResourceDir)
+    COPY_MEMBER(mResourcePath)
+    Hmx::Object::Copy(c, ty);
+    CopyMembers(c, ty);
 END_COPYS
 
 void UIComponent::CopyMembers(const UIComponent *c, Hmx::Object::CopyType ty) {

@@ -100,40 +100,24 @@ BEGIN_COPYS(Sequence)
     END_COPYING_MEMBERS
 END_COPYS
 
-// RB3-360 retail rev dialect (rb3-Wii/ObjMacros shape): the packed rev is split
-// into two HALFWORDS stored four bytes apart onto ONE internal-linkage align(4)
-// base, and the RAW incoming BinStream is forwarded to every read and to the
-// superclass Load.  DC3's Object.h BinStreamRev stack decorator additionally
-// emits ??0BinStream, a ??_7BinStreamRev@@6B@ vtable store and a ??1BinStream
-// destructor that retail has none of, and dispatches each read on `&d`.
-//
-// Written longhand rather than by including obj/ObjMacros.h: that header also
-// swaps the SYNC_PROP and HANDLE families, which are already byte-exact here.
-// The pair MUST share one aggregate -- two separate file statics are laid out
-// independently and will not fold onto a single base register.  No `#define
-// gRev` alias: several of these TUs are scatter-INCLUDED into another unit
-// (e.g. rndobj/Anim.cpp includes rndobj/MotionBlur.cpp) whose own gRev macro
-// the alias would silently shadow for the rest of the amalgamated TU.
-static struct {
-    __declspec(align(4)) unsigned short altRev;
-    __declspec(align(4)) unsigned short rev;
-} gRevs_Sequence;
+// RB3 retail (0x82706280) is rb3-Wii's Load: a plain local rev (re-read from
+// the stack, no TU rev statics), a too-new guard, then the fields.
 BEGIN_LOADS(Sequence)
     int rev;
     bs >> rev;
-    gRevs_Sequence.rev = getHmxRev(rev);
-    gRevs_Sequence.altRev = getAltRev(rev);
-    if (gRevs_Sequence.rev > 2) {
-        Hmx::Object::Load(bs);
-    }
-    bs >> mAvgVol;
-    bs >> mVolSpread;
-    bs >> mAvgTranspose;
-    bs >> mTransposeSpread;
-    bs >> mAvgPan;
-    bs >> mPanSpread;
-    if (gRevs_Sequence.rev >= 2) {
-        bs >> mCanStop;
+    if (rev > 3)
+        MILO_WARN("Can't load new Sequence");
+    else {
+        if (rev > 2)
+            Hmx::Object::Load(bs);
+        bs >> mAvgVol;
+        bs >> mVolSpread;
+        bs >> mAvgTranspose;
+        bs >> mTransposeSpread;
+        bs >> mAvgPan;
+        bs >> mPanSpread;
+        if (rev >= 2)
+            bs >> mCanStop;
     }
 END_LOADS
 

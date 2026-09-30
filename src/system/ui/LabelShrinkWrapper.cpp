@@ -62,19 +62,41 @@ BEGIN_LOADS(LabelShrinkWrapper)
     PostLoad(bs);
 END_LOADS
 
+// RB3 retail keeps no BinStreamRev here: the packed rev is split into two
+// mutable TU shorts (alt at +0, rev at +4), there is no version guard and no
+// Push/PopRev -- the same dialect as ui/UIColor.cpp.
+#pragma push_macro("INIT_REVS")
+#pragma push_macro("LOAD_REVS")
+#pragma push_macro("ASSERT_REVS")
+#undef INIT_REVS
+#undef LOAD_REVS
+#undef ASSERT_REVS
+#define INIT_REVS(rev, alt)                                                              \
+    static unsigned short gAltRev = alt;                                                 \
+    static unsigned short gRev = rev;
+#define LOAD_REVS(bs)                                                                    \
+    int rev;                                                                             \
+    bs >> rev;                                                                           \
+    gRev = getHmxRev(rev);                                                               \
+    gAltRev = getAltRev(rev);
+#define ASSERT_REVS(rev1, rev2)
+
 INIT_REVS(0, 0)
 
+// RB3 retail 0x828278D0 (rb3-Wii shape).
 void LabelShrinkWrapper::PreLoad(BinStream &bs) {
     LOAD_REVS(bs)
     ASSERT_REVS(0, 0)
     bs >> m_pLabel;
     bs >> m_pShow;
-    UIComponent::PreLoad(d.stream);
-    d.PushRev(this);
+    UIComponent::PreLoad(bs);
 }
 
+#pragma pop_macro("ASSERT_REVS")
+#pragma pop_macro("LOAD_REVS")
+#pragma pop_macro("INIT_REVS")
+
 void LabelShrinkWrapper::PostLoad(BinStream &bs) {
-    bs.PopRev(this);
     UIComponent::PostLoad(bs);
     Update();
 }
