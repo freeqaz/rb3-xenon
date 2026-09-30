@@ -310,8 +310,8 @@ DataNode BandStorePanel::OnMsg(const MetadataLoadedMsg &msg) {
         // which a named local cannot do.  So 0x50 is a reused TEMP slot and the
         // residue is MSVC temporary-slot rotation, not a missing declaration.
         //
-        // FIRST PASS (W17-F5, 2026-09-30), 5/5 variants tried, ALL FAILED TO MOVE
-        // THE SLOT MAP -- reported at_limit, do not re-open without a new lever:
+        // FIRST PASS (W17-F5, 2026-09-30, Sonnet) -- a record of what was tried,
+        // NOT a verdict. 5 statement-grouping variants, none moved the slot map:
         //   1. swap mSort/mMenuTitle order            -> REGRESSED 99.3%->96.8%
         //   2. hoist mSort to top of if-block          -> REGRESSED 99.3%->95.7%
         //   3. comma-merge prevChunk,nextChunk         -> INERT (byte-identical objdiff)
@@ -325,8 +325,10 @@ DataNode BandStorePanel::OnMsg(const MetadataLoadedMsg &msg) {
         // this one. The residual (8 mismatches: 6 diff_arg reloc-offset shifts on
         // slots 0x50/0x54/0x58, one replace+insert at [40]/[43] where retail
         // reloads the ctor'd Symbol from its frame slot instead of keeping the
-        // ctor's returned `this` in a register) looks like a register-allocator/
-        // register-pressure heuristic difference at -O1, not a source-shape one.
+        // ctor's returned `this` in a register) is untested beyond statement
+        // grouping. Not yet tried: how the Symbol is constructed/assigned (the
+        // [40]/[43] materialisation), and declaration placement that keeps the
+        // frame at 0xf0 (W16-CK's named local grew it and is banned).
         mSort = Symbol(gNullStr);
         mMenuTitle = gNullStr;
         DataArray *info = data->FindArray(Symbol("index_info"), false);
