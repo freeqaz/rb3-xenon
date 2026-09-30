@@ -285,9 +285,14 @@ void SongPreview::DetachFader(Fader *f) {
 }
 
 void SongPreview::PrepareFaders(const SongInfo *info) {
+    // rb3-Wii / retail: crowd channels go to the crowd-sing fader
+    const std::vector<int> &crowdchans = info->GetCrowdChannels();
     for (int i = 0; i < mNumChannels; i++) {
-        FaderGroup *f = mStream->ChannelFaders(i);
-        f->Add(mMusicFader);
+        FaderGroup *grp = mStream->ChannelFaders(i);
+        if (std::find(crowdchans.begin(), crowdchans.end(), i) != crowdchans.end())
+            grp->Add(mCrowdSingFader);
+        else
+            grp->Add(mMusicFader);
     }
 }
 
