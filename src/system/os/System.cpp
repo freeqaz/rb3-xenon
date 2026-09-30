@@ -274,6 +274,7 @@ int SystemMs() {
 }
 
 void SystemPoll(bool b1) {
+#ifdef HX_NATIVE
     static Timer *_t = AutoTimer::GetTimer("system_poll");
     AutoTimer _at(_t, 50.0f, nullptr, nullptr);
     Timer::ClearSlowFrame();
@@ -306,6 +307,34 @@ void SystemPoll(bool b1) {
     ThePlatformMgr.Poll();
     TheVirtualKeyboard.Poll();
     TheContentMgr.PollRefresh();
+#else
+    // RB3 retail 0x82510270: no system_poll AutoTimer, no gUsingCD-gated
+    // HolmesClientPoll and no WebSvcMgr poll (DC3-era, kept for native).
+    // Retail ends with an unidentified stage-kit poll (fn_82521ED0, which feeds
+    // JoypadStageKitSetRaw from a 32-entry ring) that no oracle defines; it is
+    // not called here.
+    Timer::ClearSlowFrame();
+    SystemMs();
+    TheDebug.Poll();
+    TheMC.Poll();
+    JoypadPoll();
+    JoypadClientPoll();
+    KeyboardPoll();
+    ThreadCallPoll();
+    FileCache::PollAll();
+    TheLoadMgr.Poll();
+    TheCacheMgr->Poll();
+    TheNetCacheMgr->Poll();
+    if (TheAppChild != nullptr) {
+        TheAppChild->Poll();
+    }
+    if (b1) {
+        TheTaskMgr.Poll();
+    }
+    ThePlatformMgr.Poll();
+    TheVirtualKeyboard.Poll();
+    TheContentMgr.PollRefresh();
+#endif
 }
 
 DataArray *SupportedLanguages(bool cheats) {

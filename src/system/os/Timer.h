@@ -68,9 +68,15 @@ public:
     }
 
     static void ClearSlowFrame() {
+#ifdef HX_NATIVE
         sSlowFrameReason = "None";
+#else
+        // RB3 retail (inlined into SystemPoll at 0x82510270) clears the reason
+        // to null; a "None" literal keeps /O1 from inlining.
+        sSlowFrameReason = 0;
+#endif
         sSlowFrameTimer.Reset();
-        sSlowFrameWaiver = 0;
+        sSlowFrameWaiver = 0.0f;
     }
 
     static Timer &SlowFrameTimer() { return sSlowFrameTimer; }
