@@ -4711,10 +4711,8 @@ HamIKEffector.cpp:
 PracticeSection.cpp:
 	.pdata      start:0x821FEC20 end:0x821FEC30
 	.pdata      start:0x822062B8 end:0x822062C0
-	.pdata      start:0x8220BBD0 end:0x8220BBE0
 	.text       start:0x82346E48 end:0x82346EB8
 	.text       start:0x823C8128 end:0x823C8198
-	.text       start:0x82424D18 end:0x82424DCC
 	.text       start:0x8250D4C0 end:0x8250D4C8
 
 RhythmBattle.cpp:
@@ -5808,17 +5806,13 @@ PropKeys.cpp:
 	.pdata      start:0x821F1648 end:0x821F1658
 	.pdata      start:0x821F1778 end:0x821F1790
 	.pdata      start:0x821F5040 end:0x821F5048
-	.pdata      start:0x82203EE8 end:0x82203EF0
-	.pdata      start:0x82203EF0 end:0x82203EF8
-	.pdata      start:0x8220B988 end:0x8220BBD0
-	.pdata      start:0x8220BBE0 end:0x8220BC98
+	.pdata      start:0x82203EE8 end:0x82203EF8
+	.pdata      start:0x8220B988 end:0x8220BC98
 	.pdata      start:0x8220BCA0 end:0x8220BCD0
-	.pdata      start:0x8222B678 end:0x8222B680
-	.pdata      start:0x8222B680 end:0x8222B690
+	.pdata      start:0x8222B678 end:0x8222B690
 	.pdata      start:0x8222BE10 end:0x8222BE20
 	.pdata      start:0x8222D7A0 end:0x8222D7A8
-	.pdata      start:0x8222D7C8 end:0x8222D7D0
-	.pdata      start:0x8222D7D0 end:0x8222D7D8
+	.pdata      start:0x8222D7C8 end:0x8222D7D8
 	.pdata      start:0x8222EA78 end:0x8222EAE0
 	.pdata      start:0x82231100 end:0x82231108
 	.pdata      start:0x82231108 end:0x82231110
@@ -5826,22 +5820,17 @@ PropKeys.cpp:
 	.pdata      start:0x82261498 end:0x822614D8
 	.text       start:0x82270438 end:0x82270510
 	.text       start:0x82270560 end:0x82270580
-	.text       start:0x82271B08 end:0x82271B68
-	.text       start:0x82271B68 end:0x82271C50
+	.text       start:0x82271B08 end:0x82271C50
 	.text       start:0x822907F0 end:0x822908A8
 	.text       start:0x822A9B70 end:0x822A9BC0
-	.text       start:0x8239C640 end:0x8239C6AC
-	.text       start:0x8239C6AC end:0x8239C6D8
-	.text       start:0x82421758 end:0x82424D18
-	.text       start:0x82424DCC end:0x82425BC8
+	.text       start:0x8239C640 end:0x8239C6D8
+	.text       start:0x82421758 end:0x82425BC8
 	.text       start:0x82425C28 end:0x82425FCC
-	.text       start:0x82638C10 end:0x82638C60
-	.text       start:0x82638C60 end:0x82638CC0
+	.text       start:0x82638C10 end:0x82638CC0
 	.text       start:0x8263FD2C end:0x8263FD30
 	.text       start:0x8263FD60 end:0x8263FDE8
 	.text       start:0x82656180 end:0x82656350
-	.text       start:0x82656630 end:0x826567D4
-	.text       start:0x826567D4 end:0x82656800
+	.text       start:0x82656630 end:0x82656800
 	.text       start:0x82667FE0 end:0x8266849C
 	.text       start:0x8268C920 end:0x8268C988
 	.text       start:0x8268C998 end:0x8268C9E8

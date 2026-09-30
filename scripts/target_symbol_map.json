@@ -7178,7 +7178,7 @@
  "0x82424a30": "?BoolAt@BoolKeys@@UAAHMAA_N@Z",
  "0x82424a38": "??$_M_range_insert_aux@PAV?$Key@VVector3@@@@@?$vector@V?$Key@VVector3@@@@V?$StlNodeAlloc@V?$Key@VVector3@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VVector3@@@@00IABU__false_type@1@@Z",
  "0x82424bc0": "??$_M_range_insert_aux@PBV?$Key@M@@@?$vector@V?$Key@M@@V?$StlNodeAlloc@V?$Key@M@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@M@@PBV2@1IABU__false_type@1@@Z",
- "0x82424d18": "??$__uninitialized_copy@PBVPracticeStep@@PAV1@@stlpmtx_std@@YAPAVPracticeStep@@PBV1@0PAV1@ABU__false_type@0@@Z",
+ "0x82424d18": "??$__uninitialized_copy@PBV?$Key@VObjectStage@@@@PAV1@@stlpmtx_std@@YAPAV?$Key@VObjectStage@@@@PBV1@0PAV1@ABU__false_type@0@@Z",
  "0x82424dd0": "?ChangeFrame@PropKeys@@QAAXHM_N@Z",
  "0x82424f10": "?_M_erase@?$vector@V?$Key@VObjectStage@@@@V?$StlNodeAlloc@V?$Key@VObjectStage@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$Key@VObjectStage@@@@PAV3@0ABU__false_type@2@@Z",
  "0x82425410": "??$_M_range_insert@PBV?$Key@VColor@Hmx@@@@@?$vector@V?$Key@VColor@Hmx@@@@V?$StlNodeAlloc@V?$Key@VColor@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VColor@Hmx@@@@PBV2@1ABUforward_iterator_tag@1@@Z",

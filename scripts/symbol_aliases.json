@@ -88104,11 +88104,32 @@
   {
    "name": "__uninitialized_copy_PBVPracticeStep",
    "address": "0x82424d18",
-   "survivor": "??$__uninitialized_copy@PBVPracticeStep@@PAV1@@stlpmtx_std@@YAPAVPracticeStep@@PBV1@0PAV1@ABU__false_type@0@@Z",
+   "survivor": "??$__uninitialized_copy@PBV?$Key@VObjectStage@@@@PAV1@@stlpmtx_std@@YAPAV?$Key@VObjectStage@@@@PBV1@0PAV1@ABU__false_type@0@@Z",
    "folded": [
     "??$__uninitialized_copy@PAV?$Key@VObjectStage@@@@PAV1@@stlpmtx_std@@YAPAV?$Key@VObjectStage@@@@PAV1@00ABU__false_type@0@@Z"
    ],
-   "evidence": "W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x82424d18). \"ours\" spelling ??$__uninitialized_copy@PAV?$Key@VObjectStage@@@@PAV1@@stlpmtx_std@@YAPAV?$Key@VObjectStage@@@@PAV1@00ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_copy@PBVPracticeStep@@PAV1@@stlpmtx_std@@YAPAVPracticeStep@@PBV1@0PAV1@ABU__false_type@0@@Z at retail address 0x82424d18. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 SLOT-FOLD-OK, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 2 row(s) / 752 B (752 B honest) across ['default/BandDirector'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md."
+   "evidence": "W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x82424d18). \"ours\" spelling ??$__uninitialized_copy@PAV?$Key@VObjectStage@@@@PAV1@@stlpmtx_std@@YAPAV?$Key@VObjectStage@@@@PAV1@00ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_copy@PBVPracticeStep@@PAV1@@stlpmtx_std@@YAPAVPracticeStep@@PBV1@0PAV1@ABU__false_type@0@@Z at retail address 0x82424d18. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 SLOT-FOLD-OK, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 2 row(s) / 752 B (752 B honest) across ['default/BandDirector'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_copy@PBVPracticeStep@@PAV1@@stlpmtx_std@@YAPAVPracticeStep@@PBV1@0PAV1@ABU__false_type@0@@Z",
+     "lane": "W17-PRAC 2026-09-30",
+     "class": "TYPE_ABSENT_FROM_RETAIL_ENCLOSING",
+     "disposition": "withdrawn; the group survivor is rebound to the retail identity at 0x82424d18, and the map is rebound there in the same commit",
+     "absent_types": [
+      "PracticeStep"
+     ],
+     "type_evidence": {
+      "PracticeSection": {
+       "rtti_mangled": ".?AVPracticeSection@@",
+       "retail_rtti_hits": 0,
+       "polymorphic_in_our_source": "yes (hamobj/PracticeSection.h, RndAnimatable-derived; PracticeStep is its element type)",
+       "rb3wii_files_mentioning_PracticeStep": 0,
+       "dc3_files": 11
+      }
+     },
+     "evidence": "TYPE DOES NOT EXIST IN RB3 RETAIL, AND THE BODY IS TYPED BY ITS CALLEE, ITS EH FUNCLET AND ITS CALLERS. Retail 0x82424d18 (96 B) strides 0x10 (PracticeStep is 0x1c) and calls 0x8228eff8 = _Copy_Construct<Key<ObjectStage>> per element; its EH funclet 0x82424d80 re-stores the vtable at 0x820142bc, which retail_rtti resolves to .?AVObjectStage@@, before each element dtor. Its retail callers are BandDirector's vector<Key<ObjectStage>>::_M_fill_insert_aux / _M_insert_overflow_aux (non-const source) and PropKeys' _M_range_insert_aux<const Key<ObjectStage>*> (const source), all inside the Key<ObjectStage> template family. The const-source spelling (defined by PropKeys.obj, whose span encloses the block) is the survivor; the non-const spelling stays folded (W16-HA 2026-09-30 proved it CHASED T1 against this address)."
+    }
+   ]
   },
   {
    "name": "__uninitialized_copy_LightPreset",
@@ -88671,6 +88692,15 @@
     "??$__uninitialized_copy@PBVVocalNote@@PAV1@@stlpmtx_std@@YAPAVVocalNote@@PBV1@0PAV1@ABU__false_type@0@@Z"
    ],
    "evidence": "W17-PRAC 2026-09-30: retail 0x826865e0 (96 B) is __uninitialized_copy<VocalNote*,VocalNote*> (stride 0x34, element copy 0x82685840 _Copy_Construct<VocalNote>). Our vector<VocalNote> copy ctor calls the const-source spelling __uninitialized_copy<const VocalNote*,VocalNote*>, which retail 0x826870d0 sends to this body. tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED only on the element-copy relocation name (_Param_Construct vs _Copy_Construct<VocalNote>), CHASED T1 PROVEN (SLOT-FOLD-OK on that slot, itself FLAT T1 PROVEN at 0x82685840)."
+  },
+  {
+   "name": "_Copy_Construct_Key_ObjectStage",
+   "address": "0x8228eff8",
+   "survivor": "??$_Copy_Construct@V?$Key@VObjectStage@@@@@stlpmtx_std@@YAXPAV?$Key@VObjectStage@@@@ABV1@@Z",
+   "folded": [
+    "??$_Param_Construct@V?$Key@VObjectStage@@@@V1@@stlpmtx_std@@YAXPAV?$Key@VObjectStage@@@@ABV1@@Z"
+   ],
+   "evidence": "W17-PRAC 2026-09-30: retail 0x8228eff8 (60 B) null-checks r3 and calls ??0?$Key@VObjectStage@@@@QAA@ABV0@@Z (0x8228efa0). _Param_Construct<Key<ObjectStage>> is the same source body (placement-new copy); tools/icf_pair_adjudicate.py --chase reports FLAT T1 PROVEN (60 B vs 60 B, relocation target names compared). Needed once 0x82424d18 was renamed from __uninitialized_copy<PracticeStep> to __uninitialized_copy<const Key<ObjectStage>*>: our compiled body calls the _Param_Construct spelling where retail calls this address. Same shape as the proven pairs at 0x825570d0, 0x82557060 and 0x82685840."
   }
  ]
 }
