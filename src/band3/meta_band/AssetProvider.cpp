@@ -114,7 +114,7 @@ void AssetProvider::Update(AssetType assetType, AssetBoutique assetBoutique) {
 UIComponent::State
 AssetProvider::ComponentStateOverride(int, int idx, UIComponent::State state) const {
     if (!mProfile->mProfileAssets.HasAsset(mAssets[idx])) {
-        state = UIComponent::kDisabled;
+        return UIComponent::kDisabled;
     }
     return state;
 }
@@ -133,6 +133,8 @@ void AssetProvider::Text(int, int idx, UIListLabel *slot, UILabel *label) const 
             label->SetTextToken(pAsset->GetName());
         } else if (slot->Matches("new")) {
             if (assets->HasAsset(sym) && assets->IsNew(sym)) {
+                // Retail: function-local static (guard 0x82E02054).
+                static Symbol customize_new("customize_new");
                 label->SetTextToken(customize_new);
             } else
                 label->SetTextToken(gNullStr);
