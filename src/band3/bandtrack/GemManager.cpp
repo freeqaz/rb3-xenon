@@ -1346,19 +1346,20 @@ void GemManager::CheckRemoveChordBracket(int gemId) {
     const GameGem &gem = mGems[gemId].GetGameGem();
     int chordTick = gem.GetTick();
     int start = gemId;
-    while (start >= 0 && chordTick == mGems[start].GetGameGem().GetTick()) {
+    while (start >= 0 && mGems[start].GetGameGem().GetTick() == chordTick) {
         start--;
     }
+    start++;
     int end = gemId;
-    while (end < mGems.size() && chordTick == mGems[end].GetGameGem().GetTick()) {
+    while (end < mGems.size() && mGems[end].GetGameGem().GetTick() == chordTick) {
         end++;
     }
     bool allHit = true;
     GemStatus *gemStatus =
         ((GemPlayer *)mTrackConfig.GetBandUser()->GetPlayer())->mGemStatus;
-    for (int i = start + 1; i < end; i++) {
+    for (int i = start; i < end; i++) {
         if (i != gemId) {
-            allHit = allHit & (bool)gemStatus->GetHit(i);
+            allHit &= gemStatus->GetHit(i);
         }
     }
     if (allHit) {
@@ -1411,15 +1412,17 @@ void GemManager::UpdateGemStates() {
     }
 }
 
+static inline bool ExtentContains(const Extent &e, int tick) {
+    return tick >= e.unk0 && tick <= e.unk4;
+}
+
 bool GemManager::InMissedPhrase(int gemId) {
     if (TheGame->InTrainer() && TheGemTrainerPanel->IsGemInFutureLoop(gemId)) {
         return false;
     }
     int rawTick = mGems[gemId].GetGameGem().GetTick();
     for (int i = 0; i < mMissedPhrases.size(); i++) {
-        int tick = GetLoopTick(rawTick);
-        bool inPhrase = tick >= mMissedPhrases[i].unk0 && tick <= mMissedPhrases[i].unk4;
-        if (inPhrase) {
+        if (ExtentContains(mMissedPhrases[i], GetLoopTick(rawTick))) {
             return true;
         }
     }
