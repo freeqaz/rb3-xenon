@@ -476,8 +476,9 @@ void GemTrack::UpdateShifts() {
                     i1 = i6 + 10;
                 }
                 if (i1 > 16) {
-                    i6 -= i1 - 16;
-                    i1 -= i1 - 16;
+                    int over = i1 - 16;
+                    i6 -= over;
+                    i1 -= over;
                     MILO_WARN(
                         "Authored range section exceeds displayable keyboard range: %.0f - %.0f @ tick %d",
                         curSect.unk8,
@@ -485,14 +486,13 @@ void GemTrack::UpdateShifts() {
                         curSect.unk0
                     );
                 }
-                int i8 = curSect.unk0;
-                mRangeShifts.push_back(
-                    RangeShift(i8, i8 + MsToTickInt(curSect.unk4), i6, i1 - i6)
-                );
+                mRangeShifts.push_back(RangeShift(
+                    curSect.unk0, curSect.unk0 + MsToTickInt(curSect.unk4), i6, i1 - i6
+                ));
             }
         } else {
-            int i90 = 0;
             int i8c = 16;
+            int i90 = 0;
             for (int i = 0; i < rangeSects.size(); i++) {
                 RangeSection &curSect = rangeSects[i];
                 MinEq(i8c, SemitoneToWhiteKey(Round(curSect.unk8)));
