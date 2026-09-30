@@ -121,25 +121,21 @@ bool StoreInfoPanel::ParseRecommendations(DataArray *data) {
     MILO_ASSERT(data, 0xCE);
     data->AddRef();
     ClearAndShrink(mRecommendations);
+    // Retail fn_8263A300: local static, and no result-size check / debug print.
+    static Symbol content("content");
     DataArray *cnt = data->FindArray(content, false);
     if (cnt) {
         int cap = cnt->Size() - 1;
         for (int i = 0; i < cap; i++) {
             RecommendedEntry entry;
             DataArray *result = cnt->Array(i + 1);
-            if (result->Size() >= 3) {
-                entry.unk0 = result->Str(0);
-                entry.unkc = "/dlc_store";
-                entry.unkc += result->Str(1);
-                entry.unk18 = result->Str(2);
-                EnsureArtLoader(entry.unkc);
-                mRecommendations.push_back(entry);
-                mCoverArtTexs.push_back(nullptr);
-            } else {
-                TheDebug
-                    << "StoreInfoPanel::ParseRecommendations: invalid recommendation result:\n"
-                    << result << "\n";
-            }
+            entry.unk0 = result->Str(0);
+            entry.unkc = "/dlc_store";
+            entry.unkc += result->Str(1);
+            entry.unk18 = result->Str(2);
+            EnsureArtLoader(entry.unkc);
+            mRecommendations.push_back(entry);
+            mCoverArtTexs.push_back(nullptr);
         }
     }
     data->Release();
