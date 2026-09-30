@@ -15,15 +15,23 @@
 #include "utl/Loader.h"
 #include "utl/MemMgr.h"
 
+// Retail ctor (0x8246bcc8, 68 B; called from DxShaderMgr's global initializer)
+// stores only 0x58/0x5c/0x64/0x68/0x6d -- it never touches mShowShaderErrors
+// or mShowMetaMatErrors, which DC3 initializes here.
 RndShaderMgr::RndShaderMgr()
-    : mShaderPoolCount(0), mShaderPoolAlloc(0), mConstantCache(0), mConstantCacheSize(0), mPreInitialized(0),
-      mShowShaderErrors(1), mShowMetaMatErrors(0) {}
+    : mShaderPoolCount(0), mShaderPoolAlloc(0), mConstantCache(0), mConstantCacheSize(0), mPreInitialized(0) {}
 
+// Retail RB3 (0x8246b9a0, 256 B) differs from DC3's body in four ways, all read
+// off retail bytes: the fields are stored in address order (unk2a between
+// unk29 and unk2b), mDisplayShaderError (0x42) is cleared rather than set,
+// there are no RELEASEs of the four mats (and no CreateAndSetMetaMat, which is
+// DC3-era), and the constant cache is a plain operator new[] with no temp-
+// allocation scope.
 void RndShaderMgr::PreInit() {
     if (!mPreInitialized) {
         mUseAO = 0;
-        mPreInitialized = true;
         mBoneCount = 0;
+        mPreInitialized = true;
         unk14 = 1;
         mInDepthVolume = 0;
         unk1c = 0;
@@ -34,6 +42,7 @@ void RndShaderMgr::PreInit() {
         unk27 = 0;
         unk28 = 0;
         unk29 = 0;
+        unk2a = 0;
         unk2b = 0;
         unk2c = 0;
         unk2d = 0;
@@ -45,7 +54,6 @@ void RndShaderMgr::PreInit() {
         unk38 = 0;
         unk39 = 0;
         unk3a = 0;
-        unk2a = 0;
         unk3b = 0;
         unk3c = 0;
         unk3d = 0;
@@ -53,21 +61,14 @@ void RndShaderMgr::PreInit() {
         unk3f = 0;
         mAllowPerPixel = 1;
         unk41 = 1;
-        mDisplayShaderError = true;
-        RELEASE(mWorkMat);
-        RELEASE(mPostProcMat);
-        RELEASE(mDrawHighlightMat);
-        RELEASE(mDrawRectMat);
+        mDisplayShaderError = false;
         mWorkMat = Hmx::Object::New<RndMat>();
         mPostProcMat = Hmx::Object::New<RndMat>();
         mDrawHighlightMat = Hmx::Object::New<RndMat>();
         mDrawRectMat = Hmx::Object::New<RndMat>();
         MILO_ASSERT(mConstantCache == NULL, 104);
         mConstantCacheSize = 516;
-        {
-            MemTemp tmp;
-            mConstantCache = new float[mConstantCacheSize];
-        }
+        mConstantCache = new float[mConstantCacheSize];
         LoadShaders("%s_preinit_shaders");
     }
 }
@@ -214,6 +215,8 @@ void RndShaderMgr::LoadShaderFile(FileStream &fs) {
     }
 }
 
+// Retail (0x8246b680, 192 B): no UsingCD()/"allocating dynamically" notify
+// branch, and the three members are stored count, alloc, pool.
 void *RndShaderMgr::AllocShader() {
     if (mShaderPoolCount == 0 && mShaderPoolAlloc > 0) {
         mShaderPoolCount = mShaderPoolAlloc;
@@ -221,70 +224,60 @@ void *RndShaderMgr::AllocShader() {
         mShaderPool = MemAlloc(mShaderSize * mShaderPoolCount, __FILE__, 0x11c, "ShaderPool");
     }
     if (mShaderPoolCount <= 0) {
-        if (UsingCD()) {
-            MILO_NOTIFY_ONCE("Shader Pool is allocating dynamically");
-        }
         mShaderPoolAlloc = 0;
         mShaderPoolCount = 0x100;
         mShaderPool = MemAlloc(mShaderSize << 8, __FILE__, 0x127, "ShaderPool");
     }
     MILO_ASSERT(mShaderPoolCount-- > 0, 0x12A);
-    // increment mShaderPool by mShaderSize
-    void *old = mShaderPool;
-    char *pool = (char *)mShaderPool;
-    pool += mShaderSize;
-    mShaderPool = pool;
     mShaderPoolAlloc--;
+    void *old = mShaderPool;
+    mShaderPool = (char *)old + mShaderSize;
     return old;
 }
 
+// Retail shape (0x8246bbc8): the found-path is entered straight from the
+// type test inside the list walk, and falling off the list goes to the
+// not-found path, which picks begin()/end() and makes ONE list::insert call.
 RndShaderProgram &RndShaderMgr::FindShader(ShaderType t, const ShaderOptions &opts) {
     u64 flags = opts.flags;
-    std::list<ShaderTree>::iterator it;
-
-    for (it = mShaderTrees.begin(); it != mShaderTrees.end(); ++it) {
+    for (std::list<ShaderTree>::iterator it = mShaderTrees.begin(); it != mShaderTrees.end();
+         ++it) {
         if (it->shaderType == t) {
-            break;
-        }
-    }
-
-    if (it == mShaderTrees.end()) {
-        ShaderTree tree;
-        tree.shaderType = t;
-        RndShaderProgram *p = NewShaderProgram();
-        p->mFlags = flags;
-        tree.obj = p;
-        if (t == kStandardShader) {
-            mShaderTrees.push_front(tree);
-        } else {
-            mShaderTrees.push_back(tree);
-        }
-        return *p;
-    }
-
-    // Found the tree, now binary search in it
-    RndShaderProgram *node = it->obj;
-    while (true) {
-        if (flags < node->mFlags) {
-            RndShaderProgram *left = (RndShaderProgram *)node->unk10;
-            if (left == NULL) {
-                RndShaderProgram *newNode = NewShaderProgram();
-                node->unk10 = (Hmx::Object *)newNode;
-                newNode->mFlags = flags;
-                return *newNode;
+            RndShaderProgram *node = it->obj;
+            while (true) {
+                if (flags < node->mFlags) {
+                    RndShaderProgram *left = (RndShaderProgram *)node->unk10;
+                    if (left == NULL) {
+                        RndShaderProgram *newNode = NewShaderProgram();
+                        node->unk10 = (Hmx::Object *)newNode;
+                        newNode->mFlags = flags;
+                        return *newNode;
+                    }
+                    node = left;
+                } else if (flags > node->mFlags) {
+                    RndShaderProgram *right = (RndShaderProgram *)node->unk14;
+                    if (right == NULL) {
+                        RndShaderProgram *newNode = NewShaderProgram();
+                        node->unk14 = (Hmx::Object *)newNode;
+                        newNode->mFlags = flags;
+                        return *newNode;
+                    }
+                    node = right;
+                } else {
+                    return *node;
+                }
             }
-            node = left;
-        } else if (flags > node->mFlags) {
-            RndShaderProgram *right = (RndShaderProgram *)node->unk14;
-            if (right == NULL) {
-                RndShaderProgram *newNode = NewShaderProgram();
-                node->unk14 = (Hmx::Object *)newNode;
-                newNode->mFlags = flags;
-                return *newNode;
-            }
-            node = right;
-        } else {
-            return *node;
         }
     }
+    ShaderTree tree;
+    tree.shaderType = t;
+    RndShaderProgram *p = NewShaderProgram();
+    tree.obj = p;
+    p->mFlags = flags;
+    if (t == kStandardShader) {
+        mShaderTrees.push_front(tree);
+    } else {
+        mShaderTrees.push_back(tree);
+    }
+    return *p;
 }

@@ -62,42 +62,38 @@ void CheckShadow();
 void CheckExtrude();
 
 void RndShader::Init() {
-    sShaders[kBlurShader] = &gShaderSimple;
     sShaders[kBloomShader] = &gShaderSimple;
     sShaders[kDepthVolumeShader] = &gShaderDepthVolume;
     sShaders[kBloomGlareShader] = &gShaderSimple;
-    sShaders[kDrawRectShader] = &gShaderDrawRect;
-    sShaders[kDownsampleShader] = &gShaderSimple;
+    sShaders[kBlurShader] = &gShaderSimple;
     sShaders[kDownsampleDepthShader] = &gShaderSimple;
-    sShaders[kDownsample4xShader] = &gShaderSimple;
     sShaders[kMultimeshShader] = &gShaderMultimesh;
+    sShaders[kDownsample4xShader] = &gShaderSimple;
+    sShaders[kDownsampleShader] = &gShaderSimple;
+    sShaders[kDrawRectShader] = &gShaderDrawRect;
     sShaders[kFurShader] = &gShaderFur;
     sShaders[kErrorShader] = &gShaderSimple;
+    sShaders[kMultimeshBBShader] = &gShaderMultimesh;
     sShaders[kLineNozShader] = &gShaderSimple;
     sShaders[kMovieShader] = &gShaderSimple;
-    sShaders[kMultimeshBBShader] = &gShaderMultimesh;
     sShaders[kLineShader] = &gShaderSimple;
-    sShaders[kShadowmapShader] = &gShaderSimple;
     sShaders[kPostprocessErrorShader] = &gShaderSimple;
+    sShaders[kShadowmapShader] = &gShaderSimple;
     sShaders[kPlayerDepthVisShader] = &gShaderSimple;
     sShaders[kParticlesShader] = &gShaderParticles;
+    sShaders[kStandardShader] = &gShaderStandard;
+    sShaders[kPostprocessShader] = &gShaderPostProc;
+    sShaders[kStandardBBShader] = &gShaderStandard;
     sShaders[kPlayerDepthShellShader] = &gShaderSimple;
+    sShaders[kUnwrapUVShader] = &gShaderUnwrapUV;
+    sShaders[kVelocityCameraShader] = &gShaderVelocityCamera;
+    sShaders[kVelocityObjectShader] = &gShaderVelocity;
 #ifdef HX_NATIVE
     sShaders[kSyncTrackShader] = &gShaderSyncTrack;
-#endif
-    sShaders[kStandardShader] = &gShaderStandard;
-    sShaders[kStandardBBShader] = &gShaderStandard;
-    sShaders[kPostprocessShader] = &gShaderPostProc;
-#ifdef HX_NATIVE
     sShaders[kPlayerDepthShell2Shader] = &gShaderSimple;
     sShaders[kDepthBuffer3DShader] = &gShaderSimple;
     sShaders[kYUVtoRGBShader] = &gShaderSimple;
     sShaders[kSyncTrackChargeEffectShader] = &gShaderSyncTrack;
-#endif
-    sShaders[kVelocityCameraShader] = &gShaderVelocityCamera;
-    sShaders[kUnwrapUVShader] = &gShaderUnwrapUV;
-    sShaders[kVelocityObjectShader] = &gShaderVelocity;
-#ifdef HX_NATIVE
     sShaders[kYUVtoBlackAndWhiteShader] = &gShaderSimple;
     sShaders[kPlayerGreenScreenShader] = &gShaderSimple;
     sShaders[kPlayerDepthGreenScreenShader] = &gShaderSimple;
@@ -210,9 +206,13 @@ bool RndShader::DisplayMatShaderFlagsError(RndMat *mat, ShaderType s) {
     return ret;
 }
 
+// Retail (0x824a5740, 112 B) is only the shader-type override and a tail call
+// into sShaders[type]->Select: no range assert, no EditMode/UsingCD error-shader
+// branch, no null check. Retail compares DrawMode against 1 and 5 here (not the
+// 2/6 of DC3); the native build keeps DC3's values and its diagnostic paths.
 void RndShader::SelectConfig(RndMat *mat, ShaderType shader_type, bool b3) {
+#ifdef HX_NATIVE
     RndShader *shader;
-    MILO_ASSERT(shader_type >= ShaderType(0) && shader_type < kMaxShaderTypes, 0x1BB);
     if (TheRnd.DrawMode() == 2) {
         shader_type = kShadowmapShader;
     } else if (TheRnd.DrawMode() == 6) {
@@ -220,37 +220,33 @@ void RndShader::SelectConfig(RndMat *mat, ShaderType shader_type, bool b3) {
     } else if (TheShaderMgr.InDepthVolume()) {
         shader_type = kDepthVolumeShader;
     }
-#ifdef HX_NATIVE
     // Native/web: skip shader diagnostic path. On Xbox retail UsingCD()==true
     // so this path is dead code. On native, UsingCD() may be false (no .ark),
     // which would activate editor-mode shader validation that crashes on WASM
     // (virtual calls into unimplemented NG shader subsystems).
     if (!b3 && TheLoadMgr.EditMode()) {
-#else
-    if (!b3 && (TheLoadMgr.EditMode() || !UsingCD())) {
-#endif
-        if (!DisplayMatShaderFlagsError(mat, shader_type)) {
-            // The metamaterial escape hatch is gone: RB3-360 retail has no
-            // MetaMaterial class, so mat->GetMetaMaterial() was a hard-coded
-            // nullptr and this branch could never suppress the error shader.
-            // See lane METAMAT-1.
-        }
+        DisplayMatShaderFlagsError(mat, shader_type);
         shader_type = shader_type == kPostprocessShader
             ? kPostprocessErrorShader
             : kErrorShader;
     }
-done:
     shader = sShaders[shader_type];
-#ifdef HX_NATIVE
     if (!shader) {
         // Fallback: unregistered shader type — use error shader
         shader = sShaders[kErrorShader];
         if (!shader) return;
     }
-#else
-    MILO_ASSERT(shader, 0x1D3);
-#endif
     shader->Select(mat, shader_type, b3);
+#else
+    if (TheRnd.DrawMode() == 1) {
+        shader_type = kShadowmapShader;
+    } else if (TheRnd.DrawMode() == 5) {
+        shader_type = kVelocityObjectShader;
+    } else if (TheShaderMgr.InDepthVolume()) {
+        shader_type = kDepthVolumeShader;
+    }
+    sShaders[shader_type]->Select(mat, shader_type, b3);
+#endif
 }
 
 void RndShader::Cache(ShaderType s, ShaderOptions opts, RndMat *mat) {
