@@ -1921,7 +1921,8 @@ void CamShot::UnHide() {
 
 RndCam *CamShot::GetCam() {
     RndCam *ret = 0;
-    WorldDir *crowdDir = GetCrowdDir();
+    // retail casts Dir() directly; GetCrowdDir()'s mParentDir check is absent
+    WorldDir *crowdDir = dynamic_cast<WorldDir *>(Dir());
     if (crowdDir) {
         ret = crowdDir->Cam();
         if (ret == 0) {
