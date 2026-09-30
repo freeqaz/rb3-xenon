@@ -185,6 +185,22 @@ def applied_name_to_addrs(map_path):
     return dict(out)
 
 
+def duplicate_keys(text):
+    """Top-level keys that occur more than once in the map's JSON TEXT.
+
+    `json.loads` silently keeps the LAST value of a repeated key, so a
+    duplicated address row hides one of its two names from every census built
+    on the parsed dict -- this gate included. Measured 2026-09-30 (lane W16-HG):
+    a rebase left `0x826ac9f0` in the map twice and this gate printed OK. The
+    duplicate therefore has to be found on the text, before parsing.
+    """
+    seen = collections.Counter()
+    top = json.loads(text, object_pairs_hook=lambda pairs: pairs)
+    for key, _ in top:
+        seen[key] += 1
+    return sorted(k for k, c in seen.items() if c > 1)
+
+
 def raw_name_to_addrs(map_path):
     """name -> [VA, ...] over every string-valued row, filter or no filter."""
     raw = json.loads(Path(map_path).read_text())
@@ -322,6 +338,19 @@ def selftest():
         check("naive flatten provably over-counts the licensed duplicate",
               naive.count("?Real@@YAXXZ"), 3)
 
+    # duplicate KEYS are invisible to json.loads (last one wins), so they are
+    # found on the text; the sabotage leg proves the parsed dict hides them.
+    dup_text = '{"0x82000000": "?A@@YAXXZ", "_c": {"x": 1, "x": 2},\n' \
+               ' "0x82000000": "?B@@YAXXZ"}'
+    check("duplicate top-level key detected on the text",
+          duplicate_keys(dup_text), ["0x82000000"])
+    check("nested duplicate in metadata is not a map-row finding",
+          "x" in duplicate_keys(dup_text), False)
+    check("parsed dict provably hides the duplicate (last value wins)",
+          json.loads(dup_text)["0x82000000"], "?B@@YAXXZ")
+    check("a clean map has no duplicate keys",
+          duplicate_keys('{"0x82000000": "?A@@YAXXZ"}'), [])
+
     print("SELFTEST", "PASS" if ok else "FAIL")
     return 0 if ok else 1
 
@@ -343,7 +372,18 @@ def main(argv=None):
         return selftest()
 
     map_path = Path(args.map)
-    raw = json.loads(map_path.read_text())
+    map_text = map_path.read_text()
+    dup_keys = duplicate_keys(map_text)
+    if dup_keys:
+        print(f"MAP HAS DUPLICATE KEYS: {len(dup_keys)} key(s) appear more "
+              f"than once in {map_path}: {' '.join(dup_keys[:20])}",
+              file=sys.stderr)
+        print("json.load keeps only the LAST value of each, so the other row "
+              "is invisible to every", file=sys.stderr)
+        print("check built on the parsed map. Usually a rebase artifact: keep "
+              "one row per address.", file=sys.stderr)
+        return 1
+    raw = json.loads(map_text)
     allowed = raw.get("_internal_linkage_allow", [])
     if not isinstance(allowed, list) or any(not isinstance(x, str)
                                             for x in allowed):
