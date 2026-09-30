@@ -4086,7 +4086,6 @@ SkeletonClip.cpp:
 	.pdata      start:0x821FED80 end:0x821FEDA0
 	.pdata      start:0x821FEDA0 end:0x821FEDA8
 	.pdata      start:0x821FEDA8 end:0x821FEDB0
-	.pdata      start:0x821FEEC8 end:0x821FEED0
 	.pdata      start:0x821FEEF8 end:0x821FEF10
 	.pdata      start:0x821FEF28 end:0x821FEF30
 	.pdata      start:0x82237AC8 end:0x82237AE8
@@ -4097,8 +4096,6 @@ SkeletonClip.cpp:
 	.text       start:0x82348B28 end:0x82348D80
 	.text       start:0x82348D80 end:0x82348DEC
 	.text       start:0x82348DEC end:0x82348E20
-	.text       start:0x8234A148 end:0x8234A1C0
-	.text       start:0x8234A228 end:0x8234A288
 	.text       start:0x8234A44C end:0x8234AC78
 	.text       start:0x8234ADC8 end:0x8234AE48
 	.text       start:0x82703890 end:0x827039C8
@@ -4425,7 +4422,7 @@ CharForeTwist.cpp:
 
 Morph.cpp:
 	.pdata      start:0x821F5048 end:0x821F5058
-	.pdata      start:0x821FEE08 end:0x821FEE20
+	.pdata      start:0x821FEE18 end:0x821FEE20
 	.pdata      start:0x821FEE38 end:0x821FEE40
 	.pdata      start:0x82202F30 end:0x82202F38
 	.pdata      start:0x82203BD8 end:0x82203C00
@@ -4440,7 +4437,7 @@ Morph.cpp:
 	.pdata      start:0x82210678 end:0x82210680
 	.pdata      start:0x82210688 end:0x82210740
 	.text       start:0x822A9BC8 end:0x822A9C58
-	.text       start:0x823493D0 end:0x823495D8
+	.text       start:0x82349470 end:0x823495D8
 	.text       start:0x8234982C end:0x823498F0
 	.text       start:0x8238AB44 end:0x8238ABA4
 	.text       start:0x82398798 end:0x82398A10
@@ -10189,9 +10186,11 @@ BandPatchMesh.cpp:
 	.pdata      start:0x821FED20 end:0x821FED28
 	.pdata      start:0x821FED38 end:0x821FED50
 	.pdata      start:0x821FEDC0 end:0x821FEE08
+	.pdata      start:0x821FEE08 end:0x821FEE18
 	.pdata      start:0x821FEE20 end:0x821FEE30
 	.pdata      start:0x821FEE78 end:0x821FEE88
 	.pdata      start:0x821FEE88 end:0x821FEEC8
+	.pdata      start:0x821FEEC8 end:0x821FEED0
 	.pdata      start:0x821FEED0 end:0x821FEEE0
 	.pdata      start:0x821FEEE0 end:0x821FEEF8
 	.pdata      start:0x821FEF10 end:0x821FEF28
@@ -10220,10 +10219,13 @@ BandPatchMesh.cpp:
 	.text       start:0x82348210 end:0x82348260
 	.text       start:0x82348388 end:0x823484EC
 	.text       start:0x82348FC4 end:0x823493D0
+	.text       start:0x823493D0 end:0x82349470
 	.text       start:0x823495D8 end:0x82349770
 	.text       start:0x82349D50 end:0x82349DC0
 	.text       start:0x82349DC0 end:0x8234A148
+	.text       start:0x8234A148 end:0x8234A1C0
 	.text       start:0x8234A1C0 end:0x8234A228
+	.text       start:0x8234A228 end:0x8234A288
 	.text       start:0x8234A288 end:0x8234A44C
 	.text       start:0x8234AC78 end:0x8234ADC8
 	.text       start:0x8234B270 end:0x8234B3D0

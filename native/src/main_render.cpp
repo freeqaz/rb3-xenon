@@ -149,11 +149,6 @@ void InternSymbolGlobals_M6Symbols();
 #include <unistd.h>
 #include <vector>
 
-// X20: prints how many times the two UNPORTED BandPatchMesh members
-// (ReProject / PreRender, which need the patch-projection subsystem) actually
-// executed. Defined in native/src/x20_bandpatchmesh_link.cpp. Called next to
-// the skin-material census so the census's verdict carries its own qualifier.
-extern "C" void Rb3X20ReportBandPatchMeshStubs();
 
 extern void InitMakeString();
 // native/src/platform/File_Native.cpp
@@ -4467,13 +4462,9 @@ namespace {
             if (hits == 0)
                 printf("      ⚠ ZERO skin materials found — this census is VACUOUS "
                        "for this scene; do not read a verdict from it.\n");
-            // ★ X20: the census above is only trustworthy if nothing on the way
-            // to it ran a NO-OP in place of real engine behaviour. Registering
-            // OutfitConfig required two BandPatchMesh members whose bodies need
-            // the unported patch-PROJECTION subsystem; both are counted, and the
-            // counts print HERE, next to the verdict they qualify, rather than
-            // in a comment claiming they are never reached.
-            Rb3X20ReportBandPatchMeshStubs();
+            // (X20's BandPatchMesh stub probe used to print here; W17-BPM2
+            // ported the patch-projection subsystem, so there is no stub left
+            // to count.)
 
             // X22: the census above says WHICH object draws; this says whether a
             // per-member replacement for it EXISTS. See ReportX22SharedMaterials.

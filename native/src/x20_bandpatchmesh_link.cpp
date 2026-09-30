@@ -53,7 +53,10 @@
 // which matches the Wii ctor's initializer list member-for-member
 // (mMeshes / mRenderTo / mSrc / mCategory).  Nothing here is invented.
 //
-// ⛔ TWO FUNCTIONS ARE NOT PORTED, AND THEY ARE COUNTED, NOT SILENT.
+// ✅ W17-BPM2 (2026-09-30): the projection subsystem is now ported and the two
+// counted stubs below are deleted. The paragraph that follows is the record of
+// why they existed.
+// ⛔ (historical) TWO FUNCTIONS WERE NOT PORTED, AND THEY WERE COUNTED, NOT SILENT.
 // BandPatchMesh::ReProject() and ::PreRender() reach ProjectPatches() ->
 // Construct/ConstructQuad/FindXfm/WorkVerts::Project -- the patch PROJECTION
 // subsystem, ~570 further lines that the partial port also omits.  Porting it
@@ -108,28 +111,9 @@ bool gRB3OutfitComposeActive = false;
 // ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
-// (3) ⛔ NOT PORTED -- counted, never silent.  See the header note.
+// (3) The two COUNTED stubs this file used to carry (ReProject, PreRender) and
+// their Rb3X20ReportBandPatchMeshStubs() probe are gone: W17-BPM2 ported the
+// patch-projection subsystem (FindXfm / ProjectPatches / Construct and the
+// WorkVerts helpers) into src/system/bandobj/BandPatchMesh.cpp, so native links
+// the real members.
 // ---------------------------------------------------------------------------
-static long gX20ReProjectHits = 0;
-static long gX20PreRenderHits = 0;
-
-bool BandPatchMesh::ReProject() {
-    ++gX20ReProjectHits;
-    return mRenderTo;  // the ported tail of the real body; the ProjectPatches
-                       // call it wraps is what is missing.
-}
-
-void BandPatchMesh::PreRender(BandCharDesc *, int) { ++gX20PreRenderHits; }
-
-// Printed on EVERY run by main_render.cpp, so "these stubs were not reached"
-// is a MEASUREMENT in each frame's own log rather than a claim in a comment.
-extern "C" void Rb3X20ReportBandPatchMeshStubs() {
-    std::printf(
-        "X20 BANDPATCHMESH STUB PROBE: ReProject hits=%ld, PreRender hits=%ld%s\n",
-        gX20ReProjectHits,
-        gX20PreRenderHits,
-        (gX20ReProjectHits == 0 && gX20PreRenderHits == 0)
-            ? "  => NO unported patch-projection behaviour was exercised"
-            : "  => ⛔ UNPORTED BEHAVIOUR WAS REACHED; results are qualified"
-    );
-}

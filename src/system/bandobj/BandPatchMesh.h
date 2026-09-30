@@ -4,6 +4,9 @@
 #include "rndobj/MeshDeform.h"
 #include "rndobj/Tex.h"
 #include "rndobj/Trans.h"
+#ifdef HX_NATIVE
+#include <cstdint>
+#endif
 
 class BandCharDesc;
 
@@ -74,8 +77,15 @@ public:
         void CopyDeformWeights(RndMeshDeform *, RndMeshDeform *);
         bool SetSameVerts(WorkVerts *);
 
+#ifdef HX_NATIVE
+        // Slots hold MeshVert pointers into the unkc arena: pointer-sized on the
+        // LP64 host (an `unsigned int` silently truncated them there).
+        typedef uintptr_t MeshVertSlot;
+#else
+        typedef unsigned int MeshVertSlot;
+#endif
         int unk0;
-        std::vector<unsigned int> mMeshVerts; // 0x4
+        std::vector<MeshVertSlot> mMeshVerts; // 0x4
         void *unkc;
         std::vector<MeshVert *> unk10;
         std::vector<RndMesh::Vert *> unk18;
