@@ -271,7 +271,7 @@ if [ "$WARM_CACHE" -eq 1 ]; then
         _pre_hashes="$( cd "$MAIN_REPO" && sha1sum $_split_outputs 2>/dev/null || true )"
 
         echo "==> Refreshing main's object cache (amortized; no-op if already current)"
-        ( cd "$MAIN_REPO" && ./tools/ninja-locked all_source ) >/dev/null 2>&1 \
+        ( cd "$MAIN_REPO" && ./tools/ninja-locked post-compile ) >/dev/null 2>&1 \
             || echo "  WARN: main cache refresh failed (non-fatal; worktree will rebuild what's stale)" >&2
 
         _post_hashes="$( cd "$MAIN_REPO" && sha1sum $_split_outputs 2>/dev/null || true )"
