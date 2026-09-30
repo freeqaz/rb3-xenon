@@ -2009,7 +2009,7 @@ DataNode SaveLoadManager::OnMsg(const DeviceChosenMsg &msg) {
     case kS_Done:
     case kS_LoadComplete:
     case kS_Finish:
-        break;
+        return DataNode(0);
     default:
         MILO_FAIL(
             "Unhandled DeviceChosenMsg in state %d and mode %d\n", (int)mState, (int)mMode
@@ -2045,7 +2045,7 @@ DataNode SaveLoadManager::OnMsg(const NoDeviceChosenMsg &) {
     case kS_Done:
     case kS_LoadComplete:
     case kS_Finish:
-        break;
+        return DataNode(0);
     default:
         MILO_FAIL(
             "Unhandled NoDeviceChosenMsg in state %d and mode %d\n",
