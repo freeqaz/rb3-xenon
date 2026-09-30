@@ -800,6 +800,7 @@ void ObjectDir::LoadSubDir(int i, const FilePath &fp, BinStream &bs, bool b) {
     }
 }
 
+#ifdef HX_NATIVE
 void PreloadArray(DataArray *arr, int idx) {
     for (int i = idx; i < arr->Size(); i++) {
         DataArray *curArr = arr->Array(i);
@@ -829,6 +830,32 @@ void PreloadSharedSubdirs(Symbol s) {
         PreloadArray(arr, 1);
     }
 }
+#else
+// RB3 retail (rb3-Wii shape): a flat loop from 1, an explicit FilePath per
+// entry, no nested-array recursion and no empty-entry test.
+void PreloadSharedSubdirs(Symbol sym) {
+    DataArray *arr = SystemConfig("preload_subdirs")->FindArray(sym, false);
+    if (arr) {
+        for (int i = 1; i < arr->Size(); i++) {
+            DataArray *thisArr = arr->Array(i);
+            const char *thisStr = thisArr->Str(0);
+            bool mem = false;
+            if (thisArr->Size() > 1) {
+                MemPushHeap(MemFindHeap(thisArr->Sym(1).Str()));
+                mem = true;
+            }
+            MILO_ASSERT(gPreloadIdx < DIM(gPreloaded), 0x998);
+            {
+                // retail constructs the path before it reads gPreloadIdx
+                FilePath path(thisStr);
+                gPreloaded[gPreloadIdx++].LoadFile(path, false, true, kLoadFront, false);
+            }
+            if (mem)
+                MemPopHeap();
+        }
+    }
+}
+#endif
 
 void ObjectDir::Terminate() {
     DeleteShared();
