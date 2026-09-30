@@ -350,7 +350,7 @@ void TalkyMatcher::Analyze(const short *samples, int numSamples, float ms) {
         mBuffer[i] = (float)samples[i * 3] / 32767.0f;
     }
     mVoiceBeat.Analyze(mBuffer, n3, false, true, ms + 6.0f);
-    if (!mRefEvents.mTimes.empty()) {
+    if (mRefEvents.mTimes.size() != 0) {
         updateScoring(ms);
     }
 }
