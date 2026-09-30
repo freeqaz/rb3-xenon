@@ -121,7 +121,6 @@
  "0x82761678": "?OnFileExists@@YA?AVDataNode@@PAVDataArray@@@Z",
  "0x82765d40": "?SetKeyValue@TypeProps@@QAAXVSymbol@@ABVDataNode@@_N@Z",
  "0x82768318": "?Handle@MsgSource@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x82768b18": "??1VarStack@@QAA@XZ",
  "0x8276af70": "?LoadFile@DataLoader@@AAAXXZ",
  "0x8276e478": "?LoaderPoll@BeatMaster@@QAAXXZ",
  "0x8276e570": "?SongDurationMs@BeatMaster@@UAAMXZ",
