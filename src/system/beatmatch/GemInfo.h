@@ -65,7 +65,10 @@ struct RGGemInfo {
     RGStrumType strum_type;
     unsigned char hand_position;
     unsigned char root_note;
-    char chord_name;
+    // A 64-byte buffer in retail: HandleRGGemStop strcpys the difficulty's
+    // mRGChordText (char[64]) into it (byte loop into the stack copy), and the
+    // caller's frame is sized for it (lane W16-HN).
+    char chord_name[64];
 };
 
 #endif

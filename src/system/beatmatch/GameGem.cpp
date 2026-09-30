@@ -36,11 +36,8 @@ GameGem::GameGem(const RGGemInfo &info)
         }
     }
     PackRealGuitarData();
-    // rb3-xenon GemInfo.h declares chord_name as a single `char` (not the
-    // rb3-Wii char[64]); take its address as the C-string. Same form under
-    // native and X360 since both build against this header.
-    if (info.chord_name != 0)
-        mChordNameOverride = &info.chord_name;
+    if (info.chord_name[0] != 0)
+        mChordNameOverride = info.chord_name;
     mForceStrum |= RightHandTap();
 }
 

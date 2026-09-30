@@ -1384,16 +1384,9 @@ void SongParser::PrepareTrack(const char *track_name, PartInfo *info) {
     else
         mState = kGems;
 
-    bool drumstyle = true;
-    if (!mForceDrumStyleGems) {
-        for (it = mDrumStyleInstruments.begin(); it != mDrumStyleInstruments.end();
-             ++it) {
-            if (*it == info->type)
-                break;
-        }
-        if (it == mDrumStyleInstruments.end())
-            drumstyle = false;
-    }
+    bool drumstyle = mForceDrumStyleGems
+        || std::find(mDrumStyleInstruments.begin(), mDrumStyleInstruments.end(), info->type)
+            != mDrumStyleInstruments.end();
     bool s9 = false;
     mDrumStyleGems = drumstyle;
     mIgnoreGemDurations = mTrackType == kTrackDrum;
@@ -2093,77 +2086,49 @@ bool SongParser::HandleRGGemStop(
     int tick, DifficultyInfo &info, unsigned char uc1, int difflevel
 ) {
     ::RGGemInfo geminfo;
-    if (!((((unsigned char)(uc1 + 0xE8)) > 5U)))
-        {
+    if (uc1 >= 24 && uc1 <= 29) {
+        int stringnum = uc1 - 24;
         bool allStringsEnded = true;
-        if (!(((unsigned char)(uc1 + 0xE8)) > 5U)) {
-            int stringnum = uc1 - 24;
-            if (info.mRGGemsInfo[stringnum].mGem.mTick == -1) {
-                MILO_WARN(
-                    "%s (%s): RG Gem on string %d ended but never started at tick %s",
-                    mFilename,
-                    mTrackName,
-                    stringnum,
-                    PrintTick(tick)
-                );
-                return true;
-            }
-            info.mRGGemsInfo[stringnum].unk18 = tick;
-
-            if (info.mRGGemsInfo[0].mGem.mTick != -1)
-                {
-                if (info.mRGGemsInfo[0].unk18 == -1) allStringsEnded = false;
-            }
-            if (info.mRGGemsInfo[1].mGem.mTick != -1)
-                {
-                if (info.mRGGemsInfo[1].unk18 == -1) allStringsEnded = false;
-            }
-            if (info.mRGGemsInfo[2].mGem.mTick != -1 && info.mRGGemsInfo[2].unk18 == -1)
-                allStringsEnded = false;
-            if (info.mRGGemsInfo[3].mGem.mTick != -1 && info.mRGGemsInfo[3].unk18 == -1)
-                allStringsEnded = false;
-            if (info.mRGGemsInfo[4].mGem.mTick != -1 && info.mRGGemsInfo[4].unk18 == -1)
-                allStringsEnded = false;
-            if (info.mRGGemsInfo[5].mGem.mTick != -1 && info.mRGGemsInfo[5].unk18 == -1)
-                allStringsEnded = false;
-
-            if (allStringsEnded) {
-                int nStr = 6;
-                int firstEndTick = -1;
-                do {
-                    SongParser::RGGemInfo *cur = &info.mRGGemsInfo[0];
-                    if (firstEndTick == -1) {
-                        if (cur->mGem.mTick != -1) {
-                            firstEndTick = cur->unk18;
-                        }
-                    } else {
-                        if (cur->mGem.mTick != -1) {
-                            if (firstEndTick != cur->unk18) {
-                                MILO_WARN(
-                                    "%s (%s): Real Guitar Chord does not end on the same note at %s",
-                                    mFilename,
-                                    mTrackName,
-                                    PrintTick(tick)
-                                );
-                                return true;
-                            }
-                        }
-                    }
-                    cur++;
-                    nStr--;
-                } while (nStr != 0);
+        if (info.mRGGemsInfo[stringnum].mGem.mTick == -1) {
+            MILO_WARN(
+                "%s (%s): RG Gem on string %d ended but never started at tick %s",
+                mFilename,
+                mTrackName,
+                stringnum,
+                PrintTick(tick)
+            );
+            return true;
+        }
+        info.mRGGemsInfo[stringnum].unk18 = tick;
+        for (int i = 0; i < 6; i++) {
+            if (info.mRGGemsInfo[i].mGem.mTick != -1)
+                allStringsEnded &= info.mRGGemsInfo[i].unk18 != -1;
+        }
+        if (allStringsEnded) {
+            int firstEndTick = -1;
+            for (unsigned int i = 0; i < 6; i++) {
+                SongParser::RGGemInfo &cur = info.mRGGemsInfo[i];
+                if (firstEndTick == -1 && cur.mGem.mTick != -1)
+                    firstEndTick = cur.unk18;
+                else if (cur.mGem.mTick != -1 && firstEndTick != cur.unk18) {
+                    MILO_WARN(
+                        "%s (%s): Real Guitar Chord does not end on the same note at %s",
+                        mFilename,
+                        mTrackName,
+                        PrintTick(firstEndTick)
+                    );
+                    return true;
+                }
             }
         }
 
         if (allStringsEnded) {
             // Find the start tick (last-wins among active strings)
             int on_tick = -1;
-            if (info.mRGGemsInfo[0].mGem.mTick != -1) on_tick = info.mRGGemsInfo[0].mGem.mTick;
-            if (info.mRGGemsInfo[1].mGem.mTick != -1) on_tick = info.mRGGemsInfo[1].mGem.mTick;
-            if (info.mRGGemsInfo[2].mGem.mTick != -1) on_tick = info.mRGGemsInfo[2].mGem.mTick;
-            if (info.mRGGemsInfo[3].mGem.mTick != -1) on_tick = info.mRGGemsInfo[3].mGem.mTick;
-            if (info.mRGGemsInfo[4].mGem.mTick != -1) on_tick = info.mRGGemsInfo[4].mGem.mTick;
-            if (info.mRGGemsInfo[5].mGem.mTick != -1) on_tick = info.mRGGemsInfo[5].mGem.mTick;
+            for (int i = 0; i < 6; i++) {
+                if (info.mRGGemsInfo[i].mGem.mTick != -1)
+                    on_tick = info.mRGGemsInfo[i].mGem.mTick;
+            }
 
             MILO_ASSERT(on_tick != -1, 0xBB2);
 
@@ -2211,45 +2176,21 @@ bool SongParser::HandleRGGemStop(
             int distFromChordText = on_tick - info.mRGChordTextTick;
             int distSign = distFromChordText >> 31;
             if ((distSign ^ distFromChordText) - distSign < 10) {
-#if defined(HX_NATIVE)
-                // rb3-xenon GemInfo.h declares chord_name as a single char (the
-                // RG chord-name path is off the standard gem path). Store the
-                // first char to stay in-bounds. X360 (#else) is unchanged.
-                geminfo.chord_name = info.mRGChordText[0];
-#else
-                strcpy(&geminfo.chord_name, info.mRGChordText);
-#endif
+                strcpy(geminfo.chord_name, info.mRGChordText);
             } else {
-#if defined(HX_NATIVE)
-                geminfo.chord_name = 0;
-#else
-                geminfo.chord_name = 0;
-#endif
+                geminfo.chord_name[0] = 0;
             }
 
             // Compute hand position if not set
             bool didComputeHandPos = false;
             if (mRGHandPos < 0) {
-                SongParser::RGGemInfo *s = &info.mRGGemsInfo[0];
-                int itr = 2;
-                mRGHandPos = 25;
                 didComputeHandPos = true;
-                do {
-                    if (s[0].mGem.mTick != -1 && s[0].mFret != 0) {
-                        if (s[0].mFret < mRGHandPos)
-                            mRGHandPos = s[0].mFret;
-                    }
-                    if (s[1].mGem.mTick != -1 && s[1].mFret != 0) {
-                        if (s[1].mFret < mRGHandPos)
-                            mRGHandPos = s[1].mFret;
-                    }
-                    if (s[2].mGem.mTick != -1 && s[2].mFret != 0) {
-                        if (s[2].mFret < mRGHandPos)
-                            mRGHandPos = s[2].mFret;
-                    }
-                    s += 3;
-                    itr--;
-                } while (itr != 0);
+                mRGHandPos = 25;
+                for (int i = 0; i < 6; i++) {
+                    SongParser::RGGemInfo &cur = info.mRGGemsInfo[i];
+                    if (cur.mGem.mTick != -1 && cur.mFret != 0)
+                        mRGHandPos = cur.mFret < mRGHandPos ? cur.mFret : mRGHandPos;
+                }
                 if (mRGHandPos < 0)
                     mRGHandPos = 0;
             }
@@ -2409,43 +2350,9 @@ bool SongParser::HandleRGGemStop(
             // Submit gem then reset DifficultyInfo
             mSink->AddRGGem(difflevel, geminfo);
 
-            // Reset all 6 RGGemInfo entries directly (no constructor call)
-            info.mRGGemsInfo[0].mGem.mTick = -1;
-            info.mRGGemsInfo[0].mGem.mPlayers = 0;
-            info.mRGGemsInfo[0].mGem.mCymbalSlots = 28;
-            info.mRGGemsInfo[0].mFret = 0;
-            info.mRGGemsInfo[0].mChannel = 0;
-            info.mRGGemsInfo[0].unk18 = -1;
-            info.mRGGemsInfo[1].mGem.mTick = -1;
-            info.mRGGemsInfo[1].mGem.mPlayers = 0;
-            info.mRGGemsInfo[1].mGem.mCymbalSlots = 28;
-            info.mRGGemsInfo[1].mFret = 0;
-            info.mRGGemsInfo[1].mChannel = 0;
-            info.mRGGemsInfo[1].unk18 = -1;
-            info.mRGGemsInfo[2].mGem.mTick = -1;
-            info.mRGGemsInfo[2].mGem.mPlayers = 0;
-            info.mRGGemsInfo[2].mGem.mCymbalSlots = 28;
-            info.mRGGemsInfo[2].mFret = 0;
-            info.mRGGemsInfo[2].mChannel = 0;
-            info.mRGGemsInfo[2].unk18 = -1;
-            info.mRGGemsInfo[3].mGem.mTick = -1;
-            info.mRGGemsInfo[3].mGem.mPlayers = 0;
-            info.mRGGemsInfo[3].mGem.mCymbalSlots = 28;
-            info.mRGGemsInfo[3].mFret = 0;
-            info.mRGGemsInfo[3].mChannel = 0;
-            info.mRGGemsInfo[3].unk18 = -1;
-            info.mRGGemsInfo[4].mGem.mTick = -1;
-            info.mRGGemsInfo[4].mGem.mPlayers = 0;
-            info.mRGGemsInfo[4].mGem.mCymbalSlots = 28;
-            info.mRGGemsInfo[4].mFret = 0;
-            info.mRGGemsInfo[4].mChannel = 0;
-            info.mRGGemsInfo[4].unk18 = -1;
-            info.mRGGemsInfo[5].mGem.mTick = -1;
-            info.mRGGemsInfo[5].mGem.mPlayers = 0;
-            info.mRGGemsInfo[5].mGem.mCymbalSlots = 28;
-            info.mRGGemsInfo[5].mFret = 0;
-            info.mRGGemsInfo[5].mChannel = 0;
-            info.mRGGemsInfo[5].unk18 = -1;
+            for (int i = 0; i < 6; i++) {
+                info.mRGGemsInfo[i] = SongParser::RGGemInfo();
+            }
             info.mRGAreaStrumType = kRGNoStrum;
         }
         return true;
