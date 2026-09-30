@@ -368,6 +368,7 @@ void SongDB::AddTrack(int, Symbol, SongInfoAudioType, TrackType ty, bool) {
 #pragma pop
 
 void SongDB::AddPhrase(BeatmatchPhraseType ty, int i2, const Phrase &phrase) {
+    static Symbol vocals("vocals");
     if (ty != kCommonPhrase || TheGame->AllowOverdrivePhrases()) {
         int startTick = phrase.GetTick();
         int endTick = phrase.GetDurationTicks() + startTick;
