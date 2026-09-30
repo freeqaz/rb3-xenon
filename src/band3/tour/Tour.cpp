@@ -265,7 +265,8 @@ void Tour::InitializeTour() {
 
 bool Tour::HasGigSpecificIntro() const {
     MILO_ASSERT(m_pTourPerformer, 0x1B1);
-    Quest *quest = TheQuestMgr.GetQuest(m_pTourPerformer->GetCurrentQuest());
+    Symbol cur = m_pTourPerformer->GetCurrentQuest();
+    Quest *quest = TheQuestMgr.GetQuest(cur);
     if (quest)
         return quest->HasCustomIntro();
     else
@@ -274,7 +275,8 @@ bool Tour::HasGigSpecificIntro() const {
 
 bool Tour::HasGigSpecificOutro() const {
     MILO_ASSERT(m_pTourPerformer, 0x1C3);
-    Quest *quest = TheQuestMgr.GetQuest(m_pTourPerformer->GetCurrentQuest());
+    Symbol cur = m_pTourPerformer->GetCurrentQuest();
+    Quest *quest = TheQuestMgr.GetQuest(cur);
     if (quest)
         return quest->HasCustomOutro();
     else
@@ -283,14 +285,16 @@ bool Tour::HasGigSpecificOutro() const {
 
 Symbol Tour::GetGigSpecificIntro() const {
     MILO_ASSERT(m_pTourPerformer, 0x1D4);
-    Quest *pQuest = TheQuestMgr.GetQuest(m_pTourPerformer->GetCurrentQuest());
+    Symbol cur = m_pTourPerformer->GetCurrentQuest();
+    Quest *pQuest = TheQuestMgr.GetQuest(cur);
     MILO_ASSERT(pQuest, 0x1D9);
     return pQuest->GetCustomIntro();
 }
 
 Symbol Tour::GetGigSpecificOutro() const {
     MILO_ASSERT(m_pTourPerformer, 0x1E1);
-    Quest *pQuest = TheQuestMgr.GetQuest(m_pTourPerformer->GetCurrentQuest());
+    Symbol cur = m_pTourPerformer->GetCurrentQuest();
+    Quest *pQuest = TheQuestMgr.GetQuest(cur);
     MILO_ASSERT(pQuest, 0x1E6);
     return pQuest->GetCustomOutro();
 }
