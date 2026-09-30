@@ -363,8 +363,8 @@ void OutfitConfig::Piercing::Deform(SyncMeshCB *cb) {
                 unsigned short *faceVerts = &headMesh->Faces(faceIdx).v1;
                 for (int k = 0; k < 3; k++) {
                     unsigned short srcIdx = faceVerts[k];
-                    RndMesh::Vert &cur = headMesh->Verts(srcIdx);
                     const SyncMeshCB::Vert &before = (*beforeVerts)[srcIdx];
+                    RndMesh::Vert &cur = headMesh->Verts(srcIdx);
                     Vector3 d;
                     Subtract(cur.pos, before.pos, d);
                     ScaleAddEq(dst.pos, d, weights[k]);
@@ -400,7 +400,7 @@ void OutfitConfig::Piercing::Deform(SyncMeshCB *cb) {
                         break;
                     }
                     RndMesh::Vert &dst = reskinMesh->Verts(dstIdx);
-                    Add(delta, dst.pos, dst.pos);
+                    Add(dst.pos, delta, dst.pos);
                 }
             } else {
                 RndTransformable *attach = mPiercing;
