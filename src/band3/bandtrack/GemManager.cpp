@@ -693,7 +693,7 @@ void GemManager::SetupGems(int startTick) {
         int phraseStart = -1;
         int phraseEnd = -1;
         if (gem.IsRealGuitar() && slots != 0) {
-            if (gem.mTick < lastArpeggioEndTick) {
+            if (gemTick < lastArpeggioEndTick) {
                 MILO_ASSERT(!mArpeggioPhrases.empty(), 0x476);
                 ArpeggioPhrase &phrase = mArpeggioPhrases.back();
                 MILO_ASSERT(phrase.mEndTick == lastArpeggioEndTick, 0x47A);
@@ -715,9 +715,9 @@ void GemManager::SetupGems(int startTick) {
                     newGem.mInArpeggio = true;
                 }
             } else {
-                int searchTick = gem.mTick + 1;
-                if (gem.mTick != lastArpeggioEndTick) {
-                    searchTick = gem.mTick;
+                int searchTick = gemTick + 1;
+                if (gemTick != lastArpeggioEndTick) {
+                    searchTick = gemTick;
                 }
                 if (TheSongDB->GetPhraseExtents(
                         (BeatmatchPhraseType)4, trackNum, searchTick, phraseStart, phraseEnd
@@ -758,16 +758,13 @@ void GemManager::SetupGems(int startTick) {
         int rgChordID = gem.GetRGChordID();
         if ((unsigned int)rgChordID == unk130 && gem.IsRealGuitarChord() && isImmediate) {
             newGem.mIsRepeatChord = true;
-            if (!gem.IsMuted() && gem.mTick >= lastArpeggioEndTick) {
-                int endTick = gem.mTick;
-                bool skipDuration = false;
-                if (gem.mIgnoreDuration || gem.LeftHandSlide()) {
-                    skipDuration = true;
+            if (!gem.IsMuted() && gemTick >= lastArpeggioEndTick) {
+                bool skipDuration = gem.mIgnoreDuration || gem.LeftHandSlide();
+                if (skipDuration) {
+                    repeatedChordEndTick = gemTick;
+                } else {
+                    repeatedChordEndTick = gemTick + gem.mDurationTicks;
                 }
-                if (!skipDuration) {
-                    endTick += gem.mDurationTicks;
-                }
-                repeatedChordEndTick = endTick;
                 newGem.mSuppressChordLabel = true;
             }
         } else {
@@ -777,18 +774,15 @@ void GemManager::SetupGems(int startTick) {
             } else {
                 unk130 = -1;
             }
-            if (gem.IsRealGuitarChord() && !gem.IsMuted() && gem.mTick >= lastArpeggioEndTick) {
+            if (gem.IsRealGuitarChord() && !gem.IsMuted() && gemTick >= lastArpeggioEndTick) {
                 repeatedChordGemId = i;
-                repeatedChordStartTick = gem.mTick;
-                int endTick = gem.mTick;
-                bool skipDuration = false;
-                if (gem.mIgnoreDuration || gem.LeftHandSlide()) {
-                    skipDuration = true;
+                repeatedChordStartTick = gemTick;
+                bool skipDuration = gem.mIgnoreDuration || gem.LeftHandSlide();
+                if (skipDuration) {
+                    repeatedChordEndTick = gemTick;
+                } else {
+                    repeatedChordEndTick = gemTick + gem.mDurationTicks;
                 }
-                if (!skipDuration) {
-                    endTick += gem.mDurationTicks;
-                }
-                repeatedChordEndTick = endTick;
                 newGem.mSuppressChordLabel = true;
             }
         }
