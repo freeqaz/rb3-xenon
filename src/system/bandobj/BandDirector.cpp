@@ -526,6 +526,30 @@ void BandDirector::PlayNextShot() {
     }
 }
 
+// Retail guard word lbl_82CBCB34 packs three function-local statics, claimed
+// bit0..bit2 in this program order (read off the full 151-instruction target
+// listing, none pre-existing in our source -- this function had zero local
+// statics before this fix):
+//   bit0 lbl_82CBCB2C: static Message("remove_midi_parsers") -- built via a
+//        temp stack Symbol (this=r31+0x50) then Message::Message(Symbol),
+//        then atexit(fn_82C43FE0) for its non-trivial dtor. Inside the
+//        `if (mCurWorld)` guard, replacing the old shared-global
+//        remove_midi_parsers_msg reference (Messages3.h) -- that global has
+//        no .cpp definition anywhere in the tree (LITERAL_MSG is declared but
+//        never invoked), so retail's real source used a local static here.
+//   bit1 lbl_82CBCB28: static Symbol("venue") -- constructed directly (no
+//        Message wrapper, no atexit: Symbol has a trivial dtor), unconditionally
+//        right after `if (TheCrowdAudio) TheCrowdAudio->SetBank(mCurWorld);`.
+//        Its value is NEVER read again anywhere in this function's retail
+//        bytes -- checked the full instruction listing, only the constructor
+//        call (??0Symbol@@QAA@PBD@Z) touches lbl_82CBCB28. Kept as a
+//        declared-but-locally-unused static purely for guard-bit parity;
+//        purpose (if any, e.g. a side effect of Symbol-table interning
+//        consumed elsewhere) is unconfirmed.
+//   bit2 lbl_82CBCB20: static Message("setup_midi_parsers") -- same
+//        temp-Symbol-then-Message-ctor-then-atexit(fn_82C43FC0) shape as bit0,
+//        replacing the old shared-global setup_midi_parsers_msg reference
+//        (Messages4.h) for the same reason as bit0.
 void BandDirector::EnterVenue() {
     if (TheBandWardrobe) {
         WorldDir *dir = mVenue.Dir();
@@ -534,13 +558,16 @@ void BandDirector::EnterVenue() {
             dir->Enter();
             if (dir != mCurWorld) {
                 TheBandWardrobe->SetVenueDir(dir);
-                if (mCurWorld)
+                if (mCurWorld) {
+                    static Message remove_midi_parsers_msg("remove_midi_parsers");
                     mCurWorld->Handle(remove_midi_parsers_msg, false);
+                }
                 mCurWorld = dir;
                 unk58 = true;
                 if (mCurWorld) {
                     if (TheCrowdAudio)
                         TheCrowdAudio->SetBank(mCurWorld);
+                    static Symbol venue_sym("venue");
                     // rb3-Wii dev-build guard: the editor-mode sphere sync is
                     // exactly the TheLoadMgr.EditMode() check CB-7 centralized as
                     // LOADMGR_EDITMODE (utl/Loader.h), but this site was
@@ -552,6 +579,7 @@ void BandDirector::EnterVenue() {
                     if (LOADMGR_EDITMODE) {
                         GetWorld()->SetSphere(mCurWorld->GetSphere());
                     }
+                    static Message setup_midi_parsers_msg("setup_midi_parsers");
                     mCurWorld->Handle(setup_midi_parsers_msg, false);
                     ClearLighting();
                 }
