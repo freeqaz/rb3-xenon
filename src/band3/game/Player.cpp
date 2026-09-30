@@ -270,10 +270,11 @@ void Player::PollTalking(int i) {
     // only pushes the change to the track.
     if (i % 5 != 0)
         return;
+    BandUser *user = mUser;
     bool talking = false;
-    if (mUser) {
-        MicManagerXbox *mgr = MicManagerXbox::GetInstance();
-        talking = mgr->unk1c->IsRemoteTalking(mUser->GetOnlineID()->GetXUID()) != 0;
+    if (user) {
+        IXHV2Engine *xhv = MicManagerXbox::GetInstance()->unk1c;
+        talking = xhv->IsRemoteTalking(user->GetOnlineID()->GetXUID()) != 0;
     }
     if (talking != unk290) {
         BandTrack *track = GetBandTrack();
@@ -500,12 +501,10 @@ void Player::LocalSetEnabledState(EnabledState estate, int i, BandUser *causer, 
 #pragma pop
 
 bool Player::Saveable() const {
-    bool ret = false;
-    if (mEnabledState == kPlayerDisabled && mTimesFailed < 3 && !unk298) {
-        MetaPerformer::Current();
-        ret = true;
-    }
-    return ret;
+    // Retail: one bool expression (li 1 / li 0 join); the MetaPerformer
+    // lookup survives only as a call whose result is unused.
+    return mEnabledState == kPlayerDisabled && mTimesFailed < 3 && !unk298
+        && (MetaPerformer::Current(), true);
 }
 
 void Player::Save(BandUser *user, bool b) { SetEnabledState(kPlayerBeingSaved, user, b); }
@@ -715,8 +714,9 @@ DECOMP_FORCEACTIVE(Player, "Non-local player trying to deploy locally\n", "send_
 
 int Player::LocalDeployBandEnergy() {
     int playersSaved = mBand->DeployBandEnergy(mUser);
-    mStats.mDeployCount++;
-    mStats.AddToPlayersSaved(playersSaved, mBand->MainPerformer()->Crowd()->GetValue());
+    Stats &stats = mStats; // retail materialises &mStats before the crowd lookup
+    stats.mDeployCount++;
+    stats.AddToPlayersSaved(playersSaved, mBand->MainPerformer()->Crowd()->GetValue());
     PerformDeployBandEnergy(playersSaved, true);
     return playersSaved;
 }
@@ -1018,14 +1018,15 @@ void Player::UpdateSectionStats(float hitFraction, float percentComplete) {
     if (TheGame->InRollback()) // retail materialises the bool (li 1 / li 0)
         return;
     if (!mQuarantined) {
-        if (TheSongDB->mPracticeSections.size() == 0)
+        SongDB *db = TheSongDB;
+        if (db->mPracticeSections.empty())
             return;
         if (unk2c0 < 0)
             return;
-        if ((unsigned int)unk2c0 >= TheSongDB->mPracticeSections.size())
+        if ((unsigned int)unk2c0 >= db->mPracticeSections.size())
             return;
         int sectionIdx = unk2c0;
-        Symbol sectionSym = TheSongDB->mPracticeSections[sectionIdx].unk0;
+        Symbol sectionSym = db->mPracticeSections[sectionIdx].unk0;
         mStats.SetSectionInfo(sectionIdx, sectionSym, hitFraction, percentComplete);
     }
 }
