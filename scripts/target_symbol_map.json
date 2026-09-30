@@ -21188,7 +21188,7 @@
  "0x827e52a0": "?RemoveAt@?$TrackWidgetImp@UInstance@RndMultiMesh@@@@UAAXMMM@Z",
  "0x827e5c48": "??1?$_List_base@PAVMidiParser@@V?$StlNodeAlloc@PAVMidiParser@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
  "0x827e5d78": "??1?$list@PAVMidiParser@@V?$StlNodeAlloc@PAVMidiParser@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
- "0x827e5d88": "??$_S_sort@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@U?$less@VSymbol@@@3@@stlpmtx_std@@YAXAAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@0@U?$less@VSymbol@@@0@@Z",
+ "0x827e5d88": "??$_S_sort@VTextInstance@@V?$StlNodeAlloc@VTextInstance@@@stlpmtx_std@@V?$WidgetInstanceCmp@VTextInstance@@@@@stlpmtx_std@@YAXAAV?$list@VTextInstance@@V?$StlNodeAlloc@VTextInstance@@@stlpmtx_std@@@0@V?$WidgetInstanceCmp@VTextInstance@@@@@Z",
  "0x827e64b8": "?StaticClassName@MidiParser@@SA?AVSymbol@@XZ",
  "0x827e6530": "?Clear@MidiParser@@QAAXXZ",
  "0x827e6590": "?Reset@MidiParser@@QAAXM@Z",
