@@ -73,9 +73,26 @@ public:
     }
 };
 
+// Instance list type per widget element. Retail keeps RndMultiMesh::Instance
+// widgets in RndMultiMesh::InstanceList (TransformListAlloc, i.e. the
+// gTransListAlloc pool): ~ImmediateWidgetImp (0x827e2b30) clears through
+// 0x8243dbf0, which frees via ReclaimableAlloc::CustFree on that pool. A trait
+// rather than a second template parameter keeps TrackWidgetImp<T> mangled as-is.
+template <typename T>
+struct TrackWidgetList {
+    typedef std::list<T> type;
+};
+
+template <>
+struct TrackWidgetList<RndMultiMesh::Instance> {
+    typedef RndMultiMesh::InstanceList type;
+};
+
 template <typename T>
 class TrackWidgetImp : public TrackWidgetImpBase {
 public:
+    typedef typename TrackWidgetList<T>::type InstList;
+
     TrackWidgetImp() {}
     virtual ~TrackWidgetImp() {}
     virtual bool Empty() { return Instances().empty(); }
@@ -88,34 +105,34 @@ public:
         DoRemoveAt(Instances(), f1, f2, f3);
     }
     virtual void RemoveUntil(float f1, float f2) { DoRemoveUntil(Instances(), f1, f2); }
-    virtual std::list<T> &Instances() = 0;
+    virtual InstList &Instances() = 0;
     virtual void RemoveInstances(
-        std::list<T> &list, typename std::list<T>::iterator start, typename std::list<T>::iterator end
+        InstList &list, typename InstList::iterator start, typename InstList::iterator end
     ) {
         list.erase(start, end);
         SetDirty(true);
     }
     virtual void PushInstance(T &inst) { DoPushInstance(Instances(), inst); }
 
-    void DoClear(std::list<T> &insts) {
+    void DoClear(InstList &insts) {
         insts.clear();
         SetDirty(true);
     }
 
-    float DoGetFirstInstanceY(std::list<T> &list) {
+    float DoGetFirstInstanceY(InstList &list) {
         MILO_ASSERT(!list.empty(), 0x8F);
         return list.front().mXfm.v.y;
     }
 
-    float DoGetLastInstanceY(std::list<T> &list) {
+    float DoGetLastInstanceY(InstList &list) {
         MILO_ASSERT(!list.empty(), 0x95);
         return list.back().mXfm.v.y;
     }
 
-    void DoRemoveAt(std::list<T> &insts, float f1, float f2, float f3) {
+    void DoRemoveAt(InstList &insts, float f1, float f2, float f3) {
         if (!insts.empty()) {
-            typename std::list<T>::iterator it5c = insts.end();
-            typename std::list<T>::iterator it = insts.begin();
+            typename InstList::iterator it5c = insts.end();
+            typename InstList::iterator it = insts.begin();
             for (; it != insts.end(); ++it) {
                 if (IsFabsZero(it->mXfm.v.y - f1)) {
                     if (f3 < 0 || Abs<float>(it->mXfm.v.x - f2) <= f3) {
@@ -140,10 +157,10 @@ public:
         }
     }
 
-    void DoRemoveUntil(std::list<T> &insts, float f1, float f2) {
+    void DoRemoveUntil(InstList &insts, float f1, float f2) {
         if (!insts.empty()) {
-            typename std::list<T>::iterator it = insts.begin();
-            typename std::list<T>::iterator begin = it;
+            typename InstList::iterator it = insts.begin();
+            typename InstList::iterator begin = it;
             for (; it != insts.end() && f2 * it->mXfm.m.y.y + it->mXfm.v.y < f1; ++it) {
             }
             if (it != begin) {
@@ -152,9 +169,9 @@ public:
         }
     }
 
-    void DoSort(std::list<T> &insts) { insts.sort(WidgetInstanceCmp<T>()); }
+    void DoSort(InstList &insts) { insts.sort(WidgetInstanceCmp<T>()); }
 
-    void DoPushInstance(std::list<T> &insts, T &instance) {
+    void DoPushInstance(InstList &insts, T &instance) {
         insts.push_back(instance);
         SetDirty(true);
     }
@@ -235,7 +252,8 @@ public:
 class MatWidgetImp : public TrackWidgetImp<MeshInstance> {
 public:
     MatWidgetImp(RndMat *m) : mMat(m) {}
-    virtual ~MatWidgetImp() {}
+    // No user-declared dtor: retail ~MatWidgetImp (0x827e2c98) has no own-vtable
+    // store at entry, the implicit-dtor shape (patterns/fixable-declarations.md).
     virtual int AddMeshInstance(Transform, RndMesh *, float);
     virtual void DrawInstances(const ObjPtrList<RndMesh> &, int);
     virtual std::list<MeshInstance> &Instances() { return mInstances; }
@@ -272,7 +290,7 @@ public:
     }
     virtual void DrawInstances(const ObjPtrList<RndMesh> &, int);
     virtual void Init();
-    virtual std::list<RndMultiMesh::Instance> &Instances();
+    virtual RndMultiMesh::InstanceList &Instances();
     virtual void PushInstance(RndMultiMesh::Instance &);
 
     NEW_OVERLOAD
@@ -286,7 +304,7 @@ public:
 class ImmediateWidgetImp : public TrackWidgetImp<RndMultiMesh::Instance> {
 public:
     ImmediateWidgetImp(bool b) : mAllowRotation(b) {}
-    virtual ~ImmediateWidgetImp() {}
+    // No user-declared dtor, as for MatWidgetImp (retail 0x827e2b30).
     virtual int AddInstance(Transform tf, float) {
         bool b2 = false;
         if (!Empty() && tf.v.y < GetLastInstanceY()) {
@@ -299,11 +317,11 @@ public:
         return b2;
     }
     virtual void DrawInstances(const ObjPtrList<RndMesh> &, int);
-    virtual std::list<RndMultiMesh::Instance> &Instances() { return mInstances; }
+    virtual RndMultiMesh::InstanceList &Instances() { return mInstances; }
 
     NEW_OVERLOAD
     DELETE_OVERLOAD
 
-    std::list<RndMultiMesh::Instance> mInstances; // 0x4
+    RndMultiMesh::InstanceList mInstances; // 0x4
     bool mAllowRotation; // 0xc
 };

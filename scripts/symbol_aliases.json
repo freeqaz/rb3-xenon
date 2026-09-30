@@ -12924,7 +12924,7 @@
   {
    "name": "push_back",
    "address": "0x827a3fa0",
-   "survivor": "?push_back@?$vector@URecurseInfo@@V?$StlNodeAlloc@URecurseInfo@@@stlpmtx_std@@@stlpmtx_std@@QAAXABURecurseInfo@@@Z",
+   "survivor": "?push_back@?$vector@VTrackChannels@@V?$StlNodeAlloc@VTrackChannels@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVTrackChannels@@@Z",
    "folded": [
     "?push_back@?$vector@ULabel@?A0xe9afadec@@V?$StlNodeAlloc@ULabel@?A0xe9afadec@@@stlpmtx_std@@@stlpmtx_std@@QAAXABULabel@?A0xe9afadec@@@Z",
     "?push_back@?$vector@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@V?$StlNodeAlloc@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@Z",
@@ -12932,10 +12932,17 @@
     "?push_back@?$vector@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@V?$StlNodeAlloc@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@Z",
     "?push_back@?$vector@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@V?$StlNodeAlloc@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@Z",
     "?push_back@?$vector@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@V?$StlNodeAlloc@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@Z",
-    "?push_back@?$vector@UObjVersion@@V?$StlNodeAlloc@UObjVersion@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUObjVersion@@@Z",
-    "?push_back@?$vector@VTrackChannels@@V?$StlNodeAlloc@VTrackChannels@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVTrackChannels@@@Z"
+    "?push_back@?$vector@UObjVersion@@V?$StlNodeAlloc@UObjVersion@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUObjVersion@@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 8 folded spelling(s), 1 census sites over 2 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 8 folded spelling(s), 1 census sites over 2 functions.",
+   "withdrawn": [
+    {
+     "spelling": "?push_back@?$vector@URecurseInfo@@V?$StlNodeAlloc@URecurseInfo@@@stlpmtx_std@@@stlpmtx_std@@QAAXABURecurseInfo@@@Z",
+     "lane": "W16-HL 2026-09-30",
+     "class": "WRONG_MAP_NAME_AT_ADDRESS",
+     "evidence": "Retail 0x827a3fa0 has exactly one caller, in DataArraySongInfo (bl at 0x827A462C); its fast path calls 0x827A3608, which copies a word at +0 and then runs ??0?$vector@H (vector<int> copy ctor, 0x827c1378) on +4 -- TrackChannels {SongInfoAudioType; vector<int>} -- and advances the finish pointer by 0x10. RecurseInfo is {String mDir; String mFile} = 0x18 in our source and in both oracles, and no retail function copies a String pair at a 0x18 stride, so the RecurseInfo push_back cannot fold with this body. The map name at this address was wrong; survivor relabelled to push_back<TrackChannels>, which our DataArraySongInfo.obj defines (split re-homed from HolmesClient.cpp to DataArraySongInfo.cpp)."
+    }
+   ]
   },
   {
    "name": "SetDescription",
@@ -81287,7 +81294,7 @@
   {
    "name": "DoRemoveUntil",
    "address": "0x827e0f90",
-   "survivor": "?DoRemoveUntil@?$TrackWidgetImp@UInstance@RndMultiMesh@@@@QAAXAAV?$list@UInstance@RndMultiMesh@@V?$StlNodeAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@MM@Z",
+   "survivor": "?DoRemoveUntil@?$TrackWidgetImp@UInstance@RndMultiMesh@@@@QAAXAAV?$list@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@MM@Z",
    "folded": [
     "?DoRemoveUntil@?$TrackWidgetImp@VMeshInstance@@@@QAAXAAV?$list@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@@@stlpmtx_std@@MM@Z"
    ],

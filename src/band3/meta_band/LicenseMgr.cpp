@@ -59,6 +59,11 @@ bool LicenseMgr::ContentDiscovered(Symbol s) {
 
 const char *LicenseMgr::ContentPattern() { return "licenses.dta"; }
 const char *LicenseMgr::ContentDir() { return "licenses"; }
+
+// Retail 0x8264e920 (li r11,0; stb r11,0x38(r3); blr), placed right after
+// ContentDir; its only caller is BandSongMgr::ClearSongCacheNeedsWrite via
+// mLicenseMgr (+0x15c). The name is ours: neither oracle has this method.
+void LicenseMgr::ClearLicenseCacheNeedsWrite() { mCacheNeedsWrite = false; }
 void LicenseMgr::ContentMounted(const char *, const char *) {}
 
 void LicenseMgr::ContentLoaded(Loader *loader, ContentLocT ct, Symbol s) {

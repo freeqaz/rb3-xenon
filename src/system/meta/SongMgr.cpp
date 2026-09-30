@@ -225,6 +225,11 @@ SongInfo *SongMgr::SongAudioData(Symbol shortname) const {
     return SongAudioData(GetSongIDFromShortName(shortname, true));
 }
 
+// Out of line, as in rb3-Wii: retail BandSongMgr::SongCacheNeedsWrite /
+// ClearSongCacheNeedsWrite `bl` these (0x827A8938 / 0x827A8978) rather than
+// inlining the qualified SongMgr:: call, which an in-class body would allow.
+bool SongMgr::SongCacheNeedsWrite() const { return mSongCacheNeedsWrite; }
+
 bool SongMgr::IsSongCacheWriteDone() const {
     return mState == kSongMgr_Ready || mState == kSongMgr_Failure;
 }
@@ -232,6 +237,8 @@ bool SongMgr::IsSongCacheWriteDone() const {
 char const *SongMgr::GetCachedSongInfoName() const { return SONG_CACHE_CONTAINER_NAME; }
 
 char const *SongMgr::AlternateSongDir() const { return SONG_CACHE_CONTAINER_NAME; }
+
+void SongMgr::ClearSongCacheNeedsWrite() { mSongCacheNeedsWrite = false; }
 
 char const *SongMgr::SongPath(Symbol shortname, int version) const {
     const char *filename = SongAudioData(shortname)->GetBaseFileName();

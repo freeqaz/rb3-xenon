@@ -134,6 +134,13 @@ _ZNK10LicenseMgr22LicenseCacheNeedsWriteEv:
     xorq %rax, %rax
     ret
 
+// LicenseMgr::ClearLicenseCacheNeedsWrite()
+.weak _ZN10LicenseMgr27ClearLicenseCacheNeedsWriteEv
+.type _ZN10LicenseMgr27ClearLicenseCacheNeedsWriteEv,@function
+_ZN10LicenseMgr27ClearLicenseCacheNeedsWriteEv:
+    xorq %rax, %rax
+    ret
+
 // LicenseMgr::WriteCachedMetadataToStream(BinStream&) const
 .weak _ZNK10LicenseMgr27WriteCachedMetadataToStreamER9BinStream
 .type _ZNK10LicenseMgr27WriteCachedMetadataToStreamER9BinStream,@function
