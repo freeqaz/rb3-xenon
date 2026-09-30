@@ -394,8 +394,10 @@ int *MemHeap::TryAlloc(int sizeWords, int align, int &allocSize) {
 int *MemHeap::Alloc(int sizeWords, int align, int &allocSize) {
     int *result = TryAlloc(sizeWords, align, allocSize);
     if (result == nullptr) {
-        int lFrags, rFrags, freeBytes, minFreeBytes, maxFreeBlock;
-        FreeBlockStats(lFrags, rFrags, freeBytes, minFreeBytes, maxFreeBlock);
+        // Retail (fn_827BCA78): 4-ref FreeBlockStats, then a default-constructed
+        // String that the report is streamed into -- not String(const char*).
+        int lFrags, rFrags, freeBytes, biggest;
+        FreeBlockStats(lFrags, rFrags, freeBytes, biggest);
         bool isMain = MainThread();
         if (!isMain) {
             extern bool gInsideMemFunc;
@@ -403,6 +405,8 @@ int *MemHeap::Alloc(int sizeWords, int align, int &allocSize) {
             gInsideMemFunc = false;
             gMemLock->Abandon();
         }
+#ifdef HX_NATIVE
+        // DC3-era addition; retail RB3 has no alloc_fail.txt dump here.
         extern MemTracker *gMemTracker;
         if (gMemTracker != nullptr && !gMemTracker->GetHeapOnly()) {
             FILE *f = fopen("alloc_fail.txt", "w");
@@ -411,16 +415,17 @@ int *MemHeap::Alloc(int sizeWords, int align, int &allocSize) {
                 fclose(f);
             }
         }
-        int wantBytes = sizeWords * 4;
-        String msg(MakeString(
+#endif
+        String msg;
+        msg << MakeString(
             "Allocation failure, heap \"%s\", want %d bytes\n"
             "   lFrags=  %8d\n"
             "   rFrags=  %8d\n"
             "   Biggest Block=%8d\n"
             "   Free Bytes=   %8d\n",
-            mName, wantBytes, lFrags, rFrags, maxFreeBlock, freeBytes
-        ));
-        MemPrintOverview(-3, msg);
+            mName, sizeWords * 4, lFrags, rFrags, biggest, freeBytes
+        );
+        MemPrintOverview(kNoHeap, msg);
         MILO_FAIL(msg.c_str());
     }
     return result;

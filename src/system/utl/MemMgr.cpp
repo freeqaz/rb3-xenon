@@ -1045,36 +1045,28 @@ int MemFindHeap(const char *name) {
     }
     return -1;
 }
-static SIZE_T sMinPhysFree = (SIZE_T)-1;
-
+// Retail (fn_827BC838) is RB3's own text, not DC3's: the physical line has no
+// running minimum (no sMinPhysFree static exists), the usage figure is a signed
+// `/ 1024` (srawi+addze), and the per-heap line comes from the 4-ref
+// MemFreeBlockStats with a 6-arg format. Its only callers are Rnd::UpdateHeap
+// (passes *mHeapOverlay) and MemHeap::Alloc's failure path (passes a String).
 void MemPrintOverview(int heapId, TextStream &stream) {
-    if ((int)-2 == heapId || heapId == -3) {
+    if ((int)-2 == heapId || heapId == kNoHeap) {
         MEMORYSTATUS status;
         GlobalMemoryStatus(&status);
-        if (sMinPhysFree >= status.dwAvailPhys) {
-            sMinPhysFree = status.dwAvailPhys;
-        }
-        int usage = PhysicalUsage();
-        unsigned long minFreeKB = sMinPhysFree >> 10;
-        unsigned long availKB = status.dwAvailPhys >> 10;
-        int usageKB = usage >> 10;
         stream << MakeString(
-            " [%5s] KB free:%7u(%7u) usage:%5i\n",
-            "physical", availKB, minFreeKB, usageKB
+            " [%5s] free:%7u usage:%5i\n",
+            "physical", status.dwAvailPhys >> 10, PhysicalUsage() / 1024
         );
     }
     for (int i = 0; i < gNumHeaps; i++) {
-        if (heapId == -3 || heapId == i) {
-            int leftFrag, rightFrag, numFreeBytes, biggestFree, minFreeBytes;
-            MemFreeBlockStats(i, leftFrag, rightFrag, numFreeBytes, biggestFree, minFreeBytes);
-            int wasteKB = (numFreeBytes - minFreeBytes) >> 10;
-            int bigKB = minFreeBytes >> 10;
-            int freeKB = biggestFree >> 10;
-            int totalFreeKB = numFreeBytes >> 10;
-            const char *name = MemHeapName(i);
+        if (heapId == kNoHeap || heapId == i) {
+            int lFrags, rFrags, freeBytes, biggest;
+            MemFreeBlockStats(i, lFrags, rFrags, freeBytes, biggest);
             stream << MakeString(
-                " [%5s] KB free:%7d(%7d) big:%7d lfrag:%5d rfrag:%5d waste:%5d\n",
-                name, totalFreeKB, freeKB, bigKB, leftFrag, rightFrag, wasteKB
+                " [%5s] free:%7d big:%7d lfrag:%5d rfrag:%5d waste:%5d\n",
+                MemHeapName(i), freeBytes >> 10, biggest >> 10, lFrags, rFrags,
+                (freeBytes - biggest) >> 10
             );
         }
     }
