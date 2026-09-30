@@ -330,7 +330,10 @@ void RndMeshAnim::ShrinkKeys(int num) {
 // (W17-PIN: rndobj/Fur.cpp is no longer scatter-included here. RndFur's block
 // 0x8246BEF0-0x8246CDF0 is its own TU on retail bytes and is pinned to
 // system/rndobj/Fur.cpp, which compiles standalone.)
-#include "rndobj/ShaderMgr.cpp"
+// (W17-PIN2: rndobj/ShaderMgr.cpp is no longer scatter-included either.
+// RndShaderMgr's 0x8246B5F0-0x8246BEF0 is pinned to system/rndobj/ShaderMgr.cpp,
+// now compiled standalone. mtx.cpp stays: Matrix4(const Transform&) at
+// 0x8246b770 is still defined out of line there, and this TU pairs it.)
 #include "math/mtx.cpp"
 
 // sw2 scatter-include (default/MeshAnim <- band3/game/NetGameMsgs.cpp)
