@@ -320,13 +320,14 @@ void ClosetMgr::ForceClosetPoll() {
 void ClosetMgr::SetCurrentCharacterPatch(
     BandCharDesc::Patch::Category cat, const char *cc
 ) {
+    // Retail (0x825678c8): the new patch's index from AddNewPatch, or the found
+    // index, is stored as the patch index -- no GetPatch()->mTexture lookup.
     int idx = unk3c->FindPatchIndex(cat, cc);
     if (idx == -1) {
-        unk3c->AddNewPatch(cat, cc);
+        idx = unk3c->AddNewPatch(cat, cc);
         unk50.patchType = 0;
-    } else {
-        unk50.patchIndex = unk3c->GetPatch(idx)->mTexture;
     }
+    unk50.patchIndex = idx;
     PreviewCharacter(true, false);
 }
 
