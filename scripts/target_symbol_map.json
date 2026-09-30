@@ -1,4 +1,12 @@
 {
+ "0x82577610": "?GetValidSongs@BandSongMgr@@QBAHABV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@AAVBandUserMgr@@AAV23@MM_N3@Z",
+ "0x82686f38": "?SetupPhrasesForTrack@SongDB@@QAAXHAAV?$vector@VExtent@@V?$StlNodeAlloc@VExtent@@@stlpmtx_std@@@stlpmtx_std@@AAV?$vector@EV?$StlNodeAlloc@E@stlpmtx_std@@@3@@Z",
+ "0x826d1fc0": "?_M_insert_overflow_aux@?$vector@VTrackerPlayerDisplay@@V?$StlNodeAlloc@VTrackerPlayerDisplay@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVTrackerPlayerDisplay@@ABV3@ABU__false_type@2@I_N@Z",
+ "0x826cee50": "?_M_insert_overflow_aux@?$vector@VData@MultiplayerAnalyzer@@V?$StlNodeAlloc@VData@MultiplayerAnalyzer@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVData@MultiplayerAnalyzer@@ABV34@ABU__false_type@2@I_N@Z",
+ "0x8266d7a8": "?_M_insert_overflow_aux@?$vector@VLeaderboardRow@@V?$StlNodeAlloc@VLeaderboardRow@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVLeaderboardRow@@ABV3@ABU__false_type@2@I_N@Z",
+ "0x82634e50": "?_M_insert_overflow_aux@?$vector@U?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAU?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@2@ABU32@ABU__false_type@2@I_N@Z",
+ "0x82b9a920": "?_M_copy@?$_Rb_tree@PAVTrackWidget@@U?$less@PAVTrackWidget@@@stlpmtx_std@@PAV1@U?$_Identity@PAVTrackWidget@@@3@U?$_SetTraitsT@PAVTrackWidget@@@priv@3@V?$StlNodeAlloc@PAVTrackWidget@@@3@@stlpmtx_std@@AAAPAU_Rb_tree_node_base@2@PAU32@0@Z",
+ "0x825970f8": "?_M_copy@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@H@3@U?$_Select1st@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@AAAPAU_Rb_tree_node_base@2@PAU32@0@Z",
  "0x82616230": "?MovePatch@CustomizePanel@@QAAXMM@Z",
  "0x826d45a0": "?SetSuccessState@TrackerBandDisplay@@QBAX_N@Z",
  "0x826d4290": "?SetType@TrackerBandDisplay@@QBAXW4TrackerBandDisplayType@@@Z",
