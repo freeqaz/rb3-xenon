@@ -24,5 +24,9 @@ void PackVector(
     unsigned char,
     bool
 );
-void FillCompressedVertex(CompressedVertex_Xbox &, const RndMesh::Vert &, bool);
+// RB3 retail 0x82737688 takes TWO args: both retail callers (RndMesh save loop
+// 0x824185E0, DxMesh::Fill 0x82737990) set only r3/r4, and the body never reads
+// r5 (its first touch is `li r5,0xa` for PackVector). DC3's is
+// (..., bool normalize) -- a later revision; RB3 has no such parameter.
+void FillCompressedVertex(CompressedVertex_Xbox &, const RndMesh::Vert &);
 void SaveCompressedVertex(const CompressedVertex_Xbox &, BinStream &);

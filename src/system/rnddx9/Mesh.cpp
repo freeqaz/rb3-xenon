@@ -131,9 +131,7 @@ static inline unsigned short FloatToHalf(float value) {
     return (unsigned short)(sign | ((((iValue >> 13) & 1) + iValue + 0xFFF) >> 13));
 }
 
-void FillCompressedVertex(
-    CompressedVertex_Xbox &compressed, const RndMesh::Vert &vert, bool normalize
-) {
+void FillCompressedVertex(CompressedVertex_Xbox &compressed, const RndMesh::Vert &vert) {
     // Pack color (ARGB D3DCOLOR format)
     u32 blue = (u32)(vert.color.blue * 255.0f);
     u32 red = (u32)(vert.color.red * 255.0f);
@@ -273,7 +271,7 @@ void DxMesh::Fill(RndMesh::Vert *begin, RndMesh::Vert *end) {
     if (begin != end) {
         CompressedVertex_Xbox *dst = (CompressedVertex_Xbox *)lock.mDataAddr;
         do {
-            FillCompressedVertex(*dst, *begin, false);
+            FillCompressedVertex(*dst, *begin);
             begin++;
             dst++;
         } while (begin != end);

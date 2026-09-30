@@ -1709,7 +1709,7 @@ static inline unsigned short FloatToHalf(float value) {
     return (unsigned short)(sign | ((((iValue >> 13) & 1) + iValue + 0xFFF) >> 13));
 }
 
-void FillCompressedVertex(CompressedVertex_Xbox &compressed, const RndMesh::Vert &vert, bool normalize) {
+void FillCompressedVertex(CompressedVertex_Xbox &compressed, const RndMesh::Vert &vert) {
     // Pack color (ARGB D3DCOLOR format)
     u32 blue = (u32)(vert.color.blue * 255.0f);
     u32 red = (u32)(vert.color.red * 255.0f);
@@ -1929,7 +1929,7 @@ void RndMesh::SaveVertices(BinStream &bs) {
                 // retail: same fold as above -- no TheLoadMgr.GetPlatform() check
                 // in the shipped asm inside this loop either.
                 static CompressedVertex_Xbox compressed;
-                FillCompressedVertex(compressed, *it, true);
+                FillCompressedVertex(compressed, *it);
                 SaveCompressedVertex(compressed, bs);
             } else {
                 bs << *it;

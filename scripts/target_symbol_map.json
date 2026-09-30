@@ -18328,7 +18328,7 @@
  "0x82737288": "?SetColorWriteMask@RndRenderState@@QAAXI@Z",
  "0x82737298": "?Init@RndRenderState@@QAAXXZ",
  "0x82737440": "?CanDraw@DxMesh@@IBA_NXZ",
- "0x82737688": "?FillCompressedVertex@@YAXAAUCompressedVertex_Xbox@@ABVVert@RndMesh@@_N@Z",
+ "0x82737688": "?FillCompressedVertex@@YAXAAUCompressedVertex_Xbox@@ABVVert@RndMesh@@@Z",
  "0x82737958": "?Fill@DxMesh@@IAAXPAVVert@RndMesh@@0@Z",
  "0x827379b8": "?FillCompressedVerts@DxMesh@@IAAXXZ",
  "0x82737f30": "?Release@VertexBufferData@DxMesh@@QAAXXZ",
