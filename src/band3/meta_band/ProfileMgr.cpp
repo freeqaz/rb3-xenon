@@ -1308,6 +1308,10 @@ void ProfileMgr::SetPrimaryProfile(BandProfile *profile) {
 }
 
 void ProfileMgr::HandleProfileLoadComplete() {
+    // Retail (0x825490A0) re-checks both web statuses before the pending work;
+    // HandleProfileSaveComplete (0x825490E8) does not.
+    CheckProfileWebLinkStatus();
+    CheckProfileWebSetlistStatus();
     HandlePendingProfileUploads();
     HandlePendingGamerpicRewards();
 }
