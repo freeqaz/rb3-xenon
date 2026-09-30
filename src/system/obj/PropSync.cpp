@@ -275,23 +275,31 @@ bool PropSync(Hmx::Rect &rect, DataNode &node, DataArray *prop, int i, PropOp op
     }
 }
 
+// Retail 0x8276A438: per-component, with six function-scope static Symbols on
+// one guard word, each dispatching to PropSync(float &).
 bool PropSync(Box &box, DataNode &node, DataArray *prop, int i, PropOp op) {
     if (i == prop->Size())
         return true;
     else {
         Symbol sym = prop->Sym(i);
-        {
-            static Symbol min("min");
-            if (sym == min) {
-                return PropSync(box.mMin, node, prop, i + 1, op);
-            }
-        }
-        {
-            static Symbol max("max");
-            if (sym == max) {
-                return PropSync(box.mMax, node, prop, i + 1, op);
-            }
-        }
+        static Symbol min_x("min_x");
+        if (sym == min_x)
+            return PropSync(box.mMin.x, node, prop, i + 1, op);
+        static Symbol max_x("max_x");
+        if (sym == max_x)
+            return PropSync(box.mMax.x, node, prop, i + 1, op);
+        static Symbol min_y("min_y");
+        if (sym == min_y)
+            return PropSync(box.mMin.y, node, prop, i + 1, op);
+        static Symbol max_y("max_y");
+        if (sym == max_y)
+            return PropSync(box.mMax.y, node, prop, i + 1, op);
+        static Symbol min_z("min_z");
+        if (sym == min_z)
+            return PropSync(box.mMin.z, node, prop, i + 1, op);
+        static Symbol max_z("max_z");
+        if (sym == max_z)
+            return PropSync(box.mMax.z, node, prop, i + 1, op);
         return false;
     }
 }
