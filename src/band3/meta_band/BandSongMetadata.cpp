@@ -403,7 +403,12 @@ bool BandSongMetadata::HasPart(Symbol s, bool b) const {
     }
 }
 
+// Retail declares real_guitar/real_bass as FUNCTION-LOCAL statics sharing one
+// guard word, claimed in that order (0x1, 0x2), not the utl/Symbols.h
+// globals -- W16-GZ localstatic lever.
 float BandSongMetadata::Rank(Symbol s) const {
+    static Symbol real_guitar("real_guitar");
+    static Symbol real_bass("real_bass");
     if (s == real_guitar || s == real_bass) {
         SongUpgradeData *data = mSongMgr->GetUpgradeData(ID());
         if (data) {
