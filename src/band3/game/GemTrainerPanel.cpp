@@ -358,10 +358,16 @@ void GemTrainerPanel::CopyGems(int tick) {
         Difficulty diff = mLocalUser->GetDifficulty();
         TrainerSection &sect = GetSection(GetCurrSection());
         GameGemList **gemListPtr = &mGameGemLists[diff];
-        int i5 = GetLoopTicks(GetCurrSection());
-        int i1 = mWriteTick - i5;
-        int startTick = sect.GetStartTick();
-        (*gemListPtr)->SetGems(startTick, i1, mWriteTick, mPattern, 4);
+        (*gemListPtr)
+            ->SetGems(
+                sect.GetStartTick(),
+                mWriteTick - GetLoopTicks(GetCurrSection()),
+                mWriteTick,
+                mPattern,
+                4
+            );
+        int i5;
+        int i1;
         mGemManager->ClearAllGems();
         mGemManager->ClearMissedPhrases();
         mTrack->GetTrackDir()->ClearAllGemWidgets();
@@ -411,6 +417,7 @@ const GameGem &GemTrainerPanel::GetLastGameGemInSection(int &gemID) const {
 void GemTrainerPanel::HandleTrackShifting() {
     if (TheGame->IsPaused())
         return;
+    static Symbol real_keys("real_keys");
     if (mTrack->GetType() != real_keys)
         return;
     TrainerSection &sect = GetSection(GetCurrSection());
