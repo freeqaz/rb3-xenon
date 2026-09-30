@@ -130,13 +130,23 @@ bool RndShaderProgram::Cache(
     if (gModTime > modTime) {
         // Retail evaluates PlatformSymbol BEFORE ShaderTypeName, i.e. in
         // function-argument (right-to-left) order -- MiloStripEval, not the
-        // comma-form MILO_LOG.
+        // comma-form MILO_LOG. MiloStripEval exists only #ifndef HX_NATIVE
+        // (os/Debug.h); natively this is the real log.
+#ifdef HX_NATIVE
+        MILO_LOG(
+            "Compiling shader: %s_%llx (%s)\n",
+            ShaderTypeName(shaderType),
+            flags,
+            PlatformSymbol(kPlatformXBox)
+        );
+#else
         MiloStripEval(
             "Compiling shader: %s_%llx (%s)\n",
             ShaderTypeName(shaderType),
             flags,
             PlatformSymbol(kPlatformXBox)
         );
+#endif
         if (!MainThread() || !Compile(shaderType, opts, vsBuffer, psBuffer)) {
             CopyErrorShader(shaderType, opts);
             return false;
