@@ -331,10 +331,16 @@ void MemTracker::StartLog(TextStream &ts) {
 }
 
 void MemTracker::StopLog() {
+#ifdef HX_NATIVE
     if (mLog) {
         *mLog << ")";
         mLog = nullptr;
     }
+#else
+    // RB3-360 retail: no null check before closing the log.
+    *mLog << ")";
+    mLog = nullptr;
+#endif
 }
 
 void MemTracker::Realloc(void *key, int reqSize, int actualSize, void *mem) {
