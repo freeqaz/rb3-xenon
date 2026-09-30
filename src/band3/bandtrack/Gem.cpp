@@ -77,6 +77,7 @@ void Gem::Poll(float f1, float f2, float f3, float f4, float f5) {
     if (CompareBounds()) {
         float fvar1 = mStart;
         if (f4 > fvar1) {
+            float fvar4 = f5 - fvar1;
             float fvar2;
             if (f4 < mEnd)
                 fvar2 = f4 - fvar1;
@@ -85,12 +86,12 @@ void Gem::Poll(float f1, float f2, float f3, float f4, float f5) {
             float fvar3 = mTailStart;
             ApplyDuration(
                 mGemManager->mTrackDir->SecondsToY(fvar3),
-                mGemManager->mTrackDir->SecondsToY(f5 - fvar1),
+                mGemManager->mTrackDir->SecondsToY(fvar4),
                 mGemManager->mTrackDir->SecondsToY(fvar2)
             );
-            for (int i = 0.0f; i < mTails.size(); i++) {
-                mTails[i]->Poll(f1, f2, f3);
-            }
+        }
+        for (int i = 0.0f; i < mTails.size(); i++) {
+            mTails[i]->Poll(f1, f2, f3);
         }
     }
 }
