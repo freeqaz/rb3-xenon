@@ -59,8 +59,8 @@ protected:
 
     static Hmx::Object *sOwner;
 
-    void LoadStage(BinStreamRev &);
-    void LoadStages(BinStreamRev &);
+    void LoadStage(BinStream &);
+    void LoadStages(BinStream &);
 
     /** The Mat to animate. */
     ObjPtr<RndMat> mMat; // 0x10

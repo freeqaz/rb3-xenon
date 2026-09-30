@@ -8148,7 +8148,7 @@
  "0x82463418": "?Add@?$Keys@VTexPtr@RndMatAnim@@PAVRndTex@@@@QAAHABVTexPtr@RndMatAnim@@M_N@Z",
  "0x82463548": "?resize@?$vector@V?$Key@VTexPtr@RndMatAnim@@@@V?$StlNodeAlloc@V?$Key@VTexPtr@RndMatAnim@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABV?$Key@VTexPtr@RndMatAnim@@@@@Z",
  "0x82463680": "??DHmx@@YA?AVMatrix4@0@ABVTransform@@ABV10@@Z",
- "0x82463850": "?LoadStages@RndMatAnim@@IAAXAAVBinStreamRev@@@Z",
+ "0x82463850": "?LoadStages@RndMatAnim@@IAAXAAVBinStream@@@Z",
  "0x82463ca8": "?Copy@RndMatAnim@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
  "0x82463de8": "?SetKey@RndMatAnim@@UAAXM@Z",
  "0x82463ee0": "?Load@RndMatAnim@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
