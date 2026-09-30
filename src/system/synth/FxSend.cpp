@@ -150,7 +150,7 @@ void FxSend::BuildChainVector(std::vector<FxSend *> &sends) {
     FOREACH (it, Refs()) {
         // Retail (and rb3-Wii) load the ref once and reuse it in both branches;
         // DC3 recomputes it per branch, which does not match retail here.
-        ObjRefOwner *ref = RefPtrOf(it);
+        auto ref = RefPtrOf(it); // ObjRefOwner* in the match build, const ObjRef* natively
         FxSend *send = dynamic_cast<FxSend *>(ref->RefOwner());
         if (send && send->mNextSend == this) {
             send->BuildChainVector(sends);
