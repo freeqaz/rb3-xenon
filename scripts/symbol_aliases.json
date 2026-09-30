@@ -83262,11 +83262,11 @@
   {
    "name": "$?5GV?$StlNodeAlloc",
    "address": "0x822a3eb0",
-   "survivor": "??$?5GV?$StlNodeAlloc@G@stlpmtx_std@@@@YAAAVBinStreamRev@@AAV0@AAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "survivor": "??$?5GV?$StlNodeAlloc@G@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@@Z",
    "folded": [
-    "??$?5GV?$StlNodeAlloc@G@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@@Z"
+    "??$?5GV?$StlNodeAlloc@G@stlpmtx_std@@@@YAAAVBinStreamRev@@AAV0@AAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@@Z"
    ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+   "evidence": "Survivor/folded swapped 2026-09-30 (lane W17-LOAD): BinStreamRev has no retail type descriptor (0 x .?AVBinStreamRev@@ in band.exe), so the BinStream spelling is the retail name; the T1 equivalence itself is unchanged. ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
    "name": "$_Destroy_Range",
