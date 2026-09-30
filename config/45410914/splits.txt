@@ -1983,6 +1983,7 @@ ArkFile.cpp:
 
 UsbMidiKeyboard.cpp:
 	.pdata      start:0x822186A8 end:0x822186B0
+	.pdata      start:0x822186B0 end:0x822186C0
 	.pdata      start:0x822186C0 end:0x822186C8
 	.pdata      start:0x822186C8 end:0x82218738
 	.pdata      start:0x82218740 end:0x82218798
@@ -2269,6 +2270,7 @@ FilterCoeffs.cpp:
 
 HeadsetXferEffect.cpp:
 	.pdata      start:0x8225B580 end:0x8225B5B0
+	.pdata      start:0x8225B5B0 end:0x8225B5B8
 	.pdata      start:0x82261AD8 end:0x82261AE0
 	.text       start:0x82B6B764 end:0x82B6BA10
 	.text       start:0x82B6BA10 end:0x82B6BA74
@@ -2988,7 +2990,6 @@ system/rndobj/Rnd.cpp:
 
 MeterEffect.cpp:
 	.pdata      start:0x8225B558 end:0x8225B580
-	.pdata      start:0x8225B5B0 end:0x8225B5B8
 	.pdata      start:0x82261AD0 end:0x82261AD8
 	.text       start:0x82B6B4F0 end:0x82B6B764
 	.text       start:0x82C43390 end:0x82C43420
@@ -4716,6 +4717,7 @@ ByteGrinder.cpp:
 	.pdata      start:0x8223A048 end:0x8223A068
 	.pdata      start:0x8223A078 end:0x8223A080
 	.pdata      start:0x8223A098 end:0x8223A0E8
+	.pdata      start:0x8223A0E8 end:0x8223A0F0
 	.text       start:0x82725440 end:0x82727F4C
 	.text       start:0x82728CFC end:0x82728E38
 	.text       start:0x82729004 end:0x82729080
@@ -6367,6 +6369,7 @@ Loader.cpp:
 	.pdata      start:0x82241E00 end:0x82241E18
 	.pdata      start:0x82241E18 end:0x82241E30
 	.pdata      start:0x82241E30 end:0x82241E38
+	.pdata      start:0x82241E48 end:0x82241E50
 	.pdata      start:0x82241E50 end:0x82241E58
 	.pdata      start:0x82241E58 end:0x82241E90
 	.pdata      start:0x82241E90 end:0x82241E98
@@ -6707,11 +6710,11 @@ Synapse_dsp.cpp:
 	.text       start:0x82B6EA08 end:0x82B70C18
 
 UIListSlot.cpp:
-	.pdata      start:0x82246EC0 end:0x82246EC8
 	.pdata      start:0x82246EE8 end:0x82246EF0
 	.pdata      start:0x82246EF0 end:0x82246EF8
 	.pdata      start:0x82246EF8 end:0x82246F00
 	.pdata      start:0x82246F00 end:0x82246FF0
+	.pdata      start:0x82246FF0 end:0x82246FF8
 	.text       start:0x82814DA0 end:0x82814E00
 	.text       start:0x82814E00 end:0x82814E38
 	.text       start:0x82814E38 end:0x82814EA0
@@ -7033,9 +7036,9 @@ UIListMesh.cpp:
 	.pdata      start:0x82246E98 end:0x82246EB0
 	.pdata      start:0x82246EB0 end:0x82246EB8
 	.pdata      start:0x82246EB8 end:0x82246EC0
+	.pdata      start:0x82246EC0 end:0x82246EC8
 	.pdata      start:0x82246EC8 end:0x82246ED0
 	.pdata      start:0x82246ED0 end:0x82246EE8
-	.pdata      start:0x82246FF0 end:0x82246FF8
 	.text       start:0x82814450 end:0x82814850
 	.text       start:0x82814850 end:0x828149B0
 	.text       start:0x828149B0 end:0x82814A58
@@ -7263,7 +7266,6 @@ MultiMeshProxy.cpp:
 	.text       start:0x824816A8 end:0x824816F8
 
 MicNull.cpp:
-	.pdata      start:0x8223A0E8 end:0x8223A0F0
 	.pdata      start:0x8223A0F0 end:0x8223A100
 	.pdata      start:0x8223A100 end:0x8223A108
 	.pdata      start:0x8223A108 end:0x8223A120
@@ -12730,7 +12732,6 @@ system/os/UsbMidiGuitar.cpp:
 	.pdata      start:0x82218628 end:0x82218638
 	.pdata      start:0x82218638 end:0x82218698
 	.pdata      start:0x82218698 end:0x822186A8
-	.pdata      start:0x822186B0 end:0x822186C0
 	.pdata      start:0x8223D3B0 end:0x8223D3C0
 	.pdata      start:0x82261588 end:0x822615D0
 	.text       start:0x8251A004 end:0x8251A070
@@ -12936,7 +12937,6 @@ system/synth/Utl.cpp:
 	.pdata      start:0x82238720 end:0x82238728
 	.pdata      start:0x82238728 end:0x82238738
 	.pdata      start:0x82241E38 end:0x82241E48
-	.pdata      start:0x82241E48 end:0x82241E50
 	.text       start:0x8270EEB8 end:0x8270EFDC
 	.text       start:0x8270EFE0 end:0x8270F01C
 	.text       start:0x8270F020 end:0x8270F108
