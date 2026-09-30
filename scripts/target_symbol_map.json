@@ -5226,7 +5226,7 @@
  "0x82394e70": "?SyncProperty@FileMerger@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x82395160": "?resize@?$vector@UMerger@FileMerger@@V?$StlNodeAlloc@UMerger@FileMerger@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUMerger@FileMerger@@@Z",
  "0x823951e8": "?resize@?$ObjVector@UMerger@FileMerger@@@@QAAXI@Z",
- "0x82395258": "??$?5UMerger@FileMerger@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@UMerger@FileMerger@@@@@Z",
+ "0x82395258": "??$?5UMerger@FileMerger@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@UMerger@FileMerger@@@@@Z",
  "0x82395380": "??4?$ObjVector@UMerger@FileMerger@@@@QAAXABV0@@Z",
  "0x823953e0": "?Copy@FileMerger@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
  "0x82395450": "?Invert@@YAXABVTransform@@AAV1@@Z",
