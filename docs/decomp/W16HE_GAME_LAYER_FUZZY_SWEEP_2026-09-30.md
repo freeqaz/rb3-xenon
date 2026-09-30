@@ -165,4 +165,11 @@ readout of source declaration order.
 
 ## 6. Native gate
 
-<!-- GATE-RESULT -->
+`tools/native_build_gate.sh` on the branch tip (all source commits in place),
+run after the A/B as the last build action:
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+Only this docs-only commit follows it. It touches no build input.
