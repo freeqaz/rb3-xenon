@@ -331,9 +331,6 @@ BandCamShot.cpp:
 	.pdata      start:0x8220E1A0 end:0x8220E1A8
 	.pdata      start:0x82213890 end:0x822138A0
 	.pdata      start:0x822138E8 end:0x822138F8
-	.pdata      start:0x82230A00 end:0x82230A08
-	.pdata      start:0x82230B78 end:0x82230B88
-	.pdata      start:0x82233B40 end:0x82233B48
 	.text       start:0x822782D0 end:0x82278384
 	.text       start:0x8227A1A8 end:0x8227A228
 	.text       start:0x8227A2A0 end:0x8227A2A8
@@ -342,9 +339,6 @@ BandCamShot.cpp:
 	.text       start:0x82456BE8 end:0x82456CA4
 	.text       start:0x824C3E08 end:0x824C3E98
 	.text       start:0x824C4528 end:0x824C46B4
-	.text       start:0x826856F0 end:0x82685750
-	.text       start:0x826870D0 end:0x82687170
-	.text       start:0x826B8C38 end:0x826B8C9C
 
 BandDirector.cpp:
 	.pdata      start:0x821F3210 end:0x821F3220
@@ -4724,13 +4718,11 @@ PracticeSection.cpp:
 	.pdata      start:0x821FEC20 end:0x821FEC30
 	.pdata      start:0x822062B8 end:0x822062C0
 	.pdata      start:0x8220BBD0 end:0x8220BBE0
-	.pdata      start:0x82233B30 end:0x82233B40
 	.pdata      start:0x822375D8 end:0x822375E0
 	.text       start:0x82346E48 end:0x82346EB8
 	.text       start:0x823C8128 end:0x823C8198
 	.text       start:0x82424D18 end:0x82424DCC
 	.text       start:0x8250D4C0 end:0x8250D4C8
-	.text       start:0x826B8BA8 end:0x826B8C38
 	.text       start:0x826FED98 end:0x826FEDF8
 
 RhythmBattle.cpp:
@@ -11429,40 +11421,28 @@ RGGemMatcher.cpp:
 	.text       start:0x8278F568 end:0x8278FB08
 
 VocalNoteList.cpp:
+	.pdata      start:0x82230A00 end:0x82230A08
+	.pdata      start:0x82230B78 end:0x82230B88
+	.pdata      start:0x82233B30 end:0x82233B48
 	.pdata      start:0x82233B48 end:0x82233B50
-	.pdata      start:0x8223E650 end:0x8223E658
-	.pdata      start:0x8223E658 end:0x8223E660
-	.pdata      start:0x8223E660 end:0x8223E668
-	.pdata      start:0x8223E668 end:0x8223E678
-	.pdata      start:0x8223E678 end:0x8223E680
-	.pdata      start:0x8223E680 end:0x8223E6A0
-	.pdata      start:0x8223E6A0 end:0x8223E6A8
+	.pdata      start:0x8223E650 end:0x8223E668
+	.pdata      start:0x8223E668 end:0x8223E680
+	.pdata      start:0x8223E680 end:0x8223E6A8
 	.pdata      start:0x8223E6A8 end:0x8223E6B0
-	.pdata      start:0x8223E6B8 end:0x8223E6C8
-	.pdata      start:0x8223E6C8 end:0x8223E6D0
-	.pdata      start:0x8223E6D8 end:0x8223E708
-	.pdata      start:0x8223E708 end:0x8223E718
-	.pdata      start:0x8223E718 end:0x8223E720
-	.pdata      start:0x8223E720 end:0x8223E768
-	.pdata      start:0x8223E768 end:0x8223E780
+	.pdata      start:0x8223E6B8 end:0x8223E6D0
+	.pdata      start:0x8223E6D8 end:0x8223E720
+	.pdata      start:0x8223E720 end:0x8223E780
+	.text       start:0x826856F0 end:0x82685750
+	.text       start:0x826870D0 end:0x82687170
+	.text       start:0x826B8BA8 end:0x826B8C9C
 	.text       start:0x826B8CA0 end:0x826B8D20
-	.text       start:0x827808C8 end:0x827809E0
-	.text       start:0x827809E0 end:0x82780A50
-	.text       start:0x82780A50 end:0x82780AC8
-	.text       start:0x82780AC8 end:0x82780B74
-	.text       start:0x82780B78 end:0x82780BC0
-	.text       start:0x82780BC0 end:0x82780E08
-	.text       start:0x82780E08 end:0x82780E7C
-	.text       start:0x82780E80 end:0x82781078
-	.text       start:0x82781078 end:0x827810F4
+	.text       start:0x827808C8 end:0x82780B74
+	.text       start:0x82780B78 end:0x82780E7C
+	.text       start:0x82780E80 end:0x827810F4
 	.text       start:0x827810F8 end:0x82781160
-	.text       start:0x827812F8 end:0x827814A8
-	.text       start:0x827814A8 end:0x82781548
-	.text       start:0x82781660 end:0x827818E0
-	.text       start:0x827818E0 end:0x827819C0
-	.text       start:0x827819C0 end:0x82781A74
-	.text       start:0x82781A78 end:0x82782168
-	.text       start:0x82782168 end:0x82782958
+	.text       start:0x827812F8 end:0x82781548
+	.text       start:0x82781660 end:0x82781A74
+	.text       start:0x82781A78 end:0x82782958
 
 OutfitConfig.cpp:
 	.pdata      start:0x821F4300 end:0x821F4338
