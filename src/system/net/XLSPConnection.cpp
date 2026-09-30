@@ -114,9 +114,7 @@ void XLSPConnection::SetState(State s) {
                 return;
             }
             s = (State)4;
-        } else if (newState == 4) {
-            return;
-        } else if (newState == 5) {
+        } else if (newState == 5) { // retail tests only 1, 2, 5 here
             if (mEnumHandle != INVALID_HANDLE_VALUE) {
                 ThreadCall(this);
                 return;
