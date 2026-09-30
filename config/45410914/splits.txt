@@ -6981,7 +6981,6 @@ system/synth_xbox/FxSendSynapse.cpp:
 
 PropertyEventProvider.cpp:
 	.pdata      start:0x8223D200 end:0x8223D208
-	.text       start:0x826F0F78 end:0x826F0F98
 	.text       start:0x82768F98 end:0x82768FF4
 
 Poll.cpp:
@@ -8439,8 +8438,7 @@ band3/game/RGTutor.cpp:
 	.pdata      start:0x82236AF0 end:0x82236AF8
 	.pdata      start:0x82236AF8 end:0x82236B08
 	.text       start:0x826F0E88 end:0x826F0F18
-	.text       start:0x826F0F20 end:0x826F0F78
-	.text       start:0x826F0F98 end:0x826F10A8
+	.text       start:0x826F0F20 end:0x826F10A8
 
 band3/meta_band/PrefabMgr.cpp:
 	.pdata      start:0x82208E98 end:0x82208EB8
