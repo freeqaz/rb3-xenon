@@ -539,14 +539,16 @@ Symbol CharacterCreatorPanel::GetEyebrows() {
 }
 
 int CharacterCreatorPanel::GetFeatureIndex(Symbol s) {
+    // Retail-360: no mPreviewDesc null check (rb3-Wii dev build has one).
+#ifdef HX_NATIVE
     if (!mPreviewDesc)
         return 0;
-    else {
-        DataArrayPtr ptr(head, s);
-        const DataNode *featureIndex = mPreviewDesc->Property(ptr, true);
-        MILO_ASSERT(featureIndex, 0x36D);
-        return featureIndex->Int();
-    }
+#endif
+    static Symbol head("head");
+    DataArrayPtr ptr(head, s);
+    const DataNode *featureIndex = mPreviewDesc->Property(ptr, true);
+    MILO_ASSERT(featureIndex, 0x36D);
+    return featureIndex->Int();
 }
 
 void CharacterCreatorPanel::ModifyFeature(Symbol s, float f) {
