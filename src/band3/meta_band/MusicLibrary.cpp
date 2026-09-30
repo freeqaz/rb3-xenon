@@ -2506,14 +2506,12 @@ BEGIN_HANDLERS(MusicLibrary)
     // comment above for the retail asm this reproduces.
     HANDLE_EXPR(
         is_downloading,
-        unk19c->IsDownloading(dynamic_cast<StoreSongSortNode *>(_msg->Obj<Hmx::Object>(2))
-                                  ->mOffer->GetSingleSongID())
+        unk19c->IsDownloading(_msg->Obj<StoreSongSortNode>(2)->mOffer->GetSingleSongID())
     )
     HANDLE_ACTION(
         load_store_art,
         unk19c->LoadStoreArt(
-            dynamic_cast<StoreOffer *>(_msg->Obj<Hmx::Object>(2))->GetSingleSongID(),
-            _msg->Obj<Hmx::Object>(3)
+            _msg->Obj<StoreOffer>(2)->GetSingleSongID(), _msg->Obj<Hmx::Object>(3)
         )
     )
     HANDLE_EXPR(get_store_art, unk19c->mStoreArt)
