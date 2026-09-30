@@ -12,7 +12,19 @@ class CharClip;
 class ShortQuat {
 public:
     void Set(const Hmx::Quat &);
-    void ToQuat(Hmx::Quat &) const;
+    // Defined in the class body, as the target has it (DC3 carries the same
+    // form): MSVC emits it as a COMDAT rather than inlining it, and the
+    // RotateTo/RotateBy callers then treat it as opaque -- f2, 1.0f and 0.0f
+    // are held in f29-f31 across the call instead of in volatile registers,
+    // which is what the retail image does.
+    void ToQuat(Hmx::Quat &quat) const {
+        quat.Set(
+            (float)(long long)x * 3.051851e-05f,
+            (float)(long long)y * 3.051851e-05f,
+            (float)(long long)z * 3.051851e-05f,
+            (float)(long long)w * 3.051851e-05f
+        );
+    }
 
     short x;
     short y;
@@ -23,7 +35,14 @@ public:
 class ByteQuat {
 public:
     void Set(const Hmx::Quat &);
-    void ToQuat(Hmx::Quat &) const;
+    void ToQuat(Hmx::Quat &quat) const {
+        quat.Set(
+            (float)(long long)x * 0.0078740157f,
+            (float)(long long)y * 0.0078740157f,
+            (float)(long long)z * 0.0078740157f,
+            (float)(long long)w * 0.0078740157f
+        );
+    }
     char x;
     char y;
     char z;

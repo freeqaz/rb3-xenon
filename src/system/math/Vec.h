@@ -146,6 +146,9 @@ public:
     ShortVector3(short *) {}
 
     void Set(const Vector3 &);
+    void ToVector3(Vector3 &v) const {
+        v.Set(x * 0.039674062f, y * 0.039674062f, z * 0.039674062f);
+    }
     static short ToShort(float);
 
     short x;
