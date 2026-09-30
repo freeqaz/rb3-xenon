@@ -11,6 +11,11 @@ BufStream::BufStream(void *buffer, int size, bool lilEndian)
 }
 
 void BufStream::ReadImpl(void *data, int bytes) {
+    // retail (TU5) rejects a negative length before touching the buffer
+    if (bytes < 0) {
+        mFail = true;
+        return;
+    }
     int tell = mTell;
     int size = mSize;
     if (tell + bytes > size) {
