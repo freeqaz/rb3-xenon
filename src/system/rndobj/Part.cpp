@@ -1669,20 +1669,18 @@ void RndParticleSys::ExplicitParticles(int i1, bool b2, PartOverride &partOverri
 #define PI 3.1415927f
 
 void RndParticleSys::InitParticle(float frame, RndParticle *p, const Transform *xfm, PartOverride &po) {
+    // Body is RB3-era (rb3-Wii shaped), NOT DC3's: retail draws each start/end/mid
+    // colour channel with its own RandomFloat (no MakeHSL/MakeColor round trip),
+    // recomputes the lifetime reciprocal with `!=` after the speed scale, and
+    // re-derives it from shrink-grow for the fancy path.
     p->birthFrame = frame;
-    float life;
     if (po.mask & 1) {
-        life = po.life;
+        p->deathFrame = p->birthFrame + po.life;
     } else {
-        life = RandomFloat(mLife.x, mLife.y);
+        p->deathFrame = p->birthFrame + RandomFloat(mLife.x, mLife.y);
     }
-    p->deathFrame = frame + life;
 
-    float invLife = 0.0f;
-    if (p->deathFrame > p->birthFrame) {
-        invLife = 1.0f / (p->deathFrame - p->birthFrame);
-    }
-    p->pos.w = invLife;
+    p->pos.w = p->deathFrame > p->birthFrame ? 1.0f / (p->deathFrame - p->birthFrame) : 0;
 
     RndMesh *emitter = mMeshEmitter;
     if (po.mask & 0x100) {
@@ -1701,44 +1699,28 @@ void RndParticleSys::InitParticle(float frame, RndParticle *p, const Transform *
             p->pos.y = RandomFloat(mBoxExtent1.y, mBoxExtent2.y);
             p->pos.z = RandomFloat(mBoxExtent1.z, mBoxExtent2.z);
         }
-
-        float p_min, p_max, y_min, y_max;
+        float pitch, yaw;
         if (po.mask & 0x80) {
-            p_max = po.pitch.y;
-            p_min = po.pitch.x;
-            y_max = po.yaw.y;
-            y_min = po.yaw.x;
+            pitch = RandomFloat(po.pitch.x, po.pitch.y);
+            yaw = RandomFloat(po.yaw.x, po.yaw.y);
         } else {
-            p_max = mPitch.y;
-            p_min = mPitch.x;
-            y_max = mYaw.y;
-            y_min = mYaw.x;
+            pitch = RandomFloat(mPitch.x, mPitch.y);
+            yaw = RandomFloat(mYaw.x, mYaw.y);
         }
 
-        float pitch = RandomFloat(p_min, p_max);
-        float yaw = RandomFloat(y_min, y_max);
-        float sinP = FastSin(pitch);
-        float cosP = FastCos(pitch);
-        float sinY = FastSin(yaw);
-        float cosY = FastCos(yaw);
-
-        p->vel.x = -sinY * cosP;
-        p->vel.y = cosY * cosP;
-        p->vel.z = sinP;
+        float cosPitch = FastCos(pitch);
+        float sinYaw = FastSin(yaw);
+        p->vel.x = -cosPitch * sinYaw;
+        p->vel.y = cosPitch * FastCos(yaw);
+        p->vel.z = FastSin(pitch);
     }
 
-    float speed;
-    if (po.mask & 2) {
-        speed = po.speed;
-    } else {
-        speed = RandomFloat(mSpeed.x, mSpeed.y);
-    }
-    p->vel.y *= speed;
-    p->vel.x *= speed;
-    p->vel.z *= speed;
+    (Vector3 &)p->vel *= po.mask & 2 ? po.speed : RandomFloat(mSpeed.x, mSpeed.y);
+    float invLife =
+        p->deathFrame != p->birthFrame ? 1.0f / (p->deathFrame - p->birthFrame) : 0;
 
     if (mRotate) {
-        p->angle = RandomFloat(0, 6.2831855f);
+        p->angle = RandomFloat(0, PI * 2);
         p->swingArm = RandomFloat(mStartOffset.x, mStartOffset.y);
     } else {
         p->angle = 0;
@@ -1748,11 +1730,9 @@ void RndParticleSys::InitParticle(float frame, RndParticle *p, const Transform *
     if (po.mask & 0x10) {
         p->col = po.startColor;
     } else {
-        float h1, s1, l1, h2, s2, l2;
-        MakeHSL(mStartColorLow, h1, s1, l1);
-        MakeHSL(mStartColorHigh, h2, s2, l2);
-        auto _tmp1 = RandomFloat(h1, h2);
-        MakeColor(_tmp1, RandomFloat(s1, s2), RandomFloat(l1, l2), p->col);
+        p->col.red = RandomFloat(mStartColorLow.red, mStartColorHigh.red);
+        p->col.green = RandomFloat(mStartColorLow.green, mStartColorHigh.green);
+        p->col.blue = RandomFloat(mStartColorLow.blue, mStartColorHigh.blue);
         p->col.alpha = RandomFloat(mStartColorLow.alpha, mStartColorHigh.alpha);
     }
 
@@ -1774,145 +1754,110 @@ void RndParticleSys::InitParticle(float frame, RndParticle *p, const Transform *
     if (po.mask & 0x40) {
         p->colVel = po.endColor;
     } else {
-        float h1, s1, l1, h2, s2, l2;
-        MakeHSL(mEndColorLow, h1, s1, l1);
-        MakeHSL(mEndColorHigh, h2, s2, l2);
-        MakeColor(RandomFloat(h1, h2), RandomFloat(s1, s2), RandomFloat(l1, l2), p->colVel);
+        p->colVel.red = RandomFloat(mEndColorLow.red, mEndColorHigh.red);
+        p->colVel.green = RandomFloat(mEndColorLow.green, mEndColorHigh.green);
+        p->colVel.blue = RandomFloat(mEndColorLow.blue, mEndColorHigh.blue);
         p->colVel.alpha = RandomFloat(mEndColorLow.alpha, mEndColorHigh.alpha);
     }
 
-    if ((unsigned long)(int)mType == kFancy) {
+    if (mType == kFancy) {
         RndFancyParticle *fp = static_cast<RndFancyParticle *>(p);
 #ifdef HX_NATIVE
         // DC3-era birth-momentum seed; retail RB3 has no momentum fields.
         memcpy(&fp->mRPMVelocity, &mMotionParentDelta, 16);
 #endif
-
         if (mBubble) {
-            fp->bubbleFreq = PI / RandomFloat(mBubblePeriod.x, mBubblePeriod.y);
-            fp->bubblePhase = RandomFloat(0, 6.2831855f);
-            float ang = RandomFloat(0, 6.2831855f);
-            float bsize = RandomFloat(mBubbleSize.x, mBubbleSize.y);
-            fp->bubbleDir.x = FastCos(ang) * bsize;
-            fp->bubbleDir.y = 0;
-            fp->bubbleDir.z = FastSin(ang) * bsize;
-            float s = FastSin(fp->bubblePhase);
-            p->pos.x += fp->bubbleDir.x * s;
-            p->pos.y += fp->bubbleDir.y * s;
-            p->pos.z += fp->bubbleDir.z * s;
+            fp->bubbleFreq = (PI * 2) / RandomFloat(mBubblePeriod.x, mBubblePeriod.y);
+            fp->bubblePhase = RandomFloat(0, PI * 2);
+            float ang = RandomFloat(0, PI * 2);
+            Scale(
+                Vector3(FastSin(ang), 0, FastCos(ang)),
+                RandomFloat(mBubbleSize.x, mBubbleSize.y),
+                (Vector3 &)fp->bubbleDir
+            );
+            Vector3 v;
+            Scale((Vector3 &)fp->bubbleDir, FastSin(fp->bubblePhase), v);
+            Add((Vector3 &)fp->pos, v, (Vector3 &)fp->pos);
             fp->bubblePhase = -(frame * fp->bubbleFreq - fp->bubblePhase);
         }
 
         if (mRotate) {
             fp->RPF = RandomFloat(mRPM.x, mRPM.y) * 0.0034906587f;
-            if (mRandomDirection && (RandomInt() & 0x100000)) {
+            if (mRandomDirection && RandomInt() & 0x100000) {
                 fp->RPF = -fp->RPF;
             }
-            fp->swingArmVel = (RandomFloat(mEndOffset.x, mEndOffset.y) - p->swingArm) * invLife;
+            fp->swingArmVel = invLife * (RandomFloat(mEndOffset.x, mEndOffset.y) - p->swingArm);
         } else {
             fp->RPF = 0;
             fp->swingArmVel = 0;
         }
 
-        if (mGrowRatio == 0) {
-            fp->growVel = 0;
-            fp->growFrame = p->birthFrame;
+        if (mGrowRatio) {
+            fp->growFrame = Interp(fp->birthFrame, fp->deathFrame, mGrowRatio);
+            fp->growVel = fp->growFrame != fp->birthFrame
+                ? fp->size / (fp->growFrame - fp->birthFrame)
+                : 0;
         } else {
-            float s = p->size;
-            float b = p->birthFrame;
-            fp->growFrame = (p->deathFrame - b) * mGrowRatio + b;
-            float gdiff = fp->growFrame - b;
-            if (gdiff != 0) {
-                fp->growVel = s / gdiff;
-            } else {
-                fp->growVel = 0;
-            }
+            fp->growVel = 0;
+            fp->growFrame = fp->birthFrame;
         }
 
-        if (mShrinkRatio == 1.0f) {
+        if (mShrinkRatio != 1) {
+            fp->shrinkFrame = Interp(p->birthFrame, p->deathFrame, mShrinkRatio);
+            fp->shrinkVel = fp->shrinkFrame != p->deathFrame
+                ? (p->size + p->sizeVel) / (fp->shrinkFrame - p->deathFrame)
+                : 0;
+        } else {
             fp->shrinkVel = 0;
             fp->shrinkFrame = p->deathFrame;
-        } else {
-            float s = p->size;
-            float sv = p->sizeVel;
-            fp->shrinkFrame = (p->deathFrame - p->birthFrame) * mShrinkRatio + p->birthFrame;
-            float sdiff = fp->shrinkFrame - p->deathFrame;
-            if (sdiff != 0) {
-                fp->shrinkVel = (s + sv) / sdiff;
-            } else {
-                fp->shrinkVel = 0;
-            }
         }
 
-        if (p->birthFrame < fp->growFrame) {
-            fp->beginGrow = 1.0f / (fp->growFrame - p->birthFrame);
-        } else {
-            fp->beginGrow = 0;
-        }
+        fp->beginGrow = fp->growFrame > p->birthFrame
+            ? 1.0f / (fp->growFrame - p->birthFrame)
+            : 0;
+        fp->midGrow = fp->shrinkFrame > fp->growFrame
+            ? 1.0f / (fp->shrinkFrame - fp->growFrame)
+            : 0;
+        fp->endGrow = p->deathFrame > fp->shrinkFrame
+            ? 1.0f / (p->deathFrame - fp->shrinkFrame)
+            : 0;
 
-        if (fp->shrinkFrame > fp->growFrame) {
-            fp->midGrow = 1.0f / (fp->shrinkFrame - fp->growFrame);
-        } else {
-            fp->midGrow = 0;
-        }
-
-        if (p->deathFrame > fp->shrinkFrame) {
-            fp->endGrow = 1.0f / (p->deathFrame - fp->shrinkFrame);
-        } else {
-            fp->endGrow = 0;
-        }
-
-        if (mGrowRatio != 0) {
+        if (mGrowRatio) {
             p->size = 0;
         }
-
-        fp->midcolFrame = (p->deathFrame - p->birthFrame) * mMidColorRatio + p->birthFrame;
+        if (fp->shrinkFrame != fp->growFrame) {
+            invLife = 1.0f / (fp->shrinkFrame - fp->growFrame);
+        }
+        fp->midcolFrame = Interp(p->birthFrame, p->deathFrame, mMidColorRatio);
         if (po.mask & 0x20) {
             fp->midcolVel = po.midColor;
         } else {
-            float h1, s1, l1, h2, s2, l2;
-            MakeHSL(mMidColorLow, h1, s1, l1);
-            MakeHSL(mMidColorHigh, h2, s2, l2);
-            MakeColor(RandomFloat(h1, h2), RandomFloat(s1, s2), RandomFloat(l1, l2), fp->midcolVel);
+            fp->midcolVel.red = RandomFloat(mMidColorLow.red, mMidColorHigh.red);
+            fp->midcolVel.green = RandomFloat(mMidColorLow.green, mMidColorHigh.green);
+            fp->midcolVel.blue = RandomFloat(mMidColorLow.blue, mMidColorHigh.blue);
             fp->midcolVel.alpha = RandomFloat(mMidColorLow.alpha, mMidColorHigh.alpha);
         }
-
-        float btom = 0;
-        if (p->birthFrame < fp->midcolFrame) {
-            btom = 1.0f / (fp->midcolFrame - p->birthFrame);
-        }
-        p->vel.w = btom;
-
-        float mtod = 0;
-        if (fp->midcolFrame < p->deathFrame) {
-            mtod = 1.0f / (p->deathFrame - fp->midcolFrame);
-        }
-        fp->bubbleDir.w = mtod;
-
-        p->colVel.red -= fp->midcolVel.red;
-        p->colVel.green -= fp->midcolVel.green;
-        p->colVel.blue -= fp->midcolVel.blue;
-        p->colVel.alpha -= fp->midcolVel.alpha;
+        p->vel.w = fp->midcolFrame > p->birthFrame
+            ? 1.0f / (fp->midcolFrame - p->birthFrame)
+            : 0;
+        fp->bubbleDir.w = p->deathFrame > fp->midcolFrame
+            ? 1.0f / (p->deathFrame - fp->midcolFrame)
+            : 0;
+        Subtract(p->colVel, fp->midcolVel, p->colVel);
         if (p->deathFrame != fp->midcolFrame) {
-            float f = 1.0f / (p->deathFrame - fp->midcolFrame);
-            p->colVel.red *= f;
-            p->colVel.green *= f;
-            p->colVel.blue *= f;
-            p->colVel.alpha *= f;
+            Multiply(p->colVel, 1.0f / (p->deathFrame - fp->midcolFrame), p->colVel);
         }
-
         if (fp->midcolFrame != p->birthFrame) {
-            float f = 1.0f / (fp->midcolFrame - p->birthFrame);
-            fp->midcolVel.red = (fp->midcolVel.red - p->col.red) * f;
-            fp->midcolVel.green = (fp->midcolVel.green - p->col.green) * f;
-            fp->midcolVel.blue = (fp->midcolVel.blue - p->col.blue) * f;
-            fp->midcolVel.alpha = (fp->midcolVel.alpha - p->col.alpha) * f;
+            Subtract(fp->midcolVel, p->col, fp->midcolVel);
+            if (fp->midcolFrame != p->birthFrame) {
+                Multiply(
+                    fp->midcolVel, 1.0f / (fp->midcolFrame - p->birthFrame), fp->midcolVel
+                );
+            }
         }
     } else {
-        p->colVel.red = (p->colVel.red - p->col.red) * invLife;
-        p->colVel.green = (p->colVel.green - p->col.green) * invLife;
-        p->colVel.blue = (p->colVel.blue - p->col.blue) * invLife;
-        p->colVel.alpha = (p->colVel.alpha - p->col.alpha) * invLife;
+        Subtract(p->colVel, p->col, p->colVel);
+        Multiply(p->colVel, invLife, p->colVel);
     }
 
     p->sizeVel *= invLife;
@@ -1922,25 +1867,12 @@ void RndParticleSys::InitParticle(float frame, RndParticle *p, const Transform *
         MakeLocToRel(local_tf);
         xfm = &local_tf;
     }
-
+    // pos is a point (full transform); vel and bubbleDir are directions, rotated only.
     Multiply((Vector3 &)p->pos, *xfm, (Vector3 &)p->pos);
-
-    float vx = p->vel.x;
-    float vy = p->vel.y;
-    float vz = p->vel.z;
-    // Evaluation order: z then y then x
-    p->vel.z = vz * xfm->m.z.z + (vx * xfm->m.x.z + vy * xfm->m.y.z);
-    p->vel.y = vz * xfm->m.z.y + (vx * xfm->m.x.y + vy * xfm->m.y.y);
-    p->vel.x = vz * xfm->m.z.x + (vx * xfm->m.x.x + vy * xfm->m.y.x);
-
+    Multiply((Vector3 &)p->vel, xfm->m, (Vector3 &)p->vel);
     if (mBubble && mType == kFancy) {
         RndFancyParticle *fp = static_cast<RndFancyParticle *>(p);
-        float bx = fp->bubbleDir.x;
-        float by = fp->bubbleDir.y;
-        float bz = fp->bubbleDir.z;
-        fp->bubbleDir.z = bz * xfm->m.z.z + (bx * xfm->m.x.z + by * xfm->m.y.z);
-        fp->bubbleDir.y = bz * xfm->m.z.y + (bx * xfm->m.x.y + by * xfm->m.y.y);
-        fp->bubbleDir.x = bz * xfm->m.z.x + (bx * xfm->m.x.x + by * xfm->m.y.x);
+        Multiply((Vector3 &)fp->bubbleDir, xfm->m, (Vector3 &)fp->bubbleDir);
     }
 
 #ifdef HX_NATIVE
