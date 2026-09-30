@@ -1060,8 +1060,8 @@ int BandSongMgr::GetPartDifficulty(Symbol s1, Symbol s2) const {
 }
 
 int BandSongMgr::GetNumVocalParts(Symbol s) const {
-    BandSongMetadata *songData =
-        (BandSongMetadata *)Data(GetSongIDFromShortName(s, true));
+    int songID = GetSongIDFromShortName(s, true);
+    BandSongMetadata *songData = (BandSongMetadata *)Data(songID);
     MILO_ASSERT(songData, 0x5E4);
     return songData->NumVocalParts();
 }
