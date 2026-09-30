@@ -3220,17 +3220,11 @@ HamCamTransform.cpp:
 	.pdata      start:0x821FEFB0 end:0x821FEFD0
 	.pdata      start:0x821FF018 end:0x821FF030
 	.pdata      start:0x821FF050 end:0x821FF0B8
-	.pdata      start:0x8220EA90 end:0x8220EAA0
-	.pdata      start:0x82213A38 end:0x82213A48
-	.pdata      start:0x8223B108 end:0x8223B150
 	.text       start:0x822A70A0 end:0x822A7250
 	.text       start:0x822A96A8 end:0x822A9718
 	.text       start:0x8234BA70 end:0x8234BCB0
 	.text       start:0x8234C410 end:0x8234C778
 	.text       start:0x8234CAB8 end:0x8234D080
-	.text       start:0x82462738 end:0x824627C8
-	.text       start:0x824C5650 end:0x824C56FC
-	.text       start:0x82744854 end:0x82744E38
 
 Spline.cpp:
 	.pdata      start:0x821F4778 end:0x821F4790
@@ -4927,6 +4921,7 @@ CameraShot.cpp:
 	.pdata      start:0x822138F8 end:0x82213900
 	.pdata      start:0x82213900 end:0x82213938
 	.pdata      start:0x82213940 end:0x82213A38
+	.pdata      start:0x82213A38 end:0x82213A48
 	.pdata      start:0x82213A48 end:0x82213AE8
 	.pdata      start:0x82213AF0 end:0x82213BA0
 	.pdata      start:0x82213BA0 end:0x82213BB8
@@ -4959,6 +4954,7 @@ CameraShot.cpp:
 	.text       start:0x824C46B8 end:0x824C4718
 	.text       start:0x824C4718 end:0x824C4998
 	.text       start:0x824C4A00 end:0x824C5650
+	.text       start:0x824C5650 end:0x824C56FC
 	.text       start:0x824C56FC end:0x824C5E90
 	.text       start:0x824C5EC0 end:0x824C694C
 	.text       start:0x824C6950 end:0x824C6A50
@@ -7592,6 +7588,7 @@ MatAnim.cpp:
 	.pdata      start:0x8220E7B0 end:0x8220E7B8
 	.pdata      start:0x8220E998 end:0x8220E9F8
 	.pdata      start:0x8220EA08 end:0x8220EA90
+	.pdata      start:0x8220EA90 end:0x8220EAA0
 	.pdata      start:0x8220EAA0 end:0x8220EB98
 	.pdata      start:0x8220EBA8 end:0x8220EBF8
 	.text       start:0x82270298 end:0x822702F0
@@ -7607,6 +7604,7 @@ MatAnim.cpp:
 	.text       start:0x8245F410 end:0x8245F56C
 	.text       start:0x82461398 end:0x82461948
 	.text       start:0x824619D8 end:0x82462738
+	.text       start:0x82462738 end:0x824627C8
 	.text       start:0x824627C8 end:0x82463680
 	.text       start:0x8246370C end:0x82463EFC
 

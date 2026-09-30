@@ -62086,11 +62086,16 @@
     "??1?$vector@UDebugGraph@?A0x364ee173@@V?$StlNodeAlloc@UDebugGraph@?A0x364ee173@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
     "??1?$vector@UDebugGraph@?A0x6b6981fb@@V?$StlNodeAlloc@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
     "??1?$vector@UDebugGraph@?A0x7ce805fb@@V?$StlNodeAlloc@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
-    "??1?$vector@UDebugGraph@?A0x9f7029cb@@V?$StlNodeAlloc@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
-    "??1?$vector@VCamShotCrowd@@V?$StlNodeAlloc@VCamShotCrowd@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
+    "??1?$vector@UDebugGraph@?A0x9f7029cb@@V?$StlNodeAlloc@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 6 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??1?$vector@VCamShotCrowd@@V?$StlNodeAlloc@VCamShotCrowd@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -62117,7 +62122,8 @@
       }
      ]
     }
-   ]
+   ],
+   "withdrawn_reason": "W17-HCT 2026-09-30: retail places ~vector<CamShotCrowd> at 0x824C5650 (CameraShot TU; called by CameraShot code; word-identical to CameraShot.obj). This address is ~vector<Piercing::Piece> with only OutfitConfig-family callers; the membership came from a relocation-masked closure -- withdrawn."
   },
   {
    "name": "SyncProperty",
@@ -88853,11 +88859,17 @@
   {
    "name": "__uninitialized_fill_n_PAUDistEntry",
    "address": "0x82462738",
-   "survivor": "??$__uninitialized_fill_n@PAUDistEntry@@IU1@@stlpmtx_std@@YAPAUDistEntry@@PAU1@IABU1@ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_fill_n@PAV?$Key@VTexPtr@RndMatAnim@@@@IV1@@stlpmtx_std@@YAPAV?$Key@VTexPtr@RndMatAnim@@@@PAV1@IABV1@ABU__false_type@0@@Z"
+   "survivor": "??$__uninitialized_fill_n@PAV?$Key@VTexPtr@RndMatAnim@@@@IV1@@stlpmtx_std@@YAPAV?$Key@VTexPtr@RndMatAnim@@@@PAV1@IABV1@ABU__false_type@0@@Z",
+   "folded": [],
+   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 16, row addr 0x82462738). \"ours\" spelling ??$__uninitialized_fill_n@PAV?$Key@VTexPtr@RndMatAnim@@@@IV1@@stlpmtx_std@@YAPAV?$Key@VTexPtr@RndMatAnim@@@@PAV1@IABV1@ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_fill_n@PAUDistEntry@@IU1@@stlpmtx_std@@YAPAUDistEntry@@PAU1@IABU1@ABU__false_type@0@@Z at retail address 0x82462738. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 SLOT-FOLD-OK, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 416 B (416 B honest) across ['default/MatAnim'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_fill_n@PAUDistEntry@@IU1@@stlpmtx_std@@YAPAUDistEntry@@PAU1@IABU1@ABU__false_type@0@@Z",
+     "lane": "W17-HCT 2026-09-30",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION"
+    }
    ],
-   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 16, row addr 0x82462738). \"ours\" spelling ??$__uninitialized_fill_n@PAV?$Key@VTexPtr@RndMatAnim@@@@IV1@@stlpmtx_std@@YAPAV?$Key@VTexPtr@RndMatAnim@@@@PAV1@IABV1@ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_fill_n@PAUDistEntry@@IU1@@stlpmtx_std@@YAPAUDistEntry@@PAU1@IABU1@ABU__false_type@0@@Z at retail address 0x82462738. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 SLOT-FOLD-OK, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 416 B (416 B honest) across ['default/MatAnim'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md."
+   "withdrawn_reason": "W17-HCT 2026-09-30: retail 0x82462738 sits in MatAnim's TU, is called by _M_fill_insert_aux<Key<TexPtr>> (0x82462A60) and fn_82462AF0 (MatAnim), and calls _Copy_Construct<Key<TexPtr>> (0x82461D90). Word-identical to MatAnim.obj's __uninitialized_fill_n<Key<RndMatAnim::TexPtr>> (the only same-body candidate in MatAnim.obj). DistEntry (ClipDistMap) has no caller at this address -- withdrawn; the Key<TexPtr> spelling was already this group's folded member (W16-HC)."
   },
   {
    "name": "__uninitialized_copy_Hmx",
