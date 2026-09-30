@@ -843,7 +843,9 @@ bool NgSpotlightDrawer::CheckRTs(NgSpotlightDrawer::SpotlightResources *sr) {
         sr->unk4 = (D3DResource *)D3DDevice_CreateTexture(
             createW, createH, 1, 1, 0, fmt, 0, D3DRTYPE_TEXTURE
         );
-        DX_ASSERT(sr->unk4, 0x12C);
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+        DX_ASSERT(sr->unk4, 0x12C); // retail CheckRTs has no check here
+#endif
     }
     if (!sr->unk10) {
         sr->unk10 = TheRnd.GetDefaultTex(Rnd::kDefaultTex_Black);
