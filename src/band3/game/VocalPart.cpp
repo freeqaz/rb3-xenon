@@ -307,7 +307,7 @@ void VocalPart::AddPhrasePoints(float pts) {
     float newScore = oldScore + pts;
     float cap = mPhraseScoreMax;
     cap = Min(unk38, cap);
-        cap = Min(cap, newScore);
+    cap = Min(newScore, cap);
     mPhraseScore = cap;
     float delta = mPhraseScore - oldScore;
     int i1, i2, i3;
@@ -511,7 +511,7 @@ void VocalPart::AfterPoll(float ms) {
     int beginNote;
     int endNote;
     GetNoteRange(ms, beginNote, endNote);
-    unk58 = beginNote & ~(beginNote >> 31);
+    unk58 = beginNote < 0 ? 0 : beginNote;
     unk54 = ms;
 }
 
