@@ -63,10 +63,12 @@ BEGIN_PROPSYNCS(SynthSample)
 #endif
 END_PROPSYNCS
 
+// RB3 retail is rev 5: the loop fields are still serialized (DC3's rev 6
+// dropped them).
 BEGIN_SAVES(SynthSample)
-    SAVE_REVS(6, 0)
+    SAVE_REVS(5, 0)
     SAVE_SUPERCLASS(Hmx::Object)
-    bs << mFile;
+    bs << mFile << mIsLooped << mLoopStartSamp << mLoopEndSamp;
     if (bs.Cached()) {
         mSampleData.Save(bs);
     }
@@ -91,26 +93,30 @@ BEGIN_LOADS(SynthSample)
     PostLoad(bs);
 END_LOADS
 
-INIT_REVS(6, 0)
+INIT_REVS(5, 0)
 
 void SynthSample::PreLoad(BinStream &bs) {
-    LOAD_REVS(bs)
-    ASSERT_REVS(6, 0)
-    if (d.rev > 1) {
-        LOAD_SUPERCLASS(Hmx::Object)
+    // RB3 retail: a raw rev (no hmx/alt split), nothing newer than 5 is loaded,
+    // and the loop fields are read into the members at every rev.
+    int rev;
+    bs >> rev;
+    if (rev > 5) {
+        return;
     }
-    d >> mFile;
-    if (d.rev <= 5) {
-        bool b;
-        int x, y;
-        d >> b >> x;
-        if (d.rev >= 3) {
-            d >> y;
-        }
+    if (rev > 1) {
+        Hmx::Object::Load(bs);
     }
-    if (bs.Cached() && d.rev >= 5) {
+    bs >> mFile >> mIsLooped >> mLoopStartSamp;
+    if (rev >= 3) {
+        bs >> mLoopEndSamp;
+    }
+    if (bs.Cached() && rev >= 5) {
         mSampleData.Load(bs, mFile);
-    } else if (d.rev > 3 && !sDisabled) {
+    } else if (rev > 3
+#ifdef HX_NATIVE
+               && !sDisabled
+#endif
+    ) {
         sLoader = dynamic_cast<FileLoader *>(TheLoadMgr.AddLoader(mFile, kLoadFront));
         sLoading = this;
     }
