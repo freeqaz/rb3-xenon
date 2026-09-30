@@ -314,6 +314,15 @@ SongInfo *BandSongMgr::SongAudioData(int i) const {
         MILO_ASSERT(songInfo, 0x1a0);
         RELEASE(unkc0);
         unkc0 = new DataArraySongInfo(songInfo);
+        // TU5: a mounted content package re-roots the song's base file name.
+        const char *name = ContentName(i);
+        if (name && TheContentMgr.IsMounted(name)) {
+            const char *root = ContentNameRoot(name);
+            if (root) {
+                const char *base = unkc0->GetBaseFileName();
+                unkc0->SetBaseFileName(FileMakePath(root, base));
+            }
+        }
         const char *update = ((BandSongMetadata *)data)->MidiUpdate(); // lol can you
                                                                        // actually do this
         if (update)
@@ -321,7 +330,8 @@ SongInfo *BandSongMgr::SongAudioData(int i) const {
         if (mUpgradeMgr->HasUpgrade(i)) {
             SongUpgradeData *upgrade = mUpgradeMgr->UpgradeData(i);
             MILO_ASSERT(upgrade, 0x1C3);
-            unkc0->AddExtraMidiFile(UpgradeMidiFile(i), 0);
+            const char *upgradeMidi = UpgradeMidiFile(i);
+            unkc0->AddExtraMidiFile(upgradeMidi, 0);
         }
         return unkc0;
     }
