@@ -40,6 +40,7 @@ class TranscodableMixerOutput;
 
 class Synth : public Hmx::Object, public RndOverlay::Callback {
     friend void SynthTerminate();
+    friend void SynthPreInit();
 
 public:
     Synth();
