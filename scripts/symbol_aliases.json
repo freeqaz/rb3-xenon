@@ -87480,6 +87480,15 @@
     "?insert_after@?$slist@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBHPAVSongStatus@@@2@@Z"
    ],
    "evidence": "ICF fold group created by W16-GQ 2026-09-30, pair #10 from the W16GQ scout's 44-pair FCNP-nonmember sweep. Both are slist<pair<K,V>>::insert_after(iterator, pair<K,V> const&) instantiations -- survivor pair<Symbol const, vector<Symbol>> (a Symbol->vector<Symbol> multimap-style bucket list), folded pair<int const, SongStatus*> (an int->SongStatus* lookup bucket list) -- reducing to the same fixed-size node-splice body since both key/value pairs are POD-sized pointer/int aggregates with no non-trivial element construction on this path. FLAT T1 REFUTED (retail_size == our_size == 88, masked bodies match but relocation targets disagree -- named top-level template-arg mismatch, empty reloc_tally) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase (4 SLOT-FOLD-OK + 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED / 0 BYTES-DIFFER / 0 CYCLE-ASSUMED). Family pigeonhole: 26-of-ours -> 1 retail address, slot0 match True, survivor_map_resident True. Charged call site per the scout census: 2 rows / 420 B, default/SongStatusMgr, 0 partial rows. See docs/decomp/W16GQ_FCNP_NONMEMBER_ADJUDICATION_2026-09-30.md."
+  },
+  {
+   "name": "insert_list_MeshInstance",
+   "address": "0x827e16a0",
+   "survivor": "?insert@?$list@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VMeshInstance@@U?$_Nonconst_traits@VMeshInstance@@@stlpmtx_std@@@2@U32@ABVMeshInstance@@@Z",
+   "folded": [
+    "?insert@?$list@VBoneState@BandCharacter@@V?$StlNodeAlloc@VBoneState@BandCharacter@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VBoneState@BandCharacter@@U?$_Nonconst_traits@VBoneState@BandCharacter@@@stlpmtx_std@@@2@U32@ABVBoneState@BandCharacter@@@Z"
+   ],
+   "evidence": "W16-GV 2026-09-30: FCNP-tail adjudication, pair #14 from the W16-GQ scout (docs/decomp/W16GQ_FCNP_NONMEMBER_ADJUDICATION_2026-09-30.md), deferred there only because lane W16-GP was concurrently relabelling this address range; W16-GP has since landed and this address is now stable (re-checked: no group previously existed at 0x827e16a0). insert<list<BoneState@BandCharacter>>::insert(iterator,T const&) is a template twin of insert<list<MeshInstance>>::insert -- both list-node-splice-insert bodies over a StlNodeAlloc. FLAT T1 REFUTED (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 4 SLOT-FOLD-OK + 1 VACUOUS-BUT-IDENTICAL, all named relocations (CriticalSection/ChunkAllocator operator new, PoolAlloc, MemOrPoolAlloc/MemOrPoolAllocSTL, _M_create_node twins), 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address; no prior co-withdrawal with the retail spelling. See docs/decomp/W16GV_FCNP_TAIL_2026-09-30.md."
   }
  ]
 }
