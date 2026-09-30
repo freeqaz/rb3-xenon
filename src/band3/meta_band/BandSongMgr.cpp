@@ -769,6 +769,7 @@ int BandSongMgr::GetValidSongs(
     outSongs.clear();
     std::vector<int> ranked;
     GetRankedSongs(ranked, false, false);
+    static Symbol band("band");
     FOREACH (it, ranked) {
         int songID = *it;
         BandSongMetadata *songData = (BandSongMetadata *)Data(songID);
