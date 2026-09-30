@@ -54,7 +54,6 @@
 #include <list>
 
 Character *Character::sCurrent;
-Character *gCharMe;
 
 // declaration goes here because of the MEM_OVERLOAD showing .cpp
 class ShadowBone : public RndTransformable {
@@ -220,7 +219,11 @@ END_COPYS
 // declaration in Character.h). ASSERT_REVS(0x15, 0) compiles to nothing in the
 // retail (non-HX_NATIVE) build either way, so the version number here is
 // documentation only.
-Character::RevState Character::gRevs = {0, 0};
+// INTERNAL linkage, not a class static: retail forwards the just-loaded rev
+// across stores through `this` (e.g. PostLoad's `mSelfShadow = false` arm keeps
+// the pre-store `lhz` value), which MSVC only does when it can prove no pointer
+// aliases the global -- i.e. file-static with its address never taken.
+static Character::RevState gRevs = {0, 0, nullptr};
 
 void Character::PreLoad(BinStream &bs) {
     int rev;
@@ -247,61 +250,51 @@ void Character::PreLoad(BinStream &bs) {
     bs.PushRev(packRevs(gRevs.altRev, curRev), this);
 }
 
+// Retail reads the revision out of the file-static gRevs aggregate (set by
+// PostLoad), not out of the rev wrapper: `lhz -0x4(base)` off the same base
+// register that addresses gRevs.charMe.  Under the cast model (see PostLoad)
+// `d` is the raw stream, so only its BinStream part may be touched here.
 BinStreamRev &operator>>(BinStreamRev &d, Character::Lod &lod) {
-    d >> lod.mScreenSize;
-    if (d.rev < 6) {
+    BinStream &bs = d;
+    bs >> lod.mScreenSize;
+    if (gRevs.rev < 6) {
         lod.mScreenSize *= (4.0f / 3.0f);
     }
-    if (gCharMe) {
+    if (gRevs.charMe) {
         // pre-group revs: a flat list of drawables wrapped into a fresh group
-        ObjPtrList<RndDrawable> draws(gCharMe);
-        d.stream >> draws;
-        lod.mGroup = gCharMe->New<RndGroup>(MakeString("group%x", (int)&lod));
+        ObjPtrList<RndDrawable> draws(gRevs.charMe);
+        bs >> draws;
+        lod.mGroup = gRevs.charMe->New<RndGroup>(MakeString("group%x", (int)&lod));
         FOREACH (it, draws) {
             lod.mGroup->AddObject(*it);
         }
     } else {
-        d >> lod.mGroup;
-        if (d.rev > 0xD) {
-            d >> lod.mTransGroup;
+        bs >> lod.mGroup;
+        if (gRevs.rev > 0xD) {
+            bs >> lod.mTransGroup;
         }
     }
     return d;
 }
 
 void Character::PostLoad(BinStream &bs) {
-    // ---- REVERTED EXPERIMENT (lane MATCH-G) -- READ BEFORE RETRYING --------
-    // Retail does NOT construct a BinStreamRev here.  Target has no
-    // ??_7BinStreamRev@@6B@ store, no ??0BinStream call and no dtor; it writes
-    // the popped revision into a file-scope AGGREGATE (retail lbl_82CBED90,
-    // `sth rev,0x4(r21)` / `sth altRev,0x0(r21)` off ONE base register) -- which
-    // is the aggregate `gRevs` that PreLoad already matches against.  The cast
-    // model is the house idiom (char/CharHair.cpp:535, rndobj/Mesh.cpp:446,
-    // rndobj/Part.cpp:669); note CharHair needs SEPARATE symbols where Character
-    // needs the aggregate, so the dialect must be read off target bytes per TU.
-    //
-    // Converting just this function (statics + `BinStreamRev &d = (BinStreamRev
-    // &)bs;` + gRevs.rev for d.rev) measured 59.99% -> 68.73% raw.  REVERTED for
-    // two reasons, neither of which is "it didn't help":
-    //   1. ZERO metric value.  matched_code is all-or-nothing per row, so 68.7%
-    //      pays exactly what 60% pays.  It does not cross and will not without
-    //      the two items below.
-    //   2. It BREAKS the native build's semantics.  operator>>(BinStreamRev &,
-    //      Character::Lod &) below reads `d.rev`; under the cast model `d` is a
-    //      reinterpreted BinStream, so that read is garbage.  A correct
-    //      conversion must ALSO move that operator onto gRevs (CharHair did the
-    //      equivalent for Strand::Load).
-    // What the remaining ~244 mismatches actually are, so the next lane starts
-    // ahead: retail caches the rev in a CALLEE-SAVED register and RE-STORES it
-    // after the nested super call (`mr r30,r11` ... `bl RndDir::PostLoad` ...
-    // `sth r30,0x4(r21)`), i.e. it guards the shared file-scope statics against
-    // being clobbered by the nested PostLoad.  There is also a `li r18,0x1c`
-    // held live across the body.  Reproducing that save/restore is the next step.
-    BinStreamRev d(bs, bs.PopRev(this));
-    if (d.rev > 1) {
+    // Retail shape (rb3-Wii ObjMacros dialect): no BinStreamRev is constructed
+    // (no ??_7BinStreamRev store, no ??0BinStream/dtor); the popped revision is
+    // written into the file-scope gRevs aggregate (`sth rev,0x4(r21)` /
+    // `sth altRev,0x0(r21)` off one base register) and the rev is cached and
+    // RE-STORED after each nested super PostLoad, which may clobber gRevs.
+    // The ObjVector readers are reached through the house cast model
+    // (char/CharHair.cpp) so they receive the raw stream (`mr r3,r20`).
+    int revs = bs.PopRev(this);
+    gRevs.rev = getHmxRev(revs);
+    gRevs.altRev = getAltRev(revs);
+    BinStreamRev &d = (BinStreamRev &)bs;
+    int oldRev = gRevs.rev;
+    if (gRevs.rev > 1) {
         RndDir::PostLoad(bs);
-        if (d.rev < 4 || !IsProxy()) {
-            if (d.rev < 9) {
+        gRevs.rev = oldRev;
+        if (gRevs.rev < 4 || !IsProxy()) {
+            if (gRevs.rev < 9) {
                 ObjVector<ObjVector<Lod> > lods(this);
                 d >> lods;
                 if (lods.size() != 0)
@@ -312,29 +305,24 @@ void Character::PostLoad(BinStream &bs) {
                 d >> mLods;
             }
             bs >> mShadow;
-            if (d.rev > 2) {
-                d >> mSelfShadow;
+            if (gRevs.rev > 2) {
+                bs >> mSelfShadow;
             } else {
                 mSelfShadow = false;
             }
-            if (d.rev > 4) {
-                ObjPtr<RndTransformable> tPtr(this, 0);
+            if (gRevs.rev > 4) {
+                ObjPtr<RndTransformable> tPtr(this);
                 bs >> tPtr;
-                RndTransformable *loadedPtr = tPtr.Ptr();
-                if (loadedPtr) {
-                    mSphereBase = loadedPtr;
-                } else {
-                    mSphereBase = this;
-                }
+                mSphereBase = tPtr.Ptr();
             } else {
                 mSphereBase = this;
             }
-            if (d.rev > 0xA) {
-                d >> mBounding;
+            if (gRevs.rev > 0xA) {
+                bs >> mBounding;
             } else {
                 mBounding.Zero();
             }
-            if (d.rev < 0xC) {
+            if (gRevs.rev < 0xC) {
                 if (mSphereBase == this) {
                     if (mBounding.GetRadius() == 0) {
                         if (GetSphere().GetRadius() != 0) {
@@ -343,47 +331,51 @@ void Character::PostLoad(BinStream &bs) {
                     }
                 }
             }
-            if (d.rev > 0xC) {
-                d >> mFrozen;
+            if (gRevs.rev > 0xC) {
+                bs >> mFrozen;
             }
-            if (d.rev > 0xE) {
-                d >> (int &)mForceLod;
+            if (gRevs.rev > 0xE) {
+                bs >> (int &)mForceLod;
             }
-            if (d.rev > 0x10) {
+            if (gRevs.rev > 0x10) {
                 bs >> mTransGroup;
             }
-            if (d.rev == 0x13 || d.rev == 0x14) {
-                ObjPtrVec<RndGroup> vec(this);
-                d >> vec;
-            }
-            if (d.rev > 9) {
+            if (gRevs.rev > 9) {
                 mTest->Load(bs);
             }
-        } else if (d.rev > 0xF) {
+        } else if (gRevs.rev > 0xF) {
             mTest->Load(bs);
         }
     } else {
         int otherRev = bs.PopRev(this);
+        int oldOtherRev = gRevs.rev;
         ObjectDir::PostLoad(bs);
+        gRevs.rev = oldOtherRev;
         if (otherRev > 4) {
             bs >> mEnv;
         }
         if (otherRev > 3) {
-            gCharMe = otherRev < 6 ? this : nullptr;
+            gRevs.charMe = otherRev < 6 ? this : nullptr;
             ObjVector<ObjVector<Character::Lod> > lods(this);
             d >> lods;
             if (lods.size() != 0)
                 mLods = lods[0];
             else
                 mLods.clear();
+            if (gRevs.charMe) {
+                for (int i = 0; i < mLods.size(); i++) {
+                    mLods[i].Group()->SetName(MakeString("lod%d.grp", i), this);
+                }
+            }
+            gRevs.charMe = nullptr;
         } else {
             mLods.clear();
         }
         if (otherRev > 6) {
-            d >> mShadow;
+            bs >> mShadow;
         }
     }
-    if (d.rev < 8) {
+    if (gRevs.rev < 8) {
         float rad = GetSphere().GetRadius();
         for (int i = 0; i < mLods.size(); i++) {
             mLods[i].mScreenSize /= rad;

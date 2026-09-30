@@ -877,9 +877,25 @@ void CharEyes::Replace(ObjRef *ref, Hmx::Object *obj) {
     CharWeightable::Replace(ref, obj);
 }
 
+// Retail shape (TU5): the focus interest is taken only when it is inside the
+// view cone OR head IK is ramping in (rb3-Wii's guard; DC3 dropped it), there
+// is NO `cheat.disable_*` DataVariable / sDisable* test anywhere in the body
+// (no DataVariable call, no local-static guard), the blink window is `< 9`,
+// and when the farthest interest is at distance 0 retail jumps straight to the
+// state reset WITHOUT clearing mCurrentInterest (`ble .L_stateReset`).
+// rb3-Wii's (dev-only) `mDartOffset = targetDir` store is absent too.
+// Spelling levers, each measured against retail (w17-chr): `target` is a
+// held &mTarget (r30) for the Set()s, but the focus copy and the Dir clamp
+// test read mTarget directly (a store through the reference forces a reload of
+// mFocusInterest); the clamp products go through a Vector3 local so /fp:fast
+// does NOT contract them into fmadds (retail: fmuls then fadds); `headPos` is
+// scoped per block so r26 is materialised per branch, as retail does, freeing
+// headXfm's register for the loop iterator.  Residual (99.6 fuzzy / 99.99
+// mpn): commutative FP operand order + two load orders, source-order-inert
+// (flipping operands at every such site was measured byte-identical).
 void CharEyes::NextLook() {
-    auto& _ref0 = mTarget;
-    Vector3 oldTarget = _ref0;
+    Vector3 &target = mTarget;
+    Vector3 oldTarget = target;
 
     RndTransformable *head = GetHead();
     const Transform &headXfm = head->WorldXfm();
@@ -887,139 +903,124 @@ void CharEyes::NextLook() {
     Vector3 facingDir(headXfm.m.y);
     Normalize(facingDir, facingDir);
 
-    if (mFocusInterest) {
-        _ref0 = mFocusInterest->WorldXfm().v;
+    if (mFocusInterest
+        && (mFocusInterest->IsWithinViewCone(headXfm.v, facingDir)
+            || IsHeadIKWeightIncreasing())) {
+        mTarget = mFocusInterest->WorldXfm().v;
         mCurrentInterest = mFocusInterest;
         const CharEyeDartRuleset *dartOverride = mCurrentInterest->GetDartRulesetOverride();
         if (dartOverride) {
-            memcpy(&mData, &dartOverride->mData, sizeof(mData));
+            mData = dartOverride->mData;
         } else {
             mData.ClearToDefaults();
         }
     } else {
         const Vector3 &lastFacing = mLastFacing;
+        // The copy is kept alive by the member operator+= (see DC3's note):
+        // retail reloads all three extrapolated components from it after tan().
+        Vector3 newFacing = facingDir;
+        float dy = (facingDir.y - lastFacing.y) * 45.0f;
         float dz = (facingDir.z - lastFacing.z) * 45.0f;
         float dx = (facingDir.x - lastFacing.x) * 45.0f;
-        float dy = (facingDir.y - lastFacing.y) * 45.0f;
 
-        float extrapMag = std::sqrt(dy * dy + (dx * dx + dz * dz));
+        float extrapMag = std::sqrt(dx * dx + (dz * dz + dy * dy));
         float maxExtrap = std::tan(mMaxExtrapolation * 0.017453292f);
 
         if (extrapMag > maxExtrap) {
             float scale = maxExtrap / extrapMag;
             dx = scale * dx;
-            dy = dy * scale;
-            dz = dz * scale;
+            dy *= scale;
+            dz *= scale;
         }
 
-        float newFacingX = facingDir.x + dx;
-        float newFacingY = dy + facingDir.y;
-        float newFacingZ = dz + facingDir.z;
+        newFacing += Vector3(dx, dy, dz);
 
         float dist = RandomFloat(20.0f, 100.0f);
         dist *= 12.0f;
 
-        float projX = dist * newFacingX;
-        float projY = newFacingY * dist;
-        float projZ = newFacingZ * dist;
+        float projX = dist * newFacing.x;
+        float projY = newFacing.y * dist;
+        float projZ = newFacing.z * dist;
 
-        _ref0.x = headXfm.v.x + projX;
-        _ref0.y = projY + headXfm.v.y;
-        _ref0.z = headXfm.v.z + projZ;
+        target.Set(headXfm.v.x + projX, projY + headXfm.v.y, headXfm.v.z + projZ);
+        const Vector3 &headPos = headXfm.v;
 
-        auto _tmp0 = Dir();
-        RndTransformable *dirTrans = dynamic_cast<RndTransformable *>(_tmp0);
+        RndTransformable *dirTrans = dynamic_cast<RndTransformable *>(Dir());
         if (dirTrans) {
-            const Vector3 &dirPos = dirTrans->WorldXfm().v;
-            if (_ref0.z < dirPos.z) {
-                float scale = (dirPos.z - headXfm.v.z) / (_ref0.z - headXfm.v.z);
-                float sx = projX * scale;
-                float sy = projY * scale;
-                float sz = projZ * scale;
-                _ref0.x = headXfm.v.x + sx;
-                _ref0.y = sy + headXfm.v.y;
-                _ref0.z = headXfm.v.z + sz;
+            const Transform &dirXfm = dirTrans->WorldXfm();
+            if (mTarget.z < dirXfm.v.z) {
+                float scale = (dirXfm.v.z - headXfm.v.z) / (mTarget.z - headXfm.v.z);
+                Vector3 s(projX * scale, projY * scale, projZ * scale);
+                target.Set(headPos.x + s.x, s.y + headPos.y, headPos.z + s.z);
             }
         }
 
-        static DataNode &interestCheat = DataVariable("cheat.disable_interest_objects");
+        if (mInterests.size() != 0) {
+            float bestScore = -1.0f;
+            float maxDistSq = bestScore;
+            for (ObjVector<CharInterestState>::iterator it = mInterests.begin();
+                 it != mInterests.end();
+                 ++it) {
+                const Vector3 &intPos = it->mInterest->WorldXfm().v;
+                float fy = intPos.y - headPos.y;
+                float fz = intPos.z - headPos.z;
+                float fx = intPos.x - headPos.x;
+                float distSq = fx * fx + (fz * fz + fy * fy);
+                if (distSq > maxDistSq)
+                    maxDistSq = distSq;
+            }
 
-        if (mInterests.size() > 0 && !sDisableInterestObjects) {
-            if (interestCheat.Int(0) == 0) {
-                float maxDistSq = -1.0f;
-                float bestScore = maxDistSq;
+            if (maxDistSq > 0.0f) {
+                CharInterestState *bestState = 0;
+                Vector3 targetDir;
+                Subtract(target, headPos, targetDir);
+                Normalize(targetDir, targetDir);
+
+                float inverseDist = 1.0f / maxDistSq;
+
                 for (ObjVector<CharInterestState>::iterator it = mInterests.begin();
                      it != mInterests.end();
                      ++it) {
-                    const Vector3 &intPos = it->mInterest->WorldXfm().v;
-                    float fy = intPos.y - headXfm.v.y;
-                    float fx = intPos.x - headXfm.v.x;
-                    float fz = intPos.z - headXfm.v.z;
-                    float distSq = (fz * fz + (fx * fx + fy * fy));
-                    if (distSq > maxDistSq)
-                        maxDistSq = distSq;
-                }
-
-                if (maxDistSq > 0.0f) {
-                    CharInterestState *bestState = 0;
-                    Vector3 targetDir;
-                    Subtract(_ref0, headXfm.v, targetDir);
-                    Normalize(targetDir, targetDir);
-
-                    float inverseDist = 1.0f / maxDistSq;
-
-                    for (ObjVector<CharInterestState>::iterator it = mInterests.begin();
-                         it != mInterests.end();
-                         ++it) {
-                        if (it->mInterest != mCurrentInterest) {
-                            if (!it->IsInRefractoryPeriod()) {
-                                float score = it->mInterest->ComputeScore(
-                                    headXfm.m.y,
-                                    headXfm.v,
-                                    targetDir,
-                                    inverseDist,
-                                    mInterestFilterFlags,
-                                    mDefaultFilterFlags == mInterestFilterFlags
-                                );
-                                if (score >= 0.0f && score > bestScore) {
-                                    bestScore = score;
-                                    bestState = &*it;
-                                }
+                    if (it->mInterest != mCurrentInterest) {
+                        if (!it->IsInRefractoryPeriod()) {
+                            float score = it->mInterest->ComputeScore(
+                                headXfm.m.y,
+                                headPos,
+                                targetDir,
+                                inverseDist,
+                                mInterestFilterFlags,
+                                mInterestFilterFlags == mDefaultFilterFlags
+                            );
+                            if (score >= 0.0f && score > bestScore) {
+                                bestScore = score;
+                                bestState = &*it;
                             }
                         }
                     }
+                }
 
-                    if (bestState) {
-                        _ref0 = bestState->mInterest->WorldXfm().v;
-                        mCurrentInterest = bestState->mInterest;
-                        const CharEyeDartRuleset *dartOverride =
-                            mCurrentInterest->GetDartRulesetOverride();
-                        if (dartOverride) {
-                            memcpy(&mData, &dartOverride->mData, sizeof(mData));
-                        } else {
-                            mData.ClearToDefaults();
-                        }
-                        bestState->mRefractoryTime =
-                            TheTaskMgr.Seconds(TaskMgr::kRealTime);
+                if (bestState) {
+                    target = bestState->mInterest->WorldXfm().v;
+                    mCurrentInterest = bestState->mInterest;
+                    const CharEyeDartRuleset *dartOverride =
+                        mCurrentInterest->GetDartRulesetOverride();
+                    if (dartOverride) {
+                        mData = dartOverride->mData;
                     } else {
-                        mCurrentInterest = 0;
                         mData.ClearToDefaults();
                     }
-
-                    // rb3-Wii (dev) assigns the MILO_DEBUG-only mDartOffset
-                    // (`mDartOffset = targetDir;`) here; retail NextLook
-                    // (fn_82373240) has no store at this point -- both branches
-                    // jump straight to stateReset.
-                    goto stateReset;
+                    bestState->mRefractoryTime = TheTaskMgr.Seconds(TaskMgr::kRealTime);
+                } else {
+                    mCurrentInterest = 0;
+                    mData.ClearToDefaults();
                 }
             }
+        } else {
+            mCurrentInterest = 0;
+            mData.ClearToDefaults();
         }
-
-        mCurrentInterest = 0;
-        mData.ClearToDefaults();
     }
 
-stateReset:
     mLastLook = 0.0f;
     mAvDelta = 0.0f;
     mEnabled = false;
@@ -1029,31 +1030,30 @@ stateReset:
     mDartInterval = 0.2f;
     mEyeClampCount = -1;
 
-    static DataNode &blinkCheat = DataVariable("cheat.disable_procedural_blinks");
-
-    if (!sDisableProceduralBlink && !blinkCheat.NotNull() && !mBlinkEnabled && mFaceServo
-        && mBlinkCount < 25
+    if (!mBlinkEnabled && mFaceServo && mBlinkCount < 9
         && TheTaskMgr.Seconds(TaskMgr::kRealTime) - mLowerBlinkAngle > 0.6f
         && mLastBlinkWeight < 0.5f) {
+        const Vector3 &headPos = headXfm.v;
         Vector3 oldDir(
-            oldTarget.x - headXfm.v.x,
-            oldTarget.y - headXfm.v.y,
-            oldTarget.z - headXfm.v.z
+            oldTarget.x - headPos.x,
+            oldTarget.y - headPos.y,
+            oldTarget.z - headPos.z
         );
         Normalize(oldDir, oldDir);
 
         Vector3 newDir(
-            _ref0.x - headXfm.v.x,
-            _ref0.y - headXfm.v.y,
-            _ref0.z - headXfm.v.z
+            target.x - headPos.x,
+            target.y - headPos.y,
+            target.z - headPos.z
         );
         Normalize(newDir, newDir);
 
-        auto _tmp1 = Dot(newDir, oldDir);
-        if (_tmp1 < 0.984808f) {
+        // Spelled out rather than Dot(newDir, oldDir): retail's chain is
+        // y, z, x with each product's operands in this order.
+        if (oldDir.x * newDir.x + (oldDir.y * newDir.y + oldDir.z * newDir.z) < 0.984808f) {
             ForceBlink();
-            mHeadForward = _ref0;
-            _ref0 = oldTarget;
+            mHeadForward = mTarget;
+            mTarget = oldTarget;
         }
     }
 }
