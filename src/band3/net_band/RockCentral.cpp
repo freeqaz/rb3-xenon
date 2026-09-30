@@ -1732,7 +1732,8 @@ void RockCentral::SyncAvailableSongs(
 ) {
     Server *server = IsConnected(o, -1, false);
     if (server) {
-        DP_KEYS2(sids, usids)
+        // Retail guard bits: dataPoint=1, sids=2, usids=4 -- each key static is
+        // declared at its first use, after the DataPoint.
         INIT_DATAPOINT("misc/sync_available_songs");
         for (int i = 0; i < profiles.size(); i++) {
             char buf[8];
@@ -1740,6 +1741,7 @@ void RockCentral::SyncAvailableSongs(
                 buf, server->GetPlayerID(profiles[i]->GetPadNum()), "pid%03d", i
             );
         }
+        static Symbol sids("sids");
         String str;
         char strBuf[0x18];
         FOREACH (it, ivec1) {
@@ -1754,6 +1756,7 @@ void RockCentral::SyncAvailableSongs(
         }
         ADD_DATA_PAIR(sids, str);
 
+        static Symbol usids("usids");
         String ustr;
         FOREACH (it, ivec2) {
             int cur = *it;
