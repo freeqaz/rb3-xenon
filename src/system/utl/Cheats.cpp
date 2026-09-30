@@ -204,7 +204,10 @@ BEGIN_HANDLERS(CheatsManager)
 #endif
     HANDLE_MESSAGE(ButtonDownMsg)
     HANDLE_MESSAGE(KeyboardKeyMsg)
+#ifdef HX_NATIVE
+    // DC3-era; RB3-360 retail (and rb3-Wii) handle only ButtonDown/KeyboardKey.
     HANDLE_MESSAGE(KeyboardKeyReleaseMsg)
+#endif
 END_HANDLERS
 
 void CheatsManager::AppendLog(FixedString &str) {
