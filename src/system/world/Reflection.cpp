@@ -64,19 +64,28 @@ END_COPYS
 
 INIT_REVS(3, 0)
 
+// RB3 retail (0x824E8A40): the packed rev is split into two TU shorts (alt +0,
+// rev +4), no version guard, raw stream to the base loads.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_WorldReflection;
+
 BEGIN_LOADS(WorldReflection)
-    LOAD_REVS(bs)
-    ASSERT_REVS(3, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    LOAD_SUPERCLASS(RndTransformable)
-    LOAD_SUPERCLASS(RndDrawable)
+    int revs;
+    bs >> revs;
+    gRevs_WorldReflection.rev = getHmxRev(revs);
+    gRevs_WorldReflection.altRev = getAltRev(revs);
+    Hmx::Object::Load(bs);
+    RndTransformable::Load(bs);
+    RndDrawable::Load(bs);
     bs >> mVerticalStretch;
     bs >> mDraws;
-    if (d.rev > 1) {
+    if (gRevs_WorldReflection.rev > 1) {
         bs >> mHideList;
         bs >> mShowList;
     }
-    if (d.rev > 2) {
+    if (gRevs_WorldReflection.rev > 2) {
         bs >> mLodChars;
     }
 END_LOADS

@@ -7900,14 +7900,8 @@ AppInlineHelp.cpp:
 	.text       start:0x82603A84 end:0x82604520
 
 ColorPalette.cpp:
-	.pdata      start:0x82232E28 end:0x82232E30
-	.pdata      start:0x82232E38 end:0x82232E68
 	.pdata      start:0x82237048 end:0x82237050
-	.pdata      start:0x8223F098 end:0x8223F0A0
-	.text       start:0x826AAF78 end:0x826AAFC8
-	.text       start:0x826AB01C end:0x826AB358
 	.text       start:0x826F95C0 end:0x826F963C
-	.text       start:0x8278DEF0 end:0x8278DF68
 
 Stream.cpp:
 	.pdata      start:0x82238998 end:0x822389C8
@@ -12402,6 +12396,8 @@ system/beatmatch/GameGem.cpp:
 	.text       start:0x8278F068 end:0x8278F208
 
 system/beatmatch/GameGemList.cpp:
+	.pdata      start:0x82232E28 end:0x82232E30
+	.pdata      start:0x82232E38 end:0x82232E68
 	.pdata      start:0x82232F18 end:0x82232F20
 	.pdata      start:0x8223DC08 end:0x8223DC10
 	.pdata      start:0x8223EF60 end:0x8223EF68
@@ -12423,6 +12419,7 @@ system/beatmatch/GameGemList.cpp:
 	.pdata      start:0x8223F050 end:0x8223F058
 	.pdata      start:0x8223F058 end:0x8223F068
 	.pdata      start:0x8223F068 end:0x8223F098
+	.pdata      start:0x8223F098 end:0x8223F0A0
 	.pdata      start:0x8223F0A0 end:0x8223F0B0
 	.pdata      start:0x8223F0B0 end:0x8223F0B8
 	.pdata      start:0x8223F0B8 end:0x8223F0C0
@@ -12430,6 +12427,8 @@ system/beatmatch/GameGemList.cpp:
 	.pdata      start:0x8223F0F0 end:0x8223F108
 	.pdata      start:0x8223F108 end:0x8223F118
 	.pdata      start:0x8223F118 end:0x8223F128
+	.text       start:0x826AAF78 end:0x826AAFC8
+	.text       start:0x826AB01C end:0x826AB358
 	.text       start:0x826AC120 end:0x826AC1A0
 	.text       start:0x82773DC0 end:0x82773E6C
 	.text       start:0x8278C898 end:0x8278C994
@@ -12451,6 +12450,7 @@ system/beatmatch/GameGemList.cpp:
 	.text       start:0x8278D950 end:0x8278D9C0
 	.text       start:0x8278D9C0 end:0x8278DB80
 	.text       start:0x8278DB80 end:0x8278DEF0
+	.text       start:0x8278DEF0 end:0x8278DF68
 	.text       start:0x8278DF68 end:0x8278E098
 	.text       start:0x8278E098 end:0x8278E0DC
 	.text       start:0x8278E0E0 end:0x8278E168
