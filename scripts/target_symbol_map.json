@@ -32,6 +32,8 @@
  "0x824ecd20": "?SavePersistentObjects@WorldInstance@@AAAXAAVBinStream@@@Z",
  "0x82527f08": "?OnShowKeyboardUI@VirtualKeyboard@@QAA?AVDataNode@@PBVDataArray@@@Z",
  "0x825da3d0": "?OnMsg@OvershellSlot@@QAA?AVDataNode@@ABVLocalUserLeftMsg@@@Z",
+ "0x825f0d80": "?ResultFailure@CampaignGoalsLeaderboardPanel@@UAAXXZ",
+ "0x825f0e40": "?EnumerationStarted@CampaignGoalsLeaderboardPanel@@UAAXXZ",
  "0x8260c070": "?TriggerCalibration@CalibrationPanel@@QAAXH@Z",
  "0x8260c508": "?OnMsg@CalibrationPanel@@QAA?AVDataNode@@ABVButtonDownMsg@@@Z",
  "0x8260e210": "?SetFaceType@CharacterCreatorPanel@@QAAXVSymbol@@@Z",

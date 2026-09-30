@@ -29,9 +29,13 @@ void CampaignGoalsLeaderboardPanel::ResultSuccess(bool b1, bool b2, bool b3) {
     HandleType(success);
 }
 
-void CampaignGoalsLeaderboardPanel::ResultFailure() { HandleType(lb_failure_msg); }
+void CampaignGoalsLeaderboardPanel::ResultFailure() {
+    static Message lb_failure_msg("lb_failure");
+    HandleType(lb_failure_msg);
+}
 
 void CampaignGoalsLeaderboardPanel::EnumerationStarted() {
+    static Message lb_in_progress_msg("lb_in_progress");
     HandleType(lb_in_progress_msg);
 }
 
