@@ -1509,7 +1509,7 @@ codebook.c:
 	.text       start:0x82C36D20 end:0x82C37768
 
 Pool.cpp:
-	.text       start:0x827D95B8 end:0x827D9640
+	.text       start:0x827D95B8 end:0x827D9648
 
 VarTimer.cpp:
 	.pdata      start:0x822431D0 end:0x822431F0
@@ -3817,7 +3817,6 @@ XLSPConnection.cpp:
 	.pdata      start:0x82243660 end:0x82243668
 	.pdata      start:0x82243668 end:0x82243670
 	.pdata      start:0x82243670 end:0x82243680
-	.text       start:0x827D9640 end:0x827D9648
 	.text       start:0x827D9648 end:0x827D96D8
 	.text       start:0x827D9750 end:0x827D97CC
 	.text       start:0x827D97D0 end:0x827D9918
