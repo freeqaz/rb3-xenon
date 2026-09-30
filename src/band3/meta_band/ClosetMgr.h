@@ -23,6 +23,8 @@ public:
     bool HasAssetOffer(Symbol);
     bool HasAnyAssetOffers() const;
     void ShowPurchaseUI(Symbol);
+    // TU5, @0x825EC840; retail passes the closet's LocalBandUser. Name is ours.
+    void RefreshOffers(LocalBandUser *);
     bool IsDownloading() const { return unk3c != 0; }
 
     int unk28; // 0x28 - retail ctor inits to 4
@@ -79,6 +81,7 @@ public:
     // out-of-line `mAssetStore.unk34 != 0`, called by CustomizePanel's
     // ButtonDownMsg handler. The name is ours, not retail's.
     bool IsPurchaseUIActive() const;
+    void RefreshAssetOffers();
     void SetDefaultColors();
     void HideClothes();
     void ShowClothes();

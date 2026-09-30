@@ -67,9 +67,11 @@ void CustomizePanel::Load() {
     MILO_ASSERT(mUser, 0x85);
     mCharData = mUser->GetChar();
     MILO_ASSERT(mCharData, 0x88);
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (PrefabMgr::PrefabIsCustomizable()) {
         mProfile = TheProfileMgr.GetProfileForUser(mUser);
     } else
+#endif
         mProfile = mClosetMgr->GetProfile();
     mPreviewDesc = mClosetMgr->GetPreviewDesc();
     MILO_ASSERT(mPreviewDesc, 0x93);
@@ -81,11 +83,15 @@ void CustomizePanel::Load() {
     mCurrentOutfitProvider = new CurrentOutfitProvider();
     MILO_ASSERT(!mAssetProvider, 0x9E);
     mAssetProvider = new AssetProvider(mProfile, assetGender);
+    mPremiumAssetProvider = new PremiumAssetProvider(assetGender);
     MILO_ASSERT(!mMakeupProvider, 0xA6);
     mMakeupProvider = new MakeupProvider(genderSym);
     MILO_ASSERT(!mInstrumentFinishProvider, 0xA9);
     mInstrumentFinishProvider = new InstrumentFinishProvider();
+    mClosetMgr->RefreshAssetOffers();
+    static Symbol key_unlocked_face_paint("key_unlocked_face_paint");
     mUnlockedFacePaint = mProfile->HasCampaignKey(key_unlocked_face_paint);
+    static Symbol key_unlocked_tattoos("key_unlocked_tattoos");
     mUnlockedTattoos = mProfile->HasCampaignKey(key_unlocked_tattoos);
 }
 
