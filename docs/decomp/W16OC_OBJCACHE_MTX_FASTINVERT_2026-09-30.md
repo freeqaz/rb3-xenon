@@ -104,11 +104,13 @@ that actually differ.
 the `ab_measure` run 20260930-231649) recompiled 1,226 objects, **including all 523**. So
 leg A inherited no stale main object. The §7 per-row caution was nonetheless right.
 
-## 4. Fix proposal (not applied)
+## 4. Fix (applied on `w16-oc`, `scripts/setup_worktree.sh`)
 
-The fix goes in `scripts/setup_worktree.sh`; objcache itself needs nothing. Add the missing
+The fix goes in `scripts/setup_worktree.sh`; objcache itself needs nothing. It adds the missing
 comparison, "the worktree's checked-out commit vs the commit that built the reflinked
-objects (main's HEAD)":
+objects (main's HEAD)". It also adds the worktree's own uncommitted work (tracked diffs
+including staged, plus untracked `src/`/`config/` files) and fails closed if the worktree's
+HEAD cannot be resolved. The core of the change, as first proposed:
 
 ```diff
      _changed="$( { git -C "$MAIN_REPO" diff --name-only 2>/dev/null;
@@ -124,19 +126,47 @@ objects (main's HEAD)":
                   | grep -cE '^(src/|config/)' || true )"
 ```
 
-Dry-validated counts for the new term: W16-IB-ab case **66**, the probe **73** (both would
-have refused), a fresh worktree at main's HEAD **0** (warm path preserved). The seeding gate
-inherits the fix through `_changed`.
+### Verified on real runs
 
-Stronger alternative, if an all-or-nothing refusal is too coarse: stamp to 2020 only the
-tracked files that are **byte-identical to main's working copy** (`cmp`). Files that differ
-keep their fresh mtime, and only their dependents rebuild. Seeding still needs the
-all-or-nothing gate.
+**Harness.** The script derives `MAIN_REPO` from its own path, so the fixed copy in
+`~/tmp/wt-w16-oc` treats that worktree as "main". It was rebased onto `1a679219f` and
+fully built and settled first (389 compiles on the first build, **0** on the second, tree
+clean), so its `build/` reflects its HEAD. The real main was not touched.
+Fixtures were `oc-stale`, which is HEAD with only `mtx.cpp` reverted to pre-`72f4922b2`
+(a `src`-only difference, the incident's shape), `oc-probe` at `74ee485ef`, and `oc-fresh`, a
+new branch at HEAD. Each build is a full `./tools/ninja-locked`.
 
-A residual assumption remains in both forms: main's `build/` reflects main's HEAD. That
-fails in the window after a merge lands and before main is rebuilt. It could be checked
-against `build/45410914/patch_state.json` or a main-side zero-work probe. This is not
-addressed here.
+| case | script | guard | seeding | first build | mtx.obj FastInvert |
+|---|---|---|---|---|---|
+| control: `oc-stale` (existing branch) | **unfixed** | `Validating` ⛔ | `Seeded` ⛔ | rc 0, 381 MSVC edges, **mtx not compiled** | **232 B beside pre-fix source** ⛔ |
+| 1: `oc-stale` (existing branch) | fixed | **NOT validated** (1 path) | **NOT seeded** | rc 0, 1,226 edges, mtx compiled | **248 B** (correct for its source) |
+| 2: probe, `oc-probe` at `74ee485ef` | fixed | **NOT validated** (73 paths) | **NOT seeded** | not built¹; 0 files 2020-stamped, `ninja -d explain` schedules mtx.obj | n/a |
+| 3: fresh `oc-fresh` at HEAD | fixed | `Validating` (`f2494e685 == main HEAD`) | `Seeded` | rc 0, 41 s; **0 non-PCH compiles**; second build 0 edges | n/a |
+
+¹ Case 2 needs `RB3_ALLOW_UNRESOLVED_SPLITS=1` for setup's configure step and would stop
+at `verify_split_current.py` in a build. Both failures are unrelated, pre-existing
+consequences of reflinking `build/` from a main whose `config/` differs, and the split guard
+is correct to refuse.
+
+The seeding gate follows because it reuses `_changed`: it seeds in case 3 and refuses in
+cases 1 and 2. Its refusal message is reworded to match.
+
+⚠ **Case 3's first build is not literally "0 compiles".** All **381** MSVC edges are the
+PCH-reset cascade (setup deliberately drops main's `system.pch`, so the `/Yc` edge and every
+`/Yu` TU re-run and are served by objcache). The unfixed control also shows exactly 381, so
+this is pre-existing, and CLAUDE.md's "true 0-compile no-op" holds only outside the 9 PCH
+dirs. That cache serving is inferred from the 41 s wall time and was not separately measured.
+
+Other options considered but not implemented: stamp to 2020 only files that are
+**byte-identical to main's working copy**, so only their dependents rebuild. Seeding
+would still need the all-or-nothing gate.
+
+**Correction to this doc's first version.** It listed "main's `build/` may lag main's HEAD
+after a merge" as an unaddressed residual. Setup already runs `ninja-locked post-compile` in
+main before reflinking ("Refreshing main's object cache"). That skips only when main has
+uncommitted `config/` changes, and in that case the `_changed` gate refuses anyway. The
+remaining window is a refresh that **fails** (logged as a non-fatal WARN), which this change
+does not cover.
 
 ⚠ dc3-decomp's `scripts/setup_worktree.sh` has the identical guard shape (lines 240, 389–390).
 It is not touched here.
@@ -144,5 +174,6 @@ It is not touched here.
 ## 5. Not done
 
 - No change to objcache source, its live binary, or `~/.cache/rb3-objcache` (read-only scan).
-- No change to main. `setup_worktree.sh` was not edited; the diff above is a proposal.
+- No change to main or to dc3-decomp. The `setup_worktree.sh` fix lives on `w16-oc` for the
+  coordinator to merge.
 - The shadowing blind spot in §2 was not probed.

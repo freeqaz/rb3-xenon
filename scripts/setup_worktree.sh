@@ -625,7 +625,7 @@ if [ "$WARM_CACHE" -ne 1 ]; then
     _seed_reason="cold-cache (--cold-cache): warm seeding disabled by design"
 elif [ "${_changed:-1}" -ne 0 ]; then
     _seed_ok=0
-    _seed_reason="main/worktree has src/|config/ diffs vs $BASE_REF (_changed=${_changed:-unset})"
+    _seed_reason="worktree ${_wt_head:0:9} differs from main HEAD / $BASE_REF, or main/worktree has local src/|config/ changes (_changed=${_changed:-unset})"
 else
     # Gate a (wiring): no uncommitted configure.py / tools/project.py diffs in main.
     _wiring_changed="$( { git -C "$MAIN_REPO" diff --name-only 2>/dev/null;
