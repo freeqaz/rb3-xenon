@@ -54,9 +54,11 @@ BEGIN_PROPSYNCS(LabelNumberTicker)
     SYNC_SUPERCLASS(UIComponent)
 END_PROPSYNCS
 
+// RB3 retail 0x82827B10: nothing was pushed; the base PostLoad is followed by
+// the virtual Update() (rb3-Wii shape).
 void LabelNumberTicker::PostLoad(BinStream &bs) {
-    bs.PopRev(this);
     UIComponent::PostLoad(bs);
+    Update();
 }
 
 void LabelNumberTicker::Init() {
@@ -115,8 +117,32 @@ void LabelNumberTicker::Enter() {
     UpdateDisplay();
 }
 
+// RB3 retail keeps no BinStreamRev here: the packed rev is split into two
+// mutable TU shorts (alt at +0, rev at +4), there is no version guard and no
+// Push/PopRev -- the same dialect as ui/UIColor.cpp.
+#pragma push_macro("INIT_REVS")
+#pragma push_macro("LOAD_REVS")
+#pragma push_macro("ASSERT_REVS")
+#undef INIT_REVS
+#undef LOAD_REVS
+#undef ASSERT_REVS
+// Separate statics are not co-addressed in this TU (measured: two relocs), so
+// they live in one aligned(4) aggregate, as in ui/UIListArrow.cpp.
+#define INIT_REVS(r_, a_)                                                                \
+    static struct {                                                                      \
+        __declspec(align(4)) unsigned short altRev;                                      \
+        __declspec(align(4)) unsigned short rev;                                         \
+    } gRevs_LabelNumberTicker = { a_, r_ };
+#define LOAD_REVS(bs)                                                                    \
+    int rev;                                                                             \
+    bs >> rev;                                                                           \
+    gRevs_LabelNumberTicker.rev = getHmxRev(rev);                                        \
+    gRevs_LabelNumberTicker.altRev = getAltRev(rev);
+#define ASSERT_REVS(rev1, rev2)
+
 INIT_REVS(2, 0)
 
+// RB3 retail 0x82828458 (rb3-Wii shape).
 void LabelNumberTicker::PreLoad(BinStream &bs) {
     LOAD_REVS(bs);
     ASSERT_REVS(2, 0)
@@ -125,15 +151,18 @@ void LabelNumberTicker::PreLoad(BinStream &bs) {
     bs >> mAnimTime;
     bs >> mAnimDelay;
     bs >> mWrapperText;
-    if (d.rev >= 1)
+    if (gRevs_LabelNumberTicker.rev >= 1)
         bs >> mAcceleration;
-    if (2 <= d.rev) {
+    if (gRevs_LabelNumberTicker.rev >= 2) {
         bs >> mTickTrigger;
         bs >> mTickEvery;
     }
     UIComponent::PreLoad(bs);
-    bs.PushRev(packRevs(d.altRev, d.rev), this);
 }
+
+#pragma pop_macro("ASSERT_REVS")
+#pragma pop_macro("LOAD_REVS")
+#pragma pop_macro("INIT_REVS")
 
 void LabelNumberTicker::SnapToValue(int i) {
     mCurrentValue = i;
