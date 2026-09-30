@@ -144,19 +144,23 @@ void DataProvider::Dim(Symbol sym) {
 
 void DataProvider::SetData(DataArray *data) {
     MILO_ASSERT(data, 0x6a);
-    data->AddRef();
+    // retail 0x828018B8: release the old array, then assign and AddRef
     if (mData) {
         mData->Release();
         mData = 0;
     }
     mData = data;
+    mData->AddRef();
 
     if (mFluidWidth) {
         mWidths.clear();
         mWidths.resize(NumData());
     }
+#ifdef HX_NATIVE
+    // not in retail
     mDisabled.clear();
     mDimmed.clear();
+#endif
 }
 
 #pragma endregion DataProvider

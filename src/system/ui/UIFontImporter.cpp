@@ -505,7 +505,12 @@ Symbol UIFontImporter::GetMatVariationName(unsigned int ui) const {
         for (int i = 0; i < ui; i++) {
             ++it;
         }
-        return FileGetBase((*it)->Name());
+        // retail 0x82818D98 (rb3-Wii): strip the extension with rfind/substr
+        String name((*it)->Name());
+        if (name.rfind(".") != String::npos) {
+            name = name.substr(0, name.rfind("."));
+        }
+        return Symbol(name.c_str());
     }
 }
 
