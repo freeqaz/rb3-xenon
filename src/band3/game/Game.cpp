@@ -1138,7 +1138,8 @@ void Game::ResetVoiceChatState() {
     LocalBandUser **it = users.begin();
     for (; it != users.end(); it++) {
         LocalBandUser *user = *it;
-        if (user->GetTrackType() == kTrackVocals) {
+        // Retail 0x8267B000 skips null users first (User vtable +0x70).
+        if (!user->IsNullUser() && user->GetTrackType() == kTrackVocals) {
             TheSynth->RequirePushToTalk(true, user->GetPadNum());
             break;
         }
