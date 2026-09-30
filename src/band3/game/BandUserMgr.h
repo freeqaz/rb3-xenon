@@ -62,6 +62,10 @@ public:
     static BandUser *GetBandUser(User *);
     static LocalBandUser *GetLocalBandUser(LocalUser *);
     static RemoteBandUser *GetRemoteBandUser(RemoteUser *);
+    // Retail-only helper at 0x82682E00, called once from ~BandUserMgr. The
+    // NAME is a lane-assigned description with no oracle backing (absent from
+    // rb3-Wii and DC3); the body is read off retail bytes.
+    void RemoveNullUsers();
 
     std::vector<BandUser *> mUsers; // 0x28
     std::vector<LocalBandUser *> mLocalUsers; // 0x34
