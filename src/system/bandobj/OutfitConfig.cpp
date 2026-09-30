@@ -219,10 +219,11 @@ void OutfitConfig::MatSwap::Compose(
         sMat->ClearDiffuseTex();
         sMat->SetAlpha(1.0f);
         {
-            const Hmx::Color *col = &baseColor;
+            const Hmx::Color *col;
             if (mColor1Palette) {
                 col = &mColor1Palette->GetColor(colors[mColor1Option]);
-            }
+            } else
+                col = &baseColor;
             sMat->SetColor(col->red, col->green, col->blue);
         }
         mMat->SetColor(baseColor.red, baseColor.green, baseColor.blue);
@@ -236,10 +237,11 @@ void OutfitConfig::MatSwap::Compose(
         if (mTwoColorInterp) {
             sMat->SetBlend(RndMat::kBlendSrcAlpha);
             sMat->SetDiffuseTex(mTwoColorInterp);
-            const Hmx::Color *col = &baseColor;
+            const Hmx::Color *col;
             if (mColor2Palette) {
                 col = &mColor2Palette->GetColor(colors[mColor2Option]);
-            }
+            } else
+                col = &baseColor;
             sMat->SetColor(col->red, col->green, col->blue);
             TheRnd.DrawRect(rect, baseColor, sMat, nullptr, nullptr);
         }
