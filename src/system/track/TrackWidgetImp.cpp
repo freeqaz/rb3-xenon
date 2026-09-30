@@ -22,7 +22,7 @@ void ImmediateWidgetImp::DrawInstances(const ObjPtrList<RndMesh> &meshes, int i2
         if (LOADMGR_EDITMODE) {
             tf68 = mesh->LocalXfm();
         }
-        std::list<RndMultiMesh::Instance>::iterator instIt;
+        RndMultiMesh::InstanceList::iterator instIt;
         if (mesh->HasDynamicConstraint()) {
             for (instIt = mInstances.begin(); instIt != mInstances.end(); ++instIt) {
                 mesh->SetLocalXfm(instIt->mXfm);
@@ -85,23 +85,12 @@ void MultiMeshWidgetImp::Init() {
     }
 }
 
-std::list<RndMultiMesh::Instance> &MultiMeshWidgetImp::Instances() {
+RndMultiMesh::InstanceList &MultiMeshWidgetImp::Instances() {
     MILO_FAIL("MultiMeshWidgetImp::Instances() called; not implemented");
-    // RndMultiMesh::Instances() returns InstanceList, i.e.
-    // std::list<Instance, TransformListAlloc<Instance>> (src/system/rndobj/
-    // MultiMesh.h) -- a distinct type from this override's declared
-    // std::list<Instance> (default allocator), because TransformListAlloc
-    // routes allocate()/deallocate() through the global gTransListAlloc pool
-    // instead of the default node allocator. That divergence doesn't exist on
-    // rb3-Wii, where RndMultiMesh::mInstances is a plain default-allocator
-    // list, so the oracle returns it with no friction at all. This path is
-    // explicitly marked unimplemented above (and MILO_FAIL is a no-op in this
-    // retail build), so the reference is never expected to be dereferenced for
-    // a real allocate/deallocate; the cast below only exists to satisfy the
-    // declared return type on this known-dead path, never as a general bridge
-    // between the two list specializations.
-    return reinterpret_cast<std::list<RndMultiMesh::Instance> &>(mMultiMeshes.front()->Instances()
-    );
+    // TrackWidgetImp<RndMultiMesh::Instance> now uses RndMultiMesh::InstanceList
+    // (see TrackWidgetList in TrackWidgetImp.h), so the multimesh's own list is
+    // returned directly; no cast between list specializations is needed.
+    return mMultiMeshes.front()->Instances();
 }
 
 void MultiMeshWidgetImp::PushInstance(RndMultiMesh::Instance &inst) {
