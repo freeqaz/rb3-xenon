@@ -121,14 +121,18 @@ void MakeScale(const Hmx::Matrix3 &m, Vector3 &v) {
 void MakeEulerScale(const Hmx::Matrix3 &m1, Vector3 &v2, Vector3 &v3) {
     MakeScale(m1, v3);
     Hmx::Matrix3 m38;
-    float inv_x = v3.x ? 1.0f / v3.x : 0.0f;
-    m38.x.z = inv_x;
+    // RB3-360 retail: a zero scale multiplies by itself (0), no ternary select.
+    float inv_x = v3.x;
+    if (inv_x != 0.0f)
+        inv_x = 1.0f / inv_x;
     Scale(m1.x, inv_x, m38.x);
-    float inv_y = v3.y ? 1.0f / v3.y : 0.0f;
-    m38.y.z = inv_y;
+    float inv_y = v3.y;
+    if (inv_y != 0.0f)
+        inv_y = 1.0f / inv_y;
     Scale(m1.y, inv_y, m38.y);
-    float inv_z = v3.z ? 1.0f / v3.z : 0.0f;
-    m38.z.z = inv_z;
+    float inv_z = v3.z;
+    if (inv_z != 0.0f)
+        inv_z = 1.0f / inv_z;
     Scale(m1.z, inv_z, m38.z);
     MakeEuler(m38, v2);
 }
