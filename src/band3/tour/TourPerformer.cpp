@@ -292,7 +292,8 @@ void TourPerformerImpl::UpdateTourPlayerContributionLabel(UILabel *label, BandUs
 
 String TourPerformerImpl::GetPlayerContributionString(BandUser *user) {
     MILO_ASSERT(user, 0x202);
-    return TheGame->mTrackerManager->GetPlayerContributionString(user->GetTrackSym());
+    Symbol trackSym = user->GetTrackSym();
+    return TheGame->mTrackerManager->GetPlayerContributionString(trackSym);
 }
 
 #pragma push
