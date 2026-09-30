@@ -382,6 +382,9 @@ void ClosetMgr::UpdateCurrentOutfitConfig() {
     Symbol name = mCurrentOutfitPiece->mName;
     AssetMgr *pAssetMgr = AssetMgr::GetAssetMgr();
     MILO_ASSERT(pAssetMgr, 599);
+    static Symbol guitar("guitar");
+    static Symbol bass("bass");
+    static Symbol drum("drum");
     if (unk44 == guitar || unk44 == bass || unk44 == drum) {
         name = pAssetMgr->StripFinish(name);
     }
@@ -440,6 +443,9 @@ void ClosetMgr::SetDefaultColors() {
     if (name != gNullStr) {
         AssetMgr *pAssetMgr = AssetMgr::GetAssetMgr();
         MILO_ASSERT(pAssetMgr, 0x2B3);
+        static Symbol guitar("guitar");
+        static Symbol bass("bass");
+        static Symbol drum("drum");
         if (unk44 == guitar || unk44 == bass || unk44 == drum) {
             name = pAssetMgr->StripFinish(name);
         }
