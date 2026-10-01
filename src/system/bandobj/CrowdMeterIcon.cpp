@@ -1,3 +1,6 @@
+// Retail inlines the ObjPtr<EventTrigger> ctors in ??0CrowdMeterIcon (vtable, owner
+// and a null mObject stored in place; no bl to the out-of-line ctor).
+#define RB3_TU_OBJPTR_FORCEINLINE_CTOR
 #include "bandobj/CrowdMeterIcon.h"
 #include "bandobj/BandTrack.h"
 #include "bandobj/TrackPanelDirBase.h"
@@ -139,7 +142,11 @@ BEGIN_HANDLERS(CrowdMeterIcon)
     HANDLE_CHECK(0xD8)
 END_HANDLERS
 
-SAVE_OBJ(CrowdMeterIcon, 0xDF)
+// Retail 0x822B94C0: rev 0, then the RndDir save.
+BEGIN_SAVES(CrowdMeterIcon)
+    SAVE_REVS(0, 0)
+    SAVE_SUPERCLASS(RndDir)
+END_SAVES
 
 void CrowdMeterIcon::PreLoad(BinStream &bs) {
     LOAD_REVS(bs)

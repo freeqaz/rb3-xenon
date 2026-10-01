@@ -38,7 +38,7 @@ public:
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
-    virtual ~LayerDir() {}
+    // No user-declared dtor: retail's ~LayerDir makes no vtable stores (implicit).
     virtual void PreLoad(BinStream &);
     virtual void PostLoad(BinStream &);
     virtual void DrawShowing();

@@ -1,3 +1,6 @@
+// Retail inlines the ObjPtr two-arg ctor at this TU's member-init sites; the
+// in-class (plain inline) definition lets MSVC choose per site, as retail did.
+#define RB3_OBJPTR_INLINE_TWOARG_CTOR
 #include "bandobj/BandDirector.h"
 #include "bandobj/BandWardrobe.h"
 #include "decomp.h"

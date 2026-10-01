@@ -24,6 +24,9 @@ public:
     virtual void Load(BinStream &);
     // RndHighlightable
     virtual void Highlight();
+    // User-declared: retail's ~CharCuff re-stores the vtables and vtordisp, which
+    // only a user-declared destructor does.
+    virtual ~CharCuff() {}
 
     float Eccentricity(const Vector2 &) const;
     void Deform(SyncMeshCB *, FileMerger *);

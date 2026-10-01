@@ -152,7 +152,66 @@ BEGIN_COPYS(VocalTrackDir)
     END_COPYING_MEMBERS
 END_COPYS
 
-SAVE_OBJ(VocalTrackDir, 0x107)
+// Retail 0x822FA7E0 is a real rev-7 serializer, the mirror of PostLoad's
+// current-revision path, ending in the shared track save (0x8234ED60).
+BEGIN_SAVES(VocalTrackDir)
+    SAVE_REVS(7, 0)
+    SAVE_SUPERCLASS(RndDir)
+    if (!IsProxy()) {
+        bs << mConfigurableObjects;
+        bs << mVoxCfg;
+        bs << mVocalistVolume;
+        bs << mMinPitchRange;
+        bs << mArrowSmoothing;
+        bs << mTambourineSmasher;
+        bs << mTambourineNowShowTrig;
+        bs << mTambourineNowHideTrig;
+        bs << mPhraseFeedbackTrig;
+        bs << mSpotlightSparklesOnlyTrig;
+        bs << mSpotlightPhraseSuccessTrig;
+        bs << mLyricColorMap;
+        bs << mLyricAlphaMap;
+        bs << mPitchWindow;
+        bs << mPitchWindowHeight;
+        bs << mPitchWindowMesh;
+        bs << mPitchWindowOverlay;
+        bs << mLeadLyrics;
+        bs << mLeadLyricHeight;
+        bs << mLeadLyricMesh;
+        bs << mHarmLyrics;
+        bs << mHarmLyricHeight;
+        bs << mHarmLyricMesh;
+        bs << mLeftDecoMesh;
+        bs << mRightDecoMesh;
+        bs << mNowBarWidth;
+        bs << mNowBarMesh;
+        bs << mRemoteVocals;
+        bs << mTrackLeftX;
+        bs << mTrackRightX;
+        bs << mTrackBottomZ;
+        bs << mTrackTopZ;
+        bs << mPitchBottomZ;
+        bs << mPitchTopZ;
+        bs << mNowBarX;
+        bs << mPitchGuides;
+        bs << mTubeStyle;
+        bs << mArrowStyle;
+        bs << mFontStyle;
+        bs << mLeadText;
+        bs << mHarmText;
+        bs << mLeadPhonemeText;
+        bs << mHarmPhonemeText;
+        bs << mLastMin;
+        bs << mLastMax;
+        bs << mMiddleCZPos;
+        bs << mTonic;
+        bs << mRangeScaleAnim;
+        bs << mRangeOffsetAnim;
+        bs << mLeadDeployMat;
+        bs << mHarmDeployMat;
+    }
+    SaveTrack(bs, IsProxy(), true);
+END_SAVES
 
 BEGIN_LOADS(VocalTrackDir)
     PreLoad(bs);

@@ -1,3 +1,6 @@
+// Retail inlines the ObjPtr ctors in ??0EndingBonus but not in ??0MiniIconData; the
+// in-class (plain inline) two-arg ctor lets MSVC decide per site.
+#define RB3_OBJPTR_INLINE_TWOARG_CTOR
 // EndingBonus (bandobj/EndingBonus.cpp), MSVC X360.
 #include "bandobj/EndingBonus.h"
 #include "utl/Loader.h"

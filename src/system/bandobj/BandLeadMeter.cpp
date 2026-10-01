@@ -1,3 +1,6 @@
+#define RB3_OBJPTR_INLINE_TWOARG_CTOR
+// Retail inlines the ObjPtr ctors at the member-init sites of this TU's ctor. The
+// plain-inline in-class two-arg ctor (not __forceinline) takes ??0BandLeadMeter to 100.
 // BandLeadMeter (bandobj/BandLeadMeter.cpp), MSVC X360.
 #include "bandobj/BandLeadMeter.h"
 #include "decomp.h"

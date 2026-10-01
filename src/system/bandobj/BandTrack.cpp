@@ -1,3 +1,6 @@
+// Retail inlines the ObjPtr two-arg ctor at this TU's member-init sites; the
+// in-class (plain inline) definition lets MSVC choose per site, as retail did.
+#define RB3_OBJPTR_INLINE_TWOARG_CTOR
 // BandTrack (bandobj/BandTrack.cpp), MSVC X360.
 #include "bandobj/BandTrack.h"
 #include "bandobj/BandCrowdMeter.h"
@@ -109,6 +112,28 @@ void BandTrack::LoadTrack(BinStream &bs, bool b1, bool b2, bool b3) {
     }
 }
 
+// Retail 0x8234ED60, called from the track dirs' Save with (bs, IsProxy(), true):
+// the save-side mirror of LoadTrack at rev 3. The third argument is unused.
+void BandTrack::SaveTrack(BinStream &bs, bool proxy, bool) {
+    bs << 3;
+    bs << mSimulatedNet;
+    bs << mInstrument;
+    if (!proxy) {
+        bs << mStarPowerMeter;
+        bs << mStreakMeter;
+        bs << mPlayerIntro;
+        bs << mPopupObject;
+        bs << mPlayerFeedback;
+        bs << mFailedFeedback;
+        bs << mEndgameFeedback;
+        bs << mRetractTrig;
+        bs << mResetTrig;
+        bs << mDeployTrig;
+        bs << mStopDeployTrig;
+        bs << mIntroTrig;
+    }
+}
+
 void BandTrack::CopyTrack(const BandTrack *c) {
     COPY_MEMBER(mDisabled)
     COPY_MEMBER(mSimulatedNet)
@@ -149,6 +174,7 @@ void BandTrack::ResetStreakMeter() {
 }
 
 void BandTrack::Reset() {
+    static Message reset("reset");
     if (mStarPowerMeter) {
         mStarPowerMeter->Reset();
         if (mParent && mParent->HasPlayer() && !unk1b) {
@@ -159,7 +185,9 @@ void BandTrack::Reset() {
     }
     ResetStreakMeter();
     if (mPlayerFeedback) {
-        mPlayerFeedback->HandleType(reset_msg);
+        mPlayerFeedback->HandleType(reset);
+        static Symbol disable("disable");
+        static Message disable_msg(disable);
         SendTrackerDisplayMessage(disable_msg);
 #ifdef HX_NATIVE
         if (UILabel *pctLabel = mPlayerFeedback->Find<UILabel>("solo_percent.lbl", false))
@@ -167,9 +195,10 @@ void BandTrack::Reset() {
 #endif
     }
     if (mFailedFeedback) {
-        mFailedFeedback->HandleType(reset_msg);
+        mFailedFeedback->HandleType(reset);
         if (mParent) {
             if (mParent->GetNoBackFromBrink()) {
+                static Symbol no_saving("no_saving");
                 mFailedFeedback->SetProperty(no_saving, DataNode(1));
             }
         }
@@ -273,8 +302,9 @@ void BandTrack::SetQuarantined(bool b) {
 }
 
 void BandTrack::ResetPlayerFeedback() {
+    static Message reset("reset");
     if (mPlayerFeedback)
-        mPlayerFeedback->HandleType(reset_msg);
+        mPlayerFeedback->HandleType(reset);
 }
 
 void BandTrack::SetNetTalking(bool talking) {
@@ -288,12 +318,18 @@ void BandTrack::SetNetTalking(bool talking) {
     }
 }
 
+// Retail builds both Symbols as function-local statics before the null test, and each
+// Message as a function-local static inside its branch (guard bits 1/2, then 4/8).
 void BandTrack::SetPlayerFeedbackShowing(bool showing) const {
+    static Symbol feedback_on("feedback_on");
+    static Symbol feedback_off("feedback_off");
     if (mPlayerFeedback) {
         if (showing) {
-            mPlayerFeedback->HandleType(feedback_on_msg);
+            static Message on_msg(feedback_on);
+            mPlayerFeedback->HandleType(on_msg);
         } else {
-            mPlayerFeedback->HandleType(feedback_off_msg);
+            static Message off_msg(feedback_off);
+            mPlayerFeedback->HandleType(off_msg);
         }
     }
 }
@@ -440,7 +476,7 @@ void BandTrack::CodaFail(bool guilty) {
 }
 
 void BandTrack::CodaSuccess() {
-    TrackPanelDirBase *tpd = dynamic_cast<TrackPanelDirBase *>(ThisDir()->Dir());
+    TrackPanelDirBase *tpd = MyTrackPanelDir();
     if (tpd)
         tpd->CodaSuccess();
     EventTrigger *trig = ThisDir()->Find<EventTrigger>("bre_success.trig", false);
@@ -456,17 +492,20 @@ void BandTrack::EnablePlayer() {
         if (trig)
             trig->Trigger();
         mDisabled = false;
-        if (dynamic_cast<TrackPanelDirBase *>(ThisDir()->Dir())) {
+        if (MyTrackPanelDir()) {
             int idx = mTrackIdx;
-            dynamic_cast<TrackPanelDirBase *>(ThisDir()->Dir())->EnablePlayer(idx);
+            MyTrackPanelDir()->EnablePlayer(idx);
         }
     }
 }
 
 void BandTrack::SoloStart() {
     if (!unk1e && !mSoloDisplay) {
-        if (mPlayerFeedback)
+        if (mPlayerFeedback) {
+            static Symbol start_solo("start_solo");
+            static Message start_solo_msg(start_solo);
             mPlayerFeedback->HandleType(start_solo_msg);
+        }
 #ifdef HX_NATIVE
         if (mPlayerFeedback) {
             UILabel *pctLabel =
@@ -519,7 +558,7 @@ void BandTrack::SetupCrowdMeter() {
     if (meter && !meter->Disabled() && mTrackIdx > -1) {
         CrowdMeterIcon *micon = meter->PlayerIcon(mTrackIdx);
         micon->SetIcon(icon);
-        micon->unk240 = dynamic_cast<TrackPanelDirBase *>(ThisDir()->Dir());
+        micon->unk240 = MyTrackPanelDir();
     }
     if (mUnisonIcon)
         ((UnisonIcon *)mUnisonIcon.Ptr())->SetIcon(icon);
@@ -611,7 +650,12 @@ void BandTrack::SyncInstrument() {
     }
 }
 
+// Retail builds BandTrack's Symbols/Messages as function-local statics, not the
+// utl/Symbols.h / utl/Messages.h globals. Here: a local static Message built from a
+// temporary Symbol("reset") at entry, and a local static Symbol/Message pair for
+// "disable" inside the feedback branch.
 void BandTrack::Retract(bool b) {
+    static Message reset("reset");
     if (b) {
         Reset();
         EventTrigger *trig =
@@ -624,7 +668,9 @@ void BandTrack::Retract(bool b) {
         if (mRetractTrig)
             mRetractTrig->Trigger();
         if (mPlayerFeedback) {
-            mPlayerFeedback->HandleType(reset_msg);
+            mPlayerFeedback->HandleType(reset);
+            static Symbol disable("disable");
+            static Message disable_msg(disable);
             SendTrackerDisplayMessage(disable_msg);
         }
     }
@@ -650,7 +696,8 @@ void BandTrack::GameWon() {
     static Message reset_msg("reset");
     if (mPlayerFeedback) {
         mPlayerFeedback->HandleType(reset_msg);
-        static Message disable_msg("disable");
+        static Symbol disable("disable");
+        static Message disable_msg(disable);
         SendTrackerDisplayMessage(disable_msg);
     }
     GameOver();
@@ -707,10 +754,10 @@ void BandTrack::SpotlightFail(bool guilty) {
 }
 
 void BandTrack::SpotlightPhraseSuccess() {
-    if (dynamic_cast<TrackPanelDirBase *>(ThisDir()->Dir())) {
-        if (dynamic_cast<TrackPanelDirBase *>(ThisDir()->Dir())->GetEndingBonus()) {
+    if (MyTrackPanelDir()) {
+        if (MyTrackPanelDir()->GetEndingBonus()) {
             int trackIdx = mTrackIdx;
-            dynamic_cast<TrackPanelDirBase *>(ThisDir()->Dir())->GetEndingBonus()->PlayerSuccess(trackIdx);
+            MyTrackPanelDir()->GetEndingBonus()->PlayerSuccess(trackIdx);
         }
     }
     if (mUnisonIcon)
@@ -789,6 +836,7 @@ void BandTrack::UnisonStart() {
 
 void BandTrack::SoloHit(int i) {
     if (mPlayerFeedback && !unk1e && !mSoloDisplay) {
+        static Symbol me_percent_format("me_percent_format");
         mPlayerFeedback->Find<UILabel>("solo_percent.lbl", true)
             ->SetTokenFmt(me_percent_format, i);
     }
@@ -799,6 +847,8 @@ void BandTrack::SoloEnd(int i, Symbol sym) {
         if (mPlayerFeedback) {
             mPlayerFeedback->Find<BandLabel>("solo_rating.lbl", true)->SetTextToken(sym);
             mPlayerFeedback->Find<UILabel>("score.lbl", true)->SetInt(i, true);
+            static Symbol end_solo("end_solo");
+            static Message end_solo_msg(end_solo);
             mPlayerFeedback->HandleType(end_solo_msg);
         }
         EventTrigger *trig =

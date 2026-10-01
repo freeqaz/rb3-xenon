@@ -1,3 +1,5 @@
+// Retail inlines the ObjPtr two-arg ctor at this TU's member-init sites.
+#define RB3_OBJPTR_INLINE_TWOARG_CTOR
 // BandCrowdMeter (bandobj/BandCrowdMeter.cpp), MSVC X360.
 #include "bandobj/BandCrowdMeter.h"
 #include "bandobj/BandTrack.h" // complete type for ObjPtr<BandTrack> in TrackPanelDirBase

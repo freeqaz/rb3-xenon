@@ -1,9 +1,9 @@
+#define RB3_OBJPTR_INLINE_TWOARG_CTOR
 // W17-TPD: retail inlines the owner-only ObjPtr ctor in ObjVector<ObjPtr<T> >::resize(unsigned)
 // (0x823090E0 / 0x82309030: {vptr-lis, mOwner, mObject, vptr-addi, vptr-store}, the
 // DEFER_OWNER order, then the vector resize).
-// The per-TU define binds `T(mOwner)` to the inline one-arg ctor (obj/Object.h).
-#define RB3_OBJPTR_INLINE_OWNER_CTOR
-#define RB3_TU_OBJPTR_DEFER_OWNER
+// The plain-inline in-class two-arg ctor covers those owner-only sites as well as
+// ??0TrackPanelDir's member inits (it replaced the OWNER_CTOR+DEFER_OWNER pair).
 #include "bandobj/TrackPanelDir.h"
 #include "bandobj/TrackPanelInterface.h"
 #include "bandobj/GemTrackDir.h"
@@ -46,8 +46,6 @@ TrackPanelDir::TrackPanelDir()
     mGemInst[2] = 2;
     mGemInst[3] = -1;
 }
-
-TrackPanelDir::~TrackPanelDir() { delete mGemTrackRsrcMgr; }
 
 BEGIN_SAVES(TrackPanelDir)
     SAVE_REVS(1, 0)

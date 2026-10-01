@@ -1,9 +1,11 @@
-// Retail inlines this TU's owner-only ObjPtr ctor(s) with the vtable
+#define RB3_OBJPTR_INLINE_TWOARG_CTOR
+// Retail inlines this TU's ObjPtr ctors; the plain-inline in-class two-arg ctor
+// (replacing RB3_OBJPTR_FORCEINLINE_CTOR) takes ??0CharClip to 100. History:
+// retail inlines this TU's owner-only ObjPtr ctor(s) with the vtable
 // materialization pinned AFTER the member stores -- the
 // RB3_OBJPTR_FORCEINLINE_CTOR signature (see obj/ObjPtr_p.h). The
 // extent census shows delta ~= -16 * (surplus bl) for this TU's ctor,
 // i.e. one un-inlined ObjPtr ctor per surplus call.
-#define RB3_OBJPTR_FORCEINLINE_CTOR
 
 #include "char/CharClip.h"
 #include "CharClipGroup.h"

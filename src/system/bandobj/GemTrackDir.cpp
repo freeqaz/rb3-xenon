@@ -134,7 +134,53 @@ BEGIN_COPYS(GemTrackDir)
     END_COPYING_MEMBERS
 END_COPYS
 
-SAVE_OBJ(GemTrackDir, 0xBC)
+// Retail 0x822E5520 is a real rev-12 serializer: PreLoad's current-revision
+// fields in load order, then the shared track save, then the superclass.
+BEGIN_SAVES(GemTrackDir)
+    SAVE_REVS(0xC, 0)
+    if (!IsProxy()) {
+        bs << mEffectSelector;
+        bs << mSurfaceMesh;
+        bs << mSurfaceMat;
+        bs << mTrackEnv;
+        bs << mGameCam;
+        bs << mBassSuperStreakOnTrig;
+        bs << mBassSuperStreakOffTrig;
+        bs << mKickDrummerTrig;
+        bs << mSpotlightPhraseSuccessTrig;
+        bs << mDrumFillResetTrig;
+        bs << mDrumMash2ndPassActivateAnim;
+        bs << mDrumMashHitAnimGrp;
+        bs << mFillColorsGrp;
+        bs << mLodAnim;
+        bs << mRotater;
+        bs << mGlowWidgets;
+        for (int i = 0; i < 5; i++) {
+            bs << mGemMashAnims[i];
+        }
+        for (int i = 1; i < 5; i++) {
+            bs << mDrumMashAnims[i];
+        }
+        for (int i = 0; i < 3; i++) {
+            bs << mFillHitTrigs[i];
+        }
+        for (int i = 0; i < 6; i++) {
+            bs << mRealGuitarMashAnims[i];
+        }
+        bs << mStreakMeterOffset;
+        bs << mStreakMeterTilt;
+        bs << mFretPosOffsets;
+        bs << mKickDrummerResetTrig;
+        bs << mChordLabelPosOffset;
+        bs << mPeakStateOnTrig;
+        bs << mPeakStateOffTrig;
+        for (int i = 1; i < 5; i++) {
+            bs << mFillLaneAnims[i];
+        }
+    }
+    SaveTrack(bs, IsProxy(), false);
+    SAVE_SUPERCLASS(TrackDir)
+END_SAVES
 
 DECOMP_FORCEACTIVE(GemTrackDir, "")
 

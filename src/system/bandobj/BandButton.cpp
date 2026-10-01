@@ -1,3 +1,5 @@
+// Retail inlines the ObjPtr two-arg ctor at this TU's member-init sites.
+#define RB3_OBJPTR_INLINE_TWOARG_CTOR
 // BandButton (bandobj/BandButton.cpp), MSVC X360.
 #include "bandobj/BandButton.h"
 #include "bandobj/BandLabel.h"

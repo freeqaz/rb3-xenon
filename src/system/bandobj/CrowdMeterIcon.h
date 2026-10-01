@@ -22,7 +22,8 @@ public:
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
-    virtual ~CrowdMeterIcon() {}
+    // No user-declared dtor: retail's ~CrowdMeterIcon makes no vtable/vtordisp stores,
+    // which is the implicit destructor's codegen.
     virtual void PreLoad(BinStream &);
     virtual void PostLoad(BinStream &bs);
     virtual void SyncObjects();

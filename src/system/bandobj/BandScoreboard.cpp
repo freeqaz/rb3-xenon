@@ -1,3 +1,5 @@
+// Retail inlines the ObjPtr two-arg ctor at ??0BandScoreboard's member inits.
+#define RB3_OBJPTR_INLINE_TWOARG_CTOR
 #define RB3_TU_OBJPTR_OUTOFLINE_DTOR
 // BandScoreboard (bandobj/BandScoreboard.cpp), MSVC X360.
 #include "bandobj/BandScoreboard.h"

@@ -1,3 +1,6 @@
+// Retail inlines the ObjPtr ctors in ??0StreakMeter but not in SyncObjects; the
+// in-class (plain inline) two-arg ctor lets MSVC decide per site.
+#define RB3_OBJPTR_INLINE_TWOARG_CTOR
 #include "bandobj/StreakMeter.h"
 #include "decomp.h"
 #include "math/Rot.h"
@@ -253,7 +256,24 @@ BEGIN_PROPSYNCS(StreakMeter)
     SYNC_SUPERCLASS(RndDir)
 END_PROPSYNCS
 
-void StreakMeter::Save(BinStream &) { MILO_ASSERT(0, 0x193); }
+// Retail 0x822D75B8: rev 3, PreLoad's current-revision fields, then RndDir.
+BEGIN_SAVES(StreakMeter)
+    SAVE_REVS(3, 0)
+    bs << mStreakMultiplier;
+    bs << mBandMultiplier;
+    bs << mMaxMultiplier;
+    if (!IsProxy()) {
+        bs << mNewStreakTrig;
+        bs << mEndStreakTrig;
+        bs << mMultiMeterAnim;
+        bs << mMultiplierLabel;
+        bs << mMeterWipeAnim;
+        bs << mStarDeployTrig;
+        bs << mEndOverdriveTrig;
+        bs << mResetTrig;
+    }
+    SAVE_SUPERCLASS(RndDir)
+END_SAVES
 
 void StreakMeter::PreLoad(BinStream &bs) {
     LOAD_REVS(bs)
