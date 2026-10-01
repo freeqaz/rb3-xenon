@@ -6988,23 +6988,11 @@ system/rnddx9/Utl.cpp:
 
 system/rnddx9/CubeTex.cpp:
 	.pdata      start:0x8223AB58 end:0x8223ABA8
-	.pdata      start:0x8223ABB8 end:0x8223ABC0
-	.pdata      start:0x8223ABF0 end:0x8223ABF8
-	.pdata      start:0x8223AC08 end:0x8223AC30
 	.pdata      start:0x8223AC50 end:0x8223AD40
 	.pdata      start:0x8223AD50 end:0x8223AD68
 	.pdata      start:0x8223AD70 end:0x8223AE20
 	.pdata      start:0x8223AE30 end:0x8223AE68
-	.text       start:0x8273D7D0 end:0x8273E048
-	.text       start:0x8273E118 end:0x8273E1F0
-	.text       start:0x8273E2D4 end:0x8273E2D8
-	.text       start:0x8273E368 end:0x8273E370
-	.text       start:0x8273E474 end:0x8273E4D0
-	.text       start:0x8273E4E0 end:0x8273E540
-	.text       start:0x8273E54C end:0x8273E568
-	.text       start:0x8273E6C4 end:0x8273E6C8
-	.text       start:0x8273E6D4 end:0x8273EAA8
-	.text       start:0x8273EBBC end:0x8273EBC0
+	.text       start:0x8273D7D0 end:0x8273E040
 	.text       start:0x8273EC04 end:0x8273FD30
 	.text       start:0x8273FDA8 end:0x8273FF80
 	.text       start:0x8273FFB0 end:0x82741040
@@ -13241,23 +13229,8 @@ system/midi/MidiReceiver.cpp:
 	.text       start:0x827EF9F8 end:0x827EFA60
 
 system/rnddx9/Movie.cpp:
-	.pdata      start:0x8223ABA8 end:0x8223ABB8
-	.pdata      start:0x8223ABC0 end:0x8223ABD0
-	.pdata      start:0x8223ABD0 end:0x8223ABD8
-	.pdata      start:0x8223ABD8 end:0x8223ABF0
-	.pdata      start:0x8223ABF8 end:0x8223AC08
-	.pdata      start:0x8223AC30 end:0x8223AC48
-	.pdata      start:0x8223AC48 end:0x8223AC50
-	.text       start:0x8273E048 end:0x8273E118
-	.text       start:0x8273E1F0 end:0x8273E2D4
-	.text       start:0x8273E2D8 end:0x8273E368
-	.text       start:0x8273E370 end:0x8273E474
-	.text       start:0x8273E4D0 end:0x8273E4E0
-	.text       start:0x8273E540 end:0x8273E54C
-	.text       start:0x8273E568 end:0x8273E6C4
-	.text       start:0x8273E6C8 end:0x8273E6D4
-	.text       start:0x8273EAA8 end:0x8273EBBC
-	.text       start:0x8273EBC0 end:0x8273EC04
+	.pdata      start:0x8223ABA8 end:0x8223AC50
+	.text       start:0x8273E040 end:0x8273EC04
 
 system/synth/Utl.cpp:
 	.pdata      start:0x82238710 end:0x82238720

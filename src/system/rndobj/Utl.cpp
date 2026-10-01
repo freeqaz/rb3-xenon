@@ -260,7 +260,9 @@ MatShaderOptions GetDefaultMatShaderOpts(const Hmx::Object *obj, RndMat *mat) {
     return opts;
 }
 
-const char *MovieExtension(const char *name, Platform p) {
+// noinline: retail keeps this out of line (0x82439968) even though its only
+// caller, CacheResource, is in this TU and /O1 would otherwise inline it.
+__declspec(noinline) const char *MovieExtension(const char *name, Platform p) {
     const char *ext;
     if (stricmp(name, "xbv") == 0) {
         // xbox, pc, ps3, or wii only
@@ -1247,6 +1249,43 @@ const char *CacheResource(const char *cc, const Hmx::Object *o) {
     }
 }
 
+#ifndef HX_NATIVE
+// Retail X360 shape (0x8243BCE0, verified on retail bytes): the platform is the
+// constant kPlatformXBox -- no TheLoadMgr.GetPlatform() call, no PS3 "_xbox" ->
+// "_ps3" rewrite -- and the Holmes cache round-trip is compiled out. FileIsLocal()
+// is still called with its result discarded (retail: bl FileIsLocal, r3 unused).
+// The localize buffer is 256 bytes (retail frame 0x190, buffer at r1+0x60).
+const char *CacheResource(const char *cc, CacheResourceResult &res) {
+    res = kCacheUnnecessary;
+    char buf[256];
+    const char *localized = FileLocalize(cc, buf);
+    FileIsLocal(localized);
+    const char *ext = FileGetExt(localized);
+    if (stricmp(ext, "bmp") == 0 || stricmp(ext, "png") == 0) {
+        static char cacheFile[256];
+        strcpy(
+            cacheFile,
+            MakeString(
+                "%s/gen/%s.%s_%s",
+                FileGetPath(localized),
+                FileGetBase(localized),
+                FileGetExt(localized),
+                PlatformSymbol(kPlatformXBox)
+            )
+        );
+        return cacheFile;
+    } else {
+        const char *movieExt = MovieExtension(ext, kPlatformXBox);
+        if (movieExt) {
+            return MakeString(
+                "%s/%s.%s", FileGetPath(localized), FileGetBase(localized), movieExt
+            );
+        }
+        res = kCacheUnknownExtension;
+        return nullptr;
+    }
+}
+#else
 const char *CacheResource(const char *cc, CacheResourceResult &res) {
     Platform thisPlatform = TheLoadMgr.GetPlatform();
     res = kCacheUnnecessary;
@@ -1304,6 +1343,7 @@ const char *CacheResource(const char *cc, CacheResourceResult &res) {
         return cacheFile;
     }
 }
+#endif
 
 DataNode GetNormalMapTextures(ObjectDir *dir) {
     int idx = 0;
