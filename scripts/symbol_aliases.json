@@ -89866,8 +89866,7 @@
    "address": "0x822dea78",
    "survivor": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAAXXZ",
    "folded": [
-    "?clear@?$_Rb_tree@PAVTrackWidget@@U?$less@PAVTrackWidget@@@stlpmtx_std@@PAV1@U?$_Identity@PAVTrackWidget@@@3@U?$_SetTraitsT@PAVTrackWidget@@@priv@3@V?$StlNodeAlloc@PAVTrackWidget@@@3@@stlpmtx_std@@QAAXXZ",
-    "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@2@U?$_SetTraitsT@H@priv@2@V?$StlNodeAlloc@H@2@@stlpmtx_std@@QAAXXZ"
+    "?clear@?$_Rb_tree@PAVTrackWidget@@U?$less@PAVTrackWidget@@@stlpmtx_std@@PAV1@U?$_Identity@PAVTrackWidget@@@3@U?$_SetTraitsT@PAVTrackWidget@@@priv@3@V?$StlNodeAlloc@PAVTrackWidget@@@3@@stlpmtx_std@@QAAXXZ"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 32, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 27 census sites over 1 functions. [W16-J landing repair 2026-09-14: this group was changed on BOTH sides of the W16-J rebase (main added memberships after the lane's base a8f9e92b; the lane changed the group independently), and the rebase resolver replaced the whole group with the lane's copy instead of three-way merging it. Restored main's memberships verbatim from 22b583d5; the lane's own change is kept.] W16-IC-B: + _Rb_tree<int> (set<int>) clear. icf_pair_adjudicate --chase T1 PROVEN (callee _M_erase slots fold-ok); retail TourCharLocal::SaveDb 0x82B79C00 calls 0x822DEA78 to destroy its local set<int>.",
    "withdrawn": [
@@ -89876,6 +89875,13 @@
      "lane": "W16-J 2026-09-14",
      "class": "CONTRADICTED",
      "why": "map spelling proven wrong on retail bytes: 0x822dea78 bl's 0x822dd9a0 = set<Symbol>::_M_erase (li r3,20 node size); the map<Symbol,CharLipSync*> instantiation would use li r3,24 (different-size COMDATs cannot fold). 0 of 62 retail callers are in CharLipSync; CharLipSync.obj emits no set-family spelling. Re-homed 0x822dea78 to BandProfile.cpp (which emits set<Symbol>::_M_erase and set<Symbol>::clear and already owns the 0x822dd9a0 carve) and renamed the map row to the set<Symbol>::clear spelling in the same commit (W16-F rule)."
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@2@U?$_SetTraitsT@H@priv@2@V?$StlNodeAlloc@H@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-IC landing 2026-10-01",
+     "class": "CHASE_CYCLE_ASSUMED",
+     "disposition": "membership withdrawn, names kept",
+     "evidence": "Coordinator gate on 46faceb78: icf_pair_adjudicate --chase reaches CHASED T1 PROVEN only through a CYCLE-ASSUMED leaf, _M_erase<set<Symbol>> | _M_erase<set<int>> (_M_erase calls itself). The group at 0x822dd9a0 (survivor _M_erase<set<Symbol>>) has no folded members, so nothing independently places _M_erase<set<int>> in it and the chase assumes the pair it proves. Admission rule is 0 CYCLE (same disposition as W17-BPM3's _M_fill_insert<unsigned int>); withdrawn until an independent channel proves it."
     }
    ],
    "repair": {
