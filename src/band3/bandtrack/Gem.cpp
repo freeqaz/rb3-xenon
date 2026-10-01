@@ -402,6 +402,10 @@ void Gem::AddHopoTails(Symbol s1) {
         || !mGemManager->mTrackConfig.IsRealGuitarTrack() || !mHopo || mInArrhythmic)
         return;
     else {
+        // Retail: function-local statics (one guard word, bits 1/2/4).
+        static Symbol miss("miss");
+        static Symbol hopo_tail("hopo_tail");
+        static Symbol hopo_tail_miss("hopo_tail_miss");
         Symbol hopoSym = s1 == miss ? hopo_tail_miss : hopo_tail;
         Symbol s20;
         mGemManager->GetWidgetName(s20, 0, hopoSym);

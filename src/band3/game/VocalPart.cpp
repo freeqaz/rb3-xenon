@@ -230,32 +230,8 @@ bool PitchBetween(float pitch, float a, float b, float &out);
 float VocalPart::GetSloppyPitch(float ms, int noteIdx, float pitch, float &outPitch)
     const {
     const VocalNote &note = mVocalNoteList->mNotes[noteIdx];
-    float pitchHi;
-    float msPlus = ms + mSlop;
-    if (note.mEndPitch == note.mBeginPitch) {
-        pitchHi = (float)note.mBeginPitch;
-    } else {
-        float dur = note.mDurationMs;
-        float noteMs = note.mMs;
-        float endMs = noteMs + dur;
-        msPlus = Min(endMs, msPlus);
-        float rel = Max(msPlus - noteMs, 0.0f);
-        float t = rel / dur;
-        pitchHi = t * (float)note.mEndPitch + (1.0f - t) * (float)note.mBeginPitch;
-    }
-    float msMinus = ms - mSlop;
-    float pitchLo;
-    if (note.mEndPitch == note.mBeginPitch) {
-        pitchLo = (float)note.mBeginPitch;
-    } else {
-        float dur = note.mDurationMs;
-        float noteMs = note.mMs;
-        float endMs = noteMs + dur;
-        msMinus = Min(endMs, msMinus);
-        float rel = Max(msMinus - noteMs, 0.0f);
-        float t = rel / dur;
-        pitchLo = t * (float)note.mEndPitch + (1.0f - t) * (float)note.mBeginPitch;
-    }
+    float pitchHi = note.PitchAt(ms + mSlop);
+    float pitchLo = note.PitchAt(ms - mSlop);
     float modPitch = (float)fmod(pitch, 12.0);
     float modHi = (float)fmod(pitchHi, 12.0);
     float modLo = (float)fmod(pitchLo, 12.0);
@@ -263,39 +239,28 @@ float VocalPart::GetSloppyPitch(float ms, int noteIdx, float pitch, float &outPi
     if (!PitchBetween(pitch, pitchHi, pitchLo, between)) {
         float diffHi = fabsf(modPitch - modHi);
         float diffLo = fabs(modPitch - modLo);
+        // Retail selects between two address-taken temporaries for both of these,
+        // i.e. std::min / std::max by const reference (not Milo's by-value fsel Min/Max).
         if (diffHi < diffLo) {
-            float spEnd = note.mMs + note.mDurationMs;
-            float spHi = ms + mSlop;
-            const float *p = (spHi <= spEnd) ? &spHi : &spEnd;
-            outPitch = *p;
+            outPitch = std::min(ms + mSlop, note.mDurationMs + note.mMs);
             return pitchHi;
         }
         if (diffHi > diffLo) {
-            float spMs = note.mMs;
-            float spLo = ms - mSlop;
-            const float *p = (spLo <= spMs) ? &spMs : &spLo;
-            outPitch = *p;
+            outPitch = std::max(ms - mSlop, note.GetMs());
             return pitchLo;
         }
-        float noteMs = note.mMs;
-        bool inRange = false;
-        if (ms >= noteMs && ms < noteMs + note.mDurationMs)
-            inRange = true;
+        // Retail materializes the in-range test as a bool, and the fallback is an
+        // fsel Min(Max(...), mMs) pair, i.e. Milo's float Clamp with mMs as `max`.
+        bool inRange = ms >= note.mMs && ms < note.mMs + note.mDurationMs;
         if (inRange) {
             outPitch = ms;
         } else {
-            float endMs = noteMs + note.mDurationMs;
-            if (endMs > noteMs) {
-                if (endMs < ms)
-                    noteMs = ms;
-                else
-                    noteMs = endMs;
-            }
-            outPitch = noteMs;
+            outPitch = Clamp(ms, note.mMs, note.mMs + note.mDurationMs);
         }
         return pitchHi;
     }
-    outPitch = pitch;
+    // Retail stores `ms` (f30, the first argument) here, not the sung pitch.
+    outPitch = ms;
     return between;
 }
 
@@ -609,11 +574,6 @@ float VocalPart::CalcPhraseScoreMax(const VocalPhrase *const &phrase) const {
     return result;
 }
 
-// VocalPlayer::kInvalidPitch is a float global retail loads out of .rdata
-// (lbl_820F14B4); no C++ declaration for it survives, so it stays
-// an extern "C" shim. objdiff forgives the placeholder target name, so this
-// costs nothing on the metric -- see docs/decomp/W16EO_*.
-extern "C" float kInvalidPitch__11VocalPlayer;
 
 void VocalPart::Poll(float ms, const SongPos &) {
     while (mFreestyleSection
@@ -808,7 +768,7 @@ void VocalPart::ScoreSinger(
 ) {
     MILO_ASSERT(o_rCache.GetHitPercentage() == 0.0f, 0x2C3);
     o_rCache.unk8 = Min(unk38, mPhraseScoreMax);
-    o_rPitchDiff = kInvalidPitch__11VocalPlayer;
+    o_rPitchDiff = VocalPlayer::kInvalidPitch;
     if (arg1 == 0.0f && mVocalNoteList->NoteAt(ms) == 0) {
         o_rCache.unk0 = 1.0f;
         o_rNote = arg4;

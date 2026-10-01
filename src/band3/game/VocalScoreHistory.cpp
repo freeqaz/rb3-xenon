@@ -42,7 +42,7 @@ void VocalScoreHistory::BiasLastScore(float f1) {
 
 float VocalScoreHistory::CalculateSum(float f1) const {
     float sum = 0;
-    for (int i = 0; i < (int)mScores.size(); i++) {
+    for (unsigned int i = 0; i < mScores.size(); i++) {
         sum += mScores[i];
     }
     return sum;

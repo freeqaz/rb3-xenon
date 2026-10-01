@@ -99,6 +99,7 @@ public:
     void PostLoad();
     GameMic *GetGameMic() const;
     MicClientID GetMicClientID() const;
+    int GetMicID() const;
     void SetMicProcessing(bool, bool);
     void Start();
     void StartIntro();

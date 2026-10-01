@@ -8313,6 +8313,7 @@ band3/game/Singer.cpp:
 	.pdata      start:0x82237038 end:0x82237048
 	.pdata      start:0x82237050 end:0x82237058
 	.pdata      start:0x82237058 end:0x82237060
+	.text       start:0x826F6930 end:0x826F6944
 	.text       start:0x826F6948 end:0x826F7948
 	.text       start:0x826F79A8 end:0x826F7CC8
 	.text       start:0x826F7E50 end:0x826F7F00
@@ -10397,7 +10398,6 @@ BandMachineMgr.cpp:
 	.text       start:0x825C3720 end:0x825C3748
 	.text       start:0x825C3748 end:0x825C4180
 	.text       start:0x825C4180 end:0x825C4918
-	.text       start:0x826F6930 end:0x826F6944
 
 CustomizePanel.cpp:
 	.pdata      start:0x82229030 end:0x82229270

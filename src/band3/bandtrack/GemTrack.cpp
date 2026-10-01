@@ -319,12 +319,18 @@ void GemTrack::UpdateFills() {
     if (!player || !player->IsDeployingBandEnergy())
         return;
     else {
+        // Retail builds these as function-local statics (one guard word, bits
+        // 1/2/4/8 in this order), not the global Symbols.
         Symbol s;
+        static Symbol fill("fill");
         for (int i = 0; i < mTrackConfig.GetMaxSlots(); i++) {
             if (mGemManager->GetWidgetName(s, i, fill)) {
                 mGemManager->GetWidgetByName(s)->Clear();
             }
         }
+        static Symbol crash("crash");
+        static Symbol crash_cymbal("crash_cymbal");
+        static Symbol beard("beard");
         Symbol symlist[3] = { crash, crash_cymbal, beard };
         for (int i = 0; i < 3U; i++) {
             if (mGemManager->GetWidgetName(s, 4, symlist[i])) {
@@ -353,20 +359,22 @@ void GemTrack::DrawFill(FillInfo *info, int i2, int i3) {
     FillExtent ext154(0, 0, 0);
     Player *player = mTrackConfig.GetBandUser()->GetPlayer();
     int i158 = 0;
+    // Retail shares one FillsEnabled() call between the two arms.
+    int fillTick;
     if (!TheGame->InTrainer()) {
         if (!info)
             return;
         if (!info->FillAt(i2, ext154, true) && !info->FillAt(i2 + i3, ext154, true))
             return;
-        if (!player->FillsEnabled(ext154.start))
-            return;
+        fillTick = ext154.start;
     } else {
         int ivar3 = GetLoopTick(i2, i158);
         if (!info->FillAt(ivar3, ext154, true) && !info->FillAt(ivar3 + i3, ext154, true))
             return;
-        if (!player->FillsEnabled(ext154.start + i158))
-            return;
+        fillTick = ext154.start + i158;
     }
+    if (!player->FillsEnabled(fillTick))
+        return;
     {
         ext154.start += i158;
         ext154.end += i158;
@@ -532,14 +540,17 @@ void GemTrack::DrawBeatLine(Symbol s1, int i2, int i3, bool b4) {
                 Symbol sfc;
                 int startKey;
                 const char *shiftWid;
+                // Retail: a down shift (endKey < 0) shows the LEFT arrow when
+                // flip_shift_arrows is set and the right one otherwise; an up shift
+                // the reverse (`bne` to the "key_shift_left.wid" load, 0x8269...9a4).
                 if (endKey < 0) {
                     startKey = 0;
                     endKey = 3;
-                    shiftWid = flip_shift_arrows.Int() ? "key_shift_right.wid" : "key_shift_left.wid";
+                    shiftWid = !flip_shift_arrows.Int() ? "key_shift_right.wid" : "key_shift_left.wid";
                 } else {
                     endKey = mRange;
                     startKey = endKey - 3;
-                    shiftWid = flip_shift_arrows.Int() ? "key_shift_left.wid" : "key_shift_right.wid";
+                    shiftWid = !flip_shift_arrows.Int() ? "key_shift_left.wid" : "key_shift_right.wid";
                 }
                 sfc = shiftWid;
                 MILO_ASSERT(startKey <= endKey, 0x297);
@@ -854,7 +865,8 @@ void GemTrack::SetGemsEnabledByPlayer() {
         MILO_LOG("GEM_DBG: SetGemsEnabledByPlayer mEnableMs=%.2f enabledState=%d\n",
                  GetPlayer()->mEnableMs, (int)GetPlayer()->GetEnabledState());
 #endif
-    SetGemsEnabled(GetPlayer()->mEnableMs);
+    Player *player = GetPlayer();
+    SetGemsEnabled(player->mEnableMs);
 }
 
 void GemTrack::UpdateGems() {
