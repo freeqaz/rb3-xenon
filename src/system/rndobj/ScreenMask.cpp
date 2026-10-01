@@ -52,6 +52,9 @@ END_PROPSYNCS
 RndScreenMask::RndScreenMask()
     : mMat(this), mColor(1, 1, 1, 1), mRect(0, 0, 1, 1), mUseCamRect(false) {}
 
+// NOTE: measured against retail RndScreenMask::Load (0x82481F98), which keeps
+// the rev in a local int (see the #ifndef HX_NATIVE body below); the split form
+// described next is kept for the native build only.
 // RB3-360 retail rev dialect (ObjMacros shape): the packed rev is split
 // into two HALFWORDS stored four bytes apart onto ONE internal-linkage align(4)
 // base, and the RAW incoming BinStream is forwarded to every read and to the
@@ -66,6 +69,24 @@ RndScreenMask::RndScreenMask()
 // gRev` alias: several of these TUs are scatter-INCLUDED into another unit
 // (e.g. rndobj/Anim.cpp includes rndobj/MotionBlur.cpp) whose own gRev macro
 // the alias would silently shadow for the rest of the amalgamated TU.
+#ifndef HX_NATIVE
+// Retail RndScreenMask::Load (0x82481F98) keeps the revision in a
+// local int and compares it whole (`lwz`/`cmpwi`): no file-static split.
+BEGIN_LOADS(RndScreenMask)
+    int rev;
+    bs >> rev;
+    Hmx::Object::Load(bs);
+    RndDrawable::Load(bs);
+    bs >> mMat;
+    bs >> mColor;
+    if (rev > 0) {
+        bs >> mRect;
+    }
+    if (rev > 1) {
+        bs >> mUseCamRect;
+    }
+END_LOADS
+#else
 static struct {
     __declspec(align(4)) unsigned short altRev;
     __declspec(align(4)) unsigned short rev;
@@ -86,6 +107,7 @@ BEGIN_LOADS(RndScreenMask)
         bs >> mUseCamRect;
     }
 END_LOADS
+#endif
 
 #ifndef HX_NATIVE
 // Retail X360 (0x824816F8): the mask rect is scaled by the target size only --

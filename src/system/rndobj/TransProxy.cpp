@@ -41,6 +41,27 @@ END_COPYS
 
 INIT_REVS(1, 0)
 
+#ifndef HX_NATIVE
+// Retail (0x8245C948) splits the revision into a file-static {altRev, rev}
+// pair and reads straight off `bs` (no BinStreamRev).
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_TransProxy;
+BEGIN_LOADS(RndTransProxy)
+    int rev;
+    bs >> rev;
+    gRevs_TransProxy.rev = getHmxRev(rev);
+    gRevs_TransProxy.altRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    if (gRevs_TransProxy.rev > 0) {
+        RndTransformable::Load(bs);
+    }
+    bs >> mProxy;
+    bs >> mPart;
+    Sync();
+END_LOADS
+#else
 BEGIN_LOADS(RndTransProxy)
     LOAD_REVS(bs)
     ASSERT_REVS(1, 0)
@@ -52,6 +73,7 @@ BEGIN_LOADS(RndTransProxy)
     bs >> mPart;
     Sync();
 END_LOADS
+#endif
 
 void RndTransProxy::PreSave(BinStream &bs) { SetTransParent(nullptr, false); }
 void RndTransProxy::PostSave(BinStream &bs) { Sync(); }

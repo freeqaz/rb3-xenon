@@ -83,6 +83,33 @@ END_COPYS
 
 INIT_REVS(2, 0)
 
+#ifndef HX_NATIVE
+// Retail (0x8248B388) splits the revision into a file-static {altRev, rev}
+// pair and reads straight off `bs` (no BinStreamRev).
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_TexBlender;
+BEGIN_LOADS(RndTexBlender)
+    int rev;
+    bs >> rev;
+    gRevs_TexBlender.rev = getHmxRev(rev);
+    gRevs_TexBlender.altRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    RndDrawable::Load(bs);
+    bs >> mOutputTextures;
+    bs >> mBaseMap;
+    bs >> mNearMap;
+    bs >> mFarMap;
+    bs >> mControllerList;
+    bs >> mOwner;
+    if (gRevs_TexBlender.rev > 1)
+        bs >> mControllerInfluence;
+    else
+        mControllerInfluence = 0.7071068f;
+    mRenderedStates = 0;
+END_LOADS
+#else
 BEGIN_LOADS(RndTexBlender)
     LOAD_REVS(bs);
     ASSERT_REVS(2, 0);
@@ -100,6 +127,7 @@ BEGIN_LOADS(RndTexBlender)
         mControllerInfluence = 0.7071068f;
     mRenderedStates = 0;
 END_LOADS
+#endif
 
 #pragma endregion
 #pragma region RndDrawable

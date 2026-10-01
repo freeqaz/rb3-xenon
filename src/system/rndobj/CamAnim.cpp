@@ -113,6 +113,26 @@ static struct {
     __declspec(align(4)) unsigned short altRev;
     __declspec(align(4)) unsigned short rev;
 } gRevs_CamAnim;
+#ifndef HX_NATIVE
+// Retail (0x824866C0) keeps the revision in a local int, compared whole.
+BEGIN_LOADS(RndCamAnim)
+    int rev;
+    bs >> rev;
+    if (rev > 0) {
+        Hmx::Object::Load(bs);
+    }
+    RndAnimatable::Load(bs);
+    bs >> mCam >> mFovKeys >> mKeysOwner;
+    if (rev < 2) {
+        FOREACH (it, mFovKeys) {
+            it->value = ConvertFov(it->value, 0.75);
+        }
+    }
+    if (!mKeysOwner) {
+        mKeysOwner = this;
+    }
+END_LOADS
+#else
 BEGIN_LOADS(RndCamAnim)
     int rev;
     bs >> rev;
@@ -132,6 +152,7 @@ BEGIN_LOADS(RndCamAnim)
         mKeysOwner = this;
     }
 END_LOADS
+#endif
 
 #pragma endregion
 #pragma region RndAnimatable

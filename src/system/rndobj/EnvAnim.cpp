@@ -57,7 +57,12 @@ void RndEnvAnim::Save(BinStream &bs) {
 void RndEnvAnim::Load(BinStream &bs) {
     int rev;
     bs >> rev;
+#ifndef HX_NATIVE
+    // Retail (0x82487928) reads every field straight off `bs`: no BinStreamRev.
+    BinStream &d = bs;
+#else
     BinStreamRev d(bs, rev);
+#endif
     if (rev > 3)
         Hmx::Object::Load(bs);
     RndAnimatable::Load(bs);
