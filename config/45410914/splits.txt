@@ -10457,13 +10457,15 @@ SongParser.cpp:
 	.text       start:0x8278C798 end:0x8278C7A0
 
 BeatMatchController.cpp:
+	.pdata      start:0x8223F188 end:0x8223F198
 	.pdata      start:0x8223F198 end:0x8223F1E0
 	.pdata      start:0x8223F1E0 end:0x8223F1E8
 	.pdata      start:0x8223F1E8 end:0x8223F1F8
+	.text       start:0x8278F9A8 end:0x8278FB08
 	.text       start:0x8278FB08 end:0x8278FB2C
 	.text       start:0x8278FB30 end:0x8278FFD0
 	.text       start:0x8278FFD0 end:0x82790054
-	.text       start:0x82790058 end:0x82790174
+	.text       start:0x82790058 end:0x82790150
 	.text       start:0x827901CC end:0x827901D0
 
 BandPatchMesh.cpp:
@@ -11740,13 +11742,13 @@ RGGemMatcher.cpp:
 	.pdata      start:0x8223F150 end:0x8223F158
 	.pdata      start:0x8223F160 end:0x8223F168
 	.pdata      start:0x8223F168 end:0x8223F178
-	.pdata      start:0x8223F178 end:0x8223F198
+	.pdata      start:0x8223F178 end:0x8223F188
 	.text       start:0x8278F208 end:0x8278F23C
 	.text       start:0x8278F240 end:0x8278F348
 	.text       start:0x8278F348 end:0x8278F3B8
 	.text       start:0x8278F418 end:0x8278F48C
 	.text       start:0x8278F490 end:0x8278F564
-	.text       start:0x8278F568 end:0x8278FB08
+	.text       start:0x8278F568 end:0x8278F9A8
 
 VocalNoteList.cpp:
 	.pdata      start:0x82230A00 end:0x82230A08
@@ -12743,6 +12745,7 @@ OverdriveMeter.cpp:
 system/beatmatch/BeatMatchUtl.cpp:
 	.pdata      start:0x8223F1F8 end:0x8223F200
 	.pdata      start:0x8223F200 end:0x8223F208
+	.text       start:0x82790150 end:0x82790174
 	.text       start:0x82790174 end:0x827901CC
 	.text       start:0x827901D0 end:0x82790258
 	.text       start:0x82790258 end:0x82790370

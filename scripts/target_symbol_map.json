@@ -1,4 +1,6 @@
 {
+ "0x82790150": "?GemPlayableBy@@YA_NHH@Z",
+ "0x8278fad8": "?SetHitSink@BeatMatchController@@UAAXPAVHitSink@@@Z",
  "0x82792cf8": "??_GPlayback@@UAAPAXI@Z",
  "0x82792c90": "?LoadFile@Playback@@QAA_NABVString@@@Z",
  "0x82792b88": "?Poll@Playback@@QAAXM@Z",
@@ -22134,7 +22136,7 @@
  "0x8278f508": "??0RGGemMatcher@@QAA@XZ",
  "0x8278f568": "?FretMatchImpl@RGGemMatcher@@QBA_NABVGameGem@@MMMM_N1W4RGMatchType@@@Z",
  "0x8278f9a8": "??0BeatMatchController@@QAA@PAVUser@@PBVDataArray@@_N@Z",
- "0x8278fae0": "?OnVoiceProcessingPassEnd@CX2SourceVoice@XAUDIO2@@UAAXXZ",
+ "0x8278fae0": "?RegisterKey@BeatMatchController@@QBAXH@Z",
  "0x8278fb08": "?RegisterRGStrum@BeatMatchController@@QBAXH@Z",
  "0x8278fb30": "?IsOurPadNum@BeatMatchController@@QBA_NH@Z",
  "0x8278fbc0": "?NewController@@YAPAVBeatMatchController@@PAVUser@@PBVDataArray@@PAVBeatMatchControllerSink@@_N3W4TrackType@@@Z",
