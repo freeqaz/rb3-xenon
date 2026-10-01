@@ -487,30 +487,25 @@ bool FileMerger::NeedsLoading(FileMerger::Merger &merger) {
 void FileMerger::LaunchNextLoader() {
     MILO_ASSERT(!mFilesPending.empty(), 0x182);
     MILO_ASSERT(!mCurLoader, 0x183);
-    int pos;
-    // Determine loader position based on current loader state
-    if (Dir()->Loader() && !Dir()->Loader()->IsLoaded()) {
-        if (Dir()->Loader()->GetPos() != kLoadStayBack) {
-            if (Dir()->Loader()->GetPos() != kLoadFrontStayBack)
-                goto next;
-        }
-        pos = 2;
+    // Load behind the directory's own loader when it is still pending at a
+    // stay-back position; otherwise load in front.
+    LoaderPos pos;
+    if (Dir()->Loader() && !Dir()->Loader()->IsLoaded()
+        && (Dir()->Loader()->GetPos() == kLoadStayBack
+            || Dir()->Loader()->GetPos() == kLoadFrontStayBack)) {
+        pos = kLoadFrontStayBack;
     } else {
-        pos = 0;
+        pos = kLoadFront;
     }
 
-// Create the next loader with the determined position
-next:
     FilePath &fp = mFilesPending.front()->loading;
     MemHeapTracker tmp(mHeap);
     if (fp.empty()) {
-        mCurLoader = new NullLoader(fp, (LoaderPos)pos, mOrganizer);
-    } else if (DirLoader::ShouldBlockSubdirLoad(fp)) {
-        mCurLoader = new NullLoader(fp, (LoaderPos)pos, mOrganizer);
+        mCurLoader = new NullLoader(fp, pos, mOrganizer);
     } else {
 #ifdef HX_NATIVE
         mCurLoader = new DirLoader(
-            fp, (LoaderPos)pos, mOrganizer, nullptr, nullptr, false,
+            fp, pos, mOrganizer, nullptr, nullptr, false,
             // Pass merger's Dir as parent so ObjPtr fallback can resolve
             // objects in the world ObjectDir during deserialization.
             // On Xbox, FileMerger flattens objects into the same scope.
@@ -518,7 +513,7 @@ next:
         );
 #else
         mCurLoader =
-            new DirLoader(fp, (LoaderPos)pos, mOrganizer, nullptr, nullptr, false);
+            new DirLoader(fp, pos, mOrganizer, nullptr, nullptr, false);
 #endif
     }
 }
