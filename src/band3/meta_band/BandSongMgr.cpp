@@ -630,14 +630,15 @@ bool BandSongMgr::CanAddSong() const {
 }
 int BandSongMgr::GetMaxSongCount() const { return mMaxSongCount; }
 
+// Retail (152 B) uses no local buffer: the directory is FileGetPath applied
+// twice to the loader's file (the parent directory of its folder), or ".".
 void BandSongMgr::AddSongData(DataArray *a, DataLoader *dl, ContentLocT lt) {
-    char cc[256] = ".";
+    const char *dir = ".";
     if (dl) {
-        const char *path = FileGetPath(dl->LoaderFile().c_str());
-        FileGetPathBuf(path, cc);
+        dir = FileGetPath(FileGetPath(dl->LoaderFile().c_str()));
     }
     std::vector<int> vec;
-    AddSongData(a, mUncachedSongMetadata, cc, lt, vec);
+    AddSongData(a, mUncachedSongMetadata, dir, lt, vec);
 }
 
 void BandSongMgr::AddSongData(
