@@ -1,6 +1,10 @@
 # W16-KD — fuzzy 90–99.99 sweep: band3 game layer + world/os/beatmatch/obj/ui/utl/synth/synth_xbox (2026-10-01)
 
-**Branch** `w16-kd`, rebased onto main `1b8903f35` (W16-KE). Not merged to main.
+**Branch** `w16-kd`, rebased onto main `2e634a816` (W16-KB landing). Not merged to main.
+
+> **Final measurement is §1a (vs `2e634a816`).** §1 is the first A/B, against `1b8903f35`, and is kept as
+> the dated record. The branch was rebased three more times (`185ad2667` W16-KA/KC, `db7c81b87` W16-KB,
+> `2e634a816`) and re-measured each time (§6a).
 **Ruler** `name_check` (graded, from `report.json` `provenance.diff_config`).
 
 **Population.** Every row with `90 ≤ fuzzy < 100` in a unit whose `objdiff.json` `source_path` is under
@@ -12,7 +16,7 @@ classified by their charged instructions in `objdiff-cli diff` (`~/tmp/w16kd/cla
 |---|---:|---:|---:|---:|
 | main `e762a9298` (start) | 1,377 | 367,020 | 796 | 343,044 |
 | A/B leg A (main `1b8903f35`) | 1,361 | 364,120 | 780 | 340,144 |
-| A/B leg B (this branch) | 1,128 | 318,028 | 606 | 296,508 |
+| A/B leg B (this branch, vs `1b8903f35`) | 1,128 | 318,028 | 606 | 296,508 |
 
 At the start, the named rows split into these classes:
 - 264 instruction-level rows (172 KB);
@@ -71,6 +75,42 @@ the wrong name to keep it.
 **Units that "fell off" 100:**
 - HamMaster no longer exists. Its only block was BeatMasterLoader's ctor, which is re-homed into BeatMaster (§3.4).
 - StoreArtLoaderPanel's denominator grew by re-homed thunk rows: 21 → 26 rows, 24 at 100.
+
+## 1a. Final whole-branch A/B, against main `2e634a816`
+
+`python3 tools/ab_measure.py --worktree ~/tmp/wt-w16kd-ab --patch <git diff 2e634a816..w16-kd, minus docs and symbols.txt>`
+- **Leg A:** `2e634a816` plus the same split-written `symbols.txt` merge (`w16-kd-ab-base4`).
+- **Patch:** 72 files; kinds map + source + splits.
+- **objdiff-cli:** sha `c1b7d952`, stable across legs.
+- **Both legs** were read at a split fixed point.
+- **Run dir:** `~/tmp/wt-w16kd-ab/.ab_measure_runs/20261001-140720-w16-kd-branch-2e634-2280963/`.
+
+```
+leg A: matched=49328 masked=24313 honest=25015 code%=50.388145  (recompiles: 0, settled)
+leg B: matched=49551 masked=24323 honest=25228 code%=50.907200  (recompiles: 1013, split=1, patch_steps=7, settle iterations: 2)
+Δmatched=+223  Δmasked_equal=+10  Δhonest=+213  Δcode%=+0.519055pp  Δcode_bytes=+53188
+Δfuzzy=+0.025540pp   (legA 58.696040 -> legB 58.721580)
+units at 100% [mpn ruler]: legA 358 -> legB 376  (Δ+18; 20 reached 100, 2 fell off)
+units at 100% [all-rows-fuzzy ruler]: legA 298 -> legB 311  (Δ+13; 15 reached 100, 2 fell off)
+```
+
+**Prediction, written before the run:** +223 / +53,188 B, from in-tree full builds of the tip and of
+leg A. **Measured: exactly that.**
+
+**Row-level diff (address-keyed, both rulers):** fuzzy 358 up / 297 to 100; `mpn` 276 up / 224 to 100.
+The **same 6 rows go down as in §1**, and again **only 0x823F4698 (4 B) leaves 100**. The coordinator
+accepted that row as a wrong name nulled under the accuracy directive. The units that leave 100 are the
+same two as in §1: HamMaster, which is removed, and StoreArtLoaderPanel, whose denominator grew.
+
+**Why the final figure is −6 fns / −1,240 B below the `185ad2667` A/B (+229 / +54,428 B)**, fully
+attributed by a row diff of the two in-tree pairs:
+- **8 rows / 1,396 B that this branch gained are landed on main independently by W16-KB**
+  (`0fa72eda0`, `2b1c6f6ec`): 0x824E17B0 re-homed to Crowd as the `list<RndMultiMesh::Instance>` copy
+  ctor, and 0x8270AAC0 as `ObjVector<ObjPtr<SeqInst>>::resize`, plus their callers and funclets.
+- **+3 rows / +156 B are new**, from the interaction with KB's Movie TU: `??_GMovieLoader@Impl@Movie` and
+  two funclets reach 100 through this branch's fold names.
+- 1,396 − 156 = 1,240 B. On `mpn`: 8 fewer gains, 1 more gain, and 1 fewer loss (KB already moved the Rot
+  funclet) gives −6.
 
 ## 2. Method
 
@@ -301,6 +341,40 @@ overlap with main. **"Gained on the old base, not on the new" lists exactly 5 ro
   and `list<FileCache*>::insert`. Those records refused closure membership without a per-pair proof. The
   admissions now say so and cite the per-pair chase (`2598b492c`), and the withdrawal records are kept.
 
+## 6a. Later rebases (`185ad2667`, `db7c81b87`, `2e634a816`)
+
+The same resolvers were used each time. The rebase loop now also **refuses to continue if any staged
+file contains conflict markers**: on the `db7c81b87` pass, one hand resolution of the Spotlight block
+missed its assertion and staged markers into the recreated audio merge. That rebase was discarded and
+redone from the saved pre-rebase tip.
+- **0 of 92 commits** in the final range contain a conflict marker. This was checked with `git grep` on
+  every commit's tree.
+- **Commit set and first-parent sequence** are identical before and after each rebase.
+
+Conflicts beyond the map and alias files:
+- **`0x826c3888` evidence string.** Main inserted text mid-string, while each of this branch's commits only
+  appended. The resolver applies the appending side's suffix to the other side, and asserts that both
+  sides' text survives.
+- **Crowd / Graph `.text` lines.** W16-KB landed the same 0x824E17B0 re-home and coalesced Crowd's blocks.
+  It also extended Graph's first block to 0x82464470 (`~Drawable`). Main's lines were kept, because they
+  already contain this branch's change.
+
+**Consistency checks against `2e634a816`** (`~/tmp/w16kd/verify_delta.py`, `splits_check.py`):
+
+| check | result |
+|---|---|
+| map = main + branch delta, strict (`null` distinct from absent) | equal; 74 delta keys, 0 changed by both sides |
+| map = main + branch delta, presence-aware (`null` = removed) | equal |
+| duplicate map keys | 0 |
+| alias memberships = main + delta | equal (missing 0, extra 0) |
+| alias withdrawal records = main + delta | equal |
+| duplicate alias group keys | 0 |
+| main's new withdrawal (`ObjVector<HamIKEffector::Constraint>::operator=`) | still withdrawn, not re-folded |
+| `splits.txt`: address ownership of every `.text` segment = main + delta | 0 mismatches over 8,294 boundaries, 0 changed by both sides |
+| duplicate headings | 0 (1,311 headings; HamMaster and BinkClip removed) |
+| `.text` overlaps | 0 (6,855 spans) |
+| bare + path-qualified heading pairs | 0 |
+
 ## 7. Alias memberships
 
 **150 net new memberships over main `1b8903f35`, 12 removed or re-keyed** (each with a record).
@@ -308,7 +382,11 @@ overlap with main. **"Gained on the old base, not on the new" lists exactly 5 ro
 with main's post-W16-JH tools:
 - `tools/icf_pair_adjudicate.py --chase --pairs`: **150 / 150 CHASED T1 PROVEN, 0 lines mentioning
   CYCLE** (`~/tmp/w16kd/chase_rb.log`).
-- `tools/alias_placeholder_slot_audit.py`: **150 / 150 CLEAN, cycle 0.** The tree-wide summary is
+- `tools/alias_placeholder_slot_audit.py`: **150 / 150 CLEAN, cycle 0.**
+- **Re-run on the final tip (`2e634a816` base; the chase and audit tools are byte-identical to main's).**
+  The pair set is unchanged: 150 added, 12 removed or re-keyed. A per-pair check (`per_pair_verdict.py`)
+  reads each pair's own log block: **150 / 150 CHASED T1 PROVEN with no CYCLE text in the block, 0 not
+  admissible, 0 without a verdict.** The slot audit reads **150 / 150 CLEAN, 0 with cycle > 0.** The tree-wide summary is
   CLEAN 4,589, CLEAN-CYCLE 63, LAX-ALSO-FAILS 231. None of the non-CLEAN rows is a membership this branch
   added.
 
@@ -359,7 +437,20 @@ Every fork refused pairs whose chase had a CYCLE-ASSUMED leaf. That covers the `
   `SampleInst_Native.cpp` should define RB3's no-argument `SynthSample::NewInst()`. The `HX_NATIVE`
   `(bool,int,int)` declaration in `synth/SynthSample.h` can then go.
 
-## 9. Gates (rebased tip `2598b492c`, after a full build)
+## 9. Gates
+
+Final tip, rebased on `2e634a816`, after a full build (49,551 / 5,216,532, equal to A/B leg B):
+
+```
+[map-injectivity] OK: 32899 applied rows, 32898 distinct names, injective (+1 enumerated internal-linkage exception(s))
+VALIDATE: PASS -- 1643 map-consistent, 272 tolerated (enumerated above), 0 contradicted, 1916 total
+[patch-state] OK: tree is a fixed point of 6 post-compile passes
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+The native gate ran last, on the final code. Only this docs-only commit follows.
+
+Earlier record, tip `2598b492c` on `1b8903f35`:
 
 ```
 [map-injectivity] OK: 32777 applied rows, 32776 distinct names, injective (+1 enumerated internal-linkage exception(s))
