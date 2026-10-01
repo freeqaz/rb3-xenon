@@ -677,16 +677,13 @@ DataNode RndPostProc::OnAllowedNormalMap(const DataArray *) {
     return GetNormalMapTextures(Dir());
 }
 
+// 0x8242EDA0: no hi-res screen test.
 bool RndPostProc::BlendPrevious() const {
-    return mTrailThreshold < 1 && mTrailDuration > 0 && !TheHiResScreen.IsActive();
+    return mTrailThreshold < 1 && mTrailDuration > 0;
 }
 
-float RndPostProc::BloomIntensity() const {
-    if (mBloomGlare && TheHiResScreen.IsActive()) {
-        return mBloomIntensity / 3.0f;
-    } else
-        return mBloomIntensity;
-}
+// 0x8242EDD8: the bare member, with no glare/hi-res scaling.
+float RndPostProc::BloomIntensity() const { return mBloomIntensity; }
 
 bool RndPostProc::HallOfTime() const { return mHallOfTimeRate != 0; }
 bool RndPostProc::DoChromaticAberration() const {
