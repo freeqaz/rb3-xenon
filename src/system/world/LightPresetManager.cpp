@@ -241,9 +241,11 @@ void LightPresetManager::Poll() {
 
     if (mPresetOverride) {
         float time = TheTaskMgr.Time(mPresetOverride->Units());
-        float f7 = 1.0f;
+        float f7;
         if (mOverrideDuration > 0.0f) {
             f7 = (time - mTimeOverride) / mOverrideDuration;
+        } else {
+            f7 = 1.0f;
         }
         float t = Clamp<float>(0.0f, 1.0f, f7);
         if (mOverrideMode == 1) {
@@ -266,11 +268,11 @@ void LightPresetManager::Poll() {
     if (pnew) {
         float time = TheTaskMgr.Time(pnew->Units());
         float fpu = pnew->FramesPerUnit();
-        float max = (0.0f > -((time - u30) * fpu)) ? (time - u30) * fpu : 0.0f;
+        float max = Max(0.0f, fpu * (time - u30));
         if (pprev != 0 && pprev != pnew) {
             float time2 = TheTaskMgr.Time(pprev->Units());
             float fpu2 = pprev->FramesPerUnit();
-            float max2 = (0.0f > -((time2 - u34) * fpu2)) ? (time2 - u34) * fpu2 : 0.0f;
+            float max2 = Max(0.0f, (time2 - u34) * fpu2);
             pprev->SetFrameEx(max2, 1.0f - blend, false);
             pnew->SetFrameEx(max, blend, false);
             mSingleBlend = false;
@@ -279,7 +281,9 @@ void LightPresetManager::Poll() {
             mSingleBlend = true;
         }
     }
-    UpdateOverlay();
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+    UpdateOverlay(); // not in retail Poll (0x824B8A28)
+#endif
 }
 
 DataNode LightPresetManager::OnForcePreset(DataArray *da) {
