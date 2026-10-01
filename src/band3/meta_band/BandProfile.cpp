@@ -89,8 +89,7 @@ void BandProfile::GetAvailableStandins(int idx, std::vector<TourCharLocal *> &ch
 
 void BandProfile::GetAllChars(std::vector<TourCharLocal *> &chars) const {
     for (int i = 0; i < mCharacters.size(); i++) {
-        TourCharLocal *tchar = mCharacters[i];
-        chars.push_back(tchar);
+        chars.push_back(mCharacters[i]);
     }
 }
 

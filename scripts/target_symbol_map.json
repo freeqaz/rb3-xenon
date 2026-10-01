@@ -1,4 +1,5 @@
 {
+ "0x825d1fc8": "?GetTotalBestStars@SongStatusMgr@@QBAHW4ScoreType@@W4Difficulty@@VSymbol@@@Z",
  "0x82308788": "?Reset@TrackPanelDir@@UAAXXZ",
  "0x823f3460": "?SetMode@MatchmakingSettings@@UAAXVSymbol@@H@Z",
  "0x823f3470": "?SetPublic@SessionSettings@@QAAX_N@Z",
@@ -15379,7 +15380,7 @@
  "0x825d1df8": "?GetTripleAwesomes@SongStatusMgr@@QBAHHW4ScoreType@@W4Difficulty@@@Z",
  "0x825d1e78": "?GetBestTripleAwesomes@SongStatusMgr@@QBAHHW4ScoreType@@W4Difficulty@@@Z",
  "0x825d1ed8": "?CalculateTotalScore@SongStatusMgr@@QBAHW4ScoreType@@VSymbol@@@Z",
- "0x825d20b0": "?GetTotalBestStars@SongStatusMgr@@QBAHW4ScoreType@@W4Difficulty@@VSymbol@@@Z",
+ "0x825d20b0": "?CalculateTotalStars@SongStatusMgr@@QBAHW4ScoreType@@@Z",
  "0x825d2250": "?GetSongPlayCount@SongStatusMgr@@QBAHH@Z",
  "0x825d22d0": "?IsProGuitarSongLessonComplete@SongStatusMgr@@QBA_NHW4Difficulty@@@Z",
  "0x825d2348": "?IsProBassSongLessonComplete@SongStatusMgr@@QBA_NHW4Difficulty@@@Z",

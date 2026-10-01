@@ -236,7 +236,8 @@ protected:
 // BandSongMgr.h includes this header, so both decls would be visible.
 
 // Free helpers defined in SongMgr.cpp; BandSongMgr.cpp needs the prototypes.
-// TheBaseSongManger is defined by BandSongMgr.cpp (its ctor sets it = this).
+// TheBaseSongManger is defined by BandSongMgr.cpp; retail's BandSongMgr ctor
+// (0x8257AA00) does not assign it.
 int GetSongID(DataArray *, DataArray *);
 int CountSongsInArray(DataArray *);
 extern SongMgr *TheBaseSongManger;
