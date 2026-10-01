@@ -4760,8 +4760,7 @@
     "??$MakeString@PAHHIPBD@@YAPBDPBDPAHHI0@Z",
     "??$MakeString@PBDKKH@@YAPBDPBD0KKH@Z",
     "??$MakeString@PBDPBDPBDVSymbol@@@@YAPBDPBD000VSymbol@@@Z",
-    "??$MakeString@VSymbol@@V1@V1@V1@@@YAPBDPBDVSymbol@@111@Z",
-    "??$MakeString@PBD_KPBDPBD@@YAPBDPBD0_K00@Z"
+    "??$MakeString@VSymbol@@V1@V1@V1@@@YAPBDPBDVSymbol@@111@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 14 folded spelling(s), 6 census sites over 2 functions.",
    "withdrawn": [
@@ -4955,13 +4954,6 @@
        "disposition": "dropped_singleton"
       }
      ]
-    }
-   ],
-   "admitted": [
-    {
-     "spelling": "??$MakeString@PBD_KPBDPBD@@YAPBDPBD0_K00@Z",
-     "lane": "W16-JE 2026-10-01",
-     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 92 B retail / 92 B ours; retail body-twins 1. Retail call site(s) reaching the survivor where we call this spelling: 0x824a4e90, 0x824a533c."
     }
    ]
   },
@@ -33533,17 +33525,9 @@
    "address": "0x82399348",
    "survivor": "??$MakeString@HH@@YAPBDPBDHH@Z",
    "folded": [
-    "??4?$ObjVector@VConstraint@HamIKEffector@@@@QAAXABV0@@Z",
-    "??4?$ObjVector@UIKTarget@CharIKHand@@@@QAAXABV0@@Z"
+    "??4?$ObjVector@VConstraint@HamIKEffector@@@@QAAXABV0@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "admitted": [
-    {
-     "spelling": "??4?$ObjVector@UIKTarget@CharIKHand@@@@QAAXABV0@@Z",
-     "lane": "W16-JE 2026-10-01",
-     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 92 B retail / 92 B ours; retail body-twins 3. Retail call site(s) reaching the survivor where we call this spelling: 0x82399938, 0x82399984."
-    }
-   ]
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
   },
   {
    "name": "1?$ObjRefConcrete",
@@ -72218,9 +72202,7 @@
    "name": "$sort_heap",
    "address": "0x82519720",
    "survivor": "??$sort_heap@PAPAVMoveDetector@@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@0UMoveDetectorCmp@@@Z",
-   "folded": [
-    "??$sort_heap@PAPAVFileCacheEntry@@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEntry@@0UPriority@@@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 20 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -72324,14 +72306,7 @@
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 2 other group(s) at 3 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 2 of the 3 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md.",
-   "admitted": [
-    {
-     "spelling": "??$sort_heap@PAPAVFileCacheEntry@@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEntry@@0UPriority@@@Z",
-     "lane": "W16-JE 2026-10-01",
-     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 100 B retail / 100 B ours; retail body-twins 16. Retail call site(s) reaching the survivor where we call this spelling: 0x82519d74."
-    }
-   ]
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 2 other group(s) at 3 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 2 of the 3 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
   },
   {
    "name": "$sort_heap",
@@ -73900,17 +73875,9 @@
    "address": "0x8246ef38",
    "survivor": "?_M_clear@?$vector@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
    "folded": [
-    "?_M_clear@?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
-    "?_M_clear_after_move@?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
+    "?_M_clear@?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 4, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions.",
-   "admitted": [
-    {
-     "spelling": "?_M_clear_after_move@?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
-     "lane": "W16-JE 2026-10-01",
-     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 112 B retail / 112 B ours; retail body-twins 16. Retail call site(s) reaching the survivor where we call this spelling: 0x8246fc78."
-    }
-   ]
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 4, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions."
   },
   {
    "name": "0ConnectionStatusPanel",
@@ -85969,17 +85936,9 @@
    "address": "0x82594778",
    "survivor": "?GetDescription@Accomplishment@@QBA?AVSymbol@@XZ",
    "folded": [
-    "?GetDescription@Asset@@QBA?AVSymbol@@XZ",
-    "?GetDescription@TourDesc@@QBA?AVSymbol@@XZ"
+    "?GetDescription@Asset@@QBA?AVSymbol@@XZ"
    ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. ",
-   "admitted": [
-    {
-     "spelling": "?GetDescription@TourDesc@@QBA?AVSymbol@@XZ",
-     "lane": "W16-JE 2026-10-01",
-     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 72 B retail / 72 B ours; retail body-twins 6. Retail call site(s) reaching the survivor where we call this spelling: 0x82b7e5c4."
-    }
-   ]
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
    "name": "resize",
@@ -88633,7 +88592,8 @@
     "??_VMidiMessage@@SAXPAX@Z",
     "??_VOrderedLocaleChunk@LocaleChunkSort@@SAXPAX@Z",
     "??_VkdTreeNode@?$kdTree@VTriangle@@@@SAXPAX@Z",
-    "??_VkdTriList@?$kdTree@VTriangle@@@@SAXPAX@Z"
+    "??_VkdTriList@?$kdTree@VTriangle@@@@SAXPAX@Z",
+    "OggFree"
    ],
    "evidence": "Fold-thunk alias group derived by tools/fold_thunk_gate.py. Evidence tier(s) FT2,FT3. Our compiled COMDAT for each folded spelling below is byte-identical to the RETAIL body at the survivor address 0x8240ddb0 once relocation-carrying fields are masked, with every relocated branch destination RESOLVED through the map and NAME-equal rather than masked away; the survivor takes 2308 direct branches across .text. FT1=retail's map places the folded spelling on the same body or nowhere. FT2=it places it on a different body the image itself discredits (zero .text fan-in, or no symbols.txt extent -- padding or a mid-function word). FT3=it places it on a HOMONYM, a distinct function under another module that legitimately carries the same mangled name, witnessed by dc3's leaked ham_xbox_r.map. FT-EMPTY=the body carries no relocation at all, so the fold is real but the byte comparison is vacuous. 7 folded spelling(s), 1281 charged name_check sites. Per spelling: [??3@YAXPAX@Z FT3, 1180 sites: HOMONYM: dc3's leaked ham_xbox_r.map names ??3@YAXPAX@Z at 3 distinct addresses, and the body at 0x82eb0c70 (xaudio2:baseswfilter.obj) is byte-identical to retail's body at 0x82bc6b70 over 148 bytes once relocated fields are masked. That address is another module's own file-scope ??3@YAXPAX@Z, not retail's copy of ours.] [OggFree FT2, 91 sites: map parks OggFree at 0x8249b200, which has ZERO .text fan-in] [??3RndLight@@SAXPAX@Z FT2, 4 sites: map parks ??3RndLight@@SAXPAX@Z at 0x8270d7f8 with no symbols.txt extent] [??3UIComponent@@SAXPAX@Z FT2, 3 sites: map parks ??3UIComponent@@SAXPAX@Z at 0x8282779c, which has ZERO .text fan-in] [??3CharEyeDartRuleset@@SAXPAX@Z FT2, 1 sites: map parks ??3CharEyeDartRuleset@@SAXPAX@Z at 0x823beea8, which has ZERO .text fan-in] [??3RndMat@@SAXPAX@Z FT2, 1 sites: map parks ??3RndMat@@SAXPAX@Z at 0x824a8f74, which has ZERO .text fan-in] [??3PlayerDiffIcon@@SAXPAX@Z FT2, 1 sites: map parks ??3PlayerDiffIcon@@SAXPAX@Z at 0x823258d4, which has ZERO .text fan-in] RE-ADJUDICATED ON RETAIL BYTES, lane ALIAS-X2 2026-08-13, verdict KEEP -- all 7 folded spellings re-derive as ADMIT under the CORRECTED tools/comdat_fold_gate.py comparator (not the withdrawn masked CF1). Each of our 7 COMDATs is a 4-byte `b ?MemFree@@YAXPAX@Z`, and retail's body at 0x8240ddb0 is a 4-byte branch whose destination RESOLVES THROUGH THE MAP to literally that same name. The MAP-B shape trap was tested and does not bite: retail contains 341 four-byte branch thunks with 341 DISTINCT destinations, and EXACTLY ONE resolves to ?MemFree@@YAXPAX@Z -- 0x8240ddb0. So the shape alone is worthless but the resolved destination is unique image-wide, and our spellings have exactly one place they can be. The FT3 homonym on ??3@YAXPAX@Z is confirmed from RETAIL BYTES ALONE, without needing dc3's map: 0x8240ddb0 is a 4-byte thunk with fan-in 2308, whereas 0x82bc6b70 (where the map places ??3@YAXPAX@Z) is a 148-byte heap-bookkeeping allocator with fan-in 178 that walks free-list metadata (lwz -4(r3) / divwu / bitmask update) -- a genuinely different function in the vendor region above 0x82A00000, not retail's copy of ours. All 6 FT2 discharges re-verified: every one of those addresses has fan-in 0 and is padding (0x00000000) or a mid-function word (e.g. 0x8270d7f8 disassembles inside Fader::DoFade), so none is a live function that could contradict the fold. | Lane W7-D, T1 at DESTINATION level (2026-09-13). Our COMDAT for the folded spelling and for the survivor are both 4 B with the identical single relocation (0,?MemFree@@YAXPAX@Z). The population control that guards the larger installs is VACUOUS here and was NOT relied on: a 4-byte body was never indexed, and a PC-relative branch's bytes encode a DISPLACEMENT, not a destination, so byte equality is not identity. Adjudicated instead by resolving retail's own branch: destination 0x827bc430 = ?MemFree@@YAXPAX@Z -- the same symbol our relocation names. Injective; group pre-adjudicated (see the validator's EXEMPT note for the HMX operator-delete family at 0x8240ddb0). | Lane W7-D, T1 at DESTINATION level (2026-09-13). Our COMDAT for the folded spelling and for the survivor are both 4 B with the identical single relocation (0,?MemFree@@YAXPAX@Z). The population control that guards the larger installs is VACUOUS here and was NOT relied on: a 4-byte body was never indexed, and a PC-relative branch's bytes encode a DISPLACEMENT, not a destination, so byte equality is not identity. Adjudicated instead by resolving retail's own branch: destination 0x827bc430 = ?MemFree@@YAXPAX@Z -- the same symbol our relocation names. Injective; group pre-adjudicated (see the validator's EXEMPT note for the HMX operator-delete family at 0x8240ddb0). | Lane W7-D, T1 at DESTINATION level (2026-09-13). Our COMDAT for the folded spelling and for the survivor are both 4 B with the identical single relocation (0,?MemFree@@YAXPAX@Z). The population control that guards the larger installs is VACUOUS here and was NOT relied on: a 4-byte body was never indexed, and a PC-relative branch's bytes encode a DISPLACEMENT, not a destination, so byte equality is not identity. Adjudicated instead by resolving retail's own branch: destination 0x827bc430 = ?MemFree@@YAXPAX@Z -- the same symbol our relocation names. Injective; group pre-adjudicated (see the validator's EXEMPT note for the HMX operator-delete family at 0x8240ddb0).",
    "contradiction_exempt": "ADJUDICATED AND DELIBERATELY INSTALLED -- DO NOT RE-LITIGATE. This is the HMX operator-delete family: retail's stub 0x8240ddb0 = `b MemFree` carries 2,303 bl sites and our source (utl/MemMgr.cpp:69) is CORRECT. Commit a745039e measured the withdrawal of this family at -72,384 B and RESTORED it, after proving source repair recovers 0 of 1,406 rows. The `??3@YAXPAX@Z` row at 0x82bc6b70 (177 callers) is the vendor CRT delete -- a genuine map NAME COLLISION, but benign here: identical names never consult the alias table, so the collision cannot mis-forgive. CharEyeDartRuleset/OggFree rows have 0 bl callers and are junk.",
@@ -88844,16 +88804,6 @@
    ],
    "withdrawn": [
     {
-     "spelling": "OggFree",
-     "lane": "CF2-FANIN (withdrawn by lane ALIAS-SURGERY, 2026-08-17)",
-     "why": "CF2 WARRANT WITHDRAWN -- the gate's discredit was a BRANCH scan. This membership was installed because tier CF2 argued the map row is unsupported: the map parks OggFree at 0x8249b200 and `Image.fanin()` counts ZERO branches there. `fanin()` counts `b`/`bl` only. Under the fixed reference scan (rb3-xenon 9ea51d6d / 868bf327) the address carries 2 references -- 0 branch, 0 address-taken, 2 pointer words (0x82074878, 0x8212a6a4) -- and the pointer word(s) sit inside a dense run of `.text` pointers in `.rdata` (6/7 and 6/7 of the 7-word window are function starts), i.e. a VTABLE SLOT. The address is reached by virtual dispatch, so the premise 'nothing in the image references this' is FALSE and the warrant is gone. Re-derived at rb3-xenon c537540e: <decomp-bench>/archive/runs/2026-08-17-alias-surgery-remint/out/refs_five.json. NOTE the withdrawal is of the WARRANT, not of the claim: a live address does not prove the two spellings are different functions, it removes CF2's reason for believing the map row wrong. Second, independent witness that this was never a fold: symbol_equivalences gate (c') ALREADY drops this member -- the target map gives OggFree its own address 0x8249b200 against the survivor's -- so the membership was never in the admission predicate.",
-     "note": "Do NOT re-add. Lane CF2-FANIN. Re-adding needs a POSITIVE warrant (body or resolved-relocation evidence that the two spellings are one COMDAT), not a negated premise about fan-in: `refs()` returning 0 is still not proof an address is unreferenced (computed addresses, wide immediate pairs, `.pdata`-only references are all unseen). Evidence: <decomp-bench>/archive/runs/2026-08-17-cf2-address-taken-fanin/",
-     "class": "CF2_WARRANT_WITHDRAWN_DATA_POINTER",
-     "folded_map_addr": "0x8249b200",
-     "charged_name_check_sites": 91,
-     "admission_predicate_cost": "0 -- symbol_equivalences gate (c') already dropped this member, so canon is BIT-IDENTICAL before and after (measured, <decomp-bench>/archive/runs/2026-08-17-alias-surgery-remint/)"
-    },
-    {
      "spelling": "??3CharEyeDartRuleset@@SAXPAX@Z",
      "lane": "CF2-FANIN (withdrawn by lane ALIAS-SURGERY, 2026-08-17)",
      "why": "CF2 WARRANT WITHDRAWN -- the gate's discredit was a BRANCH scan. This membership was installed because tier CF2 argued the map row is unsupported: the map parks ??3CharEyeDartRuleset@@SAXPAX@Z at 0x823beea8 and `Image.fanin()` counts ZERO branches there. `fanin()` counts `b`/`bl` only. Under the fixed reference scan (rb3-xenon 9ea51d6d / 868bf327) the address carries 1 reference -- 0 branch, 0 address-taken, 1 pointer word (0x8204ed94) -- and the pointer word(s) sit inside a dense run of `.text` pointers in `.rdata` (5/7 of the 7-word window are function starts), i.e. a VTABLE SLOT. The address is reached by virtual dispatch, so the premise 'nothing in the image references this' is FALSE and the warrant is gone. Re-derived at rb3-xenon c537540e: <decomp-bench>/archive/runs/2026-08-17-alias-surgery-remint/out/refs_five.json. NOTE the withdrawal is of the WARRANT, not of the claim: a live address does not prove the two spellings are different functions, it removes CF2's reason for believing the map row wrong. Second, independent witness that this was never a fold: symbol_equivalences gate (c') ALREADY drops this member -- the target map gives ??3CharEyeDartRuleset@@SAXPAX@Z its own address 0x823beea8 against the survivor's -- so the membership was never in the admission predicate.",
@@ -88862,6 +88812,26 @@
      "folded_map_addr": "0x823beea8",
      "charged_name_check_sites": 1,
      "admission_predicate_cost": "0 -- symbol_equivalences gate (c') already dropped this member, so canon is BIT-IDENTICAL before and after (measured, <decomp-bench>/archive/runs/2026-08-17-alias-surgery-remint/)"
+    }
+   ],
+   "restored": [
+    {
+     "spelling": "OggFree",
+     "lane": "W16-JE 2026-10-01",
+     "verdict": "FOLD -- PROVEN on retail bytes: our OggFree COMDAT is the 4-byte `b ?MemFree@@YAXPAX@Z`, byte- and relocation-identical to retail 0x8240ddb0 (tools/icf_pair_adjudicate.py --chase: VACUOUS-BUT-IDENTICAL, CHASED T1 PROVEN, 0 CYCLE), and retail's 4-byte branch thunks carry 341 distinct destinations of which exactly one resolves to MemFree (this group's own ALIAS-X2 census). Call-site witness: retail branches to 0x8240ddb0 at all 91 charged OggFree sites in the 28 vorbis/ogg rows of the W16-JE NAME_ONLY queue (rows otherwise instruction-identical).",
+     "why_the_original_premise_failed": "The withdrawal (CF2_WARRANT_WITHDRAWN_DATA_POINTER) correctly removed a NEGATIVE warrant (zero fan-in at the map address) and correctly demanded a POSITIVE one. The positive one is above. The map row that kept OggFree out -- target_symbol_map 0x8249b200 = OggFree -- is itself refuted on retail bytes: 0x8249b200 is a virtual method (vtable slots at 0x82074878 / 0x8212a6a4; body stores a float to this+8, tests this+0xcc, dispatches through vtable slot 0x24), not a free function. W16-JE nulled and denylisted that row in the same change, so the symbol_equivalences gate (c') no longer sees OggFree at a second address.",
+     "superseded_records": [
+      {
+       "spelling": "OggFree",
+       "lane": "CF2-FANIN (withdrawn by lane ALIAS-SURGERY, 2026-08-17)",
+       "why": "CF2 WARRANT WITHDRAWN -- the gate's discredit was a BRANCH scan. This membership was installed because tier CF2 argued the map row is unsupported: the map parks OggFree at 0x8249b200 and `Image.fanin()` counts ZERO branches there. `fanin()` counts `b`/`bl` only. Under the fixed reference scan (rb3-xenon 9ea51d6d / 868bf327) the address carries 2 references -- 0 branch, 0 address-taken, 2 pointer words (0x82074878, 0x8212a6a4) -- and the pointer word(s) sit inside a dense run of `.text` pointers in `.rdata` (6/7 and 6/7 of the 7-word window are function starts), i.e. a VTABLE SLOT. The address is reached by virtual dispatch, so the premise 'nothing in the image references this' is FALSE and the warrant is gone. Re-derived at rb3-xenon c537540e: <decomp-bench>/archive/runs/2026-08-17-alias-surgery-remint/out/refs_five.json. NOTE the withdrawal is of the WARRANT, not of the claim: a live address does not prove the two spellings are different functions, it removes CF2's reason for believing the map row wrong. Second, independent witness that this was never a fold: symbol_equivalences gate (c') ALREADY drops this member -- the target map gives OggFree its own address 0x8249b200 against the survivor's -- so the membership was never in the admission predicate.",
+       "note": "Do NOT re-add. Lane CF2-FANIN. Re-adding needs a POSITIVE warrant (body or resolved-relocation evidence that the two spellings are one COMDAT), not a negated premise about fan-in: `refs()` returning 0 is still not proof an address is unreferenced (computed addresses, wide immediate pairs, `.pdata`-only references are all unseen). Evidence: <decomp-bench>/archive/runs/2026-08-17-cf2-address-taken-fanin/",
+       "class": "CF2_WARRANT_WITHDRAWN_DATA_POINTER",
+       "folded_map_addr": "0x8249b200",
+       "charged_name_check_sites": 91,
+       "admission_predicate_cost": "0 -- symbol_equivalences gate (c') already dropped this member, so canon is BIT-IDENTICAL before and after (measured, <decomp-bench>/archive/runs/2026-08-17-alias-surgery-remint/)"
+      }
+     ]
     }
    ]
   },
@@ -89005,7 +88975,8 @@
     "??_UkdTreeNode@?$kdTree@VTriangle@@@@SAPAXI@Z",
     "??_UkdTriList@?$kdTree@VTriangle@@@@SAPAXI@Z",
     "?BinkAlloc@@YAPAXI@Z",
-    "JsonMalloc"
+    "JsonMalloc",
+    "??2Task@@SAPAXI@Z"
    ],
    "evidence": "tools/alloc_fold_gate.py -- 8-byte allocator-thunk fold class. Every folded spelling's COMDAT is byte- AND relocation-identical to the map-resident survivor's, which is the /OPT:ICF condition itself applied to two of our own COMDATs: both carry the same relocation to the same symbol, so the fold does not depend on naming retail's branch target (0x827bcd38 is unnamed in the map, which is where tools/comdat_fold_gate.py fail-closes). The survivor is corroborated on retail bytes -- 8 B, word0 equal as a FULL 32-bit value, matching branch opcode/AA/LK -- and the pair (word0, resolved dest) is UNIQUE image-wide: 712 retail 8-byte <word>+<branch> bodies carry 707 distinct combos and the 12 sharing `li r4,0` have 12 DISTINCT destinations, so shape does none of the work. REFUSED, each on a different mechanism and each a real finding: ??2Task (map address 0x822d4278 is `blr`+pad with ZERO fan-in -- a map defect, not a function), ??2OutfitConfig (0x82b66c48 is a real thunk to a DIFFERENT allocator -- our identical COMDAT is a source defect), ?SampleAlloc (our objs define two distinct COMDAT variants). W16-M (2026-09-14): ??2Friend@@SAPAXI@Z added -- gate ADMIT (COMDAT byte- and reloc-identical to the survivor, 1 definition, PlatformMgr_Xbox.obj only); retail Poll's call site is `li r3,0x28; bl 0x827bd2f0` (sizeof(Friend)=0x28 agrees), so the survivor IS the callee. Also gate-ADMIT but deliberately NOT installed (out of W16-M scope, not adjudicated): ??2JobMgr, ??2PropertyEventProvider, ??_UVert@RndMesh, and ??2OutfitConfig -- the last one this evidence text records as REFUSED on retail bytes (0x82b66c48 = thunk to a different allocator); its ADMIT today only means the map no longer contradicts it, not that the retail finding is gone. W16-M S3A (2026-09-14): ??2JobMgr@@SAPAXI@Z added -- gate re-run live: ADMIT (COMDAT byte- and reloc-identical to the survivor, 1 definition, PlatformMgr_Xbox.obj only); retail ??0PlatformMgr's site is `li r3,0x10; bl 0x827bd2f0` and sizeof(JobMgr)=0x10 agrees, so the survivor IS the callee. ??2PropertyEventProvider, ??_UVert@RndMesh, ??2OutfitConfig remain NOT installed (unadjudicated / OutfitConfig's REFUSE was retired by a map rename, not evidence).",
    "withdrawn": [
@@ -89036,6 +89007,13 @@
      "class": "SURVIVOR_SIZE_MISMATCH",
      "why": "our(S)=8 B vs our(F)=60 B [retail(S)=8] -- our own build gives them different-sized COMDATs",
      "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    }
+   ],
+   "admitted": [
+    {
+     "spelling": "??2Task@@SAPAXI@Z",
+     "lane": "W16-JE 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 UNDECIDABLE); 8 B retail / 8 B ours; retail body-twins 12. Retail call site(s) reaching the survivor where we call this spelling: 0x822e698c, 0x822e7d78, 0x822e7fc0, 0x822e82a8, 0x822e8448, 0x82306cbc, 0x8274a20c, 0x8274a564 (+1 more). Admitted after W16-JE nulled the refuted map row 0x822d4278 (`blr`+pad, an empty function, not ??2Task). Our ??2Task COMDAT is `li r4,0; b ?MemAlloc@@YAPAXHH@Z`, byte- and relocation-identical to the survivor; the (word0, destination) pair is unique image-wide per this group's alloc_fold_gate census."
     }
    ]
   },
@@ -92264,23 +92242,6 @@
    ]
   },
   {
-   "name": "$?5VSongPattern",
-   "address": "0x822a9ec0",
-   "survivor": "??$?5VSongPattern@@V?$StlNodeAlloc@VSongPattern@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@VSongPattern@@V?$StlNodeAlloc@VSongPattern@@@stlpmtx_std@@@stlpmtx_std@@@Z",
-   "folded": [
-    "??$?5VMeshAO@OutfitConfig@@V?$StlNodeAlloc@VMeshAO@OutfitConfig@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@VMeshAO@OutfitConfig@@V?$StlNodeAlloc@VMeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@@Z"
-   ],
-   "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
-   "lane": "W16-JE 2026-10-01",
-   "admitted": [
-    {
-     "spelling": "??$?5VMeshAO@OutfitConfig@@V?$StlNodeAlloc@VMeshAO@OutfitConfig@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@VMeshAO@OutfitConfig@@V?$StlNodeAlloc@VMeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@@Z",
-     "lane": "W16-JE 2026-10-01",
-     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 112 B retail / 112 B ours; retail body-twins 2. Retail call site(s) reaching the survivor where we call this spelling: 0x822ace54."
-    }
-   ]
-  },
-  {
    "name": "1?$hashtable",
    "address": "0x8256ac50",
    "survivor": "??1?$hashtable@U?$pair@$$CBHVString@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHVString@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
@@ -92404,23 +92365,6 @@
      "spelling": "??0UITransitionCompleteMsg@@QAA@PAVUIScreen@@0@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 164 B retail / 164 B ours; retail body-twins 2. Retail call site(s) reaching the survivor where we call this spelling: 0x82804118, 0x828041b8."
-    }
-   ]
-  },
-  {
-   "name": "push_back",
-   "address": "0x822ccca8",
-   "survivor": "?push_back@?$ObjVector@V?$ObjPtr@VRndPartLauncher@@@@@@QAAXABV?$ObjPtr@VRndPartLauncher@@@@@Z",
-   "folded": [
-    "?push_back@?$ObjVector@V?$ObjPtr@VRndDir@@@@@@QAAXABV?$ObjPtr@VRndDir@@@@@Z"
-   ],
-   "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
-   "lane": "W16-JE 2026-10-01",
-   "admitted": [
-    {
-     "spelling": "?push_back@?$ObjVector@V?$ObjPtr@VRndDir@@@@@@QAAXABV?$ObjPtr@VRndDir@@@@@Z",
-     "lane": "W16-JE 2026-10-01",
-     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 96 B retail / 96 B ours; retail body-twins 9. Retail call site(s) reaching the survivor where we call this spelling: 0x822cceb4."
     }
    ]
   },
@@ -92612,23 +92556,6 @@
    ]
   },
   {
-   "name": "1?$ObjPtr",
-   "address": "0x82705e88",
-   "survivor": "??1?$ObjPtr@VSeqInst@@@@UAA@XZ",
-   "folded": [
-    "??1?$ObjPtr@VSequence@@@@UAA@XZ"
-   ],
-   "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
-   "lane": "W16-JE 2026-10-01",
-   "admitted": [
-    {
-     "spelling": "??1?$ObjPtr@VSequence@@@@UAA@XZ",
-     "lane": "W16-JE 2026-10-01",
-     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 100 B retail / 100 B ours; retail body-twins 29. Retail call site(s) reaching the survivor where we call this spelling: 0x8270840c."
-    }
-   ]
-  },
-  {
    "name": "$_M_range_insert",
    "address": "0x8277cc68",
    "survivor": "??$_M_range_insert@PBH@?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@AAAXPAHPBH1ABUforward_iterator_tag@1@@Z",
@@ -92659,23 +92586,6 @@
      "spelling": "??$__uninitialized_copy@PAVWaveFileMarker@@PAV1@@stlpmtx_std@@YAPAVWaveFileMarker@@PAV1@00ABU__false_type@0@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 96 B retail / 96 B ours; retail body-twins 10. Retail call site(s) reaching the survivor where we call this spelling: 0x827d3814, 0x827d388c."
-    }
-   ]
-  },
-  {
-   "name": "$_M_allocate_and_copy",
-   "address": "0x8235f6d0",
-   "survivor": "??$_M_allocate_and_copy@PBVActionRec@@@?$vector@VActionRec@@V?$StlNodeAlloc@VActionRec@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVActionRec@@IPBV2@0@Z",
-   "folded": [
-    "??$_M_allocate_and_copy@PBV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@1@IPBV21@0@Z"
-   ],
-   "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
-   "lane": "W16-JE 2026-10-01",
-   "admitted": [
-    {
-     "spelling": "??$_M_allocate_and_copy@PBV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@1@IPBV21@0@Z",
-     "lane": "W16-JE 2026-10-01",
-     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 100 B retail / 100 B ours; retail body-twins 4. Retail call site(s) reaching the survivor where we call this spelling: 0x8235faa4."
     }
    ]
   },
@@ -93987,23 +93897,6 @@
      "spelling": "??$_Destroy_Range@PAVDeltaArray@BandFaceDeform@@@stlpmtx_std@@YAXPAVDeltaArray@BandFaceDeform@@0@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 80 B retail / 80 B ours; retail body-twins 1. Retail call site(s) reaching the survivor where we call this spelling: 0x822c7a6c."
-    }
-   ]
-  },
-  {
-   "name": "_M_fill_insert",
-   "address": "0x82349b10",
-   "survivor": "?_M_fill_insert@?$vector@EV?$StlNodeAlloc@E@stlpmtx_std@@@stlpmtx_std@@AAAXPAEIABE@Z",
-   "folded": [
-    "?_M_fill_insert@?$vector@VMeshFace@BandPatchMesh@@V?$StlNodeAlloc@VMeshFace@BandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVMeshFace@BandPatchMesh@@IABV34@@Z"
-   ],
-   "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
-   "lane": "W16-JE 2026-10-01",
-   "admitted": [
-    {
-     "spelling": "?_M_fill_insert@?$vector@VMeshFace@BandPatchMesh@@V?$StlNodeAlloc@VMeshFace@BandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVMeshFace@BandPatchMesh@@IABV34@@Z",
-     "lane": "W16-JE 2026-10-01",
-     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 104 B retail / 104 B ours; retail body-twins 2. Retail call site(s) reaching the survivor where we call this spelling: 0x8234a280."
     }
    ]
   },
