@@ -729,7 +729,7 @@ bool canBreak(const char *cc, int i) {
     return cc[i] == '\t';
 }
 
-float segmentLength(int i1, int i2, int i3, int i4, float *f5, const char *c6) {
+inline float segmentLength(int i1, int i2, int i3, int i4, float *f5, const char *c6) {
     float lineLen = 0;
     for (; c6[i2 - 1] == ' ' && i1 < i2; i2--, i4--)
         ;
@@ -793,12 +793,7 @@ void RndText::WrapText(const char *text, const Style &style, HX_VECTOR(Line) & l
     int numChars = text ? UTF8StrLen(text) : 0;
 
     if (style.mFont == nullptr || textLen == 0) {
-        Line emptyLine;
-        if (lines.size() > 1) {
-            lines.erase(lines.begin() + 1, lines.end());
-        } else {
-            lines.insert(lines.end(), 1 - lines.size(), emptyLine);
-        }
+        lines.resize(1, Line());
         Line &line0 = lines[0];
         line0.lineStyle = style;
         line0.mStart = text;
@@ -813,12 +808,7 @@ void RndText::WrapText(const char *text, const Style &style, HX_VECTOR(Line) & l
     ComputeCharWidths(charWidths, numChars, text, style);
 
     if (mWrapWidth == 0.0f) {
-        Line emptyLine;
-        if (lines.size() > 1) {
-            lines.erase(lines.begin() + 1, lines.end());
-        } else {
-            lines.insert(lines.end(), 1 - lines.size(), emptyLine);
-        }
+        lines.resize(1, Line());
         Line &line0 = lines[0];
         line0.lineStyle = style;
         line0.mStart = text;
