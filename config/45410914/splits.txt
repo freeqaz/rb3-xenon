@@ -3060,8 +3060,10 @@ MeterEffect.cpp:
 	.text       start:0x82C43390 end:0x82C43420
 
 UI.cpp:
-	.pdata      start:0x82209000 end:0x82209040
-	.pdata      start:0x82209048 end:0x822090B0
+	.pdata      start:0x82209000 end:0x82209010
+	.pdata      start:0x82209018 end:0x82209040
+	.pdata      start:0x82209048 end:0x82209060
+	.pdata      start:0x82209070 end:0x822090B0
 	.pdata      start:0x822090B8 end:0x822090E0
 	.pdata      start:0x82245D40 end:0x82245D60
 	.pdata      start:0x82245D60 end:0x82245D70
@@ -3078,8 +3080,10 @@ UI.cpp:
 	.pdata      start:0x82245E90 end:0x82245E98
 	.pdata      start:0x82245E98 end:0x82246018
 	.pdata      start:0x82246018 end:0x82246128
-	.text       start:0x823F4A30 end:0x823F4C74
-	.text       start:0x823F4CE4 end:0x823F52BC
+	.text       start:0x823F4A30 end:0x823F4AB8
+	.text       start:0x823F4B08 end:0x823F4C74
+	.text       start:0x823F4CE4 end:0x823F4E0C
+	.text       start:0x823F4FA0 end:0x823F52BC
 	.text       start:0x823F5334 end:0x823F56F8
 	.text       start:0x828023A0 end:0x828024B0
 	.text       start:0x828024B0 end:0x82802530
@@ -5936,7 +5940,9 @@ CheatProvider.cpp:
 	.pdata      start:0x822089F0 end:0x82208AC8
 	.pdata      start:0x82208FB0 end:0x82208FC8
 	.pdata      start:0x82208FC8 end:0x82208FE8
+	.pdata      start:0x82209010 end:0x82209018
 	.pdata      start:0x82209040 end:0x82209048
+	.pdata      start:0x82209060 end:0x82209070
 	.pdata      start:0x822090B0 end:0x822090B8
 	.pdata      start:0x8220D018 end:0x8220D020
 	.pdata      start:0x82237580 end:0x82237588
@@ -5950,7 +5956,9 @@ CheatProvider.cpp:
 	.text       start:0x823EF5F8 end:0x823F0310
 	.text       start:0x823F4590 end:0x823F4688
 	.text       start:0x823F4688 end:0x823F4810
+	.text       start:0x823F4AB8 end:0x823F4B08
 	.text       start:0x823F4C74 end:0x823F4CE4
+	.text       start:0x823F4E0C end:0x823F4FA0
 	.text       start:0x823F52BC end:0x823F5334
 	.text       start:0x8243E108 end:0x8243E15C
 	.text       start:0x826FE590 end:0x826FE5CC
@@ -7918,7 +7926,7 @@ StorePanel.cpp:
 	.pdata      start:0x822413F0 end:0x82241410
 	.pdata      start:0x82241410 end:0x82241450
 	.pdata      start:0x82241450 end:0x822415E0
-	.pdata      start:0x82241628 end:0x82241650
+	.pdata      start:0x82241628 end:0x82241630
 	.text       start:0x82604868 end:0x826050A8
 	.text       start:0x827B4AE0 end:0x827B4C68
 	.text       start:0x827B4C68 end:0x827B4EB8
@@ -7928,7 +7936,7 @@ StorePanel.cpp:
 	.text       start:0x827B72EC end:0x827B72F0
 	.text       start:0x827B7344 end:0x827B7348
 	.text       start:0x827B73DC end:0x827B73E8
-	.text       start:0x827B74D0 end:0x827B7660
+	.text       start:0x827B74D0 end:0x827B7530
 	.text       start:0x827B78EC end:0x827B78F8
 
 ConnectionStatusPanel.cpp:
@@ -10755,6 +10763,7 @@ SongData.cpp:
 	.pdata      start:0x8223DCC0 end:0x8223DCC8
 	.pdata      start:0x8223DCE8 end:0x8223DCF0
 	.pdata      start:0x8223DCF8 end:0x8223DD00
+	.pdata      start:0x8223DD00 end:0x8223DD08
 	.pdata      start:0x8223DD08 end:0x8223DD18
 	.pdata      start:0x8223DD18 end:0x8223DD80
 	.pdata      start:0x8223DD80 end:0x8223DD98
@@ -10832,6 +10841,7 @@ SongData.cpp:
 	.text       start:0x82774900 end:0x82774960
 	.text       start:0x82774AC8 end:0x82774B3C
 	.text       start:0x82774BB4 end:0x82774C2C
+	.text       start:0x82774C2C end:0x82774CA4
 	.text       start:0x82774CA4 end:0x82774D44
 	.text       start:0x82774D44 end:0x827753B8
 	.text       start:0x827753B8 end:0x827756A0
@@ -13019,7 +13029,6 @@ system/beatmatch/DrumMixDB.cpp:
 	.pdata      start:0x8223DC50 end:0x8223DC58
 	.pdata      start:0x8223DCC8 end:0x8223DCE8
 	.pdata      start:0x8223DCF0 end:0x8223DCF8
-	.pdata      start:0x8223DD00 end:0x8223DD08
 	.pdata      start:0x8223F420 end:0x8223F428
 	.pdata      start:0x8223F428 end:0x8223F440
 	.pdata      start:0x8223F440 end:0x8223F458
@@ -13029,7 +13038,6 @@ system/beatmatch/DrumMixDB.cpp:
 	.text       start:0x827741B0 end:0x82774224
 	.text       start:0x82774960 end:0x82774AC8
 	.text       start:0x82774B3C end:0x82774BB4
-	.text       start:0x82774C2C end:0x82774CA4
 	.text       start:0x82792D50 end:0x82792DE0
 	.text       start:0x82792DE0 end:0x82792EE0
 	.text       start:0x82792EE0 end:0x82793050
@@ -13920,6 +13928,8 @@ system/meta/StoreArtLoaderPanel.cpp:
 	.pdata      start:0x82241608 end:0x82241610
 	.pdata      start:0x82241610 end:0x82241618
 	.pdata      start:0x82241618 end:0x82241628
+	.pdata      start:0x82241630 end:0x82241640
+	.pdata      start:0x82241640 end:0x82241650
 	.pdata      start:0x82241650 end:0x82241660
 	.pdata      start:0x82241660 end:0x82241670
 	.pdata      start:0x82241670 end:0x82241680
@@ -13935,6 +13945,8 @@ system/meta/StoreArtLoaderPanel.cpp:
 	.text       start:0x827B7348 end:0x827B737C
 	.text       start:0x827B737C end:0x827B73DC
 	.text       start:0x827B73E8 end:0x827B74D0
+	.text       start:0x827B7530 end:0x827B75C8
+	.text       start:0x827B75C8 end:0x827B7660
 	.text       start:0x827B7660 end:0x827B77F4
 	.text       start:0x827B77F4 end:0x827B78EC
 	.text       start:0x827B78F8 end:0x827B7970
