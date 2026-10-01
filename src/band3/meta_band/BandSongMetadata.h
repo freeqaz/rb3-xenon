@@ -57,6 +57,7 @@ public:
     Symbol HasKeysSym() const;
     bool HasSolo(Symbol) const;
     Symbol HasSoloSym(Symbol) const;
+    bool IsDLCOrUGC() const;
     bool IsUGC() const;
     bool IsUGCPlus() const;
     const char *MidiUpdate() const;

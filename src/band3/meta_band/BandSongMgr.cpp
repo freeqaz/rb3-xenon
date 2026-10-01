@@ -39,13 +39,6 @@ BandSongMgr gSongMgr;
 BandSongMgr *TheSongMgrPtr = &gSongMgr;
 SongMgr *TheBaseSongManger;
 
-// Retail-only helper (target fn_82586AB0, called from AddSongData's 360-only
-// tail block). Zero args, single caller, no symbol -- exact
-// source/name unidentified (guarded local-static Symbols "rb1_dlc"/"ugc"/
-// "rb3_dlc"/"ugc_plus" per Ghidra decompile). Extern-declared for call-site
-// codegen only; see docs cited in AddSongData.
-extern bool RB3AddSongDataUpgradeGate();
-
 bool BandSongMgr::sFakeSongsAllowed;
 
 // Retail addresses the literal directly (no pointer load), so this is a constant.
@@ -706,21 +699,12 @@ void BandSongMgr::AddSongData(
             }
             mAvailableSongs.insert(songID);
             ivec.push_back(songID);
-            // Retail-360-only tail (TU5-era -- confirmed via
-            // Ghidra decompile of target 0x82561530 + raw asm listing): after
-            // registering a newly-added song, prime its metadata (discarding
-            // the result) and conditionally register it in the recent-songs
-            // list. unk124 (0x144) is the cache-dirty flag SongMgr::
-            // ClearCachedContent()/ReadCachedMetadataFromStream() already
-            // toggle. Data(songID) dispatches through the vtable @+0x40
-            // (confirmed: scripts/target_symbol_map.json maps 0x82783FA8 to
-            // ?Data@SongMgr@@UBAPBVSongMetadata@@H@Z). The gate predicate
-            // (target fn_82586AB0) is a single-caller, zero-arg static helper
-            // with no known counterpart -- extern-declared below for
-            // call-site codegen only, exact source identity unresolved.
+            // Retail TU5 tail: when the cache is not dirty (unk124, 0x144), a
+            // newly-added downloadable or user-generated song goes on the
+            // recent list. Data(songID) dispatches through vtable +0x40 and its
+            // result is the `this` of BandSongMetadata::IsDLCOrUGC (0x8259E5B0).
             if (!isReservedSongID && !unk124) {
-                Data(songID);
-                if (RB3AddSongDataUpgradeGate())
+                if (static_cast<const BandSongMetadata *>(Data(songID))->IsDLCOrUGC())
                     AddRecentSong(songID);
             }
         }

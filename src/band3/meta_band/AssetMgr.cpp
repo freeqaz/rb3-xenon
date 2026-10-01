@@ -154,6 +154,20 @@ int AssetMgr::GetEyebrowsCount(Symbol symbol) const {
     return eyebrows.size();
 }
 
+// Retail 0x8256B570 (no surviving source; the name is ours): the names of every
+// Premium-boutique asset (boutique 9) of the given gender, sorted. Its only caller is
+// the PremiumAssetProvider constructor.
+void AssetMgr::GetPremiumAssets(std::vector<Symbol> &assets, AssetGender gender) const {
+    FOREACH_POST (it, mAssets) {
+        Asset *pAsset = it->second;
+        if (pAsset->GetBoutique() == kAssetBoutique_Premium && pAsset->GetGender() == gender) {
+            Symbol name = pAsset->GetName();
+            assets.push_back(name);
+        }
+    }
+    std::sort(assets.begin(), assets.end());
+}
+
 Symbol AssetMgr::StripFinish(Symbol symbol) {
     Asset *pAsset = GetAsset(symbol);
     if (!pAsset) {

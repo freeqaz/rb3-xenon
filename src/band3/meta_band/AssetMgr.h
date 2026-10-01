@@ -40,6 +40,7 @@ public:
     AssetType GetTypeFromName(Symbol) const;
     void GetEyebrows(std::vector<Symbol> &, Symbol) const;
     int GetEyebrowsCount(Symbol) const;
+    void GetPremiumAssets(std::vector<Symbol> &, AssetGender) const;
     Symbol StripFinish(Symbol);
     void ConfigureAssetTypeToIconPathMap();
     void AddAssets();

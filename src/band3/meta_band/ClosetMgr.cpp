@@ -494,7 +494,7 @@ void ClosetMgr::TakePortrait() { mCurrentClosetPanel->TakePortrait(); }
 
 void ClosetMgr::SetReturnScreen(Symbol screen) { mReturnScreen = screen; }
 
-bool ClosetMgr::IsPurchaseUIActive() const { return mAssetStore.unk34 != 0; }
+bool ClosetMgr::IsPurchaseUIActive() const { return mAssetStore.mPurchaser != 0; }
 
 // TU5 (retail @0x82566978, called from CustomizePanel::Load); name is ours.
 void ClosetMgr::RefreshAssetOffers() { mAssetStore.RefreshOffers(mUser); }

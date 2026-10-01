@@ -57,6 +57,9 @@ public:
 
     std::hash_map<Symbol, int> &GetSymbolToIDMap();
     static int GetSymbolTableSize(int);
+    /** The number of symbols in the table. Out of line in retail: LoadMemcardAction::PostAction
+        calls a `lwz r3,0x44(r3); blr` body, the element count of m_mapSymbolToID. The name is ours. */
+    int GetSymbolCount() const;
 
     std::hash_map<Symbol, int> m_mapSymbolToID; // 0x30
     std::hash_map<int, Symbol> m_mapIDToSymbol; // 0x4c

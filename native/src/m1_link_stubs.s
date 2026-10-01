@@ -22,13 +22,6 @@ _Z22AllowedToAccessContenti:
     xorq %rax, %rax
     ret
 
-// RB3AddSongDataUpgradeGate()
-.weak _Z25RB3AddSongDataUpgradeGatev
-.type _Z25RB3AddSongDataUpgradeGatev,@function
-_Z25RB3AddSongDataUpgradeGatev:
-    xorq %rax, %rax
-    ret
-
 // LicenseMgr::ClearCachedContent()
 .weak _ZN10LicenseMgr18ClearCachedContentEv
 .type _ZN10LicenseMgr18ClearCachedContentEv,@function

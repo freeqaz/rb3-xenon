@@ -127,7 +127,8 @@ public:
 
 class CalibrationWelcomePanel : public UIPanel {
 public:
-    CalibrationWelcomePanel() {}
+    // Implicit ctor: retail ??0CalibrationWelcomePanel (0x825743E0, emitted in
+    // MetaPanel's TU) stores a literal 0 to the vtordisp slot.
     OBJ_CLASSNAME(CalibrationWelcomePanel);
     OBJ_SET_TYPE(CalibrationWelcomePanel);
     virtual DataNode Handle(DataArray *, bool);

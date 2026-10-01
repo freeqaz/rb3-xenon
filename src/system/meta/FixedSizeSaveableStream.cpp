@@ -12,6 +12,8 @@ void FixedSizeSaveableStream::SaveTable() {
     Seek(start, BinStream::kSeekBegin);
 }
 
+int FixedSizeSaveableStream::GetSymbolCount() const { return m_mapSymbolToID.size(); }
+
 int FixedSizeSaveableStream::GetSymbolTableSize(int) {
     return FixedSizeSaveable::GetMaxSymbols() * 0x36 + 4;
 }
