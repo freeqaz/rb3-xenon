@@ -96,6 +96,9 @@ void DxModal(Debug::ModalType &t, FixedString &s, bool b) { TheDxRnd.Modal(t, s,
 void DxRnd::PreInit(HWND__ *) {
     if (!mPreInited) {
         mPreInited = true;
+        // Retail RB3 (0x8273C6A8) has no shader_gpr_alloc config lookup here:
+        // the first call after setting mPreInited is SetDiskErrorCallback.
+#ifdef HX_NATIVE
         DataArray *cfg = SystemConfig("rnd");
         mDefaultVSRegAlloc = 32;
         mDefaultPSRegAlloc = 96;
@@ -107,6 +110,7 @@ void DxRnd::PreInit(HWND__ *) {
         MILO_ASSERT(mDefaultVSRegAlloc + mDefaultPSRegAlloc == GPU_GPRS, 0x1F0);
         MILO_ASSERT(mDefaultVSRegAlloc >= 16, 0x1F1);
         MILO_ASSERT(mDefaultPSRegAlloc >= 16, 0x1F2);
+#endif
         SetDiskErrorCallback(CDError);
         mPrintGlitches = OptionBool("print_glitches", false);
         mCaptureNextFrame = false;
@@ -131,9 +135,11 @@ void DxRnd::PreInit(HWND__ *) {
         CreatePostTextures();
         DxTex::SetEDRamChecksEnabled(false);
         NgPostProc::Init();
-        NgDOFProc::Init();
         DxTex::SetEDRamChecksEnabled(true);
         RndShadowMap::Init();
+        // RB3 creates the plain DOFProc here (0x82466298: `if (!TheDOFProc)
+        // TheDOFProc = New<DOFProc>()`), after the shadow map -- not NgDOFProc.
+        DOFProc::Init();
         Rnd::CreateDefaults();
         TheDebug.SetModalCallback(DxModal);
     }
@@ -610,21 +616,22 @@ void CreateBackBuffers(
     DX_ASSERT(colorSurface, 0x2D4);
 }
 
+// 0x8273B3B8: the clear vector's w is 0 BEFORE both resolves (retail stores
+// it at 0x8273B40C); it used to be assigned after its last use.
 void DxRnd::SavePreBuffer() {
-    XMVECTOR vector;
+    // The zero is a memory constant: retail keeps its page base in r29 and
+    // reloads it after the first resolve (as in DxRnd::ModalDraw).
+    static const float kZero = 0.0f;
     Hmx::Color c = mClearColor;
-    vector.x = c.red;
-    vector.y = c.green;
-    vector.z = c.blue;
+    XMVECTOR vector = {c.red, c.green, c.blue, kZero};
     D3DDevice_Resolve(
         mD3DDevice, 0x14, nullptr, mFrontBufferDepth, nullptr, 0, 0, nullptr, 1, 0, nullptr
     );
 
     D3DDevice_Resolve(
-        mD3DDevice, 0x300, nullptr, mPreProcessBuffer, nullptr, 0, 0, &vector, 0, 0, nullptr
+        mD3DDevice, 0x300, nullptr, mPreProcessBuffer, nullptr, 0, 0, &vector, kZero, 0,
+        nullptr
     );
-
-    vector.w = 0.f;
 }
 
 void DxRnd::SavePostBuffer() {
