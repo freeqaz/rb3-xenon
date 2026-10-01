@@ -283,7 +283,19 @@ void LightPreset::Keyframe::Save(BinStream &bs) const {
     bs << mLightEntries;
     bs << mDescription;
     bs << mSpotlightDrawerEntries;
+    // Retail 0x824B0538: the venue post-proc and the StageKit LED block (in
+    // LegacyLoadStageKit's order) follow the triggers.
+    bs << mVideoVenuePostProc;
     bs << mTriggers;
+    bs << mLedBlue;
+    bs << mLedGreen;
+    bs << mLedRed;
+    bs << mLedYellow;
+    bs << mLedBluePattern;
+    bs << mLedGreenPattern;
+    bs << mLedRedPattern;
+    bs << mLedYellowPattern;
+    bs << mStrobeSetting;
 }
 
 void LightPreset::Keyframe::Load(BinStream &d) {
@@ -299,14 +311,15 @@ void LightPreset::Keyframe::Load(BinStream &d) {
     if (sPresetRev > 9) {
         d >> mSpotlightDrawerEntries;
     }
-    if (sPresetRev > 0x11 && sPresetRev < 0x16) {
-        ObjPtr<RndPostProc> pp(mSpotlightEntries.Owner());
-        d >> pp;
+    // Retail 0x824B5010: the post-proc loads into mVideoVenuePostProc and the
+    // StageKit block is read for every rev past 0xB (retail saves rev 0x15).
+    if (sPresetRev > 0x11) {
+        d >> mVideoVenuePostProc;
     }
     if (sPresetRev > 0x13) {
         d >> mTriggers;
     }
-    if (sPresetRev > 0xB && sPresetRev < 0x16) {
+    if (sPresetRev > 0xB) {
         LegacyLoadStageKit(d);
     }
 }
