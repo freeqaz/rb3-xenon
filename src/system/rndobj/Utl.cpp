@@ -393,9 +393,17 @@ bool SortDraws(RndDrawable *draw1, RndDrawable *draw2) {
     }
 }
 
+// 0x82439CB0, the comparator RndDir::SyncObjects passes to std::sort
+// (0x824060A0). RB3 polls CharTransCopy objects ahead of everything else, then
+// orders by name; there is no PollEnabled test. Read off retail: a guarded
+// function-local Symbol, a 0.0/1.0 key per side from ClassName(), fcmpu, and a
+// strcmp of the names on ties.
 bool SortPolls(const RndPollable *p1, const RndPollable *p2) {
-    if (p1->PollEnabled() != p2->PollEnabled()) {
-        return p1->PollEnabled();
+    static Symbol charTransCopy("CharTransCopy");
+    float order1 = p1->ClassName() == charTransCopy ? 0.0f : 1.0f;
+    float order2 = p2->ClassName() == charTransCopy ? 0.0f : 1.0f;
+    if (order1 != order2) {
+        return order1 < order2;
     } else {
         return strcmp(p1->Name(), p2->Name()) < 0;
     }

@@ -1,4 +1,8 @@
 {
+ "0x82439cb0": "?SortPolls@@YA_NPBVRndPollable@@0@Z",
+ "0x8243bc68": "?XfmSort@@YA_NAAUInstance@RndMultiMesh@@0@Z",
+ "0x82415730": "?TestPoint@Rnd@@QAAXABVVector3@@PAVRndFlare@@@Z",
+ "0x8273dc00": "?SetViewport@DxCam@@QAAXXZ",
  "0x8273e9a8": "?SetFrame@DxMovie@@UAAXMM@Z",
  "0x8273e118": "?Update@DxMovie@@AAAXXZ",
  "0x82733028": "?D3DFORMAT_BitsPerPixel@@YAHW4_D3DFORMAT@@@Z",
