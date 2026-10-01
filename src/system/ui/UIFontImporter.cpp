@@ -799,12 +799,13 @@ DataNode UIFontImporter::OnShowFontPicker(DataArray *) { return 0; }
 
 DataNode UIFontImporter::OnSyncWithResourceFile(DataArray *a) {
     if (!mSyncResource.empty()) {
-        FilePath path;
-        if (ResourceDirBase::MakeResourcePath(
-                path, "UILabel", "UILabelDir", mSyncResource.c_str()
-            )) {
-            ObjDirPtr<UILabelDir> labelDir;
-            labelDir.LoadFile(path, false, true, kLoadFront, false);
+        // Retail 0x8281C5B0: "%s/%s.milo" under GetResourcesPath(), loaded
+        // through an ObjDirPtr built from null, then PostLoad(0).
+        const char *milopath = MakeString("%s/%s.milo", GetResourcesPath(), mSyncResource);
+        {
+            ObjDirPtr<UILabelDir> labelDir(0);
+            labelDir.LoadFile(FilePath(FileRoot(), milopath), false, true, kLoadFront, false);
+            labelDir.PostLoad(0);
             if (labelDir.IsLoaded()) {
                 mLowerCaseAthroughZ = labelDir->mLowerCaseAthroughZ;
                 mUpperCaseAthroughZ = labelDir->mUpperCaseAthroughZ;
@@ -817,7 +818,6 @@ DataNode UIFontImporter::OnSyncWithResourceFile(DataArray *a) {
                 mFontName = labelDir->mFontName;
                 mFontPctSize = labelDir->mFontPctSize;
                 mFontWeight = labelDir->mFontWeight;
-                mItalics = labelDir->mItalics;
                 mFontQuality = labelDir->mFontQuality;
                 mPitchAndFamily = labelDir->mPitchAndFamily;
                 mFontQuality = labelDir->mFontQuality;
@@ -825,6 +825,7 @@ DataNode UIFontImporter::OnSyncWithResourceFile(DataArray *a) {
                 mBitmapSavePath = labelDir->mBitmapSavePath;
                 mBitMapSaveName = labelDir->mBitMapSaveName;
                 mFontSupersample = labelDir->mFontSupersample;
+                mItalics = labelDir->mItalics;
                 mLeft = labelDir->mLeft;
                 mRight = labelDir->mRight;
                 mTop = labelDir->mTop;
