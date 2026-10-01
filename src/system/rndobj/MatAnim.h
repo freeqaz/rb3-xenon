@@ -41,6 +41,7 @@ public:
     virtual void SetFrame(float, float);
     virtual float EndFrame();
     virtual Hmx::Object *AnimTarget() { return mMat; }
+    void SetMat(RndMat *);
     virtual void SetKey(float);
 
     OBJ_MEM_OVERLOAD_INLINE_DEL(0x17)

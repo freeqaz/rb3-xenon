@@ -129,7 +129,7 @@ public:
     virtual void ListDrawChildren(std::list<RndDrawable *> &);
     virtual void DrawPreClear();
     virtual void UpdatePreClearState();
-    virtual ~OutfitConfig() {}
+    // ~OutfitConfig is implicit: retail destroys the members with no vtable re-stores.
     virtual void PreSave(BinStream &);
     virtual void PostSave(BinStream &);
 
