@@ -271,10 +271,10 @@ void PerfectOverdriveTracker::UpdateGoalValueLabel(UILabel &) const {}
 void PerfectOverdriveTracker::UpdateCurrentValueLabel(UILabel &) const {}
 
 String PerfectOverdriveTracker::GetPlayerContributionString(Symbol s) const {
-    static Symbol perfect_overdrive_tracker_contrib_format_vox_1("perfect_overdrive_tracker_contrib_format_vox_1");
-    static Symbol perfect_overdrive_tracker_contrib_format_vox("perfect_overdrive_tracker_contrib_format_vox");
-    static Symbol perfect_overdrive_tracker_contribution_format_1("perfect_overdrive_tracker_contribution_format_1");
     static Symbol perfect_overdrive_tracker_contribution_format("perfect_overdrive_tracker_contribution_format");
+    static Symbol perfect_overdrive_tracker_contribution_format_1("perfect_overdrive_tracker_contribution_format_1");
+    static Symbol perfect_overdrive_tracker_contrib_format_vox("perfect_overdrive_tracker_contrib_format_vox");
+    static Symbol perfect_overdrive_tracker_contrib_format_vox_1("perfect_overdrive_tracker_contrib_format_vox_1");
     static Symbol vocals("vocals");
     TrackerPlayerID pid = mSource->GetIDFromInstrument(s);
     int i4 = 0;
