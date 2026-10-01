@@ -62,10 +62,9 @@ void NoteVoiceInst::SetTranspose(float transpose) {
     mSample->SetSpeed(speed);
 }
 
+// Retail 0x827133c0 (slot 27): no null tests on mSample or mOwner.
 void NoteVoiceInst::UpdateVolume() {
-    if (mSample && mOwner) {
-        mSample->SetVolume(mOwner->Faders().GetVal() + mVolume);
-    }
+    mSample->SetVolume(mOwner->Faders().GetVal() + mVolume);
 }
 
 // NoteVoiceInst::UpdatePan() removed -- see the note at its former declaration
