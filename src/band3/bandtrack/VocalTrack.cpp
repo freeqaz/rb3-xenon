@@ -151,9 +151,15 @@ void VocalTrack::UpdateTubePlates(
         cur->Reset();
         deque.push_back(cur);
     }
-    float fvar1 = TheGame->InRollback() ? unk2a4 : f2;
-    FOREACH (it, deque) {
+    if (TheGame->InRollback())
+        f2 = unk2a4;
+    std::deque<TubePlate *>::iterator it = deque.begin();
+    std::deque<TubePlate *>::iterator end = deque.end();
+    for (; it != end; ++it) {
         TubePlate *cur = *it;
+        // Plates past the last one holding geometry are all empty.
+        if (cur->NoVerts())
+            break;
         if (cur->CurrentEndX(f3) < mDir->mTrackLeftX) {
             cur->SetShowing(false);
         } else {
@@ -171,8 +177,10 @@ void VocalTrack::UpdateTubePlates(
             DumpPlates(deque, cur->GetMatName().c_str());
         }
         cur->Bake();
-        if (mVocalStyleOverride == kVocalStyleScrolling && cur->Deploy()) {
-            cur->PollDeploy(fvar1);
+        // Deploying plates animate in only in static mode (retail 0x82BA37D0
+        // compares the style with 0, kVocalStyleStatic).
+        if (mVocalStyleOverride == kVocalStyleStatic && cur->Deploy()) {
+            cur->PollDeploy(f2);
         }
     }
 #if defined(MILO_DEBUG) && defined(HX_NATIVE)
