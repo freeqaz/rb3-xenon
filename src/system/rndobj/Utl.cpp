@@ -2361,129 +2361,80 @@ void BurnXfm(RndMesh *mesh, bool keepTranslation) {
 }
 
 void TessellateMesh(RndMesh *mesh) {
+    // splits every face into four through its edge midpoints; shared edges
+    // reuse the midpoint vert already made for the neighbouring face
     typedef RndAmbientOcclusion::Edge Edge;
     std::set<Edge> edges;
-    RndMesh *geomOwner = mesh->GetGeomOwner();
     std::vector<RndMesh::Face> newFaces;
-
     std::vector<RndMesh::Vert> newVerts;
+    newFaces.reserve(mesh->Faces().size() * 4);
+    newVerts.reserve(mesh->Verts().size() * 3);
 
-    auto _tmp0 = geomOwner->Faces().size();
-    newFaces.reserve(_tmp0 * 4);
-    auto vertCount = geomOwner->Verts().size();
-    newVerts.reserve(vertCount * 3);
+    int numVerts = mesh->Verts().size();
+    int nextVert = numVerts;
+    for (unsigned int i = 0; i < mesh->Faces().size(); i++) {
+        RndMesh::Face &face = mesh->Faces()[i];
+        RndMesh::Vert &a = mesh->Verts()[face.v1];
+        RndMesh::Vert &b = mesh->Verts()[face.v2];
+        RndMesh::Vert &c = mesh->Verts()[face.v3];
 
-    unsigned int nextVert = (unsigned short)geomOwner->Verts().size();
-
-    // Retail declares the three probe edges once, outside the loop: only their
-    // v0/v1 are re-stamped per face, and `midpoint` is seeded to -1 a single
-    // time (it is never read before being overwritten on the insert path).
-    Edge e12, e23, e31;
-    e12.midpoint = -1;
-    e23.midpoint = -1;
-    e31.midpoint = -1;
-
-    for (unsigned int i = 0; i < (unsigned int)geomOwner->Faces().size(); i++) {
-        auto face = geomOwner->Faces()[i];
-        unsigned short v2 = face.v2;
-        unsigned short v1 = face.v1;
-        unsigned short v3 = face.v3;
-
-#ifdef HX_NATIVE
-        intptr_t vertsBase = (intptr_t)geomOwner->Verts().mVerts;
-
-        RndMesh::Vert *pv1 = (RndMesh::Vert *)((uintptr_t)v1 * 0x60 + vertsBase);
-        RndMesh::Vert *pv2 = (RndMesh::Vert *)((uintptr_t)v2 * 0x60 + vertsBase);
-        RndMesh::Vert *pv3 = (RndMesh::Vert *)((uintptr_t)v3 * 0x60 + vertsBase);
-#else
-        int vertsBase = (int)(unsigned int)geomOwner->Verts().mVerts;
-
-        RndMesh::Vert *pv1 = (RndMesh::Vert *)((unsigned int)v1 * 0x60 + vertsBase);
-        RndMesh::Vert *pv2 = (RndMesh::Vert *)((unsigned int)v2 * 0x60 + vertsBase);
-        RndMesh::Vert *pv3 = (RndMesh::Vert *)((unsigned int)v3 * 0x60 + vertsBase);
-#endif
-
-        e12.v0 = v1;
-        e12.v1 = v2;
-        e23.v0 = v2;
-        e23.v1 = v3;
-        e31.v0 = v3;
-        e31.v1 = v1;
+        Edge e12, e23, e31;
+        e12.v0 = face.v1;
+        e12.v1 = face.v2;
+        e12.midpoint = -1;
+        e23.v0 = face.v2;
+        e23.v1 = face.v3;
+        e23.midpoint = -1;
+        e31.v0 = face.v3;
+        e31.v1 = face.v1;
+        e31.midpoint = -1;
 
         RndMesh::Vert blend12, blend23, blend31;
-        RndAmbientOcclusion::BlendVert(*pv1, *pv2, blend12);
-        RndAmbientOcclusion::BlendVert(*pv2, *pv3, blend23);
-        RndAmbientOcclusion::BlendVert(*pv3, *pv1, blend31);
+        RndAmbientOcclusion::BlendVert(a, b, blend12);
+        RndAmbientOcclusion::BlendVert(b, c, blend23);
+        RndAmbientOcclusion::BlendVert(c, a, blend31);
 
-        unsigned short mid12, mid23, mid31;
-
-        std::set<Edge>::iterator it12 = edges.find(e12);
-        if (it12 == edges.end()) {
-            mid12 = nextVert++;
-            e12.midpoint = mid12;
+        std::set<Edge>::iterator it = edges.find(e12);
+        if (it == edges.end()) {
+            e12.midpoint = nextVert++;
             edges.insert(e12);
             newVerts.push_back(blend12);
         } else {
-            mid12 = it12->midpoint;
+            e12 = *it;
         }
-
-        std::set<Edge>::iterator it23 = edges.find(e23);
-        if (it23 == edges.end()) {
-            mid23 = nextVert++;
-            e23.midpoint = mid23;
+        it = edges.find(e23);
+        if (it == edges.end()) {
+            e23.midpoint = nextVert++;
             edges.insert(e23);
             newVerts.push_back(blend23);
         } else {
-            mid23 = it23->midpoint;
+            e23 = *it;
         }
-
-        std::set<Edge>::iterator it31 = edges.find(e31);
-        if (it31 == edges.end()) {
-            mid31 = nextVert++;
-            e31.midpoint = mid31;
+        it = edges.find(e31);
+        if (it == edges.end()) {
+            e31.midpoint = nextVert++;
             edges.insert(e31);
             newVerts.push_back(blend31);
         } else {
-            mid31 = it31->midpoint;
+            e31 = *it;
         }
 
         RndMesh::Face f1, f2, f3, f4;
-        f1.Set(v1, mid12, mid31);
-        f2.Set(mid31, mid12, mid23);
-        f3.Set(mid12, v2, mid23);
-        f4.Set(mid23, v3, mid31);
+        f1.Set(face.v1, e12.midpoint, e31.midpoint);
+        f2.Set(e31.midpoint, e12.midpoint, e23.midpoint);
+        f3.Set(e12.midpoint, face.v2, e23.midpoint);
+        f4.Set(e23.midpoint, face.v3, e31.midpoint);
         newFaces.push_back(f1);
         newFaces.push_back(f2);
         newFaces.push_back(f3);
         newFaces.push_back(f4);
     }
 
-    geomOwner->Faces().assign(newFaces.begin(), newFaces.end());
-
-    int origNumVerts = geomOwner->Verts().size();
-    geomOwner->Verts().resize(origNumVerts + (int)newVerts.size());
-
-    bool hasNewVerts = (nextVert & 0xFFFF) != 0;
-    if ((unsigned int)origNumVerts < (unsigned int)(hasNewVerts)) {
-        int offset = origNumVerts * 0x60;
-        int count = (nextVert & 0xFFFF) - origNumVerts;
-        RndMesh::Vert *src = &newVerts[0];
-        do {
-            memcpy(
-#ifdef HX_NATIVE
-                (void *)((intptr_t)geomOwner->Verts().mVerts + offset),
-#else
-                (void *)((int)(unsigned int)geomOwner->Verts().mVerts + offset),
-#endif
-                src,
-                sizeof(RndMesh::Vert)
-            );
-            count--;
-            offset += 0x60;
-            src++;
-        } while (count != 0);
+    mesh->Faces().assign(newFaces.begin(), newFaces.end());
+    mesh->Verts().resize(mesh->Verts().size() + newVerts.size());
+    for (unsigned int v = numVerts; v < (unsigned int)nextVert; v++) {
+        memcpy(&mesh->Verts()[v], &newVerts[v - numVerts], sizeof(RndMesh::Vert));
     }
-
     mesh->Sync(0x3f);
 }
 
