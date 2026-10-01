@@ -1899,11 +1899,10 @@ void VocalTrack::UpdateScrolling(float ms) {
                             }
                             lyric->mDeployIdx = -1;
                         } else {
-                            float deployWidth = mStaticDeployZoneXSize;
-                            beginPos.x += ((deployWidth + mStaticDeployBufferX)
+                            beginPos.x += ((mStaticDeployZoneXSize + mStaticDeployBufferX)
                                        * (float)(lyric->mDeployIdx
                                                  - mNextDeployZone[std::min(part, 1)]))
-                                + (deployWidth + mStaticDeployMarginX);
+                                + (mStaticDeployZoneXSize + mStaticDeployMarginX);
                         }
                     }
                 } else {
