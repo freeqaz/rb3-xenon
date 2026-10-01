@@ -97206,7 +97206,8 @@
   {
    "name": "_M_insert_overflow_aux",
    "address": "0x823808b0",
-   "survivor": "?_M_insert_overflow_aux@?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUSpotlightDrawerEntry@LightPreset@@ABU34@ABU__false_type@2@I_N@Z",
+   "survivor": "?_M_insert_overflow_aux@?$vector@UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUBone@CharBones@@ABU34@ABU__false_type@2@I_N@Z",
+   "survivor_renamed": {"from": "?_M_insert_overflow_aux@?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUSpotlightDrawerEntry@LightPreset@@ABU34@ABU__false_type@2@I_N@Z", "lane": "W16-KD 2026-10-01", "why": "0x823808B0 copies 8-byte {Symbol, float} elements and is called only from vector<CharBones::Bone>::_M_fill_insert (0x82381088, itself called only from CharBones) and PropKeys; the map named it for the 16-byte SpotlightDrawerEntry. Map and survivor renamed to the vector<Bone> spelling; the pair<int,float> membership re-chased CHASED T1 PROVEN, 0 CYCLE-ASSUMED, against it."},
    "folded": [
     "?_M_insert_overflow_aux@?$vector@U?$pair@HM@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HM@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAU?$pair@HM@2@ABU32@ABU__false_type@2@I_N@Z"
    ],
