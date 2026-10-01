@@ -1520,7 +1520,7 @@ void VocalTrack::UpdateScrolling(float ms) {
         bool wantLyrics = (notes != NULL);
         bool dirWant =
             (part != 0) ? (bool)mDir->mHarmLyrics : (bool)mDir->mLeadLyrics;
-        if (wantLyrics != dirWant) {
+        if (dirWant != wantLyrics) {
             wantLyrics =
                 (part != 0) ? (bool)mDir->mHarmLyrics : (bool)mDir->mLeadLyrics;
             mDir->Reset();
