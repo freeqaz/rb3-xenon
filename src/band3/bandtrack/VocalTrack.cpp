@@ -2051,7 +2051,11 @@ void VocalTrack::UpdateScrolling(float ms) {
                         BuildStaticDeployZone(
                             part, beforeCoda, codaMs, tmpEndPos, shifts
                         );
-                        section = &afterCoda;
+                        BuildStaticDeployZone(
+                            part, afterCoda, nextStart, tmpEndPos, shifts
+                        );
+                        (*curDeployPtr)++;
+                        continue;
                     }
                 }
                 BuildStaticDeployZone(
