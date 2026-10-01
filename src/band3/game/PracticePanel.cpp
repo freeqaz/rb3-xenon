@@ -148,6 +148,7 @@ void PracticePanel::Unload() {
 }
 
 void PracticePanel::Poll() {
+    float f80, f84; // function scope: retail gives them their own frame slots
     UIPanel::Poll();
     static Message setShowingMsg("set_showing", 0);
     if (!unk54) {
@@ -190,7 +191,10 @@ void PracticePanel::Poll() {
                         oe = 1;
                     }
                     mMetronome->Poll(MsToTick(ms), (Metronome::OverrideEnabled)oe);
-                    float f80, f84;
+                }
+                {
+                    // Only the metronome poll is guarded: retail's
+                    // `mMetronome == 0` branch lands on GetSectionBounds.
                     GetSectionBounds(f80, f84);
                     if (vp) {
                         TheGame->AdjustForVocalPhrases(f80, f84);

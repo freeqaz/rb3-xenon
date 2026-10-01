@@ -585,7 +585,9 @@ void AccomplishmentManager::ConfigurePrecachedFilterData(DataArray *arr) {
         DataArray *pDataArray = arr->Array(i);
         MILO_ASSERT(pDataArray, 0x2CA);
         Symbol key = pDataArray->Sym(0);
-        SongSortMgr::SongFilter *pFilter = GetPrecachedFilter(key);
+        // Retail copies key into its own argument slot (stw r4,0x58) before
+        // the call; the explicit temporary reproduces that copy.
+        SongSortMgr::SongFilter *pFilter = GetPrecachedFilter(Symbol(key));
         if (pFilter)
             MILO_WARN("%s precached filter already exists, skipping", key.Str());
         else {
