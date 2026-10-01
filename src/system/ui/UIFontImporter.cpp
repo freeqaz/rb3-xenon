@@ -750,8 +750,9 @@ DataNode UIFontImporter::OnGetResourcesPath(DataArray *da) {
 DataNode UIFontImporter::OnGetGennedBitmapPath(DataArray *da) {
     if ((unsigned int)mGennedFonts.size() > 0) {
         RndFont *font = static_cast<RndFont *>(*mGennedFonts.begin());
-        if (font && font->Mat(0) && font->Mat(0)->GetDiffuseTex()) {
-            RndTex *tex = font->Mat(0)->GetDiffuseTex();
+        // Retail reads the font's single material (RndFont +0x30), not Mat(0).
+        if (font && font->GetMat() && font->GetMat()->GetDiffuseTex()) {
+            RndTex *tex = font->GetMat()->GetDiffuseTex();
             if (tex) {
                 return tex->File().c_str();
             }
