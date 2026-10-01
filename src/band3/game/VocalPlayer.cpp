@@ -1316,14 +1316,15 @@ void VocalPlayer::HandlePhraseEnd(float f1) {
         mStats.SetSingerPitchDeviationInfo(cur->GetSingerIndex(), fPitchDeviationMean, fPitchDeviationDev);
     }
     if (iPrevActivePartCount >= 2) {
-        mStats.mDoubleHarmonyPhraseCount++;
+        Stats &stats = mStats;
+        stats.mDoubleHarmonyPhraseCount++;
         if (iHighRatingPartCount >= 2) {
-            mStats.mDoubleHarmonyHit++;
+            stats.mDoubleHarmonyHit++;
         }
-        if (!(iPrevActivePartCount - 3)) {
-            mStats.mTripleHarmonyPhraseCount++;
+        if (iPrevActivePartCount == 3) {
+            stats.mTripleHarmonyPhraseCount++;
             if (iHighRatingPartCount == 3) {
-                mStats.mTripleHarmonyHit++;
+                stats.mTripleHarmonyHit++;
             }
         }
     }
