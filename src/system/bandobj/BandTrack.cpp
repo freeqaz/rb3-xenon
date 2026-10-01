@@ -564,7 +564,7 @@ void BandTrack::SetupCrowdMeter() {
         micon->unk240 = MyTrackPanelDir();
     }
     if (mUnisonIcon)
-        ((UnisonIcon *)mUnisonIcon.Ptr())->SetIcon(icon);
+        mUnisonIcon->SetIcon(icon);
 }
 
 void BandTrack::SetInstrument(TrackInstrument inst) {
@@ -748,7 +748,7 @@ void BandTrack::SpotlightFail(bool guilty) {
         if (trig)
             trig->Trigger();
         if (mUnisonIcon)
-            ((UnisonIcon *)mUnisonIcon.Ptr())->Fail();
+            mUnisonIcon->Fail();
     } else {
         EventTrigger *trig = ThisDir()->Find<EventTrigger>("spotlight_fail.trig", false);
         if (trig)
@@ -764,7 +764,7 @@ void BandTrack::SpotlightPhraseSuccess() {
         }
     }
     if (mUnisonIcon)
-        ((UnisonIcon *)mUnisonIcon.Ptr())->Succeed();
+        mUnisonIcon->Succeed();
 }
 
 void BandTrack::PopupHelp(Symbol sym, bool b) {
@@ -829,12 +829,12 @@ void BandTrack::FillReset() {
 
 void BandTrack::UnisonEnd() {
     if (mUnisonIcon)
-        ((UnisonIcon *)mUnisonIcon.Ptr())->UnisonEnd();
+        mUnisonIcon->UnisonEnd();
 }
 
 void BandTrack::UnisonStart() {
     if (mUnisonIcon)
-        ((UnisonIcon *)mUnisonIcon.Ptr())->UnisonStart();
+        mUnisonIcon->UnisonStart();
 }
 
 void BandTrack::SoloHit(int i) {

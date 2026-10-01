@@ -12,6 +12,7 @@
 #include "bandobj/StreakMeter.h"
 #include "bandobj/TrackInterface.h"
 #include "bandobj/TrackInstruments.h"
+#include "bandobj/UnisonIcon.h"
 #include "obj/Task.h"
 
 class TrackPanelDirBase;
@@ -156,7 +157,7 @@ public:
     ObjPtr<RndDir> mPopupObject; // 0x44
     ObjPtr<RndDir> mPlayerFeedback; // 0x50
     ObjPtr<RndDir> mFailedFeedback; // 0x5c
-    ObjPtr<RndDir> mUnisonIcon; // 0x68  (UnisonIcon; RndDir keeps size/layout, avoids header tail)
+    ObjPtr<UnisonIcon> mUnisonIcon; // 0x68 (retail dtor 0x822D3CB0 installs the ObjPtr<UnisonIcon> vtable)
     Symbol unk74; // 0x74
     bool unk78; // 0x78
     ObjPtr<RndDir> mEndgameFeedback; // 0x7c
