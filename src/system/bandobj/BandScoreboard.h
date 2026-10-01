@@ -26,7 +26,7 @@ public:
 
     DECLARE_REVS;
     OBJ_NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    DELETE_OVERLOAD_INLINE; // ??_G calls MemFree directly, as retail
     NEW_OBJ(BandScoreboard)
     static void Init() { Register(); }
     REGISTER_OBJ_FACTORY_FUNC(BandScoreboard)
