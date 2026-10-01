@@ -3983,7 +3983,6 @@ Text.cpp:
 	.pdata      start:0x8220E228 end:0x8220E2E8
 	.pdata      start:0x8220E2F8 end:0x8220E318
 	.pdata      start:0x8220E320 end:0x8220E4E8
-	.pdata      start:0x8220E530 end:0x8220E538
 	.pdata      start:0x82213CD0 end:0x82213CD8
 	.pdata      start:0x822224F0 end:0x822224F8
 	.pdata      start:0x82232E30 end:0x82232E38
@@ -4002,7 +4001,6 @@ Text.cpp:
 	.text       start:0x8245A02C end:0x8245C068
 	.text       start:0x8245C2E4 end:0x8245C2E8
 	.text       start:0x8245C47C end:0x8245C480
-	.text       start:0x8245C4E0 end:0x8245C510
 	.text       start:0x824C7B40 end:0x824C7BBC
 	.text       start:0x825AF2E0 end:0x825AF30C
 	.text       start:0x826AAFC8 end:0x826AB01C
@@ -6139,6 +6137,7 @@ TransProxy.cpp:
 	.pdata      start:0x8220E4E8 end:0x8220E518
 	.pdata      start:0x8220E518 end:0x8220E528
 	.pdata      start:0x8220E528 end:0x8220E530
+	.pdata      start:0x8220E530 end:0x8220E538
 	.pdata      start:0x8220E538 end:0x8220E540
 	.pdata      start:0x8220E540 end:0x8220E548
 	.pdata      start:0x8220E548 end:0x8220E550
@@ -6155,6 +6154,7 @@ TransProxy.cpp:
 	.text       start:0x8245C304 end:0x8245C47C
 	.text       start:0x8245C480 end:0x8245C490
 	.text       start:0x8245C490 end:0x8245C4E0
+	.text       start:0x8245C4E0 end:0x8245C510
 	.text       start:0x8245C510 end:0x8245C5C0
 	.text       start:0x8245C5C0 end:0x8245C648
 	.text       start:0x8245C648 end:0x8245C6D8
