@@ -2271,19 +2271,11 @@ float VocalTrack::GetHarmonyScore(int singerIdx) {
         return harmonyScore;
     for (int part = 0; part < numParts; part++) {
         if (part != singer->mFrameAssignedPart) {
-            // NOTE (laneBF-3, re-confirmed laneW19-VOCAL): residual single
-            // mismatch is `lwzx r3,r11,r30` vs our `lwzx r3,r30,r11` — the rA/rB
-            // operands of the indexed load are swapped (semantically identical
-            // `add`). Spellings tested and REFUTED, do not retry:
-            //   BF-3    `*(begin() + part)`   — identical to operator[], no change
-            //   W19     `*(part + begin())`   — reversed operands, STILL no change
-            // W19 tried the reversed form because the commutative-operand
-            // reversal is REAL for floats — proved on UpdateLyricZ in this same
-            // file, where source `delta + z` is what emits `fadds fD, f(z),
-            // f(delta)`. That mechanism does NOT transfer to integer indexed
-            // loads: MSVC canonicalizes lwzx rA/rB independently of source order.
-            // Regalloc-class, permuter banned.
-            Singer *candidate = mPlayer->mVocalParts[part]->GetBestSingerCandidate();
+            // Retail's indexed load is `lwzx r3, base, index`; holding the part
+            // in a named local gives that operand order (indexing straight into
+            // the GetBestSingerCandidate call emits `lwzx r3, index, base`).
+            VocalPart *vp = mPlayer->mVocalParts[part];
+            Singer *candidate = vp->GetBestSingerCandidate();
             if (candidate) {
                 float tmp = frameScore * candidate->mFrameBestHitScore;
                 tmp *= frameScore;
