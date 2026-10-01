@@ -186,7 +186,7 @@ void PracticePanel::Poll() {
                     int oe = 0;
                     if (TheUI->FocusPanel() != this || !unk58) {
                         oe = 2;
-                    } else if (TheGame->GetMusicSpeed() != -1.0f) {
+                    } else if (TheGame->GetMusicSpeed() != 1.0f) { // retail: 1.0f (0x820009FC)
                         oe = 1;
                     }
                     mMetronome->Poll(MsToTick(ms), (Metronome::OverrideEnabled)oe);

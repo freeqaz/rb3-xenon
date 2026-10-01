@@ -174,6 +174,8 @@ void Player::Restart(bool b) {
         }
     }
     SetCrowdMeterActive(!TheGame->ResumedNoScore());
+    // retail 0x826A7B38: restart also clears the TU5 pause counter (CountPause)
+    mUnkTU5_tail = 0;
 }
 
 void Player::Poll(float f, const SongPos &pos) {
@@ -682,12 +684,13 @@ int Player::GetIndividualMultiplier() const {
 
 int Player::GetMaxIndividualMultipler() const { return mBehavior->mMaxMultiplier; }
 
+// retail: both take the score from the non-virtual Performer::GetIndividualScore()
 int Player::GetNumStars() const {
-    return TheScoring->GetSoloNumStars(mScore, mTrackType);
+    return TheScoring->GetSoloNumStars(GetIndividualScore(), mTrackType);
 }
 
 float Player::GetNumStarsFloat() const {
-    return TheScoring->GetSoloNumStarsFloat(mScore, mTrackType);
+    return TheScoring->GetSoloNumStarsFloat(GetIndividualScore(), mTrackType);
 }
 
 int Player::GetScoreForStars(int i) const {
@@ -1143,7 +1146,10 @@ void Player::DeterminePerformanceAwards() {
     for (int i = 1; i < cfg->Size(); i++) {
         DataArray *arr = cfg->Array(i);
         if (arr->Int(1)) {
-            mStats.mPerformanceAwards.push_back(arr->Sym(0));
+            // retail copies the Sym() result into a second slot before push_back
+            Symbol award;
+            award = arr->Sym(0);
+            mStats.mPerformanceAwards.push_back(award);
         }
     }
     playerNode = n30;

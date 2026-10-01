@@ -13,11 +13,15 @@ Symbol ControllerTypeToSym(ControllerType controllerType) {
     return DataGetMacro("CHAR_INSTRUMENT_SYMBOLS")->Sym(controllerType);
 }
 
+// retail 0x8268F298: a top-tested loop whose condition is two compares against 5
+// (`cmpwi 5; blt body; bne exit`), i.e. less-than OR equal, not a folded <= / < 6.
 ControllerType SymToControllerType(Symbol s) {
-    for (int i = 0; i < 6; i++) {
+    int i = 0;
+    while (i < kControllerNone || i == kControllerNone) {
         if (s == ControllerTypeToSym((ControllerType)i)) {
             return (ControllerType)i;
         }
+        i++;
     }
     MILO_ASSERT(false, 0x1D);
     return kControllerNone;

@@ -20,7 +20,10 @@ OverdriveTracker::OverdriveTracker(
 
 OverdriveTracker::~OverdriveTracker() {}
 
+// retail: the Symbols in ConfigureTrackerSpecificData, the two value labels and
+// GetBroadcastDescription are guarded function-local statics.
 void OverdriveTracker::ConfigureTrackerSpecificData(const DataArray *arr) {
+    static Symbol chain_multipliers("chain_multipliers");
     unk70.InitFromDataArray(arr->FindArray(chain_multipliers, false));
 }
 
@@ -167,12 +170,14 @@ void OverdriveTracker::LocalEndDeployStreak(float f) {
 void OverdriveTracker::UpdateGoalValueLabel(UILabel &label) const {
     int min, sec;
     TrackerDisplay::MsToMinutesSeconds(mTargets.front(), min, sec);
+    static Symbol tour_goal_od_timer_goal_format("tour_goal_od_timer_goal_format");
     label.SetTokenFmt(tour_goal_od_timer_goal_format, min, sec);
 }
 
 void OverdriveTracker::UpdateCurrentValueLabel(UILabel &label) const {
     int min, sec;
     TrackerDisplay::MsToMinutesSeconds(0.0f, min, sec);
+    static Symbol tour_goal_od_timer_result_format("tour_goal_od_timer_result_format");
     label.SetTokenFmt(tour_goal_od_timer_result_format, min, sec);
 }
 
@@ -204,6 +209,7 @@ void OverdriveTracker::SavePlayerStats() const {
 void OverdriveTracker::TargetSuccess(int) const {}
 
 DataArrayPtr OverdriveTracker::GetBroadcastDescription() const {
+    static Symbol overdrive_tracker_explanation("overdrive_tracker_explanation");
     return DataArrayPtr(overdrive_tracker_explanation);
 }
 

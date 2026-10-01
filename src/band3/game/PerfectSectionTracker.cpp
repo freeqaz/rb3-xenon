@@ -354,38 +354,49 @@ bool PerfectSectionTracker::HandleExitExtent(float f, int i, bool b) {
     return ret;
 }
 
+// Retail 0x826DB9F8 fills one default PlayerStreakData on the stack before the
+// player loop and copies it into the map (a 0x20-byte memcpy) per player, and
+// rounds through (float) between ceil and the int conversion (frsp before fctiwz).
 void PerfectSectionTracker::TranslateRelativeTargets() {
     unk104.Init();
+    PlayerStreakData defaultStreak;
+    defaultStreak.unk0 = 0;
+    defaultStreak.unk4 = 0;
+    defaultStreak.unk8 = 0;
+    defaultStreak.unkc = 0;
+    defaultStreak.unk10 = -1.0f;
+    defaultStreak.unk14 = -1;
+    defaultStreak.unk18 = false;
+    defaultStreak.unk19 = false;
+    defaultStreak.unk1c = 0;
     for (TrackerPlayerID id = mSource->GetFirstPlayer(); id.NotNull();
          id = mSource->GetNextPlayer(id)) {
         Player *player = mSource->GetPlayer(id);
         MILO_ASSERT(player, 0x2A5);
         TrackType tt = player->GetTrackType();
-        PlayerStreakData &streak = unk5c[tt];
-        streak.unk0 = 0;
-        streak.unk4 = 0;
-        streak.unk8 = 0;
-        streak.unkc = 0;
-        streak.unk10 = -1.0f;
-        streak.unk14 = -1;
-        streak.unk18 = false;
-        streak.unk19 = false;
-        streak.unk1c = 0;
+        unk5c[tt] = defaultStreak;
         unk74[tt] = false;
         unk8c[tt] = 0;
     }
     int sectionCount = unk104.CountNonEmptySections(mSource, unke5 == 0);
     for (unsigned int i = 0; i < mTargets.size(); i++) {
-        int trackerCount = (int)std::ceil((float)sectionCount * mTargets[i]);
+        int trackerCount = (int)(float)std::ceil((float)sectionCount * mTargets[i]);
         mTargets[i] = (float)std::max(1, trackerCount);
     }
 }
 
+// retail 0x826DA320 / 0x826DA3B8: the format Symbols are guarded function-local statics
 void PerfectSectionTracker::UpdateGoalValueLabel(UILabel &label) const {
+    static Symbol tour_goal_band_perfect_section_goal_format(
+        "tour_goal_band_perfect_section_goal_format"
+    );
     label.SetTokenFmt(tour_goal_band_perfect_section_goal_format, (int)mTargets.front());
 }
 
 void PerfectSectionTracker::UpdateCurrentValueLabel(UILabel &label) const {
+    static Symbol tour_goal_band_perfect_section_result_format(
+        "tour_goal_band_perfect_section_result_format"
+    );
     label.SetTokenFmt(tour_goal_band_perfect_section_result_format, unkb4);
 }
 
