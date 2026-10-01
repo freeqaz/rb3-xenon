@@ -1333,6 +1333,8 @@ BEGIN_LOADS(LightPreset)
     for (int i = 0; i != (unsigned)mSpotlights.size(); i++) {
         bs.ReadString(buf, 0x80);
         mSpotlights[i] = Dir()->Find<Spotlight>(buf, false);
+        if (mSpotlights[i])
+            mSpotlights[i]->AddRef(this);
     }
     unsigned int envcount;
     bs >> envcount;
@@ -1340,6 +1342,8 @@ BEGIN_LOADS(LightPreset)
     for (int i = 0; i != (unsigned)mEnvironments.size(); i++) {
         bs.ReadString(buf, 0x80);
         mEnvironments[i] = Dir()->Find<RndEnviron>(buf, false);
+        if (mEnvironments[i])
+            mEnvironments[i]->AddRef(this);
     }
     unsigned int lightcount;
     bs >> lightcount;
@@ -1347,6 +1351,8 @@ BEGIN_LOADS(LightPreset)
     for (int i = 0; i != (unsigned)mLights.size(); i++) {
         bs.ReadString(buf, 0x80);
         mLights[i] = Dir()->Find<RndLight>(buf, false);
+        if (mLights[i])
+            mLights[i]->AddRef(this);
     }
     if (sPresetRev < 5) {
         bool b;
@@ -1412,6 +1418,8 @@ BEGIN_LOADS(LightPreset)
         for (int i = 0; i != (unsigned)mSpotlightDrawers.size(); i++) {
             bs.ReadString(buf, 0x80);
             mSpotlightDrawers[i] = Dir()->Find<SpotlightDrawer>(buf, false);
+        if (mSpotlightDrawers[i])
+            mSpotlightDrawers[i]->AddRef(this);
         }
     }
     if (sPresetRev == 0xB) {
