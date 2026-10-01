@@ -154,7 +154,8 @@ protected:
     Timer mFrameTimer; // 0xb0
     float mThrottle; // 0xe0
     Symbol mExt; // 0xe4
-    bool mFloatSamples; // 0xe8
+    bool mFloatSamples; // 0xe8 : the format requested from the decoder (ctor arg)
+    bool mInfoFloatSamples; // 0xe9 : the format the decoder reported to InitInfo
     int mVirtualChans; // 0xec
     int mInfoChannels; // 0xf0
     float unkec; // 0xf4
