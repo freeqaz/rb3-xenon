@@ -1133,9 +1133,12 @@ void LightPreset::AnimateState(
 void LightPreset::SetFrameEx(float frame, float blend, bool b) {
     START_AUTO_TIMER("light");
     RndAnimatable::SetFrame(frame, blend);
+#ifdef HX_NATIVE
+    // not in retail SetFrameEx (0x824B6580)
     if (frame == 0 && TheLoadMgr.EditMode()) {
         SyncNewSpotlights();
     }
+#endif
     if (!mKeyframes.empty()) {
         Keyframe *kfPrev = nullptr;
         float f = 1.0f;
@@ -1146,10 +1149,10 @@ void LightPreset::SetFrameEx(float frame, float blend, bool b) {
                 sManualEvents.pop_front();
             }
             if (!sManualEvents.empty()) {
-                float fadeTime = kfCur->mFadeOutTime;
                 float eventBeat = sManualEvents.front().second;
+                float fadeBeats = kfCur->mFadeOutTime / 480.0f;
                 float beat = TheTaskMgr.Beat();
-                if (eventBeat - fadeTime / 480.0f <= beat) {
+                if (eventBeat - fadeBeats <= beat) {
                     AdvanceManual(sManualEvents.front().first);
                     beat = TheTaskMgr.Beat();
                     if (eventBeat > beat) {
@@ -1164,8 +1167,9 @@ void LightPreset::SetFrameEx(float frame, float blend, bool b) {
             }
             if (mLastManualFrame != -1) {
                 kfPrev = &mKeyframes[mLastManualFrame];
+                float elapsed = frame - mManualFrameStart;
                 if (mManualFadeTime > 0) {
-                    f = Min((frame - mManualFrameStart) / mManualFadeTime, 1.0f);
+                    f = Min(elapsed / mManualFadeTime, 1.0f);
                     f = Max(0.0f, f);
                 } else {
                     f = 0;
@@ -1179,10 +1183,8 @@ void LightPreset::SetFrameEx(float frame, float blend, bool b) {
                 kfPrev = &mKeyframes[iPrev];
         }
 
-        bool same = false;
-        Keyframe *last = mLastKeyframe;
-        if (kfCur == last && mLastBlend == f)
-            same = true;
+        bool keyChanged = mLastKeyframe != kfCur;
+        bool same = !keyChanged && mLastBlend == f;
         if (!same) {
             ApplyState(*kfCur);
             if (kfPrev) {
@@ -1194,7 +1196,7 @@ void LightPreset::SetFrameEx(float frame, float blend, bool b) {
         if (!same || !b) {
             Animate(blend);
         }
-        if (kfCur != last) {
+        if (keyChanged) {
             FOREACH (it, mLastKeyframe->mTriggers) {
                 (*it)->Trigger();
             }
