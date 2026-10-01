@@ -17887,7 +17887,7 @@
  "0x82686840": "??$__destroy_range_aux@V?$reverse_iterator@PAVPlayerScoreInfo@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVPlayerScoreInfo@@@0@0ABU__false_type@0@@Z",
  "0x826868b0": "??1TrackData@SongDB@@QAA@XZ",
  "0x82686b28": "?ClearQuarantinedPhrases@SongDB@@QAAXH@Z",
- "0x82686ca8": "??$__destroy_aux@VTrackData@SongDB@@@stlpmtx_std@@YAXPAVTrackData@SongDB@@ABU__false_type@0@@Z",
+ "0x82686ca8": "?ClearTrackPhrases@SongDB@@QAAXH@Z",
  "0x826870d0": "??0?$vector@VVocalNote@@V?$StlNodeAlloc@VVocalNote@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
  "0x82687178": "??$_Param_Construct@VTrackData@SongDB@@V12@@stlpmtx_std@@YAXPAVTrackData@SongDB@@ABV12@@Z",
  "0x826871e0": "??4TrackData@SongDB@@QAAAAV01@ABV01@@Z",

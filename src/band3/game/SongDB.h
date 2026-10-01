@@ -49,6 +49,7 @@ public:
     void PostLoad(DataEventList *);
     void RebuildPhrases(int);
     void ClearTrackPhrases(int);
+    void ClearArpeggioPhrases(int);
     void RebuildData();
     void OverrideBasePoints(int, TrackType, const UserGuid &, int, int, int);
     int TotalBasePoints();

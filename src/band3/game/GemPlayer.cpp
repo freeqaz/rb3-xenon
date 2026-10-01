@@ -1587,6 +1587,7 @@ void GemPlayer::ChangeDifficulty(Difficulty diff) {
     FinishAllHeldNotes(ms);
     Player::ChangeDifficulty(diff);
     TheSongDB->ClearTrackPhrases(mTrackNum);
+    TheSongDB->ClearArpeggioPhrases(mTrackNum);
     TheSongDB->ChangeDifficulty(mTrackNum, diff);
     TheSongDB->ClearQuarantinedPhrases(mTrackNum);
     ResetGemStates(ms);
