@@ -1,4 +1,7 @@
 {
+ "0x82736130": "?SetTexture@DxShaderMgr@@QAAXHPAUD3DBaseTexture@@@Z",
+ "0x82739a70": "?CreateBackBuffers@@YAXHHW4_D3DMULTISAMPLE_TYPE@@AAI1AAPAUD3DSurface@@2@Z",
+ "0x82739e80": "?InitRenderState@DxRnd@@QAAXXZ",
  "0x8273b818": "?DrawString@DxRnd@@UAAAAVVector2@@PBDABV2@ABVColor@Hmx@@_N@Z",
  "0x8273c2f0": "?EndDrawing@DxRnd@@UAAXXZ",
  "0x8273a100": "?EndTiling@DxRnd@@AAAXPAUD3DBaseTexture@@H@Z",

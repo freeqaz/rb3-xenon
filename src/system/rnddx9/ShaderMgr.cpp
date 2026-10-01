@@ -533,6 +533,14 @@ void DxShaderMgr::LoadShaderFile(FileStream &fs) {
 
 RndShaderProgram *DxShaderMgr::NewShaderProgram() { return new DxShader(); }
 
+// 0x82736130: binds a raw D3D texture to a sampler (DxRnd::InitRenderState
+// binds the colour-ramp texture to sampler 15 through it).
+void DxShaderMgr::SetTexture(int sampler, D3DBaseTexture *tex) {
+    D3DDevice_SetTexture(
+        TheDxRnd.Device(), sampler, tex, 0x8000000000000000 >> (sampler + 0x20U)
+    );
+}
+
 // W16-A scatter-include (default/system/rnddx9/ShaderMgr <- rnddx9/Tex.cpp).
 // Tex.cpp was in-tree but wired NOWHERE: absent from objects.json and included
 // by no compiled TU, so the match build emitted no DxTex bodies at all and six

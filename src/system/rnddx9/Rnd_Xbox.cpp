@@ -18,6 +18,8 @@
 #include "rnddx9/CubeTex.h"
 #include "rnddx9/OcclusionQueryMgr.h"
 #include "rnddx9/Rnd.h"
+#include "rnddx9/ShaderMgr.h"
+#include "math/Rand.h"
 #include "rndobj/Cam.h"
 #include "rndobj/DOFProc_NG.h"
 #include "rndobj/Flare.h"
@@ -431,6 +433,9 @@ void DxRnd::SetDefaultRenderStates() {
     D3DDevice_SetRenderState_PresentImmediateThreshold(TheDxRnd.Device(), 100);
 }
 
+// 0x82739E80 (the last call of PostDeviceReset). RB3 also (re)builds
+// mColorRampTex -- a 32x32 L8 texture of random bytes -- and binds it to
+// sampler 15 before setting up gamma; DC3 dropped the member.
 void DxRnd::InitRenderState() {
     PhysMemTypeTracker tracker("D3D(phys):Global");
     if (!mD3DDevice) {
@@ -438,6 +443,27 @@ void DxRnd::InitRenderState() {
     }
     SetDefaultRenderStates();
     D3DXSetDXT3DXT5(1);
+    if (mColorRampTex) {
+        mColorRampTex->Release();
+        mColorRampTex = nullptr;
+    }
+    // Through the XDK's out-parameter wrapper: retail stores the result and
+    // passes the forwarded value on with a zero-extension (`clrrwi r3,r3,0`
+    // before LockRect); the release above goes through D3DResource::Release,
+    // which homes the old pointer (`stw r3,0x58(r31)`).
+    IDirect3DDevice9_CreateTexture(
+        mD3DDevice, 32, 32, 1, 0, D3DFMT_LIN_L8, 0, &mColorRampTex, nullptr
+    );
+    D3DLOCKED_RECT rect;
+    D3DTexture_LockRect(mColorRampTex, 0, &rect, nullptr, 0);
+    unsigned char *bits = (unsigned char *)rect.pBits;
+    for (unsigned int y = 0; y < 32; y++) {
+        for (unsigned int x = 0; x < 32; x++) {
+            bits[rect.Pitch * x + y] = RandomFloat(0.0f, 1.0f) * 255.0;
+        }
+    }
+    D3DTexture_UnlockRect(mColorRampTex, 0);
+    TheDxShaderMgr.SetTexture(15, mColorRampTex);
     SetupGamma();
 }
 
@@ -546,6 +572,11 @@ void CreateBackBuffers(
     D3DSurface *&colorSurface,
     D3DSurface *&depthSurface
 ) {
+    // RESIDUAL (83.9): retail (0x82739A70) sizes the A8R8G8B8 surface first,
+    // reserves the D24FS8 size for the depth surface and zeroes the parameter
+    // block. Spelled that way (with memset) it scores 68.9 -- the register and
+    // store schedule move further -- so this behaviourally identical order (both
+    // formats are 4 bytes/pixel, so the two sizes are equal) is kept.
     UINT depthSize = XGSurfaceSize(width, height, D3DFMT_D24FS8, multisample);
     UINT colorSize = XGSurfaceSize(width, height, D3DFMT_A8R8G8B8, multisample);
 

@@ -1035,8 +1035,10 @@ D3DDevice_CreateQueryTiled(D3DDevice *pDevice, D3DQUERYTYPE Type, UINT TileCapac
 void D3DDevice_SetVertexShader(D3DDevice *pDevice, D3DVertexShader *pShader);
 void D3DDevice_SetPixelShader(D3DDevice *pDevice, D3DPixelShader *pShader);
 
-void D3DXSetDXT3DXT5(int enable);
-
 #ifdef __cplusplus
 }
+
+// C++ linkage: retail's symbol is ?D3DXSetDXT3DXT5@@YAXH@Z (called from
+// DxRnd::InitRenderState, 0x82739EE0).
+void D3DXSetDXT3DXT5(int enable);
 #endif
