@@ -11,6 +11,7 @@
 #include "ui/UI.h"
 #include "utl/Symbols.h"
 #include "decomp.h"
+#include "../../Memory.h" // src/Memory.h (PhysMemTypeTracker); a bare "Memory.h" resolves into xdk/LIBCMT
 #include "obj/Task.h"
 #include "math/Utl.h"
 #include "utl/BinStream.h"
@@ -66,6 +67,7 @@ BandList::~BandList() {}
 DECOMP_FORCEACTIVE(BandList, "ObjPtr_p.h", "f.Owner()", "")
 
 void BandList::Init() {
+    PhysMemTypeTracker tracker("D3D(phys):Global");
     TheUI->InitResources("BandList");
     Register();
 }
