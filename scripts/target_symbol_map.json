@@ -4473,7 +4473,7 @@
  "0x8228f0f0": "?Replace@?$ObjPtr@VObject@Hmx@@@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x8228f108": "??_GRndPollable@@UAAPAXI@Z",
  "0x8228f158": "??_GVenueLoader@BandDirector@@UAAPAXI@Z",
- "0x8228f1a8": "?ST_SetTrackingMode@@YAKW4ST_TRACKING_MODE@@@Z",
+ "0x8228f1a8": "?Terminate@BandDirector@@SAXXZ",
  "0x8228f1c0": "?AddStageKitKeys@@YAXPAVRndPropAnim@@PAVBandDirector@@@Z",
  "0x8228f2a8": "?PostProcsFromPresets@BandDirector@@QAA_NAAPBVRndPostProc@@0AAM@Z",
  "0x8228f3b0": "?Poll@BandDirector@@UAAXXZ",
