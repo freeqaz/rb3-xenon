@@ -144,7 +144,7 @@ BinStream &operator>>(BinStream &d, LightPreset::EnvLightEntry &e) {
 #pragma region SpotlightEntry
 
 LightPreset::SpotlightEntry::SpotlightEntry(Hmx::Object *owner)
-    : mIntensity(0), mColor(0), mFlags(3), mTarget(owner) {
+    : mIntensity(0), mColor(0), mFlags(3), mTarget(ObjPtrInlineOwner(), owner) {
     mRotation.Reset();
     mRotationMatrix.Zero();
 }
@@ -283,7 +283,19 @@ void LightPreset::Keyframe::Save(BinStream &bs) const {
     bs << mLightEntries;
     bs << mDescription;
     bs << mSpotlightDrawerEntries;
+    // Retail 0x824B0538: the venue post-proc and the StageKit LED block (in
+    // LegacyLoadStageKit's order) follow the triggers.
+    bs << mVideoVenuePostProc;
     bs << mTriggers;
+    bs << mLedBlue;
+    bs << mLedGreen;
+    bs << mLedRed;
+    bs << mLedYellow;
+    bs << mLedBluePattern;
+    bs << mLedGreenPattern;
+    bs << mLedRedPattern;
+    bs << mLedYellowPattern;
+    bs << mStrobeSetting;
 }
 
 void LightPreset::Keyframe::Load(BinStream &d) {
@@ -299,30 +311,24 @@ void LightPreset::Keyframe::Load(BinStream &d) {
     if (sPresetRev > 9) {
         d >> mSpotlightDrawerEntries;
     }
-    if (sPresetRev > 0x11 && sPresetRev < 0x16) {
-        ObjPtr<RndPostProc> pp(mSpotlightEntries.Owner());
-        d >> pp;
+    // Retail 0x824B5010: the post-proc loads into mVideoVenuePostProc and the
+    // StageKit block is read for every rev past 0xB (retail saves rev 0x15).
+    if (sPresetRev > 0x11) {
+        d >> mVideoVenuePostProc;
     }
     if (sPresetRev > 0x13) {
         d >> mTriggers;
     }
-    if (sPresetRev > 0xB && sPresetRev < 0x16) {
+    if (sPresetRev > 0xB) {
         LegacyLoadStageKit(d);
     }
 }
 
-void LightPreset::Keyframe::LegacyLoadStageKit(BinStream &bs) {
-    for (int i = 0; i < 9; i++) {
-        int x;
-        bs >> x;
-    }
-}
-
-void LightPreset::Keyframe::LegacyLoadP9(BinStream &d) {
-    MILO_ASSERT(sPresetRev == 14, 0x596);
-    // TU5 reads the StageKit LED fields straight off the BinStream base of the
-    // rev stream (bypassing the rev-delegating operator>>): ReadEndian is called
-    // with `&d` as the BinStream `this`, in the field order below.
+// Retail 0x824AB740 (called from Keyframe::Load for revs 0xC..0x15 and from
+// LegacyLoadP9): the StageKit LED block. TU5 reads the fields straight off the
+// BinStream base of the rev stream (bypassing the rev-delegating operator>>):
+// ReadEndian is called with `&d` as the BinStream `this`, in the order below.
+void LightPreset::Keyframe::LegacyLoadStageKit(BinStream &d) {
     BinStream &bs = reinterpret_cast<BinStream &>(d);
     bs.ReadEndian(&mLedBlue, 4);
     bs.ReadEndian(&mLedGreen, 4);
@@ -335,9 +341,37 @@ void LightPreset::Keyframe::LegacyLoadP9(BinStream &d) {
     bs.ReadEndian(&mStrobeSetting, 4);
 }
 
+// Retail 0x824B4F90 (called from LightPreset::Load for rev 0xE): description,
+// the four entry vectors, then the StageKit block.
+void LightPreset::Keyframe::LegacyLoadP9(BinStream &d) {
+    MILO_ASSERT(sPresetRev == 14, 0x596);
+    d >> mDescription;
+    d >> mSpotlightEntries;
+    d >> mEnvironmentEntries;
+    d >> mLightEntries;
+    d >> mSpotlightDrawerEntries;
+    LegacyLoadStageKit(d);
+}
+
 BinStream &operator<<(BinStream &bs, const LightPreset::Keyframe &k) {
     k.Save(bs);
     return bs;
+}
+
+// Retail 0x824AACB8 (called by BandDirector): the three category symbols are
+// function-local statics.
+int SymToPstKeyframe(Symbol s) {
+    static Symbol next("next");
+    static Symbol prev("prev");
+    static Symbol first("first");
+    LightPreset::KeyframeCmd cmd = LightPreset::kPresetKeyframeNum;
+    if (s == next)
+        cmd = LightPreset::kPresetKeyframeNext;
+    else if (s == prev)
+        cmd = LightPreset::kPresetKeyframePrev;
+    else if (s == first)
+        cmd = LightPreset::kPresetKeyframeFirst;
+    return cmd;
 }
 
 #pragma region LightPreset
@@ -492,28 +526,32 @@ BEGIN_PROPSYNCS(LightPreset)
 END_PROPSYNCS
 
 BEGIN_SAVES(LightPreset)
-    SAVE_REVS(0x16, 0)
+    // Retail 0x824B0CF0: rev 0x15; object names are written straight from
+    // Name() (no null test); after the triggers come mLegacyFadeIn, mManual,
+    // mLocked, then mPlatformOnly as an int -- the order Load reads them.
+    SAVE_REVS(0x15, 0)
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndAnimatable)
     bs << mKeyframes;
     bs << (unsigned int)mSpotlights.size();
     for (int i = 0; i != (unsigned)mSpotlights.size(); i++)
-        bs << PathName(mSpotlights[i]);
+        bs << mSpotlights[i]->Name();
     bs << (unsigned int)mEnvironments.size();
     for (int i = 0; i != (unsigned)mEnvironments.size(); i++)
-        bs << PathName(mEnvironments[i]);
+        bs << mEnvironments[i]->Name();
     bs << (unsigned int)mLights.size();
     for (int i = 0; i != (unsigned)mLights.size(); i++)
-        bs << PathName(mLights[i]);
+        bs << mLights[i]->Name();
     bs << mLooping;
     bs << mCategory;
     bs << mSelectTriggers;
+    bs << mLegacyFadeIn;
     bs << mManual;
     bs << mLocked;
     bs << mPlatformOnly;
     bs << (unsigned int)mSpotlightDrawers.size();
     for (int i = 0; i != (unsigned)mSpotlightDrawers.size(); i++)
-        bs << PathName(mSpotlightDrawers[i]);
+        bs << mSpotlightDrawers[i]->Name();
 END_SAVES
 
 BEGIN_COPYS(LightPreset)
@@ -606,7 +644,10 @@ RndPostProc *LightPreset::GetCurrentPostProc() const {
     return ret;
 }
 
+// Retail 0x824AAFA8: no LoadMgr queries -- the running platform is the
+// constant kPlatformXBox and edit mode is not consulted.
 bool LightPreset::PlatformOk() const {
+#ifdef HX_NATIVE
     if (TheLoadMgr.EditMode() || !mPlatformOnly
         || TheLoadMgr.GetPlatform() == kPlatformNone) {
         return true;
@@ -617,6 +658,11 @@ bool LightPreset::PlatformOk() const {
         }
         return plat == mPlatformOnly;
     }
+#else
+    if (mPlatformOnly)
+        return mPlatformOnly == kPlatformXBox;
+    return true;
+#endif
 }
 
 int LightPreset::NextManualFrame(LightPreset::KeyframeCmd cmd) const {
@@ -650,12 +696,18 @@ void LightPreset::FillLightPresetData(RndLight *light, LightPreset::EnvLightEntr
     entry.mLightType = light->GetType();
 }
 
+// Retail Remove* (0x824B0230 env, 0x824B0328 light, 0x824B0430 drawer,
+// 0x824B20B8 spotlight): the removed object's ref is released before erase.
 void LightPreset::RemoveLight(int idx) {
     for (uint i = 0; i != mKeyframes.size(); i++) {
         Keyframe &cur = mKeyframes[i];
         cur.mLightEntries.erase(cur.mLightEntries.begin() + idx);
     }
     mLightState.erase(mLightState.begin() + idx);
+#ifndef HX_NATIVE
+    if (mLights[idx])
+        mLights[idx]->Release(this);
+#endif
     mLights.erase(mLights.begin() + idx);
 }
 
@@ -665,6 +717,10 @@ void LightPreset::RemoveSpotlightDrawer(int idx) {
         cur.mSpotlightDrawerEntries.erase(cur.mSpotlightDrawerEntries.begin() + idx);
     }
     mSpotlightDrawerState.erase(mSpotlightDrawerState.begin() + idx);
+#ifndef HX_NATIVE
+    if (mSpotlightDrawers[idx])
+        mSpotlightDrawers[idx]->Release(this);
+#endif
     mSpotlightDrawers.erase(mSpotlightDrawers.begin() + idx);
 }
 
@@ -681,6 +737,10 @@ void LightPreset::RemoveSpotlight(int idx) {
         cur.mSpotlightEntries.erase(cur.mSpotlightEntries.begin() + idx);
     }
     mSpotlightState.erase(mSpotlightState.begin() + idx);
+#ifndef HX_NATIVE
+    if (mSpotlights[idx])
+        mSpotlights[idx]->Release(this);
+#endif
     mSpotlights.erase(mSpotlights.begin() + idx);
 }
 
@@ -690,6 +750,10 @@ void LightPreset::RemoveEnvironment(int idx) {
         cur.mEnvironmentEntries.erase(cur.mEnvironmentEntries.begin() + idx);
     }
     mEnvironmentState.erase(mEnvironmentState.begin() + idx);
+#ifndef HX_NATIVE
+    if (mEnvironments[idx])
+        mEnvironments[idx]->Release(this);
+#endif
     mEnvironments.erase(mEnvironments.begin() + idx);
 }
 
@@ -707,11 +771,29 @@ void LightPreset::AddLight(RndLight *lit) {
     mLightState.push_back(e);
 }
 
+// Retail 0x824B7018: every held object's ref is released, but only the
+// keyframe, spotlight, environment and light vectors are cleared --
+// mSpotlightDrawers is released and left in place (Load resizes it).
 void LightPreset::Clear() {
     mKeyframes.clear();
+#ifndef HX_NATIVE
+    for (int i = 0; i != (unsigned)mSpotlights.size(); i++)
+        mSpotlights[i]->Release(this);
+#endif
     mSpotlights.clear();
+#ifndef HX_NATIVE
+    for (int i = 0; i != (unsigned)mEnvironments.size(); i++)
+        mEnvironments[i]->Release(this);
+#endif
     mEnvironments.clear();
+#ifndef HX_NATIVE
+    for (int i = 0; i != (unsigned)mLights.size(); i++)
+        mLights[i]->Release(this);
+    for (int i = 0; i != (unsigned)mSpotlightDrawers.size(); i++)
+        mSpotlightDrawers[i]->Release(this);
+#else
     mSpotlightDrawers.clear();
+#endif
     mLights.clear();
 }
 
@@ -1051,9 +1133,12 @@ void LightPreset::AnimateState(
 void LightPreset::SetFrameEx(float frame, float blend, bool b) {
     START_AUTO_TIMER("light");
     RndAnimatable::SetFrame(frame, blend);
+#ifdef HX_NATIVE
+    // not in retail SetFrameEx (0x824B6580)
     if (frame == 0 && TheLoadMgr.EditMode()) {
         SyncNewSpotlights();
     }
+#endif
     if (!mKeyframes.empty()) {
         Keyframe *kfPrev = nullptr;
         float f = 1.0f;
@@ -1064,10 +1149,10 @@ void LightPreset::SetFrameEx(float frame, float blend, bool b) {
                 sManualEvents.pop_front();
             }
             if (!sManualEvents.empty()) {
-                float fadeTime = kfCur->mFadeOutTime;
                 float eventBeat = sManualEvents.front().second;
+                float fadeBeats = kfCur->mFadeOutTime / 480.0f;
                 float beat = TheTaskMgr.Beat();
-                if (eventBeat - fadeTime / 480.0f <= beat) {
+                if (eventBeat - fadeBeats <= beat) {
                     AdvanceManual(sManualEvents.front().first);
                     beat = TheTaskMgr.Beat();
                     if (eventBeat > beat) {
@@ -1082,8 +1167,9 @@ void LightPreset::SetFrameEx(float frame, float blend, bool b) {
             }
             if (mLastManualFrame != -1) {
                 kfPrev = &mKeyframes[mLastManualFrame];
+                float elapsed = frame - mManualFrameStart;
                 if (mManualFadeTime > 0) {
-                    f = Min((frame - mManualFrameStart) / mManualFadeTime, 1.0f);
+                    f = Min(elapsed / mManualFadeTime, 1.0f);
                     f = Max(0.0f, f);
                 } else {
                     f = 0;
@@ -1097,10 +1183,8 @@ void LightPreset::SetFrameEx(float frame, float blend, bool b) {
                 kfPrev = &mKeyframes[iPrev];
         }
 
-        bool same = false;
-        Keyframe *last = mLastKeyframe;
-        if (kfCur == last && mLastBlend == f)
-            same = true;
+        bool keyChanged = mLastKeyframe != kfCur;
+        bool same = !keyChanged && mLastBlend == f;
         if (!same) {
             ApplyState(*kfCur);
             if (kfPrev) {
@@ -1112,7 +1196,7 @@ void LightPreset::SetFrameEx(float frame, float blend, bool b) {
         if (!same || !b) {
             Animate(blend);
         }
-        if (kfCur != last) {
+        if (keyChanged) {
             FOREACH (it, mLastKeyframe->mTriggers) {
                 (*it)->Trigger();
             }
@@ -1401,7 +1485,7 @@ BEGIN_LOADS(LightPreset)
             MILO_WARN("%s: %s", Name(), str2);
         }
     } else if (sPresetRev < 0x15) {
-        ObjPtr<EventTrigger> trigPtr(this);
+        ObjPtr<EventTrigger> trigPtr(ObjPtrInlineOwner(), this);
         bs >> trigPtr;
         if (trigPtr)
             mSelectTriggers.push_back(trigPtr);

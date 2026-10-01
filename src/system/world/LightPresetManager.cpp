@@ -1,6 +1,9 @@
 #include "world/LightPresetManager.h"
 #include "world/Dir.h"
 #include "math/Utl.h"
+#include "math/Rand.h"
+#include "obj/Msg.h"
+#include "world/LightPreset.h"
 #include "obj/Object.h"
 
 void PrintPreset(const char *str, LightPreset *preset) {
@@ -54,6 +57,112 @@ void LightPresetManager::Reset() {
 }
 
 void LightPresetManager::Enter() { Reset(); }
+
+// Retail 0x824B88B0.
+void LightPresetManager::SetPresetsEquivalent(bool b) {
+    if (b) {
+        mPresetPrev = mPresetNew;
+        mTimePrev = mTimeNew;
+    } else {
+        mPresetNew = mPresetPrev;
+        mTimeNew = mPresetPrev ? TheTaskMgr.Time(mPresetPrev->Units()) : 0;
+        mTimePrev = mPresetPrev ? TheTaskMgr.Time(mPresetPrev->Units()) : 0;
+    }
+}
+
+// Retail 0x824B8A10.
+void LightPresetManager::GetPresets(LightPreset *&prev, LightPreset *&next) {
+    prev = mPresetPrev;
+    next = mPresetNew;
+}
+
+// Retail 0x824B8C50: a tail call into OnKeyframeCmd, no overlay update.
+void LightPresetManager::SchedulePstKey(int cmd) {
+    if (!mIgnoreLightingEvents) {
+        if (mPresetNew)
+            mPresetNew->OnKeyframeCmd((LightPreset::KeyframeCmd)cmd);
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+        UpdateOverlay();
+#endif
+    }
+}
+
+// Retail 0x824B8CF0. The preset pointers are re-stored after StartPreset:
+// retail keeps the assignments that sat inside its (compiled-out) asserts.
+void LightPresetManager::StompPresets(LightPreset *presetA, LightPreset *presetB) {
+    if (presetA && presetB && presetA != presetB) {
+        StartPreset(presetA, false);
+        StartPreset(presetB, true);
+        mBlend = 0.5f;
+        mPresetPrev = presetA;
+        mPresetNew = presetB;
+    } else if (presetA && presetA == presetB) {
+        StartPreset(presetA, true);
+        SetPresetsEquivalent(true);
+        mBlend = 1.0f;
+        mPresetPrev = presetA;
+        mPresetNew = presetA;
+    }
+}
+
+// Retail 0x824B9370.
+void LightPresetManager::SendLightingMessage(Symbol s) {
+    char buf[0x100];
+    static Message msg("");
+    strcpy(buf, "lighting_");
+    strcpy(buf + 9, s.Str());
+    msg.SetType(buf);
+    mParent->Handle(msg, false);
+}
+
+// Retail 0x824B9C60.
+LightPreset *LightPresetManager::PickRandomPreset(Symbol s) {
+    int count = mPresets[s].size();
+    if (count == 0)
+        return 0;
+    return mPresets[s][RandomInt(0, count)];
+}
+
+// Retail 0x824B9CD8: the preset select is inline; a missing preset is ignored.
+void LightPresetManager::SetLighting(Symbol s, bool b) {
+    if (!mIgnoreLightingEvents) {
+        Symbol cat = s;
+        mLastCategory = cat;
+        LightPreset *p = PickRandomPreset(cat);
+        if (p)
+            StartPreset(p, b);
+    }
+}
+
+// Retail 0x824B9D38 (no missing-preset notifies in retail).
+void LightPresetManager::Interp(Symbol s1, Symbol s2, float f) {
+    mBlend = f;
+    if (!mPresetNew) {
+        SendLightingMessage(s2);
+        SetLighting(s2, true);
+    }
+    if (!mPresetPrev) {
+        SetLighting(s1, false);
+    }
+    if (mBlend == 0) {
+        SetPresetsEquivalent(false);
+    }
+    if (mPresetNew && mPresetPrev) {
+        Symbol prevCat = mPresetPrev->Category();
+        if (prevCat != s1 && mPresetNew->Category() == s1) {
+            SetPresetsEquivalent(true);
+        } else if (mPresetNew->Category() != s2 && prevCat == s2) {
+            SetPresetsEquivalent(false);
+        }
+        if (mPresetNew->Category() != s2) {
+            SendLightingMessage(s2);
+            SetLighting(s2, true);
+        }
+        if (mPresetPrev->Category() != s1) {
+            SetLighting(s1, false);
+        }
+    }
+}
 
 void LightPresetManager::SyncObjects() {
     mPresets.clear();
@@ -132,9 +241,11 @@ void LightPresetManager::Poll() {
 
     if (mPresetOverride) {
         float time = TheTaskMgr.Time(mPresetOverride->Units());
-        float f7 = 1.0f;
+        float f7;
         if (mOverrideDuration > 0.0f) {
             f7 = (time - mTimeOverride) / mOverrideDuration;
+        } else {
+            f7 = 1.0f;
         }
         float t = Clamp<float>(0.0f, 1.0f, f7);
         if (mOverrideMode == 1) {
@@ -157,11 +268,11 @@ void LightPresetManager::Poll() {
     if (pnew) {
         float time = TheTaskMgr.Time(pnew->Units());
         float fpu = pnew->FramesPerUnit();
-        float max = (0.0f > -((time - u30) * fpu)) ? (time - u30) * fpu : 0.0f;
+        float max = Max(0.0f, fpu * (time - u30));
         if (pprev != 0 && pprev != pnew) {
             float time2 = TheTaskMgr.Time(pprev->Units());
             float fpu2 = pprev->FramesPerUnit();
-            float max2 = (0.0f > -((time2 - u34) * fpu2)) ? (time2 - u34) * fpu2 : 0.0f;
+            float max2 = Max(0.0f, (time2 - u34) * fpu2);
             pprev->SetFrameEx(max2, 1.0f - blend, false);
             pnew->SetFrameEx(max, blend, false);
             mSingleBlend = false;
@@ -170,7 +281,9 @@ void LightPresetManager::Poll() {
             mSingleBlend = true;
         }
     }
-    UpdateOverlay();
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+    UpdateOverlay(); // not in retail Poll (0x824B8A28)
+#endif
 }
 
 DataNode LightPresetManager::OnForcePreset(DataArray *da) {

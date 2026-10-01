@@ -295,30 +295,39 @@ END_COPYS
 
 INIT_REVS(0x1D, 1)
 
+// Retail 0x824D15C0: the revs live in a file static (alt at +0, rev at +4),
+// there is no minimum-rev assert, and the rev is pushed BEFORE
+// PanelDir::PreLoad runs.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gWorldDirRevs;
+
 void WorldDir::PreLoad(BinStream &bs) {
-    LOAD_REVS(bs)
-    ASSERT_REVS(0x1D, 1)
-    MILO_ASSERT(d.rev >= 4, 0x174);
-    if (d.rev > 0 && d.rev < 5) {
-        ObjPtr<RndCam> cam(this);
-        d >> cam;
+    int revs;
+    bs >> revs;
+    gWorldDirRevs.rev = getHmxRev(revs);
+    gWorldDirRevs.altRev = getAltRev(revs);
+    if (gWorldDirRevs.rev > 0 && gWorldDirRevs.rev < 5) {
+        ObjPtr<RndCam> cam(ObjPtrInlineOwner(), this);
+        bs >> cam;
     }
-    if (d.rev > 1 && d.rev < 0x15) {
+    if (gWorldDirRevs.rev > 1 && gWorldDirRevs.rev < 0x15) {
         int x, y;
-        d >> x >> y;
+        bs >> x >> y;
     }
-    if (d.rev > 9) {
-        d >> mHUDFilename;
+    if (gWorldDirRevs.rev > 9) {
+        bs >> mHUDFilename;
     }
-    if (d.rev < 9) {
-        if (d.rev > 7) {
-            OldLoadProxies(d.stream, 0);
-        } else if (d.rev > 2) {
-            d >> gOldChars;
+    if (gWorldDirRevs.rev < 9) {
+        if (gWorldDirRevs.rev > 7) {
+            OldLoadProxies(bs, 0);
+        } else if (gWorldDirRevs.rev > 2) {
+            bs >> gOldChars;
         }
     }
-    PanelDir::PreLoad(d.stream);
-    d.PushRev(this);
+    bs.PushRev(packRevs(gWorldDirRevs.altRev, gWorldDirRevs.rev), this);
+    PanelDir::PreLoad(bs);
 }
 
 BinStream &operator>>(BinStream &bs, WorldDir::PresetOverride &o) {

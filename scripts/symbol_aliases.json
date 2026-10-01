@@ -85447,6 +85447,23 @@
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
   },
   {
+   "name": "_M_insert_overflow_aux",
+   "address": "0x824b1818",
+   "survivor": "?_M_insert_overflow_aux@?$vector@UCharClipDisplay@@V?$StlNodeAlloc@UCharClipDisplay@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUCharClipDisplay@@ABU3@ABU__false_type@2@I_N@Z",
+   "folded": [
+    "?_M_insert_overflow_aux@?$vector@UEnvLightEntry@LightPreset@@V?$StlNodeAlloc@UEnvLightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUEnvLightEntry@LightPreset@@ABU34@ABU__false_type@2@I_N@Z"
+   ],
+   "evidence": "W16-JD 2026-10-01. Retail 0x824b1818 (404 B, our compiled size 404 for both spellings) is the vector<T>::_M_insert_overflow_aux shared by the CharClipDisplay/EnvLightEntry element family (same size; push_back, __uninitialized_copy, __uninitialized_fill_n and ~_Vector_base of the two types already fold, groups 0x824b2d28/0x824ad990/0x824ad940/0x824ac190). Both retail callers branch here: push_back (map: CharClipDisplay spelling, 0x824b2d28) and _M_fill_insert (map: EnvLightEntry spelling). tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED (template twin: relocation targets differ by spelling only), CHASED T1 PROVEN, every slot SLOT-FOLD-OK, 0 CYCLE-ASSUMED leaves.",
+   "added": [
+    {
+     "spelling": "?_M_insert_overflow_aux@?$vector@UEnvLightEntry@LightPreset@@V?$StlNodeAlloc@UEnvLightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUEnvLightEntry@LightPreset@@ABU34@ABU__false_type@2@I_N@Z",
+     "lane": "W16-JD 2026-10-01",
+     "verdict": "FOLD -- CHASED T1 PROVEN, 0 CYCLE-ASSUMED",
+     "evidence": "Naming 0x824b1818 with either spelling leaves one retail caller charged (push_back<CharClipDisplay> or _M_fill_insert<EnvLightEntry>); the chase proves the two instantiations are one retail body."
+    }
+   ]
+  },
+  {
    "name": "1VocalPart",
    "address": "0x826f3630",
    "survivor": "??1VocalPart@@QAA@XZ",
