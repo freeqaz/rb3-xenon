@@ -1,4 +1,5 @@
 {
+ "0x822c2438": "??_G?$ObjPtr@VBandIKEffector@@@@UAAPAXI@Z",
  "0x82b63ed0": "?Recreate@FxSendMeterEffect360@@UAAXAAV?$vector@PAVFxSend@@V?$StlNodeAlloc@PAVFxSend@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x82b5b1d8": "?Recreate@FxSendSynapse360@@UAAXAAV?$vector@PAVFxSend@@V?$StlNodeAlloc@PAVFxSend@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x82b5b1e0": "?UpdateMix@FxSendSynapse360@@UAAXXZ",
@@ -5385,7 +5386,7 @@
  "0x822c1c18": "?ComputeHandPullAndQuat@BandIKEffector@@IAAXAAVQuatXfm@@AAVTransform@@ABV3@ABVVector3@@MMM@Z",
  "0x822c1dd8": "?ComputeElbowPullAndQuat@BandIKEffector@@IAAXAAVQuatXfm@@ABVTransform@@ABVVector3@@@Z",
  "0x822c1e90": "?MeasureLengths@BandIKEffector@@IAAHAAPAVRndTransformable@@0AAM11@Z",
- "0x822c22c8": "?Replace@?$ObjPtr@VHamCharacter@@@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+ "0x822c22c8": "?Replace@?$ObjPtr@VBandIKEffector@@@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x822c2348": "??1?$ObjPtr@VBandIKEffector@@@@UAA@XZ",
  "0x822c24b8": "??1Constraint@BandIKEffector@@QAA@XZ",
  "0x822c26e8": "??0Constraint@BandIKEffector@@QAA@ABV01@@Z",

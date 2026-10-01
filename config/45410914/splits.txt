@@ -7433,10 +7433,6 @@ DrivenPropertyEntry.cpp:
 	.text       start:0x822CEDA0 end:0x822CEEE8
 	.text       start:0x82781654 end:0x82781660
 
-HamIKSkeleton.cpp:
-	.pdata      start:0x821F6930 end:0x821F6968
-	.text       start:0x822C2220 end:0x822C24B8
-
 DefaultPhysicsManager.cpp:
 	.pdata      start:0x82213EA0 end:0x82213EB8
 	.text       start:0x824CA1F0 end:0x824CA2D4
@@ -7520,6 +7516,7 @@ BandIKEffector.cpp:
 	.pdata      start:0x821F6910 end:0x821F6918
 	.pdata      start:0x821F6918 end:0x821F6928
 	.pdata      start:0x821F6928 end:0x821F6930
+	.pdata      start:0x821F6930 end:0x821F6968
 	.pdata      start:0x821F6968 end:0x821F69B8
 	.pdata      start:0x821F69B8 end:0x821F69C0
 	.pdata      start:0x821F69C0 end:0x821F6C18
@@ -7531,6 +7528,7 @@ BandIKEffector.cpp:
 	.text       start:0x822C1DD8 end:0x822C1E90
 	.text       start:0x822C1E90 end:0x822C2198
 	.text       start:0x822C2198 end:0x822C2220
+	.text       start:0x822C2220 end:0x822C24B8
 	.text       start:0x822C24B8 end:0x822C27B0
 	.text       start:0x822C27B0 end:0x822C2934
 	.text       start:0x822C2934 end:0x822C5580
