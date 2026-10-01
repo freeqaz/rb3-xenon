@@ -220,7 +220,7 @@ void PitchArrow::SetVolume(float b) {
 
 void PitchArrow::SetSplit(bool b) {
     RndPropAnim *anim = mSplitAnim;
-    if (anim) {
+    if ((int)anim) {
         float next = anim->GetFrame();
         if (b) next = next + 0.05f;
         else next = next - 0.05f;
