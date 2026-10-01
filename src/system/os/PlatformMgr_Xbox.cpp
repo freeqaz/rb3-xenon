@@ -16,6 +16,10 @@
 #include "xdk/xapilibi/xbox.h"
 #include "xdk/XONLINE.h"
 #include "os/ThreadCall.h"
+#include "os/NetworkSocket_Win.h"
+#include "os/Joypad.h"
+#include "meta/Profile.h"
+#include "xdk/xonline/xonline.h"
 #include "meta/ConnectionStatusPanel.h"
 #include "ui/UI.h"
 #include "net/NetSession.h"
@@ -210,6 +214,23 @@ bool PlatformMgr::IsInParty() {
     return result != noPartyResult;
 }
 
+// Retail 0x8251BE80: the id is only written when the pad has a XUID.
+void PlatformMgr::GetOnlineID(int padNum, OnlineID *id) const {
+    XUID xuid;
+    if (XUserGetXUID(padNum, &xuid) == 0) {
+        id->SetXUID(xuid);
+    }
+}
+
+// Retail 0x8251C118 (the pad-level target of InviteUserParty): the party
+// check survives only as its evaluated assert condition.
+void PlatformMgr::InviteParty(int padNum) {
+    MILO_ASSERT(IsInParty(), 0);
+    if (IsSignedIn(padNum)) {
+        XPartySendGameInvites(padNum, nullptr);
+    }
+}
+
 bool PlatformMgr::IsInPartyWithOthers() {
     XPARTY_USER_LIST userList;
     bool result = IsInParty() && (XPartyGetUserList(&userList), (int)userList.dwUserCount > 1);
@@ -287,6 +308,61 @@ bool PlatformMgr::ShowFitnessBodyProfileUI(int padNum) {
 }
 
 void PlatformMgr::PreInit() { XMPOverrideBackgroundMusic(); }
+
+extern "C" {
+DWORD XMountUtilityDrive(BOOL fFormatClean, DWORD dwBytesPerCluster, DWORD dwFileCacheSize);
+DWORD XUnmountUtilityDrive();
+}
+
+// Unnamed XDK wrapper at 0x82B54288 around the XamDeviceRemap import (it paces
+// itself with GetTickCount/Sleep). It takes the new pad-index permutation and
+// returns 0 on success. The name is ours.
+extern "C" DWORD XRemapUserDevices(DWORD *mapping);
+
+// Retail 0x8251D6C8, called by OvershellSlot::SwapUserProfile (0x825DF9C8) as
+// ThePlatformMgr.X(slotUser, swapUser). The name is ours.
+// Builds the 4-pad permutation that exchanges the two users' pads, asks the
+// system to remap, and on success swaps the joypad state and broadcasts a
+// ProfileSwappedMsg to the sinks (Export, Hmx::Object vtable slot 0x38).
+void PlatformMgr::SwapUserPads(LocalUser *user1, LocalUser *user2) {
+    int pad1 = user1->GetPadNum();
+    int pad2 = user2->GetPadNum();
+    DWORD mapping[4];
+    for (int i = 0; i < 4; i++) {
+        int pad = i;
+        if (i == pad1)
+            pad = pad2;
+        else if (i == pad2)
+            pad = pad1;
+        mapping[i] = pad;
+    }
+    if (XRemapUserDevices(mapping) == 0) {
+        JoypadSwapPads(pad1, pad2);
+        static ProfileSwappedMsg msg(nullptr, nullptr);
+        msg[0] = user1;
+        msg[1] = user2;
+        Export(msg, true);
+    }
+}
+
+// Retail 0x8251D378. The hard-drive probe mounts and immediately unmounts the
+// utility drive; XOnlineStartup's result is not tested (the listener lands in
+// the file-static mListener, lbl_82CCA8EC). The tail is the inlined
+// StartRBNMemberCheck, or a re-run request when a check is already running.
+void PlatformMgr::Init() {
+    SetName("platform_mgr", ObjectDir::Main());
+    mHasHardDrive = XMountUtilityDrive(false, 0x8000, 0x8000) == 0;
+    if (mHasHardDrive)
+        XUnmountUtilityDrive();
+    WinSockSocket::Init();
+    XOnlineStartup();
+    mListener = XNotifyCreateListener(0xA7);
+    UpdateSigninState();
+    if (mRBNCheckInProgress == 0)
+        StartRBNMemberCheck();
+    else
+        mRBNCheckRerun = 1;
+}
 void PlatformMgr::EnableXMP() { XMPRestoreBackgroundMusic(); }
 void PlatformMgr::DisableXMP() { XMPOverrideBackgroundMusic(); }
 void PlatformMgr::CheckMailbox() {}
@@ -380,12 +456,26 @@ DWORD PlatformMgr::ShowDeviceSelectorUI(
     return ret;
 }
 
+// Retail 0x8251BD28 (called from SystemPreInit): only the European game
+// regions (0x101, 0x201, 0x2FE, 0x2FF) select Europe; 0xFF and every other
+// region select NA.
 void PlatformMgr::RegionInit() {
-    if (XGetGameRegion() != 0xFF) {
-        SetRegion(kRegionEurope);
-    } else {
-        SetRegion(kRegionNA);
+    PlatformRegion region;
+    switch (XGetGameRegion()) {
+    case 0xFF:
+        region = kRegionNA;
+        break;
+    case 0x101:
+    case 0x201:
+    case 0x2FE:
+    case 0x2FF:
+        region = kRegionEurope;
+        break;
+    default:
+        region = kRegionNA;
+        break;
     }
+    SetRegion(region);
 }
 
 namespace {

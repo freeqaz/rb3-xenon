@@ -163,7 +163,10 @@ bool JoypadIsConnectedPadNum(int padNum) {
 // The names are ours.  0x82524D40 walks the four pads for the first enabled
 // one whose controller type is `stagekit_xbox`; 0x82524DE0 drives its two
 // actuators with each raw value in the high byte and 0xff in the low one.
-int JoypadStageKitPadNum() {
+// 0x82524D40 has no EH frame around its local-static Symbol init (no
+// except_data prefix, guard store scheduled freely), which /EHsc gives only
+// an extern "C" function -- the C linkage of its Joypad*Common neighbours.
+extern "C" int JoypadStageKitPadNum() {
     static Symbol stagekit_xbox("stagekit_xbox");
     for (int i = 0; i < kNumJoypads; i++) {
         if (!gJoypadDisabled[i] && gJoypadData[i].mControllerType == stagekit_xbox)
@@ -172,10 +175,77 @@ int JoypadStageKitPadNum() {
     return -1;
 }
 
+// Retail 0x825248A0 (GemPlayer's caller). Enabling adds the pad to both the
+// current and next keep-alive masks; disabling only drops it from the next
+// one. Either way the countdown restarts.
+void JoypadKeepAlive(int pad, bool keepAlive) {
+    if (pad == -1)
+        return;
+    if (keepAlive) {
+        gPadsToKeepAlive |= 1 << pad;
+        gPadsToKeepAliveNext |= 1 << pad;
+    } else {
+        gPadsToKeepAliveNext &= ~(1 << pad);
+    }
+    gKeepAliveCountdown = 0;
+}
+
+// Retail 0x82526308 (no callers in the image). For the HX-peripheral pad
+// types (core guitar .. Wii keytar) the first ten bytes at JoypadData+0xa8 are
+// appended as hex, then prefixed with the pad type.
+const char *JoypadGetBreedString(int pad) {
+    String s;
+    bool hasBreed = gJoypadData[pad].mType >= kJoypadXboxCoreGuitar
+        && gJoypadData[pad].mType <= kJoypadWiiKeytar;
+    if (hasBreed) {
+        for (int i = 0; i < 10; i++) {
+            s += MakeString("%02x", gJoypadData[pad].mEepromData[i]);
+        }
+    }
+    return MakeString("%02x%s", gJoypadData[pad].mType, s);
+}
+
+// Retail 0x82524E38 (declared in Joypad.h). RB2-era HX
+// guitars report the Calbert sensor on the left stick X (negated on PS3);
+// button guitars carry it as a raw 0..127 byte at report bytes 10 / 11 of the
+// pro-guitar block, read inverted. Anything else has no sensor.
+float JoypadGetCalbertValue(int pad, bool secondary) {
+    JoypadData &data = gJoypadData[pad];
+    switch (data.mType) {
+    case kJoypadXboxHxGuitarRb2:
+    case kJoypadWiiHxGuitarRb2:
+        return data.mSticks[0][0];
+    case kJoypadPs3HxGuitarRb2:
+        return -data.mSticks[0][0];
+    case kJoypadXboxButtonGuitar:
+    case kJoypadPs3ButtonGuitar:
+    case kJoypadWiiButtonGuitar: {
+        const unsigned char *raw = (const unsigned char *)&data.mProGuitarData;
+        if (secondary)
+            return 1.0f - raw[11] * 0.007874016f;
+        else
+            return 1.0f - raw[10] * 0.007874016f;
+    }
+    default:
+        return 0.0f;
+    }
+}
+
+// Retail 0x82525DE0 (the name is ours). Called only from the
+// PlatformMgr profile-swap path (0x8251D6C8): exchanges two pads' whole
+// JoypadData (both element addresses are formed before the three 0xd4-byte
+// memcpys through a stack copy -- std::swap binding two references) and makes both
+// re-query their XInput capabilities.
+void JoypadSwapPads(int pad1, int pad2) {
+    std::swap(gJoypadData[pad1], gJoypadData[pad2]);
+    JoypadInvalidateXinputCaps(pad1);
+    JoypadInvalidateXinputCaps(pad2);
+}
+
 void JoypadStageKitSetRaw(int left, int right) {
     int pad = JoypadStageKitPadNum();
     if (pad != -1)
-        JoypadSetActuatorsImp(pad, left << 8 | 0xff, right << 8 | 0xff);
+        JoypadSetRumble(pad, left << 8 | 0xff, right << 8 | 0xff);
 }
 
 namespace {

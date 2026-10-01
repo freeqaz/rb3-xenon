@@ -117,21 +117,8 @@ bool ArkFile::ReadAsync(void *iData, int iBytes) {
         mBytesRead = 0;
         if (iBytes == 0)
             return true;
-        if (mReadAhead) {
-            unsigned int last = mFilename.find_last_of('_');
-            bool b6 = last != String::npos
-                && PlatformSymbol(TheLoadMgr.GetPlatform())
-                    == mFilename.c_str() + last + 1;
-            String filename(b6 ? mFilename.substr(0, last) : mFilename);
-            TheArchive->HasArchivePermission(mArkfileNum);
-            if (Archive::DebugArkOrder() != 0) {
-                MILO_ASSERT(filename.length() < 255, 0x7D);
-                char buf[256];
-                SearchReplace(filename.c_str(), "/eng/", "/*/", buf);
-                MILO_LOG("ArkFile%d:   '%s'\n", mArkfileNum, buf);
-                HolmesClientPrint(filename.c_str());
-            }
-        }
+        // Retail 0x8252E328 (ArkFile vtable slot 3) has no read-ahead
+        // filename / DebugArkOrder logging here; it only clears the flag.
         mReadAhead = false;
         if (mTell + iBytes > mSize) {
             iBytes = mSize - mTell;

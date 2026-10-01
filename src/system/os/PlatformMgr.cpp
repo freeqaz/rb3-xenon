@@ -66,6 +66,20 @@ void UTF8FilterKeyboardString(char *c, int i, const char *cc) {
 // MILO_* family is #ifdef HX_NATIVE), so the bare MILO_FAIL compiled to NOTHING
 // and the guard vanished entirely. The explicit `return false` restores retail's
 // four instructions while leaving native behaviour (fail first, then return).
+void PlatformMgr::SetUserContext(const LocalUser *user, int context, int value) const {
+    SetPadContext(user->GetPadNum(), context, value);
+}
+
+void PlatformMgr::SetUserProperty(
+    const LocalUser *user, int property, unsigned short const *value
+) const {
+    SetPadProperty(user->GetPadNum(), property, value);
+}
+
+void PlatformMgr::SetUserPresence(const LocalUser *user, int presence) const {
+    SetPadPresence(user->GetPadNum(), presence);
+}
+
 bool PlatformMgr::IsSignedIn(int padnum) const {
     if (padnum < 0) {
         MILO_FAIL("PadNum = %d", padnum);

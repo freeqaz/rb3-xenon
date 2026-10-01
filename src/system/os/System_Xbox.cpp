@@ -38,6 +38,59 @@ namespace {
     }
 }
 
+// Retail 0x8251B418 (pinned inside UsbMidiKeyboard's block until re-homed):
+// a plain switch on the dashboard language, each case with its own
+// function-local static Symbol (guard bits in case order); Spanish is "esl"
+// in the European region and "mex" elsewhere; anything else returns the
+// caller's default. DC3's locale-aware body is a later design.
+#ifndef HX_NATIVE
+Symbol GetSystemLanguage(Symbol s) {
+    switch (XTLGetLanguage()) {
+    case XC_LANGUAGE_ENGLISH: {
+        static Symbol eng("eng");
+        return eng;
+    }
+    case XC_LANGUAGE_JAPANESE: {
+        static Symbol jpn("jpn");
+        return jpn;
+    }
+    case XC_LANGUAGE_GERMAN: {
+        static Symbol deu("deu");
+        return deu;
+    }
+    case XC_LANGUAGE_FRENCH: {
+        static Symbol fre("fre");
+        return fre;
+    }
+    case XC_LANGUAGE_SPANISH:
+        if (ThePlatformMgr.GetRegion() == kRegionEurope) {
+            static Symbol esl("esl");
+            return esl;
+        } else {
+            static Symbol mex("mex");
+            return mex;
+        }
+    case XC_LANGUAGE_ITALIAN: {
+        static Symbol ita("ita");
+        return ita;
+    }
+    case XC_LANGUAGE_KOREAN: {
+        static Symbol kor("kor");
+        return kor;
+    }
+    case XC_LANGUAGE_TCHINESE: {
+        static Symbol cht("cht");
+        return cht;
+    }
+    case XC_LANGUAGE_PORTUGUESE: {
+        static Symbol ptb("ptb");
+        return ptb;
+    }
+    default:
+        return s;
+    }
+}
+#else
 Symbol GetSystemLanguage(Symbol s) {
     static Symbol eng("eng");
     static Symbol fre("fre");
@@ -133,6 +186,7 @@ Symbol GetSystemLanguage(Symbol s) {
 
     return s;
 }
+#endif
 
 Symbol GetSystemLocale(Symbol s) {
     static Symbol aus("aus");
