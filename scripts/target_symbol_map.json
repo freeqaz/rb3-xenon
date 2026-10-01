@@ -1,4 +1,5 @@
 {
+ "0x8251c118": "?InviteParty@PlatformMgr@@QAAXH@Z",
  "0x8251bd28": "?RegionInit@PlatformMgr@@QAAXXZ",
  "0x82514bd0": "?SetUserContext@PlatformMgr@@QBAXPBVLocalUser@@HH@Z",
  "0x82514c18": "?SetUserProperty@PlatformMgr@@QBAXPBVLocalUser@@HPBG@Z",
@@ -13548,7 +13549,7 @@
  "0x825391d0": "?OnMsg@BandUI@@QAA?AVDataNode@@ABVGameMicsChangedMsg@@@Z",
  "0x82539210": "?Handle@BandUI@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x8253a798": "?Handle@BandUI@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x8253a7a8": "?InviteParty@PlatformMgr@@QAAXH@Z",
+ "0x8253a7a8": null,
  "0x8253a820": "??1Callback@ContentMgr@@UAA@XZ",
  "0x8253a830": "?ContentDir@Callback@ContentMgr@@UAAPBDXZ",
  "0x8253a840": "??_GRemoveLastSongFromSetlistMsg@@UAAPAXI@Z",

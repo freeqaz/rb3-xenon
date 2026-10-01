@@ -214,6 +214,15 @@ bool PlatformMgr::IsInParty() {
     return result != noPartyResult;
 }
 
+// Retail 0x8251C118 (the pad-level target of InviteUserParty): the party
+// check survives only as its evaluated assert condition.
+void PlatformMgr::InviteParty(int padNum) {
+    MILO_ASSERT(IsInParty(), 0);
+    if (IsSignedIn(padNum)) {
+        XPartySendGameInvites(padNum, nullptr);
+    }
+}
+
 bool PlatformMgr::IsInPartyWithOthers() {
     XPARTY_USER_LIST userList;
     bool result = IsInParty() && (XPartyGetUserList(&userList), (int)userList.dwUserCount > 1);
