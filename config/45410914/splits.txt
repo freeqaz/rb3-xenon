@@ -10880,24 +10880,22 @@ BandSongPref.cpp:
 	.text       start:0x822C0CF8 end:0x822C0E78
 	.text       start:0x822C0E78 end:0x822C10B8
 
-BinkClip.cpp:
-	.pdata      start:0x82238588 end:0x82238590
-	.pdata      start:0x822385A0 end:0x822385A8
-	.pdata      start:0x822386E8 end:0x82238710
-	.text       start:0x8270D848 end:0x8270D8A4
-	.text       start:0x8270D940 end:0x8270D988
-	.text       start:0x8270EC58 end:0x8270EEAC
-
 system/synth/MoggClip.cpp:
 	.pdata      start:0x82238560 end:0x82238580
 	.pdata      start:0x82238580 end:0x82238588
+	.pdata      start:0x82238588 end:0x82238590
 	.pdata      start:0x82238590 end:0x822385A0
+	.pdata      start:0x822385A0 end:0x822385A8
 	.pdata      start:0x822385A8 end:0x822386E8
+	.pdata      start:0x822386E8 end:0x82238710
 	.text       start:0x8270D4B0 end:0x8270D76C
 	.text       start:0x8270D770 end:0x8270D7E4
 	.text       start:0x8270D7E8 end:0x8270D848
+	.text       start:0x8270D848 end:0x8270D8A4
 	.text       start:0x8270D8A8 end:0x8270D93C
+	.text       start:0x8270D940 end:0x8270D988
 	.text       start:0x8270D988 end:0x8270EC58
+	.text       start:0x8270EC58 end:0x8270EEAC
 	.text       start:0x8270EEAC end:0x8270EEB8
 
 Color.cpp:
