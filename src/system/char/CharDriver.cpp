@@ -477,13 +477,10 @@ static CharClip *MyFindClip(const DataNode &n, ObjectDir *dir) {
         );
         return nullptr;
     }
-    return group->GetClip(0);
+    return group->GetClip();
 }
 
 CharClip *CharDriver::FindClip(const DataNode &node, bool warn) {
-    if (!mClips) {
-        MILO_FAIL("%s: trying to FindClip with no mClips", PathName(this));
-    }
     CharClip *clip = MyFindClip(node, mClips);
     if (!clip && warn) {
         String str;
