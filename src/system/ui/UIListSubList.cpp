@@ -36,14 +36,33 @@ BEGIN_COPYS(UIListSubList)
     COPY_MEMBER_FROM(sl, mList)
 END_COPYS
 
+// RB3 retail keeps no BinStreamRev here: the packed rev is split into two
+// mutable TU shorts (alt at +0, rev at +4), no guard, no Push/PopRev -- the
+// ui/UIButton.cpp dialect.
+#pragma push_macro("INIT_REVS")
+#pragma push_macro("LOAD_REVS")
+#undef INIT_REVS
+#undef LOAD_REVS
+#define INIT_REVS(rev, alt)                                                              \
+    static unsigned short gAltRev = alt;                                                 \
+    static unsigned short gRev = rev;
+#define LOAD_REVS(bs)                                                                    \
+    int rev;                                                                             \
+    bs >> rev;                                                                           \
+    gRev = getHmxRev(rev);                                                               \
+    gAltRev = getAltRev(rev);
+
 INIT_REVS(0, 0)
 
-BEGIN_LOADS(UIListSubList)
+// Retail 0x82820CC8.
+void UIListSubList::Load(BinStream &bs) {
     LOAD_REVS(bs)
-    ASSERT_REVS(0, 0)
-    LOAD_SUPERCLASS(UIListSlot)
-    d >> mList;
-END_LOADS
+    UIListSlot::Load(bs);
+    bs >> mList;
+}
+
+#pragma pop_macro("LOAD_REVS")
+#pragma pop_macro("INIT_REVS")
 
 UIList *UIListSubList::SubList(int index) {
 #ifdef HX_NATIVE
