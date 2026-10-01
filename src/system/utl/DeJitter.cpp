@@ -18,43 +18,33 @@ void DeJitter::Reset() {
 }
 
 float DeJitter::NewMs(float f1, float &fref) {
+    // Retail TU5 shape: no time-scale path and no "dejitter_disable" check,
+    // and the output is clamped to +/-16 ms of the raw sample.
     float filteredValue = 1.0000000150474662e+30;
-    // Ring buffer indices (0-31 wrapping): prevPos is previous write position, historyPos is the
-    // position mHistoryCount steps back (for averaging interval)
     float sample = f1;
-    static DataNode &n = DataVariable("dejitter_disable"); // FLT_MAX-like sentinel for uninitialized result
-    int prevPos = (mCurrentIndex - 1) & 0x1F;
-    int historyPos = (prevPos - mHistoryCount) & 0x1F;
 
-    // Only apply jitter correction if enabled and have accumulated enough samples
-    if (!n.Int()) {
-        if (mHistoryCount > 8) { // Need more than 8 samples in the history
-            // Calculate average delta since mHistoryCount steps ago
-            float f0 = (mHistoryBuffer[prevPos] - mHistoryBuffer[historyPos]) / (float)mHistoryCount;
-            // Smooth the average with exponential moving average (alpha=0.1)
-            if (mFilteredDelta == 0.0f) {
-                mFilteredDelta = f0;
-            }
-            f0 = (f0 - mFilteredDelta) * 0.1f + mFilteredDelta;
-            filteredValue = f0;
+    if (mHistoryCount > 8) { // Need more than 8 samples in the history
+        // Ring buffer indices (0-31 wrapping): prevPos is the previous write
+        // position, historyPos is mHistoryCount steps back from it.
+        int prevPos = (mCurrentIndex - 1) & 0x1F;
+        int historyPos = (prevPos - mHistoryCount) & 0x1F;
+        // Average delta since mHistoryCount steps ago
+        float f0 = (mHistoryBuffer[prevPos] - mHistoryBuffer[historyPos]) / (float)mHistoryCount;
+        // Smooth the average with an exponential moving average (alpha=0.1)
+        if (mFilteredDelta == 0.0f) {
             mFilteredDelta = f0;
-            if (sTimeScale != 1.0f) {
-                // With time scale, output is scaled delta
-                f0 = f0 * sTimeScale;
-                mFilteredDelta = f0;
-                filteredValue = f0 + mPreviousOutput;
-            } else {
-                // Without time scale, clamp output to ±33ms from previous value
-                float f12 = mPreviousOutput + f0;
-                float f11 = sample - 33.0f;
-                float f13 = sample + 33.0f;
-                float f10 = ((f11 - f12) >= 0.0f) ? f11 : f12;
-                filteredValue = ((f10 - f13) >= 0.0f) ? f13 : f10;
-            }
-            // Don't let result go below previous output value
-            if (filteredValue < mPreviousOutput) {
-                filteredValue = mPreviousOutput;
-            }
+        }
+        f0 = (f0 - mFilteredDelta) * 0.1f + mFilteredDelta;
+        mFilteredDelta = f0;
+        // Clamp the predicted output to +/-16ms of the sample
+        float f12 = mPreviousOutput + f0;
+        float f11 = sample - 16.0f;
+        float f13 = sample + 16.0f;
+        float f10 = ((f11 - f12) >= 0.0f) ? f11 : f12;
+        filteredValue = ((f10 - f13) >= 0.0f) ? f13 : f10;
+        // Don't let result go below previous output value
+        if (filteredValue < mPreviousOutput) {
+            filteredValue = mPreviousOutput;
         }
     }
 
