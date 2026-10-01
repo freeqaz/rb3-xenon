@@ -1080,10 +1080,10 @@ void SongParser::StartVocalNote(int tick, unsigned char data, const char *lyric)
 void SongParser::EndVocalNote(int tick) {
     float ticktime = GetTempoMap()->TickToTime(tick);
     if (!mLyricPitchSet) {
-        // Retail strips only the emission: MakeString's arguments are still
-        // evaluated, so both String varargs are copy-constructed into the frame
-        // (mNextLyric -> 0x60, mFilename -> 0x70) and destroyed.
-        (void)MakeString(
+        // A stripped warning: the String/Symbol/const char*/String arguments are
+        // still copied (mNextLyric -> 0x60, mFilename -> 0x70) and handed to the
+        // out-of-line argument sink, which only destroys them.
+        MILO_WARN(
             "%s (%s): Missing vocal note at %s for lyric '%s'",
             mFilename,
             mTrackName,
