@@ -6733,9 +6733,7 @@ ssluse.c:
 	.text       start:0x82AE51D0 end:0x82AE52A8
 
 Mic.cpp:
-	.pdata      start:0x82224248 end:0x82224258
 	.pdata      start:0x8225AA38 end:0x8225AD10
-	.text       start:0x825CAC64 end:0x825CAE1C
 	.text       start:0x82B5E040 end:0x82B61488
 
 FxSendWah.cpp:
@@ -15451,8 +15449,8 @@ band3/meta_band/StandInProvider.cpp:
 	.text       start:0x82672F14 end:0x826731D8
 
 band3/meta_band/HeaderPerformanceProvider.cpp:
-	.pdata      start:0x822241B8 end:0x82224248
-	.text       start:0x825CA4E0 end:0x825CAC64
+	.pdata      start:0x822241B8 end:0x82224258
+	.text       start:0x825CA4E0 end:0x825CAE1C
 
 band3/game/GameMic.cpp:
 	.pdata      start:0x82234B28 end:0x82234B48
