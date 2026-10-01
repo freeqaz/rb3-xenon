@@ -72,6 +72,52 @@ END_COPYS
 
 INIT_REVS(4, 0)
 
+#ifndef HX_NATIVE
+// Retail (0x82406B78) reads the revision into a local int and compares it
+// whole (`cmpwi`); there is no BinStreamRev and no split into rev/altRev.
+BEGIN_LOADS(RndDrawable)
+    int rev;
+    bs >> rev;
+    if (gLoadingProxyFromDisk) {
+        bool dummy;
+        bs >> dummy;
+    } else {
+        bs >> mShowing;
+    }
+    if (rev < 2) {
+        unsigned int count;
+        bs >> count;
+        RndGroup *grp = dynamic_cast<RndGroup *>(this);
+        for (; count != 0; count--) {
+            char buf[0x80];
+            bs.ReadString(buf, 0x80);
+            if (grp) {
+                Hmx::Object *found = Dir()->Find<Hmx::Object>(buf, true);
+                // An environment in the old member list becomes the group's
+                // environment if it has none.
+                RndEnviron *env = dynamic_cast<RndEnviron *>(found);
+                if (env) {
+                    if (!grp->mEnv) {
+                        grp->mEnv = env;
+                    }
+                } else if (!dynamic_cast<RndCam *>(found)) {
+                    grp->RemoveObject(found);
+                    grp->AddObject(found, 0);
+                }
+            }
+        }
+    }
+    if (rev > 0)
+        bs >> mSphere;
+    if (rev > 2) {
+        if (gLoadingProxyFromDisk) {
+            float dummy;
+            bs >> dummy;
+        } else
+            bs >> mOrder;
+    }
+END_LOADS
+#else
 BEGIN_LOADS(RndDrawable)
     LOAD_REVS(bs)
     ASSERT_REVS(4, 0)
@@ -109,6 +155,7 @@ BEGIN_LOADS(RndDrawable)
             bs >> mOrder;
     }
 END_LOADS
+#endif
 
 void RndDrawable::Draw() {
     if (mShowing) {

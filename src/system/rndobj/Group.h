@@ -76,6 +76,9 @@ public:
     RndEnviron *GetEnv() const;
 
 protected:
+    // RndDrawable::Load (0x82406B78) adopts an old-format child environment
+    // straight into mEnv.
+    friend class RndDrawable;
     RndGroup();
 
     DataNode GetGroupChildren();

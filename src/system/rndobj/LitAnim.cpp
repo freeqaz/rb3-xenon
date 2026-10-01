@@ -95,6 +95,31 @@ END_COPYS
 
 INIT_REVS(2, 0)
 
+#ifndef HX_NATIVE
+// Retail (0x82472200) keeps the revision in a local int, compared whole.
+BEGIN_LOADS(RndLightAnim)
+    int rev;
+    bs >> rev;
+    if (rev > 1) {
+        Hmx::Object::Load(bs);
+    }
+    RndAnimatable::Load(bs);
+    bs >> mLight;
+    if (rev < 1) {
+        Keys<Hmx::Color, Hmx::Color> keys;
+        bs >> keys;
+    }
+    bs >> mColorKeys;
+    if (rev < 1) {
+        Keys<Hmx::Color, Hmx::Color> keys;
+        bs >> keys;
+    }
+    bs >> mKeysOwner;
+    if (!mKeysOwner) {
+        mKeysOwner = this;
+    }
+END_LOADS
+#else
 BEGIN_LOADS(RndLightAnim)
     LOAD_REVS(bs)
     ASSERT_REVS(2, 0)
@@ -117,6 +142,7 @@ BEGIN_LOADS(RndLightAnim)
         mKeysOwner = this;
     }
 END_LOADS
+#endif
 
 #pragma endregion
 #pragma region RndAnimatable
