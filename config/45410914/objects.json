@@ -2066,7 +2066,8 @@
                 "status": "NonMatching",
                 "extra_cflags": [
                     "/Od",
-                    "/Oi-"
+                    "/Oi-",
+                    "/Ob1"
                 ]
             },
             "network/Plugins/SessionDiscovery/Interface/SessionDiscoveryTable.cpp": "NonMatching",
