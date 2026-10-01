@@ -2018,7 +2018,7 @@ void VocalTrack::UpdateScrolling(float ms) {
             plate->CheckSync();
         }
 
-        if (staticLyrics && (int)lyricPhrases.size() == *curPhPtr
+        if (staticLyrics && *curPhPtr == lyricPhrases.size()
             && mNextDeployZone[std::min(part, 1)] < freestyles.size()) {
             std::deque<LyricShift> &shifts =
                 lead ? mLeadLyricShifts : mHarmonyLyricShifts;
