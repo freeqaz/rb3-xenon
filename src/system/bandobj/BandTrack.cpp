@@ -526,10 +526,8 @@ void BandTrack::SoloStart() {
 
 void BandTrack::SetPerformanceMode(bool b) {
     if (mParent && mPopupObject) {
-        mPopupObject->SetProperty(
-            "popup_help_disabled",
-            DataNode(mParent->ShouldDisablePopupHelp() || unk1e)
-        );
+        DataNode disabled(mParent->ShouldDisablePopupHelp() || unk1e);
+        mPopupObject->SetProperty("popup_help_disabled", disabled);
     }
     unk1e = b;
 }
