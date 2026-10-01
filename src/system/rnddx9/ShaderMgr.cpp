@@ -482,10 +482,8 @@ void DxShaderMgr::LoadShaderFile(FileStream &fs) {
                 SIZE_T size1, size2;
                 fs >> size1;
                 fs >> size2;
-                BeginMemTrackFileName(fs.Name());
                 bases[j] = XMemAlloc(size1, 0x20800000);
                 bases[j + 2] = XMemAlloc(size2, 0xB5800000);
-                EndMemTrackFileName();
                 fs.Read(bases[j], size1);
                 fs.Read(bases[j + 2], size2);
             }
