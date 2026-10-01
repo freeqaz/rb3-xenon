@@ -3616,9 +3616,6 @@ CharCuff.cpp:
 	.text       start:0x8239D518 end:0x8239F5E0
 
 SongLayout.cpp:
-	.pdata      start:0x821F4F68 end:0x821F4F70
-	.pdata      start:0x821F5038 end:0x821F5040
-	.pdata      start:0x821F5078 end:0x821F5088
 	.pdata      start:0x821F7838 end:0x821F7840
 	.pdata      start:0x821F8B30 end:0x821F8B38
 	.pdata      start:0x821F8B38 end:0x821F8B40
@@ -3635,9 +3632,6 @@ SongLayout.cpp:
 	.pdata      start:0x82208B78 end:0x82208B80
 	.pdata      start:0x82208B80 end:0x82208BA8
 	.pdata      start:0x822349D8 end:0x822349E0
-	.text       start:0x822A8E68 end:0x822A8ED8
-	.text       start:0x822A9AF0 end:0x822A9B70
-	.text       start:0x822A9EC0 end:0x822A9F58
 	.text       start:0x822C76E4 end:0x822C76F0
 	.text       start:0x822D16F8 end:0x822D1768
 	.text       start:0x822E5040 end:0x822E507C
@@ -11849,6 +11843,7 @@ OutfitConfig.cpp:
 	.pdata      start:0x821F4D70 end:0x821F4D80
 	.pdata      start:0x821F4D80 end:0x821F4D90
 	.pdata      start:0x821F4D98 end:0x821F4DB0
+	.pdata      start:0x821F4DB8 end:0x821F4DC0
 	.pdata      start:0x821F4DC8 end:0x821F4DE0
 	.pdata      start:0x821F4E10 end:0x821F4E18
 	.pdata      start:0x821F4E18 end:0x821F4E48
@@ -11856,12 +11851,15 @@ OutfitConfig.cpp:
 	.pdata      start:0x821F4E78 end:0x821F4F20
 	.pdata      start:0x821F4F40 end:0x821F4F50
 	.pdata      start:0x821F4F58 end:0x821F4F68
+	.pdata      start:0x821F4F68 end:0x821F4F70
 	.pdata      start:0x821F4F70 end:0x821F4F80
 	.pdata      start:0x821F4F90 end:0x821F4FE8
 	.pdata      start:0x821F4FF0 end:0x821F4FF8
 	.pdata      start:0x821F4FF8 end:0x821F5000
 	.pdata      start:0x821F5000 end:0x821F5020
+	.pdata      start:0x821F5038 end:0x821F5040
 	.pdata      start:0x821F5058 end:0x821F5070
+	.pdata      start:0x821F5078 end:0x821F5088
 	.pdata      start:0x821F50A0 end:0x821F50D0
 	.pdata      start:0x821F50F0 end:0x821F5108
 	.pdata      start:0x821F5118 end:0x821F5138
@@ -11931,6 +11929,7 @@ OutfitConfig.cpp:
 	.text       start:0x822A7008 end:0x822A70A0
 	.text       start:0x822A70A0 end:0x822A7250
 	.text       start:0x822A72B0 end:0x822A73D0
+	.text       start:0x822A7508 end:0x822A7580
 	.text       start:0x822A7610 end:0x822A7730
 	.text       start:0x822A7A10 end:0x822A7A68
 	.text       start:0x822A7A68 end:0x822A7D10
@@ -11939,13 +11938,16 @@ OutfitConfig.cpp:
 	.text       start:0x822A8BC0 end:0x822A8BC8
 	.text       start:0x822A8BC8 end:0x822A8C40
 	.text       start:0x822A8CAC end:0x822A8E68
+	.text       start:0x822A8E68 end:0x822A8ED8
 	.text       start:0x822A8ED8 end:0x822A8F78
 	.text       start:0x822A902C end:0x822A95E0
 	.text       start:0x822A9644 end:0x822A96A8
 	.text       start:0x822A96A8 end:0x822A9718
 	.text       start:0x822A9718 end:0x822A9938
+	.text       start:0x822A9AF0 end:0x822A9B70
 	.text       start:0x822A9BC0 end:0x822A9BC8
 	.text       start:0x822A9C58 end:0x822A9D70
+	.text       start:0x822A9EC0 end:0x822A9F58
 	.text       start:0x822AA180 end:0x822AA380
 	.text       start:0x822AA51C end:0x822AA708
 	.text       start:0x822AA8D0 end:0x822AAA08

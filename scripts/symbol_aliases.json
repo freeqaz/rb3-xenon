@@ -100563,10 +100563,8 @@
   {
    "name": "_M_fill_insert",
    "address": "0x822a8e68",
-   "survivor": "?_M_fill_insert@?$vector@VSongPattern@@V?$StlNodeAlloc@VSongPattern@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSongPattern@@IABV3@@Z",
-   "folded": [
-    "?_M_fill_insert@?$vector@VMeshAO@OutfitConfig@@V?$StlNodeAlloc@VMeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVMeshAO@OutfitConfig@@IABV34@@Z"
-   ],
+   "survivor": "?_M_fill_insert@?$vector@VMeshAO@OutfitConfig@@V?$StlNodeAlloc@VMeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVMeshAO@OutfitConfig@@IABV34@@Z",
+   "folded": [],
    "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN, CHASED T1 PROVEN, 0 CYCLE-ASSUMED; leaves include VACUOUS-BUT-IDENTICAL (allocator thunks), discharged by the chase. The map places this spelling at no address of its own. Retail call site reaching the survivor where we call this spelling (bl target read on retail bytes): 0x822a9a64 (PropSync<OutfitConfig::MeshAO>). Moved from the 0x82339948 group, whose retail callers are all BandCharDesc::Patch paths.",
    "lane": "W16-LD",
    "admitted": [
@@ -100578,7 +100576,19 @@
    ],
    "added": {
     "lane": "W16-LD 2026-10-01"
-   }
+   },
+   "survivor_renamed": {
+    "from": "?_M_fill_insert@?$vector@VSongPattern@@V?$StlNodeAlloc@VSongPattern@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSongPattern@@IABV3@@Z",
+    "lane": "W16-MB 2026-10-01"
+   },
+   "withdrawn": [
+    {
+     "spelling": "?_M_fill_insert@?$vector@VMeshAO@OutfitConfig@@V?$StlNodeAlloc@VMeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVMeshAO@OutfitConfig@@IABV34@@Z",
+     "lane": "W16-MB 2026-10-01",
+     "class": "MAP_NAME_WRONG",
+     "why": "Retail 0x822A8E68 is _M_fill_insert<OutfitConfig::MeshAO> itself: it strides 0x30 (sizeof MeshAO) and calls _M_fill_insert_aux<MeshAO> (0x822A70A0). The map row named it for SongPattern, a type this game does not have; it is renamed to the MeshAO spelling and re-homed to OutfitConfig, so this membership (the real name folded into the wrong one) is withdrawn and the survivor field follows the map."
+    }
+   ]
   },
   {
    "name": "_Copy_Construct",
