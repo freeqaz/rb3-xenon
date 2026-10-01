@@ -257,8 +257,7 @@ PassiveMessenger::~PassiveMessenger() {
 
 void PassiveMessenger::Poll() {
     if (mTimer.Running()) {
-        mTimer.Split();
-        if (mTimer.Ms() >= 6000.0f) {
+        if (mTimer.SplitMs() >= 6000.0f) {
             mTimer.Stop();
         }
     }

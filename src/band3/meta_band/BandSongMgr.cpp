@@ -48,7 +48,8 @@ extern bool RB3AddSongDataUpgradeGate();
 
 bool BandSongMgr::sFakeSongsAllowed;
 
-const char *OLD_DLC_DIR = "songs/updates/";
+// Retail addresses the literal directly (no pointer load), so this is a constant.
+static const char *const OLD_DLC_DIR = "songs/updates/";
 
 struct ExclusionEntry {
     const char *name;
@@ -374,32 +375,17 @@ const char *BandSongMgr::MidiFile(Symbol s) const {
 }
 
 const char *BandSongMgr::SongFilePath(Symbol s1, const char *cc) const {
+    // Retail 0x82575998 (TU5): no download branch and no DirLoader cache path.
     const char *path = gNullStr;
-    BandSongMetadata *data = (BandSongMetadata *)Data(GetSongIDFromShortName(s1, true));
+    int songID = GetSongIDFromShortName(s1, true);
+    BandSongMetadata *data = (BandSongMetadata *)Data(songID);
     if (data) {
-        if (data->IsDownload()) {
-            String str =
-                MakeString("%s%s", SongMgr::SongAudioData(s1)->GetBaseFileName(), cc);
-            unsigned int idx = str.find("_song");
-            if (idx != String::npos) {
-                str.erase(idx, 5);
-            }
-            path = MakeString("%s", str);
-        } else if (data->HasAlternatePath()) {
+        if (data->HasAlternatePath()) {
             const char *base =
                 FileGetBase(SongMgr::SongAudioData(s1)->GetBaseFileName());
             path = MakeString("%s%s/%s%s", OLD_DLC_DIR, base, base, cc);
         } else {
             path = MakeString("%s%s", SongMgr::SongAudioData(s1)->GetBaseFileName(), cc);
-        }
-    }
-    if (!UsingCD()) {
-        if (!data || (!data->IsOnDisc() && !data->HasAlternatePath())) {
-            if (streq(cc, ".milo")) {
-                DirLoader::SetCacheMode(true);
-                path = DirLoader::CachedPath(path, false);
-                DirLoader::SetCacheMode(false);
-            }
         }
     }
     return path;

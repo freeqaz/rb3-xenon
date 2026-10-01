@@ -9,6 +9,8 @@
 UploadErrorMgr *TheUploadErrorMgr;
 
 void UploadErrorMgr::Init() {
+    // Retail 0x82642358 constructs this as a function-local static.
+    static Symbol session_ready("session_ready");
     MILO_ASSERT(TheUploadErrorMgr == NULL, 0x1C);
     TheUploadErrorMgr = new UploadErrorMgr();
     TheNetSession->AddSink(TheUploadErrorMgr, session_ready);

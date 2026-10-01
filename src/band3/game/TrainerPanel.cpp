@@ -441,7 +441,12 @@ void TrainerChallenge::Exit() {
     Handle(exit_msg, true);
 }
 
-bool TrainerChallenge::Success() { return Handle(success_msg, true).Int(); }
+bool TrainerChallenge::Success() {
+    // Retail 0x826CA180 builds the message as a function-local static.
+    static Message success_msg("success");
+    DataNode n = Handle(success_msg, true);
+    return n.Int();
+}
 
 Symbol TrainerChallenge::GetRestrictionToken() {
     static Message restriction_token_msg("restriction_token");
