@@ -13546,7 +13546,7 @@
  "0x82523838": "?IsSignedInOnline@LocalUser@@UBA_NXZ",
  "0x82523848": "?CanSaveData@LocalUser@@UBA_NXZ",
  "0x825238b0": "?UserName@LocalUser@@UBAPBDXZ",
- "0x825238f0": "?GetLocalUser@LocalUser@@UBAPBV1@XZ",
+ "0x825238f0": "?GetRemoteUser@RemoteUser@@UAAPAV1@XZ",
  "0x82523900": "??0User@@QAA@XZ",
  "0x825239c8": "?SyncSave@User@@UBAXAAVBinStream@@I@Z",
  "0x82523a40": "??0LocalUser@@QAA@XZ",

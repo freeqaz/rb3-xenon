@@ -97623,12 +97623,10 @@
    ]
   },
   {
-   "name": "GetLocalUser",
+   "name": "GetRemoteUser",
    "address": "0x825238f0",
-   "survivor": "?GetLocalUser@LocalUser@@UBAPBV1@XZ",
-   "folded": [
-    "?GetRemoteUser@RemoteUser@@UAAPAV1@XZ"
-   ],
+   "survivor": "?GetRemoteUser@RemoteUser@@UAAPAV1@XZ",
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -97636,6 +97634,15 @@
      "spelling": "?GetRemoteUser@RemoteUser@@UAAPAV1@XZ",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 UNDECIDABLE: VACUOUS: body under 4 words or over half the words masked --); 8 B retail / 8 B ours; retail body-twins 1. Vacuous body (VACUOUS-BUT-IDENTICAL) -- admitted on the retail call-site witness: retail branches to this survivor at 0x82523ce8, the exact sites where our compiled caller calls this spelling (row otherwise instruction-identical). "
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "?GetRemoteUser@RemoteUser@@UAAPAV1@XZ",
+     "lane": "W16-KD 2026-10-01",
+     "class": "SURVIVOR_MISNAMED",
+     "disposition": "survivor respelled in place; the membership is the survivor itself",
+     "evidence": "0x825238F0 is `subi r3,r3,0x18; blr`, the this-adjust for a virtual-base User at +0x18. That is RemoteUser's layout (vfptr, vbptr, String mUserName, vtordisp), not LocalUser's (+0x10, as the non-const GetLocalUser at 0x82523758 shows). Retail's own RemoteUser vtordisp thunk ?GetRemoteUser@RemoteUser@@$4PPPPPPPM@A@AAPAV1@XZ (0x82523CE0) branches here, as does the second thunk at 0x82524D10. The map row is renamed to RemoteUser::GetRemoteUser and the group keyed on that name, so the former membership is the survivor and needs no alias. LocalUser::GetLocalUser const is a separate fold into 0x82523758."
     }
    ]
   },
