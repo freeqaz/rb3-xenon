@@ -1,4 +1,5 @@
 {
+ "0x82461320": "??$?6VColor@Hmx@@@@YAAAVTextStream@@AAV0@ABV?$Key@VColor@Hmx@@@@@Z",
  "0x82481f38": "??_DRndScreenMask@@QAAXXZ",
  "0x8245dc40": "?NewObject@RndWind@@SAPAVObject@Hmx@@XZ",
  "0x8242c810": "?CloneKey@BoolKeys@@UAAXH@Z",
@@ -11103,7 +11104,7 @@
  "0x8247ea10": "?DrawShowing@RndGenerator@@UAAXXZ",
  "0x8247ecb0": "??_GRndGenerator@@UAAPAXI@Z",
  "0x8247ed00": "??$?6VVector2@@@@YAAAVTextStream@@AAV0@ABV?$Key@VVector2@@@@@Z",
- "0x8247ed78": "??$?6VColor@Hmx@@@@YAAAVTextStream@@AAV0@ABV?$Key@VColor@Hmx@@@@@Z",
+ "0x8247ed78": "?SyncProperty@RndParticleSysAnim@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x8247ee98": "??1?$ObjOwnerPtr@VRndParticleSysAnim@@@@UAA@XZ",
  "0x8247ef38": "??_G?$ObjOwnerPtr@VRndParticleSysAnim@@@@UAAPAXI@Z",
  "0x8247ef88": "??$?6V?$Key@VVector2@@@@V?$StlNodeAlloc@V?$Key@VVector2@@@@@stlpmtx_std@@@@YAAAVTextStream@@AAV0@ABV?$vector@V?$Key@VVector2@@@@V?$StlNodeAlloc@V?$Key@VVector2@@@@@stlpmtx_std@@@stlpmtx_std@@@Z",

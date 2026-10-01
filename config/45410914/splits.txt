@@ -5750,7 +5750,7 @@ TransAnim.cpp:
 	.pdata      start:0x8220E820 end:0x8220E858
 	.pdata      start:0x8220E858 end:0x8220E868
 	.pdata      start:0x8220E868 end:0x8220E870
-	.pdata      start:0x8220E870 end:0x8220E998
+	.pdata      start:0x8220E870 end:0x8220E990
 	.pdata      start:0x82230C68 end:0x82230C78
 	.text       start:0x8245D8D0 end:0x8245D8D8
 	.text       start:0x8245DED0 end:0x8245DF70
@@ -5769,7 +5769,7 @@ TransAnim.cpp:
 	.text       start:0x8245FAE8 end:0x8245FDE4
 	.text       start:0x8245FDE4 end:0x82460340
 	.text       start:0x82460340 end:0x824603F0
-	.text       start:0x824603F0 end:0x82461398
+	.text       start:0x824603F0 end:0x82461320
 	.text       start:0x82471CC8 end:0x82471CF0
 	.text       start:0x82471CFC end:0x82471D00
 	.text       start:0x82471D0C end:0x82471D20
@@ -7760,7 +7760,7 @@ MatAnim.cpp:
 	.pdata      start:0x8220E6E0 end:0x8220E6E8
 	.pdata      start:0x8220E720 end:0x8220E728
 	.pdata      start:0x8220E7B0 end:0x8220E7B8
-	.pdata      start:0x8220E998 end:0x8220E9F8
+	.pdata      start:0x8220E990 end:0x8220E9F8
 	.pdata      start:0x8220EA08 end:0x8220EA90
 	.pdata      start:0x8220EA90 end:0x8220EAA0
 	.pdata      start:0x8220EAA0 end:0x8220EB98
@@ -7775,7 +7775,7 @@ MatAnim.cpp:
 	.text       start:0x8245DF70 end:0x8245DFE8
 	.text       start:0x8245E2A8 end:0x8245E358
 	.text       start:0x8245F410 end:0x8245F56C
-	.text       start:0x82461398 end:0x82461948
+	.text       start:0x82461320 end:0x82461948
 	.text       start:0x824619D8 end:0x82462738
 	.text       start:0x82462738 end:0x824627C8
 	.text       start:0x824627C8 end:0x82463680
