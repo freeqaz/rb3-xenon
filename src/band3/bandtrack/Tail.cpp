@@ -165,8 +165,8 @@ void Tail::Poll(float, float whammy, float) {
     if (mTailGeomOwner) {
         bool t3 = mState == 2 && !mSlideInfo.unk0;
         float fvar1 = t3 ? mTemplate.kTailOffsetX * mTemplate.GetTailScaleX() : 0;
-        mTail1->SetLocalPos(-fvar1, unk10, 0);
-        mTail2->SetLocalPos(fvar1, unk10, 0);
+        mTail1->SetLocalPos(Vector3(-fvar1, unk10, 0));
+        mTail2->SetLocalPos(Vector3(fvar1, unk10, 0));
         if (unk28) {
             float alpha;
             if (t3) {
@@ -177,21 +177,20 @@ void Tail::Poll(float, float whammy, float) {
                      time += pulseRate) {
                     GemRepTemplate *tmp = &mTemplate;
                     unk4e4 = Interp(unk4e4, whammy, tmp->kTailPulseSmoothing);
-                    float negWhammy = -unk4e4;
-                    float ampMin = tmp->kTailAmplitudeRange.x;
-                    float f4 = Interp(
-                        tmp->kTailFrequencyRange.x,
-                        tmp->kTailFrequencyRange.y,
-                        negWhammy
-                    );
-                    mWhammy.Set(
-                        Interp(ampMin, tmp->kTailAmplitudeRange.y, negWhammy)
-                        * sinf(unk4e0)
-                    );
+                    // Retail interpolates toward -whammy with the product negated
+                    // after the multiply (fmuls / fneg / fadds, not fused).
+                    float f4 = (-(unk4e4
+                                  * (tmp->kTailFrequencyRange.y - tmp->kTailFrequencyRange.x)))
+                        + tmp->kTailFrequencyRange.x;
+                    float amp = (-(unk4e4
+                                   * (tmp->kTailAmplitudeRange.y - tmp->kTailAmplitudeRange.x)))
+                        + tmp->kTailAmplitudeRange.x;
+                    mWhammy.Set(amp * sinf(unk4e0));
                     unk4e0 += pulseRate * f4;
                 }
                 unk4e8 = Interp(unk4e8, whammy, mTemplate.kTailAlphaSmoothing);
-                alpha = Interp(mTemplate.kTailMinAlpha, mTemplate.kTailMaxAlpha, -unk4e8);
+                alpha = (-(unk4e8 * (mTemplate.kTailMaxAlpha - mTemplate.kTailMinAlpha)))
+                    + mTemplate.kTailMinAlpha;
             } else {
                 unk4e0 = 0;
                 alpha = mTemplate.kTailMinAlpha;
