@@ -1,4 +1,12 @@
 {
+ "0x82738e38": "?DrawShowing@DxMesh@@UAAXXZ",
+ "0x82738c78": "?SetTransforms@DxMesh@@IAAXXZ",
+ "0x82738bf0": "?FurWeight@DxMesh@@IAAMPAVRndMat@@@Z",
+ "0x82737f80": "?Copy@DxMesh@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+ "0x82737db8": "?DrawFaces@DxMesh@@UAAXXZ",
+ "0x82737bf0": "?DrawFur@DxMesh@@IAAPAVRndMat@@PAV2@@Z",
+ "0x82737a10": "?CacheFurTransform@DxMesh@@IAAXABVTransform@@HM@Z",
+ "0x827378b8": "?GetMultimeshFaces@DxMesh@@QAAPAUD3DVertexBuffer@@XZ",
  "0x8273ca50": "??_EDxRnd@@WCI@AAPAXI@Z",
  "0x8273a850": "?NewObject@DxTex@@SAPAVObject@Hmx@@XZ",
  "0x8273a690": "?SetType@DxEnviron@@UAAXVSymbol@@@Z",

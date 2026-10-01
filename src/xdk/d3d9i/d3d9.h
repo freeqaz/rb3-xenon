@@ -816,6 +816,10 @@ void D3DDevice_SetVertexShaderConstantFN(
 );
 void D3DDevice_SetSamplerState_MinFilter(D3DDevice *pDevice, DWORD Sampler, DWORD Value);
 void D3DDevice_SetSamplerState_MagFilter(D3DDevice *pDevice, DWORD Sampler, DWORD Value);
+void D3DDevice_SetSamplerState_MipMapLodBias(
+    D3DDevice *pDevice, DWORD Sampler, DWORD Value
+);
+DWORD D3DDevice_GetSamplerState_MipMapLodBias(D3DDevice *pDevice, DWORD Sampler);
 void D3DDevice_SetSamplerState_MinMipLevel(D3DDevice *pDevice, DWORD Sampler, DWORD Value);
 void D3DDevice_SetSamplerState_MaxMipLevel(D3DDevice *pDevice, DWORD Sampler, DWORD Value);
 // The mip filter lives in fetch-constant word 3, bits 23-24.
@@ -918,6 +922,18 @@ void D3DDevice_SetPredication(D3DDevice *pDevice, DWORD PredicationMask);
 void D3DDevice_GetDeviceCaps(D3DDevice *pDevice, D3DCAPS9 *pCaps);
 void D3DDevice_SetViewport(D3DDevice *pDevice, const D3DVIEWPORT9 *pViewport);
 void D3DDevice_SetIndices(D3DDevice *pDevice, D3DIndexBuffer *pIndexData);
+HRESULT D3DDevice_BeginIndexedVertices(
+    D3DDevice *pDevice,
+    D3DPRIMITIVETYPE PrimitiveType,
+    INT BaseVertexIndex,
+    UINT VertexCount,
+    UINT IndexCount,
+    D3DFORMAT IndexDataFormat,
+    UINT VertexStreamZeroStride,
+    void **ppIndexData,
+    void **ppVertexData
+);
+void D3DDevice_EndIndexedVertices(D3DDevice *pDevice);
 void D3DDevice_DrawIndexedVertices(
     D3DDevice *pDevice,
     D3DPRIMITIVETYPE PrimitiveType,

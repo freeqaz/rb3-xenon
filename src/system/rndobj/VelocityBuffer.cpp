@@ -185,7 +185,7 @@ void RndVelocityBuffer::DrawMesh(RndMesh *mesh) const {
                     TheShaderMgr.SetVConstant((VShaderConstant)0, unk36bec[cacheIdx ^ 1]);
                     TheShaderMgr.SetVConstant((VShaderConstant)4, unk36bec[cacheIdx]);
                     TheShaderMgr.SetPConstant((PShaderConstant)8, (const Vector4 &)mDepthRangeValues);
-                    mesh->GetGeomOwner()->DrawFacesInRange(0, -1);
+                    mesh->GetGeomOwner()->DrawFaces();
 #ifdef HX_NATIVE
                     TheNgStats->mMotionBlurs++;
 #endif

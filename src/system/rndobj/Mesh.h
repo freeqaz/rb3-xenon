@@ -179,7 +179,10 @@ public:
     virtual void Highlight() { RndDrawable::Highlight(); }
     virtual void LoadVertices(BinStream &);
     virtual void SaveVertices(BinStream &);
-    virtual void DrawFacesInRange(int, int) {}
+    // Takes no arguments in RB3: every retail call through this slot (0x38) sets
+    // only r3 -- RndVelocityBuffer::DrawMesh at 0x82B85468, DxMesh::DrawShowing,
+    // DxMesh::DrawFur -- and DxMesh's override (0x82737DB8) draws all faces.
+    virtual void DrawFaces() {}
     // Retail X360 RB3 keeps NumFaces()/NumVerts() NON-VIRTUAL; they are DC3-only
     // vtable slots. Proven by three independent machine-code anchors on RndMesh's
     // own-vfptr slice (the vptr at this+0, i.e. the RndDrawable primary vtable):

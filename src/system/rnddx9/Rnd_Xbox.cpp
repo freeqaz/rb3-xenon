@@ -283,15 +283,19 @@ void DxRnd::DoPostProcess() {
 }
 
 void DxRnd::Suspend() {
-    if (!mD3DDevice || mAsyncSwapCurrent) {
+    if (!(int)mD3DDevice || mAsyncSwapCurrent) {
         return;
     }
     MILO_ASSERT(!mDrawing, 0x695);
     if (!mSuspended) {
+#ifdef HX_NATIVE
         static Timer *cpuTimer = AutoTimer::GetTimer("cpu");
         if (mPrintGlitches && cpuTimer->SplitMs() > 30.0f) {
             MILO_LOG("GLITCH (pre-suspend): %i ms\n", (int)cpuTimer->SplitMs());
         }
+#endif
+        // Retail (0x8273A370) has no glitch timer here: no local static, no
+        // AutoTimer lookup -- just the swap flag and D3DDevice_Suspend.
         mAsyncSwapNext = false;
         D3DDevice_Suspend(mD3DDevice);
     }
