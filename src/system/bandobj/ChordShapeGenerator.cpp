@@ -210,8 +210,8 @@ void ChordShapeGenerator::DumpChordGenData() {
     cycles = 0;
 }
 
-int kMaxVerts = 400;
-int kMaxFaces = 600;
+static int kMaxVerts = 400;
+static int kMaxFaces = 600;
 
 static unsigned int faceIt;
 static int vertIt;
@@ -251,9 +251,11 @@ RndMesh *ChordShapeGenerator::BuildChordMesh() {
     RndMesh * &_ref0 = mSource;
     _ref0 = mChordSrcMesh;
     if (CheckParams()) {
+#ifdef HX_NATIVE
         TheDebug.Notify(MakeString(
             "Could not create chord shape because some references are missing"
         ));
+#endif
         return 0;
     }
     mBaseXVal = mBaseXSection->WorldXfm().v.x;
@@ -269,9 +271,9 @@ RndMesh *ChordShapeGenerator::BuildChordMesh() {
     mesh->Faces().resize(kMaxFaces, RndMesh::Face());
     vertIt = 0;
     faceIt = 0;
-    std::map<unsigned short, unsigned short> connectingVerts;
     static Symbol right("right");
     static Symbol left("left");
+    std::map<unsigned short, unsigned short> connectingVerts;
     Hmx::Color onColor(1.0f, 1.0f, 1.0f, 1.0f);
     Hmx::Color offColor(0.0f, 0.0f, 0.0f, 1.0f);
     for (int i = 0; i < mNumSlots; i++) {
@@ -279,8 +281,7 @@ RndMesh *ChordShapeGenerator::BuildChordMesh() {
         const Hmx::Color &colPrev = (i == 0)
             ? col
             : (unk64[i - 1] ? onColor : offColor);
-        int fret = mStringFrets[i];
-        if (fret == -1) {
+        if (mStringFrets[i] == -1) {
             if (i != 0 && mStringFrets[i - 1] != -1) {
                 BuildEndCap(
                     mesh, connectingVerts, mStringFrets[i - 1], SlotXfm(i - 1), right,
@@ -292,7 +293,7 @@ RndMesh *ChordShapeGenerator::BuildChordMesh() {
                 mesh, connectingVerts, mStringFrets[i], SlotXfm(i), left,
                 col
             );
-        } else if (fret == 0) {
+        } else if (mStringFrets[i] == 0) {
             if (mStringFrets[i - 1] != 0) {
                 BuildContourCap(
                     mesh, connectingVerts, mStringFrets[i - 1], SlotXfm(i - 1),
@@ -301,25 +302,23 @@ RndMesh *ChordShapeGenerator::BuildChordMesh() {
             } else {
                 BuildSpan(
                     mesh, connectingVerts, mStringFrets[i - 1], mStringFrets[i],
-                    SlotXfm(i - 1), SlotXfm(i), col,
-                    colPrev
+                    SlotXfm(i - 1), SlotXfm(i), colPrev, col
                 );
             }
         } else if (mStringFrets[i - 1] == 0) {
             BuildContourCap(
                 mesh, connectingVerts, mStringFrets[i], SlotXfm(i - 1), SlotXfm(i),
-                left, col, colPrev
+                left, colPrev, col
             );
         } else {
             BuildSpan(
                 mesh, connectingVerts, mStringFrets[i - 1], mStringFrets[i],
-                SlotXfm(i - 1), SlotXfm(i), col, colPrev
+                SlotXfm(i - 1), SlotXfm(i), colPrev, col
             );
         }
     }
-    int last = mNumSlots - 1;
-    if (mStringFrets[last] != -1) {
-        Hmx::Color col = unk64[last] ? onColor : offColor;
+    if (mStringFrets[mNumSlots - 1] != -1) {
+        const Hmx::Color &col = unk64[mNumSlots - 1] ? onColor : offColor;
         BuildEndCap(
             mesh, connectingVerts, mStringFrets[mNumSlots - 1],
             SlotXfm(mNumSlots - 1), right, col
@@ -328,10 +327,13 @@ RndMesh *ChordShapeGenerator::BuildChordMesh() {
     MILO_ASSERT(connectingVerts.empty(), 0x168);
     mesh->Verts().resize(vertIt);
     mesh->Faces().resize(faceIt, RndMesh::Face());
+#ifdef HX_NATIVE
+    // Retail returns the mesh straight after trimming it; no edit-mode sync.
     if (LOADMGR_EDITMODE) {
         mesh->Sync(0x3F);
         mesh->SetMutable(0);
     }
+#endif
     return mesh;
 }
 
