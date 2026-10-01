@@ -49,7 +49,10 @@ public:
     static void TriggerEvents(ObjList<EventCall> &);
     static void ResetEvents(ObjList<EventCall> &);
 
-    NEW_OVERLOAD;
+    // Retail NewObject (0x824AAB10) inlines StaticClassName() + MemAlloc(size, 0):
+    // the class allocator is class-specific and does not fold into the
+    // global operator new at 0x827BD2F0.
+    OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD;
     NEW_OBJ(EventAnim)
     static void Init() { REGISTER_OBJ_FACTORY(EventAnim) }
