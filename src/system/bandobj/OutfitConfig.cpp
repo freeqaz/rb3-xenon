@@ -90,59 +90,61 @@ bool OutfitConfig::MatSwap::MatchesPatchCategory(int i, ObjVector<BandPatchMesh>
 void OutfitConfig::MatSwap::SwapResource() {
     if (mResourceMat) {
         static Symbol mn("Mesh");
+#ifdef HX_NATIVE
         MemDoTempAllocations m;
         const ObjRef &refs = mResourceMat->Refs();
         for (ObjRef::iterator rit = refs.begin(); rit != refs.end();) {
             ObjRef *cur = rit;
             ++rit;
-            bool replace = false;
-            if (RefPtrOf(cur)->RefOwner()) {
-                if (RefPtrOf(cur)->RefOwner()->ClassName() == mn)
-                    replace = true;
-            }
-            if (replace)
-#ifdef HX_NATIVE
-                // X7: native ObjRef IS the ring-ref (RefPtrOf is identity and
-                // returns `const ObjRef *`, obj/Object.h:277), and its Replace
-                // takes ONE argument -- the ref already points at the outgoing
-                // object. The two-argument form below is ObjRefOwner's, which
-                // only exists on the X360 ObjRefNode model.
+            // Native ObjRef IS the ring-ref (RefPtrOf is identity, obj/Object.h) and
+            // its Replace takes one argument: the ref already points at the outgoing
+            // object.
+            if (cur->RefOwner() && cur->RefOwner()->ClassName() == mn)
                 cur->Replace(mMat);
-#else
-                // ObjRef::Replace(Hmx::Object*) is an elided stub off HX_NATIVE.
-                RefPtrOf(cur)->Replace(
-                    reinterpret_cast<ObjRef *>((RndMat *)mResourceMat), mMat
-                );
-#endif
         }
+#else
+        // Retail walks mResourceMat's ref ring with no temp-allocation scope, re-reading the
+        // ring head every iteration, and reads each node's owner once before
+        // stepping to the next node.
+        for (ObjRef::iterator rit = mResourceMat->Refs().begin(); rit != mResourceMat->Refs().end();) {
+            ObjRefOwner *owner = RefPtrOf(rit);
+            ++rit;
+            if (owner->RefOwner() && owner->RefOwner()->ClassName() == mn)
+                owner->Replace(reinterpret_cast<ObjRef *>((RndMat *)mResourceMat), mMat);
+        }
+#endif
     }
 }
 
 void OutfitConfig::MatSwap::UnSwapResource() {
     if (mResourceMat && mMat) {
         static Symbol mn("Mesh");
+#ifdef HX_NATIVE
         MemDoTempAllocations m;
         const ObjRef &refs = mMat->Refs();
         for (ObjRef::iterator rit = refs.begin(); rit != refs.end();) {
             ObjRef *cur = rit;
             ++rit;
-            bool replace = false;
-            if (RefPtrOf(cur)->RefOwner()) {
-                if (RefPtrOf(cur)->RefOwner()->ClassName() == mn)
-                    replace = true;
-            }
-            if (replace)
-#ifdef HX_NATIVE
-                cur->Replace(mResourceMat); // see SwapResource above
-#else
-                // ObjRef::Replace(Hmx::Object*) is an elided stub off HX_NATIVE.
-                RefPtrOf(cur)->Replace(
-                    reinterpret_cast<ObjRef *>((RndMat *)mMat), mResourceMat
-                );
-#endif
+            // Native ObjRef IS the ring-ref (RefPtrOf is identity, obj/Object.h) and
+            // its Replace takes one argument: the ref already points at the outgoing
+            // object.
+            if (cur->RefOwner() && cur->RefOwner()->ClassName() == mn)
+                cur->Replace(mResourceMat);
         }
+#else
+        // Retail walks mMat's ref ring with no temp-allocation scope, re-reading the
+        // ring head every iteration, and reads each node's owner once before
+        // stepping to the next node.
+        for (ObjRef::iterator rit = mMat->Refs().begin(); rit != mMat->Refs().end();) {
+            ObjRefOwner *owner = RefPtrOf(rit);
+            ++rit;
+            if (owner->RefOwner() && owner->RefOwner()->ClassName() == mn)
+                owner->Replace(reinterpret_cast<ObjRef *>((RndMat *)mMat), mResourceMat);
+        }
+#endif
     }
 }
+
 
 void OutfitConfig::MatSwap::Compose(
     int *colors, ObjVector<BandPatchMesh> &patches, int category
@@ -414,21 +416,22 @@ void OutfitConfig::Piercing::Deform(SyncMeshCB *cb) {
 }
 
 void OutfitConfig::MeshAO::Apply(OutfitConfig *cfg, SyncMeshCB *mesh) {
-    RndMesh *m =
-        dynamic_cast<RndMesh *>(cfg->Dir()->FindObject(mMeshName.c_str(), false));
+    // Retail calls the out-of-line ObjectDir::Find<RndMesh> and folds each coefficient
+    // into the vertex color as a float per-channel minimum (alpha, red, green, blue).
+    RndMesh *m = cfg->Dir()->Find<RndMesh>(mMeshName.c_str(), false);
     if (m) {
         if (m->GetKeepMeshData()) {
             mesh->SyncMesh(m, 0x400);
-            if ((unsigned int)m->Verts().size() == mCoeffs.size()) {
+            if (m->Verts().size() == (int)mCoeffs.size()) {
                 m->SetHasAOCalc(true);
                 for (unsigned int i = 0; i < mCoeffs.size(); i++) {
-                    Hmx::Color32 ao(mCoeffs[i]);
-                    Hmx::Color32 vc(m->Verts(i).color);
-                    vc.a = Min(vc.a, ao.a);
-                    vc.r = Min(vc.r, ao.r);
-                    vc.g = Min(vc.g, ao.g);
-                    vc.b = Min(vc.b, ao.b);
-                    m->Verts(i).color.UnpackAlpha(vc.FullColor());
+                    Hmx::Color ao;
+                    ao.UnpackAlpha(mCoeffs[i]);
+                    Hmx::Color &vc = m->Verts(i).color;
+                    vc.alpha = Min(vc.alpha, ao.alpha);
+                    vc.red = Min(vc.red, ao.red);
+                    vc.green = Min(vc.green, ao.green);
+                    vc.blue = Min(vc.blue, ao.blue);
                 }
             } else {
                 MILO_WARN(
