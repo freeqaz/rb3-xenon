@@ -1077,8 +1077,28 @@ float ProfileMgr::GetExcessAudioLag() const {
 }
 END_FORCE_LOCAL_INLINE
 
+// Retail 0x825459F8 (with its tail 0x82545A28-0x82545A64, which dtk carves
+// off as three fn_ symbols) subtracts a per-practice-speed latency in ms:
+// 70 / 55 / 35 / 15 for 90% / 80% / 70% / 60%, and 0 otherwise.
 float ProfileMgr::GetSongToTaskMgrMs(LagContext lc) const {
-    float adjust = 0.0f;
+    int adjust;
+    switch (lc) {
+    case kPractice90:
+        adjust = 70;
+        break;
+    case kPractice80:
+        adjust = 55;
+        break;
+    case kPractice70:
+        adjust = 35;
+        break;
+    case kPractice60:
+        adjust = 15;
+        break;
+    default:
+        adjust = 0;
+        break;
+    }
     return (mSongToTaskMgrMs - mInGameExtraVideoLatency) - adjust;
 }
 
