@@ -13,13 +13,24 @@ FxSend::FxSend()
       mInputGain(0), mReverbMixDb(kDbSilence), mReverbEnable(0), mEnableUpdates(1),
       mChannels(kSendAll) {}
 
+// Retail 0x82716b38 (slot 2 of every FxSend subclass): no test of `from` and no
+// base-class call -- it assigns mNextSend from a stack ObjOwnerPtr<FxSend>(to, 0)
+// (read back through its slot, so a named local) and rebuilds the chain.
 void FxSend::Replace(ObjRef *from, Hmx::Object *to) {
+#ifdef HX_NATIVE
     if (RefIs(from, mNextSend)) {
         mNextSend.SetObj(to);
         RebuildChain();
         return;
     } else
         Hmx::Object::Replace(from, to);
+#else
+    {
+        ObjOwnerPtr<FxSend> next(to, 0);
+        mNextSend = next;
+    }
+    RebuildChain();
+#endif
 }
 
 BEGIN_HANDLERS(FxSend)
