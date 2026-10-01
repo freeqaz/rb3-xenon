@@ -1733,7 +1733,7 @@ SIVideo.cpp:
 
 ShadowMap.cpp:
 	.pdata      start:0x8220EBF8 end:0x8220EC18
-	.text       start:0x82463F00 end:0x82464480
+	.text       start:0x82463F00 end:0x82464470
 	.text       start:0x824644D8 end:0x824644E0
 
 ColorXfm.cpp:
@@ -6695,7 +6695,7 @@ Graph.cpp:
 	.pdata      start:0x8220EC90 end:0x8220ECA0
 	.pdata      start:0x8220ECA0 end:0x8220ECA8
 	.pdata      start:0x822382D0 end:0x822382E0
-	.text       start:0x82464480 end:0x824644C4
+	.text       start:0x82464470 end:0x824644C4
 	.text       start:0x824644C4 end:0x824644D8
 	.text       start:0x824644E0 end:0x824646B8
 	.text       start:0x824646B8 end:0x82464890
