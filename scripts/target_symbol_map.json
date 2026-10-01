@@ -9932,7 +9932,7 @@
  "0x82457240": "?SetType@RndText@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
  "0x82457250": "?FindPathName@RndText@@$4PPPPPPPM@A@AAPBDXZ",
  "0x82457260": "?Save@RndText@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
- "0x824575c8": "?ClearPeformanceProperties@TourProgress@@QAAXXZ",
+ "0x824575c8": "?ReserveLines@RndText@@QAAXH@Z",
  "0x82457680": "?_M_fill_insert@?$vector@VLine@RndText@@V?$StlNodeAlloc@VLine@RndText@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVLine@RndText@@IABV34@@Z",
  "0x824576f8": "?NewObject@RndText@@SAPAVObject@Hmx@@XZ",
  "0x82457790": "??1RndText@@UAA@XZ",
