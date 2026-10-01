@@ -24,7 +24,7 @@ public:
         int mPadWords;
     };
 
-    int Free(int *);
+    bool Free(int *);
     int *Truncate(int *, int, int &);
     void Print(class TextStream &, bool);
     void Init(const char *, int, int *, int, bool, Strategy, int, bool);

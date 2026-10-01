@@ -173,33 +173,34 @@ void MemHeap::Init(
     bool allowTemp
 ) {
     MILO_ASSERT_FMT(start, "Could not allocate %d bytes for heap %s\n", size * 4, name);
-    auto& _ref0 = mStart;
-    _ref0 = start;
+    // Retail 0x827bbb48 writes mStart twice (raw `start`, then the aligned
+    // pointer) and sizes the heap from a zero-extended copy of the raw start
+    // (`clrrwi r6, r6, 0`). The opaque first store keeps both: a plain
+    // `mStart = start;` is dead-store-eliminated.
+    int **pStart = &mStart;
+    *pStart = start;
+    int *rawStart = mStart;
     mName = name;
     mNum = num;
     mIsHandleHeap = handle;
-    int *i7 = (int *)(((uintptr_t)start - 4 & ~(uintptr_t)0xFU) + 0x10);
+    int *alignedStart = (int *)(((uintptr_t)start - 4 & ~(uintptr_t)0xFU) + 0x10);
     mStrategy = strat;
-    _ref0 = i7;
+    mStart = alignedStart;
     mAllowTemp = allowTemp;
 #ifdef HX_NATIVE
     mMinFreeBytes = -1;
 #endif
     mDebugLevel = debugLevel;
-    gTimeStamp++;
-        int time = gTimeStamp;
-    InsertFreeBlock((FreeBlock *)_ref0, mSizeWords = size - (i7 - start), nullptr, nullptr, time);
+    mSizeWords = size - (alignedStart - rawStart);
+    // Arguments evaluate right to left: gTimeStamp++ first, then mSizeWords and
+    // mStart are re-read (retail reloads 0xc(r3) and 0x4(r3) after the store).
+    InsertFreeBlock((FreeBlock *)mStart, mSizeWords, nullptr, nullptr, gTimeStamp++);
     if (1 <= mDebugLevel) {
         FreeBlock *blockStart = mFreeBlockChain;
         int *blockStartInt = (int *)blockStart;
-        int *start3 = blockStartInt + 3;
         int *blockEnd = blockStartInt + blockStart->mSizeWords;
-        if (start3 < blockEnd) {
-            int *ptr = start3 - 1;
-            for (unsigned int count = (((unsigned int)blockEnd - (unsigned int)start3) - 1) / 4 + 1; count != 0; count--) {
-                ptr++;
-                *ptr = 0xDEADDEAD;
-            }
+        for (int *ptr = blockStartInt + 3; ptr < blockEnd; ptr++) {
+            *ptr = 0xDEADDEAD;
         }
     }
 }
@@ -506,36 +507,27 @@ int *MemHeap::Truncate(int *ptr, int newSizeWords, int &allocSize) {
     return ptr;
 }
 
-int MemHeap::Free(int *ptr) {
+// Retail 0x827bbd88: returns a bool (MemFree masks the result to a byte at
+// 0x827bc48c) and computes no byte count.
+bool MemHeap::Free(int *ptr) {
     if (ptr < mStart || ptr >= mStart + mSizeWords) {
-        return 0;
+        return false;
     }
 
     unsigned int *headerAddr = (unsigned int *)(ptr - 1);
-    unsigned int header = *headerAddr;
-    int blockSizeBytes = (header >> 6) & 0x3FFFFFC;
-
     FreeBlock *prev = nullptr;
     FreeBlock *next;
     for (next = mFreeBlockChain; next != nullptr && (int *)next < (int *)headerAddr; next = next->mNextBlock) {
         prev = next;
     }
 
-    unsigned int padBytes = (header >> 2) & 0x3C;
-    int *blockStart = (int *)((char *)headerAddr - padBytes);
-
-    int ts = gTimeStamp++;
-    FreeBlock *newFree = (FreeBlock *)blockStart;
-    InsertFreeBlock(newFree, *headerAddr >> 8, prev, next, ts);
+    FreeBlock *newFree = (FreeBlock *)((char *)headerAddr - ((*headerAddr >> 2) & 0x3C));
+    InsertFreeBlock(newFree, *headerAddr >> 8, prev, next, gTimeStamp++);
 
     if (1 <= mDebugLevel) {
         int *end = (int *)newFree + newFree->mSizeWords;
-        if ((int *)newFree + 3 < end) {
-            int *cur = (int *)newFree + 2;
-            for (unsigned int count = (((unsigned int)end - (unsigned int)((int *)newFree + 3)) - 1) / 4 + 1; count != 0; count--) {
-                cur++;
-                *cur = 0xDEADDEAD;
-            }
+        for (int *cur = (int *)newFree + 3; cur < end; cur++) {
+            *cur = 0xDEADDEAD;
         }
     }
 
@@ -545,8 +537,7 @@ int MemHeap::Free(int *ptr) {
     if (prev != nullptr) {
         prev->AttemptMerge(newFree, mDebugLevel);
     }
-
-    return blockSizeBytes;
+    return true;
 }
 
 #ifndef HX_NATIVE
