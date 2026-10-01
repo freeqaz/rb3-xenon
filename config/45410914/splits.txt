@@ -6270,7 +6270,6 @@ CharEyes.cpp:
 	.pdata      start:0x82202F30 end:0x82202F38
 	.pdata      start:0x82202F38 end:0x82202F50
 	.pdata      start:0x82202F50 end:0x82202F98
-	.pdata      start:0x82204CD0 end:0x82204CD8
 	.text       start:0x823832D8 end:0x82383428
 	.text       start:0x82383428 end:0x823873F8
 	.text       start:0x82387458 end:0x82387768
@@ -6294,7 +6293,6 @@ CharEyes.cpp:
 	.text       start:0x8238AB44 end:0x8238ABA4
 	.text       start:0x8238ABA8 end:0x8238ACB0
 	.text       start:0x8238ACB0 end:0x8238B130
-	.text       start:0x823AE884 end:0x823AE918
 
 SongMetadata.cpp:
 	.pdata      start:0x82240898 end:0x822408A8
@@ -7629,9 +7627,11 @@ CharBoneOffset.cpp:
 	.text       start:0x823C7328 end:0x823C7334
 
 CharWeightable.cpp:
+	.pdata      start:0x82204CD0 end:0x82204CD8
 	.pdata      start:0x82204CD8 end:0x82204D20
 	.pdata      start:0x82204D38 end:0x82204D60
 	.pdata      start:0x82204D68 end:0x82204D70
+	.text       start:0x823AE884 end:0x823AE918
 	.text       start:0x823AE918 end:0x823AEE20
 	.text       start:0x823AEF98 end:0x823AF210
 	.text       start:0x823AF210 end:0x823AF21C

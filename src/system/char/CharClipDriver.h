@@ -28,7 +28,7 @@ public:
     void SetBeatOffset(float offset, TaskUnits units, Symbol beatEvent);
     float Evaluate(float beat, float, float);
     CharClipDriver *Exit(bool stack);
-    CharClipDriver *DeleteRef(ObjRef *, bool &);
+    CharClipDriver *DeleteRef(ObjRef *);
     CharClipDriver *PreEvaluate(float beat, float dbeat, float dt);
 
     CharClipDriver *Next() const { return mNext; }

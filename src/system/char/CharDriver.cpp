@@ -354,15 +354,12 @@ float CharDriver::EvaluateFlags(int flags) {
     return result;
 }
 
+// Retail (0x82376E40): CharWeightable::Replace first, then prune the
+// clip-driver chain; DeleteRef reports nothing back.
 void CharDriver::Replace(ObjRef *from, Hmx::Object *to) {
-    bool deleted = false;
-    if (mFirst != nullptr) {
-        mFirst = mFirst->DeleteRef(from, deleted);
-    }
-    if (deleted != false) {
-        return;
-    }
     CharWeightable::Replace(from, to);
+    if (mFirst)
+        mFirst = mFirst->DeleteRef(from);
 }
 
 BEGIN_SAVES(CharDriver)
