@@ -184,7 +184,7 @@ def apply(path, rows):
                 "path). That is exactly the slot decided here, on retail bytes.")
         g.setdefault("withdrawn", []).append({
             "spelling": r["folded"], "lane": LANE,
-            "class": "PLACEHOLDER_SLOT_" + s[1].replace("-", "_"),
+            "class": "PLACEHOLDER_SLOT_" + s[1].split(":")[-1].replace("-", "_"),
             "disposition": "membership withdrawn, group kept",
             "evidence": ("tools/alias_placeholder_slot_audit.py: a relocation slot "
                          "whose retail target is unnamed was tolerated on trust when "
