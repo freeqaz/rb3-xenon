@@ -116,7 +116,13 @@ void MemTrackAlloc(
     const char *const file = nullptr;
     const int line = 0;
 #endif
+#ifdef HX_NATIVE
     if (gMemTracker && gMemTrackerTracking) {
+#else
+    // Retail (0x827C43E0) tests only gMemTracker; there is no
+    // gMemTrackerTracking load between it and taking gMemLock.
+    if (gMemTracker) {
+#endif
         CritSecTracker tracker(gMemLock);
         int heap = GetCurrentHeapNum();
 #ifndef HX_NATIVE

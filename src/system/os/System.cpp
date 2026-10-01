@@ -63,11 +63,13 @@ int gUsingCD;
 #else
 // RB3 retail references these only from the System TU and co-addresses them
 // off one base (PreInitSystem 0x82510BB8 reaches gSystemConfig as -8 off
-// &gUsingCD), which MSVC does only for internal-linkage data.
-static DataArray *gSystemConfig;
-static DataArray *gSystemTitles;
-
+// &gUsingCD), which MSVC does only for internal-linkage data. The compiler
+// lays these statics out in reverse declaration order, so gUsingCD is
+// declared first to sit above gSystemConfig (0x82CC9990 config, 0x82CC9994
+// titles, 0x82CC9998 gUsingCD).
 static int gUsingCD;
+static DataArray *gSystemTitles;
+static DataArray *gSystemConfig;
 #endif
 int gSystemMs;
 float gSystemFrac;
@@ -422,7 +424,14 @@ void SetGfxMode(GfxMode mode) {
 DataNode OnSystemLanguage(DataArray *) { return gSystemLanguage; }
 DataNode OnSystemLocale(DataArray *) { return gSystemLocale; }
 DataNode OnSystemExec(DataArray *a) { return SystemExec(a->Str(1)); }
+#ifdef HX_NATIVE
 DataNode OnUsingCD(DataArray *) { return UsingCD(); }
+#else
+// Retail registers "using_cd" with the shared body at 0x826A9880, which stores
+// DataNode(1) and returns: the script query reports true without reading
+// gUsingCD.
+DataNode OnUsingCD(DataArray *) { return 1; }
+#endif
 DataNode OnSupportedLanguages(DataArray *) { return SupportedLanguages(false); }
 DataNode OnSystemMs(DataArray *) { return SystemMs(); }
 
@@ -828,7 +837,14 @@ void SystemPreInit(const char *config) {
     TheContentMgr.PreInit();
     ArchiveInit();
     TheDebug.Init();
+#ifdef HX_NATIVE
     MILO_LOG("SystemInit Params:%s\n", String(str));
+#else
+    // Retail's stripped residue copy-constructs the String and destroys it
+    // through the pointer the copy constructor returned (no reload of the
+    // temporary's address), which is MiloStripEval's by-value shape.
+    MiloStripEval("SystemInit Params:%s\n", String(str));
+#endif
     DataInit();
     PreInitSystem(config);
     LanguageInit();

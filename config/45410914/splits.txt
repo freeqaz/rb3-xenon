@@ -6863,9 +6863,9 @@ system/rndobj/CubeTex.cpp:
 	.text       start:0x82494FD8 end:0x824964EC
 
 CacheMgr.cpp:
-	.pdata      start:0x82242CD0 end:0x82242CF8
+	.pdata      start:0x82242CC8 end:0x82242CF8
 	.pdata      start:0x82242CF8 end:0x82242D00
-	.text       start:0x827CEE28 end:0x827CF05C
+	.text       start:0x827CEDD0 end:0x827CF05C
 	.text       start:0x827CF060 end:0x827CF0D0
 
 Env_NG.cpp:
@@ -12528,12 +12528,10 @@ UIEventMgr.cpp:
 	.pdata      start:0x82220408 end:0x82220410
 	.pdata      start:0x82220410 end:0x82220498
 	.pdata      start:0x82220498 end:0x82220540
-	.pdata      start:0x82242CC8 end:0x82242CD0
 	.text       start:0x8257C368 end:0x8257C3A8
 	.text       start:0x82592C90 end:0x82592D18
 	.text       start:0x82592D18 end:0x82593678
 	.text       start:0x82593678 end:0x82593F9C
-	.text       start:0x827CEDD0 end:0x827CEE28
 
 ProfileMgr.cpp:
 	.pdata      start:0x822086A8 end:0x822086B8

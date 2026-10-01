@@ -19,10 +19,6 @@ BEGIN_HANDLERS(User)
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
 
-BEGIN_PROPSYNCS(User)
-    SYNC_SUPERCLASS(Hmx::Object)
-END_PROPSYNCS
-
 void User::Reset() { mMachineID = -1; }
 
 // Retail 0x825236F0 (100 B): the assert's IsLocal() vcall survives because
