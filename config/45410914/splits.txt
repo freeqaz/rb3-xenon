@@ -7249,11 +7249,13 @@ system/synth_xbox/SynthSample.cpp:
 	.pdata      start:0x8225B678 end:0x8225B680
 	.pdata      start:0x8225B680 end:0x8225B690
 	.pdata      start:0x8225B690 end:0x8225B6A0
+	.pdata      start:0x8225B6A0 end:0x8225B6B0
 	.pdata      start:0x8225B6B0 end:0x8225B6B8
 	.text       start:0x82B6C6F8 end:0x82B6C7C0
 	.text       start:0x82B6C7C0 end:0x82B6C830
 	.text       start:0x82B6C850 end:0x82B6C8F0
 	.text       start:0x82B6C8F0 end:0x82B6CA0C
+	.text       start:0x82B6CA0C end:0x82B6CAB0
 	.text       start:0x82B6CAB0 end:0x82B6CAF8
 
 CrazeHollaback.cpp:
@@ -12545,7 +12547,6 @@ system/synth/SynthSample.cpp:
 	.pdata      start:0x8223A068 end:0x8223A078
 	.pdata      start:0x8223A080 end:0x8223A098
 	.pdata      start:0x8223A098 end:0x8223A0D8
-	.pdata      start:0x8225B6A0 end:0x8225B6B0
 	.text       start:0x826FBE68 end:0x826FBEE8
 	.text       start:0x82727F4C end:0x82728028
 	.text       start:0x82728028 end:0x82728CFC
@@ -12554,7 +12555,6 @@ system/synth/SynthSample.cpp:
 	.text       start:0x82729080 end:0x82729244
 	.text       start:0x82729244 end:0x82729618
 	.text       start:0x82B6C844 end:0x82B6C850
-	.text       start:0x82B6CA0C end:0x82B6CAB0
 
 SpeechMgr.cpp:
 	.pdata      start:0x82214250 end:0x82214260
