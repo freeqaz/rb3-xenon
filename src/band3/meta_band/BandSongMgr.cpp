@@ -231,8 +231,31 @@ void BandSongMgr::ContentDone() {
     }
 }
 
+// Retail (220 B) does far more than chain to the base: it asks the content
+// manager for the mounted package's license bits (vtable slot 32,
+// GetLicenseBits, return value ignored), treats `bits == 1` as licensed, and
+// keeps unk11c -- the list IsDemo() searches -- in step: a licensed package
+// not yet listed is appended, an unlicensed one that is listed is erased.
+// Only when the list changed does it resync shared songs, and then only when
+// no content refresh is running.
 void BandSongMgr::ContentMounted(const char *c1, const char *c2) {
     SongMgr::ContentMounted(c1, c2);
+    Symbol name(c1);
+    unsigned long bits;
+    TheContentMgr.GetLicenseBits(name, bits);
+    bool licensed = bits == 1;
+    Symbol *it = std::find(unk11c.begin(), unk11c.end(), name);
+    bool found = it != unk11c.end();
+    if (licensed && !found) {
+        unk11c.push_back(name);
+    } else if (!licensed && found) {
+        unk11c.erase(it);
+    } else {
+        return;
+    }
+    if (!TheContentMgr.RefreshInProgress()) {
+        SyncSharedSongs();
+    }
 }
 
 const char *BandSongMgr::ContentPattern() {
