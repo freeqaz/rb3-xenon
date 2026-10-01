@@ -157,7 +157,6 @@ RockCentralJobs.cpp:
 
 RockCentral.cpp:
 	.pdata      start:0x82208698 end:0x822086A8
-	.pdata      start:0x822086D0 end:0x82208708
 	.pdata      start:0x82208D68 end:0x82208D90
 	.pdata      start:0x82215F78 end:0x82215F88
 	.pdata      start:0x82215F88 end:0x82215FA0
@@ -202,7 +201,6 @@ RockCentral.cpp:
 	.pdata      start:0x8221A840 end:0x8221A850
 	.pdata      start:0x82234E98 end:0x82234EB0
 	.text       start:0x823EC310 end:0x823EC398
-	.text       start:0x823EC538 end:0x823EC788
 	.text       start:0x823F0F84 end:0x823F0F88
 	.text       start:0x823F0F9C end:0x823F0FA0
 	.text       start:0x823F27B8 end:0x823F2898
@@ -9601,14 +9599,18 @@ network/net/Synchronize.cpp:
 
 Server.cpp:
 	.pdata      start:0x822086B8 end:0x822086D0
+	.pdata      start:0x822086D0 end:0x82208708
 	.pdata      start:0x82208708 end:0x82208768
+	.pdata      start:0x822087C8 end:0x822087F0
 	.pdata      start:0x82209158 end:0x82209160
 	.pdata      start:0x82209160 end:0x82209178
 	.pdata      start:0x82209178 end:0x822091A8
 	.text       start:0x823EC418 end:0x823EC514
 	.text       start:0x823EC518 end:0x823EC538
+	.text       start:0x823EC538 end:0x823EC788
 	.text       start:0x823EC788 end:0x823ECD48
 	.text       start:0x823ECD48 end:0x823ECD58
+	.text       start:0x823ED1E8 end:0x823ED458
 	.text       start:0x823F5C98 end:0x823F5D3C
 	.text       start:0x823F5D3C end:0x823F5DD8
 	.text       start:0x823F5DD8 end:0x823F6198

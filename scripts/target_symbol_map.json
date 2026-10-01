@@ -1,4 +1,9 @@
 {
+ "0x823ec5b8": "?SetLSPLoginFilter@@YAXVString@Quazal@@@Z",
+ "0x823ec638": "??0XboxServer@@QAA@XZ",
+ "0x823ec728": "?GetPlayerID@XboxServer@@UAAHH@Z",
+ "0x823ed1e8": "?OnMsg@XboxServer@@QAA?AVDataNode@@ABVSigninChangedMsg@@@Z",
+ "0x823ed2a8": "?Handle@XboxServer@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82aa7b88": "??1Buffer@Quazal@@UAA@XZ",
  "0x8207fa34": "??_7_DDL_RBBinaryBuffer@Quazal@@6B@",
  "0x8207fa9c": "??_7RBBinaryBuffer@Quazal@@6B@",
