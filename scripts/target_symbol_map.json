@@ -1,4 +1,8 @@
 {
+ "0x82733028": "?D3DFORMAT_BitsPerPixel@@YAHW4_D3DFORMAT@@@Z",
+ "0x82732e98": "?SetViewport@DxRnd@@UAAXABUViewport@NgRnd@@@Z",
+ "0x82732e20": "?Offscreen@DxRnd@@UBA_NXZ",
+ "0x82732c98": "?DrawRectDepth@DxRnd@@UAAXABVVector3@@AAY03$$CBV2@ABVVector4@@PAVRndMat@@W4ShaderType@@@Z",
  "0x82741308": "?Init@DxMat@@SAXXZ",
  "0x827412b0": "??_GDxMat@@UAAPAXI@Z",
  "0x82741190": "?SetType@DxMat@@UAAXVSymbol@@@Z",
