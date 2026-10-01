@@ -461,6 +461,7 @@ void ChordbookPanel::DisplayChord(unsigned int idx) {
     MILO_ASSERT(idx < mNumChords, 0x381);
     static Message reset_msg("reset");
     mDir->HandleType(reset_msg);
+    ChordInfo &chord = mChords[idx];
     mChordWid->Clear();
     mFretWid->Clear();
     mLabelWid->Clear();
@@ -477,23 +478,23 @@ void ChordbookPanel::DisplayChord(unsigned int idx) {
         int fret = 0;
         int lowstr = 0;
         int highstr = 0;
-        mChords[idx].fretHand.GetFinger(i, fret, lowstr, highstr);
-        unsigned int oldStepNum = mNumSteps;
-        mStep[oldStepNum].unk0 = 0;
-        mStep[oldStepNum].unk4 = 0;
-        mStep[oldStepNum].unk5 = 0;
+        chord.fretHand.GetFinger(i, fret, lowstr, highstr);
+        FingerStep &step = mStep[mNumSteps];
+        step.unk0 = 0;
+        step.unk4 = 0;
+        step.unk5 = 0;
         if (fret > 0) {
             MaxEq(highstr, lowstr);
-            for (int j = lowstr; j < highstr; j++) {
+            for (int j = lowstr; j <= highstr; j++) {
                 set_chord_fret[0] = j;
                 set_chord_fret[1] = fret;
                 mChordLegend->HandleType(set_chord_fret);
                 int mask = 1 << j;
-                mStep[oldStepNum].unk4 |= mask;
+                step.unk4 |= mask;
                 mInUse |= mask;
             }
             for (int j = 0; j < mNumSteps; j++) {
-                mStep[j].unk4 &= ~mStep[oldStepNum].unk4;
+                mStep[j].unk4 &= ~step.unk4;
             }
             BandLabel *label = mDir->Find<BandLabel>(
                 MakeString("step_%02d_text.lbl", mNumSteps + 1), true
@@ -518,11 +519,10 @@ void ChordbookPanel::DisplayChord(unsigned int idx) {
         }
     }
 
-    unsigned oldStepNum = mNumSteps;
-    mNumSteps++;
-    mStep[oldStepNum].unk0 = 0;
-    mStep[oldStepNum].unk4 = 0xFF;
-    mStep[oldStepNum].unk5 = 1;
+    FingerStep &strumStep = mStep[mNumSteps++];
+    strumStep.unk0 = 0;
+    strumStep.unk4 = 0xFF;
+    strumStep.unk5 = 1;
     BandLabel *label =
         mDir->Find<BandLabel>(MakeString("step_%02d_text.lbl", mNumSteps), true);
     static Symbol rg_chordbook_step_strum("rg_chordbook_step_strum");
@@ -531,7 +531,7 @@ void ChordbookPanel::DisplayChord(unsigned int idx) {
     static Symbol rg_chordbook_strum("rg_chordbook_strum");
     label->SetTextToken(rg_chordbook_strum);
 
-    GameGem &gem = mGameGemList->GetGem(mChords[idx].gemId);
+    GameGem &gem = mGameGemList->GetGem(chord.gemId);
     for (int i = 0; i < 6; i++) {
         set_chord_fret[0] = i;
         set_chord_fret[1] = gem.GetFret(i);
@@ -553,7 +553,7 @@ void ChordbookPanel::DisplayChord(unsigned int idx) {
     MILO_ASSERT(fret != -1, 0x412);
     Transform tf78(unk4c->SlotAt(string));
     unk4c->GetChordMesh(
-        mChords[idx].shape, mGemPlayer->GetUser()->GetGameplayOptions()->GetLefty()
+        chord.shape, mGemPlayer->GetUser()->GetGameplayOptions()->GetLefty()
     );
     mCurrentChord = idx;
     for (int i = 0; i < 6; i++) {
