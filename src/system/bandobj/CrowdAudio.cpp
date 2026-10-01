@@ -69,14 +69,14 @@ CrowdAudio *TheCrowdAudio;
 void CrowdAudio::Init() { Register(); }
 
 CrowdAudio::CrowdAudio()
-    : mCurrentMogg(this, 0), mOldMogg(this, 0), mFadingMogg(this, 0),
+    : mCurrentMogg(NULL, NULL), mOldMogg(NULL, NULL), mFadingMogg(NULL, NULL),
       mMainFader(Hmx::Object::New<Fader>()), mWantDuck(0), mResultsDuck(0),
       mResultsFadeDuration(1000.0f), mResultsFader(Hmx::Object::New<Fader>()),
       mFadeInFromLoadingDuration(1000.0f), mEntryFader(Hmx::Object::New<Fader>()),
       mVenueChangeFadeDuration(1000.0f), mLevel(kExcitementBad), mLoopChangeTime(1e+30f),
       mIntro(0), mVenueIntro(0), mLevels(0), mVenueOutro(0), mState(0), mCrowdVol(0),
       mCamShotVol(0), mEnabled(1), mCrowdReacts(1), mLastClapBeat(0), mClapAllowed(1),
-      mBank(this, 0), mCurrentBankFader(0), mOtherBankFader(0),
+      mBank(NULL, NULL), mCurrentBankFader(0), mOtherBankFader(0),
       mReleaseFader(Hmx::Object::New<Fader>()), mCrossfadeDuration(1000.0f),
       mReleaseTime(5000.0f), mPaused(0), mShouldPlayVenueIntro(0),
       mShouldPlayVenueOutro(0), mWon(0), mRestarting(1),
