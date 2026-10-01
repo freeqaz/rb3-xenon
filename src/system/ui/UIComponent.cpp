@@ -114,7 +114,6 @@ void UIComponent::SetTypeDef(DataArray *da) {
                     PathName(Dir())
                 );
                 SetTypeDef(defaultArr);
-                return;
             } else {
                 MILO_FAIL_RTL(
                     "No default type for %s, please add to %s (%s)",
@@ -122,8 +121,8 @@ void UIComponent::SetTypeDef(DataArray *da) {
                     typesArr->File(),
                     PathName(Dir())
                 );
-                return;
             }
+            return;
         }
     }
     Hmx::Object::SetTypeDef(da);
