@@ -1860,6 +1860,7 @@ void BandDirector::OnMidiShot5Cleanup() {
 #pragma auto_inline(on)
 
 void BandDirector::ExportWorldEvent(Symbol s) {
+    static Symbol none("none");
     if (s != none) {
         if (mCurWorld) {
             static Message msg("");
