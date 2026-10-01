@@ -184,9 +184,9 @@ void GameMicManager::HookUpFxForMicId(GameMic *gmic) {
     if (mic) {
         FxSend *send = unk20->Find<FxSend>("mic.send", false);
         mic->SetFxSend(send);
-        // TU5: retail resets the synapse to its neutral target here.
-        SetPitchCorrectionTarget(false, false, 0.5f, 0.5f, 0.0f, 0.0f, 0.0f);
     }
+    // TU5: the synapse is reset to its neutral target whether or not the mic exists.
+    SetPitchCorrectionTarget(false, false, 0.5f, 0.5f, 0.0f, 0.0f, 0.0f);
 }
 
 void GameMicManager::SetOverdriveEffectEnable(bool b1) {
