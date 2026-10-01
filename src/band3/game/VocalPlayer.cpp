@@ -258,9 +258,8 @@ void VocalPlayer::Start() {
     SetAutoplay(mUser->mAutoplay);
     BandTrack *track = GetBandTrack();
     if (track) {
-        track->ShowOverdriveMeter(
-            !mUser->IsNullUser() && TheGame->AllowOverdrivePhrases()
-        );
+        bool showMeter = !mUser->IsNullUser() && TheGame->AllowOverdrivePhrases();
+        track->ShowOverdriveMeter(showMeter);
     }
 }
 
