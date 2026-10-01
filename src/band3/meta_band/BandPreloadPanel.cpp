@@ -45,7 +45,10 @@ void BandPreloadPanel::PollForLoading() {
 }
 
 bool BandPreloadPanel::IsLoaded() const {
-    return !PreloadPanel::IsLoaded() ? false : !mLockInProgress;
+    if (!PreloadPanel::IsLoaded()) {
+        return false;
+    }
+    return !mLockInProgress;
 }
 
 // Retail ICF-folds this body with SyncGameStartPanel::OnMsg(LockStepStartMsg)
