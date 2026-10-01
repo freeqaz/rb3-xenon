@@ -101427,16 +101427,26 @@
   {
    "name": "push_back",
    "address": "0x822e1238",
-   "survivor": "?push_back@?$vector@VBurst@RndParticleSys@@V?$StlNodeAlloc@VBurst@RndParticleSys@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVBurst@RndParticleSys@@@Z",
-   "folded": [
-    "?push_back@?$vector@VEdge@ChordShapeGenerator@@V?$StlNodeAlloc@VEdge@ChordShapeGenerator@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVEdge@ChordShapeGenerator@@@Z"
-   ],
+   "survivor": "?push_back@?$vector@VEdge@ChordShapeGenerator@@V?$StlNodeAlloc@VEdge@ChordShapeGenerator@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVEdge@ChordShapeGenerator@@@Z",
+   "folded": [],
    "evidence": "Fold group opened by W16-MB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
     {
      "spelling": "?push_back@?$vector@VEdge@ChordShapeGenerator@@V?$StlNodeAlloc@VEdge@ChordShapeGenerator@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVEdge@ChordShapeGenerator@@@Z",
      "lane": "W16-MB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED); 120 B retail / 120 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. ?AddEdge@CrossSec@ChordShapeGenerator@@QAAXABVEdge@2@@Z."
+    }
+   ],
+   "survivor_renamed": {
+    "from": "?push_back@?$vector@VBurst@RndParticleSys@@V?$StlNodeAlloc@VBurst@RndParticleSys@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVBurst@RndParticleSys@@@Z",
+    "lane": "W16-MB 2026-10-01"
+   },
+   "withdrawn": [
+    {
+     "spelling": "?push_back@?$vector@VEdge@ChordShapeGenerator@@V?$StlNodeAlloc@VEdge@ChordShapeGenerator@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVEdge@ChordShapeGenerator@@@Z",
+     "lane": "W16-MB 2026-10-01",
+     "class": "MAP_NAME_WRONG",
+     "why": "Retail 0x822E1238 is vector<ChordShapeGenerator::Edge>::push_back itself: it copies a 4-byte element as two halfwords (lhz/sth at +0/+2, end += 4), its only caller is ChordShapeGenerator::CrossSec::AddEdge (0x822E133C), and its overflow callee 0x822DFB18 is likewise 4-byte/halfword. It sits in a hole of ChordShapeGenerator's .text. The map row named it push_back<RndParticleSys::Burst>; it is renamed to the Edge spelling and re-homed to ChordShapeGenerator, so this membership (the real name folded into the wrong one) is withdrawn and the survivor field follows the map."
     }
    ]
   },

@@ -4076,8 +4076,11 @@ ChordShapeGenerator.cpp:
 	.pdata      start:0x821F8660 end:0x821F8668
 	.pdata      start:0x821F8678 end:0x821F8690
 	.pdata      start:0x821F8698 end:0x821F86A0
+	.pdata      start:0x821F86A0 end:0x821F86A8
+	.pdata      start:0x821F86A8 end:0x821F86B0
 	.pdata      start:0x821F86B8 end:0x821F86C0
 	.pdata      start:0x821F86C0 end:0x821F8888
+	.pdata      start:0x821F8888 end:0x821F8890
 	.pdata      start:0x821F8890 end:0x821F8998
 	.text       start:0x822DC9D0 end:0x822DCA50
 	.text       start:0x822DCA50 end:0x822DCF58
@@ -4095,8 +4098,11 @@ ChordShapeGenerator.cpp:
 	.text       start:0x822DF708 end:0x822DF8B0
 	.text       start:0x822DFA20 end:0x822DFAC0
 	.text       start:0x822DFAC0 end:0x822DFB0C
+	.text       start:0x822DFB0C end:0x822DFCAC
+	.text       start:0x822DFCAC end:0x822DFCD8
 	.text       start:0x822DFD88 end:0x822DFF28
 	.text       start:0x822DFF28 end:0x822E1234
+	.text       start:0x822E1238 end:0x822E12B0
 	.text       start:0x822E12B0 end:0x822E33E8
 
 CheckboxDisplay.cpp:
@@ -4173,9 +4179,6 @@ CharLipSync.cpp:
 	.pdata      start:0x821F8628 end:0x821F8630
 	.pdata      start:0x821F8630 end:0x821F8638
 	.pdata      start:0x821F8690 end:0x821F8698
-	.pdata      start:0x821F86A0 end:0x821F86A8
-	.pdata      start:0x821F86A8 end:0x821F86B0
-	.pdata      start:0x821F8888 end:0x821F8890
 	.pdata      start:0x821FEDB0 end:0x821FEDC0
 	.pdata      start:0x821FEE50 end:0x821FEE58
 	.pdata      start:0x822011C8 end:0x822011D8
@@ -4196,9 +4199,6 @@ CharLipSync.cpp:
 	.text       start:0x822DEB40 end:0x822DEDEC
 	.text       start:0x822DF8B0 end:0x822DF99C
 	.text       start:0x822DF9F8 end:0x822DFA20
-	.text       start:0x822DFB0C end:0x822DFCAC
-	.text       start:0x822DFCAC end:0x822DFCD8
-	.text       start:0x822E1238 end:0x822E12B0
 	.text       start:0x82348E20 end:0x82348FC4
 	.text       start:0x82349B10 end:0x82349B78
 	.text       start:0x8236AE28 end:0x8236AEA8
