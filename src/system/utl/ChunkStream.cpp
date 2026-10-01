@@ -309,6 +309,11 @@ void ChunkStream::ReadImpl(void *data, int bytes) {
     }
 #else
     MILO_ASSERT(mCurBufOffset + bytes <= (*mCurChunk & kChunkSizeMask), 0x1D6);
+    // retail: a negative count fails the stream instead of copying
+    if (bytes < 0) {
+        mFail = true;
+        return;
+    }
     memcpy(data, (void *)(mCurReadBuffer + mCurBufOffset), bytes);
     mCurBufOffset += bytes;
     mTell += bytes;

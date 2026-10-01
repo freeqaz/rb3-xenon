@@ -24,6 +24,7 @@ HxGuid::HxGuid() { Clear(); }
 void HxGuid::Clear() { mData[0] = mData[1] = mData[2] = mData[3] = 0; }
 
 void HxGuid::Generate() {
+#ifdef HX_NATIVE
     while (true) {
         Clear();
         XNetRandom((unsigned char *)mData, sizeof(mData));
@@ -32,6 +33,11 @@ void HxGuid::Generate() {
         } else
             break;
     }
+#else
+    // Retail fills the cleared GUID once and does not retry a null result.
+    Clear();
+    XNetRandom((unsigned char *)mData, sizeof(mData));
+#endif
 }
 
 bool HxGuid::IsNull() const {
