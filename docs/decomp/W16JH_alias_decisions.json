@@ -1,0 +1,134 @@
+{
+ "0x822e5040|??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z": {
+  "class": "PLACEHOLDER_SLOT_CALLEE_REFUTED_BY_RTTI",
+  "evidence": "Retail 0x822E5040's callee fn_822E4FD8 is { bl fn_822B1728(this, o); bl fn_822B1728(this+0xC, o+0xC) } and fn_822B1728 stores the vtable whose RTTI is .?AV?$ObjPtr@VEventTrigger@@VObjectDir@@@@ -- it is ObjPtr<EventTrigger>'s copy ctor, so the element retail copies here is a 24 B pair of ObjPtr<EventTrigger> (this group's CLEAN members are exactly _Copy_Construct/_Param_Construct<pair<ObjPtr<EventTrigger>,ObjPtr<EventTrigger>>>). Our callee ??0LocalizedName@HamMove@@QAA@ABU01@@Z copies no ObjPtr<EventTrigger>. The survivor's map spelling (_Copy_Construct<SongPattern>) is itself a misidentification (W16-JH findings)."
+ },
+ "0x822e5040|??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z": {
+  "class": "PLACEHOLDER_SLOT_CALLEE_REFUTED_BY_RTTI",
+  "evidence": "Retail 0x822E5040's callee fn_822E4FD8 is { bl fn_822B1728(this, o); bl fn_822B1728(this+0xC, o+0xC) } and fn_822B1728 stores the vtable whose RTTI is .?AV?$ObjPtr@VEventTrigger@@VObjectDir@@@@ -- it is ObjPtr<EventTrigger>'s copy ctor, so the element retail copies here is a 24 B pair of ObjPtr<EventTrigger> (this group's CLEAN members are exactly _Copy_Construct/_Param_Construct<pair<ObjPtr<EventTrigger>,ObjPtr<EventTrigger>>>). Our callee ??0MoveReplacer@@QAA@ABU0@@Z copies no ObjPtr<EventTrigger>. The survivor's map spelling (_Copy_Construct<SongPattern>) is itself a misidentification (W16-JH findings)."
+ },
+ "0x822e5040|??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z": {
+  "class": "PLACEHOLDER_SLOT_CALLEE_REFUTED_BY_RTTI",
+  "evidence": "Retail 0x822E5040's callee fn_822E4FD8 is { bl fn_822B1728(this, o); bl fn_822B1728(this+0xC, o+0xC) } and fn_822B1728 stores the vtable whose RTTI is .?AV?$ObjPtr@VEventTrigger@@VObjectDir@@@@ -- it is ObjPtr<EventTrigger>'s copy ctor, so the element retail copies here is a 24 B pair of ObjPtr<EventTrigger> (this group's CLEAN members are exactly _Copy_Construct/_Param_Construct<pair<ObjPtr<EventTrigger>,ObjPtr<EventTrigger>>>). Our callee ??0?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmt copies no ObjPtr<EventTrigger>. The survivor's map spelling (_Copy_Construct<SongPattern>) is itself a misidentification (W16-JH findings)."
+ },
+ "0x822e5040|??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z": {
+  "class": "PLACEHOLDER_SLOT_CALLEE_REFUTED_BY_RTTI",
+  "evidence": "Retail 0x822E5040's callee fn_822E4FD8 is { bl fn_822B1728(this, o); bl fn_822B1728(this+0xC, o+0xC) } and fn_822B1728 stores the vtable whose RTTI is .?AV?$ObjPtr@VEventTrigger@@VObjectDir@@@@ -- it is ObjPtr<EventTrigger>'s copy ctor, so the element retail copies here is a 24 B pair of ObjPtr<EventTrigger> (this group's CLEAN members are exactly _Copy_Construct/_Param_Construct<pair<ObjPtr<EventTrigger>,ObjPtr<EventTrigger>>>). Our callee ??0?$_Rb_tree@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@PBV1@U?$_Identity@PBVMov copies no ObjPtr<EventTrigger>. The survivor's map spelling (_Copy_Construct<SongPattern>) is itself a misidentification (W16-JH findings)."
+ },
+ "0x822e5040|??$_Param_Construct@VSongPattern@@V1@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z": {
+  "class": "PLACEHOLDER_SLOT_CALLEE_REFUTED_BY_RTTI",
+  "evidence": "Retail 0x822E5040's callee fn_822E4FD8 is { bl fn_822B1728(this, o); bl fn_822B1728(this+0xC, o+0xC) } and fn_822B1728 stores the vtable whose RTTI is .?AV?$ObjPtr@VEventTrigger@@VObjectDir@@@@ -- it is ObjPtr<EventTrigger>'s copy ctor, so the element retail copies here is a 24 B pair of ObjPtr<EventTrigger> (this group's CLEAN members are exactly _Copy_Construct/_Param_Construct<pair<ObjPtr<EventTrigger>,ObjPtr<EventTrigger>>>). Our callee ??0SongPattern@@QAA@ABV0@@Z copies no ObjPtr<EventTrigger>. The survivor's map spelling (_Copy_Construct<SongPattern>) is itself a misidentification (W16-JH findings)."
+ },
+ "0x824d02c8|??_DWorldDir@@QAAXXZ": {
+  "class": "SUPERSEDED_SURVIVOR_MAP_NAME_CORRECTED",
+  "disposition": "membership withdrawn, group kept (the map now names this address with this spelling)",
+  "evidence": "0x824D02C8 was mapped '??_DRndShockwave@@QAAXXZ' but RndShockwave has NO retail RTTI (not an RB3 class) and the body calls 0x824CE910, whose 14 inlined vtable stores all read RTTI .?AVWorldDir@@. W16-JH corrected the map row to ??_DWorldDir@@QAAXXZ (and named 0x824CE910 ??1WorldDir@@UAA@XZ), so no alias is needed; the old survivor spelling names no RB3 function."
+ },
+ "0x823aae58|??$PropSync@VStrand@CharHair@@@@YA_NAAV?$ObjVector@VStrand@CharHair@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z": {
+  "class": "SUPERSEDED_SURVIVOR_MAP_NAME_CORRECTED",
+  "disposition": "membership withdrawn, group kept (the map now names this address with this spelling)",
+  "evidence": "0x823AAE58 was mapped PropSync<Flow::DynamicPropertyEntry> (a DC3 type with no retail presence) but the body calls vector<Strand>::_M_erase, ~Strand x2 and PropSync(Strand&,...), and its ctor callee 0x823A8F98 inlines ObjPtr<RndTransformable> (RTTI) at +4 = Strand::mRoot. W16-JH corrected the map row to PropSync<CharHair::Strand> (and named 0x823A8F98 the Strand ctor), so no alias is needed."
+ },
+ "0x8240f0c8|?UpdateHeap@Rnd@@IAAXXZ": {
+  "class": "SUPERSEDED_SURVIVOR_MAP_NAME_CORRECTED",
+  "disposition": "membership withdrawn, group kept (the map now names this address with this spelling)",
+  "evidence": "0x8240F0C8 was mapped 'LocalTalkerIsHeadsetPresent' (every other LocalTalker* is at 0x82C1....); its body is Rnd::UpdateHeap (W16-JE chased it 140 B = 140 B; its one paired retail caller 0x8241268C calls our UpdateHeap). W16-JH corrected the map row to ?UpdateHeap@Rnd@@IAAXXZ, so the address now carries this spelling directly and no alias is needed; the old survivor spelling names no RB3 function."
+ },
+ "0x8229d1a8|??$MakeString@KPBDH@@YAPBDPBDK0H@Z": {
+  "class": "UNPROVEN_OURS_NOT_COMPILED",
+  "disposition": "membership withdrawn as UNPROVEN (NOT refuted), group kept",
+  "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. On main 8091a837c our build no longer compiles ??$MakeString@KPBDH@@YAPBDPBDK0H@Z, so retail bytes cannot decide it (chase vs the address's map name ??$MakeString@VSymbol@@PBDPBD@@YAPBDPBDVSymbol@@00@Z: MISSING(ours)). RESTORE when compiled and chase-proven."
+ },
+ "0x82706100|??$_Copy_Construct@U?$pair@$$CBVString@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@V1@@0@ABU10@@Z": {
+  "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+  "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706100, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (NO-RETAIL). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$Obj with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSeqInst@@@@QAA@ABV0@@Z and our callee ??0?$pair@$$CBVString@@V1@@stlpmtx_std@@QAA@ABU01@@Z has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+ },
+ "0x82706100|??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z": {
+  "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+  "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706100, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (NO-RETAIL). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$Obj with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSeqInst@@@@QAA@ABV0@@Z and our callee ??0LocalizedName@HamMove@@QAA@ABU01@@Z has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+ },
+ "0x82706100|??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z": {
+  "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+  "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706100, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (NO-RETAIL). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$Obj with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSeqInst@@@@QAA@ABV0@@Z and our callee ??0Node@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@QAA@ABU01@@Z has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+ },
+ "0x82706100|??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z": {
+  "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+  "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706100, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (NO-RETAIL). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$Obj with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSeqInst@@@@QAA@ABV0@@Z and our callee ??0Node@?$ObjPtrVec@VRndTex@@VObjectDir@@@@QAA@ABU01@@Z has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+ },
+ "0x82706100|??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z": {
+  "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+  "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706100, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (NO-RETAIL). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$Obj with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSeqInst@@@@QAA@ABV0@@Z and our callee ??0BoneOp@CharSignalApplier@@QAA@ABU01@@Z has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+ },
+ "0x82706100|??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z": {
+  "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+  "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706100, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (NO-RETAIL). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$Obj with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSeqInst@@@@QAA@ABV0@@Z and our callee ??0MoveReplacer@@QAA@ABU0@@Z has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+ },
+ "0x82706100|??$_Param_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z": {
+  "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+  "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706100, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (NO-RETAIL). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$Obj with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSeqInst@@@@QAA@ABV0@@Z and our callee ??0Node@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@QAA@ABU01@@Z has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+ },
+ "0x82706100|??$_Param_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z": {
+  "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+  "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706100, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (NO-RETAIL). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$Obj with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSeqInst@@@@QAA@ABV0@@Z and our callee ??0Node@?$ObjPtrVec@VRndTex@@VObjectDir@@@@QAA@ABU01@@Z has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+ },
+ "0x82706100|??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z": {
+  "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+  "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706100, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (NO-RETAIL). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$Obj with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSeqInst@@@@QAA@ABV0@@Z and our callee ??0?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+ },
+ "0x82706100|??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z": {
+  "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+  "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706100, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (NO-RETAIL). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$Obj with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSeqInst@@@@QAA@ABV0@@Z and our callee ??0?$_Rb_tree@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@PBV1 has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+ },
+ "0x82706208|??$_Copy_Construct@U?$pair@$$CBVString@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@V1@@0@ABU10@@Z": {
+  "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+  "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706208, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (LAX-ALSO-FAILS). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSequence@@@@V1@@stlpmtx_std@@YAXPAV?$Ob with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSequence@@@@QAA@ABV0@@Z and our callee ??0?$pair@$$CBVString@@V1@@stlpmtx_std@@QAA@ABU01@@Z has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+ },
+ "0x82706208|??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z": {
+  "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+  "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706208, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (LAX-ALSO-FAILS). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSequence@@@@V1@@stlpmtx_std@@YAXPAV?$Ob with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSequence@@@@QAA@ABV0@@Z and our callee ??0LocalizedName@HamMove@@QAA@ABU01@@Z has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+ },
+ "0x82706208|??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z": {
+  "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+  "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706208, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (LAX-ALSO-FAILS). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSequence@@@@V1@@stlpmtx_std@@YAXPAV?$Ob with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSequence@@@@QAA@ABV0@@Z and our callee ??0MoveReplacer@@QAA@ABU0@@Z has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+ },
+ "0x82706208|??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z": {
+  "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+  "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706208, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (LAX-ALSO-FAILS). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSequence@@@@V1@@stlpmtx_std@@YAXPAV?$Ob with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSequence@@@@QAA@ABV0@@Z and our callee ??0?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+ },
+ "0x82706208|??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z": {
+  "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+  "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706208, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (LAX-ALSO-FAILS). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSequence@@@@V1@@stlpmtx_std@@YAXPAV?$Ob with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSequence@@@@QAA@ABV0@@Z and our callee ??0?$_Rb_tree@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@PBV1 has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+ },
+ "0x823d1a78|??0?$ObjDirItr@VObjectDir@@@@QAA@PAVObjectDir@@_N@Z": {
+  "class": "UNPROVEN_OURS_NOT_COMPILED",
+  "disposition": "membership withdrawn as UNPROVEN (NOT refuted), group kept",
+  "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. On main 8091a837c our build no longer compiles ??0?$ObjDirItr@VObjectDir@@@@QAA@PAVObjectDir@@_N@Z, so retail bytes cannot decide it (chase vs the address's map name ??0?$ObjDirItr@VCharClipGroup@@@@QAA@PAVObjectDir@@_N@Z: MISSING(ours)). RESTORE when compiled and chase-proven."
+ },
+ "0x8276cfd0|?push_back@?$vector@U?$pair@PAVDataArray@@VDataNode@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVDataArray@@VDataNode@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PAVDataArray@@VDataNode@@@2@@Z": {
+  "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+  "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x8276cfd0, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (LAX-ALSO-FAILS). Decided against the address's CURRENT retail name ?push_back@?$vector@V?$ObjPtr@VObject@Hmx@@@@V?$StlNodeAlloc@V?$ObjPtr with the strict chase: the slot's retail callee is map-resident ??$_Copy_Construct@V?$ObjPtr@VObject@Hmx@@@@@stlpmtx_std@@YAXPAV?$ObjP and our callee ??$_Copy_Construct@U?$pair@PAVDataArray@@VDataNode@@@stlpmtx_std@@@stl has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+ },
+ "0x823294d8|??_DSkeletonViz@@QAAXXZ": {
+  "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+  "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x823294d8, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (LAX-ALSO-FAILS). Decided against the address's CURRENT retail name ??_DLayerDir@@QAAXXZ with the strict chase: the slot's retail callee is map-resident ??1LayerDir@@UAA@XZ and our callee ??1SkeletonViz@@UAA@XZ has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+ },
+ "0x8257c368|??_DInstarank@@QAAXXZ": {
+  "class": "SUPERSEDED_SURVIVOR_MAP_NAME_CORRECTED",
+  "disposition": "membership withdrawn, group kept (the map now names this address with this spelling)",
+  "evidence": "0x8257C368 was mapped '??_DUIEventMgr@@QAAXXZ'. Every retail reference to it -- MetaPerformer's ctor/dtor (the eh-vector-constructor's element-dtor argument beside ??0Instarank) and their 6 EH funclets -- sits where we reference ??_DInstarank, none where we reference ??_DUIEventMgr; its body {bl fn_8257B428; ...; bl ~Object} is the vbase-dtor of the class whose dtor is 0x8257B428, which MetaPerformer's dtor calls where we call ~Instarank. W16-JH corrected the row to ??_DInstarank@@QAAXXZ and named 0x8257B428 ??1Instarank@@UAA@XZ (both unmapped before), so no alias is needed. Found by the whole-branch A/B, not by the first dependency census (which collapsed lis/addi data relocs under @comp.id)."
+ },
+ "0x8257c368|??_DCharForeTwist@@QAAXXZ": {
+  "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+  "evidence": "W16-JH re-identified 0x8257C368 as ??_DInstarank@@QAAXXZ (see that record). Decided against the address's CURRENT retail name with the strict chase: the retail body calls 0x8257B428 = ??1Instarank@@UAA@XZ (map-resident, 72 B, two ~String calls) where our ??_DCharForeTwist calls ??1CharForeTwist@@UAA@XZ (92 B) -- two distinct named destructors, chase REFUTED."
+ },
+ "0x825722d0|??_EAppScoreDisplay@@$4PPPPPPPM@BGI@AAPAXI@Z": {
+  "class": "SUPERSEDED_SURVIVOR_MAP_NAME_CORRECTED",
+  "disposition": "membership withdrawn, group kept (the map now names this address with this spelling)",
+  "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JC (main 17aaa4298) re-mapped 0x825722D0 from the $4...BEI@ spelling (this group's survivor) to this $4...BGI@ spelling, so the address now carries it directly and no alias is needed."
+ },
+ "0x825722d0|??_EScoreDisplay@@$4PPPPPPPM@BGI@AAPAXI@Z": {
+  "class": "UNPROVEN_OURS_NOT_COMPILED",
+  "disposition": "membership withdrawn as UNPROVEN (NOT refuted), group kept",
+  "evidence": "One of W16-JG's 341 UNDISCHARGED memberships; W16-JC's re-mapping of 0x825722D0 moved it out of the placeholder audit's reach. Decided against the address's CURRENT name ??_EAppScoreDisplay@@$4PPPPPPPM@BGI@AAPAXI@Z: the thunk's only slot is retail fn_823208A0 vs our ??_EScoreDisplay@@UAAPAXI@Z, which our build does not compile (chase: MISSING(ours)), so retail bytes cannot decide it. RESTORE when compiled and chase-proven."
+ }
+}

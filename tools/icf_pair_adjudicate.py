@@ -402,6 +402,53 @@ def locate_retail(tgt, ours, on, mapped, exclude=None, cap=64):
     return found
 
 
+# ★ W16-JH.  CLASSES OUR DC3-DERIVED HEADERS SPELL DIFFERENTLY FROM RETAIL.
+# Lane W17-OPTR established that our X360 `ObjRefOwner` IS retail's `ObjRef`
+# (ObjPtr<T> / ObjOwnerPtr<T> derive from it directly; DC3 renamed the class).
+# So when our ~ObjPtr<T> stores ??_7ObjRefOwner@@6B@ where retail stores the
+# vtable whose RTTI reads .?AVObjRef@@, the slot names the SAME class.  W16-JG
+# left that slot UNDISCHARGED (VTABLE-OURS-CLASS-NOT-IN-RETAIL), correctly by its
+# rules, since nothing in the tool knew the correspondence.
+#
+# An entry here is NOT taken on trust: _rename_witness() re-derives it on retail
+# bytes every time -- (a) our spelling has NO retail RTTI of its own (else it is
+# a real, distinct class and a rename would hide a mismatch), and (b) the map
+# already names the retail vtable's slot-0 entry (the deleting dtor) as a member
+# of OUR class (retail 0x822702A8 = ??_GObjRefOwner@@UAAPAXI@Z).  Measured
+# reach: 3 audit memberships (W16-JH).  --self-break-rename accepts ANY retail
+# class for a renamed spelling (class check and witness both removed) and the
+# RENAME DECOY control must go red.
+CLASS_RENAMES = {"ObjRefOwner@@": "ObjRef@@"}
+_SELF_BREAK_RENAME = False
+_ADDR_NAME = {}
+
+
+def _addr_name(va):
+    if not _ADDR_NAME:
+        m = json.load(open(ROOT / "scripts/target_symbol_map.json"))
+        _ADDR_NAME.update({int(k, 16): v for k, v in m.items()
+                           if k.startswith("0x") and isinstance(v, str)})
+        _ADDR_NAME.setdefault(-1, None)
+    return _ADDR_NAME.get(va)
+
+
+def _rename_witness(cls, retail_cls, vt_va):
+    if cls not in CLASS_RENAMES:
+        return False
+    if _SELF_BREAK_RENAME:
+        return True        # --self-break-rename: ANY retail class accepted
+    if CLASS_RENAMES[cls] != _rtti_norm(retail_cls):
+        return False
+    if retail_vtables_of(cls):
+        return False
+    w = retail_image().word(vt_va)
+    s0 = _addr_name(w) if w is not None else None
+    # the slot-0 entry is a destructor; its mangling carries the class right
+    # after the special-member code (??_G/??_E/??1), a method's after `@`
+    return bool(s0) and (s0.startswith(("??_G" + cls, "??_E" + cls, "??1" + cls))
+                         or ("@" + cls) in s0)
+
+
 def discharge_slot(tgt, ours, rn, on, mapped, depth, stack, memo, out, maxdepth,
                    ctx, anchor=None):
     """Decide ONE placeholder slot.  Returns (status, kind, detail) with status
@@ -442,6 +489,8 @@ def discharge_slot(tgt, ours, rn, on, mapped, depth, stack, memo, out, maxdepth,
                     "retail %s has no COL; .?A?%s's own retail vtable(s) are %s" % (
                         rn, cls, ",".join("%x" % v for v in own[:4]))
             return "UNDISCHARGED", "VTABLE-NO-RTTI", "retail %s has no readable COL" % rn
+        if _rtti_norm(t[4:]) != _rtti_norm(cls) and _rename_witness(cls, t[4:], X):
+            return "OK", "VTABLE-CLASS-RENAMED", "retail RTTI %s is our %s" % (t, cls)
         if _rtti_norm(t[4:]) != _rtti_norm(cls):
             rel = _class_relation(cls, retail_vtables_of(cls), t[4:], X)
             if rel:
@@ -654,6 +703,247 @@ def _slots_agree(tgt, ours, rt, ob, survivor, our_name, mapped, depth, stack,
     return ok
 
 
+_BLR = b"\x4e\x80\x00\x20"
+
+
+# ★ W16-JH.  RETAIL OVER-CARVE: one function, two dtk symbols.
+#
+# dtk split retail 0x82B9F540..0x82B9F5C8 (our _Deque_iterator_base<T*>::_M_advance,
+# a .pdata-less leaf) at the internal branch target 0x82B9F568, emitting
+# fn_82B9F540 (40 B, ending in a relocated `b` into fn_82B9F568) + fn_82B9F568.
+# The raw contiguous 136 B equal OUR body exactly, and the only branches into
+# 0x82B9F568 come from 0x82B9F554 / 0x82B9F55C -- inside fn_82B9F540.  Chase saw
+# BYTES-DIFFER (40 B vs 136 B) and left the deque operator+ membership UNDISCHARGED.
+#
+# retail_overcarve() admits exactly that shape, decided on RAW retail bytes:
+#   (1) retail R = fn_X; its LAST relocation is a REL24 branch whose target symbol
+#       is the placeholder fn_Y with Y == X + len(R)  (the immediately next symbol);
+#   (2) OUR body is longer, its relocations all lie before R's final word, and the
+#       raw retail bytes [X, X+len(ours)) equal ours with ONLY our relocated
+#       fields masked;
+#   (3) CENSUS: every branch in retail .text that lands in (X, X+len(ours)) comes
+#       from inside [X, X+len(ours)) -- nothing outside enters the tail, so Y is
+#       not a function anyone calls;
+#   (4) no .pdata function starts in (X, X+len(ours)).
+# The caller then compares R's relocations MINUS the split branch against ours.
+# Measured reach: 1 audit membership; 54 retail fn_ bodies carry shape (1).
+# --self-break-overcarve drops (3) and the OVERCARVE DECOY must go red.
+_SELF_BREAK_OVERCARVE = False
+_BR_INDEX = {}
+
+
+def _retail_text_branches():
+    """{target VA: [source VA, ...]} over every relative I-/B-form branch in
+    retail .text, plus the set of .pdata BeginAddresses.  Built once."""
+    import struct
+    if _BR_INDEX:
+        return _BR_INDEX["t"], _BR_INDEX["p"]
+    img = retail_image()
+    tgts, pstarts = collections.defaultdict(list), set()
+    for nm, sva, _vsz, praw, rsz in img.secs:
+        nm = nm if isinstance(nm, str) else nm.decode("latin1")
+        nm = nm.strip("\0")
+        if nm == ".pdata":
+            d = img.data[praw:praw + rsz]
+            pstarts.update(struct.unpack_from(">I", d, i)[0] for i in range(0, len(d) - 7, 8))
+        if nm != ".text":
+            continue
+        base = 0x82000000 + sva
+        words = struct.unpack_from(">%dI" % (rsz // 4), img.data, praw)
+        for i, w in enumerate(words):
+            op = w >> 26
+            if op == 18 and not (w & 2):
+                d = w & 0x03FFFFFC
+                d -= 0x04000000 if d & 0x02000000 else 0
+            elif op == 16 and not (w & 2):
+                d = w & 0xFFFC
+                d -= 0x10000 if d & 0x8000 else 0
+            else:
+                continue
+            src = base + 4 * i
+            tgts[src + d].append(src)
+    _BR_INDEX.update(t=tgts, p=pstarts)
+    return tgts, pstarts
+
+
+def retail_overcarve(rn, rt, ob):
+    """Return R's relocation list minus the split branch when (1)-(4) above
+    hold, else None.  See the W16-JH note."""
+    X = _ph_addr(rn)
+    if X is None or not rn.startswith("fn_") or not rt[1]:
+        return None
+    n, L = len(rt[0]), len(ob[0])
+    o, nm, t = rt[1][-1]
+    if not (o == n - 4 and t == 6 and nm.startswith("fn_") and _ph_addr(nm) == X + n
+            and L > n):
+        return None
+    if any(oo + 4 > n - 4 for (oo, _x, _y) in ob[1]):
+        return None
+    raw = _retail_bytes(X, L)
+    if raw is None:
+        return None
+    raw = bytearray(raw)
+    for (oo, _x, _y) in ob[1]:
+        raw[oo:oo + 4] = ob[0][oo:oo + 4]          # mask exactly as ours is masked
+    if bytes(raw) != ob[0]:
+        return None
+    tgts, pstarts = _retail_text_branches()
+    if any(X < a < X + L for a in pstarts):
+        return None
+    if not _SELF_BREAK_OVERCARVE:
+        for a in range(X + 4, X + L, 4):
+            if any(not (X <= src < X + L) for src in tgts.get(a, ())):
+                return None
+    return rt[1][:-1]
+
+
+def retail_tail_pad(rt, ob):
+    """★ W16-JH.  True iff the retail extent is OUR body followed only by
+    alignment padding: retail = ours + k zero words, ours ends in `blr`, and no
+    retail relocation lies in (or past) the extra words.
+
+    WHY.  A leaf that touches neither the stack nor LR gets no `.pdata` record,
+    so dtk's extent for it runs to the next symbol and bills the inter-function
+    alignment word(s) into the retail body.  Measured: retail fn_8274A9D0 is 48 B
+    (11 instructions + `0x00000000`) and OUR ??0DataNode@@QAA@ABV0@@Z is those
+    11 instructions exactly (44 B) -- a one-sided reader artifact that read as
+    BYTES-DIFFER and left 35 placeholder slots UNDISCHARGED.  `0x00000000` after
+    an unconditional `blr` is unreachable (it is not even a valid instruction),
+    so it is not part of the COMDAT the linker folded.
+
+    STRICTNESS.  The zero words must be RAW zeros, not masked relocation fields
+    (masking zeroes relocated fields, which is why ~30% of masked bodies end in a
+    zero word) -- hence the no-relocation-in-the-tail test.  Only the RETAIL side
+    is trimmed: our COMDATs carry no inter-function padding.  Used only on the
+    non-vacuous general path; the vacuous branch and locate_retail stay exact."""
+    n = len(ob[0])
+    if len(rt[0]) <= n or rt[0][:n] != ob[0] or ob[0][-4:] != _BLR:
+        return False
+    if any(o + 4 > n for (o, _nm, _t) in rt[1]):
+        return False
+    tail = rt[0][n:]
+    if _SELF_BREAK_TAILPAD:
+        # --self-break-tailpad ONLY: drop the zero-tail test (any tail admitted).
+        return len(tail) % 4 == 0
+    return len(tail) % 4 == 0 and tail == b"\0" * len(tail)
+
+
+# ★ W16-JH.  Set ONLY by --self-break-tailpad, so the TAIL-PAD DECOY controls
+# can be watched going red (house pattern: a control nobody has seen fail is an
+# assumption, not a control).
+_SELF_BREAK_TAILPAD = False
+TAILPAD_POS = (0x8274A9D0, "??0DataNode@@QAA@ABV0@@Z")
+
+
+def _retail_name_at(va):
+    """The retail target-obj spelling at `va`: its map name, else fn_<ADDR>.
+    Controls are keyed by ADDRESS so a later map naming cannot strand them
+    (measured: W16-JD named 0x8274A9D0 after these controls were written)."""
+    return _addr_name(va) or "fn_%08X" % va
+
+
+OVERCARVE_POS = (0x82B9F540,
+                 "?_M_advance@?$_Deque_iterator_base@PAVLyricPlate@@@stlpmtx_std@@QAAXH@Z")
+
+
+def overcarve_controls(tgt, ours):
+    """★ W16-JH controls for retail_overcarve.  POSITIVE: fn_82B9F540 (dtk's
+    first half of a split leaf) vs our _M_advance<LyricPlate*>: expect PROVEN.
+    DECOY: the IDENTICAL pair, evaluated while the cached branch census carries
+    ONE extra branch from outside the extent into the tail (what a real
+    tail-call target looks like): expect REFUTED.  Injected by a setup/teardown
+    hook around that one evaluation, so it isolates clause (3) exactly."""
+    X, o = OVERCARVE_POS
+    s = "fn_%08X" % X
+    if s not in tgt:
+        # ★ W16-JC (main 17aaa4298) FIXED this carve at its root -- symbols.txt now
+        # gives 0x82B9F540 size 0x88 and fn_82B9F568 is gone -- which is the
+        # independent confirmation of this rule's diagnosis, and leaves the rule
+        # with no live split in the tree.  The positive is therefore rebuilt from
+        # the REAL retail bytes with ONLY dtk's old split simulated: the first
+        # 0x28 bytes, ending in the relocated `b` into +0x28.  Raw image and branch
+        # census are untouched, so every clause still runs on retail data.
+        full = tgt.get(_retail_name_at(X))
+        if full is not None and len(full[0]) > 0x28:
+            tgt[s] = (full[0][:0x24] + b"\0\0\0\0",
+                      [r for r in full[1] if r[0] < 0x24] + [(0x24, "fn_%08X" % (X + 0x28), 6)],
+                      0x28)
+    if s not in tgt or o not in ours or retail_overcarve(s, tgt[s], ours[o]) is None:
+        raise SystemExit("REFUSING: over-carve positive %s/%s absent or no longer an "
+                         "over-carve -- the controls would be VACUOUS." % (s, o))
+    tail = _ph_addr(tgt[s][1][-1][1])
+    fake_src = 0x82000000                   # a branch source far outside the extent
+
+    def setup():
+        _retail_text_branches()[0][tail].append(fake_src)
+
+    def teardown():
+        _retail_text_branches()[0][tail].remove(fake_src)
+
+    dl = "OVERCARVE DECOY, tail entered from outside (expect REFUTED)"
+    _PAIR_HOOKS[dl] = (setup, teardown)
+    return [("OVERCARVE POSITIVE, one leaf split by dtk (expect PROVEN)", s, o),
+            (dl, s, o)]
+
+
+_PAIR_HOOKS = {}
+
+
+RENAME_POS = (0x826FCCE8, "??1?$ObjPtr@VSynthSample@@@@UAA@XZ")
+
+
+def rename_controls(tgt, ours, mapped):
+    """★ W16-JH controls for CLASS_RENAMES.  POSITIVE: retail fn_826FCCE8 (a
+    ~ObjPtr<T> body storing retail's ObjRef vtable lbl_820009EC) vs OUR
+    ~ObjPtr<SynthSample> (storing ??_7ObjRefOwner@@6B@): expect PROVEN.  DECOY:
+    the same retail body with ONLY that vtable slot re-pointed at a vtable of a
+    different, unrelated retail class (the body's own ObjPtr<SynthSample> vtable
+    lbl_820F5284) -- the rename must not blanket-accept ObjRefOwner: expect
+    REFUTED.  Refuses if the positive does not carry the ObjRef slot."""
+    s, o = _retail_name_at(RENAME_POS[0]), RENAME_POS[1]
+    rt = tgt.get(s)
+    if rt is None or o not in ours or not any(n == "lbl_820009EC" for _o, n, _t in rt[1]):
+        raise SystemExit("REFUSING: rename positive %s/%s absent or no longer stores "
+                         "retail ObjRef's vtable -- the rename controls would be "
+                         "VACUOUS." % (s, o))
+    tgt["__chasetest_rename_decoy__"] = (
+        rt[0], [(x, "lbl_820F5284" if n == "lbl_820009EC" else n, t)
+                for x, n, t in rt[1]], rt[2])
+    return [("RENAME POSITIVE, retail ObjRef vtable vs our ObjRefOwner (expect PROVEN)",
+             s, o),
+            # labelled as BOTH: it is a vtable placeholder slot, so the lax slot
+            # rule (--self-break-slots) must turn it red as well
+            ("RENAME DECOY / SLOT DECOY, ObjRefOwner vs an unrelated retail vtable "
+             "(expect REFUTED)",
+             "__chasetest_rename_decoy__", o)]
+
+
+def tailpad_controls(tgt, ours):
+    """★ W16-JH controls for retail_tail_pad.  POSITIVE: retail fn_8274A9D0 (48 B
+    = DataNode's 11-instruction copy ctor + one alignment word) vs OUR copy ctor.
+    DECOY is that same retail body with ONLY the tail word altered (a `nop`,
+    0x60000000), injected under a reserved name, so it isolates the zero-tail
+    clause.
+    Refuses if the positive pair is absent (the decoy would then test nothing)."""
+    s, o = _retail_name_at(TAILPAD_POS[0]), TAILPAD_POS[1]
+    if s not in tgt or o not in ours or not retail_tail_pad(tgt[s], ours[o]):
+        raise SystemExit("REFUSING: tail-pad positive %s/%s is absent or no longer "
+                         "a pad-only pair -- the tail-pad controls would be VACUOUS."
+                         % (s, o))
+    mb, rl, sz = tgt[s]
+    n = len(ours[o][0])
+    tgt["__chasetest_tailpad_nop__"] = (mb[:n] + b"\x60\x00\x00\x00", rl, sz)
+    # ⚠ No decoy for the "relocation in the tail" clause, DELIBERATELY: it is
+    # implied by _slots_agree (a retail relocation at/past len(ours) can never
+    # pair with one of ours, so RELOC-COUNT / RELOC-SHAPE refuses it anyway).
+    # MEASURED: such a decoy stayed REFUTED under --self-break-tailpad, i.e. it
+    # cannot be made to fail by breaking this rule -- a control that cannot fail
+    # is not a control.  The clause stays as defence in depth.
+    return [("TAIL-PAD POSITIVE, retail = ours + alignment word (expect PROVEN)", s, o),
+            ("TAIL-PAD DECOY, nonzero tail word (expect REFUTED)",
+             "__chasetest_tailpad_nop__", o)]
+
+
 def chase(tgt, ours, survivor, our_name, mapped, depth=0, stack=None, memo=None,
           out=None, maxdepth=12, ctx=None):
     """RECURSIVE T1: verify a fold through relocation-target EQUIVALENCE.
@@ -795,8 +1085,15 @@ def chase(tgt, ours, survivor, our_name, mapped, depth=0, stack=None, memo=None,
         out.append((depth, "VACUOUS", survivor, our_name))
         return False
     if rt[0] != ob[0]:
-        out.append((depth, "BYTES-DIFFER", survivor, our_name))
-        return False
+        oc = None if retail_tail_pad(rt, ob) else retail_overcarve(survivor, rt, ob)
+        if oc is not None:
+            out.append((depth, "RETAIL-OVERCARVE", survivor, our_name))
+            rt = (ob[0], oc, len(ob[0]))
+        elif not retail_tail_pad(rt, ob):
+            out.append((depth, "BYTES-DIFFER", survivor, our_name))
+            return False
+        else:
+            out.append((depth, "RETAIL-TAIL-PAD", survivor, our_name))
     # The general path KEEPS its placeholder tolerance -- see the note inside
     # _slots_agree; removing it regressed a landed positive control.
     ok = _slots_agree(tgt, ours, rt, ob, survivor, our_name, mapped, depth,
@@ -1037,6 +1334,19 @@ def main():
                          "removed (SLOT_POLICY='lax', the old blanket tolerance). "
                          "Every SLOT DECOY control MUST go red and every other "
                          "control must stay green; exits 0 only then.")
+    ap.add_argument("--self-break-tailpad", action="store_true",
+                    help="run --chasetest with retail_tail_pad's zero-tail test "
+                         "REMOVED. Both TAIL-PAD DECOY controls MUST go red and "
+                         "every other control must stay green; exits 0 only then.")
+    ap.add_argument("--self-break-rename", action="store_true",
+                    help="run --chasetest with CLASS_RENAMES accepting ANY retail "
+                         "class for a renamed spelling (witness removed). The RENAME "
+                         "DECOY control MUST go red and every other control must "
+                         "stay green; exits 0 only then.")
+    ap.add_argument("--self-break-overcarve", action="store_true",
+                    help="run --chasetest with retail_overcarve's branch CENSUS "
+                         "removed. The OVERCARVE DECOY control MUST go red and every "
+                         "other control must stay green; exits 0 only then.")
     ap.add_argument("--lax-slots", action="store_true",
                     help="reproduce a pre-W16-JG verdict (blanket placeholder "
                          "tolerance). NEVER use for an admission.")
@@ -1045,6 +1355,15 @@ def main():
         globals()["_SELF_BREAK"] = True
         a.chasetest = True
     if a.self_break_slots:
+        a.chasetest = True
+    if a.self_break_tailpad:
+        globals()["_SELF_BREAK_TAILPAD"] = True
+        a.chasetest = True
+    if a.self_break_rename:
+        globals()["_SELF_BREAK_RENAME"] = True
+        a.chasetest = True
+    if a.self_break_overcarve:
+        globals()["_SELF_BREAK_OVERCARVE"] = True
         a.chasetest = True
 
     mapped = load_mapped()
@@ -1124,6 +1443,9 @@ def main():
                   ("VACUOUS FOLD, destinations proven folded (expect PROVEN)",
                    vf_s, vf_o)]
         pairs += slot_controls(tgt, ours, mapped, al)
+        pairs += tailpad_controls(tgt, ours)
+        pairs += rename_controls(tgt, ours, mapped)
+        pairs += overcarve_controls(tgt, ours)
         a.chase = True
     elif a.pairs:
         pairs = [("", s, o) for s, o in json.load(open(a.pairs))]
@@ -1134,7 +1456,13 @@ def main():
         globals()["SLOT_POLICY"] = "lax"
     rc = 0
     slot_decoy_red = slot_other_red = n_slot_decoys = 0
+    tp_decoy_red = tp_other_red = n_tp_decoys = 0
+    rn_decoy_red = rn_other_red = n_rn_decoys = 0
+    oc_decoy_red = oc_other_red = n_oc_decoys = 0
     for label, s, o in pairs:
+        hook = _PAIR_HOOKS.get(label)
+        if hook:
+            hook[0]()
         verdict, det = adjudicate(tgt, ours, s, o, mapped)
         det.update(uniqueness(tgt, ours, s, o))
         det["survivor_map_resident"] = s in mapped
@@ -1165,9 +1493,14 @@ def main():
             for d, kind, x, y in trace:
                 print("      %s%-22s %s" % ("  " * d, kind, x[:64]))
                 print("      %s%-22s %s" % ("  " * d, "", y[:64]))
+        if hook:
+            hook[1]()
         if a.selftest or a.chasetest:
             want = "REFUTED" if ("NEGATIVE" in label or "DECOY" in label) else "PROVEN"
             n_slot_decoys += "SLOT DECOY" in label
+            n_tp_decoys += "TAIL-PAD DECOY" in label
+            n_rn_decoys += "RENAME DECOY" in label
+            n_oc_decoys += "OVERCARVE DECOY" in label
             if verdict != want:
                 print("  ** CONTROL FAILED: wanted %s **" % want)
                 rc = 1
@@ -1175,6 +1508,43 @@ def main():
                     slot_decoy_red += 1
                 else:
                     slot_other_red += 1
+                if "TAIL-PAD DECOY" in label:
+                    tp_decoy_red += 1
+                else:
+                    tp_other_red += 1
+                if "RENAME DECOY" in label:
+                    rn_decoy_red += 1
+                else:
+                    rn_other_red += 1
+                if "OVERCARVE DECOY" in label:
+                    oc_decoy_red += 1
+                else:
+                    oc_other_red += 1
+    if a.self_break_overcarve:
+        if n_oc_decoys and oc_decoy_red == n_oc_decoys and not oc_other_red:
+            print("\nself-break-overcarve OK -- the OVERCARVE DECOY went RED with the "
+                  "branch census removed, and no other control moved.")
+            return 0
+        print("\nself-break-overcarve FAILED -- %d/%d overcarve decoys red, %d other "
+              "controls red." % (oc_decoy_red, n_oc_decoys, oc_other_red))
+        return 1
+    if a.self_break_rename:
+        if n_rn_decoys and rn_decoy_red == n_rn_decoys and not rn_other_red:
+            print("\nself-break-rename OK -- the RENAME DECOY went RED with the "
+                  "rename witness removed, and no other control moved.")
+            return 0
+        print("\nself-break-rename FAILED -- %d/%d rename decoys red, %d other "
+              "controls red." % (rn_decoy_red, n_rn_decoys, rn_other_red))
+        return 1
+    if a.self_break_tailpad:
+        if n_tp_decoys and tp_decoy_red == n_tp_decoys and not tp_other_red:
+            print("\nself-break-tailpad OK -- all %d TAIL-PAD DECOY controls went RED "
+                  "with the zero-tail test removed, and no other control moved."
+                  % n_tp_decoys)
+            return 0
+        print("\nself-break-tailpad FAILED -- %d/%d tail-pad decoys red, %d other "
+              "controls red." % (tp_decoy_red, n_tp_decoys, tp_other_red))
+        return 1
     if a.self_break_slots:
         # Under --self-break-slots the discharge is removed, so EVERY slot decoy
         # must go red (each was chosen because the lax rule PROVES it -- that is

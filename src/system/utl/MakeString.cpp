@@ -116,20 +116,32 @@ char *NextBuf() {
 FormatString::FormatString() : mBuf(NextBuf()), mBufSize(MAX_BUF_SIZE), mFmtEnd(nullptr) {}
 
 FormatString &FormatString::operator<<(int i) {
+#ifdef HX_NATIVE
     if (mType != kInt) {
         // for whatever reason, this has the FormatString expanded out
         FormatString str("FormatString: '%s' doesn't start with kInt.  Format: '%s'");
         str << mFmt << mFmtBuf;
         TheDebugNotifier << str.Str();
     }
+#endif
+    // retail: no kInt type check -- this overload IS fn_827C40E8, the one 124 B
+    // scalar/pointer body retail's MakeString.cpp keeps (see the note above
+    // operator<<(const char *))
     char tmp = *mFmtEnd;
     *mFmtEnd = '\0';
+#ifdef HX_NATIVE
     int n = Hx_snprintf(mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, i);
+#else
+    // retail fn_827C40E8: the CRT _snprintf directly and no bufExceeded latch
+    int n = _snprintf(mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, i);
+#endif
     *mFmtEnd = tmp;
+#ifdef HX_NATIVE
     if (n < 0 && !bufExceeded) {
         bufExceeded = true;
         MILO_NOTIFY("MakeString() buffer size %d exceeded", MAX_BUF_SIZE);
     }
+#endif
     mBufSize -= n;
     UpdateType();
     return *this;
@@ -149,23 +161,41 @@ const char *FormatString::Str() {
     return mBuf;
 }
 
+// RETAIL (TU5, MakeString.cpp .text 0x827C3D40-0x827C43D4): the TU keeps only
+// FOUR operator<< bodies -- DataNode (216 B), float (128 B), const String &
+// (124 B, fn_827C42C0) and fn_827C40E8 (124 B). fn_827C40E8 is the String &
+// body minus its `lwz r6, 8(r4)`: it hands r4 straight to _snprintf as the
+// vararg. On Xenon every scalar and pointer argument travels in one 64-bit GPR,
+// so int / unsigned / long / unsigned long / long long / unsigned long long /
+// void * / const char * / Symbol all compile to that same body and /OPT:ICF keeps
+// one copy. None of them has a type check, an arg-in-buffer check or the
+// bufExceeded latch; the native build keeps those behind HX_NATIVE.
 FormatString &FormatString::operator<<(const char *cc) {
     if (mType != kStr)
         MILO_NOTIFY(
             "FormatString: '%s' doesn't start with kStr.  Format: '%s'", mFmt, mFmtBuf
         );
+#ifdef HX_NATIVE
     if (cc >= mBuf && cc < mBuf + sizeof(mFmtBuf)) {
         FormatString str("FormatString: arg in buffer");
         TheDebugFailer << str.Str();
     }
+#endif
     char tmp = *mFmtEnd;
     *mFmtEnd = '\0';
+#ifdef HX_NATIVE
     int n = Hx_snprintf(mBuf + sizeof(mFmtBuf) - mBufSize, mBufSize, mFmt, cc);
+#else
+    // retail fn_827C40E8: the CRT _snprintf directly and no bufExceeded latch
+    int n = _snprintf(mBuf + sizeof(mFmtBuf) - mBufSize, mBufSize, mFmt, cc);
+#endif
     *mFmtEnd = tmp;
+#ifdef HX_NATIVE
     if (n < 0 && !bufExceeded) {
         bufExceeded = true;
         MILO_NOTIFY("MakeString() buffer size %d exceeded", MAX_BUF_SIZE);
     }
+#endif
     mBufSize -= n;
     UpdateType();
     return *this;
@@ -215,12 +245,19 @@ FormatString &FormatString::operator<<(void *v) {
         );
     char tmp = *mFmtEnd;
     *mFmtEnd = '\0';
+#ifdef HX_NATIVE
     int n = Hx_snprintf(mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, v);
+#else
+    // retail fn_827C40E8: the CRT _snprintf directly and no bufExceeded latch
+    int n = _snprintf(mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, v);
+#endif
     *mFmtEnd = tmp;
+#ifdef HX_NATIVE
     if (n < 0 && !bufExceeded) {
         bufExceeded = true;
         MILO_NOTIFY("MakeString() buffer size %d exceeded", MAX_BUF_SIZE);
     }
+#endif
     mBufSize -= n;
     UpdateType();
     return *this;
@@ -233,12 +270,19 @@ FormatString &FormatString::operator<<(unsigned int ui) {
         );
     char tmp = *mFmtEnd;
     *mFmtEnd = '\0';
+#ifdef HX_NATIVE
     int n = Hx_snprintf(mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, ui);
+#else
+    // retail fn_827C40E8: the CRT _snprintf directly and no bufExceeded latch
+    int n = _snprintf(mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, ui);
+#endif
     *mFmtEnd = tmp;
+#ifdef HX_NATIVE
     if (n < 0 && !bufExceeded) {
         bufExceeded = true;
         MILO_NOTIFY("MakeString() buffer size %d exceeded", MAX_BUF_SIZE);
     }
+#endif
     mBufSize -= n;
     UpdateType();
     return *this;
@@ -251,12 +295,19 @@ FormatString &FormatString::operator<<(long l) {
         );
     char tmp = *mFmtEnd;
     *mFmtEnd = '\0';
+#ifdef HX_NATIVE
     int n = Hx_snprintf(mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, l);
+#else
+    // retail fn_827C40E8: the CRT _snprintf directly and no bufExceeded latch
+    int n = _snprintf(mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, l);
+#endif
     *mFmtEnd = tmp;
+#ifdef HX_NATIVE
     if (n < 0 && !bufExceeded) {
         bufExceeded = true;
         MILO_NOTIFY("MakeString() buffer size %d exceeded", MAX_BUF_SIZE);
     }
+#endif
     mBufSize -= n;
     UpdateType();
     return *this;
@@ -269,12 +320,19 @@ FormatString &FormatString::operator<<(unsigned long ul) {
         );
     char tmp = *mFmtEnd;
     *mFmtEnd = '\0';
+#ifdef HX_NATIVE
     int n = Hx_snprintf(mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, ul);
+#else
+    // retail fn_827C40E8: the CRT _snprintf directly and no bufExceeded latch
+    int n = _snprintf(mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, ul);
+#endif
     *mFmtEnd = tmp;
+#ifdef HX_NATIVE
     if (n < 0 && !bufExceeded) {
         bufExceeded = true;
         MILO_NOTIFY("MakeString() buffer size %d exceeded", MAX_BUF_SIZE);
     }
+#endif
     mBufSize -= n;
     UpdateType();
     return *this;
@@ -287,12 +345,19 @@ FormatString &FormatString::operator<<(long long ll) {
         );
     char tmp = *mFmtEnd;
     *mFmtEnd = '\0';
+#ifdef HX_NATIVE
     int n = Hx_snprintf(mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, ll);
+#else
+    // retail fn_827C40E8: the CRT _snprintf directly and no bufExceeded latch
+    int n = _snprintf(mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, ll);
+#endif
     *mFmtEnd = tmp;
+#ifdef HX_NATIVE
     if (n < 0 && !bufExceeded) {
         bufExceeded = true;
         MILO_NOTIFY("MakeString() buffer size %d exceeded", MAX_BUF_SIZE);
     }
+#endif
     mBufSize -= n;
     UpdateType();
     return *this;
@@ -305,12 +370,19 @@ FormatString &FormatString::operator<<(unsigned long long ull) {
         );
     char tmp = *mFmtEnd;
     *mFmtEnd = '\0';
+#ifdef HX_NATIVE
     int n = Hx_snprintf(mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, ull);
+#else
+    // retail fn_827C40E8: the CRT _snprintf directly and no bufExceeded latch
+    int n = _snprintf(mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, ull);
+#endif
     *mFmtEnd = tmp;
+#ifdef HX_NATIVE
     if (n < 0 && !bufExceeded) {
         bufExceeded = true;
         MILO_NOTIFY("MakeString() buffer size %d exceeded", MAX_BUF_SIZE);
     }
+#endif
     mBufSize -= n;
     UpdateType();
     return *this;
@@ -411,12 +483,19 @@ FormatString &FormatString::operator<<(Symbol s) {
         );
     char tmp = *mFmtEnd;
     *mFmtEnd = '\0';
+#ifdef HX_NATIVE
     int n = Hx_snprintf(mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, s.Str());
+#else
+    // retail fn_827C40E8: the CRT _snprintf directly and no bufExceeded latch
+    int n = _snprintf(mBuf + MAX_BUF_SIZE - mBufSize, mBufSize, mFmt, s.Str());
+#endif
     *mFmtEnd = tmp;
+#ifdef HX_NATIVE
     if (n < 0 && !bufExceeded) {
         bufExceeded = true;
         MILO_NOTIFY("MakeString() buffer size %d exceeded", MAX_BUF_SIZE);
     }
+#endif
     mBufSize -= n;
     UpdateType();
     return *this;

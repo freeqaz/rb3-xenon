@@ -600,8 +600,10 @@ ObjOwnerPtr<T>::ObjOwnerPtr(ObjRefOwner *owner, T *ptr) {
 
 template <class T>
 ObjOwnerPtr<T>::ObjOwnerPtr(const ObjOwnerPtr &o)
-    : mOwner(o.mOwner), mObject(nullptr) {
-    mObject = o.mObject;
+    // RETAIL (TU5 fn_8236DEA0, ObjOwnerPtr<CharInterest>): vptr, then mOwner, then
+    // mObject stored ONCE straight from `o` -- no null store first. The old
+    // `mObject(nullptr)` + reassignment compiled an extra `li r10,0; stw r10,8(r3)`.
+    : mOwner(o.mOwner), mObject(o.mObject) {
     if (mObject)
         mObject->AddRef(OwnerRef());
 }
@@ -671,10 +673,21 @@ bool ObjOwnerPtr<T>::Load(BinStream &bs, bool print, ObjectDir *dir) {
     }
     return true;
 }
-#endif
 
-// template <class T1>
-// BinStream &operator<<(BinStream &bs, const ObjOwnerPtr<T1> &ptr);
+// RETAIL: the same out-of-line body as operator<<(BinStream &, const ObjPtr<T1> &)
+// above -- `bs << (obj ? obj->Name() : "")`, mObject at +8 and Hmx::Object::mName
+// read directly. Retail 0x8238B5B8 (80 B) is one of that body's four survivors and
+// is what retail's operator<<(BinStream &, const vector<ObjOwnerPtr<CharClip>> &)
+// calls per element. The match build declared this overload (Object.h) but never
+// defined it, so every caller referenced an undefined symbol. Native supplies its
+// own definition in its link glue, hence match-build only.
+template <class T1>
+BinStream &operator<<(BinStream &bs, const ObjOwnerPtr<T1> &f) {
+    const char *objName = f ? f->Name() : "";
+    bs << objName;
+    return bs;
+}
+#endif
 
 template <class T1>
 BinStream &operator>>(BinStream &bs, ObjOwnerPtr<T1> &ptr) {
@@ -1370,33 +1383,38 @@ typename ObjPtrList<T1, T2>::Node *ObjPtrList<T1, T2>::Unlink(Node *node) {
     MILO_ASSERT(node != NULL && mNodes != NULL, 0x26B);
     // List-as-ref: Release `this` (the ring-ref), not the thin node. The thin
     // node has no dtor, so erase()'s `delete node` only pool-frees — no double
-    // release. Matches binary fn_823A2538 and ObjPtrList::unlink().
+    // release.
+    //
+    // RETAIL (TU5 fn_8271A138, 224 B, ONE body for every T -- the
+    // ?clear@?$ObjPtrList@... group at 0x8249d1f0 calls it for all of them):
+    // the three arms only pick the node to return; `mSize--` and the return
+    // are shared at the bottom (`lwz r11,4(r31); subi; stw` once, after every
+    // arm, with the result already in r3).
     if (node->mObject)
         node->mObject->Release(this);
+    Node *ret;
     if (node == mNodes) {
         if (mNodes->next != nullptr) {
             mNodes->next->prev = mNodes->prev;
             mNodes = mNodes->next;
         } else {
             mNodes = nullptr;
-            mSize--;
-            return nullptr;
         }
+        ret = mNodes;
     } else if (node == mNodes->prev) {
-        // Removing tail
-        mNodes->prev = node->prev;
+        // Removing tail -- retail steps from the tail it just compared
+        // against (`mNodes->prev->prev`), not from `node`
+        mNodes->prev = mNodes->prev->prev;
         mNodes->prev->next = nullptr;
-        mSize--;
-        return mNodes->prev;
+        ret = mNodes->prev;
     } else {
         // Middle node
         node->prev->next = node->next;
         node->next->prev = node->prev;
-        mSize--;
-        return node->next;
+        ret = node->next;
     }
     mSize--;
-    return mNodes;
+    return ret;
 }
 
 template <class T1, class T2>
