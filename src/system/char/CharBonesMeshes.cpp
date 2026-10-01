@@ -1,6 +1,12 @@
 // Retail inlines the ObjPtr two-arg ctor at this TU's member-init sites; the
 // in-class (plain inline) definition lets MSVC choose per site, as retail did.
 #define RB3_OBJPTR_INLINE_TWOARG_CTOR
+// Retail also inlines the owner-only ObjOwnerPtr<RndTransformable> ctor where
+// ObjVector<ObjOwnerPtr<RndTransformable>> builds its fill value (resize,
+// 0x8237C788) and its insert item (PropSync): owner, null object, vtable
+// stores and no bl ??0ObjOwnerPtr.
+#define RB3_OBJOWNERPTR_INLINE_OWNER_CTOR
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
 #include "char/CharBonesMeshes.h"
 #include "char/CharUtl.h"
 #include "math/Rot.h"
