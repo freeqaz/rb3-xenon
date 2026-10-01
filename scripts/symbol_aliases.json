@@ -75857,7 +75857,7 @@
   {
    "name": "0?$_Deque_base",
    "address": "0x82ba23d8",
-   "survivor": "??0?$_Deque_base@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@PAVTubePlate@@@1@I@Z",
+   "survivor": "??0?$_Deque_base@VRangeShift@VocalTrack@@V?$StlNodeAlloc@VRangeShift@VocalTrack@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@VRangeShift@VocalTrack@@@1@I@Z",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -75867,7 +75867,14 @@
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 1 other group(s) at 2 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 1 of the 2 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 1 other group(s) at 2 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 1 of the 2 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md.",
+   "rekeyed": [
+    {
+     "from": "??0?$_Deque_base@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@PAVTubePlate@@@1@I@Z",
+     "lane": "W16-KD 2026-10-01",
+     "why": "W16-KD 2026-10-01: survivor re-keyed to the map name now at this address. The four _Deque_base ctors at 0x82ba2318/2378/23d8/2438 call _M_initialize_map bodies whose buffer constants give 32x4 B, 16x8 B, 5x24 B and 10x12 B elements, i.e. pointer, pair<RndMesh*,float>, VocalTrack::RangeShift and VocalTrack::LyricShift; the map had the pointer names on the 8 B and 24 B bodies and the pair name on the 12 B body. The RangeShift spelling withdrawn below as a folded member is this body's own name, not a fold."
+    }
+   ]
   },
   {
    "name": "_EAppScoreDisplay",
@@ -86327,7 +86334,7 @@
   {
    "name": "0?$_Deque_base",
    "address": "0x82ba2378",
-   "survivor": "??0?$_Deque_base@PAVTambourineGem@@V?$StlNodeAlloc@PAVTambourineGem@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@PAVTambourineGem@@@1@I@Z",
+   "survivor": "??0?$_Deque_base@U?$pair@PAVRndMesh@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMesh@@M@stlpmtx_std@@@2@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@U?$pair@PAVRndMesh@@M@stlpmtx_std@@@1@I@Z",
    "folded": [
     "??0?$_Deque_base@U?$pair@W4KeyframeCmd@LightPreset@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@W4KeyframeCmd@LightPreset@@M@stlpmtx_std@@@2@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@U?$pair@W4KeyframeCmd@LightPreset@@M@stlpmtx_std@@@1@I@Z"
    ],
@@ -86358,6 +86365,13 @@
        "disposition": "dropped_singleton"
       }
      ]
+    }
+   ],
+   "rekeyed": [
+    {
+     "from": "??0?$_Deque_base@PAVTambourineGem@@V?$StlNodeAlloc@PAVTambourineGem@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@PAVTambourineGem@@@1@I@Z",
+     "lane": "W16-KD 2026-10-01",
+     "why": "W16-KD 2026-10-01: survivor re-keyed to the map name now at this address. The four _Deque_base ctors at 0x82ba2318/2378/23d8/2438 call _M_initialize_map bodies whose buffer constants give 32x4 B, 16x8 B, 5x24 B and 10x12 B elements, i.e. pointer, pair<RndMesh*,float>, VocalTrack::RangeShift and VocalTrack::LyricShift; the map had the pointer names on the 8 B and 24 B bodies and the pair name on the 12 B body."
     }
    ]
   },
@@ -87625,10 +87639,8 @@
   {
    "name": "0?$_Deque_base",
    "address": "0x82ba2438",
-   "survivor": "??0?$_Deque_base@U?$pair@PAVRndMesh@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMesh@@M@stlpmtx_std@@@2@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@U?$pair@PAVRndMesh@@M@stlpmtx_std@@@1@I@Z",
-   "folded": [
-    "??0?$_Deque_base@VLyricShift@VocalTrack@@V?$StlNodeAlloc@VLyricShift@VocalTrack@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@VLyricShift@VocalTrack@@@1@I@Z"
-   ],
+   "survivor": "??0?$_Deque_base@VLyricShift@VocalTrack@@V?$StlNodeAlloc@VLyricShift@VocalTrack@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@VLyricShift@VocalTrack@@@1@I@Z",
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [],
    "repair": {
@@ -87656,6 +87668,13 @@
        "disposition": "dropped_singleton"
       }
      ]
+    }
+   ],
+   "rekeyed": [
+    {
+     "from": "??0?$_Deque_base@U?$pair@PAVRndMesh@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMesh@@M@stlpmtx_std@@@2@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@U?$pair@PAVRndMesh@@M@stlpmtx_std@@@1@I@Z",
+     "lane": "W16-KD 2026-10-01",
+     "why": "W16-KD 2026-10-01: survivor re-keyed to the map name now at this address. The four _Deque_base ctors at 0x82ba2318/2378/23d8/2438 call _M_initialize_map bodies whose buffer constants give 32x4 B, 16x8 B, 5x24 B and 10x12 B elements, i.e. pointer, pair<RndMesh*,float>, VocalTrack::RangeShift and VocalTrack::LyricShift; the map had the pointer names on the 8 B and 24 B bodies and the pair name on the 12 B body. The LyricShift spelling restored here as folded is this body's own name; the pair<RndMesh*,float> spelling moves to 0x82ba2378."
     }
    ]
   },
