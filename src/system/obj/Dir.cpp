@@ -389,15 +389,21 @@ void ObjectDir::Save(BinStream &bs) {
     }
     bs << mViewports;
     bs << mCurViewportID;
+#ifdef HX_NATIVE
     bs << (unsigned char)InlineProxyType();
+#else
+    // Retail 0x827540C0 writes the mInlineProxy byte itself.
+    bs << mInlineProxy;
+#endif
     bs << mProxyFile;
     std::vector<ObjDirPtr<ObjectDir> > inlinedSubDirs;
     std::vector<ObjDirPtr<ObjectDir> > notInlinedSubDirs;
     if (SaveSubdirs()) {
         for (int i = 0; i < mSubDirs.size(); i++) {
-            if (mSubDirs[i]) {
-                ObjDirPtr<ObjectDir> &curSubDir = mSubDirs[i];
-                if (curSubDir->InlineSubDirType() != kInlineNever) {
+            ObjDirPtr<ObjectDir> &curSubDir = mSubDirs[i];
+            ObjectDir *subDir = curSubDir;
+            if (subDir) {
+                if (subDir->InlineSubDirType() != kInlineNever) {
                     inlinedSubDirs.push_back(curSubDir);
                 } else {
                     notInlinedSubDirs.push_back(curSubDir);
@@ -419,15 +425,27 @@ void ObjectDir::Save(BinStream &bs) {
     boolVec.resize(mInlinedDirs.size(), false);
     for (int i = 0; i < mInlinedDirs.size(); i++) {
         InlinedDir &id = mInlinedDirs[i];
+        FilePath &file = id.file;
         switch (id.mType) {
+#ifdef HX_NATIVE
         case kInlineCachedShared:
             id.shared = true;
         case kInlineCached: {
             bool old = gLoadingProxyFromDisk;
             if (bs.Cached()) {
+#else
+        // Retail: both cached kinds share one block that re-tests for the
+        // shared kind, and the proxy flag is saved only on the cached path.
+        case kInlineCached:
+        case kInlineCachedShared: {
+            if (id.mType == kInlineCachedShared)
+                id.shared = true;
+            if (bs.Cached()) {
+                bool old = gLoadingProxyFromDisk;
+#endif
                 gLoadingProxyFromDisk = false;
                 DirLoader::SetCacheMode(false);
-                id.dir.LoadFile(id.file, false, false, kLoadFront, true);
+                id.dir.LoadFile(file, false, false, kLoadFront, true);
                 DirLoader::SetCacheMode(true);
                 gLoadingProxyFromDisk = old;
             } else {
@@ -439,7 +457,7 @@ void ObjectDir::Save(BinStream &bs) {
             MILO_ASSERT(id.mType == kInlineAlways, 0x211);
             int gg = 0;
             for (; gg != mSubDirs.size(); gg++) {
-                if (mSubDirs[gg].GetFile() == id.file)
+                if (mSubDirs[gg].GetFile() == file)
                     break;
             }
             MILO_ASSERT(gg < mSubDirs.size(), 0x21A);
@@ -451,13 +469,21 @@ void ObjectDir::Save(BinStream &bs) {
             break;
         }
         }
+#ifdef HX_NATIVE
         if (id.dir) {
-            if (id.shared && !bs.AddSharedInlined(id.file)) {
+            if (id.shared && !bs.AddSharedInlined(file)) {
                 boolVec[i] = true;
             }
         } else {
             boolVec[i] = true;
         }
+#else
+        if (id.dir) {
+            boolVec[i] = id.shared && !bs.AddSharedInlined(file);
+        } else {
+            boolVec[i] = true;
+        }
+#endif
         bs << boolVec[i];
     }
 
