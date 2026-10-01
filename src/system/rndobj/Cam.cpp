@@ -91,8 +91,18 @@ BEGIN_PROPSYNCS(RndCam)
 #endif
 END_PROPSYNCS
 
+#ifndef HX_NATIVE
+// Retail Save (0x82433E30) writes the revision from an initialized .data int
+// (0x82C7045C, 12) rather than an immediate.
+static int gRev_Cam = 0xC;
+#endif
+
 BEGIN_SAVES(RndCam)
+#ifdef HX_NATIVE
     SAVE_REVS(0xC, 0)
+#else
+    bs << gRev_Cam;
+#endif
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndTransformable)
     bs << mNearPlane << mFarPlane << mYFov;
@@ -120,16 +130,24 @@ END_COPYS
 INIT_REVS(12, 0)
 
 BEGIN_LOADS(RndCam)
+#ifdef HX_NATIVE
     LOAD_REVS(bs)
     ASSERT_REVS(12, 0)
-    if (d.rev > 10) {
+    int rev = d.rev;
+#else
+    // Retail (0x82435300) reads the revision into a plain int and compares
+    // it whole; it builds no BinStreamRev.
+    int rev;
+    bs >> rev;
+#endif
+    if (rev > 10) {
         Hmx::Object::Load(bs);
     }
     RndTransformable::Load(bs);
-    if (d.rev < 10) {
+    if (rev < 10) {
         RndDrawable::DumpLoad(bs);
     }
-    if (d.rev == 8) {
+    if (rev == 8) {
         ObjPtrList<Hmx::Object> objList(this, kObjListNoNull);
         int x;
         bs >> x >> objList;
@@ -137,25 +155,25 @@ BEGIN_LOADS(RndCam)
     bs >> mNearPlane;
     bs >> mFarPlane;
     bs >> mYFov;
-    if (d.rev < 0xC) {
+    if (rev < 0xC) {
         mYFov = ConvertFov(mYFov, 0.75f);
     }
-    if (d.rev < 2) {
+    if (rev < 2) {
         int x;
         bs >> x;
     }
     bs >> mScreenRect;
-    if (d.rev > 0 && d.rev < 3) {
+    if (rev > 0 && rev < 3) {
         int x;
         bs >> x;
     }
-    if (d.rev > 3) {
+    if (rev > 3) {
         bs >> mZRange;
     }
-    if (d.rev > 4) {
+    if (rev > 4) {
         bs >> mTargetTex;
     }
-    if (d.rev == 6) {
+    if (rev == 6) {
         int x;
         bs >> x;
     }
