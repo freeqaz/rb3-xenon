@@ -388,7 +388,12 @@
             "system/os/HDCache.cpp": "NonMatching",
             "system/utl/CacheMgr_Xbox.cpp": "NonMatching",
             "system/rndobj/SIVideo.cpp": "NonMatching",
-            "system/rndobj/ShadowMap.cpp": "NonMatching",
+            "system/rndobj/ShadowMap.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_NOTIFY_ONCE_EVAL"
+                ]
+            },
             "system/rndobj/ColorXfm.cpp": "NonMatching",
             "system/rndobj/BoxMap.cpp": "NonMatching",
             "system/rndobj/VelocityBuffer.cpp": "NonMatching",
