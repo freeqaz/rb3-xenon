@@ -244,7 +244,7 @@ void BandSongMgr::ContentMounted(const char *c1, const char *c2) {
     unsigned long bits;
     TheContentMgr.GetLicenseBits(name, bits);
     bool licensed = bits == 1;
-    Symbol *it = std::find(unk11c.begin(), unk11c.end(), name);
+    std::vector<Symbol>::iterator it = std::find(unk11c.begin(), unk11c.end(), name);
     bool found = it != unk11c.end();
     if (licensed && !found) {
         unk11c.push_back(name);
