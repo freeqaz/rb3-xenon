@@ -419,8 +419,14 @@ DataNode RndTransformable::OnGetLocalPosIndex(const DataArray *a) {
 }
 
 DataNode RndTransformable::OnGetLocalRot(const DataArray *a) {
+    // GetLocalRot's body, inline in retail (0x823F7ED0 calls Normalize and
+    // MakeEuler directly).
+    Hmx::Matrix3 m;
+    m = mLocalXfm.m;
+    Normalize(m, m);
     Vector3 v;
-    GetLocalRot(v);
+    MakeEuler(m, v);
+    v *= RAD2DEG;
     *a->Var(2) = v.x;
     *a->Var(3) = v.y;
     *a->Var(4) = v.z;
