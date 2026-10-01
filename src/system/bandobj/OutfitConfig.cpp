@@ -4,6 +4,7 @@
 // ctor section for why the same gate covers both the two-arg and copy ctors
 // without a new Object.h declaration. Must precede every include.
 #define RB3_TU_OBJPTR_DEFER_OWNER
+#define RB3_OBJPTR_INLINE_TWOARG_CTOR_DEFER_BOTH 1
 #include "bandobj/OutfitConfig.h"
 #include "bandobj/BandCharacter.h"
 #include "bandobj/BandHeadShaper.h"
