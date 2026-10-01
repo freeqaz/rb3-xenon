@@ -50,7 +50,6 @@ public:
     static int GetAlignWords(int);
 
     int *Alloc(int, int, int &);
-    int *TryAlloc(int, int, int &);
 
     // The temp-allocation scope guard pushes/restores mStrategy directly.
     friend struct MemTemp;

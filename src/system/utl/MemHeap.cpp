@@ -318,7 +318,10 @@ int MemHeap::GetAlignWords(int align) {
     return result;
 }
 
-int *MemHeap::TryAlloc(int sizeWords, int align, int &allocSize) {
+// Retail 0x827bca78 (called directly by MemAlloc @0x827bcf94) is one function:
+// fit, split, and the allocation-failure report inline. MILO_FAIL compiles out
+// of the matching build, so the failure path falls through into the split code.
+int *MemHeap::Alloc(int sizeWords, int align, int &allocSize) {
     FreeBlockInfo info;
     info.mBlock = nullptr;
     info.mPrevBlock = nullptr;
@@ -332,76 +335,11 @@ int *MemHeap::TryAlloc(int sizeWords, int align, int &allocSize) {
     case kLastFit:  LastFit(sizeWords, align, info); break;
     default:
         MILO_ASSERT(false, 0x151);
-        return nullptr;
+        break;
     }
 
-    if (info.mBlock == nullptr) return nullptr;
-
-    FreeBlock *prevBlock = info.mPrevBlock;
-    int blockSize = info.mSizeWords;
-    int padWords = info.mPadWords;
-
-    if (padWords > 8) {
-        FreeBlock *newBlock = (FreeBlock *)((int *)info.mBlock + padWords);
-        int remaining = blockSize - padWords;
-        newBlock->mSizeWords = remaining;
-        newBlock->mNextBlock = info.mBlock->mNextBlock;
-        newBlock->mTimeStamp = info.mBlock->mTimeStamp;
-        InsertFreeBlock(info.mBlock, padWords, prevBlock, newBlock, info.mBlock->mTimeStamp);
-        prevBlock = info.mBlock;
-        info.mBlock = newBlock;
-        blockSize = remaining;
-        padWords = 0;
-    }
-
-    int totalUsed = padWords + sizeWords;
-    int remainder = blockSize - totalUsed;
-
-    if (remainder > 8) {
-        InsertFreeBlock(
-            (FreeBlock *)((int *)info.mBlock + totalUsed), remainder,
-            prevBlock, info.mBlock->mNextBlock, info.mBlock->mTimeStamp
-        );
-    } else {
-        if (prevBlock == nullptr) {
-            mFreeBlockChain = info.mBlock->mNextBlock;
-        } else {
-            prevBlock->mNextBlock = info.mBlock->mNextBlock;
-        }
-        totalUsed = blockSize;
-    }
-
-    unsigned int *header = (unsigned int *)info.mBlock + padWords;
-    *header = (totalUsed << 8) | (padWords << 4) | (*header & 0xF);
-
-    int *ptr = (int *)info.mBlock;
-    int *headerPtr = (int *)header;
-    for (; ptr != headerPtr; ptr++) {
-        *ptr = 0;
-    }
-
-    if (1 <= mDebugLevel) {
-        unsigned int hdr = *header;
-        unsigned int dataWords = (hdr >> 8) - ((hdr >> 4) & 0xF);
-        int *end = (int *)header + dataWords;
-        int *cur = (int *)header + 1;
-        if (cur < end) {
-            for (int count = ((end - cur - 1) >> 2) + 1; count != 0; count--) {
-                cur++;
-                *cur = 0xABCDABCD;
-            }
-        }
-    }
-
-    allocSize = *header >> 8;
-    return (int *)(header + 1);
-}
-
-int *MemHeap::Alloc(int sizeWords, int align, int &allocSize) {
-    int *result = TryAlloc(sizeWords, align, allocSize);
-    if (result == nullptr) {
-        // Retail (fn_827BCA78): 4-ref FreeBlockStats, then a default-constructed
-        // String that the report is streamed into -- not String(const char*).
+    FreeBlock *block = info.mBlock;
+    if (block == nullptr) {
         int lFrags, rFrags, freeBytes, biggest;
         FreeBlockStats(lFrags, rFrags, freeBytes, biggest);
         bool isMain = MainThread();
@@ -433,8 +371,60 @@ int *MemHeap::Alloc(int sizeWords, int align, int &allocSize) {
         );
         MemPrintOverview(kNoHeap, msg);
         MILO_FAIL(msg.c_str());
+#ifdef HX_NATIVE
+        return nullptr;
+#endif
     }
-    return result;
+
+    if (info.mPadWords > 8) {
+        FreeBlock *newBlock = (FreeBlock *)((int *)block + info.mPadWords);
+        info.mBlock = newBlock;
+        int newSize = info.mSizeWords - info.mPadWords;
+        info.mSizeWords = newSize;
+        unsigned int ts = block->mTimeStamp;
+        FreeBlock *next = block->mNextBlock;
+        newBlock->mSizeWords = newSize;
+        newBlock->mNextBlock = next;
+        newBlock->mTimeStamp = ts;
+        InsertFreeBlock(block, info.mPadWords, info.mPrevBlock, newBlock, newBlock->mTimeStamp);
+        info.mPadWords = 0;
+        info.mPrevBlock = block;
+    }
+
+    int totalUsed = sizeWords + info.mPadWords;
+    int remainder = info.mSizeWords - totalUsed;
+    if (remainder > 8) {
+        InsertFreeBlock(
+            (FreeBlock *)((int *)info.mBlock + totalUsed), remainder, info.mPrevBlock,
+            info.mBlock->mNextBlock, info.mBlock->mTimeStamp
+        );
+    } else {
+        totalUsed = info.mSizeWords;
+        if (info.mPrevBlock == nullptr) {
+            mFreeBlockChain = info.mBlock->mNextBlock;
+        } else {
+            info.mPrevBlock->mNextBlock = info.mBlock->mNextBlock;
+        }
+    }
+
+    int padWords = info.mPadWords;
+    unsigned int *header = (unsigned int *)info.mBlock + padWords;
+    *header = (totalUsed << 8) | ((padWords & 0xF) << 4) | (*header & 0xF);
+
+    for (unsigned int *p = header - ((*header >> 4) & 0xF); p != header; p++) {
+        *p = 0;
+    }
+
+    if (1 <= mDebugLevel) {
+        unsigned int hdr = *header;
+        int *end = (int *)header + ((hdr >> 8) - ((hdr >> 4) & 0xF));
+        for (int *cur = (int *)header + 1; cur < end; cur++) {
+            *cur = 0xABCDABCD;
+        }
+    }
+
+    allocSize = *header >> 8;
+    return (int *)(header + 1);
 }
 
 bool FreeBlock::AttemptMerge(FreeBlock *next, int debugLevel) {
@@ -483,18 +473,12 @@ int *MemHeap::Truncate(int *ptr, int newSizeWords, int &allocSize) {
         for (next = mFreeBlockChain; next != nullptr && (int *)next < (int *)headerPtr; next = next->mNextBlock) {
             prev = next;
         }
-        int ts = gTimeStamp;
         FreeBlock *newFree = (FreeBlock *)((int *)ptr + newSizeWords);
-        gTimeStamp++;
-        InsertFreeBlock(newFree, truncWords, prev, next, ts);
+        InsertFreeBlock(newFree, truncWords, prev, next, gTimeStamp++);
         if (1 <= mDebugLevel) {
             int *end = (int *)newFree + newFree->mSizeWords;
-            if ((int *)newFree + 3 < end) {
-                int *cur = (int *)newFree + 2;
-                for (unsigned int count = (((unsigned int)end - (unsigned int)((int *)newFree + 3)) - 1) / 4 + 1; count != 0; count--) {
-                    cur++;
-                    *cur = 0xDEADDEAD;
-                }
+            for (int *cur = (int *)newFree + 3; cur < end; cur++) {
+                *cur = 0xDEADDEAD;
             }
         }
         if (next != nullptr) {
