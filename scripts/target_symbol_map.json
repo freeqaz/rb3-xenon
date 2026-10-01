@@ -18310,7 +18310,7 @@
  "0x82675618": "?Handle@StoreSongSortNode@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82675850": "??0StoreSongSortNode@@QAA@PAVSongSortCmp@@PAVStoreOffer@@@Z",
  "0x826758f8": "?GetType@StoreSongSortNode@@UBA?AW4SongNodeType@@XZ",
- "0x82675900": "??_GTrainerChallenge@@UAAPAXI@Z",
+ "0x82675900": "??_GLeafSortNode@@UAAPAXI@Z",
  "0x82675960": "?StaticClassName@FadePanel@@SA?AVSymbol@@XZ",
  "0x826759e0": "?NewObject@FadePanel@@SAPAVObject@Hmx@@XZ",
  "0x82675a70": "??1Interpolator@@UAA@XZ",

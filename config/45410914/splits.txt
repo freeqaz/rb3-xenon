@@ -8594,9 +8594,11 @@ band3/meta_band/TrainerProvider.cpp:
 
 band3/meta_band/StoreSongSortNode.cpp:
 	.pdata      start:0x8222F988 end:0x8222FA48
+	.pdata      start:0x8222FA48 end:0x8222FA50
 	.text       start:0x82675098 end:0x826758E4
 	.text       start:0x826758E8 end:0x826758F8
 	.text       start:0x826758F8 end:0x82675900
+	.text       start:0x82675900 end:0x82675958
 
 band3/game/PlayerBehavior.cpp:
 	.pdata      start:0x82236A50 end:0x82236A58
@@ -9591,7 +9593,7 @@ system/bandobj/BandTrack.cpp:
 band3/game/Game.cpp:
 	.pdata      start:0x821FFFC0 end:0x821FFFD0
 	.pdata      start:0x82200448 end:0x82200460
-	.pdata      start:0x8222FA48 end:0x8222FAD8
+	.pdata      start:0x8222FA50 end:0x8222FAD8
 	.pdata      start:0x8222FAD8 end:0x8222FCC0
 	.pdata      start:0x8222FCC0 end:0x8222FCC8
 	.pdata      start:0x8222FCC8 end:0x8222FCD0
@@ -9614,7 +9616,7 @@ band3/game/Game.cpp:
 	.pdata      start:0x822303E0 end:0x82230430
 	.text       start:0x8235B9F8 end:0x8235BA78
 	.text       start:0x8235F770 end:0x8235F84C
-	.text       start:0x82675900 end:0x82675DE8
+	.text       start:0x82675958 end:0x82675DE8
 	.text       start:0x82675DE8 end:0x82676F1C
 	.text       start:0x82676F20 end:0x82676F88
 	.text       start:0x82676F88 end:0x82677000
