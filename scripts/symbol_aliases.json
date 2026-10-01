@@ -2461,7 +2461,6 @@
     "??$MakeString@VSymbol@@V1@V1@@@YAPBDPBDVSymbol@@11@Z",
     "??$MakeString@HPAUXNDNS@@PBD@@YAPBDPBDHPAUXNDNS@@0@Z",
     "??$MakeString@KKJ@@YAPBDPBDKKJ@Z",
-    "??$MakeString@KPBDH@@YAPBDPBDK0H@Z",
     "??$MakeString@PAHHH@@YAPBDPBDPAHHH@Z",
     "??$MakeString@PBDHPBD@@YAPBDPBD0H0@Z",
     "??$MakeString@PBDPBDH@@YAPBDPBD00H@Z",
@@ -2471,7 +2470,15 @@
     "??$MakeString@KKK@@YAPBDPBDKKK@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 20 folded spelling(s), 20 census sites over 5 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??$MakeString@KPBDH@@YAPBDPBDK0H@Z",
+     "lane": "W16-JH 2026-10-01",
+     "class": "UNPROVEN_OURS_NOT_COMPILED",
+     "disposition": "membership withdrawn as UNPROVEN (NOT refuted), group kept",
+     "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. On main 8091a837c our build no longer compiles ??$MakeString@KPBDH@@YAPBDPBDK0H@Z, so retail bytes cannot decide it (chase vs the address's map name ??$MakeString@VSymbol@@PBDPBD@@YAPBDPBDVSymbol@@00@Z: MISSING(ours)). RESTORE when compiled and chase-proven."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -21347,30 +21354,20 @@
    "address": "0x82706100",
    "survivor": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
    "folded": [
-    "??$_Copy_Construct@U?$pair@$$CBVString@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@V1@@0@ABU10@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x364ee173@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
-    "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z"
+    "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -22001,6 +21998,76 @@
      "class": "PLACEHOLDER_SLOT_CALLEE_LOCATED_ELSEWHERE",
      "disposition": "membership withdrawn, group kept",
      "evidence": "tools/alias_placeholder_slot_audit.py: a relocation slot whose retail target is unnamed was tolerated on trust when this membership was admitted. Decided on retail bytes: CALLEE-LOCATED-ELSEWHERE @+0x24 retail fn_82706068 vs ours ??0?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std -- our ??0?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeS is PROVEN to be retail ??0?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z, not fn_82706068; SLOT-CONTRADICTED:CALLEE-LOCATED-ELSEWHERE @+? retail fn_82706068 vs ours ??0?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std -- in strict chase at depth 1"
+    },
+    {
+     "spelling": "??$_Copy_Construct@U?$pair@$$CBVString@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@V1@@0@ABU10@@Z",
+     "lane": "W16-JH 2026-10-01",
+     "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+     "disposition": "membership withdrawn, group kept",
+     "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706100, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (NO-RETAIL). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$Obj with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSeqInst@@@@QAA@ABV0@@Z and our callee ??0?$pair@$$CBVString@@V1@@stlpmtx_std@@QAA@ABU01@@Z has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+    },
+    {
+     "spelling": "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
+     "lane": "W16-JH 2026-10-01",
+     "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+     "disposition": "membership withdrawn, group kept",
+     "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706100, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (NO-RETAIL). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$Obj with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSeqInst@@@@QAA@ABV0@@Z and our callee ??0LocalizedName@HamMove@@QAA@ABU01@@Z has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W16-JH 2026-10-01",
+     "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+     "disposition": "membership withdrawn, group kept",
+     "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706100, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (NO-RETAIL). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$Obj with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSeqInst@@@@QAA@ABV0@@Z and our callee ??0Node@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@QAA@ABU01@@Z has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W16-JH 2026-10-01",
+     "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+     "disposition": "membership withdrawn, group kept",
+     "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706100, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (NO-RETAIL). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$Obj with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSeqInst@@@@QAA@ABV0@@Z and our callee ??0Node@?$ObjPtrVec@VRndTex@@VObjectDir@@@@QAA@ABU01@@Z has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+    },
+    {
+     "spelling": "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
+     "lane": "W16-JH 2026-10-01",
+     "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+     "disposition": "membership withdrawn, group kept",
+     "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706100, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (NO-RETAIL). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$Obj with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSeqInst@@@@QAA@ABV0@@Z and our callee ??0BoneOp@CharSignalApplier@@QAA@ABU01@@Z has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+    },
+    {
+     "spelling": "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
+     "lane": "W16-JH 2026-10-01",
+     "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+     "disposition": "membership withdrawn, group kept",
+     "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706100, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (NO-RETAIL). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$Obj with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSeqInst@@@@QAA@ABV0@@Z and our callee ??0MoveReplacer@@QAA@ABU0@@Z has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W16-JH 2026-10-01",
+     "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+     "disposition": "membership withdrawn, group kept",
+     "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706100, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (NO-RETAIL). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$Obj with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSeqInst@@@@QAA@ABV0@@Z and our callee ??0Node@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@QAA@ABU01@@Z has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W16-JH 2026-10-01",
+     "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+     "disposition": "membership withdrawn, group kept",
+     "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706100, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (NO-RETAIL). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$Obj with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSeqInst@@@@QAA@ABV0@@Z and our callee ??0Node@?$ObjPtrVec@VRndTex@@VObjectDir@@@@QAA@ABU01@@Z has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
+     "lane": "W16-JH 2026-10-01",
+     "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+     "disposition": "membership withdrawn, group kept",
+     "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706100, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (NO-RETAIL). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$Obj with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSeqInst@@@@QAA@ABV0@@Z and our callee ??0?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
+     "lane": "W16-JH 2026-10-01",
+     "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+     "disposition": "membership withdrawn, group kept",
+     "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706100, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (NO-RETAIL). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$Obj with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSeqInst@@@@QAA@ABV0@@Z and our callee ??0?$_Rb_tree@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@PBV1 has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
     }
    ],
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350."
@@ -22948,21 +23015,16 @@
    "address": "0x82706208",
    "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
    "folded": [
-    "??$_Copy_Construct@U?$pair@$$CBVString@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@V1@@0@ABU10@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x364ee173@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
-    "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z"
+    "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -23783,6 +23845,41 @@
      "class": "PLACEHOLDER_SLOT_CALLEE_LOCATED_ELSEWHERE",
      "disposition": "membership withdrawn, group kept",
      "evidence": "tools/alias_placeholder_slot_audit.py: a relocation slot whose retail target is unnamed was tolerated on trust when this membership was admitted. Decided on retail bytes: CALLEE-LOCATED-ELSEWHERE @+0x24 retail fn_82706170 vs ours ??0?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@QAA@ABU01@@Z -- our ??0?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_s is PROVEN to be retail fn_822E4FD8, not fn_82706170; SLOT-CONTRADICTED:CALLEE-LOCATED-ELSEWHERE @+? retail fn_82706170 vs ours ??0?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@QAA@ABU01@@Z | o -- in strict chase at depth 1"
+    },
+    {
+     "spelling": "??$_Copy_Construct@U?$pair@$$CBVString@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@V1@@0@ABU10@@Z",
+     "lane": "W16-JH 2026-10-01",
+     "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+     "disposition": "membership withdrawn, group kept",
+     "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706208, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (LAX-ALSO-FAILS). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSequence@@@@V1@@stlpmtx_std@@YAXPAV?$Ob with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSequence@@@@QAA@ABV0@@Z and our callee ??0?$pair@$$CBVString@@V1@@stlpmtx_std@@QAA@ABU01@@Z has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+    },
+    {
+     "spelling": "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
+     "lane": "W16-JH 2026-10-01",
+     "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+     "disposition": "membership withdrawn, group kept",
+     "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706208, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (LAX-ALSO-FAILS). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSequence@@@@V1@@stlpmtx_std@@YAXPAV?$Ob with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSequence@@@@QAA@ABV0@@Z and our callee ??0LocalizedName@HamMove@@QAA@ABU01@@Z has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+    },
+    {
+     "spelling": "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
+     "lane": "W16-JH 2026-10-01",
+     "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+     "disposition": "membership withdrawn, group kept",
+     "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706208, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (LAX-ALSO-FAILS). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSequence@@@@V1@@stlpmtx_std@@YAXPAV?$Ob with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSequence@@@@QAA@ABV0@@Z and our callee ??0MoveReplacer@@QAA@ABU0@@Z has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
+     "lane": "W16-JH 2026-10-01",
+     "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+     "disposition": "membership withdrawn, group kept",
+     "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706208, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (LAX-ALSO-FAILS). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSequence@@@@V1@@stlpmtx_std@@YAXPAV?$Ob with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSequence@@@@QAA@ABV0@@Z and our callee ??0?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
+     "lane": "W16-JH 2026-10-01",
+     "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+     "disposition": "membership withdrawn, group kept",
+     "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x82706208, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (LAX-ALSO-FAILS). Decided against the address's CURRENT retail name ??$_Param_Construct@V?$ObjPtr@VSequence@@@@V1@@stlpmtx_std@@YAXPAV?$Ob with the strict chase: the slot's retail callee is map-resident ??0?$ObjPtr@VSequence@@@@QAA@ABV0@@Z and our callee ??0?$_Rb_tree@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@PBV1 has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
     }
    ],
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350."
@@ -63522,9 +63619,7 @@
    "name": "0?$ObjDirItr",
    "address": "0x823d1a78",
    "survivor": "??0?$ObjDirItr@VCharClipGroup@@@@QAA@PAVObjectDir@@_N@Z",
-   "folded": [
-    "??0?$ObjDirItr@VObjectDir@@@@QAA@PAVObjectDir@@_N@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 17 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -63663,6 +63758,13 @@
      "class": "PLACEHOLDER_SLOT_UNPROVEN_CALLEE_UNPROVEN",
      "disposition": "membership withdrawn as UNPROVEN (NOT refuted), group kept",
      "evidence": "tools/alias_placeholder_slot_audit.py (W16-JH): this membership's T1 support rested on a relocation slot with an unnamed retail target, which W16-JG's discharge could not close and W16-JH could not prove on retail bytes. CALLEE-UNPROVEN @+0x50 retail fn_823D13E8 vs ours ?Advance@?$ObjDirItr@VWaypoint@@@@AAAXXZ -- retail fn_823D13E8 212 B vs our ?Advance@?$ObjDirItr@VWaypoint@@@@AAAXXZ 212 B; masked bytes equal over the common length; retail bodies byte-equal to our callee: ['?Advance@?$ObjDirItr@VRndAnimatable@@@@AAAXXZ', '?Advance@?$ObjDirItr@VRndPollable@@@@AAAXXZ', '?Advance@?$ObjDirItr@VRndDrawable@@@@AAAXXZ']. RESTORE when the chase proves it (e.g. after the callee port)."
+    },
+    {
+     "spelling": "??0?$ObjDirItr@VObjectDir@@@@QAA@PAVObjectDir@@_N@Z",
+     "lane": "W16-JH 2026-10-01",
+     "class": "UNPROVEN_OURS_NOT_COMPILED",
+     "disposition": "membership withdrawn as UNPROVEN (NOT refuted), group kept",
+     "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. On main 8091a837c our build no longer compiles ??0?$ObjDirItr@VObjectDir@@@@QAA@PAVObjectDir@@_N@Z, so retail bytes cannot decide it (chase vs the address's map name ??0?$ObjDirItr@VCharClipGroup@@@@QAA@PAVObjectDir@@_N@Z: MISSING(ours)). RESTORE when compiled and chase-proven."
     }
    ],
    "repair": {
@@ -80071,9 +80173,7 @@
    "name": "push_back",
    "address": "0x8276cfd0",
    "survivor": "?push_back@?$vector@V?$ObjPtr@VObject@Hmx@@@@V?$StlNodeAlloc@V?$ObjPtr@VObject@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABV?$ObjPtr@VObject@Hmx@@@@@Z",
-   "folded": [
-    "?push_back@?$vector@U?$pair@PAVDataArray@@VDataNode@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVDataArray@@VDataNode@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PAVDataArray@@VDataNode@@@2@@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 4 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -80117,6 +80217,13 @@
       }
      ],
      "why_the_restoration_does_not_stand": "the restoration rested on flat L1_T1 / chase, whose comparator tolerated a relocation slot with an unnamed retail target (icf_alias_build.relocs_agree / _slots_agree on the general path). That is exactly the slot decided here, on retail bytes."
+    },
+    {
+     "spelling": "?push_back@?$vector@U?$pair@PAVDataArray@@VDataNode@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVDataArray@@VDataNode@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PAVDataArray@@VDataNode@@@2@@Z",
+     "lane": "W16-JH 2026-10-01",
+     "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+     "disposition": "membership withdrawn, group kept",
+     "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x8276cfd0, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (LAX-ALSO-FAILS). Decided against the address's CURRENT retail name ?push_back@?$vector@V?$ObjPtr@VObject@Hmx@@@@V?$StlNodeAlloc@V?$ObjPtr with the strict chase: the slot's retail callee is map-resident ??$_Copy_Construct@V?$ObjPtr@VObject@Hmx@@@@@stlpmtx_std@@YAXPAV?$ObjP and our callee ??$_Copy_Construct@U?$pair@PAVDataArray@@VDataNode@@@stlpmtx_std@@@stl has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
     }
    ],
    "repair": {
@@ -84950,11 +85057,17 @@
    "name": "_DLayerDir",
    "address": "0x823294d8",
    "survivor": "??_DLayerDir@@QAAXXZ",
-   "folded": [
-    "??_DSkeletonViz@@QAAXXZ"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??_DSkeletonViz@@QAAXXZ",
+     "lane": "W16-JH 2026-10-01",
+     "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+     "disposition": "membership withdrawn, group kept",
+     "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x823294d8, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (LAX-ALSO-FAILS). Decided against the address's CURRENT retail name ??_DLayerDir@@QAAXXZ with the strict chase: the slot's retail callee is map-resident ??1LayerDir@@UAA@XZ and our callee ??1SkeletonViz@@UAA@XZ has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
