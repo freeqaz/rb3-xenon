@@ -15,6 +15,7 @@
 #include "obj/ObjMacros.h"
 #include "os/Debug.h"
 #include "os/PlatformMgr.h"
+#include "os/System.h"
 #include "ui/UI.h"
 #include "ui/UIList.h"
 #include "ui/UIListLabel.h"
@@ -37,6 +38,8 @@
 // .data rather than `addi`-ing the literal's address. GetRequestPrefix
 // (fn_82605868) is literally `{ lwz r3, sRequestPrefix; blr }`.
 static const char *sRequestPrefix = "dlc_store";
+// .data 0x82C73FDC, directly after sRequestPrefix.
+static const char *sIndexFile = "/dlc_top_%s_%s.dta";
 
 // Retail 360 base (meta/StorePanel.h) has two StoreOffer* vectors
 // (mOffers, mPendingOffers) where the rb3-Wii dev oracle used three
@@ -47,13 +50,6 @@ static const char *sRequestPrefix = "dlc_store";
 #define unk38 mOffers
 #define unk40 mPendingOffers
 #define unk48 mPendingOffers
-
-// StoreMetadataManager::mVersion is void* in the in-tree (trimmed) header.
-// The packed StoreVersionHeader has mBuildNumber (u16) at byte offset 1.
-// Read it via a cast rather than widening the shared header (ripple risk).
-static inline unsigned short StoreBuildNum() {
-    return *(unsigned short *)((char *)TheStoreMetadata.mVersion + 1);
-}
 
 // Retail (fn_82605128) never stores to mUserCanDoInput (0xE1) in the ctor --
 // only mStartBrowserAtBottom (0xE0) and mShortcutProvider (0xE4) are
@@ -78,8 +74,10 @@ bool BandStorePanel::IsSongInLibrary(const int &id) const {
     return TheSongMgr.HasSong(id);
 }
 
+// Retail 0x82605C38 (68 B), called out of line from Poll, StoreMainPanel and
+// StoreMenuPanel: "/dlc_top_<platform>_<language>.dta".
 const char *BandStorePanel::GetIndexFile() const {
-    return MakeString("%d", StoreBuildNum());
+    return MakeString(sIndexFile, PlatformSymbol(kPlatformXBox).Str(), SystemLanguage().Str());
 }
 
 const char *BandStorePanel::GetRequestPrefix() const { return sRequestPrefix; }
@@ -608,14 +606,13 @@ void BandStorePanel::Poll() {
     if (mMetadataLoader && !mLastRequest.empty()) {
         mMetadataLoader->PollLoading();
         if (mMetadataLoader->IsLoaded()) {
-            DataArray *metadata = mMetadataLoader->GetUnk4();
-            if (metadata->Size()) {
+            if (mMetadataLoader->GetUnk4()->Size()) {
+                DataArray *metadata = mMetadataLoader->GetUnk4();
                 metadata->AddRef();
                 MILO_ASSERT(metadata, 0x11C);
-                const char *nullStr = gNullStr;
-                static MetadataLoadedMsg msg(metadata, true, nullStr, false, false);
-                msg[0] = DataNode(metadata, kDataArray);
-                msg[2] = DataNode(mLastRequest.c_str());
+                static MetadataLoadedMsg msg(metadata, true, gNullStr, false, false);
+                msg[0] = metadata;
+                msg[2] = mLastRequest.c_str();
                 msg[3] = DataNode((int)(mLastRequest == GetIndexFile()));
                 msg[4] = DataNode((int)!mLastRequestExtra);
                 String path(mLastRequest);
@@ -637,7 +634,7 @@ void BandStorePanel::Poll() {
             DataArrayPtr empty;
             {
                 MetadataLoadedMsg msg(empty, false, gNullStr, false, false);
-                msg[2] = DataNode(mLastRequest.c_str());
+                msg[2] = mLastRequest.c_str();
                 msg[3] = DataNode((int)(mLastRequest == GetIndexFile()));
                 msg[4] = DataNode((int)!mLastRequestExtra);
                 mLastRequest.erase();
