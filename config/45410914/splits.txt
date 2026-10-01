@@ -5230,6 +5230,7 @@ Sequence.cpp:
 	.pdata      start:0x822381B8 end:0x822382B0
 	.pdata      start:0x822382B8 end:0x822382C0
 	.pdata      start:0x822382C8 end:0x822382D0
+	.pdata      start:0x822382D0 end:0x822382E0
 	.pdata      start:0x822382E0 end:0x822383C8
 	.pdata      start:0x8223B0A0 end:0x8223B0A8
 	.text       start:0x823D3910 end:0x823D3918
@@ -5249,6 +5250,7 @@ Sequence.cpp:
 	.text       start:0x82709C20 end:0x8270A8D8
 	.text       start:0x8270A948 end:0x8270A9B8
 	.text       start:0x8270AA38 end:0x8270AAC0
+	.text       start:0x8270AAC0 end:0x8270AB30
 	.text       start:0x8270AB30 end:0x8270B90C
 	.text       start:0x82743B0C end:0x82743B10
 	.text       start:0x82743B68 end:0x82743BD0
@@ -6692,7 +6694,6 @@ Graph.cpp:
 	.pdata      start:0x8220EC88 end:0x8220EC90
 	.pdata      start:0x8220EC90 end:0x8220ECA0
 	.pdata      start:0x8220ECA0 end:0x8220ECA8
-	.pdata      start:0x822382D0 end:0x822382E0
 	.text       start:0x82464480 end:0x824644C4
 	.text       start:0x824644C4 end:0x824644D8
 	.text       start:0x824644E0 end:0x824646B8
@@ -6702,7 +6703,6 @@ Graph.cpp:
 	.text       start:0x824649B8 end:0x82464A50
 	.text       start:0x82464A50 end:0x82464B18
 	.text       start:0x82464B18 end:0x82464BCC
-	.text       start:0x8270AAC0 end:0x8270AB30
 
 ssluse.c:
 	.pdata      start:0x82255508 end:0x82255510

@@ -1,4 +1,5 @@
 {
+ "0x8270aac0": "?resize@?$ObjVector@V?$ObjPtr@VSeqInst@@@@@@QAAXI@Z",
  "0x82466298": "?Init@DOFProc@@SAXXZ",
  "0x822ced50": "??_GBandScoreboard@@UAAPAXI@Z",
  "0x82400698": "?RateToTaskUnits@RndAnimatable@@SA?AW4TaskUnits@@W4Rate@1@@Z",
@@ -20620,7 +20621,6 @@
  "0x8270a828": "?Init@Sequence@@SAXXZ",
  "0x8270a948": "?_M_fill_insert@?$vector@V?$ObjPtr@VSequence@@@@V?$StlNodeAlloc@V?$ObjPtr@VSequence@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjPtr@VSequence@@@@IABV3@@Z",
  "0x8270aa38": "?resize@?$vector@V?$ObjPtr@VSequence@@@@V?$StlNodeAlloc@V?$ObjPtr@VSequence@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABV?$ObjPtr@VSequence@@@@@Z",
- "0x8270aac0": "??0DrawString3D@@QAA@PBDABVVector3@@ABVColor@Hmx@@@Z",
  "0x8270ab38": "?resize@?$ObjVector@V?$ObjPtr@VSequence@@@@@@QAAXI@Z",
  "0x8270aba8": "??$?5V?$ObjPtr@VSequence@@@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@V?$ObjPtr@VSequence@@@@@@@Z",
  "0x8270ac18": "?Load@GroupSeq@@UAAXAAVBinStream@@@Z",
