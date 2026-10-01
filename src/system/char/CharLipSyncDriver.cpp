@@ -212,10 +212,11 @@ void CharLipSyncDriver::BlendInOverrides(float) {}
 void CharLipSyncDriver::BlendOutOverrides(float) { mOverrideWeight = 0; }
 
 void CharLipSyncDriver::Sync() {
+    ObjPtr<CharClip> &blink = mBlinkClip;
     if (mClips) {
-        mBlinkClip = mClips->Find<CharClip>("Blink", false);
+        blink = mClips->Find<CharClip>("Blink", false);
     } else {
-        mBlinkClip = nullptr;
+        blink.ReleaseObjConcrete();
     }
     RELEASE(mMainPlayback);
     if (mLipSync && mClips) {
