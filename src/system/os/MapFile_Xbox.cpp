@@ -283,9 +283,11 @@ bool XboxMapFile::ParseStack(
         do {
             int origIdx = *pKey;
             int nameOff = origIdx * 0x80;
-            const char *name =
-                mapFile.GetFunction(*(unsigned int *)((int)pKey + offset), false);
-            strncpy(&funcNames[nameOff], name, 0x7f);
+            strncpy(
+                &funcNames[nameOff],
+                mapFile.GetFunction(*(unsigned int *)((int)pKey + offset), false),
+                0x7f
+            );
             funcNames[nameOff + 0x7f] = '\0';
             remaining--;
             pKey++;
