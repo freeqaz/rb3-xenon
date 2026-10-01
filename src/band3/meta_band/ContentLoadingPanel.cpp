@@ -59,6 +59,7 @@ void ContentLoadingPanel::ContentMountBegun(int n) {
 
 void ContentLoadingPanel::ContentMounted(const char *, const char *) {
     unk44++;
+    static Symbol loading_additional_progress("loading_additional_progress");
     mProgressLabel->SetTokenFmt(
         loading_additional_progress,
         LocalizeSeparatedInt(unk44),
@@ -69,6 +70,7 @@ void ContentLoadingPanel::ContentMounted(const char *, const char *) {
 
 void ContentLoadingPanel::ContentFailed(const char *) {
     unk44++;
+    static Symbol loading_additional_progress("loading_additional_progress");
     mProgressLabel->SetTokenFmt(
         loading_additional_progress,
         LocalizeSeparatedInt(unk44),
