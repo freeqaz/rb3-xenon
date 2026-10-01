@@ -85264,11 +85264,21 @@
   {
    "name": "$__destroy_aux",
    "address": "0x825d43b8",
-   "survivor": "??$__destroy_aux@VPlayerScore@@@stlpmtx_std@@YAXPAVPlayerScore@@ABU__false_type@0@@Z",
-   "folded": [
-    "?Reset@ViewSetting@@UAAXXZ"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 70, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "survivor": "?Reset@ViewSetting@@UAAXXZ",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 70, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "survivor_renamed": {
+    "from": "??$__destroy_aux@VPlayerScore@@@stlpmtx_std@@YAXPAVPlayerScore@@ABU__false_type@0@@Z",
+    "lane": "W16-MB 2026-10-01"
+   },
+   "withdrawn": [
+    {
+     "spelling": "?Reset@ViewSetting@@UAAXXZ",
+     "lane": "W16-MB 2026-10-01",
+     "class": "MAP_NAME_WRONG",
+     "why": "Retail 0x825D43B8 is ViewSetting::Reset itself: retail RTTI places it in slot 24 of the .?AVSortViewSetting@@, .?AVScoreTypeViewSetting@@, .?AVSongUpsellViewSetting@@ and .?AVBadReviewViewSetting@@ vtables, and its body (lwz r11,0(r3); li r4,0; lwz r11,0x70(r11); bctr) is Reset()'s SelectOption(0) virtual tail call. The map row named it __destroy_aux<PlayerScore>; it is renamed and re-homed to ViewSetting, so this membership (the real name folded into the wrong one) is withdrawn and the survivor field follows the map."
+    }
+   ]
   },
   {
    "name": "push_back",

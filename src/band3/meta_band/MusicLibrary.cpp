@@ -2323,7 +2323,8 @@ void MusicLibrary::RebuildRestrictedData() {
 
 DECOMP_FORCEACTIVE(MusicLibrary, "!myRestrictedSongChanged || aRestrictedSongChanged")
 
-bool MusicLibrary::IsPurchasing() const { return false; }
+// Retail 0x8253B1C0: a purchase is in flight while the store holds a purchaser.
+bool MusicLibrary::IsPurchasing() const { return unk19c->mPurchaser != 0; }
 
 // Retail (256 B): every store offer whose song is not already installed.
 // OfferType() is called under a function-local static Symbol("song") and its
