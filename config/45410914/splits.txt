@@ -302,6 +302,8 @@ FingerShape.cpp:
 GemTrackResourceManager.cpp:
 	.pdata      start:0x821FF958 end:0x821FF990
 	.pdata      start:0x821FF998 end:0x821FF9D8
+	.pdata      start:0x821FF9D8 end:0x821FF9E8
+	.pdata      start:0x821FF9E8 end:0x821FF9F0
 	.pdata      start:0x821FF9F0 end:0x821FFAA8
 	.pdata      start:0x821FFAA8 end:0x821FFAB0
 	.pdata      start:0x821FFAB0 end:0x821FFAC8
@@ -309,6 +311,8 @@ GemTrackResourceManager.cpp:
 	.text       start:0x82355758 end:0x82355760
 	.text       start:0x823557D8 end:0x82355B84
 	.text       start:0x82355BD0 end:0x82356118
+	.text       start:0x82356118 end:0x82356230
+	.text       start:0x82356230 end:0x82356288
 	.text       start:0x82356288 end:0x82356D40
 	.text       start:0x82356D40 end:0x82356DAC
 	.text       start:0x82356DAC end:0x82356E2C
@@ -1454,7 +1458,6 @@ Rot.cpp:
 	.pdata      start:0x821FE420 end:0x821FE428
 	.pdata      start:0x821FEB90 end:0x821FEB98
 	.pdata      start:0x821FF938 end:0x821FF948
-	.pdata      start:0x821FF9D8 end:0x821FF9E8
 	.pdata      start:0x821FFB20 end:0x821FFB28
 	.pdata      start:0x821FFC48 end:0x821FFC50
 	.pdata      start:0x822021B0 end:0x822021B8
@@ -1468,7 +1471,6 @@ Rot.cpp:
 	.text       start:0x82345520 end:0x823455B0
 	.text       start:0x823455B0 end:0x82345634
 	.text       start:0x823556E0 end:0x82355758
-	.text       start:0x82356118 end:0x82356230
 	.text       start:0x823573F0 end:0x823574A4
 	.text       start:0x82358738 end:0x823587B0
 	.text       start:0x8237B218 end:0x8237B2A8
@@ -4381,7 +4383,6 @@ MoveDir.cpp:
 	.text       start:0x82685E28 end:0x82685E60
 
 TypeProps.cpp:
-	.pdata      start:0x821FF9E8 end:0x821FF9F0
 	.pdata      start:0x82201520 end:0x82201528
 	.pdata      start:0x8223CED0 end:0x8223CEE8
 	.pdata      start:0x8223CEE8 end:0x8223CEF0
@@ -4391,7 +4392,6 @@ TypeProps.cpp:
 	.pdata      start:0x8223CF68 end:0x8223CF78
 	.pdata      start:0x8223CF78 end:0x8223CF80
 	.pdata      start:0x8223CF80 end:0x8223CF88
-	.text       start:0x82356230 end:0x82356288
 	.text       start:0x8236D408 end:0x8236D450
 	.text       start:0x82765984 end:0x827659E0
 	.text       start:0x827659E0 end:0x82765B40
