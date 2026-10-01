@@ -1,4 +1,5 @@
 {
+ "0x8275ce78": "?LoadRest@Object@Hmx@@QAAXAAVBinStream@@@Z",
  "0x824f18c8": "??$_M_allocate_and_copy@PAVVector2@@@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVVector2@@IPAV2@0@Z",
  "0x824f0680": "?Intersect@@YA_NABVSegment@@PBVBSPNode@@AAMAAVPlane@@@Z",
  "0x82434528": "?SetFrustum@RndCam@@QAAXMMMM@Z",
@@ -21987,7 +21988,7 @@
  "0x8275cb88": "??0Object@Hmx@@QAA@XZ",
  "0x8275cbf0": "??1Object@Hmx@@UAA@XZ",
  "0x8275cd80": "?RegisterFactory@Object@Hmx@@SAXVSymbol@@P6APAV12@XZ@Z",
- "0x8275cf68": "??$?5VTexPtr@RndMatAnim@@@@YAAAVBinStreamRev@@AAV0@AAV?$Key@VTexPtr@RndMatAnim@@@@@Z",
+ "0x8275cf68": "?LoadType@Object@Hmx@@QAAXAAVBinStream@@@Z",
  "0x8275cff8": "?Load@Object@Hmx@@UAAXAAVBinStream@@@Z",
  "0x8275d040": "??3DataFuncObj@@SAXPAX@Z",
  "0x8275d058": "??0DataFuncObj@@AAA@PAVDataArray@@@Z",

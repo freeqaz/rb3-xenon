@@ -96,6 +96,7 @@ Object.cpp:
 	.pdata      start:0x8223C628 end:0x8223C638
 	.pdata      start:0x8223C638 end:0x8223C718
 	.pdata      start:0x8223C718 end:0x8223C750
+	.pdata      start:0x8223C750 end:0x8223C760
 	.pdata      start:0x8223C760 end:0x8223C768
 	.text       start:0x82272DB8 end:0x82272E68
 	.text       start:0x8227403C end:0x8227409C
@@ -124,6 +125,7 @@ Object.cpp:
 	.text       start:0x8275BD08 end:0x8275C7DC
 	.text       start:0x8275C7DC end:0x8275CB84
 	.text       start:0x8275CB88 end:0x8275CE74
+	.text       start:0x8275CE74 end:0x8275CFF4
 	.text       start:0x8275CFF8 end:0x8275D03C
 
 ContextWrapper.cpp:
@@ -7923,7 +7925,6 @@ UITransitionHandler.cpp:
 	.pdata      start:0x82223550 end:0x82223558
 	.pdata      start:0x8222F540 end:0x8222F548
 	.pdata      start:0x82236E90 end:0x82236E98
-	.pdata      start:0x8223C750 end:0x8223C760
 	.pdata      start:0x82244E10 end:0x82244E18
 	.pdata      start:0x82245C80 end:0x82245C88
 	.pdata      start:0x82245C88 end:0x82245CF8
@@ -7931,7 +7932,6 @@ UITransitionHandler.cpp:
 	.text       start:0x825BFC78 end:0x825BFCD0
 	.text       start:0x826714D8 end:0x82671594
 	.text       start:0x826F7948 end:0x826F79A8
-	.text       start:0x8275CE74 end:0x8275CFF4
 	.text       start:0x827F23B8 end:0x827F2438
 	.text       start:0x828019A0 end:0x82801A0C
 	.text       start:0x82801A10 end:0x82801F78
