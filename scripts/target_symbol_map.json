@@ -1,4 +1,5 @@
 {
+ "0x82525de0": "?JoypadSwapPads@@YAXHH@Z",
  "0x82532378": "?JoypadSetXinputActuators@@YAXHHH@Z",
  "0x82532030": "?JoypadInvalidateXinputCaps@@YAXH@Z",
  "0x82531ff8": "?JoypadSetXinputCalbertMode@@YAXHH@Z",

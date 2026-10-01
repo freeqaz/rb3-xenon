@@ -323,6 +323,8 @@ bool requestBreedWrite(int, unsigned char *);
 }
 
 float JoypadGetCalbertValue(int, bool);
+void JoypadSwapPads(int, int);
+void JoypadInvalidateXinputCaps(int);
 
 void JoypadInit();
 void JoypadPoll();

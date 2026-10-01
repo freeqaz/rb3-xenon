@@ -175,6 +175,17 @@ extern "C" int JoypadStageKitPadNum() {
     return -1;
 }
 
+// Retail 0x82525DE0 (no oracle; the name is ours). Called only from the
+// PlatformMgr profile-swap path (0x8251D6C8): exchanges two pads' whole
+// JoypadData (both element addresses are formed before the three 0xd4-byte
+// memcpys through a stack copy -- std::swap binding two references) and makes both
+// re-query their XInput capabilities.
+void JoypadSwapPads(int pad1, int pad2) {
+    std::swap(gJoypadData[pad1], gJoypadData[pad2]);
+    JoypadInvalidateXinputCaps(pad1);
+    JoypadInvalidateXinputCaps(pad2);
+}
+
 void JoypadStageKitSetRaw(int left, int right) {
     int pad = JoypadStageKitPadNum();
     if (pad != -1)
