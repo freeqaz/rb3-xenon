@@ -224,11 +224,7 @@ void PitchArrow::SetSplit(bool b) {
         float next = anim->GetFrame();
         if (b) next = next + 0.05f;
         else next = next - 0.05f;
-        float clamped;
-        if (next > 1.0f) clamped = 1.0f;
-        else if (next < 0.0f) clamped = 0.0f;
-        else clamped = next;
-        anim->SetFrame(clamped, 1.0f);
+        anim->SetFrame(Clamp(0.0f, 1.0f, next), 1.0f);
     }
 }
 
