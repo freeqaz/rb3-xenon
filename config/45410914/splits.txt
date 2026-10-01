@@ -1436,7 +1436,6 @@ Rot.cpp:
 	.pdata      start:0x822021B8 end:0x822021C0
 	.pdata      start:0x8220BD00 end:0x8220BD20
 	.pdata      start:0x8220BD28 end:0x8220BD30
-	.pdata      start:0x822151F8 end:0x82215208
 	.pdata      start:0x82215C70 end:0x82215CA0
 	.pdata      start:0x82215CA0 end:0x82215D28
 	.pdata      start:0x82215D38 end:0x82215D40
@@ -1450,7 +1449,6 @@ Rot.cpp:
 	.text       start:0x8237B2A8 end:0x8237B338
 	.text       start:0x824265F8 end:0x824268A8
 	.text       start:0x82426950 end:0x82426A04
-	.text       start:0x824E17B0 end:0x824E184C
 	.text       start:0x824EE020 end:0x824EE390
 	.text       start:0x824EE3F8 end:0x824EF508
 	.text       start:0x824EF828 end:0x824EF890
@@ -5117,16 +5115,14 @@ Crowd.cpp:
 	.pdata      start:0x821FCDA0 end:0x821FCDC8
 	.pdata      start:0x821FD4D8 end:0x821FD4E0
 	.pdata      start:0x82212378 end:0x82212388
-	.pdata      start:0x82215080 end:0x822151F8
-	.pdata      start:0x82215208 end:0x82215220
+	.pdata      start:0x82215080 end:0x82215220
 	.pdata      start:0x82215230 end:0x82215480
 	.pdata      start:0x82215480 end:0x82215488
 	.pdata      start:0x82215488 end:0x822156D0
 	.text       start:0x82325608 end:0x823258C8
 	.text       start:0x8232CCB0 end:0x8232CD28
 	.text       start:0x824AA3E0 end:0x824AA460
-	.text       start:0x824E0038 end:0x824E17B0
-	.text       start:0x824E184C end:0x824E1AC0
+	.text       start:0x824E0038 end:0x824E1AC0
 	.text       start:0x824E1C88 end:0x824E4978
 	.text       start:0x824E4978 end:0x824E49EC
 	.text       start:0x824E49EC end:0x824E7518

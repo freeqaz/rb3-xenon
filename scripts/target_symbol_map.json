@@ -12629,7 +12629,7 @@
  "0x824e1698": "??1?$_List_base@UOldMMInst@@V?$StlNodeAlloc@UOldMMInst@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
  "0x824e16a0": "??$?6UCharData@WorldCrowd@@V?$StlNodeAlloc@UCharData@WorldCrowd@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@UCharData@WorldCrowd@@V?$StlNodeAlloc@UCharData@WorldCrowd@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x824e1710": "??$?6VTransform@@V?$StlNodeAlloc@VTransform@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@VTransform@@V?$StlNodeAlloc@VTransform@@@stlpmtx_std@@@stlpmtx_std@@@Z",
- "0x824e17b0": "??$_M_allocate_and_copy@PBVVector3@@@?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVVector3@@IPBV2@0@Z",
+ "0x824e17b0": "??0?$list@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
  "0x824e1858": "??$_S_sort@IV?$StlNodeAlloc@I@stlpmtx_std@@U?$less@I@2@@stlpmtx_std@@YAXAAV?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@0@U?$less@I@0@@Z",
  "0x824e1a28": "?resize@?$list@UOldMMInst@@V?$StlNodeAlloc@UOldMMInst@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUOldMMInst@@@Z",
  "0x824e1ac0": "?_M_insert_overflow_aux@?$vector@USongCollisionOutput@@V?$StlNodeAlloc@USongCollisionOutput@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUSongCollisionOutput@@ABU3@ABU__false_type@2@I_N@Z",
