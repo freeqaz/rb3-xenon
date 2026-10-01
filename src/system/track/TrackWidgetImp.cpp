@@ -350,7 +350,10 @@ void CharWidgetImp::Poll() {
 
 void CharWidgetImp::DrawInstances(const ObjPtrList<RndMesh> &, int) {
     if (Valid()) {
+#ifdef HX_NATIVE
+        // Absent from retail, which draws the text directly.
         mText->SetMeshForceNoUpdate();
+#endif
         mText->DrawShowing();
     }
 }
