@@ -108,7 +108,7 @@ void MultiplayerAnalyzer::OverrideBasePoints(
     pData->mBonusPts = baseBonusPts;
     pData->unk_0x24 = 0;
     for (int i = 0; i < mBaseScores.size(); i++) {
-        if (ty == mBaseScores[i].mTrackType) {
+        if (mBaseScores[i].mTrackType == ty) {
             mBaseScores[i].mMaxPts = baseMaxPts;
             mBaseScores[i].mMaxStreakPts = baseMaxStreakPts;
             mBaseScores[i].mBonusPts = baseBonusPts;
@@ -128,7 +128,8 @@ void MultiplayerAnalyzer::AddTrack(int i1, TrackType ty) {
         pData->mHeadPoints = cfg->FindInt("head");
         pData->mTailPoints = cfg->FindInt("tail");
         pData->mChordPoints = cfg->FindInt("chord");
-        pData->mMaxMultiplier = (ty - 2U <= 7 && ((1 << (ty - 2U)) & 0xC1U)) ? 6 : 4;
+        pData->mMaxMultiplier =
+            (ty == kTrackBass || ty == kTrackRealBass || ty == kTrackRealBass22Fret) ? 6 : 4;
         if (ty == kTrackDrum && mConfig->UseRealDrums()) {
             pData->mHeadPoints += cfg->FindInt("pro_bonus");
         }

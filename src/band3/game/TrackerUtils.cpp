@@ -26,10 +26,9 @@ void TrackerMultiplierMap::InitFromDataArray(const DataArray *iDataArray) {
             DataArray *arr = iDataArray->Array(i);
             float f10 = arr->Float(0);
             float f11 = arr->Float(1);
-            idx++;
             MultiplierEntry curentry;
             curentry.unk0 = f11;
-            curentry.unk4 = idx;
+            curentry.unk4 = ++idx;
             unk4[f10] = curentry;
             if (unk0 < f10) {
                 unk0 = f10;
@@ -62,7 +61,7 @@ int TrackerSectionManager::GetSectionCount() const { return mSections.size(); }
 
 int TrackerSectionManager::CountNonEmptySections(const TrackerSource *source, bool b) const {
     int count = 0;
-    for (int i = 0; i < (int)mSections.size(); i++) {
+    for (unsigned int i = 0; i < mSections.size(); i++) {
         for (TrackerPlayerID id = source->GetFirstPlayer(); id.NotNull();
              id = source->GetNextPlayer(id)) {
             Player *pPlayer = source->GetPlayer(id);
@@ -124,10 +123,10 @@ int TrackerSectionManager::CountGemsInSection(const Player *iPlayer, int iSectio
     } else {
         int startGemID;
         int endGemID;
-        if (GetGemIDsForRange(iPlayer, startTick, endTick, startGemID, endGemID)) {
-            return endGemID - startGemID + 1;
+        if (!GetGemIDsForRange(iPlayer, startTick, endTick, startGemID, endGemID)) {
+            return 0;
         }
-        return 0;
+        return endGemID - startGemID + 1;
     }
 }
 

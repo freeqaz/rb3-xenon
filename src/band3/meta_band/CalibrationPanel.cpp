@@ -425,12 +425,9 @@ DataNode CalibrationPanel::OnStartTest(DataArray *arr) {
     unkd0 = -1.0f;
     mTestSamples.clear();
     SetTestState(tsPreRoll);
-    int u4 = 10;
-    if (mHardwareMode)
-        u4 = 40;
-    unk90 = u4;
     unk64 = 0;
     unk5c = mCycleTimeMs / 2.0f;
+    unk90 = mHardwareMode ? 40 : 10;
     if (mEnableVideo) {
         mDir->Find<RndGroup>("visuals_anim.grp", true)->Animate(0, false, 0);
     }
