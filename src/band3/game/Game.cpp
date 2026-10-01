@@ -783,12 +783,10 @@ void Game::PopulatePlayerLists() {
         if (p)
             mAllActivePlayers.push_back(p);
     }
-    NullLocalBandUser *nullUser = TheBandUserMgr->GetNullUser();
-    if (nullUser) {
-        Player *p = nullUser->GetPlayer();
-        if (p)
-            mAllActivePlayers.push_back(p);
-    }
+    BandUser *nullUser = TheBandUserMgr->GetNullUser();
+    Player *p = nullUser->GetPlayer();
+    if (p)
+        mAllActivePlayers.push_back(p);
 }
 
 DECOMP_FORCEACTIVE(Game, "pPlayer", "player")
@@ -1732,24 +1730,14 @@ void Game::AddPlayer(BandUser *user) {
         return;
     }
     Symbol trackSym = user->GetTrackSym();
-    bool noPartInSong;
     MetaPerformer *perf = MetaPerformer::Current();
-    if (perf != nullptr) {
-        noPartInSong = true;
-        if (perf->HasSong()) {
-            if (perf->PartPlaysInSong(trackSym)) {
-                noPartInSong = false;
-            }
-        }
-        if (noPartInSong) {
-            GetTrackPanel()->DoHandleAddPlayer(user);
-            GetTrackPanel()->DoPostHandleAddPlayer(user);
-            return;
-        }
+    if (perf && !(perf->HasSong() && perf->PartPlaysInSong(trackSym))) {
+        GetTrackPanel()->DoHandleAddPlayer(user);
+        GetTrackPanel()->DoPostHandleAddPlayer(user);
+        return;
     }
-    PlayerTrackConfigList *cfgList;
+    PlayerTrackConfigList *cfgList = TheGameConfig->GetConfigList();
     SongData *songData = TheSongDB->GetData();
-    cfgList = TheGameConfig->GetConfigList();
     TheGameConfig->AssignTrack(user);
     cfgList->ProcessConfig(user->GetUserGuid());
     songData->UpdatePlayerTrackConfigList(cfgList);
@@ -1757,8 +1745,10 @@ void Game::AddPlayer(BandUser *user) {
     SetDrumKitBank(player, TheGamePanel->mDrumKitBank);
     mAllActivePlayers.push_back(player);
     player->Start();
-    SetPaused(true, true, true);
-    SetPaused(false, true, true);
+    if (!mIsPaused) {
+        SetPaused(true, false, true, false);
+        SetPaused(false, false, true, false);
+    }
     mTrackerManager->HandleAddPlayer(player);
 }
 
