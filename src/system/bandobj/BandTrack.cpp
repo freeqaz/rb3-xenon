@@ -538,9 +538,10 @@ void BandTrack::CombineStreakMultipliers(bool b) {
 }
 
 void BandTrack::SetupPlayerIntro() {
+    static Message reset("reset");
     if (mPlayerIntro) {
-        mPlayerIntro->HandleType(reset_msg);
-        if ((unsigned int)mTrackInstrument <= 7) {
+        mPlayerIntro->HandleType(reset);
+        if (mTrackInstrument >= 0 && mTrackInstrument < 8) {
             static Message setIcon = Message("set_icon", DataNode("G"));
             if (mParent) {
                 setIcon[0] = DataNode(mParent->GetTrackIcon());
@@ -799,8 +800,9 @@ void BandTrack::ClearFinaleHelp() {
             SystemConfig("objects", ThisDir()->ClassName(), "min_finale_help_time")->Float(1);
         if (elapsed < kMinFinaleHelpTime)
             delay = kMinFinaleHelpTime - elapsed;
+        static Message end_game_end("end_game_end");
         TheTaskMgr.Start(
-            new MessageTask(mEndgameFeedback, end_game_end_msg), kTaskSeconds, delay
+            new MessageTask(mEndgameFeedback, end_game_end), kTaskSeconds, delay
         );
         unk8c = false;
     }
@@ -815,7 +817,8 @@ void BandTrack::ResetPopup() {
         mPopupObject->Find<EventTrigger>("reset.trig", true)->Trigger();
         unk74 = "";
         unk78 = false;
-        mPopupObject->Handle(reset_msg, true);
+        static Message reset("reset");
+        mPopupObject->Handle(reset, true);
     }
 }
 
@@ -914,17 +917,12 @@ void BandTrack::SetCrowdRating(float f, CrowdMeterState state) {
             if (isWarning != (bool)unk1c && !isFailed) {
                 unk1c = isWarning;
                 RndAnimatable *anim =
-                    dynamic_cast<RndAnimatable *>(
-                        ThisDir()->FindObject("warning_anims.grp", false)
-                    );
+                    ThisDir()->Find<RndAnimatable>("warning_anims.grp", false);
                 if (anim) {
                     if (unk1c) {
-                        static Symbol loop("loop");
                         anim->SetFrame(0.0f, 1.0f);
-                        TrackPanelDirBase *tpd = dynamic_cast<TrackPanelDirBase *>(
-                            ThisDir()->Dir()
-                        );
-                        float startDelay = tpd->GetPulseAnimStartDelay(false);
+                        float startDelay = MyTrackPanelDir()->GetPulseAnimStartDelay(false);
+                        static Symbol loop("loop");
                         anim->Animate(
                             0.0f, false, startDelay,
                             RndAnimatable::k1_fpb, 0.0f, 1.0f, 0.0f, 1.0f, loop
@@ -948,8 +946,10 @@ void BandTrack::DisablePlayer(int i) {
         disconnected = mParent->PlayerDisconnected();
     else
         disconnected = false;
+    static Message reset("reset");
     if (mDisabled && disconnected && mFailedFeedback) {
-        mFailedFeedback->HandleType(reset_msg);
+        mFailedFeedback->HandleType(reset);
+        static Message disconnected_msg("disconnected");
         unkd8 = new MessageTask(mFailedFeedback, disconnected_msg);
         TheTaskMgr.Start(unkd8, kTaskSeconds, 0.0f);
     }
@@ -963,17 +963,18 @@ void BandTrack::DisablePlayer(int i) {
     if (trig)
         trig->Trigger();
     if (mPlayerFeedback) {
-        mPlayerFeedback->HandleType(reset_msg);
+        mPlayerFeedback->HandleType(reset);
+        static Symbol disable("disable");
+        static Message disable_msg(disable);
         SendTrackerDisplayMessage(disable_msg);
     }
     ResetPopup();
     mDisabled = true;
     if (mParent)
         mParent->SetGemsEnabled(-1.0f);
-    if (dynamic_cast<TrackPanelDirBase *>(ThisDir()->Dir())) {
+    if (MyTrackPanelDir()) {
         bool atStart = mParent && mParent->PlayerDisconnectedAtStart();
-        int idx = mTrackIdx;
-        dynamic_cast<TrackPanelDirBase *>(ThisDir()->Dir())->DisablePlayer(idx, atStart);
+        MyTrackPanelDir()->DisablePlayer(mTrackIdx, atStart);
     }
     static Message failed("failed_task", DataNode(0), DataNode(0));
     failed[0] = disconnected;
@@ -985,12 +986,18 @@ void BandTrack::DisablePlayer(int i) {
 void BandTrack::FailedTask(bool b, int i) {
     if (!mFailedFeedback)
         return;
-    if (mPlayerIntro && mTrackInstrument != kInstVocals && mParent
-        && mParent->HasLocalPlayer()) {
-        mPlayerIntro->Handle(icon_show_msg, true);
+    // Retail constructs this name on entry and never reads it; the instrument
+    // test below is on the enum.
+    static Symbol vocals("vocals");
+    if (mPlayerIntro && mTrackInstrument != kInstVocals) {
+        static Message icon_show("icon_show");
+        if (mParent && mParent->HasLocalPlayer()) {
+            mPlayerIntro->Handle(icon_show, true);
+        }
     }
     if (b) {
-        mFailedFeedback->Handle(disconnected_msg, true);
+        static Message disconnected("disconnected");
+        mFailedFeedback->Handle(disconnected, true);
     } else {
         static Message failed("failed", DataNode(0));
         failed[0] = i;
