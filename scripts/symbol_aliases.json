@@ -80747,12 +80747,17 @@
   {
    "name": "Load",
    "address": "0x822cd8c0",
-   "survivor": "?Load@TourDescPanel@@UAAXXZ",
-   "folded": [
-    "?SyncObjects@BandStarDisplay@@UAAXXZ"
-   ],
+   "survivor": "?SyncObjects@BandStarDisplay@@UAAXXZ",
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "?SyncObjects@BandStarDisplay@@UAAXXZ",
+     "lane": "W16-MB 2026-10-01",
+     "class": "MAP_NAME_WRONG",
+     "why": "Retail 0x822CD8C0 is BandStarDisplay::SyncObjects itself: retail RTTI places it at slot 3 of BandStarDisplay's vtable 0x82021094, and its body is RndDir::SyncObjects then ResetStars. TourDescPanel::Load is 0x82B7CC58 (slot 0 of TourDescPanel's vtable 0x82199F4C; calls TexLoadPanel::Load then LoadIcons). The map row is corrected, so this membership (the real name folded into the wrong one) is withdrawn and the survivor field follows the map."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -80779,7 +80784,11 @@
       }
      ]
     }
-   ]
+   ],
+   "survivor_renamed": {
+    "from": "?Load@TourDescPanel@@UAAXXZ",
+    "lane": "W16-MB 2026-10-01"
+   }
   },
   {
    "name": "SetTypeDef",
