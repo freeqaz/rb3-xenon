@@ -96088,11 +96088,21 @@
   {
    "name": "_M_fill_insert_VSampleMarker",
    "address": "0x822a5528",
-   "survivor": "?_M_fill_insert@?$vector@VSampleMarker@@V?$StlNodeAlloc@VSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSampleMarker@@IABV3@@Z",
-   "folded": [
-    "?_M_fill_insert@?$vector@VOverlay@OutfitConfig@@V?$StlNodeAlloc@VOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVOverlay@OutfitConfig@@IABV34@@Z"
-   ],
-   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 34, row addr 0x822a5528). \"ours\" spelling ?_M_fill_insert@?$vector@VOverlay@OutfitConfig@@V?$StlNodeAlloc@VOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVOverlay@OutfitConfig@@IABV34@@Z is a template/spelling twin of survivor ?_M_fill_insert@?$vector@VSampleMarker@@V?$StlNodeAlloc@VSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSampleMarker@@IABV3@@Z at retail address 0x822a5528. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 9 SLOT-FOLD-OK, 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 372 B (372 B honest) across ['default/OutfitConfig'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md."
+   "survivor": "?_M_fill_insert@?$vector@VOverlay@OutfitConfig@@V?$StlNodeAlloc@VOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVOverlay@OutfitConfig@@IABV34@@Z",
+   "folded": [],
+   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 34, row addr 0x822a5528). \"ours\" spelling ?_M_fill_insert@?$vector@VOverlay@OutfitConfig@@V?$StlNodeAlloc@VOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVOverlay@OutfitConfig@@IABV34@@Z is a template/spelling twin of survivor ?_M_fill_insert@?$vector@VSampleMarker@@V?$StlNodeAlloc@VSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSampleMarker@@IABV3@@Z at retail address 0x822a5528. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 9 SLOT-FOLD-OK, 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 372 B (372 B honest) across ['default/OutfitConfig'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md.",
+   "survivor_renamed": {
+    "from": "?_M_fill_insert@?$vector@VSampleMarker@@V?$StlNodeAlloc@VSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSampleMarker@@IABV3@@Z",
+    "lane": "W16-MB 2026-10-01"
+   },
+   "withdrawn": [
+    {
+     "spelling": "?_M_fill_insert@?$vector@VOverlay@OutfitConfig@@V?$StlNodeAlloc@VOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVOverlay@OutfitConfig@@IABV34@@Z",
+     "lane": "W16-MB 2026-10-01",
+     "class": "MAP_NAME_WRONG",
+     "why": "Retail 0x822A5528 is vector<OutfitConfig::Overlay>::_M_fill_insert: its callers are PropSync<Overlay> (0x822A63A8) and the Overlay resize (0x822A6B90), and it calls the map-resident Overlay _M_fill_insert_aux (0x822A36C0). The map row named it for vector<SampleMarker>; it is renamed to the Overlay spelling and re-homed to OutfitConfig (whose object defines it), so this membership (the real name folded into the wrong one) is withdrawn and the survivor field follows the map."
+    }
+   ]
   },
   {
    "name": "_M_allocate_and_copy_NgRnd",
@@ -98482,10 +98492,8 @@
   {
    "name": "resize",
    "address": "0x822a6b28",
-   "survivor": "?resize@?$vector@VSampleMarker@@V?$StlNodeAlloc@VSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVSampleMarker@@@Z",
-   "folded": [
-    "?resize@?$vector@VOverlay@OutfitConfig@@V?$StlNodeAlloc@VOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVOverlay@OutfitConfig@@@Z"
-   ],
+   "survivor": "?resize@?$vector@VOverlay@OutfitConfig@@V?$StlNodeAlloc@VOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVOverlay@OutfitConfig@@@Z",
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -98493,6 +98501,18 @@
      "spelling": "?resize@?$vector@VOverlay@OutfitConfig@@V?$StlNodeAlloc@VOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVOverlay@OutfitConfig@@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 124 B retail / 124 B ours; retail body-twins 11. Retail call site(s) reaching the survivor where we call this spelling: 0x822a7824."
+    }
+   ],
+   "survivor_renamed": {
+    "from": "?resize@?$vector@VSampleMarker@@V?$StlNodeAlloc@VSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVSampleMarker@@@Z",
+    "lane": "W16-MB 2026-10-01"
+   },
+   "withdrawn": [
+    {
+     "spelling": "?resize@?$vector@VOverlay@OutfitConfig@@V?$StlNodeAlloc@VOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVOverlay@OutfitConfig@@@Z",
+     "lane": "W16-MB 2026-10-01",
+     "class": "MAP_NAME_WRONG",
+     "why": "Retail 0x822A6B28 is vector<OutfitConfig::Overlay>::resize: its only caller is ObjVector<OutfitConfig::Overlay>::resize (0x822A7824), and it calls the Overlay _M_erase (0x822A3178, whose body copies 16-byte elements via ObjPtr<Object>::SetObjConcrete) and 0x822A5528. The map row named it for vector<SampleMarker>; it is renamed to the Overlay spelling and re-homed to OutfitConfig (whose object defines it), so this membership (the real name folded into the wrong one) is withdrawn and the survivor field follows the map."
     }
    ]
   },
