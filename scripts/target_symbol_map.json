@@ -33949,5 +33949,6 @@
  "0x822b8da0": "??0BandConfiguration@@QAA@XZ",
  "0x82306ee0": "?UpdateTimeInfo@TrackPanelDir@@QAAXXZ",
  "0x82303bb8": "?Unkd4@TrackPanelDir@@UAAXPBD00VSymbol@@@Z",
- "0x82309b60": "?Unkd8@TrackPanelDir@@UAAXXZ"
+ "0x82309b60": "?Unkd8@TrackPanelDir@@UAAXXZ",
+ "0x822f7158": "?Load@?$ObjPtr@VStreakMeter@@@@QAA_NAAVBinStream@@_NPAVObjectDir@@@Z"
 }
