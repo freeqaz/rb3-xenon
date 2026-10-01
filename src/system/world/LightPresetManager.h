@@ -19,12 +19,16 @@ public:
     void ForcePreset(LightPreset *, float);
     void ForcePresets(LightPreset *, LightPreset *, float);
 
-    // RB3 BandDirector deps (not in dc3 LightPresetManager — stubbed for compile).
+    // RB3-only API (absent from DC3's LightPresetManager); retail bodies in
+    // this unit's .text, see LightPresetManager.cpp.
     void GetPresets(LightPreset *&, LightPreset *&);
     void Interp(Symbol, Symbol, float);
     void SchedulePstKey(int);
     void StompPresets(LightPreset *, LightPreset *);
     LightPreset *PickRandomPreset(Symbol);
+    void SetPresetsEquivalent(bool);
+    void SendLightingMessage(Symbol);
+    void SetLighting(Symbol, bool);
 
 protected:
     DataNode OnToggleLightingEvents(DataArray *);

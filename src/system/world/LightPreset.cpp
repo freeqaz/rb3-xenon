@@ -144,7 +144,7 @@ BinStream &operator>>(BinStream &d, LightPreset::EnvLightEntry &e) {
 #pragma region SpotlightEntry
 
 LightPreset::SpotlightEntry::SpotlightEntry(Hmx::Object *owner)
-    : mIntensity(0), mColor(0), mFlags(3), mTarget(owner) {
+    : mIntensity(0), mColor(0), mFlags(3), mTarget(ObjPtrInlineOwner(), owner) {
     mRotation.Reset();
     mRotationMatrix.Zero();
 }
@@ -343,6 +343,22 @@ void LightPreset::Keyframe::LegacyLoadP9(BinStream &d) {
 BinStream &operator<<(BinStream &bs, const LightPreset::Keyframe &k) {
     k.Save(bs);
     return bs;
+}
+
+// Retail 0x824AACB8 (called by BandDirector): the three category symbols are
+// function-local statics.
+int SymToPstKeyframe(Symbol s) {
+    static Symbol next("next");
+    static Symbol prev("prev");
+    static Symbol first("first");
+    LightPreset::KeyframeCmd cmd = LightPreset::kPresetKeyframeNum;
+    if (s == next)
+        cmd = LightPreset::kPresetKeyframeNext;
+    else if (s == prev)
+        cmd = LightPreset::kPresetKeyframePrev;
+    else if (s == first)
+        cmd = LightPreset::kPresetKeyframeFirst;
+    return cmd;
 }
 
 #pragma region LightPreset
@@ -615,7 +631,10 @@ RndPostProc *LightPreset::GetCurrentPostProc() const {
     return ret;
 }
 
+// Retail 0x824AAFA8: no LoadMgr queries -- the running platform is the
+// constant kPlatformXBox and edit mode is not consulted.
 bool LightPreset::PlatformOk() const {
+#ifdef HX_NATIVE
     if (TheLoadMgr.EditMode() || !mPlatformOnly
         || TheLoadMgr.GetPlatform() == kPlatformNone) {
         return true;
@@ -626,6 +645,11 @@ bool LightPreset::PlatformOk() const {
         }
         return plat == mPlatformOnly;
     }
+#else
+    if (mPlatformOnly)
+        return mPlatformOnly == kPlatformXBox;
+    return true;
+#endif
 }
 
 int LightPreset::NextManualFrame(LightPreset::KeyframeCmd cmd) const {
