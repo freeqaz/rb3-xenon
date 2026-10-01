@@ -5060,9 +5060,8 @@ Sfx.cpp:
 	.pdata      start:0x822377E0 end:0x822377E8
 	.pdata      start:0x822377E8 end:0x82237878
 	.pdata      start:0x822391B0 end:0x82239410
-	.pdata      start:0x82239420 end:0x82239500
-	.pdata      start:0x82239508 end:0x82239658
-	.pdata      start:0x82239710 end:0x82239730
+	.pdata      start:0x82239428 end:0x82239500
+	.pdata      start:0x82239508 end:0x82239610
 	.text       start:0x826FE080 end:0x826FE4A8
 	.text       start:0x826FE4A8 end:0x826FE514
 	.text       start:0x826FE518 end:0x826FE590
@@ -5072,10 +5071,8 @@ Sfx.cpp:
 	.text       start:0x82700D18 end:0x82700D28
 	.text       start:0x82700D28 end:0x82701368
 	.text       start:0x8271A0C8 end:0x8271C1F0
-	.text       start:0x8271C27C end:0x8271CBD8
-	.text       start:0x8271CC40 end:0x8271E128
-	.text       start:0x8271E174 end:0x8271E178
-	.text       start:0x8271ECA4 end:0x8271EEE8
+	.text       start:0x8271C2CC end:0x8271CBD8
+	.text       start:0x8271CC40 end:0x8271DE68
 
 PropSync.cpp:
 	.pdata      start:0x82213EF0 end:0x82213EF8
@@ -5978,16 +5975,21 @@ system/synth/FxSend.cpp:
 	.text       start:0x82717800 end:0x827178F0
 
 Emitter.cpp:
+	.pdata      start:0x82239610 end:0x82239658
 	.pdata      start:0x82239658 end:0x82239660
 	.pdata      start:0x82239660 end:0x82239670
 	.pdata      start:0x82239670 end:0x822396F8
 	.pdata      start:0x822396F8 end:0x82239710
+	.pdata      start:0x82239710 end:0x82239730
 	.pdata      start:0x82239730 end:0x82239788
 	.pdata      start:0x82239788 end:0x82239790
+	.text       start:0x8271DE68 end:0x8271E128
 	.text       start:0x8271E128 end:0x8271E174
+	.text       start:0x8271E174 end:0x8271E178
 	.text       start:0x8271E178 end:0x8271E3A0
 	.text       start:0x8271E3A0 end:0x8271EC2C
 	.text       start:0x8271EC2C end:0x8271ECA4
+	.text       start:0x8271ECA4 end:0x8271EEE8
 	.text       start:0x8271EEE8 end:0x8271EEF4
 	.text       start:0x8271EEF8 end:0x8271F550
 	.text       start:0x8271F550 end:0x8271F55C
@@ -6033,12 +6035,14 @@ StreamReceiver.cpp:
 
 MoggClipMap.cpp:
 	.pdata      start:0x82239410 end:0x82239420
+	.pdata      start:0x82239420 end:0x82239428
 	.pdata      start:0x82239500 end:0x82239508
 	.pdata      start:0x8223A248 end:0x8223A260
 	.pdata      start:0x8223A260 end:0x8223A268
 	.pdata      start:0x8223A268 end:0x8223A270
 	.pdata      start:0x8223A270 end:0x8223A280
 	.text       start:0x8271C1F0 end:0x8271C27C
+	.text       start:0x8271C27C end:0x8271C2CC
 	.text       start:0x8271CBD8 end:0x8271CC40
 	.text       start:0x8272AFB8 end:0x8272B140
 	.text       start:0x8272B140 end:0x8272B1E0
@@ -7063,9 +7067,9 @@ system/synth/FxSendFlanger.cpp:
 	.text       start:0x82722CB8 end:0x82723698
 
 system/synth/FxSendSynapse.cpp:
-	.pdata      start:0x822389C8 end:0x82238A58
+	.pdata      start:0x822389D0 end:0x82238A58
 	.pdata      start:0x82238A80 end:0x82238A88
-	.text       start:0x82712160 end:0x82712C28
+	.text       start:0x827121AC end:0x82712C28
 	.text       start:0x82712E2C end:0x82712E7C
 
 system/synth/FxSendMeterEffect.cpp:
@@ -7569,8 +7573,6 @@ BandIKEffector.cpp:
 
 MidiInstrument.cpp:
 	.pdata      start:0x821F6C38 end:0x821F6C40
-	.pdata      start:0x82207DD0 end:0x82207DE0
-	.pdata      start:0x82207DF0 end:0x82207DF8
 	.pdata      start:0x82238AA8 end:0x82238C28
 	.pdata      start:0x82238C28 end:0x82238C30
 	.pdata      start:0x82238C30 end:0x82238C38
@@ -7586,8 +7588,6 @@ MidiInstrument.cpp:
 	.pdata      start:0x82238DB8 end:0x82238DD8
 	.pdata      start:0x82238DD8 end:0x82238DE0
 	.text       start:0x822C5758 end:0x822C57B8
-	.text       start:0x823E3ED8 end:0x823E3F58
-	.text       start:0x823E3FC8 end:0x823E4020
 	.text       start:0x827130B0 end:0x82714854
 	.text       start:0x82714858 end:0x827148B0
 	.text       start:0x827148B0 end:0x82714918
@@ -7907,7 +7907,9 @@ ColorPalette.cpp:
 
 Stream.cpp:
 	.pdata      start:0x82238998 end:0x822389C8
+	.pdata      start:0x822389C8 end:0x822389D0
 	.text       start:0x82711F78 end:0x8271215C
+	.text       start:0x82712160 end:0x827121AC
 
 DirUnloader.cpp:
 	.pdata      start:0x8223AAE8 end:0x8223AB10
@@ -9474,7 +9476,9 @@ network/net/NetSession.cpp:
 	.pdata      start:0x82207D70 end:0x82207D80
 	.pdata      start:0x82207D80 end:0x82207DC0
 	.pdata      start:0x82207DC0 end:0x82207DD0
+	.pdata      start:0x82207DD0 end:0x82207DE0
 	.pdata      start:0x82207DE0 end:0x82207DF0
+	.pdata      start:0x82207DF0 end:0x82207DF8
 	.pdata      start:0x82207DF8 end:0x82207E10
 	.pdata      start:0x82207E10 end:0x82207E48
 	.pdata      start:0x82207E48 end:0x82207E50
@@ -9536,7 +9540,9 @@ network/net/NetSession.cpp:
 	.text       start:0x823E3AA8 end:0x823E3BDC
 	.text       start:0x823E3BE0 end:0x823E3E38
 	.text       start:0x823E3E38 end:0x823E3ED8
+	.text       start:0x823E3ED8 end:0x823E3F58
 	.text       start:0x823E3F58 end:0x823E3FC8
+	.text       start:0x823E3FC8 end:0x823E4020
 	.text       start:0x823E4020 end:0x823E4180
 	.text       start:0x823E4180 end:0x823E45D8
 	.text       start:0x823E45D8 end:0x823E4630
