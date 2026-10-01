@@ -155,16 +155,33 @@ Symbol BandCharDesc::GetAnimInstrument(Symbol s) {
         return s;
 }
 
-// Retail fn_82335810. Selects the head-normal-map variant suffix consumed by
-// OutfitConfig::SetSkinTextures ("%s_%s_norm_%s.tex" when non-empty, plain
-// "%s_%s_norm.tex" when empty). Retail's body calls fn_82335410 to fill 18 floats,
-// sums them in 6 groups of 3, takes the argmax, and indexes one of two 6-entry
-// const char* tables (.data 0x82C6D810 / 0x82C6D828) selected by
-// `mGender == "female"`. fn_82335410 and both tables are undecompiled, so
-// this is deliberately a STUB: returning "" reproduces the
-// no-variant branch, which is the conservative behaviour. Only the call SHAPE is
-// load-bearing for the OutfitConfig match; do not inline it.
-const char *BandCharDesc::HeadNormVariant() { return ""; }
+// Head-normal-map variant suffix consumed by OutfitConfig::SetSkinTextures
+// ("%s_%s_norm_%s.tex" when non-empty, "%s_%s_norm.tex" when empty): the body
+// shape whose three deform weights sum highest, from a per-gender table.
+const char *gMaleHeadNormVariants[6] = { "",     "heavy", "athletic",
+                                                "skinny", "soft", "weak" };
+const char *gFemaleHeadNormVariants[6] = { "",       "heavy",     "athletic",
+                                                  "skinny", "hourglass", "weak" };
+
+const char *BandCharDesc::HeadNormVariant() {
+    float weights[18];
+    ComputeDeformWeights(weights);
+    int best = 0;
+    float bestSum = 0;
+    for (int i = 0; i < 6; i++) {
+        float sum = 0;
+        for (int j = 0; j < 3; j++) {
+            sum += weights[i * 3 + j];
+        }
+        if (MaxEq(bestSum, sum)) {
+            best = i;
+        }
+    }
+    if (mGender == "female")
+        return gFemaleHeadNormVariants[best];
+    else
+        return gMaleHeadNormVariants[best];
+}
 
 void BandCharDesc::SaveFixed(FixedSizeSaveableStream &stream) const {
     FixedSizeSaveable::SaveSymbolID(stream, mGender);
