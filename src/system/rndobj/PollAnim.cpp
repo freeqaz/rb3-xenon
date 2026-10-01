@@ -113,9 +113,6 @@ void RndPollAnim::Poll() {
         case RndAnimatable::k30_fps_tutorial:
             frame = 30.0f * TheTaskMgr.TutorialSeconds();
             break;
-        case RndAnimatable::k15_fpb:
-            frame = 15.0f * TheTaskMgr.Beat();
-            break;
         }
         cur->SetFrame(frame, 1);
     }

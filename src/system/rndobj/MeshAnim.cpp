@@ -234,10 +234,12 @@ void RndMeshAnim::Print() {
 #pragma region RndAnimatable
 
 float RndMeshAnim::EndFrame() {
+    // Retail keeps the running maximum with compare-and-branch (MaxEq), not
+    // with fsel.
     float end = VertPointsKeys().LastFrame();
-    end = Max(end, VertNormalsKeys().LastFrame());
-    end = Max(end, VertTexsKeys().LastFrame());
-    end = Max(end, VertColorsKeys().LastFrame());
+    MaxEq(end, VertNormalsKeys().LastFrame());
+    MaxEq(end, VertTexsKeys().LastFrame());
+    MaxEq(end, VertColorsKeys().LastFrame());
     return end;
 }
 

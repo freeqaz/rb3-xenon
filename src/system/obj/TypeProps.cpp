@@ -251,22 +251,6 @@ void TypeProps::AddRefObjects() {
 
 #include "rndobj/Lit.h"
 
-template<>
-bool ObjPtrList<RndLight, ObjectDir>::remove(RndLight *target) {
-    Node* current = mNodes;
-    Node* next;
-
-    while (current != nullptr) {
-        next = current->next;
-        if (current->Obj() == target) {
-            erase(current);
-            return true;
-        }
-        current = next;
-    }
-    return false;
-}
-
 void TypeProps::ClearAll() {
     ReleaseObjects();
     if (mMap) {

@@ -24,21 +24,18 @@ protected:
     NgLight();
     virtual void RenderShadows(std::vector<RndDrawable *> &);
     virtual void SetAndClearShadowViewport();
-    virtual void BlurShadowRT();
+    virtual void BlurShadowRT(float, float);
 
     bool WantShadows() const;
     bool SphereConeTest(const Vector3 &, float);
-    RndTex *CreateShadowTex();
     void SetShadowTransforms();
     bool HaveShadows(std::vector<RndDrawable *> &);
 
-    // NOTE(laneAJ-c): dc3 is newer and added a trailing `int unk18c` here (a
-    // TheRnd.DrawCount() re-entrancy cache guarding CheckShadowMap). RB3
-    // retail predates it: the vbase Hmx::Object subobject sits at NgLight+0x16c
-    // in the target but at +0x170 with the extra word (verified with
-    // /d1reportSingleClassLayoutNgLight), which shifted NgLight::Load and
-    // NgLight::Copy's `this` adjustments by 4.
+    // One shadow render target, blurred in place. The third word is a
+    // TheRnd.DrawCount() stamp: the ctor sets it to -1, CheckShadowMap skips
+    // its work when it equals the current draw count and stores the count
+    // when done. The Hmx::Object vbase sits at NgLight+0x16c.
     RndTex *mShadowRT; // 0x15c
     RndTex *mShadowMapTex; // 0x160
-    RndTex *unk188; // 0x164
+    int mShadowDrawCount; // 0x164
 };

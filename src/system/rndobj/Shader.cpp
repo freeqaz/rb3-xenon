@@ -252,17 +252,18 @@ void RndShader::SelectConfig(RndMat *mat, ShaderType shader_type, bool b3) {
 void RndShader::Cache(ShaderType s, ShaderOptions opts, RndMat *mat) {
     RndShaderProgram &program = TheShaderMgr.FindShader(s, opts);
     if (!program.Cached()) {
-        if (!program.Cache(s, opts, nullptr, nullptr)
 #ifdef HX_NATIVE
-            && !TheShaderMgr.CacheShaders()
-#else
-            && (UsingCD() || !TheShaderMgr.CacheShaders())
-#endif
-        ) {
+        if (!program.Cache(s, opts, nullptr, nullptr) && !TheShaderMgr.CacheShaders()) {
             MatShaderFlagsOK(mat, s);
         }
+#else
+        // Retail (0x824A58D8) ignores the result: no cache-shaders test and no
+        // material flag check follow.
+        program.Cache(s, opts, nullptr, nullptr);
+#endif
     }
-    bool select = s == kShadowmapShader || TheRnd.DrawMode() == Rnd::kDrawShadowColor;
+    // Retail compares the raw draw mode against 2 (RB3's shadow-colour mode).
+    bool select = s == kShadowmapShader || TheRnd.DrawMode() == (Rnd::Mode)2;
     program.Select(select);
 }
 
@@ -299,16 +300,16 @@ bool RndShaderParticles::CheckError(MatFlagErrorType type) {
         return !(type != (MatFlagErrorType)1 && type != (MatFlagErrorType)3) && TheRnd.DrawMode() != 3;
 }
 
+// Retail (0x824A5AF8) tests the option bit, then Offscreen(), then the
+// material's alpha-write flag, and writes all four channels if any is set.
 void SetColorWriteMask(const ShaderOptions &opts, RndMat *mat) {
-    bool writeAlpha = mat->mAlphaWrite;
-    if (
-#ifdef RB3_DC3_MAT
-        !mat->mForceAlphaWrite &&
-#endif
-        ((opts.flags & 0x400000) != 0 || TheNgRnd.Offscreen() || writeAlpha)) {
-        writeAlpha = true;
+    unsigned int mask;
+    if ((opts.flags & 0x400000) != 0 || TheNgRnd.Offscreen() || mat->mAlphaWrite) {
+        mask = 0xF;
+    } else {
+        mask = 7;
     }
-    TheRenderState.SetColorWriteMask((-(unsigned int)writeAlpha & 8) + 7);
+    TheRenderState.SetColorWriteMask(mask);
 }
 
 void CheckDistortionOpts(RndMat *mat, ShaderOptions &opts) {
@@ -403,8 +404,8 @@ u64 RndShaderVelocityCamera::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
 }
 
 u64 RndShaderVelocity::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
-    return ((u64)(TheHiResScreen.IsActive() & 1) << 40
-        | (u64)(TheShaderMgr.BoneCount() > 0)) << 12;
+    // Retail (0x824A7440) has no HiResScreen term: only the skinned bit.
+    return ((u64)(TheShaderMgr.BoneCount() > 0) & 1) << 12;
 }
 
 u64 RndShaderUnwrapUV::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {

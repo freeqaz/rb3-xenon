@@ -677,16 +677,13 @@ DataNode RndPostProc::OnAllowedNormalMap(const DataArray *) {
     return GetNormalMapTextures(Dir());
 }
 
+// 0x8242EDA0: no hi-res screen test.
 bool RndPostProc::BlendPrevious() const {
-    return mTrailThreshold < 1 && mTrailDuration > 0 && !TheHiResScreen.IsActive();
+    return mTrailThreshold < 1 && mTrailDuration > 0;
 }
 
-float RndPostProc::BloomIntensity() const {
-    if (mBloomGlare && TheHiResScreen.IsActive()) {
-        return mBloomIntensity / 3.0f;
-    } else
-        return mBloomIntensity;
-}
+// 0x8242EDD8: the bare member, with no glare/hi-res scaling.
+float RndPostProc::BloomIntensity() const { return mBloomIntensity; }
 
 bool RndPostProc::HallOfTime() const { return mHallOfTimeRate != 0; }
 bool RndPostProc::DoChromaticAberration() const {
@@ -695,8 +692,7 @@ bool RndPostProc::DoChromaticAberration() const {
 bool RndPostProc::DoVignette() const { return mVignetteIntensity != 0; }
 
 bool RndPostProc::DoMotionBlur() const {
-    return mMotionBlurBlend > 0 && mMotionBlurWeight.Pack() > 0
-        && !TheHiResScreen.IsActive();
+    return mMotionBlurBlend > 0 && mMotionBlurWeight.Pack() > 0;
 }
 
 bool RndPostProc::DoGradientMap() const {
@@ -770,6 +766,7 @@ void RndPostProc::Interp(const RndPostProc *from, const RndPostProc *to, float p
     // Copy non-interpolatable bool/obj properties from pick
     mNoiseMidtone = pick->mNoiseMidtone;
     mNoiseStationary = pick->mNoiseStationary;
+    mLuminanceMap = pick->mLuminanceMap.Ptr();
     mNoiseMap = pick->mNoiseMap.Ptr();
     mGradientMap = pick->mGradientMap.Ptr();
     mRefractMap = pick->mRefractMap.Ptr();
@@ -777,10 +774,8 @@ void RndPostProc::Interp(const RndPostProc *from, const RndPostProc *to, float p
     mMotionBlurVelocity = pick->mMotionBlurVelocity;
     mChromaticSharpen = pick->mChromaticSharpen;
 
-    // Bloom intensity uses BloomIntensity() which accounts for glare/hires
-    float toBloom = to->BloomIntensity();
-    float fromBloom = from->BloomIntensity();
-    ::Interp(fromBloom, toBloom, pct, mBloomIntensity);
+    // The raw member: no BloomIntensity() glare/hi-res adjustment here.
+    ::Interp(from->mBloomIntensity, to->mBloomIntensity, pct, mBloomIntensity);
 
     // Bloom color
     ::Interp(from->mBloomColor, to->mBloomColor, pct, mBloomColor);

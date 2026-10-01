@@ -15,8 +15,9 @@
 #include "math/Mtx.h"
 #include <cstring>
 
+// No gfx-mode test: retail inlines this as mShadowOverride && size() != 0.
 bool NgLight::WantShadows() const {
-    return GetGfxMode() == kNewGfx && mShadowOverride && !mShadowOverride->empty();
+    return mShadowOverride && !mShadowOverride->empty();
 }
 
 bool NgLight::HaveShadows(std::vector<RndDrawable *> &draws) {
@@ -43,19 +44,9 @@ BEGIN_LOADS(NgLight)
     CheckShadowMap();
 END_LOADS
 
-NgLight::~NgLight() {
-    RELEASE(mShadowRT);
-    RELEASE(unk188);
-}
+NgLight::~NgLight() { RELEASE(mShadowRT); }
 
-NgLight::NgLight() : mShadowRT(0), mShadowMapTex(0), unk188(0) {}
-
-RndTex *NgLight::CreateShadowTex() {
-    PhysMemTypeTracker tracker("D3D(phys): Shadow Map");
-    RndTex *tex = Hmx::Object::New<RndTex>();
-    tex->SetBitmap(0x100, 0x100, 16, RndTex::kRenderedNoZ, false, nullptr);
-    return tex;
-}
+NgLight::NgLight() : mShadowRT(0), mShadowMapTex(0), mShadowDrawCount(-1) {}
 
 // Ported from DC3's newer body (dc3-decomp rndobj/Lit_NG.cpp, whose RESIDUAL
 // note explains the rest): it replaces an older hand spelling here (single
@@ -169,34 +160,6 @@ bool NgLight::SphereConeTest(const Vector3 &sphereCenter, float sphereRadius) {
     return Length(closest) < sphereRadius;
 }
 
-namespace Hmx {
-    Matrix4 operator*(const Transform &t, const Matrix4 &b) {
-        Matrix4 out;
-
-        { Vector3 ca = b.Col3(0); out.x.x = ca.z * t.m.x.z + ca.y * t.m.x.y + ca.x * t.m.x.x; }
-        { Vector3 cb = b.Col3(1); out.x.y = cb.z * t.m.x.z + cb.y * t.m.x.y + cb.x * t.m.x.x; }
-        { Vector3 ca = b.Col3(2); out.x.z = ca.z * t.m.x.z + ca.y * t.m.x.y + ca.x * t.m.x.x; }
-        { Vector3 cb = b.Col3(3); out.x.w = cb.z * t.m.x.z + cb.y * t.m.x.y + cb.x * t.m.x.x; }
-
-        { Vector3 ca = b.Col3(0); out.y.x = ca.z * t.m.y.z + ca.y * t.m.y.y + ca.x * t.m.y.x; }
-        { Vector3 cb = b.Col3(1); out.y.y = cb.z * t.m.y.z + cb.y * t.m.y.y + cb.x * t.m.y.x; }
-        { Vector3 ca = b.Col3(2); out.y.z = ca.z * t.m.y.z + ca.y * t.m.y.y + ca.x * t.m.y.x; }
-        { Vector3 cb = b.Col3(3); out.y.w = cb.z * t.m.y.z + cb.y * t.m.y.y + cb.x * t.m.y.x; }
-
-        { Vector3 ca = b.Col3(0); out.z.x = ca.z * t.m.z.z + ca.y * t.m.z.y + ca.x * t.m.z.x; }
-        { Vector3 cb = b.Col3(1); out.z.y = cb.z * t.m.z.z + cb.y * t.m.z.y + cb.x * t.m.z.x; }
-        { Vector3 ca = b.Col3(2); out.z.z = ca.z * t.m.z.z + ca.y * t.m.z.y + ca.x * t.m.z.x; }
-        { Vector3 cb = b.Col3(3); out.z.w = cb.z * t.m.z.z + cb.y * t.m.z.y + cb.x * t.m.z.x; }
-
-        { Vector3 ca = b.Col3(0); out.w.x = ca.z * t.v.z + ca.y * t.v.y + ca.x * t.v.x + b.w.x; }
-        { Vector3 cb = b.Col3(1); out.w.y = cb.z * t.v.z + cb.y * t.v.y + cb.x * t.v.x + b.w.y; }
-        { Vector3 ca = b.Col3(2); out.w.z = ca.z * t.v.z + ca.y * t.v.y + ca.x * t.v.x + b.w.z; }
-        { Vector3 cb = b.Col3(3); out.w.w = cb.z * t.v.z + cb.y * t.v.y + cb.x * t.v.x + b.w.w; }
-
-        return out;
-    }
-}
-
 static Transform sIdentityXfm;
 static int sIdentityXfmInited;
 
@@ -257,7 +220,8 @@ void NgLight::RenderShadows(std::vector<RndDrawable *> &shadowCasters) {
     }
     TheRnd.SetDrawMode(savedDrawMode);
     mShadowRT->FinishDrawTarget();
-    BlurShadowRT();
+    BlurShadowRT(1.0f, 0.0f);
+    BlurShadowRT(0.0f, 1.0f);
     if (savedCam) {
         savedCam->Select();
     } else {
@@ -284,15 +248,18 @@ void NgLight::CheckShadowMap() {
     if (TheRnd.Drawing()) {
         if (TheShaderMgr.AllowPerPixel()) {
             if (mType == kFakeSpot) {
-                {
+                if (TheRnd.DrawCount() != mShadowDrawCount) {
                     bool tempOverride = !mShadowOverride && mShadowObjects.size() != 0;
                     if (tempOverride) {
                         mShadowOverride = &mShadowObjects;
                     }
                     if (WantShadows()) {
-                        if (!mShadowRT && !unk188) {
-                            mShadowRT = CreateShadowTex();
-                            unk188 = CreateShadowTex();
+                        if (!mShadowRT) {
+                            PhysMemTypeTracker tracker("D3D(phys): Shadow Map");
+                            mShadowRT = Hmx::Object::New<RndTex>();
+                            mShadowRT->SetBitmap(
+                                0x100, 0x100, 32, RndTex::kRenderedNoZ, false, nullptr
+                            );
                         }
                         std::vector<RndDrawable *> draws;
                         if (HaveShadows(draws)) {
@@ -307,6 +274,7 @@ void NgLight::CheckShadowMap() {
                         mShadowMapTex = TheRnd.GetDefaultTex(Rnd::kDefaultTex_FlatNormal);
                         MILO_ASSERT(mShadowMapTex, 0x91);
                     }
+                    mShadowDrawCount = TheRnd.DrawCount();
                     if (tempOverride) {
                         mShadowOverride = nullptr;
                     }
@@ -318,71 +286,55 @@ void NgLight::CheckShadowMap() {
     }
 }
 
-void NgLight::BlurShadowRT() {
+// One directional pass over mShadowRT, sampling it in place; RenderShadows
+// calls it once horizontally (1, 0) and once vertically (0, 1).
+void NgLight::BlurShadowRT(float dirX, float dirY) {
     static const float kWeights[] = { 0.1f, 0.25f, 0.3f, 0.25f, 0.1f };
-    float blurX = 1.0f;
-    float blurDir = 0.0f;
-    int pass = 0;
+    RndTex *tex = mShadowRT;
+    int w = tex->Width();
+    int h = tex->Height();
+
+    Hmx::Rect rect(0.0f, 0.0f, (float)(long long)w, (float)(long long)h);
+    TheShaderMgr.SetNumTaps(5);
+
+    float invW = 1.0f / (float)(long long)w;
+    float invH = 1.0f / (float)(long long)h;
+
+    const float *pWeight = kWeights - 1;
+    int i = -2;
+    int taps = 5;
     do {
-        RndTex *srcTex, *dstTex;
-        if (pass == 0) {
-            srcTex = mShadowRT;
-            dstTex = unk188;
-        } else {
-            srcTex = unk188;
-            dstTex = mShadowRT;
-            float tmp = blurX;
-            blurX = blurDir;
-            blurDir = tmp;
-        }
+        Vector4 offset(
+            (float)((float)((float)(long long)i * invW) * dirX),
+            (float)((float)((float)(long long)i * invH) * dirY),
+            1.0f, 1.0f
+        );
+        TheShaderMgr.SetPConstant((PShaderConstant)(0x21 + i), offset);
 
-        int w = dstTex->Width();
-        int h = dstTex->Height();
+        pWeight++;
+        float wt = *pWeight;
+        Vector4 weight(wt, wt, wt, wt);
+        TheShaderMgr.SetPConstant((PShaderConstant)(0x31 + i), weight);
+        taps--;
+        i++;
+    } while (taps != 0);
 
-        Hmx::Rect rect(0.0f, 0.0f, (float)(long long)w, (float)(long long)h);
-        TheShaderMgr.SetNumTaps(5);
+    TheRenderState.SetTextureFilter(0, (RndRenderState::FilterMode)1, false);
 
-        float invW = 1.0f / (float)(long long)w;
-        float invH = 1.0f / (float)(long long)h;
+    tex->MakeDrawTarget();
 
-        const float *pWeight = kWeights - 1;
-        int i = -2;
-        int taps = 5;
-        do {
-            Vector4 offset(
-                (float)((float)((float)(long long)i * invW) * blurX),
-                (float)((float)((float)(long long)i * invH) * blurDir),
-                1.0f, 1.0f
-            );
-            TheShaderMgr.SetPConstant((PShaderConstant)(0x8c + i), offset);
+    RndMat *workMat = TheShaderMgr.GetWork();
+    workMat->SetDiffuseTex(tex);
+    workMat->mZMode = kZModeDisable;
+    workMat->mTexWrap = kTexWrapClamp;
+    workMat->mBlend = RndMat::kBlendSrc;
+    workMat->MarkDirty(2);
 
-            pWeight++;
-            float wt = *pWeight;
-            Vector4 weight(wt, wt, wt, wt);
-            TheShaderMgr.SetPConstant((PShaderConstant)(0x9c + i), weight);
-            taps--;
-            i++;
-        } while (taps != 0);
+    Hmx::Color color;
+    TheNgRnd.DrawRect(rect, workMat, (ShaderType)1, color, nullptr, nullptr);
 
-        TheRenderState.SetTextureFilter(0, (RndRenderState::FilterMode)1, false);
-        TheRenderState.SetTextureFilter(6, (RndRenderState::FilterMode)1, false);
-
-        dstTex->MakeDrawTarget();
-
-        RndMat *workMat = TheShaderMgr.GetWork();
-        workMat->SetDiffuseTex(srcTex);
-        workMat->mBlend = RndMat::kBlendSrc;
-        workMat->mTexWrap = kTexWrapClamp;
-        workMat->mZMode = kZModeDisable;
-        workMat->MarkDirty(2);
-
-        Hmx::Color color;
-        TheNgRnd.DrawRect(rect, workMat, (ShaderType)1, color, nullptr, nullptr);
-
-        dstTex->FinishDrawTarget();
-        pass++;
-        TheShaderMgr.SetNumTaps(1);
-    } while (pass < 2);
+    tex->FinishDrawTarget();
+    TheShaderMgr.SetNumTaps(1);
 }
 
 void NgLight::Init() {

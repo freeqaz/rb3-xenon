@@ -116,14 +116,18 @@ BEGIN_PROPSYNCS(RndGroup)
 END_PROPSYNCS
 
 BEGIN_SAVES(RndGroup)
-    SAVE_REVS(0x10, 0)
+    // Retail saves revision 14 from a writable int (0x82C7063C), the newest
+    // revision Load understands (mSortInWorld at rev > 13).
+    static int REV = 14;
+    bs << REV;
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndAnimatable)
     SAVE_SUPERCLASS(RndTransformable)
     SAVE_SUPERCLASS(RndDrawable)
-    bs << mObjects;
-    bs << mDrawOnly;
-    bs << mSortInWorld;
+    // Retail writes the environment, LOD object and LOD screen size between
+    // mObjects and mSortInWorld, as one chained expression (the float is
+    // loaded before the first call).
+    bs << mObjects << mEnv << mDrawOnly << mLod << mLodScreenSize << mSortInWorld;
 END_SAVES
 
 BEGIN_COPYS(RndGroup)
@@ -320,6 +324,9 @@ void RndGroup::Draw() {
 
 void RndGroup::ListDrawChildren(std::list<RndDrawable *> &children) {
     children.insert(children.end(), mDraws.begin(), mDraws.end());
+    // Retail also lists the LOD drawable when one is set.
+    if (mLod)
+        children.push_back(mLod);
 }
 
 RndDrawable *RndGroup::CollideShowing(const Segment &seg, float &f, Plane &p) {
@@ -363,15 +370,16 @@ void RndGroup::Update() {
     if (mDrawOnly && !VectorFind(mDraws, mDrawOnly.Ptr())) {
         mDrawOnly = nullptr;
     }
+    // Retail refreshes the LOD state here (inlined at the tail).
+    UpdateLODState();
 }
 
 void RndGroup::AddObject(Hmx::Object *o1, Hmx::Object *o2) {
     if (o1 && o1 != this) {
-        if (mObjects.find(o1) != mObjects.end()) {
-            if (!o2)
-                return;
-            RemoveObject(o1);
-        }
+        // Retail returns when o1 is already a member, whether or not o2 is
+        // given; it never removes and re-inserts.
+        if (mObjects.find(o1) != mObjects.end())
+            return;
         if (o2) {
             mObjects.insert(mObjects.find(o2), o1);
             Update();

@@ -444,10 +444,10 @@ BinStream &CachedRead(BinStream &bs, std::vector<T1, T2> &vec) {
 INIT_REVS(0x26, 0)
 
 BEGIN_LOADS(RndMesh)
-    int revs;
-    bs >> revs;
-    gMeshRev = getHmxRev(revs);
-    gMeshAltRev = getAltRev(revs);
+    // Retail reads the packed revision straight into the file-static and masks
+    // it in place (`lwz; clrlwi 16; stw` on one base); no alt revision is kept.
+    bs >> gMeshRev;
+    gMeshRev = getHmxRev(gMeshRev);
     if (gMeshRev > 0x19) {
         Hmx::Object::Load(bs);
     }
@@ -587,17 +587,9 @@ BEGIN_LOADS(RndMesh)
     } else if (gMeshRev > 0x10)
         bs >> mPatches;
     if (gMeshRev > 0x1C) {
+        // Retail has no bone-limit check here: `bs >> mBones` falls straight
+        // through to the end of the bone block.
         bs >> mBones;
-        int max = MaxBones();
-        if (mBones.size() > max) {
-            MILO_NOTIFY(
-                "%s: exceeds bone limit (%d of %bs)",
-                PathName(this),
-                mBones.size(),
-                MaxBones()
-            );
-            mBones.resize(MaxBones());
-        }
     } else if (gMeshRev > 0xD) {
         ObjPtr<RndTransformable> trans(this);
         bs >> trans;
@@ -640,7 +632,9 @@ BEGIN_LOADS(RndMesh)
         } else
             mBones.clear();
     }
-    RemoveInvalidBones();
+    // Retail calls no RemoveInvalidBones here. It makes one virtual
+    // `bs.Cached()` call (slot 0x18) and discards the result.
+    bs.Cached();
     if (gMeshRev > 0 && gMeshRev < 4) {
         std::vector<std::vector<unsigned short> > usvec;
         bs >> usvec;
@@ -673,10 +667,13 @@ next:
     }
     if (gMeshRev < MESH_REV_SEP_COLOR && IsSkinned()) {
         for (auto it = mVerts.begin(); it != mVerts.end(); ++it) {
-            it->boneWeights.Set(
-                it->color.red, it->color.green, it->color.blue, it->color.alpha
-            );
-            it->color.Zero();
+            // Retail copies the colour channels in order and then resets the
+            // colour to white (four stores of 1.0f), not to zero.
+            it->boneWeights.x = it->color.red;
+            it->boneWeights.y = it->color.green;
+            it->boneWeights.z = it->color.blue;
+            it->boneWeights.w = it->color.alpha;
+            it->color.Reset();
         }
     }
     if (gMeshRev > 0x25) {
@@ -1428,7 +1425,7 @@ DataNode RndMesh::OnCompareEdgeVerts(const DataArray *da) {
     for (int i = 0; i < Verts().size(); i++) {
         if (vec20[i] == -1) {
             vec20[i] = i;
-            for (int j = i; j < Verts().size(); j++) {
+            for (int j = i + 1; j < Verts().size(); j++) {
                 if (Verts(j).pos == Verts(i).pos) {
                     vec20[j] = i;
                 }
@@ -1472,13 +1469,14 @@ DataNode RndMesh::OnCompareEdgeVerts(const DataArray *da) {
     DataArray *array = da->Array(2);
     for (int i = 0; i < array->Size(); i++) {
         RndMesh *curMesh = array->Obj<RndMesh>(i);
-        auto debugMsg = MakeString("testing %s\n", curMesh->Name());
-        TheDebug << debugMsg;
+        // Retail keeps the cast and an empty walk over vec28; the two
+        // reports are stripped debug output.
+        MILO_LOG("testing %s\n", curMesh->Name());
         FOREACH (it, vec28) {
             if (Verts(*it).pos == curMesh->Verts(*it).pos)
                 continue;
             else
-                TheDebug << MakeString("   %d doesn't match position\n", *it);
+                MILO_LOG("   %d doesn't match position\n", *it);
         }
     }
     if (mGeomOwner != this && (mVerts.size() != 0 || mFaces.size() != 0)) {
@@ -1807,6 +1805,9 @@ void RndMesh::LoadVertices(BinStream &d) {
         }
     }
 #else
+    // Retail checks the stored format against the one Xbox layout it knows
+    // (0x24-byte vertex, version 1). There is no platform query and no
+    // temp-heap push around the allocation.
     unsigned int loadedCompressedSize = 0;
     unsigned int loadedVersion = 0;
     unsigned int compressedSize = 0;
@@ -1814,29 +1815,14 @@ void RndMesh::LoadVertices(BinStream &d) {
     if (b58) {
         d.ReadEndian(&loadedCompressedSize, 4);
         d.ReadEndian(&loadedVersion, 4);
-        MILO_ASSERT(IsVertexCompressionSupported(TheLoadMgr.GetPlatform()), 0x29C);
-        if (TheLoadMgr.GetPlatform() != kPlatformXBox) {
-            TheDebug.Fail(FormatString("Unsupported platform for vertex compression").Str(), 0);
-            b4 = false;
-        } else {
-            compressedSize = 0x24;
-            b4 = true;
-        }
-                unsigned int versionCheck;
-        if ((TheLoadMgr.GetPlatform() == kPlatformXBox)) {
-            versionCheck = 1U;
-        } else {
-            versionCheck = 0U;
-        }
-        if (compressedSize != loadedCompressedSize || versionCheck != loadedVersion) {
-            b4 = false;
-        }
+        compressedSize = 0x24;
+        b4 = loadedCompressedSize == compressedSize && loadedVersion == 1;
         if (!b4) {
             MILO_NOTIFY(
                 "Loaded stale compressed vertex data, resave mesh file \"%s\""
                 "(loaded size = %d, current = %d; loaded ver = %d, current = %d",
                 d.Name(), loadedCompressedSize, compressedSize,
-                loadedVersion, (unsigned int)b4
+                loadedVersion, 1
             );
         }
     }
@@ -1846,9 +1832,7 @@ void RndMesh::LoadVertices(BinStream &d) {
             if (mNumCompressedVerts != 0) {
                 unsigned int totalSize = compressedSize * count;
                 MILO_ASSERT(totalSize > 0, 0x2D4);
-                MemPushTemp();
                 mCompressedVerts = new unsigned char[totalSize];
-                MemPopTemp();
                 ReadChunks(d, mCompressedVerts, totalSize, compressedSize << 9);
             }
         } else {

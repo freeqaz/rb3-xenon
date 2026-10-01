@@ -9,12 +9,19 @@ DOFProc::DOFProc() {}
 DOFProc::~DOFProc() {}
 
 void DOFProc::Init() {
+#ifdef HX_NATIVE
     REGISTER_OBJ_FACTORY(DOFProc);
     if (!TheDOFProc) {
         TheDOFProc = Hmx::Object::New<DOFProc>();
         static DataNode &n = DataVariable("the_dof_proc");
         n = TheDOFProc;
     }
+#else
+    // RB3 retail's DOFProc::Init (0x82466298) is 60 B: it creates the
+    // singleton and nothing else -- no factory registration, no DataVariable.
+    if (!TheDOFProc)
+        TheDOFProc = Hmx::Object::New<DOFProc>();
+#endif
 }
 
 void DOFProc::Terminate() {

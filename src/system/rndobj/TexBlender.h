@@ -71,6 +71,6 @@ protected:
     /** "Global strength of the blending effect for each controller".
         Ranges from 0 to 1. */
     float mControllerInfluence; // 0x74
-    int mRenderedStates; // 0x78
+    unsigned int mRenderedStates; // 0x78 (retail compares it unsigned)
     bool unkc0;
 };

@@ -812,6 +812,14 @@ void RndBitmap::SaveBmpPixels(BinStream *file) const {
     }
 }
 
+// Retail 0x823FC440 (callers: PatchSticker::FinishLoad): hand back the mip
+// chain without freeing it.
+RndBitmap *RndBitmap::DetachMip() {
+    RndBitmap *mip = mMip;
+    mMip = nullptr;
+    return mip;
+}
+
 void RndBitmap::SetMip(RndBitmap *bm) {
     RndBitmap *mip = mMip;
     delete mip;

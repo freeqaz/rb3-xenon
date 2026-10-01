@@ -46,9 +46,15 @@ public:
             }
         }
 
+        // Each set is a quarter of the previous one's size, starting a
+        // quarter of (w, h).
         void AllocateTextures(unsigned int w, unsigned int h) {
+            BloomTextureSet *set = mTextures;
             for (int i = N; i != 0; i--) {
-                mTextures[i].AllocateTextures(w, h);
+                w >>= 2;
+                h >>= 2;
+                set->AllocateTextures(w, h);
+                set++;
             }
         }
 
@@ -101,10 +107,11 @@ protected:
 
     static void ReleaseTex();
 
-    float mRandomSeed1; // 0x20c
-    float mRandomSeed2; // 0x210
-    float unk234; // 0x214
-    float unk238; // 0x218
+    Vector2 mRandomSeed; // 0x20c
+    Vector2 mRefractOffset; // 0x214
     ObjPtrList<RndDrawable> mMotionBlurDrawList; // 0x21c
-    bool mMotionBlurEnabled; // 0x230
+#ifdef HX_NATIVE
+    bool mMotionBlurEnabled;
+#endif
+    // RB3's NgPostProc is 0x230 bytes (NewObject allocates 0x230).
 };

@@ -41,8 +41,7 @@ public:
         k480_fpb = 1,
         k30_fps_ui = 2,
         k1_fpb = 3,
-        k30_fps_tutorial = 4,
-        k15_fpb = 5
+        k30_fps_tutorial = 4
     };
 
     OBJ_CLASSNAME(Anim);

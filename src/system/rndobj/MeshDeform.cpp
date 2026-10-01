@@ -1,3 +1,6 @@
+// Retail inlines this TU's two-argument ObjPtr ctor (BoneDesc's mBone: three
+// member stores, no `bl`) -- RB3_OBJPTR_FORCEINLINE_CTOR (see obj/ObjPtr_p.h).
+#define RB3_OBJPTR_FORCEINLINE_CTOR
 #include "rndobj/MeshDeform.h"
 #include "obj/Object.h"
 #include "os/Debug.h"
@@ -194,23 +197,20 @@ int RndMeshDeform::VertArray::AppendWeights(int num, int *const boneIndices, flo
         ptr += (*ptr * 2) + 1;
     }
     float sum = 0.0f;
-    // deduplicate bone entries: if two entries share the same bone index, merge them
-    for (int i = 1; i < num; i++) {
-        for (int j = 0; j < i; j++) {
-            if (boneIndices[i] == boneIndices[j]) {
-                weights[j] += weights[i];
-                num--;
-                int last = num;
-                boneIndices[i] = boneIndices[last];
-                weights[i] = weights[last];
-                i--;
-                break;
-            }
-        }
-    }
-    // validate weights
+    // One pass: merge every later entry that repeats bone i into entry i (the
+    // repeat is replaced by the last entry and re-examined; no break), then
+    // validate and accumulate weight i.
     int vertIdx = vertCount;
     for (int i = 0; i < num; i++) {
+        for (int j = i + 1; j < num; j++) {
+            if (boneIndices[j] == boneIndices[i]) {
+                weights[i] += weights[j];
+                num--;
+                boneIndices[j] = boneIndices[num];
+                weights[j] = weights[num];
+                j--;
+            }
+        }
         if (!(weights[i] > 0.0f)) {
             auto _tmp0 = PathName(mParent);
             MILO_NOTIFY(
@@ -236,14 +236,13 @@ int RndMeshDeform::VertArray::AppendWeights(int num, int *const boneIndices, flo
     float scale = 1.0f / sum;
     // append (num*2+1) bytes at end of buffer
     u8 *newEntry = (u8 *)MemResizeElem(
-        _ref0, mSize, (void *)((char *)_ref0 + mSize), 0, (num * 2) + 1, __FILE__, 0x85, "RndMeshDeform"
+        _ref0, mSize, (void *)((char *)_ref0 + mSize), 0, (num * 2) + 1, "RndMeshDeform"
     );
     *newEntry = (u8)num;
     for (int i = 0; i < num; i++) {
         newEntry[i * 2 + 1] = (u8)boneIndices[i];
         float w = weights[i] * scale;
-        float clamped = w < 0.0f ? 0.0f : (w > 1.0f ? 1.0f : w);
-        newEntry[i * 2 + 2] = (u8)(int)(clamped * 255.0f + 0.5f);
+        newEntry[i * 2 + 2] = (u8)(Clamp(0.0f, 1.0f, w) * 255.0f + 0.5f);
     }
     return vertCount;
 }
@@ -280,7 +279,7 @@ void RndMeshDeform::VertArray::CopyVert(int to, int from, RndMeshDeform::VertArr
     int insertLength = *buf * 2 + 1;
     int cutLength = (dst == (u8 *)mData + mSize) ? 0 : *dst * 2 + 1;
     void *out = MemResizeElem(
-        mData, mSize, dst, cutLength, insertLength, __FILE__, 0x4B, "RndMeshDeform"
+        mData, mSize, dst, cutLength, insertLength, "RndMeshDeform"
     );
     memcpy(out, buf, *buf * 2 + 1);
 }

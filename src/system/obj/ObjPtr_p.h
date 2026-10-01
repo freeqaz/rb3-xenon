@@ -1182,18 +1182,16 @@ ObjPtrList<T1, T2>::find(const Hmx::Object *target) const {
     return end();
 }
 
-// TODO: not 100%, work on this
-// addr: 0x825C6868
+// Retail (0x82452950, called from RndGroup::RemoveObject and SortDraws)
+// returns nothing and removes EVERY node holding the target: the walk keeps
+// going after a match.
 template <class T1, class T2>
-bool ObjPtrList<T1, T2>::remove(T1 *target) {
+void ObjPtrList<T1, T2>::remove(T1 *target) {
     for (iterator it = begin(); it != end();) {
         auto old = it++;
-        if (*old == target) {
+        if (*old == target)
             erase(old);
-            return true;
-        }
     }
-    return false;
 }
 
 // remove a particular item inside iterator otherIt, from list otherList,

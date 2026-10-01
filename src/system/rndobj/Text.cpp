@@ -74,9 +74,11 @@ std::set<RndText *> RndText::mTextMeshSet;
 // RB3-only RndText::Init() config keys — all three are present in the retail
 // binary (one string hit each), which is part of the evidence that retail's
 // RndText is the pre-DC3 generation.
-float gSuperscriptScale = 0.7f;
-float gGuitarScale = 0.7f;
-float gGuitarZOffset = 1.0f;
+// File-static: retail addresses all three off one base register (+0/+4/+8),
+// which needs internal linkage; external globals each get their own lis.
+static float gSuperscriptScale = 0.7f;
+static float gGuitarScale = 0.7f;
+static float gGuitarZOffset = 1.0f;
 
 // RB3-360 retail rev dialect (ObjMacros shape), not DC3's Object.h
 // BinStreamRev stack decorator.  DC3's form emits a ??0BinStream, a
@@ -669,9 +671,8 @@ RndText::ParseMarkup(const char *cc, RndText::Style *style, float f3, float f4) 
         style->mSize = b1 ? f3 : gSuperscriptScale * f3;
         ptr += 3;
     } else if (strnicmp(ptr, "gtr", 3) == 0) {
-        const float *gtrBase = &gSuperscriptScale + 1;
-        style->mSize = b1 ? f3 : gtrBase[0] * f3;
-        style->mZOffset = b1 ? f4 : gtrBase[1];
+        style->mSize = b1 ? f3 : gGuitarScale * f3;
+        style->mZOffset = b1 ? f4 : gGuitarZOffset;
         ptr += 3;
     } else if (strnicmp(ptr, "it", 2) == 0) {
         style->mItalics = b1 ? 0 : 0.1f;

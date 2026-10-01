@@ -17,8 +17,10 @@ public:
     virtual void Terminate();
     virtual MovieImpl *CreateMovieImpl();
 
-    void PlatformInit();
-    void PlatformStoreCache(void *, unsigned int);
+    // Both are static in retail: PlatformStoreCache takes the buffer in r3 and
+    // the size in r4, and Movie::Impl::Init calls PlatformInit with no object.
+    static void PlatformInit();
+    static void PlatformStoreCache(void *, unsigned int);
 
     static DataNode OnMovieSetTrack(DataArray *);
 

@@ -104,9 +104,10 @@ public:
 
         MEM_OVERLOAD(CompressTexDesc, 0x1E4)
 
-        ObjPtr<RndTex> tex;
-        RndTex::AlphaCompress alpha;
-        CompressTextureCallback *callback;
+        ObjPtr<RndTex> tex; // 0x0
+        // One byte: retail's CompressTexture (0x82415B68) stores it with stb.
+        u8 alpha; // 0xc
+        CompressTextureCallback *callback; // 0x10
     };
 
     struct CompressTextureCallback {

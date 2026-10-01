@@ -15,13 +15,6 @@
 #include "rndobj/Tex.h"
 #include "ui/UI.h"
 
-// Static tap arrays for DOF blur kernel (horizontal and vertical)
-// Tap coordinate pairs (x, y) for 8 rotated blur sample offsets.
-// Each array is initialized once (guarded by bits in sBlurTapInitFlags).
-static float sHorzBlurTaps[8][2];
-static float sVertBlurTaps[8][2];
-static unsigned int sBlurTapInitFlags; // bit 1 = vert initialized, bit 2 = horz initialized
-
 // DOF blur kernel scale factor — scales UV tap offsets by width/height
 static const float sDOFWidthFactor = 0.666f;
 
@@ -120,49 +113,33 @@ void SetVHBlurWeights(bool vertical, int width, int height) {
     weights[6] = 0.125f;
     weights[7] = 0.125f;
 
-    float (*taps)[2];
+    // Two function-local static tap tables, each built on first use (guard
+    // bits 1 and 2 of one guard word).
+    Vector2 *taps;
     if (vertical) {
+        static Vector2 sVertBlurTaps[8] = {
+            Vector2(-0.9420162439f, -0.3990621567f),
+            Vector2(0.9455860853f, -0.768907249f),
+            Vector2(-0.09418410063f, -0.9293887019f),
+            Vector2(0.3449593782f, 0.2938776016f),
+            Vector2(-0.9158858061f, 0.4577143192f),
+            Vector2(-0.8154423237f, -0.8791246414f),
+            Vector2(-0.3827754259f, 0.276768446f),
+            Vector2(0.9748439789f, 0.7564837933f),
+        };
         taps = sVertBlurTaps;
-        if ((sBlurTapInitFlags & 1) == 0) {
-            taps[0][0] = -0.9420162439f;
-            taps[0][1] = -0.3990621567f;
-            taps[1][0] = 0.9455860853f;
-            taps[1][1] = -0.768907249f;
-            taps[2][0] = -0.09418410063f;
-            taps[2][1] = -0.9293887019f;
-            taps[3][0] = 0.3449593782f;
-            taps[3][1] = 0.2938776016f;
-            taps[4][0] = -0.9158858061f;
-            taps[4][1] = 0.4577143192f;
-            taps[5][0] = -0.8154423237f;
-            taps[5][1] = -0.8791246414f;
-            taps[6][0] = -0.3827754259f;
-            taps[6][1] = 0.276768446f;
-            taps[7][0] = 0.9748439789f;
-            taps[7][1] = 0.7564837933f;
-            sBlurTapInitFlags = sBlurTapInitFlags | 1;
-        }
     } else {
+        static Vector2 sHorzBlurTaps[8] = {
+            Vector2(0.4432332516f, -0.9751155376f),
+            Vector2(0.5374298096f, -0.4737342f),
+            Vector2(-0.2649691105f, -0.4189302325f),
+            Vector2(0.7919751406f, 0.1909018755f),
+            Vector2(-0.2418884039f, 0.9970650673f),
+            Vector2(-0.8140995502f, 0.9143759012f),
+            Vector2(0.1998412609f, 0.7864136696f),
+            Vector2(0.1438316107f, -0.1410079002f),
+        };
         taps = sHorzBlurTaps;
-        if ((sBlurTapInitFlags & 2) == 0) {
-            taps[0][0] = 0.4432332516f;
-            taps[0][1] = -0.9751155376f;
-            taps[1][0] = 0.5374298096f;
-            taps[1][1] = -0.4737342f;
-            taps[2][0] = -0.2649691105f;
-            taps[2][1] = -0.4189302325f;
-            taps[3][0] = 0.7919751406f;
-            taps[3][1] = 0.1909018755f;
-            taps[4][0] = -0.2418884039f;
-            taps[4][1] = 0.9970650673f;
-            taps[5][0] = -0.8140995502f;
-            taps[5][1] = 0.9143759012f;
-            taps[6][0] = 0.1998412609f;
-            taps[6][1] = 0.7864136696f;
-            taps[7][0] = 0.1438316107f;
-            taps[7][1] = -0.1410079002f;
-            sBlurTapInitFlags = sBlurTapInitFlags | 2;
-        }
     }
 
     float fVar = RndPostProc::DOFOverrides().mBlurWidthScale * sDOFWidthFactor;
@@ -171,19 +148,18 @@ void SetVHBlurWeights(bool vertical, int width, int height) {
     float yScale = (float)(long long)height * fVar * 1.5432099e-05f;
 
     for (int i = 0; i < 8; i++) {
-        Vector4 tapOffset(taps[i][0] * xScale * 5.0f, taps[i][1] * yScale * 5.0f, 1.0f, 1.0f);
-        TheShaderMgr.SetPConstant((PShaderConstant)(0x8a + i), tapOffset);
+        Vector2 tap = taps[i];
+        Vector4 tapOffset(tap.x * xScale * 5.0f, tap.y * yScale * 5.0f, 1.0f, 1.0f);
+        TheShaderMgr.SetPConstant((PShaderConstant)(0x1f + i), tapOffset);
         Vector4 weight(weights[i], weights[i], weights[i], weights[i]);
-        TheShaderMgr.SetPConstant((PShaderConstant)(0x9a + i), weight);
+        TheShaderMgr.SetPConstant((PShaderConstant)(0x2f + i), weight);
     }
 }
 
 void NgDOFProc::DoPost() {
-    static DataNode &sDisableDof = DataVariable("disable_dof");
-
-    auto _tmp4 = sDisableDof.Int(nullptr);
-    if (_tmp4 == 0 && TheNgRnd.PreProcessTexture()
-        && TheNgRnd.PreDepthTexture()) {
+    // No disable_dof variable test: retail goes straight to the two texture
+    // checks.
+    if (TheNgRnd.PreProcessTexture() && TheNgRnd.PreDepthTexture()) {
         MILO_ASSERT(mBlurTex[0] && mBlurTex[1], 0x10e);
 
         bool enabled = mEnabled;
@@ -214,9 +190,10 @@ void NgDOFProc::DoPost() {
             TheShaderMgr.SetPConstant((PShaderConstant)0x18, dofParams);
 
             RndMat *workMat = TheShaderMgr.GetWork();
-            Hmx::Color colorPass1(1, 1, 1);
-            Hmx::Color colorPass2(1, 1, 1);
-            Hmx::Color colorPass3(1, 1, 1);
+            // Unset locals: retail stores nothing into the colours it passes.
+            Hmx::Color colorPass1;
+            Hmx::Color colorPass2;
+            Hmx::Color colorPass3;
 
             // Pass 1: Downsample with DOF shader
             mBlurTex[0]->MakeDrawTarget();

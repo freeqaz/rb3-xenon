@@ -1,3 +1,7 @@
+// Retail's ctor (0x82486440) inlines ObjPtr<RndCam>(this): mOwner,
+// vtable lis, mObject, vtable addi, vtable store, with &mCam kept as an EH temp.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR 1
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT 1
 #include "rndobj/CamAnim.h"
 #include "obj/Object.h"
 #include "rndobj/Anim.h"
@@ -6,7 +10,7 @@
 
 #pragma region Hmx::Object
 
-RndCamAnim::RndCamAnim() : mCam(this, 0), mKeysOwner(this, this) {}
+RndCamAnim::RndCamAnim() : mCam(this), mKeysOwner(this, this) {}
 
 RndCamAnim::~RndCamAnim() {}
 
@@ -73,8 +77,18 @@ BEGIN_PROPSYNCS(RndCamAnim)
 #endif
 END_PROPSYNCS
 
+#ifndef HX_NATIVE
+// Retail Save (0x82485E78) writes the revision from an initialized .data int
+// (0x82C709F8, 2) rather than an immediate.
+static int gSaveRev_CamAnim = 2;
+#endif
+
 BEGIN_SAVES(RndCamAnim)
+#ifdef HX_NATIVE
     SAVE_REVS(2, 0)
+#else
+    bs << gSaveRev_CamAnim;
+#endif
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndAnimatable)
     bs << mCam << mFovKeys << mKeysOwner;

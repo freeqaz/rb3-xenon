@@ -776,8 +776,6 @@ void *MemResizeElem(
     void *cutPoint,
     int cutLength,
     int insertLength,
-    const char *file,
-    int line,
     const char *name
 ) {
     void *old = mem;
@@ -790,7 +788,7 @@ void *MemResizeElem(
         newTotalSize = delta + prefixSize;
     }
     if (newTotalSize != totalSize) {
-        mem = (MemAlloc)(newTotalSize, file, line, name);
+        mem = MemAlloc(newTotalSize, __FILE__, __LINE__, name);
         totalSize = newTotalSize;
         if (prefixSize != 0) {
             memcpy(mem, old, prefixSize);
@@ -802,7 +800,7 @@ void *MemResizeElem(
                 suffixSize
             );
         }
-        MemFree(old, file, line, name);
+        MemFree(old, __FILE__, __LINE__, name);
     }
     return (char *)mem + prefixSize;
 }

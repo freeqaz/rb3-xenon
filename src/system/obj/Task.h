@@ -19,7 +19,13 @@ enum TaskUnits {
  */
 class Task : public Hmx::Object {
 public:
+#ifdef HX_NATIVE
     Task();
+#else
+    // Inline and empty on X360: derived ctors (e.g. AnimTask 0x82401290) call
+    // Hmx::Object's ctor directly, and retail has no Task ctor body.
+    Task() {}
+#endif
 #ifdef HX_NATIVE
     virtual ~Task();
 #endif

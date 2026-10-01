@@ -419,8 +419,14 @@ DataNode RndTransformable::OnGetLocalPosIndex(const DataArray *a) {
 }
 
 DataNode RndTransformable::OnGetLocalRot(const DataArray *a) {
+    // GetLocalRot's body, inline in retail (0x823F7ED0 calls Normalize and
+    // MakeEuler directly).
+    Hmx::Matrix3 m;
+    m = mLocalXfm.m;
+    Normalize(m, m);
     Vector3 v;
-    GetLocalRot(v);
+    MakeEuler(m, v);
+    v *= RAD2DEG;
     *a->Var(2) = v.x;
     *a->Var(3) = v.y;
     *a->Var(4) = v.z;
@@ -635,7 +641,17 @@ DataNode RndTransformable::OnGetWorldRot(const DataArray *da) {
 }
 
 DataNode RndTransformable::OnSetLocalRotIndex(const DataArray *a) {
-    SetLocalRotIndex(a->Int(2), a->Float(3));
+    // Written out in retail (0x823F8E60): the index is read once for the
+    // stripped assert and again for the store, after Float(3).
+    MILO_ASSERT(a->Int(2) < 3, 0x3A4);
+    Vector3 scale;
+    Vector3 euler;
+    MakeEulerScale(mLocalXfm.m, euler, scale);
+    euler[a->Int(2)] = a->Float(3) * DEG2RAD;
+    Hmx::Matrix3 m;
+    MakeRotMatrix(euler, m, true);
+    Scale(scale, m, m);
+    SetLocalRot(m);
     return 0;
 }
 
@@ -738,9 +754,13 @@ const Transform &RndTransformable::WorldXfm_Force() {
     } else if (mConstraint == kConstraintLocalRotate) {
         Multiply(mLocalXfm.v, mParent->WorldXfm(), mWorldXfm.v);
         mWorldXfm.m = mLocalXfm.m;
+#ifdef HX_NATIVE
+        // Retail (0x823F7A80) has no arm for this constraint: it falls into
+        // the full parent multiply below.
     } else if (mConstraint == kConstraintNoParentRotation) {
         Add(mLocalXfm.v, mParent->WorldXfm().v, mWorldXfm.v);
         mWorldXfm.m = mLocalXfm.m;
+#endif
     } else {
         Multiply(mLocalXfm, mParent->WorldXfm(), mWorldXfm);
     }

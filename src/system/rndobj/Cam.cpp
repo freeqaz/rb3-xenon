@@ -26,16 +26,30 @@ static_assert(sizeof(Frustum) == 0x60, "Frustum size mismatch");
 #ifdef HX_NATIVE
 RndCam *RndCam::sCurrent;
 #endif
+#ifdef HX_NATIVE
+// Config-driven near-plane defaults are native-only; retail RB3 has no
+// cam_default_near_plane / cam_max_far_near_ratio settings and constructs and
+// clamps with the literals 1 and 1000.
 float RndCam::sDefaultNearPlane = 1;
 float RndCam::sMaxFarNearPlaneRatio = 1000;
+#endif
 // Y/Z flip: Milo (X=right, Y=forward, Z=up) → D3D/WebGPU (X=right, Y=up, Z=forward)
 // Runtime-initialized by dynamic initializer ??__EsFlipYZ@@YAXXZ (0x82EDCAE0)
 static Transform sFlipYZ(Hmx::Matrix3(1, 0, 0, 0, 0, 1, 0, 1, 0), Vector3(0, 0, 0));
 
 RndCam::RndCam()
+#ifdef HX_NATIVE
     : mNearPlane(sDefaultNearPlane), mFarPlane(mNearPlane * sMaxFarNearPlaneRatio),
+#else
+    : mNearPlane(1.0f), mFarPlane(1000.0f),
+#endif
       mYFov(0.6024178), mAspectRatio(1), mZRange(0.0f, 1.0f),
-      mScreenRect(0.0f, 0.0f, 1.0f, 1.0f), mTargetTex(this), mViewProjMatrix(Hmx::Matrix4::ID()) {
+      mScreenRect(0.0f, 0.0f, 1.0f, 1.0f), mTargetTex(this)
+#ifdef HX_NATIVE
+      // Retail leaves mViewProjMatrix for UpdateLocal to fill (no sID copy).
+      , mViewProjMatrix(Hmx::Matrix4::ID())
+#endif
+{
     UpdateLocal();
 }
 
@@ -45,14 +59,6 @@ RndCam::~RndCam() {
 }
 
 unsigned int RndCam::ProjectZ(float) { return 0; }
-
-// Forward declaration: retail keeps every SetFrustum call site out-of-line
-// (see the definition + comment below OnSetFrustum). SyncProperty's three
-// SYNC_PROP_SET call sites need the same noinline trampoline -- without a
-// forward declaration here, /Ob2 auto-inlines SetFrustum's full clamp body
-// into each branch (measured: base 1048 B vs target 856 B, 3 duplicated
-// ~64-byte clamp/store clusters at idx 54-73/115-132/172-190 in objdiff).
-static void _outline_SetFrustum(RndCam *cam, float n, float f, float y, float a);
 
 BEGIN_HANDLERS(RndCam)
     HANDLE(set_frustum, OnSetFrustum)
@@ -66,15 +72,15 @@ END_HANDLERS
 BEGIN_PROPSYNCS(RndCam)
     SYNC_SUPERCLASS(RndTransformable)
     SYNC_PROP_SET(
-        near_plane, mNearPlane, _outline_SetFrustum(this, _val.Float(), mFarPlane, mYFov, 1)
+        near_plane, mNearPlane, SetFrustum(_val.Float(), mFarPlane, mYFov, 1)
     )
     SYNC_PROP_SET(
-        far_plane, mFarPlane, _outline_SetFrustum(this, mNearPlane, _val.Float(), mYFov, 1)
+        far_plane, mFarPlane, SetFrustum(mNearPlane, _val.Float(), mYFov, 1)
     )
     SYNC_PROP_SET(
         y_fov,
         mYFov * RAD2DEG,
-        _outline_SetFrustum(this, mNearPlane, mFarPlane, _val.Float() * DEG2RAD, 1)
+        SetFrustum(mNearPlane, mFarPlane, _val.Float() * DEG2RAD, 1)
     )
     SYNC_PROP(z_range, mZRange)
     SYNC_PROP_MODIFY(screen_rect, mScreenRect, UpdateLocal())
@@ -85,8 +91,18 @@ BEGIN_PROPSYNCS(RndCam)
 #endif
 END_PROPSYNCS
 
+#ifndef HX_NATIVE
+// Retail Save (0x82433E30) writes the revision from an initialized .data int
+// (0x82C7045C, 12) rather than an immediate.
+static int gRev_Cam = 0xC;
+#endif
+
 BEGIN_SAVES(RndCam)
+#ifdef HX_NATIVE
     SAVE_REVS(0xC, 0)
+#else
+    bs << gRev_Cam;
+#endif
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndTransformable)
     bs << mNearPlane << mFarPlane << mYFov;
@@ -114,16 +130,24 @@ END_COPYS
 INIT_REVS(12, 0)
 
 BEGIN_LOADS(RndCam)
+#ifdef HX_NATIVE
     LOAD_REVS(bs)
     ASSERT_REVS(12, 0)
-    if (d.rev > 10) {
+    int rev = d.rev;
+#else
+    // Retail (0x82435300) reads the revision into a plain int and compares
+    // it whole; it builds no BinStreamRev.
+    int rev;
+    bs >> rev;
+#endif
+    if (rev > 10) {
         Hmx::Object::Load(bs);
     }
     RndTransformable::Load(bs);
-    if (d.rev < 10) {
+    if (rev < 10) {
         RndDrawable::DumpLoad(bs);
     }
-    if (d.rev == 8) {
+    if (rev == 8) {
         ObjPtrList<Hmx::Object> objList(this, kObjListNoNull);
         int x;
         bs >> x >> objList;
@@ -131,25 +155,25 @@ BEGIN_LOADS(RndCam)
     bs >> mNearPlane;
     bs >> mFarPlane;
     bs >> mYFov;
-    if (d.rev < 0xC) {
+    if (rev < 0xC) {
         mYFov = ConvertFov(mYFov, 0.75f);
     }
-    if (d.rev < 2) {
+    if (rev < 2) {
         int x;
         bs >> x;
     }
     bs >> mScreenRect;
-    if (d.rev > 0 && d.rev < 3) {
+    if (rev > 0 && rev < 3) {
         int x;
         bs >> x;
     }
-    if (d.rev > 3) {
+    if (rev > 3) {
         bs >> mZRange;
     }
-    if (d.rev > 4) {
+    if (rev > 4) {
         bs >> mTargetTex;
     }
-    if (d.rev == 6) {
+    if (rev == 6) {
         int x;
         bs >> x;
     }
@@ -285,6 +309,7 @@ void RndCam::SetTargetTex(RndTex *tex) {
 
 void RndCam::Init() {
     REGISTER_OBJ_FACTORY(RndCam);
+#ifdef HX_NATIVE
     if (SystemConfig()) {
         DataArray *cfg = SystemConfig("rnd");
         cfg->FindData("cam_default_near_plane", sDefaultNearPlane, true);
@@ -292,9 +317,13 @@ void RndCam::Init() {
     }
     DataRegisterFunc("cam_get_default_near_plane", OnGetDefaultNearPlane);
     DataRegisterFunc("cam_get_max_far_near_ratio", OnGetMaxFarNearPlaneRatio);
+#endif
 }
 
-void RndCam::SetFrustum(float near, float far, float yfov, float f4) {
+// Out of line in retail (0x82434528): every caller in this file, as in every
+// other unit, branches to it, so /Ob2 must not inline it here.
+__declspec(noinline) void RndCam::SetFrustum(float near, float far, float yfov, float f4) {
+#ifdef HX_NATIVE
     if (far - 0.0001f > sMaxFarNearPlaneRatio * near) {
         MILO_NOTIFY_ONCE(
             "%s: %f/%f plane ratio exceeds %d",
@@ -309,6 +338,18 @@ void RndCam::SetFrustum(float near, float far, float yfov, float f4) {
             far = sMaxFarNearPlaneRatio * near;
         }
     }
+#else
+    // Retail clamps against the literal ratio 1000 (0x820010B4) and pulls the
+    // near plane in by 0.001 (0x820010EC).
+    float maxFar = near * 1000.0f;
+    if (far - 0.0001f > maxFar) {
+        if (far == mFarPlane) {
+            near = far * 0.001f;
+        } else {
+            far = maxFar;
+        }
+    }
+#endif
     mNearPlane = near;
     mFarPlane = far;
     mYFov = yfov;
@@ -456,8 +497,14 @@ void RndCam::GetViewProjectXfms(Transform &viewXfm, Hmx::Matrix4 &projMtx) const
         farRatio = farPlane / (farPlane - nearPlane);
     }
 
+#ifdef HX_NATIVE
     Hmx::Rect screenRect = mScreenRect;
     Hmx::Rect hiRect = TheHiResScreen.ScreenRect(this, screenRect);
+#else
+    // Retail (0x824338C0) frames the projection with a plain copy of
+    // mScreenRect; it makes no HiResScreen call here.
+    Hmx::Rect hiRect = mScreenRect;
+#endif
 
     float cx = mScreenRect.w * 0.5f + mScreenRect.x;
     float cy = mScreenRect.h * 0.5f + mScreenRect.y;
@@ -467,56 +514,28 @@ void RndCam::GetViewProjectXfms(Transform &viewXfm, Hmx::Matrix4 &projMtx) const
     float right = Min(hiRect.x + hiRect.w, 1.0f);
     float top = Min(hiRect.y + hiRect.h, 1.0f);
 
+    float sx = mScreenRect.w * mLocalProjectXfm.m.x.x;
+    // The vertical FOV factor is mLocalProjectXfm.m.z.y (retail reads +0x118),
+    // which UpdateLocal writes as -1/tan (or -1/ratio for ortho).  An earlier
+    // copy read v.x (+0x124), which UpdateLocal zeroes, and so produced a zero
+    // y row and a degenerate projection.
+    float sy = -(mScreenRect.h * mLocalProjectXfm.m.z.y);
     float l = (left - cx) * 2.0f;
     float b = (bottom - cy) * 2.0f;
     float r = (right - cx) * 2.0f;
     float t = (top - cy) * 2.0f;
 
-    float width = r - l;
-    float height = t - b;
-
     projMtx.z.z = farRatio;
-    projMtx.x.x = (mScreenRect.w * mLocalProjectXfm.m.x.x * 2.0f) / width;
+    projMtx.x.x = (sx * 2.0f) / (r - l);
+    projMtx.y.y = (sy * 2.0f) / (t - b);
+    projMtx.z.y = (t + b) / (t - b);
+    projMtx.z.x = -((r + l) / (r - l));
 #ifdef HX_NATIVE
-    // ⛔ THE VERTICAL FOV TERM WAS READ FROM THE WRONG MATRIX SLOT, AND IT MADE
-    //    THE ENGINE'S PROJECTION DEGENERATE.
-    //
-    // The X360 line below reads mLocalProjectXfm.v.x -- the TRANSLATION
-    // component. UpdateLocal (:162-163 in DC3's copy, :160-161 here) does
-    // `mLocalProjectXfm.v.Zero()` and then only ever writes `m.*`, so v.x is
-    // ALWAYS EXACTLY ZERO. projMtx.y.y is therefore always 0, i.e. nothing in
-    // view space contributes to NDC y, and every triangle collapses onto a
-    // line. MEASURED at X3 bring-up on crowd_female01: with this line as-is the
-    // engine's GetViewProjectXfms path returned
-    //     [ 1.8107  0  0  0 ][ 0  0  0  0 ][ -0  0  1.0011  1 ][ 0  0 -1.1123  0 ]
-    // -- an entirely zero second row -- and the frame came back a flat clear
-    // colour with the draws demonstrably issued and every texture uploaded.
-    //
-    // The vertical FOV factor lives in m.z.y: UpdateLocal writes
-    // `mLocalProjectXfm.m.z.y = -1/thetan` (and `-1/ratio` in the ortho
-    // branch). ★ DC3 HAS ALREADY FOUND AND FIXED THIS EXACT LINE --
-    // dc3-decomp/src/system/rndobj/Cam.cpp:468-472 carries the corrected slot
-    // and a comment ending "(was incorrectly mLocalProjectXfm.v.x, which is
-    // always zero)". UpdateLocal writes the value to m.z.y.
-    // So the store site is settled, and
-    // xenon is alone in reading it from somewhere else.
-    //
-    // ⚠ GATED, NOT CORRECTED OUTRIGHT, and the reason is honest rather than
-    // timid: `RndCam::GetViewProjectXfms` does not appear as a matched function
-    // in build/45410914/report.json's `default/Cam` unit (84.7% fn-matched), so
-    // this build has NO objdiff evidence about the retail body either way. The
-    // native side gets the demonstrably-correct value; the X360 side keeps
-    // exactly the bytes it compiles today (no /D is passed there, so HX_NATIVE
-    // is never defined and its token stream is unchanged). Promoting the fix
-    // unconditionally is an objdiff A/B against the real function, and it is
-    // written up as owed work in docs/plans/x3-first-render-2026-08-01.md.
-    projMtx.y.y = (-(mScreenRect.h * mLocalProjectXfm.m.z.y) * 2.0f) / height;
-#else
-    projMtx.y.y = (-(mScreenRect.h * mLocalProjectXfm.v.x) * 2.0f) / height;
-#endif
-    projMtx.z.y = (t + b) / height;
-    projMtx.z.x = -((r + l) / width);
     projMtx.w.z = -(nearPlane * farRatio);
+#else
+    // Retail re-reads mNearPlane here, after the projMtx stores.
+    projMtx.w.z = -(mNearPlane * farRatio);
+#endif
 
 #ifdef HX_NATIVE
     // Apply FOV scale — scales the projection matrix elements that encode FOV.
@@ -530,6 +549,36 @@ void RndCam::GetViewProjectXfms(Transform &viewXfm, Hmx::Matrix4 &projMtx) const
         }
     }
 #endif
+}
+
+// Leaf at 0x82433A68, directly after GetViewProjectXfms; its callers include
+// GetInfiniteViewProj below and the shadow/shader code.
+namespace Hmx {
+    Matrix4 operator*(const Transform &t, const Matrix4 &b) {
+        Matrix4 out;
+
+        { Vector3 ca = b.Col3(0); out.x.x = ca.z * t.m.x.z + ca.y * t.m.x.y + ca.x * t.m.x.x; }
+        { Vector3 cb = b.Col3(1); out.x.y = cb.z * t.m.x.z + cb.y * t.m.x.y + cb.x * t.m.x.x; }
+        { Vector3 ca = b.Col3(2); out.x.z = ca.z * t.m.x.z + ca.y * t.m.x.y + ca.x * t.m.x.x; }
+        { Vector3 cb = b.Col3(3); out.x.w = cb.z * t.m.x.z + cb.y * t.m.x.y + cb.x * t.m.x.x; }
+
+        { Vector3 ca = b.Col3(0); out.y.x = ca.z * t.m.y.z + ca.y * t.m.y.y + ca.x * t.m.y.x; }
+        { Vector3 cb = b.Col3(1); out.y.y = cb.z * t.m.y.z + cb.y * t.m.y.y + cb.x * t.m.y.x; }
+        { Vector3 ca = b.Col3(2); out.y.z = ca.z * t.m.y.z + ca.y * t.m.y.y + ca.x * t.m.y.x; }
+        { Vector3 cb = b.Col3(3); out.y.w = cb.z * t.m.y.z + cb.y * t.m.y.y + cb.x * t.m.y.x; }
+
+        { Vector3 ca = b.Col3(0); out.z.x = ca.z * t.m.z.z + ca.y * t.m.z.y + ca.x * t.m.z.x; }
+        { Vector3 cb = b.Col3(1); out.z.y = cb.z * t.m.z.z + cb.y * t.m.z.y + cb.x * t.m.z.x; }
+        { Vector3 ca = b.Col3(2); out.z.z = ca.z * t.m.z.z + ca.y * t.m.z.y + ca.x * t.m.z.x; }
+        { Vector3 cb = b.Col3(3); out.z.w = cb.z * t.m.z.z + cb.y * t.m.z.y + cb.x * t.m.z.x; }
+
+        { Vector3 ca = b.Col3(0); out.w.x = ca.z * t.v.z + ca.y * t.v.y + ca.x * t.v.x + b.w.x; }
+        { Vector3 cb = b.Col3(1); out.w.y = cb.z * t.v.z + cb.y * t.v.y + cb.x * t.v.x + b.w.y; }
+        { Vector3 ca = b.Col3(2); out.w.z = ca.z * t.v.z + ca.y * t.v.y + ca.x * t.v.x + b.w.z; }
+        { Vector3 cb = b.Col3(3); out.w.w = cb.z * t.v.z + cb.y * t.v.y + cb.x * t.v.x + b.w.w; }
+
+        return out;
+    }
 }
 
 void RndCam::GetDepthRangeValues(Vector4 &v) const {
@@ -547,18 +596,10 @@ void RndCam::GetInfiniteViewProj(Hmx::Matrix4 &m4) const {
     m4 = tfa0 * me0;
 }
 
+#ifdef HX_NATIVE
 DataNode RndCam::OnGetDefaultNearPlane(DataArray *) { return sDefaultNearPlane; }
 DataNode RndCam::OnGetMaxFarNearPlaneRatio(DataArray *) { return sMaxFarNearPlaneRatio; }
-
-// Retail keeps this call to RndCam::SetFrustum out-of-line (it is compiled as
-// a real function elsewhere in this TU for other callers). Since SetFrustum's
-// definition appears earlier in this file, /Ob2 auto-inlines it here unless we
-// force it back out through a noinline wrapper (same lever as
-// _outline_GetAccomplishmentProgress in AccomplishmentPanel.cpp).
-__declspec(noinline) static void
-_outline_SetFrustum(RndCam *cam, float n, float f, float y, float a) {
-    cam->SetFrustum(n, f, y, a);
-}
+#endif
 
 DataNode RndCam::OnSetFrustum(const DataArray *da) {
     float nearPlane, farPlane, yFov, temp;
@@ -574,7 +615,7 @@ DataNode RndCam::OnSetFrustum(const DataArray *da) {
     else
         temp = mYFov;
     yFov = temp;
-    _outline_SetFrustum(this, nearPlane, farPlane, yFov, 1.0f);
+    SetFrustum(nearPlane, farPlane, yFov, 1.0f);
     return 0;
 }
 

@@ -7,6 +7,14 @@
 
 class Movie {
 public:
+#ifndef HX_NATIVE
+    // RB3's Xbox player: one Bink wrapper class, defined in Movie.cpp. Every
+    // Movie member below is a two-instruction forward to it
+    // (`lwz r3,0(r3); b Impl::X`), except LockThread/UnlockThread/
+    // SetWidthHeight, which are inlined into the Movie wrapper.
+    class Impl;
+#endif
+
     Movie();
     ~Movie();
     static void Init();
@@ -36,7 +44,10 @@ public:
     void Draw();
     bool Poll();
     void SetWidthHeight(int, int);
+    float (*SetTimeCallback(float (*)()))();
+#ifdef HX_NATIVE
     MovieImpl *GetImpl() const { return mImpl; }
+#endif
 
 protected:
     // RB3 retail Movie is a single Impl pointer (4 bytes); the FaderGroup-based
@@ -44,5 +55,11 @@ protected:
     // against the embedded-Movie offsets in
     // MoviePanel/TexMovie target asm (mMovie 4 bytes: mSubtitlesLoader lands at
     // 0x60 not 0x64). mImpl@0x0.
+#ifdef HX_NATIVE
     MovieImpl *mImpl; // 0x0
+#else
+    Impl *mImpl; // 0x0
+#endif
 };
+
+float TaskMgrDeltaSeconds();
