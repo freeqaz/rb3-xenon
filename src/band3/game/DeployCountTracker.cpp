@@ -97,20 +97,23 @@ void DeployCountTracker::Poll_(float) {
             Player *pPlayer = mSource->GetPlayer(id);
             MILO_ASSERT(pPlayer, 0xA5);
             PlayerDeployData &data = mDeployDataMap[id];
-            bool energy = pPlayer->GetBandEnergy() >= 1.0f;
-            bool ismaxmult = pPlayer->GetIndividualMultiplier()
+            // The per-frame flags are const: retail materialises each one
+            // straight into its own register (li rN,1 / li rN,0) and never
+            // re-masks it with clrlwi before use.
+            const bool energy = pPlayer->GetBandEnergy() >= 1.0f;
+            const bool ismaxmult = pPlayer->GetIndividualMultiplier()
                 == pPlayer->GetMaxIndividualMultipler();
-            bool b8 = pPlayer->CanDeployOverdrive();
+            const bool b8 = pPlayer->CanDeployOverdrive();
             int u12 = !mRequireFullEnergy || energy;
             bool b4 = b8 & u12;
             int b5 = !mRequireMaxMultiplier || ismaxmult;
-            bool c1 = data.unk2;
+            const bool c1 = data.unk2;
             b4 = b4 & b5;
-            bool deploying = pPlayer->IsDeployingBandEnergy();
-            bool wasDeploying = data.unk3;
+            const bool deploying = pPlayer->IsDeployingBandEnergy();
+            const bool wasDeploying = data.unk3;
             if (deploying && !wasDeploying) {
-                bool b2 = !mRequireFullEnergy || data.unk0;
-                bool b3 = !mRequireMaxMultiplier || data.unk1;
+                const bool b2 = !mRequireFullEnergy || data.unk0;
+                const bool b3 = !mRequireMaxMultiplier || data.unk1;
                 if (b2 && b3) {
                     LocalDeploy(id);
                     static Message send_tracker_deploy_msg("send_tracker_deploy");
