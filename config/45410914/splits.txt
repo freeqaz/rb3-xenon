@@ -1078,6 +1078,7 @@ BandStarDisplay.cpp:
 	.pdata      start:0x821F73A0 end:0x821F73A8
 	.pdata      start:0x821F73E8 end:0x821F73F0
 	.pdata      start:0x821F73F0 end:0x821F7478
+	.pdata      start:0x821F7478 end:0x821F7480
 	.pdata      start:0x821F7480 end:0x821F7490
 	.pdata      start:0x821F74A8 end:0x821F74B8
 	.text       start:0x8227A628 end:0x8227A6A8
@@ -1109,6 +1110,7 @@ BandStarDisplay.cpp:
 	.text       start:0x822CCC98 end:0x822CCCA4
 	.text       start:0x822CCD68 end:0x822CCDC8
 	.text       start:0x822CCDD0 end:0x822CD8C0
+	.text       start:0x822CD8C0 end:0x822CD8F4
 	.text       start:0x822CD90C end:0x822CD9B4
 	.text       start:0x822CDB68 end:0x822CDC18
 
@@ -1413,7 +1415,6 @@ CalibrationPanel.cpp:
 	.text       start:0x8260C6F8 end:0x8260CFE8
 
 TourDescPanel.cpp:
-	.pdata      start:0x821F7478 end:0x821F7480
 	.pdata      start:0x82226ED0 end:0x82226ED8
 	.pdata      start:0x82226FE0 end:0x82226FE8
 	.pdata      start:0x8225C1E0 end:0x8225C1E8
@@ -1429,7 +1430,6 @@ TourDescPanel.cpp:
 	.pdata      start:0x8225C420 end:0x8225C430
 	.pdata      start:0x8225C430 end:0x8225C490
 	.pdata      start:0x8225C490 end:0x8225C498
-	.text       start:0x822CD8C0 end:0x822CD8F4
 	.text       start:0x825F3378 end:0x825F33D0
 	.text       start:0x825F4598 end:0x825F45EC
 	.text       start:0x82808FC4 end:0x82808FC8
@@ -9043,7 +9043,6 @@ band3/game/GemTrainerPanel.cpp:
 	.text       start:0x826AC678 end:0x826ADC38
 
 band3/game/Tracker.cpp:
-	.pdata      start:0x821F6F08 end:0x821F6F10
 	.pdata      start:0x82234E48 end:0x82234E50
 	.pdata      start:0x82234E50 end:0x82234E58
 	.pdata      start:0x82234E58 end:0x82234E68
@@ -9068,7 +9067,6 @@ band3/game/Tracker.cpp:
 	.pdata      start:0x82234FB8 end:0x82234FD0
 	.pdata      start:0x82234FD0 end:0x82235018
 	.pdata      start:0x82235018 end:0x82235020
-	.text       start:0x822C87B0 end:0x822C882C
 	.text       start:0x826D0AA8 end:0x826D0B00
 	.text       start:0x826D0B00 end:0x826D0B7C
 	.text       start:0x826D0B80 end:0x826D0C00
@@ -13739,6 +13737,7 @@ system/bandobj/BandFaceDeform.cpp:
 	.pdata      start:0x821F6EC8 end:0x821F6ED0
 	.pdata      start:0x821F6ED0 end:0x821F6EE8
 	.pdata      start:0x821F6EE8 end:0x821F6F00
+	.pdata      start:0x821F6F08 end:0x821F6F10
 	.pdata      start:0x821F6F10 end:0x821F6F20
 	.pdata      start:0x821F6F20 end:0x821F6F30
 	.pdata      start:0x821F6F30 end:0x821F6F48
@@ -13758,6 +13757,7 @@ system/bandobj/BandFaceDeform.cpp:
 	.text       start:0x822C83D0 end:0x822C8448
 	.text       start:0x822C8448 end:0x822C85F8
 	.text       start:0x822C85F8 end:0x822C8784
+	.text       start:0x822C87B0 end:0x822C882C
 	.text       start:0x822C8838 end:0x822C88D8
 	.text       start:0x822C88E0 end:0x822C89C8
 	.text       start:0x822C89C8 end:0x822C8BC8

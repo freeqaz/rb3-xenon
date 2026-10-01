@@ -77,16 +77,16 @@ int TrackerSectionManager::CountNonEmptySections(const TrackerSource *source, bo
 }
 
 int TrackerSectionManager::GetSectionStartTick(int idx) const {
-    return mSections[idx].mStartTick;
+    return mSections[idx].mTicks.mStartTick;
 }
 int TrackerSectionManager::GetSectionEndTick(int idx) const {
-    return mSections[idx].mEndTick;
+    return mSections[idx].mTicks.mEndTick;
 }
 
 int TrackerSectionManager::FindSectionContainingTick(int tick) const {
     int idx;
     for (idx = 0; idx < mSections.size(); idx++) {
-        if (mSections[idx].mEndTick > tick)
+        if (mSections[idx].mTicks.mEndTick > tick)
             break;
     }
     if (idx == mSections.size())
@@ -96,17 +96,17 @@ int TrackerSectionManager::FindSectionContainingTick(int tick) const {
 
 bool TrackerSectionManager::TickInSection(int tick, int section) const {
     const Section &sect = mSections[section];
-    return tick >= sect.mStartTick && tick <= sect.mEndTick;
+    return tick >= sect.mTicks.mStartTick && tick <= sect.mTicks.mEndTick;
 }
 
 bool TrackerSectionManager::TickAfterSection(int tick, int section) const {
-    return tick > mSections[section].mEndTick;
+    return tick > mSections[section].mTicks.mEndTick;
 }
 
 int TrackerSectionManager::CountGemsInSection(const Player *iPlayer, int iSection) const {
     const Section &sect = mSections[iSection];
-    int startTick = sect.mStartTick;
-    int endTick = sect.mEndTick;
+    int startTick = sect.mTicks.mStartTick;
+    int endTick = sect.mTicks.mEndTick;
     if (iPlayer->GetTrackType() == kTrackVocals) {
         VocalNoteList *pNoteList = TheSongDB->GetVocalNoteList(0);
         MILO_ASSERT(pNoteList, 224);
@@ -201,16 +201,15 @@ bool TrackerSectionManager::GetGemIDsForRange(
 }
 
 void TrackerSectionManager::GatherSections() {
-    SongDB *songDB = TheSongDB;
+    std::vector<PracticeSection> &practiceSections = TheSongDB->mPracticeSections;
     mSections.clear();
-    mSections.reserve(songDB->mPracticeSections.size());
-    std::vector<PracticeSection>::iterator it = songDB->mPracticeSections.begin();
-    for (; it != songDB->mPracticeSections.end(); ++it) {
+    mSections.reserve(practiceSections.size());
+    std::vector<PracticeSection>::iterator it = practiceSections.begin();
+    for (; it != practiceSections.end(); ++it) {
         if (it->unk4 != it->unk8) {
             int mStr = (int)it->unk0;
             Section section;
-            section.mStartTick = it->unk4;
-            section.mEndTick = it->unk8;
+            section.mTicks = Section::Ticks(it->unk4, it->unk8);
             section.unk8 = mStr;
             mSections.push_back(section);
         }

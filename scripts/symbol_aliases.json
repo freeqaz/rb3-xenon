@@ -80747,12 +80747,17 @@
   {
    "name": "Load",
    "address": "0x822cd8c0",
-   "survivor": "?Load@TourDescPanel@@UAAXXZ",
-   "folded": [
-    "?SyncObjects@BandStarDisplay@@UAAXXZ"
-   ],
+   "survivor": "?SyncObjects@BandStarDisplay@@UAAXXZ",
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "?SyncObjects@BandStarDisplay@@UAAXXZ",
+     "lane": "W16-MB 2026-10-01",
+     "class": "MAP_NAME_WRONG",
+     "why": "Retail 0x822CD8C0 is BandStarDisplay::SyncObjects itself: retail RTTI places it at slot 3 of BandStarDisplay's vtable 0x82021094, and its body is RndDir::SyncObjects then ResetStars. TourDescPanel::Load is 0x82B7CC58 (slot 0 of TourDescPanel's vtable 0x82199F4C; calls TexLoadPanel::Load then LoadIcons). The map row is corrected, so this membership (the real name folded into the wrong one) is withdrawn and the survivor field follows the map."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -80779,7 +80784,11 @@
       }
      ]
     }
-   ]
+   ],
+   "survivor_renamed": {
+    "from": "?Load@TourDescPanel@@UAAXXZ",
+    "lane": "W16-MB 2026-10-01"
+   }
   },
   {
    "name": "SetTypeDef",
@@ -96224,11 +96233,21 @@
   {
    "name": "resize_VTrackerPlayerDisplay",
    "address": "0x822c87b0",
-   "survivor": "?resize@?$vector@VTrackerPlayerDisplay@@V?$StlNodeAlloc@VTrackerPlayerDisplay@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVTrackerPlayerDisplay@@@Z",
-   "folded": [
-    "?resize@?$vector@VDeltaArray@BandFaceDeform@@V?$StlNodeAlloc@VDeltaArray@BandFaceDeform@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVDeltaArray@BandFaceDeform@@@Z"
-   ],
-   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 60, row addr 0x822c87b0). \"ours\" spelling ?resize@?$vector@VDeltaArray@BandFaceDeform@@V?$StlNodeAlloc@VDeltaArray@BandFaceDeform@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVDeltaArray@BandFaceDeform@@@Z is a template/spelling twin of survivor ?resize@?$vector@VTrackerPlayerDisplay@@V?$StlNodeAlloc@VTrackerPlayerDisplay@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVTrackerPlayerDisplay@@@Z at retail address 0x822c87b0. FLAT T1 PROVEN directly -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 2 named relocation(s) matched at FLAT T1 (no chase recursion required), 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 2 row(s) / 312 B (312 B honest) across ['default/system/bandobj/BandFaceDeform'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md."
+   "survivor": "?resize@?$vector@VDeltaArray@BandFaceDeform@@V?$StlNodeAlloc@VDeltaArray@BandFaceDeform@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVDeltaArray@BandFaceDeform@@@Z",
+   "folded": [],
+   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 60, row addr 0x822c87b0). \"ours\" spelling ?resize@?$vector@VDeltaArray@BandFaceDeform@@V?$StlNodeAlloc@VDeltaArray@BandFaceDeform@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVDeltaArray@BandFaceDeform@@@Z is a template/spelling twin of survivor ?resize@?$vector@VTrackerPlayerDisplay@@V?$StlNodeAlloc@VTrackerPlayerDisplay@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVTrackerPlayerDisplay@@@Z at retail address 0x822c87b0. FLAT T1 PROVEN directly -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 2 named relocation(s) matched at FLAT T1 (no chase recursion required), 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 2 row(s) / 312 B (312 B honest) across ['default/system/bandobj/BandFaceDeform'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md.",
+   "survivor_renamed": {
+    "from": "?resize@?$vector@VTrackerPlayerDisplay@@V?$StlNodeAlloc@VTrackerPlayerDisplay@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVTrackerPlayerDisplay@@@Z",
+    "lane": "W16-MB 2026-10-01"
+   },
+   "withdrawn": [
+    {
+     "spelling": "?resize@?$vector@VDeltaArray@BandFaceDeform@@V?$StlNodeAlloc@VDeltaArray@BandFaceDeform@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVDeltaArray@BandFaceDeform@@@Z",
+     "lane": "W16-MB 2026-10-01",
+     "class": "MAP_NAME_WRONG",
+     "why": "Retail 0x822C87B0 is vector<BandFaceDeform::DeltaArray>::resize itself: its only callers are BandFaceDeform code (0x822C8874, 0x822C8940) and its body calls the DeltaArray _M_erase/_M_fill_insert. The map row named it resize<TrackerPlayerDisplay>, whose real body is 0x826D2488 (called only by Tracker::Restart, and calling the TrackerPlayerDisplay _M_erase/_M_fill_insert). The map row is corrected, so this membership (the real name folded into the wrong one) is withdrawn and the survivor field follows the map."
+    }
+   ]
   },
   {
    "name": "_M_allocate_and_copy_PBUXUSER_ACHIEVEMENT",

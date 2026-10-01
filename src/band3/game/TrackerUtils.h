@@ -31,8 +31,13 @@ class TrackerSectionManager {
 public:
     class Section {
     public:
-        int mStartTick; // 0x0
-        int mEndTick; // 0x4
+        struct Ticks {
+            Ticks() {}
+            Ticks(int start, int end) : mStartTick(start), mEndTick(end) {}
+            int mStartTick; // 0x0
+            int mEndTick; // 0x4
+        };
+        Ticks mTicks; // 0x0
         int unk8; // 0x8
     };
 
