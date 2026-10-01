@@ -477,6 +477,73 @@ bool VorbisReader::DoFileRead() {
     return ret;
 }
 
+// Retail Poll does no decoding itself: the decode thread fills mPcmBuffers. Poll reads the
+// stream headers once, then hands the decoded PCM to the stream (at most 0x800 samples per
+// call) and flags the reader for the decode thread.
+void VorbisReader::Poll(float until) {
+    if (!TryEnter()) {
+        return;
+    }
+    CritSecTracker tracker(this);
+    Exit();
+    if (mFail) {
+        return;
+    }
+    if (unk44) {
+        return;
+    }
+    if (!CheckHmxHeader()) {
+        return;
+    }
+    if (mDone) {
+        return;
+    }
+    if (mSeekTarget >= 0 && !DoSeek()) {
+        return;
+    }
+    DoFileRead();
+    mEof = mFile->Eof();
+    if (mHeadersRead < 3) {
+        while (TryReadHeader())
+            ;
+        if (mHeadersRead < 3) {
+            return;
+        }
+        mNumChannels = mVorbisInfo->channels;
+        mSampleRate = mVorbisInfo->rate;
+        mPcmBuffers.resize(mNumChannels);
+        for (int i = 0; i < mNumChannels; i++) {
+            (mPcmBuffers.begin() + i)->reserve(0x1000);
+        }
+        Init();
+        unk44 = true;
+        return;
+    }
+    Timer timer;
+    timer.Start();
+    std::vector<short *> channels;
+    channels.resize(mNumChannels);
+    int consumed = 0;
+    while (mPcmReadPos < mPcmBuffers[0].size()) {
+        if (consumed >= 0x800) {
+            break;
+        }
+        for (int i = 0; i < mNumChannels; i++) {
+            channels[i] = &mPcmBuffers[i][mPcmReadPos];
+        }
+        int sample = mLastGranulePos == -1 ? -1 : (int)mLastGranulePos + mPcmReadPos;
+        int n = ConsumeData(
+            (void **)&channels[0], mPcmBuffers[0].size() - mPcmReadPos, sample
+        );
+        consumed += n;
+        mPcmReadPos += n;
+        if (n == 0) {
+            break;
+        }
+    }
+    unked = true;
+}
+
 #endif // !HX_NATIVE
 
 #ifdef HX_NATIVE
