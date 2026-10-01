@@ -107,8 +107,12 @@ bool CustomizePanel::IsLoaded() const {
     return !TheContentMgr.RefreshInProgress();
 }
 
+// Retail: function-local statics "male" (bit 0, never compared -- an assert
+// whose compare is gone) and "female" (bit 1).
 void CustomizePanel::FinishLoad() {
     UIPanel::FinishLoad();
+    static Symbol male("male");
+    static Symbol female("female");
     if (mClosetMgr->GetGender() == female)
         DisableFaceHair();
     else
@@ -163,7 +167,12 @@ void CustomizePanel::Unload() {
 
 bool CustomizePanel::Unloading() const { return !TheNetCacheMgr->IsUnloaded(); }
 void CustomizePanel::ContentStarted() { mRefreshingContent = true; }
-void CustomizePanel::ContentDone() { mRefreshingContent = false; }
+// Retail (20 B, ContentMgr::Callback thunk side) clears the flag and then
+// tail-calls RefreshPremiumAssetsList on the panel.
+void CustomizePanel::ContentDone() {
+    mRefreshingContent = false;
+    RefreshPremiumAssetsList();
+}
 
 void CustomizePanel::SetCustomizeState(CustomizeState state) {
     static Message msg("update_state", 0, 0);
@@ -781,6 +790,13 @@ void CustomizePanel::RefreshAssetsList() {
 void CustomizePanel::RefreshCurrentOutfitList() {
     static Message refresh_current_outfit_list_msg("refresh_current_outfit_list");
     Handle(refresh_current_outfit_list_msg, true);
+}
+// Retail 0x82617148 (168 B), between RefreshCurrentOutfitList and
+// ShowLockedDialog: the same shape with "refresh_premium_assets_list". No
+// surviving source has it; the name is ours, taken from the message.
+void CustomizePanel::RefreshPremiumAssetsList() {
+    static Message refresh_premium_assets_list_msg("refresh_premium_assets_list");
+    Handle(refresh_premium_assets_list_msg, true);
 }
 
 void CustomizePanel::PreviewAsset(Symbol s) {

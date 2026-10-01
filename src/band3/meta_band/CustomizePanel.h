@@ -106,6 +106,7 @@ public:
     Symbol GetWearing();
     Symbol StripFinish(Symbol);
     void RefreshCurrentOutfitList();
+    void RefreshPremiumAssetsList();
     void PreviewAsset(Symbol);
     void PreviewFinish(Symbol);
     void SelectAsset(Symbol);
