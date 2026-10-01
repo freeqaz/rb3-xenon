@@ -1397,9 +1397,12 @@ void GemPlayer::PollTrack() {
 
 void GemPlayer::PollAudio() {}
 
+// retail 0x826BC508: pausing also counts the pause (Player::CountPause, retail
+// 0x826A525C) before the shared JoypadKeepAlive tail.
 void GemPlayer::SetPaused(bool b1) {
     if (b1) {
         mController->Disable(true);
+        CountPause();
     } else if (mEnabledState == kPlayerEnabled) {
         ResetController(false);
         BeatMatchController *ctrl = mController;
@@ -2115,29 +2118,30 @@ void GemPlayer::Penalize(float f1, int i2, float f3) {
     }
 }
 
+// retail 0x826BE898 compares gems[i].GetTick() == tick, bumps startGemID before the
+// forward scan, and walks the chord with its own counter.
 bool GemPlayer::ShouldPenalizeGem(int gem) const {
     if (mTrackType != 4 && mTrackType != 5)
         return true;
     const std::vector<GameGem> &gems = TheSongDB->GetGems(mTrackNum);
     int tick = gems[gem].GetTick();
     int startGemID;
-    for (startGemID = gem; startGemID >= 0 && tick == gems[startGemID].GetTick();
+    for (startGemID = gem; startGemID >= 0 && gems[startGemID].GetTick() == tick;
          startGemID--)
         ;
+    startGemID++;
     int endGemID;
-    for (endGemID = gem; endGemID < gems.size() && tick == gems[endGemID].GetTick();
+    for (endGemID = gem; endGemID < gems.size() && gems[endGemID].GetTick() == tick;
          endGemID++)
         ;
-    startGemID++;
     if (endGemID - startGemID == 1) {
         MILO_ASSERT(startGemID == gem, 0xCCD);
         MILO_ASSERT(endGemID - 1 == gem, 0xCCE);
         return true;
-    } else {
-        for (; startGemID < endGemID; startGemID++) {
-            if (mGemStatus->GetHit(startGemID) || mGemStatus->Get0x4(startGemID)) {
-                return false;
-            }
+    }
+    for (int i = startGemID; i < endGemID; i++) {
+        if (mGemStatus->GetHit(i) || mGemStatus->Get0x4(i)) {
+            return false;
         }
     }
     return true;
