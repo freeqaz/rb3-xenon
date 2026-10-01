@@ -785,8 +785,8 @@ struct WrapPoint {
 void RndText::WrapText(const char *text, const Style &style, HX_VECTOR(Line) & lines) {
     lines.erase(lines.begin(), lines.end());
 
-    int numChars = text ? UTF8StrLen(text) : 0;
     int textLen = text ? strlen(text) : 0;
+    int numChars = text ? UTF8StrLen(text) : 0;
 
     if (style.mFont == nullptr || textLen == 0) {
         Line emptyLine;
@@ -829,18 +829,18 @@ void RndText::WrapText(const char *text, const Style &style, HX_VECTOR(Line) & l
     // Main DP wrap algorithm.
     WrapPoint *wps = stackBuf;
     if (numChars > 256) {
-        wps = new WrapPoint[numChars + 1];
+        wps = new WrapPoint[numChars];
     }
     memset(wps, 0, numChars * sizeof(WrapPoint));
 
     Style curStyle = style;
 
+    wps[0].bestLineLen = 0.0f;
     wps[0].byteIdx = 0;
-    wps[0].charIdx = 0;
-    wps[0].cost = 0;
     wps[0].bestPrevIdx = -1;
     wps[0].nextIdx = -1;
-    wps[0].bestLineLen = 0.0f;
+    wps[0].charIdx = 0;
+    wps[0].cost = 0;
     wps[0].style = curStyle;
     wps[0].isLineEnd = true;
     wps[0].isHardBreak = true;
