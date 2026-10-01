@@ -102,6 +102,82 @@ void Bloom_Blur(RndTex *texDst, RndTex *texSrc, BloomBlurStyle style, BloomBlurD
 
 NgPostProc *NgPostProc::s_BloomSetter;
 
+#ifndef HX_NATIVE
+// 0x82B884A0 (called from DoPost). RB3 has no bloom-setter bookkeeping or
+// debug overlay, scales the bloom color by the intensity alone, glares on
+// mBloomGlare alone, and binds each chain's final texture in its own arm.
+void NgPostProc::DoBloom() {
+    bool doBloom = (0.0f < BloomIntensity()) || (0.0f < mBloomColor.alpha);
+    bool doGlare = mBloomGlare != 0;
+    if (doBloom) {
+        float bloomIntensity = BloomIntensity();
+        Vector4 bloomColorVec(
+            mBloomColor.red * bloomIntensity,
+            mBloomColor.green * bloomIntensity,
+            mBloomColor.blue * bloomIntensity,
+            0.0f
+        );
+        TheShaderMgr.SetPConstant((PShaderConstant)6, bloomColorVec);
+        TheShaderMgr.SetPConstant((PShaderConstant)kPS_BloomParams, TheRnd.GetDefaultTex(Rnd::kDefaultTex_Black));
+        TheShaderMgr.SetPConstant((PShaderConstant)kPS_SpotlightTex, TheRnd.GetDefaultTex(Rnd::kDefaultTex_Black));
+        TheShaderMgr.SetPConstant((PShaderConstant)kPS_NgMatCustom, TheRnd.GetDefaultTex(Rnd::kDefaultTex_Black));
+        TheRenderState.SetTextureFilter(kPS_BloomParams, (RndRenderState::FilterMode)1, false);
+        TheRenderState.SetTextureClamp(kPS_BloomParams, (RndRenderState::ClampMode)2);
+        TheRenderState.SetTextureFilter(kPS_BloomParams, (RndRenderState::FilterMode)1, false);
+        TheRenderState.SetTextureClamp(kPS_BloomParams, (RndRenderState::ClampMode)2);
+        TheRenderState.SetTextureFilter(kPS_SpotlightTex, (RndRenderState::FilterMode)1, false);
+        TheRenderState.SetTextureClamp(kPS_SpotlightTex, (RndRenderState::ClampMode)2);
+        TheRenderState.SetTextureFilter(kPS_NgMatCustom, (RndRenderState::FilterMode)1, false);
+        TheRenderState.SetTextureClamp(kPS_NgMatCustom, (RndRenderState::ClampMode)2);
+
+        RndTex *preprocess = TheNgRnd.PreProcessTexture();
+        if (preprocess) {
+            if (doGlare) {
+                Bloom_Downsample(kBloomShader, preprocess, sBloom.mTextures[0].mBloomTexture[1]);
+                Bloom_Blur(sBloom.mTextures[0].mBloomTexture[1], sBloom.mTextures[0].mBloomTexture[0], kBloomBlurNormal, kBloomBlurHorizontal, 0, 0.0f, 0.0f);
+                Bloom_Blur(sBloom.mTextures[0].mBloomTexture[0], sBloom.mTextures[0].mBloomTexture[1], kBloomBlurNormal, kBloomBlurVertical, 0, 0.0f, 0.0f);
+                Bloom_Blur(sBloom.mTextures[0].mBloomTexture[1], sBloom.mTextures[0].mBloomTexture[0], kBloomBlurGlare, kBloomBlurHorizontal, 0, 0.0f, 0.0f);
+                TheShaderMgr.SetPConstant((PShaderConstant)kPS_BloomParams, sBloom.mTextures[0].mBloomTexture[0]);
+            } else if (!mBloomStreak || mBloomGlare) {
+                Bloom_Downsample(kBloomShader, preprocess, sBloom.mTextures[0].mBloomTexture[0]);
+                Bloom_Blur(sBloom.mTextures[0].mBloomTexture[0], sBloom.mTextures[0].mBloomTexture[1], kBloomBlurNormal, kBloomBlurHorizontal, 0, 0.0f, 0.0f);
+                Bloom_Blur(sBloom.mTextures[0].mBloomTexture[1], sBloom.mTextures[0].mBloomTexture[0], kBloomBlurNormal, kBloomBlurVertical, 0, 0.0f, 0.0f);
+                Bloom_Downsample(kDownsample4xShader, sBloom.mTextures[0].mBloomTexture[0], sBloom.mTextures[1].mBloomTexture[0]);
+                Bloom_Blur(sBloom.mTextures[1].mBloomTexture[0], sBloom.mTextures[1].mBloomTexture[1], kBloomBlurNormal, kBloomBlurHorizontal, 0, 0.0f, 0.0f);
+                Bloom_Blur(sBloom.mTextures[1].mBloomTexture[1], sBloom.mTextures[1].mBloomTexture[0], kBloomBlurNormal, kBloomBlurVertical, 0, 0.0f, 0.0f);
+                Bloom_Downsample(kDownsample4xShader, sBloom.mTextures[1].mBloomTexture[0], sBloom.mTextures[2].mBloomTexture[0]);
+                Bloom_Blur(sBloom.mTextures[2].mBloomTexture[0], sBloom.mTextures[2].mBloomTexture[1], kBloomBlurNormal, kBloomBlurHorizontal, 0, 0.0f, 0.0f);
+                Bloom_Blur(sBloom.mTextures[2].mBloomTexture[1], sBloom.mTextures[2].mBloomTexture[0], kBloomBlurNormal, kBloomBlurVertical, 0, 0.0f, 0.0f);
+                TheShaderMgr.SetPConstant((PShaderConstant)kPS_BloomParams, sBloom.mTextures[0].mBloomTexture[0]);
+                TheShaderMgr.SetPConstant((PShaderConstant)kPS_SpotlightTex, sBloom.mTextures[1].mBloomTexture[0]);
+                TheShaderMgr.SetPConstant((PShaderConstant)kPS_NgMatCustom, sBloom.mTextures[2].mBloomTexture[0]);
+            } else {
+                Bloom_Downsample(kBloomShader, preprocess, sBloom.mTextures[0].mBloomTexture[1]);
+                Bloom_Blur(sBloom.mTextures[0].mBloomTexture[1], sBloom.mTextures[0].mBloomTexture[0], kBloomBlurStreak, kBloomBlurHorizontal, 0, mBloomStreakAttenuation, mBloomStreakAngle);
+                Bloom_Blur(sBloom.mTextures[0].mBloomTexture[0], sBloom.mTextures[0].mBloomTexture[1], kBloomBlurStreak, kBloomBlurHorizontal, 1, mBloomStreakAttenuation, mBloomStreakAngle);
+                Bloom_Blur(sBloom.mTextures[0].mBloomTexture[1], sBloom.mTextures[0].mBloomTexture[0], kBloomBlurStreak, kBloomBlurHorizontal, 2, mBloomStreakAttenuation, mBloomStreakAngle);
+                Bloom_Downsample(kBloomShader, preprocess, sBloom.mTextures[1].mBloomTexture[1]);
+                Bloom_Blur(sBloom.mTextures[1].mBloomTexture[1], sBloom.mTextures[1].mBloomTexture[0], kBloomBlurStreak, kBloomBlurVertical, 0, mBloomStreakAttenuation, mBloomStreakAngle);
+                Bloom_Blur(sBloom.mTextures[1].mBloomTexture[0], sBloom.mTextures[1].mBloomTexture[1], kBloomBlurStreak, kBloomBlurVertical, 1, mBloomStreakAttenuation, mBloomStreakAngle);
+                Bloom_Blur(sBloom.mTextures[1].mBloomTexture[1], sBloom.mTextures[1].mBloomTexture[0], kBloomBlurStreak, kBloomBlurVertical, 2, mBloomStreakAttenuation, mBloomStreakAngle);
+                TheShaderMgr.SetPConstant((PShaderConstant)kPS_BloomParams, sBloom.mTextures[0].mBloomTexture[0]);
+                TheShaderMgr.SetPConstant((PShaderConstant)kPS_SpotlightTex, sBloom.mTextures[1].mBloomTexture[0]);
+            }
+        }
+    }
+
+    if (doBloom && doGlare) {
+        TheShaderMgr.unk28 = true;
+        TheShaderMgr.unk27 = false;
+    } else if (doBloom) {
+        TheShaderMgr.unk28 = false;
+        TheShaderMgr.unk27 = true;
+    } else {
+        TheShaderMgr.unk27 = false;
+        TheShaderMgr.unk28 = false;
+    }
+}
+#else
 void NgPostProc::DoBloom() {
     float bloomIntensity = BloomIntensity();
     bool doBloom = (0.0f < bloomIntensity) || (0.0f < mBloomColor.alpha);
@@ -225,6 +301,7 @@ void NgPostProc::DoBloom() {
         TheShaderMgr.unk28 = false;
     }
 }
+#endif
 
 NgPostProc::BloomTextureSet::BloomTextureSet() {
     for (int i = 0; i < DIM(mBloomTexture); i++) {
@@ -505,6 +582,30 @@ void NgPostProc::ModulateColorXfm() {
     mgr.SetPConstant4x3((PShaderConstant)kVS_WorldTransform, Hmx::Matrix4(xfm));
 }
 
+#ifndef HX_NATIVE
+// 0x82B89A08 (NgPostProc vtable slot 3). RB3 has no hue-converge pass, keys
+// the shader manager's luminance flag (unk29) on mLuminanceMap being set,
+// passes ColorXfmEnabled() in unk2a, and does not clear mMotionBlurEnabled.
+void NgPostProc::DoPost() {
+    RndPostProc::DoPost();
+    DoVelocity();
+    DoBloom();
+    ModulateColorXfm();
+    CheckNoise();
+    CheckBlendPrevious();
+    CheckHallOfTime();
+    CheckMotionBlur();
+    CheckGradientMap();
+    CheckRefract();
+    CheckChromaticAberration();
+    CheckPosterizeAndKaleidoscope();
+    CheckVignette();
+    TheShaderMgr.unk29 = mLuminanceMap != nullptr;
+    bool xfm = ColorXfmEnabled();
+    TheShaderMgr.unk2a = xfm;
+    TheShaderMgr.unk2f = BlendPrevious();
+}
+#else
 void NgPostProc::DoPost() {
     RndPostProc::DoPost();
     DoVelocity();
@@ -525,6 +626,7 @@ void NgPostProc::DoPost() {
     TheShaderMgr.unk2f = BlendPrevious();
     mMotionBlurEnabled = false;
 }
+#endif
 
 void NgPostProc::OnUnselect() {
     RndPostProc::OnUnselect();

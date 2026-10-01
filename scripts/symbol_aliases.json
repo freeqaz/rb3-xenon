@@ -75194,11 +75194,18 @@
   {
    "name": "Select",
    "address": "0x824a7548",
-   "survivor": "?Select@RndShaderVelocity@@MAAXPAVRndMat@@W4ShaderType@@_N@Z",
-   "folded": [
-    "?Select@RndShaderVelocityCamera@@MAAXPAVRndMat@@W4ShaderType@@_N@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "survivor": "?Select@RndShaderVelocityCamera@@MAAXPAVRndMat@@W4ShaderType@@_N@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions. W16-JA (fork D) 2026-10-01: survivor corrected to the VelocityCamera spelling -- retail RndShaderVelocityCamera vtable 0x8207503c slot 2 points here, while RndShaderVelocity vtable 0x82075028 slot 2 points at its own body 0x824a7468.",
+   "withdrawn": [
+    {
+     "spelling": "?Select@RndShaderVelocity@@MAAXPAVRndMat@@W4ShaderType@@_N@Z",
+     "lane": "W16-JA 2026-10-01",
+     "class": "DISTINCT_RETAIL_BODY",
+     "disposition": "withdrawn: the two Selects are not folded in retail",
+     "evidence": "RndShaderVelocity's vtable slot 2 is 0x824a7468 (224 B), not 0x824a7548 (208 B); the 224-B body passes TheShaderMgr.BoneCount() != 0 as RedundantState's third argument (0x824a74c0..0x824a74cc), the 208-B one passes 0. Different sizes, different code: no ICF fold."
+    }
+   ]
   },
   {
    "name": "$_Destroy_Range",
