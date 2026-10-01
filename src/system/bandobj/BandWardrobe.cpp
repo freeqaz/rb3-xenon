@@ -1160,7 +1160,7 @@ DataNode BandWardrobe::OnEnterVignette(DataArray *da) {
                 );
             } else {
                 if (strstr(name, "extra")) {
-                    driver->SetClipType(vignette);
+                    it->Driver()->SetClipType(vignette);
                     it->BoneServo()->SetClipType(vignette);
                     ObjectDir *visemes = it->Find<ObjectDir>("vignette_visemes", false);
                     if (visemes) {
@@ -1188,54 +1188,59 @@ DataNode BandWardrobe::OnEnterVignette(DataArray *da) {
                 it->Driver()->SetClips(charsDir);
             }
         }
-        if (LOADMGR_EDITMODE) {
-            for (int i = 0; i < 4; i++) {
-                mVignetteNames.names[i] = Symbol(player_names[i]);
-            }
-        } else {
-            SlotInfo info[4];
+    }
+    if (LOADMGR_EDITMODE) {
+        for (int i = 0; i < 4; i++) {
+            mVignetteNames.names[i] = Symbol(player_names[i]);
+        }
+    } else {
+        SlotInfo info[4];
+        bool hasBass = false;
+        for (int i = 0; i < 4; i++) {
+            info[i].hint = -1;
             static Message msg("get_slot_info", DataNode(0));
-            bool hasBass = false;
+            msg[0] = DataNode(i);
+            DataArray *result = HandleType(msg).Array();
+            info[i].human = result->Int(0) != 0;
+            info[i].inst = result->Sym(1);
+            info[i].score = 1.0f - result->Float(2);
+            if (info[i].inst == "bass")
+                hasBass = true;
+        }
+        if (info[1].inst.Null()) {
+            Symbol drum("drum");
+            info[1].inst = drum;
+        }
+        if (info[2].inst.Null()) {
+            Symbol mic("mic");
+            info[2].inst = mic;
+        }
+        Symbol fallback(hasBass ? "guitar" : "bass");
+        if (info[0].inst.Null())
+            info[0].inst = fallback;
+        if (info[3].inst.Null())
+            info[3].inst = fallback;
+        Symbol hints[4];
+        Hmx::Object *hintsDir =
+            worldDir->Find<Hmx::Object>("player_hints.obj", false);
+        if (hintsDir) {
             for (int i = 0; i < 4; i++) {
-                info[i].hint = -1;
-                msg[0] = DataNode(i);
-                DataArray *result = HandleType(msg).Array();
-                info[i].human = result->Int(0) != 0;
-                info[i].inst = result->Sym(1);
-                info[i].score = 1.0f - result->Float(2);
-                if (info[i].inst == "bass")
-                    hasBass = true;
+                Symbol key(MakeString("player%d_hint", i));
+                const DataNode *prop = hintsDir->Property(key, false);
+                if (prop)
+                    hints[i] = prop->Sym();
             }
-            if (info[1].inst.Null())
-                info[1].inst = Symbol("drum");
-            if (info[2].inst.Null())
-                info[2].inst = Symbol("mic");
-            Symbol fallback(hasBass ? "guitar" : "bass");
-            if (info[0].inst.Null())
-                info[0].inst = fallback;
-            if (info[3].inst.Null())
-                info[3].inst = fallback;
-            Symbol hints[4];
-            Hmx::Object *hintsDir =
-                worldDir->Find<Hmx::Object>("player_hints.obj", false);
-            if (hintsDir) {
-                for (int i = 0; i < 4; i++) {
-                    const DataNode *prop = hintsDir->Property(
-                        Symbol(MakeString("player%d_hint", i)), false
-                    );
-                    if (prop)
-                        hints[i] = prop->Sym();
-                }
-            }
-            int slot;
-            int idx;
-            while ((idx = FindBestScoringHint(hints, info, slot)) != -1) {
-                if (slot == -1)
-                    slot = MostImportantHuman(info);
-                hints[idx] = Symbol("done");
-                info[slot].hint = idx;
-                mVignetteNames.names[slot] = Symbol(player_names[idx]);
-            }
+        }
+        int slot;
+        int idx;
+        while ((idx = FindBestScoringHint(hints, info, slot)) != -1) {
+            if (slot == -1)
+                slot = MostImportantHuman(info);
+            Symbol done("done");
+            hints[idx] = done;
+            info[slot].hint = idx;
+            Symbol name(player_names[idx]);
+            mVignetteNames.names[slot] = name;
         }
     }
     SetDir(worldDir);
