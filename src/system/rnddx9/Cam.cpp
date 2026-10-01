@@ -16,14 +16,19 @@ Vector3 Hmx::Matrix4::Col3(int col) const {
 
 DxCam::DxCam() {}
 
+// The screen rect reaches the shader as a Vector4 built from a temporary
+// (retail: one shared temp slot, the four floats copied h/w/y/x into a local).
+static inline Vector4 RectToVector4(const Hmx::Rect &r) {
+    return Vector4(r.x, r.y, r.w, r.h);
+}
+
 void DxCam::Select() {
 #ifdef HX_NATIVE
     TheNgStats->mCams++;
 #endif
-    auto& _ref0 = mTargetTex;
     RndCam::Select();
-    if (_ref0 != nullptr) {
-        _ref0->MakeDrawTarget();
+    if (mTargetTex != nullptr) {
+        mTargetTex->MakeDrawTarget();
     } else {
         TheDxRnd.MakeDrawTarget();
     }
@@ -31,9 +36,8 @@ void DxCam::Select() {
     Hmx::Matrix4 proj;
     GetViewProjectXfms(view, proj);
     SetViewport();
-    auto _tmp1 = GetGfxMode();
-    if (_ref0 != nullptr) {
-        RndTex::Type type = _ref0->GetType();
+    if (mTargetTex != nullptr) {
+        RndTex::Type type = mTargetTex->GetType();
         bool isShadowMap = false;
         float depth = 1.0f;
         if (type == RndTex::kShadowMap) {
@@ -58,30 +62,19 @@ void DxCam::Select() {
             _tmp0, 0, nullptr, clearFlags, clearColor, depth, 0, 0
         );
     }
-    if (_tmp1 == kNewGfx) {
-        Hmx::Matrix4 viewProj = Hmx::operator*(view, proj);
-        SetViewProj(viewProj);
-        Transform invView = GetInvViewXfm();
-        TheShaderMgr.SetVConstant(kVS_ViewProjMatrix, mViewProjMatrix);
-        Hmx::Matrix4 invViewMtx(invView);
-        TheShaderMgr.SetVConstant((VShaderConstant)0x10, invViewMtx);
-        Hmx::Rect tmp = TheHiResScreen.ScreenRect();
-        Hmx::Rect rect;
-        rect.x = tmp.x;
-        rect.y = tmp.y;
-        rect.w = tmp.w;
-        rect.h = tmp.h;
-        TheShaderMgr.SetVConstant((VShaderConstant)0x46, (const Vector4 &)rect);
-        Hmx::Rect tmp2 = TheHiResScreen.ScreenRect();
-        Hmx::Rect rect2;
-        rect2.x = tmp2.x;
-        rect2.y = tmp2.y;
-        rect2.w = tmp2.w;
-        rect2.h = tmp2.h;
-        TheShaderMgr.SetPConstant((PShaderConstant)0x46, (const Vector4 &)rect2);
-    }
+    // RB3 always uploads the view constants (retail has no GetGfxMode test).
+    mViewProjMatrix = Hmx::operator*(view, proj);
+    Transform invView = GetInvViewXfm();
+    TheShaderMgr.SetVConstant(kVS_ViewProjMatrix, mViewProjMatrix);
+    TheShaderMgr.SetVConstant((VShaderConstant)0x10, Hmx::Matrix4(invView));
+    Vector4 rect = RectToVector4(TheHiResScreen.ScreenRect());
+    TheShaderMgr.SetVConstant((VShaderConstant)0x46, rect);
+    Vector4 rect2 = RectToVector4(TheHiResScreen.ScreenRect());
+    TheShaderMgr.SetPConstant((PShaderConstant)0x46, rect2);
 }
 
+// 0x8273DC00 (called only from DxCam::Select). RB3 has no hi-res-screenshot
+// tiling path here.
 void DxCam::SetViewport() {
     int width, height;
     if (mTargetTex != nullptr) {
@@ -92,25 +85,20 @@ void DxCam::SetViewport() {
         height = TheDxRnd.Height();
     }
     Hmx::Rect r;
-    if (TheHiResScreen.IsActive()) {
-        Hmx::Rect tileRect;
-        TheHiResScreen.CurrentTileRect(mScreenRect, r, tileRect);
-    } else {
-        float x = mScreenRect.x;
-        float y = mScreenRect.y;
-        float x2 = mScreenRect.w + x;
-        float y2 = mScreenRect.h + y;
-        r.x = Max(0.0f, x);
-        r.y = Max(0.0f, y);
-        x2 = Max(0.0f, x2);
-        y2 = Max(0.0f, y2);
-        r.x = Min(1.0f, r.x);
-        r.y = Min(1.0f, r.y);
-        x2 = Min(1.0f, x2);
-        y2 = Min(1.0f, y2);
-        r.w = x2 - r.x;
-        r.h = y2 - r.y;
-    }
+    float x = mScreenRect.x;
+    float y = mScreenRect.y;
+    float x2 = mScreenRect.w + x;
+    float y2 = mScreenRect.h + y;
+    r.x = Max(0.0f, x);
+    r.y = Max(0.0f, y);
+    x2 = Max(0.0f, x2);
+    y2 = Max(0.0f, y2);
+    r.x = Min(r.x, 1.0f);
+    r.y = Min(r.y, 1.0f);
+    x2 = Min(x2, 1.0f);
+    y2 = Min(y2, 1.0f);
+    r.w = x2 - r.x;
+    r.h = y2 - r.y;
     MILO_ASSERT((r.x >= 0.f) && (r.x <= 1.f), 0x43);
     MILO_ASSERT((r.y >= 0.f) && (r.y <= 1.f), 0x44);
     MILO_ASSERT((r.w >= 0.f) && (r.w <= 1.f), 0x45);
