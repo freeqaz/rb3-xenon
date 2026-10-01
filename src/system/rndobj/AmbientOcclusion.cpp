@@ -152,12 +152,16 @@ unsigned int GatherObjects(ObjPtrList<Hmx::Object> &list, std::vector<T *> &obje
     return objects.size();
 }
 
+// default tessellation thresholds: small and large perimeter, then error
+static const float sTessellateDefaults[3] = { 18.0f, 72.0f, 0.67625f };
+
 RndAmbientOcclusion::RndAmbientOcclusion()
     : mDontCastAO(this), mDontReceiveAO(this), mTessellate(this),
       mIgnoreTransparent(true), mIgnorePrelit(true), mIgnoreHidden(true),
       mUseMeshNormals(true), mIntersectBackFaces(false), mTessellateTriLimit(8),
-      mTessellateTriError(0.67625f), mTessellateTriLarge(gUnitsPerMeter * 2.0f),
-      mTessellateTriSmall(gUnitsPerMeter * 0.5f), mTree(0), mQuality((Quality)1) {}
+      mTessellateTriError(sTessellateDefaults[2]),
+      mTessellateTriLarge(sTessellateDefaults[1]),
+      mTessellateTriSmall(sTessellateDefaults[0]), mTree(0), mQuality((Quality)1) {}
 
 RndAmbientOcclusion::~RndAmbientOcclusion() { Clean(); }
 
