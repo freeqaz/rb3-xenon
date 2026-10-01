@@ -156,7 +156,6 @@ RockCentralJobs.cpp:
 	.text       start:0x8250C808 end:0x8250D0D8
 
 RockCentral.cpp:
-	.pdata      start:0x821F7600 end:0x821F7618
 	.pdata      start:0x82208698 end:0x822086A8
 	.pdata      start:0x822086D0 end:0x82208708
 	.pdata      start:0x82208BA8 end:0x82208BB0
@@ -203,7 +202,6 @@ RockCentral.cpp:
 	.pdata      start:0x82217758 end:0x82217808
 	.pdata      start:0x8221A840 end:0x8221A850
 	.pdata      start:0x82234E98 end:0x82234EB0
-	.text       start:0x822CEEE8 end:0x822CEF8C
 	.text       start:0x823EC310 end:0x823EC398
 	.text       start:0x823EC538 end:0x823EC788
 	.text       start:0x823F0F84 end:0x823F0F88
@@ -268,6 +266,7 @@ BandScoreboard.cpp:
 	.pdata      start:0x821F7538 end:0x821F7570
 	.pdata      start:0x821F7570 end:0x821F75D8
 	.pdata      start:0x821F75D8 end:0x821F75E0
+	.pdata      start:0x821F7600 end:0x821F7618
 	.pdata      start:0x821F7618 end:0x821F7698
 	.text       start:0x82274290 end:0x822743EC
 	.text       start:0x8227A6A8 end:0x8227A728
@@ -278,6 +277,7 @@ BandScoreboard.cpp:
 	.text       start:0x822CE3F4 end:0x822CE6A8
 	.text       start:0x822CE6A8 end:0x822CEC70
 	.text       start:0x822CEC70 end:0x822CECDC
+	.text       start:0x822CEEE8 end:0x822CEF8C
 	.text       start:0x822CEF8C end:0x822CF888
 
 FingerShape.cpp:

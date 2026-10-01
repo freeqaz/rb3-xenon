@@ -43,6 +43,7 @@ extern "C" int NWC24GetMyUserId(unsigned long long &);
 #include "obj/Msg.h"
 #include "obj/ObjMacros.h"
 #include "os/Debug.h"
+#include "os/Friend.h"
 #include "os/NetworkSocket.h"
 #include "os/OnlineID.h"
 #include "os/PlatformMgr.h"
@@ -144,15 +145,29 @@ void RockCentral::Terminate() {
     // those members do not exist in the Xbox layout (0x98 is mXNetAddr).
 }
 
-// NOTE (rb3-xenon port): RockCentral::Init is Wii-platform setup (WiiProfileMgr,
-// WiiFriendMgr, NWC24, the Wii-only PlatformMgr friend-callbacks and the 1-arg
-// DataPointRecorder). It is NOT in the pinned retail-Xbox .text range; the Xbox
-// build links a platform-different implementation we do not match here. Stubbed
-// so the TU compiles against the dc3-derived engine headers without dragging in
-// the Wii-only APIs.
+// Retail TU5 0x824F9CE0, the Xbox Init: it sets up no WiiProfileMgr,
+// WiiFriendMgr or NWC24. It sinks on the net server, on the platform
+// manager's connection_status_changed (a function-local static Symbol) and
+// FriendsListChangedMsg, and on ProfileChangedMsg, then registers the exit
+// callback that runs Terminate.
 void RockCentral::Init(bool b1) {
     mContextWrapperPool = new ContextWrapperPool();
+    SetName("rock_central", ObjectDir::Main());
+    TheNet.GetServer()->AddSink(this);
+    static Symbol connection_status_changed("connection_status_changed");
+    ThePlatformMgr.AddSink(this, connection_status_changed);
+    ThePlatformMgr.AddSink(this, FriendsListChangedMsg::Type());
+    TheProfileMgr.AddSink(this, ProfileChangedMsg::Type());
+    TheDebug.AddExitCallback(RockCentralTerminate);
+    TheDataPointMgr.SetDataPointRecorder((DataPointRecordFunc *)RecordDataPointNoRet);
+    unk88.Generate();
+    mTime.Start();
+    mRetryTime = mTime.Ms();
     unk85 = b1;
+    const char *log = OptionStr("log_datapoints", 0);
+    if (log) {
+        gDataPointLog = new TextFileStream(log, false);
+    }
 }
 
 // Retail Xbox: no skipIt toggle, no IsLoginMandatory() test, and none of the

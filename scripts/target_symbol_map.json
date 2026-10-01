@@ -1,4 +1,7 @@
 {
+ "0x824f9ce0": "?Init@RockCentral@@QAAX_N@Z",
+ "0x824f9cc8": "??1?$map@VSymbol@@VDataNode@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VDataNode@@@stlpmtx_std@@@4@@stlpmtx_std@@QAA@XZ",
+ "0x822ceee8": "?resize@?$ObjVector@V?$ObjPtr@VRndMesh@@@@@@QAAXI@Z",
  "0x8250d530": "??_GEntityUploader@@UAAPAXI@Z",
  "0x8250a440": "?Handle@XboxEntityUploader@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82509938": "?UpdateFromProfile@XboxEntityUploader@@UAA_NPAVBandProfile@@PAVObject@Hmx@@@Z",
