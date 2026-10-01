@@ -1,4 +1,7 @@
 {
+ "0x82514bd0": "?SetUserContext@PlatformMgr@@QBAXPBVLocalUser@@HH@Z",
+ "0x82514c18": "?SetUserProperty@PlatformMgr@@QBAXPBVLocalUser@@HPBG@Z",
+ "0x82514c60": "?SetUserPresence@PlatformMgr@@QBAXPBVLocalUser@@H@Z",
  "0x82516440": "FileTerminate",
  "0x82517600": "FileOpen",
  "0x82517690": "FileClose",
