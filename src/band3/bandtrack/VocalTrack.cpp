@@ -2533,16 +2533,18 @@ void VocalTrack::PrepareNoteTubes(
     float windowDurationMs, int startNote, int &endNote, int line
 ) {
     static bool sDump;
-    int curNote = startNote;
     VocalNoteList *notes = GetVocalNoteList(line);
     float alpha = 1.0f;
-    if (!mPlayer->GetEnabledStateAt(1.0f)) {
+    // Local players dim the parts they are not singing; a net player draws
+    // every part at full alpha.
+    if (!mPlayer->IsNet()) {
         int dimPart = mDir->unk6c4;
         if (dimPart != -1 && dimPart != line) {
             alpha = mDir->mHiddenPartAlpha;
         }
     }
-    if (curNote < endNote) {
+    if (startNote < endNote) {
+        int curNote = startNote;
         while (curNote < endNote) {
             VocalNote &firstNote = notes->mNotes[curNote];
             if (mPlayer && mPlayer->GetEnabledStateAt(firstNote.mMs)) {
@@ -2581,17 +2583,11 @@ void VocalTrack::PrepareNoteTubes(
                     mNoteTube->unk_0x30 = mDir->mPitchWindowHeight * 0.5f;
                 } else {
                     mNoteTube->unk_0x34 = zPerPitch;
-                    mNoteTube->unk_0x30 = 5.0f * zPerPitch;
+                    mNoteTube->unk_0x30 = zPerPitch * 5.0f;
                     float lo = mDir->unk6d8;
                     int glow = (int)((pitchRange - lo)
                                      / ((mDir->unk6dc - lo) * 0.25f));
-                    int level;
-                    if (glow > 3) {
-                        level = 3;
-                    } else {
-                        level = glow & ~(glow >> 31);
-                    }
-                    mNoteTube->SetGlowLevel(level);
+                    mNoteTube->SetGlowLevel(Clamp(0, 3, glow));
                 }
                 // Same DEV-build spew as PollLyricAnimations. Retail's frame
                 // here is 0x170; ours is 0x9d0 (2,144 B larger) and we save
@@ -2630,14 +2626,15 @@ void VocalTrack::PrepareNoteTubes(
                             );
                         }
 #endif
-                        float x = unk78 * (runX / windowDurationMs);
+                        float x = (runX / windowDurationMs) * unk78;
                         if (note.mUnpitchedNote == 0 && pointIdx == 0) {
-                            x += 0.75f * zPerPitch;
+                            x += zPerPitch * 0.75f;
                         }
-                        float minX = 0.01f + prevX;
-                        if (minX >= x)
-                            x = minX;
-                        mNoteTube->SetPointPos(pointIdx, Vector3(x, 0, z));
+                        // The point is pushed at least 0.01 past the previous
+                        // point; prevX carries the unclamped x.
+                        mNoteTube->SetPointPos(
+                            pointIdx, Vector3(std::max(prevX + 0.01f, x), 0, z)
+                        );
                         prevX = x;
                         pointIdx++;
                         runX += note.mDurationMs;
@@ -2647,19 +2644,14 @@ void VocalTrack::PrepareNoteTubes(
                 VocalNote &lastNote = notes->mNotes[curNote - 1];
                 float lastZ = (mDir->mPitchTopZ + mDir->mPitchBottomZ) * 0.5f;
                 if (!lastNote.mUnpitchedNote) {
-                    lastZ = zPerPitch * (float)(lastNote.mEndPitch - 60);
+                    lastZ = (float)(lastNote.mEndPitch - 60) * zPerPitch;
                 }
-                float lastX = unk78 * (runX / windowDurationMs);
+                float lastX = (runX / windowDurationMs) * unk78;
                 if (!lastNote.mUnpitchedNote) {
-                    float minX = (0.75f * zPerPitch - lastX);
-                    minX = -minX;
-                    float prevMin = 0.01f + prevX;
-                    if (prevMin >= minX)
-                        minX = prevMin;
-                    lastX = minX;
+                    lastX = std::max(prevX + 0.01f, lastX - zPerPitch * 0.75f);
                 }
                 mNoteTube->SetPointPos(pointIdx, Vector3(lastX, 0, lastZ));
-                mNoteTube->mXPos = unk78 * (firstNote.mMs / windowDurationMs);
+                mNoteTube->mXPos = (firstNote.mMs / windowDurationMs) * unk78;
                 mNoteTube->CreateMeshes();
             }
         }
