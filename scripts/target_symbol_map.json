@@ -1,4 +1,7 @@
 {
+ "0x82b81ef0": "??0JsonString@@QAA@PBD@Z",
+ "0x82b81f48": "??0JsonInt@@QAA@H@Z",
+ "0x82b81fa0": "??0JsonDouble@@QAA@N@Z",
  "0x82bb3870": "?DecodeThreadPoll@VorbisReader@@QAA_NXZ",
  "0x825289c8": "?SetFilterAllButStart@JoypadClient@@QAAX_N@Z",
  "0x8280dea0": "?StepPercent@UIListState@@QBAMXZ",
