@@ -501,8 +501,7 @@ int CacheXbox::ThreadDelete() {
     mThreadStr.ReplaceAll('/', '\\');
     bool result = DeleteFileA(mThreadStr.c_str());
     if (result) {
-        mThreadStr.erase(mThreadStr.find_last_of('\\'));
-        result = DeleteParentDirs(String(mThreadStr));
+        result = DeleteParentDirs(String(mThreadStr.erase(mThreadStr.find_last_of('\\'))));
     }
     if (!result) {
         DWORD err = GetLastError();
