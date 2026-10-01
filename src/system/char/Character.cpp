@@ -963,7 +963,19 @@ void Character::FindInterestObjects(ObjectDir *dir) {
 void Character::UnhookShadow() {
     for (int i = 0; i < mShadowBones.size(); i++) {
         ShadowBone *cur = mShadowBones[i];
+#ifdef HX_NATIVE
         cur->ReplaceRefs(cur->Parent());
+#else
+        // Every holder of a pointer to the shadow bone is re-pointed at the
+        // bone's parent; each Replace takes its own entry off the ring.
+        while (!cur->Refs().empty()) {
+            ObjRefOwner *owner = RefPtrOf(cur->Refs().begin());
+            RndTransformable *parent = cur->Parent();
+            owner->Replace(
+                reinterpret_cast<ObjRef *>(static_cast<Hmx::Object *>(cur)), parent
+            );
+        }
+#endif
     }
     DeleteAll(mShadowBones);
 }
