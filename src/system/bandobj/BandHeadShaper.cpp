@@ -309,34 +309,29 @@ void TestMesh(RndTransformable *start, RndTransformable *top) {
 }
 
 void BandHeadShaper::AddFrame(const char *cc, int frame, float weight) {
+    int fi = frame + 1;
     BandFaceDeform *df =
         mAnim->Dir()->Find<BandFaceDeform>(MakeString("%s.fdm", cc), false);
-    if (df && !mBonesOnly) {
-        int fi = frame + 1;
-        if ((unsigned int)fi < (unsigned short)df->mFrames.size()) {
-            BandFaceDeform::DeltaArray &da = df->mFrames[fi];
-            signed char *bytes;
-            for (Delta *d = (Delta *)da.begin(); d < da.end();
-                 d = (Delta *)d->next()) {
-                bytes = (signed char *)d;
-                for (int j = 0; j < d->num; j++) {
-                    Vector3 delta;
-                    delta.x = 0.015748031f * (float)bytes[4];
-                    delta.y = 0.015748031f * (float)bytes[5];
-                    delta.z = 0.015748031f * (float)bytes[6];
-                    int vi = (*mMapping)[j + *(unsigned short *)d];
-                    RndMesh::Vert &v = mDst->Verts()[vi];
-                    v.pos.x = delta.x * weight + v.pos.x;
-                    v.pos.y = delta.y * weight + v.pos.y;
-                    v.pos.z = delta.z * weight + v.pos.z;
-                    bytes += 3;
+    if (df && !mBonesOnly && (unsigned int)fi < df->mFrames.size()) {
+        BandFaceDeform::DeltaArray &da = df->mFrames[fi];
+        for (Delta *d = (Delta *)da.begin(); d < da.end(); d = (Delta *)d->next()) {
+            for (int j = 0; j < d->num; j++) {
+                signed char *bytes = (signed char *)d + 4 + j * 3;
+                int vi = (*mMapping)[*(unsigned short *)d + j];
+                Vector3 delta;
+                for (int k = 0; k < 3; k++) {
+                    delta[k] = bytes[k] * 0.015748031f;
                 }
+                RndMesh::Vert &v = mDst->Verts()[vi];
+                v.pos.x = delta.x * weight + v.pos.x;
+                v.pos.y = delta.y * weight + v.pos.y;
+                v.pos.z = delta.z * weight + v.pos.z;
             }
         }
     }
     CharClip *clip = mAnim->Dir()->Find<CharClip>(cc, false);
     if (clip) {
-        clip->ScaleAdd(*mBones, weight, clip->FrameToBeat(frame + 1), 0.0f);
+        clip->ScaleAdd(*mBones, weight, clip->FrameToBeat(fi), 0.0f);
     }
 }
 
