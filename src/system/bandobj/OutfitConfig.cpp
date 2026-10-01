@@ -1375,9 +1375,9 @@ BEGIN_HANDLERS(OutfitConfig)
 END_HANDLERS
 
 BEGIN_CUSTOM_PROPSYNC(OutfitConfig::Piercing::Piece)
-    SYNC_PROP(attachment, o.mAttachment)
-    SYNC_PROP(highlight, o.mHighlight)
-    SYNC_PROP(vert, o.mVert)
+    SYNC_PROP_STATIC(attachment, o.mAttachment)
+    SYNC_PROP_STATIC(highlight, o.mHighlight)
+    SYNC_PROP_STATIC(vert, o.mVert)
 END_CUSTOM_PROPSYNC
 
 // Retail builds these three Symbols as guarded function-local statics (one guard
@@ -1409,24 +1409,11 @@ BEGIN_CUSTOM_PROPSYNC(OutfitConfig::MatSwap)
 END_CUSTOM_PROPSYNC
 
 BEGIN_CUSTOM_PROPSYNC(OutfitConfig::MeshAO::Seam)
-    // X7: `index` is ALSO a POSIX function (`char *index(const char *, int)`,
-    // strings.h), which glibc pulls in transitively here. The non-local-static
-    // SYNC_PROP expands to `if (sym == index)`, so the comparison binds the
-    // libc function instead of the Symbol global and fails with "invalid
-    // operands to binary expression ('Symbol' and 'char *(const char *, int)')".
-    // The local-static SYNC_PROP variant stringizes the name into its own
-    // `static Symbol _ps("index")` and never names the global, which is both
-    // the fix and what retail actually emits.
-#ifdef HX_NATIVE
-    {
-        static Symbol _ps("index");
-        if (sym == _ps)
-            return PropSync(o.mIndex, _val, _prop, _i + 1, _op);
-    }
-#else
-    SYNC_PROP(index, o.mIndex)
-#endif
-    SYNC_PROP(coeff, o.mCoeff)
+    // Retail builds both names as guarded function-local statics. The static
+    // spelling also keeps native builds off POSIX `index()` (strings.h), which
+    // a bare `sym == index` would bind to.
+    SYNC_PROP_STATIC(index, o.mIndex)
+    SYNC_PROP_STATIC(coeff, o.mCoeff)
 END_CUSTOM_PROPSYNC
 
 BEGIN_CUSTOM_PROPSYNC(OutfitConfig::MeshAO)

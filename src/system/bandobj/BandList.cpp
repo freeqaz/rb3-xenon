@@ -705,10 +705,10 @@ BEGIN_HANDLERS(BandList)
 END_HANDLERS
 
 BEGIN_CUSTOM_PROPSYNC(HighlightObject)
-    SYNC_PROP(target_object, o.mTargetObj)
-    SYNC_PROP(x_offset, o.mXOffset)
-    SYNC_PROP(y_offset, o.mYOffset)
-    SYNC_PROP(z_offset, o.mZOffset)
+    SYNC_PROP_STATIC(target_object, o.mTargetObj)
+    SYNC_PROP_STATIC(x_offset, o.mXOffset)
+    SYNC_PROP_STATIC(y_offset, o.mYOffset)
+    SYNC_PROP_STATIC(z_offset, o.mZOffset)
 END_CUSTOM_PROPSYNC
 
 BEGIN_PROPSYNCS(BandList)
