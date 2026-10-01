@@ -21785,7 +21785,7 @@
  "0x8276ceb8": "??_EDirUnloader@@WBM@AAPAXI@Z",
  "0x8276cec0": "?StateName@Loader@@UBAPBDXZ",
  "0x8276ced0": "?reserve@?$vector@V?$ObjPtr@VObject@Hmx@@@@V?$StlNodeAlloc@V?$ObjPtr@VObject@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
- "0x8276cf80": "??_EDirUnloader@@UAAPAXI@Z",
+ "0x8276cf80": "??_GDirUnloader@@UAAPAXI@Z",
  "0x8276cfd0": "?push_back@?$vector@V?$ObjPtr@VObject@Hmx@@@@V?$StlNodeAlloc@V?$ObjPtr@VObject@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABV?$ObjPtr@VObject@Hmx@@@@@Z",
  "0x8276d050": "??0DirUnloader@@QAA@PAVObjectDir@@@Z",
  "0x8276d2a0": "?Print@TextFile@@UAAXPBD@Z",
