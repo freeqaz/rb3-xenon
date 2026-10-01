@@ -3693,8 +3693,6 @@ Mesh.cpp:
 	.pdata      start:0x8220B788 end:0x8220B948
 	.pdata      start:0x8222D8E0 end:0x8222D8E8
 	.pdata      start:0x82231D20 end:0x82231D30
-	.pdata      start:0x82234C30 end:0x82234C50
-	.pdata      start:0x82234C68 end:0x82234C70
 	.pdata      start:0x8223A6F0 end:0x8223A6F8
 	.pdata      start:0x8223CFF8 end:0x8223D008
 	.pdata      start:0x8223D040 end:0x8223D050
@@ -3742,8 +3740,6 @@ Mesh.cpp:
 	.text       start:0x824215D4 end:0x824215E0
 	.text       start:0x82657CF0 end:0x82657E08
 	.text       start:0x826985C8 end:0x82698648
-	.text       start:0x826CE5E0 end:0x826CE714
-	.text       start:0x826CE9C4 end:0x826CEA10
 	.text       start:0x82737688 end:0x827378B4
 	.text       start:0x82766EF8 end:0x82766FA8
 	.text       start:0x82767418 end:0x82767494
@@ -11238,7 +11234,9 @@ band3/game/MultiplayerAnalyzer.cpp:
 	.pdata      start:0x82234B90 end:0x82234C00
 	.pdata      start:0x82234C10 end:0x82234C20
 	.pdata      start:0x82234C20 end:0x82234C30
+	.pdata      start:0x82234C30 end:0x82234C50
 	.pdata      start:0x82234C50 end:0x82234C68
+	.pdata      start:0x82234C68 end:0x82234C70
 	.pdata      start:0x82234C70 end:0x82234C88
 	.pdata      start:0x82234C88 end:0x82234CA8
 	.pdata      start:0x82234CA8 end:0x82234CB0
@@ -11251,7 +11249,9 @@ band3/game/MultiplayerAnalyzer.cpp:
 	.text       start:0x826CD8DC end:0x826CE268
 	.text       start:0x826CE2D0 end:0x826CE4B8
 	.text       start:0x826CE4B8 end:0x826CE5E0
+	.text       start:0x826CE5E0 end:0x826CE714
 	.text       start:0x826CE714 end:0x826CE9C4
+	.text       start:0x826CE9C4 end:0x826CEA10
 	.text       start:0x826CEA10 end:0x826CEB50
 	.text       start:0x826CEB50 end:0x826CEC94
 	.text       start:0x826CEC98 end:0x826CED40
