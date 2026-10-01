@@ -231,7 +231,19 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
   identification first, cleanup-before-grind, vtable/struct, game over engine,
   native is the goal), the open hard items, and the in-flight Ghidra tooling
   track. The 08-17 edition below remains the partition-methodology record.
-- [decomp/CAMPAIGN_STATE_2026-08-17.md](decomp/CAMPAIGN_STATE_2026-08-17.md) —
+- [decomp/CAMPAIGN_STATE_2026-09-30.md](decomp/CAMPAIGN_STATE_2026-09-30.md) —
+  **lever census (09-30).** Measured at main `61bb82227` (`name_check`, objdiff 4.2.9):
+  **46,403 matched · `matched_code` 4,677,848 B = 45.650580% · fuzzy 54.578014 ·
+  honest 22,714**; ceiling re-measured at **61.537%, and we stand at 74.18% of
+  it**. Attributes 09-30's **+499,860 B / +2,249 fns** to lever classes
+  (anonymous-row naming + drifted-body repair 33%, alias adjudication 21%,
+  shared templates to retail's ObjRef shape 18%, 1–90% sweeps 10%, re-homing 9%)
+  and ranks the next levers off a fresh per-row census
+  ([decomp/next-leverage-queue-2026-09-30.tsv](decomp/next-leverage-queue-2026-09-30.tsv),
+  7,452 rows). ⛔ **Refutes 08-17's "there is no big lever left"** — breadth
+  work landed ~0.5 MB in one day.
+- [HIST] ★★★ [decomp/CAMPAIGN_STATE_2026-08-17.md](decomp/CAMPAIGN_STATE_2026-08-17.md) —
+  **superseded as live state by the 10-01 edition above.**
   **third edition; replaces `CAMPAIGN_STATE_2026-08-14.md` wholesale.** Measured
   at HEAD `6e13ee3f` on the shipped **`name_check`** ruler: **44,444 / 69,227
   matched · `matched_code` 3,723,704 / 10,320,664 = 36.080082% · fuzzy
