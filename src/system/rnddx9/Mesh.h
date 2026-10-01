@@ -33,7 +33,7 @@ public:
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     // RndMesh
     virtual void DrawShowing();
-    virtual void DrawFacesInRange(int, int);
+    virtual void DrawFaces();
     // ⚠ These MUST use MESH_DC3_VIRTUAL, not a bare `virtual`. rndobj/Mesh.h
     // already proved (three vcall-displacement anchors) that retail keeps
     // RndMesh::NumFaces/NumVerts NON-virtual, but leaving the keyword HERE
@@ -49,7 +49,7 @@ public:
     // the bare-`blr` hub (the three empty void virtuals ListDrawChildren /
     // DrawPreClear / UpdatePreClearState), [5]/[14]/[15] are referenced by
     // exactly ONE vtable each (the genuine DxMesh overrides DrawShowing /
-    // DrawFacesInRange / OnSync) and [0][1][2][4][7][8][12][13] by exactly two
+    // DrawFaces / OnSync) and [0][1][2][4][7][8][12][13] by exactly two
     // (RndMesh's own bodies). So the surplus is unambiguously the tail pair.
     MESH_DC3_VIRTUAL int NumFaces() const { return mNumFaces; }
     MESH_DC3_VIRTUAL int NumVerts() const { return mNumVerts; }
@@ -65,6 +65,12 @@ protected:
     DxMesh();
     // ?CanDraw@DxMesh@@IBA_NXZ (0x82737440), called by DxMultiMesh::DrawShowing.
     bool CanDraw() const;
+    // ?CheckFurTransformCache@DxMesh@@IAA_NXZ (0x82738B10).
+    bool CheckFurTransformCache();
+    void CacheFurTransform(const Transform &, int, float);
+    float FurWeight(RndMat *);
+    RndMat *DrawFur(RndMat *);
+    void SetTransforms();
     // Retail DxMesh vtable @0x82101b14 slot 15 -> 0x82738768; protected, as in
     // RndMesh (DC3 map: ?OnSync@DxMesh@@MAAXH@Z).
     virtual void OnSync(int);

@@ -126,6 +126,7 @@ DWORD XAudioGetSpeakerConfig(DWORD *pdwSpeakerConfig);
 DWORD XAudioOverrideSpeakerConfig(DWORD dwSpeakerConfig);
 VOID XGetVideoMode(XVIDEO_MODE *pVideoMode);
 VOID *XMemSet(VOID *dest, INT c, SIZE_T count);
+VOID *XMemCpyStreaming_WriteCombined(VOID *dest, const VOID *src, SIZE_T count);
 VOID *XMemAlloc(SIZE_T dwSize, DWORD dwAllocAttributes);
 VOID *XMemAllocDefault(SIZE_T dwSize, DWORD dwAllocAttributes);
 VOID XMemFree(LPVOID lpHandle, DWORD dwFreeAttributes);

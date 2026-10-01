@@ -20,6 +20,8 @@ public:
     virtual void SetPConstant(PShaderConstant, RndCubeTex *);
     virtual void SetPConstant4x3(PShaderConstant, const Hmx::Matrix4 &);
     virtual void SetPConstant(PShaderConstant, const Hmx::Matrix4 &);
+    // Non-virtual (retail 0x82736130 is reached with a direct bl).
+    void SetTexture(int sampler, struct D3DBaseTexture *tex);
 
 protected:
     virtual void LoadShaderFile(FileStream &);

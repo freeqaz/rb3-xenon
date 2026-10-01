@@ -6,51 +6,64 @@
 #include "xdk/D3D9.h"
 #include "xdk/d3d9i/d3d9.h"
 #include "../../Memory.h"
+#include "obj/Task.h"
+#include "rndobj/Fur.h"
+#include "rndobj/Rnd.h"
+#include "rndobj/Shader.h"
+#include "rndobj/ShaderMgr.h"
+#include "rndobj/VelocityBuffer.h"
+#include "rndobj/Wind.h"
+#include "math/Mtx.h"
+
+// File scope, not function-local: retail ??0DxMesh (0x827380B0) addresses all
+// three arrays off ONE base register (r27, then +0x60 and +0xb8), which needs
+// them in the TU's single .data; function-local statics each get their own
+// COMDAT section and a fresh lis/addi.
+// clang-format off
+static D3DVERTEXELEMENT9 sVertexElements[] = {
+    { 0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+    { 0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR, 0 },
+    { 0, 16, D3DDECLTYPE_FLOAT16_2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+    { 0, 20, D3DDECLTYPE_DEC4N, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
+    { 0, 24, D3DDECLTYPE_DEC4N, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TANGENT, 0 },
+    { 0, 28, D3DDECLTYPE_UDEC4N, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_BLENDWEIGHT, 0 },
+    { 0, 32, D3DDECLTYPE_UBYTE4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_BLENDINDICES, 0 },
+    D3DDECL_END()
+};
+// clang-format on
+// clang-format off
+static D3DVERTEXELEMENT9 sMutableVertexElements[] = {
+    { 0, 0, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+    { 0, 16, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
+    { 0, 48, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR, 0 },
+    { 0, 64, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+    { 0, 72, D3DDECLTYPE_SHORT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_BLENDINDICES, 0 },
+    { 0, 80, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TANGENT, 0 },
+    D3DDECL_END()
+};
+// clang-format on
+// clang-format off
+static D3DVERTEXELEMENT9 sMutableSkinnedVertexElements[] = {
+    { 0, 0, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+    { 0, 16, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
+    { 0, 32, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_BLENDWEIGHT, 0 },
+    { 0, 64, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+    { 0, 72, D3DDECLTYPE_SHORT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_BLENDINDICES, 0 },
+    { 0, 80, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TANGENT, 0 },
+    D3DDECL_END()
+};
+// clang-format on
 
 DxMesh::DxMesh() : mNumVerts(0), mNumFaces(0), unk1ac(0), unk1b0(0) {
     if (!sVertexDecl) {
-        // clang-format off
-        static D3DVERTEXELEMENT9 sVertexElements[] = {
-            { 0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
-            { 0, 12, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR, 0 },
-            { 0, 16, D3DDECLTYPE_FLOAT16_2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
-            { 0, 20, D3DDECLTYPE_DEC4N, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
-            { 0, 24, D3DDECLTYPE_DEC4N, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TANGENT, 0 },
-            { 0, 28, D3DDECLTYPE_UDEC4N, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_BLENDWEIGHT, 0 },
-            { 0, 32, D3DDECLTYPE_UBYTE4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_BLENDINDICES, 0 },
-            D3DDECL_END()
-        };
-        // clang-format on
         sVertexDecl = D3DDevice_CreateVertexDeclaration(sVertexElements);
         DX_ASSERT(sVertexDecl, 0xA8);
     }
     if (!sMutableVertexDecl) {
-        // clang-format off
-        static D3DVERTEXELEMENT9 sMutableVertexElements[] = {
-            { 0, 0, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
-            { 0, 16, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
-            { 0, 48, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR, 0 },
-            { 0, 64, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
-            { 0, 72, D3DDECLTYPE_SHORT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_BLENDINDICES, 0 },
-            { 0, 80, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TANGENT, 0 },
-            D3DDECL_END()
-        };
-        // clang-format on
         sMutableVertexDecl = D3DDevice_CreateVertexDeclaration(sMutableVertexElements);
         DX_ASSERT(sMutableVertexDecl, 0xAF);
     }
     if (!sMutableSkinnedVertexDecl) {
-        // clang-format off
-        static D3DVERTEXELEMENT9 sMutableSkinnedVertexElements[] = {
-            { 0, 0, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
-            { 0, 16, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
-            { 0, 32, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_BLENDWEIGHT, 0 },
-            { 0, 64, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
-            { 0, 72, D3DDECLTYPE_SHORT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_BLENDINDICES, 0 },
-            { 0, 80, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TANGENT, 0 },
-            D3DDECL_END()
-        };
-        // clang-format on
         sMutableSkinnedVertexDecl =
             D3DDevice_CreateVertexDeclaration(sMutableSkinnedVertexElements);
         DX_ASSERT(sMutableSkinnedVertexDecl, 0xB5);
@@ -62,6 +75,59 @@ DxMesh::~DxMesh() {
     unk1ac = nullptr;
     TheDxRnd.AutoRelease(unk1b0);
     unk1b0 = nullptr;
+}
+
+// 0x82737F80: a non-mutable geometry owner clones the source's GPU buffers.
+void DxMesh::Copy(const Hmx::Object *src, Hmx::Object::CopyType ty) {
+    RndMesh::Copy(src, ty);
+    const DxMesh *other = dynamic_cast<const DxMesh *>(src);
+    if (other && this == GetGeomOwner() && !mMutable) {
+        PhysMemTypeTracker tracker("D3D(phys):Mesh");
+        unk1a4.Release();
+        mNumVerts = other->mNumVerts;
+        if (mNumVerts) {
+            D3DVertexBuffer *clone = CloneVertexBuffer(other->unk1a4.buffer);
+            unk1a4.SetData(clone, other->unk1a4.size);
+        }
+        TheDxRnd.AutoRelease(unk1ac);
+        unk1ac = nullptr;
+        mNumFaces = other->mNumFaces;
+        if (mNumFaces) {
+            unk1ac = (D3DResource *)CloneIndexBuffer((D3DIndexBuffer *)other->unk1ac);
+        }
+    }
+}
+
+// 0x827378B8 (DxMultiMesh::DrawBatchedNewGfx's index stream): the 16-bit index
+// buffer widened once into a 32-bit vertex stream.
+D3DVertexBuffer *DxMesh::GetMultimeshFaces() {
+    MILO_ASSERT(!Mutable(), 0x1A7);
+    if (unk1b0) {
+        return (D3DVertexBuffer *)unk1b0;
+    }
+    {
+        unsigned int numIndices = mNumFaces * 3;
+        IDirect3DDevice9_CreateVertexBuffer(
+            TheDxRnd.Device(), numIndices * 4, 0, 0, (D3DPOOL)0,
+            (D3DVertexBuffer **)&unk1b0, nullptr
+        );
+        unsigned int *dst =
+            (unsigned int *)D3DVertexBuffer_Lock((D3DVertexBuffer *)unk1b0, 0, 0, 0);
+        unsigned short *src =
+            (unsigned short *)D3DIndexBuffer_Lock((D3DIndexBuffer *)unk1ac, 0, 0, 0x10);
+        for (unsigned int i = 0; i < numIndices; i++) {
+            *dst++ = *src++;
+        }
+        D3DIndexBuffer_Unlock((D3DIndexBuffer *)unk1ac);
+        D3DVertexBuffer_Unlock((D3DVertexBuffer *)unk1b0);
+    }
+    return (D3DVertexBuffer *)unk1b0;
+}
+
+// 0x82737440: buffers present, or the mesh is mutable (streamed each draw).
+bool DxMesh::CanDraw() const {
+    bool hasBuffers = (int)unk1a4.buffer && unk1ac != NULL;
+    return hasBuffers || mMutable;
 }
 
 u32 DxMesh::VertFVF() const {
@@ -167,6 +233,247 @@ void FillCompressedVertex(CompressedVertex_Xbox &compressed, const RndMesh::Vert
         + (int)vert.boneIndices[2]) * 0x100
         + (int)vert.boneIndices[1]) * 0x100
         + (int)vert.boneIndices[0];
+}
+
+// 0x82738B10: one cached transform per bone (one for an unskinned mesh);
+// reports whether the cache had to be (re)built.
+bool DxMesh::CheckFurTransformCache() {
+    int numBones = mBones.size();
+    if (numBones == 0) {
+        numBones = 1;
+    }
+    if ((unsigned int)numBones != unk190.size()) {
+        unk190.resize(numBones);
+        for (int i = 0; i < numBones; i++) {
+            unk190[i].Reset();
+        }
+        return true;
+    }
+    return false;
+}
+
+// 0x82737A10: blend the cached fur transform toward `xfm` (or snap when the
+// bone turned or moved too far), then push it along the fur's wind.
+void DxMesh::CacheFurTransform(const Transform &xfm, int i, float weight) {
+    MILO_ASSERT(unk190.size() > i, 0x1ee);
+    Transform &cached = unk190[i];
+    float dz = cached.v.z - xfm.v.z;
+    float dy = cached.v.y - xfm.v.y;
+    float dx = cached.v.x - xfm.v.x;
+    if (Dot(xfm.m.y, cached.m.y) >= 0.8660254f
+        && dx * dx + dy * dy + dz * dz < 2500.0f) {
+        float invWeight = 1.0f - weight;
+        cached.m.x *= invWeight;
+        cached.m.y *= invWeight;
+        cached.m.z *= invWeight;
+        cached.v *= invWeight;
+        ScaleAddEq(cached, xfm, weight);
+    } else {
+        cached.m = xfm.m;
+        cached.v = xfm.v;
+    }
+    RndWind *wind = Mat()->GetFur()->GetWind();
+    if (wind) {
+        Vector3 windForce;
+        float windTime = TheTaskMgr.Seconds(TaskMgr::kRealTime);
+        wind->GetWind(xfm.v, windTime, windForce);
+        Vector3 &cachedPos = cached.v;
+        cachedPos.x += windForce.x * 0.05f;
+        cachedPos.y += windForce.y * 0.05f;
+        cachedPos.z += windForce.z * 0.05f;
+    }
+}
+
+// 0x82738BF0 (out of line; one caller, SetTransforms): the first fur pass's
+// blend weight, 1 on a fresh cache, or -1 when no pass carries fur. RB3 walks
+// the pass chain through NextPass() directly, with no dynamic_cast.
+float DxMesh::FurWeight(RndMat *mat) {
+    while (mat) {
+        if (mat->GetFur()) {
+            if (CheckFurTransformCache()) {
+                return 1.0f;
+            }
+            return 1.0f / (mat->GetFur()->GetFluidity() * 6.5f + 1.0f);
+        }
+        mat = mat->NextPass();
+    }
+    return -1.0f;
+}
+
+static float sFurLodBias = -1.0f;
+
+// 0x82737BF0: draws every fur shell of `mat`'s pass and returns the next pass.
+// The too-many-bones report is compiled out but still evaluates
+// PathName(this) (0x8273D404).
+RndMat *DxMesh::DrawFur(RndMat *mat) {
+    if (TheRnd.DrawMode() != Rnd::kDrawNormal) {
+        return mat->NextPass();
+    }
+    DxMesh *owner = static_cast<DxMesh *>(GetGeomOwner());
+    if (NumBones() * 2 >= 43) {
+#ifdef HX_NATIVE
+        MILO_NOTIFY_ONCE(
+            "%s: Too many bones for fur (%d > %d)", PathName(this), NumBones(), 21
+        );
+#else
+        MiloStripEval(
+            "%s: Too many bones for fur (%d > %d)", PathName(this), NumBones(), 21
+        );
+#endif
+        return mat->NextPass();
+    }
+    RndFur *fur = mat->GetFur();
+    int numBones = NumBones();
+    if (numBones == 0)
+        numBones = 1;
+    int furBoneOffset = numBones * 3;
+    for (int i = 0; i < numBones; i++) {
+        RndShaderMgr &shaderMgr = TheShaderMgr;
+        shaderMgr.SetVConstant4x3(
+            (VShaderConstant)(kVS_WorldTransform + furBoneOffset + i * 3),
+            Hmx::Matrix4(unk190[i])
+        );
+    }
+    fur->Prep(owner, mat);
+    DWORD savedLod12 = D3DDevice_GetSamplerState_MipMapLodBias(TheDxRnd.Device(), 0xC);
+    DWORD savedLod0 = D3DDevice_GetSamplerState_MipMapLodBias(TheDxRnd.Device(), 0);
+    D3DDevice_SetSamplerState_MipMapLodBias(
+        TheDxRnd.Device(), 0xC, *(DWORD *)&sFurLodBias
+    );
+    D3DDevice_SetSamplerState_MipMapLodBias(
+        TheDxRnd.Device(), 0, *(DWORD *)&sFurLodBias
+    );
+    int numPasses = fur->Layers();
+    RndMat *next = mat->NextPass();
+    for (int i = 0; i < numPasses; i++) {
+        fur->Shell(i, owner, mat);
+        owner->DrawFaces();
+    }
+    D3DDevice_SetSamplerState_MipMapLodBias(TheDxRnd.Device(), 0xC, savedLod12);
+    D3DDevice_SetSamplerState_MipMapLodBias(TheDxRnd.Device(), 0, savedLod0);
+    return next;
+}
+
+// 0x82738C78: uploads the world / bone transforms (and caches them for fur and
+// the velocity buffer).
+void DxMesh::SetTransforms() {
+    bool shouldCache = mMotionCache.mShouldCache;
+    int numProcessed = 0;
+    mMotionCache.mShouldCache = false;
+    unsigned int boneCount = mBones.size();
+    TheShaderMgr.SetMeshInfo(boneCount, HasAOCalc());
+    float fw = FurWeight(Mat());
+    bool hasFur;
+    if (fw > 0.0f) {
+        hasFur = true;
+    } else {
+        hasFur = false;
+    }
+    if (boneCount == 0) {
+        TheShaderMgr.UpdateCache(WorldXfm(), 0);
+        if (hasFur) {
+            CacheFurTransform(WorldXfm(), 0, fw);
+        }
+    } else {
+        RndBone *bone = mBones.begin();
+        if (bone != mBones.end()) {
+            do {
+                Transform local;
+                Multiply(bone->mOffset, bone->mBone->WorldXfm(), local);
+                TheShaderMgr.UpdateCache(local, numProcessed);
+                if (hasFur) {
+                    CacheFurTransform(local, numProcessed, fw);
+                }
+                bone++;
+                numProcessed++;
+            } while (bone != mBones.end());
+        }
+        if (boneCount >= 1) {
+            goto upload;
+        }
+    }
+    boneCount = 1;
+upload:
+    TheShaderMgr.SetVConstant(
+        kVS_WorldTransform, TheShaderMgr.ConstantCache(), boneCount * 3
+    );
+    if (shouldCache) {
+        RndVelocityBuffer::Singleton().CacheTransform(
+            this, TheShaderMgr.ConstantCache(), boneCount
+        );
+    }
+}
+
+// 0x82738E38 (DxMesh vtable slot 5). RB3 hands the GEOMETRY OWNER to the
+// velocity buffer, reads NextPass() directly and always selects
+// kStandardShader.
+// NOTE: retail also calls an unidentified rndobj/Mesh helper (0x82418DC0) on
+// `this` between SetTransforms and the pass loop; it is not reproduced here.
+void DxMesh::DrawShowing() {
+    DxMesh *geom = static_cast<DxMesh *>(GetGeomOwner());
+    if (!geom->CanDraw()) {
+        return;
+    }
+    if (TheRnd.DrawMode() == (Rnd::Mode)5) {
+        RndVelocityBuffer::Singleton().DrawMesh(geom);
+        return;
+    }
+    SetTransforms();
+    RndMat *mat = Mat();
+    RndMat *next;
+    do {
+        if (mat) {
+            if (mat->GetFur()) {
+                mat = DrawFur(mat);
+                continue;
+            }
+            next = mat->NextPass();
+        } else {
+            next = nullptr;
+        }
+        RndShader::SelectConfig(mat, kStandardShader, false);
+        geom->DrawFaces();
+        mat = next;
+    } while (mat);
+}
+
+// 0x82737DB8 (DxMesh vtable slot 14). Mutable meshes stream their geometry into
+// the command buffer every draw; static ones draw from their GPU buffers. RB3
+// keeps no draw stats here and ignores BeginIndexedVertices' result.
+void DxMesh::DrawFaces() {
+    D3DDevice *device = TheDxRnd.Device();
+    if (mMutable) {
+        if (Faces().empty())
+            return;
+        D3DDevice_SetVertexDeclaration(
+            device, IsSkinned() ? sMutableSkinnedVertexDecl : sMutableVertexDecl
+        );
+        void *indexData = nullptr;
+        void *vertexData = nullptr;
+        D3DDevice_BeginIndexedVertices(
+            device,
+            D3DPT_TRIANGLELIST,
+            0,
+            Verts().size(),
+            Faces().size() * 3,
+            D3DFMT_INDEX16,
+            0x60,
+            &indexData,
+            &vertexData
+        );
+        void *vertexDest = vertexData;
+        RndMesh::Face *faceData = Faces().begin();
+        RndMesh::Vert *vertData = Verts().begin();
+        XMemCpyStreaming_WriteCombined(indexData, faceData, Faces().size() * 6);
+        XMemCpyStreaming_WriteCombined(vertexDest, vertData, Verts().size() * 0x60);
+        D3DDevice_EndIndexedVertices(device);
+    } else {
+        D3DDevice_SetIndices(device, (D3DIndexBuffer *)unk1ac);
+        D3DDevice_SetStreamSource(device, 0, unk1a4.buffer, 0, 0x24, 1);
+        D3DDevice_SetVertexDeclaration(device, sVertexDecl);
+        D3DDevice_DrawIndexedVertices(device, D3DPT_TRIANGLELIST, 0, 0, mNumFaces * 3);
+        D3DDevice_SetIndices(device, nullptr);
+    }
 }
 
 // Retail 0x82738768 (DxMesh vtable slot 15), frame 0xD0, one EH funclet

@@ -816,6 +816,10 @@ void D3DDevice_SetVertexShaderConstantFN(
 );
 void D3DDevice_SetSamplerState_MinFilter(D3DDevice *pDevice, DWORD Sampler, DWORD Value);
 void D3DDevice_SetSamplerState_MagFilter(D3DDevice *pDevice, DWORD Sampler, DWORD Value);
+void D3DDevice_SetSamplerState_MipMapLodBias(
+    D3DDevice *pDevice, DWORD Sampler, DWORD Value
+);
+DWORD D3DDevice_GetSamplerState_MipMapLodBias(D3DDevice *pDevice, DWORD Sampler);
 void D3DDevice_SetSamplerState_MinMipLevel(D3DDevice *pDevice, DWORD Sampler, DWORD Value);
 void D3DDevice_SetSamplerState_MaxMipLevel(D3DDevice *pDevice, DWORD Sampler, DWORD Value);
 // The mip filter lives in fetch-constant word 3, bits 23-24.
@@ -885,6 +889,21 @@ inline HRESULT IDirect3DDevice9_CreateTexture(
     return (*ppTexture != 0) ? 0 : (HRESULT)0x8007000E; // S_OK : E_OUTOFMEMORY
 }
 
+// Same XDK inline-wrapper shape for vertex buffers (DxMesh::GetMultimeshFaces
+// stores through the out-pointer and forwards the value, `clrrwi r3,r3,0`).
+inline HRESULT IDirect3DDevice9_CreateVertexBuffer(
+    D3DDevice *pDevice,
+    UINT Length,
+    DWORD Usage,
+    DWORD FVF,
+    D3DPOOL Pool,
+    D3DVertexBuffer **ppVertexBuffer,
+    HANDLE *pSharedHandle
+) {
+    *ppVertexBuffer = D3DDevice_CreateVertexBuffer(Length, Usage, Pool);
+    return (*ppVertexBuffer != 0) ? 0 : (HRESULT)0x8007000E; // S_OK : E_OUTOFMEMORY
+}
+
 D3DVertexDeclaration *
 D3DDevice_CreateVertexDeclaration(const D3DVERTEXELEMENT9 *pVertexElements);
 void D3DDevice_SetVertexDeclaration(D3DDevice *pDevice, D3DVertexDeclaration *pDecl);
@@ -918,6 +937,18 @@ void D3DDevice_SetPredication(D3DDevice *pDevice, DWORD PredicationMask);
 void D3DDevice_GetDeviceCaps(D3DDevice *pDevice, D3DCAPS9 *pCaps);
 void D3DDevice_SetViewport(D3DDevice *pDevice, const D3DVIEWPORT9 *pViewport);
 void D3DDevice_SetIndices(D3DDevice *pDevice, D3DIndexBuffer *pIndexData);
+HRESULT D3DDevice_BeginIndexedVertices(
+    D3DDevice *pDevice,
+    D3DPRIMITIVETYPE PrimitiveType,
+    INT BaseVertexIndex,
+    UINT VertexCount,
+    UINT IndexCount,
+    D3DFORMAT IndexDataFormat,
+    UINT VertexStreamZeroStride,
+    void **ppIndexData,
+    void **ppVertexData
+);
+void D3DDevice_EndIndexedVertices(D3DDevice *pDevice);
 void D3DDevice_DrawIndexedVertices(
     D3DDevice *pDevice,
     D3DPRIMITIVETYPE PrimitiveType,
@@ -1019,8 +1050,10 @@ D3DDevice_CreateQueryTiled(D3DDevice *pDevice, D3DQUERYTYPE Type, UINT TileCapac
 void D3DDevice_SetVertexShader(D3DDevice *pDevice, D3DVertexShader *pShader);
 void D3DDevice_SetPixelShader(D3DDevice *pDevice, D3DPixelShader *pShader);
 
-void D3DXSetDXT3DXT5(int enable);
-
 #ifdef __cplusplus
 }
+
+// C++ linkage: retail's symbol is ?D3DXSetDXT3DXT5@@YAXH@Z (called from
+// DxRnd::InitRenderState, 0x82739EE0).
+void D3DXSetDXT3DXT5(int enable);
 #endif

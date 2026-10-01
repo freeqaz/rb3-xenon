@@ -270,7 +270,7 @@ void RndTexBlender::DrawShowing() {
                     mesh->Name()
                 );
             }
-            mesh->DrawFacesInRange(0, -1);
+            mesh->DrawFaces();
         }
         mat->SetAlpha(1.0f);
         RndCam *cur = RndCam::Current();
@@ -312,7 +312,7 @@ void RndTexBlender::DrawShowing() {
                     mesh->Name()
                 );
             }
-            mesh->DrawFacesInRange(0, -1);
+            mesh->DrawFaces();
         }
         mat->SetAlpha(1.0f);
         RndCam *cur = RndCam::Current();
@@ -388,7 +388,7 @@ void RndTexBlender::DrawBlendList(
                         mesh->Name()
                     );
                 }
-                mesh->DrawFacesInRange(0, -1);
+                mesh->DrawFaces();
             }
         }
 

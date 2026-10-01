@@ -46,6 +46,9 @@ public:
     // (0x82438F40), passes `lhz r5` of the material's static rev.
     bool LoadOld(BinStream &, int);
     RndTex* GetFurDetail() const { return mFurDetail; }
+    int Layers() const { return mLayers; }
+    float GetFluidity() const { return mFluidity; }
+    RndWind *GetWind() const { return mWind; }
 
     OBJ_MEM_OVERLOAD(0x1A)
     NEW_OBJ(RndFur)
