@@ -3986,7 +3986,6 @@ Text.cpp:
 	.pdata      start:0x82213CD0 end:0x82213CD8
 	.pdata      start:0x822224F0 end:0x822224F8
 	.pdata      start:0x82232E30 end:0x82232E38
-	.pdata      start:0x82243AA0 end:0x82243BE0
 	.text       start:0x822A2BD8 end:0x822A2C70
 	.text       start:0x8231D02C end:0x8231D060
 	.text       start:0x82374C28 end:0x82374C94
@@ -4005,7 +4004,6 @@ Text.cpp:
 	.text       start:0x824C7B40 end:0x824C7BBC
 	.text       start:0x825AF2E0 end:0x825AF30C
 	.text       start:0x826AAFC8 end:0x826AB01C
-	.text       start:0x827DEDC8 end:0x827DF498
 
 band3/meta_band/InterstitialMgr.cpp:
 	.pdata      start:0x82222488 end:0x82222490
@@ -9240,6 +9238,7 @@ TrackDir.cpp:
 	.pdata      start:0x822439B8 end:0x82243A20
 	.pdata      start:0x82243A20 end:0x82243A98
 	.pdata      start:0x82243A98 end:0x82243AA0
+	.pdata      start:0x82243AA0 end:0x82243BE0
 	.pdata      start:0x82243BE0 end:0x82243D48
 	.text       start:0x823710B8 end:0x823710E4
 	.text       start:0x824523F8 end:0x82452494
@@ -9250,6 +9249,7 @@ TrackDir.cpp:
 	.text       start:0x827DD118 end:0x827DDDD4
 	.text       start:0x827DDDD8 end:0x827DE868
 	.text       start:0x827DE868 end:0x827DEDC8
+	.text       start:0x827DEDC8 end:0x827DF498
 	.text       start:0x827DF498 end:0x827E0A58
 
 TrackWidget.cpp:
