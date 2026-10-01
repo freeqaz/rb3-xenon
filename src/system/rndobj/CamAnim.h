@@ -22,6 +22,7 @@ public:
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
+    virtual void Print();
     // RndAnimatable
     virtual void SetFrame(float, float);
     virtual float EndFrame();

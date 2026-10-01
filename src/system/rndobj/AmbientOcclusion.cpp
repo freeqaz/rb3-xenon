@@ -42,32 +42,27 @@ bool RndAmbientOcclusion::Edge::operator<(const Edge &other) const {
 void RndAmbientOcclusion::BlendVert(
     const RndMesh::Vert &v1, const RndMesh::Vert &v2, RndMesh::Vert &out
 ) {
+    // 0x8248C750: member-wise += then *= 0.5f; the tangent is copied out as a
+    // whole 16-byte Vector3 before the add.
     memcpy(&out, &v1, sizeof(RndMesh::Vert));
-    out.pos.z = out.pos.z + v2.pos.z;
-    out.pos.y = out.pos.y + v2.pos.y;
-    out.pos.x = out.pos.x + v2.pos.x;
-    out.tex.x = out.tex.x + v2.tex.x;
-    out.tex.y = out.tex.y + v2.tex.y;
-    out.color.green = out.color.green + v2.color.green;
-    out.color.red = out.color.red + v2.color.red;
-    out.color.alpha = out.color.alpha + v2.color.alpha;
-    out.color.blue = out.color.blue + v2.color.blue;
-    out.norm.x = out.norm.x + v2.norm.x;
-    out.norm.y = out.norm.y + v2.norm.y;
-    out.norm.z = out.norm.z + v2.norm.z;
+    out.pos += v2.pos;
+    out.tex += v2.tex;
+    out.color.red += v2.color.red;
+    out.color.green += v2.color.green;
+    out.color.blue += v2.color.blue;
+    out.color.alpha += v2.color.alpha;
+    out.norm += v2.norm;
     Vector3 tang;
-    tang.x = v2.tangent.x + out.tangent.x;
-    tang.y = v2.tangent.y + out.tangent.y;
-    tang.z = v2.tangent.z + out.tangent.z;
-    out.pos.x = out.pos.x * 0.5f;
-    out.pos.y = out.pos.y * 0.5f;
-    out.pos.z = out.pos.z * 0.5f;
-    out.tex.x = out.tex.x * 0.5f;
-    out.tex.y = out.tex.y * 0.5f;
-    out.color.blue = out.color.blue * 0.5f;
-    out.color.red = out.color.red * 0.5f;
-    out.color.green = out.color.green * 0.5f;
-    out.color.alpha = out.color.alpha * 0.5f;
+    memcpy(&tang, &out.tangent, sizeof(Vector3));
+    tang.x += v2.tangent.x;
+    tang.y += v2.tangent.y;
+    tang.z += v2.tangent.z;
+    out.pos *= 0.5f;
+    out.tex *= 0.5f;
+    out.color.red *= 0.5f;
+    out.color.green *= 0.5f;
+    out.color.blue *= 0.5f;
+    out.color.alpha *= 0.5f;
     Normalize(out.norm, out.norm);
     Normalize(tang, tang);
     out.tangent.x = tang.x;
@@ -370,15 +365,15 @@ void RndAmbientOcclusion::BuildSHCoeff(const Vector3 &inVector, float *fArr) con
 float RndAmbientOcclusion::DistanceSH(
     const Vector4 &sh1, const Vector3 &n1, const Vector4 &sh2, const Vector3 &n2
 ) const {
-    float dw = (sh1.w * 2.0f - 1.0f) - (sh2.w * 2.0f - 1.0f);
     float dz = (sh1.z * 2.0f - 1.0f) - (sh2.z * 2.0f - 1.0f);
+    float dw = (sh1.w * 2.0f - 1.0f) - (sh2.w * 2.0f - 1.0f);
     float dy = (sh1.y * 2.0f - 1.0f) - (sh2.y * 2.0f - 1.0f);
-    float dot = n1.x * n2.x + n1.z * n2.z + n1.y * n2.y;
+    float dx = sh1.x - sh2.x;
+    float dist = sqrtf(dz * dz + dw * dw + dy * dy + dx * dx);
+    float dot = n1.y * n2.y + n1.z * n2.z + n1.x * n2.x;
     if (dot <= 0.0f) {
         dot = -dot;
     }
-    float dx = sh1.x - sh2.x;
-    auto dist = sqrtf(dx * dx + dy * dy + dw * dw + dz * dz);
     return dist / (dot + 1.0f);
 }
 
@@ -610,84 +605,65 @@ void RndAmbientOcclusion::BurnTransform(
     RndMesh *mesh, std::list<RndMesh *> &meshes
 ) const {
     // Find and remove mesh from the work list
-    std::list<RndMesh *>::iterator found = meshes.end();
-    for (std::list<RndMesh *>::iterator it = meshes.begin(); it != meshes.end(); ++it) {
-        if (*it == mesh) {
-            found = it;
-            break;
-        }
-    }
+    std::list<RndMesh *>::iterator found = std::find(meshes.begin(), meshes.end(), mesh);
     if (found == meshes.end())
         return;
     meshes.erase(found);
 
-    float det = Det(mesh->WorldXfm().m);
-    bool canBurn = false;
+    // 0x8248E200. Everything here works on LOCAL transforms (mesh+0x40):
+    // retail never calls WorldXfm()/SetWorldXfm in this function.
+    float det = Det(mesh->LocalXfm().m);
+    bool canBurn = fabsf(1.0f - det) > 0.0001f;
     if (mQuality == 0) {
         canBurn = CanBurnXfm(mesh);
-    } else {
-        // Retail uses `fabs` here, not the Abs<T> template's fcmpu+fneg form
-        // (fn_8248E200 @ 0x8248E200 idx 31-34: fsubs / fabs / fcmpu against
-        // __real@38d1b717 == 0.0001f).  Spelled `fabsf` so it no longer depends
-        // on a non-retail Abs(float) overload being in scope.
-        //
-        // ⚠ UNVERIFIABLE HERE, AND THE SHAPE BELOW IS PROBABLY WRONG.  This
-        // site currently emits NOTHING: MILO_NOTIFY_ONCE strips to
-        // `{ (void)sizeof(MakeString(...)); }`, and sizeof is unevaluated, so
-        // the whole condition is dead-code-eliminated (our BurnTransform has 2
-        // lfs and zero fabs/fcmpu/fneg).  Retail's does evaluate it, and feeds
-        // the result to a BOOLEAN, not to a notify: idx 29 `li r11,1` / 35
-        // `bgt cr6` / 36 `li r11,0` computes `!(fabs(1.0f-det) > 0.0001f)` and
-        // that value flows on -- i.e. retail almost certainly assigns it to
-        // `canBurn` (cf. NearlyOne(det)).  Fixing that is a control-flow change
-        // beyond this lane, and unmeasurable: BurnTransform is unpaired (no
-        // report.json row; the name is absent from the target obj, which knows
-        // this body only as fn_8248E200, 552 B vs our 568 B).
-        if (fabsf(1.0f - det) > 0.0001f) {
-            MILO_NOTIFY_ONCE(
-                "%s: Mesh has scale or mirroring applied. Re-export mesh to ensure accurate AO calculation.",
-                PathName(mesh)
-            );
-        }
+    } else if (canBurn) {
+        // Compiled out, but PathName(mesh) is still evaluated (0x82328270).
+#ifdef HX_NATIVE
+        MILO_NOTIFY_ONCE(
+            "%s: Mesh has scale or mirroring applied. Re-export mesh to ensure accurate AO calculation.",
+            PathName(mesh)
+        );
+#else
+        MiloStripEval(
+            "%s: Mesh has scale or mirroring applied. Re-export mesh to ensure accurate AO calculation.",
+            PathName(mesh)
+        );
+#endif
+        canBurn = false;
     }
+    if (!canBurn)
+        return;
 
-    if (canBurn) {
-        // Build a zero-translation copy of parent world rotation matrix
-        Transform parentRot;
-        memcpy(&parentRot, &mesh->WorldXfm(), 0x30);
-        parentRot.v.Set(0.0f, 0.0f, 0.0f);
+    const std::list<RndTransformable *> &children = mesh->Children();
+    for (std::list<RndTransformable *>::const_iterator it = children.begin();
+         it != children.end(); ++it) {
+        RndMesh *childMesh = dynamic_cast<RndMesh *>(*it);
+        if (childMesh) {
+            BurnTransform(childMesh, meshes);
+            // The parent's local rotation with its translation cleared.
+            Vector3 zero(0.0f, 0.0f, 0.0f);
+            Transform parentRot;
+            memcpy(&parentRot, &mesh->LocalXfm(), 0x30);
+            parentRot.v = zero;
 
-        const std::list<RndTransformable *> &children = mesh->Children();
-        for (std::list<RndTransformable *>::const_iterator it = children.begin();
-             it != children.end(); ++it) {
-            RndMesh *childMesh = dynamic_cast<RndMesh *>(*it);
-            if (childMesh) {
-                BurnTransform(childMesh, meshes);
-
-                Transform childXfm;
-                RndTransformable::Constraint constraint = childMesh->TransConstraint();
-                if (constraint == 0) {
-                    Multiply(childMesh->WorldXfm(), parentRot, childXfm);
-                    childMesh->SetWorldXfm(childXfm);
-                } else if (constraint == 2) {
-                    memcpy(&childXfm, &mesh->WorldXfm(), 0x40);
-                    childMesh->SetWorldXfm(childXfm);
-                    childMesh->SetTransConstraint(
-                        childMesh->TransConstraint(),
-                        childMesh->mTarget,
-                        childMesh->mPreserveScale
-                    );
-                } else {
-                    memcpy(&childXfm, &childMesh->WorldXfm(), 0x40);
-                    childMesh->SetWorldXfm(childXfm);
-                }
-                if (!childMesh->mPreserveScale) {
-                    childMesh->SetDirty_Force();
-                }
+            Transform childXfm;
+            RndTransformable::Constraint constraint = childMesh->TransConstraint();
+            if (constraint == 0) {
+                Multiply(childMesh->LocalXfm(), parentRot, childXfm);
+            } else if (constraint == 2) {
+                memcpy(&childXfm, &parentRot, 0x40);
+                childMesh->SetTransConstraint(
+                    (RndTransformable::Constraint)0,
+                    childMesh->mTarget,
+                    childMesh->mPreserveScale
+                );
+            } else {
+                memcpy(&childXfm, &childMesh->LocalXfm(), 0x40);
             }
+            childMesh->SetLocalXfm(childXfm);
         }
-        BurnXfm(mesh, true);
     }
+    BurnXfm(mesh, true);
 }
 
 void RndAmbientOcclusion::PreprocessMesh() {
@@ -1034,9 +1010,8 @@ void RndAmbientOcclusion::CalculateAO(float *outTime) {
         return;
 
     unsigned int totalVerts = 0;
-    auto receiveEnd = mObjectsReceive.end();
     for (std::vector<RndMesh *>::iterator it = mObjectsReceive.begin();
-         receiveEnd != it; ++it) {
+         it != mObjectsReceive.end(); ++it) {
         RndMesh *mesh = *it;
         if (mesh->GetGeomOwner() != mesh) {
             mesh->CopyGeometry(mesh->GetGeomOwner(), true);
@@ -1056,10 +1031,8 @@ void RndAmbientOcclusion::CalculateAO(float *outTime) {
          it != mObjectsReceive.end(); ++it) {
         RndMesh *mesh = *it;
         const Transform &xfm = mesh->WorldXfm();
-        RndMesh *geomOwner = mesh->GetGeomOwner();
-        unsigned int numVerts = geomOwner->NumVerts();
-        for (unsigned int v = 0; v < numVerts; v++) {
-            RndMesh::Vert &vert = geomOwner->Verts(v);
+        for (unsigned int v = 0; v < mesh->GetGeomOwner()->NumVerts(); v++) {
+            RndMesh::Vert &vert = mesh->Verts(v);
             Vector3 worldPos;
             Multiply(vert.pos, xfm, worldPos);
             Vector3 worldNorm;
@@ -1082,9 +1055,22 @@ void RndAmbientOcclusion::CalculateAO(float *outTime) {
     }
     timer.Restart();
 
+    // Same editor notification as Tessellate's patch loop: retail CalculateAO
+    // (0x82490ED8) references "batcher.batching", "milo", "record",
+    // "Ambient Occlusion" and "update_objects" here.
     for (std::vector<RndMesh *>::iterator it = mObjectsReceive.begin();
          it != mObjectsReceive.end(); ++it) {
-        (*it)->Sync(0x1f);
+        RndMesh *mesh = *it;
+        mesh->Sync(0x1f);
+        bool batching = DataVarExists("batcher.batching")
+            && DataVariable("batcher.batching").Int(0) != 0;
+        Hmx::Object *milo = ObjectDir::Main()->FindObject("milo", false);
+        if (milo && !batching) {
+            milo->Handle(
+                Message("record", DataNode(mesh), DataNode("Ambient Occlusion")), true
+            );
+            milo->Handle(Message("update_objects", DataNode(1)), true);
+        }
     }
 }
 
@@ -1659,10 +1645,8 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
          it != mObjectsTessellate.end(); ++it) {
         RndMesh *mesh = *it;
         mesh->Sync(0x3f);
-        bool batching = false;
-        if (DataVarExists("batcher.batching")) {
-            batching = DataVariable("batcher.batching").Int(0) != 0;
-        }
+        bool batching = DataVarExists("batcher.batching")
+            && DataVariable("batcher.batching").Int(0) != 0;
         Hmx::Object *milo = ObjectDir::Main()->FindObject("milo", false);
         if (milo && !batching) {
             milo->Handle(

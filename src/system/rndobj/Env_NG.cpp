@@ -215,6 +215,166 @@ void NgEnviron::UpdateApproxLighting(const Vector3 *pos) {
     }
 }
 
+#ifndef HX_NATIVE
+// 0x82B86738 (NgEnviron vtable slot 21). The RB3 shape, read off retail bytes:
+//  - the light-free early-out covers draw modes 3, 1, 5 and 2;
+//  - real lights are gathered into two std::vectors (freed at the end through
+//    MemOrPoolFreeSTL), at most ONE projected and TWO point lights;
+//  - three light-register slots are cleared and the projected light takes
+//    slot 2 (projected index 0);
+//  - UpdateApproxLighting is a virtual call (vtable +0x58);
+//  - no draw stats, and no fog constants at all when fog is off.
+void NgEnviron::Select(const Vector3 *pos) {
+    mNumLightsReal = 0;
+    mNumLightsApprox = 0;
+    mNumLightsPoint = 0;
+    mNumLightsProj = 0;
+    mHasPointCubeTex = false;
+    mProjectedBlend = (RndLight::ProjectedBlend)0;
+
+    Rnd::Mode mode = TheRnd.DrawMode();
+    if (mode == 3 || mode == 1 || mode == 5 || mode == 2) {
+        RndEnviron::Select(pos);
+        NgMat::SetCurrent(0);
+        return;
+    }
+
+    ReclassifyLights();
+
+    std::vector<NgLight *> pointLights;
+    std::vector<NgLight *> projLights;
+    for (ObjPtrList<RndLight>::iterator it = mLightsReal.begin(); it != mLightsReal.end();
+         ++it) {
+        NgLight *light = (NgLight *)(RndLight *)*it;
+        // Retail lays the blocks out default, kFakeSpot, kPoint; the default
+        // report is compiled out but still evaluates PathName(light).
+        switch (light->GetType()) {
+        default:
+            MILO_NOTIFY("%s: Invalid real light", PathName(light));
+            break;
+        case RndLight::kFakeSpot:
+            if (projLights.size() < 1 && CheckProjLight(*light)) {
+                if (projLights.empty()) {
+                    mProjectedBlend =
+                        (RndLight::ProjectedBlend)light->GetProjectedBlend();
+                } else if (mProjectedBlend != light->GetProjectedBlend()) {
+                    MILO_NOTIFY(
+                        "%s: projected light has different blend mode than another light already in the environment (%s)",
+                        light->Name(),
+                        PathName(this)
+                    );
+                }
+                projLights.push_back(light);
+            }
+            break;
+        case RndLight::kPoint:
+            if (pointLights.size() < 2 && CheckPointLight(*light)) {
+                pointLights.push_back(light);
+            }
+            break;
+        }
+    }
+
+    RndEnviron::Select(pos);
+    ClearPointCubeTex();
+    ClearLightTransforms();
+    for (unsigned int i = 0; i < 3; i++) {
+        ClearLightRegisters(i);
+    }
+
+    int projLightIdx = 2;
+    for (unsigned int i = 0; i < projLights.size(); i++, projLightIdx--) {
+        if (SetProjLightRegisters(projLightIdx, projLightIdx - 2, *projLights[i])) {
+            mNumLightsProj++;
+            mNumLightsReal++;
+        }
+    }
+
+    for (unsigned int i = 0; i < pointLights.size(); i++) {
+        bool hasPointCubeTex;
+        if (SetPointLightRegisters(mNumLightsPoint, *pointLights[i], hasPointCubeTex)) {
+            mNumLightsPoint++;
+            mNumLightsReal++;
+            if (hasPointCubeTex) {
+                mHasPointCubeTex = true;
+            }
+        }
+    }
+
+    UpdateApproxLighting(pos);
+    NgMat::SetCurrent(0);
+
+    if (FogEnable()) {
+        Vector4 fogParams(FogEnd(), 1.0f / (FogEnd() - FogStart()), 0.0f, 1.0f);
+        TheShaderMgr.SetVConstant((VShaderConstant)0x5b, fogParams);
+        const Hmx::Color &fogColor = FogColor();
+        Vector4 fogColorVec(fogColor.red, fogColor.green, fogColor.blue, fogColor.alpha);
+        TheShaderMgr.SetPConstant((PShaderConstant)0x5a, fogColorVec);
+    }
+
+    bool fading = mFadeOut && mFadeEnd != mFadeStart;
+    if (fading) {
+        float fadeDelta = mFadeEnd - mFadeStart;
+        float invFadeDelta;
+        if (fadeDelta < 0.001f && fadeDelta > -0.001f) {
+            invFadeDelta = fadeDelta >= 0.0f ? 1.0f / 0.001f : -1.0f / 0.001f;
+        } else {
+            invFadeDelta = 1.0f / fadeDelta;
+        }
+        Vector4 fadeParams(mFadeEnd, invFadeDelta, mFadeMax, 0.0f);
+        TheShaderMgr.SetVConstant((VShaderConstant)0x37, fadeParams);
+        TheShaderMgr.SetPConstant((PShaderConstant)0x37, fadeParams);
+
+        Vector4 lrFade = mLRFade;
+        Transform fadeRef = LRFadeRef();
+        Vector3 fadeDir = fadeRef.m.x;
+        Normalize(fadeDir, fadeDir);
+        float fadeRefDot = Dot(fadeRef.v, fadeDir);
+
+        Vector4 leftPlane(0.0f, 0.0f, 0.0f, 1.0f);
+        if (lrFade.x != lrFade.y) {
+            float scale = 1.0f / (lrFade.y - lrFade.x);
+            leftPlane.Set(
+                fadeDir.x * scale,
+                fadeDir.y * scale,
+                fadeDir.z * scale,
+                -((lrFade.x + fadeRefDot) * scale)
+            );
+        }
+        Vector4 rightPlane(0.0f, 0.0f, 0.0f, 1.0f);
+        if (lrFade.z != lrFade.w) {
+            float scale = 1.0f / (lrFade.z - lrFade.w);
+            rightPlane.Set(
+                scale * fadeDir.x,
+                scale * fadeDir.y,
+                scale * fadeDir.z,
+                -((lrFade.w + fadeRefDot) * scale)
+            );
+        }
+        TheShaderMgr.SetVConstant((VShaderConstant)0x35, leftPlane);
+        TheShaderMgr.SetVConstant((VShaderConstant)0x36, rightPlane);
+        TheShaderMgr.SetPConstant((PShaderConstant)0x35, leftPlane);
+        TheShaderMgr.SetPConstant((PShaderConstant)0x36, rightPlane);
+    }
+
+    if (mUseColorAdjust) {
+        const Transform &colorXfm = ColorXfm();
+        RndShaderMgr &shaderMgr = TheShaderMgr;
+        shaderMgr.SetPConstant4x3((PShaderConstant)0x6d, Hmx::Matrix4(colorXfm));
+    }
+
+    if (mAOEnabled) {
+        float ao = mAOStrength;
+        Vector4 aoParams(ao, ao, ao, ao);
+        TheShaderMgr.SetVConstant((VShaderConstant)0x18, aoParams);
+    }
+
+    if (mUseToneMapping) {
+        Vector4 toneParams(mIntensityAverage, mExposure, mWhitePoint, 0.0f);
+        TheShaderMgr.SetPConstant((PShaderConstant)0x7c, toneParams);
+    }
+}
+#else
 void NgEnviron::Select(const Vector3 *pos) {
     mNumLightsReal = 0;
     mNumLightsApprox = 0;
@@ -242,6 +402,7 @@ void NgEnviron::Select(const Vector3 *pos) {
     TheNgStats->mLightsReal += mNumLightsReal;
 #endif
 }
+#endif
 
 // RB3 retail linker interleaved Rnd_NG.cpp's COMDATs into this TU's .text
 // span. Compile its bodies into this obj so objdiff can pair them (bp2r).

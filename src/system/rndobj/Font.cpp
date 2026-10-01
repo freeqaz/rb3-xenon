@@ -139,6 +139,16 @@ void KerningTable::Load(BinStream &bs, RndFont *f) {
 
 BitmapLocker::BitmapLocker(RndFont *font) : mTexture(0), mPbm(0) {
     mTexture = font->ValidTexture();
+#ifndef HX_NATIVE
+    // Retail (0x82472870) always locks the texture's bitmap; the loose-.bmp
+    // development path is absent.
+    if (mTexture) {
+        mTexture->LockBitmap(mBm, 3);
+        if (mBm.Pixels()) {
+            mPbm = &mBm;
+        }
+    }
+#else
     if (mTexture) {
         const char *filename = mTexture->File().c_str();
         int len = strlen(filename);
@@ -155,6 +165,7 @@ BitmapLocker::BitmapLocker(RndFont *font) : mTexture(0), mPbm(0) {
             mTexture = nullptr;
         }
     }
+#endif
 }
 
 BitmapLocker::~BitmapLocker() {
@@ -171,6 +182,16 @@ RndFont::RndFont()
 RndFont::~RndFont() { RELEASE(mKerningTable); }
 
 void RndFont::Replace(ObjRef *from, Hmx::Object *to) {
+#ifndef HX_NATIVE
+    // Retail (0x82472D78): only the texture owner is replaceable; a null
+    // replacement makes the font its own owner, otherwise it adopts the
+    // replacement's owner. There is no base-class forwarding.
+    if (reinterpret_cast<void *>(static_cast<Hmx::Object *>(mTextureOwner.Ptr()))
+        == reinterpret_cast<void *>(from)) {
+        mTextureOwner = !to ? this : (RndFont *)dynamic_cast<RndFont *>(to)->mTextureOwner;
+    }
+    return;
+#endif
     if (RefIs(from, mTextureOwner)) {
         RndFont *replace;
         if (mTextureOwner == this) {
@@ -249,23 +270,30 @@ BEGIN_SAVES(RndFont)
     bs << mNextFont;
 END_SAVES
 
+// Retail (0x82476350): the cast precedes the superclass copy, the char list
+// and monospace flag are copied too, and a font that becomes its own texture
+// owner takes the source owner's base kerning and kerning table.
 BEGIN_COPYS(RndFont)
-    COPY_SUPERCLASS(Hmx::Object)
     CREATE_COPY_AS(RndFont, f)
     MILO_ASSERT(f, 0x451);
+    COPY_SUPERCLASS(Hmx::Object)
     COPY_MEMBER_FROM(f, mMat)
     COPY_MEMBER_FROM(f, mCellSize)
     COPY_MEMBER_FROM(f, mTexCellSize)
     COPY_MEMBER_FROM(f, mDeprecatedSize)
+    COPY_MEMBER_FROM(f, mChars)
+    COPY_MEMBER_FROM(f, mMonospace)
     COPY_MEMBER_FROM(f, mPacked)
     COPY_MEMBER_FROM(f, mCharInfoMap)
-    RndFont *obj;
     if (ty == kCopyShallow || (ty == kCopyFromMax && f->mTextureOwner != f)) {
-        obj = f->mTextureOwner;
+        mTextureOwner = f->mTextureOwner;
     } else {
-        obj = this;
+        mTextureOwner = this;
+        mBaseKerning = f->mTextureOwner->mBaseKerning;
+        std::vector<KernInfo> kerning;
+        f->mTextureOwner->GetKerning(kerning);
+        SetKerning(kerning);
     }
-    mTextureOwner = obj;
 END_COPYS
 
 struct MatChar {
@@ -606,19 +634,10 @@ float RndFont::CharWidth(unsigned short c) const {
     return w;
 }
 
-bool RndFont::CharAdvance(unsigned short u1, unsigned short c, float &f3) const {
-    if (mTextureOwner != this) {
-        return mTextureOwner->CharAdvance(u1, c, f3);
-    } else {
-        auto it = mCharInfoMap.find(c);
-        if (it != mCharInfoMap.end()
-            && (it->second.mU != 0 || it->second.mV != 0 || it->second.mAdvance != 0)) {
-            f3 = mMonospace ? 1 : it->second.mAdvance;
-            f3 += Kerning(u1, c);
-            return true;
-        }
-    }
-    return false;
+// 0x82474500: Kerning(prev, c) + CharAdvance(c). Both callees already route
+// through the texture owner, so there is no delegation here.
+float RndFont::CharAdvance(unsigned short prev, unsigned short c) const {
+    return Kerning(prev, c) + CharAdvance(c);
 }
 
 float RndFont::CharAdvance(unsigned short c) const {
@@ -687,10 +706,13 @@ float RndFont::Kerning(unsigned short us1, unsigned short us2) const {
 }
 
 String RndFont::GetASCIIChars() const {
+#ifdef HX_NATIVE
     if (DataOwner() != this) {
         return DataOwner()->GetASCIIChars();
-    } else
-        return WideVectorToASCII(mChars);
+    }
+#endif
+    // Retail (0x82472690) converts this font's own char list; no owner redirect.
+    return WideVectorToASCII(mChars);
 }
 
 void RndFont::SetBaseKerning(float f1) {
@@ -740,31 +762,29 @@ void RndFont::SetCharInfo(CharInfo *info, RndBitmap &bmap, const Vector2 &pos) {
         int right = (int)(mCellSize.x + pos.x);
         int bottom = (int)(mCellSize.y + pos.y);
         int dummy;
+        // Retail (0x824723F8) re-tests the column on every step of both scans:
+        // inward from the left edge, then inward from the right edge.
         int leftCol = left;
-        if (right != leftCol) {
-            auto _tmp0 = bmap.ColumnNonTransparent(leftCol, top, bottom, &dummy);
-            while (_tmp0 == 0) {
-                if (right > left) {
-                    leftCol++;
-                } else {
-                    leftCol--;
-                }
-                if (right == leftCol)
-                    break;
+        while (leftCol != right) {
+            if (bmap.ColumnNonTransparent(leftCol, top, bottom, &dummy))
+                break;
+            if (right > left) {
+                leftCol++;
+            } else {
+                leftCol--;
             }
         }
         float leftColF = (float)(long long)leftCol;
-        int rightCol = right - 1;
-        if (left - 1 != rightCol) {
-            auto _tmp1 = bmap.ColumnNonTransparent(rightCol, top, bottom, &dummy);
-            while (_tmp1 == 0) {
-                if (right - 1 < left - 1) {
-                    rightCol++;
-                } else {
-                    rightCol--;
-                }
-                if (rightCol == left - 1)
-                    break;
+        right--;
+        left--;
+        int rightCol = right;
+        while (rightCol != left) {
+            if (bmap.ColumnNonTransparent(rightCol, top, bottom, &dummy))
+                break;
+            if (left > right) {
+                rightCol++;
+            } else {
+                rightCol--;
             }
         }
         int width = bmap.Width();
@@ -797,27 +817,18 @@ void RndFont::SetCellSize(float x, float y) {
     UpdateChars();
 }
 
-bool RndFont::CharWidthAdvanceCoords(
-    unsigned short c, float &charW, float &advW, Vector2 &uvMin, Vector2 &uvMax
-) const {
+// 0x82473A18: follows the texture-owner chain, then reads the char's cell with
+// no existence test (callers only ask for characters the font defines).
+void RndFont::GetTexCoords(unsigned short c, Vector2 &tl, Vector2 &br) const {
     const RndFont *owner = this;
     while (owner->mTextureOwner != owner) {
         owner = owner->mTextureOwner;
     }
-    std::map<unsigned short, CharInfo>::const_iterator it = owner->mCharInfoMap.find(c);
-    if (it != owner->mCharInfoMap.end()) {
-        const CharInfo &info = it->second;
-        if (info.mU != 0 || info.mV != 0 || info.mAdvance != 0) {
-            charW = info.mCharWidth;
-            advW = owner->mMonospace ? 1.0f : info.mAdvance;
-            uvMin.x = info.mU;
-            uvMax.x = owner->mTexCellSize.x * info.mCharWidth + info.mU;
-            uvMin.y = info.mV;
-            uvMax.y = owner->mTexCellSize.y + info.mV;
-            return true;
-        }
-    }
-    return false;
+    const CharInfo &info = owner->mCharInfoMap.find(c)->second;
+    tl.x = info.mU;
+    br.x = owner->mTexCellSize.x * info.mCharWidth + info.mU;
+    tl.y = info.mV;
+    br.y = owner->mTexCellSize.y + info.mV;
 }
 
 // sw2 scatter-include (default/Font <- bandobj/BandDirector.cpp)

@@ -25,6 +25,94 @@ BEGIN_HANDLERS(DxRnd)
     HANDLE_SUPERCLASS(Rnd)
 END_HANDLERS
 
+namespace {
+    struct DepthRectVert {
+        float sx, sy, sz; // screen-space corner (0x00)
+        float pad0, pad1, pad2; // 0x0c
+        float nx, ny, nz; // 0x18 (normal)
+        float px, py, pz; // 0x24 (corner pos)
+    };
+    DepthRectVert sDepthRectVerts[4] = {
+        {-1.0f, 1.0f, 1.0f, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {-1.0f, -1.0f, 1.0f, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {1.0f, 1.0f, 1.0f, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {1.0f, -1.0f, 1.0f, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    };
+    const D3DVERTEXELEMENT9 sDepthRectDecl[] = {
+        {0, 0x00, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
+        {0, 0x0C, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
+        {0, 0x18, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},
+        {0, 0x24, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2},
+        D3DDECL_END()
+    };
+}
+
+// 0x82732C98 (DxRnd vtable slot 64).
+void DxRnd::DrawRectDepth(
+    const Vector3 &normal,
+    const Vector3 (&corners)[4],
+    const Vector4 &v4,
+    RndMat *mat,
+    ShaderType shader
+) {
+    TheShaderMgr.SetPConstant((PShaderConstant)0x59, v4);
+    for (int i = 0; i < 4; i++) {
+        sDepthRectVerts[i].nx = normal.x;
+        sDepthRectVerts[i].ny = normal.y;
+        sDepthRectVerts[i].nz = normal.z;
+        sDepthRectVerts[i].px = corners[i].x;
+        sDepthRectVerts[i].py = corners[i].y;
+        sDepthRectVerts[i].pz = corners[i].z;
+    }
+    RndShader::SelectConfig(mat, shader, false);
+    static D3DVertexDeclaration *sDecl;
+    if (!sDecl) {
+        sDecl = D3DDevice_CreateVertexDeclaration(sDepthRectDecl);
+        DX_ASSERT(sDecl, 0x2C3);
+    }
+    D3DDevice_SetRenderState_HalfPixelOffset(TheDxRnd.Device(), 1);
+    D3DDevice_SetVertexDeclaration(mD3DDevice, sDecl);
+    D3DDevice_DrawVerticesUP(mD3DDevice, D3DPT_TRIANGLESTRIP, 4, sDepthRectVerts, sizeof(DepthRectVert));
+    D3DDevice_SetRenderState_HalfPixelOffset(TheDxRnd.Device(), 0);
+}
+
+// 0x82733028 (called by DxTex::SetDeviceTex/LockBitmap). RB3's table, read
+// off the retail compare tree; anything else reports and returns 0.
+int D3DFORMAT_BitsPerPixel(D3DFORMAT fmt) {
+    switch (fmt) {
+    case D3DFMT_LIN_DXT1:
+    case D3DFMT_DXT1:
+        return 4;
+    case D3DFMT_LIN_DXT3:
+    case D3DFMT_LIN_DXT5:
+    case D3DFMT_DXT3:
+    case D3DFMT_DXT5:
+    case D3DFMT_L8:
+        return 8;
+    case D3DFMT_LIN_D16:
+    case D3DFMT_LIN_A1R5G5B5:
+    case D3DFMT_A1R5G5B5:
+    case D3DFMT_D16:
+    case D3DFMT_LIN_X1R5G5B5:
+    case D3DFMT_LIN_R5G6B5:
+    case D3DFMT_X1R5G5B5:
+    case D3DFMT_R5G6B5:
+        return 16;
+    case D3DFMT_A2R10G10B10:
+    case D3DFMT_LIN_A8R8G8B8:
+    case D3DFMT_A8R8G8B8:
+    case D3DFMT_LIN_X8R8G8B8:
+    case D3DFMT_D24FS8:
+    case D3DFMT_X8R8G8B8:
+    case D3DFMT_LIN_D24S8:
+    case D3DFMT_D24S8:
+        return 32;
+    default:
+        MILO_FAIL("Currently unsupported D3DFORMAT: %d", fmt);
+        return 0;
+    }
+}
+
 void DxRnd::Clear(unsigned int ui, const Hmx::Color &c) {
     float f1;
     if (mReverseZ) {
@@ -227,10 +315,10 @@ void DxRnd::MakeDrawTarget() {
     NgMat::SetCurrent(nullptr);
 }
 
+// 0x82732E98 (DxRnd vtable slot 60). RB3 stores the viewport unconditionally
+// (memcpy into this+0x180); there is no new-gfx-mode test.
 void DxRnd::SetViewport(const Viewport &v) {
-    if (GetGfxMode() == kNewGfx) {
-        NgRnd::SetViewport(v);
-    }
+    NgRnd::SetViewport(v);
     D3DVIEWPORT9 dxViewport;
     dxViewport.X = v.X;
     dxViewport.Y = v.Y;

@@ -18,6 +18,8 @@
 #include "rnddx9/CubeTex.h"
 #include "rnddx9/OcclusionQueryMgr.h"
 #include "rnddx9/Rnd.h"
+#include "rnddx9/ShaderMgr.h"
+#include "math/Rand.h"
 #include "rndobj/Cam.h"
 #include "rndobj/DOFProc_NG.h"
 #include "rndobj/Flare.h"
@@ -94,6 +96,9 @@ void DxModal(Debug::ModalType &t, FixedString &s, bool b) { TheDxRnd.Modal(t, s,
 void DxRnd::PreInit(HWND__ *) {
     if (!mPreInited) {
         mPreInited = true;
+        // Retail RB3 (0x8273C6A8) has no shader_gpr_alloc config lookup here:
+        // the first call after setting mPreInited is SetDiskErrorCallback.
+#ifdef HX_NATIVE
         DataArray *cfg = SystemConfig("rnd");
         mDefaultVSRegAlloc = 32;
         mDefaultPSRegAlloc = 96;
@@ -105,6 +110,7 @@ void DxRnd::PreInit(HWND__ *) {
         MILO_ASSERT(mDefaultVSRegAlloc + mDefaultPSRegAlloc == GPU_GPRS, 0x1F0);
         MILO_ASSERT(mDefaultVSRegAlloc >= 16, 0x1F1);
         MILO_ASSERT(mDefaultPSRegAlloc >= 16, 0x1F2);
+#endif
         SetDiskErrorCallback(CDError);
         mPrintGlitches = OptionBool("print_glitches", false);
         mCaptureNextFrame = false;
@@ -129,9 +135,11 @@ void DxRnd::PreInit(HWND__ *) {
         CreatePostTextures();
         DxTex::SetEDRamChecksEnabled(false);
         NgPostProc::Init();
-        NgDOFProc::Init();
         DxTex::SetEDRamChecksEnabled(true);
         RndShadowMap::Init();
+        // RB3 creates the plain DOFProc here (0x82466298: `if (!TheDOFProc)
+        // TheDOFProc = New<DOFProc>()`), after the shadow map -- not NgDOFProc.
+        DOFProc::Init();
         Rnd::CreateDefaults();
         TheDebug.SetModalCallback(DxModal);
     }
@@ -283,15 +291,19 @@ void DxRnd::DoPostProcess() {
 }
 
 void DxRnd::Suspend() {
-    if (!mD3DDevice || mAsyncSwapCurrent) {
+    if (!(int)mD3DDevice || mAsyncSwapCurrent) {
         return;
     }
     MILO_ASSERT(!mDrawing, 0x695);
     if (!mSuspended) {
+#ifdef HX_NATIVE
         static Timer *cpuTimer = AutoTimer::GetTimer("cpu");
         if (mPrintGlitches && cpuTimer->SplitMs() > 30.0f) {
             MILO_LOG("GLITCH (pre-suspend): %i ms\n", (int)cpuTimer->SplitMs());
         }
+#endif
+        // Retail (0x8273A370) has no glitch timer here: no local static, no
+        // AutoTimer lookup -- just the swap flag and D3DDevice_Suspend.
         mAsyncSwapNext = false;
         D3DDevice_Suspend(mD3DDevice);
     }
@@ -427,6 +439,9 @@ void DxRnd::SetDefaultRenderStates() {
     D3DDevice_SetRenderState_PresentImmediateThreshold(TheDxRnd.Device(), 100);
 }
 
+// 0x82739E80 (the last call of PostDeviceReset). RB3 also (re)builds
+// mColorRampTex -- a 32x32 L8 texture of random bytes -- and binds it to
+// sampler 15 before setting up gamma; DC3 dropped the member.
 void DxRnd::InitRenderState() {
     PhysMemTypeTracker tracker("D3D(phys):Global");
     if (!mD3DDevice) {
@@ -434,6 +449,27 @@ void DxRnd::InitRenderState() {
     }
     SetDefaultRenderStates();
     D3DXSetDXT3DXT5(1);
+    if (mColorRampTex) {
+        mColorRampTex->Release();
+        mColorRampTex = nullptr;
+    }
+    // Through the XDK's out-parameter wrapper: retail stores the result and
+    // passes the forwarded value on with a zero-extension (`clrrwi r3,r3,0`
+    // before LockRect); the release above goes through D3DResource::Release,
+    // which homes the old pointer (`stw r3,0x58(r31)`).
+    IDirect3DDevice9_CreateTexture(
+        mD3DDevice, 32, 32, 1, 0, D3DFMT_LIN_L8, 0, &mColorRampTex, nullptr
+    );
+    D3DLOCKED_RECT rect;
+    D3DTexture_LockRect(mColorRampTex, 0, &rect, nullptr, 0);
+    unsigned char *bits = (unsigned char *)rect.pBits;
+    for (unsigned int y = 0; y < 32; y++) {
+        for (unsigned int x = 0; x < 32; x++) {
+            bits[rect.Pitch * x + y] = RandomFloat(0.0f, 1.0f) * 255.0;
+        }
+    }
+    D3DTexture_UnlockRect(mColorRampTex, 0);
+    TheDxShaderMgr.SetTexture(15, mColorRampTex);
     SetupGamma();
 }
 
@@ -542,6 +578,11 @@ void CreateBackBuffers(
     D3DSurface *&colorSurface,
     D3DSurface *&depthSurface
 ) {
+    // RESIDUAL (83.9): retail (0x82739A70) sizes the A8R8G8B8 surface first,
+    // reserves the D24FS8 size for the depth surface and zeroes the parameter
+    // block. Spelled that way (with memset) it scores 68.9 -- the register and
+    // store schedule move further -- so this behaviourally identical order (both
+    // formats are 4 bytes/pixel, so the two sizes are equal) is kept.
     UINT depthSize = XGSurfaceSize(width, height, D3DFMT_D24FS8, multisample);
     UINT colorSize = XGSurfaceSize(width, height, D3DFMT_A8R8G8B8, multisample);
 
@@ -575,21 +616,22 @@ void CreateBackBuffers(
     DX_ASSERT(colorSurface, 0x2D4);
 }
 
+// 0x8273B3B8: the clear vector's w is 0 BEFORE both resolves (retail stores
+// it at 0x8273B40C); it used to be assigned after its last use.
 void DxRnd::SavePreBuffer() {
-    XMVECTOR vector;
+    // The zero is a memory constant: retail keeps its page base in r29 and
+    // reloads it after the first resolve (as in DxRnd::ModalDraw).
+    static const float kZero = 0.0f;
     Hmx::Color c = mClearColor;
-    vector.x = c.red;
-    vector.y = c.green;
-    vector.z = c.blue;
+    XMVECTOR vector = {c.red, c.green, c.blue, kZero};
     D3DDevice_Resolve(
         mD3DDevice, 0x14, nullptr, mFrontBufferDepth, nullptr, 0, 0, nullptr, 1, 0, nullptr
     );
 
     D3DDevice_Resolve(
-        mD3DDevice, 0x300, nullptr, mPreProcessBuffer, nullptr, 0, 0, &vector, 0, 0, nullptr
+        mD3DDevice, 0x300, nullptr, mPreProcessBuffer, nullptr, 0, 0, &vector, kZero, 0,
+        nullptr
     );
-
-    vector.w = 0.f;
 }
 
 void DxRnd::SavePostBuffer() {
@@ -639,6 +681,97 @@ RndTex *DxRnd::GetCurrentFrameTex(bool resolvePreProcess) {
         return PreProcessTexture();
     }
     return PostProcessTexture();
+}
+
+// 0x8273B818 (DxRnd vtable slot 30). Debug text: each glyph is a list of
+// polylines in the `font` DataArray, indexed by character code, each point a
+// pair of floats scaled to a 9x12 cell on a 13.5 x 18 pixel grid. Returns a
+// shared cursor holding the end of the string.
+Vector2 &DxRnd::DrawString(
+    const char *s, const Vector2 &pos, const Hmx::Color &color, bool drawGlyphs
+) {
+    MILO_ASSERT(s, 0x11F);
+    D3DDevice_SetFVF(mD3DDevice, 0x42);
+    Transform screenXfm;
+    screenXfm.Reset();
+    RndShaderMgr &shaderMgr = TheShaderMgr;
+    shaderMgr.SetVConstant(kVS_ViewProjMatrix, Hmx::Matrix4(screenXfm));
+    TheShaderMgr.SetTransform(screenXfm);
+    RndShader::SelectConfig(nullptr, kLineNozShader, false);
+    D3DDevice_SetRenderState_ViewportEnable(TheDxRnd.Device(), 0);
+    static Vector2 cursor;
+    cursor = pos;
+    float widest = pos.x;
+    char c;
+    while ((c = *s) != 0) {
+        if (c == '\n') {
+            s++;
+            if (*s) {
+                widest = Max(widest, cursor.x);
+                cursor.x = pos.x;
+                cursor.y += 18.0f;
+            }
+            continue;
+        }
+        if (drawGlyphs && c > 0 && c + 1 < Font()->Size()) {
+            DataArray *glyph = Font()->Node(c + 1).UncheckedArray();
+            for (int i = 0; i < glyph->Size(); i++) {
+                DataArray *stroke = glyph->Node(i).UncheckedArray();
+                struct StrokeVert {
+                    float x, y, z;
+                    unsigned long color;
+                } verts[12];
+                int numVerts = 0;
+                for (int j = 0; j < stroke->Size(); j += 2) {
+                    verts[numVerts].x = stroke->Float(j) * 9.0f + cursor.x;
+                    verts[numVerts].y = stroke->Float(j + 1) * 12.0f + cursor.y;
+                    verts[numVerts].z = 1.0f;
+                    verts[numVerts].color = MakeColor(color);
+                    numVerts++;
+                }
+                D3DDevice_DrawVerticesUP(
+                    mD3DDevice, D3DPT_LINESTRIP, numVerts, verts, 0x10
+                );
+            }
+        }
+        cursor.x += 13.5f;
+        s++;
+    }
+    D3DDevice_SetRenderState_ViewportEnable(TheDxRnd.Device(), 1);
+    if (RndCam::Current()) {
+        TheShaderMgr.SetVConstant(
+            kVS_ViewProjMatrix, RndCam::Current()->GetViewProjMatrix()
+        );
+    }
+    cursor.y += 18.0f;
+    cursor.x = Max(cursor.x, widest);
+    return cursor;
+}
+
+// 0x8273C2F0 (DxRnd vtable slot 33). RB3 has no draw/cpu timers or perf
+// counters here: after restoring the render target and depth surface it only
+// resets the GPR allocation.
+void DxRnd::EndDrawing() {
+    EndWorld();
+    if (mShowSafeArea) {
+        Hmx::Color titleSafeColor(1.0f, 0.0f, 0.0f, 1.0f);
+        Hmx::Color actionSafeColor(0.0f, 1.0f, 0.0f, 1.0f);
+        if (mAspect == kWidescreen)
+            DrawSafeArea(0.9f, true, titleSafeColor);
+        DrawSafeArea(0.9f, false, titleSafeColor);
+        if (mAspect == kWidescreen)
+            DrawSafeArea(0.95f, true, actionSafeColor);
+        DrawSafeArea(0.95f, false, actionSafeColor);
+    }
+    Rnd::EndDrawing();
+    mPostProcDone = false;
+    EndTiling(FrontBuffer(), 0);
+    D3DDevice_SetRenderTarget_External(mD3DDevice, 0, mBackBuffer);
+    D3DDevice_SetDepthStencilSurface(mD3DDevice, mWorldDepth);
+    if (mRegAlloc != 0) {
+        mRegAlloc = (RegisterAlloc)0;
+        D3DDevice_SetShaderGPRAllocation(mD3DDevice, 0, 0, 0);
+    }
 }
 
 bool DxRnd::CanModal(Debug::ModalType t) {

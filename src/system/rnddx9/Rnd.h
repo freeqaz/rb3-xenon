@@ -107,7 +107,10 @@ public:
                     nullptr,
                     0
                 );
-                PhysicalFreeTracked((void *)data, __FILE__, 0x109, "");
+                // Retail (0x827355A0, inside the out-of-line copy at 0x82735538)
+                // sets only r3: RB3 frees with the 1-argument PhysicalFree, as
+                // DxRnd::ReleaseAutoRelease does.
+                PhysicalFree((void *)data);
                 delete t;
             } else {
                 mPendingDeletes.push_back(t);
@@ -116,6 +119,9 @@ public:
     }
 
     u8 ReverseZ() const { return mReverseZ; }
+    void SetReverseZ(u8 r) { mReverseZ = r; }
+    unsigned int EdramBase() const { return mEdramBase; }
+    unsigned int EdramHzBase() const { return mEdramHzBase; }
     D3DSurface *BackBuffer() const;
     void PreInit(HWND__ *);
     void Init(HWND__ *);
@@ -247,6 +253,7 @@ inline unsigned long MakeColor(const Hmx::Color &c) {
 
 inline HRESULT DxCheck(void *v) { return v ? ERROR_SUCCESS : E_OUTOFMEMORY; }
 
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
 // check that the thing allocated successfully (e.g. no E_OUTOFMEMORY)
 #define DX_ASSERT(cond, line)                                                            \
     {                                                                                    \
@@ -267,3 +274,15 @@ inline HRESULT DxCheck(void *v) { return v ? ERROR_SUCCESS : E_OUTOFMEMORY; }
              ),                                                                          \
              0));                                                                        \
     }
+#else
+// RB3 retail compiled both checks down to evaluating their operand: SyncBitmap
+// (0x82734A28) stores every D3DDevice_CreateTexture/CreateSurface result with no
+// test, GetMovieSurface (0x827349A0) tail-calls D3DTexture_GetSurfaceLevel
+// straight through GetSurfaceLevel's check, and UnlockBitmap (0x827353F8) calls
+// D3DXFilterTexture with no DxRnd::Error path. The operand is still evaluated
+// (some call sites assign inside it).
+#define DX_ASSERT(cond, line)                                                            \
+    { (void)(cond); }
+#define DX_ASSERT_CODE(code, line)                                                       \
+    { (void)(code); }
+#endif

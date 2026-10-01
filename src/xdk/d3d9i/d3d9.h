@@ -298,6 +298,9 @@ VOID D3DTexture_LockRect(
     DWORD Flags
 );
 VOID D3DTexture_UnlockRect(struct D3DTexture *pTexture, UINT Level);
+HRESULT D3DXFilterTexture(
+    struct D3DBaseTexture *pBaseTexture, const void *pPalette, UINT SrcLevel, DWORD MipFilter
+);
 
 struct D3DTexture : public D3DBaseTexture { /* Size=0x34 */
     /* 0x0000: fields for D3DBaseTexture */
@@ -798,8 +801,33 @@ void D3DDevice_SetVertexShaderConstantB(
 void D3DDevice_SetPixelShaderConstantB(
     D3DDevice *pDevice, DWORD StartRegister, CONST BOOL *pConstantData, DWORD BoolCount
 );
+void D3DDevice_SetVertexShaderConstantI(
+    D3DDevice *pDevice, DWORD StartRegister, CONST INT *pConstantData, DWORD Vector4iCount
+);
+void D3DDevice_SetPixelShaderConstantI(
+    D3DDevice *pDevice, DWORD StartRegister, CONST INT *pConstantData, DWORD Vector4iCount
+);
+void D3DDevice_SetVertexShaderConstantFN(
+    D3DDevice *pDevice,
+    UINT StartRegister,
+    CONST float *pConstantData,
+    DWORD Vector4fCount,
+    UINT64 PendingMask3
+);
 void D3DDevice_SetSamplerState_MinFilter(D3DDevice *pDevice, DWORD Sampler, DWORD Value);
 void D3DDevice_SetSamplerState_MagFilter(D3DDevice *pDevice, DWORD Sampler, DWORD Value);
+void D3DDevice_SetSamplerState_MipMapLodBias(
+    D3DDevice *pDevice, DWORD Sampler, DWORD Value
+);
+DWORD D3DDevice_GetSamplerState_MipMapLodBias(D3DDevice *pDevice, DWORD Sampler);
+void D3DDevice_SetSamplerState_MinMipLevel(D3DDevice *pDevice, DWORD Sampler, DWORD Value);
+void D3DDevice_SetSamplerState_MaxMipLevel(D3DDevice *pDevice, DWORD Sampler, DWORD Value);
+// The mip filter lives in fetch-constant word 3, bits 23-24.
+inline void D3DDevice_SetSamplerState_MipFilter3(D3DDevice *pDevice, DWORD Sampler, DWORD Value, UINT64 PendingMask3) {
+    DWORD *pWord = &pDevice->m_Constants.TextureFetch[Sampler].dword[3];
+    *pWord = (*pWord & ~0x01800000) | ((Value & 3) << 23);
+    pDevice->m_Pending.m_Mask[3] |= PendingMask3;
+}
 inline void D3DDevice_SetSamplerState_MipFilter(D3DDevice *pDevice, DWORD Sampler, DWORD Value, UINT64 PendingMask3) {
     DWORD *pWord = &pDevice->m_Constants.TextureFetch[Sampler].dword[0];
     *pWord = (*pWord & ~0x1C00) | ((Value & 7) << 10);
@@ -861,8 +889,55 @@ inline HRESULT IDirect3DDevice9_CreateTexture(
     return (*ppTexture != 0) ? 0 : (HRESULT)0x8007000E; // S_OK : E_OUTOFMEMORY
 }
 
+// Cube textures: CreateTexture with six faces (DxCubeTex::Sync forwards the
+// stored value with `clrrwi r3,r3,0` before XGGetTextureDesc).
+inline HRESULT IDirect3DDevice9_CreateCubeTexture(
+    D3DDevice *pDevice,
+    UINT EdgeLength,
+    UINT Levels,
+    DWORD Usage,
+    D3DFORMAT Format,
+    UINT Pool,
+    D3DCubeTexture **ppCubeTexture,
+    HANDLE *pSharedHandle
+) {
+    *ppCubeTexture = (D3DCubeTexture *)D3DDevice_CreateTexture(
+        EdgeLength, EdgeLength, 6, Levels, Usage, Format, Pool, D3DRTYPE_CUBETEXTURE
+    );
+    return (*ppCubeTexture != 0) ? 0 : (HRESULT)0x8007000E; // S_OK : E_OUTOFMEMORY
+}
+
+// Same XDK inline-wrapper shape for vertex buffers (DxMesh::GetMultimeshFaces
+// stores through the out-pointer and forwards the value, `clrrwi r3,r3,0`).
+inline HRESULT IDirect3DDevice9_CreateVertexBuffer(
+    D3DDevice *pDevice,
+    UINT Length,
+    DWORD Usage,
+    DWORD FVF,
+    D3DPOOL Pool,
+    D3DVertexBuffer **ppVertexBuffer,
+    HANDLE *pSharedHandle
+) {
+    *ppVertexBuffer = D3DDevice_CreateVertexBuffer(Length, Usage, Pool);
+    return (*ppVertexBuffer != 0) ? 0 : (HRESULT)0x8007000E; // S_OK : E_OUTOFMEMORY
+}
+
 D3DVertexDeclaration *
 D3DDevice_CreateVertexDeclaration(const D3DVERTEXELEMENT9 *pVertexElements);
+void D3DDevice_SetVertexDeclaration(D3DDevice *pDevice, D3DVertexDeclaration *pDecl);
+void *D3DDevice_BeginVertices(
+    D3DDevice *pDevice,
+    D3DPRIMITIVETYPE PrimitiveType,
+    UINT VertexCount,
+    UINT VertexStreamZeroStride
+);
+void D3DDevice_EndVertices(D3DDevice *pDevice);
+void D3DDevice_DrawVertices(
+    D3DDevice *pDevice,
+    D3DPRIMITIVETYPE PrimitiveType,
+    UINT StartVertex,
+    UINT VertexCount
+);
 
 void D3DDevice_SetFVF(D3DDevice *pDevice, DWORD FVF);
 void D3DDevice_DrawVerticesUP(
@@ -876,8 +951,22 @@ void D3DDevice_SetRenderTarget_External(
     D3DDevice *pDevice, UINT RenderTargetIndex, D3DSurface *pRenderTarget
 );
 void D3DDevice_SetDepthStencilSurface(D3DDevice *pDevice, D3DSurface *pZStencilSurface);
+void D3DDevice_SetPredication(D3DDevice *pDevice, DWORD PredicationMask);
+void D3DDevice_GetDeviceCaps(D3DDevice *pDevice, D3DCAPS9 *pCaps);
 void D3DDevice_SetViewport(D3DDevice *pDevice, const D3DVIEWPORT9 *pViewport);
 void D3DDevice_SetIndices(D3DDevice *pDevice, D3DIndexBuffer *pIndexData);
+HRESULT D3DDevice_BeginIndexedVertices(
+    D3DDevice *pDevice,
+    D3DPRIMITIVETYPE PrimitiveType,
+    INT BaseVertexIndex,
+    UINT VertexCount,
+    UINT IndexCount,
+    D3DFORMAT IndexDataFormat,
+    UINT VertexStreamZeroStride,
+    void **ppIndexData,
+    void **ppVertexData
+);
+void D3DDevice_EndIndexedVertices(D3DDevice *pDevice);
 void D3DDevice_DrawIndexedVertices(
     D3DDevice *pDevice,
     D3DPRIMITIVETYPE PrimitiveType,
@@ -979,8 +1068,10 @@ D3DDevice_CreateQueryTiled(D3DDevice *pDevice, D3DQUERYTYPE Type, UINT TileCapac
 void D3DDevice_SetVertexShader(D3DDevice *pDevice, D3DVertexShader *pShader);
 void D3DDevice_SetPixelShader(D3DDevice *pDevice, D3DPixelShader *pShader);
 
-void D3DXSetDXT3DXT5(int enable);
-
 #ifdef __cplusplus
 }
+
+// C++ linkage: retail's symbol is ?D3DXSetDXT3DXT5@@YAXH@Z (called from
+// DxRnd::InitRenderState, 0x82739EE0).
+void D3DXSetDXT3DXT5(int enable);
 #endif

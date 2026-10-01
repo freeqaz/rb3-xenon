@@ -22,6 +22,15 @@ RndCamAnim::~RndCamAnim() {}
 //     admits "MI/vbase cases can false-negative here".
 //  2. There is NO Hmx::Object::Replace fallback.  Retail branches straight to
 //     the epilogue when the ref is not ours (bne -> .L_82485CEC).
+// 0x82485B78, reached through the vtordisp thunk 0x82486408 in vtable slot 13
+// (our tables inherited Object::Print there).
+void RndCamAnim::Print() {
+    TextStream &ts = TheDebug;
+    ts << "   cam: " << mCam.Ptr() << "\n";
+    ts << "   keysOwner: " << mKeysOwner.Ptr() << "\n";
+    ts << "   fovKeys: " << mFovKeys << "\n";
+}
+
 void RndCamAnim::Replace(ObjRef *from, Hmx::Object *to) {
     if (static_cast<Hmx::Object *>(mKeysOwner.Ptr())
         == reinterpret_cast<Hmx::Object *>(from)) {
@@ -104,6 +113,28 @@ static struct {
     __declspec(align(4)) unsigned short altRev;
     __declspec(align(4)) unsigned short rev;
 } gRevs_CamAnim;
+#ifndef HX_NATIVE
+// Retail (0x824866C0) reads the revision straight into a file-static int and
+// compares it whole (no rev/altRev split).
+static int gRev_CamAnim;
+BEGIN_LOADS(RndCamAnim)
+    int &rev = gRev_CamAnim;
+    bs >> rev;
+    if (rev > 0) {
+        Hmx::Object::Load(bs);
+    }
+    RndAnimatable::Load(bs);
+    bs >> mCam >> mFovKeys >> mKeysOwner;
+    if (rev < 2) {
+        FOREACH (it, mFovKeys) {
+            it->value = ConvertFov(it->value, 0.75);
+        }
+    }
+    if (!mKeysOwner) {
+        mKeysOwner = this;
+    }
+END_LOADS
+#else
 BEGIN_LOADS(RndCamAnim)
     int rev;
     bs >> rev;
@@ -123,6 +154,7 @@ BEGIN_LOADS(RndCamAnim)
         mKeysOwner = this;
     }
 END_LOADS
+#endif
 
 #pragma endregion
 #pragma region RndAnimatable

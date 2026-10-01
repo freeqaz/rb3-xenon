@@ -105,16 +105,17 @@ void DxShader::EstimatedCost(float &min, float &max) {
 
 RndShaderBuffer *DxShader::NewBuffer(unsigned int ui) { return new DxShaderBuffer(ui); }
 
+// 0x82736BE8. Each DxShaderBuffer is created just before its compile and the
+// compiler writes straight into its mBuffer; both compiles share one zeroed
+// parameter block with a temp-register limit of 0x24. A failure only touches
+// the error text (the report is stripped), the include data is freed
+// directly, and the result is !failed.
 bool DxShader::Compile(
     ShaderType s, const ShaderOptions &opts, RndShaderBuffer *&buf1, RndShaderBuffer *&buf2
 ) {
     std::vector<ShaderMacro> defines;
     opts.GenerateMacros(s, defines);
     const char *shaderName = ShaderTypeName(s);
-    MILO_ASSERT(streq("PIXEL_SHADER", defines[0].Name), 0xBB);
-    MILO_ASSERT(!mVShader, 0xBD);
-    MILO_ASSERT(!mPShader, 0xBE);
-
     LPCSTR data = nullptr;
     UINT bytes = 0;
     if (TheDxShaderInclude.Open(
@@ -123,13 +124,15 @@ bool DxShader::Compile(
         < 0) {
         return false;
     }
-
-    buf1 = new DxShaderBuffer();
-    buf2 = new DxShaderBuffer();
-
-    defines[0].Value = "0";
-    ID3DXBuffer *vShader = nullptr;
     ID3DXBuffer *vError = nullptr;
+    ID3DXBuffer *pError = nullptr;
+    D3DXSHADER_COMPILE_PARAMETERS params;
+    memset(&params, 0, sizeof(params));
+    params.TempRegisterLimit = 0x24;
+
+    DxShaderBuffer *vBuf = new DxShaderBuffer();
+    buf1 = vBuf;
+    defines[0].Value = "0";
     HRESULT vRes = D3DXCompileShaderExA(
         data,
         bytes,
@@ -138,15 +141,15 @@ bool DxShader::Compile(
         "vshader",
         "vs_3_0",
         0,
-        vShader,
-        vError,
+        &vBuf->mBuffer,
+        &vError,
         nullptr,
-        nullptr
+        &params
     );
 
+    DxShaderBuffer *pBuf = new DxShaderBuffer();
+    buf2 = pBuf;
     defines[0].Value = "1";
-    ID3DXBuffer *pShader = nullptr;
-    ID3DXBuffer *pError = nullptr;
     HRESULT pRes = D3DXCompileShaderExA(
         data,
         bytes,
@@ -155,41 +158,31 @@ bool DxShader::Compile(
         "pshader",
         "ps_3_0",
         0,
-        pShader,
-        pError,
+        &pBuf->mBuffer,
+        &pError,
         nullptr,
-        nullptr
+        &params
     );
 
-    if (vRes < 0 || pRes < 0) {
-        if (vRes < 0) {
-            if (vError == nullptr) {
-                MILO_NOTIFY("VShader '%s' compile failure: %d", shaderName, vRes);
-            } else {
-                TheDebug.Notify((char *)vError->GetBufferPointer());
-            }
+    bool failed = vRes < 0 || pRes < 0;
+    if (failed) {
+        if (vRes < 0 && vError) {
+            MILO_NOTIFY((char *)vError->GetBufferPointer());
         }
-        if (pRes < 0) {
-            if (pError == nullptr) {
-                MILO_NOTIFY("PShader '%s' compile failure: %d", shaderName, pRes);
-            } else {
-                TheDebug.Notify((char *)pError->GetBufferPointer());
-            }
+        if (pRes < 0 && pError) {
+            MILO_NOTIFY((char *)pError->GetBufferPointer());
         }
     }
-
-    if (vError != nullptr) {
+    if (vError) {
         vError->Release();
         vError = nullptr;
     }
-    if (pError != nullptr) {
+    if (pError) {
         pError->Release();
         pError = nullptr;
     }
-
-    TheDxShaderInclude.Close(data);
-
-    return (vRes >= 0) && (pRes >= 0);
+    MemFree((void *)data);
+    return !failed;
 }
 
 void DxShader::CreateVertexShader(RndShaderBuffer &buffer) {
@@ -253,7 +246,174 @@ void DxShaderMgr::Terminate() {
     RndShaderMgr::Terminate();
 }
 
-void DxShaderMgr::SetVConstant(VShaderConstant, const float *, unsigned int) {}
+/** The dirty bit(s) the GPU command buffer needs when `count` float4 constants
+ * starting at register `reg` are written straight into D3DDevice::m_Constants.
+ * Each mask bit covers a block of four registers, so a write spanning more than
+ * one block sets more than one bit -- hence the arithmetic shift, which smears
+ * the top bit down across `span` extra blocks before the logical shift moves it
+ * to `start`. */
+static inline UINT64 ShaderConstantDirtyMask(unsigned int reg, unsigned int count) {
+    unsigned int start = reg >> 2;
+    unsigned int span = ((reg + count - 1) >> 2) - start;
+    return (UINT64)((INT64)0x8000000000000000 >> span) >> start;
+}
+
+// 0x82735e50 (DxShaderMgr vtable slot 8).
+void DxShaderMgr::SetVConstant(
+    VShaderConstant vsc, const float *__restrict data, unsigned int count
+) {
+    unsigned int start = (unsigned int)vsc >> 2;
+    unsigned int span = ((vsc + count - 1) >> 2) - start;
+    UINT64 mask = (UINT64)((INT64)0x8000000000000000 >> span) >> start;
+    D3DDevice_SetVertexShaderConstantFN(TheDxRnd.Device(), vsc, data, count, mask);
+}
+
+// 0x82735c30 (vtable slot 10) / 0x82735ec8 (slot 17).
+void DxShaderMgr::SetVConstant(VShaderConstant vsc, int i) {
+    D3DDevice_SetVertexShaderConstantI(TheDxRnd.Device(), vsc, &i, 1);
+}
+
+void DxShaderMgr::SetPConstant(PShaderConstant psc, int i) {
+    D3DDevice_SetPixelShaderConstantI(TheDxRnd.Device(), psc, &i, 1);
+}
+
+// 0x82735c68 (vtable slot 9) / 0x82735f00 (slot 16): the four floats are
+// written straight into m_Constants and the block's dirty bit is or'd into
+// m_Pending.m_Mask[0] (vertex) / [1] (pixel).
+void DxShaderMgr::SetVConstant(VShaderConstant vsc, const Vector4 &v) {
+    D3DDevice *dev = TheDxRnd.Device();
+    float x = v.x, y = v.y, z = v.z, w = v.w;
+    float *dst = (float *)&dev->m_Constants.VertexShaderF[vsc];
+    unsigned int start = (unsigned int)vsc >> 2;
+    dev->m_Pending.m_Mask[0] |= (UINT64)0x8000000000000000 >> start;
+    dst[0] = x;
+    dst[1] = y;
+    dst[2] = z;
+    dst[3] = w;
+}
+
+void DxShaderMgr::SetPConstant(PShaderConstant psc, const Vector4 &v) {
+    D3DDevice *dev = TheDxRnd.Device();
+    float x = v.x, y = v.y, z = v.z, w = v.w;
+    float *dst = (float *)&dev->m_Constants.PixelShaderF[psc];
+    unsigned int start = (unsigned int)psc >> 2;
+    dev->m_Pending.m_Mask[1] |= (UINT64)0x8000000000000000 >> start;
+    dst[0] = x;
+    dst[1] = y;
+    dst[2] = z;
+    dst[3] = w;
+}
+
+/** Shader constants are column-major, Hmx::Matrix4 is row-major, so every
+ * upload here is a transpose. 4x3 drops the fourth column.
+ * 0x82735da0 (slot 12) / 0x82736038 (slot 19). */
+void DxShaderMgr::SetVConstant4x3(VShaderConstant vsc, const Hmx::Matrix4 &mtx) {
+    D3DDevice *dev = TheDxRnd.Device();
+    float c00 = mtx.x.x, c01 = mtx.y.x, c02 = mtx.z.x, c03 = mtx.w.x;
+    float c10 = mtx.x.y, c11 = mtx.y.y, c12 = mtx.z.y, c13 = mtx.w.y;
+    float c20 = mtx.x.z, c21 = mtx.y.z, c22 = mtx.z.z, c23 = mtx.w.z;
+    float *__restrict dst = (float *)&dev->m_Constants.VertexShaderF[vsc];
+    dev->m_Pending.m_Mask[0] |= ShaderConstantDirtyMask(vsc, 3);
+    dst[0] = c00;
+    dst[1] = c01;
+    dst[2] = c02;
+    dst[3] = c03;
+    dst[4] = c10;
+    dst[5] = c11;
+    dst[6] = c12;
+    dst[7] = c13;
+    dst[8] = c20;
+    dst[9] = c21;
+    dst[10] = c22;
+    dst[11] = c23;
+}
+
+void DxShaderMgr::SetPConstant4x3(PShaderConstant psc, const Hmx::Matrix4 &mtx) {
+    D3DDevice *dev = TheDxRnd.Device();
+    float c00 = mtx.x.x, c01 = mtx.y.x, c02 = mtx.z.x, c03 = mtx.w.x;
+    float c10 = mtx.x.y, c11 = mtx.y.y, c12 = mtx.z.y, c13 = mtx.w.y;
+    float c20 = mtx.x.z, c21 = mtx.y.z, c22 = mtx.z.z, c23 = mtx.w.z;
+    float *__restrict dst = (float *)&dev->m_Constants.PixelShaderF[psc];
+    dev->m_Pending.m_Mask[1] |= ShaderConstantDirtyMask(psc, 3);
+    dst[0] = c00;
+    dst[1] = c01;
+    dst[2] = c02;
+    dst[3] = c03;
+    dst[4] = c10;
+    dst[5] = c11;
+    dst[6] = c12;
+    dst[7] = c13;
+    dst[8] = c20;
+    dst[9] = c21;
+    dst[10] = c22;
+    dst[11] = c23;
+}
+
+// 0x82735cc0 (slot 6) / 0x82735f58 (slot 13).
+void DxShaderMgr::SetVConstant(VShaderConstant vsc, const Hmx::Matrix4 &mtx) {
+    D3DDevice *dev = TheDxRnd.Device();
+    float c00 = mtx.x.x, c01 = mtx.y.x, c02 = mtx.z.x, c03 = mtx.w.x;
+    float c10 = mtx.x.y, c11 = mtx.y.y, c12 = mtx.z.y, c13 = mtx.w.y;
+    float c20 = mtx.x.z, c21 = mtx.y.z, c22 = mtx.z.z, c23 = mtx.w.z;
+    float c30 = mtx.x.w, c31 = mtx.y.w, c32 = mtx.z.w, c33 = mtx.w.w;
+    float *__restrict dst = (float *)&dev->m_Constants.VertexShaderF[vsc];
+    dev->m_Pending.m_Mask[0] |= ShaderConstantDirtyMask(vsc, 4);
+    dst[0] = c00;
+    dst[1] = c01;
+    dst[2] = c02;
+    dst[3] = c03;
+    dst[4] = c10;
+    dst[5] = c11;
+    dst[6] = c12;
+    dst[7] = c13;
+    dst[8] = c20;
+    dst[9] = c21;
+    dst[10] = c22;
+    dst[11] = c23;
+    dst[12] = c30;
+    dst[13] = c31;
+    dst[14] = c32;
+    dst[15] = c33;
+}
+
+void DxShaderMgr::SetPConstant(PShaderConstant psc, const Hmx::Matrix4 &mtx) {
+    D3DDevice *dev = TheDxRnd.Device();
+    float c00 = mtx.x.x, c01 = mtx.y.x, c02 = mtx.z.x, c03 = mtx.w.x;
+    float c10 = mtx.x.y, c11 = mtx.y.y, c12 = mtx.z.y, c13 = mtx.w.y;
+    float c20 = mtx.x.z, c21 = mtx.y.z, c22 = mtx.z.z, c23 = mtx.w.z;
+    float c30 = mtx.x.w, c31 = mtx.y.w, c32 = mtx.z.w, c33 = mtx.w.w;
+    float *__restrict dst = (float *)&dev->m_Constants.PixelShaderF[psc];
+    dev->m_Pending.m_Mask[1] |= ShaderConstantDirtyMask(psc, 4);
+    dst[0] = c00;
+    dst[1] = c01;
+    dst[2] = c02;
+    dst[3] = c03;
+    dst[4] = c10;
+    dst[5] = c11;
+    dst[6] = c12;
+    dst[7] = c13;
+    dst[8] = c20;
+    dst[9] = c21;
+    dst[10] = c22;
+    dst[11] = c23;
+    dst[12] = c30;
+    dst[13] = c31;
+    dst[14] = c32;
+    dst[15] = c33;
+}
+
+// 0x82736158 (slot 14). With no cube texture retail unbinds the sampler
+// (tail-call into D3DDevice_SetTexture with a null texture); it does NOT
+// fall back to Rnd's null texture the way SetPConstant(RndTex *) does.
+void DxShaderMgr::SetPConstant(PShaderConstant psc, RndCubeTex *tex) {
+    if (tex) {
+        tex->Select(psc);
+    } else {
+        D3DDevice_SetTexture(
+            TheDxRnd.Device(), psc, nullptr, 0x8000000000000000 >> (psc + 0x20U)
+        );
+    }
+}
 
 void DxShaderMgr::SetVConstant(VShaderConstant vsc, RndTex *tex) {
     if (tex) {
@@ -365,6 +525,14 @@ void DxShaderMgr::LoadShaderFile(FileStream &fs) {
 }
 
 RndShaderProgram *DxShaderMgr::NewShaderProgram() { return new DxShader(); }
+
+// 0x82736130: binds a raw D3D texture to a sampler (DxRnd::InitRenderState
+// binds the colour-ramp texture to sampler 15 through it).
+void DxShaderMgr::SetTexture(int sampler, D3DBaseTexture *tex) {
+    D3DDevice_SetTexture(
+        TheDxRnd.Device(), sampler, tex, 0x8000000000000000 >> (sampler + 0x20U)
+    );
+}
 
 // W16-A scatter-include (default/system/rnddx9/ShaderMgr <- rnddx9/Tex.cpp).
 // Tex.cpp was in-tree but wired NOWHERE: absent from objects.json and included

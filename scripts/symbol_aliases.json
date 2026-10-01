@@ -75194,11 +75194,18 @@
   {
    "name": "Select",
    "address": "0x824a7548",
-   "survivor": "?Select@RndShaderVelocity@@MAAXPAVRndMat@@W4ShaderType@@_N@Z",
-   "folded": [
-    "?Select@RndShaderVelocityCamera@@MAAXPAVRndMat@@W4ShaderType@@_N@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "survivor": "?Select@RndShaderVelocityCamera@@MAAXPAVRndMat@@W4ShaderType@@_N@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions. W16-JA (fork D) 2026-10-01: survivor corrected to the VelocityCamera spelling -- retail RndShaderVelocityCamera vtable 0x8207503c slot 2 points here, while RndShaderVelocity vtable 0x82075028 slot 2 points at its own body 0x824a7468.",
+   "withdrawn": [
+    {
+     "spelling": "?Select@RndShaderVelocity@@MAAXPAVRndMat@@W4ShaderType@@_N@Z",
+     "lane": "W16-JA 2026-10-01",
+     "class": "DISTINCT_RETAIL_BODY",
+     "disposition": "withdrawn: the two Selects are not folded in retail",
+     "evidence": "RndShaderVelocity's vtable slot 2 is 0x824a7468 (224 B), not 0x824a7548 (208 B); the 224-B body passes TheShaderMgr.BoneCount() != 0 as RedundantState's third argument (0x824a74c0..0x824a74cc), the 208-B one passes 0. Different sizes, different code: no ICF fold."
+    }
+   ]
   },
   {
    "name": "$_Destroy_Range",
@@ -76214,6 +76221,20 @@
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 7 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
+    {
+     "spelling": "?PreLoad@RndMovie@@$4PPPPPPPM@CM@AAXAAVBinStream@@@Z",
+     "lane": "W16-JA 2026-10-01",
+     "class": "DISTINCT_CALLEE",
+     "disposition": "withdrawn",
+     "evidence": "Retail bytes: the survivor 0x823afe88 is a 16-byte vtordisp thunk that branches to 0x823ae888; the RndMovie PreLoad thunk with the same adjustment is its own body at 0x8273e4c0 and branches to 0x82479018 (RndMovie::PreLoad). Thunks with different jump targets cannot fold. 0x8273e4c0 carries this spelling in target_symbol_map.json (DxMovie Object-table vtable slot 18)."
+    },
+    {
+     "spelling": "?PostLoad@RndMovie@@$4PPPPPPPM@CM@AAXAAVBinStream@@@Z",
+     "lane": "W16-JA 2026-10-01",
+     "class": "DISTINCT_CALLEE",
+     "disposition": "withdrawn",
+     "evidence": "Retail bytes: the survivor 0x823afe88 branches to 0x823ae888; the RndMovie PostLoad thunk is its own body at 0x8273e4f0 and branches to 0x824780b0 (RndMovie::PostLoad). Thunks with different jump targets cannot fold. 0x8273e4f0 carries this spelling in target_symbol_map.json (DxMovie Object-table vtable slot 19)."
+    },
     {
      "spelling": "?Replace@CharBonesMeshes@@$2PPPPPPPM@CM@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
      "lane": "W17-ANON2 2026-10-01",
@@ -83262,11 +83283,17 @@
    "name": "CloneKey",
    "address": "0x8242c868",
    "survivor": "?CloneKey@BoolKeys@@UAAXH@Z",
-   "folded": [
-    "?CloneKey@SymbolKeys@@UAAXH@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "?CloneKey@SymbolKeys@@UAAXH@Z",
+     "lane": "W16-JA 2026-10-01",
+     "class": "DISTINCT_CALLEE",
+     "disposition": "withdrawn",
+     "evidence": "Retail bytes: BoolKeys::CloneKey and SymbolKeys::CloneKey are two separate bodies -- 0x8242c810 tail-calls Keys<bool,bool>::Add (0x824261b8) and 0x8242c868 is SymbolKeys' clone (lane W16-JA-E corrected the map: 0x8242c868 = SymbolKeys, 0x8242c810 = BoolKeys, the latter reading 100). Two distinct retail bodies cannot be one ICF fold; the group's survivor spelling is left as recorded, with no folded members."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -96002,11 +96029,18 @@
    "name": "$?6VColor",
    "address": "0x8247ed78",
    "survivor": "??$?6VColor@Hmx@@@@YAAAVTextStream@@AAV0@ABV?$Key@VColor@Hmx@@@@@Z",
-   "folded": [
-    "?SyncProperty@RndParticleSysAnim@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
-   ],
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
+   "withdrawn": [
+    {
+     "spelling": "?SyncProperty@RndParticleSysAnim@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+     "lane": "W16-JA 2026-10-01",
+     "class": "SURVIVOR_MISNAMED",
+     "disposition": "withdrawn",
+     "evidence": "0x8247ed78 IS RndParticleSysAnim::SyncProperty, not a fold into the Key<Color> printer: lane W16-JA-E renamed the address on retail evidence, and the printer is its own retail body at 0x82461320 (named there, reading 100 in MatAnim). With the address named for its own function the call at 0x82480680 resolves by name; the fold record would contradict the map. Group kept with no folded members."
+    }
+   ],
    "admitted": [
     {
      "spelling": "?SyncProperty@RndParticleSysAnim@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",

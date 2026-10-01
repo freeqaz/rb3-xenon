@@ -168,6 +168,9 @@ typedef struct _D3DXSHADER_COMPILE_PARAMETERS { /* Size=0x30 */
     /* 0x0024 */ DWORD PixelShaderSamplerRegisterCount;
     /* 0x0028 */ DWORD VertexShaderSamplerRegisterBase;
     /* 0x002c */ DWORD VertexShaderSamplerRegisterCount;
+    // The XDK RB3 links against has a 0x44-byte block: DxShader::Compile
+    // (0x82736BE8) zeroes 0x44 contiguous bytes for it. Field names unknown.
+    /* 0x0030 */ DWORD Reserved[5];
 } D3DXSHADER_COMPILE_PARAMETERS;
 
 HRESULT D3DXCompileShaderExA(
@@ -178,9 +181,9 @@ HRESULT D3DXCompileShaderExA(
     LPCSTR pFunctionName,
     LPCSTR pProfile,
     DWORD Flags,
-    ID3DXBuffer *ppShader,
-    ID3DXBuffer *ppErrorMsgs,
-    ID3DXConstantTable *ppConstantTable,
+    ID3DXBuffer **ppShader,
+    ID3DXBuffer **ppErrorMsgs,
+    ID3DXConstantTable **ppConstantTable,
     D3DXSHADER_COMPILE_PARAMETERS *pParameters
 );
 

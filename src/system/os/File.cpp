@@ -378,7 +378,7 @@ bool FileExists(const char *iFilename, int iMode, String *str) {
         return false;
 }
 
-String UniqueFilename(const char *c1, const char *c2) {
+String UniqueFilename(const char *c1) {
     int i = 0;
     String ret;
     File *file = nullptr;

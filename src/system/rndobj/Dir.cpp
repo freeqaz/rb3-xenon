@@ -98,8 +98,14 @@ INIT_REVS(10, 0)
 void RndDir::PreLoad(BinStream &bs) {
     LOAD_REVS(bs)
     ASSERT_REVS(10, 0)
+#ifndef HX_NATIVE
+    // Retail (0x82406178) pushes the revision BEFORE ObjectDir::PreLoad.
+    bs.PushRev(packRevs(d.altRev, d.rev), this);
+    ObjectDir::PreLoad(bs);
+#else
     ObjectDir::PreLoad(bs);
     bs.PushRev(packRevs(d.altRev, d.rev), this);
+#endif
 }
 
 void RndDir::PostLoad(BinStream &bs) {
@@ -351,6 +357,22 @@ RndDrawable *RndDir::CollideShowing(const Segment &s, float &fl, Plane &pl) {
     return ret;
 }
 
+#ifndef HX_NATIVE
+// 0x82403350 (shared by every RndDir-derived vtable): no Showing() or
+// world-sphere filter -- every draw votes, the first one sets the answer.
+int RndDir::CollidePlane(const Plane &pl) {
+    int ret = -1;
+    for (std::vector<RndDrawable *>::iterator it = mDraws.begin(); it != mDraws.end();
+         ++it) {
+        if (it == mDraws.begin()) {
+            ret = (*it)->CollidePlane(pl);
+        } else if (ret != (*it)->CollidePlane(pl)) {
+            return 0;
+        }
+    }
+    return ret;
+}
+#else
 int RndDir::CollidePlane(const Plane &pl) {
     int ret = -1;
     bool b2 = false;
@@ -370,6 +392,7 @@ int RndDir::CollidePlane(const Plane &pl) {
     }
     return ret;
 }
+#endif
 
 void RndDir::CollideList(const Segment &seg, std::list<Collision> &colls) {
     if (IsProxy() && !sForceSubpartSelection) {
@@ -413,6 +436,23 @@ void RndDir::Poll() {
     }
 }
 
+#ifndef HX_NATIVE
+// 0x82404EA8 (RndDir's RndPollable-table slot 1). No edit-mode test-event
+// check; a proxy chains its owning directory, cast to MsgSource, as source.
+void RndDir::Enter() {
+    for (std::vector<RndPollable *>::iterator it = mPolls.begin(); it != mPolls.end();
+         ++it) {
+        (*it)->Enter();
+    }
+    if (IsProxy()) {
+        MsgSource *src = dynamic_cast<MsgSource *>(Dir());
+        if (src) {
+            ChainSourceSubdir(src, this);
+        }
+    }
+    RndPollable::Enter();
+}
+#else
 void RndDir::Enter() {
     if (TheLoadMgr.EditMode()) {
         DataNode events = OnSupportedEvents(0);
@@ -430,6 +470,7 @@ void RndDir::Enter() {
     }
     RndPollable::Enter();
 }
+#endif
 
 void RndDir::Exit() {
     for (std::vector<RndPollable *>::iterator it = mPolls.begin(); it != mPolls.end();

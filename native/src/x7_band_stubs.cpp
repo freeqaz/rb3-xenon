@@ -39,9 +39,9 @@
 //   real body. No stub below can move a band member one unit.
 //
 //   IS substituted — DEFORMATION AND SKIN REFINEMENT. CharCollide::Deform,
-//   CharCuff::Deform, RndMeshDeform::Reskin, CharBoneOffset::ApplyToLocal and
+//   CharCuff::Deform, CharBoneOffset::ApplyToLocal and
 //   CharMeshHide::HideAll are the second-order mesh passes that run AFTER the
-//   pose is computed: collision squash, cuff/sleeve fitting, deform reskin,
+//   pose is computed: collision squash, cuff/sleeve fitting,
 //   per-bone offsets, and hiding the body parts an outfit covers. With them
 //   inert a member is posed and animated by the real skeleton but is not
 //   refined — expect interpenetration at joints and body geometry visible
@@ -91,9 +91,10 @@ void CharClip::MakeMRU() {}
 void CharCollide::Deform() {}
 void CharCuff::Deform(SyncMeshCB *, FileMerger *) {}
 void CharBoneOffset::ApplyToLocal() {}
-void RndMeshDeform::Reskin(SyncMeshCB *, bool) {}
 void CharMeshHide::HideAll(const ObjPtrList<CharMeshHide, ObjectDir> &, int) {}
 
+// (RndMeshDeform::Reskin used to be an inert stub here; lane W16-JA wrote the
+// real body in rndobj/MeshDeform.cpp, so it is no longer substituted.)
 // (MakeVertical(Hmx::Matrix3&) used to be an inert stub here; lane W16-HZ wrote the real
 // body in src/system/math/Rot.cpp from retail 0x824EE5F0, so that links instead.)
 

@@ -275,6 +275,19 @@ inline void Cross(const Vector3 &v1, const Vector3 &v2, Vector3 &dst) {
     );
 }
 
+// Retail 0x824791A0: a Vector2 normalize the image keeps out of line (a COMDAT
+// that lands in RndLine's object, called from RndLine::UpdateLine,
+// RndLine::UpdateLinePair and Frustum::Set). A zero vector is left untouched;
+// y is written before x.
+inline void Normalize(const Vector2 &in, Vector2 &out) {
+    float x = in.x;
+    if (x == 0 && in.y == 0)
+        return;
+    float inv = 1.0f / sqrtf(x * x + in.y * in.y);
+    out.y = in.y * inv;
+    out.x = x * inv;
+}
+
 inline void Normalize(const Vector3 &in, Vector3 &out) {
     float inv = 0;
     float len = Length(in);

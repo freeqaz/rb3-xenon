@@ -126,6 +126,31 @@ END_COPYS
 
 INIT_REVS(2, 0)
 
+#ifndef HX_NATIVE
+// Retail (0x8245DD10) splits the revision into a file-static {altRev, rev}
+// pair (two `sth` into one aggregate) and reads every field straight off `bs`
+// -- no BinStreamRev on the stack. Same longhand as RndScreenMask::Load.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_Wind;
+BEGIN_LOADS(RndWind)
+    int rev;
+    bs >> rev;
+    gRevs_Wind.rev = getHmxRev(rev);
+    gRevs_Wind.altRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    bs >> mPrevailing;
+    bs >> mRandom;
+    bs >> mTimeLoop;
+    bs >> mSpaceLoop;
+    if (gRevs_Wind.rev > 1) {
+        bs >> mWindOwner;
+        SetWindOwner(mWindOwner);
+    }
+    SyncLoops();
+END_LOADS
+#else
 BEGIN_LOADS(RndWind)
     LOAD_REVS(bs)
     ASSERT_REVS(2, 0)
@@ -140,6 +165,7 @@ BEGIN_LOADS(RndWind)
     }
     SyncLoops();
 END_LOADS
+#endif
 
 void RndWind::SyncLoops() {
     float f1;

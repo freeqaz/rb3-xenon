@@ -97,87 +97,106 @@ END_COPYS
 
 INIT_REVS(7, 0)
 
+#ifndef HX_NATIVE
+// Retail (0x8245FE40) keeps the revision in a local int, compared whole, and
+// reads every field off `bs`: no BinStreamRev.
+#define TA_LOAD_REV rev
+#define TA_LOAD_STREAM bs
+#define TA_LOAD_RAW bs
+#else
+#define TA_LOAD_REV d.rev
+#define TA_LOAD_STREAM d
+#define TA_LOAD_RAW d.stream
+#endif
 BEGIN_LOADS(RndTransAnim)
+#ifndef HX_NATIVE
+    int rev;
+    bs >> rev;
+#else
     LOAD_REVS(bs)
     ASSERT_REVS(7, 0)
-    if (d.rev > 4) {
-        LOAD_SUPERCLASS(Hmx::Object)
+#endif
+    if (TA_LOAD_REV > 4) {
+        Hmx::Object::Load(bs);
     }
-    LOAD_SUPERCLASS(RndAnimatable)
-    if (d.rev < 6) {
-        RndDrawable::DumpLoad(d.stream);
+    RndAnimatable::Load(bs);
+    if (TA_LOAD_REV < 6) {
+        RndDrawable::DumpLoad(TA_LOAD_RAW);
     }
-    d >> mTrans;
-    if (d.rev != 2) {
-        d >> mRotKeys >> mTransKeys;
+    TA_LOAD_STREAM >> mTrans;
+    if (TA_LOAD_REV != 2) {
+        TA_LOAD_STREAM >> mRotKeys >> mTransKeys;
     }
-    d >> mKeysOwner;
+    TA_LOAD_STREAM >> mKeysOwner;
     if (!mKeysOwner) {
         mKeysOwner = this;
     }
-    if (d.rev < 3) {
+    if (TA_LOAD_REV < 3) {
         unsigned int numKeys;
-        d >> numKeys;
-        if (d.rev == 2 || numKeys != 0) {
+        TA_LOAD_STREAM >> numKeys;
+        if (TA_LOAD_REV == 2 || numKeys != 0) {
             mTransKeys.resize(numKeys);
             FOREACH (it, mTransKeys) {
                 int i1, i2, i3;
                 Vector3 v1, v2;
-                d.stream >> it->value >> i1 >> i2 >> i3 >> v1 >> v2 >> it->frame;
+                TA_LOAD_RAW >> it->value >> i1 >> i2 >> i3 >> v1 >> v2 >> it->frame;
             }
         }
-        d >> numKeys;
-        if (d.rev == 2 || numKeys != 0) {
+        TA_LOAD_STREAM >> numKeys;
+        if (TA_LOAD_REV == 2 || numKeys != 0) {
             mRotKeys.resize(numKeys);
             FOREACH (it, mRotKeys) {
                 int i1, i2, i3;
                 Hmx::Quat v1, v2;
-                d.stream >> it->value >> i1 >> i2 >> i3 >> v1 >> v2 >> it->frame;
+                TA_LOAD_RAW >> it->value >> i1 >> i2 >> i3 >> v1 >> v2 >> it->frame;
             }
         }
         int c0;
-        d >> c0;
+        TA_LOAD_STREAM >> c0;
     }
-    if (d.rev > 3) {
-        d >> mTransSpline;
+    if (TA_LOAD_REV > 3) {
+        TA_LOAD_STREAM >> mTransSpline;
     } else {
         int spline;
-        d >> spline;
+        TA_LOAD_STREAM >> spline;
         mTransSpline = spline;
     }
-    d >> mRepeatTrans;
-    if (d.rev > 3) {
-        d >> mScaleKeys >> mScaleSpline;
-    } else if (d.rev > 0) {
-        if (d.rev != 2) {
-            d >> mScaleKeys;
+    TA_LOAD_STREAM >> mRepeatTrans;
+    if (TA_LOAD_REV > 3) {
+        TA_LOAD_STREAM >> mScaleKeys >> mScaleSpline;
+    } else if (TA_LOAD_REV > 0) {
+        if (TA_LOAD_REV != 2) {
+            TA_LOAD_STREAM >> mScaleKeys;
         }
-        if (d.rev < 3) {
+        if (TA_LOAD_REV < 3) {
             unsigned int numKeys;
-            d >> numKeys;
-            if (d.rev == 2 || numKeys != 0) {
+            TA_LOAD_STREAM >> numKeys;
+            if (TA_LOAD_REV == 2 || numKeys != 0) {
                 mScaleKeys.resize(numKeys);
                 FOREACH (it, mScaleKeys) {
                     int i1, i2, i3;
                     Vector3 v1, v2;
-                    d.stream >> it->value >> i1 >> i2 >> i3 >> v1 >> v2 >> it->frame;
+                    TA_LOAD_RAW >> it->value >> i1 >> i2 >> i3 >> v1 >> v2 >> it->frame;
                 }
             }
         }
         int splinebool;
-        d >> splinebool;
+        TA_LOAD_STREAM >> splinebool;
         mScaleSpline = splinebool;
     }
-    if (d.rev > 1) {
-        d >> mFollowPath;
+    if (TA_LOAD_REV > 1) {
+        TA_LOAD_STREAM >> mFollowPath;
     } else {
         mFollowPath = RotKeys().empty() && TransKeys().size() > 1;
     }
-    if (d.rev > 3)
-        d >> mRotSlerp;
-    if (d.rev > 6)
-        d >> mRotSpline;
+    if (TA_LOAD_REV > 3)
+        TA_LOAD_STREAM >> mRotSlerp;
+    if (TA_LOAD_REV > 6)
+        TA_LOAD_STREAM >> mRotSpline;
 END_LOADS
+#undef TA_LOAD_REV
+#undef TA_LOAD_STREAM
+#undef TA_LOAD_RAW
 
 void RndTransAnim::Print() {
     TheDebug << "   trans: " << mTrans << "\n";

@@ -39,12 +39,22 @@ BEGIN_HANDLERS(RndAnimatable)
     HANDLE(convert_frames, OnConvertFrames)
 END_HANDLERS
 
+#ifdef HX_NATIVE
 BEGIN_PROPSYNCS(RndAnimatable)
     SYNC_PROP(rate, (int &)mRate);
     SYNC_PROP_SET(frame, mFrame, SetFrame(_val.Float(), 1.0f))
     SYNC_PROP_SET(start_frame, StartFrame(), )
     SYNC_PROP_SET(end_frame, EndFrame(), )
 END_PROPSYNCS
+#else
+// 0x82401100: retail syncs only `rate` and `frame` (no start_frame/end_frame);
+// frame is PropSync'd into mFrame and then, unless the op is a get/size,
+// re-applied through SetFrame(mFrame, 1.0f).
+BEGIN_PROPSYNCS(RndAnimatable)
+    SYNC_PROP(rate, (int &)mRate);
+    SYNC_PROP_MODIFY(frame, mFrame, SetFrame(mFrame, 1.0f))
+END_PROPSYNCS
+#endif
 
 BEGIN_SAVES(RndAnimatable)
     SAVE_REVS(4, 0)
