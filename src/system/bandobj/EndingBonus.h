@@ -35,7 +35,8 @@ public:
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
-    virtual ~EndingBonus() {}
+    // No user-declared dtor: retail's ~EndingBonus makes no vtable/vtordisp stores,
+    // which is the implicit destructor's codegen.
     virtual void PreLoad(BinStream &);
     virtual void PostLoad(BinStream &);
     virtual void SyncObjects();

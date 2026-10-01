@@ -15,7 +15,8 @@ public:
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
-    virtual ~BandLeadMeter() {}
+    // No user-declared dtor: retail's ~BandLeadMeter makes no vtable/vtordisp stores,
+    // which is the implicit destructor's codegen.
     virtual void PreLoad(BinStream &);
     virtual void PostLoad(BinStream &);
     virtual void SetFrame(float, float) {}
