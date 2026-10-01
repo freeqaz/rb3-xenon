@@ -254,8 +254,6 @@ RockCentral.cpp:
 	.text       start:0x82594538 end:0x82594548
 	.text       start:0x82594768 end:0x82594778
 	.text       start:0x82595D10 end:0x82595D18
-	.text       start:0x825CA968 end:0x825CAC18
-	.text       start:0x825CAC18 end:0x825CAC64
 	.text       start:0x826D0F70 end:0x826D0FE8
 
 BandScoreboard.cpp:
@@ -7521,8 +7519,6 @@ TransConstraint.cpp:
 	.pdata      start:0x8222A628 end:0x8222A638
 	.pdata      start:0x8222A658 end:0x8222A660
 	.text       start:0x822EFD00 end:0x822EFD94
-	.text       start:0x82628C38 end:0x82628D94
-	.text       start:0x82628F40 end:0x82628F84
 
 LocaleOrdinal.cpp:
 	.pdata      start:0x82242D00 end:0x82242D38
@@ -8744,9 +8740,7 @@ band3/meta_band/NewAwardPanel.cpp:
 	.pdata      start:0x8222A4E8 end:0x8222A628
 	.pdata      start:0x8222A638 end:0x8222A658
 	.pdata      start:0x8222A660 end:0x8222A700
-	.text       start:0x82627A54 end:0x82628C38
-	.text       start:0x82628D94 end:0x82628F40
-	.text       start:0x82628F84 end:0x82629860
+	.text       start:0x82627A54 end:0x82628AD0
 
 band3/meta_band/CampaignGoalsLeaderboardPanel.cpp:
 	.pdata      start:0x82226AE8 end:0x82226AF8
@@ -8754,7 +8748,7 @@ band3/meta_band/CampaignGoalsLeaderboardPanel.cpp:
 	.pdata      start:0x822270E8 end:0x822270F0
 	.text       start:0x825EFB54 end:0x825EFB58
 	.text       start:0x825EFBC8 end:0x825EFC78
-	.text       start:0x825EFC78 end:0x825F2210
+	.text       start:0x825EFC78 end:0x825F10E0
 	.text       start:0x825F58C8 end:0x825F591C
 
 band3/meta_band/CharCache.cpp:
@@ -11093,7 +11087,7 @@ MainHubMessageProvider.cpp:
 	.pdata      start:0x8222F6A0 end:0x8222F758
 	.text       start:0x8267274C end:0x82672758
 	.text       start:0x82672758 end:0x8267276C
-	.text       start:0x82672770 end:0x826731D8
+	.text       start:0x82672770 end:0x82672F14
 
 Metronome.cpp:
 	.pdata      start:0x82236AB0 end:0x82236AB8
@@ -12010,7 +12004,7 @@ AppLabel.cpp:
 	.text       start:0x825C54D8 end:0x825C5538
 	.text       start:0x825C5538 end:0x825C5F00
 	.text       start:0x825C5F00 end:0x825C5FD8
-	.text       start:0x825C5FD8 end:0x825CA968
+	.text       start:0x825C5FD8 end:0x825CA4E0
 
 BandSongMgr.cpp:
 	.pdata      start:0x8221D860 end:0x8221D868
@@ -15436,3 +15430,19 @@ band3/meta_band/AppScoreDisplay.cpp:
 band3/meta_band/BandScreen.cpp:
 	.text       start:0x826424B0 end:0x826428E0
 
+
+band3/meta_band/PassiveMessagesPanel.cpp:
+	.pdata      start:0x8222A608 end:0x8222A700
+	.text       start:0x82628AD0 end:0x82629860
+
+band3/meta_band/CampaignCareerLeaderboardPanel.cpp:
+	.pdata      start:0x82226C70 end:0x82226DA8
+	.text       start:0x825F10E0 end:0x825F2210
+
+band3/meta_band/StandInProvider.cpp:
+	.pdata      start:0x8222F710 end:0x8222F748
+	.text       start:0x82672F14 end:0x826731D8
+
+band3/meta_band/HeaderPerformanceProvider.cpp:
+	.pdata      start:0x822241B8 end:0x82224248
+	.text       start:0x825CA4E0 end:0x825CAC64
