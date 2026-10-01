@@ -16411,7 +16411,7 @@
  "0x825d3c30": "?UploadDirtyScores@SongStatusMgr@@QAAXXZ",
  "0x825d3fe0": "?Handle@SongStatusMgr@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x825d4368": "??_GSongStatusMgr@@UAAPAXI@Z",
- "0x825d43b8": "??$__destroy_aux@VPlayerScore@@@stlpmtx_std@@YAXPAVPlayerScore@@ABU__false_type@0@@Z",
+ "0x825d43b8": "?Reset@ViewSetting@@UAAXXZ",
  "0x825d43d0": "??0SortViewSetting@@QAA@XZ",
  "0x825d4430": "??0ScoreTypeViewSetting@@QAA@XZ",
  "0x825d4558": "?Custom@ViewSetting@@UBAXHHPAVUIListCustom@@PAVObject@Hmx@@@Z",

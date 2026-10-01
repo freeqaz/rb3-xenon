@@ -5478,7 +5478,7 @@ IdentityInfo.cpp:
 
 SongStatusMgr.cpp:
 	.pdata      start:0x82224978 end:0x82224C60
-	.text       start:0x825D0F24 end:0x825D43D0
+	.text       start:0x825D0F24 end:0x825D43B8
 
 band3/meta_band/MusicLibraryNetSetlists.cpp:
 	.pdata      start:0x822247E0 end:0x822247E8
@@ -8912,7 +8912,7 @@ band3/meta_band/ViewSetting.cpp:
 	.pdata      start:0x82245C10 end:0x82245C18
 	.text       start:0x824CEDD0 end:0x824CEE58
 	.text       start:0x824CEE58 end:0x824CF800
-	.text       start:0x825D43D0 end:0x825D4604
+	.text       start:0x825D43B8 end:0x825D4604
 	.text       start:0x825D4604 end:0x825D46B4
 	.text       start:0x825D46B8 end:0x825D4770
 	.text       start:0x825D4770 end:0x825D47A4
