@@ -225,9 +225,7 @@ void TrackPanelDirBase::UpdateTrackSpeed() {
                 GemTrackDir *tdir = mGemTracks[i];
                 TrackInstrument inst = tdir->GetInstrument();
                 Symbol diffsym = tdir->GetPlayerDifficultySym();
-                bool ok = tdir->InUse();
-                if (ok) ok = (inst >= kInstGuitar);
-                if (ok) ok = (diffsym != gNullStr);
+                bool ok = tdir->InUse() && inst >= kInstGuitar && diffsym != gNullStr;
                 if (ok) {
                     Symbol instsym = tdir->GetInstrumentSymbol();
                     float viewtime = GetTrackViewTime(instsym, diffsym);
@@ -243,9 +241,7 @@ void TrackPanelDirBase::UpdateTrackSpeed() {
                 GemTrackDir *tdir = mGemTracks[i];
                 TrackInstrument inst = tdir->GetInstrument();
                 Symbol diffsym = tdir->GetPlayerDifficultySym();
-                bool ok = tdir->InUse();
-                if (ok) ok = (inst >= kInstGuitar);
-                if (ok) ok = (diffsym != gNullStr);
+                bool ok = tdir->InUse() && inst >= kInstGuitar && diffsym != gNullStr;
                 if (ok) {
                     Symbol instsym = tdir->GetInstrumentSymbol();
                     float viewtime = GetTrackViewTime(instsym, diffsym);
@@ -259,7 +255,8 @@ void TrackPanelDirBase::UpdateTrackSpeed() {
             }
             if (f15 > 0) {
                 float speed;
-                if (f13 == 0) {
+                bool noLocal = f13 == 0;
+                if (noLocal) {
                     speed = f11 / f15;
                 } else {
                     speed = f14 / f13;
