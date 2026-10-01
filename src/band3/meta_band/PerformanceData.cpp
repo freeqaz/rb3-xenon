@@ -377,7 +377,7 @@ void PerformanceData::Prune(Stats &stats) {
         stats.mClosestPlayersSaved.pop_back();
     while (stats.mBestSolos.size() > 3)
         stats.mBestSolos.pop_back();
-    stats.mSections.resize(0);
+    stats.SetNumSections(0);
 }
 
 void PerformanceData::InitializeStatsVectors() {

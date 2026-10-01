@@ -210,8 +210,6 @@ void Stats::SetSingerPitchDeviationInfo(int i, float f1, float f2) {
     mSingerStats[i].SetPitchDeviationInfo(f1, f2);
 }
 
-void Stats::SetNumSections(int n) { mSections.resize(n); }
-
 void Stats::UpdateBestTambourineSection(int i) { MaxEq(m0x5c, i); }
 
 void Stats::SaveForEndGame(BinStream &bs) const {

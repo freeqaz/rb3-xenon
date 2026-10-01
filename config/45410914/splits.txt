@@ -11309,6 +11309,7 @@ PerformanceData.cpp:
 	.text       start:0x82656C28 end:0x82656CB4
 	.text       start:0x82656CB8 end:0x82656D44
 	.text       start:0x82656D48 end:0x82657570
+	.text       start:0x82657570 end:0x826575A0
 	.text       start:0x82657798 end:0x82657C50
 	.text       start:0x82657E08 end:0x82657FA0
 	.text       start:0x826588DC end:0x826589E0
@@ -12325,7 +12326,7 @@ AccomplishmentConditional.cpp:
 	.pdata      start:0x8222D820 end:0x8222D830
 	.pdata      start:0x8222ED88 end:0x8222EE00
 	.pdata      start:0x8222EE00 end:0x8222EE38
-	.text       start:0x82657570 end:0x82657660
+	.text       start:0x826575A0 end:0x82657660
 	.text       start:0x8266AAC0 end:0x8266B0F0
 	.text       start:0x8266B0F0 end:0x8266B3E8
 
