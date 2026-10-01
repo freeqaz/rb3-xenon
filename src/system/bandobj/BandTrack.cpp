@@ -298,8 +298,9 @@ void BandTrack::SetQuarantined(bool b) {
 }
 
 void BandTrack::ResetPlayerFeedback() {
+    static Message reset("reset");
     if (mPlayerFeedback)
-        mPlayerFeedback->HandleType(reset_msg);
+        mPlayerFeedback->HandleType(reset);
 }
 
 void BandTrack::SetNetTalking(bool talking) {
@@ -496,8 +497,11 @@ void BandTrack::EnablePlayer() {
 
 void BandTrack::SoloStart() {
     if (!unk1e && !mSoloDisplay) {
-        if (mPlayerFeedback)
+        if (mPlayerFeedback) {
+            static Symbol start_solo("start_solo");
+            static Message start_solo_msg(start_solo);
             mPlayerFeedback->HandleType(start_solo_msg);
+        }
 #ifdef HX_NATIVE
         if (mPlayerFeedback) {
             UILabel *pctLabel =
@@ -642,8 +646,10 @@ void BandTrack::SyncInstrument() {
     }
 }
 
-// Retail: a local static Message built from a temporary Symbol("reset") at entry, and
-// local static Symbol/Message for "disable" inside the feedback branch.
+// Retail builds BandTrack's Symbols/Messages as function-local statics, not the
+// utl/Symbols.h / utl/Messages.h globals. Here: a local static Message built from a
+// temporary Symbol("reset") at entry, and a local static Symbol/Message pair for
+// "disable" inside the feedback branch.
 void BandTrack::Retract(bool b) {
     static Message reset("reset");
     if (b) {
@@ -686,7 +692,8 @@ void BandTrack::GameWon() {
     static Message reset_msg("reset");
     if (mPlayerFeedback) {
         mPlayerFeedback->HandleType(reset_msg);
-        static Message disable_msg("disable");
+        static Symbol disable("disable");
+        static Message disable_msg(disable);
         SendTrackerDisplayMessage(disable_msg);
     }
     GameOver();
@@ -825,6 +832,7 @@ void BandTrack::UnisonStart() {
 
 void BandTrack::SoloHit(int i) {
     if (mPlayerFeedback && !unk1e && !mSoloDisplay) {
+        static Symbol me_percent_format("me_percent_format");
         mPlayerFeedback->Find<UILabel>("solo_percent.lbl", true)
             ->SetTokenFmt(me_percent_format, i);
     }
@@ -835,6 +843,8 @@ void BandTrack::SoloEnd(int i, Symbol sym) {
         if (mPlayerFeedback) {
             mPlayerFeedback->Find<BandLabel>("solo_rating.lbl", true)->SetTextToken(sym);
             mPlayerFeedback->Find<UILabel>("score.lbl", true)->SetInt(i, true);
+            static Symbol end_solo("end_solo");
+            static Message end_solo_msg(end_solo);
             mPlayerFeedback->HandleType(end_solo_msg);
         }
         EventTrigger *trig =
