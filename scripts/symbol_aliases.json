@@ -84179,11 +84179,17 @@
    "name": "_M_fill_insert",
    "address": "0x82339948",
    "survivor": "?_M_fill_insert@?$vector@VPatch@BandCharDesc@@V?$StlNodeAlloc@VPatch@BandCharDesc@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVPatch@BandCharDesc@@IABV34@@Z",
-   "folded": [
-    "?_M_fill_insert@?$vector@VMeshAO@OutfitConfig@@V?$StlNodeAlloc@VMeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVMeshAO@OutfitConfig@@IABV34@@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "?_M_fill_insert@?$vector@VMeshAO@OutfitConfig@@V?$StlNodeAlloc@VMeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVMeshAO@OutfitConfig@@IABV34@@Z",
+     "lane": "W16-LD 2026-10-01",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS",
+     "disposition": "membership withdrawn, names kept",
+     "evidence": "Retail 0x82339948's only callers are PropSync<BandCharDesc::Patch> (0x82339c3c) and vector<Patch>::resize (0x8233a88c). PropSync<OutfitConfig::MeshAO> calls 0x822a8e68 (bl at 0x822a9a64), and the spelling is admitted there. The flat byte identity W16-CU recorded holds against both bodies, so it cannot pick the address; the retail call site does."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -99817,6 +99823,26 @@
      "spelling": "?SaveSize@GameplayOptions@@SAHH@Z",
      "lane": "W16-LD 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (VACUOUS-BUT-IDENTICAL), 0 CYCLE-ASSUMED; flat T1 UNDECIDABLE because the body is two words: retail 0x82654ab8 is `li r3,9; blr`, and our GameplayOptions::SaveSize compiles to the same 8 bytes now that its sPrintoutsEnabled print is the house MILO_LOG (compiled out). Retail holds one body of this shape (retail_bodytwins 1). The map places this spelling at no address of its own. Retail witnesses where we use this spelling: BandProfile::SaveSize bl at 0x8258a264, and the GameplayOptions ctor's mSaveSizeMethod store loads the address with lis/addi at 0x82654b28/0x82654b30."
+    }
+   ],
+   "added": {
+    "lane": "W16-LD 2026-10-01"
+   }
+  },
+  {
+   "name": "_M_fill_insert",
+   "address": "0x822a8e68",
+   "survivor": "?_M_fill_insert@?$vector@VSongPattern@@V?$StlNodeAlloc@VSongPattern@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSongPattern@@IABV3@@Z",
+   "folded": [
+    "?_M_fill_insert@?$vector@VMeshAO@OutfitConfig@@V?$StlNodeAlloc@VMeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVMeshAO@OutfitConfig@@IABV34@@Z"
+   ],
+   "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN, CHASED T1 PROVEN, 0 CYCLE-ASSUMED; leaves include VACUOUS-BUT-IDENTICAL (allocator thunks), discharged by the chase. The map places this spelling at no address of its own. Retail call site reaching the survivor where we call this spelling (bl target read on retail bytes): 0x822a9a64 (PropSync<OutfitConfig::MeshAO>). Moved from the 0x82339948 group, whose retail callers are all BandCharDesc::Patch paths.",
+   "lane": "W16-LD",
+   "admitted": [
+    {
+     "spelling": "?_M_fill_insert@?$vector@VMeshAO@OutfitConfig@@V?$StlNodeAlloc@VMeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVMeshAO@OutfitConfig@@IABV34@@Z",
+     "lane": "W16-LD 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN, CHASED T1 PROVEN, 0 CYCLE-ASSUMED; leaves include VACUOUS-BUT-IDENTICAL (allocator thunks), discharged by the chase. The map places this spelling at no address of its own. Retail call site reaching the survivor where we call this spelling (bl target read on retail bytes): 0x822a9a64 (PropSync<OutfitConfig::MeshAO>). Moved from the 0x82339948 group, whose retail callers are all BandCharDesc::Patch paths."
     }
    ],
    "added": {
