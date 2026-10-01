@@ -1430,11 +1430,8 @@ void RndText::ApplyLineText(
         }
         MILO_ASSERT((line.startIdx + utf8.length()) <= mFixedLength, 0x791);
         const char *theStrstr = utf8.c_str();
-        const char *ptr = theStrstr;
         for (int i = 0; i < i5; i++) {
-            char ptrChar = *ptr;
-            mText[line.startIdx + i] = ptrChar;
-            ptr++;
+            mText[line.startIdx + i] = theStrstr[i];
         }
         for (int i = i5; i < i6; i++) {
             mText[line.startIdx + i] = 0x20;
@@ -1468,7 +1465,14 @@ void RndText::ApplyLineText(
         float f3 = line.xfm.v.x;
         float f4 = line.xfm.v.y;
         Alignment align = GetAlignment();
-        float f26 = GetHorizontalAlignOffset(line, align);
+        // Retail computes the offset here as width * -0.5f / -width, not
+        // through GetHorizontalAlignOffset's -(width / 2) form.
+        float f26 = 0;
+        if (align & 2)
+            f26 = line.mWidth * -0.5f;
+        else if (align & 4)
+            f26 = -line.mWidth;
+        float lineX = f3 + f26;
         i7 = 0;
         i23 = 0;
         FOREACH (it, mMeshMap) {
@@ -1477,10 +1481,10 @@ void RndText::ApplyLineText(
             MeshInfo &meshInfo = it->second;
             RndMesh *curMesh = meshInfo.mesh;
             int uvar8 = 0;
-            float fd4 = f3 + f26;
+            float fd4 = lineX;
             if (curMesh) {
                 if (!(curMesh->Mutable() & 0x1F)
-                    || mFixedLength * 4 != curMesh->Verts().size()) {
+                    || curMesh->Verts().size() != mFixedLength * 4) {
                     curMesh->SetMutable(0x1F);
                     ResetFaces(curMesh, mFixedLength * 2);
                     curMesh->Verts().resize(mFixedLength * 4);
