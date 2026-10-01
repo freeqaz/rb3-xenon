@@ -29,7 +29,9 @@ bool gStlAllocNameLookup = false;
 bool gbUseLowestMip = false;
 bool gInsideMemFunc = false;
 extern bool gMemoryUsageTest;
+#ifdef HX_NATIVE
 int gCheckConsistency;
+#endif
 int gNewOperatorAlign;
 int gSingleHeap;
 extern String gMemLogType;
@@ -47,6 +49,9 @@ int gNumHeaps;
 // Retail addresses both off ONE anchor (lbl_82E06BA8: gHeaps at +0, gNumHeaps
 // at +0x254) in MemAllocSize/MemFree/MemTruncate/MemFindHeap -- the signature of
 // internal-linkage statics co-addressed by MSVC, not two externals.
+// gCheckConsistency is the word after gNumHeaps (0x82e06e00); MemInit
+// addresses it as gNumHeaps' base + 4, so it is an internal static too.
+static int gCheckConsistency;
 static MemHeap gHeaps[MAX_HEAPS];
 static int gNumHeaps;
 #endif
