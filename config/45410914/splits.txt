@@ -8768,6 +8768,11 @@ band3/meta_band/StoreOfferProvider.cpp:
 
 band3/meta_band/BandStorePanel.cpp:
 	.pdata      start:0x82228078 end:0x82228148
+	.pdata      start:0x82228148 end:0x82228158
+	.pdata      start:0x82228158 end:0x82228178
+	.pdata      start:0x82228178 end:0x82228180
+	.pdata      start:0x82228180 end:0x82228188
+	.pdata      start:0x82228188 end:0x82228190
 	.pdata      start:0x82228190 end:0x822281D0
 	.pdata      start:0x822281D0 end:0x82228318
 	.pdata      start:0x82228340 end:0x82228348
@@ -11981,6 +11986,8 @@ OutfitConfig.cpp:
 	.pdata      start:0x821F4FF0 end:0x821F4FF8
 	.pdata      start:0x821F4FF8 end:0x821F5000
 	.pdata      start:0x821F5000 end:0x821F5020
+	.pdata      start:0x821F5038 end:0x821F5040
+	.pdata      start:0x821F5048 end:0x821F5058
 	.pdata      start:0x821F5058 end:0x821F5070
 	.pdata      start:0x821F5078 end:0x821F5088
 	.pdata      start:0x821F50A0 end:0x821F50D0
