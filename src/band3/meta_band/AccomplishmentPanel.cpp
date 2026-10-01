@@ -257,13 +257,12 @@ void AccomplishmentPanel::LoadCampaignIcons() {
     for (std::vector<Symbol>::iterator it = vec.begin(); it != vec.end(); ++it) {
         Accomplishment *pAccomplishment = TheAccomplishmentMgr->GetAccomplishment(*it);
         MILO_ASSERT(pAccomplishment, 0x3E0);
-        Symbol name = pAccomplishment->GetName();
+        const char *name = pAccomplishment->GetName().Str();
         const char *art = pAccomplishment->GetIconArt();
         if (strlen(art) != 0)
-            AddTex(art, name.Str(), true, false);
+            AddTex(art, name, true, false);
     }
-    const char *sekrit = MakeString(Accomplishment::GetIconPath(), "acc_secret");
-    AddTex(sekrit, "acc_secret", true, false);
+    AddTex(MakeString(Accomplishment::GetIconPath(), "acc_secret"), "acc_secret", true, false);
 }
 
 void AccomplishmentPanel::Unload() {
