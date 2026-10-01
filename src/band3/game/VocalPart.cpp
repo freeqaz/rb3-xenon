@@ -526,6 +526,8 @@ bool PitchBetween(float pitch, float a, float b, float &out) {
 
 static const float kFrameTimeMs = 16.666668f;
 
+static const float kBendSpan = 2.0f;
+
 float VocalPart::GetNoteSliceWeight(float fBegin, float fEnd, int noteIdx) const {
     if (fEnd < fBegin) {
         float tmp = fBegin;
@@ -563,7 +565,6 @@ float VocalPart::GetNoteSliceWeight(float fBegin, float fEnd, int noteIdx) const
         float f22 = 1.0f - (float)pow((double)(4.0f / 7.0f), 2.0);
         float zeroThresh = accum;
         float half = 0.5f;
-        float two = 2.0f;
         float seventeenFourths = 1.75f;
         while (fBeginRel < fEndRel) {
             float sp8 = fEndRel - fBeginRel;
@@ -575,7 +576,7 @@ float VocalPart::GetNoteSliceWeight(float fBegin, float fEnd, int noteIdx) const
                 weight = 1.0f;
             } else {
                 float t = fBeginRel / noteDurationMs;
-                float x = (two * (t - half)) / seventeenFourths;
+                float x = ((t - half) * kBendSpan) / seventeenFourths;
                 weight = f22 + (float)pow((double)x, 2.0);
             }
             accum = weight * stepMs + accum;

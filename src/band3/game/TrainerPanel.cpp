@@ -415,7 +415,6 @@ int TrainerSection::GetStartTick() const { return mStartTick; }
 void TrainerSection::SetStartTick(int tick) { mStartTick = tick; }
 int TrainerSection::GetEndTick() const { return mEndTick; }
 void TrainerSection::SetEndTick(int tick) { mEndTick = tick; }
-Symbol TrainerSection::GetName() const { return mName; }
 void TrainerSection::SetName(const Symbol &name) { mName = name; }
 
 void TrainerSection::SetChallengeName(const Symbol &name) {

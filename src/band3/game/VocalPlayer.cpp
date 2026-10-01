@@ -1071,22 +1071,21 @@ void VocalPlayer::LocalEndgameEnergy(int x) {
     // does (rb3/src/band3/game/VocalPlayer.cpp).  Target fn_826E6298 holds ONE
     // function-local `static Message` (slot 0x82E03524, guard 0x82E0352C),
     // built from Symbol("") -> Message(Symbol) -> atexit, then re-typed per
-    // branch: the four arms tail-merge into a single Symbol(const char*) +
-    // Message::SetType(Symbol) (out-of-line fn_8228F068) + TheWorld->Handle.
+    // branch: each arm calls Message::SetType(Symbol) (out-of-line
+    // fn_8228F068) with its own literal, and the compiler tail-merges the four
+    // Symbol(const char*) + SetType sequences before TheWorld->Handle.
     // Same idiom as BandDirector::SetCrowd.
     if (TheWorld) {
         static Message msg("");
-        const char *type;
         if (x == 0) {
-            type = "endgame_vocals_none";
+            msg.SetType("endgame_vocals_none");
         } else if (x == 1) {
-            type = "endgame_vocals_low";
+            msg.SetType("endgame_vocals_low");
         } else if (x == 2) {
-            type = "endgame_vocals_medium";
+            msg.SetType("endgame_vocals_medium");
         } else {
-            type = "endgame_vocals_high";
+            msg.SetType("endgame_vocals_high");
         }
-        msg.SetType(type);
         TheWorld->Handle(msg, false);
     }
 #endif

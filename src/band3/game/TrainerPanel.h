@@ -31,7 +31,9 @@ public:
     void SetStartTick(int);
     int GetEndTick() const;
     void SetEndTick(int);
-    Symbol GetName() const;
+    // Inline: retail's one call site (VocalTrainerPanel::StartSectionImpl's
+    // MILO_FAIL, 0x826BA2F8) evaluates GetEndTick but makes no GetName call.
+    Symbol GetName() const { return mName; }
     void SetName(const Symbol &);
     void SetChallengeName(const Symbol &);
     void SetStartEarly(bool);
