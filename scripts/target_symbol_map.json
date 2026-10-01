@@ -1,4 +1,7 @@
 {
+ "0x82c3f848": "??__EThePlatformMgr@@YAXXZ",
+ "0x82c3f598": "??__ETheRockCentral@@YAXXZ",
+ "0x82746380": "?Poll@TexMovie@@UAAXXZ",
  "0x827444a0": "?clear@?$_Rb_tree@PAXU?$less@PAX@stlpmtx_std@@U?$pair@QAXVString@@@2@U?$_Select1st@U?$pair@QAXVString@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@QAXVString@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@QAXVString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
  "0x82743c58": "?_M_erase@?$_Rb_tree@PAXU?$less@PAX@stlpmtx_std@@U?$pair@QAXVString@@@2@U?$_Select1st@U?$pair@QAXVString@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@QAXVString@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@QAXVString@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
  "0x827460f8": "?BeginFromFile@Movie@@QAA_NPBDM_N111HPAVBinStream@@@Z",
@@ -4711,7 +4714,7 @@
  "0x822b91d0": "?PostLoad@CrowdMeterIcon@@UAAXAAVBinStream@@@Z",
  "0x822b91d8": "?Copy@CrowdMeterIcon@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
  "0x822b91e8": "?SetState@CrowdMeterIcon@@QAAXW4CrowdMeterState@@_N@Z",
- "0x822b9308": "?Reset@TexMovie@@QAAXXZ",
+ "0x822b9308": "?SetIcon@CrowdMeterIcon@@QAAXPBD@Z",
  "0x822b9318": "?HasIcon@CrowdMeterIcon@@QBA_NXZ",
  "0x822b9378": "?ArrowShow@CrowdMeterIcon@@QAAX_N@Z",
  "0x822b93a8": "?Deploy@CrowdMeterIcon@@QAAXXZ",

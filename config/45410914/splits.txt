@@ -199,6 +199,7 @@ RockCentral.cpp:
 	.pdata      start:0x82217758 end:0x82217808
 	.pdata      start:0x8221A840 end:0x8221A850
 	.pdata      start:0x82234E98 end:0x82234EB0
+	.pdata      start:0x82261530 end:0x82261538
 	.text       start:0x823EC310 end:0x823EC398
 	.text       start:0x823F0F84 end:0x823F0F88
 	.text       start:0x823F0F9C end:0x823F0FA0
@@ -249,6 +250,7 @@ RockCentral.cpp:
 	.text       start:0x82594768 end:0x82594778
 	.text       start:0x82595D10 end:0x82595D18
 	.text       start:0x826D0F70 end:0x826D0FE8
+	.text       start:0x82C3F598 end:0x82C3F5D0
 
 BandScoreboard.cpp:
 	.pdata      start:0x821F1980 end:0x821F1990
@@ -900,6 +902,7 @@ CrowdMeterIcon.cpp:
 	.pdata      start:0x821F5FD0 end:0x821F6278
 	.text       start:0x8227A2A8 end:0x8227A328
 	.text       start:0x822B91D0 end:0x822B9308
+	.text       start:0x822B9308 end:0x822B9318
 	.text       start:0x822B9318 end:0x822BB3C8
 
 PatchDir.cpp:
@@ -1482,9 +1485,9 @@ Geo.cpp:
 
 Rand.cpp:
 	.pdata      start:0x82215E58 end:0x82215E98
-	.pdata      start:0x82261528 end:0x82261580
+	.pdata      start:0x82261528 end:0x82261530
 	.text       start:0x824F2DC8 end:0x824F31D0
-	.text       start:0x82C3F548 end:0x82C3F880
+	.text       start:0x82C3F548 end:0x82C3F598
 
 SHA1.cpp:
 	.pdata      start:0x82215E98 end:0x82215EC8
@@ -3580,7 +3583,6 @@ TexMovie.cpp:
 	.pdata      start:0x8223B2A0 end:0x8223B2A8
 	.pdata      start:0x8223B2A8 end:0x8223B2B0
 	.pdata      start:0x8223B2B0 end:0x8223B3D8
-	.text       start:0x822B9308 end:0x822B9314
 	.text       start:0x824444E8 end:0x82444528
 	.text       start:0x82742B90 end:0x82742C08
 	.text       start:0x82746168 end:0x82746174
@@ -7784,8 +7786,10 @@ Shockwave.cpp:
 PlatformMgr.cpp:
 	.pdata      start:0x822180E8 end:0x82218100
 	.pdata      start:0x82218100 end:0x82218300
+	.pdata      start:0x82261578 end:0x82261580
 	.text       start:0x82514858 end:0x82514968
 	.text       start:0x82514968 end:0x82516410
+	.text       start:0x82C3F848 end:0x82C3F880
 
 PlatformMgr_Xbox.cpp:
 	.pdata      start:0x82218808 end:0x82218858
