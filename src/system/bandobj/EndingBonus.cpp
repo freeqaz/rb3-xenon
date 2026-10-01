@@ -1,4 +1,4 @@
-// Ported from rb3-Wii src/system/bandobj/EndingBonus.cpp (MWCC -> MSVC X360).
+// EndingBonus (bandobj/EndingBonus.cpp), MSVC X360.
 #include "bandobj/EndingBonus.h"
 #include "utl/Loader.h"
 #include "utl/MakeString.h"

@@ -14,7 +14,7 @@
 /** Retail `0x82B544E8` -- the async console UI shim this panel drives.
  *
  * It has exactly ONE caller in the whole retail image (this Enter()), carries no
- * string of its own, and is not in any oracle, so its real name is not
+ * string of its own, and no symbol survives for it, so its real name is not
  * recoverable from the material available to this lane. Only its SHAPE is
  * load-bearing for the match: `(dwUserIndex, XOVERLAPPED *) -> DWORD`, returning
  * ERROR_IO_PENDING while the UI is up. */

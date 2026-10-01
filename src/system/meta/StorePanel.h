@@ -42,7 +42,7 @@ void SetOfferID(int index, const String &s);
 void SetPurchased(int index, bool b);
 END_MESSAGE
 
-// RB3-360 retail StorePanel re-ported from the rb3-Wii oracle (member set +
+// RB3-360 retail StorePanel (member set +
 // inline-mEnum control flow) with Xbox platform objects, verified against the
 // retail Ghidra project (default_tu5.xex): ctor fn_827B6A58, Load fn_827B4F30,
 // Poll fn_827B6020, EnumerateOffers fn_827B66E0, UpdateOffers fn_827B5E18,
@@ -77,8 +77,8 @@ public:
     // `class LocalBandUser : public virtual BandUser, public virtual LocalUser`).
     // BandStorePanel::Request then calls slot 0 on the result, which is
     // LocalUser::GetPadNum() (LocalUser's FIRST new virtual, since its other
-    // members all override User). The rb3-Wii oracle agrees exactly:
-    // StorePanel.h:33 `virtual int StoreUser() const = 0; // fix ret type`,
+    // members all override User). In RB3's
+    // StorePanel.h this is `virtual int StoreUser() const = 0; // fix ret type`,
     // in this same position, and declares no StoreProfile at all.
     virtual LocalUser *StoreUser() const;
     // PURE in retail (lane STOREPANEL, 2026-08-22).  StorePanel's own primary
@@ -107,7 +107,7 @@ public:
 
     // Singleton lookup by object name. Retail's StorePanel.obj emits the
     // ObjectDir::Find<StorePanel> COMDAT (0x827B5300, RTTI-confirmed) and this
-    // is its only possible source; rb3-Wii StorePanel.h:60 / .cpp:239 agrees.
+    // is its only possible source.
     static StorePanel *Instance();
 
     // Retail layout (offsets are of the complete-object; UIPanel non-virtual
@@ -133,7 +133,7 @@ protected:
     // UIPanel
     virtual void PopulateOffers(DataArray *, bool);
     virtual void EnumerateOffers(bool);
-    // RB3 returns int (not StoreError) — matches rb3-Wii's StorePanel.h
+    // RB3 returns int (not StoreError).
     virtual int UpdateOffers(std::list<EnumProduct> const &, bool);
     virtual void UpdateFromEnumProduct(StorePurchaseable *, EnumProduct const *);
     virtual void StoreUserProfileSwappedToUser(LocalUser *);

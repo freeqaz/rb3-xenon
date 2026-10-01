@@ -5,7 +5,7 @@
 #include "utl/MemMgr.h"
 #include "utl/Str.h"
 
-// kOpDirectory=1, kOpFileSize=2 -- agrees with ../dc3-decomp and ../rb3, and
+// kOpDirectory=1, kOpFileSize=2 -- agrees with ../dc3-decomp and
 // with retail.  (An earlier lane declared the reverse and documented it as a
 // retail quirk; that rested on reading `li r10,1` out of a body it had
 // misidentified, because target_symbol_map.json had CacheXbox vtable slots 6

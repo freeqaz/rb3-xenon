@@ -38,7 +38,7 @@ public:
                 mState = true;
         } else if (mAccum < mOffThreshold)
             mState = false;
-// rb3-Wii guards this with #ifdef MILO_DEBUG; retail compiled it out.  Retail's
+// This is an #ifdef MILO_DEBUG guard; retail compiled it out.  Retail's
 // LowPassMercurySwitchFilter::Poll is target fn_8279E720 (0x8279E720, size 0xD8),
 // identified by exact field offsets: 0x14=mLastPoll, 0x4=mSensitivity,
 // 0x18=mAccum, 0x10=mState (byte), 0x8/0xc=mOn/mOffThreshold, with the

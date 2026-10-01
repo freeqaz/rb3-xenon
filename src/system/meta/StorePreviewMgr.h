@@ -26,7 +26,7 @@
  *    (`this + 0x1c` is MsgSource's own static vbase offset — the adjusted-this
  *    convention ??1MsgSource@@UAA@XZ @0x827680D0 itself decodes with.)
  *  - Poll @0x827B1D60 reaches MsgSource::Handle via `this + 0x1c` likewise.
- *  - rb3-Wii oracle agrees: `class StorePreviewMgr : public MsgSource`.
+ *  - `class StorePreviewMgr : public MsgSource`.
  *
  *  Offsets:
  *      0x00  MsgSource base   vbptr 0x00, mSinks 0x04, mEventSinks 0x0c,
@@ -41,7 +41,7 @@
  *      ----  sizeof == 0x60
  *
  *  Retail has none of DC3's mAttenuation / mLoopForever / mLastFailType /
- *  mHasFailure / mTexMovie, and none of the rb3-Wii DEV build's
+ *  mHasFailure / mTexMovie, and none of a DEV build's
  *  mRequestedPreview / mPreviewRequestedSeconds / mIsPreviewPlaying — either
  *  set would overflow 0x60.
  */

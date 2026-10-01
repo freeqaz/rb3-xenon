@@ -1,5 +1,5 @@
-// CommonPhraseCapturer — faithful port from the rb3-Wii oracle
-// (../rb3/src/band3/game/CommonPhraseCapturer.cpp).
+// CommonPhraseCapturer -- the overdrive/unison phrase arbiter
+// (band3/game/CommonPhraseCapturer.cpp).
 //
 // The retail arbiter that turns per-gem overdrive-phrase notes into
 // Player::CompleteCommonPhrase energy credit (single-track) and unison

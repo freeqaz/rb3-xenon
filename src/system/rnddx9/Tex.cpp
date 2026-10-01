@@ -12,7 +12,7 @@
 std::vector<DxTex *> gAllTextures;
 
 // Scratch/destination bookkeeping for the DXT compression path.  File-local in
-// retail (no map row of its own); layout taken from the dc3 oracle
+// retail (no map row of its own); layout taken from dc3
 // (../dc3-decomp/src/system/rnddx9/Tex.cpp:29).
 struct CompressLevel {
     D3DSurface *scratchSurface; // 0x0
@@ -28,7 +28,7 @@ struct CompressDesc {
     // ⚠ dc3 declares this `RndTex::AlphaCompress alpha` -- an enum, so 4 bytes,
     // which compiles to `lwz` + signed `cmpwi`.  RETAIL LOADS A BYTE:
     // `lbz r11,0x4(r30); cmplwi r11,0x0` at 0x82734148+29.  The field is
-    // byte-sized and compared UNSIGNED, so the oracle is wrong about its width.
+    // byte-sized and compared UNSIGNED, so dc3 is wrong about its width.
     // It still holds three values (0/1/2 -- StartCompress tests `== 2`), so it
     // is a u8, not a bool.  3 pad bytes follow; `unk8` stays at 0x8 either way.
     u8 alpha; // 0x4

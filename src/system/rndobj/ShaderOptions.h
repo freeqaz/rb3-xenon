@@ -3,7 +3,7 @@
 #include "utl/Str.h"
 #include <vector>
 
-// Retail RB3 (and rb3-Wii oracle) ShaderType: exactly 26 members (0..25).
+// Retail RB3 ShaderType: exactly 26 members (0..25).
 // The trailing DC3-only shaders (sync_track, playerdepth_shell2, yuv_to_*,
 // player_greenscreen, crew_photo, twirl, killalpha, allwhite, ...) are Dance
 // Central-specific and do NOT exist in Rock Band 3 — retail encodes

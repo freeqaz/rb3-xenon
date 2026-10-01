@@ -99,7 +99,7 @@ static const int kExpertDiff = 3;
 
 // ---- the real retail (scoring.dta) vocal scoring block. VocalPart::SetDifficulty-
 // Variables reads (scoring (vocals ...)); values transcribed verbatim from the
-// extracted retail config (../rb3/orig-assets/extracted/config/scoring.dta). Diff
+// extracted retail config (config/scoring.dta in the retail archive). Diff
 // arrays are indexed ->Float(diff+1), so index 0 is the key and 1..4 are the four
 // difficulties (easy..expert).
 static const char *kConfigDta =

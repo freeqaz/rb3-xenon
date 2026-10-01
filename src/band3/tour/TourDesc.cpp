@@ -27,7 +27,7 @@ void TourDesc::Cleanup() {
 }
 
 void TourDesc::Configure(DataArray *i_pConfig) {
-    // NOTE (retail-vs-Wii-dev): RB3 retail spells every one of these as a
+    // NOTE: RB3 retail spells every one of these as a
     // FUNCTION-LOCAL static Symbol, not a global from utl/Symbols*.h -- the
     // target carries a single guard word (0x82CBEC10) with 19 bits, one per
     // symbol, plus 19 matching `??__F` atexit funclets.  The DECLARATION

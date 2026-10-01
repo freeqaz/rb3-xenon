@@ -81,11 +81,11 @@ void BandRetargetVignette::ListPollChildren(std::list<RndPollable *> &polls) con
 // still does it once, but we build it TWICE (0x54 and 0x58) and so need a third
 // slot at 0x5c. Confirmed by /Z7 stack-layout: one BASE_ONLY 4-byte slot.
 //
-// MEASURED AND REJECTED — the oracle's unnamed-temporary form
+// MEASURED AND REJECTED — the unnamed-temporary form
 // `push_back(String(it->Name()))`: it makes things strictly worse (frame shrinks
 // 0x10, 24 charges instead of 2) because the named `String s` local IS retail's
 // shape — retail's `addi r6, r31, 0x80` is exactly this named temp's slot. So
-// the named local is CORRECT here even though rb3-Wii spells it unnamed, and the
+// the named local is CORRECT here, not an unnamed temporary, and the
 // duplicated end() temp is independent of the temporary's form.
 //
 // This is the same class as the surplus `stw rN, 0x5x, r31` in TrackDir::~TrackDir

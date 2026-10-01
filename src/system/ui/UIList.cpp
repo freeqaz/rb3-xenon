@@ -57,14 +57,14 @@ UIList::UIList()
     // (offsets are compiler-verified via class_layout_report.py UIList):
     //
     //  1. mScrolling (0x23b) / mUncappedNumDisplay: DC3-newer members absent
-    //     from the rb3-Wii oracle. Retail emits no store past 0x239, so they
+    //     in RB3. Retail emits no store past 0x239, so they
     //     are init'd for HX_NATIVE only.
     //  2. mUIListRev (0x1d0): retail's ctor does NOT zero it — its first tail
     //     store is 0x1d4 (mDataProvider). The member is still declared and is
     //     assigned in PreLoadWithRev, so dropping the initializer is
     //     layout-neutral. Leaving it in emitted one extra `stw r29, 0x1d0`.
     //  3. mAllowHighlight (0x239) is 0, not DC3's 1: retail emits
-    //     `stb r29, 0x239` (r29 == 0), and the rb3-Wii oracle's member in this
+    //     `stb r29, 0x239` (r29 == 0), and the original member in this
     //     slot is likewise `unk_0x1E6(0)`. This one is load-bearing beyond its
     //     own store — with (1) the constant 1 had two consumers (0x22c and
     //     0x239), so MSVC hoisted `li 1` far earlier and the longer live range
@@ -172,7 +172,7 @@ END_PROPSYNCS
 BEGIN_SAVES(UIList)
     SAVE_REVS(0x13, 0)
     SAVE_SUPERCLASS(UIComponent)
-    // RB3 retail (rb3-Wii oracle): mListDir is a raw pointer recovered from the
+    // RB3 retail: mListDir is a raw pointer recovered from the
     // resource dir at load time, NOT serialized here (DC3's ResourceDirPtr
     // streamed a FilePath). Not a matched save path; kept compile-clean.
     bs << NumDisplay();
@@ -199,7 +199,7 @@ BEGIN_LOADS(UIList)
     PostLoad(bs);
 END_LOADS
 
-// RB3 retail (0x827FA780) is rb3-Wii's Copy: assert on the cast, base copy,
+// RB3 retail (0x827FA780) Copy: assert on the cast, base copy,
 // the UIList setters, and CopyHandlerData from a second cast. It does not copy
 // mListDir or mLimitCircularDisplayNumToDataNum and does not call Update().
 void UIList::Copy(const Hmx::Object *o, CopyType ty) {
@@ -417,7 +417,7 @@ void UIList::PreLoadWithRev(BinStreamRev &bs) {
         );
     }
     UIComponent::PreLoad(bs.stream);
-    // RB3 retail (rb3-Wii oracle): mListDir is a raw UIListDir* recovered from
+    // RB3 retail: mListDir is a raw UIListDir* recovered from
     // the loaded resource dir; it is not stream-deserialized here as DC3's
     // ResourceDirPtr was. Not a matched preload path; kept compile-clean.
     mUIListRev = bs.rev;
@@ -544,7 +544,7 @@ DataNode UIList::OnSetSelected(DataArray *da) {
     }
 }
 
-// RB3 retail (0x827F86A8): rb3-Wii's PreLoad with PreLoadWithRev(bs, gRev)
+// RB3 retail (0x827F86A8): PreLoad with PreLoadWithRev(bs, gRev)
 // inlined -- the packed rev is split into two TU shorts (alt +0, rev +4, one
 // aligned aggregate as in ui/UIListArrow.cpp), mUIListRev takes the rev, no
 // version guard and no PushRev (PostLoad pops nothing).
@@ -568,7 +568,7 @@ void UIList::PreLoadWithRev(BinStream &bs, int rev) {
 
 void UIList::PostLoad(BinStream &bs) {
     UIComponent::PostLoad(bs);
-    // RB3 retail (rb3-Wii oracle): mListDir (raw UIListDir*) is recovered from
+    // RB3 retail: mListDir (raw UIListDir*) is recovered from
     // mResource->Dir() during resource load, not via a ResourceDirPtr PostLoad.
     //
     // RB3 retail does NOT construct a BinStreamRev/call BinStream::PopRev here
@@ -576,8 +576,8 @@ void UIList::PostLoad(BinStream &bs) {
     // BinStreamRev vtable are all absent from retail's target code — bs itself
     // stays live in one register across the whole function). It instead reads
     // the revision back out of mUIListRev, the persistent member PreLoadWithRev
-    // already populates via LOAD_REVS/PushRev — matching the rb3-Wii oracle,
-    // which has no BinStreamRev at all and reads `bs >>` directly gated on the
+    // already populates via LOAD_REVS/PushRev -- with no
+    // BinStreamRev at all, reading `bs >>` directly gated on the
     // mUIListRev member.
     int local_numdisplay;
     int local_gridspan = 1;
@@ -861,7 +861,7 @@ DataNode UIList::OnSetSelectedSimulateScroll(DataArray *da) {
 void UIList::OldResourcePreload(BinStream &bs) {
     char buf[0x100];
     bs.ReadString(buf, 0x100);
-    // RB3 retail (rb3-Wii oracle): mListDir is a raw UIListDir* recovered from
+    // RB3 retail: mListDir is a raw UIListDir* recovered from
     // mResource->Dir(); there is no ResourceDirPtr::SetName here. Reading the
     // legacy resource name keeps the stream cursor correct. Not a matched path.
 }

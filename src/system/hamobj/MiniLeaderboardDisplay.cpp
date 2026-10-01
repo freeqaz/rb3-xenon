@@ -7,8 +7,8 @@
 #include "ui/UIComponent.h"
 #include "ui/UIResource.h" // lane NCCC-0731-ab7e/f8/sonnet: for UIResource::Dir(); UIComponent.h only fwd-declares it
 
-// lane NCCC-0731-ab7e/f8/sonnet: mAllowSoloScores defaults true (rb3-Wii oracle:
-// `MiniLeaderboardDisplay() : mAllowSoloScores(true) {}`).
+// lane NCCC-0731-ab7e/f8/sonnet: mAllowSoloScores defaults true
+// (`MiniLeaderboardDisplay() : mAllowSoloScores(true) {}`).
 MiniLeaderboardDisplay::MiniLeaderboardDisplay() : mAllowSoloScores(true) {}
 MiniLeaderboardDisplay::~MiniLeaderboardDisplay() {}
 
@@ -104,7 +104,7 @@ void LabelShrinkWrapper::OldResourcePreload(BinStream &bs) {
     char name[256];
     bs.ReadString(name, 256);
     // NOTE(laneBS1): retail RB3 has no LabelShrinkWrapper::mResourceDir to name here
-    // (see the note in ui/LabelShrinkWrapper.h) -- and the rb3-Wii RB3 oracle has no
+    // (see the note in ui/LabelShrinkWrapper.h) -- and RB3 has no
     // OldResourcePreload for this class at all, so it is a DC3 addition. The read is
     // kept so the stream position stays correct for whatever follows. Same treatment
     // lane BQ-2 gave MeterDisplay::OldResourcePreload.

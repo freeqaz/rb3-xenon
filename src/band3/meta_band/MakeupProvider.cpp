@@ -76,7 +76,7 @@ void MakeupProvider::UpdateExtendedText(int, int i_iData, UILabel *label) const 
         label->SetTextToken(descSym);
     } else if (strcmp(label->Name(), "asset_progress_makeup.lbl") == 0) {
         // Retail: function-local static Symbol (guard-bit test + inline
-        // ??0Symbol ctor), not the Symbols*.h global the Wii dev tree uses.
+        // ??0Symbol ctor), not a Symbols*.h global.
         static Symbol customize_asset_progress("customize_asset_progress");
         label->SetTokenFmt(customize_asset_progress, i_iData + 1, NumData());
     } else

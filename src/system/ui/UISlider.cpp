@@ -55,7 +55,7 @@ BEGIN_SAVES(UISlider)
 #endif
 END_SAVES
 
-// RB3 retail (0x82809808) is rb3-Wii's: base copy from the cast pointer, then
+// RB3 retail (0x82809808): base copy from the cast pointer, then
 // mSelectToScroll only (mVertical is not copied).
 BEGIN_COPYS(UISlider)
     CREATE_COPY_AS(UISlider, s)
@@ -104,8 +104,8 @@ RndDrawable *UISlider::CollideShowing(const Segment &s, float &fl, Plane &pl) {
 
 // retail 0x8280A320 (88 B). We returned a bare 0; retail forwards to the
 // resource dir. Note the neighbouring DrawShowing/CollideShowing already match
-// at 100% with our simpler bodies even though the Wii oracle has richer ones --
-// so this was ported per-row off the retail size, not by trusting the oracle.
+// at 100% with our simpler bodies -- so this was ported per-row off the
+// retail size.
 int UISlider::CollidePlane(const Plane &pl) {
     SyncSlider();
     RndDir *dir = mResource->Dir();

@@ -35,8 +35,8 @@ public:
     //   slot 28  retail ?SetPan@NoteVoiceInst@@UAAXM@Z   ours ?UpdatePan@...
     //   slot 29  retail ?SetVolume@NoteVoiceInst@@UAAXM@Z ours ?SetPan@...
     // Slots 0-27 already agreed in count, so the inserted entry was the sole
-    // extra. The rb3-Wii oracle (RB3 generation, and it DOES carry this class
-    // -- the absence is meaningful, not a missing file) declares exactly
+    // extra. The RB3 generation of this class
+    // declares exactly
     // SetTranspose / UpdateVolume / SetPan / SetVolume with no UpdatePan;
     // dc3-decomp, which is NEWER than RB3, has it and calls it from
     // MidiInstrument::Poll. A prior lane had already removed the *call* here
@@ -52,7 +52,7 @@ public:
     SampleInst *Sample() const { return mSample; }
     // Retail MidiInstrument::ReleaseNote (0x827141D8) reads the trigger note as
     // an inlined `lbz r11, 0x34(r3)`, i.e. through an accessor the optimiser
-    // folds away. The rb3-Wii oracle declares exactly this accessor; ours was
+    // folds away. This accessor exists for that; ours was
     // missing it, which is why ReleaseNote could not be written at all.
     unsigned char TriggerNote() const { return mTriggerNote; }
 
@@ -80,7 +80,7 @@ private:
 
 /** "Basic sound effect object.  Plays several samples with a given volume, pan,
  * transpose, and envelope settings." */
-// Retail RB3 does NOT derive SynthPollable (rb3-Wii oracle: MidiInstrument is
+// Retail RB3 does NOT derive SynthPollable (MidiInstrument is
 // driven by a MidiInstrumentMgr, with a NON-virtual Poll()). DC3 (newer) added
 // the SynthPollable base + global poll list, which inserts a vfptr+mItr+mIsActive
 // (0xc) before the first member and shifts every member down. Gate the DC3 form

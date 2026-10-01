@@ -513,12 +513,12 @@ public:
     float unk390;
     float unk394;
     int unk398;
-    // NOTE: retail Xbox drops the Wii guitar-FX-core block that lived here
+    // NOTE: retail Xbox has no guitar-FX-core block here
     // (unk39c FXCore index, unk3a0 mFxPos cache, unk3a4/unk3a8 SetFX/SetReverb
     // gate bools). Xbox routes guitar FX through mPitchShift (0x38c) instead, so
     // these 16 bytes are absent in the retail layout — verified against the
     // retail disassembly (member-delta R1). Everything below is therefore 0x10
-    // lower than the old Wii-derived comments.
+    // lower than older comments assumed.
     float unk3ac; // 0x3d8
     float mAutoMissSoundTimeoutMs; // 0x3dc
     float mFirstGemMs; // 0x3e0

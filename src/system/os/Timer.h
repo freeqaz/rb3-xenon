@@ -323,7 +323,7 @@ private:
 };
 
 // Retail RB3 compiled this profiling instrumentation OUT.  Evidence (laneBS4,
-// 2026-07-30), from the retail binary rather than from either source oracle:
+// 2026-07-30), from the retail binary rather than from source text:
 //
 //  1. A whole-`.text` scan of orig/45410914/band.exe decodes 197,239 `bl`
 //     instructions; exactly THREE target AutoTimer::GetTimer (0x82511A28).

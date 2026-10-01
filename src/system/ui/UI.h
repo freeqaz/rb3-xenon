@@ -33,7 +33,7 @@ class UIResource;
 //   own-vftable @ 0x0, vbtbl @ 0x8, Hmx::Object vbase relocated to tail @ 0x84.
 //   The dc3 source had `class UIManager : public Hmx::Object` (NON-virtual base,
 //   fields starting @ 0x2c); that addressing model is wrong for RB3-360, which
-//   uses `public virtual Hmx::Object` (matches rb3-Wii, the game oracle). The
+//   uses `public virtual Hmx::Object`. The
 //   retail Handle accesses members as negative offsets from the vbase `this`
 //   (e.g. -0x74 = mTransitionState @ 0x10), proving the virtual base.
 class UIManager : public virtual Hmx::Object {
@@ -61,7 +61,7 @@ public:
     virtual bool IsBlockingTransition() { return false; }
     virtual bool IsTimelineResetAllowed() const { return true; }
 
-    // Wii-origin net-error dialog; referenced by ported RB3-Wii game code
+    // Net-error dialog; referenced by game code
     // (meta_band/OvershellPanel). Decl-only on X360.
     void ShowNetError();
     // Wii-origin; referenced by BandUI::UpdateInputPerformanceMode. Decl-only
@@ -148,7 +148,7 @@ protected:
     Automator *mAutomator;
     bool mShowDevMenu;
 #else
-    // Retail carries an unnamed int here (rb3-Wii dev oracle: `int unk74`). It
+    // Retail carries an unnamed int here (`int unk74`). It
     // pads the UIManager own-object out to 0x80 so the virtual-base thunk lands
     // at vtordisp @ 0x80 and the Hmx::Object vbase at 0x84 (without it the bool
     // at 0x7b would only extend the object to 0x7c, placing the vbase at 0x80).

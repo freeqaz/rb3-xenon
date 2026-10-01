@@ -8,7 +8,7 @@ class UIListLabel;
 class UILabel;
 
 // Retail X360 rewrite: the 360 store menu is driven by plain DataArrays
-// ("submenus" / "new_releases") instead of the Wii build's
+// ("submenus" / "new_releases"), not
 // StorePackedMetadata pages. Layout verified against retail fns
 // 0x82656AD8-0x8265760C (ctor 0x826574C0, ??_G 0x826575C0).
 class StoreMenuProvider : public UIListProvider, public Hmx::Object {

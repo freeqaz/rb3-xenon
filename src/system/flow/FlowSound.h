@@ -69,7 +69,7 @@ protected:
     // (that guess overshot sizeof by 0x20 -- see run_objdiff diff_arg on
     // FlowSound::NewObject's `li r3, 0xf4` vs retail `li r3, 0xd4`).
     // DC3 is newer and dropped these members; the exact fields are unknown (no
-    // rb3-Wii Flow oracle), so reserve the (now-correctly-sized) gap so
+    // source for these Flow members), so reserve the (now-correctly-sized) gap so
     // derived/sibling layouts match.
     char mUnkA4[0x8]; // 0xa0
 };

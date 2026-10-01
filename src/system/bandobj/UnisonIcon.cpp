@@ -1,4 +1,4 @@
-// Ported from rb3-Wii src/system/bandobj/UnisonIcon.cpp (MWCC -> MSVC X360).
+// UnisonIcon (bandobj/UnisonIcon.cpp), MSVC X360.
 #include "bandobj/UnisonIcon.h"
 #include "utl/Symbols.h"
 

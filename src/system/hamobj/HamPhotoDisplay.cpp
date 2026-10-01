@@ -67,7 +67,7 @@ END_PROPSYNCS
 //      exact: base 140 B - 3 insns (subi/mr/bl) = 128 B = target.
 //   3. SAVE_SUPERCLASS position. Retail calls ?Save@RndDir@@ LAST (tail), after
 //      the IsProxy-guarded block; SAVE_SUPERCLASS emits it FIRST.
-// And decisively: rb3-Wii -- RB3's OWN source oracle -- has no HamPhotoDisplay
+// And decisively: RB3 has no HamPhotoDisplay
 // and no hamobj/ directory at all, so RB3 never had this class to drift from.
 // Closing this row is map/identification work (find the real RB3 class), not
 // source work.

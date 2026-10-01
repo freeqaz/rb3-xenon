@@ -46,8 +46,8 @@ public:
 
         ObjPtr<RndMat> mMat; // 0x0
         ObjPtr<RndMat> mResourceMat; // 0xc
-        // DO NOT REORDER THESE THREE. Order confirmed twice over: the rb3-Wii
-        // Bank 5 debug DWARF gives MatSwap byte_size 0x70 with mTwoColorDiffuse
+        // DO NOT REORDER THESE THREE. Order confirmed twice over: the
+        // debug DWARF gives MatSwap byte_size 0x70 with mTwoColorDiffuse
         // @0x18 / mTwoColorInterp @0x24 / mTwoColorMask @0x30, and operator>>
         // gates the FIRST TWO slots behind `gRev < 5` while reading the third
         // ungated -- and it matches retail at 100%, which it could not if the
@@ -63,8 +63,8 @@ public:
         // PASSES: retail runs interp (0x2c) -> mask (0x38) -> diffuse (0x20),
         // where this source used to run diffuse -> interp -> mask. Fixed by
         // reordering the passes in Compose (lane X23, S4); the declarations
-        // here are untouched and correct. rb3-Wii's
-        // PropSync__FRQ212OutfitConfig7MatSwap... is 100.000% and pairs
+        // here are untouched and correct. The MatSwap
+        // PropSync (PropSync__FRQ212OutfitConfig7MatSwap...) is 100.000% and pairs
         // two_color_diffuse->0x18 / two_color_interp->0x24 /
         // two_color_mask->0x30 against the Symbol relocations, which settles
         // the naming independently of Compose.
@@ -171,7 +171,7 @@ public:
     // defect here. NEW_OVERLOAD produced shape (a) -- an out-of-line
     // ??2OutfitConfig@@SAPAXI@Z and the temp-free 0x50 slot -- which left the
     // row at 5/25 words equal (fuzzy 86.929). The spelling was inherited from
-    // rb3-Wii, which retail contradicts; see ObjMacros.h's NEW_OBJ record.
+    // a source form retail contradicts; see ObjMacros.h's NEW_OBJ record.
     // Delete is the INLINABLE form (_INLINE_DEL): retail's ??_GOutfitConfig
     // (fn_822ABE70) calls ?MemFree@@YAXPAX@Z directly. The NewObject unwind
     // funclet at 0x822abe48 calls the out-of-line ICF survivor

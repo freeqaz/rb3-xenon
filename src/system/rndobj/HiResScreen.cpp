@@ -159,8 +159,8 @@ void HiResScreen::TakeShot(const char *c, int i) {
 //     0x826C3888, which is a 4-byte bare `blr` with zero relocations (retail's
 //     universal empty-function ICF survivor, 1116 direct callers); and retail's
 //     HiResScreen TU emits no TakeShot extent at all.
-// (2) the rb3-Wii oracle guards this exact body with `#ifdef VERSION_SZBE69_B8`,
-//     its dev-build gate, so the retail configuration compiles it to `{}`.
+// (2) this exact body is a dev-build-only (`#ifdef VERSION_SZBE69_B8`) body,
+//     so the retail configuration compiles it to `{}`.
 // Our DC3-derived port (DC3 is a dev/debug build) inherited the body UNGATED.
 // House pattern: keep the behaviour for the native port, drop it for the match
 // build. See docs/decomp/patterns/milo-debug-force-define.md.
@@ -444,7 +444,7 @@ Hmx::Rect HiResScreen::ScreenRect(const RndCam *cam, const Hmx::Rect &r) const {
 // RB3 retail's no-arg ScreenRect() does NOT route through the 2-arg tiling
 // overload: adjudicated on retail bytes at 0x823F7150 (48 B, 12 instructions,
 // leaf, `this` in r4 unread). It is a straight copy of the current camera's
-// screen rect. DC3 (newer) and the rb3-Wii DEV build both added the
+// screen rect. DC3 (newer) and a DEV build both add the
 // `ScreenRect(cam, r)` call; retail has neither the call nor a stack frame.
 Hmx::Rect HiResScreen::ScreenRect() const { return RndCam::Current()->GetScreenRect(); }
 

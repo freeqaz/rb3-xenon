@@ -35,7 +35,7 @@ void PatchSelectPanel::Load() {
         MILO_FAIL("PatchSelectPanel must have a profile to pull from!");
     }
     mPatchProvider = new PatchProvider(mSourceProfile->mPatches);
-    // Retail X360 uses 4 columns here, not the rb3-Wii oracle's 3
+    // Retail X360 uses 4 columns here, not 3
     // (target emits `li r5, 0x4` at this call site).
     mGridProvider = new UIGridProvider(mPatchProvider, 4);
 }
@@ -172,7 +172,7 @@ inline void PatchProvider::Text(int, int idx, UIListLabel *slot, UILabel *label)
     // Retail X360 keeps these two Symbols as FUNCTION-LOCAL STATICS (two
     // guard-word-protected `Symbol::Symbol(const char*)` calls at the top of
     // the body, guard bits 0 and 1), not as the file-scope globals declared in
-    // utl/Symbols.h that the rb3-Wii dev source uses.
+    // utl/Symbols.h.
     static Symbol shell_no_patch("shell_no_patch");
     static Symbol shell_new_patch("shell_new_patch");
     if (idx == 0)
@@ -190,7 +190,7 @@ inline void PatchProvider::InitData(RndDir *dir) {
         RndMat *newMat = Hmx::Object::New<RndMat>();
         newMat->Copy(mEmptyMat, kCopyShallow);
         newMat->SetDiffuseTex(mPatches[i]->GetTex());
-        // Retail X360 has NEITHER of the rb3-Wii dev source's two extra calls
+        // Retail X360 has NEITHER of two extra calls
         // (`SetAlphaCut(true)` / `SetAlphaThreshold(false)`): the target body
         // has no `stb` to mAlphaCut at all, and exactly ONE `lwz 0x188 / ori 2
         // / stw 0x188` read-modify-write -- which is SetDiffuseTex's own

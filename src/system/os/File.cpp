@@ -444,7 +444,7 @@ void FileInit() {
     // Neither "toggle_fake_file_errors" nor "enumerate_frame_rate_results" occurs in
     // retail band.exe -- dev-only DataRegisterFunc entries, exactly the
     // loadmgr_debug/loadmgr_print class this lane already gated in LoadMgr::Init.
-    // rb3-Wii's FileInit has HolmesClientInit() inside this same ifdef block
+    // RB3's FileInit has HolmesClientInit() inside this same ifdef block
     // (not called unconditionally like dc3-decomp's newer version), and retail
     // bytes confirm it: objdiff showed the HolmesClientInit call as base-only
     // insert residue at 88.98% match (idx 33, lane NCCC-0803-b2bb/f33/sonnet).
@@ -458,7 +458,7 @@ void FileInit() {
         MILO_ASSERT(gOpenCaptureFile, 0x18F);
     }
 #ifdef HX_NATIVE
-    // rb3-Wii's FileInit has no AddExitCallback(FileTerminate) call at all --
+    // RB3's FileInit has no AddExitCallback(FileTerminate) call at all --
     // this is a dc3-decomp-only addition (dc3 is a newer engine snapshot; see
     // CLAUDE.md source-provenance caveat). Retail bytes lack it too (base-only
     // insert residue), so gate it native-only rather than dropping it outright.
@@ -990,10 +990,10 @@ void RecursePatternInternal(
         // Retail keeps pttn.length() ITSELF in r28 (`clrrwi r28,r11,0`), not
         // length()-1: we emitted an extra `subi r28,r11,0x1` and paid for it in
         // flipped strictness (`ble`/`bgt` where retail has `blt`/`bge`) and an
-        // extra `addi r6,r11,1` on the substr count. rb3-Wii (File.cpp:589) has
-        // the length()-1 form -- retail-Xbox differs from the Wii oracle here,
-        // as it also does on the recomputed dirs.size() and the 1-arg
-        // FileGetPath above. Retail bytes outrank the oracle. Lane W7-A.
+        // extra `addi r6,r11,1` on the substr count. A
+        // length()-1 form is wrong for retail-Xbox here; retail
+        // also recomputes dirs.size() and uses the 1-arg
+        // FileGetPath above. Retail bytes decide. Lane W7-A.
         int pttnLen = (int)pttn.length();
         // Walk forward from splitPos looking for path separator
         int forwardPos = splitPos;
@@ -1010,8 +1010,8 @@ void RecursePatternInternal(
             // makes 3 calls to ?substr@String@@QBA?AV1@II@Z and 0 to the one-arg
             // ?substr@String@@QBA?AV1@I@Z (measured on the split target obj's
             // relocations). dc3 -- which is NEWER than RB3 -- uses the one-arg form
-            // here and we inherited it; the RB3-era rb3-Wii oracle (File.cpp:599)
-            // uses the two-arg form and retail agrees with rb3-Wii.
+            // here and we inherited it; the RB3-era
+            // form uses two args and retail agrees.
             // Behaviourally identical: pttnLen is length()-1, so the count
             // (pttnLen+1)-forwardPos is exactly length()-forwardPos, i.e. "to end".
             String subPattern = pttn.substr(

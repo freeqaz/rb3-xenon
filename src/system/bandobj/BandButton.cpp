@@ -1,4 +1,4 @@
-// Ported from rb3-Wii src/system/bandobj/BandButton.cpp (MWCC -> MSVC X360).
+// BandButton (bandobj/BandButton.cpp), MSVC X360.
 #include "bandobj/BandButton.h"
 #include "bandobj/BandLabel.h"
 #include "rndobj/PropAnim.h"
@@ -253,10 +253,10 @@ void BandButton::StartPulseAnim() {
     }
 }
 
-// Retail 0x82343E10, 524 B. Read off retail bytes; the rb3-Wii oracle body is
-// faithful for X360 here (both label-dir anims, same order).
+// Retail 0x82343E10, 524 B. Read off retail bytes: both label-dir anims,
+// same order.
 //
-// The one place the oracle cannot be transcribed literally is the Replace()
+// The one place needing care is the Replace()
 // argument. Retail converts BOTH arguments *and* `this` with the identical
 // four-instruction virtual-base adjust (lwz +4 / lwz +4 / add / addi +4), i.e.
 // retail's Hmx::Object::Replace takes (Hmx::Object *, Hmx::Object *). This tree

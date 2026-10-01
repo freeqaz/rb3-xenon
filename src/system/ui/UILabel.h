@@ -128,10 +128,10 @@ public:
     bool CheckValid(bool);
     void SetEditText(char const *);
     // Forwards to text caps mode; referenced by game code (OvershellSlot::ShowState).
-    // Decl-only, mirrors rb3-Wii UILabel::SetCapsMode(RndText::CapsMode).
+    // Decl-only: UILabel::SetCapsMode(RndText::CapsMode).
     void SetCapsMode(RndText::CapsMode);
     void SetAlignment(RndText::Alignment);
-    // Decl-only, mirrors rb3-Wii UILabel::SetColorOverride(UIColor *).
+    // Decl-only: UILabel::SetColorOverride(UIColor *).
     // Referenced by bandobj game code (InstrumentDifficultyDisplay, ScoreDisplay).
     // Non-virtual, no layout effect.
     void SetColorOverride(UIColor *);
@@ -144,8 +144,8 @@ public:
     const RndText *TextObj() const;
 
     // ------------------------------------------------------------------
-    // RB3 retail API restored from the rb3-Wii oracle
-    // (../rb3/src/system/ui/UILabel.h) + retail asm. All NON-VIRTUAL except
+    // RB3 retail API, restored
+    // from the retail asm. All NON-VIRTUAL except
     // Update()/CopyMembers(), which are OVERRIDES of existing UIComponent
     // virtual slots 0x4c/0x48 -- they add no vtable slot and do not move the
     // verified UILabel own-virtual block (Draw/SetCreditsText/SetDisplayText
@@ -215,7 +215,7 @@ protected:
     DataNode OnSetInt(DataArray const *);
     DataNode OnSetTimeHMS(DataArray const *);
     bool AllowEditText() const;
-    // retail 0x827F6258 takes TWO bools (matches the rb3-Wii signature); the
+    // retail 0x827F6258 takes TWO bools; the
     // one-arg form was the DC3 shape.
     void LabelUpdate(bool, bool);
     DataNode OnSetHeightFromText(DataArray *);
@@ -249,23 +249,23 @@ protected:
     //     UILabel::Font()'s mat-variation cache (retail 0x827F2CE8) confirms
     //     mLabelDir/mFont/mCurFontMatVariation/mFontMatVariation.
     //
-    // Member NAMES and ORDER follow the rb3-Wii oracle
-    // (../rb3/src/system/ui/UILabel.h) — same game, so the source order is the
-    // same; only the offsets differ (Wii own-members start at 0x10c).
-    // Retail-vs-Wii-dev divergences found and encoded here:
+    // Member NAMES and ORDER follow RB3's own UILabel
+    // -- same game, so the source order is the
+    // same; only the offsets differ.
+    // Retail details encoded here:
     //   - mAlignment / mCapsMode / mFitType are 4-byte enums in retail, not the
-    //     packed uchars the Wii header shows (PreLoad reads 4 bytes into each).
+    //     packed uchars (PreLoad reads 4 bytes into each).
     //   - mMarkup / mUseHighlightMesh / mAltStyleEnabled are separate bools at
     //     0x18c / 0x1cc / 0x1f8, not a packed bitfield.
     //   - mFixedLength / mReservedLine are 4-byte ints, not shorts.
-    //   - retail has an extra String at 0x168 that the Wii decomp models as a
+    //   - retail has an extra String at 0x168, not a
     //     discarded local in PreLoad (`if (gRev > 0xD) { String s; bs >> s; }`).
     // ---------------------------------------------------------------------
     UILabelDir *mLabelDir; // 0x140 (ctor stw 0x140; Font() passes it to UILabelDir)
     RndText *mText; // 0x144 (FitText: lwz r3,0x144(r30) -> RndText methods)
-    String mLabelText; // 0x148 (Wii `unk114`, the live display text)
+    String mLabelText; // 0x148 (`unk114`, the live display text)
     ObjPtr<RndFont> mFont; // 0x154 (Font(): lwz 0x15c = ObjPtr payload)
-    Symbol mCurFontMatVariation; // 0x160 (Wii `unk12c`; Font() caches variation)
+    Symbol mCurFontMatVariation; // 0x160 (`unk12c`; Font() caches variation)
     Symbol mTextToken; // 0x164 (PreLoad: bs >> mTextToken)
     String mEditText; // 0x168 (PreLoad gRev>0xD; Milo-only preview text)
     String mIcon; // 0x174 (PreLoad gRev>0xE)
@@ -279,7 +279,7 @@ protected:
     FitType mFitType; // 0x19c
     float mWidth; // 0x1a0
     float mHeight; // 0x1a4
-    int mFixedLength; // 0x1a8 (read as 4 bytes, not the Wii short)
+    int mFixedLength; // 0x1a8 (read as 4 bytes, not a short)
     int mReservedLine; // 0x1ac (ditto)
     String mPreserveTruncText; // 0x1b0
     float mAlpha; // 0x1bc

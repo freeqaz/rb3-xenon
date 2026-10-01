@@ -41,7 +41,7 @@ void ScoreDisplay::CopyMembers(const UIComponent *o, Hmx::Object::CopyType ty) {
     COPY_MEMBER_FROM(p, mTextColor)
 }
 
-// Retail-360 has a REAL Save here (the rb3-Wii oracle's `SAVE_OBJ` assert-stub is
+// Retail-360 has a REAL Save here (a `SAVE_OBJ` assert-stub would be
 // a 4-byte body; retail's fn_8231FEE0 is 196 B of BinStream writes). Order recovered
 // from the target: packed revs 2, short@-0x20, int@-0x1c, ObjPtr@-0x10, int@-0x18,
 // bool@-0x14, then UIComponent::Save — i.e. the same order PreLoad reads them.

@@ -8,12 +8,12 @@ BandSongPref::BandSongPref()
     : mPart2Instrument("guitar"), mPart3Instrument("bass"), mPart4Instrument("drum"),
       mAnimGenre("rocker") {}
 
-// rb3-Wii's dev decomp has `SAVE_OBJ(BandSongPref, 24)` here (an unconditional
-// MILO_ASSERT(0)), but RB3-360 retail ships a real saver: fn_822C0D48 writes the
+// RB3-360 retail ships a real saver here, not a `SAVE_OBJ(BandSongPref, 24)`
+// MILO_ASSERT(0) stub: fn_822C0D48 writes the
 // packed rev 3 through BinStream::WriteEndian, chains to Hmx::Object::Save, then
 // streams the four Symbol members from this+0x28/0x2c/0x30/0x34 -- exactly
 // mPart2Instrument, mPart3Instrument, mPart4Instrument, mAnimGenre (Hmx::Object
-// is 0x28 bytes on 360, so the Wii offsets 0x1c..0x28 shift by 0xc).
+// is 0x28 bytes on 360, so the 0x1c..0x28 offsets of a 0x1c Object shift by 0xc).
 BEGIN_SAVES(BandSongPref)
     SAVE_REVS(3, 0)
     SAVE_SUPERCLASS(Hmx::Object)

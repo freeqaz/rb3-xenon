@@ -11,7 +11,7 @@ void Profiler::Start() { mTimer.Start(); }
 
 void Profiler::Stop() {
     mTimer.Stop();
-    // RB3-360 retail (rb3-Wii form): Ms() re-evaluated per use, float compares,
+    // RB3-360 retail: Ms() re-evaluated per use, float compares,
     // and the elapsed time accumulated into mSum.
     float ms = mTimer.Ms();
     if (ms < mMin) {

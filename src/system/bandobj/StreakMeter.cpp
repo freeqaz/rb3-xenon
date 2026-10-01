@@ -21,8 +21,8 @@ StreakMeter::StreakMeter()
 
 void StreakMeter::SyncObjects() {
     bool audible = true;
-    // retail: `li r5, 0x1` at the first call -- the recurse flag is TRUE, as in
-    // the rb3-Wii oracle. Ours had `false`.
+    // retail: `li r5, 0x1` at the first call -- the recurse flag is TRUE.
+    // Ours had `false`.
     Hmx::Object *gamemodeObj = FindObject("gamemode", true);
     if (gamemodeObj)
         audible = gamemodeObj->Property("play_streak_sfx", true)->Int();

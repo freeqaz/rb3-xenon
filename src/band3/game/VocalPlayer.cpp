@@ -202,7 +202,7 @@ void VocalPlayer::ConfigureBehavior() {
 }
 
 // Retail keeps this test out of line (fn_826E3AA8, one caller: SetTrack); the
-// name is ours (lane W16-HX4). The oracle spells it inline in SetTrack.
+// name is ours (lane W16-HX4).
 #pragma auto_inline(off)
 bool VocalPlayer::IsNetOrSpoofed() const { return IsNet() || mSpoofed; }
 #pragma auto_inline(on)
@@ -1067,8 +1067,8 @@ void VocalPlayer::LocalEndgameEnergy(int x) {
     (void)x;
     return;
 #else
-    // Retail 360 does NOT use the four Messages*.h globals the Wii dev build
-    // does (rb3/src/band3/game/VocalPlayer.cpp).  Target fn_826E6298 holds ONE
+    // Retail 360 does NOT use any of the four Messages*.h globals here.
+    // Target fn_826E6298 holds ONE
     // function-local `static Message` (slot 0x82E03524, guard 0x82E0352C),
     // built from Symbol("") -> Message(Symbol) -> atexit, then re-typed per
     // branch: each arm calls Message::SetType(Symbol) (out-of-line
@@ -1240,7 +1240,7 @@ int VocalPlayer::GetSpotlightPhraseID() const {
 //     phrase; it flows into VocalTrack::OnPhraseComplete's third (int)
 //     parameter, which VocalTrack.cpp only uses in a "last: %i\n" debug
 //     string.
-//   - iCappedRating/idx and the retail-vs-Wii-dev-build idx-1 note were
+//   - iCappedRating/idx and the retail idx-1 note were
 //     already present before this pass and are unchanged.
 void VocalPlayer::HandlePhraseEnd(float f1) {
     std::vector<VocalPart *> voxParts = mVocalParts;
@@ -1329,8 +1329,8 @@ void VocalPlayer::HandlePhraseEnd(float f1) {
         iPhraseRating = iHighRatingPartCount + 3;
     if (iPhraseRating != -1) {
         int idx = mVocalParts.front()->CurrentPhraseIndex();
-        // Retail passes idx-1 (`subi r5, r3, 0x1` right before the call); the
-        // Wii dev build passes idx.
+        // Retail passes idx-1 (`subi r5, r3, 0x1` right before the call), not
+        // idx.
         int iCappedRating = std::min(iPhraseRating, 4);
         UpdateCrowdMeter(iCappedRating, idx - 1);
     }
@@ -1691,8 +1691,8 @@ static bool IsVocalVolumeButton(JoypadButton but) {
     }
 }
 
-// Ported from retail bytes (fn_826E5E98, 0xF4 B) -- NOT from an oracle: rb3-Wii has
-// `OnMsg(const ButtonUpMsg&) { return 0; }`, a stub, and the RB2 dump carries only
+// Ported from retail bytes (fn_826E5E98, 0xF4 B): this is not a stub returning
+// 0, and the RB2 dump carries only
 // signatures. Retail's body, instruction for instruction:
 //   lwz 0x260(this) + vbase adjust      -> (User *)GetUser()
 //   bl fn_825150C8 + vbase adjust       -> msg.GetUser();  differ => return false
@@ -2221,7 +2221,7 @@ bool VocalPlayer::SongSectionOnly(float &f1, float &f2) const {
     // Retail (TU5) constructs a function-local static Symbol here that is never
     // read again: guard lbl_82E03500, storage lbl_82E034FC, string
     // "has_song_sections" (lbl_820DCB18), plus the guard-clear thunk
-    // fn_826E42C0 after the function. Neither rb3-Wii nor DC3 has it. Its
+    // fn_826E42C0 after the function. DC3 does not have it. Its
     // register pressure is also why retail uses r31 as a frame pointer here.
     static Symbol has_song_sections("has_song_sections");
     if (!TheGame->mProperties.mHasSongSections) {

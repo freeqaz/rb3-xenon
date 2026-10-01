@@ -93,7 +93,7 @@ END_COPYS
 // whole into a file-static int (`bs >> gRev`: lwz/cmpwi, no hmx/alt split) and
 // LoadStage (0x824637E8) reads it as its own symbol (lis + lwz lbl_82CC5060).
 // No rev wrapper exists -- band.exe has no `.?AVBinStreamRev@@` descriptor --
-// and every read takes the raw stream (rb3-Wii's shape).
+// and every read takes the raw stream.
 static int gRev_MatAnim = 0;
 
 BEGIN_LOADS(RndMatAnim)

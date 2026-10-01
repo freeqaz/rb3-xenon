@@ -35,7 +35,7 @@ public:
     //     li r4,0 ; li r3,0x290 ; bl ?MemAlloc@@YAPAXHH@Z ; stw r3,0x54(r31)
     // 0x290 == 656 == the compiler's sizeof(BandLabel), so no layout defect.
     // NEW_OVERLOAD gave shape (a) and left the row at 5/25 words (fuzzy
-    // 86.929) -- the same rb3-Wii-inherited spelling retail contradicts in
+    // 86.929) -- the same inherited spelling retail contradicts in
     // ObjMacros.h's NEW_OBJ record.
     // Delete is the INLINABLE form (_INLINE_DEL): retail's deleting destructor
     // for this class (reached as ??_GAppLabel, which inherits it) calls

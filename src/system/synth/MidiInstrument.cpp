@@ -44,7 +44,7 @@ void NoteVoiceInst::Start() {
 #ifdef HX_NATIVE
     mSample->Play(mOwner->Faders().GetVal() + mVolume);
 #else
-    // RB3 retail (rb3-Wii): the non-virtual SampleInst::Start (stop, then
+    // RB3 retail: the non-virtual SampleInst::Start (stop, then
     // StartImpl); no volume is pushed here.
     mSample->Start();
 #endif
@@ -69,7 +69,7 @@ void NoteVoiceInst::UpdateVolume() {
 }
 
 // NoteVoiceInst::UpdatePan() removed -- see the note at its former declaration
-// in MidiInstrument.h. Retail's vtable has no such slot, the rb3-Wii oracle has
+// in MidiInstrument.h. Retail's vtable has no such slot, RB3 has
 // no such method, and nothing here called it. It is DC3-only, and its body
 // (SetPan(0.0f), i.e. hard-centre the voice) was live behaviour we do not want
 // to inherit by accident.
@@ -204,7 +204,7 @@ END_COPYS
 
 INIT_REVS(3, 0)
 
-// RB3 retail (0x82715D50) is rb3-Wii's Load: a plain int rev, a too-new rev
+// RB3 retail (0x82715D50) Load: a plain int rev, a too-new rev
 // skips the body, and the rev reaches the sample zones through SampleZone::gRev
 // rather than a BinStreamRev -- the zone readers take the raw BinStream.
 BEGIN_LOADS(MidiInstrument)
@@ -243,7 +243,7 @@ void MidiInstrument::Poll() {
             }
         }
         if (mFaders.Dirty()) {
-            // Retail RB3 (and the rb3-Wii oracle) update volume only; DC3
+            // Retail RB3 updates volume only; DC3
             // (newer) added the UpdatePan() call.
             FOREACH (it, mActiveVoices) {
                 (*it)->UpdateVolume();
@@ -297,8 +297,8 @@ void MidiInstrument::ReleaseNote(unsigned char uc) {
     for (ObjPtrList<NoteVoiceInst>::iterator it = mActiveVoices.begin();
          it != mActiveVoices.end();
          ++it) {
-        // Operand order is load-bearing and the oracle has it backwards: retail
-        // emits `cmplw cr6, r11, r30` (TriggerNote first), rb3-Wii's
+        // Operand order is load-bearing: retail
+        // emits `cmplw cr6, r11, r30` (TriggerNote first), while
         // `uc == (*it)->TriggerNote()` emits `cmplw cr6, r30, r11`. One token,
         // 104 B.
         if ((*it)->TriggerNote() == uc) {
@@ -317,11 +317,11 @@ void MidiInstrument::ReleaseNote(unsigned char uc) {
 // NOTE the call is on the SAMPLE, not the voice: retail does `lwz r3, 0x28(r11)`
 // before the vcall, and mSample sits at 0x28 of NoteVoiceInst. SampleInst::Pause
 // is vtable slot 22 == 0x58 (compiler-reported), so this is
-// `(*it)->Sample()->Pause(b)`. The rb3-Wii oracle spells the loop body
-// `(*it)->Pause(b)` via a one-line NoteVoiceInst::Pause that retail INLINES away;
-// writing the oracle's form literally would have emitted a vcall on the voice and
-// not matched. Retail bytes outrank the oracle.
-// Retail 0x82713410 (8 B): `stfs f1, 0x7c(r3)` -- the oracle's range assert is
+// `(*it)->Sample()->Pause(b)`. A one-line NoteVoiceInst::Pause
+// (`(*it)->Pause(b)`) is what retail INLINES away;
+// writing that form literally would have emitted a vcall on the voice and
+// not matched. Retail bytes decide.
+// Retail 0x82713410 (8 B): `stfs f1, 0x7c(r3)` -- the range assert is
 // MILO_ASSERT, which compiles away in this build.
 void MidiInstrument::SetFineTune(float cents) {
     MILO_ASSERT_RANGE(cents, -100.f, 100.f, 0x1F9);

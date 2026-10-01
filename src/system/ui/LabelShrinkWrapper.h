@@ -21,7 +21,7 @@ public:
     // NO SetTypeDef override: retail's vtable slot dispatches UIComponent::SetTypeDef
     // (AppInlineHelp slot 15 -> 0x823258f0 -> 0x827fe658; LabelShrinkWrapper -> 0x8231c7d8 -> same).
     // DC3 added an override that calls Hmx::Object::SetTypeDef + Update() and thereby
-    // SKIPS UIComponent::SetTypeDef; rb3-Wii has none. Lane W3-E 2026-09-11.
+    // SKIPS UIComponent::SetTypeDef; RB3 has none. Lane W3-E 2026-09-11.
     virtual void PreLoad(BinStream &);
     virtual void PostLoad(BinStream &);
     // RndDrawable
@@ -51,10 +51,10 @@ protected:
     // (1) the compiler layout report put `(vtordisp for vbase Object)` at 384 with them
     // present and at 352 without, and retail's ?SetType@LabelShrinkWrapper@@ (0x82826e50)
     // uses the vbase-displacement immediate -0x160 = 352 where we emitted -0x180 = 384,
-    // a uniform -32 across all 12 differing words; (2) the rb3-Wii RB3 oracle
-    // (../rb3/src/system/ui/LabelShrinkWrapper.h) declares only m_pLabel, m_pShow and
+    // a uniform -32 across all 12 differing words; (2) RB3's own
+    // LabelShrinkWrapper declares only m_pLabel, m_pShow and
     // the four bones -- neither the dir ptr nor the borders -- so removing them also
-    // restores retail's member ORDER; (3) that oracle's PreLoad is ASSERT_REVS(0,0) and
+    // restores retail's member ORDER; (3) its PreLoad is ASSERT_REVS(0,0) and
     // streams only m_pLabel/m_pShow, i.e. retail has no stream field for either, which
     // is why the rev>=1/rev>=2 reads went with them.
     // Like MeterDisplay (lane BQ-2), RB3 reaches the dir through the INHERITED

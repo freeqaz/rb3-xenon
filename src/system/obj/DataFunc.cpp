@@ -345,7 +345,7 @@ DEF_DATA_FUNC(DataMin) {
     return 0;
 }
 #else
-// RB3 retail (rb3-Wii shape): two operands only, float if either is.
+// RB3 retail: two operands only, float if either is.
 DEF_DATA_FUNC(DataMin) {
     const DataNode &n1 = array->Evaluate(1);
     const DataNode &n2 = array->Evaluate(2);
@@ -375,7 +375,7 @@ DEF_DATA_FUNC(DataMax) {
     return 0;
 }
 #else
-// RB3 retail (rb3-Wii shape): two operands only, float if either is.
+// RB3 retail: two operands only, float if either is.
 DEF_DATA_FUNC(DataMax) {
     const DataNode &n1 = array->Evaluate(1);
     const DataNode &n2 = array->Evaluate(2);
@@ -513,7 +513,7 @@ DEF_DATA_FUNC(DataMultiply) {
     return 0;
 }
 #else
-// RB3 retail (rb3-Wii shape): two operands only, float if either is.
+// RB3 retail: two operands only, float if either is.
 DEF_DATA_FUNC(DataMultiply) {
     const DataNode &dn1 = array->Evaluate(1);
     const DataNode &dn2 = array->Evaluate(2);
@@ -589,7 +589,7 @@ DEF_DATA_FUNC(DataAsc) {
     return *str;
 }
 
-// Retail 0x8275F8B0 / rb3-Wii: only kDataSymbol goes through atoi (UncheckedStr,
+// Retail 0x8275F8B0: only kDataSymbol goes through atoi (UncheckedStr,
 // no Str() call); the kDataString arm was DC3-newer. A string node falls to
 // LiteralFloat like retail.
 DEF_DATA_FUNC(DataInt) {
@@ -716,7 +716,7 @@ DEF_DATA_FUNC(DataLocalize) {
 }
 
 DEF_DATA_FUNC(DataLocalizeSeparatedInt) {
-    // retail calls the 1-arg overload (?LocalizeSeparatedInt@@YAPBDH@Z), as rb3-Wii does;
+    // retail calls the 1-arg overload (?LocalizeSeparatedInt@@YAPBDH@Z);
     // the 2-arg form is DC3-newer (lane W3-A, 2026-09-11)
     return LocalizeSeparatedInt(array->Int(1));
 }
@@ -821,7 +821,7 @@ DEF_DATA_FUNC(DataNotify) {
     return 0;
 }
 
-// rb3-Wii DataFunc.cpp:734. Retail's body is `return 0` (folded by ICF onto
+// Retail's body is `return 0` (folded by ICF onto
 // ??0DataNode@@QAA@XZ, which is where the registry points) -- the MILO_DEBUG
 // print is dev-only and MILO_DEBUG is force-defined tree-wide.
 DEF_DATA_FUNC(DataNotifyBeta) {
@@ -1245,7 +1245,7 @@ DEF_DATA_FUNC(DataHasAnySubStr) {
     return 0;
 }
 
-// Retail 0x82761D08 / 0x82761D60 (absent from rb3-Wii DataFunc.cpp and from
+// Retail 0x82761D08 / 0x82761D60 (absent from
 // DC3): `match_pattern` = StringMatchesFilter(Str(1), Str(2));
 // `match_any_pattern` = any of Array(2)'s strings matches Str(1).
 DEF_DATA_FUNC(DataMatchPattern) {

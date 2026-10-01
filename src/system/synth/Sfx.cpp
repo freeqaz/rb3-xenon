@@ -223,7 +223,7 @@ INIT_REVS(0xD, 0)
 BEGIN_LOADS(Sfx)
     // RB3-360 retail reads the rev as a plain int and compares it directly — no
     // BinStreamRev hi/lo split, no ASSERT_REVS. The child SfxMap/MoggClipMap
-    // loaders read the parent rev via their own TU-statics (rb3-Wii idiom, assert
+    // loaders read the parent rev via their own TU-statics (ObjMacros idiom, assert
     // stripped). MILO_WARN is a retail no-op, so rev>0xC just skips the body.
     int rev;
     bs >> rev;

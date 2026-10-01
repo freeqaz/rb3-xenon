@@ -219,7 +219,7 @@ public:
     void RefreshHeader();
     int GetTotalAccomplishments();
     // Retail X360 takes an (unused) LocalBandUser* here; the handler passes
-    // _msg->Obj<LocalBandUser>(2). The rb3-Wii dev oracle has the older 0-arg
+    // _msg->Obj<LocalBandUser>(2), not a 0-arg
     // form. Verified from retail asm at 0x825F78F8 (r4 is never read).
     bool IsUserOnCorrectInstrument(LocalBandUser *);
     bool HasCorrectPlayerCount();

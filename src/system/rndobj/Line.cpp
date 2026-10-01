@@ -126,8 +126,8 @@ INIT_REVS(4, 0)
 // local at all -- ReadEndian and the bool reads dispatch directly through
 // `bs` (verified: target asm for the bool loads is `bl ??5BinStream@@...`,
 // i.e. BinStream::operator>>(bool&), not a BinStreamRev override), and the
-// rev comparisons use the raw int. This mirrors rb3-Wii's hand-written form
-// (obj/ObjMacros.h dialect) rather than dc3's LOAD_REVS(bs)/`d`-decorator
+// rev comparisons use the raw int. This is the hand-written form
+// (obj/ObjMacros.h dialect), not dc3's LOAD_REVS(bs)/`d`-decorator
 // idiom. Keep the BinStreamRev+ASSERT_REVS path for the native port only,
 // where it's real diagnostic behavior gated by HX_NATIVE and inert for the
 // match build (ASSERT_REVS expands to nothing when HX_NATIVE is undefined).

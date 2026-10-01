@@ -14,7 +14,7 @@ FaceHairProvider::FaceHairProvider() : mFaceHair(0) {
     const std::hash_map<Symbol, Asset *> &assets = pAssetMgr->GetAssets();
     // Retail declares the property Symbol as a FUNCTION-LOCAL static (guard word
     // 0x82E02018 / Symbol 0x82E02014 + ??0Symbol@@QAA@PBD@Z inline in the ctor),
-    // where the rb3-Wii dev source references the Symbols4.h global.
+    // not the Symbols4.h global.
     static Symbol none_facehair("none_facehair");
     mMaleFaceHair.push_back(none_facehair);
     mFemaleFaceHair.push_back(none_facehair);

@@ -40,7 +40,7 @@ public:
     //   ObjVector<ConstraintSystem> (0x10) -> ObjList<ConstraintSystem> (0xc)  -4
     //   bool mSetLocal (+3 tail pad it was holding open)                       -4
     // Evidence, none of it the metric:
-    //  (1) rb3-Wii -- RB3's OWN engine generation, not DC3's newer one --
+    //  (1) RB3's OWN engine generation, not DC3's newer one,
     //      declares `ObjList<ConstraintSystem> mTargets; // 0x8` followed by
     //      `mSrc1; // 0x14`, i.e. a 12-byte span, and stops at mRotation;
     //  (2) the exact NUL-terminated property Symbol "set_local\0" has ZERO

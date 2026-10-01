@@ -97,8 +97,8 @@ void VocalGuidePitch::EnableGuideTrack(int i1) {
 // both as `lwz r11, 0x48(this); lwz r3, 0x14(r11); bl`.
 //
 // This is EnableGuideTrack's inner block minus the `mGuideTrack != i1` guard and
-// the `mGuideTrack = i1` store: retail factored it out, the rb3-Wii dev build
-// inlines it. The emitted sequence (lwz 0x28 / lwz 0xc / lwz 0x10 / add /
+// the `mGuideTrack = i1` store: retail factors it out rather than
+// inlining it. The emitted sequence (lwz 0x28 / lwz 0xc / lwz 0x10 / add /
 // clrlwi / bl ReleaseNote) is byte-identical to the block inside
 // EnableGuideTrack (0x826C9098), which already matches at 100% with this exact
 // source spelling -- so the operand order below is calibrated, not guessed.

@@ -80,7 +80,7 @@ private:
     static SampleDataFreeFunc sFree;
 
     // Retail RB3 layout (cross-checked against the target binary's
-    // SampleData::Reset/Save/SizeAs and rb3-Wii's SampleData.h). DC3's newer
+    // SampleData::Reset/Save/SizeAs). DC3's newer
     // engine added mCRC@0x0 and mNumChannels@0xc; RB3 has neither.
     int mNumSamples; // 0x0
     int mSampleRate; // 0x4

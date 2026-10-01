@@ -69,7 +69,7 @@ public:
     void SetSend(FxSend *);
 
     void SetLoop(bool, int, int);
-    // Retail RB3 (and the rb3-Wii oracle) carry a 1-arg SetLoop plus trivial
+    // Retail RB3 carries a 1-arg SetLoop plus trivial
     // SetLoopStart/SetLoopEnd; SyncProperty's loop / loop_start_sample /
     // loop_end_sample properties call them.  Target ?SetLoop@..@QAAX_N@Z lives
     // at 0x8270D770 (mLoop 0x44, mStream 0x4c, start 0x80, end 0x84, vtable
@@ -84,13 +84,13 @@ public:
     // with a direct `bl` -- CrowdAudio 0x82312730, Sfx 0x8271AADC, VoiceoverPanel
     // 0x8262F568 + 0x8262F6D8).  Its body reads NO float parameter: f1 is loaded
     // from a 0.0f constant and the volume comes from mVolume + mControllerVolume.
-    // This is the rb3-Wii MoggClip::Play() shape; the virtual Play(float) below is
+    // This is the RB3 MoggClip::Play() shape; the virtual Play(float) below is
     // DC3's newer-engine form and has no retail counterpart.
     void Play();
     void SetLoopStart(int i) { mLoopStartSample = i; }
     void SetLoopEnd(int i) { mLoopEndSample = i; }
     void EndLoop();
-    // Out-of-line (matches rb3-Wii MoggClip.h:51 + retail's direct `bl` at the
+    // Out-of-line (matches retail's direct `bl` at the
     // SfxInst::UpdateVolume call site); an in-class body would inline instead.
     void SetControllerVolume(float);
     bool IsStreaming() const;

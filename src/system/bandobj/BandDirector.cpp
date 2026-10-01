@@ -34,9 +34,9 @@ static struct {
 __declspec(noinline) int SymToPstKeyframe(Symbol);
 
 /** Xbox-360 Rock Band Stage Kit fog control (see BandDirector::SetFog).
- *  The rb3-Wii dev source has SetFog empty because the Stage Kit -- a 360-only
- *  USB peripheral with a fog machine and LEDs -- does not exist on Wii, so
- *  there is NO source oracle for this one; the shape below is read off retail.
+ *  SetFog drives the Stage Kit -- a 360-only
+ *  USB peripheral with a fog machine and LEDs -- and
+ *  the shape below is read off retail.
  *  Retail BandDirector::SetFog is fn_8228CFF0 (0x6C bytes) and calls:
  *    fn_82521C80 -> bool: `return fn_82524D40() != -1;` (device id probe)
  *    fn_82521D80 -> void(bool): sends the command (fn_82521B30(0, b ? 1 : 2))
@@ -165,7 +165,7 @@ void BandDirector::Enter() {
 #if defined(MILO_DEBUG) && defined(HX_NATIVE)
         // RB3-360 retail: the string "motion_blur" occurs ZERO times in
         // orig/45410914/band.exe, and Enter() emits no Symbol("rnd")/Symbol("motion_blur").
-        // The config read is rb3-Wii DEV-build only; kept for the native host.
+        // The config read is dev-build only; kept for the native host.
         BandDirector::sMotionBlurBlendAmount = SystemConfig("rnd", "motion_blur")->Float(1);
 #endif
         mCamPostProc = 0;
@@ -360,7 +360,7 @@ void BandDirector::CollideList(const Segment &seg, std::list<Collision> &colls) 
     RndDrawable::CollideList(seg, colls);
 }
 
-// retail 0x8227CEE0: real Save body (Wii dev build had the SAVE_OBJ assert stub)
+// retail 0x8227CEE0: real Save body (not a SAVE_OBJ assert stub)
 void BandDirector::Save(BinStream &bs) {
     bs << packRevs(0, 6);
     Hmx::Object::Save(bs);
@@ -412,8 +412,8 @@ END_COPYS
 // destination our already-matching 4 B ?Copy@BandTrack@@ reaches.  That is
 // consistent with Hmx::Object::Replace itself being a no-op in the match build
 // (Object.cpp) and with CharWeightable::Replace's "no Hmx::Object::Replace
-// fallback" finding.  rb3-Wii's dev-build oracle does carry the two superclass
-// calls; retail bytes outrank the oracle.  Kept for the native port.
+// fallback" finding.  A dev build carries the two superclass
+// calls; retail bytes decide.  Kept for the native port.
 void BandDirector::Replace(ObjRef *from, Hmx::Object *to) {
 #ifdef HX_NATIVE
     Hmx::Object::Replace(from, to);
@@ -568,7 +568,7 @@ void BandDirector::EnterVenue() {
                     if (TheCrowdAudio)
                         TheCrowdAudio->SetBank(mCurWorld);
                     static Symbol venue_sym("venue");
-                    // rb3-Wii dev-build guard: the editor-mode sphere sync is
+                    // Dev-build guard: the editor-mode sphere sync is
                     // exactly the TheLoadMgr.EditMode() check CB-7 centralized as
                     // LOADMGR_EDITMODE (utl/Loader.h), but this site was
                     // open-coded under a bare #ifdef MILO_DEBUG so that fix never
@@ -809,7 +809,7 @@ void BandDirector::HarvestDircuts() {
 }
 
 // Retail 0x8228DD38 (0x244 bytes). Factored out of OnFileLoaded (lane CT-3):
-// the rb3-Wii dev source has this block inlined inside VenueLoaded, but retail
+// retail does not inline this block into VenueLoaded: it
 // calls it from two places -- OnFileLoaded (0x82292350) and
 // BandWardrobe::SetPlayMode (0x823308F4) -- so it reads everything from members:
 // the four CharLipSync* cached at 0x120-0x12c by OnFileLoaded and mSongPref at
@@ -1151,7 +1151,7 @@ DataNode BandDirector::OnLoadSong(DataArray *da) {
 // while we split them (0x50: 21, 0x54: 17). Frame size, callee-saved GPR count
 // and 85 of 87 user slots are identical. Ruled out: a by-value/by-const-ref
 // signature divergence on AddKeys/SetInterpHandler (our decls are identical to
-// BOTH the dc3 and rb3-Wii oracles). What is left is MSVC temporary-slot
+// dc3's). What is left is MSVC temporary-slot
 // allocation shaping -- permuter class, and the permuter is off by directive.
 // Do not re-diagnose this as a layout bug. `tools/r31_role_census.py` measures
 // the base rate: among decidable retail functions >= 400 instructions, r31 is
@@ -1284,7 +1284,7 @@ DataNode BandDirector::OnFileLoaded(DataArray *da) {
             );
         } else
             unk110 = false;
-        // "key_intensity" (the rb3-Wii dev spelling) does not exist anywhere in
+        // "key_intensity" does not exist anywhere in
         // retail band.exe; retail stores keyboard_intensity into the 5th slot of
         // this stack array (stw r23, 0x1a0(r31) at 0x82292...).
         const char *instIntensities[] = { "mic_intensity",     "bass_intensity",
@@ -1327,7 +1327,7 @@ void BandDirector::UnloadVenue(bool b) { mVenue.Unload(b); }
 
 DataNode BandDirector::OnSaveSong(DataArray *da) { return 0; }
 
-// Retail (Ghidra 0x82288738) drops the Wii dev build's TheLoadMgr.EditMode()
+// Retail (Ghidra 0x82288738) has no TheLoadMgr.EditMode()
 // branches (frame-skip fast path and the DeltaSeconds rewind reset).
 DataNode BandDirector::OnSelectCamera(DataArray *a) {
     if (!mDisabled) {
@@ -1467,8 +1467,8 @@ DataNode BandDirector::OnMidiAddPreset(DataArray *da) {
     return 0;
 }
 
-// Retail (0x82284C18): Keys<DircutEntry>::Cross(secs, secs - delta) replaces
-// the Wii dev build's GetFirstInRange; Cross is out-of-line at 0x822847A8.
+// Retail (0x82284C18): Keys<DircutEntry>::Cross(secs, secs - delta), not
+// GetFirstInRange; Cross is out-of-line at 0x822847A8.
 BandCamShot *BandDirector::FindNextDircut() {
     float secs = TheTaskMgr.Seconds(TaskMgr::kRealTime);
     const DircutEntry *e = mDircuts.Cross(secs, secs - TheTaskMgr.DeltaSeconds());
@@ -1824,8 +1824,8 @@ void BandDirector::OnMidiAddPostProc(Symbol s, float f1, float f2) {
     }
 }
 
-// Retail-only pair (0x8229A2E0 / 0x82298E60). Neither exists in the rb3-Wii dev
-// source; both are reached only through the two retail-only Handle() arms above,
+// Retail-only pair (0x8229A2E0 / 0x82298E60). Both
+// are reached only through the two retail-only Handle() arms above,
 // so what matters for Handle()'s codegen is that they stay out-of-line calls.
 #pragma auto_inline(off)
 void BandDirector::OnRbn2AddPostProc(Symbol s, float f) {
@@ -2026,7 +2026,7 @@ BEGIN_PROPSYNCS(BandDirector)
     SYNC_PROP_SET(cur_world, mCurWorld.Ptr(), )
     // Retail (0x822944B8..) passes the INSTRUMENT symbol first and the incoming
     // property value second: r4 = Symbol("bass"), r5 = _val.Sym().  That is the
-    // rb3-Wii oracle's order (BandDirector.cpp:2143).  The original port
+    // natural order.  The original port
     // transcribed it swapped, and a later match-chasing commit (8aa2892a)
     // wrapped the swapped form in a `{ Symbol v = ...; }` block rather than
     // fixing the order -- so the swap survived as a real behavioural defect.
@@ -2077,11 +2077,11 @@ BEGIN_PROPSYNCS(BandDirector)
 END_PROPSYNCS
 
 // ---------------------------------------------------------------------------
-// Stub definitions: methods that exist on the Wii engine LightPreset /
+// Stub definitions: methods of the full LightPreset /
 // LightPresetManager / SymToPstKeyframe / RndPostProc but are absent from the
 // dc3-derived 360 tree. Defined here (rather than touching engine .cpps) so
 // BandDirector.cpp can compile; behavior matches "no music-video presets".
-// Port the real implementations as part of the world/LightPreset Wii->360 wave.
+// Port the real implementations as part of the world/LightPreset 360 wave.
 // __declspec(noinline): retail implements these in the LightPreset TU
 // (e.g. SymToPstKeyframe @ 0x82497FD8, SchedulePstKey @ 0x824A5DC8), so every
 // call site in this TU must stay an out-of-line bl. Without the barrier MSVC

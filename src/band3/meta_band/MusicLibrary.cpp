@@ -91,7 +91,7 @@ void MusicLibrary::TryToSetHighlight(Symbol token, SongNodeType type, bool passt
     static Symbol random_song("random_song");
     static Symbol make_a_setlist("make_a_setlist");
     // Retail uses early-returns with per-block node scope (no foundNode/matched
-    // bool temporaries) — the Wii oracle's flag-tracking form emits ~30 extra
+    // bool temporaries) — a flag-tracking form emits ~30 extra
     // insns and forces a larger frame + wider callee-save band.
     if (token.Str() != gNullStr) {
         SortNode *node = GetCurrentSort()->GetNode(token);
@@ -210,7 +210,7 @@ void MusicLibrary::OnEnter() {
     UIPanel *panel = ObjectDir::Main()->Find<UIPanel>("song_select_panel", true);
     mSongPreviewDelay = panel->TypeDef()->FindFloat("song_preview_delay");
     /* Retail builds these six Symbols as FUNCTION-LOCAL statics, not as the
-       Symbols2.h file-scope globals the Wii dev branch uses. Proof: retail keeps
+       Symbols2.h file-scope globals. Proof: retail keeps
        ONE guard word at 0x82DFD5AC and tests/sets bits 0x01,0x02,0x04,0x08,0x10,
        0x20 around six ??0Symbol@@QAA@PBD@Z calls — the MSVC local-static guard
        shape. Declaration order below is that bit order; each Symbol's identity was
@@ -239,7 +239,7 @@ void MusicLibrary::OnEnter() {
            ClearCriticalUser/SetMode arm laid out INLINE and SetupTaskForTrainer
            out-of-line — i.e. SetupTaskForTrainer is the ELSE arm and the test is
            two equality compares (4 before 3), not the `ty - 3 <= 1U` range check
-           the Wii branch used. 4/3 = kControllerRealGuitar/kControllerKeys, which
+           form. 4/3 = kControllerRealGuitar/kControllerKeys, which
            is also the semantically right pair (Trainer is Pro Guitar + Pro Keys). */
         if (ty != kControllerRealGuitar && ty != kControllerKeys) {
             TheSessionMgr->mCritUserListener->ClearCriticalUser();
@@ -283,8 +283,8 @@ void MusicLibrary::OnEnter() {
     /* Retail-only, immediately after TryToSetHighlight and before the 0x180 store:
          lbz r11, 0x1a0(this); cmplwi r11, 0; beq +; lwz r3, 0x19c(this);
          bl fn_825BCA38
-       i.e. `if (unk1a0) unk19c->Unk825BCA38();`. Absent from the Wii dev branch,
-       which is why the 0x19c/0x1a0 tail fields were declared but never used here. */
+       i.e. `if (unk1a0) unk19c->Unk825BCA38();`. The 0x19c/0x1a0 tail fields
+       exist for this retail-only test. */
     if (unk1a0) {
         unk19c->Unk825BCA38();
     }
@@ -332,7 +332,7 @@ void MusicLibrary::OnEnter() {
 void MusicLibrary::OnExit() {
     ClearSongPreview();
     /* Retail builds this Symbol as a FUNCTION-LOCAL static, not as the Symbols2.h
-       file-scope global the Wii dev branch uses. Proof from retail bytes (dtk
+       file-scope global. Proof from retail bytes (dtk
        fn_82542A00 @ 0x82542A00, 748 B): immediately after the ClearSongPreview
        call it loads guard word 0x82DFD5B4, tests bit 0x1 (`clrlwi. r9,r11,31`),
        and on the cold path does `ori r11,r11,0x1; stw` then calls
@@ -381,8 +381,8 @@ void MusicLibrary::OnExit() {
     /* Retail-only, between CleanUp and the unke8 check: `lwz r3,0x19c(this);
        bl fn_825BC908`, and the map names fn_825BC908
        ?ClearPreview@MusicLibraryStore@@QAAXXZ. Unconditional here — unlike the
-       OnEnter counterpart, which guards its 0x19c call on unk1a0. Absent from the
-       Wii dev branch, which is why the 0x19c tail field was declared but unused.
+       OnEnter counterpart, which guards its 0x19c call on unk1a0. This call is
+       retail-only; the 0x19c tail field exists for it.
        ⚠ NOTE FOR THE MAP LANE: the callee's real class is MusicLibraryStore, whose
        identified members cluster at 0x825BC908/0x825BC9D8/0x825BD458/0x825BD618;
        our local stub class MusicLibraryUnkOp conflates that class with a second,
@@ -749,7 +749,7 @@ void MusicLibrary::PlaySetlist(bool b1) {
                  (void *)TheProfileMgr.GetPrimaryProfile());
 #endif
     // Retail 360 guards on HasSyncPermission() (Synchronizable slot 3, this+0x30),
-    // NOT ContentDir() as the rb3-Wii dev oracle does — verified from the retail
+    // NOT ContentDir() -- verified from the retail
     // vtable group: PlaySetlist loads [this+0x30]+0xc (Sync vtable slot 3, bool
     // return). There is NO base-layout delta here (Callback@0x2c, Sync@0x30 in
     // both builds); the prior "+4 wall" was ContentDir(Callback) misread as the
@@ -1298,8 +1298,8 @@ void MusicLibrary::Text(int, int idx, UIListLabel *slot, UILabel *label) const {
     label->SetTextToken(gNullStr);
 
     // The 360-ARK song_select.milo authors several list slots as plain UILabels
-    // rather than the AppLabel the RB3-Wii code expects; the cast then yields
-    // null. The Wii path expects AppLabel and asserts. On native/web we fall
+    // rather than the AppLabel this code expects; the cast then yields
+    // null. The original path expects AppLabel and asserts. On native/web we fall
     // back to writing the underlying text via the base UILabel API so song
     // titles, headers, and setlist names render instead of being silently
     // dropped (W6 V1). The fallback loses some localized formatting (e.g.
@@ -1477,8 +1477,8 @@ void MusicLibrary::Text(int, int idx, UIListLabel *slot, UILabel *label) const {
         break;
     }
     case kNodeStoreSong: {
-        // Retail-360-only arm. The rb3-Wii dev oracle has NO store, so this case
-        // exists in no oracle and is reconstructed from retail bytes -- the
+        // Retail-360-only arm, so this case
+        // is reconstructed from retail bytes -- the
         // `cmpwi cr6, r3, 0x7` arm of ?Text@MusicLibrary@@ at 0x8253CD90:
         //   __RTDynamicCast target ??_R0 @0x82C72544 = .?AVStoreSongSortNode@@
         //   slot strings  "song" @0x820010F0, "downloading" @0x8208FE44
@@ -1838,7 +1838,7 @@ void MusicLibrary::PushHighlightToScreen(bool b1) {
 }
 
 void MusicLibrary::PushMakingSetlistToScreen() {
-    // retail fn_8253F140: function-local Symbol + Message statics, not the Wii globals
+    // retail fn_8253F140: function-local Symbol + Message statics, not globals
     static Symbol on_change_setlist_mode("on_change_setlist_mode");
     static Message on_change_setlist_mode_msg(on_change_setlist_mode);
     SendMessageToSongSelectPanel(on_change_setlist_mode_msg);
@@ -1941,7 +1941,7 @@ void MusicLibrary::RemoveLastSongFromSetlist() {
     if (mSetlist.size()) {
         // Retail 360 guards on HasSyncPermission() (Synchronizable slot 3,
         // this+0x30, bool return), NOT ContentDir() (Callback slot 11,
-        // this+0x2c, const char* return) as the rb3-Wii dev oracle does --
+        // this+0x2c, const char* return) --
         // the same pattern as PlaySetlist and AppendToSetlist above.
         if (HasSyncPermission()) {
             mSetlist.pop_back();
@@ -2577,7 +2577,7 @@ BEGIN_HANDLERS(MusicLibrary)
     // laneAY-B: retail's list ends here -- it has NO FriendsListChangedMsg and
     // NO UserLoginMsg handler (target 0x82542D20 goes straight from
     // ServerStatusChangedMsg/RemoteMachineLeftMsg to Hmx::Object::Handle; the
-    // two rb3-Wii handlers were a clean 60-instruction base-only insert).
+    // two removed handlers were a clean 60-instruction base-only insert).
     HANDLE_SUPERCLASS(Hmx::Object)
     HANDLE_CHECK(0xC7B)
 END_HANDLERS

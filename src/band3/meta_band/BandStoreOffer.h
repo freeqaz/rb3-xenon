@@ -11,7 +11,7 @@ class StorePackedOfferBase;
 class BandStoreOffer : public StoreOffer {
 public:
     BandStoreOffer(DataArray *, SongMgr *);
-    // REMOVED (lane STOREPANEL, 2026-08-22): the rb3-Wii dev-build 3-arg ctor
+    // REMOVED (lane STOREPANEL, 2026-08-22): a dev-build 3-arg ctor
     // (const StorePackedOfferBase *, SongMgr *, bool).  It was declared-but-never-
     // defined solely so the old BandStorePanel::MakeNewOffer(ptr, bool) would
     // compile.  Retail's BandStorePanel::MakeNewOffer (0x82605778) calls

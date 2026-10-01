@@ -156,7 +156,7 @@ void BandCharacter::RemovingObject(Hmx::Object *o) {
 }
 
 // ⛔ CORRECTION (lane VT-SIG, 2026-08-22). This body previously took
-// `(Hmx::Object*, Hmx::Object*)` and carried a NOTE asserting that "RB3-Wii's
+// `(Hmx::Object*, Hmx::Object*)` and carried a NOTE asserting that "the
 // BandCharDesc::Replace / Character::Replace base calls have no dc3
 // equivalent". BOTH halves are refuted by retail bytes:
 //   * `Character::Replace(ObjRef*, Hmx::Object*)` exists in this tree
@@ -272,8 +272,8 @@ CharClipDriver *BandCharacter::PlayMainClip(int i, bool b) {
                 CharClip *clp = 0;
                 // Retail: a FUNCTION-LOCAL static (guard 0x82CBC850, string
                 // "keyboard" @0x8201165C), and the whole block is skipped in
-                // vignette/closet -- the rb3-Wii condition lacks `!invorc` and
-                // binds `&& (i & 0xF) != 2 && !b` to the keyboard arm only.
+                // vignette/closet -- a condition without `!invorc` that
+                // binds `&& (i & 0xF) != 2 && !b` to the keyboard arm only is wrong.
                 static Symbol keyboard("keyboard");
                 if (!invorc && (mUseMicStandClips || mInstrumentType == keyboard)
                     && (i & 0xF) != 2 && !b) {
@@ -425,7 +425,7 @@ void BandCharacter::Poll() {
     }
 
     // Edit mode starvation handling - clear driver if clip near end.
-    // rb3-Wii dev-build only: retail 360 has no unk6d8 member (see BandCharacter.h).
+    // Dev-build only: retail 360 has no unk6d8 member (see BandCharacter.h).
 #ifdef HX_NATIVE
     if (LOADMGR_EDITMODE && unk6d8 < 0.0f && TheTaskMgr.DeltaSeconds() > 0.0f
         && Dir() != this) {
@@ -446,7 +446,7 @@ void BandCharacter::Poll() {
 
     if (!mFrozen) {
         // Force vertical orientation.
-        // (dc3 RndTransformable uses an mDirty bool rather than rb3-Wii's
+        // (dc3 RndTransformable uses an mDirty bool rather than a
         // DirtyCache* mCache; DirtyLocalXfm() marks dirty and returns the
         // mutable local transform — same net effect as the mCache force-dirty.)
         if (mForceVertical) {
@@ -1721,8 +1721,8 @@ void BandCharacter::DrawLodOrShadowMode(int i, DrawMode mode) {
 // reaches Hmx::Object through single (non-virtual) inheritance, so per the
 // SetObjConcrete-inlining trait documented in obj/ObjPtr_p.h it should always
 // be cheap enough to inline. Our compiler's per-callsite /Ob2 cost heuristic
-// declines here even though the source is verified byte-identical to the
-// rb3-Wii oracle (BandCharacter.cpp:3547) and the callee body matches the
+// declines here even though the source is the
+// straightforward form and the callee body matches the
 // established retail non-native SetObjConcrete pattern. TU-local explicit
 // specialization forces the same body retail already emits inline; scoped to
 // this .cpp only (not declared in the shared header) so it cannot affect any
@@ -2006,15 +2006,15 @@ void BandCharacter::SetDeformation() {
 }
 
 // Stands in for a CharServoBone regulate-waypoint accessor that retail's
-// codegen proves existed (the counterpart of SetRegulateWaypoint, which both
-// oracles have). Retail loads the waypoint as `mr r10,r3 ; lwz r4,0xa4(r10)` --
+// codegen proves existed (the counterpart of SetRegulateWaypoint, which
+// exists). Retail loads the waypoint as `mr r10,r3 ; lwz r4,0xa4(r10)` --
 // i.e. it keeps the UNADJUSTED CharServoBone* and folds mRegulate@0x9c plus
 // ObjRefConcrete::mObject@+8 into one displacement. Reading `servo->mRegulate`
 // directly instead inlines ObjPtr's `operator T*()` with this = servo+0x9c, and
 // because the load gets scheduled away from that addi the fold never happens:
 // `addi r10,r3,0x9c ; lwz r4,0x8(r10)`. Going through a function whose
 // parameter is the unadjusted servo restores retail's shape exactly.
-// Neither oracle declares this accessor -- MWCC folds both forms identically,
+// No surviving source declares this accessor -- MWCC folds both forms identically,
 // so only MSVC's address-fold behaviour reveals it. Promoting it to a real
 // inline member of CharServoBone would be more faithful but is a header edit.
 static Waypoint *RegulateOf(CharServoBone *s) { return s->mRegulate; }
@@ -2298,7 +2298,7 @@ RndTex *BandCharacter::GetPatchTex(Patch &patch) {
         if (!mPrefab.Null()) {
             return Find<RndTex>(MakeString("prefab_art%02d.tex", patch.mTexture), false);
         } else
-            // Retail X360 has no LOADMGR_EDITMODE "patchtest.tex" arm (rb3-Wii
+            // Retail X360 has no LOADMGR_EDITMODE "patchtest.tex" arm (a
             // DEV-build addition), same as GetBandLogo above.
             return 0;
     }
@@ -2315,7 +2315,7 @@ RndMesh *BandCharacter::GetPatchMesh(Patch &patch) {
 
 RndTex *BandCharacter::GetBandLogo() {
     // Retail X360 has NO LOADMGR_EDITMODE / GetNullTexture arm here — that is a
-    // rb3-Wii DEV-build addition. Retail also uses a FUNCTION-LOCAL static
+    // DEV-build addition. Retail also uses a FUNCTION-LOCAL static
     // Message (guard bit + Symbol temp + atexit in the target) rather than the
     // file-scope ::get_band_logo_msg from utl/Messages.h.
     static Message get_band_logo_msg("get_band_logo");
@@ -2458,16 +2458,16 @@ BEGIN_HANDLERS(BandCharacter)
 // (0x820137FC falls inside the contiguous descending-address BandCharacter string
 // pool, so the position is corroborated by pool ordering, not just by the diff.)
 //
-// Our arm is inherited from the rb3-Wii DEV build and is structurally correct --
+// Our arm comes from a DEV build and is structurally correct --
 // same 5-instruction Symbol-compare group, same stack slot, same 0x10 of frame --
 // but semantically wrong.  Normalized objdiff runs functionRelocDiffs=none, which
 // MASKS reloc targets, so the wrong Symbol name is invisible to the metric (the
 // documented "metric is blind to attribution" class).
 //
 // Correct fix = rename to hack_fix_clips_pre_merge + recover its handler body.
-// That name appears in NO oracle (not rb3-Wii, not DC3): it is RB3-360-retail
+// That name appears in no other build (not DC3): it is RB3-360-retail
 // exclusive, so the body has to come from the target asm.  Until then this arm
-// stays, and the native port keeps the real rb3-Wii debug-overlay behaviour.
+// stays, and the native port keeps the real debug-overlay behaviour.
 #ifdef MILO_DEBUG
     HANDLE(toggle_interests_overlay, OnToggleInterestDebugOverlay)
 #endif
@@ -2655,7 +2655,7 @@ void ReplaceRefs(Hmx::Object *theirs, Hmx::Object *mine) {
 #ifdef HX_NATIVE
     // ⛔ X7 DEFECT FIX -- this arm was written against the WRONG ObjRef SHAPE.
     //
-    // It came over from rb3-Wii, where Hmx::Object::mRefs is a
+    // It assumed Hmx::Object::mRefs is a
     // `std::vector<ObjRef *>` and Refs() returns it. In THIS tree mRefs is an
     // INTRUSIVE DOUBLY-LINKED RING and `Refs()` returns `const ObjRef &` --
     // the ring HEAD SENTINEL, not a container (obj/Object.h:1973, :92-215).
@@ -2699,7 +2699,7 @@ void ReplaceRefs(Hmx::Object *theirs, Hmx::Object *mine) {
     }
 #else
     // dc3 lineage stores object refs as an ObjRef ring (begin()/end()) rather
-    // than rb3-Wii's std::vector<ObjRef*> mRefs, and ObjRef::Replace takes a
+    // than a std::vector<ObjRef*> mRefs, and ObjRef::Replace takes a
     // single target (the ref already points at `theirs`). Walk the ring, and on
     // each repoint restart from the new head (the ring mutates under us).
     bool changed = true;

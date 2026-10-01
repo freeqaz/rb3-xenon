@@ -24,8 +24,8 @@ public:
     NEW_OBJ(ContentDeletePanel);
     static void Init() { REGISTER_OBJ_FACTORY(ContentDeletePanel); }
 
-    // Retail-360 layout (proven from 0x82612EC8-0x826139B4 asm): the Wii dev
-    // build's `int mContent` + `String mContentNames[2]` are NOT present here.
+    // Retail-360 layout (proven from 0x82612EC8-0x826139B4 asm): there is no
+    // `int mContent` / `String mContentNames[2]` here.
     // The ctor constructs exactly one Symbol at +0x44 from gNullStr, Poll/OnMsg
     // pass that Symbol straight to ContentMgr::DeleteContent/IsDeleteDone, and
     // SyncProperty calls PropSync(Symbol&,...) — see ?SyncProperty@...@Z.

@@ -12,9 +12,9 @@
 #include "utl/JobMgr.h"
 #include "xdk/XSOCIAL.h"
 
-// Wii-origin HomeMenu stub — referenced by ported RB3-Wii game code
+// HomeMenu stub — referenced by game code
 // (meta_band/OvershellPanel). On Xbox 360 this object is never instantiated;
-// mHomeMenuWii points to a zeroed placeholder so the ported code compiles.
+// mHomeMenuWii points to a zeroed placeholder so the code compiles.
 struct HomeMenu {
     bool mHomeMenuActive; // 0x0
     bool mForcedHomeMenu; // 0x1
@@ -243,15 +243,15 @@ public:
     void Poll();
 
     bool GuideShowing() { return mGuideShowing; }
-    // Wii-origin entry points referenced by ported RB3-Wii game code
+    // Entry points referenced by game code
     // (meta_band/MusicLibrary). Declaration-only: the Xbox 360 retail engine
     // has no Wii home-menu / Wii online-restriction concept, so there is no
-    // body to link against on this platform — these exist purely so the ported
+    // body to link against on this platform — these exist purely so the
     // TU compiles. Append-only; does not alter existing PlatformMgr layout.
     void SetHomeMenuEnabled(bool);
     bool IsOnlineRestricted();
-    // Profanity-check entry points referenced by ported RB3-Wii game code
-    // (meta_band/EditSetlistPanel). Declaration-only, append-only — does not
+    // Profanity-check entry points referenced by
+    // meta_band/EditSetlistPanel. Declaration-only, append-only — does not
     // alter the existing PlatformMgr layout. The retail Xbox 360 build compiled
     // these references into EditSetlistPanel; the link target lives in the
     // platform layer (not part of this TU's match).

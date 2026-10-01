@@ -18,7 +18,7 @@
 // boundary MOVE (donor FlowDistance -> receiver CharIKHead), not a map fix.
 //
 // ⚠ Do NOT remove _retailTrailingPad[16] in FlowDistance.h on the strength of
-// the ctor diff.  That pad rests on a separate and still-valid oracle:
+// the ctor diff.  That pad rests on separate and still-valid evidence:
 // ?NewObject@FlowDistance@@SAPAVObject@Hmx@@XZ matches retail at 100% and
 // allocates sizeof(FlowDistance)==0xdc.  Our layout is right; only the ctor row
 // is misattributed.

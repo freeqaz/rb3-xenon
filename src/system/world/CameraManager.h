@@ -12,7 +12,7 @@ class WorldDir;
 
 /** "Searches for and sequences CamShots" — retail is a STANDALONE polymorphic
  * class (vtable@0 = { virtual Handle, virtual dtor }), NOT Hmx::Object. sizeof
- * 0x34. Layout matches rb3-Wii exactly (retail 0xc ObjPtr). */
+ * 0x34 (retail 0xc ObjPtr). */
 class CameraManager {
 public:
     class Category {
@@ -55,7 +55,7 @@ public:
     CamShot *ShotAfter(CamShot *);
     CamShot *FindCameraShot(Symbol, const std::vector<PropertyFilter> &);
     CamShot *MiloCamera();
-    void ForceCameraShot(CamShot *); // retail 0x824A6DC8: 1-arg (rb3-Wii parity; dc3 added a bool)
+    void ForceCameraShot(CamShot *); // retail 0x824A6DC8: 1-arg (dc3 added a bool)
     void PrePoll();
     void Randomize();
     void Enter();

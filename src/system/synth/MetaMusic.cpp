@@ -121,7 +121,7 @@ void MetaMusic::Poll() {
         RELEASE(mFile);
     }
     // NOTE: retail RB3 predates the `&& !ThePlatformMgr.GuideShowing()` gate
-    // that the rb3-Wii dev build / DC3 carry here.
+    // that DC3 carries here.
     if (mStream && !mStream->IsPlaying() && mStream->IsReady()) {
         mFader->SetVal(-96.0f);
         mFader->DoFade(mVolume, mFadeTime * 1000.0f);
@@ -151,7 +151,7 @@ void MetaMusic::Start() {
             } else {
                 MILO_ASSERT(!mFilename.empty(), 0x12D);
                 // Retail passes floatSamples=TRUE here (li r7,0x1 at the call
-                // site); the rb3-Wii dev build passes false.  Consistent with the
+                // site), not false.  Consistent with the
                 // mPlayFromBuffer branch above, which also requests float samples.
                 mStream =
                     TheSynth->NewStream(mFilename.c_str(), ChooseStartMs(), 0, true);

@@ -72,7 +72,7 @@ END_COPYS
 // -- it inline-splits the packed rev int via getHmxRev/getAltRev straight
 // into two mutable file-scope shorts and passes the raw `bs` on to
 // Hmx::Object::Load. That's the obj/ObjMacros.h LOAD_REVS/LOAD_SUPERCLASS
-// dialect (same shape as rb3-Wii's Fur.cpp), not the obj/Object.h
+// dialect, not the obj/Object.h
 // BinStreamRev-object dialect this TU otherwise gets from its
 // `#include "obj/Object.h"`. The two words must live in ONE aligned(4)
 // aggregate (altRev +0, rev +4) -- MSVC does not lay .bss out in declaration

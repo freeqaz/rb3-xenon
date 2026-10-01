@@ -111,7 +111,7 @@ protected:
     ObjPtr<Hmx::Object> mDefaultClip; // 0x50
 #ifdef HX_NATIVE
     // DC3-only: retail RB3 X360 CharDriver has no clip-group member (the +0x24
-    // oversize is this ObjPtr + mClipWeightMap below). Wii retail also lacks it.
+    // oversize is this ObjPtr + mClipWeightMap below).
     ObjPtr<CharClipGroup> mClipGroup;
 #endif
     /** "If true, plays the default_clip_or_group whenever starved" */

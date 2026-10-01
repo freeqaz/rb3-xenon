@@ -82,7 +82,7 @@ BEGIN_SAVES(CharLipSyncDriver)
     bs << mAlternateDriver;
 END_SAVES
 
-// RB3-360 retail rev dialect (rb3-Wii/ObjMacros shape): the packed rev is split
+// RB3-360 retail rev dialect (ObjMacros shape): the packed rev is split
 // into two HALFWORDS stored four bytes apart onto ONE internal-linkage align(4)
 // base, and the RAW incoming BinStream is forwarded to every read and to the
 // superclass Load.  DC3's Object.h BinStreamRev stack decorator additionally
@@ -193,7 +193,7 @@ void CharLipSyncDriver::SetClips(ObjectDir *dir) {
 }
 
 bool CharLipSyncDriver::SetLipSync(CharLipSync *sync) {
-    // rb3-Wii oracle body (returns void there); bool kept for hamobj compat.
+    // RB3 body (void return); bool kept for hamobj compat.
     if (sync != mLipSync) {
         mLipSync = sync;
         mLoop = false;
@@ -269,7 +269,7 @@ void CharLipSyncDriver::Highlight() {
 }
 
 void CharLipSyncDriver::Poll() {
-    // rb3-Wii oracle body (retail RB3 Poll; dc3's override-blend machinery removed).
+    // RB3 body (retail RB3 Poll; dc3's override-blend machinery removed).
     START_AUTO_TIMER("lipsyncdriver");
     if (!mClips || !mBones)
         return;

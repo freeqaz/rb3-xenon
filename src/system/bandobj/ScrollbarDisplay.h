@@ -65,7 +65,7 @@ public:
     // 2026-10-01, whole-binary A/B: ??_G crossed to 100, no row fell.
     OBJ_MEM_OVERLOAD_INLINE_DEL(0x3a);
 
-    // UIComponent is 0x140 on retail-360 (not the 0x10c the Wii header assumes).
+    // UIComponent is 0x140 on retail-360 (not 0x10c).
     ObjPtr<BandList> m_pList; // 0x140
     float mScrollbarHeight; // 0x14c
     bool mAlwaysShow; // 0x150

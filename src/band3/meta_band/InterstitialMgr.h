@@ -43,8 +43,8 @@ public:
         mScreenInterstitialMap; // 0x48 (hashtable, 0x1c)
     std::hash_map<Symbol, UIScreen *> mCurrentInterstitials; // 0x64 (hashtable, 0x1c)
     // mRandomSelection is the LAST member in retail: `new InterstitialMgr` in
-    // BandUI::Init is `li r3, 0x84` = 0x48 (bases) + 0x1c + 0x1c + 4. The
-    // rb3-Wii `mRandomOverride` member does not exist here — retail never
+    // BandUI::Init is `li r3, 0x84` = 0x48 (bases) + 0x1c + 0x1c + 4. An
+    // `mRandomOverride` member does not exist here — retail never
     // touches this+0x84 anywhere in the unit (every 0x84 reference in the target
     // is an EH frame slot off r31). It lives as the file-static
     // `sRandomOverride` in InterstitialMgr.cpp instead; CycleRandomOverride

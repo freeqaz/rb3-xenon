@@ -45,7 +45,7 @@ int DrumTrackWatcherImpl::RelevantGem(int i1, int i2, int i3) {
     int closest_gem = -1;
     int closest_gem_distance = 999;
     // Second loop takes its OWN index copied from i1 rather than mutating the
-    // parameter (which is what the rb3-Wii DEV oracle does, verbatim).  Retail
+    // parameter.  Retail
     // emits `mr r8, r4` TWICE -- once per loop -- and that second copy only
     // exists if loop 2 has its own variable; mutating i1 in place pins the
     // parameter's register for the whole loop, which pushes `this` out of r3
@@ -164,7 +164,7 @@ void DrumTrackWatcherImpl::CheckForKickAutoplay(float f) {
 }
 
 bool DrumTrackWatcherImpl::CheckCymbal(const GameGem &gem, GemHitFlags flags) const {
-    // `!= (bool)(flags & kGemHitFlagCymbal)`, NOT the rb3-Wii DEV oracle's
+    // `!= (bool)(flags & kGemHitFlagCymbal)`, NOT
     // `!= (unsigned int)(flags >> 2 & 1)`.  Retail normalises EACH side to a
     // single bit (`extrwi ...,1,29` / `extrwi ...,1,27`) and compares them with
     // `cmplw cr6` + `bnelr cr6` -- a genuine bool==bool.  Any int-typed spelling
@@ -176,7 +176,7 @@ bool DrumTrackWatcherImpl::CheckCymbal(const GameGem &gem, GemHitFlags flags) co
     // (rA = the `1<<slot` shift), we emit `and. r11, r10, r11` (rA = the
     // mGameCymbalLanes load).  MSVC canonicalises this AND's operand order and
     // it is NOT source-steerable -- five spellings all compile byte-identical:
-    //   `1 << gem.GetSlot() & mGameCymbalLanes`   (this, = the oracle)
+    //   `1 << gem.GetSlot() & mGameCymbalLanes`   (this one)
     //   `mGameCymbalLanes & 1 << gem.GetSlot()`   (operands swapped)
     //   `1U << gem.GetSlot() & mGameCymbalLanes`  (unsigned shift)
     //   both swap variants with the slot hoisted into a local first

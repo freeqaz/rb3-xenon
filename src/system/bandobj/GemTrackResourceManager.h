@@ -1,5 +1,5 @@
 #pragma once
-// Ported from rb3-Wii src/system/bandobj/GemTrackResourceManager.h
+// GemTrackResourceManager (bandobj/GemTrackResourceManager.h)
 // (ObjPtr<T,ObjectDir> -> ObjPtr<T>; dropped self-referential TrackPanelDirBase include).
 #include "obj/Object.h"
 #include "obj/Dir.h"

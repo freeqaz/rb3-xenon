@@ -801,7 +801,7 @@ int AccomplishmentPanel::GetTotalAccomplishments() {
 // Retail X360 places this on AccomplishmentProvider, not AccomplishmentPanel:
 // the get_num_completed handler arm loads mAccomplishmentProvider and calls
 // this with the provider as `this` (retail 0x825F73A0 reads this->mGoals at
-// +0x2c/+0x30 directly). The rb3-Wii dev oracle has it on the panel.
+// +0x2c/+0x30 directly).
 int AccomplishmentProvider::GetNumCompleted() {
     int count = 0;
     BandProfile *profile = TheCampaign->GetProfile();

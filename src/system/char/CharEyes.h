@@ -183,7 +183,7 @@ protected:
     ObjPtr<CharInterest> mFocusInterest; // 0xe4
     int mFocusTimer; // 0xf0
     bool mNeedRecalc; // 0xf4
-    // NOTE: rb3-Wii declares a debug-only `Vector3 mDartOffset` here under
+    // NOTE: a debug-only `Vector3 mDartOffset` would sit here under
     // #ifdef MILO_DEBUG (ctor-inited to (0,1,0); read only by the
     // MILO_DEBUG-only Highlight() overlay). Retail RB3-360 was built with
     // MILO_DEBUG off, so the member does not exist: retail asm places

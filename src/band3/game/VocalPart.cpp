@@ -610,7 +610,7 @@ float VocalPart::CalcPhraseScoreMax(const VocalPhrase *const &phrase) const {
 }
 
 // VocalPlayer::kInvalidPitch is a float global retail loads out of .rdata
-// (lbl_820F14B4); no C++ declaration for it survives in any oracle, so it stays
+// (lbl_820F14B4); no C++ declaration for it survives, so it stays
 // an extern "C" shim. objdiff forgives the placeholder target name, so this
 // costs nothing on the metric -- see docs/decomp/W16EO_*.
 extern "C" float kInvalidPitch__11VocalPlayer;

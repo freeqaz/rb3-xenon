@@ -1,19 +1,19 @@
-// Ported from the rb3-Wii oracle (../rb3/src/system/dsp/PitchDetector.cpp).
-// dc3-decomp has no dsp/ equivalent, so Wii is the correct provenance here
-// rather than the usual engine rule.
+// PitchDetector (system/dsp/PitchDetector.cpp).
+// dc3-decomp has no dsp/ equivalent, so this is RB3's own code
+// rather than the usual DC3 engine copy.
 //
-// Two deliberate divergences from the oracle, both forced by retail bytes:
+// Two deliberate details, both forced by retail bytes:
 //
-//  1. ALLOCATOR SPELLING.  The Wii file calls `_MemAlloc` / `_MemFree`.  Those
+//  1. ALLOCATOR SPELLING.  Not `_MemAlloc` / `_MemFree`.  Those
 //     are MWCC phantoms on X360 -- see the census in utl/MemMgr.h: across all
 //     396 pinned target objs `?_MemAlloc@@` and `?_MemFree@@` appear ZERO
 //     times.  Retail's own bodies here agree: 0x82B807C0 calls
 //     `?MemFree@@YAXPAX@Z` and 0x82B80FC8 calls `?MemAlloc@@YAPAXHH@Z`.  So
 //     the match build uses the 2-arg MemAlloc(size, align) / 1-arg MemFree(p).
 //
-//  2. ShiftedDotProduct's RETURN TYPE.  The Wii file forward-declares it
+//  2. ShiftedDotProduct's RETURN TYPE is `void`, not
 //     `float`; our own dsp/SndAnalysis.cpp (in-tree, compiled, and the
-//     authority) defines it `void`.  The in-tree record outranks the oracle.
+//     authority) defines it `void`.
 #include "dsp/PitchDetector.h"
 #include "dsp/IIRFilter.h"
 #include "obj/Data.h"
@@ -25,14 +25,14 @@
 #include <string.h>
 
 // Defined in dsp/SndAnalysis.cpp; there is no SndAnalysis.h, so these are
-// forward-declared here exactly as the oracle does -- but with OUR signatures.
+// forward-declared here -- with OUR signatures.
 void ShiftedDotProduct(const float *buf, int len, float *ss, bool fast);
 int FindCCPeak(const float *dp_data, const float *ss_data, int vlen, int startPeriod);
 float RefinePeriod2(
     const float *buf, const float *autocorr, const float *dp, int vlen, int period
 );
 
-// Retail calls an anonymous-namespace helper here where the Wii source inlines
+// Retail calls an anonymous-namespace helper here rather than inlining
 // `1.0f - exp(-1.0f / (t * rate))`. AnalyzeBlock's call site is 0x82B80D54 ->
 // 0x82B6EA08 = ?Time2IirA@?A0xa7b3dd7d@@YAMMM@Z, and AnalyzeBlock contains NO
 // exp call at all (its only libm call is log10 at 0x82B80E90). 0x82B6EA08 lies
@@ -295,11 +295,11 @@ void PitchDetector::AnalyzeBlock(
             mPeriod = 0.0f;
             return;
         }
-        // ⚠ THE ORACLE IS WRONG HERE AND RETAIL IS RIGHT. rb3-Wii writes
-        // `39.863136f + -36.376316f * log10(pitchHz)`, which retail refutes on
+        // ⚠ RETAIL'S FORM, NOT THE INTUITIVE ONE. The spelling
+        // `39.863136f + -36.376316f * log10(pitchHz)` is wrong: retail refutes it on
         // bytes: retail emits `fmsubs f0, f12, f0, f13` with f0=39.863136 and
         // f13=36.376316 (read out of .rdata at 0x8219AF54/0x8219AF50), i.e.
-        // `log10 * 39.863136 - 36.376316`, where the oracle's spelling compiles
+        // `log10 * 39.863136 - 36.376316`, where the other spelling compiles
         // to `fnmsubs` with the two constants in the opposite roles.
         // The retail form is also the only one that is MEANINGFUL: it is the
         // standard Hz->MIDI-note conversion 69 + 12*log2(f/440), since
@@ -311,7 +311,7 @@ void PitchDetector::AnalyzeBlock(
     unk14++;
     unk18 += numSamples;
     pitchOut = mPitch;
-    // ⚠ NOT REPRODUCED -- left at the oracle's spelling deliberately. Retail
+    // ⚠ NOT REPRODUCED -- left at the plain spelling deliberately. Retail
     // associates this as ((fixedGain / unk38) * pitchHint) * mAveEnergy:
     //   lfs f13,0x34(r30); lfs f0,0(r29); fdivs f0,f25,f0; fmuls f0,f0,f24;
     //   fmuls f0,f0,f13        (f25=fixedGain, f24=pitchHint, f13=mAveEnergy)
@@ -320,7 +320,7 @@ void PitchDetector::AnalyzeBlock(
     // /fp:fast reassociates it back to putting mAveEnergy in the numerator
     // (measured: 5 charged sites either way, total charges 122 -> 123). So the
     // association is being chosen by the scheduler, not by the parentheses, and
-    // the lever is not the spelling of this line. Reverted to the oracle's form
+    // the lever is not the spelling of this line. Reverted to the plain form
     // rather than leave an unjustified rewrite in the tree. 5 charges remain.
     confidenceOut = fixedGain * (pitchHint * mAveEnergy) / unk38;
     gateOut = mAveEnergy;

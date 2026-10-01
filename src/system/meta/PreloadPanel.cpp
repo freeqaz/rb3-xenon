@@ -33,7 +33,7 @@ PreloadPanel::PreloadPanel()
         //     sCache->SetSize(gMaxCacheSize).
         // (2) THREE args, not four -- DC3 added a trailing bool to the
         //     FileCache ctor. Retail materializes only r4/r5/r6 for this call.
-        // rb3-Wii's PreloadPanel is `new FileCache(0x500000, kLoadBack, true)`,
+        // The RB3-era form is `new FileCache(0x500000, kLoadBack, true)`,
         // i.e. it agrees on both points.
         sCache = new FileCache(0x500000, kLoadBack, true);
     }
@@ -146,7 +146,7 @@ void PreloadPanel::FinishLoad() {
     UIPanel::FinishLoad();
     // RB3 retail does NOT reset the loader period here -- this call is a
     // DC3-era addition (our engine source is a verbatim DC3 copy, and DC3 is
-    // NEWER than RB3).  Confirmed absent in the rb3-Wii oracle, and retail is
+    // NEWER than RB3).  It is absent from RB3, and retail is
     // exactly 24 bytes / 6 instructions shorter: the two 10.0f stores into
     // TheLoadMgr+0x10/+0x14 plus their address/constant materialisation.
     TheContentMgr.UnregisterCallback(this, true);

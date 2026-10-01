@@ -16,7 +16,7 @@
 // real retail implementations and would pair against this stub.
 //
 // Behavior matches "no music-video presets"; port the real implementation as
-// part of the world/LightPreset Wii->360 wave, at which point this file goes
+// part of the world/LightPreset 360 wave, at which point this file goes
 // away.
 
 #include "utl/Symbol.h"

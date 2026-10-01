@@ -41,13 +41,13 @@ public:
     // UIPanel own-object ends at 0x3c; mState @0x3c (= 5 in ctor); LockStepMgr
     // member @0x40 (0x40 bytes, matches our compile); mExternalBlock @0x80;
     // Hmx::Object vbase @0x88; sizeof 0xb0 (the NewObject target allocates
-    // `new(0xb0)`). Offsets previously noted here (0x38/0x3c/0x6c/0x70) were the
-    // rb3-Wii dev layout.
+    // `new(0xb0)`). Offsets previously noted here (0x38/0x3c/0x6c/0x70) were a
+    // dev-build layout.
     int mState; // 0x3c - state - should be an anonymous enum
     LockStepMgr mLockStepMgr; // 0x40
     bool mExternalBlock; // 0x80
 #ifdef RB3_SYNCGAMESTART_DEBUG_MEMBERS
-    // rb3-Wii dev builds kept a StartGame-resend Timer here (Wii @0x70). The
+    // A StartGame-resend Timer used to sit here (dev builds only). The
     // retail 360 ctor (fn_8268A9E0) constructs no Timer, and retail sizeof is
     // 0xb0 = own-object 0x88 + Hmx::Object vbase 0x28 — the member was stripped
     // from the shipping build. Nothing in this tree references it; kept for the

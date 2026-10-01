@@ -18,10 +18,10 @@
 //   (0x82B81758..0x82B817C0: vmaddfp + primary-opcode-4/5/6 VMX128 loads/stores
 //   through a 16-byte stack accumulator at r1-0x20), and it is selected by the
 //   FOURTH PARAMETER (`clrlwi. r11, r6, 0x18` at 0x82B816F4) -- not by the
-//   `(vlen & 15) == 0` test the Wii DEV oracle uses, where that parameter is
-//   marked `/*unused*/` and the fast path is a Gekko paired-single asm block.
-//   The 360 fast path cannot be reconstructed from the Wii oracle: it is a
-//   different instruction set doing a different (4-wide, not 2-wide) blocking.
+//   `(vlen & 15) == 0` test, so that parameter is live. The fast path is
+//   4-wide VMX128 blocking with no portable C++ equivalent, so it
+//   is not reconstructed here: this file keeps only the scalar path.
+//   It is a separate instruction-set path, not a variant of the loop.
 //   The scalar path below IS retail's else-arm instruction for instruction
 //   (0x82B817FC..0x82B81850). Deliberately left as a partial match rather than
 //   guessed at.
@@ -35,7 +35,7 @@ void ShiftedDotProduct(const float *buf, int len, float *ss, bool fast) {
 
     if (fast) {
         // Retail: VMX128, four ss[] outputs per outer iteration. Not
-        // reconstructible from the Wii paired-single oracle (see note above).
+        // reconstructed here (see note above).
         for (int i = 0; i < vlen; i += 4) {
             float acc[4];
             acc[0] = acc[1] = acc[2] = acc[3] = 0.0f;

@@ -10,8 +10,8 @@ class RndTex;
 class StorePreviewMgr;
 
 /** Retail-only (Xbox 360) DLC store-preview async op, polled every frame by
-    MusicLibrary::Poll. NO oracle exists (absent from the rb3-Wii dev branch and
-    from DC3). Reconstructed from the retail XEX (title 45410914).
+    MusicLibrary::Poll. NO surviving source (absent from DC3 too).
+    Reconstructed from the retail XEX (title 45410914).
 
     RTTI: `.?AVMusicLibraryStore@@`, vtable @0x820adf94, Complete Object Locator
     @0x821e1a88 (attributes 0x0 = single inheritance, no virtual bases).
@@ -61,7 +61,7 @@ public:
         `lwz r3,0x4c(r3); b 0x827B1B78`, i.e. `{ mPreviewMgr->ClearCurrentPreview(); }`.
         Its single retail caller is MusicLibrary::ClearSongPreview (0x8253AD58), and
         offset 0x4c is mPreviewMgr below, so the OWNING CLASS is evidenced even though
-        the METHOD NAME is not: neither oracle has a MusicLibraryStore at all. Named
+        the METHOD NAME is not: no surviving source has a MusicLibraryStore at all. Named
         after its address per the Unk825BCA38 precedent in MusicLibrary.h rather than
         guessed. It has NO .pdata entry of its own — a live instance of
         ".pdata-absence is not a not-a-function test". */

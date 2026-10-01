@@ -238,7 +238,7 @@ public:
     // Retail 360 layout (verified from ctor fn_8256A970 + SetBattle fn_825691D0):
     // base (Synchronizable@0 + MsgSource@0x20) ends at 0x38; the first own member
     // is mQpPerformer@0x38. Retail does NOT carry the Wii-only mWiiPending byte or
-    // the mLastVenue Symbol in this early cluster (both are Wii-isms rb3-Wii kept);
+    // the mLastVenue Symbol in this early cluster (both are Wii-isms);
     // they live at the tail here so the battle cluster lands at 0x58 like retail.
     QuickplayPerformerImpl *mQpPerformer; // 0x38
     bool mCreditsPending; // 0x3c

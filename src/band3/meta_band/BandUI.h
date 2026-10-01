@@ -88,7 +88,7 @@ public:
     bool WipingIn() const;
     bool WipingOut() const;
     // Retail X360 keeps this wipe check out-of-line (fn_82523A50, called from
-    // Poll); the Wii dev build inlined it, so the name is invented.
+    // Poll), so it has a function of its own; the name is invented.
     __declspec(noinline) bool ShouldCheckWipeDone() const;
 #ifdef HX_NATIVE
     void UpdateUIOverlay();
@@ -131,7 +131,7 @@ public:
     // then the panel-ptr block mEventDialog @own+0xc (0xa4) .. mAbstractWipePanel
     // @own+0x28 (0xc0). The wipe flags unk10c/unk10d (0xc4/0xc5, proven by
     // WipeIn/WipeOutIfNecessary) follow the panel block, then the vignette/UI
-    // overlay ptrs and mInviteAccepted. In the dc3/rb3-Wii dev order these three
+    // overlay ptrs and mInviteAccepted. In the dc3 order these three
     // ptrs sat BEFORE mDisbandStatus, adding a spurious +0xc to every panel-ptr
     // access — the InitPanels off:+0x4c divergence.
     // Retail X360 has NO mShowVignettes (all uses were dev-only: the
@@ -151,8 +151,8 @@ public:
     UIPanel *mAbstractWipePanel; // own+0x28 (0xc0)
     bool unk10c; // own+0x2c (0xc4) - wipe-in pending (WipeInIfNecessary)
     bool unk10d; // own+0x2d (0xc5) - wipe-out pending (WipeOutIfNecessary)
-    // Retail X360 has NO mVignetteOverlay / mUIOverlay members (the Wii dev
-    // build's debug overlays are stripped: ctor zeroed no 0xc8 word, Init did no
+    // Retail X360 has NO mVignetteOverlay / mUIOverlay members (the
+    // debug overlays are stripped: ctor zeroed no 0xc8 word, Init did no
     // RndOverlay::Find, and Handle lacks all 8 vignette/overlay handlers). It
     // also has NO unkb5 "wipe pending" mirror byte (GotoScreen /
     // OnMsg(UITransitionCompleteMsg) store only unk10c/unk10d — asm-proven).

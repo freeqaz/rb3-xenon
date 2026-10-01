@@ -397,8 +397,8 @@ void SessionMgr::SetActiveRoster(bool b) {
             mBandUserMgr->GetParticipatingBandUsers(users);
             for (int i = 0; i < users.size(); i++) {
                 // Retail dispatches through BandUser's own vftable slot 0 --
-                // `cur->IsInSession(this)` -- rather than the rb3-Wii dev
-                // oracle's `HasUser(users[i])` (this->HasUser at slot 0x30).
+                // `cur->IsInSession(this)` -- rather than
+                // `HasUser(users[i])` (this->HasUser at slot 0x30).
                 // Same inversion recorded at BandUser.h:45 and applied already
                 // in BandUserMgr::GetLocalBandUsers / InputMgr.
                 BandUser *cur = users[i];

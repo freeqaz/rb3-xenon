@@ -182,7 +182,7 @@ RndParticleSys::RndParticleSys()
 }
 
 // Retail 0x8244xxxx (124 B). Two defects vs the old RefIs() shape, both read
-// off retail bytes (the oracles cannot see either -- both spellings are
+// off retail bytes (no source diff can see either -- both spellings are
 // identical C++):
 //   1. The base Replace is called FIRST and UNCONDITIONALLY, not as the else
 //      branch.  That is what forces __savegprlr_29 (ref/obj must stay live
@@ -1669,7 +1669,7 @@ void RndParticleSys::ExplicitParticles(int i1, bool b2, PartOverride &partOverri
 #define PI 3.1415927f
 
 void RndParticleSys::InitParticle(float frame, RndParticle *p, const Transform *xfm, PartOverride &po) {
-    // Body is RB3-era (rb3-Wii shaped), NOT DC3's: retail draws each start/end/mid
+    // Body is RB3-era, NOT DC3's: retail draws each start/end/mid
     // colour channel with its own RandomFloat (no MakeHSL/MakeColor round trip),
     // recomputes the lifetime reciprocal with `!=` after the speed scale, and
     // re-derives it from shrink-grow for the fancy path.

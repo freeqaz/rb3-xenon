@@ -101,6 +101,6 @@ bool PlatformDebugBreak();
 void GetMapFileName(String &);
 void ShowDirtyDiscError();
 void CaptureStackTrace(int, struct StackData *, void *);
-// RB3's (rb3-Wii) two-arg form, used by Debug::Fail. Empty in the retail build:
+// RB3's two-arg form, used by Debug::Fail. Empty in the retail build:
 // the call lands on an ICF-folded `blr` (0x826C3888).
 void CaptureStackTrace(int depth, unsigned int *trace);

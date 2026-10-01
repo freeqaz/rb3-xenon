@@ -5,7 +5,7 @@
 //   InterstitialPanel: mCamshotDone @0x90 (ctor stb, Draw/Enter/Exiting),
 //                      unk88 @0x94 (int), mShowing @0x98 (ctor stb 1).
 //   BackdropPanel:     mOutroDone @0x90 (ctor stb 0, Enter stb 1, Exiting).
-// The rb3-Wii dev header's 0x85/0x88/0x8c are Wii-sized and wrong here.
+// Smaller 0x85/0x88/0x8c offsets are wrong here.
 // The redundant `virtual ~Derived() {}` redeclarations are dropped: retail's
 // BackdropPanel scalar-deleting dtor (0x8261F8E0) has no own-vptr store.
 class InterstitialPanel : public DeJitterPanel {

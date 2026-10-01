@@ -8,11 +8,11 @@
 #include <vector>
 #include <hash_map>
 
-// The retail X360 LicenseMgr keeps a content cache the Wii decomp dropped:
+// The retail X360 LicenseMgr keeps a content cache:
 // a hash_map<Symbol, vector<Symbol>> at 0x1c plus a dirty bool at 0x38. The
 // cache's find() inlines the STLport hashtable::find COMDAT (out-of-line find
 // returning the slist node by value, NULL miss, value at node+0x8 — see
-// fn_82632150 / fn_82632730). The Wii std::set approximation can't reproduce
+// fn_82632150 / fn_82632730). A std::set approximation can't reproduce
 // that. hash<Symbol> hashes the interned char* word identity, matching retail.
 // Guarded so other headers defining the same specialization can co-include.
 #ifndef RB3_HASH_SYMBOL_DEFINED

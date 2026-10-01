@@ -115,9 +115,9 @@ void MainHubPanel::Poll() {
         // Split() and Ms() are both header-inline, so spelling them separately
         // emits the __mftb sequence and the CyclesToMs float math inline in
         // place of that single `bl`, which is the whole of this row's gap.
-        // NOTE the rb3-Wii oracle is WRONG for retail X360 here: it spells this
-        // `Timer::CyclesToMs(mMessageTimer.mCycles)`.  Retail bytes outrank the
-        // oracle.  (Lane W16-AN.)
+        // NOTE this is not `Timer::CyclesToMs(mMessageTimer.mCycles)`:
+        // retail X360 makes the single call.  Retail bytes
+        // decide.  (Lane W16-AN.)
         if (mMessageTimer.SplitMs() > mMessageRotationMs) {
             mMessageTimer.Restart();
             int num = mMessageProvider->NumData();
@@ -193,8 +193,8 @@ void MainHubPanel::ReloadMessages() {
             // (fn_82622648), never in fn_82621AC0; (b) lbl_82C6EB50 (TheServer)
             // does not appear among fn_82621AC0's data references at all.
             // Retail goes straight from GetUserFromPad to user->GetTrackType().
-            // The rb3-Wii DEV oracle gates the ticker request on a server login;
-            // RB3 X360 retail does not.  (Lane W16-AN.)
+            // RB3 X360 retail does not gate the ticker request on a server
+            // login.  (Lane W16-AN.)
             TrackType ty = user->GetTrackType();
             // Retail emits THREE explicit equality compares here -- `cmpwi 0xa`
             // / beq, `cmpwi 0xb` / beq, `cmpwi 0xc` / bne -- not the unsigned
@@ -539,7 +539,7 @@ DataNode MainHubPanel::OnMsg(const RockCentralOpCompleteMsg &msg) {
                     (TickerDataType)2, 0, node8c0.Int(), false, false
                 );
             }
-            // NOTE: rb3-Wii dev source has `mCurrentMessage = 0;` here, but the
+            // NOTE: no `mCurrentMessage = 0;` here: the
             // RB3 retail X360 target emits no store to 0x48(this) at this point
             // (objdiff: one extra `stw r30, 0x48(r29)` on our side, everything
             // else equal). It cannot have been optimised away -- an opaque call
@@ -657,8 +657,8 @@ void MainHubPanel::SetDLCMotd(const char *motd) {
 // Retail has NO `message_latest_dlc` string anywhere in .rdata (whereas
 // GetMotd's `message_motd_signin` fallback IS present), and the get_dlcmotd
 // handler inlines to a bare `lwz r4, unk94.mStr` -- so retail's GetDLCMotd is a
-// trivial accessor with no empty-string Localize fallback. (The rb3-Wii DEV
-// build added that fallback.)
+// trivial accessor with no empty-string Localize fallback. (A DEV
+// build adds that fallback.)
 const char *MainHubPanel::GetDLCMotd() { return unk94.c_str(); }
 
 #pragma push

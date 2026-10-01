@@ -4,7 +4,7 @@
 //
 // Faithful native re-implementation of the RB3 *scoring math*, driven by the
 // real scoring.dta config format (parsed through the engine DataArray). It
-// mirrors the exact oracle formulas, transcribed from:
+// mirrors the exact game formulas, transcribed from:
 //   * Performer::AddPoints              (src/band3/game/Performer.cpp)
 //   * Player::GetMultiplier /
 //     Player::GetIndividualMultiplier   (src/band3/game/Player.cpp)

@@ -98,7 +98,7 @@ public:
     void ResolveSignInWaitStates();
     void ResolveAutoSignInStates();
     // RB3-360-only 5th resolve helper (retail fn_825B2FF0, called from
-    // ResolveSlotStates). The rb3-Wii DEV oracle has no counterpart, so this
+    // ResolveSlotStates). No symbol survives for it, so this
     // NAME IS OURS, not a proven retail name -- no map row is claimed for it.
     void ResolveChooseProfileStates();
     bool ShouldSeeRealGuitarPrompt(LocalBandUser *, OvershellSlotStateID &);
@@ -173,8 +173,8 @@ public:
     int mPartResolverSeed; // 0x4c8
     bool mAllowRealGuitarFlow; // 0x4cc
     // RB3-360: no unk4c0 (std::vector<u64> friends console codes) / unk4c8 /
-    // unk4cc — Wii-dev-only online-registration state (Poll filled unk4c0 from
-    // TheWiiFriendMgr). Retail members end at mAllowRealGuitarFlow 0x4CD,
+    // unk4cc online-registration state, and no friend-list poll. Retail
+    // members end at mAllowRealGuitarFlow 0x4CD,
     // vtordisp 0x4D0, vbase Hmx::Object at 0x4D4 (RTTI COL vbase offset 0x4D4).
 };
 

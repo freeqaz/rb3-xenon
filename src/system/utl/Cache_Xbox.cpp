@@ -36,7 +36,7 @@
 //    at 0x168 (mCacheDirList), 0x827D9F40 at 0x160 (mData).
 // 3. OP DISPATCH.  ThreadStart (0x827DBF20) sends 1 -> ThreadGetDir and
 //    2 -> the file-size worker.  0x827DA730 writes op 1, 0x827D9F40 writes op 2.
-//    => kOpDirectory == 1, kOpFileSize == 2, as both oracles say.
+//    => kOpDirectory == 1, kOpFileSize == 2, as the names suggest.
 // 4. VTABLE ORDER.  CacheXbox's vtable at 0x8211BE44 is slot 6 = 0x827DA730,
 //    slot 7 = 0x827D9F40; the other eight slots are pinned by unambiguous names
 //    and match Cache's declaration order exactly, in which slot 6 is

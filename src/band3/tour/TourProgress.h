@@ -14,7 +14,7 @@
 // hashtable<pair<const int,UIComponent*>,...>::~hashtable; (b) both setters
 // call ??4?$hashtable@...::operator= where we called ??4?$_Rb_tree@...
 // Same correction AccomplishmentProgress.h records for the identical data:
-// "the Wii decomp approximated them as std::map".
+// an earlier std::map approximation was wrong.
 #ifndef RB3_HASH_SYMBOL_DEFINED
 #define RB3_HASH_SYMBOL_DEFINED
 namespace stlpmtx_std {

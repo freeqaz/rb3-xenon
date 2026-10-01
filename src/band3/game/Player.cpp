@@ -517,7 +517,7 @@ void Player::Save(BandUser *user, bool b) { SetEnabledState(kPlayerBeingSaved, u
 // Retail keeps the slot-parity pan OUT OF LINE (fn_826A25B8, inside Player.cpp's
 // .text span): under /O1 (size-optimizing) the inlined form — two lis/lfs float
 // constant loads plus a branch — is larger than the call, so MSVC declines to
-// inline it. The rb3-Wii dev oracle writes it inline inside DisablePlayer.
+// inline it into DisablePlayer.
 __declspec(noinline) static float DiedCuePan(BandUser *user) {
     if (user->GetSlot() % 2)
         return 1.0f;
@@ -790,7 +790,7 @@ void Player::SetEnergy(float f) {
     }
 }
 
-// TU5-only (retail fn_826A5260, no oracle; the name is ours, lane W16-HX4).
+// TU5-only (retail fn_826A5260, no symbol; the name is ours, lane W16-HX4).
 // Counts pauses in mUnkTU5_tail; the tenth one quarantines the player and drains
 // its energy. Called from GemPlayer::SetPaused and VocalPlayer::SetPaused when
 // pausing.

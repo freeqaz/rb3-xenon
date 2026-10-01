@@ -85,7 +85,7 @@ void RestartGameMsg::Load(BinStream &) {}
 void RestartGameMsg::Dispatch() {
     // Retail (fn_82691B40) is exactly this and nothing else: ONE function-local
     // static DataArrayPtr ("game_restart", lbl_820DCFE4) behind a single guard
-    // bit, then Execute. It makes no store to any global, so the oracle's
+    // bit, then Execute. It makes no store to any global, so
     // ThePlatformMgr.SetIsRestarting(true) is absent inlined or not, and there
     // is no second static and no mFromWin branch.
     static DataArrayPtr restart("game_restart");

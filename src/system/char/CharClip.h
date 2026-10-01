@@ -312,7 +312,7 @@ protected:
 // bodies, costing 20 real byte-identical matches across 6 units.
 //
 // RB3's true donor TU is unidentified: `std::vector<std::map<int,float> >` occurs
-// nowhere else in this tree nor anywhere in the rb3-Wii oracle (plain
+// nowhere else in this tree nor in any RB3 source (plain
 // std::map<int,float> does -- BandList, VocalTrackDir, SongData -- but not the
 // vector-of-map). This explicit instantiation parks the bodies here, reproducing
 // the include-graph distribution the member used to provide, so the correct

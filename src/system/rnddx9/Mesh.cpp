@@ -171,7 +171,7 @@ void FillCompressedVertex(CompressedVertex_Xbox &compressed, const RndMesh::Vert
 
 // Retail 0x82738768 (DxMesh vtable slot 15), frame 0xD0, one EH funclet
 // (0x82738A1C, destroys the tracker at 0x50). Read off the retail bytes; DC3's
-// body is the oracle but RB3 differs in three places: the compressed-vert path
+// body is the reference but RB3 differs in three places: the compressed-vert path
 // does NOT store mNumVerts, the vertex buffer is set through an inline
 // SetData (both words stored off the &unk1a4 register), and there is no
 // mNumFaces <= 0xFFFF assert.

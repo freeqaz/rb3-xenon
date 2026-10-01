@@ -43,8 +43,8 @@ RGTrainerPanel *TheRGTrainerPanel;
 // 11-instruction skeleton, so it scored 10-of-11 against an unrelated function.
 // The REAL Exit is 0x826ADC38: `GemTrainerPanel::Exit(); stw 0 -> 0x82E02A94`,
 // and Enter (0x826B08D8) does `stw this -> 0x82E02A94` -- the SAME global. So
-// retail clears the TheRGTrainerPanel POINTER, exactly as the rb3-Wii oracle
-// says, and the flag this file used to clear never existed.
+// retail clears the TheRGTrainerPanel POINTER,
+// and the flag this file used to clear never existed.
 
 void ProTrainerPanel::Enter() {
     GemTrainerPanel::Enter();

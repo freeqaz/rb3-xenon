@@ -108,8 +108,8 @@ public:
 
     // 0x11 -- retail X360 writes this as a whole byte (`stb rX, 0x11`) at two
     // independent sites (SongDB::DisableCodaGems, GemTrack::SetEnableSlot), so it
-    // sits between the two bitfield groups, NOT after mRootNote where the rb3-Wii
-    // dev header puts it (the Wii DEV build genuinely stores it at 0x18).
+    // sits between the two bitfield groups, NOT after mRootNote
+    // (a DEV build genuinely stores it at 0x18).
     // Compiler-verified (/d1reportSingleClassLayout): the only offsets that move
     // are 0x11..0x18 (the bitfield groups each slide +1, mRootNote absorbs the
     // vacated 0x18). Whole-binary A/B: +2 matched, 0 regressed.  (The tail
@@ -134,8 +134,8 @@ public:
 
     unsigned char unk13; // 0x13
 
-    // TU5 layout, read off retail bytes (lane W16-HN): the Wii dev build packed
-    // strum type / hand position / note types into bitfields; retail X360 keeps
+    // TU5 layout, read off retail bytes (lane W16-HN): no
+    // bitfield packing for strum type / hand position / note types; retail X360 keeps
     // them unpacked.  GameGem(const RGGemInfo &) stores note_types[i] as words at
     // 0x14+4i, strum_type at 0x2c, hand_position at 0x30, root_note at 0x31,
     // frets at 0x32; GetRGNoteType is `lwzx (i+5)*4`; PackRealGuitarData writes

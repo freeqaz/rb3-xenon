@@ -107,7 +107,7 @@ public:
     static void Init() { REGISTER_OBJ_FACTORY(CharacterCreatorPanel); }
 
     CharCreatorState mCharCreatorState; // 0x54
-    // Retail keys this with an STLport hash_map, not the Wii build's std::map:
+    // Retail keys this with an STLport hash_map, not a std::map:
     // ??0CharacterCreatorPanel@@QAA@XZ does `addi r3, r30, 0x58` then
     // `bl ??0?$hash_map@...@stlpmtx_std@@QAA@XZ` (retail 0x8255D480, body
     // `li r4, 0x64` -> _M_initialize_buckets(100)).  A std::map ctor makes no

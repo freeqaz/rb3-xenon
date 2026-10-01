@@ -62,7 +62,7 @@ public:
     // matched 100% while doing lwz/stw 0x44(this). That evidence is bad: that row
     // maps to 0x8261feb8, ~0x29000 outside this unit's 0x825f5-0x825f6 cluster,
     // i.e. an ICF fold-alias of some other panel's identically-shaped Unload
-    // (UIPanel::Unload(); RELEASE(ptr); is a prime folding candidate). rb3-Wii
-    // has one member here and releases it in Unload; that is restored.
+    // (UIPanel::Unload(); RELEASE(ptr); is a prime folding candidate). There
+    // is one member here, released in Unload; that is restored.
     CampaignSourceProvider *mCampaignSourceProvider; // 0x3c
 };

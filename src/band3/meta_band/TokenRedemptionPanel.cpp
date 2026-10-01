@@ -116,7 +116,7 @@ void TokenRedemptionPanel::Unload() {
     UIPanel::Unload();
 }
 
-// Retail fn_8263FAA0. The rb3-Wii oracle reads `TheServer.GetMasterProfileID()`;
+// Retail fn_8263FAA0. Not `TheServer.GetMasterProfileID()`:
 // retail's 360 body instead dispatches Server slot 5 (0x14) IsConnected() and,
 // only when connected, slot 7 (0x1c) GetPlayerID(user->GetPadNum()) -- the pad
 // number arriving in r4 from a vbtable-adjusted slot-0 vcall on the user:
@@ -184,7 +184,7 @@ void TokenRedemptionPanel::ShowPurchaseUIForOffer(int ix, LocalBandUser *user) {
     MILO_ASSERT(mListData.size() > ix, 0x15B);
     MILO_ASSERT(!mPurchaser, 0x15C);
     MILO_ASSERT(user, 0x15F);
-    // Retail fn_8263FB98: the rb3-Wii dev body stubs the purchaser to NULL;
+    // Retail fn_8263FB98: the purchaser is not stubbed to NULL;
     // the 360 build constructs an XboxPurchaser for the chosen offer ID
     // (`ldx` from mOfferIDs@0x74, li r3,0x28 -> ctor 0x827B2800) and
     // Initiate()s it (vtable slot 1), exactly as UGCPurchasePanel::Poll does.

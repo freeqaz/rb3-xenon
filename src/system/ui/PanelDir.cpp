@@ -249,9 +249,9 @@ BEGIN_COPYS(PanelDir)
     END_COPYING_MEMBERS
 END_COPYS
 
-// ── lane W35-CUSTOMIZE (2026-08-17): RB3-360 retail uses the rb3-Wii
+// ── lane W35-CUSTOMIZE (2026-08-17): RB3-360 retail uses the ObjMacros
 // MUTABLE-GLOBAL rev dialect here, NOT DC3's BinStreamRev.  This is read off
-// RETAIL BYTES, not off the oracle -- ?PreLoad@PanelDir@@ @0x82809520 and
+// RETAIL BYTES -- ?PreLoad@PanelDir@@ @0x82809520 and
 // ?PostLoad@PanelDir@@ @0x828095C8:
 //
 //   * PreLoad splits the packed rev into two halves, stores them to a GLOBAL
@@ -267,11 +267,11 @@ END_COPYS
 //   * PostLoad calls RndDir::PostLoad FIRST (`subi r3,r3,0x5c; bl` at
 //     instructions 5/7, ahead of PopRev); the DC3 form calls PopRev first.
 //   * retail has NO `rev < 7 && !mCam -> SetCurViewport(...)` block.  That is a
-//     DC3-era addition: it is absent from rb3-Wii AND absent from retail, and
-//     it accounted for a chunk of our base-only instructions.  This is oracle
-//     failure mode 4 (the newer engine has statements RB3 never had).
+//     DC3-era addition: it is absent from retail, and
+//     it accounted for a chunk of our base-only instructions.  This is
+//     the case where the newer engine has statements RB3 never had.
 //
-// `!IsProxy()` is retained rather than rb3-Wii's `this == Dir()`: Dir.h defines
+// `!IsProxy()` is spelled rather than `this == Dir()`: Dir.h defines
 // `IsProxy() const { return this != Dir(); }`, so the two are the same inline
 // expression and the spelling is not load-bearing.
 //
@@ -350,7 +350,7 @@ void PanelDir::PostLoad(BinStream &bs) {
             bs >> mCam;
         }
         // ⚠ retail spells this DC3's way (`> 1 && < 3` -> `cmplwi 1; ble` +
-        // `cmplwi 3; bge`), NOT rb3-Wii's `gRevs.rev == 2` (which emits
+        // `cmplwi 3; bge`), NOT `gRevs.rev == 2` (which emits
         // `cmplwi 2; bne`).  Measured, not assumed.
         if (gRevs.rev > 1 && gRevs.rev < 3) {
             Symbol s;
@@ -358,12 +358,12 @@ void PanelDir::PostLoad(BinStream &bs) {
         }
     }
     // ⛔ THIS BLOCK IS IN RETAIL.  An earlier revision of this lane deleted it
-    // because rb3-Wii has no such block -- that was WRONG, and retail bytes
+    // because an RB3 source had no such block -- that was WRONG, and retail bytes
     // refuted it: instructions [50]-[64] of ?PostLoad@PanelDir@@ are literally
     // `cmplwi r10,0x7 / bge` + `lwz r10,-0x50(r30)` (mCam) + `lis
     // lbl_82C721F0` (TheUI) + `lwz r11,0x40(r11)` (GetCam).  RB3-360 retail is a
-    // HYBRID: rb3-Wii's rev DIALECT and call ordering, but DC3's BODY.  Do not
-    // re-delete this on the strength of the Wii oracle.
+    // HYBRID: the ObjMacros rev DIALECT and call ordering, but DC3's BODY.  Do not
+    // re-delete this.
     if (gRevs.rev < 7 && !mCam) {
         SetCurViewport(kNumViewports, TheUI->GetCam());
     }
@@ -384,8 +384,8 @@ void PanelDir::PostLoad(BinStream &bs) {
             bs >> mUseSpecifiedCam;
         }
     }
-    // ⛔ NO trailing SyncEditModePanels() here -- BOTH oracles have one and
-    // RETAIL DOES NOT.  Retail's ?PostLoad@PanelDir@@ ends
+    // ⛔ NO trailing SyncEditModePanels() here -- RETAIL DOES NOT have one,
+    // as retail's ?PostLoad@PanelDir@@ shows: it ends
     // `.L_8280976C: addi r1,r1,0x80 / b __restgprlr_28` with no call after the
     // `gRevs.rev > 7` block's `bl`, and the diff shows our `mr r3,r29 / bl
     // ?SyncEditModePanels@PanelDir@@AAAXXZ` as the ONLY two base-only

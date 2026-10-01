@@ -1,5 +1,5 @@
 #pragma once
-// Ported from rb3-Wii src/system/bandobj/TrackInstruments.h (verbatim).
+// TrackInstruments (bandobj/TrackInstruments.h).
 #include "utl/Symbol.h"
 
 enum TrackInstrument {

@@ -306,7 +306,7 @@ const char *PathName(const class Hmx::Object *obj);
     if ((cond) && _warn)                                                                 \
         MILO_WARN(__VA_ARGS__);
 
-// Retail RB3 (rb3-Wii release Debug.h:151) compiled MILO_WARN as the comma form
+// Retail RB3 (release Debug.h) compiled MILO_WARN as the comma form
 // `(void)(__VA_ARGS__)` — message string dropped, but the PathName(this) vcall
 // argument is still EVALUATED for its side effect. Our global MILO_WARN is the
 // `((void)sizeof(...))` form, which strips ALL arg evaluation (worth +23 on
@@ -791,13 +791,13 @@ const char *PathName(const class Hmx::Object *obj);
 //     ONLY data member, over a virtual Hmx::Object base).
 //
 // PROVENANCE, which is what actually predicts the direction: the macro spelling
-// was inherited from whichever oracle the header was ported from, NOT from
+// was inherited from whichever source the header was ported from, NOT from
 // retail. 36 of the 43 NEW_OVERLOAD-only classes live in src/system/bandobj
-// (ported from rb3-Wii, which spells `NEW_OVERLOAD; DELETE_OVERLOAD;` — verified
+// (whose source spells `NEW_OVERLOAD; DELETE_OVERLOAD;` — verified
 // verbatim for all four classes above), while the engine dirs came from DC3 and
 // spell OBJ_MEM_OVERLOAD (rndobj 53, hamobj 49, char 47, ui 26, flow 25).
-// So ACTIONABLE-1's "neither oracle can adjudicate it" is too weak: rb3-Wii DOES
-// have an opinion and retail contradicts it 4 times out of 4. The remaining ~32
+// So ACTIONABLE-1's "nothing can adjudicate it" is too weak: the bandobj source DOES
+// have an opinion, and retail contradicts it 4 times out of 4. The remaining ~32
 // bandobj NEW_OVERLOAD classes are the named follow-on lever — but they are
 // METRIC-INVISIBLE today (no paired NewObject row), so they need retail-byte
 // evidence per class, not a bulk flip.

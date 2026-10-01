@@ -79,10 +79,10 @@ extern bool gShowTokensCheat;
 
 const char *Localize(Symbol token, bool *success, Locale &locale);
 // RB3 2-argument form (no Locale& parameter) — real out-of-line function that
-// uses TheLocale. Matches rb3-Wii Locale.h: const char *Localize(Symbol, bool *).
+// uses TheLocale: const char *Localize(Symbol, bool *).
 const char *Localize(Symbol token, bool *success);
 const char *LocalizeSeparatedInt(int num, Locale &locale);
-// RB3 1-argument form — real out-of-line function (rb3-Wii Locale.h:63); the
+// RB3 1-argument form — real out-of-line function; the
 // `locale` parameter of the 2-arg form above is unused in its body (dead
 // param), so retail has a genuine no-locale-arg overload with its own
 // definition, not an inline forward. Call sites that pass only `num` do NOT

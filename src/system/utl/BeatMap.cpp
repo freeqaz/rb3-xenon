@@ -14,7 +14,7 @@ bool BeatInfoCmp(const BeatInfo &info, int tick) { return info.mTick < tick; }
 
 // M4: real SongData::AddBeat (native rb3-hit) feeds beat events into the
 // BeatMap. Our tree's BeatMap.cpp lacked AddBeat (declared in BeatMap.h);
-// port the oracle body. Genuine retail function — ungated for the homing scan
+// add the real body. Genuine retail function — ungated for the homing scan
 // (X360 A/B verified net-neutral+).
 bool BeatMap::AddBeat(int tick, int level) {
     if (mInfos.empty() || mInfos.back().mTick < tick) {

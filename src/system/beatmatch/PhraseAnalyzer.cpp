@@ -34,7 +34,7 @@ void PhraseAnalyzer::AddInfo(
     MILO_ASSERT(!mPerformedAnalysis, 0x43);
     // X360 fidelity: the matched build folds the game-code
     // `MemDoTempAllocations(true, false)` spelling to the no-arg temp-alloc
-    // guard (see utl/MemMgr.h). Wii oracle used the 2-arg form.
+    // guard (see utl/MemMgr.h), not the 2-arg form.
     MemDoTempAllocations tmp;
     mRawPhrases.push_back(RawPhrase(track, ty, start_tick, end_tick, independent));
 }
@@ -64,8 +64,8 @@ void PhraseAnalyzer::Analyze() {
                 // for exactly __savegprlr_23, RawPhraseCmp, sort<RawPhrase*>,
                 // SetPhraseIDs x3, memcpy, TrimExcess<RawPhrase>, __restgprlr_23 --
                 // and NONE for MakeString, SongFullPath, TickFormat or TrackName.
-                // rb3-Wii cannot adjudicate this: it is the DEV build and our
-                // source is a verbatim copy of it, so retail bytes decide. (W16-BC)
+                // Our source text alone cannot adjudicate this,
+                // so retail bytes decide. (W16-BC)
                 if (abs(mRawPhrases[i].end_tick - rawPhrase.end_tick)
                     >= mPhraseStartWindow) {
                     const char *msg = MakeString(

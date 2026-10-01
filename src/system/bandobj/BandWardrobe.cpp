@@ -323,8 +323,8 @@ void BandWardrobe::SetPlayMode(Symbol s, BandCamShot *shot) {
         // Retail (0x823308EC-0x823308F4) makes TWO calls on TheBandDirector here:
         // HarvestDircuts() then the factored-out per-character lip-sync assignment
         // at 0x8228DD38 (same routine VenueLoaded/OnFileLoaded calls at
-        // 0x82292350). The rb3-Wii dev source has that loop inlined in
-        // VenueLoaded only, so this second call has no Wii equivalent.
+        // 0x82292350). VenueLoaded alone does not
+        // inline that loop, so this second call is real.
         if (TheBandDirector && !shot) {
             TheBandDirector->HarvestDircuts();
             TheBandDirector->SetCharacterLipSyncs();
@@ -565,7 +565,7 @@ void BandWardrobe::LoadMainCharacters(BandCamShot *shot) {
     // Retail 360 (0x82330040) has NO prefab path here: after the `if (shot)`
     // block it falls straight into the vector<Symbol> instrument-assignment
     // logic below. The LOADMGR_EDITMODE / GetPrefab / "%s_budget_%s" fallback
-    // branch is rb3-Wii DEV-build only -- it is what pushed our frame to 0x260
+    // branch is DEV-build only -- it is what pushed our frame to 0x260
     // against retail's 0x140 (the `char buf[256]` alone is 0x100).
     // `syms` lives in its own scope: retail frees the vector (MemOrPoolFreeSTL)
     // right after the last "none" fixup loop, before the OutfitPiece sweep.
@@ -667,15 +667,15 @@ void BandWardrobe::LoadMainCharacters(BandCamShot *shot) {
         // name against mVenueNames. "player_mic0" never matches, so slot 3 is
         // left unplaced.
         //
-        // MEASURED ON RB3'S OWN X360 ASSETS (X8), not carried over from rb3-Wii's
-        // note about the Wii milo: decompressing all eleven shipped small_club
+        // MEASURED ON RB3'S OWN X360 ASSETS (X8), not carried over from a
+        // note about another platform's milo: decompressing all eleven shipped small_club
         // venue roots gives 1322-1360 occurrences of `player_vocals0` EACH and
         // ZERO occurrences of `player_mic0` in any of them. The name the code
         // builds is not present anywhere in the venue.
         //
-        // rb3-Wii's native port carries the identical remap at
-        // rb3/src/system/bandobj/BandWardrobe.cpp:695-703; the surrounding lines
-        // in the two trees are otherwise token-for-token identical. X360 arm
+        // So the native build remaps "mic" to "vocals" below, the
+        // name the venue actually uses. The X360 arm
+        // stays
         // untouched.
         if (inst == "mic") inst = "vocals";
 #endif

@@ -5,14 +5,14 @@
 #include "meta_band/BandProfile.h"
 #include "os/Debug.h"
 
-// Retail-vs-Wii-dev notes (laneBO1):
-//  * `AddAsset` in the rb3-Wii DEV oracle opens with an AssetMgr lookup plus a
-//    MILO_WARN("Could not find asset %s") arm and a kMaxSymbols_Assets bound
-//    check.  Retail has NEITHER -- 0x82655328 goes straight to
+// Retail behaviour (laneBO1):
+//  * `AddAsset` has no AssetMgr lookup, no
+//    MILO_WARN("Could not find asset %s") arm and no kMaxSymbols_Assets bound
+//    check -- 0x82655328 goes straight to
 //    `if (!HasAsset(...))`.
-//  * `HasAsset` in the dev oracle opens with `if (MetaPanel::sUnlockAll) return
-//    true;`.  Retail (0x82655148) drops it and starts at DoesAssetHaveSource.
-//  * `SaveSize` in the dev oracle prints through sPrintoutsEnabled.  Retail
+//  * `HasAsset` has no `if (MetaPanel::sUnlockAll) return
+//    true;` opener.  Retail (0x82655148) starts at DoesAssetHaveSource.
+//  * `SaveSize` prints nothing (no sPrintoutsEnabled).  Retail
 //    (0x82655090) is eight bytes: `li r3,0x5dc8 ; blr`.
 //  * `FakeFill` is not emitted by retail at all.
 

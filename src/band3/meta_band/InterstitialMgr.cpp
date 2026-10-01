@@ -172,8 +172,8 @@ void InterstitialMgr::CycleRandomOverride() {
 
 BEGIN_HANDLERS(InterstitialMgr)
     // Retail constructs this Symbol as a FUNCTION-LOCAL STATIC inside Handle
-    // (guard bit + Symbol::Symbol(const char*) in the body), where the rb3-Wii
-    // oracle carries a file-scope global (Symbols4.cpp).  Storage-class
+    // (guard bit + Symbol::Symbol(const char*) in the body), not a
+    // file-scope global (Symbols4.cpp).  Storage-class
     // divergence: invisible to a source diff, worth exactly 52 bytes here
     // (our 220B body vs retail's 272B = the 13-instruction local-static seq).
     HANDLE_EXPR_STATIC(

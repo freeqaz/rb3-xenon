@@ -54,10 +54,10 @@ public:
     // (VTABLE_SLOT_COUNT_FIXES_2026-08-20.md sec 15b).  Removed by lane VT-SIG
     // on four converging lines:
     //   1. retail's table has no slot for it (22 vs our 23; see above);
-    //   2. the rb3-Wii oracle -- the RIGHT oracle for this file, and a DEV
-    //      build that retains MORE than retail -- declares neither `Cmp` nor
+    //   2. no build of RB3 -- including a DEV
+    //      build that retains MORE than retail -- declares `Cmp` or
     //      `SortCmp` on `StoreOffer` OR `BandStoreOffer`.  Checked for vacuity:
-    //      that header is 253 lines and does declare `StoreOffer`;
+    //      the 253-line RB3 header does declare `StoreOffer`;
     //   3. dc3-decomp (NEWER than RB3) has both, verbatim what we inherited;
     //   4. `Cmp` was declared pure here, "overridden" by BandStoreOffer, and
     //      NEVER DEFINED anywhere -- invisible only because the match build
@@ -133,14 +133,14 @@ public:
     // this+0xc4 and assigns it Localize(store_release_date_format) formatted
     // through DateTime::Format; the release_date_str handler (fn_827827B0)
     // returns the char* at this+0xcc (= String::mStr, vptr+mCap+mStr layout);
-    // the dtor (fn_827831F8) runs ~String on this+0xc4. The Wii dev branch's
-    // `DateTime date` member is a ctor local in retail.
+    // the dtor (fn_827831F8) runs ~String on this+0xc4. A
+    // `DateTime date` is a ctor local in retail, not a member.
     String mReleaseDateStr; // 0xc4
     SongMgr *mSongMgr; // 0xd0
     std::vector<int> mSongsInOffer; // 0xd4
 };
 
-// Retail fn_827A6548 (= rb3-Wii StoreOffer.cpp:182).
+// Retail fn_827A6548.
 bool operator==(const StoreOffer *, Symbol);
 
 // ⛔ `class SortCmp` was here and is REMOVED -- see the `Cmp` note inside

@@ -159,7 +159,7 @@ bool JoypadIsConnectedPadNum(int padNum) {
         return gJoypadData[padNum].mConnected;
 }
 
-// Retail fn_82524D40 / fn_82524DE0 (no oracle; DC3 dropped the stage kit).
+// Retail fn_82524D40 / fn_82524DE0 (no symbol; DC3 dropped the stage kit).
 // The names are ours.  0x82524D40 walks the four pads for the first enabled
 // one whose controller type is `stagekit_xbox`; 0x82524DE0 drives its two
 // actuators with each raw value in the high byte and 0xff in the low one.
@@ -349,9 +349,9 @@ bool JoypadIsCalbertGuitar(int padNum) {
 
 // Retail 44 B, named in the map (unit default/Joypad). DECLARED at Joypad.h:348
 // and defined in NO translation unit -- our port of this file dropped exactly
-// this one function while keeping its neighbour below. Restored from the
-// rb3-Wii oracle (../rb3/src/system/os/Joypad.cpp:594), which places it
-// immediately before UserHasGHDrums, as here.
+// this one function while keeping its neighbour below. It sits
+// immediately before UserHasGHDrums.
+// (Restored by lane W16-D.)
 bool UserHasController(LocalUser *user) { return GetUsersPadNum(user) != -1; }
 
 // Retail 0x82524C20 (180 B) / 0x82524CD8 (104 B): explicit equality chains

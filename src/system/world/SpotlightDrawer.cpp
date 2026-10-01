@@ -73,7 +73,7 @@ END_PROPSYNCS
 BEGIN_COPYS(SpotlightDrawer)
 #ifdef HX_NATIVE
     // Same divergence as SyncProperty above: RB3-360 retail's Copy chain stops at
-    // the immediate superclass. rb3-Wii (the RB3-era oracle) copies RndDrawable
+    // the immediate superclass, copying RndDrawable
     // only; DC3's extra direct Hmx::Object chain is a later addition, native-only.
     COPY_SUPERCLASS(Hmx::Object)
 #endif
@@ -429,7 +429,7 @@ void SpotlightDrawer::UpdateBoxMap() {
 }
 
 // RB3 retail fn_824D63D0: DC3's field list, but on the raw BinStream with the
-// owner's rev passed in (rb3-Wii's signature) and a too-new rev guard.
+// owner's rev passed in and a too-new rev guard.
 void SpotDrawParams::Load(BinStream &bs, int rev) {
     if (rev > 5)
         MILO_WARN("Can't load new Params");
@@ -470,7 +470,7 @@ void SpotDrawParams::Load(BinStream &bs, int rev) {
 
 INIT_REVS(6, 0)
 
-// RB3 retail (0x824D6E08) is rb3-Wii's Load: plain int rev, max 5 (DC3's
+// RB3 retail (0x824D6E08) Load: plain int rev, max 5 (DC3's
 // rev 6 Object::Load does not exist), SetOrder inlined, params take the rev.
 BEGIN_LOADS(SpotlightDrawer)
     int rev;

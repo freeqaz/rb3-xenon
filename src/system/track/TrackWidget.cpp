@@ -16,7 +16,7 @@
 #include "track/TrackWidgetImp.h"
 #include <list>
 
-// rb3-Wii defines IsFloatOne in math/Utl.h, but adding it there perturbs codegen
+// IsFloatOne would naturally live in math/Utl.h, but adding it there perturbs codegen
 // in unrelated units that include Utl.h (extra inline COMDAT shifts inlining).
 // CheckScales below is the only consumer in this port, so it is scoped here to
 // keep math/Utl.h byte-identical to main.

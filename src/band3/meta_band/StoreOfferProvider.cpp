@@ -144,10 +144,10 @@ void StoreOfferProvider::InitData(RndDir *dir) {
 // operator new). See StoreOfferProvider.h and BandStorePanel.cpp:60.
 // ---------------------------------------------------------------------------
 // Retail fn_826639F0 (1756 bytes). Reconstructed from the retail asm (lane CF-7);
-// the rb3-Wii DEV body is the control-flow skeleton but three of its data sources
+// a narrower control-flow skeleton has three data sources that
 // do not exist in retail and were re-read out of the bytes:
 //
-//  * "rbn_icon" arm: Wii tests `offer->mPackedData->mIsRBN`. Retail StoreOffer has
+//  * "rbn_icon" arm: not `offer->mPackedData->mIsRBN`. Retail StoreOffer has
 //    no mPackedData; retail emits `bl <HasData>` with a function-local static whose
 //    ctor string at lbl_820A44CC is literally "author" (read from band.exe), i.e.
 //    `offer->HasData(author)`.
@@ -266,8 +266,8 @@ void StoreOfferProvider::Text(int i, int pos, UIListLabel *listLabel, UILabel *l
                     appLabel->SetTextToken(store_upgrade_available);
                     return;
                 }
-                // Retail branches on inLibrary here, NOT on isPurchased as the Wii
-                // DEV source does, and has no store_downloaded arm at all.
+                // Retail branches on inLibrary here, NOT on isPurchased,
+                // and has no store_downloaded arm at all.
                 if (inLibrary) {
                     static Symbol store_in_library("store_in_library");
                     appLabel->SetTextToken(store_in_library);
@@ -321,7 +321,7 @@ RndMat *StoreOfferProvider::Mat(int i, int j, UIListMesh *mesh) const {
 }
 
 // Retail (fn_82664398) indexes mElements directly -- there is NO mElements.size()
-// guard. The guard comes from the rb3-Wii DEV build; retail dropped it.
+// guard.
 Symbol StoreOfferProvider::DataSymbol(int i) const {
     Element *e = mElements[i];
     if (e->mOffer) {
@@ -348,7 +348,7 @@ bool StoreOfferProvider::IsActive(int i) const {
 }
 
 // Retail (fn_82664450, 96 bytes) searches ONLY mOffers -- the mPacks fallback
-// present in the rb3-Wii DEV source does not exist in the retail X360 build.
+// does not exist in the retail X360 build.
 StoreOffer *StoreOfferProvider::FindOffer(Symbol s) const {
     std::vector<StoreOffer *>::iterator it =
         std::find(mOffers->begin(), mOffers->end(), s);
@@ -358,7 +358,7 @@ StoreOffer *StoreOfferProvider::FindOffer(Symbol s) const {
 }
 
 // Retail (fn_82663408 / fn_826634F0, 192 bytes each): a SINGLE loop over mOffers --
-// the mPacks fallback loop in the rb3-Wii DEV source does not exist in retail (the
+// there is no mPacks fallback loop in retail (the
 // target calls HasSong once, not twice). The type Symbol is a function-local static
 // (FindPack: guard lbl_82E01D90 bit 0, Symbol lbl_82E01D8C, string lbl_820B08D0).
 const StoreOffer *StoreOfferProvider::FindPack(const StoreOffer *song) const {
@@ -442,7 +442,7 @@ StoreOfferProvider::Element *StoreOfferProvider::GetElementAtIndex(int i) const 
 }
 
 // Retail fn_82663328 (0xB4 bytes).  Body read off the retail asm, not ported
-// from an oracle (the rb3-Wii dev build has no counterpart under this name).
+// from another body.
 // `mOffers` is a POINTER to the vector: retail loads this+0x30 and only then
 // reads begin/finish off it, and it RE-LOADS this+0x30 every iteration, which
 // is what spelling the condition as `it != mOffers->end()` produces.
@@ -555,7 +555,7 @@ void StoreOfferProvider::BuildList(DataArray *grouping) {
     //  - `*p != 0 && p != NULL` on one local: MSVC treats the deref as proof
     //    of non-null and DELETES the pointer test (one compare, and the
     //    r15/r22 + `this`-spill cascade through the rest of the body).
-    //  - rb3-Wii's `if (*p == 0) p = NULL; if (p)` (and `*p ? p : NULL`, and
+    //  - `if (*p == 0) p = NULL; if (p)` (and `*p ? p : NULL`, and
     //    a switch): branchless subfic / subfe / and select.
     //  - String::empty() then a SECOND c_str() read (this form): both
     //    compares survive, both on cr0. Cost: one dead `stw r11,0x50(r31)`
@@ -574,7 +574,7 @@ void StoreOfferProvider::BuildList(DataArray *grouping) {
         // test + inline ??0Symbol ctor), and initialises them in this order:
         // browser_group, browser_subgroup, localize_heading, shortcut_group,
         // shortcut_groups -- note localize_heading comes BEFORE shortcut_group,
-        // the reverse of the rb3-Wii DEV source.
+        // not the other way round.
         static Symbol browser_group("browser_group");
         static Symbol browser_subgroup("browser_subgroup");
         static Symbol localize_heading("localize_heading");

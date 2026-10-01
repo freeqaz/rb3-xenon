@@ -60,7 +60,7 @@ BEGIN_COPYS(CharClipGroup)
     END_COPYING_MEMBERS
 END_COPYS
 
-// RB3 retail rev dialect (rb3-Wii LOAD_REVS / gRev): Load (0x823901e8) splits
+// RB3 retail rev dialect (LOAD_REVS / gRev): Load (0x823901e8) splits
 // the packed rev into two halfword file statics -- alt at the base (retail
 // 0x82CBF164), rev at +4 -- and reads mFlags only when rev > 1. No
 // BinStreamRev on the stack, no clamp on mWhich. Same shape as EventTrigger:

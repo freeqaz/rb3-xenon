@@ -348,7 +348,7 @@ void RemoveNullEvents(std::list<Symbol> &vec) {
     }
 }
 
-// RB3 retail (0x824a3e20) is rb3-Wii's Load: the raw incoming BinStream is
+// RB3 retail (0x824a3e20) Load: the raw incoming BinStream is
 // forwarded to every read (no BinStreamRev decorator -- no ??0BinStream /
 // ??1BinStream and no vtable store on the stack), the rev lives in the TU's
 // static pair, and the edit mode is forced back to false rather than restored.
@@ -787,8 +787,8 @@ DataNode EventTrigger::Cleanup(DataArray *arr) {
                 // other ring entries (see Hmx::Object::ReplaceRefs).
                 curTrig2->ReplaceRefs(curTrig);
 #else
-                // RB3 retail writes the ring walk at the call site (rb3-Wii
-                // oracle); DC3 later refactored it into Object::ReplaceRefs.
+                // RB3 retail writes the ring walk at the call site;
+                // DC3 later refactored it into Object::ReplaceRefs.
                 // Replace() unlinks the node via SetObj -> Release, so the
                 // empty() test is what terminates the loop.
                 while (!curTrig2->Refs().empty()) {

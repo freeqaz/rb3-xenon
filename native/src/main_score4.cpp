@@ -17,7 +17,7 @@
 //          Scoring/Stats/Player/Performer/Band scoring+energy graph, PlayerParams,
 //          Band bonuses table, Player::Poll / UpdateEnergy(beat-drain) / Perform-
 //          DeployBandEnergy / Deploy / StopDeployingBandEnergy bookkeeping,
-//          CommonPhraseCapturer (ported from oracle, driving real Complete-
+//          CommonPhraseCapturer (the real arbiter, driving real Complete-
 //          CommonPhrase credit), SongData::CalcSongPos clock->SongPos.
 //   SHIM : the audio clock source (no synth/stream — headless), CrowdRating (no
 //          impl anywhere), TrackPanel/BandTrack/OverdriveMeter render leaves,

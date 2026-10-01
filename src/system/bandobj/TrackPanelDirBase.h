@@ -1,6 +1,6 @@
 #pragma once
-// Ported from rb3-Wii src/system/bandobj/TrackPanelDirBase.h.
-// ObjPtr<T,ObjectDir> -> ObjPtr<T>. Like rb3-Wii, this header includes
+// TrackPanelDirBase (bandobj/TrackPanelDirBase.h).
+// ObjPtr<T,ObjectDir> -> ObjPtr<T>. This header includes
 // GemTrackDir.h: mGemTracks is ObjVector<ObjPtr<GemTrackDir> >, and MSVC
 // instantiates ObjPtr<T>::Replace (a dynamic_cast<T *>) with the class, so every
 // includer needs the complete type.
@@ -70,8 +70,8 @@ public:
     // Retail TrackPanelDir vtable is at .rdata 0x8202d464. Slot 0xd0 is
     // ?GetGemTrackResourceManager@TrackPanelDir@@UBAPAVGemTrackResourceManager@@XZ
     // and slot 0xdc reads 0x00000000, so 0xd4/0xd8 are the LAST two slots.
-    // Both are RB3-360-only: the rb3-Wii dev oracle's TrackPanelDirBase.h ends
-    // at GetGemTrackResourceManager.
+    // Both are RB3-360-only additions that follow
+    // GetGemTrackResourceManager.
     //   0xd4 -> 0x82303bb8   0xd8 -> 0x82309b60 (inline: this->0x378 = false)
     // TrackPanel::Reset() calls slot 0xd8 right before ConfigureTracks(false).
     //
@@ -137,7 +137,7 @@ public:
     ObjVector<ObjPtr<BandTrack> > mTracks; // 0x274
     // Retail element type is ObjPtr<GemTrackDir> (W17-TPD): the ctor's push_back
     // temp stores vtable 0x8202C1E4, whose Replace (0x82304000) casts to
-    // .?AVGemTrackDir@@ (rb3-Wii declares the same type).
+    // .?AVGemTrackDir@@.
     ObjVector<ObjPtr<GemTrackDir> > mGemTracks; // 0x284
     bool unk224; // 0x294
     TrackPanelInterface *mTrackPanel; // 0x298

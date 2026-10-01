@@ -52,7 +52,7 @@ END_PROPSYNCS
 RndScreenMask::RndScreenMask()
     : mMat(this), mColor(1, 1, 1, 1), mRect(0, 0, 1, 1), mUseCamRect(false) {}
 
-// RB3-360 retail rev dialect (rb3-Wii/ObjMacros shape): the packed rev is split
+// RB3-360 retail rev dialect (ObjMacros shape): the packed rev is split
 // into two HALFWORDS stored four bytes apart onto ONE internal-linkage align(4)
 // base, and the RAW incoming BinStream is forwarded to every read and to the
 // superclass Load.  DC3's Object.h BinStreamRev stack decorator additionally

@@ -57,7 +57,7 @@ static inline bool MiloDebugChooseModePath(const char *path) {
 //   - operator= fn_824D77D0: reads mObject@4, mLoader@8 (Release fn_827367D8 /
 //     AddRef fn_82737168 with `this` as the ring-ref).
 //   - PostLoad helper fn_824D7480: reads mLoader@8.
-//   - rb3-Wii oracle (obj/Dir.h:31): `ObjDirPtr : ObjRef { T* mDir; DirLoader*
+//   - shape: `ObjDirPtr : ObjRef { T* mDir; DirLoader*
 //     mLoader; }` — vtable-first, mDir first, mLoader after, NO mOwner.
 // Vtable (4 slots, from ObjRefOwner): +0 dtor, +4 RefOwner()=>nullptr,
 // +8 Replace(from,to), +c IsDirPtr()=>true.
@@ -95,7 +95,7 @@ public:
     ObjDirPtr(C *);
     virtual ~ObjDirPtr() { *this = nullptr; }
     // Vtable slot +4: RefOwner() — ObjDirPtr has no owner; returns null
-    // (rb3-Wii oracle: `RefOwner() { return 0; }`).
+    // (`RefOwner() { return 0; }`).
     virtual Hmx::Object *RefOwner() const { return nullptr; }
     // Vtable slot +8: Replace(from, to). from==nullptr => unconditional.
     virtual void Replace(ObjRef *from, Hmx::Object *o) {
@@ -351,8 +351,8 @@ class ObjectDir;
 class MergeFilter;
 #endif
 
-// GetExposedProperties is a DC3-only virtual: retail RB3 (and the rb3-Wii dev
-// decomp, src/system/obj/Dir.h) has NO such slot in ObjectDir's vbase vtable —
+// GetExposedProperties is a DC3-only virtual: retail RB3
+// has NO such slot in ObjectDir's vbase vtable —
 // its presence here pushed SyncObjects/ResetEditorState/InlineSubDirType (and
 // every ObjectDir-vbase virtual of every descendant) down one slot. Verified
 // against the retail ObjectDir-vbase vtable @0x82105d5c (slot 3 = SyncObjects,
@@ -437,7 +437,7 @@ protected:
     FilePath mProxyFile; // 0x3c (X360 String=0xC -> spans 0x3c..0x48)
     bool mProxyOverride; // 0x48 (X360) — String is 0xC so this lands at 0x48
     /** "How is this Proxy inlined?".
-        RB3 retail stores this as a single bool (rb3-Wii oracle:
+        RB3 retail stores this as a single bool (as in
         `bool mInlineProxy; // 0x49`, `AllowsInlineProxy() { return mInlineProxy; }`),
         NOT a 4-byte InlineDirType enum. The enum form is a DC3-era divergence
         that over-sizes ObjectDir by +4. Verified from the retail binary:
@@ -507,7 +507,7 @@ public:
     // RB3 retail does not: every ObjectDir-descendant vtable in band.exe holds
     // Hmx::Object::SetName (0x8275a5c0, shared by all 584 Object-derived tables)
     // at the Object slot 16, and the retail map has zero `SetName@ObjectDir`
-    // symbols (DC3's own map has 20). rb3-Wii's Dir.h has none either. Lane
+    // symbols (DC3's own map has 20). Lane
     // W3-E 2026-09-11, tools/vtable_inherit_sweep.py (29 classes charged).
     virtual ObjectDir *DataDir() { return this; }
     virtual void PreLoad(BinStream &);
@@ -520,7 +520,7 @@ public:
     DIR_DC3_VIRTUAL DataArrayPtr GetExposedProperties() { return nullptr; }
     virtual void SyncObjects();
     virtual void ResetEditorState();
-    // AllowsInlineProxy is a virtual in retail RB3 (rb3-Wii src/system/obj/Dir.h:
+    // AllowsInlineProxy is a virtual in retail RB3 (ObjectDir vbase,
     // between ResetEditorState and InlineSubDirType) — verified at the retail
     // ObjectDir-vbase vtable +0x14 slot (0x822695A8). DC3 demoted it to a plain
     // member; BandCharacter::AllowsInlineProxy already overrides it, so the base
@@ -568,8 +568,8 @@ public:
     int HashTableUsedSize() const { return mHashTable.UsedSize(); }
     int StrTableUsedSize() const { return mStringTable.UsedSize(); }
     KeylessHash<const char *, Entry> &HashTable() { return mHashTable; }
-    /** Depth-first subdir walk used by ObjDirItr (retail shape, ported from
-     * rb3-Wii Dir.cpp). which==0 returns this; otherwise recurses into
+    /** Depth-first subdir walk used by ObjDirItr (retail shape).
+     * which==0 returns this; otherwise recurses into
      * mSubDirs, decrementing which at each visited dir. */
     ObjectDir *NextSubDir(int &which) {
         if (which == 0)
@@ -729,7 +729,7 @@ protected:
 extern const char *kNotObjectMsg;
 
 /** Iterates through each Object in an ObjectDir that is of type T.
- * Retail RB3 shape (== rb3-Wii): flat 0x14-byte iterator walking subdirs via
+ * Retail RB3 shape: flat 0x14-byte iterator walking subdirs via
  * ObjectDir::NextSubDir — NOT the DC3 std::list-based recursive collector. */
 template <class T>
 class ObjDirItr {

@@ -155,7 +155,7 @@ public:
     // mTourProgress, no gap) and mScores lands at 0x50 either way, so the
     // 4-byte unk18 slot must be *inside* the mTourProgress..mScores span but
     // past the 24-byte map, i.e. at 0x4c.
-    // RETAIL X360 USES hash_map, NOT map (rb3-Wii dev build used map).
+    // RETAIL X360 USES hash_map, NOT map.
     // Evidence from retail bytes in SetLessonComplete: _M_find takes an sret
     // out-param (returns a _Slist_iterator BY VALUE) where _Rb_tree::_M_find
     // returns a bare node pointer; the end() test is `node == NULL` rather
@@ -172,7 +172,7 @@ public:
     std::vector<LocalSavedSetlist *> mSavedSetlists; // 0x54
     std::vector<StandIn> mStandIns; // 0x60
     HxGuid unk5c; // 0x6c
-    // unk6c (mLastPrefabCharUsed) sits HERE, exactly as on Wii — an earlier
+    // unk6c (mLastPrefabCharUsed) sits HERE — an earlier
     // hypothesis relocated it below mAccomplishmentProgress to shift this whole
     // block -4.  That was wrong: the retail target reads mCampaignKeys at 0x80,
     // unk88 at 0x98 and mAccomplishmentProgress at 0x110 (see
@@ -187,7 +187,7 @@ public:
     AccomplishmentProgress mAccomplishmentProgress; // retail 0x110
     int unk740;
     int mAccomplishmentDataUploadContextID; // 0x784
-    // Present on Wii (BandProfile.h:161) and in retail: CheckWebLinkStatus reads
+    // Present in retail: CheckWebLinkStatus reads
     // unk74c at 0x78c / unk754 at 0x794, i.e. +4 vs a layout without this slot.
     // Restoring it makes the whole unk74c..mPerformanceDataList block land right
     // and removes the need for the old `unk6f78pad` tail compensator below.

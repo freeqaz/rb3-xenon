@@ -82,8 +82,8 @@ TrackPanelDirBase::TrackPanelDirBase()
       mBandLogoRival(0), mBandLogo(0), mPerformanceMode(0), mDoubleSpeedActive(0),
       mIndependentTrackSpeeds(0) {
     // Retail's ctor (Ghidra decompile of va 0x82358c20) never calls
-    // DataRegisterFunc("toggle_hud", ToggleHUD) -- unlike the rb3-Wii dev
-    // decomp, which still has it (source `../rb3` TrackPanelDirBase.cpp:35).
+    // DataRegisterFunc("toggle_hud", ToggleHUD); that dev-build
+    // registration is absent.
     // ToggleHUD/gShowHUD stay defined above; only this dev-only registration
     // call was stripped for the Xbox 360 retail build.
     if (SystemConfig()->FindArray("track_graphics", false)) {
@@ -165,7 +165,7 @@ void TrackPanelDirBase::ReapplyConfiguration(bool b) {
         apply[0] = b;
         mConfiguration->Handle(apply, true);
 #ifdef HX_NATIVE
-        // rb3-Wii re-shows the HUD here; retail TU5 (0x82357640) returns right
+        // No HUD re-show here: retail TU5 (0x82357640) returns right
         // after Handle -- no mPerformanceMode test, no SetShowing.
         if (!mPerformanceMode)
             SetShowing(gShowHUD);

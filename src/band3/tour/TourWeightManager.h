@@ -6,7 +6,7 @@
 // unk4 is a Harmonix `hash_map` keyed on Symbol in retail X360, not a std::map:
 // the retail ctor calls hash_map<Symbol,_>::hash_map() out-of-line at this+4,
 // and retail's own ConfigureQuestWeightData calls
-// hash_map<Symbol,float,...>::operator[]. The Wii decomp approximated it as
+// hash_map<Symbol,float,...>::operator[]. It is not a
 // std::map. hash<Symbol> hashes the interned char* word identity, matching
 // retail. Guarded so this and another hash<Symbol>-defining header can coexist
 // in one TU without an ODR clash.

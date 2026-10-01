@@ -248,7 +248,7 @@ Task *RndAnimatable::Animate(
 }
 
 // RB3-era lean overload (no listener/easeType/easePower/wrap) -- see Anim.h.
-// Body follows rb3-Wii src/system/rndobj/Anim.cpp:144.
+// Body: the RB3-era form.
 Task *RndAnimatable::Animate(
     float blend,
     bool wait,
@@ -376,13 +376,13 @@ AnimTask::AnimTask(
     }
     mAnim = anim;
     mAnimTarget = anim->AnimTarget();
-    // rb3-Wii starts the anim here; dc3 deferred it to the first Poll() behind the
+    // RB3 starts the anim here; dc3 deferred it to the first Poll() behind the
     // mActive latch, which no longer exists in the RB3-era layout.
     mAnim->StartAnim();
 }
 
 // Retail's lean-overload path never had a listener/easeType/easePower/wait
-// AnimTask at all (see rb3-Wii's AnimTask ctor, exactly these 6 params). Same
+// AnimTask at all (the AnimTask ctor takes exactly these 6 params). Same
 // body as the 10-arg ctor above, with the extra fields fixed to their
 // no-listener/no-ease defaults rather than accepted as parameters.
 AnimTask::AnimTask(
@@ -421,12 +421,12 @@ AnimTask::AnimTask(
     }
     mAnim = anim;
     mAnimTarget = anim->AnimTarget();
-    // rb3-Wii starts the anim here; dc3 deferred it to the first Poll() behind the
+    // RB3 starts the anim here; dc3 deferred it to the first Poll() behind the
     // mActive latch, which no longer exists in the RB3-era layout.
     mAnim->StartAnim();
 }
 
-// RB3-era (rb3-Wii oracle, Anim.cpp:334) deletes mBlendTask directly rather
+// RB3-era code deletes mBlendTask directly rather
 // than routing through TaskMgr::QueueTaskDelete (a dc3-newer-engine
 // indirection - see Task.cpp). Retail's actual bytes (Ghidra @0x82401588)
 // show a null check + a vtable-slot-0 call with arg 1, i.e. exactly the
@@ -461,7 +461,7 @@ float AnimTask::TimeUntilEnd() {
     return time;
 }
 
-// RB3-era Poll, ported from the rb3-Wii oracle: no easing (mEaseFunc/mEasePower),
+// RB3-era Poll: no easing (mEaseFunc/mEasePower),
 // no listener dispatch, no wait/active gating and no mFrameSpan — those are all
 // dc3-newer additions whose backing fields do not exist in a 0x6c AnimTask.
 // StartAnim() now happens in the ctors instead of behind the mActive latch.
@@ -485,7 +485,7 @@ void AnimTask::Poll(float time) {
             TheTaskMgr.QueueTaskDelete(mBlendTask);
     }
 
-    // rb3-Wii maps the raw task time into frame space up front, then tests that
+    // RB3 maps the raw task time into frame space up front, then tests that
     // same mapped value for the end-of-anim condition below.
     time = time * mScale + mOffset;
 

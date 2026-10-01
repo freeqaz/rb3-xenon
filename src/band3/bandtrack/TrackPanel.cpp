@@ -218,9 +218,9 @@ void TrackPanel::Reset() {
     // AssignAndInitTracks/BandScoreboard::Reset, and never stores -1.0f to
     // mLastCrowdRating (0x9c) — confirmed via Ghidra decompile of the target
     // address: the function body starts directly at the TheTaskMgr.Seconds() call
-    // below. This is a genuine retail-vs-rb3-Wii-dev-build behavioral divergence
-    // (the Wii oracle's Reset() does a full track teardown/rebuild; retail's does
-    // not), not a codegen/ordering artifact. Also: retail's on_reset_msg reference
+    // below. This is genuine retail behaviour
+    // (Reset() does no track teardown/rebuild),
+    // not a codegen/ordering artifact. Also: retail's on_reset_msg reference
     // here is a function-LOCAL static (guard-byte + Symbol("on_reset") ctor +
     // atexit(~Message) all emitted inline at this call site — the classic MSVC
     // "magic static" pattern), not the shared extern global from Messages3.h.
@@ -256,7 +256,7 @@ void TrackPanel::ResetEndingBonus() {
 }
 
 void TrackPanel::CleanUpTracks() {
-    // TU5: no unk5c/unk5d gating and no null tests (rb3-Wii had both).
+    // TU5: no unk5c/unk5d gating and no null tests.
     for (int i = 0; i < mTracks.size(); i++) {
         BandUser *user = (BandUser *)mTracks[i]->GetBandUser();
         user->mTrack = nullptr;
@@ -326,7 +326,7 @@ void TrackPanel::HandleAddUser(BandUser *user) {
     }
     // Retail fn_82B92700's disassembly has ZERO stb instructions (117-instr
     // body, verified via dtk target .s dump) -- no unk5d(0x6c) write anywhere
-    // in this function, unlike the rb3-Wii dev oracle which sets it here.
+    // in this function.
     newtrack->mSlotIdx = userslot;
     user->mTrack = newtrack;
     slot.mTrack = newtrack;
@@ -600,9 +600,9 @@ void TrackPanel::Poll() {
     if (!TheSongDB || TheSongDB->GetNumTrackData() == 0)
         return;
     // Retail fn_82B60080 has NO unk5c gate here (confirmed via raw target .s +
-    // Ghidra decompile: no 0x3c(this) load anywhere in the function). The
-    // rb3-Wii oracle's `if (!unk5c) return;` does not exist in the 360 retail
-    // binary — dropped to match.
+    // Ghidra decompile: no 0x3c(this) load anywhere in the function). There
+    // is no `if (!unk5c) return;` in the 360 retail
+    // binary.
     auto _tmp0 = TheGame->mMaster->GetAudio()->Fail();
     if (_tmp0)
         return;

@@ -647,7 +647,7 @@ bool VocalTrack::UseVocalHarmony() {
 }
 
 void VocalTrack::SetVocalStyle(VocalStyle style) {
-    // Retail (this SKU) predates the rb3-Wii DEV net-vocals addition: there is no
+    // Retail (this SKU) has no net-vocals addition: there is no
     // HasNetPlayer()/unk2e5 (mRemoteBandVocals) block here -- the retail body is
     // just the style-changed guard. Confirmed from the target asm (no leading
     // vfptr load + bctrl, no stb to 0x305, and a leaf frame with no GPR saves).
@@ -703,7 +703,7 @@ void VocalTrack::UpdateVocalStyle() {
     }
 }
 
-// Retail 0x82B9FBB8. Not present in the rb3-Wii dev oracle -- an RB3-retail-only
+// Retail 0x82B9FBB8. An RB3-retail-only
 // addition, like the GetBandTrack()->StopDeploy() block in VocalPlayer::Jump that
 // calls it. Body is recovered from retail bytes: three BandTrack calls on mDir
 // (upcast +0x1dc to the BandTrack base of VocalTrackDir), the middle one virtual
@@ -1120,8 +1120,8 @@ void VocalTrack::PollLyricAnimations(
         //   * ground truth: cl.exe /d1reportSingleClassLayout puts unk50 at 0x60 and
         //     mIntroPlaying at 0x70; class_layout_report.py --check-header reports
         //     every // 0xHEX comment in Track.h agreeing with the compiler; the
-        //     rb3-Wii oracle declares the SAME ORDER (uniformly -0x10, a base-class
-        //     shift, and unk50 is merely NAMED for its Wii offset); and retail's ONLY
+        //     natural source order is the SAME ORDER (uniformly -0x10, a base-class
+        //     shift, and unk50 is merely NAMED for a narrower offset); and retail's ONLY
         //     this-relative byte access in this entire function is `lbz r11,0x70(r3)`
         //     == our `if (mIntroPlaying) return;`, which objdiff already scores EQUAL
         //     at idx 5.  This function reads unk50 ZERO times, so the "vice versa"
@@ -2123,7 +2123,7 @@ void VocalTrack::PollKaraoke(float f1) {
         int numSingers = mPlayer->NumSingers();
         // retail (this SKU) has no unk2e5 guard here — StartUpdateArrows/
         // UpdatePitchArrow/UpdateUnusedArrows run unconditionally, unlike
-        // rb3-Wii's `if (!mRemoteBandVocals)` gate. Verified against target
+        //     an `if (!mRemoteBandVocals)` gate. Verified against target
         // disassembly for fn_82B70860 (PollKaraoke): no this+0x... load or
         // branch exists between the NumSingers() computation and the
         // StartUpdateArrows() call.
@@ -2185,7 +2185,7 @@ void VocalTrack::UpdatePitchArrow(float ms, int singerIdx) {
         bool clampPitch = true;
         // Retail (this SKU) has NO gDebugSpew blocks anywhere in UpdatePitchArrow:
         // the target function never loads the gDebugSpew global and makes exactly
-        // the 20 calls of the non-debug path (the rb3-Wii DEV decomp keeps them).
+        //     the 20 calls of the non-debug path.
         if (enabled && inPhonemePhrase) {
             // The float is read into a NAMED LOCAL up front, exactly as the third
             // branch below does with mFrameBestHitScore: retail emits
@@ -2224,8 +2224,8 @@ void VocalTrack::UpdatePitchArrow(float ms, int singerIdx) {
         if (singer->mFrameMicPitch > 0.0f) {
             // Retail copies the whole translation by value into a stack temp and
             // then writes v.z in BOTH arms (the target reads v.z back off the
-            // temp at 0x68(r1)); the rb3-Wii DEV form extracts x/y/z into three
-            // scalars and rebuilds a Vector3 temp at the call, which costs an
+            // temp at 0x68(r1)); extracting x/y/z into three
+            // scalars and rebuilding a Vector3 temp at the call costs an
             // extra float-store trio.
             Vector3 v = arrow->LocalXfm().v;
             float pitchZ = mDir->PitchToZ(singer->mFrameMicPitch, clampPitch);

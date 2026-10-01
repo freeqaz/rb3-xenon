@@ -43,7 +43,7 @@ protected:
     Vector3 mFootPosition;
     float mFootBlendTime;
     // RB3 has an ObjPtr<Character> here (set in SetName, used by DoFSM), NOT
-    // DC3's Transform mFootTransform. DC3 is newer and diverged; rb3-Wii's
+    // DC3's Transform mFootTransform. DC3 is newer and diverged; a
     // retail scratch (decomp.me/scratch/G9HMd) confirms the mMe member.
     ObjPtr<Character> mMe;
 };

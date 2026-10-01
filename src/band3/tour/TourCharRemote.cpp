@@ -25,8 +25,8 @@ RndTex *TourCharRemote::GetTexAtPatchIndex(int i, bool b) const {
         for (int n = 0; n < unk4c.size(); n++) {
             // Operand order is load-bearing and VERIFIED on retail bytes:
             // retail word 30 of this body is 0x7F07F000 = `cmpw cr6,r7,r30`
-            // (r7 = the loaded index byte, r30 = i). The Wii oracle spells
-            // this `i == unk4c[n].index`, which emits 0x7F1E3800 --
+            // (r7 = the loaded index byte, r30 = i). The spelling
+            // `i == unk4c[n].index` emits 0x7F1E3800 --
             // `cmpw cr6,r30,r7`, the operands swapped -- and was the ONLY
             // non-relocation difference in the whole TourCharRemote port.
             // Writing the member first reproduces retail exactly (row now

@@ -21,7 +21,7 @@ public:
     // it lands at 0x1c. The 4 bytes at 0x20 are not a member: they are the vtordisp
     // slot MSVC places immediately before the virtual base (GameMode's dtor thunk is
     // mangled `??_E...$4PPPPPPPM@A@...`, i.e. vtordisp(-4,0)) -- hence vbase 0x24 and
-    // sizeof == 0x4c. rb3-Wii's DEV build carries ~20 extra cached-mode-flag ints
+    // sizeof == 0x4c. There are no cached-mode-flag ints
     // here (mOverdriveEnabled, mIsPractice, ...); retail X360 has NONE of them, and
     // its SetMode correspondingly does no Property() caching.
     // The earlier `mUnkTU5_0x18` placeholder sat *before* mMode and pushed it to

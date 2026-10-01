@@ -107,7 +107,7 @@ void CampaignSongInfoPanel::Enter() {
 
 void CampaignSongInfoPanel::Unload() {
     UIPanel::Unload();
-    // Releases the provider Enter() creates, per rb3-Wii. Retail's body for
+    // Releases the provider Enter() creates. Retail's body for
     // THIS class is 0x825F58C8 (slot 33 of the vtable at 0x820BB894, COL
     // .?AVCampaignSongInfoPanel@@): lwz/stw 0x3c -- word-identical to ours.
     // The 0x44-slot body at 0x8261FEB8 the map used to pair us with is
@@ -128,9 +128,9 @@ int CampaignSongInfoPanel::GetCareerScore() const {
     // Retail materialises a FUNCTION-LOCAL `static Symbol all("all")` in every
     // method of this TU that names `all` (guard word + storage in .bss, built via
     // ??0Symbol@@QAA@PBD@Z from the .rdata literal at 0x82014840, guard rolled
-    // back in the EH funclet), not the extern `all` from Symbols2.h that the
-    // rb3-Wii dev source uses. Retail guard/storage: 0x82E003D0 / 0x82E003CC (fn 0x825F5C60). The oracle is wrong
-    // here and the retail bytes are right (same finding as GoalCmp, W16-AI).
+    // back in the EH funclet), not the extern `all` from Symbols2.h.
+    // Retail guard/storage: 0x82E003D0 / 0x82E003CC (fn 0x825F5C60).
+    // (Same finding as GoalCmp, W16-AI.)
     static Symbol all("all");
     if (src == all) {
         return pSongStatusMgr->CalculateTotalScore(ty, gNullStr);
@@ -149,9 +149,9 @@ int CampaignSongInfoPanel::GetSongCount() const {
     // Retail materialises a FUNCTION-LOCAL `static Symbol all("all")` in every
     // method of this TU that names `all` (guard word + storage in .bss, built via
     // ??0Symbol@@QAA@PBD@Z from the .rdata literal at 0x82014840, guard rolled
-    // back in the EH funclet), not the extern `all` from Symbols2.h that the
-    // rb3-Wii dev source uses. Retail guard/storage: 0x82E003D8 / 0x82E003D4 (fn 0x825F5D30). The oracle is wrong
-    // here and the retail bytes are right (same finding as GoalCmp, W16-AI).
+    // back in the EH funclet), not the extern `all` from Symbols2.h.
+    // Retail guard/storage: 0x82E003D8 / 0x82E003D4 (fn 0x825F5D30).
+    // (Same finding as GoalCmp, W16-AI.)
     static Symbol all("all");
     if (src == all) {
         return pSongStatusMgr->GetTotalSongs(ty, gNullStr);
@@ -170,9 +170,9 @@ int CampaignSongInfoPanel::GetSongsCompleted(Difficulty diff) const {
     // Retail materialises a FUNCTION-LOCAL `static Symbol all("all")` in every
     // method of this TU that names `all` (guard word + storage in .bss, built via
     // ??0Symbol@@QAA@PBD@Z from the .rdata literal at 0x82014840, guard rolled
-    // back in the EH funclet), not the extern `all` from Symbols2.h that the
-    // rb3-Wii dev source uses. Retail guard/storage: 0x82E003DC / 0x82E003E0 (fn 0x825F5E08). The oracle is wrong
-    // here and the retail bytes are right (same finding as GoalCmp, W16-AI).
+    // back in the EH funclet), not the extern `all` from Symbols2.h.
+    // Retail guard/storage: 0x82E003DC / 0x82E003E0 (fn 0x825F5E08).
+    // (Same finding as GoalCmp, W16-AI.)
     static Symbol all("all");
     if (src == all) {
         return pSongStatusMgr->GetCompletedSongs(ty, diff, gNullStr);
@@ -191,9 +191,9 @@ int CampaignSongInfoPanel::GetStarCount() const {
     // Retail materialises a FUNCTION-LOCAL `static Symbol all("all")` in every
     // method of this TU that names `all` (guard word + storage in .bss, built via
     // ??0Symbol@@QAA@PBD@Z from the .rdata literal at 0x82014840, guard rolled
-    // back in the EH funclet), not the extern `all` from Symbols2.h that the
-    // rb3-Wii dev source uses. Retail guard/storage: 0x82E003E4 / 0x82E003E8 (fn 0x825F5EE0). The oracle is wrong
-    // here and the retail bytes are right (same finding as GoalCmp, W16-AI).
+    // back in the EH funclet), not the extern `all` from Symbols2.h.
+    // Retail guard/storage: 0x82E003E4 / 0x82E003E8 (fn 0x825F5EE0).
+    // (Same finding as GoalCmp, W16-AI.)
     static Symbol all("all");
     if (src == all) {
         return pSongStatusMgr->GetPossibleStars(ty, gNullStr);
@@ -212,9 +212,9 @@ int CampaignSongInfoPanel::GetStarsEarned(Difficulty diff) const {
     // Retail materialises a FUNCTION-LOCAL `static Symbol all("all")` in every
     // method of this TU that names `all` (guard word + storage in .bss, built via
     // ??0Symbol@@QAA@PBD@Z from the .rdata literal at 0x82014840, guard rolled
-    // back in the EH funclet), not the extern `all` from Symbols2.h that the
-    // rb3-Wii dev source uses. Retail guard/storage: 0x82E003EC / 0x82E003F0 (fn 0x825F5FB8). The oracle is wrong
-    // here and the retail bytes are right (same finding as GoalCmp, W16-AI).
+    // back in the EH funclet), not the extern `all` from Symbols2.h.
+    // Retail guard/storage: 0x82E003EC / 0x82E003F0 (fn 0x825F5FB8).
+    // (Same finding as GoalCmp, W16-AI.)
     static Symbol all("all");
     if (src == all) {
         return pSongStatusMgr->GetTotalBestStars(ty, diff, gNullStr);

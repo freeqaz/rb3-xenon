@@ -125,7 +125,7 @@ int JoypadMidiController::OnMsg(const ButtonDownMsg &msg) {
 
 // Mirrors GuitarController/JoypadController: retail truncates the OnMsg return to a
 // byte before DataNode construction (the retail OnMsg overloads returned bool); the
-// Wii dev decomp declares them int. Reproduce the truncation locally rather than
+// header declares them int. Reproduce the truncation locally rather than
 // changing the shared header.
 #undef HANDLE_MESSAGE
 #define HANDLE_MESSAGE(msg)                                                              \

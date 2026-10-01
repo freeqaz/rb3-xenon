@@ -37,7 +37,7 @@ public:
 
     int GetNumChannels() const;
     int GetSampleRate() const;
-    // Out of line in retail (SampleInst360's ctor calls them; rb3-Wii names).
+    // Out of line in retail (SampleInst360's ctor calls them).
     bool GetIsLooped() const;
     int GetLoopStartSamp() const;
     int GetLoopEndSamp() const;
@@ -65,7 +65,7 @@ protected:
     // ctor (mFile String ctor @ +0x28; bool@0x34=0, int@0x38=0, int@0x3c=-1;
     // SampleData ctor @ +0x40) and SynthSample360::IsXMA (mFormat @ +0x4c =
     // SampleData+0xc). DC3's newer engine dropped the loop members; RB3 keeps
-    // them (cross-checked against rb3-Wii SynthSample.h).
+    // them.
     FilePath mFile; // 0x28
     bool mIsLooped; // 0x34
     int mLoopStartSamp; // 0x38

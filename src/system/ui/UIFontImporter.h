@@ -107,7 +107,7 @@ protected:
     // RB3 retail has NO RndFontBase/RndFont3d split (that is a DC3-era addition):
     // the retail binary contains zero "RndFontBase" strings and its RTTI carries
     // .?AV?$ObjPtrList@VRndFont@@VObjectDir@@@@ / .?AV?$ObjPtr@VRndFont@@VObjectDir@@@@.
-    // rb3-Wii's UIFontImporter.h agrees: these members are all plain RndFont.
+    // These members are all plain RndFont.
     ObjPtrList<RndFont> mGennedFonts; // 0x84
     ObjPtr<RndFont> mReferenceKerning; // 0x98
     ObjPtrList<RndMat> mMatVariations; // 0xa4

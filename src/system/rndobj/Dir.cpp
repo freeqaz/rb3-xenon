@@ -140,7 +140,7 @@ void RndDir::SetSubDir(bool b1) {
     mAnims.clear();
 }
 
-// Retail 0x82405ef0 is rb3-Wii's shape. DC3's leading mSubDirs loop (reset
+// Retail 0x82405ef0 is the RB3 shape. DC3's leading mSubDirs loop (reset
 // + SetTransParent on inlined subdirs via dynamic_cast<RndTransformable *>) is
 // absent from retail, and the pollable harvest is inline here -- there is no
 // out-of-line HarvestPollables (and no MemTemp) in retail. The proxy chain
@@ -232,7 +232,7 @@ void RndDir::OldLoadProxies(BinStream &bs, int rev) {
 }
 
 // Retail 0x824037c8, 184 B. The `dir && dir->Sinks()` guard + Hmx::Object::
-// ChainSource shape was DC3 provenance; retail (and the rb3-Wii oracle) gate on
+// ChainSource shape was DC3 provenance; retail gates on
 // a dynamic_cast<MsgSource *> of the subdir instead, and chain through the
 // MsgSource base -- retail's ChainSource call has `this` = RndDir + 0x190, which
 // is exactly this class's MsgSource subobject.

@@ -42,9 +42,9 @@ RndPropAnim::~RndPropAnim() { DeleteAll(mPropKeys); }
 // base Replace at all. Our previous shape (return after the first hit, then a
 // trailing Hmx::Object::Replace fallback) is DC3's, and DC3 postdates RB3: DC3
 // rewrote this to the bool-returning "I handled it" protocol, which is what the
-// early return and the fallback are for. rb3-Wii carries the RB3-era shape and
-// agrees with the retail bytes on the loop; it disagrees on the base call
-// (rb3-Wii calls Hmx::Object::Replace first) and the retail bytes win -- the
+// early return and the fallback are for. The RB3-era shape
+// agrees with the retail bytes on the loop, but not on a leading base call
+// (Hmx::Object::Replace first); retail bytes decide -- the
 // non-native Hmx::Object::Replace body is EMPTY but lives in Object.cpp, and
 // with no LTCG an empty out-of-line callee still costs a real `bl`. There is no
 // `bl` in the retail body, so the call is genuinely absent from RB3's source.
@@ -114,8 +114,8 @@ BEGIN_HANDLERS(RndPropAnim)
     // Hmx::Object::Handle's "replace" arm uses, which matches at 100%. The
     // (ObjRef *) cast only fits the declared parameter type; retail carries an
     // Hmx::Object* through this slot (see TypeProps::Replace, also 100%).
-    // rb3-Wii's dev tree writes this as Replace(_msg->Obj(2), _msg->Obj(3))
-    // against a differently-shaped Replace(Hmx::Object*, Hmx::Object*).
+    // A Replace(_msg->Obj(2), _msg->Obj(3)) form needs a
+    // differently-shaped Replace(Hmx::Object*, Hmx::Object*).
 #ifdef HX_NATIVE
     // Native ObjRef is a real polymorphic ring node, so the X360 pointer pun
     // below would be a genuine type error here. Keep DC3's explicit form.
@@ -235,7 +235,7 @@ BEGIN_LOADS(RndPropAnim)
     bs >> revs;
     gRev_PropAnim = getHmxRev(revs);
     gAltRev_PropAnim = getAltRev(revs);
-    // Retail sets PropKeys' class-static "current load rev" here (rb3-Wii:
+    // Retail sets PropKeys' class-static "current load rev" here (a.k.a.
     // SetPropKeysRev(gRev)) before any nested PropKeys::Load() call — see the
     // PropKeys.h comment on PropKeys::sPropKeysLoadRev (named to dodge this
     // TU's scatter-include gRev macro wrapping).
@@ -765,7 +765,7 @@ bool RndPropAnim::ChangePropPath(Hmx::Object *o, DataArray *a1, DataArray *a2) {
 // W16-GN: this used to be `{ return DataNode(0); }` (scaffold, 2026-05-26).
 // MSVC proved that same-TU leaf NOTHROW and memory-inert, which changed the
 // CALLER's codegen (Handle elided the guard-word reload after the call).
-// Retail fn_82429C38 is a 2,256 B body. Control flow is rb3-Wii's: retail has
+// Retail fn_82429C38 is a 2,256 B body. Control flow is RB3's: retail has
 // NO RemoveKey call, so DC3's newer sRemoveFrame branch is not in RB3.
 DataNode RndPropAnim::ForeachKeyframe(const DataArray *da) {
     Hmx::Object *obj2 = da->Obj<Hmx::Object>(2);

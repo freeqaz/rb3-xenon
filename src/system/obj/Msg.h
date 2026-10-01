@@ -253,11 +253,11 @@ public:
     // MsgSource-derived vftable points at a `$4` vbase adjustor thunk
     // (lwz r11,-4(r3); subf r3,r11,r3; [subi r3,r3,N]; b fn_82766EE0) and
     // fn_82766EE0 is `subi r3,r3,0x1c; r5=Symbol(); b RemoveSink` — i.e. exactly
-    // rb3-Wii's `MsgSource::Replace(o1,o2) { RemoveSink(o1, Symbol()); }`.
+    // `MsgSource::Replace(o1,o2) { RemoveSink(o1, Symbol()); }`.
     // Slot index proved by the RTTI COL sitting 3 words before the vftable, so
     // the observed entry is index 2 = ObjRefOwner{dtor,RefOwner,Replace,IsDirPtr}.
     //
-    // ⚠ It MUST be declared with the INHERITED signature. Declaring the rb3-Wii
+    // ⚠ It MUST be declared with the INHERITED signature. Declaring the
     // form `virtual void Replace(Hmx::Object*, Hmx::Object*)` does not override
     // ObjRefOwner::Replace(ObjRef*, Hmx::Object*) — the parameter types differ,
     // so it is a NEW virtual, and because MsgSource's only base is VIRTUAL, MSVC

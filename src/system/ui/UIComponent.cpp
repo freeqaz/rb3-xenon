@@ -72,7 +72,7 @@ BEGIN_PROPSYNCS(UIComponent)
 #endif
 END_PROPSYNCS
 
-// RB3 retail (0x827FF3D0) is rb3-Wii's shape: copy the resource triple, then
+// RB3 retail (0x827FF3D0): copy the resource triple, then
 // Hmx::Object::Copy, then dispatch the virtual CopyMembers (which copies the
 // Trans/Draw bases and the nav links, and which UILabel/InlineHelp override).
 BEGIN_COPYS(UIComponent)
@@ -95,7 +95,7 @@ void UIComponent::CopyMembers(const UIComponent *c, Hmx::Object::CopyType ty) {
     mResourcePath = c->mResourcePath;
 }
 
-// Ported from rb3-Wii (../rb3/src/system/ui/UIComponent.cpp) per Phase B of
+// Per Phase B of
 // docs/decomp/research/2026-06-11-uicomponent-virtuals.md — retail-360 has
 // this as a real UIComponent override (Object-vbase vtable slot 15,
 // fn_827DAB68), not a fallthrough to Hmx::Object::SetTypeDef.
@@ -336,8 +336,8 @@ BEGIN_SAVES(UIComponent)
     // rev word, and a trailing 'subi r4,r31,0x2c; bl operator<<(BinStream&,
     // const String&)'. r31 == this+0x144 here, so -0x60/-0x54/-0x2c are
     // mNavRight (0xe4) / mNavDown (0xf0) / mResourceName (0x118).
-    // rb3-Wii is NOT an oracle for this body -- its dev build uses
-    // SAVE_OBJ(UIComponent, 182), the "can't save" stub.
+    // A dev build's SAVE_OBJ(UIComponent, 182) "can't save" stub does not
+    // apply here.
     SAVE_REVS(2, 0)
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndTransformable)
@@ -392,7 +392,7 @@ void UIComponent::Poll() {
     FinishSelecting();
 }
 
-// RB3 retail uses the rb3-Wii rev dialect here, NOT DC3's `BinStreamRev d`.
+// RB3 retail uses the ObjMacros rev dialect here, NOT DC3's `BinStreamRev d`.
 // Read off retail PreLoad (target 252 B): the frame is 0x80 with no BinStream
 // temp and no ??_7BinStreamRev@@6B@ vtable store; instead the packed rev int is
 // split with `srwi r11,r11,16` and written to a file-scope pair with
@@ -410,7 +410,7 @@ static unsigned short gRev = 0;
 // ASSERT_REVS is deliberately absent: it is codegen-free in the match build in
 // BOTH dialects, and Object.h's form dereferences the `d` BinStreamRev that
 // retail does not construct — spelling it here would break the native build.
-// Retail is rev 2 (see the SAVE_REVS(2,0) note above); rb3-Wii agrees.
+// Retail is rev 2 (see the SAVE_REVS(2,0) note above).
 
 void UIComponent::PreLoad(BinStream &bs) {
     int rev;
@@ -437,19 +437,19 @@ void UIComponent::PreLoad(BinStream &bs) {
 }
 
 // Retail PostLoad is a real 432 B body; DC3 dropped it to `{}` and our source
-// inherited the empty one. Ported from the rb3-Wii oracle, which the retail
-// instruction stream corroborates one-for-one.
+// inherited the empty one. This is the retail body, which the retail
+// instruction stream confirms one-for-one.
 void UIComponent::PostLoad(BinStream &bs) {
     if (mResource)
         mResource->PostLoad();
-    // rb3-Wii stages this through two `bool`s (typeOk/needsUpgrade); retail does
+    // No staging through two `bool`s (typeOk/needsUpgrade): retail does
     // NOT materialise them — it is one short-circuit chain of branches, and the
     // staged form costs three extra register initialisations (li r27,0 / mr r28
     // / mr r29). Note retail re-walks mResourceName in the tail `if` rather than
     // reusing the strlen from here, which is consistent with two separate `if`s
     // (ResourceFileUpdated may have changed the string).
     if (!Type().Null() && mResourcePath.length() != 0 && mResourceName.length() == 0) {
-        // rb3-Wii spells this `Type().mStr`; mStr is private in our Symbol and
+        // Spelled via Str(): mStr is private in our Symbol and
         // Str() is the inline accessor for the same field (identical `lwz 0(r3)`).
         mResourceName = Type().Str();
         MILO_WARN(
@@ -501,7 +501,7 @@ void UIComponent::FinishSelecting() {
 // though the notify print is stripped. Our global Debug.h release MILO_NOTIFY is
 // ((void)sizeof(...)), and sizeof does NOT evaluate its operand, so PathName is
 // dropped and the unhandled-msg tail goes missing. Locally redefine MILO_NOTIFY
-// to comma-evaluate its args (matching rb3-Wii release Debug.h:151 MILO_WARN form)
+// to comma-evaluate its args (matching the release Debug.h MILO_WARN form)
 // so PathName(this) is emitted (bl fn_82732F68) while the print stays stripped.
 // NEVER edit global Debug.h — this is TU-local only.
 #pragma push_macro("MILO_NOTIFY")

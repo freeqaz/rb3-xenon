@@ -26,7 +26,7 @@ public:
     // Access is pure name-mangling -- identical machine code -- but it decides
     // whether our obj DEFINES the name the target map assigns: in this very obj
     // `$2` <-> protected and `$4` <-> public, and the deleting dtors at
-    // 0x823C7948 / 0x823C8040 are `$4...` / `...UAA...`.  rb3-Wii also declares
+    // 0x823C7948 / 0x823C8040 are `$4...` / `...UAA...`, i.e.
     // both public.  Protected here yields `??_G...MAA...` / `??_E...$2...`, which
     // no target row can ever pair with => a permanent 0%.
     CharTransCopy();
@@ -40,7 +40,7 @@ protected:
     //   this-0x1c -> 0x08 = mSrc      this-0x10 -> 0x14 = mDest
     // and the ObjPtr pointer field sits at +8 inside each, which is why Copy reads
     // the source at 0x10 / 0x1c (`lwz r4, 0x10(r30)` / `0x1c(r30)`).  The vbptr is
-    // at 0x04 (`lwz r11, -0x20(r31)`).  These agree with rb3-Wii's own comments.
+    // at 0x04 (`lwz r11, -0x20(r31)`).
     /** "Object to copy the local xfm from" */
     ObjPtr<RndTransformable> mSrc; // 0x8
     /** "Object to copy the local xfm to" */

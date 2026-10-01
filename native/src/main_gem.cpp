@@ -12,7 +12,7 @@
 //            computes slots + difficulty (PitchToSlot), and emits a MultiGemInfo
 //            to the sink. The sink stores each gem into a real GameGemDB ->
 //            GameGemList (the concrete GemListInterface containers, newly ported
-//            from the rb3-Wii oracle: GameGem.cpp / GameGemList.cpp / GameGemDB.cpp).
+//            in GameGem.cpp / GameGemList.cpp / GameGemDB.cpp).
 //
 //   Stage 2: The same sink is handed to MidiParserMgr as its GemListInterface.
 //            MidiParserMgr::OnEndOfTrack calls mGems->SetTrack(name) then

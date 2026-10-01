@@ -24,9 +24,9 @@ public:
     // MEASURED on this box: g++ folds by default and clang -fstrict-enums folds
     // memory loads; clang WITHOUT -fstrict-enums (what native/ uses today) does
     // NOT fold, so this is latent/portability, not currently live.
-    // These are RANGE GUARDS, not recovered names: the rb3-Wii oracle declares
-    // FailureReason and UIState equally empty and EditState equally short, so it
-    // cannot supply the real enumerators and inventing them would be fiction.
+    // These are RANGE GUARDS, not recovered names: no surviving source declares
+    // FailureReason/UIState enumerators or the rest of EditState, so nothing
+    // can supply the real enumerators and inventing them would be fiction.
     // X360-neutral: an enumerator emits no code and the underlying type stays
     // int (whole-binary A/B measured Δ0 on matched/masked/honest/code%).
     enum EditState {

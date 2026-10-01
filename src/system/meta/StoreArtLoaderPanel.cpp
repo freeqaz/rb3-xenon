@@ -22,14 +22,14 @@ void StoreArtLoaderPanel::Poll() {
                 BufStream bs(pBuffer, size, true);
                 // Retail calls the void Load(BinStream &) and calls SetMip
                 // UNCONDITIONALLY -- there is no LoadSafely(bs, 256, 256) and no
-                // bool test on it.  LoadSafely comes from the rb3-Wii dev oracle.
+                // bool test on it.
                 it->unk10->Load(bs);
                 it->unk10->SetMip(0);
                 TheNetCacheMgr->DeleteNetCacheLoader(it->unkc);
                 it->unkc = 0;
             } else {
                 if (it->unkc->HasFailed()) {
-                    // Retail's failure path does MORE than the oracle's: it reads
+                    // Retail's failure path does more: it reads
                     // the loader's fail type BEFORE deleting the loader, then
                     // reports it to the store panel.  The retail callee resolves to
                     // ?UncompressedSize@AsyncFile@@UAAHXZ, but NetCacheLoader does
@@ -72,8 +72,8 @@ void StoreArtLoaderPanel::EnsureArtLoader(const String &str) {
 
 RndBitmap *StoreArtLoaderPanel::GetBmp(const String &str) {
     // Retail has NO str.empty() early-out -- it loads mArtList.begin() and branches
-    // straight to the loop condition.  The guard comes from the rb3-Wii DEV oracle;
-    // it emitted 4 instructions (lwz 0x8(str) / lbz / cmplwi / beq) that retail
+    // straight to the loop condition.  An empty-string guard would emit
+    // 4 instructions (lwz 0x8(str) / lbz / cmplwi / beq) that retail
     // does not have.  Dropping it is behaviour-neutral unless an ArtEntry is itself
     // named "", in which case retail returns that entry -- and retail is the
     // reference.

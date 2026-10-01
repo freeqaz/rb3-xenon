@@ -52,7 +52,7 @@ static std::map<std::pair<Symbol, Symbol>, bool> sSuperClassMap;
 static unsigned short sObjectDirAltRev = 0;
 static unsigned short sObjectDirRev = 0;
 
-// Retail RB3 keeps the object-version stack as FREE functions (the rb3-Wii
+// Retail RB3 keeps the object-version stack as FREE functions (the
 // obj/ObjVersion.h pair `inline int PopRev(Hmx::Object *o)`): the target calls
 // PopRev(this) with NO BinStream receiver at all. dc3's newer engine moved them
 // onto BinStream, which is what our in-tree utl/BinStream.h declares, and that
@@ -244,7 +244,7 @@ const char *ObjectDir::ProxyName() const {
 
 // RB3 retail has no out-of-line SyncSubDir: it is expanded at both PropSyncSubDirs
 // call sites (fn_82752668), and neither expansion carries the "exists in dir and
-// subdir" replace loop that both oracles have -- after GetDir() retail goes
+// subdir" replace loop -- after GetDir() retail goes
 // straight to the ObjDirPtr ctor/assignment. The loop is kept for the native port.
 __forceinline ObjectDir *SyncSubDir(const FilePath &fp, ObjectDir *dir) {
     Loader *loader = TheLoadMgr.GetLoader(fp);
@@ -849,7 +849,7 @@ void PreloadSharedSubdirs(Symbol s) {
     }
 }
 #else
-// RB3 retail (rb3-Wii shape): a flat loop from 1, an explicit FilePath per
+// RB3 retail: a flat loop from 1, an explicit FilePath per
 // entry, no nested-array recursion and no empty-entry test.
 void PreloadSharedSubdirs(Symbol sym) {
     DataArray *arr = SystemConfig("preload_subdirs")->FindArray(sym, false);
@@ -1005,7 +1005,7 @@ void ObjectDir::Init() {
     // or CheckForDuplicates() here (absent from the retail binary at this exact
     // spot - a real DC3-newer-than-RB3 divergence, not a tooling artifact: base
     // size 444B vs target 436B, an exact 8-byte / two-bl-instruction delta).
-    // dc3-decomp and rb3-Wii both call them unconditionally, so this is kept as
+    // dc3-decomp calls them unconditionally, so this is kept as
     // a targeted retail-matching removal rather than a MILO_DEBUG-style guard.
     TheLoadMgr.RegisterFactory("milo", DirLoader::New);
     TheLoadMgr.RegisterFactory("milo_xbox", DirLoader::New);
@@ -1037,7 +1037,7 @@ void ObjectDir::Iterate(DataArray *arr, bool b) {
         s8 = a2->Sym(1);
     }
 #if defined(MILO_DEBUG) && defined(HX_NATIVE)
-    // rb3-Wii: `#ifdef MILO_DEBUG` -- retail 0x8274FCE8 has no SystemConfig
+    // An `#ifdef MILO_DEBUG` block -- retail 0x8274FCE8 has no SystemConfig
     // lookup here; MILO_DEBUG is force-defined tree-wide (house pattern).
     static DataArray *objects = SystemConfig("objects");
     objects->FindArray(s2);
@@ -1242,12 +1242,12 @@ bool ObjectDir::InlineProxy(BinStream &bs) {
 #ifdef HX_NATIVE
     // ⛔ X8 DEFECT FIX — THE BAND'S WALL, and it was never in DirLoader::SetupDir.
     //
-    // retail / rb3-Wii oracle (rb3/src/system/obj/Dir.cpp:613-619):
+    // retail (Dir.cpp):
     //     return AllowsInlineProxy() && bs.Cached();
     //
-    // `AllowsInlineProxy()` is VIRTUAL (rb3-Wii Dir.h:244, this tree Dir.h:495)
-    // and `BandCharacter` overrides it to a hard `false` in BOTH trees
-    // (rb3-Wii BandCharacter.h:64, rb3-xenon BandCharacter.h:71) — a band member
+    // `AllowsInlineProxy()` is VIRTUAL (this tree Dir.h:495)
+    // and `BandCharacter` overrides it to a hard `false`
+    // (BandCharacter.h:71) — a band member
     // is NEVER inlined into its parent milo. The DC3-era InlineDirType arm below
     // reads the mInlineProxyType FIELD directly and so never dispatches through
     // that override, which is the entire defect: chars.milo's `player0` answered
@@ -1270,7 +1270,7 @@ bool ObjectDir::InlineProxy(BinStream &bs) {
     return (mInlineProxyType == kInlineCached && bs.Cached())
         || mInlineProxyType == kInlineAlways;
 #else
-    // RB3 retail (rb3-Wii oracle Dir.cpp): return AllowsInlineProxy() && bs.Cached();
+    // RB3 retail: return AllowsInlineProxy() && bs.Cached();
     // the DC3-era kInlineCached/kInlineAlways split does not exist in retail, where
     // inline-proxy is the single bool mInlineProxy.
     return AllowsInlineProxy() && bs.Cached();
@@ -1384,7 +1384,7 @@ void ObjectDir::PreLoad(BinStream &bs) {
                 mInlineProxyType = proxyType;
             }
 #else
-            // RB3 retail (rb3-Wii oracle Dir.cpp) reads a single bool here:
+            // RB3 retail reads a single bool here:
             //   if (!gLoadingProxyFromDisk) bs >> mInlineProxy; else { bool b; bs >> b; }
             // The 4-byte InlineDirType path (sObjectDirRev > 0x1B) is a DC3-era rev that
             // retail never reaches; inline-proxy is the bool mInlineProxy.
@@ -1700,7 +1700,7 @@ void ObjectDir::PostLoad(BinStream &bs) {
 // ⛔ X4d — THE VENUE-ROOT SIGSEGV. The guard below is STRICTLY WEAKER than
 // retail's, and the difference eats 4 bytes off a live stream.
 //
-//   rb3-Wii (RB3 retail oracle, rb3/src/system/obj/Dir.cpp:475):
+//   retail RB3:
 //       if (IsProxy() && !mProxyFile.empty())
 //   here:
 //       ShouldSaveProxy(bs) == IsProxy() && (!mProxyFile.empty() || InlineProxy(bs))
@@ -1722,13 +1722,13 @@ void ObjectDir::PostLoad(BinStream &bs) {
 //
 // ShouldSaveProxy is not wrong in itself -- it is the correct guard on the
 // SAVE path (used that way at :680, `ShouldSaveProxy(bs) && InlineProxy(bs)`).
-// Reusing it on the LOAD path is the defect. rb3-Wii's ObjectDir::PostLoad
+// Reusing it on the LOAD path is the defect. RB3's ObjectDir::PostLoad
 // does not call ShouldSaveProxy at all.
 //
 // ⚠ MATCH DEBT, DELIBERATELY NOT PAID HERE: this is a real decomp divergence
 // and the X360 arm below is left TOKEN-FOR-TOKEN UNCHANGED, so `default/Dir`
 // keeps whatever it currently scores. A match lane should A/B the retail guard
-// against the X360 object -- rb3-Wii `main/system/obj/Dir` is the oracle.
+// against the X360 object.
     else if (IsProxy() && !mProxyFile.empty()) {
         DeleteObjects();
         DeleteSubDirs();

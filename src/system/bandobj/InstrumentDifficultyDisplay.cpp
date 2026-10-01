@@ -50,7 +50,7 @@ BEGIN_COPYS(InstrumentDifficultyDisplay)
     UIComponent::Copy(p, ty);
 END_COPYS
 
-// Retail-360 has a REAL Save here (the rb3-Wii oracle's `SAVE_OBJ` assert-stub is
+// Retail-360 has a REAL Save here (a `SAVE_OBJ` assert-stub would be
 // a 4-byte body; retail's fn_82323D18 is 184 B of BinStream writes). Member order
 // recovered from the target: packed revs 4, then Symbol@-0x14, int@-0x1c,
 // bool@-0x20, ObjPtr@-0x10, int@-0x18, int@-0x24, then UIComponent::Save.
@@ -104,8 +104,8 @@ void InstrumentDifficultyDisplay::UpdateDisplay() {
     } else if (mInstrumentState == kIcon) {
         static Symbol get_inst_icon("get_inst_icon");
         Message msg(get_inst_icon);
-        // Retail has NO kDataString type check here (the rb3-Wii oracle's
-        // `if (handled.Type() == kDataString) ... else MILO_WARN(...)` emits a
+        // Retail has NO kDataString type check here (an
+        // `if (handled.Type() == kDataString) ... else MILO_WARN(...)` would emit a
         // cmpwi 0x12 / bne that the target bytes do not contain).
         mInstrumentLabel->SetIcon(*HandleType(msg).Str());
     }

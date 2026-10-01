@@ -159,8 +159,8 @@ BinStream &operator<<(BinStream &bs, const ObjRefConcrete<T1, class ObjectDir> &
     // 0x82377698 virtual-base T; 419 call sites between them): no call before
     // the null test. RefOwner() is virtual here, so the match build's
     // MILO_ASSERT(f.RefOwner()) -- ((void)(cond)) -- left a dead bctrl that
-    // retail does not have; rb3-Wii asserts on the non-virtual f.Owner().
-    // The referent is read through the smart pointer twice, as rb3-Wii's
+    // retail does not have (an assert on the non-virtual f.Owner() costs nothing).
+    // The referent is read through the smart pointer twice, as
     // `f.Ptr() ? f.Ptr()->Name() : ""` does -- that is what gives retail's
     // signed `cmpwi` null test (a `T1 *` local gives `cmplwi`).
     const char *objName = f ? f->Name() : "";
@@ -464,8 +464,8 @@ ObjPtr<T>::~ObjPtr() {
 }
 #endif
 
-// W17-OPTR: formerly inherited from ObjRefConcrete; same bodies (rb3-Wii
-// spells SetObjConcrete as ObjPtr::operator=(T1*)).
+// W17-OPTR: formerly inherited from ObjRefConcrete; same bodies (a.k.a.
+// ObjPtr::operator=(T1*)).
 template <class T>
 void ObjPtr<T>::SetObjConcrete(T *obj) {
     if (obj != mObject) {
@@ -492,7 +492,7 @@ Hmx::Object *ObjPtr<T>::SetObj(Hmx::Object *root_obj) {
 }
 
 // Same body as ObjRefConcrete::Load's retail arm above (every comment there
-// applies verbatim); rb3-Wii has it as ObjPtr<T1,T2>::Load.
+// applies verbatim); a.k.a. ObjPtr<T1,T2>::Load.
 template <class T>
 bool ObjPtr<T>::Load(BinStream &bs, bool print, ObjectDir *dir) {
     char buf[128];
@@ -635,7 +635,7 @@ void ObjOwnerPtr<T>::SetOwnerObj(T *obj) {
 // calls SetObjConcrete, 0x8249bc30 calls SetOwnerObj). Its callers are the
 // ObjOwnerPtr members -- EventTrigger::Anim::mAnim, RndMesh::mGeomOwner,
 // BandCharacter::mTestPrefab -- and retail's RTTI has ObjOwnerPtr<T,ObjectDir>
-// as its own class, as rb3-Wii does, with its own Load. Inheriting
+// as its own class, with its own Load. Inheriting
 // ObjRefConcrete::Load put the loaded object on the ring under `this` instead of
 // mOwner, the discipline SetOwnerObj exists for.
 template <class T>
@@ -966,8 +966,8 @@ void ObjPtrList<T1, T2>::ReplaceNode(struct ObjPtrList::Node *node, Hmx::Object 
     } else {
         Hmx::Object *old = static_cast<ObjRefConcrete<T1, T2> *>(node)->SetObj(obj);
         if (!old && mListMode == kObjListNoNull) {
-            // Erase unconditionally, exactly as rb3-Wii does
-            // (rb3/src/system/obj/ObjPtr_p.h:266-268, `if (mMode ==
+            // Erase unconditionally:
+            // (`if (mMode ==
             // kObjListNoNull && !to) { it = erase(it).mNode; continue; }`).
             //
             // ⚠ THE `gInReplaceList` SUPPRESSION THAT USED TO BE HERE WAS A
@@ -999,7 +999,7 @@ void ObjPtrList<T1, T2>::ReplaceNode(struct ObjPtrList::Node *node, Hmx::Object 
 }
 #else
 // X360 retail: the thin node has no SetObj/vtable; the LIST is the ring-ref.
-// Do the ring ops directly on `this` (the list), mirroring rb3-Wii's Replace.
+// Do the ring ops directly on `this` (the list), as Replace does.
 template <class T1, class T2>
 void ObjPtrList<T1, T2>::ReplaceNode(struct ObjPtrList::Node *node, Hmx::Object *obj) {
     if (mListMode == kObjListOwnerControl) {
@@ -1032,8 +1032,8 @@ void ObjPtrList<T1, T2>::operator=(const ObjPtrList &other) {
 #else
         // Thin X360 node has no operator=; replace the held object in place,
         // keeping the existing links, with list-as-ref Release/AddRef on `this`
-        // (mirrors rb3-Wii operator= calling Set()). Retail X360's single
-        // folded body (0x8248aee8) is rb3-Wii's Set(node, obj) shape: the
+        // (as operator= calling Set()). Retail X360's single
+        // folded body (0x8248aee8) is the Set(node, obj) shape: the
         // source referent is read into a local FIRST, and the AddRef is on
         // that local, not on a re-read of n->mObject.
         T1 *obj = otherNodes->mObject;
@@ -1119,7 +1119,7 @@ ObjPtrList<T1, T2>::insert(typename ObjPtrList<T1, T2>::iterator it, T1 *obj) {
     node->SetObjConcrete(obj);
 #else
     // Thin X360 node has no SetObjConcrete; just store the raw pointer. Link()
-    // performs the ring AddRef(this) (binary fn_826E8098 / rb3-Wii link()).
+    // performs the ring AddRef(this) (binary fn_826E8098 / link()).
     node->mObject = obj;
 #endif
     Link(it, node);
@@ -1135,7 +1135,7 @@ void ObjPtrList<T1, T2>::Set(iterator it, T1 *obj) {
 #else
     // Retail X360: thin pool node has no ring machinery; the LIST is the
     // ring-ref. Release/AddRef `this` (ObjRefOwner) directly.
-    // Mirrors rb3-Wii ObjPtrList::Set (fn_80453DC4).
+    // Same shape as ObjPtrList::Set.
     Node *n = it.mNode;
     if (n->mObject)
         n->mObject->Release(this);
@@ -1197,7 +1197,7 @@ bool ObjPtrList<T1, T2>::Load(BinStream &bs, bool print) {
     // CharPollable, 0x8270c040, 0x82819278): the owner is read straight from
     // mOwner@0xc and its dir from 0x1c(mOwner) -- no virtual RefOwner() call
     // (0 bctrl in every body) -- and mOwner is re-read for the PathName in the
-    // notify. rb3-Wii's shape: `if (mOwner) dir = mOwner->Dir();` with an
+    // notify: `if (mOwner) dir = mOwner->Dir();` with an
     // Hmx::Object *mOwner. ObjRefOwner is Hmx::Object's first base (offset 0),
     // so the downcast is free. Native keeps the virtual chain: there an owner
     // need not be an Hmx::Object.
@@ -1298,7 +1298,7 @@ void ObjPtrList<T1, T2>::sort(const S &cmp) {
                 if (cmp(inner->Obj(), prev->Obj())) {
                     // Both nodes stay in the list; set membership is unchanged,
                     // so just swap the held objects — no ring Release/AddRef.
-                    // Mirrors rb3-Wii ObjPtrList::sort.
+                    // Same shape as ObjPtrList::sort.
                     T1 *tmp = inner->mObject;
                     inner->mObject = prev->mObject;
                     prev->mObject = tmp;
@@ -1339,7 +1339,7 @@ template <class T1, class T2>
 void ObjPtrList<T1, T2>::Link(iterator it, Node *node) {
     // List-as-ref: the LIST is the ring-ref, so AddRef `this` (not the thin
     // node) up front, before splicing. Matches binary fn_826E8098 and
-    // rb3-Wii ObjPtrList::link().
+    // ObjPtrList::link().
     if (node->mObject)
         node->mObject->AddRef(this);
     node->next = it.mNode;
@@ -1370,7 +1370,7 @@ typename ObjPtrList<T1, T2>::Node *ObjPtrList<T1, T2>::Unlink(Node *node) {
     MILO_ASSERT(node != NULL && mNodes != NULL, 0x26B);
     // List-as-ref: Release `this` (the ring-ref), not the thin node. The thin
     // node has no dtor, so erase()'s `delete node` only pool-frees — no double
-    // release. Matches binary fn_823A2538 and rb3-Wii ObjPtrList::unlink().
+    // release. Matches binary fn_823A2538 and ObjPtrList::unlink().
     if (node->mObject)
         node->mObject->Release(this);
     if (node == mNodes) {
@@ -1409,7 +1409,7 @@ typename ObjPtrList<T1, T2>::iterator ObjPtrList<T1, T2>::erase(iterator it) {
 
 // Retail X360: `lwz r3, 0xc(r3); blr` (ObjPtrList<Fader> vtable 0x820f88a4
 // slot 1 -> 0x822e4460, ICF-folded with RndAnimatable::GetRate) -- the raw
-// mOwner, no null check and no virtual RefOwner() chain. rb3-Wii: Hmx::Object
+// mOwner, no null check and no virtual RefOwner() chain: an Hmx::Object
 // *mOwner, returned as is.
 template <class T1, class T2>
 Hmx::Object *ObjPtrList<T1, T2>::RefOwner() const {
@@ -1419,7 +1419,7 @@ Hmx::Object *ObjPtrList<T1, T2>::RefOwner() const {
 template <class T1, class T2>
 void ObjPtrList<T1, T2>::Replace(ObjRef *from, Hmx::Object *obj) {
     // Retail shape (fn_82272490 etc., 11 RTTI-verified instantiations in
-    // BandCharacter): mirrors rb3-Wii ObjPtrList::Replace exactly —
+    // BandCharacter): ObjPtrList::Replace exactly —
     //  1. kObjListOwnerControl delegates via the owner's VTABLE (slot 8,
     //     `lwz r11,0xc(this); lwz r11,0(r11); lwz r11,8(r11); bctrl`);
     //  2. otherwise walk the ring inline (no ReplaceNode call): match the node

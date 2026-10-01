@@ -74,7 +74,7 @@ const char *SongInfoCopy::GetExtraMidiFile(int idx) const {
     return mExtraMidiFiles[idx].c_str();
 }
 
-// rb3-Wii utl/SongInfoCopy.cpp:44; retail 0x827D1628 (648 B) stores
+// Retail 0x827D1628 (648 B) stores
 // mNumVocalParts=1, zeroes the threshold/volumes and reads beatmatcher config.
 // Ours only set mName -- a default-constructed copy carried an uninitialized
 // hopo threshold and mute volumes.
@@ -120,8 +120,8 @@ SongInfoCopy::SongInfoCopy(const SongInfo *info) {
 // Trivial member accessors. In the retail X360 object these are emitted from a
 // different TU / inlined into the vtable emitter, so their out-of-line bodies
 // are absent from SongInfoCopy.obj — but the native rb3-dta build references
-// them through the vtable and needs real definitions. Bodies are the verbatim
-// rb3-Wii oracle (src/system/utl/SongInfoCopy.cpp), which returns the members.
+// them through the vtable and needs real definitions. The bodies
+// return the members.
 // Guarded so retail bytes are byte-identical (HX_NATIVE is native-only).
 int SongInfoCopy::GetNumVocalParts() const { return mNumVocalParts; }
 

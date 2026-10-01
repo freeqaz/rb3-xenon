@@ -270,7 +270,7 @@ bool MetaPerformer::IsWinning() const {
     // laneAY-B: retail's `is_winning` handler inlines to
     // `bl CurrentImpl(); lwz vtbl; lwz +0x5c; bctrl` with NO InFinale() branch
     // (target MetaPerformer::Handle +0x9cc) -- the cheat-finale short-circuit is
-    // rb3-Wii DEV only, and it is what kept this body out of /Ob2's inline budget.
+    // dev-build only, and it is what kept this body out of /Ob2's inline budget.
     MetaPerformerImpl *pImpl = CurrentImpl();
     MILO_ASSERT(pImpl, 0x1AA);
     return pImpl->IsWinning();
@@ -336,7 +336,7 @@ int MetaPerformer::GetBattleID() const {
 bool MetaPerformer::HasValidBattleInstarank() const {
     // ✅ RESOLVED laneDN-4 (2026-08-03). MetaPerformer::Handle is now 100%
     // (all 1876 instructions equal); measured +1 matched / +7504 B / +0.070205pp.
-    // Oracle-verbatim ternary (rb3-Wii MetaPerformer.cpp:334) -- KEEP: it puts the
+    // This ternary -- KEEP: it puts the
     // two arms in retail's physical order (0-arm first, load second).
     // Retail normalizes the loaded byte with the branchless carry trick
     // (`subic r10,r11,0x1; subfe r11,r10,r11`), and that 3-instruction arm is why
@@ -798,7 +798,7 @@ void MetaPerformer::SaveAndUploadScores(
         // we emit no funclet here at all. Same lever as RB3_HANDLE_LOCAL_STATIC.
         static Symbol insta_rank("insta_rank");
         bool instaRankProp = TheGameMode->Property(insta_rank, true)->Int();
-        // W16-HX: TU5 always insta-ranks tour gigs (absent from the Wii oracle;
+        // W16-HX: TU5 always insta-ranks tour gigs (a retail-only check;
         // retail calls GameMode vslot 0 = InMode(Symbol("tour"))).
         if (TheGameMode->InMode("tour"))
             instaRankProp = true;
@@ -1212,8 +1212,8 @@ void MetaPerformer::Restart() {
 }
 
 void MetaPerformer::TriggerSongCompletion() {
-    // Retail X360 opens this function with an audition-mode early-out that the
-    // rb3-Wii DEV oracle does not carry (verified from the retail body at
+    // Retail X360 opens this function with an audition-mode early-out
+    // (verified from the retail body at
     // 0x825827D8: a first-static guard on 0x82DFEA58 constructing Symbol
     // "audition" at 0x8202CD0C, then vtable slot 0 of *0x82E02530 == TheGameMode
     // -- GameMode's OWN vftable slot 0 is InMode(), since Handle/~GameMode
@@ -1593,7 +1593,7 @@ void MetaPerformer::UpdateInstarankRankLabel(UILabel *label) {
     MILO_ASSERT(label, 0x8D0);
     // laneAY-B: retail has NO IsValid() guard here (target MetaPerformer::Handle
     // inlines a bare `mBandInstarank.UpdateRankLabel(label)`); the guard + MILO_WARN are
-    // rb3-Wii DEV-build only and cost 4 base-only instructions per call site.
+    // dev-build only and cost 4 base-only instructions per call site.
     mBandInstarank.UpdateRankLabel(label);
 }
 
@@ -1601,7 +1601,7 @@ void MetaPerformer::UpdateInstarankHighscore1Label(UILabel *label) {
     MILO_ASSERT(label, 0x8DE);
     // laneAY-B: retail has NO IsValid() guard here (target MetaPerformer::Handle
     // inlines a bare `mBandInstarank.UpdateString1Label(label)`); the guard + MILO_WARN are
-    // rb3-Wii DEV-build only and cost 4 base-only instructions per call site.
+    // dev-build only and cost 4 base-only instructions per call site.
     mBandInstarank.UpdateString1Label(label);
 }
 
@@ -1609,7 +1609,7 @@ void MetaPerformer::UpdateInstarankHighscore2Label(UILabel *label) {
     MILO_ASSERT(label, 0x8EC);
     // laneAY-B: retail has NO IsValid() guard here (target MetaPerformer::Handle
     // inlines a bare `mBandInstarank.UpdateString2Label(label)`); the guard + MILO_WARN are
-    // rb3-Wii DEV-build only and cost 4 base-only instructions per call site.
+    // dev-build only and cost 4 base-only instructions per call site.
     mBandInstarank.UpdateString2Label(label);
 }
 
@@ -1617,7 +1617,7 @@ void MetaPerformer::UpdateBattleInstarankHighscore1Label(UILabel *label) {
     MILO_ASSERT(label, 0x8FA);
     // laneAY-B: retail has NO IsValid() guard here (target MetaPerformer::Handle
     // inlines a bare `mBattleInstarank.UpdateString1Label(label)`); the guard + MILO_WARN are
-    // rb3-Wii DEV-build only and cost 4 base-only instructions per call site.
+    // dev-build only and cost 4 base-only instructions per call site.
     mBattleInstarank.UpdateString1Label(label);
 }
 
@@ -1625,7 +1625,7 @@ void MetaPerformer::UpdateBattleInstarankHighscore2Label(UILabel *label) {
     MILO_ASSERT(label, 0x908);
     // laneAY-B: retail has NO IsValid() guard here (target MetaPerformer::Handle
     // inlines a bare `mBattleInstarank.UpdateString2Label(label)`); the guard + MILO_WARN are
-    // rb3-Wii DEV-build only and cost 4 base-only instructions per call site.
+    // dev-build only and cost 4 base-only instructions per call site.
     mBattleInstarank.UpdateString2Label(label);
 }
 
@@ -1744,7 +1744,7 @@ void MetaPerformer::UpdateSoloInstarankHighscore2Label(BandUser *user, UILabel *
 
 // laneAY-B: retail's `upload_debug_stats` handler emits NO calls at all
 // (target MetaPerformer::Handle +0xffc is a bare DataNode(0) tail) -- the
-// TheRnd/Symbol/ChunkAllocator debug uploads are rb3-Wii DEV-build only.
+// TheRnd/Symbol/ChunkAllocator debug uploads are dev-build only.
 void MetaPerformer::UploadDebugStats() {}
 
 // laneAY-B: retail's set/clear_credits_pending handlers inline to a single

@@ -31,11 +31,11 @@ public:
     // shifting UserName's dispatch slot 0x70->0x74 (and only UserName's — IsLocal
     // @0x5c and GetLocalUser @0x64 are unchanged between TU0 and TU5, verified via
     // UserMgr::GetLocalUsers). This re-matches User::SyncSave and AppLabel::SetUserName
-    // under TU5. Absent from DC3/rb3-Wii User (a TU0->TU5 patch addition). Declared-only
+    // under TU5. Absent from DC3 User (a TU0->TU5 patch addition). Declared-only
     // (defined out-of-line in retail); its body is not needed for the dispatch-offset
     // match.
     //
-    // IDENTIFIED (lane NCCC-0731-5f08/f54): this slot is IsNullUser(). In rb3-Wii/TU0
+    // IDENTIFIED (lane NCCC-0731-5f08/f54): this slot is IsNullUser(). In TU0
     // IsNullUser was introduced by BandUser (BandUser's own vtable slot 0); the TU0->TU5
     // patch hoisted it up into the User virtual base. Proof, from retail
     // BandPerformer::ComputeScoreData: `user->UserName()` (a known User virtual) on a
@@ -81,10 +81,10 @@ public:
     virtual const RemoteUser *GetRemoteUser() const;
 
     // Online-ID refresh. Declared on LocalUser, NOT on the virtual base User.
-    // The old placement on User claimed to "match rb3-Wii User" -- that comment
-    // was simply wrong: rb3-Wii declares it inside LocalUser (os/User.h) and
-    // defines it as `void LocalUser::UpdateOnlineID()` (os/User.cpp:67).
-    // Retail agrees INDEPENDENTLY of the oracle: in NetSession::AddLocalUser
+    // The old placement on User claimed to "match User" -- that comment
+    // was simply wrong: it belongs inside LocalUser (os/User.h) and is
+    // defined as `void LocalUser::UpdateOnlineID()` (os/User.cpp).
+    // Retail agrees: in NetSession::AddLocalUser
     // retail calls it with `mr r3, r30` -- the RAW LocalUser* -- whereas a
     // member of the virtual base User requires the 4-instruction adjust
     // (lwz vbptr / lwz off / add / addi 4) that our build was emitting.

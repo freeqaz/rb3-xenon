@@ -143,7 +143,7 @@ float BaseGuitarTrackWatcherImpl::HitGemHook(float f, int i, GemHitFlags flags) 
     }
     mMostRecentHit = f;
     ResetGemNotFretted();
-    // Retail falls off the end here exactly like the rb3-Wii oracle -- the
+    // Retail falls off the end here -- the
     // target's last instruction before the epilogue is the ResetGemNotFretted
     // vcall, with NO `lfs f1, 0.0` materialised. MSVC's C4716 is suppressed so
     // the undefined return value is reproduced rather than zeroed.

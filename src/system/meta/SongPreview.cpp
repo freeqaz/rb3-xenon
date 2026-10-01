@@ -191,7 +191,7 @@ void SongPreview::Start(Symbol song) {
         mSong = song;
         mRestart = true;
         // Retail RB3-360 has no preview_db member (see SongPreview.h);
-        // the rb3-Wii oracle plays the music fader at 0 dB here.
+        // the match build sets the music fader to 0 dB here.
 #ifdef HX_NATIVE
         mMusicFader->SetVal(mPreviewDb);
 #else
@@ -210,7 +210,7 @@ void SongPreview::Start(Symbol song) {
         case kPlayingSong:
             // Retail (fn_827A5790) is unconditional here -- no song.Null()
             // branch, no DoFade(kSilenceVal, 0)/kIdle alternative. Confirmed
-            // against the rb3-Wii oracle's parallel single-arg Start, which
+            // against the parallel single-arg Start, which
             // has the same unconditional DoFade(-48.0f, mFadeTime) +
             // kFadingOutSong in its kPlayingSong case.
             mFader->DoFade(kSilenceVal, mFadeTime);
@@ -285,7 +285,7 @@ void SongPreview::DetachFader(Fader *f) {
 }
 
 void SongPreview::PrepareFaders(const SongInfo *info) {
-    // rb3-Wii / retail: crowd channels go to the crowd-sing fader
+    // Retail: crowd channels go to the crowd-sing fader
     const std::vector<int> &crowdchans = info->GetCrowdChannels();
     for (int i = 0; i < mNumChannels; i++) {
         FaderGroup *grp = mStream->ChannelFaders(i);

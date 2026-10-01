@@ -69,7 +69,7 @@ void UIPicture::SetTypeDef(DataArray *da) {
     }
 }
 
-// Retail UIPicture::PreLoad (0x828171A8) uses the rb3-Wii rev dialect: the rev
+// Retail UIPicture::PreLoad (0x828171A8) uses the ObjMacros rev dialect: the rev
 // word is split into file-static gAltRev (+0) / gRev (+4) globals, and there is
 // no edit-mode SetTex path. gAltRev is declared first for that .bss order.
 static unsigned short gAltRev = 0;
@@ -195,7 +195,7 @@ void UIPicture::UpdateTexture(FilePath const &p) {
             // temp) with the format literal DCE'd. NOTIFY's comma form yields
             // `p` as an lvalue and copies nothing; WARN's MiloStripEval takes
             // its params BY VALUE, which is what forces the temp. Matches the
-            // rb3-Wii oracle verbatim.
+            // retail behaviour exactly.
             MILO_WARN("%s will not be included on a disc build", p);
         mLoader = dynamic_cast<FileLoader *>(TheLoadMgr.AddLoader(mTexFile, kLoadFront));
         MILO_ASSERT(mLoader, 0xda);

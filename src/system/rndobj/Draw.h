@@ -22,8 +22,8 @@ class RndCam;
 //      would appear if Draw were virtual; fn_823F3A80 is the single cull-wrapper
 //      Draw body (tests mShowing@0x8, frustum-culls, vcalls DrawShowing@0x14).
 //      Every Draw call site in the binary is a direct bl to that one body.
-//   2. DrawShadow(const Transform&, float) is DC3-only. rb3-Wii has the unrelated
-//      DrawShowingBudget there; retail-360 has neither (else CollideList=0x28).
+//   2. DrawShadow(const Transform&, float) is DC3-only, and there is no
+//      DrawShowingBudget there either; retail-360 has neither (else CollideList=0x28).
 // Both are called directly in retail (RndGroup::DrawShowing -> child->Draw();
 // SpotlightDrawer::DrawShadow -> draw->DrawShadow), so dropping the `virtual`
 // keyword keeps them callable. Subclass Draw() overrides (RndGroup/RndEnviron/

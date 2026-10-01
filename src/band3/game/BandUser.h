@@ -25,12 +25,12 @@ public:
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual ~BandUser();
     // OVERRIDE of User::IsNullUser (User vtable slot 28 = 0x70) — NOT a BandUser-introduced
-    // virtual. In rb3-Wii/TU0 this was BandUser's own slot 0; TU5 hoisted it into the User
+    // virtual. In TU0 this was BandUser's own slot 0; TU5 hoisted it into the User
     // virtual base, so retail dispatches it via the vbptr adjust + 0x70, not via BandUser's
     // own vtable slot 0. See the proof in src/system/os/User.h.
     // NOTE: this is an OVERRIDE of User::IsNullUser (a TU5 addition to the
     // virtual base — see os/User.h slot 28 / 0x70), NOT a new virtual introduced
-    // here as rb3-Wii/TU0 had it. Consequently it does NOT occupy a slot in
+    // here as TU0 had it. Consequently it does NOT occupy a slot in
     // BandUser's own vftable; retail reaches it through the vbptr/vbtable adjust.
     virtual bool IsNullUser() const { return false; }
     // BandUser's own vftable slot 0 (0x0), vacated when IsNullUser moved up to
@@ -39,7 +39,7 @@ public:
     // `lwz r11,0x0(r3); lwz r11,0x8(r11)`). IDENTIFIED (lane NCCC-0731-5f08/f76):
     // retail InputMgr::IsActiveAndConnected and InputMgr::GetUserWithInvalidController
     // call this slot as `cur-><slot0>(mSessionMgr)` -- this=the BandUser subobject,
-    // arg=the raw SessionMgr* -- where rb3-Wii dev source has
+    // arg=the raw SessionMgr* -- the shape of
     // `mSessionMgr->HasUser(cur)`. Declared-only (out-of-line in retail); the body
     // is not needed for the dispatch-offset match. TODO(TU5): recover the real name.
     virtual bool IsInSession(SessionMgr *) const;
@@ -155,7 +155,7 @@ public:
     GameplayOptions mGameplayOptions; // 0x34
     // ⚠ The seven comments below used to be a UNIFORM 12 (0xc) LOW -- 0x70,
     // 0x74, 0x78, 0x7c, 0x84, 0x85, 0x86, with only mPlayer's 0x8c correct.
-    // That is a rb3-Wii-era offset set with gaps at 0x80/0x88, and it is a
+    // That is a pre-TU5 offset set with gaps at 0x80/0x88, and it is a
     // COMMENT defect, not a layout defect: retail's own arithmetic forbids the
     // alternative.  RemoteBandUser's vbtable (retail .rdata lbl_820E02E4) puts
     // BandUser at 0x5c and RemoteUser at 0xf4, its ctor puts the RemoteUser
@@ -210,8 +210,8 @@ public:
     bool unkc; // 0x8   (compiler-verified; the old "0xc" comment was WRONG)
     bool mHasSeenRealGuitarPrompt; // 0x9
     std::set<TrackType> mShownIntrosSet; // 0xc .. 0x24  (_Rb_tree sizeof 0x18)
-    // RETAIL HAS NO `ControllerType mControllerTypeOverride` HERE.  rb3-Wii DEV
-    // carries it; the retail 360 build compiled it out.  PROVEN (lane CP-3B) by
+    // RETAIL HAS NO `ControllerType mControllerTypeOverride` HERE: the
+    // retail 360 build compiled it out.  PROVEN (lane CP-3B) by
     // disassembling retail's real ctor LocalBandUser::LocalBandUser @ 0x8268E678
     // -- its complete this-relative store census over [0x8,0x28) is:
     //     0x8  stb (=1)  unkc              0x1c stw       _M_node_count
@@ -281,7 +281,7 @@ public:
     //
     // ⛔ THE 12-BYTE `std::vector<unsigned long long> mFriendsConsoleCodes` AND
     // THE THREE `bool unk18/unk19/unk1a` (4 bytes with padding) THAT USED TO
-    // LIVE HERE ARE A rb3-Wii CARRY-OVER THAT RETAIL 360 COMPILED OUT -- the
+    // LIVE HERE ARE A DEV-BUILD CARRY-OVER THAT RETAIL 360 COMPILED OUT -- the
     // same disease as `ControllerType mControllerTypeOverride` on
     // LocalBandUser above.  Together they made this class's own block 0x24
     // instead of 0x14 and pushed EVERY virtual base down by 0x10, which is

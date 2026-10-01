@@ -80,8 +80,8 @@ void VoiceoverPanel::ContentFailed(const char *contentName) {
 void VoiceoverPanel::SetVoiceoverFile(const char *cc, Symbol s) {
     mWaitingForLoad = true;
     mLoadingFailed = false;
-    // The rb3-Wii build rewrote the ".mogg" path to ".bik" here because its
-    // voiceover clip was a BinkClip.  Retail RB3-360 feeds a MoggClip and keeps the
+    // No ".mogg" -> ".bik" rewrite here: the
+    // voiceover clip is not a BinkClip.  Retail RB3-360 feeds a MoggClip and keeps the
     // path as-is: 0x8262F5E8 contains no strcpy/strstr and no stack buffer, and
     // passes the incoming pointer straight to MoggClip::SetFile (0x8270DF60).
     if (!s.Null()) {

@@ -42,8 +42,8 @@ static const char *sRequestPrefix = "dlc_store";
 static const char *sIndexFile = "/dlc_top_%s_%s.dta";
 
 // Retail 360 base (meta/StorePanel.h) has two StoreOffer* vectors
-// (mOffers, mPendingOffers) where the rb3-Wii dev oracle used three
-// (unk38/unk40/unk48). Map the oracle names onto the retail base:
+// (mOffers, mPendingOffers), not three
+// (unk38/unk40/unk48). The three names map onto the retail base:
 //   unk38 -> mOffers   (primary offers, provider "offers" arg)
 //   unk48 -> mPendingOffers (provider "packs" arg)
 //   unk40 -> mPendingOffers (extra offers; only touched by deferred handlers)
@@ -84,9 +84,9 @@ const char *BandStorePanel::GetIndexFile() const {
 
 const char *BandStorePanel::GetRequestPrefix() const { return sRequestPrefix; }
 
-// Retail fn_82605720 (80 B, primary vtable slot 17 / disp 0x44).  The rb3-Wii
-// dev oracle calls TheInputMgr->GetUser() TWICE with a null test between them;
-// retail 360 calls it ONCE and does not test it.  Read off the retail body:
+// Retail fn_82605720 (80 B, primary vtable slot 17 / disp 0x44).  Retail 360
+// calls TheInputMgr->GetUser() ONCE (not twice with a null test between);
+// it does not test it.  Read off the retail body:
 // there is exactly one `bl` to InputMgr::GetUser and no compare after it -- the
 // `cmplwi r3,0 / beq` that IS there sits AFTER the GetLocalBandUser vcall and
 // guards the compiler-generated LocalBandUser* -> LocalUser* virtual-base
@@ -97,9 +97,9 @@ LocalUser *BandStorePanel::StoreUser() const {
     return TheInputMgr->GetUser()->GetLocalBandUser();
 }
 
-// Retail fn_82605878 (104 B, primary vtable slot 27 / disp 0x6c).  EMPTY in BOTH
-// oracles (rb3-Wii BandStorePanel.h:46 and our header carried `{}`) and NOT empty
-// in retail 360 -- a real divergence, adjudicated on bytes:
+// Retail fn_82605878 (104 B, primary vtable slot 27 / disp 0x6c).  Our header
+// carried `{}`, and this is NOT empty
+// in retail 360 -- adjudicated on bytes:
 //   * the body never reads its `this` (r3 is overwritten by `mr r3,r4` before
 //     first use), which is why an override that ignores `this` fits;
 //   * `bl __RTDynamicCast` (fn_8282A0C8) with the two RTTI type descriptors
@@ -123,7 +123,7 @@ StoreOffer *BandStorePanel::MakeNewOffer(DataArray *da) {
 // vector, not two: the loop bounds are `lwz r31,0x3c(r3)` and `lwz r11,0x40(r30)`
 // == mOffers.begin()/end() (StorePanel.h puts mOffers at 0x3c and
 // mPendingOffers at 0x48), and there is no second loop in the body at all.
-// The rb3-Wii dev oracle's trailing unk48 pass is not in the retail 360 build.
+// There is no trailing unk48 pass in the retail 360 build.
 StoreOffer *BandStorePanel::FindOffer(Symbol s) const {
     for (std::vector<StoreOffer *>::const_iterator it = unk38.begin();
          it != unk38.end(); ++it) {
@@ -234,8 +234,8 @@ void BandStorePanel::Exit() {
 //
 // PORTED ANYWAY (lane W16-GI, 2026-09-16) -- not for this row's own score, which
 // the mis-pin makes uncollectable here, but because the EMPTY STUB it replaced
-// was a codegen assertion that propagated into Handle.  rb3-Wii's dev body is
-// `return DataNode(1);`; MSVC saw that body earlier in this TU, proved the
+// was a codegen assertion that propagated into Handle.  A
+// `return DataNode(1);` body seen earlier in this TU: MSVC proved the
 // callee nothrow, dropped the EH region that protects Handle's stack
 // LocalUserLeftMsg temporary across the call, and its scheduler then hoisted
 // the three OnMsg argument set-ups into the Message ctor's stores.  Retail
@@ -265,9 +265,9 @@ DataNode BandStorePanel::OnMsg(const LocalUserLeftMsg &msg) {
 }
 
 // Retail fn_82606280 (908 B).  The store index-.dta parser, reconstructed
-// instruction-by-instruction off retail bytes -- the rb3-Wii dev oracle is the
-// packed-StoreMetadata arm and carries only a skeleton of this, so every claim
-// below is read from band.exe, not from the oracle.
+// instruction-by-instruction off retail bytes (there is no packed-StoreMetadata
+// arm here), so every claim
+// below is read from band.exe.
 //
 // Node indices: Message::operator[](i) is mData->Node(i + 2), so retail's
 // node[2]/node[4]/node[6] are exactly the msg[0]/msg[2]/msg[4] that Poll fills
@@ -430,7 +430,7 @@ void BandStorePanel::LoadArt(const char *path, UIPanel *callback) {
 }
 
 // Retail 360 Request (fn_826071B8) is the path-based (album art / config)
-// download flow only. The rb3-Wii dev oracle's atoi()/id-branch (LoadPage /
+// download flow only. An atoi()/id-branch (LoadPage /
 // DefaultSort / chunk-path derivation) is not part of the retail function.
 void BandStorePanel::Request(const String &path, bool extra) {
     if (mLoadOk) {
@@ -538,7 +538,7 @@ BEGIN_HANDLERS(BandStorePanel)
     // the wrong expression FOR THIS HANDLER.
     HANDLE_EXPR(sort_name, mSort)
     // CORRECTED ON RETAIL BYTES (lane W16-CA).  The previous note here read:
-    //   "rb3-Wii's user_can_do_input tail checked TheWiiCommerceMgr async op
+    //   "user_can_do_input's tail checked a commerce-manager async op
     //    state; there is no CommerceMgr on 360 ... so the Wii-only commerce
     //    clause is dropped."
     // The clause is NOT dropped -- it is PORTED, and it was our extra leading
@@ -650,9 +650,9 @@ void BandStorePanel::Poll() {
     }
 }
 
-// Retail implements this on top of the base call; rb3-Wii has it as the bare
+// Retail implements this on top of the base call, not as the bare
 // `return StorePanel::UpdateOffers(list, b);` we used to carry, character for
-// character, so the oracle could only ever confirm the stub. Read off retail
+// character. Read off retail
 // bytes at fn_82607438. Every structural claim below is checked against the
 // compiler's own layout, not against header comments:
 //   * this+0x3c = mOffers, this+0x48 = mPendingOffers, both vector<StoreOffer*>,

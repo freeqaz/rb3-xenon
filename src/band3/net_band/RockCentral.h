@@ -186,13 +186,13 @@ public:
     // passes this+0x98 to XNetGetTitleXnAddr and (this+0x98, this+0xc0) to
     // XNetXnAddrToMachineId, then prints the u64 at 0xc0 into
     // g_szMachineIdString -- the same members DC3 names mXNetAddr / mMachineID.
-    // The rb3-Wii friend/messenger pointers (unk98..unka4, unka8 Timer, unkd8)
-    // that the Wii header put here do not exist on Xbox. The Hmx::Object
+    // There are no friend/messenger pointers (unk98..unka4, unka8 Timer,
+    // unkd8) here on Xbox. The Hmx::Object
     // virtual base must stay at 0xcc (vtordisp at 0xc8) for ~RockCentral.
     XNADDR mXNetAddr; // 0x98
     ULONGLONG mMachineID; // 0xc0
 #ifdef HX_NATIVE
-    // rb3-Wii messenger/invite flags. The Xbox object has no room for them
+    // Messenger/invite flags. The Xbox object has no room for them
     // (mMachineID ends at 0xc8, where the vbase's vtordisp sits), retail's
     // Handle dispatches neither message that sets them, and their only reader
     // (OvershellSlot::UpdateView) is itself HX_NATIVE-only.

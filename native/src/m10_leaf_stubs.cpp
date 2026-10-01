@@ -136,8 +136,8 @@ void JoypadKeepAlive(int, bool) {}
 // with a local `class LocalUser;` forward declaration).  It is gone because the
 // REAL definition now exists: os/Joypad.cpp declares it at Joypad.h:348 and had
 // dropped the body in our port, so the native link had nothing to resolve and
-// this stub stood in.  Lane W16-D restored the real one-liner from the rb3-Wii
-// oracle, which made this a DUPLICATE DEFINITION and failed the native gate
+// this stub stood in.  Lane W16-D restored the real one-liner,
+// which made this a DUPLICATE DEFINITION and failed the native gate
 // (`first defined here` on Joypad.cpp.o, rb3-vocal2 + rb3-harmony).  Keeping the
 // stub would also be a behavioural lie: it answered `false` unconditionally,
 // where the real body is `GetUsersPadNum(user) != -1`.

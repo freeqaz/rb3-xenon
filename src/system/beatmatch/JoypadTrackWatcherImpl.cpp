@@ -29,7 +29,7 @@ bool JoypadTrackWatcherImpl::Swing(int i1, bool b1, bool b2, GemHitFlags flags) 
     float now = mParent->GetNow();
     int unplayedGem = ClosestUnplayedGem(now, i1);
     // NOTE: retail passes TimeAt()'s result to InSlopWindow and discards
-    // TimeAtNext()'s -- the rb3-Wii oracle has these two swapped. Retail keeps
+    // TimeAtNext()'s -- not the other way round. Retail keeps
     // gemTime live across the TimeAtNext call in a callee-saved FPR (f30);
     // swapping them back drops that FPR and shrinks the frame by 0x10.
     float gemTime = mGemList->TimeAt(unplayedGem);

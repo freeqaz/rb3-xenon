@@ -19,7 +19,7 @@
 // one base register (lbl_82CC648C), and KerningTable::Load (0x82475778) reads
 // rev as its own symbol (lis + lhz lbl_82CC6490@l) -- two separate
 // internal-linkage statics, altRev declared first (.bss order). This is the
-// file-static rev rb3-Wii's LOAD_REVS writes; the old sFontRev copy of a
+// file-static rev LOAD_REVS writes; the old sFontRev copy of a
 // BinStreamRev's rev was DC3's. (BinStreamRev itself does not exist in
 // retail: zero .?AVBinStreamRev@@ type descriptors in band.exe.)
 static unsigned short gAltRev = 0;
@@ -86,7 +86,7 @@ void KerningTable::SetKerning(
             curEntry.kerning = curInfo.kerning;
             // (first, second) -- NOT swapped. TableIndex is symmetric so the
             // swap was semantically invisible, but retail loads the two shorts
-            // in declaration order (rb3-Wii oracle agrees).
+            // in declaration order.
             int index = TableIndex(curInfo.mFirstChar, curInfo.mSecondChar);
             curEntry.next = mTable[index];
             mTable[index] = &curEntry;
@@ -385,7 +385,7 @@ void RndFont::Load(BinStream &bs) {
             bs >> mChars;
         }
     } else {
-        // rb3-Wii's initialized local: retail memcpys the literal and then
+        // An initialized local: retail memcpys the literal and then
         // LOADS charBuf[0] (lbz + beq); a static const table let MSVC fold
         // the first character to ' ' and drop the test.
         char charBuf[96] =
@@ -531,8 +531,8 @@ void RndFont::UpdateChars() {
 }
 
 void RndFont::BleedTest() {
-    // Single-page: the locker and the wrap test hoist out of the loop (rb3-Wii
-    // shape). The DC3 form re-locked a per-character page inside the loop.
+    // Single-page: the locker and the wrap test hoist out of the loop.
+    // The DC3 form re-locked a per-character page inside the loop.
     BitmapLocker locker(this);
     RndBitmap *bmap = locker.PtrToBitmap();
     if (bmap) {
@@ -712,7 +712,7 @@ void RndFont::SetKerning(const std::vector<KernInfo> &kernInfo) {
 
 // Retail 0x82475a00 (24 B, no .pdata) reads this->mKerningTable directly and
 // tail-branches to KerningTable::GetKerning or vector::clear -- no DataOwner()
-// walk (that loop is DC3-era). Same body as rb3-Wii's RndFont::GetKerning.
+// walk (that loop is DC3-era).
 void RndFont::GetKerning(std::vector<KernInfo> &kernInfo) const {
     if (mKerningTable) {
         mKerningTable->GetKerning(kernInfo);
@@ -785,7 +785,7 @@ void RndFont::SetCharInfo(CharInfo *info, RndBitmap &bmap, const Vector2 &pos) {
 }
 
 // Single-page: the atlas cell fraction is one Vector2 member, not a per-material
-// vector (rb3-Wii RndFont::SetBitmapSize).
+// vector (RndFont::SetBitmapSize).
 void RndFont::SetBitmapSize(const Vector2 &cs, unsigned int w, unsigned int h) {
     mCellSize = cs;
     mTexCellSize.x = mCellSize.x / w;

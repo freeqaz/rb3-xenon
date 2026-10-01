@@ -30,8 +30,8 @@ public:
     ClosetMgr *mClosetMgr; // 0x3c
     OutfitConfig *mCurrentOutfitConfig; // 0x40
     BandCharDesc::OutfitPiece *mCurrentOutfitPiece; // 0x44
-    // Retail RB3-360 uses an STLport hash_map here, not the Wii build's
-    // std::map (same divergence SongStatusMgr.h documents). Adjudicated on
+    // Retail RB3-360 uses an STLport hash_map here, not a
+    // std::map (same layout fact SongStatusMgr.h documents). Adjudicated on
     // RETAIL BODY SIZES, which are independent of the symbol name's value-type
     // component (that part is ICF-folded and unreliable):
     //   ctor       retail calls a 76 B body; hash_map ctor = 76 B (4 retail /

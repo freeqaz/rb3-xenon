@@ -36,8 +36,8 @@ void Accomplishment::Configure(DataArray *i_pConfig) {
     mName = i_pConfig->Sym(0);
 
     // NOTE (lane W16-FY): every config key below is a FUNCTION-LOCAL
-    // `static Symbol`, not one of the pre-interned `Symbols*.h` globals the
-    // rb3-Wii DEV oracle uses.  Settled on retail bytes at 0x82594EF8: the
+    // `static Symbol`, not one of the pre-interned `Symbols*.h`
+    // globals.  Settled on retail bytes at 0x82594EF8: the
     // body contains 32 inline `Symbol::Symbol(const char*)` calls, each
     // guarded by a distinct bit of ONE packed guard word at 0x82DFEE58
     // (masks 0x1 .. 0x80000000, union 0xFFFFFFFF, popcount 32) -- that packed
@@ -151,12 +151,12 @@ void Accomplishment::Configure(DataArray *i_pConfig) {
     i_pConfig->FindData(can_be_earned_with_no_fail, mCanBeEarnedWithNoFail, false);
     static Symbol leaderboard("leaderboard");
     i_pConfig->FindData(leaderboard, mIsTrackedInLeaderboard, false);
-    // Retail-360 only (the rb3-Wii DEV source declares `xlast_id` in Symbols.h
-    // but never reads it): the XLAST achievement context id, stored at
+    // Retail-360 only (`xlast_id` is otherwise declared in Symbols.h
+    // and never read): the XLAST achievement context id, stored at
     // this+0x84 == mContextId and returned by GetContextID().
     static Symbol xlast_id("xlast_id");
     i_pConfig->FindData(xlast_id, mContextId, false);
-    // Retail-360 only (absent from the rb3-Wii DEV source): the two reward ids
+    // Retail-360 only: the two reward ids
     // stored at this+0x74 / this+0x78, read back by
     // AccomplishmentProgress::GiveGamerpic / ::GiveAvatarAsset.  These are NOT
     // FindData lookups -- retail does FindArray + an explicit kDataInt type

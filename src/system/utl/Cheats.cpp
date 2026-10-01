@@ -190,8 +190,8 @@ CheatsManager::CheatsManager()
         mCtrlOverriddeMode = arr->Int(1);
     }
     // DC3-era addition, NOT in RB3 retail: retail's 340 B ctor at 0x827C2780 runs
-    // straight from FindData("cheats_buffer") to the epilogue, and the rb3-Wii DEV
-    // oracle's ctor has no SetName either.  The six instructions this emits are
+    // straight from FindData("cheats_buffer") to the epilogue, and RB3's
+    // ctor has no SetName either.  The six instructions this emits are
     // exactly our 364 B - retail's 340 B.  Kept for the native host, which relies
     // on ObjectDir::Main() lookups.
     SetName("cheats_mgr", ObjectDir::Main());
@@ -205,7 +205,7 @@ BEGIN_HANDLERS(CheatsManager)
     HANDLE_MESSAGE(ButtonDownMsg)
     HANDLE_MESSAGE(KeyboardKeyMsg)
 #ifdef HX_NATIVE
-    // DC3-era; RB3-360 retail (and rb3-Wii) handle only ButtonDown/KeyboardKey.
+    // DC3-era; RB3-360 retail handles only ButtonDown/KeyboardKey.
     HANDLE_MESSAGE(KeyboardKeyReleaseMsg)
 #endif
 END_HANDLERS
@@ -420,8 +420,8 @@ void CheatsInit() {
 // builds exactly five literal Symbols -- disable_cheats, long_cheats,
 // set_key_cheats_enabled, set_cheat_mode, get_cheat_mode -- so quick_cheats,
 // left, right and keyboard have no Symbol ctor anywhere in the body.  (Quick
-// cheats are joypad-shift/keyboard driven, a dev-console feature; rb3-Wii is
-// the DEV build and keeps them.)
+// cheats are joypad-shift/keyboard driven, a dev-console feature that only
+// a DEV build keeps.)
 #if defined(MILO_DEBUG) && defined(HX_NATIVE)
         DataArray *quickCheats = SystemConfig("quick_cheats");
         InitQuickJoyCheats(quickCheats->FindArray("left"), CheatsManager::kLeftShift);

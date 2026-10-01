@@ -98,7 +98,7 @@ void CharDriver::Enter() {
 void CharDriver::Exit() { RndPollable::Exit(); }
 
 void CharDriver::Highlight() {
-// rb3-Wii guards this with #ifdef MILO_DEBUG; retail compiled it out, so retail's
+// This is an #ifdef MILO_DEBUG guard; retail compiled it out, so retail's
 // CharDriver::Highlight has an EMPTY body.  Both callees of the guarded body are
 // provably absent from retail band.exe (three instruments, all with firing
 // positive controls):
@@ -724,7 +724,7 @@ BEGIN_HANDLERS(CharDriver)
     HANDLE(play_group, OnPlayGroup)
     HANDLE(play_group_flags, OnPlayGroupFlags)
     // NOT a delete -- a RENAME. Retail fn_82379770 builds 15 Symbols and the
-    // rb3-Wii oracle's chain is that list verbatim; DC3 (newer) renamed these
+    // chain is that list verbatim; DC3 (newer) renamed these
     // three arms. Deleting them instead costs 13 paired EH funclets (measured).
     HANDLE_ACTION(offset, AddBeat(_msg->Float(2), _msg->Float(_msg->Size() - 1)))
     HANDLE(get_first_playing_flags, OnGetFirstFlags)
@@ -782,8 +782,8 @@ BEGIN_PROPSYNCS(CharDriver)
 #ifdef HX_NATIVE
     // RB3-360 retail strips this editor-only property: retail's SyncProperty COMDAT
     // holds 12 ??0Symbol@@QAA@PBD@Z relocs against our 13, and objdiff attributes the
-    // surplus block to the `display_zoom` string literal.  (rb3-Wii's DEV build DOES
-    // carry it unguarded at CharDriver.cpp:919 -- it is dev-only, not DC3-only.)
+    // surplus block to the `display_zoom` string literal.  (A DEV build DOES
+    // carry it unguarded -- it is dev-only, not DC3-only.)
     SYNC_PROP(display_zoom, CharClipDisplay::sZoom)
 #endif
     SYNC_SUPERCLASS(CharWeightable)

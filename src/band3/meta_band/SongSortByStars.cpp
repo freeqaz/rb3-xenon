@@ -16,7 +16,7 @@
 #include "utl/Symbols3.h"
 
 // Retail 360 resolves star-count tokens through a free function (0x82309FA0)
-// rather than StarDisplay::GetSymbolForStarCount (the Wii-dev shape).
+// rather than StarDisplay::GetSymbolForStarCount.
 Symbol GetStarsToken(int);
 
 StarsCmp::StarsCmp(int stars, float rank, const char *name)

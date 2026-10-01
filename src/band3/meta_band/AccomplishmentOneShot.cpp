@@ -37,7 +37,7 @@ bool AccomplishmentOneShot::AreOneShotConditionsMet(
 ) {
     // Retail declares the whole condition-name set as function-local statics at
     // the top of this function (13 guard bits in one word at 0x82DFFF84, slots
-    // 0x82DFFF50..0x82DFFF80), where the rb3-Wii oracle reads the file-scope
+    // 0x82DFFF50..0x82DFFF80), not the file-scope
     // globals from Symbols*.cpp.  Same storage-class divergence as
     // InitializeTrackerDesc below; invisible to a source diff.
     //
@@ -81,8 +81,8 @@ bool AccomplishmentOneShot::AreOneShotConditionsMet(
             } else if (sym == upstrum_percent) {
                 // Retail CALLS Stats::GetUpstrumPercent here (bl to the emitted
                 // COMDAT) rather than inlining it: the body carries no float
-                // ops at all.  The rb3-Wii oracle has the percentage expanded
-                // by hand because MWCC inlined it there, which is why our port
+                // ops at all.  A hand-expanded percentage
+                // (as MWCC inlines it) is why our port
                 // inherited literal float math and a callee-saved f31 holding
                 // 100.0f that retail never materialises.
                 if (it->mScoreType == score) {

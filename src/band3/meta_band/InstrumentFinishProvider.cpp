@@ -34,7 +34,7 @@ Symbol InstrumentFinishProvider::DataSymbol(int data) const {
 
 int InstrumentFinishProvider::NumData() const {
     // Retail branches AWAY on empty and falls through to the size computation
-    // (beq -> li 0 tail); the oracle's `empty() ? 0 : size()` ternary inverts it.
+    // (beq -> li 0 tail); an `empty() ? 0 : size()` ternary would invert it.
     if (!mFinishes.empty())
         return mFinishes.size();
     return 0;

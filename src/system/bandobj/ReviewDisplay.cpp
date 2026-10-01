@@ -90,7 +90,7 @@ void ReviewDisplay::Update() {
     RndDir *dir = mResource->Dir();
     MILO_ASSERT(dir, 0xA1);
     // RB3-360 retail spells both of these as FUNCTION-LOCAL static Symbols, not
-    // the utl/Symbols*.h globals the rb3-Wii dev tree uses: 0x8231F188 guards
+    // utl/Symbols*.h globals: 0x8231F188 guards
     // them with bits 0 and 1 of one guard word 0x82CBDE48 (Symbol storage at
     // 0x82CBDE44 / 0x82CBDE40).  Declaration position is load-bearing -- it
     // fixes the guard-bit numbering.  NOTE both names also exist as globals

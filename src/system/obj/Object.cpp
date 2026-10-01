@@ -80,7 +80,7 @@ bool gMiloTool = false;
 std::map<Symbol, ObjectFunc *> Hmx::Object::sFactories;
 #ifdef HX_NATIVE
 // The 8-slot recursion-safe property-path pool is a DC3-ERA ADDITION that RB3
-// retail does NOT have (dc3-decomp/src/system/obj/Object.cpp has it; rb3-Wii has
+// retail does NOT have (dc3-decomp/src/system/obj/Object.cpp has it; RB3 has
 // no such symbol, and retail's SetProperty(Symbol,...) body contains no pool scan
 // -- see the comment on SetProperty(Symbol, const DataNode &) below).  Retail
 // shares ONE static scratch array, which is a latent re-entrancy bug DC3 later
@@ -247,8 +247,8 @@ BEGIN_HANDLERS(Hmx::Object)
     // Retail (fn_8275BD78) dispatches "replace" through the ObjRefOwner vtable
     // slot @+8 (Object.h's verified vtable-layout comment), which is the
     // existing virtual Replace(ObjRef*, Hmx::Object*) override -- NOT a new
-    // 2-Object-arg overload (rb3-Wii's dev tree uses a differently-shaped
-    // Replace(Hmx::Object*, Hmx::Object*) here, but adding that signature to
+    // 2-Object-arg overload (a differently-shaped
+    // Replace(Hmx::Object*, Hmx::Object*) is wrong here: adding that signature to
     // Hmx::Object would introduce a new vtable slot and shift every derived
     // class's layout). Both message args are fetched via the same
     // Obj<Hmx::Object> accessor retail uses elsewhere in this chain; only the
@@ -273,22 +273,22 @@ BEGIN_HANDLERS(Hmx::Object)
 #ifdef RB3_KEEP_DC3_ONLY_HANDLERS
     // Retail fn_8275BD78 builds exactly 23 Symbols; get_types_list is not one
     // of them, and the literal is absent from every non-executable section of
-    // band.exe. rb3-Wii's chain also lacks it. DC3-only.
+    // band.exe. DC3-only.
     HANDLE(get_types_list, OnGetTypeList)
 #endif
     HANDLE_ARRAY(mTypeDef)
 #ifdef RB3_KEEP_DC3_ONLY_HANDLERS
     // Retail's 23-Symbol chain has neither; the literals DO exist elsewhere in
-    // the image (MsgSource), so this is structural evidence only -- but both
-    // oracles agree they are absent from THIS body, and rb3-Wii lacks them too.
+    // the image (MsgSource), so this is structural evidence only -- but
+    // they are absent from THIS body.
     HANDLE(add_sink, OnAddSink)
     HANDLE(remove_sink, OnRemoveSink)
     // Third member of the same DC3-only trio. Retail fn_8275BD78 contains only
     // FOUR indirect calls (vtable slots 0x10 ClassName x2, 0x14 SetType, and the
     // shared $LN303 join) -- slot 0x38 (Export) appears NOWHERE in the body, and
     // all three HANDLE_ARRAY(mTypeDef) miss paths branch straight to the
-    // warn/return block at .L_8275C7B4. Ghidra's decomp agrees. rb3-Wii's
-    // own chain ends at HANDLE_ARRAY(mTypeDef)+HANDLE_CHECK with no Export.
+    // warn/return block at .L_8275C7B4. Ghidra's decomp agrees.
+    // The chain ends at HANDLE_ARRAY(mTypeDef)+HANDLE_CHECK with no Export.
     Export(_msg, false);
 #endif
 END_HANDLERS
@@ -296,7 +296,7 @@ END_HANDLERS
 // W16-BS 2026-09-15: RB3 retail's Hmx::Object::SyncProperty is the EMPTY
 // terminal -- 72 B at 0x8235c2e0, i.e. exactly what BEGIN/END_PROPSYNCS emit
 // with no SYNC_PROP entries. Our 720-byte body carried three DC3-era entries
-// RB3 does not have; rb3-Wii's BEGIN_PROPSYNCS(Hmx::Object) is likewise empty,
+// RB3 does not have; retail's BEGIN_PROPSYNCS(Hmx::Object) is empty,
 // and the "sinks" string has exactly 2 retail xrefs, both in MsgSource.
 // Kept for the native build, which relies on name/type/sinks propsync.
 BEGIN_PROPSYNCS(Hmx::Object)
@@ -354,7 +354,7 @@ void Hmx::Object::SaveRest(BinStream &bs) {
 // Retail X360 (0x8275A898, lane W5-A): kCopyFromMax returns; SetNote COPIES the
 // note (fn_8275A500 -- Object owns its note string); same-class => SetTypeDef +
 // an UNCONDITIONAL TypeProps assignment (DC3's "either side has props" guard is
-// absent); else the warn's arguments are evaluated in rb3-Wii's hoisted order
+// absent); else the warn's arguments are evaluated in hoisted order
 // (o->ClassName(), ClassName(), o->Type()) with the emission stripped.
 void Hmx::Object::Copy(const Hmx::Object *o, CopyType ty) {
     if (ty == kCopyFromMax)

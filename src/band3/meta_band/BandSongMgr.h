@@ -8,7 +8,7 @@
 #include <hash_map>
 
 // Retail RB3-360's BandSongMgr lookup members are STLport hash_map, not std::map
-// (the Wii dev decomp's approximation). GetShortNameFromSongID (fn_8255F858)
+// (a real hash table). GetShortNameFromSongID (fn_8255F858)
 // inlines the int-keyed hashtable::find COMDAT (FUN_82552CD0) against this+0xd4
 // and this+0x10c, and the destructor (fn_825632E0) destroys the lookup members
 // at +0xd4/+0xf0/+0x10c via the hash_map dtor (Function_82547CC8). sizeof(hash_map)
@@ -155,7 +155,7 @@ public:
     // GetValidSongCount() at +0x154" claim had no byte support at all --
     // GetCurSongCount now recomputes instead of reading an invented cache.
     // Jukebox lives in DC3 (src/system/meta/Jukebox.h, already 4/4 at 100%) and
-    // NOT in the rb3-Wii oracle, which is why a source diff never showed it.
+    // never in an RB3 source, which is why a source diff never showed it.
     Jukebox mJukebox; // 0x148 (mJukeboxItems 0x148..0x154, mPlayCounter 0x154)
     //
     // The RTTI argument below still stands and still fixes the tail; only the
@@ -186,7 +186,7 @@ public:
 // Retail 360 exposes the song manager through a MUTABLE POINTER global (the
 // GamePanel::Load target reloads both the object pointer AND its vptr around
 // every intervening call: lwz obj -> lwz vptr -> vcall, twice from the same
-// @ha base). A C++ reference (Wii-dev shape) lets MSVC CSE both loads across
+// @ha base). A C++ reference lets MSVC CSE both loads across
 // calls -- reference-immutability makes the object address (and thus vptr)
 // invariant -- which produces a hoisted preload retail provably lacks. Keep
 // the `TheSongMgr.` spelling for all call sites via the macro.

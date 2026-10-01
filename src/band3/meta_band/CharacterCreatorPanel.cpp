@@ -292,8 +292,8 @@ void CharacterCreatorPanel::SetEyeColor(int color) {
 // RB3-360 retail dereferences mPreviewDesc UNCONDITIONALLY in all five of these
 // int accessors: inlined into Handle(), the shipped code goes straight from
 // `lwz r11,-0x30(r25)` to `lwz r11,0x24(r11)` with no cmplwi/beq between them.
-// The `if (mPreviewDesc)` guard is present in the rb3-Wii oracle, so we did not
-// invent it -- we INHERITED it -- but retail did not ship it.  The guard is also
+// An `if (mPreviewDesc)` guard here would be wrong: retail did not ship it.
+// The guard is also
 // what forces the float accessors' `stfd`/`lwz` round-trip: the null path makes
 // the result a phi, so it must land in a GPR, whereas retail's straight-line
 // form lets `fctiwz` feed `stfiwx` directly into the DataNode.
@@ -556,7 +556,7 @@ Symbol CharacterCreatorPanel::GetEyebrows() {
 }
 
 int CharacterCreatorPanel::GetFeatureIndex(Symbol s) {
-    // Retail-360: no mPreviewDesc null check (rb3-Wii dev build has one).
+    // Retail-360: no mPreviewDesc null check.
 #ifdef HX_NATIVE
     if (!mPreviewDesc)
         return 0;
@@ -571,8 +571,8 @@ int CharacterCreatorPanel::GetFeatureIndex(Symbol s) {
 void CharacterCreatorPanel::ModifyFeature(Symbol s, float f) {
     // Retail-360 does NOT null-check mPreviewDesc here: there is no
     // lwz 0x7c(this) / cmplwi / beq anywhere in the extent -- it loads
-    // mPreviewDesc only at the point of use. The rb3-Wii dev build wraps the
-    // whole body in `if (mPreviewDesc)`; retail dropped it.
+    // mPreviewDesc only at the point of use. There is no `if (mPreviewDesc)`
+    // around the body.
     static Symbol head("head");
     DataArrayPtr ptr(head, s);
     float prop = mPreviewDesc->Property(ptr, true)->Float();

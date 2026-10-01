@@ -78,7 +78,7 @@ protected:
     // RB3-360 retail layout (verified vs the target binary, NOT dc3's). dc3 is
     // *newer* and added a trailing `mFinalDrawPassFlag` bool (with a Draw()-gate
     // using it) that RB3 predates — keeping it made every UIPanel-derived field
-    // read +4 (CalibrationPanel::Exit, GamePanel, etc.). rb3-Wii UIPanel has no
+    // read +4 (CalibrationPanel::Exit, GamePanel, etc.). RB3's UIPanel has no
     // such field. Offsets below cross-checked against the binary: UIPanel::Exit
     // sets mState (int) at +0x20 and tests mLoaded (bool) at +0x1c; with String
     // = 0xc bytes (mFocusName 0x10..0x1b) the bool/int order packs as below and

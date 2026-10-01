@@ -41,7 +41,7 @@ BEGIN_COPYS(RndMotionBlur)
     END_COPYING_MEMBERS
 END_COPYS
 
-// RB3-360 retail rev dialect (rb3-Wii/ObjMacros shape), not DC3's Object.h
+// RB3-360 retail rev dialect (ObjMacros shape), not DC3's Object.h
 // BinStreamRev stack decorator.  Adjudicated on retail bytes at 0x82493EA8
 // (148 B): the body reads the packed rev, stores `revs >> 16` and `revs` as two
 // HALFWORDS four bytes apart onto ONE internal-linkage base (lbl_82CC6A48 +0/+4)

@@ -41,7 +41,7 @@ protected:
     // vbase-displacement defect from an own member sitting before the Object
     // virtual base. Dropping the 16-byte ResourceDirPtr overshot by 4 bytes (shift
     // flipped to a uniform +4/-4), so retail keeps a small 4-byte-aligned own
-    // member here. The rb3-Wii dev oracle's MiniLeaderboardDisplay.h has exactly
+    // member here. MiniLeaderboardDisplay has exactly
     // one own data member -- `bool mAllowSoloScores;` -- which pads to 4 bytes
     // before the vbase, matching the residual shift precisely.
     bool mAllowSoloScores;

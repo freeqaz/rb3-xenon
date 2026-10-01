@@ -497,8 +497,8 @@ void RndCam::GetViewProjectXfms(Transform &viewXfm, Hmx::Matrix4 &projMtx) const
     // branch). ★ DC3 HAS ALREADY FOUND AND FIXED THIS EXACT LINE --
     // dc3-decomp/src/system/rndobj/Cam.cpp:468-472 carries the corrected slot
     // and a comment ending "(was incorrectly mLocalProjectXfm.v.x, which is
-    // always zero)". rb3-Wii's Cam.cpp writes the same m.z.y in UpdateLocal.
-    // So three independent decomps agree on where the value is stored, and
+    // always zero)". UpdateLocal writes the value to m.z.y.
+    // So the store site is settled, and
     // xenon is alone in reading it from somewhere else.
     //
     // ⚠ GATED, NOT CORRECTED OUTRIGHT, and the reason is honest rather than

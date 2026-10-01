@@ -11,7 +11,7 @@
 
 // Retail RB3-360 layout (verified vs ctor fn_82787030 + OnMsg/Init/ThreadCall
 // targets in build/45410914/asm/MemcardMgr_Xbox.s):
-//   MemcardMgr : MsgSource, ThreadCallback (declared in rb3-Wii's order; MSVC
+//   MemcardMgr : MsgSource, ThreadCallback (declared in this order; MSVC
 //   still lays ThreadCallback out first, as the first base with a vfptr, but
 //   constructs MsgSource first, so the ThreadCallback vptr store is dead)
 //   - ThreadCallback vfptr @ 0x0 (primary base; ThreadCall(this) is passed

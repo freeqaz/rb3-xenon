@@ -78,7 +78,7 @@ public:
     bool Dirty() const { return mDirty; }
     Constraint TransConstraint() const { return mConstraint; }
     const std::list<RndTransformable *> &Children() const { return mChildren; }
-    // dc3 lineage stores children as std::list (RB3-Wii used std::vector).
+    // dc3 lineage stores children as std::list (RB3 used std::vector).
     // Alias for RB3 game-code callers; same underlying container.
     const std::list<RndTransformable *> &TransChildren() const { return mChildren; }
     void ResetLocalXfm() {
@@ -96,7 +96,7 @@ public:
         SetDirty();
     }
 
-    // RB3-era 3-float overload. rb3-Wii kept this because the Vector3& form
+    // RB3-era 3-float overload, kept because the Vector3& form
     // "doesn't inline nicely and results in a stack related mismatch". Unused
     // inline in TUs that don't call it (no COMDAT emitted), so codegen-neutral
     // for existing units; required by RB3 game TUs (e.g. VocalTrackDir).

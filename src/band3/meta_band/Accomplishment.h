@@ -96,7 +96,7 @@ public:
     // initialises every member in declaration order) plus the +8 offset delta
     // observed on mDynamicPrereqsSongs in ~Accomplishment (0x82594D98).
     //
-    // Two differences from the rb3-Wii DEV header:
+    // Two layout details:
     //   * retail INTERLEAVES the bools with the ints instead of grouping all
     //     eight at the tail (the init values still form the same F,F,F,T,T,F,T,F
     //     sequence in declaration order, which is what pins the assignment);

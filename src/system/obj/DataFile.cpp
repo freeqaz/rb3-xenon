@@ -518,8 +518,8 @@ DataArray *ReadCacheStream(BinStream &bs, const char *cc) {
 // sites (DataReadFile and DataLoader's ctor), so it is file-local here and
 // defined ahead of both -- MSVC's inliner is single-pass and will not inline a
 // function defined later in the TU.
-// The `UsingCD() &&` gate the DC3/Wii source has on the !isLocal arm is absent
-// from retail's inlined copies (no bl ?UsingCD@@YA_NXZ in either extent), the
+// There is no `UsingCD() &&` gate on the !isLocal arm in
+// retail's inlined copies (no bl ?UsingCD@@YA_NXZ in either extent), the
 // same elimination ArchiveInit documents.
 static const char *CachedDataFile(const char *file, bool &b) {
     bool isLocal = FileIsLocal(file);

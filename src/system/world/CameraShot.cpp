@@ -381,8 +381,8 @@ void CamShotFrame::BuildTransform(RndCam *cam, Transform &tf, bool b3) const {
 
     // NB(rb3-xenon, idx233): declared here (not just before `if (mParent)`)
     // to match retail's register allocation -- retail's Ghidra decomp fetches
-    // mParent as the very first field read after `this`, matching rb3-Wii's
-    // BuildTransform which declares `parent` right after `me`.
+    // mParent as the very first field read after `this`, i.e.
+    // BuildTransform declares `parent` right after `me`.
     RndTransformable *parent = mParent;
 
     Vector3 targetPos;
@@ -502,12 +502,12 @@ void CamShotFrame::BuildTransform(RndCam *cam, Transform &tf, bool b3) const {
     // compile it -- latent only because world/ was not in the native build. It
     // is deleted rather than re-guarded: the identity world transform is the
     // correct native behaviour for a CamShot that has no transform at all, and
-    // rb3-Wii's BuildTransform likewise has no such multiply. X360-neutral (the
+    // RB3's BuildTransform has no such multiply. X360-neutral (the
     // removed text was already excluded when HX_NATIVE is undefined).
 
     // NB(rb3-xenon, idx233): retail RB3's BuildTransform has NO
     // ApplyDynamicOffsetPreLookAt/PostLookAt calls here -- both virtuals are a
-    // DC3-era addition (absent from the rb3-Wii oracle's CamShot entirely, and
+    // DC3-era addition (absent from RB3's CamShot entirely, and
     // still empty-bodied stubs in CameraShot.h). Retail's Ghidra decomp goes
     // straight from the `if (mParent) {...}` block to the `if (b3)` block with
     // zero intervening calls -- same pattern as the ApplyFinalCamTransform fix
@@ -705,7 +705,7 @@ void CamShotFrame::Interp(const CamShotFrame &other, float f1, float f2, RndCam 
     Multiply(resultTf.m, rotMtx, resultTf.m);
 
     // NB(rb3-xenon): retail RB3 has NO ApplyFinalCamTransform call here — the
-    // virtual is a DC3-era addition (absent from the rb3-Wii oracle entirely),
+    // virtual is a DC3-era addition (absent from RB3 entirely),
     // and retail's decomp goes straight from Multiply() to SetLocalXfm().
     cam->SetLocalXfm(resultTf);
 }
@@ -958,7 +958,7 @@ CamShot::CamShot()
       mFarPlane(mNearPlane * RndCam::MaxFarNearPlaneRatio()), mUseDepthOfField(true),
       mFilter(0.9), mClampHeight(-1), mCrowdStateOverride(gNullStr), mAnims(this),
 #else
-      // RB3 retail: constant planes (rb3-Wii 1 / 1000) and a default Symbol
+      // RB3 retail: constant planes (1 / 1000) and a default Symbol
       mNearPlane(1.0f), mFarPlane(1000.0f), mUseDepthOfField(true),
       mFilter(0.9), mClampHeight(-1), mCrowdStateOverride(), mAnims(this),
 #endif
@@ -988,7 +988,7 @@ BEGIN_HANDLERS(CamShot)
     HANDLE(add_3d_crowd, OnAddCrowdChars)
     HANDLE(clear_3d_crowd, OnClearCrowdChars)
 #ifdef RB3_KEEP_DC3_ONLY_HANDLERS
-    // RB3-360 retail does not carry this handler. Two independent oracles over
+    // RB3-360 retail does not carry this handler. Two independent instruments over
     // orig/45410914/band.exe agree that fn_824C4A98 builds exactly 12 Symbols
     // and "get_crowd_dir" is not among them; the literal appears in no
     // non-executable section of the image at all. DC3 (newer engine) added it.
@@ -1051,7 +1051,7 @@ BEGIN_PROPSYNCS(CamShot)
     SYNC_PROP(crowds, mCrowds)
 #ifdef RB3_KEEP_DC3_ONLY_HANDLERS
     // Retail fn_824C6D80 builds exactly 25 Symbols and "crowd_state_override"
-    // is not one of them (both oracles agree; the literal is absent from every
+    // is not one of them (both instruments agree; the literal is absent from every
     // non-executable section of band.exe). The member itself IS real -- it is
     // still saved/copied/loaded below -- only the propsync arm is DC3-only.
     SYNC_PROP(crowd_state_override, mCrowdStateOverride)
@@ -1178,8 +1178,8 @@ BEGIN_LOADS(CamShot)
     }
     // NB(rb3-xenon): retail CamShot does NOT inherit RndTransformable, so the
     // serialized RndTransformable block is absent — rev > 0x32 still holds in
-    // the file format but loads nothing for it here. (rb3-Wii equivalent in
-    // ../rb3/src/system/world/CameraShot.cpp also has no RndTransformable::Load.)
+    // the file format but loads nothing for it here. (RB3's
+    // CameraShot.cpp also has no RndTransformable::Load.)
     if (sCamShotRev > 0xC) {
         d >> mKeyframes;
         d >> mLooping;

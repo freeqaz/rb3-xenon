@@ -25,7 +25,7 @@
 #include "utl/Symbols.h"
 #include "utl/Symbols4.h"
 
-// Retail (and the rb3-Wii oracle, TambourineManager.cpp:270 et al) call DoFade
+// Retail calls DoFade
 // UNCONDITIONALLY -- there is no null test on mTambourineFader anywhere in the
 // target. The `if (mTambourineFader)` guards that used to sit at each of these
 // seven call sites were a NATIVE-PORT accommodation: the HX_NATIVE ctor above
@@ -246,8 +246,8 @@ bool TambourineManager::GemProcessed(int index) const {
     // Unsigned shift: retail folds this whole test into a single
     // `extrwi r11, r11, 1, 29`. A signed `>>` makes MSVC emit an arithmetic
     // `srawi r11, r11, 2` plus a separate `clrlwi r11, r11, 31` instead --
-    // same value, two instructions. (rb3-Wii has the signed spelling, but it
-    // is MWCC and does not have to agree.)
+    // same value, two instructions. (A signed spelling is natural, but MSVC
+    // does not fold it.)
     return ((unsigned int)mGemStates[index] >> 2) & 1;
 }
 
@@ -270,8 +270,8 @@ void TambourineManager::SetTambourine(bool iIsActive) {
     // Symbol::Symbol(const char *) on the "tambourine" literal, emitted before the
     // early-return compare, so the declaration is first in the body).  Our source
     // reached for the shared utl/Symbols.h global ?tambourine@@3VSymbol@@A, which
-    // is a decomp convenience, not what shipped -- a source diff against the
-    // oracle shows nothing, only the codegen does.
+    // is a decomp convenience, not what shipped -- a source diff
+    // shows nothing, only the codegen does.
     static Symbol tambourine("tambourine");
     if (iIsActive == (unk60 > 0))
         return;

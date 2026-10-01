@@ -160,7 +160,7 @@ void StoreInfoPanel::GetRecommendationIndexPath(const char *cc, String &str) {
     str = MakeString(pathFmt, regionSym, SystemLanguage().Str(), cc);
     Server *server = TheNet.GetServer();
     if (server && server->IsConnected()) {
-        // RETAIL-PROVEN CALLEE (lane W16-L, 2026-09-14).  The rb3-Wii oracle has
+        // RETAIL-PROVEN CALLEE (lane W16-L, 2026-09-14).  Not
         // `server->GetMasterProfileID()` (Server vtable slot 17, dispatch 0x44,
         // no arguments).  Retail fn_82638D58 instead does
         //   bl  StorePanel::Instance()          (fn_827B53A8)
@@ -168,8 +168,8 @@ void StoreInfoPanel::GetRecommendationIndexPath(const char *cc, String &str) {
         //   lwz r11,0(r3); lwz r11,0x00(r11)    -> GetPadNum()   (LocalUser slot 0)
         //   lwz r11,0x1c(r29)                   -> Server slot 7 = GetPlayerID(int)
         // i.e. it passes a pad number in r4 to the ONE-ARG Server virtual.  The
-        // Wii build had no such call; this is a 360-only divergence, so the
-        // oracle is wrong here and retail bytes win.
+        // call is 360-only, and retail bytes
+        // decide.
         str += MakeString(
             "?pid=%u", server->GetPlayerID(StorePanel::Instance()->StoreUser()->GetPadNum())
         );

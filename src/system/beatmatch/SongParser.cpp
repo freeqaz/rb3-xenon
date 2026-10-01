@@ -749,7 +749,7 @@ void SongParser::OnGemEnd(int tick, unsigned char pitch) {
                 // test, NOT with the whole conjunction: at 0x82786cb0+0x1d0 the
                 // `mRollInProgress == -1` early-out branches clear past the
                 // whole block (to the mTrillInProgress load), whereas the
-                // rb3-Wii transcription's `(A && B && C && !D) || slot != 0`
+                // conjunction form `(A && B && C && !D) || slot != 0`
                 // would have to fall through to the `slot` test. The
                 // mDrumStyleGems test then branches *into* the body when the
                 // flag is clear, and only falls to `cmpwi slot, 0` when it is
@@ -1126,7 +1126,7 @@ bool SongParser::ParseAndStripLyricText(const char *text, VocalNote &note) {
         text++;
     }
 #ifdef HX_NATIVE
-    // The matched Wii loop below decrements `p` twice per iteration (`p--` in the
+    // The matched loop below decrements `p` twice per iteration (`p--` in the
     // body AND `--p` in the while-test) and loops on the pointer difference. When a
     // lyric is ALL trailing-strip characters (e.g. "##", "//$"), `p` underflows
     // below `text`, `(p - text) + 1` becomes a huge unsigned count, and the

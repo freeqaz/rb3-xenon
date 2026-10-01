@@ -1,5 +1,5 @@
 #pragma once
-// Ported from rb3-Wii src/system/bandobj/BandCrowdMeter.h.
+// BandCrowdMeter (bandobj/BandCrowdMeter.h).
 #include "rndobj/Dir.h"
 #include "rndobj/Group.h"
 #include "rndobj/EventTrigger.h"

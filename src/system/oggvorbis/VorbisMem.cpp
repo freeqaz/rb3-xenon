@@ -8,10 +8,10 @@
 #include "utl/MemMgr.h"
 #include <string.h>
 
-// RB3-era shape (rb3-Wii oracle), NOT dc3's. dc3-decomp is newer and adds a
+// RB3-era shape, NOT dc3's. dc3-decomp is newer and adds a
 // file-scope `Licenses sLicense(...)` object here; retail RB3's pinned span for
 // this TU carries no static-init funclet, so the Licenses object is dc3-only
-// drift. rb3-Wii has no Licenses here either.
+// drift.
 //
 // (CORRECTED, lane W13-CHARINFO: this used to say the pinned span "is exactly 8
 // bytes (0x82C30B00-0x82C30B08 = OggMalloc alone)". The 8-byte OggMalloc figure

@@ -39,7 +39,7 @@ public:
 };
 
 /** Callback interface for syncing/posing mesh vertex data (CharMeshCacheMgr,
- *  head/outfit deform). Ported from rb3-Wii bandobj/char subsystem. */
+ *  head/outfit deform), used by the bandobj/char subsystem. */
 class SyncMeshCB {
 public:
     class Vert {
@@ -152,8 +152,8 @@ public:
         //                           + `ble`  (4-byte SIGNED load, `mCapacity > 0`)
         //   ~GemRepTemplate      -> `stw r29, 0x60/0x6c, r30` (4-byte zero store
         //                           at mTailVerts+8 / mCapVerts+8)
-        // DC3 (same engine, same MSVC X360 flags) also has `int mCapacity`; only
-        // rb3-Wii's MWCC build uses `unsigned short`. The former `unkc` at 0xa
+        // DC3 (same engine, same MSVC X360 flags) also has `int mCapacity`;
+        // an `unsigned short` capacity is wrong for this build. The former `unkc` at 0xa
         // cannot exist -- 3 x 4 bytes already fills the 0xc stride (confirmed by
         // GemRepTemplate's mTailVerts 0x58 / mCapVerts 0x64).
         int mCapacity; // 0x8
@@ -222,7 +222,7 @@ public:
      *  a mesh is freed, so a later allocation at the same address would be
      *  skipped silently.
      *
-     *  ⚠ DISCLOSED: rb3-Wii's renderer also READS this flag (to skip its
+     *  ⚠ DISCLOSED: a renderer could also READ this flag (to skip its
      *  rebake + fling clamp). NO CONSUMER EXISTS IN THIS TREE -- the pinned
      *  milo-native-engine (138e1606) compiles against these same xenon headers
      *  and knows nothing about it. Here it is purely the idempotency latch.
@@ -257,7 +257,7 @@ public:
     const Transform& BoneOffsetAt(int idx) const { return mBones[idx].mOffset; }
     void SetMutable(int m) { mGeomOwner->mMutable = m; }
     int Mutable() const { return mGeomOwner->mMutable; }
-    // rb3-Wii (and retail-360, per GetDefaultMatShaderOpts asm: lbz this+0x134
+    // Retail-360, per GetDefaultMatShaderOpts asm (lbz this+0x134
     // direct, no owner indirection) reads mHasAOCalc on this; DC3 later added
     // the mGeomOwner-> indirection. Keep the RB3 form.
     bool HasAOCalc() const { return mHasAOCalc; }
@@ -315,13 +315,13 @@ protected:
     DataNode OnConfigureMesh(const DataArray *);
 
 public:
-    // Public as in the rb3-Wii oracle (Mesh.h): BandPatchMesh::ProjectPatches
+    // Public: BandPatchMesh::ProjectPatches
     // sets sRawCollide around its CollideShowing loop and reads sLastCollide.
     static bool sRawCollide;
     static int sLastCollide;
 
-    // Public to mirror the rb3-Wii oracle, where sUpdateApproxLight and its setter
-    // are public (Mesh.h:345-347) -- Character::DrawLodOrShadow and
+    // Public, as sUpdateApproxLight and its setter
+    // must be -- Character::DrawLodOrShadow and
     // NgSpotlightDrawer::DoPost both suppress it from outside RndMesh. Statics have
     // no layout impact and the non-static member run below is left in its original
     // access section, so sizeof(RndMesh) is unchanged.

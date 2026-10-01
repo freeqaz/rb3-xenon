@@ -24,7 +24,7 @@
 
 bool kKeyShifting = true;
 
-// Retail RB3 keeps the object-version stack as FREE functions (the rb3-Wii
+// Retail RB3 keeps the object-version stack as FREE functions (the
 // obj/ObjVersion.h pair): the target calls PushRev(packedRevs, this) /
 // PopRev(this) with no BinStream `this`. dc3's newer engine moved them onto
 // BinStream, which is what our in-tree utl/BinStream.h declares. Same lever
@@ -77,7 +77,7 @@ GemTrackDir::GemTrackDir()
     for (int i = 0; i < 5; i++) {
         mFretPosOffsets.push_back(0);
     }
-    // rb3-Wii (dev) additionally reads the fake_finger_shape SystemConfig array
+    // A DEV build additionally reads the fake_finger_shape SystemConfig array
     // into the MILO_DEBUG-only members here; retail ctor ends at the loops.
 }
 
@@ -88,8 +88,8 @@ GemTrackDir::~GemTrackDir() {
     // delete anywhere in the function, and the two extra callee-saved registers
     // the blocks need are exactly why our prologue is `bl __savegprlr_28` and
     // our frame 0x80 against retail's inline r30/r31 saves and 0x70 frame.
-    // rb3-Wii (the dev-build oracle) DOES release them -- retail bytes outrank
-    // the oracle.  Kept for the native host so it does not leak.
+    // A DEV build DOES release them -- retail bytes
+    // decide.  Kept for the native host so it does not leak.
     RELEASE(mArpShapePool);
     RELEASE(mFingerShape);
 #endif
@@ -1155,7 +1155,7 @@ float GemTrackDir::GetKeyRange() { return mKeyRange; }
 float GemTrackDir::GetKeyOffset() { return mKeyOffset; }
 
 void GemTrackDir::UpdateFingerFeedback(const RGState &state) {
-    // rb3-Wii (dev) can substitute/cycle a fake RGState here via the
+    // A DEV build can substitute/cycle a fake RGState here via the
     // MILO_DEBUG-only members; retail passes the caller's state straight through.
     if (mFingerShape)
         mFingerShape->Update(state, true, false);
@@ -1333,7 +1333,7 @@ BEGIN_HANDLERS(GemTrackDir)
     HANDLE(draw_sample_chord, OnDrawSampleChord)
     HANDLE_ACTION(set_key_range, SetDisplayRange(_msg->Float(2)))
     HANDLE_ACTION(set_key_offset, SetDisplayOffset(_msg->Float(2), false))
-    // rb3-Wii (dev) exposes a MILO_DEBUG-only toggle_key_shifting handler here.
+    // A DEV build exposes a MILO_DEBUG-only toggle_key_shifting handler here.
     HANDLE_SUPERCLASS(BandTrack)
     HANDLE_SUPERCLASS(TrackDir)
     HANDLE_CHECK(0x7B4)
@@ -1396,7 +1396,7 @@ BEGIN_PROPSYNCS(GemTrackDir)
     SYNC_PROP(fret_pos_offset_4, mFretPosOffsets[4])
     SYNC_PROP(chord_label_pos_offset, mChordLabelPosOffset)
     SYNC_PROP(gem_track_dir_id, mGemTrackDirID)
-    // rb3-Wii (dev) syncs the MILO_DEBUG-only fake-finger-shape props here.
+    // A DEV build syncs the MILO_DEBUG-only fake-finger-shape props here.
     SYNC_SUPERCLASS(BandTrack)
     SYNC_SUPERCLASS(TrackDir)
 END_PROPSYNCS

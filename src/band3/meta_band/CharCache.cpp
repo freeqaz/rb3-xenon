@@ -232,7 +232,7 @@ DataNode CharCache::OnGetPatchTex(DataArray *arr) {
         CharData *charData = user->GetChar();
         if (!bchar->mPrefab.Null()) {
             // Retail fn_8256BEC8 has NO prefab-customizable path here: it goes
-            // straight to the null return. The rb3-Wii dev build's block is
+            // straight to the null return. The prefab-customizable block is
             // kept for native only (house pattern, see os/Timer.h).
 #if defined(MILO_DEBUG) && defined(HX_NATIVE)
             if (PrefabMgr::GetPrefabMgr()->PrefabIsCustomizable()

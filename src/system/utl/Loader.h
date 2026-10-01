@@ -61,7 +61,7 @@ private:
     std::list<Loader *> mLoaders; // 0x0
     // TU5 divergence (verified from AddLoader/Poll/LoadStream offset triangulation,
     // 2026-07-18): mFactories through mLoaderPos are each 8 bytes earlier than a
-    // naive dc3/rb3-Wii-order layout would predict (mFactories@0x8 not 0x10,
+    // naive dc3-order layout would predict (mFactories@0x8 not 0x10,
     // mPeriod@0x10, mCurrentPeriod@0x14, mLoading@0x18, mTimer@0x20). That's
     // exactly the size of mPlatform+mEditMode+mCacheMode (4+1+1+2 pad = 8), so in
     // retail TU5 those three fields are declared AFTER mLoaderPos, not here.
@@ -124,7 +124,7 @@ public:
 
 extern LoadMgr TheLoadMgr;
 
-// rb3-Wii guards this with #ifdef MILO_DEBUG; retail builds take the `false`
+// This check is a dev-only #ifdef MILO_DEBUG block; retail builds take the `false`
 // arm.  src/macros.h force-defines MILO_DEBUG tree-wide so the MILO_ASSERT
 // family stays live, which unconditionally switched this editor check on too --
 // the same trap already documented for START_AUTO_TIMER_CALLBACK in os/Timer.h,

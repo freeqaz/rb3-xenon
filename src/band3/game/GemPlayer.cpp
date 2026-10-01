@@ -108,7 +108,7 @@ void DeltaTrackerInit() {
 
 // Retail emits this out-of-line at the head of GemPlayer's TU (0x826BBC80, just
 // before GetPhraseExtents) and GemPlayer::Poll reaches it with a direct bl. The
-// name is ours; there is no oracle for it.
+// name is ours; no symbol survives for it.
 void CheckControllerReenable(BeatMatchController *ctrl) {
     if (ctrl->unk25) {
         if (ctrl->IsDisabled()) {
@@ -886,7 +886,7 @@ void GemPlayer::FilteredWhammyBar(float val) {
                 active &= TheGame->mProperties.mEnableWhammy;
                 // Retail builds three FUNCTION-LOCAL statics here (one guard
                 // word, bits 1/2/4, each with its own atexit), not the
-                // Messages4.h globals the Wii dev build used.
+                // Messages4.h globals.
                 if (active && !unk348) {
                     static Message whammy_start_msg("whammy_start");
                     Handle(whammy_start_msg, false);
@@ -1540,7 +1540,7 @@ void GemPlayer::LocalSetEnabledState(EnabledState state, int i2, BandUser *user,
         mCommonPhraseCapturer->Enabled(this, mTrackNum, i2, false);
         // Retail (0x826BE418 idx 29-36) short-circuits with a two-way
         // li 1 / li 0 join:  lbz 0x351; beq ->0 ; lbz 0x350; li 1; beq ->join;
-        // li 0; join: clrlwi.  That is the rb3-Wii oracle's form.  Writing it
+        // li 0; join: clrlwi.  Writing it
         // as a ternary (`unk315 ? !unk314 : false`) instead makes MSVC compute
         // !unk314 as a VALUE via cntlzw/extrwi and fall through unconditionally.
         bool b1 = unk315 && !unk314;
@@ -2187,7 +2187,7 @@ void GemPlayer::FinishHeldNote(float f1, HeldNote &note) {
             Handle(whammy_end_msg, false);
         }
         unk348 = false;
-        // rb3-Wii is the DEV build and calls this unconditionally; RETAIL
+        // A DEV build calls this unconditionally; RETAIL
         // COMPILED IT OUT.  Two independent proofs: retail's FinishHeldNote
         // (508 B vs our 516 = exactly these 2 instructions) goes straight from
         // the mWhammying store to HeldCompletely(), and every debug-overlay
@@ -2514,7 +2514,7 @@ bool GemPlayer::IsCodaMiss(float ms) {
 }
 
 void GemPlayer::CheckSolo(float ms) {
-    // Retail fn_826C1E28 (TU5-era, absent from the rb3-Wii oracle): when a
+    // Retail fn_826C1E28 (TU5-era): when a
     // solo phrase is newly entered, it is only treated as started if the next
     // gem at/after (ms + mSyncOffset) still lies before the phrase's end tick.
     // endTick is declared first: retail keeps it at the lower stack slot.

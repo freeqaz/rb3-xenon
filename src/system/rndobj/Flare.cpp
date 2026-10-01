@@ -100,7 +100,7 @@ BEGIN_LOADS(RndFlare)
         mSizes.y = mSizes.x;
     }
     if (gRev > 1) {
-        // rb3-Wii oracle reads mSteps here (retail: ReadEndian into this+0x124);
+        // RB3 reads mSteps here (retail: ReadEndian into this+0x124);
         // DC3 is NEWER and reads mOffset (this+0x120) -- a post-RB3 engine change.
         bs >> mRange >> mSteps;
     }

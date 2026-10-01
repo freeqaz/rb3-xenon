@@ -4,7 +4,7 @@
 // RB3-360 retail layout (verified vs the target binary, NOT dc3's). dc3 is
 // *newer* and replaced RB3's heap-backed `std::vector<float>` history ring with
 // an inline `float mHistoryBuffer[0x20]` (making DeJitter 0x90 bytes). RB3
-// predates that change: rb3-Wii's DeJitter (utl/DeJitter.h) uses a
+// predates that change: RB3's DeJitter (utl/DeJitter.h) uses a
 // `std::vector<float>` resized to 32 plus two ints and three floats, so the
 // retail struct is small (vector 0xc + 2 ints + 3 floats = 0x20 on X360). The
 // inline-array version pushed every GamePanel field past mDeJitter +0x8c

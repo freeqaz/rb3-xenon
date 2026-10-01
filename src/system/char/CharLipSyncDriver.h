@@ -57,7 +57,7 @@ public:
     void SetOverrideWeight(float weight) { mOverrideWeight = weight; }
     float GetOverrideWeight() const { return mOverrideWeight; }
     CharClip *OverrideClip() const { return mOverrideClip; }
-    // rb3-Wii oracle + retail (BandDirector::OnGetFaceOverrideClips inline,
+    // Retail (BandDirector::OnGetFaceOverrideClips inline,
     // Ghidra 0x82284F48): falls back to the clip dir when no override is set.
     ObjectDir *OverrideDir() const {
         if (mOverrideOptions)
@@ -73,7 +73,7 @@ protected:
 
     // Retail RB3-360 layout (verified against retail CharLipSyncDriver::Save
     // @0x823795C8: Hmx::Object vbase at +0xac, ObjPtr = 0xc bytes).
-    // Matches rb3-Wii oracle field order (each 360 offset = Wii offset - 4).
+    // Each 360 offset = the narrow-Object offset - 4.
 
     /** "The lipsync file to use" */
     ObjPtr<CharLipSync> mLipSync; // 0x28
@@ -86,7 +86,7 @@ protected:
     float mSongOffset; // 0x58
     /** "should we loop this song, resets on song change" */
     bool mLoop; // 0x5c
-    CharLipSync::PlayBack *mMainPlayback; // 0x60 (Wii: mSongPlayer)
+    CharLipSync::PlayBack *mMainPlayback; // 0x60 (a.k.a. mSongPlayer)
     /** "The CharBones object to add or blend into." */
     ObjPtr<CharBonesObject> mBones; // 0x64
     /** "Test charclip to apply, does nothing else" */

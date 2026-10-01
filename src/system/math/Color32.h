@@ -1,7 +1,7 @@
 #pragma once
 #include "math/Color.h"
 
-// rb3-Wii canonically defines Hmx::Color32 inside math/Color.h. Adding it there
+// Hmx::Color32 would canonically live inside math/Color.h. Adding it there
 // directly perturbs codegen in unrelated units that include the (very hot)
 // math/Color.h — e.g. UIButton::OnMsg regressed 100% -> 98% from the extra
 // inline COMDATs shifting MSVC's inlining decisions. To keep math/Color.h

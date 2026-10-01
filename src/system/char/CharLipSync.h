@@ -57,8 +57,8 @@ public:
         // ObjPtr<CharLipSync> occupies [0xc,0x18) and stores its raw pointer at
         // +8, so we emitted `lwz r11, 20(r11)`. ObjPtr itself is proven correct
         // (ObjPtr<CharLipSync>::Replace and ??_G both match retail at 100%), so
-        // the field at 0xc cannot be an ObjPtr interior. rb3-Wii declares it raw
-        // too; DC3 (newer) upgraded it. Sibling Generator::mLipSync above is
+        // the field at 0xc cannot be an ObjPtr interior. RB3 declares it raw;
+        // DC3 (newer) upgraded it. Sibling Generator::mLipSync above is
         // still raw in DC3, which is the same asymmetry.
         CharLipSync *mLipSync; // 0xc
         ObjPtr<ObjectDir> mClips; // 0x10
@@ -99,8 +99,8 @@ protected:
     DataNode OnParse(DataArray *);
     DataNode OnParseArray(DataArray *);
 
-    /** "PropAnim to control this lipsync" — retail RB3-360 member, present in
-        rb3-Wii (src/system/char/CharLipSync.h: ObjPtr<RndPropAnim> mPropAnim)
+    /** "PropAnim to control this lipsync" — retail RB3-360 member
+        (ObjPtr<RndPropAnim> mPropAnim), present in RB3
         and in the DC3 binary (ham_xbox_r.map: ??_G?$ObjPtr@VRndPropAnim@@@@ in
         char:CharLipSync.obj), but dropped from dc3-decomp's header which we
         inherited. Proven against the retail ctor fn_823C1F80: ObjPtr vtable

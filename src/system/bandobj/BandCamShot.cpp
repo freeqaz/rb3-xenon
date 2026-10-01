@@ -285,8 +285,8 @@ BEGIN_LOADS(BandCamShot)
             if (trig2) {
                 // Retail (0x822B7EB8) fills the END call from trig1, not trig2:
                 // the block reads 0x78(r31) -- the first-loaded ObjPtr's object
-                // -- for both mDir and mEvent. rb3-Wii's text says trig2;
-                // retail's bytes win, so the RB3 behaviour is kept.
+                // -- for both mDir and mEvent, not trig2;
+                // retail's bytes decide, so the RB3 behaviour is kept.
                 ObjList<EventAnim::EventCall> &end = anim->mEnd;
                 end.push_back();
                 anim->mEnd.back().mDir = trig1->Dir();
@@ -353,7 +353,7 @@ void BandCamShot::StartAnim() {
     // NB(rb3-xenon): retail's StartAnim (0x822B5798, 948 bytes) ends at the
     // GetTotalDuration() store -- it has no `Character *chars[32]` scratch
     // array, no numChars/MILO_ASSERT, no DoHide() call and no
-    // sHideAllCharactersHack tail.  rb3-Wii's DEV build has all of that; the
+    // sHideAllCharactersHack tail.  A DEV build has all of that; the
     // 360 retail build does not.  (The static itself is still referenced from
     // BandDirector.cpp, so it stays declared.)
     FOREACH (it, mTargets) {
@@ -695,7 +695,7 @@ BEGIN_CUSTOM_PROPSYNC(BandCamShot::Target)
     // scores fuzzy 99.9882 against it with exactly ONE charged site (a callee
     // NAME), whereas our `BandCamShot`-spelled COMDAT was 1604 B / 180
     // relocations.  So the 88 B shortfall was this property, adjudicated on
-    // retail bytes rather than on a preference between the two oracles.
+    // retail bytes rather than on a preference between the two spellings.
     SYNC_PROP(to, o.mXfm)
     SYNC_PROP_MODIFY(anim_group, o.mAnimGroup, gBandCamShotOwner->StartAnim())
     SYNC_PROP(fast_forward, o.mFastForward)
@@ -785,7 +785,7 @@ END_HANDLERS
 
 DataNode BandCamShot::OnListTargets(const DataArray *da) {
     // NB(rb3-xenon): retail-verified local static (not the Messages2.h
-    // extern the rb3-Wii dev branch uses) — Ghidra shows a guarded
+    // extern) — Ghidra shows a guarded
     // function-local static Message ctor here (guard + atexit dtor reg).
     static Message list_targets_msg("list_targets");
     DataNode handled = HandleType(list_targets_msg);

@@ -106,8 +106,8 @@ add_compile_definitions(BaseMaterial=RndMat)
 #   scrolls past in a 171-step build, an error does not.
 #
 # ⚠ DELIBERATELY NOT ENABLED (measured non-zero; each needs the
-#   transcription-error-vs-faithful-shipped-bug triage against the dc3 /
-#   rb3-Wii oracles BEFORE being touched -- fixing a faithful bug breaks the
+#   transcription-error-vs-faithful-shipped-bug triage against retail bytes
+#   BEFORE being touched -- fixing a faithful bug breaks the
 #   match). Unique-site counts as of this measurement:
 #     -Wshorten-64-to-32          455   (incl. the LP64 landmine)
 #     -Woverloaded-virtual         36   (CC-5: 4 real, all faithful)
@@ -119,7 +119,7 @@ add_compile_definitions(BaseMaterial=RndMat)
 #                                        MemTrack/PoolAlloc/MemHeap store
 #                                        pointers in 32-bit words)
 #     -Wreturn-type                 2   (MidiConstants.h:34, Debug.cpp:373 --
-#                                        the latter deferred by CC-5, no oracle)
+#                                        the latter deferred by CC-5, unverified)
 #     -Warray-bounds                1   (GlitchFinder.cpp:361, index 1024 into
 #                                        char[1024] -- looks like a real defect)
 #     -Wswitch                      1   (NetCacheLoader.cpp:57)
@@ -366,7 +366,7 @@ target_link_libraries(rb3-midi PRIVATE Threads::Threads ZLIB::ZLIB)
 
 # --- M3a: beatmatch gem pipeline ---------------------------------------------
 # SongParser (the real gem parser, a MidiReceiver) + the concrete gem containers
-# (GameGem / GameGemList / GameGemDB, ported from the rb3-Wii oracle). Reuses the
+# (GameGem / GameGemList / GameGemDB, the retail gem containers). Reuses the
 # M2 MIDI cluster (MidiReader drives SongParser; MidiParserMgr fires the gem
 # branch). BeatMatchUtl / SongInfoCopy come in via M3_SOURCES; the rest of
 # beatmatch/ (BeatMatcher, TrackWatcher*, controllers) is NOT on the parse path
@@ -414,7 +414,7 @@ target_link_libraries(rb3-gem PRIVATE Threads::Threads ZLIB::ZLIB)
 # full chart surface — phrases, fills, roll/trill lanes, drum-mix, disco-flip,
 # backup tracks, PlayerTrackConfigList-driven per-player difficulty. The six
 # dependency TUs it needs (DrumMap/DrumMixDB/PhraseDB/PhraseAnalyzer/
-# PlayerTrackConfigList/FillInfo) were ported from the rb3-Wii oracle; PhraseList
+# PlayerTrackConfigList/FillInfo) are ported too; PhraseList
 # + VocalNoteList + TimeSpanVector are also pulled in (SongData's ctor news a
 # VocalNoteList; PostLoadVocals + IntersectTimeSpans need the rest).
 # beatmatch_native_support.cpp is now only the LogFile shim + TheBeatMatchOutput.
@@ -471,7 +471,7 @@ target_link_libraries(rb3-hit PRIVATE Threads::Threads ZLIB::ZLIB)
 # GemPlayer (Player -> Performer + Band/BandUser/BeatMaster/CrowdMeter/meta_band/
 # net/tour object graph) is NOT constructed here — that is the M6 frontier; both
 # it and the real Scoring/Stats TUs compile natively but drag that cascade at
-# link time. See src/score_engine.h for the per-formula oracle provenance.
+# link time. See src/score_engine.h for the per-formula source citations.
 rb3_add_executable(rb3-score
     ${CMAKE_SOURCE_DIR}/src/main_score.cpp
     ${CMAKE_SOURCE_DIR}/src/score_engine.cpp
@@ -677,7 +677,7 @@ target_link_libraries(rb3-vocal PRIVATE Threads::Threads ZLIB::ZLIB)
 # The REAL VocalPlayer::Poll each frame: real Singers, real VocalParts, greedy
 # singer<->part assignment, real ScoreSinger / phrase accumulation / phrase-end
 # rating. Adds the three real vocal game TUs (VocalPlayer/Singer/VocalPart +
-# TambourineManager) on top of the M8 object graph, plus faithful rb3-Wii-oracle
+# TambourineManager) on top of the M8 object graph, plus faithful native
 # ports of the leaf helpers (VibratoDetector, TambourineDetector, VocalScoreHistory,
 # VoiceBeat/TalkyMatcher) and m10_support (synthetic GameMic/GameMicManager +
 # vocal SongDB queries). m10_link_stubs replaces m8_link_stubs (drops the
@@ -900,13 +900,13 @@ target_link_libraries(rb3-ark PRIVATE Threads::Threads ZLIB::ZLIB)
 # on either side, with a 5-entry MILO_ENGINE_DECOMP_PLATFORM_EXCLUDE. This block
 # promotes that out-of-tree harness into the real build.
 #
-# WHY `dc3` AND NOT `rb3`: rb3-xenon's src/system/rndobj/ is DC3-lineage, not
-# RB3-Wii-lineage — it supplies NgRnd (rndobj/Rnd_NG.h:14), RndCam::
+# WHY `dc3` AND NOT `rb3`: rb3-xenon's src/system/rndobj/ is DC3-lineage, which
+# supplies NgRnd (rndobj/Rnd_NG.h:14), RndCam::
 # GetViewProjectXfms (Cam.h:46), RndParticleSys::NumTilesAcross/Down (Part.h:
 # 284), and the fat RndMesh::Vert (Mesh.h:74). Every structural reason the
-# engine's `rb3` BandRnd flavor exists applies to rb3-WII, not to us. So xenon
-# takes the engine's most-mature backend and needs 5 platform exclusions where
-# rb3-Wii needs 18.
+# engine's `rb3` BandRnd flavor exists is absent here. So xenon
+# takes the engine's most-mature backend and needs only 5 platform
+# exclusions.
 #
 # ⚠ COMPILE-COMPAT IS NOT BEHAVIOURAL COMPAT. src/system/rndobj/Rnd.h:354-360
 # documents an Rnd/NgRnd member-layout shift vs the shape the DC3 headers
@@ -1097,11 +1097,11 @@ if(RB3X_BUILD_ENGINE)
     #  FFmpegMovieImpl.cpp    engine's FFmpegMovieImpl.h:37 `void SetPaused(bool)`
     #                         vs xenon movie/MovieImpl.h:24 `virtual bool
     #                         SetPaused(bool)`. A NEAR-twin, not a shape gap —
-    #                         xenon HAS movie/MovieImpl.h (rb3-Wii does not).
+    #                         xenon HAS movie/MovieImpl.h.
     #                         See the X1 doc for why this was NOT reconciled.
     #
     # NOT excluded, and each is a tell that xenon is DC3-lineage (every one is
-    # on rb3-Wii's 18-entry exclusion list): CDReader_Native, Keygen_Stub,
+    # on the engine's `rb3`-backend exclusion list): CDReader_Native, Keygen_Stub,
     # SampleInst_Native, StreamReceiver_Native, BoneSetup, CharTwistSolver,
     # FFmpegAudioReader.
     #
@@ -1230,7 +1230,7 @@ set(MILO_FORK_SOURCES ${ENGINE_RNDOBJ} ${ENGINE_CHAR} ${ENGINE_WORLD} ${ENGINE_U
 # Measured with -fsyntax-only under this target's exact flags: 12 of the 13
 # defining TUs compile with ZERO errors. The single exception is
 # bandobj/BandCharacter.cpp (18 errors ~ 4 root defects, all stale
-# rb3-Wii-lineage code inside its own HX_NATIVE arms -- protected-member
+# pre-DC3 code inside its own HX_NATIVE arms -- protected-member
 # access on mDraws/mLods/mStoredFile, a reference to RndMesh::
 # mNativeBonesRebound that xenon's RndMesh does not have, Refs() used as a
 # std::vector<ObjRef*>, and a MergeFilter::Action/SubdirAction mixup).
@@ -1666,7 +1666,7 @@ set_source_files_properties(${REPO_ROOT}/src/system/rndobj/Font.cpp
 #   read unconditionally three lines later (two MILO_ASSERTs and
 #   `mFixedLength = fixedLength`). For a rev in (8, 0xB] RndText::Load stores
 #   garbage. Plausibly FAITHFUL -- retail's own Load has the same shape -- so it
-#   wants the oracle triage before anyone touches it. Not hit by these assets
+#   wants the retail-bytes triage before anyone touches it. Not hit by these assets
 #   (rev is far newer).
 #   CharClipDisplay.cpp:201  worse, and probably NOT faithful: the function
 #   declares `RndTransformable *data` TWICE, once at :213 and once at :219, and

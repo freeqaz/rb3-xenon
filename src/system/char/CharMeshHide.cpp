@@ -108,7 +108,7 @@ BEGIN_COPYS(CharMeshHide)
 END_COPYS
 
 BEGIN_LOADS(CharMeshHide)
-    // RB3-360 retail uses the rb3-Wii rev dialect: the packed rev int is split
+    // RB3-360 retail uses the ObjMacros rev dialect: the packed rev int is split
     // into two mutable file-scope shorts and read back directly; no BinStreamRev
     // shim and no ASSERT_REVS block. Written longhand so the DC3 macros stay
     // intact for the scatter-included TUs further down this file.

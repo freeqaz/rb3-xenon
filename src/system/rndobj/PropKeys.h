@@ -11,7 +11,7 @@
 
 // Retail X360 RB3 (rev-11-era) PropKeys vtable has no RemoveRange virtual; DC3's
 // newer PropKeys inserted `virtual int RemoveRange(float, float)` at own-slot 10
-// (0x28) plus per-Keys<> overrides. rb3-Wii confirms zero RemoveRange in PropKeys.
+// (0x28) plus per-Keys<> overrides. RB3 has zero RemoveRange in PropKeys.
 // Keeping it virtual shifts every later slot up 0x4 and breaks every PropKeys
 // vcall (verified: RndPropAnim::ValueFromIndex shows 8 PropKeys vcall slots all
 // uniformly +4 — target 0x2c..0x5c vs ours 0x30..0x60 — bracketing the insertion
@@ -91,13 +91,13 @@ public:
     };
 
     // Retail PropKeys::Load reads a class-static "current load revision"
-    // (rb3-Wii idiom: PropKeys::gRev, set via SetPropKeysRev before the
+    // (ObjMacros idiom: PropKeys::gRev, set via SetPropKeysRev before the
     // nested Load() calls) instead of a rev wrapper's own
     // `rev` member — verified from retail disasm: every rev comparison in
     // ?Load@PropKeys@@ reads a single fixed .data address (lis/lwz to a
     // literal label), never `lwz off(r4)` off the parameter. RndPropAnim::Load
     // sets this before calling PropKeys::Load. Type is `int`, not
-    // `unsigned short` as rb3-Wii's source has it — retail disasm shows a
+    // `unsigned short` -- retail disasm shows a
     // 4-byte `stw`/`lwz` (not `sth`/`lhz`) at the backing address, and a
     // SIGNED `cmpwi` for the `< 7` check (not `cmplwi`).
     // NOTE: named sPropKeysLoadRev, NOT gRev — this TU's "sw2 scatter-include"
@@ -133,8 +133,8 @@ public:
      * @returns True if the index exists in the keys, false if not.
      */
     virtual bool FrameFromIndex(int index, float &frame) { return false; }
-    // RB3 retail PropKeys::SetFrame is a 2-arg virtual (verified: rb3-Wii dev
-    // source `PropKeys::SetFrame(float,float)`; RB3-360 retail disasm at the
+    // RB3 retail PropKeys::SetFrame is a 2-arg virtual
+    // (`PropKeys::SetFrame(float,float)`; RB3-360 retail disasm at the
     // RndPropAnim::SetFrame call site only preps f1/f2, no f3). DC3 added a
     // 3rd "intensity" arg — keep it for the native engine only, gated like
     // PROPKEYS_DC3_VIRTUAL above.

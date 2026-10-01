@@ -38,7 +38,7 @@ public:
     virtual void ExitStore(StoreError) const;
     virtual LocalUser *StoreUser() const;
     // ADJUDICATED ON RETAIL BYTES (lane STOREPANEL, 2026-08-22): this takes a
-    // single DataArray *, NOT the rb3-Wii dev spelling
+    // single DataArray *, NOT
     // (const StorePackedOfferBase *, bool).  Two independent readings, both from
     // retail band.exe:
     //   * THE CALL SITE.  StorePanel::PopulateOffers (0x827b6f80, retail primary
@@ -77,7 +77,7 @@ public:
     virtual int UpdateOffers(const std::list<EnumProduct> &, bool);
     // Out-of-line and NON-EMPTY on retail 360 (fn_82605878, 104 B, vtable
     // slot 27) -- see the definition in BandStorePanel.cpp for the byte-level
-    // adjudication.  Both oracles have this as an empty inline; retail does not.
+    // adjudication.  It is not an empty inline.
     virtual void StoreUserProfileSwappedToUser(LocalUser *);
 
     DataNode OnMsg(const MetadataLoadedMsg &);
@@ -114,19 +114,19 @@ protected:
     String mLastRequest; // 0xA4
     bool mLastRequestExtra; // 0xB0
     StoreOfferProvider *mOfferProvider; // 0xB4
-    // NO mOfferContentsProvider on retail 360 (the rb3-Wii oracle carries one
-    // at its 0xC4). Three independent proofs: (a) mapping the Wii member list
-    // onto the retail ctor's stores, the offset delta steps from Wii-0x0C to
-    // Wii-0x10 exactly at that member and nowhere else; (b) the retail ctor
+    // NO mOfferContentsProvider on retail 360 (it would sit
+    // at 0xC4 in a narrow layout). Three independent proofs: (a) mapping the member list
+    // onto the retail ctor's stores, the offset delta steps from 0x0C to
+    // 0x10 exactly at that member and nowhere else; (b) the retail ctor
     // performs exactly ONE operator new (0x4c bytes -> mOfferProvider), where
-    // the Wii ctor performs two; (c) the token "offer_contents_provider" does
+    // a provider-carrying ctor would perform two; (c) the token "offer_contents_provider" does
     // not occur anywhere in band.exe, while every other BandStorePanel handler
     // string does, contiguously at .rdata 0x820bfb90..0x820bfc90. Its absence
     // is what makes the block 72 rather than 76 bytes, putting the Object
     // vbase displacement at 0xEC instead of 0xF0.
     String mPrevChunkPath; // 0xB8 (request_prev_chunk path)
     String mNextChunkPath; // 0xC4 (request_next_chunk path)
-    // mSort PRECEDES mMenuTitle (as in the rb3-Wii oracle): the retail ctor
+    // mSort PRECEDES mMenuTitle: the retail ctor
     // calls Symbol::Symbol(gNullStr) on this+0xD0 and String::String() on
     // this+0xD4. This still satisfies the AppLabel::SetStoreCrumbText pin
     // (MenuTitle().c_str() reads mMenuTitle+8 at retail 0xDC = 0xD4+8); the

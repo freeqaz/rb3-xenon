@@ -327,7 +327,7 @@ void BandList::StartConcealAnim(int i, Transform &tf) {
     for (int i = 0; i < numdisp; i++) {
         RevealState rstate = mRevealStates[i];
         // Retail tests kRevealing FIRST here (target: `cmpwi r11, 0x1` then
-        // `cmpwi r11, 0x0`), unlike the oracle's ordering.  StartRevealAnim
+        // `cmpwi r11, 0x0`).  StartRevealAnim
         // above already matches with its own (kConcealing, kRevealed) order,
         // so this asymmetry is real and not a transcription slip.
         if (rstate == kRevealing || rstate == kConcealed)

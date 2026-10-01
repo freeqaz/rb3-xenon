@@ -37,8 +37,8 @@ RndGroup::RndGroup()
 // next@4}), and has no !obj branch at all. The ref->Parent() == &mObjects
 // identity test, the !obj arm and the base call as a trailing else are all DC3's
 // -- DC3 postdates RB3 and rewrote this alongside the bool-returning Replace
-// protocol. rb3-Wii's RB3-era body is character-for-character what the retail
-// bytes decode to, which is what settled it.
+// protocol. The RB3-era body is character-for-character what the retail
+// bytes decode to.
 void RndGroup::Replace(ObjRef *ref, Hmx::Object *obj) {
     RndTransformable::Replace(ref, obj);
 #ifdef HX_NATIVE
@@ -57,14 +57,14 @@ void RndGroup::Replace(ObjRef *ref, Hmx::Object *obj) {
 }
 
 // Same class of defect as RndMat::Handle: our block had been stripped to the
-// four HANDLE_SUPERCLASS lines while both oracles carry real handlers.
+// four HANDLE_SUPERCLASS lines while retail carries real handlers.
 // Adjudicated on retail bytes: the six literals below sit in ONE contiguous
 // .rdata cluster at 0x82068AB0..0x82068AF4 (has_object, get_draws,
 // clear_objects, remove_object, add_object, sort_draws) -- the signature of a
 // single function's static Symbols. DC3's three extra handlers
 // ("insert_object", "num_objects", "get_group_children") occur ZERO times in
 // orig/45410914/band.exe, and DC3 also swapped get_draws out for
-// get_group_children. So retail == rb3-Wii here, and DC3's version postdates
+// get_group_children. So retail has exactly these six, and DC3's version postdates
 // RB3. ("move_object" appears to be present only because it is the tail of
 // "remove_object" -- the linker tail-merges string literals.)
 BEGIN_HANDLERS(RndGroup)
@@ -94,8 +94,8 @@ void RndGroup::UpdateLODState() {
 // positive-first (_ALT) shape -- so RB3_SYNCPROP_LOCAL_STATIC is INERT here
 // and SYNC_PROP_MODIFY_ALT does not exist.  (Predicted this was the same
 // local-static lever as VocalTrackDir; it is not.)
-// The rb3-Wii DEV oracle spells sort_in_world as a hand-rolled inline block --
-// RETAIL DOES NOT: it is a plain SYNC_PROP calling PropSync(bool&)
+// sort_in_world is not a hand-rolled inline block:
+// it is a plain SYNC_PROP calling PropSync(bool&)
 // (fn_82280290).  lod_screen_size cross-jumps into lod's tail, and
 // UpdateLODState() is inlined at that shared tail.
 BEGIN_PROPSYNCS(RndGroup)
@@ -148,7 +148,7 @@ END_COPYS
 
 INIT_REVS(0x10, 0)
 
-// Retail (0x82453A40) is rb3-Wii's RB3-era body branch for branch: a plain
+// Retail (0x82453A40) is the RB3-era body branch for branch: a plain
 // local `int rev` (no altRev, no BinStreamRev), mEnv loaded directly for
 // rev > 10, mLod + mLodScreenSize for rev > 11, and UpdateLODState() inlined
 // at the tail. The previous body was DC3's (env pushed into mObjects for

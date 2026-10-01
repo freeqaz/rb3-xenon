@@ -1,4 +1,4 @@
-// Ported from rb3-Wii src/system/bandobj/BandCrowdMeter.cpp (MWCC -> MSVC X360).
+// BandCrowdMeter (bandobj/BandCrowdMeter.cpp), MSVC X360.
 #include "bandobj/BandCrowdMeter.h"
 #include "bandobj/BandTrack.h" // complete type for ObjPtr<BandTrack> in TrackPanelDirBase
 #include "bandobj/CrowdMeterIcon.h"

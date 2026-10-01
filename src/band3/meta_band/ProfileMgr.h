@@ -224,7 +224,7 @@ public:
     std::vector<float> mForcedMicGains; // 0xb4
     // ProfileMgr::Init() does a pointer-sized stw/lwz through this+0xc0 to a
     // MemAlloc'd buffer immediately handed to TheMemcardMgr.SetProfileSaveBuffer
-    // (Ghidra oracle @0x82548418). CONFIRMED by objdiff: repointing this slot
+    // (Ghidra @0x82548418). CONFIRMED by objdiff: repointing this slot
     // as a member instead of a local collapsed the entire register-swap/reload
     // residue in ProfileMgr::Init (81.9%->96.6% normalized over this change +
     // the two extraneous-call removals). DC3's ProfileMgr has the equivalent

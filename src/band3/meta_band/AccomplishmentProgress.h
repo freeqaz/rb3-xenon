@@ -9,8 +9,8 @@
 #include <hash_map>
 
 // The progress maps below were originally Harmonix `hash_map` (the save-format
-// "hash_map" MILO_NOTIFY strings in FixedSizeSaveable prove it). The Wii decomp
-// approximated them as std::map; retail X360 inlines STLport hashtable::find
+// "hash_map" MILO_NOTIFY strings in FixedSizeSaveable prove it), not
+// std::map; retail X360 inlines STLport hashtable::find
 // (out-of-line find returning iterator-by-value, NULL miss sentinel, value at
 // slist node+0x8) — see ?GetToursPlayed etc. hash_map<Symbol,int> hashes the
 // interned char* word identity (retail: lwz key; divwu), matching exactly.
@@ -29,8 +29,8 @@ class BandProfile;
 class Performer;
 struct Stats;
 
-// 360-only enum for the gamer-award async write path. The Wii build had no
-// equivalent (no XOVERLAPPED tail), so this type is reconstructed from the
+// 360-only enum for the gamer-award async write path (the
+// XOVERLAPPED tail), reconstructed from the
 // retail mangled name ??0GamerAwardStatus@@QAA@HW4GamerAwardType@@@Z.
 enum GamerAwardType {
     kGamerAwardTypeNone = 0,

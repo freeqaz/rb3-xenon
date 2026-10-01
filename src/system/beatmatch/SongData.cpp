@@ -179,7 +179,7 @@ void SongData::Load(
     std::vector<MidiReceiver *> &midircvrs,
     bool bb
 ) {
-// rb3-Wii guards this with #ifdef MILO_DEBUG; retail compiled it out.  Note the
+// This is an #ifdef MILO_DEBUG guard; retail compiled it out.  Note the
 // guard is NOT inert even though MILO_LOG strips to `((void)(...))` in the match
 // build: DataVariable(...) is a real out-of-line call and its Symbol literal is
 // interned, so the probe survives macro stripping.  Two independent instruments
@@ -305,7 +305,7 @@ void SongData::PostLoad(PlayerTrackConfigList *pList) {
 #ifndef HX_NATIVE
     // RB3 retail 0x82777748 (TU5) walks mDrumMixDBs here with a body that
     // compiled to nothing (an assert/log on each entry); the counting loop
-    // itself survives in the image.  No oracle carries it.
+    // itself survives in the image.  No source carries it.
     for (int i = 0; i < mDrumMixDBs.size(); i++) {
     }
 #endif

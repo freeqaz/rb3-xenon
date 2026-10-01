@@ -14,16 +14,16 @@
 // utl/TimeConversion.cpp now DEFINES the float overload for real. Keeping this
 // definition here is a duplicate-symbol link error (it was, in 10 targets).
 //
-// Worth recording that the two derivations agreed exactly. This shim's body came
-// from the rb3-Wii oracle; the match-build definition was derived independently
+// Worth recording that the two derivations agreed exactly. This shim's body was
+// the plain source form; the match-build definition was derived independently
 // from retail bytes at 0x827C9110 (lis/lwz TheTempoMap, lwz vtable, lwz +0x4
 // = TickToTime, mtctr, bctr) while proving that address is TickToMs and not the
 // `?Init@Movie@@SAXXZ` the map claimed. Both are
 // `return TheTempoMap->TickToTime(f);`.
 
-// MidiReceiver::SkipCurrentTrack(): present in the rb3-Wii MidiReceiver.cpp but
-// absent from rb3-xenon's (which only carries the ctor + Error). SongParser
-// calls it when a track is not read. Genuine oracle body.
+// MidiReceiver::SkipCurrentTrack(): absent from rb3-xenon's MidiReceiver.cpp
+// (which only carries the ctor + Error). SongParser
+// calls it when a track is not read. Real body.
 void MidiReceiver::SkipCurrentTrack() {
     MILO_ASSERT(mReader, 0x2B);
     mReader->SkipCurrentTrack();

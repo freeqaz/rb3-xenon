@@ -62,8 +62,8 @@ protected:
     String mCorruptContentName; // 0x68
     bool mSongDoesNotExist; // 0x74
     // NOTE(laneBQ2): `int mMaxCacheSize` used to be the last member here. Retail RB3
-    // does not have it: the rb3-Wii oracle's PreloadPanel ends at `bool unk68`
-    // (= mSongDoesNotExist) and our member list matches it 1:1 with mMaxCacheSize as
+    // does not have it: PreloadPanel ends at `bool unk68`
+    // (= mSongDoesNotExist), and our member list had mMaxCacheSize as
     // the only extra. Corroborated by ?SetType@PreloadPanel@@ at 0x827b42a8, whose
     // vbase-displacement immediate is 120 -- exactly where the Object vtordisp lands
     // once this 4-byte member is gone. Moved to a file-scope static in the .cpp.

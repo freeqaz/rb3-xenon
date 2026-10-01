@@ -50,7 +50,7 @@ void CharPosConstraint::PollDeps(
     }
 }
 
-// RB3-360 retail rev dialect (rb3-Wii/ObjMacros shape), not DC3's Object.h
+// RB3-360 retail rev dialect (ObjMacros shape), not DC3's Object.h
 // BinStreamRev stack decorator.  DC3's form emits a ??0BinStream, a
 // ??_7BinStreamRev@@6B@ vtable store and a ??1BinStream destructor that retail
 // has none of, and dispatches each read on `&d` instead of the raw `bs`.

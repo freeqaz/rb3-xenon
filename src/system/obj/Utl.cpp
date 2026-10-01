@@ -517,7 +517,7 @@ void ReplaceObject(
     }
     from->ReplaceRefs(to);
 #else
-    // RB3 retail (0x8275A388, rb3-Wii shape): no null test on `to`, and the
+    // RB3 retail (0x8275A388): no null test on `to`, and the
     // ring is drained inline -- each owner's Replace unlinks its own node.
     to->SetName(name, dir);
     if (copyDeep)
@@ -686,7 +686,7 @@ void CopyTypeProperties(Hmx::Object *from, Hmx::Object *to) {
     }
 }
 
-// rb3-Wii obj/Utl.cpp:382 (DC3 dropped it). Retail keeps it in the DirLoader
+// RB3 helper (DC3 dropped it). Retail keeps it in the DirLoader
 // TU at 0x82757FC0: lower both, `find('*') != npos ? FileMatch : contains`.
 // Callers: DataMatchPattern / DataMatchAnyPattern (obj/DataFunc.cpp).
 bool StringMatchesFilter(const char *c1, const char *c2) {

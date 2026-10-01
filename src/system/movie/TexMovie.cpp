@@ -282,7 +282,7 @@ void TexMovie::DrawToTexture() {
 }
 #else
 void TexMovie::DrawToTexture() {
-    // RB3-360 retail (and rb3-Wii): gated on a set file, a texture, and a
+    // RB3-360 retail: gated on a set file, a texture, and a
     // ready, open movie -- not on the texture's dimensions.
     if (!sRoot.empty() && mTex && mMovie.Ready() && mMovie.IsOpen()) {
         mTex->MakeDrawTarget();

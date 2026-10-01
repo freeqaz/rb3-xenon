@@ -3,8 +3,8 @@
 #include "synth/MoggClip.h"
 #include "utl/BinStream.h"
 
-// RB3-360 retail (and rb3-Wii) MoggClipMap derives from Hmx::Object — the leading
-// Object subobject (0x28 bytes on X360, 0x1c on Wii) pushes mMoggClip to 0x28.
+// RB3-360 retail MoggClipMap derives from Hmx::Object — the leading
+// Object subobject (0x28 bytes on X360) pushes mMoggClip to 0x28.
 // DC3's newer refactor dropped the base (mMoggClip at 0x4); porting that verbatim
 // caused a uniform -0x24 member-offset drift in myLoad + the ObjVector helpers.
 class MoggClipMap : public Hmx::Object {
@@ -17,7 +17,7 @@ public:
 
     void mySave(BinStream &) const;
     void myLoad(BinStream &);
-    // RB3-360 retail reads the parent Sfx's rev via a TU-static (rb3-Wii idiom)
+    // RB3-360 retail reads the parent Sfx's rev via a TU-static (ObjMacros idiom)
     // rather than threading a BinStreamRev wrapper. Sfx::Load stashes its rev
     // here right before `bs >> mMoggClipMaps`.
     static int sRev;

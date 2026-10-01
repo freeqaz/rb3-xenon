@@ -249,7 +249,7 @@ void UIScreen::Enter(UIScreen *scr) {
 #ifdef HX_NATIVE
     printf("DC3 UI: Screen '%s' Enter (from '%s')\n", Name(), scr ? scr->Name() : "<null>");
 #endif
-    // RB3 retail (0x827F1178) is rb3-Wii's Enter: no DC3 post-proc panel count,
+    // RB3 retail (0x827F1178) Enter: no DC3 post-proc panel count,
     // no glitch report. Those stay native-only (the native renderer is DC3's).
     if (scr) {
         sUnloadingScreen = scr;

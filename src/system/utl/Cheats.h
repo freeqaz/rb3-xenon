@@ -87,8 +87,8 @@ protected:
     // NOT PRESENT IN RB3 RETAIL.  These five are DC3-era additions (dc3-decomp
     // is NEWER than RB3).  Retail's CheatsInit allocates the object with
     // `li r3, 0xc0`, and our class measured 0xd0 -- exactly these 10 bytes plus
-    // their 6 bytes of tail padding.  Independently, the rb3-Wii DEV oracle's
-    // CheatsManager also ends at mMaxBuffer.  Kept for the native build only.
+    // their 6 bytes of tail padding.  Independently, RB3's
+    // CheatsManager ends at mMaxBuffer.  Kept for the native build only.
     bool mCtrlOverriddeMode;
     bool mIsOverridingKeyboard;
     Hmx::Object *mPreviousOverride;

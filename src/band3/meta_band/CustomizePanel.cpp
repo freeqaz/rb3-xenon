@@ -212,9 +212,9 @@ bool CustomizePanel::InPreviewState() const {
 }
 
 // RB3-360 retail (lane RESIDUAL-2, 2026-08-14): the `in_clothing_state` arm of
-// Handle() calls a NON-MEMBER, not the `InClothingState()` const member that
-// rb3-Wii spells there.  Evidence is retail bytes via the dead-`this`-home
-// oracle: MSVC /O1 homes the vbase-adjusted `this` of an INLINED MEMBER call
+// Handle() calls a NON-MEMBER, not an `InClothingState()` const member.
+// Evidence is retail bytes via the dead-`this`-home
+// witness: MSVC /O1 homes the vbase-adjusted `this` of an INLINED MEMBER call
 // into a dead stack slot, and retail has that home at 3 of the 4 inlined member
 // calls in Handle -- every one except this arm.  With the member form our build
 // emitted two extra instructions there (`subi r10,r26,0xb8` / `stw r10,0x94(r31)`,
@@ -321,13 +321,13 @@ void CustomizePanel::UpdateAssetProvider() {
 // produces (replacing the call with the raw `mCustomizeState >= .. && <= ..`
 // comparison drops the mask AND swaps retail's stw order).  ⇒ retail inlined a
 // bool-returning NON-MEMBER.  No plausible source shape for that was found —
-// both call sites and rb3-Wii spell it as a const member — so nothing was
+// both call sites spell it as a const member -- so nothing was
 // changed.  RULED OUT by compiling and reading the listing, not by argument:
 //     * `const` on InClothingState()          -> home still emitted (identical)
 //     * in-class (header) definition instead of out-of-line -> home still emitted
 //
 // (b) RULED OUT, new: moving the `!= 0` INSIDE a bool-returning HasLicense
-// (which is what rb3-Wii's arm shape implies, since its arm has no `!= 0`)
+// (which is what a member arm with no `!= 0` implies)
 // changes NOTHING — MSVC emits no truncation at a bool return boundary when the
 // value came from a comparison.  A scan of the entire TU's /FAs listing finds
 // ZERO occurrences of `subfe` followed by `clrlwi ,24` anywhere, i.e. no
@@ -340,7 +340,7 @@ void CustomizePanel::UpdateAssetProvider() {
 //    only while the aliases still charged the row).  ⇒ a retirement is valid
 //    only on the tree it was measured on.
 //
-// (a) CLOSED by the oracle below: routing the arm through the file-static
+// (a) CLOSED by the witness below: routing the arm through the file-static
 //     IsClothingState() drops both dead-home instructions with nothing else
 //     moving (1258 equal / 2 insert -> 1258 equal / 0 insert).  The MECHANISM is
 //     retail-byte evidence; the SPELLING (a file-static delegate) is a choice --
@@ -396,7 +396,7 @@ void CustomizePanel::UpdateAssetProvider() {
 // "the one shape no source form reproduces" is false: our compiler emits this
 // straight-line in code we already match 100%.
 //
-// ★ TWO WORKING ORACLES, both fuzzy == mpn == 100.0, both returning DataNode:
+// ★ TWO WORKING REFERENCES, both fuzzy == mpn == 100.0, both returning DataNode:
 //     ?Handle@ModifierMgr@@   -- HANDLE_EXPR(is_modifier_delayed_effect,
 //                                IsModifierDelayedEffect(_msg->Sym(2)))
 //         bl GetModifier / mr r11,r3 / lbz r11,0x4(r11) / subic / subfe / clrlwi
@@ -411,7 +411,7 @@ void CustomizePanel::UpdateAssetProvider() {
 // ⚠ BUT THE MERGE DIRECTION IS PINNED BY THE int/`!= 0` FORM, and the mask and
 // the merge cannot be had together by any spelling tried.  Measured this lane:
 //   * `bool HasLicense` pure pass-through (no comparison at ANY level) + bare arm
-//     -- the ONE shape absent from RESIDUAL-2's list, and the oracle's own shape:
+//     -- the ONE shape absent from RESIDUAL-2's list, and the plain member shape:
 //     99.4% (was 99.92).  Cross-jump FLIPS: retail's whole 5-instruction tail
 //     becomes target-only at [526] and ours moves to the has_patch site [1049]
 //     WITHOUT a mask.  Reproduces DQ-1's failure mode independently.
@@ -489,7 +489,7 @@ void CustomizePanel::UpdateAssetProvider() {
 // A binary-wide scan keyed on the `.fn` symbol (⚠ operand is `, 24` WITH a space)
 // finds the exact shape `subfe rD,rA,rB` + `clrlwi rD,rD,24` at 8 sites.  Only one
 // is a named row we match outright: ?OnMsg@BandUI@@...ContentReadFailureMsg, 100%.
-// ⚠ W11b's two cited oracles are NOT reproducible as cited -- BandSongMgr.s has
+// ⚠ W11b's two cited reference sites are NOT reproducible as cited -- BandSongMgr.s has
 // ZERO sites and ModifierMgr.s does not exist as a split unit at all.  Use BandUI.
 // Its source is os/ContentMgr.h:210 `bool GetBool() const { return mData->Int(2); }`
 // consumed by `init[0] = msg.GetBool();`, and our compiler emits
@@ -545,11 +545,11 @@ void CustomizePanel::UpdateAssetProvider() {
 // one (a different 10224 QFE, or a pragma affecting bool canonicalization), and
 // the burden is to move the ProbeX transplant above, which is a 20-second check.
 //
-// ★ REUSABLE INSTRUMENT FOUND HERE (the dead store is a source-shape oracle):
+// ★ REUSABLE INSTRUMENT FOUND HERE (the dead store is a source-shape witness):
 // MSVC /O1 creates a dead stack home for the vbase-adjusted `this` of an
 // INLINED MEMBER call.  Presence/absence of that dead home therefore witnesses
 // whether retail's source called a MEMBER or a NON-MEMBER at that site — a
-// source-level fact no source diff and no oracle can see.  Pair it with the
+// source-level fact no source diff can see.  Pair it with the
 // trailing `clrlwi`, which witnesses that an inlined callee RETURNED bool.
 //
 // ── lane L6-STRUCTHEADS (2026-09-11): ONE STRUCTURAL PROBE, NEGATIVE.  W37's
@@ -614,7 +614,7 @@ void CustomizePanel::UpdateAssetProvider() {
 //        has_license `bl HasLicense->bool / clrlwi r11,r3,24 / addic / subfe`
 //                                                                  NO MASK
 //        ProbeX      `subfe r11,r11,r3 / clrlwi r11,r11,24`  MASKS -- and note
-//                    that is the BandUI oracle's exact register form.
+//                    that is the BandUI reference's exact register form.
 //     ⇒ W37's "breaking the cross-jump leaves the standalone has_license arm
 //     ALSO mask-free" is TRUE, but its companion conclusion "so NEITHER ARM
 //     OWNS IT in our source" is FALSE.  That diagnostic broke the cross-jump by
@@ -1721,7 +1721,7 @@ BEGIN_HANDLERS(CustomizePanel)
     HANDLE_EXPR(is_waiting_to_leave, mWaitingToLeave)
     HANDLE_ACTION(take_portrait, mClosetMgr->TakePortrait())
     HANDLE_EXPR(save_prefab, SavePrefab(_msg->Str(2)))
-    // RB3-360: the Wii-dev asset-token cheat arms (cheat_toggle_asset_tokens /
+    // RB3-360: the asset-token cheat arms (cheat_toggle_asset_tokens /
     // show_asset_tokens), their mShowAssetTokens member, and
     // CheatToggleAssetTokens() do not exist in retail — the retail Handle body
     // jumps straight from save_prefab to the HANDLE_MESSAGE block, and retail

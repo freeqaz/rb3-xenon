@@ -83,8 +83,8 @@ protected:
     // mElements@0xc (12B), mAlbumBgMat@0x18, mGroupBgMat@0x1c, mSongBgMat@0x20.
     // NO mPacks member: sizeof(StoreOfferProvider) is 0x4c on retail (the ctor
     // `operator new` call site is `li r3, 0x4c`, verified against
-    // BandStorePanel's ctor at fn_82605128), not 0x50. The rb3-Wii dev oracle's
-    // `packs` ctor param + mPacks field are dev-only; retail's ctor takes a
+    // BandStorePanel's ctor at fn_82605128), not 0x50. There is no
+    // `packs` ctor param or mPacks field; retail's ctor takes a
     // single `offers` pointer (confirmed by the Ghidra decomp of the retail
     // ctor: only one extra arg, `this+0x3c`, is passed to the StoreOfferProvider
     // constructor call).

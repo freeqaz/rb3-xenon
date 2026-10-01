@@ -115,8 +115,8 @@ private:
 
 protected:
     // Retail tail layout Ghidra-verified against the retail WorldDir ctor
-    // (0x824BC930; factory 0x824BD600 allocates 0x3d8). Matches the rb3-Wii
-    // member order exactly: NO ThreeDSoundManager / PhysicsManager (DC3-only),
+    // (0x824BC930; factory 0x824BD600 allocates 0x3d8). Retail
+    // member order: NO ThreeDSoundManager / PhysicsManager (DC3-only),
     // instance mGlowMat (not static), mCrowds directly after the PS3 lists,
     // mPollCamera after mFirstPoll (retail inits it true; ctor byte +0x381=1),
     // no mExplicitPostProc (retail vtordisp sits at +0x3a0).

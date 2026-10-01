@@ -47,7 +47,7 @@ private:
     bool IsScreenInSceneMap(Symbol) const;
     void ConfigureMetaMusicSceneData(DataArray *);
 
-    // Retail keys both of these with STLport hash_maps, not the Wii build's
+    // Retail keys both of these with STLport hash_maps, not
     // std::maps.  ??0MetaMusicManager@@QAA@PAVDataArray@@@Z does
     //   addi r3, r30, 0x28 ; bl ??0?$hash_map@...@stlpmtx_std@@QAA@XZ
     //   addi r3, r30, 0x44 ; bl ??0?$hash_map@...@stlpmtx_std@@QAA@XZ

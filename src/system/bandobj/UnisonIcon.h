@@ -1,6 +1,6 @@
 #pragma once
 #include "obj/ObjMacros.h"
-// Ported from rb3-Wii src/system/bandobj/UnisonIcon.h.
+// UnisonIcon (bandobj/UnisonIcon.h).
 #include "rndobj/Dir.h"
 #include "rndobj/EventTrigger.h"
 #include "bandobj/BandLabel.h"

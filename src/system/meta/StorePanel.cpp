@@ -20,7 +20,7 @@
 #include "utl/Std.h"
 #include "utl/Symbol.h"
 
-// Retail RB3-360 StorePanel — re-ported from the rb3-Wii oracle (member set +
+// Retail RB3-360 StorePanel (member set +
 // inline-mEnum control flow), Xbox platform objects, verified against retail
 // Ghidra (default_tu5.xex). See StorePanel.h for the ctor/Load/Poll/… address
 // anchors. The prior DC3 port used a StoreEnumJob architecture + ~0x18 bytes of
@@ -127,8 +127,8 @@ void StorePanel::Poll() {
         return;
     UIPanel::Poll();
     // NOTE: retail runs the TheNetCacheMgr->GetHasFailed() check at the END of
-    // Poll (see the tail below) and has no IsReady() gate at all — matching the
-    // rb3-Wii oracle. The leading early-outs are a DC3-era restructuring.
+    // Poll (see the tail below) and has no IsReady() gate at all.
+    // The leading early-outs are a DC3-era restructuring.
     mStorePreviewMgr->Poll();
     // Retail StorePreviewMgr (TU5) has no mHasFailure/mLastFailType members —
     // its layout is fixed at 0x60 (see StorePreviewMgr.h), so GetLastFailure()
@@ -255,10 +255,10 @@ Profile *StorePanel::StoreProfile() const { return nullptr; }
 // clause our port dropped. Retail dereferences `lwz r11,0x84(r31)` / `cmpwi 2`
 // and `lbz r11,0x54(r31)` — and /d1reportSingleClassLayout puts mPostPurchaseState
 // at 0x84 and mLoadOk at 0x54, so the offsets identify the members outright.
-// The rb3-Wii oracle spells the same expression (`mSessionStatus ==
-// kSessionCreated || !mLoadOK`), and Enter() already writes the literal 2.
-// The `!mLoadOk` polarity looks backwards but is what both retail and the
-// oracle say — do not "correct" it.
+// The expression is `mSessionStatus ==
+// kSessionCreated || !mLoadOK`, and Enter() already writes the literal 2.
+// The `!mLoadOk` polarity looks backwards but is what retail
+// says — do not "correct" it.
 bool StorePanel::IsLoaded() const {
     return UIPanel::IsLoaded() && TheContentMgr.RefreshDone()
         && (mPostPurchaseState == 2 || !mLoadOk);

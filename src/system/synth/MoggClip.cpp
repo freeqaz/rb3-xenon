@@ -44,7 +44,7 @@ END_HANDLERS
 // function used to carry.  Order and member offsets read off the target
 // (fn_8270DFB8): file 0x34, volume 0x40, loop 0x44 (SetLoop(_val.Int() != 0)),
 // loop_start_sample 0x80 and loop_end_sample 0x84 (both stores inlined at the
-// call site).  Matches the rb3-Wii oracle's MoggClip::SyncProperty exactly.
+// call site).
 BEGIN_PROPSYNCS(MoggClip)
     SYNC_PROP_SET(file, mMoggFile, SetFile(_val.Str()))
     SYNC_PROP_SET(volume, mControllerVolume, SetControllerVolume(_val.Float()))

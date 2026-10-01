@@ -322,7 +322,7 @@ void StandardStream::SetLoop(String &s1, String &s2) {
     // A loop jumps FROM the end marker TO the start marker, so the end is the
     // first argument.  Our port had these reversed -- a real behavioural bug,
     // not a cosmetic one.  Retail bytes load f1<-0x15c (mEndMarker.posMS) and
-    // f2<-0x148 (mStartMarker.posMS); the rb3-Wii oracle agrees.  (lane DR-3)
+    // f2<-0x148 (mStartMarker.posMS).  (lane DR-3)
     SetJump(mEndMarker.posMS, mStartMarker.posMS, nullptr);
 }
 
@@ -611,7 +611,7 @@ void StandardStream::Init(float f1, float f2, Symbol s, bool b4) {
 
 void StandardStream::InitInfo(int i1, int sampleRate, bool floatSamples, int i4) {
 #ifndef HX_NATIVE
-    // RB3 retail is rb3-Wii's front half: unkec is i4 / sampleRate in float, the
+    // RB3 retail front half: unkec is i4 / sampleRate in float, the
     // buffer size rounds up to a 2 * 0xC000 multiple and is counted in 0xC000
     // blocks, and every channel gets StreamReceiver::New (no file receiver).
     unk154 = i4;
@@ -724,7 +724,7 @@ void StandardStream::Destroy() {
 
 int StandardStream::MsToSamp(float ms) const {
     MILO_ASSERT(mSampleRate, 0x459);
-    // rb3-Wii parenthesisation: retail scales ms first (fmuls ms, 0.001f),
+    // Parenthesisation: retail scales ms first (fmuls ms, 0.001f),
     // then by the rate (/fp:fast keeps the paren order).
     return mSampleRate * (ms / 1000.0f);
 }
@@ -966,7 +966,7 @@ void StandardStream::setJumpSamplesFromMs(float fromMs, float toMs) {
         }
     }
 #else
-    // RB3 retail (rb3-Wii shape): no round-up of the jump-to sample, and the
+    // RB3 retail: no round-up of the jump-to sample, and the
     // two stream-length warnings (their String temp survives the strip).
     if (toMs != 0.0f) {
         mJumpToSamples = MsToSamp(toMs);

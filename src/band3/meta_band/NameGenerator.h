@@ -10,7 +10,7 @@
 // 0x826100f8, whose 104 B body is byte-identical (fuzzy 100, incl. relocation
 // names) to our compiled hashtable<pair<const int,UIComponent*>,...>::~hashtable
 // in default/CharacterCreatorPanel. Same correction the AccomplishmentProgress.h
-// header records: "the Wii decomp approximated them as std::map".
+// header records: an earlier std::map approximation was wrong.
 #ifndef RB3_HASH_SYMBOL_DEFINED
 #define RB3_HASH_SYMBOL_DEFINED
 namespace stlpmtx_std {

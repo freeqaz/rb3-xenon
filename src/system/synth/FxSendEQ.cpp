@@ -4,7 +4,7 @@
 #include "synth/FxSend.h"
 #include "utl/BinStream.h"
 
-// Retail RB3 uses the rb3-Wii (ObjMacros.h) rev dialect -- file-scope rev
+// Retail RB3 uses the ObjMacros.h rev dialect -- file-scope rev
 // words written by Load -- not the DC3-derived obj/Object.h BinStreamRev
 // local.  Both words fold onto ONE base register at offsets 0/4, which only
 // happens for internal-linkage align(4) file-scope statics.

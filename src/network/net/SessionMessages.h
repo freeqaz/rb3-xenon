@@ -38,7 +38,7 @@ public:
     std::vector<UserGuid> mUserGuids; // 0x8
     std::vector<MemStream> mUserDatas; // 0x14
     MemStream mAuthData; // 0x20
-    XNADDR mXnAddr; // 0x40 (compiler-verified; retail-only field, absent from rb3-Wii source)
+    XNADDR mXnAddr; // 0x40 (compiler-verified; retail-only field)
 };
 
 enum JoinResponseError {

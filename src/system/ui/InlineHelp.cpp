@@ -343,7 +343,7 @@ void InlineHelp::Update() {
     RndDir *dir = mResource->Dir();
     MILO_ASSERT(dir, 0x18A);
     static Symbol text_label("text_label");
-    // Retail instantiates Find<BandLabel> (rb3-Wii: BandLabel); not an ICF fold of
+    // Retail instantiates Find<BandLabel>; not an ICF fold of
     // Find<UILabel>, whose dynamic_cast target differs.
     mTemplateLabel = dir->Find<BandLabel>(t->FindStr(text_label), true);
     SyncLabelsToConfig();

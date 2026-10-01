@@ -6,8 +6,8 @@ bool MemStream::Fail() { return mFail; }
 
 // Retail RB3-360 guards a negative byte count before doing anything else --
 // `cmpwi cr6,r5,0 / bge / li r11,1 / stb r11,0xc(r3) / b <epilogue>` at the very
-// top of the retail body (target 148 B vs our 124 B).  NEITHER oracle has this:
-// rb3-Wii's MemStream.cpp and dc3's both start straight at the overflow test, so
+// top of the retail body (target 148 B vs our 124 B).  dc3's MemStream.cpp
+// starts straight at the overflow test, so
 // this is a genuine RB3-360-only guard recovered from retail asm.
 //
 // The overflow arm calls mBuffer.size() TWICE (retail computes `subf r7,r9,r10`

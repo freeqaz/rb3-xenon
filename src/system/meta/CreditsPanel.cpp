@@ -115,7 +115,7 @@ void CreditsPanel::Poll() {
     UIPanel::Poll();
     if (!mStream) {
         // Retail RB3-360 passes `true` for NewStream's 4th (bool) parameter here;
-        // the rb3-Wii DEV oracle passes 0.  Verified on retail bytes: the call
+        // not 0.  Verified on retail bytes: the call
         // site emits `li r7, 0x1` (lane DR-3).  The callee ignores the argument,
         // so this is byte-matching only -- no behavioural change.
         mStream = TheSynth->NewStream("sfx/streams/credits", 0, 0, 1);

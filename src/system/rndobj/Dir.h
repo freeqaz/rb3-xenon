@@ -11,7 +11,7 @@
 #include "obj/Msg.h"
 #include "utl/MemMgr.h"
 
-// RndDir derives MsgSource in retail RB3 (and the faithful rb3-Wii decomp). DC3
+// RndDir derives MsgSource in retail RB3. DC3
 // (our source provenance) DROPPED the MsgSource base and ADDED an `mEnters`
 // vector + HarvestPollables — making our RndDir 0xc too small (MsgSource
 // subobject 0x18 - mEnters 0xc = +0xc deficit). Restored to match retail.
@@ -38,7 +38,7 @@ public:
     virtual void SetSubDir(bool);
     virtual void SyncObjects();
     virtual void ChainSourceSubdir(Hmx::Object *, ObjectDir *);
-    // NON-virtual in retail RB3 (and rb3-Wii oracle): confirmed absent from all
+    // NON-virtual in retail RB3: confirmed absent from all
     // retail vtables (0 refs to RndDir::CollideListSubParts base impl 0x823f0890
     // across the whole .rdata). DC3 provenance made it virtual, inserting a bogus
     // slot into every RndDir-descendant vtable and shifting the class-specific

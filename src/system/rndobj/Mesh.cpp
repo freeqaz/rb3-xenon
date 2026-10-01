@@ -122,7 +122,7 @@ bool RndMesh::sRawCollide;
 int RndMesh::sLastCollide;
 // Retail's .data carries this as a byte with value 0x01, between sLastCollide and
 // the `static int REV = 0x26` below -- so it is initialized TRUE, not false. (The
-// rb3-Wii oracle's `= false` is inside #ifdef HX_NATIVE and never reaches its own
+// `= false` initializer is #ifdef HX_NATIVE only and never reaches the
 // match build, so it is not evidence about the initializer.)
 bool RndMesh::sUpdateApproxLight = true;
 
@@ -228,7 +228,7 @@ BEGIN_PROPSYNCS(RndMesh)
     SYNC_PROP_SET(keep_mesh_data, mKeepMeshData, SetKeepMeshData(_val.Int() > 0))
 #ifdef HX_NATIVE
     // DC3-era addition; RB3-360 retail does NOT enumerate `verts` here.
-    // Arbitrated on RETAIL BYTES (lane CQ-3), not on oracle agreement: the
+    // Arbitrated on RETAIL BYTES (lane CQ-3): the
     // property-name literal behind each `bl ??0Symbol@@` in the 1736 B retail
     // body reads exactly
     //   mat geom_owner mutable <bitfield> num_verts num_faces volume
