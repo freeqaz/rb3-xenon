@@ -149,9 +149,8 @@ bool StarDisplay::HasStarIcon() const {
 
 char StarDisplay::GetStarIcon() const {
     char ret = '*';
-    bool hasstaricon = mIconOverride != gNullStr && strcmp(mIconOverride.Str(), "*") != 0;
-    if (hasstaricon) {
-        String str(mIconOverride);
+    if (HasStarIcon()) {
+        String str(mIconOverride.Str());
         if (!str.empty()) {
             ret = str[0];
         }
