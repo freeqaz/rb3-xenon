@@ -754,9 +754,13 @@ const Transform &RndTransformable::WorldXfm_Force() {
     } else if (mConstraint == kConstraintLocalRotate) {
         Multiply(mLocalXfm.v, mParent->WorldXfm(), mWorldXfm.v);
         mWorldXfm.m = mLocalXfm.m;
+#ifdef HX_NATIVE
+        // Retail (0x823F7A80) has no arm for this constraint: it falls into
+        // the full parent multiply below.
     } else if (mConstraint == kConstraintNoParentRotation) {
         Add(mLocalXfm.v, mParent->WorldXfm().v, mWorldXfm.v);
         mWorldXfm.m = mLocalXfm.m;
+#endif
     } else {
         Multiply(mLocalXfm, mParent->WorldXfm(), mWorldXfm);
     }
