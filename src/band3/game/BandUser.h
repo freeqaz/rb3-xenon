@@ -43,7 +43,7 @@ public:
     // `mSessionMgr->HasUser(cur)`. Declared-only (out-of-line in retail); the body
     // is not needed for the dispatch-offset match. TODO(TU5): recover the real name.
     virtual bool IsInSession(SessionMgr *) const;
-    virtual bool UnkTU5Virtual() const { return true; } // TODO: TU5-inserted virtual (confirmed via Ghidra decompile of retail TrackPanel::CreateTracks: IsParticipating() call resolves to vtable+0x8, not +0x4, so this slot precedes IsParticipating, not GetLocalBandUser; still nets the same +4 shift for everything after it, incl. GetLocalBandUser 0x18->0x1c). GameConfig::AutoAssignMissingSlots (va 0x82688e68) calls this slot (offset+0x4) in place of TheNetSession->HasUser(pUser) and tests the bool result -- real identity/name still unknown, signature widened from void to bool to match that call site.
+    virtual bool UnkTU5Virtual() const; // retail 0x8268AD90 = TheSessionMgr && TheSessionMgr->HasUser(this). TODO: TU5-inserted virtual (confirmed via Ghidra decompile of retail TrackPanel::CreateTracks: IsParticipating() call resolves to vtable+0x8, not +0x4, so this slot precedes IsParticipating, not GetLocalBandUser; still nets the same +4 shift for everything after it, incl. GetLocalBandUser 0x18->0x1c). GameConfig::AutoAssignMissingSlots (va 0x82688e68) calls this slot (offset+0x4) in place of TheNetSession->HasUser(pUser) and tests the bool result -- real identity/name still unknown, signature widened from void to bool to match that call site.
     virtual bool IsParticipating() const { return mParticipating; }
     virtual int GetCurrentInstrumentCareerScore() const = 0;
     virtual int GetCurrentHardcoreIconLevel() const = 0;

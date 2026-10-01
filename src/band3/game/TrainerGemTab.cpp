@@ -233,12 +233,15 @@ int TrainerGemTab::SlotToGemIndex(int slot) const {
 }
 
 int TrainerGemTab::GetLane(int slot) const {
+    // Retail 0x826EECE0: pro keys lanes are never mirrored for lefty.
     if (mTrackType == kTrackDrum) {
-        if (slot == 0) return 0;
-        if (mLefty) return mLanes - slot;
-        return slot;
+        if (slot == 0)
+            return 0;
+        if (mLefty)
+            slot = mLanes - slot;
+    } else if (mTrackType != kTrackRealKeys && mLefty) {
+        slot = mLanes - slot - 1;
     }
-    if (mLefty) return mLanes - slot - 1;
     return slot;
 }
 
