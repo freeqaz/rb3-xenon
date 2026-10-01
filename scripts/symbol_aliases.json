@@ -38412,13 +38412,14 @@
    "survivor": "??0ColorPalette@@IAA@XZ",
    "folded": [
     "??0HamPartyJumpData@@IAA@XZ",
-    "??0BandFaceDeform@@QAA@XZ",
     "??0BustAMoveData@@IAA@XZ",
     "??0HamBattleData@@IAA@XZ",
     "??0HamSupereasyData@@IAA@XZ"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 5 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {"spelling": "??0BandFaceDeform@@QAA@XZ", "lane": "W17-ANON2 2026-10-01", "class": "RTTI_PROVES_OWN_ADDRESS", "disposition": "withdrawn", "evidence": "Retail bytes: the constructor at 0x822c80e0 (76 B) builds vtable address whose Complete Object Locator names .?AVBandFaceDeform@@ (RetailRtti.classes_installed_by); the survivor body at 0x824dfa78 builds .?AVColorPalette@@'s. A ctor that installs its own class's vtable cannot fold with another class's; the T1 proof masked exactly that operand. 0x822c80e0 carries this spelling in target_symbol_map.json (lane W17-ANON2, RTTI pass, body score 100)."}
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -57240,7 +57241,6 @@
     "??_GIdUpdater@@UAAPAXI@Z",
     "??_GMemcardAction@@UAAPAXI@Z",
     "??_GMovieSys@@UAAPAXI@Z",
-    "??_GOriginalPathable@@UAAPAXI@Z",
     "??_GPlayerScore@@UAAPAXI@Z",
     "??_GRndOcclusionQueryMgr@@UAAPAXI@Z",
     "??_GRndShader@@UAAPAXI@Z",
@@ -57265,7 +57265,6 @@
     "??_GBandEventPreviewMsg@@UAAPAXI@Z",
     "??_GBeginArbitrationMsg@@UAAPAXI@Z",
     "??_GDifficultyCmp@@UAAPAXI@Z",
-    "??_GDrawable@@UAAPAXI@Z",
     "??_GEndGameMsg@@UAAPAXI@Z",
     "??_GEnterFlowMsg@@UAAPAXI@Z",
     "??_GFile@@UAAPAXI@Z",
@@ -57322,6 +57321,8 @@
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 112 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
+    {"spelling": "??_GOriginalPathable@@UAAPAXI@Z", "lane": "W17-ANON2 2026-10-01", "class": "RTTI_PROVES_OWN_ADDRESS", "disposition": "withdrawn", "evidence": "Retail bytes: the scalar deleting destructor at 0x82390af0 (68 B) builds .?AVOriginalPathable@@'s vtable address (inlined ??1); the survivor body at 0x82bf6f58 builds no vtable. Different bodies, cannot fold (same defect W16-HZ recorded for Mic/NetworkSocket/TrackWatcherParent in this group). 0x82390af0 carries this spelling in target_symbol_map.json (lane W17-ANON2: retail vtable slot of OriginalPathable, ??_E->??_G, body score 100)."},
+    {"spelling": "??_GDrawable@@UAAPAXI@Z", "lane": "W17-ANON2 2026-10-01", "class": "RTTI_PROVES_OWN_ADDRESS", "disposition": "withdrawn", "evidence": "Retail bytes: the scalar deleting destructor at 0x82464480 (68 B) builds .?AVDrawable@@'s vtable address; the survivor body at 0x82bf6f58 builds none. Cannot fold. 0x82464480 carries this spelling in target_symbol_map.json (lane W17-ANON2, RTTI pass, body score 100)."},
     {"spelling": "??_GMic@@UAAPAXI@Z", "lane": "W16-HZ 2026-09-30", "class": "RTTI_PROVES_OWN_ADDRESS", "disposition": "withdrawn", "evidence": "Retail bytes: the scalar deleting destructor at 0x827296c0 stores vtable 0x820fe2dc (lis/addi r11, stw r11,0(r3)) and that vtable's Complete Object Locator (vtable[-1]) names TypeDescriptor .?AVMic@@. So this class's ??_G lives at 0x827296c0, not at 0x82bf6f58, whose body stores a different vtable (0x821ad144). A ??_G that stores its own class's vtable cannot fold with another class's; the T1/L1_T1 proof masked exactly that operand (the vtable relocation target is an unnamed placeholder, which name_check forgives). 0x827296c0 carries this spelling in target_symbol_map.json (lane W16-HZ)."},
     {"spelling": "??_GNetworkSocket@@UAAPAXI@Z", "lane": "W16-HZ 2026-09-30", "class": "RTTI_PROVES_OWN_ADDRESS", "disposition": "withdrawn", "evidence": "Retail bytes: the scalar deleting destructor at 0x82531448 stores vtable 0x8208d484 (lis/addi r11, stw r11,0(r3)) and that vtable's Complete Object Locator (vtable[-1]) names TypeDescriptor .?AVNetworkSocket@@. So this class's ??_G lives at 0x82531448, not at 0x82bf6f58, whose body stores a different vtable (0x821ad144). A ??_G that stores its own class's vtable cannot fold with another class's; the T1/L1_T1 proof masked exactly that operand (the vtable relocation target is an unnamed placeholder, which name_check forgives). 0x82531448 carries this spelling in target_symbol_map.json (lane W16-HZ)."},
     {"spelling": "??_GTrackWatcherParent@@UAAPAXI@Z", "lane": "W16-HZ 2026-09-30", "class": "RTTI_PROVES_OWN_ADDRESS", "disposition": "withdrawn", "evidence": "Retail bytes: the scalar deleting destructor at 0x82790490 stores vtable 0x8210f2fc (lis/addi r11, stw r11,0(r3)) and that vtable's Complete Object Locator (vtable[-1]) names TypeDescriptor .?AVTrackWatcherParent@@. So this class's ??_G lives at 0x82790490, not at 0x82bf6f58, whose body stores a different vtable (0x821ad144). A ??_G that stores its own class's vtable cannot fold with another class's; the T1/L1_T1 proof masked exactly that operand (the vtable relocation target is an unnamed placeholder, which name_check forgives). 0x82790490 carries this spelling in target_symbol_map.json (lane W16-HZ)."}
@@ -61013,7 +61014,6 @@
     "??0?$ObjDirItr@VHamRibbon@@@@QAA@PAVObjectDir@@_N@Z",
     "??0?$ObjDirItr@VObjectDir@@@@QAA@PAVObjectDir@@_N@Z",
     "??0?$ObjDirItr@VPracticeSection@@@@QAA@PAVObjectDir@@_N@Z",
-    "??0?$ObjDirItr@VRndMat@@@@QAA@PAVObjectDir@@_N@Z",
     "??0?$ObjDirItr@VRndTexBlender@@@@QAA@PAVObjectDir@@_N@Z",
     "??0?$ObjDirItr@VSkeletonViz@@@@QAA@PAVObjectDir@@_N@Z",
     "??0?$ObjDirItr@VSongCollision@@@@QAA@PAVObjectDir@@_N@Z",
@@ -61024,6 +61024,7 @@
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 17 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
+    {"spelling": "??0?$ObjDirItr@VRndMat@@@@QAA@PAVObjectDir@@_N@Z", "lane": "W17-ANON2 2026-10-01", "class": "DISTINCT_CALLEE", "disposition": "withdrawn", "evidence": "Retail bytes: 0x82325590 and the survivor 0x823d1a78 are both 120 B and word-identical EXCEPT word 20, the bl to Advance: 0x82325590 calls 0x823253e8 (mapped ?Advance@?$ObjDirItr@VRndMat@@@@AAAXXZ) and 0x823d1a78 calls 0x823d13e8. Two bodies with different call targets are not one COMDAT under /OPT:ICF. 0x82325590 carries this spelling in target_symbol_map.json (lane W17-ANON2, caller binding)."},
     {
      "spelling": "??0?$ObjDirItr@VDepthBuffer3D@@@@QAA@PAVObjectDir@@_N@Z",
      "lane": "W16-AH 2026-09-14",
@@ -65014,7 +65015,6 @@
     "??_GPlayBack@CharLipSync@@QAAPAXI@Z",
     "??_GRayCastDefaultContainer@@UAAPAXI@Z",
     "??_GRndFont3d@@UAAPAXI@Z",
-    "??_GRndFont@@UAAPAXI@Z",
     "??_GRndFontBase@@UAAPAXI@Z",
     "??_GScheduler@Quazal@@UAAPAXI@Z",
     "??_GScoreDisplay@@UAAPAXI@Z",
@@ -65023,6 +65023,7 @@
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 50 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
+    {"spelling": "??_GRndFont@@UAAPAXI@Z", "lane": "W17-ANON2 2026-10-01", "class": "DISTINCT_CALLEE", "disposition": "withdrawn", "evidence": "Retail bytes: the scalar deleting destructor at 0x82474298 (76 B) calls 0x82473b38 (??1RndFont, itself RTTI-proven: it builds .?AVRndFont@@'s vtable) and 0x827bc430 (MemFree); the survivor body at 0x823f5270 calls 0x823f4fa8 and 0x82a99258. Different callees, cannot fold. 0x82474298 carries this spelling in target_symbol_map.json (lane W17-ANON2: retail vtable slot 0 of RndFont)."},
     {
      "spelling": "??_GFreestyleMove@@UAAPAXI@Z",
      "lane": "W16-AH 2026-09-14",
@@ -74182,11 +74183,11 @@
     "??_ENetSyncScreenMsg@@$4PPPPPPPM@CM@AAPAXI@Z",
     "?FindPathName@FlowNode@@$4PPPPPPPM@CM@AAPBDXZ",
     "?PostLoad@RndMovie@@$4PPPPPPPM@CM@AAXAAVBinStream@@@Z",
-    "?PreLoad@RndMovie@@$4PPPPPPPM@CM@AAXAAVBinStream@@@Z",
-    "?Replace@CharBonesMeshes@@$2PPPPPPPM@CM@AAXPAVObjRef@@PAVObject@Hmx@@@Z"
+    "?PreLoad@RndMovie@@$4PPPPPPPM@CM@AAXAAVBinStream@@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 7 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
+    {"spelling": "?Replace@CharBonesMeshes@@$2PPPPPPPM@CM@AAXPAVObjRef@@PAVObject@Hmx@@@Z", "lane": "W17-ANON2 2026-10-01", "class": "DISTINCT_CALLEE", "disposition": "withdrawn", "evidence": "Retail bytes: two 16-byte vtordisp thunks with the same adjustment that branch to DIFFERENT targets -- 0x82375d30 -> 0x8237b338 (CharBonesMeshes region) and the survivor 0x823afe88 -> 0x823ae888 (beside CharWeightable's block). Thunks with different jump targets cannot fold. 0x82375d30 carries this spelling in target_symbol_map.json (lane W17-ANON2: retail vtable slot of CharServoBone resolves to it)."},
     {
      "spelling": "?Replace@RndMovie@@$4PPPPPPPM@CM@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
      "lane": "ALIAS-REPAIR 2026-08-19",
