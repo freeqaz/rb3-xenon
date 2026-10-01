@@ -1750,7 +1750,7 @@ void RockCentral::SyncAvailableSongs(
                 if (str.length() != 0) {
                     str += ",";
                 }
-                snprintf(strBuf, 0x18, "%d", cur);
+                _snprintf(strBuf, 0x18, "%d", cur);
                 str += strBuf;
             }
         }
@@ -1764,7 +1764,7 @@ void RockCentral::SyncAvailableSongs(
                 if (ustr.length() != 0) {
                     ustr += ",";
                 }
-                snprintf(strBuf, 0x18, "%d", cur);
+                _snprintf(strBuf, 0x18, "%d", cur);
                 ustr += strBuf;
             }
         }

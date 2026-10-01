@@ -98,9 +98,11 @@ void UIListState::SetMinDisplay(int min) {
     mSelectedDisplay = x;
 }
 
+// Retail's body (0x8280e248) is the bare store `stw r4,0x18(r3); blr`: the edit-mode
+// clamp is compiled out, so it is spelled with LOADMGR_EDITMODE (false off HX_NATIVE).
 void UIListState::SetMaxDisplay(int max) {
     MILO_ASSERT(max >= -1, 0x150);
-    if (TheLoadMgr.EditMode()) {
+    if (LOADMGR_EDITMODE) {
         if (max > mNumDisplay - 1) {
             max = mNumDisplay - 1;
         } else if (max < -1) {

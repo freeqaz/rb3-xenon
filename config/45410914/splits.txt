@@ -2180,17 +2180,10 @@ CharSleeve.cpp:
 	.text       start:0x823D049C end:0x823D0588
 
 CharUpperTwist.cpp:
-	.pdata      start:0x821FD2C0 end:0x821FD2D8
-	.pdata      start:0x821FD2E0 end:0x821FD2E8
 	.pdata      start:0x82206138 end:0x82206198
 	.pdata      start:0x822061B0 end:0x822061C0
 	.pdata      start:0x822061D8 end:0x822061F8
 	.pdata      start:0x82206200 end:0x82206208
-	.text       start:0x8232A0EC end:0x8232A0F0
-	.text       start:0x8232A12C end:0x8232A148
-	.text       start:0x8232A2A4 end:0x8232A2A8
-	.text       start:0x8232A2B4 end:0x8232A3A8
-	.text       start:0x8232A438 end:0x8232A4B0
 	.text       start:0x823C69B0 end:0x823C6FF4
 	.text       start:0x823C70E8 end:0x823C7204
 	.text       start:0x823C7308 end:0x823C7314
@@ -13535,17 +13528,8 @@ system/bandobj/UnisonIcon.cpp:
 	.text       start:0x822D2D58 end:0x822D38B0
 
 system/bandobj/DialogDisplay.cpp:
-	.pdata      start:0x821FD230 end:0x821FD2A8
-	.pdata      start:0x821FD2A8 end:0x821FD2B0
-	.pdata      start:0x821FD2B0 end:0x821FD2C0
-	.pdata      start:0x821FD2D8 end:0x821FD2E0
-	.pdata      start:0x821FD2E8 end:0x821FD360
-	.text       start:0x82329B20 end:0x8232A0EC
-	.text       start:0x8232A0F0 end:0x8232A12C
-	.text       start:0x8232A148 end:0x8232A2A4
-	.text       start:0x8232A2A8 end:0x8232A2B4
-	.text       start:0x8232A3A8 end:0x8232A438
-	.text       start:0x8232A4B0 end:0x8232ACA0
+	.pdata      start:0x821FD230 end:0x821FD360
+	.text       start:0x82329B20 end:0x8232ACA0
 
 band3/meta_band/InstrumentFinishProvider.cpp:
 	.pdata      start:0x8222F360 end:0x8222F3A0

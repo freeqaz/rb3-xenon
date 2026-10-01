@@ -1,7 +1,14 @@
 #include "utl/TextStream.h"
 #include "os/Debug.h"
 #include "os/System.h"
+#include <stdio.h>
+// Retail's TextStream operators call the CRT _snprintf directly (bl 0x8282d540);
+// Hx_snprintf is kept for the native build, which has no _snprintf.
+#ifdef HX_NATIVE
 #define SNPRINTF Hx_snprintf
+#else
+#define SNPRINTF _snprintf
+#endif
 
 TextStream::TextStream() {}
 

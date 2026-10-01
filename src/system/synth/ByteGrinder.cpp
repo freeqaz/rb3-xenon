@@ -1013,11 +1013,12 @@ void ByteGrinder::GrindArray(
         char itoaBuffer[32];
         unsigned char w = arrayToGrind[i];
         String stringArgs("");
-        Hx_snprintf(itoaBuffer, sizeof(itoaBuffer), "%d", w);
+        // retail calls the CRT _snprintf directly here (not the Hx_snprintf wrapper)
+        _snprintf(itoaBuffer, sizeof(itoaBuffer), "%d", w);
         stringArgs += itoaBuffer;
         stringArgs += " (";
         for (int j = 0; j < 0x10; j++) {
-            Hx_snprintf(itoaBuffer, sizeof(itoaBuffer), "%d", arrayToGrind[j]);
+            _snprintf(itoaBuffer, sizeof(itoaBuffer), "%d", arrayToGrind[j]);
             stringArgs += itoaBuffer;
             stringArgs += " ";
         }
