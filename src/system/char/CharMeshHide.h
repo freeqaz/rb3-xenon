@@ -29,6 +29,8 @@ public:
     OBJ_MEM_OVERLOAD_INLINE_DEL(0x15)
     static void Init();
     static void HideAll(const ObjPtrList<CharMeshHide> &, int);
+    void HideDraws(int);
+    int Flags() const { return mFlags; }
     NEW_OBJ(CharMeshHide)
 
 protected:
