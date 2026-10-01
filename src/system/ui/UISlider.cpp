@@ -77,7 +77,8 @@ void UISlider::SetTypeDef(DataArray *def) {
 // RB3 retail PreLoad (0x82809E98) / PostLoad (0x82809F08) keep no BinStreamRev:
 // the packed rev is split into two mutable TU shorts (alt at +0, rev at +4), no
 // guard, no Push/PopRev, and PostLoad reads mSelectToScroll iff rev != 0. There is
-// no mVertical read (DC3's rev-2 field) -- the ui/UIButton.cpp dialect.
+// no mVertical read (DC3's rev-2 field) -- the ui/UIButton.cpp dialect. Both
+// shorts are zero-initialised (retail 0x82E07950 lies past .data's raw size).
 #pragma push_macro("INIT_REVS")
 #pragma push_macro("LOAD_REVS")
 #undef INIT_REVS
@@ -91,7 +92,7 @@ void UISlider::SetTypeDef(DataArray *def) {
     gRev = getHmxRev(rev);                                                               \
     gAltRev = getAltRev(rev);
 
-INIT_REVS(1, 0)
+INIT_REVS(0, 0)
 
 void UISlider::PreLoad(BinStream &bs) {
     LOAD_REVS(bs)

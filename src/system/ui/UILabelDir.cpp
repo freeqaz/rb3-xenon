@@ -238,12 +238,14 @@ RndMesh *UILabelDir::TopRightHighlightBone() const { return mTopRightHighlightBo
 RndMesh *UILabelDir::BottomLeftHighlightBone() const { return mBottomLeftHighlightBone; }
 RndMesh *UILabelDir::BottomRightHighlightBone() const { return mBottomRightHighlightBone; }
 
-// Retail 0x8280FEA8: one GetColor call site; a missing state color falls back to
+// Retail 0x8280FEA8: a missing state color falls back to
 // mDefaultColor, then to white.
 void UILabelDir::GetStateColor(UIComponent::State state, Hmx::Color &col) const {
     UIColor *c = mColors[state];
-    if (c || (c = mDefaultColor)) {
+    if (c) {
         col = c->GetColor();
+    } else if (mDefaultColor) {
+        col = mDefaultColor->GetColor();
     } else {
         col.Reset();
     }
