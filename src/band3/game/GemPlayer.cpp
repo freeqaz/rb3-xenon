@@ -2533,18 +2533,18 @@ void GemPlayer::CheckSolo(float ms) {
         float tickF = MsToTick(ms);
         startTick = 0;
         endTick = 0;
-        bool inSolo = GetPhraseExtents(kSoloPhrase, mTrackNum, (int)tickF, startTick, endTick)
-            & TheGame->mProperties.mCanSolo;
+        bool inSolo = GetPhraseExtents(kSoloPhrase, mTrackNum, (int)tickF, startTick, endTick);
+        inSolo &= TheGame->mProperties.mCanSolo;
         bool wasInSolo = !((int)unk310 < 0);
         if (inSolo && !wasInSolo) {
             int idx = TheSongDB->GetGemList(mTrackNum)->ClosestMarkerIdxAtOrAfter(
                 mSyncOffset + ms
             );
             if (idx != -1) {
-                // Residual (98.4): retail if-converts this to a 0/-1 mask
-                // (xoris/subf/addc/subfe); no spelling tried reproduces it
-                // (&=, &&, `if (...) inSolo = false`, either operand order).
-                if (endTick <= TheSongDB->GetGem(mTrackNum, idx).GetTick())
+                // The solo only fails to start when that gem lies strictly
+                // after the phrase's end tick; a gem exactly on endTick still
+                // counts (retail's 0/-1 mask keeps inSolo for tick <= endTick).
+                if (TheSongDB->GetGem(mTrackNum, idx).GetTick() > endTick)
                     inSolo = false;
             }
         }
