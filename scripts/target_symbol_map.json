@@ -1,4 +1,6 @@
 {
+ "0x824cb758": "??0?$ObjPtr@VLightHue@@@@QAA@ABV0@@Z",
+ "0x824cdc68": "?_M_create_node@?$list@UPresetOverride@WorldDir@@V?$StlNodeAlloc@UPresetOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABUPresetOverride@WorldDir@@@Z",
  "0x8274e780": "?HasSubDir@ObjectDir@@QAA_NPAV1@@Z",
  "0x8274fef8": "?LoadSubDir@ObjectDir@@IAAXHABVFilePath@@AAVBinStream@@_N@Z",
  "0x82747998": "??0TaskMgr@@QAA@XZ",
