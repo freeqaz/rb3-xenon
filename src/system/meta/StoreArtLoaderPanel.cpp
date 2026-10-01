@@ -50,7 +50,6 @@ void StoreArtLoaderPanel::Poll() {
     }
 }
 
-void StoreArtLoaderPanel::Load() { UIPanel::Load(); }
 
 void StoreArtLoaderPanel::Unload() {
     ClearArt();

@@ -472,7 +472,9 @@ bool SongSortMgr::GetRandomSongs(
         curName = it->first;
         const SongRecord &rec = it->second;
         int id = rec.GetData()->ID();
-        if (std::find(validSongs.begin(), validSongs.end(), id) == validSongs.end())
+        // Retail searches through const iterators (__find<const int *>).
+        const std::vector<int> &valid = validSongs;
+        if (std::find(valid.begin(), valid.end(), id) == valid.end())
             continue;
         if (availableParts) {
             bool partOk = false;

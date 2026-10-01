@@ -51,27 +51,21 @@ bool AccomplishmentSongConditional::CheckStreakCondition(
 bool AccomplishmentSongConditional::CheckHoposPercentCondition(
     SongStatusMgr *mgr, Symbol s, const AccomplishmentCondition &cond
 ) const {
-    if (cond.mScoreType == kScoreVocals || cond.mScoreType == kScoreHarmony) {
-        MILO_WARN("hopos percent condition can not be used with vocals or harmony!");
-        return false;
-    } else {
-        int id = TheSongMgr.GetSongIDFromShortName(s, true);
-        return cond.mValue
-            <= mgr->GetBestHOPOPercent(id, cond.mScoreType, cond.mDifficulty);
-    }
+    // Retail has no vocals/harmony score-type guard here. With the guard gone this
+    // is CheckAwesomesCondition's code (mHoposPercentage shares its union byte with
+    // mAwesomes), and retail's hopos_percent arm branches to that one body (0x82669A98).
+    int id = TheSongMgr.GetSongIDFromShortName(s, true);
+    return cond.mValue <= mgr->GetBestHOPOPercent(id, cond.mScoreType, cond.mDifficulty);
 }
 
 bool AccomplishmentSongConditional::CheckSoloPercentCondition(
     SongStatusMgr *mgr, Symbol s, const AccomplishmentCondition &cond
 ) const {
-    if (cond.mScoreType == kScoreVocals || cond.mScoreType == kScoreHarmony) {
-        MILO_WARN("solo percent condition can not be used with vocals or harmony!");
-        return false;
-    } else {
-        int id = TheSongMgr.GetSongIDFromShortName(s, true);
-        return cond.mValue
-            <= mgr->GetBestSoloPercent(id, cond.mScoreType, cond.mDifficulty);
-    }
+    // Retail has no vocals/harmony score-type guard here either: mSoloPercentage
+    // shares its union byte with mDoubleAwesomes, and retail's solo_percent arm
+    // branches to CheckDoubleAwesomesCondition's body (0x82669B18).
+    int id = TheSongMgr.GetSongIDFromShortName(s, true);
+    return cond.mValue <= mgr->GetBestSoloPercent(id, cond.mScoreType, cond.mDifficulty);
 }
 
 bool AccomplishmentSongConditional::CheckAwesomesCondition(

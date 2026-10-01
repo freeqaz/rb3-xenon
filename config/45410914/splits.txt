@@ -5551,7 +5551,6 @@ CharServoBone.cpp:
 	.text       start:0x82376010 end:0x8237608C
 	.text       start:0x82376090 end:0x82376178
 	.text       start:0x82376178 end:0x82376D3C
-	.text       start:0x82545988 end:0x825459A8
 	.text       start:0x825459E0 end:0x825459E8
 	.text       start:0x826047A0 end:0x82604840
 	.text       start:0x82604840 end:0x82604868
@@ -6879,7 +6878,6 @@ MemcardMgr_Xbox.cpp:
 	.pdata      start:0x82240A28 end:0x82240A30
 	.pdata      start:0x82240A30 end:0x82240B80
 	.text       start:0x8251BB00 end:0x8251BBF0
-	.text       start:0x82553478 end:0x82553484
 	.text       start:0x827AB8E8 end:0x827ABA48
 	.text       start:0x827ABA48 end:0x827ABB14
 	.text       start:0x827ABB18 end:0x827AD1E0
@@ -8039,6 +8037,7 @@ AccomplishmentSongFilterConditional.cpp:
 	.pdata      start:0x82226358 end:0x82226380
 	.pdata      start:0x82226380 end:0x82226390
 	.text       start:0x825E8A20 end:0x825E8AD0
+	.text       start:0x825E8AD0 end:0x825E8AE8
 	.text       start:0x825E8AE8 end:0x825E8C30
 	.text       start:0x825E8C30 end:0x825E8D54
 	.text       start:0x825E8D54 end:0x825E8D88
@@ -8764,7 +8763,7 @@ band3/meta_band/LicenseMgr.cpp:
 
 band3/meta_band/StandIn.cpp:
 	.pdata      start:0x822266C8 end:0x82226718
-	.text       start:0x825EC508 end:0x825EC840
+	.text       start:0x825EC4F8 end:0x825EC840
 
 band3/meta_band/AssetStore.cpp:
 	.pdata      start:0x82226718 end:0x82226760
@@ -8885,7 +8884,6 @@ band3/meta_band/AccomplishmentTrainerListConditional.cpp:
 	.pdata      start:0x82226280 end:0x822262C8
 	.text       start:0x825E86B8 end:0x825E8770
 	.text       start:0x825E8770 end:0x825E8A20
-	.text       start:0x825E8AD0 end:0x825E8AE8
 
 band3/meta_band/AccomplishmentSongListConditional.cpp:
 	.pdata      start:0x822263D8 end:0x822263F8
@@ -9662,11 +9660,10 @@ PracticePanel.cpp:
 	.text       start:0x826CCAF0 end:0x826CCB00
 
 band3/meta_band/SaveLoadManager.cpp:
-	.pdata      start:0x8221B7D8 end:0x8221B7E0
 	.pdata      start:0x8221B800 end:0x8221C138
 	.pdata      start:0x8221C138 end:0x8221C150
-	.text       start:0x8254BBC0 end:0x8254BC20
 	.text       start:0x8254BE08 end:0x82553478
+	.text       start:0x82553478 end:0x82553484
 	.text       start:0x82553484 end:0x82553F28
 	.text       start:0x826259D8 end:0x826259E0
 
@@ -11973,7 +11970,6 @@ AccomplishmentSongConditional.cpp:
 	.pdata      start:0x8222EC28 end:0x8222EC80
 	.pdata      start:0x8222EC80 end:0x8222EC98
 	.pdata      start:0x8222EC98 end:0x8222ED88
-	.text       start:0x825EC4F8 end:0x825EC508
 	.text       start:0x82669848 end:0x82669918
 	.text       start:0x82669918 end:0x82669DF8
 	.text       start:0x82669DF8 end:0x82669F20
@@ -12266,9 +12262,9 @@ Lit_NG.cpp:
 
 AccomplishmentConditional.cpp:
 	.pdata      start:0x8222ED88 end:0x8222EE00
-	.pdata      start:0x8222EE00 end:0x8222EE38
+	.pdata      start:0x8222EE00 end:0x8222EE50
 	.text       start:0x8266AAC0 end:0x8266B0F0
-	.text       start:0x8266B0F0 end:0x8266B3E8
+	.text       start:0x8266B0F0 end:0x8266B4C0
 
 CymbalSelectionProvider.cpp:
 	.pdata      start:0x8222EB88 end:0x8222EC18
@@ -12553,9 +12549,8 @@ ProfileMgr.cpp:
 	.pdata      start:0x8221B388 end:0x8221B518
 	.pdata      start:0x8221B518 end:0x8221B768
 	.pdata      start:0x8221B768 end:0x8221B7D8
+	.pdata      start:0x8221B7D8 end:0x8221B7E0
 	.pdata      start:0x8221B7E0 end:0x8221B800
-	.pdata      start:0x82241680 end:0x82241688
-	.pdata      start:0x82241688 end:0x82241698
 	.pdata      start:0x8225D040 end:0x8225D068
 	.pdata      start:0x82261BA0 end:0x82261BA8
 	.text       start:0x823EC398 end:0x823EC418
@@ -12565,6 +12560,7 @@ ProfileMgr.cpp:
 	.text       start:0x82545868 end:0x82545900
 	.text       start:0x82545900 end:0x8254591C
 	.text       start:0x82545920 end:0x82545984
+	.text       start:0x82545988 end:0x825459A8
 	.text       start:0x825459A8 end:0x825459E0
 	.text       start:0x825459E8 end:0x82545A70
 	.text       start:0x82545A70 end:0x82545C88
@@ -12581,9 +12577,8 @@ ProfileMgr.cpp:
 	.text       start:0x82547668 end:0x82549128
 	.text       start:0x82549128 end:0x8254B990
 	.text       start:0x8254B990 end:0x8254BBC0
+	.text       start:0x8254BBC0 end:0x8254BC20
 	.text       start:0x8254BC20 end:0x8254BE08
-	.text       start:0x827B7970 end:0x827B79B0
-	.text       start:0x827B79C0 end:0x827B7B38
 	.text       start:0x82B8FC88 end:0x82B8FED8
 	.text       start:0x82C45E88 end:0x82C45EC4
 
@@ -13691,6 +13686,8 @@ system/meta/StoreArtLoaderPanel.cpp:
 	.pdata      start:0x82241608 end:0x82241610
 	.pdata      start:0x82241618 end:0x82241628
 	.pdata      start:0x82241670 end:0x82241680
+	.pdata      start:0x82241680 end:0x82241688
+	.pdata      start:0x82241688 end:0x82241698
 	.pdata      start:0x82241698 end:0x822416A0
 	.pdata      start:0x822416A0 end:0x822416A8
 	.pdata      start:0x822416A8 end:0x822416D0
@@ -13700,7 +13697,9 @@ system/meta/StoreArtLoaderPanel.cpp:
 	.text       start:0x827B7348 end:0x827B737C
 	.text       start:0x827B73E8 end:0x827B74D0
 	.text       start:0x827B78F8 end:0x827B7970
+	.text       start:0x827B7970 end:0x827B79B0
 	.text       start:0x827B79B0 end:0x827B79C0
+	.text       start:0x827B79C0 end:0x827B7B38
 	.text       start:0x827B7B38 end:0x827B7B44
 	.text       start:0x827B7B44 end:0x827B7BA8
 	.text       start:0x827B7BA8 end:0x827B7C20
