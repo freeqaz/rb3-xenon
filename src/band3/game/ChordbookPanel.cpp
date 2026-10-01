@@ -349,13 +349,12 @@ bool ChordbookPanel::ChordComplete() const {
 }
 
 void ChordbookPanel::SetCorrect(int string, bool correct) {
-    int mask = 1 << string;
-    bool maskExists = mCorrect & mask;
+    bool maskExists = mCorrect & (1 << string);
     if (maskExists != correct) {
         if (correct) {
-            mCorrect |= mask;
+            mCorrect |= (1 << string);
         } else
-            mCorrect &= ~mask;
+            mCorrect &= ~(1 << string);
     }
 }
 
@@ -557,7 +556,7 @@ void ChordbookPanel::DisplayChord(unsigned int idx) {
     );
     mCurrentChord = idx;
     for (int i = 0; i < 6; i++) {
-        SetCorrect(i, mChords[mCurrentChord].fretHand.GetFret(i) == mFret[i]);
+        SetCorrect(i, mFret[i] == mChords[mCurrentChord].fretHand.GetFret(i));
     }
     unk6c5 = false;
     unk6c8 = 0;
