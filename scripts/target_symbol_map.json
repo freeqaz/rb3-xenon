@@ -1,4 +1,7 @@
 {
+ "0x824d8040": "??$New@VRndFlare@@@Object@Hmx@@SAPAVRndFlare@@XZ",
+ "0x824ca458": "??$?5VKeyFrame@EventAnim@@@@YAAAVBinStream@@AAV0@AAV?$ObjList@VKeyFrame@EventAnim@@@@@Z",
+ "0x824c9950": "??$?5VEventCall@EventAnim@@@@YAAAVBinStream@@AAV0@AAV?$ObjList@VEventCall@EventAnim@@@@@Z",
  "0x824d3c78": "?RenderCone@NgSpotlightDrawer@@IAAXPAVSpotlight@@@Z",
  "0x824d51e8": "?DrawShowing@SpotlightDrawer@@MAAXXZ",
  "0x824eabb8": "?Replace@?$ObjDirPtr@VWorldInstance@@@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
