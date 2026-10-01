@@ -1982,14 +1982,14 @@ DataNode SaveLoadManager::OnMsg(const DeviceChosenMsg &msg) {
     case kS_Done:
     case kS_LoadComplete:
     case kS_Finish:
-        return DataNode(0);
+        return DataNode(kDataInt, 0);
     default:
         MILO_FAIL(
             "Unhandled DeviceChosenMsg in state %d and mode %d\n", (int)mState, (int)mMode
         );
         break;
     }
-    return DataNode(0);
+    return DataNode(kDataInt, 0);
 }
 
 DataNode SaveLoadManager::OnMsg(const NoDeviceChosenMsg &) {
@@ -2018,7 +2018,7 @@ DataNode SaveLoadManager::OnMsg(const NoDeviceChosenMsg &) {
     case kS_Done:
     case kS_LoadComplete:
     case kS_Finish:
-        return DataNode(0);
+        return DataNode(kDataInt, 0);
     default:
         MILO_FAIL(
             "Unhandled NoDeviceChosenMsg in state %d and mode %d\n",
@@ -2027,7 +2027,7 @@ DataNode SaveLoadManager::OnMsg(const NoDeviceChosenMsg &) {
         );
         break;
     }
-    return DataNode(0);
+    return DataNode(kDataInt, 0);
 }
 
 DataNode SaveLoadManager::OnMsg(const MCResultMsg &msg) {
