@@ -5317,7 +5317,7 @@
  "0x822cd8a0": "?Handle@BandStarDisplay@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x822cd8b0": "?SyncProperty@BandStarDisplay@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x822cd8c0": "?Load@TourDescPanel@@UAAXXZ",
- "0x822cd918": "??1?$ObjRefConcrete@VBandStarDisplay@@VObjectDir@@@@UAA@XZ",
+ "0x822cd918": "??1?$ObjPtr@VBandStarDisplay@@@@UAA@XZ",
  "0x822cda30": "??_G?$ObjPtr@VBandStarDisplay@@@@UAAPAXI@Z",
  "0x822cdc18": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
  "0x822cdc80": "?Save@BandScoreboard@@UAAXAAVBinStream@@@Z",
