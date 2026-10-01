@@ -519,18 +519,17 @@ void Character::SyncObjects() {
         ConvertBonesToTranses(this, false);
     }
     RndDir::SyncObjects();
-    if (!IsSubDir()) {
-        // Retail calls VectorRemove<RndDrawable *, ObjPtr<RndGroup> > (0x82370D20)
-        // for mTransGroup and the RndGroup * instantiation (0x82370D98) per lod.
-        VectorRemove(mDraws, mTransGroup);
-        for (int i = 0; i < mLods.size(); i++) {
-            VectorRemove(mDraws, mLods[i].Group());
-            VectorRemove(mDraws, mLods[i].TransGroup());
-        }
-        SyncShadow();
-        CharPollableSorter sorter;
-        sorter.Sort(mPolls);
+    // Retail runs the rest unconditionally (no IsSubDir test). It calls
+    // VectorRemove<RndDrawable *, ObjPtr<RndGroup> > (0x82370D20) for
+    // mTransGroup and the RndGroup * instantiation (0x82370D98) per lod.
+    VectorRemove(mDraws, mTransGroup);
+    for (int i = 0; i < mLods.size(); i++) {
+        VectorRemove(mDraws, mLods[i].Group());
+        VectorRemove(mDraws, mLods[i].TransGroup());
     }
+    SyncShadow();
+    CharPollableSorter sorter;
+    sorter.Sort(mPolls);
 }
 
 void Character::AddedObject(Hmx::Object *o) {
