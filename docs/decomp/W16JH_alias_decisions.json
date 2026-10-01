@@ -1,0 +1,37 @@
+{
+ "0x822e5040|??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z": {
+  "class": "PLACEHOLDER_SLOT_CALLEE_REFUTED_BY_RTTI",
+  "evidence": "Retail 0x822E5040's callee fn_822E4FD8 is { bl fn_822B1728(this, o); bl fn_822B1728(this+0xC, o+0xC) } and fn_822B1728 stores the vtable whose RTTI is .?AV?$ObjPtr@VEventTrigger@@VObjectDir@@@@ -- it is ObjPtr<EventTrigger>'s copy ctor, so the element retail copies here is a 24 B pair of ObjPtr<EventTrigger> (this group's CLEAN members are exactly _Copy_Construct/_Param_Construct<pair<ObjPtr<EventTrigger>,ObjPtr<EventTrigger>>>). Our callee ??0LocalizedName@HamMove@@QAA@ABU01@@Z copies no ObjPtr<EventTrigger>. The survivor's map spelling (_Copy_Construct<SongPattern>) is itself a misidentification (W16-JH findings)."
+ },
+ "0x822e5040|??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z": {
+  "class": "PLACEHOLDER_SLOT_CALLEE_REFUTED_BY_RTTI",
+  "evidence": "Retail 0x822E5040's callee fn_822E4FD8 is { bl fn_822B1728(this, o); bl fn_822B1728(this+0xC, o+0xC) } and fn_822B1728 stores the vtable whose RTTI is .?AV?$ObjPtr@VEventTrigger@@VObjectDir@@@@ -- it is ObjPtr<EventTrigger>'s copy ctor, so the element retail copies here is a 24 B pair of ObjPtr<EventTrigger> (this group's CLEAN members are exactly _Copy_Construct/_Param_Construct<pair<ObjPtr<EventTrigger>,ObjPtr<EventTrigger>>>). Our callee ??0MoveReplacer@@QAA@ABU0@@Z copies no ObjPtr<EventTrigger>. The survivor's map spelling (_Copy_Construct<SongPattern>) is itself a misidentification (W16-JH findings)."
+ },
+ "0x822e5040|??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z": {
+  "class": "PLACEHOLDER_SLOT_CALLEE_REFUTED_BY_RTTI",
+  "evidence": "Retail 0x822E5040's callee fn_822E4FD8 is { bl fn_822B1728(this, o); bl fn_822B1728(this+0xC, o+0xC) } and fn_822B1728 stores the vtable whose RTTI is .?AV?$ObjPtr@VEventTrigger@@VObjectDir@@@@ -- it is ObjPtr<EventTrigger>'s copy ctor, so the element retail copies here is a 24 B pair of ObjPtr<EventTrigger> (this group's CLEAN members are exactly _Copy_Construct/_Param_Construct<pair<ObjPtr<EventTrigger>,ObjPtr<EventTrigger>>>). Our callee ??0?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmt copies no ObjPtr<EventTrigger>. The survivor's map spelling (_Copy_Construct<SongPattern>) is itself a misidentification (W16-JH findings)."
+ },
+ "0x822e5040|??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z": {
+  "class": "PLACEHOLDER_SLOT_CALLEE_REFUTED_BY_RTTI",
+  "evidence": "Retail 0x822E5040's callee fn_822E4FD8 is { bl fn_822B1728(this, o); bl fn_822B1728(this+0xC, o+0xC) } and fn_822B1728 stores the vtable whose RTTI is .?AV?$ObjPtr@VEventTrigger@@VObjectDir@@@@ -- it is ObjPtr<EventTrigger>'s copy ctor, so the element retail copies here is a 24 B pair of ObjPtr<EventTrigger> (this group's CLEAN members are exactly _Copy_Construct/_Param_Construct<pair<ObjPtr<EventTrigger>,ObjPtr<EventTrigger>>>). Our callee ??0?$_Rb_tree@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@PBV1@U?$_Identity@PBVMov copies no ObjPtr<EventTrigger>. The survivor's map spelling (_Copy_Construct<SongPattern>) is itself a misidentification (W16-JH findings)."
+ },
+ "0x822e5040|??$_Param_Construct@VSongPattern@@V1@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z": {
+  "class": "PLACEHOLDER_SLOT_CALLEE_REFUTED_BY_RTTI",
+  "evidence": "Retail 0x822E5040's callee fn_822E4FD8 is { bl fn_822B1728(this, o); bl fn_822B1728(this+0xC, o+0xC) } and fn_822B1728 stores the vtable whose RTTI is .?AV?$ObjPtr@VEventTrigger@@VObjectDir@@@@ -- it is ObjPtr<EventTrigger>'s copy ctor, so the element retail copies here is a 24 B pair of ObjPtr<EventTrigger> (this group's CLEAN members are exactly _Copy_Construct/_Param_Construct<pair<ObjPtr<EventTrigger>,ObjPtr<EventTrigger>>>). Our callee ??0SongPattern@@QAA@ABV0@@Z copies no ObjPtr<EventTrigger>. The survivor's map spelling (_Copy_Construct<SongPattern>) is itself a misidentification (W16-JH findings)."
+ },
+ "0x824d02c8|??_DWorldDir@@QAAXXZ": {
+  "class": "SUPERSEDED_SURVIVOR_MAP_NAME_CORRECTED",
+  "disposition": "membership withdrawn, group kept (the map now names this address with this spelling)",
+  "evidence": "0x824D02C8 was mapped '??_DRndShockwave@@QAAXXZ' but RndShockwave has NO retail RTTI (not an RB3 class) and the body calls 0x824CE910, whose 14 inlined vtable stores all read RTTI .?AVWorldDir@@. W16-JH corrected the map row to ??_DWorldDir@@QAAXXZ (and named 0x824CE910 ??1WorldDir@@UAA@XZ), so no alias is needed; the old survivor spelling names no RB3 function."
+ },
+ "0x823aae58|??$PropSync@VStrand@CharHair@@@@YA_NAAV?$ObjVector@VStrand@CharHair@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z": {
+  "class": "SUPERSEDED_SURVIVOR_MAP_NAME_CORRECTED",
+  "disposition": "membership withdrawn, group kept (the map now names this address with this spelling)",
+  "evidence": "0x823AAE58 was mapped PropSync<Flow::DynamicPropertyEntry> (a DC3 type with no retail presence) but the body calls vector<Strand>::_M_erase, ~Strand x2 and PropSync(Strand&,...), and its ctor callee 0x823A8F98 inlines ObjPtr<RndTransformable> (RTTI) at +4 = Strand::mRoot. W16-JH corrected the map row to PropSync<CharHair::Strand> (and named 0x823A8F98 the Strand ctor), so no alias is needed."
+ },
+ "0x8240f0c8|?UpdateHeap@Rnd@@IAAXXZ": {
+  "class": "SUPERSEDED_SURVIVOR_MAP_NAME_CORRECTED",
+  "disposition": "membership withdrawn, group kept (the map now names this address with this spelling)",
+  "evidence": "0x8240F0C8 was mapped 'LocalTalkerIsHeadsetPresent' (every other LocalTalker* is at 0x82C1....); its body is Rnd::UpdateHeap (W16-JE chased it 140 B = 140 B; its one paired retail caller 0x8241268C calls our UpdateHeap). W16-JH corrected the map row to ?UpdateHeap@Rnd@@IAAXXZ, so the address now carries this spelling directly and no alias is needed; the old survivor spelling names no RB3 function."
+ }
+}
