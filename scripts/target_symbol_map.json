@@ -1,4 +1,7 @@
 {
+ "0x823168e8": "?SyncLabelsToConfig@InlineHelp@@MAAXXZ",
+ "0x82316f08": "?UpdateIconTypes@InlineHelp@@MAAX_N@Z",
+ "0x827fa588": "??$PropSync@VUILabel@@@@YA_NAAV?$ObjPtrList@VUILabel@@VObjectDir@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x8281a798": "?AttachImporterToFont@UIFontImporter@@QAAXPAVRndFont@@@Z",
  "0x8281a910": "??$PropSync@VRndFont@@@@YA_NAAV?$ObjPtrList@VRndFont@@VObjectDir@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x8281ab00": "??$PropSync@VRndMat@@@@YA_NAAV?$ObjPtrList@VRndMat@@VObjectDir@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",

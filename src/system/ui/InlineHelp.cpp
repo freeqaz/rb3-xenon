@@ -435,7 +435,7 @@ void InlineHelp::SyncLabelsToConfig() {
         for (int i = labels_size; i < cfg_size; i++) {
             UILabel *lbl = Hmx::Object::New<UILabel>();
             lbl->Copy(mTemplateLabel, kCopyShallow);
-            lbl->LStyle(0).mColorOverride = mTextColor;
+            lbl->SetColorOverride(mTextColor); // retail 0x82316958
             mTextLabels.push_back(lbl);
         }
     } else {
@@ -451,7 +451,7 @@ void InlineHelp::SyncLabelsToConfig() {
 
 void InlineHelp::UpdateTextColors() {
     FOREACH (it, mTextLabels) {
-        (*it)->LStyle(0).mColorOverride = mTextColor;
+        (*it)->SetColorOverride(mTextColor);
     }
 }
 
