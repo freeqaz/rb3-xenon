@@ -525,9 +525,10 @@ void TrackPanelDir::EnablePlayer(int idx) {
 }
 
 void TrackPanelDir::Reset() {
+    static Message reset("reset");
     ResetAll();
     SetMultiplier(1, false);
-    mBandScoreMultiplier->HandleType(reset_msg);
+    mBandScoreMultiplier->HandleType(reset);
     mCrowdMeter->SetTrackPanel(mTrackPanel);
     mCrowdMeter->Reset();
     mCrowdMeter->UpdatePlayers(mInstruments);
@@ -553,7 +554,7 @@ void TrackPanelDir::Reset() {
     if (mTrackPanel) {
         bool show = mTrackPanel->ShowApplauseMeter();
         if (show) {
-            mApplauseMeter->HandleType(reset_msg);
+            mApplauseMeter->HandleType(reset);
         }
         Find<RndGroup>("applause_meter.grp", true)->SetShowing(show);
         static Message set_config("set_config", "");
