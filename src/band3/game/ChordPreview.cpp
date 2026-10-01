@@ -5,6 +5,9 @@
 #include "os/Debug.h"
 #include "utl/Symbol.h"
 
+// Fade target for a preview stream being stopped (retail 0x820F395C).
+extern const float kChordPreviewSilenceDb = -48.0f;
+
 void ChordPreview::StreamData::Reset(bool releaseFader) {
     RELEASE(stream);
     state = 0;
@@ -20,9 +23,8 @@ void ChordPreview::Start(Symbol song) {
     if (!song.Null()) {
         if (!TheSongMgr.HasSong(song, true))
             return;
-        BandSongMetadata *data = (BandSongMetadata *)TheSongMgr.Data(
-            TheSongMgr.GetSongIDFromShortName(song, true)
-        );
+        int songID = TheSongMgr.GetSongIDFromShortName(song, true);
+        BandSongMetadata *data = (BandSongMetadata *)TheSongMgr.Data(songID);
         if (data && !data->IsVersionOK()) {
             song = gNullStr;
         }
@@ -45,7 +47,7 @@ void ChordPreview::Start(Symbol song) {
             data.state = 3;
             break;
         case 5:
-            data.fader->DoFade(-48.0f, mFadeMs);
+            data.fader->DoFade(kChordPreviewSilenceDb, mFadeMs);
             data.state = 7;
             break;
         default:

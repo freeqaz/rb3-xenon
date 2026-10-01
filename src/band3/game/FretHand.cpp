@@ -82,49 +82,50 @@ void FretHand::SetFingers(const GameGem &gem) {
         unsigned int finger = 0;
         int numFingers = gem.GetNumFingers();
         int maxPos = handpos + 5;
-        int advanced = 0;
-        while (handpos < maxPos && finger < 4U && numFingers != 0) {
+        bool advanced = false;
+        for (int pos = handpos; pos < maxPos && finger < 4 && numFingers != 0; pos++) {
             int lastStr = -1;
-            int placed = 0;
-            for (unsigned int str = 0; str < 6U && numFingers != 0; str++) {
-                if (handpos == gem.GetFret(str)) {
-                    if ((unsigned)numFingers <= (unsigned)(4 - finger) && lastStr == -1) {
-                        SetFinger(finger, handpos, str, -1);
-                        placed = 1;
-                        advanced = 1;
+            bool placed = false;
+            for (unsigned int str = 0; str < 6 && numFingers != 0; str++) {
+                if (gem.GetFret(str) == pos) {
+                    if ((unsigned)numFingers <= 4 - finger && lastStr == -1) {
+                        SetFinger(finger, pos, str, -1);
+                        placed = true;
+                        advanced = true;
                         finger++;
                         numFingers--;
                     } else if (lastStr == -1) {
-                        SetFinger(finger, handpos, str, -1);
+                        SetFinger(finger, pos, str, -1);
                         lastStr = str;
-                        placed = 1;
-                        advanced = 1;
+                        placed = true;
+                        advanced = true;
                         numFingers--;
                     } else {
-                        int canMerge = 1;
-                        for (int mid = lastStr + 1; mid < (int)str; mid++) {
-                            if (gem.GetFret(mid) != -1 && gem.GetFret(mid) < handpos)
-                                canMerge = 0;
+                        bool canMerge = true;
+                        int mid = lastStr + 1;
+                        while (mid < (int)str) {
+                            if (gem.GetFret(mid) != -1 && gem.GetFret(mid) < pos)
+                                canMerge = false;
+                            mid++;
                         }
                         if (canMerge) {
-                            SetFinger(finger, handpos, lastStr, str);
+                            SetFinger(finger, pos, lastStr, str);
                         } else {
                             finger++;
-                            SetFinger(finger, handpos, str, -1);
+                            SetFinger(finger, pos, str, -1);
                             lastStr = str;
                         }
-                        placed = 1;
-                        advanced = 1;
+                        placed = true;
+                        advanced = true;
                         numFingers--;
                     }
                 }
             }
             if (lastStr != -1) {
                 finger++;
-            } else if (!placed && advanced && (unsigned)numFingers < (unsigned)(4 - finger)) {
+            } else if (!placed && advanced && (unsigned)numFingers < 4 - finger) {
                 finger++;
             }
-            handpos++;
         }
         if (numFingers != 0) {
             MILO_WARN("Unable to build fret hand chord.");

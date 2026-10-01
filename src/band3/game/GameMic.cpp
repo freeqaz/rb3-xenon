@@ -82,10 +82,10 @@ int GameMic::GetDataSampleRate() {
     if (mPlaybackSampleRate) {
         return mPlaybackSampleRate;
     }
-    if (mMicID == -1) {
-        return 16000;
+    if (mMicID != -1) {
+        return GetMyMic()->GetSampleRate();
     }
-    return GetMyMic()->GetSampleRate();
+    return 16000;
 }
 
 GameMic::~GameMic() {
@@ -107,8 +107,9 @@ void GameMic::Update() {
     ThreadProcessOneFrame();
     if (mPlaybackSampleRate) {
         float sampleRate = GetDataSampleRate();
+        int maxSamples;
         int desired = TheTaskMgr.Seconds(TaskMgr::kRealTime) * sampleRate;
-        int maxSamples = mStoredAudio->Size() / 2;
+        maxSamples = mStoredAudio->Size() / 2;
         int tellSamples = mStoredAudio->Tell() / 2;
         if (desired < tellSamples) {
             desired = tellSamples;
@@ -116,8 +117,7 @@ void GameMic::Update() {
             desired = maxSamples;
         }
         mNumSamplesContinuous = desired - ((unsigned int)mStoredAudio->Tell() >> 1);
-        if (mNumSamplesContinuous > 0x2000)
-            mNumSamplesContinuous = 0x2000;
+        MinEq(mNumSamplesContinuous, 8192);
         mStoredAudio->Read(mSamplesContinuous, mNumSamplesContinuous * 2);
         for (int i = 0; i < mNumSamplesContinuous; i++) {
             mSamplesContinuous[i] = (mSamplesContinuous[i] << 8)
@@ -134,10 +134,10 @@ void GameMic::Update() {
 int GameMic::SetInputFile(const char *filename) {
     int sampleRate;
     if (!filename) {
-        if (mMicID == -1)
-            sampleRate = 16000;
-        else
+        if (mMicID != -1)
             sampleRate = GetMyMic()->GetSampleRate();
+        else
+            sampleRate = 16000;
         mPlaybackSampleRate = 0;
     } else {
         mWriteWav = false;
@@ -149,11 +149,11 @@ int GameMic::SetInputFile(const char *filename) {
             mStoredAudio = new MemStream();
         }
         mStoredAudio->Resize(
-            (int)(wav.NumChannels() * wav.BitsPerSample() * wav.NumSamples()) / 8
+            (int)(wav.BitsPerSample() * wav.NumChannels() * wav.NumSamples()) / 8
         );
         data.Read(
             (void *)mStoredAudio->Buffer(),
-            (int)(wav.NumChannels() * wav.BitsPerSample() * wav.NumSamples()) / 8
+            (int)(wav.BitsPerSample() * wav.NumChannels() * wav.NumSamples()) / 8
         );
         sampleRate = mPlaybackSampleRate;
     }
@@ -164,10 +164,10 @@ int GameMic::SetInputFile(const char *filename) {
 }
 
 GameMic::GameMic(int id)
-    : mMicID(id), mFonixIdx(-1), mUSB(1), mPlayback(1), mWriteWav(0),
-      mPlaybackSampleRate(0), mStoredAudio(0), mDetector(0), mNullMic(0),
-      mMicVolumeClamp(1), mNumSamplesRecent(0), mNumSamplesContinuous(0),
-      mSpursActive(0) {
+    : mMicID(id), mUSB(1), mPlayback(1), mWriteWav(0), mPlaybackSampleRate(0),
+      mStoredAudio(0), mDetector(0), mNullMic(0), mMicVolumeClamp(1),
+      mNumSamplesRecent(0), mNumSamplesContinuous(0), mSpursActive(0) {
+    mFonixIdx = -1;
     for (int i = 0; i < 6; i++) {
         if (!gIdxTaken[i]) {
             mFonixIdx = i;
@@ -178,8 +178,8 @@ GameMic::GameMic(int id)
     MILO_ASSERT(mFonixIdx != -1, 0x5D);
     mWriteWav = DataVariable("do_record").Int() != 0;
     SetInputFile(nullptr);
-    mLastEnergy = mEnergy = 0;
-    mLastPitch = mPitch = -1;
+    mEnergy = mLastEnergy = 0;
+    mPitch = mLastPitch = -1;
     if (mWriteWav) {
         mStoredAudio = new MemStream();
         mStoredAudio->Reserve(0x1c00000);
