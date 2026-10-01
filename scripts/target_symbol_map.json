@@ -1,4 +1,5 @@
 {
+ "0x8252e328": "?ReadAsync@ArkFile@@UAA_NPAXH@Z",
  "0x82532dc8": "?PlatformPoll@VirtualKeyboard@@AAAXXZ",
  "0x82532eb8": "?ShowKeyboardUI@VirtualKeyboard@@AAA?AVDataNode@@PAVLocalUser@@HVString@@11H@Z",
  "0x8251b418": "?GetSystemLanguage@@YA?AVSymbol@@V1@@Z",
