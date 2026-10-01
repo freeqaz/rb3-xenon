@@ -422,18 +422,13 @@ void Character::UpdateSphere() {
     SetSphere(s78);
 }
 
-void Character::DrawShadow(const Transform &xfm, float planeD) {
-    if (mShowing && mShadow) {
-        Vector3 worldPos = WorldXfm().v;
-
-        Plane pl70;
-        pl70.Set(0, 0, 1, -(worldPos.z + planeD));
-
-        MILO_ASSERT(GetGfxMode() == kOldGfx, 0x2E7);
+void Character::DrawShadow(const Transform &xfm, const Plane &plane) {
+    if (mShowing && mShadow && mShadow->Showing()) {
+        // Project the shadow bones onto the plane along the light's y axis.
         Transform tf40;
         Transpose(xfm, tf40);
         Plane plb0;
-        Multiply(pl70, tf40, plb0);
+        Multiply(plane, tf40, plb0);
 
         Transform tf90;
         float scale = -1.0f / plb0.b;

@@ -7865,6 +7865,7 @@
  "0x8236dea0": "??0?$ObjOwnerPtr@VCharInterest@@@@QAA@ABV0@@Z",
  "0x8236df48": "??1?$ObjOwnerPtr@VCharInterest@@@@UAA@XZ",
  "0x8236e4c0": "?GetInterest@CharEyes@@QAAPAVCharInterest@@H@Z",
+ "0x8236ee70": "?DrawShadow@Character@@QAAXABVTransform@@ABVPlane@@@Z",
  "0x8236e090": "??1Lod@Character@@QAA@XZ",
  "0x8236e108": "??$New@VRndGroup@@@ObjectDir@@QAAPAVRndGroup@@PBD@Z",
  "0x8236e160": "??$Find@VCharEyes@@@ObjectDir@@QAAPAVCharEyes@@PBD_N@Z",

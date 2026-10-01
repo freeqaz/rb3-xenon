@@ -8,6 +8,7 @@
 #define RB3_OBJPTR_INLINE_OWNER_CTOR
 
 #include "world/Spotlight.h"
+#include "char/Character.h"
 #include "Spotlight.h"
 #include "SpotlightDrawer.h"
 #include "math/Color.h"
@@ -594,7 +595,7 @@ void Spotlight::DrawShowing() {
             sDiskMesh->DrawShowing();
         }
         auto& _ref3 = mBeam;
-        if (_ref3.mBeam && TheRnd.DrawMode() != 5) {
+        if (_ref3.mBeam && TheRnd.DrawMode() != 4) {
             _ref3.mBeam->DrawShowing();
         }
         if (mFlare && mFlare->GetMat()) {
@@ -602,9 +603,13 @@ void Spotlight::DrawShowing() {
         }
         if (mTarget) {
             if (mTargetShadow) {
-                RndDrawable *drawable = dynamic_cast<RndDrawable *>(mTarget.Ptr());
-                if (drawable) {
-                    drawable->DrawShadow(WorldXfm(), 3.0f);
+                Character *c = dynamic_cast<Character *>(mTarget.Ptr());
+                if (c) {
+                    // Ground plane 3 units above the character's origin.
+                    Vector3 pos(c->WorldXfm().v);
+                    pos.z += 3.0f;
+                    Plane plane(pos, Vector3(0, 0, 1));
+                    c->DrawShadow(WorldXfm(), plane);
                 }
             }
             if (DoFloorSpot()) {
