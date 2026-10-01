@@ -1,4 +1,5 @@
 {
+ "0x824ce910": "??1WorldDir@@UAA@XZ",
  "0x82765f40": "?Save@TypeProps@@QAAXAAVBinStream@@@Z",
  "0x82809f90": "?Update@UISlider@@MAAXXZ",
  "0x8280a260": "?DrawShowing@UISlider@@UAAXXZ",
@@ -11967,7 +11968,7 @@
  "0x824cf9d0": "??$?0U?$_List_iterator@UFlauntStatusData@@U?$_Const_traits@UFlauntStatusData@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UFlauntStatusData@@V?$StlNodeAlloc@UFlauntStatusData@@@stlpmtx_std@@@stlpmtx_std@@QAA@U?$_List_iterator@UFlauntStatusData@@U?$_Const_traits@UFlauntStatusData@@@stlpmtx_std@@@1@0ABV?$StlNodeAlloc@UFlauntStatusData@@@1@@Z",
  "0x824cfa78": "??$?0U?$_List_iterator@UTarget@BandCamShot@@U?$_Const_traits@UTarget@BandCamShot@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UTarget@BandCamShot@@V?$StlNodeAlloc@UTarget@BandCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAA@U?$_List_iterator@UTarget@BandCamShot@@U?$_Const_traits@UTarget@BandCamShot@@@stlpmtx_std@@@1@0ABV?$StlNodeAlloc@UTarget@BandCamShot@@@1@@Z",
  "0x824cfb18": "?SyncProperty@WorldDir@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
- "0x824d02c8": "??_DRndShockwave@@QAAXXZ",
+ "0x824d02c8": "??_DWorldDir@@QAAXXZ",
  "0x824d0340": "?resize@?$ObjList@UPresetOverride@WorldDir@@@@QAAXI@Z",
  "0x824d03b8": "?resize@?$ObjList@UBitmapOverride@WorldDir@@@@QAAXI@Z",
  "0x824d0430": "?resize@?$ObjList@UMatOverride@WorldDir@@@@QAAXI@Z",
