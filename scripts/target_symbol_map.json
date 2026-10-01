@@ -1,4 +1,10 @@
 {
+ "0x82532378": "?JoypadSetXinputActuators@@YAXHHH@Z",
+ "0x82532030": "?JoypadInvalidateXinputCaps@@YAXH@Z",
+ "0x82531ff8": "?JoypadSetXinputCalbertMode@@YAXHH@Z",
+ "0x8252a0b8": "?RunXinputJoypadLoop@?A0x439b694a@@YAXXZ",
+ "0x82529c98": "JoypadSetCalbertMode",
+ "0x82529ae8": "JoypadSetActuatorsImp",
  "0x8252d938": "?ReadAsync@AsyncFile@@UAA_NPAXH@Z",
  "0x82524d40": "JoypadStageKitPadNum",
  "0x8251bcd8": "?XPrivilegeCheck@?A0x8a9ffbf2@@YA_NW4_XPRIVILEGE_TYPE@@0PBVOnlineID@@@Z",

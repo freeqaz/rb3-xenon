@@ -87,6 +87,14 @@ OutputDebugStringA:
     xorq %rax, %rax
     ret
 
+// Joypad_Xinput.cpp's rumble setter (retail 0x82532378) calls it; no pad is
+// ever connected natively, so the write is dropped.
+.weak XInputSetState
+.type XInputSetState,@function
+XInputSetState:
+    xorq %rax, %rax
+    ret
+
 .weak XInputGetCapabilities
 .type XInputGetCapabilities,@function
 XInputGetCapabilities:
