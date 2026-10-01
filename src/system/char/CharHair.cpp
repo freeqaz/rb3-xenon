@@ -410,9 +410,8 @@ void CharHair::Hookup(ObjPtrList<CharCollide> &collides) {
         if (!strand.Root())
             continue;
 
-        ObjVector<Point> &pts = strand.Points();
-        for (int j = 0; j < pts.size(); j++) {
-            pts[j].collides.clear();
+        for (int j = 0; j < strand.Points().size(); j++) {
+            strand.Points()[j].collides.clear();
         }
 
         for (ObjPtrList<CharCollide>::iterator it = collides.begin();
@@ -452,8 +451,8 @@ void CharHair::Hookup(ObjPtrList<CharCollide> &collides) {
             const Transform &rootXfm = strand.Root()->WorldXfm();
             float dist = Distance(colPos, rootXfm.v) - colAdjust;
 
-            for (int j = 0; j < pts.size(); j++) {
-                Point &pt = pts[j];
+            for (int j = 0; j < strand.Points().size(); j++) {
+                Point &pt = strand.Points()[j];
                 dist -= pt.length;
                 float maxRad = Max(pt.radius, pt.outerRadius);
                 if (maxRad > dist) {
@@ -569,7 +568,6 @@ void operator<<(BinStream &bs, const CharHair::Point &p) {
 
 void operator>>(BinStream &d, CharHair::Point &pt) {
     char buf[0x100];
-    char buf2[0x100];
     d >> pt.pos;
     d >> pt.bone;
     d >> pt.length;
@@ -593,7 +591,7 @@ void operator>>(BinStream &d, CharHair::Point &pt) {
         pt.outerRadius += f;
     }
     if (sHairRev == 6) {
-        d.ReadString(buf2, 0xFF);
+        d.ReadString(buf, 0xFF);
     }
     if (sHairRev < 8) {
         pt.sideLength = -1.0f;
