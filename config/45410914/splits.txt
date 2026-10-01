@@ -4490,6 +4490,7 @@ Morph.cpp:
 	.pdata      start:0x822104E0 end:0x822104E8
 	.pdata      start:0x822104E8 end:0x822104F0
 	.pdata      start:0x822104F0 end:0x82210508
+	.pdata      start:0x82210508 end:0x82210510
 	.pdata      start:0x82210510 end:0x82210650
 	.pdata      start:0x82210650 end:0x82210658
 	.pdata      start:0x82210678 end:0x82210680
@@ -4502,6 +4503,7 @@ Morph.cpp:
 	.text       start:0x82483148 end:0x82483264
 	.text       start:0x82483268 end:0x824833FC
 	.text       start:0x82483400 end:0x82483854
+	.text       start:0x82483858 end:0x82483920
 	.text       start:0x82483920 end:0x82484B3C
 	.text       start:0x82484B40 end:0x82484B84
 	.text       start:0x82484D00 end:0x82484D60
@@ -4916,9 +4918,7 @@ Wind.cpp:
 
 Line.cpp:
 	.pdata      start:0x8220FD28 end:0x8220FEF8
-	.pdata      start:0x82210508 end:0x82210510
 	.text       start:0x82479148 end:0x8247C3EC
-	.text       start:0x82483858 end:0x82483920
 
 Font3d.cpp:
 	.text       start:0x822DD188 end:0x822DD1E0
