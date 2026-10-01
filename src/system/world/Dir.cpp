@@ -54,7 +54,13 @@ WorldDir::WorldDir()
 }
 
 WorldDir::~WorldDir() {
+#ifdef HX_NATIVE
     RELEASE(mHUDDir);
+#else
+    // Retail deletes the HUD dir and the ctor-created glow material, nulling neither.
+    delete mHUDDir;
+    delete mGlowMat;
+#endif
     SpotlightDrawer::Current()->ClearLights();
     if (TheWorld == this) {
         SetTheWorld(nullptr);
