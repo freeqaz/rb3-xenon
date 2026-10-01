@@ -2570,10 +2570,12 @@ void GemPlayer::CheckSolo(float ms) {
 void GemPlayer::UpdateGameCymbalLanes() {
     if (mUser->GetTrackType() != kTrackDrum)
         return;
-    bool discoUnflip = false;
+    bool discoUnflip;
     if (IsLocal() && UserHasGHDrums(mUser->GetLocalBandUser())
         && !mUser->GetGameplayOptions()->GetLefty()) {
         discoUnflip = true;
+    } else {
+        discoUnflip = false;
     }
     SongData *data = TheSongDB->GetData();
     if (data->GetUsingRealDrums()) {
