@@ -12274,12 +12274,12 @@ Cam.cpp:
 	.pdata      start:0x8220C8C8 end:0x8220C918
 	.pdata      start:0x8220C918 end:0x8220C920
 	.pdata      start:0x8220C940 end:0x8220CA60
-	.pdata      start:0x822614D8 end:0x82261528
+	.pdata      start:0x822614D8 end:0x822614E0
 	.text       start:0x82433328 end:0x8243339C
 	.text       start:0x824333A0 end:0x82433FD0
 	.text       start:0x82433FD0 end:0x82434150
 	.text       start:0x82434230 end:0x82435520
-	.text       start:0x82C3F090 end:0x82C3F548
+	.text       start:0x82C3F090 end:0x82C3F138
 
 CamAnim.cpp:
 	.pdata      start:0x82210740 end:0x82210820
