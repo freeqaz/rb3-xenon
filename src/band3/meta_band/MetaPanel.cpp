@@ -69,6 +69,7 @@
 #include "meta/MetaMusicManager.h"
 #include "meta/MoviePanel.h"
 #include "meta_band/AuditionSessionPanel.h"
+#include "meta_band/JoinInvitePanel.h"
 #include "meta_band/BandPreloadPanel.h"
 #include "meta_band/BandSongMgr.h"
 #include "meta_band/BandUI.h"
@@ -118,26 +119,6 @@ public:
     OBJ_CLASSNAME(TourDescPanel);
     NEW_OBJ(TourDescPanel);
     TourDescProvider *m_pTourDescProvider; // 0x54
-};
-
-// JoinInvitePanel has exactly ONE 4-byte member, at 0x3c, zero-initialised.
-// This is read directly off retail, not inferred: its constructor
-// (fn_826308C0, build/45410914/asm/auto_03_826308B4_text.s) ends with
-//   li   r29, 0x0  ...  stw r29, 0x3c(r30)     ; r30 == this
-// and its virtual-base branch does `addi r3, r3, 0x44` before calling the
-// Hmx::Object ctor, pinning the Object subobject at 0x44 and hence the
-// vtordisp at 0x40.  So the derived block is [0x3c,0x40) -- one word -- giving
-// sizeof = 0x3c + 4 + 4 + 0x28 = 0x6c, which is exactly what retail's
-// JoinInvitePanel::NewObject allocates.  The old `char unk_pad[0x8]` was two
-// words and therefore provably wrong.  The member's semantics are unrecoverable
-// (no surviving source decompiles this class --
-// and retail never reads the field anywhere), so it keeps the house unkNN name.
-class JoinInvitePanel : public UIPanel {
-public:
-    JoinInvitePanel();
-    OBJ_CLASSNAME(JoinInvitePanel);
-    NEW_OBJ(JoinInvitePanel);
-    int unk3c; // 0x3c -- zero-initialised by the retail ctor
 };
 
 class WiiFriendsScreen : public UIPanel {

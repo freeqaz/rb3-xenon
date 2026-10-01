@@ -13622,13 +13622,17 @@ band3/meta_band/SaveLoadStatusPanel.cpp:
 	.text       start:0x826322A8 end:0x826322B4
 	.text       start:0x826322B4 end:0x826323E8
 
+band3/meta_band/JoinInvitePanel.cpp:
+	.pdata      start:0x8222ADF0 end:0x8222AED8
+	.text       start:0x826308B8 end:0x82631A20
+
 band3/meta_band/RetryAudioPanel.cpp:
 	.pdata      start:0x8222AD88 end:0x8222ADD0
 	.pdata      start:0x8222ADD0 end:0x8222ADD8
-	.pdata      start:0x8222ADE0 end:0x8222AE58
+	.pdata      start:0x8222ADE0 end:0x8222ADF0
 	.text       start:0x82630228 end:0x82630690
 	.text       start:0x82630690 end:0x82630750
-	.text       start:0x82630778 end:0x82631130
+	.text       start:0x82630778 end:0x826308B8
 
 band3/meta_band/CampaignGoalsLeaderboardChoicePanel.cpp:
 	.pdata      start:0x82226EC0 end:0x82226ED0

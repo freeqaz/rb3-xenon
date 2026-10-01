@@ -2060,6 +2060,12 @@
                 ]
             },
             "band3/meta_band/RetryAudioPanel.cpp": "NonMatching",
+            "band3/meta_band/JoinInvitePanel.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_HANDLE_LOCAL_STATIC"
+                ]
+            },
             "band3/meta_band/SaveLoadStatusPanel.cpp": "NonMatching",
             "band3/meta_band/ShellInputInterceptor.cpp": "NonMatching",
             "band3/meta_band/SetlistSortByLocation.cpp": "NonMatching",
