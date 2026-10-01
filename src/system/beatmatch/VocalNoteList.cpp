@@ -165,8 +165,8 @@ void VocalNoteList::NotesDone(const TempoMap &tmap, bool b) {
         for (int j = phrase.unk10; j < phrase.unk14; j++) {
             if (!mNotes[j].IsUnpitched()) {
                 phrase.unk18 = 1;
-                phrase.unk24 = Min<float>((float)mNotes[j].StartPitch(), phrase.unk24);
-                phrase.unk24 = Min<float>((float)mNotes[j].EndPitch(), phrase.unk24);
+                phrase.unk24 = Min<float>(phrase.unk24, (float)mNotes[j].StartPitch());
+                phrase.unk24 = Min<float>(phrase.unk24, (float)mNotes[j].EndPitch());
                 phrase.unk28 = Max<float>(phrase.unk28, (float)mNotes[j].StartPitch());
                 phrase.unk28 = Max<float>(phrase.unk28, (float)mNotes[j].EndPitch());
             }
