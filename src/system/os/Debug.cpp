@@ -60,7 +60,7 @@ CriticalSection gNotifyThreadSec;
 Debug TheDebug;
 std::vector<String> gNotifies;
 
-typedef void ModalCallbackFunc(Debug::ModalType &, FixedString &, bool);
+typedef void ModalCallbackFunc(bool &, char *, bool);
 
 void Debug::SetDisabled(bool d) { mNoDebug = d; }
 
@@ -85,13 +85,13 @@ ModalCallbackFunc *Debug::SetModalCallback(ModalCallbackFunc *func) {
     return oldFunc;
 }
 
-void DebugModal(Debug::ModalType &ty, FixedString &str, bool b3) {
-    if (ty == Debug::kModalFail) {
-        str += "\n\n-- Program ended --\n";
+void DebugModal(bool &fail, char *msg, bool wait) {
+    if (fail) {
+        strcat(msg, "\n\n-- Program ended --\n");
     } else {
-        gNotifies.push_back(str.c_str());
+        gNotifies.push_back(msg);
     }
-    MILO_LOG("%s\n", str.c_str());
+    MILO_LOG("%s\n", msg);
 }
 
 // Retail's ctor init list omits mAlwaysFlush @0x14 -- there is no
@@ -171,8 +171,8 @@ void Debug::Warn(const char *msg) {
                 gNotifyThreadSync.Wait(200);
             }
         } else {
-            ModalType type = kModalWarn;
-            Modal(type, msg, nullptr);
+            bool fail = false;
+            Modal(fail, msg, nullptr);
         }
     }
 }
@@ -190,8 +190,8 @@ void Debug::Notify(const char *msg) {
 #ifdef HX_NATIVE
         // RB3 retail (0x8250F538) has no main-thread Modal here: it returns.
         else {
-            ModalType type = kModalNotify;
-            Modal(type, msg, nullptr);
+            bool fail = false;
+            Modal(fail, msg, nullptr);
         }
 #endif
     }
@@ -391,16 +391,16 @@ const char *GetExpCode(int code) {
     }
 }
 
-void Debug::Modal(ModalType &type, const char *msg, void *addr) {
+void Debug::Modal(bool &fail, const char *msg, void *addr) {
     String msgCopy(msg);
     StackString<4096> modalMsg(msgCopy.c_str());
     StackString<256> shortMsg;
     StackString<512> dataCallstack;
     StackString<2048> callstack;
-    if (type == kModalFail) {
+    if (fail) {
         MILO_LOG("FAIL-MSG: %s\n", msg);
         if (mModalCallback) {
-            mModalCallback(type, modalMsg, false);
+            mModalCallback(fail, (char *)modalMsg.c_str(), false);
         }
         if (mFailThreadMsg) {
             AppendThreadStackTrace(modalMsg, (StackData *)mFailThreadStack);
@@ -438,17 +438,16 @@ void Debug::Modal(ModalType &type, const char *msg, void *addr) {
             modalMsg += "\n";
             modalMsg += callstack.c_str();
         }
-        if (type == kModalFail && TheAppChild) {
+        if (TheAppChild) {
             TheAppChild->Sync(2);
         }
     }
     if (mModalCallback) {
-        mModalCallback(type, modalMsg, true);
+        mModalCallback(fail, (char *)modalMsg.c_str(), true);
     } else {
-        const char *typeNames[] = { "WARN", "NOTIFY", "FAIL" };
-        MILO_LOG("%s: %s\n", typeNames[type], modalMsg);
+        MILO_LOG("%s: %s\n", fail ? "FAIL" : "NOTIFY", modalMsg);
     }
-    if (type == kModalFail) {
+    if (fail) {
         if (mModalCallback) {
             PlatformDebugBreak();
         }

@@ -80,7 +80,7 @@ Symbol gSystemLocale;
 
 Timer gSystemTimer;
 bool gNetUseTimedSleep;
-bool(__cdecl *ParseStack)(char const *, struct StackData *, int, class FixedString &) =
+bool(__cdecl *ParseStack)(char const *, struct StackData *, int, char *) =
     XboxMapFile::ParseStack;
 
 std::vector<char *> TheSystemArgs;
@@ -505,7 +505,7 @@ void AppendStackTrace(FixedString &str, void *v) {
     } else if (TheArchive && TheArchive->Patched()) {
         parse = false;
     } else {
-        parse = (*ParseStack)(mapName.c_str(), &data, stackIdx, str);
+        parse = (*ParseStack)(mapName.c_str(), &data, stackIdx, (char *)str.c_str());
     }
     if (!parse) {
         GenericMapFile::ParseStack(mapName.c_str(), &data, stackIdx, str);

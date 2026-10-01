@@ -147,10 +147,10 @@ void RndShader::ShaderWarn(const char *msg) {
         sWarnings.insert(hash);
     }
     if (TheLoadMgr.EditMode()) {
-        Debug::ModalType ty = Debug::kModalNotify;
+        bool fail = false;
         if (mModalCallback) {
             StackString<1024> str(msg);
-            (*mModalCallback)(ty, str, true);
+            (*mModalCallback)(fail, (char *)str.c_str(), true);
         }
     }
 }

@@ -15,16 +15,14 @@ typedef void FixedStringFunc(FixedString &);
 // DataFile.cpp's DataWriteFile (retail: 0x100, ours was 0x144 before this).
 class Debug : public TextStream {
 public:
-    enum ModalType {
-        kModalWarn = 0,
-        kModalNotify = 1,
-        kModalFail = 2
-    };
-
-    typedef void ModalCallbackFunc(ModalType &, FixedString &, bool);
+    // A modal callback takes (fail, message buffer, wait). The first argument is a
+    // bool by reference -- retail's DebugModal and Rnd::Modal read it with `lbz`
+    // and Rnd::Modal clears it to continue after a failure -- and the message is a
+    // plain char buffer the callback appends to with an inline strcat.
+    typedef void ModalCallbackFunc(bool &, char *, bool);
 
 private:
-    void Modal(ModalType &, const char *, void *);
+    void Modal(bool &, const char *, void *);
 
     bool mNoDebug; // 0x4
     bool mFailing; // 0x5
@@ -79,7 +77,7 @@ public:
     }
 };
 
-typedef void ModalCallbackFunc(Debug::ModalType &, FixedString &, bool);
+typedef void ModalCallbackFunc(bool &, char *, bool);
 
 #include "utl/Str.h"
 #include "utl/MakeString.h"
