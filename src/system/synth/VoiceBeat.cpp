@@ -182,8 +182,11 @@ int EventTracker::findEarliest(float t, int start) {
     int n = mTimes.size();
     if (n == 0) return -1;
     int last = n - 1;
-    MaxEq(start, 0);
-    if (start > last) start = last;
+    if (start < 0) {
+        start = 0;
+    } else if (start > last) {
+        start = last;
+    }
     while (start >= 0 && mTimes[start] >= t) {
         start--;
     }
@@ -197,17 +200,16 @@ int EventTracker::findEarliest(float t, int start) {
 int EventTracker::findLatest(float t, int start) {
     int n = mTimes.size();
     if (n == 0) return -1;
-    int idx = start;
-    if (idx > n) idx = n - 1;
-    if (idx < 0) idx = 0;
-    while (idx < n && mTimes[idx] < t) {
-        idx++;
+    if (start > n) start = n - 1;
+    if (start < 0) start = 0;
+    while (start < n && mTimes[start] < t) {
+        start++;
     }
-    if (idx >= n) return n - 1;
-    while (idx >= 0 && mTimes[idx] >= t) {
-        idx--;
+    if (start >= n) return n - 1;
+    while (start >= 0 && mTimes[start] >= t) {
+        start--;
     }
-    return idx;
+    return start;
 }
 
 void EventTracker::Reset() {
@@ -226,10 +228,7 @@ bool EventTracker::Hit(float msFrom, float msUpTo, float msNow) {
     mSelTo = findLatest(msUpTo, mSelTo);
     float tAccum = 0.0f;
     for (int i = mSelFrom; i <= mSelTo; i++) {
-        static float k_zero = 0.0f;
-        float diff = 0.2f - mPeaks[i];
-        float *p = (k_zero >= diff) ? &k_zero : &diff;
-        float tolHalf = 1000.0f * (*p) + 60.0f;
+        float tolHalf = 1000.0f * std::max(0.0f, 0.2f - mPeaks[i]) + 60.0f;
         if (mTimes[i] - tolHalf <= msNow && msNow <= mTimes[i] + tolHalf) {
             tAccum += mTimes[i];
             mHits[i] = true;
