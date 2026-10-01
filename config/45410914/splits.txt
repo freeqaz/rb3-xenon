@@ -280,7 +280,7 @@ BandScoreboard.cpp:
 	.text       start:0x822CE3F4 end:0x822CE6A8
 	.text       start:0x822CE6A8 end:0x822CEC70
 	.text       start:0x822CEC70 end:0x822CECDC
-	.text       start:0x822CEF8C end:0x822CFD10
+	.text       start:0x822CEF8C end:0x822CF888
 
 FingerShape.cpp:
 	.pdata      start:0x821FF8F0 end:0x821FF8F8
@@ -4273,8 +4273,7 @@ MoveMgr.cpp:
 	.pdata      start:0x821F76D0 end:0x821F7838
 	.pdata      start:0x821F7840 end:0x821F7938
 	.pdata      start:0x821F7940 end:0x821F7948
-	.text       start:0x822CFD10 end:0x822D16F8
-	.text       start:0x822D1768 end:0x822D2C28
+	.text       start:0x822D2BA8 end:0x822D2C28
 	.text       start:0x822D2CEC end:0x822D2D58
 	.text       start:0x82C122D8 end:0x82C122E4
 
@@ -13458,6 +13457,11 @@ system/bandobj/BandButton.cpp:
 	.text       start:0x823438C8 end:0x82343940
 	.text       start:0x82343944 end:0x82345030
 	.text       start:0x82345034 end:0x82345040
+
+system/bandobj/CharKeyHandMidi.cpp:
+	.text       start:0x822CF888 end:0x822CFD10
+	.text       start:0x822CFD10 end:0x822D16F8
+	.text       start:0x822D1768 end:0x822D2BA8
 
 system/bandobj/UnisonIcon.cpp:
 	.pdata      start:0x821F7938 end:0x821F7940

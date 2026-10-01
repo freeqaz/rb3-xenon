@@ -214,6 +214,7 @@
                 ]
             },
             "system/bandobj/BandPatchMesh.cpp": "NonMatching",
+            "system/bandobj/CharKeyHandMidi.cpp": "NonMatching",
             "system/bandobj/GemTrackDir.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [

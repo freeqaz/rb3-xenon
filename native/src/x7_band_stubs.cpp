@@ -128,36 +128,5 @@ Symbol BandCharacter::NameToDrumVenue(const char *name) {
 // (FixedSizeSaveable::{Save,Load}FixedString are defined in
 // src/system/meta/FixedSizeSaveable.cpp, retail 0x827A2C28/0x827A2A50, and link from there.)
 
-// --- CharKeyHandMidi: an ENTIRELY UNDECOMPILED CLASS.
-//
-// bandobj/CharKeyHandMidi.h exists; there is NO CharKeyHandMidi.cpp anywhere in
-// rb3-xenon, so not one of its 11 virtuals has a body and the compiler
-// therefore emits no vtable and no typeinfo. BandCharacter.cpp:1466
-// `dynamic_cast<CharKeyHandMidi *>(o)` needs the typeinfo, which is the single
-// remaining undefined symbol in the band-member link.
-//
-// ⚠ This class is the KEYBOARD PLAYER'S HAND-POSITION MIDI DRIVER. Stubbing it
-// means a keyboard band member's hands are not driven to the notes being
-// played. Off the placement path entirely (it moves fingers, not people).
-//
-// Defining the virtuals is what emits the vtable and hence the typeinfo. The
-// dynamic_cast can never actually succeed here in any case: nothing registers a
-// CharKeyHandMidi factory and nothing news one, so no object of this type can
-// exist and the cast always yields null -- which is exactly what the caller's
-// null-check arm expects.
-//
-// ★ rb3-Wii HAS the real body at
-//   /home/free/code/milohax/rb3/src/system/bandobj/CharKeyHandMidi.cpp.
-// Porting it is a self-contained follow-up, listed in the X7 handoff.
-#include "bandobj/CharKeyHandMidi.h"
-CharKeyHandMidi::~CharKeyHandMidi() {}
-void CharKeyHandMidi::Highlight() {}
-DataNode CharKeyHandMidi::Handle(DataArray *, bool) { return DataNode(kDataUnhandled, 0); }
-bool CharKeyHandMidi::SyncProperty(DataNode &, DataArray *, int, PropOp) { return false; }
-void CharKeyHandMidi::Save(BinStream &) {}
-void CharKeyHandMidi::Copy(const Hmx::Object *, Hmx::Object::CopyType) {}
-void CharKeyHandMidi::Load(BinStream &) {}
-void CharKeyHandMidi::Poll() {}
-void CharKeyHandMidi::PollDeps(std::list<Hmx::Object *> &, std::list<Hmx::Object *> &) {}
-void CharKeyHandMidi::Enter() {}
-void CharKeyHandMidi::SetName(const char *, ObjectDir *) {}
+// (CharKeyHandMidi: the real TU, src/system/bandobj/CharKeyHandMidi.cpp, retail
+// 0x822CF888-0x822D2BA8, is compiled from native/CMakeLists.txt -- lane W16-IF.)
