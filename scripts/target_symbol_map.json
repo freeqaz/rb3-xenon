@@ -8922,7 +8922,7 @@
  "0x823f0fb0": "?Load@SyncUserMsg@@UAAXAAVBinStream@@@Z",
  "0x823f0fc0": "??_GBinStream@@UAAPAXI@Z",
  "0x823f1010": "??0JoinResponseMsg@@QAA@W4JoinResponseError@@H@Z",
- "0x823f1028": "??0RBDataClient@Quazal@@QAA@XZ",
+ "0x823f1028": "?ByteCode@JoinResponseMsg@@UBAEXZ",
  "0x823f1068": "?Name@JoinResponseMsg@@UBAPBDXZ",
  "0x823f10a0": "?Load@JoinResponseMsg@@UAAXAAVBinStream@@@Z",
  "0x823f1100": "?Print@JoinResponseMsg@@UBAXAAVTextStream@@@Z",

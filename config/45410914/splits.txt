@@ -158,8 +158,6 @@ RockCentralJobs.cpp:
 RockCentral.cpp:
 	.pdata      start:0x82208698 end:0x822086A8
 	.pdata      start:0x822086D0 end:0x82208708
-	.pdata      start:0x82208BA8 end:0x82208BB0
-	.pdata      start:0x82208BB0 end:0x82208BB8
 	.pdata      start:0x82208D68 end:0x82208D90
 	.pdata      start:0x82215F78 end:0x82215F88
 	.pdata      start:0x82215F88 end:0x82215FA0
@@ -206,8 +204,6 @@ RockCentral.cpp:
 	.text       start:0x823EC538 end:0x823EC788
 	.text       start:0x823F0F84 end:0x823F0F88
 	.text       start:0x823F0F9C end:0x823F0FA0
-	.text       start:0x823F0FC0 end:0x823F1010
-	.text       start:0x823F1028 end:0x823F1064
 	.text       start:0x823F27B8 end:0x823F2898
 	.text       start:0x824F64D0 end:0x824F6548
 	.text       start:0x824F6550 end:0x824F6628
@@ -9399,6 +9395,8 @@ network/net/NetLog.cpp:
 	.text       start:0x823EB8E0 end:0x823EB958
 
 SessionMessages.cpp:
+	.pdata      start:0x82208BA8 end:0x82208BB0
+	.pdata      start:0x82208BB0 end:0x82208BB8
 	.pdata      start:0x82208BB8 end:0x82208C10
 	.pdata      start:0x82208C18 end:0x82208C28
 	.pdata      start:0x82208C28 end:0x82208C30
@@ -9415,7 +9413,9 @@ SessionMessages.cpp:
 	.pdata      start:0x82208D60 end:0x82208D68
 	.pdata      start:0x82208D90 end:0x82208DA0
 	.text       start:0x823F0F88 end:0x823F0F9C
+	.text       start:0x823F0FC0 end:0x823F1010
 	.text       start:0x823F1010 end:0x823F1028
+	.text       start:0x823F1028 end:0x823F1064
 	.text       start:0x823F1068 end:0x823F14C0
 	.text       start:0x823F1520 end:0x823F1738
 	.text       start:0x823F1738 end:0x823F1808
