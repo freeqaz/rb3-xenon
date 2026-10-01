@@ -533,16 +533,13 @@ void GemTrainerPanel::SetMetronomeVolume(int i1, int i2) {
 bool GemTrainerPanel::ShouldMissCauseFail() const {
     if (GetCurrSection() < 0)
         return false;
-    else {
-        int tick = GetTick();
-        const TrainerSection &sect = GetSection(GetCurrSection());
-        if (tick < sect.GetStartTick())
-            return false;
-        else {
-            int id;
-            return tick <= GetLastGameGemInSection(id).GetTick();
-        }
-    }
+    int tick = GetTick();
+    const TrainerSection &sect = GetSection(GetCurrSection());
+    if (tick < sect.GetStartTick())
+        return false;
+    int id;
+    const bool fail = tick <= GetLastGameGemInSection(id).GetTick();
+    return fail;
 }
 
 Difficulty GemTrainerPanel::GetDifficulty() const { return mLocalUser->GetDifficulty(); }
