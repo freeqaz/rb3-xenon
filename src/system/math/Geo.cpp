@@ -807,41 +807,17 @@ bool operator>(const Sphere &s, const Frustum &f) {
 }
 
 bool Intersect(const Segment &seg, const Sphere &sphere) {
-    Vector3 closest;
-    closest.z = seg.end.z - seg.start.z;
-    closest.x = seg.end.x - seg.start.x;
-    closest.y = seg.end.y - seg.start.y;
-    float center_z = sphere.center.z;
-    float center_x = sphere.center.x;
-    float center_y = sphere.center.y;
+    Vector3 dir;
+    Subtract(seg.end, seg.start, dir);
     Vector3 toCenter;
     Subtract(sphere.center, seg.start, toCenter);
-    float pz = toCenter.z;
-    float px = toCenter.x;
-    float py = toCenter.y;
-    float dir_z = closest.z;
-    float dir_x = closest.x;
-    float dir_y = closest.y;
-    float a = dir_z * dir_z + dir_x * dir_x + dir_y * dir_y;
+    float a = Dot(dir, dir);
     if (a == 0.0f)
         return false;
-    float t = (pz * dir_z + px * dir_x + py * dir_y) / a;
-    float zero = 0.0f;
-    float neg_t = -t;
-    t = (neg_t >= 0.0f) ? zero : t;
-    float one = 1.0f;
-    float t_minus_one = t - one;
-    t = (t_minus_one >= 0.0f) ? one : t;
+    float t = Clamp(0.0f, 1.0f, Dot(toCenter, dir) / a);
+    Vector3 closest;
     Interp(seg.start, seg.end, t, closest);
-    float dz = closest.z - center_z;
-    float dx = closest.x - center_x;
-    float dy = closest.y - center_y;
-    float r = sphere.radius;
-    float r2 = r * r;
-    float dist2 = dz * dz + dx * dx + dy * dy;
-    if (dist2 > r2)
-        return false;
-    return true;
+    return !(DistanceSquared(closest, sphere.center) > sphere.radius * sphere.radius);
 }
 
 bool Intersect(const Vector3 &v, const BSPNode *n) {
