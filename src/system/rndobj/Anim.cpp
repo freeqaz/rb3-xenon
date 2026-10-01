@@ -1,3 +1,13 @@
+// AnimTask's ctor builds mAnim (ObjOwnerPtr<RndAnimatable>, owner-only) inline:
+// retail stores owner, null and the vtable in place, and calls the
+// out-of-line ctors only for mAnimTarget and mBlendTask.
+#ifndef RB3_OBJOWNERPTR_INLINE_OWNER_CTOR
+#define RB3_OBJOWNERPTR_INLINE_OWNER_CTOR 1
+#endif
+#ifndef RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT 1
+#endif
+
 #include "rndobj/Anim.h"
 #include "math/Easing.h"
 #include "math/Utl.h"
@@ -414,9 +424,7 @@ AnimTask::AnimTask(
     MILO_ASSERT(anim, 0x213);
     mMin = Min(start, end);
     mMax = Max(start, end);
-    if (NearlyZero(fpu)) {
-        fpu = 1;
-    }
+    // No zero-fpu fallback in retail's six-argument ctor.
     if (start < end) {
         mScale = fpu;
         mOffset = mMin;
@@ -453,19 +461,28 @@ AnimTask::AnimTask(
 // not an out-of-line call to QueueTaskDelete.
 AnimTask::~AnimTask() { delete mBlendTask; }
 
+// Only the animatable going away matters: retail ignores any non-null
+// replacement, forwards nothing to Hmx::Object::Replace, and deletes the task
+// outright rather than queueing it.
 void AnimTask::Replace(ObjRef *from, Hmx::Object *to) {
-    if (RefIs(from, mAnim)) {
+#ifdef HX_NATIVE
+    if (!to && RefIs(from, mAnim)) {
+#else
+    // `from` is on the left of this compare in retail (cmplw r4, upcast).
+    if (!to
+        && reinterpret_cast<Hmx::Object *>(from)
+            == static_cast<Hmx::Object *>(mAnim.Ptr())) {
+#endif
         RndAnimatable *myAnim = Anim();
-        if (!mAnim.SetObj(to)) {
-            if (mBlendTask && mBlendTask->Anim() == myAnim) {
-                mBlendTask = nullptr;
-            }
-            Hmx::Object::Replace(from, to);
-            TheTaskMgr.QueueTaskDelete(this);
+        if (mBlendTask && mBlendTask->Anim() == myAnim) {
+#ifdef HX_NATIVE
+            mBlendTask = nullptr;
+#else
+            mBlendTask.ReleaseObjConcrete();
+#endif
         }
-        return;
-    } else
-        Hmx::Object::Replace(from, to);
+        delete this;
+    }
 }
 
 float AnimTask::TimeUntilEnd() {
@@ -484,15 +501,14 @@ float AnimTask::TimeUntilEnd() {
 // no listener dispatch, no wait/active gating and no mFrameSpan — those are all
 // dc3-newer additions whose backing fields do not exist in a 0x6c AnimTask.
 // StartAnim() now happens in the ctors instead of behind the mActive latch.
+// Tasks are deleted directly here (delete through vtable slot 0), not queued.
 void AnimTask::Poll(float time) {
-    if (!mAnim)
-        return;
     float blend = 1.0f;
     if (mBlendPeriod) {
         blend = time / mBlendPeriod;
         if (blend >= 1.0f) {
             blend = 1.0f;
-            TheTaskMgr.QueueTaskDelete(mBlendTask);
+            delete mBlendTask;
             mBlendPeriod = 0.0f;
         } else if (!mBlendTask) {
             float oldtime = mBlendTime;
@@ -501,7 +517,7 @@ void AnimTask::Poll(float time) {
         }
     } else {
         if (mBlendTask)
-            TheTaskMgr.QueueTaskDelete(mBlendTask);
+            delete mBlendTask;
     }
 
     // RB3 maps the raw task time into frame space up front, then tests that
@@ -510,7 +526,8 @@ void AnimTask::Poll(float time) {
 
     float frame;
     if (mLoop) {
-        frame = Mod(time - mMin, mMax - mMin) + mMin;
+        float min = mMin;
+        frame = Mod(time - min, mMax - min) + min;
     } else {
         frame = Clamp<float>(mMin, mMax, time);
     }
@@ -519,7 +536,7 @@ void AnimTask::Poll(float time) {
     if (!mAnimTarget
         || ((!mLoop && !mBlending && !mBlendPeriod)
             && ((time > mMax || time < mMin) || mScale == 0.0f))) {
-        TheTaskMgr.QueueTaskDelete(this);
+        delete this;
     }
 }
 
