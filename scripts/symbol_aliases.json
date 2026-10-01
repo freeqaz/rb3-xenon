@@ -96029,11 +96029,18 @@
    "name": "$?6VColor",
    "address": "0x8247ed78",
    "survivor": "??$?6VColor@Hmx@@@@YAAAVTextStream@@AAV0@ABV?$Key@VColor@Hmx@@@@@Z",
-   "folded": [
-    "?SyncProperty@RndParticleSysAnim@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
-   ],
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
+   "withdrawn": [
+    {
+     "spelling": "?SyncProperty@RndParticleSysAnim@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+     "lane": "W16-JA 2026-10-01",
+     "class": "SURVIVOR_MISNAMED",
+     "disposition": "withdrawn",
+     "evidence": "0x8247ed78 IS RndParticleSysAnim::SyncProperty, not a fold into the Key<Color> printer: lane W16-JA-E renamed the address on retail evidence, and the printer is its own retail body at 0x82461320 (named there, reading 100 in MatAnim). With the address named for its own function the call at 0x82480680 resolves by name; the fold record would contradict the map. Group kept with no folded members."
+    }
+   ],
    "admitted": [
     {
      "spelling": "?SyncProperty@RndParticleSysAnim@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",

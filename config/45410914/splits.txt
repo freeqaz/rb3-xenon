@@ -4932,8 +4932,7 @@ Wind.cpp:
 	.pdata      start:0x8220E5B8 end:0x8220E618
 	.pdata      start:0x8220E618 end:0x8220E640
 	.pdata      start:0x8220E640 end:0x8220E670
-	.pdata      start:0x8220E670 end:0x8220E6A8
-	.pdata      start:0x8220E6B8 end:0x8220E6C0
+	.pdata      start:0x8220E670 end:0x8220E6C0
 	.pdata      start:0x8220E6C0 end:0x8220E6D0
 	.text       start:0x8245CC00 end:0x8245CC78
 	.text       start:0x8245CCE0 end:0x8245D360
