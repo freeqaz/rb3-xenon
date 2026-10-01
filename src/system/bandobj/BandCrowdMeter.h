@@ -75,7 +75,7 @@ public:
     void SetTrackPanel(TrackPanelInterface *panel) { mTrackPanel = panel; }
 
     DECLARE_REVS;
-    NEW_OVERLOAD;
+    OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD_INLINE;
     NEW_OBJ(BandCrowdMeter)
     static void Init() { Register(); }

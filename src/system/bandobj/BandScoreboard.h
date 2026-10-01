@@ -25,7 +25,7 @@ public:
     void ResetScore();
 
     DECLARE_REVS;
-    NEW_OVERLOAD;
+    OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD;
     NEW_OBJ(BandScoreboard)
     static void Init() { Register(); }

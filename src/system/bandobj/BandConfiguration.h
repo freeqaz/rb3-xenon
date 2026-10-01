@@ -51,7 +51,7 @@ public:
     DataNode OnReleaseConfiguration(DataArray *);
 
     DECLARE_REVS;
-    NEW_OVERLOAD;
+    OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD_INLINE;
     NEW_OBJ(BandConfiguration)
     // ⚠ Init() MUST stay an inline one-liner in this header. Band.cpp's

@@ -26,7 +26,7 @@ public:
     int GetColor(int);
     void SyncScores();
 
-    NEW_OVERLOAD;
+    OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD_INLINE;
     NEW_OBJ(BandLeadMeter)
     static void Init() { Register(); }

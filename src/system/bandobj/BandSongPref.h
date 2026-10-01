@@ -15,7 +15,7 @@ public:
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
 
-    NEW_OVERLOAD
+    OBJ_NEW_OVERLOAD
     DELETE_OVERLOAD
     NEW_OBJ(BandSongPref)
     static void Init() { Register(); }

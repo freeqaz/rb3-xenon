@@ -63,7 +63,7 @@ public:
     DataNode OnReset(DataArray *);
 
     DECLARE_REVS;
-    NEW_OVERLOAD;
+    OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD_INLINE;
     NEW_OBJ(EndingBonus)
     static void Init() { Register(); }

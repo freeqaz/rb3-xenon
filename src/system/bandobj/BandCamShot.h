@@ -118,7 +118,7 @@ protected:
     bool ListNextShots(std::list<BandCamShot *> &);
 
 public:
-    NEW_OVERLOAD;
+    OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD_INLINE;
     static std::list<BandCamShot::TargetCache> sCache;
     static int sHideAllCharactersHack;

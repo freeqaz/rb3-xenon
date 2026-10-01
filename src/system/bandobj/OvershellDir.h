@@ -26,7 +26,7 @@ public:
     void SetDefaultOptionIndex(int idx) { mDefaultOptionIndex = idx; }
 
     DECLARE_REVS;
-    NEW_OVERLOAD;
+    OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD_INLINE;
     NEW_OBJ(OvershellDir)
     REGISTER_OBJ_FACTORY_FUNC(OvershellDir)

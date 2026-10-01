@@ -76,7 +76,7 @@ public:
     TrackInstrument GetInstrument(int) const;
     void SetBotbBandIcon(ObjectDir *, RndDir *, bool);
 
-    NEW_OVERLOAD;
+    OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD_INLINE;
     NEW_OBJ(TrackPanelDir)
     static void Init() { Register(); }

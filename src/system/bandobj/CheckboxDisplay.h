@@ -31,7 +31,7 @@ public:
     // Retail loads one base (`lis`/`addi` on a single .data label) and stores
     // gAltRev at +0 / gRev at +4, i.e. one internal-linkage adjacent pair.
     // Definitions are now file-scope statics in CheckboxDisplay.cpp.
-    NEW_OVERLOAD;
+    OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD_INLINE;
 
     RndMesh *mCheckMesh; // 0x140

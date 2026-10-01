@@ -32,7 +32,7 @@ public:
     NEW_OBJ(DialogDisplay);
 
     DECLARE_REVS;
-    NEW_OVERLOAD;
+    OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD_INLINE;
 
     ObjPtr<UILabel> mDialogLabel; // 0x8

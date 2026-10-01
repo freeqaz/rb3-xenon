@@ -36,7 +36,7 @@ public:
     NEW_OBJ(ScoreDisplay);
 
     DECLARE_REVS;
-    NEW_OVERLOAD;
+    OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD;
 
     BandLabel *mCombinedLabel;

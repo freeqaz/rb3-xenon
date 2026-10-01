@@ -116,7 +116,7 @@ public:
         __declspec(align(4)) unsigned short altRev, rev;
     };
     static RevsT gRevs;
-    NEW_OVERLOAD;
+    OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD_INLINE;
     NEW_OBJ(ChordShapeGenerator)
     static void Init() { Register(); }

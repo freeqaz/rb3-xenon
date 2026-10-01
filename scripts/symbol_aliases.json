@@ -91744,7 +91744,39 @@
     "??_VOrderedLocaleChunk@LocaleChunkSort@@SAXPAX@Z",
     "??_VkdTreeNode@?$kdTree@VTriangle@@@@SAXPAX@Z",
     "??_VkdTriList@?$kdTree@VTriangle@@@@SAXPAX@Z",
-    "OggFree"
+    "OggFree",
+    "??3BandButton@@SAXPAX@Z",
+    "??3BandCamShot@@SAXPAX@Z",
+    "??3BandCharacter@@SAXPAX@Z",
+    "??3BandConfiguration@@SAXPAX@Z",
+    "??3BandCrowdMeter@@SAXPAX@Z",
+    "??3BandDirector@@SAXPAX@Z",
+    "??3BandFaceDeform@@SAXPAX@Z",
+    "??3BandHighlight@@SAXPAX@Z",
+    "??3BandLeadMeter@@SAXPAX@Z",
+    "??3BandList@@SAXPAX@Z",
+    "??3BandRetargetVignette@@SAXPAX@Z",
+    "??3BandScoreboard@@SAXPAX@Z",
+    "??3BandSongPref@@SAXPAX@Z",
+    "??3BandStarDisplay@@SAXPAX@Z",
+    "??3CharKeyHandMidi@@SAXPAX@Z",
+    "??3CheckboxDisplay@@SAXPAX@Z",
+    "??3ChordShapeGenerator@@SAXPAX@Z",
+    "??3CrowdMeterIcon@@SAXPAX@Z",
+    "??3DialogDisplay@@SAXPAX@Z",
+    "??3EndingBonus@@SAXPAX@Z",
+    "??3GemTrackDir@@SAXPAX@Z",
+    "??3LayerDir@@SAXPAX@Z",
+    "??3MicInputArrow@@SAXPAX@Z",
+    "??3OverdriveMeter@@SAXPAX@Z",
+    "??3OvershellDir@@SAXPAX@Z",
+    "??3PitchArrow@@SAXPAX@Z",
+    "??3ScrollbarDisplay@@SAXPAX@Z",
+    "??3SongSectionController@@SAXPAX@Z",
+    "??3StreakMeter@@SAXPAX@Z",
+    "??3TrackPanelDir@@SAXPAX@Z",
+    "??3UnisonIcon@@SAXPAX@Z",
+    "??3VocalTrackDir@@SAXPAX@Z"
    ],
    "evidence": "Fold-thunk alias group derived by tools/fold_thunk_gate.py. Evidence tier(s) FT2,FT3. Our compiled COMDAT for each folded spelling below is byte-identical to the RETAIL body at the survivor address 0x8240ddb0 once relocation-carrying fields are masked, with every relocated branch destination RESOLVED through the map and NAME-equal rather than masked away; the survivor takes 2308 direct branches across .text. FT1=retail's map places the folded spelling on the same body or nowhere. FT2=it places it on a different body the image itself discredits (zero .text fan-in, or no symbols.txt extent -- padding or a mid-function word). FT3=it places it on a HOMONYM, a distinct function under another module that legitimately carries the same mangled name, witnessed by dc3's leaked ham_xbox_r.map. FT-EMPTY=the body carries no relocation at all, so the fold is real but the byte comparison is vacuous. 7 folded spelling(s), 1281 charged name_check sites. Per spelling: [??3@YAXPAX@Z FT3, 1180 sites: HOMONYM: dc3's leaked ham_xbox_r.map names ??3@YAXPAX@Z at 3 distinct addresses, and the body at 0x82eb0c70 (xaudio2:baseswfilter.obj) is byte-identical to retail's body at 0x82bc6b70 over 148 bytes once relocated fields are masked. That address is another module's own file-scope ??3@YAXPAX@Z, not retail's copy of ours.] [OggFree FT2, 91 sites: map parks OggFree at 0x8249b200, which has ZERO .text fan-in] [??3RndLight@@SAXPAX@Z FT2, 4 sites: map parks ??3RndLight@@SAXPAX@Z at 0x8270d7f8 with no symbols.txt extent] [??3UIComponent@@SAXPAX@Z FT2, 3 sites: map parks ??3UIComponent@@SAXPAX@Z at 0x8282779c, which has ZERO .text fan-in] [??3CharEyeDartRuleset@@SAXPAX@Z FT2, 1 sites: map parks ??3CharEyeDartRuleset@@SAXPAX@Z at 0x823beea8, which has ZERO .text fan-in] [??3RndMat@@SAXPAX@Z FT2, 1 sites: map parks ??3RndMat@@SAXPAX@Z at 0x824a8f74, which has ZERO .text fan-in] [??3PlayerDiffIcon@@SAXPAX@Z FT2, 1 sites: map parks ??3PlayerDiffIcon@@SAXPAX@Z at 0x823258d4, which has ZERO .text fan-in] RE-ADJUDICATED ON RETAIL BYTES, lane ALIAS-X2 2026-08-13, verdict KEEP -- all 7 folded spellings re-derive as ADMIT under the CORRECTED tools/comdat_fold_gate.py comparator (not the withdrawn masked CF1). Each of our 7 COMDATs is a 4-byte `b ?MemFree@@YAXPAX@Z`, and retail's body at 0x8240ddb0 is a 4-byte branch whose destination RESOLVES THROUGH THE MAP to literally that same name. The MAP-B shape trap was tested and does not bite: retail contains 341 four-byte branch thunks with 341 DISTINCT destinations, and EXACTLY ONE resolves to ?MemFree@@YAXPAX@Z -- 0x8240ddb0. So the shape alone is worthless but the resolved destination is unique image-wide, and our spellings have exactly one place they can be. The FT3 homonym on ??3@YAXPAX@Z is confirmed from RETAIL BYTES ALONE, without needing dc3's map: 0x8240ddb0 is a 4-byte thunk with fan-in 2308, whereas 0x82bc6b70 (where the map places ??3@YAXPAX@Z) is a 148-byte heap-bookkeeping allocator with fan-in 178 that walks free-list metadata (lwz -4(r3) / divwu / bitmask update) -- a genuinely different function in the vendor region above 0x82A00000, not retail's copy of ours. All 6 FT2 discharges re-verified: every one of those addresses has fan-in 0 and is padding (0x00000000) or a mid-function word (e.g. 0x8270d7f8 disassembles inside Fader::DoFade), so none is a live function that could contradict the fold. | Lane W7-D, T1 at DESTINATION level (2026-09-13). Our COMDAT for the folded spelling and for the survivor are both 4 B with the identical single relocation (0,?MemFree@@YAXPAX@Z). The population control that guards the larger installs is VACUOUS here and was NOT relied on: a 4-byte body was never indexed, and a PC-relative branch's bytes encode a DISPLACEMENT, not a destination, so byte equality is not identity. Adjudicated instead by resolving retail's own branch: destination 0x827bc430 = ?MemFree@@YAXPAX@Z -- the same symbol our relocation names. Injective; group pre-adjudicated (see the validator's EXEMPT note for the HMX operator-delete family at 0x8240ddb0). | Lane W7-D, T1 at DESTINATION level (2026-09-13). Our COMDAT for the folded spelling and for the survivor are both 4 B with the identical single relocation (0,?MemFree@@YAXPAX@Z). The population control that guards the larger installs is VACUOUS here and was NOT relied on: a 4-byte body was never indexed, and a PC-relative branch's bytes encode a DISPLACEMENT, not a destination, so byte equality is not identity. Adjudicated instead by resolving retail's own branch: destination 0x827bc430 = ?MemFree@@YAXPAX@Z -- the same symbol our relocation names. Injective; group pre-adjudicated (see the validator's EXEMPT note for the HMX operator-delete family at 0x8240ddb0). | Lane W7-D, T1 at DESTINATION level (2026-09-13). Our COMDAT for the folded spelling and for the survivor are both 4 B with the identical single relocation (0,?MemFree@@YAXPAX@Z). The population control that guards the larger installs is VACUOUS here and was NOT relied on: a 4-byte body was never indexed, and a PC-relative branch's bytes encode a DISPLACEMENT, not a destination, so byte equality is not identity. Adjudicated instead by resolving retail's own branch: destination 0x827bc430 = ?MemFree@@YAXPAX@Z -- the same symbol our relocation names. Injective; group pre-adjudicated (see the validator's EXEMPT note for the HMX operator-delete family at 0x8240ddb0). || Fold-thunk alias group derived by tools/fold_thunk_gate.py. Evidence tier(s) FT1. Our compiled COMDAT for each folded spelling below is byte-identical to the RETAIL body at the survivor address 0x8240ddb0 once relocation-carrying fields are masked, with every relocated branch destination RESOLVED through the map and NAME-equal rather than masked away; the survivor takes 2308 direct branches across .text. FT1=retail's map places the folded spelling on the same body or nowhere. FT2=it places it on a different body the image itself discredits (ZERO REFERENCES -- no branch, no address-taken immediate pair, no .rdata/.data pointer word -- or no symbols.txt extent -- padding or a mid-function word). FT3=it places it on a HOMONYM, a distinct function under another module that legitimately carries the same mangled name, witnessed by dc3's leaked ham_xbox_r.map. FT-EMPTY=the body carries no relocation at all, so every word was compared as a FULL 32-bit literal -- byte identity, the complete /OPT:ICF condition -- but a tiny body is shared by many distinct functions, so it is the lowest-DISCRIMINATING-POWER tier. 7 folded spelling(s), 7 charged name_check sites. Per spelling: [??3CharTransCopy@@SAXPAX@Z FT1, 1 sites: nothing in the map contradicts it] [??3CharBoneTwist@@SAXPAX@Z FT1, 1 sites: nothing in the map contradicts it] [??3CharGuitarString@@SAXPAX@Z FT1, 1 sites: nothing in the map contradicts it] [??3CharIKRod@@SAXPAX@Z FT1, 1 sites: nothing in the map contradicts it] [??3CharLipSyncDriver@@SAXPAX@Z FT1, 1 sites: nothing in the map contradicts it] [??3CharPosConstraint@@SAXPAX@Z FT1, 1 sites: nothing in the map contradicts it] [??3CharUpperTwist@@SAXPAX@Z FT1, 1 sites: nothing in the map contradicts it]",
    "contradiction_exempt": "ADJUDICATED AND DELIBERATELY INSTALLED -- DO NOT RE-LITIGATE. This is the HMX operator-delete family: retail's stub 0x8240ddb0 = `b MemFree` carries 2,303 bl sites and our source (utl/MemMgr.cpp:69) is CORRECT. Commit a745039e measured the withdrawal of this family at -72,384 B and RESTORED it, after proving source repair recovers 0 of 1,406 rows. The `??3@YAXPAX@Z` row at 0x82bc6b70 (177 callers) is the vendor CRT delete -- a genuine map NAME COLLISION, but benign here: identical names never consult the alias table, so the collision cannot mis-forgive. CharEyeDartRuleset/OggFree rows have 0 bl callers and are junk.",
@@ -91991,6 +92023,198 @@
      "lane": "W16-JD 2026-10-01",
      "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the MEM_OVERLOAD operator delete compiles to the same one-word branch to MemFree as the family's other members",
      "evidence": "Retail ~NetLoaderXbox (0x827d8a20, called only by ??_GNetLoaderXbox) branches to 0x8240ddb0 for its `delete mHttpGet` where our compiled ~NetLoaderXbox calls ??3HttpGet@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL; the call site, not the byte comparison, names the survivor. Joins ??3NetLoader@@SAXPAX@Z already in this group. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3BandButton@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_82344C98 (unit system/bandobj/BandButton) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3BandButton@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3BandCamShot@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8227B334 (unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3BandCamShot@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3BandCharacter@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8227C050 (unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3BandCharacter@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3BandConfiguration@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8227B3D8 (unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3BandConfiguration@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3BandCrowdMeter@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8227B4FC (unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3BandCrowdMeter@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3BandDirector@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_822984E0 (unit BandDirector) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3BandDirector@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3BandFaceDeform@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8227B5A0 (unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3BandFaceDeform@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3BandHighlight@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_823435C8 (unit BandHighlight) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3BandHighlight@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3BandLeadMeter@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8227B640 (unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3BandLeadMeter@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3BandList@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8233F290 (unit BandList) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3BandList@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3BandRetargetVignette@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8227B6E0 (unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3BandRetargetVignette@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3BandScoreboard@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8227B988 (unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3BandScoreboard@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3BandSongPref@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8227C0F0 (unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3BandSongPref@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3BandStarDisplay@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8227B780 (unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3BandStarDisplay@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3CharKeyHandMidi@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8227B2B0 (unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3CharKeyHandMidi@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3CheckboxDisplay@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_82321168 (unit CheckboxDisplay) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3CheckboxDisplay@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3ChordShapeGenerator@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8228B2F0 (unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3ChordShapeGenerator@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3CrowdMeterIcon@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8227B478 (unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3CrowdMeterIcon@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3DialogDisplay@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8232AB08 (unit system/bandobj/DialogDisplay) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3DialogDisplay@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3EndingBonus@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8227BAC8 (unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3EndingBonus@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3GemTrackDir@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8227BC8C (unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3GemTrackDir@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3LayerDir@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_823297E8 (unit LayerDir) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3LayerDir@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3MicInputArrow@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_82319348 (unit MicInputArrow) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3MicInputArrow@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3OverdriveMeter@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8227BB68 (unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3OverdriveMeter@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3OvershellDir@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8227BD30 (unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3OvershellDir@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3PitchArrow@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8227BDD0 (unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3PitchArrow@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3ScrollbarDisplay@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_82323208 (unit ScrollbarDisplay) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3ScrollbarDisplay@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3SongSectionController@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8227BE70 (unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3SongSectionController@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3StreakMeter@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8227BC08 (unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3StreakMeter@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3TrackPanelDir@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8227BFB0 (unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3TrackPanelDir@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3UnisonIcon@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8227BA28 (unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3UnisonIcon@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3VocalTrackDir@@SAXPAX@Z",
+     "lane": "W16-KA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8227BF10 (unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3VocalTrackDir@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
     }
    ]
   },
