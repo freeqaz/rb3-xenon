@@ -32,7 +32,7 @@ public:
     // gAltRev at +0 / gRev at +4, i.e. one internal-linkage adjacent pair.
     // Definitions are now file-scope statics in CheckboxDisplay.cpp.
     NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    DELETE_OVERLOAD_INLINE;
 
     RndMesh *mCheckMesh; // 0x140
     bool mChecked; // 0x144

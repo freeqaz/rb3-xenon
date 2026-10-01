@@ -52,12 +52,14 @@ public:
     // ?StaticClassName@MicInputArrow@; li r4, 0; li r3, 0x1f4; bl <MemAlloc>`.
     // The local hand-rolled copy that used to sit here discarded the Symbol with
     // a bare `StaticClassName();`, which homes the temp into the SAME slot as
-    // `mem` -- the 0x50-vs-0x54 residual. Plain OBJ_MEM_OVERLOAD keeps operator
-    // delete noinline exactly as DELETE_OVERLOAD did, so ??_GMicInputArrow is
-    // unperturbed; the unwind funclet at 0x82319348 loads mem from 0x54 and
-    // calls the out-of-line ICF survivor ??3BinStream@@SAXPAX@Z, which is what
-    // a noinline delete produces.
-    OBJ_MEM_OVERLOAD(0x39);
+    // `mem` -- the 0x50-vs-0x54 residual.
+    // Delete is the INLINABLE form: retail's ??_GMicInputArrow (fn_82319280)
+    // calls ?MemFree@@YAXPAX@Z directly, while the unwind funclet at 0x82319348
+    // calls the out-of-line ICF survivor ??3BinStream@@SAXPAX@Z. MSVC produces
+    // exactly that split from an inlinable delete -- the funclet call is not
+    // inlined -- so both rows are served (lane W16-IE, 2026-10-01, whole-binary
+    // A/B: ??_G crossed to 100, no row fell).
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x39);
 
     // Retail-360 layout, read off the target span 0x82318C70..0x82319810
     // (?Update@ member offsets + ??1MicInputArrow@ vector-free offsets):

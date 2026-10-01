@@ -50,7 +50,7 @@ public:
     virtual void Reset() {}
     virtual void Sync() {}
 
-    OBJ_MEM_OVERLOAD(0x17);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x17);
     NEW_OBJ(RndCubeTex)
     static void Init() { REGISTER_OBJ_FACTORY(RndCubeTex) }
 

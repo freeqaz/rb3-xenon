@@ -17,7 +17,7 @@ public:
     virtual void DrawShowing();
     virtual void ListDrawChildren(std::list<RndDrawable *> &);
 
-    OBJ_MEM_OVERLOAD(0x14);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x14);
     NEW_OBJ(RndSoftParticles)
     static void Init() { REGISTER_OBJ_FACTORY(RndSoftParticles) }
 

@@ -29,7 +29,7 @@ public:
     virtual Hmx::Object *AnimTarget() { return mTrans; }
     virtual void SetKey(float);
 
-    OBJ_MEM_OVERLOAD(0x19)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x19)
     NEW_OBJ(RndTransAnim)
     static void Init() { REGISTER_OBJ_FACTORY(RndTransAnim) }
     RndTransformable *Trans() const { return mTrans; }

@@ -93,7 +93,7 @@ public:
     virtual void Exit();
     virtual void ListPollChildren(std::list<RndPollable *> &) const;
 
-    OBJ_MEM_OVERLOAD(0x24)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x24)
     NEW_OBJ(WorldCrowd)
 
     void SetLod(int lod);

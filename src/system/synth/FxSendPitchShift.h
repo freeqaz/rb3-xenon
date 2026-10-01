@@ -16,7 +16,7 @@ public:
     // OnParametersChanged). Called by GemPlayer::SetPitchShiftRatio.
     void SetRatio(float ratio);
 
-    OBJ_MEM_OVERLOAD(0x10);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x10);
     NEW_OBJ(FxSendPitchShift)
 
 protected:

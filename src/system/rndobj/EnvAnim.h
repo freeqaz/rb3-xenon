@@ -29,7 +29,7 @@ public:
     virtual void SetKey(float);
 
     NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    DELETE_OVERLOAD_INLINE;
     NEW_OBJ(RndEnvAnim)
     static void Init() { REGISTER_OBJ_FACTORY(RndEnvAnim) }
 

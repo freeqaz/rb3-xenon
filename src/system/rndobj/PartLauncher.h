@@ -18,7 +18,7 @@ public:
     // RndPollable
     virtual void Poll();
 
-    OBJ_MEM_OVERLOAD(0x13)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x13)
     NEW_OBJ(RndPartLauncher)
     static void Init() { REGISTER_OBJ_FACTORY(RndPartLauncher) }
     void LaunchParticles();

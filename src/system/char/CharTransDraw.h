@@ -24,7 +24,7 @@ public:
 
     void SetDrawModes(Character::DrawMode);
 
-    OBJ_MEM_OVERLOAD(0x14)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x14)
     NEW_OBJ(CharTransDraw);
 
     /** "The Characters whose translucent bits we will draw" */

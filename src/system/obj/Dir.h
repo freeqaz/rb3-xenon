@@ -686,7 +686,7 @@ public:
     static void Init();
     static void Terminate();
     NEW_OBJ(ObjectDir);
-    OBJ_MEM_OVERLOAD(0x111);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x111);
 
 protected:
     /** Routine to perform when an Object has been added to this ObjectDir. */

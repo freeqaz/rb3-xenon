@@ -24,7 +24,7 @@ public:
     virtual void Copy(const Hmx::Object *, CopyType);
     virtual void Load(BinStream &);
 
-    OBJ_MEM_OVERLOAD(0x15);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x15);
     NEW_OBJ(RndTexBlendController)
     static void Init() { REGISTER_OBJ_FACTORY(RndTexBlendController) }
 

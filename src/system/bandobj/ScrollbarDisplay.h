@@ -58,9 +58,12 @@ public:
     // `StaticClassName();`, merging the two slots -- that was the single
     // residual charge. The shared OBJ_MEM_OVERLOAD calls `.Str()` on the temp
     // and names `mem`, the form utl/MemMgr.h records as reproducing retail's
-    // separate-slot placement, and keeps operator delete noinline exactly as
-    // DELETE_OVERLOAD did. Lane W16-BE, 2026-09-15.
-    OBJ_MEM_OVERLOAD(0x3a);
+    // separate-slot placement. Lane W16-BE, 2026-09-15.
+    // Delete is the INLINABLE form: retail's ??_GScrollbarDisplay (fn_823233E0)
+    // calls ?MemFree@@YAXPAX@Z directly; the NewObject unwind funclet still
+    // calls the out-of-line ??3 (it is not inlined there). Lane W16-IE,
+    // 2026-10-01, whole-binary A/B: ??_G crossed to 100, no row fell.
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x3a);
 
     // UIComponent is 0x140 on retail-360 (not the 0x10c the Wii header assumes).
     ObjPtr<BandList> m_pList; // 0x140

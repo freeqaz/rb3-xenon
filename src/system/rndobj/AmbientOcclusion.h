@@ -40,7 +40,7 @@ public:
     void CalculateAO(float *);
     void Tessellate(float *, float *);
 
-    OBJ_MEM_OVERLOAD(0x15);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x15);
     NEW_OBJ(RndAmbientOcclusion)
     static void Init() { REGISTER_OBJ_FACTORY(RndAmbientOcclusion) }
 

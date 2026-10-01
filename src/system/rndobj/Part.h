@@ -197,7 +197,7 @@ public:
     virtual void SetPool(int, Type);
     virtual void SetPersistentPool(int, Type);
 
-    OBJ_MEM_OVERLOAD(0x90)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x90)
     NEW_OBJ(RndParticleSys)
     static void Init() { REGISTER_OBJ_FACTORY(RndParticleSys) }
 

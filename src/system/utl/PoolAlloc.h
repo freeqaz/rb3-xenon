@@ -30,12 +30,15 @@ public:
     MEM_OVERLOAD(FixedSizeAlloc, 0x1C);
 #else
     // retail inlines operator new (ChunkAllocator's ctor calls MemAlloc(0x1c, 0)
-    // directly; no ??2FixedSizeAlloc row) but keeps ??3FixedSizeAlloc out of line
+    // directly; no ??2FixedSizeAlloc row). operator delete is inlinable: retail
+    // still emits the ??3FixedSizeAlloc COMDAT, but ??_GFixedSizeAlloc
+    // (fn_824684C8) and ??_GReclaimableAlloc call ?MemFree@@YAXPAX@Z directly
+    // (lane W16-IE, 2026-10-01, whole-binary A/B).
     static void *operator new(unsigned int s) {
         return MemAlloc(s, __FILE__, 0x1C, "FixedSizeAlloc", 0);
     }
     static void *operator new(unsigned int s, void *place) { return place; }
-    __declspec(noinline) static void operator delete(void *v) {
+    static void operator delete(void *v) {
         MemFree(v, __FILE__, 0x1C, "FixedSizeAlloc");
     }
 #endif

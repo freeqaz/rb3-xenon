@@ -76,7 +76,7 @@ public:
     virtual void Poll();
     virtual void Enter();
 
-    OBJ_MEM_OVERLOAD(0x1E)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x1E)
     NEW_OBJ(WorldDir)
 
     static void Init();

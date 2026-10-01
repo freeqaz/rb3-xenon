@@ -37,7 +37,7 @@ public:
     virtual void SetFrame(float frame, float blend);
     virtual float EndFrame();
 
-    OBJ_MEM_OVERLOAD(0x16);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x16);
     NEW_OBJ(RndMorph)
     static void Init() { REGISTER_OBJ_FACTORY(RndMorph) }
     int NumPoses() const { return mPoses.size(); }

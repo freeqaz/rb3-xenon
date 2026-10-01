@@ -29,7 +29,7 @@ public:
     virtual Hmx::Object *AnimTarget() { return mAnim; }
     virtual void ListAnimChildren(std::list<RndAnimatable *> &) const;
 
-    OBJ_MEM_OVERLOAD(0x1B)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x1B)
     NEW_OBJ(RndAnimFilter)
     static void Init() { REGISTER_OBJ_FACTORY(RndAnimFilter) }
 

@@ -376,6 +376,10 @@ void operator delete[](void *mem) noexcept;
     static void operator delete[](void *v) {                                             \
         MemFree(v, __FILE__, line_num, #class_name);                                     \
     }
+// MEM_OVERLOAD with an inlinable operator delete -- identical on native for the
+// same reason as OBJ_MEM_OVERLOAD_INLINE_DEL above. See the match definition.
+#define MEM_OVERLOAD_INLINE_DEL(class_name, line_num) MEM_OVERLOAD(class_name, line_num)
+
 #else
 void *operator new(unsigned int size);
 void *operator new[](unsigned int size);
@@ -392,6 +396,10 @@ void operator delete[](void *mem);
 // (verified on CacheMgr::CreateCacheMgr: target `bl fn_82709EE0` vs our inlined
 // 2-arg MemAlloc). __declspec(noinline) reproduces that: the body still folds to
 // fn_82709EE0, but the call site no longer inlines it. operator delete likewise.
+// operator delete has a PER-CLASS exception: where retail's deleting destructor
+// calls ?MemFree@@YAXPAX@Z directly, the class uses one of the inlinable-delete
+// variants (OBJ_MEM_OVERLOAD_INLINE_DEL, MEM_OVERLOAD_INLINE_DEL,
+// DELETE_OVERLOAD_INLINE) defined below.
 // OBJ_MEM_OVERLOAD is the EXCEPTION to the out-of-line rule above. Retail's
 // `MemAlloc` strip happened inside an inline *function*, not a macro, so the
 // `StaticClassName()` name argument was still EVALUATED (and its result thrown
@@ -468,6 +476,20 @@ void operator delete[](void *mem);
     __declspec(noinline) static void operator delete[](void *v) {                        \
         MemFree(v, __FILE__, line_num, #class_name);                                     \
     }
+
+// MEM_OVERLOAD_INLINE_DEL -- MEM_OVERLOAD (operator new stays noinline and
+// ICF-folds) with an INLINABLE operator delete. Same mechanism as
+// OBJ_MEM_OVERLOAD_INLINE_DEL: the stripped body is `{ (MemFree)(v); }`, and
+// retail's deleting destructor for these classes calls ?MemFree@@YAXPAX@Z
+// directly instead of the class ??3. Lane W16-IE, 2026-10-01: applied only to
+// classes whose retail ??_G body was read calling MemFree, and kept only where
+// a whole-binary A/B paid with no row falling off 100.
+#define MEM_OVERLOAD_INLINE_DEL(class_name, line_num)                                    \
+    __declspec(noinline) static void *operator new(unsigned int s) {                     \
+        return MemAlloc(s, __FILE__, line_num, #class_name, 0);                          \
+    }                                                                                    \
+    static void *operator new(unsigned int s, void *place) { return place; }             \
+    static void operator delete(void *v) { MemFree(v, __FILE__, line_num, #class_name); }
 #endif
 
 // rb3-Wii style NEW_OVERLOAD/DELETE_OVERLOAD (no class name / line tracking).
@@ -482,6 +504,7 @@ void operator delete[](void *mem);
 
 #define DELETE_OVERLOAD                                                                  \
     static void operator delete(void *v) { MemFree(v, __FILE__, 0, "unknown"); }
+#define DELETE_OVERLOAD_INLINE DELETE_OVERLOAD
 #else
 #define NEW_OVERLOAD                                                                     \
     __declspec(noinline) static void *operator new(unsigned int s) {                     \
@@ -493,6 +516,14 @@ void operator delete[](void *mem);
     __declspec(noinline) static void operator delete(void *v) {                          \
         MemFree(v, __FILE__, 0, "unknown");                                              \
     }
+
+// DELETE_OVERLOAD_INLINE -- DELETE_OVERLOAD without __declspec(noinline), so the
+// deleting destructor inlines `(MemFree)(v)` as a direct `bl ?MemFree@@YAXPAX@Z`.
+// Pairs with an unchanged NEW_OVERLOAD: it moves ONLY the delete side. Lane
+// W16-IE, 2026-10-01: used only where retail's ??_G calls MemFree directly and a
+// whole-binary A/B paid with no row falling off 100.
+#define DELETE_OVERLOAD_INLINE                                                           \
+    static void operator delete(void *v) { MemFree(v, __FILE__, 0, "unknown"); }
 #endif
 
 // #define NEW_ARRAY_OVERLOAD \

@@ -103,7 +103,7 @@ public:
     static void Register() { REGISTER_OBJ_FACTORY(BandWardrobe); }
     NEW_OBJ(BandWardrobe);
     NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    DELETE_OVERLOAD_INLINE;
 
     ObjDirPtr<ObjectDir> unk8; // 0x4
     ObjDirPtr<ObjectDir> unk14; // 0x10

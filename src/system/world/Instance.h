@@ -41,7 +41,7 @@ public:
     virtual void Poll();
     virtual void Enter();
 
-    OBJ_MEM_OVERLOAD(0x3F)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x3F)
     NEW_OBJ(WorldInstance)
 private:
     void LoadPersistentObjects(BinStream &);

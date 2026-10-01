@@ -92,7 +92,7 @@ public:
     virtual void UpdatePreClearState() {}
     virtual void Highlight();
 
-    OBJ_MEM_OVERLOAD(0x25);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x25);
     NEW_OBJ(RndDrawable);
     static void Init() { REGISTER_OBJ_FACTORY(RndDrawable); }
 

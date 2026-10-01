@@ -71,7 +71,7 @@ public:
     virtual void EndWorld();
     virtual float Priority() { return 0.1f; }
 
-    OBJ_MEM_OVERLOAD(0x34)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x34)
     NEW_OBJ(SpotlightDrawer)
 
     static void Init();
