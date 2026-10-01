@@ -2038,19 +2038,19 @@ void VocalTrack::UpdateScrolling(float ms) {
             }
             int codaTick = TheSongDB->GetCodaStartTick();
             while (*curDeployPtr < freestyles.size()) {
-                const std::pair<float, float> *section = &freestyles[*curDeployPtr];
+                const std::pair<float, float> &section = freestyles[*curDeployPtr];
                 float nextStart =
                     (freestyles.size() > (*curDeployPtr + 1))
                         ? freestyles[*curDeployPtr + 1].first
                         : -1.0f;
                 if (codaTick != -1) {
                     float codaMs = TickToMs((float)codaTick);
-                    if (section->first < codaMs && codaMs < section->second) {
+                    if (section.first < codaMs && codaMs < section.second) {
                         std::pair<float, float> beforeCoda(
-                            section->first, codaMs
+                            section.first, codaMs
                         );
                         std::pair<float, float> afterCoda(
-                            codaMs, section->second
+                            codaMs, section.second
                         );
                         BuildStaticDeployZone(
                             part, beforeCoda, codaMs, tmpEndPos, shifts
@@ -2063,7 +2063,7 @@ void VocalTrack::UpdateScrolling(float ms) {
                     }
                 }
                 BuildStaticDeployZone(
-                    part, *section, nextStart, tmpEndPos, shifts
+                    part, section, nextStart, tmpEndPos, shifts
                 );
                 (*curDeployPtr)++;
             }
