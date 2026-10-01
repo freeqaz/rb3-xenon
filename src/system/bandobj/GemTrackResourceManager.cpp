@@ -107,7 +107,11 @@ void ArpeggioShape::SetFretNumber(const String &str, const Vector3 &pos) {
 }
 
 void ArpeggioShape::SetYPos(float y) {
-    Transform xfm(Hmx::Matrix3(1, 0, 0, 0, 1, 0, 0, 0, 1), Vector3(0, y, 0));
+    Transform xfm;
+    xfm.m.Identity();
+    xfm.v.y = y;
+    xfm.v.z = 0;
+    xfm.v.x = 0;
     unk0->SetWorldXfm(xfm);
 }
 

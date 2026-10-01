@@ -267,16 +267,21 @@ BEGIN_COPYS(BandFaceDeform)
     END_COPYING_MEMBERS
 END_COPYS
 
-// Element saver for BandFaceDeform::Save's vector operator<< (retail 0x822C71E8):
-// the byte size, then each run's two halfword fields and its packed 3-byte deltas.
-BinStream &operator<<(BinStream &bs, const BandFaceDeform::DeltaArray &da) {
-    bs << da.mSize;
-    for (Delta *d = (Delta *)da.mData; d < (Delta *)((char *)da.mData + da.mSize);
+// Retail 0x822C71E8 is a member taking the array in r3 and the stream in r4 and
+// returning nothing (the vector saver calls it per element): the byte size, then
+// each run's two halfword fields and its packed 3-byte deltas.
+void BandFaceDeform::DeltaArray::Save(BinStream &bs) const {
+    bs << mSize;
+    for (Delta *d = (Delta *)mData; d < (Delta *)((char *)mData + mSize);
          d = (Delta *)d->next()) {
-        bs << (const unsigned short &)d->unk0;
+        bs << *(const unsigned short *)d;
         bs << d->num;
         bs.Write(d + 1, d->num * 3);
     }
+}
+
+inline BinStream &operator<<(BinStream &bs, const BandFaceDeform::DeltaArray &da) {
+    da.Save(bs);
     return bs;
 }
 
