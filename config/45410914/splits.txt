@@ -12870,8 +12870,8 @@ system/beatmatch/TrackType.cpp:
 	.text       start:0x8277B490 end:0x8277B5A0
 
 system/beatmatch/DrumMap.cpp:
-	.pdata      start:0x8223EF00 end:0x8223EF10
-	.text       start:0x8278C3A8 end:0x8278C460
+	.pdata      start:0x8223EF00 end:0x8223EF20
+	.text       start:0x8278C3A8 end:0x8278C550
 
 system/beatmatch/TimeSpanVector.cpp:
 	.pdata      start:0x8223F4E0 end:0x8223F4E8
@@ -12991,11 +12991,11 @@ band3/game/CommonPhraseCapturer.cpp:
 	.text       start:0x826EC860 end:0x826ED658
 
 system/beatmatch/PhraseList.cpp:
-	.pdata      start:0x8223EF10 end:0x8223EF38
+	.pdata      start:0x8223EF20 end:0x8223EF38
 	.pdata      start:0x8223EF38 end:0x8223EF48
 	.pdata      start:0x8223EF48 end:0x8223EF58
 	.pdata      start:0x8223EF58 end:0x8223EF60
-	.text       start:0x8278C460 end:0x8278C6E8
+	.text       start:0x8278C550 end:0x8278C6E8
 	.text       start:0x8278C6E8 end:0x8278C794
 	.text       start:0x8278C7A0 end:0x8278C858
 	.text       start:0x8278C858 end:0x8278C898

@@ -1,4 +1,7 @@
 {
+ "0x8278c460": "?LaneOn@DrumMap@@QAA_NHH@Z",
+ "0x8278c4d8": "?LaneOff@DrumMap@@QAA_NHH@Z",
+ "0x826ab088": "?_M_clear_after_move@?$vector@VGameGem@@V?$StlNodeAlloc@VGameGem@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
  "0x8277b530": "?SymToTrackType@@YA?AW4TrackType@@VSymbol@@@Z",
  "0x82781e48": "?DetermineFreestyleSections@VocalNoteList@@QAAXXZ",
  "0x82780f40": "?PitchAt@VocalNoteList@@QBAMM@Z",
