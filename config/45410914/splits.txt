@@ -12226,13 +12226,11 @@ HeldNote.cpp:
 	.text       start:0x826F3B18 end:0x826F3E98
 
 RGUtl.cpp:
-	.pdata      start:0x821FC040 end:0x821FC0B0
 	.pdata      start:0x8223E1C0 end:0x8223E1C8
 	.pdata      start:0x8223E1C8 end:0x8223E1D0
 	.pdata      start:0x8223E1D0 end:0x8223E1D8
 	.pdata      start:0x8223E1D8 end:0x8223E240
 	.pdata      start:0x8223E240 end:0x8223E250
-	.text       start:0x82318500 end:0x82318C40
 	.text       start:0x82779A00 end:0x82779BF8
 	.text       start:0x82779BF8 end:0x82779C3C
 	.text       start:0x82779C40 end:0x82779CBC
@@ -13266,6 +13264,7 @@ MicInputArrow.cpp:
 	.pdata      start:0x821FBFF8 end:0x821FC000
 	.pdata      start:0x821FC000 end:0x821FC008
 	.pdata      start:0x821FC008 end:0x821FC040
+	.pdata      start:0x821FC040 end:0x821FC0B0
 	.pdata      start:0x821FC0B0 end:0x821FC170
 	.pdata      start:0x821FC170 end:0x821FC178
 	.text       start:0x82317AA0 end:0x82317B18
@@ -13278,6 +13277,7 @@ MicInputArrow.cpp:
 	.text       start:0x82318078 end:0x823180EC
 	.text       start:0x823180F0 end:0x82318164
 	.text       start:0x82318170 end:0x82318500
+	.text       start:0x82318500 end:0x82318C40
 	.text       start:0x82318C40 end:0x823198F0
 	.text       start:0x823198F0 end:0x82319948
 
