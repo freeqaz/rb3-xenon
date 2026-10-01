@@ -87,12 +87,19 @@ class PlayerDiffIcon { public: static void Init(); };
 class ScrollbarDisplay { public: static void Init(); };
 
 DataNode OnPaletteSync(DataArray *array) {
-    // TODO: this engine revision tracks refs with the intrusive ObjRef ring
-    // (Hmx::Object::Refs() -> const ObjRef&), not a vector<ObjRef*>,
-    // so a reverse-iterator walk does not port directly. Body left
-    // unimplemented; only BandInit/BandTerminate are being matched here.
+    // Every outfit config and swatch referencing the palette picks up its
+    // new colours.
     ColorPalette *colpal = array->Obj<ColorPalette>(1);
-    (void)colpal;
+    for (ObjRef::iterator it = colpal->Refs().begin(); it != colpal->Refs().end();
+         ++it) {
+        Hmx::Object *owner = RefPtrOf(it)->RefOwner();
+        OutfitConfig *cfg = dynamic_cast<OutfitConfig *>(owner);
+        if (cfg)
+            cfg->Recompose();
+        BandSwatch *swatch = dynamic_cast<BandSwatch *>(owner);
+        if (swatch)
+            swatch->SetColors(colpal);
+    }
     return 0;
 }
 

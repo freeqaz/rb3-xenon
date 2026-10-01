@@ -1,5 +1,6 @@
 #include "char/CharUtl.h"
 #include "char/CharClip.h"
+#include "char/CharClipGroup.h"
 #include "char/CharCuff.h"
 #include "char/CharHair.h"
 #include "math/Vec.h"
@@ -103,6 +104,20 @@ RndTransformable *CharUtlFindBoneTrans(const char *cc, ObjectDir *dir) {
                 RndTransformable *mesh = dir->Find<RndTransformable>(buf, false);
                 return mesh;
             }
+        }
+    }
+}
+
+// Reshuffles every clip group directly in dir (no subdirs); BandCharacter's
+// OnPostMerge runs it on freshly merged body clip sets (0x823A3FB8).
+void CharUtlRandomizeClipGroups(ObjectDir *dir) {
+    if (dir) {
+        Symbol groupType("CharClipGroup");
+        for (ObjectDir::Entry *entry = dir->HashTable().Begin(); entry != nullptr;
+             entry = dir->HashTable().Next(entry)) {
+            Hmx::Object *obj = entry->obj;
+            if (obj && obj->ClassName() == groupType)
+                dynamic_cast<CharClipGroup *>(obj)->Randomize();
         }
     }
 }

@@ -288,7 +288,7 @@ public:
     // region (0x778 = unk6ec, 0x7c4 = unk738) and 0x778+4+4+64 == 0x7c0 exactly,
     // leaving no slot for it. It is kept below under HX_NATIVE only.
     Waypoint *unk734; // 0x7c0
-    unsigned int unk738; // 0x7c4
+    int unk738; // 0x7c4
     ObjPtrList<RndMesh> unk73c; // 0x7c8
     ObjPtrList<RndMesh> unk74c; // 0x7dc
 #ifdef HX_NATIVE

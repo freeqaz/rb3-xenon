@@ -180,7 +180,18 @@ inline bool NearlyOne(float f) { return fabs(f - 1.0f) < 0.0001f; }
 inline bool NearlyZero(float f) { return fabs(f) < 0.0001f; }
 inline bool NearlyEqual(float f1, float f2) { return fabs(f1 - f2) < 0.0001f; }
 
-float Mod(float, float);
+// A header inline in retail: its one out-of-line COMDAT copy sits among
+// CharLipSyncDriver's code (0x82274150), and callers in other TUs treat it as
+// a known non-throwing callee (PatchLayer::Handle keeps separate return tails
+// after FlipX/FlipY).
+inline float Mod(float a, float b) {
+    if (b == 0.0f)
+        return 0.0f;
+    float result = fmod(a, b);
+    if (result < 0.0f)
+        result += b;
+    return result;
+}
 
 inline float ModRange(float f1, float f2, float f3) { return Mod(f3 - f1, f2 - f1) + f1; }
 

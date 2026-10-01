@@ -22,15 +22,6 @@
 #include "world/Dir.h"
 #include <cstring>
 
-float Mod(float a, float b) {
-    if (b == 0.0f)
-        return 0.0f;
-    float result = fmod(a, b);
-    if (result < 0.0f)
-        result += b;
-    return result;
-}
-
 CharLipSyncDriver::CharLipSyncDriver()
     : mLipSync(this, nullptr), mClips(this), mBlinkClip(this, nullptr), mSongOwner(this),
       mSongOffset(0), mLoop(0), mMainPlayback(0), mBones(this), mTestClip(this, nullptr),

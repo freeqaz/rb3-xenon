@@ -672,6 +672,15 @@ void VocalTrackDir::UpdateVocalMeters(bool b1, bool b2, bool b3, bool b4) {
 }
 
 Symbol GetRating(int i) {
+    // Retail builds all seven names as function-local statics on entry, then
+    // switches on the rating.
+    static Symbol vox_rating_0("vox_rating_0");
+    static Symbol vox_rating_1("vox_rating_1");
+    static Symbol vox_rating_2("vox_rating_2");
+    static Symbol vox_rating_3("vox_rating_3");
+    static Symbol vox_rating_4("vox_rating_4");
+    static Symbol vox_rating_5("vox_rating_5");
+    static Symbol vox_rating_6("vox_rating_6");
     switch (i) {
     case 0:
         return vox_rating_0;
@@ -1060,25 +1069,21 @@ DECOMP_FORCEACTIVE(
 )
 
 void VocalTrackDir::ApplyArrowStyle(Hmx::Object *o) {
-    bool isArrow = false;
-    if (o) {
-        const DataArray *td = o->TypeDef();
-        const char *typeMStr = td ? td->Sym(0).Str() : gNullStr;
-        if (typeMStr == arrow_style.Str()) {
-            isArrow = true;
-        }
-    }
-    if (isArrow) {
+    static Symbol arrow_style("arrow_style");
+    if (o && o->Type() == arrow_style) {
+        static Symbol arrow_A("arrow_A");
         if (mPitchArrow1 && o->Property(arrow_A, true)->NotNull()) {
             FilePath fp(o->Property(arrow_A, true)->Str());
             mPitchArrow1->SetProxyFile(fp, false);
             mPitchArrow1->Reset(0);
         }
+        static Symbol arrow_B("arrow_B");
         if (mPitchArrow2 && o->Property(arrow_B, true)->NotNull()) {
             FilePath fp(o->Property(arrow_B, true)->Str());
             mPitchArrow2->SetProxyFile(fp, false);
             mPitchArrow2->Reset(0);
         }
+        static Symbol arrow_C("arrow_C");
         if (mPitchArrow3 && o->Property(arrow_C, true)->NotNull()) {
             FilePath fp(o->Property(arrow_C, true)->Str());
             mPitchArrow3->SetProxyFile(fp, false);
@@ -1243,18 +1248,14 @@ float VocalTrackDir::GetLyricAlpha(int idx) const {
 float VocalTrackDir::PitchToZ(float pitch, bool clamp) const {
     float ratio = (pitch - mLastMin) / (mLastMax - mLastMin);
     if (clamp) {
-        if (ratio > 1.0f)
-            ratio = 1.0f;
-        else if (ratio < 0.0f)
-            ratio = 0.0f;
+        ratio = Clamp(0.0f, 1.0f, ratio);
     } else {
         while (ratio > 1.0f)
             ratio -= 1.0f;
         while (ratio < 0.0f)
             ratio += 1.0f;
     }
-    float bottom = mPitchBottomZ;
-    return ratio * (mPitchTopZ - bottom) + bottom;
+    return Interp(mPitchBottomZ, mPitchTopZ, ratio);
 }
 
 void VocalTrackDir::UpdateTubeStyle() {
@@ -1344,24 +1345,24 @@ void VocalTrackDir::UpdateTubeStyle() {
 }
 
 DataNode VocalTrackDir::OnSetLyricColor(const DataArray *da) {
-    float alpha = da->Float(4);
+    Hmx::Color color(0.0f, 0.0f, 0.0f, da->Float(4));
     Symbol sym(da->Sym(3));
     int packed = da->Int(2);
-    float red = (float)(packed & 255) / 255.0f;
-    float green = (float)((packed >> 8) & 255) / 255.0f;
-    float blue = (float)((packed >> 16) & 255) / 255.0f;
+    color.red = (float)(packed & 255) / 255.0f;
+    color.green = (float)((packed >> 8) & 255) / 255.0f;
+    color.blue = (float)((packed >> 16) & 255) / 255.0f;
     static Symbol lead("lead");
     static Symbol harmony("harmony");
     if (sym == lead) {
         if (mLeadText)
-            mLeadText->SetColor(Hmx::Color(red, green, blue, alpha));
+            mLeadText->SetColor(color);
         if (mLeadPhonemeText)
-            mLeadPhonemeText->SetColor(Hmx::Color(red, green, blue, alpha));
+            mLeadPhonemeText->SetColor(color);
     } else if (sym == harmony) {
         if (mHarmText)
-            mHarmText->SetColor(Hmx::Color(red, green, blue, alpha));
+            mHarmText->SetColor(color);
         if (mHarmPhonemeText)
-            mHarmPhonemeText->SetColor(Hmx::Color(red, green, blue, alpha));
+            mHarmPhonemeText->SetColor(color);
     }
     return DataNode(0);
 }

@@ -12,6 +12,7 @@ void CharUtlMergeBones(ObjectDir *, ObjectDir *, int);
 RndTransformable *CharUtlFindBoneTrans(const char *, ObjectDir *);
 bool CharUtlIsAnimatable(RndTransformable *);
 void CharUtlResetTransform(ObjectDir *);
+void CharUtlRandomizeClipGroups(ObjectDir *);
 CharBone *CharUtlFindBone(const char *, ObjectDir *);
 CharBone *GrabBone(CharBone *, ObjectDir *);
 DataNode OnResetHair(DataArray *);

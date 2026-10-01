@@ -328,7 +328,7 @@ void CrowdAudio::UpdateVolume() {
 }
 
 void CrowdAudio::SetEnabled(bool b) {
-    Hmx::Object *src = Dir();
+    MsgSource *src = dynamic_cast<MsgSource *>(Dir());
     if (src)
         src->RemoveSink(this);
     mEnabled = b;

@@ -1827,6 +1827,50 @@ void BandDirector::OnMidiAddPostProc(Symbol s, float f1, float f2) {
     }
 }
 
+CamCatEntry::CamCatEntry() : mCategory(gNullStr), mShot(gNullStr), mPriority(-1) {}
+
+// Chooses the shot for a group of same-frame categories (0x8228DF88): the first
+// category with no play-mode remap, else the first remapped shot that is not
+// TEST_CAM, else a random generic category. Directed cuts are skipped unless
+// allowDirected.
+Symbol BandDirector::PickShot(
+    std::vector<CamCatEntry> &entries, Symbol playMode, bool allowDirected
+) {
+    for (unsigned int i = 0; i < entries.size(); i++) {
+        CamCatEntry &entry = entries[i];
+        entry.mShot = RemapCat(entry.mCategory, playMode);
+        if (entry.mShot == entry.mCategory) {
+            if (allowDirected || strncmp(entry.mCategory.Str(), "directed_", 9) != 0)
+                return entry.mCategory;
+        }
+    }
+    for (unsigned int i = 0; i < entries.size(); i++) {
+        static Symbol test_cam("TEST_CAM");
+        CamCatEntry &entry = entries[i];
+        if (entry.mShot != test_cam) {
+            if (allowDirected || strncmp(entry.mCategory.Str(), "directed_", 9) != 0)
+                return entry.mShot;
+        }
+    }
+    static DataArray *generic =
+        SystemConfig("objects", "BandDirector", "generic_cam_cats")->Array(1);
+    return generic->Sym(RandomInt(0, generic->Size()));
+}
+
+// Walks back from key idx to the nearest key that holds an object
+// (0x8228E1F0, called only by OnRbn2AddPostProc).
+static __declspec(noinline) const Key<ObjectStage> *
+PrevObjectKey(ObjectKeys *keys, int idx) {
+    if (keys && idx < keys->NumKeys() && idx >= 0) {
+        for (; idx >= 0; idx--) {
+            const Key<ObjectStage> *key = &static_cast<ObjKeys &>(*keys)[idx];
+            if (key && key->value)
+                return key;
+        }
+    }
+    return nullptr;
+}
+
 // Retail-only pair (0x8229A2E0 / 0x82298E60). Both
 // are reached only through the two retail-only Handle() arms above,
 // so what matters for Handle()'s codegen is that they stay out-of-line calls.
@@ -1837,29 +1881,99 @@ void BandDirector::OnRbn2AddPostProc(Symbol s, float f) {
     if (okeys && mVenue.Dir()) {
         RndPostProc *proc = mVenue.Dir()->Find<RndPostProc>(s.Str(), false);
         if (proc) {
-            okeys->Add(proc, f * 30.0f, false);
-        } else
-            MILO_WARN("PostProc %s not found.  Cannot add to song.anim!\n", s.Str());
+            ObjKeys &keys = *okeys;
+            const Key<ObjectStage> *prev = nullptr;
+            const Key<ObjectStage> *next = nullptr;
+            float ref;
+            float frame = f * 30.0f;
+            const Key<ObjectStage> *beforeThat = nullptr;
+            int idx = keys.AtFrame(frame, prev, next, ref);
+            const Key<ObjectStage> *last;
+            if (okeys->NumKeys() <= 0 || !(last = &okeys->ObjKeys::back())
+                || !(frame > last->frame)) {
+                idx--;
+            }
+            // The keys either side of the new one; a null post-proc key is
+            // inserted first unless both neighbours already hold the same
+            // object.
+            const Key<ObjectStage> *before = idx >= 0 ? PrevObjectKey(okeys, idx) : prev;
+            if (before && idx >= 1 && keys.size() >= 2)
+                beforeThat = PrevObjectKey(okeys, idx - 1);
+            bool same = false;
+            if (before && beforeThat) {
+                Hmx::Object *a = before->value.Ptr();
+                Hmx::Object *b = beforeThat->value.Ptr();
+                if (a && b && a == b)
+                    same = true;
+            }
+            if (!same)
+                keys.Add(nullptr, frame, false);
+            keys.Add(proc, frame, false);
+        }
     }
 }
 
 void BandDirector::OnMidiShot5Cleanup() {
-    if (!mPropAnim)
-        return;
     PropKeys *shot5keys = mPropAnim->GetKeys(this, DataArrayPtr(Symbol("shot_5")));
-    PropKeys *shotkeys = mPropAnim->GetKeys(this, DataArrayPtr(Symbol("shot")));
-    if (!shotkeys || !shot5keys)
-        return;
-    Keys<Symbol, Symbol> &sym5keys = *shot5keys->AsSymbolKeys();
-    Keys<Symbol, Symbol> &symkeys = *shotkeys->AsSymbolKeys();
-    symkeys.clear();
-    for (int i = 0; i < sym5keys.size(); i++) {
-        symkeys.push_back(sym5keys[i]);
+    Symbol playMode = TheBandWardrobe->GetPlayMode();
+    String shotProp(playMode.Str());
+    shotProp.replace(0, 4, "shot");
+    PropKeys *shotkeys =
+        mPropAnim->GetKeys(this, DataArrayPtr(Symbol(shotProp.c_str())));
+    if (shot5keys && shotkeys) {
+        Keys<Symbol, Symbol> *keys5 = shot5keys->AsSymbolKeys();
+        Keys<Symbol, Symbol> *keys = shotkeys->AsSymbolKeys();
+        float frame = keys5->empty() ? -1.0f : keys5->front().frame;
+        std::vector<CamCatEntry> pending;
+        bool directed = false;
+        static DataArray *priorities =
+            SystemConfig("objects", "BandDirector", "cam_cat_priorities")->Array(1);
+        // Collect the shot_5 categories that share a frame, ranked by priority,
+        // and commit one shot for each group to the play mode's shot track.
+        for (unsigned int i = 0; i < keys5->size(); i++) {
+            if ((*keys5)[i].frame > frame && !pending.empty()) {
+                Symbol shot = PickShot(pending, playMode, !directed);
+                pending.clear();
+                if (directed)
+                    frame = keys->back().frame + 3.75f;
+                keys->Add(shot, frame, true);
+                frame = (*keys5)[i].frame;
+                directed = strncmp(shot.Str(), "directed_", 9) == 0;
+            }
+            CamCatEntry entry;
+            entry.mCategory = (*keys5)[i].value;
+            for (int p = 0; p < priorities->Size(); p++) {
+                if (priorities->Node(p).Sym() == entry.mCategory) {
+                    entry.mPriority = p;
+                    break;
+                }
+            }
+            bool inserted = false;
+            for (std::vector<CamCatEntry>::iterator it = pending.begin();
+                 it < pending.end();
+                 ++it) {
+                if (entry.mPriority > it->mPriority) {
+                    pending.insert(it, 1, entry);
+                    inserted = true;
+                    break;
+                }
+            }
+            if (!inserted)
+                pending.push_back(entry);
+        }
+        if (!pending.empty()) {
+            Symbol shot = PickShot(pending, playMode, !directed);
+            pending.clear();
+            if (directed)
+                frame = keys->back().frame + 3.75f;
+            keys->Add(shot, frame, true);
+        }
     }
 }
 #pragma auto_inline(on)
 
 void BandDirector::ExportWorldEvent(Symbol s) {
+    static Symbol none("none");
     if (s != none) {
         if (mCurWorld) {
             static Message msg("");
