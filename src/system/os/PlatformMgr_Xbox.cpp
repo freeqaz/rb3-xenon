@@ -439,12 +439,26 @@ DWORD PlatformMgr::ShowDeviceSelectorUI(
     return ret;
 }
 
+// Retail 0x8251BD28 (called from SystemPreInit): only the European game
+// regions (0x101, 0x201, 0x2FE, 0x2FF) select Europe; 0xFF and every other
+// region select NA.
 void PlatformMgr::RegionInit() {
-    if (XGetGameRegion() != 0xFF) {
-        SetRegion(kRegionEurope);
-    } else {
-        SetRegion(kRegionNA);
+    PlatformRegion region;
+    switch (XGetGameRegion()) {
+    case 0xFF:
+        region = kRegionNA;
+        break;
+    case 0x101:
+    case 0x201:
+    case 0x2FE:
+    case 0x2FF:
+        region = kRegionEurope;
+        break;
+    default:
+        region = kRegionNA;
+        break;
     }
+    SetRegion(region);
 }
 
 namespace {
