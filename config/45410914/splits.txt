@@ -5551,7 +5551,6 @@ CharServoBone.cpp:
 	.text       start:0x82376010 end:0x8237608C
 	.text       start:0x82376090 end:0x82376178
 	.text       start:0x82376178 end:0x82376D3C
-	.text       start:0x82545988 end:0x825459A8
 	.text       start:0x825459E0 end:0x825459E8
 	.text       start:0x826047A0 end:0x82604840
 	.text       start:0x82604840 end:0x82604868
@@ -8039,6 +8038,7 @@ AccomplishmentSongFilterConditional.cpp:
 	.pdata      start:0x82226358 end:0x82226380
 	.pdata      start:0x82226380 end:0x82226390
 	.text       start:0x825E8A20 end:0x825E8AD0
+	.text       start:0x825E8AD0 end:0x825E8AE8
 	.text       start:0x825E8AE8 end:0x825E8C30
 	.text       start:0x825E8C30 end:0x825E8D54
 	.text       start:0x825E8D54 end:0x825E8D88
@@ -8885,7 +8885,6 @@ band3/meta_band/AccomplishmentTrainerListConditional.cpp:
 	.pdata      start:0x82226280 end:0x822262C8
 	.text       start:0x825E86B8 end:0x825E8770
 	.text       start:0x825E8770 end:0x825E8A20
-	.text       start:0x825E8AD0 end:0x825E8AE8
 
 band3/meta_band/AccomplishmentSongListConditional.cpp:
 	.pdata      start:0x822263D8 end:0x822263F8
@@ -12564,6 +12563,7 @@ ProfileMgr.cpp:
 	.text       start:0x82545868 end:0x82545900
 	.text       start:0x82545900 end:0x8254591C
 	.text       start:0x82545920 end:0x82545984
+	.text       start:0x82545988 end:0x825459A8
 	.text       start:0x825459A8 end:0x825459E0
 	.text       start:0x825459E8 end:0x82545A70
 	.text       start:0x82545A70 end:0x82545C88
