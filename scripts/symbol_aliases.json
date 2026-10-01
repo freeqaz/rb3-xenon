@@ -57334,7 +57334,6 @@
     "??_GStartGameOnTimeMsg@@UAAPAXI@Z",
     "??_GSyncAllMsg@@UAAPAXI@Z",
     "??_GSyncUserMsg@@UAAPAXI@Z",
-    "??_GTextStream@@UAAPAXI@Z",
     "??_GTourHideShowFiltersMsg@@UAAPAXI@Z",
     "??_GTourMostStarsMsg@@UAAPAXI@Z",
     "??_GTourPlayedMsg@@UAAPAXI@Z",
@@ -57379,6 +57378,13 @@
      "class": "RTTI_PROVES_OWN_ADDRESS",
      "disposition": "withdrawn",
      "evidence": "Retail bytes: the scalar deleting destructor at 0x82790490 stores vtable 0x8210f2fc (lis/addi r11, stw r11,0(r3)) and that vtable's Complete Object Locator (vtable[-1]) names TypeDescriptor .?AVTrackWatcherParent@@. So this class's ??_G lives at 0x82790490, not at 0x82bf6f58, whose body stores a different vtable (0x821ad144). A ??_G that stores its own class's vtable cannot fold with another class's; the T1/L1_T1 proof masked exactly that operand (the vtable relocation target is an unnamed placeholder, which name_check forgives). 0x82790490 carries this spelling in target_symbol_map.json (lane W16-HZ)."
+    },
+    {
+     "spelling": "??_GTextStream@@UAAPAXI@Z",
+     "lane": "W16-IF 2026-10-01",
+     "class": "RTTI_PROVES_OWN_ADDRESS",
+     "disposition": "withdrawn",
+     "evidence": "Retail bytes: the scalar deleting destructor at 0x822716f8 stores vtable 0x82000e8c (lis/addi r11, stw r11,0(r3)) whose Complete Object Locator names TypeDescriptor .?AVTextStream@@, and that vtable's slot 0 points back at 0x822716f8. So TextStream's ??_G lives at 0x822716f8, not at 0x82bf6f58 (whose body stores no vtable). 0x822716f8 carries this spelling in target_symbol_map.json (lane W16-IF; it sat anonymous in RhythmDetector's pin)."
     }
    ],
    "repair": {
@@ -78507,7 +78513,7 @@
   {
    "name": "_M_clear",
    "address": "0x82714c98",
-   "survivor": "?_M_clear@?$vector@ULocalizedName@HamMove@@V?$StlNodeAlloc@ULocalizedName@HamMove@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+   "survivor": "?_M_clear@?$vector@VSampleZone@@V?$StlNodeAlloc@VSampleZone@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -78522,6 +78528,12 @@
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
      "disposition": "repartitioned"
+    },
+    {
+     "spelling": "?_M_clear@?$vector@ULocalizedName@HamMove@@V?$StlNodeAlloc@ULocalizedName@HamMove@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "the retail body at this address constructs/destroys/assigns SampleZone (calls ??0SampleZone/??4SampleZone/~SampleZone through the family), its callers are MidiInstrument code, and it ranks 99.8-100 against MidiInstrument.obj's vector<SampleZone> instantiation; the HamMove::LocalizedName survivor was a DC3 stand-in pairing against HamMove.obj"
     }
    ],
    "repair": {
@@ -79804,7 +79816,7 @@
   {
    "name": "1?$vector",
    "address": "0x82714d18",
-   "survivor": "??1?$vector@ULocalizedName@HamMove@@V?$StlNodeAlloc@ULocalizedName@HamMove@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "survivor": "??1?$vector@VSampleZone@@V?$StlNodeAlloc@VSampleZone@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -79813,6 +79825,12 @@
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
      "disposition": "dropped_singleton"
+    },
+    {
+     "spelling": "??1?$vector@ULocalizedName@HamMove@@V?$StlNodeAlloc@ULocalizedName@HamMove@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "the retail body at this address constructs/destroys/assigns SampleZone (calls ??0SampleZone/??4SampleZone/~SampleZone through the family), its callers are MidiInstrument code, and it ranks 99.8-100 against MidiInstrument.obj's vector<SampleZone> instantiation; the HamMove::LocalizedName survivor was a DC3 stand-in pairing against HamMove.obj"
     }
    ],
    "repair": {
@@ -84495,11 +84513,19 @@
   {
    "name": "$__uninitialized_copy",
    "address": "0x827148b0",
-   "survivor": "??$__uninitialized_copy@PAULocalizedName@HamMove@@PAU12@@stlpmtx_std@@YAPAULocalizedName@HamMove@@PAU12@00ABU__false_type@0@@Z",
+   "survivor": "??$__uninitialized_copy@PAVSampleZone@@PAV1@@stlpmtx_std@@YAPAVSampleZone@@PAV1@00ABU__false_type@0@@Z",
    "folded": [
     "??$__uninitialized_copy@PBULocalizedName@HamMove@@PAU12@@stlpmtx_std@@YAPAULocalizedName@HamMove@@PBU12@0PAU12@ABU__false_type@0@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_copy@PAULocalizedName@HamMove@@PAU12@@stlpmtx_std@@YAPAULocalizedName@HamMove@@PAU12@00ABU__false_type@0@@Z",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "the retail body at this address constructs/destroys/assigns SampleZone (calls ??0SampleZone/??4SampleZone/~SampleZone through the family), its callers are MidiInstrument code, and it ranks 99.8-100 against MidiInstrument.obj's vector<SampleZone> instantiation; the HamMove::LocalizedName survivor was a DC3 stand-in pairing against HamMove.obj"
+    }
+   ]
   },
   {
    "name": "$_M_allocate_and_copy",

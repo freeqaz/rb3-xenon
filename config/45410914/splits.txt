@@ -3491,12 +3491,6 @@ HamMove.cpp:
 	.pdata      start:0x821F17D0 end:0x821F17D8
 	.pdata      start:0x821F84B0 end:0x821F84B8
 	.pdata      start:0x82210658 end:0x82210678
-	.pdata      start:0x82238C28 end:0x82238C30
-	.pdata      start:0x82238C30 end:0x82238C38
-	.pdata      start:0x82238C38 end:0x82238C40
-	.pdata      start:0x82238C58 end:0x82238C90
-	.pdata      start:0x82238C90 end:0x82238CA8
-	.pdata      start:0x82238D20 end:0x82238D28
 	.text       start:0x822717C0 end:0x82271B08
 	.text       start:0x82271D48 end:0x82271D9C
 	.text       start:0x82271DA0 end:0x82271E6C
@@ -3507,12 +3501,6 @@ HamMove.cpp:
 	.text       start:0x822DCFB8 end:0x822DD024
 	.text       start:0x822DD028 end:0x822DD188
 	.text       start:0x82484B88 end:0x82484D00
-	.text       start:0x82714858 end:0x827148B0
-	.text       start:0x827148B0 end:0x82714918
-	.text       start:0x82714918 end:0x82714948
-	.text       start:0x82714A48 end:0x82714DC8
-	.text       start:0x82714DC8 end:0x827150B8
-	.text       start:0x82715530 end:0x827155A8
 	.text       start:0x827B7ED0 end:0x827B7EE0
 
 HamNavProvider.cpp:
@@ -7617,9 +7605,15 @@ MidiInstrument.cpp:
 	.pdata      start:0x82207DD0 end:0x82207DE0
 	.pdata      start:0x82207DF0 end:0x82207DF8
 	.pdata      start:0x82238AA8 end:0x82238C28
+	.pdata      start:0x82238C28 end:0x82238C30
+	.pdata      start:0x82238C30 end:0x82238C38
+	.pdata      start:0x82238C38 end:0x82238C40
 	.pdata      start:0x82238C40 end:0x82238C48
 	.pdata      start:0x82238C48 end:0x82238C50
+	.pdata      start:0x82238C58 end:0x82238C90
+	.pdata      start:0x82238C90 end:0x82238CA8
 	.pdata      start:0x82238CA8 end:0x82238D20
+	.pdata      start:0x82238D20 end:0x82238D28
 	.pdata      start:0x82238D28 end:0x82238D90
 	.pdata      start:0x82238DA8 end:0x82238DB8
 	.pdata      start:0x82238DB8 end:0x82238DD8
@@ -7628,9 +7622,15 @@ MidiInstrument.cpp:
 	.text       start:0x823E3ED8 end:0x823E3F58
 	.text       start:0x823E3FC8 end:0x823E4020
 	.text       start:0x827130B0 end:0x82714854
+	.text       start:0x82714858 end:0x827148B0
+	.text       start:0x827148B0 end:0x82714918
+	.text       start:0x82714918 end:0x82714948
 	.text       start:0x82714948 end:0x827149B0
 	.text       start:0x827149B0 end:0x827149D8
+	.text       start:0x82714A48 end:0x82714DC8
+	.text       start:0x82714DC8 end:0x827150B8
 	.text       start:0x827150B8 end:0x82715530
+	.text       start:0x82715530 end:0x827155A8
 	.text       start:0x827155A8 end:0x82715BFC
 	.text       start:0x82715CF4 end:0x82715E18
 	.text       start:0x82715E18 end:0x82715FD8
