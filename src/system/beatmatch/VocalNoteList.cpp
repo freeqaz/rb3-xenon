@@ -110,7 +110,6 @@ void VocalNoteList::NotesDone(const TempoMap &tmap, bool b) {
     int lastRangeBoundingPhrase = -1;
     if (sDump)
         MILO_LOG("parsing phrase data\n");
-    int noteEnd;
     for (int phraseIdx = 1; phraseIdx < mPhrases.size(); phraseIdx++) {
         VocalPhrase &phrase = mPhrases[phraseIdx];
         phrase.unk18 = 0;
@@ -162,8 +161,8 @@ void VocalNoteList::NotesDone(const TempoMap &tmap, bool b) {
             mLyricPhrases.push_back(phrase);
         }
 
-        noteEnd = phrase.unk14;
-        for (int j = phrase.unk10; j < noteEnd; j++) {
+        // retail re-reads phrase.unk14 as the bound each iteration
+        for (int j = phrase.unk10; j < phrase.unk14; j++) {
             if (!mNotes[j].IsUnpitched()) {
                 phrase.unk18 = 1;
                 phrase.unk24 = Min<float>((float)mNotes[j].StartPitch(), phrase.unk24);
@@ -185,8 +184,9 @@ void VocalNoteList::NotesDone(const TempoMap &tmap, bool b) {
             }
         }
 
-        currentMin = Min<float>(phrase.unk24, currentMin);
-        currentMax = Max<float>(currentMax, phrase.unk28);
+        // by-reference std::min/max: retail selects between address-taken values
+        currentMin = std::min(currentMin, phrase.unk24);
+        currentMax = std::max(currentMax, phrase.unk28);
         if (phrase.unk1a || phraseIdx + 1 == mPhrases.size()) {
             for (int k = lastRangeBoundingPhrase + 1; k <= phraseIdx; k++) {
                 mPhrases[k].unk24 = currentMin;
