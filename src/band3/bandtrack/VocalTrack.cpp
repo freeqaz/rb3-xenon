@@ -1606,7 +1606,11 @@ void VocalTrack::UpdateScrolling(float ms) {
             if (sectionOnly && phStartMs > (sectionEnd - 100.0f))
                 break;
 
-            bool isPast = staticLyrics ? (phEndMs < ms) : (phEndMs < buildAhead);
+            bool isPast;
+            if (staticLyrics)
+                isPast = phEndMs < ms;
+            else
+                isPast = phEndMs < buildAhead;
             if (sectionOnly && !isPast) {
                 // Retail: a phrase ending before the practice section is
                 // past outright; the straddle scan only runs past its start.
