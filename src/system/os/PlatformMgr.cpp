@@ -127,23 +127,6 @@ bool PlatformMgr::IsUserAGuest(const LocalUser *pUser) const {
     return IsPadAGuest(padnum);
 }
 
-// retail 0x82514BD0: GetPadNum (LocalUser vslot 0), then SetPadContext.
-void PlatformMgr::SetUserContext(const LocalUser *pUser, int id, int value) const {
-    SetPadContext(pUser->GetPadNum(), id, value);
-}
-
-// retail 0x82514C18: GetPadNum, then SetPadProperty.
-void PlatformMgr::SetUserProperty(
-    const LocalUser *pUser, int id, unsigned short const *value
-) const {
-    SetPadProperty(pUser->GetPadNum(), id, value);
-}
-
-// retail 0x82514C60: GetPadNum, then SetPadPresence.
-void PlatformMgr::SetUserPresence(const LocalUser *pUser, int ctx) const {
-    SetPadPresence(pUser->GetPadNum(), ctx);
-}
-
 void PlatformMgr::ShowUserFriendsUI(const LocalUser *pUser) {
     MILO_ASSERT(pUser, 0xA6);
     ShowFriendsUI(pUser->GetPadNum());

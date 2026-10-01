@@ -207,12 +207,6 @@ public:
     bool UserHasOnlinePrivilege(const LocalUser *) const;
     bool IsUserAGuest(const LocalUser *) const;
     bool IsPadAGuest(int) const;
-    // LocalUser wrappers over SetPadPresence/SetPadContext/SetPadProperty, retail
-    // 0x82514C60 / 0x82514BD0 / 0x82514C18 (called from PresenceMgr::UpdatePresence).
-    // The names are descriptive, after the IsUserSignedIn/IsSignedIn pairs here.
-    void SetUserPresence(const LocalUser *, int) const;
-    void SetUserContext(const LocalUser *, int, int) const;
-    void SetUserProperty(const LocalUser *, int, unsigned short const *) const;
     bool IsGuestOnlineID(const OnlineID *) const;
     void ShowUserFriendsUI(const LocalUser *);
     void ShowFriendsUI(int);
@@ -223,13 +217,6 @@ public:
     void InviteUserParty(const LocalUser *);
     void InviteParty(int);
     LocalUser *GetOwnerUserOfGuestUser(LocalUser *);
-    /** Retail 0x8251D6C8 (0x194 B, no symbol, no surviving source; the name
-        is ours). Reads both users' pad numbers through vtable slot 0, builds a
-        4-entry pad permutation that exchanges the two, applies it, and on
-        success swaps the two pads' joypad state and notifies both users.
-        Called by OvershellSlot::SwapUserProfile. Declared only: no TU we
-        compile defines it. */
-    void SwapUserPads(LocalUser *, LocalUser *);
     int GetOwnerOfGuest(int);
     void SetRegion(PlatformRegion);
     void SetDiskError(DiskError);
