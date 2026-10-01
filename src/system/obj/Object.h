@@ -1489,7 +1489,7 @@ public:
     void sort(const S &);
 
     void operator=(const ObjPtrList &list);
-    bool remove(T1 *);
+    void remove(T1 *);
     // RB3-360 retail signature: 2 params
     // (`bool Load(BinStream&, bool)`).  Retail's call site in
     // CharIKScale::Load passes exactly `r3=this, r4=bs, r5=1` -- the DC3-era
