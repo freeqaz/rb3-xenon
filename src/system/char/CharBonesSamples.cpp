@@ -342,7 +342,7 @@ void CharBonesSamples::Print() {
     TheDebug << MakeString(
         "samples: %d size: %d address: %x compression %d\n",
         mNumSamples,
-        mTotalSize * mNumSamples,
+        AllocateSize(),
         (int)mRawData,
         (int)mCompression
     );
