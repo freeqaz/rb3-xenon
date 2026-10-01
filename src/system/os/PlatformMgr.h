@@ -193,6 +193,7 @@ public:
     bool IsSignedIntoLive(int) const;
     bool IsSignedIn(int) const;
     bool IsUserSignedIn(const LocalUser *) const;
+    void SwapUserPads(LocalUser *, LocalUser *);
     bool IsPadNumSignedIn(int) const;
     bool HasPadNumsSigninChanged(int) const;
     bool HasUserSigninChanged(const LocalUser *) const;

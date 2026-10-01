@@ -17,6 +17,8 @@
 #include "xdk/XONLINE.h"
 #include "os/ThreadCall.h"
 #include "os/NetworkSocket_Win.h"
+#include "os/Joypad.h"
+#include "meta/Profile.h"
 #include "xdk/xonline/xonline.h"
 #include "meta/ConnectionStatusPanel.h"
 #include "ui/UI.h"
@@ -293,6 +295,37 @@ void PlatformMgr::PreInit() { XMPOverrideBackgroundMusic(); }
 extern "C" {
 DWORD XMountUtilityDrive(BOOL fFormatClean, DWORD dwBytesPerCluster, DWORD dwFileCacheSize);
 DWORD XUnmountUtilityDrive();
+}
+
+// Unnamed XDK wrapper at 0x82B54288 around the XamDeviceRemap import (it paces
+// itself with GetTickCount/Sleep). It takes the new pad-index permutation and
+// returns 0 on success. The name is ours.
+extern "C" DWORD XRemapUserDevices(DWORD *mapping);
+
+// Retail 0x8251D6C8, called by OvershellSlot::SwapUserProfile (0x825DF9C8) as
+// ThePlatformMgr.X(slotUser, swapUser). No oracle defines it; the name is ours.
+// Builds the 4-pad permutation that exchanges the two users' pads, asks the
+// system to remap, and on success swaps the joypad state and broadcasts a
+// ProfileSwappedMsg to the sinks (Export, Hmx::Object vtable slot 0x38).
+void PlatformMgr::SwapUserPads(LocalUser *user1, LocalUser *user2) {
+    int pad1 = user1->GetPadNum();
+    int pad2 = user2->GetPadNum();
+    DWORD mapping[4];
+    for (int i = 0; i < 4; i++) {
+        int pad = i;
+        if (i == pad1)
+            pad = pad2;
+        else if (i == pad2)
+            pad = pad1;
+        mapping[i] = pad;
+    }
+    if (XRemapUserDevices(mapping) == 0) {
+        JoypadSwapPads(pad1, pad2);
+        static ProfileSwappedMsg msg(nullptr, nullptr);
+        msg[0] = user1;
+        msg[1] = user2;
+        Export(msg, true);
+    }
 }
 
 // Retail 0x8251D378. The hard-drive probe mounts and immediately unmounts the
