@@ -98204,6 +98204,26 @@
    ],
    "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN, CHASED T1 PROVEN, 0 CYCLE leaves; retail_bodytwins 1. Charged call site(s) where retail branches to this survivor and our compiled code calls the spelling: ??$_M_splice_range@V?$_Slist_iterator@U?$pair@$$CBVSymbol@@ (104 B, 99.615).",
    "lane": "W16-KD 2026-10-01"
+  },
+  {
+   "name": "CheckAwesomesCondition",
+   "address": "0x82669a98",
+   "survivor": "?CheckAwesomesCondition@AccomplishmentSongConditional@@QBA_NPAVSongStatusMgr@@VSymbol@@ABUAccomplishmentCondition@@@Z",
+   "folded": [
+    "?CheckHoposPercentCondition@AccomplishmentSongConditional@@QBA_NPAVSongStatusMgr@@VSymbol@@ABUAccomplishmentCondition@@@Z"
+   ],
+   "evidence": "Retail ?CheckConditionsForSong@AccomplishmentSongConditional@@ (0x82669F80; its bl at +0x358) branches to 0x82669A98 in its hopos_percent arm, the same address its awesomes arm reaches (+0x398). With retail's guard-free body restored, our CheckHoposPercentCondition compiles to CheckAwesomesCondition's code: mHoposPercentage overlays mAwesomes in SongStatusInstrumentUnion. tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED (masked bodies equal, relocation targets differ), CHASED T1 PROVEN through GetBestHOPOPercent/GetBestAwesomes -> GetHOPOPercent/GetAwesomes, every slot SLOT-FOLD-OK, 0 CYCLE leaves; retail_bodytwins 6, discriminated by the callee chain.",
+   "lane": "W16-KD 2026-10-01"
+  },
+  {
+   "name": "CheckDoubleAwesomesCondition",
+   "address": "0x82669b18",
+   "survivor": "?CheckDoubleAwesomesCondition@AccomplishmentSongConditional@@QBA_NPAVSongStatusMgr@@VSymbol@@ABUAccomplishmentCondition@@@Z",
+   "folded": [
+    "?CheckSoloPercentCondition@AccomplishmentSongConditional@@QBA_NPAVSongStatusMgr@@VSymbol@@ABUAccomplishmentCondition@@@Z"
+   ],
+   "evidence": "Retail ?CheckConditionsForSong@AccomplishmentSongConditional@@ branches to 0x82669B18 (CheckDoubleAwesomesCondition) in its solo_percent arm (+0x378). With retail's guard-free body restored, our CheckSoloPercentCondition compiles to the same code: mSoloPercentage overlays mDoubleAwesomes in SongStatusInstrumentUnion. tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED (template-twin shape), CHASED T1 PROVEN through GetBestSoloPercent/GetBestDoubleAwesomes -> GetSoloPercent/GetDoubleAwesomes, 0 CYCLE leaves; retail_bodytwins 6, discriminated by the callee chain.",
+   "lane": "W16-KD 2026-10-01"
   }
  ]
 }
