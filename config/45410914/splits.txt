@@ -5090,9 +5090,11 @@ PropSync.cpp:
 	.pdata      start:0x82213F40 end:0x822140C0
 	.pdata      start:0x82214260 end:0x82214278
 	.pdata      start:0x82214280 end:0x82214290
+	.pdata      start:0x82214290 end:0x82214298
 	.pdata      start:0x82214298 end:0x822142B0
 	.pdata      start:0x822142C0 end:0x822142F8
 	.pdata      start:0x82214300 end:0x822143D8
+	.pdata      start:0x82214468 end:0x82214470
 	.pdata      start:0x822144A8 end:0x82214550
 	.pdata      start:0x82214550 end:0x82214558
 	.pdata      start:0x822145D8 end:0x822145F0
@@ -5104,10 +5106,12 @@ PropSync.cpp:
 	.text       start:0x824CAC64 end:0x824CBFE0
 	.text       start:0x824CD8B8 end:0x824CDA48
 	.text       start:0x824CDA98 end:0x824CDB80
+	.text       start:0x824CDB80 end:0x824CDBEC
 	.text       start:0x824CDBEC end:0x824CDBF0
 	.text       start:0x824CDBF0 end:0x824CDCE8
 	.text       start:0x824CDD60 end:0x824CE130
 	.text       start:0x824CE1A0 end:0x824CEDA0
+	.text       start:0x824CF800 end:0x824CF890
 	.text       start:0x824CFB24 end:0x824D02C8
 	.text       start:0x824D02C8 end:0x824D0338
 	.text       start:0x824D08E8 end:0x824D0EB0
@@ -6101,7 +6105,6 @@ Msg.cpp:
 	.pdata      start:0x82202F98 end:0x82202FA0
 	.pdata      start:0x822072E8 end:0x822072F8
 	.pdata      start:0x8220E5B0 end:0x8220E5B8
-	.pdata      start:0x82214468 end:0x82214470
 	.pdata      start:0x8223CF88 end:0x8223CF90
 	.pdata      start:0x8223CFA0 end:0x8223CFA8
 	.pdata      start:0x8223CFA8 end:0x8223CFB0
@@ -6130,7 +6133,6 @@ Msg.cpp:
 	.text       start:0x8238B130 end:0x8238B198
 	.text       start:0x823D9570 end:0x823D9628
 	.text       start:0x8245CC78 end:0x8245CCE0
-	.text       start:0x824CF800 end:0x824CF890
 	.text       start:0x826A8AB8 end:0x826A8AC4
 	.text       start:0x82766770 end:0x82766828
 	.text       start:0x827668E8 end:0x8276696C
@@ -10981,7 +10983,6 @@ EventAnim.cpp:
 	.pdata      start:0x82213EF8 end:0x82213F00
 	.pdata      start:0x82213F00 end:0x82213F28
 	.pdata      start:0x82213F28 end:0x82213F40
-	.pdata      start:0x82214290 end:0x82214298
 	.text       start:0x824C8D00 end:0x824C8E98
 	.text       start:0x824C8E98 end:0x824C8EF8
 	.text       start:0x824C8EF8 end:0x824C8FB8
@@ -11007,7 +11008,6 @@ EventAnim.cpp:
 	.text       start:0x824CAA80 end:0x824CAA8C
 	.text       start:0x824CAA90 end:0x824CAC58
 	.text       start:0x824CAC58 end:0x824CAC64
-	.text       start:0x824CDB80 end:0x824CDBEC
 
 system/beatmatch/BeatMaster.cpp:
 	.pdata      start:0x8223D6C8 end:0x8223D6D0
