@@ -933,14 +933,32 @@ void OvershellSlot::AttemptSwapUserProfile(int i) {
     }
 }
 
-bool OvershellSlot::ConfirmSwapUserProfile() {
+// Retail returns void: it tail-chains SwapUserProfile and never sets r3, and
+// its only caller is a HANDLE_ACTION.
+void OvershellSlot::ConfirmSwapUserProfile() {
     OvershellSlotState *state = mStateMgr->GetSlotState(kState_ChooseProfileConfirm);
-    return SwapUserProfile(state->Property("swap_user", true)->Obj<LocalBandUser>());
+    SwapUserProfile(state->Property("swap_user", true)->Obj<LocalBandUser>());
 }
 
-__declspec(noinline) bool OvershellSlot::SwapUserProfile(LocalBandUser *) {
-    ShowWiiProfileFail();
-    return false;
+// Retail 0x825DF9C8 (300 B, void -- no path sets r3). The user leaves whatever
+// slot holds it, the two users exchange pads through the platform manager, this
+// slot shows kState_JoinedDefault and is flagged as leaving options, and the
+// slot the user left re-adds it when its join-list entry was kMetaJoinOK.
+void OvershellSlot::SwapUserProfile(LocalBandUser *user) {
+    OvershellSlot *other = mOvershell->GetSlot(user);
+    if (other) {
+        other->RemoveUser();
+    }
+    LocalBandUser *cur = mBandUserMgr->GetUserFromSlot(mSlotNum)->GetLocalBandUser();
+    ThePlatformMgr.SwapUserPads(cur, user);
+    ShowState(kState_JoinedDefault);
+    mIsLeavingOptions = true;
+    if (other) {
+        JoinState state;
+        if (other->LookupUserInJoinList(user, &state) && state == kMetaJoinOK) {
+            other->AddUser(user);
+        }
+    }
 }
 
 void OvershellSlot::ShowOptionsDrum() {
