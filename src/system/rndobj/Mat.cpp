@@ -30,8 +30,8 @@ namespace {
 }
 
 // RndMat's ctor now lives in rndobj/BaseMaterial.cpp with the rest of the merged
-// class (retail has ONE material class; see rndobj/BaseMaterial.h).
-RndMat::~RndMat() {}
+// class (retail has ONE material class; see rndobj/BaseMaterial.h). Its
+// destructor is compiler-generated.
 
 // RB3-360 retail carries the allowed_next_pass / allowed_normal_map handlers on the
 // material class itself and chains straight to Hmx::Object. DC3 (newer engine)

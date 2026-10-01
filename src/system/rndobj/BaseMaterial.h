@@ -190,7 +190,8 @@ public:
     friend void CheckDistortion(RndMat *);
     friend void CheckDistortionOpts(RndMat *, struct ShaderOptions &);
 
-    virtual ~RndMat();
+    // No user-declared destructor: retail's ~RndMat never stores RndMat's own
+    // vtable, which is what the compiler-generated destructor looks like.
     OBJ_CLASSNAME(Mat);
     OBJ_SET_TYPE(Mat);
     virtual DataNode Handle(DataArray *, bool);

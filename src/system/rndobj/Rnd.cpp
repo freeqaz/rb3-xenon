@@ -942,7 +942,10 @@ void PreClearCompilerHelper(ObjPtrList<RndDrawable> &list, RndDrawable *draw) {
 }
 
 void Rnd::RegisterPostProcessor(PostProcessor *proc) {
+    // Retail (0x82416AF8) keeps no panel count; native does.
+#ifdef HX_NATIVE
     sPostProcPanelCount++;
+#endif
     mPostProcessors.push_back(proc);
     mPostProcessors.sort(SortPostProc());
 }
