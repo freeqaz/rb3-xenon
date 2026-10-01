@@ -641,12 +641,11 @@ void DataFail(const char *msg) {
 DataArray *ReadEmbeddedFile(const char *file, bool b) {
     CritSecTracker cst(&gDataReadCrit);
     const char *madePath = FileMakePath(FileGetPath(gFile.Str()), file);
-    Symbol localfile = gFile;
-
-    DataArray *savedArray = gArray;
-    DataType savedDataLine = gDataLine;
     int savedNode = gNode;
     BinStream *bs = gBinStream;
+    DataType savedDataLine = gDataLine;
+    Symbol localfile = gFile;
+    DataArray *savedArray = gArray;
     int savedOpenArray = gOpenArray;
 #ifdef HX_NATIVE
     char savedHoldChar = yyGetHoldChar();
