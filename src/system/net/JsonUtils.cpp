@@ -25,13 +25,18 @@ bool JsonObject::Bool() const {
     return json_object_get_boolean(mObject);
 }
 
+// Retail does not query the type here; the check is native-only.
 int JsonObject::Int() const {
+#ifdef HX_NATIVE
     MILO_ASSERT(GetType() == kType_Int, 0x2c);
+#endif
     return json_object_get_int(mObject);
 }
 
 double JsonObject::Double() const {
+#ifdef HX_NATIVE
     MILO_ASSERT(GetType() == kType_Double, 0x32);
+#endif
     return json_object_get_double(mObject);
 }
 

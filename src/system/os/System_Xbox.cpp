@@ -347,12 +347,14 @@ bool PlatformDebugBreak() {
 }
 
 void ShowDirtyDiscError() {
+#ifdef HX_NATIVE
     unsigned long ul;
 
     if (ThePlatformMgr.sXShowCallback(ul)) {
         XShowNuiDirtyDiscErrorUI(ul, 0);
     }
-
+#endif
+    // Retail shows only the standard dirty-disc UI (no Kinect variant).
     XShowDirtyDiscErrorUI(0);
 }
 
