@@ -2404,13 +2404,9 @@ UIPicture.cpp:
 	.text       start:0x828232C8 end:0x82823340
 
 BufStream.cpp:
-	.pdata      start:0x822429E8 end:0x82242A10
-	.pdata      start:0x82242A10 end:0x82242A20
-	.pdata      start:0x82242A20 end:0x82242A28
+	.pdata      start:0x822429E8 end:0x82242A28
 	.pdata      start:0x82242A28 end:0x82242A30
-	.text       start:0x827CC150 end:0x827CC384
-	.text       start:0x827CC384 end:0x827CC428
-	.text       start:0x827CC428 end:0x827CC4CC
+	.text       start:0x827CC150 end:0x827CC4CC
 	.text       start:0x827CC4D0 end:0x827CC6C4
 
 Locale.cpp:
@@ -2873,12 +2869,10 @@ Task.cpp:
 	.text       start:0x82749C40 end:0x8274A060
 	.text       start:0x8274A060 end:0x8274A974
 	.text       start:0x8274A9A4 end:0x8274A9B0
-	.text       start:0x8278E984 end:0x8278E9A8
 
 AsyncTask.cpp:
 	.pdata      start:0x8221A050 end:0x8221A058
-	.text       start:0x82533798 end:0x825337B0
-	.text       start:0x825337B0 end:0x82533870
+	.text       start:0x82533798 end:0x82533870
 
 EventTrigger.cpp:
 	.pdata      start:0x82211800 end:0x82211810
@@ -8778,15 +8772,8 @@ band3/meta_band/StoreOfferProvider.cpp:
 
 band3/meta_band/BandStorePanel.cpp:
 	.pdata      start:0x82228078 end:0x82228148
-	.pdata      start:0x82228148 end:0x82228158
-	.pdata      start:0x82228158 end:0x82228178
-	.pdata      start:0x82228178 end:0x82228180
-	.pdata      start:0x82228180 end:0x82228188
-	.pdata      start:0x82228188 end:0x82228190
 	.pdata      start:0x82228190 end:0x822281D0
-	.pdata      start:0x822281D0 end:0x82228218
-	.pdata      start:0x82228218 end:0x82228228
-	.pdata      start:0x82228228 end:0x82228318
+	.pdata      start:0x822281D0 end:0x82228318
 	.pdata      start:0x82228340 end:0x82228348
 	.pdata      start:0x82228388 end:0x82228488
 	.text       start:0x826050A8 end:0x826058E8
@@ -8797,9 +8784,7 @@ band3/meta_band/BandStorePanel.cpp:
 	.text       start:0x82605D20 end:0x82605FF8
 	.text       start:0x82605FF8 end:0x82606004
 	.text       start:0x82606008 end:0x8260625C
-	.text       start:0x82606260 end:0x826067C0
-	.text       start:0x826067C0 end:0x826068A8
-	.text       start:0x826068A8 end:0x826078B0
+	.text       start:0x82606260 end:0x826078B0
 	.text       start:0x82607A10 end:0x82607A90
 	.text       start:0x82607D30 end:0x82608D34
 
@@ -12955,15 +12940,9 @@ system/beatmatch/BeatMatchUtl.cpp:
 
 system/beatmatch/GameGem.cpp:
 	.pdata      start:0x8223F128 end:0x8223F130
-	.pdata      start:0x8223F130 end:0x8223F138
-	.pdata      start:0x8223F138 end:0x8223F140
-	.text       start:0x8278E758 end:0x8278E8F0
-	.text       start:0x8278E8F0 end:0x8278E95C
-	.text       start:0x8278E95C end:0x8278E968
-	.text       start:0x8278E968 end:0x8278E984
-	.text       start:0x8278E9A8 end:0x8278EBB4
-	.text       start:0x8278EBB8 end:0x8278F068
-	.text       start:0x8278F068 end:0x8278F208
+	.pdata      start:0x8223F130 end:0x8223F140
+	.text       start:0x8278E758 end:0x8278EBB4
+	.text       start:0x8278EBB8 end:0x8278F208
 
 system/beatmatch/GameGemList.cpp:
 	.pdata      start:0x82232E28 end:0x82232E30

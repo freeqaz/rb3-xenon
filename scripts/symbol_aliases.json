@@ -92069,17 +92069,18 @@
   },
   {
    "address": "0x827bea28",
-   "survivor": "??1LoaderGlitchContext@@QAA@XZ",
+   "survivor": "??1FilePath@@UAA@XZ",
    "folded": [
     "??1ArtEntry@StoreArtLoaderPanel@@QAA@XZ",
     "??1CacheDirEntry@@QAA@XZ",
-    "??1FilePath@@UAA@XZ",
+    "??1LoaderGlitchContext@@QAA@XZ",
     "??1Marker@@QAA@XZ",
     "??1MoveRating@SkeletonClip@@QAA@XZ",
     "??1SampleMarker@@QAA@XZ",
     "??1Label@?A0x81ddebd1@@QAA@XZ",
     "??1LeaderboardRow@@QAA@XZ"
    ],
+   "relabelled": "W16-MC 2026-10-01: survivor label moved from ??1LoaderGlitchContext to ??1FilePath (member set unchanged). Retail 0x827BEA28 is one 4-byte blr shared by these empty destructors (235 retail callers); which spelling labels it is arbitrary. LoadMgr::PollFrontLoader no longer uses LoaderGlitchContext, so Loader.obj stopped emitting that spelling and the row read 0; it still emits ??1FilePath.",
    "evidence": "Fold-thunk alias group derived by tools/fold_thunk_gate.py. Evidence tier(s) FT2. Our compiled COMDAT for each folded spelling below is byte-identical to the RETAIL body at the survivor address 0x827bea28 once relocation-carrying fields are masked, with every relocated branch destination RESOLVED through the map and NAME-equal rather than masked away; the survivor takes 235 direct branches across .text. FT1=retail's map places the folded spelling on the same body or nowhere. FT2=it places it on a different body the image itself discredits (zero .text fan-in, or no symbols.txt extent -- padding or a mid-function word). FT3=it places it on a HOMONYM, a distinct function under another module that legitimately carries the same mangled name, witnessed by dc3's leaked ham_xbox_r.map. FT-EMPTY=the body carries no relocation at all, so the fold is real but the byte comparison is vacuous. 1 folded spelling(s), 164 charged name_check sites. Per spelling: [??1FilePath@@UAA@XZ FT2, 164 sites: map parks ??1FilePath@@UAA@XZ at 0x82812508, which has ZERO .text fan-in]",
    "contradiction_exempt": "JUNK MAP ROW. 0x82812508 is a `b` tail-thunk with 0 bl callers; the group address (0x827bea28) has 235. Same class as a745039e's uncallable rows.",
    "merged_in": [
