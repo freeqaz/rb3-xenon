@@ -1162,21 +1162,27 @@ void OutfitConfig::DrawPreClear() {
     if (mTexBlender && mTexBlender->Unkc0()) {
         mTexBlender->DrawShowing();
     }
+#ifdef HX_NATIVE
+    // Editor-only reprojection; retail's DrawPreClear has no such block.
     if (mPermaProject && TheLoadMgr.EditMode()) {
         for (int i = 0; i < mPatches.size(); i++) {
             if (mPatches[i].ReProject())
                 Recompose();
         }
     }
+#endif
     BandCharDesc *desc = NULL;
     if (unk3c == 1 || unk38 != 0) {
         desc = FindBandCharDesc();
     }
     if (unk38 != 0) {
+#ifdef HX_NATIVE
+        // Editor-only posing; retail goes straight to the recompose.
         if (InMilo()) {
             PoseBones();
             SetSkinTextures();
         }
+#endif
         if (unk3c != 2) {
             int dirty = unk38;
             if (dirty != -1) {
