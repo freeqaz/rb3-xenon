@@ -260,6 +260,7 @@ BandScoreboard.cpp:
 	.pdata      start:0x821F7538 end:0x821F7570
 	.pdata      start:0x821F7570 end:0x821F75D8
 	.pdata      start:0x821F75D8 end:0x821F75E0
+	.pdata      start:0x821F75E8 end:0x821F75F0
 	.pdata      start:0x821F7600 end:0x821F7618
 	.pdata      start:0x821F7618 end:0x821F7698
 	.text       start:0x82274290 end:0x822743EC
@@ -271,6 +272,7 @@ BandScoreboard.cpp:
 	.text       start:0x822CE3F4 end:0x822CE6A8
 	.text       start:0x822CE6A8 end:0x822CEC70
 	.text       start:0x822CEC70 end:0x822CECDC
+	.text       start:0x822CED50 end:0x822CEDA0
 	.text       start:0x822CEEE8 end:0x822CEF8C
 	.text       start:0x822CEF8C end:0x822CF888
 
@@ -6875,11 +6877,9 @@ Compress.cpp:
 
 system/rndobj/CubeTex.cpp:
 	.pdata      start:0x821F1A50 end:0x821F1A58
-	.pdata      start:0x821F75E8 end:0x821F75F0
 	.pdata      start:0x8220A678 end:0x8220A688
 	.pdata      start:0x82211350 end:0x822114A0
 	.text       start:0x82275210 end:0x8227525C
-	.text       start:0x822CED50 end:0x822CEDA0
 	.text       start:0x8240DCB8 end:0x8240DD30
 	.text       start:0x82494FD8 end:0x824964EC
 
