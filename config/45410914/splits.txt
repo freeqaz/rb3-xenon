@@ -1899,16 +1899,10 @@ DepthBuffer3D.cpp:
 	.text       start:0x82741040 end:0x82741350
 
 MicClientMapper.cpp:
-	.pdata      start:0x82238738 end:0x82238740
-	.pdata      start:0x82238740 end:0x82238748
-	.pdata      start:0x82238748 end:0x82238780
-	.pdata      start:0x82238780 end:0x82238790
-	.text       start:0x8270F108 end:0x8270F348
-	.text       start:0x8270F348 end:0x8270F448
-	.text       start:0x8270F448 end:0x8270F4F4
-	.text       start:0x8270F528 end:0x8270F550
-	.text       start:0x8270F550 end:0x8270F9C4
-	.text       start:0x8270F9C4 end:0x8270FA20
+	.pdata      start:0x82238738 end:0x82238748
+	.pdata      start:0x82238748 end:0x82238798
+	.text       start:0x8270F108 end:0x8270F4F4
+	.text       start:0x8270F528 end:0x8270FAB4
 
 CharBonesBlender.cpp:
 	.pdata      start:0x822071C8 end:0x82207280
@@ -6163,13 +6157,13 @@ Msg.cpp:
 MetaMusic.cpp:
 	.pdata      start:0x82207D30 end:0x82207D40
 	.pdata      start:0x82231D78 end:0x82231D80
-	.pdata      start:0x82238790 end:0x82238880
+	.pdata      start:0x82238798 end:0x82238880
 	.pdata      start:0x82238888 end:0x82238998
 	.text       start:0x823CE81C end:0x823CE820
 	.text       start:0x823CE82C end:0x823CE838
 	.text       start:0x823E3630 end:0x823E3790
 	.text       start:0x82698A50 end:0x82698B1C
-	.text       start:0x8270FA20 end:0x82710D10
+	.text       start:0x8270FAB4 end:0x82710D10
 	.text       start:0x82710DBC end:0x82711F78
 
 SongCollision.cpp:

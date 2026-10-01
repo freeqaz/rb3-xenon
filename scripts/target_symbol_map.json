@@ -1,4 +1,6 @@
 {
+ "0x82bb3870": "?DecodeThreadPoll@VorbisReader@@QAA_NXZ",
+ "0x825289c8": "?SetFilterAllButStart@JoypadClient@@QAAX_N@Z",
  "0x8280dea0": "?StepPercent@UIListState@@QBAMXZ",
  "0x824229b0": "??$SortKeysByFrame@MM@@YAXAAV?$Keys@MM@@@Z",
  "0x82422a48": "??$SortKeysByFrame@VColor@Hmx@@V12@@@YAXAAV?$Keys@VColor@Hmx@@V12@@@@Z",
