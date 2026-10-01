@@ -2931,9 +2931,7 @@ MeshAnim.cpp:
 	.pdata      start:0x8220F358 end:0x8220F470
 	.pdata      start:0x8220F470 end:0x8220F478
 	.pdata      start:0x8220F478 end:0x8220F680
-	.pdata      start:0x8220F680 end:0x8220F708
-	.pdata      start:0x8220F718 end:0x8220F728
-	.pdata      start:0x8220F730 end:0x8220F738
+	.pdata      start:0x8220F680 end:0x8220F6D0
 	.pdata      start:0x82234730 end:0x82234738
 	.pdata      start:0x8223B860 end:0x8223B868
 	.pdata      start:0x8223D920 end:0x8223D928
@@ -2973,10 +2971,7 @@ MeshAnim.cpp:
 	.text       start:0x8246CDF0 end:0x8246EBE0
 	.text       start:0x8246EBE0 end:0x8246EC44
 	.text       start:0x8246EC44 end:0x82470CA8
-	.text       start:0x82470CA8 end:0x824712A8
-	.text       start:0x824712F4 end:0x824712F8
-	.text       start:0x82471344 end:0x82471518
-	.text       start:0x824715A4 end:0x824716B0
+	.text       start:0x82470CA8 end:0x82471040
 	.text       start:0x826C83E8 end:0x826C8468
 	.text       start:0x8274BB88 end:0x8274BBE4
 	.text       start:0x827708C0 end:0x82770920
@@ -3556,6 +3551,8 @@ VorbisReader.cpp:
 	.pdata      start:0x8225E8A0 end:0x8225E8A8
 	.pdata      start:0x8225E8B0 end:0x8225E8B8
 	.pdata      start:0x8225E8E8 end:0x8225E8F8
+	.pdata      start:0x8225E908 end:0x8225E918
+	.pdata      start:0x8225E950 end:0x8225E958
 	.pdata      start:0x8225E958 end:0x8225E988
 	.pdata      start:0x8225E988 end:0x8225E9A8
 	.pdata      start:0x8225E9B8 end:0x8225E9C0
@@ -3569,9 +3566,12 @@ VorbisReader.cpp:
 	.text       start:0x82BB3110 end:0x82BB3228
 	.text       start:0x82BB3288 end:0x82BB33D8
 	.text       start:0x82BB36B8 end:0x82BB37D0
+	.text       start:0x82BB3870 end:0x82BB3BB8
+	.text       start:0x82BB4088 end:0x82BB41A0
 	.text       start:0x82BB41A0 end:0x82BB4478
 	.text       start:0x82BB4478 end:0x82BB4640
 	.text       start:0x82BB4730 end:0x82BB477C
+	.text       start:0x82BB4878 end:0x82BB4B88
 
 TexMovie.cpp:
 	.pdata      start:0x8220D400 end:0x8220D408
@@ -3677,7 +3677,6 @@ Mesh.cpp:
 	.pdata      start:0x8220B6E8 end:0x8220B778
 	.pdata      start:0x8220B778 end:0x8220B788
 	.pdata      start:0x8220B788 end:0x8220B948
-	.pdata      start:0x8222D8E0 end:0x8222D8E8
 	.pdata      start:0x82231D20 end:0x82231D30
 	.pdata      start:0x8223A6F0 end:0x8223A6F8
 	.pdata      start:0x8223CFF8 end:0x8223D008
@@ -3686,13 +3685,15 @@ Mesh.cpp:
 	.pdata      start:0x822449B0 end:0x822449C0
 	.pdata      start:0x8225E8D8 end:0x8225E8E0
 	.pdata      start:0x8225E8E0 end:0x8225E8E8
-	.pdata      start:0x8225E8F8 end:0x8225E928
+	.pdata      start:0x8225E8F8 end:0x8225E908
+	.pdata      start:0x8225E918 end:0x8225E928
 	.pdata      start:0x8225E928 end:0x8225E930
 	.pdata      start:0x8225E930 end:0x8225E940
-	.pdata      start:0x8225E940 end:0x8225E958
+	.pdata      start:0x8225E940 end:0x8225E950
 	.pdata      start:0x8225E9A8 end:0x8225E9B8
 	.pdata      start:0x8225E9C0 end:0x8225E9C8
-	.pdata      start:0x8225E9C8 end:0x8225E9F0
+	.pdata      start:0x8225E9C8 end:0x8225E9D0
+	.pdata      start:0x8225E9D8 end:0x8225E9F0
 	.text       start:0x822DC7B0 end:0x822DC828
 	.text       start:0x822DF9A0 end:0x822DF9F8
 	.text       start:0x8239C6D8 end:0x8239C830
@@ -3724,7 +3725,6 @@ Mesh.cpp:
 	.text       start:0x8241F250 end:0x8241F310
 	.text       start:0x8241F310 end:0x82421400
 	.text       start:0x824215D4 end:0x824215E0
-	.text       start:0x82657CF0 end:0x82657E08
 	.text       start:0x826985C8 end:0x82698648
 	.text       start:0x82737688 end:0x827378B4
 	.text       start:0x82766EF8 end:0x82766FA8
@@ -3733,13 +3733,15 @@ Mesh.cpp:
 	.text       start:0x827ED4B0 end:0x827ED548
 	.text       start:0x82BB3510 end:0x82BB3578
 	.text       start:0x82BB3578 end:0x82BB36B8
-	.text       start:0x82BB37D0 end:0x82BB3C68
+	.text       start:0x82BB37D0 end:0x82BB3870
+	.text       start:0x82BB3BB8 end:0x82BB3C68
 	.text       start:0x82BB3C68 end:0x82BB3D98
 	.text       start:0x82BB3D98 end:0x82BB3F38
-	.text       start:0x82BB3F38 end:0x82BB41A0
+	.text       start:0x82BB3F38 end:0x82BB4088
 	.text       start:0x82BB4640 end:0x82BB4730
 	.text       start:0x82BB4780 end:0x82BB47F0
-	.text       start:0x82BB47F0 end:0x82BB4C00
+	.text       start:0x82BB47F0 end:0x82BB4878
+	.text       start:0x82BB4B88 end:0x82BB4C00
 
 CharMeshHide.cpp:
 	.pdata      start:0x822032A8 end:0x822032E0
@@ -5105,9 +5107,12 @@ Crowd.cpp:
 	.text       start:0x824E49EC end:0x824E7518
 
 LitAnim.cpp:
+	.pdata      start:0x8220F6D0 end:0x8220F708
 	.pdata      start:0x8220F708 end:0x8220F710
 	.pdata      start:0x8220F710 end:0x8220F718
+	.pdata      start:0x8220F718 end:0x8220F728
 	.pdata      start:0x8220F728 end:0x8220F730
+	.pdata      start:0x8220F730 end:0x8220F738
 	.pdata      start:0x8220F738 end:0x8220F740
 	.pdata      start:0x8220F740 end:0x8220F748
 	.pdata      start:0x8220F748 end:0x8220F750
@@ -5118,9 +5123,13 @@ LitAnim.cpp:
 	.pdata      start:0x8220F7C0 end:0x8220F7F0
 	.pdata      start:0x8220F7F0 end:0x8220F808
 	.pdata      start:0x82216040 end:0x82216060
+	.text       start:0x82471040 end:0x824712A8
 	.text       start:0x824712A8 end:0x824712F4
+	.text       start:0x824712F4 end:0x824712F8
 	.text       start:0x824712F8 end:0x82471344
+	.text       start:0x82471344 end:0x82471518
 	.text       start:0x82471518 end:0x824715A4
+	.text       start:0x824715A4 end:0x824716B0
 	.text       start:0x824716B0 end:0x82471778
 	.text       start:0x82471778 end:0x82471854
 	.text       start:0x82471858 end:0x82471930
@@ -9912,6 +9921,7 @@ MetaPerformer.cpp:
 
 Performer.cpp:
 	.pdata      start:0x8222D8D0 end:0x8222D8E0
+	.pdata      start:0x8222D8E0 end:0x8222D8E8
 	.pdata      start:0x8222D910 end:0x8222D978
 	.pdata      start:0x82232130 end:0x82232140
 	.pdata      start:0x82232140 end:0x82232148
@@ -9928,6 +9938,7 @@ Performer.cpp:
 	.pdata      start:0x822323D8 end:0x822323E8
 	.text       start:0x82365E58 end:0x82365E68
 	.text       start:0x82657C50 end:0x82657CF0
+	.text       start:0x82657CF0 end:0x82657E08
 	.text       start:0x82657FA0 end:0x8265853C
 	.text       start:0x8269CB20 end:0x8269CBE8
 	.text       start:0x8269CBE8 end:0x8269CC70
