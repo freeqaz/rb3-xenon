@@ -51,6 +51,12 @@ public:
 
     StorePurchaser(Symbol s, unsigned int i) : mSource(s), mUserIndex(i) {}
 
+protected:
+    // Records the "store/purchase" data point for a completed purchase
+    // (retail 0x827b2af8, called from XboxPurchaser::Poll).
+    void RecordPurchase(const char *offer);
+
+public:
     Symbol mSource;
     int mUserIndex;
 };
@@ -107,7 +113,7 @@ public:
     virtual bool IsPurchasing() const;
     virtual bool IsSuccess() const;
     virtual bool PurchaseMade() const;
-    virtual void Poll() {}
+    virtual void Poll();
 
     XboxPurchaser(
         int,
@@ -122,7 +128,7 @@ public:
     unsigned long long mOfferID; // 0x10
     int mUserIndex;              // 0x18
     bool mPurchaseMade;          // 0x1c
-    DWORD mResult;               // 0x20
+    HRESULT mResult;             // 0x20
 };
 
 class XboxMultipleItemsPurchaser : public StorePurchaser, Hmx::Object {
@@ -145,7 +151,7 @@ public:
     PurchaseState mState;                  // 0x34 - Current purchase state
     std::vector<unsigned long long> mOfferIDs; // Offer IDs to purchase
     int mUserIndex;                             // User index
-    DWORD mSelectedCount;                       // Count of items selected by user
+    HRESULT mSelectedCount;                     // phrResult of the marketplace call
 
 private:
     DataNode OnMsg(UIChangedMsg const &);
