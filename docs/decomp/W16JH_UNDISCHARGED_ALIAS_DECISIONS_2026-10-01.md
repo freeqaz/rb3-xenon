@@ -312,3 +312,22 @@ defect of §2.
 - Working outputs (not committed): `~/tmp/w16jh/`
   - `depcensus2.py`, the repaired census;
   - `audit*.json`, `ab_whole*.log`, `ctl*.log`, `gate_*.log`, `native_gate*.log`.
+
+## 10. Landing note (for whoever merges)
+
+Measured on main `545bdf90e`. Main has since moved to `e762a9298` (W16-JA), which again
+changes `scripts/symbol_aliases.json` and `scripts/target_symbol_map.json` and neither
+source file of this branch. Do **not** trust a text merge of either ledger; this lane hit
+a silent duplicate map key that way. The rebase recipe used here, three times:
+1. Rebase. For a map conflict, take HEAD's file and re-apply that commit's key-level delta
+   (`~/tmp/w16jh/resolve_map.py`; it asserts no duplicate keys). For a ledger conflict,
+   take HEAD's file.
+2. `git show <main>:scripts/symbol_aliases.json > scripts/symbol_aliases.json`, force a
+   re-split (`rm build/45410914/target_symbol_renames.stamp; touch config/45410914/config.yml`),
+   then run `./tools/ninja-locked`.
+3. Run `python3 tools/alias_placeholder_slot_audit.py --out A.json --apply --withdraw-undischarged --extra docs/decomp/W16JH_alias_decisions.json --lane "W16-JH 2026-10-01"`.
+   Then structurally diff against main's ledger: exactly N folded removals + N records,
+   0 other differences, and every withdrawal one of W16-JG's 341.
+4. Re-audit, expecting 0 CONTRADICTED / 0 UNDISCHARGED. Re-account the 341: anything
+   main's re-mappings moved out of reach must be decided against the address's current
+   name (§5). Then re-run all seven tool controls.
