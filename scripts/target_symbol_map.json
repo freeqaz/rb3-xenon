@@ -1,4 +1,5 @@
 {
+ "0x8257b428": "??1Instarank@@UAA@XZ",
  "0x823a8f98": "??0Strand@CharHair@@QAA@PAVObject@Hmx@@@Z",
  "0x8283c960": "XPhysicalSize",
  "0x8283c968": "XPhysicalFree",
@@ -14770,7 +14771,7 @@
  "0x8257c050": "?UpdateSoloInstarankHighscore2Label@MetaPerformer@@QAAXPAVBandUser@@PAVUILabel@@@Z",
  "0x8257c1a8": "?SetCreditsPending@MetaPerformer@@QAAXXZ",
  "0x8257c240": "??4?$pair@PAVBandProfile@@VPerformerStatsInfo@@@stlpmtx_std@@QAAAAU01@ABU01@@Z",
- "0x8257c368": "??_DUIEventMgr@@QAAXXZ",
+ "0x8257c368": "??_DInstarank@@QAAXXZ",
  "0x8257c3a8": "?GetVenueClass@MetaPerformer@@QBA?AVSymbol@@XZ",
  "0x8257c480": "?NumSongs@MetaPerformer@@QBAHXZ",
  "0x8257c498": "?Song@MetaPerformer@@QBA?AVSymbol@@XZ",
