@@ -322,10 +322,9 @@ void Track::SetUserNameLabel(ObjectDir *dir, const char *labelName) {
 bool Track::InGameMode(Symbol s) const { return TheGameMode->InMode(s); }
 
 bool Track::IsScoring() const {
-    if (mTrackConfig.GetBandUser()->GetPlayer()) {
-        return !mTrackConfig.GetBandUser()->GetPlayer()->GetQuarantined();
-    } else
-        return false;
+    return mTrackConfig.GetBandUser()->GetPlayer()
+        ? !mTrackConfig.GetBandUser()->GetPlayer()->GetQuarantined()
+        : false;
 }
 
 void Track::StartPulseAnims(float f) {
