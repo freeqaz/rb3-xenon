@@ -114,10 +114,12 @@ protected:
 // from retail bytes (ctors 0x825D4498 / 0x825D44F8, methods 0x825D4948..
 // 0x825D4DE8, vtables 0x820B36AC / 0x820B3744). Row 0 = "on", row 1 = "off";
 // the state lives in TheProfileMgr (bytes 0x6a / 0x6b). Class names are ours.
-class MusicLibraryUpsellViewSetting : public ViewSetting {
+// Retail RTTI names this class .?AVSongUpsellViewSetting@@ (its DataArray key is
+// still "music_library_upsell"); the retail image has no MusicLibraryUpsellViewSetting.
+class SongUpsellViewSetting : public ViewSetting {
 public:
-    MusicLibraryUpsellViewSetting() : ViewSetting("music_library_upsell") {}
-    virtual ~MusicLibraryUpsellViewSetting() {}
+    SongUpsellViewSetting() : ViewSetting("music_library_upsell") {}
+    virtual ~SongUpsellViewSetting() {}
 
     virtual int NumData() const { return 2; }
     virtual void Text(int, int, UIListLabel *, UILabel *) const;
