@@ -134,8 +134,7 @@ void FingerShape::UpdateFretNumber(const RGState &state, bool b) {
             mLastFretNumber = i48;
         }
     }
-    UpdateAnim(
-        mFretNumberPositionAnim, posframe, b && mFretNumberShowAnim->GetFrame() != 0
-    );
+    bool blendPos = b && mFretNumberShowAnim->GetFrame() != 0;
+    UpdateAnim(mFretNumberPositionAnim, posframe, blendPos);
     UpdateAnim(mFretNumberShowAnim, f2, b);
 }
