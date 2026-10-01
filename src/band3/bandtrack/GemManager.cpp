@@ -283,7 +283,7 @@ void GemManager::SetupRealGuitarFretPos() {
         std::vector<GameGem> gameGems;
         int i2 = -1;
         int i38 = 0;
-        int i3c = -1;
+        i3c = -1;
         for (int i = 0; i < mGems.size(); i++) {
             const GameGem &curGameGem = mGems[i].GetGameGem();
             if (i3c != -1 && curGameGem.GetTick() > i3c) {
