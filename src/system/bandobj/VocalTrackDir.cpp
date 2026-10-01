@@ -1248,18 +1248,14 @@ float VocalTrackDir::GetLyricAlpha(int idx) const {
 float VocalTrackDir::PitchToZ(float pitch, bool clamp) const {
     float ratio = (pitch - mLastMin) / (mLastMax - mLastMin);
     if (clamp) {
-        if (ratio > 1.0f)
-            ratio = 1.0f;
-        else if (ratio < 0.0f)
-            ratio = 0.0f;
+        ratio = Clamp(0.0f, 1.0f, ratio);
     } else {
         while (ratio > 1.0f)
             ratio -= 1.0f;
         while (ratio < 0.0f)
             ratio += 1.0f;
     }
-    float bottom = mPitchBottomZ;
-    return ratio * (mPitchTopZ - bottom) + bottom;
+    return Interp(mPitchBottomZ, mPitchTopZ, ratio);
 }
 
 void VocalTrackDir::UpdateTubeStyle() {
