@@ -1852,11 +1852,12 @@ void VocalTrack::UpdateScrolling(float ms) {
                 break;
             if (plate->Baked())
                 continue;
+            std::vector<Lyric *> &syllables = plate->mSyllables;
             plate->mBaked = true;
             if (staticLyrics) {
                 plate->UpdateStaticTiming(mMinPhraseHighlightMs);
             }
-            int phraseTick = (int)MsToTick(plate->mSyllables.front()->mActiveMs);
+            int phraseTick = (int)MsToTick(syllables.front()->mActiveMs);
             int commonPhraseID = TheSongDB->GetCommonPhraseID(
                 mTrackConfig.TrackNum(), phraseTick
             );
@@ -1878,8 +1879,8 @@ void VocalTrack::UpdateScrolling(float ms) {
             plate->mPastPhonemeColor.alpha = pastAlpha;
             plate->mPreviewPhonemeColor.alpha = previewAlpha;
 
-            for (int i = 0; i < plate->mSyllables.size(); i++) {
-                Lyric *lyric = plate->mSyllables[i];
+            for (int i = 0; i < syllables.size(); i++) {
+                Lyric *lyric = syllables[i];
                 Vector3 beginPos;
                 if (staticLyrics) {
                     beginPos.x = lastLyricX;
