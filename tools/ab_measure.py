@@ -1086,6 +1086,22 @@ def diff_paths(diff_text):
     return out
 
 
+def diff_residual_paths(want_diff, got_diff):
+    """PURE: the paths whose per-file diff differs between two `git diff`
+    texts -- i.e. what a restore that aimed at `want_diff` left wrong. A plain
+    symmetric difference of the path SETS would miss a file present in both
+    with different content, which is exactly the half-restored case."""
+    def chunks(t):
+        out = {}
+        for c in re.split(r"(?m)^(?=diff --git )", t or ""):
+            m = DIFF_PATH_RE.match(c)
+            if m:
+                out[m.group(2)] = c
+        return out
+    a, b = chunks(want_diff), chunks(got_diff)
+    return {p for p in set(a) | set(b) if a.get(p) != b.get(p)}
+
+
 def plan_restore(pre_diff, cur_diff, pre_untracked, cur_untracked,
                  patch_diff=""):
     """PURE decision: how to put the worktree back exactly as the run found it.
@@ -1187,6 +1203,7 @@ class TreeGuard:
         self.pre_untracked = []
         self.pre_path = self.rundir / "pre_run_state.diff"
         self.patch_diff = ""
+        self.patch_new_dirs = []
         self.outcome = None
 
     # ---- the pathspec that excludes the tool-owned symbols.txt ----
@@ -1197,8 +1214,44 @@ class TreeGuard:
         return d
 
     def _untracked(self):
-        _, st = git(self.wt, "status", "--porcelain")
-        return sorted(l[3:] for l in st.splitlines() if l.startswith("??"))
+        # ⛔ NOT `git status --porcelain` (lane W16-JI, 2026-10-01): without
+        # -uall it COLLAPSES a new directory to one `?? dir/` entry, which
+        # restore() then cannot unlink (it is not a file), so a patch that
+        # adds a file in a new directory left the directory behind and the
+        # verify failed. ls-files lists every untracked FILE, honours
+        # .gitignore (so build artifacts still stay out of the set), and -z
+        # makes it safe for paths git would otherwise quote.
+        _, st = git(self.wt, "ls-files", "--others", "--exclude-standard",
+                    "-z")
+        return sorted(p for p in st.split("\0") if p)
+
+    def _tracked_subset(self, paths):
+        """The members of `paths` the INDEX knows. Only these may be handed
+        to `git checkout --`: one unknown pathspec makes git refuse the WHOLE
+        checkout (rc=1, `pathspec ... did not match`), restoring nothing."""
+        if not paths:
+            return []
+        _, out = git(self.wt, "--literal-pathspecs", "ls-files", "-z", "--",
+                     *paths, check=False)
+        known = {p for p in out.split("\0") if p}
+        return [p for p in paths if p in known]
+
+    def note_patch(self, patch_diff):
+        """Record the measured patch BEFORE it is applied, plus every
+        directory it would CREATE (an ancestor of a patch path that does not
+        exist yet). restore() removes those again if they end up empty; it
+        never touches a directory that existed before the patch went in."""
+        self.patch_diff = patch_diff or ""
+        new_dirs = set()
+        root = self.wt.resolve()
+        for rel in diff_paths(self.patch_diff):
+            parent = (self.wt / rel).parent
+            while parent.resolve() != root and not parent.exists():
+                new_dirs.add(parent)
+                parent = parent.parent
+        # deepest first, so rmdir can walk upward
+        self.patch_new_dirs = sorted(new_dirs, key=lambda p: len(p.parts),
+                                     reverse=True)
 
     def capture(self):
         """Snapshot the caller's pre-run state. MUST run before any mutation.
@@ -1231,21 +1284,49 @@ class TreeGuard:
                 self.outcome = {"ok": True, "action": "none",
                                 "note": "tree already in its pre-run state"}
                 return self.outcome
-            if plan["checkout_paths"]:
+            # ⛔ Only paths the INDEX knows go to `checkout --` (lane W16-JI,
+            # 2026-10-01). The candidate set includes every path the PATCH
+            # names, and a file the patch ADDS has no index entry; git then
+            # refuses the ENTIRE checkout (`pathspec ... did not match`,
+            # rc=1) and restores nothing. That rc used to be discarded
+            # (check=False), so every patch that added a file ended its run
+            # with all its modified files still applied -- W16-JG (2 files)
+            # and W16-JC (89, then 101). A patch-added file is untracked, so
+            # the removal step below is what undoes it, not the checkout.
+            checkout = self._tracked_subset(plan["checkout_paths"])
+            if checkout:
                 # -- 'checkout --' is safe here ONLY because staged changes are
                 # refused in preflight: with index == HEAD for these paths it
                 # restores HEAD content, not a half-staged blend (the exact
                 # trap that made --from-dirty measure a partially-staged tree
                 # against a leg A silently carrying the staged half).
-                git(self.wt, "checkout", "--", *plan["checkout_paths"],
-                    check=False)
+                rc, out = git(self.wt, "--literal-pathspecs", "checkout",
+                              "--", *checkout, check=False)
+                if rc != 0:
+                    self.outcome = {
+                        "ok": False, "action": "checkout_failed",
+                        "snapshot": str(self.pre_path),
+                        "git_output": out[-2000:],
+                        "checked_out": checkout,
+                        "residual": sorted(diff_paths(self._diff()))}
+                    return self.outcome
+            removed = []
             for rel in plan["remove_paths"]:
                 p = self.wt / rel
                 try:
-                    if p.is_file():
+                    if p.is_file() or p.is_symlink():
                         p.unlink()
+                        removed.append(rel)
                 except OSError:
                     pass
+            # Directories the PATCH created (recorded before it was applied)
+            # go too, if the removal emptied them. A directory that existed
+            # before the patch is never in this list.
+            for d in self.patch_new_dirs:
+                try:
+                    d.rmdir()
+                except OSError:
+                    pass                          # not empty / already gone
             if plan["reapply"]:
                 rc, out = git(self.wt, "apply", str(self.pre_path), check=False)
                 if rc != 0:
@@ -1264,9 +1345,9 @@ class TreeGuard:
             # counted only `checked_out`. A check that cannot fail where the
             # damage happens is the vacuity class CLAUDE.md catalogues.
             #
-            # `_untracked()` reads `git status --porcelain` `??` lines, which
-            # respect .gitignore, so build artifacts do not enter this set and
-            # the equality is safe to require.
+            # `_untracked()` reads `git ls-files --others --exclude-standard`,
+            # which respects .gitignore, so build artifacts do not enter this
+            # set and the equality is safe to require.
             now = self._diff()
             untracked_now = self._untracked()
             diff_ok = (now == self.pre_diff)
@@ -1277,9 +1358,12 @@ class TreeGuard:
                             "verified_tracked_diff": diff_ok,
                             "verified_untracked_set": untracked_ok,
                             "snapshot": str(self.pre_path),
-                            "checked_out": plan["checkout_paths"],
-                            "removed": plan["remove_paths"]}
+                            "checked_out": checkout,
+                            "removed": removed}
             if not ok:
+                self.outcome["residual"] = sorted(
+                    diff_residual_paths(self.pre_diff, now)
+                    | (set(untracked_now) ^ set(self.pre_untracked)))
                 why = []
                 if not diff_ok:
                     why.append("post-restore diff still differs from the "
@@ -1355,9 +1439,23 @@ class TreeGuard:
             if res.get("git_output"):
                 print(f"  ┃  git said: {res['git_output'].strip()[:400]}",
                       file=sys.stderr)
-            print("  ┃  (Expected for splits.txt: it is a split OUTPUT as well "
-                  "as an input,\n  ┃   so the file the run ends on is not the "
-                  "file the patch produced.)", file=sys.stderr)
+            if res.get("note"):
+                print(f"  ┃  why: {res['note']}", file=sys.stderr)
+            resid = res.get("residual") or []
+            if resid:
+                print(f"  ┃  {len(resid)} path(s) NOT back in their pre-run "
+                      "state:", file=sys.stderr)
+                for r in resid[:20]:
+                    print(f"  ┃      {r}", file=sys.stderr)
+                if len(resid) > 20:
+                    print(f"  ┃      ... and {len(resid) - 20} more",
+                          file=sys.stderr)
+            # (The old banner ended with "Expected for splits.txt ...", which
+            # read as an explanation of ANY failure; W16-JC's lane took it as
+            # one while 89-101 files sat modified. A failure here is a tool
+            # defect -- report it, do not rationalise it.)
+            print("  ┃  This is an ab_measure DEFECT, not an expected state -- "
+                  "please report it.", file=sys.stderr)
             print("  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
                   file=sys.stderr)
         return res
@@ -1950,7 +2048,7 @@ def main():
         # Widen the guard's checkout set to every path the patch names: a path
         # can end the run byte-identical to HEAD and still need reverting,
         # because the split and patcher steps rewrite files in place.
-        guard.patch_diff = patch_path.read_text()
+        guard.note_patch(patch_path.read_text())
 
         # --- classify ---
         _, numstat = git(ab.wt, "apply", "--numstat", str(patch_path))
@@ -3240,6 +3338,125 @@ def selftest():
           f"this') appears in NO caption: offenders={bad}")
     if not ok:
         fails.append("TOOLFIX-1 stale claim")
+
+    # ---- TREE RESTORE, BEHAVIOURAL (lane W16-JI, 2026-10-01) -------------
+    # The planner cases above are pure logic and could not see this bug: the
+    # PLAN for a patch that adds a file was right, the EXECUTION was not (one
+    # unknown pathspec made `git checkout --` refuse every path, rc ignored).
+    # So these drive the real TreeGuard against a real scratch git repo --
+    # no build, ~0.2 s. Each fixture reads the TREE afterwards (git diff +
+    # every untracked file + the new directory), never the guard's own claim.
+    # Validated to FAIL on the pre-W16-JI TreeGuard (see the W16-JI doc).
+    import types as _types
+
+    def _restore_fixture(name, patch_files, *, pre_dirty=None,
+                         pre_untracked=None, run_rewrites=()):
+        with tempfile.TemporaryDirectory() as td:
+            wt = Path(td) / "wt"
+            wt.mkdir()
+            run_d = Path(td) / "run"
+            run_d.mkdir()
+
+            def g(*a):
+                return subprocess.run(["git", "-C", str(wt), *a], check=True,
+                                      capture_output=True, text=True).stdout
+            g("init", "-q")
+            for rel, txt in {"src/a.cpp": "a\n", "src/b.cpp": "b\n",
+                             "config/splits.txt": "s\n",
+                             "docs/notes.md": "n\n"}.items():
+                (wt / rel).parent.mkdir(parents=True, exist_ok=True)
+                (wt / rel).write_text(txt)
+            g("add", "-A")
+            g("-c", "user.email=t@t", "-c", "user.name=t", "commit", "-qm",
+              "base")
+            # the caller's own pre-run state, which must survive
+            for rel, txt in (pre_dirty or {}).items():
+                (wt / rel).write_text(txt)
+            for rel, txt in (pre_untracked or {}).items():
+                (wt / rel).parent.mkdir(parents=True, exist_ok=True)
+                (wt / rel).write_text(txt)
+            before_diff = g("diff")
+            before_unt = g("ls-files", "--others", "--exclude-standard")
+
+            fake = _types.SimpleNamespace(wt=wt, rundir=run_d,
+                                          say=lambda *a, **k: None)
+            guard = TreeGuard(fake)
+            guard.capture()
+            # build the patch the way ab_measure gets one: a real git diff
+            # with new files as `new file mode` entries
+            for rel, txt in patch_files.items():
+                (wt / rel).parent.mkdir(parents=True, exist_ok=True)
+                (wt / rel).write_text(txt)
+            g("add", "-N", *patch_files)
+            patch = g("diff", "--", *patch_files)
+            g("reset", "-q", "--", *patch_files)
+            for rel in patch_files:          # undo the authoring, keep caller
+                if g("ls-files", "--", rel):
+                    g("checkout", "--", rel)
+                    if rel in (pre_dirty or {}):
+                        (wt / rel).write_text(pre_dirty[rel])
+                else:
+                    (wt / rel).unlink()
+            for d in sorted({(wt / r).parent for r in patch_files},
+                            key=lambda p: len(p.parts), reverse=True):
+                while d != wt and d.exists() and not any(d.iterdir()):
+                    d.rmdir()
+                    d = d.parent
+            if hasattr(guard, "note_patch"):
+                guard.note_patch(patch)
+            else:                            # pre-W16-JI TreeGuard
+                guard.patch_diff = patch
+            pf = Path(td) / "p.diff"
+            pf.write_text(patch)
+            g("apply", str(pf))
+            for rel, txt in run_rewrites:    # e.g. the split rewriting splits
+                (wt / rel).write_text(txt)
+
+            res = guard.restore()
+            after_diff = g("diff")
+            after_unt = g("ls-files", "--others", "--exclude-standard")
+            stray_dirs = sorted(
+                str(d.relative_to(wt)) for d in wt.rglob("*")
+                if d.is_dir() and ".git" not in d.parts
+                and not any(d.iterdir()))
+            ok = (after_diff == before_diff and after_unt == before_unt
+                  and not stray_dirs and res.get("ok") is True)
+            print(("  PASS" if ok else "  FAIL") + f"  [W16-JI] {name}: "
+                  f"diff_back={after_diff == before_diff} "
+                  f"untracked_back={after_unt == before_unt} "
+                  f"stray_empty_dirs={stray_dirs} "
+                  f"action={res.get('action')} ok={res.get('ok')}")
+            if not ok:
+                fails.append(f"W16-JI {name}")
+
+    _restore_fixture(
+        "a patch that ADDS a file next to a modified one is fully reverted "
+        "(old code: whole checkout refused, modified file left applied)",
+        {"src/a.cpp": "a\nPATCHED\n", "src/new_tu.cpp": "new\n"})
+    _restore_fixture(
+        "a patch that adds a file in a NEW DIRECTORY leaves no directory "
+        "behind (old code: `?? dir/` could not be unlinked)",
+        {"src/a.cpp": "a\nPATCHED\n", "src/newdir/sub/x.cpp": "x\n"})
+    _restore_fixture(
+        "W16-JC shape: many modified + new files + the split rewriting "
+        "splits.txt; the caller's own dirty edit and untracked file survive",
+        {"src/a.cpp": "a\nPATCHED\n", "src/b.cpp": "b\nPATCHED\n",
+         "src/new1.cpp": "1\n", "src/newdir/new2.cpp": "2\n"},
+        pre_dirty={"docs/notes.md": "n\nCALLER WORK\n"},
+        pre_untracked={"notes/mine.txt": "keep me\n"},
+        run_rewrites=[("config/splits.txt", "s\nRESPLIT\n")])
+    _restore_fixture(
+        "control: a modify-only patch (the case the old code already got "
+        "right) still restores -- the fixture is not failing on everything",
+        {"src/a.cpp": "a\nPATCHED\n"})
+
+    r = diff_residual_paths(
+        "diff --git a/x b/x\n+1\n", "diff --git a/x b/x\n+2\n")
+    ok = r == {"x"} and not diff_residual_paths(D_A, D_A)
+    print(("  PASS" if ok else "  FAIL") + "  [W16-JI] residual reporting "
+          f"catches a path present in BOTH diffs with different content: {r}")
+    if not ok:
+        fails.append("W16-JI residual paths")
 
     print(f"selftest: {'ALL PASS' if not fails else f'FAILURES: {fails}'}")
     return 0 if not fails else 1
