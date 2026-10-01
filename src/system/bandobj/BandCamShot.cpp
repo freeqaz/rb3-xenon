@@ -521,21 +521,15 @@ void BandCamShot::Store() {
 }
 
 void BandCamShot::View() {
-    bool b;
     FOREACH (it, mTargets) {
-        Target &cur = *it;
-        RndTransformable *t;
-        b = false;
-        if (!(*it).mTarget.Null()) {
-            t = GetTargetCache(cur.mTarget)->unk4;
-            if (t)
-                b = true;
-        }
-        if (b) {
-            TeleportTarget(t, cur.mXfm, false);
-            Character *charObj = dynamic_cast<Character *>(t);
-            if (charObj)
-                FreezeChar(charObj, false);
+        if (!it->mTarget.Null()) {
+            RndTransformable *t = GetTargetCache(it->mTarget)->unk4;
+            if (t) {
+                TeleportTarget(t, it->mXfm, false);
+                Character *charObj = dynamic_cast<Character *>(t);
+                if (charObj)
+                    FreezeChar(charObj, false);
+            }
         }
     }
     StartAnim();
