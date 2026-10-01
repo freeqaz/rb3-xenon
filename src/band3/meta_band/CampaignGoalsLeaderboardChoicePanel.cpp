@@ -143,7 +143,8 @@ void CampaignGoalsLeaderboardChoicePanel::LoadIcons() {
         Symbol cur = *it;
         Accomplishment *pGoal = TheAccomplishmentMgr->GetAccomplishment(cur);
         MILO_ASSERT(pGoal, 0xDA);
-        AddTex(pGoal->GetIconArt(), cur.Str(), true, false);
+        const char *art = pGoal->GetIconArt();
+        AddTex(art, cur.Str(), true, false);
     }
 }
 
