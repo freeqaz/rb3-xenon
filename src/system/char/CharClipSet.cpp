@@ -354,14 +354,19 @@ void CharClipSet::ResetEditorState() {
 }
 
 void CharClipSet::SetBpm(int bpm) {
+    // Pushes the tempo to the milo tool's bpm property when it is running.
     static Symbol sBpm("bpm");
+    Hmx::Object *milo = ObjectDir::Main()->FindObject("milo", false);
+    if (milo) {
+        milo->SetProperty(sBpm, bpm);
+    }
     mBpm = bpm;
 }
 
 void CharClipSet::ResetPreviewState() {
     delete mPreviewChar;
-    mPreviewClip = 0;
-    mStillClip = 0;
+    mPreviewClip.ReleaseObjConcrete();
+    mStillClip.ReleaseObjConcrete();
     mCharFilePath.SetRoot("");
     mFilterFlags = 0;
     mBpm = 90;
