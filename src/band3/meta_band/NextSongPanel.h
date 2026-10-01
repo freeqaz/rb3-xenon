@@ -28,7 +28,8 @@ _STLP_TEMPLATE_NULL struct hash<Symbol> {
 
 class NextSongPanel : public UIPanel {
 public:
-    NextSongPanel() {}
+    // Implicit ctor: retail (??0NextSongPanel, emitted in MetaPanel.obj) stores a
+    // literal 0 to the vtordisp slot, which a user-declared {} ctor does not.
     OBJ_CLASSNAME(NextSongPanel);
     OBJ_SET_TYPE(NextSongPanel);
     NEW_OBJ(NextSongPanel);

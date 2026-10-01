@@ -126,8 +126,9 @@ void ContextWrapperPool::FailAllContexts() {
     for (int i = 0; i <= cap; i++) {
         if (mContextWrappers[i].mContext) {
             RockCentralOpCompleteMsg msg(false, 0, mContextWrappers[i].mId);
-            if (mContextWrappers[i].mCallbackObject) {
-                mContextWrappers[i].mCallbackObject->Handle(msg);
+            Hmx::Object *callback = mContextWrappers[i].mCallbackObject;
+            if (callback) {
+                callback->Handle(msg);
             }
             mContextWrappers[i].Reset();
         }

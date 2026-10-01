@@ -257,13 +257,12 @@ void AccomplishmentPanel::LoadCampaignIcons() {
     for (std::vector<Symbol>::iterator it = vec.begin(); it != vec.end(); ++it) {
         Accomplishment *pAccomplishment = TheAccomplishmentMgr->GetAccomplishment(*it);
         MILO_ASSERT(pAccomplishment, 0x3E0);
-        Symbol name = pAccomplishment->GetName();
+        const char *name = pAccomplishment->GetName().Str();
         const char *art = pAccomplishment->GetIconArt();
         if (strlen(art) != 0)
-            AddTex(art, name.Str(), true, false);
+            AddTex(art, name, true, false);
     }
-    const char *sekrit = MakeString(Accomplishment::GetIconPath(), "acc_secret");
-    AddTex(sekrit, "acc_secret", true, false);
+    AddTex(MakeString(Accomplishment::GetIconPath(), "acc_secret"), "acc_secret", true, false);
 }
 
 void AccomplishmentPanel::Unload() {
@@ -983,8 +982,8 @@ bool AccomplishmentPanel::HasAward() const {
     if (IsSecret())
         return false;
     else {
-        Accomplishment *acc =
-            TheAccomplishmentMgr->GetAccomplishment(SelectedAccomplishment());
+        Symbol selected = SelectedAccomplishment();
+        Accomplishment *acc = TheAccomplishmentMgr->GetAccomplishment(selected);
         if (acc)
             return acc->HasAward();
         else
@@ -1009,8 +1008,8 @@ bool AccomplishmentPanel::HasProgress() const {
     if (IsSecret())
         return false;
     else {
-        Accomplishment *acc =
-            TheAccomplishmentMgr->GetAccomplishment(SelectedAccomplishment());
+        Symbol selected = SelectedAccomplishment();
+        Accomplishment *acc = TheAccomplishmentMgr->GetAccomplishment(selected);
         if (!acc)
             return false;
         else {
@@ -1051,8 +1050,8 @@ int AccomplishmentPanel::GetCurrentValue() const {
     else {
         BandProfile *pProfile = TheCampaign->GetProfile();
         MILO_ASSERT(pProfile, 0x879);
-        Accomplishment *acc =
-            TheAccomplishmentMgr->GetAccomplishment(SelectedAccomplishment());
+        Symbol selected = SelectedAccomplishment();
+        Accomplishment *acc = TheAccomplishmentMgr->GetAccomplishment(selected);
         int i10 = 0;
         if (acc) {
             int i14 = 0;
@@ -1068,8 +1067,8 @@ int AccomplishmentPanel::GetMaxValue() const {
     else {
         BandProfile *pProfile = TheCampaign->GetProfile();
         MILO_ASSERT(pProfile, 0x890);
-        Accomplishment *acc =
-            TheAccomplishmentMgr->GetAccomplishment(SelectedAccomplishment());
+        Symbol selected = SelectedAccomplishment();
+        Accomplishment *acc = TheAccomplishmentMgr->GetAccomplishment(selected);
         int i10 = 0;
         int i14 = 0;
         if (acc) {
@@ -1110,17 +1109,16 @@ bool AccomplishmentPanel::IsSecret() const {
 }
 
 void AccomplishmentPanel::SetRandomUnplayedSong() {
-    Accomplishment *pAccomplishment =
-        TheAccomplishmentMgr->GetAccomplishment(SelectedAccomplishment());
+    Symbol selected = SelectedAccomplishment();
+    Accomplishment *pAccomplishment = TheAccomplishmentMgr->GetAccomplishment(selected);
     MILO_ASSERT(pAccomplishment, 0x8D5);
     MILO_ASSERT(pAccomplishment->GetType() == kAccomplishmentTypeSongFilterConditional, 0x8D6);
     AccomplishmentSongFilterConditional *pFilterAccomplishment =
         dynamic_cast<AccomplishmentSongFilterConditional *>(pAccomplishment);
     MILO_ASSERT(pFilterAccomplishment, 0x8D9);
     SongSortMgr::SongFilter filter = pFilterAccomplishment->GetFilter();
-    TheMusicLibrary->SetRandomSongs(
-        1, filter, pFilterAccomplishment->GetFilteredPartSym(), false, true
-    );
+    Symbol part = pFilterAccomplishment->GetFilteredPartSym();
+    TheMusicLibrary->SetRandomSongs(1, filter, part, false, true);
 }
 
 void AccomplishmentPanel::BuildSelectedEntrySetList() {
@@ -1707,19 +1705,22 @@ inline Symbol AccomplishmentGroupProvider::GetCareerLevel(float f) const {
     static Symbol career_level7("career_level7");
     static Symbol career_level8("career_level8");
 
-    if (f == 1.0f)
+    // One .rdata table (0x820BC0C8). Retail materialises its base once; this
+    // const spelling folds the first (t[6]) access into the lfs instead.
+    static const float t[] = { 0.14f, 0.29f, 0.43f, 0.57f, 0.71f, 0.86f, 1.0f };
+    if (f == t[6])
         return career_level8;
-    if (f > 0.86f)
+    if (f > t[5])
         return career_level7;
-    if (f > 0.71f)
+    if (f > t[4])
         return career_level6;
-    if (f > 0.57f)
+    if (f > t[3])
         return career_level5;
-    if (f > 0.43f)
+    if (f > t[2])
         return career_level4;
-    if (f > 0.29f)
+    if (f > t[1])
         return career_level3;
-    if (f > 0.14f)
+    if (f > t[0])
         return career_level2;
     return career_level1;
 }

@@ -60,12 +60,12 @@ void Track::Poll(float f) {
         if (TheGame->mProperties.mEnableStreak && curstreak != mLastStreakCount) {
             BandTrack *bandtrack = GetBandTrack();
             if (!bandtrack) {
-                const HxGuid *guid = &mTrackConfig.GetBandUser()->mUserGuid;
+                const BandUser *guidUser = mTrackConfig.GetBandUser();
                 const BandUser *user = mTrackConfig.GetBandUser();
-                MILO_FAIL(
+                MILO_FAIL_RTL(
                     "no track dir for track %s (%s)!",
                     user->UserName(),
-                    guid->ToString()
+                    guidUser->mUserGuid.ToString()
                 );
             }
             if (!TheGamePanel->IsGameOver()) {
@@ -322,10 +322,9 @@ void Track::SetUserNameLabel(ObjectDir *dir, const char *labelName) {
 bool Track::InGameMode(Symbol s) const { return TheGameMode->InMode(s); }
 
 bool Track::IsScoring() const {
-    if (mTrackConfig.GetBandUser()->GetPlayer()) {
-        return !mTrackConfig.GetBandUser()->GetPlayer()->GetQuarantined();
-    } else
-        return false;
+    return mTrackConfig.GetBandUser()->GetPlayer()
+        ? !mTrackConfig.GetBandUser()->GetPlayer()->GetQuarantined()
+        : false;
 }
 
 void Track::StartPulseAnims(float f) {

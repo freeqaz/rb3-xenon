@@ -203,8 +203,9 @@ void TourDescPanel::LoadIcons() {
             Symbol s = (*it).first;
             MILO_ASSERT(pTourDesc, 0x2A7);
             AddTex(pTourDesc->GetArt(), s.Str(), true, false);
-            const char * _tmp0 = MakeString("%s_gray", s.Str());
-            AddTex(pTourDesc->GetGrayArt(), _tmp0, true, false);
+            const char *grayName = MakeString("%s_gray", s.Str());
+            const char *grayArt = pTourDesc->GetGrayArt();
+            AddTex(grayArt, grayName, true, false);
         }
     }
     {

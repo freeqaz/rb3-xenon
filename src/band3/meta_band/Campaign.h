@@ -133,7 +133,11 @@ public:
     std::vector<Symbol> unk64; // 0x7c
     std::hash_map<Symbol, CampaignKey *> m_mapCampaignKeys; // 0x88
     BandProfile *unk84; // 0xa4
+    // Retail's object ends here: MetaPanel's ctor (0x82573EE0) allocates 0xa8
+    // for new Campaign. The cheat meta level exists only in HX_NATIVE.
+#ifdef HX_NATIVE
     int unk88; // 0xa8
+#endif
 };
 
 extern Campaign *TheCampaign;

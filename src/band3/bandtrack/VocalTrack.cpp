@@ -108,7 +108,7 @@ void VocalTrack::ClearMarkers() {
     }
 }
 
-inline void TambourineGemPool::NewGem(float time, int gemIdx) {
+inline TambourineGem *TambourineGemPool::NewGem(float time, int gemIdx) {
     MILO_ASSERT(mUsedGems.empty() || time >= mUsedGems.back()->Time(), 0x1EB);
     if (mFreeGems.empty()) {
         for (int k = 0; k < 5; k++) {
@@ -125,6 +125,7 @@ inline void TambourineGemPool::NewGem(float time, int gemIdx) {
     if (mTambourineManager->GemHit(gemIdx) || mTambourineManager->GemProcessed(gemIdx)) {
         g->unk8 = 1;
     }
+    return g;
 }
 
 void VocalTrack::UpdateTubePlates(
@@ -151,9 +152,15 @@ void VocalTrack::UpdateTubePlates(
         cur->Reset();
         deque.push_back(cur);
     }
-    float fvar1 = TheGame->InRollback() ? unk2a4 : f2;
-    FOREACH (it, deque) {
+    if (TheGame->InRollback())
+        f2 = unk2a4;
+    std::deque<TubePlate *>::iterator it = deque.begin();
+    std::deque<TubePlate *>::iterator end = deque.end();
+    for (; it != end; ++it) {
         TubePlate *cur = *it;
+        // Plates past the last one holding geometry are all empty.
+        if (cur->NoVerts())
+            break;
         if (cur->CurrentEndX(f3) < mDir->mTrackLeftX) {
             cur->SetShowing(false);
         } else {
@@ -171,8 +178,10 @@ void VocalTrack::UpdateTubePlates(
             DumpPlates(deque, cur->GetMatName().c_str());
         }
         cur->Bake();
-        if (mVocalStyleOverride == kVocalStyleScrolling && cur->Deploy()) {
-            cur->PollDeploy(fvar1);
+        // Deploying plates animate in only in static mode (retail 0x82BA37D0
+        // compares the style with 0, kVocalStyleStatic).
+        if (mVocalStyleOverride == kVocalStyleStatic && cur->Deploy()) {
+            cur->PollDeploy(f2);
         }
     }
 #if defined(MILO_DEBUG) && defined(HX_NATIVE)
@@ -800,11 +809,9 @@ void VocalTrack::RebuildHUD() {
         static Symbol pitch_guides("pitch_guides");
         static Symbol harmonic("harmonic");
         if (mDir->Property(pitch_guides, true)->Sym() == harmonic) {
-            int tonic =
-                ((BandSongMetadata *)TheSongMgr.Data(TheSongMgr.GetSongIDFromShortName(
-                     MetaPerformer::Current()->Song(), true
-                 )))
-                    ->VocalTonicNote();
+            Symbol song = MetaPerformer::Current()->Song();
+            int songID = TheSongMgr.GetSongIDFromShortName(song, true);
+            int tonic = ((BandSongMetadata *)TheSongMgr.Data(songID))->VocalTonicNote();
             if (tonic != -1)
                 unk208 = tonic + 60;
         }
@@ -831,27 +838,24 @@ void VocalTrack::RebuildHUD() {
         // snapping.
         std::vector<RangeSection> &sections = TheSongDB->GetRangeSections();
         float prevMin = sections[0].unk8 - margin;
-        float prevMax = margin + sections[0].unkc;
+        float prevMax = sections[0].unkc + margin;
         float maxRange = mDir->mMinPitchRange;
         if (sDump) {
             MILO_LOG("Range Shift Data\n");
         }
         for (int i = 0; i < sections.size(); i++) {
             RangeSection &section = sections[i];
-            float secMin = section.unk8;
-            float secMax = section.unkc;
-            if (!(secMax < secMin)) {
-                float secIntro = section.unk4;
+            if (!(section.unkc < section.unk8)) {
                 RangeShift rs;
                 rs.unk0 = TickToMs((float)section.unk0); // startMs
                 rs.unk4 = prevMin; // rangeMinFrom
                 rs.unk8 = prevMax; // rangeMaxFrom
-                rs.unkc = secMin - margin; // rangeMinTo
-                rs.unk10 = secMax + margin; // rangeMaxTo
-                rs.unk14 = secIntro; // introMs
+                rs.unkc = section.unk8 - margin; // rangeMinTo
+                rs.unk10 = margin + section.unkc; // rangeMaxTo
+                rs.unk14 = section.unk4; // introMs
                 mRangeShifts.push_back(rs);
                 prevMin = section.unk8 - margin;
-                prevMax = section.unkc + margin;
+                prevMax = margin + section.unkc;
                 float range = prevMax - prevMin;
                 float *bigger = (maxRange < range) ? &range : &maxRange;
                 maxRange = *bigger;
@@ -879,17 +883,21 @@ void VocalTrack::RebuildHUD() {
             std::deque<RangeShift>::iterator it = mRangeShifts.begin();
             std::deque<RangeShift>::iterator end = mRangeShifts.end();
             for (; it != end; ++it) {
-                float diffFrom = it->unk4 + (maxRange - it->unk8);
+                float maxFrom = it->unk8;
+                float minFrom = it->unk4;
+                float diffFrom = (maxRange - maxFrom) + minFrom;
                 if (diffFrom > 0) {
                     diffFrom *= 0.5f;
-                    it->unk4 -= diffFrom;
-                    it->unk8 += diffFrom;
+                    it->unk4 = minFrom - diffFrom;
+                    it->unk8 = maxFrom + diffFrom;
                 }
-                float diffTo = it->unkc + (maxRange - it->unk10);
+                float maxTo = it->unk10;
+                float minTo = it->unkc;
+                float diffTo = (maxRange - maxTo) + minTo;
                 if (diffTo > 0) {
                     diffTo *= 0.5f;
-                    it->unkc -= diffTo;
-                    it->unk10 += diffTo;
+                    it->unkc = minTo - diffTo;
+                    it->unk10 = maxTo + diffTo;
                 }
                 if (sDump) {
                     MILO_LOG(
@@ -909,19 +917,16 @@ void VocalTrack::RebuildHUD() {
         if (mDir->mStreakMeter) {
             int parts = GetNumVocalParts();
             for (int i = 0; i < parts; i++) {
-                bool active = false;
                 VocalPart *part = mPlayer->mVocalParts[i];
-                if (part && !part->InEmptyPhrase()) {
-                    active = true;
-                }
-                mDir->mStreakMeter->SetPartActive(i, active);
+                mDir->mStreakMeter->SetPartActive(i, part && !part->InEmptyPhrase());
             }
         }
         for (int i = 0; i < mPlayer->NumSingers(); i++) {
-            if (mPlayer->mSingers[i]) {
-                MicClientID id = mPlayer->mSingers[i]->GetMicClientID();
-                if (id.mClientID != -1) {
-                    PitchArrow *arrow = mDir->GetPitchArrow(id.mClientID);
+            Singer *singer = mPlayer->mSingers[i];
+            if (singer) {
+                int clientID = singer->GetMicClientID().mClientID;
+                if (clientID != -1) {
+                    PitchArrow *arrow = mDir->GetPitchArrow(clientID);
                     if (arrow) {
                         arrow->ClearParticles();
                     }
@@ -2537,16 +2542,18 @@ void VocalTrack::PrepareNoteTubes(
     float windowDurationMs, int startNote, int &endNote, int line
 ) {
     static bool sDump;
-    int curNote = startNote;
     VocalNoteList *notes = GetVocalNoteList(line);
     float alpha = 1.0f;
-    if (!mPlayer->GetEnabledStateAt(1.0f)) {
+    // Local players dim the parts they are not singing; a net player draws
+    // every part at full alpha.
+    if (!mPlayer->IsNet()) {
         int dimPart = mDir->unk6c4;
         if (dimPart != -1 && dimPart != line) {
             alpha = mDir->mHiddenPartAlpha;
         }
     }
-    if (curNote < endNote) {
+    if (startNote < endNote) {
+        int curNote = startNote;
         while (curNote < endNote) {
             VocalNote &firstNote = notes->mNotes[curNote];
             if (mPlayer && mPlayer->GetEnabledStateAt(firstNote.mMs)) {
@@ -2585,17 +2592,11 @@ void VocalTrack::PrepareNoteTubes(
                     mNoteTube->unk_0x30 = mDir->mPitchWindowHeight * 0.5f;
                 } else {
                     mNoteTube->unk_0x34 = zPerPitch;
-                    mNoteTube->unk_0x30 = 5.0f * zPerPitch;
+                    mNoteTube->unk_0x30 = zPerPitch * 5.0f;
                     float lo = mDir->unk6d8;
                     int glow = (int)((pitchRange - lo)
                                      / ((mDir->unk6dc - lo) * 0.25f));
-                    int level;
-                    if (glow > 3) {
-                        level = 3;
-                    } else {
-                        level = glow & ~(glow >> 31);
-                    }
-                    mNoteTube->SetGlowLevel(level);
+                    mNoteTube->SetGlowLevel(Clamp(0, 3, glow));
                 }
                 // Same DEV-build spew as PollLyricAnimations. Retail's frame
                 // here is 0x170; ours is 0x9d0 (2,144 B larger) and we save
@@ -2634,14 +2635,15 @@ void VocalTrack::PrepareNoteTubes(
                             );
                         }
 #endif
-                        float x = unk78 * (runX / windowDurationMs);
+                        float x = (runX / windowDurationMs) * unk78;
                         if (note.mUnpitchedNote == 0 && pointIdx == 0) {
-                            x += 0.75f * zPerPitch;
+                            x += zPerPitch * 0.75f;
                         }
-                        float minX = 0.01f + prevX;
-                        if (minX >= x)
-                            x = minX;
-                        mNoteTube->SetPointPos(pointIdx, Vector3(x, 0, z));
+                        // The point is pushed at least 0.01 past the previous
+                        // point; prevX carries the unclamped x.
+                        mNoteTube->SetPointPos(
+                            pointIdx, Vector3(std::max(prevX + 0.01f, x), 0, z)
+                        );
                         prevX = x;
                         pointIdx++;
                         runX += note.mDurationMs;
@@ -2651,19 +2653,14 @@ void VocalTrack::PrepareNoteTubes(
                 VocalNote &lastNote = notes->mNotes[curNote - 1];
                 float lastZ = (mDir->mPitchTopZ + mDir->mPitchBottomZ) * 0.5f;
                 if (!lastNote.mUnpitchedNote) {
-                    lastZ = zPerPitch * (float)(lastNote.mEndPitch - 60);
+                    lastZ = (float)(lastNote.mEndPitch - 60) * zPerPitch;
                 }
-                float lastX = unk78 * (runX / windowDurationMs);
+                float lastX = (runX / windowDurationMs) * unk78;
                 if (!lastNote.mUnpitchedNote) {
-                    float minX = (0.75f * zPerPitch - lastX);
-                    minX = -minX;
-                    float prevMin = 0.01f + prevX;
-                    if (prevMin >= minX)
-                        minX = prevMin;
-                    lastX = minX;
+                    lastX = std::max(prevX + 0.01f, lastX - zPerPitch * 0.75f);
                 }
                 mNoteTube->SetPointPos(pointIdx, Vector3(lastX, 0, lastZ));
-                mNoteTube->mXPos = unk78 * (firstNote.mMs / windowDurationMs);
+                mNoteTube->mXPos = (firstNote.mMs / windowDurationMs) * unk78;
                 mNoteTube->CreateMeshes();
             }
         }

@@ -90,8 +90,8 @@ void GemManager::InitRGTuning(BandUser *bandUser) {
     bool isRG = bandUser->GetTrack()->GetType() == real_guitar;
     bool isRB = bandUser->GetTrack()->GetType() == real_bass;
     if (isRG || isRB) {
-        int songID =
-            TheSongMgr.GetSongIDFromShortName(MetaPerformer::Current()->Song(), true);
+        Symbol song = MetaPerformer::Current()->Song();
+        int songID = TheSongMgr.GetSongIDFromShortName(song, true);
         BandSongMetadata *metadata = (BandSongMetadata *)TheSongMgr.Data(songID);
         std::vector<int> vec18;
         if (isRG) {
@@ -276,6 +276,7 @@ void GemManager::ClearTrackMasks() {
 void GemManager::SetupRealGuitarFretPos() {
     static Symbol real_guitar("real_guitar");
     static Symbol real_bass("real_bass");
+    int i3c;
     const BandUser *bandUser = mTrackConfig.GetBandUser();
     bool isRG = bandUser->GetTrack()->GetType() == real_guitar;
     bool isRB = bandUser->GetTrack()->GetType() == real_bass;
@@ -283,7 +284,7 @@ void GemManager::SetupRealGuitarFretPos() {
         std::vector<GameGem> gameGems;
         int i2 = -1;
         int i38 = 0;
-        int i3c = -1;
+        i3c = -1;
         for (int i = 0; i < mGems.size(); i++) {
             const GameGem &curGameGem = mGems[i].GetGameGem();
             if (i3c != -1 && curGameGem.GetTick() > i3c) {
@@ -726,7 +727,7 @@ void GemManager::SetupGems(int startTick) {
                             int adjustedEnd =
                                 TheTrainerPanel->GetLoopTicks(TheTrainerPanel->GetCurrSection())
                                 + (phraseStart - offset);
-                            phraseEnd = adjustedEnd < phraseEnd ? adjustedEnd : phraseEnd;
+                            phraseEnd = Min(adjustedEnd, phraseEnd);
                         }
                         ArpeggioPhrase phrase(phraseStart, phraseEnd, i);
                         mArpeggioPhrases.push_back(phrase);
@@ -1044,22 +1045,21 @@ Symbol GemManager::GetTypeForGem(int gemId) {
         case kFillsDeployGemAndInvisible:
             return invisible;
         }
-    } else {
-        if (mGemsEnabledStart < 0.0f || mGemsEnabledStart > gem.GetMs()) {
-            return invisible;
-        }
-        bool isUnison;
-        if (!InMissedPhrase(gemId) && IsSpotlightGem(gemId, isUnison)) {
-            return isUnison ? unison : star;
-        }
-        if (gem.IsRealGuitar()) {
-            if (gem.IsRealGuitarChord()) {
-                if (mGems[gemId].mIsRepeatChord) {
-                    return repeat;
-                }
-            } else if (mGems[gemId].mInArpeggio) {
-                return section;
+    }
+    if (mGemsEnabledStart < 0.0f || mGemsEnabledStart > gem.GetMs()) {
+        return invisible;
+    }
+    bool isUnison;
+    if (!InMissedPhrase(gemId) && IsSpotlightGem(gemId, isUnison)) {
+        return isUnison ? unison : star;
+    }
+    if (gem.IsRealGuitar()) {
+        if (gem.IsRealGuitarChord()) {
+            if (mGems[gemId].mIsRepeatChord) {
+                return repeat;
             }
+        } else if (mGems[gemId].mInArpeggio) {
+            return section;
         }
     }
     return normal;

@@ -261,7 +261,8 @@ void NetSession::Disconnect() {
         OnMsg(response);
     }
 
-    for (int jobID = mCurrentStateJobID; jobID != -1; jobID = mCurrentStateJobID) {
+    while (mCurrentStateJobID != -1) {
+        int jobID = mCurrentStateJobID;
         mCurrentStateJobID = -1;
         MILO_ASSERT(mJobMgr.HasJob(jobID), 0x14C);
         mJobMgr.CancelJob(jobID);
@@ -292,7 +293,8 @@ void NetSession::Disconnect() {
     }
     for (int i = 0; i < mUsers.size();) {
         if (!mUsers[i]->IsLocal()) {
-            ProcessUserLeftMsg(UserLeftMsg(mUsers[i]));
+            UserLeftMsg leftMsg(mUsers[i]);
+            ProcessUserLeftMsg(leftMsg);
             i = 0;
         } else
             i++;
@@ -679,7 +681,13 @@ void NetSession::StartArbitration() {
     SetState(kClientsArbitrating);
     for (int i = 0; i < mUsers.size(); i++) {
         if (!mUsers[i]->IsLocal()) {
-            if (!VectorFind<int>(mStillArbitrating, mUsers[i]->mMachineID))
+            bool found = std::find(
+                             mStillArbitrating.begin(),
+                             mStillArbitrating.end(),
+                             mUsers[i]->GetMachineID()
+                         )
+                != mStillArbitrating.end();
+            if (!found)
                 mStillArbitrating.push_back(mUsers[i]->mMachineID);
         }
     }
@@ -869,9 +877,9 @@ void NetSession::SendMsg(
         std::vector<unsigned int> machineIDs;
         for (int i = 0; i < users.size(); i++) {
             unsigned int machineID = users[i]->GetMachineID();
-            std::vector<unsigned int>::iterator it =
-                std::find(machineIDs.begin(), machineIDs.end(), machineID);
-            if (it == machineIDs.end()) {
+            bool found = std::find(machineIDs.begin(), machineIDs.end(), machineID)
+                != machineIDs.end();
+            if (!found) {
                 MILO_ASSERT(machineID != Station::GetLocalInstance()->GetStationID(), 0x4EA);
                 TheNetMessenger.DeliverMsg(machineID, msg, ptype);
                 machineIDs.push_back(machineID);
@@ -913,9 +921,9 @@ void NetSession::SendToAllClientsExcept(
         machineIDs.push_back(ui);
         for (int i = 0; i < mUsers.size(); i++) {
             unsigned int machineID = mUsers[i]->GetMachineID();
-            std::vector<unsigned int>::iterator it =
-                std::find(machineIDs.begin(), machineIDs.end(), machineID);
-            if (it == machineIDs.end()) {
+            bool found = std::find(machineIDs.begin(), machineIDs.end(), machineID)
+                != machineIDs.end();
+            if (!found) {
                 TheNetMessenger.DeliverMsg(machineID, msg, ptype);
                 machineIDs.push_back(machineID);
             }
@@ -973,9 +981,8 @@ void NetSession::RemoveClient(unsigned int ui) {
     TheNetMessenger.FlushClientMessages(ui);
     if (IsHost()) {
         for (int i = 0; i < mUsers.size(); i) {
-            User *cur = mUsers[i];
-            if (ui == cur->mMachineID) {
-                UserLeftMsg msg(cur);
+            if (mUsers[i]->mMachineID == ui) {
+                UserLeftMsg msg(mUsers[i]);
                 ProcessUserLeftMsg(msg);
                 i = 0;
             } else

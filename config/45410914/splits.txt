@@ -2855,7 +2855,6 @@ Task.cpp:
 	.text       start:0x8274A060 end:0x8274A974
 	.text       start:0x8274A9A4 end:0x8274A9B0
 	.text       start:0x8278E968 end:0x8278E9A8
-	.text       start:0x827919C8 end:0x82791A24
 
 AsyncTask.cpp:
 	.pdata      start:0x8221A050 end:0x8221A058
@@ -4017,6 +4016,7 @@ Text.cpp:
 	.text       start:0x824549B0 end:0x824549C4
 	.text       start:0x82454B70 end:0x8245625C
 	.text       start:0x82456260 end:0x824575C8
+	.text       start:0x824575C8 end:0x824575D0
 	.text       start:0x824575D0 end:0x82459B80
 	.text       start:0x82459EA0 end:0x82459FC8
 	.text       start:0x8245A02C end:0x8245C068
@@ -5986,9 +5986,6 @@ system/synth/FxSend.cpp:
 	.text       start:0x82717748 end:0x82717800
 	.text       start:0x82717800 end:0x827178F0
 
-WebSvcMgr.cpp:
-	.text       start:0x827187F0 end:0x827187F4
-
 Emitter.cpp:
 	.pdata      start:0x82239658 end:0x82239660
 	.pdata      start:0x82239660 end:0x82239670
@@ -6165,12 +6162,10 @@ MetaMusic.cpp:
 SongCollision.cpp:
 	.pdata      start:0x82215220 end:0x82215230
 	.pdata      start:0x82233B18 end:0x82233B28
-	.pdata      start:0x82233C00 end:0x82233C08
 	.pdata      start:0x8223E6B0 end:0x8223E6B8
 	.pdata      start:0x8223EB50 end:0x8223EB58
 	.text       start:0x824E1AC0 end:0x824E1C88
 	.text       start:0x826B8A80 end:0x826B8B40
-	.text       start:0x826B98E0 end:0x826B9960
 	.text       start:0x82770498 end:0x827704C0
 	.text       start:0x82781160 end:0x827812F8
 	.text       start:0x82787718 end:0x82787778
@@ -7862,7 +7857,6 @@ PlatformMgr.cpp:
 	.pdata      start:0x82218100 end:0x82218300
 	.text       start:0x82514858 end:0x82514968
 	.text       start:0x82514968 end:0x82516410
-	.text       start:0x82B93F48 end:0x82B93F50
 
 PlatformMgr_Xbox.cpp:
 	.pdata      start:0x82218808 end:0x82218858
@@ -8236,6 +8230,7 @@ band3/game/VocalTrainerPanel.cpp:
 	.pdata      start:0x82233BB0 end:0x82233BD8
 	.pdata      start:0x82233BD8 end:0x82233BF8
 	.pdata      start:0x82233BF8 end:0x82233C00
+	.pdata      start:0x82233C00 end:0x82233C08
 	.pdata      start:0x82233C08 end:0x82233C10
 	.pdata      start:0x82233C10 end:0x82233C38
 	.pdata      start:0x82233C38 end:0x82233C78
@@ -8249,6 +8244,7 @@ band3/game/VocalTrainerPanel.cpp:
 	.text       start:0x826B94B0 end:0x826B9620
 	.text       start:0x826B9620 end:0x826B9890
 	.text       start:0x826B9890 end:0x826B98E0
+	.text       start:0x826B98E0 end:0x826B9960
 	.text       start:0x826B9960 end:0x826B99D4
 	.text       start:0x826B99E0 end:0x826B9BAC
 	.text       start:0x826B9BAC end:0x826BA880
@@ -10265,7 +10261,6 @@ TourProgress.cpp:
 	.text       start:0x8236434C end:0x823643A4
 	.text       start:0x823643A8 end:0x823643E4
 	.text       start:0x823643E8 end:0x82364424
-	.text       start:0x824575C8 end:0x824575D0
 
 AccomplishmentPanel.cpp:
 	.pdata      start:0x821FB208 end:0x821FB220
@@ -11039,6 +11034,7 @@ BeatMatcher.cpp:
 	.text       start:0x82791838 end:0x827918B0
 	.text       start:0x827918B0 end:0x82791920
 	.text       start:0x82791920 end:0x827919C4
+	.text       start:0x827919C8 end:0x82791A24
 	.text       start:0x82791A28 end:0x82791A38
 	.text       start:0x82791A38 end:0x82791AD8
 	.text       start:0x82791AD8 end:0x82791B60
@@ -12113,6 +12109,7 @@ GemTrack.cpp:
 	.pdata      start:0x8225D420 end:0x8225D648
 	.pdata      start:0x8225D648 end:0x8225D688
 	.text       start:0x82B93CE4 end:0x82B93F48
+	.text       start:0x82B93F48 end:0x82B93F50
 	.text       start:0x82B93F50 end:0x82B97200
 	.text       start:0x82B97200 end:0x82B97758
 
@@ -12970,6 +12967,7 @@ system/synth/VoiceBeat.cpp:
 	.text       start:0x82718578 end:0x827185CC
 	.text       start:0x827185D0 end:0x82718764
 	.text       start:0x82718768 end:0x827187EC
+	.text       start:0x827187F0 end:0x827187F4
 
 system/dsp/PitchDetector.cpp:
 	.pdata      start:0x8225C640 end:0x8225C698

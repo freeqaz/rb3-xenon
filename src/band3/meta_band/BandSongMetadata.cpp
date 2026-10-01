@@ -441,7 +441,11 @@ Symbol BandSongMetadata::LengthSym() const {
     DataArray *cfg = SystemConfig(song_select, song_lengths);
     for (int i = 1; i < cfg->Size(); i++) {
         DataArray *arr = cfg->Array(i);
-        if (arr->Size() == 1 || mLengthMs <= arr->Int(1)) {
+        if (arr->Size() == 1) {
+            return arr->Sym(0);
+        }
+        int lengthMs = mLengthMs;
+        if (lengthMs <= arr->Int(1)) {
             return arr->Sym(0);
         }
     }

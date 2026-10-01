@@ -81,7 +81,7 @@ void PerfectSectionTracker::Poll_(float f) {
             CheckForCompletedSections();
             return;
         }
-        if (TheGame->unkdc == -1.0f) {
+        if (!TheGame->InRollback()) {
             if (unkc4 >= unk104.GetSectionCount()) {
                 return;
             }
@@ -311,15 +311,15 @@ bool PerfectSectionTracker::HandleExitExtent(float f, int i, bool b) {
                 bool b1 = false;
                 bool b14 = false;
                 if (data.unkc != 0) {
-                    i15 |= 2;
                     b1 = true;
-                    int i6 = data.unkc - (pPlayer->mStats.m0x0c - data.unk8 - i11c);
-                    int i12 = pPlayer->mStats.mHitCount - data.unk4 - i118;
-                    if ((float)i12 / (float)i6 >= unkb0) {
+                    i15 |= 2;
+                    if ((float)(pPlayer->mStats.mHitCount - data.unk4 - i118)
+                            / (float)(data.unkc - (pPlayer->mStats.m0x0c - data.unk8 - i11c))
+                        >= unkb0) {
+                        unk8c[key]++;
                         i15 |= 3;
                         b14 = true;
                         ret = true;
-                        unk8c[key]++;
                         f17 = unke8.GetMultiplier(++data.unk1c);
                     } else {
                         data.unk1c = 0;

@@ -316,20 +316,9 @@ SongStatus::~SongStatus() {}
 SongStatusMgr::SongStatusMgr(LocalBandUser *u, BandSongMgr *mgr)
     : mLocalUser(u), mSongMgr(mgr), mUpdatingStatus(0) {
     mSaveSizeMethod = &SaveSize;
-#ifdef HX_NATIVE
-    // The cached-total arrays are POD members that the matched Wii ctor leaves
-    // uninitialized; on the Wii they get populated by the profile/save-load path
-    // (Clear() + UpdateCachedTotalStars) before the music library header ever
-    // reads them. Native boots profile-less, so without this they stay garbage
-    // and MusicLibrary::UpdateHeaderData() surfaces a junk star total in the
-    // song-select header ("...SORTED BY SONG NAME" + a random int like
-    // 1843121372). Zero them up front to match the offline-clean state.
-    for (int i = 0; i < 11; i++) {
-        mCachedTotalScores[i] = 0;
-        mCachedTotalDiscScores[i] = 0;
-        mCachedTotalStars[i] = 0;
-    }
-#endif
+    // Retail ctor (0x825D4268) ends with Clear(), which also zeroes the
+    // cached score/star totals.
+    Clear();
 }
 
 SongStatusMgr::~SongStatusMgr() { Clear(); }
@@ -643,15 +632,15 @@ int SongStatusMgr::GetBestTripleAwesomes(int idx, ScoreType ty, Difficulty diff)
     return best;
 }
 
-int SongStatusMgr::GetBestSongStatusFlag(
+bool SongStatusMgr::GetBestSongStatusFlag(
     Symbol songName, SongStatusFlagType flag, ScoreType ty, Difficulty diff
 ) const {
     for (; diff < 4; diff = (Difficulty)(diff + 1)) {
         if (GetSongStatusFlag(songName, flag, ty, diff)) {
-            return 1;
+            return true;
         }
     }
-    return 0;
+    return false;
 }
 
 int SongStatusMgr::GetCachedTotalDiscScore(ScoreType ty) const {
@@ -699,7 +688,31 @@ int SongStatusMgr::CalculateTotalScore(ScoreType ty, Symbol s) const {
     return ret;
 }
 
+// Retail 0x825D1FC8: best stars per song for (ty, diff), each clamped to 5,
+// over songs whose source matches s (gNullStr = every source), capped at 15000.
 int SongStatusMgr::GetTotalBestStars(ScoreType ty, Difficulty diff, Symbol s) const {
+    int ret = 0;
+    for (std::hash_map<int, SongStatus *>::const_iterator it = mSongStatusCache.begin();
+         it != mSongStatusCache.end(); ++it) {
+        int songID = it->first;
+        if (mSongMgr->HasSong(songID)) {
+            BandSongMetadata *metaData = (BandSongMetadata *)mSongMgr->Data(songID);
+            if (s == gNullStr || s == metaData->SourceSym()) {
+                int stars = GetBestStars(songID, ty, diff);
+                if (stars > 5)
+                    stars = 5;
+                ret += stars;
+                if (ret > 15000)
+                    return 15000;
+            }
+        }
+    }
+    return ret;
+}
+
+// Retail 0x825D20B0 (called only from UpdateCachedTotalStars' inline sites):
+// stars at each song's high-score difficulty, clamped to 5, capped at 15000.
+int SongStatusMgr::CalculateTotalStars(ScoreType ty) const {
     int ret = 0;
     for (std::hash_map<int, SongStatus *>::const_iterator it = mSongStatusCache.begin();
          it != mSongStatusCache.end(); ++it) {
@@ -717,28 +730,6 @@ int SongStatusMgr::GetTotalBestStars(ScoreType ty, Difficulty diff, Symbol s) co
         }
     }
     return ret;
-}
-
-int SongStatusMgr::CalculateTotalStars(ScoreType ty) const {
-    int total = 0;
-    for (std::hash_map<int, SongStatus *>::const_iterator it = mSongStatusCache.begin();
-         it != mSongStatusCache.end(); ++it) {
-        int songID = it->first;
-        if (songID && mSongMgr->HasSong(songID)) {
-            SongStatus *status = it->second;
-            if (status) {
-                Difficulty diff = status->GetHighScoreDifficulty(ty);
-                int stars = status->GetStars(ty, diff);
-                int count = total + stars;
-                if (stars > 5)
-                    count = total + 5;
-                total = count;
-                if (count > 5000)
-                    return 5000;
-            }
-        }
-    }
-    return total;
 }
 
 int SongStatusMgr::GetPossibleStars(ScoreType ty, Symbol s) const {

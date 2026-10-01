@@ -118,8 +118,8 @@ void PerfectOverdriveTracker::FirstFrame_(float) {
     init.unk4 = 0;
     init.unk5 = 0;
     init.unk6 = 0;
-    init.unk8 = 0;
     init.unkc = 0;
+    init.unk8 = 0;
     init.unk10 = 0;
     init.unk14 = -1;
     init.unk18 = -1.0f;

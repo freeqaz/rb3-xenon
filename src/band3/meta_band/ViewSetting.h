@@ -189,7 +189,7 @@ public:
     virtual DataNode Handle(DataArray *, bool);
 
     void BuildFilters(Symbol);
-    int SelectSetting(int);
+    bool SelectSetting(int);
     void RefreshAllSettings();
     void ResetAllSettings();
     void ResetActiveSetting();

@@ -843,10 +843,10 @@ void NextSongPanel::SetupDetailLine(DataArray *detail, int slot, const char *cc,
         MILO_ASSERT(scoreDisplay, 0x2F8);
         scoreDisplay->SetValues(detail->Int(1), detail->Int(2), 0, false);
     } else if (sym == header_continued) {
+        static Symbol songresults_header_continued("songresults_header_continued");
         AppLabel *lbl = dynamic_cast<AppLabel *>(t);
         MILO_ASSERT(lbl, 0x2FF);
         MILO_ASSERT(detail->Size() >= 3, 0x300);
-        static Symbol songresults_header_continued("songresults_header_continued");
         lbl->SetTokenFmt(songresults_header_continued, detail->Sym(1), detail->Int(2));
     } else if (sym == label || sym == left_label || sym == right_label || sym == header) {
         AppLabel *lbl = dynamic_cast<AppLabel *>(t);
@@ -859,7 +859,7 @@ void NextSongPanel::SetupDetailLine(DataArray *detail, int slot, const char *cc,
                 detail->Remove(0);
                 static Symbol set_token_fmt("set_token_fmt");
                 static Message msg(set_token_fmt, 0);
-                msg[0] = DataNode(detail, kDataArray);
+                msg[0] = detail;
                 lbl->Handle(msg, false);
             }
         } else if (node.Type() == kDataString) {

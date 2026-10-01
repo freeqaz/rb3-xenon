@@ -117,15 +117,14 @@ time_check:
             }
             if (i < 2) {
                 RndTex *tex = mCoverArtMats[i + 1]->GetDiffuseTex();
-                if (tex) {
+                if ((int)tex) {
                     mCoverArtMats[i]->SetDiffuseTex(tex);
                 } else {
                     mCoverArtMats[i]->SetDiffuseTex(mNoneTex);
                 }
             } else {
-                RndTex *tex = mCoverArtTexs[idx];
-                if (tex) {
-                    mCoverArtMats[i]->SetDiffuseTex(tex);
+                if (mCoverArtTexs[idx]) {
+                    mCoverArtMats[i]->SetDiffuseTex(mCoverArtTexs[idx]);
                 } else {
                     mCoverArtMats[i]->SetDiffuseTex(mNoneTex);
                 }

@@ -108,7 +108,7 @@ void OverdriveTimeTracker::SavePlayerStats() const {
 
 void OverdriveTimeTracker::UpdateTimeRemainingDisplay() {
     float f60 = mLongestDurationMs;
-    int floored = std::floor(f60 / 1000.0f);
+    int floored = (float)std::floor(f60 / 1000.0f);
     if (floored != mLastUpdateSeconds) {
         mLastUpdateSeconds = floored;
         mBandDisplay.SetTimeProgress(f60);

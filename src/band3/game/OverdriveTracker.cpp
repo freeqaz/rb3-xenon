@@ -41,10 +41,10 @@ void OverdriveTracker::TranslateRelativeTargets() {
     float deploybeats = cfg->FindFloat("deploy_beats");
     cfg->FindFloat("spotlight_phrase");
 
-    float factor = mult * ((float)playercount * ((float)(i8 / 4) * deploybeats));
+    float factor = (float)(i8 / 4) * (float)playercount * deploybeats * mult;
     unk8c = deploybeats;
-    for (int i = 0; i < (int)mTargets.size(); i++) {
-        mTargets[i] = factor * mTargets[i];
+    for (unsigned int i = 0; i < mTargets.size(); i++) {
+        mTargets[i] = mTargets[i] * factor;
     }
 }
 
@@ -182,7 +182,8 @@ String OverdriveTracker::GetPlayerContributionString(Symbol s) const {
     if (pid.NotNull()) {
         Player *pPlayer = mSource->GetPlayer(pid);
         MILO_ASSERT(pPlayer, 0x13F);
-        f1 = pPlayer->mStats.unk1c0;
+        Stats &stats = pPlayer->mStats;
+        f1 = stats.unk1c0;
     }
     int min, sec;
     TrackerDisplay::MsToMinutesSeconds(f1, min, sec);

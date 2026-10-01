@@ -43,11 +43,13 @@ void MultiSelectListPanel::ResetSelectRect(int i1) {
 }
 
 void MultiSelectListPanel::FakeComponentSelect() {
-    OnMsg(UIComponentSelectMsg(nullptr, nullptr));
+    UIComponentSelectMsg msg(nullptr, nullptr);
+    OnMsg(msg);
 }
 
 void MultiSelectListPanel::FakeComponentScroll() {
-    OnMsg(UIComponentScrollMsg(nullptr, nullptr));
+    UIComponentScrollMsg msg(nullptr, nullptr);
+    OnMsg(msg);
 }
 
 DataNode MultiSelectListPanel::OnMsg(const UIComponentSelectMsg &) {

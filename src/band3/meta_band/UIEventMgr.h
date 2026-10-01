@@ -20,7 +20,6 @@ public:
 
 class UIEventMgr : public MsgSource {
 public:
-    UIEventMgr() {}
     virtual DataNode Handle(DataArray *, bool);
     virtual ~UIEventMgr();
 

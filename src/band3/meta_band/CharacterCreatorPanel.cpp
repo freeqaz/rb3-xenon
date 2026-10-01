@@ -536,12 +536,12 @@ void CharacterCreatorPanel::SetFaceOption(int option) {
 
 void CharacterCreatorPanel::SetEyebrows(Symbol brows) {
     static Symbol none_eyebrows("none_eyebrows");
-    BandCharDesc *desc = mPreviewDesc;
-    desc->mOutfit.mEyebrows.mName = brows;
+    BandCharDesc::Outfit &outfit = mPreviewDesc->mOutfit;
+    outfit.mEyebrows.mName = brows;
     if (brows != none_eyebrows)
-        desc->mOutfit.mEyebrows.mName = brows;
+        outfit.mEyebrows.mName = brows;
     else
-        desc->mOutfit.mEyebrows.mName = gNullStr;
+        outfit.mEyebrows.mName = gNullStr;
     static Symbol eyebrows("eyebrows");
     mClosetMgr->SetCurrentOutfitPiece(eyebrows);
     mClosetMgr->PreviewCharacter(true, false);

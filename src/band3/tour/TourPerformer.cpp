@@ -155,7 +155,8 @@ void TourPerformerImpl::HandleSongCompleted(const BandStatsInfo *stats) {
     }
     if (stats) {
         const PerformerStatsInfo &info = stats->GetBandStats();
-        UpdateGigDataForSong(mMetaPerformer->Song(), info.mStars);
+        Symbol song = mMetaPerformer->Song();
+        UpdateGigDataForSong(song, info.mStars);
     } else {
         GigData data;
         data.unk0 = mMetaPerformer->Song();
@@ -237,7 +238,8 @@ int TourPerformerImpl::GetTotalStarsPossibleForCurrentGig() {
 bool TourPerformerImpl::IsWinning() const {
     TourProgress *pProgress = TheTour->GetTourProgress();
     MILO_ASSERT(pProgress, 0x22A);
-    TourDesc *pTourDesc = TheTour->GetTourDesc(pProgress->GetTourDesc());
+    Symbol tourDesc = pProgress->GetTourDesc();
+    TourDesc *pTourDesc = TheTour->GetTourDesc(tourDesc);
     MILO_ASSERT(pTourDesc, 0x22F);
     int gignum = pProgress->GetCurrentGigNum();
     if (gignum < pTourDesc->GetNumGigs() - 1) {
