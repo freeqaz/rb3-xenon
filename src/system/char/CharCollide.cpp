@@ -5,6 +5,7 @@
 #include "CharCollide.h"
 #include "math/Color.h"
 #include "math/Mtx.h"
+#include "math/Sphere.h"
 #include "obj/Object.h"
 #include "rndobj/Trans.h"
 #include "rndobj/Utl.h"
@@ -198,6 +199,96 @@ void CharCollide::SyncShape() {
 void CharCollide::CopyOriginalToCur() {
     memcpy(mCurRadius, mOrigRadius, 8);
     memcpy(mCurLength, mOrigLength, 8);
+}
+
+void CharCollide::Deform() {
+    int numSpheres;
+    if (mShape == kCollideCigar || mShape == kCollideInsideCigar)
+        numSpheres = 2;
+    else if (mShape == kCollideSphere || mShape == kCollideInsideSphere)
+        numSpheres = 1;
+    else
+        numSpheres = 0;
+    if (!mMesh)
+        return;
+    for (int i = 0; i < 8; i++) {
+        if (unkStructs[i].vertIdx >= mMesh->Verts().size()) {
+            MILO_NOTIFY_ONCE(
+                "%s: can't do vertex based deformation vert %d is greater than the mesh %s vert count %d, please recompute the deformation by re-setting the mesh property",
+                PathName(this),
+                unkStructs[i].vertIdx,
+                PathName(mMesh),
+                mMesh->Verts().size()
+            );
+            return;
+        }
+    }
+    Sphere spheres[2];
+    for (int i = 0; i < numSpheres; i++) {
+        Sphere &sph = spheres[i];
+        Vector3 &center = sph.center;
+        center.Zero();
+        CharCollideStruct *s = &unkStructs[i * 4];
+        CharCollideStruct *s2 = s;
+        for (int j = 0; j < 4; j++) {
+            Vector3 &pos = mMesh->Verts(s2->vertIdx).pos;
+            Vector3 vertPos(pos.x + s2->vec.x, pos.y + s2->vec.y, pos.z + s2->vec.z);
+            s2++;
+            center.x += vertPos.x;
+            center.y += vertPos.y;
+            center.z += vertPos.z;
+        }
+        center.x *= 0.25f;
+        center.y *= 0.25f;
+        center.z *= 0.25f;
+        sph.radius = 0;
+        for (int j = 0; j < 4; j++) {
+            float len = Length(s[j].vec);
+            float scale = (len - mOrigRadius[i]) / len;
+            Vector3 &pos = mMesh->Verts(s[j].vertIdx).pos;
+            Vector3 deformed;
+            deformed.y = s[j].vec.y * scale + pos.y;
+            deformed.z = s[j].vec.z * scale + pos.z;
+            deformed.x = s[j].vec.x * scale + pos.x;
+            sph.radius += Distance(deformed, center);
+        }
+        sph.radius *= 0.25f;
+    }
+    Transform xfm;
+    xfm.v = spheres[0].center;
+    mCurLength[0] = 0;
+    for (int i = 0; i < numSpheres; i++) {
+        mCurRadius[i] = spheres[i].radius;
+    }
+    if (numSpheres == 2) {
+        Vector3 diff;
+        Subtract(spheres[1].center, spheres[0].center, diff);
+        mCurLength[1] = Length(diff);
+        Scale(diff, 1.0f / mCurLength[1], xfm.m.x);
+    } else {
+        xfm.m.x = Vector3(1, 0, 0);
+    }
+    // Retail builds the up axis in one stack temporary shared by both arms and
+    // reads it back through a pointer after the branch.
+    const Vector3 *up;
+#ifdef HX_NATIVE
+    Vector3 upX(1, 0, 0);
+    Vector3 upY(0, 1, 0);
+    up = std::fabs(xfm.m.x.x) < std::fabs(xfm.m.x.y) ? &upX : &upY;
+#else
+    if (std::fabs(xfm.m.x.x) < std::fabs(xfm.m.x.y)) {
+        Vector3 upX(1, 0, 0);
+        up = &upX;
+    } else {
+        Vector3 upY(0, 1, 0);
+        up = &upY;
+    }
+#endif
+    Cross(*up, xfm.m.x, xfm.m.y);
+    Normalize(xfm.m.y, xfm.m.y);
+    Cross(xfm.m.x, xfm.m.y, xfm.m.z);
+    SetDirty();
+    Multiply(xfm, unk1a0, mLocalXfm);
 }
 
 int CharCollide::NumSpheres(Shape s) const {

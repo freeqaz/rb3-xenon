@@ -653,7 +653,12 @@
             "system/world/SpotlightEnder.cpp": "NonMatching",
             "system/synth/MidiInstrument.cpp": "NonMatching",
             "system/synth/MidiInstrumentMgr.cpp": "NonMatching",
-            "system/char/CharCollide.cpp": "NonMatching",
+            "system/char/CharCollide.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_NOTIFY_ONCE_EVAL"
+                ]
+            },
             "system/gesture/CameraTilt.cpp": "NonMatching",
             "system/char/CharBoneOffset.cpp": "NonMatching",
             "system/char/CharWeightable.cpp": "NonMatching",
