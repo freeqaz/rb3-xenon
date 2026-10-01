@@ -186,7 +186,12 @@ void RndUtlPreInit() {
     DataRegisterFunc("group_owner", OnGroupOwner);
 }
 
+// Retail's RndUtlInit is an empty function: Rnd::Init's call to it lands on
+// the shared empty-body survivor (0x826C3888), and the image carries no
+// "sphere.milo"/"cylinder.milo" path, so nothing is loaded and no resource
+// cache helper is registered. Native keeps the loader.
 void RndUtlInit() {
+#ifdef HX_NATIVE
     FileCache::RegisterResourceCacheHelper(&gResourceFileCacheHelper);
     if (!UsingCD()) {
         sCylinderDir = DirLoader::LoadObjects(
@@ -201,19 +206,24 @@ void RndUtlInit() {
     if (sCylinderDir) {
         sCylinderMesh = sSphereDir->Find<RndMesh>("Cylinder.mesh", true);
     }
+#endif
 }
 
+// Retail (0x824399C0, called only from TerminateCallback) releases the sphere
+// dir and clears the sphere dir/mesh pair; there is no cylinder pair.
 void RndUtlTerminate() {
     if (sSphereDir) {
         delete sSphereDir;
     }
     sSphereDir = 0;
     sSphereMesh = 0;
+#ifdef HX_NATIVE
     if (sCylinderDir) {
         delete sCylinderDir;
     }
     sCylinderDir = 0;
     sCylinderMesh = 0;
+#endif
 }
 
 MatShaderOptions GetDefaultMatShaderOpts(const Hmx::Object *obj, RndMat *mat) {

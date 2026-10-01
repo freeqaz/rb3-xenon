@@ -98,10 +98,8 @@ void CharMeshHide::HideAll(const ObjPtrList<CharMeshHide, ObjectDir> &, int) {}
 // (MakeVertical(Hmx::Matrix3&) used to be an inert stub here; lane W16-HZ wrote the real
 // body in src/system/math/Rot.cpp from retail 0x824EE5F0, so that links instead.)
 
-// --- Rnd::CompressTextureCancel — declared, never defined. It withdraws a
-// pending async texture-compression request. This backend performs no async
-// compression, so there is never a request to withdraw and inert is exact.
-void Rnd::CompressTextureCancel(Rnd::CompressTextureCallback *) {}
+// (Rnd::CompressTextureCancel used to be an inert stub here; lane W16-KB wrote the
+// real body in rndobj/Rnd.cpp from retail 0x82412A58, so that links instead.)
 
 // --- X7 continued: four more declared-never-defined symbols, same rules.
 

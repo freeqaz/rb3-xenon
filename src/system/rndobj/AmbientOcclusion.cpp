@@ -124,20 +124,28 @@ unsigned int GatherObjectsFromGroup(RndGroup *grp, std::vector<T *> &objects) {
     return objects.size();
 }
 
+
+// Retail's BuildObjectLists hands each object list to one out-of-line gatherer
+// (0x824909C8, called for mDontCastAO, mDontReceiveAO and mTessellate) that
+// gathers every entry and returns the vector's size. Retail gives the function
+// no name; "GatherObjects" is ours.
 template <class T>
-unsigned int GatherObject(Hmx::Object *object, std::vector<T *> &objects) {
-    MILO_ASSERT(IsValidObject(object), 0xD1);
-    T *templateObj = dynamic_cast<T *>(object);
-    if (templateObj) {
-        objects.push_back(templateObj);
-    } else {
-        RndGroup *group = dynamic_cast<RndGroup *>(object);
-        if (group) {
-            GatherObjectsFromGroup(group, objects);
+unsigned int GatherObjects(ObjPtrList<Hmx::Object> &list, std::vector<T *> &objects) {
+    FOREACH (it, list) {
+        Hmx::Object *object = *it;
+        MILO_ASSERT(IsValidObject(object), 0xD1);
+        T *templateObj = dynamic_cast<T *>(object);
+        if (templateObj) {
+            objects.push_back(templateObj);
         } else {
-            ObjectDir *dir = dynamic_cast<ObjectDir *>(object);
-            if (dir) {
-                GatherObjectsFromDir(dir, objects);
+            RndGroup *group = dynamic_cast<RndGroup *>(object);
+            if (group) {
+                GatherObjectsFromGroup(group, objects);
+            } else {
+                ObjectDir *dir = dynamic_cast<ObjectDir *>(object);
+                if (dir) {
+                    GatherObjectsFromDir(dir, objects);
+                }
             }
         }
     }
@@ -407,15 +415,9 @@ void RndAmbientOcclusion::BuildObjectLists(ObjectDir *dir) {
     std::vector<RndMesh *> dontReceiveMeshes;
     std::vector<RndMesh *> dontCastMeshes;
     std::vector<RndMesh *> tessellateMeshes;
-    FOREACH (it, mDontCastAO) {
-        GatherObject(*it, dontCastMeshes);
-    }
-    FOREACH (it, mDontReceiveAO) {
-        GatherObject(*it, dontReceiveMeshes);
-    }
-    FOREACH (it, mTessellate) {
-        GatherObject(*it, tessellateMeshes);
-    }
+    GatherObjects(mDontCastAO, dontCastMeshes);
+    GatherObjects(mDontReceiveAO, dontReceiveMeshes);
+    GatherObjects(mTessellate, tessellateMeshes);
     std::unique_copy(dontCastMeshes.begin(), dontCastMeshes.end(), meshes.end());
     std::unique_copy(dontReceiveMeshes.begin(), dontReceiveMeshes.end(), meshes.end());
     std::unique_copy(tessellateMeshes.begin(), tessellateMeshes.end(), meshes.end());

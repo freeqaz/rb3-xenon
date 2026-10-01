@@ -34373,22 +34373,6 @@
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350."
   },
   {
-   "name": "$MakeString",
-   "address": "0x82399348",
-   "survivor": "??$MakeString@HH@@YAPBDPBDHH@Z",
-   "folded": [],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [
-    {
-     "spelling": "??4?$ObjVector@VConstraint@HamIKEffector@@@@QAAXABV0@@Z",
-     "lane": "W16-JH 2026-10-01",
-     "class": "PLACEHOLDER_SLOT_UNPROVEN_CALLEE_UNPROVEN",
-     "disposition": "membership withdrawn as UNPROVEN (NOT refuted), group kept",
-     "evidence": "tools/alias_placeholder_slot_audit.py (W16-JH): this membership's T1 support rested on a relocation slot with an unnamed retail target, which W16-JG's discharge could not close and W16-JH could not prove on retail bytes. CALLEE-UNPROVEN @+0x34 retail fn_823991D8 vs ours ?resize@?$ObjVector@VConstraint@HamIKEffector@@@@QAAXI@Z -- retail fn_823991D8 96 B vs our ?resize@?$ObjVector@VConstraint@HamIKEffector@@@@QAAXI@Z 84 B; first diff @+0x4 retail 'stw r12, -8(r1)' vs ours '00000000'; retail bodies byte-equal to our callee: none. RESTORE when the chase proves it (e.g. after the callee port)."
-    }
-   ]
-  },
-  {
    "name": "1?$ObjRefConcrete",
    "address": "0x8238b478",
    "survivor": "??1?$ObjPtr@VCharLipSyncDriver@@@@UAA@XZ",
@@ -98084,6 +98068,22 @@
    "added": {
     "lane": "W16-JD 2026-10-01"
    }
+  },
+  {
+   "name": "$MakeString",
+   "address": "0x82399348",
+   "survivor": "??4?$ObjVector@UIKTarget@CharIKHand@@@@QAAXABV0@@Z",
+   "folded": [
+    "??4?$ObjVector@VConstraint@HamIKEffector@@@@QAAXABV0@@Z"
+   ],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions. W16-KB 2026-10-01: survivor relabelled from ??$MakeString@HH@@YAPBDPBDHH@Z to ObjVector<CharIKHand::IKTarget>::operator=. The body (92 B) is if (this != &o) { reserve(o.size()) [16-byte stride]; assign }, both retail callers are CharIKHand::Copy (0x82399938, 0x82399984), and our CharIKHand object's operator= is word-identical to it with relocations masked (0 of 23 words differ; MakeString<int,int> differs in 13). The folded membership is unchanged.",
+   "withdrawn": [
+    {
+     "spelling": "??$MakeString@HH@@YAPBDPBDHH@Z",
+     "lane": "W16-KB 2026-10-01",
+     "class": "WRONG_MAP_NAME_AT_ADDRESS"
+    }
+   ]
   }
  ]
 }
