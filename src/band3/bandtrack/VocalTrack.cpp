@@ -1650,8 +1650,8 @@ void VocalTrack::UpdateScrolling(float ms) {
                        && freestyles[*curDeployPtr].second < phEndMs) {
                     (*curDeployPtr)++;
                 }
-                (*curPhPtr)++;
                 curDeploy = *curDeployPtr;
+                (*curPhPtr)++;
                 continue;
             }
 
