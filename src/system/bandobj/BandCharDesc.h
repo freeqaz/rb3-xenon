@@ -128,7 +128,7 @@ public:
     class Outfit : public FixedSizeSaveable {
     public:
         Outfit();
-        virtual ~Outfit() {}
+        // No user-declared dtor: retail's ~Outfit makes no vtable store (implicit).
         virtual void SaveFixed(FixedSizeSaveableStream &) const;
         virtual void LoadFixed(FixedSizeSaveableStream &, int);
 
@@ -155,7 +155,7 @@ public:
     class InstrumentOutfit : public FixedSizeSaveable {
     public:
         InstrumentOutfit();
-        virtual ~InstrumentOutfit() {}
+        // No user-declared dtor: retail's ~InstrumentOutfit makes no vtable store (implicit).
         virtual void SaveFixed(FixedSizeSaveableStream &) const;
         virtual void LoadFixed(FixedSizeSaveableStream &, int);
 
@@ -209,15 +209,8 @@ public:
     void ClearPatch(Patch::Category, const char *);
     Symbol Gender() const { return mGender; }
     Head &GetHead() { return mHead; }
-    /** Retail fn_82335810 (BandCharDesc.cpp's own span), called by
-        OutfitConfig::SetSkinTextures to pick the head-normal-map variant suffix in
-        "%s_%s_norm_%s.tex"; an empty string selects the plain "%s_%s_norm.tex".
-        Retail's body sums 6 groups of 3 floats produced by fn_82335410, takes the
-        argmax, then indexes one of two 6-entry name tables chosen by
-        `mGender == "female"`. Neither fn_82335410 nor those tables is decompiled,
-        so only the SHAPE is ported here; the body is a
-        conservative stub (see BandCharDesc.cpp). Kept out-of-line on purpose --
-        retail calls it, so it must not inline away at the call site. */
+    /** Head-normal-map variant suffix used by OutfitConfig::SetSkinTextures
+        ("%s_%s_norm_%s.tex"; empty selects "%s_%s_norm.tex"). Out of line in retail. */
     const char *HeadNormVariant();
 
     DataNode ListOutfits(Symbol);

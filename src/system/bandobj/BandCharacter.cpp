@@ -33,6 +33,8 @@
 #include "obj/Task.h"
 #include "obj/Utl.h"
 #include "utl/Loader.h"
+#include "obj/DirLoader.h"
+#include "os/File.h"
 #include "rndobj/Cam.h"
 #include "rndobj/Env.h"
 #include "rndobj/Utl.h"
@@ -45,13 +47,15 @@
 
 INIT_REVS(BandCharacter)
 
-ObjectDir *sBoneMergeDir;
-ObjectDir *sOutfitDir;
-ObjectDir *sResourceDir;
-ObjectDir *sCharSharedDir;
-ObjectDir *sInstrumentDir;
-ObjectDir *sInstResourceDir;
-ObjectDir *sToDir;
+// File statics: retail addresses sOutfitDir / sResourceDir / sToDir off one base
+// (-0x14 / -0x10 / +0), i.e. one internal aggregate in declaration order.
+static ObjectDir *sBoneMergeDir;
+static ObjectDir *sOutfitDir;
+static ObjectDir *sResourceDir;
+static ObjectDir *sCharSharedDir;
+static ObjectDir *sInstrumentDir;
+static ObjectDir *sInstResourceDir;
+static ObjectDir *sToDir;
 
 const char *BandIntensityString(int num) {
     if (num != 0) {
@@ -674,6 +678,55 @@ void BandCharacter::ClearInterestFilterFlags() {
         mEyes->ClearInterestFilterFlags();
     else
         Character::ClearInterestFilterFlags();
+}
+
+// Sent by FileMerger before it merges a clip dir. Fixes up the beat alignment of a
+// few specific clips per instrument/gender/genre/tempo (0x82287F00).
+DataNode BandCharacter::OnHackFixClipsPreMerge(DataArray *da) {
+    ObjectDir *dir = da->Obj<ObjectDir>(2);
+    if (dir) {
+        Symbol name = da->Sym(3);
+        if (name == "body_realtime_clips") {
+            for (ObjDirItr<CharClip> it(dir, true); it != nullptr; ++it) {
+                it->SetBeatAlignMode(CharClip::kPlayRealTime);
+            }
+        } else if (name == "body_tempo_clips") {
+            BandCharDesc::CharInstrumentType ty = BandCharDesc::GetInstrumentFromSym(
+                BandCharDesc::GetAnimInstrument(mInstrumentType)
+            );
+            if (mGender == "female") {
+                if (ty == BandCharDesc::kKeyboard) {
+                    if (!(mGenre == "dramatic") && mTempo == "fast") {
+                        CharClip *clip = dir->Find<CharClip>("stand_idle_ext_b_fast_01", false);
+                        if (clip) {
+                            clip->SetFlags(clip->Flags() & ~CharClip::kPlayBeatAlign1);
+                        }
+                    }
+                } else if (ty == BandCharDesc::kMic) {
+                    if (!(mGenre == "banger") && (mTempo == "fast" || mTempo == "medium")) {
+                        const char *clips[2] = { "ms_idle_mel_med_02", "ms_idle_mel_med_01" };
+                        for (int i = 0; i < 2; i++) {
+                            CharClip *clip = dir->Find<CharClip>(clips[i], false);
+                            if (clip) {
+                                clip->SetFlags(
+                                    (clip->Flags() & ~(CharClip::kPlayBeatAlign1 | CharClip::kPlayBeatAlign2))
+                                    | CharClip::kPlayBeatAlign2
+                                );
+                            }
+                        }
+                    }
+                }
+            } else if (ty == BandCharDesc::kGuitar) {
+                if (mTempo == "medium" && (mGenre == "dramatic" || mGenre == "rocker")) {
+                    CharClip *clip = dir->Find<CharClip>("walk_right_c_med_01", false);
+                    if (clip) {
+                        clip->SetBeatAlignMode(CharClip::kPlayRealTime);
+                    }
+                }
+            }
+        }
+    }
+    return DataNode(0);
 }
 
 DataNode BandCharacter::OnToggleInterestDebugOverlay(DataArray *da) {
@@ -2439,38 +2492,11 @@ BEGIN_HANDLERS(BandCharacter)
     HANDLE(hide_categories, OnHideCategories)
     HANDLE(restore_categories, OnRestoreCategories)
     HANDLE_ACTION(game_over, GameOver())
-// ⚠ DO NOT "clean up" this bare #ifdef MILO_DEBUG -- it is a MISNAMED
-// PLACEHOLDER, not a stray dev-build guard, and deleting it costs -22 functions.
-// Measured (lane CB-10/C, isolated: only this arm changed, ObjMacros.h untouched):
-// gating it on HX_NATIVE drops BandCharacter::Handle 98.9% -> 95.3% normalized,
-// `delete` 7 -> 38 (target-only instructions we then LACK) and introduces a
-// structural frame delta of -0x10; 19 of its EH funclets flip off the parent
-// frame size.  So retail HAS an arm in this slot.
-//
-// But it is NOT this arm.  "toggle_interests_overlay" occurs 0 times in the
-// retail binary (orig/45410914/band.exe, ascii + utf16le + utf16be), while 28 of
-// the 28 other handler names in this block are present.  Decoding every .rdata
-// label that retail's BandCharacter::Handle (fn_8228B380) actually references,
-// in order, the arm at this position is:
-//     restore_categories        0x82013818
-//     game_over                 0x820118B8
-//     hack_fix_clips_pre_merge  0x820137FC   <-- this slot
-//     list_drum_venues          0x820137E8
-//     portrait_begin            0x820137D8
-// (0x820137FC falls inside the contiguous descending-address BandCharacter string
-// pool, so the position is corroborated by pool ordering, not just by the diff.)
-//
-// Our arm comes from a DEV build and is structurally correct --
-// same 5-instruction Symbol-compare group, same stack slot, same 0x10 of frame --
-// but semantically wrong.  Normalized objdiff runs functionRelocDiffs=none, which
-// MASKS reloc targets, so the wrong Symbol name is invisible to the metric (the
-// documented "metric is blind to attribution" class).
-//
-// Correct fix = rename to hack_fix_clips_pre_merge + recover its handler body.
-// That name appears in no other build (not DC3): it is RB3-360-retail
-// exclusive, so the body has to come from the target asm.  Until then this arm
-// stays, and the native port keeps the real debug-overlay behaviour.
-#ifdef MILO_DEBUG
+    // Retail's arm in this slot is hack_fix_clips_pre_merge (0x820137FC), dispatched
+    // to 0x82287F00. "toggle_interests_overlay" does not occur in the retail binary,
+    // so that arm is native-only.
+    HANDLE(hack_fix_clips_pre_merge, OnHackFixClipsPreMerge)
+#ifdef HX_NATIVE
     HANDLE(toggle_interests_overlay, OnToggleInterestDebugOverlay)
 #endif
     HANDLE(list_drum_venues, OnListDrumVenues)
@@ -2700,31 +2726,23 @@ void ReplaceRefs(Hmx::Object *theirs, Hmx::Object *mine) {
         }
     }
 #else
-    // dc3 lineage stores object refs as an ObjRef ring (begin()/end()) rather
-    // than a std::vector<ObjRef*> mRefs, and ObjRef::Replace takes a
-    // single target (the ref already points at `theirs`). Walk the ring, and on
-    // each repoint restart from the new head (the ring mutates under us).
-    bool changed = true;
-    while (changed) {
-        changed = false;
-        for (ObjRef::iterator it = theirs->Refs().begin();
-             it != theirs->Refs().end();
-             ++it) {
-            ObjRef *ref = it;
-            if (RefPtrOf(ref)->RefOwner() != NULL) {
-                ObjectDir *dir = RefPtrOf(ref)->RefOwner()->Dir();
-                bool match =
-                    (dir == sOutfitDir) || (dir == sResourceDir) || (dir == sToDir);
-                if (match && theirs != mine) {
-                    // ObjRef::Replace(Hmx::Object*) is an elided stub off
-                    // HX_NATIVE (compiles to nothing). Dispatch the real ring
-                    // Replace (vtable slot +8) with the outgoing object.
-                    RefPtrOf(ref)->Replace(reinterpret_cast<ObjRef *>(theirs), mine);
-                    changed = true;
-                    break;
-                }
+    // Walk theirs' ref ring; after each repoint restart from the head, since the
+    // ring is spliced under us.
+    for (ObjRef::iterator it = theirs->Refs().begin(); it != theirs->Refs().end();) {
+        ObjRefOwner *owner = RefPtrOf(it);
+        MILO_ASSERT(owner->RefOwner(), 0xA7A);
+        if (owner->RefOwner()) {
+            ObjectDir *dir = owner->RefOwner()->Dir();
+            bool match = dir == sOutfitDir || dir == sResourceDir || dir == sToDir;
+            if (match && theirs != mine) {
+                // ObjRef::Replace(Hmx::Object*) is an elided stub off HX_NATIVE;
+                // dispatch the ring Replace (vtable slot +8) with the outgoing object.
+                owner->Replace(reinterpret_cast<ObjRef *>(theirs), mine);
+                it = theirs->Refs().begin();
+                continue;
             }
         }
+        ++it;
     }
 #endif
 }
@@ -2970,8 +2988,51 @@ DataNode BandCharacter::OnPreClear(DataArray *da) {
 }
 
 DataNode BandCharacter::SavePrefabFromCloset(const char *name) {
-    MILO_ASSERT(0, 0xB95);
-    return DataNode(0);
+    FilePathTracker tracker(FileRoot());
+    if (mPrefab.Null()) {
+        mPrefab = name;
+        if (mPrefab.Null()) {
+            return MakeString("%s is not a prefab, can't save out", PathName(this));
+        }
+    }
+    BandCharDesc *prefab = BandCharDesc::FindPrefab(mPrefab.Str(), true);
+    if (!prefab) {
+        prefab = Hmx::Object::New<BandCharDesc>();
+        prefab->SetName(mPrefab.Str(), BandCharDesc::GetPrefabs());
+    }
+    prefab->CopyCharDesc(this);
+    ObjectDir *prefabDir = prefab->Dir();
+    DirLoader::SaveObjects(prefabDir->StoredFile().c_str(), prefabDir);
+    FilePath path;
+    path.SetRoot(MakeString("char/main/prefab/%s.milo", mPrefab));
+    ObjectDir *artDir = Hmx::Object::New<ObjectDir>();
+    Symbol prefabName = mPrefab;
+    for (int i = 0; i < mPatches.size(); i++) {
+        Patch &patch = mPatches[i];
+        if (patch.mCategory != Patch::kPatchNone && patch.mCategory != Patch::kPatchMakeup) {
+            mPrefab = "";
+            RndTex *tex = GetPatchTex(patch);
+            if (tex) {
+                String texName(MakeString("prefab_art%02d.tex", patch.mTexture));
+                if (!artDir->Find<Hmx::Object>(texName.c_str(), false)) {
+                    RndTex *art = Hmx::Object::New<RndTex>();
+                    art->SetName(texName.c_str(), artDir);
+                    FilePath bmp(MakeString(
+                        "char/main/prefab/%s/prefab_art%02d_pma.bmp",
+                        prefabName,
+                        patch.mTexture
+                    ));
+                    FileMkDir(FileGetPath(bmp.c_str()));
+                    tex->SaveBitmap(bmp.c_str());
+                    art->SetBitmap(bmp);
+                }
+            }
+        }
+    }
+    mPrefab = prefabName;
+    DirLoader::SaveObjects(path.c_str(), artDir);
+    delete artDir;
+    return MakeString("Prefab %s saved successfully", mPrefab);
 }
 
 DataNode BandCharacter::OnSavePrefab(DataArray *da) {
