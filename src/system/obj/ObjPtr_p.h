@@ -1148,8 +1148,13 @@ ObjPtrList<T1, T2>::insert(typename ObjPtrList<T1, T2>::iterator it, T1 *obj) {
     return node;
 }
 
+// Declared inline: retail's auto-inliner takes it wherever the body is small.
+// PropSync(ObjPtrList<T>&) inlines Set for CharBone, Sequence,
+// RndTexBlendController and Hmx::Object (Object is a non-virtual base, so
+// Release/AddRef need no adjustment) and calls it out of line for types that
+// reach Object through a virtual base (RndMesh, CharCollide, ...).
 template <class T1, class T2>
-void ObjPtrList<T1, T2>::Set(iterator it, T1 *obj) {
+inline void ObjPtrList<T1, T2>::Set(iterator it, T1 *obj) {
 #ifdef HX_NATIVE
     // Native: Node derives ObjRefConcrete which owns the ring-ref; use
     // SetObjConcrete so AddRef/Release fire on the node (not the list).
