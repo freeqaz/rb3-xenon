@@ -47,13 +47,15 @@
 
 INIT_REVS(BandCharacter)
 
-ObjectDir *sBoneMergeDir;
-ObjectDir *sOutfitDir;
-ObjectDir *sResourceDir;
-ObjectDir *sCharSharedDir;
-ObjectDir *sInstrumentDir;
-ObjectDir *sInstResourceDir;
-ObjectDir *sToDir;
+// File statics: retail addresses sOutfitDir / sResourceDir / sToDir off one base
+// (-0x14 / -0x10 / +0), i.e. one internal aggregate in declaration order.
+static ObjectDir *sBoneMergeDir;
+static ObjectDir *sOutfitDir;
+static ObjectDir *sResourceDir;
+static ObjectDir *sCharSharedDir;
+static ObjectDir *sInstrumentDir;
+static ObjectDir *sInstResourceDir;
+static ObjectDir *sToDir;
 
 const char *BandIntensityString(int num) {
     if (num != 0) {
@@ -2724,31 +2726,23 @@ void ReplaceRefs(Hmx::Object *theirs, Hmx::Object *mine) {
         }
     }
 #else
-    // dc3 lineage stores object refs as an ObjRef ring (begin()/end()) rather
-    // than a std::vector<ObjRef*> mRefs, and ObjRef::Replace takes a
-    // single target (the ref already points at `theirs`). Walk the ring, and on
-    // each repoint restart from the new head (the ring mutates under us).
-    bool changed = true;
-    while (changed) {
-        changed = false;
-        for (ObjRef::iterator it = theirs->Refs().begin();
-             it != theirs->Refs().end();
-             ++it) {
-            ObjRef *ref = it;
-            if (RefPtrOf(ref)->RefOwner() != NULL) {
-                ObjectDir *dir = RefPtrOf(ref)->RefOwner()->Dir();
-                bool match =
-                    (dir == sOutfitDir) || (dir == sResourceDir) || (dir == sToDir);
-                if (match && theirs != mine) {
-                    // ObjRef::Replace(Hmx::Object*) is an elided stub off
-                    // HX_NATIVE (compiles to nothing). Dispatch the real ring
-                    // Replace (vtable slot +8) with the outgoing object.
-                    RefPtrOf(ref)->Replace(reinterpret_cast<ObjRef *>(theirs), mine);
-                    changed = true;
-                    break;
-                }
+    // Walk theirs' ref ring; after each repoint restart from the head, since the
+    // ring is spliced under us.
+    for (ObjRef::iterator it = theirs->Refs().begin(); it != theirs->Refs().end();) {
+        ObjRefOwner *owner = RefPtrOf(it);
+        MILO_ASSERT(owner->RefOwner(), 0xA7A);
+        if (owner->RefOwner()) {
+            ObjectDir *dir = owner->RefOwner()->Dir();
+            bool match = dir == sOutfitDir || dir == sResourceDir || dir == sToDir;
+            if (match && theirs != mine) {
+                // ObjRef::Replace(Hmx::Object*) is an elided stub off HX_NATIVE;
+                // dispatch the ring Replace (vtable slot +8) with the outgoing object.
+                owner->Replace(reinterpret_cast<ObjRef *>(theirs), mine);
+                it = theirs->Refs().begin();
+                continue;
             }
         }
+        ++it;
     }
 #endif
 }
