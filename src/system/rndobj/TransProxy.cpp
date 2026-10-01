@@ -1,3 +1,8 @@
+// Retail's ctor (0x8245C080) inlines the owner-only ObjPtr ctor in the order
+// mOwner, vtable lis, mObject, vtable addi, vtable store, with the member's
+// address kept as an EH temp.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR 1
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT 1
 #include "rndobj/TransProxy.h"
 #include "obj/Object.h"
 #include "rndobj/Trans.h"

@@ -96953,13 +96953,22 @@
   {
    "name": "_M_insert_overflow_aux",
    "address": "0x8248fd58",
-   "survivor": "?_M_insert_overflow_aux@?$vector@V?$Key@VTransform@@@@V?$StlNodeAlloc@V?$Key@VTransform@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAV?$Key@VTransform@@@@ABV3@ABU__false_type@2@I_N@Z",
+   "survivor": "?_M_insert_overflow_aux@?$vector@VTriangle@@V?$StlNodeAlloc@VTriangle@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVTriangle@@ABV3@ABU__false_type@2@I_N@Z",
    "folded": [
-    "?_M_insert_overflow_aux@?$vector@VTriangle@@V?$StlNodeAlloc@VTriangle@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVTriangle@@ABV3@ABU__false_type@2@I_N@Z",
     "?_M_insert_overflow_aux@?$vector@VViewport@ObjectDir@@V?$StlNodeAlloc@VViewport@ObjectDir@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVViewport@ObjectDir@@ABV34@ABU__false_type@2@I_N@Z"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
+   "withdrawn": [
+    {
+     "spelling": "?_M_insert_overflow_aux@?$vector@V?$Key@VTransform@@@@V?$StlNodeAlloc@V?$Key@VTransform@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAV?$Key@VTransform@@@@ABV3@ABU__false_type@2@I_N@Z",
+     "lane": "W16-KB 2026-10-01",
+     "class": "SURVIVOR_ELEMENT_SIZE_CONTRADICTED",
+     "disposition": "survivor respelled to the vector<Triangle> member",
+     "respelled_to": "?_M_insert_overflow_aux@?$vector@VTriangle@@V?$StlNodeAlloc@VTriangle@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVTriangle@@ABV3@ABU__false_type@2@I_N@Z",
+     "evidence": "Retail 0x8248FD58 (400 B) divides and scales by 0x40 (srawi 6 / slwi 6) and calls __uninitialized_copy<Transform*>, so its element is 64 bytes. Key<Transform> is 0x44 bytes: our Ribbon.obj instance of this spelling uses divw/mulli 0x44 and copies 0x44 per element, so it cannot fold onto this address. The address lies between two AmbientOcclusion blocks and its named retail callers are vector<Triangle>::push_back (0x824913E0, AO) and vector<Viewport>::_M_fill_insert (0x8240D138); the Triangle and Viewport memberships below were each chased T1 PROVEN by W16-JE and are unchanged. The block is re-homed Ribbon -> AmbientOcclusion and the map row respelled to the Triangle member. The Key<Transform> spelling has no retail address identified here."
+    }
+   ],
    "admitted": [
     {
      "spelling": "?_M_insert_overflow_aux@?$vector@VTriangle@@V?$StlNodeAlloc@VTriangle@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVTriangle@@ABV3@ABU__false_type@2@I_N@Z",

@@ -1438,10 +1438,9 @@ Rot.cpp:
 	.pdata      start:0x821FF9D8 end:0x821FF9E8
 	.pdata      start:0x821FFB20 end:0x821FFB28
 	.pdata      start:0x822021B0 end:0x822021B8
-	.pdata      start:0x822021B8 end:0x822021C8
+	.pdata      start:0x822021B8 end:0x822021C0
 	.pdata      start:0x8220BD00 end:0x8220BD20
 	.pdata      start:0x8220BD28 end:0x8220BD30
-	.pdata      start:0x822151F8 end:0x82215208
 	.pdata      start:0x82215C70 end:0x82215CA0
 	.pdata      start:0x82215CA0 end:0x82215D28
 	.pdata      start:0x82215D38 end:0x82215D40
@@ -1452,10 +1451,9 @@ Rot.cpp:
 	.text       start:0x82356118 end:0x82356230
 	.text       start:0x823573F0 end:0x823574A4
 	.text       start:0x8237B218 end:0x8237B2A8
-	.text       start:0x8237B2A8 end:0x8237B410
+	.text       start:0x8237B2A8 end:0x8237B338
 	.text       start:0x824265F8 end:0x824268A8
 	.text       start:0x82426950 end:0x82426A04
-	.text       start:0x824E17B0 end:0x824E184C
 	.text       start:0x824EE020 end:0x824EE390
 	.text       start:0x824EE3F8 end:0x824EF508
 	.text       start:0x824EF828 end:0x824EF890
@@ -3766,8 +3764,7 @@ AmbientOcclusion.cpp:
 	.pdata      start:0x821FCE70 end:0x821FCE78
 	.pdata      start:0x821FCE78 end:0x821FCE80
 	.pdata      start:0x8220A838 end:0x8220A848
-	.pdata      start:0x82210D70 end:0x82210FD8
-	.pdata      start:0x82210FE8 end:0x82211000
+	.pdata      start:0x82210D70 end:0x82211000
 	.pdata      start:0x82211008 end:0x822110D8
 	.pdata      start:0x822110E0 end:0x822111A0
 	.pdata      start:0x822111A0 end:0x822111A8
@@ -3775,8 +3772,7 @@ AmbientOcclusion.cpp:
 	.text       start:0x82326468 end:0x823264D8
 	.text       start:0x823264D8 end:0x82326500
 	.text       start:0x8240EAB8 end:0x8240EB38
-	.text       start:0x8248C5E8 end:0x8248FD58
-	.text       start:0x8248FF1C end:0x82490100
+	.text       start:0x8248C5E8 end:0x82490100
 	.text       start:0x82490130 end:0x82491480
 	.text       start:0x824914CC end:0x82493418
 	.text       start:0x82493418 end:0x82493498
@@ -4630,7 +4626,7 @@ CharBonesMeshes.cpp:
 	.pdata      start:0x821F1B98 end:0x821F1BA8
 	.pdata      start:0x821F1BF8 end:0x821F1C30
 	.pdata      start:0x822014B0 end:0x822014C0
-	.pdata      start:0x822021C8 end:0x822021D0
+	.pdata      start:0x822021C0 end:0x822021D0
 	.pdata      start:0x822021D0 end:0x82202228
 	.pdata      start:0x82202228 end:0x82202258
 	.pdata      start:0x82202258 end:0x82202270
@@ -4641,7 +4637,7 @@ CharBonesMeshes.cpp:
 	.text       start:0x822768F8 end:0x82276A28
 	.text       start:0x82276D50 end:0x82276F98
 	.text       start:0x8236CA70 end:0x8236CB48
-	.text       start:0x8237B410 end:0x8237B594
+	.text       start:0x8237B338 end:0x8237B594
 	.text       start:0x8237B598 end:0x8237BBF0
 	.text       start:0x8237BBF0 end:0x8237C070
 	.text       start:0x8237C070 end:0x8237C1C8
@@ -5092,16 +5088,14 @@ Crowd.cpp:
 	.pdata      start:0x821FCDA0 end:0x821FCDC8
 	.pdata      start:0x821FD4D8 end:0x821FD4E0
 	.pdata      start:0x82212378 end:0x82212388
-	.pdata      start:0x82215080 end:0x822151F8
-	.pdata      start:0x82215208 end:0x82215220
+	.pdata      start:0x82215080 end:0x82215220
 	.pdata      start:0x82215230 end:0x82215480
 	.pdata      start:0x82215480 end:0x82215488
 	.pdata      start:0x82215488 end:0x822156D0
 	.text       start:0x82325608 end:0x823258C8
 	.text       start:0x8232CCB0 end:0x8232CD28
 	.text       start:0x824AA3E0 end:0x824AA460
-	.text       start:0x824E0038 end:0x824E17B0
-	.text       start:0x824E184C end:0x824E1AC0
+	.text       start:0x824E0038 end:0x824E1AC0
 	.text       start:0x824E1C88 end:0x824E4978
 	.text       start:0x824E4978 end:0x824E49EC
 	.text       start:0x824E49EC end:0x824E7518
@@ -7730,10 +7724,8 @@ FilterVersion.cpp:
 	.text       start:0x82474F8C end:0x82474FB4
 
 Ribbon.cpp:
-	.pdata      start:0x82210FD8 end:0x82210FE8
 	.text       start:0x82482050 end:0x82482058
 	.text       start:0x8248233C end:0x82482340
-	.text       start:0x8248FD58 end:0x8248FF1C
 
 Set.cpp:
 	.pdata      start:0x822103F0 end:0x82210408
@@ -12250,12 +12242,12 @@ Cam.cpp:
 	.pdata      start:0x8220C8C8 end:0x8220C918
 	.pdata      start:0x8220C918 end:0x8220C920
 	.pdata      start:0x8220C940 end:0x8220CA60
-	.pdata      start:0x822614D8 end:0x82261528
+	.pdata      start:0x822614D8 end:0x822614E0
 	.text       start:0x82433328 end:0x8243339C
 	.text       start:0x824333A0 end:0x82433FD0
 	.text       start:0x82433FD0 end:0x82434150
 	.text       start:0x82434230 end:0x82435520
-	.text       start:0x82C3F090 end:0x82C3F548
+	.text       start:0x82C3F090 end:0x82C3F138
 
 CamAnim.cpp:
 	.pdata      start:0x82210740 end:0x82210820
