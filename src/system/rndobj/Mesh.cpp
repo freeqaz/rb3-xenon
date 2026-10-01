@@ -444,10 +444,10 @@ BinStream &CachedRead(BinStream &bs, std::vector<T1, T2> &vec) {
 INIT_REVS(0x26, 0)
 
 BEGIN_LOADS(RndMesh)
-    int revs;
-    bs >> revs;
-    gMeshRev = getHmxRev(revs);
-    gMeshAltRev = getAltRev(revs);
+    // Retail reads the packed revision straight into the file-static and masks
+    // it in place (`lwz; clrlwi 16; stw` on one base); no alt revision is kept.
+    bs >> gMeshRev;
+    gMeshRev = getHmxRev(gMeshRev);
     if (gMeshRev > 0x19) {
         Hmx::Object::Load(bs);
     }
@@ -587,17 +587,9 @@ BEGIN_LOADS(RndMesh)
     } else if (gMeshRev > 0x10)
         bs >> mPatches;
     if (gMeshRev > 0x1C) {
+        // Retail has no bone-limit check here: `bs >> mBones` falls straight
+        // through to the end of the bone block.
         bs >> mBones;
-        int max = MaxBones();
-        if (mBones.size() > max) {
-            MILO_NOTIFY(
-                "%s: exceeds bone limit (%d of %bs)",
-                PathName(this),
-                mBones.size(),
-                MaxBones()
-            );
-            mBones.resize(MaxBones());
-        }
     } else if (gMeshRev > 0xD) {
         ObjPtr<RndTransformable> trans(this);
         bs >> trans;
@@ -640,7 +632,9 @@ BEGIN_LOADS(RndMesh)
         } else
             mBones.clear();
     }
-    RemoveInvalidBones();
+    // Retail calls no RemoveInvalidBones here. It makes one virtual
+    // `bs.Cached()` call (slot 0x18) and discards the result.
+    bs.Cached();
     if (gMeshRev > 0 && gMeshRev < 4) {
         std::vector<std::vector<unsigned short> > usvec;
         bs >> usvec;
@@ -673,10 +667,12 @@ next:
     }
     if (gMeshRev < MESH_REV_SEP_COLOR && IsSkinned()) {
         for (auto it = mVerts.begin(); it != mVerts.end(); ++it) {
+            // Retail copies the colour channels in order and then resets the
+            // colour to white (four stores of 1.0f), not to zero.
             it->boneWeights.Set(
                 it->color.red, it->color.green, it->color.blue, it->color.alpha
             );
-            it->color.Zero();
+            it->color.Reset();
         }
     }
     if (gMeshRev > 0x25) {
