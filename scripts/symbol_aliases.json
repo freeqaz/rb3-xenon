@@ -5358,9 +5358,17 @@
    "address": "0x82367eb0",
    "survivor": "?GetTourBronzeGoal@TourDesc@@QBA?AVSymbol@@XZ",
    "folded": [
-    "?GetGroup@AccomplishmentCategory@@QBA?AVSymbol@@XZ"
+    "?GetGroup@AccomplishmentCategory@@QBA?AVSymbol@@XZ",
+    "?GetInstrumentSymbol@BandTrack@@QBA?AVSymbol@@XZ"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T2. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 4, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 4 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T2. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 4, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 4 census sites over 1 functions.",
+   "admitted": [
+    {
+     "spelling": "?GetInstrumentSymbol@BandTrack@@QBA?AVSymbol@@XZ",
+     "lane": "W16-NB 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (VACUOUS-BUT-IDENTICAL, 12 B retail / 12 B ours: load the Symbol member, store it to the return slot, blr), 0 CYCLE-ASSUMED; retail carries exactly one body of this shape. Site witness: retail TrackPanelDirBase::UpdateTrackSpeed calls 0x82367eb0 on each track's BandTrack subobject (tdir + 0x40c) where the source reads GetInstrumentSymbol(); the folded spelling is not map-resident."
+    }
+   ]
   },
   {
    "name": "OnMsg",
