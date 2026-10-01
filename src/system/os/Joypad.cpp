@@ -175,6 +175,32 @@ extern "C" int JoypadStageKitPadNum() {
     return -1;
 }
 
+// Retail 0x82524E38 (declared in Joypad.h; no oracle body). RB2-era HX
+// guitars report the Calbert sensor on the left stick X (negated on PS3);
+// button guitars carry it as a raw 0..127 byte at report bytes 10 / 11 of the
+// pro-guitar block, read inverted. Anything else has no sensor.
+float JoypadGetCalbertValue(int pad, bool secondary) {
+    JoypadData &data = gJoypadData[pad];
+    switch (data.mType) {
+    case kJoypadXboxHxGuitarRb2:
+    case kJoypadWiiHxGuitarRb2:
+        return data.mSticks[0][0];
+    case kJoypadPs3HxGuitarRb2:
+        return -data.mSticks[0][0];
+    case kJoypadXboxButtonGuitar:
+    case kJoypadPs3ButtonGuitar:
+    case kJoypadWiiButtonGuitar: {
+        const unsigned char *raw = (const unsigned char *)&data.mProGuitarData;
+        if (secondary)
+            return 1.0f - raw[11] * 0.007874016f;
+        else
+            return 1.0f - raw[10] * 0.007874016f;
+    }
+    default:
+        return 0.0f;
+    }
+}
+
 // Retail 0x82525DE0 (no oracle; the name is ours). Called only from the
 // PlatformMgr profile-swap path (0x8251D6C8): exchanges two pads' whole
 // JoypadData (both element addresses are formed before the three 0xd4-byte

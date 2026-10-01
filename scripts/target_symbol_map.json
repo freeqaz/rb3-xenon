@@ -1,4 +1,5 @@
 {
+ "0x82524e38": "?JoypadGetCalbertValue@@YAMH_N@Z",
  "0x8252e328": "?ReadAsync@ArkFile@@UAA_NPAXH@Z",
  "0x82532dc8": "?PlatformPoll@VirtualKeyboard@@AAAXXZ",
  "0x82532eb8": "?ShowKeyboardUI@VirtualKeyboard@@AAA?AVDataNode@@PAVLocalUser@@HVString@@11H@Z",
