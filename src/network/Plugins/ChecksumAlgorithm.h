@@ -10,7 +10,7 @@ namespace Quazal {
         virtual ~ChecksumAlgorithm();
         virtual bool ComputeChecksum(const Buffer &, Buffer *) = 0;
         virtual bool IsReady() const { return true; }
-        virtual unsigned int GetChecksumLength() = 0;
+        virtual unsigned char GetChecksumLength() = 0;
 
         bool AppendChecksum(Buffer *);
         bool RemoveChecksum(Buffer *);

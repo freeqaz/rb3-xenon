@@ -2141,7 +2141,14 @@
                 ]
             },
             "network/Core/Scheduler.cpp": "NonMatching",
-            "network/Plugins/ChecksumAlgorithm.cpp": "NonMatching",
+            "network/Plugins/ChecksumAlgorithm.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1"
+                ]
+            },
             "network/quazal/Session.cpp": "NonMatching",
             "network/quazal/Station.cpp": "NonMatching",
             "network/quazal/Core/MutexPrimitive.cpp": "NonMatching",

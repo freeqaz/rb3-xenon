@@ -69,11 +69,12 @@ namespace Quazal {
     Key ChecksumAlgorithm::DeriveKey(const Buffer &buf, unsigned int ui) {
         Buffer buf24(buf);
         uint i = 0;
-        Buffer buf38((unsigned char)GetChecksumLength());
-        for (; i < ui; i++) {
+        Buffer buf38(GetChecksumLength());
+        while (i < ui) {
             buf38.Clear();
             ComputeChecksum(buf24, &buf38);
             buf24 = buf38;
+            i++;
         }
         return Key(buf24.GetContentPtr(), buf24.GetContentSize());
     }

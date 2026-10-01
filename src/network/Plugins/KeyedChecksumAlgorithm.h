@@ -12,7 +12,7 @@ namespace Quazal {
             return mChecksum.GetLength() >= mMinKeyLength
                 && mChecksum.GetLength() <= mMaxKeyLength;
         }
-        virtual unsigned int GetChecksumLength() = 0;
+        virtual unsigned char GetChecksumLength() = 0;
         virtual void KeyHasChanged() {}
 
         bool SetKey(const Key &);
