@@ -1,4 +1,6 @@
 {
+ "0x8273e9a8": "?SetFrame@DxMovie@@UAAXMM@Z",
+ "0x8273e118": "?Update@DxMovie@@AAAXXZ",
  "0x82733028": "?D3DFORMAT_BitsPerPixel@@YAHW4_D3DFORMAT@@@Z",
  "0x82732e98": "?SetViewport@DxRnd@@UAAXABUViewport@NgRnd@@@Z",
  "0x82732e20": "?Offscreen@DxRnd@@UBA_NXZ",
