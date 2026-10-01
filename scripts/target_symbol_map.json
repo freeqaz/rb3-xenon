@@ -1,4 +1,5 @@
 {
+ "0x82308788": "?Reset@TrackPanelDir@@UAAXXZ",
  "0x826f8040": "?_M_clear_after_move@?$vector@VVocalScoreHistory@@V?$StlNodeAlloc@VVocalScoreHistory@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
  "0x826f82e8": "??$__uninitialized_copy@PAVVocalScoreHistory@@PAV1@@stlpmtx_std@@YAPAVVocalScoreHistory@@PAV1@00ABU__false_type@0@@Z",
  "0x826f8438": "?_M_insert_overflow_aux@?$vector@VAmbiguousData@Singer@@V?$StlNodeAlloc@VAmbiguousData@Singer@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVAmbiguousData@Singer@@ABV34@ABU__false_type@2@I_N@Z",
@@ -4752,7 +4753,7 @@
  "0x82305fc0": "?SyncProperty@TrackPanelDir@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x82306550": "?SetupApplauseMeter@TrackPanelDir@@UAAXHPBD0PAVRndDir@@1_NVSymbol@@@Z",
  "0x82306b28": "?SetMultiplier@TrackPanelDir@@UAAXH_N@Z",
- "0x82307630": "??$__uninitialized_fill_n@PAVDrivenPropertyEntry@@IV1@@stlpmtx_std@@YAPAVDrivenPropertyEntry@@PAV1@IABV1@ABU__false_type@0@@Z",
+ "0x82307630": "?ConfigureTracks@TrackPanelDir@@UAAX_N@Z",
  "0x82307b78": "?_M_fill_insert_aux@?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSymbol@@IABV3@ABU__false_type@2@@Z",
  "0x82308060": "?PostLoad@TrackPanelDir@@UAAXAAVBinStream@@@Z",
  "0x823082d0": "?_M_insert_overflow_aux@?$vector@VDrivenPropertyEntry@@V?$StlNodeAlloc@VDrivenPropertyEntry@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVDrivenPropertyEntry@@ABV3@ABU__false_type@2@I_N@Z",

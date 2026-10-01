@@ -372,7 +372,9 @@ TrackPanelDir.cpp:
 	.text       start:0x823038A0 end:0x823038B0
 	.text       start:0x823038B0 end:0x82303A68
 	.text       start:0x82303A68 end:0x82307630
+	.text       start:0x82307630 end:0x82307B74
 	.text       start:0x82308060 end:0x823082D0
+	.text       start:0x82308780 end:0x82308C38
 	.text       start:0x82308CEC end:0x82308D5C
 	.text       start:0x82308D60 end:0x8230A774
 	.text       start:0x8230A7D8 end:0x8230A7E0
@@ -12471,10 +12473,10 @@ FlowNode.cpp:
 	.pdata      start:0x821FAF68 end:0x821FAF70
 	.pdata      start:0x821FAFB8 end:0x821FAFE8
 	.pdata      start:0x821FAFE8 end:0x821FAFF0
-	.text       start:0x82307630 end:0x82307B74
 	.text       start:0x823082D0 end:0x82308420
 	.text       start:0x82308420 end:0x82308478
-	.text       start:0x82308710 end:0x82308C88
+	.text       start:0x82308710 end:0x82308780
+	.text       start:0x82308C38 end:0x82308C88
 	.text       start:0x82308D5C end:0x82308D60
 
 Campaign.cpp:
