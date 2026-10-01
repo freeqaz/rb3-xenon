@@ -313,12 +313,18 @@ void BandTrack::SetNetTalking(bool talking) {
     }
 }
 
+// Retail builds both Symbols as function-local statics before the null test, and each
+// Message as a function-local static inside its branch (guard bits 1/2, then 4/8).
 void BandTrack::SetPlayerFeedbackShowing(bool showing) const {
+    static Symbol feedback_on("feedback_on");
+    static Symbol feedback_off("feedback_off");
     if (mPlayerFeedback) {
         if (showing) {
-            mPlayerFeedback->HandleType(feedback_on_msg);
+            static Message on_msg(feedback_on);
+            mPlayerFeedback->HandleType(on_msg);
         } else {
-            mPlayerFeedback->HandleType(feedback_off_msg);
+            static Message off_msg(feedback_off);
+            mPlayerFeedback->HandleType(off_msg);
         }
     }
 }
