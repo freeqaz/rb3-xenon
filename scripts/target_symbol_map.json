@@ -13,7 +13,7 @@
  "0x82713340": "?Stop@NoteVoiceInst@@UAAXXZ",
  "0x82712300": "?SetNoteHz@FxSendSynapse@@QAAXMMM@Z",
  "0x827122e8": "?SetUnisonTrio@FxSendSynapse@@QAAX_N@Z",
- "0x827036b8": "?GetJumpBackTotalTime@StandardStream@@UBAMM@Z",
+ "0x827036b8": "?GetJumpBackTotalTime@StandardStream@@UAAMXZ",
  "0x82703020": "?GetSlipOffset@StandardStream@@UAAMH@Z",
  "0x82701ca0": "?GetInSongTime@StandardStream@@UAAMXZ",
  "0x826fd780": "?NewObject@FxSendSynapse@@SAPAVObject@Hmx@@XZ",
