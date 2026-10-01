@@ -68969,28 +68969,7 @@
    "name": "$sort",
    "address": "0x822d17f0",
    "survivor": "??$sort@PAW4KeyboardKey@CharKeyHandMidi@@U?$greater@H@stlpmtx_std@@@stlpmtx_std@@YAXPAW4KeyboardKey@CharKeyHandMidi@@0U?$greater@H@0@@Z",
-   "folded": [
-    "??$sort@PAPAVUILabel@@ULabelSort@?A0x0bc8bdd4@@@stlpmtx_std@@YAXPAPAVUILabel@@0ULabelSort@?A0x0bc8bdd4@@@Z",
-    "??$sort@PAPAVUILabel@@ULabelSort@?A0x4c78cf70@@@stlpmtx_std@@YAXPAPAVUILabel@@0ULabelSort@?A0x4c78cf70@@@Z",
-    "??$sort@PAPAVUILabel@@ULabelSort@?A0x5d138e2c@@@stlpmtx_std@@YAXPAPAVUILabel@@0ULabelSort@?A0x5d138e2c@@@Z",
-    "??$sort@PAPAVUILabel@@ULabelSort@?A0x97b3acc5@@@stlpmtx_std@@YAXPAPAVUILabel@@0ULabelSort@?A0x97b3acc5@@@Z",
-    "??$sort@PAPAVUILabel@@ULabelSort@?A0xa8183d2d@@@stlpmtx_std@@YAXPAPAVUILabel@@0ULabelSort@?A0xa8183d2d@@@Z",
-    "??$sort@PAPAVUILabel@@ULabelSort@?A0xaea79d6d@@@stlpmtx_std@@YAXPAPAVUILabel@@0ULabelSort@?A0xaea79d6d@@@Z",
-    "??$sort@PAPAVUILabel@@ULabelSort@?A0xe0dde280@@@stlpmtx_std@@YAXPAPAVUILabel@@0ULabelSort@?A0xe0dde280@@@Z",
-    "??$sort@PAPAVUILabel@@ULabelSort@?A0xf6afaba9@@@stlpmtx_std@@YAXPAPAVUILabel@@0ULabelSort@?A0xf6afaba9@@@Z",
-    "??$sort@PAPAVUIListWidget@@UWidgetDrawSort@?A0x4c78cf70@@@stlpmtx_std@@YAXPAPAVUIListWidget@@0UWidgetDrawSort@?A0x4c78cf70@@@Z",
-    "??$sort@PAPAVUIListWidget@@UWidgetDrawSort@?A0x5d138e2c@@@stlpmtx_std@@YAXPAPAVUIListWidget@@0UWidgetDrawSort@?A0x5d138e2c@@@Z",
-    "??$sort@PAPAVUIListWidget@@UWidgetDrawSort@?A0xa8183d2d@@@stlpmtx_std@@YAXPAPAVUIListWidget@@0UWidgetDrawSort@?A0xa8183d2d@@@Z",
-    "??$sort@PAPAVUIListWidget@@UWidgetDrawSort@?A0xaea79d6d@@@stlpmtx_std@@YAXPAPAVUIListWidget@@0UWidgetDrawSort@?A0xaea79d6d@@@Z",
-    "??$sort@PAPAVUIListWidget@@UWidgetDrawSort@?A0xe0dde280@@@stlpmtx_std@@YAXPAPAVUIListWidget@@0UWidgetDrawSort@?A0xe0dde280@@@Z",
-    "??$sort@PAPAVUIListWidget@@UWidgetDrawSort@?A0xf6afaba9@@@stlpmtx_std@@YAXPAPAVUIListWidget@@0UWidgetDrawSort@?A0xf6afaba9@@@Z",
-    "??$sort@PAPAVFlowNode@@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVFlowNode@@0P6A_NPAV1@1@Z@Z",
-    "??$sort@PAPAVObject@Hmx@@UObjNameSort@@@stlpmtx_std@@YAXPAPAVObject@Hmx@@0UObjNameSort@@@Z",
-    "??$sort@PAPAVPrefabChar@@USortPrefabByPortraitFileName@@@stlpmtx_std@@YAXPAPAVPrefabChar@@0USortPrefabByPortraitFileName@@@Z",
-    "??$sort@PAVSymbol@@P6A_NV1@0@Z@stlpmtx_std@@YAXPAVSymbol@@0P6A_NV1@1@Z@Z",
-    "??$sort@PAPAVRndDrawable@@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVRndDrawable@@0P6A_NPAV1@1@Z@Z",
-    "??$sort@PAPAVVocalPart@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVVocalPart@@0P6A_NPBV1@1@Z@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 21 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -69004,6 +68983,146 @@
      "lane": "W16-IF 2026-10-01",
      "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
      "note": "retail's only caller is CharKeyHandMidi::Poll (0x822D1900), which sorts its vector<KeyboardKey> (less / greater<int>); the address is that TU's instantiation, the old survivor was a stand-in pairing against MoveMgr.obj's CameraManager include"
+    },
+    {
+     "spelling": "??$sort@PAPAVUILabel@@ULabelSort@?A0x0bc8bdd4@@@stlpmtx_std@@YAXPAPAVUILabel@@0ULabelSort@?A0x0bc8bdd4@@@Z",
+     "lane": "W16-IF-FOLD 2026-10-01",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "evidence": "Retail bl census: 0x822d17f0 has exactly ONE call site, 0x822d1e2c, inside CharKeyHandMidi::Poll (0x822d1900), which sorts its vector<KeyboardKey> with greater<int>. No other sort instantiation's retail caller lands here, so this spelling is not folded into this body. icf_pair_adjudicate --chase REFUTES the pair under the current survivor (relocation targets disagree: the callee __introsort_loop at 0x822d15d8 is the KeyboardKey/greater<int> instantiation, BYTES-DIFFER against this spelling's own __introsort_loop; or the spelling is in no compiled obj) AND under the pre-W16-IF survivor sort<CamShot**,NameSort> (21/21 refuted, lane W16-IF-FOLD control), so the membership was never proven. Withdrawn, not pruned."
+    },
+    {
+     "spelling": "??$sort@PAPAVUILabel@@ULabelSort@?A0x4c78cf70@@@stlpmtx_std@@YAXPAPAVUILabel@@0ULabelSort@?A0x4c78cf70@@@Z",
+     "lane": "W16-IF-FOLD 2026-10-01",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "evidence": "Retail bl census: 0x822d17f0 has exactly ONE call site, 0x822d1e2c, inside CharKeyHandMidi::Poll (0x822d1900), which sorts its vector<KeyboardKey> with greater<int>. No other sort instantiation's retail caller lands here, so this spelling is not folded into this body. icf_pair_adjudicate --chase REFUTES the pair under the current survivor (relocation targets disagree: the callee __introsort_loop at 0x822d15d8 is the KeyboardKey/greater<int> instantiation, BYTES-DIFFER against this spelling's own __introsort_loop; or the spelling is in no compiled obj) AND under the pre-W16-IF survivor sort<CamShot**,NameSort> (21/21 refuted, lane W16-IF-FOLD control), so the membership was never proven. Withdrawn, not pruned."
+    },
+    {
+     "spelling": "??$sort@PAPAVUILabel@@ULabelSort@?A0x5d138e2c@@@stlpmtx_std@@YAXPAPAVUILabel@@0ULabelSort@?A0x5d138e2c@@@Z",
+     "lane": "W16-IF-FOLD 2026-10-01",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "evidence": "Retail bl census: 0x822d17f0 has exactly ONE call site, 0x822d1e2c, inside CharKeyHandMidi::Poll (0x822d1900), which sorts its vector<KeyboardKey> with greater<int>. No other sort instantiation's retail caller lands here, so this spelling is not folded into this body. icf_pair_adjudicate --chase REFUTES the pair under the current survivor (relocation targets disagree: the callee __introsort_loop at 0x822d15d8 is the KeyboardKey/greater<int> instantiation, BYTES-DIFFER against this spelling's own __introsort_loop; or the spelling is in no compiled obj) AND under the pre-W16-IF survivor sort<CamShot**,NameSort> (21/21 refuted, lane W16-IF-FOLD control), so the membership was never proven. Withdrawn, not pruned."
+    },
+    {
+     "spelling": "??$sort@PAPAVUILabel@@ULabelSort@?A0x97b3acc5@@@stlpmtx_std@@YAXPAPAVUILabel@@0ULabelSort@?A0x97b3acc5@@@Z",
+     "lane": "W16-IF-FOLD 2026-10-01",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "evidence": "Retail bl census: 0x822d17f0 has exactly ONE call site, 0x822d1e2c, inside CharKeyHandMidi::Poll (0x822d1900), which sorts its vector<KeyboardKey> with greater<int>. No other sort instantiation's retail caller lands here, so this spelling is not folded into this body. icf_pair_adjudicate --chase REFUTES the pair under the current survivor (relocation targets disagree: the callee __introsort_loop at 0x822d15d8 is the KeyboardKey/greater<int> instantiation, BYTES-DIFFER against this spelling's own __introsort_loop; or the spelling is in no compiled obj) AND under the pre-W16-IF survivor sort<CamShot**,NameSort> (21/21 refuted, lane W16-IF-FOLD control), so the membership was never proven. Withdrawn, not pruned."
+    },
+    {
+     "spelling": "??$sort@PAPAVUILabel@@ULabelSort@?A0xa8183d2d@@@stlpmtx_std@@YAXPAPAVUILabel@@0ULabelSort@?A0xa8183d2d@@@Z",
+     "lane": "W16-IF-FOLD 2026-10-01",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "evidence": "Retail bl census: 0x822d17f0 has exactly ONE call site, 0x822d1e2c, inside CharKeyHandMidi::Poll (0x822d1900), which sorts its vector<KeyboardKey> with greater<int>. No other sort instantiation's retail caller lands here, so this spelling is not folded into this body. icf_pair_adjudicate --chase REFUTES the pair under the current survivor (relocation targets disagree: the callee __introsort_loop at 0x822d15d8 is the KeyboardKey/greater<int> instantiation, BYTES-DIFFER against this spelling's own __introsort_loop; or the spelling is in no compiled obj) AND under the pre-W16-IF survivor sort<CamShot**,NameSort> (21/21 refuted, lane W16-IF-FOLD control), so the membership was never proven. Withdrawn, not pruned."
+    },
+    {
+     "spelling": "??$sort@PAPAVUILabel@@ULabelSort@?A0xaea79d6d@@@stlpmtx_std@@YAXPAPAVUILabel@@0ULabelSort@?A0xaea79d6d@@@Z",
+     "lane": "W16-IF-FOLD 2026-10-01",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "evidence": "Retail bl census: 0x822d17f0 has exactly ONE call site, 0x822d1e2c, inside CharKeyHandMidi::Poll (0x822d1900), which sorts its vector<KeyboardKey> with greater<int>. No other sort instantiation's retail caller lands here, so this spelling is not folded into this body. icf_pair_adjudicate --chase REFUTES the pair under the current survivor (relocation targets disagree: the callee __introsort_loop at 0x822d15d8 is the KeyboardKey/greater<int> instantiation, BYTES-DIFFER against this spelling's own __introsort_loop; or the spelling is in no compiled obj) AND under the pre-W16-IF survivor sort<CamShot**,NameSort> (21/21 refuted, lane W16-IF-FOLD control), so the membership was never proven. Withdrawn, not pruned."
+    },
+    {
+     "spelling": "??$sort@PAPAVUILabel@@ULabelSort@?A0xe0dde280@@@stlpmtx_std@@YAXPAPAVUILabel@@0ULabelSort@?A0xe0dde280@@@Z",
+     "lane": "W16-IF-FOLD 2026-10-01",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "evidence": "Retail bl census: 0x822d17f0 has exactly ONE call site, 0x822d1e2c, inside CharKeyHandMidi::Poll (0x822d1900), which sorts its vector<KeyboardKey> with greater<int>. No other sort instantiation's retail caller lands here, so this spelling is not folded into this body. icf_pair_adjudicate --chase REFUTES the pair under the current survivor (relocation targets disagree: the callee __introsort_loop at 0x822d15d8 is the KeyboardKey/greater<int> instantiation, BYTES-DIFFER against this spelling's own __introsort_loop; or the spelling is in no compiled obj) AND under the pre-W16-IF survivor sort<CamShot**,NameSort> (21/21 refuted, lane W16-IF-FOLD control), so the membership was never proven. Withdrawn, not pruned."
+    },
+    {
+     "spelling": "??$sort@PAPAVUILabel@@ULabelSort@?A0xf6afaba9@@@stlpmtx_std@@YAXPAPAVUILabel@@0ULabelSort@?A0xf6afaba9@@@Z",
+     "lane": "W16-IF-FOLD 2026-10-01",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "evidence": "Retail bl census: 0x822d17f0 has exactly ONE call site, 0x822d1e2c, inside CharKeyHandMidi::Poll (0x822d1900), which sorts its vector<KeyboardKey> with greater<int>. No other sort instantiation's retail caller lands here, so this spelling is not folded into this body. icf_pair_adjudicate --chase REFUTES the pair under the current survivor (relocation targets disagree: the callee __introsort_loop at 0x822d15d8 is the KeyboardKey/greater<int> instantiation, BYTES-DIFFER against this spelling's own __introsort_loop; or the spelling is in no compiled obj) AND under the pre-W16-IF survivor sort<CamShot**,NameSort> (21/21 refuted, lane W16-IF-FOLD control), so the membership was never proven. Withdrawn, not pruned."
+    },
+    {
+     "spelling": "??$sort@PAPAVUIListWidget@@UWidgetDrawSort@?A0x4c78cf70@@@stlpmtx_std@@YAXPAPAVUIListWidget@@0UWidgetDrawSort@?A0x4c78cf70@@@Z",
+     "lane": "W16-IF-FOLD 2026-10-01",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "evidence": "Retail bl census: 0x822d17f0 has exactly ONE call site, 0x822d1e2c, inside CharKeyHandMidi::Poll (0x822d1900), which sorts its vector<KeyboardKey> with greater<int>. No other sort instantiation's retail caller lands here, so this spelling is not folded into this body. icf_pair_adjudicate --chase REFUTES the pair under the current survivor (relocation targets disagree: the callee __introsort_loop at 0x822d15d8 is the KeyboardKey/greater<int> instantiation, BYTES-DIFFER against this spelling's own __introsort_loop; or the spelling is in no compiled obj) AND under the pre-W16-IF survivor sort<CamShot**,NameSort> (21/21 refuted, lane W16-IF-FOLD control), so the membership was never proven. Withdrawn, not pruned."
+    },
+    {
+     "spelling": "??$sort@PAPAVUIListWidget@@UWidgetDrawSort@?A0x5d138e2c@@@stlpmtx_std@@YAXPAPAVUIListWidget@@0UWidgetDrawSort@?A0x5d138e2c@@@Z",
+     "lane": "W16-IF-FOLD 2026-10-01",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "evidence": "Retail bl census: 0x822d17f0 has exactly ONE call site, 0x822d1e2c, inside CharKeyHandMidi::Poll (0x822d1900), which sorts its vector<KeyboardKey> with greater<int>. No other sort instantiation's retail caller lands here, so this spelling is not folded into this body. icf_pair_adjudicate --chase REFUTES the pair under the current survivor (relocation targets disagree: the callee __introsort_loop at 0x822d15d8 is the KeyboardKey/greater<int> instantiation, BYTES-DIFFER against this spelling's own __introsort_loop; or the spelling is in no compiled obj) AND under the pre-W16-IF survivor sort<CamShot**,NameSort> (21/21 refuted, lane W16-IF-FOLD control), so the membership was never proven. Withdrawn, not pruned."
+    },
+    {
+     "spelling": "??$sort@PAPAVUIListWidget@@UWidgetDrawSort@?A0xa8183d2d@@@stlpmtx_std@@YAXPAPAVUIListWidget@@0UWidgetDrawSort@?A0xa8183d2d@@@Z",
+     "lane": "W16-IF-FOLD 2026-10-01",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "evidence": "Retail bl census: 0x822d17f0 has exactly ONE call site, 0x822d1e2c, inside CharKeyHandMidi::Poll (0x822d1900), which sorts its vector<KeyboardKey> with greater<int>. No other sort instantiation's retail caller lands here, so this spelling is not folded into this body. icf_pair_adjudicate --chase REFUTES the pair under the current survivor (relocation targets disagree: the callee __introsort_loop at 0x822d15d8 is the KeyboardKey/greater<int> instantiation, BYTES-DIFFER against this spelling's own __introsort_loop; or the spelling is in no compiled obj) AND under the pre-W16-IF survivor sort<CamShot**,NameSort> (21/21 refuted, lane W16-IF-FOLD control), so the membership was never proven. Withdrawn, not pruned."
+    },
+    {
+     "spelling": "??$sort@PAPAVUIListWidget@@UWidgetDrawSort@?A0xaea79d6d@@@stlpmtx_std@@YAXPAPAVUIListWidget@@0UWidgetDrawSort@?A0xaea79d6d@@@Z",
+     "lane": "W16-IF-FOLD 2026-10-01",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "evidence": "Retail bl census: 0x822d17f0 has exactly ONE call site, 0x822d1e2c, inside CharKeyHandMidi::Poll (0x822d1900), which sorts its vector<KeyboardKey> with greater<int>. No other sort instantiation's retail caller lands here, so this spelling is not folded into this body. icf_pair_adjudicate --chase REFUTES the pair under the current survivor (relocation targets disagree: the callee __introsort_loop at 0x822d15d8 is the KeyboardKey/greater<int> instantiation, BYTES-DIFFER against this spelling's own __introsort_loop; or the spelling is in no compiled obj) AND under the pre-W16-IF survivor sort<CamShot**,NameSort> (21/21 refuted, lane W16-IF-FOLD control), so the membership was never proven. Withdrawn, not pruned."
+    },
+    {
+     "spelling": "??$sort@PAPAVUIListWidget@@UWidgetDrawSort@?A0xe0dde280@@@stlpmtx_std@@YAXPAPAVUIListWidget@@0UWidgetDrawSort@?A0xe0dde280@@@Z",
+     "lane": "W16-IF-FOLD 2026-10-01",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "evidence": "Retail bl census: 0x822d17f0 has exactly ONE call site, 0x822d1e2c, inside CharKeyHandMidi::Poll (0x822d1900), which sorts its vector<KeyboardKey> with greater<int>. No other sort instantiation's retail caller lands here, so this spelling is not folded into this body. icf_pair_adjudicate --chase REFUTES the pair under the current survivor (relocation targets disagree: the callee __introsort_loop at 0x822d15d8 is the KeyboardKey/greater<int> instantiation, BYTES-DIFFER against this spelling's own __introsort_loop; or the spelling is in no compiled obj) AND under the pre-W16-IF survivor sort<CamShot**,NameSort> (21/21 refuted, lane W16-IF-FOLD control), so the membership was never proven. Withdrawn, not pruned."
+    },
+    {
+     "spelling": "??$sort@PAPAVUIListWidget@@UWidgetDrawSort@?A0xf6afaba9@@@stlpmtx_std@@YAXPAPAVUIListWidget@@0UWidgetDrawSort@?A0xf6afaba9@@@Z",
+     "lane": "W16-IF-FOLD 2026-10-01",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "evidence": "Retail bl census: 0x822d17f0 has exactly ONE call site, 0x822d1e2c, inside CharKeyHandMidi::Poll (0x822d1900), which sorts its vector<KeyboardKey> with greater<int>. No other sort instantiation's retail caller lands here, so this spelling is not folded into this body. icf_pair_adjudicate --chase REFUTES the pair under the current survivor (relocation targets disagree: the callee __introsort_loop at 0x822d15d8 is the KeyboardKey/greater<int> instantiation, BYTES-DIFFER against this spelling's own __introsort_loop; or the spelling is in no compiled obj) AND under the pre-W16-IF survivor sort<CamShot**,NameSort> (21/21 refuted, lane W16-IF-FOLD control), so the membership was never proven. Withdrawn, not pruned."
+    },
+    {
+     "spelling": "??$sort@PAPAVFlowNode@@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVFlowNode@@0P6A_NPAV1@1@Z@Z",
+     "lane": "W16-IF-FOLD 2026-10-01",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "evidence": "Retail bl census: 0x822d17f0 has exactly ONE call site, 0x822d1e2c, inside CharKeyHandMidi::Poll (0x822d1900), which sorts its vector<KeyboardKey> with greater<int>. No other sort instantiation's retail caller lands here, so this spelling is not folded into this body. icf_pair_adjudicate --chase REFUTES the pair under the current survivor (relocation targets disagree: the callee __introsort_loop at 0x822d15d8 is the KeyboardKey/greater<int> instantiation, BYTES-DIFFER against this spelling's own __introsort_loop; or the spelling is in no compiled obj) AND under the pre-W16-IF survivor sort<CamShot**,NameSort> (21/21 refuted, lane W16-IF-FOLD control), so the membership was never proven. Withdrawn, not pruned."
+    },
+    {
+     "spelling": "??$sort@PAPAVObject@Hmx@@UObjNameSort@@@stlpmtx_std@@YAXPAPAVObject@Hmx@@0UObjNameSort@@@Z",
+     "lane": "W16-IF-FOLD 2026-10-01",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "evidence": "Retail bl census: 0x822d17f0 has exactly ONE call site, 0x822d1e2c, inside CharKeyHandMidi::Poll (0x822d1900), which sorts its vector<KeyboardKey> with greater<int>. No other sort instantiation's retail caller lands here, so this spelling is not folded into this body. icf_pair_adjudicate --chase REFUTES the pair under the current survivor (relocation targets disagree: the callee __introsort_loop at 0x822d15d8 is the KeyboardKey/greater<int> instantiation, BYTES-DIFFER against this spelling's own __introsort_loop; or the spelling is in no compiled obj) AND under the pre-W16-IF survivor sort<CamShot**,NameSort> (21/21 refuted, lane W16-IF-FOLD control), so the membership was never proven. Withdrawn, not pruned."
+    },
+    {
+     "spelling": "??$sort@PAPAVPrefabChar@@USortPrefabByPortraitFileName@@@stlpmtx_std@@YAXPAPAVPrefabChar@@0USortPrefabByPortraitFileName@@@Z",
+     "lane": "W16-IF-FOLD 2026-10-01",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "evidence": "Retail bl census: 0x822d17f0 has exactly ONE call site, 0x822d1e2c, inside CharKeyHandMidi::Poll (0x822d1900), which sorts its vector<KeyboardKey> with greater<int>. No other sort instantiation's retail caller lands here, so this spelling is not folded into this body. icf_pair_adjudicate --chase REFUTES the pair under the current survivor (relocation targets disagree: the callee __introsort_loop at 0x822d15d8 is the KeyboardKey/greater<int> instantiation, BYTES-DIFFER against this spelling's own __introsort_loop; or the spelling is in no compiled obj) AND under the pre-W16-IF survivor sort<CamShot**,NameSort> (21/21 refuted, lane W16-IF-FOLD control), so the membership was never proven. Withdrawn, not pruned."
+    },
+    {
+     "spelling": "??$sort@PAVSymbol@@P6A_NV1@0@Z@stlpmtx_std@@YAXPAVSymbol@@0P6A_NV1@1@Z@Z",
+     "lane": "W16-IF-FOLD 2026-10-01",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "evidence": "Retail bl census: 0x822d17f0 has exactly ONE call site, 0x822d1e2c, inside CharKeyHandMidi::Poll (0x822d1900), which sorts its vector<KeyboardKey> with greater<int>. No other sort instantiation's retail caller lands here, so this spelling is not folded into this body. icf_pair_adjudicate --chase REFUTES the pair under the current survivor (relocation targets disagree: the callee __introsort_loop at 0x822d15d8 is the KeyboardKey/greater<int> instantiation, BYTES-DIFFER against this spelling's own __introsort_loop; or the spelling is in no compiled obj) AND under the pre-W16-IF survivor sort<CamShot**,NameSort> (21/21 refuted, lane W16-IF-FOLD control), so the membership was never proven. Withdrawn, not pruned."
+    },
+    {
+     "spelling": "??$sort@PAPAVRndDrawable@@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVRndDrawable@@0P6A_NPAV1@1@Z@Z",
+     "lane": "W16-IF-FOLD 2026-10-01",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "evidence": "Retail bl census: 0x822d17f0 has exactly ONE call site, 0x822d1e2c, inside CharKeyHandMidi::Poll (0x822d1900), which sorts its vector<KeyboardKey> with greater<int>. No other sort instantiation's retail caller lands here, so this spelling is not folded into this body. icf_pair_adjudicate --chase REFUTES the pair under the current survivor (relocation targets disagree: the callee __introsort_loop at 0x822d15d8 is the KeyboardKey/greater<int> instantiation, BYTES-DIFFER against this spelling's own __introsort_loop; or the spelling is in no compiled obj) AND under the pre-W16-IF survivor sort<CamShot**,NameSort> (21/21 refuted, lane W16-IF-FOLD control), so the membership was never proven. Withdrawn, not pruned."
+    },
+    {
+     "spelling": "??$sort@PAPAVVocalPart@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVVocalPart@@0P6A_NPBV1@1@Z@Z",
+     "lane": "W16-IF-FOLD 2026-10-01",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "evidence": "Retail bl census: 0x822d17f0 has exactly ONE call site, 0x822d1e2c, inside CharKeyHandMidi::Poll (0x822d1900), which sorts its vector<KeyboardKey> with greater<int>. No other sort instantiation's retail caller lands here, so this spelling is not folded into this body. icf_pair_adjudicate --chase REFUTES the pair under the current survivor (relocation targets disagree: the callee __introsort_loop at 0x822d15d8 is the KeyboardKey/greater<int> instantiation, BYTES-DIFFER against this spelling's own __introsort_loop; or the spelling is in no compiled obj) AND under the pre-W16-IF survivor sort<CamShot**,NameSort> (21/21 refuted, lane W16-IF-FOLD control), so the membership was never proven. Withdrawn, not pruned."
     }
    ],
    "repair": {
@@ -84547,9 +84666,7 @@
    "name": "$__uninitialized_copy",
    "address": "0x827148b0",
    "survivor": "??$__uninitialized_copy@PAVSampleZone@@PAV1@@stlpmtx_std@@YAPAVSampleZone@@PAV1@00ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_copy@PBULocalizedName@HamMove@@PAU12@@stlpmtx_std@@YAPAULocalizedName@HamMove@@PBU12@0PAU12@ABU__false_type@0@@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -84557,6 +84674,13 @@
      "lane": "W16-IF 2026-10-01",
      "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
      "note": "the retail body at this address constructs/destroys/assigns SampleZone (calls ??0SampleZone/??4SampleZone/~SampleZone through the family), its callers are MidiInstrument code, and it ranks 99.8-100 against MidiInstrument.obj's vector<SampleZone> instantiation; the HamMove::LocalizedName survivor was a DC3 stand-in pairing against HamMove.obj"
+    },
+    {
+     "spelling": "??$__uninitialized_copy@PBULocalizedName@HamMove@@PAU12@@stlpmtx_std@@YAPAULocalizedName@HamMove@@PBU12@0PAU12@ABU__false_type@0@@Z",
+     "lane": "W16-IF-FOLD 2026-10-01",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "evidence": "Retail bytes: 0x827148b0 calls _Copy_Construct<SampleZone> (0x82713ad8, the SampleZone copy ctor) and all six retail call sites (0x82714b04/b98/c50/eec/fbc, 0x82715034) are inside MidiInstrument's vector<SampleZone> family. HamMove::LocalizedName is DC3-only; its copy calls ??0LocalizedName (chase: BYTES-DIFFER on the copy-ctor slot). Chase REFUTED under both the current and the pre-W16-IF survivor. Withdrawn, not pruned."
     }
    ]
   },
