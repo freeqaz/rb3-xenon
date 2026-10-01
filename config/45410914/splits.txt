@@ -3828,7 +3828,7 @@ Waypoint.cpp:
 	.text       start:0x822DA004 end:0x822DA010
 	.text       start:0x823BE360 end:0x823BE4BC
 	.text       start:0x823DA758 end:0x823DCFB0
-	.text       start:0x823DD010 end:0x823DD0F0
+	.text       start:0x823DD010 end:0x823DD0E0
 	.text       start:0x82705AE0 end:0x82705B68
 	.text       start:0x82705DC0 end:0x82705E20
 
@@ -4069,6 +4069,7 @@ CharacterTest.cpp:
 	.text       start:0x82320824 end:0x82320828
 	.text       start:0x82320844 end:0x82320848
 	.text       start:0x823208A0 end:0x823208F8
+	.text       start:0x823DD0E0 end:0x823DD0F0
 	.text       start:0x823DD550 end:0x823DDDC0
 	.text       start:0x823DDDC0 end:0x823DE208
 	.text       start:0x823DE208 end:0x823DE254
