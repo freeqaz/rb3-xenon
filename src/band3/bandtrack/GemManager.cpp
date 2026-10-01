@@ -276,6 +276,7 @@ void GemManager::ClearTrackMasks() {
 void GemManager::SetupRealGuitarFretPos() {
     static Symbol real_guitar("real_guitar");
     static Symbol real_bass("real_bass");
+    int i3c;
     const BandUser *bandUser = mTrackConfig.GetBandUser();
     bool isRG = bandUser->GetTrack()->GetType() == real_guitar;
     bool isRB = bandUser->GetTrack()->GetType() == real_bass;
@@ -726,7 +727,7 @@ void GemManager::SetupGems(int startTick) {
                             int adjustedEnd =
                                 TheTrainerPanel->GetLoopTicks(TheTrainerPanel->GetCurrSection())
                                 + (phraseStart - offset);
-                            phraseEnd = adjustedEnd < phraseEnd ? adjustedEnd : phraseEnd;
+                            phraseEnd = Min(adjustedEnd, phraseEnd);
                         }
                         ArpeggioPhrase phrase(phraseStart, phraseEnd, i);
                         mArpeggioPhrases.push_back(phrase);
