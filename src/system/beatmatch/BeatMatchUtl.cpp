@@ -14,7 +14,7 @@ bool GemPlayableBy(int i, int j) {
     return i == 0 || (i & 1 << j) != 0;
 }
 
-// fn_804595B4
+// 0x82790178
 int GemNumSlots(int slot_bitfield) {
     MILO_ASSERT(0 <= slot_bitfield, 0x25);
     if ((unsigned int)slot_bitfield < 0x20)
@@ -34,7 +34,7 @@ int GemNumSlots(int slot_bitfield) {
     }
 }
 
-// fn_80459608
+// 0x827901D0
 int ConsumeNumber(const char *&cc) {
     int ret = 0;
     while (true) {

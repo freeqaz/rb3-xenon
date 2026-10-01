@@ -63,7 +63,7 @@ void VocalNoteList::CopyPhrasesFrom(const VocalNoteList *srcList) {
 
 void VocalNoteList::CopyLyricPhrases() { CopyPhraseVec(mPhrases, &mLyricPhrases); }
 
-// fn_80497850
+// 0x82781B00
 void VocalNoteList::AddNote(const VocalNote &note) {
     MemDoTempAllocations tmp;
     if (!mNotes.empty() && mNotes.back().GetTick() == note.GetTick()) {
@@ -77,7 +77,7 @@ void VocalNoteList::AddNote(const VocalNote &note) {
         mNotes.push_back(note);
 }
 
-// fn_80497928
+// 0x827821F0
 void VocalNoteList::NotesDone(const TempoMap &tmap, bool b) {
     static bool sDump;
     if (mPhrases.empty()) {
