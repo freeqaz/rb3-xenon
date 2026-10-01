@@ -129,7 +129,8 @@ END_FORCE_LOCAL_INLINE
 
 BandProfile *BandStatsInfo::GetSoloProfile(int index) const {
     MILO_ASSERT(index < mSoloStats.size(), 0xB6);
-    BandProfile *profile = mSoloStats[index].first;
+    const std::pair<BandProfile *, PerformerStatsInfo> &entry = mSoloStats[index];
+    BandProfile *profile = entry.first;
     MILO_ASSERT(profile, 0xBB);
     return profile;
 }
