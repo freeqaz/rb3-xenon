@@ -1120,7 +1120,7 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
          meshIt != mObjectsTessellate.end(); ++meshIt) {
         RndMesh *mesh = *meshIt;
         char *name = (char *)mesh->Name();
-        TheDebug << MakeString("RndAmbientOcclusion: Tessellating '%s'...\n", name);
+        MILO_LOG("RndAmbientOcclusion: Tessellating '%s'...\n", name);
         const Transform &xfm = mesh->WorldXfm();
 
         unsigned int totalNewFaces = 0;
@@ -1625,7 +1625,7 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
             // Debug output
             if (newFacesThisIter != 0) {
                 passNum++;
-                TheDebug << MakeString(
+                MILO_LOG(
                     "RndAmbientOcclusion: Tessellation pass %d: %d new faces, %d total\n",
                     (unsigned long)passNum, (unsigned long)newFacesThisIter, (long)totalNewFaces
                 );
@@ -1635,7 +1635,7 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
 
     // Print tessellation time
     float tessTime = timer.SplitMs() * 0.001f;
-    TheDebug << MakeString(
+    MILO_LOG(
         "RndAmbientOcclusion: Tessellation complete in %0.2f seconds.  Patching...\n",
         tessTime
     );
@@ -1666,7 +1666,7 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
 
     // Print patching time
     float patchTime = timer.SplitMs() * 0.001f;
-    TheDebug << MakeString(
+    MILO_LOG(
         "RndAmbientOcclusion: Patching complete in %0.2f seconds.\n", patchTime
     );
     if (outPatchTime)
