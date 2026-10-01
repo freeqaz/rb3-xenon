@@ -24715,7 +24715,7 @@
  "0x827f7ef0": "?Selected@UIList@@QBAHXZ",
  "0x827f7ef8": "?SelectedPos@UIList@@QBAHXZ",
  "0x827f7f00": "?SelectedData@UIList@@QBAHXZ",
- "0x827f7f08": "?SetSpeed@UIList@@QAAXM@Z",
+ "0x827f7f08": "?IsScrolling@UIList@@QBA_NXZ",
  "0x827f7f10": "?GetListState@UIList@@QAAAAVUIListState@@XZ",
  "0x827f7f18": "?ChildList@UIList@@QAAPAV1@XZ",
  "0x827f7f68": "?GetUIListDir@UIList@@QBAPAVUIListDir@@XZ",

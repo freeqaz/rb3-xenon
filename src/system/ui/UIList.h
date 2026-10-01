@@ -94,7 +94,7 @@ public:
     int GridSpan() const { return mListState.GridSpan(); }
     bool Circular() const { return mListState.Circular(); }
     float Speed() const;
-    int SelectedData() const { return mListState.SelectedData(); }
+    int SelectedData() const;
     int FirstShowing() const;
     bool IsScrolling() const;
 
