@@ -272,7 +272,10 @@ const char *BandTrack::UserName() const {
 }
 
 Symbol BandTrack::GetPlayerDifficultySym() const {
-    return mParent ? mParent->GetPlayerDifficultySym() : Symbol(gNullStr);
+    if (mParent)
+        return mParent->GetPlayerDifficultySym();
+    else
+        return Symbol(gNullStr);
 }
 
 TrackPanelDirBase *BandTrack::MyTrackPanelDir() {
