@@ -4134,7 +4134,6 @@ PropAnim.cpp:
 	.pdata      start:0x8220C330 end:0x8220C348
 	.pdata      start:0x8220C348 end:0x8220C360
 	.pdata      start:0x8220C378 end:0x8220C570
-	.pdata      start:0x8220E9F8 end:0x8220EA08
 	.text       start:0x822C7D58 end:0x822C7E04
 	.text       start:0x824268A8 end:0x82426950
 	.text       start:0x82426A04 end:0x82428448
@@ -4147,7 +4146,6 @@ PropAnim.cpp:
 	.text       start:0x8242C438 end:0x8242C568
 	.text       start:0x8242C770 end:0x8242C7CC
 	.text       start:0x8242C7D0 end:0x8242EC18
-	.text       start:0x82461948 end:0x824619D8
 
 HamNavList.cpp:
 	.pdata      start:0x82215988 end:0x82215990
@@ -7738,11 +7736,9 @@ MatAnim.cpp:
 	.pdata      start:0x8220E6E0 end:0x8220E6E8
 	.pdata      start:0x8220E720 end:0x8220E728
 	.pdata      start:0x8220E7B0 end:0x8220E7B8
-	.pdata      start:0x8220E990 end:0x8220E9F8
-	.pdata      start:0x8220EA08 end:0x8220EA90
+	.pdata      start:0x8220E990 end:0x8220EA90
 	.pdata      start:0x8220EA90 end:0x8220EAA0
-	.pdata      start:0x8220EAA0 end:0x8220EB98
-	.pdata      start:0x8220EBA8 end:0x8220EBF8
+	.pdata      start:0x8220EAA0 end:0x8220EBF8
 	.text       start:0x82270298 end:0x822702F0
 	.text       start:0x82272798 end:0x82272948
 	.text       start:0x822BED18 end:0x822BED88
@@ -7753,11 +7749,9 @@ MatAnim.cpp:
 	.text       start:0x8245DF70 end:0x8245DFE8
 	.text       start:0x8245E2A8 end:0x8245E358
 	.text       start:0x8245F410 end:0x8245F56C
-	.text       start:0x82461320 end:0x82461948
-	.text       start:0x824619D8 end:0x82462738
+	.text       start:0x82461320 end:0x82462738
 	.text       start:0x82462738 end:0x824627C8
-	.text       start:0x824627C8 end:0x82463680
-	.text       start:0x8246370C end:0x82463EFC
+	.text       start:0x824627C8 end:0x82463EFC
 
 FilterVersion.cpp:
 	.pdata      start:0x8220F9F0 end:0x8220FA00
@@ -12292,9 +12286,7 @@ CamAnim.cpp:
 	.text       start:0x82486674 end:0x824867D4
 
 Lit_NG.cpp:
-	.pdata      start:0x8220EB98 end:0x8220EBA8
 	.pdata      start:0x8225CBA8 end:0x8225CCB0
-	.text       start:0x82463680 end:0x8246370C
 	.text       start:0x82B89E18 end:0x82B8B860
 
 AccomplishmentConditional.cpp:
