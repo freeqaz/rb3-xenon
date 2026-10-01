@@ -91681,6 +91681,7 @@
     "??3Job@@SAXPAX@Z",
     "??3LabelNumberTicker@@SAXPAX@Z",
     "??3LabelShrinkWrapper@@SAXPAX@Z",
+    "??3Loader@@SAXPAX@Z",
     "??3MCContainer@@SAXPAX@Z",
     "??3MCFile@@SAXPAX@Z",
     "??3MeasureMap@@SAXPAX@Z",
@@ -91760,8 +91761,10 @@
     "??3StringTable@@SAXPAX@Z",
     "??3SynthEmitter@@SAXPAX@Z",
     "??3SynthSample@@SAXPAX@Z",
+    "??3Task@@SAXPAX@Z",
     "??3TempoMap@@SAXPAX@Z",
     "??3TransConstraint@@SAXPAX@Z",
+    "??3TypeProps@@SAXPAX@Z",
     "??3UIButton@@SAXPAX@Z",
     "??3UIColor@@SAXPAX@Z",
     "??3UIComponent@@SAXPAX@Z",
@@ -92266,6 +92269,23 @@
      "lane": "W16-KA 2026-10-01",
      "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
      "evidence": "Retail EH funclet fn_8227BF10 (unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3VocalTrackDir@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    }
+   ],
+   "admitted": [
+    {
+     "spelling": "??3TypeProps@@SAXPAX@Z",
+     "lane": "W16-KD 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 UNDECIDABLE: VACUOUS: body under 4 words); 4 B retail / 4 B ours, both `b MemFree`. Admitted on the retail call-site witness: retail ??_GTypeProps (0x822740d0) branches to this survivor at 0x822740fc, the exact site where our compiled ??_GTypeProps calls TypeProps::operator delete."
+    },
+    {
+     "spelling": "??3Task@@SAXPAX@Z",
+     "lane": "W16-KD 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 UNDECIDABLE: VACUOUS: body under 4 words); 4 B retail / 4 B ours, both `b MemFree`. Admitted on the retail call-site witness: retail ??_GMessageTask (0x82748158) and ??_GScriptTask (0x8274a7a0) branch to this survivor at 0x82748184 and 0x8274a7cc, the exact sites where our compiled deleting dtors call Task::operator delete."
+    },
+    {
+     "spelling": "??3Loader@@SAXPAX@Z",
+     "lane": "W16-KD 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 UNDECIDABLE: VACUOUS: body under 4 words); 4 B retail / 4 B ours, both `b MemFree`. Admitted on the retail call-site witness: retail ??_GDataLoader (0x8276b1c8) and ??_GDirUnloader (0x8276cf80) branch to this survivor at 0x8276b1f4 and 0x8276cfac, the exact sites where our compiled deleting dtors call Loader::operator delete."
     }
    ]
   },
