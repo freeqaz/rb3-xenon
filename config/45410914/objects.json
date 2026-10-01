@@ -75,7 +75,8 @@
             "system/bandobj/BandCharDesc.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
-                    "/DRB3_SYNCPROP_LOCAL_STATIC"
+                    "/DRB3_SYNCPROP_LOCAL_STATIC",
+                    "/DRB3_HANDLE_LOCAL_STATIC"
                 ]
             },
             "system/bandobj/BandButton.cpp": {
@@ -1076,7 +1077,8 @@
             "system/bandobj/BandFaceDeform.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
-                    "/DRB3_SYNCPROP_LOCAL_STATIC"
+                    "/DRB3_SYNCPROP_LOCAL_STATIC",
+                    "/DRB3_HANDLE_LOCAL_STATIC"
                 ]
             },
             "system/bandobj/ReviewDisplay.cpp": {
