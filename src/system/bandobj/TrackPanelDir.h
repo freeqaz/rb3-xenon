@@ -63,6 +63,10 @@ public:
     virtual GemTrackResourceManager *GetGemTrackResourceManager() const {
         return mGemTrackRsrcMgr;
     }
+    // The two RB3-360-only slots (0xd4/0xd8, see TrackPanelDirBase.h):
+    // write the audition time readout, and re-enable it after GameOver.
+    virtual void Unkd4(const char *, const char *, const char *, Symbol);
+    virtual void Unkd8() { unk378 = false; }
 
     void GameWon();
     void GameLost();
@@ -113,6 +117,6 @@ public:
     ObjPtr<BandLabel> mTimeRemaining; // 0x354
     ObjPtr<BandLabel> mTimeSection; // 0x360
     ObjPtr<RndGroup> mTimeGrp; // 0x36c
-    // Set: UpdateTimeInfo does nothing at all.
+    // Set by GameOver, cleared by Unkd8: UpdateTimeInfo does nothing at all.
     bool unk378; // 0x378
 };

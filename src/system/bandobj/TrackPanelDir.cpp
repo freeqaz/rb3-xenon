@@ -341,6 +341,20 @@ void TrackPanelDir::UpdateTimeInfo() {
     }
 }
 
+// Write the audition time readout: measure.beat.tick, elapsed and remaining
+// song time (all three preformatted by the caller), and the practice section.
+void TrackPanelDir::Unkd4(
+    const char *mbt, const char *elapsed, const char *remaining, Symbol section
+) {
+    if (mTimeGrp) {
+        static Symbol fmt("audition_time_display_string_format");
+        mTimeMbt->SetDisplayText(mbt, true);
+        mTimeElapsed->SetDisplayText(elapsed, true);
+        mTimeRemaining->SetDisplayText(remaining, true);
+        mTimeSection->SetTextToken(section);
+    }
+}
+
 void TrackPanelDir::ConfigureTrack(int i) {
     GemTrackDir *cur = mGemTracks[i];
     if (cur->mInUse)
@@ -623,9 +637,12 @@ void TrackPanelDir::SetMultiplier(int mult, bool b) {
 void TrackPanelDir::GameOver() {
     for (int i = 0; i < mTracks.size(); i++) {
         BandTrack *track = mTracks[i];
-        if (track)
+        if ((int)track)
             track->GameOver();
     }
+    if (mTimeGrp)
+        mTimeGrp->SetShowing(false);
+    unk378 = true;
 }
 
 void TrackPanelDir::GameWon() {

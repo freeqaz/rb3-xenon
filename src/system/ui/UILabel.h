@@ -205,6 +205,9 @@ public:
     }
 
 protected:
+    // TrackPanelDir::Unkd4 calls SetDisplayText on its time-readout labels
+    // directly (retail dispatches vtable slot 0x58).
+    friend class TrackPanelDir;
     UICOMP_DC3_VIRTUAL void OldResourcePreload(BinStream &);
     virtual void SetDisplayText(const char *, bool);
 
