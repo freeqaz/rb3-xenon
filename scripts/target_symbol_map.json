@@ -11517,7 +11517,7 @@
  "0x8248faa0": "??$GatherObjectsFromGroup@VRndMesh@@@@YAIPAVRndGroup@@AAV?$vector@PAVRndMesh@@V?$StlNodeAlloc@PAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x8248fc58": "??$__insertion_sort@PAV?$Key@_N@@V1@U?$less@V?$Key@_N@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$Key@_N@@00U?$less@V?$Key@_N@@@0@@Z",
  "0x8248fca8": "??$__partial_sort@PAV?$Key@_N@@V1@U?$less@V?$Key@_N@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$Key@_N@@000U?$less@V?$Key@_N@@@0@@Z",
- "0x8248fd58": "?_M_insert_overflow_aux@?$vector@V?$Key@VTransform@@@@V?$StlNodeAlloc@V?$Key@VTransform@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAV?$Key@VTransform@@@@ABV3@ABU__false_type@2@I_N@Z",
+ "0x8248fd58": "?_M_insert_overflow_aux@?$vector@VTriangle@@V?$StlNodeAlloc@VTriangle@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVTriangle@@ABV3@ABU__false_type@2@I_N@Z",
  "0x8248ff20": "??$__final_insertion_sort@PAV?$Key@_N@@U?$less@V?$Key@_N@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$Key@_N@@0U?$less@V?$Key@_N@@@0@@Z",
  "0x8248ff90": "??$sort_heap@PAPAVRndMesh@@U?$VectorSort@PAVRndMesh@@@@@stlpmtx_std@@YAXPAPAVRndMesh@@0U?$VectorSort@PAVRndMesh@@@@@Z",
  "0x82490100": "?ClassName@RndAmbientOcclusion@@UBA?AVSymbol@@XZ",

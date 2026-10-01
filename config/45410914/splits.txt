@@ -3765,8 +3765,7 @@ AmbientOcclusion.cpp:
 	.pdata      start:0x821FCE70 end:0x821FCE78
 	.pdata      start:0x821FCE78 end:0x821FCE80
 	.pdata      start:0x8220A838 end:0x8220A848
-	.pdata      start:0x82210D70 end:0x82210FD8
-	.pdata      start:0x82210FE8 end:0x82211000
+	.pdata      start:0x82210D70 end:0x82211000
 	.pdata      start:0x82211008 end:0x822110D8
 	.pdata      start:0x822110E0 end:0x822111A0
 	.pdata      start:0x822111A0 end:0x822111A8
@@ -3774,8 +3773,7 @@ AmbientOcclusion.cpp:
 	.text       start:0x82326468 end:0x823264D8
 	.text       start:0x823264D8 end:0x82326500
 	.text       start:0x8240EAB8 end:0x8240EB38
-	.text       start:0x8248C5E8 end:0x8248FD58
-	.text       start:0x8248FF1C end:0x82490100
+	.text       start:0x8248C5E8 end:0x82490100
 	.text       start:0x82490130 end:0x82491480
 	.text       start:0x824914CC end:0x82493418
 	.text       start:0x82493418 end:0x82493498
@@ -7762,10 +7760,8 @@ FilterVersion.cpp:
 	.text       start:0x82474F8C end:0x82474FB4
 
 Ribbon.cpp:
-	.pdata      start:0x82210FD8 end:0x82210FE8
 	.text       start:0x82482050 end:0x82482058
 	.text       start:0x8248233C end:0x82482340
-	.text       start:0x8248FD58 end:0x8248FF1C
 
 Set.cpp:
 	.pdata      start:0x822103F0 end:0x82210408
