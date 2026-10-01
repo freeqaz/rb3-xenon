@@ -9625,7 +9625,7 @@
  "0x82410b88": "?UpdateRate@Rnd@@IAAXXZ",
  "0x82410d70": "?CreateCubeTextures@Rnd@@IAAXXZ",
  "0x82410e98": "?CreateDefaultTexture@Rnd@@IAAPAVRndTex@@W4DefaultTextureType@1@@Z",
- "0x824111d0": "?UniqueFilename@@YA?AVString@@PBD0@Z",
+ "0x824111d0": "?UniqueFilename@@YA?AVString@@PBD@Z",
  "0x824112b8": "?ScreenDump@Rnd@@UAAXPBD@Z",
  "0x824113e0": "?ScreenDumpUnique@Rnd@@UAAXPBD@Z",
  "0x82411468": "??$New@VRndCam@@@ObjectDir@@QAAPAVRndCam@@PBD@Z",

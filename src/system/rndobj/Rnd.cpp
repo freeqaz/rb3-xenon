@@ -555,7 +555,7 @@ void Rnd::ScreenDump(const char *file) {
 }
 
 void Rnd::ScreenDumpUnique(const char *cc) {
-    String filename = UniqueFilename(cc, "bmp");
+    String filename = UniqueFilename(cc);
     ScreenDump(filename.c_str());
 }
 

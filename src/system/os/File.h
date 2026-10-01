@@ -194,4 +194,6 @@ bool FileExists(const char *iFilename, int iMode, String *);
 /** Is this file inside the system's drive? */
 bool FileIsLocal(const char *file);
 
-String UniqueFilename(const char *c1, const char *c2);
+// One argument in RB3: the only retail caller (Rnd::ScreenDumpUnique,
+// 0x82411400) passes just the base name, and the ".bmp" extension is fixed.
+String UniqueFilename(const char *base);
