@@ -2,6 +2,10 @@
 #include "macros.h"
 #include "synth_xbox/ExternalMic.h"
 #include "synth_xbox/Synth.h"
+#include "synth_xbox/GainEffect.h"
+#include "synth_xbox/HeadsetPlaybackEffect.h"
+#include "synth/MicClientMapper.h"
+#include "os/Joypad.h"
 #include "utl/Std.h"
 #include "math/Decibels.h"
 #include "obj/Data.h"
@@ -18,12 +22,13 @@
 #include <cstring>
 
 extern void *_xhv_voicechat_mode;
+extern void *_xhv_loopback_mode;
 
 MicManagerXbox *MicManagerXbox::sInstance;
 
-namespace GainEffect {
-static float sGain;
-}
+// The remote talker id Init registers the headset-playback chain under
+// (retail .rdata 0x82194CC0).
+static const u64 kRemoteMicId = 0x00DEADBEEFFACEF0ULL;
 
 // Separate file statics (not a struct): leaf global addresses schedule the
 // addi r5 before the li r6 in the FindData arg setup, matching retail
@@ -206,6 +211,33 @@ void MicXbox::Stop() {
     }
 }
 
+// Retail 0x82B607C8 (virtual slot; reached only through the vtable).
+void MicXbox::StartPlayback() {
+    CritSecTracker t(&MicManagerXbox::GetInstance()->unk68);
+    if (mPlaybackVoice) {
+        return;
+    }
+    Start();
+    mMute = false;
+    unk9058 = unkc ? 2700.0f : 1800.0f;
+    unk905c = 0;
+    unk9054 = 1;
+    mPlaybackVoice = new Voice(false, false, false);
+    mPlaybackVoice->SetSampleRate(48000);
+    mPlaybackVoice->SetData(unk1c, sizeof(unk1c), 0);
+    mPlaybackVoice->SetLoopRegion(0, -1);
+    mPlaybackVoice->SetSend(dynamic_cast<FxSend360 *>(mFxSend));
+    mPlaybackVoice->Start();
+    mPlaybackVoice->SetVolume(0);
+}
+
+// Retail 0x82B609B0 (virtual slot).
+void MicXbox::StopPlayback() {
+    CritSecTracker t(&MicManagerXbox::GetInstance()->unk68);
+    RELEASE(mPlaybackVoice);
+    memset(unk1c, 0, sizeof(unk1c));
+}
+
 void MicXbox::SetFxSend(FxSend *fx) {
     CritSecTracker t(&MicManagerXbox::GetInstance()->unk68);
     mFxSend = fx;
@@ -338,6 +370,41 @@ void MicXbox::AddData(void *data, int bytes) {
     mDroppedSamples = unk3040.Write(data, bytes);
 }
 
+// Retail 0x82B5F958; its only caller is MicManagerXbox::OnDataReady. Hands
+// every third captured sample to the chat encoder while an external-mic
+// client is connected.
+void MicXbox::ReadChatBuffer(void *data, unsigned int size) {
+    if (ExternalMicClientMgr::ConnectedForClient(this)) {
+        unsigned int samps = size / 2;
+        if (unk3020.size() >= samps * 3) {
+            short *out = (short *)data;
+            const short *src = &unk3020[0];
+            for (unsigned int i = 0; i < samps; i++) {
+                out[i] = src[i * 3];
+            }
+            unk3020.erase(unk3020.begin(), unk3020.begin() + samps * 3);
+        }
+    }
+}
+
+// Retail 0x82B60558; its only caller is AddData. On overflow the buffer is
+// emptied first (and the dropped count bumped); the new samples are appended.
+bool MicXbox::AddToBuffer(std::vector<short> &buf, void *data, int bytes, int *dropped) {
+    int samps = bytes / 2;
+    bool overflowed = false;
+    if (buf.size() + samps > buf.capacity()) {
+        if (dropped) {
+            *dropped += buf.size();
+        }
+        overflowed = true;
+        buf.erase(buf.begin(), buf.end());
+    }
+    unsigned int oldSize = buf.size();
+    buf.resize(oldSize + samps);
+    XMemCpy(&buf[oldSize], data, bytes);
+    return overflowed;
+}
+
 #pragma endregion MicXbox
 #pragma region MicManagerXbox
 
@@ -366,6 +433,84 @@ MicManagerXbox::MicManagerXbox()
 }
 
 MicManagerXbox::~MicManagerXbox() {}
+
+// Retail 0x82B61220; called from Synth360::Init. Creates the XHV2 chat
+// engine, chains the four headset capture rings into one remote playback
+// talker, and makes a ChatReceiver per local user.
+void MicManagerXbox::Init() {
+    MILO_ASSERT(this == sInstance, 0xB8);
+
+    void *processingModes[2];
+    XAUDIO2_EFFECT_CHAIN chain;
+    XAUDIO2_EFFECT_DESCRIPTOR desc;
+    HeadsetXferEffect *xfer[4];
+    XHV2INIT init;
+
+    processingModes[0] = _xhv_voicechat_mode;
+    processingModes[1] = _xhv_loopback_mode;
+
+    memset(&init, 0, sizeof(init));
+    init.MaxLocalTalkers = 4;
+    init.MaxRemoteTalkers = 5;
+    init.LocalProcessingModes = processingModes;
+    init.RemoteProcessingModes = processingModes;
+    init.NumLocalProcessingModes = 2;
+    init.NumRemoteProcessingModes = 1;
+    init.pfnMicrophoneRawDataReady = DataReadyCallback;
+    init.MaxNumPackets = 1;
+    init.Unk1c = 1;
+    init.Unk30 = TheXboxSynth->unkc8;
+
+    XHV2CreateEngine(&init, (DWORD *)&unk20, &unk1c);
+
+    if (!TheXboxSynth->mHeadsetSubmixes.empty()) {
+        for (int i = 0; i < 4; i++) {
+            HeadsetXferEffect *effect;
+            TheXboxSynth->GetHeadsetSubmix(i)->GetEffectParameters(0, &effect, sizeof(effect));
+            xfer[i] = effect;
+        }
+        HeadsetPlaybackEffect *playback = new HeadsetPlaybackEffect(xfer);
+
+        desc.pEffect = static_cast<IXAPO *>(playback);
+        desc.InitialState = 0;
+        desc.OutputChannels = 1;
+        chain.EffectCount = 1;
+        chain.pEffectDescriptors = &desc;
+        AddRemoteMic(kRemoteMicId, &chain);
+    }
+
+    for (int i = 0; i < 4; i++) {
+        unkc[i] = new ChatReceiver(unk1c, i);
+    }
+}
+
+// Retail 0x82B60F98; called from Init and from the session code when a
+// remote user joins. A null chain gets a single GainEffect.
+void MicManagerXbox::AddRemoteMic(unsigned long long const &xuid, XAUDIO2_EFFECT_CHAIN *chain) {
+    bool noChain = chain == 0;
+    GainEffect *gainEffect = new GainEffect();
+
+    void *mode;
+    XAUDIO2_EFFECT_CHAIN effectChain;
+    XAUDIO2_EFFECT_DESCRIPTOR desc;
+    desc.pEffect = static_cast<IXAPO *>(gainEffect);
+    desc.OutputChannels = 1;
+    effectChain.EffectCount = 1;
+    effectChain.pEffectDescriptors = &desc;
+    desc.InitialState = 0;
+
+    unk1c->RegisterRemoteTalker(xuid, noChain ? &effectChain : 0, chain, 0);
+
+    mode = _xhv_voicechat_mode;
+    unk1c->StartRemoteProcessingModes(xuid, &mode, 1);
+
+    ChatBuffer chatBuffer;
+    *(unsigned long long *)&chatBuffer = xuid;
+    chatBuffer.unk8[250] = 0;
+    unk28.push_back(chatBuffer);
+
+    gainEffect->Release();
+}
 
 void MicManagerXbox::RequirePushToTalk(bool b, int pad) {
     CritSecTracker t(&unk68);
@@ -476,6 +621,56 @@ MicManagerXbox *MicManagerXbox::GetInstance() {
         sInstance = new MicManagerXbox();
     }
     return sInstance;
+}
+
+// Retail 0x82B60258: the XHV2 raw-mic-data callback Init installs; it
+// tail-branches into OnDataReady.
+void MicManagerXbox::DataReadyCallback(
+    unsigned long userIndex, void *data, unsigned long dataSize, int *flag
+) {
+    MILO_ASSERT(sInstance, 0x183);
+    sInstance->OnDataReady(userIndex, data, dataSize, flag);
+}
+
+// Retail 0x82B5F9E8. While a local talker's processing is active, the first
+// user without a headset owns the shared mic; under push-to-talk (or with no
+// push-to-talk pad) its data is copied out of the first mapped mic. Chat
+// processing runs for every callback.
+void MicManagerXbox::OnDataReady(
+    unsigned long userIndex, void *data, unsigned long dataSize, int *flag
+) {
+    CritSecTracker t(&unk68);
+    ChatReceiver *receiver = unkc[userIndex];
+    if (receiver->unk8) {
+        if ((int)receiver->mXHV->IsHeadsetPresent(receiver->unk4)) {
+            if ((unsigned int)unk18 == userIndex) {
+                unk18 = -1;
+            }
+        } else {
+            if (unk18 == -1) {
+                unk18 = userIndex;
+            }
+            if ((unsigned int)unk18 == userIndex) {
+                if (mPushToTalkPad == -1
+                    || JoypadGetPadData(mPushToTalkPad)->IsButtonInMask(kPad_L2)
+                    || JoypadGetPadData(mPushToTalkPad)->IsButtonInMask(kPad_R2)) {
+                    MicClientMapper *mapper = TheSynth->GetMicClientMapper();
+                    for (int i = 0; i < 4; i++) {
+                        MicClientID id(i, -1);
+                        int micID = mapper->GetMicIDForClientID(id);
+                        if (micID != -1) {
+                            MicXbox *mic = (MicXbox *)TheSynth->GetMic(micID);
+                            if (mic) {
+                                mic->ReadChatBuffer(data, dataSize);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    receiver->ProcessChatData(data, dataSize, flag);
 }
 
 #pragma endregion MicManagerXbox
