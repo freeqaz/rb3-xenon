@@ -711,8 +711,11 @@ void DxTex::SyncBitmap() {
         RndBitmap &bitmap = mBitmap;
         mFormat = TheDxRnd.D3DFormatForBitmap(bitmap);
         int numLevels = bitmap.NumMips() + 1;
-        mTexture = (D3DTexture *)D3DDevice_CreateTexture(
-            mWidth, mHeight, 1, numLevels, 0, mFormat, 0, (D3DRESOURCETYPE)3
+        // Through the XDK out-parameter wrapper: retail forwards the stored
+        // texture with `clrrwi r3,r3,0` before XGGetTextureDesc (0x82734E60).
+        IDirect3DDevice9_CreateTexture(
+            TheDxRnd.Device(), mWidth, mHeight, numLevels, 0, mFormat, 0, &mTexture,
+            nullptr
         );
         XGTEXTURE_DESC desc;
         XGGetTextureDesc(mTexture, 0, &desc);

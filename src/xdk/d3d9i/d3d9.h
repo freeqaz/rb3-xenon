@@ -889,6 +889,24 @@ inline HRESULT IDirect3DDevice9_CreateTexture(
     return (*ppTexture != 0) ? 0 : (HRESULT)0x8007000E; // S_OK : E_OUTOFMEMORY
 }
 
+// Cube textures: CreateTexture with six faces (DxCubeTex::Sync forwards the
+// stored value with `clrrwi r3,r3,0` before XGGetTextureDesc).
+inline HRESULT IDirect3DDevice9_CreateCubeTexture(
+    D3DDevice *pDevice,
+    UINT EdgeLength,
+    UINT Levels,
+    DWORD Usage,
+    D3DFORMAT Format,
+    UINT Pool,
+    D3DCubeTexture **ppCubeTexture,
+    HANDLE *pSharedHandle
+) {
+    *ppCubeTexture = (D3DCubeTexture *)D3DDevice_CreateTexture(
+        EdgeLength, EdgeLength, 6, Levels, Usage, Format, Pool, D3DRTYPE_CUBETEXTURE
+    );
+    return (*ppCubeTexture != 0) ? 0 : (HRESULT)0x8007000E; // S_OK : E_OUTOFMEMORY
+}
+
 // Same XDK inline-wrapper shape for vertex buffers (DxMesh::GetMultimeshFaces
 // stores through the out-pointer and forwards the value, `clrrwi r3,r3,0`).
 inline HRESULT IDirect3DDevice9_CreateVertexBuffer(
