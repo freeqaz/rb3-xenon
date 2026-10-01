@@ -1134,7 +1134,7 @@ RndParticle *RndParticleSys::FreeParticle(RndParticle *p) {
         if (!p->prev) {
             MILO_FAIL("Already deallocated particle");
         }
-        p->prev = nullptr;
+        // only the pool path clears prev (ParticleCommonPool::FreeParticle)
         RndParticle *ret = nullptr;
         if (mPreserveParticles) {
             ret = p->next;

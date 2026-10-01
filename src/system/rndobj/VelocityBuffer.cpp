@@ -27,8 +27,8 @@ bool RndXfmCache::GetXfms(
     const float *floats;
     unsigned int endIndex = startIndex + numBones;
     if ((endIndex > unk1b580)
-        || (mMeshPtrs[startIndex] != mesh)
-        || (mMeshPtrs[endIndex - 1] != mesh)) {
+        || (mMeshPtrs[endIndex - 1] != mesh)
+        || (mMeshPtrs[startIndex] != mesh)) {
         floats = nullptr;
         valid = false;
     } else {
