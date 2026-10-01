@@ -1109,17 +1109,16 @@ bool AccomplishmentPanel::IsSecret() const {
 }
 
 void AccomplishmentPanel::SetRandomUnplayedSong() {
-    Accomplishment *pAccomplishment =
-        TheAccomplishmentMgr->GetAccomplishment(SelectedAccomplishment());
+    Symbol selected = SelectedAccomplishment();
+    Accomplishment *pAccomplishment = TheAccomplishmentMgr->GetAccomplishment(selected);
     MILO_ASSERT(pAccomplishment, 0x8D5);
     MILO_ASSERT(pAccomplishment->GetType() == kAccomplishmentTypeSongFilterConditional, 0x8D6);
     AccomplishmentSongFilterConditional *pFilterAccomplishment =
         dynamic_cast<AccomplishmentSongFilterConditional *>(pAccomplishment);
     MILO_ASSERT(pFilterAccomplishment, 0x8D9);
     SongSortMgr::SongFilter filter = pFilterAccomplishment->GetFilter();
-    TheMusicLibrary->SetRandomSongs(
-        1, filter, pFilterAccomplishment->GetFilteredPartSym(), false, true
-    );
+    Symbol part = pFilterAccomplishment->GetFilteredPartSym();
+    TheMusicLibrary->SetRandomSongs(1, filter, part, false, true);
 }
 
 void AccomplishmentPanel::BuildSelectedEntrySetList() {
