@@ -101638,6 +101638,22 @@
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED); 124 B retail / 124 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. ??$PropSync@V?$ObjOwnerPtr@VRndTransformable@@@@@@YA_NAAV?$ObjVector@V?$ObjOwnerPtr@VRndTransformable@@@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z."
     }
    ]
+  },
+  {
+   "name": "AddU",
+   "address": "0x827c5570",
+   "survivor": "?AddU@IntPacker@@QAAXII@Z",
+   "folded": [
+    "?AddS@IntPacker@@QAAXHI@Z"
+   ],
+   "evidence": "Fold group opened by W16-MC 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "?AddS@IntPacker@@QAAXHI@Z",
+     "lane": "W16-MC 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (VACUOUS-BUT-IDENTICAL), 0 CYCLE-ASSUMED (flat T1 UNDECIDABLE: 4 B retail / 4 B ours). With the range MILO_ASSERTs compiled out, AddS and AddU are both `b IntPacker::Add`; retail keeps one copy at 0x827C5570. Named retail callers spell AddU at 9 sites and AddS at 3 (PatchLayer::SavePacked, PatchDir::SaveRemote)."
+    }
+   ]
   }
  ]
 }

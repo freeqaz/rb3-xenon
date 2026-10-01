@@ -3780,6 +3780,7 @@ Mesh.cpp:
 
 CharMeshHide.cpp:
 	.pdata      start:0x82204198 end:0x822041C8
+	.pdata      start:0x822041C8 end:0x822041D0
 	.pdata      start:0x822041D8 end:0x822041E0
 	.pdata      start:0x822041E0 end:0x822043B8
 	.pdata      start:0x822133F0 end:0x822133F8
@@ -3790,6 +3791,7 @@ CharMeshHide.cpp:
 	.pdata      start:0x822377A8 end:0x822377B8
 	.text       start:0x822D4088 end:0x822D408C
 	.text       start:0x823A0680 end:0x823A0848
+	.text       start:0x823A0848 end:0x823A08C0
 	.text       start:0x823A0914 end:0x823A0A00
 	.text       start:0x823A0A00 end:0x823A23B4
 	.text       start:0x824BD788 end:0x824BD7E0
@@ -6903,10 +6905,14 @@ Voice.cpp:
 	.text       start:0x82C43100 end:0x82C43340
 
 BinStream.cpp:
-	.pdata      start:0x82242388 end:0x82242420
+	.pdata      start:0x82242388 end:0x82242408
 	.text       start:0x827C4D08 end:0x827C4D14
 	.text       start:0x827C4D18 end:0x827C4DE4
-	.text       start:0x827C4DE8 end:0x827C55E8
+	.text       start:0x827C4DE8 end:0x827C5470
+
+IntPacker.cpp:
+	.pdata      start:0x82242408 end:0x82242420
+	.text       start:0x827C5470 end:0x827C55E8
 
 ExternalMic.cpp:
 	.pdata      start:0x8225B2D0 end:0x8225B358
@@ -11725,7 +11731,7 @@ NoteTube.cpp:
 
 Faders.cpp:
 	.pdata      start:0x821FB8B0 end:0x821FB8C0
-	.pdata      start:0x822041C8 end:0x822041D8
+	.pdata      start:0x822041D0 end:0x822041D8
 	.pdata      start:0x822383C8 end:0x822383D0
 	.pdata      start:0x822383D0 end:0x822383D8
 	.pdata      start:0x822383D8 end:0x822383E0
@@ -11747,7 +11753,7 @@ Faders.cpp:
 	.pdata      start:0x82238558 end:0x82238560
 	.text       start:0x822E4500 end:0x822E4508
 	.text       start:0x82310E50 end:0x82310ED0
-	.text       start:0x823A0848 end:0x823A0914
+	.text       start:0x823A08C0 end:0x823A0914
 	.text       start:0x8270B910 end:0x8270B960
 	.text       start:0x8270B960 end:0x8270B9D0
 	.text       start:0x8270B9D0 end:0x8270BA40
