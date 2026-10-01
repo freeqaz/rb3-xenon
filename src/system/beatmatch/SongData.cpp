@@ -830,6 +830,8 @@ void SongData::OnEndOfTrack(int i, bool b) {
     }
 }
 
+static Symbol DrumFillTrackName(const SongData *song, int track, int diff);
+
 void SongData::AddMultiGem(int iii, const MultiGemInfo &info) {
     mLastGemTime = Max(mLastGemTime, info.ms + info.duration_ms);
     int curTrack = info.track;
@@ -840,7 +842,7 @@ void SongData::AddMultiGem(int iii, const MultiGemInfo &info) {
             MILO_WARN(
                 "%s (%s): Overlapping or too-close gems at %s for difficulty %d",
                 SongFullPath(),
-                mTrackInfos[info.track]->mName,
+                DrumFillTrackName(this, info.track, iii),
                 TickFormat(info.tick, *mMeasureMap),
                 iii
             );
@@ -857,7 +859,8 @@ void SongData::AddPitchOffset(int tick, float offset) {
 }
 
 void SongData::AddLyricShift(int i) {
-    mVocalNoteLists[mLoadingVocalNoteListIndex]->AddLyricShift(mTempoMap->TickToTime(i));
+    float time = mTempoMap->TickToTime(i);
+    mVocalNoteLists[mLoadingVocalNoteListIndex]->AddLyricShift(time);
 }
 
 void SongData::OnTambourineGem(int i) {
@@ -964,7 +967,7 @@ void SongData::AddMix(int track, int tick, int diff, const char *mixName) {
         MILO_WARN(
             "%s (%s): Error adding mix '%s' at %s; difficulty %d is out of range",
             SongFullPath(),
-            mTrackInfos[track]->mName,
+            DrumFillTrackName(this, track, -1),
             mixName,
             TickFormat(tick, *mMeasureMap),
             diff
@@ -974,7 +977,7 @@ void SongData::AddMix(int track, int tick, int diff, const char *mixName) {
             MILO_WARN(
                 "%s (%s): Error adding mix '%s' at %s",
                 SongFullPath(),
-                mTrackInfos[track]->mName,
+                DrumFillTrackName(this, track, -1),
                 mixName,
                 TickFormat(tick, *mMeasureMap)
             );
@@ -1001,7 +1004,7 @@ void SongData::DrumMapLane(int track, int tick, int lane, bool laneOn) {
             MILO_WARN(
                 "%s (%s): Error adding drum lane %d at %s",
                 SongFullPath(),
-                mTrackInfos[track]->mName,
+                DrumFillTrackName(this, track, -1),
                 lane,
                 TickFormat(tick, *mMeasureMap)
             );
@@ -1011,7 +1014,7 @@ void SongData::DrumMapLane(int track, int tick, int lane, bool laneOn) {
             MILO_WARN(
                 "%s (%s): Error ending drum lane %d at %s",
                 SongFullPath(),
-                mTrackInfos[track]->mName,
+                DrumFillTrackName(this, track, -1),
                 lane,
                 TickFormat(tick, *mMeasureMap)
             );
@@ -1054,7 +1057,7 @@ void SongData::AddRGGem(int diff, const RGGemInfo &info) {
         MILO_WARN(
             "%s, %s: Overlapping or too-close real guitar gems at tick %d (%s)",
             SongFullPath(),
-            mTrackInfos[info.track]->mName,
+            DrumFillTrackName(this, info.track, -1),
             info.tick,
             TickFormat(info.tick, *mMeasureMap)
         );
