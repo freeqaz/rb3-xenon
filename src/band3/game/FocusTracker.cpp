@@ -99,7 +99,7 @@ void FocusTracker::FirstFrame_(float f) {
 
 void FocusTracker::Poll_(float f) {
     if (!unkc8 && mFocusPlayer.NotNull()) {
-        if (mSource->IsPlayerLocal(mFocusPlayer) && !PlayerCanHaveFocus(mFocusPlayer)) {
+        if (mSource->IsPlayerLocal(mFocusPlayer) && !(PlayerCanHaveFocus(mFocusPlayer) & 1)) {
             bool b75;
             TrackerPlayerID next = GetNextFocusPlayer(mFocusPlayer, f, b75);
             int flags = 1;
@@ -115,7 +115,8 @@ void FocusTracker::Poll_(float f) {
         }
         bool b76 = false;
         bool b77 = false;
-        CheckCondition(f, mSource->IsFinished(), b76, b77);
+        bool finished = mSource->IsFinished();
+        CheckCondition(f, finished, b76, b77);
         if (mSource->IsPlayerLocal(mFocusPlayer)) {
             if (b76) {
                 if (b77 && !unk74) {
@@ -126,9 +127,7 @@ void FocusTracker::Poll_(float f) {
                 }
                 bool b78;
                 TrackerPlayerID next = GetNextFocusPlayer(mFocusPlayer, f, b78);
-                int flags = 0;
-                if (b77)
-                    flags = 2;
+                int flags = b77 ? 2 : 0;
                 if (b78)
                     flags |= 8;
                 if (next.mGuid == mFocusPlayer.mGuid && b78 == unk74)
