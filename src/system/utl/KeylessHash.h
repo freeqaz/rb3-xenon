@@ -274,22 +274,25 @@ void KeylessHash<T1, T2>::Clear() {
 
 template <>
 inline void KeylessHash<void *, AllocInfo *>::Remove(AllocInfo **entry) {
-    unsigned int idx = (unsigned int)((int)(entry - mEntries) >> 2) >> 2;
+    // Retail shifts the element index right by 2 again (srawi 2; srwi 2).
+    unsigned int idx = (unsigned int)(entry - mEntries) >> 2;
     MILO_ASSERT((int)idx >= 0 && (int)idx < mSize, 0xCF);
 
-    int next = idx + 1;
     *entry = mRemoved;
-    int subVal = 0 - (mSize - next);
+    int next = idx + 1;
+    next = next == mSize ? 0 : next;
 
-    if (mEntries[(subVal & next)] == mEmpty) {
+    // If the following slot is empty, the run of removed slots ending here
+    // can be turned back into empty slots, walking backwards (wrapping).
+    if (mEntries[next] == mEmpty) {
         int cur = idx;
-        do {
-            cur--;
+        while (mEntries[cur] == mRemoved) {
             mEntries[cur] = mEmpty;
+            cur--;
             mNumEntries--;
             if (cur == -1) {
                 cur = mSize - 1;
             }
-        } while (mEntries[cur] == mRemoved);
+        }
     }
 }
