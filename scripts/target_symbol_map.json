@@ -613,6 +613,7 @@
  "0x8236bea8": "?NewObject@CharForeTwist@@SAPAVObject@Hmx@@XZ",
  "0x8236bf48": "?NewObject@CharUpperTwist@@SAPAVObject@Hmx@@XZ",
  "0x8236bfe8": "?NewObject@CharTransCopy@@SAPAVObject@Hmx@@XZ",
+ "0x8238dc68": "?RandomizeIndex@CharClipGroup@@QAAXXZ",
  "0x8236b020": "?CharTerminate@@YAXXZ",
  "0x8236b060": "?NewObject@CharBoneDir@@SAPAVObject@Hmx@@XZ",
  "0x8236b100": "?NewObject@CharBoneOffset@@SAPAVObject@Hmx@@XZ",
