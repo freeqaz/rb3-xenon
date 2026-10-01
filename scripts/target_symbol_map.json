@@ -2160,7 +2160,7 @@
  "0x82756f38": "?CreateObjects@DirLoader@@AAAXXZ",
  "0x827050d0": "?DoJump@StandardStream@@AAAXXZ",
  "0x82787a30": "?_M_insert_overflow_aux@?$vector@UPartInfo@@V?$StlNodeAlloc@UPartInfo@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUPartInfo@@ABU3@ABU__false_type@2@I_N@Z",
- "0x827661c0": "?Load@TypeProps@@QAAXAAVBinStreamRev@@@Z",
+ "0x827661c0": "?Load@TypeProps@@QAAXAAVBinStream@@_N@Z",
  "0x8276f510": "?Load@BeatMaster@@QAAXPAVSongInfo@@HPAVPlayerTrackConfigList@@_NW4SongDataValidate@@PAV?$vector@PAVMidiReceiver@@V?$StlNodeAlloc@PAVMidiReceiver@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x827c2c28": "?Handle@CheatsManager@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x827edc30": "?InsertEvent@DataEventList@@QAAXMMABVDataNode@@H@Z",

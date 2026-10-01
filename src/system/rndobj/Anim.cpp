@@ -24,10 +24,13 @@
 #include "rndobj/Env.h"
 #include "utl/BinStream.h"
 
-// RB3-360 retail: RndAnimatable::Load reads the archive rev from a file-scope
-// static halfword (lbl_82CCxxxx, `lhz`) populated once at Load entry, not the
-// BinStreamRev member. Mirror that so the rev comparisons match.
-static unsigned short sAnimRev;
+// Retail RndAnimatable::Load keeps no BinStreamRev: it splits the packed rev
+// into one aligned file-scope aggregate (altRev +0, rev +4), tests the rev with
+// `lhz`, and reads everything from the raw stream.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_RndAnimatable;
 
 // Five rates: retail's two tables are 5 entries each, gRateFpu sitting 0x14
 // past gRateUnits.
@@ -84,21 +87,22 @@ END_COPYS
 INIT_REVS(4, 0)
 
 BEGIN_LOADS(RndAnimatable)
-    LOAD_REVS(bs)
-    ASSERT_REVS(4, 0)
-    sAnimRev = d.rev;
-    if (sAnimRev > 1)
-        d >> mFrame;
-    if (sAnimRev > 3) {
-        d >> (int &)mRate;
-    } else if (sAnimRev > 2) {
+    int rev;
+    bs >> rev;
+    gRevs_RndAnimatable.rev = getHmxRev(rev);
+    gRevs_RndAnimatable.altRev = getAltRev(rev);
+    if (gRevs_RndAnimatable.rev > 1)
+        bs >> mFrame;
+    if (gRevs_RndAnimatable.rev > 3) {
+        bs >> (int &)mRate;
+    } else if (gRevs_RndAnimatable.rev > 2) {
         bool rate;
-        d >> rate;
+        bs >> rate;
         mRate = (Rate)(!rate);
     }
-    if (sAnimRev < 1) {
+    if (gRevs_RndAnimatable.rev < 1) {
         int count;
-        d >> count;
+        bs >> count;
         float theScale = 1.0f;
         float theOffset = 0.0f;
         float theMin = 0.0f;
@@ -107,23 +111,23 @@ BEGIN_LOADS(RndAnimatable)
         int read;
         int unused1, unused2, unused3, unused4, unused5, unused6, unused7;
         while (count-- != 0) {
-            d >> read;
+            bs >> read;
             switch (read) {
             case 0:
-                d >> theScale >> theOffset;
+                bs >> theScale >> theOffset;
                 break;
             case 1:
-                d >> theMin >> theMax;
-                d >> theLoop;
+                bs >> theMin >> theMax;
+                bs >> theLoop;
                 break;
             case 2:
-                d >> unused1 >> unused2;
+                bs >> unused1 >> unused2;
                 break;
             case 3:
-                d >> unused3 >> unused4;
+                bs >> unused3 >> unused4;
                 break;
             case 4:
-                d >> unused5 >> unused6 >> unused7;
+                bs >> unused5 >> unused6 >> unused7;
                 break;
             default:
                 break;
@@ -140,7 +144,7 @@ BEGIN_LOADS(RndAnimatable)
             filtObj->SetProperty("loop", theLoop);
         }
         ObjPtrList<RndAnimatable> animList(this);
-        d >> animList;
+        bs >> animList;
         RndGroup *theGroup = dynamic_cast<RndGroup *>(this);
         FOREACH (it, animList) {
             if (theGroup)

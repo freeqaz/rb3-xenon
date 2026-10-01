@@ -345,8 +345,7 @@ void TypeProps::InsertArrayValue(Symbol key, int i, const DataNode &value, DataA
     }
 }
 
-void TypeProps::Load(BinStreamRev &d) {
-    bool rev = d.rev < 2;
+void TypeProps::Load(BinStream &bs, bool oldRev) {
     ReleaseObjects();
     DataArray *def = RefOwner()->TypeDef();
     Hmx::Object *theThis = nullptr;
@@ -354,11 +353,11 @@ void TypeProps::Load(BinStreamRev &d) {
         theThis = DataSetThis(mOwner);
     if (mMap && gLoadingProxyFromDisk && def) {
         DataArray *oldMap = mMap;
-        d >> mMap;
+        bs >> mMap;
         int oldMapSize = oldMap->Size();
         for (int i = 0; i < oldMapSize; i += 2) {
             Symbol val = oldMap->Sym(i);
-            if (rev) {
+            if (oldRev) {
                 bool proxy = false;
                 bool none = false;
                 GetSaveFlags(def->FindArray(val, false), proxy, none);
@@ -373,7 +372,7 @@ void TypeProps::Load(BinStreamRev &d) {
             mMap->Release();
             mMap = nullptr;
         }
-        d >> mMap;
+        bs >> mMap;
     }
     if (def) {
         // Retail (fn_827661C0) has no edit-mode outdated-property report.

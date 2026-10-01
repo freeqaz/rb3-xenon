@@ -26,7 +26,9 @@
 #include "world/Spotlight.h"
 
 WorldDir *TheWorld = nullptr;
-ObjectDir *gOldTexDir = nullptr;
+// Internal: retail addresses it off the same base register as the rev file
+// static (gWorldDirRevs + 0xc).
+static ObjectDir *gOldTexDir = nullptr;
 std::vector<FilePath> gOldChars;
 
 void SetTheWorld(WorldDir *w) {
@@ -386,112 +388,110 @@ BinStreamRev &operator>>(BinStreamRev &d, WorldDir::MatOverride &o) {
     return d;
 }
 
+// Retail 0x824D08F0: PanelDir::PostLoad runs first, then the rev is popped into
+// the same file static PreLoad fills, and every field comes from the raw
+// stream. Retail stops after SyncHUD(); the FxSend, doppler, listener and
+// alt-rev reads are newer-engine revisions.
 void WorldDir::PostLoad(BinStream &bs) {
-    BinStreamRev d(bs, bs.PopRev(this));
     PanelDir::PostLoad(bs);
-    if (d.rev > 4 && d.rev < 6) {
-        ObjPtr<RndCam> cam(this);
-        d >> cam;
+    int revs = bs.PopRev(this);
+    gWorldDirRevs.rev = getHmxRev(revs);
+    gWorldDirRevs.altRev = getAltRev(revs);
+    if (gWorldDirRevs.rev > 4 && gWorldDirRevs.rev < 6) {
+        ObjPtr<RndCam> cam(ObjPtrInlineOwner(), this);
+        bs >> cam;
         SetCam(cam);
     }
-    if (d.rev < 8) {
+    if (gWorldDirRevs.rev < 8) {
         for (int i = 0; i < gOldChars.size(); i++) {
-            RndDir *p = dynamic_cast<RndDir *>(
-                Hmx::Object::NewObject(DirLoader::GetDirClass(gOldChars[i].c_str()))
-            );
+            Symbol dirClass = DirLoader::GetDirClass(gOldChars[i].c_str());
+            RndDir *p = dynamic_cast<RndDir *>(Hmx::Object::NewObject(dirClass));
             MILO_ASSERT(p, 0x1AA);
             p->SetProxyFile(gOldChars[i], false);
             char buf[0x80];
-            d.stream.ReadString(buf, 0x80);
+            bs.ReadString(buf, 0x80);
             p->SetName(buf, this);
-            p->RndTransformable::Load(d.stream);
+            p->RndTransformable::Load(bs);
             bool showing;
-            d >> showing;
+            bs >> showing;
             float fff;
-            d.stream >> fff;
+            bs >> fff;
             if (p) {
                 p->SetShowing(showing);
                 p->SetOrder(fff);
             }
-            d.stream.ReadString(buf, 0x80);
+            bs.ReadString(buf, 0x80);
             if (p && *buf != '\0') {
                 p->SetEnv(Find<RndEnviron>(buf, true));
             }
         }
         gOldChars.clear();
     }
-    if (d.rev < 0x19) {
-        if (d.rev > 0xA) {
+    if (gWorldDirRevs.rev < 0x19) {
+        if (gWorldDirRevs.rev > 0xA) {
             Transform tf;
-            d >> tf;
-        } else if (d.rev > 6 && mCam) {
-            mCam->RndTransformable::Load(d.stream);
+            bs >> tf;
+        } else if (gWorldDirRevs.rev > 6 && mCam) {
+            mCam->RndTransformable::Load(bs);
         }
     }
-    if (d.rev > 0xB) {
+    if (gWorldDirRevs.rev > 0xB) {
         SyncHides(false);
-        d >> mHideOverrides;
+        bs >> mHideOverrides;
         SyncHides(true);
         SyncBitmaps(false);
-        gOldTexDir = d.rev > 0xC ? nullptr : Dir();
-        d >> mBitmapOverrides;
+        gOldTexDir = gWorldDirRevs.rev > 0xC ? nullptr : Dir();
+        bs >> mBitmapOverrides;
         SyncBitmaps(true);
     }
-    if (d.rev > 0xD) {
+    if (gWorldDirRevs.rev > 0xD) {
         SyncMats(false);
-        d >> mMatOverrides;
+        bs >> mMatOverrides;
         SyncMats(true);
     }
-    if (d.rev > 0xE) {
+    if (gWorldDirRevs.rev > 0xE) {
         SyncPresets(false);
-        d >> mPresetOverrides;
+        bs >> mPresetOverrides;
         SyncPresets(true);
     }
-    if (d.rev > 0xF) {
+    if (gWorldDirRevs.rev > 0xF) {
         SyncCamShots(false);
-        mCamShotOverrides.Load(d.stream, false);
+        mCamShotOverrides.Load(bs, false);
         SyncCamShots(true);
     }
-    if (d.rev > 0x10 && d.rev != 0x17) {
-        d >> mPS3PerPixelHides >> mPS3PerPixelShows;
+    if (gWorldDirRevs.rev > 0x10 && gWorldDirRevs.rev != 0x17) {
+        bs >> mPS3PerPixelHides >> mPS3PerPixelShows;
     }
-    if (d.rev > 0x11 && d.rev < 0x16) {
+    if (gWorldDirRevs.rev > 0x11 && gWorldDirRevs.rev < 0x16) {
         Symbol s;
-        d >> s;
+        bs >> s;
     }
-    if (d.rev > 0x12) {
-        d >> mTestLightPreset1 >> mTestLightPreset2 >> mTestAnimTime;
+    if (gWorldDirRevs.rev > 0x12) {
+        bs >> mTestLightPreset1 >> mTestLightPreset2 >> mTestAnimTime;
     }
-    if (d.rev > 0x13) {
-        d >> mHUD;
+    if (gWorldDirRevs.rev > 0x13) {
+        bs >> mHUD;
     }
     SyncHUD();
-    if (d.rev == 0x1A) {
+#ifdef WORLDDIR_DC3_TAIL
+    if (gWorldDirRevs.rev == 0x1A) {
         ObjPtr<FxSend> send(this);
-        d >> send;
+        bs >> send;
     }
-    if (d.rev >= 0x1C) {
+    if (gWorldDirRevs.rev >= 0x1C) {
         float x;
-        d >> x;
-#ifdef WORLDDIR_DC3_TAIL
+        bs >> x;
         m3DSoundMgr.mDopplerPower = x;
-#endif
     }
-    if (d.rev >= 0x1D) {
+    if (gWorldDirRevs.rev >= 0x1D) {
         ObjPtr<RndTransformable> trans(this);
-        d >> trans;
-#ifdef WORLDDIR_DC3_TAIL
+        bs >> trans;
         m3DSoundMgr.SetListener(trans);
-#endif
     }
-    if (d.altRev > 0) {
-#ifdef WORLDDIR_DC3_TAIL
-        d >> mExplicitPostProc;
-#else
-        bool b;
-        d >> b;
-#endif
+    if (gWorldDirRevs.altRev > 0) {
+        bs >> mExplicitPostProc;
     }
+#endif
 }
 
 // class PhysicsManager * (__cdecl* CreatePhysicsManager)(class RndDir *)

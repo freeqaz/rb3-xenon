@@ -2098,7 +2098,9 @@ public:
     void SetArrayValue(Symbol prop, int i, const DataNode &value, DataArray *typeDef);
     void RemoveArrayValue(Symbol prop, int i, DataArray *typeDef);
     void InsertArrayValue(Symbol prop, int i, const DataNode &value, DataArray *typeDef);
-    void Load(BinStreamRev &d);
+    // Retail 0x827661C0: the caller passes the raw stream and whether the
+    // object rev predates 2; there is no rev wrapper.
+    void Load(BinStream &bs, bool oldRev);
     TypeProps &operator=(const TypeProps &);
     void Save(BinStream &d);
     DataArray *Map() const { return mMap; }

@@ -447,12 +447,12 @@ void Hmx::Object::LoadType(BinStream &bs) {
 #endif
 
 void Hmx::Object::LoadRest(BinStream &bs) {
-    BinStreamRev d(bs, bs.PopRev(this));
 #ifdef HX_NATIVE
+    BinStreamRev d(bs, bs.PopRev(this));
     if (!mTypeProps) {
         mTypeProps = new TypeProps(this);
     }
-    mTypeProps->Load(d);
+    mTypeProps->Load(d.stream, d.rev < 2);
     if (!mTypeProps->HasProps()) {
         RELEASE(mTypeProps);
     }
@@ -460,14 +460,26 @@ void Hmx::Object::LoadRest(BinStream &bs) {
         d >> mNote;
     }
 #else
-    // Retail X360: TypeProps is inline
-    mTypeProps.Load(d);
-    if (d.rev > 0) {
-        // Read string into a String, then allocate persistent copy.
-        // Retail stores mNote as const char* into a memory pool.
-        String noteStr;
-        d >> noteStr;
-        SetNote(noteStr.c_str()); // pool-owned copy, freed by ~Object/SetNote
+    // Retail 0x8275CE78: the popped rev goes back into LoadType's file static,
+    // TypeProps gets the raw stream, and the note is read in place -- the old
+    // pool copy is freed, then a length-prefixed string is pool-allocated and
+    // read straight into it (an empty note stays gNullStr).
+    int revs = bs.PopRev(this);
+    gObjectRevs.rev = getHmxRev(revs);
+    gObjectRevs.altRev = getAltRev(revs);
+    mTypeProps.Load(bs, gObjectRevs.rev < 2);
+    if (gObjectRevs.rev != 0) {
+        if (mNote != gNullStr) {
+            MemOrPoolFreeSTL(strlen(mNote) + 1, (void *)mNote);
+        }
+        mNote = gNullStr;
+        int len;
+        bs >> len;
+        if (len != 0) {
+            mNote = (const char *)MemOrPoolAlloc(len + 1);
+            bs.Read((void *)mNote, len);
+            ((char *)mNote)[len] = '\0';
+        }
     }
 #endif
 }

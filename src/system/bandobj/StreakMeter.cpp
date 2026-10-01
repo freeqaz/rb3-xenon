@@ -275,37 +275,47 @@ BEGIN_SAVES(StreakMeter)
     SAVE_SUPERCLASS(RndDir)
 END_SAVES
 
+// Retail keeps no BinStreamRev here: it splits the packed rev into one aligned
+// file-scope aggregate (altRev +0, rev +4) and reads everything from the raw
+// stream.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_StreakMeter;
+
 void StreakMeter::PreLoad(BinStream &bs) {
-    LOAD_REVS(bs)
-    ASSERT_REVS(3, 0)
-    d.stream >> mStreakMultiplier;
-    d.stream >> mBandMultiplier;
-    d.stream >> mMaxMultiplier;
+    int rev;
+    bs >> rev;
+    gRevs_StreakMeter.rev = getHmxRev(rev);
+    gRevs_StreakMeter.altRev = getAltRev(rev);
+    bs >> mStreakMultiplier;
+    bs >> mBandMultiplier;
+    bs >> mMaxMultiplier;
     if (!IsProxy()) {
-        d.stream >> mNewStreakTrig;
-        d.stream >> mEndStreakTrig;
-        if (d.rev < 3) {
+        bs >> mNewStreakTrig;
+        bs >> mEndStreakTrig;
+        if (gRevs_StreakMeter.rev < 3) {
             ObjPtr<EventTrigger> trigPtr(this, 0);
-            d.stream >> trigPtr;
+            bs >> trigPtr;
         }
-        d.stream >> mMultiMeterAnim;
-        if (d.rev >= 1)
-            d.stream >> mMultiplierLabel;
+        bs >> mMultiMeterAnim;
+        if (gRevs_StreakMeter.rev >= 1)
+            bs >> mMultiplierLabel;
         else {
             ObjPtr<RndText> textPtr(this, 0);
-            d.stream >> textPtr;
+            bs >> textPtr;
         }
-        if (d.rev >= 2)
-            d.stream >> mMeterWipeAnim;
+        if (gRevs_StreakMeter.rev >= 2)
+            bs >> mMeterWipeAnim;
         else {
             ObjPtr<RndMatAnim> matPtr(this, 0);
-            d.stream >> matPtr;
+            bs >> matPtr;
         }
-        d.stream >> mStarDeployTrig;
-        d.stream >> mEndOverdriveTrig;
-        d.stream >> mResetTrig;
+        bs >> mStarDeployTrig;
+        bs >> mEndOverdriveTrig;
+        bs >> mResetTrig;
     }
-    RndDir::PreLoad(d.stream);
+    RndDir::PreLoad(bs);
 }
 
 void StreakMeter::PostLoad(BinStream &bs) { RndDir::PostLoad(bs); }
