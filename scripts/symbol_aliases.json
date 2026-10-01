@@ -99727,6 +99727,26 @@
    "added": {
     "lane": "W16-LD 2026-10-01"
    }
+  },
+  {
+   "name": "GetType",
+   "address": "0x82654ab8",
+   "survivor": "?GetType@AccomplishmentOneShot@@UBA?AW4AccomplishmentType@@XZ",
+   "folded": [
+    "?SaveSize@GameplayOptions@@SAHH@Z"
+   ],
+   "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (VACUOUS-BUT-IDENTICAL), 0 CYCLE-ASSUMED; flat T1 UNDECIDABLE because the body is two words: retail 0x82654ab8 is `li r3,9; blr`, and our GameplayOptions::SaveSize compiles to the same 8 bytes now that its sPrintoutsEnabled print is the house MILO_LOG (compiled out). Retail holds one body of this shape (retail_bodytwins 1). The map places this spelling at no address of its own. Retail witnesses where we use this spelling: BandProfile::SaveSize bl at 0x8258a264, and the GameplayOptions ctor's mSaveSizeMethod store loads the address with lis/addi at 0x82654b28/0x82654b30.",
+   "lane": "W16-LD",
+   "admitted": [
+    {
+     "spelling": "?SaveSize@GameplayOptions@@SAHH@Z",
+     "lane": "W16-LD 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (VACUOUS-BUT-IDENTICAL), 0 CYCLE-ASSUMED; flat T1 UNDECIDABLE because the body is two words: retail 0x82654ab8 is `li r3,9; blr`, and our GameplayOptions::SaveSize compiles to the same 8 bytes now that its sPrintoutsEnabled print is the house MILO_LOG (compiled out). Retail holds one body of this shape (retail_bodytwins 1). The map places this spelling at no address of its own. Retail witnesses where we use this spelling: BandProfile::SaveSize bl at 0x8258a264, and the GameplayOptions ctor's mSaveSizeMethod store loads the address with lis/addi at 0x82654b28/0x82654b30."
+    }
+   ],
+   "added": {
+    "lane": "W16-LD 2026-10-01"
+   }
   }
  ]
 }
