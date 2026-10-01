@@ -96780,8 +96780,10 @@
   {
    "name": "$__uninitialized_fill_n",
    "address": "0x82634760",
-   "survivor": "??$__uninitialized_fill_n@PAU?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@stlpmtx_std@@IU12@@stlpmtx_std@@YAPAU?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@0@PAU10@IABU10@ABU__false_type@0@@Z",
-   "folded": [],
+   "survivor": "??$__uninitialized_fill_n@PAVFilePath@@IV1@@stlpmtx_std@@YAPAVFilePath@@PAV1@IABV1@ABU__false_type@0@@Z",
+   "folded": [
+    "??$__uninitialized_fill_n@PAU?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@stlpmtx_std@@IU12@@stlpmtx_std@@YAPAU?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@0@PAU10@IABU10@ABU__false_type@0@@Z"
+   ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -96789,18 +96791,6 @@
      "spelling": "??$__uninitialized_fill_n@PAU?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@stlpmtx_std@@IU12@@stlpmtx_std@@YAPAU?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@0@PAU10@IABU10@ABU__false_type@0@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 96 B retail / 96 B ours; retail body-twins 16. Retail call site(s) reaching the survivor where we call this spelling: 0x82634f30."
-    }
-   ],
-   "survivor_renamed": {
-    "from": "??$__uninitialized_fill_n@PAVFilePath@@IV1@@stlpmtx_std@@YAPAVFilePath@@PAV1@IABV1@ABU__false_type@0@@Z",
-    "lane": "W16-LB 2026-10-01"
-   },
-   "withdrawn": [
-    {
-     "spelling": "??$__uninitialized_fill_n@PAU?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@stlpmtx_std@@IU12@@stlpmtx_std@@YAPAU?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@0@PAU10@IABU10@ABU__false_type@0@@Z",
-     "lane": "W16-LB 2026-10-01",
-     "class": "MAP_NAME_WRONG",
-     "why": "Retail 0x82634760 is fill_n<pair<vector<int>,int>> itself: its body strides 0x10 and copy-constructs a pair<vector<int>,int>, and it sits between SetlistMergePanel's own blocks next to that TU's vector<pair<vector<int>,int>> helpers. The map row named it fill_n<FilePath>; it is renamed to the pair spelling and re-homed to SetlistMergePanel, so this membership (the real name folded into the wrong one) is withdrawn and the survivor field follows the map."
     }
    ]
   },
@@ -100595,22 +100585,6 @@
      "spelling": "??1?$map@VString@@VDataNode@@U?$less@VString@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVString@@VDataNode@@@stlpmtx_std@@@4@@stlpmtx_std@@QAA@XZ",
      "lane": "W16-LB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 UNDECIDABLE); 4 B retail / 4 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. fn_8276C6CC."
-    }
-   ]
-  },
-  {
-   "name": "__uninitialized_fill_n",
-   "address": "0x824cd818",
-   "survivor": "??$__uninitialized_fill_n@PAUGrammar@SpeechMgr@@IU12@@stlpmtx_std@@YAPAUGrammar@SpeechMgr@@PAU12@IABU12@ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_fill_n@PAVFilePath@@IV1@@stlpmtx_std@@YAPAVFilePath@@PAV1@IABV1@ABU__false_type@0@@Z"
-   ],
-   "evidence": "Fold group opened by W16-LB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
-   "admitted": [
-    {
-     "spelling": "??$__uninitialized_fill_n@PAVFilePath@@IV1@@stlpmtx_std@@YAPAVFilePath@@PAV1@IABV1@ABU__false_type@0@@Z",
-     "lane": "W16-LB 2026-10-01",
-     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED); 96 B retail / 96 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. ?_M_fill_insert_aux@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVFilePath@@IABV3@ABU__false_type@2@@Z."
     }
    ]
   }
