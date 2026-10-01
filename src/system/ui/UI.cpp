@@ -515,6 +515,13 @@ void UIManager::PopScreen(UIScreen *screen) {
     }
 }
 
+// In-song performance mode: the UI's joypad client passes only Start through.
+void UIManager::EnableInputPerformanceMode(bool enable) {
+    if (mJoyClient) {
+        mJoyClient->SetFilterAllButStart(enable);
+    }
+}
+
 UIResource *UIManager::Resource(const UIComponent *comp) {
     return FindResource(comp->TypeDef());
 }

@@ -44,6 +44,7 @@ void UIListProvider::UpdateExtendedText(int, int, UILabel *label) const {
 }
 
 void UIListProvider::UpdateExtendedMesh(int, int, RndMesh *mesh) const {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (!TheLoadMgr.EditMode()) {
         MILO_NOTIFY(
             "Trying to update extended mesh without an override provider method. Mesh = %s",
@@ -51,6 +52,10 @@ void UIListProvider::UpdateExtendedMesh(int, int, RndMesh *mesh) const {
         );
         mesh->SetMat(0);
     }
+#else
+    // Retail: no override provider method means no material on the extended mesh.
+    mesh->SetMat(0);
+#endif
 }
 
 void UIListProvider::UpdateExtendedCustom(int, int, Hmx::Object *obj) const {

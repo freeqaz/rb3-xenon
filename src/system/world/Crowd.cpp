@@ -589,9 +589,8 @@ bool WorldCrowd::Crowd3DExists() {
 }
 
 void WorldCrowd::SetMatAndCameraLod() {
-    RndTex *tex = gImpostorTex[mLod];
-    gImpostorCamera->SetTargetTex(tex);
-    gImpostorMat->SetDiffuseTex(tex);
+    gImpostorCamera->SetTargetTex(gImpostorTex[mLod]);
+    gImpostorMat->SetDiffuseTex(gImpostorTex[mLod]);
 }
 
 void WorldCrowd::CreateMeshes() {

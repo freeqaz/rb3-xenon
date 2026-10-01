@@ -92,9 +92,8 @@ namespace {
 
     void CheckForArchive() {
         gUsingCD = true;
-        if (FileGetStat(
-                MakeString("gen/main_%s.hdr", PlatformSymbol(TheLoadMgr.GetPlatform()))
-            ) < 0) {
+        Symbol platform = PlatformSymbol(kPlatformXBox);
+        if (FileGetStat(MakeString("gen/main_%s.hdr", platform.Str())) < 0) {
             gUsingCD = false;
         }
     }

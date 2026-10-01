@@ -101,108 +101,63 @@ void XboxEnumeration::Poll() {
         return;
     }
 
-    DWORD bytesReceived = 0;
-    DWORD overlappedResult = XGetOverlappedResult(&mOverlapped, &bytesReceived, 0);
-
-    DWORD productCount = 0;
-    if (bytesReceived > 0) {
+    DWORD count = 0;
+    DWORD result = XGetOverlappedResult(&mOverlapped, &count, 0);
+    DWORD i = 0;
+    if (count != 0) {
         std::list<EnumProduct>::iterator it = mContentList.end();
         u32 offset = 0;
-        while (productCount < bytesReceived) {
-            char buf[256];
-            String str;
-            u8 *entryPtr = (u8 *)mEnumBuffer + offset;
-            WideCharToMultiByte(0, 0, (LPCWSTR)(entryPtr + 0x14), *(int *)(entryPtr + 0x10), buf, 0xFF, 0, 0);
-            str = buf;
-
+        for (; i < count; i++, offset += 0x68) {
             EnumProduct prod;
-            prod.mName = str;
-            prod.mOfferID = *(u64 *)entryPtr;
-            prod.mPurchased = *(int *)(entryPtr + 0x48);
+            char buf[256];
+            u8 *entry = offset + (u8 *)mEnumBuffer;
+            WideCharToMultiByte(
+                0, 0, *(LPCWSTR *)(entry + 0x14), *(int *)(entry + 0x10), buf, 0xFF, 0, 0
+            );
+            prod.mName = buf;
+            prod.mOfferID = *(u64 *)entry;
+            prod.mPurchased = *(int *)(entry + 0x48);
+            prod.mPrice = *(int *)(entry + 0x64);
             mContentList.insert(it, prod);
-            prod.mPrice = *(int *)(entryPtr + 0x64);
-
-            offset += 0x68;
-            productCount++;
         }
     }
 
-    if (mOfferIDsBegin == 0 && overlappedResult == 0 && bytesReceived >= 99) {
-        goto continue_enum;
-    }
-
-    if (mHandle != 0) {
-        CloseHandle(mHandle);
-        mHandle = 0;
-    }
-
-    delete mEnumBuffer;
-    mEnumBuffer = 0;
-
-    if (overlappedResult == 0) {
-        goto done;
-    }
-
-    if (overlappedResult == 0x12) {
-        goto handle_12;
-    }
-
-    if (overlappedResult == 0x65b) {
-        goto handle_65b;
-    }
-
-    XGetOverlappedExtendedError(&mOverlapped);
-    goto check_more_offers;
-
-handle_65b:
-    {
-        DWORD extError = XGetOverlappedExtendedError(&mOverlapped);
-        TheDebug << MakeString(" store enum: overlapped failed with: %d, extended: %d (0x%X)", (unsigned long)overlappedResult, (unsigned long)extError, (unsigned long)extError);
-    }
-    goto check_more_offers;
-
-handle_12:
-    {
-        DWORD extError = XGetOverlappedExtendedError(&mOverlapped);
-        if ((WORD)extError == 0x12) {
-            goto done;
+    // Without an offer-ID list a successful pass simply enumerates the next
+    // page on the open handle; otherwise the handle and buffer are released.
+    if (mOfferIDsBegin != 0 || result != 0) {
+        if (mHandle != 0) {
+            CloseHandle(mHandle);
+            mHandle = 0;
         }
-        TheDebug << MakeString(" store enum: funciton failed with: %d (0x%X)", (unsigned long)extError, (unsigned long)extError);
-        if ((WORD)extError >= 0x2710 && (WORD)extError < 0x2EE0) {
-            TheDebug << MakeString(" which is a winsock error, so fail.");
-        }
-    }
-
-check_more_offers:
-    if (mOfferIDsBegin != 0) {
-        if (mCurOffers < mOfferIDsBegin + mOfferIDCount) {
-            goto continue_enum;
-        }
-    }
-    goto done;
-
-error_no_more:
-    if (mOfferIDsBegin != 0) {
-        TheDebug << MakeString(" store enum: error no more files (%d)", (unsigned long)overlappedResult);
-        mEnumerating = false;
-        return;
-    }
-    goto done;
-
-continue_enum:
-    if (mOfferIDsBegin != 0) {
-        if (mCurOffers < mOfferIDsBegin + mOfferIDCount) {
-            Start();
-            return;
-        }
-    } else {
-        if (bytesReceived >= 99) {
-            Start();
+        delete mEnumBuffer;
+        mEnumBuffer = 0;
+        if (result != 0) {
+            if (result != 0x12) { // ERROR_NO_MORE_FILES
+                if (result != 0x65b) { // ERROR_FUNCTION_FAILED
+                    XGetOverlappedExtendedError(&mOverlapped);
+                } else {
+                    WORD ext = XGetOverlappedExtendedError(&mOverlapped);
+                    if (ext < 0x2710 || ext >= 0x2EE0) {
+                        // not a winsock error: move on to the next offer, if any
+                        if (mOfferIDsBegin == 0) {
+                            return;
+                        }
+                        goto next_offer;
+                    }
+                }
+            } else if (mOfferIDsBegin == 0) {
+                return;
+            }
+            mEnumerating = false;
             return;
         }
     }
-
-done:
-    mEnumerating = false;
+    if (mOfferIDsBegin != 0) {
+    next_offer:
+        if (mCurOffers >= mOfferIDsBegin + mOfferIDCount) {
+            return;
+        }
+    }
+    Start();
 }
 

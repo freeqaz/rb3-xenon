@@ -44,14 +44,30 @@ namespace {
     }
 }
 
+#ifdef HX_NATIVE
 void ByteGrinder::HvDecrypt(unsigned char *inBlock, unsigned char *outBlock, int moggVer) {
     symmetric_key key;
     int enc_method = GetEncMethod(moggVer);
-    void *placeholder = operator new(0x20C);
     rijndael_setup(&gHvKeyGreen[enc_method * 0x10], 0x10, 0, &key);
     rijndael_ecb_decrypt(inBlock, outBlock, &key);
-    delete placeholder;
 }
+#else
+// Retail decrypts through two XDK routines (0x82840788 / 0x82840820, in the xapilibi
+// block before memfunctions) that wrap a kernel AES call and return Win32 error codes
+// (0x57 for a null key, 0x18 for a key length other than 16). Their exported names are not
+// recovered; the declarations below describe their argument order.
+extern "C" unsigned long HvAesSetKey(void *state, const unsigned char *key, int keyLen);
+extern "C" unsigned long HvAesDecrypt(
+    void *state, const unsigned char *in, int len, unsigned char *out
+);
+
+void ByteGrinder::HvDecrypt(unsigned char *inBlock, unsigned char *outBlock, int moggVer) {
+    unsigned char state[0x190];
+    int enc_method = GetEncMethod(moggVer);
+    HvAesSetKey(state, &gHvKeyGreen[enc_method * 0x10], 0x10);
+    HvAesDecrypt(state, inBlock, 0x10, outBlock);
+}
+#endif
 
 DataNode hashTo5Bits(DataArray *da) {
     static u32 hashMapping[0x100];

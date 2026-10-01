@@ -35,15 +35,18 @@ void WahEffect::Reset() {
 }
 
 void WahEffect::SetParameters(WahEffect::Params const &params) {
-    mGain = params.mGain;
-    mFreqHi = params.mFreqHi;
-    mFreqLo = params.mFreqLo;
-    mResonance = params.mResonance;
-    mBandwidth = params.mBandwidth;
+    mGain = Clamp(1.0f, 10.0f, params.mGain);
+    mFreqHi = Clamp(100.0f, 10000.0f, params.mFreqHi);
+    mFreqLo = Clamp(100.0f, 10000.0f, params.mFreqLo);
+    mResonance = Clamp(0.1f, 10.0f, params.mResonance);
+    mBandwidth = Clamp(0.0f, 1.0f, params.mBandwidth);
     mSweepRate = params.mSweepRate;
-    mSweepRange = params.mSweepRange;
+    mSweepRange = Clamp(0.0f, 1.0f, params.mSweepRange);
     mEnvAmount = params.mEnvAmount;
-    mStaticSweep = params.mStaticSweep;
+    mStaticSweep = Clamp(0.0f, 1.0f, params.mStaticSweep);
+    if (mUnk4C != params.mUnk28) {
+        mUnk4C = params.mUnk28;
+    }
 }
 
 void WahEffect::Process(float *buf, int numSamples, int numChans) {

@@ -236,9 +236,7 @@ bool XLSPConnection::SecureDisconnect(in_addr a) {
         it->second--;
         if (it->second == 0) {
             mXLSPRefCountMap.erase(it);
-            if (XNetGetConnectStatus(a) != 3) {
-                XNetUnregisterInAddr(a);
-            }
+            XNetUnregisterInAddr(a);
         }
     } else {
         ret = false;

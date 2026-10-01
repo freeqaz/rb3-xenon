@@ -283,12 +283,10 @@ bool TrackWatcherImpl::ShouldAutoplayGem(float ms, int gemID) {
 }
 
 int TrackWatcherImpl::NextGemAfter(int gemID, bool timeout) {
-    int numGems = mGemList->NumGems();
-    int ret = -1;
-    if (gemID + 1 < numGems) {
-        ret = gemID + 1;
-    }
-    return ret;
+    int next = gemID + 1;
+    if (next < mGemList->NumGems())
+        return next;
+    return -1;
 }
 
 int TrackWatcherImpl::ClosestUnplayedGem(float ms, int slot) {

@@ -51,6 +51,8 @@ public:
     int FirstShowing() const { return mFirstShowing; }
     int GridSpan() const { return mGridSpan; }
     float Speed() const;
+    /** Fraction of the current scroll step completed, 0..1. */
+    float StepPercent() const;
     int MinDisplay() const;
     int MaxDisplay() const;
     bool ScrollPastMinDisplay() const;

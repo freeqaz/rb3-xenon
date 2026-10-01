@@ -327,7 +327,8 @@ void WorldInstance::DeleteTransientObjects() {
     if (!(!Dir() || Dir() == DirLoader::TopSaveDir()
         || Dir()->InlineSubDirType() != kInlineAlways)) {
         for (ObjDirItr<Hmx::Object> obj(this, false); obj != nullptr; ++obj) {
-            if (this != obj) {
+            // Meshes are never transient: retail skips them before touching refs.
+            if (obj != this && !dynamic_cast<RndMesh *>((Hmx::Object *)obj)) {
 #ifdef HX_NATIVE
                 // ⛔ X4a: `auto refs = obj->Refs();` IS AN UNTERMINATED WALK, and
                 //    it hangs the first venue load 100% of the time.
@@ -398,21 +399,23 @@ void WorldInstance::DeleteTransientObjects() {
                 }
                 delete obj;
 #else
-                auto refs = obj->Refs();
-                ObjectDir *dir_ref = Dir();
+                // The target is found, and its class checked, before the refs are
+                // snapshotted. The X360 ring is a std::list<ObjRefOwner *> in all but
+                // name (pool nodes {next, prev, refPtr}), and retail copies it as one:
+                // the walk runs over the detached copy, so Replace may unlink the live
+                // ring freely.
                 Hmx::Object *to = mDir->Find<Hmx::Object>(obj->Name(), true);
                 MILO_ASSERT(obj->ClassName() == to->ClassName(), 0x1CB);
-                {
-                    MemDoTempAllocations m;
-                    for (ObjRef::iterator it = refs.begin(); it != refs.end(); ++it) {
-                        if (RefPtrOf(it)->RefOwner() && RefPtrOf(it)->RefOwner()->Dir() == this) {
-                            // ObjRef::Replace(Hmx::Object*) is an elided stub off
-                            // HX_NATIVE; dispatch the real ring Replace (slot +8)
-                            // with the outgoing object as `from`.
-                            RefPtrOf(it)->Replace(
-                                reinterpret_cast<ObjRef *>((Hmx::Object *)obj), to
-                            );
-                        }
+                std::list<ObjRefOwner *> refs(
+                    reinterpret_cast<const std::list<ObjRefOwner *> &>(obj->Refs())
+                );
+                for (std::list<ObjRefOwner *>::iterator it = refs.begin(); it != refs.end();
+                     ++it) {
+                    if ((*it)->RefOwner() && (*it)->RefOwner()->Dir() == this) {
+                        // ObjRef::Replace(Hmx::Object*) is an elided stub off
+                        // HX_NATIVE; dispatch the real ring Replace (slot +8)
+                        // with the outgoing object as `from`.
+                        (*it)->Replace(reinterpret_cast<ObjRef *>((Hmx::Object *)obj), to);
                     }
                 }
                 delete obj;

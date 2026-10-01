@@ -752,7 +752,11 @@ public:
             mData = new DataArray(0);
     }
 
+#ifdef HX_NATIVE
     void operator=(const DataArrayPtr &ptr) { *this = (DataArray *)ptr; }
+#endif
+    // Retail declares no copy-assignment: DataArrayPtr assigns member-wise, with no
+    // reference adjustment (the std::sort heap/insertion helpers move values this way).
 
     void operator=(DataArray *da) {
         if (mData != da) {

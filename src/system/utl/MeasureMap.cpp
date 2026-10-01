@@ -1,5 +1,8 @@
 #include "utl/MeasureMap.h"
 #include "os/Debug.h"
+#include "utl/MBT.h"
+#include <cstdlib>
+#include <cstring>
 #include <algorithm>
 
 namespace {
@@ -82,6 +85,25 @@ bool MeasureMap::AddTimeSignature(int measure, int num, int denom, bool fail) {
         ));
     }
     return true;
+}
+
+// Parses "measure:beat:tick" (1-based measure and beat). Missing fields default
+// to measure 1, beat 1, tick 0.
+void ParseMBT(const char *str, int &measure, int &beat, int &tick) {
+    char buf[32];
+    strncpy(buf, str, sizeof(buf));
+    buf[sizeof(buf) - 1] = 0;
+    int vals[3] = { 1, 1, 0 };
+    char *tok = strtok(buf, ":");
+    for (int i = 0; i < 3;) {
+        if (!tok)
+            break;
+        vals[i++] = atoi(tok);
+        tok = strtok(nullptr, ":");
+    }
+    measure = vals[0] - 1;
+    beat = vals[1] - 1;
+    tick = vals[2];
 }
 
 // sw2 scatter-include (default/MeasureMap <- world/CameraShot.cpp)

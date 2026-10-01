@@ -13,7 +13,7 @@ class MoggClipMap : public Hmx::Object {
 public:
     MoggClipMap(Hmx::Object *);
     MoggClipMap(const MoggClipMap &);
-    virtual ~MoggClipMap();
+    // no user-declared destructor: retail's is compiler-generated (it does not reset the vfptr)
 
     void mySave(BinStream &) const;
     void myLoad(BinStream &);

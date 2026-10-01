@@ -88,6 +88,8 @@ void UIListState::SetSpeed(float speed) {
 
 float UIListState::Speed() const { return mSpeed; }
 
+float UIListState::StepPercent() const { return mStepPercent; }
+
 void UIListState::SetMinDisplay(int min) {
     MILO_ASSERT(min >= 0, 0x149);
     mMinDisplay = min;

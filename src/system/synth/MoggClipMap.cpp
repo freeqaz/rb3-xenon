@@ -18,8 +18,6 @@ MoggClipMap::MoggClipMap(const MoggClipMap &mogg)
     : mMoggClip(mogg.mMoggClip), mPan(mogg.mPan), mPanWidth(mogg.mPanWidth),
       mVolume(mogg.mVolume), mIsStereo(mogg.mIsStereo) {}
 
-MoggClipMap::~MoggClipMap() {}
-
 MoggClipMap &MoggClipMap::operator=(const MoggClipMap &mogg) {
     mMoggClip = mogg.mMoggClip;
     mPan = mogg.mPan;

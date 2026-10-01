@@ -560,24 +560,16 @@ void StorePanel::UpdateFromEnumProduct(StorePurchaseable *sp, EnumProduct const 
 }
 
 DataNode StorePanel::OnMsg(SigninChangedMsg const &msg) {
-    Profile *profile = StoreProfile();
-    if (profile != 0) {
-        // Check if this profile's pad number is in the signin change mask
-        int changedMask;
-        int padNum;
-        changedMask = bool(msg.mData->Node(3).Int(msg.mData));
-        padNum = profile->GetPadNum();
-        // If this pad's bit is not set in the change mask, ignore the message
-        if (((1 << padNum) & changedMask) == 0) {
-            return 0;
+    LocalUser *user = StoreUser();
+    if (user) {
+        // only a sign-in change on the store user's own pad leaves the store
+        int changedMask = msg.mData->Node(3).Int(msg.mData);
+        if (((1 << user->GetPadNum()) & changedMask) == 0) {
+            return 1;
         }
     }
-    // Signin changed for this profile - exit the store
-    if (mLoadOk) {
-        mLoadOk = false;
-        ExitStore(kStoreErrorLiveServer);
-    }
-    return 0;
+    ExitError(kStoreErrorLiveServer);
+    return 1;
 }
 
 DataNode StorePanel::OnMsg(ProfileSwappedMsg const &) { return 0; }

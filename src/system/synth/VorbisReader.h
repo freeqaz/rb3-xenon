@@ -19,6 +19,10 @@ public:
     virtual bool Fail() { return mFail; }
 
     static void SignalDecodeThread();
+    // decode-thread side of the reader: finishes reads, decodes, refills mPcmBuffers
+    bool DecodeThreadPoll();
+    bool Terminating() const { return mTerminating; }
+    void SetTerminating(bool terminating) { mTerminating = terminating; }
 
 private:
     bool TryReadHeader();

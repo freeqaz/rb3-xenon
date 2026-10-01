@@ -138,7 +138,7 @@ void CreditsPanel::Poll() {
 }
 
 bool CreditsPanel::IsLoaded() const {
-    return UIPanel::IsLoaded() && mLoader != nullptr && mLoader->IsLoaded();
+    return UIPanel::IsLoaded() && mLoader->IsLoaded();
 }
 
 void CreditsPanel::Unload() {
@@ -197,6 +197,7 @@ void CreditsPanel::DebugToggleAutoScroll() {
 #endif
 
 DataNode CreditsPanel::OnMsg(const ButtonDownMsg &msg) {
+#ifdef HX_NATIVE
     if (mAutoScroll)
         return DATA_UNHANDLED;
     if (msg.GetButton() == kPad_DDown || msg.GetButton() == kPad_LStickDown) {
@@ -205,6 +206,13 @@ DataNode CreditsPanel::OnMsg(const ButtonDownMsg &msg) {
         mList->Scroll(-1);
     }
     return 1;
+#else
+    // Retail swallows buttons while the credits auto-scroll and otherwise leaves
+    // them to the list.
+    if (!mAutoScroll)
+        return DATA_UNHANDLED;
+    return 1;
+#endif
 }
 
 void CreditsPanel::SetAutoScroll(bool b) {
