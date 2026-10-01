@@ -98082,15 +98082,20 @@
    "name": "$MakeString",
    "address": "0x82399348",
    "survivor": "??4?$ObjVector@UIKTarget@CharIKHand@@@@QAAXABV0@@Z",
-   "folded": [
-    "??4?$ObjVector@VConstraint@HamIKEffector@@@@QAAXABV0@@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions. W16-KB 2026-10-01: survivor relabelled from ??$MakeString@HH@@YAPBDPBDHH@Z to ObjVector<CharIKHand::IKTarget>::operator=. The body (92 B) is if (this != &o) { reserve(o.size()) [16-byte stride]; assign }, both retail callers are CharIKHand::Copy (0x82399938, 0x82399984), and our CharIKHand object's operator= is word-identical to it with relocations masked (0 of 23 words differ; MakeString<int,int> differs in 13). The folded membership is unchanged.",
    "withdrawn": [
     {
      "spelling": "??$MakeString@HH@@YAPBDPBDHH@Z",
      "lane": "W16-KB 2026-10-01",
      "class": "WRONG_MAP_NAME_AT_ADDRESS"
+    },
+    {
+     "spelling": "??4?$ObjVector@VConstraint@HamIKEffector@@@@QAAXABV0@@Z",
+     "lane": "W16-KB landing 2026-10-01",
+     "class": "CONTRADICTED",
+     "disposition": "membership withdrawn, names kept",
+     "evidence": "Coordinator gate on db7c81b87: icf_pair_adjudicate --chase (W16-JG/JH tightened slots) gives CHASED T1 REFUTED. Flat T1 proves the 92 B body, but the callee slot fn_823991D8 is BYTES-DIFFER / CALLEE-UNPROVEN-OURS-DISTINCT against our ?resize@?$ObjVector@VConstraint@HamIKEffector@@@@QAAXI@Z, so our operator= calls a different resize than retail's survivor does. HamIKEffector is a DC3 (Dance Central) class with no RB3 retail counterpart."
     }
    ]
   }
