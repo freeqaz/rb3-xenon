@@ -61,13 +61,8 @@ public:
 class VocalPhrase {
 public:
     VocalPhrase();
-    VocalPhrase(const VocalPhrase &phrase)
-        : unk0(phrase.unk0), unk4(phrase.unk4), unk8(phrase.unk8), unkc(phrase.unkc),
-          unk10(phrase.unk10), unk14(phrase.unk14), unk18(phrase.unk18),
-          unk19(phrase.unk19), unk1a(phrase.unk1a), unk1c(phrase.unk1c),
-          unk20(phrase.unk20), unk24(phrase.unk24), unk28(phrase.unk28),
-          unk2c(phrase.unk2c), mTambourinePhrase(phrase.mTambourinePhrase),
-          unk30(phrase.unk30), unk34(phrase.unk34) {}
+    // No user-declared copy ctor: the implicit one is trivial, so copies are a
+    // 0x38-byte memcpy (retail 0x826B9BB0 VocalTrainerPanel::CopyPhrasesImp).
 
     bool Diff() const { return (unk14 - unk10) == 0; }
 
