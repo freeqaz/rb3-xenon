@@ -330,11 +330,8 @@ void AccomplishmentProgress::ClearFirstNewAward() {
 }
 
 void AccomplishmentProgress::AddNewRewardVignette(Symbol s) {
-    std::list<Symbol>::iterator it;
-    for (it = mNewRewardVignettes.begin(); it != mNewRewardVignettes.end() && *it != s;
-         ++it)
-        ;
-    if (it == mNewRewardVignettes.end()) {
+    if (std::find(mNewRewardVignettes.begin(), mNewRewardVignettes.end(), s)
+        == mNewRewardVignettes.end()) {
         mNewRewardVignettes.push_back(s);
     }
     unkb0.insert(s);

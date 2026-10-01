@@ -204,7 +204,9 @@ public:
     int GetBestAwesomes(int, ScoreType, Difficulty) const;
     int GetBestDoubleAwesomes(int, ScoreType, Difficulty) const;
     int GetBestTripleAwesomes(int, ScoreType, Difficulty) const;
-    int GetBestSongStatusFlag(Symbol, SongStatusFlagType, ScoreType, Difficulty) const;
+    // Returns bool: every retail caller (AccomplishmentSongConditional::Check*)
+    // masks r3 to 8 bits after the call to 0x825D2BB8.
+    bool GetBestSongStatusFlag(Symbol, SongStatusFlagType, ScoreType, Difficulty) const;
     bool IsProGuitarSongLessonComplete(int, Difficulty) const;
     bool IsProBassSongLessonComplete(int, Difficulty) const;
     bool IsProKeyboardSongLessonComplete(int, Difficulty) const;

@@ -68,6 +68,7 @@
 #include "meta/Meta.h"
 #include "meta/MetaMusicManager.h"
 #include "meta/MoviePanel.h"
+#include "meta_band/AuditionSessionPanel.h"
 #include "meta_band/BandPreloadPanel.h"
 #include "meta_band/BandSongMgr.h"
 #include "meta_band/BandUI.h"
@@ -202,11 +203,13 @@ NetMessage *RemoveLastSongFromSetlistMsg::NewNetMessage() {
     return new RemoveLastSongFromSetlistMsg();
 }
 
+#ifndef RB3_STRIP_CHEAT_HANDLERS
 DataNode MetaPanel::ToggleUnlockAll(DataArray *) { return sUnlockAll = !sUnlockAll; }
 DataNode MetaPanel::ToggleIsPlaytest(DataArray *) { return sIsPlaytest = !sIsPlaytest; }
 DataNode MetaPanel::ToggleLaunchedGoalMsgsOnly(DataArray *) {
     return sLaunchedGoalMsgsOnly = !sLaunchedGoalMsgsOnly;
 }
+#endif
 
 void MetaPanel::Init() {
     MetaInit();
@@ -215,6 +218,11 @@ void MetaPanel::Init() {
     REGISTER_OBJ_FACTORY(CampaignGoalsLeaderboardChoicePanel);
     REGISTER_OBJ_FACTORY(CampaignSongInfoPanel);
     REGISTER_OBJ_FACTORY(AccomplishmentPanel);
+#ifndef HX_NATIVE
+    // AuditionSessionPanel has no decompiled body, so only the match build
+    // registers it.
+    REGISTER_OBJ_FACTORY(AuditionSessionPanel);
+#endif
     REGISTER_OBJ_FACTORY(NewAwardPanel);
     REGISTER_OBJ_FACTORY(BackdropPanel);
     REGISTER_OBJ_FACTORY(BandPreloadPanel);
@@ -270,25 +278,17 @@ void MetaPanel::Init() {
     REGISTER_OBJ_FACTORY(TrainingPanel);
     REGISTER_OBJ_FACTORY(UGCPurchasePanel);
     REGISTER_OBJ_FACTORY(VoiceoverPanel);
-    OvershellPanel::Init();
-    // ⚠ Retail's MetaPanel::Init registers 58 classes; ours registered 62.  The
-    // three Wii screens below are registered NOWHERE in the Xbox retail binary
-    // -- unsurprising, they are rb3-Wii oracle code -- and neither is
-    // BandStoreUIPanel or StoreRootPanel.  Read from retail bytes, no symbol map:
-    // fn_82574E20, 58/58 slots resolved to their .rdata literals
-    // (tools/reglist_rdata_adjudicate.py), cross-checked against a whole-binary
-    // scan of every RegisterFactory call site.
-    // ⚠ SCOPE: this evidence covers REGISTRATIONS ONLY.  The neighbouring
-    // TheWiiFriendsProvider/TheWiiInvitationsProvider Init() calls are not
-    // factory registrations, so the instrument says NOTHING about them and they
-    // are deliberately left as they are.
+    // Retail (0x82574E20) goes straight from the VoiceoverPanel registration to
+    // GameModeInit: OvershellPanel::Init and the two Wii provider inits are not
+    // called. Only the factory list was previously adjudicated (58 slots,
+    // tools/reglist_rdata_adjudicate.py); the call sequence is read from the
+    // same function's bl list.
 #ifdef HX_NATIVE
+    OvershellPanel::Init();
     WiiFriendsScreen::Init();
     REGISTER_OBJ_FACTORY(WiiFriendsScreen);
-#endif
     TheWiiFriendsProvider.Init();
     TheWiiInvitationsProvider.Init();
-#ifdef HX_NATIVE
     REGISTER_OBJ_FACTORY(WiiProfilePanel);
     REGISTER_OBJ_FACTORY(WiiFriendsDetailsProvider);
 #endif
@@ -310,17 +310,24 @@ void MetaPanel::Init() {
     AppendSongToSetlistMsg::Register();
     RemoveLastSongFromSetlistMsg::Register();
     UtlInit();
+#ifndef RB3_STRIP_CHEAT_HANDLERS
+    // Retail ends at UtlInit: none of the three literals below occurs in the
+    // image.
     DataRegisterFunc("toggle_unlock_all", ToggleUnlockAll);
     DataRegisterFunc("toggle_playtest_flag", ToggleIsPlaytest);
     DataRegisterFunc("toggle_launched_goal_msgs_only", ToggleLaunchedGoalMsgsOnly);
+#endif
 }
 
 MetaPanel::MetaPanel()
     : mTour(new Tour(SystemConfig("tour"), TheSongMgr, *TheBandUserMgr, true)),
       mCampaign(new Campaign(SystemConfig("campaign"))),
       mNameGenerator(new NameGenerator(SystemConfig("name_generator"))),
-      mMetaMusicMgr(new MetaMusicManager(SystemConfig("synth", "metamusic"))),
-      mHAQMgr(new HAQManager()), unk58(0), mMusic(0), mSongPreview(TheSongMgr), unkd4(0) {
+#ifdef HX_NATIVE
+      mHAQMgr(new HAQManager()),
+#endif
+      mMetaMusicMgr(new MetaMusicManager(SystemConfig("synth", "metamusic"))), unk58(0),
+      mMusic(0), mSongPreview(TheSongMgr), unkd4(0) {
     mSongPreview.SetName("song_preview", ObjectDir::Main());
     MusicLibrary::Init(mSongPreview);
     mRecentIndices.reserve(3);
@@ -334,14 +341,12 @@ MetaPanel::~MetaPanel() {
     RELEASE(mTour);
     RELEASE(mCampaign);
     RELEASE(mNameGenerator);
-    // laneCN-3: retail does NOT release mMetaMusicMgr here -- it emits only FOUR
-    // RELEASEs, not five. objdiff alignment is decisive: our 4th release loads
-    // -0x94(r30) where retail's 4th loads -0x90(r30) (idx 48 diff_arg), and our
-    // 5th (-0x90, the SAME slot retail uses for its 4th) is 9 PURE inserts at idx
-    // 57-65 with no target counterpart. So retail still HAS the member at -0x94
-    // (otherwise its -0x90 member would have shifted down); it simply never
-    // releases it. Leaving RELEASE(mHAQMgr) as the final one.
+    // Retail (0x82573258) releases 0x3c, 0x40, 0x44 and 0x4c: the fourth is
+    // mMetaMusicMgr. The HAQManager at 0x48 exists only in HX_NATIVE.
+    RELEASE(mMetaMusicMgr);
+#ifdef HX_NATIVE
     RELEASE(mHAQMgr);
+#endif
     TheBandUI.RemoveSink(this, "current_screen_changed");
 }
 

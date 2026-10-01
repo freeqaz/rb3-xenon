@@ -58,8 +58,11 @@ public:
     Tour *mTour; // 0x3c
     Campaign *mCampaign; // 0x40
     NameGenerator *mNameGenerator; // 0x44
-    MetaMusicManager *mMetaMusicMgr; // 0x48
-    HAQManager *mHAQMgr; // 0x4c
+    // Retail's ctor (0x82573EE0) never writes 0x48 and its dtor never releases
+    // it; no HAQManager is built anywhere in the image. Only HX_NATIVE creates
+    // one here.
+    HAQManager *mHAQMgr; // 0x48
+    MetaMusicManager *mMetaMusicMgr; // 0x4c
     std::vector<int> mRecentIndices; // 0x50
     int unk58; // 0x5c
     MetaMusic *mMusic; // 0x60
