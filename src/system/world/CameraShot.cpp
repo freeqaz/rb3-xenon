@@ -1121,7 +1121,7 @@ BEGIN_COPYS(CamShot)
         for (int i = 0; i != c->mCrowds.size(); i++) {
             mCrowds.push_back(CamShotCrowd(this, c->mCrowds[i]));
         }
-        COPY_MEMBER(mCrowdStateOverride)
+        // Retail Copy (like Save and Load) carries no crowd-state override.
         COPY_MEMBER(mNearPlane)
         COPY_MEMBER(mFarPlane)
         COPY_MEMBER(mUseDepthOfField)
