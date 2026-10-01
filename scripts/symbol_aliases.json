@@ -101556,6 +101556,22 @@
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED); 132 B retail / 132 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. ??1CharEyes@@UAA@XZ. Overrides earlier withdrawal record(s) for this spelling under other survivors (0x822aa258 FABRICATED_CLOSURE_NOT_PARTITION; 0x82373ec8 FABRICATED_CLOSURE_NOT_PARTITION; 0x8246f2b8 FABRICATED_CLOSURE_NOT_PARTITION; 0x827d1570 FABRICATED_CLOSURE_NOT_PARTITION): those refused membership without a per-pair proof against this survivor, and the chase above is one."
     }
    ]
+  },
+  {
+   "name": "_M_erase",
+   "address": "0x823db220",
+   "survivor": "?_M_erase@?$vector@V?$ObjOwnerPtr@VWaypoint@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VWaypoint@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjOwnerPtr@VWaypoint@@@@PAV3@ABU__false_type@2@@Z",
+   "folded": [
+    "?_M_erase@?$vector@V?$ObjOwnerPtr@VRndTransformable@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VRndTransformable@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjOwnerPtr@VRndTransformable@@@@PAV3@ABU__false_type@2@@Z"
+   ],
+   "evidence": "Fold group opened by W16-MB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "?_M_erase@?$vector@V?$ObjOwnerPtr@VRndTransformable@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VRndTransformable@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjOwnerPtr@VRndTransformable@@@@PAV3@ABU__false_type@2@@Z",
+     "lane": "W16-MB 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED); 124 B retail / 124 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. ??$PropSync@V?$ObjOwnerPtr@VRndTransformable@@@@@@YA_NAAV?$ObjVector@V?$ObjOwnerPtr@VRndTransformable@@@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z."
+    }
+   ]
   }
  ]
 }
