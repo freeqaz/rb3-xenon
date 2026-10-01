@@ -4,6 +4,7 @@
 #include "bandobj/OutfitConfig.h"
 #include "bandobj/PatchDir.h"
 #include "game/BandUser.h"
+#include "meta_band/AssetStore.h"
 #include "meta_band/BandProfile.h"
 #include "meta_band/CharData.h"
 #include "obj/Msg.h"
@@ -11,32 +12,6 @@
 #include "world/CameraShot.h"
 
 class ClosetPanel;
-
-// Xbox-360-only DLC asset-offer store embedded in ClosetMgr (retail RTTI
-// ".?AVAssetStore@@", sizeof 0x4c, ctor @0x825D1A38, methods @0x825D15A8/
-// 0x825D1718/0x825D1748 in an unpinned TU). Declaration-only;
-// only ClosetMgr::Handle's call sites are matched here.
-class AssetStore : public Hmx::Object {
-public:
-    AssetStore();
-    void Poll();
-    bool HasAssetOffer(Symbol);
-    bool HasAnyAssetOffers() const;
-    void ShowPurchaseUI(Symbol);
-    // TU5, @0x825EC840; retail passes the closet's LocalBandUser. Name is ours.
-    void RefreshOffers(LocalBandUser *);
-    bool IsDownloading() const { return unk3c != 0; }
-
-    int unk28; // 0x28 - retail ctor inits to 4
-    int unk2c; // 0x2c
-    int unk30; // 0x30
-    void *unk34; // 0x34 - set by ShowPurchaseUI (download object)
-    void *unk38; // 0x38 - current offer
-    void *unk3c; // 0x3c - checked by is_downloading handler
-    int unk40; // 0x40 - offers begin (HasAnyAssetOffers compares 0x40 vs 0x44)
-    int unk44; // 0x44 - offers end
-    int unk48; // 0x48
-};
 
 class ClosetMgr : public MsgSource {
 public:

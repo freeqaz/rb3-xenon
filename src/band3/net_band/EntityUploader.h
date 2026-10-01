@@ -28,7 +28,8 @@ public:
         kPlatformChecking = 1
     };
     EntityUploader();
-    virtual ~EntityUploader() {}
+    // No user-declared destructor: retail ??_GEntityUploader (0x8250D530) calls
+    // ~Object without first restoring the EntityUploader vtable.
     virtual DataNode Handle(DataArray *, bool);
     virtual void Init();
     virtual void Terminate() {}

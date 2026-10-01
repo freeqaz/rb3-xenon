@@ -20,7 +20,11 @@ Modifier::Modifier(DataArray *da) : mData(da), mDefaultEnabled(0) {
 }
 
 bool Modifier::IsHidden() const { return mData->Contains(hidden); }
-bool Modifier::CustomLocation() const { return mData->Contains(custom_location); }
+// Retail: function-local static Symbol (like its neighbours below).
+bool Modifier::CustomLocation() const {
+    static Symbol custom_location("custom_location");
+    return mData->Contains(custom_location);
+}
 // retail fn_82588F58 / fn_82589030 / fn_825891E0: function-local Symbol statics
 bool Modifier::SaveValue() const {
     static Symbol save_value("save_value");
@@ -30,7 +34,10 @@ bool Modifier::UseSaveValue() const {
     static Symbol use_save_value("use_save_value");
     return mData->Contains(use_save_value);
 }
-bool Modifier::DefaultEnabled() const { return mData->Contains(default_enabled); }
+bool Modifier::DefaultEnabled() const {
+    static Symbol default_enabled("default_enabled");
+    return mData->Contains(default_enabled);
+}
 bool Modifier::DelayedEffect() const {
     static Symbol delayed_effect("delayed_effect");
     return mData->Contains(delayed_effect);
@@ -118,9 +125,14 @@ bool ModifierMgr::HasModifier(Symbol s) { return GetModifier(s, false); }
 
 bool ModifierMgr::IsModifierUnlocked(Modifier *) const { return true; }
 
+// Retail (204 B) broadcasts the change: a function-local static
+// Message("modifier_changed_msg") exported through MsgSource::Export (virtual
+// base, slot 14) right after the toggle.
 void ModifierMgr::ToggleModifierEnabled(Symbol s) {
     Modifier *mod = GetModifier(s, true);
     mod->mDefaultEnabled = mod->mDefaultEnabled == 0;
+    static Message modifier_changed_msg("modifier_changed_msg");
+    Export(modifier_changed_msg, true);
     if (mod->UseSaveValue()) {
         TheProfileMgr.mGlobalOptionsDirty = true;
     }

@@ -158,7 +158,7 @@ public:
     int GetDefaultCharIndex() const;
     void SelectChar(int);
     void ShowEnterFlowPrompt(OvershellSlotStateID);
-    bool ConfirmSwapUserProfile();
+    void ConfirmSwapUserProfile();
     void AttemptToggleAutoVocals();
     void ConfirmChooseDiff();
     void RenameCharacter(const char *);
@@ -167,7 +167,7 @@ public:
     bool IsWiiProfileFull() const;
     bool IsWiiProfileDeleteQueueFull() const;
     const char *GetWiiProfileListSelectedName() const;
-    bool SwapUserProfile(LocalBandUser *);
+    void SwapUserProfile(LocalBandUser *);
     void AddValidController(ControllerType);
     void AddAutoVocalsValidController(ControllerType);
     void ToggleWiiSpeak();

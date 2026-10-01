@@ -43,12 +43,16 @@ extern "C" int NWC24GetMyUserId(unsigned long long &);
 #include "obj/Msg.h"
 #include "obj/ObjMacros.h"
 #include "os/Debug.h"
+#include "os/Friend.h"
 #include "os/NetworkSocket.h"
 #include "os/OnlineID.h"
 #include "os/PlatformMgr.h"
 #include "os/System.h"
 #include "ui/UIPanel.h"
+#include "rndobj/Bitmap.h"
+#include "rndobj/Tex.h"
 #include "utl/BinStream.h"
+#include "utl/BufStream.h"
 #include "utl/DataPointMgr.h"
 #include "utl/Loader.h"
 #include "utl/MemStream.h"
@@ -131,28 +135,38 @@ RockCentral::RockCentral()
 
 RockCentral::~RockCentral() { delete mContextWrapperPool; }
 
+// Retail TU5 0x824F6D98 (tail-called by the anonymous RockCentralTerminate,
+// 0x824F70A0) unregisters from exactly three sources: the net server, the
+// platform manager, and the profile manager's ProfileChangedMsg.
 void RockCentral::Terminate() {
     TheNet.GetServer()->RemoveSink(this);
     ThePlatformMgr.RemoveSink(this);
     TheProfileMgr.RemoveSink(this, ProfileChangedMsg::Type());
-    TheWiiFriendMgr.RemoveSink(this, WiiFriendsListChangedMsg::Type());
-    ThePlatformMgr.RemoveSink(this, SigninChangedMsg::Type());
-    ThePlatformMgr.RemoveSink(this, InviteReceivedMsg::Type());
-    // No sink on WiiProfileMgr's DeleteQueueUpdatedMsg here; the dc3-derived
-    // WiiProfileMgr in this tree has no MsgSource RemoveSink. Non-pinned.
-    // There are no WiiFriendList / WiiMessageList members to release:
-    // those members do not exist in the Xbox layout (0x98 is mXNetAddr).
 }
 
-// NOTE (rb3-xenon port): RockCentral::Init is Wii-platform setup (WiiProfileMgr,
-// WiiFriendMgr, NWC24, the Wii-only PlatformMgr friend-callbacks and the 1-arg
-// DataPointRecorder). It is NOT in the pinned retail-Xbox .text range; the Xbox
-// build links a platform-different implementation we do not match here. Stubbed
-// so the TU compiles against the dc3-derived engine headers without dragging in
-// the Wii-only APIs.
+// Retail TU5 0x824F9CE0, the Xbox Init: it sets up no WiiProfileMgr,
+// WiiFriendMgr or NWC24. It sinks on the net server, on the platform
+// manager's connection_status_changed (a function-local static Symbol) and
+// FriendsListChangedMsg, and on ProfileChangedMsg, then registers the exit
+// callback that runs Terminate.
 void RockCentral::Init(bool b1) {
     mContextWrapperPool = new ContextWrapperPool();
+    SetName("rock_central", ObjectDir::Main());
+    TheNet.GetServer()->AddSink(this);
+    static Symbol connection_status_changed("connection_status_changed");
+    ThePlatformMgr.AddSink(this, connection_status_changed);
+    ThePlatformMgr.AddSink(this, FriendsListChangedMsg::Type());
+    TheProfileMgr.AddSink(this, ProfileChangedMsg::Type());
+    TheDebug.AddExitCallback(RockCentralTerminate);
+    TheDataPointMgr.SetDataPointRecorder((DataPointRecordFunc *)RecordDataPointNoRet);
+    unk88.Generate();
+    mTime.Start();
+    mRetryTime = mTime.Ms();
     unk85 = b1;
+    const char *log = OptionStr("log_datapoints", 0);
+    if (log) {
+        gDataPointLog = new TextFileStream(log, false);
+    }
 }
 
 // Retail Xbox: no skipIt toggle, no IsLoginMandatory() test, and none of the
@@ -1551,6 +1565,140 @@ void RockCentral::CreateBattle(
 // principal-ID). Not in the pinned retail-Xbox range; stubbed for compilation.
 void RockCentral::DeleteNextUser() {}
 
+// Retail TU5 art-file transfer. No surviving source has these two Updatables
+// or SaveBinaryData/GetArtFile; everything below is read off the retail bytes.
+//
+// SaveArtUpdater: RTTI .?AVSaveArtUpdater@@, vtable 0x8207FB14
+// { ??_G 0x824F69A0, Update 0x824F7890, SetWrapper }. 0x10 bytes.
+class SaveArtUpdater : public Updatable {
+public:
+    SaveArtUpdater() {}
+    virtual ~SaveArtUpdater() {}
+    virtual void Update(Message *);
+
+    Quazal::String mResult; // 0x8, the server's reply
+    signed char mRetCode; // 0xc
+    bool mDone; // 0xd
+};
+
+// 0x824F7890. The reply, when non-empty, is a DTA array whose first entry's
+// second node is the new art revision.
+void SaveArtUpdater::Update(Message *msg) {
+    (*msg)[1] = mRetCode;
+    (*msg)[2] = 0;
+    String result(mResult);
+    if (strlen(result.c_str()) != 0) {
+        BufStream bs((void *)result.c_str(), strlen(result.c_str()), true);
+        DataArray *arr = DataReadStream(&bs);
+        if (arr) {
+            (*msg)[2] = arr->Array(0)->Int(1);
+        }
+    }
+    mDone = true;
+}
+
+// ArtFileConverter: RTTI .?AVArtFileConverter@@, vtable 0x8207FB94
+// { ??_G 0x824F7050, Update 0x824F9488, SetWrapper }. 0x2c bytes. Receives
+// an art file into mBuffer and loads it into mTex.
+class ArtFileConverter : public Updatable {
+public:
+    ArtFileConverter(RndTex *tex, unsigned int *revision, const String &key)
+        : mBuffer(new Quazal::RBBinaryBuffer()), mTex(tex), mRevision(revision),
+          mKey(key), mDone(false) {}
+    virtual ~ArtFileConverter() { delete mBuffer; }
+    virtual void Update(Message *);
+
+    void LoadTex(RndTex *);
+
+    Quazal::RBBinaryBuffer *mBuffer; // 0x8
+    Quazal::String mResult; // 0xc
+    signed char mRetCode; // 0x10
+    RndTex *mTex; // 0x14
+    unsigned int *mRevision; // 0x18
+    String mKey; // 0x1c
+    bool mDone; // 0x28
+};
+
+// 0x824F9388
+void ArtFileConverter::LoadTex(RndTex *tex) {
+    MemStream ms(false);
+    unsigned int size = mBuffer->mBuffer.GetContentSize();
+    if (size) {
+        ms.Resize(size);
+        mBuffer->mBuffer.CopyContent((void *)ms.Buffer(), size, 0);
+        RndBitmap bmp;
+        bmp.Load(ms);
+        tex->SetBitmap(bmp, 0, true);
+    }
+}
+
+// 0x824F9488
+void ArtFileConverter::Update(Message *msg) {
+    LoadTex(mTex);
+    String result(mResult);
+    if (strlen(result.c_str()) != 0 && mRevision) {
+        BufStream bs((void *)result.c_str(), strlen(result.c_str()), true);
+        DataArray *arr = DataReadStream(&bs);
+        if (arr) {
+            *mRevision = arr->Array(0)->Int(1);
+        }
+    }
+    (*msg)[1] = mRetCode;
+    mDone = true;
+}
+
+// Retail TU5 0x824F8A98: saves the texture's bitmap into an RBBinaryBuffer and
+// sends it with the JSON key through RBBinaryDataClient::CallSaveBinaryData.
+void RockCentral::SaveBinaryData(RndTex *tex, String &key, Hmx::Object *o, int id) {
+    if (!IsConnected(o, id, false))
+        return;
+    if (!tex) {
+        SendFailure(o, 1, id);
+        return;
+    }
+    MemStream ms(false);
+    RndBitmap bmp;
+    tex->LockBitmap(bmp, 1);
+    bmp.Save(ms);
+    tex->UnlockBitmap();
+    Quazal::RBBinaryBuffer buf;
+    buf.mBuffer.AppendData(ms.Buffer(), ms.Size(), -1);
+    Quazal::String qKey(key.c_str());
+    SaveArtUpdater *updater = new SaveArtUpdater();
+    ContextWrapper *wrapper = mContextWrapperPool->NewContextWrapper(o, updater, true, id);
+    // Retail repeats the qKey / buf / bmp destructors on this path.
+    if (!wrapper) {
+        delete updater;
+        return;
+    }
+    updater->SetWrapper(wrapper);
+    Quazal::ProtocolCallContext *ctx = wrapper->mContext;
+    mRBBinaryData->CallSaveBinaryData(
+        ctx, qKey, buf, &updater->mResult, &updater->mRetCode
+    );
+}
+
+// Retail TU5 0x824F83F8: requests the file named by the JSON key through
+// RBBinaryDataClient::CallGetBinaryData; ArtFileConverter loads the reply.
+void RockCentral::GetArtFile(
+    String key, RndTex *tex, unsigned int *revision, Hmx::Object *o, int id
+) {
+    if (!IsConnected(o, id, false))
+        return;
+    Quazal::String qKey(key.c_str());
+    ArtFileConverter *conv = new ArtFileConverter(tex, revision, key);
+    ContextWrapper *wrapper = mContextWrapperPool->NewContextWrapper(o, conv, true, id);
+    if (!wrapper) {
+        delete conv;
+        return;
+    }
+    conv->SetWrapper(wrapper);
+    Quazal::ProtocolCallContext *ctx = wrapper->mContext;
+    mRBBinaryData->CallGetBinaryData(
+        ctx, qKey, conv->mBuffer, &conv->mResult, &conv->mRetCode
+    );
+}
+
 void RockCentral::UpdateSetlistArt(
     LocalSavedSetlist *setlist, int i2, Hmx::Object *o, int i4
 ) {
@@ -1702,7 +1850,8 @@ void RockCentral::GetSetlistCreationStatus(
 
 bool RockCentral::GetIsDiskSong(int songID) {
     bool ret = false;
-    if (songID - 0x3e9U <= 0x69) {
+    // Retail tests the two bounds separately (signed bltlr / bgtlr).
+    if (songID >= 0x3e9 && songID <= 0x452) {
         static const int sSongIds[] = {
             0x3e9, 0x3eb, 0x3ec, 0x3f0, 0x3f1, 0x3f3, 0x3f4, 0x3f5, 0x3f6, 0x3f7, 0x3f8,
             0x3fa, 0x3fd, 0x400, 0x401, 0x404, 0x405, 0x406, 0x407, 0x408, 0x409, 0x40a,

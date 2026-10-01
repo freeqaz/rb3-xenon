@@ -32,6 +32,13 @@ BEGIN_HANDLERS(LayerProvider)
     HANDLE_CHECK(0x1A7)
 END_HANDLERS
 
+// Retail (508 B): the texture transform keeps the sticker's on-layer aspect
+// ratio -- (unk18 * |ScaleX|) against (ScaleY * unk1c), the longer side scaled
+// down -- rotates about Z (Vector3(0, 0, rot)) and mirrors X when the layer is
+// flipped. The scale matrix stays in registers across the second ScaleX()
+// call, so it is a separate local copied into tf.m element by element.
+// Residue: retail stores mTexGen/mTexWrap with no dirty-flag OR before the
+// transform copy (one OR after it); our setters OR before and after.
 inline RndMat *LayerProvider::GetMatForData(int idx) const {
     int layerIdx = ConvertToLayerIndex(mPatch, idx);
     PatchLayer &layer = mPatch->Layer(layerIdx);
@@ -40,30 +47,39 @@ inline RndMat *LayerProvider::GetMatForData(int idx) const {
         MILO_FAIL("Couldn't find sticker -- using -fast?");
     RndMat *curMat = mLayerMats[layerIdx];
     sticker->SetIconOnMat(curMat);
-    Transform tf50;
-    tf50.Reset();
-    float f5 = layer.ScaleX();
-    if (f5 < 0)
-        f5 *= -1.0f;
-    float scaleY = layer.ScaleY();
-    bool flipScale = sticker->unk1c * scaleY > sticker->unk18 * f5;
-    if (flipScale)
-        scaleY = layer.ScaleY();
-    if (!flipScale)
-        scaleY = layer.ScaleY();
+    float one = 1.0f;
+    float zero = 0.0f;
+    float scaleWH = one, scaleHW = one;
+    Transform tf;
+    tf.v.z = zero;
+    tf.v.y = zero;
+    tf.v.x = zero;
+    float scaleX = layer.ScaleX();
+    if (scaleX < 0)
+        scaleX *= -1.0f;
+    if (sticker->unk18 * scaleX > layer.ScaleY() * sticker->unk1c)
+        scaleWH = (sticker->unk18 * scaleX) / (layer.ScaleY() * sticker->unk1c);
+    else
+        scaleHW = (layer.ScaleY() * sticker->unk1c) / (sticker->unk18 * scaleX);
     Hmx::Matrix3 m74;
-    Vector3 v80(0, layer.Rotation() * DEG2RAD, 0);
+    Vector3 v80(0, 0, layer.Rotation() * DEG2RAD);
     MakeRotMatrix(v80, m74, true);
-    Vector3 v8c(sticker->unk18, 1.0f, sticker->unk1c);
-    Scale(v8c, tf50.m, tf50.m);
-    if (f5 != layer.ScaleX()) {
+    Hmx::Matrix3 scale;
+    scale.x.Set(one * scaleHW, zero * scaleHW, zero * scaleHW);
+    scale.y.Set(zero * scaleWH, one * scaleWH, zero * scaleWH);
+    scale.z.Set(zero * one, zero * one, one * one);
+    tf.m.Set(
+        scale.x.x, scale.x.y, scale.x.z, scale.y.x, scale.y.y, scale.y.z, scale.z.x,
+        scale.z.y, scale.z.z
+    );
+    if (scaleX != layer.ScaleX()) {
         Vector3 v98(-1, 1, 1);
-        Scale(v98, tf50.m, tf50.m);
+        Scale(v98, scale, tf.m);
     }
-    Multiply(m74, tf50.m, tf50.m);
+    Multiply(m74, tf.m, tf.m);
     curMat->SetTexGen(kTexGenXfm);
     curMat->SetTexWrap(kTexBorderBlack);
-    curMat->SetTexXfm(tf50);
+    curMat->SetTexXfm(tf);
     return curMat;
 }
 

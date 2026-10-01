@@ -164,7 +164,8 @@ public:
 class LeaderboardShortcutProvider : public UIListProvider, public Hmx::Object {
 public:
     LeaderboardShortcutProvider(const Leaderboard *);
-    virtual ~LeaderboardShortcutProvider() {}
+    // No user-declared dtor: retail 0x8266D218 does not re-store this
+    // class's vptrs before destroying its members.
     virtual void Text(int, int, UIListLabel *, UILabel *) const;
     virtual int NumData() const;
     virtual DataNode Handle(DataArray *, bool);

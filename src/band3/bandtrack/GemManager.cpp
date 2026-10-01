@@ -260,11 +260,15 @@ void GemManager::UpdateArpeggios(float f1, bool b2) {
 
 void GemManager::ClearTrackMasks() {
     if (mGemData) {
+        // Retail: function-local static Symbols (one guard word, bits 1/2), each
+        // constructed just before its lookup.
+        static Symbol arpeggio("arpeggio");
         DataArray *arpArr = mGemData->FindArray(arpeggio, false);
         if (arpArr) {
             Symbol name = arpArr->Sym(1);
             GetWidgetByName(name)->Clear();
         }
+        static Symbol unison("unison");
         DataArray *unisonArr = mGemData->FindArray(unison, false);
         if (unisonArr) {
             Symbol name = unisonArr->Sym(1);

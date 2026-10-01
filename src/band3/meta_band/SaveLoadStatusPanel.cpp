@@ -61,10 +61,12 @@ void SaveLoadStatusPanel::QueueDeactivation() {
 }
 
 void SaveLoadStatusPanel::PollDeactivation() {
+    // Retail 0x82631EB0: Timer::SplitMs() out of line, and the message is a
+    // function-local static.
     if (unk38) {
-        unk40.Split();
-        if (unk40.Ms() >= 1000.0f) {
+        if (unk40.SplitMs() >= 1000.0f) {
             unk38 = false;
+            static Message deactivate_msg("deactivate");
             Handle(deactivate_msg, true);
         }
     }

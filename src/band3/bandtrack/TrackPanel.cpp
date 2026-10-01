@@ -846,6 +846,11 @@ int TrackPanel::GetNoCrowdMeter() const {
 }
 
 float TrackPanel::CrowdRatingDefaultVal(Symbol s) const {
+    // Retail: three function-local static Symbols (one guard word, bits 1/2/4),
+    // all constructed before the first compare.
+    static Symbol medium("medium");
+    static Symbol hard("hard");
+    static Symbol expert("expert");
     Difficulty diff = kDifficultyEasy;
     if (s == medium) {
         diff = kDifficultyMedium;

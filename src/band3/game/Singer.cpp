@@ -14,7 +14,9 @@
 #include "obj/Task.h"
 #include "os/Debug.h"
 #include "os/System.h"
+#include "synth/MicClientMapper.h"
 #include "synth/MicManagerInterface.h"
+#include "synth/Synth.h"
 #include "synth/VoiceBeat.h"
 #include <algorithm>
 
@@ -123,7 +125,7 @@ Singer::Singer(VocalPlayer *vp, int n)
     : mPlayer(vp), unkc(0), mSingerIndex(n), unk14(0), unk18(0), unk1c(0), mIsSinging(0),
       mDetune(0), mCurrentFrameTime(0), unk30(0), mTambourineDeploymentSuppressMs(100.0f), mTambourineActivationTime(0), mLastTambourineTime(0), mTotalTambourineDeployment(0),
       mScreamStartTime(-1.0f), mScreamEnergyThreshold(0.8f), mScreamMinDurationMs(500.0f), mFrameMicPitch(0),
-      mLastFrameMicEnergy(0), mSmoothedMicEnergy(0), mFrameTargetPitch(0), mFrameAssignedPart(-1), mBestTargetPitch(0), mOctaveOffset(0),
+      mLastFrameMicEnergy(0), mSmoothedMicEnergy(0), mFrameBestHitScore(0), mFrameAssignedPart(-1), mBestTargetPitch(0), mOctaveOffset(0),
       unk7c(0), mScreamOccurred(0), unk84(0), unk88(0), mPitchHistoryMean(0), mPitchHistoryIndex(0), mPitchHistoryValidCount(0), mVibrato(0),
       mAccumulatedVibratoBonusPoints(0), mVibratoFrameBonus(0), mVibratoBonusAccumulator(-1.0f), mAutoplayPart(-1),
       mAutoplayVariationMagnitude(0), mAutoplayOffset(0),
@@ -148,18 +150,9 @@ Singer::Singer(VocalPlayer *vp, int n)
     mTalkyMatcher = new TalkyMatcher();
     for (int i = 0; i < 5; i++)
         mPitchHistory[i] = 0;
-
-    if (n == 0) {
-        GameMic *mic = TheGameMicManager->GetMic(mMicClientID);
-        if (mic) {
-            DataNode node = DataVariable("playback_file");
-            if (node.Type() == kDataString) {
-                if (strlen(node.Str()) != 0) {
-                    mic->SetInputFile(node.Str());
-                }
-            }
-        }
-    }
+    // Retail's ctor ends here: it has no `playback_file` DataVariable block feeding
+    // singer 0's GameMic an input file, and it zero-inits mFrameBestHitScore (+0x6c),
+    // not mFrameTargetPitch (+0x68).
 }
 
 Singer::~Singer() {
@@ -201,6 +194,14 @@ void Singer::CreateMicClientID() {
 }
 
 GameMic *Singer::GetGameMic() const { return TheGameMicManager->GetMic(mMicClientID); }
+
+// Retail fn_826F6930, 20 B (the name is ours, lane W16-JC-6): a tail call
+// `TheSynth->mMicClientMapper(+0x74)->GetMicIDForClientID(&mMicClientID)`. Its one
+// caller is VocalPlayer::HasSingerOnMic. (The map currently names this address
+// ?Dispatch@SyncLocalMachineMsg@..., which a 20-byte mic-mapper tail call is not.)
+int Singer::GetMicID() const {
+    return TheSynth->GetMicClientMapper()->GetMicIDForClientID(mMicClientID);
+}
 MicClientID Singer::GetMicClientID() const { return mMicClientID; }
 
 void Singer::SetMicProcessing(bool b1, bool b2) {
@@ -335,11 +336,12 @@ void Singer::AllScoresAreIn(const std::vector<int> &assignedParts) {
         float cacheUnk4 = mScoreCaches[i].unk4;
         float sum = mResultsData[i].targetPitchAccuracy + cacheUnk4;
         float cacheUnk8 = mScoreCaches[i].unk8;
-        mResultsData[i].targetPitchAccuracy = std::min(cacheUnk8, sum);
+        mResultsData[i].targetPitchAccuracy = std::min(sum, cacheUnk8);
         mResultsData[i].centsVariance += mScoreCaches[i].unkc;
         mResultsData[i].centsDeviation += mScoreCaches[i].unk0;
     }
-    for (AmbiguousData *entry = AMBIG0; entry != AMBIG0 + mAmbiguousData.size(); entry++) {
+    for (std::vector<AmbiguousData>::iterator entry = mAmbiguousData.begin();
+         entry != mAmbiguousData.end(); ++entry) {
         if (entry->isResolved)
             continue;
         int part0 = entry->part1;
@@ -385,62 +387,61 @@ void Singer::ClearScoreHistories() {
 }
 
 void Singer::ClearPitchHistory() {
+    // Retail (inlined into UpdatePitchHistory) zeroes the history with five integer
+    // `stw` stores and a dead `addi rX,this,0x8c`: the unrolled loop, as in the ctor.
     mPitchHistoryMean = 0;
     mPitchHistoryIndex = 0;
     mPitchHistoryValidCount = 0;
-    mPitchHistory[0] = 0;
-    mPitchHistory[1] = 0;
-    mPitchHistory[2] = 0;
-    mPitchHistory[3] = 0;
-    mPitchHistory[4] = 0;
+    for (int i = 0; i < 5; i++)
+        mPitchHistory[i] = 0;
 }
 
+// Retail bounds-checks both counters with two signed compares (`< 0 || >= 5`,
+// `< 0 || > 5`) and runs the valid-count check after BOTH arms of the edge case.
 void Singer::UpdatePitchHistory(float pitch) {
-    if ((unsigned int)mPitchHistoryIndex > 4) {
+    if (mPitchHistoryIndex < 0 || mPitchHistoryIndex >= 5) {
         MILO_NOTIFY("pitch history index out of bounds (%d) singer %d", mPitchHistoryIndex, mSingerIndex);
         ClearPitchHistory();
     }
-    float prev = mPitchHistory[mPitchHistoryIndex];
-    if ((pitch > 0.0f) != (prev > 0.0f)) {
+    if ((pitch > 0.0f) != (mPitchHistory[mPitchHistoryIndex] > 0.0f)) {
         if (pitch > 0.0f) {
             mPitchHistoryValidCount += 1;
             mPitchHistoryMean = mPitchHistoryMean + (pitch - mPitchHistoryMean) / (float)mPitchHistoryValidCount;
         } else {
             mPitchHistoryValidCount -= 1;
             if (mPitchHistoryValidCount == 0) ClearPitchHistory();
-            if ((unsigned int)mPitchHistoryValidCount > 5) {
-                MILO_NOTIFY("pitch history valid frames out of bounds (%d)", mPitchHistoryValidCount);
-                ClearPitchHistory();
-            }
+        }
+        if (mPitchHistoryValidCount < 0 || mPitchHistoryValidCount > 5) {
+            MILO_NOTIFY("pitch history valid frames out of bounds (%d)", mPitchHistoryValidCount);
+            ClearPitchHistory();
         }
     } else if (pitch > 0.0f) {
-        mPitchHistoryMean = mPitchHistoryMean + (pitch - prev) / (float)mPitchHistoryValidCount;
+        mPitchHistoryMean = mPitchHistoryMean
+            + (pitch - mPitchHistory[mPitchHistoryIndex]) / (float)mPitchHistoryValidCount;
     }
     mPitchHistory[mPitchHistoryIndex] = pitch;
     mPitchHistoryIndex = (mPitchHistoryIndex + 1) % 5;
 }
 
+// Retail tests the distance to the history mean BEFORE stepping: a pitch already
+// within 10 semitones returns 0. Each step moves the pitch one octave toward the
+// mean (`fnmsubs p = p - sign * 12`) and counts it.
 int Singer::SuddenOctaveShift(float pitch) const {
-    int sign;
-    if (mPitchHistoryValidCount >= 1) {
-        if (pitch > 0.0f) {
-        int shift = 0;
-        if (pitch > mPitchHistoryMean) sign = 1;
-        else sign = -1;
-        float step = 12.0f * (float)sign;
-        float a0 = mPitchHistoryMean;
-        goto check;
-    update:
-        pitch -= step;
-    check:
-        float diff = pitch - a0;
+    if (mPitchHistoryValidCount < 1 || pitch <= 0.0f)
+        return 0;
+    float p = pitch;
+    float mean = mPitchHistoryMean;
+    int shift = 0;
+    int sign = pitch > mean ? 1 : -1;
+    while (true) {
+        float diff = p - mean;
+        if (!(diff > 0.0f))
+            diff = -diff;
+        if (diff <= 10.0f)
+            return shift;
         shift += sign;
-        if (!(diff > 0.0f)) diff = -diff;
-        if (diff > 10.0f) goto update;
-        return shift;
+        p -= (float)sign * 12.0f;
     }
-    }
-    return 0;
 }
 
 void Singer::UpdatePitchDeviation(float pitch) {
@@ -630,8 +631,8 @@ void Singer::Poll(float ms, const SongPos &pos, float f3, float f4) {
 void Singer::AddAmbiguousPart(int i_iPart1, int i_iPart2) {
     MILO_ASSERT(i_iPart1 < i_iPart2, 0x13E);
     bool bFound = false;
-    for (AmbiguousData *iter = AMBIG0;
-         iter != AMBIG0 + mAmbiguousData.size(); iter++) {
+    for (std::vector<AmbiguousData>::iterator iter = mAmbiguousData.begin();
+         iter != mAmbiguousData.end(); ++iter) {
         if (iter->part1 == i_iPart1 || iter->part1 == i_iPart2) {
             bFound = true;
             break;
@@ -649,14 +650,11 @@ void Singer::AddAmbiguousPart(int i_iPart1, int i_iPart2) {
 }
 
 void Singer::DisableAmbiguousPart(int i_iPart1, int i_iPart2) {
-    if (mAmbiguousData.size() != 0) {
+    if (!mAmbiguousData.empty()) {
         MILO_ASSERT(i_iPart1 < i_iPart2, 0x16C);
-        for (AmbiguousData *iter = AMBIG0;
-             iter != AMBIG0 + mAmbiguousData.size(); iter++) {
-            bool match = false;
-            if (iter->part1 == i_iPart1 && iter->part2 == i_iPart2) {
-                match = true;
-            }
+        for (std::vector<AmbiguousData>::iterator iter = mAmbiguousData.begin();
+             iter != mAmbiguousData.end(); ++iter) {
+            bool match = iter->part1 == i_iPart1 && iter->part2 == i_iPart2;
             if (match) {
                 if (!iter->isResolved) {
                     iter->isResolved = true;
@@ -675,19 +673,20 @@ void Singer::GetPitchDeviation(float &mean, float &dev) const {
 void Singer::SetAssignedPart(int part, float f2) {
     mFrameAssignedPart = part;
     if (mVibratoFrameBonus != 0.0f) {
-        mScoreCaches[part].unk4 += mVibratoFrameBonus;
+        VocalScoreCache &cache = mScoreCaches[part];
+        cache.unk4 += mVibratoFrameBonus;
         mVibratoFrameBonus = 0.0f;
     }
     mScoreHistories[part].BiasLastScore(f2);
     float assignedPoints = mScoreCaches[part].unk4;
-    float unk0 = mResultsData[part].targetPitchHitScore;
     float cap = mScoreCaches[part].unk8;
-    float total = unk0 + assignedPoints;
+    float total = mResultsData[part].targetPitchHitScore + assignedPoints;
     mResultsData[part].targetPitchHitScore = std::min(total, cap);
     float vibPts = mScoreCaches[part].unk10;
     mPossibleVibratoPoints.Set(vibPts);
-    for (AmbiguousData *iter = AMBIG0;
-         iter != AMBIG0 + mAmbiguousData.size(); iter++) {
+    // Retail walks the vector with begin()/end(), reloading end() every iteration.
+    for (std::vector<AmbiguousData>::iterator iter = mAmbiguousData.begin();
+         iter != mAmbiguousData.end(); ++iter) {
         if ((iter->part1 != part && iter->part2 != part) || iter->isResolved)
             continue;
         if (iter->winningPart == part) {

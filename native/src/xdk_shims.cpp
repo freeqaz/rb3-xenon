@@ -685,6 +685,18 @@ DWORD GetTickCount() {
 // ============================================================================
 
 DWORD XBackgroundDownloadSetMode(unsigned int) { return 0; }
+// The two shape-only XDK calls meta_band/Utl.cpp's MaxAllowedHmxMaturityLevel
+// declares (retail 0x82B54328 / 0x82B543A8; names are descriptive). Natively
+// there is no parental-control restriction, so every content level is allowed.
+extern "C" DWORD XContentRestrictionFlags(DWORD, DWORD *pdwFlags) {
+    *pdwFlags = 0;
+    return 0;
+}
+extern "C" DWORD XContentRatingLimit(DWORD, DWORD *pdwBoard, DWORD *pdwRating) {
+    *pdwBoard = 0;
+    *pdwRating = 0xff;
+    return 0;
+}
 DWORD XEnableScreenSaver(BOOL) { return 0; }
 DWORD XGetLocale() { return 0x0409; } // en-US
 DWORD XTLGetLanguage() { return 1; }  // English

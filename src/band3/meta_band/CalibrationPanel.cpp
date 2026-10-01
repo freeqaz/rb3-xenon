@@ -251,35 +251,30 @@ void CalibrationPanel::UpdateProgress(bool b) {
     float progress = (float)mTestSamples.size();
     float maxProgress;
     if (b) {
-        float a8 = unka4[1];
-        float ac = unka4[2];
-        float b0 = unka4[3];
-        float b4 = unka4[4];
-        float bc = unkb8[1];
-        float c0 = unkb8[2];
-        float c4 = unkb8[3];
-        float c8 = unkb8[4];
-        float sample = (float)((double)progress / 457453.4129);
-        unka4[0] = a8;
-        unka4[1] = ac;
-        unka4[2] = b0;
-        unka4[3] = b4;
-        unka4[4] = sample;
-        unkb8[0] = bc;
-        unkb8[1] = c0;
-        unkb8[2] = c4;
-        unkb8[3] = c8;
-        progress = (float)((6.0f * b0 + (4.0f * (ac + b4) + (a8 + sample)))
-            + -0.7805914145 * bc + 3.3180408913 * c0
-            + -5.2929307473 * c4 + 3.7554462943 * c8);
+        // Retail shifts both history arrays in place and evaluates the filter
+        // from the shifted fields (stores interleave with the reloads).
+        unka4[0] = unka4[1];
+        unka4[1] = unka4[2];
+        unka4[2] = unka4[3];
+        unka4[3] = unka4[4];
+        unka4[4] = (float)((double)progress / 457453.4129);
+        unkb8[0] = unkb8[1];
+        unkb8[1] = unkb8[2];
+        unkb8[2] = unkb8[3];
+        unkb8[3] = unkb8[4];
+        progress = (float)((6.0f * unka4[2] + (4.0f * (unka4[3] + unka4[1]) + (unka4[0] + unka4[4])))
+                           + 3.7554462943 * unkb8[3] + -0.7805914145 * unkb8[0]
+                           + 3.3180408913 * unkb8[1] + -5.2929307473 * unkb8[2]);
+        // Residue: retail multiplies by the NEGATIVE constants with fmadd in
+        // exactly this term order; our build folds them to fnmsub and moves
+        // them last. Three spellings (literal first, literal last, named
+        // const double) all compile the same.
         unkb8[4] = progress;
     }
-    int &_ref0 = mNumHits;
-    progress = progress * (float)((_ref0 + 2) / _ref0);
-    maxProgress = (float)_ref0;
-    progress = *(maxProgress < progress ? &maxProgress : &progress);
-    tabanim->SetFrame(24.0f * (progress / (float)_ref0), 1.0f);
-    boneanim->SetFrame(24.0f * (progress / (float)_ref0), 1.0f);
+    // Retail scales the raw (or filtered) progress straight to the 24-frame
+    // bar: no (mNumHits + 2) / mNumHits factor and no clamp to mNumHits.
+    tabanim->SetFrame(24.0f * (progress / mNumHits), 1.0f);
+    boneanim->SetFrame(24.0f * (progress / mNumHits), 1.0f);
 }
 
 void CalibrationPanel::Draw() { UIPanel::Draw(); }
@@ -686,12 +681,8 @@ int CalibrationPanel::GetTestQuality() const {
     if (mTestSamples.size() < mNumHits - mTopOutliers - mBottomOutliers)
         return 0;
     else {
-        int ret = GetSampleSpread() < (float)mMaxSlack;
-        if (ret == 0) {
-            for (int i = 0; i < mTestSamples.size(); i++) {
-                MILO_LOG("%f ms\n", mTestSamples[i]);
-            }
-        }
+        // Retail 0x82609308 has no sample-dump loop.
+        bool ret = GetSampleSpread() < (float)mMaxSlack;
         return ret;
     }
 }
@@ -860,7 +851,11 @@ void CalibrationWelcomePanel::Exit() {
     TheInputMgr->RemoveSink(this);
 }
 
+// Retail: two function-local statics (guard bits 0 and 1) -- the Symbol, then
+// a Message built from it (atexit dtor) -- not a file-scope global.
 DataNode CalibrationWelcomePanel::OnMsg(const InputStatusChangedMsg &msg) {
+    static Symbol controllers_changed("controllers_changed");
+    static Message controllers_changed_msg(controllers_changed);
     Handle(controllers_changed_msg, true);
     return 0;
 }

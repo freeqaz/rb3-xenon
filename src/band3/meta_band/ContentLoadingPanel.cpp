@@ -33,8 +33,10 @@ void ContentLoadingPanel::ContentStarted() {
     ShowIfPossible();
 }
 
+// Retail: the token is a function-local static built after the increment.
 bool ContentLoadingPanel::ContentDiscovered(Symbol) {
     unk3c++;
+    static Symbol finding_additional_progress("finding_additional_progress");
     mProgressLabel->SetTokenFmt(finding_additional_progress, LocalizeSeparatedInt(unk3c));
     return true;
 }

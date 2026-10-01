@@ -17,14 +17,19 @@ CurrentOutfitProvider::CurrentOutfitProvider() {
 CurrentOutfitProvider::~CurrentOutfitProvider() {}
 
 void CurrentOutfitProvider::Update() {
+    // Retail 0x82671F98: a function-local static "male" is built first, and the
+    // preview desc's InstrumentOutfit is copied into a local (copy ctor + dtor).
+    static Symbol male("male");
     unk20.clear();
     ClosetMgr *pClosetMgr = ClosetMgr::GetClosetMgr();
     MILO_ASSERT(pClosetMgr, 0x23);
     BandCharDesc *pPreviewDesc = pClosetMgr->GetPreviewDesc();
     MILO_ASSERT(pPreviewDesc, 0x28);
-    unk20.push_back(pPreviewDesc->mOutfit.mTorso.mName);
-    unk20.push_back(pPreviewDesc->mOutfit.mLegs.mName);
-    unk20.push_back(pPreviewDesc->mOutfit.mFeet.mName);
+    BandCharDesc::Outfit &curOutfit = pPreviewDesc->mOutfit;
+    BandCharDesc::InstrumentOutfit outfit = pPreviewDesc->mInstruments;
+    unk20.push_back(curOutfit.mTorso.mName);
+    unk20.push_back(curOutfit.mLegs.mName);
+    unk20.push_back(curOutfit.mFeet.mName);
 }
 
 RndMat *CurrentOutfitProvider::Mat(int, int data, UIListMesh *slot) const {

@@ -233,12 +233,15 @@ int TrainerGemTab::SlotToGemIndex(int slot) const {
 }
 
 int TrainerGemTab::GetLane(int slot) const {
+    // Retail 0x826EECE0: pro keys lanes are never mirrored for lefty.
     if (mTrackType == kTrackDrum) {
-        if (slot == 0) return 0;
-        if (mLefty) return mLanes - slot;
-        return slot;
+        if (slot == 0)
+            return 0;
+        if (mLefty)
+            slot = mLanes - slot;
+    } else if (mTrackType != kTrackRealKeys && mLefty) {
+        slot = mLanes - slot - 1;
     }
-    if (mLefty) return mLanes - slot - 1;
     return slot;
 }
 
@@ -310,18 +313,17 @@ void TrainerGemTab::Draw(int i) {
 }
 
 void TrainerGemTab::Render(int startTick, int endTick, float startY, float endY, int) {
+    // Retail 0x826F0170 draws the group through the non-virtual Draw().
     mTrackGroup->SetShowing(true);
-    mTrackGroup->DrawShowing();
-    float yRange = endY - startY;
-    float tickRange = (float)endTick - (float)startTick;
+    mTrackGroup->RndDrawable::Draw();
     mTrackGroup->SetShowing(false);
     for (int i = 0; (unsigned int)i < unk4c.size(); i++) {
         const GameGem &gem = unk4c[i];
         int tick = gem.GetTick();
         if (tick >= startTick && tick < endTick) {
-            float y = (((float)tick - (float)startTick) / tickRange) *
-                    yRange +
-                startY;
+            float y = (((float)tick - (float)startTick) / ((float)endTick - (float)startTick))
+                    * (endY - startY)
+                + startY;
             mVerticalTrans->SetFrame(y, 1.0f);
             if (gem.IsRealGuitarChord()) {
                 DrawRealGuitarChord(gem);

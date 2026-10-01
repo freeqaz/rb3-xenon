@@ -29,6 +29,7 @@
 #include "utl/Symbols2.h"
 #include "utl/Symbols3.h"
 #include "utl/Symbols4.h"
+#include "meta_band/BandMemcardAction.h"
 
 // song_info_cache_* Symbols are used by the Wii song-info-cache dialog states
 // (kS_SongCacheCreate*). Not present in the in-tree Symbols headers (likely
@@ -42,39 +43,6 @@ extern Symbol song_info_cache_button_cancel;
 extern Symbol song_info_cache_create;
 extern Symbol song_info_cache_missing;
 extern Symbol song_info_cache_corrupt;
-
-class SaveMemcardAction : public MemcardAction {
-public:
-    // Takes one BandProfile* and adds no members: retail's only allocation
-    // (StartSaveAction, 0x82550658) is `li r3,0x14` == sizeof(MemcardAction),
-    // and it passes GetProfile()'s result straight to the ctor (0x825D77D8).
-    // Same correction as LoadMemcardAction below; the vector* ctor and the
-    // unk24/unk28 pair were wrong.
-    SaveMemcardAction(BandProfile *);
-    virtual ~SaveMemcardAction();
-    virtual void PreAction();
-    virtual void Action();
-    virtual void PostAction();
-};
-
-class LoadMemcardAction : public MemcardAction {
-public:
-    LoadMemcardAction(BandProfile *);
-    virtual ~LoadMemcardAction();
-    virtual void PreAction();
-    virtual void Action();
-    virtual void PostAction();
-    // NO members of its own.  Retail's two `new LoadMemcardAction` sites pass
-    // 0x14 to CriticalSection::operator new (SetState idx 195 and idx 1012,
-    // both `li r3,0x14`), and MemcardAction is exactly 0x14 (vptr + mResult +
-    // unk8 + unkc + mProfile).  An unk24/mProfiles pair belongs to a
-    // larger MemcardAction base whose ctor takes a
-    // vector<BandProfile*>* where ours takes a BandProfile*.  Neither member
-    // was ever referenced anywhere, and this TU defines no LoadMemcardAction
-    // method bodies, so they did nothing but make sizeof 0x1c and mis-size
-    // both allocations.  (meta_ham/HamMemcardAction.h's LoadMemcardAction is
-    // likewise memberless.)
-};
 
 SaveLoadManager *TheSaveLoadMgr;
 
@@ -1550,7 +1518,8 @@ void SaveLoadManager::SaveLoadErrorSetState() {
         SetState(kS_AutoloadSelectProfile);
         break;
     case kMode_AutoSave:
-    case kMode_ManualLoad:
+        // Retail (inlined into HandleEventResponse at 0x82551F08) has no
+        // ManualLoad arm.
         SetState(kS_SaveCheckProfile);
         break;
     case kMode_DisableAutoSave:
@@ -2030,29 +1999,38 @@ DataNode SaveLoadManager::OnMsg(const NoDeviceChosenMsg &) {
     return DataNode(kDataInt, 0);
 }
 
+// Retail (456 B, TU5) does not remove itself as a memcard sink here. Its
+// result tables: StartLoad maps kMCFileNotFound and
+// kMCNotEnoughSpace to the save-device-invalid prompt, SaveChooseDeviceInvalid
+// maps kMCNoCard to GlobalCreateNotFound and kMCNotEnoughSpace /
+// kMCFileNotFound to SaveOverwrite, ManualLoadChooseDevice maps
+// kMCObsoleteVersion / kMCNewerVersion to the autoload future prompts, and
+// SaveChooseDevice always moves to SaveNoOverwrite.
+// Residue: retail lowers the outer switch as a binary tree pivoting on 0x47;
+// ours, with the same seven case values, lowers to a compare chain.
 DataNode SaveLoadManager::OnMsg(const MCResultMsg &msg) {
     MILO_ASSERT(mWaiting, 0xaa3);
     mWaiting = false;
-    TheMemcardMgr.RemoveSink(this);
     MCResult res = (MCResult)msg.mData->Int(2);
     switch (mState) {
     case (State)0x4:
         unk6c = res;
         break;
-    case kS_AutoloadStartLoad: {
+    case kS_AutoloadStartLoad:
         switch (res) {
+        case kMCNoError:
+            unk6c = res;
+            SetState((State)0x43);
+            break;
         case kMCNoCard:
             SetState(kS_AutoloadNotOwner);
             break;
         case kMCCorrupt:
             SetState(kS_AutoloadCorrupt);
             break;
-        case kMCNotOwner:
-            SetState(kS_AutoloadObsolete);
-            break;
         case kMCNotEnoughSpace:
         case kMCFileNotFound:
-            SetState(kS_SaveOverwrite);
+            SetState(kS_SaveChooseDeviceInvalid);
             break;
         case kMCObsoleteVersion:
             SetState(kS_AutoloadFuture);
@@ -2060,29 +2038,27 @@ DataNode SaveLoadManager::OnMsg(const MCResultMsg &msg) {
         case kMCNewerVersion:
             SetState(kS_AutoloadFuture2);
             break;
-        case kMCNoError:
-            unk6c = res;
-            SetState((State)0x43);
+        case kMCNotOwner:
+            SetState(kS_AutoloadObsolete);
             break;
         default:
             SetState(kS_SaveFailed);
             break;
         }
         break;
-    }
-    case kS_SaveChooseDeviceInvalid: // 0x45
+    case kS_SaveChooseDeviceInvalid:
         switch (res) {
         case kMCNoCard:
             SetState(kS_GlobalCreateNotFound_Msg);
             break;
         case kMCNoError:
-        case kMCFileExists:
         case kMCCorrupt:
+        case kMCFileExists:
         case kMCNotOwner:
             SetState(kS_SaveDeviceInvalid);
             break;
-        case kMCFileNotFound:
         case kMCNotEnoughSpace:
+        case kMCFileNotFound:
             SetState(kS_SaveOverwrite);
             break;
         default:
@@ -2090,23 +2066,27 @@ DataNode SaveLoadManager::OnMsg(const MCResultMsg &msg) {
             break;
         }
         break;
-    case kS_SaveOverwrite: // 0x46
-    case kS_SaveNoOverwrite: // 0x47
+    case kS_SaveOverwrite:
+    case kS_SaveNoOverwrite:
         unk6c = res;
         break;
-    case kS_ManualLoadChooseDevice: // 0x64
+    case kS_SaveChooseDevice:
+        SetState(kS_SaveNoOverwrite);
+        break;
+    case kS_ManualLoadChooseDevice:
         switch (res) {
+        case kMCNoError:
+            unk6c = res;
+            SetState((State)0x43);
+            break;
         case kMCNoCard:
             SetState((State)0x63);
-            break;
-        case kMCFileNotFound:
-            SetState((State)0x65);
             break;
         case kMCCorrupt:
             SetState((State)0x66);
             break;
-        case kMCNotOwner:
-            SetState((State)0x67);
+        case kMCFileNotFound:
+            SetState((State)0x65);
             break;
         case kMCObsoleteVersion:
             SetState(kS_AutoloadFuture);
@@ -2114,20 +2094,12 @@ DataNode SaveLoadManager::OnMsg(const MCResultMsg &msg) {
         case kMCNewerVersion:
             SetState(kS_AutoloadFuture2);
             break;
-        case kMCNoError:
-            unk6c = res;
-            SetState((State)0x43);
+        case kMCNotOwner:
+            SetState((State)0x67);
             break;
         default:
             SetState(kS_SaveFailed);
             break;
-        }
-        break;
-    case (State)0x4b:
-        if (res == kMCNoError || res == kMCFileNotFound) {
-            SetState((State)0x4c);
-        } else {
-            SetState((State)0x4a);
         }
         break;
     case kS_Done:
@@ -2138,7 +2110,7 @@ DataNode SaveLoadManager::OnMsg(const MCResultMsg &msg) {
         MILO_FAIL("Unhandled MCResultMsg in state %d and mode %d\n", (int)mState, (int)mMode);
         break;
     }
-    return DataNode(0);
+    return 0;
 }
 
 DataNode SaveLoadManager::OnMsg(const RockCentralOpCompleteMsg &) {
@@ -2255,12 +2227,14 @@ void SaveLoadManager::HandleEventResponse(LocalUser *localUser, int choiceIdx) {
         );
         return;
     }
+    // Retail 0x82551F08 has no early return for a bad index; the check is
+    // compiled out with the message.
     if ((unsigned int)(choiceIdx - 1) > 2U) {
         MILO_FAIL("Bad choice index %i\n", choiceIdx);
-        return;
     }
     mLocalUser = localUser;
-    int isFirst = (choiceIdx == 1);
+    bool isFirst = (choiceIdx == 1);
+    // Case values and targets read off retail's compare tree.
     switch (mState) {
     case kS_AutoloadNoSaveFound_Msg: // 0x6
         if (choiceIdx == 1) {
@@ -2273,20 +2247,17 @@ void SaveLoadManager::HandleEventResponse(LocalUser *localUser, int choiceIdx) {
             SetState((State)0x42);
         }
         break;
-    case (State)0x7:
+    case kS_AutoloadMultipleSavesFound: // 0x7
         SetState(isFirst ? kS_AutoloadSelectDevice3 : (State)0x42);
         break;
     case kS_AutoloadNotOwner: // 0xc
         SetState(isFirst ? kS_AutoloadStartLoad2 : (State)0x42);
         break;
-    case kS_SaveChooseDevice: // 0x4b
-        SetState(isFirst ? kS_GlobalCreateMissing_Msg : (State)0x42);
-        break;
     case kS_AutoloadCorrupt: // 0xe
     case kS_AutoloadObsolete: // 0xf
     case kS_AutoloadFuture: // 0x10
     case kS_AutoloadFuture2: // 0x11
-    case kS_SaveNoOverwrite: // 0x47
+    case kS_SaveDeviceInvalid: // 0x48
         SetState(isFirst ? kS_SaveOverwrite : (State)0x42);
         break;
     case (State)0x17:
@@ -2303,41 +2274,55 @@ void SaveLoadManager::HandleEventResponse(LocalUser *localUser, int choiceIdx) {
     case (State)0x2f:
         SetState(isFirst ? (State)0x30 : (State)0x36);
         break;
-    case (State)0x39:
+    case (State)0x3a:
         SetState(isFirst ? (State)0x3b : (State)0x40);
         break;
-    case kS_GlobalCreateNotFound_Msg: // 0x4d
-    case kS_GlobalCreateMissing_Msg: // 0x4e
-    case (State)0x4f:
-    case (State)0x63:
-    case kS_ManualLoadChooseDevice: // 0x64
-    case (State)0x65:
-        SetState((State)0x42);
-        break;
-    case (State)0x41:
-    case kS_SaveDeviceInvalid: // 0x48
+    case (State)0x42:
         SaveLoadErrorSetState();
         break;
-    case kS_ManualLoadInit: // 0x5a
+    case kS_SaveNotEnoughSpacePS3: // 0x4a
+        switch (choiceIdx) {
+        case 1:
+            SetState(kS_SaveChooseDevice);
+            break;
+        case 2:
+            SetState(kS_SaveNoOverwrite);
+            break;
+        default:
+            SetState((State)0x42);
+            break;
+        }
+        break;
+    case kS_GlobalCreateNotFound_Msg: // 0x4c
+        SetState(isFirst ? kS_GlobalCreateMissing_Msg : (State)0x42);
+        break;
+    case kS_ManualLoadNoDevice: // 0x5c
         SetState(isFirst ? kS_ManualSaveNoDevice : (State)0x42);
         break;
-    case kS_ManualLoadStartLoad: // 0x5d
-    case kS_ManualLoadConfirmUnsaved: // 0x5e
+    case kS_ManualLoadConfirm_Yes: // 0x5f
+    case kS_ManualLoadConfirm: // 0x60
         if (choiceIdx == 1) {
-            SetState(kS_ManualLoadChooseDevice);
+            SetState(kS_ManualSaveChooseDevice);
         } else {
             SetState((State)0x44);
         }
         break;
-    case kS_ManualLoadConfirm: // 0x60
+    case kS_GlobalOptionsMissing_Msg: // 0x62
         SetState(isFirst ? kS_ManualSaveChooseDevice : (State)0x42);
         break;
-    case (State)0x61:
+    case (State)0x63:
+        SetState((State)0x42);
+        break;
+    case (State)0x49:
+    case kS_GlobalCreateCorrupt: // 0x4e
+    case (State)0x4f:
+    case kS_SaveFailed: // 0x50
+    case (State)0x65:
+    case (State)0x66:
+    case (State)0x67:
         SetState((State)0x42);
         break;
     default:
-    case (State)0x66:
-    case (State)0x67:
         MILO_FAIL(
             "Unhandled UIComponentSelectDoneMsg from choice index %i in state %d and mode %d\n",
             (int)choiceIdx, (int)mState, (int)mMode

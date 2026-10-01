@@ -417,9 +417,7 @@ int BandProfile::SaveSize(int i) {
 }
 
 void BandProfile::PreLoad() {
-    if (!MainThread()) {
-        MILO_WARN("BandProfile::PreLoad is unsafe to call in the main thread!\n");
-    }
+    // Retail 0x8258A2B8 is a bare tail call: no MainThread() test survives.
     DeleteAll();
 }
 

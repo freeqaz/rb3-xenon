@@ -142,21 +142,9 @@ void GemTrainerPanel::Exit() {
     }
 }
 
+// Retail 0x826ACCC0: no lazy track / gem-list / tab setup here; Enter does it
+// up front (see above), and Poll starts with UIPanel::Poll.
 void GemTrainerPanel::Poll() {
-    if (!mTrack && mGemPlayer && mLocalUser->GetTrack()) {
-        mTrack = dynamic_cast<GemTrack *>(mLocalUser->GetTrack());
-        MILO_ASSERT(mTrack != NULL, 0xC1);
-        mGemManager = mTrack->GetGemManager();
-        MILO_ASSERT(mGemManager != NULL, 0xC5);
-        for (int i = 0; i < 4; i++) {
-            mGameGemLists[i] =
-                (GameGemList *)TheSongDB->GetGemListByDiff(mGemPlayer->GetTrackNum(), i);
-            mSongGems[i] = mGameGemLists[i]->mGems;
-        }
-
-        RndDir *gemprev = DataDir()->Find<RndDir>("gem_preview", true);
-        mTab->Init(gemprev, SymToTrackType(mTrack->GetType()));
-    }
     UIPanel::Poll();
     if (mGemManager && mGemPlayer && GetCurrSection() >= 0) {
         if (TheGame->IsWaiting()) {
@@ -170,13 +158,14 @@ void GemTrainerPanel::Poll() {
             unkd0 = false;
             if (mAddBeatMaskImmediately) {
                 TrainerSection &sect = GetSection(GetCurrSection());
-                int ticks = GetSectionTicks(GetCurrSection());
-                AddBeatMask(sect.GetStartTick() + ticks);
+                AddBeatMask(GetSectionTicks(GetCurrSection()) + sect.GetStartTick());
                 mAddBeatMaskImmediately = false;
             }
             int tick = GetTick();
             if (tick >= mScoreTick && mScoreTick != 0) {
                 if (mNumLoops > 0) {
+                    // retail: a function-local static, guarded at 0x82E02A00
+                    static Message loop_msg("loop");
                     Handle(loop_msg, true);
                 }
                 mScoreTick += GetLoopTicks(GetCurrSection());
@@ -409,7 +398,9 @@ const GameGem &GemTrainerPanel::GetLastGameGemInSection(int &gemID) const {
     gemID = mPattern.size() * 2 - 1;
     if (unkb0 == 0)
         gemID = mPattern.size() - 1;
-    return mGameGemLists[mLocalUser->GetDifficulty()]->GetGem(gemID);
+    // retail takes the difficulty first, then reads gemID back through the reference
+    Difficulty diff = mLocalUser->GetDifficulty();
+    return mGameGemLists[diff]->GetGem(gemID);
 }
 
 void GemTrainerPanel::HandleTrackShifting() {

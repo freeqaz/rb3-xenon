@@ -137,7 +137,8 @@ public:
     virtual bool IsBandWideCummulative() const { return false; }
     virtual bool IsPercentageStat() const { return true; }
     virtual float GetStatValue(const Stats &stats) const {
-        if (stats.m0x08 + stats.mHitCount != 0) {
+        // retail tests the strum count with `> 0` (add. ; ble), like GetUpstrumPercent
+        if (stats.m0x08 + stats.mHitCount > 0) {
             return (float)stats.GetUpstrumPercent();
         } else
             return -1.0f;

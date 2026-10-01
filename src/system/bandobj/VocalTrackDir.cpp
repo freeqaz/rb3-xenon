@@ -11,6 +11,8 @@
 #include "math/Color32.h"
 #include "obj/DataFunc.h"
 #include "rndobj/Rnd.h"
+#include "rndobj/PropAnim.h"
+#include "ui/UISlider.h"
 #include "utl/Symbols.h"
 #include "utl/Messages.h"
 #include <cmath>
@@ -713,6 +715,62 @@ void VocalTrackDir::DeactivateVolume(VocalParam param) {
     if (param == kVocalParamAny || BandTrack::mParent->IsCurrentVocalParam(param)) {
         mVocalistVolume->SetShowing(false);
     }
+}
+
+// Retail fn_822F6118 (unmapped; TU5-only, no surviving source -- the name is ours, lane
+// W16-JC-6). Pushes a volume step into the vocalist-volume widget's slider:
+// `Find<UISlider>("slider.sld", true)` on mVocalistVolume, then virtual slot 0x50
+// (UISlider::SetCurrent).
+void VocalTrackDir::SetVolumeSlider(int step) {
+    mVocalistVolume->Find<UISlider>("slider.sld", true)->SetCurrent(step);
+}
+
+// Retail fn_822F61C0 (unmapped; TU5-only, no surviving source -- the name is ours, lane
+// W16-JC-6). Sole caller: VocalPlayer::OnMsg(ButtonDownMsg) for the d-pad / left
+// stick left-right buttons. Retail tests unk2a5 (+0x2f5, set by ActivateVolume),
+// the parent track, and the widget's showing flag (+0xa8), then forwards the
+// parent's IncrementVolume(delta) (TrackInterface slot 0x118) to the slider.
+void VocalTrackDir::ChangeVolume(int delta) {
+    if (unk2a5 && BandTrack::mParent && mVocalistVolume->Showing()) {
+        SetVolumeSlider(BandTrack::mParent->IncrementVolume(delta));
+    }
+}
+
+// Retail fn_822F93D0 (unmapped; TU5-only, no surviving source -- the name is ours, lane
+// W16-JC-6). Sole caller: VocalPlayer::HandleActivateVolume. Retail bytes, in order:
+//   - returns unless mEnableVocalsOptions (+0x2f4) and the parent track are set, and
+//     unless the parent is neither game-over (slot 0xbc) nor paused (slot 0xc0);
+//   - parent->PushGameplayOptions(param, mic) (slot 0xa4);
+//   - shows the widget (stb 1 -> +0xa8) and stores `enabled` to unk2a5 (+0x2f5);
+//   - "arrow_param.anim" frame = mic + 1 (0 when mic == -1), "vocal_param.anim"
+//     frame = mic + 2 (param when mic == -1), both with blend 1.0;
+//   - a function-local static Message("set_enabled", 0) gets [0] = enabled and is
+//     sent to the widget through HandleType;
+//   - the slider gets 12 steps (2 for the cue volume) and the parent's current
+//     IncrementVolume(0).
+void VocalTrackDir::ActivateVolume(VocalParam param, int mic, bool enabled) {
+    if (!mEnableVocalsOptions || !BandTrack::mParent)
+        return;
+    if (BandTrack::mParent->IsGameOver() || BandTrack::mParent->IsGamePaused())
+        return;
+    BandTrack::mParent->PushGameplayOptions(param, mic);
+    unk2a5 = enabled;
+    mVocalistVolume->SetShowing(true);
+    if (mic != -1) {
+        mVocalistVolume->Find<RndPropAnim>("arrow_param.anim", true)->SetFrame(mic + 1, 1.0f);
+        mVocalistVolume->Find<RndPropAnim>("vocal_param.anim", true)->SetFrame(mic + 2, 1.0f);
+    } else {
+        mVocalistVolume->Find<RndPropAnim>("arrow_param.anim", true)->SetFrame(0.0f, 1.0f);
+        mVocalistVolume->Find<RndPropAnim>("vocal_param.anim", true)->SetFrame(param, 1.0f);
+    }
+    static Message setEnabled("set_enabled", 0);
+    setEnabled[0] = enabled;
+    mVocalistVolume->HandleType(setEnabled);
+    int steps = 12;
+    if (param == kVocalParamCueVolume)
+        steps = 2;
+    mVocalistVolume->Find<UISlider>("slider.sld", true)->SetNumSteps(steps);
+    SetVolumeSlider(BandTrack::mParent->IncrementVolume(0));
 }
 
 void VocalTrackDir::SetEnableVocalsOptions(bool b) {

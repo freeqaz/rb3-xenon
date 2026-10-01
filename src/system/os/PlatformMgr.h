@@ -173,6 +173,11 @@ public:
     // meta_band/Utl.cpp's reference keeps compiling. Defined in PlatformMgr.cpp
     // under HX_NATIVE (the match build never links it).
     static bool unkce6b;
+    /** +0x3d, set by ParentalControlPanel::Poll when the console's parental
+        control UI completes successfully. Retail MaxAllowedHmxMaturityLevel
+        (0x825BE310) reads it first (`lbz r11,0x3d` off ThePlatformMgr) and
+        allows every content level when it is set. */
+    bool ParentalControlUnlocked() const { return unk3d; }
     void SetIsRestarting(bool b) { mIsRestarting = b; }
     // Hmx::Object
     virtual ~PlatformMgr();

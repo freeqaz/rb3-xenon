@@ -89,13 +89,9 @@ void GameMicManager::HandleMicsChanged() {
 
 bool GameMicManager::HasMic(const MicClientID &id) const {
     MILO_ASSERT(TheSynth, 0xB4);
+    // Retail 0x82681488 has no frame_rate-mode fallback.
     int nMicID = TheSynth->GetMicClientMapper()->GetMicIDForClientID(id);
-    if (nMicID == -1) {
-        return TheGameMode && TheGameMode->InMode(frame_rate);
-    } else {
-        MILO_ASSERT(mMics[nMicID] != NULL, 0xC3);
-        return true;
-    }
+    return nMicID != -1;
 }
 
 GameMic *GameMicManager::GetMic(const MicClientID &id) {

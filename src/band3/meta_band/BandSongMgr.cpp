@@ -39,16 +39,10 @@ BandSongMgr gSongMgr;
 BandSongMgr *TheSongMgrPtr = &gSongMgr;
 SongMgr *TheBaseSongManger;
 
-// Retail-only helper (target fn_82586AB0, called from AddSongData's 360-only
-// tail block). Zero args, single caller, no symbol -- exact
-// source/name unidentified (guarded local-static Symbols "rb1_dlc"/"ugc"/
-// "rb3_dlc"/"ugc_plus" per Ghidra decompile). Extern-declared for call-site
-// codegen only; see docs cited in AddSongData.
-extern bool RB3AddSongDataUpgradeGate();
-
 bool BandSongMgr::sFakeSongsAllowed;
 
-const char *OLD_DLC_DIR = "songs/updates/";
+// Retail addresses the literal directly (no pointer load), so this is a constant.
+static const char *const OLD_DLC_DIR = "songs/updates/";
 
 struct ExclusionEntry {
     const char *name;
@@ -231,8 +225,31 @@ void BandSongMgr::ContentDone() {
     }
 }
 
+// Retail (220 B) does far more than chain to the base: it asks the content
+// manager for the mounted package's license bits (vtable slot 32,
+// GetLicenseBits, return value ignored), treats `bits == 1` as licensed, and
+// keeps unk11c -- the list IsDemo() searches -- in step: a licensed package
+// not yet listed is appended, an unlicensed one that is listed is erased.
+// Only when the list changed does it resync shared songs, and then only when
+// no content refresh is running.
 void BandSongMgr::ContentMounted(const char *c1, const char *c2) {
     SongMgr::ContentMounted(c1, c2);
+    Symbol name(c1);
+    unsigned long bits;
+    TheContentMgr.GetLicenseBits(name, bits);
+    bool licensed = bits == 1;
+    std::vector<Symbol>::iterator it = std::find(unk11c.begin(), unk11c.end(), name);
+    bool found = it != unk11c.end();
+    if (licensed && !found) {
+        unk11c.push_back(name);
+    } else if (!licensed && found) {
+        unk11c.erase(it);
+    } else {
+        return;
+    }
+    if (!TheContentMgr.RefreshInProgress()) {
+        SyncSharedSongs();
+    }
 }
 
 const char *BandSongMgr::ContentPattern() {
@@ -374,32 +391,17 @@ const char *BandSongMgr::MidiFile(Symbol s) const {
 }
 
 const char *BandSongMgr::SongFilePath(Symbol s1, const char *cc) const {
+    // Retail 0x82575998 (TU5): no download branch and no DirLoader cache path.
     const char *path = gNullStr;
-    BandSongMetadata *data = (BandSongMetadata *)Data(GetSongIDFromShortName(s1, true));
+    int songID = GetSongIDFromShortName(s1, true);
+    BandSongMetadata *data = (BandSongMetadata *)Data(songID);
     if (data) {
-        if (data->IsDownload()) {
-            String str =
-                MakeString("%s%s", SongMgr::SongAudioData(s1)->GetBaseFileName(), cc);
-            unsigned int idx = str.find("_song");
-            if (idx != String::npos) {
-                str.erase(idx, 5);
-            }
-            path = MakeString("%s", str);
-        } else if (data->HasAlternatePath()) {
+        if (data->HasAlternatePath()) {
             const char *base =
                 FileGetBase(SongMgr::SongAudioData(s1)->GetBaseFileName());
             path = MakeString("%s%s/%s%s", OLD_DLC_DIR, base, base, cc);
         } else {
             path = MakeString("%s%s", SongMgr::SongAudioData(s1)->GetBaseFileName(), cc);
-        }
-    }
-    if (!UsingCD()) {
-        if (!data || (!data->IsOnDisc() && !data->HasAlternatePath())) {
-            if (streq(cc, ".milo")) {
-                DirLoader::SetCacheMode(true);
-                path = DirLoader::CachedPath(path, false);
-                DirLoader::SetCacheMode(false);
-            }
         }
     }
     return path;
@@ -607,14 +609,15 @@ bool BandSongMgr::CanAddSong() const {
 }
 int BandSongMgr::GetMaxSongCount() const { return mMaxSongCount; }
 
+// Retail (152 B) uses no local buffer: the directory is FileGetPath applied
+// twice to the loader's file (the parent directory of its folder), or ".".
 void BandSongMgr::AddSongData(DataArray *a, DataLoader *dl, ContentLocT lt) {
-    char cc[256] = ".";
+    const char *dir = ".";
     if (dl) {
-        const char *path = FileGetPath(dl->LoaderFile().c_str());
-        FileGetPathBuf(path, cc);
+        dir = FileGetPath(FileGetPath(dl->LoaderFile().c_str()));
     }
     std::vector<int> vec;
-    AddSongData(a, mUncachedSongMetadata, cc, lt, vec);
+    AddSongData(a, mUncachedSongMetadata, dir, lt, vec);
 }
 
 void BandSongMgr::AddSongData(
@@ -696,21 +699,12 @@ void BandSongMgr::AddSongData(
             }
             mAvailableSongs.insert(songID);
             ivec.push_back(songID);
-            // Retail-360-only tail (TU5-era -- confirmed via
-            // Ghidra decompile of target 0x82561530 + raw asm listing): after
-            // registering a newly-added song, prime its metadata (discarding
-            // the result) and conditionally register it in the recent-songs
-            // list. unk124 (0x144) is the cache-dirty flag SongMgr::
-            // ClearCachedContent()/ReadCachedMetadataFromStream() already
-            // toggle. Data(songID) dispatches through the vtable @+0x40
-            // (confirmed: scripts/target_symbol_map.json maps 0x82783FA8 to
-            // ?Data@SongMgr@@UBAPBVSongMetadata@@H@Z). The gate predicate
-            // (target fn_82586AB0) is a single-caller, zero-arg static helper
-            // with no known counterpart -- extern-declared below for
-            // call-site codegen only, exact source identity unresolved.
+            // Retail TU5 tail: when the cache is not dirty (unk124, 0x144), a
+            // newly-added downloadable or user-generated song goes on the
+            // recent list. Data(songID) dispatches through vtable +0x40 and its
+            // result is the `this` of BandSongMetadata::IsDLCOrUGC (0x8259E5B0).
             if (!isReservedSongID && !unk124) {
-                Data(songID);
-                if (RB3AddSongDataUpgradeGate())
+                if (static_cast<const BandSongMetadata *>(Data(songID))->IsDLCOrUGC())
                     AddRecentSong(songID);
             }
         }

@@ -468,6 +468,13 @@ void ClosetMgr::GotoArtMakerShot() { mCurrentClosetPanel->GotoArtMakerShot(); }
 void ClosetMgr::LeaveArtMakerShot() { mCurrentClosetPanel->LeaveArtMakerShot(); }
 
 void ClosetMgr::SetInstrumentType(Symbol type) {
+    // Retail 0x825667C8 constructs these as function-local statics; the
+    // assert that reads them is compiled out.
+    static Symbol guitar("guitar");
+    static Symbol bass("bass");
+    static Symbol drum("drum");
+    static Symbol mic("mic");
+    static Symbol keyboard("keyboard");
     MILO_ASSERT(type == guitar || type == bass || type == drum || type == mic || type == keyboard, 0x2E8);
     if (type != mBandCharacter->InstrumentType()) {
         mBandCharacter->SetInstrumentType(type);
@@ -487,7 +494,7 @@ void ClosetMgr::TakePortrait() { mCurrentClosetPanel->TakePortrait(); }
 
 void ClosetMgr::SetReturnScreen(Symbol screen) { mReturnScreen = screen; }
 
-bool ClosetMgr::IsPurchaseUIActive() const { return mAssetStore.unk34 != 0; }
+bool ClosetMgr::IsPurchaseUIActive() const { return mAssetStore.mPurchaser != 0; }
 
 // TU5 (retail @0x82566978, called from CustomizePanel::Load); name is ours.
 void ClosetMgr::RefreshAssetOffers() { mAssetStore.RefreshOffers(mUser); }

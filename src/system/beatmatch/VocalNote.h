@@ -1,6 +1,7 @@
 #pragma once
 #include "math/Utl.h"
 #include "utl/Str.h"
+#include "math/Utl.h"
 #include "obj/Data.h"
 #include "utl/MBT.h"
 #include "utl/TempoMap.h"
@@ -39,14 +40,16 @@ public:
     int EndTick() const { return mTick + mDurationTicks; }
     float EndMs() const { return mMs + mDurationMs; }
     bool PlayableBy(int) const;
-    // Out of line in retail (0x826F16E0, a COMDAT in VocalPart's span);
-    // VocalNoteList::PitchAt calls it after its own end-of-note test.
+    // Retail 0x826F16E0: an inline that /O1 emits out of line as a COMDAT next to
+    // VocalPart. VocalNoteList::PitchAt calls it after its own end-of-note test,
+    // and VocalPart::GetSloppyPitch calls it twice (ms +/- slop). Interpolates
+    // begin->end pitch at `ms`, clamped to the note's extent. Retail's product
+    // order is (1 - t) * begin + end * t (`fmuls end,t` then `fmadds`).
     float PitchAt(float ms) const {
-        if (EndPitch() == StartPitch())
-            return (float)StartPitch();
-        float fraction =
-            Max<float>(0.0f, Min<float>(ms, mMs + mDurationMs) - mMs) / mDurationMs;
-        return fraction * (float)EndPitch() + (1.0f - fraction) * (float)StartPitch();
+        if (mEndPitch == mBeginPitch)
+            return mBeginPitch;
+        float t = Max(Min(ms, mMs + mDurationMs) - mMs, 0.0f) / mDurationMs;
+        return (1.0f - t) * mBeginPitch + mEndPitch * t;
     }
 
     int mPhrase; // 0x0

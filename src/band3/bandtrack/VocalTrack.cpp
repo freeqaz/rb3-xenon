@@ -2147,9 +2147,7 @@ void VocalTrack::PollKaraoke(float f1) {
 
 bool VocalTrack::InTambourinePhrase() const {
     Player *p = GetPlayer();
-    if (!p)
-        return false;
-    return p->InTambourinePhrase();
+    return p ? p->InTambourinePhrase() : false;
 }
 
 void VocalTrack::StartUpdateArrows() {

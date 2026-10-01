@@ -131,7 +131,7 @@ void MusicLibrary::Poll() {
         if (!unk1a0 && unk19c->mState == 2) {
             unk1a0 = true;
             if (unk40)
-                unk19c->Finish();
+                unk19c->LoadOffers();
         }
     }
     if (mNetSetlists)
@@ -174,26 +174,12 @@ MusicLibrary::~MusicLibrary() {
     delete mNetSetlists;
 }
 
-// Retail fn_8253ABB8 (96 B) -- our body was an EMPTY `{}` (4 B, one blr), so the
-// row read fuzzy 0 with nothing wrong in the map. Transcribed off retail:
-//   stb r11(=0), 0x1a0(r30)   -> unk1a0 = false
-//   li r3, 0x64               -> 0x64 == 100 == sizeof(MusicLibraryStore)
-//   bl operator new / null guard
-//   bl 0x825BD458             -> ??0MusicLibraryStore@@QAA@XZ  (from the map, not guessed)
-//   stw r3, 0x19c(r30)        -> unk19c
-// ⚠ THIS IS ALSO THE PROOF THAT MusicLibrary.h:348 IS WRONG. That comment names
-// the op-starter `fn_825276C0`; decoding 0x825276C0 lands inside a
-// _Vector_base<TrackerPlayerDisplay> destructor region, which cannot be it. The
-// real starter is THIS function, fn_8253ABB8.
-// ⚠ AND the allocated type is MusicLibraryStore, NOT the local MusicLibraryUnkOp
-// stub -- corroborating the residual already recorded at MusicLibrary.cpp:375.
-// unk19c is retyped only through this cast, deliberately: retyping the MEMBER
-// would re-point ~20 call sites (Poll/Finish/Unk825BCA38/...) at a class that
-// does not declare them, which is a separate and much larger repair. The cast is
-// a reinterpret and emits no instruction, so the codegen here is retail's exactly.
+// Retail fn_8253ABB8 (96 B): `stb 0,0x1a0`, `li r3,0x64` (sizeof
+// MusicLibraryStore), operator new, `bl 0x825BD458` (??0MusicLibraryStore),
+// `stw r3,0x19c`.
 void MusicLibrary::OnLoad() {
     unk1a0 = false;
-    unk19c = (MusicLibraryUnkOp *)new MusicLibraryStore();
+    unk19c = new MusicLibraryStore();
 }
 
 void MusicLibrary::OnEnter() {
@@ -283,10 +269,10 @@ void MusicLibrary::OnEnter() {
     /* Retail-only, immediately after TryToSetHighlight and before the 0x180 store:
          lbz r11, 0x1a0(this); cmplwi r11, 0; beq +; lwz r3, 0x19c(this);
          bl fn_825BCA38
-       i.e. `if (unk1a0) unk19c->Unk825BCA38();`. The 0x19c/0x1a0 tail fields
-       exist for this retail-only test. */
+       i.e. `if (unk1a0) unk19c->LoadOffers();` (MusicLibraryStore::LoadOffers).
+       The 0x19c/0x1a0 tail fields exist for this retail-only test. */
     if (unk1a0) {
-        unk19c->Unk825BCA38();
+        unk19c->LoadOffers();
     }
     unk15c = false;
     if (SongSortMgr::IsSetlistSort(unkdc)) {
@@ -379,25 +365,10 @@ void MusicLibrary::OnExit() {
     TheContentMgr.UnregisterCallback(TheMusicLibrary, true);
     mNetSetlists->CleanUp();
     /* Retail-only, between CleanUp and the unke8 check: `lwz r3,0x19c(this);
-       bl fn_825BC908`, and the map names fn_825BC908
-       ?ClearPreview@MusicLibraryStore@@QAAXXZ. Unconditional here — unlike the
-       OnEnter counterpart, which guards its 0x19c call on unk1a0. This call is
-       retail-only; the 0x19c tail field exists for it.
-       ⚠ NOTE FOR THE MAP LANE: the callee's real class is MusicLibraryStore, whose
-       identified members cluster at 0x825BC908/0x825BC9D8/0x825BD458/0x825BD618;
-       our local stub class MusicLibraryUnkOp conflates that class with a second,
-       entirely UNMAPPED cluster at 0x825A3DC8-0x825A4860 (the addresses this
-       header annotates for Poll/Finish/ClearPreview/SetStorePreview/ctor are all
-       absent from target_symbol_map.json, and each lies strictly INSIDE an
-       unrelated named function, so none can be a function start).
-       UPDATE (lane CR-3): the ClearPreview annotation is now corrected to
-       0x825BC908 in the header, and ClearSongPreview -- which was calling this
-       same ClearPreview but should call the distinct thunk 0x825BC900 -- is fixed.
-       Still NOT repaired: unk19c is declared MusicLibraryUnkOp* when its real type
-       is MusicLibraryStore*. Retyping it touches ~10 call sites plus mStoreArt and
-       the ctor, risks regressing a large matched TU, and pays 0 in both currencies,
-       so it was left to a lane that can afford the whole-file A/B. */
-    ((MusicLibraryStore *)unk19c)->ClearPreview();
+       bl fn_825BC908` (MusicLibraryStore::ClearPreview). Unconditional here,
+       unlike OnEnter's LoadOffers call, which is guarded on unk1a0. This call is
+       retail-only; the 0x19c tail field exists for it. */
+    unk19c->ClearPreview();
     if (unke8 != kNumSongSortTypes) {
         TheSongSortMgr->GetSort(unke8)->CancelMakeReady();
         unke8 = kNumSongSortTypes;
@@ -605,23 +576,28 @@ void MusicLibrary::ReportSortAndFilters() {
     );
 }
 
+// Retail 0x8253F050; its only caller is MusicLibraryStore::Poll.
+void MusicLibrary::RefreshStoreDisplay() {
+    if (TheUI->InTransition())
+        return;
+    PushSonglistToScreen();
+    NodeSort *sort = TheSongSortMgr->GetSort(unkdc);
+    if (sort->GetNode(mCurrentHighlightIndex)->GetType() == kNodeStoreSong) {
+        PushHighlightToScreen(false);
+    }
+}
+
 void MusicLibrary::ClearSongPreview() {
     mLastSongPreview = gNullStr;
     mSongPreviewTimer.Reset();
     // Retail calls the single-arg Start(Symbol) (fn_827808B0), then tail-calls
     // 0x825BC900 on unk19c.
     mSongPreview.Start(gNullStr);
-    /* ⚠ NOT ClearPreview -- this was a 100/100 function calling the WRONG callee
-       (lane CR-3). Retail ClearSongPreview (0x8253AD00) ends `lwz r3,0x19c(r31);
-       bl 0x825BC900`, whereas OnExit ends `lwz r3,0x19c(this); bl 0x825BC908`.
-       They are two DIFFERENT functions eight bytes apart: 0x825BC908 is
-       ?ClearPreview@MusicLibraryStore@@QAAXXZ (208 B, own .pdata), while
-       0x825BC900 is a 2-instruction thunk `mPreviewMgr->ClearCurrentPreview()`.
-       The prior "retail fn_825A3DC8" annotation here was wrong on both counts.
-       Invisible to the default ruler (relocation args are masked), so this fix is
-       worth exactly 0 matched functions and 0 bytes -- it is a correctness repair,
-       and a metric that hides a wrong callee is worse than a lower metric. */
-    ((MusicLibraryStore *)unk19c)->Unk825BC900();
+    /* NOT ClearPreview: retail ClearSongPreview (0x8253AD00) ends
+       `lwz r3,0x19c(r31); bl 0x825BC900`, whereas OnExit ends
+       `bl 0x825BC908`. They are two different functions eight bytes apart;
+       0x825BC900 is the 2-instruction ClearCurrentPreview thunk. */
+    unk19c->ClearCurrentPreview();
 }
 
 void MusicLibrary::StartSongPreview() {
@@ -1036,7 +1012,7 @@ void MusicLibrary::SelectNode(SortNode *node, LocalBandUser *user, bool b3) {
         if (!unk19c->IsDownloading(songID)) {
             std::vector<int> songIDs;
             songIDs.push_back(songID);
-            unk19c->Unk825BD8C8(user, songIDs);
+            unk19c->PurchaseSongs(user, songIDs);
         }
         break;
     }
@@ -2268,8 +2244,19 @@ void MusicLibrary::RebuildProfileData() {
         PushSonglistToScreen();
         PushHighlightToScreen(false);
     }
+    // Retail: when reviews change and bad reviews are hidden (ProfileMgr +0x6b
+    // clear), the filtered list itself changes, so it is rebuilt for the
+    // current sort; otherwise only the review sort is redone.
     if (b2) {
-        ReSort(kSongSortByReview);
+        if (!TheProfileMgr.GetShowBadReviews()) {
+            TheSongSortMgr->BuildFilteredSongList(&mTask.filter, PartForFilter());
+            TheSongSortMgr->BuildSortTree(unkdc);
+            TheSongSortMgr->BuildSortList(unkdc);
+            TryToSetHighlight(unkd4, unkd8, true);
+            PushHighlightToScreen(true);
+        } else {
+            ReSort(kSongSortByReview);
+        }
     }
 }
 
@@ -2338,8 +2325,25 @@ DECOMP_FORCEACTIVE(MusicLibrary, "!myRestrictedSongChanged || aRestrictedSongCha
 
 bool MusicLibrary::IsPurchasing() const { return false; }
 
+// Retail (256 B): every store offer whose song is not already installed.
+// OfferType() is called under a function-local static Symbol("song") and its
+// result is never compared -- an assert whose condition survives only as the
+// call. The song ID comes from vtable slot 23 (GetSongIDFromShortName, fail
+// = false); an ID of 0 counts as not installed.
 void MusicLibrary::GetStoreOffers(std::vector<StoreOffer *> &offers) const {
     offers.clear();
+    if (unk19c) {
+        std::vector<StoreOffer *> &storeOffers = unk19c->mOffers;
+        FOREACH (it, storeOffers) {
+            StoreOffer *offer = *it;
+            static Symbol song("song");
+            MILO_ASSERT(offer->OfferType() == song, 0);
+            int songID = TheSongMgr.GetSongIDFromShortName(offer->ShortName(), false);
+            if (!songID || !TheSongMgr.HasSong(songID)) {
+                offers.push_back(offer);
+            }
+        }
+    }
 }
 
 void MusicLibrary::SetRandomSongs(
@@ -2461,29 +2465,10 @@ void MusicLibrary::FakeWinNode(
 
 #pragma push
 #pragma dont_inline on
-// DEFERRED LEAD (laneAX-W5, 2026-07-27) -- Handle is 96.01%; the residue is a
-// handler-list divergence, not the local-static lever (RB3_HANDLE_LOCAL_STATIC
-// is already on for this TU and our 52 statics line up 1:1 with retail's first
-// 52). Retail fn_82542D20 has 54 guarded Symbol ctors: ours minus `fake_win`
-// (retail has NO fake_win handler) plus three store handlers after
-// `reset_filters`, in this exact order:
-//   is_downloading   HANDLE_EXPR, returns
-//       unk19c->IsDownloading(                       // retail 0x825BCBD0
-//           dynamic_cast<StoreSongSortNode *>(_msg->Obj<Hmx::Object>(2))
-//               ->mOffer                             // StoreSongSortNode+0x44
-//               ->GetSingleSongID())                 // 0x827A6D48
-//   load_store_art   HANDLE_ACTION (branches to the "return 0" epilogue);
-//       node 3 is evaluated FIRST (MSVC right-to-left):
-//       unk19c->LoadStoreArt(                        // retail 0x825BCC10
-//           dynamic_cast<StoreOffer *>(_msg->Obj<Hmx::Object>(2))
-//               ->GetSingleSongID(),
-//           _msg->Obj<Hmx::Object>(3))
-//   get_store_art    HANDLE_EXPR, returns a kDataObject built straight from
-//       unk19c + 0x48 (an Hmx::Object* member this stub class lacks).
-// Blocker: MusicLibraryUnkOp is a deliberately-undefined stub (see the comment
-// on its declaration in MusicLibrary.h) with no IsDownloading/LoadStoreArt and
-// no 0x48 member. Adding them is a real body port, so it was NOT bundled into
-// W5's measured local-static leg.
+// Retail fn_82542D20 has no `fake_win` handler; in its place three store
+// handlers after `reset_filters`: is_downloading (MusicLibraryStore 0x825BCBD0),
+// load_store_art (0x825BCC10; node 3 is evaluated first) and get_store_art,
+// which returns unk19c's +0x48 RndTex as a kDataObject.
 BEGIN_HANDLERS(MusicLibrary)
     HANDLE_ACTION(on_enter, OnEnter())
 #ifdef HX_NATIVE

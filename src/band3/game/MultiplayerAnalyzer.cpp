@@ -144,9 +144,11 @@ void MultiplayerAnalyzer::AddGem(int i1, const GameGem &gem) {
     int slots = GemNumSlots(gem.GetSlots());
     int i6 = pData->mHeadPoints;
     if (slots > 1) {
-        i6 = pData->mHeadPoints * slots;
+        // retail: either chord points or head points per slot, as an if/else
         if (pData->mChordPoints > 0) {
             i6 = pData->mChordPoints;
+        } else {
+            i6 = pData->mHeadPoints * slots;
         }
     }
     float f1;

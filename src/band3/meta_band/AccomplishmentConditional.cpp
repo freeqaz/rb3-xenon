@@ -13,6 +13,12 @@ void AccomplishmentConditional::UpdateConditionOptionalData(
     MILO_ASSERT(i_pConditionEntryArray->Size() >= 2, 0x1f);
 
     for (int i = 2; i < i_pConditionEntryArray->Size(); i++) {
+        // Retail builds three function-local statics at the top of each pass
+        // (one guard word, bits 0..2); "song" is never compared, so it belonged
+        // to the stripped assert in the fallback branch.
+        static Symbol instrument("instrument");
+        static Symbol difficulty("difficulty");
+        static Symbol song("song");
         DataArray *pEntry = i_pConditionEntryArray->Node(i).Array();
         MILO_ASSERT(pEntry, 0x29);
         Symbol name = Accomplishment::GetName();
@@ -25,7 +31,7 @@ void AccomplishmentConditional::UpdateConditionOptionalData(
         } else if (s == difficulty) {
             condition.mDifficulty = (Difficulty)pEntry->Node(1).Int();
         } else {
-            MILO_ASSERT(false, 0x3b);
+            MILO_ASSERT(s == song, 0x3b);
         }
     }
 }

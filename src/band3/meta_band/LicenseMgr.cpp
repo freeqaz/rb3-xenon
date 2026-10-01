@@ -64,7 +64,20 @@ const char *LicenseMgr::ContentDir() { return "licenses"; }
 // ContentDir; its only caller is BandSongMgr::ClearSongCacheNeedsWrite via
 // mLicenseMgr (+0x15c). The name is ours: no symbol survives for this method.
 void LicenseMgr::ClearLicenseCacheNeedsWrite() { mCacheNeedsWrite = false; }
-void LicenseMgr::ContentMounted(const char *, const char *) {}
+// Retail (128 B) is not empty: it seeds an empty license list for a newly
+// mounted package that has no cached entry yet. Both keys are built from the
+// FIRST argument (r30 = r4 at both Symbol ctors); the second is unused.
+// The lookup Symbol is constructed at 0x54 and then copied to 0x50 before
+// _M_find -- the shape of an inlined callee taking Symbol BY VALUE, hence
+// HasCachedContent (our name; it is inline and leaves no symbol). The empty
+// vector is zeroed BEFORE the key Symbol is built, so it is a local declared
+// ahead of the operator[] call, not a temporary on the right-hand side.
+void LicenseMgr::ContentMounted(const char *contentName, const char *) {
+    if (!HasCachedContent(contentName)) {
+        std::vector<Symbol> none;
+        mCachedLicenses[contentName] = none;
+    }
+}
 
 void LicenseMgr::ContentLoaded(Loader *loader, ContentLocT ct, Symbol s) {
     DataLoader *d = dynamic_cast<DataLoader *>(loader);

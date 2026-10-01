@@ -174,6 +174,11 @@ void LocalBandMachine::SetAvailableSongs(const std::set<int> &songs) {
 }
 
 void LocalBandMachine::SetProGuitarOrBassSongs(const std::set<int> &songs) {
+    // Retail 0x825C1B08: same shape as SetAvailableSongs, sync flag 8.
+    if (mProGuitarOrBassSongs != songs) {
+        mProGuitarOrBassSongs = songs;
+        mMachineMgr->SyncLocalMachine(8);
+    }
 }
 
 void LocalBandMachine::SetCurrentSongPreview(const char *preview) {
