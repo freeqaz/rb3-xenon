@@ -95977,10 +95977,16 @@
    "name": "SetEvenOddDisabled_Rnd",
    "address": "0x8240f158",
    "survivor": "?SetEvenOddDisabled@Rnd@@QAAX_N@Z",
-   "folded": [
-    "?SetProcAndLock@Rnd@@QAAX_N@Z"
-   ],
-   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 68, row addr 0x8240f158). \"ours\" spelling ?SetProcAndLock@Rnd@@QAAX_N@Z is a template/spelling twin of survivor ?SetEvenOddDisabled@Rnd@@QAAX_N@Z at retail address 0x8240f158. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 292 B (292 B honest) across ['default/PropSync'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md."
+   "folded": [],
+   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 68, row addr 0x8240f158). \"ours\" spelling ?SetProcAndLock@Rnd@@QAAX_N@Z is a template/spelling twin of survivor ?SetEvenOddDisabled@Rnd@@QAAX_N@Z at retail address 0x8240f158. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 292 B (292 B honest) across ['default/PropSync'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md.",
+   "withdrawn": [
+    {
+     "spelling": "?SetProcAndLock@Rnd@@QAAX_N@Z",
+     "lane": "W16-LB 2026-10-01",
+     "class": "MAP_NAME_WRONG",
+     "why": "The survivor name was wrong, not the fold claim's bytes. 0x8240F158 is addi r3,r3,0x154 / b 0x8242EEE0, and 0x8242EEE0 is ProcCounter::SetProcAndLock (stb the flag, store -1 to mCount, no compare), so 0x8240F158 IS Rnd::SetProcAndLock -- which is why W16-HC's chase matched our SetProcAndLock body to it. W16-LB renamed the map row to ?SetProcAndLock@Rnd@@QAAX_N@Z; the spelling is now map-resident at this address and needs no fold. Nothing pruned."
+    }
+   ]
   },
   {
    "name": "_M_erase_VVector3",
@@ -97231,18 +97237,26 @@
   },
   {
    "name": "$_M_allocate_and_copy",
-   "address": "0x82687d48",
+   "address": "0x8245f378",
    "survivor": "??$_M_allocate_and_copy@PBV?$Key@VVector3@@@@@?$vector@V?$Key@VVector3@@@@V?$StlNodeAlloc@V?$Key@VVector3@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$Key@VVector3@@@@IPBV2@0@Z",
    "folded": [
-    "??$_M_allocate_and_copy@PAVTrackData@SongDB@@@?$vector@VTrackData@SongDB@@V?$StlNodeAlloc@VTrackData@SongDB@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVTrackData@SongDB@@IPAV23@0@Z"
+    "??$_M_allocate_and_copy@PBV?$Key@VColor@Hmx@@@@@?$vector@V?$Key@VColor@Hmx@@@@V?$StlNodeAlloc@V?$Key@VColor@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$Key@VColor@Hmx@@@@IPBV2@0@Z"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
     {
+     "spelling": "??$_M_allocate_and_copy@PBV?$Key@VColor@Hmx@@@@@?$vector@V?$Key@VColor@Hmx@@@@V?$StlNodeAlloc@V?$Key@VColor@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$Key@VColor@Hmx@@@@IPBV2@0@Z",
+     "lane": "W16-LB 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED: template twin); 100 B retail / 100 B ours. Retail vector<Key<Color>>::operator= (0x8245F410) calls the survivor 0x8245F378 where we call this spelling."
+    }
+   ],
+   "withdrawn": [
+    {
      "spelling": "??$_M_allocate_and_copy@PAVTrackData@SongDB@@@?$vector@VTrackData@SongDB@@V?$StlNodeAlloc@VTrackData@SongDB@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVTrackData@SongDB@@IPAV23@0@Z",
-     "lane": "W16-JE 2026-10-01",
-     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 100 B retail / 100 B ours; retail body-twins 2. Retail call site(s) reaching the survivor where we call this spelling: 0x82688248."
+     "lane": "W16-LB 2026-10-01",
+     "class": "MAP_NAME_WRONG",
+     "why": "This group was keyed at 0x82687D48 because the map named that address vector<Key<Vector3>>::_M_allocate_and_copy. On retail bytes 0x82687D48 allocates 0x64-byte elements (mulli 0x64) and calls __uninitialized_copy<SongDB::TrackData>, so it IS TrackData's allocate_and_copy, the body W16-JE's chase matched to this spelling. W16-LB gave 0x82687D48 that name in the map, so the spelling is map-resident at its own address and no longer a fold; Key<Vector3>'s allocate_and_copy is 0x8245F378 (mulli 0x14), and the group is re-keyed there."
     }
    ]
   },
