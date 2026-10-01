@@ -57,7 +57,7 @@ BandProfile::BandProfile(int i)
     LocalBandUser *user = GetAssociatedLocalBandUser();
     mScores = new SongStatusMgr(user, &TheSongMgr);
     mProfilePicture = new ProfilePicture(GetPadNum(), this);
-    for (int n = 0; n < 8; n++)
+    for (int n = 0; n < kMaxPatchesPerProfile; n++)
         mPatches.push_back(new PatchDir());
     for (int n = 0; n < 4; n++)
         mStandIns.push_back(StandIn());

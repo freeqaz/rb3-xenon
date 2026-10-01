@@ -8764,7 +8764,7 @@ band3/meta_band/LicenseMgr.cpp:
 
 band3/meta_band/StandIn.cpp:
 	.pdata      start:0x822266C8 end:0x82226718
-	.text       start:0x825EC508 end:0x825EC840
+	.text       start:0x825EC4F8 end:0x825EC840
 
 band3/meta_band/AssetStore.cpp:
 	.pdata      start:0x82226718 end:0x82226760
@@ -11973,7 +11973,6 @@ AccomplishmentSongConditional.cpp:
 	.pdata      start:0x8222EC28 end:0x8222EC80
 	.pdata      start:0x8222EC80 end:0x8222EC98
 	.pdata      start:0x8222EC98 end:0x8222ED88
-	.text       start:0x825EC4F8 end:0x825EC508
 	.text       start:0x82669848 end:0x82669918
 	.text       start:0x82669918 end:0x82669DF8
 	.text       start:0x82669DF8 end:0x82669F20
@@ -12266,9 +12265,9 @@ Lit_NG.cpp:
 
 AccomplishmentConditional.cpp:
 	.pdata      start:0x8222ED88 end:0x8222EE00
-	.pdata      start:0x8222EE00 end:0x8222EE38
+	.pdata      start:0x8222EE00 end:0x8222EE50
 	.text       start:0x8266AAC0 end:0x8266B0F0
-	.text       start:0x8266B0F0 end:0x8266B3E8
+	.text       start:0x8266B0F0 end:0x8266B4C0
 
 CymbalSelectionProvider.cpp:
 	.pdata      start:0x8222EB88 end:0x8222EC18
