@@ -4097,10 +4097,6 @@ CheckboxDisplay.cpp:
 	.text       start:0x822F0F08 end:0x822F0F18
 	.text       start:0x823208F8 end:0x82321590
 
-FlowTrigger.cpp:
-	.pdata      start:0x821FCFA8 end:0x821FCFB0
-	.text       start:0x82327878 end:0x823278F0
-
 CharIKHand.cpp:
 	.pdata      start:0x82201858 end:0x82201860
 	.pdata      start:0x82201A30 end:0x82201A38
@@ -4786,11 +4782,7 @@ UsbMidiKeyboardMsgs.cpp:
 	.text       start:0x82530830 end:0x8253094C
 
 Overlay.cpp:
-	.pdata      start:0x821FCF00 end:0x821FCF10
-	.pdata      start:0x821FCF18 end:0x821FCF78
 	.pdata      start:0x8220B070 end:0x8220B128
-	.text       start:0x82326DF8 end:0x82326FE8
-	.text       start:0x8232704C end:0x82327608
 	.text       start:0x82416B58 end:0x82417728
 
 MeterDisplay.cpp:
@@ -11940,8 +11932,11 @@ LayerDir.cpp:
 	.pdata      start:0x821FCE68 end:0x821FCE70
 	.pdata      start:0x821FCE80 end:0x821FCEE8
 	.pdata      start:0x821FCEF0 end:0x821FCEF8
+	.pdata      start:0x821FCF00 end:0x821FCF10
 	.pdata      start:0x821FCF10 end:0x821FCF18
+	.pdata      start:0x821FCF18 end:0x821FCF78
 	.pdata      start:0x821FCF78 end:0x821FCFA8
+	.pdata      start:0x821FCFA8 end:0x821FCFB0
 	.pdata      start:0x821FCFB0 end:0x821FD1E8
 	.pdata      start:0x821FD1E8 end:0x821FD1F8
 	.pdata      start:0x821FD1F8 end:0x821FD230
@@ -11950,8 +11945,11 @@ LayerDir.cpp:
 	.text       start:0x823263F0 end:0x82326468
 	.text       start:0x82326500 end:0x82326D1C
 	.text       start:0x82326D78 end:0x82326DC8
+	.text       start:0x82326DF8 end:0x82326FE8
 	.text       start:0x82326FE8 end:0x8232704C
+	.text       start:0x8232704C end:0x82327608
 	.text       start:0x82327608 end:0x82327878
+	.text       start:0x82327878 end:0x823278F0
 	.text       start:0x823278F0 end:0x82329778
 	.text       start:0x82329778 end:0x82329810
 	.text       start:0x82329810 end:0x82329B20
