@@ -6,6 +6,7 @@
 #include "meta_band/BandSongMgr.h"
 #include "meta_band/MusicLibrary.h"
 #include "meta_band/ProfileMgr.h"
+#include "meta_band/SessionMgr.h"
 #include "net/Net.h"
 #include "net/Server.h"
 #include "obj/Data.h"
@@ -190,7 +191,9 @@ void MusicLibraryStore::PurchaseSongs(LocalUser *user, const std::vector<int> &s
         ShowPurchaseError(0);
         return;
     }
-    if (!TheServer.GetFriendsClient()) {
+    // Retail reads lbl_82DFEB88 (TheSessionMgr) and vcalls slot 9 of its
+    // primary (Synchronizable-hoisted) vtable, IsLocal(), testing the byte.
+    if (!TheSessionMgr->IsLocal()) {
         ShowPurchaseError(1);
         return;
     }
