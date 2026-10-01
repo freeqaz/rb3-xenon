@@ -8477,10 +8477,20 @@ band3/bandtrack/GemRepTemplate.cpp:
 	.pdata      start:0x8225E4E8 end:0x8225E5F8
 	.text       start:0x82BAD718 end:0x82BAEBA4
 
+system/os/ProfilePicture.cpp:
+	.pdata      start:0x8225D078 end:0x8225D0D0
+	.text       start:0x82B8FF80 end:0x82B90370
+
+system/os/ProfilePicture_Xbox.cpp:
+	.pdata      start:0x8225D0D0 end:0x8225D0F0
+	.text       start:0x82B90370 end:0x82B90644
+
 band3/bandtrack/TrackPanel.cpp:
-	.pdata      start:0x8225D068 end:0x8225D3F0
+	.pdata      start:0x8225D068 end:0x8225D078
+	.pdata      start:0x8225D0F0 end:0x8225D3F0
 	.pdata      start:0x8225D3F0 end:0x8225D3F8
-	.text       start:0x82B8FED8 end:0x82B93C74
+	.text       start:0x82B8FED8 end:0x82B8FF80
+	.text       start:0x82B90644 end:0x82B93C74
 	.text       start:0x82B93C78 end:0x82B93CE4
 
 band3/bandtrack/Track.cpp:

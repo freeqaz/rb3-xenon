@@ -678,6 +678,8 @@
             "system/flow/FlowSound.cpp": "NonMatching",
             "system/os/PlatformMgr.cpp": "NonMatching",
             "system/os/PlatformMgr_Xbox.cpp": "NonMatching",
+            "system/os/ProfilePicture.cpp": "NonMatching",
+            "system/os/ProfilePicture_Xbox.cpp": "NonMatching",
             "system/flow/FlowCommand.cpp": "NonMatching",
             "system/os/ContentMgr.cpp": "NonMatching",
             "system/flow/FlowOutPort.cpp": "NonMatching",
@@ -2025,8 +2027,7 @@
                 "status": "NonMatching",
                 "extra_cflags": [
                     "/DRB3_HANDLE_LOCAL_STATIC",
-                    "/DRB3_STRIP_CHEAT_HANDLERS",
-                    "/DRB3_ONLINEID_PLAYERNAME"
+                    "/DRB3_STRIP_CHEAT_HANDLERS"
                 ]
             },
             "band3/net_band/ContextWrapper.cpp": "NonMatching",
