@@ -51,6 +51,11 @@ BEGIN_PROPSYNCS(StorePanel)
     SYNC_SUPERCLASS(Hmx::Object)
 END_PROPSYNCS
 
+// Retail 0x827B4CC0 (80 B) / 0x827B4D10 (16 B): declared, never defined.
+bool StorePanel::IsEnumerating() const { return mEnum && mEnum->IsEnumerating(); }
+
+bool StorePanel::InCheckout() const { return mPurchaser; }
+
 void StorePanel::Load() {
     UIPanel::Load();
     mLoadOk = true;

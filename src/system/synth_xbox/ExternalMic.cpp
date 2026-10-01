@@ -1,4 +1,8 @@
 #include "synth_xbox/ExternalMic.h"
+#include "obj/Data.h"
+#include "os/System.h"
+#include "utl/Symbol.h"
+#include "xdk/xapilibi/winerror.h"
 #include "os/Debug.h"
 #include <string.h>
 #include <vector>
@@ -71,8 +75,9 @@ namespace {
         unsigned long numFrames; // 0x8
         unsigned long stride;    // 0xc
         unsigned char *pData;    // 0x10
-        unsigned long unk14;     // 0x14
-        unsigned short aFrameSizes[1]; // 0x18
+        unsigned char *pAlloc;   // 0x14 (operator new[] block; pData = pAlloc + 0x80)
+        unsigned short aFrameSizes[8]; // 0x18
+        ExternalMic *owner;      // 0x28 (read by dataReadyEntry)
     };
 }
 
@@ -110,6 +115,133 @@ void ExternalMic::dataReady(unsigned long, unsigned long, _XOVERLAPPED *pOverlap
             );
         }
     }
+}
+
+namespace {
+    void dataReadyEntry(unsigned long a, unsigned long b, _XOVERLAPPED *pOverlapped) {
+        XMicData *data = (XMicData *)pOverlapped->dwCompletionContext;
+        data->owner->dataReady(a, b, pOverlapped);
+    }
+}
+
+// Retail fn_82B67288 (1300 B): the header declared it and no TU defined it (an
+// emission gap). Ported from DC3, whose shape retail matches: two 0x2c XMicData
+// blocks memset per connection, a Sleep(10) poll, SystemConfig(synth, mic_types,
+// xbox) scan over `capabilities`/`min_gain`/`max_gain`, two XMicRequestData.
+unsigned long ExternalMic::sampleProcessThread() {
+    DWORD deviceId = mDeviceId | 0x04000000;
+    DWORD frameBytes = 0;
+    XMIC_CAPABILITIES caps;
+    XMicData first;
+    XMicData second;
+    while (!mQuit) {
+        memset(&first, 0, sizeof(first));
+        memset(&second, 0, sizeof(second));
+        do {
+            Sleep(10);
+        } while (XMicGetStatus((HANDLE)deviceId) != 1 && !mQuit);
+        unk9 = true;
+        if (XMicGetCapabilities(deviceId, &caps) == 0) {
+            DWORD multiMic = caps.dwFlags & 1;
+            if (XMicStart(deviceId, 0x100, &frameBytes, 0) == 0) {
+                long hr = gatherGainAttribs(deviceId);
+                if (hr >= 0) {
+                    static Symbol generic_usb("generic_usb");
+                    Symbol micName = generic_usb;
+                    DataArray *cfg = SystemConfig("synth", "mic_types", "xbox");
+                    for (int i = 1; i < cfg->Size(); i++) {
+                        DataArray *entry = cfg->Array(i);
+                        DataArray *capsCfg = entry->FindArray("capabilities", true);
+                        if (capsCfg->Int(1) == caps.dwFlags && capsCfg->Int(2) == caps.wFormatTag
+                            && capsCfg->Int(3) == caps.nChannels
+                            && capsCfg->Int(4) == caps.nSamplesPerSec
+                            && capsCfg->Int(5) == caps.nBlockAlign
+                            && capsCfg->Int(6) == caps.wBitsPerSample) {
+                            DataArray *minGain = entry->FindArray("min_gain", true);
+                            if (minGain->Float(1) == mGainLeft) {
+                                DataArray *maxGain = entry->FindArray("max_gain", true);
+                                if (maxGain->Float(1) == mGainRight) {
+                                    micName = entry->Sym(0);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    ExternalMicClientProxy *master =
+                        ExternalMicClientMgr::GetMasterForIndex(mDeviceId);
+                    if (master) {
+                        hr = master->OnMicConnected(0x100, multiMic, micName);
+                        if (hr >= 0) {
+                            XOVERLAPPED firstOverlapped;
+                            XOVERLAPPED secondOverlapped;
+                            DWORD numFrames = multiMic ? 1 : 2;
+                            first.hMic = (HANDLE)deviceId;
+                            first.clientId = (unsigned long)&firstOverlapped;
+                            first.numFrames = numFrames;
+                            first.stride = frameBytes;
+                            first.pAlloc = new unsigned char[numFrames * frameBytes + 0x100];
+                            first.pData = first.pAlloc + 0x80;
+                            first.owner = this;
+                            second.hMic = (HANDLE)deviceId;
+                            second.numFrames = numFrames;
+                            second.clientId = (unsigned long)&secondOverlapped;
+                            second.stride = frameBytes;
+                            second.pAlloc = new unsigned char[numFrames * frameBytes + 0x100];
+                            second.pData = second.pAlloc + 0x80;
+                            second.owner = this;
+                            firstOverlapped.dwExtendedError = 0;
+                            firstOverlapped.hEvent = 0;
+                            firstOverlapped.pCompletionRoutine = dataReadyEntry;
+                            firstOverlapped.dwCompletionContext = (DWORD_PTR)&first;
+                            secondOverlapped.dwExtendedError = 0;
+                            secondOverlapped.hEvent = 0;
+                            secondOverlapped.pCompletionRoutine = dataReadyEntry;
+                            secondOverlapped.dwCompletionContext = (DWORD_PTR)&second;
+                            if (XMicRequestData(
+                                    first.hMic, first.numFrames, first.pData,
+                                    first.aFrameSizes, first.clientId
+                                ) != ERROR_IO_PENDING) {
+                                hr = 0x80004005;
+                            }
+                            if (hr >= 0) {
+                                if (XMicRequestData(
+                                        second.hMic, second.numFrames, second.pData,
+                                        second.aFrameSizes, second.clientId
+                                    ) != ERROR_IO_PENDING) {
+                                    hr = 0x80004005;
+                                }
+                                if (hr >= 0) {
+                                    while (!mQuit) {
+                                        SleepEx(10, true);
+                                        hr = processGain(deviceId);
+                                        MILO_ASSERT(SUCCEEDED(hr), 0x149);
+                                        if (XMicGetStatus((HANDLE)deviceId) != 2) {
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        XMicStop(deviceId, 0);
+        unk9 = false;
+        ExternalMicClientMgr::OnMicDisconnected(mDeviceId);
+        mLastGain = -1.0f;
+        if (first.pAlloc) {
+            delete[] first.pAlloc;
+            first.pData = 0;
+            first.pAlloc = 0;
+        }
+        if (second.pAlloc) {
+            delete[] second.pAlloc;
+            second.pData = 0;
+            second.pAlloc = 0;
+        }
+    }
+    return 0;
 }
 
 long ExternalMic::processGain(unsigned long deviceId) {

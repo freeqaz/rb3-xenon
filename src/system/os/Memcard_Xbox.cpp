@@ -14,6 +14,10 @@
 #include "xdk/xapilibi/xbase.h"
 #include "xdk/xapilibi/xbox.h"
 
+#ifndef HX_NATIVE
+void MemcardXbox::Init() { Memcard::Init(); }
+#endif
+
 MemcardXbox TheMC;
 
 namespace {

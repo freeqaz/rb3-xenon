@@ -149,18 +149,25 @@ const char *NextName(const char *old_name, ObjectDir *dir) {
     char *ptr;
     for (ptr = (char *)base + len; (ptr > base && ptr[-1] >= '0' && ptr[-1] <= '9'); ptr--)
         ;
+#ifdef HX_NATIVE
     int numDigits = (int)(base + len - ptr);
-    int atoied = 0;
     if (numDigits <= 1)
         numDigits = 1;
+#endif
+    int atoied = 0;
     if (*ptr != '\0')
         atoied = atoi(ptr);
     char buf[128];
     do {
-        char fmt[] = "%02d";
         atoied++;
+#ifdef HX_NATIVE
+        char fmt[] = "%02d";
         fmt[2] = '0' + numDigits;
         sprintf(ptr, fmt, atoied);
+#else
+        // RB3 retail 0x82757E68: fixed "%02d" (no DC3 digit-width carry).
+        sprintf(ptr, "%02d", atoied);
+#endif
         if (*ext != '\0') {
             sprintf(buf, "%s.%s", base, ext);
         } else {
@@ -374,15 +381,11 @@ void MergeObjectsRecurse(ObjectDir *fromDir, ObjectDir *toDir, MergeFilter &filt
         default:
             break;
         }
+#ifdef HX_NATIVE
         ObjRef tempRefs;
         tempRefs.Clear();
         for (ObjRef *it = fromDir->mRefs.next; it != &fromDir->mRefs;) {
-#ifdef HX_NATIVE
             Hmx::Object *owner = it->RefOwner();
-#else
-            // X360: ring entries are pool nodes; the ring-ref carries RefOwner().
-            Hmx::Object *owner = RefPtrOf(it)->RefOwner();
-#endif
             if (owner && owner->Dir() == fromDir) {
                 ObjRef *prevRef = it->prev;
                 it->Release(nullptr);
@@ -392,6 +395,22 @@ void MergeObjectsRecurse(ObjectDir *fromDir, ObjectDir *toDir, MergeFilter &filt
             it = it->next;
         }
         tempRefs.ReplaceList(toDir);
+#else
+        // RB3 retail 0x827586A0 (on the X360 pool-node ring):
+        // replace each ref owned by an object of fromDir in place and restart
+        // from the head; no temporary ring.
+        for (ObjRef *it = fromDir->mRefs.next; it != &fromDir->mRefs;) {
+            Hmx::Object *owner = RefPtrOf(it)->RefOwner();
+            if (owner && owner->Dir() == fromDir) {
+                RefPtrOf(it)->Replace(
+                    reinterpret_cast<ObjRef *>(static_cast<Hmx::Object *>(fromDir)), toDir
+                );
+                it = fromDir->mRefs.next;
+            } else {
+                it = it->next;
+            }
+        }
+#endif
     }
 
     for (ObjectDir::Entry *entry = fromDir->mHashTable.Begin(); entry != 0;
@@ -405,6 +424,7 @@ void MergeObjectsRecurse(ObjectDir *fromDir, ObjectDir *toDir, MergeFilter &filt
         }
     }
 
+#ifdef HX_NATIVE
     std::vector<ObjDirPtr<ObjectDir> > &subDirs = fromDir->mSubDirs;
     for (int i = 0; i < subDirs.size();) {
         ObjectDir *sd = subDirs[i];
@@ -427,6 +447,15 @@ void MergeObjectsRecurse(ObjectDir *fromDir, ObjectDir *toDir, MergeFilter &filt
         }
         i++;
     }
+#else
+    // RB3 retail: plain recursion over the subdirs (no DC3 FilterSubdir /
+    // RemovingSubDir / erase pass).
+    for (int i = 0; i < fromDir->mSubDirs.size(); i++) {
+        ObjectDir *sd = fromDir->mSubDirs[i];
+        if (sd)
+            MergeObjectsRecurse(sd, toDir, filt, false);
+    }
+#endif
 }
 
 void MergeDirs(ObjectDir *fromDir, ObjectDir *toDir, MergeFilter &filt) {

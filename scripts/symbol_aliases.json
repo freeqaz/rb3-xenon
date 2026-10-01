@@ -57239,9 +57239,7 @@
     "??_GHxMaster@@UAAPAXI@Z",
     "??_GIdUpdater@@UAAPAXI@Z",
     "??_GMemcardAction@@UAAPAXI@Z",
-    "??_GMic@@UAAPAXI@Z",
     "??_GMovieSys@@UAAPAXI@Z",
-    "??_GNetworkSocket@@UAAPAXI@Z",
     "??_GOriginalPathable@@UAAPAXI@Z",
     "??_GPlayerScore@@UAAPAXI@Z",
     "??_GRndOcclusionQueryMgr@@UAAPAXI@Z",
@@ -57254,7 +57252,6 @@
     "??_GStorePurchaser@@UAAPAXI@Z",
     "??_GStreamReader@@UAAPAXI@Z",
     "??_GThreadCallback@@UAAPAXI@Z",
-    "??_GTrackWatcherParent@@UAAPAXI@Z",
     "??_GTrackerBandDisplay@@UAAPAXI@Z",
     "??_GUIListCustomTemplate@@UAAPAXI@Z",
     "??_GUIListStateCallback@@UAAPAXI@Z",
@@ -57324,7 +57321,11 @@
     "??_GWavFileCacheHelper@@UAAPAXI@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 112 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {"spelling": "??_GMic@@UAAPAXI@Z", "lane": "W16-HZ 2026-09-30", "class": "RTTI_PROVES_OWN_ADDRESS", "disposition": "withdrawn", "evidence": "Retail bytes: the scalar deleting destructor at 0x827296c0 stores vtable 0x820fe2dc (lis/addi r11, stw r11,0(r3)) and that vtable's Complete Object Locator (vtable[-1]) names TypeDescriptor .?AVMic@@. So this class's ??_G lives at 0x827296c0, not at 0x82bf6f58, whose body stores a different vtable (0x821ad144). A ??_G that stores its own class's vtable cannot fold with another class's; the T1/L1_T1 proof masked exactly that operand (the vtable relocation target is an unnamed placeholder, which name_check forgives). 0x827296c0 carries this spelling in target_symbol_map.json (lane W16-HZ)."},
+    {"spelling": "??_GNetworkSocket@@UAAPAXI@Z", "lane": "W16-HZ 2026-09-30", "class": "RTTI_PROVES_OWN_ADDRESS", "disposition": "withdrawn", "evidence": "Retail bytes: the scalar deleting destructor at 0x82531448 stores vtable 0x8208d484 (lis/addi r11, stw r11,0(r3)) and that vtable's Complete Object Locator (vtable[-1]) names TypeDescriptor .?AVNetworkSocket@@. So this class's ??_G lives at 0x82531448, not at 0x82bf6f58, whose body stores a different vtable (0x821ad144). A ??_G that stores its own class's vtable cannot fold with another class's; the T1/L1_T1 proof masked exactly that operand (the vtable relocation target is an unnamed placeholder, which name_check forgives). 0x82531448 carries this spelling in target_symbol_map.json (lane W16-HZ)."},
+    {"spelling": "??_GTrackWatcherParent@@UAAPAXI@Z", "lane": "W16-HZ 2026-09-30", "class": "RTTI_PROVES_OWN_ADDRESS", "disposition": "withdrawn", "evidence": "Retail bytes: the scalar deleting destructor at 0x82790490 stores vtable 0x8210f2fc (lis/addi r11, stw r11,0(r3)) and that vtable's Complete Object Locator (vtable[-1]) names TypeDescriptor .?AVTrackWatcherParent@@. So this class's ??_G lives at 0x82790490, not at 0x82bf6f58, whose body stores a different vtable (0x821ad144). A ??_G that stores its own class's vtable cannot fold with another class's; the T1/L1_T1 proof masked exactly that operand (the vtable relocation target is an unnamed placeholder, which name_check forgives). 0x82790490 carries this spelling in target_symbol_map.json (lane W16-HZ)."}
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",

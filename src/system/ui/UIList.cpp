@@ -254,21 +254,7 @@ void UIList::SetParent(UIList *uilist) { mParent = uilist; }
 
 void UIList::CalcBoundingBox(Box &box) {
     box.Set(WorldXfm().v, WorldXfm().v);
-    float offset;
-    UIList *subList = mListDir->SubList(mListState.SelectedDisplay(), mWidgets);
-    if (subList != NULL) {
-        int subSelectedDisplay = subList->mListState.SelectedDisplay();
-        offset = subList->GetUIListDir()->ElementSpacing();
-        offset *= (float)subSelectedDisplay;
-    } else {
-        offset = 0.0f;
-    }
-    UIListWidgetDrawState drawState;
-    mListDir->BuildDrawState(drawState, mListState, DrawState(this), offset, true);
-    mListDir->DrawWidgets(
-        drawState, mListState, mWidgets, WorldXfm(), DrawState(this), &box,
-        mAllowHighlight
-    );
+    mListDir->DrawWidgets(mListState, mWidgets, WorldXfm(), DrawState(this), &box, mAllowHighlight);
 }
 
 Symbol UIList::SelectedSym(bool fail) const {
@@ -924,15 +910,21 @@ void UIList::LimitCircularDisplay(bool b) {
 }
 
 void UIList::SetProvider(UIListProvider *prov) {
+    // RB3 retail fn_827F9100: no LimitCircularDisplay here, the provider dir
+    // comes from the resource, and the re-poll is gated on ChildList().
     if (prov == mListState.Provider()) {
+#ifdef HX_NATIVE
         LimitCircularDisplay(mLimitCircularDisplayNumToDataNum);
+#endif
         Refresh(true);
     } else {
-        mListState.SetProvider(prov, (RndDir *)mListDir);
+        mListState.SetProvider(prov, mResource->Dir());
+#ifdef HX_NATIVE
         LimitCircularDisplay(mLimitCircularDisplayNumToDataNum);
+#endif
         SetSelected(0, -1);
     }
-    if (mListDir->SubList(mListState.SelectedDisplay(), mWidgets))
+    if (ChildList())
         Poll();
 }
 
@@ -955,23 +947,13 @@ void UIList::DrawShowing() {
         mDrawManuallyControlledWidgets = false;
     }
     bool b = mAllowHighlight;
-    if (mParent) {
+    // (int): retail fn_827F8140 tests mParent with a signed cmpwi.
+    if ((int)mParent) {
         if (mParent->ChildList() == this) {
             b = mParent->mAllowHighlight;
         }
     }
-    float offset;
-    UIList *subList = mListDir->SubList(mListState.SelectedDisplay(), mWidgets);
-    if (subList != NULL) {
-        int subSelectedDisplay = subList->mListState.SelectedDisplay();
-        float spacing = subList->GetUIListDir()->ElementSpacing();
-        offset = spacing * (float)subSelectedDisplay;
-    } else {
-        offset = 0.0f;
-    }
-    UIListWidgetDrawState drawState;
-    mListDir->BuildDrawState(drawState, mListState, DrawState(this), offset, mScrolling);
-    mListDir->DrawWidgets(drawState, mListState, mWidgets, WorldXfm(), DrawState(this), 0, b);
+    mListDir->DrawWidgets(mListState, mWidgets, WorldXfm(), DrawState(this), 0, b);
 }
 
 float UIList::GetDistanceToPlane(const Plane &p, Vector3 &v) {

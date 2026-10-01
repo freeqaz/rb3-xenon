@@ -125,10 +125,10 @@ struct NameSort {
 
 void CameraManager::RandomizeCategory(ObjPtrList<CamShot> &camlist) {
     std::vector<CamShot *> camshots;
-    {
-        MemTemp m;
-        camshots.resize(camlist.size());
-    }
+    // retail: bare MemPushTemp/MemPopTemp calls, no MemTemp object
+    MemPushTemp();
+    camshots.resize(camlist.size());
+    MemPopTemp();
     int idx = 0;
     FOREACH (it, camlist) {
         camshots[idx++] = *it;
@@ -243,7 +243,7 @@ bool CameraManager::ShotMatches(CamShot *shot, const std::vector<PropertyFilter>
             DataArray *arr = it->match.Array();
             uint i = 0;
             for (; i != arr->Size(); i++) {
-                if (n.Equal(arr->Evaluate(i), nullptr, true))
+                if (n == arr->Node(i)) // retail: operator==, no Evaluate
                     break;
             }
             if (i == arr->Size()) {

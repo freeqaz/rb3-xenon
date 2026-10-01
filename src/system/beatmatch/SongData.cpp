@@ -302,6 +302,13 @@ void SongData::PostLoad(PlayerTrackConfigList *pList) {
     for (int i = 0; i < mGemDBs.size(); i++) {
         mGemDBs[i]->Finalize();
     }
+#ifndef HX_NATIVE
+    // RB3 retail 0x82777748 (TU5) walks mDrumMixDBs here with a body that
+    // compiled to nothing (an assert/log on each entry); the counting loop
+    // itself survives in the image.  No oracle carries it.
+    for (int i = 0; i < mDrumMixDBs.size(); i++) {
+    }
+#endif
     if (mTempoMap)
         mTempoMap->Finalize();
     else

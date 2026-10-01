@@ -122,6 +122,7 @@ public:
     void SetSend(FxSend *);
     NoteVoiceInst *MakeNoteInst(SampleZone *, unsigned char, unsigned char, int, int);
     void Pause(bool);
+    void KillAllVoices();
     void SetFineTune(float);
     void PressNote(unsigned char, unsigned char, int, int);
     void ReleaseNote(unsigned char);

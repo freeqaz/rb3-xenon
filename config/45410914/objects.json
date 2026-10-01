@@ -807,7 +807,12 @@
             "system/rndobj/Mat_NG.cpp": "NonMatching",
             "system/char/CharClipGroup.cpp": "NonMatching",
             "system/char/CharPollGroup.cpp": "NonMatching",
-            "system/world/CameraShot.cpp": "NonMatching",
+            "system/world/CameraShot.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_NOTIFY_ONCE_EVAL"
+                ]
+            },
             "system/obj/PropSync.cpp": "NonMatching",
             "system/world/SpotlightDrawer.cpp": "NonMatching",
             "system/world/Spotlight.cpp": "NonMatching",

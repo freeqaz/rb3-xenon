@@ -295,6 +295,49 @@ void MicXbox::OnMicDisconnected() {
     x->mMicsChanged = true;
 }
 
+extern "C" void XMemCpy(void *, const void *, int);
+static const float sMaxSample = 32767.0f;
+
+// Retail fn_82B60CB0 (460 B): declared in Mic.h, never defined (emission gap).
+// Ported from DC3; retail shape: CritSecTracker on the manager's +0x68 critsec,
+// fsel clamp to [-32767, sMaxSample], wraparound copy into unk1c (the 0x3000-byte
+// playback buffer that ends at unk301c), then AddToBuffer + two RingBuffer writes.
+void MicXbox::AddData(void *data, int bytes) {
+    CritSecTracker t(&MicManagerXbox::GetInstance()->unk68);
+    MILO_ASSERT((bytes & 1) == 0, 0x344);
+    if (mOutputGain != 1.0f) {
+        int n = bytes / 2;
+        if (n > 0) {
+            short *p = (short *)data;
+            do {
+                float prod = (float)*p * mOutputGain;
+                float rounded = (float)floor(prod + 0.5f);
+                *p = (short)Clamp(-32767.0f, sMaxSample, rounded);
+                p++;
+            } while (--n);
+        }
+    }
+    if (mPlaybackVoice) {
+        short *bufEnd = (short *)((char *)unk1c + sizeof(unk1c));
+        if ((char *)unk301c + bytes <= (char *)bufEnd) {
+            XMemCpy(unk301c, data, bytes);
+            unk301c = (short *)((char *)unk301c + bytes);
+        } else {
+            int firstPart = (char *)bufEnd - (char *)unk301c;
+            int remaining = bytes - firstPart;
+            XMemCpy(unk301c, data, firstPart);
+            XMemCpy(unk1c, (char *)data + firstPart, remaining);
+            unk301c = (short *)((char *)unk1c + remaining);
+        }
+        if (!mPlaybackVoice->IsPlaying() && (char *)unk301c - (char *)unk1c >= 0xf00) {
+            mPlaybackVoice->SetVolume(mVolume);
+        }
+    }
+    AddToBuffer(unk3020, data, bytes, 0);
+    unk302c.Write(data, bytes);
+    mDroppedSamples = unk3040.Write(data, bytes);
+}
+
 #pragma endregion MicXbox
 #pragma region MicManagerXbox
 
@@ -387,6 +430,45 @@ void MicManagerXbox::Poll() {
             }
         }
     }
+}
+
+// Retail fn_82B606E0 (144 B), fn_82B5E8A8/-910/-968/-9C0: declared, never defined.
+// Ported from DC3 (same shape in retail).
+void MicManagerXbox::Shutdown() {
+    MILO_ASSERT(this == sInstance, 0xF0);
+    for (int i = 0; i < 4; i++) {
+        RELEASE(unkc[i]);
+    }
+    if (unk1c) {
+        unk1c->Release();
+        unk1c = nullptr;
+    }
+    sInstance = nullptr;
+    delete this;
+}
+
+DataNode SetNoiseGate(DataArray *a) {
+    gNoiseThreshold = a->Float(1);
+    if (a->Size() >= 3) {
+        gNoiseInt = a->Int(2);
+    }
+    return 0;
+}
+
+DataNode SetLowCut(DataArray *a) {
+    gLowCut = a->Float(1);
+    return 0;
+}
+
+DataNode SetLocalGain(DataArray *a) {
+    gLocalGain = a->Float(1);
+    return 0;
+}
+
+DataNode SetRemoteGain(DataArray *a) {
+    gRemoteGain = a->Float(1);
+    GainEffect::sGain = DbToRatio(gRemoteGain);
+    return 0;
 }
 
 MicManagerXbox *MicManagerXbox::GetInstance() {

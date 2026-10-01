@@ -2,6 +2,7 @@
 #include "obj/Object.h"
 #include "rndobj/Dir.h"
 #include "ui/UIListState.h"
+#include "ui/UIList.h"
 #include "utl/BinStream.h"
 #include "utl/Loader.h"
 #include "utl/Std.h"
@@ -107,23 +108,43 @@ END_COPYS
 
 INIT_REVS(1, 0)
 
+// RB3 retail (fn_8280DDB8): the packed rev is split into two TU shorts in one
+// aligned aggregate (alt at +0, rev at +4), no BinStreamRev and no version guard,
+// and the rev is pushed BEFORE RndDir::PreLoad -- the MeterDisplay::PreLoad form.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_UIListDir = { 0, 1 };
+
 void UIListDir::PreLoad(BinStream &bs) {
-    LOAD_REVS(bs);
-    ASSERT_REVS(1, 0);
+    int revs;
+    bs >> revs;
+    gRevs_UIListDir.rev = getHmxRev(revs);
+    gRevs_UIListDir.altRev = getAltRev(revs);
+#ifdef HX_NATIVE
+    if (gRevs_UIListDir.rev > 1 || gRevs_UIListDir.altRev > 0) {
+        fprintf(stderr, "ASSERT_REVS WARNING: UIListDir '%s' version %d > 1 (or alt %d > 0)\n",
+                Name(), gRevs_UIListDir.rev, gRevs_UIListDir.altRev);
+    }
+#endif
+    BinStream::PushRev(packRevs(gRevs_UIListDir.altRev, gRevs_UIListDir.rev), this);
     RndDir::PreLoad(bs);
-    bs.PushRev(packRevs(d.altRev, d.rev), this);
 }
 
 void UIListDir::PostLoad(BinStream &bs) {
-    BinStreamRev d(bs, bs.PopRev(this));
+    // RB3 retail (fn_8280CE60): RndDir::PostLoad first, then the popped rev lands
+    // in the same TU aggregate PreLoad wrote; fields read through the plain stream.
     RndDir::PostLoad(bs);
+    int revs = BinStream::PopRev(this);
+    gRevs_UIListDir.rev = getHmxRev(revs);
+    gRevs_UIListDir.altRev = getAltRev(revs);
     int orientation, numdisplay, compstate;
     float speed;
-    d >> orientation >> mFadeOffset;
+    bs >> orientation >> mFadeOffset;
     mOrientation = (UIListOrientation)orientation;
-    d >> mTestMode >> numdisplay >> mElementSpacing >> speed >> mTestNumData >> compstate
+    bs >> mTestMode >> numdisplay >> mElementSpacing >> speed >> mTestNumData >> compstate
         >> mTestGapSize >> mTestDisableElements;
-    if (d.rev > 0) d >> mScrollHighlightChange;
+    if (gRevs_UIListDir.rev != 0) bs >> mScrollHighlightChange;
     mTestState.SetNumDisplay(numdisplay, true);
     mTestState.SetSpeed(speed);
     mTestComponentState = (UIComponent::State)compstate;
@@ -247,6 +268,49 @@ void UIListDir::DrawWidgets(
         } while (it != widgets.end());
     }
 
+    if (scrolling) {
+        for (std::vector<UIListWidget *>::iterator it = widgets.begin();
+             it != widgets.end(); ++it) {
+            UIListWidget *widget = *it;
+            UIListWidgetDrawType drawType = widget->WidgetDrawType();
+            if (drawType == kUIListWidgetDrawAlways
+                || (drawType == kUIListWidgetDrawOnlyFocused
+                    && compState == UIComponent::kFocused)) {
+                widget->Draw(drawState, state, tf, compState, box, kDrawFirst);
+            }
+        }
+    }
+}
+
+void UIListDir::DrawWidgets(
+    UIListState const &state,
+    std::vector<UIListWidget *> &widgets,
+    class Transform const &tf,
+    UIComponent::State compState,
+    Box *box,
+    bool bDrawFocusedOrManual
+) {
+    UIListWidgetDrawState drawState;
+    float offset;
+    UIList *subList = SubList(state.SelectedDisplay(), widgets);
+    if (subList) {
+        offset = (float)subList->SelectedPos() * subList->GetUIListDir()->ElementSpacing();
+    } else
+        offset = 0;
+    BuildDrawState(drawState, state, compState, offset, true);
+    bool scrolling = state.IsScrolling();
+    bool isFocused = (compState == UIComponent::kFocused);
+    for (std::vector<UIListWidget *>::iterator it = widgets.begin(); it != widgets.end();
+         ++it) {
+        UIListWidget *widget = *it;
+        UIListWidgetDrawType drawType = widget->WidgetDrawType();
+        if (drawType == kUIListWidgetDrawAlways
+            || (drawType == kUIListWidgetDrawFocusedOrManual
+                && (bDrawFocusedOrManual || isFocused))
+            || (drawType == kUIListWidgetDrawOnlyFocused && isFocused)) {
+            widget->Draw(drawState, state, tf, compState, box, scrolling ? kExcludeFirst : kDrawAll);
+        }
+    }
     if (scrolling) {
         for (std::vector<UIListWidget *>::iterator it = widgets.begin();
              it != widgets.end(); ++it) {

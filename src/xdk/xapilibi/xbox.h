@@ -217,6 +217,20 @@ DWORD XUserSetPropertyEx(
     XOVERLAPPED *pOverlapped
 );
 DWORD XShowGamerCardUI(DWORD dwUserIndex, XUID XuidPlayer);
+// Offsets proven by ExternalMic::sampleProcessThread (compares these six fields
+// against the `capabilities` config array); 0x1c total from its stack slot.
+typedef struct _XMIC_CAPABILITIES { /* Size=0x1c */
+    /* 0x0000 */ DWORD dwFlags;
+    /* 0x0004 */ WORD wFormatTag;
+    /* 0x0006 */ WORD nChannels;
+    /* 0x0008 */ DWORD nSamplesPerSec;
+    /* 0x000c */ WORD nBlockAlign;
+    /* 0x000e */ WORD wBitsPerSample;
+    /* 0x0010 */ DWORD dwReserved[3];
+} XMIC_CAPABILITIES;
+DWORD XMicGetCapabilities(DWORD dwDeviceId, XMIC_CAPABILITIES *pCapabilities);
+DWORD XMicStart(DWORD dwDeviceId, DWORD dwFlags, DWORD *pcbFrame, DWORD dwReserved);
+DWORD XMicStop(DWORD dwDeviceId, DWORD dwFlags);
 DWORD XMicGetStatus(HANDLE hMic);
 DWORD XMicRequestData(HANDLE hMic, DWORD dwNumFrames, PVOID pBuffer, PVOID pFrameSizes, DWORD dwFlags);
 DWORD XMicGetGain(DWORD dwDeviceId, DWORD dwChannel, float *pGain);

@@ -21,6 +21,17 @@ void UserMgr::GetLocalUsers(std::vector<LocalUser *> &users) const {
     }
 }
 
+// Retail 0x82523578 (216 B).
+void UserMgr::GetRemoteUsers(std::vector<RemoteUser *> &rUsers) const {
+    std::vector<User *> users;
+    GetUsers(users);
+    for (int i = 0; i < users.size(); i++) {
+        if (!users[i]->IsLocal()) {
+            rUsers.push_back(users[i]->GetRemoteUser());
+        }
+    }
+}
+
 LocalUser *UserMgr::GetLocalUserFromPadNum(int padnum) const {
     return JoypadGetUserFromPadNum(padnum);
 }

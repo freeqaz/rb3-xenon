@@ -1,3 +1,9 @@
+// W16-HZ: retail's SpotDrawParams ctor inlines the owner-only ObjPtr ctor for
+// mProxy (owner, then mObject, then vtable; &mProxy spilled for EH) while
+// mTexture(owner, 0) stays an out-of-line call. Measured: _EH variant 66.7,
+// plain INLINE_OWNER_CTOR 73.4, + OWNER_CTOR_DEFER_OBJECT 95.9 (from 80.25).
+#define RB3_OBJPTR_INLINE_OWNER_CTOR
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
 #include "world/SpotlightDrawer.h"
 #include "char/Character.h"
 #include "math/Geo.h"
@@ -93,7 +99,7 @@ SpotDrawParams &SpotDrawParams::operator=(const SpotDrawParams &other) {
 SpotDrawParams::SpotDrawParams(SpotlightDrawer *owner)
     : mIntensity(1.0f), mColor(1.0f, 1.0f, 1.0f), mBaseIntensity(0.1f),
       mSmokeIntensity(0.5f), mHalfDistance(250.0f), mLightingInfluence(1.0f),
-      mTexture(owner, 0), mProxy(owner, 0), mOwner(owner) {
+      mTexture(owner, 0), mProxy(owner), mOwner(owner) {
     MILO_ASSERT(owner, 0x37c);
 }
 
@@ -444,11 +450,12 @@ void SpotDrawParams::Load(BinStream &bs, int rev) {
         }
         bs >> mColor;
         if (rev < 4) {
+            // retail reads the obsolete Key<float> fields without zero-initializing them
             int a;
-            Key<float> b, c;
+            float b[2], c[2];
             bs >> a;
-            bs >> b;
-            bs >> c;
+            bs >> *reinterpret_cast<Key<float> *>(b);
+            bs >> *reinterpret_cast<Key<float> *>(c);
         }
         bs >> mTexture;
         bs >> mProxy;

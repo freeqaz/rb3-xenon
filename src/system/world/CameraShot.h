@@ -186,7 +186,9 @@ public:
     bool ShotOk(CamShot *);
     bool SetPos(CamShotFrame &, RndCam *);
     RndCam *GetCam();
+#ifdef HX_NATIVE
     void SetParent(RndDir *d) { mParentDir = d; }
+#endif
     class WorldDir *GetCrowdDir() const;
     void AddAnim(RndAnimatable *);
     void ClearCrowds();
@@ -290,13 +292,14 @@ protected:
     /** "Automatically generated list of objects to hide while this camera shot is active,
         shows them when done.  Not editable" */
     ObjPtrList<RndDrawable> mGenHideList; // 0x94
+    // NB(rb3-xenon, W16-HZ): retail's 0xc member here is this vector, not an
+    // ObjPtr<RndDir> mParentDir: retail CamShot::DoHide walks this+0xa8..0xac as
+    // a RndDrawable* range (third hide loop), and retail GetCam never reads the
+    // slot (it casts Dir() directly). mParentDir survives for native only.
+    std::vector<RndDrawable *> mGenHideVector; // 0xa8
 #ifdef HX_NATIVE
-    // NB(rb3-xenon): DC3-only std::vector mirror used by HamCamShot in the
-    // native build. Retail RB3 has no HamCamShot, so this field is absent in
-    // the matching layout — guarded out to keep CamShot size correct.
-    std::vector<RndDrawable *> mGenHideVector;
+    ObjPtr<RndDir> mParentDir;
 #endif
-    ObjPtr<RndDir> mParentDir; // 0xa8
     /** "List of objects to draw in order instead of whole world" */
     ObjPtrList<RndDrawable> mDrawOverrides; // 0xb4
     /** "List of objects to draw after post-processing" */
