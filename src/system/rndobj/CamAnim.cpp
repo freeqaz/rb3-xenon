@@ -73,8 +73,18 @@ BEGIN_PROPSYNCS(RndCamAnim)
 #endif
 END_PROPSYNCS
 
+#ifndef HX_NATIVE
+// Retail Save (0x82485E78) writes the revision from an initialized .data int
+// (0x82C709F8, 2) rather than an immediate.
+static int gSaveRev_CamAnim = 2;
+#endif
+
 BEGIN_SAVES(RndCamAnim)
+#ifdef HX_NATIVE
     SAVE_REVS(2, 0)
+#else
+    bs << gSaveRev_CamAnim;
+#endif
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndAnimatable)
     bs << mCam << mFovKeys << mKeysOwner;
