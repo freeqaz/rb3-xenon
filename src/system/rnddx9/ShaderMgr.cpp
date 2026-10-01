@@ -105,16 +105,17 @@ void DxShader::EstimatedCost(float &min, float &max) {
 
 RndShaderBuffer *DxShader::NewBuffer(unsigned int ui) { return new DxShaderBuffer(ui); }
 
+// 0x82736BE8. Each DxShaderBuffer is created just before its compile and the
+// compiler writes straight into its mBuffer; both compiles share one zeroed
+// parameter block with a temp-register limit of 0x24. A failure only touches
+// the error text (the report is stripped), the include data is freed
+// directly, and the result is !failed.
 bool DxShader::Compile(
     ShaderType s, const ShaderOptions &opts, RndShaderBuffer *&buf1, RndShaderBuffer *&buf2
 ) {
     std::vector<ShaderMacro> defines;
     opts.GenerateMacros(s, defines);
     const char *shaderName = ShaderTypeName(s);
-    MILO_ASSERT(streq("PIXEL_SHADER", defines[0].Name), 0xBB);
-    MILO_ASSERT(!mVShader, 0xBD);
-    MILO_ASSERT(!mPShader, 0xBE);
-
     LPCSTR data = nullptr;
     UINT bytes = 0;
     if (TheDxShaderInclude.Open(
@@ -123,13 +124,15 @@ bool DxShader::Compile(
         < 0) {
         return false;
     }
-
-    buf1 = new DxShaderBuffer();
-    buf2 = new DxShaderBuffer();
-
-    defines[0].Value = "0";
-    ID3DXBuffer *vShader = nullptr;
     ID3DXBuffer *vError = nullptr;
+    ID3DXBuffer *pError = nullptr;
+    D3DXSHADER_COMPILE_PARAMETERS params;
+    memset(&params, 0, sizeof(params));
+    params.TempRegisterLimit = 0x24;
+
+    DxShaderBuffer *vBuf = new DxShaderBuffer();
+    buf1 = vBuf;
+    defines[0].Value = "0";
     HRESULT vRes = D3DXCompileShaderExA(
         data,
         bytes,
@@ -138,15 +141,15 @@ bool DxShader::Compile(
         "vshader",
         "vs_3_0",
         0,
-        vShader,
-        vError,
+        &vBuf->mBuffer,
+        &vError,
         nullptr,
-        nullptr
+        &params
     );
 
+    DxShaderBuffer *pBuf = new DxShaderBuffer();
+    buf2 = pBuf;
     defines[0].Value = "1";
-    ID3DXBuffer *pShader = nullptr;
-    ID3DXBuffer *pError = nullptr;
     HRESULT pRes = D3DXCompileShaderExA(
         data,
         bytes,
@@ -155,41 +158,31 @@ bool DxShader::Compile(
         "pshader",
         "ps_3_0",
         0,
-        pShader,
-        pError,
+        &pBuf->mBuffer,
+        &pError,
         nullptr,
-        nullptr
+        &params
     );
 
-    if (vRes < 0 || pRes < 0) {
-        if (vRes < 0) {
-            if (vError == nullptr) {
-                MILO_NOTIFY("VShader '%s' compile failure: %d", shaderName, vRes);
-            } else {
-                TheDebug.Notify((char *)vError->GetBufferPointer());
-            }
+    bool failed = vRes < 0 || pRes < 0;
+    if (failed) {
+        if (vRes < 0 && vError) {
+            MILO_NOTIFY((char *)vError->GetBufferPointer());
         }
-        if (pRes < 0) {
-            if (pError == nullptr) {
-                MILO_NOTIFY("PShader '%s' compile failure: %d", shaderName, pRes);
-            } else {
-                TheDebug.Notify((char *)pError->GetBufferPointer());
-            }
+        if (pRes < 0 && pError) {
+            MILO_NOTIFY((char *)pError->GetBufferPointer());
         }
     }
-
-    if (vError != nullptr) {
+    if (vError) {
         vError->Release();
         vError = nullptr;
     }
-    if (pError != nullptr) {
+    if (pError) {
         pError->Release();
         pError = nullptr;
     }
-
-    TheDxShaderInclude.Close(data);
-
-    return (vRes >= 0) && (pRes >= 0);
+    MemFree((void *)data);
+    return !failed;
 }
 
 void DxShader::CreateVertexShader(RndShaderBuffer &buffer) {

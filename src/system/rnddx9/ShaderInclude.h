@@ -41,6 +41,9 @@ public:
     }
 
 private:
+    // DxShader::Compile (0x82736BE8) has the shader compiler write straight
+    // into this member.
+    friend class DxShader;
     ID3DXBuffer *mBuffer; // 0x4
 };
 
