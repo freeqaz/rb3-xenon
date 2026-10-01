@@ -1,4 +1,13 @@
 {
+ "0x82781e48": "?DetermineFreestyleSections@VocalNoteList@@QAAXXZ",
+ "0x82780f40": "?PitchAt@VocalNoteList@@QBAMM@Z",
+ "0x82782090": "?GetPracticePhrases@VocalNoteList@@QBAXAAV?$vector@VVocalPhrase@@V?$StlNodeAlloc@VVocalPhrase@@@stlpmtx_std@@@stlpmtx_std@@HH@Z",
+ "0x827820f8": "?GetPracticePhrases2@VocalNoteList@@QBAXAAV?$vector@VVocalPhrase@@V?$StlNodeAlloc@VVocalPhrase@@@stlpmtx_std@@@stlpmtx_std@@HH@Z",
+ "0x827815e8": "??$TrimExcess@VVocalNote@@@@YAXAAV?$vector@VVocalNote@@V?$StlNodeAlloc@VVocalNote@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x826f16e0": "?PitchAt@VocalNote@@QBAMM@Z",
+ "0x8279fdb8": "?MakeNeighboringSlotMask@KeyboardTrackWatcherImpl@@QBAIH@Z",
+ "0x827919d8": "?GetMaxSlots@BeatMatcher@@UBAHXZ",
+ "0x82791c40": "?SetButtonMashingMode@BeatMatcher@@UAAX_N@Z",
  "0x823187f0": "??0MicInputArrow@@QAA@XZ",
  "0x82790480": "??1TrackWatcherParent@@UAA@XZ",
  "0x82790318": "?TrackTypeToAudioType@@YA?AW4BeatmatchAudioType@@W4TrackType@@@Z",
