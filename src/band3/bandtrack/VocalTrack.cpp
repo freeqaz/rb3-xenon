@@ -1598,7 +1598,7 @@ void VocalTrack::UpdateScrolling(float ms) {
             if (staticLyrics) {
                 bool tooWide = tmpEndPos > scrollerWidth;
                 bool highlightStarted =
-                    (phStartMs - mMinPhraseHighlightMs) > 0.0f;
+                    (phStartMs - mMinPhraseHighlightMs) > ms;
                 if (tooWide && highlightStarted)
                     break;
             } else if (phStartMs > lookAhead)
