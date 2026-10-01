@@ -1,4 +1,9 @@
 {
+ "0x827bd300": "?MemInit@@YAXXZ",
+ "0x827bca78": "?TryAlloc@MemHeap@@QAAPAHHHAAH@Z",
+ "0x827bbd88": "?Free@MemHeap@@QAAHPAH@Z",
+ "0x827bbc20": "?Truncate@MemHeap@@QAAPAHPAHHAAH@Z",
+ "0x827bbb48": "?Init@MemHeap@@QAAXPBDHPAHH_NW4Strategy@1@H2@Z",
  "0x82b6ca18": "?NewInst@SynthSample360@@UAAPAVSampleInst@@_NHH@Z",
  "0x82719c90": "?Stop@StreamNull@@UAAXXZ",
  "0x82719c98": "?IsPlaying@StreamNull@@UBA_NXZ",

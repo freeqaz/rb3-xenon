@@ -1624,14 +1624,16 @@ MemHeap.cpp:
 	.pdata      start:0x82241A98 end:0x82241AA0
 	.pdata      start:0x82241AA0 end:0x82241AB0
 	.pdata      start:0x82241AD8 end:0x82241B20
-	.pdata      start:0x82241BC8 end:0x82241BF8
+	.pdata      start:0x82241B78 end:0x82241B88
+	.pdata      start:0x82241BE8 end:0x82241BF8
 	.text       start:0x82744E38 end:0x82744E48
 	.text       start:0x827BB450 end:0x827BB638
 	.text       start:0x827BB678 end:0x827BB6F8
 	.text       start:0x827BB718 end:0x827BB890
 	.text       start:0x827BBB44 end:0x827BC2D0
 	.text       start:0x827BC428 end:0x827BC430
-	.text       start:0x827BD300 end:0x827BD98C
+	.text       start:0x827BCA70 end:0x827BCD30
+	.text       start:0x827BD690 end:0x827BD98C
 
 SampleZone.cpp:
 	.pdata      start:0x8223A218 end:0x8223A248
@@ -4709,9 +4711,10 @@ MemMgr.cpp:
 	.pdata      start:0x82241AD0 end:0x82241AD8
 	.pdata      start:0x82241B20 end:0x82241B28
 	.pdata      start:0x82241B28 end:0x82241B78
-	.pdata      start:0x82241B78 end:0x82241B98
+	.pdata      start:0x82241B88 end:0x82241B98
 	.pdata      start:0x82241B98 end:0x82241BC0
 	.pdata      start:0x82241BC0 end:0x82241BC8
+	.pdata      start:0x82241BC8 end:0x82241BE8
 	.pdata      start:0x8225F038 end:0x8225F040
 	.text       start:0x823F1898 end:0x823F18B4
 	.text       start:0x827BB3E8 end:0x827BB450
@@ -4723,9 +4726,11 @@ MemMgr.cpp:
 	.text       start:0x827BBAD0 end:0x827BBB44
 	.text       start:0x827BC2D0 end:0x827BC428
 	.text       start:0x827BC430 end:0x827BCA50
-	.text       start:0x827BCA50 end:0x827BCFF0
+	.text       start:0x827BCA50 end:0x827BCA70
+	.text       start:0x827BCD30 end:0x827BCFF0
 	.text       start:0x827BCFF0 end:0x827BD230
 	.text       start:0x827BD230 end:0x827BD300
+	.text       start:0x827BD300 end:0x827BD690
 	.text       start:0x82BC6B70 end:0x82BC6C04
 
 StorePurchaser.cpp:
