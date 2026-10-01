@@ -503,9 +503,9 @@ void TourDescProvider::Text(
 void TourDescPanel::SelectTour(Symbol s) {
     int index = 0;
     if (s != "") {
-        std::vector<Symbol> &tours = m_pTourDescProvider->mTours;
         int i = 0;
-        for (std::vector<Symbol>::iterator it = tours.begin(); it != tours.end();
+        for (std::vector<Symbol>::iterator it = m_pTourDescProvider->mTours.begin();
+             it != m_pTourDescProvider->mTours.end();
              ++it, ++i) {
             if (s == *it) {
                 index = i;
