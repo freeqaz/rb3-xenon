@@ -20694,7 +20694,7 @@
  "0x82728e38": "?_M_fill_insert_aux@?$vector@VSampleMarker@@V?$StlNodeAlloc@VSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSampleMarker@@IABV3@ABU__false_type@2@@Z",
  "0x82729008": "?_M_fill_insert@?$vector@VBattleStep@@V?$StlNodeAlloc@VBattleStep@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVBattleStep@@IABV3@@Z",
  "0x82729080": "??$PropSync@VSampleMarker@@@@YA_NAAV?$vector@VSampleMarker@@V?$StlNodeAlloc@VSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
- "0x82729250": null,
+ "0x82729250": "?SyncProperty@SynthSample@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x82729618": "??0SkeletonHistory@@QAA@XZ",
  "0x82729628": "?IsInUse@Mic@@UAA_NXZ",
  "0x82729638": "?GetName@Mic@@UBAABVSymbol@@XZ",

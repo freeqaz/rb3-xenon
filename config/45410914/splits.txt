@@ -4754,12 +4754,12 @@ ByteGrinder.cpp:
 	.pdata      start:0x82239CF0 end:0x82239F50
 	.pdata      start:0x8223A048 end:0x8223A068
 	.pdata      start:0x8223A078 end:0x8223A080
-	.pdata      start:0x8223A098 end:0x8223A0E8
+	.pdata      start:0x8223A0D8 end:0x8223A0E8
 	.pdata      start:0x8223A0E8 end:0x8223A0F0
 	.text       start:0x82725440 end:0x82727F4C
 	.text       start:0x82728CFC end:0x82728E38
 	.text       start:0x82729004 end:0x82729080
-	.text       start:0x82729244 end:0x827296BC
+	.text       start:0x82729618 end:0x827296BC
 	.text       start:0x827296BC end:0x82729704
 	.text       start:0x82729704 end:0x82729710
 
@@ -12538,12 +12538,14 @@ system/synth/SynthSample.cpp:
 	.pdata      start:0x82239F68 end:0x8223A048
 	.pdata      start:0x8223A068 end:0x8223A078
 	.pdata      start:0x8223A080 end:0x8223A098
+	.pdata      start:0x8223A098 end:0x8223A0D8
 	.pdata      start:0x8225B6A0 end:0x8225B6B0
 	.text       start:0x826FBE68 end:0x826FBEE8
 	.text       start:0x82727F4C end:0x82728028
 	.text       start:0x82728028 end:0x82728CFC
 	.text       start:0x82728E38 end:0x82729004
 	.text       start:0x82729080 end:0x82729244
+	.text       start:0x82729244 end:0x82729618
 	.text       start:0x82B6C844 end:0x82B6C850
 	.text       start:0x82B6CA0C end:0x82B6CAB0
 
