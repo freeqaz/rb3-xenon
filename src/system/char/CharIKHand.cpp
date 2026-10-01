@@ -2,6 +2,9 @@
 // (target: `lis r10,lbl_82017A34` + three stores); without this we bind the
 // out-of-line two-arg body. Must precede every include.
 #define RB3_OBJPTR_INLINE_OWNER_CTOR
+// ...and stores it owner, object, then vtable (ObjVector<IKTarget>::resize's
+// fill value, PropSync's appended element).
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
 
 #include "char/CharBlendBone.h"
 #include "char/CharIKHand.h"
