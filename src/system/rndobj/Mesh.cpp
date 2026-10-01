@@ -1805,6 +1805,9 @@ void RndMesh::LoadVertices(BinStream &d) {
         }
     }
 #else
+    // Retail checks the stored format against the one Xbox layout it knows
+    // (0x24-byte vertex, version 1). There is no platform query and no
+    // temp-heap push around the allocation.
     unsigned int loadedCompressedSize = 0;
     unsigned int loadedVersion = 0;
     unsigned int compressedSize = 0;
@@ -1812,29 +1815,14 @@ void RndMesh::LoadVertices(BinStream &d) {
     if (b58) {
         d.ReadEndian(&loadedCompressedSize, 4);
         d.ReadEndian(&loadedVersion, 4);
-        MILO_ASSERT(IsVertexCompressionSupported(TheLoadMgr.GetPlatform()), 0x29C);
-        if (TheLoadMgr.GetPlatform() != kPlatformXBox) {
-            TheDebug.Fail(FormatString("Unsupported platform for vertex compression").Str(), 0);
-            b4 = false;
-        } else {
-            compressedSize = 0x24;
-            b4 = true;
-        }
-                unsigned int versionCheck;
-        if ((TheLoadMgr.GetPlatform() == kPlatformXBox)) {
-            versionCheck = 1U;
-        } else {
-            versionCheck = 0U;
-        }
-        if (compressedSize != loadedCompressedSize || versionCheck != loadedVersion) {
-            b4 = false;
-        }
+        compressedSize = 0x24;
+        b4 = loadedCompressedSize == compressedSize && loadedVersion == 1;
         if (!b4) {
             MILO_NOTIFY(
                 "Loaded stale compressed vertex data, resave mesh file \"%s\""
                 "(loaded size = %d, current = %d; loaded ver = %d, current = %d",
                 d.Name(), loadedCompressedSize, compressedSize,
-                loadedVersion, (unsigned int)b4
+                loadedVersion, 1
             );
         }
     }
@@ -1844,9 +1832,7 @@ void RndMesh::LoadVertices(BinStream &d) {
             if (mNumCompressedVerts != 0) {
                 unsigned int totalSize = compressedSize * count;
                 MILO_ASSERT(totalSize > 0, 0x2D4);
-                MemPushTemp();
                 mCompressedVerts = new unsigned char[totalSize];
-                MemPopTemp();
                 ReadChunks(d, mCompressedVerts, totalSize, compressedSize << 9);
             }
         } else {
