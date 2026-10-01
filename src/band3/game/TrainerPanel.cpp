@@ -69,13 +69,11 @@ void TrainerPanel::Draw() {
 }
 
 void TrainerPanel::StartSection(int sect) {
-    if (mCurrSection >= 0) {
-        TrainerChallenge *tc = mSections[mCurrSection].mChallenge;
-        if (tc)
-            tc->Exit();
+    if (mCurrSection >= 0 && GetSection(mCurrSection).mChallenge) {
+        GetSection(mCurrSection).mChallenge->Exit();
     }
     mCurrSection = sect;
-    Message setSectNameMsg("set_section_name", mSections[sect].mName, sect);
+    Message setSectNameMsg("set_section_name", mSections[mCurrSection].mName, sect);
     Handle(setSectNameMsg, true);
 
     TrainerChallenge *tc = mSections[mCurrSection].mChallenge;
@@ -169,12 +167,12 @@ void TrainerPanel::ResetChallenge() {
     }
 }
 
-// retail fn_826CA648 (0x50 bytes, immediately before GetChallengeRestriction):
-// the challenge_success handler arm is an out-of-line member call, not the
-// inlined getter chain the rb3-Wii dev source uses.
+// Retail 0x826CA648 (0x50 bytes, immediately before GetChallengeRestriction):
+// the challenge_success handler calls this out of line. The challenge pointer is
+// tested as a signed int (cmpwi), as in GetChallengeRestriction.
 bool TrainerPanel::ChallengeSuccess() const {
-    return !mSections[mCurrSection].mChallenge
-        || mSections[mCurrSection].mChallenge->Success();
+    TrainerChallenge *tc = mSections[mCurrSection].mChallenge;
+    return !(int)tc || tc->Success();
 }
 
 Symbol TrainerPanel::GetChallengeRestriction(int idx) {
