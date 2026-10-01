@@ -143,6 +143,10 @@ EntityUploader.cpp:
 	.pdata      start:0x82217AB8 end:0x82217CC8
 	.text       start:0x8250D0D8 end:0x8250F4E0
 
+band3/net_band/XboxEntityUploader.cpp:
+	.pdata      start:0x82217560 end:0x82217758
+	.text       start:0x82508708 end:0x8250A510
+
 band3/net_band/DataResults.cpp:
 	.pdata      start:0x82217808 end:0x82217970
 	.text       start:0x8250AF88 end:0x8250BF98
@@ -195,7 +199,8 @@ RockCentral.cpp:
 	.pdata      start:0x82217130 end:0x822173D8
 	.pdata      start:0x822173D8 end:0x82217408
 	.pdata      start:0x82217408 end:0x82217410
-	.pdata      start:0x82217410 end:0x82217808
+	.pdata      start:0x82217410 end:0x82217560
+	.pdata      start:0x82217758 end:0x82217808
 	.pdata      start:0x8221A840 end:0x8221A850
 	.pdata      start:0x82234E98 end:0x82234EB0
 	.text       start:0x822CEEE8 end:0x822CEF8C
@@ -245,7 +250,8 @@ RockCentral.cpp:
 	.text       start:0x8250577C end:0x82507290
 	.text       start:0x82507290 end:0x825074C0
 	.text       start:0x825074C0 end:0x82507634
-	.text       start:0x82507634 end:0x8250AF88
+	.text       start:0x82507634 end:0x82508708
+	.text       start:0x8250A510 end:0x8250AF88
 	.text       start:0x8253B238 end:0x8253B2BC
 	.text       start:0x82594538 end:0x82594548
 	.text       start:0x82594768 end:0x82594778
