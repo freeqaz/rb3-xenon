@@ -197,16 +197,15 @@ void TexMovie::UpdatePreClearState() {
     TheRnd.PreClearDrawAddOrRemove(this, true, TheRnd.GetReleaseImmediate());
 }
 
+// Retail (0x82746380) tests only mShowing; mPaused is not consulted here.
 void TexMovie::Poll() {
-    if (!mPaused) {
-        if (mShowing) {
-            mMovie.SetPaused(false);
-            if (mTex && !mMovie.Poll()) {
-                mMovie.End();
-            }
-        } else {
-            mMovie.SetPaused(true);
+    if (mShowing) {
+        mMovie.SetPaused(false);
+        if (mTex && !mMovie.Poll()) {
+            mMovie.End();
         }
+    } else {
+        mMovie.SetPaused(true);
     }
 }
 
