@@ -121,6 +121,26 @@ BEGIN_HANDLERS(CharMeshHide)
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
 
+void CharMeshHide::HideAll(const ObjPtrList<CharMeshHide> &hides, int flags) {
+    for (ObjPtrList<CharMeshHide>::iterator it = hides.begin(); it != hides.end(); ++it) {
+        flags |= (*it)->Flags();
+    }
+    for (ObjPtrList<CharMeshHide>::iterator it = hides.begin(); it != hides.end(); ++it) {
+        (*it)->HideDraws(flags);
+    }
+}
+
+// Retail 0x823A0AA0 (out of line): show each hide's drawable unless its flags
+// intersect, inverted by mShow.
+void CharMeshHide::HideDraws(int flags) {
+    for (int i = 0; i < mHides.size(); i++) {
+        Hide &hide = mHides[i];
+        if (hide.mDraw) {
+            hide.mDraw->SetShowing(hide.mShow ^ !(flags & hide.mFlags));
+        }
+    }
+}
+
 void CharMeshHide::Init() { REGISTER_OBJ_FACTORY(CharMeshHide) }
 
 #pragma endregion CharMeshHide

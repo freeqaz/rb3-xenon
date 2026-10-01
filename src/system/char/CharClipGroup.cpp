@@ -154,6 +154,17 @@ void CharClipGroup::MakeMRU(int i) {
     mClips[mWhich] = temp;
 }
 
+// Retail 0x8238E500: finds the clip (unsigned index compare) and tail-calls
+// MakeMRU(int).
+void CharClipGroup::MakeMRU(CharClip *clip) {
+    for (int i = 0; i < mClips.size(); i++) {
+        if (mClips[i] == clip) {
+            MakeMRU(i);
+            return;
+        }
+    }
+}
+
 struct Alphabetically {
     bool operator()(Hmx::Object *c1, Hmx::Object *c2) const {
         return strcmp(c1->Name(), c2->Name()) < 0;

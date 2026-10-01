@@ -69,6 +69,13 @@ BEGIN_LOADS(CharBoneOffset)
     bs >> mOffset;
 END_LOADS
 
+void CharBoneOffset::ApplyToLocal() {
+    if (mDest) {
+        Vector3 &v = mDest->DirtyLocalXfm().v;
+        v += mOffset;
+    }
+}
+
 void CharBoneOffset::Poll() {
     if (!mDest || !mDest->TransParent())
         return;

@@ -2,6 +2,8 @@
 // in-class (plain inline) definition lets MSVC choose per site, as retail did.
 #define RB3_OBJPTR_INLINE_TWOARG_CTOR
 #include "char/CharCuff.h"
+#include "char/FileMerger.h"
+#include "obj/Dir.h"
 #include "obj/Object.h"
 #include "rndobj/Trans.h"
 #include "rndobj/Rnd.h"
@@ -126,6 +128,191 @@ float CharCuff::Eccentricity(const Vector2 &v) const {
     float f1 = v.y * v.y;
     float f2 = v.x * v.x;
     return std::sqrt((f1 + f2) / (f1 * (1.0f / (mEccentricity * mEccentricity)) + f2));
+}
+
+// Retail 0x8239E290: out of line and recursive; Deform inlines its first level.
+#ifdef HX_NATIVE
+void AddBoneChildren(
+#else
+__forceinline void AddBoneChildren(
+#endif
+    std::list<RndTransformable *> &tlist, RndTransformable *trans) {
+    if (strncmp(trans->Name(), "bone_", 5) == 0) {
+        tlist.push_back(trans);
+        for (std::list<RndTransformable *>::const_iterator it =
+                 trans->TransChildren().begin();
+             it != trans->TransChildren().end();
+             ++it) {
+            AddBoneChildren(tlist, *it);
+        }
+    }
+}
+
+static int BoneMask(std::list<RndTransformable *> &tlist, RndMesh *mesh) {
+    int mask = 0;
+    for (int i = 0; i < mesh->NumBones(); i++) {
+        if (std::find(tlist.begin(), tlist.end(), mesh->BoneTransAt(i)) != tlist.end()) {
+            mask |= 1 << i;
+        }
+    }
+    return mask;
+}
+
+void CharCuff::Deform(SyncMeshCB *cb, FileMerger *fm) {
+    if (!mBone)
+        return;
+    std::list<RndMesh *> meshes;
+    for (ObjDirItr<CharCuff> it(Dir(), false); it != nullptr; ++it) {
+        if (it != this && it->mBone == mBone) {
+            if (it->mOuterRadius > mOuterRadius)
+                return;
+            if (it->mOuterRadius == mOuterRadius && strcmp(it->Name(), Name()) > 0)
+                return;
+            for (ObjPtrList<RndMesh>::iterator m = it->mIgnore.begin();
+                 m != it->mIgnore.end();
+                 ++m) {
+                meshes.push_back(*m);
+            }
+        }
+    }
+    FileMerger::Merger *merger = nullptr;
+    if (fm) {
+        for (int i = 0; i < fm->Mergers().size(); i++) {
+            FileMerger::Merger &cur = fm->Mergers()[i];
+            if (strstr(cur.mName.Str(), mCategory.Str()) && cur.mLoadedObjects.size() != 0
+                && cur.mLoadedObjects.front()->Dir() == Dir()) {
+                merger = &cur;
+                break;
+            }
+        }
+    }
+    if (!merger)
+        return;
+    std::list<RndTransformable *> transes;
+    AddBoneChildren(transes, mBone);
+    for (ObjPtrList<Hmx::Object>::iterator it = merger->mLoadedObjects.begin();
+         it != merger->mLoadedObjects.end();
+         ++it) {
+        RndMesh *mesh = dynamic_cast<RndMesh *>(*it);
+        if (mesh && std::find(meshes.begin(), meshes.end(), mesh) == meshes.end()) {
+            int mask = BoneMask(transes, mesh);
+            if (mask != 0) {
+                meshes.push_back(mesh);
+                DeformMesh(mesh, mask, cb);
+            }
+        }
+    }
+}
+
+void CharCuff::DeformMesh(RndMesh *mesh, int boneMask, SyncMeshCB *cb) {
+    float eccInvSq = 1.0f / (mEccentricity * mEccentricity);
+    bool synced = false;
+    RndMesh::VertVector &verts = mesh->Verts();
+    Transform xfm;
+    if (TransParent() && TransParent()->Name() != Dir()->Name()) {
+        if (!mesh->NumBones())
+            return;
+        Transform boneInv;
+        FastInvert(mesh->BoneTransAt(0)->WorldXfm(), boneInv);
+        Multiply(WorldXfm(), boneInv, boneInv);
+        FastInvert(mesh->BoneOffsetAt(0), xfm);
+        Multiply(boneInv, xfm, xfm);
+    } else {
+        xfm = mLocalXfm;
+    }
+    float axisX = xfm.m.z.x;
+    float axisY = xfm.m.z.y;
+    float axisZ = xfm.m.z.z;
+    float planeD = -(xfm.v.x * axisX + (xfm.v.y * axisY + xfm.v.z * axisZ));
+    for (int i = 0; i < verts.size(); i++) {
+        RndMesh::Vert &vert = verts[i];
+        if (!(((1 << vert.boneIndices[3]) | (1 << vert.boneIndices[2])
+               | (1 << vert.boneIndices[1]) | (1 << vert.boneIndices[0]))
+              & boneMask))
+            continue;
+        float along =
+            (axisX * vert.pos.x + (axisY * vert.pos.y + axisZ * vert.pos.z)) + planeD;
+        if (along >= mShape[2].offset)
+            continue;
+        float projY = xfm.m.z.y * along + xfm.v.y;
+        float projZ = xfm.m.z.z * along + xfm.v.z;
+        float projX = xfm.m.z.x * along + xfm.v.x;
+        float dy = vert.pos.y - projY;
+        float dz = vert.pos.z - projZ;
+        float dx = vert.pos.x - projX;
+        float u = dx * xfm.m.x.x + (dz * xfm.m.x.z + xfm.m.x.y * dy);
+        float v = dx * xfm.m.y.x + (dz * xfm.m.y.z + xfm.m.y.y * dy);
+        float lenSq = dx * dx + (dz * dz + dy * dy);
+        u *= u;
+        v *= v;
+        float distSq = ((v * eccInvSq + u) / (v + u)) * lenSq;
+        if (along < mShape[0].offset) {
+            if (mOpenEnd)
+                continue;
+            if (!synced) {
+                cb->SyncMesh(mesh, 0xBF);
+                synced = true;
+            }
+            float t = mShape[0].offset;
+            vert.pos.x = xfm.m.z.x * t + xfm.v.x;
+            vert.pos.y = xfm.m.z.y * t + xfm.v.y;
+            vert.pos.z = xfm.m.z.z * t + xfm.v.z;
+            float scale = mShape[0].radius / sqrtf(distSq);
+            vert.pos.x += scale * dx;
+            vert.pos.y += dy * scale;
+            vert.pos.z += dz * scale;
+        } else {
+            float r;
+            if (along < mShape[1].offset) {
+                r = ((along - mShape[1].offset) / (mShape[0].offset - mShape[1].offset))
+                        * (mShape[0].radius - mShape[1].radius)
+                    + mShape[1].radius;
+            } else {
+                r = ((along - mShape[2].offset) / (mShape[1].offset - mShape[2].offset))
+                        * (mShape[1].radius - mShape[2].radius)
+                    + mShape[2].radius;
+            }
+            if (r * r >= distSq)
+                continue;
+            if (!synced) {
+                synced = true;
+                cb->SyncMesh(mesh, 0xBF);
+            }
+            float scale = r / sqrtf(distSq);
+            vert.pos.x = scale * dx + projX;
+            vert.pos.y = dy * scale + projY;
+            vert.pos.z = dz * scale + projZ;
+        }
+    }
+    if (mOpenEnd)
+        return;
+    std::vector<RndMesh::Face> &faces = mesh->Faces();
+    int last = faces.size() - 1;
+    for (int f = 0; f <= last; f++) {
+        RndMesh::Face &face = faces[f];
+        int j = 0;
+        for (; j < 3; j++) {
+            RndMesh::Vert &vert = verts[face[j]];
+            if (!(((1 << vert.boneIndices[3]) | (1 << vert.boneIndices[2])
+                   | (1 << vert.boneIndices[1]) | (1 << vert.boneIndices[0]))
+                  & boneMask))
+                break;
+            float along =
+                (vert.pos.x * axisX + (vert.pos.z * axisZ + vert.pos.y * axisY)) + planeD;
+            if (along > mShape[0].offset + 0.01f)
+                break;
+        }
+        if (j == 3) {
+            if (!synced) {
+                cb->SyncMesh(mesh, 0xBF);
+                synced = true;
+            }
+            face = faces[last];
+            last--;
+            f--;
+        }
+    }
+    faces.resize(last + 1);
 }
 
 void CharCuff::Highlight() {

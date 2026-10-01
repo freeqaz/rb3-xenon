@@ -1074,6 +1074,40 @@ int CharClip::InGroups() {
     return num;
 }
 
+bool CharClip::InGroup(Hmx::Object *o) {
+    FOREACH (it, mRefs) {
+#ifdef HX_NATIVE
+        Hmx::Object *owner = it->RefOwner();
+#else
+        Hmx::Object *owner = RefPtrOf(it)->RefOwner();
+#endif
+        if (o == owner)
+            return true;
+    }
+    return false;
+}
+
+void CharClip::MakeMRU() {
+    static Symbol s("CharClipGroup");
+    CharClipGroup *groups[128];
+    int numGroups = 0;
+    FOREACH (it, mRefs) {
+#ifdef HX_NATIVE
+        Hmx::Object *owner = it->RefOwner();
+#else
+        Hmx::Object *owner = RefPtrOf(it)->RefOwner();
+#endif
+        if (owner && owner->ClassName() == s) {
+            groups[numGroups++] = dynamic_cast<CharClipGroup *>(owner);
+            if (numGroups == 128)
+                break;
+        }
+    }
+    while (numGroups > 0) {
+        groups[--numGroups]->MakeMRU(this);
+    }
+}
+
 DataNode CharClip::OnGroups(DataArray *) {
     DataArray *groups = new DataArray(0);
     FOREACH (it, mRefs) {
