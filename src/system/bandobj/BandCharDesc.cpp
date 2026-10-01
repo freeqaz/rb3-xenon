@@ -626,10 +626,9 @@ void BandCharDesc::SetSkinColor(int i) {
 }
 
 Symbol BandCharDesc::NameToDrumVenue(const char *name) {
-    int i = 0;
-    for (int offset = 0; *sDrumVenueMappings[offset / 4] != 0; offset += 8, i++) {
-        if (strstr(name, sDrumVenueMappings[offset / 4])) {
-            return Symbol(sDrumVenueMappings[2 * i + 1]);
+    for (int i = 0; *sDrumVenueMappings[i * 2] != 0; i++) {
+        if (strstr(name, sDrumVenueMappings[i * 2])) {
+            return Symbol(sDrumVenueMappings[i * 2 + 1]);
         }
     }
     return Symbol(sDrumVenueMappings[0]);
@@ -931,29 +930,46 @@ void BandCharDesc::CopyCharDesc(const BandCharDesc *desc) {
 
 namespace {
     struct DeformVert {
-        float mPosX;
-        float mPosY;
+        Vector2 mPos;
         float mWeights[6];
     };
     struct DeformTri {
         DeformVert *mVerts[3];
+        // Not inlined in retail (0x82335380, a COMDAT: its caller keeps no value
+        // live in a volatile register across the call). The point is inside when
+        // the edge cross products all share one sign.
+        __declspec(noinline) bool Contains(const Vector2 &pt) const {
+            const DeformVert *prev = mVerts[2];
+            float sign = 0.0f;
+            for (int i = 0; i < 3; i++) {
+                const DeformVert *cur = mVerts[i];
+                Vector2 edge(cur->mPos.x - prev->mPos.x, cur->mPos.y - prev->mPos.y);
+                Vector2 toPt(pt.x - prev->mPos.x, pt.y - prev->mPos.y);
+                float cross = Cross(edge, toPt);
+                if (sign == 0.0f) {
+                    sign = cross;
+                } else if (cross * sign < 0.0f) {
+                    return false;
+                }
+                prev = cur;
+            }
+            return true;
+        }
     };
-}
 
-static float sWeightRange[2] = { 0.0f, 1.0f };
-static float sMuscleRange[2] = { 0.0f, 1.0f };
+}
 
 void BandCharDesc::ComputeDeformWeights(float *out) const {
     DeformVert verts[9] = {
-        { 0, 0.0f, { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f } },
-        { 0.5f, 0.0f, { 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f } },
-        { 1.0f, 0.0f, { 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f } },
-        { 0.0f, 0.5f, { 0.0f, 0.0f, 0.0f, 0.5f, 0.0f, 0.5f } },
-        { 0.5f, 0.5f, { 0.5f, 0.0f, 0.0f, 0.0f, 0.5f, 0.0f } },
-        { 1.0f, 0.5f, { 0.0f, 0.5f, 0.5f, 0.0f, 0.0f, 0.0f } },
-        { 0.0f, 1.0f, { 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f } },
-        { 0.5f, 1.0f, { 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f } },
-        { 1.0f, 1.0f, { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f } },
+        { Vector2(0.0f, 0.0f), { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f } },
+        { Vector2(0.5f, 0.0f), { 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f } },
+        { Vector2(1.0f, 0.0f), { 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f } },
+        { Vector2(0.0f, 0.5f), { 0.0f, 0.0f, 0.0f, 0.5f, 0.0f, 0.5f } },
+        { Vector2(0.5f, 0.5f), { 0.5f, 0.0f, 0.0f, 0.0f, 0.5f, 0.0f } },
+        { Vector2(1.0f, 0.5f), { 0.0f, 0.5f, 0.5f, 0.0f, 0.0f, 0.0f } },
+        { Vector2(0.0f, 1.0f), { 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f } },
+        { Vector2(0.5f, 1.0f), { 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f } },
+        { Vector2(1.0f, 1.0f), { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f } },
     };
     DeformTri tris[8] = {
         { { &verts[0], &verts[1], &verts[3] } },
@@ -968,79 +984,47 @@ void BandCharDesc::ComputeDeformWeights(float *out) const {
 
     float heightWeights[3];
     if (mHeight < 0.5f) {
-        float t = 2.0f * mHeight;
-        heightWeights[1] = 0.0f;
+        float t = mHeight * 2.0f;
         heightWeights[0] = t;
+        heightWeights[1] = 0.0f;
         heightWeights[2] = 1.0f - t;
     } else {
-        float t = -(2.0f * mHeight - 2.0f);
-        heightWeights[2] = 0.0f;
+        float t = -(mHeight * 2.0f - 2.0f);
         heightWeights[0] = t;
+        heightWeights[2] = 0.0f;
         heightWeights[1] = 1.0f - t;
     }
 
-    float weight = mWeight;
-    float muscle = mMuscle;
-    if (muscle < sMuscleRange[0])
-        muscle = sMuscleRange[0];
-    else if (muscle > sMuscleRange[1])
-        muscle = sMuscleRange[1];
-    if (mWeight < sWeightRange[0])
-        weight = sWeightRange[0];
-    else if (mWeight > sWeightRange[1])
-        weight = sWeightRange[1];
+    Vector2 pt(mWeight, mMuscle);
+    ClampEq(pt.x, 0.0f, 1.0f);
+    ClampEq(pt.y, 0.0f, 1.0f);
 
-    DeformTri *from = NULL;
-    DeformTri *to = NULL;
-    DeformTri *tri = tris;
-    for (int i = 0; i < 8; i++, tri++) {
-        DeformVert *prev = tri->mVerts[2];
-        DeformVert **vp = tri->mVerts;
-        float sign = 0.0f;
-        int hit = 0;
-        for (int j = 3; j != 0;) {
-            DeformVert *cur = *vp;
-            float ex = cur->mPosX - prev->mPosX;
-            float ey = cur->mPosY - prev->mPosY;
-            float px = weight - prev->mPosX;
-            float py = muscle - prev->mPosY;
-            float cross = ex * py - ey * px;
-            if (sign == 0.0f) {
-                sign = cross;
-            } else if (sign * cross < 0.0f) {
-                hit = 0;
-                break;
-            }
-            prev = cur;
-            vp++;
-            if (--j == 0)
-                hit = 1;
-        }
-        if (hit) {
-            from = &tris[i];
+    DeformTri *tri = nullptr;
+    for (int i = 0; i < 8; i++) {
+        if (tris[i].Contains(pt)) {
+            tri = &tris[i];
             break;
         }
     }
-    MILO_ASSERT(from != to, 0x3F3);
+    MILO_ASSERT(tri, 0x3F3);
 
     Hmx::Matrix3 mtx;
-    mtx.x.Set(from->mVerts[0]->mPosX, from->mVerts[0]->mPosY, 1.0f);
-    mtx.y.Set(from->mVerts[1]->mPosX, from->mVerts[1]->mPosY, 1.0f);
-    mtx.z.Set(from->mVerts[2]->mPosX, from->mVerts[2]->mPosY, 1.0f);
+    for (int i = 0; i < 3; i++) {
+        mtx[i].Set(tri->mVerts[i]->mPos.x, tri->mVerts[i]->mPos.y, 1.0f);
+    }
     Invert(mtx, mtx);
-
-    Vector3 point(weight, muscle, 1.0f);
     Vector3 bary;
-    Multiply(point, mtx, bary);
+    Multiply(Vector3(pt.x, pt.y, 1.0f), mtx, bary);
 
     for (int k = 0; k < 6; k++) {
-        float w0 = from->mVerts[0]->mWeights[k];
-        float w1 = from->mVerts[1]->mWeights[k];
-        float w2 = from->mVerts[2]->mWeights[k];
-        float blend = w0 * bary.x + w1 * bary.y + w2 * bary.z;
-        out[k * 3 + 0] = blend * heightWeights[0];
-        out[k * 3 + 1] = blend * heightWeights[1];
-        out[k * 3 + 2] = blend * heightWeights[2];
+        float w[3];
+        for (int j = 0; j < 3; j++) {
+            w[j] = tri->mVerts[j]->mWeights[k];
+        }
+        float blend = w[0] * bary.x + bary.y * w[1] + bary.z * w[2];
+        for (int j = 0; j < 3; j++) {
+            out[k * 3 + j] = heightWeights[j] * blend;
+        }
     }
 }
 

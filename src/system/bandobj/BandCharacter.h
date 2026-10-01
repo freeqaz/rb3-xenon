@@ -215,7 +215,6 @@ public:
     int GetPlayFlags() const;
 
     static void MakeMRU(BandCharacter *, CharClip *);
-    static Symbol NameToDrumVenue(const char *);
     static void Init();
     static void Register() { REGISTER_OBJ_FACTORY(BandCharacter); }
     static void Terminate();
