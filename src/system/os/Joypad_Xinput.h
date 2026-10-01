@@ -23,8 +23,7 @@ JoypadType ReadSingleXinputJoypad(
 );
 
 void JoypadResetXboxPC(int);
-// Retail 0x82532378 / 0x82531FF8 / 0x82532030. No oracle defines these; the
-// names are ours.
+// Retail 0x82532378 / 0x82531FF8 / 0x82532030. The names are ours.
 void JoypadSetXinputActuators(int pad, int left, int right);
 void JoypadSetXinputCalbertMode(int pad, int mode);
 void JoypadInvalidateXinputCaps(int pad);

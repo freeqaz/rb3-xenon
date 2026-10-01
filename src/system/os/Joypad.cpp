@@ -190,7 +190,7 @@ const char *JoypadGetBreedString(int pad) {
     return MakeString("%02x%s", gJoypadData[pad].mType, s);
 }
 
-// Retail 0x82524E38 (declared in Joypad.h; no oracle body). RB2-era HX
+// Retail 0x82524E38 (declared in Joypad.h). RB2-era HX
 // guitars report the Calbert sensor on the left stick X (negated on PS3);
 // button guitars carry it as a raw 0..127 byte at report bytes 10 / 11 of the
 // pro-guitar block, read inverted. Anything else has no sensor.
@@ -216,7 +216,7 @@ float JoypadGetCalbertValue(int pad, bool secondary) {
     }
 }
 
-// Retail 0x82525DE0 (no oracle; the name is ours). Called only from the
+// Retail 0x82525DE0 (the name is ours). Called only from the
 // PlatformMgr profile-swap path (0x8251D6C8): exchanges two pads' whole
 // JoypadData (both element addresses are formed before the three 0xd4-byte
 // memcpys through a stack copy -- std::swap binding two references) and makes both

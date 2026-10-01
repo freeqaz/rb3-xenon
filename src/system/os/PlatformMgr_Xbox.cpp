@@ -303,7 +303,7 @@ DWORD XUnmountUtilityDrive();
 extern "C" DWORD XRemapUserDevices(DWORD *mapping);
 
 // Retail 0x8251D6C8, called by OvershellSlot::SwapUserProfile (0x825DF9C8) as
-// ThePlatformMgr.X(slotUser, swapUser). No oracle defines it; the name is ours.
+// ThePlatformMgr.X(slotUser, swapUser). The name is ours.
 // Builds the 4-pad permutation that exchanges the two users' pads, asks the
 // system to remap, and on success swaps the joypad state and broadcasts a
 // ProfileSwappedMsg to the sinks (Export, Hmx::Object vtable slot 0x38).
