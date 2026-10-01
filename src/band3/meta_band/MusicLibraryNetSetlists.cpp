@@ -57,7 +57,7 @@ void MusicLibraryNetSetlists::RefreshSetlists() {
 void MusicLibraryNetSetlists::RefreshArchivedBattles() {
     std::vector<BandProfile *> profiles = TheProfileMgr.GetSignedInProfiles();
     unk48 = true;
-    TheRockCentral.GetAllSonglists(profiles, mDataResults, this);
+    TheRockCentral.GetClosedBattles(profiles, mDataResults, this);
 }
 
 void MusicLibraryNetSetlists::CleanUp() {
