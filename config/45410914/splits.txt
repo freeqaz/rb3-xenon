@@ -1619,7 +1619,6 @@ MemHeap.cpp:
 	.pdata      start:0x82241AD8 end:0x82241B20
 	.pdata      start:0x82241B78 end:0x82241B88
 	.pdata      start:0x82241BE8 end:0x82241BF8
-	.text       start:0x82744E38 end:0x82744E48
 	.text       start:0x827BB450 end:0x827BB638
 	.text       start:0x827BB678 end:0x827BB6F8
 	.text       start:0x827BB718 end:0x827BB890
@@ -2430,7 +2429,6 @@ CharBoneDir.cpp:
 	.pdata      start:0x822051C8 end:0x822054E8
 	.pdata      start:0x822054E8 end:0x822054F0
 	.pdata      start:0x8220A8B8 end:0x8220A8C0
-	.pdata      start:0x8223B278 end:0x8223B280
 	.text       start:0x8227ACC8 end:0x8227AD48
 	.text       start:0x8227DF28 end:0x8227DFA0
 	.text       start:0x822801A4 end:0x822801F0
@@ -2444,7 +2442,6 @@ CharBoneDir.cpp:
 	.text       start:0x823B4B40 end:0x823B85BC
 	.text       start:0x823B85C0 end:0x823B8604
 	.text       start:0x8240F188 end:0x8240F214
-	.text       start:0x827460F8 end:0x82746128
 	.text       start:0x827D10E0 end:0x827D10E8
 
 CharClip.cpp:
@@ -4355,10 +4352,6 @@ Joypad_Xbox.cpp:
 	.pdata      start:0x822194E0 end:0x82219578
 	.text       start:0x82529890 end:0x8252A4A0
 
-SkeletonUpdate.cpp:
-	.pdata      start:0x8223B080 end:0x8223B098
-	.text       start:0x82743A38 end:0x82743B0C
-
 StubCameraInput.cpp:
 	.pdata      start:0x82200968 end:0x822009B8
 	.text       start:0x82364028 end:0x8236434C
@@ -4882,7 +4875,6 @@ DataNode.cpp:
 	.pdata      start:0x82216278 end:0x82216288
 	.pdata      start:0x822162F8 end:0x82216300
 	.pdata      start:0x82216308 end:0x82216310
-	.pdata      start:0x8223B150 end:0x8223B1B8
 	.pdata      start:0x8223B780 end:0x8223B860
 	.pdata      start:0x8223B868 end:0x8223B8E0
 	.pdata      start:0x82243610 end:0x82243618
@@ -4890,7 +4882,6 @@ DataNode.cpp:
 	.text       start:0x824F8968 end:0x824F89EC
 	.text       start:0x824F8F50 end:0x824F901C
 	.text       start:0x824F90A8 end:0x824F9188
-	.text       start:0x82744E48 end:0x82745354
 	.text       start:0x8274A974 end:0x8274A9A4
 	.text       start:0x8274A9B0 end:0x8274A9D0
 	.text       start:0x8274AA00 end:0x8274AA08
@@ -5239,7 +5230,6 @@ Sequence.cpp:
 	.pdata      start:0x822382B8 end:0x822382C0
 	.pdata      start:0x822382C8 end:0x822382D0
 	.pdata      start:0x822382E0 end:0x822383C8
-	.pdata      start:0x8223B0A0 end:0x8223B0A8
 	.text       start:0x823D3910 end:0x823D3918
 	.text       start:0x826FBEE8 end:0x826FC0E8
 	.text       start:0x82705838 end:0x827058B8
@@ -5258,8 +5248,6 @@ Sequence.cpp:
 	.text       start:0x8270A948 end:0x8270A9B8
 	.text       start:0x8270AA38 end:0x8270AAC0
 	.text       start:0x8270AB30 end:0x8270B90C
-	.text       start:0x82743B0C end:0x82743B10
-	.text       start:0x82743B68 end:0x82743BD0
 
 System.cpp:
 	.pdata      start:0x82217D80 end:0x82217D90
@@ -6042,21 +6030,15 @@ Splash.cpp:
 	.pdata      start:0x8223AFB0 end:0x8223AFC0
 	.pdata      start:0x8223AFC0 end:0x8223AFC8
 	.pdata      start:0x8223AFC8 end:0x8223AFD0
-	.pdata      start:0x8223AFE0 end:0x8223B080
 	.text       start:0x82741350 end:0x827414B8
 	.text       start:0x827414B8 end:0x827414E0
 	.text       start:0x827414E0 end:0x82742968
 	.text       start:0x82742968 end:0x827429E0
 	.text       start:0x827429E0 end:0x82742A80
 	.text       start:0x82742A80 end:0x82742B90
-	.text       start:0x82742C08 end:0x82743A38
 
 PoolAlloc.cpp:
-	.pdata      start:0x8223B210 end:0x8223B238
-	.pdata      start:0x8223B240 end:0x8223B278
 	.pdata      start:0x82241A30 end:0x82241A68
-	.text       start:0x82745B00 end:0x82745D08
-	.text       start:0x82745D54 end:0x827460F8
 	.text       start:0x827BAE60 end:0x827BB1E0
 
 Msg.cpp:
@@ -7438,14 +7420,10 @@ DefaultPhysicsManager.cpp:
 WavMgr.cpp:
 	.pdata      start:0x822084E8 end:0x82208530
 	.pdata      start:0x82208F38 end:0x82208F58
-	.pdata      start:0x8223B1B8 end:0x8223B210
-	.pdata      start:0x8223B238 end:0x8223B240
 	.pdata      start:0x82249040 end:0x82249048
 	.text       start:0x823EA988 end:0x823EAD68
 	.text       start:0x823F3EE0 end:0x823F3EFC
 	.text       start:0x823F3F00 end:0x823F4168
-	.text       start:0x82745354 end:0x82745B00
-	.text       start:0x82745D08 end:0x82745D54
 	.text       start:0x82845F78 end:0x82845FF0
 
 ClipGraphGen.cpp:
@@ -12077,7 +12055,6 @@ ContentDeletePanel.cpp:
 GemManager.cpp:
 	.pdata      start:0x821F1790 end:0x821F17A8
 	.pdata      start:0x821F17D8 end:0x821F17E0
-	.pdata      start:0x8223B098 end:0x8223B0A0
 	.pdata      start:0x8225D800 end:0x8225D810
 	.pdata      start:0x8225D810 end:0x8225D818
 	.pdata      start:0x8225D818 end:0x8225D820
@@ -12090,7 +12067,6 @@ GemManager.cpp:
 	.pdata      start:0x8225D870 end:0x8225DC58
 	.text       start:0x82271C50 end:0x82271D44
 	.text       start:0x82272240 end:0x822722B0
-	.text       start:0x82743B10 end:0x82743B68
 	.text       start:0x82B98BE4 end:0x82B98CEC
 	.text       start:0x82B98CF0 end:0x82B98D78
 	.text       start:0x82B98D78 end:0x82B98D88
@@ -15469,3 +15445,7 @@ band3/game/RKTrainerPanel.cpp:
 band3/tour/TourCharLocal.cpp:
 	.pdata      start:0x8225BF50 end:0x8225BFC0
 	.text       start:0x82B799B8 end:0x82B7A06C
+
+system/movie/Movie.cpp:
+	.pdata      start:0x8223AFE0 end:0x8223B280
+	.text       start:0x82742C08 end:0x82746128
