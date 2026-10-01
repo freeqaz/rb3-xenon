@@ -100,7 +100,7 @@ public:
     // Both arms are owner pointers: an out-of-range index yields a null
     // temporary, otherwise a copy of the slot's pointer.
     CharInterest *GetInterest(int idx) {
-        return idx >= mInterests.size() ? ObjOwnerPtr<CharInterest>(nullptr, nullptr)
+        return idx >= mInterests.size() ? ObjOwnerPtr<CharInterest>(nullptr)
                                         : mInterests[idx].mInterest;
     }
     CharInterest *GetInterestUnchecked(int idx) {

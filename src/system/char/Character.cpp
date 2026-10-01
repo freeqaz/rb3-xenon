@@ -1,3 +1,7 @@
+// CharEyes::GetInterest's null arm is retail's inline owner-only ObjOwnerPtr
+// ctor (owner, object, then vtable; no call), emitted in this TU.
+#define RB3_OBJOWNERPTR_INLINE_OWNER_CTOR
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
 #define RB3_OBJPTR_INLINE_TWOARG_CTOR
 // The plain-inline in-class two-arg ctor (replacing RB3_OBJPTR_INLINE_OWNER_CTOR)
 // also inlines ??0Character's member-init ObjPtrs, taking it to 100.
