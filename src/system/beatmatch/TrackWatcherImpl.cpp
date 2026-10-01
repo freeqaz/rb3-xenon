@@ -219,8 +219,8 @@ bool TrackWatcherImpl::IsSwingInRoll(int gemID, unsigned int ui) {
     if (!AreSlotsInRoll(slots, tick))
         return false;
     else {
-        bool slotsInRoll = (slots == (slots & mRollActiveSlots));
-        return ((ui & mRollActiveSlots) == ui) && slotsInRoll;
+        bool slotsInRoll = ((slots & mRollActiveSlots) == slots);
+        return slotsInRoll && ((ui & mRollActiveSlots) == ui);
     }
 }
 
