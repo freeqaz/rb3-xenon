@@ -143,7 +143,9 @@ void PerfectOverdriveTracker::Poll_(float ms) {
     for (TrackerPlayerID id = mSource->GetFirstPlayer(); id.NotNull();
          id = mSource->GetNextPlayer(id)) {
         Player *pPlayer = mSource->GetPlayer(id);
-        bool isLocal = mSource->IsPlayerLocal(id);
+        // The per-player flags are const, as retail keeps them unmasked in their
+        // own registers; endStreak alone is re-masked (clrlwi) and stays plain.
+        const bool isLocal = mSource->IsPlayerLocal(id);
         TrackType tt = pPlayer->GetTrackType();
 
         std::map<TrackType, PlayerStreakData>::iterator streakIt = unk70.find(tt);
@@ -155,10 +157,10 @@ void PerfectOverdriveTracker::Poll_(float ms) {
         PlayerContribData &contribData = unk58[tt];
 
         const TrackerPlayerDisplay &disp = GetPlayerDisplay(id);
-        bool prevFocus = streakData.unk4;
-        bool canDeploy = pPlayer->CanDeployOverdrive();
-        bool wasDeploying = streakData.unk5;
-        bool isDeploying = pPlayer->IsDeployingBandEnergy();
+        const bool prevFocus = streakData.unk4;
+        const bool canDeploy = pPlayer->CanDeployOverdrive();
+        const bool wasDeploying = streakData.unk5;
+        const bool isDeploying = pPlayer->IsDeployingBandEnergy();
 
         anyCanDeploy |= canDeploy;
         anyHadFocus |= prevFocus;
@@ -194,8 +196,8 @@ void PerfectOverdriveTracker::Poll_(float ms) {
                     SetPlayerProgress(id, pctOfMax);
                     streakData.unk18 = pctOfMax;
                 }
-                bool notMissed = pPlayer->mStats.GetMissCount() == streakData.unkc;
-                bool failed =
+                const bool notMissed = pPlayer->mStats.GetMissCount() == streakData.unkc;
+                const bool failed =
                     (float)hitsSinceStart / (float)endDiff < 1.0f || !notMissed;
                 bool endStreak = failed || !isDeploying;
                 if (failed) {
