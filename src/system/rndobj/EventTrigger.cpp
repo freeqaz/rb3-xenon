@@ -985,3 +985,10 @@ void EventTrigger::ConvertParticleTriggerType() {
 #include "band3/game/Stats.cpp"
 #undef gRev
 #undef gAltRev
+
+// Retail 0x8249CE10: sets the playback rate of every anim this trigger drives.
+void EventTrigger::SetAnimRate(RndAnimatable::Rate rate) {
+    for (ObjList<Anim>::iterator it = mAnims.begin(); it != mAnims.end(); ++it) {
+        it->mRate = rate;
+    }
+}

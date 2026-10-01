@@ -101,6 +101,7 @@ public:
     void SetNextLink(EventTrigger *);
     bool HasTriggerEvents() const { return !mTriggerEvents.empty(); }
     void SetEnabled(bool e) { mEnabled = e; }
+    void SetAnimRate(RndAnimatable::Rate rate);
 
     static void Init();
 
