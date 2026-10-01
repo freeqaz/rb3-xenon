@@ -7865,7 +7865,7 @@
  "0x823991c0": "?SyncProperty@CharIKHand@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x82399288": "??$?5UIKTarget@CharIKHand@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@UIKTarget@CharIKHand@@@@@Z",
  "0x823992e0": "?push_back@?$ObjVector@UIKTarget@CharIKHand@@@@QAAXABUIKTarget@CharIKHand@@@Z",
- "0x82399348": "??$MakeString@HH@@YAPBDPBDHH@Z",
+ "0x82399348": "??4?$ObjVector@UIKTarget@CharIKHand@@@@QAAXABV0@@Z",
  "0x823993b0": "?Load@CharIKHand@@UAAXAAVBinStream@@@Z",
  "0x823998a0": "?Copy@CharIKHand@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
  "0x823999a8": "?Copy@CharIKHand@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
