@@ -1,4 +1,8 @@
 {
+ "0x82516440": "FileTerminate",
+ "0x82517600": "FileOpen",
+ "0x82517690": "FileClose",
+ "0x825176f8": "FileWrite",
  "0x82526308": "?JoypadGetBreedString@@YAPBDH@Z",
  "0x82524e38": "?JoypadGetCalbertValue@@YAMH_N@Z",
  "0x8252e328": "?ReadAsync@ArkFile@@UAA_NPAXH@Z",

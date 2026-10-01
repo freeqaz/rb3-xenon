@@ -108,13 +108,16 @@ static void NativeInitSystemRoot() {
 }
 #endif
 
+// Retail 0x82516440: the release and the three root clears only.
 void FileTerminate() {
     RELEASE(gOpenCaptureFile);
     *gRoot = 0;
     *gExecRoot = 0;
     *gSystemRoot = 0;
+#ifdef HX_NATIVE
     TheDebug.StopLog();
     HolmesClientTerminate();
+#endif
 }
 
 void FileQualifiedFilename(String &out, const char *in) {
@@ -794,6 +797,41 @@ const char *FileMakePath(const char *root, const char *file) {
     MILO_ASSERT(c - static_buffer < File::MaxFileNameLen, 0x372);
     *c = '\0';
     return static_buffer;
+}
+
+// Retail 0x82517600 / 0x82517690 / 0x825176F8: the descriptor API over
+// gFiles (BeatMap's file writer is the caller). The free-slot search is
+// inlined into FileOpen.
+static int GetUnusedFile() {
+    for (int i = 0; i < gFiles.size(); i++) {
+        if (!gFiles[i])
+            return i;
+    }
+    MILO_FAIL("Can't open file, too many already open!!!");
+    return -1;
+}
+
+int FileOpen(const char *iFilename, int iMode) {
+    int file = GetUnusedFile();
+    if (file != -1) {
+        gFiles[file] = NewFile(iFilename, iMode);
+        if (gFiles[file])
+            return file;
+    }
+    return -1;
+}
+
+int FileClose(int iFd) {
+    MILO_ASSERT_RANGE(iFd, 0, gFiles.size(), 0x49E);
+    MILO_ASSERT(gFiles[iFd] != NULL, 0x49F);
+    RELEASE(gFiles[iFd]);
+    return 1;
+}
+
+int FileWrite(int iFd, void *iBuff, unsigned int iLen) {
+    MILO_ASSERT_RANGE(iFd, 0, gFiles.size(), 0x4C1);
+    MILO_ASSERT(gFiles[iFd] != NULL, 0x4C2);
+    return gFiles[iFd]->Write(iBuff, iLen);
 }
 
 const char *FileLocalize(const char *iFilename, char *buffer) {

@@ -126,8 +126,8 @@ const char *FileRelativePathBuf(const char *, const char *, char *);
  */
 int FileGetStat(const char *iFilename, FileStat *iBuffer);
 
-// int FileOpen(const char *iFilename, int iMode);
-// int FileClose(int iFd);
+int FileOpen(const char *iFilename, int iMode);
+int FileClose(int iFd);
 
 /** Try to delete a file.
  * @param [in] iFilename The file to be deleted.
@@ -135,7 +135,7 @@ int FileGetStat(const char *iFilename, FileStat *iBuffer);
  */
 int FileDelete(const char *iFilename);
 
-// int FileWrite(int iFd, void *iBuff, unsigned int iLen);
+int FileWrite(int iFd, void *iBuff, unsigned int iLen);
 
 /** Try to make a directory.
  * @param [in] iDirname The directory to be created.
