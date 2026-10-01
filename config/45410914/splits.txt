@@ -2721,7 +2721,6 @@ DataFunc.cpp:
 	.pdata      start:0x8223CE78 end:0x8223CEB0
 	.pdata      start:0x8223CEB0 end:0x8223CEC0
 	.pdata      start:0x8223CEC0 end:0x8223CED0
-	.pdata      start:0x82242358 end:0x82242360
 	.pdata      start:0x8225CED8 end:0x8225CEE0
 	.text       start:0x8275D040 end:0x8275D058
 	.text       start:0x8275D058 end:0x8275D170
@@ -2811,7 +2810,6 @@ DataFunc.cpp:
 	.text       start:0x827638C0 end:0x827639B0
 	.text       start:0x827639B0 end:0x827639BC
 	.text       start:0x827639C0 end:0x82765984
-	.text       start:0x827C4AA0 end:0x827C4AE8
 	.text       start:0x82B8E790 end:0x82B8E7E8
 
 Task.cpp:
@@ -5412,9 +5410,11 @@ UIList.cpp:
 MemTrack.cpp:
 	.pdata      start:0x822422E0 end:0x822422F0
 	.pdata      start:0x822422F0 end:0x82242358
+	.pdata      start:0x82242358 end:0x82242360
 	.pdata      start:0x82242360 end:0x82242388
 	.text       start:0x827C43D4 end:0x827C44B8
 	.text       start:0x827C44B8 end:0x827C4AA0
+	.text       start:0x827C4AA0 end:0x827C4AE8
 	.text       start:0x827C4AE8 end:0x827C4D08
 
 DirLoader.cpp:
