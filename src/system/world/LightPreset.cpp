@@ -492,28 +492,32 @@ BEGIN_PROPSYNCS(LightPreset)
 END_PROPSYNCS
 
 BEGIN_SAVES(LightPreset)
-    SAVE_REVS(0x16, 0)
+    // Retail 0x824B0CF0: rev 0x15; object names are written straight from
+    // Name() (no null test); after the triggers come mLegacyFadeIn, mManual,
+    // mLocked, then mPlatformOnly as an int -- the order Load reads them.
+    SAVE_REVS(0x15, 0)
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndAnimatable)
     bs << mKeyframes;
     bs << (unsigned int)mSpotlights.size();
     for (int i = 0; i != (unsigned)mSpotlights.size(); i++)
-        bs << PathName(mSpotlights[i]);
+        bs << mSpotlights[i]->Name();
     bs << (unsigned int)mEnvironments.size();
     for (int i = 0; i != (unsigned)mEnvironments.size(); i++)
-        bs << PathName(mEnvironments[i]);
+        bs << mEnvironments[i]->Name();
     bs << (unsigned int)mLights.size();
     for (int i = 0; i != (unsigned)mLights.size(); i++)
-        bs << PathName(mLights[i]);
+        bs << mLights[i]->Name();
     bs << mLooping;
     bs << mCategory;
     bs << mSelectTriggers;
+    bs << mLegacyFadeIn;
     bs << mManual;
     bs << mLocked;
     bs << mPlatformOnly;
     bs << (unsigned int)mSpotlightDrawers.size();
     for (int i = 0; i != (unsigned)mSpotlightDrawers.size(); i++)
-        bs << PathName(mSpotlightDrawers[i]);
+        bs << mSpotlightDrawers[i]->Name();
 END_SAVES
 
 BEGIN_COPYS(LightPreset)

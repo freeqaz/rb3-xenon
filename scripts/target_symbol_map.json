@@ -11342,7 +11342,7 @@
  "0x824b0aa8": "??0?$vector@USpotlightEntry@LightPreset@@V?$StlNodeAlloc@USpotlightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
  "0x824b0b48": "?_M_clear@?$vector@USpotlightEntry@LightPreset@@V?$StlNodeAlloc@USpotlightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
  "0x824b0c60": "??$__uninitialized_copy@PAUSpotlightEntry@LightPreset@@PAU12@@stlpmtx_std@@YAPAUSpotlightEntry@LightPreset@@PAU12@00ABU__false_type@0@@Z",
- "0x824b0cf0": null,
+ "0x824b0cf0": "?Save@LightPreset@@UAAXAAVBinStream@@@Z",
  "0x824b0fd8": "?CacheFrames@LightPreset@@IAAXXZ",
  "0x824b13c8": "??1?$vector@USpotlightEntry@LightPreset@@V?$StlNodeAlloc@USpotlightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
  "0x824b1478": "?_M_erase@?$vector@USpotlightEntry@LightPreset@@V?$StlNodeAlloc@USpotlightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUSpotlightEntry@LightPreset@@PAU34@0ABU__false_type@2@@Z",
