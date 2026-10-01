@@ -606,7 +606,10 @@ RndText::RndText()
       mAltStyle(nullptr, 1, 0, Hmx::Color(1, 1, 1, 1), 0), mUseAltStyle(false),
       mDeferUpdate(0), mNeedsUpdate(false), mMeshCallback(nullptr), mCurHeight(0),
       mCurWidth(0) {
+    mRotateLineVerts = false;
+#ifdef HX_NATIVE
     mMeshDirty = false;
+#endif
 }
 
 RndText::~RndText() {
@@ -1396,7 +1399,7 @@ int RndText::NumCharsInBytes(
             goto done;
         }
         RndFont *support = SupportChar(us, mFont);
-        if ((us == 0x20 || us == 9 || us == 10) && len > 0) {
+        if ((us == 0x20 || us == 10 || us == 9) && len > 0) {
             i5++;
             if (support) {
                 f8 += style.mSize * support->CharAdvance(us);
@@ -1427,11 +1430,8 @@ void RndText::ApplyLineText(
         }
         MILO_ASSERT((line.startIdx + utf8.length()) <= mFixedLength, 0x791);
         const char *theStrstr = utf8.c_str();
-        const char *ptr = theStrstr;
         for (int i = 0; i < i5; i++) {
-            char ptrChar = *ptr;
-            mText[line.startIdx + i] = ptrChar;
-            ptr++;
+            mText[line.startIdx + i] = theStrstr[i];
         }
         for (int i = i5; i < i6; i++) {
             mText[line.startIdx + i] = 0x20;
@@ -1465,7 +1465,14 @@ void RndText::ApplyLineText(
         float f3 = line.xfm.v.x;
         float f4 = line.xfm.v.y;
         Alignment align = GetAlignment();
-        float f26 = GetHorizontalAlignOffset(line, align);
+        // Retail computes the offset here as width * -0.5f / -width, not
+        // through GetHorizontalAlignOffset's -(width / 2) form.
+        float f26 = 0;
+        if (align & 2)
+            f26 = line.mWidth * -0.5f;
+        else if (align & 4)
+            f26 = -line.mWidth;
+        float lineX = f3 + f26;
         i7 = 0;
         i23 = 0;
         FOREACH (it, mMeshMap) {
@@ -1474,10 +1481,10 @@ void RndText::ApplyLineText(
             MeshInfo &meshInfo = it->second;
             RndMesh *curMesh = meshInfo.mesh;
             int uvar8 = 0;
-            float fd4 = f3 + f26;
+            float fd4 = lineX;
             if (curMesh) {
                 if (!(curMesh->Mutable() & 0x1F)
-                    || mFixedLength * 4 != curMesh->Verts().size()) {
+                    || curMesh->Verts().size() != mFixedLength * 4) {
                     curMesh->SetMutable(0x1F);
                     ResetFaces(curMesh, mFixedLength * 2);
                     curMesh->Verts().resize(mFixedLength * 4);
@@ -1558,24 +1565,25 @@ int RndText::AddLineUTF8(
     bool *bp,
     int i6
 ) {
+#ifdef HX_NATIVE
     mManualLines = true;
+#endif
     float f98 = 0;
     int lineIdx;
-    fp = fp ? fp : &f98;
+    float *f = fp ? fp : &f98;
 
-    const String &_ref0 = mText;
+    int _tmp1 = mText.length();
     int _tmp0 = utf8.length();
-    int _tmp1 = _ref0.length();
     if ((unsigned int)(_tmp1 + _tmp0) > (unsigned int)mFixedLength) {
         MILO_WARN(
             "Text %s%s exceeds fixed length of %d, truncating",
             utf8.c_str(),
-            _ref0.c_str(),
+            mText.c_str(),
             mFixedLength
         );
         return -1;
     } else {
-        int newCharsInBytes = NumCharsInBytes(utf8, style, *fp, i6);
+        int newCharsInBytes = NumCharsInBytes(utf8, style, *f, i6);
         if (newCharsInBytes != 0 || i6 != 0) {
             MILO_ASSERT(newCharsInBytes <= utf8.length(), 0x850);
             for (lineIdx = mLines.size();
@@ -1608,9 +1616,9 @@ int RndText::AddLineUTF8(
                 i6 = newCharsInBytes;
             }
             MILO_ASSERT(line.endIdx <= mFixedLength, 0x874);
-            line.mStart = _ref0.c_str() + line.startIdx;
-            line.mEnd = _ref0.c_str() + line.endIdx;
-            ApplyLineText(utf8, style, *fp, line, newCharsInBytes, i6, bp);
+            line.mStart = mText.c_str() + line.startIdx;
+            line.mEnd = mText.c_str() + line.endIdx;
+            ApplyLineText(utf8, style, *f, line, newCharsInBytes, i6, bp);
             return lineIdx;
         } else
             return -1;
@@ -1718,8 +1726,8 @@ void RndText::ReplaceLineText(
 ) {
     MILO_ASSERT(idx < mLines.size(), 0x8E5);
     float f3c = 0;
-    fptr = fptr ? fptr : &f3c;
-    int newCharsInBytes = NumCharsInBytes(utf8, style, *fptr, fixedLineLength);
+    float *f = fptr ? fptr : &f3c;
+    int newCharsInBytes = NumCharsInBytes(utf8, style, *f, fixedLineLength);
     MILO_ASSERT(newCharsInBytes <= utf8.length(), 0x8EC);
     Line &line = mLines[idx];
     line.xfm = xfm;
@@ -1739,7 +1747,7 @@ void RndText::ReplaceLineText(
             curInfo.syncFlags |= 0x1F;
         }
     }
-    ApplyLineText(utf8, style, *fptr, line, newCharsInBytes, fixedLineLength, bptr);
+    ApplyLineText(utf8, style, *f, line, newCharsInBytes, fixedLineLength, bptr);
 }
 
 void RndText::SyncMeshes() {
@@ -1817,7 +1825,11 @@ void RndText::GetStringDimensions(
         MaxEq(f1, (*it).mWidth);
     }
     f2 = lines.front().xfm.v.z - lines.back().xfm.v.z;
-    if (mFont) {
+#ifdef HX_NATIVE
+    if (mFont)
+#endif
+    {
+        // Retail reads mFont's cell size with no null test.
         float diff = mFont->CellDiff();
         f2 += theStyle.mSize * diff * mLeading;
     }

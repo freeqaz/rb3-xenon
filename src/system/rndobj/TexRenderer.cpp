@@ -545,9 +545,9 @@ void RndTexRenderer::DrawShowing() {
 // match (99.98529%) but is otherwise equivalent.
 RndTexRenderer::RndTexRenderer()
     : mDirty(1), mForce(0), mDrawPreClear(1), mDrawWorldOnly(0), mDrawResponsible(1),
-      mNoPoll(0), mPrimeDraw(0), mForceMips(0), mImpostorHeight(0),
+      mNoPoll(0), mPrimeDraw(0), mFirstDraw(1), mForceMips(0), mImpostorHeight(0),
       mOutputTexture(this, nullptr), mDrawable(this), mCamera(this),
-      mMirrorCam((mFirstDraw = 1, this)) {}
+      mMirrorCam(this) {}
 
 // sw2 scatter-include (default/TexRenderer <- math/mtx.cpp)
 //
