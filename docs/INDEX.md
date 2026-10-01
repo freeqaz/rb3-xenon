@@ -223,7 +223,15 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
   ~10 found verbatim there. Also the standing reminder that **every numeric
   absolute predating 2026-08-12 is dead on the ruler flip**.
 - ★★★ **START HERE — the single current-state doc.**
-  [decomp/CAMPAIGN_STATE_2026-08-17.md](decomp/CAMPAIGN_STATE_2026-08-17.md) —
+  [decomp/CAMPAIGN_STATE_2026-10-01.md](decomp/CAMPAIGN_STATE_2026-10-01.md) —
+  **fourth edition: numbers + roadmap.** Measured by a full build at main
+  `a95d5c525` on `name_check`: **46,539 / 69,131 matched · `matched_code`
+  4,698,184 / 10,247,072 = 45.849% · fuzzy 54.918 · honest 22,840 · ceiling
+  61.537%, we stand at 74.51% of it.** Carries the priority order (breadth /
+  identification first, cleanup-before-grind, vtable/struct, game over engine,
+  native is the goal), the open hard items, and the in-flight Ghidra tooling
+  track. The 08-17 edition below remains the partition-methodology record.
+- [decomp/CAMPAIGN_STATE_2026-08-17.md](decomp/CAMPAIGN_STATE_2026-08-17.md) —
   **third edition; replaces `CAMPAIGN_STATE_2026-08-14.md` wholesale.** Measured
   at HEAD `6e13ee3f` on the shipped **`name_check`** ruler: **44,444 / 69,227
   matched · `matched_code` 3,723,704 / 10,320,664 = 36.080082% · fuzzy
