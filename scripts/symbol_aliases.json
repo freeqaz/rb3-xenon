@@ -91229,9 +91229,17 @@
    "survivor": "?OnMsg@SyncGameStartPanel@@QAA?AVDataNode@@ABVLockStepStartMsg@@@Z",
    "folded": [
     "?OnMsg@BandUI@@QAA?AVDataNode@@ABVServerStatusChangedMsg@@@Z",
-    "?OnMsg@MainHubPanel@@QAA?AVDataNode@@ABVLockStepCompleteMsg@@@Z"
+    "?OnMsg@MainHubPanel@@QAA?AVDataNode@@ABVLockStepCompleteMsg@@@Z",
+    "?OnUsingCD@@YA?AVDataNode@@PAVDataArray@@@Z"
    ],
-   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x826a9880 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 4 against 2 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x826a9880 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 4 against 2 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies.",
+   "admitted": [
+    {
+     "spelling": "?OnUsingCD@@YA?AVDataNode@@PAVDataArray@@@Z",
+     "lane": "W16-KD 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN and CHASED T1 PROVEN, 0 CYCLE-ASSUMED; retail body 'li r11,1; li r10,0; stw; stw; blr' is DataNode(1), unique in retail. Retail call-site witness: PreInitSystem registers this address under the \"using_cd\" string where our source registers OnUsingCD; the map places OnUsingCD at no address of its own."
+    }
+   ]
   },
   {
    "name": "ourside_comdat_identity",

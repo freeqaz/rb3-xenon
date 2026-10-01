@@ -424,7 +424,14 @@ void SetGfxMode(GfxMode mode) {
 DataNode OnSystemLanguage(DataArray *) { return gSystemLanguage; }
 DataNode OnSystemLocale(DataArray *) { return gSystemLocale; }
 DataNode OnSystemExec(DataArray *a) { return SystemExec(a->Str(1)); }
+#ifdef HX_NATIVE
 DataNode OnUsingCD(DataArray *) { return UsingCD(); }
+#else
+// Retail registers "using_cd" with the shared body at 0x826A9880, which stores
+// DataNode(1) and returns: the script query reports true without reading
+// gUsingCD.
+DataNode OnUsingCD(DataArray *) { return 1; }
+#endif
 DataNode OnSupportedLanguages(DataArray *) { return SupportedLanguages(false); }
 DataNode OnSystemMs(DataArray *) { return SystemMs(); }
 
