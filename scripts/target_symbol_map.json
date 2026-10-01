@@ -1,4 +1,5 @@
 {
+ "0x82466298": "?Init@DOFProc@@SAXXZ",
  "0x822ced50": "??_GBandScoreboard@@UAAPAXI@Z",
  "0x82400698": "?RateToTaskUnits@RndAnimatable@@SA?AW4TaskUnits@@W4Rate@1@@Z",
  "0x824006e0": "?ConvertFrames@RndAnimatable@@QAA_NAAM@Z",
@@ -10798,7 +10799,6 @@
  "0x824660d0": "??$New@VDOFProc@@@Object@Hmx@@SAPAVDOFProc@@XZ",
  "0x82466120": "?SetType@DOFProc@@UAAXVSymbol@@@Z",
  "0x82466240": "??_GDOFProc@@UAAPAXI@Z",
- "0x82466298": "??6@YAAAVTextStream@@AAV0@ABUInstance@RndMultiMesh@@@Z",
  "0x824662d8": "??$MakeString@HD@@YAPBDPBDHD@Z",
  "0x82466338": "?Help@RndConsole@@QAAXVSymbol@@@Z",
  "0x824666d8": "?DataContinue@@YA?AVDataNode@@PAVDataArray@@@Z",
