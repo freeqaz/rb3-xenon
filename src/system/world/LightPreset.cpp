@@ -311,18 +311,11 @@ void LightPreset::Keyframe::Load(BinStream &d) {
     }
 }
 
-void LightPreset::Keyframe::LegacyLoadStageKit(BinStream &bs) {
-    for (int i = 0; i < 9; i++) {
-        int x;
-        bs >> x;
-    }
-}
-
-void LightPreset::Keyframe::LegacyLoadP9(BinStream &d) {
-    MILO_ASSERT(sPresetRev == 14, 0x596);
-    // TU5 reads the StageKit LED fields straight off the BinStream base of the
-    // rev stream (bypassing the rev-delegating operator>>): ReadEndian is called
-    // with `&d` as the BinStream `this`, in the field order below.
+// Retail 0x824AB740 (called from Keyframe::Load for revs 0xC..0x15 and from
+// LegacyLoadP9): the StageKit LED block. TU5 reads the fields straight off the
+// BinStream base of the rev stream (bypassing the rev-delegating operator>>):
+// ReadEndian is called with `&d` as the BinStream `this`, in the order below.
+void LightPreset::Keyframe::LegacyLoadStageKit(BinStream &d) {
     BinStream &bs = reinterpret_cast<BinStream &>(d);
     bs.ReadEndian(&mLedBlue, 4);
     bs.ReadEndian(&mLedGreen, 4);
@@ -333,6 +326,18 @@ void LightPreset::Keyframe::LegacyLoadP9(BinStream &d) {
     bs.ReadEndian(&mLedRedPattern, 4);
     bs.ReadEndian(&mLedYellowPattern, 4);
     bs.ReadEndian(&mStrobeSetting, 4);
+}
+
+// Retail 0x824B4F90 (called from LightPreset::Load for rev 0xE): description,
+// the four entry vectors, then the StageKit block.
+void LightPreset::Keyframe::LegacyLoadP9(BinStream &d) {
+    MILO_ASSERT(sPresetRev == 14, 0x596);
+    d >> mDescription;
+    d >> mSpotlightEntries;
+    d >> mEnvironmentEntries;
+    d >> mLightEntries;
+    d >> mSpotlightDrawerEntries;
+    LegacyLoadStageKit(d);
 }
 
 BinStream &operator<<(BinStream &bs, const LightPreset::Keyframe &k) {
@@ -654,12 +659,18 @@ void LightPreset::FillLightPresetData(RndLight *light, LightPreset::EnvLightEntr
     entry.mLightType = light->GetType();
 }
 
+// Retail Remove* (0x824B0230 env, 0x824B0328 light, 0x824B0430 drawer,
+// 0x824B20B8 spotlight): the removed object's ref is released before erase.
 void LightPreset::RemoveLight(int idx) {
     for (uint i = 0; i != mKeyframes.size(); i++) {
         Keyframe &cur = mKeyframes[i];
         cur.mLightEntries.erase(cur.mLightEntries.begin() + idx);
     }
     mLightState.erase(mLightState.begin() + idx);
+#ifndef HX_NATIVE
+    if (mLights[idx])
+        mLights[idx]->Release(this);
+#endif
     mLights.erase(mLights.begin() + idx);
 }
 
@@ -669,6 +680,10 @@ void LightPreset::RemoveSpotlightDrawer(int idx) {
         cur.mSpotlightDrawerEntries.erase(cur.mSpotlightDrawerEntries.begin() + idx);
     }
     mSpotlightDrawerState.erase(mSpotlightDrawerState.begin() + idx);
+#ifndef HX_NATIVE
+    if (mSpotlightDrawers[idx])
+        mSpotlightDrawers[idx]->Release(this);
+#endif
     mSpotlightDrawers.erase(mSpotlightDrawers.begin() + idx);
 }
 
@@ -685,6 +700,10 @@ void LightPreset::RemoveSpotlight(int idx) {
         cur.mSpotlightEntries.erase(cur.mSpotlightEntries.begin() + idx);
     }
     mSpotlightState.erase(mSpotlightState.begin() + idx);
+#ifndef HX_NATIVE
+    if (mSpotlights[idx])
+        mSpotlights[idx]->Release(this);
+#endif
     mSpotlights.erase(mSpotlights.begin() + idx);
 }
 
@@ -694,6 +713,10 @@ void LightPreset::RemoveEnvironment(int idx) {
         cur.mEnvironmentEntries.erase(cur.mEnvironmentEntries.begin() + idx);
     }
     mEnvironmentState.erase(mEnvironmentState.begin() + idx);
+#ifndef HX_NATIVE
+    if (mEnvironments[idx])
+        mEnvironments[idx]->Release(this);
+#endif
     mEnvironments.erase(mEnvironments.begin() + idx);
 }
 
