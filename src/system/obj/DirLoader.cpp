@@ -834,6 +834,70 @@ bool DirLoader::SetupDir(Symbol sym) {
     return true;
 }
 
+#ifndef HX_NATIVE
+// Retail 0x82756260: no MemPoint / MemTrack bookkeeping and no rev 0x1e/0x1f
+// trailer reads; a missing object's slot is skipped with ReadDead.
+void DirLoader::LoadObjs() {
+    FilePathTracker tracker(mRoot.c_str());
+    while (!mObjects.empty()) {
+        if (mStream->Eof() == NotEof) {
+            Hmx::Object *obj = mObjects.front();
+            if (obj) {
+                if (!mPostLoad) {
+                    obj->PreLoad(*mStream);
+                    mPostLoad = true;
+                }
+                std::list<Loader *> &loaders = TheLoadMgr.Loading();
+                Loader *firstLoader = loaders.empty() ? nullptr : loaders.front();
+                if (firstLoader != this)
+                    return;
+                obj->PostLoad(*mStream);
+                mPostLoad = false;
+                if (mRev > 1)
+                    ReadDead(*mStream);
+            } else {
+                ReadDead(*mStream);
+            }
+            mObjects.pop_front();
+        }
+        if (TheLoadMgr.CheckSplit() || TheLoadMgr.GetFirstLoading() != this)
+            return;
+    }
+    mState = &DirLoader::DoneLoading;
+    Cleanup(nullptr);
+    std::list<Loader *> &loaders = TheLoadMgr.Loading();
+    Loader *firstLoader = loaders.empty() ? nullptr : loaders.front();
+    if (firstLoader != this)
+        return;
+    if (mCallback)
+        mCallback->FinishLoading(this);
+}
+
+// Retail 0x827566F0: no MemPoint bookkeeping; a not-yet-first loader or a
+// stream that is not ready just restores the proxy flag and waits.
+void DirLoader::LoadDir() {
+    if (mLoadDir) {
+        FilePathTracker tracker(mRoot.c_str());
+        bool oldproxy = gLoadingProxyFromDisk;
+        gLoadingProxyFromDisk = mProxyName != nullptr;
+        if (!mPostLoad) {
+            mDir->PreLoad(*mStream);
+            mPostLoad = true;
+        }
+        std::list<Loader *> &loaders = TheLoadMgr.Loading();
+        Loader *firstLoader = loaders.empty() ? nullptr : loaders.front();
+        if (firstLoader != this || mStream->Eof() != NotEof) {
+            gLoadingProxyFromDisk = oldproxy;
+            return;
+        }
+        mDir->PostLoad(*mStream);
+        gLoadingProxyFromDisk = oldproxy;
+        mPostLoad = false;
+    }
+    ReadDead(*mStream);
+    mState = &DirLoader::LoadObjs;
+}
+#else
 void DirLoader::LoadObjs() {
     FilePathTracker tracker(mRoot.c_str());
     EofType t;
@@ -1077,6 +1141,7 @@ void DirLoader::LoadDir() {
     ReadDead(*mStream);
     mState = &DirLoader::LoadObjs;
 }
+#endif
 
 void DirLoader::LoadResources() {
     if (mCounter-- != 0) {
