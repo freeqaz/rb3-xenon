@@ -1,4 +1,7 @@
 {
+ "0x824d3c78": "?RenderCone@NgSpotlightDrawer@@IAAXPAVSpotlight@@@Z",
+ "0x824d51e8": "?DrawShowing@SpotlightDrawer@@MAAXXZ",
+ "0x824eabb8": "?Replace@?$ObjDirPtr@VWorldInstance@@@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x824bd938": "??$New@VRndTransProxy@@@Object@Hmx@@SAPAVRndTransProxy@@XZ",
  "0x824c5af0": "??1CamShot@@UAA@XZ",
  "0x824bba08": "??0CameraManager@@QAA@PAVWorldDir@@@Z",

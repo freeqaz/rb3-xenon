@@ -260,11 +260,19 @@ void SpotlightDrawer::ClearPostDraw() {
 
 void SpotlightDrawer::DrawShowing() {
     if (sCurrent && sCurrent != sDefault && sCurrent != this) {
+#ifdef HX_NATIVE
         MILO_NOTIFY_ONCE(
             "Drawing 2 spotlightdrawers in one frame, %s and %s",
             PathName(sCurrent),
             PathName(this)
         );
+#else
+        // Retail 0x824D51E8: the notify is compiled out but its two PathName
+        // argument calls remain (right-to-left).
+        Hmx::Object *cur = sCurrent;
+        PathName(this);
+        PathName(cur);
+#endif
     } else {
         Select();
     }
