@@ -75,7 +75,7 @@ void PrefabChar::LoadPortrait() {
             loadstatus
         );
     } else {
-        Loader *loader = TheLoadMgr.AddLoader(FilePath(unk24.c_str()), kLoadBack);
+        Loader *loader = TheLoadMgr.AddLoader(unk24.c_str(), kLoadBack);
         mLoader = dynamic_cast<FileLoader *>(loader);
         MILO_ASSERT(mLoader, 0x88);
     }
