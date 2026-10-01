@@ -1729,8 +1729,8 @@ HDCache.cpp:
 	.text       start:0x82533C68 end:0x825353C0
 
 CacheMgr_Xbox.cpp:
-	.pdata      start:0x82243450 end:0x82243588
-	.text       start:0x827D75F8 end:0x827D8AF0
+	.pdata      start:0x82243450 end:0x82243548
+	.text       start:0x827D75F8 end:0x827D8800
 
 SIVideo.cpp:
 	.pdata      start:0x8225CB98 end:0x8225CBA0
@@ -2382,8 +2382,8 @@ NetCacheLoader.cpp:
 	.text       start:0x827D08E8 end:0x827D09E4
 
 NetLoader_Xbox.cpp:
-	.pdata      start:0x82242D88 end:0x82242DD8
-	.text       start:0x827CFCB0 end:0x827D00F4
+	.pdata      start:0x82243548 end:0x82243588
+	.text       start:0x827D8800 end:0x827D8AF0
 
 Option.cpp:
 	.pdata      start:0x82241F40 end:0x82241F48
@@ -6434,6 +6434,7 @@ Loader.cpp:
 	.pdata      start:0x82241E50 end:0x82241E58
 	.pdata      start:0x82241E58 end:0x82241E90
 	.pdata      start:0x82241E90 end:0x82241E98
+	.pdata      start:0x82261700 end:0x82261708
 	.text       start:0x827BEA08 end:0x827BEA28
 	.text       start:0x827BEA28 end:0x827BEA98
 	.text       start:0x827BEAB8 end:0x827BEB40
@@ -6454,6 +6455,7 @@ Loader.cpp:
 	.text       start:0x827BFC94 end:0x827BFCF8
 	.text       start:0x827BFCF8 end:0x827BFEC0
 	.text       start:0x827BFEC0 end:0x827BFF58
+	.text       start:0x82C40E78 end:0x82C40EB0
 
 ChunkStream.cpp:
 	.pdata      start:0x82242868 end:0x82242940
@@ -6475,13 +6477,15 @@ NetCacheMgr.cpp:
 NetLoader.cpp:
 	.pdata      start:0x82242D70 end:0x82242D80
 	.pdata      start:0x82242D80 end:0x82242D88
+	.pdata      start:0x82242D88 end:0x82242DD8
 	.pdata      start:0x82242DD8 end:0x82242DE0
 	.pdata      start:0x82242DE0 end:0x82242DF0
 	.pdata      start:0x82242DF0 end:0x82242E08
 	.pdata      start:0x82242E08 end:0x82242E10
 	.text       start:0x827CFB80 end:0x827CFC10
 	.text       start:0x827CFC10 end:0x827CFC38
-	.text       start:0x827CFC38 end:0x827CFC9C
+	.text       start:0x827CFC38 end:0x827CFCB0
+	.text       start:0x827CFCB0 end:0x827D00F4
 	.text       start:0x827D00F8 end:0x827D0158
 	.text       start:0x827D0158 end:0x827D02A0
 	.text       start:0x827D02A0 end:0x827D0388
@@ -7972,13 +7976,15 @@ FilePath.cpp:
 	.pdata      start:0x821F9690 end:0x821F96B0
 	.pdata      start:0x821F96B0 end:0x821F96B8
 	.pdata      start:0x82241D08 end:0x82241D10
-	.pdata      start:0x822616C8 end:0x82261708
+	.pdata      start:0x822616C8 end:0x822616E8
+	.pdata      start:0x822616F0 end:0x82261700
 	.text       start:0x822EFB68 end:0x822EFCA0
 	.text       start:0x822EFCA0 end:0x822EFCFC
 	.text       start:0x827BE9A0 end:0x827BEA00
 	.text       start:0x827BEA00 end:0x827BEA08
 	.text       start:0x827BEA98 end:0x827BEAB4
-	.text       start:0x82C40BF4 end:0x82C40EB0
+	.text       start:0x82C40BF4 end:0x82C40DB8
+	.text       start:0x82C40DF0 end:0x82C40E78
 
 UTF8.cpp:
 	.pdata      start:0x82242A30 end:0x82242AB0
@@ -13037,9 +13043,11 @@ system/os/UsbMidiGuitar.cpp:
 system/meta/MemcardMgr.cpp:
 	.pdata      start:0x822409F0 end:0x82240A00
 	.pdata      start:0x82240A00 end:0x82240A18
+	.pdata      start:0x822616E8 end:0x822616F0
 	.pdata      start:0x82261BB0 end:0x82261BB8
 	.text       start:0x827AB750 end:0x827AB7F8
 	.text       start:0x827AB7F8 end:0x827AB8E8
+	.text       start:0x82C40DB8 end:0x82C40DF0
 	.text       start:0x82C49DE0 end:0x82C49E1C
 
 system/midi/MidiVarLen.cpp:
