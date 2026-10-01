@@ -17093,7 +17093,7 @@
  "0x8260ce40": "?Handle@CalibrationPanel@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x8260ce50": "?Poll@CalibrationPanel@@UAAXXZ",
  "0x8260cfe8": "??0FaceOptionsProvider@@QAA@ABV?$vector@PAVDynamicTex@@V?$StlNodeAlloc@PAVDynamicTex@@@stlpmtx_std@@@stlpmtx_std@@@Z",
- "0x8260d168": "??1?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHPAVUIComponent@@@2@U?$_Select1st@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+ "0x8260d168": "?FinishLoad@CharacterCreatorPanel@@UAAXXZ",
  "0x8260d170": "?Poll@CharacterCreatorPanel@@UAAXXZ",
  "0x8260d1b8": "?CreateNewCharacter@CharacterCreatorPanel@@QAAXXZ",
  "0x8260d418": "?SetGender@CharacterCreatorPanel@@QAAXVSymbol@@@Z",
@@ -18102,7 +18102,7 @@
  "0x82659828": "?AttemptNextTransition@NonDestructiveTransitionEvent@@QAAXXZ",
  "0x82659948": "??0NonDestructiveTransitionEvent@@QAA@PAVNetSync@@ABV?$vector@PAVUIScreen@@V?$StlNodeAlloc@PAVUIScreen@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x82659a10": "?Poll@NonDestructiveTransitionEvent@@UAAXXZ",
- "0x82659a30": "??1?$list@PAVSortNode@@V?$StlNodeAlloc@PAVSortNode@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+ "0x82659a30": "?OnActivate@NonDestructiveTransitionEvent@@UAAXXZ",
  "0x82659a38": "?Compare@SongCmp@@UBAHPBVSongSortCmp@@W4SongNodeType@@@Z",
  "0x82659ab0": "?NewSongNode@SongSortBySong@@UBAPAVStoreSongSortNode@@PAVStoreOffer@@@Z",
  "0x82659bb0": "?NewShortcutNode@SongSortBySong@@UBAPAVShortcutNode@@PAVSongSortNode@@@Z",
@@ -23284,7 +23284,7 @@
  "0x8279b058": "?Handle@JoypadGuitarController@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x8279b270": "??1BeatMatchController@@UAA@XZ",
  "0x8279b280": "?GetJoypadData@JoypadController@@QBAPAVJoypadData@@XZ",
- "0x8279b2e0": "??0?$_STLP_alloc_proxy@PAUHamSupereasyMeasure@@U1@V?$StlNodeAlloc@UHamSupereasyMeasure@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@UHamSupereasyMeasure@@@1@PAUHamSupereasyMeasure@@@Z",
+ "0x8279b2e0": "?SetCymbalConfiguration@JoypadController@@UAAXH@Z",
  "0x8279b688": "?OnMsg@JoypadController@@QAAHABVButtonUpMsg@@@Z",
  "0x8279b778": "?ReconcileFretState@JoypadController@@QAAXXZ",
  "0x8279b860": "?NoSlotButtonsThisFrame@JoypadController@@QBA_NXZ",
@@ -33764,7 +33764,6 @@
   "0x82602840",
   "0x82604a18",
   "0x82605090",
-  "0x8260d168",
   "0x826101b8",
   "0x82618948",
   "0x82618958",
@@ -34286,5 +34285,5 @@
  "0x82303bb8": "?Unkd4@TrackPanelDir@@UAAXPBD00VSymbol@@@Z",
  "0x82309b60": "?Unkd8@TrackPanelDir@@UAAXXZ",
  "0x822f7158": "?Load@?$ObjPtr@VStreakMeter@@@@QAA_NAAVBinStream@@_NPAVObjectDir@@@Z",
- "_w16ma_vtable_class_comment": "LANE W16-MA (2026-10-01): every ctor/dtor/??_G/??_E row audited by tools/vtable_class_name_audit.py -- the class in the map name vs the RTTI class (via the COL) of the vtable the retail body installs at 0(this) (ctor: LAST store; dtor: FIRST), corroborated by retail vtable-slot ownership and by the vtable relocations of our own same-named body. Generalises W16-LB's 0x82270298 (~ObjRef -> ~ObjRefOwner). 45 rows renamed on retail-byte evidence; the addresses they resolved were removed from _bijection_arbitrary/_icf_arbitrary (identity is now established by the installed vtable, not by a byte-class bijection). Leaf `lis/addi/stw rX,0(r3)/blr` bodies are named as DESTRUCTORS because every retail caller is an EH unwind funclet. DEFERRED, true name KNOWN but NOT applied because the pinned unit's base obj does not define it and the row is at 100 today (renaming would drop it to 0): 0x826bbc28 ??0BeatMatchControllerSink@@QAA@XZ -> ??1BeatMatchSink@@UAA@XZ (pinned FreestylePanel); 0x826fbd08 ??0BaseSkeleton@@QAA@ABV0@@Z -> ??1ByteGrinder@@UAA@XZ (pinned DepthBuffer3D); 0x827d24a8 ??0SongInfo@@QAA@XZ -> ??1TempoMap@@UAA@XZ (pinned SongInfoCopy); 0x826fbd18 ??_GCallback@Loader@@UAAPAXI@Z -> ??_GByteGrinder@@UAAPAXI@Z (pinned DepthBuffer3D); 0x8228d310 ??_GOfflineCallback@@UAAPAXI@Z -> ??_GCallback@Loader@@UAAPAXI@Z (pinned HamDirector); 0x827d24b8 ??_GSongInfo@@UAAPAXI@Z -> ??_GTempoMap@@UAAPAXI@Z (pinned SongInfoCopy); 0x8265eea8 ??_GSongSortCmp@@UAAPAXI@Z -> ??_GCampaignKey@@UAAPAXI@Z (pinned SongSortByRank); 0x825ea8e8 ??_GFixedSizeSaveable@@UAAPAXI@Z -> ??_GAccomplishmentGroup@@UAAPAXI@Z (pinned FixedSizeSaveable); 0x827b27b8 ??_GPlayerGameplayMsg@@UAAPAXI@Z -> ??_GStorePurchaser@@UAAPAXI@Z (pinned MeshAnim); 0x82641610 ??_GFlowSlider@@UAAPAXI@Z -> ??_GTokenRedemptionPanel@@UAAPAXI@Z (pinned FlowSlider); 0x827f20f0 ??_GLabelStyle@UILabel@@QAAPAXI@Z -> ??_GUIScreen@@UAAPAXI@Z (pinned UILabel). Each is a re-home lead, not a settled name. Findings: docs/decomp/W16MA_VTABLE_CLASS_NAME_AUDIT_2026-10-01.md."
+ "_w16ma_vtable_class_comment": "LANE W16-MA (2026-10-01): every ctor/dtor/??_G/??_E row audited by tools/vtable_class_name_audit.py -- the class in the map name vs the RTTI class (via the COL) of the vtable the retail body installs at 0(this) (ctor: LAST store; dtor: FIRST), corroborated by retail vtable-slot ownership and by the vtable relocations of our own same-named body. Generalises W16-LB's 0x82270298 (~ObjRef -> ~ObjRefOwner). 48 rows renamed on retail-byte evidence; the addresses they resolved were removed from _bijection_arbitrary/_icf_arbitrary (identity is now established by the installed vtable, not by a byte-class bijection). Leaf `lis/addi/stw rX,0(r3)/blr` bodies are named as DESTRUCTORS because every retail caller is an EH unwind funclet. Four rows that sat in a retail VTABLE SLOT under a NON-virtual special-member name (~_Rb_tree, ~list, _STLP_alloc_proxy ctor) were named from our own vtable at the aligned slot (ours = retail + 1, confirmed on the neighbouring named slots). DEFERRED, true name KNOWN but NOT applied because the pinned unit's base obj does not define it and the row is at 100 today (renaming would drop it to 0): 0x826bbc28 ??0BeatMatchControllerSink@@QAA@XZ -> ??1BeatMatchSink@@UAA@XZ (pinned FreestylePanel); 0x826fbd08 ??0BaseSkeleton@@QAA@ABV0@@Z -> ??1ByteGrinder@@UAA@XZ (pinned DepthBuffer3D); 0x827d24a8 ??0SongInfo@@QAA@XZ -> ??1TempoMap@@UAA@XZ (pinned SongInfoCopy); 0x826fbd18 ??_GCallback@Loader@@UAAPAXI@Z -> ??_GByteGrinder@@UAAPAXI@Z (pinned DepthBuffer3D); 0x8228d310 ??_GOfflineCallback@@UAAPAXI@Z -> ??_GCallback@Loader@@UAAPAXI@Z (pinned HamDirector); 0x827d24b8 ??_GSongInfo@@UAAPAXI@Z -> ??_GTempoMap@@UAAPAXI@Z (pinned SongInfoCopy); 0x8265eea8 ??_GSongSortCmp@@UAAPAXI@Z -> ??_GCampaignKey@@UAAPAXI@Z (pinned SongSortByRank); 0x825ea8e8 ??_GFixedSizeSaveable@@UAAPAXI@Z -> ??_GAccomplishmentGroup@@UAAPAXI@Z (pinned FixedSizeSaveable); 0x827b27b8 ??_GPlayerGameplayMsg@@UAAPAXI@Z -> ??_GStorePurchaser@@UAAPAXI@Z (pinned MeshAnim); 0x82641610 ??_GFlowSlider@@UAAPAXI@Z -> ??_GTokenRedemptionPanel@@UAAPAXI@Z (pinned FlowSlider); 0x827f20f0 ??_GLabelStyle@UILabel@@QAAPAXI@Z -> ??_GUIScreen@@UAAPAXI@Z (pinned UILabel). 0x827e5d78 ??1?$list@PAVMidiParser@@... -> ?Clear@CharWidgetImp@@UAAXXZ (vtable slot; pinned MidiParser). Each is a re-home lead, not a settled name. Findings: docs/decomp/W16MA_VTABLE_CLASS_NAME_AUDIT_2026-10-01.md."
 }
