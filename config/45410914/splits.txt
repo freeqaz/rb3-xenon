@@ -6668,7 +6668,6 @@ Graph.cpp:
 	.pdata      start:0x8220EC88 end:0x8220EC90
 	.pdata      start:0x8220EC90 end:0x8220ECA0
 	.pdata      start:0x8220ECA0 end:0x8220ECA8
-	.pdata      start:0x822382D0 end:0x822382E0
 	.text       start:0x82464470 end:0x824644C4
 	.text       start:0x824644C4 end:0x824644D8
 	.text       start:0x824644E0 end:0x824646B8
