@@ -557,7 +557,7 @@ bool Game::IsActiveUser(BandUser *u) const {
 
 Player *Game::GetPlayerFromTrack(int i1, bool b2) const {
     for (int i = 0; i < mAllActivePlayers.size(); i++) {
-        if (i1 == mAllActivePlayers[i]->GetTrackNum()) {
+        if (mAllActivePlayers[i]->GetTrackNum() == i1) {
             return mAllActivePlayers[i];
         }
     }

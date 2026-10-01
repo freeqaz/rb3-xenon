@@ -108,7 +108,7 @@ void MultiplayerAnalyzer::OverrideBasePoints(
     pData->mBonusPts = baseBonusPts;
     pData->unk_0x24 = 0;
     for (int i = 0; i < mBaseScores.size(); i++) {
-        if (ty == mBaseScores[i].mTrackType) {
+        if (mBaseScores[i].mTrackType == ty) {
             mBaseScores[i].mMaxPts = baseMaxPts;
             mBaseScores[i].mMaxStreakPts = baseMaxStreakPts;
             mBaseScores[i].mBonusPts = baseBonusPts;
