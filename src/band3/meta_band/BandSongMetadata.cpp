@@ -574,7 +574,7 @@ bool BandSongMetadata::IsUGCPlus() const {
 
 const char *BandSongMetadata::MidiUpdate() const {
     if (mHasDiscUpdate)
-        return MakeString("./songs/updates/%s/%s_update.mid", mShortName, mShortName);
+        return MakeString("./songs/updates/%s/%s_update.mid", mShortName.Str(), mShortName.Str());
     else
         return 0;
 }
