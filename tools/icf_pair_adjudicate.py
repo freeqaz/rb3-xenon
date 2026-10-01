@@ -853,7 +853,21 @@ def overcarve_controls(tgt, ours):
     ONE extra branch from outside the extent into the tail (what a real
     tail-call target looks like): expect REFUTED.  Injected by a setup/teardown
     hook around that one evaluation, so it isolates clause (3) exactly."""
-    s, o = _retail_name_at(OVERCARVE_POS[0]), OVERCARVE_POS[1]
+    X, o = OVERCARVE_POS
+    s = "fn_%08X" % X
+    if s not in tgt:
+        # ★ W16-JC (main 17aaa4298) FIXED this carve at its root -- symbols.txt now
+        # gives 0x82B9F540 size 0x88 and fn_82B9F568 is gone -- which is the
+        # independent confirmation of this rule's diagnosis, and leaves the rule
+        # with no live split in the tree.  The positive is therefore rebuilt from
+        # the REAL retail bytes with ONLY dtk's old split simulated: the first
+        # 0x28 bytes, ending in the relocated `b` into +0x28.  Raw image and branch
+        # census are untouched, so every clause still runs on retail data.
+        full = tgt.get(_retail_name_at(X))
+        if full is not None and len(full[0]) > 0x28:
+            tgt[s] = (full[0][:0x24] + b"\0\0\0\0",
+                      [r for r in full[1] if r[0] < 0x24] + [(0x24, "fn_%08X" % (X + 0x28), 6)],
+                      0x28)
     if s not in tgt or o not in ours or retail_overcarve(s, tgt[s], ours[o]) is None:
         raise SystemExit("REFUSING: over-carve positive %s/%s absent or no longer an "
                          "over-carve -- the controls would be VACUOUS." % (s, o))
