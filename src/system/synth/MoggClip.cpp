@@ -23,7 +23,9 @@ MoggClip::MoggClip()
     StartPolling();
 }
 
+#ifdef HX_NATIVE
 void MoggClip::SetSend(FxSend *send) { mFxSend = send; }
+#endif
 
 MoggClip::~MoggClip() {
     RELEASE(mLoader);
@@ -101,9 +103,12 @@ void MoggClip::PreLoad(BinStream &bs) {
     }
 }
 
+// Retail 0x8270de58 (vtable slot 19) is a single `b EnsureLoaded`.
 void MoggClip::PostLoad(BinStream &bs) {
     EnsureLoaded();
+#ifdef HX_NATIVE
     LoadNumChannels();
+#endif
 }
 
 const char *MoggClip::GetSoundDisplayName() {
@@ -212,11 +217,13 @@ void MoggClip::SetControllerVolume(float vol) {
     }
 }
 
+#ifdef HX_NATIVE
 void MoggClip::SetPan(float f1) {
     if (mNumChannels == 1) {
         SetPan(0, f1);
     }
 }
+#endif
 
 void MoggClip::EndLoop() { SetLoop(false, mLoopStartSample, mLoopEndSample); }
 
@@ -309,6 +316,7 @@ void MoggClip::UpdatePanInfo() {
     }
 }
 
+#ifdef HX_NATIVE
 void MoggClip::LoadNumChannels() {
     if (mMoggFile.empty()) {
         mNumChannels = -1;
@@ -339,6 +347,7 @@ void MoggClip::LoadNumChannels() {
         mNumChannels = -1;
     }
 }
+#endif
 
 void MoggClip::LoadFile(BinStream *bs) {
     RELEASE(mLoader);
