@@ -73,9 +73,8 @@ public:
      * Example usage: {$this get_draws}
      */
     DataNode OnGetDraws(DataArray *);
-    /** RB3 retail accessor used by ui/UILabel.cpp. Non-virtual ->
-     *  layout- and vtable-neutral. */
-    RndEnviron *GetEnv() const;
+    // Inline in retail: UILabel::UpdateAndDrawHighlightMesh reads mEnv's object (+0x104) directly.
+    RndEnviron *GetEnv() const { return mEnv; }
 
 protected:
     // RndDrawable::Load (0x82406B78) adopts an old-format child environment
