@@ -235,7 +235,9 @@ public:
         float total = mHits + mMisses;
         if (bptr)
             *bptr = total > 0;
-        return total == 0 ? 0 : mHits / total;
+        if (total == 0)
+            return 0;
+        return mHits / total;
     }
 
     void Resize(int num) { mGems.resize(num); }
