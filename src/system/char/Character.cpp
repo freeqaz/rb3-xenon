@@ -115,7 +115,10 @@ BEGIN_HANDLERS(Character)
     HANDLE(play_clip, OnPlayClip)
     HANDLE_ACTION(calc_bounding_sphere, CalcBoundingSphere())
     HANDLE(copy_bounding_sphere, OnCopyBoundingSphere)
+#ifdef HX_NATIVE
+    // No "merge_draws" string in the retail image: the handler is not in RB3.
     HANDLE_ACTION(merge_draws, MergeDraws(_msg->Obj<Character>(2)))
+#endif
     HANDLE_ACTION(find_interest_objects, FindInterestObjects(_msg->Obj<ObjectDir>(2)))
     HANDLE_ACTION(force_interest, SetFocusInterest(_msg->Obj<CharInterest>(2), 0))
     HANDLE_ACTION(force_interest_named, SetFocusInterest(_msg->Sym(2), 0))

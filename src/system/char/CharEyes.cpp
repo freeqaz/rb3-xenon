@@ -370,8 +370,12 @@ DECOMP_FORCEACTIVE(
 BEGIN_HANDLERS(CharEyes)
     HANDLE(add_interest, OnAddInterest)
     HANDLE_ACTION(force_blink, ForceBlink())
+#ifdef HX_NATIVE
+    // Neither "toggle_force_focus" nor "toggle_interest_overlay" occurs in the
+    // retail image: these debug handlers are not in RB3.
     HANDLE(toggle_force_focus, OnToggleForceFocus)
     HANDLE(toggle_interest_overlay, OnToggleInterestOverlay)
+#endif
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
 
