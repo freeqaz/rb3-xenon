@@ -42,7 +42,14 @@ struct Alpha {
 DataNode PrintSymbolTable(DataArray *msg) {
     MILO_LOG("Symbol table:\n");
     MILO_LOG("%d / %d hashes\n", gHashTable.UsedSize(), gHashTable.Size());
+#ifdef HX_NATIVE
     MILO_LOG("%d / %d strings\n", gStringTable->UsedSize(), gStringTable->Size());
+#else
+    // Retail's stripped residue of this line calls Size() before UsedSize():
+    // right-to-left, the order of a real call, which MILO_LOG's comma form
+    // reverses (see the evaluation-order note above MILO_WARN in os/Debug.h).
+    MiloStripEval("%d / %d strings\n", gStringTable->UsedSize(), gStringTable->Size());
+#endif
     MILO_LOG(
         "adding 30%%, suggest Symbol::PreInit(%d, %d)\n",
         (int)(gStringTable->UsedSize() * 1.3f),
