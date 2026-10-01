@@ -150,21 +150,29 @@ void UIListDir::PostLoad(BinStream &bs) {
     mTestComponentState = (UIComponent::State)compstate;
 }
 
+// The test-widget preview is editor-only; retail's SyncObjects and DrawShowing are
+// plain RndDir tail calls.
 void UIListDir::SyncObjects() {
     RndDir::SyncObjects();
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (TheLoadMgr.EditMode()) {
         CreateElements(0, mTestWidgets, mTestState.NumDisplay());
         FillElements(mTestState, mTestWidgets);
     }
+#endif
 }
 
 void UIListDir::DrawShowing() {
+#if !(defined(MILO_DEBUG) && defined(HX_NATIVE))
+    RndDir::DrawShowing();
+#else
     if (mTestMode && TheLoadMgr.EditMode()) {
         UIListWidgetDrawState drawState;
         BuildDrawState(drawState, mTestState, mTestComponentState, 0.0f);
         DrawWidgets(drawState, mTestState, mTestWidgets, WorldXfm(), mTestComponentState, nullptr, false);
     } else
         RndDir::DrawShowing();
+#endif
 }
 
 void UIListDir::Poll() {
