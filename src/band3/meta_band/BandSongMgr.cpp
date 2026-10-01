@@ -225,7 +225,9 @@ void BandSongMgr::ContentDone() {
         }
         TheRockCentral.SyncAvailableSongs(profiles, songs2, ic8, nullptr);
     }
-    if (mSongCacheWriteAllowed && TheSaveLoadMgr) {
+    // Retail 0x82579F50 autosaves whenever the save/load manager exists; it does
+    // not consult mSongCacheWriteAllowed here.
+    if (TheSaveLoadMgr) {
         TheSaveLoadMgr->AutoSave();
     }
 }
