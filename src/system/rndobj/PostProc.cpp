@@ -770,6 +770,7 @@ void RndPostProc::Interp(const RndPostProc *from, const RndPostProc *to, float p
     // Copy non-interpolatable bool/obj properties from pick
     mNoiseMidtone = pick->mNoiseMidtone;
     mNoiseStationary = pick->mNoiseStationary;
+    mLuminanceMap = pick->mLuminanceMap.Ptr();
     mNoiseMap = pick->mNoiseMap.Ptr();
     mGradientMap = pick->mGradientMap.Ptr();
     mRefractMap = pick->mRefractMap.Ptr();
@@ -777,10 +778,8 @@ void RndPostProc::Interp(const RndPostProc *from, const RndPostProc *to, float p
     mMotionBlurVelocity = pick->mMotionBlurVelocity;
     mChromaticSharpen = pick->mChromaticSharpen;
 
-    // Bloom intensity uses BloomIntensity() which accounts for glare/hires
-    float toBloom = to->BloomIntensity();
-    float fromBloom = from->BloomIntensity();
-    ::Interp(fromBloom, toBloom, pct, mBloomIntensity);
+    // The raw member: no BloomIntensity() glare/hi-res adjustment here.
+    ::Interp(from->mBloomIntensity, to->mBloomIntensity, pct, mBloomIntensity);
 
     // Bloom color
     ::Interp(from->mBloomColor, to->mBloomColor, pct, mBloomColor);
