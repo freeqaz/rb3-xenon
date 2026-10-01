@@ -49,13 +49,23 @@ END_COPYS
 
 INIT_REVS(1, 0)
 
+// Retail keeps no BinStreamRev: the packed rev goes into one aligned
+// file-scope aggregate (altRev +0, rev +4) and every field is read from the
+// raw stream.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharUpperTwist;
+
 BEGIN_LOADS(CharUpperTwist)
-    LOAD_REVS(bs)
-    ASSERT_REVS(1, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    d >> mUpperArm;
-    d >> mTwist1;
-    d >> mTwist2;
+    int rev;
+    bs >> rev;
+    gRevs_CharUpperTwist.rev = getHmxRev(rev);
+    gRevs_CharUpperTwist.altRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    bs >> mUpperArm;
+    bs >> mTwist1;
+    bs >> mTwist2;
 END_LOADS
 
 void CharUpperTwist::Poll() {

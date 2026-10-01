@@ -61,22 +61,21 @@ BEGIN_PROPSYNCS(CharWeightable)
      * Same defect as RndTransformable::SyncProperty. */
 END_PROPSYNCS
 
+// Retail 0x823AEE20: rev 2, no Hmx::Object superclass save.
 BEGIN_SAVES(CharWeightable)
-    SAVE_REVS(3, 0)
-    SAVE_VIRTUAL_SUPERCLASS(Hmx::Object)
+    SAVE_REVS(2, 0)
     bs << mWeight;
     bs << mWeightOwner;
 END_SAVES
 
 BEGIN_COPYS(CharWeightable)
-    /* Retail (0x823AEE30, 0x88 B) has NO superclass copy: the body opens
+    /* Retail (0x823AE918, 0x88 B) has NO superclass copy: the body opens
      * straight into __RTDynamicCast, saves only r29-r31 and uses a 0x70 frame.
      * COPY_VIRTUAL_SUPERCLASS expands to `if (ClassName() == StaticClassName())
      * Hmx::Object::Copy(o, ty);`, which cost 26 surplus instructions, two Symbol
      * temps (frame 0x80) and one extra callee-save. Same defect class as this
-     * TU's SyncProperty (see the END_PROPSYNCS note above).
-     * NOT a blanket removal: SAVE_/LOAD_VIRTUAL_SUPERCLASS below are CORRECT --
-     * Save and Load are both already at 100% with them. */
+     * TU's SyncProperty (see the END_PROPSYNCS note above) and as Save/Load
+     * below, which have no superclass call either. */
     CREATE_COPY(CharWeightable)
     BEGIN_COPYING_MEMBERS
         if (ty == kCopyShallow) {
@@ -88,16 +87,23 @@ BEGIN_COPYS(CharWeightable)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(3, 0)
+INIT_REVS(2, 0)
+
+// Retail 0x823AF230 keeps no BinStreamRev: the packed rev goes into one aligned
+// file-scope aggregate (altRev +0, rev +4), both fields come from the raw
+// stream, and there is no Hmx::Object superclass load.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharWeightable;
 
 BEGIN_LOADS(CharWeightable)
-    LOAD_REVS(bs)
-    ASSERT_REVS(3, 0)
-    if (d.rev > 2) {
-        LOAD_VIRTUAL_SUPERCLASS(Hmx::Object)
-    }
-    d >> mWeight;
-    if (d.rev > 1) {
-        d >> mWeightOwner;
+    int rev;
+    bs >> rev;
+    gRevs_CharWeightable.rev = getHmxRev(rev);
+    gRevs_CharWeightable.altRev = getAltRev(rev);
+    bs >> mWeight;
+    if (gRevs_CharWeightable.rev > 1) {
+        bs >> mWeightOwner;
     }
 END_LOADS
