@@ -26,7 +26,7 @@
 
 DxShaderMgr TheDxShaderMgr;
 RndShaderMgr &TheShaderMgr = TheDxShaderMgr;
-DxShaderInclude &TheDxShaderInclude = DxShaderInclude();
+DxShaderInclude TheDxShaderInclude;
 
 #pragma region DxShader
 
@@ -118,12 +118,12 @@ bool DxShader::Compile(
     const char *shaderName = ShaderTypeName(s);
     LPCSTR data = nullptr;
     UINT bytes = 0;
-    if (TheDxShaderInclude.Open(
-            D3DXINC_LOCAL, shaderName, nullptr, (LPCVOID *)&data, &bytes, nullptr, 0
-        )
+    ID3DXInclude *include = &TheDxShaderInclude;
+    if (include->Open(D3DXINC_LOCAL, shaderName, nullptr, (LPCVOID *)&data, &bytes, nullptr, 0)
         < 0) {
         return false;
     }
+    const D3DXMACRO *macros = reinterpret_cast<const D3DXMACRO *>(defines.begin());
     ID3DXBuffer *vError = nullptr;
     ID3DXBuffer *pError = nullptr;
     D3DXSHADER_COMPILE_PARAMETERS params;
@@ -136,8 +136,8 @@ bool DxShader::Compile(
     HRESULT vRes = D3DXCompileShaderExA(
         data,
         bytes,
-        reinterpret_cast<const D3DXMACRO *>(defines.begin()),
-        &TheDxShaderInclude,
+        macros,
+        include,
         "vshader",
         "vs_3_0",
         0,
@@ -153,8 +153,8 @@ bool DxShader::Compile(
     HRESULT pRes = D3DXCompileShaderExA(
         data,
         bytes,
-        reinterpret_cast<const D3DXMACRO *>(defines.begin()),
-        &TheDxShaderInclude,
+        macros,
+        include,
         "pshader",
         "ps_3_0",
         0,
