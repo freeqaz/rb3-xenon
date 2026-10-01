@@ -3430,16 +3430,20 @@ SampleInst.cpp:
 	.pdata      start:0x821F4848 end:0x821F4850
 	.pdata      start:0x821F4850 end:0x821F4860
 	.pdata      start:0x821F48E0 end:0x821F48F0
+	.pdata      start:0x8223A1C8 end:0x8223A1D0
 	.pdata      start:0x8223A1D0 end:0x8223A1F0
+	.pdata      start:0x8223A1F0 end:0x8223A1F8
 	.pdata      start:0x8223A1F8 end:0x8223A218
 	.text       start:0x822A2E10 end:0x822A2E78
 	.text       start:0x822A2E78 end:0x822A2F18
 	.text       start:0x822A2F78 end:0x822A2F80
 	.text       start:0x822A3890 end:0x822A3928
+	.text       start:0x8272A830 end:0x8272A884
 	.text       start:0x8272A884 end:0x8272A8D8
 	.text       start:0x8272A8D8 end:0x8272A918
 	.text       start:0x8272A918 end:0x8272A940
 	.text       start:0x8272A940 end:0x8272AA78
+	.text       start:0x8272AA78 end:0x8272AAB8
 	.text       start:0x8272AAB8 end:0x8272AC00
 
 User.cpp:
@@ -5114,11 +5118,9 @@ Spotlight.cpp:
 	.pdata      start:0x82213248 end:0x82213258
 	.pdata      start:0x82214A98 end:0x82215080
 	.pdata      start:0x822382B0 end:0x822382B8
-	.pdata      start:0x8223A1F0 end:0x8223A1F8
 	.text       start:0x824BBE38 end:0x824BBED0
 	.text       start:0x824D7FC8 end:0x824E0034
 	.text       start:0x8270A8D8 end:0x8270A948
-	.text       start:0x8272AA78 end:0x8272AAB8
 
 Crowd.cpp:
 	.pdata      start:0x821FCDA0 end:0x821FCDC8
@@ -6025,11 +6027,11 @@ StreamReceiver.cpp:
 	.pdata      start:0x8223A190 end:0x8223A1A0
 	.pdata      start:0x8223A1A0 end:0x8223A1B0
 	.pdata      start:0x8223A1B0 end:0x8223A1B8
-	.pdata      start:0x8223A1B8 end:0x8223A1D0
+	.pdata      start:0x8223A1B8 end:0x8223A1C8
 	.text       start:0x8272A240 end:0x8272A3A4
 	.text       start:0x8272A3A8 end:0x8272A488
 	.text       start:0x8272A488 end:0x8272A4EC
-	.text       start:0x8272A4F0 end:0x8272A884
+	.text       start:0x8272A4F0 end:0x8272A830
 
 MoggClipMap.cpp:
 	.pdata      start:0x82239410 end:0x82239420

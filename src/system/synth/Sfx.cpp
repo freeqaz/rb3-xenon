@@ -40,7 +40,7 @@ SfxInst::~SfxInst() { DeleteAll(mSamples); }
 
 void SfxInst::Stop() {
     FOREACH (it, mSamples) {
-        (*it)->Stop(false);
+        (*it)->Stop();
     }
     FOREACH (it, mMoggClips) {
         MoggClip *clip = (*it)->GetMoggClip();
@@ -86,20 +86,23 @@ void SfxInst::SetPan(float f1) {
 
 void SfxInst::SetTranspose(float f1) { SetSpeed(CalcSpeedFromTranspose(f1)); }
 
+// Retail 0x8271aa58 (SfxInst slot 27): each sample gets SetStartProgress (slot 26)
+// then the non-virtual SampleInst::Start; each clip gets SetControllerVolume,
+// SetupPanInfo and the no-argument MoggClip::Play.
 void SfxInst::StartImpl() {
     FOREACH (it, mSamples) {
         (*it)->SetStartProgress(mStartProgress);
-        (*it)->Play(0);
+        (*it)->Start();
     }
     FOREACH (it, mMoggClips) {
         MoggClipMap *moggClipMap = *it;
         MoggClip *clip = moggClipMap->GetMoggClip();
         if (clip) {
-            clip->SetVolume(moggClipMap->Volume());
+            clip->SetControllerVolume(moggClipMap->Volume());
             clip->SetupPanInfo(
                 moggClipMap->Pan(), moggClipMap->PanWidth(), moggClipMap->Stereo()
             );
-            clip->Play(0);
+            clip->Play();
         }
     }
 }

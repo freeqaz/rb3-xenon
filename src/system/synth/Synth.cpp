@@ -553,7 +553,7 @@ int Synth::GetSampleMem(ObjectDir *dir, Platform p) {
 }
 
 void Synth::AddZombie(SampleInst *inst) {
-    inst->Stop(false);
+    inst->Stop();
     mZombieInsts.push_back(inst);
 }
 

@@ -1,4 +1,6 @@
 {
+ "0x8272a830": "?Stop@SampleInst@@QAAXXZ",
+ "0x8272aa78": "?Start@SampleInst@@QAAXXZ",
  "0x82716068": "??0?$ObjPtr@VMidiInstrument@@@@QAA@PAVObject@Hmx@@PAVMidiInstrument@@@Z",
  "0x8272abb0": "??_GSampleInst@@UAAPAXI@Z",
  "0x82721590": "??_GFxSendDistortion@@UAAPAXI@Z",
@@ -29724,7 +29726,7 @@
  "0x82b6dec0": "??0SynapseAPO@DSP@@QAA@XZ",
  "0x82b6df60": "??_GSynapseAPO@DSP@@UAAPAXI@Z",
  "0x82b6e100": "?StartImpl@SampleInst360@@MAAXXZ",
- "0x82b6e108": "?StopImpl@SampleInst360@@MAAX_N@Z",
+ "0x82b6e108": "?StopImpl@SampleInst360@@MAAXXZ",
  "0x82b6e110": "?Pause@SampleInst360@@UAAX_N@Z",
  "0x82b6e118": "?IsPlaying@SampleInst360@@UBA_NXZ",
  "0x82b6e120": "?SetVolumeImpl@SampleInst360@@MAAXM@Z",

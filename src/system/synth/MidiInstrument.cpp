@@ -52,7 +52,7 @@ void NoteVoiceInst::Start() {
 
 void NoteVoiceInst::Stop() {
     mStopped = true;
-    mSample->Stop(false);
+    mSample->Stop();
 }
 
 bool NoteVoiceInst::IsRunning() { return mSample->IsPlaying(); }

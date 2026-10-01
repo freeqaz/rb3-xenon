@@ -25,7 +25,7 @@ SynthSample::SynthSample() : mIsLooped(0), mLoopStartSamp(0), mLoopEndSamp(-1) {
 SynthSample::~SynthSample() {
 #ifdef HX_NATIVE
     FOREACH (it, mSampleInsts) {
-        (*it)->Stop(true);
+        (*it)->Stop();
     }
 #endif
     if (sLoading == this) {
