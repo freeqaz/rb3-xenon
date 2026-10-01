@@ -6806,6 +6806,7 @@ DataFile.cpp:
 	.pdata      start:0x82216268 end:0x82216278
 	.pdata      start:0x82216310 end:0x82216318
 	.pdata      start:0x8223D380 end:0x8223D3B0
+	.pdata      start:0x8223D3B0 end:0x8223D3C0
 	.pdata      start:0x8223D3C0 end:0x8223D550
 	.pdata      start:0x8223D550 end:0x8223D578
 	.pdata      start:0x8223D638 end:0x8223D658
@@ -6815,6 +6816,7 @@ DataFile.cpp:
 	.text       start:0x824F88CC end:0x824F8968
 	.text       start:0x824F9188 end:0x824F91DC
 	.text       start:0x8276A758 end:0x8276AA00
+	.text       start:0x8276AA00 end:0x8276AADC
 	.text       start:0x8276AADC end:0x8276C6CC
 	.text       start:0x8276C6CC end:0x8276C958
 	.text       start:0x8276CB18 end:0x8276CB20
@@ -12975,14 +12977,12 @@ system/os/UsbMidiGuitar.cpp:
 	.pdata      start:0x82218628 end:0x82218638
 	.pdata      start:0x82218638 end:0x82218698
 	.pdata      start:0x82218698 end:0x822186A8
-	.pdata      start:0x8223D3B0 end:0x8223D3C0
 	.pdata      start:0x82261588 end:0x822615D0
 	.text       start:0x8251A004 end:0x8251A070
 	.text       start:0x8251A070 end:0x8251A138
 	.text       start:0x8251A138 end:0x8251A2DC
 	.text       start:0x8251A2E0 end:0x8251A9B8
 	.text       start:0x8251A9B8 end:0x8251AA60
-	.text       start:0x8276AA00 end:0x8276AADC
 	.text       start:0x82C3F8EC end:0x82C3FB78
 
 system/meta/MemcardMgr.cpp:
