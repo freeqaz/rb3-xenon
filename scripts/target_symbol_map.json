@@ -1,4 +1,5 @@
 {
+ "0x824f18c8": "??$_M_allocate_and_copy@PAVVector2@@@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVVector2@@IPAV2@0@Z",
  "0x82433a68": "??DHmx@@YA?AVMatrix4@0@ABVTransform@@ABV10@@Z",
  "0x82434528": "?SetFrustum@RndCam@@QAAXMMMM@Z",
  "0x824f0680": "?Intersect@@YA_NABVSegment@@PBVBSPNode@@AAMAAVPlane@@@Z",
@@ -24096,7 +24097,7 @@
  "0x827d59b8": "??$__unguarded_partition@PAPAVAllocInfo@@PAV1@P6A_NABQAV1@0@Z@stlpmtx_std@@YAPAPAVAllocInfo@@PAPAV1@0PAV1@P6A_NABQAV1@2@Z@Z",
  "0x827d5a38": "??$__unguarded_partition@PAUMemDiffEntry@@U1@U?$less@UMemDiffEntry@@@stlpmtx_std@@@stlpmtx_std@@YAPAUMemDiffEntry@@PAU1@0U1@U?$less@UMemDiffEntry@@@0@@Z",
  "0x827d5b40": "??$__linear_insert@PAPAVAllocInfo@@PAV1@P6A_NABQAV1@0@Z@stlpmtx_std@@YAXPAPAVAllocInfo@@0PAV1@P6A_NABQAV1@2@Z@Z",
- "0x827d5bb0": "??$_M_allocate_and_copy@PAVVector2@@@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVVector2@@IPAV2@0@Z",
+ "0x827d5bb0": null,
  "0x827d5c50": "??$__linear_insert@PAUMemDiffEntry@@U1@U?$less@UMemDiffEntry@@@stlpmtx_std@@@stlpmtx_std@@YAXPAUMemDiffEntry@@0U1@U?$less@UMemDiffEntry@@@0@@Z",
  "0x827d5d70": "??$sort_heap@PAPAVAllocInfo@@P6A_NABQAV1@0@Z@stlpmtx_std@@YAXPAPAVAllocInfo@@0P6A_NABQAV1@1@Z@Z",
  "0x827d5dd8": "??$sort_heap@PAUMemDiffEntry@@U?$less@UMemDiffEntry@@@stlpmtx_std@@@stlpmtx_std@@YAXPAUMemDiffEntry@@0U?$less@UMemDiffEntry@@@0@@Z",
