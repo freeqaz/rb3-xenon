@@ -319,12 +319,18 @@ void GemTrack::UpdateFills() {
     if (!player || !player->IsDeployingBandEnergy())
         return;
     else {
+        // Retail builds these as function-local statics (one guard word, bits
+        // 1/2/4/8 in this order), not the global Symbols.
         Symbol s;
+        static Symbol fill("fill");
         for (int i = 0; i < mTrackConfig.GetMaxSlots(); i++) {
             if (mGemManager->GetWidgetName(s, i, fill)) {
                 mGemManager->GetWidgetByName(s)->Clear();
             }
         }
+        static Symbol crash("crash");
+        static Symbol crash_cymbal("crash_cymbal");
+        static Symbol beard("beard");
         Symbol symlist[3] = { crash, crash_cymbal, beard };
         for (int i = 0; i < 3U; i++) {
             if (mGemManager->GetWidgetName(s, 4, symlist[i])) {
@@ -353,20 +359,22 @@ void GemTrack::DrawFill(FillInfo *info, int i2, int i3) {
     FillExtent ext154(0, 0, 0);
     Player *player = mTrackConfig.GetBandUser()->GetPlayer();
     int i158 = 0;
+    // Retail shares one FillsEnabled() call between the two arms.
+    int fillTick;
     if (!TheGame->InTrainer()) {
         if (!info)
             return;
         if (!info->FillAt(i2, ext154, true) && !info->FillAt(i2 + i3, ext154, true))
             return;
-        if (!player->FillsEnabled(ext154.start))
-            return;
+        fillTick = ext154.start;
     } else {
         int ivar3 = GetLoopTick(i2, i158);
         if (!info->FillAt(ivar3, ext154, true) && !info->FillAt(ivar3 + i3, ext154, true))
             return;
-        if (!player->FillsEnabled(ext154.start + i158))
-            return;
+        fillTick = ext154.start + i158;
     }
+    if (!player->FillsEnabled(fillTick))
+        return;
     {
         ext154.start += i158;
         ext154.end += i158;
