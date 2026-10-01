@@ -654,6 +654,73 @@ def _slots_agree(tgt, ours, rt, ob, survivor, our_name, mapped, depth, stack,
     return ok
 
 
+_BLR = b"\x4e\x80\x00\x20"
+
+
+def retail_tail_pad(rt, ob):
+    """★ W16-JH.  True iff the retail extent is OUR body followed only by
+    alignment padding: retail = ours + k zero words, ours ends in `blr`, and no
+    retail relocation lies in (or past) the extra words.
+
+    WHY.  A leaf that touches neither the stack nor LR gets no `.pdata` record,
+    so dtk's extent for it runs to the next symbol and bills the inter-function
+    alignment word(s) into the retail body.  Measured: retail fn_8274A9D0 is 48 B
+    (11 instructions + `0x00000000`) and OUR ??0DataNode@@QAA@ABV0@@Z is those
+    11 instructions exactly (44 B) -- a one-sided reader artifact that read as
+    BYTES-DIFFER and left 35 placeholder slots UNDISCHARGED.  `0x00000000` after
+    an unconditional `blr` is unreachable (it is not even a valid instruction),
+    so it is not part of the COMDAT the linker folded.
+
+    STRICTNESS.  The zero words must be RAW zeros, not masked relocation fields
+    (masking zeroes relocated fields, which is why ~30% of masked bodies end in a
+    zero word) -- hence the no-relocation-in-the-tail test.  Only the RETAIL side
+    is trimmed: our COMDATs carry no inter-function padding.  Used only on the
+    non-vacuous general path; the vacuous branch and locate_retail stay exact."""
+    n = len(ob[0])
+    if len(rt[0]) <= n or rt[0][:n] != ob[0] or ob[0][-4:] != _BLR:
+        return False
+    if any(o + 4 > n for (o, _nm, _t) in rt[1]):
+        return False
+    tail = rt[0][n:]
+    if _SELF_BREAK_TAILPAD:
+        # --self-break-tailpad ONLY: drop the zero-tail test (any tail admitted).
+        return len(tail) % 4 == 0
+    return len(tail) % 4 == 0 and tail == b"\0" * len(tail)
+
+
+# ★ W16-JH.  Set ONLY by --self-break-tailpad, so the TAIL-PAD DECOY controls
+# can be watched going red (house pattern: a control nobody has seen fail is an
+# assumption, not a control).
+_SELF_BREAK_TAILPAD = False
+TAILPAD_POS = ("fn_8274A9D0", "??0DataNode@@QAA@ABV0@@Z")
+
+
+def tailpad_controls(tgt, ours):
+    """★ W16-JH controls for retail_tail_pad.  POSITIVE: retail fn_8274A9D0 (48 B
+    = DataNode's 11-instruction copy ctor + one alignment word) vs OUR copy ctor.
+    DECOY is that same retail body with ONLY the tail word altered (a `nop`,
+    0x60000000), injected under a reserved name, so it isolates the zero-tail
+    clause.
+    Refuses if the positive pair is absent (the decoy would then test nothing)."""
+    s, o = TAILPAD_POS
+    if s not in tgt or o not in ours or not retail_tail_pad(tgt[s], ours[o]):
+        raise SystemExit("REFUSING: tail-pad positive %s/%s is absent or no longer "
+                         "a pad-only pair -- the tail-pad controls would be VACUOUS."
+                         % TAILPAD_POS)
+    mb, rl, sz = tgt[s]
+    n = len(ours[o][0])
+    tgt["__chasetest_tailpad_nop__"] = (mb[:n] + b"\x60\x00\x00\x00", rl, sz)
+    # ⚠ No decoy for the "relocation in the tail" clause, DELIBERATELY: it is
+    # implied by _slots_agree (a retail relocation at/past len(ours) can never
+    # pair with one of ours, so RELOC-COUNT / RELOC-SHAPE refuses it anyway).
+    # MEASURED: such a decoy stayed REFUTED under --self-break-tailpad, i.e. it
+    # cannot be made to fail by breaking this rule -- a control that cannot fail
+    # is not a control.  The clause stays as defence in depth.
+    return [("TAIL-PAD POSITIVE, retail = ours + alignment word (expect PROVEN)", s, o),
+            ("TAIL-PAD DECOY, nonzero tail word (expect REFUTED)",
+             "__chasetest_tailpad_nop__", o)]
+
+
 def chase(tgt, ours, survivor, our_name, mapped, depth=0, stack=None, memo=None,
           out=None, maxdepth=12, ctx=None):
     """RECURSIVE T1: verify a fold through relocation-target EQUIVALENCE.
@@ -795,8 +862,10 @@ def chase(tgt, ours, survivor, our_name, mapped, depth=0, stack=None, memo=None,
         out.append((depth, "VACUOUS", survivor, our_name))
         return False
     if rt[0] != ob[0]:
-        out.append((depth, "BYTES-DIFFER", survivor, our_name))
-        return False
+        if not retail_tail_pad(rt, ob):
+            out.append((depth, "BYTES-DIFFER", survivor, our_name))
+            return False
+        out.append((depth, "RETAIL-TAIL-PAD", survivor, our_name))
     # The general path KEEPS its placeholder tolerance -- see the note inside
     # _slots_agree; removing it regressed a landed positive control.
     ok = _slots_agree(tgt, ours, rt, ob, survivor, our_name, mapped, depth,
@@ -1037,6 +1106,10 @@ def main():
                          "removed (SLOT_POLICY='lax', the old blanket tolerance). "
                          "Every SLOT DECOY control MUST go red and every other "
                          "control must stay green; exits 0 only then.")
+    ap.add_argument("--self-break-tailpad", action="store_true",
+                    help="run --chasetest with retail_tail_pad's zero-tail test "
+                         "REMOVED. Both TAIL-PAD DECOY controls MUST go red and "
+                         "every other control must stay green; exits 0 only then.")
     ap.add_argument("--lax-slots", action="store_true",
                     help="reproduce a pre-W16-JG verdict (blanket placeholder "
                          "tolerance). NEVER use for an admission.")
@@ -1045,6 +1118,9 @@ def main():
         globals()["_SELF_BREAK"] = True
         a.chasetest = True
     if a.self_break_slots:
+        a.chasetest = True
+    if a.self_break_tailpad:
+        globals()["_SELF_BREAK_TAILPAD"] = True
         a.chasetest = True
 
     mapped = load_mapped()
@@ -1124,6 +1200,7 @@ def main():
                   ("VACUOUS FOLD, destinations proven folded (expect PROVEN)",
                    vf_s, vf_o)]
         pairs += slot_controls(tgt, ours, mapped, al)
+        pairs += tailpad_controls(tgt, ours)
         a.chase = True
     elif a.pairs:
         pairs = [("", s, o) for s, o in json.load(open(a.pairs))]
@@ -1134,6 +1211,7 @@ def main():
         globals()["SLOT_POLICY"] = "lax"
     rc = 0
     slot_decoy_red = slot_other_red = n_slot_decoys = 0
+    tp_decoy_red = tp_other_red = n_tp_decoys = 0
     for label, s, o in pairs:
         verdict, det = adjudicate(tgt, ours, s, o, mapped)
         det.update(uniqueness(tgt, ours, s, o))
@@ -1168,6 +1246,7 @@ def main():
         if a.selftest or a.chasetest:
             want = "REFUTED" if ("NEGATIVE" in label or "DECOY" in label) else "PROVEN"
             n_slot_decoys += "SLOT DECOY" in label
+            n_tp_decoys += "TAIL-PAD DECOY" in label
             if verdict != want:
                 print("  ** CONTROL FAILED: wanted %s **" % want)
                 rc = 1
@@ -1175,6 +1254,19 @@ def main():
                     slot_decoy_red += 1
                 else:
                     slot_other_red += 1
+                if "TAIL-PAD DECOY" in label:
+                    tp_decoy_red += 1
+                else:
+                    tp_other_red += 1
+    if a.self_break_tailpad:
+        if n_tp_decoys and tp_decoy_red == n_tp_decoys and not tp_other_red:
+            print("\nself-break-tailpad OK -- all %d TAIL-PAD DECOY controls went RED "
+                  "with the zero-tail test removed, and no other control moved."
+                  % n_tp_decoys)
+            return 0
+        print("\nself-break-tailpad FAILED -- %d/%d tail-pad decoys red, %d other "
+              "controls red." % (tp_decoy_red, n_tp_decoys, tp_other_red))
+        return 1
     if a.self_break_slots:
         # Under --self-break-slots the discharge is removed, so EVERY slot decoy
         # must go red (each was chosen because the lax rule PROVES it -- that is
