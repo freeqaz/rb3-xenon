@@ -1,4 +1,5 @@
 {
+ "0x824d0800": "?NewObject@WorldDir@@SAPAVObject@Hmx@@XZ",
  "0x82b89a08": "?DoPost@NgPostProc@@UAAXXZ",
  "0x82b86738": "?Select@NgEnviron@@UAAXPBVVector3@@@Z",
  "0x824a7468": "?Select@RndShaderVelocity@@MAAXPAVRndMat@@W4ShaderType@@_N@Z",
