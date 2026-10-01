@@ -63,19 +63,16 @@ RndWind::RndWind()
 RndWind::~RndWind() {}
 
 void RndWind::Replace(ObjRef *from, Hmx::Object *to) {
+    // Retail (0x8245CFB8): re-point the owner, falling back to this, and
+    // nothing else -- no Hmx::Object::Replace call.
     if (RefIs(from, mWindOwner)) {
-        if (mWindOwner != this) {
-            RndWind *wind = dynamic_cast<RndWind *>(to);
-            if (wind) {
-                mWindOwner = wind;
-            }
-        } else {
-            mWindOwner = this;
-        }
-        return;
-    } else {
+        SetWindOwner(dynamic_cast<RndWind *>(to));
+    }
+#ifdef HX_NATIVE
+    else {
         Hmx::Object::Replace(from, to);
     }
+#endif
 }
 
 
