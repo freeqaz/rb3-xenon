@@ -384,7 +384,8 @@ Movie::Impl *Movie::Impl::sNextMovie;
 static CriticalSection gMovieCrit;
 static std::list<Movie::Impl *> gOpenMovies;
 static bool gInitialized;
-static int gBinkCores[2] = { -1, -1 };
+static int gBinkCore0 = -1;
+static int gBinkCore1 = -1;
 
 int gForceTrack;
 
@@ -416,8 +417,8 @@ void Movie::Impl::SetRect() {
     float avail;
     if (mWidth != 0) {
         w = mWidth;
-        h = mHeight;
-        avail = h;
+        avail = mHeight;
+        h = avail;
     } else {
         w = TheRnd.Width();
         h = TheRnd.Height();
@@ -516,9 +517,8 @@ float (*Movie::Impl::SetTimeCallback(float (*cb)()))() {
 void Movie::Impl::Draw() {
     MOVIE_THREAD_CHECK();
     if (mBink && mBuffers) {
-        MovieInternalBuffers *bufs = mBuffers;
-        int half = bufs->mNextFrame >= bufs->mBuffers.TotalFrames;
-        int frame = bufs->mBuffers.FrameNum;
+        int half = mBuffers->mNextFrame >= mBuffers->mBuffers.TotalFrames;
+        int frame = mBuffers->mBuffers.FrameNum;
         mBuffers->mMat->SetDiffuseTex(mBuffers->mTex[0][frame][half]);
         mBuffers->mMat->SetSpecularMap(mBuffers->mTex[1][frame][half]);
         mBuffers->mMat->SetEmissiveMap(mBuffers->mTex[2][frame][half]);
@@ -583,7 +583,7 @@ static DataNode OnMovieSetTrack(DataArray *arr) {
 void Movie::Impl::StartFrame() {
     if (!mMidFrame && mAsync) {
         BeginFrame();
-        BinkDoFrameAsync(mBink, gBinkCores[0], gBinkCores[1]);
+        BinkDoFrameAsync(mBink, gBinkCore0, gBinkCore1);
     }
 }
 
@@ -601,7 +601,8 @@ void Movie::Impl::MovieOpen(const char *file, unsigned int flags) {
         }
         BINK *&bink = mBink;
         // Retail keeps the test of the slow-frame flag; both arms open the same way.
-        if ((flags & 0x4000000) == 0) {
+        bool streamed = !(flags & 0x4000000);
+        if (streamed) {
             bink = BinkOpen(file, flags);
         } else {
             bink = BinkOpen(file, flags);
@@ -886,10 +887,8 @@ void Movie::Impl::DiscContentionCheck(Loader *except) {
     for (std::list<Loader *>::iterator it = TheLoadMgr.Loading().begin();
          it != TheLoadMgr.Loading().end();
          ++it) {
-        Loader *cur = *it;
-        if (cur != except) {
-            FilePath &file = cur->LoaderFile();
-            mDiscContention[cur] = file;
+        if (*it != except) {
+            mDiscContention[*it] = (*it)->LoaderFile();
         }
     }
 }
@@ -1017,17 +1016,17 @@ void Movie::Impl::MovieLoader::LoadFile() {
 void Movie::Impl::Init() {
     CritSecTracker tracker(&gMovieCrit);
     DataArray *cfg = SystemConfig("movie");
-    cfg->FindData("bink_core0", gBinkCores[0], true);
-    cfg->FindData("bink_core1", gBinkCores[1], true);
+    cfg->FindData("bink_core0", gBinkCore0, true);
+    cfg->FindData("bink_core1", gBinkCore1, true);
     if (!gInitialized) {
         REGISTER_OBJ_FACTORY(TexMovie)
         TheDebug.AddExitCallback(Movie::Terminate);
         BinkSetMemory(RadAlloc, operator delete);
         BinkMovieSys::PlatformInit();
         gInitialized = true;
-        bool started = BinkStartAsyncThread(gBinkCores[0], nullptr);
-        if (started && gBinkCores[0] != gBinkCores[1]) {
-            BinkStartAsyncThread(gBinkCores[1], nullptr);
+        bool started = BinkStartAsyncThread(gBinkCore0, nullptr);
+        if (started && gBinkCore0 != gBinkCore1) {
+            BinkStartAsyncThread(gBinkCore1, nullptr);
         }
     }
     DataRegisterFunc("set_bink_track", OnMovieSetTrack);

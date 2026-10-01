@@ -18,16 +18,11 @@ public:
     virtual void Replace(ObjRef *, Hmx::Object *);
     OBJ_CLASSNAME(TexMovie);
     OBJ_SET_TYPE_ENGINE(TexMovie);
-    // laneAT-f4 opt-out: the retail bytes show TexMovie's operator new was kept
-    // OUT OF LINE and ICF-folded (its `new` site is a single
-    // `bl ??2<folded>@@SAPAXI@Z` with NO StaticClassName call), unlike the
-    // OBJ_MEM_OVERLOAD majority which retail inlined. Classified from the
-    // CTOR relocation, not the symbol name -- see
-    // /home/free/tmp/laneAT/f4/newobj_classify.py.
-    // The DELETE side is inlinable (MEM_OVERLOAD_INLINE_DEL): retail's
-    // ??_GTexMovie (fn_82747708) calls ?MemFree@@YAXPAX@Z directly (lane W16-IE,
-    // 2026-10-01).
-    MEM_OVERLOAD_INLINE_DEL(TexMovie, 0x18);
+    // TexMovie::NewObject (0x82742E20, emitted in the Movie TU) evaluates
+    // StaticClassName() and then calls MemAlloc(0x84, 0) inline: the
+    // OBJ_MEM_OVERLOAD shape. ??_GTexMovie (0x82747708) calls
+    // ?MemFree@@YAXPAX@Z directly, so the delete side is the inline one too.
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x18);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);
