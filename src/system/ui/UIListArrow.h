@@ -35,7 +35,7 @@ public:
     void StartScroll(int, bool);
 
     NEW_OBJ(UIListArrow)
-    OBJ_MEM_OVERLOAD(0x18)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x18)
 
 protected:
     UIListArrow();
