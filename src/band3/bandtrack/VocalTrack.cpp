@@ -1376,8 +1376,10 @@ void VocalTrack::UpdateScrolling(float ms) {
     // Phrase-marker sweep: same shape as the beat sweep above but walking
     // the persistent unk104 phrase cursor over the lead part's phrase list,
     // additionally respecting the section-only window's start/end when set.
+    VocalNoteList *leadNotes = mAlternateNoteList[0];
+    if (!leadNotes)
+        leadNotes = TheSongDB->GetVocalNoteList(0);
     int phraseIdx = unk104;
-    VocalNoteList *leadNotes = GetVocalNoteList(0);
     while (phraseIdx < leadNotes->mPhrases.size()) {
         const VocalPhrase &ph = leadNotes->mPhrases[phraseIdx];
         float phMs = ph.unk0 + ph.unk4;
