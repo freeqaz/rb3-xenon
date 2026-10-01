@@ -203,7 +203,13 @@ int PerformanceData::SaveSize(int i) {
         savesize = 7;
     if (i >= 0x94)
         savesize++;
-    int total = savesize + 0x31e;
+    int total = savesize + 0x2be;
+    // Per singer: three (rank, score) pairs and the two pitch-deviation floats.
+    for (int singer = 0; singer < 3; singer++) {
+        for (int part = 0; part < 3; part++)
+            total += 8;
+        total += 8;
+    }
     REPORT_SIZE("PerformanceData", total);
 }
 
