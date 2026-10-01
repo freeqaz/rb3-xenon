@@ -1,4 +1,6 @@
 {
+ "0x8283c960": "XPhysicalSize",
+ "0x8283c968": "XPhysicalFree",
  "0x8247ba00": "??$?5VPoint@RndLine@@V?$StlNodeAlloc@VPoint@RndLine@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@VPoint@RndLine@@V?$StlNodeAlloc@VPoint@RndLine@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x824791a0": "?Normalize@@YAXABVVector2@@AAV1@@Z",
  "0x824768e0": "?CalcRect@RndFlare@@IAAAAVRect@Hmx@@AAVVector2@@AAM@Z",
@@ -3701,7 +3703,7 @@
  "0x82276138": "?IsLoadingStickers@PatchDir@@QBA_NXZ",
  "0x822764d0": "?_M_allocate_block@?$_String_base@DV?$allocator@D@stlpmtx_std@@@stlpmtx_std@@IAAXI@Z",
  "0x82276560": "??0bad_alloc@std@@QAA@ABV01@@Z",
- "0x82276828": "?erase@?$list@PAVFileCache@@V?$StlNodeAlloc@PAVFileCache@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVFileCache@@U?$_Nonconst_traits@PAVFileCache@@@stlpmtx_std@@@2@U32@0@Z",
+ "0x82276828": "?_S_next_size@?$_Stl_prime@_N@priv@stlpmtx_std@@SAII@Z",
  "0x82276888": "??$__destroy_range_aux@V?$reverse_iterator@PAVPatchLayer@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVPatchLayer@@@0@0ABU__false_type@0@@Z",
  "0x822768f8": "??1?$_String_base@DV?$allocator@D@stlpmtx_std@@@stlpmtx_std@@IAA@XZ",
  "0x82276920": "?_M_range_initialize@?$basic_string@DV?$char_traits@D@stlpmtx_std@@V?$allocator@D@2@@stlpmtx_std@@IAAXPBD0@Z",
