@@ -372,89 +372,62 @@ void UIListState::Scroll(int direction, bool skipActive) {
     bool changed = BuildScroll(direction, mTargetShowing, mSelectedDisplay, state);
 
     if (mCircular) {
-        int curFirst = state.mFirstShowing;
-        int curSel = state.mSelectedDisplay;
-        if (!skipActive) {
-            do {
-                curSel = state.mSelectedDisplay;
-                int sel = curSel;
-                if (mCircular)
-                    sel = mMinDisplay;
-                curFirst = state.mFirstShowing;
-                if (mScrollPastMinDisplay)
-                    sel -= mMinDisplay;
-                int data = Showing2Data(sel + curFirst);
-                if (mProvider->IsActive(data))
-                    goto accept_circ;
-                if (mTargetShowing == curFirst)
-                    return;
-                int step = direction > 0 ? 1 : -1;
-                BuildScroll(step, curFirst, curSel, state);
-            } while (curFirst != state.mFirstShowing);
-        }
-        accept_circ:
-        mTargetShowing = curFirst;
-        MILO_ASSERT(curSel == mSelectedDisplay, 0x1d6);
-    } else {
-        bool hitBoundary = false;
-        int curFirst = state.mFirstShowing;
-        int curSel = state.mSelectedDisplay;
+        // Step until an active entry is showing; give up (leave the target
+        // untouched) once a step stops moving or we are back at the target.
+        int first = state.mFirstShowing;
         if (!skipActive) {
             while (true) {
-                int sel = curSel;
-                if (mCircular)
-                    sel = mMinDisplay;
+                int sel = state.mSelectedDisplay;
+                int display = mCircular ? mMinDisplay : sel;
                 if (mScrollPastMinDisplay)
-                    sel -= mMinDisplay;
-                int data = Showing2Data(sel + curFirst);
+                    display -= mMinDisplay;
+                int data = Showing2Data(display + first);
                 if (mProvider->IsActive(data))
                     break;
-                if (hitBoundary)
+                if (mTargetShowing == first)
                     return;
-
-                int step = 1;
-                if (direction <= 0)
-                    step = -1;
-                auto _tmp0 = BuildScroll(step, curFirst, curSel, state);
-                changed = _tmp0;
-
-                if (step == 1) {
-                    auto _tmp1 = MaxFirstShowing();
-                    if (state.mFirstShowing == _tmp1) {
-                        hitBoundary = (state.mSelectedDisplay == ScrollMaxDisplay());
-                        if (hitBoundary)
-                            goto retry;
-                    }
-                } else {
-                    bool atZero = state.mFirstShowing == 0;
-                    curFirst = state.mFirstShowing;
-                    curSel = state.mSelectedDisplay;
-                    if (mScrollPastMinDisplay) {
-                        if (atZero) {
-                            hitBoundary = (curSel == mMinDisplay);
-                            if (hitBoundary)
-                                continue;
-                        }
-                    } else {
-                        if (atZero && curSel == 0) {
-                            hitBoundary = true;
-                            continue;
-                        }
-                    }
-                }
-                hitBoundary = false;
-                retry:
-                curFirst = state.mFirstShowing;
-                curSel = state.mSelectedDisplay;
+                int prevFirst = first;
+                BuildScroll(direction > 0 ? 1 : -1, first, sel, state);
+                first = state.mFirstShowing;
+                if (prevFirst == first)
+                    return;
             }
         }
-        mTargetShowing = curFirst;
-        mSelectedDisplay = curSel;
+        mTargetShowing = first;
+    } else {
+        int first = state.mFirstShowing;
+        int sel = state.mSelectedDisplay;
+        bool atEnd = false;
+        if (!skipActive) {
+            while (true) {
+                int display = mCircular ? mMinDisplay : sel;
+                if (mScrollPastMinDisplay)
+                    display -= mMinDisplay;
+                int data = Showing2Data(display + first);
+                if (mProvider->IsActive(data))
+                    break;
+                if (atEnd)
+                    return;
+                direction = direction > 0 ? 1 : -1;
+                changed = BuildScroll(direction, first, sel, state);
+                if (direction == 1) {
+                    int maxFirst = MaxFirstShowing();
+                    first = state.mFirstShowing;
+                    sel = state.mSelectedDisplay;
+                    atEnd = first == maxFirst && sel == ScrollMaxDisplay();
+                } else {
+                    first = state.mFirstShowing;
+                    sel = state.mSelectedDisplay;
+                    bool atZero = first == 0;
+                    atEnd = mScrollPastMinDisplay ? atZero && sel == mMinDisplay
+                                                  : atZero && sel == 0;
+                }
+            }
+        }
+        mTargetShowing = first;
+        mSelectedDisplay = sel;
         if (!skipActive && !changed) {
-            int dir = 1;
-            if (direction <= 0)
-                dir = -1;
-            mCallback->StartScroll(*this, dir, false);
+            mCallback->StartScroll(*this, direction > 0 ? 1 : -1, false);
             mCallback->CompleteScroll(*this);
         }
     }

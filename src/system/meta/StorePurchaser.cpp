@@ -5,11 +5,13 @@
 #include "os/Debug.h"
 #include "os/PlatformMgr.h"
 #include "ui/UI.h"
+#include "utl/DataPointMgr.h"
+#include "utl/Str.h"
 #include "utl/Symbol.h"
 #include "xdk/xapilibi/xbox.h"
 
 extern "C" DWORD XShowMarketplaceDownloadItemsUI(
-    DWORD, DWORD, ULONGLONG *, DWORD, DWORD *, XOVERLAPPED *
+    DWORD, DWORD, ULONGLONG *, DWORD, HRESULT *, XOVERLAPPED *
 );
 
 #pragma region XboxPurchaser
@@ -30,36 +32,69 @@ XboxPurchaser::XboxPurchaser(
 )
     : StorePurchaser(s, ui), mState(purchasestate0), mOfferID(param2), mUserIndex(param1) {}
 
-/* Retail's dtor @0x827b28a0 cancels the in-flight marketplace call --
- *   if (IsPurchasing() && sOverlapped.InternalLow == ERROR_IO_PENDING)
- *       XCancelOverlapped(&sOverlapped);
- * -- via a class-static XOVERLAPPED at 0x82e0684c that this port does not
- * model yet (Initiate below is likewise not the retail body).  NOT ported here
- * deliberately: that is a body port, not a layout fix, and it would widen this
- * change past what the retail layout evidence supports.  What retail's dtor
- * demonstrably does NOT do is remove a message sink -- there is no Hmx::Object
- * subobject to be one. */
-XboxPurchaser::~XboxPurchaser() {}
+// The one in-flight marketplace call. Retail keeps a single file-scope
+// XOVERLAPPED (0x82e0684c) shared by Initiate, Poll and the dtor.
+static XOVERLAPPED sOverlapped;
+
+XboxPurchaser::~XboxPurchaser() {
+    if (IsPurchasing() && sOverlapped.InternalLow == ERROR_IO_PENDING) {
+        XCancelOverlapped(&sOverlapped);
+    }
+}
 
 void XboxPurchaser::Initiate() {
     MILO_ASSERT(!IsPurchasing(), 0x39a);
     mState = purchasestate1;
-
-    unsigned long trackingID;
-    unsigned long ret;
-    if (PlatformMgr::sXShowCallback(trackingID)) {
-        ret = XShowNuiMarketplaceUI(
-            trackingID, mUserIndex, XSHOWMARKETPLACEUI_ENTRYPOINT_CONTENTITEM_BACKGROUND, mOfferID, -1
-        );
-    } else {
-        ret = XShowMarketplaceUI(
-            mUserIndex, XSHOWMARKETPLACEUI_ENTRYPOINT_CONTENTITEM_BACKGROUND, mOfferID, -1
-        );
-    }
-
-    if (ret != ERROR_SUCCESS) {
-        MILO_NOTIFY("Error starting checkout UI: %d", ret);
+    memset(&sOverlapped, 0, sizeof(XOVERLAPPED));
+    mResult = 0;
+    if (XShowMarketplaceDownloadItemsUI(
+            mUserIndex, 0x3E9, &mOfferID, 1, &mResult, &sOverlapped
+        )
+        != ERROR_IO_PENDING) {
         mState = purchasestate3;
+    }
+}
+
+void StorePurchaser::RecordPurchase(const char *offer) {
+    static Symbol source("source");
+    static Symbol offerSym("offer");
+    static Symbol purchaser("purchaser");
+    SendDataPoint("store/purchase", source, mSource, offerSym, offer, purchaser, mUserIndex);
+}
+
+void XboxPurchaser::Poll() {
+    static Symbol xbox("xbox");
+    if (mState == purchasestate1) {
+        DWORD res;
+        DWORD err = XGetOverlappedResult(&sOverlapped, &res, false);
+        if (err == ERROR_IO_INCOMPLETE)
+            return;
+        if (err != ERROR_SUCCESS && err != ERROR_CANCELLED) {
+            mState = purchasestate3;
+            return;
+        }
+        mState = kPurchaseSuccess;
+        switch (mResult) {
+        case 0: { // S_OK
+            mPurchaseMade = true;
+            String offer;
+            StorePurchaseable::IDToOfferString(mOfferID, offer);
+            RecordPurchase(offer.c_str());
+            break;
+        }
+        case (HRESULT)0x8057F001:
+            mPurchaseMade = true;
+            break;
+        case (HRESULT)0x8057F002:
+            mPurchaseMade = false;
+            break;
+        case (HRESULT)0x8057F003:
+            mPurchaseMade = false;
+            break;
+        default:
+            mPurchaseMade = false;
+            break;
+        }
     }
 }
 
@@ -78,7 +113,7 @@ bool XboxPurchaser::PurchaseMade() const {
 }
 
 bool XboxPurchaser::IsPurchasing() const {
-    return mState == purchasestate1;
+    return mState != purchasestate0 && mState != kPurchaseSuccess && mState != purchasestate3;
 }
 
 #pragma endregion XboxPurchaser

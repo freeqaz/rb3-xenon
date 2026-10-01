@@ -183,9 +183,9 @@ public:
     // UV rectangle of `c` in the font texture (0x82473A18).
     void GetTexCoords(unsigned short, Vector2 &, Vector2 &) const;
     float DeprecatedSize() const { return mDeprecatedSize; }
-    // RB3 retail API used by ui/UILabel.cpp.
-    // DECLARATION-ONLY, non-virtual -> layout- and vtable-neutral.
-    RndFont *TextureOwner() const;
+    // RB3 retail API used by ui/UILabel.cpp. Inline: retail has no out-of-line
+    // body, and UILabel::LabelUpdate reads mTextureOwner's pointer directly.
+    RndFont *TextureOwner() const { return mTextureOwner; }
     // Inline (`return mCellSize.y /
     // mCellSize.x;`). Retail's UILabel::FitText (0x827f5550) inlines this
     // ratio directly -- two float loads at mCellSize's offsets (0x60/0x64)

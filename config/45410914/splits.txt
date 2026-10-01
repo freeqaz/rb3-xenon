@@ -2955,9 +2955,6 @@ MeshAnim.cpp:
 	.pdata      start:0x82234730 end:0x82234738
 	.pdata      start:0x8223B860 end:0x8223B868
 	.pdata      start:0x8223D920 end:0x8223D928
-	.pdata      start:0x82241168 end:0x82241170
-	.pdata      start:0x82241180 end:0x82241188
-	.pdata      start:0x82241198 end:0x822411C8
 	.pdata      start:0x822411D8 end:0x822411E0
 	.pdata      start:0x822447D8 end:0x822447E0
 	.text       start:0x822724E8 end:0x82272540
@@ -2996,10 +2993,6 @@ MeshAnim.cpp:
 	.text       start:0x826C83E8 end:0x826C8468
 	.text       start:0x8274BB88 end:0x8274BBE4
 	.text       start:0x827708C0 end:0x82770920
-	.text       start:0x827B2770 end:0x827B27B8
-	.text       start:0x827B28A0 end:0x827B2924
-	.text       start:0x827B29BC end:0x827B29C0
-	.text       start:0x827B2A0C end:0x827B2C24
 	.text       start:0x827B2D80 end:0x827B2DA8
 	.text       start:0x827EBAD0 end:0x827EBB34
 
@@ -4726,13 +4719,18 @@ MemMgr.cpp:
 StorePurchaser.cpp:
 	.pdata      start:0x82241170 end:0x82241178
 	.pdata      start:0x82241178 end:0x82241180
+	.pdata      start:0x82241180 end:0x82241188
 	.pdata      start:0x82241188 end:0x82241190
 	.pdata      start:0x82241190 end:0x82241198
+	.pdata      start:0x82241198 end:0x822411C8
 	.pdata      start:0x822411C8 end:0x822411D8
 	.text       start:0x827B27B8 end:0x827B27FC
 	.text       start:0x827B27FC end:0x827B28A0
+	.text       start:0x827B28A0 end:0x827B2924
 	.text       start:0x827B2924 end:0x827B29BC
+	.text       start:0x827B29BC end:0x827B29C0
 	.text       start:0x827B29C0 end:0x827B2A0C
+	.text       start:0x827B2A0C end:0x827B2C24
 	.text       start:0x827B2C24 end:0x827B2D80
 
 FftIpp.cpp:
@@ -6250,6 +6248,7 @@ StorePreviewMgr.cpp:
 	.pdata      start:0x822410A8 end:0x822410B0
 	.pdata      start:0x822410B0 end:0x822410C8
 	.pdata      start:0x822410C8 end:0x82241168
+	.pdata      start:0x82241168 end:0x82241170
 	.text       start:0x825C21D0 end:0x825C22F4
 	.text       start:0x827B1938 end:0x827B1AC0
 	.text       start:0x827B1AC0 end:0x827B1B28
@@ -6259,6 +6258,7 @@ StorePreviewMgr.cpp:
 	.text       start:0x827B1CA8 end:0x827B1D60
 	.text       start:0x827B1D60 end:0x827B1FC8
 	.text       start:0x827B1FC8 end:0x827B2770
+	.text       start:0x827B2770 end:0x827B27B8
 
 CharEyes.cpp:
 	.pdata      start:0x822028F0 end:0x82202900
