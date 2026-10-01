@@ -70,13 +70,13 @@ bool JoypadGetCachedXInputCaps(int pad, XINPUT_CAPABILITIES *caps, bool b3) {
 void JoypadSetXinputCalbertMode(int pad, int mode) {
     switch (mode) {
     case 1:
-        JoypadSetActuatorsImp(pad, 0, 0xffff);
+        JoypadSetRumble(pad, 0, 0xffff);
         break;
     case 2:
-        JoypadSetActuatorsImp(pad, 0, 0x6000);
+        JoypadSetRumble(pad, 0, 0x6000);
         break;
     default:
-        JoypadSetActuatorsImp(pad, 0, 0);
+        JoypadSetRumble(pad, 0, 0);
         break;
     }
 }

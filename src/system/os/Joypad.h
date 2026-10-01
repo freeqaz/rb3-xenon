@@ -315,6 +315,7 @@ void TranslateSticksToButs(JoypadData &, unsigned int &);
 int GetUsersPadNum(const LocalUser *);
 int ButtonToVelocityBucket(JoypadData *data, JoypadButton btn);
 void JoypadSetActuatorsImp(int, int, int);
+void JoypadSetRumble(int, int, int);
 void AssociateUserAndPad(LocalUser *iUser, int iPadNum);
 void ResetAllUsersPads();
 void JoypadSetCalbertMode(int, int);

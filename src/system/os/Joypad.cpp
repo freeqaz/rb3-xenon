@@ -245,7 +245,7 @@ void JoypadSwapPads(int pad1, int pad2) {
 void JoypadStageKitSetRaw(int left, int right) {
     int pad = JoypadStageKitPadNum();
     if (pad != -1)
-        JoypadSetActuatorsImp(pad, left << 8 | 0xff, right << 8 | 0xff);
+        JoypadSetRumble(pad, left << 8 | 0xff, right << 8 | 0xff);
 }
 
 namespace {

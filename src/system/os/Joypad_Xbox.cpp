@@ -544,8 +544,13 @@ void XinputJoypadThreadStart() {
     ResumeThread(tThread);
 }
 
-// Retail 0x82529AE8 is a lone `b` into the XInput vibration setter.
-void JoypadSetActuatorsImp(int pad, int left, int right) {
+// Empty in retail: JoypadSetVibrate's call lands on the shared `blr` fold
+// survivor 0x826C3888.
+void JoypadSetActuatorsImp(int, int, int) {}
+
+// Retail 0x82529AE8, a lone `b` into the XInput vibration setter; called by
+// JoypadStageKitSetRaw and the Calbert-mode rumble fallback. The name is ours.
+void JoypadSetRumble(int pad, int left, int right) {
     JoypadSetXinputActuators(pad, left, right);
 }
 

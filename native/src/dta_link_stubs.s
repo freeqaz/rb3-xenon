@@ -52,6 +52,14 @@ GetTimeZoneInformation:
     xorq %rax, %rax
     ret
 
+// Joypad_Xbox.cpp's rumble entry (retail 0x82529AE8), called from Joypad.cpp
+// and Joypad_Xinput.cpp; not in the native link.
+.weak JoypadSetRumble
+.type JoypadSetRumble,@function
+JoypadSetRumble:
+    xorq %rax, %rax
+    ret
+
 .weak JoypadSetActuatorsImp
 .type JoypadSetActuatorsImp,@function
 JoypadSetActuatorsImp:
