@@ -12,20 +12,7 @@ namespace Quazal {
         void transform(const unsigned char *);
 
     private:
-        static void
-        encode(unsigned char *dest, const unsigned int *src, unsigned int size) {
-            if (size == 0) {
-                return;
-            }
-
-            for (int i = 0; i < (size / sizeof(*src)); i++) {
-                dest[(i * 4) + 0] = src[i] >> 0;
-                dest[(i * 4) + 1] = src[i] >> 8;
-                dest[(i * 4) + 2] = src[i] >> 16;
-                dest[(i * 4) + 3] = src[i] >> 24;
-            }
-        }
-
+        static void encode(unsigned char *, const unsigned int *, unsigned int);
         static void decode(unsigned int *, const unsigned char *, unsigned int);
 
         static void

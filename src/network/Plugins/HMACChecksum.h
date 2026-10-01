@@ -7,7 +7,7 @@ namespace Quazal {
         HMACChecksum();
         virtual ~HMACChecksum();
         virtual bool ComputeChecksum(const Buffer &, Buffer *);
-        virtual unsigned int GetChecksumLength();
+        virtual unsigned char GetChecksumLength();
         virtual void KeyHasChanged();
 
         unsigned char mKIPad[65]; // 0x24

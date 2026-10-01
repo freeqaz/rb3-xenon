@@ -87,17 +87,17 @@ bool PropSync(Vector3 &vec, DataNode &node, DataArray *prop, int i, PropOp op) {
 }
 
 bool PropSync(Hmx::Matrix3 &_m, DataNode &_val, DataArray *_prop, int _i, PropOp _op) {
+    // Retail calls MakeEulerScale once per property (6 sites) and only rebuilds
+    // the matrix after a successful non-get sync.
     MILO_ASSERT(_i == _prop->Size() - 1 && (_op & (kPropSet|kPropGet|kPropInsert)), 0x4F);
     Symbol sym = _prop->Sym(_i);
-    bool ret = false;
     Vector3 euler, scale;
+    bool ret = false;
     {
         static Symbol pitch("pitch");
         if (sym == pitch) {
             MakeEulerScale(_m, euler, scale);
-            euler.z *= RAD2DEG;
-            euler.x *= RAD2DEG;
-            euler.y *= RAD2DEG;
+            Scale(euler, RAD2DEG, euler);
             ret = PropSync(euler.x, _val, _prop, _i + 1, _op);
         }
     }
@@ -105,9 +105,7 @@ bool PropSync(Hmx::Matrix3 &_m, DataNode &_val, DataArray *_prop, int _i, PropOp
         static Symbol roll("roll");
         if (sym == roll) {
             MakeEulerScale(_m, euler, scale);
-            euler.z *= RAD2DEG;
-            euler.x *= RAD2DEG;
-            euler.y *= RAD2DEG;
+            Scale(euler, RAD2DEG, euler);
             ret = PropSync(euler.y, _val, _prop, _i + 1, _op);
         }
     }
@@ -115,67 +113,36 @@ bool PropSync(Hmx::Matrix3 &_m, DataNode &_val, DataArray *_prop, int _i, PropOp
         static Symbol yaw("yaw");
         if (sym == yaw) {
             MakeEulerScale(_m, euler, scale);
-            euler.z *= RAD2DEG;
-            euler.x *= RAD2DEG;
-            euler.y *= RAD2DEG;
+            Scale(euler, RAD2DEG, euler);
             ret = PropSync(euler.z, _val, _prop, _i + 1, _op);
         }
     }
-    if (!ret || _op == kPropGet) {
-        {
-            static Symbol x_scale("x_scale");
-            if (sym == x_scale) {
-                float len = Length(_m.x);
-                float oldLen = len;
-                ret = PropSync(len, _val, _prop, _i + 1, _op);
-                if (_op != kPropGet) {
-                    if (oldLen == 0.0f) {
-                        _m.Identity();
-                        oldLen = 1.0f;
-                    }
-                    float ratio = len / oldLen;
-                    _m.x.x *= ratio;
-                    _m.x.y *= ratio;
-                    _m.x.z *= ratio;
-                }
-            }
+    {
+        static Symbol x_scale("x_scale");
+        if (sym == x_scale) {
+            MakeEulerScale(_m, euler, scale);
+            Scale(euler, RAD2DEG, euler);
+            ret = PropSync(scale.x, _val, _prop, _i + 1, _op);
         }
-        {
-            static Symbol y_scale("y_scale");
-            if (sym == y_scale) {
-                float len = Length(_m.y);
-                float oldLen = len;
-                ret = PropSync(len, _val, _prop, _i + 1, _op);
-                if (_op != kPropGet) {
-                    if (oldLen == 0.0f) {
-                        _m.Identity();
-                        oldLen = 1.0f;
-                    }
-                    float ratio = len / oldLen;
-                    Scale(_m.y, ratio, _m.y);
-                }
-            }
+    }
+    {
+        static Symbol y_scale("y_scale");
+        if (sym == y_scale) {
+            MakeEulerScale(_m, euler, scale);
+            Scale(euler, RAD2DEG, euler);
+            ret = PropSync(scale.y, _val, _prop, _i + 1, _op);
         }
-        {
-            static Symbol z_scale("z_scale");
-            if (sym == z_scale) {
-                float len = Length(_m.z);
-                float oldLen = len;
-                ret = PropSync(len, _val, _prop, _i + 1, _op);
-                if (_op != kPropGet) {
-                    if (oldLen == 0.0f) {
-                        _m.Identity();
-                        oldLen = 1.0f;
-                    }
-                    float ratio = len / oldLen;
-                    Scale(_m.z, ratio, _m.z);
-                }
-            }
+    }
+    {
+        static Symbol z_scale("z_scale");
+        if (sym == z_scale) {
+            MakeEulerScale(_m, euler, scale);
+            Scale(euler, RAD2DEG, euler);
+            ret = PropSync(scale.z, _val, _prop, _i + 1, _op);
         }
-    } else {
-        euler.x *= DEG2RAD;
-        euler.y *= DEG2RAD;
-        euler.z *= DEG2RAD;
+    }
+    if (ret && _op != kPropGet) {
+        Scale(euler, DEG2RAD, euler);
         MakeRotMatrix(euler, _m, true);
         Scale(scale, _m, _m);
     }

@@ -8,12 +8,21 @@ static Licenses sLicense("system/src/math/SHA1.h", Licenses::kRequirementNotific
 
 // shoutouts to clibs' implementation of sha1: https://github.com/clibs/sha1
 
+// Retail is Reichl's CSHA1, whose ROL32 is MSVC's _rotl intrinsic under _MSC_VER.
+// The intrinsic (not the shift-or idiom) is what reproduces retail's register
+// allocation in Transform; the native build keeps the portable form.
+#ifdef HX_NATIVE
 #define rol(value, bits) (((value) << (bits)) | ((value) >> (32 - (bits))))
+#else
+extern "C" unsigned int __cdecl _rotl(unsigned int, int);
+#pragma intrinsic(_rotl)
+#define rol(value, bits) _rotl(value, bits)
+#endif
 #define blk0(i) m_block->l[i]
 #define blk(i)                                                                           \
     (m_block->l[i & 15] =                                                                \
-         rol(m_block->l[i & 15] ^ m_block->l[(i + 2) & 15]                               \
-                 ^ m_block->l[(i + 8) & 15] ^ m_block->l[(i + 13) & 15],                 \
+         rol(m_block->l[(i + 13) & 15] ^ m_block->l[(i + 8) & 15]                        \
+                 ^ m_block->l[(i + 2) & 15] ^ m_block->l[i & 15],                        \
              1))
 
 /* (R0+R1), R2, R3, R4 are the different operations used in SHA1 */
@@ -36,9 +45,9 @@ static Licenses sLicense("system/src/math/SHA1.h", Licenses::kRequirementNotific
 void CSHA1::Transform(unsigned int *pState, const unsigned char *pBuffer) {
     unsigned long a, b, c, d, e;
 
-    c = pState[2];
-    b = pState[1];
     a = pState[0];
+    b = pState[1];
+    c = pState[2];
     d = pState[3];
     e = pState[4];
     memcpy(m_block->c, pBuffer, 0x40);
@@ -123,11 +132,11 @@ void CSHA1::Transform(unsigned int *pState, const unsigned char *pBuffer) {
     R4(c, d, e, a, b, 78);
     R4(b, c, d, e, a, 79);
 
-    pState[4] += e;
-    pState[3] += d;
-    pState[2] += c;
-    pState[1] += b;
     pState[0] += a;
+    pState[1] += b;
+    pState[2] += c;
+    pState[3] += d;
+    pState[4] += e;
 }
 
 void CSHA1::Update(const unsigned char *data, unsigned int len) {

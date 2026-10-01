@@ -1115,6 +1115,13 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
         totalBudget += mesh->Faces().size() * mTessellateTriLimit;
     }
 
+    // NOTE: retail's call list has NO MakeString / TextStream::operator<< in this
+    // function -- all four progress prints below are MILO_LOG in the original.
+    // Converting them is correct (measured 64.2 -> 69.9 with the float fixes) but
+    // shrinks our frame 0x4d0 -> 0x4c0 (retail 0x4e0), which re-pairs this
+    // function's two unwind funclets (fn_82492C74/fn_82492D14) 99.8 -> 99.3/99.4.
+    // Kept as TheDebug until the frame-size gap is understood.
+
     // Process each mesh
     for (std::vector<RndMesh *>::iterator meshIt = mObjectsTessellate.begin();
          meshIt != mObjectsTessellate.end(); ++meshIt) {
@@ -1182,8 +1189,7 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
                         *(const Vector4 *)&vertsBase[i0].color,
                         vertsBase[i0].norm
                     );
-                    float totalError = (float)((double)(float)((double)err20 + (double)err12)
-                                               + (double)err01);
+                    float totalError = err20 + err12 + err01;
                     bool smallError = totalError <= mTessellateTriError;
 
                     // Compute world-space perimeter
@@ -1199,13 +1205,15 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
                     float d01 = sqrtf((wp0.x - wp1.x) * (wp0.x - wp1.x) + (wp0.y - wp1.y) * (wp0.y - wp1.y) + (wp0.z - wp1.z) * (wp0.z - wp1.z));
                     float perimeter = d12 + d02 + d01;
 
+                    bool smallFace = perimeter <= mTessellateTriSmall;
+                    bool largeFace = perimeter > mTessellateTriLarge;
                     FacePriority *pFP;
-                    if (smallError || perimeter <= mTessellateTriSmall) {
-                        if (mTessellateTriLarge < perimeter) {
+                    if (smallError || smallFace) {
+                        if (largeFace) {
                             // Large face, low error: priority based on size
                             FacePriority fp;
-                            fp.priority = (float)((double)mTessellateTriError * (double)negThree
-                                                  - (double)(perimeter - mTessellateTriLarge));
+                            fp.priority = mTessellateTriError * negThree
+                                - (perimeter - mTessellateTriLarge);
                             fp.faceIndex = faceIdx;
                             pFP = &fp;
                         } else {

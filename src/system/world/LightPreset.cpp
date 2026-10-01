@@ -523,16 +523,43 @@ BEGIN_COPYS(LightPreset)
     BEGIN_COPYING_MEMBERS
         Clear();
         COPY_MEMBER(mKeyframes)
-        mSpotlights = c->mSpotlights;
-        mEnvironments = c->mEnvironments;
-        mLights = c->mLights;
-        mSpotlightDrawers = c->mSpotlightDrawers;
+        // Retail calls AddRef after each pointer-vector copy and resizes
+        // mSpotlightDrawers. The AddRef/Release calls in Copy, Load and Replace
+        // are the X360 ref-ring bookkeeping (Hmx::Object::AddRef(ObjRefOwner *));
+        // native's Hmx::Object tracks refs through ObjRef, which LightPreset is
+        // not, so they are X360-only (same pattern as ScriptTask in Task.cpp).
+        COPY_MEMBER(mSpotlights)
+#ifndef HX_NATIVE
+        for (uint i = 0; i != mSpotlights.size(); i++) {
+            mSpotlights[i]->AddRef(this);
+        }
+#endif
+        COPY_MEMBER(mEnvironments)
+#ifndef HX_NATIVE
+        for (uint i = 0; i != mEnvironments.size(); i++) {
+            mEnvironments[i]->AddRef(this);
+        }
+#endif
+        COPY_MEMBER(mLights)
+#ifndef HX_NATIVE
+        for (uint i = 0; i != mLights.size(); i++) {
+            mLights[i]->AddRef(this);
+        }
+#endif
+        COPY_MEMBER(mSpotlightDrawers)
+#ifndef HX_NATIVE
+        for (uint i = 0; i != mSpotlightDrawers.size(); i++) {
+            mSpotlightDrawers[i]->AddRef(this);
+        }
+#endif
         mSpotlightState.resize(mSpotlights.size());
         mEnvironmentState.resize(mEnvironments.size());
         mLightState.resize(mLights.size());
+        mSpotlightDrawers.resize(mSpotlightDrawers.size());
         COPY_MEMBER(mLooping)
         COPY_MEMBER(mCategory)
         COPY_MEMBER(mSelectTriggers)
+        COPY_MEMBER(mLegacyFadeIn)
         COPY_MEMBER(mManual)
         COPY_MEMBER(mLocked)
         COPY_MEMBER(mPlatformOnly)
@@ -1317,6 +1344,10 @@ BEGIN_LOADS(LightPreset)
     for (int i = 0; i != (unsigned)mSpotlights.size(); i++) {
         bs.ReadString(buf, 0x80);
         mSpotlights[i] = Dir()->Find<Spotlight>(buf, false);
+#ifndef HX_NATIVE
+        if (mSpotlights[i])
+            mSpotlights[i]->AddRef(this);
+#endif
     }
     unsigned int envcount;
     bs >> envcount;
@@ -1324,6 +1355,10 @@ BEGIN_LOADS(LightPreset)
     for (int i = 0; i != (unsigned)mEnvironments.size(); i++) {
         bs.ReadString(buf, 0x80);
         mEnvironments[i] = Dir()->Find<RndEnviron>(buf, false);
+#ifndef HX_NATIVE
+        if (mEnvironments[i])
+            mEnvironments[i]->AddRef(this);
+#endif
     }
     unsigned int lightcount;
     bs >> lightcount;
@@ -1331,6 +1366,10 @@ BEGIN_LOADS(LightPreset)
     for (int i = 0; i != (unsigned)mLights.size(); i++) {
         bs.ReadString(buf, 0x80);
         mLights[i] = Dir()->Find<RndLight>(buf, false);
+#ifndef HX_NATIVE
+        if (mLights[i])
+            mLights[i]->AddRef(this);
+#endif
     }
     if (sPresetRev < 5) {
         bool b;
@@ -1359,10 +1398,10 @@ BEGIN_LOADS(LightPreset)
         String str2;
         bs >> str2;
         if (!str2.empty()) {
-            MILO_NOTIFY("%s: %s", Name(), str2);
+            MILO_WARN("%s: %s", Name(), str2);
         }
     } else if (sPresetRev < 0x15) {
-        ObjPtr<EventTrigger> trigPtr(this, 0);
+        ObjPtr<EventTrigger> trigPtr(this);
         bs >> trigPtr;
         if (trigPtr)
             mSelectTriggers.push_back(trigPtr);
@@ -1373,9 +1412,8 @@ BEGIN_LOADS(LightPreset)
         String strdummy;
         bs >> strdummy;
     }
-    if (sPresetRev != 0xE && sPresetRev < 0x16) {
-        int legacyFade;
-        bs >> legacyFade;
+    if (sPresetRev != 0xE) {
+        bs >> mLegacyFadeIn;
         int dummy;
         if (sPresetRev > 0 && sPresetRev < 0x11)
             bs >> dummy;
@@ -1396,6 +1434,10 @@ BEGIN_LOADS(LightPreset)
         for (int i = 0; i != (unsigned)mSpotlightDrawers.size(); i++) {
             bs.ReadString(buf, 0x80);
             mSpotlightDrawers[i] = Dir()->Find<SpotlightDrawer>(buf, false);
+#ifndef HX_NATIVE
+        if (mSpotlightDrawers[i])
+            mSpotlightDrawers[i]->AddRef(this);
+#endif
         }
     }
     if (sPresetRev == 0xB) {
@@ -1441,9 +1483,15 @@ void LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
     Hmx::Object *fromObj = reinterpret_cast<Hmx::Object *>(from);
     for (uint idx = 0; idx != mSpotlights.size(); idx++) {
         if (mSpotlights[idx] == fromObj) {
-            if (to)
+            if (to) {
+#ifndef HX_NATIVE
+                fromObj->Release(this);
+#endif
                 mSpotlights[idx] = dynamic_cast<Spotlight *>(to);
-            else
+#ifndef HX_NATIVE
+                to->AddRef(this);
+#endif
+            } else
                 RemoveSpotlight(idx);
             CacheFrames();
             return;
@@ -1451,9 +1499,15 @@ void LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
     }
     for (uint idx = 0; idx != mEnvironments.size(); idx++) {
         if (mEnvironments[idx] == fromObj) {
-            if (to)
+            if (to) {
+#ifndef HX_NATIVE
+                fromObj->Release(this);
+#endif
                 mEnvironments[idx] = dynamic_cast<RndEnviron *>(to);
-            else
+#ifndef HX_NATIVE
+                to->AddRef(this);
+#endif
+            } else
                 RemoveEnvironment(idx);
             CacheFrames();
             return;
@@ -1461,9 +1515,15 @@ void LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
     }
     for (uint idx = 0; idx != mLights.size(); idx++) {
         if (mLights[idx] == fromObj) {
-            if (to)
+            if (to) {
+#ifndef HX_NATIVE
+                fromObj->Release(this);
+#endif
                 mLights[idx] = dynamic_cast<RndLight *>(to);
-            else
+#ifndef HX_NATIVE
+                to->AddRef(this);
+#endif
+            } else
                 RemoveLight(idx);
             CacheFrames();
             return;
@@ -1471,15 +1531,22 @@ void LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
     }
     for (uint idx = 0; idx != mSpotlightDrawers.size(); idx++) {
         if (mSpotlightDrawers[idx] == fromObj) {
-            if (to)
+            if (to) {
+#ifndef HX_NATIVE
+                fromObj->Release(this);
+#endif
                 mSpotlightDrawers[idx] = dynamic_cast<SpotlightDrawer *>(to);
-            else
+#ifndef HX_NATIVE
+                to->AddRef(this);
+#endif
+            } else
                 RemoveSpotlightDrawer(idx);
             CacheFrames();
             return;
         }
     }
-    RndAnimatable::Replace(from, to);
+    // Retail does not chain to the base Replace here; the not-found path simply
+    // returns.
 }
 
 #pragma endregion

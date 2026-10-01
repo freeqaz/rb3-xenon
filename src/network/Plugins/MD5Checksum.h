@@ -7,6 +7,6 @@ namespace Quazal {
         MD5Checksum();
         virtual ~MD5Checksum();
         virtual bool ComputeChecksum(const Buffer &, Buffer *);
-        virtual unsigned int GetChecksumLength();
+        virtual unsigned char GetChecksumLength();
     };
 }
