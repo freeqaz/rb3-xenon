@@ -1,4 +1,5 @@
 {
+ "0x828127d0": "?FocusComponent@UIPanel@@QAAPAVUIComponent@@XZ",
  "0x8275ce78": "?LoadRest@Object@Hmx@@QAAXAAVBinStream@@@Z",
  "0x824f18c8": "??$_M_allocate_and_copy@PAVVector2@@@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVVector2@@IPAV2@0@Z",
  "0x824f0680": "?Intersect@@YA_NABVSegment@@PBVBSPNode@@AAMAAVPlane@@@Z",
@@ -24895,7 +24896,7 @@
  "0x82802630": "?StaticClassName@UITrigger@@SA?AVSymbol@@XZ",
  "0x828026b0": "?StaticClassName@UIGuide@@SA?AVSymbol@@XZ",
  "0x82802730": "?StaticClassName@UIFontImporter@@SA?AVSymbol@@XZ",
- "0x828027c0": "?FocusComponent@UIPanel@@QAAPAVUIComponent@@XZ",
+ "0x828027c0": "?InComponentSelect@UIManager@@UAA_NXZ",
  "0x828027e8": "?FocusPanel@UIManager@@QAAPAVUIPanel@@XZ",
  "0x82802840": "?UseJoypad@UIManager@@QAAX_N0@Z",
  "0x82802928": "?NavButtonToNavAction@?A0x10b609f0@@YA?AW4JoypadAction@@W4JoypadButton@@@Z",

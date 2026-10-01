@@ -1809,7 +1809,6 @@ UIPanel.cpp:
 	.pdata      start:0x82246C58 end:0x82246E38
 	.text       start:0x82573450 end:0x82573464
 	.text       start:0x82573468 end:0x82573470
-	.text       start:0x828027C0 end:0x828027E8
 	.text       start:0x82812510 end:0x82812558
 	.text       start:0x82812558 end:0x82814450
 
@@ -3048,6 +3047,7 @@ UI.cpp:
 	.text       start:0x82802588 end:0x828025B0
 	.text       start:0x828025B0 end:0x82802630
 	.text       start:0x82802630 end:0x828026A8
+	.text       start:0x828027C0 end:0x828027E8
 	.text       start:0x828027E8 end:0x82802840
 	.text       start:0x82802840 end:0x82802978
 	.text       start:0x82802978 end:0x82802F24
