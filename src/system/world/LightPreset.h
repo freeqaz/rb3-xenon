@@ -190,7 +190,7 @@ public:
 
     // RB3 BandDirector deps (stubs — port the real LightPreset when revisited).
     class RndPostProc *GetCurrentPostProc() const;
-    float LegacyFadeIn() const;
+    float LegacyFadeIn() const { return mLegacyFadeIn; } // inline: retail reads +0x70
     static void StaticResetEvents();
 
 protected:
