@@ -415,6 +415,8 @@ void TrackPanelDir::SetupApplauseMeter(
 
 void TrackPanelDir::SetApplauseMeterScale(int i1, int i2) {
     if (mApplauseMeter) {
+        static Symbol max_diff("max_diff");
+        static Symbol tie_window("tie_window");
         mApplauseMeter->SetProperty(max_diff, i1);
         mApplauseMeter->SetProperty(tie_window, tie_window);
     }
@@ -688,6 +690,7 @@ void TrackPanelDir::UnisonSucceed() {
 }
 
 void TrackPanelDir::StartPulseAnims(float f) {
+    static Symbol loop("loop");
     if (mPulseAnimGrp) {
         mPulseAnimGrp->Animate(
             0, false, f, RndAnimatable::k480_fpb, 0, 960.0f, 0, 1.0f, loop

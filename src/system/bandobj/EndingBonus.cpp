@@ -116,6 +116,7 @@ void EndingBonus::PlayerFailure(int slot_index) {
 }
 
 void EndingBonus::CodaEnd() {
+    static Message coda_end_script_msg("coda_end_script");
     mCodaEndTask = new MessageTask(this, coda_end_script_msg);
     TheTaskMgr.Start(mCodaEndTask, kTaskSeconds, 2.0f);
 }

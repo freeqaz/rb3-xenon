@@ -586,6 +586,7 @@ void VocalTrackDir::Tambourine(Symbol s) {
 }
 
 void VocalTrackDir::TambourineNote() {
+    static Message tambourine_note_msg("tambourine_note");
     if (mPopupObject)
         mPopupObject->Handle(tambourine_note_msg, true);
 }
@@ -679,6 +680,7 @@ void VocalTrackDir::ShowPhraseFeedback(int i1, int i2, int i3, bool b) {
     if (i3 == 4)
         i_sum++;
     if (mLeadPhraseFeedbackBottomLbl) {
+        static Symbol perfect_harmony("perfect_harmony");
         if (parts > 1 && i_sum == parts)
             mLeadPhraseFeedbackBottomLbl->SetTextToken(perfect_harmony);
         else
@@ -1242,6 +1244,8 @@ DataNode VocalTrackDir::OnSetLyricColor(const DataArray *da) {
     float red = (float)(packed & 255) / 255.0f;
     float green = (float)((packed >> 8) & 255) / 255.0f;
     float blue = (float)((packed >> 16) & 255) / 255.0f;
+    static Symbol lead("lead");
+    static Symbol harmony("harmony");
     if (sym == lead) {
         if (mLeadText)
             mLeadText->SetColor(Hmx::Color(red, green, blue, alpha));

@@ -236,6 +236,7 @@ void BandButton::SkipToUnfocused() {
 }
 
 void BandButton::StartPulseAnim() {
+    static Symbol loop("loop");
     if (mPulseAnim) {
         mAnimTask = mPulseAnim->Animate(
             0.05f,

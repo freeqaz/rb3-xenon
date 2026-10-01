@@ -756,6 +756,7 @@ void GemTrackDir::GemHit(int i) {
 }
 
 void GemTrackDir::SeeKick() {
+    static Message kick_note_msg("kick_note");
     if (mPopupObject)
         mPopupObject->Handle(kick_note_msg, true);
 }
@@ -843,6 +844,7 @@ void GemTrackDir::ResetCoda() {
 }
 
 void GemTrackDir::CrashFill() {
+    static Message drum_fill_complete_msg("drum_fill_complete");
     if (BandTrack::mParent) {
         BandTrack::mParent->GetSmasher(4)->Handle(drum_fill_complete_msg, true);
     }
@@ -869,6 +871,8 @@ void GemTrackDir::SetPlayerLocal(float f) {
 }
 
 void GemTrackDir::SetDisplayRange(float f) {
+    static Symbol range("range");
+    static Message update_range_msg("update_range");
     if (f != 10.0f)
         MILO_WARN("keyboard range must be 10 white keys inclusive");
     mSmasherPlate->SetProperty(range, f);
