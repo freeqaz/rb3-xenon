@@ -1,4 +1,9 @@
 {
+ "0x826714d0": "??_EAssetProvider@@W3AAPAXI@Z",
+ "0x82670700": "?Text@PremiumAssetProvider@@UBAXHHPAVUIListLabel@@PAVUILabel@@@Z",
+ "0x826708d8": "?UpdateExtendedText@PremiumAssetProvider@@UBAXHHPAVUILabel@@@Z",
+ "0x82670ba0": "??1PremiumAssetProvider@@UAA@XZ",
+ "0x82670c68": "??_GPremiumAssetProvider@@UAAPAXI@Z",
  "0x82680dc8": "?Init@PresenceMgr@@QAAXXZ",
  "0x82bafba0": "?CodaHitChord@GemSmasher@@QAAXXZ",
  "0x82baf0c8": "?UpdateStaticTiming@LyricPlate@@QAAXM@Z",
@@ -17935,7 +17940,7 @@
  "0x82670530": "??1MakeupProvider@@UAA@XZ",
  "0x82670648": "??_GMakeupProvider@@UAAPAXI@Z",
  "0x82670698": "?Mat@MakeupProvider@@UBAPAVRndMat@@HHPAVUIListMesh@@@Z",
- "0x82670b90": "??_EAssetProvider@@W3AAPAXI@Z",
+ "0x82670b90": "??_EPremiumAssetProvider@@W3AAPAXI@Z",
  "0x82670cb8": "?SortAssetsByIndex@AssetProvider@@SA_NVSymbol@@0@Z",
  "0x82670ec0": "?Mat@AssetProvider@@UBAPAVRndMat@@HHPAVUIListMesh@@@Z",
  "0x82670f88": "??$__unguarded_linear_insert@PAPAVRndDrawable@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVRndDrawable@@PAV1@P6A_N11@Z@Z",

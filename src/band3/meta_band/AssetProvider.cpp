@@ -4,6 +4,7 @@
 #include "meta_band/Asset.h"
 #include "meta_band/AssetMgr.h"
 #include "meta_band/AssetTypes.h"
+#include "meta_band/BandSongMgr.h"
 #include "meta_band/ClosetMgr.h"
 #include "meta_band/ProfileAssets.h"
 #include "os/Debug.h"
@@ -19,6 +20,71 @@
 // references the equivalent asset-name debug toggle static; the load+compare
 // codegen is identical regardless of the referenced data symbol.
 extern bool gShowAssetName;
+
+RndMat *PremiumAssetProvider::Mat(int, int data, UIListMesh *slot) const {
+    MILO_ASSERT(data < NumData(), 0);
+    if (slot->Matches("new_bg")) {
+        return nullptr;
+    } else
+        return slot->DefaultMat();
+}
+
+// Retail 0x82670700: name / description / icon / progress columns. The icon is
+// 'U' when TheSongMgr holds a license for the asset and 'L' otherwise.
+void PremiumAssetProvider::Text(int, int data, UIListLabel *slot, UILabel *label) const {
+    Symbol sym = DataSymbol(data);
+    AssetMgr *pAssetMgr = AssetMgr::GetAssetMgr();
+    if (pAssetMgr->HasAsset(sym)) {
+        Asset *pAsset = pAssetMgr->GetAsset(sym);
+        if (slot->Matches("name")) {
+            label->SetTextToken(pAsset->GetName());
+        } else if (slot->Matches("description")) {
+            Symbol desc = pAsset->GetDescription();
+            label->SetTextToken(desc);
+        } else if (slot->Matches("icon")) {
+            if (TheSongMgr.HasLicense(sym))
+                label->SetIcon('U');
+            else
+                label->SetIcon('L');
+        } else if (slot->Matches("progress")) {
+            static Symbol customize_asset_progress("customize_asset_progress");
+            label->SetTokenFmt(customize_asset_progress, data + 1, NumData());
+        } else
+            label->SetTextToken(gNullStr);
+    } else if (slot->Matches("name")) {
+        label->SetTextToken(sym);
+    }
+}
+
+// Retail 0x826708D8: asset_desc_premium.lbl gets the description,
+// asset_progress_premium.lbl the "n of m" progress token.
+void PremiumAssetProvider::UpdateExtendedText(int, int data, UILabel *label) const {
+    MILO_ASSERT(data < NumData(), 0);
+    Symbol sym = DataSymbol(data);
+    AssetMgr *pAssetMgr = AssetMgr::GetAssetMgr();
+    if (pAssetMgr->HasAsset(sym)) {
+        Asset *pAsset = pAssetMgr->GetAsset(sym);
+        if (strcmp(label->Name(), "asset_desc_premium.lbl") == 0) {
+            Symbol desc = pAsset->GetDescription();
+            label->SetTextToken(desc);
+            return;
+        } else if (strcmp(label->Name(), "asset_progress_premium.lbl") == 0) {
+            static Symbol customize_asset_progress("customize_asset_progress");
+            label->SetTokenFmt(customize_asset_progress, data + 1, NumData());
+            return;
+        }
+    }
+    label->SetTextToken(gNullStr);
+}
+
+PremiumAssetProvider::~PremiumAssetProvider() {}
+
+Symbol PremiumAssetProvider::DataSymbol(int data) const {
+    MILO_ASSERT_RANGE(data, 0, NumData(), 0);
+    return mAssets[data];
+}
+
+int PremiumAssetProvider::NumData() const { return mAssets.size(); }
 
 AssetProvider::AssetProvider(BandProfile *profile, AssetGender gender)
     : mProfile(profile), mGender(gender) {
