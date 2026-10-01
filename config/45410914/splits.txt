@@ -104,7 +104,6 @@ Object.cpp:
 	.text       start:0x82359F28 end:0x82359FC8
 	.text       start:0x8235A014 end:0x8235A020
 	.text       start:0x82637670 end:0x82637678
-	.text       start:0x82638B50 end:0x82638B54
 	.text       start:0x8275A460 end:0x8275A5C0
 	.text       start:0x8275A5C0 end:0x8275A64C
 	.text       start:0x8275A64C end:0x8275AB18
@@ -8770,6 +8769,7 @@ band3/meta_band/StoreInfoPanel.cpp:
 	.pdata      start:0x8222B690 end:0x8222B698
 	.pdata      start:0x8222B698 end:0x8222B6A8
 	.pdata      start:0x8222B6A8 end:0x8222B860
+	.text       start:0x82638B50 end:0x82638B54
 	.text       start:0x82638B60 end:0x82638BB0
 	.text       start:0x82638BB0 end:0x82638C10
 	.text       start:0x82638CC0 end:0x82638D04
