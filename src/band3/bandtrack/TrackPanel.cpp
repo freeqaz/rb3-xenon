@@ -624,10 +624,9 @@ void TrackPanel::Poll() {
 #endif
     bool wasSoloing = unk62;
     bool soloing = false;
-    std::vector<Track *> &_ref0 = mTracks;
-    for (unsigned int i = 0; i < _ref0.size(); i++) {
-        _ref0[i]->Poll(ms);
-        BandTrack *bandTrack = _ref0[i]->GetBandTrack();
+    for (unsigned int i = 0; i < mTracks.size(); i++) {
+        mTracks[i]->Poll(ms);
+        BandTrack *bandTrack = mTracks[i]->GetBandTrack();
         if (bandTrack && bandTrack->unk78) {
             soloing = true;
         }
