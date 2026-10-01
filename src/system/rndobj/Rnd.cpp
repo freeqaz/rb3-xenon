@@ -153,7 +153,10 @@ Rnd::Rnd()
       mStatsOverlay(0), mDefaultMat(0), mOverlayMat(0), mOverdrawMat(0),
       mDefaultCam(0), mWorldCamCopy(0), mDefaultEnv(0), mDefaultLit(0), mDefaultCubeTexBlack(nullptr),
       mDefaultCubeTexWhite(nullptr), mRateTotal(0), mRateCount(5), mFrameID(0), mRateGate("    "),
-      mFont(nullptr), mSync(1), mGsTiming(0), mShowSafeArea(0), mDrawing(0),
+#ifdef HX_NATIVE
+      mFont(nullptr), // retail's ctor leaves mFont unset (no store to 0xEC)
+#endif
+      mSync(1), mGsTiming(0), mShowSafeArea(0), mDrawing(0),
       mWorldEnded(1), mAspect(kWidescreen), mDrawMode(kDrawNormal), mResourceCached(0), mShowShaderCost(0),
       mShrinkToSafe(1), mInGame(0), mVerboseTimers(0), mDisablePostProc(0), unk146(0),
       mWorldCamCopied(0), unk148(0), mWorldEndCallback(0), unk150(0), mPostProcOverride(nullptr),
