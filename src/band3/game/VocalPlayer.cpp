@@ -1333,14 +1333,15 @@ void VocalPlayer::HandlePhraseEnd(float f1) {
     if (iHighRatingPartCount > 1)
         iPhraseRating = iHighRatingPartCount + 3;
     if (iPhraseRating != -1) {
+        // A named local: retail stores the 4 to 0x50(r31) before the
+        // CurrentPhraseIndex call and selects the minimum after it.
+        int iMaxRating = 4;
         int idx = mVocalParts.front()->CurrentPhraseIndex();
-        // Retail passes idx-1 (`subi r5, r3, 0x1` right before the call), not
-        // idx.
-        int iCappedRating = std::min(iPhraseRating, 4);
-        UpdateCrowdMeter(iCappedRating, idx - 1);
+        // idx - 1, not idx: `subi r5,r3,0x1` right before the call.
+        UpdateCrowdMeter(std::min(iPhraseRating, iMaxRating), idx - 1);
     }
     mTambourineManager.SetTambourine(mVocalParts.front()->InTambourinePhrase());
-    bool bSpotlightPhraseHit = iSpotlightPhraseID != -1 && iPhraseRating >= 4;
+    const bool bSpotlightPhraseHit = iSpotlightPhraseID != -1 && iPhraseRating >= 4;
 #ifdef HX_NATIVE
     // Headless: mTrack is a non-null sentinel with no VocalTrackDir render object
     // and no net session, so the retail render/net phrase-end leaves
@@ -1361,7 +1362,9 @@ void VocalPlayer::HandlePhraseEnd(float f1) {
             static Message msg("send_score_phrase", 0, 0, 0);
             msg[0] = iPhraseRating;
             msg[1] = packedBools;
-            msg[2] = iPrevActivePartCount;
+            // Third argument is the spotlight flag (RemoteScorePhrase's bool),
+            // masked to a byte: retail clrlwi r11,r26,24 into the DataNode.
+            msg[2] = bSpotlightPhraseHit;
             HandleType(msg);
         }
     }
