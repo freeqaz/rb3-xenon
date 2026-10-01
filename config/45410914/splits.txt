@@ -6580,7 +6580,6 @@ PanelDir.cpp:
 	.pdata      start:0x82214610 end:0x82214618
 	.pdata      start:0x82214618 end:0x82214630
 	.pdata      start:0x82214630 end:0x82214640
-	.pdata      start:0x8222B1C0 end:0x8222B1D0
 	.pdata      start:0x82244970 end:0x82244978
 	.pdata      start:0x82244978 end:0x82244998
 	.pdata      start:0x822449C0 end:0x822449C8
@@ -6595,7 +6594,6 @@ PanelDir.cpp:
 	.text       start:0x824D1120 end:0x824D11A0
 	.text       start:0x824D11A0 end:0x824D12F8
 	.text       start:0x824D12F8 end:0x824D139C
-	.text       start:0x82634760 end:0x826347F4
 	.text       start:0x827D1108 end:0x827D1120
 	.text       start:0x827ED198 end:0x827ED200
 	.text       start:0x827ED200 end:0x827ED3B0
@@ -10154,6 +10152,7 @@ SetlistMergePanel.cpp:
 	.pdata      start:0x8222B130 end:0x8222B190
 	.pdata      start:0x8222B198 end:0x8222B1A0
 	.pdata      start:0x8222B1B8 end:0x8222B1C0
+	.pdata      start:0x8222B1C0 end:0x8222B1D0
 	.pdata      start:0x8222B1D0 end:0x8222B1E0
 	.pdata      start:0x8222B1E0 end:0x8222B1E8
 	.pdata      start:0x8222B1F0 end:0x8222B1F8
@@ -10179,6 +10178,7 @@ SetlistMergePanel.cpp:
 	.text       start:0x82633D98 end:0x826342F0
 	.text       start:0x82634360 end:0x82634624
 	.text       start:0x826346E4 end:0x82634758
+	.text       start:0x82634760 end:0x826347F4
 	.text       start:0x826347F4 end:0x82634894
 	.text       start:0x82634894 end:0x82634924
 	.text       start:0x82634950 end:0x826349C8
