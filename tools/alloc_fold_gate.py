@@ -700,7 +700,7 @@ def main():
             g["folded"] = [f for f in g["folded"] if f not in out]
             g.setdefault("withdrawn", []).extend(recs)
             p = ROOT / "scripts" / "symbol_aliases.json"
-            p.write_text(json.dumps(ali, indent=1) + "\n")
+            p.write_text(json.dumps(ali, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
             print(f"\nwithdrew {len(recs)} memberships "
                   f"({dict(collections.Counter(r['class'] for r in recs))}); "
                   f"{len(g['folded'])} remain folded")
@@ -799,7 +799,7 @@ def main():
                 "evidence": "tools/alloc_fold_gate.py -- 8-byte allocator-thunk "
                             "fold class (see the tool's docstring)."})
         p = ROOT / "scripts" / "symbol_aliases.json"
-        p.write_text(json.dumps(ali, indent=1) + "\n")
+        p.write_text(json.dumps(ali, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
         print(f"\ninstalled group of {len(folded)} folded spellings into {p}")
     return 0
 
