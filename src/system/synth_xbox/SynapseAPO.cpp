@@ -37,27 +37,27 @@ void SynapseAPO::OnSetParameters(const SynapseAPOParams& params) {
         if (m.gain != t.gain) {
             mSynapse->SetVoiceGain(i, t.gain);
         }
-        if (m.freq != t.freq) {
-            mSynapse->SetVoiceTargetNote(i, t.freq);
+        if (m.noteHz != t.noteHz) {
+            mSynapse->SetVoiceTargetNote(i, t.noteHz);
         }
-        if (m.q != t.q) {
-            mSynapse->SetVoiceTransposition(i, t.q);
+        if (m.transposition != t.transposition) {
+            mSynapse->SetVoiceTransposition(i, t.transposition);
         }
-        if (m.coeff0 != t.coeff0) {
-            mSynapse->SetVoiceAmount(i, t.coeff0);
+        if (m.amount != t.amount) {
+            mSynapse->SetVoiceAmount(i, t.amount);
         }
-        if (m.coeff1 != t.coeff1) {
-            mSynapse->SetVoiceProximityEffect(i, t.coeff1);
+        if (m.proximityEffect != t.proximityEffect) {
+            mSynapse->SetVoiceProximityEffect(i, t.proximityEffect);
         }
-        if (m.coeff2 != t.coeff2) {
-            mSynapse->SetVoiceProximityFocus(i, t.coeff2);
+        if (m.proximityFocus != t.proximityFocus) {
+            mSynapse->SetVoiceProximityFocus(i, t.proximityFocus);
         }
     }
-    if (mParams.lowCutoffFreq != params.lowCutoffFreq) {
-        mSynapse->SetAttackSmoothing(params.lowCutoffFreq);
+    if (mParams.attackSmoothing != params.attackSmoothing) {
+        mSynapse->SetAttackSmoothing(params.attackSmoothing);
     }
-    if (mParams.highCutoffFreq != params.highCutoffFreq) {
-        mSynapse->SetReleaseSmoothing(params.highCutoffFreq);
+    if (mParams.releaseSmoothing != params.releaseSmoothing) {
+        mSynapse->SetReleaseSmoothing(params.releaseSmoothing);
     }
     memcpy(&mParams, &params, sizeof(SynapseAPOParams));
 }
