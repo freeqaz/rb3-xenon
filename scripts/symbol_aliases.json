@@ -82762,12 +82762,19 @@
   {
    "name": "_M_insert_overflow",
    "address": "0x826fbdb0",
-   "survivor": "?_M_insert_overflow@?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@2@ABV32@ABU__false_type@2@I_N@Z",
+   "survivor": "?ReadAsync@BufFile@@UAA_NPAXH@Z",
    "folded": [
-    "?ReadAsync@BufFile@@UAA_NPAXH@Z",
     "?ReadAsync@NullFile@@UAA_NPAXH@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "?_M_insert_overflow@?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@2@ABV32@ABU__false_type@2@I_N@Z",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "retail RTTI: .?AVBufFile@@ vtable slot 3 (ReadAsync) points here; the 48-B body is Read() + return true and scores 100 against Synth.obj's inline BufFile::ReadAsync; the vector<map<int,float>> name was a stand-in pairing against DepthBuffer3D.obj (23.3)"
+    }
+   ]
   },
   {
    "name": "Save",

@@ -1860,21 +1860,12 @@ DepthBuffer3D.cpp:
 	.text       start:0x826F8B28 end:0x826F8C60
 	.text       start:0x826F8F64 end:0x826F8F68
 	.text       start:0x826F8F9C end:0x826F8FA0
-	.text       start:0x826F9350 end:0x826F95C0
+	.text       start:0x826F9350 end:0x826F942C
+	.text       start:0x826F94C8 end:0x826F95C0
 	.text       start:0x826F963C end:0x826F9648
-	.text       start:0x826F9778 end:0x826F984C
-	.text       start:0x826F9874 end:0x826F9878
-	.text       start:0x826F9B54 end:0x826F9BC4
-	.text       start:0x826FA1C4 end:0x826FA1EC
-	.text       start:0x826FA26C end:0x826FA278
-	.text       start:0x826FA714 end:0x826FA720
-	.text       start:0x826FAAE0 end:0x826FAAE8
-	.text       start:0x826FAE0C end:0x826FAE18
-	.text       start:0x826FB758 end:0x826FB884
 	.text       start:0x826FB8EC end:0x826FB8F0
 	.text       start:0x826FB9C8 end:0x826FB9D0
 	.text       start:0x826FBD08 end:0x826FBD60
-	.text       start:0x826FBDB0 end:0x826FBE68
 	.text       start:0x82701F58 end:0x82701F80
 	.text       start:0x82701FF0 end:0x82701FF8
 	.text       start:0x82710D10 end:0x82710DBC
@@ -2234,7 +2225,7 @@ FlowIf.cpp:
 	.pdata      start:0x822061F8 end:0x82206200
 	.text       start:0x823C6FF4 end:0x823C7000
 	.text       start:0x823C7000 end:0x823C70E8
-	.text       start:0x823C7204 end:0x823C7308
+	.text       start:0x823C72DC end:0x823C7308
 	.text       start:0x823C7314 end:0x823C7318
 	.text       start:0x823C7324 end:0x823C7328
 	.text       start:0x823C7334 end:0x823C73F8
@@ -3131,6 +3122,7 @@ MemTracker.cpp:
 	.pdata      start:0x82243228 end:0x82243238
 	.pdata      start:0x82243238 end:0x82243320
 	.pdata      start:0x82243328 end:0x822433D0
+	.text       start:0x822716F8 end:0x8227173C
 	.text       start:0x82271748 end:0x822717BC
 	.text       start:0x82554CB0 end:0x82554D0C
 	.text       start:0x826B8D20 end:0x826B8EE8
@@ -5874,7 +5866,8 @@ RhythmDetector.cpp:
 	.text       start:0x82270418 end:0x82270438
 	.text       start:0x82270690 end:0x82270B1C
 	.text       start:0x82270B84 end:0x82270E68
-	.text       start:0x822716E8 end:0x82271748
+	.text       start:0x822716E8 end:0x822716F8
+	.text       start:0x8227173C end:0x82271748
 	.text       start:0x826342F0 end:0x82634354
 	.text       start:0x82657660 end:0x826576C8
 	.text       start:0x826576C8 end:0x82657798
@@ -7511,7 +7504,7 @@ DrivenPropertyEntry.cpp:
 
 HamIKSkeleton.cpp:
 	.pdata      start:0x821F6928 end:0x821F6968
-	.text       start:0x822C2198 end:0x822C24B8
+	.text       start:0x822C2220 end:0x822C24B8
 
 DefaultPhysicsManager.cpp:
 	.pdata      start:0x82213EA0 end:0x82213EB8
@@ -7612,6 +7605,7 @@ BandIKEffector.cpp:
 	.text       start:0x822C19C8 end:0x822C1DD8
 	.text       start:0x822C1DD8 end:0x822C1E90
 	.text       start:0x822C1E90 end:0x822C2198
+	.text       start:0x822C2198 end:0x822C2220
 	.text       start:0x822C24B8 end:0x822C27B0
 	.text       start:0x822C27B0 end:0x822C2934
 	.text       start:0x822C2934 end:0x822C5580
@@ -7680,6 +7674,7 @@ CharBoneOffset.cpp:
 	.text       start:0x823A4670 end:0x823A4DD0
 	.text       start:0x823A4DD0 end:0x823A4E14
 	.text       start:0x823A4E18 end:0x823A4EC8
+	.text       start:0x823C7204 end:0x823C72DC
 	.text       start:0x823C7328 end:0x823C7334
 
 CharWeightable.cpp:
@@ -8316,6 +8311,7 @@ band3/game/Singer.cpp:
 	.text       start:0x826F87E8 end:0x826F8B28
 	.text       start:0x826F8C60 end:0x826F8F64
 	.text       start:0x826F8FA0 end:0x826F9350
+	.text       start:0x826F942C end:0x826F94C8
 	.text       start:0x826F9648 end:0x826F9750
 	.text       start:0x826F9750 end:0x826F9778
 
@@ -8329,24 +8325,34 @@ band3/game/TambourineManager.cpp:
 	.pdata      start:0x822371E0 end:0x822371E8
 	.pdata      start:0x822371E8 end:0x822371F0
 	.text       start:0x826E7498 end:0x826E74A0
+	.text       start:0x826F9778 end:0x826F984C
 	.text       start:0x826F984C end:0x826F9874
+	.text       start:0x826F9874 end:0x826F9878
 	.text       start:0x826F9878 end:0x826F9888
 	.text       start:0x826F9888 end:0x826F9994
 	.text       start:0x826F9994 end:0x826F9A04
 	.text       start:0x826F9A08 end:0x826F9A20
 	.text       start:0x826F9A20 end:0x826F9B54
+	.text       start:0x826F9B54 end:0x826F9BC4
 	.text       start:0x826F9BC4 end:0x826F9D3C
 	.text       start:0x826F9D3C end:0x826F9FB8
 	.text       start:0x826F9FB8 end:0x826FA1C4
+	.text       start:0x826FA1C4 end:0x826FA1EC
 	.text       start:0x826FA1EC end:0x826FA26C
+	.text       start:0x826FA26C end:0x826FA278
 	.text       start:0x826FA278 end:0x826FA714
+	.text       start:0x826FA714 end:0x826FA720
 	.text       start:0x826FA720 end:0x826FAAE0
+	.text       start:0x826FAAE0 end:0x826FAAE8
 	.text       start:0x826FAAE8 end:0x826FAE0C
+	.text       start:0x826FAE0C end:0x826FAE18
 	.text       start:0x826FAE18 end:0x826FB22C
 	.text       start:0x826FB22C end:0x826FB4E0
 	.text       start:0x826FB4E0 end:0x826FB600
 	.text       start:0x826FB600 end:0x826FB64C
 	.text       start:0x826FB650 end:0x826FB758
+	.text       start:0x826FB758 end:0x826FB87C
+	.text       start:0x826FB87C end:0x826FB884
 
 band3/bandtrack/Gem.cpp:
 	.pdata      start:0x821F4790 end:0x821F47B0
@@ -11670,6 +11676,7 @@ system/synth/Synth.cpp:
 	.pdata      start:0x822378F0 end:0x822378F8
 	.text       start:0x8262F310 end:0x8262F388
 	.text       start:0x826FBD60 end:0x826FBDB0
+	.text       start:0x826FBDB0 end:0x826FBE68
 	.text       start:0x826FC0E8 end:0x826FC5C0
 	.text       start:0x826FC5C0 end:0x826FC9A4
 	.text       start:0x826FC9A8 end:0x826FCA10
