@@ -90069,6 +90069,14 @@
       "lane": "ALIAS-CONSOLIDATION 2026-08-19",
       "class": "FABRICATED_CLOSURE_NOT_PARTITION"
      }
+    },
+    {
+     "lane": "W16-LD 2026-10-01",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION",
+     "verdict": "FOLD -- CHASED T1 PROVEN, 0 CYCLE-ASSUMED",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED (template twin until callee names are chased), CHASED T1 PROVEN, no CYCLE-ASSUMED leaf; 100 B retail / 100 B ours. Retail CharSync::UpdateCharCache (0x82564698) branches to the survivor 0x823d14c0 at 0x82564924, 0x82564954, 0x82564990 and 0x82564ac8, the four sites where our source pushes onto a std::list<CharData*>. The spelling is not map-resident.",
+     "why_the_original_premise_failed": "The 2026-08-19 withdrawal was made against a folded list shared by ten groups at distinct addresses, wholesale rather than per membership; this membership is re-derived on retail bytes at its own call sites.",
+     "spelling": "?insert@?$list@PAVCharData@@V?$StlNodeAlloc@PAVCharData@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVCharData@@U?$_Nonconst_traits@PAVCharData@@@stlpmtx_std@@@2@U32@ABQAVCharData@@@Z"
     }
    ],
    "merged_in": [

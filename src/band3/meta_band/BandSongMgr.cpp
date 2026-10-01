@@ -938,10 +938,11 @@ bool BandSongMgr::RemoveOldestCachedContent() {
 
     std::hash_map<int, SongMetadata *>::iterator it = mCachedSongMetadata.begin();
     std::hash_map<int, SongMetadata *>::iterator oldest = it;
-    int maxAge = (*oldest).second->Age();
+    int maxAge = oldest->second->Age();
     for (; it != mCachedSongMetadata.end(); ++it) {
-        if ((*it).second->Age() > maxAge) {
-            maxAge = (*it).second->Age();
+        int age = it->second->Age();
+        if (age > maxAge) {
+            maxAge = age;
             oldest = it;
         }
     }
@@ -949,11 +950,11 @@ bool BandSongMgr::RemoveOldestCachedContent() {
     if (maxAge < 1)
         return false;
 
-    int songID = (*oldest).second->ID();
+    int songID = oldest->second->ID();
     if (songID == 0) {
         MILO_WARN(
             "Invalid SongID for song %s\n",
-            dynamic_cast<BandSongMetadata *>((*oldest).second)->Title()
+            dynamic_cast<BandSongMetadata *>(oldest->second)->Title()
         );
         return false;
     }
@@ -964,9 +965,8 @@ bool BandSongMgr::RemoveOldestCachedContent() {
         for (std::hash_map<Symbol, std::vector<int> >::iterator mit = mSongIDsInContent.begin();
              mit != mSongIDsInContent.end();
              ++mit) {
-            for (std::vector<int>::iterator vit = mit->second.begin();
-                 vit != mit->second.end();
-                 ++vit) {
+            std::vector<int> &ids = mit->second;
+            for (std::vector<int>::iterator vit = ids.begin(); vit != ids.end(); ++vit) {
                 if (songID == *vit) {
                     contentName = mit->first;
                     break;

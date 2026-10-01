@@ -120,8 +120,9 @@ bool AssetProvider::SortAssetsByIndex(Symbol s1, Symbol s2) {
 void AssetProvider::Update(AssetType assetType, AssetBoutique assetBoutique) {
     AssetMgr *pAssetMgr = AssetMgr::GetAssetMgr();
     MILO_ASSERT(pAssetMgr, 0x3d);
+    const std::hash_map<Symbol, Asset *> &assets = pAssetMgr->GetAssets();
     std::vector<Symbol> syms;
-    FOREACH_POST (it, pAssetMgr->GetAssets()) {
+    FOREACH_POST (it, assets) {
         Asset *pAsset = it->second;
         MILO_ASSERT(pAsset, 0x46);
         Symbol name = pAsset->GetName();
