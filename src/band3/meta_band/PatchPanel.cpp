@@ -532,12 +532,15 @@ inline void StickerProvider::SetStickers(std::vector<PatchSticker *> *stickers, 
         RndMat *mat = Hmx::Object::New<RndMat>();
         mat->Copy(mStickerMat, kCopyDeep);
         sticker->SetIconOnMat(mat);
-        float scaleHW = 1.0f, scaleWH = 1.0f;
+        float scaleWH = 1.0f, scaleHW = 1.0f;
         float w = sticker->unk18;
         float h = sticker->unk1c;
         if (w > h) scaleWH = w / h;
         if (!(w > h)) scaleHW = h / w;
         Transform tf;
+        tf.v.z = zero;
+        tf.v.y = zero;
+        tf.v.x = zero;
         tf.m.x.x = one * scaleHW;
         tf.m.x.y = zero * scaleHW;
         tf.m.x.z = zero * scaleHW;
@@ -547,10 +550,7 @@ inline void StickerProvider::SetStickers(std::vector<PatchSticker *> *stickers, 
         tf.m.z.x = zerone;
         tf.m.z.y = zerone;
         tf.m.z.z = oneone;
-        tf.v.y = zero;
-        tf.v.x = zero;
-        tf.v.z = zero;
-        mat->SetBlend(RndMat::kBlendAdd);
+        mat->SetTexGen(kTexGenXfm);
         mat->SetTexWrap(kTexBorderBlack);
         mat->SetTexXfm(tf);
         mStickerMats.push_back(mat);
