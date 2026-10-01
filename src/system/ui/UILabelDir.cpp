@@ -218,6 +218,39 @@ void UILabelDir::PostLoad(BinStream &bs) {
 
 bool UILabelDir::AllowEditText() const { return mAllowEditText; }
 
+void UILabelDir::SyncObjects() {
+    RndDir::SyncObjects();
+    UIFontImporter::FontImporterSyncObjects();
+}
+
+RndText *UILabelDir::TextObj(Symbol s) const {
+    if (NumGennedFonts() > 0)
+        return GetGennedText(s);
+    else
+        return mTextObj;
+}
+
+RndAnimatable *UILabelDir::FocusAnim() const { return mFocusAnim; }
+RndAnimatable *UILabelDir::PulseAnim() const { return mPulseAnim; }
+RndGroup *UILabelDir::HighlighMeshGroup() const { return mHighlightMeshGroup; }
+RndMesh *UILabelDir::TopLeftHighlightBone() const { return mTopLeftHighlightBone; }
+RndMesh *UILabelDir::TopRightHighlightBone() const { return mTopRightHighlightBone; }
+RndMesh *UILabelDir::BottomLeftHighlightBone() const { return mBottomLeftHighlightBone; }
+RndMesh *UILabelDir::BottomRightHighlightBone() const { return mBottomRightHighlightBone; }
+
+// Retail 0x8280FEA8: a missing state color falls back to
+// mDefaultColor, then to white.
+void UILabelDir::GetStateColor(UIComponent::State state, Hmx::Color &col) const {
+    UIColor *c = mColors[state];
+    if (c) {
+        col = c->GetColor();
+    } else if (mDefaultColor) {
+        col = mDefaultColor->GetColor();
+    } else {
+        col.Reset();
+    }
+}
+
 RndFont *UILabelDir::FontObj(Symbol s) const {
     if (mGennedFonts.size() > 0) {
         return GetGennedFont(s);

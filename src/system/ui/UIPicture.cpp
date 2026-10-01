@@ -159,10 +159,12 @@ void UIPicture::HookupMesh() {
         RndMat *mat = mMesh->Mat();
         if (mat) {
             RndTex *tex = mTex;
+            // Retail 0x82815D88: the null arm open-codes the release
+            // (ClearDiffuseTex) and both arms share one dirty-flag store.
             if (tex && tex->Width() != 0 && tex->Height() != 0) {
                 mat->SetDiffuseTex(tex);
             } else {
-                mat->SetDiffuseTex(0);
+                mat->ClearDiffuseTex();
             }
         }
 #ifdef HX_NATIVE

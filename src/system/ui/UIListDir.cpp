@@ -161,7 +161,7 @@ void UIListDir::SyncObjects() {
 void UIListDir::DrawShowing() {
     if (mTestMode && TheLoadMgr.EditMode()) {
         UIListWidgetDrawState drawState;
-        BuildDrawState(drawState, mTestState, mTestComponentState, 0.0f, true);
+        BuildDrawState(drawState, mTestState, mTestComponentState, 0.0f);
         DrawWidgets(drawState, mTestState, mTestWidgets, WorldXfm(), mTestComponentState, nullptr, false);
     } else
         RndDir::DrawShowing();
@@ -297,19 +297,26 @@ void UIListDir::DrawWidgets(
         offset = (float)subList->SelectedPos() * subList->GetUIListDir()->ElementSpacing();
     } else
         offset = 0;
-    BuildDrawState(drawState, state, compState, offset, true);
+    BuildDrawState(drawState, state, compState, offset);
     bool scrolling = state.IsScrolling();
-    bool isFocused = (compState == UIComponent::kFocused);
-    for (std::vector<UIListWidget *>::iterator it = widgets.begin(); it != widgets.end();
-         ++it) {
-        UIListWidget *widget = *it;
-        UIListWidgetDrawType drawType = widget->WidgetDrawType();
-        if (drawType == kUIListWidgetDrawAlways
-            || (drawType == kUIListWidgetDrawFocusedOrManual
-                && (bDrawFocusedOrManual || isFocused))
-            || (drawType == kUIListWidgetDrawOnlyFocused && isFocused)) {
-            widget->Draw(drawState, state, tf, compState, box, scrolling ? kExcludeFirst : kDrawAll);
-        }
+    // Retail 0x8280DC28: the first pass is a do-while behind an emptiness test,
+    // with isFocused computed inside it.
+    std::vector<UIListWidget *>::iterator it = widgets.begin();
+    if (it != widgets.end()) {
+        bool isFocused = (compState == UIComponent::kFocused);
+        do {
+            UIListWidget *widget = *it;
+            UIListWidgetDrawType drawType = widget->WidgetDrawType();
+            if (drawType == kUIListWidgetDrawAlways
+                || (drawType == kUIListWidgetDrawFocusedOrManual
+                    && (bDrawFocusedOrManual || isFocused))
+                || (drawType == kUIListWidgetDrawOnlyFocused && isFocused)) {
+                widget->Draw(
+                    drawState, state, tf, compState, box, scrolling ? kExcludeFirst : kDrawAll
+                );
+            }
+            ++it;
+        } while (it != widgets.end());
     }
     if (scrolling) {
         for (std::vector<UIListWidget *>::iterator it = widgets.begin();
@@ -390,7 +397,7 @@ void UIListDir::ListEntered() {
 }
 
 void UIListDir::BuildDrawState(
-    UIListWidgetDrawState &drawState, UIListState const &state, UIComponent::State compState, float subListOffset, bool allowHighlight
+    UIListWidgetDrawState &drawState, UIListState const &state, UIComponent::State compState, float subListOffset
 ) const {
     auto& _ref0 = mFadeOffset;
     int numDisplay = state.NumDisplay();
