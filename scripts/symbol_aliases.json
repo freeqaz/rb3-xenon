@@ -98098,6 +98098,19 @@
      "evidence": "Coordinator gate on db7c81b87: icf_pair_adjudicate --chase (W16-JG/JH tightened slots) gives CHASED T1 REFUTED. Flat T1 proves the 92 B body, but the callee slot fn_823991D8 is BYTES-DIFFER / CALLEE-UNPROVEN-OURS-DISTINCT against our ?resize@?$ObjVector@VConstraint@HamIKEffector@@@@QAAXI@Z, so our operator= calls a different resize than retail's survivor does. HamIKEffector is a DC3 (Dance Central) class with no RB3 retail counterpart."
     }
    ]
+  },
+  {
+   "name": "op40_op58",
+   "address": "0x82726e80",
+   "survivor": "?op40@@YA?AVDataNode@@PAVDataArray@@@Z",
+   "folded": [
+    "?op58@@YA?AVDataNode@@PAVDataArray@@@Z"
+   ],
+   "evidence": "Retail ?Init@ByteGrinder@@ pushes op40's address (0x82726e80) into the op table at both op40's and op58's slots; no other retail body has op40's shape (retail_bodytwins 1). op40 and op58 compute the same value (rotate the byte right by 6 and flip bit 0, then xor the operand; nop40 and nop58 are already the same expression). With op58 written like op40, our compiled op58 is byte-identical to retail op40, and op40 itself is at 100. tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN (104 B, 4 relocs, no masked name disagreement), CHASED T1 PROVEN, no CYCLE-ASSUMED leaf. op58 is not map-resident.",
+   "lane": "W16-KD",
+   "added": {
+    "lane": "W16-KD 2026-10-01"
+   }
   }
  ]
 }
