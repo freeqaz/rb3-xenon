@@ -3095,14 +3095,12 @@ system/rndobj/Utl.cpp:
 MemTracker.cpp:
 	.pdata      start:0x821F1748 end:0x821F1750
 	.pdata      start:0x821F1750 end:0x821F1760
-	.pdata      start:0x8221C220 end:0x8221C228
 	.pdata      start:0x82233B50 end:0x82233B60
 	.pdata      start:0x82243228 end:0x82243238
 	.pdata      start:0x82243238 end:0x82243320
 	.pdata      start:0x82243328 end:0x822433D0
 	.text       start:0x822716F8 end:0x8227173C
 	.text       start:0x82271748 end:0x822717BC
-	.text       start:0x82554CB0 end:0x82554D0C
 	.text       start:0x826B8D20 end:0x826B8EE8
 	.text       start:0x827D44C8 end:0x827D4550
 	.text       start:0x827D4550 end:0x827D5BB0
@@ -8690,8 +8688,10 @@ band3/game/RGTutor.cpp:
 
 band3/meta_band/PrefabMgr.cpp:
 	.pdata      start:0x8221C150 end:0x8221C220
+	.pdata      start:0x8221C220 end:0x8221C228
 	.pdata      start:0x8221C228 end:0x8221C378
 	.text       start:0x82553F28 end:0x82554CB0
+	.text       start:0x82554CB0 end:0x82554D0C
 	.text       start:0x82554D0C end:0x82555E64
 
 band3/meta_band/AccomplishmentManager.cpp:

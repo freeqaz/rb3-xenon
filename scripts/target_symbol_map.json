@@ -1,4 +1,9 @@
 {
+ "0x827d6b50": "?Report@MemTracker@@QAAXHAAVTextStream@@@Z",
+ "0x827d57a8": "?Alloc@MemTracker@@QAAXHHPBDPAXC_NE@Z",
+ "0x827d4c20": "?Remove@?$KeylessHash@PAXPAVAllocInfo@@@@QAAXPAPAVAllocInfo@@@Z",
+ "0x827d4a28": "??0MemTracker@@QAA@HH@Z",
+ "0x827d49c8": "?delete_and_clear@AllocInfoVec@@QAAXXZ",
  "0x827bd300": "?MemInit@@YAXXZ",
  "0x827bca78": "?Alloc@MemHeap@@QAAPAHHHAAH@Z",
  "0x827bbd88": "?Free@MemHeap@@QAA_NPAH@Z",
@@ -13701,7 +13706,7 @@
  "0x825549e0": "??$sort_heap@PAPAUEventEntry@@UMaxSort@@@stlpmtx_std@@YAXPAPAUEventEntry@@0UMaxSort@@@Z",
  "0x82554a48": "?AssignPrefabsToSlots@PrefabMgr@@QAAXXZ",
  "0x82554be8": "?UnloadPortraits@PrefabMgr@@QAAXPAVOvershellSlot@@@Z",
- "0x82554cb0": "?delete_and_clear@AllocInfoVec@@QAAXXZ",
+ "0x82554cb0": "??$DeleteAll@V?$vector@PAVCharCreatorPrefab@PrefabMgr@@V?$StlNodeAlloc@PAVCharCreatorPrefab@PrefabMgr@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVCharCreatorPrefab@PrefabMgr@@V?$StlNodeAlloc@PAVCharCreatorPrefab@PrefabMgr@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x82554d10": "??$__partial_sort@PAPAVPrefabChar@@PAV1@USortPrefabByPortraitFileName@@@stlpmtx_std@@YAXPAPAVPrefabChar@@000USortPrefabByPortraitFileName@@@Z",
  "0x82554db8": "??0PrefabMgr@@QAA@XZ",
  "0x825554f8": "??1PrefabMgr@@UAA@XZ",
