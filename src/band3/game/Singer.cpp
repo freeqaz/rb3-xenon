@@ -482,6 +482,8 @@ float Singer::AddToFreestyleDeployment(float val) {
     return mTotalTambourineDeployment;
 }
 
+static const float kAmbiguityThreshold = 0.1f;
+
 void Singer::ResolveAmbiguity() {
     for (AmbiguousData *entry = AMBIG0; entry != mAmbiguousData.end(); entry++) {
         if (!entry->isResolved || entry->winningPart == -1)
@@ -492,7 +494,7 @@ void Singer::ResolveAmbiguity() {
         float points2 = mResultsData[part2].centsDeviation;
         float delta = points1 - points2;
         float maxPoints = Max(points1, points2);
-        if (fabsf(delta) / maxPoints > 0.1f) {
+        if (fabsf(delta) / maxPoints > kAmbiguityThreshold) {
             int iWinningPart = (delta > 0.0f) ? part1 : part2;
             int iLosingPart = (delta < 0.0f) ? part1 : part2;
             MILO_ASSERT(iWinningPart != iLosingPart, 0x1B4);
