@@ -2256,14 +2256,18 @@ void RndScaleObject(Hmx::Object *obj, float scale, float fovScale) {
 void FixVertOrder(const RndMesh *src, RndMesh *dst) {
     // reorders dst's verts so each lines up with the src vert of the same UV
     RndMesh::VertVector &srcVerts = const_cast<RndMesh *>(src)->Verts();
+    std::vector<RndMesh::Face> &dstFaces = dst->Faces();
     RndMesh::VertVector &dstVerts = dst->Verts();
-    for (int i = 0; i < srcVerts.size(); i++) {
+    int srcCount = srcVerts.size();
+    for (int i = 0; i < srcCount; i++) {
         Vector2 uv = srcVerts[i].tex;
         int j;
-        for (j = 0; j < dstVerts.size(); j++) {
-            if (fabsf(uv.x - dstVerts[j].tex.x) < 1e-5f
-                && fabsf(uv.y - dstVerts[j].tex.y) < 1e-5f)
+        for (int k = 0; k < dstVerts.size(); k++) {
+            if (fabsf(uv.x - dstVerts[k].tex.x) < 1e-5f
+                && fabsf(uv.y - dstVerts[k].tex.y) < 1e-5f) {
+                j = k;
                 goto found;
+            }
         }
         j = -1;
     found:
@@ -2277,15 +2281,21 @@ void FixVertOrder(const RndMesh *src, RndMesh *dst) {
                 memcpy(&dstVerts[ii], tmp, sizeof(RndMesh::Vert));
             }
             if (js != ii) {
-                int numFaces = dst->Faces().size();
+                int numFaces = dstFaces.size();
                 for (int f = 0; f < numFaces; f++) {
-                    RndMesh::Face &face = dst->Faces()[f];
-                    for (int k = 0; k < 3; k++) {
-                        if (face[k] == js)
-                            face[k] = ii;
-                        else if (face[k] == ii)
-                            face[k] = js;
-                    }
+                    RndMesh::Face &face = dstFaces[f];
+                    if (face.v1 == js)
+                        face.v1 = ii;
+                    else if (face.v1 == ii)
+                        face.v1 = js;
+                    if (face.v2 == js)
+                        face.v2 = ii;
+                    else if (face.v2 == ii)
+                        face.v2 = js;
+                    if (face.v3 == js)
+                        face.v3 = ii;
+                    else if (face.v3 == ii)
+                        face.v3 = js;
                 }
             }
         }
