@@ -410,9 +410,8 @@ void CharHair::Hookup(ObjPtrList<CharCollide> &collides) {
         if (!strand.Root())
             continue;
 
-        ObjVector<Point> &pts = strand.Points();
-        for (int j = 0; j < pts.size(); j++) {
-            pts[j].collides.clear();
+        for (int j = 0; j < strand.Points().size(); j++) {
+            strand.Points()[j].collides.clear();
         }
 
         for (ObjPtrList<CharCollide>::iterator it = collides.begin();
@@ -452,8 +451,8 @@ void CharHair::Hookup(ObjPtrList<CharCollide> &collides) {
             const Transform &rootXfm = strand.Root()->WorldXfm();
             float dist = Distance(colPos, rootXfm.v) - colAdjust;
 
-            for (int j = 0; j < pts.size(); j++) {
-                Point &pt = pts[j];
+            for (int j = 0; j < strand.Points().size(); j++) {
+                Point &pt = strand.Points()[j];
                 dist -= pt.length;
                 float maxRad = Max(pt.radius, pt.outerRadius);
                 if (maxRad > dist) {
