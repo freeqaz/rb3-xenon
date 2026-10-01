@@ -191,12 +191,14 @@ bool OvershellSlot::LookupUserInJoinList(const LocalBandUser *user, JoinState *s
     return false;
 }
 
+// Retail: a function-local static Symbol, and the modifier test is
+// materialised as a bool (li 1 / li 0) before selecting the list.
 bool OvershellSlot::IsValidControllerType(ControllerType ty) {
-    std::vector<ControllerType> &vec =
-        TheModifierMgr && TheModifierMgr->IsModifierActive(mod_auto_vocals) ? unk48
-                                                                            : unk40;
+    static Symbol mod_auto_vocals("mod_auto_vocals");
+    bool autoVocals = TheModifierMgr && TheModifierMgr->IsModifierActive(mod_auto_vocals);
+    std::vector<ControllerType> &vec = autoVocals ? unk48 : unk40;
     for (int i = 0; i < vec.size(); i++) {
-        if (ty == vec[i])
+        if (vec[i] == ty)
             return true;
     }
     return false;
@@ -439,7 +441,12 @@ void OvershellSlot::ToggleCymbal(Symbol s) {
     mCymbalConfiguration ^= cymBit;
 }
 
+// Retail compares against function-local static Symbols (one guard word,
+// bits 0..2), all constructed before the first test.
 bool OvershellSlot::IsCymbalSelected(Symbol s) {
+    static Symbol overshell_yellow_cym("overshell_yellow_cym");
+    static Symbol overshell_blue_cym("overshell_blue_cym");
+    static Symbol overshell_green_cym("overshell_green_cym");
     if (s == overshell_yellow_cym && (mCymbalConfiguration & 4))
         return true;
     else if (s == overshell_blue_cym && (mCymbalConfiguration & 8))
