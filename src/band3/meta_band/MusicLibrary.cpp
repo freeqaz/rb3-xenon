@@ -2244,8 +2244,19 @@ void MusicLibrary::RebuildProfileData() {
         PushSonglistToScreen();
         PushHighlightToScreen(false);
     }
+    // Retail: when reviews change and bad reviews are hidden (ProfileMgr +0x6b
+    // clear), the filtered list itself changes, so it is rebuilt for the
+    // current sort; otherwise only the review sort is redone.
     if (b2) {
-        ReSort(kSongSortByReview);
+        if (!TheProfileMgr.GetShowBadReviews()) {
+            TheSongSortMgr->BuildFilteredSongList(&mTask.filter, PartForFilter());
+            TheSongSortMgr->BuildSortTree(unkdc);
+            TheSongSortMgr->BuildSortList(unkdc);
+            TryToSetHighlight(unkd4, unkd8, true);
+            PushHighlightToScreen(true);
+        } else {
+            ReSort(kSongSortByReview);
+        }
     }
 }
 
@@ -2314,8 +2325,25 @@ DECOMP_FORCEACTIVE(MusicLibrary, "!myRestrictedSongChanged || aRestrictedSongCha
 
 bool MusicLibrary::IsPurchasing() const { return false; }
 
+// Retail (256 B): every store offer whose song is not already installed.
+// OfferType() is called under a function-local static Symbol("song") and its
+// result is never compared -- an assert whose condition survives only as the
+// call. The song ID comes from vtable slot 23 (GetSongIDFromShortName, fail
+// = false); an ID of 0 counts as not installed.
 void MusicLibrary::GetStoreOffers(std::vector<StoreOffer *> &offers) const {
     offers.clear();
+    if (unk19c) {
+        std::vector<StoreOffer *> &storeOffers = unk19c->mOffers;
+        FOREACH (it, storeOffers) {
+            StoreOffer *offer = *it;
+            static Symbol song("song");
+            MILO_ASSERT(offer->OfferType() == song, 0);
+            int songID = TheSongMgr.GetSongIDFromShortName(offer->ShortName(), false);
+            if (!songID || !TheSongMgr.HasSong(songID)) {
+                offers.push_back(offer);
+            }
+        }
+    }
 }
 
 void MusicLibrary::SetRandomSongs(

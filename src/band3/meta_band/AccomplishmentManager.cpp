@@ -237,6 +237,16 @@ void AccomplishmentManager::InitializeTourSafeDiscSongs() {
         MILO_ASSERT(pSongData, 0x107);
         if (pSongData->IsDownload())
             continue;
+        // Retail constructs function-local statics here (one guard word, bits
+        // 0..7 in this order), not the shared global Symbols.
+        static Symbol drum("drum");
+        static Symbol vocals("vocals");
+        static Symbol bass("bass");
+        static Symbol guitar("guitar");
+        static Symbol real_guitar("real_guitar");
+        static Symbol real_bass("real_bass");
+        static Symbol keys("keys");
+        static Symbol real_keys("real_keys");
         if (!pSongData->HasPart(drum, false))
             continue;
         if (!pSongData->HasPart(vocals, false))
@@ -479,6 +489,10 @@ void AccomplishmentManager::ConfigureAwardData(DataArray *arr) {
     }
 }
 
+// Retail lays every rejection out as one shared `delete` block placed inline
+// after the duplicate-name test, and after any award bookkeeping it calls
+// TheAccomplishmentMgr->GetMetaScoreValue(GetMetaScoreValue()) and discards
+// the result -- an assert whose condition survives only as the call.
 void AccomplishmentManager::ConfigureAccomplishmentData(DataArray *arr) {
     for (int i = 1; i < arr->Size(); i++) {
         Accomplishment *pAccomplishment = FactoryCreateAccomplishment(arr->Array(i), i);
@@ -487,43 +501,41 @@ void AccomplishmentManager::ConfigureAccomplishmentData(DataArray *arr) {
         if (HasAccomplishment(name)) {
             MILO_WARN("%s accomplishment already exists, skipping", name.Str());
             delete pAccomplishment;
-        } else {
-            Symbol cat = pAccomplishment->GetCategory();
-            if (!HasAccomplishmentCategory(cat)) {
+            continue;
+        }
+        Symbol cat = pAccomplishment->GetCategory();
+        if (!HasAccomplishmentCategory(cat)) {
+            MILO_WARN(
+                "%s accomplishment is using unknown category: %s", name.Str(), cat.Str()
+            );
+            delete pAccomplishment;
+            continue;
+        }
+        if (pAccomplishment->GetDynamicPrereqsFilter() != gNullStr
+            && pAccomplishment->GetDynamicPrereqsNumSongs() < 0) {
+            MILO_WARN(
+                "%s accomplishment is using using dynamic prereq filter but has no song count!",
+                name.Str()
+            );
+            delete pAccomplishment;
+            continue;
+        }
+        if (pAccomplishment->HasAward()) {
+            Symbol award = pAccomplishment->GetAward();
+            if (!HasAward(award)) {
                 MILO_WARN(
-                    "%s accomplishment is using unknown category: %s",
+                    "%s accomplishment is using unknown award: %s!",
                     name.Str(),
-                    cat.Str()
+                    award.Str()
                 );
                 delete pAccomplishment;
-            } else {
-                if (pAccomplishment->GetDynamicPrereqsFilter() != gNullStr
-                    && pAccomplishment->GetDynamicPrereqsNumSongs() < 0) {
-                    MILO_WARN(
-                        "%s accomplishment is using using dynamic prereq filter but has no song count!",
-                        name.Str()
-                    );
-                    delete pAccomplishment;
-                } else {
-                    if (pAccomplishment->HasAward()) {
-                        Symbol award = pAccomplishment->GetAward();
-                        if (!HasAward(award)) {
-                            MILO_WARN(
-                                "%s accomplishment is using unknown award: %s!",
-                                name.Str(),
-                                award.Str()
-                            );
-                            delete pAccomplishment;
-                            continue;
-                        }
-                        AddAwardSource(
-                            pAccomplishment->GetAward(), pAccomplishment->GetName()
-                        );
-                    }
-                    mAccomplishments[name] = pAccomplishment;
-                }
+                continue;
             }
+            AddAwardSource(pAccomplishment->GetAward(), pAccomplishment->GetName());
         }
+        Symbol metaScore = pAccomplishment->GetMetaScoreValue();
+        MILO_ASSERT(TheAccomplishmentMgr->GetMetaScoreValue(metaScore) >= 0, 0);
+        mAccomplishments[name] = pAccomplishment;
     }
 }
 
@@ -826,17 +838,24 @@ void AccomplishmentManager::AddAssetAward(Symbol s1, Symbol s2) {
         mAssetToAward[s1] = s2;
 }
 
+// Retail builds each branch's hint token as a function-local static Symbol
+// (one guard word, bits 0..4 in branch order), not the shared globals.
 String AccomplishmentManager::GetHintStringForSource(Symbol s) const {
     String ret;
     if (HasAccomplishment(s)) {
+        static Symbol asset_hint_goal("asset_hint_goal");
         ret = MakeString(Localize(asset_hint_goal, 0), Localize(s, 0));
     } else if (HasAccomplishmentCategory(s)) {
+        static Symbol asset_hint_goalcategory("asset_hint_goalcategory");
         ret = MakeString(Localize(asset_hint_goalcategory, 0), Localize(s, 0));
     } else if (HasAccomplishmentGroup(s)) {
+        static Symbol asset_hint_goalgroup("asset_hint_goalgroup");
         ret = MakeString(Localize(asset_hint_goalgroup, 0), Localize(s, 0));
     } else if (TheCampaign->HasCampaignLevel(s)) {
+        static Symbol asset_hint_campaignlevel("asset_hint_campaignlevel");
         ret = MakeString(Localize(asset_hint_campaignlevel, 0), Localize(s, 0));
     } else if (TheAccomplishmentMgr->HasAward(s)) {
+        static Symbol asset_hint_award("asset_hint_award");
         Award *pAward = TheAccomplishmentMgr->GetAward(s);
         MILO_ASSERT(pAward, 0x473);
         ret = MakeString(
@@ -1577,15 +1596,27 @@ Symbol AccomplishmentManager::GetAwardNameDisplay(Symbol s) const {
     return ret;
 }
 
+// Retail first constructs a static Symbol "campaign_award_reason_gamestop" that
+// is never compared (an assert whose condition is gone and whose static init
+// survives), then gives each branch its own function-local static token
+// (one guard word, bits 0..4).
 void AccomplishmentManager::UpdateReasonLabelForAward(Symbol s, UILabel *i_pLabel) {
     MILO_ASSERT(i_pLabel, 0x98F);
+    static Symbol campaign_award_reason_gamestop("campaign_award_reason_gamestop");
+    MILO_ASSERT(s != campaign_award_reason_gamestop, 0);
     if (HasAccomplishment(s)) {
+        static Symbol campaign_award_earned_by_goal("campaign_award_earned_by_goal");
         i_pLabel->SetTokenFmt(campaign_award_earned_by_goal, s);
     } else if (HasAccomplishmentCategory(s)) {
+        static Symbol campaign_award_earned_by_category(
+            "campaign_award_earned_by_category"
+        );
         i_pLabel->SetTokenFmt(campaign_award_earned_by_category, s);
     } else if (HasAccomplishmentGroup(s)) {
+        static Symbol campaign_award_earned_by_group("campaign_award_earned_by_group");
         i_pLabel->SetTokenFmt(campaign_award_earned_by_group, s);
     } else if (TheCampaign->HasCampaignLevel(s)) {
+        static Symbol campaign_award_earned_by_level("campaign_award_earned_by_level");
         i_pLabel->SetTokenFmt(campaign_award_earned_by_level, s);
     } else
         i_pLabel->SetTextToken(s);

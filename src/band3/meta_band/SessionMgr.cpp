@@ -277,6 +277,9 @@ DataNode SessionMgr::OnMsg(const AddUserResultMsg &msg) {
     return 0;
 }
 
+// Retail (412 B) has no sweep that removes signed-out users and no privilege
+// check: it disconnects as soon as one local user's pad bit is set in the
+// message's changed-mask.
 DataNode SessionMgr::OnMsg(const SigninChangedMsg &msg) {
     if (IsOnlineEnabled()) {
         if (mNewPlayer.mUser && !mNewPlayer.mUser->IsSignedIn()) {
@@ -284,31 +287,14 @@ DataNode SessionMgr::OnMsg(const SigninChangedMsg &msg) {
         }
         std::vector<LocalUser *> localusers;
         GetLocalUserListImpl(localusers);
-        do {
-            std::vector<LocalUser *> localusers2;
-            GetLocalUserListImpl(localusers2);
-            std::vector<LocalUser *>::iterator it;
-            for (it = localusers2.begin(); it != localusers2.end(); ++it) {
-                if (!(*it)->IsSignedIn()) {
-                    RemoveLocalUser(BandUserMgr::GetLocalBandUser(*it));
-                    break;
-                }
-            }
-            if (it == localusers2.end())
-                goto next;
-        } while (true);
-        goto end;
-    next:
         for (int i = 0; i < localusers.size(); i++) {
             LocalUser *user = localusers[i];
-            user->GetPadNum();
-            if (!user->HasOnlinePrivilege()) {
+            if (msg.GetChangedMask() & (1 << user->GetPadNum())) {
                 Disconnect();
                 break;
             }
         }
     }
-end:
     Export(msg, true);
     return 0;
 }

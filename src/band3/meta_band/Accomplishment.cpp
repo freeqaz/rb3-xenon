@@ -203,7 +203,11 @@ Symbol Accomplishment::GetDescription() const { return MakeString("%s_desc", mNa
 
 DECOMP_FORCEACTIVE(Accomplishment, "%s_howto")
 
-Symbol Accomplishment::GetSecretDescription() const { return acc_secretdesc; }
+// Retail: function-local static Symbol.
+Symbol Accomplishment::GetSecretDescription() const {
+    static Symbol acc_secretdesc("acc_secretdesc");
+    return acc_secretdesc;
+}
 
 Symbol Accomplishment::GetFlavorText() const { return MakeString("%s_flavor", mName); }
 

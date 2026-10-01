@@ -370,7 +370,14 @@ BandCharDesc::Patch::Category GetPatchCategoryFromAssetType(AssetType assetType)
     return result;
 }
 
+// Retail (320 B) compares against its own five function-local static
+// Symbols (one guard word, bits 0..4), not the shared globals.
 bool IsInstrumentAssetType(Symbol symbol) {
+    static Symbol guitar("guitar");
+    static Symbol bass("bass");
+    static Symbol drum("drum");
+    static Symbol mic("mic");
+    static Symbol keyboard("keyboard");
     if (symbol == guitar || symbol == bass || symbol == drum || symbol == mic
         || symbol == keyboard) {
         return true;

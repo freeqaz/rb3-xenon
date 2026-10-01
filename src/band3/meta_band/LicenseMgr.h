@@ -45,6 +45,9 @@ public:
     void ClearFromCache(Symbol);
     void GetLicensesInContent(Symbol, std::vector<Symbol> &) const;
     void MarkAvailable(Symbol, Symbol);
+    bool HasCachedContent(Symbol s) const {
+        return mCachedLicenses.find(s) != mCachedLicenses.end();
+    }
 
     std::set<Symbol> mLicenses; // 0x4
     std::hash_map<Symbol, std::vector<Symbol> > mCachedLicenses; // 0x1c

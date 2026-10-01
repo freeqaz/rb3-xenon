@@ -2030,29 +2030,38 @@ DataNode SaveLoadManager::OnMsg(const NoDeviceChosenMsg &) {
     return DataNode(kDataInt, 0);
 }
 
+// Retail (456 B, TU5) does not remove itself as a memcard sink here. Its
+// result tables: StartLoad maps kMCFileNotFound and
+// kMCNotEnoughSpace to the save-device-invalid prompt, SaveChooseDeviceInvalid
+// maps kMCNoCard to GlobalCreateNotFound and kMCNotEnoughSpace /
+// kMCFileNotFound to SaveOverwrite, ManualLoadChooseDevice maps
+// kMCObsoleteVersion / kMCNewerVersion to the autoload future prompts, and
+// SaveChooseDevice always moves to SaveNoOverwrite.
+// Residue: retail lowers the outer switch as a binary tree pivoting on 0x47;
+// ours, with the same seven case values, lowers to a compare chain.
 DataNode SaveLoadManager::OnMsg(const MCResultMsg &msg) {
     MILO_ASSERT(mWaiting, 0xaa3);
     mWaiting = false;
-    TheMemcardMgr.RemoveSink(this);
     MCResult res = (MCResult)msg.mData->Int(2);
     switch (mState) {
     case (State)0x4:
         unk6c = res;
         break;
-    case kS_AutoloadStartLoad: {
+    case kS_AutoloadStartLoad:
         switch (res) {
+        case kMCNoError:
+            unk6c = res;
+            SetState((State)0x43);
+            break;
         case kMCNoCard:
             SetState(kS_AutoloadNotOwner);
             break;
         case kMCCorrupt:
             SetState(kS_AutoloadCorrupt);
             break;
-        case kMCNotOwner:
-            SetState(kS_AutoloadObsolete);
-            break;
         case kMCNotEnoughSpace:
         case kMCFileNotFound:
-            SetState(kS_SaveOverwrite);
+            SetState(kS_SaveChooseDeviceInvalid);
             break;
         case kMCObsoleteVersion:
             SetState(kS_AutoloadFuture);
@@ -2060,29 +2069,27 @@ DataNode SaveLoadManager::OnMsg(const MCResultMsg &msg) {
         case kMCNewerVersion:
             SetState(kS_AutoloadFuture2);
             break;
-        case kMCNoError:
-            unk6c = res;
-            SetState((State)0x43);
+        case kMCNotOwner:
+            SetState(kS_AutoloadObsolete);
             break;
         default:
             SetState(kS_SaveFailed);
             break;
         }
         break;
-    }
-    case kS_SaveChooseDeviceInvalid: // 0x45
+    case kS_SaveChooseDeviceInvalid:
         switch (res) {
         case kMCNoCard:
             SetState(kS_GlobalCreateNotFound_Msg);
             break;
         case kMCNoError:
-        case kMCFileExists:
         case kMCCorrupt:
+        case kMCFileExists:
         case kMCNotOwner:
             SetState(kS_SaveDeviceInvalid);
             break;
-        case kMCFileNotFound:
         case kMCNotEnoughSpace:
+        case kMCFileNotFound:
             SetState(kS_SaveOverwrite);
             break;
         default:
@@ -2090,23 +2097,27 @@ DataNode SaveLoadManager::OnMsg(const MCResultMsg &msg) {
             break;
         }
         break;
-    case kS_SaveOverwrite: // 0x46
-    case kS_SaveNoOverwrite: // 0x47
+    case kS_SaveOverwrite:
+    case kS_SaveNoOverwrite:
         unk6c = res;
         break;
-    case kS_ManualLoadChooseDevice: // 0x64
+    case kS_SaveChooseDevice:
+        SetState(kS_SaveNoOverwrite);
+        break;
+    case kS_ManualLoadChooseDevice:
         switch (res) {
+        case kMCNoError:
+            unk6c = res;
+            SetState((State)0x43);
+            break;
         case kMCNoCard:
             SetState((State)0x63);
-            break;
-        case kMCFileNotFound:
-            SetState((State)0x65);
             break;
         case kMCCorrupt:
             SetState((State)0x66);
             break;
-        case kMCNotOwner:
-            SetState((State)0x67);
+        case kMCFileNotFound:
+            SetState((State)0x65);
             break;
         case kMCObsoleteVersion:
             SetState(kS_AutoloadFuture);
@@ -2114,20 +2125,12 @@ DataNode SaveLoadManager::OnMsg(const MCResultMsg &msg) {
         case kMCNewerVersion:
             SetState(kS_AutoloadFuture2);
             break;
-        case kMCNoError:
-            unk6c = res;
-            SetState((State)0x43);
+        case kMCNotOwner:
+            SetState((State)0x67);
             break;
         default:
             SetState(kS_SaveFailed);
             break;
-        }
-        break;
-    case (State)0x4b:
-        if (res == kMCNoError || res == kMCFileNotFound) {
-            SetState((State)0x4c);
-        } else {
-            SetState((State)0x4a);
         }
         break;
     case kS_Done:
@@ -2138,7 +2141,7 @@ DataNode SaveLoadManager::OnMsg(const MCResultMsg &msg) {
         MILO_FAIL("Unhandled MCResultMsg in state %d and mode %d\n", (int)mState, (int)mMode);
         break;
     }
-    return DataNode(0);
+    return 0;
 }
 
 DataNode SaveLoadManager::OnMsg(const RockCentralOpCompleteMsg &) {
