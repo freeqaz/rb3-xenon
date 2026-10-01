@@ -48,6 +48,7 @@ END_COPYS
 void OverdriveMeter::Reset() {
     if (mResetTrig)
         mResetTrig->Trigger();
+    static Symbol guitar("guitar");
     SetEnergy(0.0f, (State)1, guitar, 0.0f, true);
 }
 
@@ -83,6 +84,7 @@ void OverdriveMeter::Deploy() {
 void OverdriveMeter::StopDeploy() {
     if (mBeFillingTrig)
         mBeFillingTrig->Trigger();
+    static Symbol range("range");
     if (mPulseAnimGroup)
         mPulseAnimGroup->Animate(
             0.0f, false, 0.0f, RndAnimatable::k30_fps_ui, 0.0f, 0.0f, 0.0f, 1.0f, range
@@ -104,6 +106,7 @@ void OverdriveMeter::MiloReset() {
 void OverdriveMeter::EnergyReady(Symbol s, bool b, float f) {
     if (mBeReadyTrig)
         mBeReadyTrig->Trigger();
+    static Symbol loop("loop");
     if (mPulseAnimGroup)
         mPulseAnimGroup->Animate(
             0.0f, false, f, RndAnimatable::k1_fpb, 0.0f, 1.0f, 0.0f, 1.0f, loop

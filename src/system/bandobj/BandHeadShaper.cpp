@@ -185,6 +185,11 @@ void BandHeadShaper::Init() {
 }
 
 int BandHeadShaper::GetCount(Symbol s) {
+    static Symbol shape("shape");
+    static Symbol chin("chin");
+    static Symbol eye("eye");
+    static Symbol nose("nose");
+    static Symbol mouth("mouth");
     if (s == shape)
         return sShapeNum;
     if (s == chin)

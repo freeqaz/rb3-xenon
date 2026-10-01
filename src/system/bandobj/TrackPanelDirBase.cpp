@@ -215,7 +215,9 @@ void TrackPanelDirBase::UpdateTrackSpeed() {
     if (!mTrackPanel || !mTrackPanel->ShouldUpdateScrollSpeed())
         return;
     else {
+        static Symbol mod_doublespeed("mod_doublespeed");
         mDoubleSpeedActive = ModifierActive(mod_doublespeed);
+        static Symbol mod_independent_track_speeds("mod_independent_track_speeds");
         mIndependentTrackSpeeds = ModifierActive(mod_independent_track_speeds);
         float f1 = mDoubleSpeedActive ? 1.5f : 1.0f;
         if (mIndependentTrackSpeeds) {

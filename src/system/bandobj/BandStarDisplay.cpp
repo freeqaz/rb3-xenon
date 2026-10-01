@@ -125,6 +125,8 @@ void BandStarDisplay::SetStarType(Symbol s, bool b) {
     if (s == mStarType && !b)
         return;
     float frame = -1.0f;
+    static Symbol normal("normal");
+    static Symbol tour("tour");
     if (s == normal)
         frame = 0;
     else if (s == tour)

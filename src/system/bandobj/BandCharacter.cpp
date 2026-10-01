@@ -382,6 +382,7 @@ bool BandCharacter::AllowOverride(const char *cc) {
 // inlined back into Poll.
 #pragma auto_inline(off)
 const char *BandCharacter::DefaultStateGroup() {
+    static Symbol drum("drum");
     return mInstrumentType == drum ? "sit" : "stand";
 }
 #pragma auto_inline(on)

@@ -579,6 +579,15 @@ void BandTrack::SetInstrument(TrackInstrument inst) {
 }
 
 void BandTrack::SyncInstrument() {
+    static Symbol guitar("guitar");
+    static Symbol bass("bass");
+    static Symbol drum("drum");
+    static Symbol vocals("vocals");
+    static Symbol keys("keys");
+    static Symbol real_guitar("real_guitar");
+    static Symbol real_bass("real_bass");
+    static Symbol real_keys("real_keys");
+    static Symbol none("none");
     if (mInstrument == guitar) {
         mTrackInstrument = kInstGuitar;
     } else if (mInstrument == bass) {

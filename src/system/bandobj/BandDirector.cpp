@@ -589,6 +589,7 @@ void BandDirector::EnterVenue() {
 }
 
 void BandDirector::ClearLighting() {
+    static Message clear_lighting_msg("clear_lighting");
     if (mCurWorld)
         mCurWorld->Handle(clear_lighting_msg, false);
 }

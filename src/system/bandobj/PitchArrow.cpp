@@ -151,6 +151,13 @@ void PitchArrow::SetFrameScore(float score, VocalHUDColor color, float harmony) 
 }
 
 VocalHUDColor GetVocalHUDColor(Symbol s) {
+    static Symbol green("green");
+    static Symbol yellow("yellow");
+    static Symbol orange("orange");
+    static Symbol brown("brown");
+    static Symbol purple("purple");
+    static Symbol blue("blue");
+    static Symbol white("white");
     if (s == green)
         return kVocalColorGreen;
     else if (s == yellow)

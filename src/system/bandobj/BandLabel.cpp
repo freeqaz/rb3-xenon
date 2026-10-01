@@ -165,6 +165,7 @@ void BandLabel::LoadOldBandTextComp(BinStream &bs) {
             bs >> a >> b >> c >> d;
         }
         bs >> s;
+        static Symbol custom_colors("custom_colors");
         if (s == custom_colors) {
             int dummy;
             int num = 4;
