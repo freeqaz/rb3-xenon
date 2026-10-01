@@ -17437,13 +17437,20 @@
    ]
   },
   {
-   "name": "1CSequentialReadMem",
+   "name": "1DxRndOcclusionQueryMgr",
    "address": "0x82739568",
-   "survivor": "??1CSequentialReadMem@NUISPEECH@@UAA@XZ",
-   "folded": [
-    "??1DxRndOcclusionQueryMgr@@UAA@XZ"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "survivor": "??1DxRndOcclusionQueryMgr@@UAA@XZ",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??1CSequentialReadMem@NUISPEECH@@UAA@XZ",
+     "lane": "W16-MA 2026-10-01",
+     "class": "CONTRADICTED_SURVIVOR_VTABLE_CLASS",
+     "disposition": "former SURVIVOR spelling withdrawn as REFUTED on retail bytes; the former folded spelling is now the survivor; group kept",
+     "evidence": "tools/vtable_class_name_audit.py (W16-MA): retail body's FIRST offset-0 store is the vtable whose COL is .?AVDxRndOcclusionQueryMgr@@; NUISPEECH::CSequentialReadMem is a DC3 Kinect class with no retail RTTI. Its sole retail caller is ??_GDxRndOcclusionQueryMgr. The folded spelling is the true name and becomes the survivor."
+    }
+   ]
   },
   {
    "name": "_GRockCentral",
@@ -17501,12 +17508,10 @@
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 4 folded spelling(s), 1 census sites over 2 functions."
   },
   {
-   "name": "0ParallelGroupSeq",
+   "name": "0SfxSeq",
    "address": "0x82709f30",
-   "survivor": "??0ParallelGroupSeq@@QAA@XZ",
-   "folded": [
-    "??0SfxSeq@@QAA@XZ"
-   ],
+   "survivor": "??0SfxSeq@@QAA@XZ",
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 1 census sites over 2 functions.",
    "withdrawn": [
     {
@@ -17515,6 +17520,13 @@
      "class": "PLACEHOLDER_SLOT_UNPROVEN_VTABLE_RELATED_CLASS",
      "disposition": "membership withdrawn as UNPROVEN (NOT refuted), group kept",
      "evidence": "tools/alias_placeholder_slot_audit.py (W16-JH): this membership's T1 support rested on a relocation slot with an unnamed retail target, which W16-JG's discharge could not close and W16-JH could not prove on retail bytes. VTABLE-RELATED-CLASS @+0x18 retail lbl_820F80E4 vs ours ??_7SerialGroupSeq@@6BObject@Hmx@@@ -- retail vtable lbl_820F80E4 RTTI .?AVSfxSeq@@; our class SerialGroupSeq@@ has 2 retail vtable(s); VTABLE-RELATED-CLASS @+0x1c retail lbl_820F80D4 vs ours ??_7SerialGroupSeq@@6BSynthPollable@@@ -- retail vtable lbl_820F80D4 RTTI .?AVSfxSeq@@; our class SerialGroupSeq@@ has 2 retail vtable(s). RESTORE when the chase proves it (e.g. after the callee port)."
+    },
+    {
+     "spelling": "??0ParallelGroupSeq@@QAA@XZ",
+     "lane": "W16-MA 2026-10-01",
+     "class": "CONTRADICTED_SURVIVOR_VTABLE_CLASS",
+     "disposition": "former SURVIVOR spelling withdrawn as REFUTED on retail bytes; the former folded spelling is now the survivor; group kept",
+     "evidence": "tools/vtable_class_name_audit.py (W16-MA): retail body ends `stw` of vtables 0x820F80E4 and 0x820F80D4 (both COL .?AVSfxSeq@@) (the ctor's LAST offset-0 store); a ParallelGroupSeq ctor stores ParallelGroupSeq's vtable, so it cannot be this body and cannot ICF-fold with SfxSeq's. Sole retail caller is ?NewObject@SfxSeq. The address IS ??0SfxSeq, which becomes the survivor."
     }
    ],
    "repair": {
@@ -86427,13 +86439,20 @@
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 4, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
   },
   {
-   "name": "0PreviewDownloadCompleteMsg",
+   "name": "0RemoteMachineUpdatedMsg",
    "address": "0x825c21d0",
-   "survivor": "??0PreviewDownloadCompleteMsg@@QAA@_N0@Z",
-   "folded": [
-    "??0RemoteMachineUpdatedMsg@@QAA@PAVRemoteBandMachine@@E@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "survivor": "??0RemoteMachineUpdatedMsg@@QAA@PAVRemoteBandMachine@@E@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??0PreviewDownloadCompleteMsg@@QAA@_N0@Z",
+     "lane": "W16-MA 2026-10-01",
+     "class": "CONTRADICTED_SURVIVOR_VTABLE_CLASS",
+     "disposition": "former SURVIVOR spelling withdrawn as REFUTED on retail bytes; the former folded spelling is now the survivor; group kept",
+     "evidence": "tools/vtable_class_name_audit.py (W16-MA): retail body's LAST offset-0 store is the vtable whose COL is .?AVRemoteMachineUpdatedMsg@@; PreviewDownloadCompleteMsg has its own retail COL, so its ctor would store that and cannot be this body. The folded spelling is the true name and becomes the survivor."
+    }
+   ]
   },
   {
    "name": "Copy",
