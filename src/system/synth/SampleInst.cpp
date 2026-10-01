@@ -47,7 +47,11 @@ void SampleInst::Start() {
 
 void SampleInst::Stop() {
     if (IsPlaying())
+#ifdef HX_NATIVE
+        StopImpl(false);
+#else
         StopImpl();
+#endif
 #ifdef HX_NATIVE
     CancelPolling();
 #endif

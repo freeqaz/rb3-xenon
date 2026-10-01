@@ -58,7 +58,13 @@ public:
     virtual void SetStartProgress(float) {} // slot 26
     virtual void StartImpl() = 0; // slot 27
     // RB3 takes no argument: retail Stop (0x8272a830) calls slot 28 with r4 unset.
+#ifdef HX_NATIVE
+    // The shared native engine's SampleInstNative still overrides the DC3
+    // StopImpl(bool) form; keep it for the native build only.
+    virtual void StopImpl(bool) = 0; // slot 28
+#else
     virtual void StopImpl() = 0; // slot 28
+#endif
     virtual void SetVolumeImpl(float) = 0; // slot 29 -> 0x74
     virtual void SetPanImpl(float) = 0; // slot 30 -> 0x78
     virtual void SetSpeedImpl(float) = 0; // slot 31 -> 0x7c
