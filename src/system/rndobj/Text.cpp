@@ -1568,14 +1568,13 @@ int RndText::AddLineUTF8(
     int lineIdx;
     fp = fp ? fp : &f98;
 
-    const String &_ref0 = mText;
+    int _tmp1 = mText.length();
     int _tmp0 = utf8.length();
-    int _tmp1 = _ref0.length();
     if ((unsigned int)(_tmp1 + _tmp0) > (unsigned int)mFixedLength) {
         MILO_WARN(
             "Text %s%s exceeds fixed length of %d, truncating",
             utf8.c_str(),
-            _ref0.c_str(),
+            mText.c_str(),
             mFixedLength
         );
         return -1;
@@ -1613,8 +1612,8 @@ int RndText::AddLineUTF8(
                 i6 = newCharsInBytes;
             }
             MILO_ASSERT(line.endIdx <= mFixedLength, 0x874);
-            line.mStart = _ref0.c_str() + line.startIdx;
-            line.mEnd = _ref0.c_str() + line.endIdx;
+            line.mStart = mText.c_str() + line.startIdx;
+            line.mEnd = mText.c_str() + line.endIdx;
             ApplyLineText(utf8, style, *fp, line, newCharsInBytes, i6, bp);
             return lineIdx;
         } else
