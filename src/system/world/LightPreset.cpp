@@ -711,11 +711,29 @@ void LightPreset::AddLight(RndLight *lit) {
     mLightState.push_back(e);
 }
 
+// Retail 0x824B7018: every held object's ref is released, but only the
+// keyframe, spotlight, environment and light vectors are cleared --
+// mSpotlightDrawers is released and left in place (Load resizes it).
 void LightPreset::Clear() {
     mKeyframes.clear();
+#ifndef HX_NATIVE
+    for (int i = 0; i != (unsigned)mSpotlights.size(); i++)
+        mSpotlights[i]->Release(this);
+#endif
     mSpotlights.clear();
+#ifndef HX_NATIVE
+    for (int i = 0; i != (unsigned)mEnvironments.size(); i++)
+        mEnvironments[i]->Release(this);
+#endif
     mEnvironments.clear();
+#ifndef HX_NATIVE
+    for (int i = 0; i != (unsigned)mLights.size(); i++)
+        mLights[i]->Release(this);
+    for (int i = 0; i != (unsigned)mSpotlightDrawers.size(); i++)
+        mSpotlightDrawers[i]->Release(this);
+#else
     mSpotlightDrawers.clear();
+#endif
     mLights.clear();
 }
 
