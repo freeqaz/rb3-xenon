@@ -599,9 +599,9 @@ MetadataLoadedMsg::MetadataLoadedMsg(
     // retail's codegen.  Visible as one FEWER callee-saved register (retail
     // `bl __savegprlr_27` vs our `__savegprlr_26`) and a 16-byte smaller frame
     // (0xb0 vs 0xc0).  Same lever as the three Request() arms in Handle.
-    // DataNode(arr, kDataArray) stays explicit -- two-argument ctor, no
-    // implicit form.
-    : Message(MetadataLoadedMsg::Type(), DataNode(arr, kDataArray), loaded, name, b2, b3) {}
+    // `arr` converts the same way, through DataNode(DataArray *, DataType =
+    // kDataArray).
+    : Message(MetadataLoadedMsg::Type(), arr, loaded, name, b2, b3) {}
 
 void BandStorePanel::Poll() {
     StorePanel::Poll();
