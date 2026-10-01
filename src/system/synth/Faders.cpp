@@ -54,17 +54,9 @@ void Fader::DoFade(float targetDb, float duration) {
 bool Fader::IsFading() const { return mFaderTask; }
 
 float Fader::GetTargetDb() const {
-    if (mFaderTask) {
-        switch (mMode) {
-        case kExp:
-            return static_cast<ExpInterpolator *>(mFaderTask->mInterp)->Y1();
-        case kInvExp:
-            return static_cast<InvExpInterpolator *>(mFaderTask->mInterp)->Y1();
-        case kLinear:
-        default:
-            return static_cast<LinearInterpolator *>(mFaderTask->mInterp)->Y1();
-        }
-    } else
+    if (mFaderTask)
+        return mFaderTask->mInterp->Y1();
+    else
         return mVal;
 }
 

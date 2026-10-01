@@ -362,38 +362,45 @@ const ADSRImpl *Synth::DefaultADSR() {
     return mADSR;
 }
 
+// Meter layout shared by DrawMeter and DrawMeterScale: bar left edge and bar width as
+// fractions of the screen width, and the dB offset that maps -40 dB to the bar's left edge.
+// Retail reads all three from one table.
+static const float sMeterLayout[3] = { 0.2f, 40.0f, 0.7f };
+
 void Synth::DrawMeter(float &y, float level, float peakHold, const char *name) {
-    Hmx::Color yellow(0.5f, 0.5f, 0.0f, 1.0f);
-    Hmx::Color white(1.0f, 1.0f, 1.0f, 1.0f);
-    Hmx::Color black(0.0f, 0.0f, 0.0f, 1.0f);
     Hmx::Color grey(0.5f, 0.5f, 0.5f, 1.0f);
+    Hmx::Color black(0.0f, 0.0f, 0.0f, 1.0f);
+    Hmx::Color white(1.0f, 1.0f, 1.0f, 1.0f);
+    Hmx::Color green(0.5f, 1.0f, 0.0f, 1.0f);
+    Hmx::Color red(1.0f, 0.5f, 0.5f, 1.0f);
 
+    TheRnd.DrawString(name, Vector2((float)TheRnd.Width() * 0.1f, y), white, true);
+
+    float levelNorm = (level + sMeterLayout[1]) * 0.025f;
     float rndWidth = (float)TheRnd.Width();
-    Vector2 labelPos(rndWidth * 0.1f, y);
-    TheRnd.DrawString(name, labelPos, white, true);
+    float barLeft = rndWidth * sMeterLayout[0];
+    float barWidth = rndWidth * sMeterLayout[2];
+    if (levelNorm < 0.0f)
+        levelNorm = 0.0f;
+    else if (levelNorm > 1.0f)
+        levelNorm = 1.0f;
+    TheRnd.DrawRect(Hmx::Rect(barLeft, y, barWidth, 12.0f), black, 0, 0, 0);
+    TheRnd.DrawRect(Hmx::Rect(barLeft, y, barWidth * levelNorm, 12.0f), grey, 0, 0, 0);
 
-    float barLeft = rndWidth * 0.2f;
-    float barWidth = rndWidth * 0.7f;
-    Hmx::Rect bgRect(barLeft, y, barWidth, 12.0f);
-    TheRnd.DrawRect(bgRect, black, 0, 0, 0);
+    float peakNorm = (peakHold + sMeterLayout[1]) * 0.025f;
+    if (peakNorm < 0.0f)
+        peakNorm = 0.0f;
+    else if (peakNorm > 1.0f)
+        peakNorm = 1.0f;
+    Hmx::Rect peakRect(peakNorm * barWidth + barLeft, y, 8.0f, 12.0f);
+    TheRnd.DrawRect(peakRect, peakNorm == 1.0f ? red : green, 0, 0, 0);
 
-    float levelNorm = Clamp(0.0f, 1.0f, (level + 40.0f) * 0.025f);
-
-    Hmx::Rect levelRect(barLeft, y, levelNorm * barWidth, 12.0f);
-    TheRnd.DrawRect(levelRect, grey, 0, 0, 0);
-
-    float peakNorm = Clamp(0.0f, 1.0f, (peakHold + 40.0f) * 0.025f);
-
-    Hmx::Color *peakColor = &white;
-    if (peakNorm != 1.0f)
-        peakColor = &yellow;
-
-    Hmx::Rect peakRect(barLeft + peakNorm * barWidth, y, 8.0f, 12.0f);
-    TheRnd.DrawRect(peakRect, *peakColor, 0, 0, 0);
-
-    Vector2 dbLabelPos(barWidth + barLeft, y);
-    TheRnd.DrawString(MakeString("%i", (int)peakHold), dbLabelPos, white, true);
-
+    TheRnd.DrawString(
+        MakeString("%i", (int)peakHold),
+        Vector2(barWidth + barLeft, y),
+        Hmx::Color(1.0f, 1.0f, 1.0f, 1.0f),
+        true
+    );
     y += 16.0f;
 }
 
@@ -401,8 +408,8 @@ void Synth::DrawMeterScale(float &y) {
     int db = -40;
     float height = (float)TheRnd.Width();
     Hmx::Color color(1.0f, 1.0f, 1.0f, 1.0f);
-    float left = height * 0.2f;
-    float width = height * 0.7f;
+    float left = height * sMeterLayout[0];
+    float width = height * sMeterLayout[2];
     Vector2 pos(left, y);
     TheRnd.DrawString(MakeString("%i", db), pos, color, true);
     db = -20;
