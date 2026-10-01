@@ -38,11 +38,12 @@ void CriticalUserListener::ClearCriticalUser() {
     mCriticalUser = nullptr;
 }
 
+// Retail (208 B) only raises the drop-out event; it does not clear
+// mCanSaveData (no store to +0x30). The token is a function-local static.
 DataNode CriticalUserListener::OnMsg(const LocalUserLeftMsg &msg) {
-    LocalUser *userleft = msg.GetUser();
-    if (userleft == mCriticalUser) {
+    if (msg.GetUser() == mCriticalUser) {
+        static Symbol critical_user_drop_out("critical_user_drop_out");
         TheUIEventMgr->TriggerEvent(critical_user_drop_out, 0);
-        mCanSaveData = false;
     }
     return 1;
 }
