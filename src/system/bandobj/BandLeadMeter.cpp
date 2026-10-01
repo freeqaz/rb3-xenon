@@ -38,10 +38,7 @@ BandLeadMeter::BandLeadMeter()
 int BandLeadMeter::GetColor(int i) {
     if (i == 0)
         return 0;
-    int color = 2;
-    if (i > 0)
-        color = 1;
-    return color;
+    return i > 0 ? 1 : 2;
 }
 
 void BandLeadMeter::SyncScores() {
@@ -63,14 +60,13 @@ void BandLeadMeter::SyncScores() {
         mLensMesh->SetMat(mat);
     }
     int neg = -mScoreDiff;
-    float min = Min<float>(std::fabs((float)neg) / (float)unk204, 1.0f);
-    float min50 = min * 50.0f;
-    int i = -1;
-    if (neg > 0)
-        i = 1;
-    float frame = min50 * i + 50.0f;
+    float frac = Min(fabsf(neg) / unk204, 1.0f);
+    int dir = 1;
+    if (neg <= 0)
+        dir = -1;
     if (mScoreDiff >= -unk204 && mScoreDiff <= unk204 && mNeedleAnim) {
-        mNeedleAnim->SetFrame(frame, 1.0f);
+        float scaled = frac * 50.0f;
+        mNeedleAnim->SetFrame(scaled * dir + 50.0f, 1.0f);
     }
 }
 
