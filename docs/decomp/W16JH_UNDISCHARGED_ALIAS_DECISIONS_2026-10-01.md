@@ -331,3 +331,26 @@ a silent duplicate map key that way. The rebase recipe used here, three times:
 4. Re-audit, expecting 0 CONTRADICTED / 0 UNDISCHARGED. Re-account the 341: anything
    main's re-mappings moved out of reach must be decided against the address's current
    name (§5). Then re-run all seven tool controls.
+
+## 11. Re-landed on main `e762a9298` (W16-JA), using the §10 recipe
+
+- **Rebase.** One map conflict, resolved by re-applying the key-level delta. The net map
+  delta against main is now **7 rows, 0 duplicate keys**: W16-JA independently corrected
+  `0x8240F0C8` to `?UpdateHeap@Rnd@@IAAXXZ` (`9fbf41cc4`). That is the third time main
+  has independently made one of this lane's identifications.
+- **Ledger.** Restored to `e762a9298`'s byte-for-byte, then a forced re-split rebuild
+  (3,123 target objs, 1,861 renamed), then `--apply --withdraw-undischarged --extra …`.
+  - Exactly **210** removals + 210 records, 0 other differences, and every one is one of
+    the 341.
+  - The regenerated ledger is **byte-identical** to the rebase's own result.
+- **Audit:** 0 CONTRADICTED / 0 UNDISCHARGED; the 341 split as 131 proven + 210 withdrawn.
+- **Dependent rows:** unchanged, 3 (repaired census).
+- **Gates:** injectivity OK (32,780 rows); validator PASS (1,609 / 268 / **0
+  contradicted** / 1,878); manifest OK. All seven tool controls rc=0, and each new
+  positive's trace shows its rule firing.
+- **Whole-branch `ab_measure` against `e762a9298`:** **Δmatched +9 / Δhonest +9 /
+  +1,908 B (+0.018619 pp)**, 0 units off 100, SongSortByRank reaches 100.
+  - Predicted: +9 / +1,908, i.e. §6's +10 / +2,048 minus the UpdateHeap row
+    (1 fn / 140 B) that main now supplies. Measured exactly that.
+  - Run dir: `~/tmp/wt-w16-jh-ab/.ab_measure_runs/20261001-120106-branch_ab5-1190798/`.
+- **Native gate:** run last, after this doc commit; result in the commit that follows.
