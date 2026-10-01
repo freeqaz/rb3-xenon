@@ -682,10 +682,7 @@ void BandTrack::StartFinale(unsigned int ui) {
     unk88 = ui;
     unk8c = true;
     GameWon();
-    bool bbb = false;
-    if (mParent && mParent->HasLocalPlayer())
-        bbb = true;
-    if (bbb) {
+    if (HasLocalPlayer()) {
         if (mEndgameFeedback) {
             static Message finale_start("end_game_start_inst", DataNode(""));
             finale_start[0] = DataNode(mInstrument);
@@ -719,9 +716,7 @@ void BandTrack::GameOver() {
 BandCrowdMeter *BandTrack::GetCrowdMeter() {
     BandCrowdMeter *meter;
     if (mShowCrowdMeter != false) {
-        ObjectDir *objDir = ThisDir()->Dir();
-        TrackPanelDirBase *tpDirBase = dynamic_cast<TrackPanelDirBase *>(objDir);
-        meter = tpDirBase->GetCrowdMeter();
+        meter = MyTrackPanelDir()->GetCrowdMeter();
     } else {
         meter = nullptr;
     }
