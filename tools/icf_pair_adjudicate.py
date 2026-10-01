@@ -971,9 +971,9 @@ def slot_controls(tgt, ours, mapped, al):
             if not isinstance(w, dict) or not str(w.get("lane", "")).startswith("W16-JG"):
                 continue
             c = w.get("class", "")
-            if c not in seen and g["survivor"] in tgt and w["spelling"] in ours:
+            seen.add(c)
+            if g["survivor"] in tgt and w["spelling"] in ours:
                 cands.append((c, g["survivor"], w["spelling"]))
-                seen.add(c)
     used = set()
     for c, s_, o_ in cands:
         if c in used or s_ not in tgt or o_ not in ours:
@@ -983,9 +983,15 @@ def slot_controls(tgt, ours, mapped, al):
             continue
         out.append(("SLOT DECOY %s, lax rule PROVES it (expect REFUTED)" % c, s_, o_))
         used.add(c)
-    if not out:
-        raise SystemExit("REFUSING: no slot decoy the lax rule proves -- the slot "
-                         "controls would be VACUOUS.")
+    missing = sorted(seen - used)
+    if not out or missing:
+        # Every withdrawal class in the ledger must contribute a decoy the lax
+        # rule PROVES.  A class that silently drops out is a control that
+        # stopped testing without saying so (measured: renaming a record class
+        # once made the first candidate a lax-refuted one and the class vanished).
+        raise SystemExit("REFUSING: no lax-PROVEN slot decoy for %s -- the slot "
+                         "controls would be VACUOUS for that class."
+                         % (missing or "any class"))
     want = {"SLOT-OK:VTABLE-RTTI": None, "SLOT-OK:CALLEE-CHASED": None}
     for g in sorted(al["groups"], key=lambda g: g["address"] or ""):
         if all(want.values()):
