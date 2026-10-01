@@ -46,7 +46,11 @@ public:
     MusicLibrary::MusicLibraryTask mTask; // 0x4
 };
 
+#ifndef RB3_STRIP_CHEAT_HANDLERS
+// Data re-read by CheatReloadTourData. Retail has neither: "config/tour.dta"
+// is not in the image and ~Tour (0x8235EFA0) releases nothing global.
 DataArray *s_pReloadedTourData;
+#endif
 
 Tour::Tour(DataArray *, const SongMgr &smgr, BandUserMgr &umgr, bool b)
     : mSongMgr(smgr), mBandUserMgr(umgr), m_pTourPerformer(0), m_pTourProgress(0),
@@ -64,8 +68,10 @@ Tour::~Tour() {
     TheSessionMgr->RemoveSink(this, RemoteLeaderLeftMsg::Type());
     ClearPerformer();
     TheTour = nullptr;
+#ifndef RB3_STRIP_CHEAT_HANDLERS
     if (s_pReloadedTourData)
         s_pReloadedTourData->Release();
+#endif
     Cleanup();
 }
 
@@ -545,6 +551,7 @@ bool Tour::ShouldShowPostSelDiffScreen() const {
     return mTourShowPostSeldiffScreen;
 }
 
+#ifndef RB3_STRIP_CHEAT_HANDLERS
 void Tour::CheatReloadTourData() {
     if (s_pReloadedTourData)
         s_pReloadedTourData->Release();
@@ -554,6 +561,7 @@ void Tour::CheatReloadTourData() {
     TheQuestMgr.Cleanup();
     TheQuestMgr.Init(s_pReloadedTourData);
 }
+#endif
 
 Symbol Tour::CombinePartSymbols(Symbol part1, Symbol part2) {
     Symbol result = part1;
