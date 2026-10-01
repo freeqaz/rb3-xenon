@@ -1,4 +1,7 @@
 {
+ "0x8252d938": "?ReadAsync@AsyncFile@@UAA_NPAXH@Z",
+ "0x82524d40": "?JoypadStageKitPadNum@@YAHXZ",
+ "0x8251bcd8": "?XPrivilegeCheck@?A0x8a9ffbf2@@YA_NW4_XPRIVILEGE_TYPE@@0PBVOnlineID@@@Z",
  "0x82757998": "?StateName@DirLoader@@UBAPBDXZ",
  "0x824cb758": "??0?$ObjPtr@VLightHue@@@@QAA@ABV0@@Z",
  "0x824cdc68": "?_M_create_node@?$list@UPresetOverride@WorldDir@@V?$StlNodeAlloc@UPresetOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABUPresetOverride@WorldDir@@@Z",
