@@ -228,7 +228,10 @@ END_COPYS
 // across stores through `this` (e.g. PostLoad's `mSelfShadow = false` arm keeps
 // the pre-store `lhz` value), which MSVC only does when it can prove no pointer
 // aliases the global -- i.e. file-static with its address never taken.
-static Character::RevState gRevs = {0, 0, nullptr};
+static Character::RevState gRevs = {0, 0};
+// A separate file-static, laid out directly after gRevs: retail's Lod reader
+// addresses both off this one (rev at -4, the pointer at 0).
+static Character *gCharMe = nullptr;
 
 void Character::PreLoad(BinStream &bs) {
     int rev;
@@ -257,17 +260,17 @@ void Character::PreLoad(BinStream &bs) {
 
 // Retail reads the revision out of the file-static gRevs aggregate (set by
 // PostLoad): `lhz -0x4(base)` off the same base register that addresses
-// gRevs.charMe. The reader takes the raw stream (RB3 has no BinStreamRev).
+// gCharMe. The reader takes the raw stream (RB3 has no BinStreamRev).
 BinStream &operator>>(BinStream &bs, Character::Lod &lod) {
     bs >> lod.mScreenSize;
     if (gRevs.rev < 6) {
         lod.mScreenSize *= (4.0f / 3.0f);
     }
-    if (gRevs.charMe) {
+    if (gCharMe) {
         // pre-group revs: a flat list of drawables wrapped into a fresh group
-        ObjPtrList<RndDrawable> draws(gRevs.charMe);
+        ObjPtrList<RndDrawable> draws(gCharMe);
         bs >> draws;
-        lod.mGroup = gRevs.charMe->New<RndGroup>(MakeString("group%x", (int)&lod));
+        lod.mGroup = gCharMe->New<RndGroup>(MakeString("group%x", (int)&lod));
         FOREACH (it, draws) {
             lod.mGroup->AddObject(*it);
         }
@@ -360,19 +363,19 @@ void Character::PostLoad(BinStream &bs) {
             bs >> mEnv;
         }
         if (otherRev > 3) {
-            gRevs.charMe = otherRev < 6 ? this : nullptr;
+            gCharMe = otherRev < 6 ? this : nullptr;
             ObjVector<ObjVector<Character::Lod> > lods(this);
             d >> lods;
             if (lods.size() != 0)
                 mLods = lods[0];
             else
                 mLods.clear();
-            if (gRevs.charMe) {
+            if (gCharMe) {
                 for (int i = 0; i < mLods.size(); i++) {
                     mLods[i].Group()->SetName(MakeString("lod%d.grp", i), this);
                 }
             }
-            gRevs.charMe = nullptr;
+            gCharMe = nullptr;
         } else {
             mLods.clear();
         }
