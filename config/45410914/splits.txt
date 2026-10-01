@@ -834,6 +834,7 @@ BandCrowdMeter.cpp:
 	.pdata      start:0x821F6598 end:0x821F65A0
 	.pdata      start:0x821F65A0 end:0x821F6648
 	.pdata      start:0x821F6650 end:0x821F6658
+	.pdata      start:0x821F6668 end:0x821F6750
 	.pdata      start:0x821F6750 end:0x821F6760
 	.pdata      start:0x821F6760 end:0x821F6770
 	.pdata      start:0x821F6770 end:0x821F6778
@@ -852,6 +853,7 @@ BandCrowdMeter.cpp:
 	.text       start:0x822BE370 end:0x822BEAB4
 	.text       start:0x822BEAB8 end:0x822BEB04
 	.text       start:0x822BEB88 end:0x822BECD8
+	.text       start:0x822BED88 end:0x822BF678
 	.text       start:0x822BF678 end:0x822BF980
 	.text       start:0x822BF980 end:0x822BFAE8
 	.text       start:0x822BFAE8 end:0x822BFB40
@@ -7757,7 +7759,7 @@ EnvAnim.cpp:
 MatAnim.cpp:
 	.pdata      start:0x821F1620 end:0x821F1628
 	.pdata      start:0x821F1818 end:0x821F1820
-	.pdata      start:0x821F6660 end:0x821F6750
+	.pdata      start:0x821F6660 end:0x821F6668
 	.pdata      start:0x821F6F00 end:0x821F6F08
 	.pdata      start:0x821F6F48 end:0x821F6F50
 	.pdata      start:0x8220E6E0 end:0x8220E6E8
@@ -7770,7 +7772,7 @@ MatAnim.cpp:
 	.pdata      start:0x8220EBA8 end:0x8220EBF8
 	.text       start:0x82270298 end:0x822702F0
 	.text       start:0x82272798 end:0x82272948
-	.text       start:0x822BED18 end:0x822BF678
+	.text       start:0x822BED18 end:0x822BED88
 	.text       start:0x822C8784 end:0x822C87B0
 	.text       start:0x822C882C end:0x822C8838
 	.text       start:0x822C88D8 end:0x822C88E0

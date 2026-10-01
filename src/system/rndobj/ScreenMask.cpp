@@ -87,6 +87,55 @@ BEGIN_LOADS(RndScreenMask)
     }
 END_LOADS
 
+#ifndef HX_NATIVE
+// Retail X360 (0x824816F8): the mask rect is scaled by the target size only --
+// no hi-res-screen remap. The screen-rect override check is compiled down to
+// nothing (its report is stripped), but it still instantiates
+// Hmx::Rect::operator==, whose COMDAT retail keeps in this TU. Both tests of
+// the target texture are signed compares (`cmpwi`), hence the (int) casts.
+void RndScreenMask::DrawShowing() {
+    if (TheRnd.DrawMode() != Rnd::kDrawNormal)
+        return;
+
+    float width = (float)TheRnd.Width();
+    RndCam *cam = RndCam::Current();
+
+    float height = (float)TheRnd.Height();
+    RndTex *targetTex = cam->TargetTex();
+    if ((int)targetTex) {
+        height = (float)targetTex->Height();
+        width = (float)targetTex->Width();
+    }
+
+    if (!mUseCamRect && (int)targetTex) {
+        Hmx::Rect defaultRect(0.0f, 0.0f, 1.0f, 1.0f);
+        if (!(cam->GetScreenRect() == defaultRect)) {
+            MILO_NOTIFY_ONCE(
+                "%s: Overriding camera screen_rect not supported with render texture",
+                (char *)Name()
+            );
+        }
+    }
+
+    if (!mUseCamRect && !(int)targetTex) {
+        TheRnd.GetDefaultCam()->Select();
+        Hmx::Rect drawRect;
+        drawRect.x = mRect.x * width;
+        drawRect.y = mRect.y * height;
+        drawRect.w = mRect.w * width;
+        drawRect.h = mRect.h * height;
+        TheRnd.DrawRect(drawRect, mColor, mMat, nullptr, nullptr);
+        cam->Select();
+    } else {
+        Hmx::Rect drawRect;
+        drawRect.x = mRect.x * width;
+        drawRect.y = mRect.y * height;
+        drawRect.w = mRect.w * width;
+        drawRect.h = mRect.h * height;
+        TheRnd.DrawRect(drawRect, mColor, mMat, nullptr, nullptr);
+    }
+}
+#else
 void RndScreenMask::DrawShowing() {
     if (TheRnd.DrawMode() != Rnd::kDrawNormal)
         return;
@@ -131,3 +180,4 @@ void RndScreenMask::DrawShowing() {
         TheRnd.DrawRect(drawRect, mColor, mMat, nullptr, nullptr);
     }
 }
+#endif

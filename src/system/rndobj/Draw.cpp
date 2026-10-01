@@ -90,11 +90,25 @@ BEGIN_LOADS(RndDrawable)
             bs.ReadString(buf, 0x80);
             if (grp) {
                 Hmx::Object *found = Dir()->Find<Hmx::Object>(buf, true);
+#ifndef HX_NATIVE
+                // Retail (0x82406B78): an environment in the old member list
+                // becomes the group's environment if it has none.
+                RndEnviron *env = dynamic_cast<RndEnviron *>(found);
+                if (env) {
+                    if (!grp->mEnv) {
+                        grp->mEnv = env;
+                    }
+                } else if (!dynamic_cast<RndCam *>(found)) {
+                    grp->RemoveObject(found);
+                    grp->AddObject(found, 0);
+                }
+#else
                 RndCam *cam = dynamic_cast<RndCam *>(found);
                 if (!cam) {
                     grp->RemoveObject(found);
                     grp->AddObject(found, 0);
                 }
+#endif
             } else
                 MILO_NOTIFY("%s not in group", buf);
         }

@@ -244,6 +244,26 @@ void RndTex::PostLoad(BinStream &bs) {
     if (d.rev > 10) {
         d >> mOptimizeForPS3;
     }
+#ifndef HX_NATIVE
+    // Retail X360 (0x824000C0): the cached bitmap is read inside a temp-heap
+    // scope (MemPushTemp/MemPopTemp around the load), with no bottom-mip
+    // substitution and no "will not be cached" log; the uncached path has no
+    // GetPlatform() test and no release-only arm.
+    if (bs.Cached()) {
+        PresyncBitmap();
+        {
+            MemDoTempAllocations tmp;
+            d >> mBitmap;
+        }
+        mNumMips = mBitmap.NumMips();
+        SyncBitmap();
+    } else if (!mFilepath.empty() && mType == kRegular) {
+        SetBitmap(mLoader);
+        mLoader = nullptr;
+    } else {
+        SetBitmap(mWidth, mHeight, mBpp, mType, b7, nullptr);
+    }
+#else
     if (bs.Cached()) {
         PresyncBitmap();
         if (UseBottomMip()) {
@@ -268,6 +288,7 @@ void RndTex::PostLoad(BinStream &bs) {
     } else {
         RELEASE(mLoader);
     }
+#endif
 }
 
 void RndTex::LockBitmap(RndBitmap &bmap, int i) {
@@ -335,6 +356,26 @@ void RndTex::SaveBitmap(const char *bmp) {
     UnlockBitmap();
 }
 
+#ifndef HX_NATIVE
+// Retail X360 (0x823FECB8) has no platform switch: TheLoadMgr.GetPlatform() is
+// never called and only the Xbox case survives.
+void RndTex::PlatformBppOrder(const char *path, int &bpp, int &order, bool hasAlpha) {
+    bool bbb = path && strstr(path, "_norm");
+    if (bbb) {
+        order = 0x20;
+    } else {
+        order = hasAlpha ? 0x18 : 8;
+    }
+    if (order == 8)
+        bpp = 4;
+    else if (order & 0x38U)
+        bpp = 8;
+    else if (bbb)
+        bpp = 0x18;
+    else if (bpp < 0x10)
+        bpp = 0x10;
+}
+#else
 void RndTex::PlatformBppOrder(const char *path, int &bpp, int &order, bool hasAlpha) {
     bool bbb;
     switch (TheLoadMgr.GetPlatform()) {
@@ -384,6 +425,7 @@ void RndTex::PlatformBppOrder(const char *path, int &bpp, int &order, bool hasAl
         break;
     }
 }
+#endif
 
 bool RndTex::PowerOf2() { return ::PowerOf2(mWidth) && ::PowerOf2(mHeight); }
 
@@ -424,6 +466,45 @@ RndTex::CheckSize(int width, int height, int bpp, int numMips, Type ty, bool fil
     }
 }
 
+#ifndef HX_NATIVE
+// Retail X360 (0x823FF510): no EditMode() test before the "_keep" check, no
+// bottom-mip substitution, and no bitmap CRC naming or "will not be cached" log.
+void RndTex::SetBitmap(FileLoader *fl) {
+    PresyncBitmap();
+    mType = kRegular;
+    char *buffer;
+    if (fl) {
+        mFilepath = fl->LoaderFile();
+        TheLoadMgr.PollUntilLoaded(fl, nullptr);
+        buffer = fl->GetBuffer(nullptr);
+        if (fl != mLoader) {
+            if (!strstr(mFilepath.c_str(), "_keep")) {
+                // By-value copy of mFilepath survives (String copy ctor + dtor on
+                // a stack temp); see the note in the native body below.
+                MILO_WARN("%s will not be included on a disc build", mFilepath);
+            }
+        }
+        delete fl;
+    } else {
+        mFilepath.Set(FilePath::Root().c_str(), "");
+        buffer = nullptr;
+    }
+
+    if (buffer) {
+        mBitmap.Create(buffer);
+        mWidth = mBitmap.Width();
+        mHeight = mBitmap.Height();
+        mBpp = mBitmap.Bpp();
+        mNumMips = mBitmap.NumMips();
+    } else {
+        mBitmap.Reset();
+        mWidth = mHeight = 0;
+        mBpp = 32;
+        mNumMips = 0;
+    }
+    SyncBitmap();
+}
+#else
 void RndTex::SetBitmap(FileLoader *fl) {
     PresyncBitmap();
     mType = kRegular;
@@ -485,6 +566,7 @@ void RndTex::SetBitmap(FileLoader *fl) {
     }
     SyncBitmap();
 }
+#endif
 
 void RndTex::SetBitmap(const FilePath &path) {
     Loader *ldr = TheLoadMgr.ForceGetLoader(path);

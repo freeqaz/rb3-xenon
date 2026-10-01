@@ -236,6 +236,31 @@ float RndGroup::GetDistanceToPlane(const Plane &p, Vector3 &v) {
     }
 }
 
+#ifndef HX_NATIVE
+// Retail X360 (0x82452568), the same shape as RndDir::MakeWorldSphere: each
+// child's sphere is widened by AddMotionSphere when the child is transformable,
+// and without `b` the group's own sphere is transformed to world space.
+bool RndGroup::MakeWorldSphere(Sphere &s, bool b) {
+    if (b) {
+        s.Zero();
+        for (std::vector<RndDrawable *>::iterator it = mDraws.begin(); it != mDraws.end();
+             ++it) {
+            Sphere local_s;
+            (*it)->MakeWorldSphere(local_s, true);
+            RndTransformable *trans = dynamic_cast<RndTransformable *>(*it);
+            if (trans) {
+                AddMotionSphere(trans, local_s);
+            }
+            s.GrowToContain(local_s);
+        }
+        return true;
+    } else if (mSphere.GetRadius()) {
+        Multiply(mSphere, WorldXfm(), s);
+        return true;
+    }
+    return false;
+}
+#else
 bool RndGroup::MakeWorldSphere(Sphere &s, bool b) {
     if (b) {
         s.Zero();
@@ -250,6 +275,7 @@ bool RndGroup::MakeWorldSphere(Sphere &s, bool b) {
         return false;
     }
 }
+#endif
 
 void RndGroup::DrawShowing() {
     if (mDraws.empty())
@@ -404,6 +430,22 @@ void RndGroup::SortDraws() {
     }
 }
 
+#ifndef HX_NATIVE
+// Retail X360 (0x824522C8): every drawable is tested, with no Showing() or
+// world-sphere filter; the first one's side seeds the result.
+int RndGroup::CollidePlane(const Plane &p) {
+    int ret = -1;
+    for (std::vector<RndDrawable *>::iterator it = mDraws.begin(); it != mDraws.end();
+         ++it) {
+        if (it == mDraws.begin()) {
+            ret = (*it)->CollidePlane(p);
+        } else if (ret != (*it)->CollidePlane(p)) {
+            return 0;
+        }
+    }
+    return ret;
+}
+#else
 int RndGroup::CollidePlane(const Plane &p) {
     int ret = -1;
     bool first = false;
@@ -421,6 +463,7 @@ int RndGroup::CollidePlane(const Plane &p) {
     }
     return ret;
 }
+#endif
 
 int RndGroup::MoveObject(Hmx::Object *obj, int delta) {
     typedef ObjPtrList<Hmx::Object>::Node Node;
