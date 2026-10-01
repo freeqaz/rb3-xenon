@@ -13,7 +13,7 @@
 //                     -> VocalPart::AddScore / AfterPoll (phrase-score accumulation)
 //                     -> at phrase boundaries: VocalPart::HandlePhraseEnd
 //                        (real CalculatePhraseRating + AddPoints)
-// The ONLY synthetic input is the microphone: GameMic::unk2c (pitch) / unk28 (energy)
+// The ONLY synthetic input is the microphone: GameMic::mLastPitch / mLastEnergy
 // are written per frame (perfect-pitch first half, tritone-off second half). All
 // pitch matching, singer assignment, phrase accumulation, rating, and player scoring
 // is REAL engine code. See native/src/m10_support.cpp for the mic/singleton census.
