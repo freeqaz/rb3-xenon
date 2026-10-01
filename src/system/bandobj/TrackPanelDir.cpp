@@ -7,6 +7,8 @@
 #include "bandobj/TrackPanelDir.h"
 #include "bandobj/TrackPanelInterface.h"
 #include "bandobj/GemTrackDir.h"
+#include "bandobj/BandLabel.h"
+#include "rndobj/Utl.h"
 #include "rndobj/TexRenderer.h"
 #include "rndobj/TransAnim.h"
 #include "rndobj/Cam.h"
@@ -34,8 +36,9 @@ TrackPanelDir::TrackPanelDir()
       mCrowdMeter(this, 0), mBandScoreMultiplier(this, 0),
       mBandScoreMultiplierTrig(this, 0), mEndingBonus(this, 0), mScoreboard(this, 0),
       mPulseAnimGrp(this, 0), unk2ac(1), unk2ad(0), mTracksExtended(0),
-      mGemTrackRsrcMgr(0), mVocals(1), mVocalsNet(0), unk33c(this, 0),
-      unk348(this, 0), unk354(this, 0), unk360(this, 0), unk36c(this, 0),
+      mGemTrackRsrcMgr(0), mVocals(1), mVocalsNet(0), mTimeMbt(this, 0),
+      mTimeElapsed(this, 0), mTimeRemaining(this, 0), mTimeSection(this, 0),
+      mTimeGrp(this, 0),
       unk378(0) {
     for (int i = 0; i < 4; i++) {
         mGemTracks.push_back(ObjPtr<GemTrackDir>(this, 0));
@@ -238,18 +241,14 @@ void TrackPanelDir::RemoveTrack(int iSlot) {
 
 void TrackPanelDir::ConfigureTracks(bool b) {
     Hmx::Object *modeobj = FindObject("gamemode", true);
-    bool b18 = false;
-    if (modeobj) {
-        if (modeobj->Property("is_practice", true)->Int())
-            b18 = true;
-    }
+    bool b18 = modeobj && modeobj->Property("is_practice", true)->Int();
     if (LOADMGR_EDITMODE)
         AssignTracks();
     for (int i = 0; i < mGemTracks.size(); i++) {
         ConfigureTrack(i);
     }
     RndCam *camcam = Find<RndCam>("Cam.cam", true);
-    camcam->SetLocalPos(0.0f, 0.0f, 0.0f);
+    camcam->SetLocalPos(Vector3(0, 0, 0));
     camcam->SetLocalRot(Vector3(0, 0, 0));
     const char *aspectstr =
         MakeString(TheRnd.GetAspect() == Rnd::kRegular ? "regular" : "wide");
@@ -262,7 +261,7 @@ void TrackPanelDir::ConfigureTracks(bool b) {
     }
     if (b1) {
         float f19 = 1.0f;
-        if (mVocalTrack->InUse() && !mPerformanceMode)
+        if (mVocalTrack->InUse())
             f19 = 0;
         Find<RndTransAnim>("scoreboard_to_top.tnm", true)->SetFrame(f19, 1.0f);
         Find<RndTransAnim>("applause_meter_to_top.tnm", true)->SetFrame(f19, 1.0f);
@@ -300,6 +299,46 @@ void TrackPanelDir::ConfigureTracks(bool b) {
         );
     }
     unk2ac = true;
+    UpdateTimeInfo();
+}
+
+// In audition mode, show a time readout: ui/track/time_info.milo is loaded
+// once as a child dir, scaled to 0.6 and placed by aspect ratio and by whether
+// the vocal track is showing; its four labels are bound for later updates.
+// Outside audition mode the readout is hidden. (Descriptive name: retail
+// carries none.)
+void TrackPanelDir::UpdateTimeInfo() {
+    if (unk378)
+        return;
+    Hmx::Object *gamemode = FindObject("gamemode", true);
+    if (!gamemode)
+        return;
+    static Symbol audition("audition");
+    static Message in_mode("in_mode", audition);
+    bool audition_mode = gamemode->Handle(in_mode, true).Int();
+    if (audition_mode) {
+        if (!mTimeGrp) {
+            RndDir *dir = Hmx::Object::New<RndDir>();
+            dir->SetProxyFile(FilePath("ui/track/time_info.milo"), false);
+            dir->SetName("time_info", this);
+            SyncObjects();
+            mTimeGrp = Find<RndGroup>("time.grp", true);
+            SetLocalScale(mTimeGrp, Vector3(0.6f, 0.6f, 0.6f));
+            static Symbol aspect("aspect");
+            Symbol asp = mConfiguration->Property(aspect, true)->Sym();
+            static Symbol widescreen("widescreen");
+            float x = asp == widescreen ? 10.15f : 7.125f;
+            float z = mVocalTrack->Showing() ? 1.5f : 4.5f;
+            mTimeGrp->SetLocalPos(Vector3(x, 25.0f, z));
+            mTimeMbt = Find<BandLabel>("time_mbt.lbl", true);
+            mTimeElapsed = Find<BandLabel>("time_elapsed.lbl", true);
+            mTimeRemaining = Find<BandLabel>("time_remaining.lbl", true);
+            mTimeSection = Find<BandLabel>("time_section.lbl", true);
+        }
+        mTimeGrp->SetShowing(true);
+    } else if (mTimeGrp) {
+        mTimeGrp->SetShowing(false);
+    }
 }
 
 void TrackPanelDir::ConfigureTrack(int i) {

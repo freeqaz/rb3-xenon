@@ -8,6 +8,8 @@
 #include "bandobj/GemTrackResourceManager.h"
 #include "rndobj/EventTrigger.h"
 
+class BandLabel;
+
 class TrackPanelDir : public TrackPanelDirBase {
 public:
     TrackPanelDir();
@@ -65,6 +67,7 @@ public:
     void GameWon();
     void GameLost();
     void ConfigureCrowdMeter();
+    void UpdateTimeInfo();
     void ApplyVocalTrackShowingStatus();
     TrackInstrument GetInstrument(int) const;
     void SetBotbBandIcon(ObjectDir *, RndDir *, bool);
@@ -100,15 +103,16 @@ public:
     bool mVocalsNet; // 0x325
     int mGemInst[4]; // 0x328
     bool mGemNet[4]; // 0x338
-    // Five further ObjPtr members retail constructs after mGemNet and destroys
-    // via EH funclets at this+0x33c/0x348/0x354/0x360/0x36c, plus a trailing
-    // bool at 0x378. Reconstructed from the target's cleanup census.
-    // Sizing them exactly re-seats the virtual
-    // bases at 0x380 (Hmx::Object) / 0x3b4 (RndHighlightable), matching retail.
-    ObjPtr<EventTrigger> unk33c; // 0x33c
-    ObjPtr<EventTrigger> unk348; // 0x348
-    ObjPtr<EventTrigger> unk354; // 0x354
-    ObjPtr<EventTrigger> unk360; // 0x360
-    ObjPtr<RndGroup> unk36c; // 0x36c
+    // The audition-mode time readout (UpdateTimeInfo): the four labels and the
+    // group of ui/track/time_info.milo. Retail's ctor stores the
+    // ObjPtr<BandLabel> vtable (RTTI) for the four labels. Sizing them exactly
+    // re-seats the virtual bases at 0x380 (Hmx::Object) / 0x3b4
+    // (RndHighlightable), matching retail.
+    ObjPtr<BandLabel> mTimeMbt; // 0x33c
+    ObjPtr<BandLabel> mTimeElapsed; // 0x348
+    ObjPtr<BandLabel> mTimeRemaining; // 0x354
+    ObjPtr<BandLabel> mTimeSection; // 0x360
+    ObjPtr<RndGroup> mTimeGrp; // 0x36c
+    // Set: UpdateTimeInfo does nothing at all.
     bool unk378; // 0x378
 };
