@@ -4164,10 +4164,8 @@ PropAnim.cpp:
 HamNavList.cpp:
 	.pdata      start:0x82215988 end:0x82215990
 	.pdata      start:0x82236EE0 end:0x82236EE8
-	.pdata      start:0x822471E8 end:0x822471F8
 	.text       start:0x824EA220 end:0x824EA298
 	.text       start:0x826F7CC8 end:0x826F7E50
-	.text       start:0x82817A68 end:0x82817C20
 
 SkeletonClip.cpp:
 	.pdata      start:0x82237AC8 end:0x82237AE8
@@ -5844,6 +5842,7 @@ UIListDir.cpp:
 
 UIFontImporter.cpp:
 	.pdata      start:0x82245DB0 end:0x82245DC0
+	.pdata      start:0x822471E8 end:0x822471F8
 	.pdata      start:0x822471F8 end:0x82247308
 	.pdata      start:0x82247308 end:0x82247310
 	.pdata      start:0x82247310 end:0x822474D8
@@ -5851,6 +5850,7 @@ UIFontImporter.cpp:
 	.pdata      start:0x822474E0 end:0x82247728
 	.pdata      start:0x82247DD0 end:0x82247DD8
 	.text       start:0x82802730 end:0x828027C0
+	.text       start:0x82817A68 end:0x82817C20
 	.text       start:0x82817C20 end:0x82818EB8
 	.text       start:0x82818EB8 end:0x82818F18
 	.text       start:0x82818F18 end:0x8281A838
