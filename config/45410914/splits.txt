@@ -4106,7 +4106,7 @@ CharIKHand.cpp:
 	.pdata      start:0x82203C00 end:0x82203C78
 	.pdata      start:0x82203C80 end:0x82203CA0
 	.pdata      start:0x82203CA0 end:0x82203CA8
-	.pdata      start:0x82203CB0 end:0x82203CF8
+	.pdata      start:0x82203CA8 end:0x82203CF8
 	.text       start:0x82371148 end:0x82371198
 	.text       start:0x82372CA8 end:0x82372D18
 	.text       start:0x82373CE8 end:0x82373DD8
@@ -4115,7 +4115,7 @@ CharIKHand.cpp:
 	.text       start:0x82398A10 end:0x82399140
 	.text       start:0x823991C0 end:0x823992E0
 	.text       start:0x823992E0 end:0x82399348
-	.text       start:0x823993A4 end:0x823999A4
+	.text       start:0x82399348 end:0x823999A4
 	.text       start:0x823999A8 end:0x823999C4
 
 PropAnim.cpp:
@@ -4532,9 +4532,7 @@ FileMerger.cpp:
 
 Rnd_NG.cpp:
 	.pdata      start:0x821F1960 end:0x821F1968
-	.pdata      start:0x82203CA8 end:0x82203CB0
 	.text       start:0x8227411C end:0x82274150
-	.text       start:0x82399348 end:0x823993A4
 
 CharClipDriver.cpp:
 	.pdata      start:0x822040E0 end:0x822040F0
