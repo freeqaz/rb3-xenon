@@ -108,7 +108,7 @@ void VocalTrack::ClearMarkers() {
     }
 }
 
-inline void TambourineGemPool::NewGem(float time, int gemIdx) {
+inline TambourineGem *TambourineGemPool::NewGem(float time, int gemIdx) {
     MILO_ASSERT(mUsedGems.empty() || time >= mUsedGems.back()->Time(), 0x1EB);
     if (mFreeGems.empty()) {
         for (int k = 0; k < 5; k++) {
@@ -125,6 +125,7 @@ inline void TambourineGemPool::NewGem(float time, int gemIdx) {
     if (mTambourineManager->GemHit(gemIdx) || mTambourineManager->GemProcessed(gemIdx)) {
         g->unk8 = 1;
     }
+    return g;
 }
 
 void VocalTrack::UpdateTubePlates(
