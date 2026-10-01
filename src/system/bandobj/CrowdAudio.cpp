@@ -241,7 +241,7 @@ bool CrowdAudio::PlayLoop(const DataArray *loopInfo, bool force) {
                     mCurrentMogg->MoggClip::Stop();
                 mOldMogg->RemoveFader(mReleaseFader);
                 mCurrentMogg = mOldMogg;
-                mOldMogg = 0;
+                mOldMogg.ReleaseObjConcrete();
             }
         }
         if (b2 || force) {
@@ -259,16 +259,15 @@ bool CrowdAudio::PlayLoop(const DataArray *loopInfo, bool force) {
             }
             mCurrentMogg = clip;
             DataArray *loopArr = loopInfo->Array(2);
-            float pan = (loopArr->Float(1) + loopArr->Float(2)) * 0.5f;
-            mCurrentMogg->SetPan(0, pan);
-            mCurrentMogg->SetPan(1, pan);
+            mCurrentMogg->SetPan(0, loopArr->Float(1));
+            mCurrentMogg->SetPan(1, loopArr->Float(2));
             mCurrentMogg->AddFader(mMainFader);
             mCurrentMogg->AddFader(mEntryFader);
             mCurrentMogg->AddFader(mResultsFader);
             mCurrentMogg->AddFader(mCurrentBankFader);
             mCurrentMogg->RemoveFader(mOtherBankFader);
             mCurrentMogg->RemoveFader(mReleaseFader);
-            mCurrentMogg->Play(0.0f);
+            mCurrentMogg->Play();
             SetPaused(mPaused);
         }
         return true;
