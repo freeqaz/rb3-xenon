@@ -101,7 +101,10 @@ public:
     void Unk825BD8C8(class LocalUser *, const std::vector<int> &); // retail 0x825BD8C8
     char unk4[0x24]; // 0x4
     int mState; // 0x28 (2 = done, 4 = failed)
-    char unk2c[0x1c]; // 0x2c
+    /** MusicLibraryStore::mOffers. Retail MusicLibrary::GetStoreOffers walks
+        `lwz r27,0x2c(unk19c)` .. `lwz r11,0x30(unk19c)` as StoreOffer*. */
+    std::vector<class StoreOffer *> mOffers; // 0x2c
+    char unk38[0x10]; // 0x38
     /** Retail MusicLibrary::Handle's `get_store_art` returns this slot straight
         as a kDataObject (target: `lwz r11, 0x48(unk19c)` + `li r10, 4`). */
     Hmx::Object *mStoreArt; // 0x48
