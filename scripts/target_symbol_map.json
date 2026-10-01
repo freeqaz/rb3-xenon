@@ -1,4 +1,8 @@
 {
+ "0x8251aaf0": "??0UsbMidiKeyboard@@QAA@XZ",
+ "0x8251ab80": "?Instance@StaticCriticalSection@@SAPAV1@XZ",
+ "0x8251b230": "?Terminate@UsbMidiKeyboard@@SAXXZ",
+ "0x8251b288": "?Init@UsbMidiKeyboard@@SAXXZ",
  "0x8251d6c8": "?SwapUserPads@PlatformMgr@@QAAXPAVLocalUser@@0@Z",
  "0x82525de0": "?JoypadSwapPads@@YAXHH@Z",
  "0x82532378": "?JoypadSetXinputActuators@@YAXHHH@Z",

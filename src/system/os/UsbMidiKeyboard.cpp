@@ -1,6 +1,7 @@
 #include "os/UsbMidiKeyboard.h"
 #include "decomp.h"
 #include "os/Debug.h"
+#include "os/System.h"
 #include "os/Joypad.h"
 #include "os/UsbMidiKeyboardMsgs.h"
 
@@ -10,6 +11,59 @@ bool UsbMidiKeyboard::mUsbMidiKeyboardExists = false;
 namespace {
     bool gUseMidiPort = false;
     bool gForceDetectKeytar = false;
+}
+
+// Retail 0x8251AB80: a function-static instance (its guard's unwind thunk is
+// 0x8251ABE8; the ctor reduces to CriticalSection's, the dtor goes to atexit).
+StaticCriticalSection *StaticCriticalSection::Instance() {
+    static StaticCriticalSection gCrit;
+    return &gCrit;
+}
+
+StaticCriticalSection::~StaticCriticalSection() {}
+
+StaticCriticalSection::StaticCriticalSection() {}
+
+// Retail 0x8251AAF0: mPadNum, the exists flag, then per pad the scalar slots
+// and the 128 key/velocity pairs.
+UsbMidiKeyboard::UsbMidiKeyboard() {
+    mPadNum = 0;
+    mUsbMidiKeyboardExists = true;
+    int j;
+    for (int i = 0; i < 4; i++) {
+        mSustain[i] = false;
+        mStompPedal[i] = false;
+        mModVal[i] = 0;
+        mExpressionPedal[i] = 0;
+        mConnectedAccessories[i] = 0;
+        for (j = 0; j < 128; ++j) {
+            mKeyPressed[i][j] = false;
+            mKeyVelocity[i][j] = 0;
+        }
+    }
+}
+
+// Inlined into Terminate (0x8251B230): an empty Enter/Exit of the shared lock.
+UsbMidiKeyboard::~UsbMidiKeyboard() {
+    CritSecTracker cst(StaticCriticalSection::Instance());
+}
+
+// Retail 0x8251B288. Both Symbols are function-local statics (one guard word,
+// bits 1 and 2, in this order).
+void UsbMidiKeyboard::Init() {
+    static Symbol use_midi_mode("use_midi_mode");
+    static Symbol joypad("joypad");
+    MILO_ASSERT(TheKeyboard == NULL, 0x58);
+    TheKeyboard = new UsbMidiKeyboard();
+    TheDebug.AddExitCallback(UsbMidiKeyboard::Terminate);
+    gUseMidiPort = SystemConfig(joypad)->FindInt(use_midi_mode);
+    gForceDetectKeytar = false;
+}
+
+// Retail 0x8251B230.
+void UsbMidiKeyboard::Terminate() {
+    MILO_ASSERT(TheKeyboard != NULL, 0x65);
+    RELEASE(TheKeyboard);
 }
 
 bool UsbMidiKeyboard::GetSustain(int pad) {
