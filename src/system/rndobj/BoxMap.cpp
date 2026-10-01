@@ -6,7 +6,7 @@
 #ifdef HX_NATIVE
 // The X360 reciprocal-square-root estimate; the host has no such instruction,
 // so give it the exact value the estimate approximates.
-static inline double __frsqrte(double x) { return 1.0 / sqrt(x); }
+static inline double __frsqrte(double x) { return 1.0 / std::sqrt(x); }
 #else
 double __frsqrte(double);
 #endif
