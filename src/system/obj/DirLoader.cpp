@@ -161,12 +161,17 @@ DirLoader::~DirLoader() {
     }
 }
 
+// Retail 0x82754A70 (48 B, entered through the ObjRefOwner subobject at +0x1c)
+// clears mProxyDir (+0x4c) and mProxyName (+0x48) and deletes itself with no
+// test of `from`; the proxy check is native-only.
 void DirLoader::Replace(ObjRef *from, Hmx::Object *to) {
-    if (RefIs(from, mProxyDir)) {
-        mProxyDir = nullptr;
-        mProxyName = nullptr;
-        delete this; // uhhh.
-    }
+#ifdef HX_NATIVE
+    if (!RefIs(from, mProxyDir))
+        return;
+#endif
+    mProxyDir = nullptr;
+    mProxyName = nullptr;
+    delete this; // uhhh.
 }
 
 const char *DirLoader::DebugText() { return MakeString("DL: %s", mFile.c_str()); }

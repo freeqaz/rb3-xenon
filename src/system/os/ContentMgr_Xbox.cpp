@@ -63,16 +63,16 @@ XboxContent::~XboxContent() {
 ContentLocT XboxContent::Location() {
     XDEVICE_DATA deviceData;
     XContentGetDeviceData(mXData.DeviceID, &deviceData);
-    if (deviceData.DeviceType == 2) {
-        return kLocationRemovableMem;
-    } else {
+    // Retail 0x8251FF70 branches (`li r3,0; cmplwi 2; beq; li r3,1`) rather than
+    // the branchless subic/subfe MSVC emits for `type == 2 ? 0 : 1`.
+    ContentLocT loc = kLocationRemovableMem;
+    if (deviceData.DeviceType != 2) {
         if (deviceData.DeviceType != 1) {
-            MILO_NOTIFY(
-                "Unknown device type: %d - defaulting to HDD", deviceData.DeviceType
-            );
+            MILO_NOTIFY("Unknown device type: %d - defaulting to HDD", deviceData.DeviceType);
         }
-        return kLocationHDD;
+        loc = kLocationHDD;
     }
+    return loc;
 }
 
 void XboxContent::Poll() {

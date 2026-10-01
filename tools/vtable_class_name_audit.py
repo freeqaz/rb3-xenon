@@ -42,9 +42,20 @@ Other member functions that store a vtable at 0(this) are reported as
 NONSPECIAL_STORE for hand review -- a method that re-constructs `*this` is
 legitimate, so these are not verdicts.
 
+--slots (lane W16-NC)
+--------------------
+Every map row whose address sits in a retail vtable slot (~7,700) is asked two
+independent questions: is the name's class an OWNER of a vtable holding the
+address (or a retail BASE_OF_OWNER), and does OUR vtable of that class hold the
+same name at the same slot?  See Audit.slot_run for what a disagreement does
+and does not mean -- most residue is ICF folds of tiny bodies, and a rename is
+made only on retail-byte evidence AFTER checking the address's direct callers.
+
 Read-only.  Usage:
     python3 tools/vtable_class_name_audit.py [--json OUT] [--map PATH]
     python3 tools/vtable_class_name_audit.py --selftest
+    python3 tools/vtable_class_name_audit.py --slots [--json OUT]
+    python3 tools/vtable_class_name_audit.py --slots --selftest
 """
 from __future__ import annotations
 
@@ -511,6 +522,112 @@ class Audit:
         return recs
 
 
+    # ------------------------------------------------ --slots (W16-NC) ---
+    def hierarchy(self):
+        """Retail class hierarchy in OUR dialect: class -> set(all bases).
+
+        MSVC's Base Class Array lists every ancestor (transitively), so one
+        lookup answers "is X an ancestor of Y"."""
+        if getattr(self, "_hier", None) is not None:
+            return self._hier, self._tdc
+        R = self.R
+        self.vt_index()
+        tds, raw = set(), {}
+        for _head, col in self.col_of_head.items():
+            r3 = R.bases_of_col(col)
+            if not r3:
+                continue
+            c, _chd, bases = r3
+            me = R.td_name(c.ptd)
+            if not me:
+                continue
+            bn = [b.name for b in bases if b.name]
+            tds.add(me)
+            tds.update(bn)
+            raw.setdefault(me, set()).update(bn)
+        vd = undname_many("??_7" + t[4:] + "6B@" for t in tds)
+
+        def tdc(t):
+            d = vd.get("??_7" + t[4:] + "6B@")
+            if d and d.startswith("const ") and d.endswith("::`vftable'"):
+                return norm(retail_to_ours(d[6:-len("::`vftable'")]))
+            return None
+        hier = {}
+        for me, bn in raw.items():
+            k = tdc(me)
+            if k:
+                hier.setdefault(k, set()).update(x for x in map(tdc, bn) if x)
+        self._hier, self._tdc = hier, tdc
+        return hier, tdc
+
+    def slot_run(self, rows=None, project_dir=ROOT):
+        """Audit every map row that sits in a retail vtable slot.
+
+        Two independent questions per row:
+          rel  -- is the map name's class an OWNER of a vtable holding the
+                  address, a retail BASE_OF_OWNER (inherited, not overridden),
+                  UNRELATED to every owner, or a NAME_CLASS_NOT_IN_RETAIL?
+          ours -- does OUR vtable of the same class, joined offset-to-offset
+                  through our own COLs (vtable_order_sweep.our_vtable_by_offset),
+                  hold the SAME name at the same slot (OURS_SAME), a different
+                  one (OURS_DIFF), or can it not be read (OURS_NONE)?
+        `??_G` and `??_E` of one class are treated as the same name: our
+        vtables reference the vector deleting dtor where retail's slot body is
+        named for the scalar one (measured: ~580 rows, all at 100).
+
+        ⚠ A disagreement is a CANDIDATE, never a verdict.  Most survivors are
+        ICF folds of 4-20 byte bodies (getters, `blr`, adjustor thunks) whose
+        map spelling is one valid member of the fold.  W16-NC renamed only on
+        retail-byte evidence -- a thunk's branch target, the class-name literal a
+        ByteCode body constructs, a body shape the old name contradicts -- and
+        then CHECKED CALLERS: naming an address that is a fold reached by direct
+        `bl` from unrelated callers took 12 rows off 100 in one wave.
+        """
+        sys.path.insert(0, os.path.join(ROOT, "tools"))
+        import vtable_order_sweep as V
+        R = self.R
+        idx = self.vt_index()
+        hier, tdc = self.hierarchy()
+        known = set(hier) | {x for s in hier.values() for x in s}
+        rows = [a for a in (rows if rows is not None else sorted(self.map)) if a in idx]
+        dem = undname_many(self.map[a] for a in rows)
+        cache = {}
+
+        def our_slot(td, head, k):
+            if (td, head) not in cache:
+                sub_off, _b = V.retail_subobject_base(R, head)
+                cache[(td, head)] = V.our_vtable_by_offset(V.bare_class(td), project_dir, sub_off)
+            ours, _how = cache[(td, head)]
+            return ours[k]["symbol"] if ours and k < len(ours) else None
+
+        def ge(n):
+            return re.sub(r"^\?\?_[GE]", "??_X", n or "")
+        out = []
+        for a in rows:
+            n = self.map[a]
+            C = norm(class_of_function(dem.get(n)))
+            occ = [(tdc(td), td, head, k) for td, head, k in idx[a]]
+            oc = {o for o, *_ in occ if o}
+            if C and C in oc:
+                rel = "OWNER"
+            elif C and any(C in hier.get(o, ()) for o in oc):
+                rel = "BASE_OF_OWNER"
+            elif not C:
+                rel = "NO_CLASS"
+            elif C not in known:
+                rel = "NAME_CLASS_NOT_IN_RETAIL"
+            else:
+                rel = "UNRELATED"
+            slots = [(o, k, our_slot(td, head, k)) for o, td, head, k in occ]
+            names = {ge(s) for _o, _k, s in slots if s}
+            ours = ("OURS_SAME" if ge(n) in names else
+                    "OURS_DIFF" if names else "OURS_NONE")
+            out.append(dict(addr=a, name=n, cls=C, rel=rel, ours=ours,
+                            owners=sorted(oc), slots=slots,
+                            size=(R.function_extent(a) or 0)))
+        return out
+
+
 # ------------------------------------------- witness 2: OUR compiled build ---
 OBJROOT = os.path.join(ROOT, "build/45410914/src")
 
@@ -652,14 +769,73 @@ def selftest():
     return 0 if ok else 1
 
 
+def slot_selftest():
+    """W16-NC positives for --slots.  Each defect must read as a disagreement
+    under its OLD name and agree under the corrected one, and a sabotage name
+    must disagree -- so the instrument is shown to fail before it is trusted."""
+    A = Audit()
+    ok = True
+    cases = (
+        # swapped pair: class agrees, our slot names a different method
+        (0x82b61d08, "?UpdateMix@FxSendDelay360@@UAAXXZ", ("OWNER", "OURS_DIFF")),
+        (0x82b61d08, "?Recreate@FxSendDelay360@@UAAXAAV?$vector@PAVFxSend@@V?$StlNodeAlloc@PAVFxSend@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+         ("OWNER", "OURS_SAME")),
+        # a Dance Central class pinned on RB3 code: no retail RTTI at all
+        (0x822c0b50, "?Copy@CrazeHollaback@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z", ("NAME_CLASS_NOT_IN_RETAIL", "OURS_DIFF")),
+        (0x822c0b50, "?Copy@BandSongPref@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z", ("OWNER", "OURS_SAME")),
+        # sabotage: an unrelated retail class must not read as agreement
+        (0x822c0b50, "?Copy@RndMesh@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z", ("UNRELATED", "OURS_DIFF")),
+        # inherited, not overridden: SongSort::NewShortcutNode sits only in its
+        # subclasses' vtables (SongSortByArtist/Diff/Plays/...).  (0x8269d940,
+        # Object::PreLoad, was the first pick and reads OWNER -- Hmx::Object's
+        # own vtable holds it too; a wrong expectation, not a tool defect.)
+        (0x825bf308, "?NewShortcutNode@SongSort@@UBAPAVShortcutNode@@PAVLeafSortNode@@@Z", ("BASE_OF_OWNER", "OURS_SAME")),
+    )
+    saved = dict(A.map)
+    for a, nm, want in cases:
+        A.map[a] = nm
+        r = A.slot_run([a])[0]
+        got = (r["rel"], r["ours"])
+        print(f"  0x{a:08x} as {nm[:44]:44s} -> {got} (want {want})")
+        ok &= got == want
+        A.map = dict(saved)
+    print("SLOT SELFTEST", "PASS" if ok else "FAIL")
+    return 0 if ok else 1
+
+
+def slot_main(a):
+    A = Audit(a.map)
+    recs = A.slot_run()
+    c = collections.Counter((r["rel"], r["ours"]) for r in recs)
+    print(f"{len(recs)} map rows sit in a retail vtable slot")
+    for k in sorted(c):
+        print(f"  {k[0]:26s} {k[1]:10s} {c[k]:6d}")
+    cand = [r for r in recs if r["rel"] in ("UNRELATED", "NAME_CLASS_NOT_IN_RETAIL", "NO_CLASS")
+            or (r["ours"] == "OURS_DIFF")]
+    cand.sort(key=lambda r: -r["size"])
+    print(f"\n{len(cand)} candidates (class or our-slot disagreement), largest body first:")
+    for r in cand:
+        sl = sorted({(o or "?", k, (s or "-")[:50]) for o, k, s in r["slots"]})[:2]
+        print(f"  0x{r['addr']:08x} {r['size']:5d} {r['rel'][:12]:12s} {r['ours']:9s} {r['name'][:60]:60s} {sl}")
+    if a.json:
+        json.dump(recs, open(a.json, "w"), indent=1, default=str)
+    return 0
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--json")
     ap.add_argument("--map", default=MAP)
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--slots", action="store_true",
+                    help="audit every row in a retail vtable slot (W16-NC)")
     a = ap.parse_args()
+    if a.selftest and a.slots:
+        return slot_selftest()
     if a.selftest:
         return selftest()
+    if a.slots:
+        return slot_main(a)
     A = Audit(a.map)
     recs = A.run()
     fanin(recs)

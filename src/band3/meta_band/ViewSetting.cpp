@@ -361,7 +361,7 @@ ScoreType ScoreTypeViewSetting::GetAlternateScoreType() const {
 // ViewSettingsProvider
 // ------------------------------------------------------------------
 
-const char *MusicLibraryUpsellViewSetting::GetCurrentStatus() const {
+const char *SongUpsellViewSetting::GetCurrentStatus() const {
     static Symbol music_library_upsell_on("music_library_upsell_on");
     static Symbol music_library_upsell_off("music_library_upsell_off");
     if (TheProfileMgr.GetMusicLibraryUpsell())
@@ -370,7 +370,7 @@ const char *MusicLibraryUpsellViewSetting::GetCurrentStatus() const {
         return Localize(music_library_upsell_off, nullptr);
 }
 
-void MusicLibraryUpsellViewSetting::Text(
+void SongUpsellViewSetting::Text(
     int, int row, UIListLabel *slot, UILabel *label
 ) const {
     static Symbol music_library_upsell_on("music_library_upsell_on");
@@ -385,12 +385,12 @@ void MusicLibraryUpsellViewSetting::Text(
     }
 }
 
-void MusicLibraryUpsellViewSetting::SelectOption(int idx) {
+void SongUpsellViewSetting::SelectOption(int idx) {
     TheProfileMgr.SetMusicLibraryUpsell(idx == 0);
     TheMusicLibrary->RefreshSongLists();
 }
 
-int MusicLibraryUpsellViewSetting::StartingOption() const {
+int SongUpsellViewSetting::StartingOption() const {
     return !TheProfileMgr.GetMusicLibraryUpsell();
 }
 
@@ -433,7 +433,7 @@ ViewSettingsProvider::ViewSettingsProvider() : mActiveSetting(nullptr),
     mSettings.push_back(new HeaderViewSetting(options));
     mSettings.push_back(new SortViewSetting());
     mSettings.push_back(new ScoreTypeViewSetting());
-    mSettings.push_back(new MusicLibraryUpsellViewSetting());
+    mSettings.push_back(new SongUpsellViewSetting());
     mSettings.push_back(new BadReviewViewSetting());
     mSettings.push_back(new HeaderViewSetting(filters));
     for (int i = 0; i < kNumFilterTypes - 2; i++) {

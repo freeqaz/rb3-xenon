@@ -19,7 +19,6 @@ public:
     void Terminate();
     void Poll();
     NetGameData *GetGameData();
-    void UpdateNetOverlay();
     void SetGameData(NetGameData *);
     void ToggleLogging();
     NetSession *GetNetSession() const { return mSession; }
@@ -28,26 +27,15 @@ public:
 
     static void SystemCheckCallback(char const *, char const *, unsigned int);
 
+    // Retail layout, read off TheNet's dynamic initializer (0x82C3EB80, which
+    // zeroes 0x28-0x34), Net::Init (0x823E0648) and Net::Terminate
+    // (0x823E07B8): no voice-chat manager, no Quazal thread and no overlay.
     NetGameData *mGameData; // 0x28
     NetSession *mSession; // 0x2c
     SessionSearcher *mSearcher; // 0x30
     Server *mServer; // 0x34
     NetworkEmulator *mEmulator; // 0x38
-    VoiceChatMgr *mVoiceChatMgr; // 0x3c
-    SyncStore *mSyncStore; // 0x40
-    unsigned char *mThreadStack; // 0x44
-    int unk3c;
-    int unk40;
-    int unk44;
-    // Opaque thread span, 0x48..0x360.
-    // The retail X360 Net
-    // uses Xbox threading and almost certainly a different layout past 0x48, but
-    // the only consumer (game/Singer.cpp) just calls GetNetSession() -> mSession
-    // (0x20), which is BEFORE this field, so the thread representation does not
-    // affect its codegen. Keep an opaque byte span of that size so the few
-    // trailing members keep their offsets until the network layer is ported.
-    unsigned char mThread[0x360 - 0x48]; // 0x54
-    RndOverlay *mNetOverlay; // 0x36c
+    SyncStore *mSyncStore; // 0x3c
 };
 
 void TerminateTheNet();
