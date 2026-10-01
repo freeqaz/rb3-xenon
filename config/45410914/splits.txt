@@ -2929,9 +2929,7 @@ MeshAnim.cpp:
 	.pdata      start:0x8220F358 end:0x8220F470
 	.pdata      start:0x8220F470 end:0x8220F478
 	.pdata      start:0x8220F478 end:0x8220F680
-	.pdata      start:0x8220F680 end:0x8220F708
-	.pdata      start:0x8220F718 end:0x8220F728
-	.pdata      start:0x8220F730 end:0x8220F738
+	.pdata      start:0x8220F680 end:0x8220F6D0
 	.pdata      start:0x82234730 end:0x82234738
 	.pdata      start:0x8223B860 end:0x8223B868
 	.pdata      start:0x8223D920 end:0x8223D928
@@ -2971,10 +2969,7 @@ MeshAnim.cpp:
 	.text       start:0x8246CDF0 end:0x8246EBE0
 	.text       start:0x8246EBE0 end:0x8246EC44
 	.text       start:0x8246EC44 end:0x82470CA8
-	.text       start:0x82470CA8 end:0x824712A8
-	.text       start:0x824712F4 end:0x824712F8
-	.text       start:0x82471344 end:0x82471518
-	.text       start:0x824715A4 end:0x824716B0
+	.text       start:0x82470CA8 end:0x82471040
 	.text       start:0x826C83E8 end:0x826C8468
 	.text       start:0x8274BB88 end:0x8274BBE4
 	.text       start:0x827708C0 end:0x82770920
@@ -5132,9 +5127,12 @@ Crowd.cpp:
 	.text       start:0x824E49EC end:0x824E7518
 
 LitAnim.cpp:
+	.pdata      start:0x8220F6D0 end:0x8220F708
 	.pdata      start:0x8220F708 end:0x8220F710
 	.pdata      start:0x8220F710 end:0x8220F718
+	.pdata      start:0x8220F718 end:0x8220F728
 	.pdata      start:0x8220F728 end:0x8220F730
+	.pdata      start:0x8220F730 end:0x8220F738
 	.pdata      start:0x8220F738 end:0x8220F740
 	.pdata      start:0x8220F740 end:0x8220F748
 	.pdata      start:0x8220F748 end:0x8220F750
@@ -5145,9 +5143,13 @@ LitAnim.cpp:
 	.pdata      start:0x8220F7C0 end:0x8220F7F0
 	.pdata      start:0x8220F7F0 end:0x8220F808
 	.pdata      start:0x82216040 end:0x82216060
+	.text       start:0x82471040 end:0x824712A8
 	.text       start:0x824712A8 end:0x824712F4
+	.text       start:0x824712F4 end:0x824712F8
 	.text       start:0x824712F8 end:0x82471344
+	.text       start:0x82471344 end:0x82471518
 	.text       start:0x82471518 end:0x824715A4
+	.text       start:0x824715A4 end:0x824716B0
 	.text       start:0x824716B0 end:0x82471778
 	.text       start:0x82471778 end:0x82471854
 	.text       start:0x82471858 end:0x82471930
