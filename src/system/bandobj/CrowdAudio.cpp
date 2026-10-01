@@ -341,15 +341,15 @@ void CrowdAudio::SetEnabled(bool b) {
 void CrowdAudio::StopAllMoggs() {
     if (mCurrentMogg) {
         mCurrentMogg->MoggClip::Stop();
-        mCurrentMogg = 0;
+        mCurrentMogg.ReleaseObjConcrete();
     }
     if (mOldMogg) {
         mOldMogg->MoggClip::Stop();
-        mOldMogg = 0;
+        mOldMogg.ReleaseObjConcrete();
     }
     if (mFadingMogg) {
         mFadingMogg->MoggClip::Stop();
-        mFadingMogg = 0;
+        mFadingMogg.ReleaseObjConcrete();
     }
 }
 
