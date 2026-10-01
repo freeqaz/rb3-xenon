@@ -489,8 +489,10 @@ void PanelDir::SetFocusComponent(UIComponent *newComponent, Symbol nav_type) {
 }
 
 RndCam *PanelDir::CamOverride() {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (TheLoadMgr.EditMode() && !mUseSpecifiedCam)
         return nullptr;
+#endif
     if (mCam)
         return mCam;
     return TheUI->GetCam();

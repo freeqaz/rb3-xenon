@@ -267,7 +267,7 @@ void *RndMeshDeform::VertArray::FindVert(int vert) {
 }
 
 void RndMeshDeform::VertArray::CopyVert(int to, int from, RndMeshDeform::VertArray &fromArr) {
-    MILO_ASSERT(from >= 0 && from < fromArr.NumVerts(), 0x41);
+    MILO_ASSERT(from < fromArr.NumVerts(), 0x41);
     u8 buf[VertArray::kMaxWeights * 2 + 1];
     u8 *src = (u8 *)fromArr.FindVert(from);
     memcpy(buf, src, *src * 2 + 1);
@@ -276,12 +276,12 @@ void RndMeshDeform::VertArray::CopyVert(int to, int from, RndMeshDeform::VertArr
         return;
     }
     u8 *dst = (u8 *)FindVert(to);
-    int insertLength = *buf * 2 + 1;
     int cutLength = (dst == (u8 *)mData + mSize) ? 0 : *dst * 2 + 1;
+    int insertLength = *buf * 2 + 1;
     void *out = MemResizeElem(
         mData, mSize, dst, cutLength, insertLength, "RndMeshDeform"
     );
-    memcpy(out, buf, *buf * 2 + 1);
+    memcpy(out, buf, insertLength);
 }
 
 void RndMeshDeform::CopyWeights(int to, int from, RndMeshDeform *fromMd) {

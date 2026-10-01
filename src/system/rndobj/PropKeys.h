@@ -33,8 +33,10 @@ public:
     void operator=(const ObjKeys &keys) {
         if (this == &keys)
             return;
-        resize(keys.size());
+        // The copied stages are owned by this key set's owner.
         Hmx::Object *oldowner = ObjectStage::sOwner;
+        ObjectStage::sOwner = mOwner;
+        resize(keys.size());
         ObjKeys::const_iterator keysit = keys.begin();
         for (ObjKeys::iterator it = begin(); it != end(); ++it) {
             *it = *keysit;

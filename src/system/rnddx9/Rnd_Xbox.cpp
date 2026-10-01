@@ -81,6 +81,11 @@ DxRnd::DxRnd()
 }
 
 DxRnd::~DxRnd() {
+    // Retail releases the color-ramp texture before anything else.
+    if (mColorRampTex) {
+        mColorRampTex->Release();
+        mColorRampTex = nullptr;
+    }
     if ((unsigned int)mInited) {
         mInited = 0;
     }

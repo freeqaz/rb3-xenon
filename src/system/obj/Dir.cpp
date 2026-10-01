@@ -730,9 +730,11 @@ namespace {
 }
 
 ObjectDir::Viewport &ObjectDir::CurViewport() {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (mCurViewportID >= kNumViewports) {
         MILO_FAIL("%s mCurView = %d, >= kNumViewports", PathName(this), mCurViewportID);
     }
+#endif
     return mViewports[mCurViewportID];
 }
 
