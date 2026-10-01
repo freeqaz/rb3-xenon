@@ -134,17 +134,17 @@ void VocalPart::Jump(float f1, bool) {
 }
 
 void VocalPart::Rollback(float, float ms) {
+    VocalNoteList *list = mVocalNoteList;
     unk58 = 0;
-    VocalNoteList * &_ref0 = mVocalNoteList;
     unk54 = ms;
-    if (_ref0 != nullptr) {
-        mThisPhrase = _ref0->mPhrases.begin();
-        while (mThisPhrase != _ref0->mPhrases.end()
+    if (mVocalNoteList != nullptr) {
+        mThisPhrase = list->mPhrases.begin();
+        while (mThisPhrase != mVocalNoteList->mPhrases.end()
                && mThisPhrase->unk0 + mThisPhrase->unk4 < ms) {
             mThisPhrase++;
         }
-        mFreestyleSection = _ref0->mFreestyleSections.begin();
-        while (mFreestyleSection != _ref0->mFreestyleSections.end()
+        mFreestyleSection = list->mFreestyleSections.begin();
+        while (mFreestyleSection != mVocalNoteList->mFreestyleSections.end()
                && ms > mFreestyleSection->second) {
             mFreestyleSection++;
         }
@@ -336,8 +336,7 @@ const VocalPhrase *VocalPart::GetNextPhraseMarker(const VocalPhrase *const &p) c
 }
 
 bool VocalPart::IsPhraseMarkerAtEnd(const VocalPhrase *const &p) const {
-    const VocalPhrase *end = mVocalNoteList->mPhrases.data() + mVocalNoteList->mPhrases.size();
-    return p == end;
+    return p == mVocalNoteList->mPhrases.end();
 }
 
 bool VocalPart::IsEmptyPhrase(const VocalPhrase *const &p) const {
@@ -355,9 +354,7 @@ bool VocalPart::IsEmptyPhrase(const VocalPhrase *const &p) const {
 }
 
 bool VocalPart::AtPhraseEnd(float ms) const {
-    const VocalPhrase *end =
-        mVocalNoteList->mPhrases.data() + mVocalNoteList->mPhrases.size();
-    if (mThisPhrase != end && ms > mThisPhrase->unk0 + mThisPhrase->unk4)
+    if (mThisPhrase != mVocalNoteList->mPhrases.end() && ms > mThisPhrase->unk0 + mThisPhrase->unk4)
         return true;
     return false;
 }
@@ -367,8 +364,7 @@ bool VocalPart::InEmptyPhrase() const {
 }
 
 bool VocalPart::PhraseHasUnpitchedNotes() const {
-    const VocalPhrase *end = mVocalNoteList->mPhrases.data() + mVocalNoteList->mPhrases.size();
-    if (mThisPhrase == end) return false;
+    if (mThisPhrase == mVocalNoteList->mPhrases.end()) return false;
     return mThisPhrase->unk19;
 }
 
@@ -435,8 +431,7 @@ int VocalPart::CalculateRemainingTambourineTicks() {
     MILO_ASSERT(mThisPhrase->mTambourinePhrase, 0x614);
     int dur = mThisPhrase->unkc;
     const VocalPhrase *sp8 = GetNextPhraseMarker(mThisPhrase);
-    while (sp8 != mVocalNoteList->mPhrases.data() + mVocalNoteList->mPhrases.size()
-           && sp8->mTambourinePhrase) {
+    while (sp8 != mVocalNoteList->mPhrases.end() && sp8->mTambourinePhrase) {
         dur += sp8->unkc;
         sp8 = GetNextPhraseMarker(sp8);
     }
@@ -512,8 +507,8 @@ void VocalPart::AfterPoll(float ms) {
 }
 
 bool PitchBetween(float pitch, float a, float b, float &out) {
-    float lo = (b < a) ? b : a;
-    float hi = (a < b) ? b : a;
+    float hi = Max(a, b);
+    float lo = Min(a, b);
     while (pitch > hi)
         pitch -= 12.0f;
     while (pitch < lo)
