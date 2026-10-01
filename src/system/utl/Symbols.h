@@ -1822,6 +1822,7 @@ extern Symbol sinks;
 extern Symbol obj;
 extern Symbol event_sinks;
 extern Symbol handler;
+extern Symbol hack_fix_clips_pre_merge;
 extern Symbol profile_pre_delete_msg;
 extern Symbol get_gender;
 extern Symbol get_color_palette;
