@@ -388,7 +388,7 @@ void RndText::CollectGarbage() {
     }
 }
 
-void RndText::UpdateText(bool) {
+void RndText::UpdateText(bool updateMeshes) {
     if (mDeferUpdate > 0) {
         mNeedsUpdate = true;
     } else {
@@ -397,21 +397,34 @@ void RndText::UpdateText(bool) {
             delete mesh;
         }
         mMeshMap.clear();
+#ifdef HX_NATIVE
         std::set<RndText *>::iterator it = mTextMeshSet.find(this);
         if (it != mTextMeshSet.end()) {
             mTextMeshSet.erase(it);
         }
+#endif
         mStyle.mFont = mFont;
         WrapText(mText.c_str(), mStyle, mLines);
+#ifdef HX_NATIVE
         mMeshDirty = true;
+#else
+        // Retail (0x82459660) rebuilds the meshes here rather than marking
+        // them dirty for DrawShowing.
+        if (updateMeshes) {
+            FOREACH (it, mMeshMap) {
+                if (it->second.mesh) {
+                    UpdateMesh((RndFont *)it->first);
+                }
+            }
+        }
+#endif
         mCurWidth = 0;
         FOREACH (it, mLines) {
             MaxEq(mCurWidth, it->mWidth);
         }
         mCurHeight = mLines.front().xfm.v.z - mLines.back().xfm.v.z;
         if (mFont) {
-            float diff = mFont->CellDiff();
-            mCurHeight += mStyle.mSize * diff * mLeading;
+            mCurHeight += mFont->CellDiff() * mStyle.mSize * mLeading;
         }
     }
 }
@@ -597,13 +610,17 @@ RndText::RndText()
 RndText::~RndText() {
     MILO_ASSERT(mDeferUpdate == 0, 723);
     FOREACH (it, mMeshMap) {
-        RndMesh *mesh = it->second.mesh;
+        RndMesh *&mesh = it->second.mesh;
         delete mesh;
     }
+#ifdef HX_NATIVE
+    // Retail (0x82457278) keeps no set of texts with dirty meshes; the native
+    // DrawShowing registers into it, so only native unregisters here.
     std::set<RndText *>::iterator it = mTextMeshSet.find(this);
     if (it != mTextMeshSet.end()) {
         mTextMeshSet.erase(it);
     }
+#endif
 }
 
 void RndText::SetFont(RndFont *f) {
@@ -613,10 +630,13 @@ void RndText::SetFont(RndFont *f) {
             RELEASE(it->second.mesh);
         }
         mMeshMap.clear();
+#ifdef HX_NATIVE
+        // Retail (0x82459A90) keeps no dirty-mesh set (see ~RndText).
         std::set<RndText *>::iterator it = mTextMeshSet.find(this);
         if (it != mTextMeshSet.end()) {
             mTextMeshSet.erase(it);
         }
+#endif
         FontKey fontasInt = (FontKey)f;
         mMeshMap.insert(std::pair<FontKey, MeshInfo>(fontasInt, MeshInfo()));
         mMeshMap[fontasInt].displayableChars = 0;
