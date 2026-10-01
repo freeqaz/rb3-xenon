@@ -715,11 +715,8 @@ void Tour::InitializeMusicLibraryTaskForArtist(
     MusicLibrary::MusicLibraryTask &task, int maxSize, const char *artistName, Symbol questSym
 ) {
     task.maxSetlistSize = maxSize;
-    {
-        SongSortMgr::SongFilter artistFilter = CreateArtistFilter(artistName);
-        task.filter = artistFilter;
-    }
-    task.partSym = Symbol(gNullStr);
+    task.filter = CreateArtistFilter(artistName);
+    task.partSym = gNullStr;
     if (questSym != gNullStr) {
         GigFilter *pFilter = TheQuestMgr.GetQuestFilter(questSym);
         MILO_ASSERT(pFilter, 0x307);
