@@ -81,7 +81,7 @@ public:
 class DialogDisplay { public: static void Init(); };
 class InstrumentDifficultyDisplay { public: static void Init(); };
 class MicInputArrow { public: static void Init(); };
-class PatchRenderer { public: static void Init(); static void Terminate(); };
+#include "bandobj/PatchRenderer.h"
 class PlayerDiffIcon { public: static void Init(); };
 class ScrollbarDisplay { public: static void Init(); };
 
