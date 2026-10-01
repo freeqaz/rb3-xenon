@@ -1024,8 +1024,8 @@ void CustomizePanel::SelectAsset(Symbol s) {
             MILO_ASSERT(pAssetMgr, 0x36A);
             Asset *pAsset = pAssetMgr->GetAsset(s);
             MILO_ASSERT(pAsset, 0x36D);
-            BandProfile *p = mProfile;
-            if (p->mProfileAssets.HasAsset(s)) {
+            ProfileAssets &assets = mProfile->mProfileAssets;
+            if (assets.HasAsset(s)) {
                 if (pAsset->HasFinishes()) {
                     mInstrumentFinishProvider->Update(s);
                     ChooseFinish();
