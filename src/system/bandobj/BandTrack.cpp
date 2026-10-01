@@ -642,7 +642,10 @@ void BandTrack::SyncInstrument() {
     }
 }
 
+// Retail: a local static Message built from a temporary Symbol("reset") at entry, and
+// local static Symbol/Message for "disable" inside the feedback branch.
 void BandTrack::Retract(bool b) {
+    static Message reset("reset");
     if (b) {
         Reset();
         EventTrigger *trig =
@@ -655,7 +658,9 @@ void BandTrack::Retract(bool b) {
         if (mRetractTrig)
             mRetractTrig->Trigger();
         if (mPlayerFeedback) {
-            mPlayerFeedback->HandleType(reset_msg);
+            mPlayerFeedback->HandleType(reset);
+            static Symbol disable("disable");
+            static Message disable_msg(disable);
             SendTrackerDisplayMessage(disable_msg);
         }
     }
