@@ -237,6 +237,16 @@ void AccomplishmentManager::InitializeTourSafeDiscSongs() {
         MILO_ASSERT(pSongData, 0x107);
         if (pSongData->IsDownload())
             continue;
+        // Retail constructs function-local statics here (one guard word, bits
+        // 0..7 in this order), not the shared global Symbols.
+        static Symbol drum("drum");
+        static Symbol vocals("vocals");
+        static Symbol bass("bass");
+        static Symbol guitar("guitar");
+        static Symbol real_guitar("real_guitar");
+        static Symbol real_bass("real_bass");
+        static Symbol keys("keys");
+        static Symbol real_keys("real_keys");
         if (!pSongData->HasPart(drum, false))
             continue;
         if (!pSongData->HasPart(vocals, false))
