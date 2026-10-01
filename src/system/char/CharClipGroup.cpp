@@ -14,13 +14,14 @@
 CharClipGroup::CharClipGroup() : mClips(this), mWhich(0), mFlags(0) {}
 
 BEGIN_HANDLERS(CharClipGroup)
-    HANDLE_EXPR(get_clip, GetClip(0))
+    HANDLE_EXPR(get_clip, GetClip())
     HANDLE_ACTION(delete_remaining, DeleteRemaining(_msg->Int(2)))
     HANDLE_EXPR(get_size, (int)mClips.size())
     HANDLE_EXPR(has_clip, HasClip(_msg->Obj<CharClip>(2)))
     HANDLE_EXPR(find_clip, GetClip(_msg->Int(2)))
     HANDLE_ACTION(add_clip, AddClip(_msg->Obj<CharClip>(2)))
     HANDLE_ACTION(set_clip_flags, SetClipFlags(_msg->Int(2)))
+    HANDLE_ACTION(randomize_index, RandomizeIndex())
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
 
@@ -163,6 +164,14 @@ void CharClipGroup::Randomize() {
     for (int i = 0; i < mClips.size(); i++) {
         std::swap(mClips[i], mClips[RandomInt(i, mClips.size())]);
     }
+}
+
+// Retail 0x8238DC68, the randomize_index handler's callee: picks a random
+// current index without reordering the clips.
+void CharClipGroup::RandomizeIndex() {
+    int n = mClips.size();
+    if (n)
+        mWhich = RandomInt(0, n);
 }
 
 void CharClipGroup::Sort() { std::sort(mClips.begin(), mClips.end(), Alphabetically()); }

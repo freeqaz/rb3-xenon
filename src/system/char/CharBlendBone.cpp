@@ -64,18 +64,28 @@ END_COPYS
 
 INIT_REVS(3, 0)
 
+// Retail Load keeps no BinStreamRev: it splits the packed rev into one aligned
+// file-scope aggregate (altRev +0, rev +4) and reads everything from the raw
+// stream.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharBlendBone;
+
 BEGIN_LOADS(CharBlendBone)
-    LOAD_REVS(bs)
-    ASSERT_REVS(3, 0)
-    MILO_ASSERT(d.rev > 2, 0x66);
-    LOAD_SUPERCLASS(Hmx::Object)
-    d >> mTargets;
-    d >> mSrc1;
-    d >> mSrc2;
-    d >> mTransX;
-    d >> mTransY;
-    d >> mTransZ;
-    d >> mRotation;
+    int rev;
+    bs >> rev;
+    gRevs_CharBlendBone.rev = getHmxRev(rev);
+    gRevs_CharBlendBone.altRev = getAltRev(rev);
+    MILO_ASSERT(gRevs_CharBlendBone.rev > 2, 0x66);
+    Hmx::Object::Load(bs);
+    bs >> mTargets;
+    bs >> mSrc1;
+    bs >> mSrc2;
+    bs >> mTransX;
+    bs >> mTransY;
+    bs >> mTransZ;
+    bs >> mRotation;
 END_LOADS
 
 void CharBlendBone::Poll() {

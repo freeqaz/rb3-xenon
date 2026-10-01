@@ -58,17 +58,27 @@ END_COPYS
 
 INIT_REVS(2, 0)
 
+// Retail Load keeps no BinStreamRev: it splits the packed rev into one aligned
+// file-scope aggregate (altRev +0, rev +4) and reads everything from the raw
+// stream.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharIKRod;
+
 BEGIN_LOADS(CharIKRod)
-    LOAD_REVS(bs)
-    ASSERT_REVS(2, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    d >> mLeftEnd;
-    d >> mRightEnd;
-    d >> mDestPos;
-    d >> mSideAxis;
-    d >> mVertical;
-    d >> mDest;
-    d >> mXfm;
+    int rev;
+    bs >> rev;
+    gRevs_CharIKRod.rev = getHmxRev(rev);
+    gRevs_CharIKRod.altRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    bs >> mLeftEnd;
+    bs >> mRightEnd;
+    bs >> mDestPos;
+    bs >> mSideAxis;
+    bs >> mVertical;
+    bs >> mDest;
+    bs >> mXfm;
 END_LOADS
 
 void CharIKRod::Poll() {

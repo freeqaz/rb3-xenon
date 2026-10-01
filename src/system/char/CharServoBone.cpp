@@ -60,14 +60,22 @@ BEGIN_COPYS(CharServoBone)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(2, 0)
+// Retail Load keeps no BinStreamRev: it splits the packed rev into one aligned
+// file-scope aggregate (altRev +0, rev +4) and reads everything from the raw
+// stream.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharServoBone;
 
 BEGIN_LOADS(CharServoBone)
-    LOAD_REVS(bs)
-    ASSERT_REVS(2, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
+    int rev;
+    bs >> rev;
+    gRevs_CharServoBone.rev = getHmxRev(rev);
+    gRevs_CharServoBone.altRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
     Symbol s;
-    if (d.rev > 1)
+    if (gRevs_CharServoBone.rev > 1)
         bs >> s;
     SetClipType(s);
 END_LOADS

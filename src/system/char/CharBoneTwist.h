@@ -19,13 +19,10 @@ public:
     virtual void Poll();
     virtual void PollDeps(std::list<Hmx::Object *> &, std::list<Hmx::Object *> &);
 
-    // laneAT-f4: retail keeps THIS class's operator new out-of-line + ICF-folded
-    // (target CharBoneTwist::NewObject calls the folded `??2CriticalSection@@SAPAXI@Z`
-    // thunk with NO StaticClassName call), unlike the OBJ_MEM_OVERLOAD majority.
-    // MEM_OVERLOAD_INLINE_DEL keeps that literal-name, noinline, foldable
-    // operator new, but its operator delete is inlinable: retail's ??_G for
-    // this class calls ?MemFree@@YAXPAX@Z directly (lane W16-IE, 2026-10-01).
-    MEM_OVERLOAD_INLINE_DEL(CharBoneTwist, 0x19)
+    // Retail CharBoneTwist::NewObject (registered by CharInit) evaluates
+    // StaticClassName() and calls MemAlloc inline, the OBJ_MEM_OVERLOAD shape.
+    // Its ??_G calls ?MemFree@@YAXPAX@Z directly, so delete is inlinable.
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x19)
     NEW_OBJ(CharBoneTwist)
 
 protected:

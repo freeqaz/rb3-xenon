@@ -61,16 +61,24 @@ BEGIN_COPYS(CharFaceServo)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(4, 0)
+// Retail Load keeps no BinStreamRev: it splits the packed rev into one aligned
+// file-scope aggregate (altRev +0, rev +4) and reads everything from the raw
+// stream.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharFaceServo;
 
 BEGIN_LOADS(CharFaceServo) // has register issue
-    LOAD_REVS(bs)
-    ASSERT_REVS(4, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
+    int rev;
+    bs >> rev;
+    gRevs_CharFaceServo.rev = getHmxRev(rev);
+    gRevs_CharFaceServo.altRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
     ObjPtr<ObjectDir> oDirPtr(this);
     bs >> oDirPtr;
     Symbol sym;
-    if (d.rev > 3)
+    if (gRevs_CharFaceServo.rev > 3)
         bs >> sym;
     else if (oDirPtr) {
         sym = oDirPtr->Type();
@@ -81,11 +89,11 @@ BEGIN_LOADS(CharFaceServo) // has register issue
             }
         }
     }
-    if (d.rev > 0)
+    if (gRevs_CharFaceServo.rev > 0)
         bs >> mBlinkClipLeftName;
-    if (d.rev > 1)
+    if (gRevs_CharFaceServo.rev > 1)
         bs >> mBlinkClipRightName;
-    if (d.rev > 2) {
+    if (gRevs_CharFaceServo.rev > 2) {
         bs >> mBlinkClipLeftName2;
         bs >> mBlinkClipRightName2;
     }

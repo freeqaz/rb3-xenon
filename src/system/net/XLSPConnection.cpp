@@ -186,7 +186,8 @@ void XLSPConnection::Poll() {
                 if (status == 1) {
                     return;
                 } else if (status >= 3) {
-                    if (status != 3) {
+                    if (status == 3) {
+                    } else {
                         MILO_NOTIFY("XNetGetConnectStatus() unhandled return: %d", status);
                         return;
                     }

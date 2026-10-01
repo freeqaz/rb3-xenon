@@ -17,6 +17,10 @@ namespace {
     }
 }
 
+// Empty in retail: CharInit calls an empty function at this point, and the
+// "toggle_char_task_graph" string is absent from the image.
 void CharTaskMgr::Init() {
+#ifdef HX_NATIVE
     DataRegisterFunc("toggle_char_task_graph", OnToggleCharTaskGraph);
+#endif
 }

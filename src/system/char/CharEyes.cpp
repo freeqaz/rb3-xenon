@@ -370,8 +370,12 @@ DECOMP_FORCEACTIVE(
 BEGIN_HANDLERS(CharEyes)
     HANDLE(add_interest, OnAddInterest)
     HANDLE_ACTION(force_blink, ForceBlink())
+#ifdef HX_NATIVE
+    // Neither "toggle_force_focus" nor "toggle_interest_overlay" occurs in the
+    // retail image: these debug handlers are not in RB3.
     HANDLE(toggle_force_focus, OnToggleForceFocus)
     HANDLE(toggle_interest_overlay, OnToggleInterestOverlay)
+#endif
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
 
@@ -835,6 +839,28 @@ Vector3 CharEyes::GenerateDartOffset() {
 }
 
 void CharEyes::Replace(ObjRef *ref, Hmx::Object *obj) {
+#ifndef HX_NATIVE
+    // Retail (0x823889B8): CharWeightable first, then every eye and
+    // interest whose pointee is the dying object is retargeted to `obj` (cast
+    // to the slot's type) and dropped from its vector if that leaves it null.
+    CharWeightable::Replace(ref, obj);
+    for (EyeDesc *it = mEyes.begin(); it != mEyes.end();) {
+        if (RefIs(ref, it->mEye))
+            it->mEye.SetOwnerObj(dynamic_cast<CharLookAt *>(obj));
+        if (!it->mEye)
+            it = mEyes.erase(it);
+        else
+            ++it;
+    }
+    for (CharInterestState *it = mInterests.begin(); it != mInterests.end();) {
+        if (RefIs(ref, it->mInterest))
+            it->mInterest.SetOwnerObj(dynamic_cast<CharInterest *>(obj));
+        if (!it->mInterest)
+            it = mInterests.erase(it);
+        else
+            ++it;
+    }
+#else
     EyeDesc *eyeEnd = mEyes.end();
     EyeDesc *eyeBegin = mEyes.begin();
     int eyeCount = (int)((char *)eyeEnd - (char *)eyeBegin) / (int)sizeof(EyeDesc);
@@ -876,6 +902,7 @@ void CharEyes::Replace(ObjRef *ref, Hmx::Object *obj) {
         }
     }
     CharWeightable::Replace(ref, obj);
+#endif
 }
 
 // Retail shape (TU5): the focus interest is taken only when it is inside the

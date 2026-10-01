@@ -60,14 +60,11 @@ void StorePanel::Load() {
     UIPanel::Load();
     mLoadOk = true;
     ThePlatformMgr.AddSink(this);
-    // NOTE (laneFAMILY-1, measured): retail dispatches vtable slot 0x44 (=17,
-    // StoreUser) here, not 0x70 (=28, StoreProfile), and then makes a VIRTUAL
-    // call on the result through the virtual-base adjust — i.e.
-    // LocalUser::GetPadNum(), not the non-virtual Profile::GetPadNum(). This is
-    // the shape StorePanel.h:71's note already predicted from band.exe.
-    LocalUser *user = StoreUser();
-    int padNum = user->GetPadNum();
-    if (padNum == 0 || ThePlatformMgr.IsSignedIntoLive(padNum) == 0) {
+    // Retail calls StoreUser() (vtable slot 0x44), then User::GetLocalUser()
+    // through the User virtual base (slot 0x64), null-tests the result and
+    // passes it to PlatformMgr::IsUserSignedIn(const LocalUser*).
+    LocalUser *user = StoreUser()->GetLocalUser();
+    if (!user || !ThePlatformMgr.IsUserSignedIn(user)) {
         if (mState == 0)
             mLoadOk = false;
         ExitStore(kStoreErrorLiveServer);
@@ -724,8 +721,13 @@ BEGIN_HANDLERS(StorePanel)
     HANDLE_ACTION(set_source_to_backup, mPurchaseSource = mBackupPurchaseSource)
     HANDLE_MESSAGE(SigninChangedMsg)
     HANDLE_MESSAGE(ProfileSwappedMsg)
+#ifdef HX_NATIVE
+    // Retail's Handle (0x827B5510) dispatches SigninChangedMsg and
+    // ProfileSwappedMsg, then UIPanel; it has no arm for either enum-complete
+    // message.
     HANDLE_MESSAGE(SingleItemEnumCompleteMsg)
     HANDLE_MESSAGE(MultipleItemsEnumCompleteMsg)
+#endif
     HANDLE_SUPERCLASS(UIPanel)
 END_HANDLERS
 // sw2 scatter-include (default/StorePanel <- hamobj/DancerSequence.cpp)

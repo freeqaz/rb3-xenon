@@ -59,27 +59,35 @@ BEGIN_COPYS(CharIKFoot)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(6, 0)
+// Retail Load keeps no BinStreamRev: it splits the packed rev into one aligned
+// file-scope aggregate (altRev +0, rev +4) and reads everything from the raw
+// stream.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharIKFoot;
 
 BEGIN_LOADS(CharIKFoot)
-    LOAD_REVS(bs)
-    ASSERT_REVS(6, 0)
-    LOAD_SUPERCLASS(CharIKHand)
-    if (d.rev < 6) {
+    int rev;
+    bs >> rev;
+    gRevs_CharIKFoot.rev = getHmxRev(rev);
+    gRevs_CharIKFoot.altRev = getAltRev(rev);
+    CharIKHand::Load(bs);
+    if (gRevs_CharIKFoot.rev < 6) {
         Symbol s;
-        d >> s;
+        bs >> s;
     }
-    if (d.rev < 5) {
+    if (gRevs_CharIKFoot.rev < 5) {
         int i;
-        if (d.rev > 1)
-            d >> i;
-        if (d.rev > 2)
-            d >> i;
-        if (d.rev > 3)
-            d >> i;
+        if (gRevs_CharIKFoot.rev > 1)
+            bs >> i;
+        if (gRevs_CharIKFoot.rev > 2)
+            bs >> i;
+        if (gRevs_CharIKFoot.rev > 3)
+            bs >> i;
     } else {
-        d >> mData;
-        d >> mDataIndex;
+        bs >> mData;
+        bs >> mDataIndex;
     }
 END_LOADS
 

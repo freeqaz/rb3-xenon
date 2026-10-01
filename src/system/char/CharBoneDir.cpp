@@ -84,29 +84,41 @@ BinStream &operator>>(BinStream &bs, CharBoneDir::Recenter &r) {
 
 INIT_REVS(4, 0)
 
+// Retail keeps the Pre/PostLoad rev in one aligned file-scope aggregate
+// (altRev +0, rev +4), not a BinStreamRev. PreLoad pushes before the base call
+// and PostLoad pops after it, so the LIFO rev stack stays balanced.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharBoneDir;
+
 void CharBoneDir::PreLoad(BinStream &bs) {
-    LOAD_REVS(bs)
-    ASSERT_REVS(4, 0)
+    int rev;
+    bs >> rev;
+    gRevs_CharBoneDir.rev = getHmxRev(rev);
+    gRevs_CharBoneDir.altRev = getAltRev(rev);
+    bs.PushRev(packRevs(gRevs_CharBoneDir.altRev, gRevs_CharBoneDir.rev), this);
     ObjectDir::PreLoad(bs);
-    d.PushRev(this);
 }
 
 void CharBoneDir::PostLoad(BinStream &bs) {
-    BinStreamRev d(bs, bs.PopRev(this));
     ObjectDir::PostLoad(bs);
-    if (d.rev < 2) {
+    int rev = bs.PopRev(this);
+    gRevs_CharBoneDir.rev = getHmxRev(rev);
+    gRevs_CharBoneDir.altRev = getAltRev(rev);
+    if (gRevs_CharBoneDir.rev < 2) {
         bool b;
-        d >> b;
+        bs >> b;
     } else {
-        d >> mMoveContext;
+        bs >> mMoveContext;
     }
-    if (d.rev < 3) {
+    if (gRevs_CharBoneDir.rev < 3) {
         bool b;
-        d >> b;
+        bs >> b;
     }
-    d >> mRecenter;
-    if (d.rev > 3) {
-        d >> mBakeOutFacing;
+    bs >> mRecenter;
+    if (gRevs_CharBoneDir.rev > 3) {
+        bs >> mBakeOutFacing;
     }
 }
 

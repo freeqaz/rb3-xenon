@@ -26,11 +26,9 @@ public:
     virtual void ListPollChildren(std::list<RndPollable *> &) const;
     virtual void PollDeps(std::list<Hmx::Object *> &, std::list<Hmx::Object *> &);
 
-    // laneAT-f4: retail keeps THIS class's operator new out-of-line + ICF-folded
-    // (target CharPollGroup::NewObject calls the folded `??2CriticalSection@@SAPAXI@Z`
-    // thunk with NO StaticClassName call), unlike the OBJ_MEM_OVERLOAD majority.
-    // MEM_OVERLOAD is the literal-name, noinline, foldable form.
-    MEM_OVERLOAD(CharPollGroup, 0x15)
+    // Retail CharPollGroup::NewObject (registered by CharInit) evaluates
+    // StaticClassName() and calls MemAlloc inline, the OBJ_MEM_OVERLOAD shape.
+    OBJ_MEM_OVERLOAD(0x15)
     NEW_OBJ(CharPollGroup);
 
     void SortPolls();

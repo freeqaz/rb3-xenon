@@ -5,6 +5,7 @@
 #include "CharMeshHide.h"
 #include "CharPollGroup.h"
 #include "CharTaskMgr.h"
+#include "char/CharTransCopy.h"
 #include "CharUtl.h"
 #include "FileMergerOrganizer.h"
 #include "char/CharBlendBone.h"
@@ -68,15 +69,22 @@
 
 CharDebug TheCharDebug;
 
+// Retail CharInit (0x8236CE30) has no TheCharDebug.Init(), CharBonesMeshes::Init()
+// or CharLipSync::Init() call; the "char_debug" command string is absent from
+// the image, and nothing allocates CharLipSync's map. Native keeps all three.
 void CharInit() {
+#ifdef HX_NATIVE
     TheCharDebug.Init();
+#endif
     Character::Init();
     CharBonesObject::Init();
     REGISTER_OBJ_FACTORY(CharBoneOffset);
     REGISTER_OBJ_FACTORY(CharBlendBone);
     REGISTER_OBJ_FACTORY(CharBone);
     REGISTER_OBJ_FACTORY(CharBonesBlender);
+#ifdef HX_NATIVE
     CharBonesMeshes::Init();
+#endif
     REGISTER_OBJ_FACTORY(CharBoneTwist);
     CharClip::Init();
     REGISTER_OBJ_FACTORY(CharClipSet);
@@ -100,7 +108,9 @@ void CharInit() {
     REGISTER_OBJ_FACTORY(CharIKRod);
     REGISTER_OBJ_FACTORY(CharIKScale);
     REGISTER_OBJ_FACTORY(CharLipSync);
+#ifdef HX_NATIVE
     CharLipSync::Init();
+#endif
     REGISTER_OBJ_FACTORY(CharLipSyncDriver);
     REGISTER_OBJ_FACTORY(CharLookAt);
     CharMeshHide::Init();
@@ -109,10 +119,10 @@ void CharInit() {
     REGISTER_OBJ_FACTORY(CharPollGroup);
     REGISTER_OBJ_FACTORY(CharPosConstraint);
     REGISTER_OBJ_FACTORY(CharServoBone);
-    // ⚠ Retail registers CharSleeve straight after CharServoBone -- and a
-    // CharTransCopy between CharTransDraw and CharUpperTwist, a class this tree
-    // does not have at all.  Read from retail bytes, not the symbol map:
-    // fn_8236CE30, 43/43 slots resolved to their .rdata literals.
+    // Retail registers CharSleeve straight after CharServoBone, and
+    // CharTransCopy between CharTransDraw and CharUpperTwist (its NewObject is
+    // 0x8236BFE8). Read from retail bytes: fn_8236CE30, 43/43 slots resolved to
+    // their .rdata literals.
     // CharSignalApplier and ClipCollide are registered NOWHERE in retail (whole
     // binary scan of every RegisterFactory call site), so they are our inherited
     // newer-DC3 engine, not a retail omission.  Kept under HX_NATIVE.
@@ -122,6 +132,7 @@ void CharInit() {
     REGISTER_OBJ_FACTORY(CharSleeve);
     CharTaskMgr::Init();
     REGISTER_OBJ_FACTORY(CharTransDraw);
+    REGISTER_OBJ_FACTORY(CharTransCopy);
     REGISTER_OBJ_FACTORY(CharUpperTwist);
     REGISTER_OBJ_FACTORY(CharWeightable);
     REGISTER_OBJ_FACTORY(CharWeightSetter);
@@ -139,12 +150,16 @@ void CharInit() {
     TheDebug.AddExitCallback(CharTerminate);
 }
 
+// Retail (0x8236B020): RemoveExitCallback, Character::Terminate (empty),
+// CharBoneDir::Terminate, nothing else.
 void CharTerminate() {
     TheDebug.RemoveExitCallback(CharTerminate);
     Character::Terminate();
     CharBoneDir::Terminate();
+#ifdef HX_NATIVE
     CharBonesMeshes::Terminate();
     CharLipSync::Terminate();
+#endif
 }
 
 #pragma region CharDebug

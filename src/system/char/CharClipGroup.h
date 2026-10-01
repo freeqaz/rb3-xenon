@@ -25,6 +25,7 @@ public:
     void SetClipFlags(int);
     CharClip *FindClip(const char *) const;
     void Randomize();
+    void RandomizeIndex();
     void Sort();
     void MakeMRU(int);
 

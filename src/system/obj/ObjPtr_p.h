@@ -1113,8 +1113,13 @@ __forceinline void ObjPtrList<T1, T2>::push_back(T1 *obj) {
     Link(it, node);
 }
 
+// Retail inlines insert() at every call site: each PropSync(ObjPtrList&)
+// instantiation's kPropInsert arm is PoolAlloc(0xc), a store of obj into the
+// node's first word, then an out-of-line Link(it, node). No out-of-line insert
+// exists in the binary. next/prev are not zeroed (Link() writes them), so the
+// node is default-initialised, as in push_back().
 template <class T1, class T2>
-typename ObjPtrList<T1, T2>::iterator
+__forceinline typename ObjPtrList<T1, T2>::iterator
 ObjPtrList<T1, T2>::insert(typename ObjPtrList<T1, T2>::iterator it, T1 *obj) {
     if (mListMode == kObjListNoNull) {
 #ifdef HX_NATIVE
@@ -1125,7 +1130,11 @@ ObjPtrList<T1, T2>::insert(typename ObjPtrList<T1, T2>::iterator it, T1 *obj) {
 #endif
         MILO_ASSERT(obj, 0x177);
     }
+#ifdef HX_NATIVE
     Node *node = new Node();
+#else
+    Node *node = new Node;
+#endif
 #ifdef HX_NATIVE
     // Native: Node derives ObjRefConcrete; use SetObjConcrete so AddRef fires
     // on the node (the node IS the ring-ref in native mode).
@@ -1139,8 +1148,13 @@ ObjPtrList<T1, T2>::insert(typename ObjPtrList<T1, T2>::iterator it, T1 *obj) {
     return node;
 }
 
+// Declared inline: retail's auto-inliner takes it wherever the body is small.
+// PropSync(ObjPtrList<T>&) inlines Set for CharBone, Sequence,
+// RndTexBlendController and Hmx::Object (Object is a non-virtual base, so
+// Release/AddRef need no adjustment) and calls it out of line for types that
+// reach Object through a virtual base (RndMesh, CharCollide, ...).
 template <class T1, class T2>
-void ObjPtrList<T1, T2>::Set(iterator it, T1 *obj) {
+inline void ObjPtrList<T1, T2>::Set(iterator it, T1 *obj) {
 #ifdef HX_NATIVE
     // Native: Node derives ObjRefConcrete which owns the ring-ref; use
     // SetObjConcrete so AddRef/Release fire on the node (not the list).

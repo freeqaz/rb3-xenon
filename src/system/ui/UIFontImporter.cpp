@@ -49,7 +49,7 @@ __forceinline void ObjPtrList<RndMat, ObjectDir>::Set(iterator it, RndMat *obj) 
 template <>
 __forceinline ObjPtrList<RndFont, ObjectDir>::iterator
 ObjPtrList<RndFont, ObjectDir>::insert(iterator it, RndFont *obj) {
-    Node *node = new Node();
+    Node *node = new Node;
     node->mObject = obj;
     Link(it, node);
     return node;
@@ -58,7 +58,7 @@ ObjPtrList<RndFont, ObjectDir>::insert(iterator it, RndFont *obj) {
 template <>
 __forceinline ObjPtrList<RndMat, ObjectDir>::iterator
 ObjPtrList<RndMat, ObjectDir>::insert(iterator it, RndMat *obj) {
-    Node *node = new Node();
+    Node *node = new Node;
     node->mObject = obj;
     Link(it, node);
     return node;

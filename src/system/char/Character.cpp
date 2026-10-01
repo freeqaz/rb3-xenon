@@ -115,7 +115,10 @@ BEGIN_HANDLERS(Character)
     HANDLE(play_clip, OnPlayClip)
     HANDLE_ACTION(calc_bounding_sphere, CalcBoundingSphere())
     HANDLE(copy_bounding_sphere, OnCopyBoundingSphere)
+#ifdef HX_NATIVE
+    // No "merge_draws" string in the retail image: the handler is not in RB3.
     HANDLE_ACTION(merge_draws, MergeDraws(_msg->Obj<Character>(2)))
+#endif
     HANDLE_ACTION(find_interest_objects, FindInterestObjects(_msg->Obj<ObjectDir>(2)))
     HANDLE_ACTION(force_interest, SetFocusInterest(_msg->Obj<CharInterest>(2), 0))
     HANDLE_ACTION(force_interest_named, SetFocusInterest(_msg->Sym(2), 0))
@@ -517,10 +520,12 @@ void Character::SyncObjects() {
     }
     RndDir::SyncObjects();
     if (!IsSubDir()) {
-        VectorRemove(mDraws, static_cast<RndDrawable *>(mTransGroup.Ptr()));
+        // Retail calls VectorRemove<RndDrawable *, ObjPtr<RndGroup> > (0x82370D20)
+        // for mTransGroup and the RndGroup * instantiation (0x82370D98) per lod.
+        VectorRemove(mDraws, mTransGroup);
         for (int i = 0; i < mLods.size(); i++) {
-            VectorRemove(mDraws, static_cast<RndDrawable *>(mLods[i].Group()));
-            VectorRemove(mDraws, static_cast<RndDrawable *>(mLods[i].TransGroup()));
+            VectorRemove(mDraws, mLods[i].Group());
+            VectorRemove(mDraws, mLods[i].TransGroup());
         }
         SyncShadow();
         CharPollableSorter sorter;
@@ -838,7 +843,8 @@ void Character::SetShadow(RndGroup *shadow) {
             mDraws.push_back(static_cast<RndDrawable *>(mShadow.Ptr()));
         }
         mShadow = shadow;
-        VectorRemove(mDraws, static_cast<RndDrawable *>(mShadow.Ptr()));
+        // Retail instantiates VectorRemove on the ObjPtr itself (0x82370D20).
+        VectorRemove(mDraws, mShadow);
     }
 }
 
@@ -945,6 +951,8 @@ void Character::UnhookShadow() {
 void Character::SyncShadow() {
     UnhookShadow();
     if (mShadow) {
+#ifdef HX_NATIVE
+        // Retail SyncShadow (0x82371B80) has no old-gfx bone rebinding pass.
         if (GetGfxMode() == kOldGfx) {
             const std::vector<RndDrawable *> &draws = mShadow->Draws();
             for (std::vector<RndDrawable *>::const_iterator it = draws.begin();
@@ -962,7 +970,9 @@ void Character::SyncShadow() {
                 }
             }
         }
-        VectorRemove(mDraws, static_cast<RndDrawable *>(mShadow.Ptr()));
+#endif
+        // Retail instantiates VectorRemove on the ObjPtr itself (0x82370D20).
+        VectorRemove(mDraws, mShadow);
     }
 }
 

@@ -83,18 +83,28 @@ END_COPYS
 
 INIT_REVS(5, 0)
 
+// Retail Load keeps no BinStreamRev: it splits the packed rev into one aligned
+// file-scope aggregate (altRev +0, rev +4) and reads everything from the raw
+// stream.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharIKFingers;
+
 BEGIN_LOADS(CharIKFingers)
-    LOAD_REVS(bs)
-    ASSERT_REVS(5, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    LOAD_SUPERCLASS(CharWeightable)
-    if (d.rev > 1)
-        d >> mIsRightHand;
-    if (d.rev > 2)
+    int rev;
+    bs >> rev;
+    gRevs_CharIKFingers.rev = getHmxRev(rev);
+    gRevs_CharIKFingers.altRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    CharWeightable::Load(bs);
+    if (gRevs_CharIKFingers.rev > 1)
+        bs >> mIsRightHand;
+    if (gRevs_CharIKFingers.rev > 2)
         bs >> mOutputTrans;
-    if (d.rev > 3)
+    if (gRevs_CharIKFingers.rev > 3)
         bs >> mKeyboardRefBone;
-    if (d.rev > 4) {
+    if (gRevs_CharIKFingers.rev > 4) {
         bs >> mHandKeyboardOffset;
         bs >> mHandThumbRotation;
         bs >> mHandPinkyRotation;
