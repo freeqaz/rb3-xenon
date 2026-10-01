@@ -510,7 +510,6 @@ void Character::Poll() {
 }
 
 void Character::Enter() {
-    AutoSetCurrentCharacter scope(this);
     mFrozen = false;
     mPollState = kCharEntered;
     mForceLod = kLODPerFrame;
