@@ -838,17 +838,24 @@ void AccomplishmentManager::AddAssetAward(Symbol s1, Symbol s2) {
         mAssetToAward[s1] = s2;
 }
 
+// Retail builds each branch's hint token as a function-local static Symbol
+// (one guard word, bits 0..4 in branch order), not the shared globals.
 String AccomplishmentManager::GetHintStringForSource(Symbol s) const {
     String ret;
     if (HasAccomplishment(s)) {
+        static Symbol asset_hint_goal("asset_hint_goal");
         ret = MakeString(Localize(asset_hint_goal, 0), Localize(s, 0));
     } else if (HasAccomplishmentCategory(s)) {
+        static Symbol asset_hint_goalcategory("asset_hint_goalcategory");
         ret = MakeString(Localize(asset_hint_goalcategory, 0), Localize(s, 0));
     } else if (HasAccomplishmentGroup(s)) {
+        static Symbol asset_hint_goalgroup("asset_hint_goalgroup");
         ret = MakeString(Localize(asset_hint_goalgroup, 0), Localize(s, 0));
     } else if (TheCampaign->HasCampaignLevel(s)) {
+        static Symbol asset_hint_campaignlevel("asset_hint_campaignlevel");
         ret = MakeString(Localize(asset_hint_campaignlevel, 0), Localize(s, 0));
     } else if (TheAccomplishmentMgr->HasAward(s)) {
+        static Symbol asset_hint_award("asset_hint_award");
         Award *pAward = TheAccomplishmentMgr->GetAward(s);
         MILO_ASSERT(pAward, 0x473);
         ret = MakeString(
