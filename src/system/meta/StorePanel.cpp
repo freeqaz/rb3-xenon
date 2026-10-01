@@ -721,8 +721,13 @@ BEGIN_HANDLERS(StorePanel)
     HANDLE_ACTION(set_source_to_backup, mPurchaseSource = mBackupPurchaseSource)
     HANDLE_MESSAGE(SigninChangedMsg)
     HANDLE_MESSAGE(ProfileSwappedMsg)
+#ifdef HX_NATIVE
+    // Retail's Handle (0x827B5510) dispatches SigninChangedMsg and
+    // ProfileSwappedMsg, then UIPanel; it has no arm for either enum-complete
+    // message.
     HANDLE_MESSAGE(SingleItemEnumCompleteMsg)
     HANDLE_MESSAGE(MultipleItemsEnumCompleteMsg)
+#endif
     HANDLE_SUPERCLASS(UIPanel)
 END_HANDLERS
 // sw2 scatter-include (default/StorePanel <- hamobj/DancerSequence.cpp)
