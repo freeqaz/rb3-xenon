@@ -40,12 +40,11 @@ public:
     HttpGet(
         unsigned int ip, unsigned short port, const char *, unsigned char, const char *
     );
-    // Cross-TU ODR divergence in retail RB3: HttpGet.cpp itself compiled HttpGet
-    // as NON-polymorphic (its dtor/ctor store no vptr, mTimer at this+0x0 — proven
-    // from disasm), but callers such as NetLoader_Xbox.cpp were compiled against a
-    // header where ~HttpGet is virtual, so their `delete mHttpGet` emits a virtual
-    // scalar-deleting-destructor call (vtable slot 0, r4=1). To reproduce both, the
-    // dtor is virtual only for TUs that opt in via RB3_HTTPGET_VIRTUAL_DTOR.
+    // HttpGet is NON-polymorphic in retail (its dtor/ctor store no vptr, mTimer at
+    // this+0x0). RB3_HTTPGET_VIRTUAL_DTOR was once set for NetLoader_Xbox.cpp on
+    // the strength of a "virtual delete mHttpGet" that was really ~NetLoaderStub
+    // (0x827cfcb0, vtable .?AVNetLoaderStub@@) deleting its FileLoader; the real
+    // ~NetLoaderXbox (0x827d8a20) calls ~HttpGet directly. No TU sets it now.
 #ifdef RB3_HTTPGET_VIRTUAL_DTOR
     virtual ~HttpGet();
 #else

@@ -62,6 +62,7 @@ bool MemTrackEnable(bool enable) {
     return old;
 }
 
+#ifdef HX_NATIVE
 void MemTrackSpew(bool spew) {
     if (gMemTracker) {
         gMemTracker->SetSpew(spew);
@@ -93,6 +94,8 @@ void MemTrackReportClose(const char *name) {
         gMemTracker->CloseReport();
     }
 }
+
+#endif
 
 // See the declaration in MemMgr.h: retail's MemTrackAlloc takes six
 // parameters. file/line are a dev-build tracking feature, native-only.
@@ -250,6 +253,7 @@ DataNode MemTrackLogDF(DataArray *a) {
 
 static const int STACK_SIZE = 64;
 
+#ifdef HX_NATIVE
 void BeginMemTrackObjectName(const char *name) {
     if (gMemTracker) {
         s_MemTrackObjectNameStackPos++;
@@ -302,8 +306,13 @@ void EndMemTrackFileName() {
         }
     }
 }
+#endif
 
+#ifdef HX_NATIVE
 void MemTrackInit(int heap, int numAllocs, bool heapOnly) {
+#else
+void MemTrackInit(int heap, int numAllocs) {
+#endif
     CritSecTracker tracker(gMemLock);
     MILO_ASSERT(!gMemTracker, 0x82);
 #ifdef HX_NATIVE
