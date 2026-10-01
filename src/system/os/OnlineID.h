@@ -5,24 +5,18 @@
 #include "utl/Str.h"
 #include "xdk/XAPILIB.h"
 
-// size 0x10 by default; 0x18 under RB3_ONLINEID_PLAYERNAME (per-TU DC3 variant).
-// (retail X360: XUID@0x0, mValid@0x8; no inline player-name String —
+// size 0x10 (retail X360: XUID@0x0, mValid@0x8; no inline player-name String --
 // verified against retail OnlineID::SetXUID @0x82511030 and the Leaderboard
 // ctor @0x826561F0 where EntityID is 0x18 = mType(4)+mPlayerID(4)+OnlineID(0x10)).
+// ProfilePicture's members after mUserID (+0x18 overlapped, +0x1c texture,
+// +0x20 RndTex) are what BandProfile sees past this 0x10.
 class OnlineID {
 private:
     friend BinStream &operator<<(BinStream &, const OnlineID &);
     friend BinStream &operator>>(BinStream &, OnlineID &);
 
     XUID mXUID; // 0x0
-#ifdef RB3_ONLINEID_PLAYERNAME
-    // Per-TU ODR skew: some retail TUs (e.g. BandProfile.cpp via ProfilePicture)
-    // were compiled against the DC3-era OnlineID that carries an inline player-name
-    // String, making sizeof 0x18 instead of 0x10. Others (Leaderboard/EntityID)
-    // saw the 0x10 variant — hence this is gated per-TU, not global.
-    String mPlayerName; // 0x8
-#endif
-    bool mValid; // 0x8 (0x10 with player-name variant)
+    bool mValid; // 0x8
 public:
     OnlineID();
     // No user-declared copy ctor: retail copies OnlineID member-wise inline

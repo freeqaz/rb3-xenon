@@ -36,6 +36,14 @@ DWORD XUserCheckPrivilege(
 );
 XUSER_SIGNIN_STATE XUserGetSigninState(DWORD dwUserIndex);
 DWORD XUserGetXUID(DWORD dwUserIndex, XUID *pxuid);
+DWORD XUserReadGamerPicture(
+    DWORD dwUserIndex,
+    BOOL fSmall,
+    BYTE *pbTextureBuffer,
+    DWORD dwPitch,
+    DWORD dwHeight,
+    XOVERLAPPED *pOverlapped
+);
 VOID XUserSetContext(DWORD dwUserIndex, DWORD dwContextId, DWORD dwContextValue);
 DWORD XUserWriteAchievements(
     DWORD dwNumAchievements, XUSER_ACHIEVEMENT *pAchievements, XOVERLAPPED *pOverlapped

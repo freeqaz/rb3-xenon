@@ -219,20 +219,21 @@ void MultiplayerAnalyzer::AddGems() {
         Data *pData = GetData(userGuid);
         MILO_ASSERT(pData, 0x15C);
         for (int j = 0; j < pData->mGemScores.size(); j++) {
-            int tick = pData->mGemScores[j].unk0;
+            const GemScore &score = pData->mGemScores[j];
+            int tick = score.unk0;
             if (codaStart > tick || tick >= codaEnd) {
                 gemCount++;
                 int mult = (gemCount / 10) + 1;
                 int maxMult = pData->mMaxMultiplier;
                 int *pMult = (mult < maxMult) ? &mult : &pData->mMaxMultiplier;
                 int multiplier = *pMult;
-                pData->mMaxPts += pData->mGemScores[j].unk4;
-                pData->mMaxStreakPts += (float)multiplier * pData->mGemScores[j].unk4;
+                pData->mMaxPts += score.unk4;
+                pData->mMaxStreakPts += pData->mGemScores[j].unk4 * (float)multiplier;
             }
         }
     }
     for (int i = 0; i < mDatas.size(); i++) {
-        mDatas[i].mGemScores.erase(mDatas[i].mGemScores.begin(), mDatas[i].mGemScores.end());
+        mDatas[i].mGemScores.clear();
     }
 }
 

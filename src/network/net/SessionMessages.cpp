@@ -5,11 +5,13 @@
 #include "utl/BinStream.h"
 #include "utl/HxGuid.h"
 #include "utl/MemStream.h"
+#include "xdk/xnet/xnetapi.h"
 
 void SessionMsg::Dispatch() { TheNet.GetNetSession()->HandleSessionMsg(this); }
 
 JoinRequestMsg::JoinRequestMsg(const std::vector<User *> &users, int gamemode)
     : mAuthData(false) {
+    XNetGetTitleXnAddr(&mXnAddr);
     for (std::vector<User *>::const_iterator it = users.begin(); it != users.end();
          ++it) {
         mUserGuids.push_back((*it)->mUserGuid);

@@ -13,7 +13,7 @@ public:
 
 class FretHand { // 0x30
 public:
-    FretHand();
+    FretHand() { Reset(); }
     ~FretHand();
 
     void Reset();

@@ -2,6 +2,7 @@
 #include "tour/TourChar.h"
 #include "bandobj/PatchDir.h"
 #include "utl/BinStream.h"
+#include <hash_map>
 
 class TourCharLocal : public TourChar {
 public:
@@ -16,5 +17,5 @@ public:
     void SetFinalized(bool);
     void SaveDb(BinStream &);
 
-    std::map<int, PatchDir *> unk4c;
+    std::hash_map<int, PatchDir *> unk4c; // 0x4c
 };

@@ -42,8 +42,7 @@ LocationCmp::LocationCmp(
         MILO_ASSERT(owner, 0x55);
         Profile *profile = TheProfileMgr.GetPrimaryProfile();
         if (profile) {
-            bool eq = strcmp(profile->GetName(), owner) == 0;
-            if (eq) {
+            if (streq(profile->GetName(), owner)) {
                 mField24 = 0;
                 break;
             }

@@ -45,6 +45,7 @@ public:
     virtual Symbol GetGoalValueSymbol() const { return ""; }
     virtual Symbol GetCurrentValueSymbol() const { return ""; }
     virtual Symbol GetContributionSymbol() const {
+        static Symbol unison_stat_tracker_contribution("unison_stat_tracker_contribution");
         return unison_stat_tracker_contribution;
     }
 };
@@ -61,6 +62,7 @@ public:
     virtual Symbol GetGoalValueSymbol() const { return ""; }
     virtual Symbol GetCurrentValueSymbol() const { return ""; }
     virtual Symbol GetContributionSymbol() const {
+        static Symbol hopo_stat_tracker_contribution("hopo_stat_tracker_contribution");
         return hopo_stat_tracker_contribution;
     }
 };
@@ -82,6 +84,7 @@ public:
     virtual Symbol GetGoalValueSymbol() const { return ""; }
     virtual Symbol GetCurrentValueSymbol() const { return ""; }
     virtual Symbol GetContributionSymbol() const {
+        static Symbol hopo_percent_stat_tracker_contribution("hopo_percent_stat_tracker_contribution");
         return hopo_percent_stat_tracker_contribution;
     }
 };
@@ -98,9 +101,11 @@ public:
     virtual Symbol GetGoalValueSymbol() const { return ""; }
     virtual Symbol GetCurrentValueSymbol() const { return ""; }
     virtual Symbol GetContributionSymbol() const {
+        static Symbol deploy_stat_tracker_contribution("deploy_stat_tracker_contribution");
         return deploy_stat_tracker_contribution;
     }
     virtual Symbol GetSingularContributionSymbol() const {
+        static Symbol deploy_stat_tracker_contribution_1("deploy_stat_tracker_contribution_1");
         return deploy_stat_tracker_contribution_1;
     }
 };
@@ -117,6 +122,7 @@ public:
     virtual Symbol GetGoalValueSymbol() const { return ""; }
     virtual Symbol GetCurrentValueSymbol() const { return ""; }
     virtual Symbol GetContributionSymbol() const {
+        static Symbol upstrum_stat_tracker_contribution("upstrum_stat_tracker_contribution");
         return upstrum_stat_tracker_contribution;
     }
 };
@@ -139,6 +145,7 @@ public:
     virtual Symbol GetGoalValueSymbol() const { return ""; }
     virtual Symbol GetCurrentValueSymbol() const { return ""; }
     virtual Symbol GetContributionSymbol() const {
+        static Symbol upstrum_percent_stat_tracker_contribution("upstrum_percent_stat_tracker_contribution");
         return upstrum_percent_stat_tracker_contribution;
     }
 };
@@ -161,6 +168,7 @@ public:
     virtual Symbol GetGoalValueSymbol() const { return ""; }
     virtual Symbol GetCurrentValueSymbol() const { return ""; }
     virtual Symbol GetContributionSymbol() const {
+        static Symbol streak_count_stat_tracker_contribution("streak_count_stat_tracker_contribution");
         return streak_count_stat_tracker_contribution;
     }
 };
@@ -180,6 +188,7 @@ public:
     virtual Symbol GetGoalValueSymbol() const { return ""; }
     virtual Symbol GetCurrentValueSymbol() const { return ""; }
     virtual Symbol GetContributionSymbol() const {
+        static Symbol solo_buttoned_solo_stat_tracker_contribution("solo_buttoned_solo_stat_tracker_contribution");
         return solo_buttoned_solo_stat_tracker_contribution;
     }
 };

@@ -4,6 +4,8 @@
 #include "obj/ObjMacros.h"
 #include "os/PlatformMgr.h"
 #include "ui/UIPanel.h"
+#include "ui/PanelDir.h"
+#include "rndobj/EventTrigger.h"
 #include "utl/Messages.h"
 #include "utl/Messages2.h"
 #include "utl/Messages4.h"
@@ -13,6 +15,11 @@ SaveLoadStatusPanel::SaveLoadStatusPanel() : unk38(0), unk70(0), unk71(0) {}
 SaveLoadStatusPanel::~SaveLoadStatusPanel() {}
 
 void SaveLoadStatusPanel::FinishLoad() {
+    RndDir *icons = mDir->Find<RndDir>("saveload_icons", true);
+    EventTrigger *start = icons->Find<EventTrigger>("start_saving.trig", true);
+    EventTrigger *finish = icons->Find<EventTrigger>("finish_saving.trig", true);
+    start->SetAnimRate(RndAnimatable::k30_fps_ui);
+    finish->SetAnimRate(RndAnimatable::k30_fps_ui);
     UIPanel::FinishLoad();
 #ifndef HX_NATIVE
     // TheSaveLoadMgr (SaveLoadManager) is in _NATIVE_FORK_EXCLUDE -> the pointer is
@@ -26,10 +33,10 @@ void SaveLoadStatusPanel::FinishLoad() {
 void SaveLoadStatusPanel::Draw() {
     UIPanel::Draw();
     if (unk71 && !unk70) {
-        unk78.Split();
-        if (unk78.Ms() >= 3000.0f) {
+        if (unk78.SplitMs() >= 3000.0f) {
             unk71 = false;
-            Handle(hide_physical_write_icon_msg, true);
+            static Message hide_physical_write_icon("hide_physical_write_icon");
+            Handle(hide_physical_write_icon, true);
             QueueDeactivation();
         }
     }
@@ -71,7 +78,8 @@ DataNode SaveLoadStatusPanel::OnMsg(const SaveLoadMgrStatusUpdateMsg &msg) {
             unk70 = true;
             unk71 = true;
             unk78.Restart();
-            Handle(show_physical_write_icon_msg, false);
+            static Message show_physical_write_icon("show_physical_write_icon");
+            Handle(show_physical_write_icon, false);
         }
         break;
     case 2:

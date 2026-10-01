@@ -6,7 +6,6 @@
 class CampaignCareerLeaderboardPanel : public Leaderboard::Callback, public UIPanel {
 public:
     CampaignCareerLeaderboardPanel();
-    virtual ~CampaignCareerLeaderboardPanel() {}
     virtual void EnumerationStarted();
     virtual void ResultSuccess(bool, bool, bool);
     virtual void ResultFailure();
@@ -23,6 +22,9 @@ public:
     Symbol GetScoreType() const;
     void SetUseDLC(bool);
     void CycleMode();
+    Symbol GetModeSymbol() const {
+        return mCampaignCareerLeaderboardProvider->GetModeSymbol();
+    }
     NEW_OBJ(CampaignCareerLeaderboardPanel);
     static void Init() { REGISTER_OBJ_FACTORY(CampaignCareerLeaderboardPanel); }
 

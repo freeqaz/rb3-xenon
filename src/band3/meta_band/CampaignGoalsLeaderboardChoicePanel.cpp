@@ -106,7 +106,8 @@ Symbol CampaignGoalsLeaderboardChoicePanel::SelectedGoal() {
     if (GetState() != kUp)
         return "";
     else {
-        DataNode handled = Handle(get_selected_index_msg, true);
+        static Message get_selected_index("get_selected_index");
+        DataNode handled = Handle(get_selected_index, true);
         int handledInt = handled.Int();
         if (mCampaignGoalsLeaderboardChoiceProvider->NumData() > 0) {
             return mCampaignGoalsLeaderboardChoiceProvider->DataSymbol(handledInt);

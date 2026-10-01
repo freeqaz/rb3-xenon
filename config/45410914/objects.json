@@ -678,6 +678,8 @@
             "system/flow/FlowSound.cpp": "NonMatching",
             "system/os/PlatformMgr.cpp": "NonMatching",
             "system/os/PlatformMgr_Xbox.cpp": "NonMatching",
+            "system/os/ProfilePicture.cpp": "NonMatching",
+            "system/os/ProfilePicture_Xbox.cpp": "NonMatching",
             "system/flow/FlowCommand.cpp": "NonMatching",
             "system/os/ContentMgr.cpp": "NonMatching",
             "system/flow/FlowOutPort.cpp": "NonMatching",
@@ -1223,6 +1225,10 @@
                 ]
             },
             "band3/game/GameMicManager.cpp": "NonMatching",
+            "band3/game/GameMic.cpp": "NonMatching",
+            "band3/game/FretHand.cpp": "NonMatching",
+            "band3/game/ChordPreview.cpp": "NonMatching",
+            "band3/game/RKTrainerPanel.cpp": "NonMatching",
             "band3/game/Metronome.cpp": "NonMatching",
             "band3/game/PresenceMgr.cpp": {
                 "status": "NonMatching",
@@ -1662,6 +1668,25 @@
             "band3/meta_band/Instarank.cpp": "NonMatching",
             "band3/meta_band/LicenseMgr.cpp": "NonMatching",
             "band3/meta_band/MainHubMessageProvider.cpp": "NonMatching",
+            "band3/meta_band/CampaignCareerLeaderboardPanel.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_HANDLE_LOCAL_STATIC"
+                ]
+            },
+            "band3/meta_band/PassiveMessagesPanel.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_HANDLE_LOCAL_STATIC"
+                ]
+            },
+            "band3/meta_band/StandInProvider.cpp": "NonMatching",
+            "band3/meta_band/HeaderPerformanceProvider.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_HANDLE_LOCAL_STATIC"
+                ]
+            },
             "band3/meta_band/MainHubPanel.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
@@ -1909,6 +1934,8 @@
             "band3/tour/QuestManager.cpp": "NonMatching",
             "band3/tour/TourCondition.cpp": "NonMatching",
             "band3/tour/Quest.cpp": "NonMatching",
+            "band3/meta_band/AppScoreDisplay.cpp": "NonMatching",
+            "band3/meta_band/BandScreen.cpp": "NonMatching",
             "band3/tour/TourReward.cpp": "NonMatching",
             "band3/tour/TourDesc.cpp": "NonMatching",
             "band3/tour/TourGameRules.cpp": "NonMatching",
@@ -1931,6 +1958,7 @@
             },
             "band3/tour/TourChar.cpp": "NonMatching",
             "band3/tour/TourCharRemote.cpp": "NonMatching",
+            "band3/tour/TourCharLocal.cpp": "NonMatching",
             "band3/tour/TourChallengeResultsPanel.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
@@ -1999,8 +2027,7 @@
                 "status": "NonMatching",
                 "extra_cflags": [
                     "/DRB3_HANDLE_LOCAL_STATIC",
-                    "/DRB3_STRIP_CHEAT_HANDLERS",
-                    "/DRB3_ONLINEID_PLAYERNAME"
+                    "/DRB3_STRIP_CHEAT_HANDLERS"
                 ]
             },
             "band3/net_band/ContextWrapper.cpp": "NonMatching",
@@ -2029,6 +2056,7 @@
             },
             "band3/meta_band/RetryAudioPanel.cpp": "NonMatching",
             "band3/meta_band/SaveLoadStatusPanel.cpp": "NonMatching",
+            "band3/meta_band/ShellInputInterceptor.cpp": "NonMatching",
             "band3/meta_band/SetlistSortByLocation.cpp": "NonMatching",
             "band3/tour/TourPropertyCollection.cpp": "NonMatching",
             "band3/meta_band/ProfileAssets.cpp": "NonMatching",
@@ -2104,6 +2132,7 @@
                     "/DRB3_HANDLE_LOCAL_STATIC"
                 ]
             },
+            "network/net/MatchmakingSettings.cpp": "NonMatching",
             "network/net/NetLog.cpp": "NonMatching",
             "network/net/NetSession.cpp": {
                 "status": "NonMatching",

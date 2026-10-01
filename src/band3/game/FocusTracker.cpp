@@ -376,7 +376,9 @@ StreakFocusTracker::StreakFocusTracker(
 
 void StreakFocusTracker::ConfigureTrackerSpecificData(const DataArray *arr) {
     FocusTracker::ConfigureTrackerSpecificData(arr);
+    static Symbol focus_streak_length_multiplier("focus_streak_length_multiplier");
     arr->FindData(focus_streak_length_multiplier, unkcc, true);
+    static Symbol focus_streak_max_note_gap_ms("focus_streak_max_note_gap_ms");
     arr->FindData(focus_streak_max_note_gap_ms, unkd4, false);
 }
 

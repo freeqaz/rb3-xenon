@@ -17,8 +17,8 @@ public:
     JoypadAction FilterAction(LocalBandUser *, JoypadAction);
     bool IsDoubleStrum(LocalBandUser *, int);
 
-    // Retail X360 layout (proven by the ctor fn_82594350: mBandUserMgr stored at
-    // +0x28, bools at +0x2c/+0x2d, Timer ctor fn_824FE428 called on this+0x30,
+    // Retail X360 layout (proven by the ctor 0x825ACC80: mBandUserMgr stored at
+    // +0x28, bools at +0x2c/+0x2d, Timer ctor 0x82511548 called on this+0x30,
     // inlined Timer::Start touches +0x30/+0x54, mLastUpDown zeroed at
     // +0x60..+0x6c) — sizeof = 0x70 (`li r3, 0x70` at the BandUI::Init new-site,
     // 0x82523548). There is NO int between the bools and the Timer on X360: the

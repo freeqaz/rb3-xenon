@@ -4,6 +4,8 @@
 #include "obj/Msg.h"
 
 class RndTex; // forward dec
+struct D3DTexture;
+struct _XOVERLAPPED;
 
 class ProfilePicture {
 public:
@@ -24,15 +26,18 @@ public:
     void Update();
     void Poll();
     void Succeed();
+    void Fail();
     void Clear();
 
-    State mState;
-    OnlineID mUserID;
-    RndTex *mUserPicture;
-    int mPadNum;
-    Hmx::Object *mCallback;
+    State mState; // 0x0
+    OnlineID mUserID; // 0x8
+    _XOVERLAPPED *mOverlapped; // 0x18, gamer-picture read in flight
+    D3DTexture *mTexture; // 0x1c, 64x64 target of the read
+    RndTex *mUserPicture; // 0x20
+    int mPadNum; // 0x24
+    Hmx::Object *mCallback; // 0x28
 };
 
 DECLARE_MESSAGE(ProfilePictureFetchedMsg, "profile_picture_fetched_msg")
-ProfilePictureFetchedMsg(int i) : Message(Type(), i) {}
+ProfilePictureFetchedMsg(bool success) : Message(Type(), success) {}
 END_MESSAGE

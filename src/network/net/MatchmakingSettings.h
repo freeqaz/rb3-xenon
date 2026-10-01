@@ -32,7 +32,7 @@ public:
 class SessionSettings : public MatchmakingSettings, public Synchronizable {
 public:
     SessionSettings();
-    virtual ~SessionSettings() {}
+    // implicit dtor: retail 0x823F3D68 re-stores no vtable before the base dtors
     virtual void SetMode(Symbol, int);
     virtual void SetRanked(bool);
     virtual void AddCustomSetting(int, int);

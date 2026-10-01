@@ -269,6 +269,8 @@ typedef struct _D3DVOLUME_DESC { /* Size=0x1c */
     /* 0x0018 */ UINT Depth;
 } D3DVOLUME_DESC;
 
+#define D3DLOCK_READONLY 0x00000010L
+
 typedef struct _D3DLOCKED_RECT { /* Size=0x8 */
     /* 0x0000 */ INT Pitch;
     /* 0x0004 */ VOID *pBits;

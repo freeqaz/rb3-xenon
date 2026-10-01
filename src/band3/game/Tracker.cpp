@@ -96,6 +96,7 @@ void Tracker::HandleGameOver(float f) {
 }
 
 void Tracker::StartIntro() {
+    static Symbol mod_nohud("mod_nohud");
     if (!TheModifierMgr->IsModifierActive(mod_nohud)) {
         DataArrayPtr desc = GetBroadcastDescription();
         if (unk4c != gNullStr) {

@@ -10,9 +10,8 @@
 
 PlayerLeaderboard::PlayerLeaderboard(Profile *p, Callback *cb)
     : Leaderboard(EntityID(), cb) {
-    if (!p) {
-        p = TheProfileMgr.GetProfileFromPad(ThePlatformMgr.GetOwnerOfGuest(0));
-    }
+    // Retail 0x826731E0: no guest-owner fallback; a null profile leaves the
+    // default EntityID.
     if (p) {
         Server *s = TheNet.mServer;
         mEntityID = EntityID(s->GetPlayerID(p->GetPadNum()));

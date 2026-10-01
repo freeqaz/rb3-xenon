@@ -8,13 +8,13 @@
 // is synthetic; all pitch matching / scoring / rating is REAL engine code.
 //
 //   * synthetic GameMic + GameMicManager — the injection point. Singer::Poll reads
-//     GameMic::unk2c (pitch) / unk28 (energy); the driver writes those each frame.
+//     GameMic::mLastPitch / mLastEnergy; the driver writes those each frame.
 //     GameMic.cpp / GameMicManager.cpp are NOT compiled (they pull TheSynth /
 //     MicClientMapper / FxSend). We define exactly the methods the vocal Poll path
 //     calls, backed by driver globals (layout-safe on a calloc'd manager, the m8
 //     calloc'd-Game pattern).
 //   * NativeMic — a concrete Mic whose IsRunning() is true so Singer::Poll takes the
-//     real-mic branch (mic->unk2c/unk28) instead of the silent branch.
+//     real-mic branch (mic->mLastPitch/mLastEnergy) instead of the silent branch.
 #include "game/GameMic.h"
 #include "game/GameMicManager.h"
 #include "game/SongDB.h"
@@ -91,17 +91,17 @@ GameMic::GameMic(int micID) {
 GameMic::~GameMic() {}
 
 Mic *GameMic::GetMyMic() { return mNullMic; }
-void GameMic::Update() {} // driver writes unk2c/unk28 directly each frame
+void GameMic::Update() {} // driver writes mLastPitch/mLastEnergy directly each frame
 void GameMic::SetEnablePitchDetection(bool) {}
-void GameMic::SetInputFile(const char *) {}
+int GameMic::SetInputFile(const char *) { return 16000; }
 int GameMic::GetDataSampleRate() { return 16000; }
 
 // ProcessTalkyData feeds these samples to the REAL TalkyMatcher. The driver leaves
-// mSamplesContinuous zeroed (silence) unless it injects a waveform; unk8034 is the
+// mSamplesContinuous zeroed (silence) unless it injects a waveform; mNumSamplesContinuous is the
 // continuous sample count.
 void GameMic::AccessContinuousSamples(const short *&samples, int &count) const {
     samples = mSamplesContinuous;
-    count = unk8034;
+    count = mNumSamplesContinuous;
 }
 
 // ========================================================== GameMicManager ====
@@ -127,7 +127,7 @@ void GameMicManager::SetPlayback(bool) {}
 void GameMicManager::HandleMicsChanged() {}
 float GameMicManager::GetEnergyForMic(const MicClientID &id) {
     GameMic *m = GetMic(id);
-    return m ? m->unk28 : 0.0f;
+    return m ? m->mLastEnergy : 0.0f;
 }
 
 // Build a calloc'd manager + N synthetic mics keyed by singer index. Returns the
@@ -145,14 +145,14 @@ GameMicManager *NativeMakeGameMicManager(int nSingers) {
 // for singer i.
 void NativeSetMicFrame(int i, float pitch, float energy) {
     if (i >= 0 && (unsigned)i < gNativeMics.size()) {
-        gNativeMics[i]->unk2c = pitch;
-        gNativeMics[i]->unk28 = energy;
+        gNativeMics[i]->mLastPitch = pitch;
+        gNativeMics[i]->mLastEnergy = energy;
     }
 }
 
 // M11: per-frame CONTINUOUS-waveform injection for the REAL TalkyMatcher path.
 // Singer::ProcessTalkyData -> GameMic::AccessContinuousSamples -> TalkyMatcher::
-// Analyze -> VoiceBeat DSP reads mSamplesContinuous[0..unk8034). The driver writes
+// Analyze -> VoiceBeat DSP reads mSamplesContinuous[0..mNumSamplesContinuous). The driver writes
 // a synthetic voiced burst here so the real syllable-onset detector scores the
 // chart's unpitched (talky) notes. count is clamped to the 8192-short buffer.
 void NativeSetMicSamples(int i, const short *buf, int count) {
@@ -162,7 +162,7 @@ void NativeSetMicSamples(int i, const short *buf, int count) {
     if (count > 8192) count = 8192;
     if (buf && count > 0)
         std::memcpy(m->mSamplesContinuous, buf, count * sizeof(short));
-    m->unk8034 = count;
+    m->mNumSamplesContinuous = count;
 }
 
 // ============================================= SongDB vocal query overrides ===
