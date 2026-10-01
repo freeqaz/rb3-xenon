@@ -1,12 +1,12 @@
 #include "os/Debug.h"
 #include "os/VirtualKeyboard.h"
+#include "os/User.h"
 #include "utl/Str.h"
 #include "utl/Symbol.h"
 #include "utl/UTF8.h"
 #include "xdk/XAPILIB.h"
 
 namespace {
-    bool gCheckOverlappedIoComplete;
     XOVERLAPPED *gXoKeyboard;
     wchar_t *gWstrKeyboard;
     char gCstrKeyboard[512];
@@ -15,8 +15,10 @@ namespace {
     wchar_t gDescrptionText[512];
 }
 
+// Retail 0x82532DC8. There is no "check pending" flag: the live overlapped
+// block is the flag, and once the UI completes both buffers are freed.
 void VirtualKeyboard::PlatformPoll() {
-    if (gCheckOverlappedIoComplete && gXoKeyboard && gXoKeyboard->InternalLow != 0x3E5) {
+    if (gXoKeyboard && gXoKeyboard->InternalLow != 0x3E5) {
         if (XGetOverlappedExtendedError(gXoKeyboard) == 0) {
             char buf[512];
             int ret = WideCharToMultiByte(
@@ -34,7 +36,10 @@ void VirtualKeyboard::PlatformPoll() {
             mMsgOk = false;
             mCallbackReady = true;
         }
-        gCheckOverlappedIoComplete = false;
+        delete gWstrKeyboard;
+        gWstrKeyboard = nullptr;
+        delete gXoKeyboard;
+        gXoKeyboard = nullptr;
     }
 }
 
@@ -54,23 +59,17 @@ const char *VirtualKeyboard::GetInputString() {
     }
 }
 
+// Retail 0x82532EB8: the pad comes from the requesting user; the previous
+// buffers are not freed here (PlatformPoll owns that).
 DataNode VirtualKeyboard::ShowKeyboardUI(
-    int pad, int i2, String windowTitle, String descText, String defaultTxt, int i8
+    LocalUser *user, int i2, String windowTitle, String descText, String defaultTxt, int i8
 ) {
     MILO_ASSERT(!mCallbackReady, 0x62);
-    if (gXoKeyboard) {
-        delete gXoKeyboard;
-        gXoKeyboard = nullptr;
-    }
-    if (gWstrKeyboard) {
-        delete gWstrKeyboard;
-        gWstrKeyboard = nullptr;
-    }
     wchar_t *newWStr = new wchar_t[i2];
     *newWStr = 0;
     XOVERLAPPED *newXo = new XOVERLAPPED;
     memset(newXo, 0, sizeof(XOVERLAPPED));
-    MILO_ASSERT(pad != -1, 0x7F);
+    int pad = user->GetPadNum();
     UTF8toWChar_t(gDefaultText, defaultTxt.c_str());
     UTF8toWChar_t(gWindowTitle, windowTitle.c_str());
     UTF8toWChar_t(gDescrptionText, descText.c_str());
@@ -98,7 +97,6 @@ DataNode VirtualKeyboard::ShowKeyboardUI(
     } else {
         gWstrKeyboard = newWStr;
         gXoKeyboard = newXo;
-        gCheckOverlappedIoComplete = true;
         return 0;
     }
 }
