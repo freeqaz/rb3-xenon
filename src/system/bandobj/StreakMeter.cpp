@@ -1,3 +1,6 @@
+// Retail inlines the ObjPtr ctors in ??0StreakMeter but not in SyncObjects; the
+// in-class (plain inline) two-arg ctor lets MSVC decide per site.
+#define RB3_OBJPTR_INLINE_TWOARG_CTOR
 #include "bandobj/StreakMeter.h"
 #include "decomp.h"
 #include "math/Rot.h"
