@@ -139,6 +139,8 @@ public:
     // vtable has 21 slots, exactly Hmx::Object's count, so NO RndFont accessor
     // occupies a slot.  Mat() is now non-virtual too.)
     RndMat *GetMat() const { return mMat; }
+    RndFont *NextFont() const { return mNextFont; }
+    void SetNextFont(RndFont *f) { mNextFont = f; }
     const RndFont *DataOwner() const { return mTextureOwner; }
     float FontUnit() const { return mCellSize.x; }
     float FontUnitInverse() const { return 1.0f / FontUnit(); }

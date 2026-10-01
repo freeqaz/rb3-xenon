@@ -18,15 +18,9 @@
 //   SYNC_PROP_MODIFY_ALT    -> SYNC_PROP_MODIFY (this tree's dialect)
 //   INIT_REVS(RndText)      -> INIT_REVS(21, 0) / BEGIN_LOADS + d.rev
 //
-// FONT CHAIN (deliberate): this RndText assumes no `mNextFont` fallback
-// chain, so Mats()/Replace()/GetDefiningFont() walk nothing. Retail RB3-360's
-// and Wii's Mats()/Replace()/GetDefiningFont() walk it. Retail RB3-360's
-// RndFont is measurably the *other* generation — it syncs `mats` (plural,
-// ObjPtrVec<RndMat>), not `mat` (singular) + mNextFont; the retail
-// binary contains the string "mats" and not "mat". Our RndFont accordingly has
-// no chain, and growing it one would change RndFont's layout fleet-wide. So the
-// three chain-walking bodies below are written in their chainless form. They
-// are the known-uncertain trio of this port.
+// FONT CHAIN: retail RndFont carries a fallback chain, mNextFont (ObjPtr at
+// 0x88, pointer at 0x90), and Mats (0x82456308), Replace (0x8245ADE8) and
+// GetDefiningFont (0x824553D0) all walk it via `lwz rN,0x90(font)`.
 // ---------------------------------------------------------------------------
 #include "rndobj/Text.h"
 #include "decomp.h"
@@ -113,10 +107,10 @@ void RndText::Init() {
 }
 
 void RndText::Mats(std::list<class RndMat *> &matList, bool) {
-    // Chainless (see the FONT-CHAIN DIVERGENCE note at the top).
-    RndFont *font = mFont;
-    if (font && font->GetMat())
-        matList.push_back(font->GetMat());
+    for (RndFont *font = mFont; font; font = font->NextFont()) {
+        if (font->GetMat())
+            matList.push_back(font->GetMat());
+    }
 }
 
 RndDrawable *RndText::CollideShowing(const Segment &s, float &f, Plane &p) {
@@ -155,11 +149,20 @@ int RndText::CollidePlane(const Plane &p) {
 
 void RndText::Replace(ObjRef *ref, Hmx::Object *to) {
     RndTransformable::Replace(ref, to);
-    // No font chain to walk: the only replaceable ref this
-    // class owns is mFont, and the ObjOwnerPtr has already been repointed by
-    // the base call — all that is left is to rebuild the text.
-    if (ref == (ObjRef *)&mFont)
-        UpdateText(true);
+    // The replaced font is unlinked wherever it sits in the chain: the head is
+    // mFont, any later link is the previous font's mNextFont.
+    RndFont *prev = nullptr;
+    for (RndFont *font = mFont; font; prev = font, font = font->NextFont()) {
+        if (reinterpret_cast<void *>(static_cast<Hmx::Object *>(font))
+            == reinterpret_cast<void *>(ref)) {
+            if (prev)
+                prev->SetNextFont(dynamic_cast<RndFont *>(to));
+            else
+                mFont = dynamic_cast<RndFont *>(to);
+            UpdateText(true);
+            return;
+        }
+    }
 }
 
 const char *RndText::FindPathName() {
@@ -1596,6 +1599,34 @@ int RndText::AddLineUTF8(
 // Retail's Line has no separate `color` member (a duplicate would be dead
 // storage — it would always hold the same value as lineStyle.color). So both the
 // early-out and the final store go through lineStyle.mTextColor.
+#ifndef HX_NATIVE
+// Retail (0x82457BA0): the line is copied by value (memcpy 0x78), there is no
+// early-out for an unchanged colour, every character from startIdx up to
+// min(endIdx, mFixedLength) whose defining font exists is recoloured (the quad
+// index advances once per character, defined or not), and the colour is not
+// written back into the line.
+void RndText::UpdateLineColor(unsigned int idx, const Hmx::Color &col, bool *bptr) {
+    Line line = mLines[idx];
+    unsigned int i = line.startIdx;
+    unsigned int end = std::min<unsigned int>(line.endIdx, mFixedLength);
+    for (int charIdx = i; i < end; charIdx++) {
+        unsigned short c;
+        int decoded = DecodeUTF8(c, mText.c_str() + i);
+        RndFont *defining = GetDefiningFont(c, line.lineStyle.mFont);
+        if (defining) {
+            MeshInfo &info = mMeshMap[(FontKey)defining];
+            RndMesh::Vert *vert = info.mesh->Verts().begin() + charIdx * 4;
+            vert[0].color = vert[1].color = vert[2].color = vert[3].color = col;
+            info.syncFlags |= 0x1F;
+        }
+        i += decoded;
+    }
+    if (bptr)
+        *bptr = true;
+    else
+        SyncMeshes();
+}
+#else
 void RndText::UpdateLineColor(unsigned int idx, const Hmx::Color &col, bool *bptr) {
     HX_VECTOR(Line) &_ref0 = mLines;
     MILO_ASSERT(idx < _ref0.size(), 0x883);
@@ -1653,6 +1684,7 @@ void RndText::UpdateLineColor(unsigned int idx, const Hmx::Color &col, bool *bpt
     else
         SyncMeshes();
 }
+#endif
 
 void RndText::ReplaceLineText(
     unsigned int idx,
@@ -1794,6 +1826,7 @@ void RndText::Draw() {
 }
 
 void RndText::DrawShowing() {
+#ifdef HX_NATIVE
     mFramesSinceDraw = 0;
     if (mNeedsUpdate) {
         mNeedsUpdate = false;
@@ -1808,6 +1841,8 @@ void RndText::DrawShowing() {
             }
         }
     }
+#endif
+    // Retail (0x82455EE8) only draws each font's mesh; no update work here.
     FOREACH (it, mMeshMap) {
         MeshInfo &meshInfo = it->second;
         if (meshInfo.mesh) {
@@ -1889,14 +1924,14 @@ RndFont *RndText::SupportChar(unsigned short us, RndFont *font) {
     return defining;
 }
 
-// Chainless: there is no font->NextFont() walk for a fallback font that
-// defines the char. Retail's RndFont has no chain (see the top-of-file note), so
-// the single authored font either defines the char or it does not.
+// The first font along the fallback chain that defines `us`.
 RndFont *RndText::GetDefiningFont(unsigned short &us, RndFont *font) const {
     if (us == 10)
         return nullptr;
-    if (font && font->CharDefined(us))
-        return font;
+    for (; font; font = font->NextFont()) {
+        if (font->CharDefined(us))
+            return font;
+    }
     return nullptr;
 }
 

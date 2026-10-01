@@ -68,6 +68,7 @@ BEGIN_CUSTOM_PROPSYNC(RndLine::Point)
 END_CUSTOM_PROPSYNC
 
 BEGIN_PROPSYNCS(RndLine)
+#ifdef HX_NATIVE
     gLine = this;
     SYNC_PROP_SET(mat, mMat.Ptr(), SetMat(_val.Obj<RndMat>()))
     SYNC_PROP(width, mWidth)
@@ -76,6 +77,10 @@ BEGIN_PROPSYNCS(RndLine)
     SYNC_PROP_MODIFY(line_pairs, mLinePairs, SetNumPoints(NumPoints()))
     SYNC_PROP_SET(num_points, NumPoints(), SetNumPoints(_val.Int()))
     SYNC_PROP_MODIFY(points, mPoints, SetNumPoints(NumPoints()))
+#else
+    // Retail (0x8247A6C0) syncs only `width` before the two superclasses.
+    SYNC_PROP(width, mWidth)
+#endif
     SYNC_SUPERCLASS(RndDrawable)
     SYNC_SUPERCLASS(RndTransformable)
 #ifdef HX_NATIVE
