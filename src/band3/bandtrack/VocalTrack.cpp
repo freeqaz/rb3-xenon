@@ -1529,8 +1529,9 @@ void VocalTrack::UpdateScrolling(float ms) {
             continue;
         std::vector<VocalNote> &noteVec = notes->mNotes;
 
-        VocalNoteList *phraseNotes = (part != 2) ? notes : GetVocalNoteList(1);
-        std::vector<VocalPhrase> &lyricPhrases = phraseNotes->mLyricPhrases;
+        std::vector<VocalPhrase> &lyricPhrases = (part != 2)
+            ? notes->mLyricPhrases
+            : GetVocalNoteList(1)->mLyricPhrases;
         bool lead = (part == 0);
 
         RndGroup *grp = lead
