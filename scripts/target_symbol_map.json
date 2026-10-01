@@ -1,4 +1,9 @@
 {
+ "0x8256e8a8": "?NewObject@AuditionSessionPanel@@SAPAVObject@Hmx@@XZ",
+ "0x82572850": "?NewObject@AppScoreDisplay@@SAPAVObject@Hmx@@XZ",
+ "0x82574810": "?NewObject@CalibrationWelcomePanel@@SAPAVObject@Hmx@@XZ",
+ "0x825743e0": "??0CalibrationWelcomePanel@@QAA@XZ",
+ "0x82574c68": "??1NextSongPanel@@UAA@XZ",
  "0x825d77d8": "??0SaveMemcardAction@@QAA@PAVBandProfile@@@Z",
  "0x825d7870": "?PreAction@SaveMemcardAction@@UAAXXZ",
  "0x825d7940": "??_GSaveMemcardAction@@UAAPAXI@Z",

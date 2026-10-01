@@ -1353,7 +1353,6 @@ system/beatmatch/JoypadGuitarController.cpp:
 
 CalibrationPanel.cpp:
 	.pdata      start:0x821F1840 end:0x821F1858
-	.pdata      start:0x8221E6A8 end:0x8221E6C0
 	.pdata      start:0x82228488 end:0x82228490
 	.pdata      start:0x82228490 end:0x82228498
 	.pdata      start:0x82228498 end:0x822286D8
@@ -1363,7 +1362,6 @@ CalibrationPanel.cpp:
 	.pdata      start:0x82228750 end:0x82228758
 	.pdata      start:0x82228758 end:0x822287D8
 	.text       start:0x82272B20 end:0x82272C00
-	.text       start:0x825743E0 end:0x825744E4
 	.text       start:0x82608D34 end:0x82608D90
 	.text       start:0x82608D90 end:0x82608E44
 	.text       start:0x82608E48 end:0x8260BD18
@@ -11563,6 +11561,7 @@ MetaPanel.cpp:
 	.pdata      start:0x8221E580 end:0x8221E5A0
 	.pdata      start:0x8221E5A0 end:0x8221E5C8
 	.pdata      start:0x8221E5D0 end:0x8221E6A8
+	.pdata      start:0x8221E6A8 end:0x8221E6C0
 	.pdata      start:0x8221E6C0 end:0x8221E708
 	.pdata      start:0x8221E708 end:0x8221E710
 	.pdata      start:0x8221E710 end:0x8221E768
@@ -11575,6 +11574,7 @@ MetaPanel.cpp:
 	.text       start:0x82573470 end:0x825736C4
 	.text       start:0x825736C8 end:0x825738B8
 	.text       start:0x82573904 end:0x825743E0
+	.text       start:0x825743E0 end:0x825744E4
 	.text       start:0x825744E4 end:0x825748A0
 	.text       start:0x825748A0 end:0x825748E4
 	.text       start:0x825748E8 end:0x82574D90

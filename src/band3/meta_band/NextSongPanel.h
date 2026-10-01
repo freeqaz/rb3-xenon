@@ -34,7 +34,7 @@ public:
     OBJ_SET_TYPE(NextSongPanel);
     NEW_OBJ(NextSongPanel);
     virtual DataNode Handle(DataArray *, bool);
-    virtual ~NextSongPanel() {}
+    // Implicit dtor: retail ~NextSongPanel (0x82574C68) stores no NextSongPanel vtable.
     virtual void Enter();
     virtual void Exit();
     virtual bool Exiting() const;
