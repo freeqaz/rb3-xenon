@@ -1,3 +1,5 @@
+// Retail inlines the owner-only ObjPtr<UIList> ctor in ??0UIListSubList.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR_EH 1
 #include "ui/UIListSubList.h"
 #include "obj/Object.h"
 #include "ui/UIComponent.h"
