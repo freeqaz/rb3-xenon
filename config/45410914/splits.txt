@@ -303,30 +303,19 @@ GemTrackResourceManager.cpp:
 	.text       start:0x8235720C end:0x82357218
 
 BandConfiguration.cpp:
-	.pdata      start:0x821F5F00 end:0x821F5F08
-	.pdata      start:0x821F5F18 end:0x821F5F30
-	.pdata      start:0x821F5F58 end:0x821F5F60
-	.text       start:0x822B8614 end:0x822B8698
-	.text       start:0x822B86F0 end:0x822B889C
-	.text       start:0x822B88F0 end:0x822B8900
-	.text       start:0x822B8B70 end:0x822B8BE8
+	.pdata      start:0x821F5F00 end:0x821F5FC0
+	.text       start:0x822B8614 end:0x822B91CC
 
 BandCamShot.cpp:
 	.pdata      start:0x821F1D40 end:0x821F1D48
 	.pdata      start:0x821F1F18 end:0x821F1F28
 	.pdata      start:0x821F5708 end:0x821F5718
 	.pdata      start:0x821F5718 end:0x821F5F00
-	.pdata      start:0x821F5F08 end:0x821F5F18
-	.pdata      start:0x821F5F30 end:0x821F5F38
-	.pdata      start:0x821F5F38 end:0x821F5F58
 	.text       start:0x822782D0 end:0x82278384
 	.text       start:0x8227A1A8 end:0x8227A228
 	.text       start:0x8227A2A0 end:0x8227A2A8
 	.text       start:0x822B0A38 end:0x822B0AB0
 	.text       start:0x822B0AB0 end:0x822B8614
-	.text       start:0x822B8698 end:0x822B86F0
-	.text       start:0x822B889C end:0x822B88F0
-	.text       start:0x822B8900 end:0x822B8B70
 
 BandDirector.cpp:
 	.pdata      start:0x821F3210 end:0x821F3220
@@ -3560,7 +3549,6 @@ CharInterest.cpp:
 	.text       start:0x823BEE40 end:0x823BEE90
 
 VorbisReader.cpp:
-	.pdata      start:0x821F5F60 end:0x821F5F88
 	.pdata      start:0x8223DC10 end:0x8223DC28
 	.pdata      start:0x8225E860 end:0x8225E868
 	.pdata      start:0x8225E868 end:0x8225E878
@@ -3573,7 +3561,6 @@ VorbisReader.cpp:
 	.pdata      start:0x8225E958 end:0x8225E988
 	.pdata      start:0x8225E988 end:0x8225E9A8
 	.pdata      start:0x8225E9B8 end:0x8225E9C0
-	.text       start:0x822B8BE8 end:0x822B8F08
 	.text       start:0x82773E70 end:0x82773FB0
 	.text       start:0x82BB28BC end:0x82BB28D8
 	.text       start:0x82BB28D8 end:0x82BB2934
@@ -4226,11 +4213,9 @@ MoveMgr.cpp:
 	.text       start:0x82C122D8 end:0x82C122E4
 
 Watcher.cpp:
-	.pdata      start:0x821F5F88 end:0x821F5FC0
 	.pdata      start:0x821FED78 end:0x821FED80
 	.pdata      start:0x82208D00 end:0x82208D18
 	.pdata      start:0x82208D18 end:0x82208D28
-	.text       start:0x822B8F08 end:0x822B91CC
 	.text       start:0x82348A60 end:0x82348B28
 	.text       start:0x823F20C0 end:0x823F21E0
 	.text       start:0x823F21E0 end:0x823F2280

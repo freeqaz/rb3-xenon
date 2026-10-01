@@ -85,6 +85,16 @@ void BandConfiguration::SyncPlayMode() {
     }
 }
 
+// Always writes all three play-mode rows; the reader below copes with a file
+// that has more or fewer.
+BinStream &operator<<(BinStream &bs, const BandConfiguration::TargTransforms &tts) {
+    for (int i = 0; i < 3; i++) {
+        bs << tts.xfms[i].targName;
+        bs << tts.xfms[i].xfm;
+    }
+    return bs;
+}
+
 BinStream &operator>>(BinStream &bs, BandConfiguration::TargTransforms &tts) {
     int i;
     for (i = 0; i < Min(3, BandConfiguration::TargTransforms::sNumPlayModes); i++) {
@@ -103,7 +113,24 @@ BinStream &operator>>(BinStream &bs, BandConfiguration::TargTransforms &tts) {
     return bs;
 }
 
-SAVE_OBJ(BandConfiguration, 0x6E)
+BEGIN_SAVES(BandConfiguration)
+    SAVE_REVS(0, 0)
+    SAVE_SUPERCLASS(Hmx::Object)
+    bs << kNumPlayModes;
+    for (int i = 0; i < 4; i++) {
+        bs << mXfms[i];
+    }
+END_SAVES
+
+// Retail stores both rev words through ONE base register (altRev+0, rev+4),
+// which only happens for internal-linkage, align(4) file-scope statics -- not
+// for the DECLARE_REVS/INIT_REVS class statics. Same lever as BandButton.cpp.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs;
+#define gAltRev gRevs.altRev
+#define gRev gRevs.rev
 
 BEGIN_LOADS(BandConfiguration)
     LOAD_REVS(bs)
@@ -117,6 +144,8 @@ BEGIN_LOADS(BandConfiguration)
         TheBandWardrobe->SetModeSink(this);
     }
 END_LOADS
+#undef gRev
+#undef gAltRev
 
 BEGIN_COPYS(BandConfiguration)
     COPY_SUPERCLASS(Hmx::Object)
