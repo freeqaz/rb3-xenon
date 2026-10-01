@@ -39,7 +39,8 @@ void PlayerDiffIcon::Init() {
 }
 
 PlayerDiffIcon::PlayerDiffIcon()
-    : mPlayerMat(0), mNoPlayerMat(0), mNumPlayers(1), mDiff(0), mAlpha(1.0f) {}
+    : mPlayerMat(0), mNoPlayerMat(0), mNumPlayers(1), mDiff(0), mAlpha(1.0f),
+      mColor(1.0f, 1.0f, 1.0f, 1.0f) {}
 
 PlayerDiffIcon::~PlayerDiffIcon() {}
 
