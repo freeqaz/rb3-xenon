@@ -5760,7 +5760,7 @@
  "0x823453a0": "??$__push_heap@PAPAVVert@RndMesh@@HPAV12@USortByZ@@@stlpmtx_std@@YAXPAPAVVert@RndMesh@@HHPAV12@USortByZ@@@Z",
  "0x82345520": "?MakeRotMatrixZ@@YAXMAAVMatrix3@Hmx@@@Z",
  "0x823455b0": "??0Vert@RndMesh@@QAA@XZ",
- "0x82345638": "?AddUV@MeshVert@BandPatchMesh@@QAAHPBV12@ABVVector2@@PBV3@@Z",
+ "0x82345638": "?AddUV@MeshVert@BandPatchMesh@@QAA_NPBV12@ABVVector2@@PBV3@@Z",
  "0x82346160": "??$__unguarded_insertion_sort_aux@PAPAVMeshVert@BandPatchMesh@@PAV12@USortByWorkVertZ@@@stlpmtx_std@@YAXPAPAVMeshVert@BandPatchMesh@@00USortByWorkVertZ@@@Z",
  "0x823461c8": "??$__adjust_heap@PAPAVVert@RndMesh@@HPAV12@USortByZ@@@stlpmtx_std@@YAXPAPAVVert@RndMesh@@HHPAV12@USortByZ@@@Z",
  "0x82346360": "??$__adjust_heap@PAPAVMeshVert@BandPatchMesh@@HPAV12@USortByPointer@@@stlpmtx_std@@YAXPAPAVMeshVert@BandPatchMesh@@HHPAV12@USortByPointer@@@Z",
@@ -33032,5 +33032,6 @@
  "0x8234a090": "?PostRender@BandPatchMesh@@QAAXXZ",
  "0x8234adc8": "?resize@?$vector@VPatchPair@MeshPair@BandPatchMesh@@V?$StlNodeAlloc@VPatchPair@MeshPair@BandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVPatchPair@MeshPair@BandPatchMesh@@@Z",
  "0x8234ae48": "?SetVertsAndFaces@WorkVerts@BandPatchMesh@@QAAXPAVRndMesh@@_N@Z",
- "0x8234b200": "?resize@?$ObjVector@VPatchPair@MeshPair@BandPatchMesh@@@@QAAXI@Z"
+ "0x8234b200": "?resize@?$ObjVector@VPatchPair@MeshPair@BandPatchMesh@@@@QAAXI@Z",
+ "0x823454a0": "?Invert@@YA_NABVMatrix2@Hmx@@AAV12@M@Z"
 }

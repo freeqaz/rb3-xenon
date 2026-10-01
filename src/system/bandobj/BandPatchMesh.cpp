@@ -56,6 +56,27 @@ static const size_t kMVTwinFlag = 0x2f;
 static const size_t kMVSlotBase = 0x40;
 #endif
 
+// Retail 0x823454A0: an out-of-line 2x2 inverse, called only by ExtendTwin. No
+// oracle has it; the name is ours, the signature is fixed by the retail body. It
+// refuses (and leaves `out` untouched) when |det| < eps, else writes adj/det.
+// All four inputs are read before the first store, so `out` may alias `m`
+// (ExtendTwin inverts in place). It must be external, not static or inline:
+// under /O1 a once-called static/inline body is inlined, and retail calls it.
+bool Invert(const Hmx::Matrix2 &m, Hmx::Matrix2 &out, float eps) {
+    if (std::fabs(m.x.x * m.y.y - m.x.y * m.y.x) < eps)
+        return false;
+    float inv = 1.0f / (m.y.y * m.x.x - m.x.y * m.y.x);
+    float xx = m.y.y * inv;
+    float xy = -(m.x.y * inv);
+    float yx = -(m.y.x * inv);
+    float yy = m.x.x * inv;
+    out.x.x = xx;
+    out.x.y = xy;
+    out.y.x = yx;
+    out.y.y = yy;
+    return true;
+}
+
 void BandPatchMesh::MeshVert::SetVert(
     const BandPatchMesh::MeshVert *mvert, const RndMesh::Vert *vert
 ) {
@@ -77,7 +98,7 @@ void BandPatchMesh::MeshVert::ZeroOut() {
     unk10.Zero();
 }
 
-int BandPatchMesh::MeshVert::AddUV(
+bool BandPatchMesh::MeshVert::AddUV(
     const BandPatchMesh::MeshVert *mv, const Vector2 &vr, const Vector2 *vp
 ) {
     MILO_ASSERT(this != mv, 0x55);
@@ -708,47 +729,36 @@ int BandPatchMesh::WorkVerts::TryAddFace(int faceidx, int b) {
     int allOut = 0xf;
     MeshVert *verts[3];
     for (int i = 0; i < 3; i++) {
-        MeshVert *mv = (MeshVert *)mMeshVerts[face[i]];
-        verts[i] = mv;
-        if (mv->mVert == 0) {
+        verts[i] = (MeshVert *)mMeshVerts[face[i]];
+        if (verts[i]->mVert == 0) {
             MILO_ASSERT(b != 3, 0x2B1);
             AddMeshVertAndTwins(face[i], (MeshVert *)mMeshVerts[face[b]]);
         }
         allOut &= verts[i]->unk26;
     }
-    int reject = (allOut != 0) ? 1 : 0;
-    if (reject == 0) {
+    bool reject = allOut != 0;
+    if (!reject) {
         MeshVert temp;
         temp.SetVert(verts[0], verts[0]->mVert);
         Vector2 v(temp.unk1c);
-        if (temp.AddUV(verts[1], unk34, &v) == 0 || temp.AddUV(verts[2], unk34, &v) == 0)
-            reject = 1;
+        reject = !temp.AddUV(verts[1], unk34, &v) || !temp.AddUV(verts[2], unk34, &v);
     }
-    if (reject == 0 && b != 3) {
+    if (!reject && b != 3) {
         int prev = (b == 0) ? 2 : b - 1;
         int next = (b == 2) ? 0 : b + 1;
-        MeshVert *vb = verts[b];
-        MeshVert *vn = verts[next];
-        MeshVert *vp = verts[prev];
-        float ey = vn->unk1c.y - vb->unk1c.y;
-        float py = vp->unk1c.y - vb->unk1c.y;
-        float ex = vn->unk1c.x - vb->unk1c.x;
-        float px = vp->unk1c.x - vb->unk1c.x;
-        float t = (ex * px + ey * py) / (ex * ex + ey * ey);
-        if (t > 1.0f)
-            t = 1.0f;
-        else if (t < 0)
-            t = 0;
-        float projx = vb->unk1c.x + t * (vn->unk1c.x - vb->unk1c.x);
-        float projy = vb->unk1c.y + t * (vn->unk1c.y - vb->unk1c.y);
-        float dot = (vp->unk1c.x - projx) * (vp->unk1c.x - 0.5f)
-            + (vp->unk1c.y - projy) * (vp->unk1c.y - 0.5f);
-        reject = (dot < 0) ? 1 : 0;
+        const Vector2 &pb = verts[b]->unk1c;
+        const Vector2 &pn = verts[next]->unk1c;
+        const Vector2 &pp = verts[prev]->unk1c;
+        float ex = pn.x - pb.x;
+        float ey = pn.y - pb.y;
+        float t = Clamp(0.0f, 1.0f, ((pp.x - pb.x) * ex + (pp.y - pb.y) * ey) / (ex * ex + ey * ey));
+        Vector2 proj;
+        Interp(pb, pn, t, proj);
+        reject = (pp.x - 0.5f) * (pp.x - proj.x) + (pp.y - 0.5f) * (pp.y - proj.y) < 0;
     }
-    if (reject != 0) {
-        int added = unk10.size() - prevVertCount;
-        for (int i = 0; i < added; i++) {
-            unk10[unk10.size() - 1]->mVert = 0;
+    if (reject) {
+        for (int i = unk10.size() - prevVertCount; i != 0; i--) {
+            unk10.back()->mVert = 0;
             unk10.pop_back();
         }
         unk20.pop_back();
@@ -884,91 +894,76 @@ void BandPatchMesh::WorkVerts::SetVertsAndFaces(RndMesh *mesh, bool renderTo) {
     }
 }
 
+// Retail 0x82346618. Accumulates the normalised render-space direction of every
+// edge joining `mv` to a twin vertex across its finished faces, turns the sum
+// into the outward perpendicular (signed by the last edge's winding), and solves
+// for the uv offset along it in the frame of the last two neighbours.
 void BandPatchMesh::WorkVerts::ExtendTwin(
     const MeshVert *mv, Vector2 &outDir, Vector2 &outUv
 ) {
-    if (mv->unk27 == 0)
+    if (!mv->unk27)
         return;
-    float accumX = 0.0f;
-    float accumY = 0.0f;
-    const MeshVert *anchor = mv;
-    const MeshVert *prevTwin = mv;
-    const MeshVert *prevOther = mv;
-    unsigned short *facePtr = (unsigned short *)((char *)mv + kMVFaceList);
+    float dx = 0.0f;
+    float dy = 0.0f;
+    const MeshVert *a = mv;
+    const MeshVert *b = mv;
+    const MeshVert *c = mv;
     for (int i = 0; i < mv->unk30; i++) {
-        unsigned short faceIdx = facePtr[i];
+        int faceIdx = ((unsigned short *)((char *)mv + kMVFaceList))[i];
         if (unk28[faceIdx].mFlags == 4) {
             RndMesh::Face &face = mMesh->Faces()[faceIdx];
-            MeshVert *v0 = (MeshVert *)mMeshVerts[face.v2];
-            MeshVert *next = (MeshVert *)mMeshVerts[face.v3];
+            MeshVert *prev2 = (MeshVert *)mMeshVerts[face.v2];
+            MeshVert *prev = (MeshVert *)mMeshVerts[face.v3];
             for (int j = 0; j < 3; j++) {
-                MeshVert *curr = (MeshVert *)mMeshVerts[face[j]];
-                if (next == mv) {
-                    if (curr->unk27 != 0) {
-                        float dx = (curr->mVert->tex.x - next->mVert->tex.x) * unk44.x;
-                        float dy = (curr->mVert->tex.y - next->mVert->tex.y) * unk44.y;
-                        float inv = 1.0f / std::sqrt(dx * dx + dy * dy);
-                        accumY = dy;
-                        accumX = dx;
+                MeshVert *cur = (MeshVert *)mMeshVerts[face[j]];
+                if (prev == mv) {
+                    if (cur->unk27) {
+                        a = prev;
+                        b = prev2;
+                        c = cur;
+                        dx = unk44.x * (cur->mVert->tex.x - prev->mVert->tex.x);
+                        dy = unk44.y * (cur->mVert->tex.y - prev->mVert->tex.y);
+                        float inv = __frsqrte(dx * dx + dy * dy);
                         outDir.x += dx * inv;
                         outDir.y += dy * inv;
-                        prevTwin = next;
-                        prevOther = v0;
-                        anchor = curr;
                     }
-                } else if (curr == mv) {
-                    if (next->unk27 != 0) {
-                        float dx = (curr->mVert->tex.x - next->mVert->tex.x) * unk44.x;
-                        float dy = (curr->mVert->tex.y - next->mVert->tex.y) * unk44.y;
-                        float inv = 1.0f / std::sqrt(dx * dx + dy * dy);
-                        accumY = dy;
-                        accumX = dx;
+                } else if (cur == mv) {
+                    if (prev->unk27) {
+                        a = prev;
+                        b = prev2;
+                        c = prev;
+                        dx = unk44.x * (cur->mVert->tex.x - prev->mVert->tex.x);
+                        dy = unk44.y * (cur->mVert->tex.y - prev->mVert->tex.y);
+                        float inv = __frsqrte(dx * dx + dy * dy);
                         outDir.x += dx * inv;
                         outDir.y += dy * inv;
-                        prevTwin = next;
-                        prevOther = v0;
-                        anchor = next;
                     }
                 }
-                v0 = next;
-                next = curr;
+                prev2 = prev;
+                prev = cur;
             }
         }
     }
-    if (prevTwin == prevOther)
+    if (a == b)
         return;
-    float dxOther = prevOther->mVert->tex.x - prevTwin->mVert->tex.x;
-    float dyOther = prevOther->mVert->tex.y - prevTwin->mVert->tex.y;
-    float cross = accumX * dyOther - accumY * dxOther;
-    float sign = (cross >= 0.0f) ? 1.0f : -1.0f;
-    float ox = outDir.x;
-    float oy = outDir.y;
-    float invLen = sign / std::sqrt(ox * ox + oy * oy);
-    outDir.x = -oy * invLen * unk4c.x;
-    outDir.y = ox * invLen * unk4c.y;
-    float ax = mv->mVert->tex.y - prevOther->mVert->tex.y;
-    float ay = mv->mVert->tex.x - prevOther->mVert->tex.x;
-    float bx = mv->mVert->tex.y - anchor->mVert->tex.y;
-    float by = mv->mVert->tex.x - anchor->mVert->tex.x;
-    float det = ay * bx - ax * by;
-    if (std::fabs(det) < 1e-15f) {
-        outUv.x = 0.0f;
-        outUv.y = 0.0f;
+    float sign = ((a->mVert->tex.y - b->mVert->tex.y) * dx
+                  - dy * (a->mVert->tex.x - b->mVert->tex.x))
+            >= 0
+        ? 1.0f
+        : -1.0f;
+    float invLen = (float)__frsqrte(outDir.x * outDir.x + outDir.y * outDir.y) * sign;
+    outDir.Set(-(unk4c.x * outDir.y * invLen), unk4c.y * outDir.x * invLen);
+    Hmx::Matrix2 m;
+    m.x.Set(mv->mVert->tex.x - b->mVert->tex.x, mv->mVert->tex.y - b->mVert->tex.y);
+    m.y.Set(mv->mVert->tex.x - c->mVert->tex.x, mv->mVert->tex.y - c->mVert->tex.y);
+    if (!Invert(m, m, 1e-15f))
         return;
-    }
-    float invDet = 1.0f / det;
-    float m00 = ay * invDet;
-    float m11 = -ax * invDet;
-    float m01 = bx * invDet;
-    float m10 = -by * invDet;
-    float tu = mv->unk1c.x - prevOther->unk1c.x;
-    float tv = mv->unk1c.y - prevOther->unk1c.y;
-    float au = mv->unk1c.x - anchor->unk1c.x;
-    float av = mv->unk1c.y - anchor->unk1c.y;
-    float resX = outDir.x * m01 + outDir.y * m00;
-    float resY = outDir.x * m10 + outDir.y * m11;
-    outUv.x = resY * av + resX * tv;
-    outUv.y = resY * au + resX * tu;
+    float r0 = outDir.x * m.x.x + outDir.y * m.y.x;
+    float r1 = outDir.x * m.x.y + outDir.y * m.y.y;
+    outUv.Set(
+        (mv->unk1c.x - b->unk1c.x) * r0 + (mv->unk1c.x - c->unk1c.x) * r1,
+        (mv->unk1c.y - b->unk1c.y) * r0 + (mv->unk1c.y - c->unk1c.y) * r1
+    );
 }
 
 bool BandPatchMesh::WorkVerts::SetSameVerts(WorkVerts *other) {
