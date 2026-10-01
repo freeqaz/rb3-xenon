@@ -110,8 +110,8 @@ NgPostProc *NgPostProc::s_BloomSetter;
 // debug overlay, scales the bloom color by the intensity alone, glares on
 // mBloomGlare alone, and binds each chain's final texture in its own arm.
 void NgPostProc::DoBloom() {
-    bool doBloom = (0.0f < BloomIntensity()) || (0.0f < mBloomColor.alpha);
-    bool doGlare = mBloomGlare != 0;
+    const bool doBloom = (0.0f < BloomIntensity()) || (0.0f < mBloomColor.alpha);
+    const bool doGlare = mBloomGlare != 0;
     if (doBloom) {
         float bloomIntensity = BloomIntensity();
         Vector4 bloomColorVec(

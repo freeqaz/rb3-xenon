@@ -505,10 +505,13 @@ bool RndMat::IsNextPass(RndMat *m) {
 
 DataNode RndMat::OnAllowedNextPass(const DataArray *a) {
     int matCount = 0;
+    // Retail 0x82437E58 counts and offers every RndMat in the dir (no class-name
+    // filter); only the material's own next-pass chain is excluded.
     for (ObjDirItr<RndMat> it(Dir(), true); it != nullptr; ++it) {
-        if (IsMat(it)) {
+#ifdef HX_NATIVE
+        if (IsMat(it))
+#endif
             matCount++;
-        }
     }
     matCount += 2;
     DataArrayPtr ptr(new DataArray(matCount));
@@ -520,7 +523,11 @@ DataNode RndMat::OnAllowedNextPass(const DataArray *a) {
     }
 
     for (ObjDirItr<RndMat> it(Dir(), true); it != nullptr; ++it) {
+#ifdef HX_NATIVE
         if (IsMat(it) && !IsNextPass(it)) {
+#else
+        if (!IsNextPass(it)) {
+#endif
             ptr->Node(idx++) = &*it;
         }
     }

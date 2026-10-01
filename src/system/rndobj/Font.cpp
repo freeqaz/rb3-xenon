@@ -188,7 +188,10 @@ void RndFont::Replace(ObjRef *from, Hmx::Object *to) {
     // replacement's owner. There is no base-class forwarding.
     if (reinterpret_cast<void *>(static_cast<Hmx::Object *>(mTextureOwner.Ptr()))
         == reinterpret_cast<void *>(from)) {
-        mTextureOwner = !to ? this : (RndFont *)dynamic_cast<RndFont *>(to)->mTextureOwner;
+        if (!to)
+            mTextureOwner = this;
+        else
+            mTextureOwner = dynamic_cast<RndFont *>(to)->mTextureOwner;
     }
     return;
 #endif
@@ -226,7 +229,9 @@ BEGIN_PROPSYNCS(RndFont)
     SYNC_PROP_SET(cell_height, (int)mCellSize.y, SetCellSize(mCellSize.x, _val.Int()))
     SYNC_PROP_SET(chars_in_map, GetASCIIChars(), SetASCIIChars(_val.Str()))
     SYNC_PROP_MODIFY(base_kerning, mBaseKerning, UpdateChars())
+#ifdef HX_NATIVE
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 // Transcribed from retail 0x82472EC0 (548 B). The write order below is the
@@ -618,11 +623,19 @@ void RndFont::BleedTest() {
                 }
             }
         }
+#ifdef HX_NATIVE
         if (errStr.length() != 0) {
             MILO_NOTIFY("Bleeding in %s:\n%s", Name(), errStr);
         } else {
             MILO_NOTIFY("No bleeding over found.  ");
         }
+#else
+        // Retail copies errStr into a temporary and destroys it (the stripped
+        // notify's by-value argument); the "no bleeding" branch emits nothing.
+        if (errStr.length() != 0) {
+            MiloStripEval("Bleeding in %s:\n%s", Name(), errStr);
+        }
+#endif
     }
 }
 
@@ -684,11 +697,16 @@ void RndFont::Print() {
 
 // Former RndFontBase::SetASCIIChars, inlined.
 void RndFont::SetASCIIChars(String str) {
+#ifdef HX_NATIVE
     if (DataOwner() != this) {
         MILO_ASSERT(0, 0x167);
     } else {
         ASCIItoWideVector(mChars, str.c_str());
     }
+#else
+    // Retail 0x82474D20 converts unconditionally (no texture-owner test).
+    ASCIItoWideVector(mChars, str.c_str());
+#endif
     UpdateChars();
 }
 

@@ -55,6 +55,9 @@ enum ShaderType {
 
 struct ShaderMacro {
     ShaderMacro(const char *n = nullptr, const char *v = nullptr) : Name(n), Value(v) {}
+    // A user-declared copy ctor, as retail's: it makes __uninitialized_fill_n<ShaderMacro>
+    // count with mtctr/bdnz, the body retail folds with fill_n<pair<int,int>> (0x824F9020).
+    ShaderMacro(const ShaderMacro &other) : Name(other.Name), Value(other.Value) {}
 
     ShaderMacro &operator=(const ShaderMacro &other) {
         this->Name = other.Name;

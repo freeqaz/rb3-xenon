@@ -377,20 +377,17 @@ public:
     float mCurHeight; // 0x184
     /** width of the current text block  (GetCurrentStringDimensions out1) */
     float mCurWidth; // 0x188
-    /** INFERRED (`unkbp6`): meshes need a rebuild on next DrawShowing. */
-    bool mMeshDirty; // 0x18c
-    // 0x18d-0x18f: EVIDENCE RAN OUT in the retail sweep (pad, or unreferenced
-    // bools). Retail's ctor was measured zeroing exactly four bools and its
-    // UpdateText omits an `unkbp6 = true`, so the Draw/CollectGarbage flags
-    // were never located. Placing them here is INFERRED; it is sizeof- and
-    // offset-neutral either way (the bytes are padding otherwise), and it is
-    // what lets these bodies port without inventing new members.
-    /** INFERRED (`unkbp7`): lines were added manually via AddLineUTF8. */
-    bool mManualLines; // 0x18d
-    /** INFERRED (`unk124b4p1`): RotateLineVerts is enabled. */
-    bool mRotateLineVerts; // 0x18e
-    /** INFERRED (`unk124b4:3`): frames since last DrawShowing (compared
-        `> 4`, so 3 bits suffice — fits a byte here). */
+    /** RotateLineVerts is enabled. Retail: the ctor clears the byte at 0x18c
+        and RotateLineVerts tests it. */
+    bool mRotateLineVerts; // 0x18c
+    // 0x18d-0x18f: no retail access. The three flags below are native-only
+    // bookkeeping (the match build's DrawShowing/UpdateText do not touch them);
+    // they occupy what is padding otherwise.
+    /** meshes need a rebuild on next DrawShowing (native). */
+    bool mMeshDirty; // 0x18d
+    /** lines were added manually via AddLineUTF8 (native). */
+    bool mManualLines; // 0x18e
+    /** frames since last DrawShowing, compared `> 4` (native). */
     unsigned char mFramesSinceDraw; // 0x18f
 
 protected:

@@ -93,9 +93,9 @@ public:
     bool IsValidRealLight(const RndLight *l) const;
     RndEnviron *AmbientFogOwner() const { return mAmbientFogOwner.Ptr(); }
     const Hmx::Color &AmbientColor() const { return mAmbientFogOwner->mAmbientColor; }
-    // RB3 retail API used by ui/UILabel.cpp (UpdateAndDrawHighlightMesh).
-    // DECLARATION-ONLY, non-virtual -> layout- and vtable-neutral.
-    void SetAmbientAlpha(float);
+    // Inline in retail: UILabel::UpdateAndDrawHighlightMesh stores straight into the
+    // alpha of the fog owner's ambient color (owner at +0x7c, alpha at +0x70).
+    void SetAmbientAlpha(float a) { mAmbientFogOwner->mAmbientColor.alpha = a; }
     void SetAmbientColor(const Hmx::Color &col) {
         mAmbientFogOwner->mAmbientColor.Set(col.red, col.green, col.blue);
     }

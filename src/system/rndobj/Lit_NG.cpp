@@ -44,7 +44,7 @@ BEGIN_LOADS(NgLight)
     CheckShadowMap();
 END_LOADS
 
-NgLight::~NgLight() { RELEASE(mShadowRT); }
+NgLight::~NgLight() { delete mShadowRT; }
 
 NgLight::NgLight() : mShadowRT(0), mShadowMapTex(0), mShadowDrawCount(-1) {}
 
@@ -209,7 +209,9 @@ void NgLight::RenderShadows(std::vector<RndDrawable *> &shadowCasters) {
     SetAndClearShadowViewport();
     SetShadowTransforms();
     Rnd::Mode savedDrawMode = TheRnd.DrawMode();
-    TheRnd.SetDrawMode(Rnd::kDrawOcclusion);
+    // Retail 0x82B8A7D0 sets raw Rnd::Mode 3, RB3's occlusion mode; this
+    // tree's Rnd::Mode numbers kDrawOcclusion 4 (see RndShader::CalcShaderOpts).
+    TheRnd.SetDrawMode((Rnd::Mode)3);
     for (std::vector<RndDrawable *>::iterator it = shadowCasters.begin(), end = shadowCasters.end();
          it != end;
          ++it) {

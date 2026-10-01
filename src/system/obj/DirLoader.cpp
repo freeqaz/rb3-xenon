@@ -1466,9 +1466,12 @@ ObjectDir *DirLoader::LoadObjects(const FilePath &fp, Callback *cb, BinStream *b
 // duplicate symbols never collide.
 bool RecurseSuperClassesSearch(Symbol classSym, Symbol searchClass);
 
+// Retail's OpenFile calls this out of line although it is in the same TU.
+#pragma auto_inline(off)
 const char *PathName(const Hmx::Object *o) {
     return !o ? "NULL Object" : ((Hmx::Object *)o)->FindPathName();
 }
+#pragma auto_inline(on)
 
 const char *SafeName(Hmx::Object *obj) {
     if (obj)

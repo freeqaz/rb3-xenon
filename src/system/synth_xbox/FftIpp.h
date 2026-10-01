@@ -20,10 +20,8 @@ public:
     };
 
     XboxAllocator() {}
-    XboxAllocator(const XboxAllocator &) {}
     template <class T2>
     XboxAllocator(const XboxAllocator<T2> &) {}
-    ~XboxAllocator() {}
 
     template <class T2>
     XboxAllocator &operator=(const XboxAllocator<T2> &) { return *this; }

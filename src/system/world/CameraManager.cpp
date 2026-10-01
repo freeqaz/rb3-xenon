@@ -79,12 +79,16 @@ float CameraManager::CalcFrame() {
 }
 
 CamShot *CameraManager::MiloCamera() {
+#ifdef HX_NATIVE
     if (TheLoadMgr.EditMode()) {
         static DataNode &anim = DataVariable("milo.anim");
         if (anim.Type() == kDataObject) {
             return anim.Obj<CamShot>();
         }
     }
+#endif
+    // Retail's only caller (WorldDir::DrawShowing) reaches the shared return-0 body:
+    // the editor's milo.anim camera lookup is not in retail.
     return nullptr;
 }
 

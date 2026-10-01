@@ -72,8 +72,18 @@ BEGIN_PROPSYNCS(RndLightAnim)
 #endif
 END_PROPSYNCS
 
+#ifndef HX_NATIVE
+// Retail 0x824716B0 writes the revision from a writable .data int holding 2
+// (0x82C70898), not a literal.
+static int sLightAnimRev = 2;
+#endif
+
 BEGIN_SAVES(RndLightAnim)
+#ifndef HX_NATIVE
+    bs << sLightAnimRev;
+#else
     SAVE_REVS(2, 0)
+#endif
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndAnimatable)
     bs << mLight << mColorKeys << mKeysOwner;

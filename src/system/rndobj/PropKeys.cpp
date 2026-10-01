@@ -10,7 +10,16 @@
 
 Hmx::Object *ObjectStage::sOwner;
 Message PropKeys::sInterpMessage(gNullStr, 0, 0, 0, 0, 0);
-int PropKeys::sPropKeysLoadRev = 0;
+// The load rev PropKeys::Load compares against (retail 0x82CC2758). It is a
+// file static: retail's Load keeps it in a register across its stores to
+// `this`, which it may only do for an object whose address never escapes.
+// Named sPropKeysLoadRev rather than gRev because this file is also
+// #included into other TUs under a `#define gRev ...` wrapper.
+static int sPropKeysLoadRev;
+
+// Out of line in retail (0x82421758: stw r3 to the rev static, blr);
+// RndPropAnim::Load calls it before any nested PropKeys::Load().
+void SetPropKeysRev(int rev) { sPropKeysLoadRev = rev; }
 
 float CalcSpline(float t, float *const p) {
     float p1 = p[1];
@@ -376,15 +385,17 @@ int FloatKeys::FloatAt(float frame, float &fl) {
             points[1] = prev->value;
             points[2] = next->value;
             int idx = (prev - data());
+            // points[3] is the key after `next` (index idx + 2).
+            int nextIdx = idx + 1;
             if (idx != 0) {
                 points[0] = this->at(idx - 1).value;
             } else {
                 points[0] = prev->value;
             }
-            if (size() - 1 == idx) {
+            if (nextIdx == size() - 1) {
                 points[3] = next->value;
             } else {
-                points[3] = this->at(idx + 1).value;
+                points[3] = this->at(nextIdx + 1).value;
             }
             fl = CalcSpline(ref, points);
         } else {
@@ -509,7 +520,7 @@ BinStream &operator<<(BinStream &bs, const ObjectStage &stage) {
 // field (RB3 has no BinStreamRev), and reads both pointers off the raw stream.
 BinStream &operator>>(BinStream &bs, ObjectStage &stage) {
     ObjectDir *dir = nullptr;
-    if (PropKeys::sPropKeysLoadRev > 8) {
+    if (sPropKeysLoadRev > 8) {
         ObjPtr<ObjectDir> dirPtr(stage.Owner(), nullptr);
         dirPtr.Load(bs, true, dir);
         dir = dirPtr.Ptr();

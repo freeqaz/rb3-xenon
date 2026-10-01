@@ -307,9 +307,8 @@ Task *RndAnimatable::Animate(
 
     AnimTask *task = new AnimTask(this, start, end, fpu, type == loop, blend);
     if (wait) {
-        AnimTask *blendTask = task->BlendTask();
-        if (blendTask) {
-            delay += blendTask->TimeUntilEnd();
+        if (task->BlendTask()) {
+            delay += task->BlendTask()->TimeUntilEnd();
         }
     }
     TheTaskMgr.Start(task, gRateUnits[rate], delay);
@@ -611,7 +610,8 @@ DataNode RndAnimatable::OnAnimate(DataArray *arr) {
     }
     DataArray *periodArr = arr->FindArray(period, false);
     if (periodArr) {
-        p = std::fabs(animTaskEnd - animTaskStart) / periodArr->Float(1);
+        p = std::fabs(animTaskEnd - animTaskStart);
+        p = p / periodArr->Float(1);
     }
     AnimTask *task = new AnimTask(
         this, animTaskStart, animTaskEnd, p, animTaskLoop, local_blend

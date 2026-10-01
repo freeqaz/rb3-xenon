@@ -149,7 +149,7 @@ RndTexBlendController::GetBlendState(float &blend, float influence) const {
 
     blend *= influence;
     blend = Clamp(0.0f, 1.0f, blend);
-    blend = (float)((long long)(blend * 255.0f) & 0xFF) * (1.0f / 255.0f);
+    blend = (unsigned char)(blend * 255.0f) * (1.0f / 255.0f);
     if (blend < 1.0f / 255.0f) {
         state = kBlendNone;
     }

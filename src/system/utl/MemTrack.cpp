@@ -192,7 +192,12 @@ void StartLog(const char *base) {
     gLog = new TextFileStream(buffer, false);
 }
 
+#ifdef HX_NATIVE
 void MemTrackReport(int i1, bool b2) {
+#else
+// Retail takes one argument: its only caller, MemTrackReportDF, sets r3 alone.
+void MemTrackReport(int i1) {
+#endif
     if (gMemTracker) {
         CritSecTracker tracker(gMemLock);
 #ifdef HX_NATIVE
@@ -238,7 +243,11 @@ void MemTrackHeapDump(bool freeOnly) {
 }
 
 DataNode MemTrackReportDF(DataArray *) {
+#ifdef HX_NATIVE
     MemTrackReport(1000, true);
+#else
+    MemTrackReport(1000);
+#endif
     return 0;
 }
 

@@ -60,38 +60,26 @@ int RingBuffer::Peek(void *data, int len) {
 
 int RingBuffer::Write(void *data, int len) {
     char *src = (char *)data;
-    int writeLen = len;
-
-    if (writeLen > mSize) {
+    if (len > mSize) {
         src = src + len - mSize;
-        writeLen = mSize;
+        len = mSize;
     }
 
     int available = mSize - mWriteIx;
-    int returnVal = (mTotal - mSize) + writeLen;
-    int *pChunk;
-    int chunkSize = writeLen;
-    if (writeLen < available) {
-        pChunk = &chunkSize;
-    } else {
-        pChunk = &available;
-    }
-    int chunk1 = *pChunk;
+    int returnVal = (mTotal - mSize) + len;
+    // Retail clamps against len itself: it writes the clamped length back to
+    // the parameter's home slot and selects &len or &available.
+    int chunk1 = std::min(available, len);
 
     memcpy((char *)mBuffer + mWriteIx, src, chunk1);
 
-    if (chunk1 != writeLen) {
-        memcpy(mBuffer, src + chunk1, writeLen - chunk1);
+    if (chunk1 != len) {
+        memcpy(mBuffer, src + chunk1, len - chunk1);
     }
 
-    int *pTotal;
-    int tempTotal = mTotal + writeLen;
-    pTotal = &tempTotal;
-    mWriteIx = (mWriteIx + writeLen) % mSize;
-    if (tempTotal >= mSize) {
-        pTotal = &mSize;
-    }
-    int newTotal = *pTotal;
+    int tempTotal = mTotal + len;
+    mWriteIx = (mWriteIx + len) % mSize;
+    int newTotal = std::min(mSize, tempTotal);
     mTotal = newTotal;
 
     if (newTotal == mSize) {

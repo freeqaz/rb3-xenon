@@ -488,12 +488,12 @@ void RndBitmap::ConvertColor(
     } else if (mBpp == 0x10) {
         unsigned short swapped = SwapBytes(*(unsigned short *)uc);
         if (mOrder & 1) {
-            a = -(swapped >> 0xF & 1);
+            a = (swapped & 0x8000) ? 0xFF : 0;
             b = swapped >> 7 & 0xF8;
             g = swapped >> 2 & 0xF8;
             r = swapped << 3;
         } else {
-            a = -(swapped >> 0xF & 1);
+            a = (swapped & 0x8000) ? 0xFF : 0;
             r = swapped >> 7 & 0xF8;
             g = swapped >> 2 & 0xF8;
             b = swapped << 3;
@@ -1068,11 +1068,9 @@ void RndBitmap::DxtColor(
     int dxt = mOrder & 0x38;
     MILO_ASSERT(dxt != 0, 0x6CC);
 
-    int xQuotient = x / 4;
-    int xRemainder = x - xQuotient * 4;
-    int yQuotient = y / 4;
-    int blockIdx = (mWidth >> 2) * yQuotient + xQuotient;
-    int yRemainder = y - yQuotient * 4;
+    int blockIdx = (mWidth >> 2) * (y / 4) + x / 4;
+    int xRemainder = x % 4;
+    int yRemainder = y % 4;
 
     if (dxt == 8) {
         DecodeDxtColor(mPixels + blockIdx * 8, xRemainder, yRemainder, true, r, g, b, a);
@@ -1082,8 +1080,9 @@ void RndBitmap::DxtColor(
         DecodeDxtColor(blockData + 8, xRemainder, yRemainder, false, r, g, b, unused);
         if (dxt == 0x10) {
             unsigned short *alphaData = (unsigned short *)blockData;
-            unsigned char alphaBits =
-                (unsigned char)(alphaData[yRemainder] >> (xRemainder << 2));
+            // Retail 0x823FC8A8 keeps the low nibble only (& 0xF) before
+            // replicating it into both halves of the byte.
+            int alphaBits = (alphaData[yRemainder] >> (xRemainder << 2)) & 0xF;
             a = alphaBits | (alphaBits << 4);
         } else {
             DecodeDxt5Alpha(blockData, xRemainder, yRemainder, a);

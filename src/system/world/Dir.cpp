@@ -54,7 +54,13 @@ WorldDir::WorldDir()
 }
 
 WorldDir::~WorldDir() {
+#ifdef HX_NATIVE
     RELEASE(mHUDDir);
+#else
+    // Retail deletes the HUD dir and the ctor-created glow material, nulling neither.
+    delete mHUDDir;
+    delete mGlowMat;
+#endif
     SpotlightDrawer::Current()->ClearLights();
     if (TheWorld == this) {
         SetTheWorld(nullptr);
@@ -578,7 +584,8 @@ void WorldDir::DrawShowing() {
 
             if (shot) {
                 Spotlight *spot = shot->mGlowSpot;
-                if (spot && mGlowMat && spot->Showing() && spot->Intensity() > 0) {
+                // Retail does not test mGlowMat (the ctor always creates it).
+                if (spot && spot->Showing() && spot->Intensity() > 0) {
                     Hmx::Rect rect(0, 0, TheRnd.Width(), TheRnd.Height());
                     Hmx::Color color(spot->Color());
                     color.alpha = 0.25f;
@@ -603,7 +610,10 @@ void WorldDir::DrawShowing() {
             }
         }
 
+#ifdef HX_NATIVE
+        // Not in retail's DrawShowing (0x824CD068): no debug-graph camera here.
         RndGraph::SetCamera(RndCam::Current());
+#endif
 
         if (mHUDDir)
             mHUDDir->DrawShowing();

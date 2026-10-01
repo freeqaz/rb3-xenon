@@ -260,7 +260,10 @@ void RndConsole::Where() {
         MILO_FAIL("Can't where unless debugging");
 }
 
+// Retail's body is empty: Rnd::OnShowConsole (0x82412D40) and ModalKeyListener::OnMsg
+// (0x82411968) call the shared blr survivor 0x826C3888 where they call this.
 void RndConsole::SetShowing(bool show) {
+#ifdef HX_NATIVE
     if (mShowing != show) {
         if (show) {
             mInput->Clear();
@@ -277,6 +280,7 @@ void RndConsole::SetShowing(bool show) {
         Message msg("rnd_console_showing", show);
         HolmesClientSendMessage(msg);
     }
+#endif
 }
 
 void RndConsole::MoveLevel(int level) {
