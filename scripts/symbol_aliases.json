@@ -92006,6 +92006,7 @@
     "??3TrackPanelDir@@SAXPAX@Z",
     "??3UnisonIcon@@SAXPAX@Z",
     "??3VocalTrackDir@@SAXPAX@Z",
+    "??3Label3d@@SAXPAX@Z",
     "??3Task@@SAXPAX@Z",
     "??3Loader@@SAXPAX@Z",
     "??3TypeProps@@SAXPAX@Z"
@@ -92447,6 +92448,12 @@
      "lane": "W16-KA 2026-10-01",
      "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
      "evidence": "Retail EH funclet fn_8227BF10 (unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3VocalTrackDir@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
+    },
+    {
+     "spelling": "??3Label3d@@SAXPAX@Z",
+     "lane": "W16-LA 2026-10-01",
+     "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL: the class operator delete compiles to the same one-word branch to MemFree as the family's other members",
+     "evidence": "Retail EH funclet fn_8227BDD0 (unwind of Label3d::NewObject, 0x8227BD60, unit BandCharacter) branches to 0x8240ddb0 for the delete where our compiled funclet calls ??3Label3d@@SAXPAX@Z. tools/icf_pair_adjudicate.py --chase: FLAT T1 UNDECIDABLE (4-byte body), CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL, no CYCLE leaf; the call site, not the byte comparison, names the survivor. Not map-resident anywhere."
     }
    ],
    "admitted": [
@@ -99882,6 +99889,15 @@
    "added": {
     "lane": "W16-LD 2026-10-01"
    }
+  },
+  {
+   "name": "DeleteAll",
+   "address": "0x822f0408",
+   "survivor": "?DeleteAll@?$ObjPtrList@VRndTransformable@@VObjectDir@@@@QAAXXZ",
+   "folded": [
+    "?DeleteAll@?$ObjPtrList@VRndMesh@@VObjectDir@@@@QAAXXZ"
+   ],
+   "evidence": "W16-LA 2026-10-01. Retail Label3d::~Label3d (0x822F10E8, bl at 0x822F11B0) and Label3d::SyncText (0x822F0568, bl at 0x822F0610) call 0x822F0408 on Label3d::mMeshes, an ObjPtrList<RndMesh>, where our source calls ObjPtrList<RndMesh>::DeleteAll. tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN (116 B retail / 116 B ours, 4 relocations, 1 tolerated placeholder), CHASED T1 PROVEN (the one placeholder slot is SLOT-OK:CALLEE-CHASED, retail fn_8227D0E8 vs our ObjPtrList<RndMesh>::Unlink), 0 CYCLE-ASSUMED. Retail has one body for both instantiations; the survivor is map-resident at 0x822F0408."
   }
  ]
 }
