@@ -199,7 +199,7 @@ int Ps2ADSR::NearestSustainRate(float f) const {
     const float *table;
     int size;
 
-    int sus = GetSustainMode();
+    unsigned int sus = GetSustainMode();
 
     if (sus == ADSRImpl::kSustainLinInc) {
         table = gLinInc;
