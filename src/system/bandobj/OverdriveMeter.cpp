@@ -1,3 +1,5 @@
+// Retail inlines the ObjPtr ctors at the member-init sites of this TU's ctor.
+#define RB3_TU_OBJPTR_FORCEINLINE_CTOR
 #include "bandobj/OverdriveMeter.h"
 #include "utl/Symbols.h"
 

@@ -1,3 +1,5 @@
+// Retail inlines the ObjPtr ctors at the member-init sites of this TU's ctor.
+#define RB3_TU_OBJPTR_FORCEINLINE_CTOR
 // BandLeadMeter (bandobj/BandLeadMeter.cpp), MSVC X360.
 #include "bandobj/BandLeadMeter.h"
 #include "decomp.h"
