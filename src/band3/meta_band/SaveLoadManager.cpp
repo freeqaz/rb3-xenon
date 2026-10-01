@@ -29,6 +29,7 @@
 #include "utl/Symbols2.h"
 #include "utl/Symbols3.h"
 #include "utl/Symbols4.h"
+#include "meta_band/BandMemcardAction.h"
 
 // song_info_cache_* Symbols are used by the Wii song-info-cache dialog states
 // (kS_SongCacheCreate*). Not present in the in-tree Symbols headers (likely
@@ -42,39 +43,6 @@ extern Symbol song_info_cache_button_cancel;
 extern Symbol song_info_cache_create;
 extern Symbol song_info_cache_missing;
 extern Symbol song_info_cache_corrupt;
-
-class SaveMemcardAction : public MemcardAction {
-public:
-    // Takes one BandProfile* and adds no members: retail's only allocation
-    // (StartSaveAction, 0x82550658) is `li r3,0x14` == sizeof(MemcardAction),
-    // and it passes GetProfile()'s result straight to the ctor (0x825D77D8).
-    // Same correction as LoadMemcardAction below; the vector* ctor and the
-    // unk24/unk28 pair were wrong.
-    SaveMemcardAction(BandProfile *);
-    virtual ~SaveMemcardAction();
-    virtual void PreAction();
-    virtual void Action();
-    virtual void PostAction();
-};
-
-class LoadMemcardAction : public MemcardAction {
-public:
-    LoadMemcardAction(BandProfile *);
-    virtual ~LoadMemcardAction();
-    virtual void PreAction();
-    virtual void Action();
-    virtual void PostAction();
-    // NO members of its own.  Retail's two `new LoadMemcardAction` sites pass
-    // 0x14 to CriticalSection::operator new (SetState idx 195 and idx 1012,
-    // both `li r3,0x14`), and MemcardAction is exactly 0x14 (vptr + mResult +
-    // unk8 + unkc + mProfile).  An unk24/mProfiles pair belongs to a
-    // larger MemcardAction base whose ctor takes a
-    // vector<BandProfile*>* where ours takes a BandProfile*.  Neither member
-    // was ever referenced anywhere, and this TU defines no LoadMemcardAction
-    // method bodies, so they did nothing but make sizeof 0x1c and mis-size
-    // both allocations.  (meta_ham/HamMemcardAction.h's LoadMemcardAction is
-    // likewise memberless.)
-};
 
 SaveLoadManager *TheSaveLoadMgr;
 

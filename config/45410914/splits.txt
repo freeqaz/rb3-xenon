@@ -1150,15 +1150,19 @@ StreakMeter.cpp:
 	.text       start:0x822DB278 end:0x822DB298
 
 CriticalUserListener.cpp:
-	.pdata      start:0x82224F78 end:0x82225020
-	.text       start:0x825D6F80 end:0x825D7870
+	.pdata      start:0x82224F78 end:0x82225010
+	.text       start:0x825D6F80 end:0x825D77D8
+
+band3/meta_band/BandMemcardAction.cpp:
+	.pdata      start:0x82225010 end:0x82225048
+	.text       start:0x825D77D8 end:0x825D7AD8
 
 CharData.cpp:
 	.pdata      start:0x82204D28 end:0x82204D38
-	.pdata      start:0x82225020 end:0x82225108
+	.pdata      start:0x82225048 end:0x82225108
 	.text       start:0x823AEE98 end:0x823AEF8C
 	.text       start:0x823AF220 end:0x823AF22C
-	.text       start:0x825D7870 end:0x825D8498
+	.text       start:0x825D7AD8 end:0x825D8498
 
 OvershellSlot.cpp:
 	.pdata      start:0x82211810 end:0x82211820

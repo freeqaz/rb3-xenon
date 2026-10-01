@@ -1,4 +1,8 @@
 {
+ "0x825d77d8": "??0SaveMemcardAction@@QAA@PAVBandProfile@@@Z",
+ "0x825d7870": "?PreAction@SaveMemcardAction@@UAAXXZ",
+ "0x825d7940": "??_GSaveMemcardAction@@UAAPAXI@Z",
+ "0x825d7990": "?PostAction@LoadMemcardAction@@UAAXXZ",
  "0x825ec840": "?RefreshOffers@AssetStore@@QAAXPAVLocalBandUser@@@Z",
  "0x825ec8c8": "?HasAnyAssetOffers@AssetStore@@QBA_NXZ",
  "0x825ec8e8": "?LoadOffers@AssetStore@@AAAXXZ",
