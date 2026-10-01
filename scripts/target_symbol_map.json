@@ -1,4 +1,8 @@
 {
+ "0x824909c8": "??$GatherObjects@VRndMesh@@@@YAIAAV?$ObjPtrList@VObject@Hmx@@VObjectDir@@@@AAV?$vector@PAVRndMesh@@V?$StlNodeAlloc@PAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x82464470": "??1Drawable@@UAA@XZ",
+ "0x82415b68": "?CompressTexture@Rnd@@QAAHPAVRndTex@@W4AlphaCompress@2@PAUCompressTextureCallback@1@@Z",
+ "0x82412a58": "?CompressTextureCancel@Rnd@@QAAXPAUCompressTextureCallback@1@@Z",
  "0x824a7aa0": "??DHmx@@YA?AVMatrix4@0@ABV10@0@Z",
  "0x824399c0": "?RndUtlTerminate@@YAXXZ",
  "0x8257b428": "??1Instarank@@UAA@XZ",
