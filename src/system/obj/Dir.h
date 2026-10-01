@@ -333,8 +333,12 @@ BinStream &operator<<(BinStream &bs, const ObjDirPtr<C> &ptr) {
     return bs;
 }
 #else
+// Saves the dir's file, relative to the root path.
 template <class C>
-BinStream &operator<<(BinStream &bs, const ObjDirPtr<C> &ptr);
+BinStream &operator<<(BinStream &bs, const ObjDirPtr<C> &ptr) {
+    bs << FileRelativePath(FilePath::Root().c_str(), ptr.GetFile().c_str());
+    return bs;
+}
 #endif
 
 template <class T>

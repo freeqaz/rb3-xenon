@@ -97,6 +97,19 @@ END_HANDLERS
 
 void JoypadClient::SetVirtualDpad(bool b) { mVirtualDpad = b; }
 
+// Turning the filter on cancels every pending button hold/repeat.
+void JoypadClient::SetFilterAllButStart(bool filter) {
+    if (mFilterAllButStart != filter) {
+        if (filter) {
+            for (int i = 0; i < 4; i++) {
+                mRepeats[i].mHoldTimer.Reset();
+                mRepeats[i].mRepeatTimer.Reset();
+            }
+        }
+        mFilterAllButStart = filter;
+    }
+}
+
 int JoypadClient::OnMsg(const ButtonDownMsg &msg) {
     if (mFilterAllButStart && msg.GetAction() != kAction_Start)
         return 0;

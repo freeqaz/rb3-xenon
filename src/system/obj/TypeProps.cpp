@@ -41,6 +41,11 @@ void GetSaveFlags(DataArray *arr, bool &proxy, bool &none) {
     }
 }
 
+// Indexed access over the flat (k0 v0 k1 v1 ...) map: pair idx is nodes 2*idx, 2*idx+1.
+Symbol TypeProps::Key(int idx) const { return mMap->Node(idx * 2).UncheckedSym(); }
+
+DataNode &TypeProps::Value(int idx) const { return mMap->Node(idx * 2 + 1); }
+
 int TypeProps::Size() const {
     if (mMap)
         return mMap->Size() / 2;
