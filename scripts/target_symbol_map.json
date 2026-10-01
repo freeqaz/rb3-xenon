@@ -22125,7 +22125,7 @@
  "0x82791838": "?SetNow@BeatMatcher@@QAAXM@Z",
  "0x827918b0": "?Poll@BeatMatcher@@QAAXM@Z",
  "0x82791920": "?Jump@BeatMatcher@@QAAXM@Z",
- "0x827919c8": "?ResetBeatTaskTime@TaskMgr@@QAAXM@Z",
+ "0x827919c8": "?SetDrumKitBank@BeatMatcher@@QAAXPAVObjectDir@@@Z",
  "0x82791a28": "?GetTrackType@BeatMatcher@@QBA?AW4TrackType@@H@Z",
  "0x82791a38": "?SetPitchBend@BeatMatcher@@UAAXHM_N@Z",
  "0x82791ad8": "?ResetPitchBend@BeatMatcher@@UAAXH@Z",
