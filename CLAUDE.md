@@ -1222,6 +1222,11 @@ across this lane's sabotage cycles. Two clean builds here do not differ at all.
   four thresholds so it stays visibly one: `thr≤4 = 0 units · ≤5 = 0 · ≤6 = 104
   · ≤7 = 104`. Scaffold bytes are stable (179,948 B / 104 units vs 08-17's
   180,196 / 105 — one unit of legitimate drift, not a methodology change).
+  ✅✅✅ **RE-MEASURED 2026-09-30 at main `61bb82227`: ceiling 61.537%
+  (6,305,760 B), `matched_code` 4,677,848 B = 45.650580% = 74.18% OF THE
+  CEILING, gap 1,627,912 B.** The ceiling moved +0.002 pp, our share +8.5 pp in
+  two weeks (+499,860 B on 09-30 alone). Use these figures; current-state doc:
+  `docs/decomp/CAMPAIGN_STATE_2026-09-30.md`.
   ⚠ **`tools/ceiling_recompute.py` takes FOUR positional args** —
   `main(report_path, objdiff_path, root, label)`. Fewer raises a bare
   `IndexError: list index out of range`, which reads like a data problem and is
