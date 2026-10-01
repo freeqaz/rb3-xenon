@@ -610,84 +610,65 @@ void RndAmbientOcclusion::BurnTransform(
     RndMesh *mesh, std::list<RndMesh *> &meshes
 ) const {
     // Find and remove mesh from the work list
-    std::list<RndMesh *>::iterator found = meshes.end();
-    for (std::list<RndMesh *>::iterator it = meshes.begin(); it != meshes.end(); ++it) {
-        if (*it == mesh) {
-            found = it;
-            break;
-        }
-    }
+    std::list<RndMesh *>::iterator found = std::find(meshes.begin(), meshes.end(), mesh);
     if (found == meshes.end())
         return;
     meshes.erase(found);
 
-    float det = Det(mesh->WorldXfm().m);
-    bool canBurn = false;
+    // 0x8248E200. Everything here works on LOCAL transforms (mesh+0x40):
+    // retail never calls WorldXfm()/SetWorldXfm in this function.
+    float det = Det(mesh->LocalXfm().m);
+    bool canBurn = fabsf(1.0f - det) > 0.0001f;
     if (mQuality == 0) {
         canBurn = CanBurnXfm(mesh);
-    } else {
-        // Retail uses `fabs` here, not the Abs<T> template's fcmpu+fneg form
-        // (fn_8248E200 @ 0x8248E200 idx 31-34: fsubs / fabs / fcmpu against
-        // __real@38d1b717 == 0.0001f).  Spelled `fabsf` so it no longer depends
-        // on a non-retail Abs(float) overload being in scope.
-        //
-        // ⚠ UNVERIFIABLE HERE, AND THE SHAPE BELOW IS PROBABLY WRONG.  This
-        // site currently emits NOTHING: MILO_NOTIFY_ONCE strips to
-        // `{ (void)sizeof(MakeString(...)); }`, and sizeof is unevaluated, so
-        // the whole condition is dead-code-eliminated (our BurnTransform has 2
-        // lfs and zero fabs/fcmpu/fneg).  Retail's does evaluate it, and feeds
-        // the result to a BOOLEAN, not to a notify: idx 29 `li r11,1` / 35
-        // `bgt cr6` / 36 `li r11,0` computes `!(fabs(1.0f-det) > 0.0001f)` and
-        // that value flows on -- i.e. retail almost certainly assigns it to
-        // `canBurn` (cf. NearlyOne(det)).  Fixing that is a control-flow change
-        // beyond this lane, and unmeasurable: BurnTransform is unpaired (no
-        // report.json row; the name is absent from the target obj, which knows
-        // this body only as fn_8248E200, 552 B vs our 568 B).
-        if (fabsf(1.0f - det) > 0.0001f) {
-            MILO_NOTIFY_ONCE(
-                "%s: Mesh has scale or mirroring applied. Re-export mesh to ensure accurate AO calculation.",
-                PathName(mesh)
-            );
-        }
+    } else if (canBurn) {
+        // Compiled out, but PathName(mesh) is still evaluated (0x82328270).
+#ifdef HX_NATIVE
+        MILO_NOTIFY_ONCE(
+            "%s: Mesh has scale or mirroring applied. Re-export mesh to ensure accurate AO calculation.",
+            PathName(mesh)
+        );
+#else
+        MiloStripEval(
+            "%s: Mesh has scale or mirroring applied. Re-export mesh to ensure accurate AO calculation.",
+            PathName(mesh)
+        );
+#endif
+        canBurn = false;
     }
+    if (!canBurn)
+        return;
 
-    if (canBurn) {
-        // Build a zero-translation copy of parent world rotation matrix
-        Transform parentRot;
-        memcpy(&parentRot, &mesh->WorldXfm(), 0x30);
-        parentRot.v.Set(0.0f, 0.0f, 0.0f);
+    const std::list<RndTransformable *> &children = mesh->Children();
+    for (std::list<RndTransformable *>::const_iterator it = children.begin();
+         it != children.end(); ++it) {
+        RndMesh *childMesh = dynamic_cast<RndMesh *>(*it);
+        if (childMesh) {
+            BurnTransform(childMesh, meshes);
+            // The parent's local rotation with its translation cleared.
+            Vector3 zero(0.0f, 0.0f, 0.0f);
+            Transform parentRot;
+            memcpy(&parentRot, &mesh->LocalXfm(), 0x30);
+            parentRot.v = zero;
 
-        const std::list<RndTransformable *> &children = mesh->Children();
-        for (std::list<RndTransformable *>::const_iterator it = children.begin();
-             it != children.end(); ++it) {
-            RndMesh *childMesh = dynamic_cast<RndMesh *>(*it);
-            if (childMesh) {
-                BurnTransform(childMesh, meshes);
-
-                Transform childXfm;
-                RndTransformable::Constraint constraint = childMesh->TransConstraint();
-                if (constraint == 0) {
-                    Multiply(childMesh->WorldXfm(), parentRot, childXfm);
-                    childMesh->SetWorldXfm(childXfm);
-                } else if (constraint == 2) {
-                    memcpy(&childXfm, &mesh->WorldXfm(), 0x40);
-                    childMesh->SetWorldXfm(childXfm);
-                    childMesh->SetTransConstraint(
-                        childMesh->TransConstraint(),
-                        childMesh->mTarget,
-                        childMesh->mPreserveScale
-                    );
-                } else {
-                    memcpy(&childXfm, &childMesh->WorldXfm(), 0x40);
-                    childMesh->SetWorldXfm(childXfm);
-                }
-                if (!childMesh->mPreserveScale) {
-                    childMesh->SetDirty_Force();
-                }
+            Transform childXfm;
+            RndTransformable::Constraint constraint = childMesh->TransConstraint();
+            if (constraint == 0) {
+                Multiply(childMesh->LocalXfm(), parentRot, childXfm);
+            } else if (constraint == 2) {
+                memcpy(&childXfm, &parentRot, 0x40);
+                childMesh->SetTransConstraint(
+                    (RndTransformable::Constraint)0,
+                    childMesh->mTarget,
+                    childMesh->mPreserveScale
+                );
+            } else {
+                memcpy(&childXfm, &childMesh->LocalXfm(), 0x40);
             }
+            childMesh->SetLocalXfm(childXfm);
         }
-        BurnXfm(mesh, true);
     }
+    BurnXfm(mesh, true);
 }
 
 void RndAmbientOcclusion::PreprocessMesh() {
