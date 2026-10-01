@@ -729,10 +729,7 @@ void RndText::ComputeCharWidths(float *fp, int i2, const char *cc, Style style) 
             int i6 = DecodeUTF8(us68, cc);
             RndFont *i4 = SupportChar(us68, style.mFont);
             if (i4) {
-                // 360: CharAdvance is the 3-arg bool out-param form here,
-                // not a 2-arg float CharAdvance(prev,cur).
-                float f9 = 0;
-                i4->CharAdvance(u7, us68, f9);
+                float f9 = i4->CharAdvance(u7, us68);
                 float fVal = style.mSize * f9;
                 fp[i] = fVal;
                 u7 = us68;
@@ -1178,9 +1175,7 @@ float RndText::GetStringWidthUTF8(
         } else {
             RndFont *font = GetDefiningFont(us, style->mFont);
             if (font) {
-                float adv = 0;
-                font->CharAdvance(us8, us, adv);
-                ret += style->mSize * adv;
+                ret += style->mSize * font->CharAdvance(us8, us);
             }
             us8 = us;
             ccIt += decoded;
@@ -1262,10 +1257,9 @@ void RndText::UpdateMesh(RndFont *font) {
     meshInfo->syncFlags = 0;
 }
 
-// 360 RndFont: no separate font->GetTexCoords(c, uv0, uv2) plus
-// separate CharWidth/CharAdvance. The 360 RndFont fuses all three into
-// CharWidthAdvanceCoords(c, &charW, &advW, &uvMin, &uvMax) -> bool, and the Vert
-// UV member is `tex`, not `uv`.
+// Retail (0x82455138) calls Kerning, CharWidth, CharAdvance(c) and
+// GetTexCoords (0x82473A18) separately; there is no fused width/advance/UV
+// query and no early-out for an undefined character.
 void SetupCharVerts(
     unsigned short us1,
     RndMesh::Vert *&vert,
@@ -1279,19 +1273,18 @@ void SetupCharVerts(
     unsigned short us10,
     bool b11
 ) {
-    float charW, advW;
-    if (!font->CharWidthAdvanceCoords(us1, charW, advW, vert[0].tex, vert[2].tex))
-        return;
+    // 0x82455138.
     if (!b11) {
-        fref += style.mSize * font->Kerning(us10, us1);
+        fref += font->Kerning(us10, us1) * style.mSize;
     }
-    float f1 = style.mSize * charW;
+    float f1 = font->CharWidth(us1) * style.mSize;
     if (f1 <= 0) {
-        f1 = style.mSize * advW;
+        f1 = font->CharAdvance(us1) * style.mSize;
     }
     if (f1 <= 0)
         return;
     else {
+        font->GetTexCoords(us1, vert[0].tex, vert[2].tex);
         vert[1].tex.Set(vert[0].tex.x, vert[2].tex.y);
         vert[3].tex.Set(vert[2].tex.x, vert[0].tex.y);
         float topZ = f5;
@@ -1305,7 +1298,7 @@ void SetupCharVerts(
         vert[0].color = vert[1].color = vert[2].color = vert[3].color = style.mTextColor;
         vert += 4;
         if (!b11) {
-            fref += style.mSize * advW;
+            fref += font->CharAdvance(us1) * style.mSize;
         }
     }
 }
@@ -1350,9 +1343,7 @@ void RndText::CreateLines(RndFont *font) {
                             false
                         );
                     } else {
-                        float adv = 0;
-                        definingFont->CharAdvance(i14, us98, adv);
-                        f90 += style.mSize * adv;
+                        f90 += style.mSize * definingFont->CharAdvance(i14, us98);
                     }
                 }
                 i14 = us98;

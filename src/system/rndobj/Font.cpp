@@ -606,19 +606,10 @@ float RndFont::CharWidth(unsigned short c) const {
     return w;
 }
 
-bool RndFont::CharAdvance(unsigned short u1, unsigned short c, float &f3) const {
-    if (mTextureOwner != this) {
-        return mTextureOwner->CharAdvance(u1, c, f3);
-    } else {
-        auto it = mCharInfoMap.find(c);
-        if (it != mCharInfoMap.end()
-            && (it->second.mU != 0 || it->second.mV != 0 || it->second.mAdvance != 0)) {
-            f3 = mMonospace ? 1 : it->second.mAdvance;
-            f3 += Kerning(u1, c);
-            return true;
-        }
-    }
-    return false;
+// 0x82474500: Kerning(prev, c) + CharAdvance(c). Both callees already route
+// through the texture owner, so there is no delegation here.
+float RndFont::CharAdvance(unsigned short prev, unsigned short c) const {
+    return Kerning(prev, c) + CharAdvance(c);
 }
 
 float RndFont::CharAdvance(unsigned short c) const {
@@ -797,27 +788,18 @@ void RndFont::SetCellSize(float x, float y) {
     UpdateChars();
 }
 
-bool RndFont::CharWidthAdvanceCoords(
-    unsigned short c, float &charW, float &advW, Vector2 &uvMin, Vector2 &uvMax
-) const {
+// 0x82473A18: follows the texture-owner chain, then reads the char's cell with
+// no existence test (callers only ask for characters the font defines).
+void RndFont::GetTexCoords(unsigned short c, Vector2 &tl, Vector2 &br) const {
     const RndFont *owner = this;
     while (owner->mTextureOwner != owner) {
         owner = owner->mTextureOwner;
     }
-    std::map<unsigned short, CharInfo>::const_iterator it = owner->mCharInfoMap.find(c);
-    if (it != owner->mCharInfoMap.end()) {
-        const CharInfo &info = it->second;
-        if (info.mU != 0 || info.mV != 0 || info.mAdvance != 0) {
-            charW = info.mCharWidth;
-            advW = owner->mMonospace ? 1.0f : info.mAdvance;
-            uvMin.x = info.mU;
-            uvMax.x = owner->mTexCellSize.x * info.mCharWidth + info.mU;
-            uvMin.y = info.mV;
-            uvMax.y = owner->mTexCellSize.y + info.mV;
-            return true;
-        }
-    }
-    return false;
+    const CharInfo &info = owner->mCharInfoMap.find(c)->second;
+    tl.x = info.mU;
+    br.x = owner->mTexCellSize.x * info.mCharWidth + info.mU;
+    tl.y = info.mV;
+    br.y = owner->mTexCellSize.y + info.mV;
 }
 
 // sw2 scatter-include (default/Font <- bandobj/BandDirector.cpp)
