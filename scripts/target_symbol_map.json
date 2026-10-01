@@ -1,4 +1,8 @@
 {
+ "0x8242b988": "??$?5VSymbol@@@@YAAAVBinStream@@AAV0@AAV?$Key@VSymbol@@@@@Z",
+ "0x8242b688": "??$?5VVector3@@@@YAAAVBinStream@@AAV0@AAV?$Key@VVector3@@@@@Z",
+ "0x8247f120": "??$?5VVector2@@@@YAAAVBinStream@@AAV0@AAV?$Key@VVector2@@@@@Z",
+ "0x824635d0": "??$?5V?$Key@VTexPtr@RndMatAnim@@@@V?$StlNodeAlloc@V?$Key@VTexPtr@RndMatAnim@@@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@V?$Key@VTexPtr@RndMatAnim@@@@V?$StlNodeAlloc@V?$Key@VTexPtr@RndMatAnim@@@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x82426290": "?FloatAt@FloatKeys@@UAAHMAAM@Z",
  "0x82461320": "??$?6VColor@Hmx@@@@YAAAVTextStream@@AAV0@ABV?$Key@VColor@Hmx@@@@@Z",
  "0x82481f38": "??_DRndScreenMask@@QAAXXZ",
