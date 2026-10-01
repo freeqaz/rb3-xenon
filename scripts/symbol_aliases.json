@@ -73273,7 +73273,10 @@
    "name": "0?$_Deque_base",
    "address": "0x82ba2318",
    "survivor": "??0?$_Deque_base@PAVLyricPlate@@V?$StlNodeAlloc@PAVLyricPlate@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@PAVLyricPlate@@@1@I@Z",
-   "folded": [],
+   "folded": [
+    "??0?$_Deque_base@PAVTambourineGem@@V?$StlNodeAlloc@PAVTambourineGem@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@PAVTambourineGem@@@1@I@Z",
+    "??0?$_Deque_base@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@PAVTubePlate@@@1@I@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -73282,7 +73285,19 @@
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 1 other group(s) at 2 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 1 of the 2 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 1 other group(s) at 2 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 1 of the 2 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md.",
+   "admitted": [
+    {
+     "spelling": "??0?$_Deque_base@PAVTambourineGem@@V?$StlNodeAlloc@PAVTambourineGem@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@PAVTambourineGem@@@1@I@Z",
+     "lane": "W16-KD 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- template-twin, ); 96 B retail / 96 B ours. Retail call site(s) reaching the survivor where we call this spelling: 0x82ba3e94, 0x82ba3ea4, 0x82ba9bd4."
+    },
+    {
+     "spelling": "??0?$_Deque_base@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@PAVTubePlate@@@1@I@Z",
+     "lane": "W16-KD 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- template-twin, ); 96 B retail / 96 B ours. Retail call site(s) reaching the survivor where we call this spelling: 0x82ba2f78, 0x82ba9b68, 0x82ba9b78, 0x82ba9d04, 0x82ba9d28, 0x82ba9d4c."
+    }
+   ]
   },
   {
    "name": "1?$ObjPtrList",
@@ -98379,6 +98394,38 @@
      "spelling": "?AtLastPhrase@VocalPlayer@@QBA_NXZ",
      "lane": "W16-KD 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 36 B retail / 36 B ours. Retail call site(s) reaching the survivor where we call this spelling: 0x826f72f4, 0x826f73a8, 0x826f7480."
+    }
+   ]
+  },
+  {
+   "name": "_M_create_nodes",
+   "address": "0x82ba0a00",
+   "survivor": "?_M_create_nodes@?$_Deque_base@VLyricShift@VocalTrack@@V?$StlNodeAlloc@VLyricShift@VocalTrack@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAPAVLyricShift@VocalTrack@@0@Z",
+   "folded": [
+    "?_M_create_nodes@?$_Deque_base@VRangeShift@VocalTrack@@V?$StlNodeAlloc@VRangeShift@VocalTrack@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAPAVRangeShift@VocalTrack@@0@Z"
+   ],
+   "evidence": "W16-KD 2026-10-01: group created for an ICF fold proven on retail bytes; the survivor is the map name at 0x82ba0a00.",
+   "admitted": [
+    {
+     "spelling": "?_M_create_nodes@?$_Deque_base@VRangeShift@VocalTrack@@V?$StlNodeAlloc@VRangeShift@VocalTrack@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAPAVRangeShift@VocalTrack@@0@Z",
+     "lane": "W16-KD 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- template-twin, ); 88 B retail / 88 B ours. Retail call site(s) reaching the survivor where we call this spelling: 0x82ba1014."
+    }
+   ]
+  },
+  {
+   "name": "_M_initialize_map",
+   "address": "0x82ba0e60",
+   "survivor": "?_M_initialize_map@?$_Deque_base@U?$pair@W4KeyframeCmd@LightPreset@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@W4KeyframeCmd@LightPreset@@M@stlpmtx_std@@@2@@stlpmtx_std@@IAAXI@Z",
+   "folded": [
+    "?_M_initialize_map@?$_Deque_base@U?$pair@PAVRndMesh@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMesh@@M@stlpmtx_std@@@2@@stlpmtx_std@@IAAXI@Z"
+   ],
+   "evidence": "W16-KD 2026-10-01: group created for an ICF fold proven on retail bytes; the survivor is the map name at 0x82ba0e60.",
+   "admitted": [
+    {
+     "spelling": "?_M_initialize_map@?$_Deque_base@U?$pair@PAVRndMesh@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMesh@@M@stlpmtx_std@@@2@@stlpmtx_std@@IAAXI@Z",
+     "lane": "W16-KD 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- template-twin, ); 220 B retail / 220 B ours. Retail call site(s) reaching the survivor where we call this spelling: 0x82ba23bc."
     }
    ]
   }
