@@ -349,37 +349,39 @@ MCResult MemcardMgr::ThreadCall_SaveGame() {
     ULONGLONG freeSpace = 0;
     MCResult res = container->Mount((CreateType)0);
     switch (res) {
-    case kMCNoError:
-        if (mSaveCreateType == 0)
-            goto unmount_return;
-        {
-            u64 pathFree = 0;
-            if (container->GetPathFreeSpace("", &pathFree) != kMCNoError || (freeSpace = pathFree, mSaveCreateType != 0)) {
-                int existingSize = -1;
-                container->GetSize(kSaveFilename, &existingSize);
-                if (existingSize > 0) {
-                    if ((ULONGLONG)existingSize < sizeNeeded) {
-                        sizeNeeded = sizeNeeded - (ULONGLONG)existingSize;
-                    } else {
-                        sizeNeeded = 0;
-                    }
-                }
-                break;
+    case kMCNoError: {
+        // An existing save is only replaced when asked to (mSaveCreateType).
+        if (mSaveCreateType == 0) {
+            container->Unmount();
+            return kMCFileExists;
+        }
+        u64 pathFree = 0;
+        if (container->GetPathFreeSpace("", &pathFree) == kMCNoError) {
+            if (mSaveCreateType == 0) {
+                container->Unmount();
+                return kMCFileExists;
+            }
+            freeSpace = pathFree;
+        }
+        int existingSize = -1;
+        container->GetSize(kSaveFilename, &existingSize);
+        if (existingSize > 0) {
+            if ((ULONGLONG)existingSize < sizeNeeded) {
+                sizeNeeded = sizeNeeded - (ULONGLONG)existingSize;
+            } else {
+                sizeNeeded = 0;
             }
         }
-    unmount_return:
-        container->Unmount();
-        res = kMCFileExists;
         break;
+    }
     case kMCCorrupt:
-        if (mSaveCreateType == 0) {
-            return res;
+        // A corrupt save is only deleted when we were asked to replace it.
+        if (mSaveCreateType != 0) {
+            res = TheMC.DeleteContainer(container->Cid());
+            if (res == kMCNoError)
+                break;
         }
-        res = TheMC.DeleteContainer(container->Cid());
-        if (res != kMCNoError) {
-            return res;
-        }
-        break;
+        return res;
     case kMCFileNotFound:
         break;
     default:
