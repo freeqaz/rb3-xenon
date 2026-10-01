@@ -54,8 +54,9 @@ void FreestylePanel::Poll() {
     UIPanel::Poll();
     if (TheUI->FocusPanel() != this || !mUser || !mController || mFreestylePaused)
         return;
+    GameplayOptions *options = mUser->GetGameplayOptions();
     bool lefty = mController->mLefty;
-    if (lefty != mUser->GetGameplayOptions()->GetLefty()) {
+    if (lefty != options->GetLefty()) {
         mController->mLefty = mUser->GetGameplayOptions()->GetLefty();
     }
     mController->SetSecondPedalHiHat(TheProfileMgr.GetSecondPedalHiHat());
