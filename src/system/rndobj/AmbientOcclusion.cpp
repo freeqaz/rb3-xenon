@@ -772,19 +772,20 @@ bool kdTree<Triangle>::Intersect(
                         children[0] = &nodes[(node->mFlags & 0x7FFF) * 2 + 1];
                         children[1] = &nodes[(node->mFlags & 0x7FFF) * 2 + 2];
 
-                        bool isAbove = origin[axis] > splitVal;
+                        // near child first; the far one is the other index
+                        int isAbove = origin[axis] > splitVal;
 
                         if (tSplit < 0.0f || tSplit > tFar) {
                             node = children[isAbove];
-                        } else if (tSplit >= tNear) {
+                        } else if (tSplit < tNear) {
+                            node = children[isAbove ^ 1];
+                        } else {
                             nodeStack[stackDepth].tFar = tFar;
                             nodeStack[stackDepth].tNear = tSplit;
                             tFar = tSplit;
-                            stackDepth++;
                             node = children[isAbove];
-                            nodeStack[stackDepth - 1].node = children[!isAbove];
-                        } else {
-                            node = children[!isAbove];
+                            nodeStack[stackDepth].node = children[isAbove ^ 1];
+                            stackDepth++;
                         }
                     } else {
                         kdTriList *triList = node->GetTriList();
