@@ -97,11 +97,10 @@ public:
     // Vtable slot +4: RefOwner() — ObjDirPtr has no owner; returns null
     // (`RefOwner() { return 0; }`).
     virtual Hmx::Object *RefOwner() const { return nullptr; }
-    // Vtable slot +8: Replace(from, to). from==nullptr => unconditional.
+    // Vtable slot +8: Replace(from, to): retarget only when pointing at `from`.
     virtual void Replace(ObjRef *from, Hmx::Object *o) {
-        Hmx::Object *fromObj = reinterpret_cast<Hmx::Object *>(from);
-        if (fromObj == nullptr || (Hmx::Object *)mObject == fromObj) {
-            *this = o ? dynamic_cast<C *>(o) : nullptr;
+        if ((Hmx::Object *)mObject == reinterpret_cast<Hmx::Object *>(from)) {
+            *this = dynamic_cast<C *>(o);
         }
     }
     // Vtable slot +c: IsDirPtr() => true.
