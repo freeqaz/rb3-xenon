@@ -83436,11 +83436,17 @@
    "name": "Init",
    "address": "0x8264d058",
    "survivor": "?Init@CharMeshHide@@SAXXZ",
-   "folded": [
-    "?Init@AppMiniLeaderboardDisplay@@SAXXZ"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "?Init@AppMiniLeaderboardDisplay@@SAXXZ",
+     "lane": "W16-KC 2026-10-01",
+     "class": "NOT_A_FOLD_SURVIVOR_WAS_A_MAP_MISNAME",
+     "disposition": "withdrawn; address now mapped to this spelling directly",
+     "evidence": "The byte proof recorded under `restored` was sound but proved identity, not a fold: retail 0x8264D058 calls StaticClassName@AppMiniLeaderboardDisplay (0x8264BCE8) and NewObject@AppMiniLeaderboardDisplay (0x8264C828), and sits between two AppMiniLeaderboardDisplay .text blocks (0x8264BD68-0x8264D058, 0x8264D08C-0x8264D15C). It is AppMiniLeaderboardDisplay::Init itself. The survivor label ?Init@CharMeshHide@@SAXXZ came from a map misname: retail CharMeshHide::Init is 0x823A1D38, which calls StaticClassName@CharMeshHide (0x823A0680) and is called from CharInit's registration sequence. W16-KC maps 0x8264D058 -> ?Init@AppMiniLeaderboardDisplay@@SAXXZ and 0x823A1D38 -> ?Init@CharMeshHide@@SAXXZ, re-pins 0x8264D058 to AppMiniLeaderboardDisplay, and withdraws this membership; nothing pruned."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
