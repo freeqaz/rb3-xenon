@@ -101427,16 +101427,26 @@
   {
    "name": "push_back",
    "address": "0x822ccd08",
-   "survivor": "?push_back@?$ObjVector@V?$ObjPtr@VRndPropAnim@@@@@@QAAXABV?$ObjPtr@VRndPropAnim@@@@@Z",
-   "folded": [
-    "?push_back@?$ObjVector@V?$ObjPtr@VRndAnimatable@@@@@@QAAXABV?$ObjPtr@VRndAnimatable@@@@@Z"
-   ],
+   "survivor": "?push_back@?$ObjVector@V?$ObjPtr@VRndAnimatable@@@@@@QAAXABV?$ObjPtr@VRndAnimatable@@@@@Z",
+   "folded": [],
    "evidence": "Fold group opened by W16-MB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
     {
      "spelling": "?push_back@?$ObjVector@V?$ObjPtr@VRndAnimatable@@@@@@QAAXABV?$ObjPtr@VRndAnimatable@@@@@Z",
      "lane": "W16-MB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED); 96 B retail / 96 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. ?SetupStars@BandStarDisplay@@QAAXXZ."
+    }
+   ],
+   "survivor_renamed": {
+    "from": "?push_back@?$ObjVector@V?$ObjPtr@VRndPropAnim@@@@@@QAAXABV?$ObjPtr@VRndPropAnim@@@@@Z",
+    "lane": "W16-MB 2026-10-01"
+   },
+   "withdrawn": [
+    {
+     "spelling": "?push_back@?$ObjVector@V?$ObjPtr@VRndAnimatable@@@@@@QAAXABV?$ObjPtr@VRndAnimatable@@@@@Z",
+     "lane": "W16-MB 2026-10-01",
+     "class": "MAP_NAME_WRONG",
+     "why": "Retail 0x822CCD08 is ObjVector<ObjPtr<RndAnimatable>>::push_back itself: it calls 0x822CCB40, whose body installs the .?AV?$ObjPtr@VRndAnimatable@@VObjectDir@@@@ vtable (ObjVector<ObjPtr<RndAnimatable>>::resize), and its only caller is BandStarDisplay::SetupStars (0x822CCEF4, the mStarSweepAnims push). The map row named it for RndPropAnim; it is renamed and re-homed to BandStarDisplay, so this membership (the real name folded into the wrong one) is withdrawn and the survivor field follows the map."
     }
    ]
   },

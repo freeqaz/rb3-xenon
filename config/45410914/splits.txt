@@ -1076,6 +1076,8 @@ BandStarDisplay.cpp:
 	.pdata      start:0x821F7390 end:0x821F7398
 	.pdata      start:0x821F7398 end:0x821F73A0
 	.pdata      start:0x821F73A0 end:0x821F73A8
+	.pdata      start:0x821F73A8 end:0x821F73D8
+	.pdata      start:0x821F73D8 end:0x821F73E8
 	.pdata      start:0x821F73E8 end:0x821F73F0
 	.pdata      start:0x821F73F0 end:0x821F7478
 	.pdata      start:0x821F7480 end:0x821F7490
@@ -1106,8 +1108,11 @@ BandStarDisplay.cpp:
 	.text       start:0x822CC938 end:0x822CC9B8
 	.text       start:0x822CC9B8 end:0x822CCA38
 	.text       start:0x822CCA38 end:0x822CCB38
+	.text       start:0x822CCB38 end:0x822CCC98
 	.text       start:0x822CCC98 end:0x822CCCA4
+	.text       start:0x822CCCA4 end:0x822CCD68
 	.text       start:0x822CCD68 end:0x822CCDC8
+	.text       start:0x822CCDC8 end:0x822CCDD0
 	.text       start:0x822CCDD0 end:0x822CD8C0
 	.text       start:0x822CD90C end:0x822CD9B4
 	.text       start:0x822CDB68 end:0x822CDC18
@@ -1137,8 +1142,6 @@ BandRetargetVignette.cpp:
 StreakMeter.cpp:
 	.pdata      start:0x821F71D8 end:0x821F71E0
 	.pdata      start:0x821F7208 end:0x821F7210
-	.pdata      start:0x821F73A8 end:0x821F73D8
-	.pdata      start:0x821F73D8 end:0x821F73E8
 	.pdata      start:0x821F7D10 end:0x821F7D28
 	.pdata      start:0x821F7D28 end:0x821F7D30
 	.pdata      start:0x821F7DD0 end:0x821F7DF0
@@ -1164,9 +1167,6 @@ StreakMeter.cpp:
 	.text       start:0x822CC2B4 end:0x822CC2B8
 	.text       start:0x822CC2C4 end:0x822CC2C8
 	.text       start:0x822CC2D4 end:0x822CC2D8
-	.text       start:0x822CCB38 end:0x822CCC98
-	.text       start:0x822CCCA4 end:0x822CCD68
-	.text       start:0x822CCDC8 end:0x822CCDD0
 	.text       start:0x822D6270 end:0x822D63FC
 	.text       start:0x822D6400 end:0x822D6568
 	.text       start:0x822D6F88 end:0x822D70D8
