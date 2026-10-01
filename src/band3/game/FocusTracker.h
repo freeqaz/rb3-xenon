@@ -78,12 +78,7 @@ public:
     virtual void HandleFocusSwitch(float);
     virtual void BroadcastFocusSuccess() const;
     virtual void BroadcastSuccess(int) const;
-    virtual Symbol GetContributionToken(int fmt) const {
-        if (fmt == 1)
-            return tour_goal_band_streak_player_contribution_format_1;
-        else
-            return tour_goal_band_streak_player_contribution_format;
-    }
+    virtual Symbol GetContributionToken(int fmt) const;
 
     float unkcc;
     int unkd0;

@@ -514,7 +514,23 @@ DataArrayPtr StreakFocusTracker::GetBroadcastDescription() const {
     return DataArrayPtr(streak_focus_tracker_explanation);
 }
 
+// retail: both format Symbols are function-local statics sharing one guard word,
+// constructed on entry before the choice.
+Symbol StreakFocusTracker::GetContributionToken(int fmt) const {
+    static Symbol tour_goal_band_streak_player_contribution_format(
+        "tour_goal_band_streak_player_contribution_format"
+    );
+    static Symbol tour_goal_band_streak_player_contribution_format_1(
+        "tour_goal_band_streak_player_contribution_format_1"
+    );
+    return fmt == 1 ? tour_goal_band_streak_player_contribution_format_1
+                    : tour_goal_band_streak_player_contribution_format;
+}
+
 void StreakFocusTracker::BroadcastFocusSuccess() const {
+    // retail: function-local statics sharing one guard word, as above
+    static Symbol streak_focus_tracker_progress("streak_focus_tracker_progress");
+    static Symbol streak_focus_tracker_progress_1("streak_focus_tracker_progress_1");
     Symbol toUse =
         unk88 == 1 ? streak_focus_tracker_progress_1 : streak_focus_tracker_progress;
     mBroadcastDisplay.ShowBriefBandMessage(DataArrayPtr(toUse, unk88));
@@ -591,6 +607,7 @@ void AccuracyFocusTracker::HandleFocusSwitch(float f) {
 }
 
 DataArrayPtr AccuracyFocusTracker::GetBroadcastDescription() const {
+    static Symbol accuracy_focus_tracker_explanation("accuracy_focus_tracker_explanation"); // retail: local static
     return DataArrayPtr(accuracy_focus_tracker_explanation);
 }
 
