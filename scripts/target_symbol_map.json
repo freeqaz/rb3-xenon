@@ -7169,7 +7169,7 @@
  "0x82356230": "?GetArpeggioShape@ArpeggioShapePool@@QAAPAVArpeggioShape@@XZ",
  "0x82356288": "??$__destroy_aux@VSmasherPlateInfo@GemTrackResourceManager@@@stlpmtx_std@@YAXPAVSmasherPlateInfo@GemTrackResourceManager@@ABU__false_type@0@@Z",
  "0x82356290": "?GetFreeSmasherPlate@GemTrackResourceManager@@QAAPAVRndDir@@W4TrackInstrument@@@Z",
- "0x82356300": "??0?$StlNodeAlloc@VSmasherPlateInfo@GemTrackResourceManager@@@stlpmtx_std@@QAA@ABV01@@Z",
+ "0x82356300": "?ReleaseSmasherPlate@GemTrackResourceManager@@QAAXPAVRndDir@@@Z",
  "0x82356360": "??$_Copy_Construct@VSmasherPlateInfo@GemTrackResourceManager@@@stlpmtx_std@@YAXPAVSmasherPlateInfo@GemTrackResourceManager@@ABV12@@Z",
  "0x823563d0": "??$__destroy_range_aux@V?$reverse_iterator@PAVSmasherPlateInfo@GemTrackResourceManager@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVSmasherPlateInfo@GemTrackResourceManager@@@0@0ABU__false_type@0@@Z",
  "0x82356430": "?_M_clear@?$vector@VSmasherPlateInfo@GemTrackResourceManager@@V?$StlNodeAlloc@VSmasherPlateInfo@GemTrackResourceManager@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
