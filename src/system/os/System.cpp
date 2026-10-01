@@ -63,11 +63,13 @@ int gUsingCD;
 #else
 // RB3 retail references these only from the System TU and co-addresses them
 // off one base (PreInitSystem 0x82510BB8 reaches gSystemConfig as -8 off
-// &gUsingCD), which MSVC does only for internal-linkage data.
-static DataArray *gSystemConfig;
-static DataArray *gSystemTitles;
-
+// &gUsingCD), which MSVC does only for internal-linkage data. The compiler
+// lays these statics out in reverse declaration order, so gUsingCD is
+// declared first to sit above gSystemConfig (0x82CC9990 config, 0x82CC9994
+// titles, 0x82CC9998 gUsingCD).
 static int gUsingCD;
+static DataArray *gSystemTitles;
+static DataArray *gSystemConfig;
 #endif
 int gSystemMs;
 float gSystemFrac;
