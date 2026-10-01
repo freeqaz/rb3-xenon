@@ -1,6 +1,6 @@
 # W16-KA — bandobj second pass: mis-pinned TU, missing TU5 code, shared-template and allocator shapes (2026-10-01)
 
-**Branch** `w16-ka`, rebased onto main `1b8903f35` (after W16-KE).
+**Branch** `w16-ka`, rebased onto main `8e01fb73b` (after W16-KC; first rebased onto `1b8903f35`, see §10).
 **Ruler** `name_check` (graded, read from `report.json` `provenance.diff_config`).
 **Scope** every unit whose base object is under `src/system/bandobj/` (50 units with
 sub-100 rows), after W16-JB's pass over bandobj + char. Rows were ranked by
@@ -8,6 +8,31 @@ sub-100 rows), after W16-JB's pass over bandobj + char. Rows were ranked by
 90–99.99 because `matched_code` credits a row only at fuzzy 100.
 
 ## 1. Whole-branch A/B
+
+### 1.1 Against main `8e01fb73b` (W16-KC landed) -- the current result
+
+W16-KC had already landed the `ObjPtrList::insert` change (§5.1), so this branch no
+longer carries it. **Prediction, written before the run:** the earlier result minus
+§5.1's measured effect, i.e. +79 − 14 = **+65 fns** and +19,760 − 5,880 = **+13,880 B**.
+
+`python3 tools/ab_measure.py --worktree ~/tmp/wt-w16-ka-ab2 --patch <git diff 8e01fb73b..w16-ka>`,
+one run, fresh worktree, both legs at a split fixed point, leg B 1,082 recompiles.
+Archived at `~/tmp/w16ka/ab_run/20261001-133647-w16-ka-branch-on-kc-2005325/`.
+
+```
+leg A: matched=49017 masked=24233 honest=24784 code%=49.896263
+leg B: matched=49082 masked=24247 honest=24835 code%=50.031715
+Δmatched=+65  Δmasked_equal=+14  Δhonest=+51  Δcode%=+0.135452pp  Δcode_bytes=+13880
+Δfuzzy=+0.040012pp   (legA 58.400410 -> legB 58.440422)
+units at 100% [mpn]: 350 -> 351 (0 fell off); [all-rows-fuzzy]: 293 -> 294 (0 fell off)
+[control none] +12,872 B -- NOT_APPLICABLE (source in patch)
+```
+
+**Measured: +65 / +13,880 B, exactly as predicted.** Row diff of the archived legs:
+**74 up, 0 down, 0 off 100**, 23 GONE/NEW pairs. The 7 GONE rows at 100 are the same
+Watcher rows re-homed to BandConfiguration (§3) and reappear there at 100.
+
+### 1.2 Against main `1b8903f35` (before W16-KC) -- superseded, kept for the record
 
 `python3 tools/ab_measure.py --worktree ~/tmp/wt-w16-ka-ab --patch <git diff main..w16-ka>`,
 **one run**, fresh worktree at main `1b8903f35`. Patch: 42 files, kinds
@@ -124,7 +149,14 @@ as `TrackPanelDir::UpdateTimeInfo` (descriptive name; retail carries none), 0 �
 
 ## 5. Shared engine fixes with bandobj witnesses
 
-### 5.1 `ObjPtrList::insert` is always inlined (+14 fns / +5,880 B tree-wide)
+### 5.1 `ObjPtrList::insert` is always inlined (+14 fns / +5,880 B tree-wide, now carried by W16-KC)
+
+**Superseded on rebase:** W16-KC made the same change independently (and also declared
+`Set` inline), so `obj/ObjPtr_p.h` resolved to KC's text and this lane's commit is kept
+empty with the adjudication. Both lanes agree on the bytes: retail's insert arm does
+`bl PoolAlloc(0xc)`, one `stw` of the object word to node+0, then `Link`, with no store
+to next/prev (+4/+8), so the node is default-initialised.
+
 
 Retail has no out-of-line `ObjPtrList<T>::insert` anywhere. Every site, e.g.
 `PropSync<ObjPtrList<BandCamShot>>`'s `kPropInsert` arm, inlines it as
@@ -204,23 +236,29 @@ Inserted textually, so no existing entry was rewritten.
 
 ## 9. Gates
 
-Run on the rebased tip `827a45f3f` before the docs commit:
+Run on the tip rebased onto `8e01fb73b`, before this docs commit:
 
-- `python3 tools/map_name_injectivity.py`: **OK**, 32,782 applied rows, 32,781 distinct
+- `python3 tools/map_name_injectivity.py`: **OK**, 32,801 applied rows, 32,800 distinct
   names, injective (+1 enumerated internal-linkage exception).
 - `python3 tools/icf_alias_finder.py --validate`: **PASS**, 1,608 map-consistent,
   269 tolerated, **0 contradicted**, 1,878 total.
 - `tools/native_build_gate.sh`:
   `NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0`.
-  Only this docs-only commit came after it.
 - **New alias folds:** 32 `??3X` spellings into the `??3BinStream@@SAXPAX@Z` group
   (§5.2), each **CHASED T1 PROVEN** by `tools/icf_pair_adjudicate.py --chase` with no
-  CYCLE leaf (logs `~/tmp/w16ka/deladj.log`, `~/tmp/w16ka/deladj2.log`).
+  CYCLE leaf (logs `~/tmp/w16ka/deladj.log`, `~/tmp/w16ka/deladj2.log`). None overlaps
+  the seven `??3Char*` spellings W16-KC added to the same group.
 - **`symbols.txt` is unchanged** on the branch.
 
 ## 10. Rebase
 
-The branch was rebased from `e762a9298` onto main `1b8903f35` (W16-KE: 34 dtk
-mis-carve fixes in `symbols.txt`) without conflicts, then rebuilt with a forced re-split
-to a `symbols.txt` fixed point. The A/B above was run against `1b8903f35`.
-`symbols.txt` is unchanged on the branch.
+1. `e762a9298` → `1b8903f35` (W16-KE, 34 dtk mis-carve fixes): no conflicts.
+2. `1b8903f35` → `8e01fb73b` (W16-KC), two conflicts:
+   - `src/system/obj/ObjPtr_p.h`: resolved to KC's text (identical `insert` change plus
+     KC's `Set` inline); the lane's commit kept empty with the byte adjudication (§5.1).
+   - `scripts/symbol_aliases.json`: both lanes appended to the `??3BinStream` group
+     (KC 7 `??3Char*`, this lane 32 bandobj spellings, no overlap). Resolved by taking
+     KC's file and re-inserting this lane's 32 members and `added` records textually.
+
+After each rebase the worktree was rebuilt with a forced re-split to a `symbols.txt`
+fixed point. `symbols.txt` is unchanged on the branch.
