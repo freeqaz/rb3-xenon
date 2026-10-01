@@ -337,6 +337,10 @@ RndMesh *ChordShapeGenerator::BuildChordMesh() {
     return mesh;
 }
 
+// Retail reloads the 0.1 band tolerance from .rdata at every compare instead
+// of holding it in a saved FPR; a named constant gives that shape.
+static const float kBandTolerance = 0.1f;
+
 void ChordShapeGenerator::CrossSec::AddEdge(const Edge &edge) {
     mEdges.push_back(edge);
     mVerts.insert(edge.mV0);
@@ -356,10 +360,10 @@ void ChordShapeGenerator::GetCrossSection(float xOffset, CrossSec &cs) {
         int outsideVert = -1;
         for (int j = 0; j < 3; j++) {
             float x = verts[f[j]].pos.x;
-            if (x < xOffset - 0.1f) {
+            if (x < xOffset - kBandTolerance) {
                 outOfBand = true;
                 break;
-            } else if (x > xOffset + 0.1f) {
+            } else if (x > xOffset + kBandTolerance) {
                 if (outsideVert != -1) {
                     outOfBand = true;
                     break;
@@ -413,9 +417,9 @@ void ChordShapeGenerator::BuildEndCap(
     for (int i = 0; i < srcVerts.size(); i++) {
         float sx = srcVerts[i].pos.x;
         if (contour) {
-            if (sx < mContourXVal + 0.1f)
+            if (sx < mContourXVal + kBandTolerance)
                 continue;
-        } else if (sx > mBaseXVal - 0.1f)
+        } else if (sx > mBaseXVal - kBandTolerance)
             continue;
         capMap[i] = vertIt++;
     }
@@ -445,13 +449,13 @@ void ChordShapeGenerator::BuildEndCap(
             float minX = srcVerts[f.v1].pos.x;
             MinEq(minX, srcVerts[f.v2].pos.x);
             MinEq(minX, srcVerts[f.v3].pos.x);
-            if (minX < mContourXVal - 0.1f)
+            if (minX < mContourXVal - kBandTolerance)
                 continue;
         } else {
             float maxX = srcVerts[f.v1].pos.x;
             MaxEq(maxX, srcVerts[f.v2].pos.x);
             MaxEq(maxX, srcVerts[f.v3].pos.x);
-            if (maxX > mBaseXVal + 0.1f)
+            if (maxX > mBaseXVal + kBandTolerance)
                 continue;
         }
         if (faceIt >= meshFaces.size()) {
@@ -511,7 +515,7 @@ void ChordShapeGenerator::BuildContourCap(
     std::map<unsigned short, unsigned short> capMap;
     for (int i = 0; i < srcVerts.size(); i++) {
         float sx = srcVerts[i].pos.x;
-        if (sx > mBaseXVal + 0.1f && sx < mContourXVal - 0.1f) {
+        if (sx > mBaseXVal + kBandTolerance && sx < mContourXVal - kBandTolerance) {
             capMap[i] = vertIt++;
         }
     }
@@ -573,11 +577,11 @@ void ChordShapeGenerator::BuildContourCap(
         float minX = srcVerts[f.v1].pos.x;
         MinEq(minX, srcVerts[f.v2].pos.x);
         MinEq(minX, srcVerts[f.v3].pos.x);
-        if (minX < mBaseXVal - 0.1f) continue;
+        if (minX < mBaseXVal - kBandTolerance) continue;
         float maxX = srcVerts[f.v1].pos.x;
         MaxEq(maxX, srcVerts[f.v2].pos.x);
         MaxEq(maxX, srcVerts[f.v3].pos.x);
-        if (maxX > mContourXVal + 0.1f) continue;
+        if (maxX > mContourXVal + kBandTolerance) continue;
         if (faceIt >= meshFaces.size()) {
             unsigned int newsize = meshFaces.size() * 2;
             MILO_LOG("RG: too few faces for chord shape - increasing to %d", (int)newsize);
