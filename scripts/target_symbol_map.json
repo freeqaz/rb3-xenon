@@ -12625,7 +12625,7 @@
  "0x824f65d8": "??_GUpdatable@@UAAPAXI@Z",
  "0x824f6628": "?Type@ProfileChangedMsg@@SA?AVSymbol@@XZ",
  "0x824f66a8": "?Type@RockCentralOpCompleteMsg@@SA?AVSymbol@@XZ",
- "0x824f6878": "??1DeleteUserCompleteMsg@@UAA@XZ",
+ "0x824f6878": null,
  "0x824f6fa8": "?Export@MsgSource@@$4PPPPPPPM@LA@AAXPAVDataArray@@_N@Z",
  "0x824f6fb8": "?SyncProperty@MsgSource@@$4PPPPPPPM@LA@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x824f6fc8": "?Replace@MsgSource@@$4PPPPPPPM@LA@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
