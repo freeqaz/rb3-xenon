@@ -277,6 +277,7 @@ public:
     SongStatus *AccessSongStatus(int songID) const { return GetSongStatus(songID); }
     SongStatus *CreateOrAccessSongStatus(int songID) const;
     void ClearLeastImportantSongStatusEntry();
+    void RemoveSongStatus(int);
 
     void SetLocalUser(LocalBandUser *u) { mLocalUser = u; }
 

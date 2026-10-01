@@ -340,6 +340,8 @@ void SongStatusMgr::Clear() {
     }
 }
 
+// Retail: an entry whose song is gone is evicted at once; otherwise the least
+// recently played one is. Eviction is the out-of-line RemoveSongStatus.
 void SongStatusMgr::ClearLeastImportantSongStatusEntry() {
     int lowestlast = 0x7FFFFFFF;
     int evict = 0;
@@ -348,17 +350,23 @@ void SongStatusMgr::ClearLeastImportantSongStatusEntry() {
         int songID = it->first;
         SongStatus *status = it->second;
         if (!TheSongMgr.HasSong(songID)) {
-            evict = songID;
-            break;
+            RemoveSongStatus(songID);
+            return;
         }
         if (status->GetLastPlayed() < lowestlast) {
-            lowestlast = status->GetLastPlayed();
             evict = songID;
+            lowestlast = status->GetLastPlayed();
         }
     }
-    std::hash_map<int, SongStatus *>::iterator found = mSongStatusCache.find(evict);
+    RemoveSongStatus(evict);
+}
+
+// Retail 0x825D30D8 (108 B), called only from ClearLeastImportantSongStatusEntry
+// and not inlined into it. No surviving source has it; the name is ours.
+void SongStatusMgr::RemoveSongStatus(int songID) {
+    std::hash_map<int, SongStatus *>::iterator found = mSongStatusCache.find(songID);
     delete found->second;
-    mSongStatusCache.erase(evict);
+    mSongStatusCache.erase(songID);
 }
 
 SongStatus *SongStatusMgr::CreateOrAccessSongStatus(int id) const {
