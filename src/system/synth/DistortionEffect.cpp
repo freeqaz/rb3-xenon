@@ -25,9 +25,9 @@ void DistortionEffect::Process(float *f, int numSamples, int numChans) {
 
     if (numSamples > 0) {
         float gain = amount + 1.0f;
-        float *right = f + 1;
         float *left = f;
         int count = numSamples;
+        float *right = f + 1;
 
         do {
             float sampleL = *left;
@@ -39,7 +39,7 @@ void DistortionEffect::Process(float *f, int numSamples, int numChans) {
             }
 
             left += numChans;
-            right += numChans;
+            right += 2;
             count -= 1;
         } while (count != 0);
     }
