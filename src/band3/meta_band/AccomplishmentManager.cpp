@@ -479,6 +479,10 @@ void AccomplishmentManager::ConfigureAwardData(DataArray *arr) {
     }
 }
 
+// Retail lays every rejection out as one shared `delete` block placed inline
+// after the duplicate-name test, and after any award bookkeeping it calls
+// TheAccomplishmentMgr->GetMetaScoreValue(GetMetaScoreValue()) and discards
+// the result -- an assert whose condition survives only as the call.
 void AccomplishmentManager::ConfigureAccomplishmentData(DataArray *arr) {
     for (int i = 1; i < arr->Size(); i++) {
         Accomplishment *pAccomplishment = FactoryCreateAccomplishment(arr->Array(i), i);
@@ -487,43 +491,41 @@ void AccomplishmentManager::ConfigureAccomplishmentData(DataArray *arr) {
         if (HasAccomplishment(name)) {
             MILO_WARN("%s accomplishment already exists, skipping", name.Str());
             delete pAccomplishment;
-        } else {
-            Symbol cat = pAccomplishment->GetCategory();
-            if (!HasAccomplishmentCategory(cat)) {
+            continue;
+        }
+        Symbol cat = pAccomplishment->GetCategory();
+        if (!HasAccomplishmentCategory(cat)) {
+            MILO_WARN(
+                "%s accomplishment is using unknown category: %s", name.Str(), cat.Str()
+            );
+            delete pAccomplishment;
+            continue;
+        }
+        if (pAccomplishment->GetDynamicPrereqsFilter() != gNullStr
+            && pAccomplishment->GetDynamicPrereqsNumSongs() < 0) {
+            MILO_WARN(
+                "%s accomplishment is using using dynamic prereq filter but has no song count!",
+                name.Str()
+            );
+            delete pAccomplishment;
+            continue;
+        }
+        if (pAccomplishment->HasAward()) {
+            Symbol award = pAccomplishment->GetAward();
+            if (!HasAward(award)) {
                 MILO_WARN(
-                    "%s accomplishment is using unknown category: %s",
+                    "%s accomplishment is using unknown award: %s!",
                     name.Str(),
-                    cat.Str()
+                    award.Str()
                 );
                 delete pAccomplishment;
-            } else {
-                if (pAccomplishment->GetDynamicPrereqsFilter() != gNullStr
-                    && pAccomplishment->GetDynamicPrereqsNumSongs() < 0) {
-                    MILO_WARN(
-                        "%s accomplishment is using using dynamic prereq filter but has no song count!",
-                        name.Str()
-                    );
-                    delete pAccomplishment;
-                } else {
-                    if (pAccomplishment->HasAward()) {
-                        Symbol award = pAccomplishment->GetAward();
-                        if (!HasAward(award)) {
-                            MILO_WARN(
-                                "%s accomplishment is using unknown award: %s!",
-                                name.Str(),
-                                award.Str()
-                            );
-                            delete pAccomplishment;
-                            continue;
-                        }
-                        AddAwardSource(
-                            pAccomplishment->GetAward(), pAccomplishment->GetName()
-                        );
-                    }
-                    mAccomplishments[name] = pAccomplishment;
-                }
+                continue;
             }
+            AddAwardSource(pAccomplishment->GetAward(), pAccomplishment->GetName());
         }
+        Symbol metaScore = pAccomplishment->GetMetaScoreValue();
+        MILO_ASSERT(TheAccomplishmentMgr->GetMetaScoreValue(metaScore) >= 0, 0);
+        mAccomplishments[name] = pAccomplishment;
     }
 }
 
