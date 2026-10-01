@@ -692,8 +692,7 @@ bool RndPostProc::DoChromaticAberration() const {
 bool RndPostProc::DoVignette() const { return mVignetteIntensity != 0; }
 
 bool RndPostProc::DoMotionBlur() const {
-    return mMotionBlurBlend > 0 && mMotionBlurWeight.Pack() > 0
-        && !TheHiResScreen.IsActive();
+    return mMotionBlurBlend > 0 && mMotionBlurWeight.Pack() > 0;
 }
 
 bool RndPostProc::DoGradientMap() const {
