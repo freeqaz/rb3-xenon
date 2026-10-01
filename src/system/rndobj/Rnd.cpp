@@ -92,21 +92,22 @@ bool gNotifyKeepGoing;
 bool gFailKeepGoing;
 bool gFailRestartConsole;
 
-struct {
-    HANDLE mThread;
-    HANDLE mTextureEvent;
-} gRndHandles;
-
 #define gRndThread gRndHandles.mThread
 #define gRndTextureEvent gRndHandles.mTextureEvent
 
 #ifdef HX_NATIVE
 static void* sTexture = nullptr; // stub — DxTex doesn't exist on native
 #else
-DxTex *sTexture;
+static DxTex *sTexture;
 #endif
-bool sCompressDone;
-void *sCompressData;
+static bool sCompressDone;
+static void *sCompressData;
+// Retail addresses the compress statics and these two handles off one base
+// (0x82CC2410: texture +0, done +4, data +8, thread +0xC, event +0x10).
+static struct {
+    HANDLE mThread;
+    HANDLE mTextureEvent;
+} gRndHandles;
 
 extern int lbl_82F14008;
 extern DataArray *lbl_830A4100;
@@ -476,13 +477,12 @@ void WordWrap(const char *src, int lineWidth, char *dst, int dstSize) {
 }
 
 #ifndef HX_NATIVE
+// Retail (0x8240EC30) waits for the event, stops once no texture is queued,
+// and marks a job done after compressing it.
 DWORD CompressThread(void *) {
-    while (true) {
-        WaitForSingleObject(gRndTextureEvent, -1);
-        if (sTexture == nullptr)
-            break;
-        sCompressDone = true;
+    while (WaitForSingleObject(gRndTextureEvent, -1), sTexture != nullptr) {
         sTexture->DoCompress(sCompressData);
+        sCompressDone = true;
     }
     return 0;
 }
