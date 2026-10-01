@@ -30,9 +30,12 @@ void SetlistToStorePanel::Load() {
 // it is outside this unit's pinned span so it is unscored) and then seeds
 // mAllMetadata with a one-element `offers` array.
 void SetlistToStorePanel::LoadSongMetadata() {
+    StartMetadataLoaders();
     static Symbol offers("offers");
+    DataArrayPtr offersPtr(offers);
     mAllMetadata = new DataArray(1);
-    mAllMetadata->Node(0) = DataArrayPtr(DataNode(offers));
+    DataNode offersNode(offersPtr);
+    mAllMetadata->Node(0) = offersNode;
 }
 
 /* THERE IS NO SEPARATE SetlistMetadataLoadedMsg -- it is MetadataLoadedMsg.
