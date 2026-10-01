@@ -1122,24 +1122,6 @@ void RndText::SetText(const char *text) {
         mText = text;
     }
     if (!mText.empty()) {
-        if (mCapsMode == kForceLower || mCapsMode == kForceUpper) {
-            int i2 = 0;
-            const char *casestr = "[noforcecase]";
-            for (int i = 0; i < mText.length();) {
-                unsigned short us;
-                unsigned int ui = DecodeUTF8(us, &mText[i]);
-                if (us != (unsigned short)*casestr)
-                    break;
-                if (i2 == 0xC) {
-                    mCapsMode = kCapsModeNone;
-                    mText = mText.replace(0, 0xD, "");
-                    break;
-                }
-                i2++;
-                casestr++;
-                i += ui;
-            }
-        }
         if (mCapsMode == kForceUpper) {
             for (int i = 0; i < mText.length();) {
                 unsigned short us;
