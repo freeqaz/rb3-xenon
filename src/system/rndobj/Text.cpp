@@ -606,7 +606,10 @@ RndText::RndText()
       mAltStyle(nullptr, 1, 0, Hmx::Color(1, 1, 1, 1), 0), mUseAltStyle(false),
       mDeferUpdate(0), mNeedsUpdate(false), mMeshCallback(nullptr), mCurHeight(0),
       mCurWidth(0) {
+    mRotateLineVerts = false;
+#ifdef HX_NATIVE
     mMeshDirty = false;
+#endif
 }
 
 RndText::~RndText() {
@@ -1558,7 +1561,9 @@ int RndText::AddLineUTF8(
     bool *bp,
     int i6
 ) {
+#ifdef HX_NATIVE
     mManualLines = true;
+#endif
     float f98 = 0;
     int lineIdx;
     fp = fp ? fp : &f98;
