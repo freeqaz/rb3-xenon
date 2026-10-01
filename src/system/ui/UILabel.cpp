@@ -166,6 +166,7 @@ void UILabel::CopyMembers(const UIComponent *o, Hmx::Object::CopyType ty) {
     const UILabel *l = dynamic_cast<const UILabel *>(o);
     MILO_ASSERT(l, 0x6A);
     COPY_MEMBER_FROM(l, mTextToken)
+    COPY_MEMBER_FROM(l, mEditText) // retail copies the String at +0x168 here
     COPY_MEMBER_FROM(l, mIcon)
     COPY_MEMBER_FROM(l, mTextSize)
     COPY_MEMBER_FROM(l, mCapsMode)
