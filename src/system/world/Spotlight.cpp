@@ -6,6 +6,8 @@
 // both, and pins the vptr AFTER the stores). The owner-only lever hits exactly the
 // 1-arg ctor and leaves the 2-arg one alone.
 #define RB3_OBJPTR_INLINE_OWNER_CTOR
+// The ctor's inlined owner-only ObjPtrs store owner, object, then vtable.
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
 
 #include "world/Spotlight.h"
 #include "char/Character.h"
@@ -170,10 +172,10 @@ Vector2 Spotlight::BeamDef::NGRadii() const {
 #pragma region Spotlight
 
 Spotlight::Spotlight()
-    : mSpotMaterial(this), mFlare(Hmx::Object::New<RndFlare>()), mFlareEnabled(true),
+    : mSpotMaterial(this, nullptr), mFlare(Hmx::Object::New<RndFlare>()), mFlareEnabled(true),
       mFlareVisibilityTest(true), mFlareOffset(0), mSpotScale(30), mSpotHeight(0.25),
       mColor(1, 1, 1), mIntensity(1), mColorOwner(this, this), mLensSize(0),
-      mLensOffset(0), mLensMaterial(this), mBeam(this), mSlaves(this),
+      mLensOffset(0), mLensMaterial(this, nullptr), mBeam(this), mSlaves(this),
       mLightCanMesh(this), mLightCanOffset(0), mTarget(this), mTargetLoaded(true),
       mSpotTarget(this), mFloorSpotTargetZ(-1e33), mTargetShadow(false), mLightCanSort(false),
       mSnapToTarget(true), mDampingConstant(1), mAdditionalObjects(this),
