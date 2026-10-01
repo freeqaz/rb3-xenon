@@ -1381,10 +1381,10 @@ BEGIN_LOADS(LightPreset)
         String str2;
         bs >> str2;
         if (!str2.empty()) {
-            MILO_NOTIFY("%s: %s", Name(), str2);
+            MILO_WARN("%s: %s", Name(), str2);
         }
     } else if (sPresetRev < 0x15) {
-        ObjPtr<EventTrigger> trigPtr(this, 0);
+        ObjPtr<EventTrigger> trigPtr(this);
         bs >> trigPtr;
         if (trigPtr)
             mSelectTriggers.push_back(trigPtr);
@@ -1395,9 +1395,8 @@ BEGIN_LOADS(LightPreset)
         String strdummy;
         bs >> strdummy;
     }
-    if (sPresetRev != 0xE && sPresetRev < 0x16) {
-        int legacyFade;
-        bs >> legacyFade;
+    if (sPresetRev != 0xE) {
+        bs >> mLegacyFadeIn;
         int dummy;
         if (sPresetRev > 0 && sPresetRev < 0x11)
             bs >> dummy;
