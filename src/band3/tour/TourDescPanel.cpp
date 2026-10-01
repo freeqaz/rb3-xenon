@@ -130,7 +130,6 @@ public:
     OBJ_CLASSNAME(TourDescPanel);
     OBJ_SET_TYPE(TourDescPanel);
     virtual DataNode Handle(DataArray *, bool);
-    virtual ~TourDescPanel();
     virtual void Load();
     virtual void FinishLoad();
     virtual void Enter();
@@ -572,8 +571,6 @@ void TourDescPanel::CheatWinTour() {
 
 
 TourDescPanel::TourDescPanel() : m_pTourDescProvider(0) {}
-
-TourDescPanel::~TourDescPanel() {}
 
 void TourDescPanel::Load() {
     TexLoadPanel::Load();
