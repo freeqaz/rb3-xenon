@@ -54,9 +54,7 @@ static std::unordered_map<Character *, RndTex *> sImpostorCache;
 
 namespace {
     void GetMeshShaderFlags(RndMat *mat, std::list<unsigned int> &flags) {
-        ObjRef::iterator it = mat->Refs().begin();
-        ObjRef::iterator itEnd = mat->Refs().end();
-        for (; it != itEnd; ++it) {
+        for (ObjRef::iterator it = mat->Refs().begin(); it != mat->Refs().end(); ++it) {
             RndMesh *mesh = dynamic_cast<RndMesh *>(RefPtrOf(it)->RefOwner());
             if (mesh) {
                 unsigned int flag = mesh->IsSkinned() | (mesh->HasAOCalc() ? 2 : 0);
