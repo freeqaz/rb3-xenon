@@ -323,8 +323,11 @@ MetaPanel::MetaPanel()
     : mTour(new Tour(SystemConfig("tour"), TheSongMgr, *TheBandUserMgr, true)),
       mCampaign(new Campaign(SystemConfig("campaign"))),
       mNameGenerator(new NameGenerator(SystemConfig("name_generator"))),
-      mMetaMusicMgr(new MetaMusicManager(SystemConfig("synth", "metamusic"))),
-      mHAQMgr(new HAQManager()), unk58(0), mMusic(0), mSongPreview(TheSongMgr), unkd4(0) {
+#ifdef HX_NATIVE
+      mHAQMgr(new HAQManager()),
+#endif
+      mMetaMusicMgr(new MetaMusicManager(SystemConfig("synth", "metamusic"))), unk58(0),
+      mMusic(0), mSongPreview(TheSongMgr), unkd4(0) {
     mSongPreview.SetName("song_preview", ObjectDir::Main());
     MusicLibrary::Init(mSongPreview);
     mRecentIndices.reserve(3);
@@ -338,14 +341,12 @@ MetaPanel::~MetaPanel() {
     RELEASE(mTour);
     RELEASE(mCampaign);
     RELEASE(mNameGenerator);
-    // laneCN-3: retail does NOT release mMetaMusicMgr here -- it emits only FOUR
-    // RELEASEs, not five. objdiff alignment is decisive: our 4th release loads
-    // -0x94(r30) where retail's 4th loads -0x90(r30) (idx 48 diff_arg), and our
-    // 5th (-0x90, the SAME slot retail uses for its 4th) is 9 PURE inserts at idx
-    // 57-65 with no target counterpart. So retail still HAS the member at -0x94
-    // (otherwise its -0x90 member would have shifted down); it simply never
-    // releases it. Leaving RELEASE(mHAQMgr) as the final one.
+    // Retail (0x82573258) releases 0x3c, 0x40, 0x44 and 0x4c: the fourth is
+    // mMetaMusicMgr. The HAQManager at 0x48 exists only in HX_NATIVE.
+    RELEASE(mMetaMusicMgr);
+#ifdef HX_NATIVE
     RELEASE(mHAQMgr);
+#endif
     TheBandUI.RemoveSink(this, "current_screen_changed");
 }
 
