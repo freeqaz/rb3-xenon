@@ -1349,24 +1349,24 @@ void VocalTrackDir::UpdateTubeStyle() {
 }
 
 DataNode VocalTrackDir::OnSetLyricColor(const DataArray *da) {
-    float alpha = da->Float(4);
+    Hmx::Color color(0.0f, 0.0f, 0.0f, da->Float(4));
     Symbol sym(da->Sym(3));
     int packed = da->Int(2);
-    float red = (float)(packed & 255) / 255.0f;
-    float green = (float)((packed >> 8) & 255) / 255.0f;
-    float blue = (float)((packed >> 16) & 255) / 255.0f;
+    color.red = (float)(packed & 255) / 255.0f;
+    color.green = (float)((packed >> 8) & 255) / 255.0f;
+    color.blue = (float)((packed >> 16) & 255) / 255.0f;
     static Symbol lead("lead");
     static Symbol harmony("harmony");
     if (sym == lead) {
         if (mLeadText)
-            mLeadText->SetColor(Hmx::Color(red, green, blue, alpha));
+            mLeadText->SetColor(color);
         if (mLeadPhonemeText)
-            mLeadPhonemeText->SetColor(Hmx::Color(red, green, blue, alpha));
+            mLeadPhonemeText->SetColor(color);
     } else if (sym == harmony) {
         if (mHarmText)
-            mHarmText->SetColor(Hmx::Color(red, green, blue, alpha));
+            mHarmText->SetColor(color);
         if (mHarmPhonemeText)
-            mHarmPhonemeText->SetColor(Hmx::Color(red, green, blue, alpha));
+            mHarmPhonemeText->SetColor(color);
     }
     return DataNode(0);
 }
