@@ -406,7 +406,9 @@ void GemTrackDir::SetPitch(float pitch) {
         float precomp = -(pitch + 30.0f);
         RndGroup *grp = Find<RndGroup>("streak.grp", true);
         float sined = std::sin(precomp * DEG2RAD);
-        grp->DirtyLocalXfm().v.y = -mStreakMeterOffset / sined;
+        Vector3 pos(grp->LocalXfm().v);
+        pos.y = (-1.0f / sined) * mStreakMeterOffset;
+        grp->SetLocalPos(pos);
     }
 }
 
