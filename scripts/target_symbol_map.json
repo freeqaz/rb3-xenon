@@ -1089,7 +1089,7 @@
  "0x82377698": "??$?6VCharBonesObject@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtr@VCharBonesObject@@@@@Z",
  "0x8237d7b8": "?SetRelative@CharClip@@QAAXPAV1@@Z",
  "0x8240e940": "?StaticClassName@DOFProc@@SA?AVSymbol@@XZ",
- "0x82452950": "?remove@?$ObjPtrList@VObject@Hmx@@VObjectDir@@@@QAA_NPAVObject@Hmx@@@Z",
+ "0x82452950": "?remove@?$ObjPtrList@VObject@Hmx@@VObjectDir@@@@QAAXPAVObject@Hmx@@@Z",
  "0x822c0808": "?resize@?$ObjVector@V?$ObjPtr@VRndGroup@@@@@@QAAXI@Z",
  "0x8240f978": "?NewObject@RndFont@@SAPAVObject@Hmx@@XZ",
  "0x82410168": "?NewObject@RndMeshDeform@@SAPAVObject@Hmx@@XZ",
