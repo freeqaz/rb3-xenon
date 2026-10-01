@@ -12,6 +12,7 @@ namespace Hmx {
         static Matrix2 sID;
 
     public:
+        Matrix2() {}
         Matrix2(const Vector2 &v1, const Vector2 &v2) : x(v1), y(v2) {}
         Vector2 x;
         Vector2 y;

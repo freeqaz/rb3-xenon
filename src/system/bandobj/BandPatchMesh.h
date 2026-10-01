@@ -39,7 +39,7 @@ public:
 
     class MeshVert {
     public:
-        int AddUV(const MeshVert *, const Vector2 &, const Vector2 *);
+        bool AddUV(const MeshVert *, const Vector2 &, const Vector2 *);
         void SetVert(const MeshVert *, const RndMesh::Vert *);
         void SetVert(const RndMesh::Vert *);
         void ZeroOut();
