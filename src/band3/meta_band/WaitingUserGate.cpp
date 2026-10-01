@@ -137,12 +137,8 @@ void OpenGateData::Load(BinStream &bs) {
 void OpenGateData::GetWaitingUsers(
     std::vector<BandUser *> &out
 ) const {
-    unsigned int i;
-    int byteOffset;
-    for (i = 0, byteOffset = 0; i < mWaitingUsers.size(); i++, byteOffset += 0x10) {
-        out.push_back(TheBandUserMgr->GetBandUser(
-            *(const UserGuid *)((const char *)&mWaitingUsers[0] + byteOffset), true
-        ));
+    for (unsigned int i = 0; i < mWaitingUsers.size(); i++) {
+        out.push_back(TheBandUserMgr->GetBandUser(mWaitingUsers[i], true));
     }
 }
 

@@ -862,7 +862,7 @@ float ProfileMgr::GetJoypadExtraLagInits(JoypadType type, LagContext ctx) const 
     case kJoypadWiiRealGuitar22Fret:
         switch (ctx) {
         case kVCal:
-            ret = 74.0f;
+            ret = 14.0f;
             break;
         case kACal:
             ret = 60.0f;

@@ -76,6 +76,22 @@ inline void _Temporary_buffer<Symbol *, Symbol>::_M_allocate_buffer() {
     }
 }
 
+// The ctor's unwind frees through MemFree as well (retail funclet
+// 0x825595BC calls MemFree, not the CRT free of the generic template).
+template <>
+inline _Temporary_buffer<Symbol *, Symbol>::_Temporary_buffer(
+    Symbol *__first, Symbol *__last
+) {
+    typedef __type_traits<Symbol>::has_trivial_default_constructor _Trivial;
+    _STLP_TRY {
+        _M_len = distance(__first, __last);
+        _M_allocate_buffer();
+        if (_M_len > 0)
+            _M_initialize_buffer(*__first, _Trivial());
+    }
+    _STLP_UNWIND(MemFree(_M_buffer); _M_buffer = 0; _M_len = 0)
+}
+
 template <>
 inline _Temporary_buffer<Symbol *, Symbol>::~_Temporary_buffer() {
     _STLP_STD::_Destroy_Range(_M_buffer, _M_buffer + _M_len);

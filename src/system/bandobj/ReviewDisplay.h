@@ -36,6 +36,9 @@ public:
 
     DECLARE_REVS
     NEW_OBJ(ReviewDisplay)
+    // NewObject inlines the class operator new: retail calls
+    // ReviewDisplay::StaticClassName, then MemAlloc(0x184, 0).
+    OBJ_NEW_OVERLOAD;
 
     RndAnimatable *mReviewAnim; // 0x140
     RndAnimatable *mFocusAnim; // 0x144

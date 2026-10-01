@@ -105,7 +105,6 @@ public:
     struct RevState {
         __declspec(align(4)) unsigned short altRev;
         __declspec(align(4)) unsigned short rev;
-        Character *charMe;
     };
     // RndDrawable
     virtual void UpdateSphere();

@@ -8,8 +8,8 @@ TourSavable::TourSavable()
     : mDirtySave(1), mDirtyUpload(1), unka(0), mNameUnchecked(1), unk12(1) {
     DateTime dt;
     GetDateAndTime(dt);
-    unsigned int diff = dt.ToCode() - 0xe10;
-    unkb = diff;
+    DateTime start(dt.ToCode() - 0xe10);
+    unkb = start;
 }
 
 TourSavable::~TourSavable() {}

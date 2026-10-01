@@ -222,7 +222,7 @@ public:
     static unsigned short gAltRev;
     NEW_OBJ(BandCharacter);
     OBJ_NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    DELETE_OVERLOAD_INLINE; // ??_G calls MemFree directly, as retail
 
     int mPlayFlags; // 0x4ac
     ObjPtr<CharDriver> unk454; // 0x4b0

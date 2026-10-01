@@ -84,7 +84,11 @@ const char *BandIntensityString(int num) {
 }
 
 __declspec(noinline) void BandCharacter::Init() { Register(); }
-__declspec(noinline) void BandCharacter::Terminate() { __asm nop }
+// Empty (a bare blr): retail BandTerminate calls it at 0x8227B004, where it
+// branches to the shared blr survivor 0x826C3888. BandTerminate is in this TU
+// (Band.cpp is included above), and MSVC drops a call to a body it can see is
+// empty; the empty asm block keeps the call without emitting an instruction.
+__declspec(noinline) void BandCharacter::Terminate() { __asm {} }
 
 BandCharacter::BandCharacter()
     : mPlayFlags(0), unk454(this, 0), mAddDriver(0), mFaceDriver(0), mForceNextGroup(0),

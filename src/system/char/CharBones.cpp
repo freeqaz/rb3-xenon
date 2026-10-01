@@ -111,9 +111,8 @@ void CharBones::SetCompression(CompressionType ty) {
 
 CharBones::Type CharBones::TypeOf(Symbol s) {
     const char *p = s.Str();
-    char c = *p;
-    while (c != 0) {
-        if (c == '.') {
+    while (*p != 0) {
+        if (*p == '.') {
             p++;
             switch (*p) {
             case 'p':
@@ -132,7 +131,7 @@ CharBones::Type CharBones::TypeOf(Symbol s) {
                 break;
             }
         }
-        c = *++p;
+        p++;
     }
     MILO_FAIL("Unknown bone suffix in %s", (String &)s);
     return NUM_TYPES;
