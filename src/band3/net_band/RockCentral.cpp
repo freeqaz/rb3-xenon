@@ -49,7 +49,10 @@ extern "C" int NWC24GetMyUserId(unsigned long long &);
 #include "os/PlatformMgr.h"
 #include "os/System.h"
 #include "ui/UIPanel.h"
+#include "rndobj/Bitmap.h"
+#include "rndobj/Tex.h"
 #include "utl/BinStream.h"
+#include "utl/BufStream.h"
 #include "utl/DataPointMgr.h"
 #include "utl/Loader.h"
 #include "utl/MemStream.h"
@@ -1561,6 +1564,140 @@ void RockCentral::CreateBattle(
 // NOTE (rb3-xenon port): Wii delete-queue drain (WiiProfileMgr / Wii OnlineID
 // principal-ID). Not in the pinned retail-Xbox range; stubbed for compilation.
 void RockCentral::DeleteNextUser() {}
+
+// Retail TU5 art-file transfer. No surviving source has these two Updatables
+// or SaveBinaryData/GetArtFile; everything below is read off the retail bytes.
+//
+// SaveArtUpdater: RTTI .?AVSaveArtUpdater@@, vtable 0x8207FB14
+// { ??_G 0x824F69A0, Update 0x824F7890, SetWrapper }. 0x10 bytes.
+class SaveArtUpdater : public Updatable {
+public:
+    SaveArtUpdater() {}
+    virtual ~SaveArtUpdater() {}
+    virtual void Update(Message *);
+
+    Quazal::String mResult; // 0x8, the server's reply
+    signed char mRetCode; // 0xc
+    bool mDone; // 0xd
+};
+
+// 0x824F7890. The reply, when non-empty, is a DTA array whose first entry's
+// second node is the new art revision.
+void SaveArtUpdater::Update(Message *msg) {
+    (*msg)[1] = mRetCode;
+    (*msg)[2] = 0;
+    String result(mResult);
+    if (strlen(result.c_str()) != 0) {
+        BufStream bs((void *)result.c_str(), strlen(result.c_str()), true);
+        DataArray *arr = DataReadStream(&bs);
+        if (arr) {
+            (*msg)[2] = arr->Array(0)->Int(1);
+        }
+    }
+    mDone = true;
+}
+
+// ArtFileConverter: RTTI .?AVArtFileConverter@@, vtable 0x8207FB94
+// { ??_G 0x824F7050, Update 0x824F9488, SetWrapper }. 0x2c bytes. Receives
+// an art file into mBuffer and loads it into mTex.
+class ArtFileConverter : public Updatable {
+public:
+    ArtFileConverter(RndTex *tex, unsigned int *revision, const String &key)
+        : mBuffer(new Quazal::RBBinaryBuffer()), mTex(tex), mRevision(revision),
+          mKey(key), mDone(false) {}
+    virtual ~ArtFileConverter() { delete mBuffer; }
+    virtual void Update(Message *);
+
+    void LoadTex(RndTex *);
+
+    Quazal::RBBinaryBuffer *mBuffer; // 0x8
+    Quazal::String mResult; // 0xc
+    signed char mRetCode; // 0x10
+    RndTex *mTex; // 0x14
+    unsigned int *mRevision; // 0x18
+    String mKey; // 0x1c
+    bool mDone; // 0x28
+};
+
+// 0x824F9388
+void ArtFileConverter::LoadTex(RndTex *tex) {
+    MemStream ms(false);
+    unsigned int size = mBuffer->mBuffer.GetContentSize();
+    if (size) {
+        ms.Resize(size);
+        mBuffer->mBuffer.CopyContent((void *)ms.Buffer(), size, 0);
+        RndBitmap bmp;
+        bmp.Load(ms);
+        tex->SetBitmap(bmp, 0, true);
+    }
+}
+
+// 0x824F9488
+void ArtFileConverter::Update(Message *msg) {
+    LoadTex(mTex);
+    String result(mResult);
+    if (strlen(result.c_str()) != 0 && mRevision) {
+        BufStream bs((void *)result.c_str(), strlen(result.c_str()), true);
+        DataArray *arr = DataReadStream(&bs);
+        if (arr) {
+            *mRevision = arr->Array(0)->Int(1);
+        }
+    }
+    (*msg)[1] = mRetCode;
+    mDone = true;
+}
+
+// Retail TU5 0x824F8A98: saves the texture's bitmap into an RBBinaryBuffer and
+// sends it with the JSON key through RBBinaryDataClient::CallSaveBinaryData.
+void RockCentral::SaveBinaryData(RndTex *tex, String &key, Hmx::Object *o, int id) {
+    if (!IsConnected(o, id, false))
+        return;
+    if (!tex) {
+        SendFailure(o, 1, id);
+        return;
+    }
+    MemStream ms(false);
+    RndBitmap bmp;
+    tex->LockBitmap(bmp, 1);
+    bmp.Save(ms);
+    tex->UnlockBitmap();
+    Quazal::RBBinaryBuffer buf;
+    buf.mBuffer.AppendData(ms.Buffer(), ms.Size(), -1);
+    Quazal::String qKey(key.c_str());
+    SaveArtUpdater *updater = new SaveArtUpdater();
+    ContextWrapper *wrapper = mContextWrapperPool->NewContextWrapper(o, updater, true, id);
+    // Retail repeats the qKey / buf / bmp destructors on this path.
+    if (!wrapper) {
+        delete updater;
+        return;
+    }
+    updater->SetWrapper(wrapper);
+    Quazal::ProtocolCallContext *ctx = wrapper->mContext;
+    mRBBinaryData->CallSaveBinaryData(
+        ctx, qKey, buf, &updater->mResult, &updater->mRetCode
+    );
+}
+
+// Retail TU5 0x824F83F8: requests the file named by the JSON key through
+// RBBinaryDataClient::CallGetBinaryData; ArtFileConverter loads the reply.
+void RockCentral::GetArtFile(
+    String key, RndTex *tex, unsigned int *revision, Hmx::Object *o, int id
+) {
+    if (!IsConnected(o, id, false))
+        return;
+    Quazal::String qKey(key.c_str());
+    ArtFileConverter *conv = new ArtFileConverter(tex, revision, key);
+    ContextWrapper *wrapper = mContextWrapperPool->NewContextWrapper(o, conv, true, id);
+    if (!wrapper) {
+        delete conv;
+        return;
+    }
+    conv->SetWrapper(wrapper);
+    Quazal::ProtocolCallContext *ctx = wrapper->mContext;
+    mRBBinaryData->CallGetBinaryData(
+        ctx, qKey, conv->mBuffer, &conv->mResult, &conv->mRetCode
+    );
+}
 
 void RockCentral::UpdateSetlistArt(
     LocalSavedSetlist *setlist, int i2, Hmx::Object *o, int i4
