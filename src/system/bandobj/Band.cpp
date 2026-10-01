@@ -18,6 +18,7 @@
 #include "bandobj/BandScoreboard.h"
 #include "bandobj/BandSongPref.h"
 #include "bandobj/BandStarDisplay.h"
+#include "bandobj/Label3d.h"
 #include "bandobj/BandSwatch.h"
 #include "bandobj/BandWardrobe.h"
 #include "bandobj/CharKeyHandMidi.h"
@@ -121,13 +122,9 @@ void BandInit() {
         CrowdMeterIcon::Init();
         EndingBonus::Init();
         GemTrackDir::Init();
-        // Retail inlines a standalone REGISTER_OBJ_FACTORY(ObjectDir) here (6-instr
-        // StaticClassName+RegisterFactory shape, address-confirmed via Ghidra decompile
-        // of 0x8227ACC8 + target .s at instrs 103-108) that dc3's
-        // BandInit() does not show -- an older-revision leftover. Call target identity
-        // is score-invisible (functionRelocDiffs=none), so matching the shape here is
-        // what matters.
-        REGISTER_OBJ_FACTORY(ObjectDir);
+        // Retail registers Label3d here: 0x8227ACC8 is Label3d::StaticClassName (it
+        // builds the Symbol "Label3d") and its NewObject is 0x8227BD60.
+        Label3d::Init();
         LayerDir::Init();
         PatchRenderer::Init();
         PitchArrow::Init();

@@ -226,6 +226,13 @@
                 ]
             },
             "system/bandobj/NoteTube.cpp": "NonMatching",
+            "system/bandobj/Label3d.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_HANDLE_LOCAL_STATIC",
+                    "/DRB3_SYNCPROP_LOCAL_STATIC"
+                ]
+            },
             "system/bandobj/PitchArrow.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [

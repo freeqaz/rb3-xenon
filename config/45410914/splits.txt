@@ -2436,25 +2436,16 @@ trees.c:
 	.text       start:0x82B58594 end:0x82B59F78
 
 CharBoneDir.cpp:
-	.pdata      start:0x821F2070 end:0x821F2080
 	.pdata      start:0x821F2428 end:0x821F2438
 	.pdata      start:0x821F2668 end:0x821F2670
-	.pdata      start:0x821F96B8 end:0x821F9710
-	.pdata      start:0x821F9718 end:0x821F9778
-	.pdata      start:0x821F9778 end:0x821F9818
 	.pdata      start:0x821FCEE8 end:0x821FCEF0
 	.pdata      start:0x821FCEF8 end:0x821FCF00
 	.pdata      start:0x82204518 end:0x82204520
 	.pdata      start:0x822051C8 end:0x822054E8
 	.pdata      start:0x822054E8 end:0x822054F0
 	.pdata      start:0x8220A8B8 end:0x8220A8C0
-	.text       start:0x8227ACC8 end:0x8227AD48
 	.text       start:0x8227DF28 end:0x8227DFA0
 	.text       start:0x822801A4 end:0x822801F0
-	.text       start:0x822EFD98 end:0x822F0408
-	.text       start:0x822F047C end:0x822F0ED8
-	.text       start:0x822F0EE8 end:0x822F0F08
-	.text       start:0x822F0F18 end:0x822F18A8
 	.text       start:0x82326D20 end:0x82326D78
 	.text       start:0x82326DC8 end:0x82326DF8
 	.text       start:0x823A3940 end:0x823A3988
@@ -7914,12 +7905,12 @@ ConnectionStatusPanel.cpp:
 	.text       start:0x827BB368 end:0x827BB3E4
 
 FilePath.cpp:
-	.pdata      start:0x821F9690 end:0x821F96B0
+	.pdata      start:0x821F9690 end:0x821F96A0
 	.pdata      start:0x821F96B0 end:0x821F96B8
 	.pdata      start:0x82241D08 end:0x82241D10
 	.pdata      start:0x822616C8 end:0x822616E8
 	.pdata      start:0x822616F0 end:0x82261700
-	.text       start:0x822EFB68 end:0x822EFCA0
+	.text       start:0x822EFB68 end:0x822EFBE0
 	.text       start:0x822EFCA0 end:0x822EFCFC
 	.text       start:0x827BE9A0 end:0x827BEA00
 	.text       start:0x827BEA00 end:0x827BEA08
@@ -11978,6 +11969,19 @@ LayerDir.cpp:
 	.text       start:0x823278F0 end:0x82329778
 	.text       start:0x82329778 end:0x82329810
 	.text       start:0x82329810 end:0x82329B20
+
+Label3d.cpp:
+	.pdata      start:0x821F2070 end:0x821F2080
+	.pdata      start:0x821F96A0 end:0x821F96B0
+	.pdata      start:0x821F96B8 end:0x821F9710
+	.pdata      start:0x821F9718 end:0x821F9778
+	.pdata      start:0x821F9778 end:0x821F9818
+	.text       start:0x8227ACC8 end:0x8227AD48
+	.text       start:0x822EFBE0 end:0x822EFCA0
+	.text       start:0x822EFD98 end:0x822F0408
+	.text       start:0x822F047C end:0x822F0ED8
+	.text       start:0x822F0EE8 end:0x822F0F08
+	.text       start:0x822F0F18 end:0x822F18A8
 
 PitchArrow.cpp:
 	.pdata      start:0x821F2080 end:0x821F2090
