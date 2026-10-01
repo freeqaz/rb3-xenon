@@ -164,6 +164,4 @@ void WorldReflection::DrawShowing() {
     mInDrawShowing = false;
 }
 
-#ifdef HX_NATIVE
 void WorldReflection::Highlight() { RndDrawable::Highlight(); }
-#endif

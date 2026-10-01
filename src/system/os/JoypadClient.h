@@ -28,6 +28,7 @@ public:
 
     JoypadClient(Hmx::Object *sink);
     void SetVirtualDpad(bool);
+    void SetFilterAllButStart(bool);
     void PollClient() { Poll(); }
     void SetRepeatMask(int);
 
