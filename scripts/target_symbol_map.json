@@ -15552,7 +15552,7 @@
  "0x82597000": "?GetRecord@SongSortMgr@@QAAPAVSongRecord@@H@Z",
  "0x82597098": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@VSetlistRecord@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@VSetlistRecord@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@VSetlistRecord@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VSetlistRecord@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
  "0x825970e8": "??1?$slist@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
- "0x825971f0": "??$__ucopy_aux@PAPAU_Slist_node_base@priv@stlpmtx_std@@PAPAU123@@stlpmtx_std@@YAPAPAU_Slist_node_base@priv@0@PAPAU120@00ABU__true_type@0@@Z",
+ "0x825971f0": "??1?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
  "0x82597200": "??1NodeSort@@UAA@XZ",
  "0x82597358": "??0SongSortBySong@@QAA@XZ",
  "0x82597420": "??0SongSortByArtist@@QAA@XZ",
@@ -34099,6 +34099,7 @@
  "_denylist_unadjudicated_comment": "Addresses hand-flagged as suspect but NOT yet adjudicated, and therefore NOT honoured by scripts/obj_target_symbol_renamer.py. Kept as a record of the suspicion rather than deleted. 0x82685750 (??1?$_Vector_base@VVocalNote@@...) sat in _denylist with NO recorded rationale, unlike its neighbours (0x82759310 = DrawBounds collision, 0x82553fc8 = argreg proof). Lane MAP-R MEASURED the cost of honouring it: -1 matched / -1 honest / 0 code bytes, all of it default/SongDB 118->117; honouring the other three costs EXACTLY 0 on every key. The credit at stake is mpn-ONLY -- the row is a real 40-byte function whose fuzzy is <100, so it contributes 0 bytes, i.e. it is relocation-masked and NOT byte-evidence that the name is right. Nothing here shows it is wrong either. Adjudicate on retail bytes before moving it back into _denylist.",
  "_icf_arbitrary": [
   "0x822724e8",
+  "0x825971f0",
   "0x8227ce58",
   "0x82356360",
   "0x823a0cf8",
