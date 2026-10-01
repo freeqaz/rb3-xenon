@@ -306,16 +306,18 @@ int CharacterCreatorPanel::GetEyeColor() {
     return mPreviewDesc->mHead.mEyeColor;
 }
 
+// Retail: function-local statics (guard bits 0, 1) and no mPreviewDesc null
+// check, like GetGlasses.
 void CharacterCreatorPanel::SetGlasses(Symbol s) {
+    static Symbol none_glasses("none_glasses");
     BandCharDesc *desc = mPreviewDesc;
-    if (desc) {
-        if (s != none_glasses)
-            desc->mOutfit.mGlasses.mName = s;
-        else
-            desc->mOutfit.mGlasses.mName = gNullStr;
-        mClosetMgr->SetCurrentOutfitPiece(glasses);
-        mClosetMgr->PreviewCharacter(true, false);
-    }
+    if (s != none_glasses)
+        desc->mOutfit.mGlasses.mName = s;
+    else
+        desc->mOutfit.mGlasses.mName = gNullStr;
+    static Symbol glasses("glasses");
+    mClosetMgr->SetCurrentOutfitPiece(glasses);
+    mClosetMgr->PreviewCharacter(true, false);
 }
 
 Symbol CharacterCreatorPanel::GetGlasses() {
@@ -329,16 +331,18 @@ Symbol CharacterCreatorPanel::GetGlasses() {
         return desc->mOutfit.mHair.mName;
 }
 
+// Retail: function-local statics (guard bits 0, 1) and no mPreviewDesc null
+// check, like GetHair.
 void CharacterCreatorPanel::SetHair(Symbol s) {
+    static Symbol none_hair("none_hair");
     BandCharDesc *desc = mPreviewDesc;
-    if (desc) {
-        if (s != none_hair)
-            desc->mOutfit.mHair.mName = s;
-        else
-            desc->mOutfit.mHair.mName = gNullStr;
-        mClosetMgr->SetCurrentOutfitPiece(hair);
-        mClosetMgr->PreviewCharacter(true, false);
-    }
+    if (s != none_hair)
+        desc->mOutfit.mHair.mName = s;
+    else
+        desc->mOutfit.mHair.mName = gNullStr;
+    static Symbol hair("hair");
+    mClosetMgr->SetCurrentOutfitPiece(hair);
+    mClosetMgr->PreviewCharacter(true, false);
 }
 
 Symbol CharacterCreatorPanel::GetHair() {
