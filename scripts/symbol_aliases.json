@@ -97316,9 +97316,11 @@
   {
    "name": "_M_insert_overflow_aux",
    "address": "0x824b24f0",
-   "survivor": "?_M_insert_overflow_aux@?$vector@UEntry@LocalePanel@@V?$StlNodeAlloc@UEntry@LocalePanel@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUEntry@LocalePanel@@ABU34@ABU__false_type@2@I_N@Z",
-   "folded": [
-    "?_M_insert_overflow_aux@?$vector@USpotlightEntry@LightPreset@@V?$StlNodeAlloc@USpotlightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUSpotlightEntry@LightPreset@@ABU34@ABU__false_type@2@I_N@Z"
+   "survivor": "?_M_insert_overflow_aux@?$vector@USpotlightEntry@LightPreset@@V?$StlNodeAlloc@USpotlightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUSpotlightEntry@LightPreset@@ABU34@ABU__false_type@2@I_N@Z",
+   "survivor_renamed": {"from": "?_M_insert_overflow_aux@?$vector@UEntry@LocalePanel@@V?$StlNodeAlloc@UEntry@LocalePanel@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUEntry@LocalePanel@@ABU34@ABU__false_type@2@I_N@Z", "lane": "W16-KD 2026-10-01"},
+   "folded": [],
+   "withdrawn": [
+    {"spelling": "?_M_insert_overflow_aux@?$vector@USpotlightEntry@LightPreset@@V?$StlNodeAlloc@USpotlightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUSpotlightEntry@LightPreset@@ABU34@ABU__false_type@2@I_N@Z", "lane": "W16-KD 2026-10-01", "class": "MAP_NAME_WRONG", "why": "Retail 0x824B24F0 is vector<LightPreset::SpotlightEntry>::_M_insert_overflow_aux itself: it steps 0x58-byte elements (li 0x58 / mulli 0x58 / addi 0x58) where LocalePanel::Entry is 0x28 bytes, its callees are the SpotlightEntry __uninitialized_copy/__uninitialized_fill_n/_M_clear, and its only retail caller is LightPreset's push_back (0x824B3610). The 0x28-byte LocalePanel spelling cannot be the same COMDAT. The map row is renamed to the SpotlightEntry spelling and this membership is withdrawn; the survivor field follows the map (old name in survivor_renamed)."}
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",

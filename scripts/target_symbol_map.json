@@ -12053,7 +12053,7 @@
  "0x824b2398": "?_M_fill_insert@?$vector@UEnvironmentEntry@LightPreset@@V?$StlNodeAlloc@UEnvironmentEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUEnvironmentEntry@LightPreset@@IABU34@@Z",
  "0x824b2408": "?_M_fill_insert@?$vector@UEnvLightEntry@LightPreset@@V?$StlNodeAlloc@UEnvLightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUEnvLightEntry@LightPreset@@IABU34@@Z",
  "0x824b2478": "?_M_fill_insert@?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVVector3@@IABV3@@Z",
- "0x824b24f0": "?_M_insert_overflow_aux@?$vector@UEntry@LocalePanel@@V?$StlNodeAlloc@UEntry@LocalePanel@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUEntry@LocalePanel@@ABU34@ABU__false_type@2@I_N@Z",
+ "0x824b24f0": "?_M_insert_overflow_aux@?$vector@USpotlightEntry@LightPreset@@V?$StlNodeAlloc@USpotlightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUSpotlightEntry@LightPreset@@ABU34@ABU__false_type@2@I_N@Z",
  "0x824b2688": "??0Keyframe@LightPreset@@QAA@ABU01@@Z",
  "0x824b2950": "??$_Copy_Construct@UKeyframe@LightPreset@@@stlpmtx_std@@YAXPAUKeyframe@LightPreset@@ABU12@@Z",
  "0x824b2ca8": "?push_back@?$vector@UEnvironmentEntry@LightPreset@@V?$StlNodeAlloc@UEnvironmentEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUEnvironmentEntry@LightPreset@@@Z",
