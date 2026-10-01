@@ -16721,7 +16721,7 @@
  "0x825f1360": "?ClassName@CampaignCareerLeaderboardPanel@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
  "0x825f2210": "??1DynamicTex@@UAA@XZ",
  "0x825f22e8": "??8@YA_NPBVDynamicTex@@ABVString@@@Z",
- "0x825f2308": null,
+ "0x825f2308": "?FinishLoad@TexLoadPanel@@UAAXXZ",
  "0x825f2318": "??0DynamicTex@@QAA@PBD0_N1@Z",
  "0x825f2480": "??_GDynamicTex@@UAAPAXI@Z",
  "0x825f24d8": "?StartLoading@DLCTex@@QAAXXZ",
