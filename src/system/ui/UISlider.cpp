@@ -74,26 +74,40 @@ void UISlider::SetTypeDef(DataArray *def) {
     Update();
 }
 
-INIT_REVS(3, 0)
+// RB3 retail PreLoad (0x82809E98) / PostLoad (0x82809F08) keep no BinStreamRev:
+// the packed rev is split into two mutable TU shorts (alt at +0, rev at +4), no
+// guard, no Push/PopRev, and PostLoad reads mSelectToScroll iff rev != 0. There is
+// no mVertical read (DC3's rev-2 field) -- the ui/UIButton.cpp dialect.
+#pragma push_macro("INIT_REVS")
+#pragma push_macro("LOAD_REVS")
+#undef INIT_REVS
+#undef LOAD_REVS
+#define INIT_REVS(rev, alt)                                                              \
+    static unsigned short gAltRev = alt;                                                 \
+    static unsigned short gRev = rev;
+#define LOAD_REVS(bs)                                                                    \
+    int rev;                                                                             \
+    bs >> rev;                                                                           \
+    gRev = getHmxRev(rev);                                                               \
+    gAltRev = getAltRev(rev);
+
+INIT_REVS(1, 0)
 
 void UISlider::PreLoad(BinStream &bs) {
-    LOAD_REVS(bs);
-    ASSERT_REVS(3, 0);
-    UIComponent::PreLoad(d.stream);
-    d.PushRev(this);
+    LOAD_REVS(bs)
+    UIComponent::PreLoad(bs);
 }
 
 void UISlider::PostLoad(BinStream &bs) {
-    BinStreamRev d(bs, bs.PopRev(this));
-    UIComponent::PostLoad(d.stream);
-    if (d.rev > 0) {
-        d >> mSelectToScroll;
-    }
-    if (d.rev > 1) {
-        d >> mVertical;
+    UIComponent::PostLoad(bs);
+    if (gRev != 0) {
+        bs >> mSelectToScroll;
     }
     Update();
 }
+
+#pragma pop_macro("LOAD_REVS")
+#pragma pop_macro("INIT_REVS")
 
 void UISlider::DrawShowing() { SyncSlider(); }
 

@@ -536,6 +536,77 @@ const char *UIFontImporter::GetMatVariationName(RndFont *font) const {
     return "";
 }
 
+// Retail 0x82817E90; its only callers are the two arms of
+// FontImporterSyncObjects below.
+String UIFontImporter::GetBaseName() const {
+    if (HandMadeFontExists()) {
+        String str(mHandmadeFont->Name());
+        if (str.find(".") != String::npos) {
+            str = str.substr(0, str.rfind("."));
+        }
+        return str;
+    } else {
+        return mBitMapSaveName.substr(0, mBitMapSaveName.rfind("."));
+    }
+}
+
+// Retail 0x8281A1F8, called from UILabelDir::SyncObjects (0x8280FD24). Converts a
+// pre-material-variation resource: the old variation list is emptied and each
+// genned font's material is renamed (the first one becomes the default mat).
+void UIFontImporter::FontImporterSyncObjects() {
+    if (!mDefaultMat && mMatVariations.size() > 0 && mGennedFonts.size() > 0) {
+        ObjPtrList<RndMat>::iterator mit;
+        ObjPtrList<RndFont>::iterator it;
+        for (mit = mMatVariations.begin(); mit != mMatVariations.end();) {
+            RndMat *old = *mit;
+            mit = mMatVariations.erase(mit);
+            delete old;
+        }
+        int idx = 0;
+        for (it = mGennedFonts.begin(); it != mGennedFonts.end(); it++, idx++) {
+            RndFont *font = *it;
+            RndMat *mat = font->GetMat();
+            if (idx == 0) {
+                String name = GetBaseName();
+                String matname = name + ".mat";
+                mat->SetName(matname.c_str(), Dir());
+                mDefaultMat = mat;
+                String fontname = name + ".font";
+                font->SetName(fontname.c_str(), Dir());
+                RndText *text = FindTextForFont(font);
+                if (text) {
+                    String textname = name + ".txt";
+                    text->SetName(textname.c_str(), Dir());
+                    String textstr(text->RawText().c_str());
+                    if (textstr.find("_default") != String::npos) {
+                        textstr = textstr.substr(0, textstr.find("_default"));
+                        text->SetText(textstr.c_str());
+                    }
+                }
+            } else {
+                String name = GetBaseName();
+                String matname = mat->Name();
+                if (matname.find(name.c_str()) == 0) {
+                    int nameLen = name.length();
+                    int matLen = matname.length();
+                    matname = matname.substr(name.length() + 1, matLen - nameLen - 1);
+                }
+                mat->SetName(matname.c_str(), Dir());
+                mMatVariations.push_back(mat);
+            }
+        }
+        MILO_WARN(MakeString(
+            "Upgraded font resource to new material variation setup.  Please resave %s",
+            Dir()->GetPathName()
+        ));
+    }
+}
+
+// Retail 0x8281A8D0: TextObj's genned-font arm (UILabelDir::TextObj tail-calls it).
+RndText *UIFontImporter::GetGennedText(Symbol s) const {
+    return FindTextForFont(GetGennedFont(s));
+}
+
 RndFont *UIFontImporter::GetGennedFont(Symbol s) const {
     if (s.Null()) {
         return *mGennedFonts.begin();

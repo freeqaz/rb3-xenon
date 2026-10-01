@@ -26,6 +26,8 @@ public:
     virtual void Load(BinStream &);
     virtual void PreLoad(BinStream &);
     virtual void PostLoad(BinStream &);
+    // RndDir
+    virtual void SyncObjects(); // retail 0x8280FD08, UILabelDir vtable slot 3
 
     OBJ_MEM_OVERLOAD(0x19);
 

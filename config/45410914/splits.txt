@@ -4462,6 +4462,7 @@ CharTransDraw.cpp:
 	.pdata      start:0x822062B8 end:0x822062C0
 	.pdata      start:0x822062D8 end:0x82206330
 	.pdata      start:0x82206330 end:0x82206340
+	.pdata      start:0x82206340 end:0x82206378
 	.pdata      start:0x82206378 end:0x82206380
 	.text       start:0x823C8128 end:0x823C8190
 	.text       start:0x823C82F4 end:0x823C88D0
@@ -4469,6 +4470,7 @@ CharTransDraw.cpp:
 	.text       start:0x823C88E0 end:0x823C88EC
 	.text       start:0x823C8908 end:0x823C8A64
 	.text       start:0x823C8A68 end:0x823C8A74
+	.text       start:0x823C8A88 end:0x823C8F90
 	.text       start:0x823C8F90 end:0x823C8F9C
 	.text       start:0x823C8FA0 end:0x823C8FAC
 	.text       start:0x823C8FB0 end:0x823C8FBC
@@ -7281,7 +7283,6 @@ CharPosConstraint.cpp:
 
 Screenshot.cpp:
 	.pdata      start:0x822062C0 end:0x822062D8
-	.pdata      start:0x82206340 end:0x82206378
 	.pdata      start:0x82247EF8 end:0x82247F00
 	.pdata      start:0x82247F00 end:0x82247F08
 	.pdata      start:0x82247F10 end:0x82247F70
@@ -7289,7 +7290,7 @@ Screenshot.cpp:
 	.text       start:0x823C88DC end:0x823C88E0
 	.text       start:0x823C88EC end:0x823C8908
 	.text       start:0x823C8A64 end:0x823C8A68
-	.text       start:0x823C8A74 end:0x823C8F90
+	.text       start:0x823C8A74 end:0x823C8A88
 	.text       start:0x823C8F9C end:0x823C8FA0
 	.text       start:0x823C8FAC end:0x823C8FB0
 	.text       start:0x823C8FBC end:0x823C8FC0
