@@ -386,62 +386,61 @@ void Singer::ClearScoreHistories() {
 }
 
 void Singer::ClearPitchHistory() {
+    // Retail (inlined into UpdatePitchHistory) zeroes the history with five integer
+    // `stw` stores and a dead `addi rX,this,0x8c`: the unrolled loop, as in the ctor.
     mPitchHistoryMean = 0;
     mPitchHistoryIndex = 0;
     mPitchHistoryValidCount = 0;
-    mPitchHistory[0] = 0;
-    mPitchHistory[1] = 0;
-    mPitchHistory[2] = 0;
-    mPitchHistory[3] = 0;
-    mPitchHistory[4] = 0;
+    for (int i = 0; i < 5; i++)
+        mPitchHistory[i] = 0;
 }
 
+// Retail bounds-checks both counters with two signed compares (`< 0 || >= 5`,
+// `< 0 || > 5`) and runs the valid-count check after BOTH arms of the edge case.
 void Singer::UpdatePitchHistory(float pitch) {
-    if ((unsigned int)mPitchHistoryIndex > 4) {
+    if (mPitchHistoryIndex < 0 || mPitchHistoryIndex >= 5) {
         MILO_NOTIFY("pitch history index out of bounds (%d) singer %d", mPitchHistoryIndex, mSingerIndex);
         ClearPitchHistory();
     }
-    float prev = mPitchHistory[mPitchHistoryIndex];
-    if ((pitch > 0.0f) != (prev > 0.0f)) {
+    if ((pitch > 0.0f) != (mPitchHistory[mPitchHistoryIndex] > 0.0f)) {
         if (pitch > 0.0f) {
             mPitchHistoryValidCount += 1;
             mPitchHistoryMean = mPitchHistoryMean + (pitch - mPitchHistoryMean) / (float)mPitchHistoryValidCount;
         } else {
             mPitchHistoryValidCount -= 1;
             if (mPitchHistoryValidCount == 0) ClearPitchHistory();
-            if ((unsigned int)mPitchHistoryValidCount > 5) {
-                MILO_NOTIFY("pitch history valid frames out of bounds (%d)", mPitchHistoryValidCount);
-                ClearPitchHistory();
-            }
+        }
+        if (mPitchHistoryValidCount < 0 || mPitchHistoryValidCount > 5) {
+            MILO_NOTIFY("pitch history valid frames out of bounds (%d)", mPitchHistoryValidCount);
+            ClearPitchHistory();
         }
     } else if (pitch > 0.0f) {
-        mPitchHistoryMean = mPitchHistoryMean + (pitch - prev) / (float)mPitchHistoryValidCount;
+        mPitchHistoryMean = mPitchHistoryMean
+            + (pitch - mPitchHistory[mPitchHistoryIndex]) / (float)mPitchHistoryValidCount;
     }
     mPitchHistory[mPitchHistoryIndex] = pitch;
     mPitchHistoryIndex = (mPitchHistoryIndex + 1) % 5;
 }
 
+// Retail tests the distance to the history mean BEFORE stepping: a pitch already
+// within 10 semitones returns 0. Each step moves the pitch one octave toward the
+// mean (`fnmsubs p = p - sign * 12`) and counts it.
 int Singer::SuddenOctaveShift(float pitch) const {
-    int sign;
-    if (mPitchHistoryValidCount >= 1) {
-        if (pitch > 0.0f) {
-        int shift = 0;
-        if (pitch > mPitchHistoryMean) sign = 1;
-        else sign = -1;
-        float step = 12.0f * (float)sign;
-        float a0 = mPitchHistoryMean;
-        goto check;
-    update:
-        pitch -= step;
-    check:
-        float diff = pitch - a0;
+    if (mPitchHistoryValidCount < 1 || pitch <= 0.0f)
+        return 0;
+    float p = pitch;
+    float mean = mPitchHistoryMean;
+    int shift = 0;
+    int sign = pitch > mean ? 1 : -1;
+    while (true) {
+        float diff = p - mean;
+        if (!(diff > 0.0f))
+            diff = -diff;
+        if (diff <= 10.0f)
+            return shift;
         shift += sign;
-        if (!(diff > 0.0f)) diff = -diff;
-        if (diff > 10.0f) goto update;
-        return shift;
+        p -= (float)sign * 12.0f;
     }
-    }
-    return 0;
 }
 
 void Singer::UpdatePitchDeviation(float pitch) {
