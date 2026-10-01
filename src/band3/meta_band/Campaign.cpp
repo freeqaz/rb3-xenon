@@ -914,6 +914,7 @@ RndTex *Campaign::GetPrimaryBandLogoTex() {
         return nullptr;
 }
 
+#ifdef HX_NATIVE // the cheat level lives in unk88, which retail's Campaign lacks
 void Campaign::CheatNextMetaLevel() {
     BandMachineMgr *pMachineMgr = TheSessionMgr->mMachineMgr;
     MILO_ASSERT(pMachineMgr, 0x68F);
@@ -941,6 +942,8 @@ const char *Campaign::GetCheatMetaLevel() {
     else
         return GetCampaignLevelForMetaScore(unk88).Str();
 }
+
+#endif
 
 void Campaign::CheatReloadCampaignData() {
     if (s_pReloadedCampaignData)
