@@ -565,7 +565,7 @@ void TrackPanelDir::Reset() {
     mPerformanceMode = ModifierActive("mod_nohud");
     for (int i = 0; i < mTracks.size(); i++) {
         BandTrack *track = mTracks[i];
-        if (track)
+        if ((int)track)
             track->SetPerformanceMode(mPerformanceMode);
     }
     SetShowing(false);
