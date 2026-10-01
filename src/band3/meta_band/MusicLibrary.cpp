@@ -2268,8 +2268,19 @@ void MusicLibrary::RebuildProfileData() {
         PushSonglistToScreen();
         PushHighlightToScreen(false);
     }
+    // Retail: when reviews change and bad reviews are hidden (ProfileMgr +0x6b
+    // clear), the filtered list itself changes, so it is rebuilt for the
+    // current sort; otherwise only the review sort is redone.
     if (b2) {
-        ReSort(kSongSortByReview);
+        if (!TheProfileMgr.GetShowBadReviews()) {
+            TheSongSortMgr->BuildFilteredSongList(&mTask.filter, PartForFilter());
+            TheSongSortMgr->BuildSortTree(unkdc);
+            TheSongSortMgr->BuildSortList(unkdc);
+            TryToSetHighlight(unkd4, unkd8, true);
+            PushHighlightToScreen(true);
+        } else {
+            ReSort(kSongSortByReview);
+        }
     }
 }
 
