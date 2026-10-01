@@ -423,6 +423,50 @@ TypeProps &TypeProps::operator=(const TypeProps &t) {
     return *this;
 }
 
+#ifndef HX_NATIVE
+// Retail 0x82765F40: no EditMode type-check pass and no EditorDir key stashing.
+// Only a data-dir owner (or a proxy load) filters its keys through the type
+// def's save flags; keys the type def does not declare are dropped.
+void TypeProps::Save(BinStream &bs) {
+    Hmx::Object *owner = RefOwner();
+    if (!mMap || owner->DataDir() != owner
+        || owner == owner->Dir() && !gLoadingProxyFromDisk) {
+        bs << mMap;
+        return;
+    }
+    DataArray *typeDef = owner->TypeDef();
+    if (!typeDef) {
+        bs << (DataArray *)nullptr;
+        return;
+    }
+    DataArray *arrToWrite = nullptr;
+    int keyIdx = 0;
+    for (int i = 0; i < mMap->Size(); i += 2) {
+        Symbol key = mMap->Sym(i);
+        DataArray *def = typeDef->FindArray(key, false);
+        if (def) {
+            bool proxy = false;
+            bool none = false;
+            GetSaveFlags(def, proxy, none);
+            if (!none && proxy != gLoadingProxyFromDisk) {
+                if (!arrToWrite) {
+                    arrToWrite = new DataArray(mMap->Size());
+                }
+                arrToWrite->Node(keyIdx) = key;
+                arrToWrite->Node(keyIdx + 1) = mMap->Node(i + 1);
+                keyIdx += 2;
+            }
+        }
+    }
+    if (arrToWrite) {
+        arrToWrite->Resize(keyIdx);
+        bs << arrToWrite;
+        arrToWrite->Release();
+    } else {
+        bs << (DataArray *)nullptr;
+    }
+}
+#else
 void TypeProps::Save(BinStream &bs) {
     Hmx::Object *owner = RefOwner();
     if (mMap) {
@@ -528,3 +572,4 @@ void TypeProps::Save(BinStream &bs) {
         }
     }
 }
+#endif

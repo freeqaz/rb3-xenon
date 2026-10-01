@@ -65083,6 +65083,13 @@
       }
      ],
      "why_the_restoration_does_not_stand": "the restoration rested on flat L1_T1 / chase, whose comparator tolerated a relocation slot with an unnamed retail target (icf_alias_build.relocs_agree / _slots_agree on the general path). That is exactly the slot decided here, on retail bytes."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UTaskInfo@TaskTimeline@@@stlpmtx_std@@YAXPAUTaskInfo@TaskTimeline@@ABU12@@Z",
+     "lane": "W16-JD 2026-10-01",
+     "class": "CALL_CHAIN_PROVES_OWN_ADDRESS",
+     "disposition": "withdrawn: the spelling is now mapped at its own retail address (validator CONTRADICTED until withdrawn)",
+     "evidence": "retail places it at its own address 0x82749360: TaskTimeline::AddTask -> list<TaskInfo>::insert 0x827495C8 -> _M_create_node 0x827494D0 -> bl 0x82749360 (copies ObjPtr<Task> via 0x82747A78, then the float); AddTask, insert and _M_create_node all read 100 under these names"
     }
    ],
    "repair": {
@@ -77864,7 +77871,6 @@
     "??$_Param_Construct@VStreakList@Scoring@@V12@@stlpmtx_std@@YAXPAVStreakList@Scoring@@ABV12@@Z",
     "??$_Copy_Construct@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@0@ABU10@@Z",
     "??$_Copy_Construct@U?$pair@PAVDataArray@@VDataNode@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@PAVDataArray@@VDataNode@@@0@ABU10@@Z",
-    "??$_Copy_Construct@UVar@ScriptTask@@@stlpmtx_std@@YAXPAUVar@ScriptTask@@ABU12@@Z",
     "??$_Param_Construct@U?$pair@PAVDataArray@@VDataNode@@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@PAVDataArray@@VDataNode@@@0@ABU10@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 11 folded spelling(s), 0 census sites over 1 functions.",
@@ -77899,6 +77905,13 @@
      "class": "CONTRADICTED_DIFFERENT_BODY_CANNOT_FOLD",
      "disposition": "withdrawn",
      "evidence": "W16-HR 2026-09-30. Retail keeps a separate 80 B _Copy_Construct<SongRanking> at fn_82578D28, bound by a matched mpn-100 BandSongMgr caller (binding table), whose element copy is bl fn_82576F18 -- not the survivor's callee. tools/icf_pair_adjudicate.py --survivor <Overlay> --ours <SongRanking> now returns FLAT T1 REFUTED: 'masked bodies match but relocation TARGETS disagree -- template-twin, not a fold'. W16-CU's restore compared this callee while it was an unnamed placeholder. Surfaced as a FATAL CONTRADICTED once 0x82578D28 was named."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UVar@ScriptTask@@@stlpmtx_std@@YAXPAUVar@ScriptTask@@ABU12@@Z",
+     "lane": "W16-JD 2026-10-01",
+     "class": "CALL_CHAIN_PROVES_OWN_ADDRESS",
+     "disposition": "withdrawn: the spelling is now mapped at its own retail address (validator CONTRADICTED until withdrawn)",
+      "evidence": "retail places it at its own address 0x827493D0: ScriptTask ctor / UpdateVarsObjects -> list<Var>::insert 0x82749630 -> _M_create_node 0x82749550 -> bl 0x827493D0 (copies a word, then a DataNode via 0x8274A9D0); the ctor, UpdateVarsObjects, insert and _M_create_node all read 100 under these names"
     }
    ],
    "repair": {
