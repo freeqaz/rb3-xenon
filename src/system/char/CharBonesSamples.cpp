@@ -173,35 +173,33 @@ void CharBonesSamples::LoadData(BinStream &bs) {
         bs >> x;
     }
     bool cached = bs.Cached();
-    auto& _sub1 = mOffsets[TYPE_QUAT];
-    auto& _sub0 = mOffsets[TYPE_END];
     if (!cached || gVer <= 0xE) {
         for (int i = 0; i < mNumSamples; i++) {
             SetSamplePointers(Min(i, mNumSamples - 1));
 
             if (cached) {
-                bs.Read(mStart, _sub0 - mOffsets[TYPE_POS]);
+                bs.Read(mStart, mOffsets[TYPE_END] - mOffsets[TYPE_POS]);
 #ifdef HX_NATIVE
                 // Cached .milo_xbox files store raw big-endian data.
                 // Byte-swap floats (4 bytes) in POS/SCALE sections and
                 // shorts (2 bytes) in QUAT/ROT sections to native LE order.
                 if (!bs.LittleEndian()) {
-                    SwapBESection(mStart, _sub1 - mOffsets[TYPE_POS],
+                    SwapBESection(mStart, mOffsets[TYPE_QUAT] - mOffsets[TYPE_POS],
                                   NativePosElemWidth());
-                    SwapBESection(mStart + _sub1, mOffsets[TYPE_ROTX] - _sub1,
+                    SwapBESection(mStart + mOffsets[TYPE_QUAT], mOffsets[TYPE_ROTX] - mOffsets[TYPE_QUAT],
                                   NativeQuatElemWidth());
                     SwapBESection(mStart + mOffsets[TYPE_ROTX],
-                                  _sub0 - mOffsets[TYPE_ROTX], NativeRotElemWidth());
+                                  mOffsets[TYPE_END] - mOffsets[TYPE_ROTX], NativeRotElemWidth());
                 }
 #endif
             } else {
                 if (mCompression >= kCompressVects) {
-                    short *quatOffset = (short *)(mStart + _sub1);
+                    short *quatOffset = (short *)(mStart + mOffsets[TYPE_QUAT]);
                     for (short *p = (short *)mStart; p < quatOffset; p += 3) {
                         bs >> p[0] >> p[1] >> p[2];
                     }
                 } else {
-                    Vector3 *quatOffset = (Vector3 *)(mStart + _sub1);
+                    Vector3 *quatOffset = (Vector3 *)(mStart + mOffsets[TYPE_QUAT]);
                     for (Vector3 *p = (Vector3 *)mStart; p < quatOffset; p++) {
                         bs >> *p;
                     }
@@ -209,7 +207,7 @@ void CharBonesSamples::LoadData(BinStream &bs) {
 
                 if (mCompression >= kCompressQuats) {
                     char *rotXOffset = mStart + mOffsets[TYPE_ROTX];
-                    for (char *p = mStart + _sub1; p < rotXOffset; p += 4) {
+                    for (char *p = mStart + mOffsets[TYPE_QUAT]; p < rotXOffset; p += 4) {
                         bs.Read(p, 1);
                         bs.Read(p + 1, 1);
                         bs.Read(p + 2, 1);
@@ -217,27 +215,27 @@ void CharBonesSamples::LoadData(BinStream &bs) {
                     }
                 } else if (mCompression != kCompressNone) {
                     short *rotXOffset = (short *)(mStart + mOffsets[TYPE_ROTX]);
-                    for (short *p = (short *)(mStart + _sub1); p < rotXOffset;
+                    for (short *p = (short *)(mStart + mOffsets[TYPE_QUAT]); p < rotXOffset;
                          p += 4) {
                         bs >> p[0] >> p[1] >> p[2] >> p[3];
                     }
                 } else {
                     Hmx::Quat *rotXOffset =
                         (Hmx::Quat *)(mStart + mOffsets[TYPE_ROTX]);
-                    for (Hmx::Quat *p = (Hmx::Quat *)(mStart + _sub1);
+                    for (Hmx::Quat *p = (Hmx::Quat *)(mStart + mOffsets[TYPE_QUAT]);
                          p < rotXOffset; p++) {
                         bs >> *p;
                     }
                 }
 
                 if (mCompression != kCompressNone) {
-                    short *endOffset = (short *)(mStart + _sub0);
+                    short *endOffset = (short *)(mStart + mOffsets[TYPE_END]);
                     for (short *p = (short *)(mStart + mOffsets[TYPE_ROTX]); p < endOffset;
                          p++) {
                         bs >> *p;
                     }
                 } else {
-                    float *endOffset = (float *)(mStart + _sub0);
+                    float *endOffset = (float *)(mStart + mOffsets[TYPE_END]);
                     for (float *p = (float *)(mStart + mOffsets[TYPE_ROTX]); p < endOffset;
                          p++) {
                         bs >> *p;
@@ -266,10 +264,10 @@ void CharBonesSamples::LoadData(BinStream &bs) {
         if (!bs.LittleEndian()) {
             for (int i = 0; i < mNumSamples; i++) {
                 char *s = mRawData + mTotalSize * i;
-                SwapBESection(s, _sub1 - mOffsets[TYPE_POS], NativePosElemWidth());
-                SwapBESection(s + _sub1, mOffsets[TYPE_ROTX] - _sub1,
+                SwapBESection(s, mOffsets[TYPE_QUAT] - mOffsets[TYPE_POS], NativePosElemWidth());
+                SwapBESection(s + mOffsets[TYPE_QUAT], mOffsets[TYPE_ROTX] - mOffsets[TYPE_QUAT],
                               NativeQuatElemWidth());
-                SwapBESection(s + mOffsets[TYPE_ROTX], _sub0 - mOffsets[TYPE_ROTX],
+                SwapBESection(s + mOffsets[TYPE_ROTX], mOffsets[TYPE_END] - mOffsets[TYPE_ROTX],
                               NativeRotElemWidth());
             }
         }
