@@ -456,26 +456,18 @@ void RndLine::UpdateLinePair(RndLine::Point *pt1, RndLine::Point *pt2) {
         proj1[1] = viewPos1[2] * invY1;
         proj1[0] = viewPos1[0] * invY1;
         float invY2 = 1.0f / viewPos2[1];
-        proj2[0] = viewPos2[0] * invY2;
         proj2[1] = viewPos2[2] * invY2;
+        proj2[0] = viewPos2[0] * invY2;
 
-        float dirZ = proj2[1] - proj1[1];
-        dir1[1] = dirZ;
-        float dirX = proj2[0] - proj1[0];
-        dir1[0] = dirX;
-        float len = std::sqrt(dirX * dirX + dirZ * dirZ);
-        float invLen = 0.0f;
-        if (len != 0.0f) {
-            invLen = 1.0f / len;
-        }
-        dir1[1] = invLen * dir1[1];
-        dir1[0] = invLen * dirX;
-
-        side1[1] = dir1[0];
-        side1[0] = -dir1[1];
-        float width = mWidth;
-        side1[1] = side1[1] * width;
-        side1[0] = side1[0] * width;
+        // Retail 0x82479FD8: the direction is normalized out of line.
+        Vector2 &dir = *(Vector2 *)dir1;
+        dir.x = proj2[0] - proj1[0];
+        dir.y = proj2[1] - proj1[1];
+        Normalize(dir, dir);
+        side1[0] = -dir.y;
+        side1[1] = dir.x;
+        side1[0] *= mWidth;
+        side1[1] *= mWidth;
         ((int *)side2)[0] = ((int *)side1)[0];
         ((int *)side2)[1] = ((int *)side1)[1];
 
@@ -541,35 +533,20 @@ void RndLine::UpdateLine(RndLine::Point *start, RndLine::Point *end) {
     Point *lastPt = start;
     if (start != end) {
         for (Point *pt = start; pt != end; pt++) {
-            float *proj = (float *)&pt->unk[4];
-            float *dir = (float *)&pt->unk[6];
-            Point *next = pt + 1;
-            float *nextProj = (float *)&next->unk[4];
-
-            float dirZ = nextProj[1] - proj[1];
-            dir[1] = dirZ;
-            float dirX = nextProj[0] - proj[0];
-            dir[0] = dirX;
-
-            float len = std::sqrt(dirX * dirX + dirZ * dirZ);
-            float invLen = 0.0f;
-            if (len != 0.0f) {
-                invLen = 1.0f / len;
-            }
-            float normDirZ = dirZ * invLen;
-            float normDirX = dirX * invLen;
-            dir[1] = normDirZ;
-            dir[0] = normDirX;
-
+            Vector2 &proj = *(Vector2 *)&pt->unk[4];
+            Vector2 &dir = *(Vector2 *)&pt->unk[6];
+            Vector2 &side = *(Vector2 *)&pt->unk[8];
+            Vector2 &nextProj = *(Vector2 *)&(pt + 1)->unk[4];
+            // Retail 0x82479954: the direction is normalized out of line.
+            dir.x = nextProj.x - proj.x;
+            dir.y = nextProj.y - proj.y;
+            Normalize(dir, dir);
             lastPt = pt + 1;
-
             // Side vector: perpendicular to direction, scaled by width
-            float *side = (float *)&pt->unk[8];
-            side[1] = normDirX;
-            side[0] = -normDirZ;
-            float width = mWidth;
-            side[1] = normDirX * width;
-            side[0] = side[0] * width;
+            side.x = -dir.y;
+            side.y = dir.x;
+            side.x *= mWidth;
+            side.y *= mWidth;
         }
     }
 
