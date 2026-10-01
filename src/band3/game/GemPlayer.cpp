@@ -2578,15 +2578,17 @@ void GemPlayer::CheckSolo(float ms) {
 void GemPlayer::UpdateGameCymbalLanes() {
     if (mUser->GetTrackType() != kTrackDrum)
         return;
-    bool discoUnflip;
+    bool ghDrumsUnflip;
     if (IsLocal() && UserHasGHDrums(mUser->GetLocalBandUser())
         && !mUser->GetGameplayOptions()->GetLefty()) {
-        discoUnflip = true;
+        ghDrumsUnflip = true;
     } else {
-        discoUnflip = false;
+        ghDrumsUnflip = false;
     }
     SongData *data = TheSongDB->GetData();
-    if (data->GetUsingRealDrums()) {
+    bool realDrums = data->GetUsingRealDrums();
+    bool discoUnflip = ghDrumsUnflip;
+    if (realDrums) {
         mGameCymbalLanes = mUser->GetCymbalConfiguration();
         bool forceUseCymbals = TheGame->mProperties.mForceUseCymbals;
         bool forceDontUseCymbals = TheGame->mProperties.mForceDontUseCymbals;
