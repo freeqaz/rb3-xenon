@@ -165,6 +165,13 @@ public:
 #endif
         static int _x = MemFindHeap("char");
         MemHeapTracker tmp(_x);
+#ifndef HX_NATIVE
+        // Retail evaluates the class name and discards it before allocating
+        // (bl StaticClassName between MemPushHeap and MemAlloc), as
+        // OBJ_MEM_OVERLOAD does; the match-build MemAlloc macro drops the
+        // argument expression itself.
+        (void)StaticClassName().Str();
+#endif
         return MemAlloc(s, __FILE__, 0x51, StaticClassName().Str(), 0);
     }
 #ifdef HX_NATIVE
