@@ -5,6 +5,12 @@
 
 Quazal::CallContext *QuazalSession::mTerminatingContext;
 
+// 0x823F2C10, 20 bytes: tests the global ~QuazalSession (0x823F2AC0) fills
+// with a fresh CallContext and Poll (0x823F2B80) clears once it is no longer
+// pending.  Called from NetSession's destructor (0x823E33EC) and
+// DeleteSessionJob::IsFinished (0x823F6C84).
+bool QuazalSession::StillDeleting() { return mTerminatingContext; }
+
 // Retail constructs QuazalSession OUT OF LINE: MakeQuazalSessionJob::IsFinished
 // emits `new` -> store to the EH object-under-construction slot -> null check ->
 // `lbz r4,0xc(r30)` (mHosting) -> `bl fn_823F2F08`.  0x823F2F08 sits in the

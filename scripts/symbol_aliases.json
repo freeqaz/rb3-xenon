@@ -101756,6 +101756,38 @@
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED on size only: retail 224 B includes 4 B of tail padding, RETAIL-TAIL-PAD node; ours 220 B). PropKeys::ReSort calls this one body for Color, Vector3 and Quat keys (retail 0x82424940)."
     }
    ]
+  },
+  {
+   "name": "IsFinished",
+   "address": "0x823f6780",
+   "survivor": "?IsFinished@XboxJob@@UAA_NXZ",
+   "folded": [
+    "?OverlappedFinished@DeleteSessionJob@@IAA_NXZ"
+   ],
+   "evidence": "Fold group opened by W16-NC-F1 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "?OverlappedFinished@DeleteSessionJob@@IAA_NXZ",
+     "lane": "W16-NC-F1 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN and CHASED T1 PROVEN, 0 CYCLE-ASSUMED; 112 B retail / 112 B ours, 2 relocations agreeing by name (XGetOverlappedResult, XGetOverlappedExtendedError), retail body unique. DeleteSessionJob derives from Job, not XboxJob, yet its IsFinished (0x823F6C60) ends in `bl 0x823F6780`: its polling helper reads its XOVERLAPPED at the same offset (+8) and folded into XboxJob::IsFinished."
+    }
+   ]
+  },
+  {
+   "name": "GetCustomValue",
+   "address": "0x82512ac0",
+   "survivor": "?GetArkfileCachePriority@Archive@@QBAHH@Z",
+   "folded": [
+    "?GetCustomValue@MatchmakingSettings@@QBAHH@Z"
+   ],
+   "evidence": "Fold group opened by W16-NC-F1 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "?GetCustomValue@MatchmakingSettings@@QBAHH@Z",
+     "lane": "W16-NC-F1 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN and CHASED T1 PROVEN, 0 CYCLE-ASSUMED; 16 B retail / 16 B ours, no relocations, retail body unique (`lwz r11,0x1c(r3); slwi r10,r4,2; lwzx r3,r11,r10; blr`: mCustomValues[i] and Archive's 0x1c vector[i] are the same code). MakeSessionJob::Start calls it at 0x823F68DC, between NumCustomSettings and GetCustomID."
+    }
+   ]
   }
  ]
 }

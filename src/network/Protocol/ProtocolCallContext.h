@@ -13,16 +13,13 @@ namespace Quazal {
         void *GetReturnValuePtr(unsigned int);
         void AddReturnValuePtr(void *);
 
-        qVector<int> unk48;
-        int unk50;
-        int unk54;
-        // Retail sizeof(ProtocolCallContext) is 0x68, 8 bytes larger than the
-        // fields captured above (which end unpadded at 0x5c and
-        // round to 0x60). This field is unidentified; type
-        // and true offset unconfirmed, but an 8-byte tail (forcing 8-byte
-        // class alignment via Time's 8-byte member) reproduces retail's
-        // `li r3, 0x68` allocation size exactly.
-        long long unk58;
+        // Retail's ctor (0x82A8A4A0) builds its own members from +0x50 and
+        // stores +0x60 and +0x64; sizeof is 0x68 (`li r3, 0x68` before
+        // ContextWrapper::SetCallbackObject's `new`).
+        qVector<int> unk48; // 0x50
+        int unk50; // 0x5c
+        int unk54; // 0x60
+        int unk58; // 0x64
     };
 
 }

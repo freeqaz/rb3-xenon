@@ -88,6 +88,37 @@ DWORD XSessionLeaveLocal(
     const DWORD *pdwUserIndexes,
     XOVERLAPPED *pXOverlapped
 );
+DWORD XSessionModify(
+    HANDLE hSession,
+    DWORD dwFlags,
+    DWORD dwMaxPublicSlots,
+    DWORD dwMaxPrivateSlots,
+    XOVERLAPPED *pXOverlapped
+);
+DWORD XSessionJoinRemote(
+    HANDLE hSession,
+    DWORD dwXuidCount,
+    const XUID *pXuids,
+    const BOOL *pfPrivateSlots,
+    XOVERLAPPED *pXOverlapped
+);
+DWORD XSessionLeaveRemote(
+    HANDLE hSession, DWORD dwXuidCount, const XUID *pXuids, XOVERLAPPED *pXOverlapped
+);
+
+typedef struct _XSESSION_REGISTRATION_RESULTS XSESSION_REGISTRATION_RESULTS;
+DWORD XSessionArbitrationRegister(
+    HANDLE hSession,
+    DWORD dwFlags,
+    ULONGLONG qwSessionNonce,
+    DWORD *pcbRegistrationResults,
+    XSESSION_REGISTRATION_RESULTS *pRegistrationResults,
+    XOVERLAPPED *pXOverlapped
+);
+
+#define XSESSION_CREATE_HOST 0x00000001
+#define XSESSION_CREATE_USES_ARBITRATION 0x00000010
+
 #define XONLINE_GAMERTAG_SIZE 16
 #define XONLINE_FRIENDSTATE_FLAG_SENTREQUEST 0x40000000
 #define XONLINE_FRIENDSTATE_FLAG_RECEIVEDREQUEST 0x80000000
