@@ -92,7 +92,8 @@ public:
     class Head : public FixedSizeSaveable {
     public:
         Head();
-        virtual ~Head() {}
+        // No user-declared dtor: retail's ~BandCharDesc does not re-store Head's
+        // vtable at +0x18 when it destroys this member (implicit).
         virtual void SaveFixed(FixedSizeSaveableStream &) const;
         virtual void LoadFixed(FixedSizeSaveableStream &, int);
 
