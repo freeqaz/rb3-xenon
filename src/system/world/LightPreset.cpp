@@ -1485,7 +1485,7 @@ BEGIN_LOADS(LightPreset)
             MILO_WARN("%s: %s", Name(), str2);
         }
     } else if (sPresetRev < 0x15) {
-        ObjPtr<EventTrigger> trigPtr(this);
+        ObjPtr<EventTrigger> trigPtr(ObjPtrInlineOwner(), this);
         bs >> trigPtr;
         if (trigPtr)
             mSelectTriggers.push_back(trigPtr);
