@@ -5297,6 +5297,8 @@ DataEventList.cpp:
 	.pdata      start:0x82244958 end:0x82244960
 	.pdata      start:0x82244960 end:0x82244970
 	.pdata      start:0x82244998 end:0x822449B0
+	.pdata      start:0x822449C0 end:0x822449C8
+	.pdata      start:0x822449C8 end:0x822449D0
 	.pdata      start:0x822449D0 end:0x822449E0
 	.pdata      start:0x822449E0 end:0x822449F8
 	.pdata      start:0x822449F8 end:0x82244A00
@@ -5311,6 +5313,8 @@ DataEventList.cpp:
 	.text       start:0x827ED078 end:0x827ED0E0
 	.text       start:0x827ED0E0 end:0x827ED198
 	.text       start:0x827ED3B0 end:0x827ED4B0
+	.text       start:0x827ED548 end:0x827ED6A0
+	.text       start:0x827ED6A0 end:0x827ED6F8
 	.text       start:0x827ED6F8 end:0x827ED8D8
 	.text       start:0x827ED8D8 end:0x827ED930
 	.text       start:0x827ED930 end:0x827EDA08
@@ -6582,8 +6586,6 @@ PanelDir.cpp:
 	.pdata      start:0x82214630 end:0x82214640
 	.pdata      start:0x82244970 end:0x82244978
 	.pdata      start:0x82244978 end:0x82244998
-	.pdata      start:0x822449C0 end:0x822449C8
-	.pdata      start:0x822449C8 end:0x822449D0
 	.pdata      start:0x82246128 end:0x822462C8
 	.pdata      start:0x822462C8 end:0x82246398
 	.pdata      start:0x82246398 end:0x822463A0
@@ -6597,8 +6599,6 @@ PanelDir.cpp:
 	.text       start:0x827D1108 end:0x827D1120
 	.text       start:0x827ED198 end:0x827ED200
 	.text       start:0x827ED200 end:0x827ED3B0
-	.text       start:0x827ED548 end:0x827ED6A0
-	.text       start:0x827ED6A0 end:0x827ED6F8
 	.text       start:0x82806418 end:0x82807EF8
 	.text       start:0x82807EF8 end:0x82808B0C
 	.text       start:0x82808B10 end:0x82808C64

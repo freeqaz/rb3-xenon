@@ -24813,7 +24813,7 @@
  "0x827ed3b0": "??$ClearAndShrink@VDataEvent@@@@YAXAAV?$vector@VDataEvent@@V?$StlNodeAlloc@VDataEvent@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x827ed408": "??0?$vector@UCompEv@DataEventList@@V?$StlNodeAlloc@UCompEv@DataEventList@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
  "0x827ed4b0": "??$_M_allocate_and_copy@PAVDataEvent@@@?$vector@VDataEvent@@V?$StlNodeAlloc@VDataEvent@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVDataEvent@@IPAV2@0@Z",
- "0x827ed550": "?_M_insert_overflow_aux@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVFilePath@@ABV3@ABU__false_type@2@I_N@Z",
+ "0x827ed550": "?_M_insert_overflow_aux@?$vector@VDataEvent@@V?$StlNodeAlloc@VDataEvent@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVDataEvent@@ABV3@ABU__false_type@2@I_N@Z",
  "0x827ed6f8": "?_M_fill_insert_aux@?$vector@VDataEvent@@V?$StlNodeAlloc@VDataEvent@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVDataEvent@@IABV3@ABU__false_type@2@@Z",
  "0x827ed8d8": "??0DataEventList@@QAA@XZ",
  "0x827ed930": "??1DataEventList@@QAA@XZ",
