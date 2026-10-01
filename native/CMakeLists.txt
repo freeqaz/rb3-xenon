@@ -1489,6 +1489,9 @@ set(MILO_TARGET_COMMON_SOURCES
     # ---- X7: the band MEMBERS ------------------------------------------
     ${REPO_ROOT}/src/system/bandobj/BandCharacter.cpp
     ${REPO_ROOT}/src/system/bandobj/BandCharDesc.cpp
+    # W16-IF: the real CharKeyHandMidi TU (keyboard-hand MIDI driver) replaces
+    # x7_band_stubs.cpp's empty virtuals.
+    ${REPO_ROOT}/src/system/bandobj/CharKeyHandMidi.cpp
     # BandCharacter's own dependency layer, measured from the link, not guessed:
     # OutfitConfig (outfit recompose / texture patching), BandHeadShaper (face
     # visemes), BandPatchMesh + BandRetargetVignette (leaf drawables), and

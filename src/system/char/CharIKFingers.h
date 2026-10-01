@@ -10,6 +10,9 @@
 class CharIKFingers : public RndHighlightable,
                       public CharWeightable,
                       public CharPollable {
+    // retail CharKeyHandMidi::Poll stores mResetCurHandTrans directly (0x822D1970)
+    friend class CharKeyHandMidi;
+
 public:
     enum FingerNum {
         kFingerThumb,
@@ -63,6 +66,8 @@ public:
     NEW_OBJ(CharIKFingers)
 
     void MeasureLengths();
+    void SetFinger(Vector3, Vector3, FingerNum);
+    void ReleaseFinger(FingerNum);
 
 protected:
     CharIKFingers();

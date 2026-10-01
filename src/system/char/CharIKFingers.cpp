@@ -103,6 +103,36 @@ BEGIN_LOADS(CharIKFingers)
     }
 END_LOADS
 
+// RB3 keyboard-hand entry points (callers: CharKeyHandMidi::KeyFinger / RunTest /
+// UnkeyFinger / EndTest). DC3 dropped them with the keyboard; retail RB3 has both
+// (0x823B1190 SetFinger, 0x823B1290 ReleaseFinger), on this class's DC3-era member
+// names: FingerDesc stride 0x98, mIsEngaged @0, mTargetWorldPos @8, mRefWorldPos @0x18,
+// mBlendFrames @0x68, mBlendOutFrames @0x6c, mNeedsIKSolve @0x94; owner mMoveHand @0x14d.
+void CharIKFingers::SetFinger(Vector3 v1, Vector3 v2, FingerNum fingerNum) {
+    MILO_ASSERT(fingerNum >= 0 && fingerNum < kNumFingers, 0x37);
+    FingerDesc &finger = mFingers[fingerNum];
+    finger.mTargetWorldPos = v1;
+    finger.mRefWorldPos = v2;
+    finger.mIsEngaged = true;
+    finger.mNeedsIKSolve = true;
+    Transform tf;
+    Multiply(finger.mFinger01->LocalXfm(), mCurHandTrans, tf);
+    if (Distance(tf.v, v1) > finger.mBoneTotalLength * mFingerCurledLength) {
+        mMoveHand = true;
+    }
+    mBlendInFrames = 5;
+    finger.mBlendFrames = 5;
+    finger.mBlendOutFrames = 0;
+}
+
+void CharIKFingers::ReleaseFinger(FingerNum finger) {
+    MILO_ASSERT(finger >= 0 && finger < kNumFingers, 0x57);
+    mFingers[finger].mIsEngaged = false;
+    mFingers[finger].mNeedsIKSolve = true;
+    mFingers[finger].mBlendOutFrames = 0;
+    mFingers[finger].mBlendFrames = 5;
+}
+
 void CharIKFingers::SetName(const char *name, ObjectDir *dir) {
     Hmx::Object::SetName(name, dir);
     if (dir) {

@@ -3,6 +3,8 @@
 #include "char/CharPollable.h"
 #include "char/CharIKFingers.h"
 
+class Character;
+
 class CharKeyHandMidi : public RndHighlightable,
                         public CharWeightable,
                         public CharPollable {
@@ -38,10 +40,9 @@ public:
     DataNode OnFingersUp(DataArray *);
     DataNode OnFingersDown(DataArray *);
 
-    static unsigned short gRev;
-    static unsigned short gAltRev;
-    NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    // Retail NewObject (0x8227B918) calls StaticClassName + MemAlloc inline and
+    // ??_GCharKeyHandMidi (0x822D1860) calls MemFree directly: inline-delete overload.
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x17)
     NEW_OBJ(CharKeyHandMidi)
     static void Init() { Register(); }
     static void Register() { REGISTER_OBJ_FACTORY(CharKeyHandMidi) }

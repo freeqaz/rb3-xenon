@@ -18487,12 +18487,19 @@
   {
    "name": "1?$vector",
    "address": "0x826f8380",
-   "survivor": "??1?$vector@VFlowMathOp@@V?$StlNodeAlloc@VFlowMathOp@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "survivor": "??1?$vector@VVocalScoreHistory@@V?$StlNodeAlloc@VVocalScoreHistory@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
    "folded": [
-    "??1?$vector@UEntry@LocalePanel@@V?$StlNodeAlloc@UEntry@LocalePanel@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
-    "??1?$vector@VVocalScoreHistory@@V?$StlNodeAlloc@VVocalScoreHistory@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
+    "??1?$vector@UEntry@LocalePanel@@V?$StlNodeAlloc@UEntry@LocalePanel@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 1 census sites over 2 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 1 census sites over 2 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??1?$vector@VFlowMathOp@@V?$StlNodeAlloc@VFlowMathOp@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "retail callers are Singer code (Singer::PostLoad / ~Singer / AppendToScoreHistory / push_back chains) and the body ranks 99.6-100 against Singer.obj's instantiation for this element type; the previous name was a stand-in pairing against another unit's obj (DepthBuffer3D / CameraManager / CharBones / FlowMathOp)"
+    }
+   ]
   },
   {
    "name": "$_Param_Construct",
@@ -38418,7 +38425,13 @@
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 5 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
-    {"spelling": "??0BandFaceDeform@@QAA@XZ", "lane": "W17-ANON2 2026-10-01", "class": "RTTI_PROVES_OWN_ADDRESS", "disposition": "withdrawn", "evidence": "Retail bytes: the constructor at 0x822c80e0 (76 B) builds vtable address whose Complete Object Locator names .?AVBandFaceDeform@@ (RetailRtti.classes_installed_by); the survivor body at 0x824dfa78 builds .?AVColorPalette@@'s. A ctor that installs its own class's vtable cannot fold with another class's; the T1 proof masked exactly that operand. 0x822c80e0 carries this spelling in target_symbol_map.json (lane W17-ANON2, RTTI pass, body score 100)."}
+    {
+     "spelling": "??0BandFaceDeform@@QAA@XZ",
+     "lane": "W17-ANON2 2026-10-01",
+     "class": "RTTI_PROVES_OWN_ADDRESS",
+     "disposition": "withdrawn",
+     "evidence": "Retail bytes: the constructor at 0x822c80e0 (76 B) builds vtable address whose Complete Object Locator names .?AVBandFaceDeform@@ (RetailRtti.classes_installed_by); the survivor body at 0x824dfa78 builds .?AVColorPalette@@'s. A ctor that installs its own class's vtable cannot fold with another class's; the T1 proof masked exactly that operand. 0x822c80e0 carries this spelling in target_symbol_map.json (lane W17-ANON2, RTTI pass, body score 100)."
+    }
    ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
@@ -43013,7 +43026,7 @@
   {
    "name": "$sort_heap",
    "address": "0x822d09c8",
-   "survivor": "??$sort_heap@PAHU?$less@H@stlpmtx_std@@@stlpmtx_std@@YAXPAH0U?$less@H@0@@Z",
+   "survivor": "??$sort_heap@PAW4KeyboardKey@CharKeyHandMidi@@U?$greater@H@stlpmtx_std@@@stlpmtx_std@@YAXPAW4KeyboardKey@CharKeyHandMidi@@0U?$greater@H@0@@Z",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 20 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -43116,6 +43129,12 @@
      "spelling": "??$sort_heap@PAVSymbol@@U?$less@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@YAXPAVSymbol@@0U?$less@VSymbol@@@0@@Z",
      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "??$sort_heap@PAHU?$less@H@stlpmtx_std@@@stlpmtx_std@@YAXPAH0U?$less@H@0@@Z",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "retail's only caller is CharKeyHandMidi::Poll (0x822D1900), which sorts its vector<KeyboardKey> (less / greater<int>); the address is that TU's instantiation, the old survivor was a stand-in pairing against MoveMgr.obj's CameraManager include"
     }
    ],
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 2 other group(s) at 3 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 2 of the 3 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
@@ -49274,7 +49293,7 @@
   {
    "name": "$__make_heap",
    "address": "0x822d0350",
-   "survivor": "??$__make_heap@PAHU?$less@H@stlpmtx_std@@HH@stlpmtx_std@@YAXPAH0U?$less@H@0@00@Z",
+   "survivor": "??$__make_heap@PAW4KeyboardKey@CharKeyHandMidi@@U?$greater@H@stlpmtx_std@@W412@H@stlpmtx_std@@YAXPAW4KeyboardKey@CharKeyHandMidi@@0U?$greater@H@0@0PAH@Z",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 22 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -49387,6 +49406,12 @@
      "spelling": "??$__make_heap@PAVSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@H@stlpmtx_std@@YAXPAVSymbol@@0U?$less@VSymbol@@@0@0PAH@Z",
      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "??$__make_heap@PAHU?$less@H@stlpmtx_std@@HH@stlpmtx_std@@YAXPAH0U?$less@H@0@00@Z",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "retail's only caller is CharKeyHandMidi::Poll (0x822D1900), which sorts its vector<KeyboardKey> (less / greater<int>); the address is that TU's instantiation, the old survivor was a stand-in pairing against MoveMgr.obj's CameraManager include"
     }
    ],
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 1 other group(s) at 2 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 1 of the 2 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
@@ -55771,7 +55796,7 @@
   {
    "name": "$__insertion_sort",
    "address": "0x822d0a30",
-   "survivor": "??$__insertion_sort@PAHHU?$less@H@stlpmtx_std@@@stlpmtx_std@@YAXPAH00U?$less@H@0@@Z",
+   "survivor": "??$__insertion_sort@PAW4KeyboardKey@CharKeyHandMidi@@W412@U?$less@W4KeyboardKey@CharKeyHandMidi@@@stlpmtx_std@@@stlpmtx_std@@YAXPAW4KeyboardKey@CharKeyHandMidi@@00U?$less@W4KeyboardKey@CharKeyHandMidi@@@0@@Z",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 18 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -55864,6 +55889,12 @@
      "spelling": "??$__insertion_sort@PAPAVVocalPart@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVVocalPart@@00P6A_NPBV1@1@Z@Z",
      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "??$__insertion_sort@PAHHU?$less@H@stlpmtx_std@@@stlpmtx_std@@YAXPAH00U?$less@H@0@@Z",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "retail's only caller is CharKeyHandMidi::Poll (0x822D1900), which sorts its vector<KeyboardKey> (less / greater<int>); the address is that TU's instantiation, the old survivor was a stand-in pairing against MoveMgr.obj's CameraManager include"
     }
    ],
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 2 other group(s) at 3 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 2 of the 3 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
@@ -57310,7 +57341,6 @@
     "??_GStartGameOnTimeMsg@@UAAPAXI@Z",
     "??_GSyncAllMsg@@UAAPAXI@Z",
     "??_GSyncUserMsg@@UAAPAXI@Z",
-    "??_GTextStream@@UAAPAXI@Z",
     "??_GTourHideShowFiltersMsg@@UAAPAXI@Z",
     "??_GTourMostStarsMsg@@UAAPAXI@Z",
     "??_GTourPlayedMsg@@UAAPAXI@Z",
@@ -57321,11 +57351,48 @@
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 112 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
-    {"spelling": "??_GOriginalPathable@@UAAPAXI@Z", "lane": "W17-ANON2 2026-10-01", "class": "RTTI_PROVES_OWN_ADDRESS", "disposition": "withdrawn", "evidence": "Retail bytes: the scalar deleting destructor at 0x82390af0 (68 B) builds .?AVOriginalPathable@@'s vtable address (inlined ??1); the survivor body at 0x82bf6f58 builds no vtable. Different bodies, cannot fold (same defect W16-HZ recorded for Mic/NetworkSocket/TrackWatcherParent in this group). 0x82390af0 carries this spelling in target_symbol_map.json (lane W17-ANON2: retail vtable slot of OriginalPathable, ??_E->??_G, body score 100)."},
-    {"spelling": "??_GDrawable@@UAAPAXI@Z", "lane": "W17-ANON2 2026-10-01", "class": "RTTI_PROVES_OWN_ADDRESS", "disposition": "withdrawn", "evidence": "Retail bytes: the scalar deleting destructor at 0x82464480 (68 B) builds .?AVDrawable@@'s vtable address; the survivor body at 0x82bf6f58 builds none. Cannot fold. 0x82464480 carries this spelling in target_symbol_map.json (lane W17-ANON2, RTTI pass, body score 100)."},
-    {"spelling": "??_GMic@@UAAPAXI@Z", "lane": "W16-HZ 2026-09-30", "class": "RTTI_PROVES_OWN_ADDRESS", "disposition": "withdrawn", "evidence": "Retail bytes: the scalar deleting destructor at 0x827296c0 stores vtable 0x820fe2dc (lis/addi r11, stw r11,0(r3)) and that vtable's Complete Object Locator (vtable[-1]) names TypeDescriptor .?AVMic@@. So this class's ??_G lives at 0x827296c0, not at 0x82bf6f58, whose body stores a different vtable (0x821ad144). A ??_G that stores its own class's vtable cannot fold with another class's; the T1/L1_T1 proof masked exactly that operand (the vtable relocation target is an unnamed placeholder, which name_check forgives). 0x827296c0 carries this spelling in target_symbol_map.json (lane W16-HZ)."},
-    {"spelling": "??_GNetworkSocket@@UAAPAXI@Z", "lane": "W16-HZ 2026-09-30", "class": "RTTI_PROVES_OWN_ADDRESS", "disposition": "withdrawn", "evidence": "Retail bytes: the scalar deleting destructor at 0x82531448 stores vtable 0x8208d484 (lis/addi r11, stw r11,0(r3)) and that vtable's Complete Object Locator (vtable[-1]) names TypeDescriptor .?AVNetworkSocket@@. So this class's ??_G lives at 0x82531448, not at 0x82bf6f58, whose body stores a different vtable (0x821ad144). A ??_G that stores its own class's vtable cannot fold with another class's; the T1/L1_T1 proof masked exactly that operand (the vtable relocation target is an unnamed placeholder, which name_check forgives). 0x82531448 carries this spelling in target_symbol_map.json (lane W16-HZ)."},
-    {"spelling": "??_GTrackWatcherParent@@UAAPAXI@Z", "lane": "W16-HZ 2026-09-30", "class": "RTTI_PROVES_OWN_ADDRESS", "disposition": "withdrawn", "evidence": "Retail bytes: the scalar deleting destructor at 0x82790490 stores vtable 0x8210f2fc (lis/addi r11, stw r11,0(r3)) and that vtable's Complete Object Locator (vtable[-1]) names TypeDescriptor .?AVTrackWatcherParent@@. So this class's ??_G lives at 0x82790490, not at 0x82bf6f58, whose body stores a different vtable (0x821ad144). A ??_G that stores its own class's vtable cannot fold with another class's; the T1/L1_T1 proof masked exactly that operand (the vtable relocation target is an unnamed placeholder, which name_check forgives). 0x82790490 carries this spelling in target_symbol_map.json (lane W16-HZ)."}
+    {
+     "spelling": "??_GOriginalPathable@@UAAPAXI@Z",
+     "lane": "W17-ANON2 2026-10-01",
+     "class": "RTTI_PROVES_OWN_ADDRESS",
+     "disposition": "withdrawn",
+     "evidence": "Retail bytes: the scalar deleting destructor at 0x82390af0 (68 B) builds .?AVOriginalPathable@@'s vtable address (inlined ??1); the survivor body at 0x82bf6f58 builds no vtable. Different bodies, cannot fold (same defect W16-HZ recorded for Mic/NetworkSocket/TrackWatcherParent in this group). 0x82390af0 carries this spelling in target_symbol_map.json (lane W17-ANON2: retail vtable slot of OriginalPathable, ??_E->??_G, body score 100)."
+    },
+    {
+     "spelling": "??_GDrawable@@UAAPAXI@Z",
+     "lane": "W17-ANON2 2026-10-01",
+     "class": "RTTI_PROVES_OWN_ADDRESS",
+     "disposition": "withdrawn",
+     "evidence": "Retail bytes: the scalar deleting destructor at 0x82464480 (68 B) builds .?AVDrawable@@'s vtable address; the survivor body at 0x82bf6f58 builds none. Cannot fold. 0x82464480 carries this spelling in target_symbol_map.json (lane W17-ANON2, RTTI pass, body score 100)."
+    },
+    {
+     "spelling": "??_GMic@@UAAPAXI@Z",
+     "lane": "W16-HZ 2026-09-30",
+     "class": "RTTI_PROVES_OWN_ADDRESS",
+     "disposition": "withdrawn",
+     "evidence": "Retail bytes: the scalar deleting destructor at 0x827296c0 stores vtable 0x820fe2dc (lis/addi r11, stw r11,0(r3)) and that vtable's Complete Object Locator (vtable[-1]) names TypeDescriptor .?AVMic@@. So this class's ??_G lives at 0x827296c0, not at 0x82bf6f58, whose body stores a different vtable (0x821ad144). A ??_G that stores its own class's vtable cannot fold with another class's; the T1/L1_T1 proof masked exactly that operand (the vtable relocation target is an unnamed placeholder, which name_check forgives). 0x827296c0 carries this spelling in target_symbol_map.json (lane W16-HZ)."
+    },
+    {
+     "spelling": "??_GNetworkSocket@@UAAPAXI@Z",
+     "lane": "W16-HZ 2026-09-30",
+     "class": "RTTI_PROVES_OWN_ADDRESS",
+     "disposition": "withdrawn",
+     "evidence": "Retail bytes: the scalar deleting destructor at 0x82531448 stores vtable 0x8208d484 (lis/addi r11, stw r11,0(r3)) and that vtable's Complete Object Locator (vtable[-1]) names TypeDescriptor .?AVNetworkSocket@@. So this class's ??_G lives at 0x82531448, not at 0x82bf6f58, whose body stores a different vtable (0x821ad144). A ??_G that stores its own class's vtable cannot fold with another class's; the T1/L1_T1 proof masked exactly that operand (the vtable relocation target is an unnamed placeholder, which name_check forgives). 0x82531448 carries this spelling in target_symbol_map.json (lane W16-HZ)."
+    },
+    {
+     "spelling": "??_GTrackWatcherParent@@UAAPAXI@Z",
+     "lane": "W16-HZ 2026-09-30",
+     "class": "RTTI_PROVES_OWN_ADDRESS",
+     "disposition": "withdrawn",
+     "evidence": "Retail bytes: the scalar deleting destructor at 0x82790490 stores vtable 0x8210f2fc (lis/addi r11, stw r11,0(r3)) and that vtable's Complete Object Locator (vtable[-1]) names TypeDescriptor .?AVTrackWatcherParent@@. So this class's ??_G lives at 0x82790490, not at 0x82bf6f58, whose body stores a different vtable (0x821ad144). A ??_G that stores its own class's vtable cannot fold with another class's; the T1/L1_T1 proof masked exactly that operand (the vtable relocation target is an unnamed placeholder, which name_check forgives). 0x82790490 carries this spelling in target_symbol_map.json (lane W16-HZ)."
+    },
+    {
+     "spelling": "??_GTextStream@@UAAPAXI@Z",
+     "lane": "W16-IF 2026-10-01",
+     "class": "RTTI_PROVES_OWN_ADDRESS",
+     "disposition": "withdrawn",
+     "evidence": "Retail bytes: the scalar deleting destructor at 0x822716f8 stores vtable 0x82000e8c (lis/addi r11, stw r11,0(r3)) whose Complete Object Locator names TypeDescriptor .?AVTextStream@@, and that vtable's slot 0 points back at 0x822716f8. So TextStream's ??_G lives at 0x822716f8, not at 0x82bf6f58 (whose body stores no vtable). 0x822716f8 carries this spelling in target_symbol_map.json (lane W16-IF; it sat anonymous in RhythmDetector's pin)."
+    }
    ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
@@ -61024,7 +61091,13 @@
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 17 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
-    {"spelling": "??0?$ObjDirItr@VRndMat@@@@QAA@PAVObjectDir@@_N@Z", "lane": "W17-ANON2 2026-10-01", "class": "DISTINCT_CALLEE", "disposition": "withdrawn", "evidence": "Retail bytes: 0x82325590 and the survivor 0x823d1a78 are both 120 B and word-identical EXCEPT word 20, the bl to Advance: 0x82325590 calls 0x823253e8 (mapped ?Advance@?$ObjDirItr@VRndMat@@@@AAAXXZ) and 0x823d1a78 calls 0x823d13e8. Two bodies with different call targets are not one COMDAT under /OPT:ICF. 0x82325590 carries this spelling in target_symbol_map.json (lane W17-ANON2, caller binding)."},
+    {
+     "spelling": "??0?$ObjDirItr@VRndMat@@@@QAA@PAVObjectDir@@_N@Z",
+     "lane": "W17-ANON2 2026-10-01",
+     "class": "DISTINCT_CALLEE",
+     "disposition": "withdrawn",
+     "evidence": "Retail bytes: 0x82325590 and the survivor 0x823d1a78 are both 120 B and word-identical EXCEPT word 20, the bl to Advance: 0x82325590 calls 0x823253e8 (mapped ?Advance@?$ObjDirItr@VRndMat@@@@AAAXXZ) and 0x823d1a78 calls 0x823d13e8. Two bodies with different call targets are not one COMDAT under /OPT:ICF. 0x82325590 carries this spelling in target_symbol_map.json (lane W17-ANON2, caller binding)."
+    },
     {
      "spelling": "??0?$ObjDirItr@VDepthBuffer3D@@@@QAA@PAVObjectDir@@_N@Z",
      "lane": "W16-AH 2026-09-14",
@@ -63312,11 +63385,17 @@
   {
    "name": "_M_erase",
    "address": "0x826f7f70",
-   "survivor": "?_M_erase@?$vector@UDepthBuffer3DAttachment@@V?$StlNodeAlloc@UDepthBuffer3DAttachment@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUDepthBuffer3DAttachment@@PAU3@0ABU__false_type@2@@Z",
-   "folded": [
-    "?_M_erase@?$vector@VVocalScoreCache@@V?$StlNodeAlloc@VVocalScoreCache@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVVocalScoreCache@@PAV3@0ABU__false_type@2@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "survivor": "?_M_erase@?$vector@VVocalScoreCache@@V?$StlNodeAlloc@VVocalScoreCache@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVVocalScoreCache@@PAV3@0ABU__false_type@2@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "?_M_erase@?$vector@UDepthBuffer3DAttachment@@V?$StlNodeAlloc@UDepthBuffer3DAttachment@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUDepthBuffer3DAttachment@@PAU3@0ABU__false_type@2@@Z",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "retail callers are Singer code (Singer::PostLoad / ~Singer / AppendToScoreHistory / push_back chains) and the body ranks 99.6-100 against Singer.obj's instantiation for this element type; the previous name was a stand-in pairing against another unit's obj (DepthBuffer3D / CameraManager / CharBones / FlowMathOp)"
+    }
+   ]
   },
   {
    "name": "$_Copy_Construct",
@@ -65023,7 +65102,13 @@
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 50 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
-    {"spelling": "??_GRndFont@@UAAPAXI@Z", "lane": "W17-ANON2 2026-10-01", "class": "DISTINCT_CALLEE", "disposition": "withdrawn", "evidence": "Retail bytes: the scalar deleting destructor at 0x82474298 (76 B) calls 0x82473b38 (??1RndFont, itself RTTI-proven: it builds .?AVRndFont@@'s vtable) and 0x827bc430 (MemFree); the survivor body at 0x823f5270 calls 0x823f4fa8 and 0x82a99258. Different callees, cannot fold. 0x82474298 carries this spelling in target_symbol_map.json (lane W17-ANON2: retail vtable slot 0 of RndFont)."},
+    {
+     "spelling": "??_GRndFont@@UAAPAXI@Z",
+     "lane": "W17-ANON2 2026-10-01",
+     "class": "DISTINCT_CALLEE",
+     "disposition": "withdrawn",
+     "evidence": "Retail bytes: the scalar deleting destructor at 0x82474298 (76 B) calls 0x82473b38 (??1RndFont, itself RTTI-proven: it builds .?AVRndFont@@'s vtable) and 0x827bc430 (MemFree); the survivor body at 0x823f5270 calls 0x823f4fa8 and 0x82a99258. Different callees, cannot fold. 0x82474298 carries this spelling in target_symbol_map.json (lane W17-ANON2: retail vtable slot 0 of RndFont)."
+    },
     {
      "spelling": "??_GFreestyleMove@@UAAPAXI@Z",
      "lane": "W16-AH 2026-09-14",
@@ -68883,7 +68968,7 @@
   {
    "name": "$sort",
    "address": "0x822d17f0",
-   "survivor": "??$sort@PAPAVCamShot@@UNameSort@@@stlpmtx_std@@YAXPAPAVCamShot@@0UNameSort@@@Z",
+   "survivor": "??$sort@PAW4KeyboardKey@CharKeyHandMidi@@U?$greater@H@stlpmtx_std@@@stlpmtx_std@@YAXPAW4KeyboardKey@CharKeyHandMidi@@0U?$greater@H@0@@Z",
    "folded": [
     "??$sort@PAPAVUILabel@@ULabelSort@?A0x0bc8bdd4@@@stlpmtx_std@@YAXPAPAVUILabel@@0ULabelSort@?A0x0bc8bdd4@@@Z",
     "??$sort@PAPAVUILabel@@ULabelSort@?A0x4c78cf70@@@stlpmtx_std@@YAXPAPAVUILabel@@0ULabelSort@?A0x4c78cf70@@@Z",
@@ -68913,6 +68998,12 @@
      "lane": "W17-MVS 2026-09-30",
      "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS",
      "why": "sort<Vert**,SortByZ> is retail 0x82349B78: its only caller is BandPatchMesh::WorkVerts::WorkVerts (bl 0x82349F78) and it calls __introsort_loop<SortByZ> 0x82349770 / __final_insertion_sort<SortByZ> 0x82347B78, both reaching the named SortByZ leaves. 0x822d17f0 has one retail caller, 0x822D1900. The spelling now has its own map row, so it cannot also be folded here."
+    },
+    {
+     "spelling": "??$sort@PAPAVCamShot@@UNameSort@@@stlpmtx_std@@YAXPAPAVCamShot@@0UNameSort@@@Z",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "retail's only caller is CharKeyHandMidi::Poll (0x822D1900), which sorts its vector<KeyboardKey> (less / greater<int>); the address is that TU's instantiation, the old survivor was a stand-in pairing against MoveMgr.obj's CameraManager include"
     }
    ],
    "repair": {
@@ -73030,7 +73121,7 @@
   {
    "name": "$__insertion_sort",
    "address": "0x822d0a80",
-   "survivor": "??$__insertion_sort@PAPAVCamShot@@PAV1@UNameSort@@@stlpmtx_std@@YAXPAPAVCamShot@@00UNameSort@@@Z",
+   "survivor": "??$__insertion_sort@PAW4KeyboardKey@CharKeyHandMidi@@W412@U?$greater@H@stlpmtx_std@@@stlpmtx_std@@YAXPAW4KeyboardKey@CharKeyHandMidi@@00U?$greater@H@0@@Z",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 18 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -73123,6 +73214,12 @@
      "spelling": "??$__insertion_sort@PAPAVVocalPart@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVVocalPart@@00P6A_NPBV1@1@Z@Z",
      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "??$__insertion_sort@PAPAVCamShot@@PAV1@UNameSort@@@stlpmtx_std@@YAXPAPAVCamShot@@00UNameSort@@@Z",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "retail's only caller is CharKeyHandMidi::Poll (0x822D1900), which sorts its vector<KeyboardKey> (less / greater<int>); the address is that TU's instantiation, the old survivor was a stand-in pairing against MoveMgr.obj's CameraManager include"
     }
    ],
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 2 other group(s) at 3 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 2 of the 3 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
@@ -74187,7 +74284,13 @@
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 7 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
-    {"spelling": "?Replace@CharBonesMeshes@@$2PPPPPPPM@CM@AAXPAVObjRef@@PAVObject@Hmx@@@Z", "lane": "W17-ANON2 2026-10-01", "class": "DISTINCT_CALLEE", "disposition": "withdrawn", "evidence": "Retail bytes: two 16-byte vtordisp thunks with the same adjustment that branch to DIFFERENT targets -- 0x82375d30 -> 0x8237b338 (CharBonesMeshes region) and the survivor 0x823afe88 -> 0x823ae888 (beside CharWeightable's block). Thunks with different jump targets cannot fold. 0x82375d30 carries this spelling in target_symbol_map.json (lane W17-ANON2: retail vtable slot of CharServoBone resolves to it)."},
+    {
+     "spelling": "?Replace@CharBonesMeshes@@$2PPPPPPPM@CM@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
+     "lane": "W17-ANON2 2026-10-01",
+     "class": "DISTINCT_CALLEE",
+     "disposition": "withdrawn",
+     "evidence": "Retail bytes: two 16-byte vtordisp thunks with the same adjustment that branch to DIFFERENT targets -- 0x82375d30 -> 0x8237b338 (CharBonesMeshes region) and the survivor 0x823afe88 -> 0x823ae888 (beside CharWeightable's block). Thunks with different jump targets cannot fold. 0x82375d30 carries this spelling in target_symbol_map.json (lane W17-ANON2: retail vtable slot of CharServoBone resolves to it)."
+    },
     {
      "spelling": "?Replace@RndMovie@@$4PPPPPPPM@CM@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
      "lane": "ALIAS-REPAIR 2026-08-19",
@@ -78423,7 +78526,7 @@
   {
    "name": "_M_clear",
    "address": "0x82714c98",
-   "survivor": "?_M_clear@?$vector@ULocalizedName@HamMove@@V?$StlNodeAlloc@ULocalizedName@HamMove@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+   "survivor": "?_M_clear@?$vector@VSampleZone@@V?$StlNodeAlloc@VSampleZone@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -78438,6 +78541,12 @@
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
      "disposition": "repartitioned"
+    },
+    {
+     "spelling": "?_M_clear@?$vector@ULocalizedName@HamMove@@V?$StlNodeAlloc@ULocalizedName@HamMove@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "the retail body at this address constructs/destroys/assigns SampleZone (calls ??0SampleZone/??4SampleZone/~SampleZone through the family), its callers are MidiInstrument code, and it ranks 99.8-100 against MidiInstrument.obj's vector<SampleZone> instantiation; the HamMove::LocalizedName survivor was a DC3 stand-in pairing against HamMove.obj"
     }
    ],
    "repair": {
@@ -79192,11 +79301,17 @@
   {
    "name": "$__uninitialized_fill_n",
    "address": "0x826f7e50",
-   "survivor": "??$__uninitialized_fill_n@PAUDepthBuffer3DAttachment@@IU1@@stlpmtx_std@@YAPAUDepthBuffer3DAttachment@@PAU1@IABU1@ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_fill_n@PAVVocalScoreCache@@IV1@@stlpmtx_std@@YAPAVVocalScoreCache@@PAV1@IABV1@ABU__false_type@0@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "survivor": "??$__uninitialized_fill_n@PAVVocalScoreCache@@IV1@@stlpmtx_std@@YAPAVVocalScoreCache@@PAV1@IABV1@ABU__false_type@0@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_fill_n@PAUDepthBuffer3DAttachment@@IU1@@stlpmtx_std@@YAPAUDepthBuffer3DAttachment@@PAU1@IABU1@ABU__false_type@0@@Z",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "retail callers are Singer code (Singer::PostLoad / ~Singer / AppendToScoreHistory / push_back chains) and the body ranks 99.6-100 against Singer.obj's instantiation for this element type; the previous name was a stand-in pairing against another unit's obj (DepthBuffer3D / CameraManager / CharBones / FlowMathOp)"
+    }
+   ]
   },
   {
    "name": "KeyLessEq",
@@ -79720,7 +79835,7 @@
   {
    "name": "1?$vector",
    "address": "0x82714d18",
-   "survivor": "??1?$vector@ULocalizedName@HamMove@@V?$StlNodeAlloc@ULocalizedName@HamMove@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "survivor": "??1?$vector@VSampleZone@@V?$StlNodeAlloc@VSampleZone@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -79729,6 +79844,12 @@
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
      "disposition": "dropped_singleton"
+    },
+    {
+     "spelling": "??1?$vector@ULocalizedName@HamMove@@V?$StlNodeAlloc@ULocalizedName@HamMove@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "the retail body at this address constructs/destroys/assigns SampleZone (calls ??0SampleZone/??4SampleZone/~SampleZone through the family), its callers are MidiInstrument code, and it ranks 99.8-100 against MidiInstrument.obj's vector<SampleZone> instantiation; the HamMove::LocalizedName survivor was a DC3 stand-in pairing against HamMove.obj"
     }
    ],
    "repair": {
@@ -80269,11 +80390,17 @@
   {
    "name": "$__uninitialized_copy",
    "address": "0x826f7ea0",
-   "survivor": "??$__uninitialized_copy@PAUDepthBuffer3DAttachment@@PAU1@@stlpmtx_std@@YAPAUDepthBuffer3DAttachment@@PAU1@00ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_copy@PAVVocalScoreCache@@PAV1@@stlpmtx_std@@YAPAVVocalScoreCache@@PAV1@00ABU__false_type@0@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "survivor": "??$__uninitialized_copy@PAVVocalScoreCache@@PAV1@@stlpmtx_std@@YAPAVVocalScoreCache@@PAV1@00ABU__false_type@0@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_copy@PAUDepthBuffer3DAttachment@@PAU1@@stlpmtx_std@@YAPAUDepthBuffer3DAttachment@@PAU1@00ABU__false_type@0@@Z",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "retail callers are Singer code (Singer::PostLoad / ~Singer / AppendToScoreHistory / push_back chains) and the body ranks 99.6-100 against Singer.obj's instantiation for this element type; the previous name was a stand-in pairing against another unit's obj (DepthBuffer3D / CameraManager / CharBones / FlowMathOp)"
+    }
+   ]
   },
   {
    "name": "5",
@@ -82678,12 +82805,19 @@
   {
    "name": "_M_insert_overflow",
    "address": "0x826fbdb0",
-   "survivor": "?_M_insert_overflow@?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@2@ABV32@ABU__false_type@2@I_N@Z",
+   "survivor": "?ReadAsync@BufFile@@UAA_NPAXH@Z",
    "folded": [
-    "?ReadAsync@BufFile@@UAA_NPAXH@Z",
     "?ReadAsync@NullFile@@UAA_NPAXH@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "?_M_insert_overflow@?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@2@ABV32@ABU__false_type@2@I_N@Z",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "retail RTTI: .?AVBufFile@@ vtable slot 3 (ReadAsync) points here; the 48-B body is Read() + return true and scores 100 against Synth.obj's inline BufFile::ReadAsync; the vector<map<int,float>> name was a stand-in pairing against DepthBuffer3D.obj (23.3)"
+    }
+   ]
   },
   {
    "name": "Save",
@@ -83167,11 +83301,19 @@
   {
    "name": "_M_fill_insert",
    "address": "0x826f93c0",
-   "survivor": "?_M_fill_insert@?$vector@UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUBone@CharBones@@IABU34@@Z",
+   "survivor": "?_M_fill_insert@?$vector@VSingerResultsData@@V?$StlNodeAlloc@VSingerResultsData@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSingerResultsData@@IABV3@@Z",
    "folded": [
     "?_M_fill_insert@?$vector@UHamListRibbonDrawState@@V?$StlNodeAlloc@UHamListRibbonDrawState@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUHamListRibbonDrawState@@IABU3@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "?_M_fill_insert@?$vector@UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUBone@CharBones@@IABU34@@Z",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "retail callers are Singer code (Singer::PostLoad / ~Singer / AppendToScoreHistory / push_back chains) and the body ranks 99.6-100 against Singer.obj's instantiation for this element type; the previous name was a stand-in pairing against another unit's obj (DepthBuffer3D / CameraManager / CharBones / FlowMathOp)"
+    }
+   ]
   },
   {
    "name": "StrIStartsWith",
@@ -84404,11 +84546,19 @@
   {
    "name": "$__uninitialized_copy",
    "address": "0x827148b0",
-   "survivor": "??$__uninitialized_copy@PAULocalizedName@HamMove@@PAU12@@stlpmtx_std@@YAPAULocalizedName@HamMove@@PAU12@00ABU__false_type@0@@Z",
+   "survivor": "??$__uninitialized_copy@PAVSampleZone@@PAV1@@stlpmtx_std@@YAPAVSampleZone@@PAV1@00ABU__false_type@0@@Z",
    "folded": [
     "??$__uninitialized_copy@PBULocalizedName@HamMove@@PAU12@@stlpmtx_std@@YAPAULocalizedName@HamMove@@PBU12@0PAU12@ABU__false_type@0@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_copy@PAULocalizedName@HamMove@@PAU12@@stlpmtx_std@@YAPAULocalizedName@HamMove@@PAU12@00ABU__false_type@0@@Z",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "the retail body at this address constructs/destroys/assigns SampleZone (calls ??0SampleZone/??4SampleZone/~SampleZone through the family), its callers are MidiInstrument code, and it ranks 99.8-100 against MidiInstrument.obj's vector<SampleZone> instantiation; the HamMove::LocalizedName survivor was a DC3 stand-in pairing against HamMove.obj"
+    }
+   ]
   },
   {
    "name": "$_M_allocate_and_copy",
@@ -85370,11 +85520,17 @@
   {
    "name": "push_back",
    "address": "0x826f94c8",
-   "survivor": "?push_back@?$vector@UPropertyFilter@CameraManager@@V?$StlNodeAlloc@UPropertyFilter@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUPropertyFilter@CameraManager@@@Z",
-   "folded": [
-    "?push_back@?$vector@VVocalScoreHistory@@V?$StlNodeAlloc@VVocalScoreHistory@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVVocalScoreHistory@@@Z"
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+   "survivor": "?push_back@?$vector@VVocalScoreHistory@@V?$StlNodeAlloc@VVocalScoreHistory@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVVocalScoreHistory@@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. ",
+   "withdrawn": [
+    {
+     "spelling": "?push_back@?$vector@UPropertyFilter@CameraManager@@V?$StlNodeAlloc@UPropertyFilter@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUPropertyFilter@CameraManager@@@Z",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "retail callers are Singer code (Singer::PostLoad / ~Singer / AppendToScoreHistory / push_back chains) and the body ranks 99.6-100 against Singer.obj's instantiation for this element type; the previous name was a stand-in pairing against another unit's obj (DepthBuffer3D / CameraManager / CharBones / FlowMathOp)"
+    }
+   ]
   },
   {
    "name": "$_M_allocate_and_copy",
@@ -90516,11 +90672,17 @@
   {
    "name": "__uninitialized_fill_n_VVector3",
    "address": "0x826f80c0",
-   "survivor": "??$__uninitialized_fill_n@PAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@IV12@@stlpmtx_std@@YAPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@PAV10@IABV10@ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_fill_n@PAVVocalScoreHistory@@IV1@@stlpmtx_std@@YAPAVVocalScoreHistory@@PAV1@IABV1@ABU__false_type@0@@Z"
-   ],
-   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 50, row addr 0x826f80c0). \"ours\" spelling ??$__uninitialized_fill_n@PAVVocalScoreHistory@@IV1@@stlpmtx_std@@YAPAVVocalScoreHistory@@PAV1@IABV1@ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_fill_n@PAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@IV12@@stlpmtx_std@@YAPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@PAV10@IABV10@ABU__false_type@0@@Z at retail address 0x826f80c0. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 SLOT-FOLD-OK, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 328 B (328 B honest) across ['default/band3/game/Singer'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md."
+   "survivor": "??$__uninitialized_fill_n@PAVVocalScoreHistory@@IV1@@stlpmtx_std@@YAPAVVocalScoreHistory@@PAV1@IABV1@ABU__false_type@0@@Z",
+   "folded": [],
+   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 50, row addr 0x826f80c0). \"ours\" spelling ??$__uninitialized_fill_n@PAVVocalScoreHistory@@IV1@@stlpmtx_std@@YAPAVVocalScoreHistory@@PAV1@IABV1@ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_fill_n@PAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@IV12@@stlpmtx_std@@YAPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@PAV10@IABV10@ABU__false_type@0@@Z at retail address 0x826f80c0. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 SLOT-FOLD-OK, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 328 B (328 B honest) across ['default/band3/game/Singer'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_fill_n@PAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@IV12@@stlpmtx_std@@YAPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@PAV10@IABV10@ABU__false_type@0@@Z",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "retail callers are Singer code (Singer::PostLoad / ~Singer / AppendToScoreHistory / push_back chains) and the body ranks 99.6-100 against Singer.obj's instantiation for this element type; the previous name was a stand-in pairing against another unit's obj (DepthBuffer3D / CameraManager / CharBones / FlowMathOp)"
+    }
+   ]
   },
   {
    "name": "__uninitialized_copy_CameraManager",
@@ -90844,18 +91006,18 @@
    "survivor": "?_M_fill_insert@?$vector@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVObject@Hmx@@IABQAV34@@Z",
    "folded": [],
    "withdrawn": [
-     {
-       "spelling": "?_M_fill_insert@?$vector@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@AAAXPAIIABI@Z",
-       "lane": "W17-BPM3 2026-10-01",
-       "class": "CHASE_CYCLE_ASSUMED",
-       "disposition": "membership withdrawn, names kept",
-       "evidence": "Peer gate on cff5c82aa: icf_pair_adjudicate --chase reaches CHASED T1 PROVEN only through a CYCLE-ASSUMED leaf, _M_fill_insert_aux<RndDrawable*> | _M_fill_insert_aux<unsigned int> (the aux calls itself). The admitted group at 0x82272798 proves aux<RndDrawable*> == aux<Object*>, but nothing independently places aux<unsigned int> in it, so the chase assumes the pair it proves. Admission rule is 0 CYCLE; withdrawn until an independent channel (masked-body uniqueness + heterogeneous fan-in naming the unsigned-int spelling) proves it."
-     }
+    {
+     "spelling": "?_M_fill_insert@?$vector@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@AAAXPAIIABI@Z",
+     "lane": "W17-BPM3 2026-10-01",
+     "class": "CHASE_CYCLE_ASSUMED",
+     "disposition": "membership withdrawn, names kept",
+     "evidence": "Peer gate on cff5c82aa: icf_pair_adjudicate --chase reaches CHASED T1 PROVEN only through a CYCLE-ASSUMED leaf, _M_fill_insert_aux<RndDrawable*> | _M_fill_insert_aux<unsigned int> (the aux calls itself). The admitted group at 0x82272798 proves aux<RndDrawable*> == aux<Object*>, but nothing independently places aux<unsigned int> in it, so the chase assumes the pair it proves. Admission rule is 0 CYCLE; withdrawn until an independent channel (masked-body uniqueness + heterogeneous fan-in naming the unsigned-int spelling) proves it."
+    }
    ],
    "evidence": "Hand-installed by lane W17-BPM3. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (flat T1 refuted only on relocation targets -- _M_fill_insert_aux / _M_insert_overflow <unsigned int> vs <Object*> -- which fold recursively through MemOrPoolAlloc/MemOrPoolAllocSTL, PoolAlloc and the operator new twins). Retail keeps four 108-byte body-twins of this shape (vector<float>, vector<float,XboxAllocator>, vector<Object*>, vector<Spotlight*>), so body identity cannot pick the membership; the call-site displacement does: WorkVerts::SetMeshVerts (0x8234A458) bl's 0x82272A60 at the mMeshVerts.resize site (idx 76), and that row is otherwise instruction-identical to retail (318/318 canonical). mMeshVerts' element type unsigned int is pinned by retail's own named callee in the same function, ?erase@?$vector@IV?$StlNodeAlloc@I@ at 0x824B06C8.",
    "added": {
     "lane": "W17-BPM3 2026-10-01"
    }
   }
-]
+ ]
 }
