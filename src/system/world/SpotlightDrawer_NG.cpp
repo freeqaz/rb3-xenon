@@ -163,10 +163,11 @@ void NgSpotlightDrawer::RenderCone(Spotlight *sl) {
         colorOwner->mColor.alpha * scale
     );
     if (!sl->mAnimateColorFromPreset && sl->mBeam.mMat) {
-        color.red = sl->mBeam.mMat->GetColor().red * color.red;
-        color.green = sl->mBeam.mMat->GetColor().green * color.green;
-        color.blue = sl->mBeam.mMat->GetColor().blue * color.blue;
-        color.alpha = sl->mBeam.mMat->GetColor().alpha * color.alpha;
+        RndMat *mat = sl->mBeam.mMat;
+        color.red = mat->GetColor().red * color.red;
+        color.green = mat->GetColor().green * color.green;
+        color.blue = mat->GetColor().blue * color.blue;
+        color.alpha = mat->GetColor().alpha * color.alpha;
     }
     RenderConeDefs(sl, color);
 }

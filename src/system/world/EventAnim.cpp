@@ -17,7 +17,12 @@
 
 EventAnim *gEventAnimOwner;
 
-INIT_REVS(EventAnim)
+// Retail EventAnim::Load (0x824CA758) keeps the revs in ONE internal object
+// (altRev at lbl_82CC76F0+0, rev at +4, both lhz/sth off a single base).
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_EventAnim;
 
 EventAnim::EventAnim()
     : mStart(this), mEnd(this), mKeys(this), mResetStart(1), mLastFrame(-1e+30f) {}
@@ -98,7 +103,12 @@ BEGIN_SAVES(EventAnim)
 END_SAVES
 
 BEGIN_LOADS(EventAnim)
-    LOAD_REVS(bs)
+    int rev;
+    bs >> rev;
+    gRevs_EventAnim.rev = getHmxRev(rev);
+    gRevs_EventAnim.altRev = getAltRev(rev);
+    unsigned short &gRev = gRevs_EventAnim.rev;
+    unsigned short &gAltRev = gRevs_EventAnim.altRev;
     ASSERT_REVS(1, 0)
     LOAD_SUPERCLASS(Hmx::Object)
     LOAD_SUPERCLASS(RndAnimatable)
