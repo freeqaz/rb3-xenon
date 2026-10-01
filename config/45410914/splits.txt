@@ -1896,13 +1896,12 @@ CharFaceServo.cpp:
 	.pdata      start:0x822043B8 end:0x822044F0
 	.pdata      start:0x822044F0 end:0x822044F8
 	.pdata      start:0x822044F8 end:0x82204510
-	.pdata      start:0x822045B0 end:0x822045B8
 	.text       start:0x823754A0 end:0x823754AC
 	.text       start:0x823A23B8 end:0x823A3638
 	.text       start:0x823A3638 end:0x823A368C
 	.text       start:0x823A368C end:0x823A38B0
 	.text       start:0x823A393C end:0x823A3940
-	.text       start:0x823A45E0 end:0x823A4670
+	.text       start:0x823A4664 end:0x823A4670
 
 GainEffect.cpp:
 	.pdata      start:0x8225B6B8 end:0x8225B6E0
@@ -7380,14 +7379,12 @@ CharIKScale.cpp:
 	.pdata      start:0x82203CF8 end:0x82203D80
 	.pdata      start:0x82203D80 end:0x82203D88
 	.pdata      start:0x82203D88 end:0x82203DD8
-	.pdata      start:0x82203DE0 end:0x82203DE8
 	.pdata      start:0x82203DF0 end:0x82203E10
 	.text       start:0x823999C8 end:0x823999E0
 	.text       start:0x823999E0 end:0x82399A00
 	.text       start:0x82399A00 end:0x8239A49C
 	.text       start:0x8239A4A0 end:0x8239A59C
 	.text       start:0x8239A5A0 end:0x8239AAF4
-	.text       start:0x8239AD88 end:0x8239B1A4
 	.text       start:0x8239B390 end:0x8239B470
 	.text       start:0x8239BE68 end:0x8239BE70
 	.text       start:0x8239C2FC end:0x8239C300
@@ -7565,6 +7562,7 @@ CharCollide.cpp:
 	.pdata      start:0x821F6F98 end:0x821F6FA0
 	.pdata      start:0x821F6FC0 end:0x821F6FD0
 	.pdata      start:0x82203DD8 end:0x82203DE0
+	.pdata      start:0x82203DE0 end:0x82203DE8
 	.pdata      start:0x82203DE8 end:0x82203DF0
 	.pdata      start:0x82203E10 end:0x82203E68
 	.pdata      start:0x82203E68 end:0x82203E70
@@ -7575,6 +7573,7 @@ CharCollide.cpp:
 	.text       start:0x822C92FC end:0x822C9300
 	.text       start:0x822C94D4 end:0x822C95D4
 	.text       start:0x8239AAF4 end:0x8239AD88
+	.text       start:0x8239AD88 end:0x8239B1A4
 	.text       start:0x8239B1A4 end:0x8239B390
 	.text       start:0x8239B470 end:0x8239BC24
 	.text       start:0x8239BC24 end:0x8239BE68
@@ -7590,12 +7589,14 @@ CameraTilt.cpp:
 CharBoneOffset.cpp:
 	.pdata      start:0x82200FA8 end:0x82200FB8
 	.pdata      start:0x822045A8 end:0x822045B0
+	.pdata      start:0x822045B0 end:0x822045B8
 	.pdata      start:0x822045B8 end:0x82204630
 	.pdata      start:0x82204630 end:0x82204638
 	.pdata      start:0x82204638 end:0x82204640
 	.pdata      start:0x822061C0 end:0x822061C8
 	.text       start:0x82369D28 end:0x82369DA8
 	.text       start:0x823A4520 end:0x823A45E0
+	.text       start:0x823A45E0 end:0x823A4664
 	.text       start:0x823A4670 end:0x823A4DD0
 	.text       start:0x823A4DD0 end:0x823A4E14
 	.text       start:0x823A4E18 end:0x823A4EC8
