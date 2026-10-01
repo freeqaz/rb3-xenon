@@ -47169,7 +47169,7 @@
   {
    "name": "Load",
    "address": "0x82604a40",
-   "survivor": "?Load@UIPanel@@$4PPPPPPPM@EM@AAXAAVBinStream@@@Z",
+   "survivor": "?SetTypeDef@PreloadPanel@@$4PPPPPPPM@7AAXPAVDataArray@@@Z",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -47179,6 +47179,13 @@
      "class": "PLACEHOLDER_SLOT_UNPROVEN_CALLEE_UNPROVEN_OURS_DISTINCT",
      "disposition": "membership withdrawn as UNPROVEN (NOT refuted), group kept",
      "evidence": "tools/alias_placeholder_slot_audit.py (W16-JH): this membership's T1 support rested on a relocation slot with an unnamed retail target, which W16-JG's discharge could not close and W16-JH could not prove on retail bytes. CALLEE-UNPROVEN-OURS-DISTINCT @+0xc retail fn_827B36E0 vs ours ?FindPathName@FlowNode@@UAAPBDXZ -- retail fn_827B36E0 8 B vs our ?FindPathName@FlowNode@@UAAPBDXZ 232 B; first diff @+0x0 retail 'addi r3, r3, -0x3c' vs ours 'mflr r12'; retail bodies byte-equal to our callee: none. RESTORE when the chase proves it (e.g. after the callee port)."
+    },
+    {
+     "spelling": "?Load@UIPanel@@$4PPPPPPPM@EM@AAXAAVBinStream@@@Z",
+     "lane": "W16-NC-F2 2026-10-01",
+     "class": "CONTRADICTED_SURVIVOR_THUNK_TARGET",
+     "disposition": "former SURVIVOR spelling withdrawn as REFUTED on retail bytes; survivor respelled to the thunk the bytes name; folded list unchanged (empty); group kept",
+     "evidence": "Retail 0x82604A40 is `lwz r11,-4(r3); subf r3,r11,r3; addi r3,r3,-8; b 0x827B36E0`: a vtordisp thunk with a -8 adjustment (mangled `7`, not `EM` = 0x4C) whose target 0x827B36E0 is `addi r3,r3,-0x3c; b ?SetTypeDef@UIPanel@@`, i.e. PreloadPanel::SetTypeDef, not UIPanel::Load. It is slot 15 of BandPreloadPanel's Object-subobject vtable 0x820BEF8C, and our compiled BandPreloadPanel.obj puts ?SetTypeDef@PreloadPanel@@$4PPPPPPPM@7AAXPAVDataArray@@@Z in that slot (scripts/dump_vtable.py, slot 16 with the COL at [0])."
     }
    ]
   },
