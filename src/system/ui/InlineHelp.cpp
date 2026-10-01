@@ -319,7 +319,8 @@ String InlineHelp::GetIconStringFromAction(int idx) {
     MILO_ASSERT(t, 0x1cb);
     DataArray *actionArr = t->FindArray(action_chars);
     FOREACH (it, mIconTypes) {
-        const char *str = actionArr->FindArray(*it)->Str(idx + 1);
+        DataArray *iconArr = actionArr->FindArray(*it);
+        const char *str = iconArr->Node(idx + 1).Str(iconArr);
         char c = *str;
         if (ret.find(c) == String::npos)
             ret += c;

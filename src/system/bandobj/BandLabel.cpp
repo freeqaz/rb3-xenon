@@ -199,12 +199,14 @@ void BandLabel::Poll() {
 
 void BandLabel::Count(int i1, int i2, float f, Symbol s) {
     unk1dc.clear();
+    // The keys are timed in UI milliseconds (Poll samples them with
+    // AtFrame(uisecs)) and carry the count as their value.
     Key<float> key;
-    key.value = TheTaskMgr.UISeconds() * 1000.0f;
-    key.frame = i1;
+    key.frame = TheTaskMgr.UISeconds() * 1000.0f;
+    key.value = i1;
     unk1dc.push_back(key);
-    key.value += f;
-    key.frame = i2;
+    key.frame += f;
+    key.value = i2;
     unk1dc.push_back(key);
     unk1e4 = s;
 }

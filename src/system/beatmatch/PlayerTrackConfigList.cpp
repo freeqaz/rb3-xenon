@@ -193,7 +193,7 @@ void PlayerTrackConfigList::Process(std::vector<TrackType> &tracktypes) {
 
 int PlayerTrackConfigList::TrackNumOfExactType(TrackType ty) {
     for (int i = 0; i < mTrackTypes.size(); i++) {
-        if (ty == mTrackTypes[i] && mTrackOccupied[i] == 0)
+        if (mTrackTypes[i] == ty && mTrackOccupied[i] == 0)
             return i;
     }
     return -1;

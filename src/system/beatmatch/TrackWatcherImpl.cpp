@@ -219,8 +219,8 @@ bool TrackWatcherImpl::IsSwingInRoll(int gemID, unsigned int ui) {
     if (!AreSlotsInRoll(slots, tick))
         return false;
     else {
-        bool slotsInRoll = (slots == (slots & mRollActiveSlots));
-        return ((ui & mRollActiveSlots) == ui) && slotsInRoll;
+        bool slotsInRoll = ((slots & mRollActiveSlots) == slots);
+        return slotsInRoll && ((ui & mRollActiveSlots) == ui);
     }
 }
 
@@ -627,7 +627,7 @@ void TrackWatcherImpl::MaybeAutoplayFutureCymbal(int gemID) {
         GameGem &curGem = mGemList->GetGem(gemID);
         if (curGem.mMs > gemMs)
             break;
-        if (i3 == curGem.GetSlot()) {
+        if (curGem.GetSlot() == i3) {
             curGem.SetUnk10B1(true);
             return;
         }
