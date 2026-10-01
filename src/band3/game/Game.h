@@ -40,7 +40,7 @@ enum EndGameResult {
 // verified against retail disasm (GemPlayer::CanFlail / GemManager::IsSpotlightGem
 // read mProperties bools 4 bytes lower than our old 3-base layout).
 // RB3-360 TU5-only helper owned by Game at this+0x48. Its real NAME is not
-// recoverable (absent from both the rb3-Wii dev oracle and dc3-decomp; its
+// recoverable (absent from dc3-decomp; its
 // only symbols are the anonymous fn_82677BD0 ctor / fn_82677C88 dtor inside
 // Game.cpp's own .text span), but its LAYOUT and its dtor body are fully
 // proven from retail:
@@ -129,7 +129,7 @@ public:
     virtual DataNode Handle(DataArray *, bool);
 
     // Retail-360 takes FOUR bools: GamePanel::StartIntro's call site loads
-    // r4..r7 all = 1 (the rb3-Wii dev build's 3-arg form only fills r4..r6).
+    // r4..r7 all = 1 (a 3-arg form would only fill r4..r6).
     void SetPaused(bool, bool, bool, bool = true);
     void SetGameOver(bool);
     bool ResumedNoScore() const;
@@ -171,8 +171,8 @@ public:
     float GetSongMs() const;
     // Retail takes a third bool: SetPaused forwards its own (defaulted) 4th
     // argument here, which is why the inlined set_paused handler arm sets up
-    // r6 = 1 before the call. Its use inside the body is not recoverable from
-    // the rb3-Wii oracle (Wii's build has only the two-arg form), so it is
+    // r6 = 1 before the call. Its use inside the body is not recoverable
+    // (no surviving source has it), so it is
     // left unnamed.
     void UpdatePausedState(bool, bool, bool = true);
     bool CanUserPause() const;
@@ -274,7 +274,7 @@ public:
     // Game::HandleAudioLoad reading lbz 0x78 / stb 0x79). With mAllActivePlayers
     // ending at 0x74, mRealtime must be the 5th bool of this run (index 4), so
     // retail has only ONE unknown bool (mPauseTime) between mOvershellWantsPause
-    // and mRealtime — unk6b/unk6c (DC3/Wii-era extras) sit AFTER unk6f, absorbed
+    // and mRealtime — unk6b/unk6c (extra bools) sit AFTER unk6f, absorbed
     // by the alignment pad before mTimeOffset@0x7c. Reordering (not deleting)
     // keeps their ctor init + accessors valid while fixing the +2 bool shift.
     bool mIsPaused; // 0x78
@@ -291,15 +291,15 @@ public:
     // (+8) — the extra +4 lands exactly here. TODO: identify this member.
     int mUnkTU5_0x84; // (new in TU5, base ~0x80)
     // NOTE (360 offsets): Timer is 0x30 on X360 (8-byte-aligned unsigned long
-    // long mCycles) vs 0x28 on Wii, so everything from mHasIntro on sits +0x8
-    // vs the old Wii-era annotations here. Proven by the retail getter
+    // long mCycles), not 0x28, so everything from mHasIntro on sits +0x8
+    // vs the old annotations here. Proven by the retail getter
     // fn_82659CD8 (= Game::HasIntro): `lbz r3, 0xb0(r3)`, called on
     // GamePanel::mGame in GamePanel::StartGame (target 0x826773F4).
     Timer mTime; // 0x88 (0x30 bytes on 360)
-    bool mHasIntro; // 0xb8 (Wii: 0xa8)
-    float mLastPollMs; // 0xbc (Wii: 0xac)
+    bool mHasIntro; // 0xb8
+    float mLastPollMs; // 0xbc
     // Retail packs mMuckWithPitch with the mNeverAllowInput/unkb9 bool group
-    // (Wii interleaved it with mMusicSpeed, wasting 4 bytes of alignment pad),
+    // (not interleaved with mMusicSpeed, which would waste 4 bytes of alignment pad),
     // so mLoadState lands at 0xcc rather than 0xd0.
     float mMusicSpeed; // 0xc0
     bool mNeverAllowInput; // 0xc4

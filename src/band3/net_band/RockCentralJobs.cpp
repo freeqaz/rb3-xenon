@@ -8,8 +8,8 @@
 #include "os/PlatformMgr.h"
 #include "utl/Std.h"
 
-// NOTE (rb3-xenon port, lane CJ-3): ported from the rb3-Wii DEV oracle
-// ../rb3/src/band3/net_band/RockCentralJobs.cpp.
+// NOTE (lane CJ-3): the RockCentral job classes
+// (band3/net_band/RockCentralJobs.cpp).
 //
 // UpdateMasterProfileFriendsListJob is DELIBERATELY OMITTED. It is Wii-only:
 // its RTTI type-descriptor string ".?AVUpdateMasterProfileFriendsListJob@@" is

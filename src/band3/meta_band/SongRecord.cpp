@@ -167,7 +167,7 @@ bool SongRecord::UpdateRestricted() {
         return false;
 }
 
-// retail 0x825BAE40 (TU5; no oracle has it). Unlike its siblings the store is
+// retail 0x825BAE40 (TU5). Unlike its siblings the store is
 // unconditional, and a change re-runs UpdatePerformanceData.
 bool SongRecord::UpdateDemo() {
     bool old = mDemo;

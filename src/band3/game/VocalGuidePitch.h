@@ -15,8 +15,8 @@ public:
     void EnableGuideTrack(int);
     // Retail 0x826C9160 (76 B). ⚠ NAME PROVENANCE: the BODY, the CLASS and the
     // SIGNATURE (void, no arguments) are PROVEN on retail bytes; the SPELLING
-    // `StopNote` is a lane-assigned descriptive label with NO oracle backing --
-    // rb3-Wii has no such method (it inlines these three statements into
+    // `StopNote` is a lane-assigned descriptive label with NO symbol backing --
+    // no build names this method (the three statements are otherwise inlined into
     // EnableGuideTrack) and DC3 has no VocalGuidePitch at all. Do not cite this
     // name as an identification. See docs/decomp/W16FE_*.md.
     void StopNote();

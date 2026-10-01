@@ -1,6 +1,6 @@
-// Faithful port from the rb3-Wii oracle
-// (../rb3/src/band3/game/TambourineDetector.cpp). X360-inert: not in objects.json,
-// header unchanged. NOTE: the oracle file also defines `MicClientID sNullClientID`,
+// TambourineDetector
+// (band3/game/TambourineDetector.cpp). X360-inert: not in objects.json,
+// header unchanged. NOTE: `MicClientID sNullClientID` belongs with this class,
 // but rb3-xenon's Singer.cpp already owns that definition — omitted here to avoid a
 // duplicate-symbol clash in the native link.
 #include "game/TambourineDetector.h"

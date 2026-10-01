@@ -61,7 +61,7 @@ BEGIN_SAVES(CharIKMidi)
     bs << mMaxAnimBlend;
 END_SAVES
 
-// RB3 retail (0x823ca968) is rb3-Wii's Load: the raw incoming BinStream is
+// RB3 retail (0x823ca968) Load: the raw incoming BinStream is
 // passed to every read (no BinStreamRev decorator -- no ??0BinStream /
 // ??1BinStream on the stack, mMaxAnimBlend read by a direct ReadEndian), and
 // the rev lives in two separate align(4) file statics (retail 0x82CBF804

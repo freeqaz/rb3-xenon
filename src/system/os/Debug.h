@@ -9,9 +9,9 @@ typedef void FixedStringFunc(FixedString &);
 
 // size 0x100 (retail RB3-360). DC3 added a Crucible telemetry block
 // (mFailAppendCallbacks/mCrucibleCallback + mCrucibleHostname/App/Project,
-// mKernelVersion, unk124, mHostName) that RB3 never had -- confirmed against
-// rb3-Wii's Debug.h, which ends at mNotifyThreadMsg with the same 0x100 total,
-// and against the literal `new Debug()` allocation size embedded in
+// mKernelVersion, unk124, mHostName) that RB3 never had -- RB3's Debug
+// ends at mNotifyThreadMsg with the same 0x100 total, as confirmed by
+// the literal `new Debug()` allocation size embedded in
 // DataFile.cpp's DataWriteFile (retail: 0x100, ours was 0x144 before this).
 class Debug : public TextStream {
 public:

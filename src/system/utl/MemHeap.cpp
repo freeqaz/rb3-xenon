@@ -631,8 +631,8 @@ void MemPopTemp() {
 // split the two across TUs or the pin boundary is wrong is a splits question,
 // not a source one -- this follows the pins rather than re-homing them.
 // DECLARED at utl/MemMgr.h:160, defined in NO translation unit before this.
-// Retail body is the bare decrement: the oracle's two MILO_ASSERTs
-// (../rb3/src/system/utl/MemMgr.cpp:838) have pure conditions, so the
+// Retail body is the bare decrement: two MILO_ASSERTs
+// there have pure conditions, so the
 // evaluate-and-discard MILO_ASSERT leaves no trace -- which is exactly why this
 // is 20 B and Lock, with its aliasing reload, is 28 B.
 void MemHandle::Unlock() { --mAlloc->mLockCount; }

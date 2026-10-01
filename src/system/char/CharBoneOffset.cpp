@@ -38,7 +38,7 @@ BEGIN_COPYS(CharBoneOffset)
     END_COPYING_MEMBERS
 END_COPYS
 
-// RB3-360 retail rev dialect (rb3-Wii/ObjMacros shape): the packed rev is split
+// RB3-360 retail rev dialect (ObjMacros shape): the packed rev is split
 // into two HALFWORDS stored four bytes apart onto ONE internal-linkage align(4)
 // base, and the RAW incoming BinStream is forwarded to every read and to the
 // superclass Load.  DC3's Object.h BinStreamRev stack decorator additionally

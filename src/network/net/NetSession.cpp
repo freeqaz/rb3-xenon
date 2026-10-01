@@ -542,7 +542,7 @@ void NetSession::AddLocalUser(LocalUser *newUser) {
     // RB3-360 retail evaluates PlatformMgr::IsUserSignedIn(newUser) here and
     // discards the result: `lis/addi ThePlatformMgr; bl IsUserSignedIn` sits
     // between the prologue and the IsHost() call, with no branch on r3.  The
-    // rb3-Wii oracle has no such statement -- but our own assert line numbers
+    // assert line numbers
     // give it away: 0x2F9, 0x2FA, **0x2FB missing**, 0x2FC.  MILO_ASSERT is
     // ((void)(cond)) in this build, so restoring the assert at its own line
     // number reproduces the call exactly without inventing a new statement.
@@ -629,7 +629,7 @@ void NetSession::RemoveLocalUser(LocalUser *user) {
     MILO_ASSERT(user, 0x36E);
     // Retail-360 has NO `if (HasUser(user))` guard -- RemoveLocalFromSession is
     // the first call in the extent -- and it Exports the LocalUserLeftMsg BEFORE
-    // resetting the user. The rb3-Wii dev build differs on both counts.
+    // resetting the user.
     RemoveLocalFromSession(user);
     if ((IsOnlineEnabled() && !IsJoining()) || mState == kRequestingJoin) {
         UserLeftMsg msg(user);

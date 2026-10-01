@@ -357,7 +357,7 @@ bool UIManager::OverloadHorizontalNav(JoypadAction act, JoypadButton btn, Symbol
         && (NavButtonToNavAction(btn) != act || (s != none && JoypadTypeHasLeftyFlip(s)));
 }
 
-// RB3 retail (0x82804268) is rb3-Wii's Terminate without the two calls RB3
+// RB3 retail (0x82804268) is Terminate without the two calls RB3
 // never needs: CheatProvider is never Init'd here and the Automator is never
 // allocated (see Init). It force-releases and deletes the UI resources, and it
 // removes the callback Init actually added (UITerminateCallback; the old body
@@ -441,7 +441,7 @@ void UIManager::GotoScreenImpl(UIScreen *scr, bool b1, bool b2) {
 // 0x14(r30)` == `mWentBack = b2` -- there is NO mPushedScreens iterator setup
 // (no lwz 0x18/0x1c(r30)) and NO call to UIScreen::SharesPanels, whose ONLY
 // caller in the entire tree is this site.  src/macros.h force-defines
-// MILO_DEBUG tree-wide, which switched this rb3-Wii dev-build check on; gate it
+// MILO_DEBUG tree-wide, which switched this dev-build check on; gate it
 // on HX_NATIVE so the native port keeps the real check.  (The MILO_FAIL format
 // string is NOT evidence either way: the retail comma form discards the literal,
 // so both hypotheses predict it is absent from .rdata.)
@@ -460,8 +460,8 @@ void UIManager::GotoScreenImpl(UIScreen *scr, bool b1, bool b2) {
 #endif
 
 // Retail RB3-360 EXCLUDES this trace too (dc3-decomp-only addition, absent
-// from both retail's Ghidra decomp at fn_828036E8 and rb3-Wii's dev build --
-// rb3-Wii goes straight from CancelTransition() to mWentBack = b2). Keep the
+// from retail's Ghidra decomp at fn_828036E8, which goes straight
+// from CancelTransition() to mWentBack = b2). Keep the
 // name computation for the native debug printf only.
 #ifdef HX_NATIVE
         const char *curName = mCurrentScreen ? mCurrentScreen->Name() : "<none>";
@@ -544,7 +544,7 @@ UIResource *UIManager::FindResource(const DataArray *array) {
     DataArray *fileArray = array->FindArray(resource_file, false);
     if (fileArray) {
         FilePath path(FileGetPath(fileArray->File()), fileArray->Str(1));
-        // retail 0x82804C98 (rb3-Wii shape): equal_range over the sorted list
+        // retail 0x82804C98: equal_range over the sorted list
         std::pair<std::list<UIResource *>::iterator, std::list<UIResource *>::iterator>
             range = std::equal_range(
                 mResources.begin(), mResources.end(), path.c_str(), UIResource::Compare()
@@ -825,7 +825,7 @@ void UIManager::Poll() {
             mPushedScreens.pop_back();
             mTransitionState = kTransitionNone;
             if (mTransitionScreen == mCurrentScreen) {
-                // Retail (and rb3-Wii) leave mTransitionScreen set here.
+                // Retail leaves mTransitionScreen set here.
                 UITransitionCompleteMsg completeMsg(mCurrentScreen, oldCurScreen);
                 Handle(completeMsg, false);
             } else {
@@ -938,8 +938,8 @@ DataNode UIManager::OnForeachCurrentScreen(const DataArray *arr) {
 void UIManager::Init() {
     MILO_ASSERT(TheUI, 0x1f3);
     // RB3-360 (verified @ 0x827E0690): Init does NOT allocate the Automator (no
-    // ??0Automator ctor call, no mAutomator store in the retail body). DC3 and
-    // rb3-Wii both create it here; RB3 retail does not (mAutomator stays null
+    // ??0Automator ctor call, no mAutomator store in the retail body).
+    // DC3 creates it here; RB3 retail does not (mAutomator stays null
     // and HANDLE_MEMBER_PTR(mAutomator) tolerates that).
     SetName("ui", ObjectDir::Main());
     DataArray *cfg = SystemConfig("ui");
@@ -1042,8 +1042,8 @@ BEGIN_HANDLERS(UIManager)
     HANDLE_EXPR(bottom_screen, BottomScreen())
     HANDLE_EXPR(in_transition, InTransition())
     HANDLE(is_resource, OnIsResource)
-    // RB3 retail uses HANDLE_ACTION here, not HANDLE (rb3-Wii UI.cpp:976
-    // `HANDLE_ACTION(foreach_screen, ForeachScreen(_msg))`; our
+    // RB3 retail uses HANDLE_ACTION here, not HANDLE
+    // (`HANDLE_ACTION(foreach_screen, ForeachScreen(_msg))`; our
     // OnForeachCurrentScreen is byte-for-byte the same body under DC3's name).
     // This is load-bearing for EH layout, not cosmetic: HANDLE routes through
     // _HANDLE_CHECKED, whose `DataNode result` is a NAMED local live across

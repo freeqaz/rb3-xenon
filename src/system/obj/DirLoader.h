@@ -65,9 +65,9 @@ public:
     // RETAIL-ADJUDICATED arity: ObjectDir::Handle's `save_objects` action calls
     // this with TWO argument registers (r3,r4) and never materialises r5, which
     // is volatile and clobbered by the immediately preceding `bl DataNode::Str`.
-    // DC3 (a NEWER engine revision) grew a third `bool` parameter; the rb3-Wii
-    // oracle, which is RB3-era, has the two-parameter form. Retail agrees with
-    // rb3-Wii.
+    // DC3 (a NEWER engine revision) grew a third `bool` parameter; the
+    // RB3-era form has two parameters, and retail
+    // agrees.
     static bool SaveObjects(const char *, ObjectDir *);
     static void SaveObjects(BinStream &, ObjectDir *);
     static void WriteTypeMemDump(TextFileStream *);
@@ -113,8 +113,8 @@ private:
     // comments (which are a known lie class): ObjectDir::Handle's `proxy_dir`
     // expression reads `mLoader->mProxyDir` as `lwz r11, 0x68(r11)`. This slot
     // used to be `int mPad64 // unused padding (dead code from RB2)`; it is not
-    // padding, it is mProxyDir, exactly as the rb3-Wii oracle has it
-    // (mProxyName @0x60 / mProxyDir @0x64 / mTimer @0x68 in Wii's own base
+    // padding, it is mProxyDir
+    // (mProxyName @0x60 / mProxyDir @0x64 / mTimer @0x68 in a 0x1c-Object base
     // layout). sizeof(DirLoader) stays 168 (0xa8) = retail's PoolAlloc size.
     class ObjectDir *mProxyDir; // 0x68
 #else
@@ -131,7 +131,7 @@ private:
     // HX_NATIVE — see Dir.cpp/ObjPtr_p.h ParentDir() call sites, all HX_NATIVE-
     // gated). RB3 retail X360 has neither: PoolAlloc's compiled size argument for
     // `new DirLoader(...)` is exactly 0xa8 (168) bytes, which only reconciles once
-    // both mParentDir is dropped and mProxyDir reverts to the rb3-Wii oracle's raw
+    // both mParentDir is dropped and mProxyDir is the raw
     // (non-owning) `ObjectDir *mProxyDir` — see docs/decomp/research (DirLoader
     // size-probe investigation).
     class ObjectDir *mParentDir; // 0x9c

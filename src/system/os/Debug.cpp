@@ -132,7 +132,7 @@ void Debug::Print(const char *msg) {
 
 void Debug::Exit(int exitCode, bool call_exit) {
 #ifndef HX_NATIVE
-    // RB3-360 retail (rb3-Wii shape): unconditional, no memory-usage-test gate,
+    // RB3-360 retail: unconditional, no memory-usage-test gate,
     // and the log is stopped before the optional relaunch.
     mExiting = true;
     FOREACH (it, mExitCallbacks) {
@@ -421,7 +421,7 @@ void Debug::Modal(ModalType &type, const char *msg, void *addr) {
             );
             modalMsg += MakeString("\nLang: %s   SystemConfig: %s", SystemLanguage(), config);
             // Retail RB3-360 has no live kernel-version query here (that's a DC3
-            // telemetry addition RB3 never had); rb3-Wii's equivalent Modal() body
+            // telemetry addition RB3 never had); RB3's Modal() body
             // just prints a static "n/a" placeholder for SDK.
             String sdk("n/a");
             modalMsg += MakeString(

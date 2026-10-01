@@ -130,7 +130,7 @@ public:
 // sizeof = 0x3c + 4 + 4 + 0x28 = 0x6c, which is exactly what retail's
 // JoinInvitePanel::NewObject allocates.  The old `char unk_pad[0x8]` was two
 // words and therefore provably wrong.  The member's semantics are unrecoverable
-// (no oracle decompiles this class -- rb3-Wii carries the same placeholder --
+// (no surviving source decompiles this class --
 // and retail never reads the field anywhere), so it keeps the house unkNN name.
 class JoinInvitePanel : public UIPanel {
 public:

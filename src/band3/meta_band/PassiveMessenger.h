@@ -108,7 +108,7 @@ public:
     //  (2) map-independent string scan of orig/45410914/band.exe: the handler
     //      name "set_show_messages" occurs 0 times, while positive controls
     //      "passive_messages" and "queue_message" occur once each.
-    // So SetShowMessages/mShowMessages are rb3-Wii DEV-build-only code that
+    // So SetShowMessages/mShowMessages are DEV-build-only code that
     // retail compiled out -- the MILO_DEBUG force-define hazard described in
     // CLAUDE.md.  Nothing in this tree defined or read them.
     class PassiveMessenger *mMessenger; // 0x3c

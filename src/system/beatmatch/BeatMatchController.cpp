@@ -4,8 +4,8 @@
 #include "os/Joypad.h"
 #include "os/User.h"
 
-// Minimal port of the worklist BeatMatchController member functions from the
-// rb3-Wii decomp (MWCC) to MSVC X360. Only the worklist-pinned functions plus
+// Minimal BeatMatchController: the worklist member functions
+// for MSVC X360. Only the worklist-pinned functions plus
 // the private ButtonToSlot(btn, arr) helper the virtual overload dispatches to
 // are ported here — the constructor / NewController factory pull in a large set
 // of controller subclass headers (JoypadController, RealGuitarController, ...)

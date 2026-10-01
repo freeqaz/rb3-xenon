@@ -7,7 +7,7 @@
 #include <utility>
 #include <vector>
 
-// Minimal slice of the rb3-Wii meta/StorePackedMetadata.h, declaring only the
+// Minimal slice of meta/StorePackedMetadata.h, declaring only the
 // pieces StoreMainPanel.cpp depends on, with ABI-correct offsets. The full
 // header pulls in the complete StoreOffer.h packed-offer type family, which our
 // tree only carries in trimmed form; widening it would ripple across the other
@@ -16,8 +16,8 @@
 //
 // ── DRAINED VEIN (lane BT-1, 2026-07-30). Do not re-port the packed family. ──
 // A 2,014-line meta/StorePackedMetadata.cpp + 248-line
-// band3/meta_band/StoreOfferContentsProvider.cpp were ported from the rb3-Wii
-// DEV oracle and preserved at commit f69d26fa (tag
+// band3/meta_band/StoreOfferContentsProvider.cpp were ported
+// and preserved at commit f69d26fa (tag
 // salvage-storepackedmetadata-20260730). Evaluated and rejected:
 //
 //   * The packed-metadata subsystem DOES NOT EXIST in RB3-360 retail. Tested

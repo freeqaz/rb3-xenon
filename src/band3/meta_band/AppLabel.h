@@ -94,7 +94,7 @@ public:
     // records at this+0x2C, slots "name"/..., status_online/offline.mat) —
     // the record's real class name is unknown; layout is pinned by the
     // caller's lbz +0xC (online flag) and these thunks' +0x8/+0x18 c_str
-    // loads. Wii source has no equivalent (LIVE friends UI).
+    // loads. Xbox LIVE friends UI only.
     struct FriendRecord {
         String mName; // 0x0
         bool mOnline; // 0xc

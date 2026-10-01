@@ -5,13 +5,13 @@
 #include "utl/BinStream.h"
 #include "utl/MemStream.h"
 
-// Ported from rb3-Wii src/network/net/NetSearchResult.cpp (lane W16-BN,
+// NetSearchResult (lane W16-BN,
 // 2026-09-15). Retail 360 bytes live at 0x823F56F8-0x823F5C98 (15 functions,
 // 1,396 function bytes) -- a span that was mis-pinned under `UI.cpp:` and is
 // re-homed to this TU in the same commit series.
 //
-// Wii -> 360 deltas, all established from retail bytes rather than assumed:
-//  * member offsets. The Wii oracle header documents mSessionData at 0x1c;
+// 360 details, all established from retail bytes rather than assumed:
+//  * member offsets. A 0x1c-Object layout would put mSessionData at 0x1c;
 //    retail 360 stores it at 0x28 (`stw r3, 0x28(r30)` in the ctor) because
 //    Hmx::Object is 12 bytes larger here. src/network/net/NetSearchResult.h
 //    already carries the corrected 0x28/0x2c/0x30/0x34 offsets, and all four

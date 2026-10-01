@@ -320,7 +320,7 @@ void Multiply(const Vector3 &vin, const Hmx::Quat &q, Vector3 &vout) {
     // every vin component to a local first. This arm now does the same, so the
     // two arms agree, and the fix is the same shape as the one at math/mtx.cpp
     // :77 that X4b landed for Multiply(Transform,Transform,Transform) -- the
-    // alias-unsafe-compose family that cost rb3-Wii ~15 waves on
+    // alias-unsafe-compose family that once cost ~15 waves on
     // Multiply(Transform,Transform,Transform) and produced its "spindly
     // tree-branch hands".
     //

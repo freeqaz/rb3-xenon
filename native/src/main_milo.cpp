@@ -45,8 +45,8 @@
 // it serializes a nested directory whose inner objects carry their own dead
 // markers, so ReadDead stops at the first inner one and leaves the remainder in
 // the stream; the parent desyncs and a later PreLoad reads a string length as a
-// vector count -> runaway resize -> SIGSEGV. (Diagnosed on the rb3-Wii side;
-// see rb3/native/src/rb3_game_object_factories.cpp.) So a *Dir gap is a hard
+// vector count -> runaway resize -> SIGSEGV. (Diagnosed in an earlier native
+// harness's object-factory list.) So a *Dir gap is a hard
 // FAIL here, while a leaf gap is reported and counted.
 //
 // Determinism: the census is printed from a std::map, i.e. sorted by class
@@ -371,8 +371,8 @@ int main(int argc, char **argv) {
     // We set gSystemConfig directly rather than calling PreInitSystem/
     // SystemInit: those also do DataSetMacro, OptionStr parsing,
     // DataRegisterFunc and SetGfxMode(kNewGfx) -- i.e. they start standing the
-    // RENDERER up, which is the one thing X2 must not do. Same split rb3-Wii's
-    // native harness makes (rb3/native/src/main_native.cpp:268).
+    // RENDERER up, which is the one thing X2 must not do. This is the usual
+    // native-harness split.
     //
     // config/objects.dta is the shipped per-class type-def table, but it is the
     // CONTENTS of the `objects` section, not a whole system config -- its 74

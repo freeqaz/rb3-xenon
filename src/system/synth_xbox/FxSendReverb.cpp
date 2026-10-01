@@ -105,7 +105,7 @@ void ReverbConvertI3DL2ToNative(
 // already set, which is the `??_B`/`$S` static-init guard shape.
 //
 // ADJUDICATED AGAINST RETAIL BYTES, NOT AGAINST DC3 (CLAUDE.md: DC3 is newer, and
-// five rows on 2026-09-16 alone had our source faithfully reproducing an oracle
+// five rows on 2026-09-16 alone had our source faithfully reproducing a source
 // defect). Symbolically executing retail 0x82B68070 reconstructs the whole table:
 //   * entry count 30 — the search compares a byte cursor against 0x690 = 30 * 0x38,
 //     and the last Symbol ctor targets slot 0x658 = entry 29;
@@ -115,7 +115,7 @@ void ReverbConvertI3DL2ToNative(
 //   * all 30 x 13 = 390 constants match, including three (hallway DecayHFRatio,
 //     mountains and medium_hall ReflectionsDelay) that retail spills to stack slots
 //     r31+0x50/0x54/0x58 rather than keeping in an FPR.
-// So on the TABLE the oracle is verified, not assumed. The one place RB3 and DC3
+// So the TABLE is verified, not assumed. The one place RB3 and DC3
 // genuinely differ is sizeof(XAUDIO2FX_REVERB_PARAMETERS) — see xaudio2fx.h.
 void FxSendReverb360::SyncEffectParams(IXAudio2SubmixVoice *voice) const {
     static ReverbPreset presets[] = {

@@ -61,7 +61,7 @@ public:
     float mVolume; // 0x40
     bool mLoop; // 0x44
     bool mPreload; // 0x45
-    int mUnk3c; // 0x48 — retail RB3-360 member absent from the rb3-Wii decomp (member-delta R1)
+    int mUnk3c; // 0x48 — retail RB3-360 member (member-delta R1)
     StandardStream *mStream; // 0x4c
     float mPlaybackVolumeOffset; // 0x50
     void *mData; // 0x54

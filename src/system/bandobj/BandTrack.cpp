@@ -1,4 +1,4 @@
-// Ported from rb3-Wii src/system/bandobj/BandTrack.cpp (MWCC -> MSVC X360).
+// BandTrack (bandobj/BandTrack.cpp), MSVC X360.
 #include "bandobj/BandTrack.h"
 #include "bandobj/BandCrowdMeter.h"
 #include "bandobj/BandLabel.h"

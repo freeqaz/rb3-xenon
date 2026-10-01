@@ -321,7 +321,7 @@ void SystemPoll(bool b1) {
     // RB3 retail 0x82510270: no system_poll AutoTimer, no gUsingCD-gated
     // HolmesClientPoll and no WebSvcMgr poll (DC3-era, kept for native).
     // Retail ends with an unidentified stage-kit poll (fn_82521ED0, which feeds
-    // JoypadStageKitSetRaw from a 32-entry ring) that no oracle defines; it is
+    // JoypadStageKitSetRaw from a 32-entry ring) with no known source; it is
     // not called here.
     Timer::ClearSlowFrame();
     SystemMs();

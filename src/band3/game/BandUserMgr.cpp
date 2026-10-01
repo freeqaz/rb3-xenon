@@ -290,11 +290,11 @@ int BandUserMgr::GetLocalBandUsers(std::vector<LocalBandUser *> *users, int mask
 
         // Retail dispatches through BandUser's own vftable slot 0 --
         // `user->IsInSession(mSessionMgr)` -- with NO null check on mSessionMgr,
-        // where the rb3-Wii dev oracle has `mSessionMgr->HasUser(user)`. Same
+        // not `mSessionMgr->HasUser(user)`. Same
         // inversion the BandUser.h slot-0 comment records for InputMgr.
         inSession = user->IsInSession(mSessionMgr);
 
-        // Same inversion again: the oracle routes these through ThePlatformMgr,
+        // Same inversion again: not through ThePlatformMgr;
         // retail calls the LocalUser virtuals on the user directly. Slots are
         // pinned by two already-matching anchors in this very function --
         // IsJoypadConnected @0x4 and CanSaveData @0x18 -- between which
@@ -321,7 +321,7 @@ int BandUserMgr::GetLocalBandUsers(std::vector<LocalBandUser *> *users, int mask
         // Positive "keep" polarity with a bool temp per filter, and the mask bit
         // itself typed bool so MSVC normalizes it with extrwi -- see the
         // GetRemoteBandUsers commit for the derivation. Leaving these hoisted
-        // above the loop (as the MWCC oracle does) parks 13 values in
+        // above the loop (the MWCC-friendly shape) parks 13 values in
         // callee-saved regs + 7 stack spills and inflates the frame to 0x110.
         bool bit2 = (mask & 0x4) != 0;
         bool keep2 = !bit2 || !isParticipating;
@@ -382,14 +382,14 @@ int BandUserMgr::GetRemoteBandUsers(std::vector<RemoteBandUser *> *users, int ma
 
         // Retail dispatches through BandUser's own vftable slot 0 --
         // `user->IsInSession(mSessionMgr)` -- with NO null check on mSessionMgr,
-        // where the rb3-Wii dev oracle has `mSessionMgr->HasUser(user)`. Same
+        // not `mSessionMgr->HasUser(user)`. Same
         // inversion the BandUser.h slot-0 comment records for InputMgr.
         inSession = user->IsInSession(mSessionMgr);
 
         // Retail materializes each filter into a bool temp and branches on it
         // (li 0 / li 1 / clrlwi. / beq), rather than short-circuiting straight to
         // the loop latch -- so these must stay as separate `keep` locals in
-        // POSITIVE ("survives the filter") polarity, not the oracle's `rej` form.
+        // POSITIVE ("survives the filter") polarity, not a `rej` form.
         // The bits feeding a compound (`|| ...`) filter are BOOLs in retail:
         // MSVC normalizes them to 0/1 with extrwi. The standalone filters below
         // stay as raw `!(mask & BIT)`, which already emits nor+extrwi. and matches.

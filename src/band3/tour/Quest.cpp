@@ -7,8 +7,8 @@
 #include "utl/Symbol.h"
 
 // Retail TU: 0x8235AE68-0x8235B978 (vtable .?AVQuest@@ at 0x8203CDC4).
-// Ported from the rb3-Wii oracle (band3/tour/Quest.cpp). Retail differs from the
-// oracle only in that every FindData tag is a function-local static Symbol
+// Quest (band3/tour/Quest.cpp). Every FindData tag
+// is a function-local static Symbol
 // declared at its point of use (one guard word, bits 0x1.. in call order).
 
 Quest::Quest(DataArray *da)

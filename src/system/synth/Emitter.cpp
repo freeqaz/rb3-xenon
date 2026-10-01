@@ -43,7 +43,7 @@ BEGIN_PROPSYNCS(SynthEmitter)
 END_PROPSYNCS
 
 #ifndef HX_NATIVE
-// rb3-Wii: the save rev is a mutable global, so retail loads it from .data.
+// The save rev is a mutable global, so retail loads it from .data.
 int kEmitterRev = 3;
 #endif
 

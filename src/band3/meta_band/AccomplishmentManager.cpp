@@ -1661,8 +1661,8 @@ void AccomplishmentManager::ClearFirstNewAward(LocalBandUser *i_pUser) {
 }
 
 bool AccomplishmentManager::HasNewRewardVignettes() const {
-    // NOTE: the rb3-Wii DEV oracle opens with `if (!TheSessionMgr->GetLocalHost())
-    // return false;`. RB3-360 retail has no such guard -- the target emits the
+    // NOTE: there is no `if (!TheSessionMgr->GetLocalHost())
+    // return false;` opener in RB3-360 retail -- the target emits the
     // "tour" Symbol construction directly after the prologue, and GetLocalHost is
     // a virtual call that could not have been optimized away. Do not reinstate.
     if (TheGameMode->InMode("tour")) {

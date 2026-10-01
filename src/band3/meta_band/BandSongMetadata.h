@@ -68,7 +68,7 @@ public:
     // (member init stores), COMDAT dtor fn_8255D5E0 (String dtors @0x4c/0x58/
     // 0x64/0xd4/0xe0/0xf0, map dtor @0x9c, vector free @0x128), and Handle
     // fn_82588000 (mTitle.mStr@0x54, dates@0x72/0x78, rating short@0xb8).
-    // Differences vs the rb3-Wii header:
+    // Layout notes:
     //  - mHasAlternatePath + mIsBonus/mIsFake/mIsTutorial/mMuteWinCues moved
     //    up, between mLengthMs and mRanks (matches dta parse order).
     //  - mRating sits AFTER mRanks, not paired with mAlbumTrackNum.

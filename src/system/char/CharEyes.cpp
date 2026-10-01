@@ -100,7 +100,7 @@ CharEyes::~CharEyes() {}
 // NOTE (statement order): MSVC schedules this store block by strictly
 // alternating the integer-unit and float-unit streams, each stream kept in
 // SOURCE order.  Decomposing retail's asm along those two streams recovers
-// rb3-Wii's exact statement order (member names differ, offsets do not):
+// the exact statement order (member names differ, offsets do not):
 //   float: mLastLook, mAvDelta, mLastCang, mLastBlinkWeight, mDartInterval,
 //          mBlinkTimer, mUpperBlinkAngle, mLowerBlinkAngle, mDartTimer
 //   int:   mBlinkDetect, mDartEnabled, mEyeClampCount, mBlinkEnabled,
@@ -164,7 +164,7 @@ void CharEyes::Exit() {
 }
 
 void CharEyes::Highlight() {
-// rb3-Wii guards this with #ifdef MILO_DEBUG; retail compiled it out, so retail's
+// This is an #ifdef MILO_DEBUG guard; retail compiled it out, so retail's
 // CharEyes::Highlight has an EMPTY body.  Evidence: every string literal that is
 // unique to this body -- "p blink!", "GENERATED", "focus = '%s' (looking at %s)",
 // "focus = '%s'", "interest = '%s'" -- has 0 hits in retail band.exe, while the
@@ -878,12 +878,12 @@ void CharEyes::Replace(ObjRef *ref, Hmx::Object *obj) {
 }
 
 // Retail shape (TU5): the focus interest is taken only when it is inside the
-// view cone OR head IK is ramping in (rb3-Wii's guard; DC3 dropped it), there
+// view cone OR head IK is ramping in (DC3 dropped that guard), there
 // is NO `cheat.disable_*` DataVariable / sDisable* test anywhere in the body
 // (no DataVariable call, no local-static guard), the blink window is `< 9`,
 // and when the farthest interest is at distance 0 retail jumps straight to the
 // state reset WITHOUT clearing mCurrentInterest (`ble .L_stateReset`).
-// rb3-Wii's (dev-only) `mDartOffset = targetDir` store is absent too.
+// A (dev-only) `mDartOffset = targetDir` store is absent too.
 // Spelling levers, each measured against retail (w17-chr): `target` is a
 // held &mTarget (r30) for the Set()s, but the focus copy and the Dir clamp
 // test read mTarget directly (a store through the reference forces a reload of
@@ -1092,7 +1092,7 @@ void CharEyes::LidTrackAndClampingUpdate(EyeDesc &desc, float blinkWeight) {
     // this function, and no hoisted `negEyeRot` temp -- it negates at the use
     // site, inside the guarded block.  Adjudicated on retail bytes: the target
     // instruction stream contains ZERO self-compare `fcmpu fN,fN`, while ours
-    // had THREE (0x1b0, 0x218, 0x5e4).  rb3-Wii (the RB3-era dev source) has no
+    // had THREE (0x1b0, 0x218, 0x5e4).  The RB3-era source has no
     // guard either and spells the product `-eyeRot * mUpperLidTrackUp` inline;
     // dc3-decomp DOES have the guard.  So `isNaN` is a post-RB3 Harmonix
     // robustness fix we inherited from the newer engine, exactly the class
@@ -1162,7 +1162,7 @@ void CharEyes::LidTrackAndClampingUpdate(EyeDesc &desc, float blinkWeight) {
 
         const Transform &srcXfm = source->WorldXfm();
         // Retail holds this flag in the POSITIVE polarity -- `> 0.0f`, which
-        // rb3-Wii names `notLidsOK` -- not `<= 0.0f` negated at the test.  The
+        // is `notLidsOK` -- not `<= 0.0f` negated at the test.  The
         // negated spelling emits `ble`/`bne` where retail emits `bgt`/`beq`.
         bool notLidsOK =
             cross.x * srcXfm.m.x.x + cross.y * srcXfm.m.x.y + cross.z * srcXfm.m.x.z
@@ -1170,7 +1170,7 @@ void CharEyes::LidTrackAndClampingUpdate(EyeDesc &desc, float blinkWeight) {
 
         // ⚠ Retail does NOT read sDisableEyeClamping here: the four-instruction
         // `lis`/`lbz`/`cmplwi`/`bne` on ?sDisableEyeClamping@CharEyes@@1_NA is
-        // base-only in the diff.  rb3-Wii's DEV source guards with
+        // base-only in the diff.  A DEV build guards with
         // `!sDisableEyeClamping && !DataVariable("disable_clamping").Int(0) &&
         // notLidsOK`; the shipped retail binary tests only `notLidsOK`.  Keep
         // the author-facing switch alive for the native runtime.
@@ -1504,7 +1504,7 @@ skipInterp:
     // both the target .text (objdiff idx 385-388 / 405-407 are base-only inserts)
     // and Ghidra's decomp of the retail function go straight from
     // ProceduralBlinkUpdate() into the loop and then to UpdateOverlay(). The
-    // bracket is an rb3-Wii DEV-build artifact, so keep it native-only.
+    // bracket is a DEV-build artifact, so keep it native-only.
 #ifdef HX_NATIVE
     CharLookAt::sDisableJitter = sDisableEyeJitter;
 #endif

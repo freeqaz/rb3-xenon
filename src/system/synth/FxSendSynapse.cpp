@@ -10,9 +10,9 @@ FxSendSynapse::FxSendSynapse()
       mNote2Hz(0.0f), mNote3Hz(0.0f), mUnisonTrio(0), mAttackSmoothing(30.0f),
       mReleaseSmoothing(60.0f) {}
 
-// Setters: rb3-Wii oracle order. Retail keeps all seven out of line in this TU
+// Setters. Retail keeps all seven out of line in this TU
 // (0x82712270..0x82712300, each `stfs/stb` + tail-call OnParametersChanged). The
-// last two are TU5-only (no oracle); their names are ours (lane W16-HX4) --
+// last two are TU5-only (no symbol); their names are ours (lane W16-HX4) --
 // GameMicManager::SetPitchCorrectionTarget is their one caller.
 void FxSendSynapse::SetAttackSmoothing(float as) {
     mAttackSmoothing = as;

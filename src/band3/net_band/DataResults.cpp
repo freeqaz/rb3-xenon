@@ -3,7 +3,7 @@
 #include "os/Debug.h"
 #include "utl/Std.h"
 
-// Ported from rb3-Wii (dev) DataResults.cpp. Retail RB3-360 TU spans
+// DataResults. Retail RB3-360 TU spans
 // [0x8250af88, 0x8250bf98): Clear, GetDataResultValue, GetDataResult, ctor,
 // dtor, scalar-deleting dtor, Update, plus the map/list template COMDATs and
 // EH funclets this TU is the first to instantiate. Retail carries no Print

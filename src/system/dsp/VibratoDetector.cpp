@@ -1,4 +1,4 @@
-// Faithful port from the rb3-Wii oracle (../rb3/src/system/dsp/VibratoDetector.cpp).
+// VibratoDetector (system/dsp/VibratoDetector.cpp).
 // NOTE: the banner here used to claim this file was "X360-inert: not listed in
 // config/45410914/objects.json, so it is never compiled for the retail build."
 // That was stale -- it IS listed (as system/dsp/VibratoDetector.cpp, NonMatching)

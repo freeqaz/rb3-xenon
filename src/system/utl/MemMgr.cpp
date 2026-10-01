@@ -61,8 +61,8 @@ void *operator new(unsigned int size) {
     // Retail/match: 2-arg (size, align) with a LITERAL 0 align.
     //
     // This used to pass `gNewOperatorAlign`, inherited from dc3-decomp — which
-    // is NEWER than RB3 and knows an align global RB3 does not.  Both oracles
-    // refute it: rb3-Wii's MemMgr.cpp reads `operator new(size) { return
+    // is NEWER than RB3 and knows an align global RB3 does not.  The bytes
+    // refute it: RB3's `operator new(size)` is `{ return
     // _MemAlloc(size, 0); }`, and retail's own body at 0x827bd2f0 is
     // `li r4,0 ; b <alloc>` -- an immediate 0, not a load of a global.  The
     // global-load form compiled to 12 bytes (lis/lwz/b) instead of retail's 8,
@@ -262,7 +262,7 @@ void MemOrPoolFreeSTL(
 // Retail/match dispatchers: no __FILE__/line/name — the retail XEX's MemTrack
 // instrumentation is compiled out, so the pool/heap entry points take only the
 // byte size (and the heap fast path's MemAlloc takes (size, align)). Mirrors
-// rb3-Wii _MemOrPoolAlloc(int)/_MemAlloc(int,int) and the 2-arg POOL_OVERLOAD.
+// _MemOrPoolAlloc(int)/_MemAlloc(int,int) and the 2-arg POOL_OVERLOAD.
 void *MemOrPoolAlloc(int size) {
     if (size == 0) {
         return nullptr;
@@ -360,7 +360,7 @@ __declspec(noinline) void *
 #ifndef HX_NATIVE
 // Retail/match 2-arg heap allocator: MemAlloc(size, align). The retail XEX's
 // heap fast path takes no __FILE__/line/name — MemTrack is compiled out.
-// Mirrors rb3-Wii _MemAlloc(int, int). STILL A STUB — the body below is the
+// Same shape as _MemAlloc(int, int). STILL A STUB — the body below is the
 // malloc() placeholder, not the reconstruction (MemHeap::Alloc itself is
 // already decompiled; see MemHeap.cpp).
 //
@@ -545,13 +545,13 @@ void *MemOrPoolAllocSTL(int size, const char *file, int line, const char *name) 
 // XboxAllocator -> MemAlloc/MemFree direct) and the rest are scan-window
 // artifacts. NO rival dispatcher exists anywhere in .text.
 //
-// ⚠ TWO ORACLE FORMS ARE WRONG FOR RB3-360 — do not "fix" this back to either:
+// ⚠ TWO PLAUSIBLE FORMS ARE WRONG FOR RB3-360 — do not "fix" this back to either:
 //
 //   * dc3-decomp spells `{ MemTemp tmp; MemAlloc(...); }` — a temp guard. Retail
 //     has NO guard here; 0x827bd208 is a frameless leaf that tail-branches
 //     (`b`, not `bl`) to both callees, which a guard's dtor makes impossible.
 //     DC3 is the NEWER engine; this is a DC3-side divergence.
-//   * rb3-Wii spells the STL variant with threshold 0x100 vs 0x80 for the plain
+//   * A variant with STL threshold 0x100 vs 0x80 for the plain
 //     variant. RB3-360 does NOT carry that split: a whole-.text scan finds ZERO
 //     0x100-vs-r3 compares near any allocator branch (the same probe finds the
 //     0x80 one, so it discriminates), and retail's surviving
@@ -826,7 +826,7 @@ void MemPopHeap() {
 //     addi/subi r11,r11,1 ; stw r11,0x44(r3)
 //     addi r1,r1,0x60 ; lwz r12,-8(r1) ; mtlr r12 ; blr
 //
-// The `gNumHeaps` guard was a Wii/DC3-side divergence; retail has no such test
+// A `gNumHeaps` guard here would be wrong; retail has no such test
 // (and no MILO_ASSERT — that family is a no-op in this build anyway). Dropping
 // it matters because these inline into same-TU callers such as _MemAllocTemp,
 // where the guard's load+branch is exactly what kept the body from matching.
@@ -878,7 +878,7 @@ MemDoTempAllocations::~MemDoTempAllocations() {
 // split and do not denote this guard — see the header's MemDoTempAllocations
 // comment). Locks gMemStackLock, captures the current heap's strategy into
 // mOld, forces MemHeap::kLastFit for the scope; the dtor restores mOld.
-// Matches the rb3-Wii
+// The standard
 // MemDoTempAllocations ctor/dtor shape (CritSecTracker + GetCurrentHeapNum +
 // gHeaps[]) but with the retail unconditional kLastFit strategy and no
 // `enabled` static (verified byte-for-byte against the retail XEX).
@@ -904,7 +904,7 @@ MemTemp::~MemTemp() {
 }
 #endif
 
-// Retail/match 4-arg FreeBlockStats (fn_827963D8). Per the rb3-Wii oracle this
+// Retail/match 4-arg FreeBlockStats (fn_827963D8). This
 // is Heap::FreeBlockStats(int&,int&,int&,int&), grouped into the MemMgr.o TU.
 // Walks the free-block chain: totalFree = sum of block bytes, biggest = largest
 // block bytes, maxIdx = index of the largest block, rFrags = (count-maxIdx-1).
@@ -942,7 +942,7 @@ void *MemHandle::Lock() {
     return (char *)mAlloc + 0x10;
 }
 
-// Retail/match MemHandle ctor (rb3-Wii utl/MemMgr.cpp:827). Retail has no
+// Retail/match MemHandle ctor. Retail has no
 // out-of-line ??0MemHandle row; _MemAllocH below inlines it as three stores
 // plus an aliasing reload of mAlloc (lwz r10,0(r3) before stw r11,4(r10)).
 MemHandle::MemHandle(void *alloc) {
@@ -951,8 +951,8 @@ MemHandle::MemHandle(void *alloc) {
     mAlloc->mLockCount = 0;
 }
 
-// Retail 0x827BBA68 (104 B, UNNAMED in target_symbol_map.json -- neither
-// rb3-Wii nor DC3 has a name for it, so it stays anonymous rather than carry
+// Retail 0x827BBA68 (104 B, UNNAMED in target_symbol_map.json -- no build
+// has a name for it, so it stays anonymous rather than carry
 // a name invented for a body we authored). Its bytes are GetCurrentHeapNum()
 // inlined (ThreadMemStack(false) top-of-stack else sDefaultHeap) followed by
 // `heapNum > -1 ? &gHeaps[heapNum] : NULL` (mulli 0x24 = sizeof(MemHeap)).
@@ -964,10 +964,10 @@ MemHeap *MemCurrentHeap() {
 }
 
 // Retail/match _MemAllocH, 0x827BD190 (120 B), unit `default/MemMgr`.
-// rb3-Wii utl/MemMgr.cpp:1202. MILO_ASSERT is ((void)(cond)) in the match
+// MILO_ASSERT is ((void)(cond)) in the match
 // build, so MainThread() and MemCurrentHeap() survive as bare `bl`s with
-// discarded results (see File.cpp NewFile for the same shape). rb3-Wii's
-// second assert also checks heap->mUseHeapAlign; RB3-360's MemHeap has no
+// discarded results (see File.cpp NewFile for the same shape). A
+// second assert would check heap->mUseHeapAlign; RB3-360's MemHeap has no
 // such member (retail stride is 0x24), so only the non-null half is kept.
 MemHandle *_MemAllocH(int size) {
     MILO_ASSERT(MainThread(), 0xb23);
@@ -986,14 +986,14 @@ MemHandle *_MemAllocH(int size) {
 #endif
     // Retail has an explicit `li r3,0` else-arm after the PoolAlloc null test:
     // that is MSVC's null check on a throw() placement operator new, so the
-    // source is the single new-expression, not rb3-Wii's `if (h) new (h) ...`.
+    // source is the single new-expression, not `if (h) new (h) ...`.
     return new (PoolAlloc(sizeof(MemHandle), sizeof(MemHandle))) MemHandle(data);
 }
 
 // Retail/match MemFreeH, 0x827BCA08 (72 B), unit `default/MemMgr`.
-// rb3-Wii utl/MemMgr.cpp:1208. W16-D's oracle correction applies: retail calls
+// Retail calls
 // ?MemFree@@YAXPAX@Z (0x827BC430), not _MemFree, and the 2-arg
-// ?PoolFree@@YAXHPAX@Z (0x827BADB0), not the Wii's 3-arg _PoolFree.
+// ?PoolFree@@YAXHPAX@Z (0x827BADB0), not a 3-arg _PoolFree.
 void MemFreeH(MemHandle *h) {
     MILO_ASSERT(MainThread(), 0xb42);
     if (h != NULL) {
@@ -1011,7 +1011,7 @@ void MemFreeBlockStats(
     gHeaps[heapNum].FreeBlockStats(i2, i3, numFreeBytes, i5, biggestFreeBlock);
 }
 
-// Retail/match 4-ref overload (rb3-Wii oracle
+// Retail/match 4-ref overload (signature
 // MemFreeBlockStats(int, int&, int&, int&, int&)). DC3 grew a fifth out-param
 // (minFreeBytes); RB3 retail predates it, so call sites that must match retail
 // codegen (e.g. MetaMusic::Poll) use this arity.

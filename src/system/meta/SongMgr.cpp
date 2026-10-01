@@ -225,7 +225,7 @@ SongInfo *SongMgr::SongAudioData(Symbol shortname) const {
     return SongAudioData(GetSongIDFromShortName(shortname, true));
 }
 
-// Out of line, as in rb3-Wii: retail BandSongMgr::SongCacheNeedsWrite /
+// Out of line: retail BandSongMgr::SongCacheNeedsWrite /
 // ClearSongCacheNeedsWrite `bl` these (0x827A8938 / 0x827A8978) rather than
 // inlining the qualified SongMgr:: call, which an in-class body would allow.
 bool SongMgr::SongCacheNeedsWrite() const { return mSongCacheNeedsWrite; }
@@ -342,7 +342,7 @@ bool SongMgr::HasSong(Symbol shortname, bool fail) const {
 const char *SongMgr::ContentName(int songID) const {
     const SongMetadata *data = Data(songID);
     // TU5: retail also treats song ID 99000001 (lis 0x5e6; ori 0x9ec1, the
-    // metadata's mID at +0x30) as having no content -- absent from both oracles.
+    // metadata's mID at +0x30) as having no content.
     if (data && !data->IsOnDisc() && data->mID != 99000001) {
         auto it = mContentUsedForSong.find(songID);
         MILO_ASSERT(it != mContentUsedForSong.end(), 0x158);

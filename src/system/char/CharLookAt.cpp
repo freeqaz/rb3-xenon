@@ -22,9 +22,9 @@
 // which Mtx.h has no overload for -- Mtx.h only supplies the transpose
 // (Vector3, Matrix3) form, whose out.x reads the matrix COLUMN {0x0,0x10,0x20}.
 // Retail's asm at va 0x823ba738 reads rows {0x0,0x4,0x8} / {0x10,0x14,0x18} /
-// {0x20,0x24,0x28}, so the two call sites below need this overload. rb3-Wii has
-// it in its own Mtx.h; its body is hand-unrolled into accx/accy/accz temporaries
-// which is MWCC-shaped and costs MSVC 6 extra instructions here (aliasing
+// {0x20,0x24,0x28}, so the two call sites below need this overload. A
+// hand-unrolled body (accx/accy/accz temporaries)
+// is MWCC-shaped and costs MSVC 6 extra instructions here (aliasing
 // reloads, since `out` may alias `v`) -- the Dot() spelling is what matches.
 // NOTE: this belongs in math/Mtx.h, but adding it there is a header change with
 // engine-wide blast radius, so it is kept TU-local pending its own A/B.
@@ -93,7 +93,7 @@ BEGIN_PROPSYNCS(CharLookAt)
     SYNC_PROP(show_range, mShowRange)
     SYNC_PROP(source_radius, mSourceRadius)
     // retail (MILO_DEBUG off) has no property-sync exposure for jitter/test_range
-    // members (rb3-Wii gates these under #ifdef MILO_DEBUG in BEGIN_PROPSYNCS),
+    // members (they are MILO_DEBUG-only in BEGIN_PROPSYNCS),
     // and does not double-sync the Hmx::Object superclass.
     SYNC_SUPERCLASS(CharWeightable)
 END_PROPSYNCS
@@ -258,7 +258,7 @@ void CharLookAt::Poll() {
                     }
                     Subtract(source->WorldXfm().m.y, unka4, sourceFilter);
                     // LengthSquared(sourceFilter), but spelled with the component
-                    // temporaries rb3-Wii's LengthSquared() carries and ours does
+                    // temporaries a LengthSquared() can carry and ours does
                     // not. The DECLARATION order is load-bearing: MSVC emits the
                     // three fsubs rotated one position left of the decl order, so
                     // (y,z,x) here reproduces retail's (z,x,y). Vec.h's plain
@@ -298,10 +298,10 @@ void CharLookAt::Poll() {
                 }
                 mPivotLookTarget = lookDir;
                 // retail (this build/version, vanilla 45410914) has NEITHER the
-                // rb3-Wii debug-only mTestRange preview branch NOR the mShowRange
+                // debug-only mTestRange preview branch NOR the mShowRange
                 // preview switch -- both absent from the compiled retail Poll().
                 // Do not reintroduce those two. The eye-jitter block below IS
-                // present in retail, minus rb3-Wii's later-added sDisableJitter/
+                // present in retail, minus later-added sDisableJitter/
                 // "cheat.disable_eye_jitter" dev guards (retail's asm gates on
                 // mEnableJitter && deltasecs>0.0f only -- verified via va
                 // 0x823ba738 Ghidra decomp + objdiff instruction-level match).

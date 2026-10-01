@@ -112,7 +112,7 @@ inline bool ClampEq(T &value, const T &min, const T &max) {
 }
 
 // NOTE: retail RB3-360 has NO float specializations of ClampEq/MinEq/MaxEq
-// (DC3-era fsel additions, absent from RB3-era Wii Utl.h; retail witness:
+// (DC3-era fsel additions, absent from RB3; retail witness:
 // branchy generic MinEq in UtilDrawPlane at fn 0x82428440). The branchy
 // generics below are the retail shape for float too.
 
@@ -138,7 +138,7 @@ inline bool MaxEq(T &x, const T &y) {
 //
 // One existed (`return fabsf(x);`), inherited from ../dc3-decomp in c5c1650f
 // "Scaffold engine + math library from dc3-decomp".  It is NOT retail's: RB3's
-// own Wii tree (../rb3, the SAME GAME) and ../og-dc3-decomp both declare only
+// own source and ../og-dc3-decomp both declare only
 // the template below.  Because a non-template overload beats a template for a
 // float argument, its mere presence silently rewrote every `Abs(someFloat)` in
 // the tree from the template's fcmpu/ble/fneg into a single `fabs`.

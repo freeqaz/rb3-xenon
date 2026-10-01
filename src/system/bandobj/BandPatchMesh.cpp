@@ -26,8 +26,8 @@ static inline double __frsqrte(double x) { return 1.0 / std::sqrt(x); }
 double __frsqrte(double);
 #endif
 
-// Minimal port of BandPatchMesh.cpp from the rb3-Wii MWCC decomp (matching TU
-// src/system/bandobj/BandPatchMesh.cpp) to MSVC X360. Only the worklist target
+// Minimal BandPatchMesh.cpp (TU
+// src/system/bandobj/BandPatchMesh.cpp) for MSVC X360. Only the worklist target
 // functions and the helpers required to compile + emit them are ported here:
 //
 //   * BandPatchMesh::MeshVert::AddUV                  (0x82332BC0)
@@ -44,7 +44,7 @@ double __frsqrte(double);
 // (stb 0x2f twin-flag stores, addi +0x1d face-list base, addi +0x1e slot size).
 #ifdef HX_NATIVE
 // Host layout (LP64 pointer, host Vector3): derive the same three quantities from
-// the struct, as the rb3-Wii oracle's native arm does. On X360 these expressions
+// the struct. On X360 these expressions
 // evaluate to exactly the literals below (unk30 at 0x38, unk27 at 0x2f).
 static const size_t kMVFaceList =
     offsetof(BandPatchMesh::MeshVert, unk30) + sizeof(unsigned short);
@@ -57,7 +57,7 @@ static const size_t kMVSlotBase = 0x40;
 #endif
 
 // Retail 0x823454A0: an out-of-line 2x2 inverse, called only by ExtendTwin. No
-// oracle has it; the name is ours, the signature is fixed by the retail body. It
+// symbol survives; the name is ours, the signature is fixed by the retail body. It
 // refuses (and leaves `out` untouched) when |det| < eps, else writes adj/det.
 // All four inputs are read before the first store, so `out` may alias `m`
 // (ExtendTwin inverts in place). It must be external, not static or inline:
@@ -234,14 +234,14 @@ void BandPatchMesh::WorkVerts::SetMeshVerts() {
 }
 
 // -----------------------------------------------------------------------------------
-// BandPatchMesh / MeshPair members (lane W17-BPM), ported from the rb3-Wii oracle
-// (src/system/bandobj/BandPatchMesh.cpp:906-975 and 1217-1360). These used to exist
+// BandPatchMesh / MeshPair members (lane W17-BPM)
+// in this TU. These used to exist
 // only as native-link copies in native/src/x20_bandpatchmesh_link.cpp; retail has
 // them in this TU (0x8234B270-0x8234D2F0), so the X360 build now emits them too.
 //
-// Retail-vs-oracle differences, read off retail bytes:
-//   * PreRender calls MakeRotMatrixZ(angle, m) (0x82345520) where the oracle has
-//     the inline Hmx::Matrix3::RotateAboutZ.
+// Retail details, read off retail bytes:
+//   * PreRender calls MakeRotMatrixZ(angle, m) (0x82345520), not
+//     an inline Hmx::Matrix3::RotateAboutZ.
 //   * ConstructQuad is inlined into PreRender (retail PreRender calls Construct
 //     with (mMeshes[0], tex, true, false, 0) directly).
 // -----------------------------------------------------------------------------------
@@ -399,7 +399,7 @@ void BandPatchMesh::Render(RndTex *tex, RndMat *mat) {
                 if (patch) {
                     RndMat *patchmat = patch->Mat();
                     if (patchmat) {
-                        // The oracle reads `patchmat->mColor`; that member is
+                        // Reads the patch material's color; mColor is
                         // protected on X360's RndMat, and GetColor() returns it.
                         mat->SetColor(patchmat->GetColor());
                         mat->SetTexWrap(patchmat->GetTexWrap());
@@ -473,7 +473,7 @@ void BandPatchMesh::ConstructQuad(RndTex *tex) {
         Construct(mMeshes[0], tex, true, false, 0);
 }
 
-// Retail 0x823460D0 (rb3-Wii BandPatchMesh.cpp:1428). Defined ahead of Construct:
+// Retail 0x823460D0. Defined ahead of Construct:
 // retail Construct keeps its 1.0 / 0.0 loop constants in volatile f9 / f10 across
 // the call, which the compiler does only for a callee whose register use it has
 // already seen in this TU.
@@ -499,7 +499,7 @@ void BandPatchMesh::WorkVerts::SortWorkVertsByZ() {
     std::sort(unk10.begin(), unk10.end(), SortByWorkVertZ());
 }
 
-// Retail 0x8234BD68 (rb3-Wii BandPatchMesh.cpp:981). Retail-vs-oracle, read off
+// Retail 0x8234BD68. Read off
 // retail bytes: the scale is (0.5 / |x|, -0.5 / |y|); the hit point is clipped
 // with the out-of-line Interp(start, end, t, end); the seed vertex takes the
 // collision plane as its normal and no uv; SortWorkVertsByZ is inlined.
@@ -585,10 +585,10 @@ void BandPatchMesh::ProjectPatches(const Transform &xfm, RndTex *tex, bool perm)
     }
 }
 
-// Retail 0x8234B6F0 (rb3-Wii BandPatchMesh.cpp:1372). Retail-vs-oracle, read off
+// Retail 0x8234B6F0. Read off
 // retail bytes: with `perm`, the patch mesh and the generated deform are tagged
-// with SetNote (strings 0x82039B1C / 0x82039AE8), which the oracle's bare
-// MakeString discards.
+// with SetNote (strings 0x82039B1C / 0x82039AE8), not a bare
+// MakeString that would be discarded.
 void BandPatchMesh::Construct(
     MeshPair &meshpair, RndTex *tex, bool quad, bool perm, WorkVerts *wv
 ) {
@@ -647,10 +647,10 @@ void BandPatchMesh::Construct(
 
 // -----------------------------------------------------------------------------------
 // The rest of the patch-projection subsystem (lane W17-BPM2), so the native build
-// links the real PreRender / ReProject instead of counted stubs. Ported from the
-// rb3-Wii oracle (src/system/bandobj/BandPatchMesh.cpp:51-905, 958-964) except
-// FindXfm, which follows retail 0x823468E8 (the oracle's copy is garbled: its
-// nearest-edge fallback is guarded by `endFace == endFace` and never runs). None
+// links the real PreRender / ReProject instead of counted stubs.
+// FindXfm
+// follows retail 0x823468E8 (its nearest-edge fallback is not dead: a
+// `endFace == endFace` guard would never run it). None
 // of these is named in the target map yet, so on X360 they are compiled but not
 // scored. They sit after Construct / ProjectPatches so that neither caller sees
 // their bodies (retail calls every one of them out of line).
@@ -1193,8 +1193,8 @@ BinStream &operator>>(BinStream &bs, BandPatchMesh &mesh) {
 // "patches" (0x8201AB64), member 1 is passed at +0x0 to
 // ??$PropSync@VRndMesh@@@@YA_N... (i.e. an ObjPtr<RndMesh>) and member 2 at
 // +0xc, which is exactly MeshPair's { ObjPtr<RndMesh> mesh; ObjVector<PatchPair>
-// patches; } layout.  The rb3-Wii oracle (src/system/bandobj/BandPatchMesh.cpp
-// :1502) has the identical two SYNC_PROPs.
+// patches; } layout -- two SYNC_PROPs, one per member
+// (mesh, patches).
 //
 // The old pairing scored 100.0 only because objdiff masks relocation arguments,
 // so MoveRating's 2-property PropSync (member 1 at +0x0, member 2 at +0xc --
@@ -1212,7 +1212,7 @@ BEGIN_CUSTOM_PROPSYNC(BandPatchMesh::MeshPair)
     SYNC_PROP(patches, o.patches)
 END_CUSTOM_PROPSYNC
 
-// Retail 0x8234CD38 (rb3-Wii BandPatchMesh.cpp:1507).
+// Retail 0x8234CD38.
 BEGIN_CUSTOM_PROPSYNC(BandPatchMesh)
     SYNC_PROP(meshes, o.mMeshes)
     SYNC_PROP(src, o.mSrc)

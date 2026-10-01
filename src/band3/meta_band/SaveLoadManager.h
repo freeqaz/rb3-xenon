@@ -136,7 +136,7 @@ protected:
     // at 0x88. MsgSource non-virtual subobject ends at 0x18 (mExporting@0x14 +
     // tail pad reused), so mActivated lands at 0x18. Retail has a SINGLE
     // BandProfile* vector at 0x34 (12-byte classic std::vector) and NO profiling
-    // Timer member (Wii's mUploadProfiles/mSaveProfiles pair + mTimer were merged
+    // Timer member (an mUploadProfiles/mSaveProfiles pair + mTimer is merged
     // / stripped for retail). See docs/plans/saveloadmanager-port-log-2026-07-20.md.
     bool mActivated; // 0x18
     bool mInitialLoadNotDone; // 0x19

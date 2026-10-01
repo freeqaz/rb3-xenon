@@ -25,7 +25,7 @@ void SetlistToStorePanel::Load() {
 }
 
 // Retail X360 wires `load_song_metadata` to a real method (fn_82642B38); the
-// rb3-Wii DEV build's HANDLE_ACTION(load_song_metadata, 0) is a stub.  The
+// arm is not a HANDLE_ACTION(load_song_metadata, 0) stub.  The
 // retail body kicks off the metadata net-loaders (fn_826429A0, not yet ported --
 // it is outside this unit's pinned span so it is unscored) and then seeds
 // mAllMetadata with a one-element `offers` array.
@@ -158,7 +158,7 @@ void SetlistToStorePanel::GetSongsFromMusicLibrary() {
     const std::vector<int> &songs = setlist->mSongs;
     MILO_ASSERT(!songs.empty(), 0x91);
     // Retail X360 predates the StoreMetadataManager setlist-offer bookkeeping
-    // the rb3-Wii dev build added here: neither ClearSetlistOffers() nor the
+    // here: neither ClearSetlistOffers() nor the
     // per-song AddSetlistOffer() below exists in the target, and their absence
     // is what frees the callee-save register the rest of the loop is off by.
     MILO_ASSERT(mSongs.empty(), 0x98);

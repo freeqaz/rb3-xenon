@@ -15,7 +15,7 @@
 #include "ui/UIPanel.h"
 #include <hash_map>
 
-// Xbox-360 TU5 provider, absent from the rb3-Wii oracle. Retail RTTI
+// Xbox-360 TU5 provider. Retail RTTI
 // ".?AVPremiumAssetProvider@@" (UIListProvider, Hmx::Object), sizeof 0x38,
 // ctor @0x82670A88 (a Symbol vector at +0x2c filled from AssetMgr). Declared
 // here only for CustomizePanel::Load's allocation; the class body is unported.
@@ -63,8 +63,8 @@ public:
         // `case 0x20..0x24` at :193,:897-:902) -- all outside [0,31] and hence
         // foldable by a compiler that trusts the declared range. Same defect
         // class as the missing Character::DrawMode 4 that killed char shadows.
-        // A RANGE GUARD, not a recovered name: the rb3-Wii oracle stops at 28
-        // too, so it cannot supply the real enumerators for 0x20..0x24.
+        // A RANGE GUARD, not a recovered name: no surviving source names
+        // anything past 28, so nothing can supply the real enumerators for 0x20..0x24.
         // X360-neutral: an enumerator emits no code (A/B measured Δ0).
         kCustomizeState_MaxUsed = 0x24
     };
@@ -158,7 +158,7 @@ public:
     CustomizeState mCustomizeState; // 0x40
     CustomizeState mPendingState; // 0x44
     CustomizeState mPatchMenuReturnState; // 0x48
-    // Retail keys this with an STLport hash_map, not the Wii build's std::map.
+    // Retail keys this with an STLport hash_map, not a std::map.
     // ??0CustomizePanel@@QAA@XZ does `addi r3, r30, 0x4c` and then
     // `bl ??0?$hash_map@...@stlpmtx_std@@QAA@XZ` (retail 0x8255D480, whose body
     // is `li r4, 0x64` -> _M_initialize_buckets(100) -- a hashtable ctor, not an
@@ -197,7 +197,7 @@ public:
     String mPatchName; // 0xa8
     // RB3-360: no trailing mShowAssetTokens — retail members end after
     // mPatchName (RTTI: vtordisp 0xB4, vbase Hmx::Object at 0xB8). The
-    // Wii-dev-only bool pushed the vbase to 0xBC and biased every
+    // bool pushed the vbase to 0xBC and biased every
     // r26-relative displacement in Handle. Its only users were the two
     // RB3_STRIP_CHEAT_HANDLERS-stripped cheat arms + CheatToggleAssetTokens.
 };

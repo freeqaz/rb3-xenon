@@ -217,7 +217,7 @@ void UIStats::MaybePublish(UIScreen *from) {
                     // Symbol is loaded as part of the vararg setup, not as a separate
                     // expression. `.Str()` forces the load EARLY (`lwz r30,0(r11)` then
                     // `mr r4,r30`). Passing the UNNAMED temporary BY VALUE reproduces the late
-                    // load. A NAMED Symbol local (rb3-Wii's shape, UIStats.cpp:207) measured
+                    // load. A NAMED Symbol local measured
                     // WORSE (99.1 vs 99.2) — it homes the Symbol to r31 and costs 0x10 of
                     // frame — but the unnamed-temporary form is a different shape.
                     String val(MakeString(
@@ -280,8 +280,8 @@ void UIStats::MaybePublish(UIScreen *from) {
         DropScreen(from);
     } else if (mLastDroppedScreen) {
         // retail X360 (fn_8255F9D0 @.L_8256035C) has exactly ONE `bl RecordDataPoint`
-        // in the whole function — the padUser one. rb3-Wii's DEV source records
-        // screenExit too (UIStats.cpp:241); retail dropped it. Verified by counting
+        // in the whole function — the padUser one. There is no screenExit
+        // recording. Verified by counting
         // bl fn_827CD110 sites in the target .s: 1.
         screenExit.AddPair("dropped_screens", DataNode(mLastDroppedScreen));
         mLastDroppedScreen = NULL;

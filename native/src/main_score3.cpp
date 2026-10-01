@@ -28,7 +28,7 @@
 // SCOPE LINE (what stays shimmed, and why):
 //   * CommonPhraseCapturer — the retail arbiter that *calls* CompleteCommonPhrase
 //     is TheGame/SongDB/GemPlayer/TrackPanel-bound multi-track unison machinery
-//     (its .cpp exists only in the rb3-Wii oracle). For a single player its
+//     (its .cpp is not built here). For a single player its
 //     decision reduces exactly to HasPlayedWholePhrase -> OneTrackCompletedPhrase
 //     -> Player::CompleteCommonPhrase(false,false); we run that real credit method
 //     directly and drive the "whole phrase played" test from the real SongData

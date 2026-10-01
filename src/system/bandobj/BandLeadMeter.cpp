@@ -1,4 +1,4 @@
-// Ported from rb3-Wii src/system/bandobj/BandLeadMeter.cpp (MWCC -> MSVC X360).
+// BandLeadMeter (bandobj/BandLeadMeter.cpp), MSVC X360.
 #include "bandobj/BandLeadMeter.h"
 #include "decomp.h"
 #include "math/Utl.h"

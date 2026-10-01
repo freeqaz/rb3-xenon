@@ -29,7 +29,7 @@ using stlpmtx_std::StlNodeAlloc;
 // RB3-360 RETAIL RndText.
 //
 // Ground truth: docs/decomp/rndtext-retail-layout.md (lane BP-2b) — a
-// compiler-and-retail-verified member table. Retail RndText is rb3-Wii-lineage
+// compiler-and-retail-verified member table. Retail RndText is pre-DC3
 // in structure, member order, Load/Save order and ctor mem-init list, with
 // 360-widened types. It is NOT the DC3-generation class this file used to hold
 // (no mStyles / StyleState / FontMap / FontMap3d / BlacklightPacket / fit /
@@ -68,7 +68,7 @@ public:
     };
 
     // sizeof 0x24 — UNCHANGED from the previous (DC3-shaped) header: retail's
-    // Style has the identical layout, only rb3-Wii's *names* differ
+    // Style has the identical layout; only the original field *names* differ
     // (font/size/italics/color/brk/pre/zOffset). Keeping our field names avoids
     // churning Lyric.{h,cpp}, UIFontImporter, HamListRibbon, StarsDisplay and
     // UIListLabel for zero layout benefit.
@@ -89,7 +89,7 @@ public:
               mTextColor(1, 1, 1, 1),
 #endif
               nobreak(true), pre(false), mZOffset(0) {}
-        // rb3-Wii-lineage ctor. Wii passes Color32(-1) (opaque white); the
+        // Ctor. The original passes Color32(-1) (opaque white); the
         // 360 widening makes that Hmx::Color(1,1,1,1) — the ctor default the
         // retail RndText ctor was measured to store.
         Style(RndFont *f, float sz, float ital, const Hmx::Color &col, float z)
@@ -121,7 +121,7 @@ public:
         float mItalics; // 0x08
         /** "Color of the text, put into mesh verts. Modified by <color=r,g,b,a>." */
         Hmx::Color mTextColor; // 0x0c
-        /** "Prevent line breaks in a block" (rb3-Wii `brk`) */
+        /** "Prevent line breaks in a block" (`brk`) */
         bool nobreak; // 0x1c
         /** "Super-script / pre" */
         bool pre; // 0x1d
@@ -133,13 +133,13 @@ public:
     // dtor's deallocation arithmetic).
     //
     // CORRECTION to docs/decomp/rndtext-retail-layout.md: that doc's *table*
-    // (which is the measurement) and its *prose decomposition* disagree. Wii's
-    // Line is 0x60 = Style 0x18 + 2 ptrs + 2 uints + Transform 0x30 + float +
+    // (which is the measurement) and its *prose decomposition* disagree. The
+    // narrow Line is 0x60 = Style 0x18 + 2 ptrs + 2 uints + Transform 0x30 + float +
     // Color32. On 360 Style grows to 0x24 (+0xc) and Transform to 0x40 (+0x10),
-    // so KEEPING Wii's separate `color` member would give 0x88, not 0x78. The
+    // so KEEPING a separate `color` member would give 0x88, not 0x78. The
     // measured table attributes every byte of [0,0x78) with no room for it.
-    // Conclusion: retail DROPS Wii's redundant Line::color — the colour lives in
-    // lineStyle.mTextColor (on Wii both were written with the same value, so the
+    // Conclusion: retail DROPS a redundant Line::color — the colour lives in
+    // lineStyle.mTextColor (a duplicate would hold the same value, so the
     // duplicate was dead storage). INFERRED from the measured table, but the
     // arithmetic only closes this one way.
     class Line {
@@ -295,7 +295,7 @@ public:
     float BoundsRight() const;
     float BoundsBottom() const;
 
-    // ---- single-style line API (rb3-Wii-lineage; used by band3 Lyric.cpp) ----
+    // ---- single-style line API (used by band3 Lyric.cpp) ----
     int
     AddLineUTF8(const String &, const Transform &, const Style &, float *, bool *, int);
     void ReplaceLineText(
@@ -311,7 +311,7 @@ public:
     void ApplyLineText(const String &, const Style &, float &, Line &, int, int, bool *);
     int NumCharsInBytes(const String &, const Style &, float &, int);
 
-    // ---- internals (public, as on rb3-Wii) ----
+    // ---- internals (public) ----
     const char *ParseMarkup(const char *, Style *, float, float) const;
     float GetHorizontalAlignOffset(const Line &, Alignment) const;
     void RotateLineVerts(const Line &, RndMesh::Vert *, RndMesh::Vert *);
@@ -343,32 +343,32 @@ public:
     HX_VECTOR(Line) mLines; // 0x0d8  0x0c  (stride 0x78)
     ObjOwnerPtr<RndFont> mFont; // 0x0e4  0x0c  (payload @0x0ec)
     float mWrapWidth; // 0x0f0  (ctor 0.0)
-    /** 360-widened: rb3-Wii packs mAlign/mCapsMode as a u8 pair. */
+    /** 360-widened from a u8 pair (mAlign/mCapsMode). */
     int mAlign; // 0x0f4  (ctor 0x11 kTopLeft)
     int mCapsMode; // 0x0f8  (ctor 0)
     float mLeading; // 0x0fc  (ctor 1.0)
     String mText; // 0x100  0x0c
-    /** 360-widened: rb3-Wii has `int mFixedLength : 16`. */
+    /** 360-widened from `int mFixedLength : 16`. */
     int mFixedLength; // 0x10c
     Style mStyle; // 0x110  0x24
-    /** 360: a real bool member of RndText. On rb3-Wii this is a bitfield in the
-        RndDrawable base. Serialized (Load rev > 0xD). */
+    /** 360: a real bool member of RndText (not a bitfield in the
+        RndDrawable base). Serialized (Load rev > 0xD). */
     bool mTextMarkup; // 0x134  (+3 pad)
     Style mAltStyle; // 0x138  0x24  (Load tail: memcpy 0x24 from mStyle)
 
     // --- runtime-only tail. Save touches NOTHING in [0x138,0x15c) or
     // [0x178,0x190), so none of these are serialized and their identity cannot
     // be pinned from the stream. Offsets are MEASURED; the mapping onto
-    // rb3-Wii's flags is INFERRED from role + declaration adjacency. ---
+    // the original flags is INFERRED from role + declaration adjacency. ---
 
-    /** INFERRED = Wii `unkbp4`: enables mAltStyle for the <alt> markup tag.
+    /** INFERRED (`unkbp4`): enables mAltStyle for the <alt> markup tag.
         Sits immediately after mAltStyle, and SetAltStyle writes both. */
     bool mUseAltStyle; // 0x15c  (+3 pad)
     // the 0x18 _Rb_tree flavour — do NOT gate this TU with RB3_RBTREE_0x1C
     std::map<FontKey, MeshInfo> mMeshMap; // 0x160  0x18
     /** signed; DeferUpdateText/ResolveUpdateText nest on it (cmpwi). */
     int mDeferUpdate; // 0x178
-    /** INFERRED = Wii `unkbp5`: an UpdateText was requested while deferred.
+    /** INFERRED (`unkbp5`): an UpdateText was requested while deferred.
         Sits immediately after mDeferUpdate, which is the pair it is read with. */
     bool mNeedsUpdate; // 0x17c  (+3 pad)
     /** callback interface, virtual slot 1 = Update(RndMesh*) */
@@ -377,20 +377,20 @@ public:
     float mCurHeight; // 0x184
     /** width of the current text block  (GetCurrentStringDimensions out1) */
     float mCurWidth; // 0x188
-    /** INFERRED = Wii `unkbp6`: meshes need a rebuild on next DrawShowing. */
+    /** INFERRED (`unkbp6`): meshes need a rebuild on next DrawShowing. */
     bool mMeshDirty; // 0x18c
     // 0x18d-0x18f: EVIDENCE RAN OUT in the retail sweep (pad, or unreferenced
     // bools). Retail's ctor was measured zeroing exactly four bools and its
-    // UpdateText omits Wii's `unkbp6 = true`, so the Draw/CollectGarbage flags
+    // UpdateText omits an `unkbp6 = true`, so the Draw/CollectGarbage flags
     // were never located. Placing them here is INFERRED; it is sizeof- and
     // offset-neutral either way (the bytes are padding otherwise), and it is
-    // what lets the rb3-Wii bodies port without inventing new members.
-    /** INFERRED = Wii `unkbp7`: lines were added manually via AddLineUTF8. */
+    // what lets these bodies port without inventing new members.
+    /** INFERRED (`unkbp7`): lines were added manually via AddLineUTF8. */
     bool mManualLines; // 0x18d
-    /** INFERRED = Wii `unk124b4p1`: RotateLineVerts is enabled. */
+    /** INFERRED (`unk124b4p1`): RotateLineVerts is enabled. */
     bool mRotateLineVerts; // 0x18e
-    /** INFERRED = Wii `unk124b4:3`: frames since last DrawShowing (compared
-        `> 4`, so 3 bits on Wii — fits a byte here). */
+    /** INFERRED (`unk124b4:3`): frames since last DrawShowing (compared
+        `> 4`, so 3 bits suffice — fits a byte here). */
     unsigned char mFramesSinceDraw; // 0x18f
 
 protected:

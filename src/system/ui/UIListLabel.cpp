@@ -162,10 +162,10 @@ UIListSlotElement *UIListLabel::CreateElement(UIList *uilist) {
 
 UIListLabelElement::~UIListLabelElement() { delete mLabel; }
 
-// RB3-360 retail implements rb3-Wii's RB3-era algorithm, NOT DC3's newer one.
+// RB3-360 retail implements the RB3-era algorithm, NOT DC3's newer one.
 // Our previous body was a verbatim copy of DC3's multi-style version
 // (BoundsLeft/BoundsTop + _alloca over NumStyles()/Style(i)); retail instead
-// walks the label's meshes.  This is not an oracle preference -- it is what the
+// walks the label's meshes.  This is not a source preference -- it is what the
 // retail bytes at 0x8281FED8 call: ?CalcBox@@YAXPAVRndMesh@@AAVBox@@@Z,
 // ?GrowToContain@Box@@QAAXABVVector3@@_N@Z, ?TextObj@UILabel@@, and
 // ?SetColorOverride@UILabel@@, with NO BoundsLeft and NO NumStyles anywhere in

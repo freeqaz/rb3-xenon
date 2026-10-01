@@ -11,7 +11,7 @@
 // default ctor for the member. The value type (M = float) matches too.
 // Corroboration: retail's FixedSizeSaveable::SaveStd/LoadStd, which SaveFixed
 // and LoadFixed call with this member, are instantiated on hash_map, not map.
-// The Wii decomp approximated it as std::map.
+// It is not a std::map.
 #ifndef RB3_HASH_SYMBOL_DEFINED
 #define RB3_HASH_SYMBOL_DEFINED
 namespace stlpmtx_std {

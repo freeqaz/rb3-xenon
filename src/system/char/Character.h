@@ -89,7 +89,7 @@ public:
     virtual void PreSave(BinStream &) { UnhookShadow(); }
     virtual void PreLoad(BinStream &);
     virtual void PostLoad(BinStream &);
-    // ObjMacros.h-dialect rev statics (see rb3-Wii Character.cpp's DECLARE_REVS):
+    // ObjMacros.h-dialect rev statics (DECLARE_REVS):
     // retail's PreLoad reads a rev directly into these class statics rather than
     // constructing a full virtual BinStreamRev wrapper (verified from asm — no
     // ??0BinStream@@QAA@_N@Z / ??_7BinStreamRev@@6B@ in retail's PreLoad body).
@@ -97,7 +97,7 @@ public:
     // permitted (by the standard's guaranteed member layout) to CSE the base
     // address across both fields into a single addi+sth/sth pair, matching
     // retail's measured .data layout (base+0 = altRev, base+4 = rev).
-    // +8 is the load-time "old flat-drawable Lod" owner (rb3-Wii's file-scope
+    // +8 is the load-time "old flat-drawable Lod" owner (file-scope
     // gCharMe): retail co-addresses it with the revs off ONE base register
     // (PostLoad `stw ...,0x8(r21)`; operator>>(Lod) anchors on it and reads the
     // rev at -4), which MSVC only does for a single aggregate or internal statics.
@@ -119,7 +119,7 @@ public:
     // ObjectDir
     virtual void SyncObjects();
     // NON-virtual, same as RndDir::CollideListSubParts (see rndobj/Dir.h): the
-    // rb3-Wii oracle's Character declares no CollideListSubParts at all, and
+    // RB3 Character declares no CollideListSubParts at all, and
     // retail's BandCharacter vtable puts Teleport at inherited-region slot 11
     // (measured: OnCamTeleport/OnClosetTeleport vcall `lwz r11,0x2c(r11)` vs our
     // 0x30). Keeping it virtual here reinserted the bogus DC3 slot that Dir.h
@@ -134,8 +134,8 @@ public:
     virtual bool MakeWorldSphere(Sphere &, bool);
     virtual float ComputeScreenSize(RndCam *);
     // Virtual, and declared HERE (right after ComputeScreenSize, before GetEyes)
-    // to match retail's inherited-region slot order — same position the rb3-Wii
-    // oracle's Character gives it. This slot is what the old bogus virtual
+    // to match retail's inherited-region slot order (RB3's
+    // Character puts it here too). This slot is what the old bogus virtual
     // CollideListSubParts was accidentally compensating for.
     virtual void DrawLodOrShadow(int, DrawMode);
     DRAW_DC3_VIRTUAL void DrawOpaque();
@@ -220,7 +220,7 @@ protected:
 
     // Retail RB3 Character: mShadow / mTransGroup are single owned RndGroup
     // pointers (ObjPtr<RndGroup>, 0xc) — NOT DrawPtrVec (0x1c). DC3 introduced
-    // the vec form later; RB3 retail (and the rb3-Wii oracle) use the single-
+    // the vec form later; RB3 retail uses the single-
     // pointer form, which shrinks Character by 0x20 and shifts every member
     // after the shadow groups down toward the retail offsets.
     ObjVector<Lod> mLods; // 0x1dc
@@ -261,8 +261,8 @@ protected:
     // `bool mDebugDrawInterestObjects` here. RB3 retail has NEITHER: the
     // "showable_props" / "prop_N_showing" / "debug_draw_interest_objects"
     // property strings are all absent from the retail XEX, Character::Save/Copy
-    // stop at mFrozen, and rb3-Wii gates mDebugDrawInterestObjects behind
-    // MILO_DEBUG (off in retail). Together they add 0x20 to sizeof(Character),
+    // stop at mFrozen, and mDebugDrawInterestObjects is
+    // MILO_DEBUG-only (off in retail). Together they add 0x20 to sizeof(Character),
     // shifting every member of every subclass (BandCharacter/Char/Crowd/
     // HamCharacter/...) down 0x20. Dropping both realigns the whole family.
     // (This project's src/macros.h force-defines MILO_DEBUG, so the member must

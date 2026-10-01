@@ -98,7 +98,7 @@ void WaveFile::ReadMarkers() {
                 labelvec.push_back(Label(str, unk1));
             }
 #else
-            // RB3-360 retail (and rb3-Wii): labels only, found by chunk ID.
+            // RB3-360 retail: labels only, found by chunk ID.
             iChunk.Next(kWaveLabelChunkID);
             IDataChunk dataChunk(iChunk);
             int len = dataChunk.Header()->Length() - 4;

@@ -157,7 +157,7 @@ protected:
     ObjDirPtr<ObjectDir> mResourceDir; // 0x124 (ObjDirPtr is 0xc)
     String mResourcePath; // 0x130
     bool mLoading; // 0x13c (verified: UpdateResource reads 0x13c twice as mLoading)
-    unsigned char mSelectCancelled; // 0x13d — Wii name mMockSelect, same byte:
+    unsigned char mSelectCancelled; // 0x13d — a.k.a. mMockSelect, same byte:
                                     // MockSelect() sets it, FinishSelecting() tests+clears.
                                     // (no third flag; 0x13e/0x13f = padding)
 

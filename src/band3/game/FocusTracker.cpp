@@ -577,7 +577,7 @@ void AccuracyFocusTracker::HandleFocusSwitch(float f) {
         unkd4 = pPlayer->mStats.mHitCount - i34;
         // NOTE: in AccuracyFocusTracker the header declares unke0 before unkdc,
         // so unke0 lives at +0xe8 and unkdc at +0xec (the reverse of what the
-        // stale rb3-Wii-derived names suggest -- every member of this class is
+        // stale inherited names suggest -- every member of this class is
         // +0xc from its name). Retail stores the gem-count baseline to +0xe8 and
         // the CountGemsInSection result to +0xec, hence the pairing below.
         // Do NOT "fix" the names without also swapping the uses in

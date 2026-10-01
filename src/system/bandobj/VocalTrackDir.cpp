@@ -647,7 +647,7 @@ void VocalTrackDir::SetStreakPct(float f) {
         mStreakMeter->SetWipe(f);
 }
 
-// Retail fn_822F6168 (unmapped; TU5-only, no oracle -- the name is ours, lane
+// Retail fn_822F6168 (unmapped; TU5-only, no symbol -- the name is ours, lane
 // W16-HX4). Hides the vocalist-volume widget unless another param is still the
 // track's current one. Sole caller: VocalPlayer::HandleDeactivateVolume.
 void VocalTrackDir::DeactivateVolume(VocalParam param) {
@@ -810,8 +810,8 @@ void VocalTrackDir::Reset() {
 
 void VocalTrackDir::Retract(bool b) {
     BandTrack::Retract(b);
-    // Retail-only: mVocalistVolume is absent from the rb3-Wii dev oracle, so the
-    // Wii source omits this line. Retail stores 0 to (mVocalistVolume->mPtr)+0xa8,
+    // Retail-only: mVocalistVolume exists only in the retail build, hence this
+    // line. Retail stores 0 to (mVocalistVolume->mPtr)+0xa8,
     // i.e. RndDir's RndDrawable::mShowing. (this-bias for this override is 0x1dc.)
     mVocalistVolume->SetShowing(false);
     if (b) {
@@ -1303,7 +1303,7 @@ void VocalTrackDir::SortArrowFx() {
 }
 
 BEGIN_PROPSYNCS(VocalTrackDir)
-    // Retail-only (absent from the rb3-Wii DEV oracle): recovered from retail
+    // Retail-only: recovered from retail
     // bytes -- 85 local-static Symbol ctor sites in fn_82300128, offsets
     // resolved at vbase bias 0x73C against the compiler's class layout.
     SYNC_PROP(enable_vocals_options, mEnableVocalsOptions)

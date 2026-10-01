@@ -22,7 +22,7 @@
 // ---------------------------------------------------------------------------
 // RB3-360 retail: .text 0x825B0518..0x825B22A8.
 //
-// Retail-vs-Wii-dev divergences confirmed by reading the target:
+// Retail behaviour confirmed by reading the target:
 //  * AllowInput (0x825B0B18) has NO ThePlatformMgr.mHomeMenuWii /
 //    TheVirtualKeyboard.IsKeyboardShowing() arm -- that is Wii-platform only.
 //  * IsValidButtonForShell (0x825B0BA8) does NOT call

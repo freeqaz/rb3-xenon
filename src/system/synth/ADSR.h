@@ -6,8 +6,8 @@
 class ADSR; // forward declaration for ADSRImpl::Load
 class ADSRImpl;
 
-/** PS2-packed ADSR register pair. RB3 retail embeds this in ADSRImpl (the
- *  rb3-Wii oracle layout); DC3's newer header dropped it. 4 bytes. */
+/** PS2-packed ADSR register pair. RB3 retail embeds this in ADSRImpl;
+ *  DC3's newer header dropped it. 4 bytes. */
 class Ps2ADSR {
 public:
     Ps2ADSR() : mReg1(0x8F1F), mReg2(0x3C7) {}
@@ -122,7 +122,7 @@ private:
     SustainMode mSustainMode; // 0x18
     /** @hmx{Release mode} */
     ReleaseMode mReleaseMode; // 0x1c
-    /** PS2-packed register pair (RB3 retail layout; rb3-Wii oracle) */
+    /** PS2-packed register pair (RB3 retail layout) */
     Ps2ADSR mPacked; // 0x20
     /** Whether the ADSR is synced */
     bool mSynced; // 0x24

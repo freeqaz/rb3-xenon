@@ -11,7 +11,7 @@ AppChild *TheAppChild;
 
 AppChild::~AppChild() { delete mStream; }
 
-// MILO_DEBUG force-define trap (see CLAUDE.md).  rb3-Wii's os/AppChild.cpp carries
+// MILO_DEBUG force-define trap (see CLAUDE.md).  The retail form is
 //     #ifndef MILO_DEBUG
 //     NetAddress HolmesResolveIP() { return NetAddress(); }   // "why"
 //     #endif

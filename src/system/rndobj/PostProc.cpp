@@ -388,7 +388,7 @@ BEGIN_COPYS(RndPostProc)
     END_COPYING_MEMBERS
 END_COPYS
 
-// Retail (build/45410914/asm/PostProc.s fn_82433268) is the rb3-Wii shape, not the
+// Retail (build/45410914/asm/PostProc.s fn_82433268) is the ObjMacros shape, not the
 // DC3 BinStreamRev shape: two co-addressed file-static shorts (altRev at +0, rev at
 // +4 -- declaration order controls the .bss order) and LoadRev(bs, gRev) with gRev
 // re-read from memory. Adjudicated on retail bytes by lane W16-FC, 2026-09-16.
@@ -481,8 +481,8 @@ void RndPostProc::LoadRev(BinStream &bs, int rev) {
             bs >> mBloomIntensity;
             mBloomIntensity = sqrtf(mBloomIntensity);
             // Retail uses a THIRD distinct stack slot here (r31+0x60) -- one
-            // `int dummy` read into twice would reuse one slot. rb3-Wii spells
-            // it `int dummy2;` too.
+            // `int dummy` read into twice would reuse one slot. Hence
+            // `int dummy2;`.
             int dummy2;
             bs >> dummy2;
         }
@@ -495,7 +495,7 @@ void RndPostProc::LoadRev(BinStream &bs, int rev) {
             // Retail offsets all four member addresses from ONE base held in
             // a non-volatile: `addi r28,r30,0xb8` then `addi r25,r28,0x20`,
             // `addi r24,r28,0x10`, `addi r4,r28,0x30`. That is a pointer local
-            // (the rb3-Wii spelling), and it is what makes r24/r25 live and
+            // (named in source), and it is what makes r24/r25 live and
             // forces retail's `__savegprlr_24` + 0xf0 frame.
             Transform *ptxfm = &mColorXfm.mColorXfm;
             bs >> ptxfm->m.x >> ptxfm->m.y >> ptxfm->m.z;
@@ -511,7 +511,7 @@ void RndPostProc::LoadRev(BinStream &bs, int rev) {
             // Retail (fn_82430FD0, .L_824311B0) does `mr r4,r29; addi r3,r30,0x64;
             // bl <RndColorXfm::Load>` and falls straight through to .L_824311BC --
             // no clrlwi./bne, and no PathName/ClassName argument evaluation. The
-            // return is simply not tested. rb3-Wii's check is dev-build-only.
+            // return is simply not tested; the check is dev-build-only.
             mColorXfm.Load(bs);
 #endif
         }

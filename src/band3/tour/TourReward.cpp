@@ -5,8 +5,8 @@
 #include "utl/Symbol.h"
 
 // Retail TU: 0x82364428-0x82364AA0 (vtable .?AVTourReward@@ at 0x8203F394).
-// Ported from the rb3-Wii oracle (band3/tour/TourReward.cpp). Retail has no
-// ValidatePropertyModification calls (dev-build only in the oracle).
+// TourReward (band3/tour/TourReward.cpp). Retail has no
+// ValidatePropertyModification calls.
 
 TourReward::TourReward() : mRewards(NULL) {}
 

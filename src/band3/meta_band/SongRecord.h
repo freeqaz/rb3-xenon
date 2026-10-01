@@ -17,7 +17,7 @@ public:
     bool UpdateReview();
     bool UpdateRestricted();
     /** Retail 0x825BAE40 -- the sixth member of the Update* family, absent from
-        BOTH oracles (rb3-Wii and DC3 declare only the five above). Decoded off
+        every other build (DC3 declares only the five above). Decoded off
         retail bytes; the body is unambiguous:
 
             bool old = mDemo;                                // lbz r30,0x2d(r3)
@@ -34,7 +34,7 @@ public:
         (0x2e).
 
         ⚠ THE NAME IS INFERRED, NOT RECOVERED. 0x825BAE40 is absent from
-        target_symbol_map.json and neither oracle has the method, so no oracle can
+        target_symbol_map.json and no symbol survives for the method, so nothing can
         supply the real spelling; `UpdateDemo` is chosen to parallel the family.
         The name is score-invisible either way (a `bl` target is a relocation
         argument, which the default ruler masks), so this costs nothing if wrong.
@@ -64,7 +64,7 @@ public:
     Symbol mShortName; // real 0x28
     // RESOLVED (was: "DO NOT swap ... retail most likely has a FOURTH bool").
     // There is no fourth bool.  Our NAMES for 0x2c and 0x2e were swapped, and
-    // every use site inherited the same mis-naming from the oracle -- so the
+    // every use site inherited the same mis-naming -- so the
     // wrong names over the wrong layout cancelled out to correct offsets
     // everywhere EXCEPT the two Update* fns and the ctor, whose identity is
     // pinned by their callee rather than by a name we are free to swap.

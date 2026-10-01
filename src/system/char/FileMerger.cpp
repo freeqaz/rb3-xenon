@@ -573,9 +573,9 @@ bool FileMerger::StartLoadInternal(bool async, bool loading) {
 }
 
 FileMerger::Merger *FileMerger::NotifyFileLoaded(Loader *l, ObjectDir *dir) {
-    // Signature RESTORED to the RB3-era (rb3-Wii) shape by lane FILEMERGER-1;
+    // Signature RESTORED to the RB3-era shape by lane FILEMERGER-1;
     // we had carried DC3's newer `(Loader *, DirLoader *)`. Adjudicated on
-    // retail bytes, not on the oracle: retail's FinishLoading computes
+    // retail bytes: retail's FinishLoading computes
     // `d ? d->GetDir() : nullptr` into r5 -- and fn_82754A00 is mapped
     // `?GetDir@DirLoader@@QAAPAVObjectDir@@XZ`, i.e. it RETURNS ObjectDir* --
     // and both `msg[1] = <param>` sites below apply the ObjectDir->Hmx::Object
@@ -608,8 +608,8 @@ FileMerger::Merger *FileMerger::NotifyFileLoaded(Loader *l, ObjectDir *dir) {
         msg[1] = dir;
         msg[2] = m->MergerDir();
         HandleType(msg);
-        // RB3-360-retail-exclusive game hacks -- present in NO oracle (absent
-        // from both rb3-Wii and DC3), recovered from the retail disassembly.
+        // RB3-360-retail-exclusive game hacks -- absent
+        // from DC3, recovered from the retail disassembly.
         // The five literals decode straight out of band.exe .rdata:
         // 0x8200100C "main", 0x8201232C "body_realtime_clips",
         // 0x82012318 "body_tempo_clips", 0x820137FC "hack_fix_clips_pre_merge",
@@ -667,7 +667,7 @@ void FileMerger::AppendLoader(FileMerger::Merger &merger) {
 }
 
 // Retail arity is THREE args, not four -- `PostMerge(Merger *, bool)`, the
-// rb3-Wii shape; we had carried DC3's `(Merger *, DirLoader *, bool)`. Proven
+// RB3-era shape; we had carried DC3's `(Merger *, DirLoader *, bool)`. Proven
 // independently at BOTH call sites on retail bytes: FinishLoading loads only
 // r3/r4/r5 (`mr r3,r26; mr r4,r27; li r5,1`) and FailedLoading likewise
 // (`mr r3,r29; lwz r4,0x8(r11); li r5,0`) -- r6 is never written before either

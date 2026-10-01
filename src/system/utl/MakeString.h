@@ -51,7 +51,7 @@ void InitMakeString();
 bool MakeStringInitted();
 void TerminateMakeString();
 
-// Retail inlines the single-arg overload (rb3-Wii header agrees); the retail
+// Retail inlines the single-arg overload; the retail
 // FormatString stack frame (0x870 in NETMSG_NAME bodies) proves mFmtBuf is 0x800.
 inline const char *MakeString(const char *c) {
     FormatString fs(c);

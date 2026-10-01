@@ -1,4 +1,4 @@
-// Ported from rb3-Wii src/system/bandobj/BandHighlight.cpp (MWCC -> MSVC X360).
+// BandHighlight (bandobj/BandHighlight.cpp), MSVC X360.
 #include "bandobj/BandHighlight.h"
 #include "ui/UI.h"
 #include "ui/UIResource.h"
@@ -170,7 +170,7 @@ void BandHighlight::SetTarget(UIComponent *c, bool b) {
 //      `lbl->TextObj()` folds to `lwz r3,<mText>,r3`; retail keeps it out-of-line
 //      (`bl fn_827CCF10`), which also flips the null-test cr6->cr0 (idx 18-20).
 //   2. rndobj/Text.h declares `RndText : public RndDrawable, public RndTransformable`
-//      (non-virtual); DC3's same-compiler oracle uses `public virtual` for both
+//      (non-virtual); DC3 uses `public virtual` for both
 //      bases. The vbase overhead pushes RndText::mText 0xe0->0x108, which is the
 //      lone diff_arg at idx 22 (`lwz r4,0x108,r3` vs our `0xe0`).
 // Both fixes ripple across the whole binary (every UILabel/RndText user) and must

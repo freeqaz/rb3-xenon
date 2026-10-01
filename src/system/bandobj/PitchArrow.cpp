@@ -1,5 +1,5 @@
 #define RB3_OBJPTR_INLINE_TWOARG_CTOR 1
-// Ported from rb3-Wii src/system/bandobj/PitchArrow.cpp (MWCC -> MSVC X360).
+// PitchArrow (bandobj/PitchArrow.cpp), MSVC X360.
 #include "bandobj/PitchArrow.h"
 #include "utl/Symbols.h"
 

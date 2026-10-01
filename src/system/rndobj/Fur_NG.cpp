@@ -41,7 +41,7 @@ bool NgFur::Shell(int layerIdx, RndMesh *mesh, RndMat *mat) const {
     // VERTEX-shader constant: target dispatches vtable+0x24 =
     // SetVConstant(VShaderConstant, Vector4 const&), not +0x40 =
     // SetPConstant(PShaderConstant, Vector4 const&). The register index value is
-    // shared between the VS/PS constant enums (0x32).  [DC3 oracle agrees]
+    // shared between the VS/PS constant enums (0x32).  [DC3 agrees]
     TheShaderMgr.SetVConstant((VShaderConstant)kPS_FurGeometry, furGeom);
 
     // Constant 0xc: color interpolation between roots and ends tints
@@ -88,7 +88,7 @@ bool NgFur::Shell(int layerIdx, RndMesh *mesh, RndMat *mat) const {
 
     Vector4 furShell(shellThickness, vertCount, zeroVal, zeroVal);
     // Shell thickness / vertex count is likewise a VERTEX-shader constant
-    // (target dispatches vtable+0x24, not +0x40).  [DC3 oracle agrees]
+    // (target dispatches vtable+0x24, not +0x40).  [DC3 agrees]
     TheShaderMgr.SetVConstant((VShaderConstant)kPS_FurShell, furShell);
 
     // Constant 0xb: alpha processing params

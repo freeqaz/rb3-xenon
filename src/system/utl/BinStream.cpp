@@ -11,7 +11,7 @@
 
 // Retail stripped the *_ONCE log macros to a side-effect-preserving no-op: they
 // evaluate their arguments (so the virtual Name() call survives) but discard the
-// format. This matches the rb3-Wii non-debug Debug.h form; our engine Debug.h's
+// format. This matches the non-debug Debug.h form; our engine Debug.h's
 // retail forms use an unevaluated sizeof() no-op that drops the Name() call.
 #ifndef HX_NATIVE
 #undef MILO_NOTIFY_ONCE

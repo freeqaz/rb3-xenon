@@ -100,7 +100,7 @@ void StreamReceiver::Poll() {
     }
 #else
     // Retail RB3-360 (0x8272a5b8): a switch on the state, 0xC000-byte send
-    // blocks (hence divw, not a shift) and a 100000 wrap limit, as rb3-Wii.
+    // blocks (hence divw, not a shift) and a 100000 wrap limit.
     switch ((unsigned int)mState) {
     case kInit:
         mWantToSend = true;

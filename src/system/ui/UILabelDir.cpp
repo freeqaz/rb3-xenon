@@ -112,7 +112,7 @@ END_SAVES
 
 BEGIN_COPYS(UILabelDir)
     COPY_SUPERCLASS(RndDir)
-    // retail 0x828114A8 (rb3-Wii shape): no UIFontImporter::Copy; the highlight
+    // retail 0x828114A8: no UIFontImporter::Copy; the highlight
     // group and its four bones are copied.
     CREATE_COPY(UILabelDir)
     BEGIN_COPYING_MEMBERS
@@ -135,7 +135,7 @@ END_LOADS
 // Retail UILabelDir::PreLoad (0x82812468, 148 B) uses the obj/ObjMacros.h rev
 // dialect -- CLASS-STATIC-style globals written at load time, gAltRev at
 // base+0 (`sth r11, lbl_82E07A3C@l(r10)`) and gRev at base+4 (`sth r3, 0x4(r8)`)
-// -- and pushes the rev BEFORE calling RndDir::PreLoad (rb3-Wii order), not
+// -- and pushes the rev BEFORE calling RndDir::PreLoad, not
 // obj/Object.h's local BinStreamRev + PushRev-after. Same bracketed install as
 // ui/UILabel.cpp so the dialect cannot leak into any COMDAT-scatter includer of
 // this file. PostLoad (below) reads the same file-static gRev/gAltRev pair.
@@ -172,7 +172,7 @@ void UILabelDir::PreLoad(BinStream &bs) {
 #pragma pop_macro("INIT_REVS")
 
 void UILabelDir::PostLoad(BinStream &bs) {
-    // retail 0x82810ED0: rb3-Wii shape -- superclass first, then PopRev into the
+    // retail 0x82810ED0: superclass first, then PopRev into the
     // file-static gRev/gAltRev pair (no BinStreamRev local).
     RndDir::PostLoad(bs);
     int revs = bs.PopRev(this);

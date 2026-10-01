@@ -652,7 +652,7 @@ Symbol Campaign::GetNextMajorLevelForMetaScore(int score) {
 void Campaign::UpdateProgressMeter(MeterDisplay *i_pMeter, LocalBandUser *i_pUser) {
     MILO_ASSERT(i_pUser, 0x42C);
     MILO_ASSERT(i_pMeter, 0x42D);
-    // Oracle order. MPNGAP-1 (ebec38819) had transposed these to fit the
+    // Natural order. MPNGAP-1 (ebec38819) had transposed these to fit the
     // 0x825a6f08..0x825a7158 map names, which were themselves crossed
     // (Current/Total); W16-HK corrected the names, and this order matches
     // retail under them (Campaign::Handle inlines this function).

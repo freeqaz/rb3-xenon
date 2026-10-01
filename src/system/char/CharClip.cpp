@@ -187,7 +187,7 @@ void CharClip::Transitions::AddNode(CharClip *clip, const CharGraphNode &node) {
     resized->size++;
 }
 
-// Retail (fn_8237D3C8, rb3-Wii's RemoveNodes(CharClip *)): Release the clip
+// Retail (fn_8237D3C8, RemoveNodes(CharClip *)): Release the clip
 // before dropping its node vector.
 void CharClip::Transitions::RemoveClip(CharClip *clip) {
 #ifdef HX_NATIVE
@@ -552,7 +552,7 @@ END_COPYS
 // (lbl_82CBEF00) addresses gOldRev +0 (lwz/stw), altRev +4 and rev +8 (sth);
 // Transitions::Load reads gOldRev as its own symbol (lis + lwz). No rev wrapper
 // exists -- band.exe has no `.?AVBinStreamRev@@` descriptor -- and every read
-// takes the raw stream (rb3-Wii's shape: `int gOldRev;` + LOAD_REVS statics).
+// takes the raw stream (`int gOldRev;` + LOAD_REVS statics).
 BEGIN_LOADS(CharClip)
     static int _x = MemFindHeap("char");
     MemHeapTracker temp(_x);
@@ -585,7 +585,7 @@ BEGIN_LOADS(CharClip)
         bs >> mRange;
     }
     if (gOldRev > 5) {
-        // retail: bl ObjRefConcrete<CharClip, ObjectDir>::Load (rb3-Wii's form)
+        // retail: bl ObjRefConcrete<CharClip, ObjectDir>::Load
         mRelative.Load(bs, false, nullptr);
     } else if (gOldRev > 4) {
         bool isRelativeToSelf;

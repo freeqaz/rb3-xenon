@@ -88,7 +88,7 @@ void BandUI::Init() {
     TheSaveLoadMgr->AddSink(this);
 #endif
     TheRockCentral.AddSink(this);
-    // Retail X360 drops the Wii dev build's
+    // Retail X360 has no
     // `ThePlatformMgr.AddSink(this, NetErrorMsg::Type());` (and BandUI has no
     // OnMsg(NetErrorMsg) body in the retail binary either).
 
@@ -99,7 +99,7 @@ void BandUI::Init() {
     LockStepMgr::Init();
     mInterstitialMgr = new InterstitialMgr();
     UIManager::Init();
-    // Retail X360 drops the Wii dev build's is-every-UIScreen-a-BandScreen
+    // Retail X360 has no is-every-UIScreen-a-BandScreen
     // verification loop (ObjDirItr + dynamic_cast + MILO_WARN) AND the two
     // debug-overlay lookups (`mVignetteOverlay = RndOverlay::Find(vignette,
     // false); mUIOverlay = RndOverlay::Find(ui, false);`) — Init goes straight
@@ -289,7 +289,7 @@ void BandUI::GetCurrentScreenState(std::vector<UIScreen *> &screens) {
 }
 
 UIFlowType BandUI::GetCurrentFlowType() const {
-    // Retail X360 case set is SPARSER than the Wii dev build's: no Waiting*
+    // Retail X360 case set is SPARSE: no Waiting*
     // (4-8) cases and no (NetUIState)22 case — those fall to default. That
     // sparseness is what makes MSVC lower this switch as a binary-search
     // compare chain (root at 0xb, range-test 0xc..0x10) instead of the dense
@@ -380,7 +380,7 @@ void BandUI::SendTransitionComplete(UIScreen *s1, UIScreen *s2) {
 DataNode BandUI::OnMsg(const UITransitionCompleteMsg &msg) {
     // Retail X360: no HAQManager::Print calls (HAQ debug strip). `disable`
     // defaults FALSE when the property is absent, so an unset property leaves
-    // the screen saver ENABLED -- same sense as the Wii dev build's
+    // the screen saver ENABLED -- same sense as
     // `SetScreenSaver(!prop || prop->Int() == 0)`.
     //
     // Asm proof (target 0x82539xxx, idx 41-54): `cmplwi r3,0 / beq ->A` where
@@ -419,9 +419,9 @@ DataNode BandUI::OnMsg(const UIScreenChangeMsg &msg) {
     return DataNode(kDataUnhandled, 0);
 }
 
-// Retail X360 body is just `return 0;` — the Wii dev build's
+// Retail X360 body is just `return 0;` -- no
 // `if (msg.GetProcessed()) { VerifyBuildVersionMsg m; TheNetSession->SendMsgToAll(m, kReliable); }`
-// was dropped in retail. Ground truth: the Handle dispatch calls fn_8228D358,
+// in retail. Ground truth: the Handle dispatch calls fn_8228D358,
 // whose retail bytes are exactly
 //     39600000 li r11,0 / 91630000 stw r11,0x0(r3) / 91630004 stw r11,0x4(r3) / 4e800020 blr
 // i.e. a 16-byte DataNode(0) return, ICF-folded with every other `return 0;`
@@ -440,9 +440,9 @@ DataNode BandUI::OnMsg(const ConnectionStatusChangedMsg &msg) {
 }
 
 DataNode BandUI::OnMsg(const ServerStatusChangedMsg &msg) {
-    // Retail X360 body is just `return 1;` (20-byte target fn_825245A0) — the
-    // Wii dev build's `if (msg->Int(2) == 0) TheSessionMgr->Disconnect();` was
-    // dropped in retail (server status handled elsewhere on Live).
+    // Retail X360 body is just `return 1;` (20-byte target fn_825245A0) — no
+    // `if (msg->Int(2) == 0) TheSessionMgr->Disconnect();`
+    // (server status handled elsewhere on Live).
     return 1;
 }
 
@@ -534,7 +534,7 @@ DataNode BandUI::OnMsg(const GameMicsChangedMsg &msg) {
 
 DataNode BandUI::OnOvershellMsgCommon(const Message &msg, bool b2) {
     // Retail X360 does NOT null-check EventDialog() here (no cmplwi/beq —
-    // the Wii dev build's `&& EventDialog()` guard is absent).
+    // no `&& EventDialog()` guard).
     if (TheUIEventMgr->HasActiveDialogEvent()) {
         if (EventDialog()->GetState() == UIPanel::kUp) {
             DataNode handled = EventDialog()->Handle(msg, false);
@@ -568,8 +568,8 @@ DataNode BandUI::OnMsg(const NetErrorMsg &msg) {
 
 // Retail X360 emits this out-of-line (target fn_82523A50): at /O1 the 17-instr
 // body is larger than the 2-instr call, and the externally-linked copy must be
-// kept anyway, so the size-optimizer declines to inline. The Wii dev build
-// inlined it into Poll; the name is invented.
+// kept anyway, so the size-optimizer declines to inline. The name is
+// invented.
 __declspec(noinline) bool BandUI::ShouldCheckWipeDone() const {
     return (unk10c && mTransitionState == kTransitionFrom)
         || (unk10d && mTransitionState == kTransitionTo);
@@ -587,7 +587,7 @@ bool BandUI::InComponentSelect() {
 }
 
 UIScreen *BandUI::GetTargetScreen(UIScreen *screen) {
-    // Retail X360 drops the Wii dev build's `if (mShowVignettes)` gate and the
+    // Retail X360 has no `if (mShowVignettes)` gate and no
     // dev-only PrintOverlay call, and uses a function-local static Symbol.
     UIScreen *ret = screen;
     UIScreen *toScreen = mInterstitialMgr->CurrentInterstitialToScreen(screen);
@@ -724,8 +724,8 @@ BEGIN_HANDLERS(BandUI)
     HANDLE_ACTION(trigger_disband_event, TriggerDisbandEvent((DisbandError)_msg->Int(2)))
     HANDLE_ACTION(abstract_wipe, WipeOnNextTransition(false))
     HANDLE_ACTION(abstract_wipe_in, WipeOnNextTransition(true))
-    // Retail X360 drops the 8 vignette/overlay debug handlers the Wii dev
-    // build had here (set/get_vignettes_showing, cycle/get_vignette_override,
+    // Retail X360 has none of the 8 vignette/overlay debug handlers
+    // (set/get_vignettes_showing, cycle/get_vignette_override,
     // write_to_vignette_overlay, toggle_vignette_overlay,
     // vignette_overlay_showing, toggle_ui_overlay) — .rdata has no such handler
     // strings and Handle's $S guard-word bit chain skips straight from
@@ -770,7 +770,7 @@ BEGIN_HANDLERS(BandUI)
     HANDLE_MESSAGE(EventDialogDismissMsg)
     HANDLE_MESSAGE(LocalUserLeftMsg)
     // Retail X360 has no NetErrorMsg dispatch here (subscription + handler
-    // are Wii-dev-only; see Init()).
+    // are absent; see Init()).
     HANDLE_MEMBER_PTR(TheInputMgr)
     HANDLE_SUPERCLASS(UIManager)
     HANDLE_CHECK(0x3F0)

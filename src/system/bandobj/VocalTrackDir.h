@@ -1,6 +1,6 @@
 #pragma once
 #include "bandobj/BandTrack.h"
-#include "bandobj/CrowdMeterIcon.h" // CrowdMeterState (was transitively pulled in rb3-Wii)
+#include "bandobj/CrowdMeterIcon.h" // CrowdMeterState
 #include "bandobj/PitchArrow.h"
 #include "math/Color.h"
 #include "rndobj/Dir.h"

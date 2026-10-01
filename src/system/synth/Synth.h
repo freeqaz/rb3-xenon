@@ -177,8 +177,8 @@ protected:
     // Retail RB3-360 has NO mTrackLevels instance slot: Synth::SetMic
     // (fn_826FC818) reads the mic count at +0x3c and Synth::Terminate RELEASEs
     // mMidiSynth from +0x40 / DeleteAll(mMics) at +0x44 — i.e. exactly ONE word
-    // between mByteGrinder (0x38) and mMidiSynth (0x40). rb3-Wii's Synth (the
-    // same game version) likewise has no mTrackLevels. Kept as a class static so
+    // between mByteGrinder (0x38) and mMidiSynth (0x40). RB3's Synth
+    // has no mTrackLevels. Kept as a class static so
     // the two uses in Synth.cpp still compile.
     static bool mTrackLevels;
     int mNumMics; // 0x3c  (retail: Synth::SetMic reads +0x3c)
@@ -220,7 +220,7 @@ protected:
     Fader *mMidiInstrumentFader; // 0x70
     MicClientMapper *mMicClientMapper; // 0x74 (retail: fn_82664760 reads +0x74)
     MidiInstrumentMgr *mMidiInstrumentMgr; // 0x78 (retail: Terminate reads +0x78)
-    // 8 unidentified, non-destructible bytes: rb3-Wii's Synth has `int unk60;`
+    // 8 unidentified, non-destructible bytes: possibly `int unk60;`
     // (TranscodableMixer*?) and `int unk64;` (Stream* mDebugStream?) in exactly
     // these two slots, between mMidiInstrumentMgr and mHud.
     int unk7c; // 0x7c

@@ -31,8 +31,8 @@ void UGCPurchasePanel::Enter() {
 }
 
 void UGCPurchasePanel::Exit() {
-    // The Wii oracle has this as a bare `UIPanel::Exit();` -- character-identical
-    // to what we had -- and structurally CANNOT contain this line: it is a 360-only
+    // A bare `UIPanel::Exit();` -- character-identical
+    // to what we had -- is wrong: retail adds this line, a 360-only
     // XAM call. Retail's `li r3,2; bl __imp_XamBackgroundDownloadSetMode` says
     // Exit restores AUTO, undoing the ALWAYS_ALLOW that Enter above sets.
     XBackgroundDownloadSetMode(XBACKGROUND_DOWNLOAD_MODE_AUTO);
@@ -74,9 +74,9 @@ void UGCPurchasePanel::Poll() {
     case 2:
         break;
     case 3: {
-        // Retail (target fn 0x8263edf0, case 3) does substantially more than the
-        // Wii-dev source (which is just `mPurchaseState = 5; break;` -- ../rb3
-        // checked, confirms case 3 is a retail-360-only addition): it optionally
+        // Retail (target fn 0x8263edf0, case 3) does substantially more than
+        // `mPurchaseState = 5; break;` (case 3 is a
+        // retail-360-only addition): it optionally
         // derives a flags/index value from a global singleton (DAT_82cbfaec in the
         // Ghidra decompile), then constructs an XboxPurchaser via placement new,
         // mirroring the StorePanel::CheckOut idiom (StorePanel.cpp).

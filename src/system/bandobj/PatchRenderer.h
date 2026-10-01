@@ -1,5 +1,5 @@
 #pragma once
-// Ported from the rb3-Wii oracle (../rb3/src/system/bandobj/PatchRenderer.h),
+// PatchRenderer (bandobj/PatchRenderer.h),
 // adapted to rb3-xenon's single-argument ObjPtr<>. Declaration only: retail
 // scattered this class's OBJ_CLASSNAME COMDAT into the BandSwatch .text span,
 // which is why BandSwatch.cpp force-emits StaticClassName below.

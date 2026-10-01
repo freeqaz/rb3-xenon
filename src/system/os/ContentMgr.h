@@ -149,8 +149,8 @@ public:
     // ContentDeletePanel::OnMsg calls DeleteContent through slot 0x78 and
     // ::Poll calls IsDeleteDone through 0x7c, exactly 6 and 7 slots after
     // StartRefresh (0x60, which both sides already agree on) -- i.e. one fewer
-    // slot than the DC3 ordering.  rb3-Wii's ContentMgr.h has no IsCorrupt at
-    // all.  It is a real Xbox entry point (XboxContentMgr overrides it,
+    // slot than the DC3 ordering.  IsCorrupt is not part of the shared
+    // ContentMgr interface.  It is a real Xbox entry point (XboxContentMgr overrides it,
     // PreloadPanel::ContentFailed calls it), so keep it virtual but move it
     // past the slots whose retail positions we can prove.
     // Signature corrected on retail bytes (lane W16-CB): RB3's IsCorrupt takes
@@ -164,8 +164,8 @@ public:
     //     whole retail binary that calls ContentMgr vtable slot 0x88, and it
     //     sets r3 and r4 only.  A caller must materialise every parameter even
     //     when the callee ignores it, so a third parameter cannot exist.
-    // The `const char *&` was a DC3-ism carried in with the DC3 header; rb3-Wii
-    // has no IsCorrupt at all, so nothing outside DC3 ever attested it.
+    // The `const char *&` was a DC3-ism carried in with the DC3 header, and
+    // nothing outside DC3 ever attested it.
     virtual bool IsCorrupt(Symbol) { return false; }
 
     bool NeverRefreshed() const { return mState == kDone; }

@@ -1,5 +1,5 @@
-// RB3 retail-360 shape. Rewritten 2026-07-29 (lane BO-3, worker D) from the
-// rb3-Wii DEV oracle `../rb3/src/system/ui/UILabel.cpp` plus the retail asm in
+// RB3 retail-360 shape. Rewritten 2026-07-29 (lane BO-3, worker D) from
+// the retail asm in
 // `build/45410914/asm/UILabel.s`. The previous contents were a DC3 port
 // (ObjVector<LabelStyle> / mIconChar / mTextEmpty / mDirty) that does not exist
 // in RB3 and no longer compiles against the reconstructed retail member layout.
@@ -94,8 +94,8 @@ bool UILabel::sRequireFixedLength;
 
 INIT_REVS(UILabel)
 
-// RndTextUpdateDeferrer now comes from rndobj/Text.h (as it does on rb3-Wii,
-// which is the generation retail RndText matches). The TU-local duplicate that
+// RndTextUpdateDeferrer now comes from rndobj/Text.h (the
+// generation retail RndText matches). The TU-local duplicate that
 // used to live here is gone.
 
 float GetTextSizeFromPctHeight(float f) {
@@ -201,8 +201,8 @@ void UILabel::CopyMembers(const UIComponent *o, Hmx::Object::CopyType ty) {
     COPY_MEMBER_FROM(l, mObjDirPtr)
 }
 
-// retail 0x827F2E98 -- a REAL serializer at rev 0x18. (The Wii DEV build has
-// `SAVE_OBJ(UILabel, 173)`, an assert stub: a retail-vs-dev divergence.) Field
+// retail 0x827F2E98 -- a REAL serializer at rev 0x18 (not a
+// `SAVE_OBJ(UILabel, 173)` assert stub). Field
 // order mirrors PreLoad's newest-revision read order.
 BEGIN_SAVES(UILabel)
     SAVE_REVS(0x18, 0)
@@ -254,7 +254,7 @@ void UILabel::Load(BinStream &bs) {
 // ?PreLoad@UIComponent@@ on the base subobject (this-0xd4), calls
 // ?AltFontResourceFileUpdated@UILabel@@ with `true` at the gRev>0x15 gate, and
 // its 24 revision gates run in exactly this function's constant order.
-// Retail-vs-Wii-dev divergences encoded here:
+// Retail details encoded here:
 //   * mAlignment / mCapsMode / mFitType / mFixedLength / mReservedLine are read
 //     as 4 raw bytes straight into the member (no int temporary + MILO_ASSERT
 //     narrowing pass the dev build does).
@@ -348,8 +348,8 @@ void UILabel::PreLoad(BinStream &bs) {
 // retail 0x827F76B0. (An older comment here called this "mislabeled
 // ?Load@UILabel@@..."; that is stale -- the map has carried the correct
 // ?PostLoad@UILabel@@UAAXAAVBinStream@@@Z at this address since a9c3240d.)
-// Retail adds the middle `mEditText && AllowEditText()` arm that the Wii dev
-// build lacks.
+// Retail has the middle `mEditText && AllowEditText()` arm
+// as well.
 void UILabel::PostLoad(BinStream &bs) {
     UIComponent::PostLoad(bs);
     LabelUpdate(false, true);
@@ -577,8 +577,8 @@ const char *UILabel::GetDefaultText() const {
         return Localize(mTextToken, nullptr);
 }
 
-// retail 0x827F4B68. The Wii DEV build has this as an EMPTY stub -- a
-// retail-vs-dev divergence; ported from the retail asm instead.
+// retail 0x827F4B68. Not an EMPTY stub: a real body,
+// ported from the retail asm.
 void UILabel::SetEditText(const char *cc) {
     MILO_ASSERT(AllowEditText(), 0x1f5);
     mEditText = cc;
@@ -694,7 +694,7 @@ void UILabel::Update() {
         LabelUpdate(false, false);
 }
 
-// retail 0x827F6258 -- TWO bool args in retail (like the Wii signature), not the
+// retail 0x827F6258 -- TWO bool args in retail, not the
 // one-arg DC3 form the tree previously declared.
 void UILabel::LabelUpdate(bool b1, bool b2) {
     UIComponent::Update();
@@ -1120,7 +1120,7 @@ BEGIN_PROPSYNCS(UILabel)
     SYNC_PROP_SET(text_token, mTextToken, SetTextToken(_val.ForceSym()))
     SYNC_PROP_SET(icon, mIcon.c_str(), OnSetIcon(_val.Str()))
     SYNC_PROP_SET(edit_text, mEditText.c_str(), SetEditText(_val.Str()))
-    // retail-vs-Wii-dev divergence: retail stores/loads the RAW float here (no
+    // Retail stores/loads the RAW float here (no
     // GetPctHeightFromTextSize / GetTextSizeFromPctHeight conversion).
     SYNC_PROP_SET(text_size, mTextSize, mTextSize = _val.Float(); Update())
     SYNC_PROP_SET(

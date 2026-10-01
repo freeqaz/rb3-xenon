@@ -55,6 +55,6 @@ protected:
     // Retail RB3 sizes FlowNode-derived objects 0x10 larger than dc3's (newer)
     // engine layout; the extra 16 bytes sit in the trailing virtual-Hmx::Object
     // region and are not referenced by any accessor (all field functions match).
-    // NewObject/??_G size immediates (0xdc) confirm this via the sizeof oracle.
+    // NewObject/??_G size immediates (0xdc) confirm this sizeof.
     char _retailTrailingPad[16]; // 0xa0
 };

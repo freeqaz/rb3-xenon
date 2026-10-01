@@ -10,9 +10,9 @@ class LocalBandUser;
  * Enter() fires the console's async parental-control UI for the panel's user
  * and parks the XOVERLAPPED; Poll() drains it and raises `done`.
  *
- * NOTE (retail-vs-rb3-Wii): the Wii dev decomp of this class
- * (`../rb3/src/band3/meta_band/ParentalControlPanel.{cpp,h}`) is a STUB -- two
- * `unkNN` members and two two-line bodies. Retail has three members and real
+ * NOTE: this class is not a stub
+ * (two `unkNN` members and two two-line bodies would be wrong):
+ * retail has three members and real
  * bodies. It also does NOT redeclare `virtual ~ParentalControlPanel()`:
  * proved from the retail vtable at 0x820C9C54 -- PCP's primary slot 0 is
  * byte-identical to UIPanel's (0x82812CB8), so the derived dtor is not its own

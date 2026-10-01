@@ -35,7 +35,7 @@ public:
     static void Print(HAQType, Hmx::Object *, int);
     static void Print(HAQType);
     // Referenced only by BandUI::OnMsg(UIComponentScrollMsg); decl-only on X360
-    // (rb3-Wii meta/HAQManager.cpp defines it). Additive — no layout/vtable change.
+    // (meta/HAQManager.cpp would define it). Additive — no layout/vtable change.
     static void HandleComponentScroll(UIComponent *);
     bool Enabled() const { return m_bEnabled; }
 

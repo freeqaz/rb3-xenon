@@ -43,9 +43,9 @@ public:
         const ObjPtr<RndTransformable> &ptr = mSource ? mSource : mPivot;
         return ptr;
     }
-    // dc3 RENAMED rb3-Wii's `mDest` to `mTarget`; it was never dropped. The
+    // dc3 RENAMED `mDest` to `mTarget`; it was never dropped. The
     // compiler layout report puts mTarget at 0x40 (mSource 0x28, mPivot 0x34),
-    // matching the rb3-Wii oracle exactly, and retail's BandCharacter::Poll
+    // matching retail exactly: retail's BandCharacter::Poll
     // loads the ObjPtr's object word at 0x48 == 0x40+8. The old
     // `return GetSource()` alias made us emit GetSource's two-way
     // mSource?mSource:mPivot select instead of retail's single load.
@@ -87,8 +87,8 @@ protected:
     Box mLookLimits; // 0x94
     /** "Graphically show the extreme ranges of motion" */
     bool mShowRange; // 0xb4
-    // NOTE: retail RB3-360 (MILO_DEBUG off) does NOT contain the three
-    // debug-only members that rb3-Wii gates under #ifdef MILO_DEBUG here
+    // NOTE: retail RB3-360 (MILO_DEBUG off) does NOT contain three
+    // debug-only #ifdef MILO_DEBUG members
     // (bool mTestRange; float mTestRangePitch; float mTestRangeYaw;).
     // Retail-verified via CharLookAt::Copy @0x823a95d0 and RTTI COL
     // 0x821cefd4: tail bools are consecutive at 0xb5-0xb7, jitter floats at

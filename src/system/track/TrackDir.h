@@ -31,8 +31,8 @@ public:
     virtual void Poll();
     // everything below this is for TrackDir (i.e. not from PanelDir)
     // NOTE: SyncFingerFeedback is declared LAST (after PostDraw), NOT before
-    // SetDisplayRange like the rb3-Wii dev header (rb3/src/system/track/
-    // TrackDir.h:33-34 declares it first). Declaring it here would push
+    // SetDisplayRange (declaring it
+    // first is wrong). Declaring it there would push
     // SetDisplayRange (and every TrackDir virtual after it) one slot too high.
     //
     // (CORRECTED, lane W13-CHARINFO: this note used to cite "GemTrackDir vtable
@@ -176,7 +176,7 @@ public:
     Transform unk308; // 0x388
     Transform unk338; // 0x3c8
     float unk368; // 0x408
-    // NOTE: rb3-Wii (a DEV/MILO_DEBUG build) has `TrackTest *mTest;` here, but
+    // NOTE: a DEV/MILO_DEBUG build has `TrackTest *mTest;` here, but
     // RB3 retail (our X360 target) stripped MILO_DEBUG, so this 4-byte member is
     // absent. We force-define MILO_DEBUG in macros.h, which would otherwise
     // compile it in and inflate TrackDir by 4 — shifting the BandTrack base

@@ -74,7 +74,7 @@ const char *Locale::Localize(Symbol token, bool success) const {
     }
     // RB3 retail (fn_827C96D8) is just the null check and the table lookup: the
     // Magnu-string override and the UsingCD() datapoint are dev/DC3-era code that
-    // retail does not carry (same for both oracles). Kept for the native port.
+    // retail does not carry. Kept for the native port.
 #ifdef HX_NATIVE
     if (!mSymTable) {
         MILO_ASSERT(mSymTable, 0x1D8);
@@ -304,7 +304,7 @@ done:
     //     be materialised in .rdata for the call to exist, so this is decisive
     //     and map-independent); (2) ?Init@Locale@@ inserts exactly the
     //     Symbol("toggle_show_tokens_cheat") ctor + DataRegisterFunc call that
-    //     the target lacks. Dev-only code inherited from the rb3-Wii dev decomp
+    //     the target lacks. Dev-only code
     //     with NO guard of its own -- the class the pattern doc warns is larger
     //     than the #ifdef MILO_DEBUG census. Native keeps the cheat.
 #if defined(MILO_DEBUG) && defined(HX_NATIVE)
@@ -396,7 +396,7 @@ const char *LocalizeSeparatedInt(int num, Locale &locale) {
     return result;
 }
 
-// RB3 1-argument form — matches rb3-Wii Locale.cpp:320 (real out-of-line
+// RB3 1-argument form (real out-of-line
 // function, not a forward to the 2-arg version). The 2-arg version's
 // `locale` parameter is unused in its body, so this is logically identical;
 // kept as a separate definition (mirroring source) so the call site doesn't

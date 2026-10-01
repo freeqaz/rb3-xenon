@@ -1,14 +1,14 @@
 // ---------------------------------------------------------------------------
 // RB3-360 RETAIL RndText implementation.
 //
-// PORTED FROM: ../rb3/src/system/rndobj/Text.cpp (rb3-Wii DEV decomp) — retail
-// RB3-360's RndText is that generation, not DC3's. See
-// docs/decomp/rndtext-retail-layout.md for the measured member table.
+// RndText as shipped in retail RB3-360: the pre-DC3 generation, not DC3's.
+// See docs/decomp/rndtext-retail-layout.md for the measured member
+// table.
 //
-// Wii -> 360 substitutions applied throughout:
+// Name/type mapping from the older generation, applied throughout:
 //   Hmx::Color32            -> Hmx::Color   (col.a -> col.alpha, Opaque()->Pack())
 //   Style::font/size/...    -> mFont/mSize/mItalics/mTextColor/nobreak/pre/mZOffset
-//   Line::unk18/1c/28/58    -> mStart/mEnd/xfm/mWidth  (Wii's separate `color`
+//   Line::unk18/1c/28/58    -> mStart/mEnd/xfm/mWidth  (a separate `color`
 //                              member does NOT exist on retail; see Text.h)
 //   RndText::unkbp4..7 etc. -> mUseAltStyle/mNeedsUpdate/mMeshDirty/mManualLines,
 //                              mFramesSinceDraw, mRotateLineVerts, mMeshCallback,
@@ -18,11 +18,11 @@
 //   SYNC_PROP_MODIFY_ALT    -> SYNC_PROP_MODIFY (this tree's dialect)
 //   INIT_REVS(RndText)      -> INIT_REVS(21, 0) / BEGIN_LOADS + d.rev
 //
-// FONT-CHAIN DIVERGENCE (deliberate, and the one place this port does NOT
-// follow the Wii oracle): rb3-Wii's RndFont has a `mNextFont` fallback chain,
+// FONT CHAIN (deliberate): this RndText assumes no `mNextFont` fallback
+// chain, so Mats()/Replace()/GetDefiningFont() walk nothing. Retail RB3-360's
 // and Wii's Mats()/Replace()/GetDefiningFont() walk it. Retail RB3-360's
 // RndFont is measurably the *other* generation — it syncs `mats` (plural,
-// ObjPtrVec<RndMat>) where Wii syncs `mat` (singular) + mNextFont; the retail
+// ObjPtrVec<RndMat>), not `mat` (singular) + mNextFont; the retail
 // binary contains the string "mats" and not "mat". Our RndFont accordingly has
 // no chain, and growing it one would change RndFont's layout fleet-wide. So the
 // three chain-walking bodies below are written in their chainless form. They
@@ -79,12 +79,12 @@ std::set<RndText *> RndText::mTextMeshSet;
 
 // RB3-only RndText::Init() config keys — all three are present in the retail
 // binary (one string hit each), which is part of the evidence that retail's
-// RndText is the rb3-Wii generation.
+// RndText is the pre-DC3 generation.
 float gSuperscriptScale = 0.7f;
 float gGuitarScale = 0.7f;
 float gGuitarZOffset = 1.0f;
 
-// RB3-360 retail rev dialect (rb3-Wii/ObjMacros shape), not DC3's Object.h
+// RB3-360 retail rev dialect (ObjMacros shape), not DC3's Object.h
 // BinStreamRev stack decorator.  DC3's form emits a ??0BinStream, a
 // ??_7BinStreamRev@@6B@ vtable store and a ??1BinStream destructor that retail
 // has none of, and dispatches each read on `&d` instead of the raw `bs`.
@@ -155,7 +155,7 @@ int RndText::CollidePlane(const Plane &p) {
 
 void RndText::Replace(ObjRef *ref, Hmx::Object *to) {
     RndTransformable::Replace(ref, to);
-    // Wii walks the font chain here; chainless, the only replaceable ref this
+    // No font chain to walk: the only replaceable ref this
     // class owns is mFont, and the ObjOwnerPtr has already been repointed by
     // the base call — all that is left is to rebuild the text.
     if (ref == (ObjRef *)&mFont)
@@ -169,8 +169,8 @@ const char *RndText::FindPathName() {
         return Hmx::Object::FindPathName();
 }
 
-// Retail RndText IS saveable (fn_82455928, writes rev 0x15) — unlike rb3-Wii,
-// whose dev-build decomp has SAVE_OBJ(RndText, 171) i.e. an unsaveable stub.
+// Retail RndText IS saveable (fn_82455928, writes rev 0x15) -- not a
+// SAVE_OBJ(RndText, 171) unsaveable stub.
 // The item list below is reconstructed from Load's current-revision path: 3
 // superclasses + 11 members = 14 items, which is exactly the count measured off
 // the retail body. Nothing in [0x138,0x15c) (mAltStyle) or [0x178,0x190) (the
@@ -295,9 +295,9 @@ BEGIN_LOADS(RndText)
         bs >> mFixedLength;
     } else if (gRevs_Text.rev > 8) {
         // Retail writes the MEMBER in both arms (stw -0x88(r30)) and then
-        // re-loads it for the ResizeText test.  The inherited rb3-Wii shape
+        // re-loads it for the ResizeText test.  A shape that
         // assigned mText.length() into the `bool b` and threw it away, leaving
-        // `fixedLength` genuinely UNINITIALIZED on this path.
+        // `fixedLength` UNINITIALIZED on this path would be wrong.
         bool b;
         bs >> b;
         if (b) {
@@ -321,7 +321,7 @@ BEGIN_LOADS(RndText)
     }
     if (gRevs_Text.rev > 0xD) {
         // 360: mTextMarkup is a real bool member, so this is a plain read.
-        // rb3-Wii needs LOAD_BITFIELD here because it lives in RndDrawable.
+        // (No LOAD_BITFIELD: it does not live in RndDrawable.)
         bs >> mTextMarkup;
     }
     if (gRevs_Text.rev > 0xE) {
@@ -578,8 +578,8 @@ void RndText::Print() {
     *ts << "   capsMode: " << mCapsMode << "\n";
 }
 
-// The retail ctor's mem-init list is a 1:1 match for rb3-Wii's, including the
-// opaque-white style colour (Wii Color32(-1) -> Hmx::Color(1,1,1,1)) and the
+// The retail ctor's mem-init list, including the
+// opaque-white style colour (Hmx::Color(1,1,1,1)) and the
 // four zeroed bools. MEASURED off fn_82456CB0.
 RndText::RndText()
     : mFont(this), mWrapWidth(0), mAlign(kTopLeft), mCapsMode(kCapsModeNone),
@@ -729,8 +729,8 @@ void RndText::ComputeCharWidths(float *fp, int i2, const char *cc, Style style) 
             int i6 = DecodeUTF8(us68, cc);
             RndFont *i4 = SupportChar(us68, style.mFont);
             if (i4) {
-                // 360: the 2-arg float CharAdvance(prev,cur) rb3-Wii uses is the
-                // 3-arg bool out-param form here.
+                // 360: CharAdvance is the 3-arg bool out-param form here,
+                // not a 2-arg float CharAdvance(prev,cur).
                 float f9 = 0;
                 i4->CharAdvance(u7, us68, f9);
                 float fVal = style.mSize * f9;
@@ -1262,10 +1262,10 @@ void RndText::UpdateMesh(RndFont *font) {
     meshInfo->syncFlags = 0;
 }
 
-// 360 translation note: rb3-Wii calls font->GetTexCoords(c, uv0, uv2) plus
+// 360 RndFont: no separate font->GetTexCoords(c, uv0, uv2) plus
 // separate CharWidth/CharAdvance. The 360 RndFont fuses all three into
 // CharWidthAdvanceCoords(c, &charW, &advW, &uvMin, &uvMax) -> bool, and the Vert
-// UV member is `tex`, not `uv`. Otherwise this is Wii's body unchanged.
+// UV member is `tex`, not `uv`.
 void SetupCharVerts(
     unsigned short us1,
     RndMesh::Vert *&vert,
@@ -1602,8 +1602,8 @@ int RndText::AddLineUTF8(
     }
 }
 
-// Retail's Line has no separate `color` member (rb3-Wii's duplicate was dead
-// storage — it always held the same value as lineStyle.color). So both the
+// Retail's Line has no separate `color` member (a duplicate would be dead
+// storage — it would always hold the same value as lineStyle.color). So both the
 // early-out and the final store go through lineStyle.mTextColor.
 void RndText::UpdateLineColor(unsigned int idx, const Hmx::Color &col, bool *bptr) {
     HX_VECTOR(Line) &_ref0 = mLines;
@@ -1898,7 +1898,7 @@ RndFont *RndText::SupportChar(unsigned short us, RndFont *font) {
     return defining;
 }
 
-// Chainless: rb3-Wii walks font->NextFont() looking for a fallback font that
+// Chainless: there is no font->NextFont() walk for a fallback font that
 // defines the char. Retail's RndFont has no chain (see the top-of-file note), so
 // the single authored font either defines the char or it does not.
 RndFont *RndText::GetDefiningFont(unsigned short &us, RndFont *font) const {
@@ -2019,7 +2019,7 @@ DataNode RndText::OnSetColor(DataArray *da) {
     return 0;
 }
 
-// Retail's PROPSYNC makes exactly TWO SYNC_SUPERCLASS calls (rb3-Wii has 2, DC3
+// Retail's PROPSYNC makes exactly TWO SYNC_SUPERCLASS calls (DC3
 // has 3) — MEASURED off the retail body's tail.
 BEGIN_PROPSYNCS(RndText)
     SYNC_PROP_SET(text, TextASCII(), SetTextASCII(_val.Str()));

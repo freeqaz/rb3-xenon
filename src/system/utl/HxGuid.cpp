@@ -68,7 +68,7 @@ BinStream &operator>>(BinStream &bs, HxGuid &hx) {
 // is emitted — hence its absence here). The native FixedSizeSaveable round-trip
 // links StandIn/SavedSetlist/BandProfile which reference it out-of-line, so
 // provide the body natively. Value 0x14 (= kGuidRev int + 4 data ints = 20 bytes
-// written by operator<<) is confirmed against the rb3-Wii oracle. X360-inert:
+// written by operator<<). X360-inert:
 // the whole block is preprocessed out (HX_NATIVE undefined for the MSVC build).
 int HxGuid::SaveSize() { return 0x14; }
 #endif

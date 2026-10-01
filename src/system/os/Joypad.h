@@ -227,7 +227,7 @@ public:
     bool mConnected; // 0x48
     bool mVibrateEnabled; // 0x49
     bool mHasCapFlag1, mIsWireless, unk4c; // 0x4c, 0x4b, 0x4c
-    bool mHasAnalogSticks; // 0x4d (retail: stb 0x4d in JoypadIsControllerTypePadNum; Wii-era bool, dc3 changed to int mNumAnalogSticks)
+    bool mHasAnalogSticks; // 0x4d (retail: stb 0x4d in JoypadIsControllerTypePadNum; a bool, dc3 changed to int mNumAnalogSticks)
     bool mTranslateSticks; // 0x4e
     int mIgnoreButtonMask; // 0x50
     int mGreenCymbalMask; // 0x54
@@ -357,7 +357,7 @@ inline bool DirectionalAction(JoypadAction a) {
         || a == kAction_Left;
 }
 
-// Present in rb3-Wii's os/Joypad.h but absent from our dc3-based copy; needed by
+// RB3 os/Joypad.h declarations absent from our dc3-based copy; needed by
 // RB3 game code (game/VocalPlayer.cpp). Declarations only (additive).
 class LocalUser;
 void JoypadKeepAlive(int, bool);

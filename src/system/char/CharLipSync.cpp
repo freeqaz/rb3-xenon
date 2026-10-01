@@ -25,7 +25,7 @@ static struct {
 std::map<Symbol, CharLipSync *> *CharLipSync::sLipSyncMap;
 
 CharLipSync::CharLipSync() : mPropAnim(this), mFrames(0) {}
-// RB3-360 retail: empty destructor, matches rb3-Wii. dc3-decomp's version calls
+// RB3-360 retail: empty destructor. dc3-decomp's version calls
 // UnregisterLipSync(this) here, but that call is ABSENT from retail asm (confirmed
 // via objdiff residue: retail is exactly 4 bytes / one `bl` smaller, and the
 // downstream r3->r30 register-swap on the next two loads is a mechanical
@@ -34,7 +34,7 @@ CharLipSync::~CharLipSync() {}
 
 // RB3-360 retail: CharLipSync::Handle has NO message cases -- it is the bare
 // BEGIN_HANDLERS / HANDLE_SUPERCLASS / END_HANDLERS forwarder, 164 B at 0x823d3918.
-// Evidence (W16-AQ, retail bytes, not the oracles): the body at 0x823d3918 computes
+// Evidence (W16-AQ, retail bytes): the body at 0x823d3918 computes
 // `_msg->Sym(1)`, immediately `bl ?Handle@Object@Hmx@@`, then the END_HANDLERS tail
 // (`cmpwi r11,6` / PathName / DataNode(kDataUnhandled)) with no Symbol compare at all.
 // `tools/retail_rtti.py owner 0x823d3918` puts that address at vtable slot 6 of 16
@@ -42,10 +42,10 @@ CharLipSync::~CharLipSync() {}
 // case-less Handles -- so this is CharLipSync's own Handle, not a neighbour's.
 // Control: `owner 0x8275bd78` (?Handle@Object@Hmx@@) returns .?AVObject@Hmx@@ slot 6,
 // so slot 6 really is Handle.
-// BOTH oracles disagree with retail here and agree with each other: rb3-Wii
-// (../rb3/src/system/char/CharLipSync.cpp:281) and DC3 both carry
+// Source text is no guide here: the
+// natural source form carries
 // HANDLE(parse, OnParse) + HANDLE(parse_array, OnParseArray). That makes this a
-// retail-vs-oracle divergence, NOT the "DC3-is-newer over-implementation" it was
+// retail divergence from source, NOT the "DC3-is-newer over-implementation" it was
 // filed as -- retail X360 simply compiled a CharLipSync without parse handlers.
 // OnParse/OnParseArray are retained below (unreferenced now); retail's /OPT:REF
 // would have dropped them, but their absence is not provable from the image.

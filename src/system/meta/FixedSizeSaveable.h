@@ -51,7 +51,7 @@ public:
     static void LoadStd(FixedSizeSaveableStream &, std::set<Symbol> &, int);
     static void EnablePrintouts(bool);
 
-    // Note: `Allocator` here is actually the size/capacity type parameter on Wii.
+    // Note: `Allocator` here is actually the size/capacity type parameter.
     // The name is based on Xbox 360 symbols, which show the allocator type instead.
     template <class T, class Allocator>
     static void SaveStdFixed(
@@ -174,7 +174,7 @@ public:
     // std::map<Symbol, T> 4-arg overload (BandProfile::mLessonCompletions is a
     // genuine rbtree std::map per the BandProfile.h offset annotations: 0x30
     // map -> 0x48 mScores = 0x18 = sizeof(rbtree), not 0x1c hashtable). Mirrors
-    // the rb3-Wii oracle's std::map<Symbol,T> SaveStd.
+    // the std::map<Symbol,T> SaveStd form.
     template <class T>
     static void SaveStd(
         FixedSizeSaveableStream &stream,

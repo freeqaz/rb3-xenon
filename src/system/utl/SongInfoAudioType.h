@@ -1,7 +1,7 @@
 #pragma once
 #include "utl/Symbol.h"
 
-// RB3 retail (X360) uses the SAME 7-value enum as the rb3-Wii oracle, NOT the
+// RB3 retail (X360) uses a 7-value enum, NOT the
 // wider DC3 one.  Ground truth: SongParser::AudioTrackUsed compares against
 // `cmpwi 5` for kAudioTypeFake (target), whereas the DC3 numbering put Fake at
 // 15.  The DC3 extras (drum2/perc/guitar2/harm1/harm2/keys2/keys3/backing*/

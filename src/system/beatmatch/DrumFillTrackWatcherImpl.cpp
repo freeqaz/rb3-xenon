@@ -30,8 +30,8 @@ void DrumFillTrackWatcherImpl::FillSwing(int i1, int i2, int i3, bool b4) {
         mFillNotes++;
         int bucket = mParent->GetVelocityBucket(i2);
         int slot = b4 && i2 == 4 ? 4 : mParent->GetVirtualSlot(i2);
-        // NOT a `float db = ...;` temp (which is what the rb3-Wii DEV oracle has,
-        // verbatim).  Retail evaluates the CALLEE expression before the argument:
+        // NOT a `float db = ...;` temp.
+        // Retail evaluates the CALLEE expression before the argument:
         // 0x82xxxx loads mParent (0x20) and its vptr *before* `bl
         // VelocityBucketToDb`, then reloads mParent for `this` -- i.e. mParent is
         // read TWICE (that extra load is the target's +4 bytes over the temp

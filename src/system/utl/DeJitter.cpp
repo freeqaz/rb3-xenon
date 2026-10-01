@@ -5,7 +5,7 @@ float DeJitter::sTimeScale = 1;
 
 DeJitter::DeJitter() {
     Reset();
-    // RB3 stores the history ring in a heap-backed std::vector (rb3-Wii oracle),
+    // RB3 stores the history ring in a heap-backed std::vector,
     // not an inline array; size it once at construction.
     mHistoryBuffer.resize(32);
 }

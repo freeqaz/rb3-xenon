@@ -110,7 +110,7 @@ protected:
     ScoreType mScoreType; // 0x10
 };
 
-// RB3-360 (TU5) on/off toggles, absent from the rb3-Wii oracle and rebuilt
+// RB3-360 (TU5) on/off toggles, rebuilt
 // from retail bytes (ctors 0x825D4498 / 0x825D44F8, methods 0x825D4948..
 // 0x825D4DE8, vtables 0x820B36AC / 0x820B3744). Row 0 = "on", row 1 = "off";
 // the state lives in TheProfileMgr (bytes 0x6a / 0x6b). Class names are ours.

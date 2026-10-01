@@ -193,8 +193,8 @@ float pow(float base, int exponent) {
 
 // MILO_WARN (not MILO_NOTIFY) throughout this file -- lane W27-FRAMEQ, 2026-08-17.
 // dc3-decomp spells every site in this TU MILO_NOTIFY and we inherited that, but DC3
-// is NEWER than RB3: the RB3-era rb3-Wii oracle spells them all MILO_WARN, and RETAIL
-// BYTES break the tie in rb3-Wii's favour.  MILO_WARN expands to MiloStripEval (a real
+// is NEWER than RB3: RB3 spells them all MILO_WARN, as RETAIL
+// BYTES confirm.  MILO_WARN expands to MiloStripEval (a real
 // function call -> MSVC evaluates arguments RIGHT-TO-LEFT); MILO_NOTIFY expands to the
 // comma form ((void)(args)) which is LEFT-TO-RIGHT.  See the long analysis above
 // MILO_WARN in os/Debug.h -- and do NOT "fix" that asymmetry globally, it is measured

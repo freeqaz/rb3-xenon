@@ -73,7 +73,7 @@ protected:
 
     // Offsets below are TRUE retail X360 offsets, reconstructed from target asm
     // (e.g. PanelDir::RemovingObject: mTriggers@0x1f0, mComponents@0x1f8,
-    // mFocusComponent@0x1dc). The old `// 0xHEX` comments were stale Wii values.
+    // mFocusComponent@0x1dc). The old `// 0xHEX` comments were stale values.
     /** The currently focused-on component. */
     UIComponent *mFocusComponent; // 0x1dc
     class UIPanel *mOwnerPanel; // 0x1e0
@@ -85,8 +85,8 @@ protected:
     std::list<UIComponent *> mComponents; // 0x1f8
     // NOTE: DC3's PanelDir adds `std::list<Flow*> mFlows;` between mTriggers and
     // mComponents; RB3 retail lacks it (target asm shows mTriggers@0x1f0 and
-    // mComponents@0x1f8 — adjacent 8-byte lists, no gap — and the rb3-Wii oracle
-    // has no mFlows anywhere). Removed to shrink PanelDir by 8 so every
+    // mComponents@0x1f8 — adjacent 8-byte lists, no gap). Removed to
+    // shrink PanelDir by 8 so every
     // PanelDir-derived member lands at its retail offset. (+4 TrackPanelDir fns)
     /** "Trigger postprocs before drawing this panel.
      * If checked, this panel will not be affected by the postprocs." */

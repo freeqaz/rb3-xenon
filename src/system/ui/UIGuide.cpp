@@ -22,7 +22,7 @@ void UIGuide::Save(BinStream &bs) {
     bs << mPos;
 }
 
-// RB3 retail's UIGuide::Load uses the rb3-Wii/ObjMacros.h rev dialect (two
+// RB3 retail's UIGuide::Load uses the ObjMacros.h rev dialect (two
 // mutable file-scope shorts written by hand), NOT DC3's Object.h BinStreamRev
 // stack decorator.  Adjudicated on retail bytes at 0x82826670 (140 B): the body
 // stores rev>>16 and rev as HALFWORDS into a global pair 4 bytes apart

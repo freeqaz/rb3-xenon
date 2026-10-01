@@ -34,8 +34,8 @@ AppMiniLeaderboardDisplay::~AppMiniLeaderboardDisplay() {
     if (mLeaderboard) {
         delete mLeaderboard;
         // Retail (0x8264bd60, idx 47 `beq` -> past the second SetProvider): the
-        // re-point is INSIDE `if (mLeaderboard)`. The rb3-Wii DEV oracle has it
-        // unconditional; the 360 retail bytes do not (lane L1-UNICORNFIX).
+        // re-point is INSIDE `if (mLeaderboard)`, not
+        // unconditional (lane L1-UNICORNFIX).
         MILO_ASSERT(mLeaderboardList, 0x63);
         mLeaderboardList->SetProvider(mLeaderboardList);
     }

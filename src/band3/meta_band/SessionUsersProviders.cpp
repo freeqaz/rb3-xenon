@@ -64,7 +64,7 @@ BandUser *SessionUsersProvider::GetUser(int index) {
 
 void SessionUsersProvider::ToggleMuteStatus(int selected) {
     MILO_ASSERT_RANGE(selected, 0, mUsers.size(), 0x6B);
-    // RB3-360 has no VoiceChatMgr (rb3-Wii calls
+    // RB3-360 has no VoiceChatMgr (so no
     // TheVoiceChatMgr->ToggleMuteStatus(mUsers[selected]) here; retail 360 has
     // no VoiceChatMgr RTTI or strings). Retail compiles this to an EMPTY body:
     // Handle's toggle_mute_status arm at 0x82654694 is Int() followed by

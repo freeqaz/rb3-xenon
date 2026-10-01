@@ -100,7 +100,7 @@ BEGIN_COPYS(Sequence)
     END_COPYING_MEMBERS
 END_COPYS
 
-// RB3 retail (0x82706280) is rb3-Wii's Load: a plain local rev (re-read from
+// RB3 retail (0x82706280) Load: a plain local rev (re-read from
 // the stack, no TU rev statics), a too-new guard, then the fields.
 BEGIN_LOADS(Sequence)
     int rev;

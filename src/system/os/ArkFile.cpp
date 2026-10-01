@@ -75,7 +75,7 @@ ArkFile::ArkFile(const char *iFilename, int iMode)
       mNumOutstandingTasks(0), mBytesRead(0), mTell(0), mFail(false), mReadAhead(true),
       mFilename(iFilename) {
 #else
-    // RB3 retail (0x8252E120) is rb3-Wii's initialiser list: GetFileInfo fills
+    // RB3 retail (0x8252E120) initialiser list: GetFileInfo fills
     // the rest, and mReadStartTime is left alone.
     : mNumOutstandingTasks(0), mBytesRead(0), mTell(0), mFail(0), mReadAhead(true),
       mFilename(iFilename) {

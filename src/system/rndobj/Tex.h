@@ -154,7 +154,7 @@ protected:
     DataNode OnSetSize(int, int);
 
     // NOTE: DC3 (newer) has `Hmx::CRC unk2c; // 0x2c` here that retail RB3-360
-    // lacks. rb3-Wii agrees (mBitmap follows the prior block directly, no CRC),
+    // lacks (mBitmap follows the prior block directly, no CRC),
     // and RndTex::Print/Save/~RndTex read mBitmap+every following member at +4 vs
     // retail. Gated out (default) to match the retail layout; the only use is the
     // COPY_MEMBER in Tex.cpp, gated to match. Native keeps the DC3 member.
@@ -183,8 +183,8 @@ protected:
     // this header inherited DC3's commented-out form, which is why RndTex::RndTex
     // was one instruction short: retail zeroes TWO bools, `stb r29,0x68` then
     // `stb r29,0x69`.
-    // ⚠ ORDER IS THE REVERSE OF rb3-Wii, which has mIsPowerOf2 (0x5C) BEFORE
-    // mOptimizeForPS3 (0x5D). Declaring it the Wii way moved mOptimizeForPS3 to
+    // ⚠ ORDER IS NOT mIsPowerOf2 (0x5C) BEFORE
+    // mOptimizeForPS3 (0x5D). Declaring it that way moved mOptimizeForPS3 to
     // 0x69 and measured -1 matched / -404 matched_code over 625 recompiled TUs.
     // Retail adjudicates directly: ?Save@RndTex@@ (100%) reads mOptimizeForPS3
     // with `lbz r11, 0x68(r30)`, so mOptimizeForPS3 is at 0x68 and mIsPowerOf2

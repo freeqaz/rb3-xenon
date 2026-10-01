@@ -286,8 +286,8 @@ bool GuitarController::IsShifted() const {
 }
 
 // Retail truncates the OnMsg return to a byte before DataNode construction
-// (caller-side clrlwi 24) — the retail OnMsg overloads returned bool. The Wii
-// dev decomp declares them int (MWCC codegen can't tell), so reproduce the
+// (caller-side clrlwi 24) — the retail OnMsg overloads returned bool. The
+// header declares them int, so reproduce the
 // byte truncation locally instead of changing the shared header.
 #undef HANDLE_MESSAGE
 #define HANDLE_MESSAGE(msg)                                                              \

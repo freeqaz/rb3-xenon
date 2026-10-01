@@ -113,7 +113,7 @@ public:
     Bone GetBonesAt(int index) { return mBones[index]; }
     char *GetStart() const { return mStart; }
     int GetOffset(Type type) const { return mOffsets[type]; }
-    // rb3-Wii-style inline offset accessors. Retail RB3 addresses the bone
+    // Inline offset accessors. Retail RB3 addresses the bone
     // buffer through `&mBones` (the inlined accessor's `this`), not through the
     // owning object's `this` — see CharMirror::Poll.
     char *Start() const { return mStart; }

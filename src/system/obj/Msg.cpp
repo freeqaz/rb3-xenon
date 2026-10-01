@@ -345,14 +345,14 @@ void MsgSinks::Replace(ObjRef *ref, Hmx::Object *obj) {
 }
 
 // -----------------------------------------------------------------------------
-// MsgSource — the retail RB3-360 (Wii-lineage) messaging class. Ported from the
-// rb3-Wii dev decomp (../rb3/src/system/obj/Msg.cpp), adapted to our Msg.h
+// MsgSource — the retail RB3-360 messaging class
+// (system/obj/Msg.cpp), adapted to our Msg.h
 // declarations (std::list<Sink>/<EventSink>, member SinkMode enum, and Replace
 // re-signed to the inherited slot-2 form). Coexists in this TU with MsgSinks (the
 // DC3-flattened form above). MILO_ASSERT file string stays "Msg.cpp".
 // -----------------------------------------------------------------------------
 
-// The Wii-lineage MsgSource tracks its referenced sinks with the retail
+// MsgSource tracks its referenced sinks with the retail
 // owner-model ring API — Object::AddRef/Release(ObjRefOwner*) — passing the
 // MsgSource itself as the owner. The HX_NATIVE Object ring is node-model
 // (AddRef/Release take an ObjRef*, not the owner), so those calls don't

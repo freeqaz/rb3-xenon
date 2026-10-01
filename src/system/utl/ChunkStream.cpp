@@ -129,7 +129,7 @@ ChunkStream::ChunkStream(
     // Retail's ChunkStream member-init list only sets the fields below --
     // mFile, mFail, mBufSize, mCurReadBuffer, mChunkInfoPending, mCurChunk,
     // mChunkEnd are NOT defaulted here (verified against retail's
-    // instruction stream, ../rb3's ChunkStream.cpp agrees). mFile/mFail are
+    // instruction stream). mFile/mFail are
     // assigned unconditionally as body statements right after NewFile(), so
     // there's no read-before-write window even without a default. The other
     // four are only ever meaningfully set inside the branches below, and
@@ -174,9 +174,9 @@ ChunkStream::ChunkStream(
             // here reproduces retail's frame size and that dead store exactly
             // (98.9% -> 100.0% normalized, 95/95 instructions equal).
             // NOTE: this is a codegen-shaping device standing in for whatever made
-            // the size address-escape in Harmonix's source (rb3-Wii's dev-build
-            // ChunkStream.cpp has no local here, so the escaping construct did not
-            // survive into that tree). It is a side-effect-free no-op, so the
+            // the size address-escape in Harmonix's source (no
+            // local survives in any visible source, so the escaping construct
+            // is unknown). It is a side-effect-free no-op, so the
             // native build is unaffected -- do not "clean it up".
             int bufSize = mBufSize;
             (void)&bufSize;

@@ -15,8 +15,8 @@
 //   0x825BC808 ( 32 B) ??__F_choosing  (atexit funclet for Text's local static)
 //   0x825BC828 (212 B) SetlistProvider::NumData
 //
-// Divergences from the rb3-Wii DEV oracle
-// (../rb3/src/band3/meta_band/SongSetlistProvider.cpp):
+// Retail details
+// (verified on retail bytes):
 //  * `choosing` is a FUNCTION-LOCAL `static Symbol`, not the centralized global
 //    from utl/Symbols2.h — retail emits the guard-bit test + inline Symbol ctor
 //    at 0x825BC774 (guard word 0x82DFF5F8 bit 0, Symbol storage 0x82DFF5F4) and

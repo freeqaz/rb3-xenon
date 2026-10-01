@@ -16,7 +16,7 @@ public:
 
     class CrossSec {
     public:
-        // The rb3-Wii MWCC STLport accepted `vector<Edge, unsigned short>` (2nd
+        // Some STLports accept `vector<Edge, unsigned short>` (2nd
         // param treated as a size hint), but our dc3-derived STLport treats the
         // 2nd param as a real allocator and rejects `unsigned short`, which
         // triggers an _Alloc_traits::rebind cascade. The element type and on-disc

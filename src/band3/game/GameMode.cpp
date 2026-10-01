@@ -75,8 +75,8 @@ void GameMode::SetMode(Symbol mode) {
 
 BEGIN_HANDLERS(GameMode)
     HANDLE_EXPR(in_mode, InMode(_msg->Sym(2)))
-    // NOTE: rb3-Wii's DEV build also carries HANDLE_EXPR(get_mode, mMode.Str()),
-    // but retail X360's GameMode::Handle has exactly TWO handler symbol compares
+    // NOTE: there is no HANDLE_EXPR(get_mode, mMode.Str()):
+    // retail X360's GameMode::Handle has exactly TWO handler symbol compares
     // (two static Symbols, two ??__F atexit thunks clearing guard bits 1 and 2)
     // before falling through to the superclass chain -- no get_mode.
     HANDLE(set_mode, OnSetMode)

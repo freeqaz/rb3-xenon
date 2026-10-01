@@ -1,4 +1,4 @@
-// Ported from rb3-Wii src/system/bandobj/DialogDisplay.cpp (MWCC -> MSVC X360).
+// DialogDisplay (bandobj/DialogDisplay.cpp), MSVC X360.
 #include "bandobj/DialogDisplay.h"
 #include "ui/UI.h"
 #include "utl/Symbols.h"

@@ -39,12 +39,12 @@ public:
     int unk3c;
     int unk40;
     int unk44;
-    // rb3-Wii had `OSThread mThread` (Wii RVL SDK) here, spanning 0x48..0x360.
-    // That pulled the Wii revolution/ SDK into a 360 build. The retail X360 Net
+    // Opaque thread span, 0x48..0x360.
+    // The retail X360 Net
     // uses Xbox threading and almost certainly a different layout past 0x48, but
     // the only consumer (game/Singer.cpp) just calls GetNetSession() -> mSession
     // (0x20), which is BEFORE this field, so the thread representation does not
-    // affect its codegen. Keep an opaque byte span of the Wii size so the few
+    // affect its codegen. Keep an opaque byte span of that size so the few
     // trailing members keep their offsets until the network layer is ported.
     unsigned char mThread[0x360 - 0x48]; // 0x54
     RndOverlay *mNetOverlay; // 0x36c

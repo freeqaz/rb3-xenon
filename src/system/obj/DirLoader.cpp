@@ -86,10 +86,10 @@ DirLoader::DirLoader(
 #endif
 )
     // NOTE(lane W4-A): no mRev(0) / mCounter(0) -- retail's ctor (0x82755AF8)
-    // stores nothing at 0x3c/0x40 and rb3-Wii's initializer list has neither;
+    // stores nothing at 0x3c/0x40, and there is no initializer for either;
     // both are stream-read (LoadHeader / LoadObjs) before any read. The
     // mHasEditorDir / mSubDir members and their initializers are DC3-newer
-    // (absent from rb3-Wii; retail stores only 0xa0/0xa1 here), kept for the
+    // (retail stores only 0xa0/0xa1 here), kept for the
     // native build only.
     : Loader(fp, pos), mOwnStream(false), mStream(stream),
       mObjects(nullptr, kObjListAllowNull), mCallback(cb), mDir(dir), mPostLoad(false),
@@ -109,7 +109,7 @@ DirLoader::DirLoader(
         mProxyName = dir->Name();
         mProxyDir = dir->Dir();
 #ifndef HX_NATIVE
-        // rb3-Wii: `if (dDir) mProxyDir->AddRef(this);` -- retail's ctor calls
+        // `if (dDir) mProxyDir->AddRef(this);` -- retail's ctor calls
         // the out-of-line AddRef(ObjRefOwner*) (fn_8275BD08: RefOwner() vcall,
         // compare with this, list insert) right here. Natively mProxyDir is an
         // ObjOwnerPtr that does its own bookkeeping.
@@ -131,8 +131,8 @@ DirLoader::DirLoader(
     }
     // NOTE(lane W4-A): mRoot is NOT derived here. DC3 (newer) moved the
     // FileGetPath / "/gen"-strip / FileMakePath(FileRoot(), ...) block into the
-    // ctor; RB3 retail (0x82755AF8 ctor ends at `mState = &OpenFile`) and
-    // rb3-Wii derive it in OpenFile(), i.e. when the loader is actually polled
+    // ctor; RB3 retail (0x82755AF8 ctor ends at `mState = &OpenFile`)
+    // derives it in OpenFile(), i.e. when the loader is actually polled
     // and FileRoot() is whatever is current THEN -- not whatever FilePathTracker
     // a parent LoadDir() happens to hold at construction time.
     mState = &DirLoader::OpenFile;
@@ -149,7 +149,7 @@ DirLoader::~DirLoader() {
         }
     }
 #ifndef HX_NATIVE
-    // rb3-Wii: `if (mProxyDir) mProxyDir->Release(this);` (pairs the ctor AddRef)
+    // `if (mProxyDir) mProxyDir->Release(this);` (pairs the ctor AddRef)
     if (mProxyDir)
         mProxyDir->Release(this);
 #else
@@ -590,7 +590,7 @@ void DirLoader::Cleanup(const char *str) {
         if (IsLoaded() && mDir) {
 #ifdef HX_NATIVE
             AutoGlitchReport report(50.0f, SyncObjectsGlitchCB, mDir);
-            // DC3-newer (rb3-Wii has no SetSubDirFlag here); native-only.
+            // DC3-newer (no SetSubDirFlag in RB3); native-only.
             mDir->SetSubDirFlag(mSubDir);
             mDir->SyncObjects();
             mDir->SetSubDirFlag(false);
@@ -792,7 +792,7 @@ bool DirLoader::SetupDir(Symbol sym) {
                 );
             }
 #else
-            // RB3 retail (rb3-Wii shape): one MakeString, result discarded --
+            // RB3 retail: one MakeString, result discarded --
             // retail keeps the bl, and has neither DC3's proxy-dir branch nor
             // the MemPoint tracking around the body.
             MILO_WARN(MakeString(
@@ -1014,7 +1014,7 @@ void DirLoader::LoadObjs() {
             ReadEditorDirDead(*mStream);
         }
 #ifdef HX_NATIVE
-        // DC3-newer (rev 0x20 editor dir); rb3-Wii has no mHasEditorDir.
+        // DC3-newer (rev 0x20 editor dir); RB3 has no mHasEditorDir.
         if (mHasEditorDir && mRev > 0x1f) {
             ReadEditorDirDead(*mStream);
         }
@@ -1301,7 +1301,7 @@ void DirLoader::OpenFile() {
     mTimer.Start();
     // Retail derives mRoot HERE (0x82755A38: `lbz *mFile; beq -> sRoot;
     // FileGetPath -> strip "/gen" -> FileMakePath(FileRoot(), buf)`), not in
-    // the ctor -- see the ctor note. Spelled as rb3-Wii spells it.
+    // the ctor -- see the ctor note.
     const char *fileStr = mFile.c_str();
     if (*fileStr == '\0') {
         mRoot = FilePath::Root();
@@ -1317,7 +1317,7 @@ void DirLoader::OpenFile() {
     if (mStream == nullptr) {
         Archive *theArchive = TheArchive;
         // Retail restores with `li r3,1; bl SetUsingCD` and never calls
-        // UsingCD(): the MILO_DEBUG read is dev-only (rb3-Wii #ifdef MILO_DEBUG),
+        // UsingCD(): the MILO_DEBUG read is dev-only (#ifdef MILO_DEBUG),
         // and MILO_DEBUG is force-defined tree-wide -- house pattern.
 #if defined(MILO_DEBUG) && defined(HX_NATIVE)
         bool using_cd = UsingCD();
@@ -1366,8 +1366,8 @@ void DirLoader::OpenFile() {
 
 // NOTE(laneGLM3): the sTypeMemDumpFile bracketing is a DC3-era addition that
 // RB3 retail's LoadObjects does not have. The 124-byte retail body is just the
-// ctor / PollUntilLoaded / GetDir / dtor -- matching the rb3-Wii RB3 oracle
-// (../rb3/src/system/obj/DirLoader.cpp:171) exactly -- and every base-only
+// ctor / PollUntilLoaded / GetDir / dtor
+// -- and every base-only
 // instruction in the aligned diff belonged to this instrumentation: the
 // sTypeMemDumpFile load + test, the sMemPointMap _Rb_tree::clear, the
 // WriteTypeMemDump call, and the three extra callee-saves (r27/r28/r29) it
@@ -1442,7 +1442,7 @@ bool IsASubclass(Symbol child, Symbol parent) {
         return RecurseSuperClassesSearch(child, parent);
 }
 
-// rb3-Wii obj/Utl.cpp:382 (DC3 dropped it). Retail keeps it in the DirLoader
+// RB3 helper (DC3 dropped it). Retail keeps it in the DirLoader
 // TU at 0x82757FC0: lower both, `find('*') != npos ? FileMatch : contains`.
 // Callers: DataMatchPattern / DataMatchAnyPattern (obj/DataFunc.cpp).
 bool StringMatchesFilter(const char *c1, const char *c2) {

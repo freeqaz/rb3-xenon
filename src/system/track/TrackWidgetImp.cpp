@@ -58,9 +58,9 @@ void ImmediateWidgetImp::DrawInstances(const ObjPtrList<RndMesh> &meshes, int i2
     }
 }
 
-// The rb3-Wii oracle accesses `mesh->mInstances` directly throughout this
-// class (RndMultiMesh::mInstances is public there). In this tree
-// RndMultiMesh::mInstances is `protected` (src/system/rndobj/MultiMesh.h), so
+// Code in this class naturally reads `mesh->mInstances` directly. In this tree
+// RndMultiMesh::mInstances is `protected`
+// (src/system/rndobj/MultiMesh.h), so
 // every such access below goes through the public `Instances()` accessor
 // instead -- a trivial one-line inline expected to codegen identically.
 
@@ -100,10 +100,10 @@ void MultiMeshWidgetImp::PushInstance(RndMultiMesh::Instance &inst) {
 }
 
 void MultiMeshWidgetImp::DrawInstances(const ObjPtrList<RndMesh> &meshes, int i2) {
-    // rb3-Wii gates this loop with `if (unk10) { dynamic_cast<WiiMultiMesh*>
-    // (mesh)->unk34 = true; }` before every DrawShowing() -- a Wii/GX-specific
-    // multi-mesh flag (WiiMultiMesh, src/rndwii/MultiMesh.h) that has no
-    // counterpart anywhere in this tree (src/rndwii does not exist; RndMultiMesh
+    // No per-mesh GX flag (unk34) is set before DrawShowing() here:
+    // that flag is GX-hardware-specific
+    // state and has no
+    // counterpart anywhere in this tree (RndMultiMesh
     // here carries no unk34-shaped field). Dropped outright, same as
     // TrackWidgetImpBase's removed CheckValid() and TrackWidget::CheckValid()'s
     // no-op reduction elsewhere in this file family -- `unk10` is kept as a
@@ -140,10 +140,10 @@ int MultiMeshWidgetImp::Size() {
 // helpers are hardcoded to std::list<T> (default allocator); InstanceList is
 // std::list<Instance, TransformListAlloc<Instance>>, a distinct type whose
 // allocate()/deallocate() route through the global gTransListAlloc pool
-// instead. On rb3-Wii, RndMultiMesh::mInstances is a plain default-allocator
-// list, so the oracle's equivalents call straight through to the Do* helpers
+// instead. With a plain default-allocator
+// list, the overrides would call straight through to the Do* helpers
 // with no friction -- this divergence is X360-retail-specific (same class as
-// the WiiMultiMesh/SetMeshForceNoQuantize drops elsewhere in this file), and
+// the GX-only calls dropped elsewhere in this file), and
 // MultiMeshWidgetImp already overrides every one of these individually rather
 // than relying on the base template's single-list-oriented inline versions,
 // consistent with needing bespoke logic here.
@@ -373,11 +373,11 @@ void CharWidgetImp::Poll() {
             mNeedRebuild = false;
         }
         if (mNeedSync) {
-            // rb3-Wii also calls mText->SetMeshForceNoQuantize() here first --
-            // a Wii GX hardware vertex-quantization control with no counterpart
+            // No SetMeshForceNoQuantize() call here first --
+            // a GX hardware vertex-quantization control with no counterpart
             // on this platform (no "Quantize" member/method exists anywhere in
             // this tree's RndText/RndMesh). Dropped, same rationale as the
-            // WiiMultiMesh branch above.
+            // multi-mesh flag above.
             mText->SyncMeshes();
             mNeedSync = false;
         }

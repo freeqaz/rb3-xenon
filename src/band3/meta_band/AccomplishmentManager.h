@@ -17,7 +17,7 @@ class SongStatusMgr;
 #include "meta_band/Award.h"
 
 // The accomplishment maps below were originally Harmonix `hash_map` keyed on
-// Symbol. The Wii decomp approximated them as std::map; retail X360 inlines the
+// Symbol, not std::map; retail X360 inlines the
 // STLport hashtable::find COMDAT (out-of-line find returning iterator-by-value,
 // NULL-miss sentinel, value at slist node+0x8) — see the Has*/Get* accessors.
 // hash<Symbol> hashes the interned char* word identity, matching retail exactly.

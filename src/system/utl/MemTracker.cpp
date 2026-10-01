@@ -28,7 +28,7 @@ struct MemDiffEntry {
     // total: 0x48 = 72 bytes
 
     // Retail's second comparison is NON-STRICT and REVERSED (`>=`), not `<`.
-    // Read off retail bytes, not the oracle: within these same functions MSVC
+    // Read off retail bytes: within these same functions MSVC
     // lowers the mHeap `<` to the eqv idiom (subfc/eqv/srwi/addze/clrlwi) and
     // that half matches us at 100% -- so `<` provably cannot produce retail's
     // second idiom (srwi/srawi/subfc/adde), which decodes to `X <= Y`.

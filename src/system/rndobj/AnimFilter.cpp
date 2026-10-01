@@ -70,7 +70,7 @@ BEGIN_COPYS(RndAnimFilter)
     END_COPYING_MEMBERS
 END_COPYS
 
-// RB3-360 retail uses the old plain-int static gRev idiom (rb3-Wii style, assert
+// RB3-360 retail uses the old plain-int static gRev idiom (ObjMacros style, assert
 // stripped): rev is read straight into a TU-static int (ReadEndian into the
 // global at the guard-word base) and compared as a full int — no BinStreamRev,
 // no hi/lo split, no ASSERT_REVS block in the retail body.

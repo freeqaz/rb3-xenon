@@ -17,7 +17,7 @@ BEGIN_PROPSYNCS(Screenshot)
     // PropSync(mTexPath,...) for tex_path -- no `andi. op,0x11` gate, no
     // Sync() call (confirmed against target_symbol_map: the branch calls
     // fn_82769330==PropSync(FilePath&,...) then converts the bool result
-    // directly, unlike dc3/rb3-Wii's SYNC_PROP_MODIFY[_ALT](..., Sync())).
+    // directly, with no SYNC_PROP_MODIFY[_ALT](..., Sync())).
     {
         static Symbol _s("tex_path");
         if (sym == _s) {
@@ -63,7 +63,7 @@ BEGIN_COPYS(Screenshot)
     //      call sequence, so it is absent rather than inlined.
     //  (2) The note at the top of this file records a prior lane finding the
     //      SAME divergence at an adjacent site: retail's Screenshot::SyncProperty
-    //      also has no Sync() call where dc3/rb3-Wii do.
+    //      also has no Sync() call.
     // Load() (retail 0x82824E10, named by lane W16-HS) has no Sync() either;
     // it is kept native-only there too.
 END_COPYS

@@ -324,7 +324,7 @@ protected:
     // Retail X360/RB3 layout (verified via Rnd ctor fn_82402FA0 + OnShowConsole
     // loading mConsole at 0x90): the four overlay pointers sit at 0x80..0x8c
     // followed by mConsole at 0x90. RB3 retail has NO Watcher subsystem in Rnd
-    // (confirmed: rb3-Wii Rnd.h/.cpp carry no mWatcher/mWatchOverlay at all).
+    // (no mWatcher/mWatchOverlay at all).
     // DC3 added mWatchOverlay (+4) + inline Watcher mWatcher (+0x3c) = +0x40,
     // which shifted every member from mStatsOverlay onward up 64 bytes vs retail.
     RndOverlay *mTimersOverlay; // 0x80
@@ -375,8 +375,8 @@ protected:
     // Retail X360/RB3 layout (verified via Rnd ctor fn_82402FA0 + NgRnd ctor
     // fn_82B59180): mPostProcOverride is a plain 4-byte RndPostProc* at 0x124,
     // immediately followed by mPreClearDraws (ObjPtrList vtable @0x128). RB3
-    // retail has NO mPostProcBlackLightOverride field (confirmed: rb3-Wii Rnd.h
-    // carries a single `PostProcessor *mPostProcOverride` and no blacklight
+    // retail has NO mPostProcBlackLightOverride field (a single
+    // `PostProcessor *mPostProcOverride` and no blacklight
     // override). DC3 promoted both to ObjPtr<RndPostProc> (0x14 each = +0x24),
     // which shifted mPreClearDraws..mCompressTexQueue and the whole NgRnd/DxRnd
     // own region up 0x24/0x60 bytes vs retail.
@@ -384,7 +384,7 @@ protected:
     // 0x124 is unchanged). RndPostProc derives from PostProcessor as its
     // SECOND base, so assigning an RndPostProc* to this member emits the
     // null-checked `+0x28` upcast that retail shows inlined at the
-    // set_postproc_override handler in Rnd::Handle. rb3-Wii Rnd.h:244 agrees.
+    // set_postproc_override handler in Rnd::Handle.
     PostProcessor *mPostProcOverride; // 0x124
 #ifdef HX_NATIVE
     ObjPtr<RndPostProc> mPostProcBlackLightOverride; // native-only (DC3 blacklight override)

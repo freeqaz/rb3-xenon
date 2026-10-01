@@ -32,7 +32,7 @@ protected:
     bool mUseParentRotateY; // 0x95
     bool mUseParentRotateZ; // 0x96
     WorldDir *mWorld; // 0x98
-    // RB3-360 retail only (absent from DC3 and from the rb3-Wii decomp): the
+    // RB3-360 retail only (absent from DC3): the
     // `enable_depth_of_field` handler writes a bool here, and Poll() gates its
     // TheDOFProc block on it (retail `lbz r11,0x9c(r31)` with r31 == this,
     // the same reg used for `lwz r10,0x98(r31)` == mWorld).

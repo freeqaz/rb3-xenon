@@ -87,8 +87,8 @@ class ScrollbarDisplay { public: static void Init(); };
 
 DataNode OnPaletteSync(DataArray *array) {
     // TODO: this engine revision tracks refs with the intrusive ObjRef ring
-    // (Hmx::Object::Refs() -> const ObjRef&), not rb3-Wii's vector<ObjRef*>,
-    // so the oracle's reverse-iterator walk does not port directly. Body left
+    // (Hmx::Object::Refs() -> const ObjRef&), not a vector<ObjRef*>,
+    // so a reverse-iterator walk does not port directly. Body left
     // unimplemented; only BandInit/BandTerminate are being matched here.
     ColorPalette *colpal = array->Obj<ColorPalette>(1);
     (void)colpal;
@@ -123,8 +123,8 @@ void BandInit() {
         GemTrackDir::Init();
         // Retail inlines a standalone REGISTER_OBJ_FACTORY(ObjectDir) here (6-instr
         // StaticClassName+RegisterFactory shape, address-confirmed via Ghidra decompile
-        // of 0x8227ACC8 + target .s at instrs 103-108) that neither dc3 nor rb3-Wii's
-        // BandInit() source shows -- an older-revision leftover. Call target identity
+        // of 0x8227ACC8 + target .s at instrs 103-108) that dc3's
+        // BandInit() does not show -- an older-revision leftover. Call target identity
         // is score-invisible (functionRelocDiffs=none), so matching the shape here is
         // what matters.
         REGISTER_OBJ_FACTORY(ObjectDir);

@@ -54,7 +54,7 @@ public:
     virtual void AddedObject(Hmx::Object *);
     virtual void RemovingObject(Hmx::Object *);
     // ⚠ MUST carry the INHERITED `ObjRefOwner::Replace(ObjRef*, Hmx::Object*)`
-    // signature -- the rb3-Wii dev form `Replace(Hmx::Object*, Hmx::Object*)`
+    // signature -- a `Replace(Hmx::Object*, Hmx::Object*)` form
     // does NOT override it, so MSVC appends a NEW slot and our offset-0
     // (ObjectDir) vftable ran 21 slots against retail's 20.  Adjudicated on
     // retail bytes (lane VT-SIG): retail reaches this body from slot 2 of the
@@ -103,8 +103,8 @@ public:
     virtual void Compress(RndTex *, bool);
     // Retail X360 body is `subi r3, r3, 0x268; blr` — i.e. it really does return
     // `this`, adjusted from the BandCharDesc sub-object (at +0x268 in
-    // BandCharacter) back to the ObjectDir base at offset 0. The rb3-Wii oracle's
-    // empty body is a DEV-build artifact, not retail behaviour: BandCharacter IS
+    // BandCharacter) back to the ObjectDir base at offset 0. An
+    // empty body would be wrong: BandCharacter IS
     // an ObjectDir (via Character→RndDir→ObjectDir) and is the dir
     // GetPatchMesh()/GetPatchTex() search for patch meshes/textures, so the
     // character's own dir is the correct patch dir. This also fixes native, where
@@ -129,7 +129,7 @@ public:
     // temp from `bl fn_822824F8(this, "")` and inline-destructs it, and
     // CustomizePanel::SavePrefab *returns* this call's result — so retail's
     // signature is `DataNode SavePrefabFromCloset(const char* = "")`, not the
-    // rb3-Wii dev-build `void ...()`.  fn_822824F8 lives inside BandCharacter's
+    // `void ...()`.  fn_822824F8 lives inside BandCharacter's
     // own .text span (0x82280F8C-0x82285D98) and interns its char* argument into
     // mPrefab (+0x274) via Symbol(); its real body is ~0x400 B and is NOT ported
     // here.  Only the signature is corrected, which is what the two Handle
@@ -282,8 +282,8 @@ public:
     int unk6f0; // 0x77c
     char unk6f4[64]; // 0x780
     // retail TU5 (proved from the ~BandCharacter member-dtor sequence + the ctor's
-    // init-store sequence): the waypoint PRECEDES the flags, and rb3-Wii's
-    // `float unk6d8` (Wii 0x6d8, an edit-mode starvation timer) does NOT exist in
+    // init-store sequence): the waypoint PRECEDES the flags, and the
+    // `float unk6d8` edit-mode starvation timer does NOT exist in
     // the retail 360 build at all — the ctor emits exactly two zero-stores in this
     // region (0x778 = unk6ec, 0x7c4 = unk738) and 0x778+4+4+64 == 0x7c0 exactly,
     // leaving no slot for it. It is kept below under HX_NATIVE only.
@@ -292,7 +292,7 @@ public:
     ObjPtrList<RndMesh> unk73c; // 0x7c8
     ObjPtrList<RndMesh> unk74c; // 0x7dc
 #ifdef HX_NATIVE
-    // rb3-Wii-only edit-mode clip-starvation timer (Wii 0x6d8); absent from retail
+    // Edit-mode clip-starvation timer (dev builds only); absent from retail
     // 360, so it lives after the matched layout.
     float unk6d8;
 #endif

@@ -33,8 +33,8 @@ public:
     // @0x38 -- verified against the target binary (StreamReceiver::Stop dispatches
     // slot 0x30, and the retail StreamReceiver::Play at 0x8272A3C0 dispatches 0x30
     // then 0x34). DC3 hoisted GetPlayCursor above PauseImpl, shifting both by one
-    // slot. rb3-Wii's StreamReceiver has the same PauseImpl/PlayImpl/GetPlayCursor
-    // relative order as RB3-360, corroborating that DC3 is the one that moved it.
+    // slot. Retail's PauseImpl/PlayImpl/GetPlayCursor relative order is the
+    // original one; DC3 is the one that moved it.
     //
     // ⚠ DO NOT "FIX" THIS ORDER TO MATCH tools/vtable_order_sweep.py. The sweep
     // reports StreamReceiver360 as PERMUTED with slots 13/14 swapped, and that is

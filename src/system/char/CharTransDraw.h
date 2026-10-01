@@ -30,7 +30,7 @@ public:
     /** "The Characters whose translucent bits we will draw" */
     ObjPtrList<Character> mChars; // 0x24
     // NO `bool mForceDraw` IN RB3 RETAIL -- a DC3-era addition.  Evidence:
-    //  (1) rb3-Wii's CharTransDraw (RB3's OWN engine generation) declares only
+    //  (1) RB3's own CharTransDraw (its own engine generation) declares only
     //      mChars and its BEGIN_PROPSYNCS has only SYNC_PROP(chars, mChars);
     //  (2) the exact NUL-terminated property Symbol "force_draw\0" has ZERO
     //      occurrences in retail band.exe while this class's sibling property

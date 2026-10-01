@@ -412,7 +412,7 @@ RemoteBandUser *LocalBandUser::GetRemoteBandUser() const {
 
 const std::vector<u64> &LocalBandUser::GetFriendsConsoleCodes() const {
     // RB3-360: was `return TheBandUI.mOvershell->unk4c0;` — that member
-    // (Wii friends-console-code list filled by OvershellPanel::Poll) is
+    // (friends-console-code list filled by OvershellPanel::Poll) is
     // absent in retail. Stubbed to an empty list; whether retail even keeps
     // this vtable slot is an open recon question (dump ??_7LocalBandUser).
     static std::vector<u64> sNoFriendsConsoleCodes;
@@ -539,8 +539,8 @@ BEGIN_HANDLERS(LocalBandUser)
     HANDLE_EXPR(connected_controller_type, ConnectedControllerType())
     HANDLE_EXPR(connected_controller_sym, ControllerTypeToSym(ConnectedControllerType()))
     HANDLE_ACTION(set_contributes_song_progress, unkc = _msg->Int(2))
-    // RB3-360 divergence from the rb3-Wii oracle: the Wii build stubs this to a
-    // constant 1 (`(_msg->Obj<BandUser>(2), 1)`) because it has no Xbox friends
+    // RB3-360: not stubbed to a
+    // constant 1 (`(_msg->Obj<BandUser>(2), 1)`), since 360 has an Xbox friends
     // API. Retail calls the real thing -- target emits `subi r11, r27, 0x28` /
     // `mr r4, r3` / `mr r3, r11` / `bl HasAsFriend` where the stub emits a bare
     // `li r11, 0x1`. LocalBandUser::HasAsFriend (XUserAreUsersFriends) was
@@ -554,7 +554,7 @@ END_HANDLERS
 // Retail @ 0x8268B4E8: after the vbase/vtordisp preamble the whole body is
 // three zero stores (`stw r29, 0x8/0xc/0x10(r30)`), `operator new(0x84)`,
 // TourCharRemote's ctor, and `stw r3, 0x4(r30)`.  There is NO
-// `TheWiiFriendMgr.AddSink` -- the Wii friends-list sink is absent from the
+// `TheWiiFriendMgr.AddSink` -- there is no friends-list sink in the
 // 360 build, which is the same finding as the dropped mFriendsConsoleCodes.
 RemoteBandUser::RemoteBandUser()
     : mCurrentInstrumentCareerScore(), mCurrentHardcoreIconLevel(),
@@ -650,7 +650,7 @@ void RemoteBandUser::SyncLoad(BinStream &bs, unsigned int mask) {
         mCymbalConfiguration = cymbalCfg;
     }
     // ⛔ A `if (mask & 0x80) { ... mFriendsConsoleCodes ... }` block used to
-    // follow, ported from rb3-Wii.  RETAIL 360 DOES NOT HAVE IT: the target
+    // follow.  RETAIL 360 DOES NOT HAVE IT: the target
     // body ends at the `mCymbalConfiguration` store and is 740 bytes against
     // our 856 -- a 116-byte gap that is exactly the 29 instructions objdiff
     // reported as pure `insert` rows (the `rlwinm. r11, r29, 0, 24, 24` mask
@@ -664,7 +664,7 @@ DataNode RemoteBandUser::OnMsg(const WiiFriendsListChangedMsg &msg) {
     return 1;
 }
 
-// rb3-Wii guards this with a `bool unk18` member that retail 360 does not have
+// A `bool unk18` member guard would need a member retail 360 does not have
 // (see the layout block in BandUser.h), so the guard is dropped rather than
 // invented.  Nothing reaches this function on 360 or on native anyway: the
 // only caller is OnMsg(WiiFriendsListChangedMsg), and retail's ctor registers

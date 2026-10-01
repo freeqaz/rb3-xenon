@@ -7,8 +7,8 @@
 //   mTempo  @0x70 (Enter: `stfs f0,0x70` = DeltaBeat()/DeltaSeconds())
 //   mPeriod @0x74 (Load: old TheLoadMgr period)
 //   mStartSeconds @0x78 (Enter: Seconds(kRealTime)+DeltaSeconds(); Poll reads it)
-// The rb3-Wii dev header lists 0x38/0x68/0x6c (Wii base size) and lacks the
-// 0x78 member entirely.  It also redeclares `virtual ~GameTimePanel() {}`;
+// An older header lists 0x38/0x68/0x6c (narrower base) and lacks the
+// 0x78 member entirely.  Retail does not redeclare `virtual ~GameTimePanel() {}`:
 // retail's scalar-deleting dtor (0x8261EF60) has no own-vptr store, so the
 // redeclaration is dropped here (laneBL §7).
 class GameTimePanel : public UIPanel {

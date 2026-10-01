@@ -90,19 +90,19 @@ public:
     virtual float GetSpeed() const = 0;
     virtual void LoadMarkerList(const char *) = 0;
     virtual void ClearMarkerList() {}
-    // Retail passes Marker BY VALUE (matches the rb3-Wii oracle): the caller
+    // Retail passes Marker BY VALUE: the caller
     // copy-constructs the Marker into its own frame slot and passes that.
     virtual void AddMarker(Marker) {}
     virtual int MarkerListSize() const { return 0; }
     virtual bool MarkerAt(int, Marker &) const { return 0; }
-    // rb3-Wii/retail names this SetLoop (NOT a SetJump overload). Keeping the
+    // Retail names this SetLoop (NOT a SetJump overload). Keeping the
     // dc3 name "SetJump" collided with SetJump(float,...) below: MSVC groups
     // same-name virtuals at the first declaration's slot, collapsing the float
     // overload from retail's 0xa0 to 0x94 (-3 slots). Renaming to SetLoop breaks
     // the collision so SetJump(float,...) lands at 0xa0.
     virtual void SetLoop(String &, String &) = 0;
     virtual bool CurrentJumpPoints(Marker &, Marker &) { return 0; }
-    // RB3 retail (matching rb3-Wii) has an extra AbandonLoop slot here that
+    // RB3 retail has an extra AbandonLoop slot here that
     // dc3 (newer) dropped; without it Stream's vtable is one slot short and
     // ChannelFaders lands at 0xbc instead of retail's 0xc0.
     virtual void AbandonLoop() = 0;
@@ -114,7 +114,7 @@ public:
     virtual float GetSlipOffset(int) = 0;
     virtual void SetSlipSpeed(int, float) = 0;
     virtual void SetStereoPair(int, int) {}
-    // rb3-Wii returns FaderGroup*, dc3 returns FaderGroup&. Use ptr for
+    // This returns FaderGroup*, dc3 returns FaderGroup&. Use ptr for
     // header compatibility with MasterAudio.cpp.
     virtual FaderGroup *ChannelFaders(int) = 0;
     virtual void AddVirtualChannels(int) {}

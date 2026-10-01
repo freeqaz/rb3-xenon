@@ -47,7 +47,7 @@ Symbol TourPerformerImpl::GetCurrentQuestDisplayName() const {
     Symbol quest = GetCurrentQuest();
     Quest *pQuest = TheQuestMgr.GetQuest(quest);
     // No `if (!pQuest) return quest;` -- retail 0x823609F8 is 88 B and has no
-    // such branch; the rb3-Wii DEV oracle does carry it. Retail bytes win.
+    // such branch. Retail bytes decide.
     MILO_ASSERT(pQuest, 0x8C);
     return pQuest->GetDisplayName();
 }
@@ -55,7 +55,7 @@ Symbol TourPerformerImpl::GetCurrentQuestDisplayName() const {
 Symbol TourPerformerImpl::GetCurrentQuestDescription() const {
     Symbol quest = GetCurrentQuest();
     Quest *pQuest = TheQuestMgr.GetQuest(quest);
-    // W16-HR: no null fallback in retail (dev-oracle branch), as DisplayName.
+    // W16-HR: no null fallback in retail, as DisplayName.
     MILO_ASSERT(pQuest, 0x9F);
     return pQuest->GetDescription();
 }
@@ -63,7 +63,7 @@ Symbol TourPerformerImpl::GetCurrentQuestDescription() const {
 Symbol TourPerformerImpl::GetCurrentQuestLongDescription() const {
     Symbol quest = GetCurrentQuest();
     Quest *pQuest = TheQuestMgr.GetQuest(quest);
-    // W16-HR: no null fallback in retail (dev-oracle branch), as DisplayName.
+    // W16-HR: no null fallback in retail, as DisplayName.
     MILO_ASSERT(pQuest, 0xB2);
     return pQuest->GetLongDescription();
 }

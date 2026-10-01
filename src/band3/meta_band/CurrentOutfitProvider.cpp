@@ -40,7 +40,7 @@ void CurrentOutfitProvider::Text(int, int data, UIListLabel *slot, UILabel *labe
     MILO_ASSERT(label, 0x43);
     // Retail materialises `none` as a FUNCTION-LOCAL static (guard word
     // 0x82E02078 / Symbol 0x82E02074 + an inline ??0Symbol@@QAA@PBD@Z),
-    // where the rb3-Wii dev source references the utl/Symbols.h global.
+    // not the utl/Symbols.h global.
     Symbol sym = DataSymbol(data);
     static Symbol none("none");
     if (sym != none) {

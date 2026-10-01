@@ -42,11 +42,11 @@ void FxSendFlanger::Save(BinStream &bs) {
     bs << mTempo;
 }
 
-// RB3 retail is rev 6 and uses the rb3-Wii ObjMacros LOAD dialect, NOT this
+// RB3 retail is rev 6 and uses the ObjMacros LOAD dialect, NOT this
 // tree's DC3-derived `BinStreamRev d` wrapper — written LONGHAND here rather
 // than by switching the shared macro (which 280+ other TUs depend on).
 //
-// Adjudicated on retail bytes at fn_82722F18 (332 B), not on the oracle:
+// Adjudicated on retail bytes at fn_82722F18 (332 B):
 //   * every read passes the RAW incoming BinStream (`mr r3,r31`) and the
 //     superclass call is `bl ?Load@FxSend@@` with r4=bs — there is no
 //     BinStreamRev stack object anywhere in the body.  The `d` wrapper would

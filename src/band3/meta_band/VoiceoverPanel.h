@@ -38,7 +38,7 @@ public:
 
     // Offsets below are read off the RETAIL bodies (PlayVoiceover 0x8262F6B0,
     // SetVoiceoverFile 0x8262F5E8, UpdateVolumeOffset 0x8262FC20), not inherited
-    // from the rb3-Wii header -- those comments said 0x3c..0x50 and were uniformly
+    // from an older header -- those comments said 0x3c..0x50 and were uniformly
     // 4 bytes stale.
     MoggClip *mVoiceOver; // 0x40
     Fader *mFader; // 0x44

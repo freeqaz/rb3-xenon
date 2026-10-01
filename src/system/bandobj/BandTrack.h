@@ -1,5 +1,5 @@
 #pragma once
-// Ported from rb3-Wii src/system/bandobj/BandTrack.h.
+// BandTrack (bandobj/BandTrack.h).
 // ObjPtr<T,ObjectDir> -> ObjPtr<T> (retail/dc3 single-arg form).
 // UnisonIcon/BandCrowdMeter forward-declared (used only via ObjPtr/pointer) to
 // avoid pulling their full headers into every BandTrack.h includer.

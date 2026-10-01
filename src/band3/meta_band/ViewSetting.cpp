@@ -191,7 +191,7 @@ int FilterViewSetting::NumData() const { return mFilters.size(); }
 
 // Retail fn_825D5E88 is only 58 instructions and contains NO DataArray allocation
 // and NO Release (lane CF-7, read off the asm). The hand-rolled `new DataArray(2)`
-// inherited from the rb3-Wii DEV source was ~60 instructions of pure excess:
+// was ~60 instructions of pure excess:
 // retail calls the TEMPLATED overload ??$SetTokenFmt@PAD@UILabel@@QAAXVSymbol@@PAD@Z
 // = SetTokenFmt(Symbol, char*), which builds the DataArrayPtr internally and
 // already places the token at Node(0) and the argument at Node(1) -- so the

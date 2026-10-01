@@ -97,7 +97,7 @@ OvershellSlot::OvershellSlot(
     setupProviders[4] = mCymbalProvider;
     setupProviders[5] = TheModifierMgr;
     mOvershellDir->HandleType(setupProviders);
-    // Retail X360 ends the ctor here: the rb3-Wii DEV tree's trailing
+    // Retail X360 ends the ctor here: a trailing
     // Find<BandLabel>("user_name.lbl") + TheServer.AddSink(UserLoginMsg::Type())
     // have NO counterpart in the retail body (16 base-only instructions at the
     // tail, zero target instructions between the setupProviders HandleType and
@@ -258,9 +258,9 @@ void OvershellSlot::RemoveUser() {
     // holds exactly four calls (GetUserFromSlot, the vtable+0x1c GetLocalBandUser,
     // SessionMgr::RemoveLocalUser, ResetSlotCamera) and NO branch at all.  So the
     // `if (TheSaveLoadMgr) AutoSaveNow()` guard cannot be there (it would emit a
-    // branch), and the TheWiiProfileMgr.RemovePad() call is the Wii-only /
-    // Xbox-wrong class -- both came from the rb3-Wii DEV oracle.  Retail bytes
-    // outrank the oracle.  See docs/decomp/ROCKCENTRAL_HANDLE_AND_MOVIE_MAP_2026-09-14.md
+    // branch), and there is no TheWiiProfileMgr.RemovePad() call either.
+    // Retail bytes
+    // decide.  See docs/decomp/ROCKCENTRAL_HANDLE_AND_MOVIE_MAP_2026-09-14.md
     mSessionMgr->RemoveLocalUser(pLocUser);
     ResetSlotCamera();
 }
@@ -622,15 +622,15 @@ void OvershellSlot::AttemptRemoveUser() {
     // decision points after the assert: !mSessionMgr->IsLocal(), GetLocalHost()
     // == pUser->GetLocalUser(), mCriticalUser == pUser, mOvershell->InSong() --
     // then the shared SetOvershellSlotState/UpdateAll tail or RemoveUser().  The
-    // rb3-Wii DEV oracle's pad loop over TheWiiProfileMgr (GetIndexForPad /
-    // IsIndexValid / IsPadAGuest / IsPadRegistered) and its fourth branch on
+    // pad loop over TheWiiProfileMgr (GetIndexForPad /
+    // IsIndexValid / IsPadAGuest / IsPadRegistered) and a fourth branch on
     // TheProfileMgr.IsPrimaryProfileCritical() are NOT in the retail bytes
-    // (no loop, no fifth call) -- same Wii-only class W15-E removed from
-    // RemoveUser() below/above.  Retail bytes outrank the oracle.  See
+    // (no loop, no fifth call) -- same class W15-E removed from
+    // RemoveUser() below/above.  Retail bytes decide.  See
     // docs/decomp/ROCKCENTRAL_ONMSG_ESCALATION_2026-09-14.md (lane W16-B).
     //
     // Build 3 of lane W16-B (94.29%) had this as `bool b1 = false; if (...) {
-    // if (...) b1 = true; } if (b1)` -- the oracle's shape.  Retail has NO
+    // if (...) b1 = true; } if (b1)`.  Retail has NO
     // stored bool: both tests branch straight to the critical-user arm
     // (`bne .L_824A27E8` after IsLocal, `bne cr6, .L_824A27E8` after the host
     // compare), and the frame is 0x70 with __savegprlr_29 -- one callee-saved
@@ -996,7 +996,7 @@ void OvershellSlot::FetchLinkingCode() {
 void OvershellSlot::CancelLinkingCode() {
     MILO_ASSERT(mState->GetStateID() == kState_LinkingCode, 0x769);
 #ifdef HX_NATIVE
-    // rb3-Wii DEV clears these two flags here; retail X360 does not — the
+    // No flag clears here in retail X360 — the
     // cancel_linking_code arm inlines to exactly
     //   lwz r3,0x2c(this); bl GetStateID; TheRockCentral.CancelOutstandingCalls(this)
     // with no flag stores at all.
@@ -1187,9 +1187,9 @@ void OvershellSlot::UpdateState() {
             }
         }
         // laneCN-3: reconstructed from retail asm (UpdateState idx 227-251); the
-        // rb3-Wii oracle does NOT have this clause (its LinkingCode path is the
-        // Wii TheServer.IsConnected()/CancelLinkingCode() shape instead), so this
-        // is retail-only and had to come from the disassembly, not the oracle.
+        // clause is retail-only (there is no
+        // TheServer.IsConnected()/CancelLinkingCode() shape here), so this
+        // is reconstructed from the disassembly.
         //   cmpwi cr6, r3, 0x3a  -> kState_LinkingCodeError (58)
         //   two bool virtuals on the localUser LocalUser vbase subobject, slots
         //   +0x18 then +0x14, both required true, then ShowState(0x2f =
@@ -1236,8 +1236,8 @@ void OvershellSlot::UpdateState() {
             }
         }
 
-        // retail X360-only: friends-list denial (Wii builds have the
-        // EnterWiiProfile/RegisterWiiProfile blocks here instead)
+        // retail X360-only: friends-list denial (no
+        // EnterWiiProfile/RegisterWiiProfile blocks here)
         if (mState->GetStateID() == kState_InviteFriends
             && mFriendsProvider->NumData() == 0) {
             ShowState(kState_InviteFriendsDenial);
@@ -1357,7 +1357,7 @@ void OvershellSlot::UpdateView() {
         mOvershellDir->HandleType(updateLocalStatusMsg);
         mSessionMgr->IsLocal();
 #ifdef HX_NATIVE
-        // rb3-Wii DEV-build only: retail X360 has no "update_restart_allowed"
+        // Retail X360 has no "update_restart_allowed"
         // message here (no such string, and no guard bit, in fn_825DB930)
         static Message updateRestartAllowedMsg("update_restart_allowed", 0);
         updateRestartAllowedMsg[0] = mSessionMgr->IsLocalToLeader(user);
@@ -1378,7 +1378,7 @@ void OvershellSlot::UpdateView() {
             updatePadNumMsg[0] = l14->GetPadNum() + 1;
             mOvershellDir->HandleType(updatePadNumMsg);
 #ifdef HX_NATIVE
-            // rb3-Wii DEV-build only: retail X360 has neither the
+            // Retail X360 has neither the
             // UpdateProfilesList() call nor the RockCentral invitation flag here
             UpdateProfilesList();
 #endif
@@ -1533,7 +1533,7 @@ void OvershellSlot::UpdateView() {
         }
     }
 #ifdef HX_NATIVE
-    // rb3-Wii DEV-build only: retail X360 emits nothing between the
+    // Retail X360 emits nothing between the
     // difficulty-restriction handling and the update_mics message
     if (b1) {
         HandleType(show_invitation_notification_msg);
@@ -1834,8 +1834,8 @@ void OvershellSlot::UpdateFriendsList() {
     mOvershellDir->HandleType(updateFriendsMsg);
 }
 
-// Retail 0x825D8FD0 / 0x825D9040 (X360 TU5): the Wii-era script messages are
-// replaced by direct calls into the X360-only gamercard / friends providers.
+// Retail 0x825D8FD0 / 0x825D9040 (X360 TU5): no script messages here;
+// these are direct calls into the X360-only gamercard / friends providers.
 void OvershellSlot::ViewUserGamercard(int i) {
     BandUser *pUser = GetUser();
     MILO_ASSERT(pUser->IsLocal(), 0x9A0);
@@ -1893,8 +1893,8 @@ __declspec(noinline) bool OvershellSlot::CanChangeSynapseOption() {
 
 void OvershellSlot::UpdateProfilesList() {
     // Retail X360's Reload() takes no argument -- see the header comment on
-    // OvershellProfileProvider::Reload. rb3-Wii's oracle version reads
-    // `GetUser()->GetLocalBandUser()` into a second arg here, but the retail
+    // OvershellProfileProvider::Reload. There is no
+    // `GetUser()->GetLocalBandUser()` second arg here: the retail
     // X360 disassembly shows no GetUserFromSlot/IsLocal/GetLocalBandUser calls
     // at all in this function.
     mSwappableProfilesProvider->Reload();

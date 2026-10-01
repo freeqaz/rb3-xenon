@@ -105,8 +105,8 @@ private:
     //
     // mInitted is DC3-only too: retail's ?Terminate@SongPreview@@QAAXXZ has no
     // `if (mInitted)` guard and no `mInitted = 0` store at all, and the ctor
-    // stores nothing at 0x6e/0x6f. The rb3-Wii oracle agrees (no such member,
-    // no guards in Init/Terminate/SetMusicVol/SetCrowdSingVol/Start).
+    // stores nothing at 0x6e/0x6f (no such member,
+    // and no guards in Init/Terminate/SetMusicVol/SetCrowdSingVol/Start).
 #ifdef HX_NATIVE
     bool mSameSongRequested;
     bool mInitted;

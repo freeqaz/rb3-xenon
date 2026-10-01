@@ -4,7 +4,7 @@
 #include "math/Utl.h"
 #include "utl/MemMgr.h"
 #include <algorithm>
-#include <cfloat> // FLT_MAX (the Wii oracle's 3.4028235E+38f decimal literal
+#include <cfloat> // FLT_MAX (the 3.4028235E+38f decimal literal
                   // overflows MSVC X360's parser (C2177); FLT_MAX is the exact
                   // same value, 0x7F7FFFFF, and is MSVC/clang portable)
 #include <functional>
@@ -663,7 +663,7 @@ void VocalNoteList::UpdatePitchRangeTickDelimited(
     int startTick, int endTick, float &min, float &max
 ) {
     // .begin()/.end() spelling preserved from the prior tree stub — it matches
-    // retail (the oracle's .data() spelling regressed 2 whole-binary matches).
+    // retail (a .data() spelling regressed 2 whole-binary matches).
     VocalNote *it = mNotes.begin();
     VocalNote *end = mNotes.end();
     for (; it != end; ++it) {

@@ -14,8 +14,8 @@ class ClosetPanel;
 
 // Xbox-360-only DLC asset-offer store embedded in ClosetMgr (retail RTTI
 // ".?AVAssetStore@@", sizeof 0x4c, ctor @0x825D1A38, methods @0x825D15A8/
-// 0x825D1718/0x825D1748 in an unpinned TU). Declaration-only: absent from the
-// rb3-Wii oracle; only ClosetMgr::Handle's call sites are matched here.
+// 0x825D1718/0x825D1748 in an unpinned TU). Declaration-only;
+// only ClosetMgr::Handle's call sites are matched here.
 class AssetStore : public Hmx::Object {
 public:
     AssetStore();
@@ -77,7 +77,7 @@ public:
     void SetPatches();
     void ResetPatches();
     bool IsAlreadyLoaded();
-    // TU5-only (retail 0x82566988, unnamed; absent from the rb3-Wii oracle):
+    // TU5-only (retail 0x82566988, unnamed):
     // out-of-line `mAssetStore.unk34 != 0`, called by CustomizePanel's
     // ButtonDownMsg handler. The name is ours, not retail's.
     bool IsPurchaseUIActive() const;

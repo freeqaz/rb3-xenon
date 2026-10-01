@@ -352,7 +352,7 @@ bool BlockMgr::SpinUp() {
                 );
 #else
                 // Retail reads the block's last sector into its own buffer
-                // (rb3-Wii's arguments).
+                // (sector (BlockNum+1)*32-1, count 1, at Buffer()+0xF800).
                 bool x = CDRead(
                     mReadingBlock->ArkFileNum(),
                     ((mReadingBlock->BlockNum() + 1) << 5) - 1,

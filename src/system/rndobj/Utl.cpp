@@ -296,7 +296,7 @@ int GenerationCount(RndTransformable *t1, RndTransformable *t2) {
 }
 
 RndAnimatable *AnimController(Hmx::Object *o) {
-    // rb3-Wii oracle uses FOREACH_OBJREF (reverse walk of a std::vector<ObjRef*>).
+    // The natural form is FOREACH_OBJREF (reverse walk of a std::vector<ObjRef*>).
     // This tree's Hmx::Object::Refs() is a DC3-era intrusive next/prev ring with
     // only a forward iterator (see UIFontImporter::FindFontForMat for the same
     // adaptation), so this walks forward via RefPtrOf() instead.

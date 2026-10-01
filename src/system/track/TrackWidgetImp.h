@@ -12,7 +12,7 @@
 #include <list>
 #include <vector>
 
-// rb3-Wii defines IsFabsZero in math/Utl.h, but adding it there perturbs codegen
+// IsFabsZero would naturally live in math/Utl.h, but adding it there perturbs codegen
 // in unrelated units that include Utl.h (extra inline COMDAT shifts inlining).
 // TrackWidgetImp.h (via DoRemoveAt below) is the only consumer in this port, so
 // it is scoped here to keep math/Utl.h byte-identical to main.

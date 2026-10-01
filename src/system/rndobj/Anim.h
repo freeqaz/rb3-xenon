@@ -14,7 +14,7 @@ class AnimTask;
 
 // Retail X360 RB3 (rev-11-era) RndAnimatable vtable ends its own virtual slice at
 // ListAnimChildren; DC3's newer RndAnimatable appended `OnListFlowLabels` (Flow
-// integration). rb3-Wii's Anim.h confirms no such virtual exists in the RB3 era.
+// integration). No such virtual exists in the RB3 era.
 // Keeping it virtual adds a 10th own-slot, shifting every later (derived-class)
 // slot up 0x4 and breaking EventTrigger::Trigger vcalls (target slot 0x24 vs ours
 // 0x28; verified via machine-code anchors in VocalTrackDir::PlayIntro/TrackReset/
@@ -83,7 +83,7 @@ public:
 
     // Retail's 3-arg call sites (UITransitionHandler etc.) resolve to a genuinely
     // distinct, leaner Animate() overload with no listener/easeType/easePower/wrap
-    // params at all (see rb3-Wii Anim.h: no such params exist pre-DC3). Restoring
+    // params at all (none exist pre-DC3). Restoring
     // that lean overload here (rather than relying on this extended one's defaults)
     // matches retail's call-site codegen exactly (fewer arg-setup instructions).
     Task *Animate(float blend, bool wait, float delay);
@@ -98,7 +98,7 @@ public:
     );
     // Same rationale as the 3-arg and 5-arg lean overloads above: RB3-era
     // RndAnimatable has NO listener/easeType/easePower/wrap on this form at all
-    // (see rb3-Wii Anim.h, which stops at `Symbol type`). Retail's call sites
+    // (the form stops at `Symbol type`). Retail's call sites
     // (BandStarDisplay::SetNumStars, ...) therefore emit a 10-word outgoing
     // parameter area; routing them through the dc3-era extended overload below
     // costs 4 extra 8-byte param slots (+0x20 of arg area), which in turn
@@ -187,7 +187,7 @@ protected:
 class AnimTask : public Task {
 public:
     // Retail's lean Animate() overloads (see RndAnimatable::Animate above) never
-    // built up a listener/easeType/easePower/wait AnimTask at all (rb3-Wii's
+    // built up a listener/easeType/easePower/wait AnimTask at all (the RB3
     // AnimTask ctor takes exactly these 6 params, full stop). A forwarding stub
     // that delegates to the 10-arg ctor with hardcoded defaults gets inlined by
     // /Ob2 right back into the exact same call as the extended overload -
@@ -233,11 +233,11 @@ public:
     // The 36-byte delta is forced, not fitted: dc3's extra scalar members
     // (mPrevFrame/mEaseFunc/mEasePower/mWait/mFrameSpan/mActive) total only 24
     // bytes, so they alone CANNOT account for 36 — the 12-byte ObjPtr mListener
-    // must go too. Independently, rb3-Wii's AnimTask (the RB3-era oracle) has
+    // must go too. Independently, the RB3-era AnimTask has
     // exactly this field set, and laying it out on our Task base (mAnim at 0x28,
     // compiler-verified) sums to exactly 0x6c. Easing/listener/wait/active are
     // dc3-newer engine features; RB3 had none of them.
-    // Consequence: StartAnim() moves into the ctors (rb3-Wii does it there),
+    // Consequence: StartAnim() moves into the ctors,
     // since there is no mActive first-poll latch any more.
     /** The animatable this task should be animating. */
     ObjOwnerPtr<RndAnimatable> mAnim; // 0x28

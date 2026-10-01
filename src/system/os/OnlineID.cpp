@@ -44,8 +44,8 @@ BinStream &operator<<(BinStream &bs, const OnlineID &ssm) {
 }
 
 // Retail 0x825245E8: ReadEndian(&oid, 8) -- XUID is u64 at offset 0 -- then a
-// `stb 1` into offset 0x8 (mValid), returning bs. Matches the rb3-Wii oracle
-// modulo the platform ID member (Wii reads mPrincipalID, X360 reads mXUID).
+// `stb 1` into offset 0x8 (mValid), returning bs. The platform ID member
+// is mXUID on X360.
 BinStream &operator>>(BinStream &bs, OnlineID &oid) {
     bs >> oid.mXUID;
     oid.mValid = true;
@@ -60,7 +60,7 @@ BinStream &operator>>(BinStream &bs, OnlineID &oid) {
 // 0x82CCB29C, which is never stored anywhere in .text -- Keyboard.cpp's
 // gSource, never initialised on X360.  Their caller set (Rnd.cpp
 // FailRestartConsole, UIManager::Init/Terminate, CheatsInit/Terminate) is
-// exactly the oracle's three KeyboardSubscribe sites.  The two bodies are
+// exactly the three KeyboardSubscribe sites.  The two bodies are
 // masked-reloc SHAPE TWINS (both `if (g) g->AddSink(o)`), which is why the
 // old mis-assignment scored 100.0.  Without this include the corrected rows
 // have no base counterpart here and the repair costs -1 matched.

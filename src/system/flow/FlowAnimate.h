@@ -88,6 +88,6 @@ protected:
     bool mImmediateRelease; // 0xc5
     // See FlowDistance.h: retail RB3 sizes FlowNode-derived objects 0x10 larger
     // than dc3's newer layout; trailing pad in the virtual-Hmx::Object region.
-    // NewObject size immediate (0x104) confirms via the sizeof oracle.
+    // NewObject size immediate (0x104) confirms this sizeof.
     char _retailTrailingPad[16]; // 0xc6
 };

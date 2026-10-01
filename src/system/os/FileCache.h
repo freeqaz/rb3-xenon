@@ -94,7 +94,7 @@ public:
     // spew in DumpOverSize; RB3 has no such parameter. Proven from retail
     // codegen at PreloadPanel::PreloadPanel, which materializes only r4/r5/r6
     // for this call (base with the DC3 signature emitted r4..r7), and
-    // corroborated by the rb3-Wii oracle, whose FileCache ctor is
+    // corroborated by RB3's FileCache ctor being
     // `FileCache(int, LoaderPos, bool)` at BOTH of its call sites.
     FileCache(int, LoaderPos, bool);
     ~FileCache();

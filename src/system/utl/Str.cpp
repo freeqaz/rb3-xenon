@@ -17,7 +17,7 @@ char gEmpty[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 // A default-constructed String's mStr points at this shared empty-buffer sentinel
 // (a zero-initialized .bss char). Retail bakes its *address* directly into every
 // String ctor (lis/addi of a fixed .bss VA) — mStr = &gNullStrBuf — NOT a load of a
-// `const char*` variable's value. Mirrors rb3-Wii's `char gEmpty; mStr(&gEmpty)`.
+// `const char*` variable's value: `char gEmpty; mStr(&gEmpty)` in effect.
 char gNullStrBuf = 0;
 
 // gNullStr ("" in .rdata) backs Symbol/comparison use; distinct from gNullStrBuf.

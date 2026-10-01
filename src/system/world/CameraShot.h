@@ -138,7 +138,7 @@ class AutoPrepTarget;
 
 /** "A camera shot. This is an animated camera path with keyframed settings." */
 // NB(rb3-xenon): retail CamShot is single-inheritance RndAnimatable only
-// (per rb3-Wii's CameraShot.h and Ghidra of BandCamShot::GetTotalDuration
+// (Ghidra of BandCamShot::GetTotalDuration
 // reading mDuration at this+0x190). DC3 derives from RndAnimatable +
 // RndTransformable; retail does not.
 class CamShot : public RndAnimatable {
@@ -214,7 +214,7 @@ protected:
     // ours are both SetFrameEx -- the two tables agree at BOTH ends and differ
     // by exactly these four insertions.
     //
-    // They were a DC3-era addition (absent from the rb3-Wii oracle's CamShot
+    // They were a DC3-era addition (absent from RB3's CamShot
     // entirely), had ZERO overrides and ZERO call sites tree-wide, and their
     // retail call sites were already removed by an earlier lane -- see the
     // NB(idx233) notes in CameraShot.cpp's BuildTransform and Interp.  Only

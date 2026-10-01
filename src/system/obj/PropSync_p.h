@@ -103,7 +103,7 @@ bool PropSync(std::vector<T> &vec, DataNode &node, DataArray *prop, int i, PropO
         node = (int)vec.size();
         return true;
     } else {
-        // NOTE: RB3-360 retail (and the rb3-Wii oracle) have NO bounds check here;
+        // NOTE: RB3-360 retail has NO bounds check here;
         // DC3's newer engine added `if (idx >= vec.size() + (op == kPropInsert))`.
         typename std::vector<T>::iterator it = vec.begin() + prop->Int(i++);
         if (i < prop->Size() || op & (kPropGet | kPropSet | kPropSize)) {
@@ -131,7 +131,7 @@ bool PropSync(std::list<T> &pList, DataNode &node, DataArray *prop, int i, PropO
         node = (int)pList.size();
         return true;
     } else {
-        // NOTE: RB3-360 retail (and the rb3-Wii oracle) have NO bounds check here;
+        // NOTE: RB3-360 retail has NO bounds check here;
         // DC3's newer engine added `if (idx >= pList.size() + (op == kPropInsert))`.
         typename std::list<T>::iterator it = pList.begin();
         for (int count = prop->Int(i++); count > 0; count--) {

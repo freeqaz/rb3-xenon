@@ -65,7 +65,7 @@ namespace Quazal {
     // TU stores just the code-address word (one 4-byte store at this+4) — i.e. it
     // truncated the 8-byte DuplicatedObject pmf to its first word with no stack
     // temp. We cannot reproduce that exact frameless single-word store from the
-    // available (partial rb3-Wii) source: any standard cast either materializes
+    // available source: any standard cast either materializes
     // the full 8-byte pmf literal (extra `li 0; stw` of the this-adjust word) or
     // forces a frame. &StateMachine::TopState is a 4-byte SI pmf, so InvalidState
     // and the ValidState `else` branch match exactly.

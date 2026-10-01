@@ -3,7 +3,7 @@
 #include "synth/FxSend.h"
 #include "utl/BinStream.h"
 
-// Retail RB3 uses the rb3-Wii (ObjMacros.h) rev dialect -- file-scope rev
+// Retail RB3 uses the ObjMacros.h rev dialect -- file-scope rev
 // words written by Load -- not the DC3-derived obj/Object.h BinStreamRev
 // local.  Both words fold onto ONE base register at offsets 0/4, which only
 // happens for internal-linkage align(4) file-scope statics.
@@ -52,11 +52,11 @@ BEGIN_PROPSYNCS(FxSendMeterEffect)
     SYNC_PROP_MODIFY(reset_peaks, mResetPeaks, OnParametersChanged())
 #ifdef HX_NATIVE
     // DC3-era additions; RB3-360 retail syncs only reset_peaks here.  Arbitrated
-    // on retail asm (lane CP-2), not on oracle agreement: objdiff's call diff for
+    // on retail asm (lane CP-2): objdiff's call diff for
     // the 264 B retail body reports ??0Symbol@@ target 1 / base 3, and
     // ?ChannelData@FxSendMeterEffect@@ base-only x2 -- retail never calls the
     // channel accessors at all.  The 70-instruction insert cluster is exactly
-    // these two blocks.  rb3-Wii independently agrees (reset_peaks only).
+    // these two blocks (reset_peaks only).
     SYNC_PROP_SET(channel1, ChannelData(0), )
     SYNC_PROP_SET(channel2, ChannelData(1), )
 #endif

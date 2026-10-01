@@ -30,15 +30,15 @@ class KerningTable;
 //                lfs +0x5c, vector walk at +0x6c.
 //   * CharDefined 0x82473A98: two finds on the map at +0x40, then tests CharInfo
 //                +0x0/+0x4/+0xc.
-// That is the rb3-Wii generation's shape: ONE ObjPtr<RndMat> mMat (no
+// That is the older generation's shape: ONE ObjPtr<RndMat> mMat (no
 // ObjPtrVec mMats), an mTexCellSize Vector2 (no mMaterialOffsets vector), an
 // mNextFont fallback chain, and a FOUR-FLOAT CharInfo with no page index. The
 // multi-page DC3 shape this file used to carry does not exist in RB3 retail.
 //
 // ⛔ CORRECTED 2026-08-20 (lane VTGRIND). This paragraph used to read: "The
-// VTABLE is deliberately NOT changed to rb3-Wii's. Retail's CharDefined and
+// VTABLE is deliberately NOT changed to the older generation's. Retail's CharDefined and
 // Print are mangled `?...@RndFont@@UB...` -- public *virtual* const -- whereas
-// rb3-Wii declares both non-virtual. RB3-360 is a hybrid: Wii-era members under
+// the older generation declares both non-virtual. RB3-360 is a hybrid: older members under
 // a DC3-era vtable."  That is HALF RIGHT, and the half that is wrong was
 // unknowable from the instrument it used.
 //
@@ -129,7 +129,7 @@ public:
     bool CharDefined(unsigned short) const;
     float AspectRatio() const { return mCellSize.y / mCellSize.x; }
     RndMat *Mat() const { return mMat; }
-    // rb3-Wii's accessor, and NON-virtual on purpose. Retail reads the font's
+    // Plain accessor, and NON-virtual on purpose. Retail reads the font's
     // material with a plain `lwz r4, 0x30(font)` field load at every SetMat site
     // in rndobj/Text.cpp (0x82458E20, 0x82458ED4, 0x8245911C, 0x824594C4) -- no
     // vtable call appears anywhere. Callers that retail inlines must use this,
@@ -143,8 +143,8 @@ public:
     float FontUnitInverse() const { return 1.0f / FontUnit(); }
     // NOT const: Hmx::Object::Print() is non-const, so a `const` here does NOT
     // override -- MSVC keeps Object::Print in its slot AND appends a new one.
-    // dc3-decomp declares it const and we inherited that; rb3-Wii, the closer
-    // oracle for RB3, declares it NON-const.  Retail agrees: a Print@RndFont
+    // dc3-decomp declares it const and we inherited that; RB3
+    // declares it NON-const.  Retail agrees: a Print@RndFont
     // body sits in Object::Print's slot (13), and of ~40 retail Print
     // overrides every other one is `UAA` (non-const) -- the lone `UBA` is this
     // symbol, whose spelling comes from OUR declaration via the map.
@@ -180,10 +180,10 @@ public:
     bool
     CharWidthAdvanceCoords(unsigned short, float &, float &, Vector2 &, Vector2 &) const;
     float DeprecatedSize() const { return mDeprecatedSize; }
-    // RB3 retail API used by ui/UILabel.cpp (rb3-Wii oracle rndobj/Font.h).
+    // RB3 retail API used by ui/UILabel.cpp.
     // DECLARATION-ONLY, non-virtual -> layout- and vtable-neutral.
     RndFont *TextureOwner() const;
-    // Inline (rb3-Wii Font.h's non-HX_NATIVE branch: `return mCellSize.y /
+    // Inline (`return mCellSize.y /
     // mCellSize.x;`). Retail's UILabel::FitText (0x827f5550) inlines this
     // ratio directly -- two float loads at mCellSize's offsets (0x60/0x64)
     // and a single fdivs, no `bl` -- so leaving this out-of-line forces an
@@ -365,7 +365,7 @@ protected:
     std::map<unsigned short, CharInfo *> mCharInfoMap; // 0x88
 };
 
-// Single-page, per the rb3-Wii oracle. The DC3 page-indexed form
+// Single-page. The DC3 page-indexed form
 // (BitmapLocker(RndFont*, int) + LoadPage(int)) presupposed the multi-page
 // ObjPtrVec<RndMat> font that RB3 retail does not have.
 //

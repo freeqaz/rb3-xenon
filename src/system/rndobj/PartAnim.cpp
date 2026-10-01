@@ -87,8 +87,8 @@ BEGIN_COPYS(RndParticleSysAnim)
 END_COPYS
 
 // Retail RndParticleSysAnim::Load (0x82480D88) reads the revision word whole
-// into a stack local (`bs >> rev`, then lwz/cmpwi against 2/1) -- rb3-Wii's
-// shape -- and passes the raw stream to every read. No rev wrapper exists
+// into a stack local (`bs >> rev`, then lwz/cmpwi against 2/1)
+// -- and passes the raw stream to every read. No rev wrapper exists
 // (band.exe has no `.?AVBinStreamRev@@` descriptor).
 BEGIN_LOADS(RndParticleSysAnim)
     int rev;

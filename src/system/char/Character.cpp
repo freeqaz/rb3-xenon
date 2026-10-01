@@ -124,7 +124,7 @@ BEGIN_HANDLERS(Character)
         EnableBlinks(_msg->Int(2), false)
     )
     // RB3 retail strips the debug-only handlers (no "list_interest_objects"
-    // string in the XEX; rb3-Wii gates these + mTest behind MILO_DEBUG).
+    // string in the XEX; they and mTest are MILO_DEBUG-only).
     HANDLE_SUPERCLASS(RndDir)
 END_HANDLERS
 
@@ -150,7 +150,7 @@ BEGIN_PROPSYNCS(Character)
         interest_to_force, mInterestToForce, SetFocusInterest(mInterestToForce, 0)
     )
     // RB3 retail strips the debug-only props (no "debug_draw_interest_objects"
-    // / "CharacterTesting" strings in the XEX; rb3-Wii gates them MILO_DEBUG).
+    // / "CharacterTesting" strings in the XEX; they are MILO_DEBUG-only).
     SYNC_SUPERCLASS(RndDir)
 END_PROPSYNCS
 
@@ -174,9 +174,9 @@ BinStream &operator<<(BinStream &bs, const Character::Lod &lod) {
 }
 
 BEGIN_SAVES(Character)
-    // Retail writes 0x11 here, NOT the 0x15 the rb3-Wii dev oracle carries:
+    // Retail writes 0x11 here, NOT 0x15:
     // target [4] is `li r11, 0x11` feeding WriteEndian(4).  Adjudicated on
-    // retail bytes, per the rule that an oracle rev disagreement is a
+    // retail bytes, per the rule that a rev disagreement is a
     // hypothesis and never a verdict.
     SAVE_REVS(0x11, 0)
     SAVE_SUPERCLASS(RndDir)
@@ -276,7 +276,7 @@ BinStream &operator>>(BinStream &bs, Character::Lod &lod) {
 }
 
 void Character::PostLoad(BinStream &bs) {
-    // Retail shape (rb3-Wii ObjMacros dialect): no BinStreamRev is constructed
+    // Retail shape (ObjMacros dialect): no BinStreamRev is constructed
     // (no ??_7BinStreamRev store, no ??0BinStream/dtor); the popped revision is
     // written into the file-scope gRevs aggregate (`sth rev,0x4(r21)` /
     // `sth altRev,0x0(r21)` off one base register) and the rev is cached and
@@ -1096,7 +1096,7 @@ bool CharPollableSorter::ChangedByRecurse(Dep *dep) {
 
 // Is a reachable by walking b's changed-by chain? A dep is never "changed by"
 // itself. Matches retail (the a == b early-out and the a/b roles are both
-// visible in Sort's inlined copy), rb3-Wii and DC3.
+// visible in Sort's inlined copy) and DC3.
 bool CharPollableSorter::ChangedBy(Dep *a, Dep *b) {
     if (a == b)
         return false;

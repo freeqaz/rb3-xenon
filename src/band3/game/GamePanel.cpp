@@ -175,7 +175,7 @@ void GamePanel::CreateGame() {
     // lbl_82E0260C bit 0x1, instance lbl_82E02608, string lbl_820E2608 ==
     // "disable_pause_ms", plus a ??__F atexit thunk), emitted at this exact
     // declaration point -- immediately after the mGame store and before the
-    // Property call. The rb3-Wii oracle uses the file-scope extern from
+    // Property call, not the file-scope extern from
     // Symbols2.h:1146, which is the wrong spelling for this image.
     static Symbol disable_pause_ms("disable_pause_ms");
     mGame->mDisablePauseMs = Property(disable_pause_ms, true)->Float();
@@ -264,7 +264,7 @@ void GamePanel::Enter() {
     mLoadProf.Stop();
     Reset();
     mGame->SetPaused(false, true, true);
-    // Retail-360 addition (absent on Wii): update rich presence with the song
+    // Retail-360 addition: update rich presence with the song
     // being entered. Nested call shape is load-bearing: the vtable is cached
     // across the Current()/Song() arg evaluation.
     ThePresenceMgr.SetSongID(
@@ -287,7 +287,7 @@ void GamePanel::Exit() {
         TheTaskMgr.ClearTimelineTasks(kTaskBeats);
         TheTaskMgr.ClearTimelineTasks(kTaskTutorialSeconds);
     }
-    // Retail-360 addition (absent on Wii, exactly like the SetSongID call in
+    // Retail-360 addition (exactly like the SetSongID call in
     // Enter above): clear rich presence on the way out.  Sits AFTER the
     // !mMultiEvent block, not inside it -- retail's `bne 80` guarding that block
     // is byte-identical to ours, so the join point is unmoved, while the
@@ -473,7 +473,7 @@ void GamePanel::UpdateNowBar() {
 // TrackerDisplay.cpp's HasLocalPlayer() precedent and force it noinline.
 //
 // Retail-360 body (lane W16-AT, reconstructed from the 157 retail
-// instructions at 0x82695178; no source oracle -- rb3-Wii's UpdateNowBar above
+// instructions at 0x82695178; no source exists -- UpdateNowBar above
 // is the dev-build MBT overlay and shares only the TaskMgr/SongDB reads):
 //   * no mTime RndOverlay to write into (stripped member) -- the three
 //     formatted strings go through TrackPanelDir's vtable slot 0xd4 (Unkd4,
@@ -641,7 +641,7 @@ void GamePanel::ClearDrawGlitch() {
     RndPostProc::Reset();
     TheRnd.ForceColorClear();
     // Retail 360 draws two buffered frames with NO EndWorld between
-    // BeginDrawing and TheUI->Draw (the Wii shape had EndWorld here).
+    // BeginDrawing and TheUI->Draw.
     for (int i = 0; i < 2; i++) {
         TheRnd.BeginDrawing();
         TheUI->Draw();

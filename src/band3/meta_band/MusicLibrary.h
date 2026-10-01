@@ -23,8 +23,8 @@
 #include "ui/UIListProvider.h"
 #include <vector>
 
-/** Retail-only async op polled by MusicLibrary::Poll — absent from the rb3-Wii
-    dev branch. Retail shape (verified from the XEX): size 0x64, vptr @0x0,
+/** Retail-only async op polled by MusicLibrary::Poll.
+    Retail shape (verified from the XEX): size 0x64, vptr @0x0,
     int state @0x28 (2 = done, 3 = in progress?, 4 = failed -> deleted),
     vector of overlapped IO @0x54. Impl lives in an unidentified meta_band TU:
     ctor @0x825A4860, Poll @0x825A50F8, Finish @0x825A3ED0. Only the shape
@@ -57,8 +57,8 @@ public:
         ⚠ NAME UNKNOWN AND DELIBERATELY NOT GUESSED. 0x825BC900 is absent from
         target_symbol_map.json, has no .pdata entry of its own (it is absorbed into
         the extent of the function ending at 0x825BC8F8 -- a live instance of
-        ".pdata-absence is not a not-a-function test"), and neither oracle can name
-        it: DC3 and rb3-Wii have no MusicLibraryStore at all, and their only
+        ".pdata-absence is not a not-a-function test"), and no symbol can name
+        it: DC3 has no MusicLibraryStore at all, and its only
         ClearCurrentPreview callers are StorePreviewMgr's own
         HANDLE_ACTION(clear_current_preview,...). Named after its address per the
         Unk825BCA38 precedent below.
@@ -194,8 +194,8 @@ public:
     int GetMaxSetlistSize();
     void SetTask(MusicLibraryTask &);
     SongSortMgr::SongFilter &GetFilter();
-    // retail fn_8253ACF8: `lbz r3, 0x76(r3); blr` == mTask + 0x22. The rb3-Wii
-    // decomp calls that member `requiresStandardParts`, but Tour.cpp feeds it
+    // retail fn_8253ACF8: `lbz r3, 0x76(r3); blr` == mTask + 0x22. That
+    // member is sometimes called `requiresStandardParts`, but Tour.cpp feeds it
     // `Quest::IsUGCAllowed()` (Tour::LaunchQuestFilter ->
     // CreateAndSubmitMusicLibraryTask), so it is really the allow-UGC flag.
     bool GetAllowUGC();
@@ -225,7 +225,7 @@ public:
     bool IsExiting();
     void OnUnload();
     void ResetFilters();
-    // Retail fn_82540208 (TU5, absent from the rb3-Wii oracle; name is ours).
+    // Retail fn_82540208 (TU5; name is ours).
     void RefreshSongLists();
     void ToggleFilter(FilterType, Symbol);
     const char *GetStatusText();
@@ -344,7 +344,7 @@ public:
     short mHeaderCareerInstrumentMask; // 0x190
     int mHeaderCareerStars; // 0x194
     int mHeaderPossibleStars; // 0x198 (compiled: 0x198)
-    /** Retail-only tail fields (0x19c/0x1a0), absent from the Wii dev branch.
+    /** Retail-only tail fields (0x19c/0x1a0).
         NOTE: retail's ctor does NOT initialize these (verified: no other
         stores to 0x19c/0x1a0 in the unit); they are set by the op-starter
         (retail fn_825276C0: unk1a0 = false; unk19c = new MusicLibraryUnkOp). */

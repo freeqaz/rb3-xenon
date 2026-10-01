@@ -103,7 +103,7 @@ public:
 
     SongData *GetData() const { return mSongData; }
 
-    // Offsets below are Wii-era annotations (stlport vector = 0x8 there; it is
+    // Offsets below are pre-360 annotations (stlport vector = 0x8 there; it is
     // 0x10 on X360, so the real 360 offsets differ). NOTE: a prior lead claimed
     // retail SongDB is >= 0xb1 bytes based on the 8-byte getter fn_82659CD8
     // (`lbz r3, 0xb0(r3)`) supposedly reading SongDB+0xb0 -- that was wrong: the

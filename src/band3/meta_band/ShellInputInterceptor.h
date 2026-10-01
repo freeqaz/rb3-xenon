@@ -22,8 +22,8 @@ public:
     // inlined Timer::Start touches +0x30/+0x54, mLastUpDown zeroed at
     // +0x60..+0x6c) — sizeof = 0x70 (`li r3, 0x70` at the BandUI::Init new-site,
     // 0x82523548). There is NO int between the bools and the Timer on X360: the
-    // rb3-Wii header's `int unk24` sat where alignment padding falls on Wii
-    // (indistinguishable from padding there), but on X360 it pushed the 8-aligned
+    // `int unk24` sometimes assumed here would sit in alignment padding on a
+    // narrower layout, but on X360 it pushed the 8-aligned
     // Timer from 0x30 to 0x38 and sizeof from 0x70 to 0x78 — the sole source of
     // the BandUI::Init raw diff `li 0x70 vs 0x78` (d4afbf0). Timer itself is 0x30
     // on X360 both here and in Game.h; the two waves' evidence never conflicted.

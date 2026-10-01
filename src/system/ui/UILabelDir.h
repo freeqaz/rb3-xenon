@@ -33,7 +33,7 @@ public:
     RndFont *FontObj(Symbol) const;
     UIColor *GetStateColor(UIComponent::State) const;
     // ------------------------------------------------------------------
-    // RB3 retail UILabelDir API (rb3-Wii oracle). DECLARATION-ONLY, non-virtual:
+    // RB3 retail UILabelDir API. DECLARATION-ONLY, non-virtual:
     // layout- and vtable-neutral; they let ui/UILabel.cpp compile in the RB3
     // shape. Bodies land when UILabelDir itself is ported.
     // ------------------------------------------------------------------

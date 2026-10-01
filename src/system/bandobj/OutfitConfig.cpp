@@ -1,4 +1,4 @@
-// Ported from rb3-Wii src/system/bandobj/OutfitConfig.cpp (MWCC -> MSVC X360).
+// OutfitConfig (bandobj/OutfitConfig.cpp), MSVC X360.
 // Lane NCCC f264: RB3_TU_OBJPTR_DEFER_OWNER -- reused (not a new gate) for the
 // ObjPtr<RndMat> copy ctor double-vtable-store fix; see obj/ObjPtr_p.h's copy
 // ctor section for why the same gate covers both the two-arg and copy ctors
@@ -257,15 +257,15 @@ void OutfitConfig::MatSwap::Compose(
             sMat->SetColor(baseColor.red, baseColor.green, baseColor.blue);
             TheRnd.DrawRect(rect, baseColor, sMat, nullptr, nullptr);
         }
-        // ONE SetUseEnv call on xenon, not two. rb3-Wii's target writes its
-        // mUseEnviron bit TWICE (two rlwinm on the packed word 0xac), but the
-        // 360 target does not: the entire retail Compose contains exactly two
+        // ONE SetUseEnv call on xenon, not two. The 360 target writes
+        // mUseEnviron ONCE (there is no second packed-word store):
+        // the entire retail Compose contains exactly two
         // byte stores, `stb 0x99` (mUseEnviron) and `stb 0x11c`, and both
         // already pair with this source. Adding a second call was measured and
         // REGRESSES xenon -- Compose 86.76854 -> 86.27865 -- because it emits a
         // third byte store with no counterpart in the target. Platform
         // divergence, same class as the diffTex-vs-TheRnd rect above; do not
-        // port the Wii's count across.
+        // add a second call.
         sMat->SetUseEnv(false);
         sMat->SetCull(kCullNone);
         for (int i = 0; i < patches.size(); i++) {
@@ -497,7 +497,7 @@ void OutfitConfig::RecomposePatches(int flag) {
 // times from the 3-arg SetSkinTextures). Points one head-feature texblend
 // controller at the numbered head-normal map for the feature's current option and
 // reports whether that actually changed anything. Reconstructed from the retail
-// assembly -- rb3-Wii never decompiled it, which is exactly why its two format
+// assembly -- it was never decompiled before, which is exactly why its two format
 // strings sat unreferenced in the DECOMP_FORCEACTIVE at the bottom of this file.
 static bool
 SetHeadNormMap(const char *part, int option, Symbol gender, ObjectDir *dir1, ObjectDir *dir2) {

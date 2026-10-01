@@ -37,7 +37,7 @@ PracticePanel *ThePracticePanel;
 
 // RB3-360: retail ctor (Function_82693E60) initializes exactly these members
 // in exactly this order/value sequence (0, -1, 0, 1, 0, 1) — no unk59/unk5c/
-// unk60 (Wii-dev-only).
+// unk60 (those do not exist in retail).
 PracticePanel::PracticePanel()
     : mInVocalMode(0), mFader(Hmx::Object::New<Fader>()), mPlayAllTracks(0),
       mGuidePitch(0), unk4c(-1), unk54(0), mScorePart(-1), unk55(0), unk56(1),
@@ -55,7 +55,7 @@ PracticePanel::~PracticePanel() {
 void PracticePanel::Enter() {
     mGuidePitch->Init();
     UIPanel::Enter();
-    // RB3-360: `unk59 = false;` removed — member absent in retail (Wii-only).
+    // RB3-360: no `unk59 = false;` -- member absent in retail.
     TheGame->AddMusicFader(mFader);
     OnFadeSongIn(0.1f);
     if (IsDrums()) {
@@ -73,11 +73,11 @@ void PracticePanel::Enter() {
     mScorePart = -1;
     unk55 = false;
     unk56 = true;
-    // RB3-360: `unk5c = 1;` and `SetRestartAllowed(true);` removed — unk5c and
-    // unk60 (restart-allowed flag) absent in retail (Wii-only).
+    // RB3-360: no `unk5c = 1;` / `SetRestartAllowed(true);` -- unk5c and
+    // unk60 (restart-allowed flag) are absent in retail.
     unk57 = false;
     MarkGemsAsProcessed();
-    // RB3-360 (retail 0x826B1FF8 tail, absent in the Wii oracle): seed the
+    // RB3-360 (retail 0x826B1FF8 tail): seed the
     // last-controller Symbol from the first active player's controller.
     unk64 = gNullStr;
     std::vector<Player *> &players = TheGame->GetActivePlayers();
@@ -165,9 +165,9 @@ void PracticePanel::Poll() {
                 if (vp && vp->ScoringEnabled()) {
                     mGuidePitch->Poll(ms);
                 }
-                // RB3-360: unk5c absent in retail (Wii-only) — the Wii build
-                // wrapped this in a two-poll delay state machine
-                // (unk5c==1 -> unk5c=2 -> else { unk5c=0; ... }).
+                // RB3-360: unk5c is absent in retail -- there is no
+                // two-poll delay state machine here
+                // (no unk5c==1 -> unk5c=2 -> else { unk5c=0; ... }).
                 if (unk56 && !unk57) {
                     static Message trackInMsg("bring_track_in");
                     Handle(trackInMsg, true);
@@ -202,7 +202,7 @@ void PracticePanel::Poll() {
                             Symbol cntSym = TheGameConfig->GetController(gp->GetUser());
                             // RB3-360 retail: the reset is gated on a CACHED
                             // last-controller Symbol member (unk64), not on the
-                            // Wii build's `cntSym == keys && cntSym ==
+                            // `cntSym == keys && cntSym ==
                             // gp->GetControllerType()` pair.  Retail bytes:
                             //   lwz r11,0x64(this) / lwz r10,cntSym / cmplw
                             //   beq  -> skip                     (one compare)
@@ -218,10 +218,10 @@ void PracticePanel::Poll() {
                         }
                     }
                     float ftick = MsToTick(f84);
-                    // RB3-360: unk59/unk60 absent in retail (Wii-only) — the
-                    // Wii build guarded this block with `if (!unk59)` (with a
-                    // one-poll skip via `else unk59 = false;`, setting
-                    // `unk59 = true` after loop_msg) and called
+                    // RB3-360: unk59/unk60 are absent in retail -- there is
+                    // no `if (!unk59)` guard on this block (no
+                    // one-poll skip via `else unk59 = false;`, no
+                    // `unk59 = true` after loop_msg) and no
                     // SetRestartAllowed(false) after end_play_msg.
                     if (TheTaskMgr.GetSongPos().GetTotalTick() > ftick) {
                         if (!unk57) {
@@ -406,7 +406,7 @@ void PracticePanel::TrackOut() {
     unk4c = mGuidePitch->GetGuideTrack();
     mGuidePitch->EnableGuideTrack(-1);
     unk56 = true;
-    // RB3-360: `unk5c = 1;` removed — member absent in retail (Wii-only).
+    // RB3-360: no `unk5c = 1;` -- member absent in retail.
 }
 
 int PracticePanel::GetNumVocalParts() const {
@@ -446,8 +446,8 @@ void PracticePanel::MarkGemsAsProcessed() {
     }
 }
 
-// RB3-360: SetRestartAllowed/GetRestartAllowed removed — unk60 and the
-// get_restart_allowed Handle arm are absent in retail (Wii-only); the arm's
+// RB3-360: no SetRestartAllowed/GetRestartAllowed -- unk60 and the
+// get_restart_allowed Handle arm are absent in retail; that arm's
 // `static Symbol _hs` was what shifted the guard bits (oris 0x200 vs 0x400).
 
 #pragma push

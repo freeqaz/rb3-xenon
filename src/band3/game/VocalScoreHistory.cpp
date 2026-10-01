@@ -1,5 +1,5 @@
-// Faithful port from the rb3-Wii oracle
-// (../rb3/src/band3/game/VocalScoreHistory.cpp). X360-inert: not in objects.json,
+// VocalScoreHistory
+// (band3/game/VocalScoreHistory.cpp). X360-inert: not in objects.json,
 // header unchanged, so it can never perturb retail preprocessed output. Backs the
 // real Singer score-history ring buffer used by the M10 vocal orchestration.
 #include "game/VocalScoreHistory.h"

@@ -9,8 +9,8 @@ Quazal::CallContext *QuazalSession::mTerminatingContext;
 // emits `new` -> store to the EH object-under-construction slot -> null check ->
 // `lbz r4,0xc(r30)` (mHosting) -> `bl fn_823F2F08`.  0x823F2F08 sits in the
 // unpinned gap between this TU's pinned .text ranges (0x823F2CF8..0x823F3038), so
-// the real ctor is a genuine out-of-line function in this same TU -- the rb3-Wii
-// oracle simply never decompiled its body and left `{}` behind.  An empty ctor is
+// the real ctor is a genuine out-of-line function in this same TU, not an
+// empty `{}`.  An empty ctor is
 // always inlined at /O1 /Ob2, which deletes the null check and the call together
 // and costs IsFinished 10 instructions.  auto_inline(off) restores retail's call
 // shape (per MetaPerformer.cpp / BandCharacter.cpp; __declspec(noinline) is NOT a

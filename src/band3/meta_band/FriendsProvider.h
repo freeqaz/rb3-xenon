@@ -3,7 +3,7 @@
 #include "ui/UIListProvider.h"
 #include <vector>
 
-// Retail X360-only class (absent from the Wii dev tree). Reconstructed from
+// Retail X360-only class. Reconstructed from
 // the retail XEX: default ctor fn_826493A0 (allocated with operator new(0x40)
 // in OvershellSlot's ctor fn_825C7188), RTTI ".?AVFriendsProvider@@",
 // NumData (UIListProvider vtable slot 10) = fn_82657CB8 returning
@@ -21,7 +21,7 @@
 // predicts, so the class shape below is unaffected -- only the citations were
 // bogus.)
 // It fills OvershellSlot's setup_providers slot 2 (the invite_friends.lst
-// provider — the slot the Wii build passes 0 for) and backs the
+// provider — the slot that is otherwise 0) and backs the
 // kState_InviteFriends -> kState_InviteFriendsDenial check in
 // OvershellSlot::UpdateState.
 class Friend;

@@ -166,7 +166,7 @@ Net TheNet;
 //
 // retail defines these in src/system/utl/Symbols*.cpp as
 //     Symbol sync_play_mode("sync_play_mode");
-// (rb3-Wii oracle rb3/src/system/utl/Symbols.cpp:960). rb3-xenon ships the
+// (system/utl/Symbols.cpp). rb3-xenon ships the
 // Symbols*.h HEADERS but no corresponding .cpp, which is why they had to be
 // hand-defined here at all.
 //

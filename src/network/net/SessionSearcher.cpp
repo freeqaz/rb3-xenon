@@ -9,9 +9,9 @@
 #include "utl/Std.h"
 #include <algorithm>
 
-// Ported from rb3-Wii SessionSearcher.cpp (lane W16-AE, 2026-09-14). Retail
-// 360 bytes at 0x823ead68-0x823eb8e0 differ from the Wii dev source in three
-// ways, all reproduced here: the handler Symbols are function-local statics
+// SessionSearcher (lane W16-AE, 2026-09-14). Retail
+// 360 bytes at 0x823ead68-0x823eb8e0 have three notable
+// details, all reproduced here: the handler Symbols are function-local statics
 // (RB3_HANDLE_LOCAL_STATIC; three statics + one shared guard word), the ctor's
 // `invite_accepted` is a function-local static constructed AFTER SetName, and
 // StopSearching's `search_finished_msg` is a function-local static Message

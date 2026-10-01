@@ -271,9 +271,9 @@ void Game::LoadSong() {
     // Retail computes a THREE-way SongDataValidate, and computes both
     // predicates unconditionally before selecting between them (the IsCorrupt
     // call is issued before the IsOnDisc result is ever tested, so this cannot
-    // be a short-circuiting ternary chain).  rb3-Wii's Game.cpp has the 2-way
-    // form our source inherited; retail Xbox TU5 diverges, and retail bytes
-    // outrank the oracle.
+    // be a short-circuiting ternary chain).  Retail Xbox TU5 uses the 3-way
+    // form, not a 2-way one; this follows the
+    // retail bytes.
     bool onDisc = TheSongMgr.Data(_tmp0)->IsOnDisc();
     bool corrupt = TheContentMgr.IsCorrupt(TheSongMgr.ContentName(songSym, true));
     // Branchy if/else-if over a pre-initialised variable, NOT a nested ternary:
@@ -292,8 +292,8 @@ void Game::LoadSong() {
     BeatMaster * &_ref0 = mMaster;
     // No SetPracticeMode here: retail's LoadSong contains no GetAudio() load
     // and no SetPracticeMode call at all (it has neither the 0x1c member fetch
-    // nor the Symbol("practice")/TheGameMode vcall that our inherited rb3-Wii
-    // line emits).  Removed on retail bytes; if retail drives practice mode it
+    // nor the Symbol("practice")/TheGameMode vcall that such a
+    // line would emit).  Removed on retail bytes; if retail drives practice mode it
     // does so from some other site, which is a separate lane's finding.
     RELEASE(mSongInfo);
         _ref0->Load(mSongInfo = new SongInfoCopy(TheSongMgr.SongAudioData(songSym)), 4, cfgList, false, i2, nullptr);
@@ -393,7 +393,7 @@ void Game::Start() {
 // (ctor at retail 0x82B2E8E8 stores this -> 0x82DDF9A8; builds the 5.1+drum
 // channel-name table "FL/FR/C/LFE/SL/SR/DML/DMR" and "limiter"/"ratio"
 // strings). Game::Go pokes its +0x110 flag when a song actually starts.
-// Name is provisional -- no Wii/dc3 analog exists to confirm it.
+// Name is provisional -- no other build's symbol exists to confirm it.
 class XOutputMixer {
 public:
     unsigned char pad[0x110]; // 0x00..0x110 unexplored
@@ -693,7 +693,7 @@ void Game::EnableWorldPolling(bool b1) {
     }
     MidiParserMgr *midiParserMgr = mMaster->GetMidiParserMgr();
     if (midiParserMgr && !mProperties.mInPracticeMode && b1) {
-        // Retail: bool at MidiParserMgr+0x69 (Wii unk59 shifted +0x10 by the
+        // Retail: bool at MidiParserMgr+0x69 (behind the
         // MI vptrs); not yet a named member in our MidiParserMgr.h.
         *(bool *)((char *)midiParserMgr + 0x69) = b1;
     }
@@ -1533,8 +1533,8 @@ void Game::OvershellSetPaused(bool paused) {
     }
 }
 
-// Retail 0x8267AA48. Two differences from the rb3-Wii dev source, both read
-// off retail bytes: the Wii-era screen-saver save/restore at the head is absent
+// Retail 0x8267AA48. Two details, both read
+// off retail bytes: there is no screen-saver save/restore at the head
 // (the first call is TheSynth->PauseAllSfx), and the third bool parameter --
 // which our source had left unnamed and unused -- gates SetNoFail (r6 -> r27,
 // `clrlwi. r11, r27, 24` after IsNoFailActive).

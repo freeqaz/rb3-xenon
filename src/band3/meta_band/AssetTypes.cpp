@@ -8,7 +8,7 @@
 Symbol GetSymbolFromAssetType(AssetType asset_type) {
     // Retail declares all 19 of these as function-local statics at the TOP of the
     // body (guard word 0x82E001F0, bits 0x1..0x40000 in this exact order); the
-    // rb3-Wii oracle used file-scope Symbols*.h globals instead.
+    // order is load-bearing (not file-scope Symbols*.h globals).
     static Symbol bandana("bandana");
     static Symbol bass("bass");
     static Symbol drum("drum");

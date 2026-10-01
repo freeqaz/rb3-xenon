@@ -801,8 +801,8 @@ void ChordShapeGenerator::NameMesh(RndMesh *mesh, bool lefty) {
         name = MakeString("%s_%d", name, mStringFrets[i]);
     }
     // Retail calls ObjectDir::Find<RndMesh> here, not the bare FindObject: the
-    // rb3-Wii oracle spells this `dynamic_cast<RndMesh *>(Dir()->FindObject(
-    // ..., false))` (ChordShapeGenerator.cpp:784/791 there) and Find<T> is
+    // source form is `dynamic_cast<RndMesh *>(Dir()->FindObject(
+    // ..., false))` and Find<T> is
     // exactly that cast plus the fail path. Two charged bl slots in NameMesh,
     // matching these two sites exactly; the third FindObject below ("milo") is
     // a genuine uncast lookup and is correctly not charged. Dropping the cast

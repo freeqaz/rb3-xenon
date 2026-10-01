@@ -225,7 +225,7 @@ BEGIN_COPYS(RndAmbientOcclusion)
     END_COPYING_MEMBERS
 END_COPYS
 
-// RB3-360 retail rev dialect (rb3-Wii/ObjMacros shape): the packed rev is split
+// RB3-360 retail rev dialect (ObjMacros shape): the packed rev is split
 // into two HALFWORDS stored four bytes apart onto ONE internal-linkage align(4)
 // base, and the RAW incoming BinStream is forwarded to every read and to the
 // superclass Load.  DC3's Object.h BinStreamRev stack decorator additionally
@@ -1652,8 +1652,8 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
     timer.Restart();
 
     // Sync all meshes, and notify the "milo" tool object so the editor records
-    // the AO result. Retail RB3-360 has this block; NEITHER oracle does (dc3's
-    // AmbientOcclusion.cpp and rb3-Wii's both stop at Sync), so it is
+    // the AO result. Retail RB3-360 has this block; dc3's
+    // AmbientOcclusion.cpp stops at Sync, so it is
     // reconstructed from retail bytes -- see docs/decomp/NAME_UNPAIRED_2026-09-14.md.
     for (std::vector<RndMesh *>::iterator it = mObjectsTessellate.begin();
          it != mObjectsTessellate.end(); ++it) {

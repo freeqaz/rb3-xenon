@@ -44,13 +44,13 @@
 // therefore NOT the TU -- it is the nine ordinary members the partial port
 // never wrote, plus the two below that need the projection subsystem.
 //
-// PROVENANCE OF THE BODIES
+// WHAT THE BODIES ARE
 // ------------------------
-// Ported from the rb3-Wii MWCC decomp oracle,
-// /home/free/code/milohax/rb3/src/system/bandobj/BandPatchMesh.cpp (shared Milo
-// engine, the same source this repo's own partial port names as its oracle).
+// The BandPatchMesh bodies of the shared Milo engine
+// (system/bandobj/BandPatchMesh.cpp, the same source this repo's own partial
+// port in src/system/bandobj compiles).
 // Member layout is taken from THIS repo's src/system/bandobj/BandPatchMesh.h,
-// which matches the Wii ctor's initializer list member-for-member
+// which matches the original ctor's initializer list member-for-member
 // (mMeshes / mRenderTo / mSrc / mCategory).  Nothing here is invented.
 //
 // ✅ W17-BPM2 (2026-09-30): the projection subsystem is now ported and the two

@@ -375,8 +375,8 @@ void RndConsole::SetBreak(DataArray *arr) {
 // NOTE(laneGLM3): retail's Break is 444 B and starts by loading arr->Node(0) --
 // there is no mDebugging load at entry at all, so the guard below must emit no
 // code. It already need not: MILO_FAIL is (void)(args) in the match build (see
-// os/Debug.h:174-184), so writing the guard the way the rb3-Wii RB3 oracle
-// writes it (../rb3/src/system/rndobj/Console.cpp:209) is both the faithful
+// os/Debug.h:174-184), so writing the guard as RB3 writes it
+// (a plain MILO_FAIL guard) is both the faithful
 // source and the matching one. The previous hand-rolled
 // `TheDebugFailer << _MakeString(...)` deliberately bypassed MILO_FAIL and so
 // emitted a real Debug::Fail call retail does not have.
@@ -386,7 +386,7 @@ void RndConsole::Break(DataArray *arr) {
     if (arr->UncheckedFunc(0) != DataNop) {
         bool drawing = TheRnd.Drawing();
 #ifdef HX_NATIVE
-        // The rb3-Wii RB3 DEV build force-shows the console around a break;
+        // A DEV build force-shows the console around a break;
         // RB3-360 RETAIL does not -- its Break contains no SetShowing call and
         // no mShowing load (both SetShowing sites and the mShowing lbz are
         // base-only in the aligned diff). Kept for the native build, where the
@@ -489,7 +489,7 @@ bool RndConsole::OnMsg(const KeyboardKeyMsg &msg) {
     if (!mShowing)
         return 0;
     if (msg.GetKey() == 0x12E) {
-        // rb3-Wii guards this with #ifdef MILO_DEBUG; retail (0x82467158)
+        // This is an #ifdef MILO_DEBUG guard; retail (0x82467158)
         // branches straight to the tail with no call.
 #if defined(MILO_DEBUG) && defined(HX_NATIVE)
         SetShowing(false);

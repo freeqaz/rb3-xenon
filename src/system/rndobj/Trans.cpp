@@ -142,7 +142,7 @@ BEGIN_PROPSYNCS(RndTransformable)
      * resolve to exactly those four names. There is no local_xfm and no
      * world_xfm arm.
      *
-     * DC3 has both arms here, but DC3 is NEWER than RB3 and an oracle agreeing
+     * DC3 has both arms here, but DC3 is NEWER than RB3 and a reference agreeing
      * with our source proves nothing -- retail is the arbiter. Their surplus is
      * what inflates our frame to 0xd0 against retail's `stwu r1,-0xb0(r1)`.
      *
@@ -735,7 +735,7 @@ const Transform &RndTransformable::WorldXfm_Force() {
     return mWorldXfm;
 }
 
-// Retail (TU5) is the OLDER rb3-Wii shape, not DC3's: no mTarget null tests
+// Retail (TU5) is the OLDER RB3 shape, not DC3's: no mTarget null tests
 // (TargetWorld/ShadowTarget/LookAtTarget dereference it unconditionally), the
 // billboard reference is always the current camera, there are no SkyBox cases,
 // the shadow shear is three plain divides (/fp:fast folds them to one -1/b),

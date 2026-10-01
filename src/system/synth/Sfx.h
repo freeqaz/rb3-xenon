@@ -17,7 +17,7 @@ public:
     SfxMap(Hmx::Object *);
     void Save(BinStream &) const;
     void Load(BinStream &);
-    // RB3-360 retail reads the parent Sfx's rev via a TU-static (rb3-Wii idiom,
+    // RB3-360 retail reads the parent Sfx's rev via a TU-static (ObjMacros idiom,
     // assert stripped) rather than threading a BinStreamRev wrapper. Sfx::Load
     // stashes its rev here right before `bs >> mMaps`.
     static int gRev;
@@ -65,7 +65,7 @@ public:
     POOL_OVERLOAD(SfxInst, 0x4E);
 
 private:
-    // TU5 retail layout (matches rb3-Wii SfxInst): mSamples is the first
+    // TU5 retail layout: mSamples is the first
     // SfxInst-specific member at 0x40 (right after the SeqInst base). The retail
     // binary does NOT keep an mSfx back-pointer; instead SfxInst owns its own
     // ObjPtrList<MoggClipMap> populated from Sfx::MoggClipMaps() in the ctor, and

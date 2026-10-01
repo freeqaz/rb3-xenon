@@ -1,6 +1,6 @@
 #pragma once
 // Minimal stub for DrumMap — included by game/SongDB.h.
-// Full class body matches rb3-Wii; ported from src/system/beatmatch/DrumMap.h.
+// Full class body (the retail layout).
 #include "beatmatch/FillInfo.h"
 
 class DrumFillInfo : public FillInfo {

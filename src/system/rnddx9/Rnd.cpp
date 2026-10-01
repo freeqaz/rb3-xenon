@@ -66,7 +66,7 @@ namespace {
 // W16-A: this 6-param overload was DECLARED in rnddx9/Rnd.h and DEFINED NOWHERE.
 // The 5-param overload above forwards to it, so the match build emitted no body
 // at all and retail's 1,512 B row read fuzzy 0 for want of anything to pair with.
-// Ported from the dc3-decomp oracle (src/system/rnddx9/Rnd.cpp), which is matched
+// Ported from dc3-decomp (src/system/rnddx9/Rnd.cpp), which is matched
 // there; the three codegen comments below are dc3's own measured findings and are
 // load-bearing -- do not "simplify" any of them.
 void DxRnd::DrawRect(

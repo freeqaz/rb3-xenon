@@ -167,7 +167,7 @@ Rnd::Rnd()
 
 // ★ Must be defined BEFORE the handler block: retail inlines this at the
 // set_postproc_override call site in Rnd::Handle (MSVC /Ob2 only inlines a
-// definition it has already seen). rb3-Wii Rnd.cpp:572 is the same one-liner;
+// definition it has already seen). It is a one-liner;
 // the MILO_LOG + "postproc" RndOverlay reflect block that used to live here is
 // a DC3-era addition and is absent from retail RB3.
 void Rnd::SetPostProcOverride(RndPostProc *pp) { mPostProcOverride = pp; }
@@ -332,7 +332,7 @@ void Rnd::PreInit() {
     // RndFontBase in Font.h -- retail RB3-360 has no ".?AVRndFontBase@@" type
     // descriptor and no "FontBase" string anywhere in the binary). Retail's
     // Rnd::PreInit() goes straight from RndMeshDeform to RndText to RndFont,
-    // matching rb3-Wii's order (../rb3/src/system/rndobj/Rnd.cpp) exactly.
+    // in that order.
     RndText::Init();
     RndFont::Init();
     RndEnviron::Init();
@@ -410,7 +410,7 @@ void Rnd::PreInit() {
     // (os/Debug.cpp:183), so the null flows on and :377's SetCallback derefs it.
     // Measured on the shipped RB3-360 config: "rate", "heap", "stats" and
     // "timers" all resolve, "watch" does not -- consistent with the header note
-    // at Rnd.h:306 that mWatcher/mWatchOverlay are a DC3 addition rb3-Wii does
+    // at Rnd.h:306 that mWatcher/mWatchOverlay are a DC3 addition RB3 does
     // not have either. Both the Find and the guard are inside HX_NATIVE, so
     // there is nothing here for the X360 build to be affected by.
     mWatchOverlay = RndOverlay::Find("watch", false);
@@ -527,7 +527,7 @@ void Rnd::Terminate() {
     // FORGIVES placeholder targets -- so the row scored a false fuzzy 100 with
     // the wrong callee.
     //
-    // ⚠ dc3 is NOT the oracle for this line.  dc3's Rnd::Terminate calls BOTH
+    // ⚠ dc3 is NOT the reference for this line.  dc3's Rnd::Terminate calls BOTH
     // DOFProc::Terminate and RndMat::Terminate, one bl more than RB3 retail
     // has.  Porting dc3's shape verbatim was measured here at -1 fn / -180 B,
     // exactly that extra call.  Dropping RndMat::Terminate is behaviourally
@@ -1326,10 +1326,10 @@ void Rnd::DrawPreClear() {
     ObjPtrList<RndDrawable> *drawList;
     drawList = mReleaseImmediate ? &mDraws : &mPreClearDraws;
 #ifdef HX_NATIVE
-    // ★ X21 — THE PRE-CLEAR LIST SELECTION IS INVERTED RELATIVE TO THE ORACLE,
+    // ★ X21 — THE PRE-CLEAR LIST SELECTION WAS INVERTED,
     // AND THAT IS WHY THE OUTFIT COMPOSE PASS NEVER RUNS.
     //
-    //   rb3-Wii (MWCC oracle, rndobj/Rnd.cpp:742):
+    //   correct (rndobj/Rnd.cpp, original member names):
     //       drawList = unk130 ? &unk110 : &mDraws;
     //   here:
     //       drawList = mReleaseImmediate ? &mDraws : &mPreClearDraws;
@@ -1342,9 +1342,9 @@ void Rnd::DrawPreClear() {
     //
     // It matters because BOTH builds register the same way:
     // Rnd::PreClearDrawAddOrRemove is `b3 ? mPreClearDraws : mDraws` in this
-    // tree AND `b3 ? unk110 : mDraws` on Wii, and OutfitConfig::
-    // UpdatePreClearState (bandobj/OutfitConfig.cpp:865, token-identical to
-    // rb3-Wii's :1026) calls it with b3=FALSE — i.e. every OutfitConfig lands in
+    // tree AND `b3 ? unk110 : mDraws` by original names, and OutfitConfig::
+    // UpdatePreClearState (bandobj/OutfitConfig.cpp:865)
+    // calls it with b3=FALSE — i.e. every OutfitConfig lands in
     // mDraws. With mReleaseImmediate false (its value all frame: only
     // movie/Splash.cpp:190,252 ever writes it, for the boot splash) the
     // inverted expression reads mPreClearDraws, so the 40 registered
@@ -1362,7 +1362,7 @@ void Rnd::DrawPreClear() {
     // ⚠ THIS FUNCTION CANNOT BE SCORED. `?DrawPreClear@Rnd@@MAAXXZ` has
     // target_size=0 in objdiff, has no ICF alias, and the string does not occur
     // anywhere under build/45410914/asm — there is no X360 target body to diff
-    // against. So the correction is asserted from the rb3-Wii oracle plus the
+    // against. So the correction is asserted from the original drawList form plus the
     // offset correspondence above, NOT from a match measurement, and it is
     // confined to HX_NATIVE: the X360 arm above is left byte-identical and this
     // change's blast radius on the scored build is zero by construction.

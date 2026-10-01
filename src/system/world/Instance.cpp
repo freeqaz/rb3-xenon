@@ -178,13 +178,13 @@ INIT_REVS(3, 0)
 // Retail reads the file's current rev for LoadPersistentObjects's gate from a
 // process-wide 2-byte global (verified: lbl_82CC7AA8, unsigned-halfword compare)
 // rather than from the BinStreamRev reference passed down the PostLoad call
-// chain -- matching rb3-Wii's `DECLARE_REVS`/`WorldInstance::gRev` static member
+// chain -- a `DECLARE_REVS`/`WorldInstance::gRev` static member
 // (set in PostLoad's LOAD_REVS-equivalent), which our DC3-derived BinStreamRev
 // refactor replaced with an explicit parameter. Reproduced here as a private
 // TU-static (not a class member -- no layout change) rather than porting the
-// full rb3-Wii static-member mechanism tree-wide.
+// full static-member mechanism tree-wide.
 // W16-HM: one TU aggregate for the load rev, shared by PreLoad (writes it),
-// PostLoad (re-writes it from the popped rev, rb3-Wii) and LoadPersistentObjects
+// PostLoad (re-writes it from the popped rev) and LoadPersistentObjects
 // (reads the rev half, retail lbl_82CC7AA8 = base+4). Was PreLoad's local
 // static plus a separate sPersistRev that PostLoad filled from a BinStreamRev.
 static unsigned short sLoadAltRev = 0;
@@ -219,11 +219,11 @@ void WorldInstance::PreLoad(BinStream &bs) {
     } else
         bs >> mDir;
 
-    // ⚠ ORDER DIVERGENCE FROM rb3-Wii — RESOLVED for MATCH here (lane
+    // ⚠ ORDER — RESOLVED for MATCH here (lane
     // NCCC-0803-b2bb/f307/sonnet), the "open MATCH question" the block below
     // used to describe.
     //
-    // rb3-Wii's faithful RB3 decomp (rb3/src/system/world/Instance.cpp) pushes
+    // RB3 pushes
     // the rev BEFORE RndDir::PreLoad; this body (byte-identical to DC3's) used
     // to push it after. X4a already proved the ordering is RUNTIME-equivalent
     // (BinStream::PushRev/PopRev only touch a process-wide `sRevStack`, never
@@ -233,7 +233,7 @@ void WorldInstance::PreLoad(BinStream &bs) {
     // does NOT sit where DC3's ordering would put it — an objdiff mismatch had
     // our own `bl RndDir::PreLoad` appearing as a phantom insert/delete pair
     // against target, the shape of a call reordered relative to its neighbors,
-    // not a body content change. Switching to rb3-Wii's push-before-superclass
+    // not a body content change. Switching to the push-before-superclass
     // order collapsed that pair. Measured via run_objdiff in worktree
     // ~/tmp/nc-wave4/f307s: 87.9% -> (see next measurement) normalized.
     bs.PushRev(packRevs(sLoadAltRev, sLoadRev), this);
@@ -268,8 +268,8 @@ void WorldInstance::LoadPersistentObjects(BinStream &bs) {
             bs.ReadString(objName, 0x80);
 
 #if defined(MILO_DEBUG) && defined(HX_NATIVE)
-            // f45: rb3-Wii's faithful decomp (rb3/src/system/world/Instance.cpp:180)
-            // wraps this ENTIRE RegisteredFactory guard in `#ifdef MILO_DEBUG` --
+            // f45: in RB3 this ENTIRE RegisteredFactory guard is
+            // `#ifdef MILO_DEBUG` --
             // retail (non-debug) compiles it OUT. DC3 (newer) dropped the guard and
             // added the check unconditionally. Confirmed against retail bytes: the
             // dtk target disassembly for WorldInstance::LoadPersistentObjects
@@ -355,12 +355,12 @@ void WorldInstance::DeleteTransientObjects() {
                 //
                 // ★ THIS IS A TRANSCRIPTION DEFECT, NOT A DESIGN. Three
                 // independent witnesses:
-                //   1. rb3-Wii's faithful decomp (rb3/src/system/world/Instance.cpp)
+                //   1. The intended form
                 //      writes `std::vector<ObjRef *> refs = obj->Refs();` — its
                 //      Refs() returns a VECTOR SNAPSHOT BY VALUE — then iterates
                 //      that vector (rbegin/rend). Mutating the ring is safe there
                 //      because the vector is detached.
-                //   2. The residue proves it: rb3-Wii wraps `MemDoTempAllocations`
+                //   2. The residue proves it: `MemDoTempAllocations` wraps
                 //      around the COPY, because building the vector ALLOCATES.
                 //      xenon kept the scope and dropped the allocation it existed
                 //      to scope — a loop that allocates nothing.
@@ -437,11 +437,11 @@ void WorldInstance::SetProxyFile(const FilePath &fp, bool override) {
 
 void WorldInstance::PostLoad(BinStream &bs) {
     // ⚠ See the note in PreLoad above: this is the mirrored half of an ordering
-    // divergence from rb3-Wii (which calls RndDir::PostLoad FIRST and pops
+    // divergence (retail calls RndDir::PostLoad FIRST and pops
     // after). X4a's theory that it corrupted the venue stream is REFUTED —
     // PopRev does not read the stream — and swapping it was measured to change
     // nothing at runtime. Left as-is; open as a match question, not a bug fix.
-    // RB3 retail (0x824ED000) is rb3-Wii's order: base PostLoad first, then pop
+    // RB3 retail (0x824ED000): base PostLoad first, then pop
     // the rev into the TU rev statics.
     RndDir::PostLoad(bs);
     int revs = bs.PopRev(this);
@@ -625,7 +625,7 @@ void SharedGroup::TryEnter(WorldInstance *inst) {
     }
 #else
     // RB3 retail: two __RTDynamicCast ObjectDir -> MsgSource, then
-    // MsgSource::ChainSource (rb3-Wii shape).
+    // MsgSource::ChainSource.
     MsgSource *src = dynamic_cast<MsgSource *>(mPollMaster->Dir());
     if (src) {
         MsgSource *src2 = dynamic_cast<MsgSource *>(mGroup->Dir());

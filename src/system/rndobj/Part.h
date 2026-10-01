@@ -106,7 +106,7 @@ private:
 
 class PartOverride {
 public:
-    // throw() is load-bearing, not decoration -- and this is the DC3 oracle's
+    // throw() is load-bearing, not decoration -- and this is DC3's
     // spelling (dc3-decomp/src/system/rndobj/Part.h:85), which our port dropped.
     // Binary evidence, read out of retail's own C++ EH metadata rather than off
     // the metric: RndPartLauncher's ctor (fn_8244FD48) has FuncInfo.maxState 6
@@ -395,7 +395,7 @@ protected:
     // does NOT exist in the retail X360 layout (verified: SetSubSamples stores
     // mSubSamples at 0x2c4 in the target, which only holds if there is no
     // mMotionParentDelta before mBounce — its presence shifts every member
-    // >=0x2c4 by +0x10). rb3-Wii's RndParticleSys also lacks it.
+    // >=0x2c4 by +0x10). RB3's RndParticleSys lacks it.
     Vector3 mMotionParentDelta;
 #endif
     /** "Specify a collide plane to reflect particles.
@@ -436,7 +436,7 @@ protected:
     // exist in the retail X360 layout (verified: ExplicitParticles reads
     // mExplicitParts at 0x360 in the target, which only holds if there are no
     // mBirthMomentum/mBirthMomentumAmount between mMidColorHigh and mBursts —
-    // their presence shifts every member >=mBursts by +0x08). rb3-Wii's
+    // their presence shifts every member >=mBursts by +0x08). RB3's
     // RndParticleSys also lacks them.
     /** "Add relative parent's momentum to each particle's initial speed.
         Fancy property must be true." */
@@ -460,7 +460,7 @@ protected:
     // retail X360 layout: retail's last own member is mElapsedTime, with the
     // Hmx::Object virtual base immediately following (funclet fn_8243BCD8 puts
     // Object at 0x36c). Its presence shifts the Object vbase +0x30 to 0x39c and
-    // breaks every RndParticleSys funclet/ctor offset. rb3-Wii's Part.h also ends
+    // breaks every RndParticleSys funclet/ctor offset. RB3's Part.h also ends
     // at mElapsedTime. Per-particle tile state (RndParticle::mCurrentTileIndex/
     // mTileTime) is likewise HX_NATIVE-only.
     /** "uses material texture as page tiles to animated through" */

@@ -13,8 +13,8 @@
 // rndobj/Rnd.h:354-360). REGISTER_OBJ_FACTORY is just
 // Hmx::Object::RegisterFactory(StaticClassName(), NewObject)
 // (obj/ObjMacros.h:680) -- a name -> allocator map entry with no singleton, no
-// GPU and no config dependency. Same split rb3-Wii's native harness makes in
-// native/src/main_native.cpp:134 RegisterCommonFactories().
+// GPU and no config dependency. Same split as a
+// RegisterCommonFactories() harness.
 //
 // WHY IT MATTERS THAT THE LIST IS COMPLETE (not just "big enough")
 // ---------------------------------------------------------------
@@ -25,8 +25,8 @@
 // carry their OWN dead markers, so ReadDead stops at the first inner one and
 // leaves the rest in the stream. The parent desyncs and the next PreLoad reads
 // a string length as a vector count -> runaway resize -> SIGSEGV. (This exact
-// failure was diagnosed on the rb3-Wii side; see
-// rb3/native/src/rb3_game_object_factories.cpp.) main_milo.cpp therefore
+// failure was diagnosed in an earlier native harness's
+// object-factory list.) main_milo.cpp therefore
 // reports every "Can't make" class it sees, and treats a *Dir among them as a
 // hard error rather than a footnote.
 //

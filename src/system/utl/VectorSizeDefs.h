@@ -9,7 +9,7 @@
  * size argument directly, as otherwise that argument will attempt to be used as the
  * allocator on standard STL implementations and fail miserably.
  *
- * Ported from rb3-Wii src/system/utl/VectorSizeDefs.h.
+ * (STLport takes the size type where standard STL expects an allocator.)
  * Required by src/network/Platform/qStd.h.
  */
 // clang-format off

@@ -92,8 +92,8 @@ void Multiply(const Transform &a, const Transform &b, Transform &out) {
     //       dest == a (a,b,a)     v = [ 5.000   9.330  2.000 ]   WRONG
     //
     // Fix pattern: SNAPSHOT EVERY OPERAND READ BEFORE THE FIRST STORE. Same
-    // shape as the rb3-Wii port's Rot.cpp fix for this identical bug, which
-    // cost that lane ~15 waves because it surfaces as skewed/exploded bone
+    // shape as the Rot.cpp fix for this identical bug, which
+    // once cost ~15 waves because it surfaces as skewed/exploded bone
     // composition far from the arithmetic. Do NOT "optimise" these copies
     // away -- they are the correctness, not overhead.
     //

@@ -74,7 +74,7 @@ BEGIN_COPYS(FxSend)
     END_COPYING_MEMBERS
 END_COPYS
 
-// Retail RB3 uses the rb3-Wii (ObjMacros.h) rev dialect -- file-scope rev
+// Retail RB3 uses the ObjMacros.h rev dialect -- file-scope rev
 // words written by Load -- not the DC3-derived obj/Object.h BinStreamRev
 // local.  Both words fold onto ONE base register at offsets 0/4, which only
 // happens for internal-linkage align(4) file-scope statics.
@@ -148,7 +148,7 @@ void FxSend::RebuildChain() {
 void FxSend::BuildChainVector(std::vector<FxSend *> &sends) {
     sends.push_back(this);
     FOREACH (it, Refs()) {
-        // Retail (and rb3-Wii) load the ref once and reuse it in both branches;
+        // Retail loads the ref once and reuses it in both branches;
         // DC3 recomputes it per branch, which does not match retail here.
         auto ref = RefPtrOf(it); // ObjRefOwner* in the match build, const ObjRef* natively
         FxSend *send = dynamic_cast<FxSend *>(ref->RefOwner());

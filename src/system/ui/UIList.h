@@ -128,10 +128,10 @@ protected:
     void HandleSelectionUpdated();
     void UpdateExtendedEntries(UIListState const &);
     void PreLoadWithRev(BinStreamRev &);
-    void PreLoadWithRev(BinStream &, int); // RB3 (rb3-Wii) form, used by PreLoad
+    void PreLoadWithRev(BinStream &, int); // RB3 form, used by PreLoad
     void BoundingBoxTriangles(std::vector<std::vector<Vector3> > &);
 
-    // RB3 retail (rb3-Wii oracle): mListDir is a raw UIListDir* assigned from
+    // RB3 retail: mListDir is a raw UIListDir* assigned from
     // mResource->Dir() in PostLoad — NOT DC3's ResourceDirPtr<UIListDir>
     // (the DC3-newer divergence). The raw pointer is 0xc bytes smaller than
     // ResourceDirPtr, shrinking mWidgets/mListState back to retail offsets.
@@ -139,7 +139,7 @@ protected:
     std::vector<UIListWidget *> mWidgets;
     UIListState mListState;
     // RB3 retail load-revision tracker, between mListState and mDataProvider
-    // (rb3-Wii: int mUIListRev). DC3 dropped this member.
+    // (int mUIListRev). DC3 dropped this member.
     int mUIListRev;
     DataProvider *mDataProvider;
     /** "Num data to show (only for milo)". Ranges from 1 to 1000. */

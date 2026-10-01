@@ -255,7 +255,7 @@ void FileLoader::SaveData(BinStream &bs, void *v, int size) {
 #pragma region LoadMgr
 
 // Retail's ctor leaves mPlatform/mEditMode/mCacheMode to TheLoadMgr's static
-// zero-init (no stores at +0x58/+0x5c/+0x5d); native keeps the oracle's inits.
+// zero-init (no stores at +0x58/+0x5c/+0x5d); native keeps explicit inits.
 LoadMgr::LoadMgr()
     :
 #ifdef HX_NATIVE
@@ -553,8 +553,8 @@ void LoadMgr::Init() {
 // Retail RB3-360 EXCLUDES these two dev registrations.  Retail's LoadMgr::Init
 // builds exactly four literal Symbols -- set_edit_mode, set_loader_period,
 // sysplatform_sym, sysplatform -- with no loadmgr_debug/loadmgr_print ctor in
-// the body (retail_props.py over band.exe).  rb3-Wii is the DEV build and keeps
-// them unguarded, so the oracle disagrees with retail here and retail wins.
+// the body (retail_props.py over band.exe).  A DEV build keeps
+// them unguarded; retail decides.
 #if defined(MILO_DEBUG) && defined(HX_NATIVE)
     DataRegisterFunc("loadmgr_debug", OnSetLoadMgrDebug);
     DataRegisterFunc("loadmgr_print", OnLoadMgrPrint);

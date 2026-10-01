@@ -7,9 +7,9 @@
 // 0x824E2E10-0x824E3510): the base Interpolator carries mY0/mY1/mX0/mX1 and the
 // leaf classes append their own coefficients. ATanInterpolator holds an
 // embedded LinearInterpolator (mXMapping) and reads it through the vtable in
-// Eval, exactly as rb3-Wii's math/Interp.{h,cpp}. This differs from the newer
+// Eval. This differs from the newer
 // dc3-decomp Interp.h (Vector2 mP0/mP1 + Sync) — dc3 is a later engine revision;
-// RB3 retail matches the rb3-Wii form byte-for-byte.
+// RB3 retail matches this form byte-for-byte.
 
 class Interpolator {
 public:

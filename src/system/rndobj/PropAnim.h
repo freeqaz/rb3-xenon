@@ -175,7 +175,7 @@ protected:
     bool mLoop; // 0x1d
     // mFireFlowLabel, mIntensity (Milo save rev 15) and mFlowLabels (rev 14)
     // are DC3-era additions. Retail RB3 RndPropAnim is rev-11-era (see Anim.h)
-    // and, matching the rb3-Wii oracle, its non-virtual part ends right after
+    // and its non-virtual part ends right after
     // mLoop (this+0x1d): RndPropAnim::Save's member/base offsets prove the
     // Hmx::Object virtual base subobject sits at this+0x24 with no trailing
     // members, i.e. only a vtordisp/pad before it. So none of these three may

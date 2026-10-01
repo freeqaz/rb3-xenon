@@ -149,7 +149,7 @@ struct MemHeapTracker {
     ~MemHeapTracker() { MemPopHeap(); }
 };
 
-// rb3-Wii locked-heap handle API (used by MetaMusic's mRndHeap streaming path).
+// Locked-heap handle API (used by MetaMusic's mRndHeap streaming path).
 // Declarations only — additive, no codegen impact on other TUs.
 struct MemHandleAlloc {
     class MemHandle *mBack; // 0x0
@@ -182,7 +182,7 @@ void *MemTruncate(
     const char *name = "unknown"
 );
 void *_MemAllocTemp(int size, const char *file, int line, const char *name, int align);
-// ⛔ PHANTOMS -- `_MemAlloc` / `_MemFree` are rb3-Wii (MWCC) spellings that
+// ⛔ PHANTOMS -- `_MemAlloc` / `_MemFree` are spellings that
 // RETAIL RB3-360 DOES NOT HAVE, and that we never defined either.  Adjudicated
 // on retail bytes (lane W1b-GAME): across all 396 pinned target objs the
 // mangled `?_MemAlloc@@` and `?_MemFree@@` appear ZERO times, while their real
@@ -212,15 +212,15 @@ void *_MemAllocTemp(int size, const char *file, int line, const char *name, int 
 // gone, which makes the phantoms UNCALLABLE (a reintroduced call is now a
 // compile error instead of a silent wrong relocation).
 #ifdef HX_NATIVE
-void *_MemAlloc(int size, int align); // rb3-Wii two-arg allocator (native only)
-void _MemFree(void *mem);             // rb3-Wii free (native only)
+void *_MemAlloc(int size, int align); // two-arg allocator (native only)
+void _MemFree(void *mem);             // free (native only)
 #endif
 void *
 MemRealloc(void *mem, int size, const char *file, int line, const char *name, int align);
 void *MemAlloc(int size, const char *file, int line, const char *name, int align = 0);
 #ifndef HX_NATIVE
 // Retail/match 2-arg heap allocator (size, align) — no debug strings. See the
-// retail ABI note above; mirrors rb3-Wii _MemAlloc(int, int).
+// retail ABI note above; same shape as _MemAlloc(int, int).
 void *MemAlloc(int size, int align);
 // Retail/match LEAF alloc: rewrite the inherited debug call sites
 // `MemAlloc(size, __FILE__, line, name[, align])` down to the retail 2-arg
@@ -298,8 +298,8 @@ void MemFree(
 // Retail/match LEAF free: the retail RB3-360 XEX strips MemTrack debug
 // instrumentation, so every MemFree call site passes ONLY the pointer — no
 // __FILE__/line/name (verified in Ghidra: callers like the RndBitmap dtor pass
-// a single reg; the debug literals are absent from the XEX). Mirrors rb3-Wii's
-// 1-arg _MemFree(void*) and follows the MemOrPool/STL +52 + POOL_OVERLOAD
+// a single reg; the debug literals are absent from the XEX). Same shape as
+// the 1-arg _MemFree(void*); follows the MemOrPool/STL +52 + POOL_OVERLOAD
 // precedent. The function is declared/defined 1-arg; a function-like macro
 // rewrites the dozens of inherited 4-arg debug call sites
 // `MemFree(p, __FILE__, line, name)` down to `(MemFree)(p)` so no debug regs
@@ -315,8 +315,8 @@ void MemFree(void *mem);
 // allocator as MemAlloc(size, align) — exactly 2 regs, no string loads; the
 // "StringBuf"/__FILE__ literals are absent from the binary; the address once
 // cited here as an example caller, 0x82798360, no longer denotes a function
-// in the current split). This mirrors
-// rb3-Wii's _MemOrPoolAlloc(int)/_MemAlloc(int,int) form and follows the same
+// in the current split). This is the
+// _MemOrPoolAlloc(int)/_MemAlloc(int,int) form and follows the same
 // precedent as PoolAlloc.h's 2-arg POOL_OVERLOAD win. On HX_NATIVE we keep the
 // debug form (default args carry real host tracking strings); on the X360 match
 // build the entry points take only the size/idx the retail call site passes.
@@ -492,8 +492,8 @@ void operator delete[](void *mem);
     static void operator delete(void *v) { MemFree(v, __FILE__, line_num, #class_name); }
 #endif
 
-// rb3-Wii style NEW_OVERLOAD/DELETE_OVERLOAD (no class name / line tracking).
-// dc3 only exposes MEM_OVERLOAD/OBJ_MEM_OVERLOAD; the rb3-Wii Fader.h uses the
+// NEW_OVERLOAD/DELETE_OVERLOAD (no class name / line tracking).
+// dc3 only exposes MEM_OVERLOAD/OBJ_MEM_OVERLOAD; Fader.h uses the
 // terser spelling, so provide it for header compatibility.
 #ifdef HX_NATIVE
 #define NEW_OVERLOAD                                                                     \

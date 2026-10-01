@@ -59,7 +59,7 @@ protected:
     /** "max value of meter" */
     int mMaxValue; // 0x160
     // NOTE(laneBQ2): `ResourceDirPtr<RndDir> mResourceDir` used to follow. Retail RB3
-    // has no such member -- the rb3-Wii oracle's MeterDisplay ends at `mMaxValue`, and
+    // has no such member -- MeterDisplay ends at `mMaxValue`, and
     // RB3 reaches the dir through the INHERITED UIComponent::mResource (a UIResource*
     // at 0x108) via mResource->Dir(). Confirmed three ways: (1) ?SetType@MeterDisplay@@
     // at 0x8231a9a8 has vbase-displacement immediate 356, exactly where the Object

@@ -49,8 +49,8 @@ public:
     // Retail carries no payload: Save and Load are both folded onto the same
     // empty body in RestartGameMsg's vtable (lbl_820DBFAC slots 1 and 2 ->
     // fn_826C3888, a bare blr), Dispatch never touches `this`, and Handle's
-    // send_restart_game_net_msg call site passes no argument at all. The
-    // rb3-Wii DEV oracle's mFromWin is not in this image.
+    // send_restart_game_net_msg call site passes no argument at all. There
+    // is no mFromWin in this image.
     RestartGameMsg() {}
     virtual ~RestartGameMsg() {}
     virtual void Save(BinStream &) const;

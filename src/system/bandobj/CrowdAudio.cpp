@@ -351,12 +351,12 @@ void CrowdAudio::StopAllMoggs() {
     }
 }
 
-// Lane DR-2: retail X360 runs this body UNCONDITIONALLY.  rb3-Wii's DEV build
-// wraps it in `if (TypeDef() != arr)` and we inherited that, which cost exactly
+// Lane DR-2: retail X360 runs this body UNCONDITIONALLY.  An
+// `if (TypeDef() != arr)` wrapper would cost exactly
 // the three leading instructions retail does not have:
 //     lwz r10, -168(r11) / cmplw cr6, r10, r4 / beq cr6, <end>
-// This is the usual oracle trap running in reverse -- the oracle AGREED with our
-// source and both were wrong for retail.  Adjudicated on retail bytes, per the
+// This is the usual source-text trap running in reverse -- the natural form looked
+// right and was wrong for retail.  Adjudicated on retail bytes, per the
 // standing rule.
 void CrowdAudio::SetTypeDef(DataArray *arr) {
     Hmx::Object::SetTypeDef(arr);
@@ -448,7 +448,7 @@ void CrowdAudio::SetBank(ObjectDir *dir) {
 void CrowdAudio::Save(BinStream &) { MILO_ASSERT(0, 0x33F); }
 
 BEGIN_LOADS(CrowdAudio)
-    // RB3-360 retail uses the rb3-Wii rev dialect: the packed rev int is split
+    // RB3-360 retail uses the ObjMacros rev dialect: the packed rev int is split
     // into two MUTABLE file-scope aligned(4) shorts (gRev/gAltRev) and the body
     // reads `bs` directly. No BinStreamRev shim, no ASSERT_REVS block.
     int rev;

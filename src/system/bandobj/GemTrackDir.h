@@ -209,7 +209,7 @@ public:
     std::map<unsigned int, std::pair<int, RndMesh *> > unk6cc; // 0x798
     ArpeggioShapePool *mArpShapePool; // 0x7b0
     bool unk6e8; // 0x7b4
-    // Retail RB3-360 (MILO_DEBUG off) ends here: sizeof == 0x6ec. rb3-Wii (dev)
+    // Retail RB3-360 (MILO_DEBUG off) ends here: sizeof == 0x6ec. A dev build
     // gates 4 more members under MILO_DEBUG (mFakeFingerShape,
     // mCycleFakeFingerShapes, mRandomShapeFrameCount, RGState mRGState) — removed
     // outright since macros.h force-defines MILO_DEBUG and GemTrackDir.cpp is

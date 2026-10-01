@@ -198,7 +198,7 @@ void JoypadClient::Init() {
         }
     }
 #else
-    // retail (0x825296D8, rb3-Wii shape): no SystemConfig() null fallback
+    // retail (0x825296D8): no SystemConfig() null fallback
     if (gDefaultHoldMs < 0.0f) {
         SystemConfig("joypad")->FindData("hold_ms", gDefaultHoldMs, true);
     }

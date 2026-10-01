@@ -132,7 +132,7 @@ void NowBar::Miss(float param1, int slot) {
     // never loaded again in this function. Symbol's ctor interns into the global
     // symbol table, so MSVC cannot elide it; its unwind funclet (guard &= ~1) is
     // the 32-byte COMDAT at 0x82BAA63C, and it is also why this function sets up
-    // r31 as a frame pointer. The rb3-Wii dev oracle has no trace of it.
+    // r31 as a frame pointer.
     static Symbol miss("miss");
     GemSmasher *smasher = FindSmasher(slot);
     if (smasher != 0 && !HandleOutOfRangeKey(smasher, slot, false)) {

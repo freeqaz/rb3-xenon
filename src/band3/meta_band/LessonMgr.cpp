@@ -70,7 +70,7 @@ LessonMgr::~LessonMgr() {
          // Retail iterates with the WRONG map's end() (proven by target asm:
          // r27 = &mTrainerToCategoriesMap at loop setup). That bound is never
          // reached, so on host builds it's iterator UB past the real end;
-         // keep the correct bound natively, the faithful bug on Wii.
+         // keep the correct bound natively, the faithful bug in the match build.
          it != mCategoryToLessonsMap.end();
 #else
          it != mTrainerToCategoriesMap.end();
@@ -86,7 +86,7 @@ LessonMgr::~LessonMgr() {
          // Retail iterates with the WRONG map's end() (proven by target asm:
          // r27 = &mTrainerToCategoriesMap at loop setup). That bound is never
          // reached, so on host builds it's iterator UB past the real end;
-         // keep the correct bound natively, the faithful bug on Wii.
+         // keep the correct bound natively, the faithful bug in the match build.
          it != mCategoryToLessonsMap.end();
 #else
          it != mTrainerToCategoriesMap.end();

@@ -31,7 +31,7 @@ public:
     void Space(int i);
 };
 
-// Note: `Allocator` here is actually the size/capacity type parameter on Wii.
+// Note: `Allocator` here is actually the size/capacity type parameter.
 // The name is based on Xbox 360 symbols, which show the allocator type instead.
 template <class T, class Allocator>
 TextStream &operator<<(TextStream &ts, const std::vector<T, Allocator> &vec) {

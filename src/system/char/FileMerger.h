@@ -78,7 +78,7 @@ public:
         /** "Name of the merger, just for identification" */
         Symbol mName; // 0x0
         // NOTE: DC3 (newer) has an extra `Symbol filler; // 0x4` here that
-        // retail RB3-360 lacks (rb3-Wii agrees: mSelected directly follows
+        // retail RB3-360 lacks (mSelected directly follows
         // mName, and _M_fill_insert_aux's sizeof(Merger) is -4 vs retail).
         // Dropped to match the retail layout.
         /** "The file you want to merge" */

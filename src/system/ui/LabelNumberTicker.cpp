@@ -55,7 +55,7 @@ BEGIN_PROPSYNCS(LabelNumberTicker)
 END_PROPSYNCS
 
 // RB3 retail 0x82827B10: nothing was pushed; the base PostLoad is followed by
-// the virtual Update() (rb3-Wii shape).
+// the virtual Update().
 void LabelNumberTicker::PostLoad(BinStream &bs) {
     UIComponent::PostLoad(bs);
     Update();
@@ -142,7 +142,7 @@ void LabelNumberTicker::Enter() {
 
 INIT_REVS(2, 0)
 
-// RB3 retail 0x82828458 (rb3-Wii shape).
+// RB3 retail 0x82828458.
 void LabelNumberTicker::PreLoad(BinStream &bs) {
     LOAD_REVS(bs);
     ASSERT_REVS(2, 0)
@@ -217,7 +217,7 @@ BEGIN_HANDLERS(LabelNumberTicker)
     HANDLE_ACTION(count_up, CountUp())
 #ifdef RB3_KEEP_DC3_ONLY_HANDLERS
     // Retail fn_82828820 builds exactly 2 Symbols (snap_to_value, count_up);
-    // both oracles and the rb3-Wii source agree this third arm is DC3-only.
+    // this third arm is DC3-only.
     HANDLE_ACTION(count_up_from_current, CountUpFromCurrentValue())
 #endif
     HANDLE_SUPERCLASS(UIComponent)

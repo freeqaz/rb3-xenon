@@ -29,7 +29,7 @@ void FixedSizeSaveable::PadStream(FixedSizeSaveableStream &fixedStream, int padS
     MILO_ASSERT(fixedStream.Tell() + padSize <= fixedStream.Size(), 0x30);
     memset(buf, sPadder, 1024);
 #else
-    // retail (rb3-Wii shape): no Tell/Size assert, zero padding
+    // retail: no Tell/Size assert, zero padding
     memset(buf, 0, 1024);
 #endif
     for (; padSize > 0x400; padSize -= 0x400) {

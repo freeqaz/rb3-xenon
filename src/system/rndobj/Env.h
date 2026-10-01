@@ -41,8 +41,8 @@
 // our own PostProc.cpp already declared) and streams out to 0x208.  The map named it
 // RndEnviron::Save and splits.txt pinned it into Env.cpp to match; both are repaired.
 // Reading it as RndEnviron produced a phantom "21-revision schema gap".
-// rb3-Wii's Env.h is the same Hmx::Object lineage; retail differs only by the
-// larger 0x28 Object base (Wii's is 0x1c) and by carrying mNumLights*/mHasPointCubeTex
+// Retail RndEnviron is the plain Hmx::Object lineage, with a 0x28 Object
+// base, and carries mNumLights*/mHasPointCubeTex
 // in the NgEnviron subclass rather than in RndEnviron itself.
 class RndEnviron : public Hmx::Object {
     friend class LightPreset;

@@ -43,13 +43,13 @@ END_HANDLERS
 BEGIN_PROPSYNCS(RndCamAnim)
 #ifdef HX_NATIVE
     // RB3-360 retail enumerates NO properties here -- these three are DC3-era
-    // additions.  Proven from retail asm (lane CP-2, 2026-08-02), not from oracle
-    // agreement: ?SyncProperty@RndCamAnim@@ is 120 B in retail and contains
+    // additions.  Proven from retail asm (lane CP-2, 2026-08-02), not from source
+    // text: ?SyncProperty@RndCamAnim@@ is 120 B in retail and contains
     // exactly two calls -- DataNode::Sym, then RndAnimatable::SyncProperty with
     // the same `subi r3,...,0x24` this-adjustment we emit.  There is no room for
     // a property chain, and none of the three ??0Symbol@@ constructions or
-    // PropSync calls our 392 B body emits appears anywhere in it.  rb3-Wii (the
-    // RB3-era oracle) independently agrees: SYNC_SUPERCLASS(RndAnimatable) only.
+    // PropSync calls our 392 B body emits appears anywhere in it: the RB3-era
+    // list is SYNC_SUPERCLASS(RndAnimatable) only.
     // Kept for the native port, which drives object property editing through
     // SyncProperty.
     SYNC_PROP(cam, mCam)
@@ -86,7 +86,7 @@ BEGIN_COPYS(RndCamAnim)
     END_COPYING_MEMBERS
 END_COPYS
 
-// RB3-360 retail rev dialect (rb3-Wii/ObjMacros shape): the packed rev is split
+// RB3-360 retail rev dialect (ObjMacros shape): the packed rev is split
 // into two HALFWORDS stored four bytes apart onto ONE internal-linkage align(4)
 // base, and the RAW incoming BinStream is forwarded to every read and to the
 // superclass Load.  DC3's Object.h BinStreamRev stack decorator additionally

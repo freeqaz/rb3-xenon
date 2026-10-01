@@ -10,7 +10,7 @@
 
 // Retail X360 0x827C90B8 is 24 B / 6 instructions -- lis/lwz TheTempoMap, lwz
 // vtable, lwz +0x8 (TimeToTick), mtctr, bctr -- i.e. an unguarded TAIL CALL with
-// fp1 passed straight through.  There is no room for a null test.  rb3-Wii agrees
+// fp1 passed straight through.  There is no room for a null test
 // (`inline float MsToTick(float f) { return TheTempoMap->TimeToTick(f); }`); the
 // `!TheTempoMap ? 0 :` guard came from DC3, which is the NEWER engine.
 float MsToTick(float ms) { return TheTempoMap->TimeToTick(ms); }
@@ -18,7 +18,7 @@ float MsToTick(float ms) { return TheTempoMap->TimeToTick(ms); }
 // Retail X360 0x827C90D0 is 64 B: TheTempoMap vcall +0x8 (TimeToTick) then
 // lis/lwz TheBeatMap and `bl BeatMap::Beat(float)`.  NO null test on either
 // global.  The `if (TheBeatMap && TheTempoMap)` guard this had until lane W16-B
-// (2026-09-14) came from DC3 (newer engine); the rb3-Wii oracle has no guard.
+// (2026-09-14) came from DC3 (newer engine).
 float MsToBeat(float ms) { return TheBeatMap->Beat(TheTempoMap->TimeToTick(ms)); }
 
 // Retail X360 0x827C9110 is 24 B / 6 instructions -- lis/lwz TheTempoMap, lwz
@@ -51,7 +51,7 @@ float TickToBeat(int tick) { return TheBeatMap->Beat(tick); }
 // (0x82695178; lane W16-AT ported that body and needs this call shape -- an
 // inline `TheTempoMap->TimeToTick(sec * 1000)` at the call site would emit the
 // vcall in GamePanel instead of a `bl`).  The NAME is convention-derived from
-// SecondsToBeat/TickToSeconds; no header (ours, rb3-Wii or DC3) declares it, so
+// SecondsToBeat/TickToSeconds; no header (ours or DC3's) declares it, so
 // the map row 0x827c91a0 is deliberately left ANONYMOUS rather than given this
 // invented name (under name_check a placeholder callee is already forgiven at
 // the GamePanel call site; naming it would be a bet, not a proof).  The map

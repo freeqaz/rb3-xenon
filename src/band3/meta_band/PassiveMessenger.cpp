@@ -233,7 +233,7 @@ PassiveMessenger::PassiveMessenger() : unk1c(0) {
     MILO_ASSERT(!ThePassiveMessenger, 0x159);
     ThePassiveMessenger = this;
     SetName("passive_messenger", ObjectDir::Main());
-    // Retail-360 registers exactly THESE THREE. The rb3-Wii dev build's other two
+    // Retail-360 registers exactly THESE THREE. Two other sinks
     // -- VoiceChatDisabledMsg on TheVoiceChatMgr and InviteReceivedMsg on
     // ThePlatformMgr -- are absent from the retail extent. InviteReceivedMsg is
     // corroborated independently by BEGIN_HANDLERS below, which retail likewise
@@ -248,9 +248,9 @@ PassiveMessenger::~PassiveMessenger() {
     ThePassiveMessenger = nullptr;
     // Un-sinks two of the THREE the ctor registers -- a strict subset, so nothing
     // is removed that was never added. (This comment previously said "two of the
-    // five", counting the rb3-Wii dev build's sinks; retail's ctor registers three.
+    // five", counting two sinks retail does not have; retail's ctor registers three.
     // SessionDisconnectedMsg is the single sink retail leaves permanently
-    // registered, matching the dev build's own asymmetry.)
+    // registered.)
     ThePlatformMgr.RemoveSink(this, InviteSentMsg::Type());
     TheSessionMgr->RemoveSink(this, RemoteUserLeftMsg::Type());
 }

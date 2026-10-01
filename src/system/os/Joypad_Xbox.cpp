@@ -22,7 +22,7 @@
 //   tInputStates +0x00, tBreed +0x40, sThreadData +0x70, tButtonStatesCurr
 //   +0x78, tButtonStatesPrev +0x88, tNeedCaps +0x98, tCritSection +0x9c
 // which is byte-for-byte the run DC3's Joypad_Xbox.cpp documents -- verified
-// here against RETAIL bytes, not inherited from the oracle.
+// here against RETAIL bytes.
 namespace {
     CriticalSection tCritSection;
 }

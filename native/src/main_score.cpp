@@ -4,7 +4,7 @@
 // real TrackWatcher Hit/Miss/Pass judgments now drive a faithful native scorer
 // that produces real score, streak multiplier, overdrive meter, and a solo star
 // rating from the real config/scoring.dta values and formulas (see
-// score_engine.h for the exact oracle provenance). This replaces rb3-hit's
+// score_engine.h for the exact formula sources). This replaces rb3-hit's
 // HIT/MISS tally with genuine RB3 numbers.
 //
 // Wires the REAL beatmatch scoring engine so synthetic input is judged against

@@ -268,8 +268,8 @@ BEGIN_COPYS(BandFaceDeform)
 END_COPYS
 
 // Retail's BandFaceDeform::Save streams mFrames through the generic
-// vector operator<<, which needs a per-element operator<<. The rb3-Wii dev
-// tree has only operator>> (its Save is a MILO_ASSERT(0) stub), so the
+// vector operator<<, which needs a per-element operator<<. Only
+// operator>> exists in this tree, so the
 // element saver is declared here and left to the (not-yet-located) definition.
 BinStream &operator<<(BinStream &bs, const BandFaceDeform::DeltaArray &da);
 
@@ -292,8 +292,8 @@ void BandFaceDeform::DeltaArray::Load(BinStream &bs) {
     }
 }
 
-// rb3-Wii dev has SAVE_OBJ(BandFaceDeform, 0x129) (an unconditional
-// MILO_ASSERT(0)); RB3-360 retail ships a real saver at 0x822C7768: it writes
+// RB3-360 retail ships a real saver here, not a SAVE_OBJ(BandFaceDeform, 0x129)
+// MILO_ASSERT(0) stub: the saver at 0x822C7768 writes
 // the packed rev 0 through BinStream::WriteEndian, chains to Hmx::Object::Save,
 // then streams mFrames from this+0x28 (Hmx::Object is 0x28 bytes on 360).
 BEGIN_SAVES(BandFaceDeform)

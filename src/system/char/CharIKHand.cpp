@@ -19,9 +19,9 @@
 
 // mPullShoulder (0x5a) is deliberately NOT in this init list: retail's ctor
 // asm stores mAlwaysIKElbow(0x58) then jumps straight to mConstraintWrist
-// (0x78) with no store to 0x5a at all -- matching rb3-Wii's dev decomp
-// (../rb3/src/system/char/CharIKHand.cpp), which has no mPullShoulder
-// initializer either (rb3-Wii predates the `pull_shoulder` property; see the
+// (0x78) with no store to 0x5a at all, so there is no mPullShoulder
+// initializer here
+// (retail predates the `pull_shoulder` property; see the
 // SYNC_PROP comment above). The member is left uninitialized on retail, same
 // as here.
 CharIKHand::CharIKHand()
@@ -63,9 +63,9 @@ BEGIN_PROPSYNCS(CharIKHand)
     SYNC_PROP(elbow_collide, mElbowCollide)
     SYNC_PROP(clockwise, mClockwise)
 #ifdef HX_NATIVE
-    // DC3-only property: rb3-Wii (RB3's own dev build) has no `pull_shoulder` prop at
+    // DC3-only property: retail RB3 has no `pull_shoulder` prop at
     // all -- only the PullShoulder() method.  Retail's SyncProperty COMDAT holds 13
-    // ??0Symbol@@QAA@PBD@Z relocs, exactly rb3-Wii's 13-property list, against our 14.
+    // ??0Symbol@@QAA@PBD@Z relocs, exactly the 13-property list, against our 14.
     SYNC_PROP(pull_shoulder, mPullShoulder)
 #endif
     SYNC_SUPERCLASS(CharWeightable)
@@ -129,7 +129,7 @@ BEGIN_COPYS(CharIKHand)
     END_COPYING_MEMBERS
 END_COPYS
 
-// RB3-360 retail rev dialect (rb3-Wii/ObjMacros shape): the packed rev is split
+// RB3-360 retail rev dialect (ObjMacros shape): the packed rev is split
 // into two HALFWORDS stored four bytes apart onto ONE internal-linkage align(4)
 // base, and the RAW incoming BinStream is forwarded to every read and to the
 // superclass Load.  DC3's Object.h BinStreamRev stack decorator additionally

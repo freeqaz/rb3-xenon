@@ -1,5 +1,5 @@
 #define RB3_OBJPTR_INLINE_TWOARG_CTOR 1
-// Ported from rb3-Wii src/system/bandobj/ScrollbarDisplay.cpp (MWCC -> MSVC X360).
+// ScrollbarDisplay (bandobj/ScrollbarDisplay.cpp), MSVC X360.
 #include "bandobj/ScrollbarDisplay.h"
 #include "decomp.h"
 #include "math/Utl.h"
@@ -54,7 +54,7 @@ void ScrollbarDisplay::CopyMembers(const UIComponent *o, Hmx::Object::CopyType t
     COPY_MEMBER_FROM(pDisplay, mMinThumbHeight)
 }
 
-// Retail-360 really saves (the Wii dev build's SAVE_OBJ MILO_FAIL stub is
+// Retail-360 really saves (not a SAVE_OBJ MILO_FAIL stub):
 // absent): rev 2, then the same member order PreLoad reads back.
 void ScrollbarDisplay::Save(BinStream &bs) {
     bs << 2;
@@ -245,7 +245,7 @@ void ScrollbarDisplay::SetListAttached(bool b) {
 bool ScrollbarDisplay::GetListAttached() const {
     // Retail reuses the (already-zero) blist register as the false result
     // instead of pre-zeroing a separate one -- i.e. a short-circuit `&&`
-    // expression, not the Wii dev build's nested if/assign form.
+    // expression, not a nested if/assign form.
     BandList *blist = GetList();
     RndTransformable *parent = TransParent();
     return blist && blist == parent;

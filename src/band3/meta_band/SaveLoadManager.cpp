@@ -49,7 +49,7 @@ public:
     // (StartSaveAction, 0x82550658) is `li r3,0x14` == sizeof(MemcardAction),
     // and it passes GetProfile()'s result straight to the ctor (0x825D77D8).
     // Same correction as LoadMemcardAction below; the vector* ctor and the
-    // unk24/unk28 pair were rb3-Wii-oracle shape.
+    // unk24/unk28 pair were wrong.
     SaveMemcardAction(BandProfile *);
     virtual ~SaveMemcardAction();
     virtual void PreAction();
@@ -67,8 +67,8 @@ public:
     // NO members of its own.  Retail's two `new LoadMemcardAction` sites pass
     // 0x14 to CriticalSection::operator new (SetState idx 195 and idx 1012,
     // both `li r3,0x14`), and MemcardAction is exactly 0x14 (vptr + mResult +
-    // unk8 + unkc + mProfile).  The unk24/mProfiles pair came from the rb3-Wii
-    // oracle, whose MemcardAction base is larger and whose ctor takes a
+    // unk8 + unkc + mProfile).  An unk24/mProfiles pair belongs to a
+    // larger MemcardAction base whose ctor takes a
     // vector<BandProfile*>* where ours takes a BandProfile*.  Neither member
     // was ever referenced anywhere, and this TU defines no LoadMemcardAction
     // method bodies, so they did nothing but make sizeof 0x1c and mis-size
@@ -132,9 +132,9 @@ void SaveLoadManager::HandleEventResponseStart(int) { mStateAtSelectStart = mSta
 void SaveLoadManager::Start() {
     mUser = NULL;
     mLocalUser = NULL;
-    // RB3-360 retail: Start() subscribes to TheMemcardMgr here.  The rb3-Wii dev
-    // build's Start() does not (it calls AddSink at its other 10 sites only), so
-    // this line is retail-byte evidence, not an oracle transcription.  The three
+    // RB3-360 retail: Start() subscribes to TheMemcardMgr here, i.e.
+    // Start() calls AddSink here (beyond its other 10 sites), so
+    // this line is retail-byte evidence.  The three
     // null-Symbol/kHandle arguments are AddSink's DEFAULT arguments -- retail's
     // `lwz r6,<gNullStr>` / `mr r5,r6` / `li r7,0` are the defaults being
     // materialised, which is why the one-argument spelling reproduces them.
@@ -192,8 +192,8 @@ void SaveLoadManager::Poll() {
         // Retail (Ghidra fn_82553490, verified against the compiled Start()
         // call count -- target 2 vs our old 5, and IsReasonToAutosave absent
         // from target's Poll() entirely) does NOT dispatch on individual
-        // mRequestFlags bits here. rb3-Wii's dev-build source has the 4-bit
-        // (8/1/4/2) dispatch below in comments -- this is a genuine 360
+        // mRequestFlags bits here. A 4-bit
+        // (8/1/4/2) dispatch is shown below in comments -- this is a genuine 360
         // retail simplification, not a decomp bug: any nonzero mRequestFlags
         // byte triggers a single AutoSave-mode Start(), and unk75 nonzero
         // triggers a single AutoLoad-mode Start(). The kMode_ManualLoad /
@@ -236,8 +236,8 @@ void SaveLoadManager::Poll() {
             break;
         // Retail (Ghidra fn_82553490) collapses kMode_ManualDelete/kMode_ManualLoad
         // into the default arm here -- consistent with the kS_Idle rewrite above,
-        // which never sets mMode to either value. rb3-Wii's dev source still has
-        // both cases; this is a genuine retail-360 simplification, not an omission.
+        // which never sets mMode to either value. This is
+        // a genuine retail-360 simplification, not an omission.
         default:
             MILO_NOTIFY("SaveLoadManager startup bad mode: %d\n", (SaveLoadMode)mMode);
             SetState((State)0x6a);
@@ -2355,7 +2355,7 @@ BEGIN_HANDLERS(SaveLoadManager)
     // Retail X360 ships neither `delete_saves` nor `printout_savesize_info`:
     // the in-COMDAT local-static Symbol chain of fn_82552660 runs
     // autosave, autoload, manual_save, ... , activate and then goes straight to
-    // the ProfileSwappedMsg arm.  Both are rb3-Wii DEV-build debug handlers, so
+    // the ProfileSwappedMsg arm.  Both are DEV-build debug handlers, so
     // they are gated out (via /DRB3_STRIP_CHEAT_HANDLERS) for the retail match
     // but kept for native builds.
     HANDLE_ACTION(delete_saves, ManualDelete())

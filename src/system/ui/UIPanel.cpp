@@ -94,7 +94,7 @@ bool UIPanel::Entering() const {
 }
 
 void UIPanel::Draw() {
-    // RB3 (rb3-Wii oracle) has no mFinalDrawPassFlag gate; that field is a
+    // RB3 has no mFinalDrawPassFlag gate; that field is a
     // dc3-newer addition removed from the RB3-360-matching layout.
     if (mDir && !mLoaded) {
         mDir->DrawShowing();

@@ -36,7 +36,7 @@ void TourChar::SaveFixed(FixedSizeSaveableStream &stream) const {
 }
 
 // Retail returns +0x20020 here (addis r3,r11,0x2 / addi r3,r3,0x20 at
-// 0x82B7FD2C). The rb3-Wii oracle carries 0x4020; retail wins.
+// 0x82B7FD2C), not 0x4020.
 int TourChar::SaveSize(int i) {
     int size = HxGuid::SaveSize() + 0x80;
     size += BandCharDesc::SaveSize(i);

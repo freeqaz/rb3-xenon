@@ -107,7 +107,7 @@ bool GemPlayer::HasDealtWithGem(int idx) {
 // player can hold a valid, vtable-bearing instance.
 //
 // ⚠ CORRECTION (lane CC-5): this block previously claimed "CrowdRating has no
-// real implementation anywhere (not in DC3, not in the rb3-Wii oracle)". That is
+// real implementation anywhere". That is
 // FALSE — the full implementation has been in this very repo the whole time at
 // src/band3/game/CrowdRating.cpp (139 lines, all 17 methods). Only the NATIVE
 // build was stubbing it, and a stub-execution probe (src/cc5_stub_probe.c)

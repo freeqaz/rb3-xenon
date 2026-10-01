@@ -2229,7 +2229,7 @@ namespace {
     // reference PNG to diff, no retail capture to compare against, and no
     // "looks about right" judgement. Any ratio != 1.000 is a mathematical proof
     // that a transform on the compose path is wrong. It is the same oracle
-    // rb3-Wii's native port used, and it is precisely the instrument that
+    // an earlier native port used, and it is precisely the instrument that
     // catches an alias-unsafe Multiply -- which is how it earns its place here
     // (see the mtx.cpp fix landed alongside this milestone).
     //
@@ -2547,7 +2547,7 @@ namespace {
     // re-pointed at it. So this oracle uses CollectDeep, like the mesh walk.
     //
     // ⛔ WHY NOT THE BONE-LENGTH RATIO. The charter's standing warning, and
-    // rb3-Wii lost four milestones to it: liveDist/|LocalXfm().v| is invariant
+    // an earlier port lost four milestones to it: liveDist/|LocalXfm().v| is invariant
     // under ANY rigid motion of a subtree. A hand rigidly displaced a metre from
     // the wrist, or rotated 180deg, scores a perfect 1.0000. Every check below
     // is ABSOLUTE (world positions, world-space gaps) or EXACT (a recompose
@@ -2558,7 +2558,7 @@ namespace {
     //   1. RECOMPOSE IDENTITY.  WorldXfm == LocalXfm * parent->WorldXfm, for
     //      every bone, elementwise. Needs no ground truth and no asset. This is
     //      the direct test for the alias-unsafe-compose family that cost
-    //      rb3-Wii ~15 waves and bit xenon in X4b -- a Multiply that stores
+    //      an earlier port ~15 waves and bit xenon in X4b -- a Multiply that stores
     //      into its destination before reading an aliased operand breaks THIS
     //      identity, at the first bone where it happens.
     //
@@ -3480,7 +3480,7 @@ namespace {
     }
 
     // Direct alias-safety probe for the compose family (charter hazard class;
-    // cost rb3-Wii ~15 waves, bit xenon in X4b). Compares Multiply(a,b,out)
+    // cost an earlier port ~15 waves, bit xenon in X4b). Compares Multiply(a,b,out)
     // against the same call with `out` aliasing each argument. Reference and
     // subject are the SAME function, so this cannot pass by construction --
     // it fails loudly if the snapshot fix in mtx.cpp:77 ever regresses.
@@ -3847,7 +3847,7 @@ namespace {
             // With it on, LoadCharacters drives the FileMerger, which fires
             // `on_post_merge` -> BandCharacter::OnPostMerge -> SyncObjects, and
             // SyncObjects runs the shipped loop (BandCharacter.cpp:148-153,
-            // token-identical to rb3-Wii's :186-192):
+            // shown here):
             //     while (!unk610.empty()) { RndMeshDeform *df = unk610.front();
             //                               ... df->Mesh()->...; delete df; }
             // which assumes a kObjListNoNull list really contains no nulls.

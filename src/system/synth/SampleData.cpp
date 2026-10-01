@@ -148,7 +148,7 @@ void SampleData::Load(BinStream &bs, const FilePath &fp) {
         // retail 0x90) and its only 5 charged sites -- 440 B, otherwise 105/110
         // instructions equal.  TWO SPELLINGS MEASURED AND REFUTED, do not retry:
         //   1. unnamed temporaries -- `(void)FilePath(fp);` in both branches
-        //   2. (1) PLUS a brace-less `else`, matching rb3-Wii's own shape
+        //   2. (1) PLUS a brace-less `else`
         // Both produced output BYTE-IDENTICAL to the form below: same 5
         // diff_arg sites, same 0x70 slot, same 0xa0 frame.  => MSVC X360 /O1
         // canonicalizes all three, so lexical scope depth and named-local-vs-

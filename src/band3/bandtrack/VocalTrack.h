@@ -38,7 +38,7 @@ public:
     }
     void FreeOldGems(float oldTime);
     TambourineGem *NewGem(float time, int gemIdx);
-    // W16-HR: TU5 helper, retail fn_82BA29A0 (name ours; no oracle has it).
+    // W16-HR: TU5 helper, retail fn_82BA29A0 (name ours; no symbol survives).
     TambourineGem *SetGemState(int id, int state);
     void SetTambourineManager(TambourineManager *mgr) { mTambourineManager = mgr; }
 
@@ -69,7 +69,7 @@ public:
     // in RebuildHUD ("start ms: %.2f, intro ms: %.2f, min: %.1f -> %.1f, max:
     // %.1f -> %.1f", args unk0/unk14/unk4/unkc/unk8/unk10) and the FROM/TO
     // lerp + SetRange(TO-pair) usage in UpdateScrolling. This also confirms
-    // W16-FS's oracle-defect findings #9/#10
+    // W16-FS's source-defect findings #9/#10
     // (docs/decomp/W16FS_UPDATESCROLLING_RETAIL_REDERIVE_2026-09-16.md) --
     // correct field roles and the TO-pair SetRange call are already present
     // in this source. Left un-renamed, comment-only, matching the LyricShift

@@ -41,7 +41,7 @@ void RetryAudioPanel::Load() {
     Symbol item = RandomVOContextItem();
     if (item != "") {
         SetVoiceoverSymbol(item);
-        // No SetPreLoad here: that was the rb3-Wii BinkClip preload flag.  Retail
+        // No SetPreLoad here (a BinkClip preload flag).  Retail
         // 0x826305B0 goes straight from SetVoiceoverSymbol (0x8262FDE8) to
         // PlayVoiceover (0x8262F6B0) with nothing in between.
         PlayVoiceover();

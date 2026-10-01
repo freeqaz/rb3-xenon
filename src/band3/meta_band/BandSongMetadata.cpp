@@ -553,8 +553,8 @@ bool BandSongMetadata::IsUGC() const {
 
 // retail fn_8259E890 (between IsUGC and IsDownload): one function-local lazy
 // static "ugc_plus" + GameOrigin() compare (cntlzw/srwi == idiom). Reached
-// from the retail-only `is_ugc_plus` handler arm; absent from the rb3-Wii dev
-// source, which inlines the ugc_plus test into `is_ugc`.
+// from the retail-only `is_ugc_plus` handler arm; `is_ugc` does not inline
+// the ugc_plus test.
 bool BandSongMetadata::IsUGCPlus() const {
     static Symbol ugc_plus("ugc_plus");
     return GameOrigin() == ugc_plus;

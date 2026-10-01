@@ -1,5 +1,5 @@
 #pragma once
-// Ported from rb3-Wii src/system/bandobj/BandLeadMeter.h (MWCC -> MSVC X360).
+// BandLeadMeter (bandobj/BandLeadMeter.h), MSVC X360.
 #include "rndobj/Dir.h"
 #include "rndobj/Mesh.h"
 #include "rndobj/Mat.h"

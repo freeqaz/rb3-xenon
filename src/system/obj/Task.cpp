@@ -88,7 +88,7 @@ ScriptTask::ScriptTask(DataArray *script, bool once, DataArray *updateVarsObjs)
 ScriptTask::~ScriptTask() {
 #ifndef HX_NATIVE
     // Retail: mObjects entries are ring-referenced via AddRef(this) in
-    // UpdateVarsObjects, so release them here (matches og-rb3/rb3-Wii, where
+    // UpdateVarsObjects, so release them here (in RB3
     // Hmx::Object derives ObjRef and `this` is a valid ring referrer). The X360
     // ring dispatches this ScriptTask's Replace when a held object dies.
     for (std::list<Hmx::Object *>::iterator it = mObjects.begin(); it != mObjects.end();
@@ -173,8 +173,8 @@ void ScriptTask::UpdateVarsObjects(DataArray *d) {
             mObjects.push_back(obj);
 #ifndef HX_NATIVE
             // Retail: register this ScriptTask as a ring referrer of `obj` so
-            // the ring dispatches our Replace when `obj` dies (matches
-            // og-rb3/rb3-Wii). Native's Hmx::Object is an ObjRefOwner, not an
+            // the ring dispatches our Replace when `obj` dies (as in
+            // RB3). Native's Hmx::Object is an ObjRefOwner, not an
             // ObjRef, so it cannot self-register; the raw pointer is tracked
             // for identity only (see ~ScriptTask).
             obj->AddRef(this);

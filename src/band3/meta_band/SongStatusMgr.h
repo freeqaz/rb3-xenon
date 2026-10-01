@@ -8,9 +8,9 @@
 #include "game/BandUser.h"
 #include <hash_map>
 
-// Retail RB3-360 SongStatusMgr replaced the Wii build's `SongStatusLookup
-// mLookups[1000]` linear-scan cache (an embedded SongStatusCacheMgr sub-object,
-// 0x1f48 bytes) with an STLport `hash_map<int, SongStatus*>` song-index cache
+// Retail RB3-360 SongStatusMgr has no `SongStatusLookup
+// mLookups[1000]` linear-scan cache (no embedded SongStatusCacheMgr sub-object,
+// 0x1f48 bytes); it uses an STLport `hash_map<int, SongStatus*>` song-index cache
 // living directly at the manager (this+0x38). Proven from the retail asm:
 //  - 23 accessors decode `addi rX, r3, 0x38; bl <int-key hashtable::find>`
 //    (find COMDAT lbl_82552CD0 = STLport hashtable<int,...>::find returning an
@@ -260,9 +260,9 @@ public:
 
     // Cache index. Retail inlines STLport hash_map<int,SongStatus*>::find at
     // this+0x38 (the find COMDAT returns an iterator-by-value with a NULL-miss
-    // sentinel; the value pointer is at slist node+0x8). The Wii build's
+    // sentinel; the value pointer is at slist node+0x8). There is no
     // GetSongStatusIndex/HasSongStatus/AccessSongStatus linear scan over
-    // mLookups[1000] is replaced by these map lookups.
+    // mLookups[1000]; these map lookups do that job.
     bool HasSongStatus(int songID) const {
         return mSongStatusCache.find(songID) != mSongStatusCache.end();
     }

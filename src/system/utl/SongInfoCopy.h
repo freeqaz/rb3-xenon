@@ -44,7 +44,7 @@ public:
     virtual float GetVocalMuteVolume() const = 0;
     // TU5/retail-only virtual inserted here (vtable slot 0x4c), pushing
     // NumExtraMidiFiles 0x4c->0x50 and GetExtraMidiFile 0x50->0x54. Absent from
-    // the rb3-Wii dev oracle AND DC3 (both have NumExtraMidiFiles directly after
+    // DC3 (which has NumExtraMidiFiles directly after
     // GetVocalMuteVolume). Verified from the retail TU5 SongInfoCopy vtable
     // @0x8211A9EC: slot 19 = fn_827D1190, which returns bool and compares the
     // song's GetName() against the interned Symbol "ugc_audition_temp_song"

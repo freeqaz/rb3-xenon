@@ -86,7 +86,7 @@ void MoviePanel::Load() {
 #ifdef HX_NATIVE
         mLanguage = Movie::LocalizationTrack();
 #else
-        // RB3 retail (0x827B0A20) is rb3-Wii's inline lookup: SystemLanguage()
+        // RB3 retail (0x827B0A20) inline lookup: SystemLanguage()
         // against SupportedLanguages(false), 1-based, 0 falls back to the first.
         Symbol language = SystemLanguage();
         DataArray *supported = SupportedLanguages(false);
@@ -136,7 +136,7 @@ void MoviePanel::Load() {
 }
 
 void MoviePanel::Draw() {
-    // RB3 (rb3-Wii oracle): gate only on state. mFinalDrawPassFlag is a
+    // RB3: gate only on state. mFinalDrawPassFlag is a
     // dc3-newer field removed from the RB3-360-matching UIPanel layout.
     if (GetState() != kUnloaded) {
 #ifdef __EMSCRIPTEN__

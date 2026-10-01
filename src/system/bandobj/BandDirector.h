@@ -29,7 +29,7 @@ public:
         Symbol mName; // 0xc
     };
 
-    /** Retail-only rewrite (no rb3-Wii equivalent): mDircuts entry wrapping a
+    /** Retail-only rewrite: mDircuts entry wrapping a
      * possibly-null BandCamShot*. Evidence: Keys<DircutEntry,DircutEntry>::Cross
      * at 0x822847A8 (stride 8, value@+0, frame@+4 => sizeof 4); FindNextDircut
      * 0x82284C18 returns entry->shot and null-tests it; AddDircut 0x822881B8
@@ -60,8 +60,8 @@ public:
     void VenueLoaded(WorldDir *);
     void OnMidiAddPostProc(Symbol, float, float);
     /** Retail-only (0x8229A2E0): the RBN2 flavour of `midi_add_postproc`, which
-     * takes only (Symbol, seconds) -- no fade-length. Not present in the rb3-Wii
-     * dev source; its `rbn2_add_postproc` handler string lives at .rdata
+     * takes only (Symbol, seconds) -- no fade-length. Retail-only;
+     * its `rbn2_add_postproc` handler string lives at .rdata
      * 0x820170F8. */
     void OnRbn2AddPostProc(Symbol, float);
     /** Retail-only (0x82298E60): the `midi_shot5_cleanup` handler body, which
@@ -72,7 +72,7 @@ public:
     bool BehindCamera(Symbol) const;
     void LoadVenue(Symbol, LoaderPos);
     void SetCharacterHideHackEnabled(bool);
-    /** Retail (0x82298B40) takes a bool the rb3-Wii dev source lacks; it gates
+    /** Retail (0x82298B40) takes a bool; it gates
      * the back-inserted legacy fade-in key (`if (lpreset && b && i > 0)`), and
      * the `midi_cleanup_presets` handler feeds it `_msg->Int(2)`. */
     void OnMidiPresetCleanup(bool);
@@ -81,7 +81,7 @@ public:
     void ClearSymbolKeysFrameRange(Symbol, float, float);
     void HarvestDircuts();
     /** Retail-only factoring (0x8228DD38, 0x244 bytes): the per-character
-     * lip-sync assignment loop that the rb3-Wii dev source has inlined inside
+     * lip-sync assignment loop, out of line rather than inlined into
      * VenueLoaded. Retail calls it from two places -- OnFileLoaded/VenueLoaded
      * (0x82292350) and BandWardrobe::SetPlayMode (0x823308F4) -- with `this` as
      * the only argument, so it takes no parameters and reads everything it needs

@@ -72,7 +72,7 @@ public:
     virtual void NonStrumSwing(int slot, bool button_down, bool solo) = 0;
     virtual void FretButtonDown(int slot) = 0;
     // ★ Slot order proven on RETAIL BYTES (lane SETDIFF, 2026-08-31), NOT from
-    // an oracle: retail `TrackWatcher::FretButtonUp` is the forwarder at
+    // a guess: retail `TrackWatcher::FretButtonUp` is the forwarder at
     // 0x8279d768, which dispatches through `lwz r11, 0x2c(r11)` == slot 11.
     // It is identified without any map name by `BeatMatcher::FretButtonUp`
     // (anchored by its own "(%2d%10.1f UP\t%d)\n" format string) doing

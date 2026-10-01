@@ -4,8 +4,8 @@
 #include "tour/TourPerformer.h"
 #include <hash_map>
 
-// Retail RB3-X360 uses Harmonix `hash_map<Symbol,int>` here where the rb3-Wii
-// dev decomp approximated std::map -- ChooseQuestFilters/CheatCycleSetlist call
+// Retail RB3-X360 uses Harmonix `hash_map<Symbol,int>` here, not
+// std::map -- ChooseQuestFilters/CheatCycleSetlist call
 // the container's default ctor OUT OF LINE (??0?$hash_map@VSymbol@@H...) and
 // InqSongsInFilterData indexes it through the hashtable helpers.  Same finding
 // as meta_band/AccomplishmentProgress.h.

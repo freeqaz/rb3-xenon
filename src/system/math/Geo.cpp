@@ -117,7 +117,7 @@ void Box::GrowToContain(const Vector3 &vec, bool b) {
     if (b) {
         mMin = mMax = vec;
     } else
-        // rb3-Wii form: else-if (max is only tested when vec[i] >= mMin[i]),
+        // Else-if form (max is only tested when vec[i] >= mMin[i]),
         // which reproduces retail's branch structure. DC3's independent
         // MinEq/MaxEq pair evaluates both unconditionally and mismatches.
         for (int i = 0; i < 3; i++) {

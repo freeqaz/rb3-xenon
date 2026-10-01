@@ -233,7 +233,7 @@ BEGIN_SAVES(WorldCrowd)
 #ifdef RB3_WORLDCROWD_DC3_REV
     SAVE_REVS(0x10, 0)
 #else
-    // retail RB3-360 (rb3-Wii ASSERT_REVS(0xE,0)); DC3 bumped to 0x10 for the
+    // retail RB3-360 (ASSERT_REVS(0xE,0)); DC3 bumped to 0x10 for the
     // mCharForceLod/unkd0 members retail lacks.
     SAVE_REVS(0xE, 0)
 #endif
@@ -1499,7 +1499,7 @@ void WorldCrowd::DrawShowing() {
                         // INSIDE the tracker scope (~RndEnvironTracker runs
                         // last), and re-reads the mEnviron member for the test
                         // rather than the cached local. Both adjudicated on
-                        // retail bytes; matches the rb3-Wii oracle's scoping.
+                        // retail bytes.
                         if (mEnviron) {
                             env->SetUseApproxGlobal(savedApprox);
                         }

@@ -119,7 +119,7 @@ void MusicLibraryNetSetlists::ParseDataResultsIntoSetlists(bool archived) {
     // Retail RB3-360 (TU5) does NOT dump the result list here: the log string
     // "Setlists from net:" is absent from the retail image, while every
     // functional string in this body (art_url / seconds_left / valid_instr)
-    // is present exactly once. This is rb3-Wii DEV-build residue. House
+    // is present exactly once. This is DEV-build residue. House
     // pattern: keep it for the native build, drop it for the match build.
 #if defined(MILO_DEBUG) && defined(HX_NATIVE)
     MILO_LOG("Setlists from net:\n");
@@ -143,8 +143,8 @@ void MusicLibraryNetSetlists::ParseDataResultsIntoSetlists(bool archived) {
                 artUrl = node.Str(nullptr);
             }
         }
-        // Retail parses an "owner_guid" field that neither oracle (rb3-Wii dev
-        // nor DC3) has: a decimal string converted in-place to a 64-bit XUID.
+        // Retail parses an "owner_guid" field that DC3 does not
+        // have: a decimal string converted in-place to a 64-bit XUID.
         XUID ownerXuid = 0;
         NetSavedSetlist *setlist = nullptr;
         switch (type) {

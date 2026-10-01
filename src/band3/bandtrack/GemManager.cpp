@@ -810,8 +810,8 @@ void GemManager::SetupGems(int startTick) {
     }
 
     mTrackDir->DeleteUnusedChordMeshes();
-    // Retail has no IsRealGuitar()/SyncFingerFeedback path here (the Wii
-    // oracle's anyRG flag is absent from TU5 SetupGems).
+    // Retail has no IsRealGuitar()/SyncFingerFeedback path here (there is no
+    // anyRG flag in TU5 SetupGems).
     if (anyRGChord) {
         mTrackDir->SyncObjects();
     }
@@ -1442,7 +1442,7 @@ void GemManager::Poll(float ms, const PlayerState &state) {
         UpdateArpeggios(ms, true);
     } else {
         // RB3-360: `|| ThePracticePanel->unk5c <= 0` removed from this
-        // condition — PracticePanel::unk5c is absent in retail (Wii-only
+        // condition — PracticePanel::unk5c is absent in retail (the
         // track-in delay state). GemManager::Poll is unpinned; the retail
         // form of this practice-mode condition is UNVERIFIED (recon open
         // question — revisit when GemManager is pinned).

@@ -116,7 +116,7 @@ BEGIN_PROPSYNCS(UIFontImporter)
         mFontPctSize = mLastGenWasNG ? std::fabs(_val.Int() / HEIGHT_HD)
                                      : std::fabs(_val.Int() / HEIGHT_SD)
     )
-    // rb3-Wii oracle: RB3 has NO `weight` prop here -- it goes straight from
+    // RB3 has NO `weight` prop here -- it goes straight from
     // font_pixel_size to `bold`, whose getter is (mFontWeight > 400).
     SYNC_PROP_SET(
         bold, (mFontWeight > 400), if (_val.Int()) mFontWeight = 800;
@@ -138,10 +138,10 @@ BEGIN_PROPSYNCS(UIFontImporter)
     SYNC_PROP(bitmap_save_name, mBitMapSaveName)
     SYNC_PROP(gened_fonts, mGennedFonts)
     SYNC_PROP(reference_kerning, mReferenceKerning)
-    // NOTE: the oracle spells these SYNC_PROP_MODIFY_ALT, but that macro lives only
+    // NOTE: the natural spelling is SYNC_PROP_MODIFY_ALT, but that macro lives only
     // in obj/ObjMacros.h (not included here).  obj/Object.h's live SYNC_PROP_MODIFY
     // ALREADY has the ALT shape (`if (PropSync(...)) {...} else return false;`), so
-    // this is already the oracle's codegen -- no change needed.
+    // this is already that codegen -- no change needed.
     SYNC_PROP_MODIFY(mat_variations, mMatVariations, SyncWithGennedFonts())
     SYNC_PROP_MODIFY(handmade_font, mHandmadeFont, HandmadeFontChanged())
     SYNC_PROP(resource_name, mSyncResource)
@@ -155,8 +155,8 @@ END_PROPSYNCS
 
 // Retail writes the save revision by LOADING A GLOBAL, not by storing a folded
 // immediate: the target emits `lis/lwz lbl_82C793C0` where SAVE_REVS(10,4)'s
-// constexpr packRevs() gives us `lis 0x4 / ori 0xa` (= 0x4000A).  The rb3-Wii oracle
-// agrees -- it carries a file-scope `int gREV` and asserts against it on load.
+// constexpr packRevs() gives us `lis 0x4 / ori 0xa` (= 0x4000A).  The RB3 source
+// carries a file-scope `int gREV` and asserts against it on load.
 static int gSaveRev = (4 << 16) | 10; // packRevs(alt=4, rev=10)
 
 BEGIN_SAVES(UIFontImporter)
@@ -230,7 +230,7 @@ BEGIN_COPYS(UIFontImporter)
     END_COPYING_MEMBERS
 END_COPYS
 
-// RB3-360 retail rev dialect (rb3-Wii/ObjMacros shape): the packed rev is split
+// RB3-360 retail rev dialect (ObjMacros shape): the packed rev is split
 // into two HALFWORDS stored four bytes apart onto ONE internal-linkage align(4)
 // base, and the RAW incoming BinStream is forwarded to every read and to the
 // superclass Load.  DC3's Object.h BinStreamRev stack decorator additionally
@@ -295,8 +295,8 @@ BEGIN_LOADS(UIFontImporter)
     // Was `if (rev > 5 && rev < 10) { ObjPtr<RndMat> mat(this); bs >> mat; }` --
     // a DC3-era guard that read mDefaultMat into a DISCARDED temporary and skipped it
     // entirely at rev 10.  Retail's Save provably WRITES mDefaultMat (adding
-    // `bs << mDefaultMat` is what took Save from 95.8% to 100%), and the rb3-Wii
-    // oracle reads it unconditionally at `rev > 5`, so the `< 10` cutoff is a DC3
+    // `bs << mDefaultMat` is what took Save from 95.8% to 100%), and RB3
+    // reads it unconditionally at `rev > 5`, so the `< 10` cutoff is a DC3
     // artifact and the discard left Save/Load asymmetric.
     if (rev > 5) {
         bs >> mDefaultMat;
@@ -318,15 +318,15 @@ BEGIN_LOADS(UIFontImporter)
     // for this unit: nothing in the body ever reads one.
 END_LOADS
 
-// rb3-Wii oracle body.  The DC3-era version set "weight", "drop_shadow" and
+// RB3 property list.  The DC3-era version set "weight", "drop_shadow" and
 // "drop_shadow_opacity"; retail band.exe contains ZERO "drop_shadow" /
 // "drop_shadow_opacity" strings but DOES contain "bold" / "imported_font" /
 // "font_name" / "font_size" / "italics" (positive controls all fire), so the
-// oracle's property list is the RB3 one.
-// NOTE ON CONTROL FLOW: the oracle hoists a `bool has_import_font` flag, but retail
+// RB3 list is the one below.
+// NOTE ON CONTROL FLOW: no hoisted `bool has_import_font` flag; retail
 // did NOT -- that form costs an extra local (measured: frame delta +0x10 structural,
 // with inserted li/li/clrlwi. flag machinery).  Retail uses the direct condition, so
-// only the PROPERTY LIST is taken from the oracle, not its control flow.
+// only the PROPERTY LIST is RB3's, not a flag-based control flow.
 void UIFontImporter::ImportSettingsFromFont(RndFont *font) {
     if (font && font->Type() == Symbol("imported_font")) {
         SetProperty("font_name", font->Property("font_name")->Str());
@@ -388,13 +388,13 @@ void UIFontImporter::GenerateBitmapFilename() {
     mBitMapSaveName.ReplaceAll(' ', '_');
 }
 
-// rb3-Wii oracle (src/system/ui/UIFontImporter.cpp): RB3 has a single RndFont type,
+// RB3 has a single RndFont type,
 // so there is no Font3d arm here -- the RndFontBase/RndFont3d split is a DC3-era
 // addition.  Retail band.exe contains zero "RndFont3d" strings.
 RndFont *UIFontImporter::FindFontForMat(RndMat *mat) const {
     if (mat) {
         static Symbol Font("Font");
-        // NOTE: the oracle uses FOREACH_OBJREF (a REVERSE walk of a
+        // NOTE: the natural form is FOREACH_OBJREF (a REVERSE walk of a
         // std::vector<ObjRef*>).  This tree's Hmx::Object::Refs() is a DC3-era
         // intrusive next/prev ring returning `const ObjRef &`, so neither the vector
         // type nor rbegin()/rend() exists here.  Keeping the forward FOREACH walk;
@@ -450,7 +450,7 @@ void UIFontImporter::OnSetCharsetUTF8(String const &s) {
     mPlus = s;
 }
 
-// rb3-Wii oracle: plain reverse ObjRef walk, no mStyle.mFont filter.
+// RB3: plain reverse ObjRef walk, no mStyle.mFont filter.
 RndText *UIFontImporter::FindTextForFont(RndFont *font) const {
     if (font) {
         static Symbol Text("Text");
@@ -469,7 +469,7 @@ RndText *UIFontImporter::FindTextForFont(RndFont *font) const {
                 // name "Text", but this decomp's class carries the "Rnd" prefix
                 // (OBJ_CLASSNAME(RndText) => ClassName() == "RndText"), so the
                 // matched `== Text` compare never fires for a natively-loaded
-                // RndText.  Accept the prefixed name too. (Oracle does the same.)
+                // RndText.  Accept the prefixed name too.
                 if (owner->ClassName() == Text
                     || owner->ClassName() == RndText::StaticClassName()) {
                     return dynamic_cast<RndText *>(owner);
@@ -505,7 +505,7 @@ Symbol UIFontImporter::GetMatVariationName(unsigned int ui) const {
         for (int i = 0; i < ui; i++) {
             ++it;
         }
-        // retail 0x82818D98 (rb3-Wii): strip the extension with rfind/substr
+        // retail 0x82818D98: strip the extension with rfind/substr
         String name((*it)->Name());
         if (name.rfind(".") != String::npos) {
             name = name.substr(0, name.rfind("."));
@@ -666,10 +666,10 @@ DataNode UIFontImporter::OnForgetGened(DataArray *) {
 }
 
 // Retail calls ImportSettingsFromFont DIRECTLY here, not the AttachImporterToFont
-// wrapper the rb3-Wii dev oracle shows: the charged `bl` at index 10 of this row
+// wrapper: the charged `bl` at index 10 of this row
 // names ?ImportSettingsFromFont@UIFontImporter@@QAAXPAVRndFont@@@Z, and our body of
 // THAT name is byte-exact against retail 0x82818840 (1036 B, fuzzy 100).  Retail
-// bytes outrank the oracle.  AttachImporterToFont is left defined (now uncalled) so
+// bytes decide.  AttachImporterToFont is left defined (now uncalled) so
 // the native link is unaffected.  Lane W16-EC.
 DataNode UIFontImporter::OnAttachToImportFont(DataArray *) {
     ImportSettingsFromFont(mFontToImportFrom);

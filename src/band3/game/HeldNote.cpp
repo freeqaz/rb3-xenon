@@ -11,8 +11,8 @@
 // that dtk splits off SetHoldTime); GetGem() and GetAwardedPercent() are NOT
 // emitted, so they are deliberately left undefined here.
 //
-// The definition order below is RETAIL's COMDAT order, which differs from the
-// rb3-Wii oracle's source order: retail puts ReleaseSlot BEFORE SetHoldTime.
+// The definition order below is RETAIL's COMDAT order:
+// retail puts ReleaseSlot BEFORE SetHoldTime.
 
 HeldNote::HeldNote()
     : mGem(0), unk_0x4(-1), mTrackType(kTrackNone), unk_0xc(0.0f), unk_0x10(0),
@@ -83,11 +83,11 @@ float HeldNote::GetPointFraction() {
     if (pointsPlus <= 0)
         return 0;
     else {
-        // RETAIL DIVERGES FROM THE rb3-Wii ORACLE HERE.  The Wii dev source is
+        // RETAIL CLAMPS HERE.  The plausible source
         //   if (fraction < 0.0f || fraction > 1.0f) { MILO_WARN(...); fraction = 1.0f; }
-        // i.e. BOTH out-of-range arms land on 1.0.  Retail's `blt` skips over the
+        // sends BOTH out-of-range arms to 1.0.  Retail's `blt` skips over the
         // 1.0 constant load and reaches `fmr f1, f0` while f0 still holds 0.0, so
-        // retail CLAMPS to [0,1] instead.  Retail wins over the oracle.
+        // retail CLAMPS to [0,1] instead.  Retail decides.
         float fraction = ((float)headPoints + awarded) / (float)pointsPlus;
         if (fraction < 0.0f)
             fraction = 0.0f;

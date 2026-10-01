@@ -337,7 +337,7 @@ protected:
     float mVignetteIntensity; // 0x208
 
     // RB3-2010 retail: the hue-converge / blend / brightness post-proc effect
-    // was ADDED in the newer DC3-2012 engine; rb3-Wii's RndPostProc ends at
+    // was ADDED in the newer DC3-2012 engine; RB3's RndPostProc ends at
     // mVignetteIntensity (no mHueTarget/mHueFocus/mBlendAmount/mBrightnessPower),
     // and the retail asm confirms it: NgPostProc's own members (mRandomSeed1 at
     // target 0x20c, unk234/unk238) sit exactly 16 bytes (4 words = these 4

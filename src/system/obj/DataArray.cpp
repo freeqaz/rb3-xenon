@@ -977,7 +977,7 @@ DataNode DataArray::ExecuteScript(
     int numVars = 0;
     int size = mSize;
     // MATCH-LOAD-BEARING: retail keeps the post-if index in a SEPARATE local
-    // from the `index` parameter (dc3/rb3-Wii both write `index++` here, which
+    // from the `index` parameter (an `index++` here
     // does NOT match).  Retail's allocator parks this variable in r30 -- the
     // same register as the inner loop's countdown -- so it must preload r30
     // from the parameter at entry and keep a second copy of `index` alive

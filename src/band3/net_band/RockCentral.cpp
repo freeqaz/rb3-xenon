@@ -72,9 +72,9 @@ extern "C" int NWC24GetMyUserId(unsigned long long &);
 // the static DataPoint (verified from the shared guard-word bit order:
 // key1,key2,...,dataPoint). So the keys are declared up front (DP_KEYS*), then
 // INIT_DATAPOINT declares the DataPoint static last, then ADD_DATA_PAIR just
-// inserts using the pre-declared key statics. (rb3-Wii's decomp used the global
-// Symbols.h tokens with the key statics interleaved after the DataPoint, which
-// diverges from the retail static-init ordering.)
+// inserts using the pre-declared key statics. (Global
+// Symbols.h tokens with the key statics interleaved after the DataPoint
+// would diverge from the retail static-init ordering.)
 #define DP_KEY(a) static Symbol a(#a)
 #define DP_KEYS1(a) DP_KEY(a);
 #define DP_KEYS2(a, b) DP_KEY(a), b(#b);
@@ -138,9 +138,9 @@ void RockCentral::Terminate() {
     TheWiiFriendMgr.RemoveSink(this, WiiFriendsListChangedMsg::Type());
     ThePlatformMgr.RemoveSink(this, SigninChangedMsg::Type());
     ThePlatformMgr.RemoveSink(this, InviteReceivedMsg::Type());
-    // rb3-Wii sinks on WiiProfileMgr's DeleteQueueUpdatedMsg; the dc3-derived
+    // No sink on WiiProfileMgr's DeleteQueueUpdatedMsg here; the dc3-derived
     // WiiProfileMgr in this tree has no MsgSource RemoveSink. Non-pinned.
-    // rb3-Wii also released its WiiFriendList / WiiMessageList members here;
+    // There are no WiiFriendList / WiiMessageList members to release:
     // those members do not exist in the Xbox layout (0x98 is mXNetAddr).
 }
 
@@ -245,11 +245,11 @@ DataNode RockCentral::OnMsg(const ServerStatusChangedMsg &msg) {
 // retail-Xbox range (an earlier note here claimed otherwise — it was false).
 // Retail calls ONE body, fn_824F7C98 (0x80 B), for BOTH UserLoginMsg and
 // FriendsListChangedMsg — an ICF fold, so the two handlers are the same source
-// text: queue an UpdateFriendsListJob for the message's pad. The rb3-Wii DEV
-// oracle's UserLogin body (WiiProfileMgr PID check, MILO_WARN, unk112) and its
+// text: queue an UpdateFriendsListJob for the message's pad. A
+// UserLogin body with a WiiProfileMgr PID check, MILO_WARN and unk112, or a
 // FriendsListChanged second job (UpdateMasterProfileFriendsListJob, Wii-only —
 // see RockCentralJobs.cpp) are NOT in the retail bytes. ProfileChangedMsg is
-// fn_824F7D48 (0xD8 B) and matches the oracle body exactly.
+// fn_824F7D48 (0xD8 B).
 DataNode RockCentral::OnMsg(const UserLoginMsg &msg) {
     mJobMgr.QueueJob(new UpdateFriendsListJob(msg.GetPadNum()));
     return 1;
@@ -349,7 +349,7 @@ void RockCentral::ForceLogout() {
     // i.e. `mState == 2 || mState == 1`.  Semantically inert (two side-effect-free
     // equality tests on the same value), so this is an accuracy fix, not a bug
     // fix -- it closes the only 2 of Handle@RockCentral's 30 charges that name a
-    // source construct.  rb3-Wii has the operands the other way round.
+    // source construct.
     if (mState == 2 || mState == 1) {
         mState = 3;
         TheNet.GetServer()->Logout();
@@ -508,7 +508,7 @@ void RockCentral::GetLeaderboardByPlayer(
 ) {
     // Retail RB3 360 has no empty-vec early-out / RockCentralOpCompleteMsg else
     // branch here (verified from fn_824E88E8: the `if (server)` failure jumps
-    // straight to the epilogue). rb3-Wii's dev build added that branch.
+    // straight to the epilogue).
     Server *server = IsConnected(o, -1, false);
     if (server) {
         DP_KEYS5(role_id, song_id, lb_type, lb_mode, num_rows)
@@ -586,7 +586,7 @@ void RockCentral::GetLeaderboardByRankRange(
     // branch here, exactly as in GetLeaderboardByPlayer above: retail's body is
     // reloc-masked byte-identical to GetLeaderboardByPlayer (824 B, frame 0x160)
     // -- the same ByPlayer/ByRankRange twinning the Acc (624 B) and Battle
-    // (620 B) pairs already show. rb3-Wii's dev build added that branch.
+    // (620 B) pairs already show.
     Server *server = IsConnected(o, -1, false);
     if (server) {
         DP_KEYS5(role_id, song_id, start_rank, end_rank, lb_type)
@@ -657,7 +657,7 @@ void RockCentral::UpdateFriendList(
             String str;
             str = friends[i]->mName.c_str();
             // Retail RB3 360 reads the full 64-bit XUID at Friend+0x20 (ld) and
-            // formats it with "%lld" — no 32-bit truncation as in rb3-Wii.
+            // formats it with "%lld" — no 32-bit truncation.
             unsigned long long key = friends[i]->mXUID;
             char buf[8];
             char buf2[0x18];
@@ -674,7 +674,7 @@ void RockCentral::UpdateFriendList(
 
 // Profile* overload (fn_824EA128 in the pinned retail range). Unlike the int
 // overload, the pid value is the server's player-id for the profile's pad.
-// rb3-Wii's dev .cpp never defined this overload; recovered from the target asm.
+// This overload is recovered from the target asm.
 // Retail recomputes friends.size() at the loop test each iteration (no cached
 // _tmp5): the target re-reads begin/end and re-derives (end-begin)>>2 on the
 // back-edge. Caching the size diverged (+the dropped recompute flipped the loop
@@ -1399,8 +1399,8 @@ void RockCentral::ConvertToStr(PatchDir *dir, String &str) {
 }
 
 void RockCentral::ConvertToStr(MemStream &ms, String &str) {
-    // rb3-Wii MemStream exposed BufferSize(); the dc3-derived engine header
-    // names the identical accessor Size(). Non-pinned; behavior unchanged.
+    // The dc3-derived engine header
+    // names the MemStream accessor Size(). Non-pinned; behavior unchanged.
     str.reserve(ms.Size() * 2 + 1);
     ms.Seek(0, BinStream::kSeekBegin);
     while (!ms.Eof()) {
@@ -1968,7 +1968,7 @@ BEGIN_HANDLERS(RockCentral)
     // instantiates those Msg::Type() statics -- delete_queue_update,
     // delete_user_complete, wii_friend_mgr_op_complete, wii_friends_list_changed,
     // enumerate_messages_complete, invite_received. The two wii_* ones are the
-    // Wii-oracle-correct / Xbox-wrong class. Kept: the seven whose type strings
+    // Wii-only class. Kept: the seven whose type strings
     // ARE in the image.
     HANDLE_MESSAGE(ServerStatusChangedMsg)
     HANDLE_MESSAGE(UserLoginMsg)

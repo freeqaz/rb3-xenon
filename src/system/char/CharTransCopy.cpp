@@ -36,10 +36,10 @@ void CharTransCopy::PollDeps(
 BEGIN_HANDLERS(CharTransCopy)
     HANDLE_SUPERCLASS(RndPollable)
     HANDLE_SUPERCLASS(Hmx::Object)
-    // NB: rb3-Wii spells a HANDLE_CHECK(0x4C) here.  In THIS tree END_HANDLERS
+    // NB: no HANDLE_CHECK(0x4C) here.  In THIS tree END_HANDLERS
     // already emits the `if (_warn) (void)(PathName(this), sym);` tail that the
     // retail body's call to PathName (0x82757BA8) evidences, and ObjMacros.h's
-    // HANDLE_CHECK belongs to the parallel rb3-Wii macro set whose INIT_REVS /
+    // HANDLE_CHECK belongs to a parallel macro set whose INIT_REVS /
     // SYNC_PROP signatures are incompatible with Object.h's.  Do not re-add it.
 END_HANDLERS
 
@@ -48,11 +48,11 @@ BEGIN_PROPSYNCS(CharTransCopy)
     SYNC_PROP(dest, mDest)
 END_PROPSYNCS
 
-// ⚠ THE ORACLE IS THE DEFECT HERE.  rb3-Wii spells this `SAVE_OBJ(CharTransCopy,
-// 0x2D)`, i.e. an assert-only stub with NO body.  RB3-360 retail has a REAL save:
+// ⚠ NOT A STUB.  `SAVE_OBJ(CharTransCopy,
+// 0x2D)` would be an assert-only stub with NO body.  RB3-360 retail has a REAL save:
 // fn_823C7B88 writes `li r11,1` through a 4-byte BinStream::Write (SAVE_REVS(1,0)),
 // calls Hmx::Object::Save (0x8275AB90) once, then streams the two members.  Written
-// from the retail bytes, per the standing rule that retail outranks both oracles.
+// from the retail bytes.
 BEGIN_SAVES(CharTransCopy)
     SAVE_REVS(1, 0)
     SAVE_SUPERCLASS(Hmx::Object)

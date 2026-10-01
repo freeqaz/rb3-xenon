@@ -50,22 +50,22 @@ void StorePurchaseable::IDToOfferString(unsigned long long id, String &s) {
     s = MakeString("%016llX", id);
 }
 
-// Retail 360 fn_827A64B8 (lane BU-2). rb3-Wii StoreOffer.cpp:631 gives the
-// body verbatim, and the retail operand order matches it exactly: the three
+// Retail 360 fn_827A64B8 (lane BU-2). Retail's operand order: the three
 // byte loads are this+0x28, this+0xa8, this+0x68 = isAvailable of `this`,
-// then mPack (0x80+0x28), then mAlbum (0x40+0x28).
+// then mPack (0x80+0x28), then mAlbum (0x40+0x28) -- in exactly that
+// order.
 bool StoreOffer::IsCompletelyUnavailable() const {
     return !IsAvailable() && !mPack.IsAvailable() && !mAlbum.IsAvailable();
 }
 
-// Retail 360 fn_827A6548 (lane BU-2) = rb3-Wii StoreOffer.cpp:182. Loads
+// Retail 360 fn_827A6548 (lane BU-2). Loads
 // mStoreOfferData (this+0xc0), sret-calls DataNode::Sym on node 0 and compares
 // the returned Symbol against the argument.
 bool operator==(const StoreOffer *o, Symbol s) { return o->ShortName() == s; }
 
 // Retail body reconstructed from Ghidra fn_82783368: retail also parses
 // album_id/pack_id into the nested purchaseables, formats the localized
-// release-date string into mReleaseDateStr (the Wii branch's DateTime member
+// release-date string into mReleaseDateStr (the DateTime
 // is only a ctor local here), and dropped the avatar-offer notify exemption.
 StoreOffer::StoreOffer(DataArray *a, SongMgr *mgr) : mStoreOfferData(a), mSongMgr(mgr) {
     static Symbol id("id");
@@ -166,9 +166,9 @@ bool StoreOffer::IsTest() const {
     return false;
 }
 
-// Retail-only accessors below (absent from the rb3-Wii dev snapshot, which
-// rewrote StoreOffer around StorePackedOffer; retail 360 kept the DataArray
-// form). Bodies reconstructed from the retail binary (Ghidra 0x82781860,
+// Retail-only accessors below (retail 360 keeps the DataArray form;
+// there is no StorePackedOffer rewrite). Bodies reconstructed from
+// the retail binary (Ghidra 0x82781860,
 // 0x82781D08, 0x82781D78, 0x827822E0, 0x82782448, 0x827825C0, 0x82782130).
 
 int StoreOffer::YearReleased() const {
@@ -238,7 +238,7 @@ bool StoreOffer::PartiallyInLibrary() const {
     return false;
 }
 
-// Retail (fn_82781E68) dropped the Wii dev build's MILO_NOTIFY diagnostics.
+// Retail (fn_82781E68) has no MILO_NOTIFY diagnostics.
 int StoreOffer::GetSingleSongID() const {
     const std::vector<int> &v = mSongsInOffer;
     return v.empty() ? 0 : v.front();
@@ -301,8 +301,8 @@ DataNode StoreOffer::OnGetData(DataArray *d) {
     return GetData(array, x != 0);
 }
 
-// Retail handler list reconstructed from Ghidra fn_827827B0 (drops the Wii
-// branch's artist/album_name/partially_in_library handlers; adds
+// Retail handler list reconstructed from Ghidra fn_827827B0 (no
+// artist/album_name/partially_in_library handlers; has
 // year_released, genre, has_available_pack/album, is_completely_unavailable
 // and release_date_str; is_test moved to the tail).
 BEGIN_HANDLERS(StoreOffer)

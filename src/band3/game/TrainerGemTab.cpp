@@ -381,8 +381,8 @@ void TrainerGemTab::DrawTails(
     unsigned int slots = gem.GetSlots();
     for (int slot = 0; slot < mLanes; slot++) {
         if (slots & (1 << slot)) {
-            // ★ Do NOT hoist `yRange`/`tickRange` into pre-loop locals, even though
-            // the rb3-Wii oracle spells them that way. Measured: named pre-loop
+            // ★ Do NOT hoist `yRange`/`tickRange` into pre-loop locals.
+            // Measured: named pre-loop
             // locals let MSVC perform loop-invariant code motion, computing both
             // before the loop into callee-saved FPRs and growing the save set
             // (__savegprlr_24/__savefpr_21 vs retail's _22/_23) -- 17 charged sites

@@ -40,7 +40,7 @@ BandSongMgr *TheSongMgrPtr = &gSongMgr;
 SongMgr *TheBaseSongManger;
 
 // Retail-only helper (target fn_82586AB0, called from AddSongData's 360-only
-// tail block). Zero args, single caller, no rb3-Wii/dc3 oracle -- exact
+// tail block). Zero args, single caller, no symbol -- exact
 // source/name unidentified (guarded local-static Symbols "rb1_dlc"/"ugc"/
 // "rb3_dlc"/"ugc_plus" per Ghidra decompile). Extern-declared for call-site
 // codegen only; see docs cited in AddSongData.
@@ -55,9 +55,9 @@ struct ExclusionEntry {
     int songID;
 };
 
-/* TWO entries, not the four the rb3-Wii dev oracle carries. This is a real
+/* TWO entries, not four. This is a real
    behaviour change and it is deliberate: our target is TU5, and TU5 shrank this
-   table. Evidence is retail bytes, not the oracle (lane CR-3):
+   table. Evidence is retail bytes (lane CR-3):
 
      - TU5 .rdata @0x8209DE28 holds exactly two {const char*, int} pairs:
        0x8209DE00 "hierkommtalex"/1005106 and 0x8209DDF0 "rockandrollstar"/1005109.
@@ -65,9 +65,9 @@ struct ExclusionEntry {
      - TU5's IsInExclusionList (0x825755B8) bounds its loop `cmplwi r7,0x10`
        = 16 bytes = 2 entries, which is where our `i < 2U` came from.
      - TU0 (orig/45410914/tu0-archive/band.exe) has the OTHER shape: a FOUR-entry
-       table @0x8209C1B4 in exactly the Wii order (danicalifornia/8,
+       table @0x8209C1B4 in this order (danicalifornia/8,
        blackholesun/3, hierkommtalex/1005106, rockandrollstar/1005109) and a loop
-       bounded `cmplwi r7,0x20` = 4 entries. So the Wii oracle == TU0, and TU5 is
+       bounded `cmplwi r7,0x20` = 4 entries. So TU0 has four, and TU5 is
        a deliberate Harmonix source change (those two songs stopped being excluded).
      - Corroborated independently by string presence: TU0 contains bare C-strings
        for all four names; TU5 contains bare strings ONLY for hierkommtalex and
@@ -236,9 +236,9 @@ void BandSongMgr::ContentMounted(const char *c1, const char *c2) {
 }
 
 const char *BandSongMgr::ContentPattern() {
-    // Retail 360 returns a bare constant -- NOT the rb3-Wii dev build's
+    // Retail 360 returns a bare constant -- NOT
     // `TheArchive ? "&songs*.dta" : "&songs*.dt?"`, which is what this used to
-    // be (../rb3/src/band3/meta_band/BandSongMgr.cpp:204, copied verbatim).
+    // be.
     // Adjudicated on retail bytes with no map involved: this is vtable slot 10
     // of the ContentMgr::Callback subobject, 0x82575558, whose ENTIRE body is
     // `lis r11,0x820a; addi r3,r11,-0x21c8; blr` -- 12 bytes, no load of
@@ -641,7 +641,7 @@ void BandSongMgr::AddSongData(
         // Retail-360 (TU5) tail guard: song ID 0x05E69EC1 is skipped for the
         // Data()/AddRecentSong priming below. Recovering this bool is what
         // makes the whole function's register allocation line up (retail saves
-        // r16..r31, one more callee-save than the rb3-Wii shape) -- without it
+        // r16..r31, one more callee-save than the bool-less shape) -- without it
         // every GPR in the loop is off by one.
         bool isReservedSongID = songID == 0x05E69EC1;
         /* ⛔ KNOWN 1-INSTRUCTION MISMATCH, DELIBERATELY NOT "FIXED" (lane CR-3).
@@ -696,7 +696,7 @@ void BandSongMgr::AddSongData(
             }
             mAvailableSongs.insert(songID);
             ivec.push_back(songID);
-            // Retail-360-only tail (TU5-era, no rb3-Wii oracle -- confirmed via
+            // Retail-360-only tail (TU5-era -- confirmed via
             // Ghidra decompile of target 0x82561530 + raw asm listing): after
             // registering a newly-added song, prime its metadata (discarding
             // the result) and conditionally register it in the recent-songs
@@ -706,7 +706,7 @@ void BandSongMgr::AddSongData(
             // (confirmed: scripts/target_symbol_map.json maps 0x82783FA8 to
             // ?Data@SongMgr@@UBAPBVSongMetadata@@H@Z). The gate predicate
             // (target fn_82586AB0) is a single-caller, zero-arg static helper
-            // with no rb3-Wii/dc3 counterpart -- extern-declared below for
+            // with no known counterpart -- extern-declared below for
             // call-site codegen only, exact source identity unresolved.
             if (!isReservedSongID && !unk124) {
                 Data(songID);
@@ -814,12 +814,12 @@ int BandSongMgr::GetPosInRecentList(int songID) {
     }
     return -1;
 }
-// Retail fn_82575F68 (0xA4 B). rb3-Wii's DEV decomp has `return false;` here and
-// so did we -- BYTE-IDENTICAL to the oracle, so a source diff showed NOTHING.
+// Retail fn_82575F68 (0xA4 B). This used to be `return false;`, a
+// stub, so a source diff showed NOTHING.
 // The tell was in the CALLER: retail's `is_demo` handler in Handle() emits
 // `bl fn_82575F68`, while a `return false;` stub gets /Ob2-inlined to nothing,
 // costing Handle 4 instructions and perturbing its register allocation.
-// Reconstructed from the retail bytes, not from oracle preference:
+// Reconstructed from the retail bytes:
 //   vtable slot 0x40 -> Data(int) (same slot fn_827A8EC8/ContentName uses),
 //   bl ?IsUGC@BandSongMetadata@@QBA_NXZ, the 0x05E69EC1 reserved-song-ID guard
 //   this TU already names at AddSongs, ??0Symbol@@QAA@PBD@Z on ContentName's
@@ -1027,8 +1027,8 @@ void BandSongMgr::AddSongs(DataArray *a) {
 
 // Retail 360 keeps a genuine MRU list here (unk114, 0x130), capped at 20
 // entries -- confirmed via Ghidra decompile of target fn_8255F488, the sole
-// caller of which is AddSongData's tail block (see there). Both rb3-Wii's dev
-// decomp and dc3 stub this out; retail's TU5-era body is real. push_back +
+// caller of which is AddSongData's tail block (see there). dc3
+// stubs this out; retail's TU5-era body is real. push_back +
 // walk-count (STLport list::size() is O(n)) + pop_front matches the
 // decompiled insert-at-end/erase-at-begin/size-walk shape exactly.
 void BandSongMgr::AddRecentSong(int songID) {

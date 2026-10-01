@@ -254,7 +254,7 @@ void RndMeshDeform::VertArray::Copy(const RndMeshDeform::VertArray &a) {
 }
 
 // RB3 members DC3 dropped, needed by BandPatchMesh's patch projection (lane
-// W17-BPM2). Ported from rb3-Wii rndobj/MeshDeform.cpp:56-82 and 150-194; not
+// W17-BPM2); not
 // named in the target map yet (retail CopyVert 0x8240B2A8, SetMesh 0x8240B6B8,
 // CopyWeights 0x8240B6F8, FindDeform 0x8240B9F8, all anonymous there).
 void *RndMeshDeform::VertArray::FindVert(int vert) {
@@ -294,8 +294,8 @@ void RndMeshDeform::SetMesh(RndMesh *mesh) {
     mVerts.Clear();
 }
 
-// Retail walks the mesh's ref ring forward (the oracle's copy walks a reverse
-// vector of refs, which is the Wii Object's layout).
+// Retail walks the mesh's ref ring forward (not a reverse
+// vector of refs).
 RndMeshDeform *RndMeshDeform::FindDeform(RndMesh *m) {
     for (ObjRef::iterator it = m->Refs().begin(); it != m->Refs().end(); ++it) {
         RndMeshDeform *md = dynamic_cast<RndMeshDeform *>(RefPtrOf(it)->RefOwner());

@@ -437,8 +437,8 @@ public:
 // owns mOwner/mObject itself -- the ObjPtr half of what W17-OWN did for
 // ObjOwnerPtr. Retail RTTI (tools/retail_rtti.py) gives every one of the 91
 // ObjPtr<T,ObjectDir> classes the two-entry hierarchy {Self, ObjRef}; there is
-// no ObjRefConcrete in the image, and rb3-Wii has `class ObjPtr : public
-// ObjRef` with its own mOwner/mPtr, dtor, Load and operator=. The layer
+// no ObjRefConcrete in the image: `class ObjPtr : public
+// ObjRef` has its own mOwner/mPtr, dtor, Load and operator=. The layer
 // mattered for the DESTRUCTOR: with ObjRefConcrete in between, ~ObjPtr<T> was
 // an implicit 4-byte `b ~ObjRefConcrete<T>` and the real body stored
 // ObjRefConcrete's vtable, while retail's one ~ObjPtr<T> body (e.g.
@@ -822,8 +822,8 @@ public:
     virtual Hmx::Object *RefOwner() const { return mOwner; }
     // Vtable slot +8: Replace(from, to). The ring dispatches with the *dying
     // Hmx::Object* * in `from` (the declared ObjRef* is a modelling artefact of
-    // this tree — rb3-Wii's ObjRef declares `Replace(Hmx::Object*, Hmx::Object*)`,
-    // src/system/obj/Object.h:185 there — so `from` is reinterpreted, not cast).
+    // this tree -- an ObjRef declaring `Replace(Hmx::Object*, Hmx::Object*)`
+    // would be the natural form -- so `from` is reinterpreted, not cast).
     //
     // Retail body (verified byte-for-byte against 0x82314B70 / 0x823BDAB0, both
     // 0x60 = 96 B): NO `from == nullptr` short-circuit, and the dynamic_cast +
@@ -867,7 +867,7 @@ public:
 
 #ifndef HX_NATIVE
 // W17-OPTR: ObjPtr no longer converts to ObjRefConcrete<T>&, so it carries
-// its own name-based save (rb3-Wii: operator<<(BinStream&, const
+// its own name-based save (operator<<(BinStream&, const
 // ObjPtr<T1,ObjectDir>&)); the body is ObjRefConcrete's, see obj/ObjPtr_p.h.
 template <class T1>
 BinStream &operator<<(BinStream &bs, const ObjPtr<T1> &f);
@@ -961,8 +961,8 @@ public:
 // exactly ONE non-template ref base, `.?AVObjRef@@`, and every smart pointer
 // class -- all 27 ObjOwnerPtr<T,ObjectDir>, 91 ObjPtr, 45 ObjPtrList, 4
 // ObjDirPtr -- carries the two-entry hierarchy {Self, ObjRef}; there is no
-// ObjRefConcrete class in the image at all. rb3-Wii says the same
-// (`class ObjOwnerPtr : public ObjRef`, its own mOwner/mPtr, its own dtor).
+// ObjRefConcrete class in the image at all:
+// `class ObjOwnerPtr : public ObjRef`, its own mOwner/mPtr, its own dtor.
 // The layer mattered for the DESTRUCTOR: inheriting ObjRefConcrete forced ours
 // to null mObject so the base dtor would not Release(this) a second time,
 // while every one of the 27 retail ~ObjOwnerPtr bodies (e.g. RndCamAnim
@@ -1056,7 +1056,7 @@ public:
             SetOwnerObj(dynamic_cast<T *>(root_obj));
         return mObject;
     }
-    // Retail has its own Load (rb3-Wii's ObjOwnerPtr<T1,T2>::Load): the same
+    // Retail has its own Load (ObjOwnerPtr<T1,T2>::Load): the same
     // body as ObjRefConcrete::Load but assigning through SetOwnerObj. Without
     // it the inherited Load managed the ring on `this`. See obj/ObjPtr_p.h.
     bool Load(BinStream &, bool, ObjectDir *);
@@ -1451,7 +1451,7 @@ public:
 #ifdef HX_NATIVE
     Hmx::Object *Owner() const { return mOwner ? mOwner->RefOwner() : nullptr; }
 #else
-    // Retail X360: the raw mOwner (rb3-Wii: `return mOwner;`). The only caller
+    // Retail X360: the raw mOwner (`return mOwner;`). The only caller
     // is operator<<'s MILO_ASSERT(c.Owner()), i.e. ((void)(cond)) here; with a
     // virtual call inside, that cannot be dropped, and retail's single folded
     // operator<< body (0x8249bbb0) has no call at all.
@@ -1490,8 +1490,8 @@ public:
 
     void operator=(const ObjPtrList &list);
     bool remove(T1 *);
-    // RB3-360 retail signature: 2 params, matching the rb3-Wii oracle
-    // (ObjPtr_p.h:517 `bool Load(BinStream&, bool)`).  Retail's call site in
+    // RB3-360 retail signature: 2 params
+    // (`bool Load(BinStream&, bool)`).  Retail's call site in
     // CharIKScale::Load passes exactly `r3=this, r4=bs, r5=1` -- the DC3-era
     // trailing `ObjectDir*, bool` pair made every `bs >> objPtrList` emit two
     // extra `li` argument setups.  The 4th param was never read in the body and
@@ -2002,7 +2002,7 @@ extern DataArray *SystemConfig(Symbol, Symbol, Symbol);
 // Cause: MILO_FAIL is `((void)(__VA_ARGS__))` (os/Debug.h:188) — a COMMA
 // EXPRESSION, so it does NOT compile the body out; every argument is still
 // evaluated and PathName(this)/ClassName() are real calls with side effects the
-// compiler must emit.  The rb3-Wii dialect (obj/ObjMacros.h) already gates this
+// compiler must emit.  The obj/ObjMacros.h dialect already gates this
 // check behind VERSION_SZBE69_B8 (a DEV-build macro) and expands to nothing
 // otherwise; only this DC3-derived copy was left ungated.  Same family as the
 // MILO_DEBUG force-define documented in CLAUDE.md.
@@ -2048,7 +2048,7 @@ extern DataArray *SystemConfig(Symbol, Symbol, Symbol);
 // TypeProps implementation
 // Retail X360: TypeProps is a 0xc-byte inline ObjRefOwner member of Hmx::Object
 // (vtable@0, mMap@4, mOwner@8). No mObjects ring — object-ref tracking uses
-// the simpler rb3-Wii approach (pass Hmx::Object* ref explicitly to each op).
+// a simpler approach (pass Hmx::Object* ref explicitly to each op).
 // HX_NATIVE keeps the full dc3-style TypeProps (with mObjects) for
 // correct ref-counting in the native engine.
 class TypeProps : public ObjRefOwner {
@@ -2092,7 +2092,7 @@ public:
     void SetKeyValue(Symbol key, const DataNode &value, bool);
     // RB3 retail X360 (GetArray 0x827664F8, SetArrayValue 0x827665D0,
     // InsertArrayValue 0x827666B0; lane W5-A): the owner's TypeDef arrives as an
-    // ARGUMENT -- rb3-Wii's shape -- where DC3's GetArray reads mOwner->TypeDef()
+    // ARGUMENT -- where DC3's GetArray reads mOwner->TypeDef()
     // itself. Same semantics, retail arity (callers pass their own mTypeDef).
     DataArray *GetArray(Symbol prop, DataArray *typeDef);
     void SetArrayValue(Symbol prop, int i, const DataNode &value, DataArray *typeDef);
@@ -2414,7 +2414,7 @@ namespace Hmx {
         // RB3-retail signature: NO trailing `bool chain` param (DC3 added it
         // later). Proven by X360 call-site codegen (e.g. BandUI::Init AddSink
         // calls stop at r7=SinkMode; DC3's `= true` default would materialize
-        // an extra `li r8, 0x1` at every call site). rb3-Wii Msg.h agrees.
+        // an extra `li r8, 0x1` at every call site).
         void AddSink(
             Hmx::Object *,
             Symbol = Symbol(),

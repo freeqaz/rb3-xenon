@@ -327,7 +327,7 @@ int DataNode::Int(const DataArray *source) const {
 // ones that DO test in retail are testing for real dispatch, not asserting
 // (Float tests kDataInt to convert, GetObj tests kDataObject/kDataSymbol to
 // look up).  So this block is dev-build-only and retail took the false branch;
-// the rb3-Wii source it was ported from spells it `#ifdef MILO_DEBUG`, which
+// the block is spelled `#ifdef MILO_DEBUG`, which
 // src/macros.h force-defines here -- hence the HX_NATIVE conjunct.  See
 // docs/decomp/patterns/milo-debug-force-define.md for the house pattern.
 #if defined(MILO_DEBUG) && defined(HX_NATIVE)
@@ -578,7 +578,7 @@ Hmx::Object *DataNode::GetObj(const DataArray *source) const {
 // FindObject it goes straight to the epilogue -- no PathName, no MakeString,
 // no Debug::Fail, and not even a `bl LiteralStr` (retail INLINES LiteralStr's
 // dispatch: cmpwi 5 -> lwz r4,0(r3), else lwz r11,0(r3) / lwz r4,0(r11)).
-// The rb3-Wii source wraps this whole block in `#ifdef MILO_DEBUG`, which
+// This whole block is wrapped in `#ifdef MILO_DEBUG`, which
 // src/macros.h force-defines here -- hence the HX_NATIVE conjunct.  Gating it
 // also shrinks LiteralStr enough for /Ob2 to inline it, which is what makes
 // the dispatch above match.  See docs/decomp/patterns/milo-debug-force-define.md.

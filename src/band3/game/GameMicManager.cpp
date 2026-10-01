@@ -215,7 +215,7 @@ void GameMicManager::Poll(float f1) {
     }
 }
 
-// TU5 body, rebuilt from retail bytes (fn_826818D0); the rb3-Wii oracle is an
+// TU5 body, rebuilt from retail bytes (fn_826818D0); it is not an
 // empty stub. Notes are MIDI pitches, converted with 8.1758 Hz * 2^(n/12).
 // The second range test overwriting `prox` (not `focus`) is retail's own: both
 // `fmr f24, f0`, and `focus` still reaches SetProximityFocus unmodified.

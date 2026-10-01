@@ -36,8 +36,8 @@ BEGIN_SAVES(LabelShrinkWrapper)
     SAVE_SUPERCLASS(UIComponent)
 END_SAVES
 
-// NOTE(laneGLM3): retail's Copy is the rb3-Wii RB3 oracle's shape
-// (../rb3/src/system/ui/LabelShrinkWrapper.cpp:19), NOT the dc3-derived one.
+// NOTE(laneGLM3): retail's Copy is RB3's own shape
+// (ui/LabelShrinkWrapper.cpp), NOT the dc3-derived one.
 // Three things are settled by the 112-byte retail body, whose 28 instructions
 // are exhaustively accounted for by what is written below:
 //   (1) UIComponent::Copy runs LAST, not first;
@@ -83,7 +83,7 @@ END_LOADS
 
 INIT_REVS(0, 0)
 
-// RB3 retail 0x828278D0 (rb3-Wii shape).
+// RB3 retail 0x828278D0.
 void LabelShrinkWrapper::PreLoad(BinStream &bs) {
     LOAD_REVS(bs)
     ASSERT_REVS(0, 0)
@@ -118,10 +118,10 @@ void LabelShrinkWrapper::Poll() { UIComponent::Poll(); }
 void LabelShrinkWrapper::Update() {
     // NOTE(laneNCCC-f164): retail's Ghidra decomp calls UIComponent::Update()
     // unconditionally at entry and has NO if/else null-check branch at all
-    // (matches rb3-Wii's shape, ../rb3/src/system/ui/LabelShrinkWrapper.cpp:81);
+    // (RB3's own shape);
     // the dc3-derived if(pTypeDef && pDir){...}else{clear bones} shape does not
     // exist in retail. MILO_ASSERT no-ops here (HX_NATIVE undefined), so the
-    // Wii oracle's asserts generate no code either way.
+    // asserts generate no code either way.
     UIComponent::Update();
     const DataArray *pTypeDef = TypeDef();
     RndDir *pDir = mResource->Dir();
@@ -146,8 +146,8 @@ void LabelShrinkWrapper::Init() {
 }
 
 void LabelShrinkWrapper::UpdateAndDrawWrapper() {
-    // NOTE(laneBS1): ported from the rb3-Wii RB3 oracle
-    // (../rb3/src/system/ui/LabelShrinkWrapper.cpp:49). The previous body derived the
+    // NOTE(laneBS1): RB3's own body
+    // (ui/LabelShrinkWrapper.cpp). The previous body derived the
     // corners from RndText bounds plus the four mLeft/Right/Top/BottomBorder floats;
     // retail RB3 has no such members (see the header note), so it cannot be that shape.
     MILO_ASSERT(m_pLabel, 0x86);

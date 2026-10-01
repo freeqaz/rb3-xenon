@@ -27,7 +27,7 @@ __attribute__((weak))
 const std::vector<TrackChannels> &SongInfoCopy::GetTracks() const { return mTrackChannels; }
 
 // ---- MsgSource (obj/Msg.h) — real bodies now live in src/system/obj/Msg.cpp
-// (ported from the rb3-Wii oracle, 2026-07-24). obj/*.cpp is globbed into the
+// (since 2026-07-24). obj/*.cpp is globbed into the
 // native build, so Msg.cpp supplies MsgSource's ctor/dtor/Handle/SyncProperty/
 // Export/AddSink/RemoveSink/etc. The former no-op shim here is removed: the
 // broadcast now actually reaches sinks. ----

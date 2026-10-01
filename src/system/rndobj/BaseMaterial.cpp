@@ -394,7 +394,7 @@ BEGIN_LOADS(RndMat)
         bs >> mSpecular2RGB;
     }
     // Unconditional, and HERE: retail calls ResetColors(&mColorMod, 3) at 0x82439668,
-    // after the rev>0x32 block (the rb3-Wii position, not DC3's top-of-Load one).
+    // after the rev>0x32 block (not at the top of Load as in DC3).
     ResetColors(mColorMod, 3);
     if (sMatRevs.rev > 0x33 && sMatRevs.rev < 0x44) {
         std::vector<Hmx::Color> colors;

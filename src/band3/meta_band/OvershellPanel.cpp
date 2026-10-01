@@ -94,7 +94,7 @@ OvershellPanel::OvershellPanel(SessionMgr *smgr, BandUserMgr *umgr)
     ThePlatformMgr.AddSink(this);
     TheRockCentral.AddSink(this);
     // Retail fn_825B4AA8 stops here: the typed ThePlatformMgr invite/utility
-    // sinks and the TheServer profanity sink are dev-build (rb3-Wii) only.
+    // sinks and the TheServer profanity sink are dev-build only.
 #if defined(MILO_DEBUG) && defined(HX_NATIVE)
     ThePlatformMgr.AddSink(this, InviteReceivedMsg::Type());
     ThePlatformMgr.AddSink(this, InviteExpiredMsg::Type());
@@ -303,8 +303,8 @@ DECOMP_FORCEACTIVE(OvershellPanel, "!playableTracks.empty()", "!resolvingUsers.e
 
 DataNode OvershellPanel::OnMsg(const SessionReadyMsg &msg) {
     if (InOverrideFlow(kOverrideFlow_RegisterOnline)) {
-        // Retail fn_825B7EA8: success ends the register-online flow (the Wii
-        // build instead armed its friends-console-code gather).
+        // Retail fn_825B7EA8: success ends the register-online flow (no
+        // friends-console-code gather).
         if (msg->Int(2)) {
             EndOverrideFlow(kOverrideFlow_RegisterOnline, false);
         } else {
@@ -341,9 +341,9 @@ DataNode OvershellPanel::OnMsg(const MatchmakerChangedMsg &) {
 // RB3-360 retail has NO guarded body here: Handle's dispatch site for this
 // message branches to the folded 76-byte `{ UpdateAll(); return 1; }` survivor
 // at 0x825b7f70 (map name OnMsg(ConnectionStatusChangedMsg)), and our 132-byte
-// body could not be that COMDAT. The rb3-Wii DEV oracle's `unk4cc == 2` block
+// body could not be that COMDAT. An `unk4cc == 2` block
 // (ShowNetError / EndOverrideFlow) is Wii-only -- unk4cc does not exist in the
-// retail layout. Retail bytes outrank the oracle. See W16-AK.
+// retail layout. Retail bytes decide. See W16-AK.
 DataNode OvershellPanel::OnMsg(const ServerStatusChangedMsg &) {
     UpdateAll();
     return 1;
@@ -570,7 +570,7 @@ bool OvershellPanel::IsAnySlotAllowingInputToShell() {
 }
 
 // RB3-360: retail has no GetFirstUserAllowingInputToShell function (its only
-// caller was the Wii-dev get_first_user_allowing_input_to_shell Handle arm,
+// caller would be a get_first_user_allowing_input_to_shell Handle arm,
 // which retail lacks). Kept for reference; emitted but unpaired.
 BandUser *OvershellPanel::GetFirstUserAllowingInputToShell() {
     for (int i = 0; i < mSlots.size(); i++) {
@@ -777,8 +777,8 @@ void OvershellPanel::ResolveSlotStates() {
                             MILO_ASSERT(pUser, 0x632);
                             // retail calls BandUser's own vftable slot 0 --
                             // IsInSession(SessionMgr*) -- as
-                            // `pUser-><slot0>(mSessionMgr)`, where the rb3-Wii DEV
-                            // oracle has `mSessionMgr->HasUser(pUser)`. Same TU5
+                            // `pUser-><slot0>(mSessionMgr)`, not
+                            // `mSessionMgr->HasUser(pUser)`. Same TU5
                             // substitution already identified in
                             // src/band3/game/BandUser.h (lane NCCC-0731-5f08/f76,
                             // InputMgr::IsActiveAndConnected). Using the BandUser
@@ -915,9 +915,9 @@ void OvershellPanel::ResolvePartWaitStates() {
                     if (userHasPriority && !otherHasPriority)
                         continue;
                     // RB3-360 retail branches this as a NESTED if with an early
-                    // `continue`, not the rb3-Wii oracle's single `&&`. The two are
+                    // `continue`, not a single `&&`. The two are
                     // NOT equivalent: on (state == kState_ChoosePartWait &&
-                    // !RepresentSamePart) the oracle's form falls through and still
+                    // !RepresentSamePart) the `&&` form falls through and still
                     // does priorityUsers.push_back(other), while retail skips the
                     // push_back and the allWaiting update entirely and continues the
                     // loop. Measured on retail bytes (W16-AQ): at the `clrlwi.` that
@@ -1218,8 +1218,8 @@ bool OvershellPanel::Exiting() const {
 }
 
 // RB3-360 retail (fn_825B3230, 100 B / 25 instructions): the ENTIRE
-// `if (TheRnd->mProcCmds & kProcessPost) { ... }` block of the rb3-Wii DEV
-// oracle is absent, and the slot loop is NOT guarded by it. Retail is
+// `if (TheRnd->mProcCmds & kProcessPost) { ... }` block is
+// absent, and the slot loop is NOT guarded by it. Retail is
 // `mr r31,r3; bl UIPanel::Poll; addi r31,r31,0x74; <slot loop>` -- no
 // ProcCmds read, no inSession/NetSession/Matchmaker, no
 // ThePlatformMgr.mHomeMenuWii->mForcedHomeMenu (a Wii-only member) and no

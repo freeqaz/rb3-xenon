@@ -10,7 +10,7 @@ class StorePurchaser; // forward-decl to avoid kSuccess enum collision with net/
 
 class TokenRedemptionPanel : public UIListProvider, public UIPanel {
 public:
-    // Retail-360 state values, read off retail bytes -- the rb3-Wii oracle's
+    // Retail-360 state values, read off retail bytes -- a
     // gapped 0,2,3,5,6,7,8 is WRONG for this binary. Witnessed stores/compares
     // at mRedemptionState (this+0x40) in band3/meta_band/TokenRedemptionPanel.s:
     //   fn_8263FAA0 GetOffersForToken        stw 1
@@ -55,8 +55,8 @@ public:
     String mActiveToken; // 0x44
     DataResultList mResultList; // 0x50
     std::vector<String> mListData; // 0x68
-    // Xbox-retail-only: the offer-ID list handed to XboxEnumeration. Absent from
-    // the rb3-Wii oracle (Wii uses the TheStoreMetadata.mRedemptionsTable global).
+    // Xbox-retail-only: the offer-ID list handed to XboxEnumeration (not
+    // the TheStoreMetadata.mRedemptionsTable global).
     // Proven by retail asm: ctor zeroes 6 words at 0x74..0x88; ~TokenRedemptionPanel
     // (0x826414C0) inlines ~_Vector_base over 0x74/0x7c with srawi/slwi 3 =>
     // 8-byte POD element; EnumerateOffers (0x8263FEB0) push_back's an `std`-stored

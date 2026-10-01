@@ -61,7 +61,7 @@ protected:
 
     // Retail X360 layout: UIComponent [0,0x140), ScrollSelect base @0x140.
     // sizeof(UISlider) = 0x190 (retail New allocs 400 bytes via fn_827E4BB0).
-    // UISlider has NO own resource member (rb3-Wii oracle confirms only the 3
+    // UISlider has NO own resource member (only the 3
     // scalars). The funclets fn_827E4518/fn_827E455C destroy UISlider's *virtual
     // bases* — Hmx::Object @0x15c and RndHighlightable @0x190 — which sit at the
     // object tail (MSVC places virtual bases last). RndHighlightable/Hmx::Object

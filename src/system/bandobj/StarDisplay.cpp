@@ -81,7 +81,7 @@ void StarDisplay::PreLoad(BinStream &bs) {
     }
     if (gRev >= 4)
         bs >> (int &)mAlignment;
-    // rb3-Wii writes `gRev == 5`, which MSVC folds to a single `bne`. Retail
+    // Not `gRev == 5`, which MSVC folds to a single `bne`. Retail
     // emits a two-sided RANGE test -- `cmplwi 5; blt skip; cmplwi 6; bge skip`
     // -- so the source was written as the half-open interval, not an equality.
     if (gRev >= 5 && gRev < 6) {

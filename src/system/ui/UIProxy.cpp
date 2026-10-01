@@ -63,7 +63,7 @@ END_LOADS
 
 INIT_REVS(3, 0)
 
-// RB3 retail (PostLoad 0x82824580) is rb3-Wii's: the popped rev lands in two
+// RB3 retail (PostLoad 0x82824580): the popped rev lands in two
 // TU shorts (alt +0 / rev +4, retail lbl_82E07D98; initialised so .bss follows
 // declaration order) and later tests re-read the rev short.
 static unsigned short sUIProxyAltRev = 0;

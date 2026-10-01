@@ -131,7 +131,7 @@ public:
         /** "Fade-out time of the keyframe" */
         float mFadeOutTime; // 0xb4
         float mFrame; // 0xb8
-        // RB3 retail StageKit LED keyframe fields (absent in DC3/rb3-Wii dev).
+        // RB3 retail StageKit LED keyframe fields (absent in DC3).
         int mLedRed; // 0xbc
         int mLedBlue; // 0xc0
         int mLedGreen; // 0xc4
@@ -188,7 +188,7 @@ public:
     void ResetEvents();
     void SetFrameEx(float, float, bool);
 
-    // RB3 BandDirector deps (stubs — port from rb3-Wii LightPreset when revisited).
+    // RB3 BandDirector deps (stubs — port the real LightPreset when revisited).
     class RndPostProc *GetCurrentPostProc() const;
     float LegacyFadeIn() const;
     static void StaticResetEvents();

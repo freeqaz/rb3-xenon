@@ -34,7 +34,7 @@ public:
     // `bl` with only `this` in r3 -- no GetUser()/IsLocal()/GetLocalBandUser()
     // chain feeding a second arg. Confirmed by full retail disassembly of both
     // the caller and callee (0x825deec8 / 0x826681a0): zero-arg on X360, unlike
-    // rb3-Wii's `Reload(LocalBandUser*)`.
+    // a `Reload(LocalBandUser*)` form.
     void Reload();
     const char *GetWiiProfileSelectedName() const;
 
@@ -45,8 +45,8 @@ public:
 
     BandUserMgr *mBandUserMgr; // 0x2c
     std::vector<LocalBandUser *> mUsers; // 0x30
-    // NOTE: the rb3-Wii DEV oracle carries two std::vector<int> Wii-profile
-    // lists here (12 bytes each under STLport). RB3-360 retail does NOT: the
+    // NOTE: no two std::vector<int> Wii-profile
+    // lists here (12 bytes each under STLport): RB3-360 retail does NOT have them; the
     // OvershellSlot ctor allocates sizeof(OvershellProfileProvider) == 0x3c
     // (60), which is exactly this class without those two vectors (0x54 - 24).
     // The Wii profile list is a Wii-only feature, so they are omitted here.

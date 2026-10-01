@@ -55,7 +55,7 @@ BEGIN_HANDLERS(Song)
     HANDLE_EXPR(song_name, mSongName)
     HANDLE(mbt_from_seconds, OnMBTFromSeconds)
 #ifdef HX_NATIVE
-    // DC3-era handlers; RB3-360 retail (and rb3-Wii) go straight to add_section.
+    // DC3-era handlers; RB3-360 retail goes straight to add_section.
     HANDLE_EXPR(
         seconds_from_mbt, GetFrameFromMBT(_msg->Int(2), _msg->Int(3), _msg->Int(4))
     )
@@ -112,7 +112,7 @@ BEGIN_LOADS(Song)
     LOAD_REVS(bs)
     ASSERT_REVS(0, 0)
 #else
-    // RB3-360 retail (and rb3-Wii) read the revision as a plain int and keep
+    // RB3-360 retail reads the revision as a plain int and keeps
     // reading from bs; there is no BinStreamRev wrapper on the stack.
     int rev;
     bs >> rev;

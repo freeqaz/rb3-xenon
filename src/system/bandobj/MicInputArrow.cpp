@@ -1,4 +1,4 @@
-// Ported from rb3-Wii src/system/bandobj/MicInputArrow.cpp (MWCC -> MSVC X360).
+// MicInputArrow (bandobj/MicInputArrow.cpp), MSVC X360.
 #include "bandobj/MicInputArrow.h"
 #include "decomp.h"
 #include "obj/ObjMacros.h"

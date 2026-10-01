@@ -15,8 +15,8 @@ class RndTransformable;
 class TrainerGemTab {
 public:
     // size 0x48 (compiler-verified via /d1reportSingleClassLayoutExtraTail;
-    // the old "0x38" here was inherited from the rb3-Wii header, where
-    // Transform is smaller. Retail agrees with 0x48: the retail
+    // the old "0x38" here assumed a smaller
+    // Transform. Retail agrees with 0x48: the retail
     // vector<ExtraTail>::_M_erase body loads `li r10, 0x48` as its stride.)
     class ExtraTail {
     public:

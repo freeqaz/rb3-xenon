@@ -1,9 +1,9 @@
-// Faithful port from the rb3-Wii oracle (../rb3/src/system/synth/VoiceBeat.cpp).
+// VoiceBeat / EventTracker / TalkyMatcher (system/synth/VoiceBeat.cpp).
 // Contains VoiceBeat (the talky/spam-syllable DSP), EventTracker (reference-event
 // hit/miss bookkeeping), and TalkyMatcher (the per-frame unpitched-note matcher
 // Singer drives via ProcessTalkyData). X360-inert: not in objects.json, header
 // unchanged, so it cannot perturb retail preprocessed output. The single deviation
-// from the oracle is the profiling-only START_AUTO_TIMER, gated out under HX_NATIVE
+// here is the profiling-only START_AUTO_TIMER, gated out under HX_NATIVE
 // (a no-op that never touches scoring state) to keep the native link surface tight.
 #include "synth/VoiceBeat.h"
 #include "math/Utl.h"
@@ -42,7 +42,7 @@ void VoiceBeat::Analyze(
 
     // Retail (TU5 X360) is the plain mkfilter form: explicit delay-line shifts,
     // gains divided (so /fp:fast multiplies by the reciprocal), std::max on the
-    // floor. Rebuilt from retail asm; the rb3-Wii text is a scheduled transliteration.
+    // floor. Rebuilt from retail asm.
     double *xv = mXVVoice;
     double *yv = mYVVoice;
     double *xa = mXVEnvAntiAlias;

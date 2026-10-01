@@ -17,8 +17,8 @@
 //      (fn_8272A8F8/fn_8272A918) slot 0x7c -> SetVolumeImpl/SetPanImpl/
 //      SetSpeedImpl are slots 29/30/31, i.e. exactly TWO virtuals (Pause,
 //      SetADSR) sit between IsPlaying and SetFXCore.
-// Both facts are reproduced by rb3-Wii's single-inheritance SampleInst with a
-// uniform +0xc shift (Wii Hmx::Object is 0x1c, 360's is 0x28). DC3 (newer)
+// Both facts follow from a single-inheritance SampleInst whose members sit
+// at fixed offsets after the 0x28-byte Hmx::Object. DC3 (newer)
 // refactored the class onto a PlayableSample/SynthPollable MI base and added an
 // ObjPtr<SynthSample> mSample, which together insert 0x18 before mVolume and
 // push Pause/SetADSR into a secondary vtable. Gate the DC3 form behind
@@ -70,7 +70,7 @@ public:
     virtual void SynthPoll();
 #endif
     SAMPLEINST_NATIVE_VIRTUAL void Play(float);
-    // rb3-Wii / retail 0x8272AA78: Stop, then StartImpl.
+    // Retail 0x8272AA78: Stop, then StartImpl.
     void Start();
     SAMPLEINST_NATIVE_VIRTUAL void Stop(bool);
     SAMPLEINST_NATIVE_VIRTUAL bool DonePlaying();
@@ -99,7 +99,7 @@ public:
 protected:
     void UpdateVolume();
 
-    // Retail offsets (Hmx::Object is 0x28 on 360; rb3-Wii's layout +0xc).
+    // Retail offsets (Hmx::Object is 0x28 on 360).
     float mVolume; // 0x28
     float mBankVolume; // 0x2c
     float mPan; // 0x30

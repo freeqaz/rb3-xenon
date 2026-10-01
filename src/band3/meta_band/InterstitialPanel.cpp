@@ -56,7 +56,7 @@ void BackdropPanel::Exit() {
     mOutroDone = false;
     // STORAGE-CLASS divergence: retail builds the message as a FUNCTION-LOCAL
     // STATIC here, not as the file-scope `vignette_outro_msg` global that
-    // utl/Messages4.h declares (which is what the rb3-Wii oracle uses, so a
+    // utl/Messages4.h declares (so a
     // source diff shows nothing).  Read off the retail body at 0x8261FAC8:
     // guard word lbl_82E01040 bit 0x1, the Message object at lbl_82E01038, the
     // Symbol built as a STACK TEMP at r31+0x50 via ??0Symbol@@QAA@PBD@Z, and an

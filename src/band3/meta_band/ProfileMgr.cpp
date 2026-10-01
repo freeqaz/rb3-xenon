@@ -62,7 +62,7 @@ namespace {
 }
 
 ProfileMgr::ProfileMgr()
-    // retail X360 defaults (the rb3-Wii dev values were 0 / 50 / 70 / 0)
+    // retail X360 defaults
     : mPlatformAudioLatency(5.0f), mPlatformVideoLatency(22.0f),
       mInGameExtraVideoLatency(22.0f), mInGameSyncOffsetAdjustment(50.0f),
       mGlobalOptionsSaveState(kMetaProfileUnloaded), mGlobalOptionsDirty(0),
@@ -391,8 +391,8 @@ DataNode ProfileMgr::OnMsg(const UserLoginMsg &) {
     return 1;
 }
 
-// Retail X360 DIVERGES from the rb3-Wii dev build here: the Wii oracle has a
-// bare `{ return 1; }`, but retail's body (fn_82548F70, 0x60 bytes) reads node 2
+// Retail X360: not a
+// bare `{ return 1; }`. Retail's body (fn_82548F70, 0x60 bytes) reads node 2
 // of the message and, when the server is up, re-runs the same three profile
 // web checks as OnMsg(UserLoginMsg&):
 //     lwz r4,0x4(r5) / lwz r11,0x0(r4) / addi r3,r11,0x10 / bl DataNode::Int
@@ -479,7 +479,7 @@ void ProfileMgr::SaveGlobalOptions(FixedSizeSaveableStream &bs) {
 void ProfileMgr::LoadGlobalOptions(FixedSizeSaveableStream &bs) {
     // Retail reads the rev into a local (no gRev store), skips the whole body
     // for a rev newer than 8, reads unk58b from rev 8 on, and has none of the
-    // Wii tail (String / bool / int64) nor the mHasLoaded store.
+    // trailing String / bool / int64 fields, nor the mHasLoaded store.
     int rev;
     bs >> rev;
     if (rev <= 8) {

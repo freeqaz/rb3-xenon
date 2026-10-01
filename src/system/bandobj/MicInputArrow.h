@@ -78,9 +78,9 @@ public:
     std::vector<EventTrigger *> mExtendedTrigs; // 0x1a0
     std::vector<RndAnimatable *> mLevelAnims; // 0x1ac
     float mMicEnergyNormalizer; // 0x1b8
-    // NOTE: rb3-Wii's dev header also carries `bool unk160` + `float unk164[3]`
+    // NOTE: no `bool unk160` + `float unk164[3]`
     // (a manual level-override path used by DrawShowing's `switch`). Retail-360
     // does NOT have them: the Hmx::Object virtual base sits at 0x1bc (read off
     // `lwz r11, -0x1bc(r30)` in ?SetType@MicInputArrow@), i.e. exactly 16 bytes
-    // earlier than the Wii layout, and sizeof is 0x1f4.
+    // earlier than a layout with them, and sizeof is 0x1f4.
 };

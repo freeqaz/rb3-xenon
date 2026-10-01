@@ -37,11 +37,11 @@ RndMat::~RndMat() {}
 // material class itself and chains straight to Hmx::Object. DC3 (newer engine)
 // hoisted them into a BaseMaterial base and added an is_default handler; our
 // src/system is a verbatim DC3 copy, so we inherited that refactor. Adjudicated on
-// retail bytes, not on either oracle: fn_824B27C8 (Handle, 412 B) builds exactly two
+// retail bytes: fn_824B27C8 (Handle, 412 B) builds exactly two
 // Symbols, at 0x82065658 = "allowed_next_pass" and 0x82063C20 = "allowed_normal_map",
 // then tail-calls ?Handle@Object@Hmx@@. "is_default", "get_metamats" and
 // "prop_is_hidden" appear ZERO times anywhere in orig/45410914/band.exe, so DC3's
-// other four handlers postdate RB3. rb3-Wii agrees exactly.
+// other four handlers postdate RB3.
 // This is the ONE Handle of the merged class, and it is deliberately here rather
 // than in BaseMaterial.cpp: retail's Handle is pinned at 0x82438138, inside Mat.cpp's
 // .text span. The OnAllowedNextPass / OnAllowedNormalMap bodies stay in
@@ -66,8 +66,8 @@ END_HANDLERS
 // Every `<prop>_edit_action` Symbol and the `IsEditable` gate around it are GONE:
 // "_edit_action" occurs 0 times in orig/45410914/band.exe, with 15/15 positive
 // controls from this same list firing at 1-occurrence resolution (allowed_next_pass,
-// shader_variation, rim_light_under, environ_map_specmask...). rb3-Wii -- the RB3-era
-// oracle -- agrees structurally: its BEGIN_PROPSYNCS(RndMat) has no IsEditable at all.
+// shader_variation, rim_light_under, environ_map_specmask...). Structurally the
+// RB3-era BEGIN_PROPSYNCS(RndMat) has no IsEditable at all.
 #define SYNC_MAT_PROP(s, member, dirty_flag)                                             \
     {                                                                                    \
         _NEW_STATIC_SYMBOL(s)                                                            \
@@ -125,7 +125,7 @@ BEGIN_PROPSYNCS(RndMat)
     // out. Retail: after `bl ??$PropSync@VRndMat@@`, fn_82436488+0x5ec branches to
     // 0x12c0, which is the EPILOGUE (`addi r1, r31, 0xc0`), not to the shared
     // `clrlwi./beq/andi./mDirty |= 2` tail at 0x0ac that every SYNC_MAT_PROP uses.
-    // rb3-Wii agrees literally: `SYNC_PROP(next_pass, mNextPass)`, no dirty flag.
+    // i.e. `SYNC_PROP(next_pass, mNextPass)` with no dirty flag.
     // (Written out rather than as SYNC_PROP because Mat.cpp does not compile with
     // /DRB3_SYNCPROP_LOCAL_STATIC, so the live SYNC_PROP takes a Symbol *variable*.)
     {
@@ -140,7 +140,7 @@ BEGIN_PROPSYNCS(RndMat)
     // ⚠ The old `(int &)mCull` was a REAL MEMORY BUG, not just a codegen mismatch:
     // mCull is ONE byte at 0x11c, so an int& write covered 0x11c-0x11f and clobbered
     // mPerPixelLit (0x11d), mScreenAligned (0x11e) and mEnvironMapFalloff (0x11f)
-    // on every `cull` set. rb3-Wii declares `bool mCull : 1`.
+    // on every `cull` set. mCull is a 1-bit bool.
     SYNC_MAT_PROP(cull, (bool &)mCull, 2)
     SYNC_MAT_PROP(per_pixel_lit, mPerPixelLit, 2)
     SYNC_MAT_PROP(emissive_multiplier, mEmissiveMultiplier, 2)
@@ -222,7 +222,7 @@ BEGIN_PROPSYNCS(RndMat)
 #endif
 // ⛔ NO SYNC_SUPERCLASS HERE. Retail's material SyncProperty does NOT chain to
 // Hmx::Object::SyncProperty -- it falls off the end of the property list and returns
-// false. Adjudicated on retail bytes, not on either oracle: the last four instructions
+// false. Adjudicated on retail bytes: the last four instructions
 // of fn_82436488 (0x82436488 + 4808 = 0x82437750) are
 //
 //   82437740  4b ff f6 e0   b     <common false exit>
@@ -236,8 +236,8 @@ BEGIN_PROPSYNCS(RndMat)
 // Where the surplus line came from: DC3 (newer) has `RndMat : BaseMaterial` and ends
 // this list with SYNC_SUPERCLASS(BaseMaterial). When BASEMAT-2 (9ea37046) merged
 // BaseMaterial INTO RndMat, that line was mechanically rewritten to name the new base
-// -- Hmx::Object -- rather than re-adjudicated. rb3-Wii, the RB3-*era* oracle, ends
-// its BEGIN_PROPSYNCS(RndMat) with a bare END_PROPSYNCS and no SYNC_SUPERCLASS at all.
+// -- Hmx::Object -- rather than re-adjudicated. The RB3-era list
+// ends with a bare END_PROPSYNCS and no SYNC_SUPERCLASS at all.
 //
 // SYNC_SUPERCLASS expands to `if (parent::SyncProperty(...)) return true;`, which cost
 // exactly 10 surplus instructions (4808 -> 4848 bytes): 4x `mr` arg setup + `bl` +

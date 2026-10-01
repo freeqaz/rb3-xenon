@@ -25,7 +25,7 @@ INIT_REVS(1, 0)
 
 // RB3 retail (0x82721370): the packed rev is split into two TU shorts -- here
 // rev at +0 and alt at +4 (retail lbl_82E03CE4) -- with no version guard, and
-// FxSend::Load gets the raw stream (rb3-Wii shape).
+// FxSend::Load gets the raw stream (ObjMacros shape).
 static struct {
     __declspec(align(4)) unsigned short rev;
     __declspec(align(4)) unsigned short altRev;

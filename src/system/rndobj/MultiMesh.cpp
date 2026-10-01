@@ -75,7 +75,7 @@ END_COPYS
 // Retail's rev pair: RndMultiMesh::Load (0x8246B470) writes altRev +0 / rev +4
 // off one base register (lbl_82CC63CC), and Instance::Load (0x8246B3B0) reads
 // the rev as its own symbol (lis + lhz lbl_82CC63D0) -- so gInstanceLoadRev IS
-// the loaded rev (rb3-Wii spells it RndMultiMesh::gRev). No rev wrapper exists
+// the loaded rev (a.k.a. RndMultiMesh::gRev). No rev wrapper exists
 // (band.exe has no `.?AVBinStreamRev@@` descriptor); every read takes the raw
 // stream.
 static __declspec(align(4)) unsigned short gAltRev_MultiMeshLoad = 0;
