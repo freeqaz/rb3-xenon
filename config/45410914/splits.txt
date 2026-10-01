@@ -6876,10 +6876,8 @@ Compress.cpp:
 	.text       start:0x827CF910 end:0x827CFA40
 
 system/rndobj/CubeTex.cpp:
-	.pdata      start:0x821F1A50 end:0x821F1A58
 	.pdata      start:0x8220A678 end:0x8220A688
 	.pdata      start:0x82211350 end:0x822114A0
-	.text       start:0x82275210 end:0x8227525C
 	.text       start:0x8240DCB8 end:0x8240DD30
 	.text       start:0x82494FD8 end:0x824964EC
 
@@ -8007,6 +8005,7 @@ ContentMgr.cpp:
 Accomplishment.cpp:
 	.pdata      start:0x821F1990 end:0x821F19A8
 	.pdata      start:0x821F1A38 end:0x821F1A50
+	.pdata      start:0x821F1A50 end:0x821F1A58
 	.pdata      start:0x821F1AB0 end:0x821F1AB8
 	.pdata      start:0x821F1BA8 end:0x821F1BE8
 	.pdata      start:0x821F1C30 end:0x821F1C40
@@ -8026,6 +8025,7 @@ Accomplishment.cpp:
 	.text       start:0x8227500C end:0x82275010
 	.text       start:0x822750BC end:0x822750C0
 	.text       start:0x822750D0 end:0x82275210
+	.text       start:0x82275210 end:0x8227525C
 	.text       start:0x82275808 end:0x8227587C
 	.text       start:0x82276A28 end:0x82276C78
 	.text       start:0x82276F98 end:0x82277014
