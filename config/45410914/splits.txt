@@ -2721,7 +2721,6 @@ DataFunc.cpp:
 	.pdata      start:0x8223CE78 end:0x8223CEB0
 	.pdata      start:0x8223CEB0 end:0x8223CEC0
 	.pdata      start:0x8223CEC0 end:0x8223CED0
-	.pdata      start:0x82242358 end:0x82242360
 	.pdata      start:0x8225CED8 end:0x8225CEE0
 	.text       start:0x8275D040 end:0x8275D058
 	.text       start:0x8275D058 end:0x8275D170
@@ -2811,7 +2810,6 @@ DataFunc.cpp:
 	.text       start:0x827638C0 end:0x827639B0
 	.text       start:0x827639B0 end:0x827639BC
 	.text       start:0x827639C0 end:0x82765984
-	.text       start:0x827C4AA0 end:0x827C4AE8
 	.text       start:0x82B8E790 end:0x82B8E7E8
 
 Task.cpp:
@@ -4164,10 +4162,8 @@ PropAnim.cpp:
 HamNavList.cpp:
 	.pdata      start:0x82215988 end:0x82215990
 	.pdata      start:0x82236EE0 end:0x82236EE8
-	.pdata      start:0x822471E8 end:0x822471F8
 	.text       start:0x824EA220 end:0x824EA298
 	.text       start:0x826F7CC8 end:0x826F7E50
-	.text       start:0x82817A68 end:0x82817C20
 
 SkeletonClip.cpp:
 	.pdata      start:0x82237AC8 end:0x82237AE8
@@ -5301,6 +5297,8 @@ DataEventList.cpp:
 	.pdata      start:0x82244958 end:0x82244960
 	.pdata      start:0x82244960 end:0x82244970
 	.pdata      start:0x82244998 end:0x822449B0
+	.pdata      start:0x822449C0 end:0x822449C8
+	.pdata      start:0x822449C8 end:0x822449D0
 	.pdata      start:0x822449D0 end:0x822449E0
 	.pdata      start:0x822449E0 end:0x822449F8
 	.pdata      start:0x822449F8 end:0x82244A00
@@ -5315,6 +5313,8 @@ DataEventList.cpp:
 	.text       start:0x827ED078 end:0x827ED0E0
 	.text       start:0x827ED0E0 end:0x827ED198
 	.text       start:0x827ED3B0 end:0x827ED4B0
+	.text       start:0x827ED548 end:0x827ED6A0
+	.text       start:0x827ED6A0 end:0x827ED6F8
 	.text       start:0x827ED6F8 end:0x827ED8D8
 	.text       start:0x827ED8D8 end:0x827ED930
 	.text       start:0x827ED930 end:0x827EDA08
@@ -5414,9 +5414,11 @@ UIList.cpp:
 MemTrack.cpp:
 	.pdata      start:0x822422E0 end:0x822422F0
 	.pdata      start:0x822422F0 end:0x82242358
+	.pdata      start:0x82242358 end:0x82242360
 	.pdata      start:0x82242360 end:0x82242388
 	.text       start:0x827C43D4 end:0x827C44B8
 	.text       start:0x827C44B8 end:0x827C4AA0
+	.text       start:0x827C4AA0 end:0x827C4AE8
 	.text       start:0x827C4AE8 end:0x827C4D08
 
 DirLoader.cpp:
@@ -5844,6 +5846,7 @@ UIListDir.cpp:
 
 UIFontImporter.cpp:
 	.pdata      start:0x82245DB0 end:0x82245DC0
+	.pdata      start:0x822471E8 end:0x822471F8
 	.pdata      start:0x822471F8 end:0x82247308
 	.pdata      start:0x82247308 end:0x82247310
 	.pdata      start:0x82247310 end:0x822474D8
@@ -5851,6 +5854,7 @@ UIFontImporter.cpp:
 	.pdata      start:0x822474E0 end:0x82247728
 	.pdata      start:0x82247DD0 end:0x82247DD8
 	.text       start:0x82802730 end:0x828027C0
+	.text       start:0x82817A68 end:0x82817C20
 	.text       start:0x82817C20 end:0x82818EB8
 	.text       start:0x82818EB8 end:0x82818F18
 	.text       start:0x82818F18 end:0x8281A838
@@ -6583,8 +6587,6 @@ PanelDir.cpp:
 	.pdata      start:0x8222B1C0 end:0x8222B1D0
 	.pdata      start:0x82244970 end:0x82244978
 	.pdata      start:0x82244978 end:0x82244998
-	.pdata      start:0x822449C0 end:0x822449C8
-	.pdata      start:0x822449C8 end:0x822449D0
 	.pdata      start:0x82246128 end:0x822462C8
 	.pdata      start:0x822462C8 end:0x82246398
 	.pdata      start:0x82246398 end:0x822463A0
@@ -6599,8 +6601,6 @@ PanelDir.cpp:
 	.text       start:0x827D1108 end:0x827D1120
 	.text       start:0x827ED198 end:0x827ED200
 	.text       start:0x827ED200 end:0x827ED3B0
-	.text       start:0x827ED548 end:0x827ED6A0
-	.text       start:0x827ED6A0 end:0x827ED6F8
 	.text       start:0x82806418 end:0x82807EF8
 	.text       start:0x82807EF8 end:0x82808B0C
 	.text       start:0x82808B10 end:0x82808C64

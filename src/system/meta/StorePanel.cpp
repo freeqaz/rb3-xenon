@@ -280,10 +280,11 @@ void StorePanel::LoadArt(const char *cc, UIPanel *panel) {
     String str(cc);
     std::list<NetCacheLoader *>::iterator it = std::find(mNetCacheLoaders.begin(), mNetCacheLoaders.end(), str);
     if (it == mNetCacheLoaders.end()) {
-        NetCacheLoader *loader = TheNetCacheMgr->AddNetCacheLoader(cc, (NetLoaderPos)0);
+        // Retail requests position 1 and appends the new loader at the list end.
+        NetCacheLoader *loader = TheNetCacheMgr->AddNetCacheLoader(cc, (NetLoaderPos)1);
         mPendingArtLoader = loader;
         if (loader) {
-            mNetCacheLoaders.insert(it, mPendingArtLoader);
+            mNetCacheLoaders.push_back(mPendingArtLoader);
         }
     } else {
         mPendingArtLoader = *it;
