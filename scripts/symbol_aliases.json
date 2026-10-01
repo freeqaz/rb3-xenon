@@ -96949,11 +96949,9 @@
   {
    "name": "$__make_heap",
    "address": "0x825546f0",
-   "survivor": "??$__make_heap@PAPAUEventEntry@@UMaxSort@@PAU1@H@stlpmtx_std@@YAXPAPAUEventEntry@@0UMaxSort@@0PAH@Z",
-   "folded": [
-    "??$__make_heap@PAPAVPrefabChar@@USortPrefabByPortraitFileName@@PAV1@H@stlpmtx_std@@YAXPAPAVPrefabChar@@0USortPrefabByPortraitFileName@@0PAH@Z"
-   ],
-   "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
+   "survivor": "??$__make_heap@PAPAVPrefabChar@@USortPrefabByPortraitFileName@@PAV1@H@stlpmtx_std@@YAXPAPAVPrefabChar@@0USortPrefabByPortraitFileName@@0PAH@Z",
+   "folded": [],
+   "evidence": "Created by lane W16-JE: see per-member records in `admitted`. W16-LD 2026-10-01: survivor relabelled from ??$__make_heap@PAPAUEventEntry@@UMaxSort@@PAU1@H@stlpmtx_std@@YAXPAPAUEventEntry@@0UMaxSort@@0PAH@Z to ??$__make_heap@PAPAVPrefabChar@@USortPrefabByPortraitFileName@@PAV1@H@stlpmtx_std@@YAXPAPAVPrefabChar@@0USortPrefabByPortraitFileName@@0PAH@Z. Retail's body at this address calls __adjust_heap<PrefabChar**,SortPrefabByPortraitFileName> (0x825543c8), and the sort chain that reaches it starts in PrefabMgr::LoadPortraits (0x82555aa0 -> sort at 0x82555998 -> __introsort_loop at 0x825558d8), so this is the PrefabChar instantiation that our PrefabMgr object defines. The old survivor name was a MessageTimer instantiation pulled into this TU by a scatter include; our MessageTimer::EventEntry helpers call a different __adjust_heap whose body differs (--chase: BYTES-DIFFER), so no fold is claimed for it. The former folded spelling is now the survivor.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
     {
@@ -96961,22 +96959,36 @@
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 108 B retail / 108 B ours; retail body-twins 16. Retail call site(s) reaching the survivor where we call this spelling: 0x82554d38."
     }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$__make_heap@PAPAUEventEntry@@UMaxSort@@PAU1@H@stlpmtx_std@@YAXPAPAUEventEntry@@0UMaxSort@@0PAH@Z",
+     "lane": "W16-LD 2026-10-01",
+     "class": "WRONG_MAP_NAME_AT_ADDRESS",
+     "evidence": "Retail 0x825546f0 calls __adjust_heap<PrefabChar**,SortPrefabByPortraitFileName>; it is the PrefabChar instantiation reached from PrefabMgr::LoadPortraits. Map row renamed to ??$__make_heap@PAPAVPrefabChar@@USortPrefabByPortraitFileName@@PAV1@H@stlpmtx_std@@YAXPAPAVPrefabChar@@0USortPrefabByPortraitFileName@@0PAH@Z."
+    }
    ]
   },
   {
    "name": "$sort_heap",
    "address": "0x825549e0",
-   "survivor": "??$sort_heap@PAPAUEventEntry@@UMaxSort@@@stlpmtx_std@@YAXPAPAUEventEntry@@0UMaxSort@@@Z",
-   "folded": [
-    "??$sort_heap@PAPAVPrefabChar@@USortPrefabByPortraitFileName@@@stlpmtx_std@@YAXPAPAVPrefabChar@@0USortPrefabByPortraitFileName@@@Z"
-   ],
-   "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
+   "survivor": "??$sort_heap@PAPAVPrefabChar@@USortPrefabByPortraitFileName@@@stlpmtx_std@@YAXPAPAVPrefabChar@@0USortPrefabByPortraitFileName@@@Z",
+   "folded": [],
+   "evidence": "Created by lane W16-JE: see per-member records in `admitted`. W16-LD 2026-10-01: survivor relabelled from ??$sort_heap@PAPAUEventEntry@@UMaxSort@@@stlpmtx_std@@YAXPAPAUEventEntry@@0UMaxSort@@@Z to ??$sort_heap@PAPAVPrefabChar@@USortPrefabByPortraitFileName@@@stlpmtx_std@@YAXPAPAVPrefabChar@@0USortPrefabByPortraitFileName@@@Z. Retail's body at this address calls __adjust_heap<PrefabChar**,SortPrefabByPortraitFileName> (0x825543c8), and the sort chain that reaches it starts in PrefabMgr::LoadPortraits (0x82555aa0 -> sort at 0x82555998 -> __introsort_loop at 0x825558d8), so this is the PrefabChar instantiation that our PrefabMgr object defines. The old survivor name was a MessageTimer instantiation pulled into this TU by a scatter include; our MessageTimer::EventEntry helpers call a different __adjust_heap whose body differs (--chase: BYTES-DIFFER), so no fold is claimed for it. The former folded spelling is now the survivor.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
     {
      "spelling": "??$sort_heap@PAPAVPrefabChar@@USortPrefabByPortraitFileName@@@stlpmtx_std@@YAXPAPAVPrefabChar@@0USortPrefabByPortraitFileName@@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 100 B retail / 100 B ours; retail body-twins 16. Retail call site(s) reaching the survivor where we call this spelling: 0x82554da0."
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$sort_heap@PAPAUEventEntry@@UMaxSort@@@stlpmtx_std@@YAXPAPAUEventEntry@@0UMaxSort@@@Z",
+     "lane": "W16-LD 2026-10-01",
+     "class": "WRONG_MAP_NAME_AT_ADDRESS",
+     "evidence": "Retail 0x825549e0 calls __adjust_heap<PrefabChar**,SortPrefabByPortraitFileName>; it is the PrefabChar instantiation reached from PrefabMgr::LoadPortraits. Map row renamed to ??$sort_heap@PAPAVPrefabChar@@USortPrefabByPortraitFileName@@@stlpmtx_std@@YAXPAPAVPrefabChar@@0USortPrefabByPortraitFileName@@@Z."
     }
    ]
   },
