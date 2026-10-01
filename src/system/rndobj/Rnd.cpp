@@ -593,8 +593,13 @@ void Rnd::BeginDrawing() {
     }
 }
 
+// Retail's Rnd::EndDrawing (0x8240F038, called only from DxRnd::EndDrawing) is
+// EndWorld, clear mDrawing, bump mFrameID. It draws no overlays and touches no
+// timers; retail's only RndOverlay::DrawAll call is in DxRnd::ModalDraw.
+// Native keeps the overlay pass here.
 void Rnd::EndDrawing() {
     EndWorld();
+#ifdef HX_NATIVE
     if (MainThread()) {
         {
             static Timer *cpuStop = AutoTimer::GetTimer("cpu");
@@ -625,6 +630,7 @@ void Rnd::EndDrawing() {
                 drawStart->Start();
         }
     }
+#endif
     mDrawing = false;
     mFrameID++;
 }
@@ -1066,18 +1072,34 @@ Rnd::CompressTexDesc::~CompressTexDesc() {
     }
 }
 
+// Retail (0x82415B68) allocates the request and queues it; it does not walk the
+// queue for a duplicate first. Native keeps the duplicate notify.
 int Rnd::CompressTexture(
     RndTex *tex, RndTex::AlphaCompress a, CompressTextureCallback *cb
 ) {
+#ifdef HX_NATIVE
     for (std::list<CompressTexDesc *>::iterator it = mCompressTexQueue.begin(); it != mCompressTexQueue.end();
          ++it) {
         if (tex == (*it)->tex) {
             MILO_NOTIFY("%s: texture added to compression twice", PathName(tex));
         }
     }
+#endif
     CompressTexDesc *desc = new CompressTexDesc(tex, a, cb);
     mCompressTexQueue.push_back(desc);
     return (int)desc;
+}
+
+// Retail 0x82412A58 (called from ~BandCharacter): every queued request that
+// would report to this callback has its callback cleared.
+void Rnd::CompressTextureCancel(CompressTextureCallback *cb) {
+    for (std::list<CompressTexDesc *>::iterator it = mCompressTexQueue.begin();
+         it != mCompressTexQueue.end();
+         ++it) {
+        if ((*it)->callback == cb) {
+            (*it)->callback = nullptr;
+        }
+    }
 }
 
 void Rnd::PreClearDrawAddOrRemove(RndDrawable *d, bool b2, bool b3) {
@@ -1313,7 +1335,7 @@ void Rnd::DrawPreClear() {
                         newTex = Hmx::Object::New<RndTex>();
                     }
                     ReplaceObject((Hmx::Object *)gRndTextureEvent, newTex, false, false, false);
-                    gRndTextureEvent = sTexture->StartCompress(first->alpha);
+                    gRndTextureEvent = sTexture->StartCompress((RndTex::AlphaCompress)first->alpha);
                     if ((unsigned char)gRndTextureEvent != 0) {
                         MILO_ASSERT(!sCompressDone, 0x4C3);
                     }
