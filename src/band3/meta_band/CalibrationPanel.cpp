@@ -860,7 +860,11 @@ void CalibrationWelcomePanel::Exit() {
     TheInputMgr->RemoveSink(this);
 }
 
+// Retail: two function-local statics (guard bits 0 and 1) -- the Symbol, then
+// a Message built from it (atexit dtor) -- not a file-scope global.
 DataNode CalibrationWelcomePanel::OnMsg(const InputStatusChangedMsg &msg) {
+    static Symbol controllers_changed("controllers_changed");
+    static Message controllers_changed_msg(controllers_changed);
     Handle(controllers_changed_msg, true);
     return 0;
 }
