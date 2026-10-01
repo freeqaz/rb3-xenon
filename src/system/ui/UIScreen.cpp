@@ -169,7 +169,10 @@ void UIScreen::UnloadPanels() {
 #endif
     FOREACH_REVERSE(it, mPanelList) {
         if (it->mLoaded) {
+#ifdef HX_NATIVE
             AutoGlitchReport report(17.0f, UnloadGlitchCB, it->mPanel);
+#endif
+            // Retail 0x827F1678 calls CheckUnload with no glitch report.
             it->mPanel->CheckUnload();
         }
     }
@@ -225,6 +228,7 @@ void UIScreen::Poll() {
 void UIScreen::Draw() {
     if (mShowing) {
         FOREACH (it, mPanelList) {
+#ifdef HX_NATIVE
             if (it->Active() && it->mPanel->Showing()
                 && TheRnd.ShouldDrawPanel(it->mPanel)) {
                 static Symbol suppress_blacklight_text("suppress_blacklight_text");
@@ -232,6 +236,12 @@ void UIScreen::Draw() {
                 TheUI->SetScreenBlacklghtDisabled(prop && prop->Int() != 0);
                 it->mPanel->Draw();
             }
+#else
+            // Retail 0x827F01F0: no ShouldDrawPanel test, no blacklight property.
+            if (it->Active() && it->mPanel->Showing()) {
+                it->mPanel->Draw();
+            }
+#endif
         }
     }
 }
