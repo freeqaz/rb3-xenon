@@ -24091,7 +24091,7 @@
  "0x827c4700": "?DebugHeapAlloc@@YAPAXH@Z",
  "0x827c4708": "?DebugHeapFree@@YAXPAX@Z",
  "0x827c4718": "?StartLog@@YAXPBD@Z",
- "0x827c4828": "?MemTrackReport@@YAXH_N@Z",
+ "0x827c4828": "?MemTrackReport@@YAXH@Z",
  "0x827c4940": "?MemTrackHeapDump@@YAX_N@Z",
  "0x827c4aa0": "?MemTrackReportDF@@YA?AVDataNode@@PAVDataArray@@@Z",
  "0x827c4ae8": "?MemTrackHeapDumpDF@@YA?AVDataNode@@PAVDataArray@@@Z",
