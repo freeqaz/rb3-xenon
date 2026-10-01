@@ -9828,6 +9828,7 @@ MetaPerformer.cpp:
 	.pdata      start:0x8221EDA8 end:0x8221EDC0
 	.pdata      start:0x8221EDC0 end:0x8221EDE0
 	.pdata      start:0x8221EDE0 end:0x8221EDF0
+	.pdata      start:0x8221EDF0 end:0x8221EDF8
 	.pdata      start:0x8221EDF8 end:0x8221EE10
 	.pdata      start:0x8221EE10 end:0x8221EE28
 	.pdata      start:0x8221EE28 end:0x8221EE98
@@ -9869,6 +9870,7 @@ MetaPerformer.cpp:
 	.text       start:0x8257B9E0 end:0x8257BC88
 	.text       start:0x8257BC88 end:0x8257C240
 	.text       start:0x8257C240 end:0x8257C368
+	.text       start:0x8257C368 end:0x8257C3A8
 	.text       start:0x8257C3A8 end:0x8257C498
 	.text       start:0x8257C498 end:0x8257C5C4
 	.text       start:0x8257C5C8 end:0x8257CDF8
@@ -12599,11 +12601,9 @@ SpeechMgr.cpp:
 	.text       start:0x824CD818 end:0x824CD8B8
 
 UIEventMgr.cpp:
-	.pdata      start:0x8221EDF0 end:0x8221EDF8
 	.pdata      start:0x82220408 end:0x82220410
 	.pdata      start:0x82220410 end:0x82220498
 	.pdata      start:0x82220498 end:0x82220540
-	.text       start:0x8257C368 end:0x8257C3A8
 	.text       start:0x82592C90 end:0x82592D18
 	.text       start:0x82592D18 end:0x82593678
 	.text       start:0x82593678 end:0x82593F9C
