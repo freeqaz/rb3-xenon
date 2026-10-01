@@ -18924,7 +18924,8 @@
    "folded": [
     "?push_back@?$vector@VMicClientID@@V?$StlNodeAlloc@VMicClientID@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVMicClientID@@@Z",
     "?push_back@?$vector@U?$pair@HPBD@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HPBD@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@HPBD@2@@Z",
-    "?push_back@?$vector@U?$pair@HH@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HH@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@HH@2@@Z"
+    "?push_back@?$vector@U?$pair@HH@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HH@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@HH@2@@Z",
+    "?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
    "admitted": [
@@ -18937,6 +18938,11 @@
      "spelling": "?push_back@?$vector@U?$pair@HH@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HH@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@HH@2@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 120 B retail / 120 B ours; retail body-twins 3. Retail call site(s) reaching the survivor where we call this spelling: 0x8255ccc8, 0x827052d4, 0x82bb1cec."
+    },
+    {
+     "spelling": "?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z",
+     "lane": "W16-LB 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED); 120 B retail / 120 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. ?GenerateMacros@ShaderOptions@@QBAXW4ShaderType@@AAV?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@@Z."
     }
    ]
   },
