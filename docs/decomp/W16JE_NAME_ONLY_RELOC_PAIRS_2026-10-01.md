@@ -53,8 +53,8 @@ Each phase was also row-diffed against the previous phase's report: **0 rows fel
 100 and 0 rows went down** at every step. The only "vanished" rows were renamed
 `ObjPtrList` destructors, which are present at 100 under their new names.
 
-**Whole-branch A/B** (`tools/ab_measure.py --patch <main..w16-je>` in a fresh worktree
-at main): see §8.
+**Whole-branch A/B** (§8): **+368 fns / +368 honest / +92,888 B (+0.906490 pp)**, 29 units
+to 100, 0 rows off 100.
 
 ## 3. Phase A — the clean folds, and the hole in `--chase` it exposed
 
@@ -210,14 +210,40 @@ audit-failed, 53 cycles without a type witness.
 
 ## 8. Measurement and gates
 
-ab_measure: _pending_
+`python3 tools/ab_measure.py --worktree ~/tmp/wt-w16-je-ab --patch <git diff main w16-je>`,
+fresh worktree at main `169512b3e`, patch kinds map+source+splits (forced re-split on both
+legs, both at a `symbols.txt` fixed point after 0 extra splits). Run dir
+`~/tmp/wt-w16-je-ab/.ab_measure_runs/20261001-081229-w16je-whole-branch-3352011/`.
+
+| | leg A (main) | leg B (w16-je) | Δ |
+|---|---:|---:|---:|
+| matched_functions | 47,391 | 47,759 | **+368** |
+| masked_equal | 23,822 | 23,822 | +0 |
+| honest | 23,569 | 23,937 | **+368** |
+| matched_code_percent | 47.137640 | 48.044130 | **+0.906490 pp (+92,888 B)** |
+| fuzzy | 56.694084 | 56.697243 | +0.003159 pp |
+| units at 100 (mpn) | 270 | 299 | +29, **0 fell off** |
+| units at 100 (all-rows-fuzzy) | 232 | 256 | +24, 0 fell off |
+
+`none` control: +196 B (NOT_APPLICABLE as a check -- the patch carries source, so movement
+on `none` is expected). The A/B equals the sum of the phase progress reads (+368 / +92,888 B)
+exactly.
+
+**Row level, run on the A/B's own archived leg reports:** 407 rows reach fuzzy 100
+(+93,056 B), **0 rows go down on either ruler.** The keys that disappear are all renames
+or re-homes, and each is present at 100 under its new identity in leg B:
+`~ObjPtrList<CharBoneOffset>` (BandCharacter) is now `~ObjPtrList<RndMesh>` at 100;
+`~ObjPtrList<RndMesh>` (UIList) is now `~ObjPtrList<UILabel>` at 100; and
+`fn_8232A348`/`fn_8232A378` (`~DialogDisplay`'s funclets) moved from CharUpperTwist to
+DialogDisplay at 100. That move is also the A/B's one "unit regression"
+(CharUpperTwist 23 → 21 matched).
 
 Gates on the final tree:
 
 - `tools/map_name_injectivity.py`: OK (32,159 applied rows, injective).
 - `tools/icf_alias_finder.py --validate`: PASS (0 contradicted).
 - `scripts/verify_objs_patched.py --verify-manifest`: OK (denylist applied, 7 addresses).
-- native gate: _pending_
+- `tools/native_build_gate.sh`: `NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0` (run on the final source state; nothing under `src/` changed after it).
 
 ## 9. Deliberately not done
 
