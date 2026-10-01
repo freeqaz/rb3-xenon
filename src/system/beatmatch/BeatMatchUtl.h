@@ -14,6 +14,7 @@ enum BeatmatchAudioType {
 };
 
 bool GemPlayableBy(int, int);
+bool IsWhiteKey(int);
 int GemNumSlots(int);
 int ConsumeNumber(const char *&);
 float VelocityBucketToDb(int);

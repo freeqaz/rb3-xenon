@@ -11014,7 +11014,7 @@ BeatMatcher.cpp:
 	.pdata      start:0x8223F308 end:0x8223F310
 	.pdata      start:0x8223F310 end:0x8223F318
 	.pdata      start:0x8223F318 end:0x8223F388
-	.text       start:0x82790490 end:0x827904D4
+	.text       start:0x82790480 end:0x827904D4
 	.text       start:0x827904D8 end:0x82790DF4
 	.text       start:0x82790DF8 end:0x82790E7C
 	.text       start:0x82790E80 end:0x82790F54
@@ -12749,7 +12749,7 @@ system/beatmatch/BeatMatchUtl.cpp:
 	.text       start:0x82790174 end:0x827901CC
 	.text       start:0x827901D0 end:0x82790258
 	.text       start:0x82790258 end:0x82790370
-	.text       start:0x82790370 end:0x82790490
+	.text       start:0x82790370 end:0x82790480
 	.text       start:0x827904D4 end:0x827904D8
 
 system/beatmatch/GameGem.cpp:

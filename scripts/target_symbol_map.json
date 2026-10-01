@@ -1,4 +1,7 @@
 {
+ "0x82790480": "??1TrackWatcherParent@@UAA@XZ",
+ "0x82790318": "?TrackTypeToAudioType@@YA?AW4BeatmatchAudioType@@W4TrackType@@@Z",
+ "0x82790210": "?IsWhiteKey@@YA_NH@Z",
  "0x82790150": "?GemPlayableBy@@YA_NHH@Z",
  "0x8278fad8": "?SetHitSink@BeatMatchController@@UAAXPAVHitSink@@@Z",
  "0x82792cf8": "??_GPlayback@@UAAPAXI@Z",
