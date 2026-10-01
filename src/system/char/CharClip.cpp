@@ -166,9 +166,10 @@ void CharClip::Transitions::AddNode(CharClip *clip, const CharGraphNode &node) {
         // retail computes the tail size before Resize moves the storage
         intptr_t moveSize = (intptr_t)mNodeEnd - (intptr_t)next;
         resized = Resize(bytes + 8, nodes);
-        memmove(
-            &resized->nodes[resized->size + 1], &resized->nodes[resized->size], moveSize
-        );
+        // Retail addresses the tail by byte offset from the vector: it starts
+        // at +8 + size*8 (the old Next()) and moves up one 8-byte node.
+        int off = resized->size * sizeof(CharGraphNode);
+        memmove((char *)resized + off + 16, (char *)resized + off + 8, moveSize);
     } else {
 #ifndef HX_NATIVE
         clip->AddRef(mOwner);
