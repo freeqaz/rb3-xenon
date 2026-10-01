@@ -402,6 +402,53 @@ def locate_retail(tgt, ours, on, mapped, exclude=None, cap=64):
     return found
 
 
+# ★ W16-JH.  CLASSES OUR DC3-DERIVED HEADERS SPELL DIFFERENTLY FROM RETAIL.
+# Lane W17-OPTR established that our X360 `ObjRefOwner` IS retail's `ObjRef`
+# (ObjPtr<T> / ObjOwnerPtr<T> derive from it directly; DC3 renamed the class).
+# So when our ~ObjPtr<T> stores ??_7ObjRefOwner@@6B@ where retail stores the
+# vtable whose RTTI reads .?AVObjRef@@, the slot names the SAME class.  W16-JG
+# left that slot UNDISCHARGED (VTABLE-OURS-CLASS-NOT-IN-RETAIL), correctly by its
+# rules, since nothing in the tool knew the correspondence.
+#
+# An entry here is NOT taken on trust: _rename_witness() re-derives it on retail
+# bytes every time -- (a) our spelling has NO retail RTTI of its own (else it is
+# a real, distinct class and a rename would hide a mismatch), and (b) the map
+# already names the retail vtable's slot-0 entry (the deleting dtor) as a member
+# of OUR class (retail 0x822702A8 = ??_GObjRefOwner@@UAAPAXI@Z).  Measured
+# reach: 3 audit memberships (W16-JH).  --self-break-rename accepts ANY retail
+# class for a renamed spelling (class check and witness both removed) and the
+# RENAME DECOY control must go red.
+CLASS_RENAMES = {"ObjRefOwner@@": "ObjRef@@"}
+_SELF_BREAK_RENAME = False
+_ADDR_NAME = {}
+
+
+def _addr_name(va):
+    if not _ADDR_NAME:
+        m = json.load(open(ROOT / "scripts/target_symbol_map.json"))
+        _ADDR_NAME.update({int(k, 16): v for k, v in m.items()
+                           if k.startswith("0x") and isinstance(v, str)})
+        _ADDR_NAME.setdefault(-1, None)
+    return _ADDR_NAME.get(va)
+
+
+def _rename_witness(cls, retail_cls, vt_va):
+    if cls not in CLASS_RENAMES:
+        return False
+    if _SELF_BREAK_RENAME:
+        return True        # --self-break-rename: ANY retail class accepted
+    if CLASS_RENAMES[cls] != _rtti_norm(retail_cls):
+        return False
+    if retail_vtables_of(cls):
+        return False
+    w = retail_image().word(vt_va)
+    s0 = _addr_name(w) if w is not None else None
+    # the slot-0 entry is a destructor; its mangling carries the class right
+    # after the special-member code (??_G/??_E/??1), a method's after `@`
+    return bool(s0) and (s0.startswith(("??_G" + cls, "??_E" + cls, "??1" + cls))
+                         or ("@" + cls) in s0)
+
+
 def discharge_slot(tgt, ours, rn, on, mapped, depth, stack, memo, out, maxdepth,
                    ctx, anchor=None):
     """Decide ONE placeholder slot.  Returns (status, kind, detail) with status
@@ -442,6 +489,8 @@ def discharge_slot(tgt, ours, rn, on, mapped, depth, stack, memo, out, maxdepth,
                     "retail %s has no COL; .?A?%s's own retail vtable(s) are %s" % (
                         rn, cls, ",".join("%x" % v for v in own[:4]))
             return "UNDISCHARGED", "VTABLE-NO-RTTI", "retail %s has no readable COL" % rn
+        if _rtti_norm(t[4:]) != _rtti_norm(cls) and _rename_witness(cls, t[4:], X):
+            return "OK", "VTABLE-CLASS-RENAMED", "retail RTTI %s is our %s" % (t, cls)
         if _rtti_norm(t[4:]) != _rtti_norm(cls):
             rel = _class_relation(cls, retail_vtables_of(cls), t[4:], X)
             if rel:
@@ -693,6 +742,35 @@ def retail_tail_pad(rt, ob):
 # assumption, not a control).
 _SELF_BREAK_TAILPAD = False
 TAILPAD_POS = ("fn_8274A9D0", "??0DataNode@@QAA@ABV0@@Z")
+
+
+RENAME_POS = ("fn_826FCCE8", "??1?$ObjPtr@VSynthSample@@@@UAA@XZ")
+
+
+def rename_controls(tgt, ours, mapped):
+    """★ W16-JH controls for CLASS_RENAMES.  POSITIVE: retail fn_826FCCE8 (a
+    ~ObjPtr<T> body storing retail's ObjRef vtable lbl_820009EC) vs OUR
+    ~ObjPtr<SynthSample> (storing ??_7ObjRefOwner@@6B@): expect PROVEN.  DECOY:
+    the same retail body with ONLY that vtable slot re-pointed at a vtable of a
+    different, unrelated retail class (the body's own ObjPtr<SynthSample> vtable
+    lbl_820F5284) -- the rename must not blanket-accept ObjRefOwner: expect
+    REFUTED.  Refuses if the positive does not carry the ObjRef slot."""
+    s, o = RENAME_POS
+    rt = tgt.get(s)
+    if rt is None or o not in ours or not any(n == "lbl_820009EC" for _o, n, _t in rt[1]):
+        raise SystemExit("REFUSING: rename positive %s/%s absent or no longer stores "
+                         "retail ObjRef's vtable -- the rename controls would be "
+                         "VACUOUS." % RENAME_POS)
+    tgt["__chasetest_rename_decoy__"] = (
+        rt[0], [(x, "lbl_820F5284" if n == "lbl_820009EC" else n, t)
+                for x, n, t in rt[1]], rt[2])
+    return [("RENAME POSITIVE, retail ObjRef vtable vs our ObjRefOwner (expect PROVEN)",
+             s, o),
+            # labelled as BOTH: it is a vtable placeholder slot, so the lax slot
+            # rule (--self-break-slots) must turn it red as well
+            ("RENAME DECOY / SLOT DECOY, ObjRefOwner vs an unrelated retail vtable "
+             "(expect REFUTED)",
+             "__chasetest_rename_decoy__", o)]
 
 
 def tailpad_controls(tgt, ours):
@@ -1110,6 +1188,11 @@ def main():
                     help="run --chasetest with retail_tail_pad's zero-tail test "
                          "REMOVED. Both TAIL-PAD DECOY controls MUST go red and "
                          "every other control must stay green; exits 0 only then.")
+    ap.add_argument("--self-break-rename", action="store_true",
+                    help="run --chasetest with CLASS_RENAMES accepting ANY retail "
+                         "class for a renamed spelling (witness removed). The RENAME "
+                         "DECOY control MUST go red and every other control must "
+                         "stay green; exits 0 only then.")
     ap.add_argument("--lax-slots", action="store_true",
                     help="reproduce a pre-W16-JG verdict (blanket placeholder "
                          "tolerance). NEVER use for an admission.")
@@ -1121,6 +1204,9 @@ def main():
         a.chasetest = True
     if a.self_break_tailpad:
         globals()["_SELF_BREAK_TAILPAD"] = True
+        a.chasetest = True
+    if a.self_break_rename:
+        globals()["_SELF_BREAK_RENAME"] = True
         a.chasetest = True
 
     mapped = load_mapped()
@@ -1201,6 +1287,7 @@ def main():
                    vf_s, vf_o)]
         pairs += slot_controls(tgt, ours, mapped, al)
         pairs += tailpad_controls(tgt, ours)
+        pairs += rename_controls(tgt, ours, mapped)
         a.chase = True
     elif a.pairs:
         pairs = [("", s, o) for s, o in json.load(open(a.pairs))]
@@ -1212,6 +1299,7 @@ def main():
     rc = 0
     slot_decoy_red = slot_other_red = n_slot_decoys = 0
     tp_decoy_red = tp_other_red = n_tp_decoys = 0
+    rn_decoy_red = rn_other_red = n_rn_decoys = 0
     for label, s, o in pairs:
         verdict, det = adjudicate(tgt, ours, s, o, mapped)
         det.update(uniqueness(tgt, ours, s, o))
@@ -1247,6 +1335,7 @@ def main():
             want = "REFUTED" if ("NEGATIVE" in label or "DECOY" in label) else "PROVEN"
             n_slot_decoys += "SLOT DECOY" in label
             n_tp_decoys += "TAIL-PAD DECOY" in label
+            n_rn_decoys += "RENAME DECOY" in label
             if verdict != want:
                 print("  ** CONTROL FAILED: wanted %s **" % want)
                 rc = 1
@@ -1258,6 +1347,18 @@ def main():
                     tp_decoy_red += 1
                 else:
                     tp_other_red += 1
+                if "RENAME DECOY" in label:
+                    rn_decoy_red += 1
+                else:
+                    rn_other_red += 1
+    if a.self_break_rename:
+        if n_rn_decoys and rn_decoy_red == n_rn_decoys and not rn_other_red:
+            print("\nself-break-rename OK -- the RENAME DECOY went RED with the "
+                  "rename witness removed, and no other control moved.")
+            return 0
+        print("\nself-break-rename FAILED -- %d/%d rename decoys red, %d other "
+              "controls red." % (rn_decoy_red, n_rn_decoys, rn_other_red))
+        return 1
     if a.self_break_tailpad:
         if n_tp_decoys and tp_decoy_red == n_tp_decoys and not tp_other_red:
             print("\nself-break-tailpad OK -- all %d TAIL-PAD DECOY controls went RED "
