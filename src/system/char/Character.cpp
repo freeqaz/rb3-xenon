@@ -810,21 +810,11 @@ bool Character::SetFocusInterest(Symbol symbol, int i) {
     CharEyes *eyes = GetEyes();
     if (eyes) {
         CharInterest *interest = nullptr;
-        int count = eyes->mInterests.size();
-        for (int idx = 0; idx < count; idx++) {
-            CharInterest *ci =
-                (unsigned int)idx >= eyes->mInterests.size()
-                    ? 0
-                    : (CharInterest *)eyes->mInterests[idx].mInterest;
-            if (symbol == ci->Name()) {
-                interest = (unsigned int)idx >= eyes->mInterests.size()
-                    ? 0
-                    : (CharInterest *)eyes->mInterests[idx].mInterest;
+        for (int idx = 0; idx < eyes->NumInterests(); idx++) {
+            if (symbol == eyes->GetInterest(idx)->Name()) {
+                interest = eyes->GetInterest(idx);
                 break;
             }
-        }
-        if (!symbol.Null() && !interest) {
-            MILO_NOTIFY("Couldn't find interest named %s to force on %s", symbol.Str(), Name());
         }
         return SetFocusInterest(interest, i);
     }
