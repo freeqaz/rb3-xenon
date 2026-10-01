@@ -568,7 +568,6 @@ void operator<<(BinStream &bs, const CharHair::Point &p) {
 
 void operator>>(BinStream &d, CharHair::Point &pt) {
     char buf[0x100];
-    char buf2[0x100];
     d >> pt.pos;
     d >> pt.bone;
     d >> pt.length;
@@ -592,7 +591,7 @@ void operator>>(BinStream &d, CharHair::Point &pt) {
         pt.outerRadius += f;
     }
     if (sHairRev == 6) {
-        d.ReadString(buf2, 0xFF);
+        d.ReadString(buf, 0xFF);
     }
     if (sHairRev < 8) {
         pt.sideLength = -1.0f;
