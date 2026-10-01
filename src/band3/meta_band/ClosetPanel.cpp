@@ -94,7 +94,10 @@ void ClosetPanel::CycleCamera() {
     shotname = shotname.substr(0, shotname.length() - 5);
     std::vector<String> substrs;
     if (shotname.split("_", substrs) > 1) {
-        int l6 = strtol(substrs.back().c_str(), 0, 10) + 1;
+        // Retail stores &substrs.back() (end - 0xc) to the frame's first local
+        // slot before strtol: the home of a named reference.
+        String &last = substrs.back();
+        int l6 = strtol(last.c_str(), 0, 10) + 1;
         String str30;
         for (int i = 0; i < substrs.size() - 1; i++) {
             str30 += substrs[i] + "_";
