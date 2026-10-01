@@ -104,6 +104,6 @@ void UIListArrow::StartScroll(int i, bool) {
     if (mScrollAnim
         && ((i < 0 && mPosition == kUIListArrowBack)
             || (i > 0 && mPosition == kUIListArrowNext))) {
-        mScrollAnim->Animate(0, false, 0, 0, kEaseLinear, 0, 0);
+        mScrollAnim->Animate(0, false, 0); // retail 0x8281DD90: 3-arg Animate
     }
 }
