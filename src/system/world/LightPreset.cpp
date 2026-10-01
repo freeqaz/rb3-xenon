@@ -1064,9 +1064,9 @@ void LightPreset::GetKey(float frame, int &prevIdx, int &curIdx, float &blend) c
             return;
         }
 
+        int before = 0;
         int after = mKeyframes.size() - 1;
-        int before;
-        for (before = 0; after > before + 1;) {
+        while (after > before + 1) {
             int mid = (after + before) >> 1;
             if (frame == mKeyframes[mid].mFrame) {
                 prevIdx = -1;
