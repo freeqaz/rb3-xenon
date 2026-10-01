@@ -1,4 +1,11 @@
 {
+ "0x82770388": "??1GemListInterface@@UAA@XZ",
+ "0x82770398": "??_GGemListInterface@@UAAPAXI@Z",
+ "0x827703e0": "??1HxSongData@@UAA@XZ",
+ "0x827703f0": "??_GHxSongData@@UAAPAXI@Z",
+ "0x82770438": "??1InternalSongParserSink@@UAA@XZ",
+ "0x82770448": "??_GInternalSongParserSink@@UAAPAXI@Z",
+ "0x8278b368": "??_GSongParser@@UAAPAXI@Z",
  "0x8278c460": "?LaneOn@DrumMap@@QAA_NHH@Z",
  "0x8278c4d8": "?LaneOff@DrumMap@@QAA_NHH@Z",
  "0x826ab088": "?_M_clear_after_move@?$vector@VGameGem@@V?$StlNodeAlloc@VGameGem@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",

@@ -10641,6 +10641,7 @@ BandPatchMesh.cpp:
 
 SongData.cpp:
 	.pdata      start:0x822084E0 end:0x822084E8
+	.pdata      start:0x8223D8C8 end:0x8223D8E0
 	.pdata      start:0x8223D8E0 end:0x8223D8E8
 	.pdata      start:0x8223D8E8 end:0x8223D8F8
 	.pdata      start:0x8223D8F8 end:0x8223D910
@@ -10708,7 +10709,7 @@ SongData.cpp:
 	.pdata      start:0x8223E160 end:0x8223E1C0
 	.pdata      start:0x8223EEF0 end:0x8223EEF8
 	.text       start:0x823EA958 end:0x823EA984
-	.text       start:0x82770490 end:0x82770498
+	.text       start:0x82770388 end:0x82770498
 	.text       start:0x827704C0 end:0x82770530
 	.text       start:0x82770530 end:0x827705C8
 	.text       start:0x827705C8 end:0x82770718
@@ -12931,7 +12932,6 @@ system/beatmatch/PlayerTrackConfigList.cpp:
 	.pdata      start:0x8223D8A8 end:0x8223D8B0
 	.pdata      start:0x8223D8B0 end:0x8223D8B8
 	.pdata      start:0x8223D8B8 end:0x8223D8C8
-	.pdata      start:0x8223D8C8 end:0x8223D8E0
 	.text       start:0x8276F700 end:0x8276F708
 	.text       start:0x8276F708 end:0x8276F720
 	.text       start:0x8276F720 end:0x8276F738
@@ -12948,7 +12948,7 @@ system/beatmatch/PlayerTrackConfigList.cpp:
 	.text       start:0x8276FFC8 end:0x827700A4
 	.text       start:0x827700A8 end:0x827701BC
 	.text       start:0x827701C0 end:0x82770370
-	.text       start:0x82770370 end:0x82770490
+	.text       start:0x82770370 end:0x82770388
 
 system/synth/VoiceBeat.cpp:
 	.pdata      start:0x82238F80 end:0x82238F90
