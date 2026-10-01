@@ -7544,7 +7544,6 @@ CharFeedback.cpp:
 	.pdata      start:0x821F46A8 end:0x821F4700
 	.pdata      start:0x82233408 end:0x82233410
 	.text       start:0x822A1164 end:0x822A1630
-	.text       start:0x826B1C30 end:0x826B1C88
 
 FitnessFilter.cpp:
 	.pdata      start:0x82207640 end:0x82207690
@@ -8261,7 +8260,7 @@ band3/game/RGTrainerPanel.cpp:
 	.pdata      start:0x82233358 end:0x82233408
 	.text       start:0x826ADC38 end:0x826ADD68
 	.text       start:0x826ADD68 end:0x826B1350
-	.text       start:0x826B1350 end:0x826B1C30
+	.text       start:0x826B1350 end:0x826B1760
 
 band3/game/TrainerPanel.cpp:
 	.pdata      start:0x822347D8 end:0x822347E0
@@ -8275,7 +8274,6 @@ band3/game/TrainerPanel.cpp:
 	.text       start:0x826CB4A0 end:0x826CB4E4
 	.text       start:0x826CB4E4 end:0x826CB590
 	.text       start:0x826CB654 end:0x826CCA88
-	.text       start:0x826CCE28 end:0x826CD438
 
 band3/game/DirectInstrument.cpp:
 	.pdata      start:0x82234AF0 end:0x82234AF8
@@ -8680,7 +8678,7 @@ band3/game/RGTutor.cpp:
 	.pdata      start:0x82236AF0 end:0x82236AF8
 	.pdata      start:0x82236AF8 end:0x82236B08
 	.text       start:0x826F0E88 end:0x826F0F18
-	.text       start:0x826F0F20 end:0x826F10A8
+	.text       start:0x826F0F20 end:0x826F1080
 
 band3/meta_band/PrefabMgr.cpp:
 	.pdata      start:0x8221C150 end:0x8221C220
@@ -11214,7 +11212,7 @@ band3/game/MultiplayerAnalyzer.cpp:
 	.pdata      start:0x82234CE8 end:0x82234CF0
 	.pdata      start:0x82234CF0 end:0x82234CF8
 	.text       start:0x82687F98 end:0x826881DC
-	.text       start:0x826CD4E0 end:0x826CE268
+	.text       start:0x826CD8DC end:0x826CE268
 	.text       start:0x826CE2D0 end:0x826CE4B8
 	.text       start:0x826CE4B8 end:0x826CE5E0
 	.text       start:0x826CE714 end:0x826CE9C4
@@ -12080,7 +12078,6 @@ GemManager.cpp:
 	.text       start:0x82271C50 end:0x82271D44
 	.text       start:0x82272240 end:0x822722B0
 	.text       start:0x82743B10 end:0x82743B68
-	.text       start:0x82B799B8 end:0x82B7A06C
 	.text       start:0x82B98BE4 end:0x82B98CEC
 	.text       start:0x82B98CF0 end:0x82B98D78
 	.text       start:0x82B98D78 end:0x82B98D88
@@ -12206,7 +12203,7 @@ VocalPart.cpp:
 	.pdata      start:0x82236BD0 end:0x82236BD8
 	.pdata      start:0x82236BD8 end:0x82236BE0
 	.pdata      start:0x82236BE0 end:0x82236BF0
-	.text       start:0x826F10A8 end:0x826F2144
+	.text       start:0x826F15FC end:0x826F2144
 	.text       start:0x826F2148 end:0x826F28C8
 	.text       start:0x826F28C8 end:0x826F2AE8
 	.text       start:0x826F2AE8 end:0x826F2B90
@@ -15446,3 +15443,30 @@ band3/meta_band/StandInProvider.cpp:
 band3/meta_band/HeaderPerformanceProvider.cpp:
 	.pdata      start:0x822241B8 end:0x82224248
 	.text       start:0x825CA4E0 end:0x825CAC64
+
+band3/game/GameMic.cpp:
+	.pdata      start:0x82234B28 end:0x82234B48
+	.pdata      start:0x82234B50 end:0x82234B90
+	.text       start:0x826CCE28 end:0x826CD438
+	.text       start:0x826CD4E0 end:0x826CD8DC
+
+band3/game/FretHand.cpp:
+	.pdata      start:0x82236B08 end:0x82236B18
+	.text       start:0x826F1080 end:0x826F1430
+
+band3/game/ChordPreview.cpp:
+	.pdata      start:0x82236B18 end:0x82236B28
+	.text       start:0x826F1430 end:0x826F15FC
+
+band3/game/RKTrainerPanel.cpp:
+	.pdata      start:0x822333C0 end:0x822333E0
+	.pdata      start:0x822333E0 end:0x82233408
+	.pdata      start:0x82233408 end:0x82233410
+	.text       start:0x826B1760 end:0x826B1920
+	.text       start:0x826B1920 end:0x826B1948
+	.text       start:0x826B1948 end:0x826B1C30
+	.text       start:0x826B1C30 end:0x826B1C88
+
+band3/tour/TourCharLocal.cpp:
+	.pdata      start:0x8225BF50 end:0x8225BFC0
+	.text       start:0x82B799B8 end:0x82B7A06C

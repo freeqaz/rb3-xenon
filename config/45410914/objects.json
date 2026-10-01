@@ -1223,6 +1223,10 @@
                 ]
             },
             "band3/game/GameMicManager.cpp": "NonMatching",
+            "band3/game/GameMic.cpp": "NonMatching",
+            "band3/game/FretHand.cpp": "NonMatching",
+            "band3/game/ChordPreview.cpp": "NonMatching",
+            "band3/game/RKTrainerPanel.cpp": "NonMatching",
             "band3/game/Metronome.cpp": "NonMatching",
             "band3/game/PresenceMgr.cpp": {
                 "status": "NonMatching",
@@ -1952,6 +1956,7 @@
             },
             "band3/tour/TourChar.cpp": "NonMatching",
             "band3/tour/TourCharRemote.cpp": "NonMatching",
+            "band3/tour/TourCharLocal.cpp": "NonMatching",
             "band3/tour/TourChallengeResultsPanel.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [

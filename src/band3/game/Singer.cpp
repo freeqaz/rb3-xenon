@@ -602,7 +602,7 @@ void Singer::Poll(float ms, const SongPos &pos, float f3, float f4) {
     GameMic *mic = TheGameMicManager->GetMic(mMicClientID);
     if (mic && mic->GetMyMic()->IsRunning()) {
         mic->Update();
-        Poll_(ms, pos, mic->unk2c, mic->unk28, f3, f4);
+        Poll_(ms, pos, mic->mLastPitch, mic->mLastEnergy, f3, f4);
     } else {
         Poll_(ms, pos, 0.0f, 0.0f, f3, f4);
     }

@@ -121,7 +121,7 @@ float GameMicManager::GetEnergyForMic(const MicClientID &id) {
     GameMic *mic = GetMic(id);
     if (mic) {
         mic->Update();
-        return mic->unk28;
+        return mic->mLastEnergy;
     } else
         return 0;
 }

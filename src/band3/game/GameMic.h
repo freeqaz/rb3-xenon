@@ -9,7 +9,7 @@ public:
     GameMic(int);
     ~GameMic();
 
-    void SetInputFile(const char *);
+    int SetInputFile(const char *);
     void SetEnablePitchDetection(bool);
     void AccessContinuousSamples(const short *&, int &) const;
     void ThreadProcessOneFrame();
@@ -19,23 +19,23 @@ public:
 
     int mMicID; // 0x0
     int mFonixIdx; // 0x4
-    bool unk8;
-    bool unk9;
+    bool mUSB; // 0x8
+    bool mPlayback; // 0x9
     bool mWriteWav; // 0xa
-    int unkc;
+    int mPlaybackSampleRate; // 0xc
     MemStream *mStoredAudio; // 0x10
     PitchDetector *mDetector; // 0x14
     Mic *mNullMic; // 0x18
-    float unk1c;
-    float unk20;
-    float unk24;
-    float unk28;
-    float unk2c;
+    float mEnergy; // 0x1c
+    float mPitch; // 0x20
+    float mMicVolumeClamp; // 0x24
+    float mLastEnergy; // 0x28
+    float mLastPitch; // 0x2c
     short mSamplesRecent[8192]; // 0x30
     short mSamplesContinuous[8192]; // 0x4030
-    int unk8030;
-    int unk8034;
-    bool unk8038;
+    int mNumSamplesRecent; // 0x8030
+    int mNumSamplesContinuous; // 0x8034
+    bool mSpursActive; // 0x8038
 };
 
 DECLARE_MESSAGE(GameMicsChangedMsg, "game_mics_changed");
