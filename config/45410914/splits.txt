@@ -7908,11 +7908,15 @@ JoypadMsgs.cpp:
 	.text       start:0x82532520 end:0x82532DC8
 	.text       start:0x82533120 end:0x82533644
 
+band3/meta_band/AuditionSessionPanel.cpp:
+	.pdata      start:0x82227E80 end:0x82227F10
+	.pdata      start:0x82227F10 end:0x82227FE0
+	.text       start:0x826033F0 end:0x82603A78
+	.text       start:0x82603A84 end:0x826047A0
+
 AppInlineHelp.cpp:
-	.pdata      start:0x82227DA0 end:0x82227F10
-	.pdata      start:0x82227F10 end:0x82227F78
-	.text       start:0x82602418 end:0x82603A78
-	.text       start:0x82603A84 end:0x82604520
+	.pdata      start:0x82227DA0 end:0x82227E80
+	.text       start:0x82602418 end:0x826033F0
 
 ColorPalette.cpp:
 	.pdata      start:0x82237048 end:0x82237050

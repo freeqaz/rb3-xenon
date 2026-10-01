@@ -219,8 +219,9 @@ void MetaPanel::Init() {
     REGISTER_OBJ_FACTORY(CampaignSongInfoPanel);
     REGISTER_OBJ_FACTORY(AccomplishmentPanel);
 #ifndef HX_NATIVE
-    // AuditionSessionPanel has no decompiled body, so only the match build
-    // registers it.
+    // AuditionSessionPanel's body (AuditionSessionPanel.cpp) is wired into the
+    // match build only; its collaborators (meta_band/AuditionMgr.h) have no
+    // bodies, so only the match build registers it.
     REGISTER_OBJ_FACTORY(AuditionSessionPanel);
 #endif
     REGISTER_OBJ_FACTORY(NewAwardPanel);
