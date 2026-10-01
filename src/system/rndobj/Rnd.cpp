@@ -1577,7 +1577,6 @@ void Rnd::Modal(Debug::ModalType &type, FixedString &str, bool bb) {
         MILO_LOG("%s\n", s);
     }
     if (CanModal(type)) {
-        AutoSlowFrame frame("Rnd::Modal", 6000000.0f);
         char buf[0x1000];
         WordWrap(str.c_str(), 0x5a, buf, 0x1000);
         if (!bb) {
@@ -1593,10 +1592,7 @@ void Rnd::Modal(Debug::ModalType &type, FixedString &str, bool bb) {
             RndSplasherSuspend();
         }
         ModalDraw(type, buf);
-        bool oldScreenSaver = ThePlatformMgr.ScreenSaver();
         if (bb) {
-            ThePlatformMgr.SetScreenSaver(false);
-            ThePlatformMgr.SetScreenSaver(oldScreenSaver);
             gFailKeepGoing = false;
             gNotifyKeepGoing = false;
             gFailRestartConsole = false;

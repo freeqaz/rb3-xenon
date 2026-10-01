@@ -106,21 +106,18 @@ void RndEnviron::OnRemoveAllLights() {
     mLightsOld.clear();
 }
 
+// Retail only re-targets the ambient-fog owner ref (to the new environment's
+// owner, or to this when the target is not an environment); there is no
+// fall-through to Hmx::Object::Replace.
 void RndEnviron::Replace(ObjRef *from, Hmx::Object *to) {
     if (RefIs(from, mAmbientFogOwner)) {
-        if (mAmbientFogOwner == this) {
-            mAmbientFogOwner = this;
+        RndEnviron *env = dynamic_cast<RndEnviron *>(to);
+        if (env) {
+            mAmbientFogOwner.SetOwnerObj(env->mAmbientFogOwner.Ptr());
         } else {
-            RndEnviron *env = dynamic_cast<RndEnviron *>(to);
-            if (env) {
-                mAmbientFogOwner.SetOwnerObj(env->mAmbientFogOwner.Ptr());
-            } else {
-                mAmbientFogOwner = this;
-            }
+            mAmbientFogOwner.SetOwnerObj(this);
         }
-        return;
     }
-    Hmx::Object::Replace(from, to);
 }
 
 BEGIN_LOADS(RndEnviron)

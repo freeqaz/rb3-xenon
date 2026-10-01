@@ -33,14 +33,16 @@ void RndShadowMap::Init() {
 void RndShadowMap::EndShadow() { TheRnd.SetShadowMap(nullptr, nullptr, nullptr); }
 
 bool RndShadowMap::PrepShadow(RndDrawable *draw, RndEnviron *env) {
-    if (GetGfxMode() != kNewGfx || sLightCam == NULL || sShadowTex == NULL)
+    if (sLightCam == NULL || sShadowTex == NULL)
         return false;
 
     RndEnviron *e = env != NULL ? env : RndEnviron::Current();
 
     RndLight *light = NULL;
     ObjPtrList<RndLight>::iterator it;
-    for (it = e->LightsApprox().begin(); it != e->LightsApprox().end(); ++it) {
+    // Both passes walk the real lights: a floor spot wins, else the first
+    // directional or point light.
+    for (it = e->LightsReal().begin(); it != e->LightsReal().end(); ++it) {
         if ((*it)->GetType() == RndLight::kFloorSpot) {
             light = *it;
             break;
@@ -72,10 +74,7 @@ found:
     lightXfm.v = sphere.center;
 
     if (light->GetType() == RndLight::kPoint) {
-        const Transform &lw = light->WorldXfm();
-        lightXfm.m.y.z = sphere.center.z - lw.v.z;
-        lightXfm.m.y.y = sphere.center.y - lw.v.y;
-        lightXfm.m.y.x = sphere.center.x - lw.v.x;
+        Subtract(sphere.center, light->WorldXfm().v, lightXfm.m.y);
         Normalize(lightXfm.m, lightXfm.m);
     }
 
@@ -93,7 +92,7 @@ found:
     sLightCam->Select();
 
     Rnd::Mode oldMode = TheRnd.DrawMode();
-    TheRnd.SetDrawMode(Rnd::kDrawExtrude);
+    TheRnd.SetDrawMode(Rnd::kDrawShadowDepth);
     draw->DrawShowing();
     TheRnd.SetDrawMode(oldMode);
 
