@@ -83,6 +83,19 @@ def comdats(path):
     # existing consumer changes behaviour.  New keys `fn_size`/`fn_raw`/
     # `fn_relocs`/`fn_bounded` carry the function-only extent; use THOSE for any
     # comparison against retail.
+    # ---- COMDAT-NESS (lane W16-KF, 2026-10-01).  ADDITIVE, like the extent
+    # keys below.  /OPT:ICF folds only COMDAT ("packaged") sections, so a fold
+    # argument has to know whether each definition IS one, and with which
+    # selection: an inline class allocator is IMAGE_COMDAT_SELECT_ANY (2), while
+    # an ordinary out-of-line function compiled /Gy -- e.g. MemMgr.cpp's global
+    # operator new -- is IMAGE_COMDAT_SELECT_NODUPLICATES (1).  The selection
+    # byte lives in the section-definition symbol's aux record (offset 14).
+    comdat_sel = {}      # secnum -> selection byte
+    for (i, nm, val, secnum, sclass, naux) in recs:
+        if (sclass == 3 and naux >= 1 and val == 0 and 0 < secnum <= len(sec)
+                and nm == sec[secnum - 1][0] and secnum not in comdat_sel):
+            aux = d[psym + (i + 1) * 18: psym + (i + 2) * 18]
+            comdat_sel[secnum] = aux[14]
     FUNCLET = ("__unwind$", "__catch$", "__ehhandler$", "__unwindfunclet$",
                "__tryblocktable$", "__ehfuncinfo$", "$EH")
     bounds = {}          # secnum -> sorted list of candidate end offsets
@@ -126,6 +139,10 @@ def comdats(path):
             "fn_relocs": [(o, n, t) for (o, n, t) in rel_rebased
                           if o < len(fn_body)],
             "fn_bounded": bool(nxt),         # False => no boundary symbol found
+            # COMDAT-ness (W16-KF): IMAGE_SCN_LNK_COMDAT and its selection byte
+            "section_comdat": bool(chars & 0x1000),
+            "comdat_select": (comdat_sel.get(secnum)
+                              if chars & 0x1000 else None),
         }
     return out
 

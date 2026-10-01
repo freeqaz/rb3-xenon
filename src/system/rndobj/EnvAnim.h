@@ -28,7 +28,10 @@ public:
     virtual Hmx::Object *AnimTarget() { return mEnviron; }
     virtual void SetKey(float);
 
-    NEW_OVERLOAD;
+    // Retail NewObject (0x82410290) inlines StaticClassName() + MemAlloc(size, 0):
+    // the class allocator is class-specific and does not fold into the
+    // global operator new at 0x827BD2F0.
+    OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD_INLINE;
     NEW_OBJ(RndEnvAnim)
     static void Init() { REGISTER_OBJ_FACTORY(RndEnvAnim) }
