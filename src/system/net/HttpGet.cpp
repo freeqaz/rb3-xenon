@@ -169,13 +169,13 @@ namespace {
 };
 
 HttpGet::HttpGet(unsigned int ip, unsigned short port, const char *c1, const char *c2)
-    : mSocket(nullptr), mPath(c1), mPort(port), mState(-1), mHeaderOnly(false), mFlags(false),
+    : mSocket(nullptr), mPath(c1), mPort(port), mState(-1), mHeaderOnly(false),
       mTimeoutMs(kDefaultTimeoutMs), mIP(ip), mRecvBuf(nullptr), mRecvBufPos(0),
-      mFileBuf(nullptr), mFileBufSize(0), mFileBufRecvPos(0), mRetryCount(0), mFailType(),
-      mPrevState(kHttpGet_Nil) {
+      mFileBuf(nullptr), mFileBufSize(0), mFileBufRecvPos(0), mRetryCount(0), mFailType() {
+    // Retail (0x827DC9E8) leaves mPrevState and mFlags unset here and adds no
+    // request headers; only the five-argument ctor does.
     (void)c2;
     SetState(kHttpGet_Connecting);
-    AddRequiredHeaders();
 }
 
 HttpGet::HttpGet(
