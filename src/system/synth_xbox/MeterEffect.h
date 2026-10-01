@@ -14,7 +14,8 @@ public:
     DoProcess(const MeterEffectParams &, float *__restrict, unsigned int, unsigned int);
 
 private:
-    float unk60[6]; // 0x60
-    float unk78[6]; // 0x78
+    // One array, not two: DoProcess (retail 0x82B6B768) reloads the peak
+    // after storing the sum, which MSVC does only when the store may hit it.
+    float mStats[2][6]; // 0x60: [0] sum of squares, [1] peak, per channel
     unsigned int unk90; // 0x90
 };

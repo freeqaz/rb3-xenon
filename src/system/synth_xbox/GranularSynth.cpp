@@ -57,7 +57,8 @@ GranularSynth::GranularSynth(const FloatVec &input, unsigned int numVoices, unsi
         for (unsigned int j = 0; j < window.size(); j++) {
             static const float sPi = 3.1415927410125732f;
             float angle = ((float)j + 0.5f) * sPi;
-            window[j] = ((float)cos(angle / (float)window.size()) + 1.0f) * 0.5f;
+            float c = (float)cos(angle / (float)window.size());
+            window[j] = (c + 1.0f) * 0.5f;
         }
     }
 

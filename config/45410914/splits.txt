@@ -1929,9 +1929,9 @@ system/synth_xbox/FxSendEQ.cpp:
 	.text       start:0x82C42FE0 end:0x82C43070
 
 system/synth_xbox/FxSendChorus.cpp:
-	.pdata      start:0x8225AE60 end:0x8225AF00
+	.pdata      start:0x8225AE60 end:0x8225AF10
 	.pdata      start:0x82261A78 end:0x82261A80
-	.text       start:0x82B62450 end:0x82B62C60
+	.text       start:0x82B62450 end:0x82B62CD0
 	.text       start:0x82C42F50 end:0x82C42FE0
 
 system/synth_xbox/FxSendFlanger.cpp:
@@ -2287,10 +2287,10 @@ FilterCoeffs.cpp:
 	.text       start:0x82B74ED0 end:0x82B75184
 
 HeadsetXferEffect.cpp:
-	.pdata      start:0x8225B580 end:0x8225B5B0
+	.pdata      start:0x8225B588 end:0x8225B5B0
 	.pdata      start:0x8225B5B0 end:0x8225B5B8
 	.pdata      start:0x82261AD8 end:0x82261AE0
-	.text       start:0x82B6B764 end:0x82B6BA10
+	.text       start:0x82B6B838 end:0x82B6BA10
 	.text       start:0x82B6BA10 end:0x82B6BA74
 	.text       start:0x82B6BA74 end:0x82B6BA78
 	.text       start:0x82C43420 end:0x82C434B0
@@ -3028,9 +3028,9 @@ system/rndobj/Rnd.cpp:
 	.text       start:0x82412B34 end:0x82416B54
 
 MeterEffect.cpp:
-	.pdata      start:0x8225B558 end:0x8225B580
+	.pdata      start:0x8225B558 end:0x8225B588
 	.pdata      start:0x82261AD0 end:0x82261AD8
-	.text       start:0x82B6B4F0 end:0x82B6B764
+	.text       start:0x82B6B4F0 end:0x82B6B838
 	.text       start:0x82C43390 end:0x82C43420
 
 UI.cpp:
@@ -6219,6 +6219,7 @@ DataArraySongInfo.cpp:
 	.pdata      start:0x82240150 end:0x82240158
 	.pdata      start:0x82240158 end:0x82240160
 	.pdata      start:0x82240160 end:0x82240168
+	.pdata      start:0x82240180 end:0x82240190
 	.pdata      start:0x82240198 end:0x82240210
 	.pdata      start:0x82240210 end:0x82240218
 	.pdata      start:0x82240218 end:0x822402B8
@@ -6227,6 +6228,7 @@ DataArraySongInfo.cpp:
 	.text       start:0x827A33A8 end:0x827A3400
 	.text       start:0x827A3400 end:0x827A3460
 	.text       start:0x827A3460 end:0x827A3594
+	.text       start:0x827A3688 end:0x827A37AC
 	.text       start:0x827A3808 end:0x827A3FA0
 	.text       start:0x827A3FA0 end:0x827A4014
 	.text       start:0x827A4014 end:0x827A4E10
@@ -6733,9 +6735,7 @@ ssluse.c:
 	.text       start:0x82AE51D0 end:0x82AE52A8
 
 Mic.cpp:
-	.pdata      start:0x82224248 end:0x82224258
 	.pdata      start:0x8225AA38 end:0x8225AD10
-	.text       start:0x825CAC64 end:0x825CAE1C
 	.text       start:0x82B5E040 end:0x82B61488
 
 FxSendWah.cpp:
@@ -6761,12 +6761,10 @@ Synapse_dsp.cpp:
 	.pdata      start:0x821F1810 end:0x821F1818
 	.pdata      start:0x821F8668 end:0x821F8670
 	.pdata      start:0x82223308 end:0x82223310
-	.pdata      start:0x82240180 end:0x82240190
 	.pdata      start:0x8225B898 end:0x8225BA90
 	.text       start:0x822726A8 end:0x82272798
 	.text       start:0x822DF4D8 end:0x822DF544
 	.text       start:0x825BD3E8 end:0x825BD450
-	.text       start:0x827A3688 end:0x827A37AC
 	.text       start:0x82B6EA08 end:0x82B70C18
 
 UIListSlot.cpp:
@@ -7310,11 +7308,11 @@ system/synth_xbox/FxSendPitchShift.cpp:
 	.text       start:0x82B6A090 end:0x82B6A160
 
 system/synth_xbox/FxSendCompress.cpp:
-	.pdata      start:0x8225AF00 end:0x8225AF18
+	.pdata      start:0x8225AF10 end:0x8225AF18
 	.pdata      start:0x8225AF18 end:0x8225AF20
 	.pdata      start:0x8225AF20 end:0x8225AF28
 	.pdata      start:0x8225AF28 end:0x8225AF68
-	.text       start:0x82B62C60 end:0x82B62D3C
+	.text       start:0x82B62CD0 end:0x82B62D3C
 	.text       start:0x82B62D3C end:0x82B62D64
 	.text       start:0x82B62D68 end:0x82B62DA0
 	.text       start:0x82B62DA0 end:0x82B630C0
@@ -15451,8 +15449,8 @@ band3/meta_band/StandInProvider.cpp:
 	.text       start:0x82672F14 end:0x826731D8
 
 band3/meta_band/HeaderPerformanceProvider.cpp:
-	.pdata      start:0x822241B8 end:0x82224248
-	.text       start:0x825CA4E0 end:0x825CAC64
+	.pdata      start:0x822241B8 end:0x82224258
+	.text       start:0x825CA4E0 end:0x825CAE1C
 
 band3/game/GameMic.cpp:
 	.pdata      start:0x82234B28 end:0x82234B48
