@@ -157,7 +157,6 @@ RockCentralJobs.cpp:
 
 RockCentral.cpp:
 	.pdata      start:0x82208698 end:0x822086A8
-	.pdata      start:0x82208D68 end:0x82208D90
 	.pdata      start:0x82215F78 end:0x82215F88
 	.pdata      start:0x82215F88 end:0x82215FA0
 	.pdata      start:0x82215FA0 end:0x82215FA8
@@ -203,7 +202,6 @@ RockCentral.cpp:
 	.text       start:0x823EC310 end:0x823EC398
 	.text       start:0x823F0F84 end:0x823F0F88
 	.text       start:0x823F0F9C end:0x823F0FA0
-	.text       start:0x823F27B8 end:0x823F2898
 	.text       start:0x824F64D0 end:0x824F6548
 	.text       start:0x824F6550 end:0x824F6628
 	.text       start:0x824F6628 end:0x824F6680
@@ -9410,6 +9408,7 @@ SessionMessages.cpp:
 	.pdata      start:0x82208D40 end:0x82208D58
 	.pdata      start:0x82208D58 end:0x82208D60
 	.pdata      start:0x82208D60 end:0x82208D68
+	.pdata      start:0x82208D68 end:0x82208D90
 	.pdata      start:0x82208D90 end:0x82208DA0
 	.text       start:0x823F0F88 end:0x823F0F9C
 	.text       start:0x823F0FC0 end:0x823F1010
@@ -9429,6 +9428,7 @@ SessionMessages.cpp:
 	.text       start:0x823F2408 end:0x823F2608
 	.text       start:0x823F2608 end:0x823F267C
 	.text       start:0x823F267C end:0x823F27B8
+	.text       start:0x823F27B8 end:0x823F2898
 	.text       start:0x823F2898 end:0x823F2A18
 
 SyncStore.cpp:
