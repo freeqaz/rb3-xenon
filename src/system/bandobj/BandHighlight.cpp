@@ -52,57 +52,30 @@ void BandHighlight::Exit() {
 
 void BandHighlight::Poll() {
     UIComponent::Poll();
-    if (!LOADMGR_EDITMODE) {
-        SetState(kDisabled);
-        UIScreen *curscreen = TheUI->CurrentScreen();
-        if (curscreen) {
-            UIPanel *focuspanel = curscreen->FocusPanel();
-            if (focuspanel) {
-                if (focuspanel->LoadedDir() == Dir()) {
-                    SetState(kNormal);
-                }
-            }
+    SetState(kDisabled);
+    UIScreen *curscreen = TheUI->CurrentScreen();
+    if (curscreen) {
+        UIPanel *focuspanel = curscreen->FocusPanel();
+        if (focuspanel && focuspanel->LoadedDir() == Dir()) {
+            SetState(kNormal);
         }
     }
-    float loc28;
+    float t;
     if (mAnimDuration != 0)
-        loc28 = (TheTaskMgr.UISeconds() - unk124) / mAnimDuration;
+        t = (TheTaskMgr.UISeconds() - unk124) / mAnimDuration;
     else
-        loc28 = 1.0f;
-    ClampEq(loc28, 0.0f, 1.0f);
-    float px, py, pz;
-    if (loc28 == 0.0f) {
-        px = unk10c.x; py = unk10c.y; pz = unk10c.z;
-    } else if (loc28 == 1.0f) {
-        px = unk118.x; py = unk118.y; pz = unk118.z;
-    } else {
-        float fz = unk10c.z;
-        float fy = unk10c.y;
-        float fx = unk10c.x;
-        pz = loc28 * (unk118.z - fz) + fz;
-        py = loc28 * (unk118.y - fy) + fy;
-        px = loc28 * (unk118.x - fx) + fx;
-    }
-    SetLocalPos(px, py, pz);
+        t = 1.0f;
+    ClampEq(t, 0.0f, 1.0f);
+    Vector3 pos;
+    Interp(unk10c, unk118, t, pos);
+    SetLocalPos(pos);
     if (unk148) {
         if (unk13c.x == 0) {
             UpdateTargetEdge(TransParent());
         }
         if (unk13c.x != 0) {
-            float ex, ey, ez;
-            if (loc28 == 0.0f) {
-                ex = unk130.x; ey = unk130.y; ez = unk130.z;
-            } else if (loc28 == 1.0f) {
-                ex = unk13c.x; ey = unk13c.y; ez = unk13c.z;
-            } else {
-                float efz = unk130.z;
-                float efy = unk130.y;
-                float efx = unk130.x;
-                ez = loc28 * (unk13c.z - efz) + efz;
-                ey = loc28 * (unk13c.y - efy) + efy;
-                ex = loc28 * (unk13c.x - efx) + efx;
-            }
-            unk148->SetLocalPos(ex, ey, ez);
+            Interp(unk130, unk13c, t, pos);
+            unk148->SetLocalPos(pos);
         }
     }
 }
