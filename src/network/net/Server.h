@@ -43,7 +43,12 @@ public:
     // two is unprovable from bytes -- the tail is left in declaration order.
     virtual void GetPlayerIDs(std::vector<unsigned int> &) {}
     // fix all of these return types
-    virtual int GetFriendsClient() {
+    // Slot [9]. Retail's only caller found so far, MusicLibraryStore::PurchaseSongs
+    // (0x825BD8C8), vcalls `lwz r11,0x24(vtbl)` on TheServer and tests the
+    // result as a byte (`clrlwi. r11,r3,24`), so the slot returns bool. Both
+    // Server's and XboxServer's slot 9 are the shared `return 0` stub. The name
+    // is the Wii header's and is unattested for this slot.
+    virtual bool GetFriendsClient() {
         MILO_FAIL("not implemented for this platform");
         return 0;
     }

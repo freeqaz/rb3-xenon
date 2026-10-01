@@ -14,7 +14,7 @@ public:
     virtual void Logout();
     // fix all of these return types
     virtual int GetPlayerID(int);
-    virtual int GetFriendsClient();
+    virtual bool GetFriendsClient();
     virtual int GetMessagingClient();
     virtual Quazal::MatchMakingClient *GetMatchMakingClient();
     virtual Quazal::CustomMatchMakingClient *GetCustomMatchMakingClient();
