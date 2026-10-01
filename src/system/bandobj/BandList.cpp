@@ -374,9 +374,7 @@ void BandList::ConcealAnimPoll(int i, Transform &tf) {
     if (mRevealStates[i] == kConcealing) {
         float startTime = mRevealStartTimes[i];
         float f1 = TheTaskMgr.UISeconds() - startTime;
-        int numdisp = NumDisplay();
-        numdisp = (numdisp - i) - 1;
-        float f4 = mConcealEntryDelay * (float)numdisp + mConcealStartDelay;
+        float f4 = mConcealEntryDelay * (float)(NumDisplay() - i - 1) + mConcealStartDelay;
         float soundTime = f4 + mConcealSoundDelay;
         float frame = 0;
         if (f1 > f4)
