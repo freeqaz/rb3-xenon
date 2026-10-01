@@ -5872,7 +5872,7 @@
  "0x8234fcf0": "?LoadTrack@BandTrack@@QAAXAAVBinStream@@_N11@Z",
  "0x82350c00": "?SavePlayer@BandTrack@@UAAXXZ",
  "0x82350e68": "?EnterCoda@BandTrack@@UAAXXZ",
- "0x82351420": "?SetGameOver@GamePanel@@QAAX_N@Z",
+ "0x82351420": "?ResetPopup@BandTrack@@QAAXXZ",
  "0x82351560": "?PlayIntro@BandTrack@@UAAXXZ",
  "0x82351bc8": "?SetHasTrackerFocus@BandTrack@@UAAX_N@Z",
  "0x82351e70": "?SetNetTalking@BandTrack@@QAAX_N@Z",
