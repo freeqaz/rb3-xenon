@@ -1,4 +1,6 @@
 {
+ "0x822eca38": "?_M_insert_overflow_aux@?$vector@VSongPattern@@V?$StlNodeAlloc@VSongPattern@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVSongPattern@@ABV3@ABU__false_type@2@I_N@Z",
+ "0x82299540": "?push_back@?$vector@UPropertyFilter@CameraManager@@V?$StlNodeAlloc@UPropertyFilter@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUPropertyFilter@CameraManager@@@Z",
  "0x827cfca0": "?SetFailType@NetLoader@@IAAXW4NetLoaderFailType@@@Z",
  "0x827d8a20": "??1NetLoaderXbox@@UAA@XZ",
  "0x827d5c00": "??$__insertion_sort@PAPAVAllocInfo@@PAV1@P6A_NABQAV1@0@Z@stlpmtx_std@@YAXPAPAVAllocInfo@@00P6A_NABQAV1@1@Z@Z",

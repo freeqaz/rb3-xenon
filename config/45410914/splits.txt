@@ -337,6 +337,7 @@ BandDirector.cpp:
 	.pdata      start:0x821F3BD8 end:0x821F3BE0
 	.pdata      start:0x821F3BE0 end:0x821F3C20
 	.pdata      start:0x821F3C20 end:0x821F3F80
+	.pdata      start:0x821F3F80 end:0x821F3F88
 	.pdata      start:0x821F3F88 end:0x821F42A8
 	.text       start:0x8228C908 end:0x8228C980
 	.text       start:0x8228C9B8 end:0x8228CAB0
@@ -346,6 +347,7 @@ BandDirector.cpp:
 	.text       start:0x82295FB8 end:0x82296018
 	.text       start:0x82296018 end:0x822963E0
 	.text       start:0x822963E0 end:0x82299540
+	.text       start:0x82299540 end:0x822995B4
 	.text       start:0x822995B4 end:0x8229CA70
 
 BandWardrobe.cpp:
@@ -3630,6 +3632,7 @@ SongLayout.cpp:
 	.pdata      start:0x821F8B38 end:0x821F8B40
 	.pdata      start:0x821F90B0 end:0x821F90C0
 	.pdata      start:0x821F91A8 end:0x821F91C8
+	.pdata      start:0x821F91C8 end:0x821F91E0
 	.pdata      start:0x821F91E0 end:0x821F91E8
 	.pdata      start:0x822000F0 end:0x822000F8
 	.pdata      start:0x822000F8 end:0x82200100
@@ -3650,6 +3653,7 @@ SongLayout.cpp:
 	.text       start:0x822E507C end:0x822E50A8
 	.text       start:0x822EB620 end:0x822EB6B0
 	.text       start:0x822EC868 end:0x822EC9B8
+	.text       start:0x822EC9B8 end:0x822ECBC4
 	.text       start:0x822ECBC8 end:0x822ECC48
 	.text       start:0x8235CAE0 end:0x8235CB54
 	.text       start:0x8235CB54 end:0x8235CB7C
@@ -6847,16 +6851,12 @@ MidiSynth.cpp:
 	.text       start:0x82718A30 end:0x82719C88
 
 Cache_Xbox.cpp:
-	.pdata      start:0x821F3F80 end:0x821F3F88
 	.pdata      start:0x821F7DF0 end:0x821F7E10
-	.pdata      start:0x821F91C8 end:0x821F91E0
 	.pdata      start:0x82243680 end:0x82243688
 	.pdata      start:0x82243688 end:0x82243690
 	.pdata      start:0x82243698 end:0x822438C8
 	.text       start:0x822797B8 end:0x822797C8
-	.text       start:0x82299540 end:0x822995B4
 	.text       start:0x822D70E0 end:0x822D71B8
-	.text       start:0x822EC9B8 end:0x822ECBC4
 	.text       start:0x827D9E40 end:0x827D9E90
 	.text       start:0x827D9E90 end:0x827D9EE8
 	.text       start:0x827D9F10 end:0x827DC00C
