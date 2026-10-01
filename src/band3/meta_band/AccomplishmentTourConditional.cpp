@@ -51,7 +51,7 @@ void AccomplishmentTourConditional::Configure(DataArray *i_pConfig) {
             if (pConditionEntryArray->Size() < 2) {
                 MILO_WARN("Condition does not have a value associated with it!");
             } else {
-                cond.mGameType = (TourGameType)pConditionEntryArray->Node(1).Int();
+                cond.mValue = pConditionEntryArray->Node(1).Int();
                 UpdateConditionOptionalData(cond, pConditionEntryArray);
             }
             m_vConditions.push_back(cond);
