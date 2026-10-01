@@ -115,7 +115,16 @@ void MergeObject(
     }
 #endif
     if (o2) {
+#ifdef HX_NATIVE
         o1->ReplaceRefs(o2);
+#else
+        // Retail (0x827583E0) walks o1's ring inline, re-reading the head after
+        // each dispatch: Replace(o1, o2) moves the ref, unlinking its node.
+        const ObjRef &refs = o1->Refs();
+        while (!refs.empty()) {
+            RefPtrOf(refs.begin())->Replace(reinterpret_cast<ObjRef *>(o1), o2);
+        }
+#endif
         if (act == MergeFilter::kMerge)
             o2->Copy(o1, Hmx::Object::kCopyFromMax);
         else if (act == MergeFilter::kReplace)
