@@ -486,7 +486,7 @@ void BeatMatcher::SetButtonMashingMode(bool b) {
     // 0x82791C40: drum, vocals, then the signed range 10..12.
     TrackType curTrackType = mTrackTypes[mCurTrack];
     if (curTrackType != kTrackDrum && curTrackType != kTrackVocals
-        && (curTrackType < kTrackNone || curTrackType > kTrackPendingVocals)) {
+        && (curTrackType <= kTrackRealBass22Fret || curTrackType > kTrackPendingVocals)) {
         mAudio->SetButtonMashingMode(mCurTrack, b);
     }
 }

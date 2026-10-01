@@ -349,21 +349,22 @@ void VocalNoteList::DetermineFreestyleSections() {
     bool atWordBoundary = true;
     for (std::vector<VocalNote>::iterator note = mNotes.begin(); note != mNotes.end();
          ++note) {
+        const String &text = note->mText;
         if (atWordBoundary) {
-            float gap = note->GetMs() - sectionStart;
+            float noteMs = note->GetMs();
+            float gap = noteMs - sectionStart;
             for (int i = 0; i < mFreestyleMinDuration->Size(); i++) {
                 float pad = mFreestylePad->Float(i);
                 float minDuration = mFreestyleMinDuration->Float(i);
                 if (gap > 64.0f * pad + minDuration) {
                     mFreestyleSections.push_back(
-                        std::make_pair(sectionStart + pad, note->GetMs() - pad)
+                        std::make_pair(sectionStart + pad, noteMs - pad)
                     );
                     break;
                 }
             }
         }
         sectionStart = note->EndMs();
-        String &text = note->mText;
         atWordBoundary =
             text.empty() || (text.rindex(-1) != '-' && text.rindex(-1) != '=');
     }
