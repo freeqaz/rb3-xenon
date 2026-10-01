@@ -24,5 +24,4 @@
 #include "world/LightPresetManager.h"
 
 
-__declspec(noinline) float LightPreset::LegacyFadeIn() const { volatile float f = 0.0f; return f; }
 __declspec(noinline) void LightPreset::StaticResetEvents() { volatile int n = 0; (void)n; }

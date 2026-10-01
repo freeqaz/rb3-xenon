@@ -31,7 +31,7 @@ DECOMP_FORCEACTIVE(
 MicInputArrow::MicInputArrow()
     : mArrowNum(0), mMicManagerInterface(0), mMicEnergyNormalizer(1.0f) {
     for (int i = 0; i < 3; i++) {
-        mConnectedFlags.push_back(-1);
+        mConnectedFlags.push_back(false);
         mHiddenFlags.push_back(true);
     }
 }

@@ -791,13 +791,7 @@ BinStream &operator>>(BinStream &bs, OutfitConfig::MeshAO::Seam &seam) {
 
 BinStream &operator>>(BinStream &bs, OutfitConfig::MeshAO &ao) {
     bs >> ao.mMeshName;
-    if (gRev == 9 || gRev == 10 || gRev == 11
-        || gRev == 12 || gRev == 13
-        || gRev == 14 || gRev == 15
-        || gRev == 16 || gRev == 17
-        || gRev == 18 || gRev == 19
-        || gRev == 20 || gRev == 21
-        || gRev == 22) {
+    if (gRev > 8 && gRev < 23) {
         CSHA1::Digest d;
         bs >> d;
     }

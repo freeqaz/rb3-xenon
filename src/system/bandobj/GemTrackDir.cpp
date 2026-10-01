@@ -1277,7 +1277,7 @@ RndMesh *GemTrackDir::GetChordMesh(unsigned int key, bool which) {
 
 void GemTrackDir::SetUnisonProgress(float f) {
     if (mUnisonIcon)
-        static_cast<UnisonIcon *>(mUnisonIcon.Ptr())->SetProgress(f);
+        mUnisonIcon->SetProgress(f);
 }
 
 void GemTrackDir::AddChordRepImpl(
