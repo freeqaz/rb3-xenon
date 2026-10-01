@@ -23577,7 +23577,7 @@
  "0x827bd080": "?MemRealloc@@YAPAXPAXHPBDH1H@Z",
  "0x827bd190": "?_MemAllocH@@YAPAVMemHandle@@H@Z",
  "0x827bd208": "?MemOrPoolAlloc@@YAPAXH@Z",
- "0x827bd230": "?MemResizeElem@@YAPAXAAPAXAAHPAXHHPBDH3@Z",
+ "0x827bd230": "?MemResizeElem@@YAPAXAAPAXAAHPAXHHPBD@Z",
  "0x827bd2f0": "??2CriticalSection@@SAPAXI@Z",
  "0x827bd690": "??AString@@QAAAADI@Z",
  "0x827bd6a0": "?rindex@String@@QBADH@Z",
