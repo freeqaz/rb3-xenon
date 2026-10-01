@@ -1425,7 +1425,7 @@ DataNode RndMesh::OnCompareEdgeVerts(const DataArray *da) {
     for (int i = 0; i < Verts().size(); i++) {
         if (vec20[i] == -1) {
             vec20[i] = i;
-            for (int j = i; j < Verts().size(); j++) {
+            for (int j = i + 1; j < Verts().size(); j++) {
                 if (Verts(j).pos == Verts(i).pos) {
                     vec20[j] = i;
                 }
@@ -1469,13 +1469,14 @@ DataNode RndMesh::OnCompareEdgeVerts(const DataArray *da) {
     DataArray *array = da->Array(2);
     for (int i = 0; i < array->Size(); i++) {
         RndMesh *curMesh = array->Obj<RndMesh>(i);
-        auto debugMsg = MakeString("testing %s\n", curMesh->Name());
-        TheDebug << debugMsg;
+        // Retail keeps the cast and an empty walk over vec28; the two
+        // reports are stripped debug output.
+        MILO_LOG("testing %s\n", curMesh->Name());
         FOREACH (it, vec28) {
             if (Verts(*it).pos == curMesh->Verts(*it).pos)
                 continue;
             else
-                TheDebug << MakeString("   %d doesn't match position\n", *it);
+                MILO_LOG("   %d doesn't match position\n", *it);
         }
     }
     if (mGeomOwner != this && (mVerts.size() != 0 || mFaces.size() != 0)) {
