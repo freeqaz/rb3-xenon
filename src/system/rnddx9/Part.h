@@ -12,6 +12,11 @@ public:
     virtual void SetPool(int x, Type t) { RndParticleSys::SetPool(x, t); }
 
     static void Init();
+    // Retail Init (0x82740FF0) registers 0x82740C48, which MemAllocs and runs
+    // ??0DxParticleSys -- without this the factory resolves to the inherited
+    // RndParticleSys::NewObject and builds the wrong class.
+    NEW_OBJ(DxParticleSys)
+    void DrawParticles(const Hmx::Color &);
 
 protected:
     DxParticleSys();

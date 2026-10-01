@@ -9,6 +9,8 @@
 #include "utl/Symbol.h"
 #include "os/Debug.h"
 #include "../../Memory.h"
+#include "rndobj/Shader.h"
+#include "rndobj/ShaderMgr.h"
 
 DxMultiMesh::DxMultiMesh() : mGeomDirtyFlags(0), mBufferCycleIndex(0) {
     for (int i = 0; i < 3; i++) {
@@ -176,4 +178,90 @@ void DxMultiMesh::UpdateGeometryBuffers() {
     }
 
     D3DVertexBuffer_Unlock((D3DVertexBuffer *)*(void **)((char *)this + temp_r28_2));
+}
+
+// 0x8273F370, called only from DrawShowing. RB3's batching is simpler than the
+// later engine's: the instance transform is a local identity, every instance
+// is drawn (no per-instance visibility test), a batch fills vertex-shader
+// registers 0x5c up to a fixed 0x81-register span, and no draw stats are kept.
+void DxMultiMesh::DrawBatchedNewGfx() {
+    RndMesh *mesh = mMesh;
+    DxMesh *owner = static_cast<DxMesh *>(mesh->GetGeomOwner());
+    bool fastBillboard =
+        mesh->TransConstraint() == RndTransformable::kConstraintFastBillboardXYZ;
+    RndMat *mat = mesh->Mat();
+    if (owner->Mutable()) {
+        UpdateGeometryBuffers();
+    }
+    int numFaces;
+    if (owner->Mutable()) {
+        D3DDevice_SetStreamSource(
+            TheDxRnd.Device(),
+            0,
+            mVertexBuffers[(unsigned int)mBufferCycleIndex % 3],
+            0,
+            0x60,
+            1
+        );
+        D3DDevice_SetStreamSource(
+            TheDxRnd.Device(), 1, mIndexBuffers[(unsigned int)mBufferCycleIndex % 3], 0, 4, 1
+        );
+        D3DDevice_SetVertexDeclaration(TheDxRnd.Device(), sMutableVertexDecl);
+        numFaces = owner->GetGeomOwner()->Faces().size();
+    } else {
+        D3DDevice_SetStreamSource(TheDxRnd.Device(), 0, owner->unk1a4.buffer, 0, 0x24, 1);
+        D3DDevice_SetStreamSource(
+            TheDxRnd.Device(), 1, owner->GetMultimeshFaces(), 0, 4, 1
+        );
+        D3DDevice_SetVertexDeclaration(TheDxRnd.Device(), sVertexDecl);
+        numFaces = owner->mNumFaces;
+    }
+    int vertsPerInstance = numFaces * 3;
+    Vector4 instanceVerts;
+    instanceVerts.x = vertsPerInstance;
+    instanceVerts.y = vertsPerInstance;
+    instanceVerts.z = vertsPerInstance;
+    instanceVerts.w = vertsPerInstance;
+    TheShaderMgr.SetVConstant((VShaderConstant)0x59, instanceVerts);
+
+    ShaderType shader = fastBillboard ? kMultimeshBBShader : kMultimeshShader;
+    do {
+        Transform xfm;
+        xfm.Reset();
+        TheShaderMgr.SetTransform(xfm);
+        RndShader::SelectConfig(mat, shader, false);
+        InstanceList::iterator it = mInstances.begin();
+        while (it != mInstances.end()) {
+            int reg;
+            for (reg = 0; reg < 0x81 && it != mInstances.end(); reg += 3, ++it) {
+                TheShaderMgr.SetVConstant4x3(
+                    (VShaderConstant)(reg + 0x5C), Hmx::Matrix4(it->mXfm)
+                );
+            }
+            D3DDevice_DrawVertices(
+                TheDxRnd.Device(), D3DPT_TRIANGLELIST, 0, reg / 3 * vertsPerInstance
+            );
+        }
+        if (mat) {
+            mat = mat->NextPass();
+        }
+    } while (mat);
+    mBufferCycleIndex++;
+}
+
+// 0x8273F610 (DxMultiMesh vtable slot 5).
+void DxMultiMesh::DrawShowing() {
+    if (mInstances.empty())
+        return;
+    RndMesh *mesh = mMesh;
+    if (!mesh)
+        return;
+    if (!static_cast<DxMesh *>(mesh->GetGeomOwner())->CanDraw())
+        return;
+    Rnd::Mode mode = TheRnd.DrawMode();
+    if (mode == Rnd::kDrawOcclusion)
+        return;
+    if (mode != Rnd::kDrawNormal)
+        return;
+    DrawBatchedNewGfx();
 }

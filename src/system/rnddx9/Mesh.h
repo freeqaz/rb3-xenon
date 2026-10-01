@@ -7,6 +7,10 @@
 #include "xdk/D3D9.h"
 
 class DxMesh : public RndMesh, public DxObject {
+    // DxMultiMesh::DrawBatchedNewGfx (0x8273F370) reads mNumFaces (0x160) and
+    // the vertex buffer at 0x164 directly.
+    friend class DxMultiMesh;
+
 public:
     struct VertexBufferData {
         VertexBufferData() : buffer(0), size(0) {}
@@ -59,6 +63,8 @@ public:
 
 protected:
     DxMesh();
+    // ?CanDraw@DxMesh@@IBA_NXZ (0x82737440), called by DxMultiMesh::DrawShowing.
+    bool CanDraw() const;
     // Retail DxMesh vtable @0x82101b14 slot 15 -> 0x82738768; protected, as in
     // RndMesh (DC3 map: ?OnSync@DxMesh@@MAAXH@Z).
     virtual void OnSync(int);

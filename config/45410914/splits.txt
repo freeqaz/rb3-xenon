@@ -1844,7 +1844,7 @@ DepthBuffer3D.cpp:
 	.pdata      start:0x82237220 end:0x82237228
 	.pdata      start:0x82237960 end:0x82237968
 	.pdata      start:0x82238880 end:0x82238888
-	.pdata      start:0x8223AE20 end:0x8223AE30
+	.pdata      start:0x8223AE20 end:0x8223AE68
 	.text       start:0x82360DC8 end:0x82360E44
 	.text       start:0x826EBF20 end:0x826EBF28
 	.text       start:0x826FB8EC end:0x826FB8F0
@@ -1853,7 +1853,7 @@ DepthBuffer3D.cpp:
 	.text       start:0x82701F58 end:0x82701F80
 	.text       start:0x82701FF0 end:0x82701FF8
 	.text       start:0x82710D10 end:0x82710DBC
-	.text       start:0x82741040 end:0x827410B8
+	.text       start:0x82741040 end:0x82741350
 
 MicClientMapper.cpp:
 	.pdata      start:0x82238738 end:0x82238740
@@ -6991,12 +6991,10 @@ system/rnddx9/CubeTex.cpp:
 	.pdata      start:0x8223AC50 end:0x8223AD40
 	.pdata      start:0x8223AD50 end:0x8223AD68
 	.pdata      start:0x8223AD70 end:0x8223AE20
-	.pdata      start:0x8223AE30 end:0x8223AE68
 	.text       start:0x8273D7D0 end:0x8273E040
 	.text       start:0x8273EC04 end:0x8273FD30
 	.text       start:0x8273FDA8 end:0x8273FF80
 	.text       start:0x8273FFB0 end:0x82741040
-	.text       start:0x827410B8 end:0x82741350
 
 UIListCustom.cpp:
 	.pdata      start:0x822478C0 end:0x82247960
