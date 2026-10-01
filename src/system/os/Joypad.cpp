@@ -175,6 +175,21 @@ extern "C" int JoypadStageKitPadNum() {
     return -1;
 }
 
+// Retail 0x825248A0 (GemPlayer's caller). Enabling adds the pad to both the
+// current and next keep-alive masks; disabling only drops it from the next
+// one. Either way the countdown restarts.
+void JoypadKeepAlive(int pad, bool keepAlive) {
+    if (pad == -1)
+        return;
+    if (keepAlive) {
+        gPadsToKeepAlive |= 1 << pad;
+        gPadsToKeepAliveNext |= 1 << pad;
+    } else {
+        gPadsToKeepAliveNext &= ~(1 << pad);
+    }
+    gKeepAliveCountdown = 0;
+}
+
 // Retail 0x82526308 (no callers in the image). For the HX-peripheral pad
 // types (core guitar .. Wii keytar) the first ten bytes at JoypadData+0xa8 are
 // appended as hex, then prefixed with the pad type.

@@ -131,7 +131,8 @@ void VocalOverlay::AppendPhraseMeter(float) {}
 void VocalOverlay::FinalizeDisplayString() {}
 
 // ---- free-function + misc engine leaves (off scoring path) ------------------
-void JoypadKeepAlive(int, bool) {}
+// `JoypadKeepAlive(int, bool)` was stubbed here; os/Joypad.cpp now defines it
+// (retail 0x825248A0), so the stub would be a duplicate definition.
 // `bool UserHasController(LocalUser *)` USED to be stubbed here (returning false,
 // with a local `class LocalUser;` forward declaration).  It is gone because the
 // REAL definition now exists: os/Joypad.cpp declares it at Joypad.h:348 and had
