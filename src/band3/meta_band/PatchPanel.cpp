@@ -422,9 +422,6 @@ DataNode PatchPanel::OnMsg(const ButtonUpMsg &msg) {
 #pragma push
 #pragma pool_data on
 void PatchPanel::Poll() {
-    int& _mEditLayerIdx = this->mEditLayerIdx;
-    float& _mMoveVelX = this->mMoveVelX;
-    int& _mMoveX = this->mMoveX;
     UIPanel::Poll();
     int numLoading = mPatch->NumLoadingStickers();
     if (numLoading != 0) {
@@ -435,16 +432,16 @@ void PatchPanel::Poll() {
         }
     }
     if (unk51) {
-        static Message update_char_preview_msg("update_char_preview");
         unk51 = false;
+        static Message update_char_preview_msg("update_char_preview");
         HandleType(update_char_preview_msg);
     }
-    PatchLayer &layer = mPatch->Layer(_mEditLayerIdx);
+    PatchLayer &layer = mPatch->Layer(mEditLayerIdx);
     if (layer.HasSticker()) {
-        _mMoveVelX = CalcMotion(_mMoveVelX, _mMoveX);
+        mMoveVelX = CalcMotion(mMoveVelX, mMoveX);
         mMoveVelY = CalcMotion(mMoveVelY, mMoveY);
         Vector3 pos = layer.Position();
-        pos.x = _mMoveVelX * unk58 + pos.x;
+        pos.x = mMoveVelX * unk58 + pos.x;
         pos.z = mMoveVelY * unk58 + pos.z;
         if (pos.x < -250.0f)
             pos.x = -250.0f;
@@ -464,8 +461,8 @@ void PatchPanel::Poll() {
         float newScaleX = unk60 * mScaleVelX + scaleX;
         float newScaleY = unk60 * mScaleVelY + scaleY;
         if (newScaleX < 0.0f) {
-            float minS = (-1.0f * unk68) / mBaseSizeX;
-            float maxS = (-1.0f * unk64) / mBaseSizeX;
+            float minS = unk68 / mBaseSizeX * -1.0f;
+            float maxS = unk64 / mBaseSizeX * -1.0f;
             if (newScaleX < minS)
                 newScaleX = minS;
             else if (newScaleX > maxS)
@@ -488,12 +485,9 @@ void PatchPanel::Poll() {
         layer.SetScaleY(newScaleY);
         mDeformVel = CalcMotion(mDeformVel, mDeform);
         float newDeform = mDeformVel * unk7c + layer.DeformFrame();
-        if (newDeform < unk80)
-            newDeform = unk80;
-        else if (newDeform > unk84)
-            newDeform = unk84;
+        ClampEq(newDeform, unk80, unk84);
         layer.SetDeformFrame(newDeform);
-        if (_mMoveVelX != 0.0f || mMoveVelY != 0.0f || mRotVel != 0.0f
+        if (mMoveVelX != 0.0f || mMoveVelY != 0.0f || mRotVel != 0.0f
             || mScaleVelX != 0.0f || mScaleVelY != 0.0f || mDeformVel != 0.0f) {
             unk50 = true;
         }
