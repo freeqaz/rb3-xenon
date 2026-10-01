@@ -281,8 +281,15 @@ CharDriver::PlayGroup(const char *cc, int i, float f1, float f2, float f3) {
         if (!grp) {
             MILO_NOTIFY("%s could not find group %s", PathName(this), cc);
             return nullptr;
-        } else
+        } else {
+#ifdef HX_NATIVE
             return PlayGroup(grp, i, f1, f2, f3);
+#else
+            // Retail (0x823780E8) picks the group's clip with the no-argument
+            // GetClip and plays it directly.
+            return Play(grp->GetClip(), i, f1, f2, f3);
+#endif
+        }
     }
 }
 
@@ -617,9 +624,8 @@ void CharDriver::PollDeps(
 
 bool CharDriver::Starved() {
     if (!mFirst) return true;
-    if (mFirst->Next() || (mFirst->mPlayFlags & 0xF0) == 0x10)
-        return false;
-    return true;
+    bool ret = !(mFirst->Next() || (mFirst->mPlayFlags & 0xF0) == 0x10);
+    return ret;
 }
 
 void CharDriver::SetBeatScale(float beatscale, bool) {

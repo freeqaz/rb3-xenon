@@ -80286,12 +80286,17 @@
   {
    "name": "$?5VContentPoolMapping",
    "address": "0x82310a50",
-   "survivor": "??$?5VContentPoolMapping@SongSectionController@@@@YAAAVBinStream@@AAV0@AAV?$ObjList@VContentPoolMapping@SongSectionController@@@@@Z",
-   "folded": [
-    "??$?5VPracticeSectionMapping@SongSectionController@@@@YAAAVBinStream@@AAV0@AAV?$ObjList@VPracticeSectionMapping@SongSectionController@@@@@Z"
-   ],
+   "survivor": "??$?5VPracticeSectionMapping@SongSectionController@@@@YAAAVBinStream@@AAV0@AAV?$ObjList@VPracticeSectionMapping@SongSectionController@@@@@Z",
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??$?5VPracticeSectionMapping@SongSectionController@@@@YAAAVBinStream@@AAV0@AAV?$ObjList@VPracticeSectionMapping@SongSectionController@@@@@Z",
+     "lane": "W16-MB 2026-10-01",
+     "class": "MAP_NAME_WRONG",
+     "why": "Retail 0x82310A50 is operator>>(BinStream&, ObjList<SongSectionController::PracticeSectionMapping>&) itself: it calls resize<ObjList<PracticeSectionMapping>> (0x823109A0) and the PracticeSectionMapping element reader (0x8230D7B8), and SongSectionController::Load reaches it first, for mSectionMappings (0x82310BCC). The ContentPoolMapping reader is a separate retail body at 0x8230ED28 (it calls 0x8230EC88 and 0x8230D920, the ContentPoolMapping resize and element reader), so the two spellings never folded. The map row is renamed to the PracticeSectionMapping spelling and 0x8230ED28 is named for ContentPoolMapping; this membership (the real name folded into the wrong one) is withdrawn and the survivor field follows the map."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -80318,7 +80323,11 @@
       }
      ]
     }
-   ]
+   ],
+   "survivor_renamed": {
+    "from": "??$?5VContentPoolMapping@SongSectionController@@@@YAAAVBinStream@@AAV0@AAV?$ObjList@VContentPoolMapping@SongSectionController@@@@@Z",
+    "lane": "W16-MB 2026-10-01"
+   }
   },
   {
    "name": "$__destroy_range_aux",
@@ -96103,11 +96112,21 @@
   {
    "name": "_M_fill_insert_VSampleMarker",
    "address": "0x822a5528",
-   "survivor": "?_M_fill_insert@?$vector@VSampleMarker@@V?$StlNodeAlloc@VSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSampleMarker@@IABV3@@Z",
-   "folded": [
-    "?_M_fill_insert@?$vector@VOverlay@OutfitConfig@@V?$StlNodeAlloc@VOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVOverlay@OutfitConfig@@IABV34@@Z"
-   ],
-   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 34, row addr 0x822a5528). \"ours\" spelling ?_M_fill_insert@?$vector@VOverlay@OutfitConfig@@V?$StlNodeAlloc@VOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVOverlay@OutfitConfig@@IABV34@@Z is a template/spelling twin of survivor ?_M_fill_insert@?$vector@VSampleMarker@@V?$StlNodeAlloc@VSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSampleMarker@@IABV3@@Z at retail address 0x822a5528. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 9 SLOT-FOLD-OK, 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 372 B (372 B honest) across ['default/OutfitConfig'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md."
+   "survivor": "?_M_fill_insert@?$vector@VOverlay@OutfitConfig@@V?$StlNodeAlloc@VOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVOverlay@OutfitConfig@@IABV34@@Z",
+   "folded": [],
+   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 34, row addr 0x822a5528). \"ours\" spelling ?_M_fill_insert@?$vector@VOverlay@OutfitConfig@@V?$StlNodeAlloc@VOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVOverlay@OutfitConfig@@IABV34@@Z is a template/spelling twin of survivor ?_M_fill_insert@?$vector@VSampleMarker@@V?$StlNodeAlloc@VSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSampleMarker@@IABV3@@Z at retail address 0x822a5528. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 9 SLOT-FOLD-OK, 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 372 B (372 B honest) across ['default/OutfitConfig'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md.",
+   "survivor_renamed": {
+    "from": "?_M_fill_insert@?$vector@VSampleMarker@@V?$StlNodeAlloc@VSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSampleMarker@@IABV3@@Z",
+    "lane": "W16-MB 2026-10-01"
+   },
+   "withdrawn": [
+    {
+     "spelling": "?_M_fill_insert@?$vector@VOverlay@OutfitConfig@@V?$StlNodeAlloc@VOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVOverlay@OutfitConfig@@IABV34@@Z",
+     "lane": "W16-MB 2026-10-01",
+     "class": "MAP_NAME_WRONG",
+     "why": "Retail 0x822A5528 is vector<OutfitConfig::Overlay>::_M_fill_insert: its callers are PropSync<Overlay> (0x822A63A8) and the Overlay resize (0x822A6B90), and it calls the map-resident Overlay _M_fill_insert_aux (0x822A36C0). The map row named it for vector<SampleMarker>; it is renamed to the Overlay spelling and re-homed to OutfitConfig (whose object defines it), so this membership (the real name folded into the wrong one) is withdrawn and the survivor field follows the map."
+    }
+   ]
   },
   {
    "name": "_M_allocate_and_copy_NgRnd",
@@ -98507,10 +98526,8 @@
   {
    "name": "resize",
    "address": "0x822a6b28",
-   "survivor": "?resize@?$vector@VSampleMarker@@V?$StlNodeAlloc@VSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVSampleMarker@@@Z",
-   "folded": [
-    "?resize@?$vector@VOverlay@OutfitConfig@@V?$StlNodeAlloc@VOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVOverlay@OutfitConfig@@@Z"
-   ],
+   "survivor": "?resize@?$vector@VOverlay@OutfitConfig@@V?$StlNodeAlloc@VOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVOverlay@OutfitConfig@@@Z",
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -98518,6 +98535,18 @@
      "spelling": "?resize@?$vector@VOverlay@OutfitConfig@@V?$StlNodeAlloc@VOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVOverlay@OutfitConfig@@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 124 B retail / 124 B ours; retail body-twins 11. Retail call site(s) reaching the survivor where we call this spelling: 0x822a7824."
+    }
+   ],
+   "survivor_renamed": {
+    "from": "?resize@?$vector@VSampleMarker@@V?$StlNodeAlloc@VSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVSampleMarker@@@Z",
+    "lane": "W16-MB 2026-10-01"
+   },
+   "withdrawn": [
+    {
+     "spelling": "?resize@?$vector@VOverlay@OutfitConfig@@V?$StlNodeAlloc@VOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVOverlay@OutfitConfig@@@Z",
+     "lane": "W16-MB 2026-10-01",
+     "class": "MAP_NAME_WRONG",
+     "why": "Retail 0x822A6B28 is vector<OutfitConfig::Overlay>::resize: its only caller is ObjVector<OutfitConfig::Overlay>::resize (0x822A7824), and it calls the Overlay _M_erase (0x822A3178, whose body copies 16-byte elements via ObjPtr<Object>::SetObjConcrete) and 0x822A5528. The map row named it for vector<SampleMarker>; it is renamed to the Overlay spelling and re-homed to OutfitConfig (whose object defines it), so this membership (the real name folded into the wrong one) is withdrawn and the survivor field follows the map."
     }
    ]
   },
@@ -101472,16 +101501,26 @@
   {
    "name": "push_back",
    "address": "0x822e1238",
-   "survivor": "?push_back@?$vector@VBurst@RndParticleSys@@V?$StlNodeAlloc@VBurst@RndParticleSys@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVBurst@RndParticleSys@@@Z",
-   "folded": [
-    "?push_back@?$vector@VEdge@ChordShapeGenerator@@V?$StlNodeAlloc@VEdge@ChordShapeGenerator@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVEdge@ChordShapeGenerator@@@Z"
-   ],
+   "survivor": "?push_back@?$vector@VEdge@ChordShapeGenerator@@V?$StlNodeAlloc@VEdge@ChordShapeGenerator@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVEdge@ChordShapeGenerator@@@Z",
+   "folded": [],
    "evidence": "Fold group opened by W16-MB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
     {
      "spelling": "?push_back@?$vector@VEdge@ChordShapeGenerator@@V?$StlNodeAlloc@VEdge@ChordShapeGenerator@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVEdge@ChordShapeGenerator@@@Z",
      "lane": "W16-MB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED); 120 B retail / 120 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. ?AddEdge@CrossSec@ChordShapeGenerator@@QAAXABVEdge@2@@Z."
+    }
+   ],
+   "survivor_renamed": {
+    "from": "?push_back@?$vector@VBurst@RndParticleSys@@V?$StlNodeAlloc@VBurst@RndParticleSys@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVBurst@RndParticleSys@@@Z",
+    "lane": "W16-MB 2026-10-01"
+   },
+   "withdrawn": [
+    {
+     "spelling": "?push_back@?$vector@VEdge@ChordShapeGenerator@@V?$StlNodeAlloc@VEdge@ChordShapeGenerator@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVEdge@ChordShapeGenerator@@@Z",
+     "lane": "W16-MB 2026-10-01",
+     "class": "MAP_NAME_WRONG",
+     "why": "Retail 0x822E1238 is vector<ChordShapeGenerator::Edge>::push_back itself: it copies a 4-byte element as two halfwords (lhz/sth at +0/+2, end += 4), its only caller is ChordShapeGenerator::CrossSec::AddEdge (0x822E133C), and its overflow callee 0x822DFB18 is likewise 4-byte/halfword. It sits in a hole of ChordShapeGenerator's .text. The map row named it push_back<RndParticleSys::Burst>; it is renamed to the Edge spelling and re-homed to ChordShapeGenerator, so this membership (the real name folded into the wrong one) is withdrawn and the survivor field follows the map."
     }
    ]
   },
@@ -101560,6 +101599,22 @@
      "spelling": "??1?$vector@UCharInterestState@CharEyes@@V?$StlNodeAlloc@UCharInterestState@CharEyes@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
      "lane": "W16-MB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED); 132 B retail / 132 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. ??1CharEyes@@UAA@XZ. Overrides earlier withdrawal record(s) for this spelling under other survivors (0x822aa258 FABRICATED_CLOSURE_NOT_PARTITION; 0x82373ec8 FABRICATED_CLOSURE_NOT_PARTITION; 0x8246f2b8 FABRICATED_CLOSURE_NOT_PARTITION; 0x827d1570 FABRICATED_CLOSURE_NOT_PARTITION): those refused membership without a per-pair proof against this survivor, and the chase above is one."
+    }
+   ]
+  },
+  {
+   "name": "_M_erase",
+   "address": "0x823db220",
+   "survivor": "?_M_erase@?$vector@V?$ObjOwnerPtr@VWaypoint@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VWaypoint@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjOwnerPtr@VWaypoint@@@@PAV3@ABU__false_type@2@@Z",
+   "folded": [
+    "?_M_erase@?$vector@V?$ObjOwnerPtr@VRndTransformable@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VRndTransformable@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjOwnerPtr@VRndTransformable@@@@PAV3@ABU__false_type@2@@Z"
+   ],
+   "evidence": "Fold group opened by W16-MB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "?_M_erase@?$vector@V?$ObjOwnerPtr@VRndTransformable@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VRndTransformable@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjOwnerPtr@VRndTransformable@@@@PAV3@ABU__false_type@2@@Z",
+     "lane": "W16-MB 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED); 124 B retail / 124 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. ??$PropSync@V?$ObjOwnerPtr@VRndTransformable@@@@@@YA_NAAV?$ObjVector@V?$ObjOwnerPtr@VRndTransformable@@@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z."
     }
    ]
   }

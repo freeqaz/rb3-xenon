@@ -13,6 +13,9 @@ public:
 class CharPollableSorter {
 public:
     struct Dep {
+        // Retail's map<Object*, Dep>::operator[] (0x82376B18) zeroes obj and poll
+        // in the default-constructed value and leaves searchID alone.
+        Dep() : obj(nullptr), poll(nullptr) {}
         Hmx::Object *obj; // 0x0
         std::list<Dep *> changedBy; // 0x4
         RndPollable *poll; // 0xc

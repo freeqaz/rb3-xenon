@@ -18,15 +18,14 @@
 #define RB3_TU_OBJPTR_FORCEINLINE_CTOR
 #include "char/CharMeshHide.h"
 #include "obj/Object.h"
-// Retail folds both rev words onto ONE base register at +0/+4, which only
-// happens for internal-linkage align(4) file-scope storage laid out as a single
-// aggregate (altRev at +0, rev at +4). Two separate statics do NOT fold.
-static struct {
-    __declspec(align(4)) unsigned short altRev;
-    __declspec(align(4)) unsigned short rev;
-} gRevs;
-#define gAltRev gRevs.altRev
-#define gRev gRevs.rev
+// Two internal-linkage align(4) file statics, altRev then rev. Load stores both
+// off ONE base register at +0/+4 (MSVC co-addresses file statics it lays out
+// itself), while the Hide reader, which touches only rev, addresses it directly
+// (lis + lhz rev) -- the latter is what an aggregate cannot produce.
+static __declspec(align(4)) unsigned short gAltRev_CharMeshHide;
+static __declspec(align(4)) unsigned short gRev_CharMeshHide;
+#define gAltRev gAltRev_CharMeshHide
+#define gRev gRev_CharMeshHide
 
 #pragma region CharMeshHide::Hide
 

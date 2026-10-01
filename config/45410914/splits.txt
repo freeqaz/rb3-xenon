@@ -3340,7 +3340,6 @@ Character.cpp:
 	.pdata      start:0x821F4B58 end:0x821F4B68
 	.pdata      start:0x821F4B98 end:0x821F4BA0
 	.pdata      start:0x821F4BA0 end:0x821F4BB8
-	.pdata      start:0x821F4D00 end:0x821F4D08
 	.pdata      start:0x82201500 end:0x82201520
 	.pdata      start:0x82201528 end:0x82201678
 	.pdata      start:0x82201678 end:0x82201680
@@ -3385,7 +3384,7 @@ Character.cpp:
 	.text       start:0x822A543C end:0x822A54B0
 	.text       start:0x822A5768 end:0x822A58B4
 	.text       start:0x822A58B4 end:0x822A5970
-	.text       start:0x822A6B20 end:0x822A6BA4
+	.text       start:0x822A6B20 end:0x822A6B28
 	.text       start:0x822A6C14 end:0x822A6C18
 	.text       start:0x8236D2C8 end:0x8236D408
 	.text       start:0x8236D450 end:0x8236D4E4
@@ -4070,8 +4069,11 @@ ChordShapeGenerator.cpp:
 	.pdata      start:0x821F8660 end:0x821F8668
 	.pdata      start:0x821F8678 end:0x821F8690
 	.pdata      start:0x821F8698 end:0x821F86A0
+	.pdata      start:0x821F86A0 end:0x821F86A8
+	.pdata      start:0x821F86A8 end:0x821F86B0
 	.pdata      start:0x821F86B8 end:0x821F86C0
 	.pdata      start:0x821F86C0 end:0x821F8888
+	.pdata      start:0x821F8888 end:0x821F8890
 	.pdata      start:0x821F8890 end:0x821F8998
 	.text       start:0x822DC9D0 end:0x822DCA50
 	.text       start:0x822DCA50 end:0x822DCF58
@@ -4089,8 +4091,11 @@ ChordShapeGenerator.cpp:
 	.text       start:0x822DF708 end:0x822DF8B0
 	.text       start:0x822DFA20 end:0x822DFAC0
 	.text       start:0x822DFAC0 end:0x822DFB0C
+	.text       start:0x822DFB0C end:0x822DFCAC
+	.text       start:0x822DFCAC end:0x822DFCD8
 	.text       start:0x822DFD88 end:0x822DFF28
 	.text       start:0x822DFF28 end:0x822E1234
+	.text       start:0x822E1238 end:0x822E12B0
 	.text       start:0x822E12B0 end:0x822E33E8
 
 CheckboxDisplay.cpp:
@@ -4167,9 +4172,6 @@ CharLipSync.cpp:
 	.pdata      start:0x821F8628 end:0x821F8630
 	.pdata      start:0x821F8630 end:0x821F8638
 	.pdata      start:0x821F8690 end:0x821F8698
-	.pdata      start:0x821F86A0 end:0x821F86A8
-	.pdata      start:0x821F86A8 end:0x821F86B0
-	.pdata      start:0x821F8888 end:0x821F8890
 	.pdata      start:0x821FEDB0 end:0x821FEDC0
 	.pdata      start:0x821FEE50 end:0x821FEE58
 	.pdata      start:0x822011C8 end:0x822011D8
@@ -4190,9 +4192,6 @@ CharLipSync.cpp:
 	.text       start:0x822DEB40 end:0x822DEDEC
 	.text       start:0x822DF8B0 end:0x822DF99C
 	.text       start:0x822DF9F8 end:0x822DFA20
-	.text       start:0x822DFB0C end:0x822DFCAC
-	.text       start:0x822DFCAC end:0x822DFCD8
-	.text       start:0x822E1238 end:0x822E12B0
 	.text       start:0x82348E20 end:0x82348FC4
 	.text       start:0x82349B10 end:0x82349B78
 	.text       start:0x8236AE28 end:0x8236AEA8
@@ -6892,14 +6891,10 @@ GranularSynth.cpp:
 	.text       start:0x82B73CD0 end:0x82B74B28
 
 SampleData.cpp:
-	.pdata      start:0x821F49C8 end:0x821F49D0
 	.pdata      start:0x821F49D0 end:0x821F49D8
-	.pdata      start:0x821F4B78 end:0x821F4B80
 	.pdata      start:0x8223A280 end:0x8223A2F0
 	.pdata      start:0x8223A488 end:0x8223A490
-	.text       start:0x822A4258 end:0x822A43A4
 	.text       start:0x822A43A4 end:0x822A43E8
-	.text       start:0x822A5528 end:0x822A55A0
 	.text       start:0x8272B2E0 end:0x8272BAC8
 	.text       start:0x82733C70 end:0x82733CB0
 
@@ -11819,6 +11814,7 @@ OutfitConfig.cpp:
 	.pdata      start:0x821F4970 end:0x821F4978
 	.pdata      start:0x821F4978 end:0x821F4988
 	.pdata      start:0x821F4988 end:0x821F49C8
+	.pdata      start:0x821F49C8 end:0x821F49D0
 	.pdata      start:0x821F49D8 end:0x821F4A18
 	.pdata      start:0x821F4A60 end:0x821F4A68
 	.pdata      start:0x821F4A68 end:0x821F4A88
@@ -11828,6 +11824,7 @@ OutfitConfig.cpp:
 	.pdata      start:0x821F4B20 end:0x821F4B28
 	.pdata      start:0x821F4B28 end:0x821F4B38
 	.pdata      start:0x821F4B68 end:0x821F4B78
+	.pdata      start:0x821F4B78 end:0x821F4B80
 	.pdata      start:0x821F4C28 end:0x821F4C30
 	.pdata      start:0x821F4C48 end:0x821F4C60
 	.pdata      start:0x821F4C60 end:0x821F4C68
@@ -11835,6 +11832,7 @@ OutfitConfig.cpp:
 	.pdata      start:0x821F4CC8 end:0x821F4CD0
 	.pdata      start:0x821F4CD0 end:0x821F4CF0
 	.pdata      start:0x821F4CF0 end:0x821F4D00
+	.pdata      start:0x821F4D00 end:0x821F4D08
 	.pdata      start:0x821F4D08 end:0x821F4D10
 	.pdata      start:0x821F4D20 end:0x821F4D48
 	.pdata      start:0x821F4D60 end:0x821F4D70
@@ -11904,6 +11902,7 @@ OutfitConfig.cpp:
 	.text       start:0x822A3F54 end:0x822A3FA8
 	.text       start:0x822A3FB0 end:0x822A4060
 	.text       start:0x822A4060 end:0x822A4258
+	.text       start:0x822A4258 end:0x822A43A4
 	.text       start:0x822A43E8 end:0x822A45B8
 	.text       start:0x822A4838 end:0x822A48A0
 	.text       start:0x822A48A0 end:0x822A4980
@@ -11913,6 +11912,7 @@ OutfitConfig.cpp:
 	.text       start:0x822A4FB8 end:0x822A5028
 	.text       start:0x822A5030 end:0x822A51DC
 	.text       start:0x822A54B0 end:0x822A5528
+	.text       start:0x822A5528 end:0x822A55A0
 	.text       start:0x822A6024 end:0x822A60A8
 	.text       start:0x822A6270 end:0x822A6438
 	.text       start:0x822A6438 end:0x822A64A4
@@ -11921,6 +11921,7 @@ OutfitConfig.cpp:
 	.text       start:0x822A68E0 end:0x822A6AA8
 	.text       start:0x822A6AA8 end:0x822A6AB0
 	.text       start:0x822A6AB0 end:0x822A6B20
+	.text       start:0x822A6B28 end:0x822A6BA4
 	.text       start:0x822A6BA4 end:0x822A6C14
 	.text       start:0x822A6CE8 end:0x822A6E60
 	.text       start:0x822A6F70 end:0x822A7008

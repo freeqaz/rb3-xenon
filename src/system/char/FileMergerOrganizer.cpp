@@ -181,7 +181,7 @@ void FileMergerOrganizer::StartLoad() {
 void FileMergerOrganizer::Dispatch(FileMergerOrganizer::OrganizedFileMerger *ofm) {
     MILO_ASSERT(mActiveOrg == NULL, 0xC4);
     mActiveOrg = ofm;
-    if (mActiveOrg->state != kFailedLoad) {
+    if (ofm->state != kFailedLoad) {
         FOREACH (it, mOrganizedFileMergers) {
             OrganizedFileMerger *curr = &*it;
             MILO_ASSERT(curr->state != kPendingLoad, 0xCD);
