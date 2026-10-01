@@ -268,10 +268,8 @@ void RndMatAnim::LoadStage(BinStream &d) {
         MILO_NOTIFY("Can't convert old MatAnim stages");
     }
     if (gRev_MatAnim > 0) {
-        Keys<Vector3, Vector3> &t = TransKeys();
-        Keys<Vector3, Vector3> &s = ScaleKeys();
-        Keys<Vector3, Vector3> &r = RotKeys();
-        d >> t >> s >> r;
+        // Retail 0x824637E8 reads this anim's own key lists, not mKeysOwner's.
+        d >> mTransKeys >> mScaleKeys >> mRotKeys;
     }
     if (gRev_MatAnim > 1) {
         d >> (Keys<TexPtr, RndTex *> &)mTexKeys;

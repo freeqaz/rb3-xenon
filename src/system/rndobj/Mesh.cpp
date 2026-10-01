@@ -1870,8 +1870,10 @@ void RndMesh::SaveVertices(BinStream &bs) {
     }
 
     bool hasMeshData;
-    if ((mMutable & 0x1F) > 0 || (hasMeshData = false, mKeepMeshData == true)) {
+    if ((mMutable & 0x1F) > 0 || mKeepMeshData == true) {
         hasMeshData = true;
+    } else {
+        hasMeshData = false;
     }
 
     // retail: this Xbox-only SKU folds the TheLoadMgr.GetPlatform()==kPlatformXBox
@@ -1879,15 +1881,14 @@ void RndMesh::SaveVertices(BinStream &bs) {
     // here at all, just doCompress = cached && !hasMeshData. See dc3's newer,
     // multi-platform-runtime-checked version of this same body for comparison.
     bool doCompress;
-    if (!cached || (doCompress = true, hasMeshData)) {
+    if (cached != true || (doCompress = true, hasMeshData)) {
         doCompress = false;
     }
 
     value = verts->mNumVerts;
     bs.WriteEndian(&value, 4);
-    bool compress = doCompress;
-    bs.Write(&compress, 1);
-    if (compress) {
+    bs << doCompress;
+    if (doCompress) {
         // retail: same fold -- compressedSize/isXBox are unconditional constants,
         // no TheLoadMgr.GetPlatform() != kPlatformXBox branch in the shipped asm.
         unsigned int compressedSize = 0x24;
@@ -1908,7 +1909,7 @@ void RndMesh::SaveVertices(BinStream &bs) {
     if (it != verts->mVerts + verts->mNumVerts) {
         do {
 #endif
-            if (cached && compress) {
+            if (cached && doCompress) {
                 // retail: same fold as above -- no TheLoadMgr.GetPlatform() check
                 // in the shipped asm inside this loop either.
                 static CompressedVertex_Xbox compressed;

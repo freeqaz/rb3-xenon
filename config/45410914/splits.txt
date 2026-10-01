@@ -3856,7 +3856,9 @@ Font.cpp:
 	.pdata      start:0x8220F958 end:0x8220F9A0
 	.pdata      start:0x8220F9A0 end:0x8220F9A8
 	.pdata      start:0x8220F9A8 end:0x8220F9F0
+	.pdata      start:0x8220F9F0 end:0x8220FA00
 	.pdata      start:0x8220FA00 end:0x8220FA20
+	.pdata      start:0x8220FA20 end:0x8220FA28
 	.pdata      start:0x8220FA28 end:0x8220FA98
 	.pdata      start:0x8220FA98 end:0x8220FAA0
 	.pdata      start:0x8220FAA0 end:0x8220FAB0
@@ -3886,7 +3888,9 @@ Font.cpp:
 	.text       start:0x82473E80 end:0x824742E8
 	.text       start:0x824742E8 end:0x824743B8
 	.text       start:0x824743B8 end:0x82474D20
+	.text       start:0x82474D20 end:0x82474D88
 	.text       start:0x82474D88 end:0x82474F8C
+	.text       start:0x82474F8C end:0x82474FB4
 	.text       start:0x82474FB4 end:0x8247565C
 	.text       start:0x8247565C end:0x82475778
 	.text       start:0x82475778 end:0x82475938
@@ -7747,12 +7751,6 @@ MatAnim.cpp:
 	.text       start:0x82461320 end:0x82462738
 	.text       start:0x82462738 end:0x824627C8
 	.text       start:0x824627C8 end:0x82463EFC
-
-FilterVersion.cpp:
-	.pdata      start:0x8220F9F0 end:0x8220FA00
-	.pdata      start:0x8220FA20 end:0x8220FA28
-	.text       start:0x82474D20 end:0x82474D88
-	.text       start:0x82474F8C end:0x82474FB4
 
 Ribbon.cpp:
 	.text       start:0x82482050 end:0x82482058

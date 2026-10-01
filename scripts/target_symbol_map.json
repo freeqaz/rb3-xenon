@@ -11381,7 +11381,7 @@
  "0x824743b8": "??A?$map@DUMatChar@@U?$less@D@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBDUMatChar@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAAAUMatChar@@ABD@Z",
  "0x82474478": "?CharWidth@RndFont@@QBAMG@Z",
  "0x824744b0": "?CharAdvance@RndFont@@QBAMG@Z",
- "0x82474d20": "?Sym@DataArray@@QBA?AVSymbol@@H@Z",
+ "0x82474d20": "?SetASCIIChars@RndFont@@IAAXVString@@@Z",
  "0x82474fb8": "??$?5DUMatChar@@@@YAAAVBinStream@@AAV0@AAV?$map@DUMatChar@@U?$less@D@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBDUMatChar@@@stlpmtx_std@@@3@@stlpmtx_std@@@Z",
  "0x82475058": "?SyncProperty@RndFont@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x8247565c": null,

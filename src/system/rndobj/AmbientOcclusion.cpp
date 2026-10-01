@@ -730,8 +730,12 @@ bool kdTree<Triangle>::kdTreeNode::FindSplit_SAH(
 
     if (!(bestCost[bestAxis] < fCount))
         return false;
-    mData.real = bestPos[bestAxis];
+    // Retail stores the axis first, reads it back out of the packed word to
+    // pick the split, and re-asserts it after the float store (as FindSplit_Mean).
     mData.index = bestAxis;
+    unsigned int splitAxis = mData.index;
+    mData.real = bestPos[splitAxis];
+    mData.index = splitAxis;
     return true;
 }
 
