@@ -856,6 +856,8 @@ CharClip::FindNode(CharClip *clip, float f1, int iii, float f2) const {
     unsigned int blendMode = iii & 0xFu;
     const CharGraphNode *n = nullptr;
 
+    // kPlayNoBlend has no transition node at all; kPlayNow and unknown modes
+    // fall back to a node at the current beat.
     if (blendMode >= kPlayNoBlend) {
         if (blendMode != kPlayNoBlend) {
             if (blendMode >= kPlayLast) {
@@ -872,6 +874,8 @@ CharClip::FindNode(CharClip *clip, float f1, int iii, float f2) const {
             } else {
                 n = FindFirstNode(clip, f1);
             }
+        } else {
+            return nullptr;
         }
     }
 
