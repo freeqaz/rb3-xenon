@@ -66454,12 +66454,19 @@
     }
    ],
    "withdrawn": [
-   {
-    "spelling": "??0?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@1@@Z",
-    "lane": "W16-KD 2026-10-01",
-    "class": "RESPELLED_NOT_PROVEN",
-    "why": "The W16-KD world fork changed LightPresetManager's preset hash_map from a private SymbolHash to the stock hash<Symbol> (retail's _M_find is the 128-byte stock body), which respelled this member in place. A respelled spelling is a new membership for admission purposes, and tools/icf_pair_adjudicate.py --chase reads it CHASED T1 REFUTED (FLAT T1 UNDECIDABLE: the survivor 0x825a07e0 lies outside every pinned .text span). It is withdrawn rather than carried forward on the old spelling's evidence; nothing pruned. The old SymbolHash spelling read REFUTED on main as well."
-   }
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-KD 2026-10-01",
+     "class": "RESPELLED_NOT_PROVEN",
+     "why": "The W16-KD world fork changed LightPresetManager's preset hash_map from a private SymbolHash to the stock hash<Symbol> (retail's _M_find is the 128-byte stock body), which respelled this member in place. A respelled spelling is a new membership for admission purposes, and tools/icf_pair_adjudicate.py --chase reads it CHASED T1 REFUTED (FLAT T1 UNDECIDABLE: the survivor 0x825a07e0 lies outside every pinned .text span). It is withdrawn rather than carried forward on the old spelling's evidence; nothing pruned. The old SymbolHash spelling read REFUTED on main as well."
+    },
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@USymbolHash@LightPresetManager@@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABUSymbolHash@LightPresetManager@@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-KD landing 2026-10-01",
+     "class": "RE_KEYED_STALE_SPELLING",
+     "disposition": "spelling no longer emitted; replaced by its hash<Symbol> re-key",
+     "evidence": "W16-KD changed LightPresetManager's map from hashtable<...,LightPresetManager::SymbolHash,...> to a std::hash<Symbol> specialization (match build), so this USymbolHash@LightPresetManager spelling is in no compiled obj and forgives nothing. The same member under the hash<Symbol> spelling is a new membership admitted by W16-KD as CHASED T1 PROVEN."
+    }
    ]
   },
   {
@@ -91289,7 +91296,16 @@
     "?_M_before_begin@?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QBA?AU?$_Ht_iterator@V?$_Slist_iterator@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@U?$_NonLocalHashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@23@@priv@2@AAI@Z",
     "?_M_before_begin@?$hashtable@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@stlpmtx_std@@QBA?AU?$_Ht_iterator@V?$_Slist_iterator@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@U?$_NonLocalHashMapTraitsT@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@23@@priv@2@AAI@Z"
    ],
-   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x8265df00 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 11 against 9 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x8265df00 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 11 against 9 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies.",
+   "withdrawn": [
+    {
+     "spelling": "?_M_before_begin@?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@USymbolHash@LightPresetManager@@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QBA?AU?$_Ht_iterator@V?$_Slist_iterator@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@U?$_NonLocalHashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@23@@priv@2@AAI@Z",
+     "lane": "W16-KD landing 2026-10-01",
+     "class": "RE_KEYED_STALE_SPELLING",
+     "disposition": "spelling no longer emitted; replaced by its hash<Symbol> re-key",
+     "evidence": "W16-KD changed LightPresetManager's map from hashtable<...,LightPresetManager::SymbolHash,...> to a std::hash<Symbol> specialization (match build), so this USymbolHash@LightPresetManager spelling is in no compiled obj and forgives nothing. The same member under the hash<Symbol> spelling is a new membership admitted by W16-KD as CHASED T1 PROVEN."
+    }
+   ]
   },
   {
    "name": "ourside_comdat_identity",
@@ -96404,6 +96420,15 @@
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 104 B retail / 104 B ours; retail body-twins 3. Retail call site(s) reaching the survivor where we call this spelling: 0x8264f0cc, 0x8264f768."
     }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@USymbolHash@LightPresetManager@@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-KD landing 2026-10-01",
+     "class": "RE_KEYED_STALE_SPELLING",
+     "disposition": "spelling no longer emitted; replaced by its hash<Symbol> re-key",
+     "evidence": "W16-KD changed LightPresetManager's map from hashtable<...,LightPresetManager::SymbolHash,...> to a std::hash<Symbol> specialization (match build), so this USymbolHash@LightPresetManager spelling is in no compiled obj and forgives nothing. The same member under the hash<Symbol> spelling is a new membership admitted by W16-KD as CHASED T1 PROVEN."
+    }
    ]
   },
   {
@@ -97302,12 +97327,12 @@
      "verdict": "FOLD -- CHASED T1 PROVEN, 0 CYCLE-ASSUMED",
      "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED, CHASED T1 PROVEN, 0 CYCLE-ASSUMED; 396 B retail / 396 B ours; retail body-twins 2. Retail branches to the survivor (0x826e6fb0) at the call site(s) where our source spells this instantiation, in: ?_M_fill_insert@?$vector@U?$pair@PBVMoveVariant@@PBV1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVMoveVariant@@PBV1@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAU?$pair@PBVMoveVariant@@PBV1@@2@IABU32@@Z."
     },
-   {
-    "spelling": "?_M_insert_overflow_aux@?$vector@U?$pair@HH@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HH@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAU?$pair@HH@2@ABU32@ABU__false_type@2@I_N@Z",
-    "lane": "W16-KD 2026-10-01",
-    "verdict": "FOLD -- CHASED T1 PROVEN, 0 CYCLE-ASSUMED",
-    "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED (template twin), CHASED T1 PROVEN, 0 CYCLE-ASSUMED; 396 B retail / 396 B ours; retail body-twins 2. Retail branches to the survivor (0x826e6fb0) from vector<pair<int,int>>::_M_fill_insert (0x824c3d18), where our source spells this instantiation. Added at integration: the fork that renamed 0x824c3d18 from the pair<const MoveVariant*,...> spelling to pair<int,int> left this call site on the old membership."
-   }
+    {
+     "spelling": "?_M_insert_overflow_aux@?$vector@U?$pair@HH@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HH@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAU?$pair@HH@2@ABU32@ABU__false_type@2@I_N@Z",
+     "lane": "W16-KD 2026-10-01",
+     "verdict": "FOLD -- CHASED T1 PROVEN, 0 CYCLE-ASSUMED",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED (template twin), CHASED T1 PROVEN, 0 CYCLE-ASSUMED; 396 B retail / 396 B ours; retail body-twins 2. Retail branches to the survivor (0x826e6fb0) from vector<pair<int,int>>::_M_fill_insert (0x824c3d18), where our source spells this instantiation. Added at integration: the fork that renamed 0x824c3d18 from the pair<const MoveVariant*,...> spelling to pair<int,int> left this call site on the old membership."
+    }
    ]
   },
   {
@@ -98427,10 +98452,18 @@
    "name": "$_M_allocate_and_copy",
    "address": "0x824bbe38",
    "survivor": "??$_M_allocate_and_copy@PAUPropertyFilter@CameraManager@@@?$vector@UPropertyFilter@CameraManager@@V?$StlNodeAlloc@UPropertyFilter@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUPropertyFilter@CameraManager@@IPAU23@0@Z",
-   "survivor_renamed": {"from": "??$_M_allocate_and_copy@PBVColor@Hmx@@@?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVColor@Hmx@@IPBV23@0@Z", "lane": "W16-KD 2026-10-01"},
+   "survivor_renamed": {
+    "from": "??$_M_allocate_and_copy@PBVColor@Hmx@@@?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVColor@Hmx@@IPBV23@0@Z",
+    "lane": "W16-KD 2026-10-01"
+   },
    "folded": [],
    "withdrawn": [
-    {"spelling": "??$_M_allocate_and_copy@PAUPropertyFilter@CameraManager@@@?$vector@UPropertyFilter@CameraManager@@V?$StlNodeAlloc@UPropertyFilter@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUPropertyFilter@CameraManager@@IPAU23@0@Z", "lane": "W16-KD 2026-10-01", "class": "MAP_NAME_WRONG", "why": "Retail 0x824BBE38 is vector<CameraManager::PropertyFilter>'s own _M_allocate_and_copy: it sizes 20-byte elements (mulli 0x14) where Color is 16 bytes (slwi 4), and its only retail caller is vector<PropertyFilter>::reserve (0x824BBFA8). A 16-byte Color instantiation cannot be that COMDAT. The map row is renamed to the PropertyFilter spelling and re-homed to CameraManager; this membership is withdrawn and the survivor field follows the map."}
+    {
+     "spelling": "??$_M_allocate_and_copy@PAUPropertyFilter@CameraManager@@@?$vector@UPropertyFilter@CameraManager@@V?$StlNodeAlloc@UPropertyFilter@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUPropertyFilter@CameraManager@@IPAU23@0@Z",
+     "lane": "W16-KD 2026-10-01",
+     "class": "MAP_NAME_WRONG",
+     "why": "Retail 0x824BBE38 is vector<CameraManager::PropertyFilter>'s own _M_allocate_and_copy: it sizes 20-byte elements (mulli 0x14) where Color is 16 bytes (slwi 4), and its only retail caller is vector<PropertyFilter>::reserve (0x824BBFA8). A 16-byte Color instantiation cannot be that COMDAT. The map row is renamed to the PropertyFilter spelling and re-homed to CameraManager; this membership is withdrawn and the survivor field follows the map."
+    }
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
@@ -98446,7 +98479,11 @@
    "name": "_M_insert_overflow_aux",
    "address": "0x823808b0",
    "survivor": "?_M_insert_overflow_aux@?$vector@UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUBone@CharBones@@ABU34@ABU__false_type@2@I_N@Z",
-   "survivor_renamed": {"from": "?_M_insert_overflow_aux@?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUSpotlightDrawerEntry@LightPreset@@ABU34@ABU__false_type@2@I_N@Z", "lane": "W16-KD 2026-10-01", "why": "0x823808B0 copies 8-byte {Symbol, float} elements and is called only from vector<CharBones::Bone>::_M_fill_insert (0x82381088, itself called only from CharBones) and PropKeys; the map named it for the 16-byte SpotlightDrawerEntry. Map and survivor renamed to the vector<Bone> spelling; the pair<int,float> membership re-chased CHASED T1 PROVEN, 0 CYCLE-ASSUMED, against it."},
+   "survivor_renamed": {
+    "from": "?_M_insert_overflow_aux@?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUSpotlightDrawerEntry@LightPreset@@ABU34@ABU__false_type@2@I_N@Z",
+    "lane": "W16-KD 2026-10-01",
+    "why": "0x823808B0 copies 8-byte {Symbol, float} elements and is called only from vector<CharBones::Bone>::_M_fill_insert (0x82381088, itself called only from CharBones) and PropKeys; the map named it for the 16-byte SpotlightDrawerEntry. Map and survivor renamed to the vector<Bone> spelling; the pair<int,float> membership re-chased CHASED T1 PROVEN, 0 CYCLE-ASSUMED, against it."
+   },
    "folded": [
     "?_M_insert_overflow_aux@?$vector@U?$pair@HM@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HM@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAU?$pair@HM@2@ABU32@ABU__false_type@2@I_N@Z"
    ],
@@ -98464,10 +98501,18 @@
    "name": "_M_insert_overflow_aux",
    "address": "0x824b24f0",
    "survivor": "?_M_insert_overflow_aux@?$vector@USpotlightEntry@LightPreset@@V?$StlNodeAlloc@USpotlightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUSpotlightEntry@LightPreset@@ABU34@ABU__false_type@2@I_N@Z",
-   "survivor_renamed": {"from": "?_M_insert_overflow_aux@?$vector@UEntry@LocalePanel@@V?$StlNodeAlloc@UEntry@LocalePanel@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUEntry@LocalePanel@@ABU34@ABU__false_type@2@I_N@Z", "lane": "W16-KD 2026-10-01"},
+   "survivor_renamed": {
+    "from": "?_M_insert_overflow_aux@?$vector@UEntry@LocalePanel@@V?$StlNodeAlloc@UEntry@LocalePanel@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUEntry@LocalePanel@@ABU34@ABU__false_type@2@I_N@Z",
+    "lane": "W16-KD 2026-10-01"
+   },
    "folded": [],
    "withdrawn": [
-    {"spelling": "?_M_insert_overflow_aux@?$vector@USpotlightEntry@LightPreset@@V?$StlNodeAlloc@USpotlightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUSpotlightEntry@LightPreset@@ABU34@ABU__false_type@2@I_N@Z", "lane": "W16-KD 2026-10-01", "class": "MAP_NAME_WRONG", "why": "Retail 0x824B24F0 is vector<LightPreset::SpotlightEntry>::_M_insert_overflow_aux itself: it steps 0x58-byte elements (li 0x58 / mulli 0x58 / addi 0x58) where LocalePanel::Entry is 0x28 bytes, its callees are the SpotlightEntry __uninitialized_copy/__uninitialized_fill_n/_M_clear, and its only retail caller is LightPreset's push_back (0x824B3610). The 0x28-byte LocalePanel spelling cannot be the same COMDAT. The map row is renamed to the SpotlightEntry spelling and this membership is withdrawn; the survivor field follows the map (old name in survivor_renamed)."}
+    {
+     "spelling": "?_M_insert_overflow_aux@?$vector@USpotlightEntry@LightPreset@@V?$StlNodeAlloc@USpotlightEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUSpotlightEntry@LightPreset@@ABU34@ABU__false_type@2@I_N@Z",
+     "lane": "W16-KD 2026-10-01",
+     "class": "MAP_NAME_WRONG",
+     "why": "Retail 0x824B24F0 is vector<LightPreset::SpotlightEntry>::_M_insert_overflow_aux itself: it steps 0x58-byte elements (li 0x58 / mulli 0x58 / addi 0x58) where LocalePanel::Entry is 0x28 bytes, its callees are the SpotlightEntry __uninitialized_copy/__uninitialized_fill_n/_M_clear, and its only retail caller is LightPreset's push_back (0x824B3610). The 0x28-byte LocalePanel spelling cannot be the same COMDAT. The map row is renamed to the SpotlightEntry spelling and this membership is withdrawn; the survivor field follows the map (old name in survivor_renamed)."
+    }
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
