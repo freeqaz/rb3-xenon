@@ -1827,6 +1827,20 @@ void BandDirector::OnMidiAddPostProc(Symbol s, float f1, float f2) {
     }
 }
 
+// Walks back from key idx to the nearest key that holds an object
+// (0x8228E1F0, called only by OnRbn2AddPostProc).
+static __declspec(noinline) const Key<ObjectStage> *
+PrevObjectKey(ObjectKeys *keys, int idx) {
+    if (keys && idx < keys->NumKeys() && idx >= 0) {
+        for (; idx >= 0; idx--) {
+            const Key<ObjectStage> *key = &static_cast<ObjKeys &>(*keys)[idx];
+            if (key && key->value)
+                return key;
+        }
+    }
+    return nullptr;
+}
+
 // Retail-only pair (0x8229A2E0 / 0x82298E60). Both
 // are reached only through the two retail-only Handle() arms above,
 // so what matters for Handle()'s codegen is that they stay out-of-line calls.
@@ -1837,9 +1851,35 @@ void BandDirector::OnRbn2AddPostProc(Symbol s, float f) {
     if (okeys && mVenue.Dir()) {
         RndPostProc *proc = mVenue.Dir()->Find<RndPostProc>(s.Str(), false);
         if (proc) {
-            okeys->Add(proc, f * 30.0f, false);
-        } else
-            MILO_WARN("PostProc %s not found.  Cannot add to song.anim!\n", s.Str());
+            ObjKeys &keys = *okeys;
+            const Key<ObjectStage> *prev = nullptr;
+            const Key<ObjectStage> *next = nullptr;
+            float ref;
+            float frame = f * 30.0f;
+            const Key<ObjectStage> *beforeThat = nullptr;
+            int idx = keys.AtFrame(frame, prev, next, ref);
+            const Key<ObjectStage> *last;
+            if (okeys->NumKeys() <= 0 || !(last = &okeys->ObjKeys::back())
+                || !(frame > last->frame)) {
+                idx--;
+            }
+            // The keys either side of the new one; a null post-proc key is
+            // inserted first unless both neighbours already hold the same
+            // object.
+            const Key<ObjectStage> *before = idx >= 0 ? PrevObjectKey(okeys, idx) : prev;
+            if (before && idx >= 1 && keys.size() >= 2)
+                beforeThat = PrevObjectKey(okeys, idx - 1);
+            bool same = false;
+            if (before && beforeThat) {
+                Hmx::Object *a = before->value.Ptr();
+                Hmx::Object *b = beforeThat->value.Ptr();
+                if (a && b && a == b)
+                    same = true;
+            }
+            if (!same)
+                keys.Add(nullptr, frame, false);
+            keys.Add(proc, frame, false);
+        }
     }
 }
 
