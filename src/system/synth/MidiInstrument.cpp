@@ -386,28 +386,3 @@ void MidiInstrument::StartSample(
 #undef gRev
 #undef gAltRev
 
-#pragma region MidiInstrumentMgr
-// Retail places these inside the MidiInstrument .text pin
-// (0x82716240..0x82716324), so they are defined here where the pin pairs them.
-#include "synth/MidiInstrumentMgr.h"
-
-MidiInstrumentMgr::MidiInstrumentMgr() : mObjectDir(), mInstrument(0) {}
-
-// Retail 0x82716358 (called from the Synth dtor at 0x82701a10): UnloadInstrument,
-// then the ObjPtr (+0xc) and ObjDirPtr (+0x0) member dtors.
-MidiInstrumentMgr::~MidiInstrumentMgr() { UnloadInstrument(); }
-
-void MidiInstrumentMgr::SetInstrument(MidiInstrument *inst) { mInstrument = inst; }
-
-void MidiInstrumentMgr::UnloadInstrument() {
-    if (mInstrument)
-        mInstrument->KillAllVoices();
-    mInstrument = 0;
-}
-
-void MidiInstrumentMgr::Poll() {
-    if (!mInstrument)
-        return;
-    mInstrument->Poll();
-}
-#pragma endregion

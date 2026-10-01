@@ -7584,8 +7584,7 @@ MidiInstrument.cpp:
 	.pdata      start:0x82238D28 end:0x82238D90
 	.pdata      start:0x82238DA8 end:0x82238DB8
 	.pdata      start:0x82238DB8 end:0x82238DD8
-	.pdata      start:0x82238DD8 end:0x82238E28
-	.pdata      start:0x82238E28 end:0x82238E40
+	.pdata      start:0x82238DD8 end:0x82238DE0
 	.text       start:0x822C5758 end:0x822C57B8
 	.text       start:0x823E3ED8 end:0x823E3F58
 	.text       start:0x823E3FC8 end:0x823E4020
@@ -7602,8 +7601,13 @@ MidiInstrument.cpp:
 	.text       start:0x827155A8 end:0x82715BFC
 	.text       start:0x82715CF4 end:0x82715E18
 	.text       start:0x82715E18 end:0x82715FD8
-	.text       start:0x82715FD8 end:0x82716358
-	.text       start:0x82716358 end:0x827163F8
+	.text       start:0x82715FD8 end:0x82716060
+
+system/synth/MidiInstrumentMgr.cpp:
+	.pdata      start:0x82238DE0 end:0x82238E10
+	.pdata      start:0x82238E10 end:0x82238E40
+	.text       start:0x82716060 end:0x82716240
+	.text       start:0x82716240 end:0x827163F8
 
 CharCollide.cpp:
 	.pdata      start:0x821F6F70 end:0x821F6F88

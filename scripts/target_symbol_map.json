@@ -1,4 +1,5 @@
 {
+ "0x82716068": "??0?$ObjPtr@VMidiInstrument@@@@QAA@PAVObject@Hmx@@PAVMidiInstrument@@@Z",
  "0x8272abb0": "??_GSampleInst@@UAAPAXI@Z",
  "0x82721590": "??_GFxSendDistortion@@UAAPAXI@Z",
  "0x8271aaf8": "?Stop@SfxInst@@UAAXXZ",
@@ -20317,7 +20318,7 @@
  "0x82714350": "?Pause@MidiInstrument@@QAAX_N@Z",
  "0x827143b0": "?DeleteAll@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ",
  "0x82714508": "?StartSample@MidiInstrument@@AAAXEEHH@Z",
- "0x827145f0": "?Reset@ATanInterpolator@@QAAXABVVector2@@0M@Z",
+ "0x827145f0": "?KillAllVoices@MidiInstrument@@QAAXXZ",
  "0x82714600": "??1?$ObjPtrList@VNoteVoiceInst@@VObjectDir@@@@UAA@XZ",
  "0x82714680": "??_G?$ObjPtrList@VNoteVoiceInst@@VObjectDir@@@@UAAPAXI@Z",
  "0x827146d0": "??$__destroy_range_aux@V?$reverse_iterator@PAVSampleZone@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVSampleZone@@@0@0ABU__false_type@0@@Z",
