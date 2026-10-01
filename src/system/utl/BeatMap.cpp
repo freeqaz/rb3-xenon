@@ -1,5 +1,7 @@
 #include "utl/BeatMap.h"
 #include <algorithm>
+#include "os/Endian.h"
+#include "os/File.h"
 
 BeatMap gDefaultBeatMap;
 BeatMap *TheBeatMap = &gDefaultBeatMap;
@@ -97,4 +99,67 @@ float BeatMap::Beat(float tick) const {
         i2 = lowerInfo - &mInfos.front() - 1;
     }
     return Interpolate(tick, i2);
+}
+
+// Debug dump of a mono 16-bit PCM buffer as a .wav file (the GameMic "do_record"
+// path). The RIFF header fields are little-endian, so every size and the samples
+// themselves are byte-swapped on the way out.
+namespace {
+    const char *kWavRiffID = "RIFF";
+    const char *kWavWaveID = "WAVE";
+    const char *kWavFormatID = "fmt ";
+    const char *kWavDataID = "data";
+
+    struct WavChunkHeader {
+        int mID;
+        unsigned int mSize;
+    };
+
+    struct WavFormat {
+        unsigned short mFormatTag;
+        unsigned short mChannels;
+        unsigned int mSampleRate;
+        unsigned int mByteRate;
+        unsigned short mBlockAlign;
+        unsigned short mBitsPerSample;
+    };
+}
+
+void WriteWav(const char *file, int sampleRate, const void *data, int bytes) {
+    int fd = FileOpen(file, 0x301);
+
+    WavChunkHeader riff;
+    riff.mSize = EndianSwap((unsigned int)(bytes + 0x24));
+    riff.mID = *(const int *)kWavRiffID;
+    FileWrite(fd, &riff, sizeof(riff));
+
+    int wave = *(const int *)kWavWaveID;
+    FileWrite(fd, &wave, sizeof(wave));
+
+    WavChunkHeader fmt;
+    fmt.mSize = EndianSwap((unsigned int)sizeof(WavFormat));
+    fmt.mID = *(const int *)kWavFormatID;
+    FileWrite(fd, &fmt, sizeof(fmt));
+
+    WavFormat format;
+    format.mFormatTag = EndianSwap((unsigned short)1);
+    format.mChannels = EndianSwap((unsigned short)1);
+    format.mSampleRate = EndianSwap((unsigned int)sampleRate);
+    format.mBlockAlign = EndianSwap((unsigned short)2);
+    format.mBitsPerSample = EndianSwap((unsigned short)16);
+    format.mByteRate = EndianSwap((unsigned int)(sampleRate * 2));
+    FileWrite(fd, &format, sizeof(format));
+
+    WavChunkHeader dataHdr;
+    dataHdr.mSize = EndianSwap((unsigned int)bytes);
+    dataHdr.mID = *(const int *)kWavDataID;
+    FileWrite(fd, &dataHdr, sizeof(dataHdr));
+
+    const short *samples = (const short *)data;
+    for (int i = 0; i < bytes / 2; i++) {
+        short sample = samples[i];
+        short swapped = (sample << 8) | ((unsigned short)sample >> 8);
+        FileWrite(fd, &swapped, sizeof(swapped));
+    }
+    FileClose(fd);
 }
