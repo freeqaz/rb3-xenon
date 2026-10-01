@@ -76,108 +76,37 @@ void DxMultiMesh::Shutdown() {
     }
 }
 
+// 0x8273F1E8 (called only from DrawBatchedNewGfx). Uploads the geometry
+// owner's vertices into this frame's cycled vertex buffer and its faces as
+// 32-bit indices; the face count is re-read every iteration.
 void DxMultiMesh::UpdateGeometryBuffers() {
-    // Register variables ordered to match calling conventions
-    u32 var_r9;
-    s32 var_r10;
-    void *temp_r3_3;
-    void *temp_r11;
-    void *temp_r11_2;
-    void *temp_r11_3;
-    s32 temp_r24;
-    s32 temp_r28_2;
-    s32 temp_r3;
-    DxMesh *temp_r30_ptr;
-    s32 temp_r28;
-    s32 temp_r10;
-    void *temp_r11_4;
-    s32 temp_r3_2;
-    void *temp_r27;
-    Symbol sym("D3D(phys):Mesh");
-    PhysMemTypeTracker tracker(sym);
-    s32 temp_r8;
-    void *var_r3;
-    s32 temp_r23;
-    void *temp_r30;
-
-    u16 temp_r8_2;
-    void *temp_r27_ptr;
-
-    temp_r30_ptr = *(DxMesh **)((char *)this + 0x4C);
-    temp_r30 = (void *)temp_r30_ptr;
-    temp_r11 = (void *)((char *)temp_r30 + 0x150);
-    temp_r27_ptr = *(void **)((char *)temp_r30 + 0x148);
-    temp_r27 = temp_r27_ptr;
-
-    MILO_ASSERT(!(*(u32 *)((char *)temp_r30 + 0x150) != *(u32 *)((char *)temp_r30 + 0x154)),
-               0x21A);
-
-    MILO_ASSERT(!(*(s32 *)((char *)temp_r27 + 0x160) == 0), 0x21B);
-
-    temp_r24 = *(u32 *)((char *)this + 0x60) % 3;
-    temp_r28 = (temp_r24 + 0x19) * 4;
-
-    if (*(void **)((char *)this + temp_r28) == nullptr) {
-        temp_r23 = *(s32 *)((char *)temp_r27 + 0x104);
-        temp_r30_ptr->VertFVF();
-        temp_r3 = (s32)D3DDevice_CreateVertexBuffer(temp_r23 * 0x60, 0, (D3DPOOL)0);
-        *(s32 *)((char *)this + temp_r28) = temp_r3;
-        temp_r10 = temp_r3 - 1;
-        temp_r3_2 = ((temp_r10 - temp_r10) - (temp_r10 == 0 ? 1 : 0)) & 0x8007000E;
-        if (temp_r3_2 != 0) {
-            const char *errMsg = DxRnd::Error(temp_r3_2);
-            MILO_FAIL("File: %s Line: %d Error: %s\n", __FILE__, 0x225, errMsg);
-        }
+    PhysMemTypeTracker tracker("D3D(phys):Mesh");
+    unsigned int idx = (unsigned int)mBufferCycleIndex % 3;
+    RndMesh *owner = mMesh->GetGeomOwner();
+    RndMesh::VertVector &verts = owner->Verts();
+    if (!mVertexBuffers[idx]) {
+        mVertexBuffers[idx] =
+            D3DDevice_CreateVertexBuffer(verts.size() * 0x60, 0, (D3DPOOL)0);
     }
-
-    void *bufPtr = *(void **)((char *)this + temp_r28);
-    D3DVertexBuffer *vertBuf = (D3DVertexBuffer *)bufPtr;
-    BufLock<D3DVertexBuffer> bufLock(vertBuf, 0);
-
-    temp_r3 = *(s32 *)((char *)temp_r27 + 0x104);
-    void *srcData = *(void **)((char *)temp_r27 + 0x100);
-    void *dstData = bufLock.mDataAddr;
-
-    memcpy(dstData, srcData, temp_r3 * 0x60);
-
-    temp_r11_2 = *(void **)((char *)temp_r30 + 0x148);
-    temp_r28_2 = (temp_r24 + 0x1C) * 4;
-    temp_r11 = (void *)((char *)temp_r11_2 + 0x110);
-
-    if (*(void **)((char *)this + temp_r28_2) == nullptr) {
-        s32 indexSize = ((*(s32 *)((char *)temp_r11_2 + 0x114) -
-                          *(s32 *)((char *)temp_r11_2 + 0x110)) / 6) * 0xC;
-        void *vb2Ptr = D3DDevice_CreateVertexBuffer(indexSize, 0, (D3DPOOL)0);
-        *(void **)((char *)this + temp_r28_2) = vb2Ptr;
+    {
+        BufLock<D3DVertexBuffer> lock(mVertexBuffers[idx], 0);
+        memcpy(lock.mDataAddr, &verts[0], verts.size() * 0x60);
     }
-
-    auto _tmp0 = D3DVertexBuffer_Lock((D3DVertexBuffer *)*(void **)((char *)this + temp_r28_2), 0, 0, 0);
-    var_r3 = _tmp0;
-
-    temp_r11_3 = *(void **)((char *)temp_r30 + 0x148);
-    var_r9 = 0;
-
-    if ((*(s32 *)((char *)temp_r11_3 + 0x114) -
-                     *(s32 *)((char *)temp_r11_3 + 0x110)) / 6 != 0) {
-        var_r10 = 0;
-        u32 indexCount = (u32)((*(s32 *)((char *)temp_r11_3 + 0x114) -
-                                  *(s32 *)((char *)temp_r11_3 + 0x110)) / 6);
-        do {
-            temp_r8 = *(s32 *)((char *)temp_r11_3 + 0x110);
-            var_r9++;
-            temp_r11_4 = (void *)(var_r10 + temp_r8);
-            temp_r8_2 = *(u16 *)((char *)temp_r11_4 + 0);
-            var_r10 += 6;
-            *(s32 *)((char *)var_r3 + 0) = (s32)temp_r8_2;
-            temp_r3_3 = (void *)((char *)var_r3 + 4);
-            *(s32 *)((char *)var_r3 + 4) = (s32)*(u16 *)((char *)temp_r11_4 + 2);
-            *(s32 *)((char *)temp_r3_3 + 4) = (s32)*(u16 *)((char *)temp_r11_4 + 4);
-            temp_r11_3 = *(void **)((char *)temp_r30 + 0x148);
-            var_r3 = (void *)((char *)temp_r3_3 + 8);
-        } while (var_r9 != indexCount);
+    int indexCount = owner->Faces().size() * 3;
+    if (!mIndexBuffers[idx]) {
+        mIndexBuffers[idx] =
+            D3DDevice_CreateVertexBuffer(indexCount * 4, 0, (D3DPOOL)0);
     }
-
-    D3DVertexBuffer_Unlock((D3DVertexBuffer *)*(void **)((char *)this + temp_r28_2));
+    unsigned int *dst =
+        (unsigned int *)D3DVertexBuffer_Lock(mIndexBuffers[idx], 0, 0, 0);
+    for (unsigned int i = 0; i != owner->Faces().size(); i++) {
+        RndMesh::Face &face = owner->Faces()[i];
+        *dst = face.v1;
+        *++dst = face.v2;
+        *++dst = face.v3;
+        dst++;
+    }
+    D3DVertexBuffer_Unlock(mIndexBuffers[idx]);
 }
 
 // 0x8273F370, called only from DrawShowing. RB3's batching is simpler than the
