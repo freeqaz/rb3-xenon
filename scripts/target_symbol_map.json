@@ -19742,7 +19742,7 @@
  "0x826ce0e0": "??$_Copy_Construct@VPlayerScoreInfo@@@stlpmtx_std@@YAXPAVPlayerScoreInfo@@ABV1@@Z",
  "0x826ce148": "??4PlayerScoreInfo@@QAAAAV0@ABV0@@Z",
  "0x826ce1b0": "??0Data@MultiplayerAnalyzer@@QAA@ABV01@@Z",
- "0x826ce268": "??$_Param_Construct@VLeaderboardRow@@V1@@stlpmtx_std@@YAXPAVLeaderboardRow@@ABV1@@Z",
+ "0x826ce268": "??$_Param_Construct@VData@MultiplayerAnalyzer@@V12@@stlpmtx_std@@YAXPAVData@MultiplayerAnalyzer@@ABV12@@Z",
  "0x826ce4b8": "??4Data@MultiplayerAnalyzer@@QAAAAV01@ABV01@@Z",
  "0x826ce568": "?_M_clear_after_move@?$vector@VPlayerScoreInfo@@V?$StlNodeAlloc@VPlayerScoreInfo@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
  "0x826ce5e0": "??$__uninitialized_fill_n@PAVPlayerScoreInfo@@IV1@@stlpmtx_std@@YAPAVPlayerScoreInfo@@PAV1@IABV1@ABU__false_type@0@@Z",
