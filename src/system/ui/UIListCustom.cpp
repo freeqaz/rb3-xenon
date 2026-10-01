@@ -60,7 +60,13 @@ END_LOADS
 UIListSlotElement *UIListCustom::CreateElement(UIList *) {
     MILO_ASSERT(mObject, 0x69);
     Hmx::Object *c = Hmx::Object::NewObject(mObject->ClassName());
-    c->Copy(mObject.Ptr(), kCopyDeep);
+    // Retail 0x8281EB60: a UIComponent clone takes the template's resource
+    // (ResourceCopy); anything else is deep-copied.
+    UIComponent *comp = dynamic_cast<UIComponent *>(c);
+    if (comp)
+        comp->ResourceCopy(dynamic_cast<UIComponent *>(mObject.Ptr()));
+    else
+        c->Copy(mObject.Ptr(), kCopyDeep);
     return new UIListCustomElement(this, c);
 }
 
