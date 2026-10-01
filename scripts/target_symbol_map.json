@@ -1,5 +1,7 @@
 {
+ "0x824f70a0": "?RockCentralTerminate@?A0x2286b3c1@@YAXXZ",
  "0x824f9ce0": "?Init@RockCentral@@QAAX_N@Z",
+ "0x824f6d98": "?Terminate@RockCentral@@QAAXXZ",
  "0x824f9cc8": "??1?$map@VSymbol@@VDataNode@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VDataNode@@@stlpmtx_std@@@4@@stlpmtx_std@@QAA@XZ",
  "0x822ceee8": "?resize@?$ObjVector@V?$ObjPtr@VRndMesh@@@@@@QAAXI@Z",
  "0x8250d530": "??_GEntityUploader@@UAAPAXI@Z",

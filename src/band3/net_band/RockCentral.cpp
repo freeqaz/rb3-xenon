@@ -132,17 +132,13 @@ RockCentral::RockCentral()
 
 RockCentral::~RockCentral() { delete mContextWrapperPool; }
 
+// Retail TU5 0x824F6D98 (tail-called by the anonymous RockCentralTerminate,
+// 0x824F70A0) unregisters from exactly three sources: the net server, the
+// platform manager, and the profile manager's ProfileChangedMsg.
 void RockCentral::Terminate() {
     TheNet.GetServer()->RemoveSink(this);
     ThePlatformMgr.RemoveSink(this);
     TheProfileMgr.RemoveSink(this, ProfileChangedMsg::Type());
-    TheWiiFriendMgr.RemoveSink(this, WiiFriendsListChangedMsg::Type());
-    ThePlatformMgr.RemoveSink(this, SigninChangedMsg::Type());
-    ThePlatformMgr.RemoveSink(this, InviteReceivedMsg::Type());
-    // No sink on WiiProfileMgr's DeleteQueueUpdatedMsg here; the dc3-derived
-    // WiiProfileMgr in this tree has no MsgSource RemoveSink. Non-pinned.
-    // There are no WiiFriendList / WiiMessageList members to release:
-    // those members do not exist in the Xbox layout (0x98 is mXNetAddr).
 }
 
 // Retail TU5 0x824F9CE0, the Xbox Init: it sets up no WiiProfileMgr,
