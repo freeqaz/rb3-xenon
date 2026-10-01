@@ -307,9 +307,8 @@ Task *RndAnimatable::Animate(
 
     AnimTask *task = new AnimTask(this, start, end, fpu, type == loop, blend);
     if (wait) {
-        AnimTask *blendTask = task->BlendTask();
-        if (blendTask) {
-            delay += blendTask->TimeUntilEnd();
+        if (task->BlendTask()) {
+            delay += task->BlendTask()->TimeUntilEnd();
         }
     }
     TheTaskMgr.Start(task, gRateUnits[rate], delay);
