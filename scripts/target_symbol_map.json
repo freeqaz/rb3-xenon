@@ -2441,7 +2441,7 @@
  "0x82b9bd40": "?DrawTrackMasks@GemManager@@QAAXHH@Z",
  "0x82b9cd38": "?SetupRealGuitarFretPos@GemManager@@QAAXXZ",
  "0x82ba4048": "?FreeOldGems@TambourineGemPool@@QAAXM@Z",
- "0x82ba4110": "?NewGem@TambourineGemPool@@QAAXMH@Z",
+ "0x82ba4110": "?NewGem@TambourineGemPool@@QAAPAVTambourineGem@@MH@Z",
  "0x82ba5d90": "?BuildScrollingDeployZones@VocalTrack@@QAAXM@Z",
  "0x82bab460": "?Poll@Gem@@QAAXMMMMM@Z",
  "0x82bab960": "?AddStrumInstance@Gem@@QAAXVSymbol@@0@Z",
