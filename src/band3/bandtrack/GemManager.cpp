@@ -1045,22 +1045,21 @@ Symbol GemManager::GetTypeForGem(int gemId) {
         case kFillsDeployGemAndInvisible:
             return invisible;
         }
-    } else {
-        if (mGemsEnabledStart < 0.0f || mGemsEnabledStart > gem.GetMs()) {
-            return invisible;
-        }
-        bool isUnison;
-        if (!InMissedPhrase(gemId) && IsSpotlightGem(gemId, isUnison)) {
-            return isUnison ? unison : star;
-        }
-        if (gem.IsRealGuitar()) {
-            if (gem.IsRealGuitarChord()) {
-                if (mGems[gemId].mIsRepeatChord) {
-                    return repeat;
-                }
-            } else if (mGems[gemId].mInArpeggio) {
-                return section;
+    }
+    if (mGemsEnabledStart < 0.0f || mGemsEnabledStart > gem.GetMs()) {
+        return invisible;
+    }
+    bool isUnison;
+    if (!InMissedPhrase(gemId) && IsSpotlightGem(gemId, isUnison)) {
+        return isUnison ? unison : star;
+    }
+    if (gem.IsRealGuitar()) {
+        if (gem.IsRealGuitarChord()) {
+            if (mGems[gemId].mIsRepeatChord) {
+                return repeat;
             }
+        } else if (mGems[gemId].mInArpeggio) {
+            return section;
         }
     }
     return normal;
