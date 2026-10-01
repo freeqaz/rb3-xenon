@@ -398,7 +398,8 @@ int BeatMatcher::GetMaxSlots() const {
     if (mCurTrack < 0 || (size_t)mCurTrack >= mTrackTypes.size())
         return 5;
 #endif
-    // 0x827919D8: a compare chain (5, then 6/7/8/9).
+    // 0x827919D8: a compare chain (5, then 6/7/8/9). dtk carves the last
+    // 24 bytes off as 0x82791A0C (fall-through, not merged).
     int type = mTrackTypes[mCurTrack];
     if (type == kTrackRealKeys)
         return 25;

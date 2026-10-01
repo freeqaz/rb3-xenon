@@ -362,17 +362,15 @@ void VocalNoteList::DetermineFreestyleSections() {
                 }
             }
         }
-        atWordBoundary = false;
         sectionStart = note->EndMs();
         String &text = note->mText;
-        if (text.empty()
-            || (text.rindex(-1) != '-' && text.rindex(-1) != '=')) {
-            atWordBoundary = true;
-        }
+        atWordBoundary =
+            text.empty() || (text.rindex(-1) != '-' && text.rindex(-1) != '=');
     }
-    mFreestyleSections.push_back(std::make_pair(
-        sectionStart + mFreestyleMinDuration->Float(0), FLT_MAX
-    ));
+    // retail pads the open-ended last section with mFreestylePad (+0x48)
+    mFreestyleSections.push_back(
+        std::make_pair(sectionStart + mFreestylePad->Float(0), FLT_MAX)
+    );
 }
 
 void VocalNoteList::AddTambourineGem(int gem) { mTambourineGems.push_back(gem); }
@@ -600,8 +598,8 @@ float VocalNoteList::PitchAt(float ms) const {
 void VocalNoteList::GetPracticePhrases(
     std::vector<VocalPhrase> &out, int startTick, int endTick
 ) const {
-    for (const VocalPhrase *phrase = mPhrases.data();
-         phrase != mPhrases.data() + mPhrases.size();
+    for (std::vector<VocalPhrase>::const_iterator phrase = mPhrases.begin();
+         phrase != mPhrases.end();
          ++phrase) {
         if (startTick < phrase->unk8 + phrase->unkc
             && endTick > phrase->unk8) {
@@ -614,8 +612,8 @@ void VocalNoteList::GetPracticePhrases(
 void VocalNoteList::GetPracticePhrases2(
     std::vector<VocalPhrase> &out, int startTick, int endTick
 ) const {
-    for (const VocalPhrase *phrase = mPhrases.data();
-         phrase != mPhrases.data() + mPhrases.size();
+    for (std::vector<VocalPhrase>::const_iterator phrase = mPhrases.begin();
+         phrase != mPhrases.end();
          ++phrase) {
         if (startTick < phrase->unk8 + phrase->unkc && endTick > phrase->unk8
             && phrase->unk8 + phrase->unkc <= endTick) {
