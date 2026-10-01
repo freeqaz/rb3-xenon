@@ -324,6 +324,7 @@ bool requestBreedWrite(int, unsigned char *);
 
 float JoypadGetCalbertValue(int, bool);
 void JoypadSwapPads(int, int);
+const char *JoypadGetBreedString(int);
 void JoypadInvalidateXinputCaps(int);
 
 void JoypadInit();
@@ -335,7 +336,6 @@ Symbol JoypadControllerTypePadNum(int);
 bool JoypadTypeHasLeftyFlip(Symbol);
 int JoypadTypePadShiftButton(Symbol);
 int JoypadTypeCymbalShiftButton(Symbol);
-const char *JoypadGetBreedString(int);
 
 void JoypadSubscribe(Hmx::Object *);
 void JoypadUnsubscribe(Hmx::Object *);

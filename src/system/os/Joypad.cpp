@@ -175,6 +175,21 @@ extern "C" int JoypadStageKitPadNum() {
     return -1;
 }
 
+// Retail 0x82526308 (no callers in the image). For the HX-peripheral pad
+// types (core guitar .. Wii keytar) the first ten bytes at JoypadData+0xa8 are
+// appended as hex, then prefixed with the pad type.
+const char *JoypadGetBreedString(int pad) {
+    String s;
+    bool hasBreed = gJoypadData[pad].mType >= kJoypadXboxCoreGuitar
+        && gJoypadData[pad].mType <= kJoypadWiiKeytar;
+    if (hasBreed) {
+        for (int i = 0; i < 10; i++) {
+            s += MakeString("%02x", gJoypadData[pad].mEepromData[i]);
+        }
+    }
+    return MakeString("%02x%s", gJoypadData[pad].mType, s);
+}
+
 // Retail 0x82524E38 (declared in Joypad.h; no oracle body). RB2-era HX
 // guitars report the Calbert sensor on the left stick X (negated on PS3);
 // button guitars carry it as a raw 0..127 byte at report bytes 10 / 11 of the
