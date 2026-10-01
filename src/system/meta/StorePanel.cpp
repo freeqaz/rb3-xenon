@@ -488,6 +488,13 @@ bool operator==(const EnumProduct &product, const StorePurchaseable &purchaseabl
     return product.mOfferID == purchaseable.songID;
 }
 
+// Matches an enumerated marketplace product to a purchaseable by offer ID.
+struct EnumProductHasOffer {
+    EnumProductHasOffer(const unsigned long long &id) : mID(id) {}
+    bool operator()(const EnumProduct &p) const { return p.mOfferID == mID; }
+    const unsigned long long &mID;
+};
+
 int StorePanel::UpdateOffers(std::list<EnumProduct> const &enumList, bool arg) {
     std::vector<StoreOffer *> *offers = arg ? &mPendingOffers : &mOffers;
 
@@ -495,55 +502,45 @@ int StorePanel::UpdateOffers(std::list<EnumProduct> const &enumList, bool arg) {
     if (mShowTestOffers) {
         result = kStoreErrorSuccess;
     } else {
-        result = offers->empty() ? kStoreErrorSignedOut : kStoreErrorNoContent;
+        result = offers->size() == 0 ? kStoreErrorSignedOut : kStoreErrorNoContent;
     }
 
-    std::vector<StoreOffer *>::iterator it;
-    for (it = offers->begin(); it != offers->end(); ++it) {
+    for (std::vector<StoreOffer *>::iterator it = offers->begin(); it != offers->end();
+         ++it) {
         StoreOffer *offer = *it;
-
-        // Primary purchaseable (the offer itself).
         std::list<EnumProduct>::const_iterator e;
-        if (offer->Exists()) {
-            for (e = enumList.begin(); e != enumList.end(); ++e) {
-                if (e->mOfferID == offer->songID)
-                    break;
-            }
-        } else {
-            e = enumList.end();
-        }
-        if (e != enumList.end()) {
+
+        // The offer itself.
+        if (offer->Exists()
+            && (e = std::find_if(
+                    enumList.begin(), enumList.end(), EnumProductHasOffer(offer->songID)
+                ))
+                != enumList.end()) {
             result = kStoreErrorSuccess;
             UpdateFromEnumProduct(offer, &*e);
         } else if (offer->IsTest()) {
             offer->isAvailable = false;
             offer->isPurchased = false;
-            offer->cost = 0x270f;
+            offer->cost = 9999;
         }
 
-        // Album purchaseable (offer + 0x40).
-        StorePurchaseable *album = (StorePurchaseable *)((char *)offer + 0x40);
-        if (album->Exists()) {
-            for (e = enumList.begin(); e != enumList.end(); ++e) {
-                if (e->mOfferID == album->songID)
-                    break;
-            }
+        // Its album and pack purchaseables.
+        if (offer->mAlbum.Exists()) {
+            e = std::find_if(
+                enumList.begin(), enumList.end(), EnumProductHasOffer(offer->mAlbum.songID)
+            );
             if (e != enumList.end()) {
                 result = kStoreErrorSuccess;
-                UpdateFromEnumProduct(album, &*e);
+                UpdateFromEnumProduct(&offer->mAlbum, &*e);
             }
         }
-
-        // Pack purchaseable (offer + 0x80).
-        StorePurchaseable *pack = (StorePurchaseable *)((char *)offer + 0x80);
-        if (pack->Exists()) {
-            for (e = enumList.begin(); e != enumList.end(); ++e) {
-                if (e->mOfferID == pack->songID)
-                    break;
-            }
+        if (offer->mPack.Exists()) {
+            e = std::find_if(
+                enumList.begin(), enumList.end(), EnumProductHasOffer(offer->mPack.songID)
+            );
             if (e != enumList.end()) {
                 result = kStoreErrorSuccess;
-                UpdateFromEnumProduct(pack, &*e);
+                UpdateFromEnumProduct(&offer->mPack, &*e);
             }
         }
     }
