@@ -55,7 +55,8 @@ void Playback::Poll(float f) {
 // no player-range assert.
 void Playback::DoCommand(DataArray *arr) {
     if (arr->Size() >= 4) {
-        BeatMatcher *sink = mPlayerSinks[arr->Int(0)];
+        int player = arr->Int(0);
+        BeatMatcher *sink = mPlayerSinks[player];
         if (sink) {
             static Symbol SWING("SWING");
             static Symbol UP("UP");
