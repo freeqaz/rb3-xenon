@@ -673,10 +673,21 @@ bool ObjOwnerPtr<T>::Load(BinStream &bs, bool print, ObjectDir *dir) {
     }
     return true;
 }
-#endif
 
-// template <class T1>
-// BinStream &operator<<(BinStream &bs, const ObjOwnerPtr<T1> &ptr);
+// RETAIL: the same out-of-line body as operator<<(BinStream &, const ObjPtr<T1> &)
+// above -- `bs << (obj ? obj->Name() : "")`, mObject at +8 and Hmx::Object::mName
+// read directly. Retail 0x8238B5B8 (80 B) is one of that body's four survivors and
+// is what retail's operator<<(BinStream &, const vector<ObjOwnerPtr<CharClip>> &)
+// calls per element. The match build declared this overload (Object.h) but never
+// defined it, so every caller referenced an undefined symbol. Native supplies its
+// own definition in its link glue, hence match-build only.
+template <class T1>
+BinStream &operator<<(BinStream &bs, const ObjOwnerPtr<T1> &f) {
+    const char *objName = f ? f->Name() : "";
+    bs << objName;
+    return bs;
+}
+#endif
 
 template <class T1>
 BinStream &operator>>(BinStream &bs, ObjOwnerPtr<T1> &ptr) {
