@@ -1396,7 +1396,7 @@ int RndText::NumCharsInBytes(
             goto done;
         }
         RndFont *support = SupportChar(us, mFont);
-        if ((us == 0x20 || us == 9 || us == 10) && len > 0) {
+        if ((us == 0x20 || us == 10 || us == 9) && len > 0) {
             i5++;
             if (support) {
                 f8 += style.mSize * support->CharAdvance(us);
