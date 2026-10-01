@@ -253,9 +253,12 @@ void SongSectionController::ResetAll() {
             }
         }
     }
+#ifdef HX_NATIVE
+    // Retail's ResetAll does not clear the debug section/pool symbols.
     mDebugSectionName = gNullStr;
     mDebugPoolCategory = gNullStr;
     mLastDebugPoolActivated = gNullStr;
+#endif
 }
 
 void SongSectionController::Exit() { RndPollable::Exit(); }
