@@ -11,7 +11,7 @@ Sections:
 	.idata      type:data align:65536
 
 MasterAudio.cpp:
-	.pdata      start:0x8223E268 end:0x8223E280
+	.pdata      start:0x8223E270 end:0x8223E280
 	.pdata      start:0x8223E280 end:0x8223E288
 	.pdata      start:0x8223E288 end:0x8223E290
 	.pdata      start:0x8223E290 end:0x8223E2A0
@@ -41,7 +41,7 @@ MasterAudio.cpp:
 	.pdata      start:0x8223E598 end:0x8223E5B8
 	.pdata      start:0x8223E5B8 end:0x8223E5E0
 	.pdata      start:0x8223E5E0 end:0x8223E608
-	.text       start:0x8277B52C end:0x8277B6E8
+	.text       start:0x8277B5A0 end:0x8277B6E8
 	.text       start:0x8277B6E8 end:0x8277B7A0
 	.text       start:0x8277B7A0 end:0x8277B800
 	.text       start:0x8277B800 end:0x8277B8D8
@@ -12239,13 +12239,12 @@ RGUtl.cpp:
 
 RGState.cpp:
 	.pdata      start:0x8223E250 end:0x8223E258
-	.pdata      start:0x8223E258 end:0x8223E268
 	.text       start:0x8277B398 end:0x8277B3DC
 	.text       start:0x8277B3E0 end:0x8277B3FC
 	.text       start:0x8277B400 end:0x8277B434
 	.text       start:0x8277B438 end:0x8277B45C
 	.text       start:0x8277B460 end:0x8277B46C
-	.text       start:0x8277B470 end:0x8277B52C
+	.text       start:0x8277B470 end:0x8277B490
 
 WebSvcMgrCurl.cpp:
 	.pdata      start:0x821F8CC8 end:0x821F8CF8
@@ -12865,6 +12864,10 @@ system/beatmatch/FillInfo.cpp:
 system/beatmatch/Playback.cpp:
 	.pdata      start:0x8223F3B8 end:0x8223F420
 	.text       start:0x82792538 end:0x82792D50
+
+system/beatmatch/TrackType.cpp:
+	.pdata      start:0x8223E258 end:0x8223E270
+	.text       start:0x8277B490 end:0x8277B5A0
 
 system/beatmatch/DrumMap.cpp:
 	.pdata      start:0x8223EF00 end:0x8223EF10
