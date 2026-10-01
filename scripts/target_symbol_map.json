@@ -19502,7 +19502,7 @@
  "0x826eeeb0": "?Init@TrainerGemTab@@QAAXPAVRndDir@@W4TrackType@@@Z",
  "0x826efb18": "?DrawExtraTails@TrainerGemTab@@QAAXXZ",
  "0x826efbe0": "??$__uninitialized_copy@PAVExtraTail@TrainerGemTab@@PAV12@@stlpmtx_std@@YAPAVExtraTail@TrainerGemTab@@PAV12@00ABU__false_type@0@@Z",
- "0x826efc38": "??$__destroy_range_aux@V?$reverse_iterator@PAVGameGem@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVGameGem@@@0@0ABU__false_type@0@@Z",
+ "0x826efc38": "??0TrainerGemTab@@QAA@XZ",
  "0x826efc98": "?Render@TrainerGemTab@@QAAXHHMMH@Z",
  "0x826efcf8": "??1TrainerGemTab@@QAA@XZ",
  "0x826efd90": "?SetPattern@TrainerGemTab@@QAAXPBVTrainerSection@@ABV?$vector@VGameGem@@V?$StlNodeAlloc@VGameGem@@@stlpmtx_std@@@stlpmtx_std@@@Z",
