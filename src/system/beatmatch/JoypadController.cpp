@@ -161,7 +161,7 @@ bool JoypadController::IsCymbal(int i) const {
 }
 
 // https://decomp.me/scratch/Q41Vw
-// 0x8279B498
+// 0x8279B498. Every pass-through path shares the one return at the bottom.
 int JoypadController::GetVirtualSlot(int i) const {
     if (!mLocalUser)
         return i;
@@ -175,53 +175,57 @@ int JoypadController::GetVirtualSlot(int i) const {
             if (i == 4)
                 return IsCymbal(4) ? 4 : 8;
         }
-        return i;
-    }
-    switch (i) {
-    case 0:
-    case 1:
-        break;
-    case 2:
-        if (mLefty) {
-            if (HasBlueCymbal(thePadData)) {
-                if (IsCymbal(3)) {
-                    if (thePadData->mHasSecondaryPedal
-                        && mSecondaryPedalFunction == kHiHatPedal) {
-                        return thePadData->IsButtonInMask(mSecondaryPedalButton) ? 5 : 6;
+    } else {
+        switch (i) {
+        case 2:
+            if (mLefty) {
+                if (HasBlueCymbal(thePadData)) {
+                    if (IsCymbal(3)) {
+                        if (thePadData->mHasSecondaryPedal
+                            && mSecondaryPedalFunction == kHiHatPedal) {
+                            return thePadData->IsButtonInMask(mSecondaryPedalButton) ? 5
+                                                                                     : 6;
+                        }
+                        return 5;
                     }
-                    return 5;
+                    return 2;
                 }
-                return 2;
-            }
-            return mAlternateMapping ? 5 : 2;
-        } else {
-            if (HasYellowCymbal(thePadData)) {
-                if (IsCymbal(2)) {
-                    if (thePadData->mHasSecondaryPedal
-                        && mSecondaryPedalFunction == kHiHatPedal) {
-                        return thePadData->IsButtonInMask(mSecondaryPedalButton) ? 5 : 6;
+                return mAlternateMapping ? 5 : 2;
+            } else {
+                if (HasYellowCymbal(thePadData)) {
+                    if (IsCymbal(2)) {
+                        if (thePadData->mHasSecondaryPedal
+                            && mSecondaryPedalFunction == kHiHatPedal) {
+                            return thePadData->IsButtonInMask(mSecondaryPedalButton) ? 5
+                                                                                     : 6;
+                        }
+                        return 5;
                     }
-                    return 5;
+                    return 2;
                 }
-                return 2;
+                return mAlternateMapping ? 5 : 2;
             }
-            return mAlternateMapping ? 5 : 2;
+        case 3:
+            if (mLefty) {
+                if (IsCymbal(2))
+                    return 7;
+                return 3;
+            } else {
+                if (IsCymbal(3))
+                    return 7;
+                return 3;
+            }
+        case 4:
+            if (mLefty) {
+                if (HasGreenCymbal(thePadData))
+                    return IsCymbal(4) ? 4 : 8;
+                return mAlternateMapping ? 4 : 8;
+            } else {
+                if (HasGreenCymbal(thePadData))
+                    return IsCymbal(4) ? 4 : 8;
+                return mAlternateMapping ? 4 : 8;
+            }
         }
-    case 3:
-        return IsCymbal(mLefty ? 2 : 3) ? 7 : 3;
-    case 4:
-        if (mLefty) {
-            if (HasGreenCymbal(thePadData))
-                return IsCymbal(4) ? 4 : 8;
-            return mAlternateMapping ? 4 : 8;
-        } else {
-            if (HasGreenCymbal(thePadData))
-                return IsCymbal(4) ? 4 : 8;
-            return mAlternateMapping ? 4 : 8;
-        }
-    default:
-        MILO_FAIL("JoypadController::GetVirtualSlot of bad slot %d", i);
-        break;
     }
     return i;
 }
