@@ -5007,6 +5007,8 @@ Sfx.cpp:
 	.pdata      start:0x82237520 end:0x82237570
 	.pdata      start:0x82237570 end:0x82237578
 	.pdata      start:0x82237578 end:0x82237580
+	.pdata      start:0x82237720 end:0x82237728
+	.pdata      start:0x82237770 end:0x82237778
 	.pdata      start:0x822377B8 end:0x822377D0
 	.pdata      start:0x822377D0 end:0x822377E0
 	.pdata      start:0x822377E0 end:0x822377E8
@@ -5017,6 +5019,8 @@ Sfx.cpp:
 	.text       start:0x826FE080 end:0x826FE4A8
 	.text       start:0x826FE4A8 end:0x826FE514
 	.text       start:0x826FE518 end:0x826FE590
+	.text       start:0x826FFE38 end:0x826FFFC0
+	.text       start:0x827005E8 end:0x82700730
 	.text       start:0x827009E8 end:0x82700AF8
 	.text       start:0x82700AFC end:0x82700C98
 	.text       start:0x82700C98 end:0x82700D18
@@ -5885,8 +5889,10 @@ CheatProvider.cpp:
 	.pdata      start:0x82237588 end:0x822375A8
 	.pdata      start:0x822375A8 end:0x822375B0
 	.pdata      start:0x822376E8 end:0x822376F0
-	.pdata      start:0x822376F0 end:0x82237730
-	.pdata      start:0x82237760 end:0x822377A0
+	.pdata      start:0x822376F0 end:0x82237720
+	.pdata      start:0x82237728 end:0x82237730
+	.pdata      start:0x82237760 end:0x82237770
+	.pdata      start:0x82237778 end:0x822377A0
 	.text       start:0x823EF5F8 end:0x823F0310
 	.text       start:0x823F4590 end:0x823F4688
 	.text       start:0x823F4688 end:0x823F4810
@@ -5896,8 +5902,10 @@ CheatProvider.cpp:
 	.text       start:0x826FE5CC end:0x826FE7F0
 	.text       start:0x826FE7F0 end:0x826FE8A8
 	.text       start:0x826FFC18 end:0x826FFC80
-	.text       start:0x826FFC80 end:0x826FFFE8
-	.text       start:0x82700270 end:0x827008DC
+	.text       start:0x826FFC80 end:0x826FFE38
+	.text       start:0x826FFFC0 end:0x826FFFE8
+	.text       start:0x82700270 end:0x827005E8
+	.text       start:0x82700730 end:0x827008DC
 
 CameraManager.cpp:
 	.pdata      start:0x82213058 end:0x82213060

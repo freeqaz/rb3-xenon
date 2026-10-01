@@ -98185,6 +98185,19 @@
    "added": {
     "lane": "W16-KD 2026-10-01"
    }
+  },
+  {
+   "name": "__uninitialized_copy@PBVSfxMap@@PAV1@@st",
+   "address": "0x8271b9a0",
+   "survivor": "??$__uninitialized_copy@PBVSfxMap@@PAV1@@stlpmtx_std@@YAPAVSfxMap@@PBV1@0PAV1@ABU__false_type@0@@Z",
+   "folded": [
+    "??$__uninitialized_copy@PAVSfxMap@@PAV1@@stlpmtx_std@@YAPAVSfxMap@@PAV1@00ABU__false_type@0@@Z"
+   ],
+   "evidence": "W16-KD 2026-10-01: vector<SfxMap>::_M_fill_insert_aux and _M_insert_overflow_aux (0x826FFE38, 0x827005E8) branch here in retail where our STL spells the non-const-source copy; the const and non-const source twins compile to one body. tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN, CHASED T1 PROVEN, no CYCLE-ASSUMED leaf; the folded spelling is not map-resident.",
+   "lane": "W16-KD",
+   "added": {
+    "lane": "W16-KD 2026-10-01"
+   }
   }
  ]
 }
