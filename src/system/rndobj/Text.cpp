@@ -1817,7 +1817,11 @@ void RndText::GetStringDimensions(
         MaxEq(f1, (*it).mWidth);
     }
     f2 = lines.front().xfm.v.z - lines.back().xfm.v.z;
-    if (mFont) {
+#ifdef HX_NATIVE
+    if (mFont)
+#endif
+    {
+        // Retail reads mFont's cell size with no null test.
         float diff = mFont->CellDiff();
         f2 += theStyle.mSize * diff * mLeading;
     }
