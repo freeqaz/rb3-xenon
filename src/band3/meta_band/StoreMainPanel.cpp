@@ -158,15 +158,26 @@ void StoreMainPanel::Unload() {
     StoreArtLoaderPanel::Unload();
 }
 
+// Retail (288 B) keeps only the payload's "marquee" sub-array (function-local
+// static Symbol, FindArray(.., false)), takes a reference on it, releases the
+// old one, and re-parses only when the array actually changed.
 DataNode StoreMainPanel::OnMsg(const MetadataLoadedMsg &msg) {
-    if (!msg->Int(3) || !msg->Int(5) || mNewReleaseList.size() != 0)
+    if (!msg->Int(3) || !msg->Int(5) || !mNewReleaseList.empty())
         return DataNode(1);
-    MILO_ASSERT_FMT(
-        msg->Array(2),
-        "NULL data array passed to StoreMainPanel::SetConfigData()\n"
-    );
-    mConfigData = msg->Array(2);
-    ParseConfigData();
+    // MILO_ASSERT_FMT drops its condition in the match build; retail keeps
+    // the msg->Array(2) call, so the check is spelled as a MILO_ASSERT.
+    MILO_ASSERT(msg->Array(2), 0);
+    static Symbol marquee("marquee");
+    DataArray *config = msg->Array(2)->FindArray(marquee, false);
+    if (config && mConfigData != config) {
+        config->AddRef();
+        if (mConfigData) {
+            mConfigData->Release();
+            mConfigData = 0;
+        }
+        mConfigData = config;
+        ParseConfigData();
+    }
     return DataNode(1);
 }
 
