@@ -192,6 +192,9 @@ float StandardStream::GetJumpBackTotalTime() {
     return mAccumulatedLoopbacks;
 }
 
+// Retail 0x82701b60 (slot 39): a tail call through slot 41 (ClearJump).
+void StandardStream::AbandonLoop() { ClearJump(); }
+
 // Retail 0x82701ca0 (slot 16).
 float StandardStream::GetInSongTime() { return GetTime() + GetJumpBackTotalTime(); }
 

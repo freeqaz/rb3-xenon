@@ -2110,6 +2110,7 @@ Memory_Xbox.cpp:
 
 StreamNull.cpp:
 	.pdata      start:0x82239150 end:0x822391B0
+	.text       start:0x82719C88 end:0x82719CAC
 	.text       start:0x82719CB0 end:0x8271A0C8
 
 CharEyeDartRuleset.cpp:
@@ -6836,7 +6837,7 @@ MidiSynth.cpp:
 	.text       start:0x827009E4 end:0x827009E8
 	.text       start:0x82701820 end:0x82701888
 	.text       start:0x82701888 end:0x82701938
-	.text       start:0x82718A30 end:0x82719CAC
+	.text       start:0x82718A30 end:0x82719C88
 
 Cache_Xbox.cpp:
 	.pdata      start:0x821F3F80 end:0x821F3F88
