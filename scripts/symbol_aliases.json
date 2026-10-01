@@ -13346,11 +13346,18 @@
   {
    "name": "FocusComponent",
    "address": "0x828027c0",
-   "survivor": "?FocusComponent@UIPanel@@QAAPAVUIComponent@@XZ",
-   "folded": [
-    "?InComponentSelect@UIManager@@UAA_NXZ"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "survivor": "?InComponentSelect@UIManager@@UAA_NXZ",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "?FocusComponent@UIPanel@@QAAPAVUIComponent@@XZ",
+     "lane": "W16-KD 2026-10-01",
+     "class": "WRONG_SURVIVOR_NAME",
+     "disposition": "survivor field moved to the name that lives at this address; nothing is folded here",
+     "evidence": "0x828027c0 tests the member at +0x2c (UIManager::mCurrentScreen) and dispatches its virtual slot 0x6c: it is UIManager::InComponentSelect, which retail BandUI::InComponentSelect tail-calls with this (b at 0x8253703c). UIPanel::FocusComponent is the separate 40-byte body at 0x828127d0 (mDir at +8, slot 0x34), called by the same BandUI function at 0x82537018 with mEventDialog. Two retail bodies => no fold; this group's T1 compared our InComponentSelect against the address under the map's wrong name."
+    }
+   ]
   },
   {
    "name": "OnMsg",
