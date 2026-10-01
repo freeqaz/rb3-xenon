@@ -187,9 +187,9 @@ void RndMorph::SetFrame(float frame, float blend) {
                         b3 = false;
                         for (; targetIt != vertEnd && itVert != itVertEnd;
                              ++targetIt, ++itVert) {
-                            Scale(targetIt->pos, intenseInterp, itVert->pos);
+                            Scale(itVert->pos, intenseInterp, targetIt->pos);
                             if (mNormals) {
-                                Scale(targetIt->norm, intenseInterp, itVert->norm);
+                                Scale(itVert->norm, intenseInterp, targetIt->norm);
                             }
                         }
                     } else {

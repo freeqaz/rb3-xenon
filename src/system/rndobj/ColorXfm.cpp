@@ -5,9 +5,8 @@
 static int ModChan(int chan) {
     int i = chan % 3;
     if (i < 0)
-        return i + 3;
-    else
-        return i;
+        i += 3;
+    return i;
 }
 
 void RndColorXfm::Reset() { mColorXfm.Reset(); }
