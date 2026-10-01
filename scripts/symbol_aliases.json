@@ -18487,12 +18487,19 @@
   {
    "name": "1?$vector",
    "address": "0x826f8380",
-   "survivor": "??1?$vector@VFlowMathOp@@V?$StlNodeAlloc@VFlowMathOp@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "survivor": "??1?$vector@VVocalScoreHistory@@V?$StlNodeAlloc@VVocalScoreHistory@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
    "folded": [
-    "??1?$vector@UEntry@LocalePanel@@V?$StlNodeAlloc@UEntry@LocalePanel@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
-    "??1?$vector@VVocalScoreHistory@@V?$StlNodeAlloc@VVocalScoreHistory@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
+    "??1?$vector@UEntry@LocalePanel@@V?$StlNodeAlloc@UEntry@LocalePanel@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 1 census sites over 2 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 1 census sites over 2 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??1?$vector@VFlowMathOp@@V?$StlNodeAlloc@VFlowMathOp@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "retail callers are Singer code (Singer::PostLoad / ~Singer / AppendToScoreHistory / push_back chains) and the body ranks 99.6-100 against Singer.obj's instantiation for this element type; the previous name was a stand-in pairing against another unit's obj (DepthBuffer3D / CameraManager / CharBones / FlowMathOp)"
+    }
+   ]
   },
   {
    "name": "$_Param_Construct",
@@ -63378,11 +63385,17 @@
   {
    "name": "_M_erase",
    "address": "0x826f7f70",
-   "survivor": "?_M_erase@?$vector@UDepthBuffer3DAttachment@@V?$StlNodeAlloc@UDepthBuffer3DAttachment@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUDepthBuffer3DAttachment@@PAU3@0ABU__false_type@2@@Z",
-   "folded": [
-    "?_M_erase@?$vector@VVocalScoreCache@@V?$StlNodeAlloc@VVocalScoreCache@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVVocalScoreCache@@PAV3@0ABU__false_type@2@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "survivor": "?_M_erase@?$vector@VVocalScoreCache@@V?$StlNodeAlloc@VVocalScoreCache@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVVocalScoreCache@@PAV3@0ABU__false_type@2@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "?_M_erase@?$vector@UDepthBuffer3DAttachment@@V?$StlNodeAlloc@UDepthBuffer3DAttachment@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUDepthBuffer3DAttachment@@PAU3@0ABU__false_type@2@@Z",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "retail callers are Singer code (Singer::PostLoad / ~Singer / AppendToScoreHistory / push_back chains) and the body ranks 99.6-100 against Singer.obj's instantiation for this element type; the previous name was a stand-in pairing against another unit's obj (DepthBuffer3D / CameraManager / CharBones / FlowMathOp)"
+    }
+   ]
   },
   {
    "name": "$_Copy_Construct",
@@ -79288,11 +79301,17 @@
   {
    "name": "$__uninitialized_fill_n",
    "address": "0x826f7e50",
-   "survivor": "??$__uninitialized_fill_n@PAUDepthBuffer3DAttachment@@IU1@@stlpmtx_std@@YAPAUDepthBuffer3DAttachment@@PAU1@IABU1@ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_fill_n@PAVVocalScoreCache@@IV1@@stlpmtx_std@@YAPAVVocalScoreCache@@PAV1@IABV1@ABU__false_type@0@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "survivor": "??$__uninitialized_fill_n@PAVVocalScoreCache@@IV1@@stlpmtx_std@@YAPAVVocalScoreCache@@PAV1@IABV1@ABU__false_type@0@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_fill_n@PAUDepthBuffer3DAttachment@@IU1@@stlpmtx_std@@YAPAUDepthBuffer3DAttachment@@PAU1@IABU1@ABU__false_type@0@@Z",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "retail callers are Singer code (Singer::PostLoad / ~Singer / AppendToScoreHistory / push_back chains) and the body ranks 99.6-100 against Singer.obj's instantiation for this element type; the previous name was a stand-in pairing against another unit's obj (DepthBuffer3D / CameraManager / CharBones / FlowMathOp)"
+    }
+   ]
   },
   {
    "name": "KeyLessEq",
@@ -80371,11 +80390,17 @@
   {
    "name": "$__uninitialized_copy",
    "address": "0x826f7ea0",
-   "survivor": "??$__uninitialized_copy@PAUDepthBuffer3DAttachment@@PAU1@@stlpmtx_std@@YAPAUDepthBuffer3DAttachment@@PAU1@00ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_copy@PAVVocalScoreCache@@PAV1@@stlpmtx_std@@YAPAVVocalScoreCache@@PAV1@00ABU__false_type@0@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "survivor": "??$__uninitialized_copy@PAVVocalScoreCache@@PAV1@@stlpmtx_std@@YAPAVVocalScoreCache@@PAV1@00ABU__false_type@0@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_copy@PAUDepthBuffer3DAttachment@@PAU1@@stlpmtx_std@@YAPAUDepthBuffer3DAttachment@@PAU1@00ABU__false_type@0@@Z",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "retail callers are Singer code (Singer::PostLoad / ~Singer / AppendToScoreHistory / push_back chains) and the body ranks 99.6-100 against Singer.obj's instantiation for this element type; the previous name was a stand-in pairing against another unit's obj (DepthBuffer3D / CameraManager / CharBones / FlowMathOp)"
+    }
+   ]
   },
   {
    "name": "5",
@@ -83276,11 +83301,19 @@
   {
    "name": "_M_fill_insert",
    "address": "0x826f93c0",
-   "survivor": "?_M_fill_insert@?$vector@UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUBone@CharBones@@IABU34@@Z",
+   "survivor": "?_M_fill_insert@?$vector@VSingerResultsData@@V?$StlNodeAlloc@VSingerResultsData@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSingerResultsData@@IABV3@@Z",
    "folded": [
     "?_M_fill_insert@?$vector@UHamListRibbonDrawState@@V?$StlNodeAlloc@UHamListRibbonDrawState@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUHamListRibbonDrawState@@IABU3@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "?_M_fill_insert@?$vector@UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUBone@CharBones@@IABU34@@Z",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "retail callers are Singer code (Singer::PostLoad / ~Singer / AppendToScoreHistory / push_back chains) and the body ranks 99.6-100 against Singer.obj's instantiation for this element type; the previous name was a stand-in pairing against another unit's obj (DepthBuffer3D / CameraManager / CharBones / FlowMathOp)"
+    }
+   ]
   },
   {
    "name": "StrIStartsWith",
@@ -85487,11 +85520,17 @@
   {
    "name": "push_back",
    "address": "0x826f94c8",
-   "survivor": "?push_back@?$vector@UPropertyFilter@CameraManager@@V?$StlNodeAlloc@UPropertyFilter@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUPropertyFilter@CameraManager@@@Z",
-   "folded": [
-    "?push_back@?$vector@VVocalScoreHistory@@V?$StlNodeAlloc@VVocalScoreHistory@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVVocalScoreHistory@@@Z"
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+   "survivor": "?push_back@?$vector@VVocalScoreHistory@@V?$StlNodeAlloc@VVocalScoreHistory@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVVocalScoreHistory@@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. ",
+   "withdrawn": [
+    {
+     "spelling": "?push_back@?$vector@UPropertyFilter@CameraManager@@V?$StlNodeAlloc@UPropertyFilter@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUPropertyFilter@CameraManager@@@Z",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "retail callers are Singer code (Singer::PostLoad / ~Singer / AppendToScoreHistory / push_back chains) and the body ranks 99.6-100 against Singer.obj's instantiation for this element type; the previous name was a stand-in pairing against another unit's obj (DepthBuffer3D / CameraManager / CharBones / FlowMathOp)"
+    }
+   ]
   },
   {
    "name": "$_M_allocate_and_copy",
@@ -90633,11 +90672,17 @@
   {
    "name": "__uninitialized_fill_n_VVector3",
    "address": "0x826f80c0",
-   "survivor": "??$__uninitialized_fill_n@PAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@IV12@@stlpmtx_std@@YAPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@PAV10@IABV10@ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_fill_n@PAVVocalScoreHistory@@IV1@@stlpmtx_std@@YAPAVVocalScoreHistory@@PAV1@IABV1@ABU__false_type@0@@Z"
-   ],
-   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 50, row addr 0x826f80c0). \"ours\" spelling ??$__uninitialized_fill_n@PAVVocalScoreHistory@@IV1@@stlpmtx_std@@YAPAVVocalScoreHistory@@PAV1@IABV1@ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_fill_n@PAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@IV12@@stlpmtx_std@@YAPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@PAV10@IABV10@ABU__false_type@0@@Z at retail address 0x826f80c0. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 SLOT-FOLD-OK, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 328 B (328 B honest) across ['default/band3/game/Singer'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md."
+   "survivor": "??$__uninitialized_fill_n@PAVVocalScoreHistory@@IV1@@stlpmtx_std@@YAPAVVocalScoreHistory@@PAV1@IABV1@ABU__false_type@0@@Z",
+   "folded": [],
+   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 50, row addr 0x826f80c0). \"ours\" spelling ??$__uninitialized_fill_n@PAVVocalScoreHistory@@IV1@@stlpmtx_std@@YAPAVVocalScoreHistory@@PAV1@IABV1@ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_fill_n@PAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@IV12@@stlpmtx_std@@YAPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@PAV10@IABV10@ABU__false_type@0@@Z at retail address 0x826f80c0. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 SLOT-FOLD-OK, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 328 B (328 B honest) across ['default/band3/game/Singer'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_fill_n@PAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@IV12@@stlpmtx_std@@YAPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@PAV10@IABV10@ABU__false_type@0@@Z",
+     "lane": "W16-IF 2026-10-01",
+     "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
+     "note": "retail callers are Singer code (Singer::PostLoad / ~Singer / AppendToScoreHistory / push_back chains) and the body ranks 99.6-100 against Singer.obj's instantiation for this element type; the previous name was a stand-in pairing against another unit's obj (DepthBuffer3D / CameraManager / CharBones / FlowMathOp)"
+    }
+   ]
   },
   {
    "name": "__uninitialized_copy_CameraManager",

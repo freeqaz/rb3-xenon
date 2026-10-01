@@ -1855,14 +1855,6 @@ DepthBuffer3D.cpp:
 	.pdata      start:0x8223AE20 end:0x8223AE30
 	.text       start:0x82360DC8 end:0x82360E44
 	.text       start:0x826EBF20 end:0x826EBF28
-	.text       start:0x826F7E50 end:0x826F7F00
-	.text       start:0x826F7F70 end:0x826F87E8
-	.text       start:0x826F8B28 end:0x826F8C60
-	.text       start:0x826F8F64 end:0x826F8F68
-	.text       start:0x826F8F9C end:0x826F8FA0
-	.text       start:0x826F9350 end:0x826F942C
-	.text       start:0x826F94C8 end:0x826F95C0
-	.text       start:0x826F963C end:0x826F9648
 	.text       start:0x826FB8EC end:0x826FB8F0
 	.text       start:0x826FB9C8 end:0x826FB9D0
 	.text       start:0x826FBD08 end:0x826FBD60
@@ -8306,12 +8298,20 @@ band3/game/Singer.cpp:
 	.pdata      start:0x82237058 end:0x82237060
 	.text       start:0x826F6948 end:0x826F7948
 	.text       start:0x826F79A8 end:0x826F7CC8
+	.text       start:0x826F7E50 end:0x826F7F00
 	.text       start:0x826F7F00 end:0x826F7F48
 	.text       start:0x826F7F48 end:0x826F7F70
+	.text       start:0x826F7F70 end:0x826F87E8
 	.text       start:0x826F87E8 end:0x826F8B28
+	.text       start:0x826F8B28 end:0x826F8C60
 	.text       start:0x826F8C60 end:0x826F8F64
+	.text       start:0x826F8F64 end:0x826F8F68
+	.text       start:0x826F8F9C end:0x826F8FA0
 	.text       start:0x826F8FA0 end:0x826F9350
+	.text       start:0x826F9350 end:0x826F942C
 	.text       start:0x826F942C end:0x826F94C8
+	.text       start:0x826F94C8 end:0x826F95C0
+	.text       start:0x826F963C end:0x826F9648
 	.text       start:0x826F9648 end:0x826F9750
 	.text       start:0x826F9750 end:0x826F9778
 
