@@ -107,7 +107,10 @@ public:
                     nullptr,
                     0
                 );
-                PhysicalFreeTracked((void *)data, __FILE__, 0x109, "");
+                // Retail (0x827355A0, inside the out-of-line copy at 0x82735538)
+                // sets only r3: RB3 frees with the 1-argument PhysicalFree, as
+                // DxRnd::ReleaseAutoRelease does.
+                PhysicalFree((void *)data);
                 delete t;
             } else {
                 mPendingDeletes.push_back(t);

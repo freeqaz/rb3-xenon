@@ -406,12 +406,10 @@ void DxTex::UnlockBitmap() {
     }
 }
 
-// 0x82733E60 (slot 30).
+// 0x82733E60 (slot 30). No fallback to Rnd's null texture: a DxTex with no
+// D3D texture binds null.
 void DxTex::Select(int x) {
     D3DTexture *tex = mTexture;
-    if (!tex) {
-        tex = static_cast<DxTex *>(TheRnd.GetNullTexture())->mTexture;
-    }
     if (mType & 0x8) {
         if (mType == kFrontBuffer) {
             tex = TheDxRnd.FrontBuffer();
@@ -501,21 +499,15 @@ void DxTex::FinishDrawTarget() {
     TheDxRnd.SetReverseZ(true);
 }
 
-// 0x82733DC8 (slot 27).
+// 0x82733DC8 (slot 27). Unconditional: retail does not test mTexture.
 bool DxTex::TexelsLock(void *&p) {
-    void *texels = nullptr;
-    if (mTexture) {
-        UINT baseData;
-        XGGetTextureLayout(
-            mTexture, &baseData, nullptr, nullptr, nullptr, 0, nullptr, nullptr,
-            nullptr, nullptr, 0
-        );
-        texels = (void *)baseData;
-        p = texels;
-        return true;
-    }
-    p = texels;
-    return false;
+    UINT baseData;
+    XGGetTextureLayout(
+        mTexture, &baseData, nullptr, nullptr, nullptr, 0, nullptr, nullptr, nullptr,
+        nullptr, 0
+    );
+    p = (void *)baseData;
+    return true;
 }
 
 // 0x82733D20 (slot 24).
@@ -585,127 +577,126 @@ void DxTex::SyncBitmap() {
     bool isScratch = (mType & kScratch) != 0;
 
     if (isRendered) {
-        if (mWidth == 0 || mHeight == 0) {
-            return;
-        }
-        if (mType == kShadowMap) {
-            mFormat = D3DFMT_D24S8;
-        } else {
-            mFormat = D3DFMT_A8R8G8B8;
-        }
-        unkac = false;
-        UINT colorTiles = 0;
-        UINT tiles;
-        D3DSURFACE_PARAMETERS params;
-        if (mType == kShadowMap) {
-            mRenderTarget = nullptr;
-        } else {
-            D3DFORMAT edramFormat = mFormat;
-            switch (edramFormat) {
-            case D3DFMT_A16B16G16R16:
-                edramFormat = D3DFMT_A16B16G16R16_EDRAM;
-                break;
-            case D3DFMT_A2B10G10R10:
-                edramFormat = D3DFMT_A2B10G10R10F_EDRAM;
-                break;
-            case D3DFMT_G16R16:
-                edramFormat = D3DFMT_G16R16_EDRAM;
-                break;
-            }
-            memset(&params, 0, sizeof(params));
-            params.ColorExpBias = 0;
-            params.Base = 0;
-            params.HierarchicalZBase = -1;
-            params.HiZFunc = D3DHIZFUNC_DEFAULT;
-            {
-                int gpuFormat = edramFormat & 0x3f;
-                UINT bytesPerPixel = 4;
-                UINT alignedWidth = (((UINT)mWidth + 79) / 80) * 80;
-                UINT alignedHeight = ((UINT)mHeight + 15) & ~15;
-                if (gpuFormat == 0x15 || gpuFormat == 0x20 || gpuFormat == 0x25) {
-                    bytesPerPixel = 8;
-                }
-                tiles = alignedHeight * alignedWidth * bytesPerPixel / 0x1400;
-            }
-            colorTiles = tiles;
-            if (tiles < 0x800) {
-                if (sEDRamChecksEnabled && tiles > TheDxRnd.EdramBase()) {
-                    unkac = true;
-                }
-                mRenderTarget = CreateEdramSurface(
-                    mWidth, mHeight, edramFormat, D3DMULTISAMPLE_NONE, &params
-                );
-                DX_ASSERT(mRenderTarget, 1026);
-            } else {
-                MILO_FAIL(
-                    "Render target '%s' exceeds available\nEDRAM area (requested %d of %d color tiles)\n",
-                    PathName(this), tiles, 0x800
-                );
-                mRenderTarget = nullptr;
-            }
-        }
-
-        if (mNumMips != 0) {
-            mTexture = new D3DTexture;
-            UINT dwTextureSize = XGSetTextureHeaderEx(
-                mWidth, mHeight, mNumMips, 0, mFormat, 0, 1, 0, -1, 0, mTexture, nullptr,
-                nullptr
-            );
-            MILO_ASSERT(dwTextureSize != 0, 1059);
-            void *textureBuffer =
-                PhysicalAllocTracked(dwTextureSize, 0x404, "Tex(phys)");
-            MILO_ASSERT(textureBuffer != NULL, 1065);
-            XGOffsetBaseTextureAddress(mTexture, textureBuffer, textureBuffer);
-        } else {
-            mTexture = (D3DTexture *)D3DDevice_CreateTexture(
-                mWidth, mHeight, 1, 1, 0, mFormat, 0, (D3DRESOURCETYPE)3
-            );
-            DX_ASSERT(mTexture, 1073);
-        }
-
-        bool wantsDepth = (mType & kRendered) && !(mType & 0x20);
-        if (wantsDepth || mType == kDepthVolumeMap) {
-            D3DFORMAT depthFormat = D3DFMT_D24FS8;
+        if (mWidth != 0 && mHeight != 0) {
             if (mType == kShadowMap) {
-                depthFormat = D3DFMT_D24S8;
-            }
-            D3DSURFACE_PARAMETERS depthParams;
-            memset(&depthParams, 0, sizeof(depthParams));
-            depthParams.Base = colorTiles;
-            depthParams.ColorExpBias = 0;
-            depthParams.HierarchicalZBase = 0;
-            depthParams.HiZFunc = D3DHIZFUNC_DEFAULT;
-            UINT hzTiles;
-            {
-                int gpuFormat = depthFormat & 0x3f;
-                UINT bytesPerPixel = 4;
-                UINT alignedWidth = (((UINT)mWidth + 79) / 80) * 80;
-                UINT alignedHeight = ((UINT)mHeight + 15) & ~15;
-                if (gpuFormat == 0x15 || gpuFormat == 0x20 || gpuFormat == 0x25) {
-                    bytesPerPixel = 8;
-                }
-                tiles = colorTiles + alignedHeight * alignedWidth * bytesPerPixel / 0x1400;
-                hzTiles = HierarchicalZTiles(mWidth, mHeight);
-            }
-            if (tiles < 0x800 && hzTiles < 0xe10) {
-                if (sEDRamChecksEnabled
-                    && (tiles > TheDxRnd.EdramBase()
-                        || hzTiles > TheDxRnd.EdramHzBase())) {
-                    unkac = true;
-                }
-                mDepthRT = CreateEdramSurface(
-                    mWidth, mHeight, depthFormat, D3DMULTISAMPLE_NONE, &depthParams
-                );
-                DX_ASSERT(mDepthRT, 1114);
+                mFormat = D3DFMT_D24S8;
             } else {
-                MILO_FAIL(
-                    "Depth surface '%s' exceeds available EDRAM or hi-z area\n(requested %d of %d color tiles and %d of %d hi-z tiles)\nDepth surface creation failed.",
-                    PathName(this), tiles, 0x800, hzTiles, 0xe10
+                mFormat = D3DFMT_A8R8G8B8;
+            }
+            unkac = false;
+            UINT colorTiles = 0;
+            UINT tiles;
+            D3DSURFACE_PARAMETERS params;
+            if (mType == kShadowMap) {
+                mRenderTarget = nullptr;
+            } else {
+                D3DFORMAT edramFormat = mFormat;
+                switch (edramFormat) {
+                case D3DFMT_A16B16G16R16:
+                    edramFormat = D3DFMT_A16B16G16R16_EDRAM;
+                    break;
+                case D3DFMT_A2B10G10R10:
+                    edramFormat = D3DFMT_A2B10G10R10F_EDRAM;
+                    break;
+                case D3DFMT_G16R16:
+                    edramFormat = D3DFMT_G16R16_EDRAM;
+                    break;
+                }
+                memset(&params, 0, sizeof(params));
+                params.ColorExpBias = 0;
+                params.Base = 0;
+                params.HierarchicalZBase = -1;
+                params.HiZFunc = D3DHIZFUNC_DEFAULT;
+                {
+                    int gpuFormat = edramFormat & 0x3f;
+                    UINT bytesPerPixel = 4;
+                    UINT alignedWidth = (((UINT)mWidth + 79) / 80) * 80;
+                    UINT alignedHeight = ((UINT)mHeight + 15) & ~15;
+                    if (gpuFormat == 0x15 || gpuFormat == 0x20 || gpuFormat == 0x25) {
+                        bytesPerPixel = 8;
+                    }
+                    tiles = alignedHeight * alignedWidth * bytesPerPixel / 0x1400;
+                }
+                colorTiles = tiles;
+                if (tiles < 0x800) {
+                    if (sEDRamChecksEnabled && tiles > TheDxRnd.EdramBase()) {
+                        unkac = true;
+                    }
+                    mRenderTarget = CreateEdramSurface(
+                        mWidth, mHeight, edramFormat, D3DMULTISAMPLE_NONE, &params
+                    );
+                    DX_ASSERT(mRenderTarget, 1026);
+                } else {
+                    MILO_FAIL(
+                        "Render target '%s' exceeds available\nEDRAM area (requested %d of %d color tiles)\n",
+                        PathName(this), tiles, 0x800
+                    );
+                    mRenderTarget = nullptr;
+                }
+            }
+
+            if (mNumMips != 0) {
+                mTexture = new D3DTexture;
+                UINT dwTextureSize = XGSetTextureHeaderEx(
+                    mWidth, mHeight, mNumMips, 0, mFormat, 0, 1, 0, -1, 0, mTexture, nullptr,
+                    nullptr
                 );
+                MILO_ASSERT(dwTextureSize != 0, 1059);
+                void *textureBuffer =
+                    PhysicalAllocTracked(dwTextureSize, 0x404, "Tex(phys)");
+                MILO_ASSERT(textureBuffer != NULL, 1065);
+                XGOffsetBaseTextureAddress(mTexture, textureBuffer, textureBuffer);
+            } else {
+                mTexture = (D3DTexture *)D3DDevice_CreateTexture(
+                    mWidth, mHeight, 1, 1, 0, mFormat, 0, (D3DRESOURCETYPE)3
+                );
+                DX_ASSERT(mTexture, 1073);
+            }
+
+            bool wantsDepth = (mType & kRendered) && !(mType & 0x20);
+            if (wantsDepth || mType == kDepthVolumeMap) {
+                D3DFORMAT depthFormat = D3DFMT_D24FS8;
+                if (mType == kShadowMap) {
+                    depthFormat = D3DFMT_D24S8;
+                }
+                D3DSURFACE_PARAMETERS depthParams;
+                memset(&depthParams, 0, sizeof(depthParams));
+                depthParams.Base = colorTiles;
+                depthParams.ColorExpBias = 0;
+                depthParams.HierarchicalZBase = 0;
+                depthParams.HiZFunc = D3DHIZFUNC_DEFAULT;
+                UINT hzTiles;
+                {
+                    int gpuFormat = depthFormat & 0x3f;
+                    UINT bytesPerPixel = 4;
+                    UINT alignedWidth = (((UINT)mWidth + 79) / 80) * 80;
+                    UINT alignedHeight = ((UINT)mHeight + 15) & ~15;
+                    if (gpuFormat == 0x15 || gpuFormat == 0x20 || gpuFormat == 0x25) {
+                        bytesPerPixel = 8;
+                    }
+                    tiles = colorTiles + alignedHeight * alignedWidth * bytesPerPixel / 0x1400;
+                    hzTiles = HierarchicalZTiles(mWidth, mHeight);
+                }
+                if (tiles < 0x800 && hzTiles < 0xe10) {
+                    if (sEDRamChecksEnabled
+                        && (tiles > TheDxRnd.EdramBase()
+                            || hzTiles > TheDxRnd.EdramHzBase())) {
+                        unkac = true;
+                    }
+                    mDepthRT = CreateEdramSurface(
+                        mWidth, mHeight, depthFormat, D3DMULTISAMPLE_NONE, &depthParams
+                    );
+                    DX_ASSERT(mDepthRT, 1114);
+                } else {
+                    MILO_FAIL(
+                        "Depth surface '%s' exceeds available EDRAM or hi-z area\n(requested %d of %d color tiles and %d of %d hi-z tiles)\nDepth surface creation failed.",
+                        PathName(this), tiles, 0x800, hzTiles, 0xe10
+                    );
+                    mDepthRT = nullptr;
+                }
+            } else {
                 mDepthRT = nullptr;
             }
-        } else {
-            mDepthRT = nullptr;
         }
     } else if (IsBackBuffer()) {
         mFormat = D3DFMT_A8R8G8B8;
@@ -735,9 +726,13 @@ void DxTex::SyncBitmap() {
         for (int level = 0; level < numLevels; level++) {
             MILO_ASSERT(bmp, 1332);
             mTexture->LockRect(level, &rect, nullptr, 0);
+            // Retail forms the GPU format and the pixel pointer BEFORE calling
+            // DxtRowBytes (r22/r23 at 0x82734EF0/0x82734EF4), so both are locals.
+            DWORD gpuFormat = desc.Format & 0x3f;
+            void *pixels = bmp->Pixels();
             XGTileTextureLevel(
-                desc.Width, desc.Height, level, desc.Format & 0x3f, numLevels == 1,
-                rect.pBits, nullptr, bmp->Pixels(), bmp->DxtRowBytes(), nullptr
+                desc.Width, desc.Height, level, gpuFormat, numLevels == 1, rect.pBits,
+                nullptr, pixels, bmp->DxtRowBytes(), nullptr
             );
             mTexture->UnlockRect(level);
             bmp = bmp->nextMip();
@@ -746,16 +741,15 @@ void DxTex::SyncBitmap() {
     } else if (!isScratch && !(mType & 0x20)) {
         // Movie triple-buffer: DXT1 with GPUENDIAN_NONE.
         mFormat = (D3DFORMAT)0x1a200012;
-        if (mWidth == 0 || mHeight == 0) {
-            return;
+        if (mWidth != 0 && mHeight != 0) {
+            for (int i = 0; i < 3; i++) {
+                mMovieTextures[i] = (D3DTexture *)D3DDevice_CreateTexture(
+                    mWidth, mHeight, 1, 1, 0, mFormat, 1, (D3DRESOURCETYPE)3
+                );
+                DX_ASSERT(mMovieTextures[i], 1231);
+            }
+            mTexture = mMovieTextures[(mMovieBufIdx + 1) % 3];
         }
-        for (int i = 0; i < 3; i++) {
-            mMovieTextures[i] = (D3DTexture *)D3DDevice_CreateTexture(
-                mWidth, mHeight, 1, 1, 0, mFormat, 1, (D3DRESOURCETYPE)3
-            );
-            DX_ASSERT(mMovieTextures[i], 1231);
-        }
-        mTexture = mMovieTextures[(mMovieBufIdx + 1) % 3];
     } else {
         if (isScratch) {
             mFormat = (D3DFORMAT)0x28280044;
