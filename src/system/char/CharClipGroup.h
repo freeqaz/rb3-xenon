@@ -28,6 +28,7 @@ public:
     void RandomizeIndex();
     void Sort();
     void MakeMRU(int);
+    void MakeMRU(CharClip *);
 
 protected:
     CharClipGroup();

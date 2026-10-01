@@ -454,6 +454,7 @@ Symbol test_prefab;
 Symbol test_tour_ending_venue;
 Symbol texture;
 Symbol toggle_interests_overlay;
+Symbol hack_fix_clips_pre_merge; // BandCharacter::Handle (retail 0x820137FC string)
 Symbol torso;
 Symbol unload_venue;
 Symbol use_mic_stand_clips;

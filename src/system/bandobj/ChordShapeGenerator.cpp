@@ -210,20 +210,25 @@ void ChordShapeGenerator::DumpChordGenData() {
     cycles = 0;
 }
 
-int kMaxVerts = 400;
-int kMaxFaces = 600;
+static int kMaxVerts = 400;
+static int kMaxFaces = 600;
 
-int vertIt;
-unsigned int faceIt;
+static unsigned int faceIt;
+static int vertIt;
 
 RndMesh *ChordShapeGenerator::BuildChordMesh(unsigned int ui, int i) {
     RGUnpackChordShapeID(ui, mStringFrets, &unk64);
+#ifdef HX_NATIVE
     shapesGenerated++;
     TIMER_GET_CYCLES(startCycles);
     RndMesh *ret = BuildChordMesh();
     TIMER_GET_CYCLES(endCycles);
     cycles += endCycles - startCycles;
     return ret;
+#else
+    // Retail keeps no build statistics here: unpack, then build.
+    return BuildChordMesh();
+#endif
 }
 
 RndMesh *ChordShapeGenerator::MakeInvertedMesh(const RndMesh *mesh) {
@@ -246,9 +251,11 @@ RndMesh *ChordShapeGenerator::BuildChordMesh() {
     RndMesh * &_ref0 = mSource;
     _ref0 = mChordSrcMesh;
     if (CheckParams()) {
+#ifdef HX_NATIVE
         TheDebug.Notify(MakeString(
             "Could not create chord shape because some references are missing"
         ));
+#endif
         return 0;
     }
     mBaseXVal = mBaseXSection->WorldXfm().v.x;
@@ -264,68 +271,80 @@ RndMesh *ChordShapeGenerator::BuildChordMesh() {
     mesh->Faces().resize(kMaxFaces, RndMesh::Face());
     vertIt = 0;
     faceIt = 0;
+    static Symbol right("right");
+    static Symbol left("left");
     std::map<unsigned short, unsigned short> connectingVerts;
-    Hmx::Color32 onColor(0xFFFFFFFF);
-    Hmx::Color32 offColor(0xFF000000);
+    Hmx::Color onColor(1.0f, 1.0f, 1.0f, 1.0f);
+    Hmx::Color offColor(0.0f, 0.0f, 0.0f, 1.0f);
     for (int i = 0; i < mNumSlots; i++) {
-        const Hmx::Color32& col = unk64[i] ? onColor : offColor;
-        const Hmx::Color32& colPrev = (i == 0)
+        const Hmx::Color &col = unk64[i] ? onColor : offColor;
+        const Hmx::Color &colPrev = (i == 0)
             ? col
             : (unk64[i - 1] ? onColor : offColor);
-        int fret = mStringFrets[i];
-        if (fret == -1) {
+        if (mStringFrets[i] == -1) {
             if (i != 0 && mStringFrets[i - 1] != -1) {
                 BuildEndCap(
                     mesh, connectingVerts, mStringFrets[i - 1], SlotXfm(i - 1), right,
-                    Hmx::Color32(col)
+                    col
                 );
             }
         } else if (i == 0 || mStringFrets[i - 1] == -1) {
             BuildEndCap(
                 mesh, connectingVerts, mStringFrets[i], SlotXfm(i), left,
-                Hmx::Color32(col)
+                col
             );
-        } else if (fret == 0) {
+        } else if (mStringFrets[i] == 0) {
             if (mStringFrets[i - 1] != 0) {
                 BuildContourCap(
                     mesh, connectingVerts, mStringFrets[i - 1], SlotXfm(i - 1),
-                    SlotXfm(i), right, Hmx::Color32(col), Hmx::Color32(colPrev)
+                    SlotXfm(i), right, col, colPrev
                 );
             } else {
                 BuildSpan(
                     mesh, connectingVerts, mStringFrets[i - 1], mStringFrets[i],
-                    SlotXfm(i - 1), SlotXfm(i), Hmx::Color32(col),
-                    Hmx::Color32(colPrev)
+                    SlotXfm(i - 1), SlotXfm(i), colPrev, col
                 );
             }
         } else if (mStringFrets[i - 1] == 0) {
             BuildContourCap(
                 mesh, connectingVerts, mStringFrets[i], SlotXfm(i - 1), SlotXfm(i),
-                left, Hmx::Color32(col), Hmx::Color32(colPrev)
+                left, colPrev, col
             );
         } else {
             BuildSpan(
                 mesh, connectingVerts, mStringFrets[i - 1], mStringFrets[i],
-                SlotXfm(i - 1), SlotXfm(i), Hmx::Color32(col), Hmx::Color32(colPrev)
+                SlotXfm(i - 1), SlotXfm(i), colPrev, col
             );
         }
     }
-    int last = mNumSlots - 1;
-    if (mStringFrets[last] != -1) {
-        Hmx::Color32 col = unk64[last] ? onColor : offColor;
+    if (mStringFrets[mNumSlots - 1] != -1) {
+        const Hmx::Color &col = unk64[mNumSlots - 1] ? onColor : offColor;
         BuildEndCap(
             mesh, connectingVerts, mStringFrets[mNumSlots - 1],
-            SlotXfm(mNumSlots - 1), right, Hmx::Color32(col)
+            SlotXfm(mNumSlots - 1), right, col
         );
     }
     MILO_ASSERT(connectingVerts.empty(), 0x168);
     mesh->Verts().resize(vertIt);
     mesh->Faces().resize(faceIt, RndMesh::Face());
+#ifdef HX_NATIVE
+    // Retail returns the mesh straight after trimming it; no edit-mode sync.
     if (LOADMGR_EDITMODE) {
         mesh->Sync(0x3F);
         mesh->SetMutable(0);
     }
+#endif
     return mesh;
+}
+
+// Retail reloads the 0.1 band tolerance from .rdata at every compare instead
+// of holding it in a saved FPR; a named constant gives that shape.
+static const float kBandTolerance = 0.1f;
+
+void ChordShapeGenerator::CrossSec::AddEdge(const Edge &edge) {
+    mEdges.push_back(edge);
+    mVerts.insert(edge.mV0);
+    mVerts.insert(edge.mV1);
 }
 
 void ChordShapeGenerator::GetCrossSection(float xOffset, CrossSec &cs) {
@@ -335,18 +354,16 @@ void ChordShapeGenerator::GetCrossSection(float xOffset, CrossSec &cs) {
     cs.mXOffset = xOffset;
     RndMesh::VertVector &verts = mSource->Verts();
     std::vector<RndMesh::Face> faces(mSource->Faces());
-    float hi = xOffset + 0.1f;
-    float lo = xOffset - 0.1f;
     for (unsigned int i = 0; i < faces.size(); i++) {
         RndMesh::Face &f = faces[i];
         bool outOfBand = false;
         int outsideVert = -1;
         for (int j = 0; j < 3; j++) {
             float x = verts[f[j]].pos.x;
-            if (x < lo) {
+            if (x < xOffset - kBandTolerance) {
                 outOfBand = true;
                 break;
-            } else if (x > hi) {
+            } else if (x > xOffset + kBandTolerance) {
                 if (outsideVert != -1) {
                     outOfBand = true;
                     break;
@@ -357,14 +374,12 @@ void ChordShapeGenerator::GetCrossSection(float xOffset, CrossSec &cs) {
         if (!outOfBand && outsideVert != -1) {
             Edge edge;
             for (int j = 0; j < 3; j++) {
-                if (f[j] == outsideVert) {
+                if (outsideVert == f[j]) {
                     edge.mV0 = f[(j + 1) % 3];
                     edge.mV1 = f[(j + 2) % 3];
                 }
             }
-            cs.mEdges.push_back(edge);
-            cs.mVerts.insert(edge.mV0);
-            cs.mVerts.insert(edge.mV1);
+            cs.AddEdge(edge);
         }
     }
 }
@@ -375,44 +390,55 @@ void ChordShapeGenerator::BuildEndCap(
     int mFret,
     const Transform &xfm,
     Symbol orient,
-    Hmx::Color32 col
+    Hmx::Color col
 ) {
     bool contour = mFret > 0;
-    if (orient == right) {
-        unsigned int expectedVerts =
-            contour ? sec1.mVerts.size() : sec2.mVerts.size();
-        MILO_ASSERT(connectingVerts.size() == expectedVerts, 0x1C4);
-    } else {
+    static Symbol right("right");
+    static Symbol left("left");
+    // A left cap starts a strip: it lays down its own profile and leaves it in
+    // connectingVerts for the next span. A right cap closes the strip that is
+    // already there, and clears it at the end.
+    if (orient != right) {
         MILO_ASSERT(orient == left, 0x1C8);
         connectingVerts.clear();
         AddVertProfile(
-            mesh, xfm, mFretHeights[mFret], contour ? sec1 : sec2, connectingVerts,
-            Hmx::Color32(col)
+            mesh, xfm, mFretHeights[mFret], contour ? sec1 : sec2, connectingVerts, col
         );
     }
+    // Winding (and the sign of the x scale) flips when exactly one of
+    // "closing cap" and "contour side" holds.
+    bool flip = contour == (orient == right);
     std::map<unsigned short, unsigned short> capMap;
-    RndMesh::VertVector &srcVerts = mSource->Verts();
     RndMesh::VertVector &meshVerts = mesh->Verts();
-    for (int i = 0; i < (int)srcVerts.size(); i++) {
+    RndMesh::VertVector &srcVerts = mSource->Verts();
+    // The cap is the part of the source mesh beyond the cross section: past
+    // the contour section on the contour side, short of the base section
+    // otherwise.
+    for (int i = 0; i < srcVerts.size(); i++) {
         float sx = srcVerts[i].pos.x;
-        if (contour ? (sx < mContourXVal + 0.1f) : (sx > mBaseXVal - 0.1f)) {
-            capMap[i] = vertIt++;
-        }
+        if (contour) {
+            if (sx < mContourXVal + kBandTolerance)
+                continue;
+        } else if (sx > mBaseXVal - kBandTolerance)
+            continue;
+        capMap[i] = vertIt++;
     }
-    if (vertIt > (int)meshVerts.size()) {
+    if (vertIt > meshVerts.size()) {
         unsigned int newsize = meshVerts.size() * 2;
         MILO_LOG("RG: too few verts for chord shape - increasing to %d", newsize);
         meshVerts.resize(newsize);
     }
-    float xOffset = contour ? mContourXVal : mBaseXVal;
-    float xScale = contour ? -1.0f : 1.0f;
+    float xScale = 3.3333333f / (mContourXVal - mBaseXVal);
     float fretHeight = mFretHeights[mFret];
+    float xOffset = contour ? mContourXVal : mBaseXVal;
+    if (flip)
+        xScale *= -1.0f;
     std::map<unsigned short, unsigned short>::const_iterator vit = capMap.begin();
     std::map<unsigned short, unsigned short>::const_iterator vend = capMap.end();
     for (; vit != vend; ++vit) {
         RndMesh::Vert &curvert = meshVerts[vit->second];
         curvert = srcVerts[vit->first];
-        TransformVert(curvert, xOffset, xScale, fretHeight, xfm, Hmx::Color32(col));
+        TransformVert(curvert, xOffset, xScale, fretHeight, xfm, col);
     }
     capMap.insert(connectingVerts.begin(), connectingVerts.end());
     std::vector<RndMesh::Face> &srcFaces = mSource->Faces();
@@ -423,13 +449,13 @@ void ChordShapeGenerator::BuildEndCap(
             float minX = srcVerts[f.v1].pos.x;
             MinEq(minX, srcVerts[f.v2].pos.x);
             MinEq(minX, srcVerts[f.v3].pos.x);
-            if (!(minX < mContourXVal - 0.1f))
+            if (minX < mContourXVal - kBandTolerance)
                 continue;
         } else {
             float maxX = srcVerts[f.v1].pos.x;
             MaxEq(maxX, srcVerts[f.v2].pos.x);
             MaxEq(maxX, srcVerts[f.v3].pos.x);
-            if (!(maxX > mBaseXVal + 0.1f))
+            if (maxX > mBaseXVal + kBandTolerance)
                 continue;
         }
         if (faceIt >= meshFaces.size()) {
@@ -443,13 +469,14 @@ void ChordShapeGenerator::BuildEndCap(
                 && capMap.find(f.v3) != capMap.end(),
             0x223
         );
-        if (contour) {
+        if (flip) {
             mf.Set(capMap[f.v1], capMap[f.v3], capMap[f.v2]);
         } else {
             mf.Set(capMap[f.v1], capMap[f.v2], capMap[f.v3]);
         }
     }
-    connectingVerts.clear();
+    if (orient == right)
+        connectingVerts.clear();
 }
 
 void ChordShapeGenerator::TransformVert(
@@ -458,7 +485,7 @@ void ChordShapeGenerator::TransformVert(
     float xScale,
     float fretHeight,
     const Transform &tf,
-    Hmx::Color32 col
+    Hmx::Color col
 ) {
     float px = vert.pos.x;
     float pz = vert.pos.z;
@@ -467,7 +494,7 @@ void ChordShapeGenerator::TransformVert(
     if (pz > mBaseHeightVal) {
         vert.pos.z = fretHeight * (pz - mBaseHeightVal) + mBaseHeightVal;
     }
-    vert.color.UnpackAlpha(col.FullColor());
+    vert.color = col;
     Multiply(vert.pos, tf, vert.pos);
 }
 
@@ -478,15 +505,17 @@ void ChordShapeGenerator::BuildContourCap(
     const Transform &tf1,
     const Transform &tf2,
     Symbol sym,
-    Hmx::Color32 col1,
-    Hmx::Color32 col2
+    Hmx::Color col1,
+    Hmx::Color col2
 ) {
+    static Symbol right("right");
+    static Symbol left("left");
     MILO_ASSERT(connectingVerts.size(), 0x24B);
     const RndMesh::VertVector &srcVerts = mSource->Verts();
     std::map<unsigned short, unsigned short> capMap;
     for (int i = 0; i < srcVerts.size(); i++) {
         float sx = srcVerts[i].pos.x;
-        if (sx > mBaseXVal + 0.1f && sx < mContourXVal - 0.1f) {
+        if (sx > mBaseXVal + kBandTolerance && sx < mContourXVal - kBandTolerance) {
             capMap[i] = vertIt++;
         }
     }
@@ -505,45 +534,39 @@ void ChordShapeGenerator::BuildContourCap(
     InterpolateXfm(tf1, tf2, 0.50f, midPt);
     midPt.v = trisectA.v;
     midPt.v += trisectB.v;
-    midPt.v /= 2.0f;
+    midPt.v *= 0.5f;
     float capTessA = (mBaseXVal * 2.0f + mContourXVal) / 3.0f;
     float capTessB = (mContourXVal * 2.0f + mBaseXVal) / 3.0f;
-    float xMid = (mBaseXVal + mContourXVal) * 0.5f;
+    float xMid = (mContourXVal + mBaseXVal) * 0.5f;
     float xScale = (tf2.v.x - tf1.v.x) / (mContourXVal - mBaseXVal);
     float fretHeight = mFretHeights[iii];
     std::map<unsigned short, unsigned short>::const_iterator vit = capMap.begin();
     std::map<unsigned short, unsigned short>::const_iterator vend = capMap.end();
-    float zScale = -xScale;
     for (; vit != vend; ++vit) {
         RndMesh::Vert &curvert = meshVerts[vit->second];
         curvert = srcVerts[vit->first];
         if (invert) {
             if (curvert.pos.x < capTessA) {
-                TransformVert(curvert, mBaseXVal, zScale, fretHeight, tf2, Hmx::Color32(col2));
+                TransformVert(curvert, mBaseXVal, -xScale, fretHeight, tf2, col2);
             } else if (curvert.pos.x < capTessB) {
-                TransformVert(curvert, xMid, zScale, fretHeight, midPt, Hmx::Color32(col2));
+                TransformVert(curvert, xMid, -xScale, fretHeight, midPt, col2);
             } else {
-                TransformVert(curvert, mContourXVal, zScale, fretHeight, tf1, Hmx::Color32(col2));
+                TransformVert(curvert, mContourXVal, -xScale, fretHeight, tf1, col2);
             }
         } else {
             if (curvert.pos.x < capTessA) {
-                TransformVert(curvert, mBaseXVal, xScale, fretHeight, tf1, Hmx::Color32(col1));
+                TransformVert(curvert, mBaseXVal, xScale, fretHeight, tf1, col1);
             } else if (curvert.pos.x < capTessB) {
-                TransformVert(curvert, xMid, xScale, fretHeight, midPt, Hmx::Color32(col1));
+                TransformVert(curvert, xMid, xScale, fretHeight, midPt, col1);
             } else {
-                TransformVert(curvert, mContourXVal, xScale, fretHeight, tf2, Hmx::Color32(col1));
+                TransformVert(curvert, mContourXVal, xScale, fretHeight, tf2, col1);
             }
         }
     }
     std::map<unsigned short, unsigned short> endVerts;
-    Hmx::Color32 endColor(invert ? col1 : col2);
+    // The closing profile sits at tf2 with this fret's height.
     AddVertProfile(
-        mesh,
-        tf2,
-        xMid,
-        invert ? sec2 : sec1,
-        endVerts,
-        Hmx::Color32(endColor)
+        mesh, tf2, fretHeight, invert ? sec2 : sec1, endVerts, invert ? col1 : col2
     );
     capMap.insert(connectingVerts.begin(), connectingVerts.end());
     capMap.insert(endVerts.begin(), endVerts.end());
@@ -554,11 +577,11 @@ void ChordShapeGenerator::BuildContourCap(
         float minX = srcVerts[f.v1].pos.x;
         MinEq(minX, srcVerts[f.v2].pos.x);
         MinEq(minX, srcVerts[f.v3].pos.x);
-        if (minX < mBaseXVal - 0.1f) continue;
+        if (minX < mBaseXVal - kBandTolerance) continue;
         float maxX = srcVerts[f.v1].pos.x;
         MaxEq(maxX, srcVerts[f.v2].pos.x);
         MaxEq(maxX, srcVerts[f.v3].pos.x);
-        if (maxX > mContourXVal + 0.1f) continue;
+        if (maxX > mContourXVal + kBandTolerance) continue;
         if (faceIt >= meshFaces.size()) {
             unsigned int newsize = meshFaces.size() * 2;
             MILO_LOG("RG: too few faces for chord shape - increasing to %d", (int)newsize);
@@ -586,8 +609,8 @@ void ChordShapeGenerator::BuildSpan(
     int fretB,
     const Transform &tfA,
     const Transform &tfB,
-    Hmx::Color32 col1,
-    Hmx::Color32 col2
+    Hmx::Color col1,
+    Hmx::Color col2
 ) {
     MILO_ASSERT(connectingVerts.size(), 0x2D0);
     MILO_ASSERT(bool(fretA) == bool(fretB), 0x2D3);
@@ -601,8 +624,8 @@ void ChordShapeGenerator::BuildSpan(
                 (float)i / 3.0f,
                 1.0f,
                 sec2,
-                Hmx::Color32(col1),
-                Hmx::Color32(col2)
+                col1,
+                col2
             );
         }
         return;
@@ -612,25 +635,25 @@ void ChordShapeGenerator::BuildSpan(
     float frac1 = (1.0f + gradeDist) * 0.5f;
     ExtendProfile(
         mesh, connectingVerts, tfA, tfB, frac0, mFretHeights[fretA], sec1,
-        Hmx::Color32(col1), Hmx::Color32(col2)
+        col1, col2
     );
     ExtendProfile(
         mesh, connectingVerts, tfA, tfB, frac0 + 0.05f,
         0.9f * mFretHeights[fretA] + 0.1f * mFretHeights[fretB], sec1,
-        Hmx::Color32(col1), Hmx::Color32(col2)
+        col1, col2
     );
     ExtendProfile(
         mesh, connectingVerts, tfA, tfB, frac1 - 0.05f,
         0.1f * mFretHeights[fretA] + 0.9f * mFretHeights[fretB], sec1,
-        Hmx::Color32(col1), Hmx::Color32(col2)
+        col1, col2
     );
     ExtendProfile(
         mesh, connectingVerts, tfA, tfB, frac1, mFretHeights[fretB], sec1,
-        Hmx::Color32(col1), Hmx::Color32(col2)
+        col1, col2
     );
     ExtendProfile(
         mesh, connectingVerts, tfA, tfB, 1.0f, mFretHeights[fretB], sec1,
-        Hmx::Color32(col1), Hmx::Color32(col2)
+        col1, col2
     );
 }
 
@@ -642,18 +665,15 @@ void ChordShapeGenerator::ExtendProfile(
     float t,
     float fretHeight,
     const CrossSec &crossSec,
-    Hmx::Color32 col1,
-    Hmx::Color32 col2
+    Hmx::Color col1,
+    Hmx::Color col2
 ) {
     std::map<unsigned short, unsigned short> profileVerts;
     Transform interp;
     InterpolateXfm(tfA, tfB, t, interp);
-    Hmx::Color32 col(col1);
-    col.g = col1.g + (int)(t * (col2.g - col1.g));
-    col.r = col1.r + (int)(t * (col2.r - col1.r));
-    col.a = col1.a + (int)(t * (col2.a - col1.a));
-    col.b = col1.b + (int)(t * (col2.b - col1.b));
-    AddVertProfile(mesh, interp, fretHeight, crossSec, profileVerts, Hmx::Color32(col));
+    Hmx::Color col;
+    Interp(col1, col2, t, col);
+    AddVertProfile(mesh, interp, fretHeight, crossSec, profileVerts, col);
     ConnectVertProfiles(mesh, connectingVerts, profileVerts, crossSec);
     connectingVerts.swap(profileVerts);
 }
@@ -663,49 +683,43 @@ void ChordShapeGenerator::InterpolateXfm(
 ) {
     if (t > 0.99f) {
         out = b;
-        return;
-    }
-    if (t < 0.1f) {
+    } else if (t < 0.1f) {
         out = a;
-        return;
-    }
-    float ax = a.v.x;
-    float az = a.v.z;
-    float bx = b.v.x;
-    float bz = b.v.z;
-    Vector3 eulerA;
-    Vector3 eulerB;
-    MakeEuler(a.m, eulerA);
-    MakeEuler(b.m, eulerB);
-    float rA = eulerA.y;
-    float rB = eulerB.y;
-    MILO_ASSERT(rA != rB, 0x331);
-    MILO_ASSERT((fabs(rA) < PI) && (fabs(rB) < PI), 0x333);
-    float cosA = (float)cos(rA);
-    float slopeA = -(float)sin(rA) / cosA;
-    float cosB = (float)cos(rB);
-    float slopeB = -(float)sin(rB) / cosB;
-    float interceptA = -(slopeA * ax - az);
-    float midY = (a.v.y + b.v.y) * 0.5f;
-    float isectX = (-(slopeB * bx - bz) - interceptA) / (slopeA - slopeB);
-    float isectZ = slopeA * isectX + interceptA;
-    if (t < 0.5f) {
-        out.v.Set(isectX, midY, isectZ);
-        out.v -= a.v;
-        out.v *= 2.0f * t;
-        out.v += a.v;
     } else {
-        out.v.Set(isectX, midY, isectZ);
-        out.v -= b.v;
-        out.v *= 2.0f * (1.0f - t);
-        out.v += b.v;
+        float ax = a.v.x;
+        float az = a.v.z;
+        float bx = b.v.x;
+        float bz = b.v.z;
+        Vector3 eulerA;
+        Vector3 eulerB;
+        MakeEuler(a.m, eulerA);
+        MakeEuler(b.m, eulerB);
+        float rA = eulerA.y;
+        float rB = eulerB.y;
+        MILO_ASSERT(rA != rB, 0x331);
+        MILO_ASSERT((fabs(rA) < PI) && (fabs(rB) < PI), 0x333);
+        // Slopes of the two string lines in the xz plane, intersected.
+        float slopeA = -((float)sin(rA) / (float)cos(rA));
+        float slopeB = -((float)sin(rB) / (float)cos(rB));
+        float interceptA = -(slopeA * ax - az);
+        float isectX = (-(slopeB * bx - bz) - interceptA) / (slopeA - slopeB);
+        Vector3 isect(isectX, (a.v.y + b.v.y) * 0.5f, slopeA * isectX + interceptA);
+        if (t < 0.5f) {
+            out.v = isect;
+            out.v -= a.v;
+            out.v *= t * 2.0f;
+            out.v += a.v;
+        } else {
+            out.v = isect;
+            out.v -= b.v;
+            out.v *= (1.0f - t) * 2.0f;
+            out.v += b.v;
+        }
+        Vector3 midEuler(eulerA);
+        midEuler += eulerB;
+        midEuler *= 0.5f;
+        MakeRotMatrix(midEuler, out.m, true);
     }
-    Vector3 midEuler(
-        (eulerA.x + eulerB.x) * 0.5f,
-        (eulerA.y + eulerB.y) * 0.5f,
-        (eulerA.z + eulerB.z) * 0.5f
-    );
-    MakeRotMatrix(midEuler, out.m, true);
 }
 
 void ChordShapeGenerator::AddVertProfile(
@@ -714,7 +728,7 @@ void ChordShapeGenerator::AddVertProfile(
     float fretHeight,
     const CrossSec &secSrc,
     std::map<unsigned short, unsigned short> &newVertMap,
-    Hmx::Color32 col
+    Hmx::Color col
 ) {
     newVertMap.clear();
     int numNewVerts = secSrc.mVerts.size();
@@ -737,7 +751,7 @@ void ChordShapeGenerator::AddVertProfile(
         if (pz > mBaseHeightVal) {
             curvert.pos.z = fretHeight * (pz - mBaseHeightVal) + mBaseHeightVal;
         }
-        curvert.color.UnpackAlpha(col.FullColor());
+        curvert.color = col;
         Multiply(curvert.pos, xfm, curvert.pos);
         newVertMap[srcIdx] = destIdx;
     }

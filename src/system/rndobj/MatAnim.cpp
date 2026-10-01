@@ -136,6 +136,9 @@ BEGIN_LOADS(RndMatAnim)
     }
 END_LOADS
 
+// Retail 0x82461410 is out of line: mMat's SetObjConcrete as a tail call.
+void RndMatAnim::SetMat(RndMat *mat) { mMat = mat; }
+
 void RndMatAnim::Print() {
     TheDebug << "   mat: " << mMat << "\n";
     TheDebug << "   transKeys: " << mTransKeys << "\n";

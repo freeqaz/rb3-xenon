@@ -36,7 +36,14 @@ public:
     class PlayBack {
     public:
         struct Weight {
+#ifdef HX_NATIVE
             Weight() : mClip(nullptr), mPrevWeight(0), mNextWeight(0), mCurWeight(0) {}
+#else
+            // Retail's resize() temporary constructs only mClip (ObjPtr ctor
+            // with a null owner and object) and leaves the three weights for
+            // Reset() to clear.
+            Weight() : mClip(nullptr) {}
+#endif
 
             ObjPtr<CharClip> mClip;
             float mPrevWeight;
@@ -44,8 +51,7 @@ public:
             float mCurWeight;
         };
         PlayBack();
-        void Set(CharLipSync *, ObjPtr<ObjectDir>);
-        void SetClips(ObjPtr<ObjectDir>);
+        void Set(CharLipSync *, ObjectDir *);
         void Reset();
         void Poll(float);
 
@@ -53,18 +59,17 @@ public:
 
         std::vector<Weight> mWeights; // 0x0
         // RAW pointer, not ObjPtr. Retail CharLipSyncDriver::Poll loads the
-        // CharLipSync through `lwz r11, 12(r11)` = PlayBack+0xc directly; our
-        // ObjPtr<CharLipSync> occupies [0xc,0x18) and stores its raw pointer at
-        // +8, so we emitted `lwz r11, 20(r11)`. ObjPtr itself is proven correct
-        // (ObjPtr<CharLipSync>::Replace and ??_G both match retail at 100%), so
-        // the field at 0xc cannot be an ObjPtr interior. RB3 declares it raw;
-        // DC3 (newer) upgraded it. Sibling Generator::mLipSync above is
-        // still raw in DC3, which is the same asymmetry.
+        // CharLipSync through `lwz r11, 12(r11)` = PlayBack+0xc directly.
         CharLipSync *mLipSync; // 0xc
-        ObjPtr<ObjectDir> mClips; // 0x10
-        int mIndex; // 0x1c
-        int mOldIndex; // 0x20
-        int mFrame; // 0x24
+        // Set() copies CharLipSync::mPropAnim here when the lipsync has one;
+        // Poll() then samples each PropKeys of that anim instead of mData.
+        RndPropAnim *mPropAnim; // 0x10
+        // Raw: retail Set() stores its ObjectDir* argument at +0x14 and the
+        // out-of-line ctor zeroes +0x10 and +0x14 with no vtable store.
+        ObjectDir *mClips; // 0x14
+        int mIndex; // 0x18
+        int mOldIndex; // 0x1c
+        int mFrame; // 0x20
     };
 
     // Hmx::Object

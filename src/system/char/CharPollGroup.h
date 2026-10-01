@@ -11,6 +11,9 @@
 class CharPollGroup : public CharPollable, public CharWeightable {
 public:
     // Hmx::Object
+    // User-declared: retail ~CharPollGroup (0x823B0048) re-stores the
+    // CharPollGroup vtables before destroying the members.
+    virtual ~CharPollGroup();
     OBJ_CLASSNAME(CharPollGroup)
     OBJ_SET_TYPE(CharPollGroup)
     virtual DataNode Handle(DataArray *, bool);

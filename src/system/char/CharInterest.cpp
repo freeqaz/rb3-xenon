@@ -165,7 +165,9 @@ float CharInterest::ComputeScore(
     int filterFlags,
     bool b
 ) {
-    if (!IsMatchingFilterFlags(filterFlags) && !(b && mCategoryFlags == 0)) {
+    // Retail materialises the whole test as a bool before branching on it.
+    bool usable = IsMatchingFilterFlags(filterFlags) || (b && mCategoryFlags == 0);
+    if (!usable) {
         return -1.0f;
     }
 

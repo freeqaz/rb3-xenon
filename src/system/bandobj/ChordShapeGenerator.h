@@ -25,6 +25,10 @@ public:
         std::vector<Edge> mEdges; // 0x0
         std::set<unsigned short> mVerts; // 0xc
         float mXOffset; // 0x24
+
+        // Out of line in retail (0x822E1320, called only from GetCrossSection);
+        // no name survives, this one is descriptive.
+        void AddEdge(const Edge &);
     };
 
     ChordShapeGenerator();
@@ -43,14 +47,14 @@ public:
     void NameMesh(RndMesh *, bool);
     void InterpolateXfm(const Transform &, const Transform &, float, Transform &);
     void
-    TransformVert(RndMesh::Vert &, float, float, float, const Transform &, Hmx::Color32);
+    TransformVert(RndMesh::Vert &, float, float, float, const Transform &, Hmx::Color);
     void AddVertProfile(
         RndMesh *,
         const Transform &,
         float,
         const CrossSec &,
         std::map<unsigned short, unsigned short> &,
-        Hmx::Color32
+        Hmx::Color
     );
     void BuildContourCap(
         RndMesh *,
@@ -59,8 +63,8 @@ public:
         const Transform &,
         const Transform &,
         Symbol,
-        Hmx::Color32,
-        Hmx::Color32
+        Hmx::Color,
+        Hmx::Color
     );
     void BuildEndCap(
         RndMesh *,
@@ -68,7 +72,7 @@ public:
         int,
         const Transform &,
         Symbol,
-        Hmx::Color32
+        Hmx::Color
     );
     void GetCrossSection(float, CrossSec &);
     void ExtendProfile(
@@ -79,8 +83,8 @@ public:
         float,
         float,
         const CrossSec &,
-        Hmx::Color32,
-        Hmx::Color32
+        Hmx::Color,
+        Hmx::Color
     );
     void BuildSpan(
         RndMesh *,
@@ -89,8 +93,8 @@ public:
         int,
         const Transform &,
         const Transform &,
-        Hmx::Color32,
-        Hmx::Color32
+        Hmx::Color,
+        Hmx::Color
     );
     void ConnectVertProfiles(
         RndMesh *,

@@ -1358,7 +1358,10 @@ DataNode BandWardrobe::OnSelectExtras(DataArray *da) {
                 m.mName = o->Name();
                 m.mDir = dynamic_cast<ObjectDir *>(o);
                 m.mSubdirs = (MergeFilter::Subdirs)3;
-                unk20->Mergers().push_back(m);
+                // Retail calls std::vector<Merger>::push_back here (0x82332298:
+                // copy-construct in place or _M_insert_overflow_aux), not
+                // ObjVector's resize-and-assign push_back.
+                static_cast<std::vector<FileMerger::Merger> &>(unk20->Mergers()).push_back(m);
                 DataNode propnode = o->PropertyArray(proxies);
                 DataArray *proparr = propnode.Array();
                 for (int i = 0; i < proparr->Size(); i++) {

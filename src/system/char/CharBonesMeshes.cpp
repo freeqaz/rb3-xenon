@@ -27,7 +27,7 @@ void CharBonesMeshes::Replace(ObjRef *ref, Hmx::Object *obj) {
              it != mMeshes.end();
              ++it) {
             if (*it == from) {
-                *it = obj ? dynamic_cast<RndTransformable *>(obj) : 0;
+                *it = dynamic_cast<RndTransformable *>(obj); // retail: no null test first
                 if (!*it)
                     *it = mDummyMesh;
                 return;

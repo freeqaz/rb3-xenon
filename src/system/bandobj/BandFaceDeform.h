@@ -33,6 +33,7 @@ public:
         void SetSize(int);
         void Clear();
         void Load(BinStream &);
+        void Save(BinStream &) const;
         void AppendDeltas(const std::vector<Vector3> &, const std::vector<Vector3> &);
         void *end() { return &((char *)mData)[mSize]; }
         void *begin() { return mData; }

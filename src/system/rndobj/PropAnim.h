@@ -150,6 +150,9 @@ public:
 
     friend class HamDirector; // native: PropKeys retargeting after Copy
 
+    // CharLipSync::PlayBack walks the keys list directly (one weight per keys).
+    std::list<PropKeys *> &PropKeysList() { return mPropKeys; }
+
 protected:
     RndPropAnim();
 

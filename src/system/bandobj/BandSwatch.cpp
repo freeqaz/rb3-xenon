@@ -44,7 +44,12 @@ BEGIN_COPYS(BandSwatch)
     COPY_SUPERCLASS_FROM(UIList, s)
 END_COPYS
 
-SAVE_OBJ(BandSwatch, 0x48)
+// Retail serializes (0x822AD340): rev 1, the palette, then UIList.
+void BandSwatch::Save(BinStream &bs) {
+    bs << 1;
+    bs << mColorPalette;
+    UIList::Save(bs);
+}
 
 BEGIN_LOADS(BandSwatch)
     PreLoad(bs);
@@ -114,10 +119,6 @@ END_PROPSYNCS
 #undef gRev
 #undef gAltRev
 
-// Lane-AE scatter force-emit: retail placed PatchRenderer's OBJ_CLASSNAME
-// COMDAT (?StaticClassName@PatchRenderer@@SA?AVSymbol@@XZ) inside the .text span
-// pinned to default/BandSwatch. The macro defines it inline, so it is only
-// emitted where it is odr-used -- nothing in this TU used it, so our obj
-// never defined the symbol and objdiff could not pair it. Force the use.
-#include "bandobj/PatchRenderer.h"
-Symbol ForceEmit_PatchRenderer_StaticClassName() { return PatchRenderer::StaticClassName(); }
+// PatchRenderer's code sits inside the .text span pinned to BandSwatch in retail
+// (0x822AE130-0x822AF1C8), so it is compiled into this object.
+#include "bandobj/PatchRenderer.cpp"

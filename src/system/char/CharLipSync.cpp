@@ -303,66 +303,43 @@ CharLipSync *CharLipSync::FindLipSyncForSound(Sound *sound) {
 }
 
 CharLipSync::PlayBack::PlayBack()
-    : mLipSync(nullptr), mClips(nullptr), mIndex(0), mOldIndex(0), mFrame(-1) {}
+    : mLipSync(nullptr), mPropAnim(nullptr), mClips(nullptr), mIndex(0), mOldIndex(0),
+      mFrame(-1) {}
 
-void CharLipSync::PlayBack::Set(CharLipSync *lipsync, ObjPtr<ObjectDir> clips) {
+// Retail: a lipsync that carries a RndPropAnim drives one weight per PropKeys
+// of that anim, each bound to the clip named by the keys' property path;
+// otherwise one weight per viseme name. There is no "viseme_list" message.
+void CharLipSync::PlayBack::Set(CharLipSync *lipsync, ObjectDir *clips) {
     mClips = clips;
-    mLipSync = lipsync;
-
-    int numVisemes = mLipSync->mVisemes.size();
-    auto& _ref2 = mWeights;
-    _ref2.resize(numVisemes);
-
-    for (int i = 0; i < _ref2.size(); i++) {
-        ObjPtr<CharClip> &clip = _ref2[i].mClip;
-        clip = mClips->Find<CharClip>(mLipSync->mVisemes[i].c_str(), false);
-        if (!clip) {
-            MILO_LOG("could not find %s", (char *)mLipSync->mVisemes[i].c_str());
+    RndPropAnim *anim = lipsync->mPropAnim;
+    if (anim) {
+        mPropAnim = anim;
+        std::list<PropKeys *> &keys = anim->PropKeysList();
+        mWeights.resize(keys.size());
+        int i = 0;
+        for (std::list<PropKeys *>::iterator it = keys.begin(); it != keys.end(); ++it, i++) {
+            String name((*it)->Prop()->Str(0));
+            mWeights[i].mClip = mClips->Find<CharClip>(name.c_str(), false);
         }
-    }
-
-    static Message viseme_list("viseme_list");
-    DataNode result = mLipSync->Handle(viseme_list, false);
-
-    if (result.Type() == kDataArray) {
-        DataArray *arr = result.Array(0);
-        int arrSize = arr->Size();
-        int newSize = numVisemes + arrSize;
-        if (_ref2.size() != newSize) {
-            _ref2.resize(newSize);
-            for (int i = numVisemes; (unsigned int)i < newSize; i++) {
-                Symbol visemeSym = arr->Sym(i - numVisemes);
-                ObjPtr<CharClip> &clip = _ref2[i].mClip;
-                clip = mClips->Find<CharClip>(visemeSym.Str(), false);
-            }
+    } else {
+        mLipSync = lipsync;
+        mWeights.resize(mLipSync->mVisemes.size());
+        for (int i = 0; i < mWeights.size(); i++) {
+            mWeights[i].mClip =
+                mClips->Find<CharClip>(mLipSync->mVisemes[i].c_str(), false);
         }
     }
 }
 
 void CharLipSync::PlayBack::Poll(float time) {
-    if (!mLipSync)
-        return;
-
-    float zero = 0.0f;
-    static Message viseme_list("viseme_list");
-    DataNode result = mLipSync->Handle(viseme_list, false);
-
-    if (result.Type() == kDataArray) {
-        int numVisemes = mLipSync->mVisemes.size();
-        DataArray *arr = result.Array(0);
-        int end = arr->Size() + numVisemes;
-        if (numVisemes < end) {
-            int visIdx = 0;
-            float one = 1.0f;
-            CharLipSync *ls = mLipSync;
-            for (; numVisemes < end; visIdx++, numVisemes++) {
-                Symbol visemeSym = result.Array(0)->Sym(visIdx);
-                float weight = ls->Property(visemeSym, true)->Float(0);
-                if ((unsigned int)numVisemes < mWeights.size()) {
-                    mWeights[numVisemes].mCurWeight = Clamp(zero, one, weight);
-                }
-            }
+    if (mPropAnim) {
+        float frame = time * 30.0f;
+        int i = 0;
+        std::list<PropKeys *> &keys = mPropAnim->PropKeysList();
+        for (std::list<PropKeys *>::iterator it = keys.begin(); it != keys.end(); ++it, i++) {
+            (*it)->FloatAt(frame, mWeights[i].mCurWeight);
         }
+        return;
     }
 
     if (mLipSync->mFrames < 2) {
@@ -375,8 +352,8 @@ void CharLipSync::PlayBack::Poll(float time) {
 
     if (frameIdx < 1) {
         frameIdx = 1;
-        frac = zero;
-    } else if (frameIdx >= mLipSync->mFrames - 1) {
+        frac = 0.0f;
+    } else if (frameIdx >= mLipSync->mFrames) {
         frameIdx = mLipSync->mFrames - 1;
         frac = 0.9999999f;
     }
@@ -389,8 +366,9 @@ void CharLipSync::PlayBack::Poll(float time) {
     if (mFrame < frameIdx) {
         float conv = 1.0f / 255.0f;
         do {
-            mOldIndex = mIndex++;
-            int count = lipSync->mData[mOldIndex];
+            int oldIndex = mIndex++;
+            mOldIndex = oldIndex;
+            int count = lipSync->mData[oldIndex];
             if (count != 0) {
                 for (int i = count; i != 0; i--) {
                     int idx = lipSync->mData[mIndex++];
@@ -412,28 +390,6 @@ void CharLipSync::PlayBack::Poll(float time) {
                 idx += 2;
                 Weight &w = mWeights[wIdx];
                 w.mCurWeight = Interp(w.mPrevWeight, w.mNextWeight, frac);
-            }
-        }
-    }
-}
-
-void CharLipSync::PlayBack::SetClips(ObjPtr<ObjectDir> clips) {
-    if (!mLipSync)
-        return;
-    mClips = clips;
-
-    static Message viseme_list("viseme_list");
-    DataNode result = mLipSync->Handle(viseme_list, false);
-
-    if (result.Type() == kDataArray) {
-        DataArray *arr = result.Array(0);
-        int arrSize = arr->Size();
-        if (mWeights.size() == arrSize) {
-            mWeights.resize(arrSize);
-            for (int i = 0; i < arrSize; i++) {
-                Symbol visemeSym = result.Array(0)->Sym(i);
-                ObjPtr<CharClip> &clip = mWeights[i].mClip;
-                clip = mClips->Find<CharClip>(visemeSym.Str(), false);
             }
         }
     }

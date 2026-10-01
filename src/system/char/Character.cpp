@@ -829,11 +829,25 @@ void Character::SetSphereBase(RndTransformable *trans) {
     mSphereBase = trans;
 }
 
+// Retail keeps this out of line: OnCopyBoundingSphere calls it.
+#ifndef HX_NATIVE
+__declspec(noinline)
+#endif
 void Character::CopyBoundingSphere(Character *c) {
     MILO_ASSERT(c, 0x46D);
     SetSphere(c->mSphere);
     mBounding = c->mBounding;
-    SetSphereBase(c->mSphereBase);
+    // Retail assigns the owner pointer directly; it does not go through
+    // SetSphereBase.
+    mSphereBase = c->mSphereBase;
+}
+
+void Character::RepointSphereBase(ObjectDir *dir) {
+    if (mSphereBase) {
+        RndTransformable *t = dir->Find<RndTransformable>(mSphereBase->Name(), false);
+        if (t)
+            mSphereBase = t;
+    }
 }
 
 void Character::SetShadow(RndGroup *shadow) {

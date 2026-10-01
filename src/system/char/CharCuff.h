@@ -30,6 +30,7 @@ public:
 
     float Eccentricity(const Vector2 &) const;
     void Deform(SyncMeshCB *, FileMerger *);
+    void DeformMesh(RndMesh *, int, SyncMeshCB *);
 
     OBJ_MEM_OVERLOAD_INLINE_DEL(0x1A)
     NEW_OBJ(CharCuff)

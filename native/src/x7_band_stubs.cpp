@@ -68,30 +68,18 @@
 #include "rndobj/Rnd.h"
 
 // --- Character (char/Character.h:153-154). Declared, never defined.
-// RepointSphereBase re-anchors the bounding sphere onto a merged dir; with it
-// inert the sphere keeps whatever base it loaded with, which affects CULLING
-// and LOD selection, not position.
-void Character::RepointSphereBase(ObjectDir *) {}
+// (RepointSphereBase used to be an inert stub here; lane W16-LA wrote the real
+// body in char/Character.cpp from retail 0x8236F1D0.)
 // RemoveFromPoll drops a pollable from the character's poll list. Inert means
 // a removed pollable keeps polling — a leak of work, not of correctness, for a
 // single-frame render.
 void Character::RemoveFromPoll(RndPollable *) {}
 
-// --- CharClip (char/CharClip.h:186-187). Declared, never defined. Note the
-// tree DOES define the differently-named CharClip::InGroups() (CharClip.cpp:1021);
-// these two are not it.
-// InGroup answers "is this clip in that group"; false = "no group claims it",
-// which routes clip selection to its default arm rather than to a wrong group.
-bool CharClip::InGroup(Hmx::Object *) { return false; }
-// MakeMRU promotes a clip in the LRU cache. Inert = no reordering; eviction
-// order changes, contents do not.
-void CharClip::MakeMRU() {}
-
-// --- Deformation passes. All declared, never defined. See the disclosure above.
-void CharCollide::Deform() {}
-void CharCuff::Deform(SyncMeshCB *, FileMerger *) {}
-void CharBoneOffset::ApplyToLocal() {}
-void CharMeshHide::HideAll(const ObjPtrList<CharMeshHide, ObjectDir> &, int) {}
+// (CharClip::InGroup and CharClip::MakeMRU, and the four deformation passes
+// CharCollide::Deform, CharCuff::Deform, CharBoneOffset::ApplyToLocal and
+// CharMeshHide::HideAll, used to be inert stubs here; lane W16-LA wrote the real
+// bodies from retail 0x8237E0B8, 0x8237E118, 0x8239AD88, 0x8239F1A0, 0x823A45E0
+// and 0x823A0D60, so the disclosure above no longer applies to them.)
 
 // (RndMeshDeform::Reskin used to be an inert stub here; lane W16-JA wrote the
 // real body in rndobj/MeshDeform.cpp, so it is no longer substituted.)
@@ -108,17 +96,6 @@ void CharMeshHide::HideAll(const ObjPtrList<CharMeshHide, ObjectDir> &, int) {}
 #include "bandobj/BandPatchMesh.h"
 #include "meta/FixedSizeSaveable.h"
 #include "meta/FixedSizeSaveableStream.h"
-
-// BandCharacter.h:206 re-declares `static Symbol NameToDrumVenue(const char*)`
-// which BandCharDesc ALREADY declares and DEFINES (BandCharDesc.cpp:575). The
-// redeclaration hides the inherited one, so the call binds to a symbol with no
-// body. Forwarding to the base is not a guess: identical signature, identical
-// semantics, and BandCharacter IS-A BandCharDesc. Deleting the redundant
-// declaration from the header would also work but would change name lookup in
-// the X360 arm, which this lane does not touch.
-Symbol BandCharacter::NameToDrumVenue(const char *name) {
-    return BandCharDesc::NameToDrumVenue(name);
-}
 
 // (BandPatchMesh::ConstructQuad used to be an inert stub here; W17-BPM2 ported
 // the patch-projection subsystem, so the real member in

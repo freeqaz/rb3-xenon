@@ -1,3 +1,7 @@
+// Retail inlines the owner-only ObjOwnerPtr ctor in this TU (EyeDesc's ctor and
+// OnAddInterest store {mOwner, mObject = 0, vptr} in place).
+#define RB3_OBJOWNERPTR_INLINE_OWNER_CTOR
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
 #define RB3_OBJPTR_INLINE_TWOARG_CTOR
 // The plain-inline in-class two-arg ctor (replacing RB3_OBJPTR_INLINE_OWNER_CTOR)
 // takes ??0CharEyes to 100. Retail inlines the owner-only ObjPtr ctor in this TU (three stores, no

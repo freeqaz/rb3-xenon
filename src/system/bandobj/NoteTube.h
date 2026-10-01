@@ -45,7 +45,7 @@ public:
 class NoteTube : public Hmx::Object {
 public:
     NoteTube();
-    virtual ~NoteTube() {}
+    // Implicit in retail: ~NoteTube (0x82C29AC0) re-stores no vtable.
 
     void SetNumPoints(int);
     void SetPointPos(int, Vector3);

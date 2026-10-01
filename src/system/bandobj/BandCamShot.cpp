@@ -81,6 +81,8 @@ BandCamShot::BandCamShot()
       mCurShot(this), unk15c(0), unk160(0), unk168(0), unk164(0), unk169(0), unk16a(0),
       mAnimsDuringNextShots(0) {
     mShotIter = mNextShots.end();
+    mNearPlane = 10.0f;
+    mFarPlane = 10000.0f;
 }
 
 RndTransformable *BandCamShot::FindTarget(Symbol s, bool b) {
