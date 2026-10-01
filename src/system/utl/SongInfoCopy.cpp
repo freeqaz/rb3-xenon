@@ -30,12 +30,17 @@ int SongInfoCopy::NumChannelsOfTrack(SongInfoAudioType ty) const {
         return 0;
 }
 
-// TU5/retail-only virtual (vtable slot 0x4c). Placeholder body — the real
-// retail impl (fn_827D1190) compares GetName() against Symbol
-// "ugc_audition_temp_song". Exact semantics for SongInfoCopy TBD; returning
-// false is behavior-neutral for the non-audition path and is not a tracked rep.
-// TODO(tu5): port the real body once the method's purpose is confirmed.
-bool SongInfoCopy::UnkTU5Virtual_0x4c() const { return false; }
+// TU5/retail-only virtual (vtable slot 0x4c, retail 0x827D1190); its real name is
+// not known. MasterAudio passes the result to Synth::NewStream.
+// Retail reads the name through a writable global pointer (.data 0x82C78F24),
+// not a literal; the variable's name is descriptive.
+static const char *gUGCAuditionTempSongName = "ugc_audition_temp_song";
+
+// Retail: true for every song except the UGC audition temp song.
+bool SongInfoCopy::UnkTU5Virtual_0x4c() const {
+    static Symbol ugc_audition_temp_song(gUGCAuditionTempSongName);
+    return GetName() != ugc_audition_temp_song;
+}
 
 int SongInfoCopy::NumExtraMidiFiles() const { return mExtraMidiFiles.size(); }
 
