@@ -1326,6 +1326,7 @@
                     "/DRB3_HANDLE_LOCAL_STATIC"
                 ]
             },
+            "band3/meta_band/BandPreloadPanel.cpp": "NonMatching",
             "band3/meta_band/BandStorePanel.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
@@ -2169,6 +2170,12 @@
             },
             "network/net/MatchmakingSettings.cpp": "NonMatching",
             "network/net/NetLog.cpp": "NonMatching",
+            "network/net/Net.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_HANDLE_LOCAL_STATIC"
+                ]
+            },
             "network/net/NetSession.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [

@@ -3164,9 +3164,7 @@ Timer.cpp:
 	.text       start:0x82C40F28 end:0x82C40F7C
 
 Str.cpp:
-	.pdata      start:0x82207868 end:0x82207888
 	.pdata      start:0x82241BF8 end:0x82241D08
-	.text       start:0x823E0430 end:0x823E063C
 	.text       start:0x827BD990 end:0x827BE9A0
 
 RenderState.cpp:
@@ -4649,10 +4647,10 @@ RhythmBattle.cpp:
 CharBonesSamples.cpp:
 	.pdata      start:0x821F86B0 end:0x821F86B8
 	.pdata      start:0x82207770 end:0x82207840
-	.pdata      start:0x82207840 end:0x82207868
+	.pdata      start:0x82207840 end:0x82207850
 	.text       start:0x822DFCD8 end:0x822DFD88
 	.text       start:0x823DE258 end:0x823DFFE8
-	.text       start:0x823DFFE8 end:0x823E0420
+	.text       start:0x823DFFE8 end:0x823E02F0
 
 CharBonesMeshes.cpp:
 	.pdata      start:0x821F1AB8 end:0x821F1AD0
@@ -5570,8 +5568,6 @@ CharServoBone.cpp:
 	.pdata      start:0x82201CE8 end:0x82201CF0
 	.pdata      start:0x82201CF0 end:0x82201CF8
 	.pdata      start:0x82201CF8 end:0x82201D90
-	.pdata      start:0x82227FE0 end:0x82227FE8
-	.pdata      start:0x82227FE8 end:0x82227FF0
 	.text       start:0x823587B0 end:0x82358804
 	.text       start:0x82375448 end:0x823754A0
 	.text       start:0x823754B0 end:0x82375534
@@ -5590,8 +5586,6 @@ CharServoBone.cpp:
 	.text       start:0x82376090 end:0x82376178
 	.text       start:0x82376178 end:0x82376D3C
 	.text       start:0x825459E0 end:0x825459E8
-	.text       start:0x826047A0 end:0x82604840
-	.text       start:0x82604840 end:0x82604868
 
 Mat.cpp:
 	.pdata      start:0x8220CB00 end:0x8220CB08
@@ -7902,13 +7896,11 @@ MoviePanel.cpp:
 	.text       start:0x827AF8B0 end:0x827B1780
 
 StorePanel.cpp:
-	.pdata      start:0x82227FF0 end:0x82228078
 	.pdata      start:0x822413D8 end:0x822413F0
 	.pdata      start:0x822413F0 end:0x82241410
 	.pdata      start:0x82241410 end:0x82241450
 	.pdata      start:0x82241450 end:0x822415E0
 	.pdata      start:0x82241628 end:0x82241630
-	.text       start:0x82604868 end:0x826050A8
 	.text       start:0x827B4AE0 end:0x827B4C68
 	.text       start:0x827B4C68 end:0x827B4EB8
 	.text       start:0x827B4EB8 end:0x827B53A4
@@ -8750,6 +8742,10 @@ band3/meta_band/StoreOfferProvider.cpp:
 	.text       start:0x826640CC end:0x82665D94
 	.text       start:0x82665D98 end:0x82665DE4
 
+band3/meta_band/BandPreloadPanel.cpp:
+	.pdata      start:0x82227FE0 end:0x82228078
+	.text       start:0x826047A0 end:0x826050A8
+
 band3/meta_band/BandStorePanel.cpp:
 	.pdata      start:0x82228078 end:0x82228148
 	.pdata      start:0x82228148 end:0x82228158
@@ -9396,6 +9392,13 @@ network/net/MatchmakingSettings.cpp:
 	.text       start:0x823F33E0 end:0x823F3648
 	.text       start:0x823F3648 end:0x823F3E24
 
+network/net/Net.cpp:
+	.pdata      start:0x82207850 end:0x822078A8
+	.pdata      start:0x82261460 end:0x82261468
+	.text       start:0x823E02F0 end:0x823E08A0
+	.text       start:0x82C3EB80 end:0x82C3EBF0
+	.text       start:0x82C44C90 end:0x82C44CA8
+
 network/net/NetLog.cpp:
 	.pdata      start:0x82208600 end:0x82208610
 	.text       start:0x823EB8E0 end:0x823EB958
@@ -9477,7 +9480,7 @@ network/net/QuazalSession.cpp:
 	.text       start:0x823F3038 end:0x823F30B8
 
 network/net/NetSession.cpp:
-	.pdata      start:0x82207888 end:0x822078D8
+	.pdata      start:0x822078A8 end:0x822078D8
 	.pdata      start:0x822078D8 end:0x822078E8
 	.pdata      start:0x822078E8 end:0x822078F8
 	.pdata      start:0x822078F8 end:0x82207908
@@ -9540,7 +9543,7 @@ network/net/NetSession.cpp:
 	.pdata      start:0x822080D8 end:0x82208100
 	.pdata      start:0x82208100 end:0x82208108
 	.pdata      start:0x82208108 end:0x822082C0
-	.text       start:0x823E063C end:0x823E0A28
+	.text       start:0x823E08A0 end:0x823E0A28
 	.text       start:0x823E0A28 end:0x823E0AA8
 	.text       start:0x823E0AA8 end:0x823E0B28
 	.text       start:0x823E0B28 end:0x823E0BA8

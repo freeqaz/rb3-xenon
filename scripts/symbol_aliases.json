@@ -47169,7 +47169,7 @@
   {
    "name": "Load",
    "address": "0x82604a40",
-   "survivor": "?Load@UIPanel@@$4PPPPPPPM@EM@AAXAAVBinStream@@@Z",
+   "survivor": "?SetTypeDef@PreloadPanel@@$4PPPPPPPM@7AAXPAVDataArray@@@Z",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -47179,6 +47179,13 @@
      "class": "PLACEHOLDER_SLOT_UNPROVEN_CALLEE_UNPROVEN_OURS_DISTINCT",
      "disposition": "membership withdrawn as UNPROVEN (NOT refuted), group kept",
      "evidence": "tools/alias_placeholder_slot_audit.py (W16-JH): this membership's T1 support rested on a relocation slot with an unnamed retail target, which W16-JG's discharge could not close and W16-JH could not prove on retail bytes. CALLEE-UNPROVEN-OURS-DISTINCT @+0xc retail fn_827B36E0 vs ours ?FindPathName@FlowNode@@UAAPBDXZ -- retail fn_827B36E0 8 B vs our ?FindPathName@FlowNode@@UAAPBDXZ 232 B; first diff @+0x0 retail 'addi r3, r3, -0x3c' vs ours 'mflr r12'; retail bodies byte-equal to our callee: none. RESTORE when the chase proves it (e.g. after the callee port)."
+    },
+    {
+     "spelling": "?Load@UIPanel@@$4PPPPPPPM@EM@AAXAAVBinStream@@@Z",
+     "lane": "W16-NC-F2 2026-10-01",
+     "class": "CONTRADICTED_SURVIVOR_THUNK_TARGET",
+     "disposition": "former SURVIVOR spelling withdrawn as REFUTED on retail bytes; survivor respelled to the thunk the bytes name; folded list unchanged (empty); group kept",
+     "evidence": "Retail 0x82604A40 is `lwz r11,-4(r3); subf r3,r11,r3; addi r3,r3,-8; b 0x827B36E0`: a vtordisp thunk with a -8 adjustment (mangled `7`, not `EM` = 0x4C) whose target 0x827B36E0 is `addi r3,r3,-0x3c; b ?SetTypeDef@UIPanel@@`, i.e. PreloadPanel::SetTypeDef, not UIPanel::Load. It is slot 15 of BandPreloadPanel's Object-subobject vtable 0x820BEF8C, and our compiled BandPreloadPanel.obj puts ?SetTypeDef@PreloadPanel@@$4PPPPPPPM@7AAXPAVDataArray@@@Z in that slot (scripts/dump_vtable.py, slot 16 with the COL at [0])."
     }
    ]
   },
@@ -91391,7 +91398,8 @@
     "??_G?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@QAAPAXI@Z",
     "??_GDebugGraph@?A0xb39b74bf@@QAAPAXI@Z",
     "??_GLongJoyCheat@@QAAPAXI@Z",
-    "??_GPendingPurchase@MusicLibraryStore@@QAAPAXI@Z"
+    "??_GPendingPurchase@MusicLibraryStore@@QAAPAXI@Z",
+    "??_GSyncStore@@QAAPAXI@Z"
    ],
    "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x825bd3e8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 16 against 4 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies.",
    "admitted": [
@@ -91399,6 +91407,11 @@
      "spelling": "??_GPendingPurchase@MusicLibraryStore@@QAAPAXI@Z",
      "lane": "W16-KD 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED (masked bodies match but relocation TARGETS disagree -- template-twin, not a fold), CHASED T1 PROVEN, 0 CYCLE leaves; retail_bodytwins 1. Charged call site(s) where retail branches to this survivor and our compiled code calls the spelling: ?Poll@MusicLibraryStore@@ (1448 B, 99.972)."
+    },
+    {
+     "spelling": "??_GSyncStore@@QAAPAXI@Z",
+     "lane": "W16-NC-F2 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED (template-twin shape: the operator-delete slot names differ), CHASED T1 PROVEN, 0 CYCLE leaves; retail_bodytwins 1. Charged call site: ?Terminate@Net@@QAAXXZ (232 B, 99.91) -- retail 0x823E0874 `bl 0x825BD3E8` deletes mSyncStore (Net+0x3c, the SyncStore that Net::Init news at 0x823E06B0) where our source calls ??_GSyncStore."
     }
    ]
   },
@@ -91764,6 +91777,7 @@
    "address": "0x826a9880",
    "survivor": "?OnMsg@SyncGameStartPanel@@QAA?AVDataNode@@ABVLockStepStartMsg@@@Z",
    "folded": [
+    "?OnMsg@BandPreloadPanel@@QAA?AVDataNode@@ABVLockStepStartMsg@@@Z",
     "?OnMsg@BandUI@@QAA?AVDataNode@@ABVServerStatusChangedMsg@@@Z",
     "?OnMsg@MainHubPanel@@QAA?AVDataNode@@ABVLockStepCompleteMsg@@@Z",
     "?OnUsingCD@@YA?AVDataNode@@PAVDataArray@@@Z"
@@ -91774,6 +91788,11 @@
      "spelling": "?OnUsingCD@@YA?AVDataNode@@PAVDataArray@@@Z",
      "lane": "W16-KD 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN and CHASED T1 PROVEN, 0 CYCLE-ASSUMED; retail body 'li r11,1; li r10,0; stw; stw; blr' is DataNode(1), unique in retail. Retail call-site witness: PreInitSystem registers this address under the \"using_cd\" string where our source registers OnUsingCD; the map places OnUsingCD at no address of its own."
+    },
+    {
+     "spelling": "?OnMsg@BandPreloadPanel@@QAA?AVDataNode@@ABVLockStepStartMsg@@@Z",
+     "lane": "W16-NC-F2 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN and CHASED T1 PROVEN (20 B, 0 relocations), 0 CYCLE leaves; retail_bodytwins 1. Retail call-site witness: BandPreloadPanel::Handle (0x82604E40) dispatches LockStepStartMsg with `bl 0x826A9880` at 0x82604EB8; BandPreloadPanel's TU (0x826047A0-0x826050A8) contains no body of its own for this OnMsg."
     }
    ]
   },
