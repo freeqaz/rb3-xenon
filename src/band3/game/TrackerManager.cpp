@@ -278,9 +278,11 @@ void TrackerManager::OnRemoteTrackerEndStreak(Player *p, int i1, int i2) {
 }
 
 TrackerSource *TrackerManager::CreateSource(const TrackerDesc &desc) const {
-    LocalBandUser *pUser = desc.mUser;
-    if (!pUser)
+    if (!desc.mUser)
         return new BandTrackerSource(mBand);
+    // Declared after the first new: retail stores pUser into 0x50(r31), the
+    // slot it shares with the new-expression cleanup temporary.
+    LocalBandUser *pUser = desc.mUser;
     MILO_ASSERT(pUser, 600);
     Player *p = pUser->GetPlayer();
     if (!p) {
