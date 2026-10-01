@@ -95,6 +95,7 @@ void TambourineManager::PostDynamicAdd() { Restart(); }
 void TambourineManager::Start() { mTambourineActive = true; }
 
 void TambourineManager::Restart() {
+    static Symbol tambourine("tambourine"); // retail: function-local static
     unk4c = 0;
     mTambourineIdx = 0;
     unk60 = 0;
@@ -106,6 +107,7 @@ void TambourineManager::Restart() {
 }
 
 void TambourineManager::Jump(float) {
+    static Symbol tambourine("tambourine"); // retail: function-local static
     unk4c = 0;
     mTambourineIdx = 0;
     unk60 = 0;
@@ -178,10 +180,10 @@ void TambourineManager::Poll(float ms) {
 }
 
 void TambourineManager::ComputeTambourinePoints() {
+    static Symbol tambourine("tambourine"); // retail: function-local static
     Symbol awardSym;
-    Symbol trackSym = tambourine;
     int points = 0;
-    TheScoring->GetSoloAward(100, trackSym, points, awardSym);
+    TheScoring->GetSoloAward(100, tambourine, points, awardSym);
     unk78 = 0;
     unk7c = 0;
     VocalNoteList *list = mPlayerRef.mVocalParts[0]->mVocalNoteList;
@@ -252,6 +254,7 @@ bool TambourineManager::GemProcessed(int index) const {
 }
 
 void TambourineManager::LocalTambourineSoloEnd(int pct, int numGems) {
+    static Symbol tambourine("tambourine"); // retail: function-local static
     Symbol awardSym;
     int points = 0;
     TheScoring->GetSoloAward(pct, tambourine, points, awardSym);
@@ -260,8 +263,7 @@ void TambourineManager::LocalTambourineSoloEnd(int pct, int numGems) {
     mPlayerRef.AddTambourinePointsStat((float)total);
     BandTrack *track = mPlayerRef.GetBandTrack();
     if (track) {
-        Symbol awardSymCopy = awardSym;
-        GetTrackPanelDir()->SoloEnd(track, total, awardSymCopy);
+        GetTrackPanelDir()->SoloEnd(track, total, awardSym);
     }
 }
 
@@ -408,9 +410,10 @@ DataNode TambourineManager::OnPlayTambourine(DataArray *d) {
 }
 
 void TambourineManager::OnRemoteTambourineSucceeding(DataArray *msg) {
-    int succeeding = msg->Int(2);
+    bool succeeding = msg->Int(2) != 0;
     int pct = msg->Int(3);
-    if ((unk48 = succeeding != 0)) {
+    unk48 = succeeding;
+    if (succeeding) {
         BandTrack *track = mPlayerRef.GetBandTrack();
         if (track) {
             track->SoloHit(pct);
