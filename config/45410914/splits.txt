@@ -2010,12 +2010,10 @@ UsbMidiKeyboard.cpp:
 	.pdata      start:0x822186B0 end:0x822186C0
 	.pdata      start:0x822186C0 end:0x822186C8
 	.pdata      start:0x822186C8 end:0x82218738
-	.pdata      start:0x82218740 end:0x82218798
 	.text       start:0x8251AA60 end:0x8251AB74
 	.text       start:0x8251AB74 end:0x8251AC08
 	.text       start:0x8251AC08 end:0x8251B09C
 	.text       start:0x8251B09C end:0x8251B3D8
-	.text       start:0x8251B410 end:0x8251B848
 
 json_tokener.c:
 	.pdata      start:0x8225C848 end:0x8225C878
@@ -7364,7 +7362,9 @@ DOFProc.cpp:
 
 System_Xbox.cpp:
 	.pdata      start:0x82218738 end:0x82218740
+	.pdata      start:0x82218740 end:0x82218798
 	.text       start:0x8251B3D8 end:0x8251B410
+	.text       start:0x8251B410 end:0x8251B848
 	.text       start:0x8251B848 end:0x8251B880
 
 FakeSongMgr.cpp:
