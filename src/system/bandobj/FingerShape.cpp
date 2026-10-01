@@ -96,6 +96,10 @@ void FingerShape::UpdateLeftyFlip(bool lefty) {
 void FingerShape::Reset(bool b) { Update(RGState(), b, false); }
 
 void FingerShape::UpdateAnim(RndAnimatable *anim, float frame, bool b) {
+    // Retail builds both Symbols as guarded function-local statics ("dest" bit 1,
+    // "range" bit 2); the two trailing EH funclets reset those guard bits.
+    static Symbol dest("dest");
+    static Symbol range("range");
     Symbol sym = b ? dest : range;
     float frametouse = b ? anim->GetFrame() : frame;
     anim->Animate(
@@ -117,7 +121,9 @@ void FingerShape::UpdateFretNumber(const RGState &state, bool b) {
     RGGetFretLabelInfo(state, i44, i48);
     float posframe = mFretNumberPositionAnim->GetFrame();
     float f2 = 0;
-    if (i48 > 0) {
+    // Retail materializes the fret test as a bool ((-x & ~x) >> 31) before branching.
+    bool hasFret = i48 > 0;
+    if (hasFret) {
         if (mLefty)
             posframe = 5 - i44;
         else

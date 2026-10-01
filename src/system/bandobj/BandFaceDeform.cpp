@@ -267,11 +267,18 @@ BEGIN_COPYS(BandFaceDeform)
     END_COPYING_MEMBERS
 END_COPYS
 
-// Retail's BandFaceDeform::Save streams mFrames through the generic
-// vector operator<<, which needs a per-element operator<<. Only
-// operator>> exists in this tree, so the
-// element saver is declared here and left to the (not-yet-located) definition.
-BinStream &operator<<(BinStream &bs, const BandFaceDeform::DeltaArray &da);
+// Element saver for BandFaceDeform::Save's vector operator<< (retail 0x822C71E8):
+// the byte size, then each run's two halfword fields and its packed 3-byte deltas.
+BinStream &operator<<(BinStream &bs, const BandFaceDeform::DeltaArray &da) {
+    bs << da.mSize;
+    for (Delta *d = (Delta *)da.mData; d < (Delta *)((char *)da.mData + da.mSize);
+         d = (Delta *)d->next()) {
+        bs << (const unsigned short &)d->unk0;
+        bs << d->num;
+        bs.Write(d + 1, d->num * 3);
+    }
+    return bs;
+}
 
 BinStream &operator>>(BinStream &bs, BandFaceDeform::DeltaArray &da) {
     da.Load(bs);

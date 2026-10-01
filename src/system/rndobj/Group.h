@@ -57,6 +57,8 @@ public:
      * add will be appended.
      */
     void AddObject(Hmx::Object *add, Hmx::Object *after = nullptr);
+    /** Add an object to the front of this group (and of its anim/draw lists). */
+    void AddObjectAtFront(Hmx::Object *obj);
     /** Completely empty the group. */
     void ClearObjects();
     /** "Sort objects by draw_order and material" */

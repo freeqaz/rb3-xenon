@@ -404,6 +404,22 @@ void RndGroup::RemoveObject(Hmx::Object *obj) {
     }
 }
 
+// Retail 0x82453318: no Update() and no draw-iterator reset; the object goes to the
+// front of mObjects and, by cast, to the front of mAnims and mDraws.
+void RndGroup::AddObjectAtFront(Hmx::Object *o) {
+    if (!o || o == this)
+        return;
+    if (mObjects.find(o) != mObjects.end())
+        return;
+    mObjects.insert(mObjects.begin(), o);
+    RndAnimatable *anim = dynamic_cast<RndAnimatable *>(o);
+    if (anim)
+        mAnims.insert(mAnims.begin(), anim);
+    RndDrawable *draw = dynamic_cast<RndDrawable *>(o);
+    if (draw)
+        mDraws.insert(mDraws.begin(), draw);
+}
+
 void RndGroup::ClearObjects() {
     mObjects.clear();
     Update();
