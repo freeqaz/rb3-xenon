@@ -816,24 +816,11 @@ DataNode BandCamShot::OnListAnimGroups(const DataArray *da) {
 }
 
 DataNode BandCamShot::OnTestDelta(DataArray *arr) {
-    float f4 = arr->Float(2);
-    bool ret = true;
-    if (f4 != 0) {
-        bool inRange = false;
-        bool passMin = true;
-        if (mMinTime != 0) {
-            if (!(f4 >= mMinTime)) passMin = false;
-        }
-        if (passMin) {
-            bool passMax = true;
-            if (mMaxTime != 0) {
-                if (!(f4 <= mMaxTime)) passMax = false;
-            }
-            if (passMax) inRange = true;
-        }
-        if (!inRange) ret = false;
-    }
-    return ret;
+    float delta = arr->Float(2);
+    return delta != 0
+            && ((mMinTime != 0 && delta < mMinTime) || (mMaxTime != 0 && delta > mMaxTime))
+        ? 0
+        : 1;
 }
 
 DataNode BandCamShot::OnAllowableNextShots(const DataArray *da) {
