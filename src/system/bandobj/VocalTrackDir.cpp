@@ -672,6 +672,15 @@ void VocalTrackDir::UpdateVocalMeters(bool b1, bool b2, bool b3, bool b4) {
 }
 
 Symbol GetRating(int i) {
+    // Retail builds all seven names as function-local statics on entry, then
+    // switches on the rating.
+    static Symbol vox_rating_0("vox_rating_0");
+    static Symbol vox_rating_1("vox_rating_1");
+    static Symbol vox_rating_2("vox_rating_2");
+    static Symbol vox_rating_3("vox_rating_3");
+    static Symbol vox_rating_4("vox_rating_4");
+    static Symbol vox_rating_5("vox_rating_5");
+    static Symbol vox_rating_6("vox_rating_6");
     switch (i) {
     case 0:
         return vox_rating_0;
