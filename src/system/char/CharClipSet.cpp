@@ -377,27 +377,23 @@ void CharClipSet::SortGroups() {
 }
 
 void CharClipSet::LoadCharacter() {
-    MILO_ASSERT(TheLoadMgr.EditMode(), 0x14b);
-    if (Dir() == this) {
-        delete mPreviewChar;
-        ObjectDir *loadedDir =
-            dynamic_cast<RndDir *>(DirLoader::LoadObjects(mCharFilePath, 0, 0));
-        mPreviewChar = dynamic_cast<RndDir *>(loadedDir);
-        Character *theChar = dynamic_cast<Character *>(loadedDir);
-        if (mPreviewChar && !theChar) {
-            for (ObjDirItr<Character> it(mPreviewChar, true); it != nullptr; ++it) {
-                mPreviewChar = it;
-                break;
-            }
+    delete mPreviewChar;
+    ObjectDir *loadedDir =
+        dynamic_cast<RndDir *>(DirLoader::LoadObjects(mCharFilePath, 0, 0));
+    mPreviewChar = dynamic_cast<RndDir *>(loadedDir);
+    Character *theChar = dynamic_cast<Character *>(loadedDir);
+    if (mPreviewChar && !theChar) {
+        ObjDirItr<Character> it(mPreviewChar, true);
+        if (it != nullptr)
+            mPreviewChar = it;
+    }
+    if (mPreviewChar) {
+        mPreviewChar->Enter();
+        mPreviewChar->SetName("preview_character", this);
+        Hmx::Object *milo = ObjectDir::Main()->FindObject("milo", false);
+        if (milo) {
+            milo->Handle(Message("update_objects"), true);
         }
-        if (mPreviewChar) {
-            mPreviewChar->Enter();
-            mPreviewChar->SetName("preview_character", this);
-        }
-    } else {
-        MILO_NOTIFY(
-            "Preview character can only be loaded if the CharClipSet is the top-level directory."
-        );
     }
 }
 
