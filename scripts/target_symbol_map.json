@@ -20207,7 +20207,7 @@
  "0x8270dbb8": "?UpdatePanInfo@MoggClip@@AAAXXZ",
  "0x8270dc28": "?SynthPoll@MoggClip@@UAAXXZ",
  "0x8270dda0": "?PreLoad@MoggClip@@UAAXAAVBinStream@@@Z",
- "0x8270de58": null,
+ "0x8270de58": "?PostLoad@MoggClip@@UAAXAAVBinStream@@@Z",
  "0x8270de60": "?Play@MoggClip@@QAAXXZ",
  "0x8270df60": "?SetFile@MoggClip@@QAAXPBD@Z",
  "0x8270dfb8": "?SyncProperty@MoggClip@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
