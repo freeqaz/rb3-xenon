@@ -1357,7 +1357,8 @@ void MetaPerformer::RecordBattleScore(const BandStatsInfo &stats, bool battleFin
     std::vector<BandProfile *> profiles40;
     FOREACH (it, profiles) {
         BandProfile *cur = *it;
-        if (netServer->GetPlayerID(cur->GetPadNum())) {
+        unsigned int playerID = netServer->GetPlayerID(cur->GetPadNum());
+        if (playerID != 0) {
             profiles40.push_back(cur);
         }
     }
