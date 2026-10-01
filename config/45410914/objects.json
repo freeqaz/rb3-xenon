@@ -2031,6 +2031,7 @@
             },
             "band3/meta_band/RetryAudioPanel.cpp": "NonMatching",
             "band3/meta_band/SaveLoadStatusPanel.cpp": "NonMatching",
+            "band3/meta_band/ShellInputInterceptor.cpp": "NonMatching",
             "band3/meta_band/SetlistSortByLocation.cpp": "NonMatching",
             "band3/tour/TourPropertyCollection.cpp": "NonMatching",
             "band3/meta_band/ProfileAssets.cpp": "NonMatching",

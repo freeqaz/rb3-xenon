@@ -198,7 +198,6 @@ RockCentral.cpp:
 	.pdata      start:0x82217408 end:0x82217410
 	.pdata      start:0x82217410 end:0x82217808
 	.pdata      start:0x8221A840 end:0x8221A850
-	.pdata      start:0x82222208 end:0x82222218
 	.pdata      start:0x82224200 end:0x82224240
 	.pdata      start:0x82224240 end:0x82224248
 	.pdata      start:0x82234E88 end:0x82234EB0
@@ -255,7 +254,6 @@ RockCentral.cpp:
 	.text       start:0x82594538 end:0x82594548
 	.text       start:0x82594768 end:0x82594778
 	.text       start:0x82595D10 end:0x82595D18
-	.text       start:0x825ACC78 end:0x825ACD30
 	.text       start:0x825CA968 end:0x825CAC18
 	.text       start:0x825CAC18 end:0x825CAC64
 	.text       start:0x826D0F70 end:0x826D0FE8
@@ -5959,14 +5957,12 @@ CameraManager.cpp:
 	.pdata      start:0x82213068 end:0x82213248
 	.pdata      start:0x82213258 end:0x822133E0
 	.pdata      start:0x822149F0 end:0x822149F8
-	.pdata      start:0x82222218 end:0x82222220
-	.pdata      start:0x82222220 end:0x822222B0
+	.pdata      start:0x822222A8 end:0x822222B0
 	.text       start:0x824B9E60 end:0x824B9ED8
 	.text       start:0x824B9F00 end:0x824BBE38
 	.text       start:0x824BBED0 end:0x824BD6C0
 	.text       start:0x824D6F68 end:0x824D6FDC
-	.text       start:0x825ACD30 end:0x825ACEC0
-	.text       start:0x825ACEC0 end:0x825AD768
+	.text       start:0x825AD700 end:0x825AD768
 	.text       start:0x825AD7A4 end:0x825AD7A8
 	.text       start:0x825AD804 end:0x825AD810
 
@@ -9364,6 +9360,10 @@ network/net/SessionSearcher.cpp:
 network/net/NetSearchResult.cpp:
 	.pdata      start:0x822090E0 end:0x82209158
 	.text       start:0x823F56F8 end:0x823F5C98
+
+band3/meta_band/ShellInputInterceptor.cpp:
+	.pdata      start:0x822221F0 end:0x822222A8
+	.text       start:0x825ACA64 end:0x825AD700
 
 network/net/MatchmakingSettings.cpp:
 	.pdata      start:0x82208E68 end:0x82208E98
@@ -13445,7 +13445,7 @@ band3/meta_band/LockStepMgr.cpp:
 	.pdata      start:0x82221FD8 end:0x82221FE8
 	.pdata      start:0x82221FF8 end:0x82222030
 	.pdata      start:0x82222030 end:0x82222038
-	.pdata      start:0x82222038 end:0x82222208
+	.pdata      start:0x82222038 end:0x822221F0
 	.text       start:0x825AAC28 end:0x825AACA0
 	.text       start:0x825AACDC end:0x825AAD5C
 	.text       start:0x825AAE1C end:0x825AAEB8
@@ -13453,7 +13453,7 @@ band3/meta_band/LockStepMgr.cpp:
 	.text       start:0x825AB060 end:0x825AB0F0
 	.text       start:0x825AB160 end:0x825AB3B8
 	.text       start:0x825AB3B8 end:0x825AB404
-	.text       start:0x825AB408 end:0x825ACC78
+	.text       start:0x825AB408 end:0x825ACA64
 
 band3/meta_band/UGCPurchasePanel.cpp:
 	.pdata      start:0x8222BCB0 end:0x8222BD68

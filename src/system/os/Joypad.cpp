@@ -526,6 +526,18 @@ bool JoypadTypeHasLeftyFlip(Symbol type) {
     return found->Int(1) != 0;
 }
 
+int JoypadTypePadShiftButton(Symbol type) {
+    static Symbol pad_shift_button("pad_shift_button");
+    DataArray *found = gControllersCfg->FindArray(type)->FindArray(pad_shift_button);
+    return found->Int(1);
+}
+
+int JoypadTypeCymbalShiftButton(Symbol type) {
+    static Symbol cymbal_shift_button("cymbal_shift_button");
+    DataArray *found = gControllersCfg->FindArray(type)->FindArray(cymbal_shift_button);
+    return found->Int(1);
+}
+
 bool JoypadIsShiftButton(int padNum, JoypadButton btn) {
     static Symbol cymbal_shift_button("cymbal_shift_button");
     static Symbol pad_shift_button("pad_shift_button");
