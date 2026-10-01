@@ -1,4 +1,8 @@
 {
+ "0x82b6b768": "?DoProcess@MeterEffect@@UAAXABUMeterEffectParams@@PIAMII@Z",
+ "0x82b6ba10": "??_G?$CSampleXAPOBase@VHeadsetXferEffect@@UHeadsetXferEffectParams@@@ATG@@MAAPAXI@Z",
+ "0x82b6dbc0": "?LockForProcess@?$CSampleXAPOBase@VSynapseAPO@DSP@@USynapseAPOParams@2@@ATG@@UAAJIPBUXAPO_LOCKFORPROCESS_BUFFER_PARAMETERS@@I0@Z",
+ "0x82b6dc00": "?Process@?$CSampleXAPOBase@VSynapseAPO@DSP@@USynapseAPOParams@2@@ATG@@UAAXIPBUXAPO_PROCESS_BUFFER_PARAMETERS@@IPAU3@H@Z",
  "0x82b61220": "?Init@MicManagerXbox@@QAAXXZ",
  "0x82b60f98": "?AddRemoteMic@MicManagerXbox@@QAAXAB_KPAUXAUDIO2_EFFECT_CHAIN@@@Z",
  "0x82b60f10": "?push_back@?$vector@UChatBuffer@MicManagerXbox@@V?$StlNodeAlloc@UChatBuffer@MicManagerXbox@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUChatBuffer@MicManagerXbox@@@Z",

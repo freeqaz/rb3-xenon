@@ -2287,10 +2287,10 @@ FilterCoeffs.cpp:
 	.text       start:0x82B74ED0 end:0x82B75184
 
 HeadsetXferEffect.cpp:
-	.pdata      start:0x8225B580 end:0x8225B5B0
+	.pdata      start:0x8225B588 end:0x8225B5B0
 	.pdata      start:0x8225B5B0 end:0x8225B5B8
 	.pdata      start:0x82261AD8 end:0x82261AE0
-	.text       start:0x82B6B764 end:0x82B6BA10
+	.text       start:0x82B6B838 end:0x82B6BA10
 	.text       start:0x82B6BA10 end:0x82B6BA74
 	.text       start:0x82B6BA74 end:0x82B6BA78
 	.text       start:0x82C43420 end:0x82C434B0
@@ -3028,9 +3028,9 @@ system/rndobj/Rnd.cpp:
 	.text       start:0x82412B34 end:0x82416B54
 
 MeterEffect.cpp:
-	.pdata      start:0x8225B558 end:0x8225B580
+	.pdata      start:0x8225B558 end:0x8225B588
 	.pdata      start:0x82261AD0 end:0x82261AD8
-	.text       start:0x82B6B4F0 end:0x82B6B764
+	.text       start:0x82B6B4F0 end:0x82B6B838
 	.text       start:0x82C43390 end:0x82C43420
 
 UI.cpp:
