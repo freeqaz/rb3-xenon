@@ -217,21 +217,20 @@ bool CacheXbox::GetFreeSpaceSync(u64 *u) {
         return false;
     } else {
         ULARGE_INTEGER freeBytes = {0};
-        const char *path = mCacheID.GetCachePath(nullptr);
-        if (GetDiskFreeSpaceExA(path, &freeBytes, nullptr, nullptr) == 0U) {
+        if (GetDiskFreeSpaceExA(mCacheID.GetCachePath(nullptr), &freeBytes, nullptr, nullptr)
+            == 0U) {
             void *err = (void *)GetLastError();
             if ((DWORD)err == 0x15 || (DWORD)err == 0x456 || (DWORD)err == 0x48F || (DWORD)err == 0x651
                 || !IsDeviceConnected(mCacheID.DeviceID())) {
                 mLastResult = kCache_ErrorStorageDeviceMissing;
-                return false;
             } else {
                 MILO_NOTIFY(
                     "CacheXbox::GetFreeSpaceSync(): Unhandled error %u returned from GetDiskFreeSpaceEx().\n",
                     err
                 );
                 mLastResult = kCache_ErrorUnknown;
-                return false;
             }
+            return false;
         } else {
             XDEVICE_DATA deviceData;
             DWORD err = XContentGetDeviceData(mCacheID.DeviceID(), &deviceData);
