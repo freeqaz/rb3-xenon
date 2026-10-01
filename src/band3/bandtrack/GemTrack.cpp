@@ -540,14 +540,17 @@ void GemTrack::DrawBeatLine(Symbol s1, int i2, int i3, bool b4) {
                 Symbol sfc;
                 int startKey;
                 const char *shiftWid;
+                // Retail: a down shift (endKey < 0) shows the LEFT arrow when
+                // flip_shift_arrows is set and the right one otherwise; an up shift
+                // the reverse (`bne` to the "key_shift_left.wid" load, 0x8269...9a4).
                 if (endKey < 0) {
                     startKey = 0;
                     endKey = 3;
-                    shiftWid = flip_shift_arrows.Int() ? "key_shift_right.wid" : "key_shift_left.wid";
+                    shiftWid = !flip_shift_arrows.Int() ? "key_shift_right.wid" : "key_shift_left.wid";
                 } else {
                     endKey = mRange;
                     startKey = endKey - 3;
-                    shiftWid = flip_shift_arrows.Int() ? "key_shift_left.wid" : "key_shift_right.wid";
+                    shiftWid = !flip_shift_arrows.Int() ? "key_shift_left.wid" : "key_shift_right.wid";
                 }
                 sfc = shiftWid;
                 MILO_ASSERT(startKey <= endKey, 0x297);
