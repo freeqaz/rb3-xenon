@@ -1,3 +1,7 @@
+// Retail's ctor (0x82486440) inlines ObjPtr<RndCam>(this): mOwner,
+// vtable lis, mObject, vtable addi, vtable store, with &mCam kept as an EH temp.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR 1
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT 1
 #include "rndobj/CamAnim.h"
 #include "obj/Object.h"
 #include "rndobj/Anim.h"
@@ -6,7 +10,7 @@
 
 #pragma region Hmx::Object
 
-RndCamAnim::RndCamAnim() : mCam(this, 0), mKeysOwner(this, this) {}
+RndCamAnim::RndCamAnim() : mCam(this), mKeysOwner(this, this) {}
 
 RndCamAnim::~RndCamAnim() {}
 
