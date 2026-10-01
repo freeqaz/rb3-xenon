@@ -101788,6 +101788,22 @@
      "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN and CHASED T1 PROVEN, 0 CYCLE-ASSUMED; 16 B retail / 16 B ours, no relocations, retail body unique (`lwz r11,0x1c(r3); slwi r10,r4,2; lwzx r3,r11,r10; blr`: mCustomValues[i] and Archive's 0x1c vector[i] are the same code). MakeSessionJob::Start calls it at 0x823F68DC, between NumCustomSettings and GetCustomID."
     }
    ]
+  },
+  {
+   "name": "$?6UPresetOverride list writer",
+   "address": "0x824cd470",
+   "survivor": "??$?6UPresetOverride@WorldDir@@V?$StlNodeAlloc@UPresetOverride@WorldDir@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@UPresetOverride@WorldDir@@V?$StlNodeAlloc@UPresetOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "folded": [
+    "??$?6UMatOverride@WorldDir@@V?$StlNodeAlloc@UMatOverride@WorldDir@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@UMatOverride@WorldDir@@V?$StlNodeAlloc@UMatOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@@Z"
+   ],
+   "evidence": "Fold group opened by W16-NB 2026-10-01: the membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "??$?6UMatOverride@WorldDir@@V?$StlNodeAlloc@UMatOverride@WorldDir@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@UMatOverride@WorldDir@@V?$StlNodeAlloc@UMatOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+     "lane": "W16-NB 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, no CYCLE leaf; both bodies 120 B, the two ObjPtr writer callees chased (fn_8229E5D0, fn_8238B5B8). WorldDir::Save (retail 0x824cd8b8) calls 0x824cd470 for mMatOverrides as well as mPresetOverrides. Requires MatOverride's writer to stream mesh and mat only, matching its reader."
+    }
+   ]
   }
  ]
 }

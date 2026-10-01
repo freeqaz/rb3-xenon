@@ -67,6 +67,12 @@ void NetStream::WriteImpl(const void *v, int i) {
 
 void NetStream::SeekImpl(int i, SeekType ty) { MILO_ASSERT(false, 0x7A); }
 
+// Retail keeps the connect timeout in its own .rdata word (0x8208DA08, not the
+// shared 1000.0f literal) and reloads it on every pass of the wait loop, which is
+// what an external-linkage const object compiles to.
+extern const float kNetStreamConnectTimeoutMs;
+const float kNetStreamConnectTimeoutMs = 1000.0f;
+
 void NetStream::ClientConnect(const NetAddress &addr) {
     MILO_ASSERT(mSocket, 0x38);
     Timer timer;
@@ -80,7 +86,7 @@ void NetStream::ClientConnect(const NetAddress &addr) {
                 mFail = true;
                 break;
             }
-            if (timer.SplitMs() > 1000) {
+            if (timer.SplitMs() > kNetStreamConnectTimeoutMs) {
                 mFail = true;
                 break;
             }

@@ -296,49 +296,40 @@ bool XboxMapFile::ParseStack(
     return true;
 }
 
-const char *XboxMapFile::GetFunction(unsigned int ui, bool b2) {
+// Map lines are sorted by address: the function containing `addr` is the
+// one on the line before the first line whose address compares greater.
+const char *XboxMapFile::GetFunction(unsigned int addr, bool rewind) {
     static char sBuffer[0x400];
-    if (b2) {
+    if (rewind) {
         mFile->Seek(mStart, 0);
     }
-    char local1440[2048];
-    char localC40[1024];
-    char *cur = local1440;
-    sprintf(localC40, "%8x", ui);
-    int oldTell = mFile->Tell();
-    char *b4 = "";
+    char lineA[0x800];
+    char key[0x400];
+    char lineB[0x800];
+    sprintf(key, "%8x", addr);
+    char *line = lineA;
+    const char *prevName = "";
+    int prevPos = mFile->Tell();
     while (!mFile->Eof()) {
-                                cur = cur == local1440 ? localC40 : local1440;
-        int curTell = mFile->Tell();
-        ReadLine(cur, 0x800);
-        char c2 = cur[0x15];
-        char *pCur = &cur[0x15];
-        while (c2 != 0x20) {
-            pCur++;
-            c2 = *pCur;
+        line = line == lineA ? lineB : lineA;
+        int pos = mFile->Tell();
+        ReadLine(line, 0x800);
+        char *p = &line[0x15];
+        char *name = p;
+        while (*p != ' ') {
+            p++;
         }
-        *pCur = 0;
-        while (*pCur++ == 0x20)
+        *p = '\0';
+        while (*++p == ' ')
             ;
-        pCur--;
-
-        // String comparison
-        char *cmpBuf = localC40;
-        char b3 = *cmpBuf;
-        char b4_1 = *pCur;
-
-        while (b3 != 0 && b3 == b4_1) {
-            cmpBuf++;
-            pCur++;
-            b3 = *cmpBuf;
-            b4_1 = *pCur;
-        }
-
-        if ((int)((unsigned char)b3 - (unsigned char)b4_1) >= 0) {
-            TryDemangleFunc(sBuffer, &cur[0x15]);
-            mFile->Seek(oldTell, 0);
+        p[8] = '\0';
+        if (strcmp(key, p) < 0) {
+            TryDemangleFunc(sBuffer, prevName);
+            mFile->Seek(prevPos, 0);
             return sBuffer;
         }
+        prevName = name;
+        prevPos = pos;
     }
     return "(unknown)";
 }

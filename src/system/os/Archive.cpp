@@ -148,46 +148,37 @@ void Archive::Enumerate(
         }
     }
 
-    const char *dirp = dir;
-    do {
-        dirp++;
-    } while ('\0' != *(dirp - 1));
-    int dirLen = dirp - dir - 1;
+    int dirLen = strlen(dir);
 
-    bool matches = false;
     const char *lastPath = nullptr;
+    bool matches = false;
 
-    auto& _ref0 = mHashTable;
     FOREACH (it, mFileEntries) {
-        const char *curPath = _ref0[it->HashedPath()];
+        const char *curPath = mHashTable[it->HashedPath()];
 
         if (lastPath != curPath) {
+            lastPath = curPath;
+            // A recursive enumerate is a plain prefix test on the folder path.
             if (recurse) {
-                matches = !strncmp(curPath, dir, dirLen)
-                    && (curPath[dirLen] == '\0' || curPath[dirLen] == '/'
-                        || curPath[dirLen] == '\\');
+                matches = strncmp(curPath, dir, dirLen) == 0;
             } else {
                 matches = strcmp(curPath, dir) == 0;
             }
-            lastPath = curPath;
         }
 
         if (!matches) continue;
 
-        const char *curName = _ref0[it->HashedName()];
+        const char *curName = mHashTable[it->HashedName()];
         if (pattern) {
             const char *buf = MakeString("%s/%s", curPath, curName);
             if (!FileMatch(buf, pattern)) continue;
         }
 
         if (isDtb) {
-            const char *path = FileGetPath(curPath);
-            const char *base = FileGetBase(curName);
-            const char *dtaName = MakeString("%s.dta", base);
-            cb(path, dtaName);
-        } else {
-            cb(curPath, curName);
+            curPath = FileGetPath(curPath);
+            curName = MakeString("%s.dta", FileGetBase(curName));
         }
+        cb(curPath, curName);
     }
 }
 

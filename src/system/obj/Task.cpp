@@ -636,6 +636,7 @@ void TaskMgr::Init() {
     DataRegisterFunc("thread_task", OnThreadTask);
 }
 
+#ifdef HX_NATIVE
 void TaskMgr::QueueTaskDelete(Task *task) {
     if (task) {
 #ifdef HX_NATIVE
@@ -653,5 +654,6 @@ void TaskMgr::QueueTaskDelete(Task *task) {
         unk84.push_back(ObjPtr<Task>(nullptr, task));
     }
 }
+#endif
 
 #pragma endregion

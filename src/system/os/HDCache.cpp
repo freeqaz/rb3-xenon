@@ -86,10 +86,12 @@ bool HDCache::WriteDone() {
             if (mWriteArkFiles[mWriteFileIdx]->Fail()) {
                 MILO_LOG("HDCache Write %d.%d failed\n", mWriteFileIdx, mWriteBlock);
             } else {
+                int word = mWriteBlock / 32;
+                int bit = 1 << (mWriteBlock % 32);
                 if (++mDirtyCache == 1) {
                     mLastHdrWriteMs = SystemMs();
                 }
-                mBlockState[mWriteFileIdx][mWriteBlock / 32] |= 1 << mWriteBlock;
+                mBlockState[mWriteFileIdx][word] |= bit;
             }
             mWriteBlock = -1;
         }

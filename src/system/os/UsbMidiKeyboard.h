@@ -50,13 +50,13 @@ public:
     }
 
     bool GetKeyPressed(int pad, int key) {
-        if ((unsigned int)key <= 0x7F)
+        if (key >= 0 && key <= 0x7F)
             return mKeyPressed[pad][key];
         return false;
     }
 
     int GetKeyVelocity(int pad, int key) {
-        if ((unsigned int)key <= 0x7F)
+        if (key >= 0 && key <= 0x7F)
             return mKeyVelocity[pad][key];
         return 0;
     }
@@ -76,15 +76,13 @@ public:
     void SetHighHandPlacement(int pad, int hh) { mHighHandPlacement[pad] = hh; }
 
     void SetKeyPressed(int pad, int key, bool pressed) {
-        if (0x7F < (unsigned int)key)
-            return;
-        mKeyPressed[pad][key] = pressed;
+        if (key >= 0 && key <= 0x7F)
+            mKeyPressed[pad][key] = pressed;
     }
 
     void SetKeyVelocity(int pad, int key, int vel) {
-        if (0x7F < (unsigned int)key)
-            return;
-        mKeyVelocity[pad][key] = vel;
+        if (key >= 0 && key <= 0x7F)
+            mKeyVelocity[pad][key] = vel;
     }
 
     bool GetSustain(int);

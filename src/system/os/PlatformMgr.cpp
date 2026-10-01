@@ -124,6 +124,7 @@ bool PlatformMgr::IsUserAGuest(const LocalUser *pUser) const {
     int padnum = pUser->GetPadNum();
     if (padnum < 0) {
         MILO_FAIL("PadNum = %d", padnum);
+        return false;
     }
     return IsPadAGuest(padnum);
 }

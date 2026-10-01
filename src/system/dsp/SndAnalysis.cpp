@@ -3,6 +3,7 @@
 #include "utl/Symbol.h"
 #include <algorithm>
 #include <math.h>
+#include "xdk/LIBCMT/vectorintrinsics.h"
 
 // ---------------------------------------------------------------------------
 // RB3-360 retail: .text 0x82B816F0..0x82B81DD8, seven COMDATs in source order:
@@ -14,18 +15,19 @@
 //   0x82B81C58 ( 32 B) ??__F  clears bit 3                      (numpeaksmin)
 //   0x82B81C78 (352 B) RefinePeriod2
 //
-// ★ ShiftedDotProduct's fast path is HAND-VECTORISED VMX128 in retail
-//   (0x82B81758..0x82B817C0: vmaddfp + primary-opcode-4/5/6 VMX128 loads/stores
-//   through a 16-byte stack accumulator at r1-0x20), and it is selected by the
-//   FOURTH PARAMETER (`clrlwi. r11, r6, 0x18` at 0x82B816F4) -- not by the
-//   `(vlen & 15) == 0` test, so that parameter is live. The fast path is
-//   4-wide VMX128 blocking with no portable C++ equivalent, so it
-//   is not reconstructed here: this file keeps only the scalar path.
-//   It is a separate instruction-set path, not a variant of the loop.
-//   The scalar path below IS retail's else-arm instruction for instruction
-//   (0x82B817FC..0x82B81850). Deliberately left as a partial match rather than
-//   guessed at.
+// ShiftedDotProduct's fast path (selected by the fourth parameter,
+// `clrlwi. r11, r6, 0x18` at 0x82B816F4) is VMX128: four ss[] outputs per
+// outer iteration, accumulated in a 16-byte stack vector at r1-0x20, with the
+// three word-shifted windows built by vperm against the table at 0x8219B0E0.
+// The scalar else-arm is 0x82B817FC..0x82B81850.
 // ---------------------------------------------------------------------------
+
+// vperm selectors that shift a pair of vectors left by one, two and three words.
+static const XMVECTORU32 sShiftPerm[3] = {
+    { 0x04050607, 0x08090A0B, 0x0C0D0E0F, 0x10111213 },
+    { 0x08090A0B, 0x0C0D0E0F, 0x10111213, 0x14151617 },
+    { 0x0C0D0E0F, 0x10111213, 0x14151617, 0x18191A1B },
+};
 
 // Computes shifted dot products of buf with itself, output to ss.
 // ss[i] = sum_{j} buf[j] * buf[j + i] for i in [0, vlen) where vlen = len/2.
@@ -34,21 +36,30 @@ void ShiftedDotProduct(const float *buf, int len, float *ss, bool fast) {
     MILO_ASSERT((vlen & 15) == 0, 0x135);
 
     if (fast) {
-        // Retail: VMX128, four ss[] outputs per outer iteration. Not
-        // reconstructed here (see note above).
-        for (int i = 0; i < vlen; i += 4) {
-            float acc[4];
-            acc[0] = acc[1] = acc[2] = acc[3] = 0.0f;
-            for (int j = 0; j < vlen; j++) {
-                acc[0] += buf[j] * buf[j + i];
-                acc[1] += buf[j] * buf[j + i + 1];
-                acc[2] += buf[j] * buf[j + i + 2];
-                acc[3] += buf[j] * buf[j + i + 3];
+        __declspec(align(16)) float acc[4] = { 0.0f };
+        const float *end = buf + vlen;
+        const float *src = buf;
+        float *out = ss;
+        for (int i = 0; i < vlen / 4; i++) {
+            XMVECTOR next = __lvx(src, 0);
+            for (const float *p = buf; p != end;) {
+                XMVECTOR b = __lvx(p, 0);
+                XMVECTOR cur = next;
+                p += 4;
+                XMVECTOR a = __lvx(acc, 0);
+                a = __vmaddfp(__vspltw(b, 0), cur, a);
+                next = __lvx(p + i * 4, 0);
+                a = __vmaddfp(__vspltw(b, 1), __vperm(cur, next, sShiftPerm[0].v), a);
+                a = __vmaddfp(__vspltw(b, 2), __vperm(cur, next, sShiftPerm[1].v), a);
+                a = __vmaddfp(__vspltw(b, 3), __vperm(cur, next, sShiftPerm[2].v), a);
+                __stvx(a, acc, 0);
             }
-            ss[i] = acc[0];
-            ss[i + 1] = acc[1];
-            ss[i + 2] = acc[2];
-            ss[i + 3] = acc[3];
+            for (int k = 0; k < 4; k++) {
+                out[k] = acc[k];
+                acc[k] = 0.0f;
+            }
+            src += 4;
+            out += 4;
         }
     } else {
         for (int i = 0; i < vlen; i++) {
