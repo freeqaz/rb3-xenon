@@ -94047,6 +94047,18 @@
    ]
   },
   {
+   "name": "??1_DDL_RBBinaryBuffer",
+   "address": "0x824f6878",
+   "survivor": "??1_DDL_RBBinaryBuffer@Quazal@@UAA@XZ",
+   "folded": [
+    "??1RBBinaryBuffer@Quazal@@UAA@XZ"
+   ],
+   "evidence": "Hand-installed by lane W16-JC-1. CHASED T1 PROVEN by tools/icf_pair_adjudicate.py --chase (VACUOUS-BUT-IDENTICAL, no CYCLE-ASSUMED): our implicit ~RBBinaryBuffer and ~_DDL_RBBinaryBuffer are the same 24 bytes (store ??_7_DDL_RBBinaryBuffer@Quazal@@6B@, tail-branch ??1Buffer@Quazal@@UAA@XZ on this+4) and equal retail 0x824F6878 outside relocated words; flat T1 is UNDECIDABLE only because the body is 6 words, half relocated. The chase became decidable after naming the vtable 0x8207FA34 from its RTTI (.?AV_DDL_RBBinaryBuffer@Quazal@@) and the callee 0x82AA7B88 as ~Buffer (stores a vtable, frees mData at +8 sized by mBufSize at +0x10, then the RefCountedObject base dtor; called on the Buffer member at this+4). Site witness: retail SaveBinaryData's (0x824F8A98) EH funclet fn_824F8CC0 destroys the stack RBBinaryBuffer at frame+0x60 with bl 0x824F6878, where our funclet calls ??1RBBinaryBuffer; retail's two vtables (0x8207FA34, 0x8207FA9C) also share slot 0 (0x824F67C8).",
+   "added": {
+    "lane": "W16-JC-1 2026-10-01"
+   }
+  },
+  {
    "name": "??1CampaignGoalsLeaderboardPanel",
    "address": "0x825f0068",
    "survivor": "??1CampaignGoalsLeaderboardPanel@@UAA@XZ",

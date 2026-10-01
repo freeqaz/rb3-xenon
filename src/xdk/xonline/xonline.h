@@ -108,6 +108,31 @@ DWORD XFriendsCreateEnumerator(
     DWORD *pcbBuffer,
     HANDLE *ph
 );
+// XStringVerify (retail import @0x82A6A8F8). The two structs are 2-byte
+// packed in retail: XboxEntityUploader allocates STRING_DATA arrays with a
+// 6-byte stride and reads pszString / pStringResult at +2.
+#pragma pack(push, 2)
+typedef struct _STRING_DATA { /* Size=0x6 */
+    /* 0x0000 */ WORD wStringSize;
+    /* 0x0002 */ WCHAR *pszString;
+} STRING_DATA;
+
+typedef struct _STRING_VERIFY_RESPONSE { /* Size=0x6 */
+    /* 0x0000 */ WORD wNumStrings;
+    /* 0x0002 */ HRESULT *pStringResult;
+} STRING_VERIFY_RESPONSE;
+#pragma pack(pop)
+
+DWORD XStringVerify(
+    DWORD dwFlags,
+    const CHAR *szLocale,
+    DWORD dwNumStrings,
+    const STRING_DATA *pStringData,
+    DWORD cbResults,
+    STRING_VERIFY_RESPONSE *pResults,
+    XOVERLAPPED *pXOverlapped
+);
+
 DWORD XOnlineStartup();
 DWORD XOnlineCleanup();
 

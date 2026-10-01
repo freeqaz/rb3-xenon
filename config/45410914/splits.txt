@@ -143,6 +143,10 @@ EntityUploader.cpp:
 	.pdata      start:0x82217AB8 end:0x82217CC8
 	.text       start:0x8250D0D8 end:0x8250F4E0
 
+band3/net_band/XboxEntityUploader.cpp:
+	.pdata      start:0x82217560 end:0x82217758
+	.text       start:0x82508708 end:0x8250A510
+
 band3/net_band/DataResults.cpp:
 	.pdata      start:0x82217808 end:0x82217970
 	.text       start:0x8250AF88 end:0x8250BF98
@@ -152,11 +156,7 @@ RockCentralJobs.cpp:
 	.text       start:0x8250C808 end:0x8250D0D8
 
 RockCentral.cpp:
-	.pdata      start:0x821F7600 end:0x821F7618
 	.pdata      start:0x82208698 end:0x822086A8
-	.pdata      start:0x822086D0 end:0x82208708
-	.pdata      start:0x82208BA8 end:0x82208BB0
-	.pdata      start:0x82208BB0 end:0x82208BB8
 	.pdata      start:0x82208D68 end:0x82208D90
 	.pdata      start:0x82215F78 end:0x82215F88
 	.pdata      start:0x82215F88 end:0x82215FA0
@@ -182,6 +182,7 @@ RockCentral.cpp:
 	.pdata      start:0x822162E8 end:0x822162F8
 	.pdata      start:0x82216320 end:0x82216328
 	.pdata      start:0x82216328 end:0x82216338
+	.pdata      start:0x82216338 end:0x82216350
 	.pdata      start:0x82216350 end:0x822163D0
 	.pdata      start:0x822163D0 end:0x822163F8
 	.pdata      start:0x822163F8 end:0x82216408
@@ -195,16 +196,13 @@ RockCentral.cpp:
 	.pdata      start:0x82217130 end:0x822173D8
 	.pdata      start:0x822173D8 end:0x82217408
 	.pdata      start:0x82217408 end:0x82217410
-	.pdata      start:0x82217410 end:0x82217808
+	.pdata      start:0x82217410 end:0x82217560
+	.pdata      start:0x82217758 end:0x82217808
 	.pdata      start:0x8221A840 end:0x8221A850
 	.pdata      start:0x82234E98 end:0x82234EB0
-	.text       start:0x822CEEE8 end:0x822CEF8C
 	.text       start:0x823EC310 end:0x823EC398
-	.text       start:0x823EC538 end:0x823EC788
 	.text       start:0x823F0F84 end:0x823F0F88
 	.text       start:0x823F0F9C end:0x823F0FA0
-	.text       start:0x823F0FC0 end:0x823F1010
-	.text       start:0x823F1028 end:0x823F1064
 	.text       start:0x823F27B8 end:0x823F2898
 	.text       start:0x824F64D0 end:0x824F6548
 	.text       start:0x824F6550 end:0x824F6628
@@ -231,6 +229,7 @@ RockCentral.cpp:
 	.text       start:0x824F8EC0 end:0x824F8F4C
 	.text       start:0x824F9230 end:0x824F9288
 	.text       start:0x824F9288 end:0x824F9380
+	.text       start:0x824F9380 end:0x824F9480
 	.text       start:0x824F9480 end:0x824F9BD8
 	.text       start:0x824F9BD8 end:0x824F9FD0
 	.text       start:0x824F9FD0 end:0x824F9FE0
@@ -245,7 +244,8 @@ RockCentral.cpp:
 	.text       start:0x8250577C end:0x82507290
 	.text       start:0x82507290 end:0x825074C0
 	.text       start:0x825074C0 end:0x82507634
-	.text       start:0x82507634 end:0x8250AF88
+	.text       start:0x82507634 end:0x82508708
+	.text       start:0x8250A510 end:0x8250AF88
 	.text       start:0x8253B238 end:0x8253B2BC
 	.text       start:0x82594538 end:0x82594548
 	.text       start:0x82594768 end:0x82594778
@@ -262,6 +262,7 @@ BandScoreboard.cpp:
 	.pdata      start:0x821F7538 end:0x821F7570
 	.pdata      start:0x821F7570 end:0x821F75D8
 	.pdata      start:0x821F75D8 end:0x821F75E0
+	.pdata      start:0x821F7600 end:0x821F7618
 	.pdata      start:0x821F7618 end:0x821F7698
 	.text       start:0x82274290 end:0x822743EC
 	.text       start:0x8227A6A8 end:0x8227A728
@@ -272,6 +273,7 @@ BandScoreboard.cpp:
 	.text       start:0x822CE3F4 end:0x822CE6A8
 	.text       start:0x822CE6A8 end:0x822CEC70
 	.text       start:0x822CEC70 end:0x822CECDC
+	.text       start:0x822CEEE8 end:0x822CEF8C
 	.text       start:0x822CEF8C end:0x822CF888
 
 FingerShape.cpp:
@@ -9393,6 +9395,8 @@ network/net/NetLog.cpp:
 	.text       start:0x823EB8E0 end:0x823EB958
 
 SessionMessages.cpp:
+	.pdata      start:0x82208BA8 end:0x82208BB0
+	.pdata      start:0x82208BB0 end:0x82208BB8
 	.pdata      start:0x82208BB8 end:0x82208C10
 	.pdata      start:0x82208C18 end:0x82208C28
 	.pdata      start:0x82208C28 end:0x82208C30
@@ -9409,7 +9413,9 @@ SessionMessages.cpp:
 	.pdata      start:0x82208D60 end:0x82208D68
 	.pdata      start:0x82208D90 end:0x82208DA0
 	.text       start:0x823F0F88 end:0x823F0F9C
+	.text       start:0x823F0FC0 end:0x823F1010
 	.text       start:0x823F1010 end:0x823F1028
+	.text       start:0x823F1028 end:0x823F1064
 	.text       start:0x823F1068 end:0x823F14C0
 	.text       start:0x823F1520 end:0x823F1738
 	.text       start:0x823F1738 end:0x823F1808
@@ -9593,14 +9599,18 @@ network/net/Synchronize.cpp:
 
 Server.cpp:
 	.pdata      start:0x822086B8 end:0x822086D0
+	.pdata      start:0x822086D0 end:0x82208708
 	.pdata      start:0x82208708 end:0x82208768
+	.pdata      start:0x822087C8 end:0x822087F0
 	.pdata      start:0x82209158 end:0x82209160
 	.pdata      start:0x82209160 end:0x82209178
 	.pdata      start:0x82209178 end:0x822091A8
 	.text       start:0x823EC418 end:0x823EC514
 	.text       start:0x823EC518 end:0x823EC538
+	.text       start:0x823EC538 end:0x823EC788
 	.text       start:0x823EC788 end:0x823ECD48
 	.text       start:0x823ECD48 end:0x823ECD58
+	.text       start:0x823ED1E8 end:0x823ED458
 	.text       start:0x823F5C98 end:0x823F5D3C
 	.text       start:0x823F5D3C end:0x823F5DD8
 	.text       start:0x823F5DD8 end:0x823F6198
@@ -12702,11 +12712,9 @@ PhysicsVolume.cpp:
 	.text       start:0x8279E988 end:0x8279E990
 
 AccomplishmentDiscSongConditional.cpp:
-	.pdata      start:0x82216338 end:0x82216350
 	.pdata      start:0x82225E30 end:0x82225E38
 	.pdata      start:0x82225E38 end:0x82225E40
 	.pdata      start:0x82225E40 end:0x82225EC0
-	.text       start:0x824F9380 end:0x824F9480
 	.text       start:0x825E4EE8 end:0x825E4EF0
 	.text       start:0x825E4EF0 end:0x825E4F50
 	.text       start:0x825E4F50 end:0x825E4F90
