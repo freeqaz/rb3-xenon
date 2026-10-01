@@ -862,7 +862,8 @@ void GemTrack::SetGemsEnabledByPlayer() {
         MILO_LOG("GEM_DBG: SetGemsEnabledByPlayer mEnableMs=%.2f enabledState=%d\n",
                  GetPlayer()->mEnableMs, (int)GetPlayer()->GetEnabledState());
 #endif
-    SetGemsEnabled(GetPlayer()->mEnableMs);
+    Player *player = GetPlayer();
+    SetGemsEnabled(player->mEnableMs);
 }
 
 void GemTrack::UpdateGems() {
