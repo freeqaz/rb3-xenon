@@ -3072,8 +3072,6 @@ system/rndobj/Utl.cpp:
 	.pdata      start:0x8220D2F0 end:0x8220D310
 	.pdata      start:0x8220D310 end:0x8220D330
 	.pdata      start:0x82237B00 end:0x82237B08
-	.pdata      start:0x8223AD40 end:0x8223AD50
-	.pdata      start:0x8223AD68 end:0x8223AD70
 	.text       start:0x82439910 end:0x8243E108
 	.text       start:0x8243E15C end:0x824423E8
 	.text       start:0x8244243C end:0x82442C78
@@ -3082,8 +3080,6 @@ system/rndobj/Utl.cpp:
 	.text       start:0x824434D0 end:0x82443784
 	.text       start:0x82703AC8 end:0x82703AF8
 	.text       start:0x82703BF4 end:0x82703BF8
-	.text       start:0x8273FD30 end:0x8273FDA8
-	.text       start:0x8273FF80 end:0x8273FFB0
 
 MemTracker.cpp:
 	.pdata      start:0x82233B50 end:0x82233B60
@@ -4941,7 +4937,6 @@ system/rndobj/Movie.cpp:
 	.pdata      start:0x8220FCB8 end:0x8220FCD0
 	.pdata      start:0x8220FCD0 end:0x8220FD20
 	.pdata      start:0x8220FD20 end:0x8220FD28
-	.pdata      start:0x82213AE8 end:0x82213AF0
 	.text       start:0x82478038 end:0x824781A0
 	.text       start:0x824781A0 end:0x82478420
 	.text       start:0x82478420 end:0x82478750
@@ -4951,7 +4946,6 @@ system/rndobj/Movie.cpp:
 	.text       start:0x82478A28 end:0x82478B90
 	.text       start:0x82478B90 end:0x82479100
 	.text       start:0x82479100 end:0x82479144
-	.text       start:0x824C5E90 end:0x824C5EC0
 
 MultiMesh.cpp:
 	.pdata      start:0x821FB558 end:0x821FB560
@@ -4992,7 +4986,7 @@ CameraShot.cpp:
 	.pdata      start:0x82213940 end:0x82213A38
 	.pdata      start:0x82213A38 end:0x82213A48
 	.pdata      start:0x82213A48 end:0x82213AE8
-	.pdata      start:0x82213AF0 end:0x82213BA0
+	.pdata      start:0x82213AE8 end:0x82213BA0
 	.pdata      start:0x82213BA0 end:0x82213BB8
 	.pdata      start:0x82213BB8 end:0x82213BD0
 	.pdata      start:0x82213BD0 end:0x82213BD8
@@ -5025,7 +5019,7 @@ CameraShot.cpp:
 	.text       start:0x824C4A00 end:0x824C5650
 	.text       start:0x824C5650 end:0x824C56FC
 	.text       start:0x824C56FC end:0x824C5E90
-	.text       start:0x824C5EC0 end:0x824C694C
+	.text       start:0x824C5E90 end:0x824C694C
 	.text       start:0x824C6950 end:0x824C6A50
 	.text       start:0x824C6A50 end:0x824C6B58
 	.text       start:0x824C6B58 end:0x824C6BC0
@@ -6966,12 +6960,12 @@ system/rnddx9/Utl.cpp:
 system/rnddx9/CubeTex.cpp:
 	.pdata      start:0x8223AB58 end:0x8223ABA8
 	.pdata      start:0x8223AC50 end:0x8223AD40
-	.pdata      start:0x8223AD50 end:0x8223AD68
-	.pdata      start:0x8223AD70 end:0x8223AE20
+	.pdata      start:0x8223AD40 end:0x8223AD68
+	.pdata      start:0x8223AD68 end:0x8223AE20
 	.text       start:0x8273D7D0 end:0x8273E040
 	.text       start:0x8273EC04 end:0x8273FD30
-	.text       start:0x8273FDA8 end:0x8273FF80
-	.text       start:0x8273FFB0 end:0x82741040
+	.text       start:0x8273FD30 end:0x8273FF80
+	.text       start:0x8273FF80 end:0x82741040
 
 UIListCustom.cpp:
 	.pdata      start:0x822478C0 end:0x82247960
