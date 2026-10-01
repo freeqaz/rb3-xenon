@@ -16,18 +16,12 @@ bool gGenderChirality;
 bool FileMergerSort::operator()(const FileMerger::Merger *m1, const FileMerger::Merger *m2) {
     CatData &m1data = gCatPriority[m1->mName];
     CatData &m2data = gCatPriority[m2->mName];
+    // An unknown category is appended to the priority order on first use.
     if (m2data.priority == 0) {
-        if (gOrganizing) {
-            auto _tmp0 = MakeString("unknown file merger organizer category %s", m2->mName);
-            TheDebug.Notify(_tmp0);
-        }
         m2data.priority = gNextCatPriority++;
         m2data.mInGenderOrder = false;
     }
     if (m1data.priority == 0) {
-        if (gOrganizing) {
-            MILO_NOTIFY("unknown file merger organizer category %s", m1->mName);
-        }
         m1data.priority = gNextCatPriority++;
         m1data.mInGenderOrder = false;
     }
