@@ -98176,6 +98176,23 @@
     }
    ],
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 1 other group(s) at 2 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 1 of the 2 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+  },
+  {
+   "name": "DisableXMP",
+   "address": "0x8251c178",
+   "survivor": "?DisableXMP@PlatformMgr@@QAAXXZ",
+   "folded": [
+    "?PreInit@PlatformMgr@@QAAXXZ"
+   ],
+   "evidence": "Created by lane W16-KD: see per-member records in `admitted`.",
+   "lane": "W16-KD 2026-10-01",
+   "admitted": [
+    {
+     "spelling": "?PreInit@PlatformMgr@@QAAXXZ",
+     "lane": "W16-KD 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (flat VACUOUS: both bodies are 'b XMPOverrideBackgroundMusic'), 0 CYCLE-ASSUMED; the map places PreInit at no address of its own. Retail call-site witness: SystemPreInit branches to 0x8251C178 right after RegionInit, where our source calls PlatformMgr::PreInit."
+    }
+   ]
   }
  ]
 }

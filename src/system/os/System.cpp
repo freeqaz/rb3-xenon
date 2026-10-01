@@ -830,7 +830,14 @@ void SystemPreInit(const char *config) {
     TheContentMgr.PreInit();
     ArchiveInit();
     TheDebug.Init();
+#ifdef HX_NATIVE
     MILO_LOG("SystemInit Params:%s\n", String(str));
+#else
+    // Retail's stripped residue copy-constructs the String and destroys it
+    // through the pointer the copy constructor returned (no reload of the
+    // temporary's address), which is MiloStripEval's by-value shape.
+    MiloStripEval("SystemInit Params:%s\n", String(str));
+#endif
     DataInit();
     PreInitSystem(config);
     LanguageInit();
