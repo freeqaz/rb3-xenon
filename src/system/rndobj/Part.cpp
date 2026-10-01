@@ -1893,10 +1893,10 @@ void RndParticleSys::InitParticle(RndParticle *p, const Transform *t) {
 void RndParticleSys::SetRelativeMotion(float motion, RndTransformable *parent) {
     mMotionParent = parent ? parent : this;
     mRelativeMotion = motion;
-    mLastWorldXfm = mMotionParent->WorldXfm();
     if (motion == 1) {
         mRelativeXfm = mMotionParent->WorldXfm();
     } else {
+        mLastWorldXfm = mMotionParent->WorldXfm();
         mRelativeXfm.Reset();
     }
 #ifdef HX_NATIVE
