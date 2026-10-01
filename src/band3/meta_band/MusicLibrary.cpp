@@ -2224,8 +2224,8 @@ DataNode MusicLibrary::OnMsg(const RemoteMachineUpdatedMsg &msg) {
 }
 
 DataNode MusicLibrary::OnMsg(const RemoteMachineLeftMsg &) {
-    // retail fn_82540ED8: TU5 refreshes the song lists before the qp_coop test
-    RebuildSharedSongData();
+    // Retail 0x82540ED8 rebuilds the restricted flags (0x8253DE30) first.
+    RebuildRestrictedData();
     if (TheSessionMgr->IsLocal()) {
         RefreshSongLists();
         static Symbol qp_coop("qp_coop");
