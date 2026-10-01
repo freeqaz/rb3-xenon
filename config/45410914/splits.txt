@@ -4273,8 +4273,6 @@ MoveMgr.cpp:
 	.pdata      start:0x821F76D0 end:0x821F7838
 	.pdata      start:0x821F7840 end:0x821F7938
 	.pdata      start:0x821F7940 end:0x821F7948
-	.text       start:0x822D2BA8 end:0x822D2C28
-	.text       start:0x822D2CEC end:0x822D2D58
 	.text       start:0x82C122D8 end:0x82C122E4
 
 Watcher.cpp:
@@ -13466,8 +13464,10 @@ system/bandobj/CharKeyHandMidi.cpp:
 system/bandobj/UnisonIcon.cpp:
 	.pdata      start:0x821F7938 end:0x821F7940
 	.pdata      start:0x821F7948 end:0x821F79E0
+	.text       start:0x822D2BA8 end:0x822D2C28
 	.text       start:0x822D2C28 end:0x822D2C80
 	.text       start:0x822D2C80 end:0x822D2CEC
+	.text       start:0x822D2CEC end:0x822D2D58
 	.text       start:0x822D2D58 end:0x822D38B0
 
 system/bandobj/DialogDisplay.cpp:

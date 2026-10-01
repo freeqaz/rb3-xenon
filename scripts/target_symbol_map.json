@@ -1,4 +1,12 @@
 {
+ "0x822d2ba8": "?PostLoad@UnisonIcon@@UAAXAAVBinStream@@@Z",
+ "0x822d2bb0": "?Copy@UnisonIcon@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+ "0x822d2bb8": "?UnisonStart@UnisonIcon@@QAAXXZ",
+ "0x822d2bd0": "?UnisonEnd@UnisonIcon@@QAAXXZ",
+ "0x822d2be8": "?Succeed@UnisonIcon@@QAAXXZ",
+ "0x822d2c00": "?Fail@UnisonIcon@@QAAXXZ",
+ "0x822d2c18": "?SetIcon@UnisonIcon@@QAAXPBD@Z",
+ "0x822d2cf0": "?SetProgress@UnisonIcon@@QAAXM@Z",
  "0x823b1190": "?SetFinger@CharIKFingers@@QAAXVVector3@@0W4FingerNum@1@@Z",
  "0x823b1290": "?ReleaseFinger@CharIKFingers@@QAAXW4FingerNum@1@@Z",
  "0x822cf888": "?FindPreferredFinger@CharKeyHandMidi@@QAA?AW4FingerNum@CharIKFingers@@W4KeyboardKey@1@0W423@@Z",
