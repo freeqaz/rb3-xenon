@@ -944,7 +944,6 @@ PatchDir.cpp:
 	.pdata      start:0x821F1E88 end:0x821F1E90
 	.pdata      start:0x821F1EA0 end:0x821F1F08
 	.pdata      start:0x821F1F08 end:0x821F1F18
-	.pdata      start:0x82238E28 end:0x82238E40
 	.text       start:0x822737D0 end:0x822737D8
 	.text       start:0x822737D8 end:0x82273810
 	.text       start:0x82273810 end:0x82273860
@@ -990,7 +989,6 @@ PatchDir.cpp:
 	.text       start:0x82279978 end:0x822799F8
 	.text       start:0x82279A98 end:0x8227A068
 	.text       start:0x8227A068 end:0x8227A1A8
-	.text       start:0x82716358 end:0x827163F8
 
 SongSectionController.cpp:
 	.pdata      start:0x821F20C0 end:0x821F20D0
@@ -7587,6 +7585,7 @@ MidiInstrument.cpp:
 	.pdata      start:0x82238DA8 end:0x82238DB8
 	.pdata      start:0x82238DB8 end:0x82238DD8
 	.pdata      start:0x82238DD8 end:0x82238E28
+	.pdata      start:0x82238E28 end:0x82238E40
 	.text       start:0x822C5758 end:0x822C57B8
 	.text       start:0x823E3ED8 end:0x823E3F58
 	.text       start:0x823E3FC8 end:0x823E4020
@@ -7604,6 +7603,7 @@ MidiInstrument.cpp:
 	.text       start:0x82715CF4 end:0x82715E18
 	.text       start:0x82715E18 end:0x82715FD8
 	.text       start:0x82715FD8 end:0x82716358
+	.text       start:0x82716358 end:0x827163F8
 
 CharCollide.cpp:
 	.pdata      start:0x821F6F70 end:0x821F6F88

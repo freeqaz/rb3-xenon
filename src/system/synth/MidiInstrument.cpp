@@ -393,6 +393,10 @@ void MidiInstrument::StartSample(
 
 MidiInstrumentMgr::MidiInstrumentMgr() : mObjectDir(), mInstrument(0) {}
 
+// Retail 0x82716358 (called from the Synth dtor at 0x82701a10): UnloadInstrument,
+// then the ObjPtr (+0xc) and ObjDirPtr (+0x0) member dtors.
+MidiInstrumentMgr::~MidiInstrumentMgr() { UnloadInstrument(); }
+
 void MidiInstrumentMgr::SetInstrument(MidiInstrument *inst) { mInstrument = inst; }
 
 void MidiInstrumentMgr::UnloadInstrument() {
