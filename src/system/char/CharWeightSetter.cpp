@@ -6,6 +6,10 @@
 // obj/Object.h -- same combo CharClipSet.cpp uses for mPreviewChar.
 #define RB3_OBJPTR_INLINE_OWNER_CTOR
 #define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
+// Retail Load (0x823BA240) also inlines the two-argument ObjPtr ctor for its
+// two ObjPtr<CharWeightSetter> locals (stores owner, vtable, null object; no
+// bl ??0ObjPtr), which this per-TU switch gives.
+#define RB3_TU_OBJPTR_FORCEINLINE_CTOR
 #include "char/CharWeightSetter.h"
 #include "char/CharWeightable.h"
 #include "obj/Object.h"
