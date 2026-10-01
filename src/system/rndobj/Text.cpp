@@ -1566,7 +1566,7 @@ int RndText::AddLineUTF8(
 #endif
     float f98 = 0;
     int lineIdx;
-    fp = fp ? fp : &f98;
+    float *f = fp ? fp : &f98;
 
     int _tmp1 = mText.length();
     int _tmp0 = utf8.length();
@@ -1579,7 +1579,7 @@ int RndText::AddLineUTF8(
         );
         return -1;
     } else {
-        int newCharsInBytes = NumCharsInBytes(utf8, style, *fp, i6);
+        int newCharsInBytes = NumCharsInBytes(utf8, style, *f, i6);
         if (newCharsInBytes != 0 || i6 != 0) {
             MILO_ASSERT(newCharsInBytes <= utf8.length(), 0x850);
             for (lineIdx = mLines.size();
@@ -1614,7 +1614,7 @@ int RndText::AddLineUTF8(
             MILO_ASSERT(line.endIdx <= mFixedLength, 0x874);
             line.mStart = mText.c_str() + line.startIdx;
             line.mEnd = mText.c_str() + line.endIdx;
-            ApplyLineText(utf8, style, *fp, line, newCharsInBytes, i6, bp);
+            ApplyLineText(utf8, style, *f, line, newCharsInBytes, i6, bp);
             return lineIdx;
         } else
             return -1;
@@ -1722,8 +1722,8 @@ void RndText::ReplaceLineText(
 ) {
     MILO_ASSERT(idx < mLines.size(), 0x8E5);
     float f3c = 0;
-    fptr = fptr ? fptr : &f3c;
-    int newCharsInBytes = NumCharsInBytes(utf8, style, *fptr, fixedLineLength);
+    float *f = fptr ? fptr : &f3c;
+    int newCharsInBytes = NumCharsInBytes(utf8, style, *f, fixedLineLength);
     MILO_ASSERT(newCharsInBytes <= utf8.length(), 0x8EC);
     Line &line = mLines[idx];
     line.xfm = xfm;
@@ -1743,7 +1743,7 @@ void RndText::ReplaceLineText(
             curInfo.syncFlags |= 0x1F;
         }
     }
-    ApplyLineText(utf8, style, *fptr, line, newCharsInBytes, fixedLineLength, bptr);
+    ApplyLineText(utf8, style, *f, line, newCharsInBytes, fixedLineLength, bptr);
 }
 
 void RndText::SyncMeshes() {
