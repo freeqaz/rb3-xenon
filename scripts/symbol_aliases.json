@@ -99004,57 +99004,24 @@
     "??2Accomplishment@@SAPAXI@Z",
     "??2AppChild@@SAPAXI@Z",
     "??2Archive@@SAPAXI@Z",
-    "??2AsyncFileHolmes@@SAPAXI@Z",
-    "??2AsyncFileWin@@SAPAXI@Z",
-    "??2BandButton@@SAPAXI@Z",
-    "??2BandCamShot@@SAPAXI@Z",
     "??2BandCharDesc@@SAPAXI@Z",
-    "??2BandCharacter@@SAPAXI@Z",
-    "??2BandConfiguration@@SAPAXI@Z",
-    "??2BandCrowdMeter@@SAPAXI@Z",
-    "??2BandDirector@@SAPAXI@Z",
-    "??2BandFaceDeform@@SAPAXI@Z",
-    "??2BandHighlight@@SAPAXI@Z",
-    "??2BandLabel@@SAPAXI@Z",
-    "??2BandLeadMeter@@SAPAXI@Z",
-    "??2BandList@@SAPAXI@Z",
-    "??2BandScoreboard@@SAPAXI@Z",
     "??2BandScreen@@SAPAXI@Z",
-    "??2BandSongPref@@SAPAXI@Z",
-    "??2BandStarDisplay@@SAPAXI@Z",
-    "??2BandSwatch@@SAPAXI@Z",
-    "??2BandWardrobe@@SAPAXI@Z",
     "??2BinStream@@SAPAXI@Z",
     "??2Block@@SAPAXI@Z",
-    "??2BmpCache@HiResScreen@@SAPAXI@Z",
     "??2Cache@@SAPAXI@Z",
     "??2CacheID@@SAPAXI@Z",
     "??2CacheMgr@@SAPAXI@Z",
-    "??2CharBoneTwist@@SAPAXI@Z",
     "??2CharBonesAlloc@@SAPAXI@Z",
-    "??2CharGuitarString@@SAPAXI@Z",
-    "??2CharIKRod@@SAPAXI@Z",
     "??2CharInfo@RndFont3d@@SAPAXI@Z",
-    "??2CharKeyHandMidi@@SAPAXI@Z",
-    "??2CharLipSyncDriver@@SAPAXI@Z",
-    "??2CharPollGroup@@SAPAXI@Z",
-    "??2CharPosConstraint@@SAPAXI@Z",
     "??2CharWidgetImp@@SAPAXI@Z",
-    "??2CheckboxDisplay@@SAPAXI@Z",
-    "??2ChordShapeGenerator@@SAPAXI@Z",
     "??2ChunkAllocator@@SAPAXI@Z",
     "??2ChunkHeader@@SAPAXI@Z",
     "??2ClipDistMap@@SAPAXI@Z",
     "??2CompressTexDesc@Rnd@@SAPAXI@Z",
     "??2Content@@SAPAXI@Z",
-    "??2CrowdMeterIcon@@SAPAXI@Z",
     "??2DataEventList@@SAPAXI@Z",
-    "??2DialogDisplay@@SAPAXI@Z",
-    "??2EndingBonus@@SAPAXI@Z",
     "??2ErrorNode@@SAPAXI@Z",
-    "??2EventAnim@@SAPAXI@Z",
     "??2EventEntry@@SAPAXI@Z",
-    "??2Fader@@SAPAXI@Z",
     "??2FileCache@@SAPAXI@Z",
     "??2FileStream@@SAPAXI@Z",
     "??2FilterVersion@@SAPAXI@Z",
@@ -99065,7 +99032,6 @@
     "??2FlowSound@@SAPAXI@Z",
     "??2FreestyleMoveRecorder@@SAPAXI@Z",
     "??2Friend@@SAPAXI@Z",
-    "??2GemTrackDir@@SAPAXI@Z",
     "??2HamSongData@@SAPAXI@Z",
     "??2HttpGet@@SAPAXI@Z",
     "??2ImmediateWidgetImp@@SAPAXI@Z",
@@ -99079,42 +99045,32 @@
     "??2MCFile@@SAPAXI@Z",
     "??2MatWidgetImp@@SAPAXI@Z",
     "??2MeasureMap@@SAPAXI@Z",
-    "??2MoggClip@@SAPAXI@Z",
     "??2MovieImpl@@SAPAXI@Z",
     "??2MultiMeshWidgetImp@@SAPAXI@Z",
     "??2NetCacheLoader@@SAPAXI@Z",
     "??2NetLoader@@SAPAXI@Z",
     "??2ObjEntry@@SAPAXI@Z",
     "??2OnlineID@@SAPAXI@Z",
-    "??2OvershellDir@@SAPAXI@Z",
     "??2ParticleCommonPool@@SAPAXI@Z",
-    "??2PitchArrow@@SAPAXI@Z",
     "??2PlayBack@CharLipSync@@SAPAXI@Z",
     "??2Rand2@@SAPAXI@Z",
     "??2Rand@@SAPAXI@Z",
     "??2RayCastContainer@@SAPAXI@Z",
     "??2RndBitmap@@SAPAXI@Z",
-    "??2RndEnvAnim@@SAPAXI@Z",
     "??2RndGraph@@KAPAXI@Z",
     "??2RndOverlay@@SAPAXI@Z",
     "??2RndShaderBuffer@@SAPAXI@Z",
-    "??2ScoreDisplay@@SAPAXI@Z",
     "??2ShadowBone@@SAPAXI@Z",
-    "??2SongSectionController@@SAPAXI@Z",
     "??2SpotlightResources@NgSpotlightDrawer@@SAPAXI@Z",
-    "??2StreakMeter@@SAPAXI@Z",
     "??2StreamChecksumValidator@@SAPAXI@Z",
     "??2StreamReceiver@@SAPAXI@Z",
     "??2StreamRecorder@@SAPAXI@Z",
     "??2StringTable@@SAPAXI@Z",
     "??2TempoMap@@SAPAXI@Z",
-    "??2TexMovie@@SAPAXI@Z",
-    "??2TrackPanelDir@@SAPAXI@Z",
     "??2UIListCustomElement@@SAPAXI@Z",
     "??2UIListLabelElement@@SAPAXI@Z",
     "??2UIListSlotElement@@SAPAXI@Z",
     "??2UIListSubListElement@@SAPAXI@Z",
-    "??2VocalTrackDir@@SAPAXI@Z",
     "??_U@YAPAXI@Z",
     "??_UMidiMessage@@SAPAXI@Z",
     "??_UOrderedLocaleChunk@LocaleChunkSort@@SAPAXI@Z",
@@ -99161,6 +99117,316 @@
      "class": "SURVIVOR_SIZE_MISMATCH",
      "why": "our(S)=8 B vs our(F)=60 B [retail(S)=8] -- our own build gives them different-sized COMDATs",
      "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??2AsyncFileHolmes@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "NO_DEFINITION",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: NO_DEFINITION. body: no compiled obj defines this spelling. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site. UNPROVEN, not refuted: --install may re-admit it once a compiled COMDAT is byte- and reloc-identical to the survivor.",
+     "regate": true
+    },
+    {
+     "spelling": "??2AsyncFileWin@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "FOLDS_ELSEWHERE",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: bytes equal but relocation targets differ: ['?_MemAllocTemp@@YAPAXHH@Z'] vs ['?MemAlloc@@YAPAXHH@Z']. our 8-B body occurs in retail exactly at ['0x82c30b00'] (shape-only matches 12); relocs ['?_MemAllocTemp@@YAPAXHH@Z']. retail keeps this exact body at a DIFFERENT address (OggMalloc), so if retail emitted it out of line it folded THERE, not at 0x827bd2f0. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2BandButton@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@BandButton@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x82344c28): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2BandCamShot@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@BandCamShot@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8227b078): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2BandCharacter@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@BandCharacter@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8228b280): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2BandConfiguration@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@BandConfiguration@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8227b118): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2BandCrowdMeter@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@BandCrowdMeter@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8227b240): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2BandDirector@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@BandDirector@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x82298470): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2BandFaceDeform@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@BandFaceDeform@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8227b4a8): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2BandHighlight@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@BandHighlight@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x82343558): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2BandLabel@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@BandLabel@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x82341ff8): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2BandLeadMeter@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@BandLeadMeter@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8227b530): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2BandList@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@BandList@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8233f220): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2BandScoreboard@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@BandScoreboard@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8227b670): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2BandSongPref@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@BandSongPref@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8227b2e0): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2BandStarDisplay@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@BandStarDisplay@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8227b5d0): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2BandSwatch@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@BandSwatch@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x822adbc8): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2BandWardrobe@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@BandWardrobe@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8232fe00): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2BmpCache@HiResScreen@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "NO_DEFINITION",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: NO_DEFINITION. body: no compiled obj defines this spelling. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site. UNPROVEN, not refuted: --install may re-admit it once a compiled COMDAT is byte- and reloc-identical to the survivor.",
+     "regate": true
+    },
+    {
+     "spelling": "??2CharBoneTwist@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@CharBoneTwist@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8236b240): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2CharGuitarString@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@CharGuitarString@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8236c7f0): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2CharIKRod@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@CharIKRod@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8236bd68): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2CharKeyHandMidi@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@CharKeyHandMidi@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8227b918): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2CharLipSyncDriver@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@CharLipSyncDriver@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8236c750): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2CharPollGroup@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@CharPollGroup@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8236c448): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2CharPosConstraint@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@CharPosConstraint@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8236bae8): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2CheckboxDisplay@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@CheckboxDisplay@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x823210f8): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2ChordShapeGenerator@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@ChordShapeGenerator@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8227bc38): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2CrowdMeterIcon@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@CrowdMeterIcon@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8227b1a0): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2DialogDisplay@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@DialogDisplay@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8232aa98): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2EndingBonus@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@EndingBonus@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8227ba58): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2EventAnim@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "RETAIL_NEWOBJECT_INLINES",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_NEWOBJECT. body: COMDAT byte- and reloc-identical to the survivor. our 8-B body occurs in retail exactly at ['0x827bd2f0'] (shape-only matches 12); relocs ['?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x824aab10): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2Fader@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@Fader@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x826fcf70): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2GemTrackDir@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@GemTrackDir@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8227bcc0): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2MoggClip@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@MoggClip@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x826fcff8): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2OvershellDir@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@OvershellDir@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8227bfe0): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2PitchArrow@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@PitchArrow@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8227be00): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2RndEnvAnim@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "RETAIL_NEWOBJECT_INLINES",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_NEWOBJECT. body: COMDAT byte- and reloc-identical to the survivor. our 8-B body occurs in retail exactly at ['0x827bd2f0'] (shape-only matches 12); relocs ['?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x82410290): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2ScoreDisplay@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@ScoreDisplay@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x823203b8): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2SongSectionController@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@SongSectionController@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8227c080): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2StreakMeter@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@StreakMeter@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8227baf8): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2TexMovie@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@TexMovie@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x82742e20): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2TrackPanelDir@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@TrackPanelDir@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8227bf40): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
+    },
+    {
+     "spelling": "??2VocalTrackDir@@SAPAXI@Z",
+     "lane": "W16-KF 2026-10-01",
+     "class": "BODY_CANNOT_FOLD",
+     "disposition": "withdrawn from folded; the record is the membership's audit trail",
+     "evidence": "tools/alloc_fold_gate.py --audit-members: CONTRADICTED_BODY. body: body 60 B != survivor 8 B -- different-size COMDATs cannot fold. our 60-B body occurs in retail exactly at NO address (shape-only matches 0); relocs ['?StaticClassName@VocalTrackDir@@SA?AVSymbol@@XZ', '?MemAlloc@@YAPAXHH@Z']. retail NewObject (0x8227bea0): INLINED -- calls StaticClassName and MemAlloc itself; the class allocator is inlined, there is no out-of-line body to fold. retail call sites (strict/bl tier): witness 0/0, contradiction 0/0 -- the membership forgives no aligned site."
     }
    ],
    "admitted": [
