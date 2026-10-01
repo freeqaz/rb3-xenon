@@ -21315,7 +21315,7 @@
  "0x8273a198": "?SavePostBuffer@DxRnd@@AAAXXZ",
  "0x8273a1f0": "?SetFrameBuffersAsSource@DxRnd@@AAAXXZ",
  "0x8273a3d0": "?Resume@DxRnd@@UAAXXZ",
- "0x8273a428": "?resize@?$vector@URndPointTest@NgRnd@@V?$StlNodeAlloc@URndPointTest@NgRnd@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABURndPointTest@NgRnd@@@Z",
+ "0x8273a428": "??$New@VDxTex@@@Object@Hmx@@SAPAVDxTex@@XZ",
  "0x8273a5f0": "?NewObject@DxEnviron@@SAPAVObject@Hmx@@XZ",
  "0x8273a7b8": "?NewObject@DxMesh@@SAPAVObject@Hmx@@XZ",
  "0x8273a8d8": "?NewObject@DxCubeTex@@SAPAVObject@Hmx@@XZ",
