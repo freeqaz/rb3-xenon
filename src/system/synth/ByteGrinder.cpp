@@ -663,24 +663,26 @@ DataNode op57(DataArray *msg) {
     return DataNode(kDataInt, u8(tmp ^ operand));
 }
 
+// Same operation as op40 (rotate right by 6, flip bit 0); retail compiles
+// both to one body and the linker folds them, so op58's table slot points
+// at op40.
 DataNode op58(DataArray *msg) {
     u32 operand = msg->Int(1);
-    u8 w = msg->Int(2);
+    u32 w = (u8)msg->Int(2);
 
-    u32 working2 = (w ^ 0x65u);
-    u32 working3 = (w << 8) ^ 0x3Cu;
-    u32 tmp = ((working2 | working3) >> 6);
+    u32 tmp = (((w << 8) | (w ^ 0x5Cu)) >> 6);
     return u8(tmp ^ operand);
 }
 
 DataNode op59(DataArray *msg) {
     u32 operand = msg->Int(1);
-    u32 w = (u8)msg->Int(2);
+    u8 w = msg->Int(2);
 
-    u32 working2 = (w ^ 0x65u);
-    u32 working3 = (w << 8) ^ 0x3Cu;
+    u32 w_extended = w;
+    u32 working2 = (w_extended ^ 0x3Cu);
+    u32 working3 = (w_extended << 8) ^ 0x65u;
     u32 tmp = ((working2 | working3) >> 2);
-    return u8(tmp ^ operand);
+    return DataNode(kDataInt, u8(tmp ^ operand));
 }
 
 DataNode op60(DataArray *msg) {

@@ -14,6 +14,10 @@ DSP::Synapse::PitchCorrectedVoice::PitchCorrectedVoice()
       mProximityEffect(0.0f), mProximityFocus(0.5f), mField_0x28(0.0f), mFreqCounter(0.0f),
       mPrevFreq(0.0f), mAbsPitchDeviation(0.0f) {}
 
+// Out of line and empty: every member is a float. Retail callers branch to the
+// shared empty-body COMDAT the linker folded it into.
+DSP::Synapse::PitchCorrectedVoice::~PitchCorrectedVoice() {}
+
 float DSP::Synapse::PitchCorrectedVoice::GetCorrection() {
     // Interval between the two target frequencies, in semitones.
     float interval = Util::Log<float>(mFreq1) - Util::Log<float>(mFreq0);

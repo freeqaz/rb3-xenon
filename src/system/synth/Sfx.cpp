@@ -17,7 +17,11 @@ SfxInst::SfxInst(Sfx *sfx)
     FOREACH (it, sfx->SfxMaps()) {
         SampleInst *inst = nullptr;
         if (it->Sample()) {
+#ifdef HX_NATIVE
             inst = it->Sample()->NewInst(false, 0, -1);
+#else
+            inst = it->Sample()->NewInst();
+#endif
         }
         if (inst) {
             inst->SetBankVolume(it->Volume() + mRandVol);

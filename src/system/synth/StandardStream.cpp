@@ -561,7 +561,13 @@ void StandardStream::Init(float f1, float f2, Symbol s, bool b4) {
     mStartMs = f1;
     mLastStreamTime = f1;
     mTimer.Reset(f1);
+#ifdef HX_NATIVE
     mFloatSamples = false;
+#else
+    // Init clears the decoder-reported format, not the requested one: the
+    // decoder created just below is still asked for mFloatSamples.
+    mInfoFloatSamples = false;
+#endif
     if (!b4) {
         MILO_ASSERT(mChanParams.empty(), 0x6E);
         mChanParams.resize(32);
@@ -602,7 +608,7 @@ void StandardStream::InitInfo(int i1, int sampleRate, bool floatSamples, int i4)
             const int kRB3StreamBufSize = 0xC000;
             int bufBytes = (mBufSecs * (float)sampleRate * 2.0f);
             _ref2 = sampleRate;
-            mFloatSamples = floatSamples;
+            mInfoFloatSamples = floatSamples;
             bufBytes = bufBytes + (2 * kRB3StreamBufSize - bufBytes % (2 * kRB3StreamBufSize));
             int numBufs = bufBytes / kRB3StreamBufSize;
             SystemConfig("synth", "iop")->FindInt("max_slip");
@@ -613,7 +619,7 @@ void StandardStream::InitInfo(int i1, int sampleRate, bool floatSamples, int i4)
             }
             for (int i = 0; i < mVirtualChans; i++) {
                 void *buf = MemAlloc(
-                    (mFloatSamples ? 4 : 2) << 0xB, __FILE__, 0x159, "stream mVirtBufs"
+                    (mInfoFloatSamples ? 4 : 2) << 0xB, __FILE__, 0x159, "stream mVirtBufs"
                 );
                 mVirtBufs.push_back(buf);
             }
@@ -662,7 +668,11 @@ void StandardStream::InitInfo(int i1, int sampleRate, bool floatSamples, int i4)
 #endif
             MILO_ASSERT(numChannels == mChannels.size(), 0x161);
             MILO_ASSERT(_ref2 == sampleRate, 0x162);
+#ifdef HX_NATIVE
             MILO_ASSERT(mFloatSamples == floatSamples, 0x163);
+#else
+            MILO_ASSERT(mInfoFloatSamples == floatSamples, 0x163);
+#endif
         }
         if (mJumpSamplesInvalid) {
             setJumpSamplesFromMs(mJumpFromMs, mJumpToMs);
@@ -901,7 +911,7 @@ int StandardStream::ConsumeData(void **v, int numSamples, int startSamp) {
     }
 
     if ((unsigned int)samplesToConsume != 0) {
-        int bytesPerSample = mFloatSamples ? 4 : 2;
+        int bytesPerSample = mInfoFloatSamples ? 4 : 2;
         int copySize = bytesPerSample * samplesToConsume;
         for (std::vector<std::pair<int, int> >::iterator mapIt = mChanMaps.begin();
              mapIt != mChanMaps.end(); ++mapIt) {
@@ -911,7 +921,7 @@ int StandardStream::ConsumeData(void **v, int numSamples, int startSamp) {
         short convBuf[0x800];
         for (int chIdx = 0; chIdx < numChannels; chIdx++) {
             void *data;
-            if (mFloatSamples) {
+            if (mInfoFloatSamples) {
                 for (unsigned int j = 0; j < (unsigned int)samplesToConsume; j++) {
                     float f = ((float *)pcm[chIdx])[j] * 32767.0f;
                     f = Clamp(-32767.0f, 32767.0f, f);

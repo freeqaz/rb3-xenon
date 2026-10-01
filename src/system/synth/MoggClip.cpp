@@ -35,7 +35,7 @@ MoggClip::~MoggClip() {
 }
 
 BEGIN_HANDLERS(MoggClip)
-    HANDLE_ACTION(play, Play(0))
+    HANDLE_ACTION(play, Play())
     HANDLE_ACTION(stop, Stop())
     HANDLE_ACTION(set_pan, SetPan(_msg->Int(2), _msg->Float(3)))
     HANDLE_SUPERCLASS(Hmx::Object)

@@ -6,6 +6,10 @@
 namespace DSP {
 namespace Synapse {
 
+// Out of line and empty (the members are plain data); ~Synapse's scoped_ptr
+// delete branches to the shared empty-body COMDAT the linker folded it into.
+PeakDetector::~PeakDetector() {}
+
 PeakDetector::PeakDetector(const stlpmtx_std::vector<float, stlpmtx_std::StlNodeAlloc<float> > &input,
                            unsigned int windowSize, unsigned int hop) {
     mInput = &input;

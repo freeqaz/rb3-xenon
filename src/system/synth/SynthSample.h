@@ -29,7 +29,9 @@ public:
 #ifdef HX_NATIVE
     virtual SampleInst *NewInst(bool loop, int startSample, int endSample);
 #else
-    virtual SampleInst *NewInst(bool, int, int) { return nullptr; }
+    // Retail takes no arguments: the instance reads the sample's own loop
+    // points (SampleInst360's ctor).
+    virtual SampleInst *NewInst() { return nullptr; }
 #endif
     virtual float LengthMs() const { return 0; }
 

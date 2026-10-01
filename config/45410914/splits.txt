@@ -4937,10 +4937,6 @@ Mat_NG.cpp:
 	.text       start:0x824A8EC8 end:0x824A8F74
 	.text       start:0x824A8F74 end:0x824AA3E0
 
-HamMaster.cpp:
-	.pdata      start:0x8223D6D8 end:0x8223D6F0
-	.text       start:0x8276E328 end:0x8276E3D8
-
 CameraShot.cpp:
 	.pdata      start:0x821F6538 end:0x821F6540
 	.pdata      start:0x821F6658 end:0x821F6660
@@ -5011,6 +5007,8 @@ Sfx.cpp:
 	.pdata      start:0x82237520 end:0x82237570
 	.pdata      start:0x82237570 end:0x82237578
 	.pdata      start:0x82237578 end:0x82237580
+	.pdata      start:0x82237720 end:0x82237728
+	.pdata      start:0x82237770 end:0x82237778
 	.pdata      start:0x822377B8 end:0x822377D0
 	.pdata      start:0x822377D0 end:0x822377E0
 	.pdata      start:0x822377E0 end:0x822377E8
@@ -5021,6 +5019,8 @@ Sfx.cpp:
 	.text       start:0x826FE080 end:0x826FE4A8
 	.text       start:0x826FE4A8 end:0x826FE514
 	.text       start:0x826FE518 end:0x826FE590
+	.text       start:0x826FFE38 end:0x826FFFC0
+	.text       start:0x827005E8 end:0x82700730
 	.text       start:0x827009E8 end:0x82700AF8
 	.text       start:0x82700AFC end:0x82700C98
 	.text       start:0x82700C98 end:0x82700D18
@@ -5079,9 +5079,7 @@ SpotlightDrawer.cpp:
 
 Spotlight.cpp:
 	.pdata      start:0x82214A98 end:0x82215080
-	.pdata      start:0x822382B0 end:0x822382B8
 	.text       start:0x824D7FC8 end:0x824E0034
-	.text       start:0x8270A8D8 end:0x8270A948
 
 Crowd.cpp:
 	.pdata      start:0x821FCDA0 end:0x821FCDC8
@@ -5211,7 +5209,9 @@ Sequence.cpp:
 	.pdata      start:0x822380E8 end:0x822380F0
 	.pdata      start:0x822380F0 end:0x822381B8
 	.pdata      start:0x822381B8 end:0x822382B0
+	.pdata      start:0x822382B0 end:0x822382B8
 	.pdata      start:0x822382B8 end:0x822382C0
+	.pdata      start:0x822382C0 end:0x822382C8
 	.pdata      start:0x822382C8 end:0x822382D0
 	.pdata      start:0x822382D0 end:0x822382E0
 	.pdata      start:0x822382E0 end:0x822383C8
@@ -5230,7 +5230,9 @@ Sequence.cpp:
 	.text       start:0x82709278 end:0x827092E0
 	.text       start:0x827092E0 end:0x82709C20
 	.text       start:0x82709C20 end:0x8270A8D8
+	.text       start:0x8270A8D8 end:0x8270A948
 	.text       start:0x8270A948 end:0x8270A9B8
+	.text       start:0x8270A9B8 end:0x8270AA38
 	.text       start:0x8270AA38 end:0x8270AAC0
 	.text       start:0x8270AAC0 end:0x8270AB30
 	.text       start:0x8270AB30 end:0x8270B90C
@@ -5884,8 +5886,10 @@ CheatProvider.cpp:
 	.pdata      start:0x82237588 end:0x822375A8
 	.pdata      start:0x822375A8 end:0x822375B0
 	.pdata      start:0x822376E8 end:0x822376F0
-	.pdata      start:0x822376F0 end:0x82237730
-	.pdata      start:0x82237760 end:0x822377A0
+	.pdata      start:0x822376F0 end:0x82237720
+	.pdata      start:0x82237728 end:0x82237730
+	.pdata      start:0x82237760 end:0x82237770
+	.pdata      start:0x82237778 end:0x822377A0
 	.text       start:0x823EF5F8 end:0x823F0310
 	.text       start:0x823F4590 end:0x823F4688
 	.text       start:0x823F4688 end:0x823F4810
@@ -5895,8 +5899,10 @@ CheatProvider.cpp:
 	.text       start:0x826FE5CC end:0x826FE7F0
 	.text       start:0x826FE7F0 end:0x826FE8A8
 	.text       start:0x826FFC18 end:0x826FFC80
-	.text       start:0x826FFC80 end:0x826FFFE8
-	.text       start:0x82700270 end:0x827008DC
+	.text       start:0x826FFC80 end:0x826FFE38
+	.text       start:0x826FFFC0 end:0x826FFFE8
+	.text       start:0x82700270 end:0x827005E8
+	.text       start:0x82700730 end:0x827008DC
 
 CameraManager.cpp:
 	.pdata      start:0x82213058 end:0x82213060
@@ -10871,24 +10877,22 @@ BandSongPref.cpp:
 	.text       start:0x822C0CF8 end:0x822C0E78
 	.text       start:0x822C0E78 end:0x822C10B8
 
-BinkClip.cpp:
-	.pdata      start:0x82238588 end:0x82238590
-	.pdata      start:0x822385A0 end:0x822385A8
-	.pdata      start:0x822386E8 end:0x82238710
-	.text       start:0x8270D848 end:0x8270D8A4
-	.text       start:0x8270D940 end:0x8270D988
-	.text       start:0x8270EC58 end:0x8270EEAC
-
 system/synth/MoggClip.cpp:
 	.pdata      start:0x82238560 end:0x82238580
 	.pdata      start:0x82238580 end:0x82238588
+	.pdata      start:0x82238588 end:0x82238590
 	.pdata      start:0x82238590 end:0x822385A0
+	.pdata      start:0x822385A0 end:0x822385A8
 	.pdata      start:0x822385A8 end:0x822386E8
+	.pdata      start:0x822386E8 end:0x82238710
 	.text       start:0x8270D4B0 end:0x8270D76C
 	.text       start:0x8270D770 end:0x8270D7E4
 	.text       start:0x8270D7E8 end:0x8270D848
+	.text       start:0x8270D848 end:0x8270D8A4
 	.text       start:0x8270D8A8 end:0x8270D93C
+	.text       start:0x8270D940 end:0x8270D988
 	.text       start:0x8270D988 end:0x8270EC58
+	.text       start:0x8270EC58 end:0x8270EEAC
 	.text       start:0x8270EEAC end:0x8270EEB8
 
 Color.cpp:
@@ -10948,12 +10952,14 @@ EventAnim.cpp:
 system/beatmatch/BeatMaster.cpp:
 	.pdata      start:0x8223D6C8 end:0x8223D6D0
 	.pdata      start:0x8223D6D0 end:0x8223D6D8
+	.pdata      start:0x8223D6D8 end:0x8223D6F0
 	.pdata      start:0x8223D6F0 end:0x8223D7D0
 	.pdata      start:0x8223D7D0 end:0x8223D7D8
 	.pdata      start:0x8223D7D8 end:0x8223D7E0
 	.pdata      start:0x8223D7E0 end:0x8223D808
 	.text       start:0x8276E26C end:0x8276E2B8
 	.text       start:0x8276E2B8 end:0x8276E328
+	.text       start:0x8276E328 end:0x8276E3D8
 	.text       start:0x8276E3D8 end:0x8276F458
 	.text       start:0x8276F458 end:0x8276F4A4
 	.text       start:0x8276F4A8 end:0x8276F4D4
