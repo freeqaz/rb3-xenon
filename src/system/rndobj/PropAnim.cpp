@@ -395,7 +395,7 @@ void RndPropAnim::SetFrame(float frame, float blend) {
 float RndPropAnim::StartFrame() {
     float frame = 0.0f;
     FOREACH (it, mPropKeys) {
-        frame = Min((*it)->StartFrame(), frame);
+        frame = Min(frame, (*it)->StartFrame());
     }
     return frame;
 }
