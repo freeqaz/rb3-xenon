@@ -631,8 +631,7 @@ bool CharDriver::Starved() {
 void CharDriver::SetBeatScale(float beatscale, bool) {
     CharClipDriver *playing = FirstPlaying();
     if (playing) {
-        float oldBeatScale = mBeatScale;
-        float ratio = oldBeatScale / beatscale;
+        float ratio = mBeatScale / beatscale;
         for (CharClipDriver *d = playing; d != nullptr; d = d->Next()) {
             if ((playing->mPlayFlags & 0xF600) != CharClip::kPlayRealTime) {
                 d->mTimeScale *= ratio;
