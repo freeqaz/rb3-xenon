@@ -324,6 +324,9 @@ void RndGroup::Draw() {
 
 void RndGroup::ListDrawChildren(std::list<RndDrawable *> &children) {
     children.insert(children.end(), mDraws.begin(), mDraws.end());
+    // Retail also lists the LOD drawable when one is set.
+    if (mLod)
+        children.push_back(mLod);
 }
 
 RndDrawable *RndGroup::CollideShowing(const Segment &seg, float &f, Plane &p) {
