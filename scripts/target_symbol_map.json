@@ -12177,7 +12177,7 @@
  "0x824bb930": "??$__partial_sort@PAPAVCamShot@@PAV1@UNameSort@@@stlpmtx_std@@YAXPAPAVCamShot@@000UNameSort@@@Z",
  "0x824bbbd0": "??1CameraManager@@UAA@XZ",
  "0x824bbd40": "??$__introsort_loop@PAVCategory@CameraManager@@V12@HU?$less@VCategory@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@YAXPAVCategory@CameraManager@@00HU?$less@VCategory@CameraManager@@@0@@Z",
- "0x824bbe38": "??$_M_allocate_and_copy@PBVColor@Hmx@@@?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVColor@Hmx@@IPBV23@0@Z",
+ "0x824bbe38": "??$_M_allocate_and_copy@PAUPropertyFilter@CameraManager@@@?$vector@UPropertyFilter@CameraManager@@V?$StlNodeAlloc@UPropertyFilter@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUPropertyFilter@CameraManager@@IPAU23@0@Z",
  "0x824bbed0": "??_GCameraManager@@UAAPAXI@Z",
  "0x824bbf20": "??$sort@PAVCategory@CameraManager@@@stlpmtx_std@@YAXPAVCategory@CameraManager@@0@Z",
  "0x824bbfa8": "?reserve@?$vector@UPropertyFilter@CameraManager@@V?$StlNodeAlloc@UPropertyFilter@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",

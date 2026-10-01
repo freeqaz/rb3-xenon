@@ -96679,9 +96679,11 @@
   {
    "name": "$_M_allocate_and_copy",
    "address": "0x824bbe38",
-   "survivor": "??$_M_allocate_and_copy@PBVColor@Hmx@@@?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVColor@Hmx@@IPBV23@0@Z",
-   "folded": [
-    "??$_M_allocate_and_copy@PAUPropertyFilter@CameraManager@@@?$vector@UPropertyFilter@CameraManager@@V?$StlNodeAlloc@UPropertyFilter@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUPropertyFilter@CameraManager@@IPAU23@0@Z"
+   "survivor": "??$_M_allocate_and_copy@PAUPropertyFilter@CameraManager@@@?$vector@UPropertyFilter@CameraManager@@V?$StlNodeAlloc@UPropertyFilter@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUPropertyFilter@CameraManager@@IPAU23@0@Z",
+   "survivor_renamed": {"from": "??$_M_allocate_and_copy@PBVColor@Hmx@@@?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVColor@Hmx@@IPBV23@0@Z", "lane": "W16-KD 2026-10-01"},
+   "folded": [],
+   "withdrawn": [
+    {"spelling": "??$_M_allocate_and_copy@PAUPropertyFilter@CameraManager@@@?$vector@UPropertyFilter@CameraManager@@V?$StlNodeAlloc@UPropertyFilter@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUPropertyFilter@CameraManager@@IPAU23@0@Z", "lane": "W16-KD 2026-10-01", "class": "MAP_NAME_WRONG", "why": "Retail 0x824BBE38 is vector<CameraManager::PropertyFilter>'s own _M_allocate_and_copy: it sizes 20-byte elements (mulli 0x14) where Color is 16 bytes (slwi 4), and its only retail caller is vector<PropertyFilter>::reserve (0x824BBFA8). A 16-byte Color instantiation cannot be that COMDAT. The map row is renamed to the PropertyFilter spelling and re-homed to CameraManager; this membership is withdrawn and the survivor field follows the map."}
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",

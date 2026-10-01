@@ -5078,10 +5078,8 @@ SpotlightDrawer.cpp:
 	.text       start:0x82C43780 end:0x82C437B8
 
 Spotlight.cpp:
-	.pdata      start:0x82213248 end:0x82213258
 	.pdata      start:0x82214A98 end:0x82215080
 	.pdata      start:0x822382B0 end:0x822382B8
-	.text       start:0x824BBE38 end:0x824BBED0
 	.text       start:0x824D7FC8 end:0x824E0034
 	.text       start:0x8270A8D8 end:0x8270A948
 
@@ -5904,11 +5902,13 @@ CheatProvider.cpp:
 CameraManager.cpp:
 	.pdata      start:0x82213058 end:0x82213060
 	.pdata      start:0x82213068 end:0x82213248
+	.pdata      start:0x82213248 end:0x82213258
 	.pdata      start:0x82213258 end:0x822133E0
 	.pdata      start:0x822149F0 end:0x822149F8
 	.pdata      start:0x822222A8 end:0x822222B0
 	.text       start:0x824B9E60 end:0x824B9ED8
 	.text       start:0x824B9F00 end:0x824BBE38
+	.text       start:0x824BBE38 end:0x824BBED0
 	.text       start:0x824BBED0 end:0x824BD6C0
 	.text       start:0x824D6F68 end:0x824D6FDC
 	.text       start:0x825AD700 end:0x825AD768
