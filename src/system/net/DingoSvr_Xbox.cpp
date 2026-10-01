@@ -100,8 +100,8 @@ void DingoSvrXbox::StartSessionComplete(bool b1) {
     MILO_ASSERT(mLeaderboardID != -1, 0x207);
     MILO_ASSERT(mLeaderboardScorePropID != -1, 0x208);
     if (b1) {
-        mJobMgr.QueueJob(new WriteCareerLeaderboardJob(
-            mSessionHandle, mLeaderboardID, mLeaderboardScorePropID, mScoreXUID, mCareerScore
+        mJobMgr.QueueJob(new WriteTrueSkillJob(
+            mSessionHandle, mScoreXUID, mCareerScore, mLeaderboardScorePropID, mLeaderboardID
         ));
         mJobState = 4;
     } else {
@@ -267,7 +267,11 @@ void DingoSvrXbox::OnAuthSuccess() {
 
 void DingoSvrXbox::CreateSession() {
     XUserSetContext(mAuthedPadNum, 0x800A, 1);
-    mJobMgr.QueueJob(new MakeSessionJob(&mSessionHandle, 0x706, mAuthedPadNum));
+    // RB3's MakeSessionJob is built from the matchmaking settings and session
+    // data XboxSession owns; this server has neither.
+    mJobMgr.QueueJob(
+        new MakeSessionJob(&mSessionHandle, nullptr, 0x706, mAuthedPadNum, 0, 0, nullptr)
+    );
     mJobState = 1;
 }
 

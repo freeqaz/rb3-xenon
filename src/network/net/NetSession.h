@@ -141,6 +141,9 @@ public:
     void SetState(SessionState);
     void OnRegisterSessionJobComplete(bool);
     void OnConnectSessionJobComplete(bool);
+    // Retail 0x823E6DE0, reached only from RegisterArbitrationJob::OnCompletion
+    // (0x823F6670); not yet written here, and its name is provisional.
+    void OnRegisterArbitrationJobComplete();
     void Clear();
     void EnterInGameState();
     bool IsHost() const;

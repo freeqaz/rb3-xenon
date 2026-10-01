@@ -45,6 +45,14 @@ DWORD XUserReadGamerPicture(
     XOVERLAPPED *pOverlapped
 );
 VOID XUserSetContext(DWORD dwUserIndex, DWORD dwContextId, DWORD dwContextValue);
+VOID XUserSetProperty(
+    DWORD dwUserIndex, DWORD dwPropertyId, DWORD cbValue, const VOID *pvValue
+);
+#define X_CONTEXT_GAME_TYPE 0x0000800A
+#define X_CONTEXT_GAME_MODE 0x0000800B
+#define X_CONTEXT_GAME_TYPE_RANKED 0
+#define X_CONTEXT_GAME_TYPE_STANDARD 1
+#define XUSER_DATA_TYPE_INT32 1
 DWORD XUserWriteAchievements(
     DWORD dwNumAchievements, XUSER_ACHIEVEMENT *pAchievements, XOVERLAPPED *pOverlapped
 );

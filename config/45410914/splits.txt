@@ -7429,10 +7429,6 @@ system/synth/FxSendPitchShift.cpp:
 	.text       start:0x82712E7C end:0x82712FB0
 	.text       start:0x82713020 end:0x827130B0
 
-ClipCollide.cpp:
-	.pdata      start:0x822091D0 end:0x822091E8
-	.text       start:0x823F6380 end:0x823F64AC
-
 DrivenPropertyEntry.cpp:
 	.pdata      start:0x821F74B8 end:0x821F74C8
 	.pdata      start:0x821F74E8 end:0x821F74F8
@@ -7501,14 +7497,8 @@ FlowWhile.cpp:
 	.text       start:0x823423DC end:0x82342438
 
 SessionJobs_Xbox.cpp:
-	.pdata      start:0x82208DA0 end:0x82208DC8
-	.pdata      start:0x822091A8 end:0x822091D0
-	.pdata      start:0x822091E8 end:0x822092D8
-	.pdata      start:0x82250128 end:0x82250130
-	.text       start:0x823F2A18 end:0x823F2C10
-	.text       start:0x823F6198 end:0x823F6380
-	.text       start:0x823F64AC end:0x823F70E0
-	.text       start:0x82A58570 end:0x82A585BC
+	.pdata      start:0x822091A8 end:0x822092D8
+	.text       start:0x823F6198 end:0x823F70E0
 
 CharFeedback.cpp:
 	.pdata      start:0x821F46A8 end:0x821F4700
@@ -9450,7 +9440,7 @@ SessionMessages.cpp:
 	.text       start:0x823F2608 end:0x823F267C
 	.text       start:0x823F267C end:0x823F27B8
 	.text       start:0x823F27B8 end:0x823F2898
-	.text       start:0x823F2898 end:0x823F2A18
+	.text       start:0x823F2898 end:0x823F2A08
 
 SyncStore.cpp:
 	.pdata      start:0x82208348 end:0x822083C0
@@ -9480,8 +9470,10 @@ SyncStore.cpp:
 	.text       start:0x823F0FA0 end:0x823F0FC0
 
 network/net/QuazalSession.cpp:
+	.pdata      start:0x82208DA0 end:0x82208DC8
 	.pdata      start:0x82208DD0 end:0x82208DD8
 	.pdata      start:0x82208E28 end:0x82208E30
+	.text       start:0x823F2A08 end:0x823F2C10
 	.text       start:0x823F2C98 end:0x823F2CD4
 	.text       start:0x823F2CD8 end:0x823F2CF8
 	.text       start:0x823F3038 end:0x823F30B8
