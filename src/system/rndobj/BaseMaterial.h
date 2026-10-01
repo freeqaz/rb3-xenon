@@ -323,6 +323,10 @@ public:
         mDiffuseTex = tex;
         mDirty |= 2;
     }
+    void SetEmissiveMap(RndTex *tex) {
+        mEmissiveMap = tex;
+        mDirty |= 2;
+    }
     // SetDiffuseTex(nullptr) with the null store open-coded
     // (`if (mObject) { mObject->Release(this); mObject = 0; }`), as retail
     // inlines it at some sites -- e.g. both sMat resets in
