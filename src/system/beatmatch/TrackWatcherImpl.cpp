@@ -627,7 +627,7 @@ void TrackWatcherImpl::MaybeAutoplayFutureCymbal(int gemID) {
         GameGem &curGem = mGemList->GetGem(gemID);
         if (curGem.mMs > gemMs)
             break;
-        if (i3 == curGem.GetSlot()) {
+        if (curGem.GetSlot() == i3) {
             curGem.SetUnk10B1(true);
             return;
         }
