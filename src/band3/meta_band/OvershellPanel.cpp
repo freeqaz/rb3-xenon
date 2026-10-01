@@ -636,8 +636,12 @@ void OvershellPanel::EnableAutoVocals() {
         TheModifierMgr->ToggleModifierEnabled(mod_auto_vocals);
     }
     mSessionMgr->Disconnect();
-    for (int i = 0; i < mSlots.size(); i++) {
-        BandUser *user = mSlots[i]->GetUser();
+    // Retail spills the slot vector's begin pointer to the frame's first local
+    // slot inside the loop and reloads begin from the vector for RemoveUser:
+    // the home of a named vector reference used for the bound and GetUser.
+    std::vector<OvershellSlot *> &slots = mSlots;
+    for (int i = 0; i < slots.size(); i++) {
+        BandUser *user = slots[i]->GetUser();
         if (user && user->GetControllerType() == 2) {
             mSlots[i]->RemoveUser();
         }

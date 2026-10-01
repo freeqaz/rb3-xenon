@@ -69,8 +69,13 @@ void PerfectSectionTracker::FirstFrame_(float) {
     }
 }
 
+// Poll_ reloads 0.0f from the constant pool at each compare (the pool
+// address stays in r22 across the calls); a bare 0.0f literal is hoisted into
+// a callee-saved FPR instead.
+static const float kZero = 0.0f;
+
 void PerfectSectionTracker::Poll_(float f) {
-    if (mTargets.front() != 0.0f) {
+    if (mTargets.front() != kZero) {
         if (mSource->IsFinished()) {
             if (!unke4) {
                 if (unkc0) {
@@ -104,7 +109,7 @@ void PerfectSectionTracker::Poll_(float f) {
                 unkb4 = 0.0f;
             }
             float bc = unkbc;
-            if (bc > 0.0f && f >= bc) {
+            if (bc > kZero && f >= bc) {
                 HandleEnterExtent(f, unkc4, true);
                 unkbc = 0.0f;
                 unkc0 = true;
@@ -117,7 +122,7 @@ void PerfectSectionTracker::Poll_(float f) {
                 if (skipSection) {
                     unkbc = f;
                 }
-            } else if (inSection && 0.0f == bc) {
+            } else if (inSection && kZero == bc) {
                 HandleInExtent(f, unkc4);
             }
             if (exitedExtent) {

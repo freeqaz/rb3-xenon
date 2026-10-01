@@ -52,8 +52,9 @@ void GameplayOptions::LoadFixed(FixedSizeSaveableStream &fsss, int) {
 }
 
 int GameplayOptions::SaveSize(int) {
-    if (FixedSizeSaveable::sPrintoutsEnabled)
-        TheDebug << MakeString("* %s = %i\n", "GameplayOptions", 9);
+    if (FixedSizeSaveable::sPrintoutsEnabled) {
+        MILO_LOG("* %s = %i\n", "GameplayOptions", 9);
+    }
     return 9;
 }
 

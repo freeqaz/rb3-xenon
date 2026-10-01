@@ -1524,13 +1524,17 @@ int GemManager::GetSlotsForGem(int gem) {
 }
 
 void GemManager::EnableSlot(int slot) {
-    if (!SlotEnabled(slot)) {
+    std::list<int>::iterator it =
+        std::find(mDisabledSlotsList.begin(), mDisabledSlotsList.end(), slot);
+    if (it != mDisabledSlotsList.end()) {
         mDisabledSlotsList.remove(slot);
     }
 }
 
 void GemManager::DisableSlot(int slot) {
-    if (SlotEnabled(slot)) {
+    std::list<int>::iterator it =
+        std::find(mDisabledSlotsList.begin(), mDisabledSlotsList.end(), slot);
+    if (it == mDisabledSlotsList.end()) {
         mDisabledSlotsList.push_back(slot);
     }
 }

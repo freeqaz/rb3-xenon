@@ -5783,8 +5783,6 @@ RhythmDetector.cpp:
 	.pdata      start:0x821F1678 end:0x821F16C0
 	.pdata      start:0x821F16C8 end:0x821F1700
 	.pdata      start:0x8222B190 end:0x8222B198
-	.pdata      start:0x8222D830 end:0x8222D838
-	.pdata      start:0x8222D838 end:0x8222D850
 	.text       start:0x822702F0 end:0x822703A4
 	.text       start:0x822703A8 end:0x82270414
 	.text       start:0x82270418 end:0x82270438
@@ -5793,8 +5791,6 @@ RhythmDetector.cpp:
 	.text       start:0x822716E8 end:0x822716F8
 	.text       start:0x8227173C end:0x82271748
 	.text       start:0x826342F0 end:0x82634354
-	.text       start:0x82657660 end:0x826576C8
-	.text       start:0x826576C8 end:0x82657798
 	.text       start:0x82667FC8 end:0x82667FD8
 
 App.cpp:
@@ -8479,11 +8475,13 @@ band3/bandtrack/Track.cpp:
 
 band3/game/Stats.cpp:
 	.pdata      start:0x822004F0 end:0x822004F8
+	.pdata      start:0x8222D830 end:0x8222D850
 	.pdata      start:0x82231CB8 end:0x82231D20
 	.pdata      start:0x82231D30 end:0x82231D78
 	.pdata      start:0x82231D90 end:0x82231EA8
 	.pdata      start:0x822349E0 end:0x822349E8
 	.text       start:0x8235FFD8 end:0x82360048
+	.text       start:0x82657660 end:0x82657798
 	.text       start:0x82697538 end:0x826985C8
 	.text       start:0x82698648 end:0x82698A50
 	.text       start:0x82698B1C end:0x82698B20
@@ -8596,9 +8594,11 @@ band3/meta_band/TrainerProvider.cpp:
 
 band3/meta_band/StoreSongSortNode.cpp:
 	.pdata      start:0x8222F988 end:0x8222FA48
+	.pdata      start:0x8222FA48 end:0x8222FA50
 	.text       start:0x82675098 end:0x826758E4
 	.text       start:0x826758E8 end:0x826758F8
 	.text       start:0x826758F8 end:0x82675900
+	.text       start:0x82675900 end:0x82675958
 
 band3/game/PlayerBehavior.cpp:
 	.pdata      start:0x82236A50 end:0x82236A58
@@ -9593,7 +9593,7 @@ system/bandobj/BandTrack.cpp:
 band3/game/Game.cpp:
 	.pdata      start:0x821FFFC0 end:0x821FFFD0
 	.pdata      start:0x82200448 end:0x82200460
-	.pdata      start:0x8222FA48 end:0x8222FAD8
+	.pdata      start:0x8222FA50 end:0x8222FAD8
 	.pdata      start:0x8222FAD8 end:0x8222FCC0
 	.pdata      start:0x8222FCC0 end:0x8222FCC8
 	.pdata      start:0x8222FCC8 end:0x8222FCD0
@@ -9616,7 +9616,7 @@ band3/game/Game.cpp:
 	.pdata      start:0x822303E0 end:0x82230430
 	.text       start:0x8235B9F8 end:0x8235BA78
 	.text       start:0x8235F770 end:0x8235F84C
-	.text       start:0x82675900 end:0x82675DE8
+	.text       start:0x82675958 end:0x82675DE8
 	.text       start:0x82675DE8 end:0x82676F1C
 	.text       start:0x82676F20 end:0x82676F88
 	.text       start:0x82676F88 end:0x82677000
@@ -10072,14 +10072,12 @@ Leaderboard.cpp:
 	.pdata      start:0x8222EF60 end:0x8222EF68
 	.pdata      start:0x8222EF68 end:0x8222EF78
 	.pdata      start:0x8222EF78 end:0x8222F160
-	.pdata      start:0x82234C00 end:0x82234C10
 	.text       start:0x8235EF08 end:0x8235EF70
 	.text       start:0x8235EF70 end:0x8235EF98
 	.text       start:0x8266BDD0 end:0x8266C270
 	.text       start:0x8266C270 end:0x8266C30C
 	.text       start:0x8266C30C end:0x8266C440
 	.text       start:0x8266C464 end:0x8266E4E8
-	.text       start:0x826CE268 end:0x826CE2D0
 
 MainHubPanel.cpp:
 	.pdata      start:0x822237C0 end:0x822237D0
@@ -11168,6 +11166,7 @@ band3/game/PerfectSectionTracker.cpp:
 band3/game/MultiplayerAnalyzer.cpp:
 	.pdata      start:0x82230CA8 end:0x82230CC8
 	.pdata      start:0x82234B90 end:0x82234C00
+	.pdata      start:0x82234C00 end:0x82234C10
 	.pdata      start:0x82234C10 end:0x82234C20
 	.pdata      start:0x82234C20 end:0x82234C30
 	.pdata      start:0x82234C30 end:0x82234C50
@@ -11183,6 +11182,7 @@ band3/game/MultiplayerAnalyzer.cpp:
 	.pdata      start:0x82234CF0 end:0x82234CF8
 	.text       start:0x82687F98 end:0x826881DC
 	.text       start:0x826CD8DC end:0x826CE268
+	.text       start:0x826CE268 end:0x826CE2D0
 	.text       start:0x826CE2D0 end:0x826CE4B8
 	.text       start:0x826CE4B8 end:0x826CE5E0
 	.text       start:0x826CE5E0 end:0x826CE714

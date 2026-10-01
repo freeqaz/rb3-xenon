@@ -983,7 +983,8 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
         );
     }
 
-    bool bSolo = ((int)mVocalParts.size() - 1) == 0;
+    // Retail tests the byte span: `clrrwi; subi 4; cntlzw` (size() == 1).
+    bool bSolo = mVocalParts.size() == 1;
     if (TheGameMicManager->GetMicCount() == 1 && bSolo) {
         Singer *pFirstSinger = mSingers[0];
         float fHitPct = pFirstSinger->AccessScoreCache(0).unk14;
@@ -991,14 +992,16 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
         if (0.0f == fHitPct) {
             fAdjusted = 0.0f;
         }
-        // TODO(W17): objdiff shows retail materializing `(0.0f != fAdjusted)` via
-        // an unconditional register copy plus an inverted-polarity branch (looks
-        // CSE'd with the `0.0f == fHitPct` test above), where our compiled code
-        // does a fresh fcmpu+branch here. Working hypothesis is a benign
-        // compiler CSE/scheduling divergence, NOT yet proven -- flagged for a
-        // future matching lane rather than asserted as safe.
+        /* Retail 0x826EB030: `fcmpu f3,f29; mr r4,r17(=0); beq; li r4,1` --
+           the flag starts false and is set only on the not-equal arm. A bare
+           `fAdjusted != 0.0f` argument emits the opposite shape
+           (`li r4,1; bne; mr r4,0`). */
+        bool bCorrect = false;
+        if (fAdjusted != 0.0f) {
+            bCorrect = true;
+        }
         TheGameMicManager->SetPitchCorrectionTarget(
-            (0.0f != fAdjusted), false,
+            bCorrect, false,
             mSynapseProximitySolo, mSynapseFocusSolo,
             fAdjusted, 0.0f, 0.0f
         );
@@ -1330,14 +1333,15 @@ void VocalPlayer::HandlePhraseEnd(float f1) {
     if (iHighRatingPartCount > 1)
         iPhraseRating = iHighRatingPartCount + 3;
     if (iPhraseRating != -1) {
+        // A named local: retail stores the 4 to 0x50(r31) before the
+        // CurrentPhraseIndex call and selects the minimum after it.
+        int iMaxRating = 4;
         int idx = mVocalParts.front()->CurrentPhraseIndex();
-        // Retail passes idx-1 (`subi r5, r3, 0x1` right before the call), not
-        // idx.
-        int iCappedRating = std::min(iPhraseRating, 4);
-        UpdateCrowdMeter(iCappedRating, idx - 1);
+        // idx - 1, not idx: `subi r5,r3,0x1` right before the call.
+        UpdateCrowdMeter(std::min(iPhraseRating, iMaxRating), idx - 1);
     }
     mTambourineManager.SetTambourine(mVocalParts.front()->InTambourinePhrase());
-    bool bSpotlightPhraseHit = iSpotlightPhraseID != -1 && iPhraseRating >= 4;
+    const bool bSpotlightPhraseHit = iSpotlightPhraseID != -1 && iPhraseRating >= 4;
 #ifdef HX_NATIVE
     // Headless: mTrack is a non-null sentinel with no VocalTrackDir render object
     // and no net session, so the retail render/net phrase-end leaves
@@ -1358,7 +1362,9 @@ void VocalPlayer::HandlePhraseEnd(float f1) {
             static Message msg("send_score_phrase", 0, 0, 0);
             msg[0] = iPhraseRating;
             msg[1] = packedBools;
-            msg[2] = iPrevActivePartCount;
+            // Third argument is the spotlight flag (RemoteScorePhrase's bool),
+            // masked to a byte: retail clrlwi r11,r26,24 into the DataNode.
+            msg[2] = bSpotlightPhraseHit;
             HandleType(msg);
         }
     }

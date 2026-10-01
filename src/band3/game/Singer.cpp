@@ -537,13 +537,13 @@ void Singer::Poll_(float ms, const SongPos &, float micPitch, float micEnergy, f
         } else {
             micPitch = 0.0f;
         }
-        micEnergy = 0.0f;
-        if (micEnergy != micPitch) {
+        if (micPitch != 0.0f) {
             if ((mAutoplayPart != -1 || mIsSinging != 0) && !mPlayer->AtLastPhrase()) {
                 float t = ms / 1000.0f;
                 micPitch += mDetune;
                 micEnergy = 1.0f;
-                micPitch += mAutoplayVariationMagnitude *
+                float magnitude = mAutoplayVariationMagnitude;
+                micPitch += magnitude *
                                 (float)sin(6.2831f * t + 0.5f * 3.1415f * (float)mSingerIndex) +
                             mAutoplayOffset;
             } else {
@@ -552,6 +552,8 @@ void Singer::Poll_(float ms, const SongPos &, float micPitch, float micEnergy, f
             }
         } else if (mIsSinging != 0) {
             micEnergy = 1.0f;
+        } else {
+            micEnergy = 0.0f;
         }
     }
 

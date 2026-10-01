@@ -245,6 +245,54 @@ def load_address_map(path: Path) -> Dict[str, str]:
     return out
 
 
+DEFAULT_SYMBOLS = PROJECT_ROOT / "config" / "45410914" / "symbols.txt"
+
+
+def stale_label_names(symbols_path: Path) -> Dict[str, int]:
+    """`lbl_<X>` names that symbols.txt places at an address OTHER than X.
+
+    The rename map is keyed by the hex in a symbol's NAME, not by where the
+    symbol lives. For `fn_<X>` the two always agree. For `.text` labels they
+    do not: symbols.txt carries 18,335 `lbl_<X>` entries whose X is a stale
+    address (e.g. `lbl_825F8AA8 = .text:0x82615368`, the switch base inside
+    CustomizePanel::GetWearing). 414 of those X's are map keys, so a name-keyed
+    rename gave a branch target inside one function the name of an unrelated
+    function (`?RefreshHeader@AccomplishmentPanel@@QAAXXZ` here). Under the
+    name_check ruler that charges every reference to the label, where an
+    unrenamed `lbl_` placeholder is forgiven.
+
+    Returns {name: real_address} for every such label, so the caller can drop
+    the rename. A `lbl_<X>` that really sits at X (dtk's frameless entry
+    points, see load_address_map) is not returned and keeps its rename.
+    """
+    out: Dict[str, int] = {}
+    if not symbols_path.is_file():
+        return out
+    with symbols_path.open() as fh:
+        for line in fh:
+            if not line.startswith("lbl_"):
+                continue
+            head, sep, rest = line.partition(" = ")
+            if not sep:
+                continue
+            name = head.strip()
+            hexpart = name[4:]
+            if len(hexpart) != 8:
+                continue
+            _sec, colon, addr_txt = rest.partition(":")
+            if not colon:
+                continue
+            addr_txt = addr_txt.split(";", 1)[0].strip()
+            try:
+                named = int(hexpart, 16)
+                real = int(addr_txt, 16)
+            except ValueError:
+                continue
+            if named != real:
+                out[name.upper().replace("LBL_", "lbl_")] = real
+    return out
+
+
 def rename_symbols(
     data: bytearray, renames: Dict[str, str]
 ) -> Tuple[int, List[str]]:
@@ -328,6 +376,12 @@ def main() -> int:
         help="JSON address->name map (default: %(default)s)",
     )
     parser.add_argument(
+        "--symbols",
+        default=str(DEFAULT_SYMBOLS),
+        help="dtk symbols.txt, used to find lbl_ names whose hex is not their "
+        "address (default: %(default)s)",
+    )
+    parser.add_argument(
         "files", nargs="*", help="Specific .obj files to patch (overrides --batch)"
     )
     args = parser.parse_args()
@@ -348,6 +402,13 @@ def main() -> int:
         except json.JSONDecodeError as exc:
             print(f"ERROR: cannot parse {map_path}: {exc}", file=sys.stderr)
             return 1
+        stale = stale_label_names(Path(args.symbols))
+        dropped = [n for n in stale if n in renames]
+        for n in dropped:
+            del renames[n]
+        print(f"[map] {len(stale)} lbl_ name(s) in {args.symbols} are not at "
+              f"their named address; {len(dropped)} would have taken a map "
+              f"name and are left as placeholders")
 
     obj_dir = Path(args.obj_dir)
     if args.batch:

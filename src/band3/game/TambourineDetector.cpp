@@ -26,8 +26,11 @@ TambourineDetector::~TambourineDetector() {}
 void TambourineDetector::CheckForSwing(float f1, float f2) {
     float sub = f1 - mLagMsOffset;
     int tick = MsToTickInt(sub);
-    bool set8 = unk8;
-    if (set8) {
+    // The previous state is kept as its own value (mr. r10,r11) and tested
+    // unmasked at the end; reading unk8 again re-masked it.
+    const bool wasSet = unk8;
+    bool set8 = wasSet;
+    if (wasSet) {
         unkc = Max(unkc, f2);
         if (f2 < unkc - mEnergyDropThreshold) {
             unk10 = f2;
@@ -40,7 +43,7 @@ void TambourineDetector::CheckForSwing(float f1, float f2) {
             unkc = f2;
         }
     }
-    bool b1 = set8 && !unk8;
+    bool b1 = set8 && !wasSet;
     unk8 = set8;
     if (b1 && mManager.TambourineSwing(tick) != 0) {
         mSinger->NoteTambourineSwing(sub);

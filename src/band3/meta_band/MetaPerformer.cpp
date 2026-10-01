@@ -129,7 +129,8 @@ END_FORCE_LOCAL_INLINE
 
 BandProfile *BandStatsInfo::GetSoloProfile(int index) const {
     MILO_ASSERT(index < mSoloStats.size(), 0xB6);
-    BandProfile *profile = mSoloStats[index].first;
+    const std::pair<BandProfile *, PerformerStatsInfo> &entry = mSoloStats[index];
+    BandProfile *profile = entry.first;
     MILO_ASSERT(profile, 0xBB);
     return profile;
 }
@@ -1252,7 +1253,8 @@ void MetaPerformer::TriggerSongCompletion() {
                 Difficulty d8 = localUser->GetDifficulty();
                 if (!player->GetQuarantined() && localUser->unkc) {
                     int i7 = localUser->GetPadNum();
-                    info.AddSoloStats(i7, localUser->GetSlot(), s, d8, profile, player);
+                    int slot = localUser->GetSlot();
+                    info.AddSoloStats(i7, slot, s, d8, profile, player);
                     if (player->IsAutoplay()) {
                         m16 = true;
                     }
@@ -1409,7 +1411,7 @@ void MetaPerformer::SyncSave(BinStream &bs, unsigned int ui) const {
     bs << mVenue;
     bs << mFestivalReward;
     bs << mSetlist;
-    bs << (mSetlistIsLocal ? (const String &)String(gNullStr) : (const String &)mSetlistTitle);
+    bs << (mSetlistIsLocal ? (const String &)gNullStr : mSetlistTitle);
     bs << mSetlistIsHmx;
     bs << mSongs;
     bs << mStars;

@@ -77,8 +77,10 @@ void GameMicManager::HandleMicsChanged() {
     MILO_ASSERT(pMapper, 0x92);
     std::vector<int> mics;
     pMapper->GetAllConnectedMics(mics);
+    // Searched through a const view: retail calls __find<const int *>.
+    const std::vector<int> &connected = mics;
     for (int i = 0; i < mMics.size(); i++) {
-        if (std::find(mics.begin(), mics.end(), i) == mics.end()) {
+        if (std::find(connected.begin(), connected.end(), i) == connected.end()) {
             DeleteMic(i);
         } else
             CreateMic(i);

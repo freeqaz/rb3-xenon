@@ -151,10 +151,9 @@ DataNode SetlistMergePanel::OnMsg(const ReleasingLockStepMsg &msg) {
         totalUsers += mSetlists[i].second;
     }
     for (int i = 0; i < numSetlists; i++) {
-        std::vector<int> &songs = mSetlists[i].first;
         int targetSize = mSetlists[i].second * 100 / totalUsers;
-        if (songs.size() > (unsigned int)targetSize) {
-            songs.resize(targetSize);
+        if (mSetlists[i].first.size() > (unsigned int)targetSize) {
+            mSetlists[i].first.resize(targetSize);
         }
     }
     std::vector<int> mergedSetlist;
