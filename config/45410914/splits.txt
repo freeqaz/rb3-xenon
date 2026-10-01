@@ -5089,6 +5089,7 @@ PropSync.cpp:
 	.pdata      start:0x82214298 end:0x822142B0
 	.pdata      start:0x822142C0 end:0x822142F8
 	.pdata      start:0x82214300 end:0x822143D8
+	.pdata      start:0x822144A8 end:0x82214550
 	.pdata      start:0x82214550 end:0x82214558
 	.pdata      start:0x8223D238 end:0x8223D2A0
 	.pdata      start:0x8223D2A0 end:0x8223D380
@@ -5101,6 +5102,7 @@ PropSync.cpp:
 	.text       start:0x824CDBF0 end:0x824CDCE8
 	.text       start:0x824CDD60 end:0x824CE130
 	.text       start:0x824CE1A0 end:0x824CEDA0
+	.text       start:0x824CFB24 end:0x824D02C8
 	.text       start:0x824D02C8 end:0x824D0338
 	.text       start:0x8276927C end:0x82769AB0
 	.text       start:0x82769AB0 end:0x8276A758
@@ -7851,13 +7853,11 @@ FlowQueueable.cpp:
 Shockwave.cpp:
 	.pdata      start:0x822142F8 end:0x82214300
 	.pdata      start:0x82214498 end:0x822144A8
-	.pdata      start:0x822144A8 end:0x82214550
 	.pdata      start:0x82214558 end:0x82214578
 	.pdata      start:0x82214588 end:0x822145D0
 	.pdata      start:0x822145D8 end:0x822145F0
 	.text       start:0x824CE130 end:0x824CE1A0
 	.text       start:0x824CFA78 end:0x824CFB18
-	.text       start:0x824CFB24 end:0x824D02C8
 	.text       start:0x824D0338 end:0x824D0430
 	.text       start:0x824D049C end:0x824D0898
 	.text       start:0x824D08E8 end:0x824D0EB0
