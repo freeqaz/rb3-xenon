@@ -669,9 +669,10 @@ next:
         for (auto it = mVerts.begin(); it != mVerts.end(); ++it) {
             // Retail copies the colour channels in order and then resets the
             // colour to white (four stores of 1.0f), not to zero.
-            it->boneWeights.Set(
-                it->color.red, it->color.green, it->color.blue, it->color.alpha
-            );
+            it->boneWeights.x = it->color.red;
+            it->boneWeights.y = it->color.green;
+            it->boneWeights.z = it->color.blue;
+            it->boneWeights.w = it->color.alpha;
             it->color.Reset();
         }
     }
