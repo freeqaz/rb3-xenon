@@ -117,7 +117,9 @@ void BandCrowdMeter::Poll() {
                 if (f15 >= f13) {
                     if (!curicon.unk19) {
                         curicon.unk19 = 1;
-                        mOrderedPeaks.push_back(curicon.unkc);
+                        // Front insert: retail links the node at begin().
+                        ObjPtrList<RndGroup> &peaks = mOrderedPeaks;
+                        peaks.insert(peaks.begin(), curicon.unkc);
                         curicon.unk0->ArrowShow(false);
                     }
                 } else {
