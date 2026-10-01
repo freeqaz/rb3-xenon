@@ -222,9 +222,10 @@ void VocalNoteList::NotesDone(const TempoMap &tmap, bool b) {
     }
 
     int gem;
+    // retail starts phraseIdx at 0 once; each gem resumes the search
+    int phraseIdx = 0;
     for (int i = 0; i < mTambourineGems.size(); i++) {
         gem = mTambourineGems[i];
-        int phraseIdx = 0;
         while (phraseIdx < mPhrases.size()
                && gem >= mPhrases[phraseIdx].unk8 + mPhrases[phraseIdx].unkc) {
             phraseIdx++;
@@ -233,12 +234,22 @@ void VocalNoteList::NotesDone(const TempoMap &tmap, bool b) {
             && mPhrases[phraseIdx].unk10 == mPhrases[phraseIdx].unk14) {
             mPhrases[phraseIdx].mTambourinePhrase = true;
         } else {
+#ifdef HX_NATIVE
             MILO_LOG(
                 "NOTIFY: %s (%s): tambourine gem at tick %s not in phrase or in singing phrase; discarding\n",
                 mSongData->SongFullPath(),
                 mTrackName,
                 PrintTick(gem)
             );
+#else
+            // retail evaluates these right to left (PrintTick first)
+            MiloStripEval(
+                "NOTIFY: %s (%s): tambourine gem at tick %s not in phrase or in singing phrase; discarding\n",
+                mSongData->SongFullPath(),
+                mTrackName,
+                PrintTick(gem)
+            );
+#endif
             mTambourineGems.erase(mTambourineGems.begin() + i);
             i--;
         }
