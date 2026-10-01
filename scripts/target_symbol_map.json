@@ -17765,7 +17765,7 @@
  "0x82654178": "?Name@KickPlayerMsg@?A0x3d644e05@@UBAPBDXZ",
  "0x826541b0": "?Mat@SessionUsersProvider@@UBAPAVRndMat@@HHPAVUIListMesh@@@Z",
  "0x82654220": "?NewNetMessage@KickPlayerMsg@?A0x3d644e05@@SAPAVNetMessage@@XZ",
- "0x82654260": "?Register@KickPlayerMsg@?A0x9d4e879f@@SAXXZ",
+ "0x82654260": "?SessionUsersProvidersInit@@YAXXZ",
  "0x826542b0": "?KickPlayer@SessionUsersProvider@@QAAXH@Z",
  "0x82654350": "?KickPlayer@SessionUsersProvider@@QAAXPAVBandUser@@@Z",
  "0x82654430": "?GetUser@SessionUsersProvider@@QAAPAVBandUser@@H@Z",
