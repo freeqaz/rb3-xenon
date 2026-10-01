@@ -1837,17 +1837,19 @@ Symbol BandDirector::PickShot(
     std::vector<CamCatEntry> &entries, Symbol playMode, bool allowDirected
 ) {
     for (unsigned int i = 0; i < entries.size(); i++) {
-        entries[i].mShot = RemapCat(entries[i].mCategory, playMode);
-        if (entries[i].mShot == entries[i].mCategory) {
-            if (allowDirected || strncmp(entries[i].mCategory.Str(), "directed_", 9) != 0)
-                return entries[i].mCategory;
+        CamCatEntry &entry = entries[i];
+        entry.mShot = RemapCat(entry.mCategory, playMode);
+        if (entry.mShot == entry.mCategory) {
+            if (allowDirected || strncmp(entry.mCategory.Str(), "directed_", 9) != 0)
+                return entry.mCategory;
         }
     }
     for (unsigned int i = 0; i < entries.size(); i++) {
         static Symbol test_cam("TEST_CAM");
-        if (entries[i].mShot != test_cam) {
-            if (allowDirected || strncmp(entries[i].mCategory.Str(), "directed_", 9) != 0)
-                return entries[i].mShot;
+        CamCatEntry &entry = entries[i];
+        if (entry.mShot != test_cam) {
+            if (allowDirected || strncmp(entry.mCategory.Str(), "directed_", 9) != 0)
+                return entry.mShot;
         }
     }
     static DataArray *generic =
