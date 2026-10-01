@@ -3297,11 +3297,8 @@ JobMgr.cpp:
 	.text       start:0x827CBE80 end:0x827CBEF8
 
 FlowMultiSetProperty.cpp:
-	.pdata      start:0x821F1820 end:0x821F1838
-	.pdata      start:0x821F1838 end:0x821F1840
-	.text       start:0x822728E0 end:0x82272940
-	.text       start:0x82272948 end:0x82272AD0
-	.text       start:0x82272AD0 end:0x82272B20
+	.pdata      start:0x821F1820 end:0x821F1840
+	.text       start:0x822728E0 end:0x82272B20
 
 Char.cpp:
 	.pdata      start:0x82200F68 end:0x82200FA8
@@ -7774,7 +7771,6 @@ MatAnim.cpp:
 	.pdata      start:0x8220EAA0 end:0x8220EBF8
 	.text       start:0x82270298 end:0x822702F0
 	.text       start:0x82272798 end:0x822728E0
-	.text       start:0x82272940 end:0x82272948
 	.text       start:0x822BED18 end:0x822BED88
 	.text       start:0x822C8784 end:0x822C87B0
 	.text       start:0x822C882C end:0x822C8838

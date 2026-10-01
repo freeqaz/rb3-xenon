@@ -101655,6 +101655,50 @@
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (VACUOUS-BUT-IDENTICAL), 0 CYCLE-ASSUMED (flat T1 UNDECIDABLE: 4 B retail / 4 B ours). With the range MILO_ASSERTs compiled out, AddS and AddU are both `b IntPacker::Add`; retail keeps one copy at 0x827C5570. Named retail callers spell AddU at 9 sites and AddS at 3 (PatchLayer::SavePacked, PatchDir::SaveRemote)."
     }
    ]
+  },
+  {
+   "name": "SortKeysByFrame",
+   "address": "0x824229b0",
+   "survivor": "??$SortKeysByFrame@MM@@YAXAAV?$Keys@MM@@@Z",
+   "folded": [
+    "??$SortKeysByFrame@_N_N@@YAXAAV?$Keys@_N_N@@@Z",
+    "??$SortKeysByFrame@VSymbol@@V1@@@YAXAAV?$Keys@VSymbol@@V1@@@@Z"
+   ],
+   "evidence": "Fold group opened by W16-MC 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "??$SortKeysByFrame@_N_N@@YAXAAV?$Keys@_N_N@@@Z",
+     "lane": "W16-MC 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN and CHASED T1 PROVEN, 0 CYCLE-ASSUMED; 152 B retail / 152 B ours. PropKeys::ReSort calls this one body for float, bool and Symbol keys (retail 0x82424940)."
+    },
+    {
+     "spelling": "??$SortKeysByFrame@VSymbol@@V1@@@YAXAAV?$Keys@VSymbol@@V1@@@@Z",
+     "lane": "W16-MC 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN and CHASED T1 PROVEN, 0 CYCLE-ASSUMED; 152 B retail / 152 B ours. PropKeys::ReSort calls this one body for float, bool and Symbol keys (retail 0x82424940)."
+    }
+   ]
+  },
+  {
+   "name": "SortKeysByFrame",
+   "address": "0x82422a48",
+   "survivor": "??$SortKeysByFrame@VColor@Hmx@@V12@@@YAXAAV?$Keys@VColor@Hmx@@V12@@@@Z",
+   "folded": [
+    "??$SortKeysByFrame@VVector3@@V1@@@YAXAAV?$Keys@VVector3@@V1@@@@Z",
+    "??$SortKeysByFrame@VQuat@Hmx@@V12@@@YAXAAV?$Keys@VQuat@Hmx@@V12@@@@Z"
+   ],
+   "evidence": "Fold group opened by W16-MC 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "??$SortKeysByFrame@VVector3@@V1@@@YAXAAV?$Keys@VVector3@@V1@@@@Z",
+     "lane": "W16-MC 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED on size only: retail 224 B includes 4 B of tail padding, RETAIL-TAIL-PAD node; ours 220 B). PropKeys::ReSort calls this one body for Color, Vector3 and Quat keys (retail 0x82424940)."
+    },
+    {
+     "spelling": "??$SortKeysByFrame@VQuat@Hmx@@V12@@@YAXAAV?$Keys@VQuat@Hmx@@V12@@@@Z",
+     "lane": "W16-MC 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED on size only: retail 224 B includes 4 B of tail padding, RETAIL-TAIL-PAD node; ours 220 B). PropKeys::ReSort calls this one body for Color, Vector3 and Quat keys (retail 0x82424940)."
+    }
+   ]
   }
  ]
 }
