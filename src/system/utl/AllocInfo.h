@@ -101,15 +101,13 @@ public:
     AllocInfo **erase(AllocInfo **first, AllocInfo **last);
     void clear() { erase(begin(), end()); }
 
+    // Retail 0x827d49c8: mEnd is re-read every iteration, no null test, and the
+    // vector is emptied by resetting mEnd (no erase call).
     void delete_and_clear() {
-        AllocInfo **e = mEnd;
-        for (AllocInfo **it = mStart; it != e; ++it) {
-            AllocInfo *info = *it;
-            if (info) {
-                delete info;
-            }
+        for (AllocInfo **it = mStart; it != mEnd; ++it) {
+            delete *it;
         }
-        clear();
+        mEnd = mStart;
     }
 
 private:
