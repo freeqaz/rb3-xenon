@@ -218,7 +218,7 @@ DataNode CharDriver::OnPlayGroupFlags(const DataArray *msg) {
     MILO_ASSERT(msg->Size() <= 5, 0x3aa);
     CharClipGroup *group = mClips->Find<CharClipGroup>(msg->Str(2), false);
     if (!group) {
-        MILO_NOTIFY("%s could not find group %s", PathName(this), msg->Str(2));
+        MILO_FAIL_RTL("%s could not find group %s", PathName(this), msg->Str(2));
         return 0;
     } else {
         int clipIdx = msg->Int(3);
