@@ -2106,6 +2106,7 @@
                     "/DRB3_HANDLE_LOCAL_STATIC"
                 ]
             },
+            "network/net/MatchmakingSettings.cpp": "NonMatching",
             "network/net/NetLog.cpp": "NonMatching",
             "network/net/NetSession.cpp": {
                 "status": "NonMatching",

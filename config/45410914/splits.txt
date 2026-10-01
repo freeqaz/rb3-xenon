@@ -5712,7 +5712,7 @@ SoundTouch.cpp:
 	.text       start:0x82B6E2D0 end:0x82B6EA08
 
 Matchmaker.cpp:
-	.pdata      start:0x82208EB8 end:0x82208F38
+	.pdata      start:0x82208F28 end:0x82208F38
 	.pdata      start:0x8222D3B8 end:0x8222D3C0
 	.pdata      start:0x8222D3C0 end:0x8222D3E0
 	.pdata      start:0x8222D3E0 end:0x8222D410
@@ -5720,7 +5720,7 @@ Matchmaker.cpp:
 	.pdata      start:0x8222D420 end:0x8222D430
 	.pdata      start:0x8222D430 end:0x8222D438
 	.pdata      start:0x8222D438 end:0x8222D5F8
-	.text       start:0x823F38C8 end:0x823F3EE0
+	.text       start:0x823F3E24 end:0x823F3EE0
 	.text       start:0x82651928 end:0x82651998
 	.text       start:0x82651998 end:0x82651C20
 	.text       start:0x82651C20 end:0x82651F40
@@ -8691,10 +8691,8 @@ band3/game/RGTutor.cpp:
 	.text       start:0x826F0F20 end:0x826F10A8
 
 band3/meta_band/PrefabMgr.cpp:
-	.pdata      start:0x82208E98 end:0x82208EB8
 	.pdata      start:0x8221C150 end:0x8221C220
 	.pdata      start:0x8221C228 end:0x8221C378
-	.text       start:0x823F3648 end:0x823F38C8
 	.text       start:0x82553F28 end:0x82554CB0
 	.text       start:0x82554D0C end:0x82555E64
 
@@ -9366,6 +9364,12 @@ network/net/SessionSearcher.cpp:
 network/net/NetSearchResult.cpp:
 	.pdata      start:0x822090E0 end:0x82209158
 	.text       start:0x823F56F8 end:0x823F5C98
+
+network/net/MatchmakingSettings.cpp:
+	.pdata      start:0x82208E68 end:0x82208E98
+	.pdata      start:0x82208E98 end:0x82208F28
+	.text       start:0x823F33E0 end:0x823F3648
+	.text       start:0x823F3648 end:0x823F3E24
 
 network/net/NetLog.cpp:
 	.pdata      start:0x82208600 end:0x82208610
