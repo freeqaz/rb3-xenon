@@ -110,17 +110,21 @@ void UISlider::PostLoad(BinStream &bs) {
 #pragma pop_macro("LOAD_REVS")
 #pragma pop_macro("INIT_REVS")
 
-void UISlider::DrawShowing() { SyncSlider(); }
-
-RndDrawable *UISlider::CollideShowing(const Segment &s, float &fl, Plane &pl) {
+// Retail 0x8280A260 (UISlider vtable slot 5).
+void UISlider::DrawShowing() {
     SyncSlider();
-    return nullptr;
+    UpdateMeshes(DrawState(this));
+    mResource->Dir()->DrawShowing();
 }
 
-// retail 0x8280A320 (88 B). We returned a bare 0; retail forwards to the
-// resource dir. Note the neighbouring DrawShowing/CollideShowing already match
-// at 100% with our simpler bodies -- so this was ported per-row off the
-// retail size.
+// Retail 0x8280A2C0 (slot 7): the slider itself is the hit when its resource
+// dir collides.
+RndDrawable *UISlider::CollideShowing(const Segment &s, float &fl, Plane &pl) {
+    SyncSlider();
+    return mResource->Dir()->CollideShowing(s, fl, pl) ? this : nullptr;
+}
+
+// retail 0x8280A320 (88 B): forwards to the resource dir.
 int UISlider::CollidePlane(const Plane &pl) {
     SyncSlider();
     RndDir *dir = mResource->Dir();
@@ -186,10 +190,10 @@ void UISlider::Init() {
     REGISTER_OBJ_FACTORY(UISlider)
 }
 
+// Retail 0x82809F90 (slot 19): the base update runs first; no TypeDef null test.
 void UISlider::Update() {
-    if (TypeDef()) {
-        TypeDef()->FindData("vertical", mVertical, false);
-    }
+    UIComponent::Update();
+    TypeDef()->FindData("vertical", mVertical, false);
 }
 
 DataNode UISlider::OnMsg(const ButtonDownMsg &msg) {
