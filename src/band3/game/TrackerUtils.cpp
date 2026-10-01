@@ -61,7 +61,7 @@ int TrackerSectionManager::GetSectionCount() const { return mSections.size(); }
 
 int TrackerSectionManager::CountNonEmptySections(const TrackerSource *source, bool b) const {
     int count = 0;
-    for (int i = 0; i < (int)mSections.size(); i++) {
+    for (unsigned int i = 0; i < mSections.size(); i++) {
         for (TrackerPlayerID id = source->GetFirstPlayer(); id.NotNull();
              id = source->GetNextPlayer(id)) {
             Player *pPlayer = source->GetPlayer(id);
