@@ -549,6 +549,99 @@ void VorbisReader::Poll(float until) {
     unked = true;
 }
 
+namespace {
+    // The decode thread: wakes on gEvent, adopts readers created since the last wake, then
+    // polls every reader until a full pass makes no progress. A reader being destroyed sets
+    // its terminating flag and spins; the thread drops it from the list and clears the flag.
+    DWORD DecodeThreadEntry(HANDLE) {
+        while (true) {
+            WaitForSingleObject(gEvent, -1);
+            gLock.Enter();
+            if (!gNewReaders.empty()) {
+                gReaders.splice(gReaders.begin(), gNewReaders);
+            }
+            gLock.Exit();
+            bool progress;
+            do {
+                progress = false;
+                for (std::list<VorbisReader *>::iterator it = gReaders.begin();
+                     it != gReaders.end();) {
+                    VorbisReader *cur = *it;
+                    if (cur->Terminating()) {
+                        it = gReaders.erase(it);
+                        cur->SetTerminating(false);
+                    } else {
+                        ++it;
+                        progress = cur->DecodeThreadPoll() || progress;
+                    }
+                }
+            } while (progress);
+        }
+        return 0;
+    }
+}
+
+// Runs on the decode thread for each live reader; returns whether it made progress.
+// It finishes a completed file read (decrypt, hand to ogg), initializes the decoder once
+// Poll has read the headers, and after Poll has consumed PCM drops the consumed samples,
+// decodes, and converts up to 0x1000 queued samples per channel to 16-bit.
+bool VorbisReader::DecodeThreadPoll() {
+    if (!TryEnter()) {
+        return true;
+    }
+    CritSecTracker tracker(this);
+    Exit();
+    if (unk40 > 0) {
+        MILO_ASSERT(mReadBuffer, 0x2EF);
+        Decrypt((unsigned char *)mReadBuffer, unk40);
+        ogg_sync_wrote(mOggSync, unk40);
+        mReadBuffer = nullptr;
+        unk40 = 0;
+    }
+    if (unk44) {
+        InitDecoder();
+        unk44 = false;
+    }
+    if (!unked) {
+        return false;
+    }
+    for (int i = 0; i < mNumChannels; i++) {
+        std::vector<short> &samples = mPcmBuffers[i];
+        samples.erase(samples.begin(), samples.begin() + mPcmReadPos);
+    }
+    if (mLastGranulePos != -1) {
+        mLastGranulePos += mPcmReadPos;
+    }
+    mPcmReadPos = 0;
+    bool ret = TryDecode();
+    if (QueuedOutputSamples() > 0) {
+        float **pcm;
+        int got = vorbis_synthesis_pcmout(mVorbisDsp, &pcm);
+        int queued = mPcmBuffers[0].size();
+        int space = 0x1000 - queued;
+        int consumed = Min(space, got);
+        if (consumed > 0) {
+            s64 pos = mVorbisDsp->granulepos - got;
+            if (mLastGranulePos == -1 && pos >= 0) {
+                mLastGranulePos = pos - queued;
+            }
+            int count = Min(space, got);
+            for (int c = 0; c < mNumChannels; c++) {
+                mPcmBuffers[c].resize(queued + count);
+                for (int i = 0; i < count; i++) {
+                    mPcmBuffers[c][queued + i] =
+                        (short)Clamp(-32767.0f, 32767.0f, pcm[c][i] * 32767.0f);
+                }
+            }
+            ret = true;
+        } else {
+            ret = space != 0 ? ret : false;
+        }
+        vorbis_synthesis_read(mVorbisDsp, consumed);
+    }
+    return ret;
+}
+
 #endif // !HX_NATIVE
 
 #ifdef HX_NATIVE

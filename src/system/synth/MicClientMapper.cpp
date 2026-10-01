@@ -140,3 +140,29 @@ int MicClientMapper::GetMicIDForClientID(const MicClientID &clientID) const {
     } else
         return GetMicIDForPlayerID(clientID.mPlayerID);
 }
+
+void MicClientMapper::SetMicManager(MicManagerInterface *mgr) {
+    mMicManager = mgr;
+    HandleMicsChanged();
+}
+
+void MicClientMapper::GetAllConnectedMics(std::vector<int> &mics) const {
+    FOREACH (it, mMappingData) {
+        if (it->mMicID != -1)
+            mics.push_back(it->mMicID);
+    }
+}
+
+void MicClientMapper::SetNumberOfPlayers(int numPlayers) {
+    if (numPlayers != mNumPlayers) {
+        mNumPlayers = numPlayers;
+        mPlayers.clear();
+        for (int i = 0; i < mNumPlayers; i++) {
+            mPlayers.push_back(PlayerMappingData());
+        }
+        FOREACH (it, mMappingData) {
+            it->bLocked = false;
+        }
+        RefreshPlayerMapping();
+    }
+}
