@@ -98,7 +98,8 @@ void CharCache::RecomposePatches(int idx, BandCharDesc *desc, int i2) {
         return;
     bchar->RecomposePatches(desc, i2);
 #else
-    GetCharacter(idx)->RecomposePatches(desc, i2);
+    BandCharacter *bchar = GetCharacter(idx);
+    bchar->RecomposePatches(desc, i2);
 #endif
 }
 

@@ -1834,7 +1834,8 @@ bool AccomplishmentManager::IsAvailable(Symbol s, bool b) const {
             MILO_ASSERT(iNumSongs <= rSongs.size(), 0xAD4);
             int i7 = 0;
             for (int i = 0; i < numrsongs; i++) {
-                if (TheSongMgr.HasSong(rSongs[i], false))
+                Symbol song = rSongs[i];
+                if (TheSongMgr.HasSong(song, false))
                     i7++;
                 if (i7 >= iNumSongs)
                     return true;
