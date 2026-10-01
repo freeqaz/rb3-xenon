@@ -1,4 +1,6 @@
 {
+ "0x8270a280": "?_M_insert_overflow_aux@?$vector@V?$ObjPtr@VSequence@@@@V?$StlNodeAlloc@V?$ObjPtr@VSequence@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAV?$ObjPtr@VSequence@@@@ABV3@ABU__false_type@2@I_N@Z",
+ "0x8270a0d8": "?_M_insert_overflow_aux@?$vector@V?$ObjPtr@VSeqInst@@@@V?$StlNodeAlloc@V?$ObjPtr@VSeqInst@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAV?$ObjPtr@VSeqInst@@@@ABV3@ABU__false_type@2@I_N@Z",
  "0x824f18c8": "??$_M_allocate_and_copy@PAVVector2@@@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVVector2@@IPAV2@0@Z",
  "0x824f0680": "?Intersect@@YA_NABVSegment@@PBVBSPNode@@AAMAAVPlane@@@Z",
  "0x82434528": "?SetFrustum@RndCam@@QAAXMMMM@Z",
@@ -22256,7 +22258,7 @@
  "0x8276daf8": "yy_get_next_buffer",
  "0x8276dcd8": "yylex",
  "0x8276e2b8": "?ResetAudio@BeatMaster@@QAAXXZ",
- "0x8276e328": "??0HamMasterLoader@@QAA@PAVHamMaster@@@Z",
+ "0x8276e328": "??0BeatMasterLoader@@QAA@PAVBeatMaster@@@Z",
  "0x8276e3d8": "?StateName@BeatMasterLoader@@UBAPBDXZ",
  "0x8276e3e8": "??_GBeatMasterLoader@@UAAPAXI@Z",
  "0x8276e440": "?DebugText@BeatMasterLoader@@UAAPBDXZ",

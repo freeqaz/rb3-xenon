@@ -4937,10 +4937,6 @@ Mat_NG.cpp:
 	.text       start:0x824A8EC8 end:0x824A8F74
 	.text       start:0x824A8F74 end:0x824AA3E0
 
-HamMaster.cpp:
-	.pdata      start:0x8223D6D8 end:0x8223D6F0
-	.text       start:0x8276E328 end:0x8276E3D8
-
 CameraShot.cpp:
 	.pdata      start:0x821F6538 end:0x821F6540
 	.pdata      start:0x821F6658 end:0x821F6660
@@ -5080,10 +5076,8 @@ SpotlightDrawer.cpp:
 Spotlight.cpp:
 	.pdata      start:0x82213248 end:0x82213258
 	.pdata      start:0x82214A98 end:0x82215080
-	.pdata      start:0x822382B0 end:0x822382B8
 	.text       start:0x824BBE38 end:0x824BBED0
 	.text       start:0x824D7FC8 end:0x824E0034
-	.text       start:0x8270A8D8 end:0x8270A948
 
 Crowd.cpp:
 	.pdata      start:0x821FCDA0 end:0x821FCDC8
@@ -5213,7 +5207,9 @@ Sequence.cpp:
 	.pdata      start:0x822380E8 end:0x822380F0
 	.pdata      start:0x822380F0 end:0x822381B8
 	.pdata      start:0x822381B8 end:0x822382B0
+	.pdata      start:0x822382B0 end:0x822382B8
 	.pdata      start:0x822382B8 end:0x822382C0
+	.pdata      start:0x822382C0 end:0x822382C8
 	.pdata      start:0x822382C8 end:0x822382D0
 	.pdata      start:0x822382D0 end:0x822382E0
 	.pdata      start:0x822382E0 end:0x822383C8
@@ -5232,7 +5228,9 @@ Sequence.cpp:
 	.text       start:0x82709278 end:0x827092E0
 	.text       start:0x827092E0 end:0x82709C20
 	.text       start:0x82709C20 end:0x8270A8D8
+	.text       start:0x8270A8D8 end:0x8270A948
 	.text       start:0x8270A948 end:0x8270A9B8
+	.text       start:0x8270A9B8 end:0x8270AA38
 	.text       start:0x8270AA38 end:0x8270AAC0
 	.text       start:0x8270AAC0 end:0x8270AB30
 	.text       start:0x8270AB30 end:0x8270B90C
@@ -10951,12 +10949,14 @@ EventAnim.cpp:
 system/beatmatch/BeatMaster.cpp:
 	.pdata      start:0x8223D6C8 end:0x8223D6D0
 	.pdata      start:0x8223D6D0 end:0x8223D6D8
+	.pdata      start:0x8223D6D8 end:0x8223D6F0
 	.pdata      start:0x8223D6F0 end:0x8223D7D0
 	.pdata      start:0x8223D7D0 end:0x8223D7D8
 	.pdata      start:0x8223D7D8 end:0x8223D7E0
 	.pdata      start:0x8223D7E0 end:0x8223D808
 	.text       start:0x8276E26C end:0x8276E2B8
 	.text       start:0x8276E2B8 end:0x8276E328
+	.text       start:0x8276E328 end:0x8276E3D8
 	.text       start:0x8276E3D8 end:0x8276F458
 	.text       start:0x8276F458 end:0x8276F4A4
 	.text       start:0x8276F4A8 end:0x8276F4D4

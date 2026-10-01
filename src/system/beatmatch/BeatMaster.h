@@ -60,7 +60,7 @@ public:
 class BeatMasterLoader : public Loader {
 public:
     BeatMasterLoader(BeatMaster *bm)
-        : Loader(FilePath(""), kLoadFrontStayBack), mBeatMaster(bm) {}
+        : Loader("", kLoadFrontStayBack), mBeatMaster(bm) {}
     virtual ~BeatMasterLoader() {}
     virtual const char *DebugText();
     virtual bool IsLoaded() const { return false; }
