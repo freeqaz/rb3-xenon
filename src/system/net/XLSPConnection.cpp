@@ -67,63 +67,65 @@ void XLSPConnection::Disconnect() {
 }
 
 void XLSPConnection::SetState(State s) {
-    if (mState == s)
-        return;
-    do {
-        State oldState = mState;
-        State newState = s;
-        bool skipCleanup = false;
-        if (oldState == 1) {
+    while (mState != s) {
+        switch (mState) {
+        case 1: {
+            // Leaving enumeration: cancel or keep the pending enumerate (it is
+            // kept only when moving to state 5), then drop its buffer.
+            bool keepEnum = false;
             if (mEnumHandle != INVALID_HANDLE_VALUE) {
                 if (mXOverlapped.InternalLow == ERROR_IO_PENDING) {
-                    if (newState == 5) {
-                        skipCleanup = true;
-                    } else {
+                    if (s == 5)
+                        keepEnum = true;
+                    else
                         XCancelOverlapped(&mXOverlapped);
-                    }
                 }
-                if (!skipCleanup) {
+                if (!keepEnum) {
                     memset(&mXOverlapped, 0, sizeof(XOVERLAPPED));
                     CloseHandle(mEnumHandle);
                     mEnumHandle = INVALID_HANDLE_VALUE;
                 }
             }
-            if (!skipCleanup) {
+            if (!keepEnum) {
                 mEnumBufferSize = 0;
                 if (mEnumBuffer) {
                     MemFree(mEnumBuffer, __FILE__, __LINE__);
                     mEnumBuffer = nullptr;
                 }
             }
-        } else if (oldState == 2) {
-            if (newState != 3) {
+            break;
+        }
+        case 2:
+            if (s != 3)
                 SecureDisconnect(*(in_addr *)&unk44);
-            }
-        } else if (oldState == 3) {
+            break;
+        case 3:
             SecureDisconnect(*(in_addr *)&unk44);
+            break;
         }
 
-        mState = newState;
+        mState = s;
 
-        if (newState == 1) {
+        switch (s) {
+        case 1:
             StartEnumeration();
             return;
-        } else if (newState == 2) {
-            int ret = StartGatewayConnection(*(in_addr *)&unk44);
-            if (ret == 0) {
+        case 2:
+            if (StartGatewayConnection(*(in_addr *)&unk44) == 0)
                 return;
-            }
             s = (State)4;
-        } else if (newState == 5) { // retail tests only 1, 2, 5 here
+            break;
+        case 5:
             if (mEnumHandle != INVALID_HANDLE_VALUE) {
                 ThreadCall(this);
                 return;
             }
             s = (State)0;
-        } else {
+            break;
+        default:
             return;
         }
-    } while (mState != s);
+    }
 }
 
 void XLSPConnection::Poll() {
