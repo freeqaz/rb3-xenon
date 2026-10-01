@@ -120,5 +120,15 @@
  "0x8257c368|??_DCharForeTwist@@QAAXXZ": {
   "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
   "evidence": "W16-JH re-identified 0x8257C368 as ??_DInstarank@@QAAXXZ (see that record). Decided against the address's CURRENT retail name with the strict chase: the retail body calls 0x8257B428 = ??1Instarank@@UAA@XZ (map-resident, 72 B, two ~String calls) where our ??_DCharForeTwist calls ??1CharForeTwist@@UAA@XZ (92 B) -- two distinct named destructors, chase REFUTED."
+ },
+ "0x825722d0|??_EAppScoreDisplay@@$4PPPPPPPM@BGI@AAPAXI@Z": {
+  "class": "SUPERSEDED_SURVIVOR_MAP_NAME_CORRECTED",
+  "disposition": "membership withdrawn, group kept (the map now names this address with this spelling)",
+  "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JC (main 17aaa4298) re-mapped 0x825722D0 from the $4...BEI@ spelling (this group's survivor) to this $4...BGI@ spelling, so the address now carries it directly and no alias is needed."
+ },
+ "0x825722d0|??_EScoreDisplay@@$4PPPPPPPM@BGI@AAPAXI@Z": {
+  "class": "UNPROVEN_OURS_NOT_COMPILED",
+  "disposition": "membership withdrawn as UNPROVEN (NOT refuted), group kept",
+  "evidence": "One of W16-JG's 341 UNDISCHARGED memberships; W16-JC's re-mapping of 0x825722D0 moved it out of the placeholder audit's reach. Decided against the address's CURRENT name ??_EAppScoreDisplay@@$4PPPPPPPM@BGI@AAPAXI@Z: the thunk's only slot is retail fn_823208A0 vs our ??_EScoreDisplay@@UAAPAXI@Z, which our build does not compile (chase: MISSING(ours)), so retail bytes cannot decide it. RESTORE when compiled and chase-proven."
  }
 }
