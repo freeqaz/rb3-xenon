@@ -824,7 +824,8 @@ void CustomizePanel::PreviewAsset(Symbol s) {
         } else {
             Asset *pAsset = pAssetMgr->GetAsset(s);
             MILO_ASSERT(pAsset, 0x269);
-            mProfile->mProfileAssets.SetOld(s);
+            ProfileAssets &assets = mProfile->mProfileAssets;
+            assets.SetOld(s);
             ty = pAsset->GetType();
             if (pAsset->HasFinishes()) {
                 Symbol finish = pAsset->GetFinish(0);
