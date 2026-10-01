@@ -217,15 +217,14 @@ bool CacheMgrXbox::MountAsync(CacheID *pCacheIDXbox, Cache **ppCache, Hmx::Objec
             if (res != 0x3E5) {
                 if (XContentGetDeviceState(myCacheXbox->DeviceID(), nullptr) != 0) {
                     SetLastResult(kCache_ErrorStorageDeviceMissing);
-                    return false;
                 } else {
                     MILO_NOTIFY(
                         "CacheMgrXbox::MountAsync(): Unhandled error %u returned from XContentCreateEx().\n",
                         res
                     );
                     SetLastResult(kCache_ErrorUnknown);
-                    return false;
                 }
+                return false;
             } else {
                 mCacheIDXbox = myCacheXbox;
                 mppCache = ppCache;
@@ -259,15 +258,14 @@ bool CacheMgrXbox::UnmountAsync(Cache **ppCache, Hmx::Object *o) {
             if (XContentGetDeviceState(mCacheIDXbox->DeviceID(), nullptr) != 0) {
                 MILO_NOTIFY("UnmountAsync: device is not connected");
                 SetLastResult(kCache_ErrorStorageDeviceMissing);
-                return false;
             } else {
                 MILO_NOTIFY(
                     "CacheMgrXbox::UnmountAsync(): Unhandled error %u returned from XContentClose().\n",
                     res
                 );
                 SetLastResult(kCache_ErrorUnknown);
-                return false;
             }
+            return false;
         } else {
             mppCache = ppCache;
             mCallback = o;
@@ -297,15 +295,14 @@ bool CacheMgrXbox::DeleteAsync(CacheID *id) {
             if (res != 0x3E5) {
                 if (XContentGetDeviceState(mCacheIDXbox->DeviceID(), nullptr) != 0) {
                     SetLastResult(kCache_ErrorStorageDeviceMissing);
-                    return false;
                 } else {
                     MILO_NOTIFY(
                         "CacheMgrXbox::DeleteAsync(): Unhandled error %u returned from XContentClose().\n",
                         res
                     );
                     SetLastResult(kCache_ErrorUnknown);
-                    return false;
                 }
+                return false;
             } else {
                 mCacheIDXbox = cacheXbox;
                 SetLastResult(kCache_NoError);
