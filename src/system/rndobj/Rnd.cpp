@@ -88,9 +88,10 @@ int Rnd::sPostProcPanelCount;
 #endif
 
 // Rnd & TheRnd;
-bool gNotifyKeepGoing;
-bool gFailKeepGoing;
-bool gFailRestartConsole;
+// File-local: Rnd::Modal clears all three from one base address.
+static bool gNotifyKeepGoing;
+static bool gFailKeepGoing;
+static bool gFailRestartConsole;
 
 #define gRndThread gRndHandles.mThread
 #define gRndTextureEvent gRndHandles.mTextureEvent
@@ -1598,10 +1599,7 @@ void Rnd::Modal(bool &fail, char *msg, bool wait) {
             ModalKeyListener mkl;
             KeyboardSubscribe(&mkl);
             // A failure waits for START only; a notify takes any button.
-            int mask = -1;
-            if (fail) {
-                mask = 0x800;
-            }
+            int mask = fail ? 0x800 : -1;
             while (!(mask & JoypadPollForButton(-1))) {
                 KeyboardPoll();
                 ModalDraw(fail, buf);
