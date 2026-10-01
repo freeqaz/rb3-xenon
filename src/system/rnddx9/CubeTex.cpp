@@ -86,3 +86,8 @@ void DxCubeTex::Sync() {
 
 // sw2 scatter-include (default/system/rnddx9/CubeTex <- rnddx9/Part.cpp)
 #include "rnddx9/Part.cpp"
+
+// DxEnviron::Select is the 4-byte `b NgEnviron::Select` at 0x8273E038 (retail
+// DxEnviron vtable 0x82101e64 slot 21), inside this unit's pinned span.
+// rnddx9/Env.cpp was compiled by no TU.
+#include "rnddx9/Env.cpp"

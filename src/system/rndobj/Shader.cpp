@@ -1184,10 +1184,13 @@ void RndShaderUnwrapUV::Select(RndMat *mat, ShaderType s, bool b) {
     }
 }
 
+// 0x824a7468 (RndShaderVelocity vtable slot 2). Unlike VelocityCamera's
+// Select (0x824a7548), the redundancy check is keyed on skinning: retail
+// passes TheShaderMgr.BoneCount() != 0 as the third argument.
 void RndShaderVelocity::Select(RndMat *mat, ShaderType s, bool b) {
     if (!mat) mat = TheRnd.DefaultMat();
     TheRenderState.SetFillMode((RndRenderState::FillMode)0);
-    if (!RedundantState(mat, s, false, false, b)) {
+    if (!RedundantState(mat, s, TheShaderMgr.BoneCount() != 0, false, b)) {
 #ifdef HX_NATIVE
         TheNgStats->mMats++;
 #endif
