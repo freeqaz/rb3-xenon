@@ -103,17 +103,10 @@ DataNode OnGroupOwner(DataArray *da) { return GroupOwner(da->Obj<Hmx::Object>(1)
 RndEnviron *FindEnviron(RndDrawable *d) {
     RndGroup *owner = GroupOwner(d);
     if (owner) {
-        int i = owner->Draws().size();
-        while (--i > 0) {
-            if (owner->Draws()[i] == d && i >= 0) {
-                for (; i >= 0; i--) {
-                    RndEnviron *env = dynamic_cast<RndEnviron *>(owner->Draws()[i]);
-                    if (env) {
-                        return env;
-                    }
-                }
-            }
-        }
+        // a group's own environment wins; otherwise ask the group's owner
+        RndEnviron *env = owner->GetEnv();
+        if (env)
+            return env;
         return FindEnviron(owner);
     } else {
         RndDir *rdir = dynamic_cast<RndDir *>(d->Dir());
@@ -1454,22 +1447,17 @@ DataNode OnTestDrawGroups(DataArray *da) {
 }
 
 void TestTextureSize(ObjectDir *dir, int iType, int i3, int i4, int i5, int maxBpp) {
-    bool rendered = false;
-    if (iType == RndTex::kRendered || iType == RndTex::kRenderedNoZ)
-        rendered = true;
-    bool shouldCheckBpp = false;
-    if (GetGfxMode() == 0 || rendered)
-        shouldCheckBpp = true;
-    int scaleFactor = 1;
-    if (shouldCheckBpp)
-        scaleFactor = i5;
+    bool rendered = iType == RndTex::kRendered || iType == RndTex::kRenderedNoZ;
+    bool shouldCheckBpp = rendered != 0;
+    int scaleFactor = shouldCheckBpp ? i5 : 1;
+    int limit = scaleFactor * i3 * i4;
     for (ObjDirItr<RndTex> it(dir, true); it != 0; ++it) {
-        if (iType == it->GetType()) {
+        if (it->GetType() == iType) {
             int local_bpp = shouldCheckBpp ? it->Bpp() : 1;
-            if (rendered && GetGfxMode() == 1 && local_bpp == 0x10)
+            if (rendered && local_bpp == 0x10)
                 local_bpp = 0x20;
             int product = it->Width() * it->Height() * local_bpp;
-            if (product > i3 * i4 * scaleFactor) {
+            if (product > limit) {
                 MILO_WARN(
                     "%s is too big w:%d h:%d bpp:%d",
                     PathName(it),
@@ -1544,30 +1532,27 @@ void MakeTangentsLate(RndMesh *m) {
     RndMesh *geom = m->GetGeomOwner();
     if (geom != m || geom->Verts().size() == 0)
         return;
-    if (GetGfxMode() == kOldGfx)
-        return;
 
-    Vector4 zeroTangent(0, 0, 0, 0);
-    std::vector<Vector4> faceTangents(m->Faces().size(), zeroTangent);
-    double posW = 1.0;
-    double negW = -1.0;
+    std::vector<Vector4> faceTangents(m->Faces().size());
     for (unsigned int i = 0; i < m->Faces().size(); i++) {
         Hmx::Matrix3 basis;
         ComputeFaceTangentBasis(m, i, basis);
-        double w = posW;
-        if ((basis.x.z * basis.z.y - basis.z.z * basis.x.y) * basis.y.x
-                + basis.y.y * (basis.z.z * basis.x.x - basis.x.z * basis.z.x)
-                + basis.y.z * (basis.x.y * basis.z.x - basis.z.y * basis.x.x)
-            < 0.0) {
-            w = negW;
-        }
-        faceTangents[i].w = (float)w;
-        Normalize(basis.x, *(Vector3 *)&faceTangents[i]);
+        // handedness: sign of (x cross z) . y
+        float w = (basis.x.z * basis.z.y - basis.z.z * basis.x.y) * basis.y.x
+                + (basis.y.y * (basis.z.z * basis.x.x - basis.x.z * basis.z.x)
+                   + basis.y.z * (basis.x.y * basis.z.x - basis.z.y * basis.x.x))
+                >= 0.0f
+            ? 1.0f
+            : -1.0f;
+        Vector4 tangent;
+        Normalize(basis.x, *(Vector3 *)&tangent);
+        faceTangents[i] = tangent;
+        faceTangents[i].w = w;
     }
 
-    double zeroThresh = 0.0;
     for (int i = 0; i < (int)m->Verts().size(); i++) {
         RndMesh::Vert &v = m->Verts()[i];
+        Vector4 &t = v.tangent;
         bool first = true;
         for (unsigned int f = 0; f < m->Faces().size(); f++) {
             RndMesh::Face &face = m->Faces()[f];
@@ -1579,36 +1564,26 @@ void MakeTangentsLate(RndMesh *m) {
             if (3 != k) {
                 if (first) {
                     first = false;
-                    v.tangent = faceTangents[f];
+                    t = faceTangents[f];
+                } else if (faceTangents[f].w * t.w < 0.0f) {
+                    MILO_NOTIFY(
+                        "%s has previously welded vertex tangents with opposite handedness; re-export from Max for more accurate normal mapping.",
+                        PathName(m)
+                    );
                 } else {
-                    if ((double)(faceTangents[f].w * v.tangent.w) < zeroThresh) {
-                        String notifyMsg = MakeString(
-                            "NOTIFY: %s has previously welded vertex tangents with opposite handedness; re-export from Max for more accurate normal mapping.\n",
-                            PathName(m)
-                        );
-                        TheDebug << notifyMsg;
-                    } else {
-                        v.tangent.x += faceTangents[f].x;
-                        v.tangent.y += faceTangents[f].y;
-                        v.tangent.z += faceTangents[f].z;
-                    }
+                    Add(*(Vector3 *)&t, *(Vector3 *)&faceTangents[f], *(Vector3 *)&t);
                 }
             }
         }
-        Normalize(*(Vector3 *)&v.tangent, *(Vector3 *)&v.tangent);
-
-        float tx = v.tangent.x, ty = v.tangent.y, tz = v.tangent.z;
-        float tDotN = v.norm.x * tx + v.norm.z * tz + v.norm.y * ty;
-        float scaleX = v.norm.x * tDotN;
-        float scaleY = v.norm.y * tDotN;
-        float scaleZ = v.norm.z * tDotN;
-        float ox = tx - scaleX;
-        float oy = ty - scaleY;
-        float oz = tz - scaleZ;
-        Normalize(*(Vector3 *)&ox, *(Vector3 *)&v.tangent);
+        Normalize(*(Vector3 *)&t, *(Vector3 *)&t);
+        // Gram-Schmidt the tangent against the vertex normal
+        const Vector3 &n = v.norm;
+        Vector4 tc = t;
+        float d = n.x * tc.x + n.z * tc.z + n.y * tc.y;
+        Vector3 ortho(tc.x - n.x * d, tc.y - n.y * d, tc.z - n.z * d);
+        Normalize(ortho, *(Vector3 *)&t);
     }
-    TheDebug
-        << MakeString("NOTIFY: %s MakingTangentsLate, resave this file!", PathName(m));
+    MILO_NOTIFY("%s MakingTangentsLate, resave this file!", PathName(m));
 }
 
 void ComputeFaceTangentBasis(RndMesh *m, int faceIdx, Hmx::Matrix3 &outBasis) {
@@ -1686,9 +1661,7 @@ void ComputeFaceTangentBasis(RndMesh *m, int faceIdx, Hmx::Matrix3 &outBasis) {
                 }
             }
         }
-        TheDebug << MakeString(
-            "NOTIFY: %s has bad UVs, should reexport from Max\n", PathName(m)
-        );
+        MILO_NOTIFY("%s has bad UVs, should reexport from Max", PathName(m));
     }
 }
 
@@ -2281,68 +2254,40 @@ void RndScaleObject(Hmx::Object *obj, float scale, float fovScale) {
 }
 
 void FixVertOrder(const RndMesh *src, RndMesh *dst) {
-    int mismatchCount = 0;
+    // reorders dst's verts so each lines up with the src vert of the same UV
     RndMesh::VertVector &srcVerts = const_cast<RndMesh *>(src)->Verts();
     RndMesh::VertVector &dstVerts = dst->Verts();
-    int srcCount = srcVerts.mNumVerts;
-    float tolerance = 1e-5f;
-    if (srcCount > 0) {
-        unsigned int i = 0;
-        do {
-            unsigned int j = 0;
-            float stx = srcVerts.mVerts[i].tex.x;
-            float sty = srcVerts.mVerts[i].tex.y;
-            if (dstVerts.mNumVerts > 0) {
-                do {
-                    if (fabsf(stx - dstVerts.mVerts[j].tex.x) < tolerance
-                        && fabsf(sty - dstVerts.mVerts[j].tex.y) < tolerance)
-                        goto found;
-                    j++;
-                } while ((int)j < dstVerts.mNumVerts);
+    for (int i = 0; i < srcVerts.size(); i++) {
+        Vector2 uv = srcVerts[i].tex;
+        int j;
+        for (j = 0; j < dstVerts.size(); j++) {
+            if (fabsf(uv.x - dstVerts[j].tex.x) < 1e-5f
+                && fabsf(uv.y - dstVerts[j].tex.y) < 1e-5f)
+                goto found;
+        }
+        j = -1;
+    found:
+        if (j != -1) {
+            unsigned short ii = i;
+            unsigned short js = j;
+            if (js != ii) {
+                unsigned char tmp[sizeof(RndMesh::Vert)];
+                memcpy(tmp, &dstVerts[js], sizeof(RndMesh::Vert));
+                memcpy(&dstVerts[js], &dstVerts[ii], sizeof(RndMesh::Vert));
+                memcpy(&dstVerts[ii], tmp, sizeof(RndMesh::Vert));
             }
-            j = (unsigned int)-1;
-        found:
-            if (!((int)j == -1)) {
-                unsigned short ii = (unsigned short)i;
-                unsigned short js = (unsigned short)j;
-                if (js != ii) {
-                    RndMesh::Vert tmp;
-                    memcpy(&tmp, &dstVerts.mVerts[js], sizeof(RndMesh::Vert));
-                    memcpy(
-                        &dstVerts.mVerts[js], &dstVerts.mVerts[ii], sizeof(RndMesh::Vert)
-                    );
-                    memcpy(&dstVerts.mVerts[ii], &tmp, sizeof(RndMesh::Vert));
-                    int numFaces = (int)dst->Faces().size();
-                    if (numFaces > 0) {
-                        unsigned short *faceData = &dst->Faces()[0].v1;
-                        int n = numFaces;
-                        do {
-                            if (faceData[0] == js)
-                                faceData[0] = ii;
-                            else if (faceData[0] == ii)
-                                faceData[0] = js;
-                            if (faceData[1] == js)
-                                faceData[1] = ii;
-                            else if (faceData[1] == ii)
-                                faceData[1] = js;
-                            if (faceData[2] == js)
-                                faceData[2] = ii;
-                            else if (faceData[2] == ii)
-                                faceData[2] = js;
-                            faceData += 3;
-                            n--;
-                        } while (n != 0);
+            if (js != ii) {
+                int numFaces = dst->Faces().size();
+                for (int f = 0; f < numFaces; f++) {
+                    RndMesh::Face &face = dst->Faces()[f];
+                    for (int k = 0; k < 3; k++) {
+                        if (face[k] == js)
+                            face[k] = ii;
+                        else if (face[k] == ii)
+                            face[k] = js;
                     }
                 }
-            } else {
-                mismatchCount++;
             }
-            i++;
-        } while ((int)i < srcCount);
-        if (mismatchCount != 0) {
-            TheDebug << MakeString(
-                "%s has %d mismatched verts\n", PathName(src), mismatchCount
-            );
         }
     }
 }
