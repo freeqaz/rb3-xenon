@@ -361,6 +361,14 @@ void operator delete[](void *mem) noexcept;
 // one spelling on both targets.
 #define OBJ_MEM_OVERLOAD_INLINE_DEL(line_num) OBJ_MEM_OVERLOAD(line_num)
 
+// OBJ_NEW_OVERLOAD -- only the operator new half of OBJ_MEM_OVERLOAD; the class
+// keeps whatever operator delete it already declares. See the match-build note.
+#define OBJ_NEW_OVERLOAD                                                                 \
+    static void *operator new(size_t s) {                                                \
+        return MemAlloc(s, __FILE__, 0, StaticClassName().Str(), 0);                     \
+    }                                                                                    \
+    static void *operator new(size_t s, void *place) { return place; }
+
 #define MEM_OVERLOAD(class_name, line_num)                                               \
     static void *operator new(size_t s) {                                                \
         return MemAlloc(s, __FILE__, line_num, #class_name, 0);                          \
@@ -448,6 +456,20 @@ void operator delete[](void *mem);
 // out-of-line COMDAT too (e.g. ??3CharEyeDartRuleset@@SAXPAX@Z, 4 B `b MemFree`)
 // -- emitting it and inlining it at the call site are not exclusive, which is
 // exactly what a normal inline operator delete does and what noinline forbids.
+// OBJ_NEW_OVERLOAD -- only the operator new half of OBJ_MEM_OVERLOAD (retail's
+// "shape (b)": NewObject inlines the class operator new as StaticClassName()
+// then (MemAlloc)(size, 0)). The class keeps whatever operator delete it
+// already declares (DELETE_OVERLOAD / DELETE_OVERLOAD_INLINE), so the NewObject
+// unwind funclet and ??_G are unaffected. Same body as StarDisplay.h's
+// hand-written operator new.
+#define OBJ_NEW_OVERLOAD                                                                 \
+    static void *operator new(unsigned int s) {                                          \
+        (void)StaticClassName().Str();                                                   \
+        void *mem = (MemAlloc)(s, 0);                                                    \
+        return mem;                                                                      \
+    }                                                                                    \
+    static void *operator new(unsigned int s, void *place) { return place; }
+
 #define OBJ_MEM_OVERLOAD_INLINE_DEL(line_num)                                            \
     static void *operator new(unsigned int s) {                                          \
         (void)StaticClassName().Str();                                                   \

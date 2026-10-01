@@ -4647,8 +4647,8 @@
  "0x822b86c0": "?ClassName@BandConfiguration@@UBA?AVSymbol@@XZ",
  "0x822b88a0": "??_GBandConfiguration@@UAAPAXI@Z",
  "0x822b88f0": "??0TargTransform@BandConfiguration@@QAA@XZ",
- "0x822b8900": "?CheckNoFlashcardsCondition@AccomplishmentSongConditional@@IBA_NPAVSongStatusMgr@@VSymbol@@@Z",
- "0x822b8f08": "?Handle@Watcher@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x822b8900": "?ConfigIndex@BandConfiguration@@QAAHXZ",
+ "0x822b8f08": "?Handle@BandConfiguration@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x822b91d0": "?PostLoad@CrowdMeterIcon@@UAAXAAVBinStream@@@Z",
  "0x822b91d8": "?Copy@CrowdMeterIcon@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
  "0x822b91e8": "?SetState@CrowdMeterIcon@@QAAXW4CrowdMeterState@@_N@Z",
@@ -33939,5 +33939,16 @@
  "0x8234adc8": "?resize@?$vector@VPatchPair@MeshPair@BandPatchMesh@@V?$StlNodeAlloc@VPatchPair@MeshPair@BandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVPatchPair@MeshPair@BandPatchMesh@@@Z",
  "0x8234ae48": "?SetVertsAndFaces@WorkVerts@BandPatchMesh@@QAAXPAVRndMesh@@_N@Z",
  "0x8234b200": "?resize@?$ObjVector@VPatchPair@MeshPair@BandPatchMesh@@@@QAAXI@Z",
- "0x823454a0": "?Invert@@YA_NABVMatrix2@Hmx@@AAV12@M@Z"
+ "0x823454a0": "?Invert@@YA_NABVMatrix2@Hmx@@AAV12@M@Z",
+ "0x822b8988": "?SyncPlayMode@BandConfiguration@@QAAXXZ",
+ "0x822b8a28": "??6@YAAAVBinStream@@AAV0@ABVTargTransforms@BandConfiguration@@@Z",
+ "0x822b8a90": "??5@YAAAVBinStream@@AAV0@AAVTargTransforms@BandConfiguration@@@Z",
+ "0x822b8be8": "?Load@BandConfiguration@@UAAXAAVBinStream@@@Z",
+ "0x822b8c90": "?OnStoreConfiguration@BandConfiguration@@QAA?AVDataNode@@PAVDataArray@@@Z",
+ "0x822b8d30": "?OnReleaseConfiguration@BandConfiguration@@QAA?AVDataNode@@PAVDataArray@@@Z",
+ "0x822b8da0": "??0BandConfiguration@@QAA@XZ",
+ "0x82306ee0": "?UpdateTimeInfo@TrackPanelDir@@QAAXXZ",
+ "0x82303bb8": "?Unkd4@TrackPanelDir@@UAAXPBD00VSymbol@@@Z",
+ "0x82309b60": "?Unkd8@TrackPanelDir@@UAAXXZ",
+ "0x822f7158": "?Load@?$ObjPtr@VStreakMeter@@@@QAA_NAAVBinStream@@_NPAVObjectDir@@@Z"
 }

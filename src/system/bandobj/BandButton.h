@@ -30,7 +30,7 @@ public:
     static void Init();
     static void Register() { REGISTER_OBJ_FACTORY(BandButton) }
     NEW_OBJ(BandButton)
-    NEW_OVERLOAD;
+    OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD_INLINE;
 
     RndAnimatable *mFocusAnim; // 0x214 - might be a RndPropAnim* instead?

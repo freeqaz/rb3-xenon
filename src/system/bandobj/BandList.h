@@ -102,7 +102,7 @@ public:
     // DECLARE_REVS removed: gRev/gAltRev are file-scope statics in BandList.cpp
     // so retail's single-base addressing reproduces. Re-adding it here would
     // silently make that inert (class scope beats namespace scope in PreLoad).
-    NEW_OVERLOAD;
+    OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD;
 
     int mBandListRev; // 0x23c

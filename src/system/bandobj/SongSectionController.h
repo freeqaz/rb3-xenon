@@ -61,7 +61,7 @@ public:
     DataNode OnWaitForEventReceived(const DataArray *);
 
     DECLARE_REVS;
-    NEW_OVERLOAD;
+    OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD_INLINE;
     NEW_OBJ(SongSectionController)
     static void Init() { Register(); }

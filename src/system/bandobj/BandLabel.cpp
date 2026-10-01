@@ -28,7 +28,11 @@ BEGIN_COPYS(BandLabel)
     END_COPYING_MEMBERS
 END_COPYS
 
-void BandLabel::Save(BinStream &) { MILO_ASSERT(0, 0x44); }
+BEGIN_SAVES(BandLabel)
+    SAVE_REVS(0x11, 0)
+    SAVE_SUPERCLASS(UILabel)
+    SaveHandlerData(bs);
+END_SAVES
 
 void BandLabel::Load(BinStream &bs) {
     PreLoad(bs);

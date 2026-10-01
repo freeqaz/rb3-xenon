@@ -181,7 +181,7 @@ public:
     static void Terminate();
 
     NEW_OBJ(BandDirector);
-    NEW_OVERLOAD;
+    OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD_INLINE;
     static DataArray *sPropArr;
     static float sMotionBlurBlendAmount;

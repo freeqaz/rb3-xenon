@@ -3,6 +3,8 @@
 // leaving the ctor at fuzzy 77.97%.  Found by tools/inline_budget_sweep.py
 // (lane W7-B).  bandobj/ is PCH-excluded, so this precedes the header include.
 #define RB3_TU_OBJPTR_FORCEINLINE_CTOR
+#define RB3_OBJOWNERPTR_INLINE_OWNER_CTOR
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
 #include "bandobj/BandCharacter.h"
 #include "obj/ObjMacros.h"
 #include "decomp.h"
@@ -84,7 +86,7 @@ BandCharacter::BandCharacter()
     : mPlayFlags(0), unk454(this, 0), mAddDriver(0), mFaceDriver(0), mForceNextGroup(0),
       mForceVertical(1), mOutfitDir(this, 0), mInstDir(this, 0), mTempo("medium"),
       mFileMerger(0), mHeadLookAt(this, 0), mNeckLookAt(this, 0), mEyes(this, 0),
-      unk574(0), mTestPrefab(this, 0), mGenre("rocker"), mDrumVenue("small_club"),
+      unk574(0), mTestPrefab(this), mGenre("rocker"), mDrumVenue("small_club"),
       mTestTourEndingVenue(0), mInstrumentType("none"), unk594(this, 0), mInCloset(0),
       unk5a1(0), unk5a2(0), unk5a3(0), mSingalongWeight(this, 0),
       unk5b0(this, kObjListNoNull), unk5c0(this, kObjListNoNull),

@@ -70,7 +70,10 @@
                 ]
             },
             "system/bandobj/BandConfiguration.cpp": {
-                "status": "NonMatching"
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_HANDLE_LOCAL_STATIC"
+                ]
             },
             "system/bandobj/BandCharDesc.cpp": {
                 "status": "NonMatching",

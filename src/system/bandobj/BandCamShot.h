@@ -89,7 +89,10 @@ public:
 
     static void DeleteTargetCache(std::list<TargetCache>::iterator);
 
-    bool ShouldSetNextShot(float f1) const;
+    // Inlined at both retail call sites (SetFrame / SetPreFrame).
+    bool ShouldSetNextShot(float f1) const {
+        return f1 < Duration() || mNextShots.size() == 0;
+    }
 
     DataNode OnTestDelta(DataArray *);
     DataNode AddTarget(DataArray *);
@@ -115,7 +118,7 @@ protected:
     bool ListNextShots(std::list<BandCamShot *> &);
 
 public:
-    NEW_OVERLOAD;
+    OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD_INLINE;
     static std::list<BandCamShot::TargetCache> sCache;
     static int sHideAllCharactersHack;

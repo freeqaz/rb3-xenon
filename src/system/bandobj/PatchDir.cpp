@@ -328,7 +328,9 @@ int PatchDir::SaveSize(int) {
 }
 
 void PatchDir::Clear() {
-    std::for_each(mLayers.begin(), mLayers.end(), std::mem_fun_ref(&PatchLayer::Reset));
+    std::for_each(
+        mLayers.begin(), mLayers.end(), std::mem_fun_ref(&PatchLayer::ClearSticker)
+    );
     unk1c0 = true;
 }
 

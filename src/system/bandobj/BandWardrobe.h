@@ -102,7 +102,7 @@ public:
     static void Init();
     static void Register() { REGISTER_OBJ_FACTORY(BandWardrobe); }
     NEW_OBJ(BandWardrobe);
-    NEW_OVERLOAD;
+    OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD_INLINE;
 
     ObjDirPtr<ObjectDir> unk8; // 0x4

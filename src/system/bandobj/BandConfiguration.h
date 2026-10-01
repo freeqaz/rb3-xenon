@@ -12,14 +12,20 @@
 
 class BandConfiguration : public Hmx::Object {
 public:
-    // size 0x34
+    // size 0x44
     class TargTransform {
     public:
+        // Retail copies a whole TargTransform with one memcpy (Copy), the
+        // same way Transform::operator= copies itself.
+        TargTransform &operator=(const TargTransform &tt) {
+            memcpy(this, &tt, sizeof(*this));
+            return *this;
+        }
         Symbol targName; // 0x0
         Transform xfm; // 0x4
     };
 
-    // size 0xa0
+    // size 0xd0
     class TargTransforms {
     public:
         TargTransform xfms[3];
@@ -45,8 +51,8 @@ public:
     DataNode OnReleaseConfiguration(DataArray *);
 
     DECLARE_REVS;
-    NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    OBJ_NEW_OVERLOAD;
+    DELETE_OVERLOAD_INLINE;
     NEW_OBJ(BandConfiguration)
     // ⚠ Init() MUST stay an inline one-liner in this header. Band.cpp's
     // BandInit() sees it through the scatter-include into BandCharacter.cpp,
@@ -58,6 +64,6 @@ public:
     static void Init() { Register(); }
     REGISTER_OBJ_FACTORY_FUNC(BandConfiguration)
 
-    TargTransforms mXfms[4]; // 0x28, 0xbc, 0x15c, 0x1fc
-    // 0x29c
+    TargTransforms mXfms[4]; // 0x28, 0xf8, 0x1c8, 0x298
+    // 0x368
 };

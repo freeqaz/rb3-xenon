@@ -221,7 +221,7 @@ public:
     static unsigned short gRev;
     static unsigned short gAltRev;
     NEW_OBJ(BandCharacter);
-    NEW_OVERLOAD;
+    OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD;
 
     int mPlayFlags; // 0x4ac

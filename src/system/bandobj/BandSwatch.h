@@ -27,7 +27,7 @@ public:
     static void Register() { REGISTER_OBJ_FACTORY(BandSwatch); }
     NEW_OBJ(BandSwatch);
     DECLARE_REVS;
-    NEW_OVERLOAD;
+    OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD_INLINE;
     static void Terminate();
     static ColorPalette *sDummyPalette;

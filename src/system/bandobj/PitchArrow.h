@@ -41,7 +41,7 @@ public:
     DataNode OnSetupFx(DataArray *);
 
     static bool NeedSort(PitchArrow *);
-    NEW_OVERLOAD;
+    OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD_INLINE;
     NEW_OBJ(PitchArrow)
     static void Init() { Register(); }

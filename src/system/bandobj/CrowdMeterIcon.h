@@ -41,7 +41,7 @@ public:
     bool HasIcon() const;
 
     DECLARE_REVS;
-    NEW_OVERLOAD;
+    OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD_INLINE;
     NEW_OBJ(CrowdMeterIcon)
     static void Init() { Register(); }
