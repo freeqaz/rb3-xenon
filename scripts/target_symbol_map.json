@@ -12117,7 +12117,7 @@
  "0x8248cbf0": "??$__adjust_heap@PAUFacePriority@@HU1@U?$less@UFacePriority@@@stlpmtx_std@@@stlpmtx_std@@YAXPAUFacePriority@@HHU1@U?$less@UFacePriority@@@0@@Z",
  "0x8248cca8": "?Save@RndAmbientOcclusion@@UAAXAAVBinStream@@@Z",
  "0x8248ce20": "?IsValid_Mesh@RndAmbientOcclusion@@IBA_NPBVRndMesh@@@Z",
- "0x8248cf78": "?Intersect@?$kdTree@VTriangle@@@@QBA_NABVVector3@@0MAAM@Z",
+ "0x8248cf78": "?Intersect@?$kdTree@VTriangle@@@@QBA_NABVVector3@@0AAM@Z",
  "0x8248d168": "?FindSplit_Mean@kdTreeNode@?$kdTree@VTriangle@@@@QAA_NABVBox@@ABV?$list@PAVTriangle@@V?$StlNodeAlloc@PAVTriangle@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x8248d360": "?FindSplit_SAH@kdTreeNode@?$kdTree@VTriangle@@@@QAA_NABVBox@@ABV?$list@PAVTriangle@@V?$StlNodeAlloc@PAVTriangle@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x8248d4e8": "?Allocate@kdTriList@?$kdTree@VTriangle@@@@SAPAV12@I@Z",

@@ -747,7 +747,7 @@ bool kdTree<Triangle>::kdTreeNode::FindSplit_SAH(
 
 template <>
 bool kdTree<Triangle>::Intersect(
-    const Vector3 &origin, const Vector3 &direction, float maxDist, float &hitDist
+    const Vector3 &origin, const Vector3 &direction, float &hitDist
 ) const {
     float tNear, tFar;
     bool boxHit = ::Intersect(origin, direction, mBounds, tNear, tFar);
@@ -814,50 +814,45 @@ bool kdTree<Triangle>::Intersect(
     return false;
 }
 
+// rays are cast out to 48 units; a hit is weighted by (dist / 48)^2
+static const float kAOMaxDist = 48.0f;
+static float sAOInvMaxDist = 1.0f / 48.0f;
+
 void RndAmbientOcclusion::CalculateAOAtPoint(
     const Vector3 &pos, const Vector3 &norm, float *result
 ) const {
-    float maxDist = gUnitsPerMeter * 50.0f;
     Vector3 rayOrigin;
     rayOrigin.x = norm.x * 0.001f + pos.x;
     rayOrigin.y = norm.y * 0.001f + pos.y;
     rayOrigin.z = norm.z * 0.001f + pos.z;
     double shAccum[4] = { 0, 0, 0, 0 };
-    float invMaxDist = 1.0f / maxDist;
-    int numSamples = mSampleDirs.size();
-    float shCoeffs[4];
-    float occlusion = 1.0f;
+    unsigned int numSamples = mSampleDirs.size();
 
-    for (int i = 0; (unsigned int)i < numSamples; i++) {
+    for (unsigned int i = 0; i < numSamples; i++) {
         const Vector3 &sampleDir = mSampleDirs[i];
         float dot = norm.x * sampleDir.x + sampleDir.z * norm.z + sampleDir.y * norm.y;
-        occlusion = 1.0f;
         if (dot > 0.0f) {
+            float occlusion = 1.0f;
             float hitDist;
-            bool hit = mTree->Intersect(rayOrigin, sampleDir, maxDist, hitDist);
-            if (hit && hitDist <= maxDist) {
-                float t = hitDist * invMaxDist;
-                occlusion = t * t;
+            if (mTree->Intersect(rayOrigin, sampleDir, hitDist) && hitDist <= kAOMaxDist) {
+                hitDist *= sAOInvMaxDist;
+                occlusion = hitDist * hitDist;
             }
+            float shCoeffs[4];
             BuildSHCoeff(sampleDir, shCoeffs);
-            for (int j = 0; j <= 3; j++) {
-                shAccum[j] += (double)(shCoeffs[j] * occlusion * dot);
+            for (int j = 0; j < 4; j++) {
+                shAccum[j] += shCoeffs[j] * occlusion * dot;
             }
         }
     }
 
     for (unsigned int k = 0; k < 4; k++) {
-        shAccum[k] *= (double)(12.566371f / (float)numSamples);
+        shAccum[k] *= 12.566371f / (float)numSamples;
         if (k == 0) {
-            float val = (float)shAccum[0];
-            val = val > 0.0f ? val : 0.0f;
-            val = val < 1.0f ? val : 1.0f;
-            shAccum[0] = val;
+            shAccum[0] = Clamp(0.0f, 1.0f, (float)shAccum[0]);
         } else {
-            float val = (float)shAccum[k];
-            val = val > -1.0f ? val : -1.0f;
-            val = val < 1.0f ? val : 1.0f;
-            shAccum[k] = val * 0.5f + 0.5f;
+            // the linear terms are remapped from [-1, 1] to [0, 1]
+            shAccum[k] = (Clamp(-1.0f, 1.0f, (float)shAccum[k]) * 0.5) + 0.5;
         }
     }
 

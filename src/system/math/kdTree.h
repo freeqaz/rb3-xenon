@@ -224,7 +224,8 @@ public:
         mNodes->Pack(s, mBounds, mItems, mNodes, uc);
     }
 
-    bool Intersect(const Vector3 &, const Vector3 &, float, float &) const;
+    // origin, direction, out: distance to the nearest hit
+    bool Intersect(const Vector3 &, const Vector3 &, float &) const;
 
 private:
     std::list<T *> mItems; // 0x0 - objects?
