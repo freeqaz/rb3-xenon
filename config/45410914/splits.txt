@@ -6878,8 +6878,6 @@ DataFile.cpp:
 	.pdata      start:0x8223D380 end:0x8223D3B0
 	.pdata      start:0x8223D3C0 end:0x8223D550
 	.pdata      start:0x8223D550 end:0x8223D578
-	.pdata      start:0x8223D578 end:0x8223D598
-	.pdata      start:0x8223D5B0 end:0x8223D5D0
 	.pdata      start:0x8223D638 end:0x8223D658
 	.pdata      start:0x8223D658 end:0x8223D660
 	.pdata      start:0x8223D660 end:0x8223D698
@@ -6889,9 +6887,7 @@ DataFile.cpp:
 	.text       start:0x8276A758 end:0x8276AA00
 	.text       start:0x8276AADC end:0x8276C6CC
 	.text       start:0x8276C6CC end:0x8276C958
-	.text       start:0x8276C968 end:0x8276CA80
 	.text       start:0x8276CB18 end:0x8276CB20
-	.text       start:0x8276CBC0 end:0x8276CE10
 	.text       start:0x8276D244 end:0x8276D248
 	.text       start:0x8276D29C end:0x8276D540
 	.text       start:0x8276D540 end:0x8276D758
@@ -7930,12 +7926,16 @@ Stream.cpp:
 
 DirUnloader.cpp:
 	.pdata      start:0x8223AAE8 end:0x8223AB10
+	.pdata      start:0x8223D578 end:0x8223D598
 	.pdata      start:0x8223D598 end:0x8223D5A0
+	.pdata      start:0x8223D5B0 end:0x8223D5D0
 	.pdata      start:0x8223D5D0 end:0x8223D608
 	.pdata      start:0x8223D608 end:0x8223D630
 	.text       start:0x8273CA70 end:0x8273CBFC
 	.text       start:0x8276C958 end:0x8276C968
+	.text       start:0x8276C968 end:0x8276CA80
 	.text       start:0x8276CA80 end:0x8276CB18
+	.text       start:0x8276CBC0 end:0x8276CE10
 	.text       start:0x8276CE10 end:0x8276D174
 	.text       start:0x8276D174 end:0x8276D244
 

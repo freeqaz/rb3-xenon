@@ -1,4 +1,8 @@
 {
+ "0x8276c9e0": "??$__uninitialized_copy@PAV?$ObjPtr@VObject@Hmx@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VObject@Hmx@@@@PAV1@00ABU__false_type@0@@Z",
+ "0x8276cc68": "?_M_insert_overflow_aux@?$vector@V?$ObjPtr@VObject@Hmx@@@@V?$StlNodeAlloc@V?$ObjPtr@VObject@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAV?$ObjPtr@VObject@Hmx@@@@ABV3@ABU__false_type@2@I_N@Z",
+ "0x8276c970": "??$_Copy_Construct@V?$ObjPtr@VObject@Hmx@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VObject@Hmx@@@@ABV1@@Z",
+ "0x8276cbc8": "??$_M_allocate_and_copy@PAV?$ObjPtr@VObject@Hmx@@@@@?$vector@V?$ObjPtr@VObject@Hmx@@@@V?$StlNodeAlloc@V?$ObjPtr@VObject@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VObject@Hmx@@@@IPAV2@0@Z",
  "0x824d08f0": "?PostLoad@WorldDir@@UAAXAAVBinStream@@@Z",
  "0x824cfb30": "??0WorldDir@@QAA@XZ",
  "0x824ce910": "??1WorldDir@@UAA@XZ",
