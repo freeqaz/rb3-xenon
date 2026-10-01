@@ -161,7 +161,9 @@ bool AccomplishmentTourConditional::IsConditionMet(
     int i4 = 0;
     int i8 = 0;
     InqConditionProgress(profile, cond, i4, i8);
-    return i4 >= i8;
+    if (i4 >= i8)
+        return true;
+    return false;
 }
 
 bool AccomplishmentTourConditional::CanBeLaunched() const { return true; }
