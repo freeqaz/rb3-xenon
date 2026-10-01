@@ -81513,11 +81513,17 @@
    "name": "push_back",
    "address": "0x8257fcf8",
    "survivor": "?push_back@?$vector@VPlayerScore@@V?$StlNodeAlloc@VPlayerScore@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVPlayerScore@@@Z",
-   "folded": [
-    "?push_back@?$vector@UJumpInstance@@V?$StlNodeAlloc@UJumpInstance@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUJumpInstance@@@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "?push_back@?$vector@UJumpInstance@@V?$StlNodeAlloc@UJumpInstance@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUJumpInstance@@@Z",
+     "lane": "W16-IC 2026-10-01",
+     "class": "DISTINCT_RETAIL_BODY",
+     "disposition": "withdrawn; the spelling is now the map name of its own retail body at 0x82704bb8",
+     "evidence": "Retail has two word-identical push_back bodies that differ only in their two bl targets, so they are not one ICF fold. 0x8257FCF8 calls _M_insert_overflow_aux<PlayerScore> (0x8257F5B0) and is called by MetaPerformer::PopulatePlayerBandScores, MetaPerformer::PopulatePlayerScores and SongStatusMgr::UploadDirtyScores. 0x82704BB8 calls 0x82704058 (whose only caller is 0x82704BB8) and is called only by StandardStream::DoJump, the one user of vector<JumpInstance>::push_back; our StandardStream.obj's push_back<JumpInstance> reads 100 against it. The W16-CU L1_T1 identity is consistent with the bodies being word-identical apart from bl targets; 0x8257FCF8's first callee (0x8257D4C8) is unnamed, so a name-compared check sees only one of the two differing targets (not verified further). Kept as a record per the never-prune-without-a-record rule (a745039e)."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
