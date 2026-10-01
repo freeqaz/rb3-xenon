@@ -9043,7 +9043,6 @@ band3/game/GemTrainerPanel.cpp:
 	.text       start:0x826AC678 end:0x826ADC38
 
 band3/game/Tracker.cpp:
-	.pdata      start:0x821F6F08 end:0x821F6F10
 	.pdata      start:0x82234E48 end:0x82234E50
 	.pdata      start:0x82234E50 end:0x82234E58
 	.pdata      start:0x82234E58 end:0x82234E68
@@ -9068,7 +9067,6 @@ band3/game/Tracker.cpp:
 	.pdata      start:0x82234FB8 end:0x82234FD0
 	.pdata      start:0x82234FD0 end:0x82235018
 	.pdata      start:0x82235018 end:0x82235020
-	.text       start:0x822C87B0 end:0x822C882C
 	.text       start:0x826D0AA8 end:0x826D0B00
 	.text       start:0x826D0B00 end:0x826D0B7C
 	.text       start:0x826D0B80 end:0x826D0C00
@@ -13739,6 +13737,7 @@ system/bandobj/BandFaceDeform.cpp:
 	.pdata      start:0x821F6EC8 end:0x821F6ED0
 	.pdata      start:0x821F6ED0 end:0x821F6EE8
 	.pdata      start:0x821F6EE8 end:0x821F6F00
+	.pdata      start:0x821F6F08 end:0x821F6F10
 	.pdata      start:0x821F6F10 end:0x821F6F20
 	.pdata      start:0x821F6F20 end:0x821F6F30
 	.pdata      start:0x821F6F30 end:0x821F6F48
@@ -13758,6 +13757,7 @@ system/bandobj/BandFaceDeform.cpp:
 	.text       start:0x822C83D0 end:0x822C8448
 	.text       start:0x822C8448 end:0x822C85F8
 	.text       start:0x822C85F8 end:0x822C8784
+	.text       start:0x822C87B0 end:0x822C882C
 	.text       start:0x822C8838 end:0x822C88D8
 	.text       start:0x822C88E0 end:0x822C89C8
 	.text       start:0x822C89C8 end:0x822C8BC8
