@@ -77911,7 +77911,7 @@
      "lane": "W16-JD 2026-10-01",
      "class": "CALL_CHAIN_PROVES_OWN_ADDRESS",
      "disposition": "withdrawn: the spelling is now mapped at its own retail address (validator CONTRADICTED until withdrawn)",
-      "evidence": "retail places it at its own address 0x827493D0: ScriptTask ctor / UpdateVarsObjects -> list<Var>::insert 0x82749630 -> _M_create_node 0x82749550 -> bl 0x827493D0 (copies a word, then a DataNode via 0x8274A9D0); the ctor, UpdateVarsObjects, insert and _M_create_node all read 100 under these names"
+     "evidence": "retail places it at its own address 0x827493D0: ScriptTask ctor / UpdateVarsObjects -> list<Var>::insert 0x82749630 -> _M_create_node 0x82749550 -> bl 0x827493D0 (copies a word, then a DataNode via 0x8274A9D0); the ctor, UpdateVarsObjects, insert and _M_create_node all read 100 under these names"
     }
    ],
    "repair": {
@@ -93484,10 +93484,17 @@
    "name": "__uninitialized_copy_PAU12",
    "address": "0x827070f0",
    "survivor": "??$__uninitialized_copy@PAUUnlockable@?A0xf8e4b4b5@@PAU12@@stlpmtx_std@@YAPAUUnlockable@?A0xf8e4b4b5@@PAU12@00ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_copy@PAV?$ObjPtr@VSeqInst@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VSeqInst@@@@PAV1@00ABU__false_type@0@@Z"
-   ],
-   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 25, row addr 0x827070f0). \"ours\" spelling ??$__uninitialized_copy@PAV?$ObjPtr@VSeqInst@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VSeqInst@@@@PAV1@00ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_copy@PAUUnlockable@?A0xf8e4b4b5@@PAU12@@stlpmtx_std@@YAPAUUnlockable@?A0xf8e4b4b5@@PAU12@00ABU__false_type@0@@Z at retail address 0x827070f0. FLAT T1 PROVEN directly -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 3 named relocation(s) matched at FLAT T1 (no chase recursion required), 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 392 B (392 B honest) across ['default/Sequence'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md."
+   "folded": [],
+   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 25, row addr 0x827070f0). \"ours\" spelling ??$__uninitialized_copy@PAV?$ObjPtr@VSeqInst@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VSeqInst@@@@PAV1@00ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_copy@PAUUnlockable@?A0xf8e4b4b5@@PAU12@@stlpmtx_std@@YAPAUUnlockable@?A0xf8e4b4b5@@PAU12@00ABU__false_type@0@@Z at retail address 0x827070f0. FLAT T1 PROVEN directly -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 3 named relocation(s) matched at FLAT T1 (no chase recursion required), 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 392 B (392 B honest) across ['default/Sequence'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_copy@PAV?$ObjPtr@VSeqInst@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VSeqInst@@@@PAV1@00ABU__false_type@0@@Z",
+     "lane": "W16-JD 2026-10-01",
+     "class": "PLACEHOLDER_SLOT_VTABLE_RTTI_DIFFERS",
+     "disposition": "membership withdrawn, group kept",
+     "evidence": "tools/alias_placeholder_slot_audit.py: a relocation slot whose retail target is unnamed was tolerated on trust when this membership was admitted. Decided on retail bytes: SLOT-CONTRADICTED:VTABLE-RTTI-DIFFERS @+? retail lbl_82020C54 vs ours ??_7?$ObjPtr@VSeqInst@@@@6B@ | retail RTTI .?AV?$ObjPtr@VSequence@@VOb -- in strict chase at depth 3"
+    }
+   ]
   },
   {
    "name": "__uninitialized_copy_InlineHelp",
@@ -96359,17 +96366,17 @@
    ]
   },
   {
-  "name": "_M_clear_after_move<GameGem>",
-  "address": "0x826ab088",
-  "survivor": "?_M_clear_after_move@?$vector@VGameGem@@V?$StlNodeAlloc@VGameGem@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
-  "folded": [
-   "?_M_clear@?$vector@VGameGem@@V?$StlNodeAlloc@VGameGem@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
-  ],
-  "evidence": "Hand-installed by lane W16-JD (fork bm). Call-site proof: retail 0x826AB088 (destroy range + deallocate, 0x44-byte elements) is the target of four vector<GameGem> call sites -- _M_insert_overflow_aux (bl at 0x826AB2F8), operator= (0x826AB3B0), reserve (0x82773E34) and _M_range_insert_realloc<const GameGem*> (0x8278DC84). Our source spells the first _M_clear_after_move and the other three _M_clear, so both spellings resolve to the one retail address; their STLport bodies are identical. tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN, CHASED T1 PROVEN (no CYCLE-ASSUMED leaf; 116 B both sides; the one relocation is the destroy-range callee, a tolerated placeholder). Naming 0x826AB088 with either spelling alone measured two rows off 100 (the other spelling's callers), which is the fold showing itself.",
-  "added": {
-   "lane": "W16-JD 2026-10-01"
-  }
- },
+   "name": "_M_clear_after_move<GameGem>",
+   "address": "0x826ab088",
+   "survivor": "?_M_clear_after_move@?$vector@VGameGem@@V?$StlNodeAlloc@VGameGem@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+   "folded": [
+    "?_M_clear@?$vector@VGameGem@@V?$StlNodeAlloc@VGameGem@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
+   ],
+   "evidence": "Hand-installed by lane W16-JD (fork bm). Call-site proof: retail 0x826AB088 (destroy range + deallocate, 0x44-byte elements) is the target of four vector<GameGem> call sites -- _M_insert_overflow_aux (bl at 0x826AB2F8), operator= (0x826AB3B0), reserve (0x82773E34) and _M_range_insert_realloc<const GameGem*> (0x8278DC84). Our source spells the first _M_clear_after_move and the other three _M_clear, so both spellings resolve to the one retail address; their STLport bodies are identical. tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN, CHASED T1 PROVEN (no CYCLE-ASSUMED leaf; 116 B both sides; the one relocation is the destroy-range callee, a tolerated placeholder). Naming 0x826AB088 with either spelling alone measured two rows off 100 (the other spelling's callers), which is the fold showing itself.",
+   "added": {
+    "lane": "W16-JD 2026-10-01"
+   }
+  },
   {
    "name": "1NetLoaderXbox",
    "address": "0x827cfcb0",
