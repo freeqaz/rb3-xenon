@@ -109,6 +109,9 @@ void StorePreviewMgr::AddToDownloadQueue(String const &str) {
     }
 }
 
+// Retail 0x827B2350, between the destructor and Handle: `b AddToDownloadQueue`.
+void StorePreviewMgr::DownloadPreviewFile(String const &str) { AddToDownloadQueue(str); }
+
 BEGIN_HANDLERS(StorePreviewMgr)
 HANDLE_ACTION(clear_current_preview, ClearCurrentPreview())
 HANDLE_ACTION(set_current_preview_file, SetCurrentPreviewFile(_msg->Str(2)))

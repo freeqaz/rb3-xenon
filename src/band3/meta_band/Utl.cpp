@@ -48,10 +48,13 @@ void UtlInit() {
     DataRegisterFunc(
         "get_font_char_from_controller_type", OnGetFontCharFromControllerType
     );
-    // Retail fn_825BF0C0 order; the fake-upload-failure cheat is dev-only.
-    DataRegisterFunc("get_font_char_for_harmony_mics", OnGetFontCharForHarmonyMics);
+    // Retail 0x825BF0C0 order, read off the registered strings
+    // (lbl_820AE4F4 "get_font_char_from_track_type", 0x820AE4D4
+    // "..._from_score_type", 0x820AE4B4 "..._for_harmony_mics") and the callee
+    // of each registered handler. The fake-upload-failure cheat is dev-only.
     DataRegisterFunc("get_font_char_from_track_type", OnGetFontCharFromTrackType);
     DataRegisterFunc("get_font_char_from_score_type", OnGetFontCharFromScoreType);
+    DataRegisterFunc("get_font_char_for_harmony_mics", OnGetFontCharForHarmonyMics);
     DataRegisterFunc("is_leader_local", OnIsLeaderLocal);
     DataRegisterFunc("is_vignette", OnIsVignette);
 #if defined(MILO_DEBUG) && defined(HX_NATIVE)
@@ -149,6 +152,9 @@ const char *GetFontCharFromScoreType(ScoreType scoreType, int idx) {
 }
 
 const char *GetFontCharFromTrackType(TrackType trackType, int idx) {
+    // Retail 0x825BE650 guards a function-local static Symbol (guard word
+    // 0x82DFF640) rather than reading the Symbols*.h global.
+    static Symbol instrument_icons("instrument_icons");
     MILO_ASSERT_RANGE(trackType, 0, kNumTrackTypes + 1, 0xD9);
     switch (trackType) {
     case kTrackDrum:
@@ -181,6 +187,12 @@ static DataNode OnGetFontCharForHarmonyMics(DataArray *da) {
 }
 
 const char *GetFontCharForHarmonyMics(int num_mics, int idx) {
+    // Retail 0x825BE760: three function-local statics under one guard word
+    // (bits 1/2/4), which also keeps the body out of line in
+    // GetFontCharFromScoreType's kScoreHarmony case.
+    static Symbol instrument_icons("instrument_icons");
+    static Symbol harmony_2("harmony_2");
+    static Symbol harmony_3("harmony_3");
     switch (num_mics) {
     case 2:
         return SystemConfig(instrument_icons, harmony_2)->Str(idx + 1);
@@ -269,12 +281,99 @@ static DataNode OnAllowedToAccessContent(DataArray *da) {
     return DataNode(allowedToAccessContent);
 }
 
+/** Two XDK calls reached only from MaxAllowedHmxMaturityLevel (retail
+    0x82B54328 and 0x82B543A8). Both are unnamed in our map and carry no string
+    of their own, so their real XDK names are not recoverable here; the names
+    below are descriptive. Only their SHAPE is load-bearing, and retail shows
+    it: `(dwUserIndex, DWORD *...) -> DWORD`, called with XUSER_INDEX_ANY (0xff).
+    The first fills a flags word whose bit 0x80 gates the rating check; the
+    second fills a rating-board index (0-11) and a rating value (0xff = none). */
+extern "C" DWORD XContentRestrictionFlags(DWORD dwUserIndex, DWORD *pdwFlags);
+extern "C" DWORD XContentRatingLimit(DWORD dwUserIndex, DWORD *pdwBoard, DWORD *pdwRating);
+
+/** Retail 0x825BE310. Translates the console's parental-control game-rating
+    limit into an HMX content maturity level (1-3; -1 for a rating with no
+    mapping), never below kMinContentLevel. With PlatformMgr's +0x3d override
+    set, without the restriction flag, or with no rating set, every level (4)
+    is allowed. The board/rating table below is read off retail's two jump
+    tables (0x820AE238 by board, 0x820AE228 for boards 1-3) and the compare
+    chains of the other boards. */
 int MaxAllowedHmxMaturityLevel() {
-    if (ThePlatformMgr.unkce6b != 0) {
+    int level = -1;
+    if (ThePlatformMgr.ParentalControlUnlocked()) {
         return 4;
     }
-    if (kMinContentLevel <= 4) {
+    DWORD flags = 0;
+    XContentRestrictionFlags(0xff, &flags);
+    if (!(flags & 0x80)) {
         return 4;
     }
-    return kMinContentLevel;
+    DWORD board = 0;
+    DWORD rating = 0;
+    XContentRatingLimit(0xff, &board, &rating);
+    if (rating == 0xff) {
+        return 4;
+    }
+    switch (board) {
+    case 0:
+        switch (rating) {
+        case 0: case 2: case 4: level = 1; break;
+        case 6: level = 2; break;
+        case 8: case 10: level = 3; break;
+        }
+        break;
+    case 1:
+    case 2:
+    case 3:
+        switch (rating) {
+        case 0: case 1: case 3: case 4: case 8: level = 1; break;
+        case 9: case 12: case 13: level = 2; break;
+        case 14: level = 3; break;
+        }
+        break;
+    case 4:
+        switch (rating) {
+        case 0: case 1: case 4: case 5: level = 1; break;
+        case 9: case 12: case 13: level = 2; break;
+        case 14: level = 3; break;
+        }
+        break;
+    case 5:
+    case 9:
+        switch (rating) {
+        case 0: level = 1; break;
+        case 2: case 4: level = 2; break;
+        case 6: level = 3; break;
+        }
+        break;
+    case 6:
+        switch (rating) {
+        case 0: case 2: case 4: case 6: level = 2; break;
+        case 8: level = 3; break;
+        }
+        break;
+    case 7:
+        switch (rating) {
+        case 0: case 2: level = 1; break;
+        case 3: case 4: case 5: case 6: level = 2; break;
+        }
+        break;
+    case 8:
+        switch (rating) {
+        case 0: case 2: level = 1; break;
+        case 4: case 6: level = 2; break;
+        }
+        break;
+    case 11:
+        switch (rating) {
+        case 0: case 6: case 7: level = 1; break;
+        case 10: case 13: level = 2; break;
+        case 14: level = 3; break;
+        }
+        break;
+    }
+    if (level < kMinContentLevel) {
+        level = kMinContentLevel;
+    }
+    return level;
 }

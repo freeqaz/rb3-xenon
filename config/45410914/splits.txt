@@ -435,8 +435,7 @@ MusicLibrary.cpp:
 MusicLibraryStore.cpp:
 	.pdata      start:0x82223230 end:0x82223238
 	.pdata      start:0x82223238 end:0x82223240
-	.pdata      start:0x82223240 end:0x822232E8
-	.pdata      start:0x822232F0 end:0x82223308
+	.pdata      start:0x82223240 end:0x82223308
 	.pdata      start:0x82223310 end:0x82223318
 	.pdata      start:0x82223318 end:0x82223338
 	.pdata      start:0x82223338 end:0x82223388
@@ -448,8 +447,7 @@ MusicLibraryStore.cpp:
 	.pdata      start:0x82223498 end:0x822234A8
 	.text       start:0x825BC900 end:0x825BC9D4
 	.text       start:0x825BC9D8 end:0x825BCA38
-	.text       start:0x825BCA38 end:0x825BD1F8
-	.text       start:0x825BD254 end:0x825BD3E8
+	.text       start:0x825BCA38 end:0x825BD3E8
 	.text       start:0x825BD450 end:0x825BD458
 	.text       start:0x825BD458 end:0x825BD564
 	.text       start:0x825BD564 end:0x825BD618
@@ -7906,17 +7904,19 @@ JoypadMsgs.cpp:
 	.pdata      start:0x82219EC8 end:0x82219ED8
 	.pdata      start:0x82219ED8 end:0x82219FC0
 	.pdata      start:0x82219FF0 end:0x8221A038
-	.pdata      start:0x822232E8 end:0x822232F0
 	.text       start:0x825324A0 end:0x82532520
 	.text       start:0x82532520 end:0x82532DC8
 	.text       start:0x82533120 end:0x82533644
-	.text       start:0x825BD1F8 end:0x825BD254
+
+band3/meta_band/AuditionSessionPanel.cpp:
+	.pdata      start:0x82227E80 end:0x82227F10
+	.pdata      start:0x82227F10 end:0x82227FE0
+	.text       start:0x826033F0 end:0x82603A78
+	.text       start:0x82603A84 end:0x826047A0
 
 AppInlineHelp.cpp:
-	.pdata      start:0x82227DA0 end:0x82227F10
-	.pdata      start:0x82227F10 end:0x82227F78
-	.text       start:0x82602418 end:0x82603A78
-	.text       start:0x82603A84 end:0x82604520
+	.pdata      start:0x82227DA0 end:0x82227E80
+	.text       start:0x82602418 end:0x826033F0
 
 ColorPalette.cpp:
 	.pdata      start:0x82237048 end:0x82237050
@@ -13622,13 +13622,17 @@ band3/meta_band/SaveLoadStatusPanel.cpp:
 	.text       start:0x826322A8 end:0x826322B4
 	.text       start:0x826322B4 end:0x826323E8
 
+band3/meta_band/JoinInvitePanel.cpp:
+	.pdata      start:0x8222ADF0 end:0x8222AED8
+	.text       start:0x826308B8 end:0x82631A20
+
 band3/meta_band/RetryAudioPanel.cpp:
 	.pdata      start:0x8222AD88 end:0x8222ADD0
 	.pdata      start:0x8222ADD0 end:0x8222ADD8
-	.pdata      start:0x8222ADE0 end:0x8222AE58
+	.pdata      start:0x8222ADE0 end:0x8222ADF0
 	.text       start:0x82630228 end:0x82630690
 	.text       start:0x82630690 end:0x82630750
-	.text       start:0x82630778 end:0x82631130
+	.text       start:0x82630778 end:0x826308B8
 
 band3/meta_band/CampaignGoalsLeaderboardChoicePanel.cpp:
 	.pdata      start:0x82226EC0 end:0x82226ED0
