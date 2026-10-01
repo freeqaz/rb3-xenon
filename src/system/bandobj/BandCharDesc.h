@@ -52,7 +52,7 @@ public:
         };
 
         Patch();
-        virtual ~Patch() {}
+        // No user-declared dtor: retail's ~Patch makes no vtable stores (implicit).
         virtual void SaveFixed(FixedSizeSaveableStream &) const;
         virtual void LoadFixed(FixedSizeSaveableStream &, int);
 

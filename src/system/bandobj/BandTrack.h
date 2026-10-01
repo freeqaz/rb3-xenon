@@ -71,7 +71,7 @@ public:
     virtual void SetupSmasherPlate() {}
     virtual void ReleaseSmasherPlate() {}
     virtual void TutorialReset() {}
-    virtual ~BandTrack() {}
+    // No user-declared dtor: retail's ~BandTrack makes no vtable stores (implicit).
 
     void Init(Hmx::Object *);
     void LoadTrack(BinStream &, bool, bool, bool);
