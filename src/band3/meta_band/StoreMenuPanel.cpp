@@ -57,10 +57,14 @@ void StoreMenuPanel::Enter() {
     BandStorePanel *storePanel = BandStorePanel::Instance();
     UIPanel::Enter();
     storePanel->AddSink(this);
-    if (mCurrentMenuIx == -1) {
+    if (mCurrentMenuIx == 0) {
+        {
+            String indexFile(storePanel->GetIndexFile());
+            storePanel->Request(indexFile, true);
+        }
         mStartingHighlightIx = 0;
+        mCurrentMenuIx = 0;
         mPendingMenuIx = -1;
-        storePanel->Request(String(storePanel->GetIndexFile()), true);
     }
 }
 
