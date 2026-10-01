@@ -8,7 +8,13 @@ class DataArray;
 
 class Playback {
 public:
-    Playback();
+    // Inline: retail has no out-of-line ctor. TheBeatMatchPlayback's vptr and
+    // scalar members are constant-initialized in .data (0x82C78780) and its
+    // dynamic initializer (0x82C40D38) only zeroes the eight sinks.
+    Playback() : mPlayerIndex(0), mCommands(0), mCommandIndex(0), mTime(0.0f) {
+        for (int i = 0; i < 8; i++)
+            mPlayerSinks[i] = 0;
+    }
     virtual ~Playback();
     void Poll(float);
     void DoCommand(DataArray *);

@@ -1,4 +1,13 @@
 {
+ "0x82792cf8": "??_GPlayback@@UAAPAXI@Z",
+ "0x82792c90": "?LoadFile@Playback@@QAA_NABVString@@@Z",
+ "0x82792b88": "?Poll@Playback@@QAAXM@Z",
+ "0x82792b38": "??1Playback@@UAA@XZ",
+ "0x82792b00": "?GetPlaybackNum@Playback@@QAAHPAVBeatMatcher@@@Z",
+ "0x82792a18": "?Jump@Playback@@QAAXM@Z",
+ "0x827925a8": "?DoCommand@Playback@@QAAXPAVDataArray@@@Z",
+ "0x82792538": "?AddSink@Playback@@QAAXPAVBeatMatcher@@@Z",
+ "0x82792430": "?LanesAt@FillInfo@@QBAHH@Z",
  "0x824d8040": "??$New@VRndFlare@@@Object@Hmx@@SAPAVRndFlare@@XZ",
  "0x824ca458": "??$?5VKeyFrame@EventAnim@@@@YAAAVBinStream@@AAV0@AAV?$ObjList@VKeyFrame@EventAnim@@@@@Z",
  "0x824c9950": "??$?5VEventCall@EventAnim@@@@YAAAVBinStream@@AAV0@AAV?$ObjList@VEventCall@EventAnim@@@@@Z",
