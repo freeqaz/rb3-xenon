@@ -1,4 +1,7 @@
 {
+ "0x8273b818": "?DrawString@DxRnd@@UAAAAVVector2@@PBDABV2@ABVColor@Hmx@@_N@Z",
+ "0x8273c2f0": "?EndDrawing@DxRnd@@UAAXXZ",
+ "0x8273a100": "?EndTiling@DxRnd@@AAAXPAUD3DBaseTexture@@H@Z",
  "0x82738e38": "?DrawShowing@DxMesh@@UAAXXZ",
  "0x82738c78": "?SetTransforms@DxMesh@@IAAXXZ",
  "0x82738bf0": "?FurWeight@DxMesh@@IAAMPAVRndMat@@@Z",

@@ -645,6 +645,97 @@ RndTex *DxRnd::GetCurrentFrameTex(bool resolvePreProcess) {
     return PostProcessTexture();
 }
 
+// 0x8273B818 (DxRnd vtable slot 30). Debug text: each glyph is a list of
+// polylines in the `font` DataArray, indexed by character code, each point a
+// pair of floats scaled to a 9x12 cell on a 13.5 x 18 pixel grid. Returns a
+// shared cursor holding the end of the string.
+Vector2 &DxRnd::DrawString(
+    const char *s, const Vector2 &pos, const Hmx::Color &color, bool drawGlyphs
+) {
+    MILO_ASSERT(s, 0x11F);
+    D3DDevice_SetFVF(mD3DDevice, 0x42);
+    Transform screenXfm;
+    screenXfm.Reset();
+    RndShaderMgr &shaderMgr = TheShaderMgr;
+    shaderMgr.SetVConstant(kVS_ViewProjMatrix, Hmx::Matrix4(screenXfm));
+    TheShaderMgr.SetTransform(screenXfm);
+    RndShader::SelectConfig(nullptr, kLineNozShader, false);
+    D3DDevice_SetRenderState_ViewportEnable(TheDxRnd.Device(), 0);
+    static Vector2 cursor;
+    cursor = pos;
+    float widest = pos.x;
+    char c;
+    while ((c = *s) != 0) {
+        if (c == '\n') {
+            s++;
+            if (*s) {
+                widest = Max(widest, cursor.x);
+                cursor.x = pos.x;
+                cursor.y += 18.0f;
+            }
+            continue;
+        }
+        if (drawGlyphs && c > 0 && c + 1 < Font()->Size()) {
+            DataArray *glyph = Font()->Node(c + 1).UncheckedArray();
+            for (int i = 0; i < glyph->Size(); i++) {
+                DataArray *stroke = glyph->Node(i).UncheckedArray();
+                struct StrokeVert {
+                    float x, y, z;
+                    unsigned long color;
+                } verts[12];
+                int numVerts = 0;
+                for (int j = 0; j < stroke->Size(); j += 2) {
+                    verts[numVerts].x = stroke->Float(j) * 9.0f + cursor.x;
+                    verts[numVerts].y = stroke->Float(j + 1) * 12.0f + cursor.y;
+                    verts[numVerts].z = 1.0f;
+                    verts[numVerts].color = MakeColor(color);
+                    numVerts++;
+                }
+                D3DDevice_DrawVerticesUP(
+                    mD3DDevice, D3DPT_LINESTRIP, numVerts, verts, 0x10
+                );
+            }
+        }
+        cursor.x += 13.5f;
+        s++;
+    }
+    D3DDevice_SetRenderState_ViewportEnable(TheDxRnd.Device(), 1);
+    if (RndCam::Current()) {
+        TheShaderMgr.SetVConstant(
+            kVS_ViewProjMatrix, RndCam::Current()->GetViewProjMatrix()
+        );
+    }
+    cursor.y += 18.0f;
+    cursor.x = Max(cursor.x, widest);
+    return cursor;
+}
+
+// 0x8273C2F0 (DxRnd vtable slot 33). RB3 has no draw/cpu timers or perf
+// counters here: after restoring the render target and depth surface it only
+// resets the GPR allocation.
+void DxRnd::EndDrawing() {
+    EndWorld();
+    if (mShowSafeArea) {
+        Hmx::Color titleSafeColor(1.0f, 0.0f, 0.0f, 1.0f);
+        Hmx::Color actionSafeColor(0.0f, 1.0f, 0.0f, 1.0f);
+        if (mAspect == kWidescreen)
+            DrawSafeArea(0.9f, true, titleSafeColor);
+        DrawSafeArea(0.9f, false, titleSafeColor);
+        if (mAspect == kWidescreen)
+            DrawSafeArea(0.95f, true, actionSafeColor);
+        DrawSafeArea(0.95f, false, actionSafeColor);
+    }
+    Rnd::EndDrawing();
+    mPostProcDone = false;
+    EndTiling(FrontBuffer(), 0);
+    D3DDevice_SetRenderTarget_External(mD3DDevice, 0, mBackBuffer);
+    D3DDevice_SetDepthStencilSurface(mD3DDevice, mWorldDepth);
+    if (mRegAlloc != 0) {
+        mRegAlloc = (RegisterAlloc)0;
+        D3DDevice_SetShaderGPRAllocation(mD3DDevice, 0, 0, 0);
+    }
+}
+
 bool DxRnd::CanModal(Debug::ModalType t) {
     if (mTilingActive) {
         // Retail tests t as a byte (clrlwi. r11,r4,24), allowing EndTiling for any
