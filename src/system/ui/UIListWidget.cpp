@@ -257,6 +257,48 @@ void UIListWidget::DrawMesh(
 
 UIList *UIListWidget::ParentList() { return mParentList; }
 
+#ifndef RB3_UILISTWIDGET_IN_PANELDIR
+#pragma region UIResource
+// A UIManager-shared resource dir, reference counted by the components using it.
+// Retail places these right after UIListWidget's code.
+#include "ui/UIResource.h"
+
+UIResource::UIResource(const FilePath &path) : mRefCount(0), mResourcePath(path) {}
+
+// The dir is post-loaded on the first reference only.
+void UIResource::PostLoad() {
+    if (mRefCount == 0) {
+        mDir.PostLoad(nullptr);
+    }
+    mRefCount++;
+}
+
+void UIResource::ForceRelease() {
+    mRefCount = 0;
+    mDir = nullptr;
+}
+
+// The dir is requested on the first reference; a synchronous load also post-loads.
+void UIResource::Load(bool async) {
+    if (mRefCount == 0) {
+        mDir.LoadFile(mResourcePath, async, true, kLoadFront, false);
+    }
+    if (!async) {
+        PostLoad();
+    }
+}
+
+void UIResource::Release() {
+    if (mDir) {
+        mRefCount--;
+        if (mRefCount == 0) {
+            ForceRelease();
+        }
+    }
+}
+#pragma endregion
+#endif
+
 // sw2 scatter-include (default/UIListWidget <- ui/Utl.cpp)
 // Not when PanelDir.cpp scatter-includes this file: none of Utl's rows live in
 // PanelDir's span, and with IsNavAction's body visible MSVC dead-codes the
