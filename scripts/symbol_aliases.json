@@ -12410,7 +12410,7 @@
   {
    "name": "1?$ObjPtrList",
    "address": "0x82282c20",
-   "survivor": "??1?$ObjPtrList@VCharBoneOffset@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtrList@VRndMesh@@VObjectDir@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 15 folded spelling(s), 1 census sites over 2 functions.",
    "withdrawn": [
@@ -12490,7 +12490,16 @@
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 19 other group(s) at 20 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 19 of the 20 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 19 other group(s) at 20 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 19 of the 20 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md.",
+   "repair": [
+    {
+     "lane": "W16-JE 2026-10-01",
+     "class": "WRONG_SURVIVOR_IDENTITY",
+     "old_survivor": "??1?$ObjPtrList@VCharBoneOffset@@VObjectDir@@@@UAA@XZ",
+     "new_survivor": "??1?$ObjPtrList@VRndMesh@@VObjectDir@@@@UAA@XZ",
+     "evidence": "Retail RTTI: the body at 0x82282c20 stores the vtable whose Complete Object Locator names ??1?$ObjPtrList@VRndMesh@@VObjectDir@@@@UAA@XZ; the map row was renamed to match (one cycle of the ObjPtrList<T>::~ObjPtrList name permutation across 0x8232dc20/0x8232c758/0x8232d8d8, 0x82282c20/0x827fa298, 0x8271b710/0x8271b798). folded[] was already empty; only the label moves."
+    }
+   ]
   },
   {
    "name": "1?$ObjPtrList",
@@ -18062,7 +18071,7 @@
   {
    "name": "1?$ObjPtrList",
    "address": "0x827fa298",
-   "survivor": "??1?$ObjPtrList@VRndMesh@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtrList@VUILabel@@VObjectDir@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 15 folded spelling(s), 1 census sites over 2 functions.",
    "withdrawn": [
@@ -18142,7 +18151,16 @@
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 19 other group(s) at 20 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 19 of the 20 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 19 other group(s) at 20 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 19 of the 20 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md.",
+   "repair": [
+    {
+     "lane": "W16-JE 2026-10-01",
+     "class": "WRONG_SURVIVOR_IDENTITY",
+     "old_survivor": "??1?$ObjPtrList@VRndMesh@@VObjectDir@@@@UAA@XZ",
+     "new_survivor": "??1?$ObjPtrList@VUILabel@@VObjectDir@@@@UAA@XZ",
+     "evidence": "Retail RTTI: the body at 0x827fa298 stores the vtable whose Complete Object Locator names ??1?$ObjPtrList@VUILabel@@VObjectDir@@@@UAA@XZ; the map row was renamed to match (one cycle of the ObjPtrList<T>::~ObjPtrList name permutation across 0x8232dc20/0x8232c758/0x8232d8d8, 0x82282c20/0x827fa298, 0x8271b710/0x8271b798). folded[] was already empty; only the label moves."
+    }
+   ]
   },
   {
    "name": "$Handle_caseless_HmxObject",
@@ -61604,7 +61622,7 @@
   {
    "name": "1?$ObjPtrList",
    "address": "0x8232c758",
-   "survivor": "??1?$ObjPtrList@VObject@Hmx@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjPtrList@VObjectDir@@V1@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 15 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -61684,7 +61702,16 @@
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 19 other group(s) at 20 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 19 of the 20 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 19 other group(s) at 20 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 19 of the 20 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md.",
+   "repair": [
+    {
+     "lane": "W16-JE 2026-10-01",
+     "class": "WRONG_SURVIVOR_IDENTITY",
+     "old_survivor": "??1?$ObjPtrList@VObject@Hmx@@VObjectDir@@@@UAA@XZ",
+     "new_survivor": "??1?$ObjPtrList@VObjectDir@@V1@@@UAA@XZ",
+     "evidence": "Retail RTTI: the body at 0x8232c758 stores the vtable whose Complete Object Locator names ??1?$ObjPtrList@VObjectDir@@V1@@@UAA@XZ; the map row was renamed to match (one cycle of the ObjPtrList<T>::~ObjPtrList name permutation across 0x8232dc20/0x8232c758/0x8232d8d8, 0x82282c20/0x827fa298, 0x8271b710/0x8271b798). folded[] was already empty; only the label moves."
+    }
+   ]
   },
   {
    "name": "insert_unique",
@@ -69758,7 +69785,7 @@
   {
    "name": "1?$ObjPtrList",
    "address": "0x8232d8d8",
-   "survivor": "??1?$ObjPtrList@VObjectDir@@V1@@@UAA@XZ",
+   "survivor": "??1?$ObjPtrList@VCharInterest@@VObjectDir@@@@UAA@XZ",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 15 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -69838,7 +69865,16 @@
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 19 other group(s) at 20 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 19 of the 20 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 19 other group(s) at 20 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 19 of the 20 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md.",
+   "repair": [
+    {
+     "lane": "W16-JE 2026-10-01",
+     "class": "WRONG_SURVIVOR_IDENTITY",
+     "old_survivor": "??1?$ObjPtrList@VObjectDir@@V1@@@UAA@XZ",
+     "new_survivor": "??1?$ObjPtrList@VCharInterest@@VObjectDir@@@@UAA@XZ",
+     "evidence": "Retail RTTI: the body at 0x8232d8d8 stores the vtable whose Complete Object Locator names ??1?$ObjPtrList@VCharInterest@@VObjectDir@@@@UAA@XZ; the map row was renamed to match (one cycle of the ObjPtrList<T>::~ObjPtrList name permutation across 0x8232dc20/0x8232c758/0x8232d8d8, 0x82282c20/0x827fa298, 0x8271b710/0x8271b798). folded[] was already empty; only the label moves."
+    }
+   ]
   },
   {
    "name": "$__linear_insert",
@@ -92352,23 +92388,6 @@
    ]
   },
   {
-   "name": "0EventDialogDismissMsg",
-   "address": "0x82803540",
-   "survivor": "??0EventDialogDismissMsg@@QAA@VSymbol@@0@Z",
-   "folded": [
-    "??0UITransitionCompleteMsg@@QAA@PAVUIScreen@@0@Z"
-   ],
-   "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
-   "lane": "W16-JE 2026-10-01",
-   "admitted": [
-    {
-     "spelling": "??0UITransitionCompleteMsg@@QAA@PAVUIScreen@@0@Z",
-     "lane": "W16-JE 2026-10-01",
-     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 164 B retail / 164 B ours; retail body-twins 2. Retail call site(s) reaching the survivor where we call this spelling: 0x82804118, 0x828041b8."
-    }
-   ]
-  },
-  {
    "name": "SetAmount",
    "address": "0x827122a0",
    "survivor": "?SetAmount@FxSendSynapse@@QAAXM@Z",
@@ -93294,23 +93313,6 @@
    ]
   },
   {
-   "name": "0CSTree",
-   "address": "0x8278ded0",
-   "survivor": "??0CSTree@NUISPEECH@@QAA@PAVCHeap@1@@Z",
-   "folded": [
-    "??0GameGemList@@QAA@H@Z"
-   ],
-   "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
-   "lane": "W16-JE 2026-10-01",
-   "admitted": [
-    {
-     "spelling": "??0GameGemList@@QAA@H@Z",
-     "lane": "W16-JE 2026-10-01",
-     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 24 B retail / 24 B ours; retail body-twins 1. Retail call site(s) reaching the survivor where we call this spelling: 0x82793240."
-    }
-   ]
-  },
-  {
    "name": "_M_push_back_aux_v",
    "address": "0x82ba2fd0",
    "survivor": "?_M_push_back_aux_v@?$deque@U?$pair@PAVRndMesh@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMesh@@M@stlpmtx_std@@@2@@stlpmtx_std@@IAAXABU?$pair@PAVRndMesh@@M@2@@Z",
@@ -94033,23 +94035,6 @@
      "spelling": "??1?$vector@VPatchPair@MeshPair@BandPatchMesh@@V?$StlNodeAlloc@VPatchPair@MeshPair@BandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 136 B retail / 136 B ours; retail body-twins 7. Retail call site(s) reaching the survivor where we call this spelling: 0x822a4a44."
-    }
-   ]
-  },
-  {
-   "name": "1CharUpperTwist",
-   "address": "0x8232a2c0",
-   "survivor": "??1CharUpperTwist@@MAA@XZ",
-   "folded": [
-    "??1DialogDisplay@@UAA@XZ"
-   ],
-   "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
-   "lane": "W16-JE 2026-10-01",
-   "admitted": [
-    {
-     "spelling": "??1DialogDisplay@@UAA@XZ",
-     "lane": "W16-JE 2026-10-01",
-     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 136 B retail / 136 B ours; retail body-twins 2. Retail call site(s) reaching the survivor where we call this spelling: 0x8232ac6c."
     }
    ]
   },
