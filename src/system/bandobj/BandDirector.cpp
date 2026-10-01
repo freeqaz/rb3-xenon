@@ -1827,6 +1827,34 @@ void BandDirector::OnMidiAddPostProc(Symbol s, float f1, float f2) {
     }
 }
 
+CamCatEntry::CamCatEntry() : mCategory(gNullStr), mShot(gNullStr), mPriority(-1) {}
+
+// Chooses the shot for a group of same-frame categories (0x8228DF88): the first
+// category with no play-mode remap, else the first remapped shot that is not
+// TEST_CAM, else a random generic category. Directed cuts are skipped unless
+// allowDirected.
+Symbol BandDirector::PickShot(
+    std::vector<CamCatEntry> &entries, Symbol playMode, bool allowDirected
+) {
+    for (unsigned int i = 0; i < entries.size(); i++) {
+        entries[i].mShot = RemapCat(entries[i].mCategory, playMode);
+        if (entries[i].mShot == entries[i].mCategory) {
+            if (allowDirected || strncmp(entries[i].mCategory.Str(), "directed_", 9) != 0)
+                return entries[i].mCategory;
+        }
+    }
+    for (unsigned int i = 0; i < entries.size(); i++) {
+        static Symbol test_cam("TEST_CAM");
+        if (entries[i].mShot != test_cam) {
+            if (allowDirected || strncmp(entries[i].mCategory.Str(), "directed_", 9) != 0)
+                return entries[i].mShot;
+        }
+    }
+    static DataArray *generic =
+        SystemConfig("objects", "BandDirector", "generic_cam_cats")->Array(1);
+    return generic->Sym(RandomInt(0, generic->Size()));
+}
+
 // Walks back from key idx to the nearest key that holds an object
 // (0x8228E1F0, called only by OnRbn2AddPostProc).
 static __declspec(noinline) const Key<ObjectStage> *
@@ -1884,17 +1912,60 @@ void BandDirector::OnRbn2AddPostProc(Symbol s, float f) {
 }
 
 void BandDirector::OnMidiShot5Cleanup() {
-    if (!mPropAnim)
-        return;
     PropKeys *shot5keys = mPropAnim->GetKeys(this, DataArrayPtr(Symbol("shot_5")));
-    PropKeys *shotkeys = mPropAnim->GetKeys(this, DataArrayPtr(Symbol("shot")));
-    if (!shotkeys || !shot5keys)
-        return;
-    Keys<Symbol, Symbol> &sym5keys = *shot5keys->AsSymbolKeys();
-    Keys<Symbol, Symbol> &symkeys = *shotkeys->AsSymbolKeys();
-    symkeys.clear();
-    for (int i = 0; i < sym5keys.size(); i++) {
-        symkeys.push_back(sym5keys[i]);
+    Symbol playMode = TheBandWardrobe->GetPlayMode();
+    String shotProp(playMode.Str());
+    shotProp.replace(0, 4, "shot");
+    PropKeys *shotkeys =
+        mPropAnim->GetKeys(this, DataArrayPtr(Symbol(shotProp.c_str())));
+    if (shot5keys && shotkeys) {
+        Keys<Symbol, Symbol> *keys5 = shot5keys->AsSymbolKeys();
+        Keys<Symbol, Symbol> *keys = shotkeys->AsSymbolKeys();
+        float frame = keys5->empty() ? -1.0f : keys5->front().frame;
+        std::vector<CamCatEntry> pending;
+        bool directed = false;
+        static DataArray *priorities =
+            SystemConfig("objects", "BandDirector", "cam_cat_priorities")->Array(1);
+        // Collect the shot_5 categories that share a frame, ranked by priority,
+        // and commit one shot for each group to the play mode's shot track.
+        for (unsigned int i = 0; i < keys5->size(); i++) {
+            if ((*keys5)[i].frame > frame && !pending.empty()) {
+                Symbol shot = PickShot(pending, playMode, !directed);
+                pending.clear();
+                if (directed)
+                    frame = keys->back().frame + 3.75f;
+                keys->Add(shot, frame, true);
+                frame = (*keys5)[i].frame;
+                directed = strncmp(shot.Str(), "directed_", 9) == 0;
+            }
+            CamCatEntry entry;
+            entry.mCategory = (*keys5)[i].value;
+            for (int p = 0; p < priorities->Size(); p++) {
+                if (priorities->Node(p).Sym() == entry.mCategory) {
+                    entry.mPriority = p;
+                    break;
+                }
+            }
+            bool inserted = false;
+            for (std::vector<CamCatEntry>::iterator it = pending.begin();
+                 it < pending.end();
+                 ++it) {
+                if (entry.mPriority > it->mPriority) {
+                    pending.insert(it, 1, entry);
+                    inserted = true;
+                    break;
+                }
+            }
+            if (!inserted)
+                pending.push_back(entry);
+        }
+        if (!pending.empty()) {
+            Symbol shot = PickShot(pending, playMode, !directed);
+            pending.clear();
+            if (directed)
+                frame = keys->back().frame + 3.75f;
+            keys->Add(shot, frame, true);
+        }
     }
 }
 #pragma auto_inline(on)
