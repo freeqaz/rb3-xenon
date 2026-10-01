@@ -56,18 +56,15 @@ void CharBonesMeshes::Replace(ObjRef *ref, Hmx::Object *obj) {
 
 void CharBonesMeshes::ReallocateInternal() {
     CharBonesAlloc::ReallocateInternal();
-    String str;
     {
         ObjVector<ObjOwnerPtr<RndTransformable> > temp(this);
         mMeshes.swap(temp);
     }
     mMeshes.resize(mBones.size());
+    // A bone with no transform in the directory is driven onto the dummy mesh.
     for (int i = 0; i < mMeshes.size(); i++) {
         mMeshes[i] = CharUtlFindBoneTrans(mBones[i].name.Str(), Dir());
         if (!mMeshes[i]) {
-            if (strncmp("bone_facing", mBones[i].name.Str(), 0xB)) {
-                str += MakeString("%s, ", mBones[i].name);
-            }
             mMeshes[i] = mDummyMesh;
         }
     }
