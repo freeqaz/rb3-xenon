@@ -1,4 +1,5 @@
 {
+ "0x82b62cd8": "??0FxSendCompress360@@QAA@XZ",
  "0x82b6b768": "?DoProcess@MeterEffect@@UAAXABUMeterEffectParams@@PIAMII@Z",
  "0x82b6ba10": "??_G?$CSampleXAPOBase@VHeadsetXferEffect@@UHeadsetXferEffectParams@@@ATG@@MAAPAXI@Z",
  "0x82b6dbc0": "?LockForProcess@?$CSampleXAPOBase@VSynapseAPO@DSP@@USynapseAPOParams@2@@ATG@@UAAJIPBUXAPO_LOCKFORPROCESS_BUFFER_PARAMETERS@@I0@Z",
@@ -29470,7 +29471,7 @@
  "0x82b62ae0": "?DoProcess@?$StandardEffect@VFlangerEffect@@@@UAAXABUParams@FlangerEffect@@PIAMII@Z",
  "0x82b62b60": "??1?$StandardEffect@VFlangerEffect@@@@UAA@XZ",
  "0x82b62c08": "??_G?$StandardEffect@VFlangerEffect@@@@UAAPAXI@Z",
- "0x82b62c60": "??0FxSendCompress360@@QAA@XZ",
+ "0x82b62c60": "?CreateFx@FxSendChorus360@@MAAPAUIUnknown@@XZ",
  "0x82b62d68": "?ClassName@FxSendCompress360@@UBA?AVSymbol@@XZ",
  "0x82b62da0": "??1FxSendCompress360@@UAA@XZ",
  "0x82b62e28": "?SyncEffectParams@FxSendCompress360@@UBAXPAUIXAudio2SubmixVoice@@@Z",
