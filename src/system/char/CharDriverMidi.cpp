@@ -39,24 +39,32 @@ BEGIN_COPYS(CharDriverMidi)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(7, 0)
+// Retail Load keeps no BinStreamRev: it splits the packed rev into one aligned
+// file-scope aggregate (altRev +0, rev +4) and reads everything from the raw
+// stream.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharDriverMidi;
 
 BEGIN_LOADS(CharDriverMidi)
-    LOAD_REVS(bs)
-    ASSERT_REVS(7, 0)
-    LOAD_SUPERCLASS(CharDriver)
-    if (d.rev < 7) {
+    int rev;
+    bs >> rev;
+    gRevs_CharDriverMidi.rev = getHmxRev(rev);
+    gRevs_CharDriverMidi.altRev = getAltRev(rev);
+    CharDriver::Load(bs);
+    if (gRevs_CharDriverMidi.rev < 7) {
         mDefaultClip.Load(bs, false, mClips);
     }
-    if (d.rev == 2) {
+    if (gRevs_CharDriverMidi.rev == 2) {
         String str;
-        d >> str;
-    } else if (d.rev > 3)
-        d >> mParser;
-    if (d.rev > 4)
-        d >> mFlagParser;
-    if (d.rev > 5)
-        d >> mBlendOverridePct;
+        bs >> str;
+    } else if (gRevs_CharDriverMidi.rev > 3)
+        bs >> mParser;
+    if (gRevs_CharDriverMidi.rev > 4)
+        bs >> mFlagParser;
+    if (gRevs_CharDriverMidi.rev > 5)
+        bs >> mBlendOverridePct;
 END_LOADS
 
 void CharDriverMidi::Poll() { CharDriver::Poll(); }

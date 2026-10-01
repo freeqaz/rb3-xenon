@@ -76,39 +76,47 @@ BEGIN_COPYS(CharCuff)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(8, 0)
+// Retail Load keeps no BinStreamRev: it splits the packed rev into one aligned
+// file-scope aggregate (altRev +0, rev +4) and reads everything from the raw
+// stream.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharCuff;
 
 BEGIN_LOADS(CharCuff)
-    LOAD_REVS(bs)
-    ASSERT_REVS(8, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    LOAD_SUPERCLASS(RndTransformable)
+    int rev;
+    bs >> rev;
+    gRevs_CharCuff.rev = getHmxRev(rev);
+    gRevs_CharCuff.altRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    RndTransformable::Load(bs);
     for (int i = 0; i < 3; i++) {
         bs >> mShape[i].radius >> mShape[i].offset;
     }
-    if (d.rev > 1)
+    if (gRevs_CharCuff.rev > 1)
         bs >> mOuterRadius;
     else
         mOuterRadius = mShape[1].radius + 0.5f;
-    if (d.rev > 2)
+    if (gRevs_CharCuff.rev > 2)
         bs >> mOpenEnd;
     else
         mOpenEnd = false;
-    if (d.rev > 3)
+    if (gRevs_CharCuff.rev > 3)
         bs >> mBone;
     else
         mBone = TransParent();
-    if (d.rev > 4)
+    if (gRevs_CharCuff.rev > 4)
         bs >> mEccentricity;
     else
         mEccentricity = 1.0f;
-    if (d.rev > 5)
+    if (gRevs_CharCuff.rev > 5)
         bs >> mCategory;
     else
         mCategory = Symbol("");
-    if (d.rev > 7)
+    if (gRevs_CharCuff.rev > 7)
         bs >> mIgnore;
-    if (d.rev < 7)
+    if (gRevs_CharCuff.rev < 7)
         MILO_NOTIFY("%s old CharCuff, must convert, see James", PathName(this));
 END_LOADS
 

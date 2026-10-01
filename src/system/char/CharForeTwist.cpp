@@ -51,21 +51,29 @@ BEGIN_COPYS(CharForeTwist)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(4, 0)
+// Retail Load keeps no BinStreamRev: it splits the packed rev into one aligned
+// file-scope aggregate (altRev +0, rev +4) and reads everything from the raw
+// stream.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharForeTwist;
 
 BEGIN_LOADS(CharForeTwist)
-    LOAD_REVS(bs)
-    ASSERT_REVS(4, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    d >> mOffset;
-    d >> mHand;
-    d >> mTwist2;
-    if (d.rev > 1 && d.rev < 3) {
+    int rev;
+    bs >> rev;
+    gRevs_CharForeTwist.rev = getHmxRev(rev);
+    gRevs_CharForeTwist.altRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    bs >> mOffset;
+    bs >> mHand;
+    bs >> mTwist2;
+    if (gRevs_CharForeTwist.rev > 1 && gRevs_CharForeTwist.rev < 3) {
         int dummy;
-        d >> dummy;
+        bs >> dummy;
     }
-    if (d.rev > 3)
-        d >> mBias;
+    if (gRevs_CharForeTwist.rev > 3)
+        bs >> mBias;
 END_LOADS
 
 void CharForeTwist::Poll() {

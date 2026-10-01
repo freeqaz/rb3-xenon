@@ -49,16 +49,24 @@ BEGIN_COPYS(CharGuitarString)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(0, 0)
+// Retail Load keeps no BinStreamRev: it splits the packed rev into one aligned
+// file-scope aggregate (altRev +0, rev +4) and reads everything from the raw
+// stream.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharGuitarString;
 
 BEGIN_LOADS(CharGuitarString)
-    LOAD_REVS(bs)
-    ASSERT_REVS(0, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    d >> mNut;
-    d >> mBridge;
-    d >> mBend;
-    d >> mTarget;
+    int rev;
+    bs >> rev;
+    gRevs_CharGuitarString.rev = getHmxRev(rev);
+    gRevs_CharGuitarString.altRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    bs >> mNut;
+    bs >> mBridge;
+    bs >> mBend;
+    bs >> mTarget;
 END_LOADS
 
 void CharGuitarString::Poll() {

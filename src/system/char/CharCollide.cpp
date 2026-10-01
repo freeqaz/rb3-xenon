@@ -137,40 +137,50 @@ void CharCollide::Highlight() {
 
 INIT_REVS(7, 0)
 
+// Retail Load keeps no BinStreamRev: it splits the packed rev into one aligned
+// file-scope aggregate (altRev +0, rev +4) and reads everything from the raw
+// stream.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharCollide;
+
 BEGIN_LOADS(CharCollide)
-    LOAD_REVS(bs)
-    ASSERT_REVS(7, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    LOAD_SUPERCLASS(RndTransformable)
-    d >> (int &)mShape;
-    d >> mOrigRadius[0];
-    if (d.rev > 4)
-        d >> mOrigLength[0];
-    if (d.rev > 2)
-        d >> mOrigLength[1];
-    if (d.rev > 1)
-        d >> mFlags;
+    int rev;
+    bs >> rev;
+    gRevs_CharCollide.rev = getHmxRev(rev);
+    gRevs_CharCollide.altRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    RndTransformable::Load(bs);
+    bs >> (int &)mShape;
+    bs >> mOrigRadius[0];
+    if (gRevs_CharCollide.rev > 4)
+        bs >> mOrigLength[0];
+    if (gRevs_CharCollide.rev > 2)
+        bs >> mOrigLength[1];
+    if (gRevs_CharCollide.rev > 1)
+        bs >> mFlags;
     else
         mFlags = 0;
-    if (d.rev > 3)
-        d >> mCurRadius[0];
+    if (gRevs_CharCollide.rev > 3)
+        bs >> mCurRadius[0];
     else
         mCurRadius[0] = mOrigRadius[0];
 
-    if (d.rev > 5) {
-        d >> mOrigRadius[1];
-        d >> mCurRadius[1];
-        d >> mCurLength[0];
-        d >> mCurLength[1];
-        d >> unk1a0;
-        d >> mMesh;
+    if (gRevs_CharCollide.rev > 5) {
+        bs >> mOrigRadius[1];
+        bs >> mCurRadius[1];
+        bs >> mCurLength[0];
+        bs >> mCurLength[1];
+        bs >> unk1a0;
+        bs >> mMesh;
         for (int i = 0; i < 8; i++) {
-            d >> unkStructs[i].vertIdx;
-            d >> unkStructs[i].vec;
+            bs >> unkStructs[i].vertIdx;
+            bs >> unkStructs[i].vec;
         }
-        d >> mDigest;
-        d >> mMeshYBias;
-        if (d.rev < 7)
+        bs >> mDigest;
+        bs >> mMeshYBias;
+        if (gRevs_CharCollide.rev < 7)
             CopyOriginalToCur();
     } else {
         mOrigRadius[1] = mOrigRadius[0];

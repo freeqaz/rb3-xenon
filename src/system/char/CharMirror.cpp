@@ -45,13 +45,21 @@ BEGIN_COPYS(CharMirror)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(1, 0)
+// Retail Load keeps no BinStreamRev: it splits the packed rev into one aligned
+// file-scope aggregate (altRev +0, rev +4) and reads everything from the raw
+// stream.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharMirror;
 
 BEGIN_LOADS(CharMirror)
-    LOAD_REVS(bs);
-    ASSERT_REVS(1, 0);
-    LOAD_SUPERCLASS(Hmx::Object)
-    LOAD_SUPERCLASS(CharWeightable)
+    int rev;
+    bs >> rev;
+    gRevs_CharMirror.rev = getHmxRev(rev);
+    gRevs_CharMirror.altRev = getAltRev(rev);;
+    Hmx::Object::Load(bs);
+    CharWeightable::Load(bs);
     bs >> mMirrorServo;
     bs >> mServo;
     SyncBones();

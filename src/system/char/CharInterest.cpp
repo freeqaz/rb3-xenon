@@ -16,33 +16,41 @@ CharInterest::CharInterest()
 
 // Handle is in Waypoint.cpp (cross-unit)
 
-INIT_REVS(6, 0)
+// Retail Load keeps no BinStreamRev: it splits the packed rev into one aligned
+// file-scope aggregate (altRev +0, rev +4) and reads everything from the raw
+// stream.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharInterest;
 
 BEGIN_LOADS(CharInterest)
-    LOAD_REVS(bs)
-    ASSERT_REVS(6, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    LOAD_SUPERCLASS(RndTransformable)
+    int rev;
+    bs >> rev;
+    gRevs_CharInterest.rev = getHmxRev(rev);
+    gRevs_CharInterest.altRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    RndTransformable::Load(bs);
     bs >> mMaxViewAngle;
     bs >> mPriority;
     bs >> mMinLookTime;
     bs >> mMaxLookTime;
     bs >> mRefractoryPeriod;
-    if (d.rev > 1 && d.rev <= 5) {
+    if (gRevs_CharInterest.rev > 1 && gRevs_CharInterest.rev <= 5) {
         ObjPtr<Hmx::Object> obj(this);
         bs >> obj;
-    } else if (d.rev > 5) {
+    } else if (gRevs_CharInterest.rev > 5) {
         bs >> mDartRulesetOverride;
     }
-    if (d.rev > 2) {
+    if (gRevs_CharInterest.rev > 2) {
         bs >> mCategoryFlags;
-        if (d.rev == 3) {
+        if (gRevs_CharInterest.rev == 3) {
             bool x;
-            d >> x;
+            bs >> x;
         }
     }
-    if (d.rev > 4) {
-        d >> mOverridesMinTargetDist;
+    if (gRevs_CharInterest.rev > 4) {
+        bs >> mOverridesMinTargetDist;
         bs >> mMinTargetDistOverride;
     }
     SyncMaxViewAngle();

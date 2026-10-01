@@ -381,48 +381,56 @@ BEGIN_SAVES(CharDriver)
     bs << mDefaultPlayStarved;
 END_SAVES
 
-INIT_REVS(0xe, 0)
+// Retail Load keeps no BinStreamRev: it splits the packed rev into one aligned
+// file-scope aggregate (altRev +0, rev +4) and reads everything from the raw
+// stream.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharDriver;
 
 BEGIN_LOADS(CharDriver)
-    LOAD_REVS(bs)
-    ASSERT_REVS(0xe, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    LOAD_SUPERCLASS(CharWeightable)
-    if (d.rev < 3) {
+    int rev;
+    bs >> rev;
+    gRevs_CharDriver.rev = getHmxRev(rev);
+    gRevs_CharDriver.altRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    CharWeightable::Load(bs);
+    if (gRevs_CharDriver.rev < 3) {
         int x;
-        d >> x;
+        bs >> x;
     }
-    d >> mBones;
-    if (d.rev < 8) {
+    bs >> mBones;
+    if (gRevs_CharDriver.rev < 8) {
         FilePath fp;
-        d >> fp;
-        if (d.rev > 6 && fp.empty()) {
-            d >> mClips;
+        bs >> fp;
+        if (gRevs_CharDriver.rev > 6 && fp.empty()) {
+            bs >> mClips;
         }
     } else {
-        d >> mClips;
+        bs >> mClips;
     }
-    if (d.rev > 8) {
-        d >> mBlendWidth;
+    if (gRevs_CharDriver.rev > 8) {
+        bs >> mBlendWidth;
     }
-    if (d.rev > 1) {
-        d >> mRealign;
+    if (gRevs_CharDriver.rev > 1) {
+        bs >> mRealign;
     } else {
         mRealign = false;
     }
-    if (d.rev > 5)
-        d >> (int &)mApply;
-    else if (d.rev > 4) {
+    if (gRevs_CharDriver.rev > 5)
+        bs >> (int &)mApply;
+    else if (gRevs_CharDriver.rev > 4) {
         bool b48;
-        d >> b48;
+        bs >> b48;
         mApply = (ApplyMode)(b48 != false);
     } else
         mApply = kApplyBlend;
-    if (d.rev > 9)
-        d >> mClipType;
-    if (d.rev > 0xC)
-        d >> mPlayMultipleClips;
-    if (d.rev <= 9 && mClips) {
+    if (gRevs_CharDriver.rev > 9)
+        bs >> mClipType;
+    if (gRevs_CharDriver.rev > 0xC)
+        bs >> mPlayMultipleClips;
+    if (gRevs_CharDriver.rev <= 9 && mClips) {
         mClipType = mClips->Type();
         if (mClipType.Null()) {
             for (ObjDirItr<CharClip> it(mClips, true); it != nullptr; ++it) {
@@ -432,14 +440,14 @@ BEGIN_LOADS(CharDriver)
         }
     }
     SyncInternalBones();
-    if (d.rev > 3) {
+    if (gRevs_CharDriver.rev > 3) {
         mTestClip.Load(bs, false, mClips);
     }
-    if (d.rev > 0xB) {
+    if (gRevs_CharDriver.rev > 0xB) {
         mDefaultClip.Load(bs, false, mClips);
     }
-    if (d.rev > 0xD)
-        d >> mDefaultPlayStarved;
+    if (gRevs_CharDriver.rev > 0xD)
+        bs >> mDefaultPlayStarved;
 END_LOADS
 
 static CharClip *MyFindClip(const DataNode &n, ObjectDir *dir) {

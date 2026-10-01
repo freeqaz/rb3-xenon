@@ -68,22 +68,30 @@ BEGIN_COPYS(CharWeightSetter)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(9, 0)
+// Retail Load keeps no BinStreamRev: it splits the packed rev into one aligned
+// file-scope aggregate (altRev +0, rev +4) and reads everything from the raw
+// stream.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharWeightSetter;
 
 BEGIN_LOADS(CharWeightSetter)
-    LOAD_REVS(bs)
-    ASSERT_REVS(9, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    if (d.rev > 1)
-        LOAD_SUPERCLASS(CharWeightable)
+    int rev;
+    bs >> rev;
+    gRevs_CharWeightSetter.rev = getHmxRev(rev);
+    gRevs_CharWeightSetter.altRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    if (gRevs_CharWeightSetter.rev > 1)
+        CharWeightable::Load(bs);
     bs >> mDriver;
     bs >> mFlags;
-    if (d.rev < 3) {
+    if (gRevs_CharWeightSetter.rev < 3) {
         mScale = 1.0f;
         mOffset = 0.0f;
-    } else if (d.rev < 4) {
+    } else if (gRevs_CharWeightSetter.rev < 4) {
         bool b;
-        d >> b;
+        bs >> b;
         if (b) {
             mScale = -1.0f;
             mOffset = 1.0f;
@@ -93,7 +101,7 @@ BEGIN_LOADS(CharWeightSetter)
         }
     } else
         bs >> mOffset >> mScale;
-    if (d.rev < 2) {
+    if (gRevs_CharWeightSetter.rev < 2) {
         ObjPtrList<CharWeightable, ObjectDir> pList(this, kObjListNoNull);
         bs >> pList;
         for (ObjPtrList<CharWeightable, ObjectDir>::iterator it = pList.begin();
@@ -102,26 +110,26 @@ BEGIN_LOADS(CharWeightSetter)
             (*it)->SetWeightOwner(this);
         }
     }
-    if (d.rev > 4) {
+    if (gRevs_CharWeightSetter.rev > 4) {
         bs >> mBaseWeight;
         bs >> mBeatsPerWeight;
     } else {
         mBaseWeight = mWeight;
         mBeatsPerWeight = 0.0f;
     }
-    if (d.rev > 5)
+    if (gRevs_CharWeightSetter.rev > 5)
         bs >> mBase;
-    if (d.rev > 8) {
+    if (gRevs_CharWeightSetter.rev > 8) {
         bs >> mMinWeights;
         bs >> mMaxWeights;
     } else {
-        if (d.rev > 6) {
+        if (gRevs_CharWeightSetter.rev > 6) {
             ObjPtr<CharWeightSetter> ptrWS(this, 0);
             bs >> ptrWS;
             if (ptrWS)
                 mMinWeights.push_back(ptrWS);
         }
-        if (d.rev > 7) {
+        if (gRevs_CharWeightSetter.rev > 7) {
             ObjPtr<CharWeightSetter> ptrWS(this, 0);
             bs >> ptrWS;
             if (ptrWS)
