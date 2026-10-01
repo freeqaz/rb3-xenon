@@ -819,12 +819,16 @@ void ObjectDir::LoadSubDir(int i, const FilePath &fp, BinStream &bs, bool b) {
         mSubDirs[i] = 0;
     } else {
         FilePath subdirpath = GetSubDirPath(fp, bs);
+#ifdef HX_NATIVE
+        // DC3 self-subdir guard; retail 0x8274FEF8 loads unconditionally.
         if (streq(mPathName, subdirpath.c_str())) {
             MILO_NOTIFY(
                 "%s trying to subdir self in slot %d, setting NULL", PathName(this), i
             );
             mSubDirs[i] = 0;
-        } else {
+        } else
+#endif
+        {
             mSubDirs[i].LoadFile(subdirpath, true, b, kLoadFront, true);
 #ifdef HX_NATIVE
             // Propagate parent dir so ObjPtr fallback can walk up to this dir
