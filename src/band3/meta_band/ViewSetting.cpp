@@ -397,20 +397,20 @@ int MusicLibraryUpsellViewSetting::StartingOption() const {
 const char *BadReviewViewSetting::GetCurrentStatus() const {
     static Symbol music_library_upsell_on("music_library_upsell_on");
     static Symbol music_library_upsell_off("music_library_upsell_off");
-    return Localize(
-        TheProfileMgr.GetShowBadReviews() ? music_library_upsell_on
-                                          : music_library_upsell_off,
-        nullptr
-    );
+    if (TheProfileMgr.GetShowBadReviews())
+        return Localize(music_library_upsell_on, nullptr);
+    else
+        return Localize(music_library_upsell_off, nullptr);
 }
 
 void BadReviewViewSetting::Text(int, int row, UIListLabel *slot, UILabel *label) const {
     static Symbol music_library_upsell_on("music_library_upsell_on");
     static Symbol music_library_upsell_off("music_library_upsell_off");
     if (slot->Matches("name")) {
-        label->SetTextToken(
-            row == 0 ? music_library_upsell_on : music_library_upsell_off
-        );
+        if (row == 0)
+            label->SetTextToken(music_library_upsell_on);
+        else
+            label->SetTextToken(music_library_upsell_off);
     } else {
         label->SetTextToken(gNullStr);
     }
