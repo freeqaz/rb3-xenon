@@ -45,14 +45,23 @@ BEGIN_COPYS(CharNeckTwist)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(1, 0)
+// Retail Load (0x823CEAE8) keeps no BinStreamRev: it splits the packed rev into
+// one file-scope aggregate (altRev +0, rev +4) with two sth stores, then reads
+// Object and both ObjPtrs from the raw stream -- the same shape as
+// CharTransCopy::Load.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharNeckTwist;
 
 BEGIN_LOADS(CharNeckTwist)
-    LOAD_REVS(bs)
-    ASSERT_REVS(1, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    d >> mHead;
-    d >> mTwist;
+    int rev;
+    bs >> rev;
+    gRevs_CharNeckTwist.rev = getHmxRev(rev);
+    gRevs_CharNeckTwist.altRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    bs >> mHead;
+    bs >> mTwist;
 END_LOADS
 
 void CharNeckTwist::Poll() {
@@ -71,10 +80,12 @@ void CharNeckTwist::Poll() {
         MakeRotQuatUnitX(tf.m.x, q);
         Multiply(tf.m.y, q, v);
         float angle = LimitAng(std::atan2(v.z, v.y)) * 0.5f;
-        bool isNaN = angle != angle;
-        if (!isNaN) {
-            MakeRotMatrixX(angle, mTwist->DirtyLocalXfm().m);
-        }
+#ifdef HX_NATIVE
+        // Native-only guard; retail applies the angle unconditionally.
+        if (angle != angle)
+            return;
+#endif
+        MakeRotMatrixX(angle, mTwist->DirtyLocalXfm().m);
     }
 }
 
