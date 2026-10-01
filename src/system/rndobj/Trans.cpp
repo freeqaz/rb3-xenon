@@ -635,7 +635,17 @@ DataNode RndTransformable::OnGetWorldRot(const DataArray *da) {
 }
 
 DataNode RndTransformable::OnSetLocalRotIndex(const DataArray *a) {
-    SetLocalRotIndex(a->Int(2), a->Float(3));
+    // Written out in retail (0x823F8E60): the index is read once for the
+    // stripped assert and again for the store, after Float(3).
+    MILO_ASSERT(a->Int(2) < 3, 0x3A4);
+    Vector3 scale;
+    Vector3 euler;
+    MakeEulerScale(mLocalXfm.m, euler, scale);
+    euler[a->Int(2)] = a->Float(3) * DEG2RAD;
+    Hmx::Matrix3 m;
+    MakeRotMatrix(euler, m, true);
+    Scale(scale, m, m);
+    SetLocalRot(m);
     return 0;
 }
 
