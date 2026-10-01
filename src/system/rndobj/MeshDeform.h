@@ -97,7 +97,7 @@ public:
     virtual void PreSave(BinStream &);
     virtual void Print();
 
-    OBJ_MEM_OVERLOAD(0x1A)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x1A)
     NEW_OBJ(RndMeshDeform)
     static void Init() { REGISTER_OBJ_FACTORY(RndMeshDeform) }
 

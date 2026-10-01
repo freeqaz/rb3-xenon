@@ -58,7 +58,7 @@ public:
     virtual unsigned int TexelsPitch() const { return 0; }
     virtual void Select(int) {}
 
-    OBJ_MEM_OVERLOAD(0x1C)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x1C)
     NEW_OBJ(RndTex)
     static void Init() { REGISTER_OBJ_FACTORY(RndTex) }
 

@@ -28,7 +28,7 @@ public:
     NEW_OBJ(BandSwatch);
     DECLARE_REVS;
     NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    DELETE_OVERLOAD_INLINE;
     static void Terminate();
     static ColorPalette *sDummyPalette;
 

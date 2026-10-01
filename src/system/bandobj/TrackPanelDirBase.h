@@ -125,7 +125,7 @@ public:
     // already proven+landed for BandWardrobe.cpp's file-scope statics. See the
     // gRevs struct + gRev/gAltRev macros in TrackPanelDirBase.cpp.
     NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    DELETE_OVERLOAD_INLINE;
 
     float mViewTimeEasy; // 0x238
     float mViewTimeExpert; // 0x23c

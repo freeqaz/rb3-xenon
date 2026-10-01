@@ -27,7 +27,7 @@ public:
     virtual bool MakeWorldSphere(Sphere &, bool);
     virtual void DrawShowing();
 
-    OBJ_MEM_OVERLOAD(0x1B);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x1B);
     NEW_OBJ(RndTexBlender)
     static void Init() { REGISTER_OBJ_FACTORY(RndTexBlender) }
 

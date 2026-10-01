@@ -32,7 +32,7 @@ public:
     virtual float EndFrame();
     virtual void SetKey(float);
 
-    OBJ_MEM_OVERLOAD(0x17);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x17);
     NEW_OBJ(RndPropAnim)
     static void Init() { REGISTER_OBJ_FACTORY(RndPropAnim) }
 

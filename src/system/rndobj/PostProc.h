@@ -94,7 +94,7 @@ public:
     virtual void DoPost();
     virtual float Priority() { return mPriority; }
 
-    OBJ_MEM_OVERLOAD(0x22);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x22);
     NEW_OBJ(RndPostProc)
 
     void Interp(const RndPostProc *, const RndPostProc *, float);

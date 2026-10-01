@@ -239,7 +239,7 @@ public:
     static unsigned short gRev;
     static unsigned short gAltRev;
     NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    DELETE_OVERLOAD_INLINE;
 
     Symbol mPrefab; // 0xc
     Symbol mGender; // 0x10

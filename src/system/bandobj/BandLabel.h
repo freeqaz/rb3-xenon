@@ -36,10 +36,17 @@ public:
     // 0x290 == 656 == the compiler's sizeof(BandLabel), so no layout defect.
     // NEW_OVERLOAD gave shape (a) and left the row at 5/25 words (fuzzy
     // 86.929) -- the same rb3-Wii-inherited spelling retail contradicts in
-    // ObjMacros.h's NEW_OBJ record. Plain OBJ_MEM_OVERLOAD, not _INLINE_DEL:
-    // the unwind funclet at 0x82342068 loads mem from 0x54 and calls the
-    // out-of-line ICF survivor ??3BinStream@@SAXPAX@Z.
-    OBJ_MEM_OVERLOAD(0x1f);
+    // ObjMacros.h's NEW_OBJ record.
+    // Delete is the INLINABLE form (_INLINE_DEL): retail's deleting destructor
+    // for this class (reached as ??_GAppLabel, which inherits it) calls
+    // ?MemFree@@YAXPAX@Z directly. The NewObject unwind funclet at 0x82342068
+    // calls the out-of-line ICF survivor ??3BinStream@@SAXPAX@Z, and MSVC keeps
+    // that funclet call out of line even with the inlinable delete -- measured
+    // on our BandLabel.obj (funclet -> ??3BandLabel, ??_G -> MemFree) and in the
+    // whole-binary A/B, where the funclet row stayed at 100 (lane W16-IE,
+    // 2026-10-01). The earlier "plain OBJ_MEM_OVERLOAD because of the funclet"
+    // reading assumed the funclet would inline too; it does not.
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x1f);
     static void LoadOldBandTextComp(BinStream &);
     static void Init();
     static void Register() { REGISTER_OBJ_FACTORY(BandLabel); }

@@ -108,7 +108,7 @@ public:
     int NumChannels() const { return mNumChannels; }
 
     NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    DELETE_OVERLOAD_INLINE;
     NEW_OBJ(MoggClip)
     static void Init() { REGISTER_OBJ_FACTORY(MoggClip) }
 

@@ -214,7 +214,7 @@ public:
     virtual int CollidePlane(const Plane &);
     virtual void Highlight() { RndDrawable::Highlight(); }
 
-    OBJ_MEM_OVERLOAD(0x19);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x19);
     NEW_OBJ(RndText);
 
     static void Init();

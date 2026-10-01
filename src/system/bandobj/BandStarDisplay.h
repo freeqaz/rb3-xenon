@@ -28,7 +28,7 @@ public:
 
     DECLARE_REVS;
     NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    DELETE_OVERLOAD_INLINE;
     NEW_OBJ(BandStarDisplay)
     static void Init() { Register(); }
     REGISTER_OBJ_FACTORY_FUNC(BandStarDisplay)

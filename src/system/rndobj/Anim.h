@@ -73,7 +73,7 @@ public:
     virtual void ListAnimChildren(std::list<RndAnimatable *> &) const {}
     ANIM_DC3_VIRTUAL DataNode OnListFlowLabels(DataArray *) { return 0; }
 
-    OBJ_MEM_OVERLOAD(0x1B)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x1B)
     NEW_OBJ(RndAnimatable)
 
     /** Determine if this animatable has any active tasks associated with it. */

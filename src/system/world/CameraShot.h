@@ -169,7 +169,7 @@ public:
 
     static void Init();
 
-    OBJ_MEM_OVERLOAD(0xAD)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0xAD)
     NEW_OBJ(CamShot)
 
     float Duration() const { return mDuration; }

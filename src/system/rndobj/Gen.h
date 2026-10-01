@@ -45,7 +45,7 @@ public:
     // RndHighlightable
     virtual void Highlight() { RndDrawable::Highlight(); }
 
-    OBJ_MEM_OVERLOAD(0x1F)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x1F)
     NEW_OBJ(RndGenerator)
     static void Init() { REGISTER_OBJ_FACTORY(RndGenerator) }
 

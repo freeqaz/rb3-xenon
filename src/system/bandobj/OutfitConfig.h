@@ -172,10 +172,13 @@ public:
     // ??2OutfitConfig@@SAPAXI@Z and the temp-free 0x50 slot -- which left the
     // row at 5/25 words equal (fuzzy 86.929). The spelling was inherited from
     // rb3-Wii, which retail contradicts; see ObjMacros.h's NEW_OBJ record.
-    // Plain OBJ_MEM_OVERLOAD (not _INLINE_DEL): retail's NewObject unwind
-    // funclet at 0x822abe48 loads mem from 0x54 and calls the out-of-line ICF
-    // survivor ??3BinStream@@SAXPAX@Z, i.e. delete stays noinline as it was.
-    OBJ_MEM_OVERLOAD(0xa2);
+    // Delete is the INLINABLE form (_INLINE_DEL): retail's ??_GOutfitConfig
+    // (fn_822ABE70) calls ?MemFree@@YAXPAX@Z directly. The NewObject unwind
+    // funclet at 0x822abe48 calls the out-of-line ICF survivor
+    // ??3BinStream@@SAXPAX@Z, and MSVC keeps that funclet call out of line even
+    // with an inlinable delete, so the funclet row stays at 100 (lane W16-IE,
+    // 2026-10-01, whole-binary A/B).
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0xa2);
 
     int mColors[3]; // 0x24, 0x24, 0x28
     ObjVector<MatSwap> mMats; // 0x30

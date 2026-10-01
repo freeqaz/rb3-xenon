@@ -116,7 +116,7 @@ protected:
 
 public:
     NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    DELETE_OVERLOAD_INLINE;
     static std::list<BandCamShot::TargetCache> sCache;
     static int sHideAllCharactersHack;
     NEW_OBJ(BandCamShot)

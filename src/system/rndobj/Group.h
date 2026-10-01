@@ -42,7 +42,7 @@ public:
 
     virtual void Highlight() { RndDrawable::Highlight(); }
 
-    OBJ_MEM_OVERLOAD(0x18);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x18);
     NEW_OBJ(RndGroup)
     static void Init() { REGISTER_OBJ_FACTORY(RndGroup) }
 

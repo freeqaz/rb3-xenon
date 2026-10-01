@@ -33,7 +33,7 @@ public:
 
     DECLARE_REVS;
     NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    DELETE_OVERLOAD_INLINE;
 
     ObjPtr<UILabel> mDialogLabel; // 0x8
     ObjPtr<RndMesh> mTopBone; // 0x14

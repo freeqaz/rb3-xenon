@@ -12,7 +12,7 @@ public:
     virtual void Load(BinStream &);
     virtual void DrawShowing();
 
-    OBJ_MEM_OVERLOAD(0x15);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x15);
     NEW_OBJ(RndMotionBlur)
     static void Init() { REGISTER_OBJ_FACTORY(RndMotionBlur) }
 

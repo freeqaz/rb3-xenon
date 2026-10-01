@@ -134,7 +134,7 @@ public:
 
     DECLARE_REVS;
     NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    DELETE_OVERLOAD_INLINE;
 
     bool mDisabled; // 0x8
     bool mSimulatedNet; // 0x9

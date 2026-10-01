@@ -71,7 +71,7 @@ public:
     virtual void Highlight();
     virtual void Print();
 
-    OBJ_MEM_OVERLOAD(0x1C);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x1C);
 
     const Transform &LocalXfm() const { return mLocalXfm; }
     RndTransformable *TransParent() const { return mParent; }

@@ -42,7 +42,7 @@ public:
     void SetTranspose(float t) { mTranspose = t; }
 
     NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    DELETE_OVERLOAD_INLINE;
     NEW_OBJ(Fader);
     static void Init() { REGISTER_OBJ_FACTORY(Fader) }
 

@@ -24,7 +24,10 @@ public:
     // OBJ_MEM_OVERLOAD majority which retail inlined. Classified from the
     // CTOR relocation, not the symbol name -- see
     // /home/free/tmp/laneAT/f4/newobj_classify.py.
-    MEM_OVERLOAD(TexMovie, 0x18);
+    // The DELETE side is inlinable (MEM_OVERLOAD_INLINE_DEL): retail's
+    // ??_GTexMovie (fn_82747708) calls ?MemFree@@YAXPAX@Z directly (lane W16-IE,
+    // 2026-10-01).
+    MEM_OVERLOAD_INLINE_DEL(TexMovie, 0x18);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);

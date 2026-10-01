@@ -27,7 +27,7 @@ public:
     // RndPollable
     virtual void Poll();
 
-    OBJ_MEM_OVERLOAD(0x1B);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x1B);
     NEW_OBJ(SynthEmitter);
     static void Init() { REGISTER_OBJ_FACTORY(SynthEmitter) }
 

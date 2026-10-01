@@ -27,7 +27,7 @@ public:
 
     DECLARE_REVS;
     NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    DELETE_OVERLOAD_INLINE;
     NEW_OBJ(OvershellDir)
     REGISTER_OBJ_FACTORY_FUNC(OvershellDir)
     static void Init() { Register(); }

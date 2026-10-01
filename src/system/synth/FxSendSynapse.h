@@ -21,7 +21,7 @@ public:
     void SetUnisonTrio(bool);
     void SetNoteHz(float, float, float);
 
-    OBJ_MEM_OVERLOAD(0x10);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x10);
     NEW_OBJ(FxSendSynapse)
 
 protected:

@@ -39,7 +39,7 @@ public:
     NEW_OBJ(BandHighlight);
     DECLARE_REVS;
     NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    DELETE_OVERLOAD_INLINE;
 
     Vector3 unk10c; // 0x140
     Vector3 unk118; // 0x150

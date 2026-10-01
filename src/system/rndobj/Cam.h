@@ -70,7 +70,7 @@ public:
     }
 
     NEW_OBJ(RndCam);
-    OBJ_MEM_OVERLOAD(0x1B);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x1B);
     static void Init();
     static RndCam *Current() { return sCurrent; }
 #ifdef HX_NATIVE

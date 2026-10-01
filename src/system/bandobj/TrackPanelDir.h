@@ -69,7 +69,7 @@ public:
     void SetBotbBandIcon(ObjectDir *, RndDir *, bool);
 
     NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    DELETE_OVERLOAD_INLINE;
     NEW_OBJ(TrackPanelDir)
     static void Init() { Register(); }
     REGISTER_OBJ_FACTORY_FUNC(TrackPanelDir)

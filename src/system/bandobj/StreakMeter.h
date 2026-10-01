@@ -55,7 +55,7 @@ public:
     void SetPitch(float);
 
     NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    DELETE_OVERLOAD_INLINE;
     NEW_OBJ(StreakMeter)
     static void Init() { Register(); }
     static void Register() { REGISTER_OBJ_FACTORY(StreakMeter) }

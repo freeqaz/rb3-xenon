@@ -24,8 +24,10 @@ public:
     // laneAT-f4: retail keeps THIS class's operator new out-of-line + ICF-folded
     // (target CharPosConstraint::NewObject calls the folded `??2CriticalSection@@SAPAXI@Z`
     // thunk with NO StaticClassName call), unlike the OBJ_MEM_OVERLOAD majority.
-    // MEM_OVERLOAD is the literal-name, noinline, foldable form.
-    MEM_OVERLOAD(CharPosConstraint, 0x18)
+    // MEM_OVERLOAD_INLINE_DEL keeps that literal-name, noinline, foldable
+    // operator new, but its operator delete is inlinable: retail's ??_G for
+    // this class calls ?MemFree@@YAXPAX@Z directly (lane W16-IE, 2026-10-01).
+    MEM_OVERLOAD_INLINE_DEL(CharPosConstraint, 0x18)
     NEW_OBJ(CharPosConstraint)
 
 protected:

@@ -19,7 +19,7 @@ public:
     virtual void DrawShowing();
     virtual void Highlight() { RndDrawable::Highlight(); }
 
-    OBJ_MEM_OVERLOAD(0x14);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x14);
     NEW_OBJ(RndMultiMeshProxy)
     static void Init() { REGISTER_OBJ_FACTORY(RndMultiMeshProxy) }
     RndMultiMesh *MultiMesh() const { return mMultiMesh; }

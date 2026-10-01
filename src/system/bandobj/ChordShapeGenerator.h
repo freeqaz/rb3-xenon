@@ -117,7 +117,7 @@ public:
     };
     static RevsT gRevs;
     NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    DELETE_OVERLOAD_INLINE;
     NEW_OBJ(ChordShapeGenerator)
     static void Init() { Register(); }
     REGISTER_OBJ_FACTORY_FUNC(ChordShapeGenerator)
