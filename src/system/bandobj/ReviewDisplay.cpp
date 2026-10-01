@@ -105,7 +105,7 @@ void ReviewDisplay::Update() {
 Symbol ReviewDisplay::GetSymbolForReviewScore(int score) {
     // RB3-360 retail (0x8231ED50) initializes all six as FUNCTION-LOCAL static
     // Symbols up front -- guard bits 0..5 of one guard word, in this order --
-    // before the switch, rather than the utl/Symbols*.h globals rb3-Wii uses.
+    // before the switch, not the utl/Symbols*.h globals.
     // Each static init is its own EH state (six 32-byte funclets follow).
     static Symbol unreviewed("unreviewed");
     static Symbol review_1("review_1");
