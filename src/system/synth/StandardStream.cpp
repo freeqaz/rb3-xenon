@@ -158,8 +158,12 @@ void StandardStream::Resync(float f) {
     }
 }
 
+// Retail 0x82701C88 is 20 bytes -- `lwz r3,0x1c(r3)` then a tail call through
+// mRdr's vtable -- with no null test; the guard is native-only.
 void StandardStream::EnableReads(bool b) {
+#ifdef HX_NATIVE
     if (mRdr)
+#endif
         mRdr->EnableReads(b);
 }
 
