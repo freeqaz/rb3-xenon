@@ -3238,6 +3238,10 @@ DataNode BandCharacter::OnPostMerge(DataArray *da) {
         && (noTextures || (mFileMerger->mAsyncLoad && !unk6bd))) {
         SyncObjects();
     }
+    if (category == "body_tempo_clips" || category == "body_realtime_clips"
+        || category == "body_add_base" || category == "body_add_clips") {
+        CharUtlRandomizeClipGroups(dir);
+    }
     return DataNode(0);
 }
 
