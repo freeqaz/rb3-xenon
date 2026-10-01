@@ -3223,8 +3223,7 @@ system/synth_xbox/Synth.cpp:
 	.text       start:0x82C42DA0 end:0x82C42E30
 
 CharDriver.cpp:
-	.pdata      start:0x82201D90 end:0x82201D98
-	.pdata      start:0x82201D98 end:0x82201FC0
+	.pdata      start:0x82201D90 end:0x82201FC0
 	.pdata      start:0x82201FC8 end:0x822020D8
 	.pdata      start:0x822020D8 end:0x822020E8
 	.pdata      start:0x822020E8 end:0x822020F8
@@ -3234,8 +3233,7 @@ CharDriver.cpp:
 	.pdata      start:0x82206910 end:0x82206918
 	.pdata      start:0x82206920 end:0x82206928
 	.pdata      start:0x82206938 end:0x82206970
-	.text       start:0x82376D40 end:0x82376D98
-	.text       start:0x82376D98 end:0x823793C4
+	.text       start:0x82376D40 end:0x823793C4
 	.text       start:0x82379410 end:0x8237A320
 	.text       start:0x8237A320 end:0x8237A400
 	.text       start:0x8237A400 end:0x8237A4A0
@@ -4064,6 +4062,7 @@ CharacterTest.cpp:
 
 ChordShapeGenerator.cpp:
 	.pdata      start:0x821F8490 end:0x821F8498
+	.pdata      start:0x821F8498 end:0x821F84A8
 	.pdata      start:0x821F84A8 end:0x821F84B0
 	.pdata      start:0x821F84C0 end:0x821F84C8
 	.pdata      start:0x821F84C8 end:0x821F84F8
@@ -4081,6 +4080,7 @@ ChordShapeGenerator.cpp:
 	.pdata      start:0x821F86C0 end:0x821F8888
 	.pdata      start:0x821F8890 end:0x821F8998
 	.text       start:0x822DC9D0 end:0x822DCA50
+	.text       start:0x822DCA50 end:0x822DCF58
 	.text       start:0x822DCF58 end:0x822DCFB8
 	.text       start:0x822DD240 end:0x822DD28C
 	.text       start:0x822DD290 end:0x822DD7AC
@@ -6771,11 +6771,9 @@ PostProc_NG.cpp:
 
 Archive.cpp:
 	.pdata      start:0x821F1E90 end:0x821F1EA0
-	.pdata      start:0x821F8498 end:0x821F84A8
 	.pdata      start:0x82217F28 end:0x82217F38
 	.pdata      start:0x82217F38 end:0x822180E8
 	.text       start:0x82279A00 end:0x82279A98
-	.text       start:0x822DCA50 end:0x822DCF58
 	.text       start:0x82512180 end:0x82512264
 	.text       start:0x82512268 end:0x82512288
 	.text       start:0x82512288 end:0x82514858
