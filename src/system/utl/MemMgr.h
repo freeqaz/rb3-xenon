@@ -49,14 +49,14 @@ void MemPrint(int heapIdx, class TextStream &stream, bool freeOnly);
 void MemInit();
 void MemDelta(const char *msg, int heapNum);
 int MemAllocSize(void *mem);
+// Six parameters: retail's body (0x827BD230) reads only r3-r7 and every
+// retail call site loads r3-r8, the last being the owner name string.
 void *MemResizeElem(
     void *&mem,
     int &totalSize,
     void *cutPoint,
     int cutLength,
     int insertLength,
-    const char *file,
-    int line,
     const char *name
 );
 void MemFreeBlockStats(int, int &, int &, int &, int &, int &);
