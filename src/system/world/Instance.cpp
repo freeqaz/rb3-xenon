@@ -82,8 +82,8 @@ void WorldInstance::SavePersistentObjects(BinStream &bs) {
             it->PreSave(bs);
         }
     }
-    bs.WriteEndian(&hashUsed, 4);
-    bs.WriteEndian(&strUsed, 4);
+    bs << hashUsed;
+    bs << strUsed;
     std::list<Hmx::Object *> objects;
     for (ObjDirItr<Hmx::Object> it(this, false); it != nullptr; ++it) {
         if (it != this) {
@@ -92,8 +92,7 @@ void WorldInstance::SavePersistentObjects(BinStream &bs) {
     }
     DirLoader::ClassAndNameSort sorter;
     objects.sort(sorter);
-    int count = objects.size();
-    bs.WriteEndian(&count, 4);
+    bs << (int)objects.size();
     for (std::list<Hmx::Object *>::iterator it = objects.begin(); it != objects.end(); ++it) {
         bs << (*it)->ClassName();
         bs << (*it)->Name();
