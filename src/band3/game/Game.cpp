@@ -449,7 +449,8 @@ void Game::Reset() {
     TheGamePanel->mDeJitter.Reset();
     if (DataVarExists("beatmatch_start_mbt")) {
         int m, b, t;
-        ParseMBT(DataVariable("beatmatch_start_mbt").Str(), m, b, t);
+        const char *mbt = DataVariable("beatmatch_start_mbt").Str();
+        ParseMBT(mbt, m, b, t);
         MeasureMap *measureMap = TheSongDB->GetData()->GetMeasureMap();
         unk134 = TickToMs(measureMap->MeasureBeatTickToTick(m, b, t));
     }

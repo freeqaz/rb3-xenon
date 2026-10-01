@@ -250,7 +250,8 @@ void Tracker::RemoteSetPlayerProgress(Player *p, float f) {
 void Tracker::RemoteTrackerPlayerDisplay(Player *p, int i1, int i2, int i3) {
     TrackerPlayerID pid = mSource->FindPlayerID(p);
     if (pid.NotNull()) {
-        GetPlayerDisplay(pid).RemotePlayerDisplayMsg(i1, i2, i3);
+        const TrackerPlayerDisplay &display = GetPlayerDisplay(pid);
+        display.RemotePlayerDisplayMsg(i1, i2, i3);
     }
 }
 

@@ -358,7 +358,7 @@ void Performer::CheckGameWon() {
 }
 
 float Performer::GetSongFraction() const {
-    return Min(mProgressMs / TheSongDB->GetSongDurationMs(), 1.0f);
+    return Min(1.0f, mProgressMs / TheSongDB->GetSongDurationMs());
 }
 
 void Performer::Poll(float ms, const SongPos &pos) {

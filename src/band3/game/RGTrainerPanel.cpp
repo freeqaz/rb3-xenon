@@ -630,7 +630,8 @@ void RGTrainerPanel::HitNotify(int i) { mTutor.Hit(i, mPattern[i % mPattern.size
 
 bool RGTrainerPanel::MissNotify(int i) {
     Difficulty diff = mGemPlayer->GetUser()->GetLocalBandUser()->GetDifficulty();
-    return mTutor.Miss(i, mPattern[i % mPattern.size()], diff);
+    const GameGem &gem = mPattern[i % mPattern.size()];
+    return mTutor.Miss(i, gem, diff);
 }
 
 void RGTrainerPanel::Looped() { mTutor.Loop(); }
