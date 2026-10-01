@@ -581,7 +581,7 @@ class Audit:
         retail-byte evidence -- a thunk's branch target, the class-name literal a
         ByteCode body constructs, a body shape the old name contradicts -- and
         then CHECKED CALLERS: naming an address that is a fold reached by direct
-        `bl` from unrelated callers charged 13 rows off 100 in one wave.
+        `bl` from unrelated callers took 12 rows off 100 in one wave.
         """
         sys.path.insert(0, os.path.join(ROOT, "tools"))
         import vtable_order_sweep as V
