@@ -307,6 +307,113 @@ RndMeshDeform *RndMeshDeform::FindDeform(RndMesh *m) {
     return 0;
 }
 
+bool RndMeshDeform::IsExoBone(RndTransformable *t) {
+    if (!t)
+        return false;
+    return strnicmp("exo_", t->Name(), 4) == 0;
+}
+
+void RndMeshDeform::BoneDesc::ExportWorldXfm(Transform &xfm) {
+    xfm.Reset();
+    RndTransformable *t = mBone;
+    while (RndMeshDeform::IsExoBone(t)) {
+        Multiply(xfm, t->LocalXfm(), xfm);
+        t = t->TransParent();
+    }
+    Multiply(xfm, unk54, xfm);
+}
+
+// 0x8240B208: scale all twelve floats of a Transform in place. Retail keeps it
+// out of line; its only caller is Reskin.
+__declspec(noinline) void ScaleEq(Transform &t, float f) {
+    t.m.x *= f;
+    t.m.y *= f;
+    t.m.z *= f;
+    t.v *= f;
+}
+
+// 0x8240D248 (called from CharBonesMeshes, 0x82284A8C). Both diagnostics are
+// compiled out but still evaluate PathName(this) (0x8240D3DC, 0x8240D6F4).
+void RndMeshDeform::Reskin(SyncMeshCB *cb, bool force) {
+    if (!mMesh)
+        return;
+    if (!cb->HasMesh(mMesh) && !force && mDeformed)
+        return;
+    cb->SyncMesh(mMesh, 0x1f);
+    mDeformed = true;
+    std::vector<Transform> xfms;
+    {
+        MemTemp tmp;
+        xfms.resize(mBones.size());
+    }
+    for (unsigned int i = 0; i < mBones.size(); i++) {
+        if (mBones[i].mBone) {
+            Transform world;
+            mBones[i].ExportWorldXfm(world);
+            Multiply(mBones[i].unk14, world, xfms[i]);
+        } else {
+            xfms[i].Reset();
+            MILO_FAIL("%s: null bone %d", PathName(this), i);
+        }
+    }
+    int numVerts = mMesh->Verts().size();
+    int vertIdx = 0;
+    for (u8 *vert = (u8 *)mVerts.mData; vert < (u8 *)mVerts.mData + mVerts.mSize;
+         vert += *vert * 2 + 1) {
+        if (vertIdx == numVerts) {
+            MILO_FAIL(
+                "%s cannot reskin %s, the vert counts differ mesh:%d me:%d",
+                PathName(this),
+                mMesh->Name(),
+                numVerts,
+                mVerts.NumVerts()
+            );
+            return;
+        }
+        Transform weighted;
+        weighted.m.x.Zero();
+        weighted.m.y.Zero();
+        weighted.m.z.Zero();
+        weighted.v.Zero();
+        float totalWeight = 0;
+        for (int n = 0; n < *vert; n++) {
+            float w = vert[n * 2 + 2] * (1.0f / 255.0f);
+            totalWeight += w;
+            ScaleAddEq(weighted, xfms[vert[n * 2 + 1]], w);
+        }
+        ScaleEq(weighted, 1.0f / totalWeight);
+        if (!mSkipInverse) {
+            Multiply(weighted, mMeshInverse, weighted);
+        }
+        RndMesh::Vert &v = mMesh->Verts(vertIdx);
+        Multiply(v.pos, weighted, v.pos);
+        Vector3 axis;
+        float anx = std::fabs(v.norm.x);
+        float any = std::fabs(v.norm.y);
+        float anz = std::fabs(v.norm.z);
+        if (anx <= any && anx <= anz) {
+            axis.x = v.norm.x * -v.norm.x + 1.0f;
+            axis.y = v.norm.y * -v.norm.x;
+            axis.z = v.norm.z * -v.norm.x;
+        } else if (any < anx && any < anz) {
+            axis.x = v.norm.x * -v.norm.y;
+            axis.y = v.norm.y * -v.norm.y + 1.0f;
+            axis.z = v.norm.z * -v.norm.y;
+        } else {
+            axis.x = v.norm.x * -v.norm.z;
+            axis.y = v.norm.y * -v.norm.z;
+            axis.z = v.norm.z * -v.norm.z + 1.0f;
+        }
+        Vector3 cross;
+        Cross(v.norm, axis, cross);
+        Multiply(axis, weighted.m, axis);
+        Multiply(cross, weighted.m, cross);
+        Cross(axis, cross, v.norm);
+        Normalize(v.norm, v.norm);
+        vertIdx++;
+    }
+}
+
 // ---------------------------------------------------------------------------
 // SCATTER TAIL -- X360 ONLY. Same reasoning as rndobj/MeshAnim.cpp's tail:
 // obj/Dir.cpp is already emitted by the native obj/ source set (duplicate), and

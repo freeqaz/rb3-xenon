@@ -1,4 +1,8 @@
 {
+ "0x8240d248": "?Reskin@RndMeshDeform@@QAAXPAVSyncMeshCB@@_N@Z",
+ "0x8240b968": "?ExportWorldXfm@BoneDesc@RndMeshDeform@@QAAXAAVTransform@@@Z",
+ "0x8240b710": "?IsExoBone@RndMeshDeform@@SA_NPAVRndTransformable@@@Z",
+ "0x8240b208": "?ScaleEq@@YAXAAVTransform@@M@Z",
  "0x82741308": "?Init@DxMat@@SAXXZ",
  "0x827412b0": "??_GDxMat@@UAAPAXI@Z",
  "0x82741190": "?SetType@DxMat@@UAAXVSymbol@@@Z",
