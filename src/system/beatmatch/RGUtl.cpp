@@ -503,7 +503,7 @@ bool RGGetHeldFretRange(const RGState &state, int &i1, int &i2) {
         MILO_ASSERT(fret >= -1, 0x334);
         if (fret > 0) {
             MinEq(i1, fret);
-            MaxEq(i1, fret);
+            MaxEq(i2, fret);
             ret = true;
         }
     }
