@@ -1,3 +1,6 @@
+// Retail inlines the ObjPtr<EventTrigger> ctors in ??0CrowdMeterIcon (vtable, owner
+// and a null mObject stored in place; no bl to the out-of-line ctor).
+#define RB3_TU_OBJPTR_FORCEINLINE_CTOR
 #include "bandobj/CrowdMeterIcon.h"
 #include "bandobj/BandTrack.h"
 #include "bandobj/TrackPanelDirBase.h"
