@@ -1767,7 +1767,8 @@
             "band3/meta_band/MetaPanel.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
-                    "/DRB3_HANDLE_LOCAL_STATIC"
+                    "/DRB3_HANDLE_LOCAL_STATIC",
+                    "/DRB3_STRIP_CHEAT_HANDLERS"
                 ]
             },
             "band3/meta_band/MetaPerformer.cpp": {
