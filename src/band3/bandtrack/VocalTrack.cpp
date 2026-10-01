@@ -2528,10 +2528,9 @@ void VocalTrack::BuildScrollingDeployZones(float ms) {
     int numParts = std::min(2, (int)mPlayer->mVocalParts.size());
     for (int part = 0; part < numParts; part++) {
         VocalNoteList *notes = GetVocalNoteList(part);
-        while (mNextDeployZone[part] < notes->mFreestyleSections.size()
-               && notes->mFreestyleSections[mNextDeployZone[part]].first < ms) {
-            const std::pair<float, float> &section =
-                notes->mFreestyleSections[mNextDeployZone[part]];
+        std::vector<std::pair<float, float> > &fs = notes->mFreestyleSections;
+        while (mNextDeployZone[part] < fs.size() && fs[mNextDeployZone[part]].first < ms) {
+            const std::pair<float, float> &section = fs[mNextDeployZone[part]];
             float codaMs;
             if (codaTick != -1 && section.first < (codaMs = TickToMs(codaTick))
                 && codaMs < section.second) {
