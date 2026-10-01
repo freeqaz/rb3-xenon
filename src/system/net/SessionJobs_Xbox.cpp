@@ -210,6 +210,7 @@ void MakeSessionJob::Start() {
                 mUserIndex, mSettings->GetCustomID(i), sizeof(DWORD), &value
             );
         }
+        XOVERLAPPED *overlapped = &mXOverlapped;
         DWORD res = XSessionCreate(
             mFlags,
             mUserIndex,
@@ -217,10 +218,10 @@ void MakeSessionJob::Start() {
             0,
             &mData->mNonce,
             &mData->mInfo,
-            &mXOverlapped,
+            overlapped,
             mSession
         );
-        CheckError(res, &mXOverlapped);
+        CheckError(res, overlapped);
     }
 }
 
@@ -229,32 +230,33 @@ bool MakeSessionJob::IsFinished() {
     DWORD res = XGetOverlappedResult(&mXOverlapped, &dw, false);
     if (res == ERROR_IO_INCOMPLETE) {
         return false;
-    } else if (res != 0) {
+    }
+    if (res != 0) {
         *mSession = INVALID_HANDLE_VALUE;
         mSession = nullptr;
         mSuccess = false;
-        return true;
-    } else if (mFlags & XSESSION_CREATE_HOST) {
-        return true;
-    } else if (!mJoinContext) {
-        if (!mSession) {
-            return true;
+    } else if (!(mFlags & XSESSION_CREATE_HOST)) {
+        if (!mJoinContext) {
+            if (mSession) {
+                // a joining client: connect to the host the session describes
+                XSESSION_INFO info = mData->mInfo;
+                static QuazalJoinTarget_82AA1658 sTarget;
+                sTarget.Set_82AA2BE8(
+                    &info.hostAddress, &info.sessionID, &info.keyExchangeKey
+                );
+                mJoinContext = new Quazal::CallContext();
+                QuazalJoin_82A78668(mJoinContext, sTarget);
+                return false;
+            }
+        } else {
+            Quazal::CallContext::_State state = mJoinContext->GetState();
+            if (state == Quazal::CallContext::CallPending) {
+                return false;
+            }
+            mSuccess = state == Quazal::CallContext::CallSuccess;
         }
-        // a joining client: connect to the host the session describes
-        XSESSION_INFO info = mData->mInfo;
-        static QuazalJoinTarget_82AA1658 sTarget;
-        sTarget.Set_82AA2BE8(&info.hostAddress, &info.sessionID, &info.keyExchangeKey);
-        mJoinContext = new Quazal::CallContext();
-        QuazalJoin_82A78668(mJoinContext, sTarget);
-        return false;
-    } else {
-        Quazal::CallContext::_State state = mJoinContext->GetState();
-        if (state == Quazal::CallContext::CallPending) {
-            return false;
-        }
-        mSuccess = state == Quazal::CallContext::CallSuccess;
-        return true;
     }
+    return true;
 }
 
 void MakeSessionJob::Cancel(Hmx::Object *) {
@@ -304,12 +306,13 @@ bool DeleteSessionJob::OverlappedFinished() {
 
 bool DeleteSessionJob::IsFinished() {
     if (!mStarted) {
-        if (QuazalSession::StillDeleting()) {
+        if (!QuazalSession::StillDeleting()) {
+            mStarted = true;
+            DWORD res = XSessionDelete(mSession, &mXOverlapped);
+            CheckError(res, &mXOverlapped);
+        } else {
             return false;
         }
-        mStarted = true;
-        DWORD res = XSessionDelete(mSession, &mXOverlapped);
-        CheckError(res, &mXOverlapped);
     }
     return OverlappedFinished();
 }

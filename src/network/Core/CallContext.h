@@ -30,15 +30,20 @@ namespace Quazal {
 
         _State GetState() const { return unkc; }
 
+        // Offsets read off retail's ctor (0x82A8AF30, the base ctor
+        // ProtocolCallContext's 0x82A8A4A0 calls): it constructs the qResult
+        // at +0x28, zeroes +0x34, +0x38, +0x40 and 8 bytes at +0x48, and
+        // MakeSessionJob::IsFinished allocates the object at 0x50 bytes.
         unsigned int unk8; // 0x8
         _State unkc; // 0xc
         qList<int> unk10; // 0x10
         qVector<int> unk18; // 0x18
-        qResult unk20; // 0x24
-        int unk30;
-        int unk34;
-        int unk38;
-        int unk3c;
-        Time unk40; // 0x40
+        int unk24; // 0x24 (not initialised by the ctor)
+        qResult unk20; // 0x28
+        int unk30; // 0x34
+        int unk34; // 0x38
+        int unk38; // 0x3c
+        int unk3c; // 0x40
+        Time unk40; // 0x48
     };
 }

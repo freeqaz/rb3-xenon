@@ -9888,7 +9888,7 @@
  "0x823f2608": "?push_back@?$vector@VMemStream@@V?$StlNodeAlloc@VMemStream@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVMemStream@@@Z",
  "0x823f2898": "?Load@JoinRequestMsg@@UAAXAAVBinStream@@@Z",
  "0x823f2a18": "??_GJob@@UAAPAXI@Z",
- "0x823f2c10": "?CheatsInitialized@@YA_NXZ",
+ "0x823f2c10": "?StillDeleting@QuazalSession@@SA_NXZ",
  "0x823f2c98": "??0MakeQuazalSessionJob@@QAA@PAPAVQuazalSession@@_N@Z",
  "0x823f2cd8": "?Cancel@MakeQuazalSessionJob@@UAAXPAVObject@Hmx@@@Z",
  "0x823f2ce8": "?OnCompletion@MakeQuazalSessionJob@@UAAXPAVObject@Hmx@@@Z",

@@ -6361,11 +6361,9 @@ Symbol.cpp:
 	.text       start:0x82C40EB0 end:0x82C40F28
 
 Cheats.cpp:
-	.pdata      start:0x82208DC8 end:0x82208DD0
 	.pdata      start:0x82241F80 end:0x82241F90
 	.pdata      start:0x82241F90 end:0x82242028
 	.pdata      start:0x82242028 end:0x822421B8
-	.text       start:0x823F2C10 end:0x823F2C98
 	.text       start:0x827C11D0 end:0x827C11FC
 	.text       start:0x827C1200 end:0x827C12E0
 	.text       start:0x827C12E0 end:0x827C12FC
@@ -9470,11 +9468,9 @@ SyncStore.cpp:
 	.text       start:0x823F0FA0 end:0x823F0FC0
 
 network/net/QuazalSession.cpp:
-	.pdata      start:0x82208DA0 end:0x82208DC8
-	.pdata      start:0x82208DD0 end:0x82208DD8
+	.pdata      start:0x82208DA0 end:0x82208DD8
 	.pdata      start:0x82208E28 end:0x82208E30
-	.text       start:0x823F2A08 end:0x823F2C10
-	.text       start:0x823F2C98 end:0x823F2CD4
+	.text       start:0x823F2A08 end:0x823F2CD4
 	.text       start:0x823F2CD8 end:0x823F2CF8
 	.text       start:0x823F3038 end:0x823F30B8
 
