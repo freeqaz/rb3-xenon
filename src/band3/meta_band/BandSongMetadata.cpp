@@ -517,6 +517,18 @@ Symbol BandSongMetadata::HasKeysSym() const {
     return HasKeys() ? has_part_yes : has_part_no;
 }
 
+// Retail 0x8259E5B0 (no surviving source; the name is ours): true for the
+// downloadable and user-generated origins. Its single caller is
+// BandSongMgr::AddSongData, which adds such a song to the recent list.
+bool BandSongMetadata::IsDLCOrUGC() const {
+    static Symbol rb1_dlc("rb1_dlc");
+    static Symbol ugc("ugc");
+    static Symbol rb3_dlc("rb3_dlc");
+    static Symbol ugc_plus("ugc_plus");
+    return GameOrigin() == rb1_dlc || GameOrigin() == ugc || GameOrigin() == rb3_dlc
+        || GameOrigin() == ugc_plus;
+}
+
 bool BandSongMetadata::HasSolo(Symbol s) const {
     static Symbol real_guitar("real_guitar");
     static Symbol guitar("guitar");
