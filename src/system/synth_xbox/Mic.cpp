@@ -26,9 +26,15 @@ extern void *_xhv_loopback_mode;
 
 MicManagerXbox *MicManagerXbox::sInstance;
 
-// The remote talker id Init registers the headset-playback chain under
-// (retail .rdata 0x82194CC0).
+// File constants in retail .rdata order: 0x82194CB8 sample clamp (AddData),
+// 0x82194CBC wireless playback lead, 0x82194CC0 the remote talker id Init
+// registers the headset-playback chain under, 0x82194CC8 the wired lead
+// parameters. Poll and StartPlayback address the leads off one base register
+// (2700 at -0xc, 300 at +0x4), so these are file statics, not literals.
+static const float sMaxSample = 32767.0f;
+static const float sWirelessLeadSamples = 2700.0f;
 static const u64 kRemoteMicId = 0x00DEADBEEFFACEF0ULL;
+static const float sWiredLeadParams[3] = { 1800.0f, 300.0f, 100.0f };
 
 // Separate file statics (not a struct): leaf global addresses schedule the
 // addi r5 before the li r6 in the FindData arg setup, matching retail
@@ -219,7 +225,7 @@ void MicXbox::StartPlayback() {
     }
     Start();
     mMute = false;
-    unk9058 = unkc ? 2700.0f : 1800.0f;
+    unk9058 = unkc ? sWirelessLeadSamples : sWiredLeadParams[0];
     unk905c = 0;
     unk9054 = 1;
     mPlaybackVoice = new Voice(false, false, false);
@@ -286,23 +292,23 @@ void MicXbox::Poll() {
             unk9058 += 12288.0f;
         }
         float pos = ModRange(
-            (unkc ? 2700.0f : 1800.0f) - 600.0f,
-            (unkc ? 2700.0f : 1800.0f) - 600.0f + 12288.0f,
+            (unkc ? sWirelessLeadSamples : sWiredLeadParams[0]) - 600.0f,
+            (unkc ? sWirelessLeadSamples : sWiredLeadParams[0]) - 600.0f + 12288.0f,
             unk9058
         );
         float vol = mMute ? 0.0f : mVolume;
-        if (pos > (unkc ? 2700.0f : 1800.0f) + 600.0f) {
+        if (pos > (unkc ? sWirelessLeadSamples : sWiredLeadParams[0]) + 600.0f) {
             unk9054 = unk9054 > 1.0f ? 1.08f : 0.92f;
             vol = 0.0f;
-        } else if (pos > (unkc ? 2700.0f : 1800.0f) + 150.0f) {
+        } else if (pos > (unkc ? sWirelessLeadSamples : sWiredLeadParams[0]) + 150.0f) {
             unk9054 = 1.0002f;
-        } else if (pos < (unkc ? 2700.0f : 1800.0f) - 150.0f) {
+        } else if (pos < (unkc ? sWirelessLeadSamples : sWiredLeadParams[0]) - 150.0f) {
             unk9054 = 0.9998f;
-        } else if (pos > (unkc ? 2700.0f : 1800.0f) + 300.0f) {
+        } else if (pos > (unkc ? sWirelessLeadSamples : sWiredLeadParams[0]) + sWiredLeadParams[1]) {
             unk9054 = 1.0006f;
-        } else if (pos < (unkc ? 2700.0f : 1800.0f) - 300.0f) {
+        } else if (pos < (unkc ? sWirelessLeadSamples : sWiredLeadParams[0]) - sWiredLeadParams[1]) {
             unk9054 = 0.9994f;
-        } else if ((unk9054 > 1.0f && pos < (unkc ? 2700.0f : 1800.0f) * 0.5f) || (unk9054 < 1.0f && pos > (unkc ? 2700.0f : 1800.0f) * 0.5f)) {
+        } else if ((unk9054 > 1.0f && pos < (unkc ? sWirelessLeadSamples : sWiredLeadParams[0]) * 0.5f) || (unk9054 < 1.0f && pos > (unkc ? sWirelessLeadSamples : sWiredLeadParams[0]) * 0.5f)) {
             unk9054 = 1.0f;
         }
         mPlaybackVoice->SetVolume(vol);
@@ -328,7 +334,6 @@ void MicXbox::OnMicDisconnected() {
 }
 
 extern "C" void XMemCpy(void *, const void *, int);
-static const float sMaxSample = 32767.0f;
 
 // Retail fn_82B60CB0 (460 B): declared in Mic.h, never defined (emission gap).
 // Ported from DC3; retail shape: CritSecTracker on the manager's +0x68 critsec,
