@@ -476,7 +476,7 @@ void BandTrack::CodaFail(bool guilty) {
 }
 
 void BandTrack::CodaSuccess() {
-    TrackPanelDirBase *tpd = dynamic_cast<TrackPanelDirBase *>(ThisDir()->Dir());
+    TrackPanelDirBase *tpd = MyTrackPanelDir();
     if (tpd)
         tpd->CodaSuccess();
     EventTrigger *trig = ThisDir()->Find<EventTrigger>("bre_success.trig", false);
@@ -492,9 +492,9 @@ void BandTrack::EnablePlayer() {
         if (trig)
             trig->Trigger();
         mDisabled = false;
-        if (dynamic_cast<TrackPanelDirBase *>(ThisDir()->Dir())) {
+        if (MyTrackPanelDir()) {
             int idx = mTrackIdx;
-            dynamic_cast<TrackPanelDirBase *>(ThisDir()->Dir())->EnablePlayer(idx);
+            MyTrackPanelDir()->EnablePlayer(idx);
         }
     }
 }
@@ -558,7 +558,7 @@ void BandTrack::SetupCrowdMeter() {
     if (meter && !meter->Disabled() && mTrackIdx > -1) {
         CrowdMeterIcon *micon = meter->PlayerIcon(mTrackIdx);
         micon->SetIcon(icon);
-        micon->unk240 = dynamic_cast<TrackPanelDirBase *>(ThisDir()->Dir());
+        micon->unk240 = MyTrackPanelDir();
     }
     if (mUnisonIcon)
         ((UnisonIcon *)mUnisonIcon.Ptr())->SetIcon(icon);
@@ -754,10 +754,10 @@ void BandTrack::SpotlightFail(bool guilty) {
 }
 
 void BandTrack::SpotlightPhraseSuccess() {
-    if (dynamic_cast<TrackPanelDirBase *>(ThisDir()->Dir())) {
-        if (dynamic_cast<TrackPanelDirBase *>(ThisDir()->Dir())->GetEndingBonus()) {
+    if (MyTrackPanelDir()) {
+        if (MyTrackPanelDir()->GetEndingBonus()) {
             int trackIdx = mTrackIdx;
-            dynamic_cast<TrackPanelDirBase *>(ThisDir()->Dir())->GetEndingBonus()->PlayerSuccess(trackIdx);
+            MyTrackPanelDir()->GetEndingBonus()->PlayerSuccess(trackIdx);
         }
     }
     if (mUnisonIcon)
