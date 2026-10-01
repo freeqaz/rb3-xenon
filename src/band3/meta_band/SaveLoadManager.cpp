@@ -178,22 +178,11 @@ void SaveLoadManager::ManualDelete() {
     mRequestFlags |= 1;
 }
 
-// LINKAGE IS *NOT* THE LEVER HERE -- REFUTED, do not re-run (lane W16-CF).
-// SetState's clusters at idx 516-648 are our `kStrGlobalCacheName.Str()` load
-// sitting ABOVE the `bl Localize` at the three sites that pass both in one
-// argument list (cases 0x2b, 0x2c, 0x3b); retail keeps that load BELOW the call.
-// Hypothesis tested: internal linkage lets MSVC prove Localize() cannot write
-// this global, licensing the hoist.  Removing this anonymous namespace (giving
-// the global external linkage) was BUILT AND MEASURED: the TU recompiled and the
-// mangled name really did change (?kStrGlobalCacheName@?A0x48d882c4@@3VSymbol@@A
-// -> ?kStrGlobalCacheName@@3VSymbol@@A), and codegen came back BIT-IDENTICAL --
-// row fuzzy 96.74512 before and after, whole-binary delta 0 on all three keys.
-// So the hoist is NOT alias-analysis; it is scheduling.  A different lever is
-// needed.  (Natural control worth keeping: of the 16 references to this global
-// in SetState, the 8 that share no argument list with a call sit at
-// byte-identical indices on both sides; only the 3 Localize sites diverge.)
+// A writable `const char *` in .data (retail 0x82C72830 -> "globaloptions"),
+// not a constructed Symbol: every use reloads the pointer, and at the three
+// sites that also pass Localize() the load is scheduled after that call.
 namespace {
-    Symbol kStrGlobalCacheName("globaloptions");
+    const char *kStrGlobalCacheName = "globaloptions";
 }
 
 void SaveLoadManager::Poll() {
@@ -453,7 +442,7 @@ void SaveLoadManager::Poll() {
             unk70 = (int)result;
                         switch (result) {
                 case kCache_NoError:
-                TheCacheMgr->AddCacheID(mCacheID, Symbol(kStrGlobalCacheName.Str()));
+                TheCacheMgr->AddCacheID(mCacheID, Symbol(kStrGlobalCacheName));
                 SetState((State)0x2e);
                 break;
                 case kCache_ErrorCacheNotFound:
@@ -486,7 +475,7 @@ void SaveLoadManager::Poll() {
                 unk7c = 2;
                 int sz = mCacheID->GetDeviceID();
                 unk78 = sz;
-                TheCacheMgr->AddCacheID(mCacheID, Symbol(kStrGlobalCacheName.Str()));
+                TheCacheMgr->AddCacheID(mCacheID, Symbol(kStrGlobalCacheName));
                 SetState((State)0x31);
                 break;
                 }
@@ -576,7 +565,7 @@ void SaveLoadManager::Poll() {
                 unk7c = 2;
                 int sz = mCacheID->GetDeviceID();
                 unk78 = sz;
-                TheCacheMgr->AddCacheID(mCacheID, Symbol(kStrGlobalCacheName.Str()));
+                TheCacheMgr->AddCacheID(mCacheID, Symbol(kStrGlobalCacheName));
                 SetState((State)0x3d);
                 break;
                 }
@@ -1097,7 +1086,7 @@ void SaveLoadManager::SetState(State newState) {
     case 0x13:
     {
         if (mCacheID == NULL) {
-            mCacheID = TheCacheMgr->GetCacheID(kStrGlobalCacheName.Str());
+            mCacheID = TheCacheMgr->GetCacheID(kStrGlobalCacheName);
         }
         if (mCacheID == NULL) {
             SetState((State)0x37);
@@ -1113,7 +1102,7 @@ void SaveLoadManager::SetState(State newState) {
             delete mCacheID;
             mCacheID = NULL;
         }
-        if (!TheCacheMgr->SearchAsync(kStrGlobalCacheName.Str(), &mCacheID)) {
+        if (!TheCacheMgr->SearchAsync(kStrGlobalCacheName, &mCacheID)) {
 #pragma dont_inline on
             MILO_FAIL("TheCacheMgr->SearchAsync failed with CacheResult %d\n", (int)TheCacheMgr->GetLastResult());
 #pragma dont_inline reset
@@ -1149,28 +1138,12 @@ void SaveLoadManager::SetState(State newState) {
             mCacheID = NULL;
         }
         // Retail order: static-init, THEN GetGlobalOptionsSize, THEN Localize.
-        // ⛔ DO NOT hoist Localize into a `const char *locName` local here, even
-        // though the rb3-Wii oracle spells it that way (its lines 1013/1029/1050
-        // all read `const char *locName = Localize(...);`).  BUILT AND MEASURED
-        // (lane W16-CF): the hoist DOES fix the one thing wrong with this site --
-        // our `kStrGlobalCacheName.Str()` load moves from above the `bl Localize`
-        // to below it, landing directly in the argument register, and goes EQUAL
-        // at all three sites (0x2b, 0x2c, 0x3b).  But it costs more than it buys:
-        //   (a) retail loads TheCacheMgr AND its vptr BEFORE the bl, holding the
-        //       vptr in a callee-saved reg across it.  That only happens while
-        //       Localize is an ARGUMENT; as a statement MSVC sinks the vptr fetch
-        //       below the call, breaking 2 instructions at each of the 3 sites.
-        //   (b) the regalloc shift broke two regions that were previously EQUAL
-        //       and have no Localize at all -- case 0x21 (idx 349-359) and case
-        //       0x32 (idx 670-678).
-        // Net row fuzzy 97.24219 -> 96.12402, so the inline form below is kept.
-        // Retail wants vptr-early (=> inline) AND the string load late (=> hoisted)
-        // and neither pure source form delivers both; that coupling, not 8
-        // separate defects, is what the idx 516-648 clusters are.
+        // Localize stays an argument expression: retail loads TheCacheMgr and its
+        // vptr before the call and holds the vptr in a callee-saved register.
         static Symbol global_options_cache_name("global_options_cache_name");
         int sz = TheProfileMgr.GetGlobalOptionsSize();
         if (!TheCacheMgr->ShowUserSelectUIAsync(
-                NULL, (unsigned long long)sz, kStrGlobalCacheName.Str(),
+                NULL, (unsigned long long)sz, kStrGlobalCacheName,
                 Localize(global_options_cache_name, NULL), &mCacheID
             )) {
             if (TheCacheMgr->GetLastResult() != kCache_NoError) {
@@ -1189,7 +1162,7 @@ void SaveLoadManager::SetState(State newState) {
         }
         static Symbol global_options_cache_name("global_options_cache_name");
         TheCacheMgr->CreateCacheIDFromDeviceID(
-            unk78, kStrGlobalCacheName.Str(), Localize(global_options_cache_name, NULL), &mCacheID
+            unk78, kStrGlobalCacheName, Localize(global_options_cache_name, NULL), &mCacheID
         );
         break;
     }
@@ -1214,7 +1187,7 @@ void SaveLoadManager::SetState(State newState) {
         static Symbol global_options_cache_name("global_options_cache_name");
         int sz = TheProfileMgr.GetGlobalOptionsSize();
         if (!TheCacheMgr->ShowUserSelectUIAsync(
-                NULL, (unsigned long long)sz, kStrGlobalCacheName.Str(),
+                NULL, (unsigned long long)sz, kStrGlobalCacheName,
                 Localize(global_options_cache_name, NULL), &mCacheID
             )) {
             if (TheCacheMgr->GetLastResult() != kCache_NoError) {
@@ -1257,7 +1230,7 @@ void SaveLoadManager::SetState(State newState) {
     {
         int sz = TheProfileMgr.GetGlobalOptionsSize();
         mData = (_MemAllocTemp)(sz, 0);
-        if (!mCache->ReadAsync(kStrGlobalCacheName.Str(), mData, (unsigned int)sz, NULL)) {
+        if (!mCache->ReadAsync(kStrGlobalCacheName, mData, (unsigned int)sz, NULL)) {
 #pragma dont_inline on
             MILO_FAIL("TheCacheMgr->ReadAsync failed with CacheResult %d\n", (int)TheCacheMgr->GetLastResult());
 #pragma dont_inline reset
@@ -1272,7 +1245,7 @@ void SaveLoadManager::SetState(State newState) {
         mData = (_MemAllocTemp)(sz, 0);
         FixedSizeSaveableStream stream(mData, sz, true);
         TheProfileMgr.SaveGlobalOptions(stream);
-        if (!mCache->WriteAsync(kStrGlobalCacheName.Str(), mData, (unsigned int)sz, NULL)) {
+        if (!mCache->WriteAsync(kStrGlobalCacheName, mData, (unsigned int)sz, NULL)) {
 #pragma dont_inline on
             MILO_FAIL("mCache->WriteAsync failed with CacheResult %d\n", (int)TheCacheMgr->GetLastResult());
 #pragma dont_inline reset
@@ -1296,7 +1269,7 @@ void SaveLoadManager::SetState(State newState) {
     {
         unk7c = 1;
         unk78 = 0;
-        TheProfileMgr.SetGlobalOptionsSaveState(kMetaProfileLoaded);
+        TheProfileMgr.SetGlobalOptionsSaveState(kMetaProfileError);
         SetState((State)0x38);
         break;
     }
@@ -1304,7 +1277,7 @@ void SaveLoadManager::SetState(State newState) {
     {
         unk7c = 0;
         unk78 = 0;
-        TheProfileMgr.SetGlobalOptionsSaveState(kMetaProfileLoaded);
+        TheProfileMgr.SetGlobalOptionsSaveState(kMetaProfileError);
         SetState((State)0x38);
         break;
     }
@@ -1324,7 +1297,7 @@ void SaveLoadManager::SetState(State newState) {
     {
         unk7c = 0;
         unk78 = 0;
-        TheProfileMgr.SetGlobalOptionsSaveState(kMetaProfileLoaded);
+        TheProfileMgr.SetGlobalOptionsSaveState(kMetaProfileError);
         SetState((State)0x41);
         break;
     }
@@ -1444,7 +1417,7 @@ void SaveLoadManager::SetState(State newState) {
     case 0x53:
     {
         if (mCacheID == NULL) {
-            mCacheID = TheCacheMgr->GetCacheID(kStrGlobalCacheName.Str());
+            mCacheID = TheCacheMgr->GetCacheID(kStrGlobalCacheName);
         }
         if (mCacheID == NULL) {
             SetState((State)0x40);
@@ -1477,7 +1450,7 @@ void SaveLoadManager::SetState(State newState) {
         break;
     case 0x56:
     {
-        mUploadProfiles.erase(mUploadProfiles.begin(), mUploadProfiles.end());
+        mUploadProfiles.clear();
         if (IsReasonToUpload()) {
             mUploadProfiles = TheProfileMgr.GetSignedInProfiles();
         }
@@ -2009,14 +1982,14 @@ DataNode SaveLoadManager::OnMsg(const DeviceChosenMsg &msg) {
     case kS_Done:
     case kS_LoadComplete:
     case kS_Finish:
-        return DataNode(0);
+        return DataNode(kDataInt, 0);
     default:
         MILO_FAIL(
             "Unhandled DeviceChosenMsg in state %d and mode %d\n", (int)mState, (int)mMode
         );
         break;
     }
-    return DataNode(0);
+    return DataNode(kDataInt, 0);
 }
 
 DataNode SaveLoadManager::OnMsg(const NoDeviceChosenMsg &) {
@@ -2045,7 +2018,7 @@ DataNode SaveLoadManager::OnMsg(const NoDeviceChosenMsg &) {
     case kS_Done:
     case kS_LoadComplete:
     case kS_Finish:
-        return DataNode(0);
+        return DataNode(kDataInt, 0);
     default:
         MILO_FAIL(
             "Unhandled NoDeviceChosenMsg in state %d and mode %d\n",
@@ -2054,7 +2027,7 @@ DataNode SaveLoadManager::OnMsg(const NoDeviceChosenMsg &) {
         );
         break;
     }
-    return DataNode(0);
+    return DataNode(kDataInt, 0);
 }
 
 DataNode SaveLoadManager::OnMsg(const MCResultMsg &msg) {

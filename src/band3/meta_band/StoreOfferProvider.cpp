@@ -414,8 +414,7 @@ int StoreOfferProvider::ShortcutToPos(Symbol s) {
 }
 
 int StoreOfferProvider::PosToNextGroupPos(int pos) {
-    unsigned int n = mElements.size();
-    for (unsigned int i = pos + 1; i < n; i++) {
+    for (unsigned int i = pos + 1; i < mElements.size(); i++) {
         if (mElements[i]->mGroupHeading.Str() != gNullStr) {
             return i;
         }
@@ -730,11 +729,11 @@ BEGIN_HANDLERS(StoreOfferProvider)
     HANDLE_EXPR(find_offer, FindOffer(_msg->Sym(2)))
     HANDLE_EXPR(
         find_album,
-        (Hmx::Object *)FindAlbum(dynamic_cast<StoreOffer *>(_msg->GetObj(2)))
+        (Hmx::Object *)FindAlbum(_msg->Obj<StoreOffer>(2))
     )
     HANDLE_EXPR(
         find_pack,
-        (Hmx::Object *)FindPack(dynamic_cast<StoreOffer *>(_msg->GetObj(2)))
+        (Hmx::Object *)FindPack(_msg->Obj<StoreOffer>(2))
     )
     // Retail (0x82665824-0x826658A4) is a bog-standard macro arm using the
     // same function-local static Symbol as its thirteen siblings (guard bit
@@ -745,7 +744,7 @@ BEGIN_HANDLERS(StoreOfferProvider)
     // doc comment for why its body is still a stub.
     HANDLE_EXPR(
         show_browser_purchased,
-        DataNode(ShowBrowserPurchased(dynamic_cast<StoreOffer *>(_msg->GetObj(2))))
+        DataNode(ShowBrowserPurchased(_msg->Obj<StoreOffer>(2)))
     )
     HANDLE_EXPR(get_shortcut_array, DataNode(mShortcuts, kDataArray))
     HANDLE_EXPR(has_shortcuts, mShortcuts->Size() != 0)
