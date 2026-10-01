@@ -2036,7 +2036,7 @@ void VocalTrack::UpdateScrolling(float ms) {
             while (*curDeployPtr < freestyles.size()) {
                 const std::pair<float, float> *section = &freestyles[*curDeployPtr];
                 float nextStart =
-                    ((*curDeployPtr + 1) < freestyles.size())
+                    (freestyles.size() > (*curDeployPtr + 1))
                         ? freestyles[*curDeployPtr + 1].first
                         : -1.0f;
                 if (codaTick != -1) {
