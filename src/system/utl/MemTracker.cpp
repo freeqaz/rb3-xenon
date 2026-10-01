@@ -150,6 +150,17 @@ template const char *MakeString<const char(&)[9], const char(&)[3], const char(&
     const char(&)[8]
 );
 
+#ifndef HX_NATIVE
+// Retail 0x827d4a28: no free-memory queries, no DataFunc registration, and
+// mHashMem/mHashTable are only assigned once their allocations return.
+MemTracker::MemTracker(int heap, int numAllocs)
+    : mTimeSlice(0), mCurStatTable(0), mFreedInfos(numAllocs), mLog(0), mHeap(heap) {
+    mHashMem = DebugHeapAlloc(numAllocs * 8);
+    mHashTable = new KeylessHash<void *, AllocInfo *>(
+        numAllocs * 2, (AllocInfo *)0, (AllocInfo *)-1, (AllocInfo **)mHashMem
+    );
+}
+#else
 MemTracker::MemTracker(int x, int y)
     : mHashMem(nullptr), mHashTable(nullptr), mTimeSlice(0), mCurStatTable(0),
       mFreedInfos(y), mLog(0), mReport(0), mHeap(x) {
@@ -164,6 +175,8 @@ MemTracker::MemTracker(int x, int y)
     DataRegisterFunc("spit_alloc_info", SpitAllocInfo);
     DataRegisterFunc("sai", SpitAllocInfo);
 }
+
+#endif
 
 #ifdef HX_NATIVE
 void *MemTracker::operator new(size_t size) { return DebugHeapAlloc(size); }
@@ -180,6 +193,31 @@ const AllocInfo *MemTracker::GetInfo(void *info) const {
         return nullptr;
 }
 
+#ifndef HX_NATIVE
+// Retail 0x827d57a8: no tracking-enabled test, no heap-only mode and no name
+// strings; the log line is written only for unpooled heap-0 strategy-0 blocks.
+void MemTracker::Alloc(
+    int requestedSize,
+    int actualSize,
+    const char *type,
+    void *memory,
+    signed char heap,
+    bool pooled,
+    unsigned char strat
+) {
+    if (mHeap != -1 && heap != mHeap) {
+        return;
+    }
+    AllocInfo *info = new AllocInfo(requestedSize, actualSize, type, memory, heap, pooled, strat);
+    mHashTable->Insert(info);
+    if (mLog && !pooled && heap == 0 && strat == 0) {
+        *mLog << " ((com new) " << "(mem " << memory << ") " << *info << ")\n";
+    }
+    if (!pooled) {
+        mHeapStats[heap].Alloc(actualSize, requestedSize);
+    }
+}
+#else
 void MemTracker::Alloc(
     int requestedSize,
     int actualSize,
@@ -249,6 +287,8 @@ void MemTracker::Alloc(
     gMemTrackerTracking = true;
 }
 
+#endif
+
 void MemTracker::Free(void *mem) {
     AllocInfo **found = mHashTable->Find(mem);
     if (found) {
@@ -279,6 +319,7 @@ void MemTracker::ColatedPrint(TextStream &ts, AllocInfo *info, const char *com) 
     ts << "  ((com " << com << ") (rep " << 1 << " ) " << *info << ")\n";
 }
 
+#ifdef HX_NATIVE
 void MemTracker::CloseReport() {
     if (mReport) {
         MemNumHeaps();
@@ -323,6 +364,8 @@ void MemTracker::CloseReport() {
 void MemTracker::SetAllocInfoName(const char *name) {
     Hx_snprintf(mAllocInfoName, 64, "%s", name);
 }
+
+#endif
 
 void MemTracker::StartLog(TextStream &ts) {
     mLog = &ts;
@@ -369,6 +412,7 @@ void MemTracker::Realloc(void *key, int reqSize, int actualSize, void *mem) {
     }
 }
 
+#ifdef HX_NATIVE
 void MemTracker::HeapReport(TextStream &ts) {
     int max = MemNumHeaps() + 1;
     for (int i = 0; i < max; i++) {
@@ -399,6 +443,8 @@ void MemTracker::HeapReport(TextStream &ts) {
     }
 }
 
+#endif
+
 void MemTracker::UpdateStats() {
     mPoolTable[mCurStatTable].Clear();
     mMemTable[mCurStatTable].Clear();
@@ -416,6 +462,7 @@ void MemTracker::UpdateStats() {
     }
 }
 
+#ifdef HX_NATIVE
 DataNode MemTracker::SpitAllocInfo(DataArray *a) {
     int ret = 1;
     if (a && a->Size() > 1) {
@@ -425,6 +472,76 @@ DataNode MemTracker::SpitAllocInfo(DataArray *a) {
     return ret;
 }
 
+#endif
+
+#ifndef HX_NATIVE
+void MemTracker::Report(int threshold, TextStream &ts) {
+    int numMemBlocks, numPoolBlocks;
+
+    // Retail 0x827d6b50 has the heap report inline: the physical heap prints
+    // "N/A" for every figure, and each real heap also prints rFrags.
+    int max = MemNumHeaps() + 1;
+    for (int i = 0; i < max; i++) {
+        HeapStats &curStats = mHeapStats[i];
+        ts << MakeString("\n*** FREE LIST for heap #%d ***\n", i);
+        if (i == MemNumHeaps()) {
+            ts << MakeString("  Heap name          = %14s\n", "physical");
+            ts << MakeString("  Heap size          = %14s\n", "N/A");
+            ts << MakeString("  Num Free Bytes     = %14s\n", "N/A");
+            ts << MakeString("  Biggest Free Block = %14s\n", "N/A");
+            ts << MakeString("  Num Free Blocks    = %14s\n", "N/A");
+        } else {
+            int lFrags, rFrags, freeBytes, biggest;
+            MemFreeBlockStats(i, lFrags, rFrags, freeBytes, biggest);
+            ts << MakeString("  Heap name          = %14s\n", MemHeapName(i));
+            ts << MakeString("  Heap size          = %14d\n", MemHeapSize(i));
+            ts << MakeString("  Num Free Bytes     = %14d\n", freeBytes);
+            ts << MakeString("  Biggest Free Block = %14d\n", biggest);
+            ts << MakeString("  lFrags             = %14d\n", lFrags);
+            ts << MakeString("  rFrags             = %14d\n", rFrags);
+        }
+        ts << MakeString("  Num Allocs         = %14d\n", curStats.mTotalNumAllocs);
+        ts << MakeString("  Bytes Requested    = %14d\n", curStats.mTotalReqSize);
+        ts << MakeString("  Bytes Allocated    = %14d\n", curStats.mTotalActSize);
+        ts << MakeString("  Peak Num Allocs    = %14d\n", curStats.mMaxNumAllocs);
+        ts << MakeString("  Peak Bytes Alloc'd = %14d\n", curStats.mMaxActSize);
+    }
+    UpdateStats();
+
+    mMemTable[mCurStatTable].SortBySize();
+    numMemBlocks = mMemTable[mCurStatTable].GetNumStats();
+    ts << MakeString("\n  %-30s %2s %5s %10s %10s\n", "TYPE", "Hp", "Num", "SzRequest", "SzActual");
+
+    for (int i = 0; i < numMemBlocks; i++) {
+        BlockStat &stat = mMemTable[mCurStatTable].GetBlockStat(i);
+        if (stat.mSizeAct >= threshold) {
+            ts << MakeString(
+                "  %-30s %2d %5d %10d %10d\n",
+                stat.mName, stat.mHeap, stat.mNumAllocs, stat.mSizeReq, stat.mSizeAct
+            );
+        }
+    }
+
+    mPoolTable[mCurStatTable].SortBySize();
+    numPoolBlocks = mPoolTable[mCurStatTable].GetNumStats();
+    ts << MakeString("\n  %-30s %5s %10s %10s\n", "POOL TYPE", "Num", "SzRequest", "SzActual");
+
+    for (int i = 0; i < numPoolBlocks; i++) {
+        BlockStat &stat = mPoolTable[mCurStatTable].GetBlockStat(i);
+        if (stat.mSizeAct >= threshold) {
+            ts << MakeString("  %-30s %5d %10d %10d\n", stat.mName, stat.mNumAllocs, stat.mSizeReq, stat.mSizeAct);
+        }
+    }
+
+    ts << "Diff from last report:\n";
+    DiffTblReport("MALLOC DIFF TYPES", mMemTable[mCurStatTable], mMemTable[1 - mCurStatTable], ts);
+
+    DiffTblReport("POOL DIFF TYPES", mPoolTable[mCurStatTable], mPoolTable[1 - mCurStatTable], ts);
+
+    mCurStatTable = 1 - mCurStatTable;
+}
+
+#else
 void MemTracker::Report(int threshold, TextStream &ts) {
     int numMemBlocks, numPoolBlocks;
 
@@ -464,6 +581,9 @@ void MemTracker::Report(int threshold, TextStream &ts) {
     mCurStatTable = 1 - mCurStatTable;
 }
 
+#endif
+
+#ifdef HX_NATIVE
 int MemTracker::SpitAllocInfo(TextStream *ts) {
     int ret = 1;
     if (gMemTracker != nullptr && gMemTracker->mHashTable != nullptr) {
@@ -499,6 +619,8 @@ int MemTracker::SpitAllocInfo(struct _iobuf *file) {
     }
     return ret;
 }
+
+#endif
 
 void MemTracker::DiffDump(TextStream &ts) {
     if (mTimeSlice) {
@@ -558,6 +680,7 @@ void MemTracker::DiffDump(TextStream &ts) {
     mTimeSlice++;
 }
 
+#ifdef HX_NATIVE
 #include "hamobj/HamGameData.h"
 #include "hamobj/HamPlayerData.h"
 
@@ -666,6 +789,8 @@ void MemTracker::ReportMemoryUsageOverview(const char *name) {
         *ts << MakeString(",%d", biggest);
     }
 }
+
+#endif
 
 #ifndef HX_NATIVE
 // Forward declaration for __pop_heap_aux template specialization

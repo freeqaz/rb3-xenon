@@ -38,11 +38,13 @@ public:
     void ReportMemoryUsage(const char *);
     void ReportMemoryUsageOverview(const char *);
     void Report(int, TextStream &);
+    signed char Heap() const { return mHeap; }
+#ifdef HX_NATIVE
     void SetSpew(bool spew) { mSpew = spew; }
     void SetReport(TextFileStream *s) { mReport = s; }
-    signed char Heap() const { return mHeap; }
     bool GetHeapOnly() const { return mHeapOnly; }
     void SetHeapOnly(bool heapOnly) { mHeapOnly = heapOnly; }
+#endif
 
 #ifdef HX_NATIVE
     static void *operator new(size_t);
@@ -69,29 +71,22 @@ private:
     AllocInfoVec mFreedInfos; // 0x18180
     TextStream *mLog; // 0x1818c
     signed char mHeap; // 0x18190
+    // Retail sizeof(MemTracker) is 0x18194 (operator new is called with that
+    // size) and the ctor (0x827d4a28) writes nothing past mHeap, so everything
+    // below is DC3-era and native-only.
+#ifdef HX_NATIVE
     bool mHeapOnly; // 0x18191
     bool mSpew; // 0x18192
-    // ---- Members below do NOT exist in RB3 retail's MemTracker. -------------
-    // Retail evidence (MemTracker.s / MemTrack.s target asm):
-    //   * MemTracker::operator new is called with r3 = 0x18194, so retail
-    //     sizeof(MemTracker) == 0x18194 -- 116 bytes smaller than ours.
-    //   * the retail ctor writes mFreedInfos at 0x18180/84/88, a word (mLog)
-    //     at 0x1818c and a BYTE (mHeap) at 0x18190, and nothing beyond.
-    //   * MemTrackHeapDump reads mHeap with lbzx at 0x18190.
-    // They are kept (RB3 code here still references them) but parked AFTER
-    // mSpew so they cannot perturb any offset retail actually uses. Deleting
-    // them outright -- the fully correct fix -- also needs mReport /
-    // mFreeSysMem / mFreePhysMem / the Strings / mAllocInfoName turned into
-    // MemTracker.cpp file statics, across 7 including TUs.
-    TextFileStream *mReport; // 0x18194 (retail: absent)
-    int mFreeSysMem; // 0x18198 (retail: absent)
-    int mFreePhysMem; // 0x1819c (retail: absent)
+    TextFileStream *mReport;
+    int mFreeSysMem;
+    int mFreePhysMem;
 public:
     String unk181a4; // current file name
     String unk181ac; // previous file name (stack push/pop)
     String unk181b4; // current object name
 private:
-    char mAllocInfoName[64]; // 0x181c4
+    char mAllocInfoName[64];
+#endif
 };
 
 #ifdef HX_NATIVE

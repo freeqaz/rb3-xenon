@@ -2401,8 +2401,12 @@ Profiler.cpp:
 	.text       start:0x827D2854 end:0x827D2868
 
 TextFileStream.cpp:
+	.pdata      start:0x821F1748 end:0x821F1750
+	.pdata      start:0x821F1750 end:0x821F1760
 	.pdata      start:0x82242270 end:0x82242278
 	.pdata      start:0x82242278 end:0x82242290
+	.text       start:0x822716F8 end:0x8227173C
+	.text       start:0x82271748 end:0x822717BC
 	.text       start:0x827C3BF0 end:0x827C3C68
 	.text       start:0x827C3C68 end:0x827C3D40
 
@@ -3093,14 +3097,10 @@ system/rndobj/Utl.cpp:
 	.text       start:0x8273FF80 end:0x8273FFB0
 
 MemTracker.cpp:
-	.pdata      start:0x821F1748 end:0x821F1750
-	.pdata      start:0x821F1750 end:0x821F1760
 	.pdata      start:0x82233B50 end:0x82233B60
 	.pdata      start:0x82243228 end:0x82243238
 	.pdata      start:0x82243238 end:0x82243320
 	.pdata      start:0x82243328 end:0x822433D0
-	.text       start:0x822716F8 end:0x8227173C
-	.text       start:0x82271748 end:0x822717BC
 	.text       start:0x826B8D20 end:0x826B8EE8
 	.text       start:0x827D44C8 end:0x827D4550
 	.text       start:0x827D4550 end:0x827D5BB0

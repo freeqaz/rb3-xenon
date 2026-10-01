@@ -1,4 +1,5 @@
 {
+ "0x827d71e8": "??0AllocInfo@@QAA@HHPBDPAXC_NE@Z",
  "0x827d6b50": "?Report@MemTracker@@QAAXHAAVTextStream@@@Z",
  "0x827d57a8": "?Alloc@MemTracker@@QAAXHHPBDPAXC_NE@Z",
  "0x827d4c20": "?Remove@?$KeylessHash@PAXPAVAllocInfo@@@@QAAXPAPAVAllocInfo@@@Z",
@@ -23665,7 +23666,7 @@
  "0x827d7118": "??2AllocInfo@@SAPAXI@Z",
  "0x827d7140": "??3AllocInfo@@SAXPAX@Z",
  "0x827d7178": "?Compare@AllocInfo@@QBAHABV1@@Z",
- "0x827d7218": "?Validate@AllocInfo@@QBAXXZ",
+ "0x827d7218": "?StackCompare@AllocInfo@@QBAHABV1@@Z",
  "0x827d7290": "??6@YAAAVTextStream@@AAV0@ABVAllocInfo@@@Z",
  "0x827d72d0": "??0NetCacheMgrXbox@@QAA@XZ",
  "0x827d7360": "??1NetCacheMgrXbox@@UAA@XZ",
