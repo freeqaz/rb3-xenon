@@ -17,7 +17,8 @@ public:
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
-    virtual ~TrackPanelDir();
+    // No user-declared dtor: retail's ~TrackPanelDir (0x82309DE0) makes no
+    // vtable/vtordisp stores and does not free mGemTrackRsrcMgr.
     virtual void PreLoad(BinStream &);
     virtual void PostLoad(BinStream &);
     virtual void SyncObjects();
@@ -91,7 +92,8 @@ public:
     bool mTracksExtended; // 0x31e
     // Retail X360 stores this as a RAW owning pointer (4 bytes at this+0x320),
     // not an ObjPtr: the ctor emits a single `stw r0, 0x320(this)` with no
-    // ObjRef construction, and ~TrackPanelDir plain-deletes it. (An ObjPtr
+    // ObjRef construction. ~TrackPanelDir (0x82309DE0) does not free it; the
+    // only release is SyncObjects' RELEASE before re-creating it. (An ObjPtr
     // here is wrong; the retail bytes decide.)
     GemTrackResourceManager *mGemTrackRsrcMgr; // 0x320
     bool mVocals; // 0x324

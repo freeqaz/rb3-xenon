@@ -47,8 +47,6 @@ TrackPanelDir::TrackPanelDir()
     mGemInst[3] = -1;
 }
 
-TrackPanelDir::~TrackPanelDir() { delete mGemTrackRsrcMgr; }
-
 BEGIN_SAVES(TrackPanelDir)
     SAVE_REVS(1, 0)
     SAVE_SUPERCLASS(TrackPanelDirBase)
