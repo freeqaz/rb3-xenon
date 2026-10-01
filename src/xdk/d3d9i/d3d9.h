@@ -889,6 +889,21 @@ inline HRESULT IDirect3DDevice9_CreateTexture(
     return (*ppTexture != 0) ? 0 : (HRESULT)0x8007000E; // S_OK : E_OUTOFMEMORY
 }
 
+// Same XDK inline-wrapper shape for vertex buffers (DxMesh::GetMultimeshFaces
+// stores through the out-pointer and forwards the value, `clrrwi r3,r3,0`).
+inline HRESULT IDirect3DDevice9_CreateVertexBuffer(
+    D3DDevice *pDevice,
+    UINT Length,
+    DWORD Usage,
+    DWORD FVF,
+    D3DPOOL Pool,
+    D3DVertexBuffer **ppVertexBuffer,
+    HANDLE *pSharedHandle
+) {
+    *ppVertexBuffer = D3DDevice_CreateVertexBuffer(Length, Usage, Pool);
+    return (*ppVertexBuffer != 0) ? 0 : (HRESULT)0x8007000E; // S_OK : E_OUTOFMEMORY
+}
+
 D3DVertexDeclaration *
 D3DDevice_CreateVertexDeclaration(const D3DVERTEXELEMENT9 *pVertexElements);
 void D3DDevice_SetVertexDeclaration(D3DDevice *pDevice, D3DVertexDeclaration *pDecl);

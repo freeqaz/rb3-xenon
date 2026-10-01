@@ -102,10 +102,14 @@ void DxMesh::Copy(const Hmx::Object *src, Hmx::Object::CopyType ty) {
 // buffer widened once into a 32-bit vertex stream.
 D3DVertexBuffer *DxMesh::GetMultimeshFaces() {
     MILO_ASSERT(!Mutable(), 0x1A7);
-    if (!unk1b0) {
+    if (unk1b0) {
+        return (D3DVertexBuffer *)unk1b0;
+    }
+    {
         unsigned int numIndices = mNumFaces * 3;
-        unk1b0 = (D3DResource *)D3DDevice_CreateVertexBuffer(
-            numIndices * 4, 0, (D3DPOOL)0
+        IDirect3DDevice9_CreateVertexBuffer(
+            TheDxRnd.Device(), numIndices * 4, 0, 0, (D3DPOOL)0,
+            (D3DVertexBuffer **)&unk1b0, nullptr
         );
         unsigned int *dst =
             (unsigned int *)D3DVertexBuffer_Lock((D3DVertexBuffer *)unk1b0, 0, 0, 0);
