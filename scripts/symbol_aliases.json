@@ -94881,11 +94881,27 @@
   {
    "name": "GetObj_VMoggClip",
    "address": "0x827d1118",
-   "survivor": "?GetObj@?$ObjRefConcrete@VMoggClip@@VObjectDir@@@@UBAPAVObject@Hmx@@XZ",
+   "survivor": "?DisabledAlphaScale@UIListWidget@@QBAMXZ",
    "folded": [
     "?GetWeight@GigFilter@@QBAMXZ"
    ],
-   "evidence": "W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x827d1118). \"ours\" spelling ?GetWeight@GigFilter@@QBAMXZ is a template/spelling twin of survivor ?GetObj@?$ObjRefConcrete@VMoggClip@@VObjectDir@@@@UBAPAVObject@Hmx@@XZ at retail address 0x827d1118. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 520 B (520 B honest) across ['default/band3/tour/TourPerformerLocal'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md."
+   "evidence": "W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x827d1118). \"ours\" spelling ?GetWeight@GigFilter@@QBAMXZ is a template/spelling twin of survivor ?GetObj@?$ObjRefConcrete@VMoggClip@@VObjectDir@@@@UBAPAVObject@Hmx@@XZ at retail address 0x827d1118. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 520 B (520 B honest) across ['default/band3/tour/TourPerformerLocal'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md.",
+   "withdrawn": [
+    {
+     "spelling": "?GetObj@?$ObjRefConcrete@VMoggClip@@VObjectDir@@@@UBAPAVObject@Hmx@@XZ",
+     "lane": "W16-KD 2026-10-01",
+     "class": "WRONG_SURVIVOR_NAME",
+     "disposition": "survivor field moved to the name that lives at this address; the GetWeight membership is kept and re-adjudicated against it",
+     "evidence": "0x827d1118 is `lfs f1,0x2c(r3); blr`, a float accessor -- the shared ICF survivor of every `return <float at +0x2c>` getter (it sits in the run of trivial-accessor survivors at 0x827d10e0-0x827d1120). A GetObj returning Hmx::Object* would be `lwz r3,...`, so it cannot be this body. Retail UIListSlot::Draw calls it where our source calls UIListWidget::DisabledAlphaScale (mDisabledAlphaScale at +0x2c), so the map now names it that."
+    }
+   ],
+   "admitted": [
+    {
+     "spelling": "?GetWeight@GigFilter@@QBAMXZ",
+     "lane": "W16-KD 2026-10-01",
+     "evidence": "Re-adjudicated after the survivor rename: tools/icf_pair_adjudicate.py --chase --survivor ?DisabledAlphaScale@UIListWidget@@QBAMXZ: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 UNDECIDABLE: VACUOUS: body under 4 words); 8 B retail / 8 B ours, both `lfs f1,0x2c(r3); blr` with no relocation. Retail call-site witness: TourPerformerLocal::GetRandomQuestFilter (0x82367398) branches to 0x827d1118 at 0x82367434 and 0x8236748c, where our source calls GigFilter::GetWeight."
+    }
+   ]
   },
   {
    "name": "push_back_RhythmDetector",

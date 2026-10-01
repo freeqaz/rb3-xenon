@@ -24092,7 +24092,7 @@
  "0x827d10e0": "?GetTracks@SongInfoCopy@@UBAABV?$vector@VTrackChannels@@V?$StlNodeAlloc@VTrackChannels@@@stlpmtx_std@@@stlpmtx_std@@XZ",
  "0x827d10f0": "?GetIntegralImage@FaceDetector@TrueColor@@QAAPAMXZ",
  "0x827d1110": "?DrawOrder@UIListWidget@@QBAMXZ",
- "0x827d1118": "?GetObj@?$ObjRefConcrete@VMoggClip@@VObjectDir@@@@UBAPAVObject@Hmx@@XZ",
+ "0x827d1118": "?DisabledAlphaScale@UIListWidget@@QBAMXZ",
  "0x827d1120": "?GetPackageName@SongInfoCopy@@UBAPBDXZ",
  "0x827d1138": "?NumChannelsOfTrack@SongInfoCopy@@UBAHW4SongInfoAudioType@@@Z",
  "0x827d1228": "?NumExtraMidiFiles@SongInfoCopy@@UBAHXZ",
