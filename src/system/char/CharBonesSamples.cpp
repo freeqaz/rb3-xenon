@@ -481,42 +481,25 @@ int CharBonesSamples::FracToSample(float *frac) const {
         *frac = 0.0f;
         return 0;
     }
-    float inputFrac = *frac;
-    float clampedFrac = Clamp(0.0f, 1.0f, inputFrac);
-    *frac = clampedFrac;
+    ClampEq(*frac, 0.0f, 1.0f);
     int total = Max((int)mFrames.size(), mNumSamples);
-    float scaledPos = clampedFrac * (total - 1);
-    *frac = scaledPos;
-    int sampleIdx = scaledPos;
-    if ((unsigned int)sampleIdx >= total - 1) {
+    int last = total - 1;
+    *frac = last * *frac;
+    int sampleIdx = *frac;
+    if (sampleIdx >= last) {
         *frac = 0.0f;
         return mNumSamples - 1;
     }
-    float interpFrac = scaledPos - sampleIdx;
-    *frac = interpFrac;
-    int ret = sampleIdx;
+    *frac -= sampleIdx;
+    // With a frame table, the fraction indexes the table and the sample is
+    // the integer part of the interpolated frame.
     if (mFrames.size() != 0) {
         float frame = mFrames[sampleIdx];
-        float nextFrame = mFrames[sampleIdx + 1];
-        float interpFrame = frame + (nextFrame - frame) * interpFrac;
-        ret = interpFrame;
-        *frac = interpFrame - ret;
+        float interpFrame = frame + (mFrames[sampleIdx + 1] - frame) * *frac;
+        sampleIdx = interpFrame;
+        *frac = interpFrame - sampleIdx;
     }
-    if (ret < 0 || ret >= mNumSamples) {
-        MILO_NOTIFY_ONCE(
-            "FracToSample: sample is %d, clip only has %d samples, frac was %g, is %g",
-            ret,
-            mNumSamples,
-            inputFrac,
-            *frac
-        );
-        ret = 0;
-    }
-    if (*frac < 0.0f || *frac >= 1.0f) {
-        MILO_NOTIFY_ONCE("FracToSample: frac is %g, outside of 0 and 1", *frac);
-        *frac = 0.0f;
-    }
-    return ret;
+    return sampleIdx;
 }
 
 void CharBonesSamples::EvaluateChannel(void *dest, int byteOffset, int sample, float frac) {
