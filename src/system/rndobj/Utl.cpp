@@ -1529,21 +1529,17 @@ void ComputeFaceTangentBasis(RndMesh *m, int faceIdx, Hmx::Matrix3 &outBasis);
 void MakeTangentsLate(RndMesh *m) {
     if (!m)
         return;
-    RndMesh *geom = m->GetGeomOwner();
-    if (geom != m || geom->Verts().size() == 0)
+    if (m->GetGeomOwner() != m || m->Verts().size() == 0)
         return;
 
     std::vector<Vector4> faceTangents(m->Faces().size());
     for (unsigned int i = 0; i < m->Faces().size(); i++) {
         Hmx::Matrix3 basis;
         ComputeFaceTangentBasis(m, i, basis);
-        // handedness: sign of (x cross z) . y
-        float w = (basis.x.z * basis.z.y - basis.z.z * basis.x.y) * basis.y.x
-                + (basis.y.y * (basis.z.z * basis.x.x - basis.x.z * basis.z.x)
-                   + basis.y.z * (basis.x.y * basis.z.x - basis.z.y * basis.x.x))
-                >= 0.0f
-            ? 1.0f
-            : -1.0f;
+        // handedness: sign of (z cross x) . y
+        Vector3 zx;
+        Cross(basis.z, basis.x, zx);
+        float w = Dot(zx, basis.y) < 0.0f ? -1.0f : 1.0f;
         Vector4 tangent;
         Normalize(basis.x, *(Vector3 *)&tangent);
         faceTangents[i] = tangent;
@@ -1579,8 +1575,10 @@ void MakeTangentsLate(RndMesh *m) {
         // Gram-Schmidt the tangent against the vertex normal
         const Vector3 &n = v.norm;
         Vector4 tc = t;
-        float d = n.x * tc.x + n.z * tc.z + n.y * tc.y;
-        Vector3 ortho(tc.x - n.x * d, tc.y - n.y * d, tc.z - n.z * d);
+        Vector3 proj;
+        Scale(n, Dot(n, *(Vector3 *)&tc), proj);
+        Vector3 ortho;
+        Subtract(*(Vector3 *)&tc, proj, ortho);
         Normalize(ortho, *(Vector3 *)&t);
     }
     MILO_NOTIFY("%s MakingTangentsLate, resave this file!", PathName(m));
