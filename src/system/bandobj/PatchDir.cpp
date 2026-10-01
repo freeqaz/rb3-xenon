@@ -40,7 +40,8 @@ PatchSticker::PatchSticker()
 
 PatchSticker::~PatchSticker() { Unload(); }
 
-void PatchSticker::MakeLoader() {
+// Retail keeps MakeLoader out of line (0x822738D8); LoadStickerTex calls it.
+__declspec(noinline) void PatchSticker::MakeLoader() {
     MILO_ASSERT(!mLoader, 0x52);
     mLoader = dynamic_cast<FileLoader *>(TheLoadMgr.AddLoader(unkc, kLoadFront));
 }
@@ -794,14 +795,10 @@ void PatchDir::Poll() {
         }
     }
 }
-__declspec(noinline) void _outline_MakeLoader(PatchSticker *_obj) {
-    _obj->MakeLoader();
-}
-
 void PatchDir::LoadStickerTex(PatchSticker *sticker, bool push) {
-    if (sticker->mTex || sticker->mLoader)
+    if (sticker->mTex || (int)sticker->mLoader)
         return;
-    _outline_MakeLoader(sticker);
+    sticker->MakeLoader();
     MILO_ASSERT(sticker->GetLoader(), 0x4EE);
     if (push)
         mStickersLoading.push_back(sticker);
