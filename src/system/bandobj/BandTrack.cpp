@@ -647,14 +647,17 @@ void BandTrack::StartFinale(unsigned int ui) {
 }
 
 void BandTrack::GameWon() {
+    static Message reset_msg("reset");
     if (mPlayerFeedback) {
         mPlayerFeedback->HandleType(reset_msg);
+        static Message disable_msg("disable");
         SendTrackerDisplayMessage(disable_msg);
     }
     GameOver();
 }
 
 void BandTrack::GameOver() {
+    static Message reset_msg("reset");
     if (mPlayerIntro)
         mPlayerIntro->HandleType(reset_msg);
     ResetPopup();
@@ -865,6 +868,7 @@ void BandTrack::SetCrowdRating(float f, CrowdMeterState state) {
                     );
                 if (anim) {
                     if (unk1c) {
+                        static Symbol loop("loop");
                         anim->SetFrame(0.0f, 1.0f);
                         TrackPanelDirBase *tpd = dynamic_cast<TrackPanelDirBase *>(
                             ThisDir()->Dir()
@@ -875,6 +879,7 @@ void BandTrack::SetCrowdRating(float f, CrowdMeterState state) {
                             RndAnimatable::k1_fpb, 0.0f, 1.0f, 0.0f, 1.0f, loop
                         );
                     } else {
+                        static Symbol dest("dest");
                         anim->Animate(
                             0.0f, false, 0.0f, RndAnimatable::k1_fpb, 0.0f, 1.0f,
                             0.0f, 1.0f, dest
