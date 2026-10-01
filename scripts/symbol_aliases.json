@@ -96388,6 +96388,18 @@
      "evidence": "Lane W16-JE. Retail 0x8280e248 is `stw r4,0x18(r3); blr` (8 B, no relocation), inside UIListState.cpp's pins directly before SetScrollPastMinDisplay, so the survivor is named for UIListState (the TU whose contribution holds it; map row renamed from Voice::SetStartSamp in the same change). Our Voice::SetStartSamp COMDAT is byte-identical -- `90830018 4e800020`, no relocation -- which is the /OPT:ICF folding condition itself (VACUOUS-BUT-IDENTICAL). Call-site witness: retail StreamReceiver360::SetSlipOffset branches to 0x8280e248 at the site where our compiled SetSlipOffset calls Voice::SetStartSamp (retail callers of the address: UIList::Copy/PostLoad/SyncProperty -- the SetMaxDisplay sites -- and StreamReceiver360::SetSlipOffset)."
     }
    ]
+  },
+  {
+  "name": "_M_clear_after_move<GameGem>",
+  "address": "0x826ab088",
+  "survivor": "?_M_clear_after_move@?$vector@VGameGem@@V?$StlNodeAlloc@VGameGem@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "folded": [
+   "?_M_clear@?$vector@VGameGem@@V?$StlNodeAlloc@VGameGem@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
+  ],
+  "evidence": "Hand-installed by lane W16-JD (fork bm). Call-site proof: retail 0x826AB088 (destroy range + deallocate, 0x44-byte elements) is the target of four vector<GameGem> call sites -- _M_insert_overflow_aux (bl at 0x826AB2F8), operator= (0x826AB3B0), reserve (0x82773E34) and _M_range_insert_realloc<const GameGem*> (0x8278DC84). Our source spells the first _M_clear_after_move and the other three _M_clear, so both spellings resolve to the one retail address; their STLport bodies are identical. tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN, CHASED T1 PROVEN (no CYCLE-ASSUMED leaf; 116 B both sides; the one relocation is the destroy-range callee, a tolerated placeholder). Naming 0x826AB088 with either spelling alone measured two rows off 100 (the other spelling's callers), which is the fold showing itself.",
+  "added": {
+   "lane": "W16-JD 2026-10-01"
   }
+ }
  ]
 }

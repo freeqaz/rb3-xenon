@@ -9,14 +9,12 @@ namespace {
                                         1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5 };
 }
 
+// 0x82790150
 bool GemPlayableBy(int i, int j) {
-    bool ret = false;
-    if (i == 0 || i & 1 << j)
-        ret = true;
-    return ret;
+    return i == 0 || (i & 1 << j) != 0;
 }
 
-// fn_804595B4
+// 0x82790178
 int GemNumSlots(int slot_bitfield) {
     MILO_ASSERT(0 <= slot_bitfield, 0x25);
     if ((unsigned int)slot_bitfield < 0x20)
@@ -36,7 +34,7 @@ int GemNumSlots(int slot_bitfield) {
     }
 }
 
-// fn_80459608
+// 0x827901D0
 int ConsumeNumber(const char *&cc) {
     int ret = 0;
     while (true) {
@@ -47,6 +45,14 @@ int ConsumeNumber(const char *&cc) {
         cc++;
     }
     return ret;
+}
+
+// 0x82790210; called by SongParser::CheckKeyboardRangeMarker.
+bool IsWhiteKey(int pitch) {
+    int mod = pitch % 12;
+    if (mod == 1 || mod == 3 || mod == 6 || mod == 8 || mod == 10)
+        return false;
+    return true;
 }
 
 float VelocityBucketToDb(int bucket) {
@@ -60,6 +66,7 @@ float VelocityBucketToDb(int bucket) {
         return 0.0f;
 }
 
+// 0x82790318
 BeatmatchAudioType TrackTypeToAudioType(TrackType ty) {
     switch (ty) {
     case kTrackDrum:

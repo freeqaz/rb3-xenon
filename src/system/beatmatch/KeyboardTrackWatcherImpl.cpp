@@ -350,7 +350,7 @@ int KeyboardTrackWatcherImpl::GetNeighboringWhiteKeySlot(int slot, int direction
 
 int KeyboardTrackWatcherImpl::GetNeighboringBlackKeySlot(int slot, int direction) const {
     MILO_ASSERT(direction == 1 || direction == -1, 0x2A8);
-    if (slot <= 1U && direction == -1)
+    if ((slot == 0 || slot == 1) && direction == -1)
         return -1;
     if ((slot == 0x18 || slot == 0x16) && direction == 1)
         return -1;

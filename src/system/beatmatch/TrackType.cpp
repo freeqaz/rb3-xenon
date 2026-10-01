@@ -2,17 +2,17 @@
 #include "obj/DataUtl.h"
 #include "os/Debug.h"
 
-static inline const char *TrackSymStr() { return "TRACK_SYMBOLS"; }
+// Retail TrackType.cpp: .text 0x8277B490-0x8277B5A0, between RGState.cpp and
+// MasterAudio.cpp.
 
-#pragma push
-#pragma force_active on
-inline Symbol TrackTypeToSym(TrackType type) {
-    return DataGetMacro(TrackSymStr())->Sym(type);
+// 0x8277B490: the TRACK_SYMBOLS macro array is cached in a function-local
+// static (guard 0x82E063D8, storage 0x82E063D4).
+Symbol TrackTypeToSym(TrackType type) {
+    static DataArray *trackSyms = DataGetMacro("TRACK_SYMBOLS");
+    return trackSyms->Sym(type);
 }
-#pragma pop
 
-static Symbol lol(TrackType ty) { return TrackTypeToSym(ty); }
-
+// 0x8277B530
 TrackType SymToTrackType(Symbol sym) {
     for (int i = 0; i < 11; i++) {
         if (sym == TrackTypeToSym((TrackType)i)) {

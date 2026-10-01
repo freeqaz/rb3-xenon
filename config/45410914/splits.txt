@@ -11,7 +11,7 @@ Sections:
 	.idata      type:data align:65536
 
 MasterAudio.cpp:
-	.pdata      start:0x8223E268 end:0x8223E280
+	.pdata      start:0x8223E270 end:0x8223E280
 	.pdata      start:0x8223E280 end:0x8223E288
 	.pdata      start:0x8223E288 end:0x8223E290
 	.pdata      start:0x8223E290 end:0x8223E2A0
@@ -41,7 +41,7 @@ MasterAudio.cpp:
 	.pdata      start:0x8223E598 end:0x8223E5B8
 	.pdata      start:0x8223E5B8 end:0x8223E5E0
 	.pdata      start:0x8223E5E0 end:0x8223E608
-	.text       start:0x8277B52C end:0x8277B6E8
+	.text       start:0x8277B5A0 end:0x8277B6E8
 	.text       start:0x8277B6E8 end:0x8277B7A0
 	.text       start:0x8277B7A0 end:0x8277B800
 	.text       start:0x8277B800 end:0x8277B8D8
@@ -10457,13 +10457,15 @@ SongParser.cpp:
 	.text       start:0x8278C798 end:0x8278C7A0
 
 BeatMatchController.cpp:
+	.pdata      start:0x8223F188 end:0x8223F198
 	.pdata      start:0x8223F198 end:0x8223F1E0
 	.pdata      start:0x8223F1E0 end:0x8223F1E8
 	.pdata      start:0x8223F1E8 end:0x8223F1F8
+	.text       start:0x8278F9A8 end:0x8278FB08
 	.text       start:0x8278FB08 end:0x8278FB2C
 	.text       start:0x8278FB30 end:0x8278FFD0
 	.text       start:0x8278FFD0 end:0x82790054
-	.text       start:0x82790058 end:0x82790174
+	.text       start:0x82790058 end:0x82790150
 	.text       start:0x827901CC end:0x827901D0
 
 BandPatchMesh.cpp:
@@ -10639,6 +10641,7 @@ BandPatchMesh.cpp:
 
 SongData.cpp:
 	.pdata      start:0x822084E0 end:0x822084E8
+	.pdata      start:0x8223D8C8 end:0x8223D8E0
 	.pdata      start:0x8223D8E0 end:0x8223D8E8
 	.pdata      start:0x8223D8E8 end:0x8223D8F8
 	.pdata      start:0x8223D8F8 end:0x8223D910
@@ -10706,7 +10709,7 @@ SongData.cpp:
 	.pdata      start:0x8223E160 end:0x8223E1C0
 	.pdata      start:0x8223EEF0 end:0x8223EEF8
 	.text       start:0x823EA958 end:0x823EA984
-	.text       start:0x82770490 end:0x82770498
+	.text       start:0x82770388 end:0x82770498
 	.text       start:0x827704C0 end:0x82770530
 	.text       start:0x82770530 end:0x827705C8
 	.text       start:0x827705C8 end:0x82770718
@@ -11012,9 +11015,7 @@ BeatMatcher.cpp:
 	.pdata      start:0x8223F308 end:0x8223F310
 	.pdata      start:0x8223F310 end:0x8223F318
 	.pdata      start:0x8223F318 end:0x8223F388
-	.pdata      start:0x8223F3A0 end:0x8223F3A8
-	.pdata      start:0x8223F3B8 end:0x8223F420
-	.text       start:0x82790490 end:0x827904D4
+	.text       start:0x82790480 end:0x827904D4
 	.text       start:0x827904D8 end:0x82790DF4
 	.text       start:0x82790DF8 end:0x82790E7C
 	.text       start:0x82790E80 end:0x82790F54
@@ -11032,8 +11033,6 @@ BeatMatcher.cpp:
 	.text       start:0x82791A38 end:0x82791AD8
 	.text       start:0x82791AD8 end:0x82791B60
 	.text       start:0x82791B60 end:0x827921B8
-	.text       start:0x8279242C end:0x82792460
-	.text       start:0x82792538 end:0x82792D50
 	.text       start:0x82793908 end:0x82793910
 
 CampaignSongInfoPanel.cpp:
@@ -11744,13 +11743,13 @@ RGGemMatcher.cpp:
 	.pdata      start:0x8223F150 end:0x8223F158
 	.pdata      start:0x8223F160 end:0x8223F168
 	.pdata      start:0x8223F168 end:0x8223F178
-	.pdata      start:0x8223F178 end:0x8223F198
+	.pdata      start:0x8223F178 end:0x8223F188
 	.text       start:0x8278F208 end:0x8278F23C
 	.text       start:0x8278F240 end:0x8278F348
 	.text       start:0x8278F348 end:0x8278F3B8
 	.text       start:0x8278F418 end:0x8278F48C
 	.text       start:0x8278F490 end:0x8278F564
-	.text       start:0x8278F568 end:0x8278FB08
+	.text       start:0x8278F568 end:0x8278F9A8
 
 VocalNoteList.cpp:
 	.pdata      start:0x82230A00 end:0x82230A08
@@ -12228,13 +12227,11 @@ HeldNote.cpp:
 	.text       start:0x826F3B18 end:0x826F3E98
 
 RGUtl.cpp:
-	.pdata      start:0x821FC040 end:0x821FC0B0
 	.pdata      start:0x8223E1C0 end:0x8223E1C8
 	.pdata      start:0x8223E1C8 end:0x8223E1D0
 	.pdata      start:0x8223E1D0 end:0x8223E1D8
 	.pdata      start:0x8223E1D8 end:0x8223E240
 	.pdata      start:0x8223E240 end:0x8223E250
-	.text       start:0x82318500 end:0x82318C40
 	.text       start:0x82779A00 end:0x82779BF8
 	.text       start:0x82779BF8 end:0x82779C3C
 	.text       start:0x82779C40 end:0x82779CBC
@@ -12243,13 +12240,12 @@ RGUtl.cpp:
 
 RGState.cpp:
 	.pdata      start:0x8223E250 end:0x8223E258
-	.pdata      start:0x8223E258 end:0x8223E268
 	.text       start:0x8277B398 end:0x8277B3DC
 	.text       start:0x8277B3E0 end:0x8277B3FC
 	.text       start:0x8277B400 end:0x8277B434
 	.text       start:0x8277B438 end:0x8277B45C
 	.text       start:0x8277B460 end:0x8277B46C
-	.text       start:0x8277B470 end:0x8277B52C
+	.text       start:0x8277B470 end:0x8277B490
 
 WebSvcMgrCurl.cpp:
 	.pdata      start:0x821F8CC8 end:0x821F8CF8
@@ -12747,10 +12743,11 @@ OverdriveMeter.cpp:
 system/beatmatch/BeatMatchUtl.cpp:
 	.pdata      start:0x8223F1F8 end:0x8223F200
 	.pdata      start:0x8223F200 end:0x8223F208
+	.text       start:0x82790150 end:0x82790174
 	.text       start:0x82790174 end:0x827901CC
 	.text       start:0x827901D0 end:0x82790258
 	.text       start:0x82790258 end:0x82790370
-	.text       start:0x82790370 end:0x82790490
+	.text       start:0x82790370 end:0x82790480
 	.text       start:0x827904D4 end:0x827904D8
 
 system/beatmatch/GameGem.cpp:
@@ -12856,16 +12853,26 @@ system/beatmatch/PhraseDB.cpp:
 system/beatmatch/FillInfo.cpp:
 	.pdata      start:0x8223EEF8 end:0x8223EF00
 	.pdata      start:0x8223F388 end:0x8223F3A0
+	.pdata      start:0x8223F3A0 end:0x8223F3A8
 	.pdata      start:0x8223F3A8 end:0x8223F3B8
 	.text       start:0x8278C348 end:0x8278C3A8
 	.text       start:0x827921B8 end:0x82792270
 	.text       start:0x82792270 end:0x8279242C
+	.text       start:0x8279242C end:0x82792460
 	.text       start:0x82792460 end:0x8279252C
 	.text       start:0x8279252C end:0x82792538
 
+system/beatmatch/Playback.cpp:
+	.pdata      start:0x8223F3B8 end:0x8223F420
+	.text       start:0x82792538 end:0x82792D50
+
+system/beatmatch/TrackType.cpp:
+	.pdata      start:0x8223E258 end:0x8223E270
+	.text       start:0x8277B490 end:0x8277B5A0
+
 system/beatmatch/DrumMap.cpp:
-	.pdata      start:0x8223EF00 end:0x8223EF10
-	.text       start:0x8278C3A8 end:0x8278C460
+	.pdata      start:0x8223EF00 end:0x8223EF20
+	.text       start:0x8278C3A8 end:0x8278C550
 
 system/beatmatch/TimeSpanVector.cpp:
 	.pdata      start:0x8223F4E0 end:0x8223F4E8
@@ -12925,7 +12932,6 @@ system/beatmatch/PlayerTrackConfigList.cpp:
 	.pdata      start:0x8223D8A8 end:0x8223D8B0
 	.pdata      start:0x8223D8B0 end:0x8223D8B8
 	.pdata      start:0x8223D8B8 end:0x8223D8C8
-	.pdata      start:0x8223D8C8 end:0x8223D8E0
 	.text       start:0x8276F700 end:0x8276F708
 	.text       start:0x8276F708 end:0x8276F720
 	.text       start:0x8276F720 end:0x8276F738
@@ -12942,7 +12948,7 @@ system/beatmatch/PlayerTrackConfigList.cpp:
 	.text       start:0x8276FFC8 end:0x827700A4
 	.text       start:0x827700A8 end:0x827701BC
 	.text       start:0x827701C0 end:0x82770370
-	.text       start:0x82770370 end:0x82770490
+	.text       start:0x82770370 end:0x82770388
 
 system/synth/VoiceBeat.cpp:
 	.pdata      start:0x82238F80 end:0x82238F90
@@ -12985,11 +12991,11 @@ band3/game/CommonPhraseCapturer.cpp:
 	.text       start:0x826EC860 end:0x826ED658
 
 system/beatmatch/PhraseList.cpp:
-	.pdata      start:0x8223EF10 end:0x8223EF38
+	.pdata      start:0x8223EF20 end:0x8223EF38
 	.pdata      start:0x8223EF38 end:0x8223EF48
 	.pdata      start:0x8223EF48 end:0x8223EF58
 	.pdata      start:0x8223EF58 end:0x8223EF60
-	.text       start:0x8278C460 end:0x8278C6E8
+	.text       start:0x8278C550 end:0x8278C6E8
 	.text       start:0x8278C6E8 end:0x8278C794
 	.text       start:0x8278C7A0 end:0x8278C858
 	.text       start:0x8278C858 end:0x8278C898
@@ -13261,6 +13267,7 @@ MicInputArrow.cpp:
 	.pdata      start:0x821FBFF8 end:0x821FC000
 	.pdata      start:0x821FC000 end:0x821FC008
 	.pdata      start:0x821FC008 end:0x821FC040
+	.pdata      start:0x821FC040 end:0x821FC0B0
 	.pdata      start:0x821FC0B0 end:0x821FC170
 	.pdata      start:0x821FC170 end:0x821FC178
 	.text       start:0x82317AA0 end:0x82317B18
@@ -13273,6 +13280,7 @@ MicInputArrow.cpp:
 	.text       start:0x82318078 end:0x823180EC
 	.text       start:0x823180F0 end:0x82318164
 	.text       start:0x82318170 end:0x82318500
+	.text       start:0x82318500 end:0x82318C40
 	.text       start:0x82318C40 end:0x823198F0
 	.text       start:0x823198F0 end:0x82319948
 

@@ -1684,11 +1684,6 @@ bool SongParser::CheckDrumMapMarker(int i, int j, bool b) {
         return false;
 }
 
-__declspec(noinline) static bool IsWhiteKey(int pitch) {
-    int mod = pitch % 12;
-    return mod != 1 && mod != 3 && mod != 6 && mod != 8 && mod != 10;
-}
-
 bool SongParser::CheckKeyboardRangeMarker(int tick, int pitch, bool b) {
     // Same shape as PitchToSlot: retail (0x82783E90) has a function-local
     // static Symbol keys (guard 0x82E06410 bit 0x1, storage 0x82E0640C) that

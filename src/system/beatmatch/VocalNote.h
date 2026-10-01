@@ -1,4 +1,5 @@
 #pragma once
+#include "math/Utl.h"
 #include "utl/Str.h"
 #include "obj/Data.h"
 #include "utl/MBT.h"
@@ -38,6 +39,15 @@ public:
     int EndTick() const { return mTick + mDurationTicks; }
     float EndMs() const { return mMs + mDurationMs; }
     bool PlayableBy(int) const;
+    // Out of line in retail (0x826F16E0, a COMDAT in VocalPart's span);
+    // VocalNoteList::PitchAt calls it after its own end-of-note test.
+    float PitchAt(float ms) const {
+        if (EndPitch() == StartPitch())
+            return (float)StartPitch();
+        float fraction =
+            Max<float>(0.0f, Min<float>(ms, mMs + mDurationMs) - mMs) / mDurationMs;
+        return fraction * (float)EndPitch() + (1.0f - fraction) * (float)StartPitch();
+    }
 
     int mPhrase; // 0x0
     int mBeginPitch; // 0x4

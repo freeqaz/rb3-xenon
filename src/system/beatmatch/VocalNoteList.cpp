@@ -3,6 +3,7 @@
 #include "os/System.h"
 #include "math/Utl.h"
 #include "utl/MemMgr.h"
+#include "utl/Std.h"
 #include <algorithm>
 #include <cfloat> // FLT_MAX (the 3.4028235E+38f decimal literal
                   // overflows MSVC X360's parser (C2177); FLT_MAX is the exact
@@ -62,7 +63,7 @@ void VocalNoteList::CopyPhrasesFrom(const VocalNoteList *srcList) {
 
 void VocalNoteList::CopyLyricPhrases() { CopyPhraseVec(mPhrases, &mLyricPhrases); }
 
-// fn_80497850
+// 0x82781B00
 void VocalNoteList::AddNote(const VocalNote &note) {
     MemDoTempAllocations tmp;
     if (!mNotes.empty() && mNotes.back().GetTick() == note.GetTick()) {
@@ -76,7 +77,7 @@ void VocalNoteList::AddNote(const VocalNote &note) {
         mNotes.push_back(note);
 }
 
-// fn_80497928
+// 0x827821F0
 void VocalNoteList::NotesDone(const TempoMap &tmap, bool b) {
     static bool sDump;
     if (mPhrases.empty()) {
@@ -109,7 +110,6 @@ void VocalNoteList::NotesDone(const TempoMap &tmap, bool b) {
     int lastRangeBoundingPhrase = -1;
     if (sDump)
         MILO_LOG("parsing phrase data\n");
-    int noteEnd;
     for (int phraseIdx = 1; phraseIdx < mPhrases.size(); phraseIdx++) {
         VocalPhrase &phrase = mPhrases[phraseIdx];
         phrase.unk18 = 0;
@@ -161,12 +161,12 @@ void VocalNoteList::NotesDone(const TempoMap &tmap, bool b) {
             mLyricPhrases.push_back(phrase);
         }
 
-        noteEnd = phrase.unk14;
-        for (int j = phrase.unk10; j < noteEnd; j++) {
+        // retail re-reads phrase.unk14 as the bound each iteration
+        for (int j = phrase.unk10; j < phrase.unk14; j++) {
             if (!mNotes[j].IsUnpitched()) {
                 phrase.unk18 = 1;
-                phrase.unk24 = Min<float>((float)mNotes[j].StartPitch(), phrase.unk24);
-                phrase.unk24 = Min<float>((float)mNotes[j].EndPitch(), phrase.unk24);
+                phrase.unk24 = Min<float>(phrase.unk24, (float)mNotes[j].StartPitch());
+                phrase.unk24 = Min<float>(phrase.unk24, (float)mNotes[j].EndPitch());
                 phrase.unk28 = Max<float>(phrase.unk28, (float)mNotes[j].StartPitch());
                 phrase.unk28 = Max<float>(phrase.unk28, (float)mNotes[j].EndPitch());
             }
@@ -184,8 +184,9 @@ void VocalNoteList::NotesDone(const TempoMap &tmap, bool b) {
             }
         }
 
-        currentMin = Min<float>(phrase.unk24, currentMin);
-        currentMax = Max<float>(currentMax, phrase.unk28);
+        // by-reference std::min/max: retail selects between address-taken values
+        currentMin = std::min(currentMin, phrase.unk24);
+        currentMax = std::max(currentMax, phrase.unk28);
         if (phrase.unk1a || phraseIdx + 1 == mPhrases.size()) {
             for (int k = lastRangeBoundingPhrase + 1; k <= phraseIdx; k++) {
                 mPhrases[k].unk24 = currentMin;
@@ -221,9 +222,10 @@ void VocalNoteList::NotesDone(const TempoMap &tmap, bool b) {
     }
 
     int gem;
+    // retail starts phraseIdx at 0 once; each gem resumes the search
+    int phraseIdx = 0;
     for (int i = 0; i < mTambourineGems.size(); i++) {
         gem = mTambourineGems[i];
-        int phraseIdx = 0;
         while (phraseIdx < mPhrases.size()
                && gem >= mPhrases[phraseIdx].unk8 + mPhrases[phraseIdx].unkc) {
             phraseIdx++;
@@ -232,12 +234,22 @@ void VocalNoteList::NotesDone(const TempoMap &tmap, bool b) {
             && mPhrases[phraseIdx].unk10 == mPhrases[phraseIdx].unk14) {
             mPhrases[phraseIdx].mTambourinePhrase = true;
         } else {
+#ifdef HX_NATIVE
             MILO_LOG(
                 "NOTIFY: %s (%s): tambourine gem at tick %s not in phrase or in singing phrase; discarding\n",
                 mSongData->SongFullPath(),
                 mTrackName,
                 PrintTick(gem)
             );
+#else
+            // retail evaluates these right to left (PrintTick first)
+            MiloStripEval(
+                "NOTIFY: %s (%s): tambourine gem at tick %s not in phrase or in singing phrase; discarding\n",
+                mSongData->SongFullPath(),
+                mTrackName,
+                PrintTick(gem)
+            );
+#endif
             mTambourineGems.erase(mTambourineGems.begin() + i);
             i--;
         }
@@ -336,40 +348,40 @@ void VocalNoteList::EndPlayerPhrase(int tick, int) {
 }
 
 void VocalNoteList::Finalize() {
-    std::vector<VocalNote>(mNotes).swap(mNotes);
+    // retail inlines this into NotesDone: TrimExcess (0x827815E8) out of line
+    TrimExcess(mNotes);
     DetermineFreestyleSections();
 }
 
+// 0x82781E48
 void VocalNoteList::DetermineFreestyleSections() {
     MILO_ASSERT(mFreestyleSections.empty(), 0x287);
     float sectionStart = 0.0f;
     bool atWordBoundary = true;
     for (std::vector<VocalNote>::iterator note = mNotes.begin(); note != mNotes.end();
          ++note) {
+        const String &text = note->mText;
         if (atWordBoundary) {
-            float gap = note->GetMs() - sectionStart;
+            float noteMs = note->GetMs();
+            float gap = noteMs - sectionStart;
             for (int i = 0; i < mFreestyleMinDuration->Size(); i++) {
                 float pad = mFreestylePad->Float(i);
-                float minDuration = mFreestyleMinDuration->Float(i);
-                if (gap > 64.0f * pad + minDuration) {
+                if (gap > 64.0f * pad + mFreestyleMinDuration->Float(i)) {
                     mFreestyleSections.push_back(
-                        std::make_pair(sectionStart + pad, note->GetMs() - pad)
+                        std::make_pair(sectionStart + pad, noteMs - pad)
                     );
                     break;
                 }
             }
         }
-        atWordBoundary = false;
         sectionStart = note->EndMs();
-        String &text = note->mText;
-        if (text.empty()
-            || (text.rindex(-1) != '-' && text.rindex(-1) != '=')) {
-            atWordBoundary = true;
-        }
+        atWordBoundary =
+            text.empty() || (text.rindex(-1) != '-' && text.rindex(-1) != '=');
     }
-    mFreestyleSections.push_back(std::make_pair(
-        sectionStart + mFreestyleMinDuration->Float(0), FLT_MAX
-    ));
+    // retail pads the open-ended last section with mFreestylePad (+0x48)
+    mFreestyleSections.push_back(
+        std::make_pair(sectionStart + mFreestylePad->Float(0), FLT_MAX)
+    );
 }
 
 void VocalNoteList::AddTambourineGem(int gem) { mTambourineGems.push_back(gem); }
@@ -581,32 +593,24 @@ const VocalNote *VocalNoteList::NoteAt(float ms) const {
     return NULL;
 }
 
+// 0x82780F40
 float VocalNoteList::PitchAt(float ms) const {
     const VocalNote *it =
         std::upper_bound(mNotes.begin(), mNotes.end(), ms, VocalNoteCmp);
-    if (it == mNotes.begin())
-        return 0.0;
-    --it;
-    MILO_ASSERT(it->GetMs() <= ms, 0x1ff);
-    float noteMs = it->GetMs();
-    float noteDur = it->GetDurationMs();
-    if (ms <= noteMs + noteDur) {
-        if (it->EndPitch() == it->StartPitch())
-            return (float)it->StartPitch();
-        float fraction =
-            Max<float>(0.0f, Min<float>(ms, noteMs + noteDur) - noteMs)
-            / noteDur;
-        return fraction * (float)it->EndPitch()
-            + (1.0f - fraction) * (float)it->StartPitch();
+    if (it != mNotes.begin()) {
+        --it;
+        if (ms <= it->GetDurationMs() + it->GetMs())
+            return it->PitchAt(ms);
     }
     return 0.0f;
 }
 
+// 0x82782090
 void VocalNoteList::GetPracticePhrases(
     std::vector<VocalPhrase> &out, int startTick, int endTick
 ) const {
-    for (const VocalPhrase *phrase = mPhrases.data();
-         phrase != mPhrases.data() + mPhrases.size();
+    for (std::vector<VocalPhrase>::const_iterator phrase = mPhrases.begin();
+         phrase != mPhrases.end();
          ++phrase) {
         if (startTick < phrase->unk8 + phrase->unkc
             && endTick > phrase->unk8) {
@@ -615,11 +619,12 @@ void VocalNoteList::GetPracticePhrases(
     }
 }
 
+// 0x827820F8
 void VocalNoteList::GetPracticePhrases2(
     std::vector<VocalPhrase> &out, int startTick, int endTick
 ) const {
-    for (const VocalPhrase *phrase = mPhrases.data();
-         phrase != mPhrases.data() + mPhrases.size();
+    for (std::vector<VocalPhrase>::const_iterator phrase = mPhrases.begin();
+         phrase != mPhrases.end();
          ++phrase) {
         if (startTick < phrase->unk8 + phrase->unkc && endTick > phrase->unk8
             && phrase->unk8 + phrase->unkc <= endTick) {
