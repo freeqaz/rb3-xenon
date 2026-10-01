@@ -602,7 +602,7 @@ FocusTracker.cpp:
 	.text       start:0x826D6660 end:0x826D70A0
 	.text       start:0x826D70A0 end:0x826D70F4
 	.text       start:0x826D70F8 end:0x826D7188
-	.text       start:0x826D7188 end:0x826D9930
+	.text       start:0x826D7188 end:0x826D95C8
 
 Defines.cpp:
 	.pdata      start:0x82231368 end:0x822313A8
@@ -11190,6 +11190,7 @@ band3/game/PerfectSectionTracker.cpp:
 	.pdata      start:0x82235B28 end:0x82235B30
 	.pdata      start:0x82235B30 end:0x82235B40
 	.text       start:0x822D79B8 end:0x822D7AC8
+	.text       start:0x826D95C8 end:0x826D9930
 	.text       start:0x826D9930 end:0x826DA0E0
 	.text       start:0x826DA0E0 end:0x826DA260
 	.text       start:0x826DA260 end:0x826DA488
