@@ -49,7 +49,8 @@ public:
     OBJ_SET_TYPE(AppLabel);
     NEW_OBJ(AppLabel);
     virtual DataNode Handle(DataArray *, bool);
-    virtual ~AppLabel();
+    // No user-declared destructor: retail's ??_DAppLabel (0x825727C8) calls
+    // ~BandLabel directly, i.e. the implicit one was inlined.
     virtual void SetCreditsText(DataArray *, UIListSlot *);
 
     DataNode OnSetUserName(const DataArray *);

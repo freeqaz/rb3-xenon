@@ -18,7 +18,8 @@ public:
     virtual DataNode Handle(DataArray *, bool);
     virtual ~StoreArtLoaderPanel();
     virtual void Poll();
-    virtual void Load();
+    // No Load override: retail's vtable keeps UIPanel::Load (0x82812CB8) in that
+    // slot, and StoreMainPanel::Load calls UIPanel::Load directly.
     virtual void Unload();
 
     void ClearArt();
