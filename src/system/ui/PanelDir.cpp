@@ -1,3 +1,5 @@
+// Retail inlines ObjPtr<T>(owner, ptr) at this TU's member-init sites.
+#define RB3_OBJPTR_INLINE_TWOARG_CTOR
 #include "ui/PanelDir.h"
 #include "obj/Data.h"
 #include "obj/Object.h"
@@ -162,9 +164,12 @@ bool ShouldActivateNativeFlow(const char *dirName, const char *flowPath) {
 PanelDir::PanelDir()
     : mFocusComponent(nullptr), mOwnerPanel(nullptr), mCam(this), mCanEndWorld(true),
       mUseSpecifiedCam(false), mShowEditModePanels(false), mShowFocusComponent(true) {
+    // Retail's ctor has no edit-mode test.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (TheLoadMgr.EditMode()) {
         mShowEditModePanels = true;
     }
+#endif
 }
 
 PanelDir::~PanelDir() {

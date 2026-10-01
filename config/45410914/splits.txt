@@ -96,6 +96,7 @@ Object.cpp:
 	.pdata      start:0x8223C628 end:0x8223C638
 	.pdata      start:0x8223C638 end:0x8223C718
 	.pdata      start:0x8223C718 end:0x8223C750
+	.pdata      start:0x8223C750 end:0x8223C760
 	.pdata      start:0x8223C760 end:0x8223C768
 	.text       start:0x82272DB8 end:0x82272E68
 	.text       start:0x8227403C end:0x8227409C
@@ -124,6 +125,7 @@ Object.cpp:
 	.text       start:0x8275BD08 end:0x8275C7DC
 	.text       start:0x8275C7DC end:0x8275CB84
 	.text       start:0x8275CB88 end:0x8275CE74
+	.text       start:0x8275CE74 end:0x8275CFF4
 	.text       start:0x8275CFF8 end:0x8275D03C
 
 ContextWrapper.cpp:
@@ -1807,7 +1809,6 @@ UIPanel.cpp:
 	.pdata      start:0x82246C58 end:0x82246E38
 	.text       start:0x82573450 end:0x82573464
 	.text       start:0x82573468 end:0x82573470
-	.text       start:0x828027C0 end:0x828027E8
 	.text       start:0x82812510 end:0x82812558
 	.text       start:0x82812558 end:0x82814450
 
@@ -3046,6 +3047,7 @@ UI.cpp:
 	.text       start:0x82802588 end:0x828025B0
 	.text       start:0x828025B0 end:0x82802630
 	.text       start:0x82802630 end:0x828026A8
+	.text       start:0x828027C0 end:0x828027E8
 	.text       start:0x828027E8 end:0x82802840
 	.text       start:0x82802840 end:0x82802978
 	.text       start:0x82802978 end:0x82802F24
@@ -6811,6 +6813,7 @@ DataFile.cpp:
 	.pdata      start:0x82216268 end:0x82216278
 	.pdata      start:0x82216310 end:0x82216318
 	.pdata      start:0x8223D380 end:0x8223D3B0
+	.pdata      start:0x8223D3B0 end:0x8223D3C0
 	.pdata      start:0x8223D3C0 end:0x8223D550
 	.pdata      start:0x8223D550 end:0x8223D578
 	.pdata      start:0x8223D638 end:0x8223D658
@@ -6820,6 +6823,7 @@ DataFile.cpp:
 	.text       start:0x824F88CC end:0x824F8968
 	.text       start:0x824F9188 end:0x824F91DC
 	.text       start:0x8276A758 end:0x8276AA00
+	.text       start:0x8276AA00 end:0x8276AADC
 	.text       start:0x8276AADC end:0x8276C6CC
 	.text       start:0x8276C6CC end:0x8276C958
 	.text       start:0x8276CB18 end:0x8276CB20
@@ -7925,7 +7929,6 @@ UITransitionHandler.cpp:
 	.pdata      start:0x82223550 end:0x82223558
 	.pdata      start:0x8222F540 end:0x8222F548
 	.pdata      start:0x82236E90 end:0x82236E98
-	.pdata      start:0x8223C750 end:0x8223C760
 	.pdata      start:0x82244E10 end:0x82244E18
 	.pdata      start:0x82245C80 end:0x82245C88
 	.pdata      start:0x82245C88 end:0x82245CF8
@@ -7933,7 +7936,6 @@ UITransitionHandler.cpp:
 	.text       start:0x825BFC78 end:0x825BFCD0
 	.text       start:0x826714D8 end:0x82671594
 	.text       start:0x826F7948 end:0x826F79A8
-	.text       start:0x8275CE74 end:0x8275CFF4
 	.text       start:0x827F23B8 end:0x827F2438
 	.text       start:0x828019A0 end:0x82801A0C
 	.text       start:0x82801A10 end:0x82801F78
@@ -12974,14 +12976,12 @@ system/os/UsbMidiGuitar.cpp:
 	.pdata      start:0x82218628 end:0x82218638
 	.pdata      start:0x82218638 end:0x82218698
 	.pdata      start:0x82218698 end:0x822186A8
-	.pdata      start:0x8223D3B0 end:0x8223D3C0
 	.pdata      start:0x82261588 end:0x822615D0
 	.text       start:0x8251A004 end:0x8251A070
 	.text       start:0x8251A070 end:0x8251A138
 	.text       start:0x8251A138 end:0x8251A2DC
 	.text       start:0x8251A2E0 end:0x8251A9B8
 	.text       start:0x8251A9B8 end:0x8251AA60
-	.text       start:0x8276AA00 end:0x8276AADC
 	.text       start:0x82C3F8EC end:0x82C3FB78
 
 system/meta/MemcardMgr.cpp:

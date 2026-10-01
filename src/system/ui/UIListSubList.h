@@ -25,7 +25,7 @@ public:
     );
 
     NEW_OBJ(UIListSubList)
-    OBJ_MEM_OVERLOAD(0x11)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x11)
 
     virtual RndTransformable *RootTrans() { return mList; }
 

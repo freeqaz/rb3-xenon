@@ -90,7 +90,7 @@ public:
     void SetColor(UIListWidgetState, UIComponent::State, UIColor *);
 
     NEW_OBJ(UIListWidget)
-    OBJ_MEM_OVERLOAD(0x48)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x48)
 
 protected:
     UIListWidget();
