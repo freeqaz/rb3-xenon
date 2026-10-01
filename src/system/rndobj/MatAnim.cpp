@@ -312,7 +312,9 @@ void Interp(
 #ifndef HX_NATIVE
 #define gRev gRev_Anim
 #define gAltRev gAltRev_Anim
+#define ANIM_UNITS_OUT_OF_LINE
 #include "rndobj/Anim.cpp"
+#undef ANIM_UNITS_OUT_OF_LINE
 #undef gRev
 #undef gAltRev
 #endif

@@ -19,9 +19,11 @@
 // BinStreamRev member. Mirror that so the rev comparisons match.
 static unsigned short sAnimRev;
 
-static TaskUnits gRateUnits[6] = { kTaskSeconds, kTaskBeats,           kTaskUISeconds,
-                                   kTaskBeats,   kTaskTutorialSeconds, kTaskBeats };
-static float gRateFpu[6] = { 30.0f, 480.0f, 30.0f, 1.0f, 30.0f, 15.0f };
+// Five rates: retail's two tables are 5 entries each, gRateFpu sitting 0x14
+// past gRateUnits.
+static TaskUnits gRateUnits[5] = { kTaskSeconds, kTaskBeats, kTaskUISeconds,
+                                   kTaskBeats, kTaskTutorialSeconds };
+static float gRateFpu[5] = { 30.0f, 480.0f, 30.0f, 1.0f, 30.0f };
 
 #pragma region Hmx::Object
 
@@ -144,7 +146,14 @@ END_LOADS
 
 
 TaskUnits RndAnimatable::RateToTaskUnits(Rate myRate) { return gRateUnits[myRate]; }
-__declspec(noinline) TaskUnits RndAnimatable::Units() const { return gRateUnits[mRate]; }
+// Retail inlines Units() at every call inside this TU, but code from other TUs
+// calls it out of line (20 retail call sites, none in this TU). Those TUs see
+// this body through MatAnim.cpp's scatter-include, which defines
+// ANIM_UNITS_OUT_OF_LINE to keep their calls out of line.
+#ifdef ANIM_UNITS_OUT_OF_LINE
+__declspec(noinline)
+#endif
+TaskUnits RndAnimatable::Units() const { return gRateUnits[mRate]; }
 float RndAnimatable::FramesPerUnit() { return gRateFpu[mRate]; }
 
 bool RndAnimatable::ConvertFrames(float &f) {
@@ -525,29 +534,19 @@ DataNode RndAnimatable::OnConvertFrames(DataArray *arr) {
 }
 
 DataNode RndAnimatable::OnAnimate(DataArray *arr) {
-    float local_blend; // 0x88
-    float local_ease_power; // 0x84
-    EaseType local_ease; // 0x80
-    TaskUnits local_units; // 0x7c
-    const char *local_name; // 0x78
-    float local_delay; // 0x74
-    bool local_wait; // 0x72
-    bool local_wrap; // 0x71
-    bool animTaskLoop; // 0x70
-
-    local_blend = 0.0f;
+    // Retail reads exactly nine keys here (blend/range/loop/dest/period/delay/
+    // units/name/wait) and builds the six-argument AnimTask: no listener, ease,
+    // wrap or trigger_anim_task, and no assert on a zero period.
+    TaskUnits local_units = kTaskSeconds; // 0x60
+    float local_blend = 0.0f; // 0x5c
     float animTaskStart = StartFrame();
     float animTaskEnd = EndFrame();
-    animTaskLoop = Loop();
-    float p = FramesPerUnit();
+    bool animTaskLoop = Loop();
+    float local_delay = 0.0f; // 0x58
+    const char *local_name = nullptr; // 0x54
+    bool local_wait = false; // 0x50
     local_units = Units();
-    local_delay = 0.0f;
-    local_name = nullptr;
-    local_wait = false;
-    local_wrap = false;
-    local_ease_power = 2;
-    local_ease = kEaseLinear;
-    Hmx::Object *local_listener = nullptr;
+    float p = FramesPerUnit();
 
     static Symbol blend("blend");
     static Symbol range("range");
@@ -558,23 +557,13 @@ DataNode RndAnimatable::OnAnimate(DataArray *arr) {
     static Symbol units("units");
     static Symbol name("name");
     static Symbol wait("wait");
-    static Symbol wrap("wrap");
-    static Symbol ease_power("ease_power");
-    static Symbol ease("ease");
-    static Symbol listener("listener");
 
     arr->FindData(blend, local_blend, false);
     arr->FindData(delay, local_delay, false);
     arr->FindData(units, (int &)local_units, false);
     arr->FindData(name, local_name, false);
     arr->FindData(wait, local_wait, false);
-    arr->FindData(wrap, local_wrap, false);
-    arr->FindData(ease_power, local_ease_power, false);
-    arr->FindData(ease, (int &)local_ease, false);
 
-    if (arr->FindArray(listener, false)) {
-        local_listener = arr->FindArray(listener, true)->GetObj(1);
-    }
     DataArray *rangeArr = arr->FindArray(range, false);
     if (rangeArr) {
         animTaskStart = rangeArr->Float(1);
@@ -601,40 +590,23 @@ DataNode RndAnimatable::OnAnimate(DataArray *arr) {
     }
     DataArray *periodArr = arr->FindArray(period, false);
     if (periodArr) {
-        p = periodArr->Float(1);
-        MILO_ASSERT(p, 0x1C5);
-        float fabs = std::fabs(animTaskEnd - animTaskStart);
-        p = fabs / p;
+        p = std::fabs(animTaskEnd - animTaskStart) / periodArr->Float(1);
     }
     AnimTask *task = new AnimTask(
-        this,
-        animTaskStart,
-        animTaskEnd,
-        p,
-        animTaskLoop,
-        local_blend,
-        local_listener,
-        local_ease,
-        local_ease_power,
-        local_wait
+        this, animTaskStart, animTaskEnd, p, animTaskLoop, local_blend
     );
-    ObjPtr<AnimTask> taskPtr(nullptr, task);
-    if (local_name && taskPtr) {
+    if (local_name) {
         MILO_ASSERT(DataThis(), 0x1CD);
-        taskPtr->SetName(local_name, DataThis()->DataDir());
+        task->SetName(local_name, DataThis()->DataDir());
     }
-    if (local_wait && taskPtr->BlendTask()) {
-        if (taskPtr->BlendTask()->Anim()->GetRate() != GetRate()) {
+    if (local_wait && task->BlendTask()) {
+        if (task->BlendTask()->Anim()->GetRate() != GetRate()) {
             MILO_NOTIFY("%s: need same rate to wait", Name());
         } else
-            local_delay = taskPtr->BlendTask()->TimeUntilEnd();
+            local_delay = task->BlendTask()->TimeUntilEnd();
     }
-    static Symbol trigger_anim_task("trigger_anim_task");
-    if (!Property(trigger_anim_task, false) || Property(trigger_anim_task)->Int() != 0) {
-        TheTaskMgr.Start(taskPtr, local_units, local_delay);
-    }
-
-    return DataNode(taskPtr.Ptr());
+    TheTaskMgr.Start(task, local_units, local_delay);
+    return DataNode(task);
 }
 
 // sw2 scatter-include (default/Anim <- rndobj/Line.cpp)
