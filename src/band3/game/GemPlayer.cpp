@@ -1994,7 +1994,7 @@ void GemPlayer::UpdateCrowdMeter(float noteScore, int gem_id) {
     MILO_ASSERT(noteScore >= 0 && noteScore <= 1, 0xC09);
     if (mCrowd->mActive && !mFill) {
         float multiplier = 1.0f;
-        bool inPhrase = TheSongDB->IsInPhrase(kCommonPhrase, mTrackNum, gem_id);
+        int inPhrase = TheSongDB->IsInPhrase(kCommonPhrase, mTrackNum, gem_id);
         if (mDrumSlotWeights) {
             const GameGem &gem = TheSongDB->GetGem(mTrackNum, gem_id);
             int slot = gem.GetSlot();
@@ -2020,8 +2020,7 @@ void GemPlayer::UpdateCrowdMeter(float noteScore, int gem_id) {
             float reward = GetCrowdBoost();
             bool isSoloMod = unk315 && !unk314;
             if (isSoloMod) {
-                Symbol trackSym = mUser->GetTrackSym();
-                reward *= TheScoring->GetSoloGemReward(trackSym);
+                reward *= TheScoring->GetSoloGemReward(mUser->GetTrackSym());
             } else if (inPhrase) {
                 reward = reward * TheScoring->mCommonPhraseReward;
             }
@@ -2029,8 +2028,7 @@ void GemPlayer::UpdateCrowdMeter(float noteScore, int gem_id) {
         } else {
             bool isSoloMod = unk315 && !unk314;
             if (isSoloMod) {
-                Symbol trackSym = mUser->GetTrackSym();
-                multiplier *= TheScoring->GetSoloGemPenalty(trackSym);
+                multiplier *= TheScoring->GetSoloGemPenalty(mUser->GetTrackSym());
             } else if (inPhrase) {
                 multiplier *= TheScoring->mCommonPhrasePenalty;
             }
