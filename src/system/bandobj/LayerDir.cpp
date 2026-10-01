@@ -109,29 +109,18 @@ BinStream &operator<<(BinStream &bs, const LayerDir::Layer &layer) {
     bs << layer.mAllowAlpha;
     bs << layer.mAlphaMin;
     bs << layer.mAlphaMax;
-    {
-        unsigned int length = layer.mBitmapList.size();
-        bs << length;
-        for (std::list<FilePath>::const_iterator it = layer.mBitmapList.begin();
-             it != layer.mBitmapList.end();
-             it++) {
-            bs << *it;
-        }
-    }
+    // Retail calls the list<FilePath> template writer out of line here
+    // (0x82326F60: count, then each path through FileRelativePath).
+    bs << layer.mBitmapList;
     bs << layer.mProxy;
     bs << layer.mColorIdx;
     return bs;
 }
 
-// LANE DD-2, correcting lane DC-3's deferral.  DC-3 read retail's call as
-// `operator<<(BinStream&, const list<Symbol>&)` and concluded our
-// `list<LayerDir::Layer>` member had the wrong TYPE.  That callee name is a
-// RELOCATION ARGUMENT, which objdiff masks under functionRelocDiffs=none, so it
-// cannot witness a type mismatch -- retail's list<Layer> writer simply ICF-folded
-// with list<Symbol>'s and the map named the fold survivor.  Same artifact as
-// BandIKEffector, whose Save calls `?Save@FlowValueCase@@` for CharWeightable
-// and still matches 100%.  No member-type change is needed; the only real
-// blocker was the missing elementwise operator<< added above.
+// `bs << mLayers` is the list<Layer> template writer.  Retail keeps it out of
+// line at 0x82327878: one caller (this Save, 0x82327EFC), and its element call
+// goes to the Layer writer above (0x82327050).  It is not a fold with the
+// list<Symbol> writer -- that one would call the Symbol writer instead.
 BEGIN_SAVES(LayerDir)
     SAVE_REVS(7, 0)
     bs << mUseFreeCam;
