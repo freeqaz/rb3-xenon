@@ -114,9 +114,11 @@ static struct {
     __declspec(align(4)) unsigned short rev;
 } gRevs_CamAnim;
 #ifndef HX_NATIVE
-// Retail (0x824866C0) keeps the revision in a local int, compared whole.
+// Retail (0x824866C0) reads the revision straight into a file-static int and
+// compares it whole (no rev/altRev split).
+static int gRev_CamAnim;
 BEGIN_LOADS(RndCamAnim)
-    int rev;
+    int &rev = gRev_CamAnim;
     bs >> rev;
     if (rev > 0) {
         Hmx::Object::Load(bs);

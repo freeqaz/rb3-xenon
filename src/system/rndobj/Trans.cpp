@@ -190,10 +190,31 @@ END_COPYS
 
 INIT_REVS(9, 0)
 
+#ifndef HX_NATIVE
+// Retail (0x823FA038) splits the revision into a file-static {altRev, rev}
+// pair and re-reads the halfword at every test (`lhz`/`cmplwi`); every field
+// comes straight off `bs` -- no BinStreamRev on the stack.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_Trans;
+#define TRANS_LOAD_REV gRevs_Trans.rev
+#define TRANS_LOAD_STREAM bs
+#else
+#define TRANS_LOAD_REV gRev
+#define TRANS_LOAD_STREAM d
+#endif
 BEGIN_LOADS(RndTransformable)
+#ifndef HX_NATIVE
+    int rev;
+    bs >> rev;
+    gRevs_Trans.rev = getHmxRev(rev);
+    gRevs_Trans.altRev = getAltRev(rev);
+#else
     LOAD_REVS(bs)
     ASSERT_REVS(9, 0)
     int gRev = d.rev;
+#endif
     if (ClassName() == StaticClassName()) {
         Hmx::Object::Load(bs);
     }
@@ -206,7 +227,7 @@ BEGIN_LOADS(RndTransformable)
         mWorldWriterTag = kWorldLoaded; // X18 -- world came straight off disk
 #endif
     }
-    if (gRev < 9) {
+    if (TRANS_LOAD_REV < 9) {
         ObjPtrList<RndTransformable> l(this);
         bs >> l;
         FOREACH (it, l) {
@@ -214,20 +235,18 @@ BEGIN_LOADS(RndTransformable)
         }
     }
 
-    switch (gRev) {
-    default:
+    // An if/else ladder, not a switch: retail (0x823FA038) tests the rev with
+    // an unsigned compare chain (> 8, > 6, == 6, >= 3, != 0).
+    if (TRANS_LOAD_REV > 8) {
         bs >> (int &)mConstraint;
-        break;
-    case 7:
-    case 8:
+    } else if (TRANS_LOAD_REV > 6) {
         bs >> (int &)mConstraint;
         if (mConstraint == 4) {
             mConstraint = kConstraintNone;
-        } else if (mConstraint == 2 || mConstraint == 3 || mConstraint == 4) {
+        } else if (mConstraint > 1 && mConstraint < 5) {
             mConstraint = (Constraint)(mConstraint + kConstraintLocalRotate);
         }
-        break;
-    case 6:
+    } else if (TRANS_LOAD_REV == 6) {
         bs >> (int &)mConstraint;
         mPreserveScale = mConstraint > kConstraintTargetWorld;
         if (mConstraint > 9) {
@@ -237,10 +256,7 @@ BEGIN_LOADS(RndTransformable)
         } else if (mConstraint == 2) {
             mConstraint = kConstraintParentWorld;
         }
-        break;
-    case 3:
-    case 4:
-    case 5:
+    } else if (TRANS_LOAD_REV >= 3) {
         // Rev 3-5 packed the constraint mode and the preserve-scale flag into one
         // int: bit 0x80 is preserve-scale, the low bits select the billboard mode
         // (hence the 0x04/0x84, 0x08/0x88, ... case pairs below).
@@ -272,63 +288,63 @@ BEGIN_LOADS(RndTransformable)
             mConstraint = kConstraintNone;
             break;
         }
-        break;
-    case 1:
-    case 2: {
+    } else if (TRANS_LOAD_REV != 0) {
         unsigned int numb4;
         bs >> (int &)numb4;
         int sp80[6] = { 0, 0, 0, 5, 6, 7 };
-                mConstraint = numb4 >= 0x18 ? kConstraintNone : (Constraint)sp80[numb4];
-        break;
+        if (numb4 >= 0x18) {
+            mConstraint = kConstraintNone;
+        } else {
+            mConstraint = (Constraint)sp80[numb4];
+        }
     }
-    case 0:
-        break;
-    }
-    if (gRev > 0 && gRev < 7) {
+    if (TRANS_LOAD_REV > 0 && TRANS_LOAD_REV < 7) {
         Vector3 v;
         bs >> v;
         if (!v.IsZero()) {
             MILO_LOG("Transform origin no longer supported\n");
         }
     }
-    if (gRev > 1 && gRev < 5) {
+    if (TRANS_LOAD_REV > 1 && TRANS_LOAD_REV < 5) {
         bool b3u;
-        d >> b3u;
+        TRANS_LOAD_STREAM >> b3u;
     }
-    if (gRev > 5 && gRev < 8) {
+    if (TRANS_LOAD_REV > 5 && TRANS_LOAD_REV < 8) {
         Sphere s;
         bs >> s;
         RndDrawable *draw = dynamic_cast<RndDrawable *>(this);
         if (draw)
             draw->SetSphere(s);
     }
-    if (gRev > 5) {
+    if (TRANS_LOAD_REV > 5) {
         if (gLoadingProxyFromDisk) {
             ObjPtr<RndTransformable> tPtr(this);
             tPtr.Load(bs, false, 0);
         } else
             bs >> mTarget;
     }
-    if (gRev > 6)
-        d >> mPreserveScale;
-    if (gRev > 8) {
+    if (TRANS_LOAD_REV > 6)
+        TRANS_LOAD_STREAM >> mPreserveScale;
+    if (TRANS_LOAD_REV > 8) {
         ObjPtr<RndTransformable> tPtr(this);
         if (!gLoadingProxyFromDisk) {
             bs >> tPtr;
             SetTransParent(tPtr, false);
         } else
             tPtr.Load(bs, false, 0);
-    } else if (gRev > 6) {
+    } else if (TRANS_LOAD_REV > 6) {
         ObjPtr<RndTransformable> tPtr(this);
         bs >> tPtr;
         if (tPtr != this) {
             SetTransParent(tPtr, false);
             mConstraint = kConstraintParentWorld;
         }
-    } else if (gRev == 6 && mConstraint == kConstraintParentWorld) {
+    } else if (TRANS_LOAD_REV == 6 && mConstraint == kConstraintParentWorld) {
         SetTransParent(mTarget, false);
     }
 END_LOADS
+#undef TRANS_LOAD_REV
+#undef TRANS_LOAD_STREAM
 
 void RndTransformable::Highlight() { UtilDrawAxes(WorldXfm(), 3, Hmx::Color(1, 1, 1)); }
 
