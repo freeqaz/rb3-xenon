@@ -402,28 +402,21 @@ void StorePanel::PopulateOffers(DataArray *arr, bool b) {
             DeleteAll(mOffers);
         }
 
-        std::vector<StoreOffer *> *offerVec = &mPendingOffers;
-        if (!b) {
-            offerVec = &mOffers;
-        }
+        std::vector<StoreOffer *> *offerVec = b ? &mPendingOffers : &mOffers;
 
         if (arr != NULL) {
             arr->AddRef();
-            int i = 1;
-
-            if (arr->Size() > 1) {
-                do {
-                    DataArray *child_arr = arr->Array(i);
-                    StoreOffer *offer = MakeNewOffer(child_arr);
-
-                    if (((mShowTestOffers == 0) && offer->IsTest()) || !offer->ValidTitle()) {
-                        delete offer;
-                    } else {
-                        offerVec->push_back(offer);
-                    }
-
-                    i++;
-                } while (i < arr->Size());
+            for (int i = 1; i < arr->Size(); i++) {
+                StoreOffer *offer = MakeNewOffer(arr->Array(i));
+                if (!mShowTestOffers && offer->IsTest()) {
+                    delete offer;
+                    continue;
+                }
+                if (!offer->ValidTitle()) {
+                    delete offer;
+                    continue;
+                }
+                offerVec->push_back(offer);
             }
 
 #ifdef HX_NATIVE
