@@ -190,7 +190,8 @@ void Tracker::UpdateCurrentValueLabel(UILabel &) const {}
 String Tracker::GetPlayerContributionString(Symbol) const { return ""; }
 
 bool Tracker::HasPlayerForInstrument(Symbol s) const {
-    return mSource->GetIDFromInstrument(s).NotNull();
+    TrackerPlayerID id = mSource->GetIDFromInstrument(s);
+    return id.NotNull();
 }
 
 bool Tracker::ReachedAnyTarget() const { return GetTargetSuccessLevel() > -1; }
