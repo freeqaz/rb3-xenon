@@ -57,7 +57,7 @@ void OverdriveMeter::Reset() {
 void OverdriveMeter::SetEnergy(
     float f1, OverdriveMeter::State state, Symbol s, float f2, bool b
 ) {
-    if (mExtendAnimGroup && (f1 != mExtendAnimGroup->GetFrame() || b)) {
+    if (mExtendAnimGroup && (mExtendAnimGroup->GetFrame() != f1 || b)) {
         mExtendAnimGroup->SetFrame(f1, 1.0f);
     }
     if ((state != mState) || b) {
