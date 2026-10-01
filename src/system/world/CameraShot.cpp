@@ -172,11 +172,14 @@ RndTransformable *LoadSubPart(BinStream &d, CamShot *shot) {
         // `str` into a by-value temporary, calls PathName(shot), then
         // destroys the copy (0x824BE030). MILO_LOG's comma form copies
         // nothing, so the function-call form is spelled out here.
+        // MiloStripEval exists only in the match build; natively the site is dropped.
+#ifndef HX_NATIVE
         MiloStripEval(
             "%s could not find %s, assuming character, attaching to base\n",
             PathName(shot),
             str
         );
+#endif
     }
     char buf[256];
     strcpy(buf, sym.Str());

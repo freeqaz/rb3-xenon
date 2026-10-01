@@ -5,7 +5,8 @@
 
 // hash<Symbol> hashes the interned char* word identity. Guarded: the band3
 // accomplishment headers define the same specialization.
-#ifndef RB3_HASH_SYMBOL_DEFINED
+// The native build's hash_map is not stlport and keeps a private hasher below.
+#if !defined(HX_NATIVE) && !defined(RB3_HASH_SYMBOL_DEFINED)
 #define RB3_HASH_SYMBOL_DEFINED
 namespace stlpmtx_std {
 _STLP_TEMPLATE_NULL struct hash<Symbol> {
@@ -56,7 +57,14 @@ protected:
     // 0x54 (WorldDir tail proof). It uses the stock hash<Symbol>: retail's
     // operator[] (0x824B9A58) and _M_insert share the hash<Symbol> _M_find and
     // resize bodies with the other Symbol-keyed hash_maps.
+#ifdef HX_NATIVE
+    struct SymbolHash {
+        size_t operator()(Symbol s) const { return (size_t)s.Str(); }
+    };
+    std::hash_map<Symbol, std::vector<LightPreset *>, SymbolHash> mPresets;
+#else
     std::hash_map<Symbol, std::vector<LightPreset *> > mPresets; // 0x4 (0x1c)
+#endif
     Symbol mLastCategory; // 0x20
     WorldDir *mParent; // 0x24
     LightPreset *mPresetOverride; // 0x28
