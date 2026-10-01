@@ -1252,7 +1252,8 @@ void MetaPerformer::TriggerSongCompletion() {
                 Difficulty d8 = localUser->GetDifficulty();
                 if (!player->GetQuarantined() && localUser->unkc) {
                     int i7 = localUser->GetPadNum();
-                    info.AddSoloStats(i7, localUser->GetSlot(), s, d8, profile, player);
+                    int slot = localUser->GetSlot();
+                    info.AddSoloStats(i7, slot, s, d8, profile, player);
                     if (player->IsAutoplay()) {
                         m16 = true;
                     }
