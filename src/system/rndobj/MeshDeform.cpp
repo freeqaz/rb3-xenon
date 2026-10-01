@@ -342,10 +342,9 @@ void RndMeshDeform::Reskin(SyncMeshCB *cb, bool force) {
     cb->SyncMesh(mMesh, 0x1f);
     mDeformed = true;
     std::vector<Transform> xfms;
-    {
-        MemTemp tmp;
-        xfms.resize(mBones.size());
-    }
+    MemPushTemp();
+    xfms.resize(mBones.size());
+    MemPopTemp();
     for (unsigned int i = 0; i < mBones.size(); i++) {
         if (mBones[i].mBone) {
             Transform world;
@@ -358,10 +357,11 @@ void RndMeshDeform::Reskin(SyncMeshCB *cb, bool force) {
     }
     int numVerts = mMesh->Verts().size();
     int vertIdx = 0;
-    for (u8 *vert = (u8 *)mVerts.mData; vert < (u8 *)mVerts.mData + mVerts.mSize;
+    VertArray &verts = mVerts;
+    for (u8 *vert = (u8 *)verts.mData; vert < (u8 *)verts.mData + verts.mSize;
          vert += *vert * 2 + 1) {
         if (vertIdx == numVerts) {
-            MILO_FAIL(
+            MILO_FAIL_RTL(
                 "%s cannot reskin %s, the vert counts differ mesh:%d me:%d",
                 PathName(this),
                 mMesh->Name(),
@@ -376,40 +376,44 @@ void RndMeshDeform::Reskin(SyncMeshCB *cb, bool force) {
         weighted.m.z.Zero();
         weighted.v.Zero();
         float totalWeight = 0;
+        u8 *pair = vert;
         for (int n = 0; n < *vert; n++) {
-            float w = vert[n * 2 + 2] * (1.0f / 255.0f);
+            unsigned int bone = pair[1];
+            unsigned int weight = pair[2];
+            pair += 2;
+            float w = weight * (1.0f / 255.0f);
             totalWeight += w;
-            ScaleAddEq(weighted, xfms[vert[n * 2 + 1]], w);
+            ScaleAddEq(weighted, xfms[bone], w);
         }
         ScaleEq(weighted, 1.0f / totalWeight);
         if (!mSkipInverse) {
             Multiply(weighted, mMeshInverse, weighted);
         }
-        RndMesh::Vert &v = mMesh->Verts(vertIdx);
-        Multiply(v.pos, weighted, v.pos);
+        Vector3 &pos = mMesh->Verts(vertIdx).pos;
+        Vector3 &norm = mMesh->Verts(vertIdx).norm;
+        Multiply(pos, weighted, pos);
+        // A vector perpendicular to the normal: project out the normal from the
+        // axis it is least aligned with (norm * -norm[k], then +1 on k).
         Vector3 axis;
-        float anx = std::fabs(v.norm.x);
-        float any = std::fabs(v.norm.y);
-        float anz = std::fabs(v.norm.z);
+        float anx = fabsf(norm.x);
+        float any = fabsf(norm.y);
+        float anz = fabsf(norm.z);
         if (anx <= any && anx <= anz) {
-            axis.x = v.norm.x * -v.norm.x + 1.0f;
-            axis.y = v.norm.y * -v.norm.x;
-            axis.z = v.norm.z * -v.norm.x;
+            Scale(norm, -norm.x, axis);
+            axis.x += 1.0f;
         } else if (any < anx && any < anz) {
-            axis.x = v.norm.x * -v.norm.y;
-            axis.y = v.norm.y * -v.norm.y + 1.0f;
-            axis.z = v.norm.z * -v.norm.y;
+            Scale(norm, -norm.y, axis);
+            axis.y += 1.0f;
         } else {
-            axis.x = v.norm.x * -v.norm.z;
-            axis.y = v.norm.y * -v.norm.z;
-            axis.z = v.norm.z * -v.norm.z + 1.0f;
+            Scale(norm, -norm.z, axis);
+            axis.z += 1.0f;
         }
         Vector3 cross;
-        Cross(v.norm, axis, cross);
+        Cross(norm, axis, cross);
         Multiply(axis, weighted.m, axis);
         Multiply(cross, weighted.m, cross);
-        Cross(axis, cross, v.norm);
-        Normalize(v.norm, v.norm);
+        Cross(axis, cross, norm);
+        Normalize(norm, norm);
         vertIdx++;
     }
 }
