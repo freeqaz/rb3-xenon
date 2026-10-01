@@ -439,7 +439,7 @@ def audit(ours, sv_key, S, members, R, checks, sites=None, nob_override=None):
 
 
 # ---------------------------------------------------------------- selftest
-def selftest(R, rs, ours, S, members, checks):
+def selftest(R, rs, ours, S, members, checks, withdrawn_spellings=()):
     """Run every control; return [(tag, label, wanted, got)]."""
     sv = ours.get(S)
     res = []
@@ -519,9 +519,14 @@ def selftest(R, rs, ours, S, members, checks):
         audit(ours, sv_key, S, [pos], R, checks, sites=sites,
               nob_override={pos: ("INLINED", 0)})[0]["verdict"])
 
-    # newobject classifier must be able to say BOTH things on live retail bytes
+    # newobject classifier must be able to say BOTH things on live retail bytes.
+    # ⚠ Population = folded AND withdrawn spellings.  Measured: drawing it from
+    # the FOLDED list alone went RED the moment --withdraw removed every
+    # INLINED member -- the cleanup this classifier drove made its own control
+    # vacuous.  The withdrawn records are the population that still holds the
+    # known-INLINED witnesses.
     seen = collections.Counter()
-    for m in members:
+    for m in sorted(set(members) | set(withdrawn_spellings)):
         c = class_of(m)
         if c:
             seen[newobject_class(R, c)[0]] += 1
@@ -639,7 +644,8 @@ def main():
 
     if args.selftest or args.self_break:
         checks = set(ALL_CHECKS) - ({args.self_break} if args.self_break else set())
-        res = selftest(R, rs, ours, S, members, checks)
+        res = selftest(R, rs, ours, S, members, checks,
+                       [w["spelling"] for w in (grp[0].get("withdrawn", []) if grp else [])])
         red = collections.Counter()
         for tag, label, want, got in res:
             bad = want != got
