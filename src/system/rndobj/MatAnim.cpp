@@ -9,11 +9,10 @@
 
 Hmx::Object *RndMatAnim::sOwner;
 
-RndMatAnim::TexPtr::TexPtr(RndTex *tex) : ObjPtr<RndTex>(DeferOwner(), tex) {
-#ifdef HX_NATIVE
-    mOwner = sOwner;
-#endif
-}
+// Two out-of-line ctors (0x82461948 / 0x82461990); each hands the current
+// RndMatAnim::sOwner to ObjPtr<RndTex> as the owner.
+RndMatAnim::TexPtr::TexPtr() : ObjPtr<RndTex>(sOwner, nullptr) {}
+RndMatAnim::TexPtr::TexPtr(RndTex *tex) : ObjPtr<RndTex>(sOwner, tex) {}
 
 #pragma region Hmx::Object
 
