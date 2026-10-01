@@ -101,8 +101,8 @@ void BandList::PreLoad(BinStream &bs) {
     ASSERT_REVS(0x16, 0);
     mBandListRev = gRev;
     if (mBandListRev <= 0x11) {
-        BinStreamRev d(bs, mBandListRev);
-        UIList::PreLoadWithRev(d);
+        // Retail passes the raw stream and the rev; there is no rev wrapper.
+        UIList::PreLoadWithRev(bs, mBandListRev);
     } else {
         UIList::PreLoad(bs);
     }

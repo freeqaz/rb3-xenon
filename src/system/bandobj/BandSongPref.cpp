@@ -23,18 +23,21 @@ BEGIN_SAVES(BandSongPref)
     bs << mAnimGenre;
 END_SAVES
 
+// Retail reads the whole packed rev straight into a file-scope int (one 4-byte
+// read, no hmx/alt split, no rev wrapper) and tests it signed.
+static int sBandSongPrefRev;
+
 BEGIN_LOADS(BandSongPref)
-    LOAD_REVS(bs)
-    ASSERT_REVS(3, 0)
-    LOAD_SUPERCLASS(Hmx::Object);
+    bs >> sBandSongPrefRev;
+    Hmx::Object::Load(bs);
     bs >> mPart2Instrument;
     bs >> mPart3Instrument;
     bs >> mPart4Instrument;
-    if (d.rev != 0 && d.rev < 3) {
-        unsigned char dump;
+    if (sBandSongPrefRev > 0 && sBandSongPrefRev < 3) {
+        bool dump;
         bs >> dump;
     }
-    if (d.rev > 1)
+    if (sBandSongPrefRev > 1)
         bs >> mAnimGenre;
 END_LOADS
 

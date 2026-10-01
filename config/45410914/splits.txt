@@ -1507,7 +1507,7 @@ Trig.cpp:
 
 Key.cpp:
 	.pdata      start:0x82215F10 end:0x82215F28
-	.text       start:0x824F58C0 end:0x824F5DCC
+	.text       start:0x824F58C8 end:0x824F5DCC
 
 Interp.cpp:
 	.pdata      start:0x82215F28 end:0x82215F78
@@ -2174,13 +2174,13 @@ CharSleeve.cpp:
 CharUpperTwist.cpp:
 	.pdata      start:0x82206138 end:0x82206198
 	.pdata      start:0x822061B0 end:0x822061C0
-	.pdata      start:0x822061D8 end:0x822061F8
+	.pdata      start:0x822061D0 end:0x822061F8
 	.pdata      start:0x82206200 end:0x82206208
 	.text       start:0x823C69B0 end:0x823C6FF4
 	.text       start:0x823C70E8 end:0x823C7204
 	.text       start:0x823C7308 end:0x823C7314
 	.text       start:0x823C7318 end:0x823C7324
-	.text       start:0x823C73F8 end:0x823C75C4
+	.text       start:0x823C7334 end:0x823C75C4
 	.text       start:0x823C75C8 end:0x823C75D4
 	.text       start:0x823C7620 end:0x823C76FC
 	.text       start:0x823C7760 end:0x823C7768
@@ -2188,14 +2188,12 @@ CharUpperTwist.cpp:
 FlowIf.cpp:
 	.pdata      start:0x82206198 end:0x822061B0
 	.pdata      start:0x822061C8 end:0x822061D0
-	.pdata      start:0x822061D0 end:0x822061D8
 	.pdata      start:0x822061F8 end:0x82206200
 	.text       start:0x823C6FF4 end:0x823C7000
 	.text       start:0x823C7000 end:0x823C70E8
 	.text       start:0x823C72DC end:0x823C7308
 	.text       start:0x823C7314 end:0x823C7318
 	.text       start:0x823C7324 end:0x823C7328
-	.text       start:0x823C7334 end:0x823C73F8
 	.text       start:0x823C75C4 end:0x823C75C8
 	.text       start:0x823C75D4 end:0x823C761C
 
@@ -7584,31 +7582,27 @@ CharBoneOffset.cpp:
 
 CharWeightable.cpp:
 	.pdata      start:0x82204CD0 end:0x82204CD8
-	.pdata      start:0x82204CD8 end:0x82204D20
+	.pdata      start:0x82204CD8 end:0x82204D28
 	.pdata      start:0x82204D38 end:0x82204D60
-	.pdata      start:0x82204D68 end:0x82204D70
+	.pdata      start:0x82204D60 end:0x82204D70
 	.text       start:0x823AE884 end:0x823AE918
-	.text       start:0x823AE918 end:0x823AEE20
+	.text       start:0x823AE918 end:0x823AEE98
 	.text       start:0x823AEF98 end:0x823AF210
 	.text       start:0x823AF210 end:0x823AF21C
-	.text       start:0x823AF2A8 end:0x823AF310
+	.text       start:0x823AF22C end:0x823AF310
 
 CharPollGroup.cpp:
-	.pdata      start:0x82204D60 end:0x82204D68
 	.pdata      start:0x82204D70 end:0x82204EC0
 	.pdata      start:0x82204EC8 end:0x82204ED0
 	.pdata      start:0x82204EE0 end:0x82204EF8
 	.text       start:0x823AF21C end:0x823AF220
-	.text       start:0x823AF22C end:0x823AF2A8
 	.text       start:0x823AF310 end:0x823B08CC
 	.text       start:0x823B0914 end:0x823B0AA8
 	.text       start:0x823B0B00 end:0x823B0C78
 
 FlowValueCase.cpp:
-	.pdata      start:0x82204D20 end:0x82204D28
 	.pdata      start:0x82205680 end:0x822056A8
 	.pdata      start:0x8222ADD8 end:0x8222ADE0
-	.text       start:0x823AEE20 end:0x823AEE98
 	.text       start:0x823AEF8C end:0x823AEF98
 	.text       start:0x823B9B24 end:0x823B9B28
 	.text       start:0x823B9D30 end:0x823B9D38
@@ -10900,7 +10894,7 @@ system/synth/MoggClip.cpp:
 Color.cpp:
 	.pdata      start:0x82215F08 end:0x82215F10
 	.text       start:0x824F52B8 end:0x824F5364
-	.text       start:0x824F5368 end:0x824F58C0
+	.text       start:0x824F5368 end:0x824F58C8
 
 EventAnim.cpp:
 	.pdata      start:0x82213D50 end:0x82213D70

@@ -95,46 +95,52 @@ void RndDir::Export(DataArray *a, bool b2) {
 
 INIT_REVS(10, 0)
 
+// Retail keeps the Pre/PostLoad rev in one aligned file-scope aggregate
+// (altRev +0, rev +4), not a BinStreamRev, and reads the raw stream. PreLoad
+// pushes before ObjectDir::PreLoad and PostLoad pops after ObjectDir::PostLoad,
+// so the LIFO rev stack stays balanced.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_RndDir;
+
 void RndDir::PreLoad(BinStream &bs) {
-    LOAD_REVS(bs)
-    ASSERT_REVS(10, 0)
-#ifndef HX_NATIVE
-    // Retail (0x82406178) pushes the revision BEFORE ObjectDir::PreLoad.
-    bs.PushRev(packRevs(d.altRev, d.rev), this);
+    int rev;
+    bs >> rev;
+    gRevs_RndDir.rev = getHmxRev(rev);
+    gRevs_RndDir.altRev = getAltRev(rev);
+    bs.PushRev(packRevs(gRevs_RndDir.altRev, gRevs_RndDir.rev), this);
     ObjectDir::PreLoad(bs);
-#else
-    ObjectDir::PreLoad(bs);
-    bs.PushRev(packRevs(d.altRev, d.rev), this);
-#endif
 }
 
 void RndDir::PostLoad(BinStream &bs) {
-    BinStreamRev d(bs, bs.PopRev(this));
     ObjectDir::PostLoad(bs);
-    RndAnimatable::Load(d.stream);
-    RndDrawable::Load(d.stream);
-    if (d.rev > 0) {
-        RndTransformable::Load(d.stream);
+    int rev = bs.PopRev(this);
+    gRevs_RndDir.rev = getHmxRev(rev);
+    gRevs_RndDir.altRev = getAltRev(rev);
+    RndAnimatable::Load(bs);
+    RndDrawable::Load(bs);
+    if (gRevs_RndDir.rev > 0) {
+        RndTransformable::Load(bs);
     }
-    if (d.rev > 1) {
+    if (gRevs_RndDir.rev > 1) {
         if (gLoadingProxyFromDisk) {
             ObjPtr<RndEnviron> env(this);
-            env.Load(d.stream, false, nullptr);
+            env.Load(bs, false, nullptr);
         } else {
-            d.stream >> mEnv;
+            bs >> mEnv;
         }
     }
-    if (d.rev > 2 && d.rev != 9) {
-        d.stream >> mTestEvent;
+    if (gRevs_RndDir.rev > 2 && gRevs_RndDir.rev != 9) {
+        bs >> mTestEvent;
     }
-    if (d.rev > 3 && d.rev < 9) {
+    if (gRevs_RndDir.rev > 3 && gRevs_RndDir.rev < 9) {
         Symbol s;
-        d.stream >> s;
-        d.stream >> s;
+        bs >> s >> s;
     }
-    if (d.rev > 4 && d.rev < 8) {
+    if (gRevs_RndDir.rev > 4 && gRevs_RndDir.rev < 8) {
         RndPostProc *pp = Hmx::Object::New<RndPostProc>();
-        pp->LoadRev(d.stream, d.rev);
+        pp->LoadRev(bs, gRevs_RndDir.rev);
         delete pp;
     }
 }

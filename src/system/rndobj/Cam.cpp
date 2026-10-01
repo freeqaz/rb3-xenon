@@ -554,29 +554,31 @@ void RndCam::GetViewProjectXfms(Transform &viewXfm, Hmx::Matrix4 &projMtx) const
 // Leaf at 0x82433A68, directly after GetViewProjectXfms; its callers include
 // GetInfiniteViewProj below and the shadow/shader code.
 namespace Hmx {
+    // Rotation row times the upper 3x4 of a matrix, written through a reference
+    // so each element is stored before the operands are reloaded.
+    static __forceinline void MultiplyRow(const Vector3 &v, const Matrix4 &m, Vector4 &out) {
+        out.x = v.x * m.x.x + v.y * m.y.x + v.z * m.z.x;
+        out.y = v.x * m.x.y + v.y * m.y.y + v.z * m.z.y;
+        out.z = v.x * m.x.z + v.y * m.y.z + v.z * m.z.z;
+        out.w = v.x * m.x.w + v.y * m.y.w + v.z * m.z.w;
+    }
+
+    // Translation row: the same product plus the matrix's own translation.
+    static __forceinline void MultiplyPoint(const Vector3 &v, const Matrix4 &m, Vector4 &out) {
+        out.x = v.x * m.x.x + v.y * m.y.x + v.z * m.z.x + m.w.x;
+        out.y = v.x * m.x.y + v.y * m.y.y + v.z * m.z.y + m.w.y;
+        out.z = v.x * m.x.z + v.y * m.y.z + v.z * m.z.z + m.w.z;
+        out.w = v.x * m.x.w + v.y * m.y.w + v.z * m.z.w + m.w.w;
+    }
+
+    // Retail 0x82433A68: the three rotation rows, then the translation row,
+    // which adds b.w last.
     Matrix4 operator*(const Transform &t, const Matrix4 &b) {
         Matrix4 out;
-
-        { Vector3 ca = b.Col3(0); out.x.x = ca.z * t.m.x.z + ca.y * t.m.x.y + ca.x * t.m.x.x; }
-        { Vector3 cb = b.Col3(1); out.x.y = cb.z * t.m.x.z + cb.y * t.m.x.y + cb.x * t.m.x.x; }
-        { Vector3 ca = b.Col3(2); out.x.z = ca.z * t.m.x.z + ca.y * t.m.x.y + ca.x * t.m.x.x; }
-        { Vector3 cb = b.Col3(3); out.x.w = cb.z * t.m.x.z + cb.y * t.m.x.y + cb.x * t.m.x.x; }
-
-        { Vector3 ca = b.Col3(0); out.y.x = ca.z * t.m.y.z + ca.y * t.m.y.y + ca.x * t.m.y.x; }
-        { Vector3 cb = b.Col3(1); out.y.y = cb.z * t.m.y.z + cb.y * t.m.y.y + cb.x * t.m.y.x; }
-        { Vector3 ca = b.Col3(2); out.y.z = ca.z * t.m.y.z + ca.y * t.m.y.y + ca.x * t.m.y.x; }
-        { Vector3 cb = b.Col3(3); out.y.w = cb.z * t.m.y.z + cb.y * t.m.y.y + cb.x * t.m.y.x; }
-
-        { Vector3 ca = b.Col3(0); out.z.x = ca.z * t.m.z.z + ca.y * t.m.z.y + ca.x * t.m.z.x; }
-        { Vector3 cb = b.Col3(1); out.z.y = cb.z * t.m.z.z + cb.y * t.m.z.y + cb.x * t.m.z.x; }
-        { Vector3 ca = b.Col3(2); out.z.z = ca.z * t.m.z.z + ca.y * t.m.z.y + ca.x * t.m.z.x; }
-        { Vector3 cb = b.Col3(3); out.z.w = cb.z * t.m.z.z + cb.y * t.m.z.y + cb.x * t.m.z.x; }
-
-        { Vector3 ca = b.Col3(0); out.w.x = ca.z * t.v.z + ca.y * t.v.y + ca.x * t.v.x + b.w.x; }
-        { Vector3 cb = b.Col3(1); out.w.y = cb.z * t.v.z + cb.y * t.v.y + cb.x * t.v.x + b.w.y; }
-        { Vector3 ca = b.Col3(2); out.w.z = ca.z * t.v.z + ca.y * t.v.y + ca.x * t.v.x + b.w.z; }
-        { Vector3 cb = b.Col3(3); out.w.w = cb.z * t.v.z + cb.y * t.v.y + cb.x * t.v.x + b.w.w; }
-
+        MultiplyRow(t.m.x, b, out.x);
+        MultiplyRow(t.m.y, b, out.y);
+        MultiplyRow(t.m.z, b, out.z);
+        MultiplyPoint(t.v, b, out.w);
         return out;
     }
 }

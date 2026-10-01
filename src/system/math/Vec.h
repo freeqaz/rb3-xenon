@@ -288,13 +288,19 @@ inline void Normalize(const Vector2 &in, Vector2 &out) {
     out.x = x * inv;
 }
 
+// Retail's out-of-line copy (0x822C1280): a zero vector is written as zero
+// (y, z, then x through the shared tail store), anything else is scaled by
+// 1 / Length. The old form scaled by 0 instead, which is the same result for a
+// zero vector but a different body.
 inline void Normalize(const Vector3 &in, Vector3 &out) {
-    float inv = 0;
-    float len = Length(in);
-    if (len != 0) {
-        inv = 1.0f / len;
+    float x = in.x;
+    if (x == 0 && in.y == 0 && in.z == 0) {
+        out.y = 0;
+        out.z = 0;
+        out.x = 0;
+        return;
     }
-    Scale(in, inv, out);
+    Scale(in, 1.0f / Length(in), out);
 }
 
 inline void NormalizeScale(const Vector3 &in, float scalar, Vector3 &out) {

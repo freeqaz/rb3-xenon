@@ -48,20 +48,15 @@ BEGIN_CUSTOM_PROPSYNC(CharMeshHide::Hide)
     SYNC_PROP(show, o.mShow)
 END_CUSTOM_PROPSYNC
 
+// Retail reads the raw stream and gates mShow on the rev CharMeshHide::Load
+// left in the file static.
 BinStream &operator>>(BinStream &bs, CharMeshHide::Hide &hide) {
     bs >> hide.mDraw;
     bs >> hide.mFlags;
-    bs >> hide.mShow;
-    return bs;
-}
-
-BinStreamRev &operator>>(BinStreamRev &d, CharMeshHide::Hide &hide) {
-    d >> hide.mDraw;
-    d >> hide.mFlags;
-    if (d.rev > 1) {
-        d >> hide.mShow;
+    if (gRev > 1) {
+        bs >> hide.mShow;
     }
-    return d;
+    return bs;
 }
 
 BinStream &operator<<(BinStream &bs, const CharMeshHide::Hide &hide) {
