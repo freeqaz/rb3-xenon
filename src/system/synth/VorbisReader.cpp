@@ -116,7 +116,12 @@ void VorbisReader::Seek(int sample) {
 
 void VorbisReader::Init() {
     MILO_ASSERT(mStream, 0x41F);
+#ifdef HX_NATIVE
     mStream->InitInfo(mNumChannels, mSampleRate, false, mOggMap.GetSongLengthSamples());
+#else
+    // retail passes no song length (-1)
+    mStream->InitInfo(mNumChannels, mSampleRate, false, -1);
+#endif
 }
 
 int VorbisReader::ConsumeData(void **v, int i1, int i2) {
