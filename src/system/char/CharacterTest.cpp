@@ -90,72 +90,94 @@ END_SAVES
 
 INIT_REVS(15, 0)
 
+// Retail 0x823DDFC0 keeps no BinStreamRev: the packed rev goes into one
+// aligned file-scope aggregate (altRev +0, rev +4) and every field is read
+// from the raw stream.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharacterTest;
+
 BEGIN_LOADS(CharacterTest)
-    LOAD_REVS(bs)
-    if (d.rev > 15) {
+    int rev;
+    bs >> rev;
+    gRevs_CharacterTest.rev = getHmxRev(rev);
+    gRevs_CharacterTest.altRev = getAltRev(rev);
+#ifdef HX_NATIVE
+    if (gRevs_CharacterTest.rev > 15) {
         MILO_FAIL(
             "%s can't load new %s version %d > %d",
             PathName(mMe),
             "CharacterTesting",
-            d.rev,
+            gRevs_CharacterTest.rev,
             gRev
         );
     }
-    if (d.altRev > 0) {
+    if (gRevs_CharacterTest.altRev > 0) {
         MILO_FAIL(
             "%s can't load new %s alt version %d > %d",
             PathName(mMe),
             "CharacterTesting",
-            d.altRev,
+            gRevs_CharacterTest.altRev,
             gAltRev
         );
     }
-    if (d.rev != 0xD)
-        mDriver.Load(d.stream, false, mMe);
-
+    if (gRevs_CharacterTest.rev != 0xD)
+        mDriver.Load(bs, false, mMe);
     if (Clips()) {
-        mClip1.Load(d.stream, true, Clips());
-        mClip2.Load(d.stream, true, Clips());
+        mClip1.Load(bs, true, Clips());
+        mClip2.Load(bs, true, Clips());
     } else {
         Symbol s;
-        d >> s;
-        d >> s;
+        bs >> s;
+        bs >> s;
         mClip1 = nullptr;
         mClip2 = nullptr;
     }
-    d >> mTeleportTo;
-    mWalkPath.Load(d.stream, false);
-    d >> mShowDistMap;
-    d >> mTransition;
-    d >> mCycleTransition;
-    d >> mTransitionIdx;
-    if (d.rev < 10) {
+#else
+    // Retail has no version checks and does not resolve the clips: both are
+    // saved by name, read and dropped, and the pointers cleared.
+    if (gRevs_CharacterTest.rev != 0xD)
+        mDriver.Load(bs, false, mMe);
+    Symbol s;
+    bs >> s;
+    bs >> s;
+    mClip1.ReleaseObjConcrete();
+    mClip2.ReleaseObjConcrete();
+#endif
+    bs >> mTeleportTo;
+    mWalkPath.Load(bs, false);
+    bs >> mShowDistMap;
+    bs >> mTransition;
+    bs >> mCycleTransition;
+    bs >> mTransitionIdx;
+    if (gRevs_CharacterTest.rev < 10) {
         int i;
-        d >> i;
+        bs >> i;
     }
-    d >> mMetronome;
-    d >> mZeroTravel;
-    d >> mShowScreenSize;
-    if (d.rev < 0xC) {
+    bs >> mMetronome;
+    bs >> mZeroTravel;
+    bs >> mShowScreenSize;
+    if (gRevs_CharacterTest.rev < 0xC) {
         Symbol ss;
-        d >> ss;
+        bs >> ss;
     }
-    d >> mShowFootExtents;
-    if (d.rev < 0xF) {
+    bs >> mShowFootExtents;
+    if (gRevs_CharacterTest.rev < 0xF) {
         bool b;
         int i;
-        d >> b;
-        d >> i;
+        bs >> b;
+        bs >> i;
     }
-    if (d.rev > 6 && d.rev < 11) {
+    if (gRevs_CharacterTest.rev > 6 && gRevs_CharacterTest.rev < 11) {
         Symbol ss;
         int i;
-        d >> ss;
-        d >> i;
+        bs >> ss;
+        bs >> i;
     }
-    if (d.rev > 8 && d.rev < 11) {
+    if (gRevs_CharacterTest.rev > 8 && gRevs_CharacterTest.rev < 11) {
         Symbol ss;
-        d >> ss;
+        bs >> ss;
     }
     if (!mDriver) {
         mDriver = mMe->Find<CharDriver>("main.drv", false);
