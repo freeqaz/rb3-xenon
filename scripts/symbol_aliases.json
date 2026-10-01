@@ -90842,8 +90842,15 @@
    "name": "_M_fill_insert",
    "address": "0x82272a60",
    "survivor": "?_M_fill_insert@?$vector@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVObject@Hmx@@IABQAV34@@Z",
-   "folded": [
-    "?_M_fill_insert@?$vector@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@AAAXPAIIABI@Z"
+   "folded": [],
+   "withdrawn": [
+     {
+       "spelling": "?_M_fill_insert@?$vector@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@AAAXPAIIABI@Z",
+       "lane": "W17-BPM3 2026-10-01",
+       "class": "CHASE_CYCLE_ASSUMED",
+       "disposition": "membership withdrawn, names kept",
+       "evidence": "Peer gate on cff5c82aa: icf_pair_adjudicate --chase reaches CHASED T1 PROVEN only through a CYCLE-ASSUMED leaf, _M_fill_insert_aux<RndDrawable*> | _M_fill_insert_aux<unsigned int> (the aux calls itself). The admitted group at 0x82272798 proves aux<RndDrawable*> == aux<Object*>, but nothing independently places aux<unsigned int> in it, so the chase assumes the pair it proves. Admission rule is 0 CYCLE; withdrawn until an independent channel (masked-body uniqueness + heterogeneous fan-in naming the unsigned-int spelling) proves it."
+     }
    ],
    "evidence": "Hand-installed by lane W17-BPM3. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (flat T1 refuted only on relocation targets -- _M_fill_insert_aux / _M_insert_overflow <unsigned int> vs <Object*> -- which fold recursively through MemOrPoolAlloc/MemOrPoolAllocSTL, PoolAlloc and the operator new twins). Retail keeps four 108-byte body-twins of this shape (vector<float>, vector<float,XboxAllocator>, vector<Object*>, vector<Spotlight*>), so body identity cannot pick the membership; the call-site displacement does: WorkVerts::SetMeshVerts (0x8234A458) bl's 0x82272A60 at the mMeshVerts.resize site (idx 76), and that row is otherwise instruction-identical to retail (318/318 canonical). mMeshVerts' element type unsigned int is pinned by retail's own named callee in the same function, ?erase@?$vector@IV?$StlNodeAlloc@I@ at 0x824B06C8.",
    "added": {
