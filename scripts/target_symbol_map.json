@@ -1,4 +1,6 @@
 {
+ "0x8274e780": "?HasSubDir@ObjectDir@@QAA_NPAV1@@Z",
+ "0x8274fef8": "?LoadSubDir@ObjectDir@@IAAXHABVFilePath@@AAVBinStream@@_N@Z",
  "0x82747998": "??0TaskMgr@@QAA@XZ",
  "0x8274a8f8": "?Terminate@TaskMgr@@QAAXXZ",
  "0x82747a78": "??0?$ObjPtr@VTask@@@@QAA@ABV0@@Z",

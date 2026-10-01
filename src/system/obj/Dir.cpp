@@ -710,6 +710,23 @@ ObjectDir::Viewport &ObjectDir::CurViewport() {
     return mViewports[mCurViewportID];
 }
 
+#ifndef HX_NATIVE
+// Retail 0x8274E780: a flat walk over NextSubDir (which already recurses),
+// with no self test; the cursor is re-seeded from a counter each pass.
+bool ObjectDir::HasSubDir(ObjectDir *dir) {
+    int i = 0;
+    while (true) {
+        int which = i;
+        i = which + 1;
+        ObjectDir *sub = NextSubDir(which);
+        if (!sub)
+            break;
+        if (sub == dir)
+            return true;
+    }
+    return false;
+}
+#else
 bool ObjectDir::HasSubDir(ObjectDir *dir) {
     if (this == dir)
         return true;
@@ -722,6 +739,7 @@ bool ObjectDir::HasSubDir(ObjectDir *dir) {
     }
     return false;
 }
+#endif
 
 void ObjectDir::SaveProxy(BinStream &bs) {
 #ifdef HX_NATIVE
