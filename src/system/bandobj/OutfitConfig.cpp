@@ -512,13 +512,14 @@ SetHeadNormMap(const char *part, int option, Symbol gender, ObjectDir *dir1, Obj
     if (ctrl) {
         RndTex *tex =
             dir1->Find<RndTex>(MakeString("%s_head_norm%02d.tex", gender, option + 1), false);
-        if (tex) {
-            if (tex == ctrl->Tex())
-                return false;
-            ctrl->SetTex(tex);
-            return true;
+        if (!tex) {
+            MILO_WARN("%s could not find head norm %d", PathName(dir1), option + 1);
+            return false;
         }
-        MILO_WARN("%s could not find head norm %d", PathName(dir1), option + 1);
+        if (tex == ctrl->Tex())
+            return false;
+        ctrl->SetTex(tex);
+        return true;
     } else {
         MILO_WARN("%s could not find norm_%s.texblendctl", PathName(dir2), part);
     }
@@ -1385,10 +1386,12 @@ BEGIN_CUSTOM_PROPSYNC(OutfitConfig::Piercing::Piece)
     SYNC_PROP(vert, o.mVert)
 END_CUSTOM_PROPSYNC
 
+// Retail builds these three Symbols as guarded function-local statics (one guard
+// word, bits 1/2/4 in this order).
 BEGIN_CUSTOM_PROPSYNC(OutfitConfig::Piercing)
-    SYNC_PROP(piercing, o.mPiercing)
-    SYNC_PROP(reskin, o.mReskin)
-    SYNC_PROP(pieces, o.mPieces)
+    SYNC_PROP_STATIC(piercing, o.mPiercing)
+    SYNC_PROP_STATIC(reskin, o.mReskin)
+    SYNC_PROP_STATIC(pieces, o.mPieces)
 END_CUSTOM_PROPSYNC
 
 // Retail inlines this (and SyncTwoColor) into PropSync(MatSwap&) -- no bl.
