@@ -94,7 +94,8 @@ void JoypadController::Disable(bool b) {
 }
 
 float JoypadController::GetWhammyBar() const {
-    if (!mUser->IsLocal())
+    // 0x8279B2E8: a null user (vtable slot 28) also reads no whammy.
+    if (!mUser->IsLocal() || mUser->IsNullUser())
         return 0;
     else if (mLocalUser) {
         return std::min(0.0f, GetJoypadData()->GetLY());
@@ -160,31 +161,21 @@ bool JoypadController::IsCymbal(int i) const {
 }
 
 // https://decomp.me/scratch/Q41Vw
+// 0x8279B498
 int JoypadController::GetVirtualSlot(int i) const {
     if (!mLocalUser)
         return i;
-    int ret = i;
     JoypadData *thePadData = GetJoypadData();
     if (mPadShiftButton == kPad_NumButtons) {
         if ((thePadData->mType == kJoypadXboxRoDrums
-             || thePadData->mType == kJoypadPs3RoDrums)) {
-            if (!mLefty) {
-                switch (i) {
-                case 2:
-                    ret = 5;
-                    break;
-                case 4:
-                    if (IsCymbal(4)) {
-                        ret = 4;
-                    } else {
-                        ret = 8;
-                    }
-                    break;
-                }
-            }
-            return ret;
+             || thePadData->mType == kJoypadPs3RoDrums)
+            && !mLefty) {
+            if (i == 2)
+                return 5;
+            if (i == 4)
+                return IsCymbal(4) ? 4 : 8;
         }
-        return ret;
+        return i;
     }
     switch (i) {
     case 0:
@@ -196,74 +187,43 @@ int JoypadController::GetVirtualSlot(int i) const {
                 if (IsCymbal(3)) {
                     if (thePadData->mHasSecondaryPedal
                         && mSecondaryPedalFunction == kHiHatPedal) {
-                        JoypadButton secBtn = mSecondaryPedalButton;
-                        ret = thePadData->IsButtonInMask(secBtn) ? 5 : 6;
-                    } else
-                        ret = 5;
-                } else
-                    ret = 2;
-            } else {
-                ret = mAlternateMapping ? 5 : 2;
+                        return thePadData->IsButtonInMask(mSecondaryPedalButton) ? 5 : 6;
+                    }
+                    return 5;
+                }
+                return 2;
             }
+            return mAlternateMapping ? 5 : 2;
         } else {
             if (HasYellowCymbal(thePadData)) {
                 if (IsCymbal(2)) {
                     if (thePadData->mHasSecondaryPedal
                         && mSecondaryPedalFunction == kHiHatPedal) {
-                        JoypadButton secBtn = mSecondaryPedalButton;
-                        ret = thePadData->IsButtonInMask(secBtn) ? 5 : 6;
-                    } else
-                        ret = 5;
-                } else
-                    ret = 2;
-            } else {
-                ret = mAlternateMapping ? 5 : 2;
+                        return thePadData->IsButtonInMask(mSecondaryPedalButton) ? 5 : 6;
+                    }
+                    return 5;
+                }
+                return 2;
             }
+            return mAlternateMapping ? 5 : 2;
         }
-        break;
     case 3:
-        if (mLefty) {
-            if (IsCymbal(2))
-                ret = 7;
-            else
-                ret = 3;
-        } else {
-            if (IsCymbal(3))
-                ret = 7;
-            else
-                ret = 3;
-        }
-        break;
+        return IsCymbal(mLefty ? 2 : 3) ? 7 : 3;
     case 4:
         if (mLefty) {
-            if (HasGreenCymbal(thePadData)) {
-                if (IsCymbal(4))
-                    ret = 4;
-                else
-                    ret = 8;
-            } else {
-                ret = 8;
-                if (mAlternateMapping)
-                    ret = 4;
-            }
+            if (HasGreenCymbal(thePadData))
+                return IsCymbal(4) ? 4 : 8;
+            return mAlternateMapping ? 4 : 8;
         } else {
-            if (HasGreenCymbal(thePadData)) {
-                if (IsCymbal(4))
-                    ret = 4;
-                else
-                    ret = 8;
-            } else {
-                ret = 8;
-                if (mAlternateMapping)
-                    ret = 4;
-            }
+            if (HasGreenCymbal(thePadData))
+                return IsCymbal(4) ? 4 : 8;
+            return mAlternateMapping ? 4 : 8;
         }
-        break;
     default:
         MILO_FAIL("JoypadController::GetVirtualSlot of bad slot %d", i);
         break;
     }
-    return ret;
+    return i;
 }
 
 int JoypadController::OnMsg(const ButtonDownMsg &msg) {
