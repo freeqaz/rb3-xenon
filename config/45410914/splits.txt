@@ -1078,6 +1078,7 @@ BandStarDisplay.cpp:
 	.pdata      start:0x821F73A0 end:0x821F73A8
 	.pdata      start:0x821F73E8 end:0x821F73F0
 	.pdata      start:0x821F73F0 end:0x821F7478
+	.pdata      start:0x821F7478 end:0x821F7480
 	.pdata      start:0x821F7480 end:0x821F7490
 	.pdata      start:0x821F74A8 end:0x821F74B8
 	.text       start:0x8227A628 end:0x8227A6A8
@@ -1109,6 +1110,7 @@ BandStarDisplay.cpp:
 	.text       start:0x822CCC98 end:0x822CCCA4
 	.text       start:0x822CCD68 end:0x822CCDC8
 	.text       start:0x822CCDD0 end:0x822CD8C0
+	.text       start:0x822CD8C0 end:0x822CD8F4
 	.text       start:0x822CD90C end:0x822CD9B4
 	.text       start:0x822CDB68 end:0x822CDC18
 
@@ -1413,7 +1415,6 @@ CalibrationPanel.cpp:
 	.text       start:0x8260C6F8 end:0x8260CFE8
 
 TourDescPanel.cpp:
-	.pdata      start:0x821F7478 end:0x821F7480
 	.pdata      start:0x82226ED0 end:0x82226ED8
 	.pdata      start:0x82226FE0 end:0x82226FE8
 	.pdata      start:0x8225C1E0 end:0x8225C1E8
@@ -1429,7 +1430,6 @@ TourDescPanel.cpp:
 	.pdata      start:0x8225C420 end:0x8225C430
 	.pdata      start:0x8225C430 end:0x8225C490
 	.pdata      start:0x8225C490 end:0x8225C498
-	.text       start:0x822CD8C0 end:0x822CD8F4
 	.text       start:0x825F3378 end:0x825F33D0
 	.text       start:0x825F4598 end:0x825F45EC
 	.text       start:0x82808FC4 end:0x82808FC8
