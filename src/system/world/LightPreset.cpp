@@ -523,16 +523,32 @@ BEGIN_COPYS(LightPreset)
     BEGIN_COPYING_MEMBERS
         Clear();
         COPY_MEMBER(mKeyframes)
-        mSpotlights = c->mSpotlights;
-        mEnvironments = c->mEnvironments;
-        mLights = c->mLights;
-        mSpotlightDrawers = c->mSpotlightDrawers;
+        // Retail calls AddRef after each pointer-vector copy and resizes
+        // mSpotlightDrawers.
+        COPY_MEMBER(mSpotlights)
+        for (uint i = 0; i != mSpotlights.size(); i++) {
+            mSpotlights[i]->AddRef(this);
+        }
+        COPY_MEMBER(mEnvironments)
+        for (uint i = 0; i != mEnvironments.size(); i++) {
+            mEnvironments[i]->AddRef(this);
+        }
+        COPY_MEMBER(mLights)
+        for (uint i = 0; i != mLights.size(); i++) {
+            mLights[i]->AddRef(this);
+        }
+        COPY_MEMBER(mSpotlightDrawers)
+        for (uint i = 0; i != mSpotlightDrawers.size(); i++) {
+            mSpotlightDrawers[i]->AddRef(this);
+        }
         mSpotlightState.resize(mSpotlights.size());
         mEnvironmentState.resize(mEnvironments.size());
         mLightState.resize(mLights.size());
+        mSpotlightDrawers.resize(mSpotlightDrawers.size());
         COPY_MEMBER(mLooping)
         COPY_MEMBER(mCategory)
         COPY_MEMBER(mSelectTriggers)
+        COPY_MEMBER(mLegacyFadeIn)
         COPY_MEMBER(mManual)
         COPY_MEMBER(mLocked)
         COPY_MEMBER(mPlatformOnly)
