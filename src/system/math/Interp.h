@@ -34,7 +34,8 @@ public:
     LinearInterpolator() {}
     virtual float Eval(float f) { return mSlope * f + mB; }
     virtual void Reset(const DataArray *);
-    virtual ~LinearInterpolator() {}
+    // No user-declared dtor: retail's owners (~Tail, ~Game) destroy an
+    // ATanInterpolator's mXMapping without an EH frame of its own.
 
     void Reset(float, float, float, float);
 

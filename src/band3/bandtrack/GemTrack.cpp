@@ -561,10 +561,7 @@ void GemTrack::DrawBeatLines(int from_tick, int to_tick) {
     static Symbol downbeat_line("bar_measure.wid");
     static Symbol beat_line("bar_beat.wid");
     static Symbol offbeat_line("bar_half_beat.wid");
-    int subdivision = 0xF0;
-    if (TheSongDB->GetData()->mDetailedGrid) {
-        subdivision = 0x78;
-    }
+    int subdivision = TheSongDB->GetData()->mDetailedGrid ? 0x78 : 0xF0;
     int beat = TickToBeat(from_tick);
     int beat_tick = BeatToTick((float)beat);
     while (beat_tick < to_tick) {

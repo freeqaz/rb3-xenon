@@ -104,11 +104,9 @@ void SongDB::RunMultiplayerAnalyzer() {
 }
 
 void SongDB::RebuildPhrases(int i) {
-    // Retail 0x826872A8: ClearTrackPhrases inlined (direct ClearQuarantinedPhrases call).
-    ClearQuarantinedPhrases(i);
-    TrackData &data = mTrackData[i];
-    data.mArpeggioPhraseExtents.clear();
-    data.mChordMarkupPhraseExtents.clear();
+    // Retail 0x826872A8: both clears are inlined here.
+    ClearTrackPhrases(i);
+    ClearArpeggioPhrases(i);
     mSongData->SendPhrases(i);
 }
 
@@ -452,8 +450,13 @@ void SongDB::ClearQuarantinedPhrases(int i1) {
     data.unk3c.assign(a->NumPhrases(), -1);
 }
 
-void SongDB::ClearTrackPhrases(int i1) {
-    ClearQuarantinedPhrases(i1);
+// Retail 0x82686CA8 is a bare tail call: clearing the arpeggio and chord-markup
+// extents is a separate function (0x82686CB0), which GemPlayer::ChangeDifficulty
+// calls and Player::DisableOverdrivePhrases does not.
+void SongDB::ClearTrackPhrases(int i1) { ClearQuarantinedPhrases(i1); }
+
+// Retail 0x82686CB0 (no name survives; this one is descriptive).
+void SongDB::ClearArpeggioPhrases(int i1) {
     TrackData &data = mTrackData[i1];
     data.mArpeggioPhraseExtents.clear();
     data.mChordMarkupPhraseExtents.clear();
