@@ -80286,12 +80286,17 @@
   {
    "name": "$?5VContentPoolMapping",
    "address": "0x82310a50",
-   "survivor": "??$?5VContentPoolMapping@SongSectionController@@@@YAAAVBinStream@@AAV0@AAV?$ObjList@VContentPoolMapping@SongSectionController@@@@@Z",
-   "folded": [
-    "??$?5VPracticeSectionMapping@SongSectionController@@@@YAAAVBinStream@@AAV0@AAV?$ObjList@VPracticeSectionMapping@SongSectionController@@@@@Z"
-   ],
+   "survivor": "??$?5VPracticeSectionMapping@SongSectionController@@@@YAAAVBinStream@@AAV0@AAV?$ObjList@VPracticeSectionMapping@SongSectionController@@@@@Z",
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??$?5VPracticeSectionMapping@SongSectionController@@@@YAAAVBinStream@@AAV0@AAV?$ObjList@VPracticeSectionMapping@SongSectionController@@@@@Z",
+     "lane": "W16-MB 2026-10-01",
+     "class": "MAP_NAME_WRONG",
+     "why": "Retail 0x82310A50 is operator>>(BinStream&, ObjList<SongSectionController::PracticeSectionMapping>&) itself: it calls resize<ObjList<PracticeSectionMapping>> (0x823109A0) and the PracticeSectionMapping element reader (0x8230D7B8), and SongSectionController::Load reaches it first, for mSectionMappings (0x82310BCC). The ContentPoolMapping reader is a separate retail body at 0x8230ED28 (it calls 0x8230EC88 and 0x8230D920, the ContentPoolMapping resize and element reader), so the two spellings never folded. The map row is renamed to the PracticeSectionMapping spelling and 0x8230ED28 is named for ContentPoolMapping; this membership (the real name folded into the wrong one) is withdrawn and the survivor field follows the map."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -80318,7 +80323,11 @@
       }
      ]
     }
-   ]
+   ],
+   "survivor_renamed": {
+    "from": "??$?5VContentPoolMapping@SongSectionController@@@@YAAAVBinStream@@AAV0@AAV?$ObjList@VContentPoolMapping@SongSectionController@@@@@Z",
+    "lane": "W16-MB 2026-10-01"
+   }
   },
   {
    "name": "$__destroy_range_aux",
