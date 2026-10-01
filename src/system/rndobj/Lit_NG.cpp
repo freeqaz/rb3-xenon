@@ -44,7 +44,7 @@ BEGIN_LOADS(NgLight)
     CheckShadowMap();
 END_LOADS
 
-NgLight::~NgLight() { RELEASE(mShadowRT); }
+NgLight::~NgLight() { delete mShadowRT; }
 
 NgLight::NgLight() : mShadowRT(0), mShadowMapTex(0), mShadowDrawCount(-1) {}
 
