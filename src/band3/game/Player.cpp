@@ -682,12 +682,13 @@ int Player::GetIndividualMultiplier() const {
 
 int Player::GetMaxIndividualMultipler() const { return mBehavior->mMaxMultiplier; }
 
+// retail: both take the score from the non-virtual Performer::GetIndividualScore()
 int Player::GetNumStars() const {
-    return TheScoring->GetSoloNumStars(mScore, mTrackType);
+    return TheScoring->GetSoloNumStars(GetIndividualScore(), mTrackType);
 }
 
 float Player::GetNumStarsFloat() const {
-    return TheScoring->GetSoloNumStarsFloat(mScore, mTrackType);
+    return TheScoring->GetSoloNumStarsFloat(GetIndividualScore(), mTrackType);
 }
 
 int Player::GetScoreForStars(int i) const {

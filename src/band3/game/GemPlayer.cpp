@@ -1100,7 +1100,10 @@ Symbol GemPlayer::GetStarRating() const {
     return TheScoring->GetStarRating(GetNumStars());
 }
 
-int GemPlayer::GetNumStars() const { return GetStarsForScore(GetScore(), GetUserGuid()); }
+// retail: the score comes from the non-virtual Performer::GetIndividualScore()
+int GemPlayer::GetNumStars() const {
+    return GetStarsForScore(GetIndividualScore(), GetUserGuid());
+}
 
 int GemPlayer::GetBaseMaxPoints() const {
     return TheSongDB->GetBaseMaxPoints(GetUserGuid());
