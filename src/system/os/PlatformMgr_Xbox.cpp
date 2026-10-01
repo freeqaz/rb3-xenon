@@ -214,6 +214,14 @@ bool PlatformMgr::IsInParty() {
     return result != noPartyResult;
 }
 
+// Retail 0x8251BE80: the id is only written when the pad has a XUID.
+void PlatformMgr::GetOnlineID(int padNum, OnlineID *id) const {
+    XUID xuid;
+    if (XUserGetXUID(padNum, &xuid) == 0) {
+        id->SetXUID(xuid);
+    }
+}
+
 // Retail 0x8251C118 (the pad-level target of InviteUserParty): the party
 // check survives only as its evaluated assert condition.
 void PlatformMgr::InviteParty(int padNum) {

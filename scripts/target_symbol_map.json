@@ -1,4 +1,5 @@
 {
+ "0x8251be80": "?GetOnlineID@PlatformMgr@@QBAXHPAVOnlineID@@@Z",
  "0x8251c118": "?InviteParty@PlatformMgr@@QAAXH@Z",
  "0x8251bd28": "?RegionInit@PlatformMgr@@QAAXXZ",
  "0x82514bd0": "?SetUserContext@PlatformMgr@@QBAXPBVLocalUser@@HH@Z",
