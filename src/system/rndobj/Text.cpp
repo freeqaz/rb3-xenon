@@ -1146,14 +1146,16 @@ float RndText::GetStringWidthUTF8(
 ) const {
     unsigned short us8 = 0;
     float ret = 0;
-    Style myStyle;
+    // a copy of mStyle is made only when no style is passed; the local is
+    // not default-constructed
+    unsigned int styleBuf[(sizeof(Style) + 3) / 4];
     Style *style = (Style *)styleIn;
     if (!cc2) {
         cc2 = cc1 + strlen(cc1);
     }
     if (!style) {
-        myStyle = mStyle;
-        style = &myStyle;
+        memcpy(styleBuf, &mStyle, sizeof(Style));
+        style = (Style *)styleBuf;
     }
     if (!style->mFont) {
         style->mFont = (RndFont *)mFont.Ptr();
@@ -1860,18 +1862,15 @@ float RndText::GetDistanceToPlane(const Plane &p, Vector3 &v) {
     if (mMeshMap.empty())
         return 0;
     else {
+        // no nearest-mesh test in this build: each mesh overwrites the
+        // result, so the last mesh in the map wins
         float ret = 0;
-        bool first = true;
         FOREACH (it, mMeshMap) {
             RndMesh *mesh = it->second.mesh;
             if (mesh) {
                 Vector3 vec;
-                float dist = mesh->GetDistanceToPlane(p, vec);
-                if (first || std::fabs(dist) < std::fabs(ret)) {
-                    first = false;
-                    v = vec;
-                    ret = dist;
-                }
+                ret = mesh->GetDistanceToPlane(p, vec);
+                v = vec;
             }
         }
         return ret;
