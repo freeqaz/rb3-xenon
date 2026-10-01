@@ -666,6 +666,7 @@
  "0x82b8a7d0": "?RenderShadows@NgLight@@MAAXAAV?$vector@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x82b8bf78": "?Set@NgDOFProc@@MAAXPBVRndCam@@MMMM@Z",
  "0x82b8c0a8": "?DoPost@NgDOFProc@@UAAXXZ",
+ "0x8266d460": "??_GLeaderboardShortcutProvider@@UAAPAXI@Z",
  "0x82642450": "?UpdateDisplay@AppScoreDisplay@@UAAXXZ",
  "0x826424b0": "?Entering@BandScreen@@UBA_NXZ",
  "0x826424f8": "?Exiting@BandScreen@@UBA_NXZ",
