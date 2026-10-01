@@ -87850,13 +87850,13 @@
      "spelling": "?Start@VocalPart@@QAAXXZ",
      "lane": "W16-ID 2026-10-01",
      "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL (FT-EMPTY): a 4-byte blr body with no relocation",
-     "evidence": "Retail ?Start@VocalPlayer@@UAAXXZ at 0x826e46a0 calls 0x826c3888 in both of its part/singer loops (0x8269DAB0, 0x8269DAD0) where our VocalPlayer::Start calls VocalPart::Start() and Singer::Start(); both are empty {} bodies, compiled as a 4-byte blr with no relocation. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL. Not map-resident elsewhere."
+     "evidence": "Retail ?Start@VocalPlayer@@UAAXXZ at 0x826e46a0 calls 0x826c3888 in both of its part/singer loops (bl at 0x826E46CC and 0x826E46EC, verified on retail bytes) where our VocalPlayer::Start calls VocalPart::Start() and Singer::Start(); both are empty {} bodies, compiled as a 4-byte blr with no relocation. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL. Not map-resident elsewhere."
     },
     {
      "spelling": "?SetPaused@VocalPart@@QAAX_N@Z",
      "lane": "W16-ID 2026-10-01",
      "verdict": "FOLD -- VACUOUS-BUT-IDENTICAL (FT-EMPTY): a 4-byte blr body with no relocation",
-     "evidence": "Retail ?SetPaused@VocalPlayer@@UAAX_N@Z at 0x826e4828 calls 0x826c3888 in both of its part/singer loops (0x8269DC48, 0x8269DC6C) where our VocalPlayer::SetPaused calls VocalPart::SetPaused(bool) and Singer::SetPaused(bool); both are empty {} bodies, compiled as a 4-byte blr with no relocation. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL. Not map-resident elsewhere."
+     "evidence": "Retail ?SetPaused@VocalPlayer@@UAAX_N@Z at 0x826e4828 calls 0x826c3888 in both of its part/singer loops (bl at 0x826E4864 and 0x826E4888, verified on retail bytes) where our VocalPlayer::SetPaused calls VocalPart::SetPaused(bool) and Singer::SetPaused(bool); both are empty {} bodies, compiled as a 4-byte blr with no relocation. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN as VACUOUS-BUT-IDENTICAL. Not map-resident elsewhere."
     },
     {
      "spelling": "?Start@Singer@@QAAXXZ",
