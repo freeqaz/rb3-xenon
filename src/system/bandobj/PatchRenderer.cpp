@@ -5,7 +5,7 @@
 #include "obj/ObjMacros.h"
 #include "os/System.h"
 #include "rndobj/Rnd.h"
-#include "Memory.h"
+#include "../../Memory.h" // src/Memory.h (PhysMemTypeTracker); a bare "Memory.h" resolves into xdk/LIBCMT
 
 // Retail keeps the two patch dirs at 0x82CBCD78 (blank) / 0x82CBCD7C (test).
 RndDir *PatchRenderer::sBlankPatch;
