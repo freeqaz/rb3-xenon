@@ -2488,6 +2488,8 @@ CharClip.cpp:
 	.pdata      start:0x822003F0 end:0x82200400
 	.pdata      start:0x82200400 end:0x82200418
 	.pdata      start:0x82200428 end:0x82200438
+	.pdata      start:0x82200438 end:0x82200440
+	.pdata      start:0x82200440 end:0x82200448
 	.pdata      start:0x82200480 end:0x82200488
 	.pdata      start:0x822004F8 end:0x82200500
 	.pdata      start:0x822022F8 end:0x82202620
@@ -2515,6 +2517,8 @@ CharClip.cpp:
 	.text       start:0x8235F1F0 end:0x8235F2A8
 	.text       start:0x8235F2A8 end:0x8235F400
 	.text       start:0x8235F59C end:0x8235F6D0
+	.text       start:0x8235F6D0 end:0x8235F73C
+	.text       start:0x8235F73C end:0x8235F770
 	.text       start:0x8235FA58 end:0x8235FBA8
 	.text       start:0x82360048 end:0x823600D0
 	.text       start:0x8237C960 end:0x82380598
@@ -5740,7 +5744,6 @@ TransAnim.cpp:
 	.pdata      start:0x8220E858 end:0x8220E868
 	.pdata      start:0x8220E868 end:0x8220E870
 	.pdata      start:0x8220E870 end:0x8220E990
-	.pdata      start:0x82230C68 end:0x82230C78
 	.text       start:0x8245D8D0 end:0x8245D8D8
 	.text       start:0x8245DED0 end:0x8245DF70
 	.text       start:0x8245DFE8 end:0x8245E1F8
@@ -5763,7 +5766,6 @@ TransAnim.cpp:
 	.text       start:0x82471CFC end:0x82471D00
 	.text       start:0x82471D0C end:0x82471D20
 	.text       start:0x82471D2C end:0x82471D38
-	.text       start:0x82687D48 end:0x82687DE0
 
 PropKeys.cpp:
 	.pdata      start:0x821F1648 end:0x821F1658
@@ -6310,8 +6312,6 @@ SongMetadata.cpp:
 	.text       start:0x827AAD98 end:0x827AB1C0
 
 ButtonHolder.cpp:
-	.pdata      start:0x82200438 end:0x82200440
-	.pdata      start:0x82200440 end:0x82200448
 	.pdata      start:0x82240B80 end:0x82240B90
 	.pdata      start:0x82240CC8 end:0x82240CD8
 	.pdata      start:0x82240D08 end:0x82240D18
@@ -6319,8 +6319,6 @@ ButtonHolder.cpp:
 	.pdata      start:0x82241760 end:0x82241768
 	.pdata      start:0x82241768 end:0x822417A0
 	.pdata      start:0x822417A0 end:0x82241900
-	.text       start:0x8235F6D0 end:0x8235F73C
-	.text       start:0x8235F73C end:0x8235F770
 	.text       start:0x827AD1E0 end:0x827AD260
 	.text       start:0x827AE288 end:0x827AE31C
 	.text       start:0x827AE510 end:0x827AE6A0
@@ -12221,6 +12219,7 @@ SongDB.cpp:
 	.pdata      start:0x82230A98 end:0x82230AA0
 	.pdata      start:0x82230AA0 end:0x82230B78
 	.pdata      start:0x82230B88 end:0x82230C68
+	.pdata      start:0x82230C68 end:0x82230C78
 	.pdata      start:0x82230C78 end:0x82230CA8
 	.pdata      start:0x82230CC8 end:0x82230CD0
 	.pdata      start:0x82230CD0 end:0x82230CE0
@@ -12245,6 +12244,7 @@ SongDB.cpp:
 	.text       start:0x82686410 end:0x82686460
 	.text       start:0x82686460 end:0x826870D0
 	.text       start:0x82687170 end:0x82687D48
+	.text       start:0x82687D48 end:0x82687DE0
 	.text       start:0x82687DE0 end:0x82687F98
 	.text       start:0x826881DC end:0x82688298
 	.text       start:0x82688298 end:0x8268830C
