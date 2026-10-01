@@ -836,12 +836,10 @@ float Rnd::UpdateOverlay(RndOverlay *o, float f) {
 }
 
 DataNode Rnd::OnShowOverlay(const DataArray *da) {
-    RndOverlay *o = RndOverlay::Find(da->Str(2), false);
-    if (o) {
-        o->SetShowing(da->Int(3));
-        if (da->Size() > 4) {
-            o->SetTimeout(da->Float(4));
-        }
+    RndOverlay *o = RndOverlay::Find(da->Str(2), true);
+    o->SetShowing(da->Int(3));
+    if (da->Size() > 4) {
+        o->SetTimeout(da->Float(4));
     }
     return 0;
 }
