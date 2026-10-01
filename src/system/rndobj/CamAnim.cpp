@@ -22,6 +22,15 @@ RndCamAnim::~RndCamAnim() {}
 //     admits "MI/vbase cases can false-negative here".
 //  2. There is NO Hmx::Object::Replace fallback.  Retail branches straight to
 //     the epilogue when the ref is not ours (bne -> .L_82485CEC).
+// 0x82485B78, reached through the vtordisp thunk 0x82486408 in vtable slot 13
+// (our tables inherited Object::Print there).
+void RndCamAnim::Print() {
+    TextStream &ts = TheDebug;
+    ts << "   cam: " << mCam.Ptr() << "\n";
+    ts << "   keysOwner: " << mKeysOwner.Ptr() << "\n";
+    ts << "   fovKeys: " << mFovKeys << "\n";
+}
+
 void RndCamAnim::Replace(ObjRef *from, Hmx::Object *to) {
     if (static_cast<Hmx::Object *>(mKeysOwner.Ptr())
         == reinterpret_cast<Hmx::Object *>(from)) {
