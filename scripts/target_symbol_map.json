@@ -18891,7 +18891,7 @@
  "0x82687a78": "?_M_clear@?$vector@VTrackData@SongDB@@V?$StlNodeAlloc@VTrackData@SongDB@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
  "0x82687c28": "??1?$vector@VTrackData@SongDB@@V?$StlNodeAlloc@VTrackData@SongDB@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
  "0x82687cd8": "?_M_erase@?$vector@VTrackData@SongDB@@V?$StlNodeAlloc@VTrackData@SongDB@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVTrackData@SongDB@@PAV34@0ABU__false_type@2@@Z",
- "0x82687d48": null,
+ "0x82687d48": "??$_M_allocate_and_copy@PAVTrackData@SongDB@@@?$vector@VTrackData@SongDB@@V?$StlNodeAlloc@VTrackData@SongDB@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVTrackData@SongDB@@IPAV23@0@Z",
  "0x82687de8": "??0SongDB@@QAA@XZ",
  "0x82687f98": "??1?$vector@VData@MultiplayerAnalyzer@@V?$StlNodeAlloc@VData@MultiplayerAnalyzer@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
  "0x826881e0": "?reserve@?$vector@VTrackData@SongDB@@V?$StlNodeAlloc@VTrackData@SongDB@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
