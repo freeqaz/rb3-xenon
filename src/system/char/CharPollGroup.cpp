@@ -14,6 +14,8 @@
 
 CharPollGroup::CharPollGroup() : mPolls(this), mChangedBy(this), mChanges(this) {}
 
+CharPollGroup::~CharPollGroup() {}
+
 
 BEGIN_HANDLERS(CharPollGroup)
     HANDLE_ACTION(sort_polls, SortPolls())
