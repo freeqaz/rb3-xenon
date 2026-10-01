@@ -3977,6 +3977,7 @@ Text.cpp:
 	.pdata      start:0x82201BF0 end:0x82201BF8
 	.pdata      start:0x82203ED8 end:0x82203EE0
 	.pdata      start:0x82203EE0 end:0x82203EE8
+	.pdata      start:0x8220E060 end:0x8220E068
 	.pdata      start:0x8220E068 end:0x8220E138
 	.pdata      start:0x8220E138 end:0x8220E228
 	.pdata      start:0x8220E228 end:0x8220E2E8
@@ -3992,6 +3993,7 @@ Text.cpp:
 	.text       start:0x8239C558 end:0x8239C5AC
 	.text       start:0x8239C5D4 end:0x8239C640
 	.text       start:0x824549B0 end:0x824549C4
+	.text       start:0x82454A18 end:0x82454B70
 	.text       start:0x82454B70 end:0x8245625C
 	.text       start:0x82456260 end:0x824575C8
 	.text       start:0x824575C8 end:0x824575D0
@@ -7109,11 +7111,10 @@ MetaMusicScene.cpp:
 	.text       start:0x827B9F18 end:0x827BA450
 
 ScreenMask.cpp:
-	.pdata      start:0x8220E060 end:0x8220E068
 	.pdata      start:0x82210348 end:0x822103B8
 	.pdata      start:0x822103B8 end:0x822103E8
 	.pdata      start:0x822103E8 end:0x822103F0
-	.text       start:0x824549C8 end:0x82454B70
+	.text       start:0x824549C8 end:0x82454A18
 	.text       start:0x824816A4 end:0x824816A8
 	.text       start:0x824816F8 end:0x82482050
 	.text       start:0x82482058 end:0x8248233C
