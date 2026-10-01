@@ -109,7 +109,7 @@ void ContentLoadingPanel::FinishLoad() {
 }
 
 void ContentLoadingPanel::ShowIfPossible() {
-    if (!mShowing && TheContentMgr.ShowCurRefreshProgress()) {
+    if (!mShowing && TheContentMgr.RefreshInProgress()) {
         MILO_ASSERT(IsLoaded(), 0xA0);
         mShowing = true;
         Enter();

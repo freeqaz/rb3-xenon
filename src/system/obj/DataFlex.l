@@ -4,6 +4,11 @@
  *
  * run with the following command-line args in the root of the repo:
  * -L "-osrc/system/obj/DataFlex.c" "src/system/obj/DataFlex.l"
+ *
+ * There is no carriage-return rule: '\r' falls through to the default rule like
+ * any other whitespace. The tables in DataFlex.c are the shipped scanner's; flex
+ * 2.6.4 builds the same DFA from this file (identical yy_accept and yy_def) but
+ * compresses yy_ec/yy_meta/yy_base/yy_nxt/yy_chk differently.
  */
 
 /* %option nounistd - not supported on the version of flex used */
@@ -58,7 +63,6 @@ BCOMMENT_SKIP       \*+[^\n\/\*]*
 BCOMMENT_END        \*+\/
 
 %%
-\r                                                  { /* skip carriage returns */ TESTER_RETURN(kDataTokenCarriageReturn); }
 \n                                                  { gDataLine++; TESTER_RETURN(kDataTokenNewline); }
 {STRING}                                            { return kDataTokenString; }
 {QUOTED_SYMBOL}                                     { return kDataTokenQuotedSymbol; }

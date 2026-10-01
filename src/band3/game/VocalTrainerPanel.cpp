@@ -241,7 +241,14 @@ void VocalTrainerPanel::CopyTubes(int i1) {
         MILO_LOG("************ COPY GEMS\n");
         MILO_LOG("jump tick: %d\n", i1);
         MILO_LOG("write tick: %d\n", unk9c);
+#ifdef HX_NATIVE
         MILO_LOG("section (%d, %d)\n", sect.GetStartTick(), sect.GetEndTick());
+#else
+        // The stripped log still evaluates its arguments, and retail does so in
+        // call-argument order (GetEndTick before GetStartTick), not as the
+        // left-to-right comma expression the generic MILO_LOG expands to.
+        MiloStripEval("section (%d, %d)\n", sect.GetStartTick(), sect.GetEndTick());
+#endif
         for (int i = 0; i < 3; i++) {
             MILO_LOG("PART %d\n", i);
             VocalNoteList *curNoteList = unka8[i];

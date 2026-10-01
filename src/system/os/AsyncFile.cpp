@@ -42,10 +42,19 @@ void PrintDiscFile(const char *file) {
     }
     String fullPath(MakeString("%s/%s%s.%s", path, gen, base, ext));
     unsigned int last = fullPath.find_last_of('_');
+#ifdef HX_NATIVE
     bool lastFound = (last != FixedString::npos) && (PlatformSymbol(TheLoadMgr.GetPlatform()) == fullPath.c_str() + last + 1);
     fullPath = (lastFound) ? fullPath.substr(0, last) : fullPath;
     MILO_LOG("AsyncFile:   '%s'\n", fullPath);
     HolmesClientPrint(fullPath.c_str());
+#else
+    // Retail (0x8252D400) strips the Xbox platform suffix with a
+    // constant `li r4,2` (kPlatformXBox), not the loader's platform, and makes
+    // no Holmes call: the log residue only copies and destroys the String.
+    bool lastFound = (last != FixedString::npos) && (PlatformSymbol(kPlatformXBox) == fullPath.c_str() + last + 1);
+    fullPath = (lastFound) ? fullPath.substr(0, last) : fullPath;
+    MiloStripEval("AsyncFile:   '%s'\n", fullPath);
+#endif
 }
 
 AsyncFile::AsyncFile(const char *c, int i)

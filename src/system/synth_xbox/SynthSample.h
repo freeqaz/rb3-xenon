@@ -9,7 +9,11 @@ public:
     virtual ~SynthSample360() {}
     OBJ_CLASSNAME(SynthSample);
     OBJ_SET_TYPE(SynthSample360);
+#ifdef HX_NATIVE
     virtual SampleInst *NewInst(bool, int, int);
+#else
+    virtual SampleInst *NewInst();
+#endif
     virtual float LengthMs() const;
 
     bool IsXMA() const;

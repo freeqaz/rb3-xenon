@@ -81,7 +81,9 @@ UIList::~UIList() {
 BEGIN_HANDLERS(UIList)
     HANDLE_MESSAGE(ButtonDownMsg)
     HANDLE(selected_sym, OnSelectedSym)
-    HANDLE_EXPR(selected_pos, SelectedPos())
+    // The script's selected_pos is the selected data index; SelectedPos() is the
+    // highlight's display row.
+    HANDLE_EXPR(selected_pos, Selected())
     HANDLE_EXPR(selected_data, SelectedData())
     HANDLE_EXPR(num_display, NumDisplay())
     HANDLE_EXPR(first_showing, FirstShowing())
@@ -230,7 +232,9 @@ void UIList::Copy(const Hmx::Object *o, CopyType ty) {
 
 UIListDir *UIList::GetUIListDir() const { return mListDir; }
 
-int UIList::SelectedPos() const { return mListState.Selected(); }
+int UIList::SelectedPos() const { return mListState.SelectedDisplay(); }
+
+int UIList::SelectedData() const { return mListState.SelectedData(); }
 
 const std::vector<UIListWidget *> &UIList::GetWidgets() const { return mWidgets; }
 

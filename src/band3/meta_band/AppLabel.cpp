@@ -87,8 +87,6 @@ DECOMP_FORCEACTIVE(
     "%s(%d): %s unhandled msg: %s"
 )
 
-AppLabel::~AppLabel() {}
-
 bool UILabel::CanHaveFocus() { return false; }
 
 void AppLabel::SetLeaderboardName(const LeaderboardRow &lb) {

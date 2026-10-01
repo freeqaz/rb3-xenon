@@ -1,3 +1,5 @@
+// Retail inlines ObjPtr<T>(owner, ptr) at every mFoo(this) site in this TU.
+#define RB3_OBJPTR_INLINE_TWOARG_CTOR
 #include "ui/LabelShrinkWrapper.h"
 #include "ui/UIComponent.h"
 #include "macros.h"

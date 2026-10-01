@@ -108,27 +108,31 @@ int KeyboardTrackWatcherImpl::ClosestUnplayedGem(float ms, int slot) {
     return RelevantGem(i1, i3, slot);
 }
 
+// Same body as DrumTrackWatcherImpl::RelevantGem: retail keeps only one copy
+// (0x82780298) and ClosestUnplayedGem branches to it. Written the same way so
+// both compile to that one body.
 int KeyboardTrackWatcherImpl::RelevantGem(int first_gem_id, int last_gem_id, int slot) {
-    int current = first_gem_id;
-    int count = 0;
-    for (; current <= last_gem_id; current++) {
-        GameGem &gem = mGemList->GetGem(current);
+    int num_unplayed = 0;
+    int g = first_gem_id;
+    for (; g <= last_gem_id; g++) {
+        GameGem &gem = mGemList->GetGem(g);
         int gemSlot = gem.GetSlot();
-        if (slot == gemSlot)
-            return current;
+        if (gemSlot == slot)
+            return g;
         if (!gem.GetPlayed())
-            count++;
+            num_unplayed++;
     }
-    bool noCount = !count;
+    bool choose_any = (num_unplayed == 0);
     int closest_gem = -1;
-    int minDist = 999;
-    for (int i = first_gem_id; i <= last_gem_id; i++) {
-        GameGem &gem = mGemList->GetGem(i);
-        if (noCount || !gem.GetPlayed()) {
-            int dist = abs(slot - gem.GetSlot());
-            if (dist < minDist) {
-                minDist = dist;
-                closest_gem = i;
+    int closest_gem_distance = 999;
+    int j = first_gem_id;
+    for (; j <= last_gem_id; j++) {
+        GameGem &gem = mGemList->GetGem(j);
+        if (choose_any || !gem.GetPlayed()) {
+            int absval = abs(slot - gem.GetSlot());
+            if (absval < closest_gem_distance) {
+                closest_gem_distance = absval;
+                closest_gem = j;
             }
         }
     }

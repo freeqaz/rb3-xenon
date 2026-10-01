@@ -6,6 +6,10 @@ AccomplishmentConditional::AccomplishmentConditional(DataArray *i_pConfig, int i
     AccomplishmentConditional::Configure(i_pConfig);
 }
 
+// User-declared: retail's destructor (0x8266AF90) re-stores the vtable, which
+// the implicit one does not.
+AccomplishmentConditional::~AccomplishmentConditional() {}
+
 
 void AccomplishmentConditional::UpdateConditionOptionalData(
     AccomplishmentCondition &condition, DataArray *i_pConditionEntryArray

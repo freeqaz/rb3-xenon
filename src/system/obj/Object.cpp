@@ -416,6 +416,7 @@ void Hmx::Object::Load(BinStream &bs) {
 
 INIT_REVS(2, 0)
 
+#ifdef HX_NATIVE
 void Hmx::Object::LoadType(BinStream &bs) {
     LOAD_REVS(bs)
     ASSERT_REVS(2, 0)
@@ -424,6 +425,26 @@ void Hmx::Object::LoadType(BinStream &bs) {
     SetType(s);
     bs.PushRev(packRevs(d.altRev, d.rev), this);
 }
+#else
+// Retail keeps Object's load revisions in a file-static pair (alt at +0, rev at
+// +4, one halfword each) rather than a BinStreamRev local: LoadType stores both
+// halves of the packed word there and pushes them back for LoadRest.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gObjectRevs;
+
+void Hmx::Object::LoadType(BinStream &bs) {
+    int revs;
+    bs >> revs;
+    gObjectRevs.rev = getHmxRev(revs);
+    gObjectRevs.altRev = getAltRev(revs);
+    Symbol s;
+    bs >> s;
+    SetType(s);
+    bs.PushRev(packRevs(gObjectRevs.altRev, gObjectRevs.rev), this);
+}
+#endif
 
 void Hmx::Object::LoadRest(BinStream &bs) {
     BinStreamRev d(bs, bs.PopRev(this));

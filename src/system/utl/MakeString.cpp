@@ -15,12 +15,25 @@
 #define MAX_BUF_SIZE 0x800
 
 bool bufExceeded = false;
-static CriticalSection *gLock = nullptr;
-static char ***gBuf = nullptr;
-static int gNum[MAX_BUF_THREADS] = { 0 };
+// The zero-initialised buffer state is one aggregate: retail addresses all of
+// it off a single base register anchored on the lock (lock +0x0, buffers +0x4,
+// per-thread counters +0x8, current thread +0x20, thread count +0x24) in both
+// InitMakeString and NextBuf. Separate statics let the compiler re-anchor on
+// whichever member a function uses most. The thread-id table is initialised
+// to -1, so it lives in .data on its own.
+static struct {
+    CriticalSection *lock;
+    char ***buf;
+    int num[MAX_BUF_THREADS];
+    int curThread;
+    int numThreads;
+} gMakeString;
+#define gLock gMakeString.lock
+#define gBuf gMakeString.buf
+#define gNum gMakeString.num
+#define gCurThread gMakeString.curThread
+#define gNumThreads gMakeString.numThreads
 static int gThreadIds[MAX_BUF_THREADS] = { -1 };
-static int gCurThread = 0;
-static int gNumThreads = 0;
 
 void InitMakeString() {
     if (!gLock) {
@@ -105,9 +118,10 @@ char *NextBuf() {
         }
     }
 
-    char *buf = gBuf[gCurThread][gNum[gCurThread]];
-    if (++gNum[gCurThread] == 0x10) {
-        gNum[gCurThread] = 0;
+    int *num = &gNum[gCurThread];
+    char *buf = gBuf[gCurThread][*num];
+    if (++*num == 0x10) {
+        *num = 0;
     }
 
     return buf;

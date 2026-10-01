@@ -3,6 +3,18 @@
 #include "utl/Symbol.h"
 #include <hash_map>
 
+// hash<Symbol> hashes the interned char* word identity. Guarded: the band3
+// accomplishment headers define the same specialization.
+// The native build's hash_map is not stlport and keeps a private hasher below.
+#if !defined(HX_NATIVE) && !defined(RB3_HASH_SYMBOL_DEFINED)
+#define RB3_HASH_SYMBOL_DEFINED
+namespace stlpmtx_std {
+_STLP_TEMPLATE_NULL struct hash<Symbol> {
+    size_t operator()(const Symbol &s) const { return (size_t)s.Str(); }
+};
+}
+#endif
+
 class LightPreset;
 class WorldDir;
 
@@ -38,15 +50,21 @@ protected:
     void UpdateOverlay();
     void StartPreset(LightPreset *, bool);
 
-    // Layout-only hasher stand-in: retail RB3's mPresets is an stlport
-    // hash_map, NOT std::map — the retail LightPresetManager ctor (0x824A6758)
-    // calls hashtable(100, hf, eql, alloc) via 0x82268810/0x82268698 and sets
-    // _M_max_load_factor=1.0f at +0x18, making the container 0x1c (vs map's
-    // 0x18) and sizeof(LightPresetManager) 0x54 (WorldDir tail proof).
+    // Retail RB3's mPresets is an stlport hash_map, NOT std::map -- the retail
+    // LightPresetManager ctor (0x824A6758) calls hashtable(100, hf, eql, alloc)
+    // via 0x82268810/0x82268698 and sets _M_max_load_factor=1.0f at +0x18,
+    // making the container 0x1c (vs map's 0x18) and sizeof(LightPresetManager)
+    // 0x54 (WorldDir tail proof). It uses the stock hash<Symbol>: retail's
+    // operator[] (0x824B9A58) and _M_insert share the hash<Symbol> _M_find and
+    // resize bodies with the other Symbol-keyed hash_maps.
+#ifdef HX_NATIVE
     struct SymbolHash {
         size_t operator()(Symbol s) const { return (size_t)s.Str(); }
     };
-    std::hash_map<Symbol, std::vector<LightPreset *>, SymbolHash> mPresets; // 0x4 (0x1c)
+    std::hash_map<Symbol, std::vector<LightPreset *>, SymbolHash> mPresets;
+#else
+    std::hash_map<Symbol, std::vector<LightPreset *> > mPresets; // 0x4 (0x1c)
+#endif
     Symbol mLastCategory; // 0x20
     WorldDir *mParent; // 0x24
     LightPreset *mPresetOverride; // 0x28

@@ -1,3 +1,5 @@
+// Retail inlines ObjPtr<T>(owner, ptr) at this TU's member-init sites.
+#define RB3_OBJPTR_INLINE_TWOARG_CTOR
 #include "ui/UITransitionHandler.h"
 #include "math/Easing.h"
 #include "rndobj/Anim.h"

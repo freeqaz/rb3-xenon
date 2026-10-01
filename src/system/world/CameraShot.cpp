@@ -168,11 +168,18 @@ RndTransformable *LoadSubPart(BinStream &d, CamShot *shot) {
     if (sym.Null()) {
         if (foundTrans)
             return foundTrans;
-        MILO_LOG(
+        // Retail evaluates this log's arguments as a call would: it copies
+        // `str` into a by-value temporary, calls PathName(shot), then
+        // destroys the copy (0x824BE030). MILO_LOG's comma form copies
+        // nothing, so the function-call form is spelled out here.
+        // MiloStripEval exists only in the match build; natively the site is dropped.
+#ifndef HX_NATIVE
+        MiloStripEval(
             "%s could not find %s, assuming character, attaching to base\n",
             PathName(shot),
             str
         );
+#endif
     }
     char buf[256];
     strcpy(buf, sym.Str());
@@ -1117,7 +1124,7 @@ BEGIN_COPYS(CamShot)
         for (int i = 0; i != c->mCrowds.size(); i++) {
             mCrowds.push_back(CamShotCrowd(this, c->mCrowds[i]));
         }
-        COPY_MEMBER(mCrowdStateOverride)
+        // Retail Copy (like Save and Load) carries no crowd-state override.
         COPY_MEMBER(mNearPlane)
         COPY_MEMBER(mFarPlane)
         COPY_MEMBER(mUseDepthOfField)
@@ -1401,12 +1408,8 @@ BEGIN_LOADS(CamShot)
             mCrowds.push_back(crowdData);
     } else
         d >> mCrowds;
-    if (sCamShotRev > 0x33) {
-        d >> mCrowdStateOverride;
-    } else {
-        static Symbol none("none");
-        mCrowdStateOverride = none;
-    }
+    // RB3 retail (0x824C8010) goes straight from mCrowds to mAnims: the
+    // serialized crowd-state override (rev > 0x33) is a later format revision.
     if (sCamShotRev > 0x2A)
         d >> mAnims;
 

@@ -18,7 +18,8 @@ public:
     // Hmx::Object
     virtual ~User() {}
     virtual DataNode Handle(DataArray *, bool);
-    virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
+    // No SyncProperty override: retail BandUser::SyncProperty (0x8268C750)
+    // forwards its superclass case straight to Hmx::Object::SyncProperty.
     // User
     virtual void Reset();
     virtual void SyncSave(BinStream &, unsigned int) const;

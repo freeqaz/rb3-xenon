@@ -566,7 +566,9 @@ void Song::SyncState() {
         } while (tick <= targetTick);
     }
 
-    TheTaskMgr.SetSeconds(savedSeconds, true);
+    // Retail restores the clock with the same `false` flag as the catch-up
+    // loop (li r5,0 at both SetSeconds calls).
+    TheTaskMgr.SetSeconds(savedSeconds, false);
     TheTaskMgr.SetDeltaTime(kTaskSeconds, savedDeltaSeconds);
     TheTaskMgr.SetDeltaTime(kTaskBeats, savedDeltaBeat);
 

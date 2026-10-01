@@ -19,6 +19,7 @@ class PeakDetector {
 public:
     PeakDetector(const stlpmtx_std::vector<float, stlpmtx_std::StlNodeAlloc<float> > &input,
                  unsigned int windowSize, unsigned int hop);
+    ~PeakDetector();
 
     void Detect(unsigned int pos);
 

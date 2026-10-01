@@ -55,7 +55,7 @@ public:
     const char *MatchName() const;
 
     NEW_OBJ(UIListSlot)
-    OBJ_MEM_OVERLOAD(0x27)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x27)
 
 private:
     void ClearElements();

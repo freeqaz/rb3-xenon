@@ -225,7 +225,8 @@ int GameConfig::GetFxSwitchPosition(LocalBandUser *pUser) {
     DataArray *cfg = SystemConfig(joypad)->FindArray(five_way_controllers, false);
     if (cfg) {
         for (int i = 1; i < cfg->Size(); i++) {
-            if (cfg->Node(i).Sym(cfg) == cnttype) {
+            Symbol type = cfg->Node(i).Sym(cfg);
+            if (type == cnttype) {
                 int tbl[30] = { 0,  0,  0, 0, 0, -1, -1, 1, 1, 1,  1,  -1, -1, 2, 2,
                                 2,  2,  2, 2, 3, 3,  3,  3, -1, -1, 4, 4,  4,  4, 4 };
                 // TU5: the five-way switch position rides on the left trigger axis
