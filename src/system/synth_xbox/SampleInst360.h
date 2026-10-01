@@ -6,7 +6,11 @@ class Voice;
 
 class SampleInst360 : public SampleInst {
 public:
+#ifdef HX_NATIVE
     SampleInst360(SynthSample360 *, bool, int, int);
+#else
+    SampleInst360(SynthSample360 *);
+#endif
     virtual ~SampleInst360();
 
     // SampleInst pure virtuals

@@ -25,7 +25,11 @@ NoteVoiceInst::NoteVoiceInst(
       mGlideFramesLeft(-1), mFineTune(fineTune), mDurationFramesLeft(durFramesLeft),
       mOwner(owner) {
     if (zone->Sample()) {
+#ifdef HX_NATIVE
         mSample = zone->Sample()->NewInst(false, 0, -1);
+#else
+        mSample = zone->Sample()->NewInst();
+#endif
         float db = RatioToDb(ratio / 127.0f);
         mSample->SetBankVolume(zone->Volume() + db);
         mSample->SetBankPan(zone->Pan());

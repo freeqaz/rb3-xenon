@@ -1,13 +1,17 @@
 #include "synth_xbox/SampleInst360.h"
 #include "synth_xbox/Voice.h"
 
+#ifdef HX_NATIVE
 SampleInst360::SampleInst360(SynthSample360 *sample, bool loop, int startSample, int endSample)
+#else
+SampleInst360::SampleInst360(SynthSample360 *sample)
+#endif
     : SampleInst(sample) {
     // Retail 0x82B6DFB8 passes (IsXMA(), 0, 0): no channel-count call at all.
     mVoice = new Voice(sample->IsXMA(), false, false);
     mVoice->SetSampleRate(sample->GetSampleRate());
     mVoice->SetData((const void *)sample->GetDataAddr(), sample->GetNumBytes(), sample->GetNumSamples());
-    // Retail ignores the NewInst loop arguments and reads the sample's own loop.
+    // The loop region is the sample's own.
     if (sample->GetIsLooped()) {
         mVoice->SetLoopRegion(sample->GetLoopStartSamp(), sample->GetLoopEndSamp());
     }

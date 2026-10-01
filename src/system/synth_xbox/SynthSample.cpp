@@ -69,9 +69,19 @@ float SynthSample360::LengthMs() const {
     return 0.0f;
 }
 
+#ifdef HX_NATIVE
 SampleInst *SynthSample360::NewInst(bool b, int i1, int i2) {
     if (mSampleData.HasData()) {
         return new SampleInst360(this, b, i1, i2);
     }
     return nullptr;
 }
+#else
+SampleInst *SynthSample360::NewInst() {
+    // Unsigned test of the data address (cmplwi), unlike HasData's signed one.
+    if (mSampleData.DataAddr() != 0) {
+        return new SampleInst360(this);
+    }
+    return nullptr;
+}
+#endif
