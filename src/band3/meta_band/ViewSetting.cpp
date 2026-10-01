@@ -364,11 +364,10 @@ ScoreType ScoreTypeViewSetting::GetAlternateScoreType() const {
 const char *MusicLibraryUpsellViewSetting::GetCurrentStatus() const {
     static Symbol music_library_upsell_on("music_library_upsell_on");
     static Symbol music_library_upsell_off("music_library_upsell_off");
-    return Localize(
-        TheProfileMgr.GetMusicLibraryUpsell() ? music_library_upsell_on
-                                              : music_library_upsell_off,
-        nullptr
-    );
+    if (TheProfileMgr.GetMusicLibraryUpsell())
+        return Localize(music_library_upsell_on, nullptr);
+    else
+        return Localize(music_library_upsell_off, nullptr);
 }
 
 void MusicLibraryUpsellViewSetting::Text(
