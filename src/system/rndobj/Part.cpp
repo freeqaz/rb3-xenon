@@ -13,6 +13,10 @@
 // per-TU -- one function, four sites, two different expansions.
 // (Do NOT cite fn_8270B9A8 here -- that was a stale TU0 address; see obj/Object.h.)
 #define RB3_OBJPTR_INLINE_OWNER_CTOR 1
+// mMotionParent (an ObjOwnerPtr) is inlined too, and all three inline sites
+// store {mOwner, vptr-lis, mObject = 0, vptr-addi, vptr} -- the DEFER_OBJECT order.
+#define RB3_OBJOWNERPTR_INLINE_OWNER_CTOR 1
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT 1
 #include "rndobj/Part.h"
 #include "math/Geo.h"
 #include "math/Rand.h"
@@ -149,7 +153,7 @@ RndParticleSys::RndParticleSys()
       mFrameDrive(0), mLastFrame(0), mDrawCount(0), mPauseOffscreen(0), mPausedTime(0),
       mBubblePeriod(10, 10), mBubbleSize(1, 1), mLife(100, 100), mBoxExtent1(0, 0, 0),
       mBoxExtent2(0, 0, 0), mSpeed(1, 1), mPitch(0, 0), mYaw(0, 0), mEmitRate(1, 1),
-      mStartSize(gUnitsPerMeter / 4, gUnitsPerMeter / 4), mDeltaSize(0, 0),
+      mStartSize(1, 1), mDeltaSize(0, 0),
       mStartColorLow(1, 1, 1), mStartColorHigh(1, 1, 1), mEndColorLow(1, 1, 1),
       // PER-SITE: retail INLINES mMeshEmitter(this) (three stores at +0x1c8) but
       // CALLS the out-of-line ctor for mMat (bl at +0x1d4, the ObjPtr<RndMat>
