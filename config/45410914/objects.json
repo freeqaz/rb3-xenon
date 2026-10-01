@@ -1715,6 +1715,7 @@
                 ]
             },
             "band3/meta_band/MusicLibraryStore.cpp": "NonMatching",
+            "band3/meta_band/AssetStore.cpp": "NonMatching",
             "band3/meta_band/NameGenerator.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [

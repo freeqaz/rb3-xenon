@@ -5548,10 +5548,6 @@ FixedSizeSaveable.cpp:
 	.text       start:0x827A3100 end:0x827A318C
 	.text       start:0x827A3190 end:0x827A3228
 
-FreestyleMoveRecorder.cpp:
-	.pdata      start:0x82226760 end:0x822267C0
-	.text       start:0x825ECBF4 end:0x825ED2A0
-
 band3/meta_band/ClosetPanel.cpp:
 	.pdata      start:0x822267C0 end:0x82226858
 	.pdata      start:0x82226858 end:0x82226898
@@ -8846,8 +8842,14 @@ band3/meta_band/LicenseMgr.cpp:
 	.text       start:0x8264E900 end:0x8264F988
 
 band3/meta_band/StandIn.cpp:
-	.pdata      start:0x822266C8 end:0x82226760
-	.text       start:0x825EC508 end:0x825ECBF4
+	.pdata      start:0x822266C8 end:0x82226718
+	.text       start:0x825EC508 end:0x825EC840
+
+band3/meta_band/AssetStore.cpp:
+	.pdata      start:0x82226718 end:0x82226760
+	.pdata      start:0x82226760 end:0x822267C0
+	.text       start:0x825EC840 end:0x825ECBF4
+	.text       start:0x825ECBF4 end:0x825ED2A0
 
 band3/meta_band/StoreInfoPanel.cpp:
 	.pdata      start:0x8222B660 end:0x8222B668
