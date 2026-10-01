@@ -112,8 +112,10 @@ BEGIN_LOADS(CharCuff)
         mEccentricity = 1.0f;
     if (gRevs_CharCuff.rev > 5)
         bs >> mCategory;
-    else
-        mCategory = Symbol("");
+    else {
+        Symbol empty("");
+        mCategory = empty;
+    }
     if (gRevs_CharCuff.rev > 7)
         bs >> mIgnore;
     if (gRevs_CharCuff.rev < 7)
