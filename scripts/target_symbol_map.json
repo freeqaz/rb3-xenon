@@ -16019,7 +16019,7 @@
  "0x826059e8": "?SetType@BandStorePanel@@UAAXVSymbol@@@Z",
  "0x82605b48": "?FindOffer@BandStorePanel@@UBAPAVStoreOffer@@VSymbol@@@Z",
  "0x82605bb0": "?Unload@BandStorePanel@@UAAXXZ",
- "0x82605c38": null,
+ "0x82605c38": "?GetIndexFile@BandStorePanel@@QBAPBDXZ",
  "0x82605ca8": "?SyncProperty@BandStorePanel@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x82605e68": "??$adjacent_find@PA_KU?$equal_to@_K@stlpmtx_std@@@stlpmtx_std@@YAPA_KPA_K0U?$equal_to@_K@0@@Z",
  "0x82605ec0": "??$__unguarded_insertion_sort_aux@PA_K_KU?$less@_K@stlpmtx_std@@@stlpmtx_std@@YAXPA_K00U?$less@_K@0@@Z",

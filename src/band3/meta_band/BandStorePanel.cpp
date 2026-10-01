@@ -77,7 +77,9 @@ bool BandStorePanel::IsSongInLibrary(const int &id) const {
 // Retail 0x82605C38 (68 B), called out of line from Poll, StoreMainPanel and
 // StoreMenuPanel: "/dlc_top_<platform>_<language>.dta".
 const char *BandStorePanel::GetIndexFile() const {
-    return MakeString(sIndexFile, PlatformSymbol(kPlatformXBox).Str(), SystemLanguage().Str());
+    Symbol platform = PlatformSymbol(kPlatformXBox);
+    Symbol language = SystemLanguage();
+    return MakeString(sIndexFile, platform.Str(), language.Str());
 }
 
 const char *BandStorePanel::GetRequestPrefix() const { return sRequestPrefix; }
