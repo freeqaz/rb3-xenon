@@ -244,57 +244,53 @@ void CharKeyHandMidi::Poll() {
     }
 
     if (unk78) {
-        const Transform &firstXfm = mFirstSpot->WorldXfm();
-        Vector3 firstPos(firstXfm.v.x, firstXfm.v.y, firstXfm.v.z);
-
+        // retail 0x822D1980: the layout is built from stack Vector3 objects -- a
+        // 16-byte copy of the first spot updated in place, products kept in named
+        // vectors (separate fmuls/fadds, never fused), whole-vector stores
+        Vector3 cur = mFirstSpot->WorldXfm().v;
         Vector3 keyDir;
-        Subtract(mSecondSpot->WorldXfm().v, firstPos, keyDir);
+        Subtract(mSecondSpot->WorldXfm().v, cur, keyDir);
         float keyDist = Length(keyDir);
         Normalize(keyDir, keyDir);
-
-        Vector3 upDir;
-        Normalize(mFirstSpot->WorldXfm().m.z, upDir);
-
+        Vector3 up;
+        Normalize(mFirstSpot->WorldXfm().m.z, up);
         const Vector3 &forward = mFirstSpot->WorldXfm().m.y;
 
-        float halfStep = keyDist / 28.0f;
-        float fullStep = keyDist / 14.0f;
+        Vector3 tipOff;
+        Scale(forward, -1.0f, tipOff);
+        Vector3 down;
+        Scale(up, -0.4f, down);
+        cur += down;
+        Vector3 white;
+        Scale(keyDir, keyDist / 14.0f, white);
+        Vector3 half;
+        Scale(keyDir, keyDist / 28.0f, half);
+        Vector3 back;
+        Scale(tipOff, 2.0f, back);
+        Vector3 raise;
+        Scale(up, 0.5f, raise);
+        Vector3 black;
+        Add(back, half, black);
+        Add(raise, black, black);
 
-        float negFwdX = forward.x * -1.0f;
-        float negFwdY = forward.y * -1.0f;
-        float negFwdZ = forward.z * -1.0f;
-        float tipX = negFwdX * 1.0f;
-        float tipY = negFwdY * 1.0f;
-        float tipZ = negFwdZ * 1.0f;
-
-        float curX = upDir.x * -0.4f + firstPos.x;
-        float curY = firstPos.y + upDir.y * -0.4f;
-        float curZ = firstPos.z + upDir.z * -0.4f;
-
-        float whiteX = keyDir.x * fullStep;
-        float whiteY = keyDir.y * fullStep;
-        float whiteZ = keyDir.z * fullStep;
-
-        float blackX = upDir.x * 0.5f + (negFwdX * 2.0f + keyDir.x * halfStep);
-        float blackY = upDir.y * 0.5f + (negFwdY * 2.0f + keyDir.y * halfStep);
-        float blackZ = upDir.z * 0.5f + (negFwdZ * 2.0f + keyDir.z * halfStep);
-
-        unk4c[1].Set(curX, curY, curZ);
-        unk54[1].Set(curX + tipX, curY + tipY, curZ + tipZ);
+        unk4c[1] = cur;
+        Vector3 tip(cur);
+        tip += tipOff;
+        unk54[1] = tip;
 
         for (int key = 2; key <= 0x19; key++) {
             if (!(IsBlackKey((KeyboardKey)key))) {
-                curX = curX + whiteX;
-                curY = curY + whiteY;
-                curZ = curZ + whiteZ;
-                unk4c[key].Set(curX, curY, curZ);
-                unk54[key].Set(curX + tipX, curY + tipY, curZ + tipZ);
+                cur += white;
+                unk4c[key] = cur;
+                Vector3 t;
+                Add(cur, tipOff, t);
+                unk54[key] = t;
             } else {
-                float px = curX + blackX;
-                float py = curY + blackY;
-                float pz = curZ + blackZ;
-                unk4c[key].Set(px, py, pz);
-                unk54[key].Set(px + tipX, py + tipY, pz + tipZ);
+                Vector3 p;
+                Add(cur, black, p);
+                unk4c[key] = p;
+                p += tipOff;
+                unk54[key] = p;
             }
         }
         unk78 = false;
