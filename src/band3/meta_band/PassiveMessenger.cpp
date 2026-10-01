@@ -287,7 +287,7 @@ void PassiveMessenger::TriggerMessage(
                 if (i10 == 0)
                     i4 = -1;
                 slot->GetMessageQueue()->AddMessage(
-                    new PassiveMessage(a, t, s, i6, i8, i9, i4, i7, c1, c2, c3, i14, b4)
+                    new PassiveMessage(a, t, s, i6, i7, i8, i9, i4, c1, c2, c3, i14, b4)
                 );
                 return;
             }
@@ -299,7 +299,7 @@ void PassiveMessenger::TriggerMessage(
         if (i10 == 0)
             i4 = -1;
         pmPanel->GetMessageQueue()->AddMessage(
-            new PassiveMessage(a, t, s, i6, i8, i9, i4, i7, c1, c2, c3, i14, b4)
+            new PassiveMessage(a, t, s, i6, i7, i8, i9, i4, c1, c2, c3, i14, b4)
         );
     }
 }
