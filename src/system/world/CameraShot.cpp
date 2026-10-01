@@ -1401,12 +1401,8 @@ BEGIN_LOADS(CamShot)
             mCrowds.push_back(crowdData);
     } else
         d >> mCrowds;
-    if (sCamShotRev > 0x33) {
-        d >> mCrowdStateOverride;
-    } else {
-        static Symbol none("none");
-        mCrowdStateOverride = none;
-    }
+    // RB3 retail (0x824C8010) goes straight from mCrowds to mAnims: the
+    // serialized crowd-state override (rev > 0x33) is a later format revision.
     if (sCamShotRev > 0x2A)
         d >> mAnims;
 
