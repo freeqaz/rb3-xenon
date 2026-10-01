@@ -433,7 +433,7 @@ bool BandWardrobe::ValidGenreGender(CamShot *shot) {
         MILO_ASSERT(PowerOf2(flags & 0xF8000), 0x3C9);
         int instnum;
         for (instnum = 0; instnum < 4; instnum++) {
-            if (flags & gInstFocus[instnum])
+            if (shot->Flags() & gInstFocus[instnum])
                 break;
         }
         Symbol instsym = BandCharDesc::GetInstrumentSym(instnum);
