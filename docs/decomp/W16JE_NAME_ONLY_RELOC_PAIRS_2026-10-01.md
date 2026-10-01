@@ -241,7 +241,7 @@ DialogDisplay at 100. That move is also the A/B's one "unit regression"
 Gates on the final tree:
 
 - `tools/map_name_injectivity.py`: OK (32,159 applied rows, injective).
-- `tools/icf_alias_finder.py --validate`: PASS (0 contradicted).
+- `tools/icf_alias_finder.py --validate`: PASS -- 1620 map-consistent / 252 tolerated / 0 contradicted / 1873 (baseline 1496 / 252 / 0 / 1749).
 - `scripts/verify_objs_patched.py --verify-manifest`: OK (denylist applied, 7 addresses).
 - `tools/native_build_gate.sh`: `NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0` (run on the final source state; nothing under `src/` changed after it).
 
