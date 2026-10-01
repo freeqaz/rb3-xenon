@@ -8292,6 +8292,7 @@ band3/game/DirectInstrument.cpp:
 	.text       start:0x826CCB00 end:0x826CCE28
 
 band3/game/Singer.cpp:
+	.pdata      start:0x82236E38 end:0x82236E40
 	.pdata      start:0x82236E40 end:0x82236E90
 	.pdata      start:0x82236E98 end:0x82236EE0
 	.pdata      start:0x82236EE8 end:0x82236EF8
@@ -8307,6 +8308,7 @@ band3/game/Singer.cpp:
 	.pdata      start:0x82237038 end:0x82237048
 	.pdata      start:0x82237050 end:0x82237058
 	.pdata      start:0x82237058 end:0x82237060
+	.text       start:0x826F6840 end:0x826F6930
 	.text       start:0x826F6948 end:0x826F7948
 	.text       start:0x826F79A8 end:0x826F7CC8
 	.text       start:0x826F7E50 end:0x826F7F00
@@ -10022,7 +10024,7 @@ TrackerUtils.cpp:
 	.pdata      start:0x82236DF0 end:0x82236DF8
 	.pdata      start:0x82236DF8 end:0x82236E00
 	.pdata      start:0x82236E00 end:0x82236E08
-	.pdata      start:0x82236E08 end:0x82236E40
+	.pdata      start:0x82236E08 end:0x82236E38
 	.text       start:0x826F5850 end:0x826F5898
 	.text       start:0x826F5898 end:0x826F599C
 	.text       start:0x826F59A0 end:0x826F5AE0
@@ -10035,7 +10037,7 @@ TrackerUtils.cpp:
 	.text       start:0x826F6238 end:0x826F6318
 	.text       start:0x826F6318 end:0x826F633C
 	.text       start:0x826F6340 end:0x826F6364
-	.text       start:0x826F6368 end:0x826F6930
+	.text       start:0x826F6368 end:0x826F6840
 
 BandMachine.cpp:
 	.pdata      start:0x82223678 end:0x82223680
@@ -10173,9 +10175,7 @@ MainHubPanel.cpp:
 	.text       start:0x826245A0 end:0x82624748
 
 SelectDifficultyPanel.cpp:
-	.pdata      start:0x8222AF20 end:0x8222AF30
 	.pdata      start:0x8222AF70 end:0x8222B130
-	.text       start:0x82631EA8 end:0x82631FA4
 	.text       start:0x826323E8 end:0x82633D98
 
 SetlistMergePanel.cpp:
@@ -13613,11 +13613,13 @@ band3/meta_band/SetlistSortByLocation.cpp:
 band3/meta_band/SaveLoadStatusPanel.cpp:
 	.pdata      start:0x8222AED8 end:0x8222AF18
 	.pdata      start:0x8222AF18 end:0x8222AF20
+	.pdata      start:0x8222AF20 end:0x8222AF30
 	.pdata      start:0x8222AF30 end:0x8222AF40
 	.pdata      start:0x8222AF40 end:0x8222AF60
 	.pdata      start:0x8222AF60 end:0x8222AF70
 	.text       start:0x82631A20 end:0x82631DFC
 	.text       start:0x82631DFC end:0x82631EA8
+	.text       start:0x82631EA8 end:0x82631FA4
 	.text       start:0x82631FA4 end:0x826320F8
 	.text       start:0x826320F8 end:0x826322A8
 	.text       start:0x826322A8 end:0x826322B4
