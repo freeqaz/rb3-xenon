@@ -1603,7 +1603,7 @@
  "0x82749b10": "?Poll@TaskMgr@@QAAXXZ",
  "0x827a4d00": "?Load@DataArraySongInfo@@UAAXAAVBinStream@@@Z",
  "0x8278ce50": "??$__adjust_heap@PAVGameGem@@HV1@U?$less@VGameGem@@@stlpmtx_std@@@stlpmtx_std@@YAXPAVGameGem@@HHV1@U?$less@VGameGem@@@0@@Z",
- "0x827c4bb8": "?MemTrackInit@@YAXHH_N@Z",
+ "0x827c4bb8": "?MemTrackInit@@YAXHH@Z",
  "0x82810048": "?Handle@UILabelDir@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x824b9710": "?insert_unique_noresize@?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@USymbolHash@LightPresetManager@@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$pair@U?$_Ht_iterator@V?$_Slist_iterator@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@U?$_NonLocalHashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@23@@priv@stlpmtx_std@@_N@2@ABU?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@2@@Z",
  "0x82721470": "?SetType@FxSendDistortion@@UAAXVSymbol@@@Z",

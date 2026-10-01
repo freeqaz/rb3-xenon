@@ -303,7 +303,11 @@ void EndMemTrackFileName() {
     }
 }
 
+#ifdef HX_NATIVE
 void MemTrackInit(int heap, int numAllocs, bool heapOnly) {
+#else
+void MemTrackInit(int heap, int numAllocs) {
+#endif
     CritSecTracker tracker(gMemLock);
     MILO_ASSERT(!gMemTracker, 0x82);
 #ifdef HX_NATIVE

@@ -579,6 +579,53 @@ void *MemOrPoolAllocSTL(int size) {
 }
 #endif
 
+#ifndef HX_NATIVE
+// Retail 0x827bd300. None of the DC3 additions below (lowest-mip exceptions,
+// log type, disc-release pools, the "tiny" heap, the memory-test options) are
+// in it; gNumHeaps is Size() - 1 and the tracker gets two arguments.
+void MemInit() {
+    gMemLock = new CriticalSection();
+    gMemStackLock = new CriticalSection();
+    CritSecTracker tracker(gMemLock);
+    bool disableMgr = false;
+    bool enableTracking = false;
+    DataArray *cfg = SystemConfig("mem");
+    cfg->FindData("check_consistency", gCheckConsistency);
+    cfg->FindData("enable_tracking", enableTracking);
+    cfg->FindData("disable_mgr", disableMgr);
+    cfg->FindData("single_heap", gSingleHeap);
+    int trackHeap = -1;
+    cfg->FindData("track_heap", trackHeap, false);
+    int trackedAllocs = -1;
+    cfg->FindData("tracked_allocs", trackedAllocs, false);
+    PoolAllocInit(cfg->FindArray("pool"));
+    if (!disableMgr) {
+        void *mem = malloc(0x10000);
+        DataArray *heapArr = cfg->FindArray("heaps");
+        gNumHeaps = gSingleHeap ? 1 : heapArr->Size() - 1;
+        Symbol size("size");
+        int totalBytes = 0;
+        for (int i = heapArr->Size() - 1; i > 0; i--) {
+            DataArray *heap = heapArr->Array(i);
+            int bytes = 0;
+            heap->FindData(size, bytes, true);
+            if (gSingleHeap) {
+                totalBytes += bytes;
+                if (i == 1) {
+                    AddHeap(0, totalBytes, heap);
+                }
+            } else {
+                AddHeap(i - 1, bytes, heap);
+            }
+        }
+        free(mem);
+        MemHeapStack::sDefaultHeap = 0;
+    }
+    if (enableTracking) {
+        MemTrackInit(trackHeap, trackedAllocs);
+    }
+}
+#else
 void MemInit() {
     gMemLock = new CriticalSection();
     gMemStackLock = new CriticalSection();
@@ -682,6 +729,7 @@ void MemInit() {
     }
     gInitted = true;
 }
+#endif
 
 #ifndef HX_NATIVE
 static inline int MemHeapAllocSizeInline(const MemHeap &heap, int *ptr) {

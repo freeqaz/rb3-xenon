@@ -94,7 +94,13 @@ private:
     char mAllocInfoName[64]; // 0x181c4
 };
 
+#ifdef HX_NATIVE
 void MemTrackInit(int, int, bool);
+#else
+// Retail 0x827c4bb8 takes two arguments: it never reads r5, and its only
+// caller (MemInit, 0x827bd300) never sets it.
+void MemTrackInit(int, int);
+#endif
 bool MemTrackEnable(bool);
 void MemTrackSpew(bool);
 void MemTrackSetReportName(const char *);
