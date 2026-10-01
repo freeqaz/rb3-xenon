@@ -93587,7 +93587,9 @@
    "name": "consensus_partition",
    "address": "0x826989e0",
    "survivor": "??$_Copy_Construct@VSingerStats@@@stlpmtx_std@@YAXPAVSingerStats@@ABV1@@Z",
-   "folded": [],
+   "folded": [
+    "??$_Param_Construct@VSingerStats@@V1@@stlpmtx_std@@YAXPAVSingerStats@@ABV1@@Z"
+   ],
    "evidence": "PARTITIONED by the 2026-08-20 retail-anchored partition (arm D-prime): at every usable call site where our code calls this spelling, retail's own resolved bl lands at this address. Withheld classes and the derangement control are in decomp-bench archive/runs/2026-08-20-alias-partition-preland/.",
    "withdrawn": [
     {
@@ -93611,6 +93613,13 @@
      "adjudicator_detail": "size 68 vs 60 | different body SIZE -- cannot be one COMDAT",
      "callee_layer": "HARD_SIZE",
      "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    }
+   ],
+   "admitted": [
+    {
+     "spelling": "??$_Param_Construct@VSingerStats@@V1@@stlpmtx_std@@YAXPAVSingerStats@@ABV1@@Z",
+     "lane": "W16-LD 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN, CHASED T1 PROVEN, 0 CYCLE-ASSUMED; 68 B retail / 68 B ours. The map places this spelling at no address of its own. Retail call site reaching the survivor where we call this spelling (bl target read on retail bytes): 0x826991fc (in __uninitialized_fill_n<SingerStats*>)."
     }
    ]
   },
@@ -95046,11 +95055,17 @@
   {
    "name": "push_back_RhythmDetector",
    "address": "0x82699a50",
-   "survivor": "?push_back@?$vector@UFrame@RhythmDetector@@V?$StlNodeAlloc@UFrame@RhythmDetector@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUFrame@RhythmDetector@@@Z",
-   "folded": [
-    "?push_back@?$vector@VSingerStats@@V?$StlNodeAlloc@VSingerStats@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVSingerStats@@@Z"
-   ],
-   "evidence": "W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x82699a50). \"ours\" spelling ?push_back@?$vector@VSingerStats@@V?$StlNodeAlloc@VSingerStats@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVSingerStats@@@Z is a template/spelling twin of survivor ?push_back@?$vector@UFrame@RhythmDetector@@V?$StlNodeAlloc@UFrame@RhythmDetector@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUFrame@RhythmDetector@@@Z at retail address 0x82699a50. FLAT T1 PROVEN directly -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 named relocation(s) matched at FLAT T1 (no chase recursion required), 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 2 row(s) / 508 B (508 B honest) across ['default/band3/game/Stats'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md."
+   "survivor": "?push_back@?$vector@VSingerStats@@V?$StlNodeAlloc@VSingerStats@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVSingerStats@@@Z",
+   "folded": [],
+   "evidence": "W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x82699a50). \"ours\" spelling ?push_back@?$vector@VSingerStats@@V?$StlNodeAlloc@VSingerStats@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVSingerStats@@@Z is a template/spelling twin of survivor ?push_back@?$vector@UFrame@RhythmDetector@@V?$StlNodeAlloc@UFrame@RhythmDetector@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUFrame@RhythmDetector@@@Z at retail address 0x82699a50. FLAT T1 PROVEN directly -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 named relocation(s) matched at FLAT T1 (no chase recursion required), 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 2 row(s) / 508 B (508 B honest) across ['default/band3/game/Stats'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md. W16-LD 2026-10-01: survivor relabelled from ?push_back@?$vector@UFrame@RhythmDetector@@V?$StlNodeAlloc@UFrame@RhythmDetector@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUFrame@RhythmDetector@@@Z to ?push_back@?$vector@VSingerStats@@V?$StlNodeAlloc@VSingerStats@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVSingerStats@@@Z. Retail's only callers are Stats::SetVocalSingerAndPartCounts (0x82699b80) and Stats::LoadSingerStats (0x82699cc4), and the body calls _Copy_Construct<SingerStats> (0x826989e0) and the overflow path at 0x82699830, which calls vector<SingerStats>::_M_clear (0x82699140). The former folded spelling is now the survivor; no fold is claimed for vector<RhythmDetector::Frame>::push_back (its _Copy_Construct<Frame> differs, --chase: BYTES-DIFFER).",
+   "withdrawn": [
+    {
+     "spelling": "?push_back@?$vector@UFrame@RhythmDetector@@V?$StlNodeAlloc@UFrame@RhythmDetector@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUFrame@RhythmDetector@@@Z",
+     "lane": "W16-LD 2026-10-01",
+     "class": "WRONG_MAP_NAME_AT_ADDRESS",
+     "evidence": "Retail 0x82699a50 is vector<SingerStats>::push_back: both callers are Stats SingerStats paths and it copy-constructs through _Copy_Construct<SingerStats>. Map row renamed."
+    }
+   ]
   },
   {
    "name": "_M_erase_VCartRow",
@@ -97335,17 +97350,25 @@
   {
    "name": "$__uninitialized_copy",
    "address": "0x82657660",
-   "survivor": "??$__uninitialized_copy@PAUFrame@RhythmDetector@@PAU12@@stlpmtx_std@@YAPAUFrame@RhythmDetector@@PAU12@00ABU__false_type@0@@Z",
+   "survivor": "??$__uninitialized_copy@PAVSingerStats@@PAV1@@stlpmtx_std@@YAPAVSingerStats@@PAV1@00ABU__false_type@0@@Z",
    "folded": [
     "??$__uninitialized_copy@PBVSingerStats@@PAV1@@stlpmtx_std@@YAPAVSingerStats@@PBV1@0PAV1@ABU__false_type@0@@Z"
    ],
-   "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
+   "evidence": "Created by lane W16-JE: see per-member records in `admitted`. W16-LD 2026-10-01: survivor relabelled from ??$__uninitialized_copy@PAUFrame@RhythmDetector@@PAU12@@stlpmtx_std@@YAPAUFrame@RhythmDetector@@PAU12@00ABU__false_type@0@@Z to ??$__uninitialized_copy@PAVSingerStats@@PAV1@@stlpmtx_std@@YAPAVSingerStats@@PAV1@00ABU__false_type@0@@Z. Retail's callers are vector<SingerStats>'s copy ctor (0x82657cb4), operator= (0x82657ddc) and _M_insert_overflow_aux (0x826998d4, 0x8269994c), and the body calls _Copy_Construct<SingerStats> (0x826989e0) and __destroy_range<SingerStats> (0x82656b40). The folded const-SingerStats membership is unchanged. The block moves from RhythmDetector.cpp to band3/game/Stats.cpp, the only object that defines this spelling.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
     {
      "spelling": "??$__uninitialized_copy@PBVSingerStats@@PAV1@@stlpmtx_std@@YAPAVSingerStats@@PBV1@0PAV1@ABU__false_type@0@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 96 B retail / 96 B ours; retail body-twins 10. Retail call site(s) reaching the survivor where we call this spelling: 0x82657cb4."
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_copy@PAUFrame@RhythmDetector@@PAU12@@stlpmtx_std@@YAPAUFrame@RhythmDetector@@PAU12@00ABU__false_type@0@@Z",
+     "lane": "W16-LD 2026-10-01",
+     "class": "WRONG_MAP_NAME_AT_ADDRESS",
+     "evidence": "Retail 0x82657660 is __uninitialized_copy<SingerStats*,SingerStats*>: every caller is a vector<SingerStats> member and it copy-constructs through _Copy_Construct<SingerStats>. Map row renamed."
     }
    ]
   },
@@ -99679,6 +99702,26 @@
      "spelling": "??$_Destroy_Range@PAVLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@0@Z",
      "lane": "W16-LD 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 80 B retail / 80 B ours. The map places this spelling at no address of its own. Retail call site(s) reaching the survivor where we call this spelling (bl target read on retail bytes): 0x8266d5c4 (in _M_erase@?$vector). W16-HJ withdrew this spelling from the 0x825a36b8 group as WRONG_MAP_NAME_AT_ADDRESS (that body is a vector<hash_map<Symbol,String>> helper). This is a different address, reached from vector<LeaderboardRow>::_M_erase."
+    }
+   ],
+   "added": {
+    "lane": "W16-LD 2026-10-01"
+   }
+  },
+  {
+   "name": "_M_clear",
+   "address": "0x82699140",
+   "survivor": "?_M_clear@?$vector@VSingerStats@@V?$StlNodeAlloc@VSingerStats@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+   "folded": [
+    "?_M_clear_after_move@?$vector@VSingerStats@@V?$StlNodeAlloc@VSingerStats@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
+   ],
+   "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN, CHASED T1 PROVEN, 0 CYCLE-ASSUMED; 116 B retail / 116 B ours. The map places this spelling at no address of its own. Retail call site reaching the survivor where we call this spelling (bl target read on retail bytes): 0x8269995c (in vector<SingerStats>::_M_insert_overflow_aux).",
+   "lane": "W16-LD",
+   "admitted": [
+    {
+     "spelling": "?_M_clear_after_move@?$vector@VSingerStats@@V?$StlNodeAlloc@VSingerStats@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-LD 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN, CHASED T1 PROVEN, 0 CYCLE-ASSUMED; 116 B retail / 116 B ours. The map places this spelling at no address of its own. Retail call site reaching the survivor where we call this spelling (bl target read on retail bytes): 0x8269995c (in vector<SingerStats>::_M_insert_overflow_aux)."
     }
    ],
    "added": {
