@@ -188,7 +188,10 @@ void RndFont::Replace(ObjRef *from, Hmx::Object *to) {
     // replacement's owner. There is no base-class forwarding.
     if (reinterpret_cast<void *>(static_cast<Hmx::Object *>(mTextureOwner.Ptr()))
         == reinterpret_cast<void *>(from)) {
-        mTextureOwner = !to ? this : (RndFont *)dynamic_cast<RndFont *>(to)->mTextureOwner;
+        if (!to)
+            mTextureOwner = this;
+        else
+            mTextureOwner = dynamic_cast<RndFont *>(to)->mTextureOwner;
     }
     return;
 #endif
