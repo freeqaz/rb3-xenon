@@ -264,6 +264,8 @@ void SongSectionController::RegisterEvents() {
     MsgSource *src = dynamic_cast<MsgSource *>(Dir());
     if (!src || mWaitForEvent.Null())
         return;
+    // Retail builds the handler symbol as a function-local static here.
+    static Symbol wait_for_event_received("wait_for_event_received");
     src->AddSink(this, mWaitForEvent, wait_for_event_received);
 }
 

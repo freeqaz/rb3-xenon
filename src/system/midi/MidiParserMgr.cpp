@@ -40,10 +40,12 @@ MidiParserMgr::~MidiParserMgr() {
 }
 
 void MidiParserMgr::OnNewTrack(int) {
-    MemTemp tmp;
+    // Retail calls MemPushTemp / MemPopTemp directly: the inline
+    // MemDoTempAllocations guard, not the out-of-line MemTemp.
+    MemDoTempAllocations tmp;
     MILO_ASSERT(!mSongName.Null(), 0x7C);
     FreeAllData();
-    mNoteOns.resize(128);
+    mNoteOns.resize(128, -1);
     mText.reserve(2000);
     mWarnUnnamedTracks = true;
 }
