@@ -98212,6 +98212,19 @@
    "added": {
     "lane": "W16-KD 2026-10-01"
    }
+  },
+  {
+   "name": "RelevantGem@DrumTrackWatcherImpl@@QAAHHH",
+   "address": "0x82780298",
+   "survivor": "?RelevantGem@DrumTrackWatcherImpl@@QAAHHHH@Z",
+   "folded": [
+    "?RelevantGem@KeyboardTrackWatcherImpl@@QAAHHHH@Z"
+   ],
+   "evidence": "W16-KD 2026-10-01: retail KeyboardTrackWatcherImpl::ClosestUnplayedGem (0x827A00EC) branches to DrumTrackWatcherImpl::RelevantGem; the two RelevantGem bodies are the same function and the linker kept one (retail_bodytwins 1). With Keyboard's written like Drum's, our compiled body is byte-identical to retail's. tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN (300 B), CHASED T1 PROVEN, no CYCLE-ASSUMED leaf; the Keyboard spelling is not map-resident.",
+   "lane": "W16-KD",
+   "added": {
+    "lane": "W16-KD 2026-10-01"
+   }
   }
  ]
 }
