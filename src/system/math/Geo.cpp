@@ -882,64 +882,42 @@ bool Intersect(const Segment &seg, const BSPNode *n, float &t, Plane &p) {
     if (denom == 0.0f)
         return false;
 
+    // Split the segment at the plane: near = {start, mid}, far = {mid, end}.
     float frac = startDot / denom;
-    Vector3 mid;
-    Interp(seg.start, seg.end, frac, mid);
+    Segment nearSeg;
+    Interp(seg.start, seg.end, frac, nearSeg.end);
+    nearSeg.start = seg.start;
+    Segment farSeg;
+    farSeg.start = nearSeg.end;
+    farSeg.end = seg.end;
 
-    Segment seg1;
-    seg1.start = seg.start;
-    seg1.end = seg.end;
-    Segment seg2;
-    seg2.start = mid;
-    seg2.end = seg.end;
-
-    if (startDot <= endDot) {
-        if (!n->right) {
-            t = frac;
-            goto done_neg;
-        }
-        if (Intersect(seg1, n->right, t2, p)) {
+    if (startDot > endDot) {
+        if (n->left && Intersect(nearSeg, n->left, t2, p)) {
             t = frac * t2;
+        } else if (!n->right) {
+            t = frac;
         } else {
-            if (!n->left || !Intersect(seg2, n->left, t2, p))
+            if (!Intersect(farSeg, n->right, t2, p))
                 return false;
             t = (1.0f - frac) * t2 + frac;
         }
-        t = frac;
-    done_neg:
         if (t2 == 0.0f && t != 0.0f) {
-            p.a = -n->plane.a;
-            p.b = -n->plane.b;
-            p.c = -n->plane.c;
-            p.d = -n->plane.d;
+            p = n->plane;
         }
     } else {
-        if (!n->left) {
-            if (!n->right || !Intersect(seg2, n->right, t2, p))
+        if (!n->right) {
+            t = 0.0f;
+            return true;
+        }
+        if (Intersect(nearSeg, n->right, t2, p)) {
+            t = frac * t2;
+        } else {
+            if (!n->left || !Intersect(farSeg, n->left, t2, p))
                 return false;
             t = (1.0f - frac) * t2 + frac;
-            t = frac;
-            if (t2 == 0.0f && t != 0.0f) {
-                p.a = n->plane.a;
-                p.b = n->plane.b;
-                p.c = n->plane.c;
-                p.d = n->plane.d;
-            }
-        } else {
-            if (Intersect(seg1, n->left, t2, p)) {
-                t = frac * t2;
-            } else {
-                if (!n->right || !Intersect(seg2, n->right, t2, p))
-                    return false;
-                t = (1.0f - frac) * t2 + frac;
-            }
-            t = frac;
-            if (t2 == 0.0f && t != 0.0f) {
-                p.a = n->plane.a;
-                p.b = n->plane.b;
-                p.c = n->plane.c;
-                p.d = n->plane.d;
-            }
+        }
+        if (t2 == 0.0f && t != 0.0f) {
+            p.Set(-n->plane.a, -n->plane.b, -n->plane.c, -n->plane.d);
         }
     }
     return true;
