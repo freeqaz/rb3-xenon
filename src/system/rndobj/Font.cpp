@@ -229,7 +229,9 @@ BEGIN_PROPSYNCS(RndFont)
     SYNC_PROP_SET(cell_height, (int)mCellSize.y, SetCellSize(mCellSize.x, _val.Int()))
     SYNC_PROP_SET(chars_in_map, GetASCIIChars(), SetASCIIChars(_val.Str()))
     SYNC_PROP_MODIFY(base_kerning, mBaseKerning, UpdateChars())
+#ifdef HX_NATIVE
     SYNC_SUPERCLASS(Hmx::Object)
+#endif
 END_PROPSYNCS
 
 // Transcribed from retail 0x82472EC0 (548 B). The write order below is the
@@ -695,11 +697,16 @@ void RndFont::Print() {
 
 // Former RndFontBase::SetASCIIChars, inlined.
 void RndFont::SetASCIIChars(String str) {
+#ifdef HX_NATIVE
     if (DataOwner() != this) {
         MILO_ASSERT(0, 0x167);
     } else {
         ASCIItoWideVector(mChars, str.c_str());
     }
+#else
+    // Retail 0x82474D20 converts unconditionally (no texture-owner test).
+    ASCIItoWideVector(mChars, str.c_str());
+#endif
     UpdateChars();
 }
 
