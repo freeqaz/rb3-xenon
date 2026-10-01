@@ -982,8 +982,8 @@ bool AccomplishmentPanel::HasAward() const {
     if (IsSecret())
         return false;
     else {
-        Accomplishment *acc =
-            TheAccomplishmentMgr->GetAccomplishment(SelectedAccomplishment());
+        Symbol selected = SelectedAccomplishment();
+        Accomplishment *acc = TheAccomplishmentMgr->GetAccomplishment(selected);
         if (acc)
             return acc->HasAward();
         else
@@ -1008,8 +1008,8 @@ bool AccomplishmentPanel::HasProgress() const {
     if (IsSecret())
         return false;
     else {
-        Accomplishment *acc =
-            TheAccomplishmentMgr->GetAccomplishment(SelectedAccomplishment());
+        Symbol selected = SelectedAccomplishment();
+        Accomplishment *acc = TheAccomplishmentMgr->GetAccomplishment(selected);
         if (!acc)
             return false;
         else {
@@ -1050,8 +1050,8 @@ int AccomplishmentPanel::GetCurrentValue() const {
     else {
         BandProfile *pProfile = TheCampaign->GetProfile();
         MILO_ASSERT(pProfile, 0x879);
-        Accomplishment *acc =
-            TheAccomplishmentMgr->GetAccomplishment(SelectedAccomplishment());
+        Symbol selected = SelectedAccomplishment();
+        Accomplishment *acc = TheAccomplishmentMgr->GetAccomplishment(selected);
         int i10 = 0;
         if (acc) {
             int i14 = 0;
@@ -1067,8 +1067,8 @@ int AccomplishmentPanel::GetMaxValue() const {
     else {
         BandProfile *pProfile = TheCampaign->GetProfile();
         MILO_ASSERT(pProfile, 0x890);
-        Accomplishment *acc =
-            TheAccomplishmentMgr->GetAccomplishment(SelectedAccomplishment());
+        Symbol selected = SelectedAccomplishment();
+        Accomplishment *acc = TheAccomplishmentMgr->GetAccomplishment(selected);
         int i10 = 0;
         int i14 = 0;
         if (acc) {
