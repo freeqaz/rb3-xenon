@@ -116,14 +116,18 @@ BEGIN_PROPSYNCS(RndGroup)
 END_PROPSYNCS
 
 BEGIN_SAVES(RndGroup)
-    SAVE_REVS(0x10, 0)
+    // Retail saves revision 14 from a writable int (0x82C7063C), the newest
+    // revision Load understands (mSortInWorld at rev > 13).
+    static int REV = 14;
+    bs << REV;
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndAnimatable)
     SAVE_SUPERCLASS(RndTransformable)
     SAVE_SUPERCLASS(RndDrawable)
-    bs << mObjects;
-    bs << mDrawOnly;
-    bs << mSortInWorld;
+    // Retail writes the environment, LOD object and LOD screen size between
+    // mObjects and mSortInWorld, as one chained expression (the float is
+    // loaded before the first call).
+    bs << mObjects << mEnv << mDrawOnly << mLod << mLodScreenSize << mSortInWorld;
 END_SAVES
 
 BEGIN_COPYS(RndGroup)
