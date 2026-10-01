@@ -3554,6 +3554,7 @@ VorbisReader.cpp:
 	.pdata      start:0x8225E958 end:0x8225E988
 	.pdata      start:0x8225E988 end:0x8225E9A8
 	.pdata      start:0x8225E9B8 end:0x8225E9C0
+	.pdata      start:0x8225E9D0 end:0x8225E9D8
 	.text       start:0x82773E70 end:0x82773FB0
 	.text       start:0x82BB28BC end:0x82BB28D8
 	.text       start:0x82BB28D8 end:0x82BB2934
