@@ -1457,9 +1457,11 @@ void LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
     Hmx::Object *fromObj = reinterpret_cast<Hmx::Object *>(from);
     for (uint idx = 0; idx != mSpotlights.size(); idx++) {
         if (mSpotlights[idx] == fromObj) {
-            if (to)
+            if (to) {
+                fromObj->Release(this);
                 mSpotlights[idx] = dynamic_cast<Spotlight *>(to);
-            else
+                to->AddRef(this);
+            } else
                 RemoveSpotlight(idx);
             CacheFrames();
             return;
@@ -1467,9 +1469,11 @@ void LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
     }
     for (uint idx = 0; idx != mEnvironments.size(); idx++) {
         if (mEnvironments[idx] == fromObj) {
-            if (to)
+            if (to) {
+                fromObj->Release(this);
                 mEnvironments[idx] = dynamic_cast<RndEnviron *>(to);
-            else
+                to->AddRef(this);
+            } else
                 RemoveEnvironment(idx);
             CacheFrames();
             return;
@@ -1477,9 +1481,11 @@ void LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
     }
     for (uint idx = 0; idx != mLights.size(); idx++) {
         if (mLights[idx] == fromObj) {
-            if (to)
+            if (to) {
+                fromObj->Release(this);
                 mLights[idx] = dynamic_cast<RndLight *>(to);
-            else
+                to->AddRef(this);
+            } else
                 RemoveLight(idx);
             CacheFrames();
             return;
@@ -1487,15 +1493,18 @@ void LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
     }
     for (uint idx = 0; idx != mSpotlightDrawers.size(); idx++) {
         if (mSpotlightDrawers[idx] == fromObj) {
-            if (to)
+            if (to) {
+                fromObj->Release(this);
                 mSpotlightDrawers[idx] = dynamic_cast<SpotlightDrawer *>(to);
-            else
+                to->AddRef(this);
+            } else
                 RemoveSpotlightDrawer(idx);
             CacheFrames();
             return;
         }
     }
-    RndAnimatable::Replace(from, to);
+    // Retail does not chain to the base Replace here; the not-found path simply
+    // returns.
 }
 
 #pragma endregion
