@@ -371,11 +371,10 @@ void RndGroup::Update() {
 
 void RndGroup::AddObject(Hmx::Object *o1, Hmx::Object *o2) {
     if (o1 && o1 != this) {
-        if (mObjects.find(o1) != mObjects.end()) {
-            if (!o2)
-                return;
-            RemoveObject(o1);
-        }
+        // Retail returns when o1 is already a member, whether or not o2 is
+        // given; it never removes and re-inserts.
+        if (mObjects.find(o1) != mObjects.end())
+            return;
         if (o2) {
             mObjects.insert(mObjects.find(o2), o1);
             Update();
