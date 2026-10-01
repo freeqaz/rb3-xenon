@@ -113,10 +113,13 @@ void Tour::ConfigureTourStatusData(DataArray *arr) {
         entry.mStars = pStatusEntry->Int(1);
         m_vTourStatus.push_back(entry);
     }
+#ifdef HX_NATIVE
+    // Not in retail (0x8235F160 ends after the parse loop).
     for (int i = 1; i < m_vTourStatus.size(); i++) {
         if (m_vTourStatus[i - 1].mStars >= m_vTourStatus[i].mStars)
             MILO_WARN("Tour status fan requirement values are not increasing!");
     }
+#endif
 }
 
 int Tour::GetTourStatusIndexForFanCount(int fanCount) const {
