@@ -6162,7 +6162,6 @@ MetaMusic.cpp:
 SongCollision.cpp:
 	.pdata      start:0x82215220 end:0x82215230
 	.pdata      start:0x82233B18 end:0x82233B28
-	.pdata      start:0x82233C00 end:0x82233C08
 	.pdata      start:0x8223E6B0 end:0x8223E6B8
 	.pdata      start:0x8223EB50 end:0x8223EB58
 	.text       start:0x824E1AC0 end:0x824E1C88
@@ -8231,6 +8230,7 @@ band3/game/VocalTrainerPanel.cpp:
 	.pdata      start:0x82233BB0 end:0x82233BD8
 	.pdata      start:0x82233BD8 end:0x82233BF8
 	.pdata      start:0x82233BF8 end:0x82233C00
+	.pdata      start:0x82233C00 end:0x82233C08
 	.pdata      start:0x82233C08 end:0x82233C10
 	.pdata      start:0x82233C10 end:0x82233C38
 	.pdata      start:0x82233C38 end:0x82233C78
