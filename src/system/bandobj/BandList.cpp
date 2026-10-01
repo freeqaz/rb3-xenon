@@ -1,3 +1,6 @@
+// Retail inlines the ObjPtr two-arg ctor at this TU's member-init sites; the
+// in-class (plain inline) definition lets MSVC choose per site, as retail did.
+#define RB3_OBJPTR_INLINE_TWOARG_CTOR
 // ObjMacros.h must precede BandList.h: its DECLARE_REVS/INIT_REVS/LOAD_REVS
 // (1-arg, class-member gRev) dialect is what this TU + the header expect. It
 // is pulled after ui/UIList.h so it overrides obj/Object.h's 2-arg dialect.

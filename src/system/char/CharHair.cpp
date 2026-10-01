@@ -620,7 +620,8 @@ void operator>>(BinStream &d, CharHair::Point &pt) {
 }
 
 CharHair::Point::Point(Hmx::Object *owner)
-    : bone(owner), length(0.0f), collides(owner), radius(0.0f), outerRadius(-1.0f) {
+    : bone(owner), length(0.0f), collides(owner), radius(0.0f), outerRadius(0.0f),
+      sideLength(-1.0f) {
     pos.Zero();
     force.Zero();
     lastFriction.Zero();
