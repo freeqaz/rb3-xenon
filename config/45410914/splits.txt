@@ -1864,8 +1864,7 @@ MicClientMapper.cpp:
 	.pdata      start:0x82238780 end:0x82238790
 	.text       start:0x8270F108 end:0x8270F348
 	.text       start:0x8270F348 end:0x8270F448
-	.text       start:0x8270F448 end:0x8270F4F0
-	.text       start:0x8270F4F0 end:0x8270F4F4
+	.text       start:0x8270F448 end:0x8270F4F4
 	.text       start:0x8270F528 end:0x8270F550
 	.text       start:0x8270F550 end:0x8270F9C4
 	.text       start:0x8270F9C4 end:0x8270FA20
@@ -2371,7 +2370,6 @@ BufStream.cpp:
 	.text       start:0x827CC384 end:0x827CC428
 	.text       start:0x827CC428 end:0x827CC4CC
 	.text       start:0x827CC4D0 end:0x827CC6C4
-	.text       start:0x827CC768 end:0x827CC770
 
 Locale.cpp:
 	.pdata      start:0x82242808 end:0x82242868
@@ -4697,7 +4695,6 @@ UIComponent.cpp:
 	.text       start:0x827FE250 end:0x827FE2D0
 	.text       start:0x827FE2D0 end:0x827FFAD8
 	.text       start:0x827FFAD8 end:0x828012E0
-	.text       start:0x828175E8 end:0x828175EC
 
 MemMgr.cpp:
 	.pdata      start:0x82241A90 end:0x82241A98
@@ -4909,8 +4906,7 @@ DataNode.cpp:
 	.text       start:0x824F8F50 end:0x824F901C
 	.text       start:0x824F90A8 end:0x824F9188
 	.text       start:0x82744E48 end:0x82745354
-	.text       start:0x8274A974 end:0x8274A99C
-	.text       start:0x8274A99C end:0x8274A9A4
+	.text       start:0x8274A974 end:0x8274A9A4
 	.text       start:0x8274A9B0 end:0x8274A9D0
 	.text       start:0x8274AA00 end:0x8274AA08
 	.text       start:0x8274AA08 end:0x8274BB88
@@ -5596,7 +5592,6 @@ CharServoBone.cpp:
 	.text       start:0x82376178 end:0x82376D3C
 	.text       start:0x82545988 end:0x825459A8
 	.text       start:0x825459E0 end:0x825459E8
-	.text       start:0x82545A28 end:0x82545A64
 	.text       start:0x826047A0 end:0x82604840
 	.text       start:0x82604840 end:0x82604868
 
@@ -6971,7 +6966,6 @@ MeasureMap.cpp:
 	.text       start:0x822BCEC0 end:0x822BCFD0
 	.text       start:0x82449998 end:0x824499F8
 	.text       start:0x82771728 end:0x82771798
-	.text       start:0x827D0A64 end:0x827D0B40
 	.text       start:0x827D0C20 end:0x827D0C60
 	.text       start:0x827D0C60 end:0x827D0E98
 	.text       start:0x827D0E98 end:0x827D1018
@@ -7969,8 +7963,7 @@ FilePath.cpp:
 
 UTF8.cpp:
 	.pdata      start:0x82242A30 end:0x82242AB0
-	.text       start:0x827CC6C4 end:0x827CC768
-	.text       start:0x827CC770 end:0x827CD0FC
+	.text       start:0x827CC6C4 end:0x827CD0FC
 
 Chunks.cpp:
 	.pdata      start:0x82243588 end:0x82243590
@@ -11303,8 +11296,7 @@ PerformanceData.cpp:
 	.text       start:0x82656800 end:0x82656C28
 	.text       start:0x82656C28 end:0x82656CB4
 	.text       start:0x82656CB8 end:0x82656D44
-	.text       start:0x82656D48 end:0x82657570
-	.text       start:0x82657570 end:0x826575A0
+	.text       start:0x82656D48 end:0x826575A0
 	.text       start:0x826575A0 end:0x82657660
 	.text       start:0x82657798 end:0x82657C50
 	.text       start:0x82657E08 end:0x82657FA0
@@ -12622,8 +12614,7 @@ ProfileMgr.cpp:
 	.text       start:0x82545900 end:0x8254591C
 	.text       start:0x82545920 end:0x82545984
 	.text       start:0x825459A8 end:0x825459E0
-	.text       start:0x825459E8 end:0x82545A28
-	.text       start:0x82545A64 end:0x82545A70
+	.text       start:0x825459E8 end:0x82545A70
 	.text       start:0x82545A70 end:0x82545C88
 	.text       start:0x82545C90 end:0x82545CA0
 	.text       start:0x82545CA0 end:0x82545DD8
@@ -13169,7 +13160,7 @@ CharTaskMgr.cpp:
 system/utl/DeJitter.cpp:
 	.pdata      start:0x82242E60 end:0x82242E70
 	.text       start:0x827D09E8 end:0x827D0A0C
-	.text       start:0x827D0A10 end:0x827D0A64
+	.text       start:0x827D0A10 end:0x827D0B40
 	.text       start:0x827D0B40 end:0x827D0C1C
 
 system/synth_xbox/FxSend.cpp:
@@ -13518,10 +13509,8 @@ band3/game/KeysFx.cpp:
 	.text       start:0x826F3E98 end:0x826F4A10
 
 system/ui/UIGridProvider.cpp:
-	.pdata      start:0x82247178 end:0x822471A8
-	.pdata      start:0x822471A8 end:0x822471E8
-	.text       start:0x82817260 end:0x828175E8
-	.text       start:0x828175EC end:0x82817A64
+	.pdata      start:0x82247178 end:0x822471E8
+	.text       start:0x82817260 end:0x82817A64
 
 system/bandobj/BandButton.cpp:
 	.pdata      start:0x821FEA70 end:0x821FEA80
