@@ -172,8 +172,8 @@ void NgSpotlightDrawer::RenderCone(Spotlight *sl) {
 }
 
 void NgSpotlightDrawer::RenderSphere(Spotlight *sl) {
-    static float sBeamBrighten = 0.1f; // lbl_82F197C8
-    static float sSphereScale = 1.0f; // lbl_82F197CC
+    static float sBeamBrighten = 0.1f; // RB3 retail 0x82C7118C = 0.1f
+    static float sSphereScale = 1.0f; // RB3 retail 0x82C71190 = 1.0f
     MILO_ASSERT(sl->HasBeam(), 0x470);
     Spotlight::BeamDef &def = sl->mBeam;
     float zero = 0.0f;
