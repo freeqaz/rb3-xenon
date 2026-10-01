@@ -742,18 +742,18 @@ void RndText::ComputeCharWidths(float *fp, int i2, const char *cc, Style style) 
     for (int i = 0; i < i2; i++) {
         if (*cc == '<' && mTextMarkup) {
             const char *parsed = ParseMarkup(cc, &style, size, f3);
-            while (cc != parsed) {
+            int markupLen = parsed - cc;
+            for (int j = 0; j < markupLen; j++) {
                 fp[i++] = 0;
-                cc++;
             }
+            cc = parsed;
             i--;
         } else {
             unsigned short us68;
             int i6 = DecodeUTF8(us68, cc);
             RndFont *i4 = SupportChar(us68, style.mFont);
             if (i4) {
-                float f9 = i4->CharAdvance(u7, us68);
-                float fVal = style.mSize * f9;
+                float fVal = i4->CharAdvance(u7, us68) * style.mSize;
                 fp[i] = fVal;
                 u7 = us68;
                 if (fVal < 0)

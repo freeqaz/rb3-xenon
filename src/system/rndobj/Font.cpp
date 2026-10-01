@@ -762,31 +762,29 @@ void RndFont::SetCharInfo(CharInfo *info, RndBitmap &bmap, const Vector2 &pos) {
         int right = (int)(mCellSize.x + pos.x);
         int bottom = (int)(mCellSize.y + pos.y);
         int dummy;
+        // Retail (0x824723F8) re-tests the column on every step of both scans:
+        // inward from the left edge, then inward from the right edge.
         int leftCol = left;
-        if (right != leftCol) {
-            auto _tmp0 = bmap.ColumnNonTransparent(leftCol, top, bottom, &dummy);
-            while (_tmp0 == 0) {
-                if (right > left) {
-                    leftCol++;
-                } else {
-                    leftCol--;
-                }
-                if (right == leftCol)
-                    break;
+        while (leftCol != right) {
+            if (bmap.ColumnNonTransparent(leftCol, top, bottom, &dummy))
+                break;
+            if (right > left) {
+                leftCol++;
+            } else {
+                leftCol--;
             }
         }
         float leftColF = (float)(long long)leftCol;
-        int rightCol = right - 1;
-        if (left - 1 != rightCol) {
-            auto _tmp1 = bmap.ColumnNonTransparent(rightCol, top, bottom, &dummy);
-            while (_tmp1 == 0) {
-                if (right - 1 < left - 1) {
-                    rightCol++;
-                } else {
-                    rightCol--;
-                }
-                if (rightCol == left - 1)
-                    break;
+        right--;
+        left--;
+        int rightCol = right;
+        while (rightCol != left) {
+            if (bmap.ColumnNonTransparent(rightCol, top, bottom, &dummy))
+                break;
+            if (left > right) {
+                rightCol++;
+            } else {
+                rightCol--;
             }
         }
         int width = bmap.Width();
