@@ -1225,6 +1225,24 @@ DataNode Hmx::Object::OnRemoveSink(DataArray *a) {
     return 0;
 }
 
+#ifndef HX_NATIVE
+// Retail 0x8275B798: no type check on the non-symbol key, and a missing
+// property falls back to the default argument.
+DataNode Hmx::Object::OnGet(const DataArray *a) {
+    const DataNode &node = a->Evaluate(2);
+    if (node.Type() == kDataSymbol) {
+        const char *sym = node.UncheckedStr();
+        const DataNode *prop = Property(STR_TO_SYM(sym), a->Size() < 4);
+        if (prop)
+            return *prop;
+    } else {
+        const DataNode *prop = Property(node.UncheckedArray(), a->Size() < 4);
+        if (prop)
+            return *prop;
+    }
+    return a->Node(3);
+}
+#else
 DataNode Hmx::Object::OnGet(const DataArray *a) {
     const DataNode &node = a->Evaluate(2);
     if (node.Type() == kDataSymbol) {
@@ -1255,6 +1273,7 @@ DataNode Hmx::Object::OnGet(const DataArray *a) {
     return a->Node(3);
 #endif
 }
+#endif
 
 #ifdef HX_NATIVE
 DataNode Hmx::Object::OnSet(const DataArray *a) {
