@@ -14,7 +14,9 @@
 #include "obj/Task.h"
 #include "os/Debug.h"
 #include "os/System.h"
+#include "synth/MicClientMapper.h"
 #include "synth/MicManagerInterface.h"
+#include "synth/Synth.h"
 #include "synth/VoiceBeat.h"
 #include <algorithm>
 
@@ -201,6 +203,14 @@ void Singer::CreateMicClientID() {
 }
 
 GameMic *Singer::GetGameMic() const { return TheGameMicManager->GetMic(mMicClientID); }
+
+// Retail fn_826F6930, 20 B (the name is ours, lane W16-JC-6): a tail call
+// `TheSynth->mMicClientMapper(+0x74)->GetMicIDForClientID(&mMicClientID)`. Its one
+// caller is VocalPlayer::HasSingerOnMic. (The map currently names this address
+// ?Dispatch@SyncLocalMachineMsg@..., which a 20-byte mic-mapper tail call is not.)
+int Singer::GetMicID() const {
+    return TheSynth->GetMicClientMapper()->GetMicIDForClientID(mMicClientID);
+}
 MicClientID Singer::GetMicClientID() const { return mMicClientID; }
 
 void Singer::SetMicProcessing(bool b1, bool b2) {

@@ -66,6 +66,9 @@ public:
     void SetStreakPct(float);
     void SetEnableVocalsOptions(bool);
     void DeactivateVolume(VocalParam);
+    void ActivateVolume(VocalParam, int, bool);
+    void ChangeVolume(int);
+    void SetVolumeSlider(int);
     void ApplyFontStyle(Hmx::Object *);
     void ApplyArrowStyle(Hmx::Object *);
     void SetIsolatedPart(int);

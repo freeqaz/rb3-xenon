@@ -1611,6 +1611,67 @@ bool VocalPlayer::HadMic(const MicClientID &id) const {
     return false;
 }
 
+// Retail's predicate MATERIALIZES a bool (`li r11,0/1; clrlwi. r11,r11,24; beq`)
+// instead of branching straight to the call, so it is an inlined helper returning
+// bool -- a raw `if (a || b || c)` branches directly and never builds the 0/1.
+// Retail's compare chain is `==1 -> T; <=2 -> F; <=5 -> T; ==7 -> T; else F`,
+// i.e. true for {1,3,4,5,7} == {R2, R1, Tri, Circle, Square} (X/A is excluded).
+static bool IsVocalVolumeButton(JoypadButton but) {
+    switch (but) {
+    case kPad_R2:
+    case kPad_R1:
+    case kPad_Tri:
+    case kPad_Circle:
+    case kPad_Square:
+        return true;
+    default:
+        return false;
+    }
+}
+
+// Retail OnMsg(ButtonDownMsg) materializes this predicate too (`li r11,0/1`), with a
+// compare chain true for {13, 15, 17, 19} == {DRight, DLeft, LStickRight, LStickLeft}.
+static bool IsVolumeChangeButton(JoypadButton but) {
+    switch (but) {
+    case kPad_DRight:
+    case kPad_DLeft:
+    case kPad_LStickRight:
+    case kPad_LStickLeft:
+        return true;
+    default:
+        return false;
+    }
+}
+
+// Inlined into retail OnMsg(ButtonDownMsg) (no out-of-line copy): right steps the
+// volume +1, left -1, through the track's VocalTrackDir::ChangeVolume (fn_822F61C0).
+void VocalPlayer::HandleChangeVolume(JoypadButton but) {
+    int delta;
+    switch (but) {
+    case kPad_DRight:
+    case kPad_LStickRight:
+        delta = 1;
+        break;
+    case kPad_DLeft:
+    case kPad_LStickLeft:
+        delta = -1;
+        break;
+    default:
+        MILO_WARN("HandleChangeVolume got an unused button! Ignoring it.\n");
+        return;
+    }
+    if (mTrack)
+        mTrack->GetVocalTrackDir()->ChangeVolume(delta);
+}
+
+// Retail (the HANDLE_MESSAGE(ButtonDownMsg) target) has no "world_panel" focus test:
+// a focus panel other than TheGamePanel must be a PracticePanel. After the overshell
+// checks it reads the button once, ignores R1/R2 while
+// TheGame->mProperties.mUnkTU5_movieSync is set, then dispatches in order: tambourine,
+// the volume-param buttons (out of line, fn_826E5FB0), the d-pad/left-stick volume
+// steps (inlined, see HandleChangeVolume), and Select during a freestyle section
+// (vtable slots 0x158 InFreestyleSection and 0x190 DeployBandEnergyIfPossible, then
+// a 0 store to +0x360).
 bool VocalPlayer::OnMsg(const ButtonDownMsg &msg) {
 #ifdef HX_NATIVE
     // Off-path: the tambourine button-down path pulls TheUI / TheBandUI overshell
@@ -1620,20 +1681,26 @@ bool VocalPlayer::OnMsg(const ButtonDownMsg &msg) {
 #else
     if ((User *)GetUser() != msg.GetUser())
         return 0;
-    bool b1 = false;
-    if (TheUI->FocusPanel()) {
-        b1 = strcmp(TheUI->FocusPanel()->Name(), "world_panel") == 0;
-    }
-    if (TheUI->FocusPanel() != TheGamePanel && !b1) {
+    if (TheUI->FocusPanel() != TheGamePanel) {
         if (!dynamic_cast<PracticePanel *>(TheUI->FocusPanel()))
             return 0;
     }
     OvershellSlot *slot = TheBandUI.GetOvershell()->FindSlotForUser(GetUser());
     if (slot->IsLeavingOptions() || !slot->IsHidden())
         return 0;
-    const DataArray *arr = msg.mData;
-    if (mTambourineManager.IsTambourineButton((JoypadButton)arr->Node(3).Int(arr))) {
+    JoypadButton but = msg.GetButton();
+    if (TheGame->mProperties.mUnkTU5_movieSync && (but == kPad_R1 || but == kPad_R2))
+        return 0;
+    if (mTambourineManager.IsTambourineButton(but)) {
         mTambourineManager.HandleButtonDown();
+    }
+    if (IsVocalVolumeButton(but))
+        HandleActivateVolume(but);
+    else if (IsVolumeChangeButton(but))
+        HandleChangeVolume(but);
+    if (but == kPad_Select && InFreestyleSection()) {
+        DeployBandEnergyIfPossible(false);
+        mLastDeploymentSinger = 0;
     }
     return 0;
 #endif
@@ -1673,23 +1740,6 @@ DECOMP_FORCEACTIVE(
 // register by one -- 212 charged r28<->r29 sites, ALL of which dissolved with the
 // frame. Handing `&msg` to an out-of-TU callee (GetUser) is what defeats the analysis.
 // Full record + the Poll wall: docs/decomp/w22-frame.md.
-// Retail's predicate MATERIALIZES a bool (`li r11,0/1; clrlwi. r11,r11,24; beq`)
-// instead of branching straight to the call, so it is an inlined helper returning
-// bool -- a raw `if (a || b || c)` branches directly and never builds the 0/1.
-// Retail's compare chain is `==1 -> T; <=2 -> F; <=5 -> T; ==7 -> T; else F`,
-// i.e. true for {1,3,4,5,7} == {R2, R1, Tri, Circle, Square} (X/A is excluded).
-static bool IsVocalVolumeButton(JoypadButton but) {
-    switch (but) {
-    case kPad_R2:
-    case kPad_R1:
-    case kPad_Tri:
-    case kPad_Circle:
-    case kPad_Square:
-        return true;
-    default:
-        return false;
-    }
-}
 
 // Ported from retail bytes (fn_826E5E98, 0xF4 B): this is not a stub returning
 // 0, and the RB2 dump carries only
@@ -1765,6 +1815,49 @@ void VocalPlayer::HandleDeactivateVolume(JoypadButton but) {
     } else if (mTrack) {
         mTrack->GetVocalTrackDir()->DeactivateVolume(param);
     }
+}
+
+// Retail fn_826E5FB0, 180 B (unmapped; TU5-only, no surviving source -- the name is from the
+// "HandleActivateVolume:" warning string; body from retail bytes, lane W16-JC-6).
+// The three mic-gain params address mic (param - Mic1Gain) and enable the widget only
+// if a singer is on that mic (fn_826E57B0); the cue volume is enabled by
+// AllowPitchCorrection(); everything else is enabled. Then the track's VocalTrackDir
+// shows the widget (fn_822F93D0).
+void VocalPlayer::HandleActivateVolume(JoypadButton but) {
+    VocalParam param;
+    if (!GetVolumeParam(but, param)) {
+        MILO_WARN(
+            "HandleActivateVolume: Couldn't get a VocalParam for supposed volume button %d!\n",
+            but
+        );
+        return;
+    }
+    int mic;
+    bool isMic;
+    if (param == kVocalParamMic1Gain || param == kVocalParamMic2Gain
+        || param == kVocalParamMic3Gain) {
+        mic = param - kVocalParamMic1Gain;
+        isMic = true;
+    } else {
+        mic = -1;
+        isMic = false;
+    }
+    if (mTrack) {
+        bool enabled = !isMic || HasSingerOnMic(mic);
+        if (param == kVocalParamCueVolume)
+            enabled = AllowPitchCorrection();
+        mTrack->GetVocalTrackDir()->ActivateVolume(param, mic, enabled);
+    }
+}
+
+// Retail fn_826E57B0, 80 B (unmapped; the name is ours, lane W16-JC-6): true if any
+// singer's mic id (Singer fn_826F6930) is `mic`.
+bool VocalPlayer::HasSingerOnMic(int mic) const {
+    FOREACH (it, mSingers) {
+        if ((*it)->GetMicID() == mic)
+            return true;
+    }
+    return false;
 }
 #pragma auto_inline(on)
 
