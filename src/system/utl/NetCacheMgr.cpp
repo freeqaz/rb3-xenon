@@ -155,31 +155,17 @@ Symbol NetCacheMgr::CheatNextServer() {
 }
 
 void NetCacheMgr::Load(NetCacheMgr::CacheSize cs) {
-    if (mLoadCount == 0) {
-        while (mState == 2) {
-            NetCacheMgr::Poll();
-        }
-    }
+    // Retail neither waits out a pending unload nor checks the count here.
     mLoadCount++;
-    MILO_ASSERT(mLoadCount <= 2, 0x120);
-    if (mState == 0 && !mHasFailed) {
-        MILO_NOTIFY("NetCcaheMgr::Load() called before previous load had finished.");
-    }
     mLoadCacheSize = cs == 0 ? 0x100000 : 0x500000;
-    if (mLoadCount == 1) {
-        SetState((NetCacheMgrState)0);
+    if (mLoadCount == 1 && mState == kNCMS_Nil) {
+        SetState(kNCMS_Load);
     }
 }
 
 void NetCacheMgr::Unload() {
     mLoadCount--;
-    if (mLoadCount < 0) {
-        MILO_NOTIFY("NetCacheMgr::Unload() called more times than NetCacheMgr::Load()!\n"
-        );
-        mLoadCount = 0;
-    } else {
-        SetState((NetCacheMgrState)2);
-    }
+    SetState(kNCMS_UnloadWaitForWrite);
 }
 
 NetLoader *NetCacheMgr::AddNetLoader(const char *cc, NetLoaderPos pos) {
@@ -206,12 +192,13 @@ void NetCacheMgr::SetState(NetCacheMgrState state) {
     // Retail (0x827CE820) is the recursive form: Poll inlines SetState(Nil) and
     // keeps the nested SetState(kNCMS_Load) as a call; the body's own copy is a
     // tail-recursion loop.
-    if (mState == state)
+    int oldState = mState;
+    if (oldState == state)
         return;
-    if (mState == kNCMS_UnloadWaitForWrite) {
+    if (oldState == kNCMS_UnloadWaitForWrite) {
         mHasFailed = false;
     }
-    if (mState == kNCMS_Nil && state == kNCMS_UnloadWaitForWrite) {
+    if (oldState == kNCMS_Nil && state == kNCMS_UnloadWaitForWrite) {
         MILO_FAIL("NetCacheMgr attempted to move straight from kNCMS_Nil to kNCMS_Unload!\n");
     }
     mState = state;
