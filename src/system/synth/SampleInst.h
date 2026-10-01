@@ -82,6 +82,11 @@ public:
     // Retail 0x8272a830: `if (IsPlaying()) StopImpl();`, no argument (every
     // retail caller leaves r4 unset).
     SAMPLEINST_NATIVE_VIRTUAL void Stop();
+#ifdef HX_NATIVE
+    // PlayableSample's DC3 Stop(bool) pure virtual, native build only;
+    // forwards to the RB3 no-argument form.
+    virtual void Stop(bool) { Stop(); }
+#endif
     SAMPLEINST_NATIVE_VIRTUAL bool DonePlaying();
     SAMPLEINST_NATIVE_VIRTUAL void EndLoopImpl() {
         MILO_NOTIFY("EndLoop not implemented on this platform\n");
