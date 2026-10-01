@@ -1596,15 +1596,27 @@ Symbol AccomplishmentManager::GetAwardNameDisplay(Symbol s) const {
     return ret;
 }
 
+// Retail first constructs a static Symbol "campaign_award_reason_gamestop" that
+// is never compared (an assert whose condition is gone and whose static init
+// survives), then gives each branch its own function-local static token
+// (one guard word, bits 0..4).
 void AccomplishmentManager::UpdateReasonLabelForAward(Symbol s, UILabel *i_pLabel) {
     MILO_ASSERT(i_pLabel, 0x98F);
+    static Symbol campaign_award_reason_gamestop("campaign_award_reason_gamestop");
+    MILO_ASSERT(s != campaign_award_reason_gamestop, 0);
     if (HasAccomplishment(s)) {
+        static Symbol campaign_award_earned_by_goal("campaign_award_earned_by_goal");
         i_pLabel->SetTokenFmt(campaign_award_earned_by_goal, s);
     } else if (HasAccomplishmentCategory(s)) {
+        static Symbol campaign_award_earned_by_category(
+            "campaign_award_earned_by_category"
+        );
         i_pLabel->SetTokenFmt(campaign_award_earned_by_category, s);
     } else if (HasAccomplishmentGroup(s)) {
+        static Symbol campaign_award_earned_by_group("campaign_award_earned_by_group");
         i_pLabel->SetTokenFmt(campaign_award_earned_by_group, s);
     } else if (TheCampaign->HasCampaignLevel(s)) {
+        static Symbol campaign_award_earned_by_level("campaign_award_earned_by_level");
         i_pLabel->SetTokenFmt(campaign_award_earned_by_level, s);
     } else
         i_pLabel->SetTextToken(s);
