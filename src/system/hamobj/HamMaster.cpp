@@ -46,7 +46,7 @@ void HamMaster::Poll(float f1) {
     if (IsLoaded() && mAudio->GetSongStream()) {
         mSongMs = f1;
         mSongPos = mSongData->CalcSongPos(this, mSongMs);
-        float f8 = mAudio->GetSongStream()->GetJumpBackTotalTime(f1);
+        float f8 = mAudio->GetSongStream()->GetJumpBackTotalTime();
         float f9 = f8 + mSongMs;
         mStreamJumped = f9 < mStreamMs;
         Marker marker1, marker2;

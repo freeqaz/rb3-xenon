@@ -654,6 +654,7 @@
             "system/world/PostProcer.cpp": "NonMatching",
             "system/world/SpotlightEnder.cpp": "NonMatching",
             "system/synth/MidiInstrument.cpp": "NonMatching",
+            "system/synth/MidiInstrumentMgr.cpp": "NonMatching",
             "system/char/CharCollide.cpp": "NonMatching",
             "system/gesture/CameraTilt.cpp": "NonMatching",
             "system/char/CharBoneOffset.cpp": "NonMatching",

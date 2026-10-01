@@ -42,7 +42,9 @@ public:
     void SetDoppler(float);
 
     void EnableDoppler(bool enable) {
+#ifdef HX_NATIVE
         mDistanceFader->SetTranspose(0);
+#endif
         mDopplerEnabled = enable;
     }
     void SetFalloffType(EaseType type) {

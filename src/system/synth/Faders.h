@@ -38,11 +38,15 @@ public:
     float GetVal() { return mVal; }
     Symbol LocalName() const { return mLocalName; }
     void SetLocalName(Symbol name) { mLocalName = name; }
+#ifdef HX_NATIVE
+    // DC3 doppler transpose; not part of RB3's Fader (retail sizeof is 0x50).
     float GetTranspose() const { return mTranspose; }
     void SetTranspose(float t) { mTranspose = t; }
+#endif
 
-    NEW_OVERLOAD;
-    DELETE_OVERLOAD_INLINE;
+    // Retail NewObject (0x826fcf70) inlines operator new: StaticClassName()
+    // then MemAlloc(0x50, 0).
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x2C);
     NEW_OBJ(Fader);
     static void Init() { REGISTER_OBJ_FACTORY(Fader) }
 
@@ -52,8 +56,10 @@ public:
     Symbol mLocalName; // 0x30
     std::set<FaderGroup *> mClients; // 0x34
     Mode mMode; // 0x4c
-    float mTranspose; // 0x50
-};
+#ifdef HX_NATIVE
+    float mTranspose; // DC3 only
+#endif
+}; // 0x50 (retail NewObject allocates 0x50)
 
 class FaderTask {
 public:

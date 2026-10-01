@@ -19,7 +19,7 @@ public:
 
 protected:
     virtual void StartImpl();
-    virtual void StopImpl(bool);
+    virtual void StopImpl();
     virtual void SetVolumeImpl(float);
     virtual void SetPanImpl(float);
     virtual void SetSpeedImpl(float);

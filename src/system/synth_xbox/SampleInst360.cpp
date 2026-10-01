@@ -29,7 +29,7 @@ void SampleInst360::SetFXCore(FXCore core) {}
 
 void SampleInst360::StartImpl() { mVoice->Start(); }
 
-void SampleInst360::StopImpl(bool) { mVoice->Stop(); } // retail 0x82B6E108: `lwz r3, 0x54(r3); b Voice::Stop`
+void SampleInst360::StopImpl() { mVoice->Stop(); } // retail 0x82B6E108: `lwz r3, 0x54(r3); b Voice::Stop`
 
 void SampleInst360::SetVolumeImpl(float vol) { mVoice->SetVolume(vol); }
 

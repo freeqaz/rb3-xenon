@@ -25,7 +25,7 @@ SynthSample::SynthSample() : mIsLooped(0), mLoopStartSamp(0), mLoopEndSamp(-1) {
 SynthSample::~SynthSample() {
 #ifdef HX_NATIVE
     FOREACH (it, mSampleInsts) {
-        (*it)->Stop(true);
+        (*it)->Stop();
     }
 #endif
     if (sLoading == this) {
@@ -48,8 +48,13 @@ BEGIN_CUSTOM_PROPSYNC(SampleMarker)
     SYNC_PROP(name, o.name)
 END_CUSTOM_PROPSYNC
 
+// Retail 0x82729250 (slot 7): RB3 still exposes the loop fields, each
+// re-syncing with sync1.
 BEGIN_PROPSYNCS(SynthSample)
     SYNC_PROP_MODIFY(file, mFile, Sync(sync0))
+    SYNC_PROP_MODIFY(looped, mIsLooped, Sync(sync1))
+    SYNC_PROP_MODIFY(loop_start_sample, mLoopStartSamp, Sync(sync1))
+    SYNC_PROP_MODIFY(loop_end_sample, mLoopEndSamp, Sync(sync1))
     SYNC_PROP_SET(
         sample_rate,
         mSampleData.GetSampleRate(),

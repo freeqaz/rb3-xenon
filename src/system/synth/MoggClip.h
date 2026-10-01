@@ -65,8 +65,12 @@ public:
     void Pause(bool);
     bool DonePlaying();
     void SetVolume(float);
+#ifdef HX_NATIVE
+    // DC3 forms over DC3-only state (mNumChannels / mFxSend); retail's MoggClip
+    // is 0x88 bytes (NewObject 0x826fcff8 allocates 0x88) and has neither.
     void SetPan(float);
     void SetSend(FxSend *);
+#endif
 
     void SetLoop(bool, int, int);
     // Retail RB3 carries a 1-arg SetLoop plus trivial
@@ -105,10 +109,13 @@ public:
     const FilePath Path() const { return mMoggFile; }
     StandardStream *GetStream() const { return mStream; }
     bool HasStream() const { return mStream; }
+#ifdef HX_NATIVE
     int NumChannels() const { return mNumChannels; }
+#endif
 
-    NEW_OVERLOAD;
-    DELETE_OVERLOAD_INLINE;
+    // Retail NewObject (0x826fcff8) inlines operator new: StaticClassName()
+    // then MemAlloc(0x88, 0).
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x13);
     NEW_OBJ(MoggClip)
     static void Init() { REGISTER_OBJ_FACTORY(MoggClip) }
 
@@ -119,7 +126,9 @@ private:
     bool EnsureLoaded();
     void UpdateFaders();
     void UpdatePanInfo();
+#ifdef HX_NATIVE
     void LoadNumChannels();
+#endif
     void LoadFile(BinStream *);
 
 protected:
@@ -144,6 +153,8 @@ protected:
     bool mPlaying; // 0x7e
     int mLoopStartSample; // 0x80
     int mLoopEndSample; // 0x84
-    int mNumChannels; // 0x88
-    FxSend *mFxSend; // 0x8c
+#ifdef HX_NATIVE
+    int mNumChannels; // DC3 only
+    FxSend *mFxSend; // DC3 only
+#endif
 };
