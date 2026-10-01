@@ -163,7 +163,10 @@ bool JoypadIsConnectedPadNum(int padNum) {
 // The names are ours.  0x82524D40 walks the four pads for the first enabled
 // one whose controller type is `stagekit_xbox`; 0x82524DE0 drives its two
 // actuators with each raw value in the high byte and 0xff in the low one.
-int JoypadStageKitPadNum() {
+// 0x82524D40 has no EH frame around its local-static Symbol init (no
+// except_data prefix, guard store scheduled freely), which /EHsc gives only
+// an extern "C" function -- the C linkage of its Joypad*Common neighbours.
+extern "C" int JoypadStageKitPadNum() {
     static Symbol stagekit_xbox("stagekit_xbox");
     for (int i = 0; i < kNumJoypads; i++) {
         if (!gJoypadDisabled[i] && gJoypadData[i].mControllerType == stagekit_xbox)
