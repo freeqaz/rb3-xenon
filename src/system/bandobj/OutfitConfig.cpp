@@ -180,7 +180,7 @@ void OutfitConfig::MatSwap::Compose(
     if (!diffTex || (diffTex->GetType() & RndTex::kRenderedNoZ) != RndTex::kRenderedNoZ) {
         if (mTwoColor)
             return;
-        if (!mTextures.empty()) {
+        if (mTextures.size() != 0) {
             int idx = colors[mColor1Option] % mTextures.size();
             mMat->SetDiffuseTex(mTextures[idx]);
         } else if (mColor1Palette) {
@@ -216,13 +216,14 @@ void OutfitConfig::MatSwap::Compose(
         sMat->SetBlend(RndMat::kBlendSrc);
         sMat->SetZMode(kZModeDisable);
         sMat->SetTexWrap(kTexWrapClamp);
-        sMat->SetDiffuseTex(nullptr);
+        sMat->ClearDiffuseTex();
         sMat->SetAlpha(1.0f);
         {
-            const Hmx::Color *col = &baseColor;
+            const Hmx::Color *col;
             if (mColor1Palette) {
                 col = &mColor1Palette->GetColor(colors[mColor1Option]);
-            }
+            } else
+                col = &baseColor;
             sMat->SetColor(col->red, col->green, col->blue);
         }
         mMat->SetColor(baseColor.red, baseColor.green, baseColor.blue);
@@ -236,10 +237,11 @@ void OutfitConfig::MatSwap::Compose(
         if (mTwoColorInterp) {
             sMat->SetBlend(RndMat::kBlendSrcAlpha);
             sMat->SetDiffuseTex(mTwoColorInterp);
-            const Hmx::Color *col = &baseColor;
+            const Hmx::Color *col;
             if (mColor2Palette) {
                 col = &mColor2Palette->GetColor(colors[mColor2Option]);
-            }
+            } else
+                col = &baseColor;
             sMat->SetColor(col->red, col->green, col->blue);
             TheRnd.DrawRect(rect, baseColor, sMat, nullptr, nullptr);
         }
@@ -271,7 +273,7 @@ void OutfitConfig::MatSwap::Compose(
         }
         sCam->SetTargetTex(nullptr);
         prevCam->Select();
-        sMat->SetDiffuseTex(nullptr);
+        sMat->ClearDiffuseTex();
     }
 }
 
@@ -298,9 +300,6 @@ bool OutfitConfig::MatSwap::Compress(BandCharDesc *desc) {
     return true;
 }
 
-OutfitConfig::Piercing::Piercing(Hmx::Object *o)
-    : mPiercing(o, 0), mReskin(0), mPieces(o) {}
-
 RndMesh *OutfitConfig::Piercing::GetHeadMesh() {
     return mPiercing.Owner()->Dir()->Find<RndMesh>("head.mesh", false);
 }
@@ -320,8 +319,7 @@ void OutfitConfig::Piercing::Deform(SyncMeshCB *cb) {
     const std::vector<SyncMeshCB::Vert> *beforeVerts = &cb->GetVerts(headMesh);
     if (!beforeVerts)
         return;
-    if ((unsigned short)beforeVerts->size()
-        != (unsigned int)headMesh->Verts().size()) {
+    if (beforeVerts->size() != headMesh->Verts().size()) {
         MILO_WARN(
             "%s can't apply piercing deformation, before verts different than head "
             "(0x%x) vert count (%d v %d)",
@@ -345,12 +343,12 @@ void OutfitConfig::Piercing::Deform(SyncMeshCB *cb) {
                     PathName(mPiercing.Owner()),
                     i
                 );
-                continue;
+                return;
             }
             for (int j = 0; j < reskinMesh->Verts().size(); j++) {
                 unsigned short faceIdx = piece.unk14[j * 2];
                 RndMesh::Vert &dst = reskinMesh->Verts(j);
-                if (faceIdx >= (unsigned short)headMesh->Faces().size()) {
+                if (faceIdx >= headMesh->Faces().size()) {
                     MILO_WARN(
                         "%s can't do piercing piece %d deform, head verts out of "
                         "date, need to re-ao",
@@ -364,15 +362,14 @@ void OutfitConfig::Piercing::Deform(SyncMeshCB *cb) {
                 weights[0] = (float)(packed & 0xff) / 255.0f;
                 weights[1] = (float)((packed >> 8) & 0xff) / 255.0f;
                 weights[2] = 1.0f - weights[0] - weights[1];
+                unsigned short *faceVerts = &headMesh->Faces(faceIdx).v1;
                 for (int k = 0; k < 3; k++) {
-                    unsigned short *faceVerts = &headMesh->Faces(faceIdx).v1;
                     unsigned short srcIdx = faceVerts[k];
-                    RndMesh::Vert &cur = headMesh->Verts(srcIdx);
                     const SyncMeshCB::Vert &before = (*beforeVerts)[srcIdx];
-                    float w = weights[k];
-                    dst.pos.x += (cur.pos.x - before.pos.x) * w;
-                    dst.pos.y += (cur.pos.y - before.pos.y) * w;
-                    dst.pos.z += (cur.pos.z - before.pos.z) * w;
+                    RndMesh::Vert &cur = headMesh->Verts(srcIdx);
+                    Vector3 d;
+                    Subtract(cur.pos, before.pos, d);
+                    ScaleAddEq(dst.pos, d, weights[k]);
                 }
             }
         } else {
@@ -383,13 +380,12 @@ void OutfitConfig::Piercing::Deform(SyncMeshCB *cb) {
                     PathName(mPiercing.Owner()),
                     i
                 );
-                continue;
+                return;
             }
             const SyncMeshCB::Vert &before = (*beforeVerts)[piece.mVert];
             RndMesh::Vert &headVert = headMesh->Verts(piece.mVert);
-            float dx = headVert.pos.x - before.pos.x;
-            float dy = headVert.pos.y - before.pos.y;
-            float dz = headVert.pos.z - before.pos.z;
+            Vector3 delta;
+            Subtract(headVert.pos, before.pos, delta);
             if (reskinMesh) {
                 for (int j = 0; j < piece.unk14.size(); j++) {
                     unsigned short dstIdx = piece.unk14[j];
@@ -406,16 +402,12 @@ void OutfitConfig::Piercing::Deform(SyncMeshCB *cb) {
                         break;
                     }
                     RndMesh::Vert &dst = reskinMesh->Verts(dstIdx);
-                    dst.pos.x += dx;
-                    dst.pos.y += dy;
-                    dst.pos.z += dz;
+                    Add(dst.pos, delta, dst.pos);
                 }
             } else {
                 RndTransformable *attach = mPiercing;
                 Transform &xfm = attach->DirtyLocalXfm();
-                xfm.v.x = unkc.v.x + dx;
-                xfm.v.y = unkc.v.y + dy;
-                xfm.v.z = unkc.v.z + dz;
+                Add(unkc.v, delta, xfm.v);
             }
         }
     }
@@ -472,7 +464,8 @@ void OutfitConfig::Terminate() {
 
 OutfitConfig::OutfitConfig()
     : mMats(this), unk38(0), unk3c(0), mComputeAO(1), mPatches(this), mPermaProject(0),
-      mPiercings(this), mTexBlender(this, 0), mWrinkleBlender(this, 0), mOverlays(this),
+      mPiercings(this), mTexBlender(ObjPtrInlineOwner(), this),
+      mWrinkleBlender(ObjPtrInlineOwner(), this), mOverlays(this),
       mBandLogo(this, 0) {
     for (int i = 0; i < 3; i++)
         mColors[i] = i;
@@ -765,7 +758,8 @@ BinStream &operator>>(BinStream &bs, OutfitConfig::Piercing &piercing) {
             bool b;
             bs >> b;
         }
-        if (gRev == 0x10) {
+        // Retail tests a RANGE (cmplwi 0xf/ble; cmplwi 0x11/bge), not `== 0x10`.
+        if (gRev > 0xF && gRev < 0x11) {
             bool b;
             bs >> b;
         }
@@ -1390,7 +1384,8 @@ BEGIN_CUSTOM_PROPSYNC(OutfitConfig::Piercing)
     SYNC_PROP(pieces, o.mPieces)
 END_CUSTOM_PROPSYNC
 
-void PropSyncTwoColor(OutfitConfig::MatSwap &swap) {
+// Retail inlines this (and SyncTwoColor) into PropSync(MatSwap&) -- no bl.
+inline void PropSyncTwoColor(OutfitConfig::MatSwap &swap) {
     swap.SyncTwoColor();
     gOutfitConfigOwner->Recompose();
 }
