@@ -507,11 +507,11 @@ static bool
 SetHeadNormMap(const char *part, int option, Symbol gender, ObjectDir *dir1, ObjectDir *dir2) {
     // Retail lays the controller-found path out first; both "could not find" warnings
     // share one PathName call and one `return false` at the end.
-    RndTexBlendController *ctrl =
-        dir2->Find<RndTexBlendController>(MakeString("norm_%s.texblendctl", part), false);
+    const char *ctrlName = MakeString("norm_%s.texblendctl", part);
+    RndTexBlendController *ctrl = dir2->Find<RndTexBlendController>(ctrlName, false);
     if (ctrl) {
-        RndTex *tex =
-            dir1->Find<RndTex>(MakeString("%s_head_norm%02d.tex", gender, option + 1), false);
+        const char *texName = MakeString("%s_head_norm%02d.tex", gender, option + 1);
+        RndTex *tex = dir1->Find<RndTex>(texName, false);
         if (!tex) {
             MILO_WARN("%s could not find head norm %d", PathName(dir1), option + 1);
             return false;
