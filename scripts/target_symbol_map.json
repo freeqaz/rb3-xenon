@@ -1,4 +1,6 @@
 {
+ "0x822fa7e0": "?Save@VocalTrackDir@@UAAXAAVBinStream@@@Z",
+ "0x8234ed60": "?SaveTrack@BandTrack@@QAAXAAVBinStream@@_N1@Z",
  "0x8236ce30": "?CharInit@@YAXXZ",
  "0x822a0438": "?DrawPreClear@OutfitConfig@@UAAXXZ",
  "0x823a0430": "?PreEvaluate@CharClipDriver@@QAAPAV1@MMM@Z",

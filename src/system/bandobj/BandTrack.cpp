@@ -109,6 +109,28 @@ void BandTrack::LoadTrack(BinStream &bs, bool b1, bool b2, bool b3) {
     }
 }
 
+// Retail 0x8234ED60, called from the track dirs' Save with (bs, IsProxy(), true):
+// the save-side mirror of LoadTrack at rev 3. The third argument is unused.
+void BandTrack::SaveTrack(BinStream &bs, bool proxy, bool) {
+    bs << 3;
+    bs << mSimulatedNet;
+    bs << mInstrument;
+    if (!proxy) {
+        bs << mStarPowerMeter;
+        bs << mStreakMeter;
+        bs << mPlayerIntro;
+        bs << mPopupObject;
+        bs << mPlayerFeedback;
+        bs << mFailedFeedback;
+        bs << mEndgameFeedback;
+        bs << mRetractTrig;
+        bs << mResetTrig;
+        bs << mDeployTrig;
+        bs << mStopDeployTrig;
+        bs << mIntroTrig;
+    }
+}
+
 void BandTrack::CopyTrack(const BandTrack *c) {
     COPY_MEMBER(mDisabled)
     COPY_MEMBER(mSimulatedNet)
