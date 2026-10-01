@@ -981,15 +981,11 @@ void CharClip::ScaleAdd(CharBones &bones, float f1, float f2, float f3) {
 
 void CharClip::SetRelative(CharClip *clip) {
     if (clip != mRelative) {
-        if (clip == this) {
-            MILO_NOTIFY("%s cannot be relative to itself", PathName(this));
-        } else {
-            mRelative = clip;
-            if (mRelative)
-                Relativize();
-            else
-                MILO_NOTIFY("%s cannot de-relativize clip, must reexport", PathName(this));
-        }
+        mRelative = clip;
+        if (mRelative)
+            Relativize();
+        else
+            MILO_NOTIFY("%s cannot de-relativize clip, must reexport", PathName(this));
     }
 }
 
