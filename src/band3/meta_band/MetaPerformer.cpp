@@ -1410,7 +1410,7 @@ void MetaPerformer::SyncSave(BinStream &bs, unsigned int ui) const {
     bs << mVenue;
     bs << mFestivalReward;
     bs << mSetlist;
-    bs << (mSetlistIsLocal ? (const String &)String(gNullStr) : (const String &)mSetlistTitle);
+    bs << (mSetlistIsLocal ? (const String &)gNullStr : mSetlistTitle);
     bs << mSetlistIsHmx;
     bs << mSongs;
     bs << mStars;
