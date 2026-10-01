@@ -299,7 +299,9 @@ void MemOrPoolFreeSTL(int poolIdx, void *mem) {
 }
 #endif
 
-void AddHeap(
+// No out-of-line copy in retail: the DataArray overload below carries this
+// body inline (malloc, the 1 GB fallback, MemHeap::Init).
+__forceinline void AddHeap(
     int heapNum,
     int size,
     const char *c3,
