@@ -257,6 +257,8 @@ Hmx::Rect &RndFlare::CalcRect(Vector2 &screenPos, float &visibleArea) {
 
     int width = TheRnd.Width();
     int height = TheRnd.Height();
+#ifdef HX_NATIVE
+    // Retail (0x824768E0) has no hi-res screenshot tiling adjustment here.
     if (TheHiResScreen.IsActive()) {
         width *= TheHiResScreen.GetTiling();
         int paddingX = TheHiResScreen.GetPaddingX();
@@ -269,15 +271,19 @@ Hmx::Rect &RndFlare::CalcRect(Vector2 &screenPos, float &visibleArea) {
         screenPos.x -= screenRect.x;
         screenPos.y -= screenRect.y;
     }
+#endif
     CalcScale();
 
-    mArea.w = (flareSize * (width * mScaleFactors.x));
-    mArea.h = ((height * (flareSize * (width * mScaleFactors.y)))) / (width * TheRnd.YRatio());
-    mArea.x = screenPos.x * width - mArea.w * 0.5f;
-    mArea.y = screenPos.y * height - mArea.h * 0.5f;
+    float w = width;
+    float h = height;
+    float sizePx = w * flareSize;
+    mArea.w = mScaleFactors.x * sizePx;
+    mArea.h = (sizePx * (mScaleFactors.y * h)) / (TheRnd.YRatio() * w);
+    mArea.x = screenPos.x * w - mArea.w * 0.5f;
+    mArea.y = screenPos.y * h - mArea.h * 0.5f;
 
-    auto _tmp0 = Min<float>(width, mArea.x + mArea.w);
-    float visibleHeight = Min<float>(height, mArea.y + mArea.h) - Max(0.0f, mArea.y);
+    auto _tmp0 = Min<float>(w, mArea.x + mArea.w);
+    float visibleHeight = Min<float>(h, mArea.y + mArea.h) - Max(0.0f, mArea.y);
     float visibleWidth = _tmp0 - Max(0.0f, mArea.x);
     visibleArea = visibleWidth * visibleHeight;
     return mArea;
