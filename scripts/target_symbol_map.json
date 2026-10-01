@@ -1,4 +1,6 @@
 {
+ "0x82489ef8": "?DrawBlendList@RndTexBlender@@IAAXABV?$vector@U?$pair@PAVRndTexBlendController@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndTexBlendController@@M@stlpmtx_std@@@2@@stlpmtx_std@@W4TexState@1@@Z",
+ "0x82489ca0": "?SetupMaterial@RndTexBlender@@IAAPAVRndMat@@PAV2@PAVRndTex@@@Z",
  "0x823271a0": "?GetBitmapList@LayerDir@@QAA?AVDataNode@@PAVDataArray@@@Z",
  "0x82327050": "??6@YAAAVBinStream@@AAV0@ABVLayer@LayerDir@@@Z",
  "0x82326f60": "??$?6VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@@Z",
