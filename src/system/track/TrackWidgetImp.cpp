@@ -133,8 +133,9 @@ int MultiMeshWidgetImp::Size() {
         return mMultiMeshes.front()->Instances().size();
 }
 
-// The methods below reimplement TrackWidgetImp<T>::Do{Clear,RemoveAt,
-// RemoveUntil,GetFirstInstanceY,GetLastInstanceY,Sort}()'s bodies (and, where
+// RemoveAt / RemoveUntil below call the base template's Do* helpers, as retail
+// does. The others reimplement TrackWidgetImp<T>::Do{Clear,GetFirstInstanceY,
+// GetLastInstanceY,Sort}()'s bodies (and, where
 // they call it, the base's virtual RemoveInstances()) directly against
 // RndMultiMesh::InstanceList, rather than delegating to those helpers. The
 // helpers are hardcoded to std::list<T> (default allocator); InstanceList is
@@ -155,54 +156,17 @@ void MultiMeshWidgetImp::Clear() {
     }
 }
 
+// Retail runs the base template's out-of-line DoRemoveUntil / DoRemoveAt over
+// each multimesh's instance list.
 void MultiMeshWidgetImp::RemoveUntil(float f1, float f2) {
     for (int i = 0; i < mMultiMeshes.size(); i++) {
-        RndMultiMesh *mesh = mMultiMeshes[i];
-        RndMultiMesh::InstanceList &insts = mesh->Instances();
-        if (!insts.empty()) {
-            RndMultiMesh::InstanceList::iterator it = insts.begin();
-            RndMultiMesh::InstanceList::iterator begin = it;
-            for (; it != insts.end() && f2 * it->mXfm.m.y.y + it->mXfm.v.y < f1; ++it) {
-            }
-            if (it != begin) {
-                insts.erase(insts.begin(), it);
-                SetDirty(true);
-            }
-        }
+        DoRemoveUntil(mMultiMeshes[i]->Instances(), f1, f2);
     }
 }
 
 void MultiMeshWidgetImp::RemoveAt(float f1, float f2, float f3) {
     for (int i = 0; i < mMultiMeshes.size(); i++) {
-        RndMultiMesh::InstanceList &insts = mMultiMeshes[i]->Instances();
-        if (!insts.empty()) {
-            RndMultiMesh::InstanceList::iterator it5c = insts.end();
-            RndMultiMesh::InstanceList::iterator it = insts.begin();
-            for (; it != insts.end(); ++it) {
-                if (IsFabsZero(it->mXfm.v.y - f1)) {
-                    if (f3 < 0 || Abs<float>(it->mXfm.v.x - f2) <= f3) {
-                        if (it5c == insts.end()) {
-                            it5c = it;
-                        }
-                    } else if (it5c != insts.end()) {
-                        insts.erase(it5c, it);
-                        SetDirty(true);
-                        it5c = insts.end();
-                    }
-                } else if (it->mXfm.v.y > f1) {
-                    if (it5c != insts.end()) {
-                        insts.erase(it5c, it);
-                        SetDirty(true);
-                        it5c = insts.end();
-                    }
-                    break;
-                }
-            }
-            if (it5c != insts.end()) {
-                insts.erase(it5c, it);
-                SetDirty(true);
-            }
-        }
+        DoRemoveAt(mMultiMeshes[i]->Instances(), f1, f2, f3);
     }
 }
 
