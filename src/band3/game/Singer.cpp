@@ -336,11 +336,12 @@ void Singer::AllScoresAreIn(const std::vector<int> &assignedParts) {
         float cacheUnk4 = mScoreCaches[i].unk4;
         float sum = mResultsData[i].targetPitchAccuracy + cacheUnk4;
         float cacheUnk8 = mScoreCaches[i].unk8;
-        mResultsData[i].targetPitchAccuracy = std::min(cacheUnk8, sum);
+        mResultsData[i].targetPitchAccuracy = std::min(sum, cacheUnk8);
         mResultsData[i].centsVariance += mScoreCaches[i].unkc;
         mResultsData[i].centsDeviation += mScoreCaches[i].unk0;
     }
-    for (AmbiguousData *entry = AMBIG0; entry != AMBIG0 + mAmbiguousData.size(); entry++) {
+    for (std::vector<AmbiguousData>::iterator entry = mAmbiguousData.begin();
+         entry != mAmbiguousData.end(); ++entry) {
         if (entry->isResolved)
             continue;
         int part0 = entry->part1;
@@ -630,8 +631,8 @@ void Singer::Poll(float ms, const SongPos &pos, float f3, float f4) {
 void Singer::AddAmbiguousPart(int i_iPart1, int i_iPart2) {
     MILO_ASSERT(i_iPart1 < i_iPart2, 0x13E);
     bool bFound = false;
-    for (AmbiguousData *iter = AMBIG0;
-         iter != AMBIG0 + mAmbiguousData.size(); iter++) {
+    for (std::vector<AmbiguousData>::iterator iter = mAmbiguousData.begin();
+         iter != mAmbiguousData.end(); ++iter) {
         if (iter->part1 == i_iPart1 || iter->part1 == i_iPart2) {
             bFound = true;
             break;
@@ -649,14 +650,11 @@ void Singer::AddAmbiguousPart(int i_iPart1, int i_iPart2) {
 }
 
 void Singer::DisableAmbiguousPart(int i_iPart1, int i_iPart2) {
-    if (mAmbiguousData.size() != 0) {
+    if (!mAmbiguousData.empty()) {
         MILO_ASSERT(i_iPart1 < i_iPart2, 0x16C);
-        for (AmbiguousData *iter = AMBIG0;
-             iter != AMBIG0 + mAmbiguousData.size(); iter++) {
-            bool match = false;
-            if (iter->part1 == i_iPart1 && iter->part2 == i_iPart2) {
-                match = true;
-            }
+        for (std::vector<AmbiguousData>::iterator iter = mAmbiguousData.begin();
+             iter != mAmbiguousData.end(); ++iter) {
+            bool match = iter->part1 == i_iPart1 && iter->part2 == i_iPart2;
             if (match) {
                 if (!iter->isResolved) {
                     iter->isResolved = true;
@@ -675,19 +673,20 @@ void Singer::GetPitchDeviation(float &mean, float &dev) const {
 void Singer::SetAssignedPart(int part, float f2) {
     mFrameAssignedPart = part;
     if (mVibratoFrameBonus != 0.0f) {
-        mScoreCaches[part].unk4 += mVibratoFrameBonus;
+        VocalScoreCache &cache = mScoreCaches[part];
+        cache.unk4 += mVibratoFrameBonus;
         mVibratoFrameBonus = 0.0f;
     }
     mScoreHistories[part].BiasLastScore(f2);
     float assignedPoints = mScoreCaches[part].unk4;
-    float unk0 = mResultsData[part].targetPitchHitScore;
     float cap = mScoreCaches[part].unk8;
-    float total = unk0 + assignedPoints;
+    float total = mResultsData[part].targetPitchHitScore + assignedPoints;
     mResultsData[part].targetPitchHitScore = std::min(total, cap);
     float vibPts = mScoreCaches[part].unk10;
     mPossibleVibratoPoints.Set(vibPts);
-    for (AmbiguousData *iter = AMBIG0;
-         iter != AMBIG0 + mAmbiguousData.size(); iter++) {
+    // Retail walks the vector with begin()/end(), reloading end() every iteration.
+    for (std::vector<AmbiguousData>::iterator iter = mAmbiguousData.begin();
+         iter != mAmbiguousData.end(); ++iter) {
         if ((iter->part1 != part && iter->part2 != part) || iter->isResolved)
             continue;
         if (iter->winningPart == part) {
