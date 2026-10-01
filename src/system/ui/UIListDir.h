@@ -69,8 +69,10 @@ public:
     void CompleteScroll(UIListState const &, std::vector<UIListWidget *> &);
     void FillElements(UIListState const &, std::vector<UIListWidget *> &);
     void ListEntered();
+    // Retail 0x8280D4A0 takes no allowHighlight flag (DC3 added it): neither
+    // its body nor its one caller (0x8280DC1C) touches the fifth argument slot.
     void BuildDrawState(
-        UIListWidgetDrawState &, UIListState const &, UIComponent::State, float, bool
+        UIListWidgetDrawState &, UIListState const &, UIComponent::State, float
     ) const;
     void CreateElements(UIList *, std::vector<UIListWidget *> &, int);
 
