@@ -6017,11 +6017,15 @@
   {
    "name": "0?$_Rb_tree",
    "address": "0x8235ca80",
-   "survivor": "??0?$_Rb_tree@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@PBV1@U?$_Identity@PBVMoveParent@@@3@U?$_SetTraitsT@PBVMoveParent@@@priv@3@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@QAA@V?$__move_source@V?$_Rb_tree@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@PBV1@U?$_Identity@PBVMoveParent@@@3@U?$_SetTraitsT@PBVMoveParent@@@priv@3@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@@1@@Z",
+   "survivor": "??0?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAA@V?$__move_source@V?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@1@@Z",
    "folded": [
     "??0?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAA@V?$__move_source@V?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@1@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 4, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 3 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 4, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 3 census sites over 1 functions.",
+   "survivor_renamed": {
+    "from": "??0?$_Rb_tree@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@PBV1@U?$_Identity@PBVMoveParent@@@3@U?$_SetTraitsT@PBVMoveParent@@@priv@3@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@QAA@V?$__move_source@V?$_Rb_tree@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@PBV1@U?$_Identity@PBVMoveParent@@@3@U?$_SetTraitsT@PBVMoveParent@@@priv@3@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@@1@@Z",
+    "lane": "W16-MB 2026-10-01"
+   }
   },
   {
    "name": "SetParentList",
@@ -17046,7 +17050,8 @@
    "address": "0x8235c608",
    "survivor": "??0?$_Rb_tree_base@U?$pair@$$CBHM@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@IAA@V?$__move_source@U?$_Rb_tree_base@U?$pair@$$CBHM@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@1@@Z",
    "folded": [
-    "??0?$_Rb_tree_base@PBVMoveParent@@V?$StlNodeAlloc@PBVMoveParent@@@stlpmtx_std@@@stlpmtx_std@@IAA@V?$__move_source@U?$_Rb_tree_base@PBVMoveParent@@V?$StlNodeAlloc@PBVMoveParent@@@stlpmtx_std@@@stlpmtx_std@@@1@@Z"
+    "??0?$_Rb_tree_base@PBVMoveParent@@V?$StlNodeAlloc@PBVMoveParent@@@stlpmtx_std@@@stlpmtx_std@@IAA@V?$__move_source@U?$_Rb_tree_base@PBVMoveParent@@V?$StlNodeAlloc@PBVMoveParent@@@stlpmtx_std@@@stlpmtx_std@@@1@@Z",
+    "??0?$_Rb_tree_base@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@IAA@V?$__move_source@U?$_Rb_tree_base@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T2. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 4, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions. | Lane W7-D, T1 on retail bytes (2026-09-13). Our COMDAT for the folded spelling and for the survivor are both 104 B, sha256 4478a32028f209d7, with ZERO relocations -- so nothing is masked and the comparison is total (the DATAINITFUNCS anti-vacuity condition). Retail@0x8235c608 corroborates the body exactly. Injective; no other retail address carries a branch-masked-identical body. Deliberately installed against the house --install-min-relocs 1 default: that filter's stated rationale is that an UNIMPLEMENTED STUB compiles to a bare 4-byte `blr`, which cannot describe a 104 B pure-computation body. NOTE the measured limit: retail holds a bare `blr` at 6 DISTINCT addresses unfolded, so identity does not entail folding -- this rests on corroboration + injectivity, as the other installs do.",
    "withdrawn": [],
@@ -17065,6 +17070,13 @@
        "superseded_by": "ALIAS-2 2026-08-16"
       }
      ]
+    }
+   ],
+   "admitted": [
+    {
+     "spelling": "??0?$_Rb_tree_base@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@IAA@V?$__move_source@U?$_Rb_tree_base@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-MB 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 PROVEN); 104 B retail / 104 B ours. Retail's _Rb_tree<Symbol,...,_SetTraitsT> move ctor (0x8235CA80, the vector<set<Symbol>> family) calls the survivor where ours calls this spelling."
     }
    ]
   },
@@ -98358,10 +98370,8 @@
   {
    "name": "1?$vector",
    "address": "0x8235f1f8",
-   "survivor": "??1?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
-   "folded": [
-    "??1?$vector@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@V?$StlNodeAlloc@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ"
-   ],
+   "survivor": "??1?$vector@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@V?$StlNodeAlloc@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -98369,6 +98379,18 @@
      "spelling": "??1?$vector@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@V?$StlNodeAlloc@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 136 B retail / 136 B ours; retail body-twins 7. Retail call site(s) reaching the survivor where we call this spelling: 0x8235f7b8."
+    }
+   ],
+   "survivor_renamed": {
+    "from": "??1?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+    "lane": "W16-MB 2026-10-01"
+   },
+   "withdrawn": [
+    {
+     "spelling": "??1?$vector@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@V?$StlNodeAlloc@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-MB 2026-10-01",
+     "class": "MAP_NAME_WRONG",
+     "why": "Retail 0x8235f1f8 belongs to the vector<set<Symbol>> instantiation (SongSortMgr::SongFilter's), not to the element type in the old map name: the family's node-creating callee allocates 0x14-byte _Rb_tree nodes holding one 4-byte key (a map<int,float> node is 0x18 and holds a pair), its bodies call _Rb_tree<Symbol,...,_SetTraitsT>::clear and _Copy_Construct<set<Symbol>>, and the blocks interleave Tour's own functions; Tour.obj defines the whole vector<set<Symbol>> family. The map row is renamed to the set<Symbol> spelling and re-homed to Tour, so this membership (the real name folded into the wrong one) is withdrawn and the survivor field follows the map."
     }
    ]
   },
@@ -101292,10 +101314,9 @@
   {
    "name": "_M_clear_after_move",
    "address": "0x8235ee38",
-   "survivor": "?_M_clear_after_move@?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXXZ",
+   "survivor": "?_M_clear_after_move@?$vector@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@V?$StlNodeAlloc@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXXZ",
    "folded": [
-    "?_M_clear@?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXXZ",
-    "?_M_clear_after_move@?$vector@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@V?$StlNodeAlloc@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXXZ"
+    "?_M_clear@?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXXZ"
    ],
    "evidence": "Fold group opened by W16-MB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
@@ -101308,6 +101329,18 @@
      "spelling": "?_M_clear_after_move@?$vector@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@V?$StlNodeAlloc@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXXZ",
      "lane": "W16-MB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED); 116 B retail / 116 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. ?_M_insert_overflow_aux@?$vector@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@V?$StlNodeAlloc@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@2@ABV32@ABU__false_type@2@I_N@Z."
+    }
+   ],
+   "survivor_renamed": {
+    "from": "?_M_clear_after_move@?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXXZ",
+    "lane": "W16-MB 2026-10-01"
+   },
+   "withdrawn": [
+    {
+     "spelling": "?_M_clear_after_move@?$vector@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@V?$StlNodeAlloc@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-MB 2026-10-01",
+     "class": "MAP_NAME_WRONG",
+     "why": "Retail 0x8235ee38 belongs to the vector<set<Symbol>> instantiation (SongSortMgr::SongFilter's), not to the element type in the old map name: the family's node-creating callee allocates 0x14-byte _Rb_tree nodes holding one 4-byte key (a map<int,float> node is 0x18 and holds a pair), its bodies call _Rb_tree<Symbol,...,_SetTraitsT>::clear and _Copy_Construct<set<Symbol>>, and the blocks interleave Tour's own functions; Tour.obj defines the whole vector<set<Symbol>> family. The map row is renamed to the set<Symbol> spelling and re-homed to Tour, so this membership (the real name folded into the wrong one) is withdrawn and the survivor field follows the map."
     }
    ]
   },
@@ -101426,7 +101459,7 @@
   {
    "name": "_Destroy_Moved_Range",
    "address": "0x8235ede8",
-   "survivor": "??$_Destroy_Moved_Range@PAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@0@Z",
+   "survivor": "??$_Destroy_Moved_Range@PAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@0@0@Z",
    "folded": [
     "??$_Destroy_Range@PAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@0@0@Z"
    ],
@@ -101437,21 +101470,35 @@
      "lane": "W16-MB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 PROVEN); 80 B retail / 80 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. fn_8235F560."
     }
-   ]
+   ],
+   "survivor_renamed": {
+    "from": "??$_Destroy_Moved_Range@PAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@0@Z",
+    "lane": "W16-MB 2026-10-01"
+   }
   },
   {
    "name": "__uninitialized_move",
    "address": "0x8235eeb0",
-   "survivor": "??$__uninitialized_move@PAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@PAV12@U__false_type@2@@stlpmtx_std@@YAPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@PAV10@00U__false_type@0@ABU__true_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_move@PAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@PAV12@U__false_type@2@@stlpmtx_std@@YAPAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@0@PAV10@00U__false_type@0@ABU__true_type@0@@Z"
-   ],
+   "survivor": "??$__uninitialized_move@PAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@PAV12@U__false_type@2@@stlpmtx_std@@YAPAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@0@PAV10@00U__false_type@0@ABU__true_type@0@@Z",
+   "folded": [],
    "evidence": "Fold group opened by W16-MB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
     {
      "spelling": "??$__uninitialized_move@PAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@PAV12@U__false_type@2@@stlpmtx_std@@YAPAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@0@PAV10@00U__false_type@0@ABU__true_type@0@@Z",
      "lane": "W16-MB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED); 80 B retail / 80 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. ?_M_insert_overflow_aux@?$vector@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@V?$StlNodeAlloc@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@2@ABV32@ABU__false_type@2@I_N@Z."
+    }
+   ],
+   "survivor_renamed": {
+    "from": "??$__uninitialized_move@PAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@PAV12@U__false_type@2@@stlpmtx_std@@YAPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@PAV10@00U__false_type@0@ABU__true_type@0@@Z",
+    "lane": "W16-MB 2026-10-01"
+   },
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_move@PAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@PAV12@U__false_type@2@@stlpmtx_std@@YAPAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@0@PAV10@00U__false_type@0@ABU__true_type@0@@Z",
+     "lane": "W16-MB 2026-10-01",
+     "class": "MAP_NAME_WRONG",
+     "why": "Retail 0x8235eeb0 belongs to the vector<set<Symbol>> instantiation (SongSortMgr::SongFilter's), not to the element type in the old map name: the family's node-creating callee allocates 0x14-byte _Rb_tree nodes holding one 4-byte key (a map<int,float> node is 0x18 and holds a pair), its bodies call _Rb_tree<Symbol,...,_SetTraitsT>::clear and _Copy_Construct<set<Symbol>>, and the blocks interleave Tour's own functions; Tour.obj defines the whole vector<set<Symbol>> family. The map row is renamed to the set<Symbol> spelling and re-homed to Tour, so this membership (the real name folded into the wrong one) is withdrawn and the survivor field follows the map."
     }
    ]
   },

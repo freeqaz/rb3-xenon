@@ -2483,15 +2483,6 @@ CharClip.cpp:
 	.pdata      start:0x821F4680 end:0x821F4688
 	.pdata      start:0x822000D0 end:0x822000D8
 	.pdata      start:0x822000D8 end:0x822000E8
-	.pdata      start:0x82200350 end:0x82200358
-	.pdata      start:0x82200388 end:0x822003A0
-	.pdata      start:0x822003F0 end:0x82200400
-	.pdata      start:0x82200400 end:0x82200418
-	.pdata      start:0x82200428 end:0x82200438
-	.pdata      start:0x82200438 end:0x82200440
-	.pdata      start:0x82200440 end:0x82200448
-	.pdata      start:0x82200480 end:0x82200488
-	.pdata      start:0x822004F8 end:0x82200500
 	.pdata      start:0x822022F8 end:0x82202620
 	.pdata      start:0x82202628 end:0x82202630
 	.pdata      start:0x82202630 end:0x82202638
@@ -2512,15 +2503,6 @@ CharClip.cpp:
 	.text       start:0x8235C94C end:0x8235C974
 	.text       start:0x8235C974 end:0x8235CA80
 	.text       start:0x8235CAD8 end:0x8235CAE0
-	.text       start:0x8235E9F8 end:0x8235EA60
-	.text       start:0x8235EDC0 end:0x8235EEB0
-	.text       start:0x8235F1F0 end:0x8235F2A8
-	.text       start:0x8235F2A8 end:0x8235F400
-	.text       start:0x8235F59C end:0x8235F6D0
-	.text       start:0x8235F6D0 end:0x8235F73C
-	.text       start:0x8235F73C end:0x8235F770
-	.text       start:0x8235FA58 end:0x8235FBA8
-	.text       start:0x82360048 end:0x823600D0
 	.text       start:0x8237C960 end:0x82380598
 	.text       start:0x823806D8 end:0x82380878
 	.text       start:0x82380878 end:0x823808B0
@@ -6508,12 +6490,8 @@ MidiParserMgr.cpp:
 	.text       start:0x827EBB34 end:0x827ECA70
 
 OriginalChoreoRemixer.cpp:
-	.pdata      start:0x822000E8 end:0x822000F0
-	.pdata      start:0x822003A0 end:0x822003A8
 	.pdata      start:0x82202BA0 end:0x82202BA8
 	.pdata      start:0x82202C60 end:0x82202C70
-	.text       start:0x8235CA80 end:0x8235CAD4
-	.text       start:0x8235EEB0 end:0x8235EF08
 	.text       start:0x823873F8 end:0x82387458
 	.text       start:0x82387EE0 end:0x82387F8C
 
@@ -8500,13 +8478,11 @@ band3/bandtrack/Track.cpp:
 	.text       start:0x82B98B40 end:0x82B98BE4
 
 band3/game/Stats.cpp:
-	.pdata      start:0x822004F0 end:0x822004F8
 	.pdata      start:0x8222D830 end:0x8222D850
 	.pdata      start:0x82231CB8 end:0x82231D20
 	.pdata      start:0x82231D30 end:0x82231D78
 	.pdata      start:0x82231D90 end:0x82231EA8
 	.pdata      start:0x822349E0 end:0x822349E8
-	.text       start:0x8235FFD8 end:0x82360048
 	.text       start:0x82657660 end:0x82657798
 	.text       start:0x82697538 end:0x826985C8
 	.text       start:0x82698648 end:0x82698A50
@@ -10048,7 +10024,6 @@ BandMachine.cpp:
 
 BandSongMetadata.cpp:
 	.pdata      start:0x821FAF20 end:0x821FAF48
-	.pdata      start:0x82200488 end:0x82200498
 	.pdata      start:0x82200B00 end:0x82200B08
 	.pdata      start:0x82200B38 end:0x82200B40
 	.pdata      start:0x82212BC8 end:0x82212BD0
@@ -10066,7 +10041,6 @@ BandSongMetadata.cpp:
 	.pdata      start:0x82221780 end:0x82221798
 	.pdata      start:0x82221798 end:0x822217B8
 	.text       start:0x82307B78 end:0x82308060
-	.text       start:0x8235FBA8 end:0x8235FC88
 	.text       start:0x82365510 end:0x82365560
 	.text       start:0x823658F8 end:0x82365974
 	.text       start:0x824B4390 end:0x824B43F8
@@ -10099,14 +10073,10 @@ BandUser.cpp:
 	.text       start:0x8268C9E8 end:0x8268F144
 
 Leaderboard.cpp:
-	.pdata      start:0x822003A8 end:0x822003B0
-	.pdata      start:0x822003B0 end:0x822003B8
 	.pdata      start:0x8222EF08 end:0x8222EF60
 	.pdata      start:0x8222EF60 end:0x8222EF68
 	.pdata      start:0x8222EF68 end:0x8222EF78
 	.pdata      start:0x8222EF78 end:0x8222F160
-	.text       start:0x8235EF08 end:0x8235EF70
-	.text       start:0x8235EF70 end:0x8235EF98
 	.text       start:0x8266BDD0 end:0x8266C270
 	.text       start:0x8266C270 end:0x8266C30C
 	.text       start:0x8266C30C end:0x8266C440
@@ -11361,16 +11331,32 @@ Tour.cpp:
 	.pdata      start:0x82200048 end:0x82200080
 	.pdata      start:0x82200088 end:0x822000A0
 	.pdata      start:0x822000A8 end:0x822000D0
+	.pdata      start:0x822000E8 end:0x822000F0
 	.pdata      start:0x82200100 end:0x82200120
 	.pdata      start:0x82200128 end:0x82200350
+	.pdata      start:0x82200350 end:0x82200358
 	.pdata      start:0x82200358 end:0x82200380
 	.pdata      start:0x82200380 end:0x82200388
+	.pdata      start:0x82200388 end:0x822003A0
+	.pdata      start:0x822003A0 end:0x822003A8
+	.pdata      start:0x822003A8 end:0x822003B0
+	.pdata      start:0x822003B0 end:0x822003B8
 	.pdata      start:0x822003B8 end:0x822003E8
 	.pdata      start:0x822003E8 end:0x822003F0
+	.pdata      start:0x822003F0 end:0x82200400
+	.pdata      start:0x82200400 end:0x82200418
 	.pdata      start:0x82200418 end:0x82200428
+	.pdata      start:0x82200428 end:0x82200438
+	.pdata      start:0x82200438 end:0x82200440
+	.pdata      start:0x82200440 end:0x82200448
 	.pdata      start:0x82200460 end:0x82200470
+	.pdata      start:0x82200470 end:0x82200480
+	.pdata      start:0x82200480 end:0x82200488
+	.pdata      start:0x82200488 end:0x82200498
 	.pdata      start:0x82200498 end:0x822004A8
 	.pdata      start:0x822004A8 end:0x822004D8
+	.pdata      start:0x822004F0 end:0x822004F8
+	.pdata      start:0x822004F8 end:0x82200500
 	.pdata      start:0x82200500 end:0x82200520
 	.pdata      start:0x82200520 end:0x82200548
 	.pdata      start:0x82200548 end:0x822005A0
@@ -11383,16 +11369,32 @@ Tour.cpp:
 	.text       start:0x8235C080 end:0x8235C328
 	.text       start:0x8235C374 end:0x8235C538
 	.text       start:0x8235C670 end:0x8235C94C
+	.text       start:0x8235CA80 end:0x8235CAD4
 	.text       start:0x8235CB7C end:0x8235CC80
 	.text       start:0x8235CCC8 end:0x8235E9F4
+	.text       start:0x8235E9F8 end:0x8235EA60
 	.text       start:0x8235EA60 end:0x8235ECC8
 	.text       start:0x8235ECC8 end:0x8235EDC0
+	.text       start:0x8235EDC0 end:0x8235EEB0
+	.text       start:0x8235EEB0 end:0x8235EF08
+	.text       start:0x8235EF08 end:0x8235EF70
+	.text       start:0x8235EF70 end:0x8235EF98
 	.text       start:0x8235EF98 end:0x8235F160
 	.text       start:0x8235F160 end:0x8235F1F0
+	.text       start:0x8235F1F0 end:0x8235F2A8
+	.text       start:0x8235F2A8 end:0x8235F400
 	.text       start:0x8235F400 end:0x8235F59C
+	.text       start:0x8235F59C end:0x8235F6D0
+	.text       start:0x8235F6D0 end:0x8235F73C
+	.text       start:0x8235F73C end:0x8235F770
 	.text       start:0x8235F84C end:0x8235F9B8
+	.text       start:0x8235F9B8 end:0x8235FA58
+	.text       start:0x8235FA58 end:0x8235FBA8
+	.text       start:0x8235FBA8 end:0x8235FC88
 	.text       start:0x8235FC88 end:0x8235FD10
 	.text       start:0x8235FD10 end:0x8235FF14
+	.text       start:0x8235FFD8 end:0x82360048
+	.text       start:0x82360048 end:0x823600D0
 	.text       start:0x823600D0 end:0x82360238
 	.text       start:0x82360238 end:0x82360450
 	.text       start:0x82360450 end:0x823608A0
@@ -12159,7 +12161,6 @@ GemTrack.cpp:
 	.text       start:0x82B97200 end:0x82B97758
 
 NetGameMsgs.cpp:
-	.pdata      start:0x82200470 end:0x82200480
 	.pdata      start:0x822004E0 end:0x822004F0
 	.pdata      start:0x82223190 end:0x82223198
 	.pdata      start:0x8222D7A8 end:0x8222D7C0
@@ -12171,7 +12172,6 @@ NetGameMsgs.cpp:
 	.pdata      start:0x822317D8 end:0x822317E0
 	.pdata      start:0x82231810 end:0x82231818
 	.pdata      start:0x82231840 end:0x82231848
-	.text       start:0x8235F9B8 end:0x8235FA58
 	.text       start:0x8235FF70 end:0x8235FFD8
 	.text       start:0x825BC188 end:0x825BC1C0
 	.text       start:0x82656350 end:0x82656528
