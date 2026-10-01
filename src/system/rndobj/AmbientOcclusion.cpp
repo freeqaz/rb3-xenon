@@ -404,23 +404,24 @@ bool VectorSort<RndMesh *>::operator()(RndMesh *item1, RndMesh *item2) {
 }
 
 void RndAmbientOcclusion::BuildObjectLists(ObjectDir *dir) {
-    ObjectDir *myDir = dir ? dir : Dir();
+    if (!dir)
+        dir = Dir();
     Clean();
     MILO_ASSERT(mObjectsCast.empty(), 0x199);
     MILO_ASSERT(mObjectsReceive.empty(), 0x19A);
     MILO_ASSERT(mObjectsTessellate.empty(), 0x19B);
     std::vector<RndMesh *> meshes;
-    GatherObjectsFromDir(myDir, meshes);
-    std::unique_copy(meshes.begin(), meshes.end(), meshes.begin());
-    std::vector<RndMesh *> dontReceiveMeshes;
+    GatherObjectsFromDir(dir, meshes);
+    std::unique(meshes.begin(), meshes.end());
     std::vector<RndMesh *> dontCastMeshes;
+    std::vector<RndMesh *> dontReceiveMeshes;
     std::vector<RndMesh *> tessellateMeshes;
     GatherObjects(mDontCastAO, dontCastMeshes);
     GatherObjects(mDontReceiveAO, dontReceiveMeshes);
     GatherObjects(mTessellate, tessellateMeshes);
-    std::unique_copy(dontCastMeshes.begin(), dontCastMeshes.end(), meshes.end());
-    std::unique_copy(dontReceiveMeshes.begin(), dontReceiveMeshes.end(), meshes.end());
-    std::unique_copy(tessellateMeshes.begin(), tessellateMeshes.end(), meshes.end());
+    std::unique(dontCastMeshes.begin(), dontCastMeshes.end());
+    std::unique(dontReceiveMeshes.begin(), dontReceiveMeshes.end());
+    std::unique(tessellateMeshes.begin(), tessellateMeshes.end());
     FOREACH (it, meshes) {
         RndMesh *cur = *it;
         if (IsValid_AOCast(cur)
@@ -433,16 +434,17 @@ void RndAmbientOcclusion::BuildObjectLists(ObjectDir *dir) {
                 == dontReceiveMeshes.end()) {
             mObjectsReceive.push_back(cur);
         }
-        if (IsValid_Tessellate(cur, myDir)
+        if (IsValid_Tessellate(cur, dir)
             && std::find(tessellateMeshes.begin(), tessellateMeshes.end(), cur)
                 != tessellateMeshes.end()) {
             mObjectsTessellate.push_back(cur);
         }
     }
+    // tessellate in the order the meshes were listed
     std::sort(
         mObjectsTessellate.begin(),
         mObjectsTessellate.end(),
-        VectorSort<RndMesh *>(mObjectsTessellate)
+        VectorSort<RndMesh *>(tessellateMeshes)
     );
 }
 
