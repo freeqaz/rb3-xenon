@@ -4332,6 +4332,7 @@ Anim.cpp:
 	.text       start:0x82273728 end:0x822737D0
 	.text       start:0x823F78B0 end:0x823F7964
 	.text       start:0x82400590 end:0x82400698
+	.text       start:0x82400698 end:0x82400720
 	.text       start:0x82400720 end:0x82402F68
 	.text       start:0x82402FA0 end:0x82404440
 	.text       start:0x82404440 end:0x8240466C
@@ -4726,7 +4727,6 @@ FftIpp.cpp:
 Tex.cpp:
 	.pdata      start:0x82209868 end:0x822099F8
 	.text       start:0x823FE6D8 end:0x82400590
-	.text       start:0x82400698 end:0x82400720
 
 PollAnim.cpp:
 	.pdata      start:0x82210948 end:0x82210A18

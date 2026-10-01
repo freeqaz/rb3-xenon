@@ -1,4 +1,6 @@
 {
+ "0x82400698": "?RateToTaskUnits@RndAnimatable@@SA?AW4TaskUnits@@W4Rate@1@@Z",
+ "0x824006e0": "?ConvertFrames@RndAnimatable@@QAA_NAAM@Z",
  "0x82469388": "?OnDistribute@RndMultiMesh@@IAA?AVDataNode@@PBVDataArray@@@Z",
  "0x82483858": "?Save@RndMorph@@UAAXAAVBinStream@@@Z",
  "0x82454a98": "?FindPathName@RndText@@UAAPBDXZ",
