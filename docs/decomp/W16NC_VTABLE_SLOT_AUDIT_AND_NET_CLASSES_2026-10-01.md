@@ -13,13 +13,40 @@ with `--no-ff`: **F1** (session jobs) and **F2** (`Net`, `BandPreloadPanel`).
 
 ## 1. Whole-branch A/B
 
-_(filled in §9 after F1 merged)_
+`python3 tools/ab_measure.py --worktree ~/tmp/wt-w16-nc-ab --patch <git diff 5347dce70..w16-nc, docs and the
+read-only audit tool excluded>`, one run, fresh `setup_worktree.sh` at main `5347dce70`. Patch kinds:
+source, map, splits, objects.json; no `symbols.txt`. Both legs at a split fixed point (0 extra re-splits each).
+Run dir `~/tmp/wt-w16-nc-ab/.ab_measure_runs/20261001-194706-ab_branch-1081727/`.
+
+```
+leg A: matched=50448 masked=24432 honest=26016 code%=52.857906  (recompiles: 0, settled)
+leg B: matched=50537 masked=24445 honest=26092 code%=52.924694  (recompiles: 1021, split=1, patch_steps=7, settle iterations: 2)
+Δmatched=+89  Δmasked_equal=+13  Δhonest=+76  Δcode%=+0.066788pp  Δcode_bytes=+6844
+Δfuzzy=+0.062135pp   (legA 59.616610 -> legB 59.678745)
+units at 100% [mpn ruler]: legA 424 -> legB 428  (Δ+4; 6 reached 100, 2 fell off)
+units at 100% [all-rows-fuzzy ruler]: legA 365 -> legB 368  (Δ+3; 5 reached 100, 2 fell off)
+[control none] Δmatched_code=+6572 B -- NOT_APPLICABLE (kinds=configgen,map,source,splits)
+```
+
+**Prediction, written before the run** from in-tree full builds of base and tip: +89 fns / +6,844 B, 98
+rows up (93 to 100), 3 down from below 100, 0 off 100. **Measured: exactly that.** The total is exactly
+additive over the three contributors: this lane's own commits +23 / +596 B, F2 +35 / +3,464 B, F1 +31 /
++2,784 B.
+
+**Row level** (archived leg reports keyed by retail address; a row missing from leg B counts as down, so
+the check can fail): fuzzy ruler 98 up (93 to 100), mpn ruler 93 up (89 to 100); on both, exactly **3
+down, none from 100**: `0x82a58570` 99.4 → 0 (F1: a wrong `??0RemoveLocalPlayerJob` on XGRAPHICS code,
+moved to its real address `0x823F6530`), `0x82b5ac08` 99.75 → 0 and `0x8271a0b8` 95 → 0 (§3.3). **0 rows
+off 100 on either ruler.** The two units that "fell off 100" are composition: CrazeHollaback no longer exists
+(§3.4) and QuazalSession grew 4 → 13 rows while its matched count rose 4 → 6 (F1 moved the start of
+QuazalSession.cpp into its pin). Three of the six unit completions are DENOMINATOR_SHRANK (BandUI,
+CharEyeDartRuleset, Cheats: a wrongly attributed row left).
 
 ## 2. Instrument — `tools/vtable_class_name_audit.py --slots`
 
 W16-MA's tool asked "does the class in a ctor/dtor name agree with the vtable its body installs?". The
 new `--slots` mode asks two independent questions of **every map row whose address is a retail vtable
-slot** (7,732 rows at base, 7,735 at the tip):
+slot** (7,732 rows at base, 7,758 at the final tip):
 
 - **rel** — is the name's class an `OWNER` of a vtable holding the address, a retail `BASE_OF_OWNER`
   (inherited, not overridden; MSVC's Base Class Array lists every ancestor), `UNRELATED` to every
@@ -36,14 +63,15 @@ read `UNRELATED`.
 
 ### 2.1 Census
 
-| rel / ours | base `5347dce70` | tip |
+| rel / ours | base `5347dce70` | final tip |
 |---|---:|---:|
-| OWNER / OURS_SAME | 6,176 | 6,793 |
-| BASE_OF_OWNER / OURS_SAME | 635 | 638 |
+| rows in a retail vtable slot | 7,732 | 7,758 |
+| OWNER / OURS_SAME | 6,176 | 6,822 |
+| BASE_OF_OWNER / OURS_SAME | 635 | 641 |
 | OWNER / OURS_DIFF | 620 | 29 |
-| OWNER / OURS_NONE (our vtable not readable) | 216 | 216 |
-| UNRELATED | 36 | 29 |
-| NAME_CLASS_NOT_IN_RETAIL | 38 | 25 |
+| OWNER / OURS_NONE (our vtable not readable) | 216 | 218 |
+| UNRELATED | 36 | 28 |
+| NAME_CLASS_NOT_IN_RETAIL | 38 | 16 |
 
 (The OWNER/OURS_DIFF drop is mostly the `??_G`/`??_E` normalisation, which was added after the base
 census; the rest is the fixes below.)
@@ -215,15 +243,38 @@ thunk / deleting-dtor names fixed; two chased-PROVEN fold admissions (`??_GSyncS
 down. Left: `Net::Init` 99.86 (installs the shared empty function `0x826C3888`; adjudicator UNDECIDABLE,
 no alias).
 
-### 6.2 F1: session jobs
+### 6.2 F1: session jobs (rewritten from retail bytes)
 
-_(filled in after F1 merges)_
+_(from the fork report)_ `src/system/net/SessionJobs_Xbox.{h,cpp}` now describe what retail compiles at
+`0x823F2A18–0x823F7100`. Retail RTTI calls our `XboxSessionJob` **`XboxJob`** (abstract; every derived
+class without its own dtor shares its deleting dtor at `0x823F6CE8`); our `WriteCareerLeaderboardJob` is
+retail's **`WriteTrueSkillJob`** (its ctor fills two INT32 properties); new **`ModifySessionJob`,
+`AddRemotePlayerJob`, `RemoveRemotePlayerJob`, `RegisterArbitrationJob`** (owns a results buffer);
+**`DeleteSessionJob` derives from `Job`**, not XboxJob (an `mStarted` flag, empty Start, lazy
+`XSessionDelete` from IsFinished); **`MakeSessionJob` is 0x48 bytes** with a 7-argument ctor taking a
+`SessionSettings*` and an `XSessionData*`, driving `XUserSetContext`/`XUserSetProperty` and owning a
+`Quazal::CallContext*` at +0x40. Every class size is confirmed by retail's allocation sizes at its call
+sites. Side fixes: `0x823F2C10` is `QuazalSession::StillDeleting` (was `CheatsInitialized`; naming it also
+lifted `~NetSession`, 372 B, to 100); `Quazal::CallContext` is 0x50 (retail ctor `0x82A8AF30`), retiring
+`ProtocolCallContext.h`'s 8-byte padding; ClipCollide's only pin was job code (no retail ClipCollide RTTI)
+— heading removed; `0x823F2A08–0x823F2C98` is the start of `QuazalSession.cpp` and joined its pin. Two
+`--chase` PROVEN folds, 0 CYCLE leaves (`DeleteSessionJob::OverlappedFinished` → `XboxJob::IsFinished`,
+`MatchmakingSettings::GetCustomValue` → `Archive::GetArkfileCachePriority`). Fork A/B: **+31 fns / +2,784
+B**, 34 up (31 to 100), 1 down from 99.4.
+
+Left: `MakeSessionJob::Start` 94.7 (one load-order difference among the `XSessionCreate` arguments; three
+spellings measured identical), `::IsFinished` 91.7 (shared "set success; return true" exit block placed
+differently); `~Job` at `0x823F2A08` left anonymous (naming it charges two RockCentralJobs cleanup stubs;
+the `~RockCentralJob` fold there is unprovable); `NetSession::OnRegisterArbitrationJobComplete` (retail
+`0x823E6DE0`) declared, not written, its name marked a guess in the source; several Quazal/XboxSession
+callees have no symbol, string or RTTI and are declared with address-built names; `src/network/net/
+XSessionData.h` is a minimal stub (nonce + session info) a future `XboxSession` port should absorb.
 
 ### 6.3 The Xbox platform layer has no source anywhere — identified, not ported
 
 Retail RTTI places a whole Xbox network platform layer at `0x823EC980–0x823F0A70`: `XboxServer`'s tail
 (our `Server.cpp` has the head at 100), `XSessionSearcher`, `XboxSession`, `XSessionData`/`SessionData`.
-None of the three has source in this tree, DC3 or rb3-Wii. Inventory at the tip:
+No source for any of the three exists in this tree or either sibling decomp. Inventory at the final tip (unchanged by both forks):
 
 | unit holding the code | rows | bytes | at 100 |
 |---|---:|---:|---:|
@@ -242,7 +293,7 @@ WavMgr, ContextChecker and Matchmaker pins at `0x823F3E30–0x823F5700` (~6 KB).
 
 ## 7. Left open
 
-- The 85 `--slots` candidates at the tip: StaticByteCode/ByteCode folds (22), leaf getter folds,
+- The 75 `--slots` candidates at the final tip (7,758 slot rows): StaticByteCode/ByteCode folds (22), leaf getter folds,
   `EnterFlowMsg`/`JoinEntryPointEvent` (retail has them in an anonymous namespace; ours are not),
   `ObjPtr<HamCharacter>::Replace` at `0x822c22c8` (a DC3 class; owner `ObjPtr<BandIKEffector>`),
   `??_GAutomator` = `MessageBroker` (not emitted), the CXAPO `AddRef` W-thunk (unlocated).
@@ -251,8 +302,34 @@ WavMgr, ContextChecker and Matchmaker pins at `0x823F3E30–0x823F5700` (~6 KB).
 
 ## 8. Gates
 
-_(filled in after the final build)_
+On the final code tip `517f6f667` (both forks merged), after a full build equal to A/B leg B (50,537 /
+5,423,384 B), every exit code read directly:
 
-## 9. A/B detail
+```
+[map-injectivity] OK: 33469 applied rows, 33468 distinct names, injective (+1 enumerated internal-linkage exception(s))
+VALIDATE: PASS -- 1688 map-consistent, 293 tolerated (enumerated above), 0 contradicted, 1982 total
+[patch-state] OK: 1253 decomp, 3115 target objects match 2026-10-01T19:46:36Z (tree_sha256=172cb131f702693f)
+tools/vtable_class_name_audit.py --selftest: SELFTEST PASS
+tools/vtable_class_name_audit.py --slots --selftest: SLOT SELFTEST PASS
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
 
-_(filled in after the final run)_
+The native gate ran last on the final code; only this docs commit follows it. W16-MA's special-member
+census at the tip is unchanged or better on every kind (DISAGREE `??0` 22 = 22, `??1` 43 → 42, `??_G` 13 →
+12 + 1 owner-only, `??_E` 2 → 1), so no rename here introduced a ctor/dtor class disagreement.
+
+## 9. Step ledger (in-tree full builds, row diff keyed by retail address)
+
+| step | Δfns | ΔB | rows up (to 100) / down |
+|---|---:|---:|---|
+| wave 1 (31 renames, 12 re-homes, 3 source edits) — first build | +3 | −8,076 | 22 (20) / **19, 17 of them off 100** |
+| wave 1b (revert 4 getter-fold names + GemTrack; `NewNetMessage@EndLockMsg`) | +16 | +8,372 | — |
+| **wave 1 net** | **+19** | **+296** | 21 (19) / 2 from <100 |
+| DirLoader::Replace, XboxContent::Location source | +2 | +108 | 2 (2) / 0 |
+| SongUpsellViewSetting class rename | 0 | 0 | 0 / 0 |
+| merge F2 | +35 | +3,464 | (fork: 41 (39) / 0) |
+| HamIKSkeleton pin → BandIKEffector | +2 | +192 | 2 (2) / 0 |
+| merge F1 | +31 | +2,784 | (fork: 34 (31) / 1 from 99.4) |
+| **branch** | **+89** | **+6,844** | 98 (93) / 3 from <100, 0 off 100 |
+
+Wave 1's first build is the lesson of §4: every row it took off 100 was a caller of a newly named fold.
