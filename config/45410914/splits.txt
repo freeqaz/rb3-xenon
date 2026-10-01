@@ -152,7 +152,6 @@ RockCentralJobs.cpp:
 RockCentral.cpp:
 	.pdata      start:0x821F7600 end:0x821F7618
 	.pdata      start:0x821FEB88 end:0x821FEB90
-	.pdata      start:0x821FED18 end:0x821FED20
 	.pdata      start:0x82208698 end:0x822086A8
 	.pdata      start:0x822086D0 end:0x82208708
 	.pdata      start:0x82208BA8 end:0x82208BB0
@@ -3867,7 +3866,7 @@ Font.cpp:
 	.pdata      start:0x821F4968 end:0x821F4970
 	.pdata      start:0x821F8670 end:0x821F8678
 	.pdata      start:0x821F9FE0 end:0x821F9FE8
-	.pdata      start:0x821FECB8 end:0x821FECC8
+	.pdata      start:0x821FECB8 end:0x821FECC0
 	.pdata      start:0x82202620 end:0x82202628
 	.pdata      start:0x8220EFB8 end:0x8220EFC0
 	.pdata      start:0x8220F808 end:0x8220F828
@@ -4207,11 +4206,6 @@ HamNavList.cpp:
 	.text       start:0x82817A68 end:0x82817C20
 
 SkeletonClip.cpp:
-	.pdata      start:0x821FEC88 end:0x821FEC90
-	.pdata      start:0x821FED80 end:0x821FEDA0
-	.pdata      start:0x821FEDA0 end:0x821FEDA8
-	.pdata      start:0x821FEDA8 end:0x821FEDB0
-	.pdata      start:0x821FEF28 end:0x821FEF30
 	.pdata      start:0x82237AC8 end:0x82237AE8
 	.pdata      start:0x82237B68 end:0x82237B70
 	.pdata      start:0x82237B70 end:0x82237B78
@@ -4270,9 +4264,6 @@ MoveMgr.cpp:
 	.pdata      start:0x821F76D0 end:0x821F7838
 	.pdata      start:0x821F7840 end:0x821F7938
 	.pdata      start:0x821F7940 end:0x821F7948
-	.pdata      start:0x821FED10 end:0x821FED18
-	.pdata      start:0x821FED30 end:0x821FED38
-	.pdata      start:0x821FED68 end:0x821FED70
 	.text       start:0x822CFD10 end:0x822D16F8
 	.text       start:0x822D1768 end:0x822D2C28
 	.text       start:0x822D2C80 end:0x822D2D58
@@ -4280,7 +4271,7 @@ MoveMgr.cpp:
 
 Watcher.cpp:
 	.pdata      start:0x821F5F88 end:0x821F5FC0
-	.pdata      start:0x821FED70 end:0x821FED80
+	.pdata      start:0x821FED78 end:0x821FED80
 	.pdata      start:0x82208D00 end:0x82208D18
 	.pdata      start:0x82208D18 end:0x82208D28
 	.text       start:0x822B8F08 end:0x822B91CC
@@ -4545,7 +4536,6 @@ CharForeTwist.cpp:
 
 Morph.cpp:
 	.pdata      start:0x821F5048 end:0x821F5058
-	.pdata      start:0x821FEE18 end:0x821FEE20
 	.pdata      start:0x82203BD8 end:0x82203C00
 	.pdata      start:0x82203C78 end:0x82203C80
 	.pdata      start:0x822104B8 end:0x822104D0
@@ -4959,7 +4949,6 @@ DataNode.cpp:
 	.text       start:0x82C3FFAC end:0x82C40BA8
 
 FileCache.cpp:
-	.pdata      start:0x821FECB0 end:0x821FECB8
 	.pdata      start:0x82218488 end:0x82218490
 	.pdata      start:0x82218490 end:0x82218498
 	.pdata      start:0x82218498 end:0x82218610
@@ -10423,9 +10412,11 @@ BeatMatchController.cpp:
 
 BandPatchMesh.cpp:
 	.pdata      start:0x821FEB98 end:0x821FEBA0
+	.pdata      start:0x821FEBA0 end:0x821FEBD0
 	.pdata      start:0x821FEBD0 end:0x821FEBD8
 	.pdata      start:0x821FEBD8 end:0x821FEBE0
 	.pdata      start:0x821FEBE0 end:0x821FEBF8
+	.pdata      start:0x821FEBF8 end:0x821FEC10
 	.pdata      start:0x821FEC10 end:0x821FEC18
 	.pdata      start:0x821FEC18 end:0x821FEC38
 	.pdata      start:0x821FEC38 end:0x821FEC40
@@ -10435,10 +10426,13 @@ BandPatchMesh.cpp:
 	.pdata      start:0x821FEC58 end:0x821FEC60
 	.pdata      start:0x821FEC60 end:0x821FEC68
 	.pdata      start:0x821FEC68 end:0x821FEC88
+	.pdata      start:0x821FEC88 end:0x821FEC90
 	.pdata      start:0x821FEC90 end:0x821FEC98
 	.pdata      start:0x821FEC98 end:0x821FECA0
 	.pdata      start:0x821FECA0 end:0x821FECA8
 	.pdata      start:0x821FECA8 end:0x821FECB0
+	.pdata      start:0x821FECB0 end:0x821FECB8
+	.pdata      start:0x821FECC0 end:0x821FECC8
 	.pdata      start:0x821FECC8 end:0x821FECD0
 	.pdata      start:0x821FECD0 end:0x821FECD8
 	.pdata      start:0x821FECD8 end:0x821FECE0
@@ -10448,14 +10442,23 @@ BandPatchMesh.cpp:
 	.pdata      start:0x821FECF8 end:0x821FED00
 	.pdata      start:0x821FED00 end:0x821FED08
 	.pdata      start:0x821FED08 end:0x821FED10
+	.pdata      start:0x821FED10 end:0x821FED18
+	.pdata      start:0x821FED18 end:0x821FED20
 	.pdata      start:0x821FED20 end:0x821FED28
 	.pdata      start:0x821FED28 end:0x821FED30
+	.pdata      start:0x821FED30 end:0x821FED38
 	.pdata      start:0x821FED38 end:0x821FED50
 	.pdata      start:0x821FED50 end:0x821FED58
 	.pdata      start:0x821FED58 end:0x821FED60
 	.pdata      start:0x821FED60 end:0x821FED68
+	.pdata      start:0x821FED68 end:0x821FED70
+	.pdata      start:0x821FED70 end:0x821FED78
+	.pdata      start:0x821FED80 end:0x821FEDA0
+	.pdata      start:0x821FEDA0 end:0x821FEDA8
+	.pdata      start:0x821FEDA8 end:0x821FEDB0
 	.pdata      start:0x821FEDC0 end:0x821FEE08
 	.pdata      start:0x821FEE08 end:0x821FEE18
+	.pdata      start:0x821FEE18 end:0x821FEE20
 	.pdata      start:0x821FEE20 end:0x821FEE30
 	.pdata      start:0x821FEE30 end:0x821FEE38
 	.pdata      start:0x821FEE38 end:0x821FEE40
@@ -10472,6 +10475,8 @@ BandPatchMesh.cpp:
 	.pdata      start:0x821FEEE0 end:0x821FEEF8
 	.pdata      start:0x821FEEF8 end:0x821FEF10
 	.pdata      start:0x821FEF10 end:0x821FEF28
+	.pdata      start:0x821FEF28 end:0x821FEF30
+	.pdata      start:0x821FEF30 end:0x821FEF48
 	.pdata      start:0x821FEF48 end:0x821FEF68
 	.pdata      start:0x821FEF68 end:0x821FEF80
 	.pdata      start:0x821FEF80 end:0x821FEFB0
@@ -12360,7 +12365,6 @@ MessageTimer.cpp:
 	.pdata      start:0x821F1808 end:0x821F1810
 	.pdata      start:0x821F1858 end:0x821F1868
 	.pdata      start:0x821F1868 end:0x821F1870
-	.pdata      start:0x821FEBF8 end:0x821FEC10
 	.pdata      start:0x8220C360 end:0x8220C378
 	.text       start:0x822722B0 end:0x82272404
 	.text       start:0x82272408 end:0x822724E8
