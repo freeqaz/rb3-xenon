@@ -870,6 +870,7 @@ void GemTrackDir::ResetDrumFill() {
     if (mDrumMash2ndPassActivateAnim) {
         if (delay < 0.0f)
             delay += 1.0f;
+        static Symbol loop("loop");
         mDrumMash2ndPassActivateAnim->Animate(
             0,
             true,
