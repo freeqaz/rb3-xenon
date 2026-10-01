@@ -2225,9 +2225,11 @@ HeldNote &GemPlayer::GetUnusedHeldNote() {
     return mHeldNotes.front();
 }
 
+// retail: the slot mask is computed once, ahead of the empty-list test
 HeldNote *GemPlayer::FindHeldNoteFromSlot(int slot) {
+    unsigned int mask = 1 << slot;
     FOREACH (it, mHeldNotes) {
-        if (it->GetGemSlots() & (1 << slot))
+        if (it->GetGemSlots() & mask)
             return it;
     }
     return nullptr;
