@@ -163,7 +163,7 @@ void BandMachineMgr::GetMachines(std::vector<BandMachine *> &machines) const {
 }
 
 RemoteBandMachine *BandMachineMgr::GetRemoteMachine(unsigned int id, bool fail) const {
-    for (int i = 0; i < (int)mRemoteMachines.size(); i++) {
+    for (int i = 0; i < mRemoteMachines.size(); i++) {
         if (mRemoteMachines[i]->IsActive() && mRemoteMachines[i]->GetMachineID() == id) {
             return mRemoteMachines[i];
         }
@@ -189,7 +189,7 @@ DataNode BandMachineMgr::OnMsg(const NewRemoteUserMsg &msg) {
     RemoteUser *msgUser = msg.GetUser();
     unsigned int userID = msgUser->mMachineID;
     bool found = false;
-    for (int i = 0; i < (int)mRemoteMachines.size(); i++) {
+    for (int i = 0; i < mRemoteMachines.size(); i++) {
         if (mRemoteMachines[i]->IsActive()
             && userID == mRemoteMachines[i]->GetMachineID()) {
             found = true;
@@ -204,7 +204,7 @@ DataNode BandMachineMgr::OnMsg(const NewRemoteUserMsg &msg) {
 void BandMachineMgr::AddRemoteMachine(unsigned int id) {
     RemoteBandMachine *target = 0;
     bool found = false;
-    for (int i = 0; i < (int)mRemoteMachines.size(); i++) {
+    for (int i = 0; i < mRemoteMachines.size(); i++) {
         if (!mRemoteMachines[i]->IsActive()) {
             mRemoteMachines[i]->Activate(id);
             found = true;

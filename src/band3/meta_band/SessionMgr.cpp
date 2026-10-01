@@ -38,7 +38,6 @@ void SessionMgr::Init() {
     TheSessionMgr = mgr;
     SessionUsersProvidersInit();
     BandMachineMgr::Init();
-    InitJunkMsg();
 }
 
 SessionMgr::SessionMgr(BandUserMgr *umgr, Matchmaker *mm)

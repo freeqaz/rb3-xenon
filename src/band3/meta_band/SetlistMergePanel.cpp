@@ -125,7 +125,7 @@ int SetlistMergePanel::IntToSetlistIndex(int i, int setlistSize) {
     int index = -1;
     float ratio = 100.0f / setlistSize;
     for (int i3 = 0; i3 < setlistSize; i3++) {
-        if (i == (int)std::floor(ratio * i3)) {
+        if (i == (int)(float)std::floor(ratio * i3)) {
             index = i3;
             break;
         }

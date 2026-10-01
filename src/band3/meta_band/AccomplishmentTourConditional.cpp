@@ -51,7 +51,7 @@ void AccomplishmentTourConditional::Configure(DataArray *i_pConfig) {
             if (pConditionEntryArray->Size() < 2) {
                 MILO_WARN("Condition does not have a value associated with it!");
             } else {
-                cond.mGameType = (TourGameType)pConditionEntryArray->Node(1).Int();
+                cond.mValue = pConditionEntryArray->Node(1).Int();
                 UpdateConditionOptionalData(cond, pConditionEntryArray);
             }
             m_vConditions.push_back(cond);
@@ -161,7 +161,9 @@ bool AccomplishmentTourConditional::IsConditionMet(
     int i4 = 0;
     int i8 = 0;
     InqConditionProgress(profile, cond, i4, i8);
-    return i4 >= i8;
+    if (i4 >= i8)
+        return true;
+    return false;
 }
 
 bool AccomplishmentTourConditional::CanBeLaunched() const { return true; }

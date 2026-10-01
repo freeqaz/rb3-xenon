@@ -340,7 +340,8 @@ bool Accomplishment::IsUserOnValidScoreType(LocalBandUser *i_pUser) const {
     } else {
         for (std::set<ScoreType>::iterator it = scoreTypes.begin(); it != scoreTypes.end();
              ++it) {
-            if (controllerType == TrackTypeToControllerType(ScoreTypeToTrackType(*it))) {
+            ScoreType scoreType = *it;
+            if (controllerType == TrackTypeToControllerType(ScoreTypeToTrackType(scoreType))) {
                 returnValue = true;
                 break;
             }

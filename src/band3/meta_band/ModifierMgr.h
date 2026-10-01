@@ -31,7 +31,7 @@ public:
 //                        under the hidden vbase-ctor flag `cmplwi cr6, r4, 0`)
 // i.e. Hmx::Object is reached virtually *through MsgSource*, not as a direct
 // first base -- which is why mModifiers sits at 0x1c and not 0x2c.
-class ModifierMgr : public UIListProvider, public MsgSource {
+class ModifierMgr : public MsgSource, public UIListProvider {
 public:
     ModifierMgr();
     virtual ~ModifierMgr();
