@@ -1507,7 +1507,7 @@ Trig.cpp:
 
 Key.cpp:
 	.pdata      start:0x82215F10 end:0x82215F28
-	.text       start:0x824F58C0 end:0x824F5DCC
+	.text       start:0x824F58C8 end:0x824F5DCC
 
 Interp.cpp:
 	.pdata      start:0x82215F28 end:0x82215F78
@@ -10900,7 +10900,7 @@ system/synth/MoggClip.cpp:
 Color.cpp:
 	.pdata      start:0x82215F08 end:0x82215F10
 	.text       start:0x824F52B8 end:0x824F5364
-	.text       start:0x824F5368 end:0x824F58C0
+	.text       start:0x824F5368 end:0x824F58C8
 
 EventAnim.cpp:
 	.pdata      start:0x82213D50 end:0x82213D70
