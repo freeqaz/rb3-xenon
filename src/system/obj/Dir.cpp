@@ -1431,7 +1431,11 @@ void ObjectDir::PreLoad(BinStream &bs) {
             if (!fp.empty() && fp == mProxyFile) {
                 mProxyOverride = true;
             } else {
-                if (!DirLoader::ShouldBlockSubdirLoad(fp)) {
+#ifdef HX_NATIVE
+                // DC3 subdir blocking; retail 0x82753378 assigns unconditionally.
+                if (!DirLoader::ShouldBlockSubdirLoad(fp))
+#endif
+                {
                     mProxyFile = fp;
                 }
                 mProxyOverride = false;
@@ -1462,6 +1466,7 @@ void ObjectDir::PreLoad(BinStream &bs) {
 
     if (sObjectDirRev > 2) {
         d >> notInlinedSubDirs;
+#ifdef HX_NATIVE
         {
             std::vector<FilePath>::iterator endIter = notInlinedSubDirs.end();
             std::vector<FilePath>::iterator it = std::remove_if(
@@ -1471,6 +1476,7 @@ void ObjectDir::PreLoad(BinStream &bs) {
                 notInlinedSubDirs.erase(it, endIter);
             }
         }
+#endif
         std::vector<int> intVec;
         if (sObjectDirRev == 0x17) {
             d >> intVec;
@@ -1478,6 +1484,7 @@ void ObjectDir::PreLoad(BinStream &bs) {
         if (sObjectDirRev > 0x14) {
             d >> mInlineSubDirType;
             d >> inlinedSubDirs;
+#ifdef HX_NATIVE
             {
                 std::vector<FilePath>::iterator endIter = inlinedSubDirs.end();
                 std::vector<FilePath>::iterator it = std::remove_if(
@@ -1487,6 +1494,7 @@ void ObjectDir::PreLoad(BinStream &bs) {
                     inlinedSubDirs.erase(it, endIter);
                 }
             }
+#endif
         } else {
             inlinedSubDirs.clear();
         }
