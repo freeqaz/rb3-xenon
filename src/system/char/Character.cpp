@@ -1,3 +1,7 @@
+// CharEyes::GetInterest's null arm is retail's inline owner-only ObjOwnerPtr
+// ctor (owner, object, then vtable; no call), emitted in this TU.
+#define RB3_OBJOWNERPTR_INLINE_OWNER_CTOR
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
 #define RB3_OBJPTR_INLINE_TWOARG_CTOR
 // The plain-inline in-class two-arg ctor (replacing RB3_OBJPTR_INLINE_OWNER_CTOR)
 // also inlines ??0Character's member-init ObjPtrs, taking it to 100.
@@ -418,18 +422,13 @@ void Character::UpdateSphere() {
     SetSphere(s78);
 }
 
-void Character::DrawShadow(const Transform &xfm, float planeD) {
-    if (mShowing && mShadow) {
-        Vector3 worldPos = WorldXfm().v;
-
-        Plane pl70;
-        pl70.Set(0, 0, 1, -(worldPos.z + planeD));
-
-        MILO_ASSERT(GetGfxMode() == kOldGfx, 0x2E7);
+void Character::DrawShadow(const Transform &xfm, const Plane &plane) {
+    if (mShowing && mShadow && mShadow->Showing()) {
+        // Project the shadow bones onto the plane along the light's y axis.
         Transform tf40;
         Transpose(xfm, tf40);
         Plane plb0;
-        Multiply(pl70, tf40, plb0);
+        Multiply(plane, tf40, plb0);
 
         Transform tf90;
         float scale = -1.0f / plb0.b;
@@ -506,7 +505,6 @@ void Character::Poll() {
 }
 
 void Character::Enter() {
-    AutoSetCurrentCharacter scope(this);
     mFrozen = false;
     mPollState = kCharEntered;
     mForceLod = kLODPerFrame;
@@ -810,21 +808,11 @@ bool Character::SetFocusInterest(Symbol symbol, int i) {
     CharEyes *eyes = GetEyes();
     if (eyes) {
         CharInterest *interest = nullptr;
-        int count = eyes->mInterests.size();
-        for (int idx = 0; idx < count; idx++) {
-            CharInterest *ci =
-                (unsigned int)idx >= eyes->mInterests.size()
-                    ? 0
-                    : (CharInterest *)eyes->mInterests[idx].mInterest;
-            if (symbol == ci->Name()) {
-                interest = (unsigned int)idx >= eyes->mInterests.size()
-                    ? 0
-                    : (CharInterest *)eyes->mInterests[idx].mInterest;
+        for (int idx = 0; idx < eyes->NumInterests(); idx++) {
+            if (symbol == eyes->GetInterest(idx)->Name()) {
+                interest = eyes->GetInterest(idx);
                 break;
             }
-        }
-        if (!symbol.Null() && !interest) {
-            MILO_NOTIFY("Couldn't find interest named %s to force on %s", symbol.Str(), Name());
         }
         return SetFocusInterest(interest, i);
     }
@@ -969,7 +957,19 @@ void Character::FindInterestObjects(ObjectDir *dir) {
 void Character::UnhookShadow() {
     for (int i = 0; i < mShadowBones.size(); i++) {
         ShadowBone *cur = mShadowBones[i];
+#ifdef HX_NATIVE
         cur->ReplaceRefs(cur->Parent());
+#else
+        // Every holder of a pointer to the shadow bone is re-pointed at the
+        // bone's parent; each Replace takes its own entry off the ring.
+        while (!cur->Refs().empty()) {
+            ObjRefOwner *owner = RefPtrOf(cur->Refs().begin());
+            RndTransformable *parent = cur->Parent();
+            owner->Replace(
+                reinterpret_cast<ObjRef *>(static_cast<Hmx::Object *>(cur)), parent
+            );
+        }
+#endif
     }
     DeleteAll(mShadowBones);
 }
@@ -1024,41 +1024,51 @@ void Character::DrawLod(int lod) {
 }
 
 void Character::DrawLodOrShadow(int lod, DrawMode drawMode) {
+    // Approximate lighting is updated once, here, from the character's world
+    // sphere; the meshes drawn below must not redo it per mesh.
+    bool oldUpdate = RndMesh::sUpdateApproxLight;
+    RndMesh::SetUpdateApproxLight(false);
+    if (drawMode & 1) {
+        RndEnviron *env = RndEnviron::Current();
+        if (env) {
+            Sphere s;
+            if (MakeWorldSphere(s, false) && s.GetRadius() > 0) {
+                env->UpdateApproxLighting(&s.center);
+            }
+        }
+    }
+    if (drawMode == 1) {
+        unk2a0 = RndEnviron::Current();
+        unk2b4 = RndEnviron::CurrentPos();
+    }
     mPollState = (PollState)5;
     if (drawMode == 4 && mShadow) {
         mShadow->DrawShowing();
-        return;
-    }
-
-    mLastLod = Clamp<int>(0, mLods.size() - 1, lod);
-    Lod *curLod = mLods.size() != 0 ? &mLods[mLastLod] : nullptr;
-
-    if (drawMode & 1) {
-        RndEnvironTracker tracker(mEnv, &WorldXfm().v);
-        RndDir::DrawShowing();
-        if (curLod && curLod->Group()) {
-            curLod->Group()->DrawShowing();
+    } else {
+        mLastLod = Clamp<int>(0, mLods.size() - 1, lod);
+        Lod *curLod = mLods.size() != 0 ? &mLods[mLastLod] : nullptr;
+        if (drawMode & 5) {
+            RndDir::DrawShowing();
+            if (curLod && curLod->Group()) {
+                curLod->Group()->DrawShowing();
+            }
         }
-        if (drawMode == 1) {
-            unk2a0 = RndEnviron::Current();
-            unk2b4 = RndEnviron::CurrentPos();
-        }
-    }
-
-    if (drawMode & 2) {
-        if (drawMode == 2) {
-            RndEnvironTracker tracker(unk2a0, unk2b4);
-            if (mTransGroup)
-                mTransGroup->DrawShowing();
-            if (curLod && curLod->TransGroup())
-                curLod->TransGroup()->DrawShowing();
-        } else {
-            if (mTransGroup)
-                mTransGroup->DrawShowing();
-            if (curLod && curLod->TransGroup())
-                curLod->TransGroup()->DrawShowing();
+        if ((drawMode & 2) && (mTransGroup || (curLod && curLod->TransGroup()))) {
+            if (drawMode == 2) {
+                RndEnvironTracker tracker(unk2a0, unk2b4);
+                if (mTransGroup)
+                    mTransGroup->DrawShowing();
+                if (curLod && curLod->TransGroup())
+                    curLod->TransGroup()->DrawShowing();
+            } else {
+                if (mTransGroup)
+                    mTransGroup->DrawShowing();
+                if (curLod && curLod->TransGroup())
+                    curLod->TransGroup()->DrawShowing();
+            }
         }
     }
+    RndMesh::SetUpdateApproxLight(oldUpdate);
 }
 
 void DrawPtrVec::Draw() const {

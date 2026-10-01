@@ -12,7 +12,10 @@ class Character;
 class CharIKHead : public RndHighlightable, public CharWeightable, public CharPollable {
 public:
     struct Point {
-        Point(Hmx::Object *);
+        // Inline: retail has no out-of-line owner ctor; ObjVector::resize
+        // builds its fill value in place.
+        Point(Hmx::Object *owner)
+            : mBone(owner), mPos(0, 0, 0), mLen(0), mLenRatio(0) {}
         Point(CharIKHead::Point const &);
 
         ObjPtr<RndTransformable> mBone;

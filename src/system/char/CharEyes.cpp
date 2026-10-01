@@ -713,9 +713,6 @@ void CharEyes::PollDeps(
 }
 
 void CharEyes::DartUpdate() {
-    static DataNode &dartCheat = DataVariable("cheat.disable_eye_darts");
-    if (sDisableEyeDart || dartCheat.Int(NULL) != 0)
-        return;
     mDartInterval -= TheTaskMgr.DeltaSeconds();
     if (mDartEnabled) {
         if (mDartInterval < 0) {

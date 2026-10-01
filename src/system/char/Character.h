@@ -109,7 +109,9 @@ public:
     // RndDrawable
     virtual void UpdateSphere();
     virtual void DrawShowing();
-    DRAW_DC3_VIRTUAL void DrawShadow(const Transform &, float);
+    // Non-virtual: callers (SpotlightDrawer, Spotlight) cast to Character and
+    // pass the ground plane they computed.
+    void DrawShadow(const Transform &, const Plane &);
     virtual RndDrawable *CollideShowing(const Segment &, float &, Plane &);
     // RndPollable
     virtual void Poll();

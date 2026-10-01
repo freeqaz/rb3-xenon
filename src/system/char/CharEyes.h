@@ -97,8 +97,11 @@ public:
     void ClearAllInterestObjects();
     void AddInterestObject(CharInterest *);
     int NumInterests() const { return mInterests.size(); }
+    // Both arms are owner pointers: an out-of-range index yields a null
+    // temporary, otherwise a copy of the slot's pointer.
     CharInterest *GetInterest(int idx) {
-        return idx >= mInterests.size() ? 0 : mInterests[idx].mInterest;
+        return idx >= mInterests.size() ? ObjOwnerPtr<CharInterest>(nullptr)
+                                        : mInterests[idx].mInterest;
     }
     CharInterest *GetInterestUnchecked(int idx) {
         return mInterests[idx].mInterest;

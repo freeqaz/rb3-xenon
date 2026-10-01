@@ -405,9 +405,13 @@ void SpotlightDrawer::DrawShadow() {
     for (; it != itEnd; ++it) {
         Spotlight *shadowSpot = *it;
         MILO_ASSERT(shadowSpot->GetTarget() && shadowSpot->TargetShadow(), 0x288);
-        RndDrawable *draw = dynamic_cast<RndDrawable *>(shadowSpot->GetTarget());
-        if (draw) {
-            draw->DrawShadow(shadowSpot->WorldXfm(), 1.5f);
+        Character *c = dynamic_cast<Character *>(shadowSpot->GetTarget());
+        if (c) {
+            // Ground plane 1.5 units above the character's origin.
+            Vector3 pos(c->WorldXfm().v);
+            pos.z += 1.5f;
+            Plane plane(pos, Vector3(0, 0, 1));
+            c->DrawShadow(shadowSpot->WorldXfm(), plane);
         }
     }
 }

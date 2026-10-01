@@ -141,15 +141,16 @@ CharClipDriver *CharClipDriver::Exit(bool b) {
 }
 
 void CharClipDriver::ExecuteEvent(Symbol sym) {
-    if (sym.Null())
+    // The event runs as a handler on the clip itself: nothing to do for an
+    // empty symbol or a clip without a type definition. "clip.dude" names the
+    // directory of the object that owns this driver.
+    if (sym.Null() || !mClip->TypeDef())
         return;
-    static Symbol clip_event("clip_event");
-    Hmx::Object *owner = mClip.RefOwner();
-    Hmx::Object *exportTarget = owner->Dir();
-    static Message msg(clip_event, DataNode(0), DataNode(0), DataNode(0));
-    msg[0] = DataNode(sym);
-    msg[1] = DataNode(mClip.Ptr());
-    exportTarget->Export(msg, true);
+    static DataNode &dude = DataVariable("clip.dude");
+    dude = DataNode(mClip.RefOwner()->Dir());
+    static Message msg(sym);
+    msg.SetType(sym);
+    mClip->HandleType(msg);
 }
 
 void CharClipDriver::SetBeatOffset(float offset, TaskUnits units, Symbol sym) {

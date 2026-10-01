@@ -303,13 +303,17 @@ inline void Normalize(const Vector3 &in, Vector3 &out) {
     Scale(in, 1.0f / Length(in), out);
 }
 
+// Same shape as Normalize: a zero vector is written as zero, anything else is
+// scaled by scalar / Length.
 inline void NormalizeScale(const Vector3 &in, float scalar, Vector3 &out) {
-    float inv = 0;
-    float len = Length(in);
-    if (len != 0) {
-        inv = 1.0f / len;
+    float x = in.x;
+    if (x == 0 && in.y == 0 && in.z == 0) {
+        out.y = 0;
+        out.z = 0;
+        out.x = 0;
+        return;
     }
-    Scale(in, inv * scalar, out);
+    Scale(in, scalar / Length(in), out);
 }
 
 inline void Negate(const Vector3 &v, Vector3 &vres) { vres.Set(-v.x, -v.y, -v.z); }
