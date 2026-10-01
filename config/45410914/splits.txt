@@ -3290,6 +3290,7 @@ Char.cpp:
 	.pdata      start:0x82200FB8 end:0x822010D8
 	.pdata      start:0x822010E8 end:0x822011C8
 	.pdata      start:0x822011E8 end:0x822011F8
+	.pdata      start:0x822011F8 end:0x82201280
 	.pdata      start:0x82201280 end:0x82201290
 	.pdata      start:0x82201290 end:0x822012C0
 	.pdata      start:0x822012C0 end:0x822012E0
@@ -3306,6 +3307,7 @@ Char.cpp:
 	.text       start:0x82369DA8 end:0x8236A6A8
 	.text       start:0x8236A728 end:0x8236AE28
 	.text       start:0x8236AF28 end:0x8236AFA8
+	.text       start:0x8236AFA8 end:0x8236B4C0
 	.text       start:0x8236B4C0 end:0x8236B560
 	.text       start:0x8236B560 end:0x8236B728
 	.text       start:0x8236B728 end:0x8236B868
@@ -3761,7 +3763,6 @@ CharMeshHide.cpp:
 	.pdata      start:0x822041E0 end:0x822043B8
 	.pdata      start:0x822133F0 end:0x822133F8
 	.pdata      start:0x82213CF0 end:0x82213CF8
-	.pdata      start:0x8222CE90 end:0x8222CE98
 	.pdata      start:0x822375B0 end:0x822376E8
 	.pdata      start:0x82237730 end:0x82237760
 	.pdata      start:0x822377A8 end:0x822377B8
@@ -3771,7 +3772,6 @@ CharMeshHide.cpp:
 	.text       start:0x823A0A00 end:0x823A23B4
 	.text       start:0x824BD788 end:0x824BD7E0
 	.text       start:0x824C7CA8 end:0x824C7D10
-	.text       start:0x8264D058 end:0x8264D08C
 	.text       start:0x826FE8A8 end:0x826FFC18
 	.text       start:0x826FFFE8 end:0x82700270
 	.text       start:0x82700938 end:0x827009E4
@@ -4444,9 +4444,11 @@ CharBlendBone.cpp:
 
 CharTransCopy.cpp:
 	.pdata      start:0x82206208 end:0x82206210
+	.pdata      start:0x82206210 end:0x82206238
 	.pdata      start:0x82206238 end:0x822062A8
 	.pdata      start:0x822062A8 end:0x822062B8
 	.text       start:0x823C76FC end:0x823C7760
+	.text       start:0x823C7768 end:0x823C7908
 	.text       start:0x823C7908 end:0x823C803C
 	.text       start:0x823C8040 end:0x823C8128
 
@@ -4526,7 +4528,6 @@ Morph.cpp:
 	.text       start:0x82485870 end:0x8248587C
 
 FileMerger.cpp:
-	.pdata      start:0x822011F8 end:0x82201280
 	.pdata      start:0x82203538 end:0x82203540
 	.pdata      start:0x82203540 end:0x82203570
 	.pdata      start:0x82203570 end:0x82203AC0
@@ -4535,7 +4536,6 @@ FileMerger.cpp:
 	.pdata      start:0x82203B58 end:0x82203B68
 	.pdata      start:0x82203B68 end:0x82203B70
 	.pdata      start:0x82203B70 end:0x82203BD0
-	.text       start:0x8236AFA8 end:0x8236B4C0
 	.text       start:0x82390AF0 end:0x82390B34
 	.text       start:0x82390B38 end:0x82390B50
 	.text       start:0x82390B50 end:0x82390F40
@@ -7719,12 +7719,10 @@ Group.cpp:
 	.text       start:0x82774228 end:0x827742B0
 
 CharNeckTwist.cpp:
-	.pdata      start:0x82206210 end:0x82206238
 	.pdata      start:0x82206878 end:0x822068C0
 	.pdata      start:0x822068C0 end:0x822068D8
 	.pdata      start:0x822068D8 end:0x82206910
 	.pdata      start:0x82206918 end:0x82206920
-	.text       start:0x823C7768 end:0x823C7908
 	.text       start:0x823CE3D0 end:0x823CE81C
 	.text       start:0x823CE820 end:0x823CE82C
 	.text       start:0x823CE838 end:0x823CE92C
@@ -8710,11 +8708,13 @@ band3/meta_band/AppMiniLeaderboardDisplay.cpp:
 	.pdata      start:0x821FC1E8 end:0x821FC1F0
 	.pdata      start:0x8222CD70 end:0x8222CD80
 	.pdata      start:0x8222CD80 end:0x8222CE90
+	.pdata      start:0x8222CE90 end:0x8222CE98
 	.pdata      start:0x8222CE98 end:0x8222CEA8
 	.text       start:0x8231A0D8 end:0x8231A138
 	.text       start:0x82323950 end:0x82323960
 	.text       start:0x8264BCE8 end:0x8264BD60
 	.text       start:0x8264BD68 end:0x8264D058
+	.text       start:0x8264D058 end:0x8264D08C
 	.text       start:0x8264D08C end:0x8264D15C
 
 band3/meta_band/UIStats.cpp:
@@ -13152,10 +13152,6 @@ CharIKMidi.cpp:
 	.text       start:0x823CA8F8 end:0x823CA95C
 	.text       start:0x823CA95C end:0x823CAAF0
 	.text       start:0x823CAAF0 end:0x823CAAFC
-
-CharTaskMgr.cpp:
-	.pdata      start:0x82208FE8 end:0x82209000
-	.text       start:0x823F4810 end:0x823F4A30
 
 system/utl/DeJitter.cpp:
 	.pdata      start:0x82242E60 end:0x82242E70
