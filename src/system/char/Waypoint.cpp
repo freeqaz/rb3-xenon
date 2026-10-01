@@ -1,6 +1,12 @@
 // Retail inlines the ObjPtr two-arg ctor at this TU's member-init sites; the
 // in-class (plain inline) definition lets MSVC choose per site, as retail did.
 #define RB3_OBJPTR_INLINE_TWOARG_CTOR
+// Retail inlines the owner-only ObjOwnerPtr<Waypoint> ctor in
+// ObjVector<ObjOwnerPtr<Waypoint>>::resize (0x823DCD38: the ObjOwnerPtr<Waypoint>
+// vtable stored in-line, then the ~ObjOwnerPtr<Waypoint> call), so this TU opts
+// into the ObjOwnerPtr edition of the inline owner-ctor lever (see obj/Object.h).
+#define RB3_OBJOWNERPTR_INLINE_OWNER_CTOR
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
 #include "char/Waypoint.h"
 #include "char/CharInterest.h"
 #include "math/Rand.h"
