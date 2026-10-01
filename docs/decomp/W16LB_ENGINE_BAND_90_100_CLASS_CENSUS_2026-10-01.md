@@ -153,7 +153,42 @@ content: six `??_R0` TypeDescriptors (each by its own `.?AV…` string at +8), t
 Reverted in full (nothing committed); the tree's measures came back bit-identical. The names are right on
 retail bytes, but under the brief's no-row-off-100 rule they are a net loss here.
 
-### 3.5 Not taken
+### 3.5 `MemTrackReport` takes one argument — MemTrackReportDF 93.78 → 100, +72 B
+
+Fork oum re-homed `0x827C4AA0` (`MemTrackReportDF`, from a lead by fork snd), and the row read 93.78:
+retail calls `MemTrackReport` (`0x827C4828`) with `r3 = 1000` and leaves `r4` holding the incoming
+`DataArray*`. Retail's body never reads `r4`, and `tools/retail_callers.py` finds **one** call site, so
+retail's function has one parameter. The match build now declares `MemTrackReport(int)`, and the map row
+follows to `?MemTrackReport@@YAXH@Z`; native keeps `(int,bool)` for its `MemTrackInit` tail.
+Full build: +1 fn / +72 B, 0 down.
+
+### 3.6 `Key.h`: `operator>>(BinStream&, Weight&)` chains the stream — +72 B
+
+Retail's `Key<Weight>` load (`0x82482F50`, Morph) reads through the stream returned by the `Vector3`
+read. Full build: 94.44 → 100, +1 fn / +72 B, 0 down. (Lead from fork r1.)
+
+### 3.7 The `const bool` / `static const float kZero` lever has no hits in this band
+
+A sibling lane reported that a `const bool` local removes bool-materialisation residue (retail
+`li rN,0|1` into a callee-saved register where ours has `clrlwi rN,rM,24`), and that a named
+`static const float kZero` restores retail's per-compare pool reload with no FPR save.
+`~/tmp/w16lb/booltell.py` scanned every band row outside NAME_ONLY at lane tip `fe1cd8ff0`
+(383 of the band's 635 rows; NAME_ONLY rows carry no such instructions by construction):
+
+| tell | rows |
+|---|---:|
+| any `clrlwi …, 0x18` on our side | 23 |
+| our `clrlwi …, 0x18` on a charged line | 2 |
+| retail `li r14–r31, 0/1` on a charged line | 24 |
+| **both on the same row (the tell)** | **0** |
+| retail reloads `__real@00000000` more often than we do, with an FPR save on our side | **0** |
+
+The two smallest "retail `li 0/1`" rows (`DataNetLoader::PollLoading`, `FileLoader::SaveData`) were read
+by hand. Both are pure register permutations (`li r28,0` vs `li r29,0`), not bool materialisation. The
+first version of the scanner keyed on `, 24` and could not fire, because objdiff prints `0x18`. It was
+caught by printing the raw counts beside the conjunction.
+
+### 3.8 Not taken
 
 - 15 chase-proven spellings are already members of a group whose survivor is a *different* retail
   address. Retail keeps two byte-equivalent bodies, and a spelling can fold to only one survivor. Not
