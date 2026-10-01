@@ -271,6 +271,7 @@ bool UIPanel::Exiting() const {
 #ifdef __EMSCRIPTEN__
     return false;
 #else
+#ifdef HX_NATIVE
     if (mDir && !mLoaded && mDir->Exiting()) {
         return true;
     }
@@ -280,6 +281,12 @@ bool UIPanel::Exiting() const {
         return node.Int();
     } else
         return false;
+#else
+    // Retail 0x82812830: the dir answers; no "exiting" script message.
+    if (mDir && !mLoaded)
+        return mDir->Exiting();
+    return false;
+#endif
 #endif
 }
 
