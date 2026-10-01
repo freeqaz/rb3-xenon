@@ -213,17 +213,22 @@ void ChordShapeGenerator::DumpChordGenData() {
 int kMaxVerts = 400;
 int kMaxFaces = 600;
 
-static int vertIt;
 static unsigned int faceIt;
+static int vertIt;
 
 RndMesh *ChordShapeGenerator::BuildChordMesh(unsigned int ui, int i) {
     RGUnpackChordShapeID(ui, mStringFrets, &unk64);
+#ifdef HX_NATIVE
     shapesGenerated++;
     TIMER_GET_CYCLES(startCycles);
     RndMesh *ret = BuildChordMesh();
     TIMER_GET_CYCLES(endCycles);
     cycles += endCycles - startCycles;
     return ret;
+#else
+    // Retail keeps no build statistics here: unpack, then build.
+    return BuildChordMesh();
+#endif
 }
 
 RndMesh *ChordShapeGenerator::MakeInvertedMesh(const RndMesh *mesh) {
