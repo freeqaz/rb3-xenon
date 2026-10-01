@@ -1,4 +1,11 @@
 {
+ "0x8271de70": "??0?$ObjPtr@VSfx@@@@QAA@PAVObject@Hmx@@PAVSfx@@@Z",
+ "0x8271df08": "??1?$ObjPtr@VSfx@@@@UAA@XZ",
+ "0x8271dfa0": "??0?$ObjPtr@VSfxInst@@@@QAA@PAVObject@Hmx@@PAVSfxInst@@@Z",
+ "0x8271e0c8": "?Replace@?$ObjPtr@VSfxInst@@@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+ "0x8271eca8": "?Replace@?$ObjPtr@VSfx@@@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+ "0x8271ed10": "??$PropSync@VSfx@@@@YA_NAAV?$ObjPtr@VSfx@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x8271edf0": "?Load@?$ObjPtr@VSfx@@@@QAA_NAAVBinStream@@_NPAVObjectDir@@@Z",
  "0x8272a830": "?Stop@SampleInst@@QAAXXZ",
  "0x8272aa78": "?Start@SampleInst@@QAAXXZ",
  "0x82716068": "??0?$ObjPtr@VMidiInstrument@@@@QAA@PAVObject@Hmx@@PAVMidiInstrument@@@Z",
