@@ -251,9 +251,8 @@ void BandWardrobe::SetVenueDir(ObjectDir *dir) {
     SetContexts("venue");
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 2; j++) {
-            Character *thechar = dir->Find<Character>(
-                MakeString("crowd_%s%02d", genders[j], i + 1), false
-            );
+            const char *charName = MakeString("crowd_%s%02d", genders[j], i + 1);
+            Character *thechar = dir->Find<Character>(charName, false);
             if (thechar) {
                 CharDriver *driver = thechar->Driver();
                 ObjectDir *gendir =
