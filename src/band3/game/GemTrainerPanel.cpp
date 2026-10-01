@@ -112,10 +112,10 @@ void GemTrainerPanel::Enter() {
             strcpy(notename, RGGetNoteName(key, key));
             if (tone == 1) {
                 strcat(notename, "m");
-                static Message msg("set_key", "");
-                msg[0] = notename;
-                Handle(msg, true);
             }
+            static Message msg("set_key", "");
+            msg[0] = notename;
+            Handle(msg, true);
         } else {
             static Message hide_key_msg("hide_key");
             Handle(hide_key_msg, true);
