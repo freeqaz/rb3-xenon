@@ -600,8 +600,10 @@ ObjOwnerPtr<T>::ObjOwnerPtr(ObjRefOwner *owner, T *ptr) {
 
 template <class T>
 ObjOwnerPtr<T>::ObjOwnerPtr(const ObjOwnerPtr &o)
-    : mOwner(o.mOwner), mObject(nullptr) {
-    mObject = o.mObject;
+    // RETAIL (TU5 fn_8236DEA0, ObjOwnerPtr<CharInterest>): vptr, then mOwner, then
+    // mObject stored ONCE straight from `o` -- no null store first. The old
+    // `mObject(nullptr)` + reassignment compiled an extra `li r10,0; stw r10,8(r3)`.
+    : mOwner(o.mOwner), mObject(o.mObject) {
     if (mObject)
         mObject->AddRef(OwnerRef());
 }
