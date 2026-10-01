@@ -24026,7 +24026,7 @@
  "0x827cdbc8": "?clear@?$_List_base@UServerData@NetCacheMgr@@V?$StlNodeAlloc@UServerData@NetCacheMgr@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
  "0x827cdc20": "?DeleteNetCacheLoader@NetCacheMgr@@QAAXPAVNetCacheLoader@@@Z",
  "0x827cdc60": "?DeleteNetLoader@NetCacheMgr@@QAAXPAVNetLoader@@@Z",
- "0x827cdd28": "?insert@?$list@VSetlistArtRecord@MusicLibraryNetSetlists@@V?$StlNodeAlloc@VSetlistArtRecord@MusicLibraryNetSetlists@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VSetlistArtRecord@MusicLibraryNetSetlists@@U?$_Nonconst_traits@VSetlistArtRecord@MusicLibraryNetSetlists@@@stlpmtx_std@@@2@U32@ABVSetlistArtRecord@MusicLibraryNetSetlists@@@Z",
+ "0x827cdd28": "?insert@?$list@UNetLoaderRef@@V?$StlNodeAlloc@UNetLoaderRef@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UNetLoaderRef@@U?$_Nonconst_traits@UNetLoaderRef@@@stlpmtx_std@@@2@U32@ABUNetLoaderRef@@@Z",
  "0x827cdd90": "?clear@?$_List_base@UNetLoaderRef@@V?$StlNodeAlloc@UNetLoaderRef@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
  "0x827cdde8": "?OnInit@NetCacheMgr@@IAAXPAVDataArray@@@Z",
  "0x827ce208": "?GetPort@NetCacheMgr@@QBAGXZ",
