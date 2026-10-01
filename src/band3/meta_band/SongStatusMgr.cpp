@@ -316,20 +316,9 @@ SongStatus::~SongStatus() {}
 SongStatusMgr::SongStatusMgr(LocalBandUser *u, BandSongMgr *mgr)
     : mLocalUser(u), mSongMgr(mgr), mUpdatingStatus(0) {
     mSaveSizeMethod = &SaveSize;
-#ifdef HX_NATIVE
-    // The cached-total arrays are POD members that the matched Wii ctor leaves
-    // uninitialized; on the Wii they get populated by the profile/save-load path
-    // (Clear() + UpdateCachedTotalStars) before the music library header ever
-    // reads them. Native boots profile-less, so without this they stay garbage
-    // and MusicLibrary::UpdateHeaderData() surfaces a junk star total in the
-    // song-select header ("...SORTED BY SONG NAME" + a random int like
-    // 1843121372). Zero them up front to match the offline-clean state.
-    for (int i = 0; i < 11; i++) {
-        mCachedTotalScores[i] = 0;
-        mCachedTotalDiscScores[i] = 0;
-        mCachedTotalStars[i] = 0;
-    }
-#endif
+    // Retail ctor (0x825D4268) ends with Clear(), which also zeroes the
+    // cached score/star totals.
+    Clear();
 }
 
 SongStatusMgr::~SongStatusMgr() { Clear(); }
