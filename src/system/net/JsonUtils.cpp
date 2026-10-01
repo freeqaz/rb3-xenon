@@ -53,6 +53,18 @@ JsonArray::~JsonArray() {
 
 int JsonArray::GetSize() const { return json_object_array_length(mObject); }
 
+// The array takes its own reference on the member's json object.
+void JsonArray::AddMember(JsonObject *obj) {
+    obj->AddRef();
+    json_object_array_add(mObject, obj->mObject);
+}
+
+JsonString::JsonString(const char *s) { mObject = json_object_new_string(s); }
+
+JsonInt::JsonInt(int i) { mObject = json_object_new_int(i); }
+
+JsonDouble::JsonDouble(double d) { mObject = json_object_new_double(d); }
+
 #pragma endregion JsonArray
 #pragma region JsonConverter
 
@@ -97,6 +109,32 @@ JsonArray *JsonConverter::NewArray() {
     arr->AddRef();
     mObjects.push_back(entry);
     return arr;
+}
+
+// Each New* takes one reference for the converter, which releases its objects
+// when it is destroyed (same shape as NewArray).
+JsonString *JsonConverter::NewString(const char *s) {
+    JsonString *str = new JsonString(s);
+    JsonObject *entry = str;
+    str->AddRef();
+    mObjects.push_back(entry);
+    return str;
+}
+
+JsonInt *JsonConverter::NewInt(int i) {
+    JsonInt *val = new JsonInt(i);
+    JsonObject *entry = val;
+    val->AddRef();
+    mObjects.push_back(entry);
+    return val;
+}
+
+JsonDouble *JsonConverter::NewDouble(double d) {
+    JsonDouble *val = new JsonDouble(d);
+    JsonObject *entry = val;
+    val->AddRef();
+    mObjects.push_back(entry);
+    return val;
 }
 
 JsonObject *JsonConverter::LoadFromString(const String &str) {

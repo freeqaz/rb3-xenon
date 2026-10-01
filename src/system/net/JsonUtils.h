@@ -30,6 +30,7 @@ public:
     double Double() const;
 
 protected:
+    friend class JsonArray;
     json_object *mObject; // 0x4
 };
 
@@ -43,7 +44,26 @@ private:
     json_object *operator[](int idx) { return json_object_array_get_idx(mObject, idx); }
 
 public:
+    void AddMember(JsonObject *);
     int GetSize() const;
+};
+
+// Leaf values. Retail RTTI names all three (vtables 0x8219B1CC/D4/DC); none
+// declares a destructor of its own, so each vtable's only slot is the
+// JsonObject deleting destructor. The constructors are out of line.
+class JsonString : public JsonObject {
+public:
+    JsonString(const char *);
+};
+
+class JsonInt : public JsonObject {
+public:
+    JsonInt(int);
+};
+
+class JsonDouble : public JsonObject {
+public:
+    JsonDouble(double);
 };
 
 class JsonConverter : public JsonArray {
@@ -55,6 +75,9 @@ public:
         merely in the parallel src/network/net/JsonUtils.h, which nothing compiles)
         because retail emits it OUT OF LINE from this TU. */
     JsonArray *NewArray();
+    JsonString *NewString(const char *);
+    JsonInt *NewInt(int);
+    JsonDouble *NewDouble(double);
 
     JsonObject *LoadFromString(String const &);
     JsonObject *GetValue(JsonArray *, int);
