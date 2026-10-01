@@ -574,11 +574,6 @@ float VocalPart::CalcPhraseScoreMax(const VocalPhrase *const &phrase) const {
     return result;
 }
 
-// VocalPlayer::kInvalidPitch is a float global retail loads out of .rdata
-// (lbl_820F14B4); no C++ declaration for it survives, so it stays
-// an extern "C" shim. objdiff forgives the placeholder target name, so this
-// costs nothing on the metric -- see docs/decomp/W16EO_*.
-extern "C" float kInvalidPitch__11VocalPlayer;
 
 void VocalPart::Poll(float ms, const SongPos &) {
     while (mFreestyleSection
@@ -773,7 +768,7 @@ void VocalPart::ScoreSinger(
 ) {
     MILO_ASSERT(o_rCache.GetHitPercentage() == 0.0f, 0x2C3);
     o_rCache.unk8 = Min(unk38, mPhraseScoreMax);
-    o_rPitchDiff = kInvalidPitch__11VocalPlayer;
+    o_rPitchDiff = VocalPlayer::kInvalidPitch;
     if (arg1 == 0.0f && mVocalNoteList->NoteAt(ms) == 0) {
         o_rCache.unk0 = 1.0f;
         o_rNote = arg4;

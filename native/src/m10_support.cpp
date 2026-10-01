@@ -33,15 +33,12 @@
 // VocalPart.cpp calls VocalNoteList::NoteAt / ::PitchAt through their MWCC X360
 // symbol names (so the retail obj links against the real methods). Native (Itanium
 // ABI) has no such symbols; forward the extern "C" name to the real C++ method.
-// VocalPlayer::kInvalidPitch (a static sentinel for "no pitch difference") equals
-// 1000.0f — the same value VocalPlayer::Poll tests fDev against (`1000.0f != fDev`).
 extern "C" VocalNote *NoteAt__13VocalNoteListCFf(const VocalNoteList *self, float ms) {
     return const_cast<VocalNote *>(self->NoteAt(ms));
 }
 extern "C" float PitchAt__13VocalNoteListCFf(const VocalNoteList *self, float ms) {
     return self->PitchAt(ms);
 }
-extern "C" float kInvalidPitch__11VocalPlayer = 1000.0f;
 
 // ------------------------------------------------------------- driver state --
 // The synthetic mic bank, keyed by MicClientID.mClientID (== singer index). The

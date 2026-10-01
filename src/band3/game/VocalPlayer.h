@@ -105,6 +105,9 @@ public:
 
 class VocalPlayer : public Player, public RndOverlay::Callback {
 public:
+    // Retail .rdata 0x820F14B4 = -1000.0f. A real static const, not a literal:
+    // retail keeps its address in a callee-saved GPR and reloads the float.
+    static const float kInvalidPitch;
     VocalPlayer(BandUser *, BeatMaster *, Band *, int, Performer *, int);
 #ifdef HX_NATIVE
     // Native scoring-core ctor (M10): delegates to the native Player scoring-core

@@ -50,6 +50,8 @@
 #include <functional>
 #include <utility>
 
+const float VocalPlayer::kInvalidPitch = -1000.0f;
+
 MicClientID sNullMicClientID;
 
 VocalPlayer::VocalPlayer(
@@ -626,7 +628,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
         }
 
         // Score singer against each part
-        float fBestPitchDeviation = -1000.0f;
+        float fBestPitchDeviation = kInvalidPitch;
         FOREACH (pIt, mVocalParts) {
             VocalPart *pPart = *pIt;
             bool bScoringAllowed = mScoringEnabled && !InRollback();
@@ -655,7 +657,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                     iRating,
                     fDev
                 );
-                if (-1000.0f != fDev && fabs(fDev) < fabsf(fBestPitchDeviation)) {
+                if (kInvalidPitch != fDev && fabs(fDev) < fabsf(fBestPitchDeviation)) {
                     fBestPitchDeviation = fDev;
                 }
 
@@ -666,7 +668,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                 pSinger->AppendToScoreHistory(fCompMS, pPart->mPartIndex, fScore, iRating);
             }
         }
-        if (-1000.0f != fBestPitchDeviation) {
+        if (kInvalidPitch != fBestPitchDeviation) {
             pSinger->UpdatePitchDeviation(fBestPitchDeviation);
         }
 
