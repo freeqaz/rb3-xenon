@@ -7,7 +7,6 @@
 #include "math/Utl.h"
 #include "math/Mtx.h"
 
-extern float gUnitsPerMeter;
 static Rand *sRand = nullptr;
 static float sWhiteField[0x400] = { 0 };
 static float sWindField[0x401] = { 0 };
@@ -54,7 +53,10 @@ void RndWind::SelfGetWind(const Vector3 &pos, float time, Vector3 &result) {
 
 RndWind::RndWind()
     : mPrevailing(0.0f, 0.0f, 0.0f), mRandom(0.0f, 0.0f, 0.0f), mTimeLoop(100.0f),
-      mSpaceLoop(gUnitsPerMeter * 10.0f), mWindOwner(this, this) {
+      // Retail (0x8245D298) stores the same literal 100 as mTimeLoop; there is
+      // no gUnitsPerMeter scaling (which made the default 393.7).  SetDefaults
+      // agrees.
+      mSpaceLoop(100.0f), mWindOwner(this, this) {
     SyncLoops();
 }
 
@@ -184,7 +186,7 @@ void RndWind::SetDefaults() {
     mPrevailing.Set(0.0f, 0.0f, 0.0f);
     mRandom.Set(17.0f, 17.0f, 0.0f);
     mTimeLoop = 100.0f;
-    mSpaceLoop = gUnitsPerMeter * 10;
+    mSpaceLoop = 100.0f;
 }
 
 void RndWind::SetWindOwner(RndWind *wind) { mWindOwner = wind ? wind : this; }
