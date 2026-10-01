@@ -89,7 +89,10 @@ public:
 
     static void DeleteTargetCache(std::list<TargetCache>::iterator);
 
-    bool ShouldSetNextShot(float f1) const;
+    // Inlined at both retail call sites (SetFrame / SetPreFrame).
+    bool ShouldSetNextShot(float f1) const {
+        return f1 < Duration() || mNextShots.size() == 0;
+    }
 
     DataNode OnTestDelta(DataArray *);
     DataNode AddTarget(DataArray *);
