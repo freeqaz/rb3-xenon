@@ -14,7 +14,8 @@ class RndMatAnim : public RndAnimatable {
 public:
     class TexPtr : public ObjPtr<RndTex> {
     public:
-        TexPtr(RndTex *tex = nullptr);
+        TexPtr();
+        TexPtr(RndTex *tex);
     };
 
     class TexKeys : public Keys<TexPtr, RndTex *> {

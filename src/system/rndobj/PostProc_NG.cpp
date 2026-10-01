@@ -50,8 +50,11 @@ void Bloom_Downsample(ShaderType shader, RndTex *texSrc, RndTex *texDst) {
     workMat->SetDiffuseTex(texSrc);
     workMat->MarkDirty(2);
 
+    // The colour is a default-constructed (unset) local: retail stores nothing
+    // into it before passing its address.
     Hmx::Rect rect(0, 0, (float)texDst->Width(), (float)texDst->Height());
-    TheNgRnd.DrawRect(rect, workMat, shader, Hmx::Color(1, 1, 1), nullptr, nullptr);
+    Hmx::Color color;
+    TheNgRnd.DrawRect(rect, workMat, shader, color, nullptr, nullptr);
 
     texDst->FinishDrawTarget();
 }
@@ -320,16 +323,24 @@ void NgPostProc::BloomTextureSet::AllocateTextures(unsigned int w, unsigned int 
 
 void NgPostProc::BloomTextureSet::FreeTextures() { RELEASE(mBloomTexture[0]); }
 
+// The two RandomFloat() calls are one Vector2 ctor's arguments, evaluated
+// right to left: retail's first call lands in .y (0x210).
 NgPostProc::NgPostProc()
-    : mRandomSeed1(RandomFloat()), mRandomSeed2(RandomFloat()), unk234(0), unk238(0),
-      mMotionBlurDrawList(this), mMotionBlurEnabled(1) {}
+    : mRandomSeed(RandomFloat(), RandomFloat()), mRefractOffset(0, 0),
+      mMotionBlurDrawList(this)
+#ifdef HX_NATIVE
+      ,
+      mMotionBlurEnabled(1)
+#endif
+{
+}
 
 NgPostProc::~NgPostProc() {}
 
 void NgPostProc::Select() {
     RndPostProc::Select();
-    mRandomSeed1 = RandomFloat();
-    mRandomSeed2 = RandomFloat();
+    mRandomSeed.x = RandomFloat();
+    mRandomSeed.y = RandomFloat();
 }
 
 void NgPostProc::Init() {
@@ -340,15 +351,11 @@ void NgPostProc::Init() {
 
 void NgPostProc::RebuildTex() {
     ReleaseTex();
-    int w = 0x80;
-    int h = 0x80;
-    if (TheLoadMgr.GetPlatform() != kPlatformNone) {
-        MILO_ASSERT(TheNgRnd.PreProcessTexture(), 0x3AB );
-        w = TheNgRnd.PreProcessTexture()->Width();
-        h = TheNgRnd.PreProcessTexture()->Height();
-    }
+    MILO_ASSERT(TheNgRnd.PreProcessTexture(), 0x3AB);
+    unsigned int w = TheNgRnd.PreProcessTexture()->Width();
+    unsigned int h = TheNgRnd.PreProcessTexture()->Height();
     RndVelocityBuffer::Singleton().AllocateData(w, h, TheRnd.Bpp());
-    sBloom.AllocateTextures(w * 4, h * 4);
+    sBloom.AllocateTextures(w, h);
 }
 
 #ifdef HX_NATIVE
@@ -440,7 +447,11 @@ void NgPostProc::CheckChromaticAberration() {
 }
 
 void NgPostProc::CheckHallOfTime() {
+#ifdef HX_NATIVE
     if (HallOfTime() && !mMotionBlurEnabled) {
+#else
+    if (HallOfTime()) {
+#endif
         Vector4 hallParams(mHallOfTimeRate, mHallOfTimeMix, 0.0f, 0.0f);
         TheShaderMgr.SetPConstant(kPS_HallOfTimeParams, hallParams);
         Vector4 hallColor(mHallOfTimeColor.red, mHallOfTimeColor.green, mHallOfTimeColor.blue, 1.0f);
@@ -501,16 +512,16 @@ void NgPostProc::CheckRefract() {
         float sinAngle = (float)sin((double)angleRad);
         float cosAngle = (float)cos((double)angleRad);
 
-        unk234 += mRefractVelocity.x * mDeltaSecs;
-        unk238 += mRefractVelocity.y * mDeltaSecs;
+        mRefractOffset.x += mRefractVelocity.x * mDeltaSecs;
+        mRefractOffset.y += mRefractVelocity.y * mDeltaSecs;
 
         Vector4 refractParams(angleRad, sinAngle, cosAngle, mRefractDist);
 
-        unk234 = (float)fmod((double)unk234, 1.0);
-        unk238 = (float)fmod((double)unk238, 1.0);
+        mRefractOffset.x = (float)fmod((double)mRefractOffset.x, 1.0);
+        mRefractOffset.y = (float)fmod((double)mRefractOffset.y, 1.0);
 
         Vector4 panningParams(mRefractScale.x, mRefractScale.y,
-                              mRefractPanning.x + unk234, mRefractPanning.y + unk238);
+                              mRefractPanning.x + mRefractOffset.x, mRefractPanning.y + mRefractOffset.y);
         TheShaderMgr.SetPConstant(kPS_RefractStrength, refractParams);
         TheShaderMgr.SetPConstant(kPS_RefractPanning, panningParams);
 
@@ -519,8 +530,8 @@ void NgPostProc::CheckRefract() {
         TheRenderState.SetTextureClamp(1, (RndRenderState::ClampMode)0);
         TheShaderMgr.unk3b = true;
     } else {
-        unk234 = 0.0f;
-        unk238 = 0.0f;
+        mRefractOffset.x = 0.0f;
+        mRefractOffset.y = 0.0f;
     }
 }
 
@@ -533,7 +544,7 @@ void NgPostProc::CheckNoise() {
             Vector4 params(mNoiseBaseScale.x, mNoiseBaseScale.y, mNoiseTopScale, mNoiseIntensity);
             TheShaderMgr.SetPConstant(kPS_NoiseParams, params);
         } else {
-            Vector4 seeds(mRandomSeed1, mRandomSeed2, mRandomSeed1, mRandomSeed2);
+            Vector4 seeds(mRandomSeed.x, mRandomSeed.y, mRandomSeed.x, mRandomSeed.y);
             TheShaderMgr.SetPConstant(kPS_NoiseSeeds, seeds);
             Vector4 params(mNoiseBaseScale.x, mNoiseBaseScale.y, 1.0f, mNoiseIntensity);
             TheShaderMgr.SetPConstant(kPS_NoiseParams, params);
