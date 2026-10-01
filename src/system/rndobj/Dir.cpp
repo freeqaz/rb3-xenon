@@ -98,8 +98,14 @@ INIT_REVS(10, 0)
 void RndDir::PreLoad(BinStream &bs) {
     LOAD_REVS(bs)
     ASSERT_REVS(10, 0)
+#ifndef HX_NATIVE
+    // Retail (0x82406178) pushes the revision BEFORE ObjectDir::PreLoad.
+    bs.PushRev(packRevs(d.altRev, d.rev), this);
+    ObjectDir::PreLoad(bs);
+#else
     ObjectDir::PreLoad(bs);
     bs.PushRev(packRevs(d.altRev, d.rev), this);
+#endif
 }
 
 void RndDir::PostLoad(BinStream &bs) {

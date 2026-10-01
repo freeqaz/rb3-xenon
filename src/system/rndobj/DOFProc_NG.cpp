@@ -50,9 +50,14 @@ void NgDOFProc::Set(const RndCam *cam, float focalPlane, float blurDepth, float 
     mMaxBlur = Clamp(0.0f, 1.0f, dof.mMaxBlurScale * maxBlur + dof.mMaxBlurOffset);
     mMinBlur = Clamp(0.0f, 1.0f, dof.mMinBlurScale * minBlur + dof.mMinBlurOffset);
 
+#ifndef HX_NATIVE
+    // Retail (0x82B8BF78): a plain assignment, no game-screen test.
+    mEnabled = mMaxBlur > 0.0f;
+#else
     if (mMaxBlur > 0.0f && TheUI->IsGameScreenActive()) {
         mEnabled = true;
     }
+#endif
 
     if (mBlurDepth <= 0.001f) {
         mBlurDepth = 0.001f;
@@ -62,7 +67,7 @@ void NgDOFProc::Set(const RndCam *cam, float focalPlane, float blurDepth, float 
     float farPlane = cam->FarPlane();
 
     float scale = 0.0f;
-    if (nearPlane <= focalPlane) {
+    if (focalPlane >= nearPlane) {
         scale = (farPlane - farPlane / focalPlane * nearPlane) / (farPlane - nearPlane)
             * (cam->ZRange().y - cam->ZRange().x) + cam->ZRange().x;
     }
@@ -71,7 +76,7 @@ void NgDOFProc::Set(const RndCam *cam, float focalPlane, float blurDepth, float 
     float farFocal = focalPlane - focalPlane * mBlurDepth;
 
     float bias = 0.0f;
-    if (nearPlane <= farFocal) {
+    if (farFocal >= nearPlane) {
         bias = (farPlane - farPlane / farFocal * nearPlane) / (farPlane - nearPlane)
             * (cam->ZRange().y - cam->ZRange().x) + cam->ZRange().x;
     }
