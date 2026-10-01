@@ -335,6 +335,12 @@ RndMesh *ChordShapeGenerator::BuildChordMesh() {
     return mesh;
 }
 
+void ChordShapeGenerator::CrossSec::AddEdge(const Edge &edge) {
+    mEdges.push_back(edge);
+    mVerts.insert(edge.mV0);
+    mVerts.insert(edge.mV1);
+}
+
 void ChordShapeGenerator::GetCrossSection(float xOffset, CrossSec &cs) {
     MILO_ASSERT(mSource, 0x17C);
     cs.mEdges.clear();
@@ -342,18 +348,16 @@ void ChordShapeGenerator::GetCrossSection(float xOffset, CrossSec &cs) {
     cs.mXOffset = xOffset;
     RndMesh::VertVector &verts = mSource->Verts();
     std::vector<RndMesh::Face> faces(mSource->Faces());
-    float hi = xOffset + 0.1f;
-    float lo = xOffset - 0.1f;
     for (unsigned int i = 0; i < faces.size(); i++) {
         RndMesh::Face &f = faces[i];
         bool outOfBand = false;
         int outsideVert = -1;
         for (int j = 0; j < 3; j++) {
             float x = verts[f[j]].pos.x;
-            if (x < lo) {
+            if (x < xOffset - 0.1f) {
                 outOfBand = true;
                 break;
-            } else if (x > hi) {
+            } else if (x > xOffset + 0.1f) {
                 if (outsideVert != -1) {
                     outOfBand = true;
                     break;
@@ -364,14 +368,12 @@ void ChordShapeGenerator::GetCrossSection(float xOffset, CrossSec &cs) {
         if (!outOfBand && outsideVert != -1) {
             Edge edge;
             for (int j = 0; j < 3; j++) {
-                if (f[j] == outsideVert) {
+                if (outsideVert == f[j]) {
                     edge.mV0 = f[(j + 1) % 3];
                     edge.mV1 = f[(j + 2) % 3];
                 }
             }
-            cs.mEdges.push_back(edge);
-            cs.mVerts.insert(edge.mV0);
-            cs.mVerts.insert(edge.mV1);
+            cs.AddEdge(edge);
         }
     }
 }

@@ -25,6 +25,10 @@ public:
         std::vector<Edge> mEdges; // 0x0
         std::set<unsigned short> mVerts; // 0xc
         float mXOffset; // 0x24
+
+        // Out of line in retail (0x822E1320, called only from GetCrossSection);
+        // no name survives, this one is descriptive.
+        void AddEdge(const Edge &);
     };
 
     ChordShapeGenerator();
