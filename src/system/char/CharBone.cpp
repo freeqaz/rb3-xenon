@@ -27,9 +27,10 @@ CharBone::CharBone()
       mBakeOutAsTopLevel(0) {}
 
 void CharBone::ClearContext(int mask) {
-    mPositionContext &= ~mask;
-    mScaleContext &= ~mask;
-    mRotationContext &= ~mask;
+    int keep = ~mask;
+    mPositionContext &= keep;
+    mScaleContext &= keep;
+    mRotationContext &= keep;
 }
 
 // NOTE(INSDEL-1): StuffBones' 20 charges are the stack-slot class in the
