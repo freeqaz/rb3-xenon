@@ -92073,7 +92073,6 @@
    "folded": [
     "??1ArtEntry@StoreArtLoaderPanel@@QAA@XZ",
     "??1CacheDirEntry@@QAA@XZ",
-    "??1LoaderGlitchContext@@QAA@XZ",
     "??1Marker@@QAA@XZ",
     "??1MoveRating@SkeletonClip@@QAA@XZ",
     "??1SampleMarker@@QAA@XZ",
@@ -92107,6 +92106,16 @@
      "spelling": "??1LeaderboardRow@@QAA@XZ",
      "lane": "W16-MB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 UNDECIDABLE); 4 B retail / 4 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. fn_8266E4AC."
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??1LoaderGlitchContext@@QAA@XZ",
+     "lane": "W16-MC landing 2026-10-01",
+     "class": "UNPROVEN",
+     "regate": true,
+     "disposition": "membership withdrawn, names kept",
+     "evidence": "Coordinator gate on 6440c3bf8: icf_pair_adjudicate --chase gives CHASED T1 REFUTED via MISSING(ours) -- the survivor spelling ??1FilePath@@UAA@XZ is in no compiled obj, so the fold cannot be verified (flat T1 UNDECIDABLE). Unproven rather than contradicted; restore once a compiled obj emits the survivor or an independent channel proves the fold."
     }
    ]
   },
