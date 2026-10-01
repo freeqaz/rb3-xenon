@@ -18727,7 +18727,7 @@
  "0x826b94b0": "??1VocalNoteList@@QAA@XZ",
  "0x826b9620": "?Enter@VocalTrainerPanel@@UAAXXZ",
  "0x826b9890": "?Exit@VocalTrainerPanel@@UAAXXZ",
- "0x826b98e0": "?push_back@?$vector@UBeatCollisionData@@V?$StlNodeAlloc@UBeatCollisionData@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUBeatCollisionData@@@Z",
+ "0x826b98e0": "?push_back@?$vector@VVocalPhrase@@V?$StlNodeAlloc@VVocalPhrase@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVVocalPhrase@@@Z",
  "0x826b9960": "?push_back@?$vector@VVocalNote@@V?$StlNodeAlloc@VVocalNote@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVVocalNote@@@Z",
  "0x826b99e0": "??1VocalTrainerPanel@@UAA@XZ",
  "0x826ba830": "??_GVocalTrainerPanel@@UAAPAXI@Z",
