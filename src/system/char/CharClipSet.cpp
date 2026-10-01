@@ -105,6 +105,10 @@ void CharClipSet::PostSave(BinStream &bs) {
     if (mPreviewChar) {
         mPreviewChar->SetName("preview_character", this);
         mPreviewChar->Enter();
+        Hmx::Object *milo = ObjectDir::Main()->FindObject("milo", false);
+        if (milo) {
+            milo->Handle(Message("update_objects"), true);
+        }
     }
 }
 
