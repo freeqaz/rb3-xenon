@@ -20,7 +20,7 @@ PassiveMessagesPanel::~PassiveMessagesPanel() { delete mMessenger; }
 void PassiveMessagesPanel::SetTypeDef(DataArray *a) {
     UIPanel::SetTypeDef(a);
     static Symbol msg_duration("msg_duration");
-    mMessageQueue->SetMessageDuration(a->FindArray(msg_duration, true)->Float(1));
+    mMessageQueue->SetMessageDuration(a->FindFloat(msg_duration));
 }
 
 void PassiveMessagesPanel::Poll() {
@@ -54,6 +54,7 @@ void PassiveMessagesPanel::PostSetup() {
         UIScreen *screen = TheUI->CurrentScreen();
         if (screen) {
             FOREACH (it, screen->PanelList()) {
+                static Symbol game("game");
                 if (game == it->mPanel->Name()) {
                     inGame = true;
                     break;
@@ -61,11 +62,7 @@ void PassiveMessagesPanel::PostSetup() {
             }
         }
         if (inGame) {
-            if (TheRnd.GetAspect() == Rnd::kRegular) {
-                anim->SetFrame(2, 1);
-            } else {
-                anim->SetFrame(1, 1);
-            }
+            anim->SetFrame(1, 1);
         } else {
             anim->SetFrame(0, 1);
         }

@@ -97,7 +97,7 @@ BEGIN_HANDLERS(CampaignCareerLeaderboardPanel)
     HANDLE_EXPR(get_scoretype, GetScoreType())
     HANDLE_ACTION(set_use_dlc, SetUseDLC(_msg->Int(2)))
     HANDLE_ACTION(cycle_mode, CycleMode())
-    HANDLE_EXPR(get_mode_symbol, mCampaignCareerLeaderboardProvider->GetModeSymbol())
+    HANDLE_EXPR(get_mode_symbol, GetModeSymbol())
     HANDLE_EXPR(
         scroll_lb_up,
         mCampaignCareerLeaderboardProvider

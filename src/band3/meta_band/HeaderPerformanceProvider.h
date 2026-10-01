@@ -9,7 +9,6 @@
 class SetlistScoresProvider : public UIListProvider, public Hmx::Object {
 public:
     SetlistScoresProvider();
-    virtual ~SetlistScoresProvider() {}
     virtual void Text(int, int, UIListLabel *, UILabel *) const;
     virtual void Custom(int, int, class UIListCustom *, Hmx::Object *) const;
     virtual int NumData() const;

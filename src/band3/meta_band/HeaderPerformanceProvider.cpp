@@ -46,11 +46,7 @@ void SetlistScoresProvider::Text(int, int data, UIListLabel *slot, UILabel *labe
 
 UIListWidgetState
 SetlistScoresProvider::ElementStateOverride(int, int data, UIListWidgetState state) const {
-    bool hassong = TheSongMgr.HasSong(unk20[data]);
-    UIListWidgetState ret = kUIListWidgetInactive;
-    if (hassong)
-        ret = state;
-    return ret;
+    return TheSongMgr.HasSong(unk20[data]) ? state : kUIListWidgetInactive;
 }
 
 int SetlistScoresProvider::NumData() const { return unk20.size(); }
@@ -69,7 +65,8 @@ void SetlistScoresProvider::RefreshScores() {
         int songID = unk20[i];
         SongStatusMgr *mgr = mProfile->GetSongStatusMgr();
         MILO_ASSERT(mgr, 0x77);
-        unk28[i] = mgr->GetHighScore(songID, mScoreType);
+        // Retail calls 0x825D1840, which GetScore and GetHighScore share (identical bodies).
+        unk28[i] = mgr->GetScore(songID, mScoreType);
         unk30[i] = mgr->GetBandInstrumentMask(songID);
     }
 }

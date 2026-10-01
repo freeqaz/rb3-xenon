@@ -17,6 +17,7 @@ void StandInProvider::Text(int, int idx, UIListLabel *slot, UILabel *label) cons
     if (slot->Matches("name")) {
         const StandIn &standin = mProfile->GetStandIn(idx);
         if (standin.IsNone()) {
+            static Symbol none("none");
             label->SetTextToken(none);
         } else if (standin.IsPrefabCharacter()) {
             label->SetTextToken(standin.mName);

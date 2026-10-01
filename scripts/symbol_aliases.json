@@ -91148,6 +91148,18 @@
    "added": {
     "lane": "W17-BPM3 2026-10-01"
    }
+  },
+  {
+   "name": "??1CampaignGoalsLeaderboardPanel",
+   "address": "0x825f0068",
+   "survivor": "??1CampaignGoalsLeaderboardPanel@@UAA@XZ",
+   "folded": [
+    "??1CampaignCareerLeaderboardPanel@@UAA@XZ"
+   ],
+   "evidence": "Hand-installed by lane W16-IC-A. Evidence tier T1: retail ??_GCampaignCareerLeaderboardPanel (0x825F1518, slot 0 of vtable .?AVCampaignCareerLeaderboardPanel@@ 0x820BAB0C) calls 0x825F0068, the map row ??1CampaignGoalsLeaderboardPanel. Both classes derive from Leaderboard::Callback and UIPanel with trivially destructible members and implicit destructors; our compiled ??1CampaignCareerLeaderboardPanel and ??1CampaignGoalsLeaderboardPanel are the same 116 bytes with the same relocation target names (??1UIPanel, ??_7Callback@Leaderboard x2, ??1Callback@Leaderboard; only the per-function __ehfuncinfo differs), and both equal retail 0x825F0068 word for word outside relocated words. 0x825F0068 lies inside CampaignGoalsLeaderboardPanel's region, so its copy is the survivor.",
+   "added": {
+    "lane": "W16-IC-A 2026-10-01"
+   }
   }
  ]
 }
