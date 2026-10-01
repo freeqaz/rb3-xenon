@@ -250,6 +250,7 @@ inline unsigned long MakeColor(const Hmx::Color &c) {
 
 inline HRESULT DxCheck(void *v) { return v ? ERROR_SUCCESS : E_OUTOFMEMORY; }
 
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
 // check that the thing allocated successfully (e.g. no E_OUTOFMEMORY)
 #define DX_ASSERT(cond, line)                                                            \
     {                                                                                    \
@@ -270,3 +271,15 @@ inline HRESULT DxCheck(void *v) { return v ? ERROR_SUCCESS : E_OUTOFMEMORY; }
              ),                                                                          \
              0));                                                                        \
     }
+#else
+// RB3 retail compiled both checks down to evaluating their operand: SyncBitmap
+// (0x82734A28) stores every D3DDevice_CreateTexture/CreateSurface result with no
+// test, GetMovieSurface (0x827349A0) tail-calls D3DTexture_GetSurfaceLevel
+// straight through GetSurfaceLevel's check, and UnlockBitmap (0x827353F8) calls
+// D3DXFilterTexture with no DxRnd::Error path. The operand is still evaluated
+// (some call sites assign inside it).
+#define DX_ASSERT(cond, line)                                                            \
+    { (void)(cond); }
+#define DX_ASSERT_CODE(code, line)                                                       \
+    { (void)(code); }
+#endif
