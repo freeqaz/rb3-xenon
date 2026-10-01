@@ -34,7 +34,6 @@ public:
     LinearInterpolator() {}
     virtual float Eval(float f) { return mSlope * f + mB; }
     virtual void Reset(const DataArray *);
-    virtual ~LinearInterpolator() {}
 
     void Reset(float, float, float, float);
 
