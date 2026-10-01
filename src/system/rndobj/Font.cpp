@@ -618,11 +618,19 @@ void RndFont::BleedTest() {
                 }
             }
         }
+#ifdef HX_NATIVE
         if (errStr.length() != 0) {
             MILO_NOTIFY("Bleeding in %s:\n%s", Name(), errStr);
         } else {
             MILO_NOTIFY("No bleeding over found.  ");
         }
+#else
+        // Retail copies errStr into a temporary and destroys it (the stripped
+        // notify's by-value argument); the "no bleeding" branch emits nothing.
+        if (errStr.length() != 0) {
+            MiloStripEval("Bleeding in %s:\n%s", Name(), errStr);
+        }
+#endif
     }
 }
 
