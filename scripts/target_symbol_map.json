@@ -1,4 +1,6 @@
 {
+ "0x82b88a70": "?CheckHallOfTime@NgPostProc@@IAAXXZ",
+ "0x82b884a0": "?DoBloom@NgPostProc@@IAAXXZ",
  "0x824d0800": "?NewObject@WorldDir@@SAPAVObject@Hmx@@XZ",
  "0x82b89a08": "?DoPost@NgPostProc@@UAAXXZ",
  "0x82b86738": "?Select@NgEnviron@@UAAXPBVVector3@@@Z",
@@ -30551,7 +30553,7 @@
  "0x82b87fc0": "?AllocateTextures@BloomTextureSet@NgPostProc@@QAAXII@Z",
  "0x82b88018": "?CheckPosterizeAndKaleidoscope@NgPostProc@@IAAXXZ",
  "0x82b88148": "?SetBloomColor@NgPostProc@@UAAXXZ",
- "0x82b881d8": "?AddSink@Object@Hmx@@QAAXPAV12@VSymbol@@1W4SinkMode@12@_N@Z",
+ "0x82b881d8": "?Bloom_Downsample@@YAXW4ShaderType@@PAVRndTex@@1@Z",
  "0x82b88300": "?Bloom_Blur@@YAXPAVRndTex@@0W4BloomBlurStyle@@W4BloomBlurDirection@@IMM@Z",
  "0x82b889c0": "?CheckGradientMap@NgPostProc@@IAAXXZ",
  "0x82b88b40": "?CheckVignette@NgPostProc@@IAAXXZ",

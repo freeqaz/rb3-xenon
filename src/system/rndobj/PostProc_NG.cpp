@@ -505,6 +505,29 @@ void NgPostProc::ModulateColorXfm() {
     mgr.SetPConstant4x3((PShaderConstant)kVS_WorldTransform, Hmx::Matrix4(xfm));
 }
 
+#ifndef HX_NATIVE
+// 0x82B89A08 (NgPostProc vtable slot 3). RB3 has no hue-converge pass, keys
+// the shader manager's luminance flag (unk29) on mLuminanceMap being set,
+// passes ColorXfmEnabled() in unk2a, and does not clear mMotionBlurEnabled.
+void NgPostProc::DoPost() {
+    RndPostProc::DoPost();
+    DoVelocity();
+    DoBloom();
+    ModulateColorXfm();
+    CheckNoise();
+    CheckBlendPrevious();
+    CheckHallOfTime();
+    CheckMotionBlur();
+    CheckGradientMap();
+    CheckRefract();
+    CheckChromaticAberration();
+    CheckPosterizeAndKaleidoscope();
+    CheckVignette();
+    TheShaderMgr.unk29 = mLuminanceMap != nullptr;
+    TheShaderMgr.unk2a = ColorXfmEnabled();
+    TheShaderMgr.unk2f = BlendPrevious();
+}
+#else
 void NgPostProc::DoPost() {
     RndPostProc::DoPost();
     DoVelocity();
@@ -525,6 +548,7 @@ void NgPostProc::DoPost() {
     TheShaderMgr.unk2f = BlendPrevious();
     mMotionBlurEnabled = false;
 }
+#endif
 
 void NgPostProc::OnUnselect() {
     RndPostProc::OnUnselect();
