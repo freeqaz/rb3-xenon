@@ -3182,7 +3182,6 @@ UIListState.cpp:
 	.text       start:0x8280DEB8 end:0x8280F694
 
 UIListWidget.cpp:
-	.pdata      start:0x82246398 end:0x822463A0
 	.pdata      start:0x82247B80 end:0x82247B88
 	.pdata      start:0x82247B88 end:0x82247BA0
 	.pdata      start:0x82247BA0 end:0x82247CC0
@@ -3198,7 +3197,6 @@ UIListWidget.cpp:
 	.pdata      start:0x82247D40 end:0x82247D50
 	.pdata      start:0x82247D50 end:0x82247DA8
 	.pdata      start:0x82247DA8 end:0x82247DC8
-	.text       start:0x82808B10 end:0x82808C64
 	.text       start:0x82820E48 end:0x82820EC8
 	.text       start:0x82820EC8 end:0x82820F8C
 	.text       start:0x82820F90 end:0x82821238
@@ -6617,6 +6615,7 @@ PanelDir.cpp:
 	.pdata      start:0x822449C8 end:0x822449D0
 	.pdata      start:0x82246128 end:0x822462C8
 	.pdata      start:0x822462C8 end:0x82246398
+	.pdata      start:0x82246398 end:0x822463A0
 	.pdata      start:0x822463A0 end:0x822463C8
 	.text       start:0x8241BAF8 end:0x8241BB90
 	.text       start:0x824CF890 end:0x824CFA78
@@ -6632,6 +6631,7 @@ PanelDir.cpp:
 	.text       start:0x827ED6A0 end:0x827ED6F8
 	.text       start:0x82806418 end:0x82807EF8
 	.text       start:0x82807EF8 end:0x82808B0C
+	.text       start:0x82808B10 end:0x82808C64
 	.text       start:0x82808C64 end:0x82808FB8
 	.text       start:0x82808FB8 end:0x82808FC4
 	.text       start:0x82808FC8 end:0x82808FD4

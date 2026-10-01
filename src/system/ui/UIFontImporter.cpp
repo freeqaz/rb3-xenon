@@ -586,9 +586,10 @@ void UIFontImporter::FontImporterSyncObjects() {
             } else {
                 String name = GetBaseName();
                 String matname = mat->Name();
-                if (matname.find(name.c_str()) == 0) {
-                    int nameLen = name.length();
+                int pos = matname.find(name.c_str());
+                if (pos == 0) {
                     int matLen = matname.length();
+                    int nameLen = name.length();
                     matname = matname.substr(name.length() + 1, matLen - nameLen - 1);
                 }
                 mat->SetName(matname.c_str(), Dir());
