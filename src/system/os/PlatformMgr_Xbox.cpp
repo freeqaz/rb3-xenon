@@ -16,6 +16,8 @@
 #include "xdk/xapilibi/xbox.h"
 #include "xdk/XONLINE.h"
 #include "os/ThreadCall.h"
+#include "os/NetworkSocket_Win.h"
+#include "xdk/xonline/xonline.h"
 #include "meta/ConnectionStatusPanel.h"
 #include "ui/UI.h"
 #include "net/NetSession.h"
@@ -287,6 +289,30 @@ bool PlatformMgr::ShowFitnessBodyProfileUI(int padNum) {
 }
 
 void PlatformMgr::PreInit() { XMPOverrideBackgroundMusic(); }
+
+extern "C" {
+DWORD XMountUtilityDrive(BOOL fFormatClean, DWORD dwBytesPerCluster, DWORD dwFileCacheSize);
+DWORD XUnmountUtilityDrive();
+}
+
+// Retail 0x8251D378. The hard-drive probe mounts and immediately unmounts the
+// utility drive; XOnlineStartup's result is not tested (the listener lands in
+// the file-static mListener, lbl_82CCA8EC). The tail is the inlined
+// StartRBNMemberCheck, or a re-run request when a check is already running.
+void PlatformMgr::Init() {
+    SetName("platform_mgr", ObjectDir::Main());
+    mHasHardDrive = XMountUtilityDrive(false, 0x8000, 0x8000) == 0;
+    if (mHasHardDrive)
+        XUnmountUtilityDrive();
+    WinSockSocket::Init();
+    XOnlineStartup();
+    mListener = XNotifyCreateListener(0xA7);
+    UpdateSigninState();
+    if (mRBNCheckInProgress == 0)
+        StartRBNMemberCheck();
+    else
+        mRBNCheckRerun = 1;
+}
 void PlatformMgr::EnableXMP() { XMPRestoreBackgroundMusic(); }
 void PlatformMgr::DisableXMP() { XMPOverrideBackgroundMusic(); }
 void PlatformMgr::CheckMailbox() {}
