@@ -495,7 +495,7 @@ u64 RndShaderParticles::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
         texGenVal = 2;
         break;
     default:
-        texGenVal = -(uint)(texGen == kTexGenEnviron) & 3;
+        texGenVal = texGen == kTexGenEnviron ? 3 : 0;
         break;
     }
     // The target clears bits 16-17 alongside the 2-bit texgen field at 10-11
@@ -546,7 +546,7 @@ u64 RndShaderParticles::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     if (TheRnd.DrawMode() == (Rnd::Mode)6) {
         opts |= 0x200000000000;
     }
-    return -(s64)(bool)(TheRnd.DrawMode() - (Rnd::Mode)3) & opts;
+    return (s64)(TheRnd.DrawMode() != (Rnd::Mode)3 ? -1 : 0) & opts;
 }
 
 // The two bodies below were previously scored against each other's retail
