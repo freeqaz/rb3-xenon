@@ -1,4 +1,5 @@
 #include "os/PlatformMgr.h"
+#include "meta/Profile.h"
 #include "obj/Data.h"
 #include "obj/DataUtl.h"
 
@@ -242,3 +243,12 @@ DataNode PlatformMgr::OnSignInUsers(DataArray *) {
     return DataNode(0);
 }
 #endif
+
+// The swapped users ride in message nodes 2 and 3.
+LocalUser *ProfileSwappedMsg::GetUser1() const {
+    return dynamic_cast<LocalUser *>(mData->Node(2).GetObj(mData));
+}
+
+LocalUser *ProfileSwappedMsg::GetUser2() const {
+    return dynamic_cast<LocalUser *>(mData->Node(3).GetObj(mData));
+}
