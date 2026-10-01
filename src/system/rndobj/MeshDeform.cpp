@@ -1,3 +1,6 @@
+// Retail inlines this TU's two-argument ObjPtr ctor (BoneDesc's mBone: three
+// member stores, no `bl`) -- RB3_OBJPTR_FORCEINLINE_CTOR (see obj/ObjPtr_p.h).
+#define RB3_OBJPTR_FORCEINLINE_CTOR
 #include "rndobj/MeshDeform.h"
 #include "obj/Object.h"
 #include "os/Debug.h"
