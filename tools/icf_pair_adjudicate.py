@@ -832,10 +832,17 @@ def retail_tail_pad(rt, ob):
 # can be watched going red (house pattern: a control nobody has seen fail is an
 # assumption, not a control).
 _SELF_BREAK_TAILPAD = False
-TAILPAD_POS = ("fn_8274A9D0", "??0DataNode@@QAA@ABV0@@Z")
+TAILPAD_POS = (0x8274A9D0, "??0DataNode@@QAA@ABV0@@Z")
 
 
-OVERCARVE_POS = ("fn_82B9F540",
+def _retail_name_at(va):
+    """The retail target-obj spelling at `va`: its map name, else fn_<ADDR>.
+    Controls are keyed by ADDRESS so a later map naming cannot strand them
+    (measured: W16-JD named 0x8274A9D0 after these controls were written)."""
+    return _addr_name(va) or "fn_%08X" % va
+
+
+OVERCARVE_POS = (0x82B9F540,
                  "?_M_advance@?$_Deque_iterator_base@PAVLyricPlate@@@stlpmtx_std@@QAAXH@Z")
 
 
@@ -846,10 +853,10 @@ def overcarve_controls(tgt, ours):
     ONE extra branch from outside the extent into the tail (what a real
     tail-call target looks like): expect REFUTED.  Injected by a setup/teardown
     hook around that one evaluation, so it isolates clause (3) exactly."""
-    s, o = OVERCARVE_POS
+    s, o = _retail_name_at(OVERCARVE_POS[0]), OVERCARVE_POS[1]
     if s not in tgt or o not in ours or retail_overcarve(s, tgt[s], ours[o]) is None:
         raise SystemExit("REFUSING: over-carve positive %s/%s absent or no longer an "
-                         "over-carve -- the controls would be VACUOUS." % OVERCARVE_POS)
+                         "over-carve -- the controls would be VACUOUS." % (s, o))
     tail = _ph_addr(tgt[s][1][-1][1])
     fake_src = 0x82000000                   # a branch source far outside the extent
 
@@ -868,7 +875,7 @@ def overcarve_controls(tgt, ours):
 _PAIR_HOOKS = {}
 
 
-RENAME_POS = ("fn_826FCCE8", "??1?$ObjPtr@VSynthSample@@@@UAA@XZ")
+RENAME_POS = (0x826FCCE8, "??1?$ObjPtr@VSynthSample@@@@UAA@XZ")
 
 
 def rename_controls(tgt, ours, mapped):
@@ -879,12 +886,12 @@ def rename_controls(tgt, ours, mapped):
     different, unrelated retail class (the body's own ObjPtr<SynthSample> vtable
     lbl_820F5284) -- the rename must not blanket-accept ObjRefOwner: expect
     REFUTED.  Refuses if the positive does not carry the ObjRef slot."""
-    s, o = RENAME_POS
+    s, o = _retail_name_at(RENAME_POS[0]), RENAME_POS[1]
     rt = tgt.get(s)
     if rt is None or o not in ours or not any(n == "lbl_820009EC" for _o, n, _t in rt[1]):
         raise SystemExit("REFUSING: rename positive %s/%s absent or no longer stores "
                          "retail ObjRef's vtable -- the rename controls would be "
-                         "VACUOUS." % RENAME_POS)
+                         "VACUOUS." % (s, o))
     tgt["__chasetest_rename_decoy__"] = (
         rt[0], [(x, "lbl_820F5284" if n == "lbl_820009EC" else n, t)
                 for x, n, t in rt[1]], rt[2])
@@ -904,11 +911,11 @@ def tailpad_controls(tgt, ours):
     0x60000000), injected under a reserved name, so it isolates the zero-tail
     clause.
     Refuses if the positive pair is absent (the decoy would then test nothing)."""
-    s, o = TAILPAD_POS
+    s, o = _retail_name_at(TAILPAD_POS[0]), TAILPAD_POS[1]
     if s not in tgt or o not in ours or not retail_tail_pad(tgt[s], ours[o]):
         raise SystemExit("REFUSING: tail-pad positive %s/%s is absent or no longer "
                          "a pad-only pair -- the tail-pad controls would be VACUOUS."
-                         % TAILPAD_POS)
+                         % (s, o))
     mb, rl, sz = tgt[s]
     n = len(ours[o][0])
     tgt["__chasetest_tailpad_nop__"] = (mb[:n] + b"\x60\x00\x00\x00", rl, sz)
