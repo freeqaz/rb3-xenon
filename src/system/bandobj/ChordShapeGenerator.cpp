@@ -526,25 +526,24 @@ void ChordShapeGenerator::BuildContourCap(
     InterpolateXfm(tf1, tf2, 0.50f, midPt);
     midPt.v = trisectA.v;
     midPt.v += trisectB.v;
-    midPt.v /= 2.0f;
+    midPt.v *= 0.5f;
     float capTessA = (mBaseXVal * 2.0f + mContourXVal) / 3.0f;
     float capTessB = (mContourXVal * 2.0f + mBaseXVal) / 3.0f;
-    float xMid = (mBaseXVal + mContourXVal) * 0.5f;
+    float xMid = (mContourXVal + mBaseXVal) * 0.5f;
     float xScale = (tf2.v.x - tf1.v.x) / (mContourXVal - mBaseXVal);
     float fretHeight = mFretHeights[iii];
     std::map<unsigned short, unsigned short>::const_iterator vit = capMap.begin();
     std::map<unsigned short, unsigned short>::const_iterator vend = capMap.end();
-    float zScale = -xScale;
     for (; vit != vend; ++vit) {
         RndMesh::Vert &curvert = meshVerts[vit->second];
         curvert = srcVerts[vit->first];
         if (invert) {
             if (curvert.pos.x < capTessA) {
-                TransformVert(curvert, mBaseXVal, zScale, fretHeight, tf2, col2);
+                TransformVert(curvert, mBaseXVal, -xScale, fretHeight, tf2, col2);
             } else if (curvert.pos.x < capTessB) {
-                TransformVert(curvert, xMid, zScale, fretHeight, midPt, col2);
+                TransformVert(curvert, xMid, -xScale, fretHeight, midPt, col2);
             } else {
-                TransformVert(curvert, mContourXVal, zScale, fretHeight, tf1, col2);
+                TransformVert(curvert, mContourXVal, -xScale, fretHeight, tf1, col2);
             }
         } else {
             if (curvert.pos.x < capTessA) {
@@ -557,7 +556,10 @@ void ChordShapeGenerator::BuildContourCap(
         }
     }
     std::map<unsigned short, unsigned short> endVerts;
-    AddVertProfile(mesh, tf2, xMid, invert ? sec2 : sec1, endVerts, invert ? col1 : col2);
+    // The closing profile sits at tf2 with this fret's height.
+    AddVertProfile(
+        mesh, tf2, fretHeight, invert ? sec2 : sec1, endVerts, invert ? col1 : col2
+    );
     capMap.insert(connectingVerts.begin(), connectingVerts.end());
     capMap.insert(endVerts.begin(), endVerts.end());
     const std::vector<RndMesh::Face> &srcFaces = mSource->Faces();
