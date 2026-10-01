@@ -182,24 +182,36 @@ DataNode StoreMainPanel::OnMsg(const MetadataLoadedMsg &msg) {
 }
 
 void StoreMainPanel::ParseConfigData() {
-    StoreMarqueeTable *table = TheStoreMetadata.mMarqueeTable;
-    mNewReleaseList.reserve(table->mNumMarquees);
-    NewReleaseEntry entry;
-    for (int i = 0; i < TheStoreMetadata.mMarqueeTable->mNumMarquees; i++) {
-        unsigned short *marquee =
-            (unsigned short *)(TheStoreMetadata.mMarqueeTable->mMarquees + i * 0xA);
-        entry.mStrName = BandStorePanel::Instance()->GetRequestPrefix();
-        entry.mStrName += TheStoreMetadata.GetString(marquee[1]);
-        entry.mText1 = TheStoreMetadata.GetString(marquee[2]);
-        entry.mText2 = TheStoreMetadata.GetString(marquee[3]);
-        entry.mText3 = TheStoreMetadata.GetString(marquee[0]);
-        entry.mText4 = MakeString("%d", (int)marquee[4]);
-        EnsureArtLoader(entry.mStrName);
-        mNewReleaseList.push_back(entry);
-        mCoverArtTexs.push_back(Hmx::Object::New<RndTex>());
+    // Retail 0x8263BD68: the entries come from the "content" array of the
+    // config DataArray handed over by OnMsg(MetadataLoadedMsg); the panel takes
+    // a reference for the duration of the parse and clears mConfigData.
+    DataArray *cfg = mConfigData;
+    cfg->AddRef();
+    if (mConfigData) {
+        mConfigData->Release();
+        mConfigData = 0;
     }
-    mTimeNextEvent = 0;
+    static Symbol content("content");
+    DataArray *arr = cfg->FindArray(content, false);
+    if (arr && arr->Size() >= 2) {
+        mNewReleaseList.reserve(arr->Size() - 1);
+        for (int i = 1; i < arr->Size(); i++) {
+            DataArray *e = arr->Array(i);
+            NewReleaseEntry entry;
+            entry.mStrName = BandStorePanel::Instance()->GetRequestPrefix();
+            entry.mStrName += e->Str(1);
+            entry.mText1 = e->Str(0);
+            entry.mText2 = e->Str(2);
+            entry.mText3 = e->Str(3);
+            entry.mText4 = e->Str(4);
+            EnsureArtLoader(entry.mStrName);
+            mNewReleaseList.push_back(entry);
+            mCoverArtTexs.push_back(Hmx::Object::New<RndTex>());
+        }
+    }
     mCurrentEntry = -1;
+    mTimeNextEvent = 0;
+    cfg->Release();
 }
 
 void StoreMainPanel::ClearConfigData() {

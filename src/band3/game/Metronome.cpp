@@ -51,8 +51,7 @@ void Metronome::SetVolume(int v, int steps) {
 }
 
 int Metronome::GetVolume(int steps) const {
-    if (mFader) {
-        return (mFader->mVal - -20.0f) / 20.0f * (steps + -1);
-    } else
+    if (!mFader)
         return 0;
+    return ((mFader->mVal - -20.0f) / 20.0f) * (steps + -1);
 }

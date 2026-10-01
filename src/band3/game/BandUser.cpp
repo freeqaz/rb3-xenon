@@ -8,6 +8,7 @@
 #include "meta_band/BandProfile.h"
 #include "meta_band/BandUI.h"
 #include "meta_band/OvershellSlotState.h"
+#include "meta_band/SessionMgr.h"
 #include "meta_band/SongStatusMgr.h"
 #include "meta_band/CharData.h"
 #include "meta_band/CharSync.h"
@@ -43,6 +44,13 @@ BandUser::BandUser()
 }
 
 BandUser::~BandUser() {}
+
+// Retail 0x8268AD90 (vtable slot 1 of BandUser and every subclass).
+bool BandUser::UnkTU5Virtual() const {
+    if (TheSessionMgr)
+        return TheSessionMgr->HasUser(this);
+    return false;
+}
 
 LocalBandUser *BandUser::NewLocalBandUser() { return new LocalBandUser(); }
 

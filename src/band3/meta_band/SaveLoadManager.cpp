@@ -1550,7 +1550,8 @@ void SaveLoadManager::SaveLoadErrorSetState() {
         SetState(kS_AutoloadSelectProfile);
         break;
     case kMode_AutoSave:
-    case kMode_ManualLoad:
+        // Retail (inlined into HandleEventResponse at 0x82551F08) has no
+        // ManualLoad arm.
         SetState(kS_SaveCheckProfile);
         break;
     case kMode_DisableAutoSave:
@@ -2258,12 +2259,14 @@ void SaveLoadManager::HandleEventResponse(LocalUser *localUser, int choiceIdx) {
         );
         return;
     }
+    // Retail 0x82551F08 has no early return for a bad index; the check is
+    // compiled out with the message.
     if ((unsigned int)(choiceIdx - 1) > 2U) {
         MILO_FAIL("Bad choice index %i\n", choiceIdx);
-        return;
     }
     mLocalUser = localUser;
-    int isFirst = (choiceIdx == 1);
+    bool isFirst = (choiceIdx == 1);
+    // Case values and targets read off retail's compare tree.
     switch (mState) {
     case kS_AutoloadNoSaveFound_Msg: // 0x6
         if (choiceIdx == 1) {
@@ -2276,20 +2279,17 @@ void SaveLoadManager::HandleEventResponse(LocalUser *localUser, int choiceIdx) {
             SetState((State)0x42);
         }
         break;
-    case (State)0x7:
+    case kS_AutoloadMultipleSavesFound: // 0x7
         SetState(isFirst ? kS_AutoloadSelectDevice3 : (State)0x42);
         break;
     case kS_AutoloadNotOwner: // 0xc
         SetState(isFirst ? kS_AutoloadStartLoad2 : (State)0x42);
         break;
-    case kS_SaveChooseDevice: // 0x4b
-        SetState(isFirst ? kS_GlobalCreateMissing_Msg : (State)0x42);
-        break;
     case kS_AutoloadCorrupt: // 0xe
     case kS_AutoloadObsolete: // 0xf
     case kS_AutoloadFuture: // 0x10
     case kS_AutoloadFuture2: // 0x11
-    case kS_SaveNoOverwrite: // 0x47
+    case kS_SaveDeviceInvalid: // 0x48
         SetState(isFirst ? kS_SaveOverwrite : (State)0x42);
         break;
     case (State)0x17:
@@ -2306,41 +2306,55 @@ void SaveLoadManager::HandleEventResponse(LocalUser *localUser, int choiceIdx) {
     case (State)0x2f:
         SetState(isFirst ? (State)0x30 : (State)0x36);
         break;
-    case (State)0x39:
+    case (State)0x3a:
         SetState(isFirst ? (State)0x3b : (State)0x40);
         break;
-    case kS_GlobalCreateNotFound_Msg: // 0x4d
-    case kS_GlobalCreateMissing_Msg: // 0x4e
-    case (State)0x4f:
-    case (State)0x63:
-    case kS_ManualLoadChooseDevice: // 0x64
-    case (State)0x65:
-        SetState((State)0x42);
-        break;
-    case (State)0x41:
-    case kS_SaveDeviceInvalid: // 0x48
+    case (State)0x42:
         SaveLoadErrorSetState();
         break;
-    case kS_ManualLoadInit: // 0x5a
+    case kS_SaveNotEnoughSpacePS3: // 0x4a
+        switch (choiceIdx) {
+        case 1:
+            SetState(kS_SaveChooseDevice);
+            break;
+        case 2:
+            SetState(kS_SaveNoOverwrite);
+            break;
+        default:
+            SetState((State)0x42);
+            break;
+        }
+        break;
+    case kS_GlobalCreateNotFound_Msg: // 0x4c
+        SetState(isFirst ? kS_GlobalCreateMissing_Msg : (State)0x42);
+        break;
+    case kS_ManualLoadNoDevice: // 0x5c
         SetState(isFirst ? kS_ManualSaveNoDevice : (State)0x42);
         break;
-    case kS_ManualLoadStartLoad: // 0x5d
-    case kS_ManualLoadConfirmUnsaved: // 0x5e
+    case kS_ManualLoadConfirm_Yes: // 0x5f
+    case kS_ManualLoadConfirm: // 0x60
         if (choiceIdx == 1) {
-            SetState(kS_ManualLoadChooseDevice);
+            SetState(kS_ManualSaveChooseDevice);
         } else {
             SetState((State)0x44);
         }
         break;
-    case kS_ManualLoadConfirm: // 0x60
+    case kS_GlobalOptionsMissing_Msg: // 0x62
         SetState(isFirst ? kS_ManualSaveChooseDevice : (State)0x42);
         break;
-    case (State)0x61:
+    case (State)0x63:
+        SetState((State)0x42);
+        break;
+    case (State)0x49:
+    case kS_GlobalCreateCorrupt: // 0x4e
+    case (State)0x4f:
+    case kS_SaveFailed: // 0x50
+    case (State)0x65:
+    case (State)0x66:
+    case (State)0x67:
         SetState((State)0x42);
         break;
     default:
-    case (State)0x66:
-    case (State)0x67:
         MILO_FAIL(
             "Unhandled UIComponentSelectDoneMsg from choice index %i in state %d and mode %d\n",
             (int)choiceIdx, (int)mState, (int)mMode

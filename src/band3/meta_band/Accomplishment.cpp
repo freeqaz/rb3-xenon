@@ -422,23 +422,11 @@ bool Accomplishment::CanBeEarnedWithNoFail() const { return mCanBeEarnedWithNoFa
 bool Accomplishment::IsTrackedInLeaderboard() const { return mIsTrackedInLeaderboard; }
 
 Symbol Accomplishment::GetUnitsToken(int useSingular) const {
-    bool noToken;
-    if (gNullStr) {
-        noToken = !strcmp(mUnitsToken.Str(), gNullStr);
-    } else {
-        noToken = (mUnitsToken.Str() == gNullStr);
-    }
-
-    if (!noToken) {
+    // Retail 0x82594620 calls Symbol::operator==(const char *) out of line
+    // (0x8227C6D0) and builds both defaults as function-local statics.
+    if (mUnitsToken != gNullStr) {
         if (useSingular == 1) {
-            bool noSingularToken;
-            if (gNullStr) {
-                noSingularToken = !strcmp(mUnitsTokenSingular.Str(), gNullStr);
-            } else {
-                noSingularToken = (mUnitsTokenSingular.Str() == gNullStr);
-            }
-
-            if (!noSingularToken) {
+            if (mUnitsTokenSingular != gNullStr) {
                 return mUnitsTokenSingular;
             } else {
                 return mUnitsToken;
@@ -446,10 +434,11 @@ Symbol Accomplishment::GetUnitsToken(int useSingular) const {
         } else {
             return mUnitsToken;
         }
+    } else if (useSingular == 1) {
+        static Symbol campaign_goalunits_singular_default("campaign_goalunits_singular_default");
+        return campaign_goalunits_singular_default;
     } else {
-        if (useSingular == 1) {
-            return campaign_goalunits_singular_default;
-        }
+        static Symbol campaign_goalunits_default("campaign_goalunits_default");
         return campaign_goalunits_default;
     }
 }

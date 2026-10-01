@@ -468,6 +468,13 @@ void ClosetMgr::GotoArtMakerShot() { mCurrentClosetPanel->GotoArtMakerShot(); }
 void ClosetMgr::LeaveArtMakerShot() { mCurrentClosetPanel->LeaveArtMakerShot(); }
 
 void ClosetMgr::SetInstrumentType(Symbol type) {
+    // Retail 0x825667C8 constructs these as function-local statics; the
+    // assert that reads them is compiled out.
+    static Symbol guitar("guitar");
+    static Symbol bass("bass");
+    static Symbol drum("drum");
+    static Symbol mic("mic");
+    static Symbol keyboard("keyboard");
     MILO_ASSERT(type == guitar || type == bass || type == drum || type == mic || type == keyboard, 0x2E8);
     if (type != mBandCharacter->InstrumentType()) {
         mBandCharacter->SetInstrumentType(type);

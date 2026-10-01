@@ -318,7 +318,9 @@ public:
     }
     float GetAverageMultiplier() const { return mAverageMultiplier; }
     int NumSections() const { return mSections.size(); }
-    void SetNumSections(int); // TU5, retail fn_82656B98 (name ours)
+    // TU5, retail fn_82656B98 (name ours). Inline: retail's one out-of-line
+    // copy sits in PerformanceData.cpp's .text, emitted there as a COMDAT.
+    void SetNumSections(int n) { mSections.resize(n); }
     bool HasCoda() const { return mHasCoda; }
     bool HasSolos() const { return mHasSolos; }
     void SetHasSolos(bool solos) { mHasSolos = solos; }

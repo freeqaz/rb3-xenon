@@ -994,7 +994,9 @@ DataNode SongStatusMgr::OnMsg(const RockCentralOpCompleteMsg &msg) {
 }
 
 int SongStatusMgr::SaveSize(int rev) {
-    int size = 0;
+    // Retail 0x825D11A8 counts the song status cache (LoadStdPtr's 3000
+    // entries, each SongStatus::SaveSize(rev) + 4, plus the count word).
+    int size = (SongStatus::SaveSize(rev) + 4) * 3000 + 4;
     if (rev >= 0x92)
         size += 0x58;
     if (rev >= 0x93)

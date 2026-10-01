@@ -681,12 +681,8 @@ int CalibrationPanel::GetTestQuality() const {
     if (mTestSamples.size() < mNumHits - mTopOutliers - mBottomOutliers)
         return 0;
     else {
-        int ret = GetSampleSpread() < (float)mMaxSlack;
-        if (ret == 0) {
-            for (int i = 0; i < mTestSamples.size(); i++) {
-                MILO_LOG("%f ms\n", mTestSamples[i]);
-            }
-        }
+        // Retail 0x82609308 has no sample-dump loop.
+        bool ret = GetSampleSpread() < (float)mMaxSlack;
         return ret;
     }
 }
