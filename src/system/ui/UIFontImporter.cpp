@@ -33,6 +33,36 @@ __forceinline void ObjPtrList<RndFont, ObjectDir>::Set(iterator it, RndFont *obj
     if (n->mObject)
         n->mObject->AddRef(this);
 }
+
+// The ObjPtrList PropSync instantiations (retail 0x8281A910 RndFont, 0x8281AB00
+// RndMat) inline insert (PoolAlloc + Link) and Set (Release, store, AddRef).
+template <>
+__forceinline void ObjPtrList<RndMat, ObjectDir>::Set(iterator it, RndMat *obj) {
+    Node *n = it.mNode;
+    if (n->mObject)
+        n->mObject->Release(this);
+    n->mObject = obj;
+    if (n->mObject)
+        n->mObject->AddRef(this);
+}
+
+template <>
+__forceinline ObjPtrList<RndFont, ObjectDir>::iterator
+ObjPtrList<RndFont, ObjectDir>::insert(iterator it, RndFont *obj) {
+    Node *node = new Node();
+    node->mObject = obj;
+    Link(it, node);
+    return node;
+}
+
+template <>
+__forceinline ObjPtrList<RndMat, ObjectDir>::iterator
+ObjPtrList<RndMat, ObjectDir>::insert(iterator it, RndMat *obj) {
+    Node *node = new Node();
+    node->mObject = obj;
+    Link(it, node);
+    return node;
+}
 #endif
 
 #define HEIGHT_SD 480.0f
@@ -68,8 +98,9 @@ BEGIN_HANDLERS(UIFontImporter)
     HANDLE(generate, OnGenerate)
     HANDLE(generate_og, OnGenerateOG)
     HANDLE(forget_gened_fonts, OnForgetGened)
-    HANDLE(import_from_importfont, OnImportSettings)
+    // Retail Handle (0x8281CAE0 / 0x8281CB5C) tests attach_to_importfont first.
     HANDLE(attach_to_importfont, OnAttachToImportFont)
+    HANDLE(import_from_importfont, OnImportSettings)
     HANDLE(sync_with_resource, OnSyncWithResourceFile)
     HANDLE(get_resources_path, OnGetResourcesPath)
     HANDLE(get_bitmap_path, OnGetGennedBitmapPath)
@@ -363,8 +394,10 @@ void UIFontImporter::AttachImporterToFont(RndFont *font) {
                 "Cannot attach font %s to font resource %s because its in a different dir.  Notify a programmer!"
             );
         else {
+            // Retail 0x8281A798 also makes the font's own material the default mat.
             mGennedFonts.clear();
             mMatVariations.clear();
+            mDefaultMat = font->GetMat();
             mGennedFonts.push_back(font);
             mReferenceKerning = font;
             ImportSettingsFromFont(font);
@@ -743,8 +776,10 @@ DataNode UIFontImporter::OnForgetGened(DataArray *) {
 // THAT name is byte-exact against retail 0x82818840 (1036 B, fuzzy 100).  Retail
 // bytes decide.  AttachImporterToFont is left defined (now uncalled) so
 // the native link is unaffected.  Lane W16-EC.
+// Retail 0x8281B018 (the attach_to_importfont handler) attaches, it does not
+// only import settings.
 DataNode UIFontImporter::OnAttachToImportFont(DataArray *) {
-    ImportSettingsFromFont(mFontToImportFrom);
+    AttachImporterToFont(mFontToImportFrom);
     return 0;
 }
 
