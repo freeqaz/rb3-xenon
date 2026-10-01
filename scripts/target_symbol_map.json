@@ -1,4 +1,5 @@
 {
+ "0x82473568": "??4?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGUCharInfo@RndFont@@@2@U?$_Select1st@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
  "0x8247ba00": "??$?5VPoint@RndLine@@V?$StlNodeAlloc@VPoint@RndLine@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@VPoint@RndLine@@V?$StlNodeAlloc@VPoint@RndLine@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x824768e0": "?CalcRect@RndFlare@@IAAAAVRect@Hmx@@AAVVector2@@AAM@Z",
  "0x824748b0": "?BleedTest@RndFont@@QAAXXZ",

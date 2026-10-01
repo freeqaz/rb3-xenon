@@ -139,6 +139,16 @@ void KerningTable::Load(BinStream &bs, RndFont *f) {
 
 BitmapLocker::BitmapLocker(RndFont *font) : mTexture(0), mPbm(0) {
     mTexture = font->ValidTexture();
+#ifndef HX_NATIVE
+    // Retail (0x82472870) always locks the texture's bitmap; the loose-.bmp
+    // development path is absent.
+    if (mTexture) {
+        mTexture->LockBitmap(mBm, 3);
+        if (mBm.Pixels()) {
+            mPbm = &mBm;
+        }
+    }
+#else
     if (mTexture) {
         const char *filename = mTexture->File().c_str();
         int len = strlen(filename);
@@ -155,6 +165,7 @@ BitmapLocker::BitmapLocker(RndFont *font) : mTexture(0), mPbm(0) {
             mTexture = nullptr;
         }
     }
+#endif
 }
 
 BitmapLocker::~BitmapLocker() {
@@ -171,6 +182,16 @@ RndFont::RndFont()
 RndFont::~RndFont() { RELEASE(mKerningTable); }
 
 void RndFont::Replace(ObjRef *from, Hmx::Object *to) {
+#ifndef HX_NATIVE
+    // Retail (0x82472D78): only the texture owner is replaceable; a null
+    // replacement makes the font its own owner, otherwise it adopts the
+    // replacement's owner. There is no base-class forwarding.
+    if (reinterpret_cast<void *>(static_cast<Hmx::Object *>(mTextureOwner.Ptr()))
+        == reinterpret_cast<void *>(from)) {
+        mTextureOwner = !to ? this : (RndFont *)dynamic_cast<RndFont *>(to)->mTextureOwner;
+    }
+    return;
+#endif
     if (RefIs(from, mTextureOwner)) {
         RndFont *replace;
         if (mTextureOwner == this) {
@@ -249,23 +270,30 @@ BEGIN_SAVES(RndFont)
     bs << mNextFont;
 END_SAVES
 
+// Retail (0x82476350): the cast precedes the superclass copy, the char list
+// and monospace flag are copied too, and a font that becomes its own texture
+// owner takes the source owner's base kerning and kerning table.
 BEGIN_COPYS(RndFont)
-    COPY_SUPERCLASS(Hmx::Object)
     CREATE_COPY_AS(RndFont, f)
     MILO_ASSERT(f, 0x451);
+    COPY_SUPERCLASS(Hmx::Object)
     COPY_MEMBER_FROM(f, mMat)
     COPY_MEMBER_FROM(f, mCellSize)
     COPY_MEMBER_FROM(f, mTexCellSize)
     COPY_MEMBER_FROM(f, mDeprecatedSize)
+    COPY_MEMBER_FROM(f, mChars)
+    COPY_MEMBER_FROM(f, mMonospace)
     COPY_MEMBER_FROM(f, mPacked)
     COPY_MEMBER_FROM(f, mCharInfoMap)
-    RndFont *obj;
     if (ty == kCopyShallow || (ty == kCopyFromMax && f->mTextureOwner != f)) {
-        obj = f->mTextureOwner;
+        mTextureOwner = f->mTextureOwner;
     } else {
-        obj = this;
+        mTextureOwner = this;
+        mBaseKerning = f->mTextureOwner->mBaseKerning;
+        std::vector<KernInfo> kerning;
+        f->mTextureOwner->GetKerning(kerning);
+        SetKerning(kerning);
     }
-    mTextureOwner = obj;
 END_COPYS
 
 struct MatChar {
@@ -678,10 +706,13 @@ float RndFont::Kerning(unsigned short us1, unsigned short us2) const {
 }
 
 String RndFont::GetASCIIChars() const {
+#ifdef HX_NATIVE
     if (DataOwner() != this) {
         return DataOwner()->GetASCIIChars();
-    } else
-        return WideVectorToASCII(mChars);
+    }
+#endif
+    // Retail (0x82472690) converts this font's own char list; no owner redirect.
+    return WideVectorToASCII(mChars);
 }
 
 void RndFont::SetBaseKerning(float f1) {
