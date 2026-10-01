@@ -16,10 +16,8 @@
 //   * RndFont holds its RndMat* at 0x30 (dc3's RndFont uses ObjPtrVec mMats).
 // Model them positionally and TU-locally rather than perturbing the shared
 // engine headers, whose current layouts many other units' codegen depends on.
-// Retail UILabel::TextObj() is an OUT-OF-LINE accessor (target fn_827F2438 =
-// `lwz r3,0x144(r3); blr`); our in-tree UILabel::TextObj() is inline, which
-// costs three instructions here. Call the retail accessor by declaration.
-RndText *UILabelTextObj(UILabel *);
+// UILabel::TextObj() is an out-of-line accessor (retail 0x827F2438 =
+// `lwz r3,0x144(r3); blr`), called here with a bl.
 
 static inline void SetLabelAlpha(UILabel *l, float a) {
     *(float *)((char *)l + 0x1BC) = a;
@@ -89,7 +87,7 @@ void PlayerDiffIcon::DrawShowing() {
     }
     for (ObjDirItr<UILabel> it(d, true); it != 0; ++it) {
         SetLabelAlpha(it, mAlpha);
-        RndFont *font = TextFont(UILabelTextObj(it));
+        RndFont *font = TextFont(it->TextObj());
         if (font) {
             RndMat *mat = FontMat(font);
             if (mat)
