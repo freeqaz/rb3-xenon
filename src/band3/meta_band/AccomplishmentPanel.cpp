@@ -1707,19 +1707,22 @@ inline Symbol AccomplishmentGroupProvider::GetCareerLevel(float f) const {
     static Symbol career_level7("career_level7");
     static Symbol career_level8("career_level8");
 
-    if (f == 1.0f)
+    // One .rdata table (0x820BC0C8). Retail materialises its base once; this
+    // const spelling folds the first (t[6]) access into the lfs instead.
+    static const float t[] = { 0.14f, 0.29f, 0.43f, 0.57f, 0.71f, 0.86f, 1.0f };
+    if (f == t[6])
         return career_level8;
-    if (f > 0.86f)
+    if (f > t[5])
         return career_level7;
-    if (f > 0.71f)
+    if (f > t[4])
         return career_level6;
-    if (f > 0.57f)
+    if (f > t[3])
         return career_level5;
-    if (f > 0.43f)
+    if (f > t[2])
         return career_level4;
-    if (f > 0.29f)
+    if (f > t[1])
         return career_level3;
-    if (f > 0.14f)
+    if (f > t[0])
         return career_level2;
     return career_level1;
 }
