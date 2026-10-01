@@ -699,7 +699,31 @@ int SongStatusMgr::CalculateTotalScore(ScoreType ty, Symbol s) const {
     return ret;
 }
 
+// Retail 0x825D1FC8: best stars per song for (ty, diff), each clamped to 5,
+// over songs whose source matches s (gNullStr = every source), capped at 15000.
 int SongStatusMgr::GetTotalBestStars(ScoreType ty, Difficulty diff, Symbol s) const {
+    int ret = 0;
+    for (std::hash_map<int, SongStatus *>::const_iterator it = mSongStatusCache.begin();
+         it != mSongStatusCache.end(); ++it) {
+        int songID = it->first;
+        if (mSongMgr->HasSong(songID)) {
+            BandSongMetadata *metaData = (BandSongMetadata *)mSongMgr->Data(songID);
+            if (s == gNullStr || s == metaData->SourceSym()) {
+                int stars = GetBestStars(songID, ty, diff);
+                if (stars > 5)
+                    stars = 5;
+                ret += stars;
+                if (ret > 15000)
+                    return 15000;
+            }
+        }
+    }
+    return ret;
+}
+
+// Retail 0x825D20B0 (called only from UpdateCachedTotalStars' inline sites):
+// stars at each song's high-score difficulty, clamped to 5, capped at 15000.
+int SongStatusMgr::CalculateTotalStars(ScoreType ty) const {
     int ret = 0;
     for (std::hash_map<int, SongStatus *>::const_iterator it = mSongStatusCache.begin();
          it != mSongStatusCache.end(); ++it) {
@@ -717,28 +741,6 @@ int SongStatusMgr::GetTotalBestStars(ScoreType ty, Difficulty diff, Symbol s) co
         }
     }
     return ret;
-}
-
-int SongStatusMgr::CalculateTotalStars(ScoreType ty) const {
-    int total = 0;
-    for (std::hash_map<int, SongStatus *>::const_iterator it = mSongStatusCache.begin();
-         it != mSongStatusCache.end(); ++it) {
-        int songID = it->first;
-        if (songID && mSongMgr->HasSong(songID)) {
-            SongStatus *status = it->second;
-            if (status) {
-                Difficulty diff = status->GetHighScoreDifficulty(ty);
-                int stars = status->GetStars(ty, diff);
-                int count = total + stars;
-                if (stars > 5)
-                    count = total + 5;
-                total = count;
-                if (count > 5000)
-                    return 5000;
-            }
-        }
-    }
-    return total;
 }
 
 int SongStatusMgr::GetPossibleStars(ScoreType ty, Symbol s) const {
