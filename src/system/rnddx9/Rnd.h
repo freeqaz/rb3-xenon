@@ -116,6 +116,9 @@ public:
     }
 
     u8 ReverseZ() const { return mReverseZ; }
+    void SetReverseZ(u8 r) { mReverseZ = r; }
+    unsigned int EdramBase() const { return mEdramBase; }
+    unsigned int EdramHzBase() const { return mEdramHzBase; }
     D3DSurface *BackBuffer() const;
     void PreInit(HWND__ *);
     void Init(HWND__ *);

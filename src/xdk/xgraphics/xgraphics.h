@@ -120,12 +120,34 @@ INT XGEstimateIdealShaderCost(
 void XGRegisterPixelShader(D3DPixelShader *pShader, void *pPhysicalPart);
 void XGRegisterVertexShader(D3DVertexShader *pShader, void *pPhysicalPart);
 
+// 12 arguments, as the XDK declares it: retail DxTex::SyncBitmap (0x8273505C)
+// passes eight in r3-r10 and MipOffset/pTexture/pBaseSize/pMipSize in the
+// parameter save area (r1+0x54/0x5c/0x64/0x6c).
 UINT XGSetTextureHeader(
     UINT Width, UINT Height, UINT Levels, UINT Usage,
     D3DFORMAT Format, UINT ExpBias, UINT Flags, INT BaseOffset,
-    D3DTexture *pTexture
+    INT MipOffset, D3DTexture *pTexture, UINT *pBaseSize, UINT *pMipSize
+);
+// Same with an extra Pitch between MipOffset and pTexture (13 arguments).
+UINT XGSetTextureHeaderEx(
+    UINT Width, UINT Height, UINT Levels, DWORD Usage,
+    D3DFORMAT Format, DWORD ExpBias, DWORD Flags, UINT BaseOffset,
+    UINT MipOffset, UINT Pitch, D3DTexture *pTexture, UINT *pBaseSize, UINT *pMipSize
 );
 void XGOffsetResourceAddress(D3DBaseTexture *pResource, void *pBaseAddress);
+void XGOffsetBaseTextureAddress(
+    D3DBaseTexture *pTexture, void *pBaseAddress, void *pMipAddress
+);
+VOID XGUntileSurface(
+    VOID *pDestination,
+    UINT DestRowPitch,
+    const tagPOINT *pDestPoint,
+    const VOID *pSource,
+    UINT SrcWidth,
+    UINT SrcHeight,
+    const tagRECT *pSrcRect,
+    UINT TexelPitch
+);
 
 #ifdef __cplusplus
 }

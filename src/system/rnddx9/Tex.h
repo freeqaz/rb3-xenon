@@ -26,6 +26,7 @@ public:
     NEW_OBJ(DxTex)
     static void SetEDRamChecksEnabled(bool enabled) { sEDRamChecksEnabled = enabled; }
 
+    void ResolveMipChain();
     void *StartCompress(AlphaCompress);
     void DoCompress(void *);
     void FinishCompress(void *);
@@ -52,10 +53,13 @@ protected:
     int unk84;
     D3DSurface *mRenderTarget; // 0x80
     D3DSurface *mDepthRT; // 0x84
-    int mMovieBufIdx;
-    D3DTexture *mMovieTextures[2];
-    D3DLOCKED_RECT mLockedRect; // 0x94
-    D3DSurface *unka4; // 0x9c
-    int unka8;
-    bool unkac;
+    int mMovieBufIdx; // 0x88
+    // THREE movie buffers in RB3 retail (DC3 has two): ??0DxTex (0x82734728)
+    // zeroes 0x8c/0x90/0x94, ResetSurfaces (0x827355D0) and SyncBitmap's movie
+    // path loop 3 times, and SwapMovieSurface (0x82733E30) advances `% 3`.
+    D3DTexture *mMovieTextures[3]; // 0x8c
+    D3DLOCKED_RECT mLockedRect; // 0x98
+    D3DSurface *unka4; // 0xa0
+    int unka8; // 0xa4
+    bool unkac; // 0xa8 -- set by SyncBitmap when a target overruns the EDRAM base
 };

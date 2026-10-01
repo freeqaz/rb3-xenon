@@ -8,6 +8,8 @@
 extern "C" {
 #endif
 
+#define D3DPTEXTURECAPS_SQUAREONLY 0x00000020L
+
 typedef struct _D3DVSHADERCAPS2_0 { /* Size=0x10 */
     /* 0x0000 */ UINT Caps;
     /* 0x0004 */ INT DynamicFlowControlDepth;

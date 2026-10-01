@@ -298,6 +298,9 @@ VOID D3DTexture_LockRect(
     DWORD Flags
 );
 VOID D3DTexture_UnlockRect(struct D3DTexture *pTexture, UINT Level);
+HRESULT D3DXFilterTexture(
+    struct D3DBaseTexture *pBaseTexture, const void *pPalette, UINT SrcLevel, DWORD MipFilter
+);
 
 struct D3DTexture : public D3DBaseTexture { /* Size=0x34 */
     /* 0x0000: fields for D3DBaseTexture */
@@ -798,8 +801,29 @@ void D3DDevice_SetVertexShaderConstantB(
 void D3DDevice_SetPixelShaderConstantB(
     D3DDevice *pDevice, DWORD StartRegister, CONST BOOL *pConstantData, DWORD BoolCount
 );
+void D3DDevice_SetVertexShaderConstantI(
+    D3DDevice *pDevice, DWORD StartRegister, CONST INT *pConstantData, DWORD Vector4iCount
+);
+void D3DDevice_SetPixelShaderConstantI(
+    D3DDevice *pDevice, DWORD StartRegister, CONST INT *pConstantData, DWORD Vector4iCount
+);
+void D3DDevice_SetVertexShaderConstantFN(
+    D3DDevice *pDevice,
+    UINT StartRegister,
+    CONST float *pConstantData,
+    DWORD Vector4fCount,
+    UINT64 PendingMask3
+);
 void D3DDevice_SetSamplerState_MinFilter(D3DDevice *pDevice, DWORD Sampler, DWORD Value);
 void D3DDevice_SetSamplerState_MagFilter(D3DDevice *pDevice, DWORD Sampler, DWORD Value);
+void D3DDevice_SetSamplerState_MinMipLevel(D3DDevice *pDevice, DWORD Sampler, DWORD Value);
+void D3DDevice_SetSamplerState_MaxMipLevel(D3DDevice *pDevice, DWORD Sampler, DWORD Value);
+// The mip filter lives in fetch-constant word 3, bits 23-24.
+inline void D3DDevice_SetSamplerState_MipFilter3(D3DDevice *pDevice, DWORD Sampler, DWORD Value, UINT64 PendingMask3) {
+    DWORD *pWord = &pDevice->m_Constants.TextureFetch[Sampler].dword[3];
+    *pWord = (*pWord & ~0x01800000) | ((Value & 3) << 23);
+    pDevice->m_Pending.m_Mask[3] |= PendingMask3;
+}
 inline void D3DDevice_SetSamplerState_MipFilter(D3DDevice *pDevice, DWORD Sampler, DWORD Value, UINT64 PendingMask3) {
     DWORD *pWord = &pDevice->m_Constants.TextureFetch[Sampler].dword[0];
     *pWord = (*pWord & ~0x1C00) | ((Value & 7) << 10);
@@ -876,6 +900,8 @@ void D3DDevice_SetRenderTarget_External(
     D3DDevice *pDevice, UINT RenderTargetIndex, D3DSurface *pRenderTarget
 );
 void D3DDevice_SetDepthStencilSurface(D3DDevice *pDevice, D3DSurface *pZStencilSurface);
+void D3DDevice_SetPredication(D3DDevice *pDevice, DWORD PredicationMask);
+void D3DDevice_GetDeviceCaps(D3DDevice *pDevice, D3DCAPS9 *pCaps);
 void D3DDevice_SetViewport(D3DDevice *pDevice, const D3DVIEWPORT9 *pViewport);
 void D3DDevice_SetIndices(D3DDevice *pDevice, D3DIndexBuffer *pIndexData);
 void D3DDevice_DrawIndexedVertices(

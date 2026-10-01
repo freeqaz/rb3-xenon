@@ -69,7 +69,8 @@ namespace {
             D3DTexture *d3dTex = new D3DTexture();
             int texSize =
                 XGSetTextureHeader(
-                    0x140, 0xf0, 1, 4, (D3DFORMAT)0x1a220058, 0, 0, -1, d3dTex
+                    0x140, 0xf0, 1, 4, (D3DFORMAT)0x1a220058, 0, 0, -1, 0, d3dTex,
+                    nullptr, nullptr
                 );
 #ifdef HX_NATIVE
             void *ptr = PhysicalAllocTracked(
