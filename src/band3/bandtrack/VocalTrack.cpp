@@ -800,11 +800,9 @@ void VocalTrack::RebuildHUD() {
         static Symbol pitch_guides("pitch_guides");
         static Symbol harmonic("harmonic");
         if (mDir->Property(pitch_guides, true)->Sym() == harmonic) {
-            int tonic =
-                ((BandSongMetadata *)TheSongMgr.Data(TheSongMgr.GetSongIDFromShortName(
-                     MetaPerformer::Current()->Song(), true
-                 )))
-                    ->VocalTonicNote();
+            Symbol song = MetaPerformer::Current()->Song();
+            int songID = TheSongMgr.GetSongIDFromShortName(song, true);
+            int tonic = ((BandSongMetadata *)TheSongMgr.Data(songID))->VocalTonicNote();
             if (tonic != -1)
                 unk208 = tonic + 60;
         }
@@ -831,27 +829,24 @@ void VocalTrack::RebuildHUD() {
         // snapping.
         std::vector<RangeSection> &sections = TheSongDB->GetRangeSections();
         float prevMin = sections[0].unk8 - margin;
-        float prevMax = margin + sections[0].unkc;
+        float prevMax = sections[0].unkc + margin;
         float maxRange = mDir->mMinPitchRange;
         if (sDump) {
             MILO_LOG("Range Shift Data\n");
         }
         for (int i = 0; i < sections.size(); i++) {
             RangeSection &section = sections[i];
-            float secMin = section.unk8;
-            float secMax = section.unkc;
-            if (!(secMax < secMin)) {
-                float secIntro = section.unk4;
+            if (!(section.unkc < section.unk8)) {
                 RangeShift rs;
                 rs.unk0 = TickToMs((float)section.unk0); // startMs
                 rs.unk4 = prevMin; // rangeMinFrom
                 rs.unk8 = prevMax; // rangeMaxFrom
-                rs.unkc = secMin - margin; // rangeMinTo
-                rs.unk10 = secMax + margin; // rangeMaxTo
-                rs.unk14 = secIntro; // introMs
+                rs.unkc = section.unk8 - margin; // rangeMinTo
+                rs.unk10 = margin + section.unkc; // rangeMaxTo
+                rs.unk14 = section.unk4; // introMs
                 mRangeShifts.push_back(rs);
                 prevMin = section.unk8 - margin;
-                prevMax = section.unkc + margin;
+                prevMax = margin + section.unkc;
                 float range = prevMax - prevMin;
                 float *bigger = (maxRange < range) ? &range : &maxRange;
                 maxRange = *bigger;
@@ -879,17 +874,21 @@ void VocalTrack::RebuildHUD() {
             std::deque<RangeShift>::iterator it = mRangeShifts.begin();
             std::deque<RangeShift>::iterator end = mRangeShifts.end();
             for (; it != end; ++it) {
-                float diffFrom = it->unk4 + (maxRange - it->unk8);
+                float maxFrom = it->unk8;
+                float minFrom = it->unk4;
+                float diffFrom = (maxRange - maxFrom) + minFrom;
                 if (diffFrom > 0) {
                     diffFrom *= 0.5f;
-                    it->unk4 -= diffFrom;
-                    it->unk8 += diffFrom;
+                    it->unk4 = minFrom - diffFrom;
+                    it->unk8 = maxFrom + diffFrom;
                 }
-                float diffTo = it->unkc + (maxRange - it->unk10);
+                float maxTo = it->unk10;
+                float minTo = it->unkc;
+                float diffTo = (maxRange - maxTo) + minTo;
                 if (diffTo > 0) {
                     diffTo *= 0.5f;
-                    it->unkc -= diffTo;
-                    it->unk10 += diffTo;
+                    it->unkc = minTo - diffTo;
+                    it->unk10 = maxTo + diffTo;
                 }
                 if (sDump) {
                     MILO_LOG(
@@ -909,19 +908,16 @@ void VocalTrack::RebuildHUD() {
         if (mDir->mStreakMeter) {
             int parts = GetNumVocalParts();
             for (int i = 0; i < parts; i++) {
-                bool active = false;
                 VocalPart *part = mPlayer->mVocalParts[i];
-                if (part && !part->InEmptyPhrase()) {
-                    active = true;
-                }
-                mDir->mStreakMeter->SetPartActive(i, active);
+                mDir->mStreakMeter->SetPartActive(i, part && !part->InEmptyPhrase());
             }
         }
         for (int i = 0; i < mPlayer->NumSingers(); i++) {
-            if (mPlayer->mSingers[i]) {
-                MicClientID id = mPlayer->mSingers[i]->GetMicClientID();
-                if (id.mClientID != -1) {
-                    PitchArrow *arrow = mDir->GetPitchArrow(id.mClientID);
+            Singer *singer = mPlayer->mSingers[i];
+            if (singer) {
+                int clientID = singer->GetMicClientID().mClientID;
+                if (clientID != -1) {
+                    PitchArrow *arrow = mDir->GetPitchArrow(clientID);
                     if (arrow) {
                         arrow->ClearParticles();
                     }
