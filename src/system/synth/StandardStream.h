@@ -45,7 +45,7 @@ public:
     virtual bool FillDone() const { return true; }
     virtual void EnableReads(bool);
     virtual float GetTime();
-    virtual float GetJumpBackTotalTime(float) const;
+    virtual float GetJumpBackTotalTime();
     virtual float GetInSongTime();
     virtual std::vector<struct JumpInstance> *GetJumpInstances() {
         return &mJumpInstances;

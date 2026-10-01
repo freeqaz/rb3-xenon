@@ -3,6 +3,5 @@
 FxSendSynapse360::FxSendSynapse360() {}
 FxSendSynapse360::~FxSendSynapse360() {}
 
-IUnknown *FxSendSynapse360::CreateFx() { return nullptr; }
-
-void FxSendSynapse360::SyncEffectParams(IXAudio2SubmixVoice *) const {}
+// CreateFx and SyncEffectParams live in synth_xbox/FxSendSynapse.cpp, the TU
+// retail pins them in (0x82B6A160 / 0x82B6A220).

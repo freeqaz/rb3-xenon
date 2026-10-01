@@ -30,7 +30,8 @@ void VirtualKeyboard::Poll() {
 }
 
 DataNode VirtualKeyboard::OnShowKeyboardUI(const DataArray *array) {
-    int i2 = array->Int(2);
+    // Retail 0x82527F08: the requesting user is a dynamic_cast object arg.
+    LocalUser *user = array->Obj<LocalUser>(2);
     int i3 = array->Int(3);
     class String s4(array->Str(4));
     class String s5(array->Str(5));
@@ -39,7 +40,7 @@ DataNode VirtualKeyboard::OnShowKeyboardUI(const DataArray *array) {
     int i8 = 0;
     if (array->Size() >= 9)
         i8 = array->Int(8);
-    return ShowKeyboardUI(i2, i3, s4, s5, s6, i8);
+    return ShowKeyboardUI(user, i3, s4, s5, s6, i8);
 }
 
 void VirtualKeyboard::Terminate() {}
@@ -55,7 +56,7 @@ const char *VirtualKeyboard::GetInputString() {
     return "";
 }
 
-DataNode VirtualKeyboard::ShowKeyboardUI(int, int, String, String, String, int) {
+DataNode VirtualKeyboard::ShowKeyboardUI(LocalUser *, int, String, String, String, int) {
     return DataNode(0);
 }
 #endif

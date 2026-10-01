@@ -577,11 +577,12 @@ GemInProgress *TrackWatcherImpl::GetUnusedGemInProgress(float ms) {
 }
 
 GemInProgress *TrackWatcherImpl::GetGemInProgressWithSlot(int slot) {
+    int mask = 1 << slot;
     FOREACH (iter, mGemsInProgress) {
         if (iter->mInUse) {
             MILO_ASSERT(iter->mGemID != -1, 0x3FD);
             GameGem &gem = mGemList->GetGem(iter->mGemID);
-            if (1 << slot & gem.GetSlots())
+            if (mask & gem.GetSlots())
                 return iter;
         }
     }

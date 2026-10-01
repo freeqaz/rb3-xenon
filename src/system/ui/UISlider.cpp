@@ -74,38 +74,57 @@ void UISlider::SetTypeDef(DataArray *def) {
     Update();
 }
 
-INIT_REVS(3, 0)
+// RB3 retail PreLoad (0x82809E98) / PostLoad (0x82809F08) keep no BinStreamRev:
+// the packed rev is split into two mutable TU shorts (alt at +0, rev at +4), no
+// guard, no Push/PopRev, and PostLoad reads mSelectToScroll iff rev != 0. There is
+// no mVertical read (DC3's rev-2 field) -- the ui/UIButton.cpp dialect. Both
+// shorts are zero-initialised (retail 0x82E07950 lies past .data's raw size).
+#pragma push_macro("INIT_REVS")
+#pragma push_macro("LOAD_REVS")
+#undef INIT_REVS
+#undef LOAD_REVS
+#define INIT_REVS(rev, alt)                                                              \
+    static unsigned short gAltRev = alt;                                                 \
+    static unsigned short gRev = rev;
+#define LOAD_REVS(bs)                                                                    \
+    int rev;                                                                             \
+    bs >> rev;                                                                           \
+    gRev = getHmxRev(rev);                                                               \
+    gAltRev = getAltRev(rev);
+
+INIT_REVS(0, 0)
 
 void UISlider::PreLoad(BinStream &bs) {
-    LOAD_REVS(bs);
-    ASSERT_REVS(3, 0);
-    UIComponent::PreLoad(d.stream);
-    d.PushRev(this);
+    LOAD_REVS(bs)
+    UIComponent::PreLoad(bs);
 }
 
 void UISlider::PostLoad(BinStream &bs) {
-    BinStreamRev d(bs, bs.PopRev(this));
-    UIComponent::PostLoad(d.stream);
-    if (d.rev > 0) {
-        d >> mSelectToScroll;
-    }
-    if (d.rev > 1) {
-        d >> mVertical;
+    UIComponent::PostLoad(bs);
+    if (gRev != 0) {
+        bs >> mSelectToScroll;
     }
     Update();
 }
 
-void UISlider::DrawShowing() { SyncSlider(); }
+#pragma pop_macro("LOAD_REVS")
+#pragma pop_macro("INIT_REVS")
 
-RndDrawable *UISlider::CollideShowing(const Segment &s, float &fl, Plane &pl) {
+// Retail 0x8280A260 (UISlider vtable slot 5).
+void UISlider::DrawShowing() {
     SyncSlider();
-    return nullptr;
+    UpdateMeshes(DrawState(this));
+    mResource->Dir()->DrawShowing();
 }
 
-// retail 0x8280A320 (88 B). We returned a bare 0; retail forwards to the
-// resource dir. Note the neighbouring DrawShowing/CollideShowing already match
-// at 100% with our simpler bodies -- so this was ported per-row off the
-// retail size.
+// Retail 0x8280A2C0 (slot 7): the slider itself is the hit when its resource
+// dir collides.
+RndDrawable *UISlider::CollideShowing(const Segment &s, float &fl, Plane &pl) {
+    SyncSlider();
+    return mResource->Dir()->CollideShowing(s, fl, pl) ? this : nullptr;
+}
+
+// retail 0x8280A320 (88 B): forwards to the resource dir.
 int UISlider::CollidePlane(const Plane &pl) {
     SyncSlider();
     RndDir *dir = mResource->Dir();
@@ -171,10 +190,10 @@ void UISlider::Init() {
     REGISTER_OBJ_FACTORY(UISlider)
 }
 
+// Retail 0x82809F90 (slot 19): the base update runs first; no TypeDef null test.
 void UISlider::Update() {
-    if (TypeDef()) {
-        TypeDef()->FindData("vertical", mVertical, false);
-    }
+    UIComponent::Update();
+    TypeDef()->FindData("vertical", mVertical, false);
 }
 
 DataNode UISlider::OnMsg(const ButtonDownMsg &msg) {

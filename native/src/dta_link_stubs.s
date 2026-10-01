@@ -52,6 +52,14 @@ GetTimeZoneInformation:
     xorq %rax, %rax
     ret
 
+// Joypad_Xbox.cpp's rumble entry (retail 0x82529AE8), called from Joypad.cpp
+// and Joypad_Xinput.cpp; not in the native link.
+.weak JoypadSetRumble
+.type JoypadSetRumble,@function
+JoypadSetRumble:
+    xorq %rax, %rax
+    ret
+
 .weak JoypadSetActuatorsImp
 .type JoypadSetActuatorsImp,@function
 JoypadSetActuatorsImp:
@@ -84,6 +92,14 @@ JoypadSendKeepAlive:
 .weak OutputDebugStringA
 .type OutputDebugStringA,@function
 OutputDebugStringA:
+    xorq %rax, %rax
+    ret
+
+// Joypad_Xinput.cpp's rumble setter (retail 0x82532378) calls it; no pad is
+// ever connected natively, so the write is dropped.
+.weak XInputSetState
+.type XInputSetState,@function
+XInputSetState:
     xorq %rax, %rax
     ret
 

@@ -24,7 +24,7 @@ public:
         int mPadWords;
     };
 
-    int Free(int *);
+    bool Free(int *);
     int *Truncate(int *, int, int &);
     void Print(class TextStream &, bool);
     void Init(const char *, int, int *, int, bool, Strategy, int, bool);
@@ -50,7 +50,6 @@ public:
     static int GetAlignWords(int);
 
     int *Alloc(int, int, int &);
-    int *TryAlloc(int, int, int &);
 
     // The temp-allocation scope guard pushes/restores mStrategy directly.
     friend struct MemTemp;

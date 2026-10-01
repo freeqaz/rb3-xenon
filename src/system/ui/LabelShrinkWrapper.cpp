@@ -151,18 +151,21 @@ void LabelShrinkWrapper::UpdateAndDrawWrapper() {
     // corners from RndText bounds plus the four mLeft/Right/Top/BottomBorder floats;
     // retail RB3 has no such members (see the header note), so it cannot be that shape.
     MILO_ASSERT(m_pLabel, 0x86);
-    UILabel *label = m_pLabel;
     Vector3 vMin, vMax;
-    float w = label->GetDrawWidth();
-    float h = label->GetDrawHeight();
-    label->InqMinMaxFromWidthAndHeight(w, h, label->Alignment(), vMin, vMax);
+    float w = m_pLabel->GetDrawWidth();
+    float h = m_pLabel->GetDrawHeight();
+    m_pLabel->InqMinMaxFromWidthAndHeight(w, h, m_pLabel->Alignment(), vMin, vMax);
     float minX = vMin.x;
     float maxX = vMax.x;
     float maxZ = vMax.z;
     float minZ = vMin.z;
-    SetWorldXfm(label->WorldXfm());
-    m_pTopLeftBone->SetLocalPos(minX, 0.0f, maxZ);
-    m_pTopRightBone->SetLocalPos(maxX, 0.0f, maxZ);
-    m_pBottomLeftBone->SetLocalPos(minX, 0.0f, minZ);
-    m_pBottomRightBone->SetLocalPos(maxX, 0.0f, minZ);
+    SetWorldXfm(m_pLabel->WorldXfm());
+    Vector3 tl(minX, 0.0f, maxZ);
+    Vector3 tr(maxX, 0.0f, maxZ);
+    Vector3 bl(minX, 0.0f, minZ);
+    Vector3 br(maxX, 0.0f, minZ);
+    m_pTopLeftBone->SetLocalPos(tl);
+    m_pTopRightBone->SetLocalPos(tr);
+    m_pBottomLeftBone->SetLocalPos(bl);
+    m_pBottomRightBone->SetLocalPos(br);
 }

@@ -96,9 +96,13 @@ int AsyncFile::Read(void *iBuf, int iBytes) {
     return iBytes;
 }
 
+// Retail 0x8252D938 (AsyncFile vtable slot 3): a negative size fails the
+// file instead of asserting, and there is no open-mode check.
 bool AsyncFile::ReadAsync(void *iBuff, int iBytes) {
-    MILO_ASSERT(iBytes >= 0, 0x126);
-    MILO_ASSERT(mMode & FILE_OPEN_READ, 0x128);
+    if (iBytes < 0) {
+        mFail = true;
+        return false;
+    }
     if (mFail)
         return false;
     else {

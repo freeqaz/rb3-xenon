@@ -46,6 +46,8 @@ private:
 };
 
 class MicXbox : public Mic {
+    friend class MicManagerXbox;
+
 public:
     virtual ~MicXbox();
     virtual float GetGain() const;

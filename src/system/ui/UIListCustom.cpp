@@ -48,19 +48,44 @@ BEGIN_COPYS(UIListCustom)
     COPY_MEMBER(mObject)
 END_COPYS
 
+// RB3 retail keeps no BinStreamRev here: the packed rev is split into two
+// mutable TU shorts (alt at +0, rev at +4), no guard, no Push/PopRev -- the
+// ui/UIButton.cpp dialect.
+#pragma push_macro("INIT_REVS")
+#pragma push_macro("LOAD_REVS")
+#undef INIT_REVS
+#undef LOAD_REVS
+#define INIT_REVS(rev, alt)                                                              \
+    static unsigned short gAltRev = alt;                                                 \
+    static unsigned short gRev = rev;
+#define LOAD_REVS(bs)                                                                    \
+    int rev;                                                                             \
+    bs >> rev;                                                                           \
+    gRev = getHmxRev(rev);                                                               \
+    gAltRev = getAltRev(rev);
+
 INIT_REVS(0, 0)
 
-BEGIN_LOADS(UIListCustom)
+// Retail 0x8281EF00.
+void UIListCustom::Load(BinStream &bs) {
     LOAD_REVS(bs)
-    ASSERT_REVS(0, 0)
-    LOAD_SUPERCLASS(UIListSlot)
-    d >> mObject;
-END_LOADS
+    UIListSlot::Load(bs);
+    bs >> mObject;
+}
+
+#pragma pop_macro("LOAD_REVS")
+#pragma pop_macro("INIT_REVS")
 
 UIListSlotElement *UIListCustom::CreateElement(UIList *) {
     MILO_ASSERT(mObject, 0x69);
     Hmx::Object *c = Hmx::Object::NewObject(mObject->ClassName());
-    c->Copy(mObject.Ptr(), kCopyDeep);
+    // Retail 0x8281EB60: a UIComponent clone takes the template's resource
+    // (ResourceCopy); anything else is deep-copied.
+    UIComponent *comp = dynamic_cast<UIComponent *>(c);
+    if (comp)
+        comp->ResourceCopy(dynamic_cast<UIComponent *>(mObject.Ptr()));
+    else
+        c->Copy(mObject.Ptr(), kCopyDeep);
     return new UIListCustomElement(this, c);
 }
 

@@ -19,6 +19,22 @@ Pool &GetPool() {
     return sPool;
 }
 
+#ifndef HX_NATIVE
+// Retail 0x827d71e8.
+AllocInfo::AllocInfo(
+    int requestedSize,
+    int actualSize,
+    const char *type,
+    void *mem,
+    signed char heap,
+    bool pooled,
+    unsigned char strat
+)
+    : mReqSize(requestedSize), mActSize(actualSize), mType(type), mMem(mem), mHeap(heap),
+      mPooled(pooled), mStrat(strat) {
+    mTimeSlice = *(short *)((char *)gMemTracker + 0x8);
+}
+#else
 AllocInfo::AllocInfo(
     int requestedSize,
     int actualSize,
@@ -50,6 +66,8 @@ AllocInfo::~AllocInfo() {
     s_pTrie->remove(unk21);
 }
 
+#endif
+
 #ifdef HX_NATIVE
 void *AllocInfo::operator new(size_t size) {
 #else
@@ -67,6 +85,7 @@ void AllocInfo::SetPoolMemory(void *mem, int i2) { GetPool() = Pool(0x18, mem, i
 
 void AllocInfo::Validate() const { MILO_ASSERT(mPooled <= 1, 0xA5); }
 
+#ifdef HX_NATIVE
 void AllocInfo::PrintCsv(TextStream &ts) const {
     ts << MakeString("addr, 0x%lX, %s, bytes, %d ", (unsigned long)mMem, mType, mReqSize);
     MILO_ASSERT(s_pTrie, 0xC6);
@@ -81,6 +100,16 @@ void AllocInfo::PrintCsv(TextStream &ts) const {
     }
 }
 
+#endif
+
+#ifndef HX_NATIVE
+// Retail 0x827d7220: type and size, then "(pooled) ".
+void AllocInfo::Print(TextStream &ts) const {
+    ts << MakeString("(type \"%s\") (bytes %d) ", mType, mReqSize);
+    if (mPooled)
+        ts << "(pooled) ";
+}
+#else
 void AllocInfo::Print(TextStream &ts) const {
     if (bPrintCsv)
         PrintCsv(ts);
@@ -100,6 +129,9 @@ void AllocInfo::Print(TextStream &ts) const {
     }
 }
 
+#endif
+
+#ifdef HX_NATIVE
 void AllocInfo::PrintForReport(TextStream &ts) const {
     MILO_ASSERT(s_pTrie, 0xD1);
     char buf1d[0x80];
@@ -130,6 +162,8 @@ void AllocInfo::PrintForReport(struct _iobuf *f) const {
     );
 }
 
+#endif
+
 TextStream &operator<<(TextStream &ts, const AllocInfo &info) {
     info.Print(ts);
     return ts;
@@ -147,6 +181,7 @@ int AllocInfo::Compare(const AllocInfo &info) const {
         return 0;
 }
 
+#ifdef HX_NATIVE
 void AllocInfo::FillStackTrace() {
     int stack[20];
     DmCaptureStackBackTrace(20, stack);
@@ -157,6 +192,8 @@ void AllocInfo::FillStackTrace() {
     }
     mStackTrace[15] = 0;
 }
+
+#endif
 
 void AllocInfoInit() {
     Trie *trie;
@@ -175,6 +212,10 @@ void AllocInfoInit() {
     }
 }
 
+#ifndef HX_NATIVE
+// Retail 0x827d7218 is a bare branch to Compare: there is no stack trace.
+int AllocInfo::StackCompare(const AllocInfo &other) const { return Compare(other); }
+#else
 int AllocInfo::StackCompare(const AllocInfo &other) const {
     int result = Compare(other);
     if (result != 0) {
@@ -193,6 +234,7 @@ int AllocInfo::StackCompare(const AllocInfo &other) const {
     }
     return 0;
 }
+#endif
 AllocInfo **AllocInfoVec::erase(AllocInfo **first, AllocInfo **last) {
     AllocInfo **i = first;
     for (AllocInfo **j = last; j != mEnd; ++j) {

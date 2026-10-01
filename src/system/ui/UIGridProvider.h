@@ -65,10 +65,12 @@ public:
     }
     virtual int NumData() const { return mGridProvider->NumDataForSublistIndex(mIndex); }
     virtual bool IsActive(int i) const {
-        return mListProvider->IsActive(i + mIndex * mGridProvider->mWidth);
+        int idx = mIndex * mGridProvider->mWidth + i;
+        return mListProvider->IsActive(idx);
     }
     virtual bool IsHidden(int i) const {
-        return mListProvider->IsHidden(i + mIndex * mGridProvider->mWidth);
+        int idx = mIndex * mGridProvider->mWidth + i;
+        return mListProvider->IsHidden(idx);
     }
 
     UIListProvider *mListProvider; // 0x4

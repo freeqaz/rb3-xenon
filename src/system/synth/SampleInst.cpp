@@ -31,7 +31,7 @@ SampleInst::~SampleInst() {
 
 void SampleInst::Play(float f1) {
     SetVolume(f1);
-    Stop(false);
+    Stop();
     StartImpl();
 #ifdef HX_NATIVE
     StartPolling();
@@ -41,12 +41,17 @@ void SampleInst::Play(float f1) {
 }
 
 void SampleInst::Start() {
-    Stop(false);
+    Stop();
     StartImpl();
 }
 
-void SampleInst::Stop(bool b1) {
-    StopImpl(b1);
+void SampleInst::Stop() {
+    if (IsPlaying())
+#ifdef HX_NATIVE
+        StopImpl(false);
+#else
+        StopImpl();
+#endif
 #ifdef HX_NATIVE
     CancelPolling();
 #endif

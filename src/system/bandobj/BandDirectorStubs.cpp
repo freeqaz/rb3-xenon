@@ -23,23 +23,6 @@
 #include "world/LightPreset.h"
 #include "world/LightPresetManager.h"
 
-// volatile local: without it MSVC /O1 constant-folds the return into callers
-// (even across __declspec(noinline)) and deletes retail call sites.
-__declspec(noinline) int SymToPstKeyframe(Symbol) {
-    volatile int n = LightPreset::kPresetKeyframeNum;
-    return n;
-}
 
 __declspec(noinline) float LightPreset::LegacyFadeIn() const { volatile float f = 0.0f; return f; }
 __declspec(noinline) void LightPreset::StaticResetEvents() { volatile int n = 0; (void)n; }
-__declspec(noinline) void LightPresetManager::GetPresets(LightPreset *&a, LightPreset *&b) {
-    volatile int n = 0; (void)n;
-    a = nullptr; b = nullptr;
-}
-__declspec(noinline) void LightPresetManager::Interp(Symbol, Symbol, float) { volatile int n = 0; (void)n; }
-__declspec(noinline) void LightPresetManager::SchedulePstKey(int) { volatile int n = 0; (void)n; }
-__declspec(noinline) void LightPresetManager::StompPresets(LightPreset *, LightPreset *) { volatile int n = 0; (void)n; }
-__declspec(noinline) LightPreset *LightPresetManager::PickRandomPreset(Symbol) {
-    volatile int n = 0;
-    return (LightPreset *)(n & 0);
-}

@@ -1714,9 +1714,8 @@ void HamNavList::DrawShowing() {
 #endif
 
     UIListWidgetDrawState widgetState;
-    mListDirResource->BuildDrawState(
-        widgetState, mListState, kFocused, 0.0f, !mScrollBehavior.IsScrolling()
-    );
+    // RB3's UIListDir::BuildDrawState has no allowHighlight flag (it was never read).
+    mListDirResource->BuildDrawState(widgetState, mListState, kFocused, 0.0f);
 
     LinkRibbonDrawState(mRibbonDrawStates, widgetState);
 

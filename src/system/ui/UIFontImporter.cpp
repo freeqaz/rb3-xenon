@@ -33,6 +33,36 @@ __forceinline void ObjPtrList<RndFont, ObjectDir>::Set(iterator it, RndFont *obj
     if (n->mObject)
         n->mObject->AddRef(this);
 }
+
+// The ObjPtrList PropSync instantiations (retail 0x8281A910 RndFont, 0x8281AB00
+// RndMat) inline insert (PoolAlloc + Link) and Set (Release, store, AddRef).
+template <>
+__forceinline void ObjPtrList<RndMat, ObjectDir>::Set(iterator it, RndMat *obj) {
+    Node *n = it.mNode;
+    if (n->mObject)
+        n->mObject->Release(this);
+    n->mObject = obj;
+    if (n->mObject)
+        n->mObject->AddRef(this);
+}
+
+template <>
+__forceinline ObjPtrList<RndFont, ObjectDir>::iterator
+ObjPtrList<RndFont, ObjectDir>::insert(iterator it, RndFont *obj) {
+    Node *node = new Node();
+    node->mObject = obj;
+    Link(it, node);
+    return node;
+}
+
+template <>
+__forceinline ObjPtrList<RndMat, ObjectDir>::iterator
+ObjPtrList<RndMat, ObjectDir>::insert(iterator it, RndMat *obj) {
+    Node *node = new Node();
+    node->mObject = obj;
+    Link(it, node);
+    return node;
+}
 #endif
 
 #define HEIGHT_SD 480.0f
@@ -68,8 +98,9 @@ BEGIN_HANDLERS(UIFontImporter)
     HANDLE(generate, OnGenerate)
     HANDLE(generate_og, OnGenerateOG)
     HANDLE(forget_gened_fonts, OnForgetGened)
-    HANDLE(import_from_importfont, OnImportSettings)
+    // Retail Handle (0x8281CAE0 / 0x8281CB5C) tests attach_to_importfont first.
     HANDLE(attach_to_importfont, OnAttachToImportFont)
+    HANDLE(import_from_importfont, OnImportSettings)
     HANDLE(sync_with_resource, OnSyncWithResourceFile)
     HANDLE(get_resources_path, OnGetResourcesPath)
     HANDLE(get_bitmap_path, OnGetGennedBitmapPath)
@@ -363,8 +394,10 @@ void UIFontImporter::AttachImporterToFont(RndFont *font) {
                 "Cannot attach font %s to font resource %s because its in a different dir.  Notify a programmer!"
             );
         else {
+            // Retail 0x8281A798 also makes the font's own material the default mat.
             mGennedFonts.clear();
             mMatVariations.clear();
+            mDefaultMat = font->GetMat();
             mGennedFonts.push_back(font);
             mReferenceKerning = font;
             ImportSettingsFromFont(font);
@@ -536,6 +569,78 @@ const char *UIFontImporter::GetMatVariationName(RndFont *font) const {
     return "";
 }
 
+// Retail 0x82817E90; its only callers are the two arms of
+// FontImporterSyncObjects below.
+String UIFontImporter::GetBaseName() const {
+    if (HandMadeFontExists()) {
+        String str(mHandmadeFont->Name());
+        if (str.find(".") != String::npos) {
+            str = str.substr(0, str.rfind("."));
+        }
+        return str;
+    } else {
+        return mBitMapSaveName.substr(0, mBitMapSaveName.rfind("."));
+    }
+}
+
+// Retail 0x8281A1F8, called from UILabelDir::SyncObjects (0x8280FD24). Converts a
+// pre-material-variation resource: the old variation list is emptied and each
+// genned font's material is renamed (the first one becomes the default mat).
+void UIFontImporter::FontImporterSyncObjects() {
+    if (!mDefaultMat && mMatVariations.size() > 0 && mGennedFonts.size() > 0) {
+        ObjPtrList<RndMat>::iterator mit;
+        ObjPtrList<RndFont>::iterator it;
+        for (mit = mMatVariations.begin(); mit != mMatVariations.end();) {
+            RndMat *old = *mit;
+            mit = mMatVariations.erase(mit);
+            delete old;
+        }
+        int idx = 0;
+        for (it = mGennedFonts.begin(); it != mGennedFonts.end(); it++, idx++) {
+            RndFont *font = *it;
+            RndMat *mat = font->GetMat();
+            if (idx == 0) {
+                String name = GetBaseName();
+                String matname = name + ".mat";
+                mat->SetName(matname.c_str(), Dir());
+                mDefaultMat = mat;
+                String fontname = name + ".font";
+                font->SetName(fontname.c_str(), Dir());
+                RndText *text = FindTextForFont(font);
+                if (text) {
+                    String textname = name + ".txt";
+                    text->SetName(textname.c_str(), Dir());
+                    String textstr(text->RawText().c_str());
+                    if (textstr.find("_default") != String::npos) {
+                        textstr = textstr.substr(0, textstr.find("_default"));
+                        text->SetText(textstr.c_str());
+                    }
+                }
+            } else {
+                String name = GetBaseName();
+                String matname = mat->Name();
+                int pos = matname.find(name.c_str());
+                if (pos == 0) {
+                    int matLen = matname.length();
+                    int nameLen = name.length();
+                    matname = matname.substr(name.length() + 1, matLen - nameLen - 1);
+                }
+                mat->SetName(matname.c_str(), Dir());
+                mMatVariations.push_back(mat);
+            }
+        }
+        MILO_WARN(MakeString(
+            "Upgraded font resource to new material variation setup.  Please resave %s",
+            Dir()->GetPathName()
+        ));
+    }
+}
+
+// Retail 0x8281A8D0: TextObj's genned-font arm (UILabelDir::TextObj tail-calls it).
+RndText *UIFontImporter::GetGennedText(Symbol s) const {
+    return FindTextForFont(GetGennedFont(s));
+}
+
 RndFont *UIFontImporter::GetGennedFont(Symbol s) const {
     if (s.Null()) {
         return *mGennedFonts.begin();
@@ -645,8 +750,9 @@ DataNode UIFontImporter::OnGetResourcesPath(DataArray *da) {
 DataNode UIFontImporter::OnGetGennedBitmapPath(DataArray *da) {
     if ((unsigned int)mGennedFonts.size() > 0) {
         RndFont *font = static_cast<RndFont *>(*mGennedFonts.begin());
-        if (font && font->Mat(0) && font->Mat(0)->GetDiffuseTex()) {
-            RndTex *tex = font->Mat(0)->GetDiffuseTex();
+        // Retail reads the font's single material (RndFont +0x30), not Mat(0).
+        if (font && font->GetMat() && font->GetMat()->GetDiffuseTex()) {
+            RndTex *tex = font->GetMat()->GetDiffuseTex();
             if (tex) {
                 return tex->File().c_str();
             }
@@ -671,8 +777,10 @@ DataNode UIFontImporter::OnForgetGened(DataArray *) {
 // THAT name is byte-exact against retail 0x82818840 (1036 B, fuzzy 100).  Retail
 // bytes decide.  AttachImporterToFont is left defined (now uncalled) so
 // the native link is unaffected.  Lane W16-EC.
+// Retail 0x8281B018 (the attach_to_importfont handler) attaches, it does not
+// only import settings.
 DataNode UIFontImporter::OnAttachToImportFont(DataArray *) {
-    ImportSettingsFromFont(mFontToImportFrom);
+    AttachImporterToFont(mFontToImportFrom);
     return 0;
 }
 
@@ -691,12 +799,13 @@ DataNode UIFontImporter::OnShowFontPicker(DataArray *) { return 0; }
 
 DataNode UIFontImporter::OnSyncWithResourceFile(DataArray *a) {
     if (!mSyncResource.empty()) {
-        FilePath path;
-        if (ResourceDirBase::MakeResourcePath(
-                path, "UILabel", "UILabelDir", mSyncResource.c_str()
-            )) {
-            ObjDirPtr<UILabelDir> labelDir;
-            labelDir.LoadFile(path, false, true, kLoadFront, false);
+        // Retail 0x8281C5B0: "%s/%s.milo" under GetResourcesPath(), loaded
+        // through an ObjDirPtr built from null, then PostLoad(0).
+        const char *milopath = MakeString("%s/%s.milo", GetResourcesPath(), mSyncResource);
+        {
+            ObjDirPtr<UILabelDir> labelDir(0);
+            labelDir.LoadFile(FilePath(FileRoot(), milopath), false, true, kLoadFront, false);
+            labelDir.PostLoad(0);
             if (labelDir.IsLoaded()) {
                 mLowerCaseAthroughZ = labelDir->mLowerCaseAthroughZ;
                 mUpperCaseAthroughZ = labelDir->mUpperCaseAthroughZ;
@@ -709,7 +818,6 @@ DataNode UIFontImporter::OnSyncWithResourceFile(DataArray *a) {
                 mFontName = labelDir->mFontName;
                 mFontPctSize = labelDir->mFontPctSize;
                 mFontWeight = labelDir->mFontWeight;
-                mItalics = labelDir->mItalics;
                 mFontQuality = labelDir->mFontQuality;
                 mPitchAndFamily = labelDir->mPitchAndFamily;
                 mFontQuality = labelDir->mFontQuality;
@@ -717,6 +825,7 @@ DataNode UIFontImporter::OnSyncWithResourceFile(DataArray *a) {
                 mBitmapSavePath = labelDir->mBitmapSavePath;
                 mBitMapSaveName = labelDir->mBitMapSaveName;
                 mFontSupersample = labelDir->mFontSupersample;
+                mItalics = labelDir->mItalics;
                 mLeft = labelDir->mLeft;
                 mRight = labelDir->mRight;
                 mTop = labelDir->mTop;

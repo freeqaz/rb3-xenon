@@ -193,6 +193,7 @@ public:
     bool IsSignedIntoLive(int) const;
     bool IsSignedIn(int) const;
     bool IsUserSignedIn(const LocalUser *) const;
+    void SwapUserPads(LocalUser *, LocalUser *);
     bool IsPadNumSignedIn(int) const;
     bool HasPadNumsSigninChanged(int) const;
     bool HasUserSigninChanged(const LocalUser *) const;
@@ -239,6 +240,11 @@ public:
     void SetPadContext(int, int, int) const;
     void SetPadPresence(int, int) const;
     void SetPadProperty(int, int, unsigned short const *) const;
+    // Retail 0x82514BD0 / 0x82514C18 / 0x82514C60: LocalUser forwarders to
+    // the pad-number setters above. The names are ours.
+    void SetUserContext(const LocalUser *, int, int) const;
+    void SetUserProperty(const LocalUser *, int, unsigned short const *) const;
+    void SetUserPresence(const LocalUser *, int) const;
     void EnumerateFriends(int, std::vector<Friend *> &, Hmx::Object *);
     void Poll();
 

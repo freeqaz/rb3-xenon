@@ -162,18 +162,15 @@ void Synapse::SetReleaseSmoothing(float val) {
     }
 }
 
-Synapse::Synapse(float sampleRate) : mTargetPitch(sampleRate) {
-    mDetectionInterval = 64;
+Synapse::Synapse(float sampleRate) : mDetectionInterval(64), mTargetPitch(sampleRate) {
+    float prod1 = mTargetPitch * 0.4f;
+    float prod2 = mTargetPitch * 0.0015384615f;
+    float prod3 = mTargetPitch * 0.016666668f;
+    mDefaultPitch = (unsigned int)(prod2 + (prod2 >= 0.0f ? 0.5f : -0.5f));
+    mField_0x20 = (unsigned int)(prod3 + (prod3 >= 0.0f ? 0.5f : -0.5f));
 
-    float prod1 = sampleRate * 0.4f;
-    float prod2 = sampleRate * 0.0015384615f;
-    float prod3 = sampleRate * 0.016666668f;
-    mDefaultPitch = (int)(long long)(prod2 + (prod2 >= 0.0f ? 0.5f : -0.5f));
-    mField_0x20 = (int)(long long)(prod3 + (prod3 >= 0.0f ? 0.5f : -0.5f));
-
-    float zero = 0.0f;
-    mInputBuffer.resize((int)(long long)(prod1 + (prod1 >= 0.0f ? 0.5f : -0.5f)) & ~3, zero);
-    mDownsampledBuffer.resize((unsigned int)mInputBuffer.size() >> 2, zero);
+    mInputBuffer.resize((unsigned int)(prod1 + (prod1 >= 0.0f ? 0.5f : -0.5f)) & ~3, 0.0f);
+    mDownsampledBuffer.resize((unsigned int)mInputBuffer.size() >> 2, 0.0f);
 
     mBufferIndex = 0;
     mGain = 1.0f;
@@ -191,60 +188,39 @@ Synapse::Synapse(float sampleRate) : mTargetPitch(sampleRate) {
     PeakDetector *peak = new PeakDetector(mInputBuffer, mDefaultPitch, mField_0x20);
     mPeakDetector.reset(peak);
 
-    // Voices
-    PitchCorrectedVoice pcv;
-    mVoices.resize(3, pcv);
+    mVoices.resize(3, PitchCorrectedVoice());
 
-    // Channel buffers
 #ifdef HX_NATIVE
-    std::vector<float> emptyVec;
+    mChannelBuffers.resize(mVoices.size(), std::vector<float>());
 #else
-    stlpmtx_std::vector<float, stlpmtx_std::StlNodeAlloc<float> > emptyVec;
+    mChannelBuffers.resize(
+        mVoices.size(), stlpmtx_std::vector<float, stlpmtx_std::StlNodeAlloc<float> >()
+    );
 #endif
-    mChannelBuffers.resize((int)mVoices.size(), emptyVec);
+    mOutputBuffers.resize(mVoices.size(), 0);
 
-    // Output buffers
-    float *nullPtr = 0;
-    mOutputBuffers.resize((int)mVoices.size(), nullPtr);
-
-    // Resize each channel buffer to 0x2000 floats and set output buffer pointers
-    unsigned int i = 0;
-    if ((int)mChannelBuffers.size() != 0) {
-        int chanOffset = 0;
-        int outOffset = 0;
-        do {
-            mChannelBuffers[i].resize(0x2000, zero);
-            i++;
-            mOutputBuffers[outOffset / 4] = mChannelBuffers[(chanOffset) / 12].begin();
-            chanOffset += 0xC;
-            outOffset += 4;
-        } while (i < (unsigned int)((int)mChannelBuffers.size()));
+    // Each voice renders into its own 0x2000-sample buffer.
+    for (unsigned int i = 0; i < mChannelBuffers.size(); i++) {
+        mChannelBuffers[i].resize(0x2000, 0.0f);
+        mOutputBuffers[i] = &mChannelBuffers[i][0];
     }
 
-    // GranularSynth
-    GranularSynth *gs = new GranularSynth(mInputBuffer, (int)mVoices.size(), mDefaultPitch, mField_0x20);
-    mGranularSynth.reset(gs);
-
-    // Zero out voice gains in GranularSynth
-    unsigned int j = 0;
-    if ((int)mVoices.size() != 0) {
-        int voiceOffset = 0;
-        do {
-            j++;
-            mGranularSynth->mVoices[voiceOffset / 0x18].mField_0x00 = 0.0f;
-            voiceOffset += 0x18;
-        } while (j < (unsigned int)((int)mVoices.size()));
+    mGranularSynth.reset(new GranularSynth(mInputBuffer, mVoices.size(), mDefaultPitch, mField_0x20));
+    for (unsigned int j = 0; j < mVoices.size(); j++) {
+        mGranularSynth->mVoices[j].mField_0x00 = 0.0f;
     }
 
     // Biquad filters
-    float coeffs[5];
-    LowpassCoefficients(coeffs, mTargetPitch, kBiquadParams[0], kBiquadParams[1]);
-    Biquad *lpf = new Biquad(coeffs);
-    mScratchBuffer1.reset(lpf);
+    {
+        float coeffs[5];
+        LowpassCoefficients(coeffs, mTargetPitch, kBiquadParams[0], kBiquadParams[1]);
+        Biquad *lpf = new Biquad(coeffs);
+        mScratchBuffer1.reset(lpf);
 
-    HighpassCoefficients(coeffs, mTargetPitch * 0.25f, kBiquadParams[2], kBiquadParams[1]);
-    Biquad *hpf = new Biquad(coeffs);
-    mScratchBuffer2.reset(hpf);
+        HighpassCoefficients(coeffs, mTargetPitch * 0.25f, kBiquadParams[2], kBiquadParams[1]);
+        Biquad *hpf = new Biquad(coeffs);
+        mScratchBuffer2.reset(hpf);
+    }
 
     mIirSmooth = 0.0f;
     mIirCoeff = Time2IirA(0.00811767578125f, mTargetPitch * 0.25f);

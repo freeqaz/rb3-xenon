@@ -52,7 +52,7 @@ void NoteVoiceInst::Start() {
 
 void NoteVoiceInst::Stop() {
     mStopped = true;
-    mSample->Stop(false);
+    mSample->Stop();
 }
 
 bool NoteVoiceInst::IsRunning() { return mSample->IsPlaying(); }
@@ -62,10 +62,9 @@ void NoteVoiceInst::SetTranspose(float transpose) {
     mSample->SetSpeed(speed);
 }
 
+// Retail 0x827133c0 (slot 27): no null tests on mSample or mOwner.
 void NoteVoiceInst::UpdateVolume() {
-    if (mSample && mOwner) {
-        mSample->SetVolume(mOwner->Faders().GetVal() + mVolume);
-    }
+    mSample->SetVolume(mOwner->Faders().GetVal() + mVolume);
 }
 
 // NoteVoiceInst::UpdatePan() removed -- see the note at its former declaration
@@ -386,24 +385,3 @@ void MidiInstrument::StartSample(
 #undef gRev
 #undef gAltRev
 
-#pragma region MidiInstrumentMgr
-// Retail places these inside the MidiInstrument .text pin
-// (0x82716240..0x82716324), so they are defined here where the pin pairs them.
-#include "synth/MidiInstrumentMgr.h"
-
-MidiInstrumentMgr::MidiInstrumentMgr() : mObjectDir(), mInstrument(0) {}
-
-void MidiInstrumentMgr::SetInstrument(MidiInstrument *inst) { mInstrument = inst; }
-
-void MidiInstrumentMgr::UnloadInstrument() {
-    if (mInstrument)
-        mInstrument->KillAllVoices();
-    mInstrument = 0;
-}
-
-void MidiInstrumentMgr::Poll() {
-    if (!mInstrument)
-        return;
-    mInstrument->Poll();
-}
-#pragma endregion

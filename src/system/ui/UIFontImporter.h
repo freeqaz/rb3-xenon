@@ -37,6 +37,8 @@ public:
     const char *GetMatVariationName(RndFont *) const;
     int GetMatVariationIdx(Symbol) const;
     RndFont *GetGennedFont(Symbol) const;
+    RndText *GetGennedText(Symbol) const;
+    void FontImporterSyncObjects();
     void AttachImporterToFont(RndFont *);
 
     int NumMatVariations() const { return mMatVariations.size(); }
@@ -65,6 +67,7 @@ protected:
     void OnSetCharsetUTF8(String const &);
     DataNode OnSyncWithResourceFile(DataArray *);
     RndText *FindTextForFont(RndFont *) const;
+    String GetBaseName() const;
 
     /** "include uppercase letters" */
     bool mUpperCaseAthroughZ; // 0x4

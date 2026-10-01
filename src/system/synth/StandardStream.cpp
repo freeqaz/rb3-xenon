@@ -174,51 +174,29 @@ float StandardStream::GetTime() {
         return mStartMs;
 }
 
-float StandardStream::GetJumpBackTotalTime(float time) const {
-    bool foundJump = true;
-    float lastTime = 0.0f;
-    float loopback = 0.0f;
-
-    int count = (int)mJumpInstances.size() - 1;
-    int i = count;
-    while (i >= 0) {
-        // PROVISIONAL field mapping. Retail's JumpInstance is
-        // {Marker mFrom; Marker mTo; float mTotal} (see Stream.h for the
-        // binary evidence); dc3's four-float layout this body was ported from
-        // does not exist in RB3, so the old unk8/unkc slots have no direct
-        // equivalent. This function is not currently matched (it is one of the
-        // unnamed fn_ rows in the unit), so the body is a placeholder pending a
-        // dedicated port of retail's jump/loop logic.
-        const JumpInstance& jump = mJumpInstances[i];
-        float jumpTime = jump.mFrom.posMS;
-        if (time >= jumpTime) {
-            loopback = jump.mTotal;
-            lastTime = jumpTime;
-            break;
-        }
-        foundJump = false;
-        i--;
-    }
-
-    if (foundJump && mJumpFromSamples != mJumpToSamples) {
-        float totalLoopback = loopback + lastTime;
-        float jumpFromMs = SampToMs(mJumpFromSamples);
-        float jumpToMs = SampToMs(mJumpToSamples);
-        if (totalLoopback < jumpFromMs) {
-            float adjustedTime = (time - lastTime) + totalLoopback;
-            if (adjustedTime >= jumpFromMs) {
-                loopback = loopback + (jumpToMs - jumpFromMs);
-            }
+// Retail 0x827036b8 (StandardStream vtable slot 15). Takes no argument: it
+// advances the jump cursor (+0x160) past every jump whose destination the
+// current play time has passed, accumulating each jump's loopback total
+// (+0x164), and returns the accumulated total.
+float StandardStream::GetJumpBackTotalTime() {
+    if (!mJumpInstances.empty()) {
+        float time = GetTime();
+        while (unk160 < mJumpInstances.size()) {
+            JumpInstance &jump = mJumpInstances[unk160];
+            if (mAccumulatedLoopbacks + time <= jump.mTo.posMS)
+                break;
+            mAccumulatedLoopbacks -= jump.mTotal;
+            unk160++;
         }
     }
-
-    return loopback;
+    return mAccumulatedLoopbacks;
 }
 
-float StandardStream::GetInSongTime() {
-    float time = GetTime();
-    return time + GetJumpBackTotalTime(time);
-}
+// Retail 0x82701b60 (slot 39): a tail call through slot 41 (ClearJump).
+void StandardStream::AbandonLoop() { ClearJump(); }
+
+// Retail 0x82701ca0 (slot 16).
+float StandardStream::GetInSongTime() { return GetTime() + GetJumpBackTotalTime(); }
 
 void StandardStream::SetVolume(int chan, float vol) {
     MILO_ASSERT_RANGE(chan, 0, mChanParams.size(), 0x41E);

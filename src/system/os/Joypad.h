@@ -315,6 +315,7 @@ void TranslateSticksToButs(JoypadData &, unsigned int &);
 int GetUsersPadNum(const LocalUser *);
 int ButtonToVelocityBucket(JoypadData *data, JoypadButton btn);
 void JoypadSetActuatorsImp(int, int, int);
+void JoypadSetRumble(int, int, int);
 void AssociateUserAndPad(LocalUser *iUser, int iPadNum);
 void ResetAllUsersPads();
 void JoypadSetCalbertMode(int, int);
@@ -323,6 +324,9 @@ bool requestBreedWrite(int, unsigned char *);
 }
 
 float JoypadGetCalbertValue(int, bool);
+void JoypadSwapPads(int, int);
+const char *JoypadGetBreedString(int);
+void JoypadInvalidateXinputCaps(int);
 
 void JoypadInit();
 void JoypadPoll();
@@ -333,7 +337,6 @@ Symbol JoypadControllerTypePadNum(int);
 bool JoypadTypeHasLeftyFlip(Symbol);
 int JoypadTypePadShiftButton(Symbol);
 int JoypadTypeCymbalShiftButton(Symbol);
-const char *JoypadGetBreedString(int);
 
 void JoypadSubscribe(Hmx::Object *);
 void JoypadUnsubscribe(Hmx::Object *);

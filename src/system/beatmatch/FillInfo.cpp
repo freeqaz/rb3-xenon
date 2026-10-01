@@ -10,7 +10,7 @@ void FillInfo::Clear() {
     mLanes.mInfos.clear();
 }
 
-// fn_8045F964
+// 0x827924A0
 bool FillInfo::AddFill(int start, int duration, bool bre) {
     int newStart = ((start + 15) / 30) * 30;
     int newEnd = ((start + duration + 15) / 30) * 30;
@@ -79,14 +79,8 @@ bool FillInfo::FillExtentAtOrBefore(int tick, FillExtent &outExtent) const {
     }
 }
 
-// fn_8045CCBC
+// 0x82792530
 bool FillInfo::AddLanes(int tick, int lanes) { return mLanes.AddInfo(tick, lanes); }
 
-int FillInfo::LanesAt(int tick) const {
-    const TickedInfo<int> *info = std::upper_bound(
-        mLanes.mInfos.begin(), mLanes.mInfos.end(), tick, TickedInfoCollection<int>::Cmp
-    );
-    if (info != mLanes.mInfos.begin())
-        info--;
-    return info->mInfo;
-}
+// 0x82792430
+int FillInfo::LanesAt(int tick) const { return mLanes.IteratorAt(tick, false)->mInfo; }

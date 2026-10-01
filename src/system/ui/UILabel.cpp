@@ -497,14 +497,19 @@ void UILabel::UpdateAndDrawHighlightMesh() {
             float f1 = 0;
             float f2 = 0;
             mText->GetCurrentStringDimensions(f1, f2);
-            Vector3 v80, v74;
+            Vector3 v74, v80;
             InqMinMaxFromWidthAndHeight(f1, f2, Alignment(), v74, v80);
             mLabelDir->SetWorldXfm(WorldXfm());
-            // retail copies whole Vector3 temporaries (SetLocalPos(const Vector3&))
-            topleft->SetLocalPos(Vector3(v74.x, 0, v80.z));
-            topright->SetLocalPos(Vector3(v80.x, 0, v80.z));
-            botleft->SetLocalPos(Vector3(v74.x, 0, v74.z));
-            botright->SetLocalPos(Vector3(v80.x, 0, v74.z));
+            // retail builds the four corners as locals, then copies each whole
+            // (SetLocalPos(const Vector3&))
+            Vector3 tl(v74.x, 0, v80.z);
+            Vector3 tr(v80.x, 0, v80.z);
+            Vector3 bl(v74.x, 0, v74.z);
+            Vector3 br(v80.x, 0, v74.z);
+            topleft->SetLocalPos(tl);
+            topright->SetLocalPos(tr);
+            botleft->SetLocalPos(bl);
+            botright->SetLocalPos(br);
         }
         RndEnviron *env = meshgroup->GetEnv();
         if (env) {

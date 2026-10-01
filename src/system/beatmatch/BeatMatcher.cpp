@@ -398,11 +398,15 @@ int BeatMatcher::GetMaxSlots() const {
     if (mCurTrack < 0 || (size_t)mCurTrack >= mTrackTypes.size())
         return 5;
 #endif
+    // 0x827919D8: a compare chain (5, then 6/7/8/9). dtk carves the last
+    // 24 bytes off as 0x82791A0C (fall-through, not merged).
     int type = mTrackTypes[mCurTrack];
     if (type == kTrackRealKeys)
         return 25;
-    int d = type - kTrackRealGuitar;
-    return (int)(((unsigned)(~(~3 & d)) - ((unsigned)(3 - d) >> 1)) >> 31) + 5;
+    if (type == kTrackRealGuitar || type == kTrackRealGuitar22Fret || type == kTrackRealBass
+        || type == kTrackRealBass22Fret)
+        return 6;
+    return 5;
 }
 
 TrackType BeatMatcher::GetTrackType(int idx) const { return mTrackTypes[idx]; }
@@ -479,9 +483,10 @@ void BeatMatcher::SetCodaStartTick(int tick) { mCodaStartTick = tick; }
 void BeatMatcher::EnterCoda() { SetFillsEnabled(true); }
 
 void BeatMatcher::SetButtonMashingMode(bool b) {
+    // 0x82791C40: drum, vocals, then the signed range 10..12.
     TrackType curTrackType = mTrackTypes[mCurTrack];
-    if (curTrackType - 10U > 2 && curTrackType != kTrackDrum
-        && curTrackType != kTrackVocals) {
+    if (curTrackType != kTrackDrum && curTrackType != kTrackVocals
+        && (curTrackType <= kTrackRealBass22Fret || curTrackType > kTrackPendingVocals)) {
         mAudio->SetButtonMashingMode(mCurTrack, b);
     }
 }

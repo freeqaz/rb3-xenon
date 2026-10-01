@@ -260,11 +260,19 @@ void SpotlightDrawer::ClearPostDraw() {
 
 void SpotlightDrawer::DrawShowing() {
     if (sCurrent && sCurrent != sDefault && sCurrent != this) {
+#ifdef HX_NATIVE
         MILO_NOTIFY_ONCE(
             "Drawing 2 spotlightdrawers in one frame, %s and %s",
             PathName(sCurrent),
             PathName(this)
         );
+#else
+        // Retail 0x824D51E8: the notify is compiled out but its two PathName
+        // argument calls remain (right-to-left).
+        Hmx::Object *cur = sCurrent;
+        PathName(this);
+        PathName(cur);
+#endif
     } else {
         Select();
     }
@@ -300,69 +308,56 @@ void SpotlightDrawer::RemoveFromLists(Spotlight *spot) {
     }
 }
 
+// Retail 0x824D7920. The visibility test is on the bytes of the packed colour
+// key; a light is queued only when mTargetLoaded and Showing(); there is no
+// shadow-spot queue and no late-draw warning here. The light-can mesh is culled
+// by its world sphere against the current camera frustum.
 void SpotlightDrawer::DrawLight(Spotlight *spot) {
     if (!spot)
         return;
 
-    const Hmx::Color& color = spot->Color();
+    const Hmx::Color &color = spot->Color();
     float intensity = spot->Intensity();
+    float r = intensity * color.red;
+    float g = intensity * color.green;
+    float b = color.blue * intensity;
+    unsigned int packedColor = ((int)(r * 255.0f) & 0xFF)
+        | (((int)(g * 255.0f) & 0xFF) << 8) | (((int)(b * 255.0f) & 0xFF) << 16);
 
-    float baseR = color.red * intensity * 255.0f;
-    float baseG = color.green * intensity * 255.0f;
-    float baseB = color.blue * intensity * 255.0f;
+    unsigned char byteR = (unsigned char)packedColor;
+    unsigned char byteG = (unsigned char)(packedColor >> 8);
+    unsigned char byteB = (unsigned char)(packedColor >> 16);
+    bool shouldProcess = byteR > 5u || byteG > 3u || byteB > 7u;
 
-    uint packedColor = ((uint)baseB & 0xff) << 16 | ((uint)baseG & 0xff) << 8 | (uint)baseR & 0xff;
-
-    bool shouldProcess = (baseR > 5) || ((baseG > 3) || (baseB > 7));
-
-    if (shouldProcess && spot->GetTarget()) {
-        GfxMode gfxMode = GetGfxMode();
-
-        if (gfxMode == kOldGfx && spot->TargetShadow()) {
-            sShadowSpots.push_back(spot);
-        }
-
+    if (shouldProcess && spot->mTargetLoaded && spot->Showing()) {
         SpotlightEntry entry;
-        entry.mColorKey = packedColor;
         entry.mSpotlight = spot;
+        entry.mColorKey = packedColor;
         sLights.push_back(entry);
-
-        if (sHaveAdditionals || spot->GetAdditionalObjects().size() > 0) {
-            sHaveAdditionals = true;
-        }
-
-        if (sHaveFlares && (!spot->GetFlare() || spot->mFlareOffset == 0)) {
-            sHaveFlares = false;
-        } else {
-            sHaveFlares = true;
-        }
-
-        if (sHaveLenses || spot->LensMesh()) {
-            sHaveLenses = true;
-        }
-
-        if (sNeedBoxMap == (int)TheRnd.GetFrameID()) {
-            static bool boxMapLogged = false;
-            if (!boxMapLogged) {
-                boxMapLogged = true;
-                const char* objName = PathName(spot);
-                MILO_WARN("%s drawn after SpotlightEnder", objName);
-            }
-        }
-
+        sHaveAdditionals = sHaveAdditionals || spot->mAdditionalObjects.size() > 0;
+        sHaveFlares = sHaveFlares || (spot->mFlareEnabled && spot->GetFlare());
+        sHaveLenses = sHaveLenses || spot->LensMesh();
         sNeedDraw = true;
     }
 
-    RndMesh* lightCanMesh = spot->mLightCanMesh;
-    if (lightCanMesh && !spot->mLightCanSort) {
-        const Transform& xfm = spot->WorldXfm();
-        float nearDist = spot->mLightCanOffset;
-        if (nearDist <= 0.0f) {
+    if (spot->mLightCanMesh && !spot->mLightCanSort) {
+        RndMesh *mesh = spot->mLightCanMesh;
+        bool visible = mesh->Showing();
+        if (visible) {
+            Sphere s = mesh->GetSphere();
+            if (s.GetRadius() > 0.0f) {
+                Multiply(s, spot->mLightCanXfm, s);
+                visible = !(s > RndCam::Current()->WorldFrustum());
+            } else {
+                visible = true;
+            }
+        }
+        if (visible) {
             SpotMeshEntry meshEntry;
-            meshEntry.mCanMesh = lightCanMesh;
-            meshEntry.mEnvMesh = nullptr;
+            meshEntry.mCanMesh = spot->mLightCanMesh;
+            meshEntry.mEnvMesh = (RndMesh *)RndEnviron::Current();
             meshEntry.mSpotlight = spot;
-            meshEntry.mTransform = xfm;
+            meshEntry.mTransform = spot->mLightCanXfm;
             sCans.push_back(meshEntry);
             sNeedDraw = true;
         }

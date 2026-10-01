@@ -386,6 +386,63 @@ extern "C" {
 }
 
 
+// In-place transpose of an n x n matrix of complex floats, two complex
+// values (one 16-byte vector) at a time. Retail 0x82B765F0.
+void SquareComplexTransposeVector(float* data, long n) {
+    XMVECTORU32 perm_lo;
+    XMVECTORU32 perm_hi;
+    long half = n / 2;
+
+    perm_lo.u[0] = 0x00010203;
+    perm_lo.u[1] = 0x04050607;
+    perm_lo.u[2] = 0x10111213;
+    perm_lo.u[3] = 0x14151617;
+
+    perm_hi.u[0] = 0x08090A0B;
+    perm_hi.u[1] = 0x0C0D0E0F;
+    perm_hi.u[2] = 0x18191A1B;
+    perm_hi.u[3] = 0x1C1D1E1F;
+
+    if (half > 0) {
+        long stride = n * 0x10;
+        long rowHalf = half * 0x10;
+        XMVECTOR vLo = __lvx(&perm_lo, 0);
+        XMVECTOR vHi = __lvx(&perm_hi, 0);
+        char* row = (char*)data;
+        char* col = (char*)data;
+        for (int i = 0; i < half; i++) {
+            char* r0 = row;
+            char* r1 = row + rowHalf;
+            char* c0 = col;
+            char* c1 = col + rowHalf;
+            for (int j = 0; j < i; j++) {
+                XMVECTOR b = __lvx(c1, 0);
+                XMVECTOR a = __lvx(c0, 0);
+                XMVECTOR d = __lvx(r0, 0);
+                XMVECTOR e = __lvx(r1, 0);
+                XMVECTOR t0 = __vperm(a, b, vLo);
+                XMVECTOR t1 = __vperm(a, b, vHi);
+                XMVECTOR t2 = __vperm(d, e, vLo);
+                XMVECTOR t3 = __vperm(d, e, vHi);
+                __stvx(t0, r0, 0);
+                r0 += 0x10;
+                __stvx(t1, r1, 0);
+                r1 += 0x10;
+                __stvx(t2, c0, 0);
+                c0 += stride;
+                __stvx(t3, c1, 0);
+                c1 += stride;
+            }
+            XMVECTOR d = __lvx(r0, 0);
+            XMVECTOR e = __lvx(r1, 0);
+            __stvx(__vperm(d, e, vLo), r0, 0);
+            __stvx(__vperm(d, e, vHi), r1, 0);
+            row += stride;
+            col += 0x10;
+        }
+    }
+}
+
 int fft_matrix_forward_columnwise(float* data, long size, float* context) {
     int ret = 0;
     int power = 1;

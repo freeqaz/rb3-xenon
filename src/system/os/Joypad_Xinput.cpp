@@ -1,4 +1,5 @@
 #include "os/Joypad_Xinput.h"
+#include <cstring>
 #include "os/Joypad_Xbox.h"
 #include "obj/Data.h"
 #include "os/CritSec.h"
@@ -62,6 +63,35 @@ bool JoypadGetCachedXInputCaps(int pad, XINPUT_CAPABILITIES *caps, bool b3) {
             return false;
     }
     return true;
+}
+
+// Retail 0x82531FF8: pads without a Calbert sensor approximate the calibration
+// mode with the right rumble motor (full, 0x6000, off).
+void JoypadSetXinputCalbertMode(int pad, int mode) {
+    switch (mode) {
+    case 1:
+        JoypadSetRumble(pad, 0, 0xffff);
+        break;
+    case 2:
+        JoypadSetRumble(pad, 0, 0x6000);
+        break;
+    default:
+        JoypadSetRumble(pad, 0, 0);
+        break;
+    }
+}
+
+// Retail 0x82532030: the next JoypadGetCachedXInputCaps re-queries this pad.
+void JoypadInvalidateXinputCaps(int pad) { gCapsValid[pad] = false; }
+
+// Retail 0x82532378: the vibration block is zeroed whole before both motor
+// speeds are written.
+void JoypadSetXinputActuators(int pad, int left, int right) {
+    XINPUT_VIBRATION vib;
+    memset(&vib, 0, sizeof(vib));
+    vib.wLeftMotorSpeed = left;
+    vib.wRightMotorSpeed = right;
+    XInputSetState(pad, &vib);
 }
 
 void JoypadResetXboxPC(int pad) {

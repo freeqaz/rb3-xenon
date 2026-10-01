@@ -1,6 +1,8 @@
 #pragma once
 #include "obj/Object.h"
 
+class LocalUser;
+
 class VirtualKeyboard : public Hmx::Object {
 private:
     Hmx::Object *mPobjKeyboardCallback; // 0x28
@@ -10,7 +12,7 @@ private:
 
     void PlatformPoll();
     const char *GetInputString();
-    DataNode ShowKeyboardUI(int, int, String, String, String, int);
+    DataNode ShowKeyboardUI(LocalUser *, int, String, String, String, int);
 
 public:
     VirtualKeyboard();

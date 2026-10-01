@@ -150,7 +150,7 @@ bool NgSpotlightDrawer::CheckCam() {
     return true;
 }
 
-static float sBeamIntensity = 1.0f;
+static float sBeamIntensity = 8.0f; // RB3 retail 0x82C711BC = 8.0f
 
 void NgSpotlightDrawer::RenderCone(Spotlight *sl) {
     MILO_ASSERT(sl->HasBeam(), 0x45d);
