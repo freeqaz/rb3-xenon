@@ -48,7 +48,9 @@ public:
     float PitchAt(float ms) const {
         if (mEndPitch == mBeginPitch)
             return mBeginPitch;
-        float t = Max(Min(ms, mMs + mDurationMs) - mMs, 0.0f) / mDurationMs;
+        // Min(end, ms) and Max(0, x): retail's fsel operands are
+        // fsel(end - ms, ms, end) and fsel(-x, 0, x).
+        float t = Max(0.0f, Min(mMs + mDurationMs, ms) - mMs) / mDurationMs;
         return (1.0f - t) * mBeginPitch + mEndPitch * t;
     }
 
