@@ -161,6 +161,50 @@ void RndTex::Print() {
 INIT_REVS(11, 0)
 
 // (see the note above BEGIN_LOADS -- native now uses these matched bodies too)
+#ifndef HX_NATIVE
+// Retail (0x824003F0): the revision is split into a file-static {altRev, rev}
+// pair (re-read with lhz at each test) and every field comes straight off `bs`
+// -- no BinStreamRev; the pair is re-packed for PushRev at the end.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_Tex;
+void RndTex::PreLoad(BinStream &bs) {
+    int rev;
+    bs >> rev;
+    gRevs_Tex.rev = getHmxRev(rev);
+    gRevs_Tex.altRev = getAltRev(rev);
+    if (gRevs_Tex.rev > 8) {
+        Hmx::Object::Load(bs);
+    }
+    if (gRevs_Tex.rev == 1) {
+        short w, h;
+        bs >> w;
+        bs >> h;
+        mWidth = w;
+        mHeight = h;
+    } else {
+        bs >> mWidth;
+        bs >> mHeight;
+    }
+    bs >> mBpp;
+    bs >> mFilepath;
+    if (gRevs_Tex.rev > 9) {
+        if (!bs.Cached()) {
+            mLoader = new FileLoader(
+                mFilepath,
+                CacheResource(mFilepath.c_str(), this),
+                kLoadFront,
+                0,
+                false,
+                true,
+                nullptr
+            );
+        }
+    }
+    bs.PushRev(packRevs(gRevs_Tex.altRev, gRevs_Tex.rev), this);
+}
+#else
 void RndTex::PreLoad(BinStream &bs) {
     LOAD_REVS(bs)
     ASSERT_REVS(11, 0)
@@ -194,10 +238,26 @@ void RndTex::PreLoad(BinStream &bs) {
     }
     d.PushRev(this);
 }
+#endif
 
+#ifndef HX_NATIVE
+// Retail (0x824000C0): PopRev's result is split into the same file-static pair
+// PreLoad uses, and fields come straight off `bs` (no BinStreamRev).
+#define TEX_POST_REV gRevs_Tex.rev
+#define TEX_POST_STREAM bs
+#else
+#define TEX_POST_REV d.rev
+#define TEX_POST_STREAM d
+#endif
 void RndTex::PostLoad(BinStream &bs) {
+#ifndef HX_NATIVE
+    int popped = bs.PopRev(this);
+    gRevs_Tex.rev = getHmxRev(popped);
+    gRevs_Tex.altRev = getAltRev(popped);
+#else
     BinStreamRev d(bs, bs.PopRev(this));
-    if (d.rev < 5) {
+#endif
+    if (TEX_POST_REV < 5) {
         int cubemapmask;
         bs >> cubemapmask;
         if (cubemapmask != 0 && !mFilepath.empty()) {
@@ -214,35 +274,35 @@ void RndTex::PostLoad(BinStream &bs) {
             }
         }
     }
-    if (d.rev > 0 && d.rev < 3) {
+    if (TEX_POST_REV > 0 && TEX_POST_REV < 3) {
         bool b;
-        d >> b;
+        TEX_POST_STREAM >> b;
     }
-    if (d.rev > 7) {
-        d >> mMipMapK;
-    } else if (d.rev > 3) {
+    if (TEX_POST_REV > 7) {
+        TEX_POST_STREAM >> mMipMapK;
+    } else if (TEX_POST_REV > 3) {
         int i;
-        d >> i;
+        TEX_POST_STREAM >> i;
         mMipMapK = i / 16.0f;
     }
-    if (d.rev > 6) {
-        d >> (int &)mType;
-    } else if (d.rev > 5) {
+    if (TEX_POST_REV > 6) {
+        TEX_POST_STREAM >> (int &)mType;
+    } else if (TEX_POST_REV > 5) {
         Type types[5] = { kRegular, kRendered, kMovie, kBackBuffer, kFrontBuffer };
         int i;
-        d >> i;
+        TEX_POST_STREAM >> i;
         mType = types[i];
-    } else if (d.rev > 4) {
+    } else if (TEX_POST_REV > 4) {
         bool b;
-        d >> b;
+        TEX_POST_STREAM >> b;
         mType = b ? kRendered : kRegular;
     }
     bool b7 = false;
-    if (d.rev > 7) {
-        d >> b7;
+    if (TEX_POST_REV > 7) {
+        TEX_POST_STREAM >> b7;
     }
-    if (d.rev > 10) {
-        d >> mOptimizeForPS3;
+    if (TEX_POST_REV > 10) {
+        TEX_POST_STREAM >> mOptimizeForPS3;
     }
 #ifndef HX_NATIVE
     // Retail X360 (0x824000C0): the cached bitmap is read inside a temp-heap
@@ -253,7 +313,7 @@ void RndTex::PostLoad(BinStream &bs) {
         PresyncBitmap();
         {
             MemDoTempAllocations tmp;
-            d >> mBitmap;
+            TEX_POST_STREAM >> mBitmap;
         }
         mNumMips = mBitmap.NumMips();
         SyncBitmap();
@@ -268,10 +328,10 @@ void RndTex::PostLoad(BinStream &bs) {
         PresyncBitmap();
         if (UseBottomMip()) {
             RndBitmap bmap;
-            d >> bmap;
+            TEX_POST_STREAM >> bmap;
             CopyBottomMip(mBitmap, bmap);
         } else {
-            d >> mBitmap;
+            TEX_POST_STREAM >> mBitmap;
         }
         if (!mBitmap.HasName() && mType == kRegular) {
             MILO_LOG(
@@ -290,6 +350,8 @@ void RndTex::PostLoad(BinStream &bs) {
     }
 #endif
 }
+#undef TEX_POST_REV
+#undef TEX_POST_STREAM
 
 void RndTex::LockBitmap(RndBitmap &bmap, int i) {
     if (mBitmap.Order() & 0x38) {
