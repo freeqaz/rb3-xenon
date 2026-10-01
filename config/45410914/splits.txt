@@ -2810,6 +2810,7 @@ Task.cpp:
 	.pdata      start:0x8223B540 end:0x8223B548
 	.pdata      start:0x8223B548 end:0x8223B550
 	.pdata      start:0x8223B550 end:0x8223B5D0
+	.pdata      start:0x8223B5D0 end:0x8223B620
 	.pdata      start:0x8223B620 end:0x8223B628
 	.pdata      start:0x8223B628 end:0x8223B638
 	.pdata      start:0x8223B638 end:0x8223B648
@@ -2844,6 +2845,7 @@ Task.cpp:
 	.text       start:0x82748AF0 end:0x82748B60
 	.text       start:0x82748B60 end:0x82748BAC
 	.text       start:0x82748BB0 end:0x82749360
+	.text       start:0x82749360 end:0x82749694
 	.text       start:0x82749698 end:0x827496E4
 	.text       start:0x827496E8 end:0x827497C0
 	.text       start:0x827497C0 end:0x827499A8
@@ -4915,7 +4917,8 @@ DataNode.cpp:
 	.text       start:0x82744E48 end:0x82745354
 	.text       start:0x8274A974 end:0x8274A99C
 	.text       start:0x8274A99C end:0x8274A9A4
-	.text       start:0x8274A9B0 end:0x8274AA08
+	.text       start:0x8274A9B0 end:0x8274A9D0
+	.text       start:0x8274AA00 end:0x8274AA08
 	.text       start:0x8274AA08 end:0x8274BB88
 	.text       start:0x8274BBE4 end:0x8274C4E0
 	.text       start:0x827D96D8 end:0x827D9750
@@ -5350,6 +5353,7 @@ DataUtl.cpp:
 	.pdata      start:0x8223D228 end:0x8223D230
 	.pdata      start:0x8223D230 end:0x8223D238
 	.pdata      start:0x822616C0 end:0x822616C8
+	.text       start:0x8274A9D0 end:0x8274AA00
 	.text       start:0x82768630 end:0x827686B0
 	.text       start:0x827686B0 end:0x82768738
 	.text       start:0x82768738 end:0x82768770
@@ -6098,10 +6102,6 @@ Msg.cpp:
 	.pdata      start:0x822072E8 end:0x822072F8
 	.pdata      start:0x8220E5B0 end:0x8220E5B8
 	.pdata      start:0x82214468 end:0x82214470
-	.pdata      start:0x8223B5D0 end:0x8223B5F0
-	.pdata      start:0x8223B5F0 end:0x8223B610
-	.pdata      start:0x8223B610 end:0x8223B618
-	.pdata      start:0x8223B618 end:0x8223B620
 	.pdata      start:0x8223CF88 end:0x8223CF90
 	.pdata      start:0x8223CFA0 end:0x8223CFA8
 	.pdata      start:0x8223CFA8 end:0x8223CFB0
@@ -6132,10 +6132,6 @@ Msg.cpp:
 	.text       start:0x8245CC78 end:0x8245CCE0
 	.text       start:0x824CF800 end:0x824CF890
 	.text       start:0x826A8AB8 end:0x826A8AC4
-	.text       start:0x82749360 end:0x827494D0
-	.text       start:0x827494D0 end:0x827495C8
-	.text       start:0x827495C8 end:0x8274962C
-	.text       start:0x82749630 end:0x82749694
 	.text       start:0x82766770 end:0x82766828
 	.text       start:0x827668E8 end:0x8276696C
 	.text       start:0x82766970 end:0x82766A9C
