@@ -208,9 +208,11 @@ void StoreMainPanel::ParseConfigData() {
             mNewReleaseList.push_back(entry);
             mCoverArtTexs.push_back(Hmx::Object::New<RndTex>());
         }
+        // The cursor reset happens only when a content list was parsed; a
+        // missing or empty "content" array leaves it untouched.
+        mCurrentEntry = -1;
+        mTimeNextEvent = 0;
     }
-    mCurrentEntry = -1;
-    mTimeNextEvent = 0;
     cfg->Release();
 }
 
