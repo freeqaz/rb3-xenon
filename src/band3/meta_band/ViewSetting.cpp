@@ -376,9 +376,10 @@ void MusicLibraryUpsellViewSetting::Text(
     static Symbol music_library_upsell_on("music_library_upsell_on");
     static Symbol music_library_upsell_off("music_library_upsell_off");
     if (slot->Matches("name")) {
-        label->SetTextToken(
-            row == 0 ? music_library_upsell_on : music_library_upsell_off
-        );
+        if (row == 0)
+            label->SetTextToken(music_library_upsell_on);
+        else
+            label->SetTextToken(music_library_upsell_off);
     } else {
         label->SetTextToken(gNullStr);
     }
