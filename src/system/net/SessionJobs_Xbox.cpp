@@ -210,7 +210,6 @@ void MakeSessionJob::Start() {
                 mUserIndex, mSettings->GetCustomID(i), sizeof(DWORD), &value
             );
         }
-        XOVERLAPPED *overlapped = &mXOverlapped;
         DWORD res = XSessionCreate(
             mFlags,
             mUserIndex,
@@ -218,10 +217,10 @@ void MakeSessionJob::Start() {
             0,
             &mData->mNonce,
             &mData->mInfo,
-            overlapped,
+            &mXOverlapped,
             mSession
         );
-        CheckError(res, overlapped);
+        CheckError(res, &mXOverlapped);
     }
 }
 
