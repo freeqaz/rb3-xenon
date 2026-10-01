@@ -174,6 +174,7 @@ void BandTrack::ResetStreakMeter() {
 }
 
 void BandTrack::Reset() {
+    static Message reset("reset");
     if (mStarPowerMeter) {
         mStarPowerMeter->Reset();
         if (mParent && mParent->HasPlayer() && !unk1b) {
@@ -184,7 +185,9 @@ void BandTrack::Reset() {
     }
     ResetStreakMeter();
     if (mPlayerFeedback) {
-        mPlayerFeedback->HandleType(reset_msg);
+        mPlayerFeedback->HandleType(reset);
+        static Symbol disable("disable");
+        static Message disable_msg(disable);
         SendTrackerDisplayMessage(disable_msg);
 #ifdef HX_NATIVE
         if (UILabel *pctLabel = mPlayerFeedback->Find<UILabel>("solo_percent.lbl", false))
@@ -192,9 +195,10 @@ void BandTrack::Reset() {
 #endif
     }
     if (mFailedFeedback) {
-        mFailedFeedback->HandleType(reset_msg);
+        mFailedFeedback->HandleType(reset);
         if (mParent) {
             if (mParent->GetNoBackFromBrink()) {
+                static Symbol no_saving("no_saving");
                 mFailedFeedback->SetProperty(no_saving, DataNode(1));
             }
         }
