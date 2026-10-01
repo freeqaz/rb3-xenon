@@ -92309,9 +92309,8 @@
   {
    "name": "operator_new_alloc_thunk",
    "address": "0x827bd2f0",
-   "survivor": "??2CriticalSection@@SAPAXI@Z",
+   "survivor": "??2@YAPAXI@Z",
    "folded": [
-    "??2@YAPAXI@Z",
     "??2Accomplishment@@SAPAXI@Z",
     "??2AppChild@@SAPAXI@Z",
     "??2Archive@@SAPAXI@Z",
@@ -92438,6 +92437,13 @@
    ],
    "evidence": "tools/alloc_fold_gate.py -- 8-byte allocator-thunk fold class. Every folded spelling's COMDAT is byte- AND relocation-identical to the map-resident survivor's, which is the /OPT:ICF condition itself applied to two of our own COMDATs: both carry the same relocation to the same symbol, so the fold does not depend on naming retail's branch target (0x827bcd38 is unnamed in the map, which is where tools/comdat_fold_gate.py fail-closes). The survivor is corroborated on retail bytes -- 8 B, word0 equal as a FULL 32-bit value, matching branch opcode/AA/LK -- and the pair (word0, resolved dest) is UNIQUE image-wide: 712 retail 8-byte <word>+<branch> bodies carry 707 distinct combos and the 12 sharing `li r4,0` have 12 DISTINCT destinations, so shape does none of the work. REFUSED, each on a different mechanism and each a real finding: ??2Task (map address 0x822d4278 is `blr`+pad with ZERO fan-in -- a map defect, not a function), ??2OutfitConfig (0x82b66c48 is a real thunk to a DIFFERENT allocator -- our identical COMDAT is a source defect), ?SampleAlloc (our objs define two distinct COMDAT variants). W16-M (2026-09-14): ??2Friend@@SAPAXI@Z added -- gate ADMIT (COMDAT byte- and reloc-identical to the survivor, 1 definition, PlatformMgr_Xbox.obj only); retail Poll's call site is `li r3,0x28; bl 0x827bd2f0` (sizeof(Friend)=0x28 agrees), so the survivor IS the callee. Also gate-ADMIT but deliberately NOT installed (out of W16-M scope, not adjudicated): ??2JobMgr, ??2PropertyEventProvider, ??_UVert@RndMesh, and ??2OutfitConfig -- the last one this evidence text records as REFUSED on retail bytes (0x82b66c48 = thunk to a different allocator); its ADMIT today only means the map no longer contradicts it, not that the retail finding is gone. W16-M S3A (2026-09-14): ??2JobMgr@@SAPAXI@Z added -- gate re-run live: ADMIT (COMDAT byte- and reloc-identical to the survivor, 1 definition, PlatformMgr_Xbox.obj only); retail ??0PlatformMgr's site is `li r3,0x10; bl 0x827bd2f0` and sizeof(JobMgr)=0x10 agrees, so the survivor IS the callee. ??2PropertyEventProvider, ??_UVert@RndMesh, ??2OutfitConfig remain NOT installed (unadjudicated / OutfitConfig's REFUSE was retired by a map rename, not evidence).",
    "withdrawn": [
+    {
+     "spelling": "??2@YAPAXI@Z",
+     "lane": "W16-KD 2026-10-01",
+     "class": "SURVIVOR_MISNAMED",
+     "disposition": "survivor respelled in place; the former membership is the survivor itself",
+     "evidence": "0x827BD2F0 is 'li r4,0; b MemAlloc' inside the MemMgr TU: the global operator new, which MemMgr.cpp defines. CriticalSection has no class allocator in retail -- MemInit (0x827BD300), compiled in that same TU, inlines the global operator new into MemAlloc(0x20, 0) for both locks -- so the old survivor name ??2CriticalSection is no spelling of ours. The map row is renamed to ??2@YAPAXI@Z and the group keyed on it; every other folded operator-new spelling is unchanged."
+    },
     {
      "spelling": "??2BandRetargetVignette@@SAPAXI@Z",
      "lane": "ALIAS-2 2026-08-16",

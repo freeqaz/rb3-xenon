@@ -16,7 +16,13 @@ public:
     bool TryEnter();
     void Abandon();
 
+#ifdef HX_NATIVE
     MEM_OVERLOAD(CriticalSection, 0x20);
+#endif
+    // No class allocator in retail: MemInit (0x827BD300), compiled in the TU
+    // that defines the global operator new, inlines it into MemAlloc(0x20, 0)
+    // for both locks, while every other `new CriticalSection` site branches to
+    // the global operator new's folded body at 0x827BD2F0.
 };
 
 class CritSecTracker {
