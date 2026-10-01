@@ -1,4 +1,6 @@
 {
+ "0x824bd938": "??$New@VRndTransProxy@@@Object@Hmx@@SAPAVRndTransProxy@@XZ",
+ "0x824c5af0": "??1CamShot@@UAA@XZ",
  "0x824bba08": "??0CameraManager@@QAA@PAVWorldDir@@@Z",
  "0x824baa68": "?OnRandomSeed@CameraManager@@AAA?AVDataNode@@PAVDataArray@@@Z",
  "0x824bc730": "?PickCameraShot@CameraManager@@QAAPAVCamShot@@VSymbol@@ABV?$vector@UPropertyFilter@CameraManager@@V?$StlNodeAlloc@UPropertyFilter@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@@Z",
@@ -11614,7 +11616,7 @@
  "0x824c4208": "??1?$ObjVector@VCamShotFrame@@@@QAA@XZ",
  "0x824c4218": "?AddCrowdChars@CamShotCrowd@@QAAXPBV?$list@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@@Z",
  "0x824c44a8": "?resize@?$vector@U?$pair@PBVMoveVariant@@PBV1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVMoveVariant@@PBV1@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXIABU?$pair@PBVMoveVariant@@PBV1@@2@@Z",
- "0x824c4500": "??$New@VRndTransProxy@@@Object@Hmx@@SAPAVRndTransProxy@@XZ",
+ "0x824c4500": null,
  "0x824c4528": "?_M_insert_overflow_aux@?$vector@VCamShotFrame@@V?$StlNodeAlloc@VCamShotFrame@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVCamShotFrame@@ABV3@ABU__false_type@2@I_N@Z",
  "0x824c46b8": null,
  "0x824c4720": "?SetCrowdChars@CamShotCrowd@@QAAXXZ",
