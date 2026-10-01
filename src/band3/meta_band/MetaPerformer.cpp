@@ -484,9 +484,8 @@ bool MetaPerformer::PartPlaysInSet(Symbol s) const {
          ++it) {
         if (*it == gNullStr || *it == any || *it == random)
             return true;
-        BandSongMetadata *data =
-            (BandSongMetadata *)mSongMgr->Data(mSongMgr->GetSongIDFromShortName(*it, true)
-            );
+        int songID = mSongMgr->GetSongIDFromShortName(*it, true);
+        BandSongMetadata *data = (BandSongMetadata *)mSongMgr->Data(songID);
         if (data && data->HasPart(s, false))
             return true;
     }
@@ -518,9 +517,8 @@ int MetaPerformer::GetSetlistMaxVocalParts() const {
         if (*it == gNullStr || *it == any || *it == random)
             continue;
         else {
-            BandSongMetadata *data = (BandSongMetadata *)mSongMgr->Data(
-                mSongMgr->GetSongIDFromShortName(*it, true)
-            );
+            int songID = mSongMgr->GetSongIDFromShortName(*it, true);
+            BandSongMetadata *data = (BandSongMetadata *)mSongMgr->Data(songID);
             if (data) {
                 int dataparts = data->NumVocalParts();
                 if (dataparts > parts)
@@ -679,9 +677,8 @@ int MetaPerformer::GetHighestDifficultyForPart(Symbol s) const {
     FOREACH (it, mSongs) {
         if (*it == gNullStr || *it == any || *it == random)
             return -1;
-        BandSongMetadata *data =
-            (BandSongMetadata *)mSongMgr->Data(mSongMgr->GetSongIDFromShortName(*it, true)
-            );
+        int songID = mSongMgr->GetSongIDFromShortName(*it, true);
+        BandSongMetadata *data = (BandSongMetadata *)mSongMgr->Data(songID);
         if (data && data->HasPart(s, false)) {
             if (diff < mSongMgr->GetPartDifficulty(*it, s)) {
                 diff = mSongMgr->GetPartDifficulty(*it, s);
