@@ -4880,7 +4880,7 @@
  "0x822afc40": "?AddFrameHelper@BandHeadShaper@@QAAXPBDHHMAAM@Z",
  "0x822afcc8": "?AddDegrees@BandHeadShaper@@QAAXPBDHPAMH@Z",
  "0x822afd50": "??0BandHeadShaper@@QAA@XZ",
- "0x822afd68": "??0?$list@UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@UBone@CharBones@@@1@@Z",
+ "0x822afd68": "??1BandHeadShaper@@QAA@XZ",
  "0x822afd88": "??0Vector3@@QAA@XZ",
  "0x822afd90": "?AddChildBones@BandHeadShaper@@QAAXPAVRndTransformable@@@Z",
  "0x822afe10": "?Reskin@BandHeadShaper@@QAAXXZ",
