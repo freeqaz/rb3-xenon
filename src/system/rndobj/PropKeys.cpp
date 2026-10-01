@@ -10,11 +10,16 @@
 
 Hmx::Object *ObjectStage::sOwner;
 Message PropKeys::sInterpMessage(gNullStr, 0, 0, 0, 0, 0);
-int PropKeys::sPropKeysLoadRev = 0;
+// The load rev PropKeys::Load compares against (retail 0x82CC2758). It is a
+// file static: retail's Load keeps it in a register across its stores to
+// `this`, which it may only do for an object whose address never escapes.
+// Named sPropKeysLoadRev rather than gRev because this file is also
+// #included into other TUs under a `#define gRev ...` wrapper.
+static int sPropKeysLoadRev;
 
 // Out of line in retail (0x82421758: stw r3 to the rev static, blr);
-// RndPropAnim::Load calls it.
-void SetPropKeysRev(int rev) { PropKeys::sPropKeysLoadRev = rev; }
+// RndPropAnim::Load calls it before any nested PropKeys::Load().
+void SetPropKeysRev(int rev) { sPropKeysLoadRev = rev; }
 
 float CalcSpline(float t, float *const p) {
     float p1 = p[1];
@@ -513,7 +518,7 @@ BinStream &operator<<(BinStream &bs, const ObjectStage &stage) {
 // field (RB3 has no BinStreamRev), and reads both pointers off the raw stream.
 BinStream &operator>>(BinStream &bs, ObjectStage &stage) {
     ObjectDir *dir = nullptr;
-    if (PropKeys::sPropKeysLoadRev > 8) {
+    if (sPropKeysLoadRev > 8) {
         ObjPtr<ObjectDir> dirPtr(stage.Owner(), nullptr);
         dirPtr.Load(bs, true, dir);
         dir = dirPtr.Ptr();
