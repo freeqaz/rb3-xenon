@@ -15448,7 +15448,7 @@
  "0x825d5568": "?Mat@ViewSettingsProvider@@UBAPAVRndMat@@HHPAVUIListMesh@@@Z",
  "0x825d55e8": "?Text@ViewSettingsProvider@@UBAXHHPAVUIListLabel@@PAVUILabel@@@Z",
  "0x825d5700": "?IsActive@ViewSettingsProvider@@UBA_NH@Z",
- "0x825d5748": "?SelectSetting@ViewSettingsProvider@@QAAHH@Z",
+ "0x825d5748": "?SelectSetting@ViewSettingsProvider@@QAA_NH@Z",
  "0x825d57c0": "?Handle@ViewSettingsProvider@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x825d5d20": "?GetCurrentStatus@FilterViewSetting@@UBAPBDXZ",
  "0x825d5e88": "?Text@FilterViewSetting@@UBAXHHPAVUIListLabel@@PAVUILabel@@@Z",

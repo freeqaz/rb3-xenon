@@ -509,13 +509,13 @@ bool ViewSettingsProvider::IsActive(int idx) const {
     return !mSettings[idx]->IsHeader();
 }
 
-int ViewSettingsProvider::SelectSetting(int idx) {
+bool ViewSettingsProvider::SelectSetting(int idx) {
     ViewSetting *setting = mSettings[idx];
     if (setting->IsValid()) {
         mActiveSetting = mSettings[idx];
-        return 1;
+        return true;
     }
-    return 0;
+    return false;
 }
 
 void ViewSettingsProvider::BuildFilters(Symbol s) {
@@ -593,15 +593,25 @@ void ViewSettingsProvider::ResetActiveSetting() {
 
 BEGIN_HANDLERS(ViewSettingsProvider)
     HANDLE_ACTION(select_setting_option, mActiveSetting->SelectOption(_msg->Int(2)))
-    HANDLE_ACTION(
-        set_to_setting_options,
-        dynamic_cast<UIList *>(_msg->GetObj(2))->SetProvider(mActiveSetting)
-    )
+    // The two cast-and-call arms bind the cast result first, so mActiveSetting
+    // is read after __RTDynamicCast returns.
+    {
+        static Symbol _hs("set_to_setting_options");
+        if (sym == _hs) {
+            UIList *list = _msg->Obj<UIList>(2);
+            list->SetProvider(mActiveSetting);
+            return 0;
+        }
+    }
     HANDLE_EXPR(select_setting, SelectSetting(_msg->Int(2)))
-    HANDLE_ACTION(
-        set_view_setting_to_label,
-        dynamic_cast<AppLabel *>(_msg->GetObj(2))->SetViewSetting(mActiveSetting)
-    )
+    {
+        static Symbol _hs("set_view_setting_to_label");
+        if (sym == _hs) {
+            AppLabel *label = _msg->Obj<AppLabel>(2);
+            label->SetViewSetting(mActiveSetting);
+            return 0;
+        }
+    }
     HANDLE_EXPR(can_select_multiple_options, mActiveSetting->CanSelectMultiple())
     HANDLE_ACTION(refresh_all_settings, RefreshAllSettings())
     HANDLE_ACTION(reset_all_settings, ResetAllSettings())
