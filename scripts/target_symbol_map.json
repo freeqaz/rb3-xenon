@@ -1,4 +1,5 @@
 {
+ "0x82765f40": "?Save@TypeProps@@QAAXAAVBinStream@@@Z",
  "0x82809f90": "?Update@UISlider@@MAAXXZ",
  "0x8280a260": "?DrawShowing@UISlider@@UAAXXZ",
  "0x8280a2c0": "?CollideShowing@UISlider@@UAAPAVRndDrawable@@ABVSegment@@AAMAAVPlane@@@Z",
@@ -21662,7 +21663,7 @@
  "0x82766338": "?ReplaceObject@TypeProps@@AAAXAAVDataNode@@PAVObject@Hmx@@1@Z",
  "0x827663d8": "?Replace@TypeProps@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x827664a8": "?ClearAll@TypeProps@@AAAXXZ",
- "0x827664f8": "?GetArray@TypeProps@@QAAPAVDataArray@@VSymbol@@PAVDataArray@@@Z",
+ "0x827664f8": "?GetArray@TypeProps@@QAAPAVDataArray@@VSymbol@@PAV2@@Z",
  "0x827666b0": "?InsertArrayValue@TypeProps@@QAAXVSymbol@@HABVDataNode@@PAVDataArray@@@Z",
  "0x82766708": "??4TypeProps@@QAAAAV0@ABV0@@Z",
  "0x82766770": "?Export@Sink@MsgSource@@QAAXPAVDataArray@@@Z",
