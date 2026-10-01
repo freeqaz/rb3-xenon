@@ -3930,7 +3930,7 @@
  "0x82270188": "?SplitMs@Timer@@QAAMXZ",
  "0x82270210": "??0FilePath@@QAA@PBD@Z",
  "0x82270288": "??3DataArray@@SAXPAX@Z",
- "0x82270298": "??1ObjRef@@QAA@XZ",
+ "0x82270298": "??1ObjRefOwner@@UAA@XZ",
  "0x822702a8": "??_GObjRefOwner@@UAAPAXI@Z",
  "0x822702f0": "??_H@YAXPAXIHP6APAX0@Z@Z",
  "0x82270330": "??3DirLoader@@SAXPAX@Z",
