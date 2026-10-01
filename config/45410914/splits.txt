@@ -1812,7 +1812,6 @@ UIScreen.cpp:
 	.pdata      start:0x8222C138 end:0x8222C148
 	.pdata      start:0x82244BC8 end:0x82244D58
 	.pdata      start:0x82244D58 end:0x82244DC8
-	.text       start:0x826426C0 end:0x8264278C
 	.text       start:0x827EFF08 end:0x827F1AC0
 	.text       start:0x827F1AC0 end:0x827F20EC
 	.text       start:0x827F213C end:0x827F2148
@@ -12350,8 +12349,6 @@ UploadErrorMgr.cpp:
 	.pdata      start:0x8222C148 end:0x8222C168
 	.pdata      start:0x8222C170 end:0x8222C1C8
 	.text       start:0x82641D1C end:0x82642450
-	.text       start:0x82642450 end:0x826426C0
-	.text       start:0x8264278C end:0x826428E0
 	.text       start:0x82642914 end:0x82642B30
 	.text       start:0x82642D3C end:0x82642D48
 	.text       start:0x8264330C end:0x82643310
@@ -15427,3 +15424,11 @@ xdk/d3dx9/threadlocaldata.cpp:
 xdk/d3dx9/trees.cpp:
 	.pdata      start:0x8224C220 end:0x8224C238
 	.text       start:0x8292FE70 end:0x829308E8
+
+band3/meta_band/AppScoreDisplay.cpp:
+	.text       start:0x82642450 end:0x826424B0
+
+
+band3/meta_band/BandScreen.cpp:
+	.text       start:0x826424B0 end:0x826428E0
+
