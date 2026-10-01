@@ -25,9 +25,11 @@ Rand CameraManager::sRand(0);
 int CameraManager::sSeed;
 
 CameraManager::CameraManager(WorldDir *parent)
-    : mParent(parent), mNextShot(parent), mCurrentShot(parent), mCamStartTime(0),
+    : mParent(parent), mNextShot(ObjPtrInlineOwner(), parent),
+      mCurrentShot(ObjPtrInlineOwner(), parent), mCamStartTime(0),
       mFreeCam(nullptr) {
     MILO_ASSERT(mParent, 0x34);
+    DOFProc::Init(); // retail ctor 0x824BBA08 ends with this call (0x82466298)
 }
 
 CameraManager::~CameraManager() {
@@ -324,6 +326,8 @@ void CameraManager::SyncObjects() {
 CamShot *
 CameraManager::PickCameraShot(Symbol s, const std::vector<PropertyFilter> &filts) {
     CamShot *ret = FindCameraShot(s, filts);
+#ifdef HX_NATIVE
+    // retail PickCameraShot (0x824BC730) has no not-found report
     if (!ret) {
         static Symbol flags_exact("flags_exact");
         static Symbol flags_any("flags_any");
@@ -339,10 +343,13 @@ CameraManager::PickCameraShot(Symbol s, const std::vector<PropertyFilter> &filts
         }
         MILO_NOTIFY(msg.c_str());
         return nullptr;
-    } else {
-        mNextShot = ret;
-        return ret;
     }
+#else
+    if (!ret)
+        return nullptr;
+#endif
+    mNextShot = ret;
+    return ret;
 }
 
 DataNode CameraManager::OnPickCameraShot(DataArray *da) {
@@ -367,8 +374,7 @@ DataNode CameraManager::OnNumCameraShots(DataArray *da) {
 }
 
 DataNode CameraManager::OnRandomSeed(DataArray *da) {
-    sSeed = da->Int(2);
-    Randomize();
+    sSeed = da->Int(2); // retail 0x824BAA68 does not re-randomize here
     return 0;
 }
 

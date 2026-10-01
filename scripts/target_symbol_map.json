@@ -1,4 +1,11 @@
 {
+ "0x824bba08": "??0CameraManager@@QAA@PAVWorldDir@@@Z",
+ "0x824baa68": "?OnRandomSeed@CameraManager@@AAA?AVDataNode@@PAVDataArray@@@Z",
+ "0x824bc730": "?PickCameraShot@CameraManager@@QAAPAVCamShot@@VSymbol@@ABV?$vector@UPropertyFilter@CameraManager@@V?$StlNodeAlloc@UPropertyFilter@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x824bc3a0": "??$sort@PAPAVCamShot@@UNameSort@@@stlpmtx_std@@YAXPAPAVCamShot@@0UNameSort@@@Z",
+ "0x824bb5a0": "??$__make_heap@PAPAVCamShot@@UNameSort@@PAV1@H@stlpmtx_std@@YAXPAPAVCamShot@@0UNameSort@@0PAH@Z",
+ "0x824bb868": "??$sort_heap@PAPAVCamShot@@UNameSort@@@stlpmtx_std@@YAXPAPAVCamShot@@0UNameSort@@@Z",
+ "0x824bb550": "??$__insertion_sort@PAPAVCamShot@@PAV1@UNameSort@@@stlpmtx_std@@YAXPAPAVCamShot@@00UNameSort@@@Z",
  "0x824b88b0": "?SetPresetsEquivalent@LightPresetManager@@QAAX_N@Z",
  "0x824b8a10": "?GetPresets@LightPresetManager@@QAAXAAPAVLightPreset@@0@Z",
  "0x824b8c50": "?SchedulePstKey@LightPresetManager@@QAAXH@Z",
