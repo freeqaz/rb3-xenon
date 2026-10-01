@@ -542,9 +542,9 @@ void BandTrack::SetupPlayerIntro() {
     if (mPlayerIntro) {
         mPlayerIntro->HandleType(reset);
         if (mTrackInstrument >= 0 && mTrackInstrument < 8) {
-            static Message setIcon = Message("set_icon", DataNode("G"));
+            static Message setIcon("set_icon", DataNode("G"));
             if (mParent) {
-                setIcon[0] = DataNode(mParent->GetTrackIcon());
+                setIcon[0] = mParent->GetTrackIcon();
                 mParent->SetUserNameLabel(mPlayerIntro, "player_name.lbl");
             }
             mPlayerIntro->HandleType(setIcon);
@@ -973,8 +973,9 @@ void BandTrack::DisablePlayer(int i) {
     if (mParent)
         mParent->SetGemsEnabled(-1.0f);
     if (MyTrackPanelDir()) {
-        bool atStart = mParent && mParent->PlayerDisconnectedAtStart();
-        MyTrackPanelDir()->DisablePlayer(mTrackIdx, atStart);
+        MyTrackPanelDir()->DisablePlayer(
+            mTrackIdx, mParent && mParent->PlayerDisconnectedAtStart()
+        );
     }
     static Message failed("failed_task", DataNode(0), DataNode(0));
     failed[0] = disconnected;
