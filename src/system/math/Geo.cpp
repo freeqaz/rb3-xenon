@@ -762,17 +762,6 @@ void Sphere::GrowToContain(const Sphere &s) {
     }
 }
 
-// Retail 0x824791A0: a Vector2 normalize the image keeps out of line (a COMDAT
-// that lands in RndLine's object). A zero vector is left untouched; y is written
-// before x.
-inline void Normalize(const Vector2 &in, Vector2 &out) {
-    if (in.x == 0 && in.y == 0)
-        return;
-    float inv = 1.0f / std::sqrt(in.x * in.x + in.y * in.y);
-    out.y = in.y * inv;
-    out.x = in.x * inv;
-}
-
 void Frustum::Set(float near, float far, float fovY, float ratio) {
     front.Set(0, 1, 0, -near);
     back.Set(0, -1, 0, far);

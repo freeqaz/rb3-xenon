@@ -124,7 +124,8 @@ public:
     // finding generalized by tools/vtable_order_sweep.py's slot COUNT.
     float CharWidth(unsigned short) const;
     float CharAdvance(unsigned short) const;
-    bool CharAdvance(unsigned short, unsigned short, float &) const;
+    // Advance of `c` after `prev`, kerning included (0x82474500).
+    float CharAdvance(unsigned short prev, unsigned short c) const;
     float Kerning(unsigned short, unsigned short) const;
     bool CharDefined(unsigned short) const;
     float AspectRatio() const { return mCellSize.y / mCellSize.x; }
@@ -138,6 +139,8 @@ public:
     // vtable has 21 slots, exactly Hmx::Object's count, so NO RndFont accessor
     // occupies a slot.  Mat() is now non-virtual too.)
     RndMat *GetMat() const { return mMat; }
+    RndFont *NextFont() const { return mNextFont; }
+    void SetNextFont(RndFont *f) { mNextFont = f; }
     const RndFont *DataOwner() const { return mTextureOwner; }
     float FontUnit() const { return mCellSize.x; }
     float FontUnitInverse() const { return 1.0f / FontUnit(); }
@@ -177,8 +180,8 @@ public:
     RndTex *ValidTexture(int) const;
     void SetCellSize(float, float);
     void BleedTest();
-    bool
-    CharWidthAdvanceCoords(unsigned short, float &, float &, Vector2 &, Vector2 &) const;
+    // UV rectangle of `c` in the font texture (0x82473A18).
+    void GetTexCoords(unsigned short, Vector2 &, Vector2 &) const;
     float DeprecatedSize() const { return mDeprecatedSize; }
     // RB3 retail API used by ui/UILabel.cpp.
     // DECLARATION-ONLY, non-virtual -> layout- and vtable-neutral.
