@@ -3572,6 +3572,7 @@ VorbisReader.cpp:
 	.pdata      start:0x8225E888 end:0x8225E8A0
 	.pdata      start:0x8225E8A0 end:0x8225E8A8
 	.pdata      start:0x8225E8B0 end:0x8225E8B8
+	.pdata      start:0x8225E8E0 end:0x8225E8E8
 	.pdata      start:0x8225E8E8 end:0x8225E8F0
 	.pdata      start:0x8225E908 end:0x8225E918
 	.pdata      start:0x8225E950 end:0x8225E958
@@ -3591,6 +3592,7 @@ VorbisReader.cpp:
 	.text       start:0x82BB2D48 end:0x82BB3110
 	.text       start:0x82BB3110 end:0x82BB3228
 	.text       start:0x82BB3288 end:0x82BB33D8
+	.text       start:0x82BB3578 end:0x82BB36B8
 	.text       start:0x82BB36B8 end:0x82BB3750
 	.text       start:0x82BB37C4 end:0x82BB37D0
 	.text       start:0x82BB3870 end:0x82BB3BB8
@@ -3701,7 +3703,6 @@ Mesh.cpp:
 	.pdata      start:0x8223D058 end:0x8223D060
 	.pdata      start:0x822449B0 end:0x822449C0
 	.pdata      start:0x8225E8D8 end:0x8225E8E0
-	.pdata      start:0x8225E8E0 end:0x8225E8E8
 	.pdata      start:0x8225E8F0 end:0x8225E8F8
 	.pdata      start:0x8225E8F8 end:0x8225E908
 	.pdata      start:0x8225E918 end:0x8225E928
@@ -3748,7 +3749,6 @@ Mesh.cpp:
 	.text       start:0x827674E8 end:0x82767518
 	.text       start:0x827ED4B0 end:0x827ED548
 	.text       start:0x82BB3510 end:0x82BB3578
-	.text       start:0x82BB3578 end:0x82BB36B8
 	.text       start:0x82BB3750 end:0x82BB37C4
 	.text       start:0x82BB37D0 end:0x82BB3870
 	.text       start:0x82BB3BB8 end:0x82BB3C68

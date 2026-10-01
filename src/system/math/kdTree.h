@@ -100,7 +100,7 @@ public:
         kdTriList *GetTriList() const { return mData.triList; }
         void SetTriList(kdTriList *p) { mData.triList = p; }
 #endif
-        short mFlags;
+        unsigned short mFlags;
 
         unsigned short GetIsLeaf() const { return mFlags & 0x8000; }
 
@@ -213,8 +213,9 @@ public:
     kdTree(const Box &box) {
         mBounds.Set(box.mMin, box.mMax);
         mNodes = new kdTreeNode[0x8000];
+        // the low 15 bits of each node's flags hold its own index
         for (u16 i = 0; i < 0x8000; i++) {
-            mNodes[i].mFlags |= i;
+            mNodes[i].mFlags = (mNodes[i].mFlags & 0x8000) | (i & 0x7FFF);
         }
     }
     ~kdTree() { delete[] mNodes; }
@@ -224,7 +225,8 @@ public:
         mNodes->Pack(s, mBounds, mItems, mNodes, uc);
     }
 
-    bool Intersect(const Vector3 &, const Vector3 &, float, float &) const;
+    // origin, direction, out: distance to the nearest hit
+    bool Intersect(const Vector3 &, const Vector3 &, float &) const;
 
 private:
     std::list<T *> mItems; // 0x0 - objects?
@@ -303,15 +305,17 @@ void kdTree<T>::kdTreeNode::Pack(
                         kdTreeNode *pNode0 = pBase + ((unsigned short)mFlags * 2 + 1);
                         kdTreeNode *pNode1 = pNode0 + 1;
 #else
+                        // children of node n sit at 2n+1 and 2n+2 (16-byte stride
+                        // from pBase + 8); the index is the low 15 bits of mFlags
+                        kdTreeNode *pNode0 = reinterpret_cast<kdTreeNode *>(
+                            reinterpret_cast<char *>(pBase)
+                            + ((mFlags & 0x7fff) << 4) + 8
+                        );
                         kdTreeNode *pNode1 = reinterpret_cast<kdTreeNode *>(
                             reinterpret_cast<char *>(pBase)
-                            + (((unsigned short)mFlags + 1) << 4)
+                            + (((mFlags & 0x7fff) + 1) << 4)
                         );
-                        reinterpret_cast<kdTreeNode *>(
-                            reinterpret_cast<char *>(pBase)
-                            + (((unsigned short)mFlags) << 4) + 8
-                        )
-                            ->Pack(s, minBox, leftList, pBase, ucNext);
+                        pNode0->Pack(s, minBox, leftList, pBase, ucNext);
 #endif
 #ifdef HX_NATIVE
                         pNode0->Pack(s, minBox, leftList, pBase, ucNext);
