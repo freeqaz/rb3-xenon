@@ -504,22 +504,24 @@ void OutfitConfig::RecomposePatches(int flag) {
 // strings sat unreferenced in the DECOMP_FORCEACTIVE at the bottom of this file.
 static bool
 SetHeadNormMap(const char *part, int option, Symbol gender, ObjectDir *dir1, ObjectDir *dir2) {
+    // Retail lays the controller-found path out first; both "could not find" warnings
+    // share one PathName call and one `return false` at the end.
     RndTexBlendController *ctrl =
         dir2->Find<RndTexBlendController>(MakeString("norm_%s.texblendctl", part), false);
-    if (!ctrl) {
-        MILO_WARN("%s could not find norm_%s.texblendctl", PathName(dir2), part);
-        return false;
-    }
-    RndTex *tex =
-        dir1->Find<RndTex>(MakeString("%s_head_norm%02d.tex", gender, option + 1), false);
-    if (!tex) {
+    if (ctrl) {
+        RndTex *tex =
+            dir1->Find<RndTex>(MakeString("%s_head_norm%02d.tex", gender, option + 1), false);
+        if (tex) {
+            if (tex == ctrl->Tex())
+                return false;
+            ctrl->SetTex(tex);
+            return true;
+        }
         MILO_WARN("%s could not find head norm %d", PathName(dir1), option + 1);
-        return false;
+    } else {
+        MILO_WARN("%s could not find norm_%s.texblendctl", PathName(dir2), part);
     }
-    if (tex == ctrl->Tex())
-        return false;
-    ctrl->SetTex(tex);
-    return true;
+    return false;
 }
 
 void OutfitConfig::SetSkinTextures(ObjectDir *dir1, ObjectDir *dir2, BandCharDesc *desc) {
@@ -1070,7 +1072,8 @@ int OutfitConfig::NumColorOptions() const {
     int maxOption = -1;
     for (int i = 0; i < mMats.size(); i++) {
         const MatSwap &m = mMats[i];
-        if (m.mColor1Palette || !m.mTextures.empty()) {
+        // Retail tests the texture count ((end - begin) / sizeof), not begin != end.
+        if (m.mColor1Palette || m.mTextures.size()) {
             if (maxOption < mMats[i].mColor1Option)
                 maxOption = mMats[i].mColor1Option;
         }
@@ -1122,7 +1125,7 @@ int OutfitConfig::NumIndices(int idx) const {
         if (m.mColor1Option == idx) {
             if (m.mColor1Palette)
                 return m.mColor1Palette->NumColors();
-            if (!m.mTextures.empty())
+            if (m.mTextures.size())
                 return m.mTextures.size();
         }
         if (m.mColor2Option == idx) {
