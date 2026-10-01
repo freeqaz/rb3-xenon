@@ -1325,8 +1325,8 @@ void VocalTrack::UpdateScrolling(float ms) {
             }
             if (part < 2) {
                 int dz = mNextDeployZone[part];
-                while (dz < notes->mFreestyleSections.size()
-                       && notes->mFreestyleSections[dz].second <= buildAhead) {
+                std::vector<std::pair<float, float> > &fs = notes->mFreestyleSections;
+                while (dz < fs.size() && fs[dz].second <= buildAhead) {
                     mNextDeployZone[part] = dz;
                     dz++;
                 }
