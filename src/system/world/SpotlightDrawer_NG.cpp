@@ -172,34 +172,35 @@ void NgSpotlightDrawer::RenderCone(Spotlight *sl) {
 }
 
 void NgSpotlightDrawer::RenderSphere(Spotlight *sl) {
-    static float sBeamBrighten = 2.0f;
-    static float sSphereScale = 0.5f;
+    static float sBeamBrighten = 0.1f; // lbl_82F197C8
+    static float sSphereScale = 1.0f; // lbl_82F197CC
     MILO_ASSERT(sl->HasBeam(), 0x470);
+    Spotlight::BeamDef &def = sl->mBeam;
     float zero = 0.0f;
-    Vector4 sphereParams(zero, zero, 0.625f, sl->mBeam.mTopRadius * sSphereScale);
-    const Spotlight::BeamDef &beam = sl->mBeam;
+    Vector4 sphereParams(zero, zero, 0.625f, def.mTopRadius * sSphereScale);
     TheShaderMgr.SetPConstant((PShaderConstant)0x5b, sphereParams);
 
     Spotlight *colorOwner = sl->mColorOwner;
-    float intensity = colorOwner->mIntensity * sl->mBeam.mBrighten * sBeamBrighten;
-    float r = colorOwner->mColor.red * intensity;
+    float intensity = colorOwner->mIntensity * def.mBrighten * sBeamBrighten;
+    float r = intensity * colorOwner->mColor.red;
     float g = colorOwner->mColor.green * intensity;
     float b = colorOwner->mColor.blue * intensity;
     float a = colorOwner->mColor.alpha * intensity;
 
     if (!sl->mAnimateColorFromPreset && sl->mBeam.mMat) {
-        r = r * sl->mBeam.mMat->GetColor().red;
-        g = sl->mBeam.mMat->GetColor().green * g;
-        b = sl->mBeam.mMat->GetColor().blue * b;
-        a = sl->mBeam.mMat->GetColor().alpha * a;
+        const Hmx::Color &matColor = sl->mBeam.mMat->GetColor();
+        r = r * matColor.red;
+        g = matColor.green * g;
+        b = matColor.blue * b;
+        a = matColor.alpha * a;
     }
 
     TheShaderMgr.mCullModeOverride = 1;
     Vector4 colorVec(r, g, b, a);
     TheShaderMgr.SetPConstant((PShaderConstant)0x5a, colorVec);
 
-    SetXSectionTexture(beam);
-    beam.mBeam->DrawShowing();
+    SetXSectionTexture(def);
+    def.mBeam->DrawShowing();
 }
 
 void NgSpotlightDrawer::RenderSheet(Spotlight *sl) {
@@ -305,98 +306,139 @@ void NgSpotlightDrawer::RenderConeDefs(Spotlight *sl, const Hmx::Color &color) {
     TheShaderMgr.mCullModeOverride = 3;
     TheShaderMgr.unk24 = 0;
 
-    RndMesh *beam = sl->mBeam.mBeam;
-    if (beam && sl->mBeam.mLength > 0.0f) {
-        float brighten = sl->mBeam.mBrighten;
+    // Retail keeps a pointer to the BeamDef sub-object in a callee-saved GPR for
+    // the whole body (`lfs f13, 0x8(r28)` = def.mLength), rather than re-deriving
+    // it from `sl` at every use (`lfs f13, 0x1fc(r30)`).
+    const Spotlight::BeamDef &def = sl->mBeam;
+    RndMesh *beam = def.mBeam;
+    if (beam && def.mLength > 0.0f) {
+        float brighten = def.mBrighten;
         Vector4 colorVec(
             color.red * brighten, color.green * brighten, color.blue * brighten, 1.0f
         );
         TheShaderMgr.SetPConstant((PShaderConstant)0x5a, colorVec);
 
-        SetupXSection(sl, sl->mBeam);
+        SetupXSection(sl, def);
 
         const Transform &camXfm = mSpotCam->WorldXfm();
+        Vector3 camPos = camXfm.v;
         const Transform &camXfm2 = mSpotCam->WorldXfm();
+        Vector3 camUp = camXfm2.m.y;
 
-        float camPosX = camXfm.v.x;
-        float camPosY = camXfm.v.y;
-        float camPosZ = camXfm.v.z;
+        Vector4 camPosVec(camPos.x, camPos.y, camPos.z, 1.0f);
+        TheShaderMgr.SetPConstant((PShaderConstant)0xa, camPosVec);
 
-        float camUpX = camXfm2.m.y.x;
-        float camUpY = camXfm2.m.y.y;
-        float camUpZ = camXfm2.m.y.z;
-
-        Vector4 camPos(camPosX, camPosY, camPosZ, 1.0f);
-        TheShaderMgr.SetPConstant((PShaderConstant)0xa, camPos);
-
-        float dotProduct = -(camUpX * camPosX + camUpY * camPosY + camUpZ * camPosZ);
-        Vector4 camPlane(camUpX, camUpY, camUpZ, dotProduct);
+        // Association is the image's, not a flat sum: retail starts the chain
+        // at z (828215DC fmuls f11, f0, f29), adds y (82821600 fmadds), then
+        // negates x in (82821604 fnmadds). A flat three-term sum in any
+        // order lowers y-first here.
+        float dotProduct =
+            -(camUp.x * camPos.x + (camUp.y * camPos.y + camUp.z * camPos.z));
+        Vector4 camPlane(camUp.x, camUp.y, camUp.z, dotProduct);
         TheShaderMgr.SetPConstant((PShaderConstant)0x1e, camPlane);
 
         float farPlane = mSpotCam->FarPlane();
         float zero = 0.0f;
-        float invFarPlane = zero;
+        // if/else, not a pre-initialised local: retail materialises the 0.0f
+        // through an explicit else arm (`b`/`fmr f0, f19`), which a
+        // `x = 0; if (..) x = ..;` spelling folds away.
+        float invFarPlane;
         if (zero < farPlane) {
             invFarPlane = 1.0f / farPlane;
+        } else {
+            invFarPlane = zero;
         }
 
-        Vector4 fogParams(mParams.mHalfDistance, invFarPlane, zero, zero);
+        // BUG FIX (w7-bw): the image lays the 0x5b constant out as
+        // (0, mHalfDistance, 0, invFarPlane) -- 82821640 `stfs f13, 0xe4(r1)`
+        // (half distance -> .y), 82821648 `stfs f0, 0xec(r1)` (1/farPlane
+        // -> .w), 82821650/54 `stfs f19` to 0xe0/0xe8 (.x/.z = 0). The old
+        // spelling (mHalfDistance, invFarPlane, 0, 0) fed the pixel shader
+        // both values in the wrong lanes.
+        Vector4 fogParams(zero, mParams.mHalfDistance, zero, invFarPlane);
         TheShaderMgr.SetPConstant((PShaderConstant)0x5b, fogParams);
 
         Vector3 lightPos;
         GetLightPosition(sl, lightPos);
 
+        // Whole-vector copy, not three scalar reads: retail lifts all four words
+        // of the world transform's +Y row into a stack local and reads the
+        // components back from it.
         const Transform &slXfm = sl->WorldXfm();
-        float dirX = slXfm.m.y.x;
-        float dirY = slXfm.m.y.y;
-        float dirZ = slXfm.m.y.z;
+        Vector3 dir = slXfm.m.y;
 
-        Vector2 radii = sl->mBeam.NGRadii();
+        Vector2 radii = def.NGRadii();
         float topRad = radii.x;
         float botRad = radii.y;
         float minRad = (topRad - botRad) < 0.0f ? topRad : botRad;
 
-        float offset = 0.0f;
+        float offset;
         if (0.0f < botRad) {
-            offset = (minRad * sl->mBeam.mLength) / (botRad - minRad);
+            offset = (minRad * def.mLength) / (botRad - minRad);
+        } else {
+            offset = zero;
         }
 
         float negOffset = -offset;
-        float totalLength = offset + sl->mBeam.mLength;
+        float totalLength = offset + def.mLength;
         float invTotalLength = 1.0f / totalLength;
 
-        float apexX = lightPos.x + dirX * negOffset;
-        float apexY = lightPos.y + dirY * negOffset;
-        float apexZ = lightPos.z + dirZ * negOffset;
+        // The apex offset is a scaled copy of `dir`, so the products are plain
+        // fmuls followed by fadds; folding them into the addend expression makes
+        // MSVC contract each pair into a single fmadds, which retail does not do.
+        Vector3 apexOffset = dir;
+        apexOffset *= negOffset;
+        float apexX = apexOffset.x + lightPos.x;
+        float apexY = apexOffset.y + lightPos.y;
+        float apexZ = apexOffset.z + lightPos.z;
 
         Vector4 apex(apexX, apexY, apexZ, invTotalLength);
         TheShaderMgr.SetPConstant((PShaderConstant)0x19, apex);
 
+        // NEGATIVE RESULT (w7-bw): retail fills this Vector4 through one FPR,
+        // load/store interleaved (828217B4..828217D8). Member-wise assignment
+        // (`Vector4 direction; direction.x = ...`) reproduces that shape but
+        // re-colours every Vector4 slot in the frame (camPosVec 0xb0 -> 0x90,
+        // fogParams 0xe0 -> 0xa0, apex 0x90 -> 0xe0, ...): 96.47 -> 93.5, and
+        // 94.8 with the block wrapped in its own scope. The ctor form keeps
+        // the frame layout; the three-load-then-store shape is the residual.
         const Transform &slXfm2 = sl->WorldXfm();
         Vector4 direction(slXfm2.m.y.x, slXfm2.m.y.y, slXfm2.m.y.z, totalLength);
         TheShaderMgr.SetPConstant((PShaderConstant)0x1a, direction);
 
         const Transform &camXfm3 = mSpotCam->WorldXfm();
-        float vx = camXfm3.v.x;
-        float vy = camXfm3.v.y;
-        float vz = camXfm3.v.z;
+        Vector3 relCam = camXfm3.v;
 
-        float relX = vx - apexX;
-        float relY = vy - apexY;
-        float relZ = vz - apexZ;
+        float relX = relCam.x - apexX;
+        float relY = relCam.y - apexY;
+        float relZ = relCam.z - apexZ;
 
         Vector4 relCamPos(relX, relY, relZ, 1.0f);
         TheShaderMgr.SetPConstant((PShaderConstant)0x1b, relCamPos);
 
         Vector4 radiiVec(
             minRad, botRad,
-            dirX * apexX + dirY * apexY + dirZ * apexZ,
-            dirX * apexX + dirY * apexY + dirZ * apexZ + totalLength
+            dir.x * apexX + dir.y * apexY + dir.z * apexZ,
+            dir.x * apexX + dir.y * apexY + dir.z * apexZ + totalLength
         );
         TheShaderMgr.SetPConstant((PShaderConstant)0x1d, radiiVec);
 
+        // After the 0x1d upload retail re-reads both radii from the Vector4
+        // it just passed (828218C0 `lfs f12, 0x74(r1)`, 828218C8
+        // `lfs f13, 0x70(r1)`) rather than from the registers still holding
+        // minRad/botRad: the source reads radiiVec back.
+        // RESIDUAL (w7-bw, 96.5 canonical): after the 0x1d upload retail
+        // re-reads both radii from the Vector4 it just passed (828218C0
+        // `lfs f12, 0x74(r1)`, 828218C8 `lfs f13, 0x70(r1)`) instead of the
+        // callee-saved copies, so the source read radiiVec.x/.y back. Spelling
+        // it that way (radiusDiff = radiiVec.y - radiiVec.x, shift from
+        // radiiVec.x, cos from radiiVec.y) matches those three rows but
+        // re-colours totalLength/invTotalLength (f24/f23 -> f23/f22) and
+        // reschedules the whole apex block 82821700..82821780 (copy words
+        // 0,4,c,8 -> c,0,4,8; y/z sums swapped): 96.5 -> 93.2 twice. Kept the
+        // register-sourced form.
         float radiusDiff = botRad - minRad;
-        float dotRelDir = dirX * relX + dirY * relY + dirZ * relZ;
+        float dotRelDir = dir.x * relX + dir.y * relY + dir.z * relZ;
         float tanSlope = invTotalLength * radiusDiff;
 
         float shift = 0.0f;
@@ -404,8 +446,8 @@ void NgSpotlightDrawer::RenderConeDefs(Spotlight *sl, const Hmx::Color &color) {
             shift = (minRad / radiusDiff) * totalLength;
         }
 
-        float extProj = shift + dotRelDir;
         float cosAngle = (float)cos((float)atan(invTotalLength * botRad));
+        float extProj = shift + dotRelDir;
 
         Vector4 coneParams(
             tanSlope * tanSlope + 1.0f,
@@ -429,6 +471,7 @@ void NgSpotlightDrawer::SetupFogDensityMap() {
 }
 
 void NgSpotlightDrawer::SetupForPostProcess() {
+    static float sPostIntensityScale = 32.0f;
     Vector4 zero(0.0f, 0.0f, 0.0f, 0.0f);
     TheShaderMgr.SetPConstant((PShaderConstant)0x5A, zero);
     BlurRT();
@@ -439,7 +482,11 @@ void NgSpotlightDrawer::SetupForPostProcess() {
     } else {
         recipFarPlane = 0.0f;
     }
-    Vector4 intensityParams(mParams.mIntensity * 32.0f, 0.0f, 0.0f, recipFarPlane);
+    // .y is the far-plane DISTANCE (`stfs f13, 0x64(r1)`, f13 = mFarPlane as
+    // loaded for the > 0 test); only .z is zero.  We passed 0.0 in .y.
+    Vector4 intensityParams(
+        mParams.mIntensity * sPostIntensityScale, farPlane, 0.0f, recipFarPlane
+    );
     TheShaderMgr.SetPConstant((PShaderConstant)0x5B, intensityParams);
     Hmx::Color c = mParams.mColor;
     Vector4 colorVec(c.red, c.green, c.blue, c.alpha);
@@ -633,33 +680,48 @@ void NgSpotlightDrawer::RenderScene() {
 
 namespace {
 
-// Slides a beam corner along `dir` by `scale`.  `dir` arrives by value: retail
-// copies the whole 16-byte Vector3 (padding included) into a fresh stack slot
-// at every one of the five corner sites, which is what produces the
-// lwz/lwz/lwz/lwz + stw/stw/stw/stw runs that dominate this function.
+// Slides a beam corner along `dir` by `scale`.  `dir` arrives by value AND IS
+// SCALED IN PLACE -- that is what makes the copy survive.  Xenon MSVC at /O1
+// folds an *unmodified* local-to-local 16-byte Vector3 copy unconditionally,
+// but a by-value parameter the callee writes to is a distinct object it has to
+// materialise.  Each of the five corner sites therefore keeps its own
+// lwz/lwz/lwz/lwz + stw/stw/stw/stw run, exactly as retail does.  (The scaled
+// stores themselves are dead and get removed, so all five copies can share
+// stack slots with one another.)
 void SlideCorner(Vector3 &pt, Vector3 dir, float scale) {
-    pt.x += dir.x * scale;
-    pt.y += dir.y * scale;
-    pt.z += dir.z * scale;
+    dir *= scale;
+    pt.x += dir.x;
+    pt.y += dir.y;
+    pt.z += dir.z;
 }
 
 void SlideCornerBack(Vector3 &pt, Vector3 dir, float scale) {
-    pt.x -= dir.x * scale;
-    pt.y -= dir.y * scale;
-    pt.z -= dir.z * scale;
+    dir *= scale;
+    pt.x -= dir.x;
+    pt.y -= dir.y;
+    pt.z -= dir.z;
 }
 
 // Normal of the plane through the eye and the silhouette edge a..b.  Both
-// endpoints arrive by value for the same reason as above.
+// endpoints arrive by value and are rebased onto the eye in place, for the same
+// reason as above -- that keeps both 16-byte copies.
 void EyeEdgePlane(Vector3 a, Vector3 b, const Vector3 &eye, Vector3 &dst) {
-    dst.Set(
-        (a.y - eye.y) * (b.z - eye.z) - (a.z - eye.z) * (b.y - eye.y),
-        (a.z - eye.z) * (b.x - eye.x) - (a.x - eye.x) * (b.z - eye.z),
-        (a.x - eye.x) * (b.y - eye.y) - (a.y - eye.y) * (b.x - eye.x)
-    );
+    a -= eye;
+    b -= eye;
+    Cross(a, b, dst);
 }
 
 void NormalizeCopy(Vector3 v, Vector3 &dst) { Normalize(v, dst); }
+
+// Divides a silhouette plane through by its projection onto the bisector and
+// packs it as a shader plane equation.  `n` is by value and scaled in place for
+// the same copy-preserving reason as SlideCorner.
+void PlaneEquation(Vector3 n, float inv, float d, Vector4 &out) {
+    n.x *= inv;
+    n.y *= inv;
+    n.z *= inv;
+    out.Set(n.x, n.y, n.z, inv * d);
+}
 
 }
 
@@ -670,6 +732,15 @@ void NormalizeCopy(Vector3 v, Vector3 &dst) { Normalize(v, dst); }
 // Everything here is Vector3-valued: retail works with whole vectors, copies
 // them field-wise into the corner locals, and only drops to scalars for the
 // final shader constants.
+//
+// w7-bj (2026-09-14): still 79.24 canonical. The residual is 30 insert/delete
+// clusters spread over the corner block (rows ~118-330): the image keeps one
+// extra by-value copy of perp at 0x120 for the botR slides, reuses perp's slot
+// 0x60 for topLeft once perp is dead, and saves r17-r31 (15 GPRs, three more
+// than we do) because it keeps more 16-byte copies in flight at once. Refuted
+// here: hoisting all five corner copies above the slides (copies first, slides
+// after) drops the function to 67.9 with 76 inserts / 72 deletes. Interleaved
+// copy-then-slide, as written, is the closer shape.
 void NgSpotlightDrawer::SetupXSection(Spotlight *sl, const Spotlight::BeamDef &def) {
     Vector3 lightPos;
     GetLightPosition(sl, lightPos);
@@ -680,8 +751,14 @@ void NgSpotlightDrawer::SetupXSection(Spotlight *sl, const Spotlight::BeamDef &d
     // The beam points down the spotlight's local +Y axis.
     const Vector3 &beamDir = sl->WorldXfm().m.y;
 
+    // Component-wise on purpose: `toCam -= camXfm.v` makes MSVC materialise
+    // &camXfm.v into a GPR for operator-=' reference parameter, and that
+    // address computation is dead by the time the loads are folded back to
+    // 0x30/0x34/0x38(r30).  Retail has no such addi.
     Vector3 toCam = lightPos;
-    toCam -= camXfm.v;
+    toCam.x -= camXfm.v.x;
+    toCam.y -= camXfm.v.y;
+    toCam.z -= camXfm.v.z;
 
     Vector3 viewDir = toCam;
     Normalize(viewDir, viewDir);
@@ -711,19 +788,24 @@ void NgSpotlightDrawer::SetupXSection(Spotlight *sl, const Spotlight::BeamDef &d
     Vector3 botLeft = botCenter;
     SlideCornerBack(botLeft, perp, botR);
 
+    // The eye position is read once into a local.  `camXfm` is a reference to
+    // memory this function does not own, so every `camXfm.v.x` re-spelling has
+    // to be re-loaded after each `Normalize` call; a local whose address never
+    // escapes gets scalarised into callee-saved FPRs and survives them, which
+    // is what retail does (f18/f26/f25 hold eye.x/y/z across both plane calls).
+    Vector3 eye(camXfm.v.x, camXfm.v.y, camXfm.v.z);
+
     Vector3 rightPlane;
-    EyeEdgePlane(topRight, botRight, camXfm.v, rightPlane);
+    EyeEdgePlane(topRight, botRight, eye, rightPlane);
     Normalize(rightPlane, rightPlane);
 
     Vector3 leftPlane;
-    EyeEdgePlane(topLeft, botLeft, camXfm.v, leftPlane);
+    EyeEdgePlane(topLeft, botLeft, eye, leftPlane);
     Normalize(leftPlane, leftPlane);
 
     // Plane constants: the eye lies on both planes, so d == dot(eye, n).
-    float rightD = camXfm.v.x * rightPlane.x
-        + (camXfm.v.y * rightPlane.y + camXfm.v.z * rightPlane.z);
-    float leftD = camXfm.v.x * leftPlane.x
-        + (camXfm.v.y * leftPlane.y + camXfm.v.z * leftPlane.z);
+    float rightD = eye.x * rightPlane.x + (eye.y * rightPlane.y + eye.z * rightPlane.z);
+    float leftD = eye.x * leftPlane.x + (eye.y * leftPlane.y + eye.z * leftPlane.z);
 
     // Bisector of the two silhouette planes.
     Vector3 bisector = rightPlane;
@@ -748,28 +830,19 @@ void NgSpotlightDrawer::SetupXSection(Spotlight *sl, const Spotlight::BeamDef &d
         invLeft = 1.0f / leftCos;
     }
 
-    Vector4 leftEq(
-        leftPlane.x * invLeft,
-        leftPlane.y * invLeft,
-        leftPlane.z * invLeft,
-        invLeft * leftD
-    );
-    Vector4 rightEq(
-        rightPlane.x * invRight,
-        rightPlane.y * invRight,
-        rightPlane.z * invRight,
-        invRight * rightD
-    );
+    Vector4 leftEq;
+    PlaneEquation(leftPlane, invLeft, leftD, leftEq);
+    Vector4 rightEq;
+    PlaneEquation(rightPlane, invRight, rightD, rightEq);
 
     // Narrow end of the cone, and the distance from the apex to the light.
-    float minR = botR;
-    if ((topR - botR) < 0.0f) {
-        minR = topR;
-    }
+    float minR = (topR - botR) >= 0.0f ? botR : topR;
 
-    float apexDist = 0.0f;
+    float apexDist;
     if (0.0f < botR) {
         apexDist = (len * minR) / (botR - minR);
+    } else {
+        apexDist = 0.0f;
     }
 
     float halfAngle = (botR * 0.5f) / (len + apexDist);
@@ -794,7 +867,8 @@ void NgSpotlightDrawer::SetupXSection(Spotlight *sl, const Spotlight::BeamDef &d
         vis = 0.0f;
     }
 
-    Vector4 visConst(vis, 0.0f, 0.0f, 0.0f);
+    Vector4 visConst;
+    visConst.Set(vis, 0.0f, 0.0f, 0.0f);
     TheShaderMgr.SetPConstant((PShaderConstant)0x56, visConst);
     TheShaderMgr.SetPConstant((PShaderConstant)0x57, rightEq);
     TheShaderMgr.SetPConstant((PShaderConstant)0x58, leftEq);
