@@ -610,7 +610,8 @@ DataNode RndAnimatable::OnAnimate(DataArray *arr) {
     }
     DataArray *periodArr = arr->FindArray(period, false);
     if (periodArr) {
-        p = std::fabs(animTaskEnd - animTaskStart) / periodArr->Float(1);
+        p = std::fabs(animTaskEnd - animTaskStart);
+        p = p / periodArr->Float(1);
     }
     AnimTask *task = new AnimTask(
         this, animTaskStart, animTaskEnd, p, animTaskLoop, local_blend
