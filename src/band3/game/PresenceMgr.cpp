@@ -4,6 +4,8 @@
 #include "game/BandUserMgr.h"
 #include "game/GameConfig.h"
 #include "game/GameMode.h"
+#include "meta_band/BandSongMetadata.h"
+#include "meta_band/BandSongMgr.h"
 #include "meta_band/SessionMgr.h"
 #include "obj/Data.h"
 #include "obj/ObjMacros.h"
@@ -14,6 +16,7 @@
 #include "utl/Symbols2.h"
 #include "utl/Symbols3.h"
 #include "utl/Symbols4.h"
+#include "utl/UTF8.h"
 
 PresenceMgr ThePresenceMgr;
 
@@ -27,6 +30,15 @@ DECOMP_FORCEBLOCK(
 PresenceMgr::PresenceMgr()
     : unk1c(0), unk20(0), unk24(0), unk34(0), unk38(0), unk39(0), unk3c(0) {}
 
+// Body from retail 0x82680A20; no surviving source has this rich-presence
+// code. Per signed-in local user retail:
+//   - tests LocalUser vslot 4 (IsSignedIn), not ThePlatformMgr.IsUserSignedIn;
+//   - takes the "not in session" flag from BandUser vslot 1 (UnkTU5Virtual),
+//     not TheSessionMgr->HasUser;
+//   - remaps context 0 to 0xe when the play-mode context is 0xb, then pushes
+//     presence, context 2 = play mode, and property 0x40000003 = the current
+//     song title (only outside a listed game mode), trimmed to 19 chars plus
+//     "..." when longer than 22.
 void PresenceMgr::UpdatePresence() {
     if (!TheGameConfig || !unk1c)
         return;
@@ -43,10 +55,27 @@ void PresenceMgr::UpdatePresence() {
         FOREACH (it, users) {
             LocalBandUser *pUser = *it;
             MILO_ASSERT(pUser, 0xBD);
-            if (ThePlatformMgr.IsUserSignedIn(pUser)) {
-                bool noUserInSession = !TheSessionMgr->HasUser(pUser);
-                GetPresenceContextFromMode(mode, noUserInSession);
-                GetPlayModeContextFromUser(pUser, inMode);
+            if (pUser->IsSignedIn()) {
+                int ctx = GetPresenceContextFromMode(mode, !pUser->UnkTU5Virtual());
+                int playMode = GetPlayModeContextFromUser(pUser, inMode);
+                if (ctx == 0 && playMode == 0xb)
+                    ctx = 0xe;
+                ThePlatformMgr.SetUserPresence(pUser, ctx);
+                ThePlatformMgr.SetUserContext(pUser, 2, playMode);
+                String title;
+                if (!inMode && unk34 != 0) {
+                    title =
+                        static_cast<BandSongMetadata *>(TheSongMgr.Data(unk34))->Title();
+                }
+                if (title.length() > 0x16) {
+                    int i = 0x12;
+                    while (title.c_str()[i] == ' ' && --i > 0)
+                        ;
+                    title.resize(i + 1);
+                    title += "...";
+                }
+                const unsigned short *wideTitle = CharToWideChar(title.c_str());
+                ThePlatformMgr.SetUserProperty(pUser, 0x40000003, wideTitle);
             }
         }
     }

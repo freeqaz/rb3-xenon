@@ -202,6 +202,12 @@ public:
     bool UserHasOnlinePrivilege(const LocalUser *) const;
     bool IsUserAGuest(const LocalUser *) const;
     bool IsPadAGuest(int) const;
+    // LocalUser wrappers over SetPadPresence/SetPadContext/SetPadProperty, retail
+    // 0x82514C60 / 0x82514BD0 / 0x82514C18 (called from PresenceMgr::UpdatePresence).
+    // The names are descriptive, after the IsUserSignedIn/IsSignedIn pairs here.
+    void SetUserPresence(const LocalUser *, int) const;
+    void SetUserContext(const LocalUser *, int, int) const;
+    void SetUserProperty(const LocalUser *, int, unsigned short const *) const;
     bool IsGuestOnlineID(const OnlineID *) const;
     void ShowUserFriendsUI(const LocalUser *);
     void ShowFriendsUI(int);
