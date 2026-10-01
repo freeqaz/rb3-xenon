@@ -76215,6 +76215,20 @@
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 7 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
     {
+     "spelling": "?PreLoad@RndMovie@@$4PPPPPPPM@CM@AAXAAVBinStream@@@Z",
+     "lane": "W16-JA 2026-10-01",
+     "class": "DISTINCT_CALLEE",
+     "disposition": "withdrawn",
+     "evidence": "Retail bytes: the survivor 0x823afe88 is a 16-byte vtordisp thunk that branches to 0x823ae888; the RndMovie PreLoad thunk with the same adjustment is its own body at 0x8273e4c0 and branches to 0x82479018 (RndMovie::PreLoad). Thunks with different jump targets cannot fold. 0x8273e4c0 carries this spelling in target_symbol_map.json (DxMovie Object-table vtable slot 18)."
+    },
+    {
+     "spelling": "?PostLoad@RndMovie@@$4PPPPPPPM@CM@AAXAAVBinStream@@@Z",
+     "lane": "W16-JA 2026-10-01",
+     "class": "DISTINCT_CALLEE",
+     "disposition": "withdrawn",
+     "evidence": "Retail bytes: the survivor 0x823afe88 branches to 0x823ae888; the RndMovie PostLoad thunk is its own body at 0x8273e4f0 and branches to 0x824780b0 (RndMovie::PostLoad). Thunks with different jump targets cannot fold. 0x8273e4f0 carries this spelling in target_symbol_map.json (DxMovie Object-table vtable slot 19)."
+    },
+    {
      "spelling": "?Replace@CharBonesMeshes@@$2PPPPPPPM@CM@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
      "lane": "W17-ANON2 2026-10-01",
      "class": "DISTINCT_CALLEE",

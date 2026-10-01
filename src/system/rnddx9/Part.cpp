@@ -106,9 +106,8 @@ void DxParticleSys::DrawParticles(const Hmx::Color &color) {
             vert++;
         }
     }
+    // No NgStats bookkeeping in RB3 (retail ends at EndVertices).
     D3DDevice_EndVertices(TheDxRnd.Device());
-    TheNgStats->mParts += numActive;
-    TheNgStats->mPartSys += (unsigned int)numActive != 0;
 }
 
 void DxParticleSys::DrawShowing() {
