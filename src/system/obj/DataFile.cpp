@@ -643,12 +643,12 @@ DataArray *ReadEmbeddedFile(const char *file, bool b) {
     const char *madePath = FileMakePath(FileGetPath(gFile.Str()), file);
     Symbol localfile = gFile;
 
-    BinStream *bs = gBinStream;
-    DataType savedDataLine = gDataLine;
     DataArray *savedArray = gArray;
+    DataType savedDataLine = gDataLine;
+    int savedNode = gNode;
+    BinStream *bs = gBinStream;
     int savedOpenArray = gOpenArray;
 #ifdef HX_NATIVE
-    int savedNode = gNode;
     char savedHoldChar = yyGetHoldChar();
 #endif
 
@@ -657,14 +657,12 @@ DataArray *ReadEmbeddedFile(const char *file, bool b) {
     if (b && !ret) {
         MILO_FAIL("Couldn\'t open embedded file: %s (file %s, line %d)", madePath, savedArray->File(), savedArray->Line());
     }
+    gNode = savedNode;
     gBinStream = bs;
     gDataLine = savedDataLine;
     gFile = localfile;
     gArray = savedArray;
     gOpenArray = savedOpenArray;
-#ifdef HX_NATIVE
-    gNode = savedNode;
-#endif
 
     yyrestart(nullptr);
 #ifdef HX_NATIVE
