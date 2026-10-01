@@ -133,33 +133,28 @@ void QuatSpline(
     if (prev == next) {
         qout = prev->value;
     } else {
+        // Catmull-Rom through the four keys around [prev, next].
+        float t2 = ref * ref;
+        float t3 = t2 * ref;
         int idx = prev - &keys.front();
-        Hmx::Quat prevQuat = prev->value;
-        Hmx::Quat nextQuat = next->value;
-        Hmx::Quat q88 = idx == 0 ? prevQuat : keys[idx - 1].value;
-        Hmx::Quat q58 = idx + 1 == keys.size() - 1 ? nextQuat : keys[idx + 2].value;
-        NormalizeTo(prevQuat, q88);
-        NormalizeTo(prevQuat, nextQuat);
-        NormalizeTo(prevQuat, q58);
-        int i = 0;
-        while (i < 4) {
-            float prev_val = prevQuat[i];
-            float next_val = nextQuat[i];
-            float prev_prev_val = q88[i];
-            float next_next_val = q58[i];
-
-            float twice_prev = prev_val * 2.0f;
-            float five_prev = prev_val * 5.0f;
-            float three_next = next_val * 3.0f;
-            float four_next = next_val * 4.0f;
-
-            float difference = next_val - prev_prev_val;
-            float c1 = difference * 0.5f;
-            float c3 = (three_next - prev_prev_val) - difference;
-            float c2 = (four_next - five_prev + twice_prev) - next_next_val;
-
-            qout[i] = ((c3 * ref + c2) * ref + c1) * ref + twice_prev;
-            i++;
+        Hmx::Quat q[4];
+        q[1] = prev->value;
+        q[2] = next->value;
+        q[0] = idx == 0 ? q[1] : keys[idx - 1].value;
+        q[3] = idx + 1 == keys.size() - 1 ? q[2] : keys[idx + 2].value;
+        NormalizeTo(q[1], q[0]);
+        NormalizeTo(q[1], q[2]);
+        NormalizeTo(q[1], q[3]);
+        for (int i = 0; i < 4; i++) {
+            float p0 = q[0][i];
+            float p1 = q[1][i];
+            float p2 = q[2][i];
+            float p3 = q[3][i];
+            qout[i] = (p1 * 2.0f
+                       + ((p2 - p0) * ref
+                          + ((((p0 * 2.0f - p1 * 5.0f) + p2 * 4.0f) - p3) * t2
+                             + (((p1 * 3.0f - p0) - p2 * 3.0f) + p3) * t3)))
+                * 0.5f;
         }
         Normalize(qout, qout);
     }

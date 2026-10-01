@@ -144,6 +144,8 @@ bool Splash::PrepareNext() {
 
     auto splashMovie = rndDir->Find<TexMovie>(kSplashMovie, false);
     if (splashMovie) {
+        // Splash screens play in real time: drop any frame-time callback first.
+        splashMovie->GetMovie().SetTimeCallback(nullptr);
         splashMovie->GetMovie().CheckOpen(false);
     }
 
