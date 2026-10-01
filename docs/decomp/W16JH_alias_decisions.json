@@ -111,5 +111,14 @@
  "0x823294d8|??_DSkeletonViz@@QAAXXZ": {
   "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
   "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. W16-JD (main) re-identified 0x823294d8, so the group's survivor spelling no longer names it and the placeholder-slot audit can no longer key on it (LAX-ALSO-FAILS). Decided against the address's CURRENT retail name ??_DLayerDir@@QAAXXZ with the strict chase: the slot's retail callee is map-resident ??1LayerDir@@UAA@XZ and our callee ??1SkeletonViz@@UAA@XZ has DIFFERENT bytes (BYTES-DIFFER) -- two distinct named functions, the fold cannot hold."
+ },
+ "0x8257c368|??_DInstarank@@QAAXXZ": {
+  "class": "SUPERSEDED_SURVIVOR_MAP_NAME_CORRECTED",
+  "disposition": "membership withdrawn, group kept (the map now names this address with this spelling)",
+  "evidence": "0x8257C368 was mapped '??_DUIEventMgr@@QAAXXZ'. Every retail reference to it -- MetaPerformer's ctor/dtor (the eh-vector-constructor's element-dtor argument beside ??0Instarank) and their 6 EH funclets -- sits where we reference ??_DInstarank, none where we reference ??_DUIEventMgr; its body {bl fn_8257B428; ...; bl ~Object} is the vbase-dtor of the class whose dtor is 0x8257B428, which MetaPerformer's dtor calls where we call ~Instarank. W16-JH corrected the row to ??_DInstarank@@QAAXXZ and named 0x8257B428 ??1Instarank@@UAA@XZ (both unmapped before), so no alias is needed. Found by the whole-branch A/B, not by the first dependency census (which collapsed lis/addi data relocs under @comp.id)."
+ },
+ "0x8257c368|??_DCharForeTwist@@QAAXXZ": {
+  "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+  "evidence": "W16-JH re-identified 0x8257C368 as ??_DInstarank@@QAAXXZ (see that record). Decided against the address's CURRENT retail name with the strict chase: the retail body calls 0x8257B428 = ??1Instarank@@UAA@XZ (map-resident, 72 B, two ~String calls) where our ??_DCharForeTwist calls ??1CharForeTwist@@UAA@XZ (92 B) -- two distinct named destructors, chase REFUTED."
  }
 }

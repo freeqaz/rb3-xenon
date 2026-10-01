@@ -9460,16 +9460,16 @@
     {
      "spelling": "??_DInstarank@@QAAXXZ",
      "lane": "W16-JH 2026-10-01",
-     "class": "PLACEHOLDER_SLOT_UNPROVEN_CALLEE_UNPROVEN_OURS_DISTINCT",
-     "disposition": "membership withdrawn as UNPROVEN (NOT refuted), group kept",
-     "evidence": "tools/alias_placeholder_slot_audit.py (W16-JH): this membership's T1 support rested on a relocation slot with an unnamed retail target, which W16-JG's discharge could not close and W16-JH could not prove on retail bytes. CALLEE-UNPROVEN-OURS-DISTINCT @+0x18 retail fn_8257B428 vs ours ??1Instarank@@UAA@XZ -- retail fn_8257B428 72 B vs our ??1Instarank@@UAA@XZ 96 B; first diff @+0x18 retail 'mr r30, r3' vs ours 'lwz r11, -0x34(r3)'; retail bodies byte-equal to our callee: none. RESTORE when the chase proves it (e.g. after the callee port)."
+     "class": "SUPERSEDED_SURVIVOR_MAP_NAME_CORRECTED",
+     "disposition": "membership withdrawn, group kept (the map now names this address with this spelling)",
+     "evidence": "0x8257C368 was mapped '??_DUIEventMgr@@QAAXXZ'. Every retail reference to it -- MetaPerformer's ctor/dtor (the eh-vector-constructor's element-dtor argument beside ??0Instarank) and their 6 EH funclets -- sits where we reference ??_DInstarank, none where we reference ??_DUIEventMgr; its body {bl fn_8257B428; ...; bl ~Object} is the vbase-dtor of the class whose dtor is 0x8257B428, which MetaPerformer's dtor calls where we call ~Instarank. W16-JH corrected the row to ??_DInstarank@@QAAXXZ and named 0x8257B428 ??1Instarank@@UAA@XZ (both unmapped before), so no alias is needed. Found by the whole-branch A/B, not by the first dependency census (which collapsed lis/addi data relocs under @comp.id)."
     },
     {
      "spelling": "??_DCharForeTwist@@QAAXXZ",
      "lane": "W16-JH 2026-10-01",
-     "class": "PLACEHOLDER_SLOT_UNPROVEN_CALLEE_UNPROVEN_OURS_DISTINCT",
-     "disposition": "membership withdrawn as UNPROVEN (NOT refuted), group kept",
-     "evidence": "tools/alias_placeholder_slot_audit.py (W16-JH): this membership's T1 support rested on a relocation slot with an unnamed retail target, which W16-JG's discharge could not close and W16-JH could not prove on retail bytes. CALLEE-UNPROVEN-OURS-DISTINCT @+0x18 retail fn_8257B428 vs ours ??1CharForeTwist@@UAA@XZ -- retail fn_8257B428 72 B vs our ??1CharForeTwist@@UAA@XZ 92 B; first diff @+0x4 retail 'stw r12, -8(r1)' vs ours '00000000'; retail bodies byte-equal to our callee: ['fn_823C6318']. RESTORE when the chase proves it (e.g. after the callee port)."
+     "class": "SURVIVOR_RENAMED_CHASE_REFUTED",
+     "disposition": "membership withdrawn, group kept",
+     "evidence": "W16-JH re-identified 0x8257C368 as ??_DInstarank@@QAAXXZ (see that record). Decided against the address's CURRENT retail name with the strict chase: the retail body calls 0x8257B428 = ??1Instarank@@UAA@XZ (map-resident, 72 B, two ~String calls) where our ??_DCharForeTwist calls ??1CharForeTwist@@UAA@XZ (92 B) -- two distinct named destructors, chase REFUTED."
     }
    ],
    "repair": {
@@ -63697,6 +63697,13 @@
      "evidence": "tools/alias_placeholder_slot_audit.py (W16-JH): this membership's T1 support rested on a relocation slot with an unnamed retail target, which W16-JG's discharge could not close and W16-JH could not prove on retail bytes. CALLEE-UNPROVEN @+0x50 retail fn_823D13E8 vs ours ?Advance@?$ObjDirItr@VHamRibbon@@@@AAAXXZ -- retail fn_823D13E8 212 B vs our ?Advance@?$ObjDirItr@VHamRibbon@@@@AAAXXZ 212 B; masked bytes equal over the common length; retail bodies byte-equal to our callee: ['?Advance@?$ObjDirItr@VRndAnimatable@@@@AAAXXZ', '?Advance@?$ObjDirItr@VRndPollable@@@@AAAXXZ', '?Advance@?$ObjDirItr@VRndDrawable@@@@AAAXXZ']. RESTORE when the chase proves it (e.g. after the callee port)."
     },
     {
+     "spelling": "??0?$ObjDirItr@VObjectDir@@@@QAA@PAVObjectDir@@_N@Z",
+     "lane": "W16-JH 2026-10-01",
+     "class": "UNPROVEN_OURS_NOT_COMPILED",
+     "disposition": "membership withdrawn as UNPROVEN (NOT refuted), group kept",
+     "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. On main 8091a837c our build no longer compiles ??0?$ObjDirItr@VObjectDir@@@@QAA@PAVObjectDir@@_N@Z, so retail bytes cannot decide it (chase vs the address's map name ??0?$ObjDirItr@VCharClipGroup@@@@QAA@PAVObjectDir@@_N@Z: MISSING(ours)). RESTORE when compiled and chase-proven."
+    },
+    {
      "spelling": "??0?$ObjDirItr@VPracticeSection@@@@QAA@PAVObjectDir@@_N@Z",
      "lane": "W16-JH 2026-10-01",
      "class": "PLACEHOLDER_SLOT_UNPROVEN_CALLEE_UNPROVEN",
@@ -63758,13 +63765,6 @@
      "class": "PLACEHOLDER_SLOT_UNPROVEN_CALLEE_UNPROVEN",
      "disposition": "membership withdrawn as UNPROVEN (NOT refuted), group kept",
      "evidence": "tools/alias_placeholder_slot_audit.py (W16-JH): this membership's T1 support rested on a relocation slot with an unnamed retail target, which W16-JG's discharge could not close and W16-JH could not prove on retail bytes. CALLEE-UNPROVEN @+0x50 retail fn_823D13E8 vs ours ?Advance@?$ObjDirItr@VWaypoint@@@@AAAXXZ -- retail fn_823D13E8 212 B vs our ?Advance@?$ObjDirItr@VWaypoint@@@@AAAXXZ 212 B; masked bytes equal over the common length; retail bodies byte-equal to our callee: ['?Advance@?$ObjDirItr@VRndAnimatable@@@@AAAXXZ', '?Advance@?$ObjDirItr@VRndPollable@@@@AAAXXZ', '?Advance@?$ObjDirItr@VRndDrawable@@@@AAAXXZ']. RESTORE when the chase proves it (e.g. after the callee port)."
-    },
-    {
-     "spelling": "??0?$ObjDirItr@VObjectDir@@@@QAA@PAVObjectDir@@_N@Z",
-     "lane": "W16-JH 2026-10-01",
-     "class": "UNPROVEN_OURS_NOT_COMPILED",
-     "disposition": "membership withdrawn as UNPROVEN (NOT refuted), group kept",
-     "evidence": "One of W16-JG's 341 UNDISCHARGED memberships. On main 8091a837c our build no longer compiles ??0?$ObjDirItr@VObjectDir@@@@QAA@PAVObjectDir@@_N@Z, so retail bytes cannot decide it (chase vs the address's map name ??0?$ObjDirItr@VCharClipGroup@@@@QAA@PAVObjectDir@@_N@Z: MISSING(ours)). RESTORE when compiled and chase-proven."
     }
    ],
    "repair": {
