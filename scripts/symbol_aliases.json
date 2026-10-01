@@ -97408,7 +97408,8 @@
    "survivor": "?_M_insert_overflow_aux@?$vector@VMicClientID@@V?$StlNodeAlloc@VMicClientID@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVMicClientID@@ABV3@ABU__false_type@2@I_N@Z",
    "folded": [
     "?_M_insert_overflow_aux@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@ABU32@ABU__false_type@2@I_N@Z",
-    "?_M_insert_overflow_aux@?$vector@U?$pair@PBVMoveVariant@@PBV1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVMoveVariant@@PBV1@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAU?$pair@PBVMoveVariant@@PBV1@@2@ABU32@ABU__false_type@2@I_N@Z"
+    "?_M_insert_overflow_aux@?$vector@U?$pair@PBVMoveVariant@@PBV1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVMoveVariant@@PBV1@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAU?$pair@PBVMoveVariant@@PBV1@@2@ABU32@ABU__false_type@2@I_N@Z",
+    "?_M_insert_overflow_aux@?$vector@U?$pair@HH@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HH@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAU?$pair@HH@2@ABU32@ABU__false_type@2@I_N@Z"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
@@ -97423,7 +97424,13 @@
      "lane": "W16-KD 2026-10-01",
      "verdict": "FOLD -- CHASED T1 PROVEN, 0 CYCLE-ASSUMED",
      "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED, CHASED T1 PROVEN, 0 CYCLE-ASSUMED; 396 B retail / 396 B ours; retail body-twins 2. Retail branches to the survivor (0x826e6fb0) at the call site(s) where our source spells this instantiation, in: ?_M_fill_insert@?$vector@U?$pair@PBVMoveVariant@@PBV1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVMoveVariant@@PBV1@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAU?$pair@PBVMoveVariant@@PBV1@@2@IABU32@@Z."
-    }
+    },
+   {
+    "spelling": "?_M_insert_overflow_aux@?$vector@U?$pair@HH@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HH@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAU?$pair@HH@2@ABU32@ABU__false_type@2@I_N@Z",
+    "lane": "W16-KD 2026-10-01",
+    "verdict": "FOLD -- CHASED T1 PROVEN, 0 CYCLE-ASSUMED",
+    "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED (template twin), CHASED T1 PROVEN, 0 CYCLE-ASSUMED; 396 B retail / 396 B ours; retail body-twins 2. Retail branches to the survivor (0x826e6fb0) from vector<pair<int,int>>::_M_fill_insert (0x824c3d18), where our source spells this instantiation. Added at integration: the fork that renamed 0x824c3d18 from the pair<const MoveVariant*,...> spelling to pair<int,int> left this call site on the old membership."
+   }
    ]
   },
   {
