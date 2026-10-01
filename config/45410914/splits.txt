@@ -5085,18 +5085,21 @@ Sfx.cpp:
 PropSync.cpp:
 	.pdata      start:0x82213EF0 end:0x82213EF8
 	.pdata      start:0x82213F40 end:0x822140C0
+	.pdata      start:0x82214260 end:0x82214278
 	.pdata      start:0x82214280 end:0x82214290
 	.pdata      start:0x82214298 end:0x822142B0
 	.pdata      start:0x822142C0 end:0x822142F8
 	.pdata      start:0x82214300 end:0x822143D8
 	.pdata      start:0x822144A8 end:0x82214550
 	.pdata      start:0x82214550 end:0x82214558
+	.pdata      start:0x822145D8 end:0x822145F0
 	.pdata      start:0x8223D238 end:0x8223D2A0
 	.pdata      start:0x8223D2A0 end:0x8223D380
 	.text       start:0x824CA6B8 end:0x824CA754
 	.text       start:0x824CAA7C end:0x824CAA80
 	.text       start:0x824CAA8C end:0x824CAA90
 	.text       start:0x824CAC64 end:0x824CBFE0
+	.text       start:0x824CD8B8 end:0x824CDA48
 	.text       start:0x824CDA98 end:0x824CDB80
 	.text       start:0x824CDBEC end:0x824CDBF0
 	.text       start:0x824CDBF0 end:0x824CDCE8
@@ -5104,6 +5107,7 @@ PropSync.cpp:
 	.text       start:0x824CE1A0 end:0x824CEDA0
 	.text       start:0x824CFB24 end:0x824D02C8
 	.text       start:0x824D02C8 end:0x824D0338
+	.text       start:0x824D08E8 end:0x824D0EB0
 	.text       start:0x8276927C end:0x82769AB0
 	.text       start:0x82769AB0 end:0x8276A758
 
@@ -7855,12 +7859,10 @@ Shockwave.cpp:
 	.pdata      start:0x82214498 end:0x822144A8
 	.pdata      start:0x82214558 end:0x82214578
 	.pdata      start:0x82214588 end:0x822145D0
-	.pdata      start:0x822145D8 end:0x822145F0
 	.text       start:0x824CE130 end:0x824CE1A0
 	.text       start:0x824CFA78 end:0x824CFB18
 	.text       start:0x824D0338 end:0x824D0430
 	.text       start:0x824D049C end:0x824D0898
-	.text       start:0x824D08E8 end:0x824D0EB0
 
 PlatformMgr.cpp:
 	.pdata      start:0x822180E8 end:0x82218100
@@ -12574,9 +12576,7 @@ system/synth/SynthSample.cpp:
 
 SpeechMgr.cpp:
 	.pdata      start:0x82214250 end:0x82214260
-	.pdata      start:0x82214260 end:0x82214278
 	.text       start:0x824CD818 end:0x824CD8B8
-	.text       start:0x824CD8B8 end:0x824CDA48
 
 UIEventMgr.cpp:
 	.pdata      start:0x8221EDF0 end:0x8221EDF8

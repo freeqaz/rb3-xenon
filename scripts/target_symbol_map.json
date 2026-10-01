@@ -1,4 +1,5 @@
 {
+ "0x824d08f0": "?PostLoad@WorldDir@@UAAXAAVBinStream@@@Z",
  "0x824cfb30": "??0WorldDir@@QAA@XZ",
  "0x824ce910": "??1WorldDir@@UAA@XZ",
  "0x82765f40": "?Save@TypeProps@@QAAXAAVBinStream@@@Z",
@@ -11935,7 +11936,7 @@
  "0x824cd470": "??$?6UPresetOverride@WorldDir@@V?$StlNodeAlloc@UPresetOverride@WorldDir@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@UPresetOverride@WorldDir@@V?$StlNodeAlloc@UPresetOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x824cd738": "??$_Copy_Construct@UProxyCall@EventTrigger@@@stlpmtx_std@@YAXPAUProxyCall@EventTrigger@@ABU12@@Z",
  "0x824cd818": "??$__uninitialized_fill_n@PAUGrammar@SpeechMgr@@IU12@@stlpmtx_std@@YAPAUGrammar@SpeechMgr@@PAU12@IABU12@ABU__false_type@0@@Z",
- "0x824cd8b8": "??$__uninitialized_copy@PAUGrammar@SpeechMgr@@PAU12@@stlpmtx_std@@YAPAUGrammar@SpeechMgr@@PAU12@00ABU__false_type@0@@Z",
+ "0x824cd8b8": "?Save@WorldDir@@UAAXAAVBinStream@@@Z",
  "0x824cda48": "?clear@?$_List_base@UMatOverride@WorldDir@@V?$StlNodeAlloc@UMatOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
  "0x824cda98": "??$VectorRemove@PAVRndDrawable@@V?$ObjPtr@VRndDir@@@@@@YAXAAV?$vector@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@@@stlpmtx_std@@@stlpmtx_std@@ABV?$ObjPtr@VRndDir@@@@@Z",
  "0x824cdb10": "?erase@?$list@UPresetOverride@WorldDir@@V?$StlNodeAlloc@UPresetOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UPresetOverride@WorldDir@@U?$_Nonconst_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@2@U32@0@Z",
