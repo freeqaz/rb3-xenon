@@ -398,7 +398,9 @@ const GameGem &GemTrainerPanel::GetLastGameGemInSection(int &gemID) const {
     gemID = mPattern.size() * 2 - 1;
     if (unkb0 == 0)
         gemID = mPattern.size() - 1;
-    return mGameGemLists[mLocalUser->GetDifficulty()]->GetGem(gemID);
+    // retail takes the difficulty first, then reads gemID back through the reference
+    Difficulty diff = mLocalUser->GetDifficulty();
+    return mGameGemLists[diff]->GetGem(gemID);
 }
 
 void GemTrainerPanel::HandleTrackShifting() {
