@@ -79167,7 +79167,6 @@
     "??$_Param_Construct@VOverlay@OutfitConfig@@V12@@stlpmtx_std@@YAXPAVOverlay@OutfitConfig@@ABV12@@Z",
     "??$_Copy_Construct@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@0@ABU10@@Z",
     "??$_Copy_Construct@U?$pair@$$CBVSymbol@@VDataNode@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVSymbol@@VDataNode@@@0@ABU10@@Z",
-    "??$_Param_Construct@VStreakList@Scoring@@V12@@stlpmtx_std@@YAXPAVStreakList@Scoring@@ABV12@@Z",
     "??$_Copy_Construct@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@0@ABU10@@Z",
     "??$_Copy_Construct@U?$pair@PAVDataArray@@VDataNode@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@PAVDataArray@@VDataNode@@@0@ABU10@@Z",
     "??$_Param_Construct@U?$pair@PAVDataArray@@VDataNode@@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@PAVDataArray@@VDataNode@@@0@ABU10@@Z"
@@ -79211,6 +79210,13 @@
      "class": "CALL_CHAIN_PROVES_OWN_ADDRESS",
      "disposition": "withdrawn: the spelling is now mapped at its own retail address (validator CONTRADICTED until withdrawn)",
      "evidence": "retail places it at its own address 0x827493D0: ScriptTask ctor / UpdateVarsObjects -> list<Var>::insert 0x82749630 -> _M_create_node 0x82749550 -> bl 0x827493D0 (copies a word, then a DataNode via 0x8274A9D0); the ctor, UpdateVarsObjects, insert and _M_create_node all read 100 under these names"
+    },
+    {
+     "spelling": "??$_Param_Construct@VStreakList@Scoring@@V12@@stlpmtx_std@@YAXPAVStreakList@Scoring@@ABV12@@Z",
+     "lane": "W16-LD 2026-10-01",
+     "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS",
+     "disposition": "membership withdrawn, names kept",
+     "evidence": "Retail 0x8229ee78 copy-constructs through ObjPtr<RndTex>'s copy ctor (0x8229d898) and its callers are SampleMarker and Label helpers. Every retail vector<Scoring::StreakList> helper (__uninitialized_copy 0x826a1844, __uninitialized_fill_n 0x826a199c, _M_insert_overflow_aux 0x826a1b94, push_back 0x826a1c8c) calls 0x826a1228, which copy-constructs through vector<Extent>'s copy ctor; the spelling is admitted there."
     }
    ],
    "repair": {
@@ -99843,6 +99849,26 @@
      "spelling": "?_M_fill_insert@?$vector@VMeshAO@OutfitConfig@@V?$StlNodeAlloc@VMeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVMeshAO@OutfitConfig@@IABV34@@Z",
      "lane": "W16-LD 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN, CHASED T1 PROVEN, 0 CYCLE-ASSUMED; leaves include VACUOUS-BUT-IDENTICAL (allocator thunks), discharged by the chase. The map places this spelling at no address of its own. Retail call site reaching the survivor where we call this spelling (bl target read on retail bytes): 0x822a9a64 (PropSync<OutfitConfig::MeshAO>). Moved from the 0x82339948 group, whose retail callers are all BandCharDesc::Patch paths."
+    }
+   ],
+   "added": {
+    "lane": "W16-LD 2026-10-01"
+   }
+  },
+  {
+   "name": "_Copy_Construct",
+   "address": "0x826a1228",
+   "survivor": "??$_Copy_Construct@VStreakList@Scoring@@@stlpmtx_std@@YAXPAVStreakList@Scoring@@ABV12@@Z",
+   "folded": [
+    "??$_Param_Construct@VStreakList@Scoring@@V12@@stlpmtx_std@@YAXPAVStreakList@Scoring@@ABV12@@Z"
+   ],
+   "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- template-twin); leaves include VACUOUS-BUT-IDENTICAL (allocator thunks), discharged by the chase. The map places this spelling at no address of its own. Retail call sites reaching the survivor where we call this spelling (bl target read on retail bytes): 0x826a1844 (__uninitialized_copy<StreakList*>), 0x826a199c (__uninitialized_fill_n<StreakList*>). Moved from the 0x8229ee78 group, whose body copies an ObjPtr<RndTex>.",
+   "lane": "W16-LD",
+   "admitted": [
+    {
+     "spelling": "??$_Param_Construct@VStreakList@Scoring@@V12@@stlpmtx_std@@YAXPAVStreakList@Scoring@@ABV12@@Z",
+     "lane": "W16-LD 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- template-twin); leaves include VACUOUS-BUT-IDENTICAL (allocator thunks), discharged by the chase. The map places this spelling at no address of its own. Retail call sites reaching the survivor where we call this spelling (bl target read on retail bytes): 0x826a1844 (__uninitialized_copy<StreakList*>), 0x826a199c (__uninitialized_fill_n<StreakList*>). Moved from the 0x8229ee78 group, whose body copies an ObjPtr<RndTex>."
     }
    ],
    "added": {
