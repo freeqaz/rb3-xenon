@@ -158,18 +158,74 @@ def data_consistency(rows):
     return {on: {rn: len(v) for rn, v in d.items()} for on, d in m.items() if len(d) > 1}
 
 
-def apply(path, rows):
+def slot_evidence(tgt, ours, rn, on):
+    """★ W16-JH.  Mechanical retail-byte evidence for ONE undischarged slot, so an
+    UNPROVEN withdrawal records WHY the chase could not close it (and a later
+    lane can see exactly what a port would have to change to restore it)."""
+    on = (on or "").split(" | ")[0]
+    X = A._ph_addr(rn or "")
+    if on.startswith("??_7"):
+        t = A.retail_rtti_name(X) if X else None
+        cls = A._vtable_class(on)
+        return "retail vtable %s RTTI %s; our class %s has %d retail vtable(s)" % (
+            rn, t, cls, len(A.retail_vtables_of(cls)) if cls else -1)
+    r, o = tgt.get(rn), ours.get(on)
+    if r is None or o is None:
+        return "retail %s %s; ours %s %s" % (rn, "present" if r else "ABSENT",
+                                            on[:60], "compiled" if o else "NOT COMPILED")
+    import capstone
+    md = capstone.Cs(capstone.CS_ARCH_PPC, capstone.CS_MODE_32 | capstone.CS_MODE_BIG_ENDIAN)
+
+    def ins(b, i):
+        d = list(md.disasm(b[i:i + 4], i))
+        return "%s %s" % (d[0].mnemonic, d[0].op_str) if d else b[i:i + 4].hex()
+    first = next((i for i in range(0, min(len(r[0]), len(o[0])), 4)
+                  if r[0][i:i + 4] != o[0][i:i + 4]), None)
+    diff = ("first diff @+0x%x retail '%s' vs ours '%s'" % (first, ins(r[0], first), ins(o[0], first))
+            if first is not None else "masked bytes equal over the common length")
+    eq = [n for n, (mb, _rl, _s) in tgt.items() if mb == o[0]][:3]
+    return "retail %s %d B vs our %s %d B; %s; retail bodies byte-equal to our callee: %s" % (
+        rn, r[2], on[:60], o[2], diff, eq or "none")
+
+
+def apply(path, rows, tgt=None, ours=None, undischarged=False, extra=None, lane=LANE):
     raw = Path(path).read_text()
     al = json.loads(raw)
     n = 0
+    extra = extra or {}
     for r in rows:
-        if r["verdict"] != "CONTRADICTED":
+        key = "%s|%s" % (r["address"], r["folded"])
+        x = extra.get(key)
+        if x is None and r["verdict"] != "CONTRADICTED" and not (
+                undischarged and r["verdict"] == "UNDISCHARGED"):
             continue
         g = al["groups"][r["gi"]]
         assert g["address"] == r["address"] and g["survivor"] == r["survivor"]
         if r["folded"] not in g["folded"]:
             continue
         g["folded"].remove(r["folded"])
+        if x is not None or r["verdict"] == "UNDISCHARGED":
+            if x is not None:
+                cls, ev, disp = x["class"], x["evidence"], x.get(
+                    "disposition", "membership withdrawn, group kept")
+            else:
+                s = r["slots"][0]
+                cls = "PLACEHOLDER_SLOT_UNPROVEN_" + s[1].split(":")[-1].replace("-", "_")
+                disp = "membership withdrawn as UNPROVEN (NOT refuted), group kept"
+                ev = ("tools/alias_placeholder_slot_audit.py (W16-JH): this membership's "
+                      "T1 support rested on a relocation slot with an unnamed retail "
+                      "target, which W16-JG's discharge could not close and W16-JH could "
+                      "not prove on retail bytes. " + "; ".join(
+                          "%s @+%s retail %s vs ours %s -- %s" % (
+                              k, hex(o) if o is not None else "?", (xx or "")[:60],
+                              (yy or "")[:70], slot_evidence(tgt, ours, xx, yy))
+                          for _s, k, o, xx, yy, _d in r["slots"][:2]) +
+                      ". RESTORE when the chase proves it (e.g. after the callee port).")
+            g.setdefault("withdrawn", []).append({
+                "spelling": r["folded"], "lane": lane, "class": cls,
+                "disposition": disp, "evidence": ev})
+            n += 1
+            continue
         s = r["slots"][0]
         sup = [{"lane": x.get("lane"), "verdict": str(x.get("verdict", ""))[:160]}
                for x in g.get("restored", [])
@@ -183,7 +239,7 @@ def apply(path, rows):
                 "(icf_alias_build.relocs_agree / _slots_agree on the general "
                 "path). That is exactly the slot decided here, on retail bytes.")
         g.setdefault("withdrawn", []).append({
-            "spelling": r["folded"], "lane": LANE,
+            "spelling": r["folded"], "lane": lane,
             "class": "PLACEHOLDER_SLOT_" + s[1].split(":")[-1].replace("-", "_"),
             "disposition": "membership withdrawn, group kept",
             "evidence": ("tools/alias_placeholder_slot_audit.py: a relocation slot "
@@ -216,6 +272,14 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--apply", action="store_true",
                     help="withdraw CONTRADICTED memberships (record kept, group kept)")
+    ap.add_argument("--withdraw-undischarged", action="store_true",
+                    help="with --apply: ALSO withdraw UNDISCHARGED memberships as "
+                         "UNPROVEN (class PLACEHOLDER_SLOT_UNPROVEN_*), with mechanical "
+                         "retail-byte evidence per slot (W16-JH)")
+    ap.add_argument("--extra", help="with --apply: JSON {\"<address>|<folded>\": "
+                    "{class, evidence[, disposition]}} -- further decided withdrawals "
+                    "(any verdict), applied with exactly that record")
+    ap.add_argument("--lane", default=LANE, help="lane label for written records")
     a = ap.parse_args()
     mapped = A.load_mapped()
     tgt, ours = A.load_sides()
@@ -235,7 +299,9 @@ def main():
     json.dump(dict(summary=dict(c), slot_kinds=dict(kinds), data_inconsistent=dc,
                    rows=rows), open(a.out, "w"), indent=0)
     if a.apply:
-        print("withdrawn:", apply(a.aliases, rows))
+        extra = json.loads(Path(a.extra).read_text()) if a.extra else {}
+        print("withdrawn:", apply(a.aliases, rows, tgt, ours, a.withdraw_undischarged,
+                                  extra, a.lane))
     return 0
 
 
