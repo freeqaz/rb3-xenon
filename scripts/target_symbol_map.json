@@ -31853,7 +31853,7 @@
  "0x82bf6078": "?Stop@CBaseSkin@LEAPCORE@@UAAJII@Z",
  "0x82bf6248": "?EnableEffect@CBaseSkin@LEAPCORE@@UAAJII@Z",
  "0x82bf6308": "?DisableEffect@CBaseSkin@LEAPCORE@@UAAJII@Z",
- "0x82bf63c8": "??_G?$ResourceDirPtr@VUILabelDir@@@@UAAPAXI@Z",
+ "0x82bf63c8": "??_GCBaseSkin@LEAPCORE@@UAAPAXI@Z",
  "0x82bf6418": "?AddToDestroyList@CX2Engine@XAUDIO2@@QAAXPAUILeapFilter@@@Z",
  "0x82bf65a0": "?AddTail@?$CPointerList@UCommand@LEAPCORE@@$0BA@$0PPPPPPPP@$03@@QAAPAXPAUCommand@LEAPCORE@@@Z",
  "0x82bf6620": "??1CCommandManager@LEAPCORE@@QAA@XZ",
