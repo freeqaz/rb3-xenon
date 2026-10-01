@@ -1,3 +1,6 @@
+#define RB3_OBJPTR_INLINE_TWOARG_CTOR
+// The plain-inline in-class two-arg ctor (replacing RB3_OBJPTR_INLINE_OWNER_CTOR)
+// also inlines ??0Character's member-init ObjPtrs, taking it to 100.
 // Retail INLINES the owner-only ObjPtr<RndTransformable> ctor in Character::Save
 // (target [42..47]: lis vtable, stw mOwner@0x5c, li 0, addi vtable,
 // stw mObject@0x60, stw vtable@0x58).  Without this define the one-arg spelling
@@ -10,7 +13,6 @@
 // retail's order in this function: it hoists `stw mOwner` ABOVE the `lis` and
 // scores 96.89% (1 insert + 1 delete + reg renames).  The plain empty-body form
 // is the right one here.  Must precede every include.
-#define RB3_OBJPTR_INLINE_OWNER_CTOR
 
 #include "char/Character.h"
 #include "CharInterest.h"
