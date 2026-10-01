@@ -385,15 +385,17 @@ int FloatKeys::FloatAt(float frame, float &fl) {
             points[1] = prev->value;
             points[2] = next->value;
             int idx = (prev - data());
+            // points[3] is the key after `next` (index idx + 2).
+            int nextIdx = idx + 1;
             if (idx != 0) {
                 points[0] = this->at(idx - 1).value;
             } else {
                 points[0] = prev->value;
             }
-            if (size() - 1 == idx) {
+            if (nextIdx == size() - 1) {
                 points[3] = next->value;
             } else {
-                points[3] = this->at(idx + 1).value;
+                points[3] = this->at(nextIdx + 1).value;
             }
             fl = CalcSpline(ref, points);
         } else {
