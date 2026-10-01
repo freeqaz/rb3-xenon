@@ -29,7 +29,12 @@ void ReviewDisplay::CopyMembers(const UIComponent *o, Hmx::Object::CopyType ty) 
     COPY_MEMBER_FROM(p, mScore);
 }
 
-SAVE_OBJ(ReviewDisplay, 0x40);
+// Retail 0x8231EB18: rev 0, mScore, then the UIComponent save.
+BEGIN_SAVES(ReviewDisplay)
+    SAVE_REVS(0, 0)
+    bs << mScore;
+    SAVE_SUPERCLASS(UIComponent)
+END_SAVES
 
 BEGIN_LOADS(ReviewDisplay)
     PreLoad(bs);

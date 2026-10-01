@@ -1,4 +1,7 @@
 {
+ "0x8231eb18": "?Save@ReviewDisplay@@UAAXAAVBinStream@@@Z",
+ "0x822b94c0": "?Save@CrowdMeterIcon@@UAAXAAVBinStream@@@Z",
+ "0x822d75b8": "?Save@StreakMeter@@UAAXAAVBinStream@@@Z",
  "0x822e5520": "?Save@GemTrackDir@@UAAXAAVBinStream@@@Z",
  "0x822fa7e0": "?Save@VocalTrackDir@@UAAXAAVBinStream@@@Z",
  "0x8234ed60": "?SaveTrack@BandTrack@@QAAXAAVBinStream@@_N1@Z",
