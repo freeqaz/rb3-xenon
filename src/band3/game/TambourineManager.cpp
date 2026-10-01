@@ -388,9 +388,9 @@ DataNode TambourineManager::OnPlayTambourine(DataArray *d) {
     Symbol sym = d->Sym(2);
     Symbol seq_name;
     if (sym == "tambourine_gem") {
-        seq_name = Symbol("percussion.cue");
+        seq_name = "percussion.cue";
     } else if (sym == "tambourine_implicit") {
-        seq_name = Symbol("percussion1.cue");
+        seq_name = "percussion1.cue";
     }
     MILO_ASSERT(!seq_name.Null(), 0x1ef);
 #ifndef HX_NATIVE
