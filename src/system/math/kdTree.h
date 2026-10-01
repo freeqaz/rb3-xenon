@@ -147,6 +147,10 @@ public:
             return (float)(rightCount * rightAreaFrac) + leftCount * leftAreaFrac + 0.3f;
         }
 
+        // 0x8248D168. The split axis lives in the low two bits of the split
+        // value's word, and retail PRESERVES it across each store of the value
+        // (it re-inserts the saved bits with rlwimi). The candidate points per
+        // triangle are origin, origin + frame.x and origin + frame.y.
         bool FindSplit_Mean(const Box &box, const std::list<Triangle *> &items) {
             float yDiff = box.mMax.y - box.mMin.y;
             float zDiff = box.mMax.z - box.mMin.z;
@@ -160,44 +164,37 @@ public:
                 mData.index = 2;
             }
 
-            unsigned int vecIdx = mData.index;
-            float idxDiff = box.mMax[vecIdx] - box.mMin[vecIdx];
+            unsigned int axis = mData.index;
+            mData.real = (box.mMax[axis] - box.mMin[axis]) * 0.5f + box.mMin[axis];
+            mData.index = axis;
 
             unsigned int numContains = 0;
-            mData.real = idxDiff / 2.0f + box.mMin[mData.index];
-            mData.index = 3;
-
             double fsum = 0.0;
-            if (!items.empty()) {
-                FOREACH (it, items) {
-                    Triangle *cur = *it;
-                    Vector3 v[3];
-                    v[0].Set(
-                        cur->origin.x + cur->frame.x.x,
-                        cur->origin.y + cur->frame.x.y,
-                        cur->origin.z + cur->frame.x.z
-                    );
-                    v[1].Set(
-                        cur->origin.x + cur->frame.y.x,
-                        cur->origin.y + cur->frame.y.y,
-                        cur->origin.z + cur->frame.y.z
-                    );
-                    v[2].Set(
-                        cur->origin.x + cur->frame.z.x,
-                        cur->origin.y + cur->frame.z.y,
-                        cur->origin.z + cur->frame.z.z
-                    );
-                    for (int i = 0; i < 3; i++) {
-                        if (box.Contains(v[i])) {
-                            fsum += v[i][vecIdx];
-                            numContains++;
-                        }
+            FOREACH (it, items) {
+                Triangle *cur = *it;
+                Vector3 v[3];
+                v[0] = cur->origin;
+                v[1].Set(
+                    cur->origin.x + cur->frame.x.x,
+                    cur->origin.y + cur->frame.x.y,
+                    cur->origin.z + cur->frame.x.z
+                );
+                v[2].Set(
+                    cur->origin.x + cur->frame.y.x,
+                    cur->origin.y + cur->frame.y.y,
+                    cur->origin.z + cur->frame.y.z
+                );
+                for (unsigned int i = 0; i < 3; i++) {
+                    if (box.Contains(v[i])) {
+                        numContains++;
+                        fsum += v[i][mData.index];
                     }
                 }
-                if (numContains != 0) {
-                    mData.real = (float)(fsum / numContains);
-                    mData.index = 3;
-                }
+            }
+            if (numContains != 0) {
+                unsigned int idx = mData.index;
+                mData.real = (float)(fsum / numContains);
+                mData.index = idx;
             }
             return true;
         }

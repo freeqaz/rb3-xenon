@@ -68,6 +68,8 @@ public:
         iterator end() const { return iterator((void *)((intptr_t)mData + mSize)); }
 
     protected:
+        // Reskin walks the packed weight records directly.
+        friend class RndMeshDeform;
         void SetSize(int);
 
         int mSize;
@@ -81,9 +83,13 @@ public:
             unk14.Reset();
             unk54.Reset();
         }
+        // 0x8240B968: reset, walk the exo-bone parent chain multiplying local
+        // transforms, then apply unk54.
+        void ExportWorldXfm(Transform &);
+
         ObjPtr<RndTransformable> mBone; // 0x0
-        Transform unk14;
-        Transform unk54;
+        Transform unk14; // 0xc
+        Transform unk54; // 0x4c
     };
 
     virtual ~RndMeshDeform();
@@ -108,6 +114,8 @@ public:
     void CopyWeights(int, int, RndMeshDeform *);
     void SetMesh(RndMesh *);
     static RndMeshDeform *FindDeform(RndMesh *);
+    // 0x8240B710: a bone named "exo_*".
+    static bool IsExoBone(RndTransformable *);
 
 protected:
     RndMeshDeform();
