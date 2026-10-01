@@ -171,11 +171,7 @@ DataNode OnGraphReset(DataArray *) {
 }
 
 void RndGraph::Terminate() {
-    std::list<RndGraph*> *temp = sGraphs;
-    if (temp != nullptr) {
-        temp->clear();
-        delete temp;
-    }
+    delete sGraphs;
     sGraphs = nullptr;
     if (sOneFrame != nullptr) {
         delete sOneFrame;

@@ -820,15 +820,16 @@ void RndFont::SetCellSize(float x, float y) {
 // 0x82473A18: follows the texture-owner chain, then reads the char's cell with
 // no existence test (callers only ask for characters the font defines).
 void RndFont::GetTexCoords(unsigned short c, Vector2 &tl, Vector2 &br) const {
-    const RndFont *owner = this;
-    while (owner->mTextureOwner != owner) {
-        owner = owner->mTextureOwner;
+    // Retail (0x82473a18) forwards to the texture owner by tail recursion, as Kerning does.
+    if (DataOwner() != this) {
+        DataOwner()->GetTexCoords(c, tl, br);
+        return;
     }
-    const CharInfo &info = owner->mCharInfoMap.find(c)->second;
+    const CharInfo &info = mCharInfoMap.find(c)->second;
     tl.x = info.mU;
-    br.x = owner->mTexCellSize.x * info.mCharWidth + info.mU;
+    br.x = mTexCellSize.x * info.mCharWidth + info.mU;
     tl.y = info.mV;
-    br.y = owner->mTexCellSize.y + info.mV;
+    br.y = mTexCellSize.y + info.mV;
 }
 
 // sw2 scatter-include (default/Font <- bandobj/BandDirector.cpp)
