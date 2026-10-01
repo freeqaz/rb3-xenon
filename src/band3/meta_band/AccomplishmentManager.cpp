@@ -664,9 +664,8 @@ int AccomplishmentManager::GetMetaScoreValue(Symbol s) {
 
 int AccomplishmentManager::GetScaledFanValue(int i_iPointValue) {
     MILO_ASSERT(!m_vFanScalingData.empty(), 0x355);
-    unsigned fansize = m_vFanScalingData.size();
-    int i = fansize - 1;
-    for (int j = 0; j < fansize; j++) {
+    int i = m_vFanScalingData.size() - 1;
+    for (int j = 0; j < m_vFanScalingData.size(); j++) {
         if (i_iPointValue < m_vFanScalingData[j].first) {
             i = j;
             break;
