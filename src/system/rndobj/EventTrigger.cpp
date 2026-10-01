@@ -538,12 +538,13 @@ void EventTrigger::TriggerSelf() {
                 if (it->mDelay) {
                     static Message msg("set_showing", 0);
                     MessageTask *msgtask = new MessageTask(it->mHide, msg);
-                    mSpawnedTasks.push_back(msgtask);
+                    // Retail 0x8249DE60 starts the task before recording it.
                     TheTaskMgr.Start(
                         msgtask,
                         RndAnimatable::RateToTaskUnits((RndAnimatable::Rate)it->mRate),
                         it->mDelay
                     );
+                    mSpawnedTasks.push_back(msgtask);
                 } else {
                     it->mHide->SetShowing(false);
                 }
