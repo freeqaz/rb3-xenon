@@ -142,7 +142,7 @@ struct BINK {
 struct BINKSUMMARY {
     unsigned int Width; // 0x0
     unsigned int Height; // 0x4
-    unsigned int rest[0x20];
+    unsigned int rest[0x1e];
 };
 
 struct BINKPLANE {
@@ -201,7 +201,6 @@ static const unsigned int kNoThread = (unsigned int)-1;
     )
 
 static void *RadAlloc(unsigned int size) { return MemAlloc(size, 0x80); }
-static void RadFree(void *mem) { MemFree(mem); }
 
 // Flushes a plane texture's texels out of the CPU cache once Bink has decoded
 // into it.
@@ -233,13 +232,18 @@ public:
 
 MovieInternalBuffers::MovieInternalBuffers() {
     memset(&mBuffers, 0, sizeof(mBuffers));
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 2; j++) {
-            for (int k = 0; k < 2; k++) {
-                mTex[i][j][k] = nullptr;
-            }
-        }
-    }
+    mTex[0][0][0] = nullptr;
+    mTex[0][0][1] = nullptr;
+    mTex[0][1][0] = nullptr;
+    mTex[0][1][1] = nullptr;
+    mTex[1][0][0] = nullptr;
+    mTex[1][0][1] = nullptr;
+    mTex[1][1][0] = nullptr;
+    mTex[1][1][1] = nullptr;
+    mTex[2][0][0] = nullptr;
+    mTex[2][0][1] = nullptr;
+    mTex[2][1][0] = nullptr;
+    mTex[2][1][1] = nullptr;
     mMat = nullptr;
     mRefs = 0;
     mNextFrame = 0;
@@ -256,7 +260,7 @@ MovieInternalBuffers::~MovieInternalBuffers() {
     }
 }
 
-static void EndianSwapBuffer(void *buf, int size) {
+__declspec(noinline) static void EndianSwapBuffer(void *buf, int size) {
     MILO_ASSERT(size % sizeof(unsigned int) == 0, 0);
     unsigned int *p = (unsigned int *)buf;
     unsigned int *end = (unsigned int *)((char *)buf + size);
@@ -449,7 +453,7 @@ void Movie::Impl::FinishOpen() {
     if (!mBink) {
         MILO_WARN("BinkOpen '%s' error: %s\n", mFilename, BinkGetError());
     } else {
-        mSoundDisabled |= mBuffers->mRefs != 1;
+        mSoundDisabled |= mBuffers->mRefs > 1;
         BinkSetSoundOnOff(mBink, !mSoundDisabled);
         BINKSUMMARY summary;
         BinkGetSummary(mBink, &summary);
@@ -595,8 +599,14 @@ void Movie::Impl::MovieOpen(const char *file, unsigned int flags) {
             BinkSetSoundTrack(1, &track);
             flags |= 0x4000;
         }
-        mBink = BinkOpen(file, flags);
-        if (mBink) {
+        BINK *&bink = mBink;
+        // Retail keeps the test of the slow-frame flag; both arms open the same way.
+        if ((flags & 0x4000000) == 0) {
+            bink = BinkOpen(file, flags);
+        } else {
+            bink = BinkOpen(file, flags);
+        }
+        if (bink) {
             gOpenMovies.push_back(this);
         }
     }
@@ -692,7 +702,8 @@ void Movie::Impl::SetPaused(bool paused) {
     }
     if (!paused) {
         LockThread();
-    } else {
+    }
+    if (paused) {
         FinishFrame();
     }
     if (!paused && mPreloadBuf && mTimeCallback) {
@@ -735,8 +746,9 @@ void Movie::Impl::SharedFinishOpen(bool unpause) {
     if (bufs) {
         bufs->mRefs = count;
         for (int i = 0; i < count; i++) {
-            movies[i]->mBuffers = bufs;
-            movies[i]->FinishOpen();
+            Impl *movie = movies[i];
+            movie->mBuffers = bufs;
+            movie->FinishOpen();
         }
     }
     if (unpause && !shared) {
@@ -745,33 +757,37 @@ void Movie::Impl::SharedFinishOpen(bool unpause) {
 }
 
 bool Movie::Impl::FinishFrame() {
-    if (!mMidFrame) {
-        return false;
-    }
-    if (mAsync && BinkDoFrameAsyncWait(mBink, mBuffers->mRefs == 1 ? 0 : -1)) {
-        EndFrame();
-    }
     if (mMidFrame) {
-        return false;
-    }
-    if (mTimeCallback) {
-        bool stopped = mTimeCallback() == 0.0f;
-        if (stopped) {
-            SetPaused(stopped);
-            return false;
+        if (mAsync) {
+            // A shared buffer set is polled; a movie decoding alone waits.
+            bool shared = mBuffers->mRefs > 1;
+            if (BinkDoFrameAsyncWait(mBink, shared ? 0 : -1)) {
+                EndFrame();
+            }
+        }
+        if (!mMidFrame) {
+            if (mTimeCallback) {
+                bool stopped = mTimeCallback() == 0.0f;
+                if (stopped) {
+                    SetPaused(stopped);
+                    return false;
+                }
+            }
+            if (sNextMovie) {
+                SetPaused(true);
+                sNextMovie->SetPaused(false);
+                sNextMovie = nullptr;
+                return false;
+            }
+            bool skip =
+                mBink->ReadError || (!mLoop && mBink->FrameNum == mBink->Frames);
+            if (!skip) {
+                NextFrame();
+                return true;
+            }
         }
     }
-    if (sNextMovie) {
-        SetPaused(true);
-        sNextMovie->SetPaused(false);
-        sNextMovie = nullptr;
-        return false;
-    }
-    if (mBink->ReadError || (!mLoop && mBink->FrameNum == mBink->Frames)) {
-        return false;
-    }
-    NextFrame();
-    return true;
+    return false;
 }
 
 void Movie::Impl::DoFrame() {
@@ -800,7 +816,7 @@ void Movie::Impl::DiscContentionPublish() {
         count++;
     }
     if (count != 0) {
-        MILO_NOTIFY("Streaming Bink Thrashed with %d files: (%s)", count, files);
+        MILO_WARN("Streaming Bink Thrashed with %d files: (%s)", count, files);
         mDiscContention.clear();
     }
 }
@@ -872,7 +888,8 @@ void Movie::Impl::DiscContentionCheck(Loader *except) {
          ++it) {
         Loader *cur = *it;
         if (cur != except) {
-            mDiscContention[cur] = cur->LoaderFile();
+            FilePath &file = cur->LoaderFile();
+            mDiscContention[cur] = file;
         }
     }
 }
@@ -1005,11 +1022,11 @@ void Movie::Impl::Init() {
     if (!gInitialized) {
         REGISTER_OBJ_FACTORY(TexMovie)
         TheDebug.AddExitCallback(Movie::Terminate);
-        BinkSetMemory(RadAlloc, RadFree);
+        BinkSetMemory(RadAlloc, operator delete);
         BinkMovieSys::PlatformInit();
         gInitialized = true;
-        if (BinkStartAsyncThread(gBinkCores[0], nullptr)
-            && gBinkCores[0] != gBinkCores[1]) {
+        bool started = BinkStartAsyncThread(gBinkCores[0], nullptr);
+        if (started && gBinkCores[0] != gBinkCores[1]) {
             BinkStartAsyncThread(gBinkCores[1], nullptr);
         }
     }
@@ -1074,9 +1091,10 @@ bool Movie::Impl::Begin(
     if (preload) {
         static int sPhysicalHeap = MemFindHeap("physical");
         MemHeapTracker tracker(sPhysicalHeap);
+        const char *name = mFilename.c_str();
         mLoader = new FileLoader(
-            FilePath(mFilename.c_str()),
-            mFilename.c_str(),
+            FilePath(name),
+            name,
             kLoadFront,
             0,
             true,
