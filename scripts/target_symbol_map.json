@@ -4,6 +4,8 @@
  "0x82b5b1d8": "?Recreate@FxSendSynapse360@@UAAXAAV?$vector@PAVFxSend@@V?$StlNodeAlloc@PAVFxSend@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x82b5b1e0": "?UpdateMix@FxSendSynapse360@@UAAXXZ",
  "0x825aad68": "??0EndLockMsg@@QAA@XZ",
+ "0x8228df88": "?PickShot@BandDirector@@QAA?AVSymbol@@AAV?$vector@UCamCatEntry@@V?$StlNodeAlloc@UCamCatEntry@@@stlpmtx_std@@@stlpmtx_std@@V2@_N@Z",
+ "0x8228cab0": "??0CamCatEntry@@QAA@XZ",
  "0x8228e1f0": "?PrevObjectKey@@YAPBV?$Key@VObjectStage@@@@PAVObjectKeys@@H@Z",
  "0x82b81ef0": "??0JsonString@@QAA@PBD@Z",
  "0x82b81f48": "??0JsonInt@@QAA@H@Z",
