@@ -205,6 +205,7 @@ public:
     DataNode OnHideCategories(DataArray *);
     DataNode OnRestoreCategories(DataArray *);
     DataNode OnToggleInterestDebugOverlay(DataArray *);
+    DataNode OnHackFixClipsPreMerge(DataArray *);
     DataNode OnListDrumVenues(DataArray *);
     DataNode OnPortraitBegin(DataArray *);
     DataNode OnPortraitEnd(DataArray *);
