@@ -353,5 +353,5 @@ void CharLipSyncDriver::ScaleAddViseme(CharClip *clip, float f1) {
         dVar2 = 0.0f;
     }
     length = clip->FrameToBeat(clip->FramesPerSec() * dVar2);
-    mBones.Ptr()->ScaleAdd(clip, 0.0, length, f1);
+    mBones.Ptr()->ScaleAdd(clip, f1, length, 0.0f);
 }
