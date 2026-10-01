@@ -168,7 +168,11 @@ RndTransformable *LoadSubPart(BinStream &d, CamShot *shot) {
     if (sym.Null()) {
         if (foundTrans)
             return foundTrans;
-        MILO_LOG(
+        // Retail evaluates this log's arguments as a call would: it copies
+        // `str` into a by-value temporary, calls PathName(shot), then
+        // destroys the copy (0x824BE030). MILO_LOG's comma form copies
+        // nothing, so the function-call form is spelled out here.
+        MiloStripEval(
             "%s could not find %s, assuming character, attaching to base\n",
             PathName(shot),
             str
