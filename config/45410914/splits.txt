@@ -4139,7 +4139,6 @@ CharIKHand.cpp:
 
 PropAnim.cpp:
 	.pdata      start:0x821F6E60 end:0x821F6E70
-	.pdata      start:0x8220BCD0 end:0x8220BD00
 	.pdata      start:0x8220BD20 end:0x8220BD28
 	.pdata      start:0x8220BD30 end:0x8220BF20
 	.pdata      start:0x8220BF20 end:0x8220BFE8
@@ -4152,7 +4151,6 @@ PropAnim.cpp:
 	.pdata      start:0x8220C378 end:0x8220C570
 	.pdata      start:0x8220E9F8 end:0x8220EA08
 	.text       start:0x822C7D58 end:0x822C7E04
-	.text       start:0x82425FD0 end:0x824265F8
 	.text       start:0x824268A8 end:0x82426950
 	.text       start:0x82426A04 end:0x82428448
 	.text       start:0x82428450 end:0x8242916C
@@ -5783,6 +5781,7 @@ PropKeys.cpp:
 	.pdata      start:0x82203EE8 end:0x82203EF8
 	.pdata      start:0x8220B988 end:0x8220BC98
 	.pdata      start:0x8220BCA0 end:0x8220BCD0
+	.pdata      start:0x8220BCD0 end:0x8220BD00
 	.pdata      start:0x8222B678 end:0x8222B690
 	.pdata      start:0x8222BE10 end:0x8222BE20
 	.pdata      start:0x8222D7A0 end:0x8222D7A8
@@ -5800,6 +5799,7 @@ PropKeys.cpp:
 	.text       start:0x8239C640 end:0x8239C6D8
 	.text       start:0x82421758 end:0x82425BC8
 	.text       start:0x82425C28 end:0x82425FCC
+	.text       start:0x82425FD0 end:0x824265F8
 	.text       start:0x82638C10 end:0x82638CC0
 	.text       start:0x8263FD2C end:0x8263FD30
 	.text       start:0x8263FD60 end:0x8263FDE8
