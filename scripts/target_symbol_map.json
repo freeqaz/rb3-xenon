@@ -1,4 +1,5 @@
 {
+ "0x826f0170": "?Render@TrainerGemTab@@QAAXHHMMH@Z",
  "0x82656b98": "?SetNumSections@Stats@@QAAXH@Z",
  "0x82bafba0": "?CodaHitChord@GemSmasher@@QAAXXZ",
  "0x82baf0c8": "?UpdateStaticTiming@LyricPlate@@QAAXM@Z",
@@ -19850,7 +19851,7 @@
  "0x826efb18": "?DrawExtraTails@TrainerGemTab@@QAAXXZ",
  "0x826efbe0": "??$__uninitialized_copy@PAVExtraTail@TrainerGemTab@@PAV12@@stlpmtx_std@@YAPAVExtraTail@TrainerGemTab@@PAV12@00ABU__false_type@0@@Z",
  "0x826efc38": "??0TrainerGemTab@@QAA@XZ",
- "0x826efc98": "?Render@TrainerGemTab@@QAAXHHMMH@Z",
+ "0x826efc98": null,
  "0x826efcf8": "??1TrainerGemTab@@QAA@XZ",
  "0x826efd90": "?SetPattern@TrainerGemTab@@QAAXPBVTrainerSection@@ABV?$vector@VGameGem@@V?$StlNodeAlloc@VGameGem@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x826efdf8": "?DrawTails@TrainerGemTab@@QAAXABVGameGem@@HHMM@Z",
