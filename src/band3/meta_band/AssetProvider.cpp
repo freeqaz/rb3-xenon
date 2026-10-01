@@ -77,6 +77,12 @@ void PremiumAssetProvider::UpdateExtendedText(int, int data, UILabel *label) con
     label->SetTextToken(gNullStr);
 }
 
+// Retail 0x82670A88.
+PremiumAssetProvider::PremiumAssetProvider(AssetGender gender) {
+    AssetMgr *pAssetMgr = AssetMgr::GetAssetMgr();
+    pAssetMgr->GetPremiumAssets(mAssets, gender);
+}
+
 PremiumAssetProvider::~PremiumAssetProvider() {}
 
 Symbol PremiumAssetProvider::DataSymbol(int data) const {

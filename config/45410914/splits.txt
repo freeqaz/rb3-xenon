@@ -5736,12 +5736,6 @@ SessionUsersProviders.cpp:
 	.pdata      start:0x8222D5F8 end:0x8222D6A8
 	.text       start:0x82654080 end:0x82654A10
 
-HamSupereasyData.cpp:
-	.pdata      start:0x8222F488 end:0x8222F490
-	.pdata      start:0x8222F490 end:0x8222F4A8
-	.text       start:0x82670A88 end:0x82670B0C
-	.text       start:0x82670B0C end:0x82670B8C
-
 TransAnim.cpp:
 	.pdata      start:0x8220E6A8 end:0x8220E6B8
 	.pdata      start:0x8220E6D0 end:0x8220E6E0
@@ -8642,12 +8636,14 @@ band3/meta_band/AssetMgr.cpp:
 	.pdata      start:0x8221D868 end:0x8221D878
 	.pdata      start:0x8221D880 end:0x8221D9D0
 	.pdata      start:0x8221D9D0 end:0x8221D9D8
+	.pdata      start:0x8221D9E0 end:0x8221D9E8
 	.pdata      start:0x8221D9E8 end:0x8221DA30
 	.text       start:0x82569E78 end:0x82569E88
 	.text       start:0x82569E88 end:0x8256A100
 	.text       start:0x8256A150 end:0x8256A268
 	.text       start:0x8256A298 end:0x8256B4C8
 	.text       start:0x8256B4C8 end:0x8256B544
+	.text       start:0x8256B570 end:0x8256B5DC
 	.text       start:0x8256B5DC end:0x8256B8B0
 
 band3/meta_band/ProfileAssets.cpp:
@@ -8656,10 +8652,14 @@ band3/meta_band/ProfileAssets.cpp:
 
 band3/meta_band/AssetProvider.cpp:
 	.pdata      start:0x8222F468 end:0x8222F488
+	.pdata      start:0x8222F488 end:0x8222F490
+	.pdata      start:0x8222F490 end:0x8222F4A8
 	.pdata      start:0x8222F4A8 end:0x8222F4E8
 	.pdata      start:0x8222F4F0 end:0x8222F540
 	.pdata      start:0x8222F548 end:0x8222F5A0
 	.text       start:0x82670700 end:0x82670A88
+	.text       start:0x82670A88 end:0x82670B0C
+	.text       start:0x82670B0C end:0x82670B8C
 	.text       start:0x82670B8C end:0x82670F88
 	.text       start:0x82670FDC end:0x826714D8
 	.text       start:0x82671594 end:0x82671AE8
@@ -8774,11 +8774,9 @@ band3/meta_band/CampaignGoalsLeaderboardPanel.cpp:
 	.text       start:0x825F58C8 end:0x825F591C
 
 band3/meta_band/CharCache.cpp:
-	.pdata      start:0x8221D9E0 end:0x8221D9E8
 	.pdata      start:0x8221DA30 end:0x8221DA78
 	.pdata      start:0x8221DA78 end:0x8221DAB0
 	.pdata      start:0x8221DAB0 end:0x8221DB20
-	.text       start:0x8256B570 end:0x8256B5DC
 	.text       start:0x8256B8B0 end:0x8256BC58
 	.text       start:0x8256BC58 end:0x8256C310
 	.text       start:0x8256C310 end:0x8256C7E0
