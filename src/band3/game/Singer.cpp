@@ -125,7 +125,7 @@ Singer::Singer(VocalPlayer *vp, int n)
     : mPlayer(vp), unkc(0), mSingerIndex(n), unk14(0), unk18(0), unk1c(0), mIsSinging(0),
       mDetune(0), mCurrentFrameTime(0), unk30(0), mTambourineDeploymentSuppressMs(100.0f), mTambourineActivationTime(0), mLastTambourineTime(0), mTotalTambourineDeployment(0),
       mScreamStartTime(-1.0f), mScreamEnergyThreshold(0.8f), mScreamMinDurationMs(500.0f), mFrameMicPitch(0),
-      mLastFrameMicEnergy(0), mSmoothedMicEnergy(0), mFrameTargetPitch(0), mFrameAssignedPart(-1), mBestTargetPitch(0), mOctaveOffset(0),
+      mLastFrameMicEnergy(0), mSmoothedMicEnergy(0), mFrameBestHitScore(0), mFrameAssignedPart(-1), mBestTargetPitch(0), mOctaveOffset(0),
       unk7c(0), mScreamOccurred(0), unk84(0), unk88(0), mPitchHistoryMean(0), mPitchHistoryIndex(0), mPitchHistoryValidCount(0), mVibrato(0),
       mAccumulatedVibratoBonusPoints(0), mVibratoFrameBonus(0), mVibratoBonusAccumulator(-1.0f), mAutoplayPart(-1),
       mAutoplayVariationMagnitude(0), mAutoplayOffset(0),
@@ -150,18 +150,9 @@ Singer::Singer(VocalPlayer *vp, int n)
     mTalkyMatcher = new TalkyMatcher();
     for (int i = 0; i < 5; i++)
         mPitchHistory[i] = 0;
-
-    if (n == 0) {
-        GameMic *mic = TheGameMicManager->GetMic(mMicClientID);
-        if (mic) {
-            DataNode node = DataVariable("playback_file");
-            if (node.Type() == kDataString) {
-                if (strlen(node.Str()) != 0) {
-                    mic->SetInputFile(node.Str());
-                }
-            }
-        }
-    }
+    // Retail's ctor ends here: it has no `playback_file` DataVariable block feeding
+    // singer 0's GameMic an input file, and it zero-inits mFrameBestHitScore (+0x6c),
+    // not mFrameTargetPitch (+0x68).
 }
 
 Singer::~Singer() {
