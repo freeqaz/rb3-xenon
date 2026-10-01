@@ -315,9 +315,13 @@ MergeFilter::Action FileMerger::Filter(Hmx::Object *o1, Hmx::Object *o2, ObjectD
         a = MergeAction(o1, o2, dir);
     }
     if (a == 1 && !o2) {
-        mFilesPending.front()->mLoadedObjects.push_back(o1);
+        AddObject(o1);
     }
     return a;
+}
+
+__declspec(noinline) void FileMerger::AddObject(Hmx::Object *obj) {
+    mFilesPending.front()->mLoadedObjects.push_back(obj);
 }
 
 __declspec(noinline) void FileMerger::AddSubdir(ObjectDir *dir) {

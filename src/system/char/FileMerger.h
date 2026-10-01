@@ -148,6 +148,7 @@ protected:
     virtual Action Filter(Hmx::Object *, Hmx::Object *, ObjectDir *);
     virtual SubdirAction FilterSubdir(ObjectDir *o1, ObjectDir *);
 
+    void AddObject(Hmx::Object *);
     void AddSubdir(ObjectDir *);
     void DeleteCurLoader();
     bool StartLoadInternal(bool, bool);

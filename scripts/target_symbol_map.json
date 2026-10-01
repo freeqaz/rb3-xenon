@@ -8381,6 +8381,7 @@
  "0x823915a0": "?Clear@Merger@FileMerger@@QAAXXZ",
  "0x82391818": "?FindMerger@FileMerger@@QAAPAUMerger@1@VSymbol@@_N@Z",
  "0x82391860": "?Select@FileMerger@@QAAXVSymbol@@ABVFilePath@@_N@Z",
+ "0x823918c0": "?AddObject@FileMerger@@IAAXPAVObject@Hmx@@@Z",
  "0x82391910": "?AddSubdir@FileMerger@@IAAXPAVObjectDir@@@Z",
  "0x82391960": "?Filter@FileMerger@@MAA?AW4Action@MergeFilter@@PAVObject@Hmx@@0PAVObjectDir@@@Z",
  "0x823919d0": "?FilterSubdir@FileMerger@@MAA?AW4SubdirAction@MergeFilter@@PAVObjectDir@@0@Z",
