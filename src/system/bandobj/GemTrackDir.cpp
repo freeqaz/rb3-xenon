@@ -1248,10 +1248,13 @@ bool GemTrackDir::PrepareChordMesh(unsigned int chord) {
         invMesh->Sync(0x3F);
         unk6cc[chord] = std::make_pair(1, invMesh);
 
+#ifdef HX_NATIVE
         if (TheLoadMgr.EditMode()) {
             chordMesh->SetName(MakeString("chord_%d", chord), this);
             invMesh->SetName(MakeString("chord_L_%d", chord), this);
-        } else {
+        } else
+#endif
+        {
             chordMesh->SetName("", this);
             invMesh->SetName("", this);
         }
