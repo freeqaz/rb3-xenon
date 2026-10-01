@@ -2,6 +2,9 @@
 // Must precede the first #include of obj/Object.h (rndobj/ is PCH-excluded).
 #define RB3_OBJPTR_INLINE_OWNER_CTOR 1
 #define RB3_OBJPTR_INLINE_OWNER_CTOR_EH 1
+// Retail's RndMeshAnim ctor (0x8246FE80) also inlines the two-argument mMesh(this,
+// nullptr) ctor, stores before the vtable.
+#define RB3_OBJPTR_FORCEINLINE_CTOR
 #include "rndobj/MeshAnim.h"
 #include "obj/Object.h"
 #include "rndobj/Anim.h"
