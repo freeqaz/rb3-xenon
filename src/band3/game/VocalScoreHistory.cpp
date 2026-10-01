@@ -21,7 +21,7 @@ void VocalScoreHistory::AddScore(float f1, float f2) {
         return;
     else {
         mScores[unkc++] = f2;
-        if (unkc >= (int)mScores.size())
+        if (unkc >= mScores.size())
             unkc = 0;
         unk0 = f1;
         unk20 = true;
