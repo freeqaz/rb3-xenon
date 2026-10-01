@@ -167,8 +167,9 @@ JsonObject *JsonConverter::LoadFromString(const String &str) {
     printbuf_memappend(buf, str.c_str(), strlen(str.c_str()));
     jObj->Set(json_tokener_parse(buf->buf));
     printbuf_free(buf);
+    JsonObject *temp = jObj;
     jObj->AddRef();
-    mObjects.push_back(jObj);
+    mObjects.push_back(temp);
     return jObj;
 #endif
 }
