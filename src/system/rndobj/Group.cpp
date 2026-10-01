@@ -370,6 +370,8 @@ void RndGroup::Update() {
     if (mDrawOnly && !VectorFind(mDraws, mDrawOnly.Ptr())) {
         mDrawOnly = nullptr;
     }
+    // Retail refreshes the LOD state here (inlined at the tail).
+    UpdateLODState();
 }
 
 void RndGroup::AddObject(Hmx::Object *o1, Hmx::Object *o2) {
