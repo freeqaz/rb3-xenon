@@ -94583,6 +94583,23 @@
      "evidence": "Cycle broken by TWO INDEPENDENT CHANNELS (FOLDPROVE-2 method), lane W16-JE. --chase is CHASED T1 PROVEN with its only CYCLE-ASSUMED leaf the self-recursive slot. (1) MASKED-BODY UNIQUENESS: ?_M_fill_insert_aux@?$vector@PAU_Slist_node_base@priv@stlpmtx_std@@V?$ self-recursive on both sides, whole-image census of retail bodies with its masked bytes AND relocation shape = exactly 1 (?_M_fill_insert_aux@?$vector@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDra) -- so if retail instantiated our spelling's leaf it can only be the survivor's leaf. (2) HETEROGENEOUS FAN-IN naming our element type: retail 2 call(s) the survivor/leaf chain (e.g. ??$__uninitialized_fill_n@PAV?$hash_map@VSymbol@@VString@@U?$hash@VSymbol@@@stlpmtx_std@@U, ?_M_insert_overflow_aux@?$vector@V?$hash_map@VSymbol@@VString@@U?$hash@VSymbol@@@stlpmtx_s). The self-recursive slot itself is NOT counted as evidence. Placeholder-slot audit: every tolerated slot re-checked (data globals one address, unnamed callees chase PROVEN), 0 bad."
     }
    ]
+  },
+  {
+   "name": "SetMaxDisplay",
+   "address": "0x8280e248",
+   "survivor": "?SetMaxDisplay@UIListState@@QAAXH@Z",
+   "folded": [
+    "?SetStartSamp@Voice@@QAAXH@Z"
+   ],
+   "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
+   "lane": "W16-JE 2026-10-01",
+   "admitted": [
+    {
+     "spelling": "?SetStartSamp@Voice@@QAAXH@Z",
+     "lane": "W16-JE 2026-10-01",
+     "evidence": "Lane W16-JE. Retail 0x8280e248 is `stw r4,0x18(r3); blr` (8 B, no relocation), inside UIListState.cpp's pins directly before SetScrollPastMinDisplay, so the survivor is named for UIListState (the TU whose contribution holds it; map row renamed from Voice::SetStartSamp in the same change). Our Voice::SetStartSamp COMDAT is byte-identical -- `90830018 4e800020`, no relocation -- which is the /OPT:ICF folding condition itself (VACUOUS-BUT-IDENTICAL). Call-site witness: retail StreamReceiver360::SetSlipOffset branches to 0x8280e248 at the site where our compiled SetSlipOffset calls Voice::SetStartSamp (retail callers of the address: UIList::Copy/PostLoad/SyncProperty -- the SetMaxDisplay sites -- and StreamReceiver360::SetSlipOffset)."
+    }
+   ]
   }
  ]
 }
