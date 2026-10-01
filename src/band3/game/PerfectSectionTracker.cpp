@@ -20,9 +20,13 @@ PerfectSectionTracker::PerfectSectionTracker(
 PerfectSectionTracker::~PerfectSectionTracker() {}
 
 void PerfectSectionTracker::ConfigureTrackerSpecificData(const DataArray *arr) {
+    static Symbol required_accuracy("required_accuracy");
     arr->FindData(required_accuracy, unkb0, false);
+    static Symbol section_name("section_name");
     arr->FindData(section_name, unk58, false);
+    static Symbol require_all_players("require_all_players");
     arr->FindData(require_all_players, unke5, false);
+    static Symbol chain_multipliers("chain_multipliers");
     unke8.InitFromDataArray(arr->FindArray(chain_multipliers, false));
 }
 
@@ -141,30 +145,48 @@ void PerfectSectionTracker::CheckForCompletedSections() {
         if (playercount == 0)
             return;
         while (unkac < mSectionData.size() && mSectionData[unkac].unk0 >= playercount) {
-            SectionData &cur = mSectionData[unkac];
-            float curc = cur.unkc;
-            int cur8 = cur.unk8;
+            int numInSection = mSectionData[unkac].unk4;
+            float curc = mSectionData[unkac].unkc;
+            int cur8 = mSectionData[unkac].unk8;
 
-            if (cur.unk4 > 0) {
+            if (numInSection > 0) {
                 if (unke5) {
-                    if (cur8 == cur.unk4) {
+                    if (cur8 == numInSection) {
                         curc = unke8.GetMultiplier(++unkb8);
+                        static Symbol perfect_section_band_tracker_success(
+                            "perfect_section_band_tracker_success"
+                        );
                         mBroadcastDisplay.ShowBriefBandMessage(
                             DataArrayPtr(perfect_section_band_tracker_success)
                         );
                     } else {
-                        unkb8 = 0;
                         curc = 0;
+                        unkb8 = 0;
+                        static Symbol perfect_section_tracker_progress(
+                            "perfect_section_tracker_progress"
+                        );
+                        static Symbol perfect_section_tracker_progress_1(
+                            "perfect_section_tracker_progress_1"
+                        );
                         Symbol sym = cur8 == 1 ? perfect_section_tracker_progress_1
                                                : perfect_section_tracker_progress;
                         mBroadcastDisplay.ShowBriefBandMessage(DataArrayPtr(sym, cur8));
                     }
                 } else {
-                    if (cur8 == cur.unk4) {
+                    if (cur8 == numInSection) {
+                        static Symbol perfect_section_band_tracker_success(
+                            "perfect_section_band_tracker_success"
+                        );
                         mBroadcastDisplay.ShowBriefBandMessage(
                             DataArrayPtr(perfect_section_band_tracker_success)
                         );
                     } else {
+                        static Symbol perfect_section_tracker_progress(
+                            "perfect_section_tracker_progress"
+                        );
+                        static Symbol perfect_section_tracker_progress_1(
+                            "perfect_section_tracker_progress_1"
+                        );
                         Symbol sym = cur8 == 1 ? perfect_section_tracker_progress_1
                                                : perfect_section_tracker_progress;
                         mBroadcastDisplay.ShowBriefBandMessage(DataArrayPtr(sym, cur8));
@@ -373,8 +395,15 @@ String PerfectSectionTracker::GetPlayerContributionString(Symbol s) const {
     if (pid.NotNull()) {
         Player *pPlayer = mSource->GetPlayer(pid);
         MILO_ASSERT(pPlayer, 0x2D9);
-        f1 = pPlayer->mStats.unk1c0;
+        Stats &stats = pPlayer->mStats;
+        f1 = stats.unk1c0;
     }
+    static Symbol tour_goal_band_perfect_section_result_format(
+        "tour_goal_band_perfect_section_result_format"
+    );
+    static Symbol tour_goal_band_perfect_section_result_format_1(
+        "tour_goal_band_perfect_section_result_format_1"
+    );
     Symbol sym = (int)f1 == 1 ? tour_goal_band_perfect_section_result_format_1
                               : tour_goal_band_perfect_section_result_format;
     return MakeString(Localize(sym, 0), f1);
@@ -394,5 +423,6 @@ void PerfectSectionTracker::SavePlayerStats() const {
 }
 
 DataArrayPtr PerfectSectionTracker::GetBroadcastDescription() const {
+    static Symbol perfect_section_tracker_explanation("perfect_section_tracker_explanation");
     return DataArrayPtr(perfect_section_tracker_explanation);
 }
