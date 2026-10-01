@@ -1433,7 +1433,7 @@ Rot.cpp:
 	.pdata      start:0x821FF9D8 end:0x821FF9E8
 	.pdata      start:0x821FFB20 end:0x821FFB28
 	.pdata      start:0x822021B0 end:0x822021B8
-	.pdata      start:0x822021B8 end:0x822021C8
+	.pdata      start:0x822021B8 end:0x822021C0
 	.pdata      start:0x8220BD00 end:0x8220BD20
 	.pdata      start:0x8220BD28 end:0x8220BD30
 	.pdata      start:0x822151F8 end:0x82215208
@@ -1447,7 +1447,7 @@ Rot.cpp:
 	.text       start:0x82356118 end:0x82356230
 	.text       start:0x823573F0 end:0x823574A4
 	.text       start:0x8237B218 end:0x8237B2A8
-	.text       start:0x8237B2A8 end:0x8237B410
+	.text       start:0x8237B2A8 end:0x8237B338
 	.text       start:0x824265F8 end:0x824268A8
 	.text       start:0x82426950 end:0x82426A04
 	.text       start:0x824E17B0 end:0x824E184C
@@ -4644,7 +4644,7 @@ CharBonesMeshes.cpp:
 	.pdata      start:0x821F1B98 end:0x821F1BA8
 	.pdata      start:0x821F1BF8 end:0x821F1C30
 	.pdata      start:0x822014B0 end:0x822014C0
-	.pdata      start:0x822021C8 end:0x822021D0
+	.pdata      start:0x822021C0 end:0x822021D0
 	.pdata      start:0x822021D0 end:0x82202228
 	.pdata      start:0x82202228 end:0x82202258
 	.pdata      start:0x82202258 end:0x82202270
@@ -4655,7 +4655,7 @@ CharBonesMeshes.cpp:
 	.text       start:0x822768F8 end:0x82276A28
 	.text       start:0x82276D50 end:0x82276F98
 	.text       start:0x8236CA70 end:0x8236CB48
-	.text       start:0x8237B410 end:0x8237B594
+	.text       start:0x8237B338 end:0x8237B594
 	.text       start:0x8237B598 end:0x8237BBF0
 	.text       start:0x8237BBF0 end:0x8237C070
 	.text       start:0x8237C070 end:0x8237C1C8
