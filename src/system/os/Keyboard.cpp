@@ -2,7 +2,10 @@
 #include "obj/Object.h"
 #include "obj/Object.h"
 
-Hmx::Object *gSource;
+// A MsgSource, not a bare Hmx::Object: retail's KeyboardSubscribe
+// (0x82524630) and KeyboardUnsubscribe (0x82524660) tail-call
+// MsgSource::AddSink / MsgSource::RemoveSink.
+MsgSource *gSource;
 ObjPtr<Hmx::Object> gOverride(0, 0);
 
 void KeyboardTerminateCommon() { RELEASE(gSource); }
@@ -21,7 +24,7 @@ void KeyboardUnsubscribe(Hmx::Object *o) {
 
 void KeyboardInitCommon() {
     MILO_ASSERT(!gSource, 0x12);
-    gSource = Hmx::Object::New<Hmx::Object>();
+    gSource = Hmx::Object::New<MsgSource>();
 }
 
 Hmx::Object *KeyboardOverride(Hmx::Object *o) {
