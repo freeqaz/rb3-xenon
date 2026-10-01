@@ -66,7 +66,9 @@ public:
     };
 
     struct HideDelay {
-        HideDelay(Hmx::Object *);
+        // Inline: retail has no out-of-line HideDelay ctor; resize() builds
+        // the default element in place.
+        HideDelay(Hmx::Object *o) : mHide(o), mDelay(0), mRate(0) {}
         HideDelay &operator=(const HideDelay &);
 
         /** "object to hide" */
