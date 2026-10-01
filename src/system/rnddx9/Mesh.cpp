@@ -64,6 +64,12 @@ DxMesh::~DxMesh() {
     unk1b0 = nullptr;
 }
 
+// 0x82737440: buffers present, or the mesh is mutable (streamed each draw).
+bool DxMesh::CanDraw() const {
+    bool hasBuffers = (int)unk1a4.buffer && unk1ac != NULL;
+    return hasBuffers || mMutable;
+}
+
 u32 DxMesh::VertFVF() const {
     return 0;
 }
