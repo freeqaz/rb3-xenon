@@ -10272,7 +10272,7 @@
  "0x82421400": "?Handle@RndPollable@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x824215e0": "?Enter@RndPollable@@UAAXXZ",
  "0x824216a0": "?Exit@RndPollable@@UAAXXZ",
- "0x82421758": "?Current@RndCam@@SAPAV1@XZ",
+ "0x82421758": "?SetPropKeysRev@@YAXH@Z",
  "0x82421768": "?CalcSpline@@YAMMQAM@Z",
  "0x824217e0": "?Copy@PropKeys@@UAAXPBV1@@Z",
  "0x82421808": "?NearlyEqual@@YA_NABVVector3@@0M@Z",

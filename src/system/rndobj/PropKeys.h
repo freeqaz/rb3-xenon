@@ -57,6 +57,8 @@ public:
  * Holds a reference to the target object
  * as well as the property path.
  */
+void SetPropKeysRev(int rev);
+
 class PropKeys : public ObjRefOwner {
     friend class RndPropAnim;
 public:

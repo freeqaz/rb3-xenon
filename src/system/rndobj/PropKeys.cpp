@@ -12,6 +12,10 @@ Hmx::Object *ObjectStage::sOwner;
 Message PropKeys::sInterpMessage(gNullStr, 0, 0, 0, 0, 0);
 int PropKeys::sPropKeysLoadRev = 0;
 
+// Out of line in retail (0x82421758: stw r3 to the rev static, blr);
+// RndPropAnim::Load calls it.
+void SetPropKeysRev(int rev) { PropKeys::sPropKeysLoadRev = rev; }
+
 float CalcSpline(float t, float *const p) {
     float p1 = p[1];
     float p0 = p[0];

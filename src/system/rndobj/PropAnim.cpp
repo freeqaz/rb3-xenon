@@ -235,11 +235,9 @@ BEGIN_LOADS(RndPropAnim)
     bs >> revs;
     gRev_PropAnim = getHmxRev(revs);
     gAltRev_PropAnim = getAltRev(revs);
-    // Retail sets PropKeys' class-static "current load rev" here (a.k.a.
-    // SetPropKeysRev(gRev)) before any nested PropKeys::Load() call — see the
-    // PropKeys.h comment on PropKeys::sPropKeysLoadRev (named to dodge this
-    // TU's scatter-include gRev macro wrapping).
-    PropKeys::sPropKeysLoadRev = gRev_PropAnim;
+    // Retail hands PropKeys the load rev through an out-of-line call before
+    // any nested PropKeys::Load().
+    SetPropKeysRev(gRev_PropAnim);
     Hmx::Object::Load(bs);
     RndAnimatable::Load(bs);
 
