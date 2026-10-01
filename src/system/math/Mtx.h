@@ -135,38 +135,7 @@ namespace Hmx {
     };
 
     Hmx::Matrix4 operator*(const Transform &, const Hmx::Matrix4 &);
-    inline Hmx::Matrix4 operator*(const Hmx::Matrix4 &a, const Hmx::Matrix4 &b) {
-        Vector4 c0 = a.Col4(0);
-        Vector4 c1 = a.Col4(1);
-        Vector4 c2 = a.Col4(2);
-        Vector4 c3 = a.Col4(3);
-        return Hmx::Matrix4(
-            Vector4(
-                b.x.x * c0.x + b.x.y * c1.x + b.x.z * c2.x + b.x.w * c3.x,
-                b.x.x * c0.y + b.x.y * c1.y + b.x.z * c2.y + b.x.w * c3.y,
-                b.x.x * c0.z + b.x.y * c1.z + b.x.z * c2.z + b.x.w * c3.z,
-                b.x.x * c0.w + b.x.y * c1.w + b.x.z * c2.w + b.x.w * c3.w
-            ),
-            Vector4(
-                b.y.x * c0.x + b.y.y * c1.x + b.y.z * c2.x + b.y.w * c3.x,
-                b.y.x * c0.y + b.y.y * c1.y + b.y.z * c2.y + b.y.w * c3.y,
-                b.y.x * c0.z + b.y.y * c1.z + b.y.z * c2.z + b.y.w * c3.z,
-                b.y.x * c0.w + b.y.y * c1.w + b.y.z * c2.w + b.y.w * c3.w
-            ),
-            Vector4(
-                b.z.x * c0.x + b.z.y * c1.x + b.z.z * c2.x + b.z.w * c3.x,
-                b.z.x * c0.y + b.z.y * c1.y + b.z.z * c2.y + b.z.w * c3.y,
-                b.z.x * c0.z + b.z.y * c1.z + b.z.z * c2.z + b.z.w * c3.z,
-                b.z.x * c0.w + b.z.y * c1.w + b.z.z * c2.w + b.z.w * c3.w
-            ),
-            Vector4(
-                b.w.x * c0.x + b.w.y * c1.x + b.w.z * c2.x + b.w.w * c3.x,
-                b.w.x * c0.y + b.w.y * c1.y + b.w.z * c2.y + b.w.w * c3.y,
-                b.w.x * c0.z + b.w.y * c1.z + b.w.z * c2.z + b.w.w * c3.z,
-                b.w.x * c0.w + b.w.y * c1.w + b.w.z * c2.w + b.w.w * c3.w
-            )
-        );
-    }
+    inline Hmx::Matrix4 operator*(const Hmx::Matrix4 &a, const Hmx::Matrix4 &b);
 
     class Quat {
     public:
@@ -460,6 +429,27 @@ void Multiply(const Vector3 &, const Transform &, Vector3 &);
 // 0x822C17D0, which loads the matrix/translation from r3 (0x0..0x38) and the
 // point from r4 (0x0..0x8). DC3 declares (Vector3, Transform);
 // that is a later-engine change. Do not "restore" the DC3 order.
+// Row vector times matrix: out = v * m.
+__forceinline void Multiply(const Vector4 &v, const Hmx::Matrix4 &m, Vector4 &out) {
+    out.x = v.x * m.x.x + v.y * m.y.x + v.z * m.z.x + v.w * m.w.x;
+    out.y = v.x * m.x.y + v.y * m.y.y + v.z * m.z.y + v.w * m.w.y;
+    out.z = v.x * m.x.z + v.y * m.y.z + v.z * m.z.z + v.w * m.w.z;
+    out.w = v.x * m.x.w + v.y * m.y.w + v.z * m.z.w + v.w * m.w.w;
+}
+
+// Row-vector product a * b: row i of the result is row i of a times b.
+// Retail's out-of-line copy (0x824A7AA0, called from CheckShadow with the
+// shadow texture matrix as b) computes exactly this, one row at a time: each
+// element is stored before both operands are reloaded for the next.
+inline Hmx::Matrix4 Hmx::operator*(const Hmx::Matrix4 &a, const Hmx::Matrix4 &b) {
+    Hmx::Matrix4 out;
+    Multiply(a.x, b, out.x);
+    Multiply(a.y, b, out.y);
+    Multiply(a.z, b, out.z);
+    Multiply(a.w, b, out.w);
+    return out;
+}
+
 inline void MultiplyTranspose(const Transform &t, const Vector3 &v, Vector3 &out) {
     Subtract(v, t.v, out);
     out.Set(Dot(out, t.m.x), Dot(out, t.m.y), Dot(out, t.m.z));
