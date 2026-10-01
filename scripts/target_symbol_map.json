@@ -1,4 +1,6 @@
 {
+ "0x824ce910": "??1WorldDir@@UAA@XZ",
+ "0x823a8f98": "??0Strand@CharHair@@QAA@PAVObject@Hmx@@@Z",
  "0x8283c960": "XPhysicalSize",
  "0x8283c968": "XPhysicalFree",
  "0x8247ba00": "??$?5VPoint@RndLine@@V?$StlNodeAlloc@VPoint@RndLine@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@VPoint@RndLine@@V?$StlNodeAlloc@VPoint@RndLine@@@stlpmtx_std@@@stlpmtx_std@@@Z",
@@ -8125,7 +8127,7 @@
  "0x823aabc8": "?_M_fill_insert_aux@?$vector@VStrand@CharHair@@V?$StlNodeAlloc@VStrand@CharHair@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVStrand@CharHair@@IABV34@ABU__false_type@2@@Z",
  "0x823aad78": "?_M_erase@?$vector@UDynamicPropertyEntry@Flow@@V?$StlNodeAlloc@UDynamicPropertyEntry@Flow@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUDynamicPropertyEntry@Flow@@PAU34@0ABU__false_type@2@@Z",
  "0x823aade0": "?_M_fill_insert@?$vector@UDynamicPropertyEntry@Flow@@V?$StlNodeAlloc@UDynamicPropertyEntry@Flow@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUDynamicPropertyEntry@Flow@@IABU34@@Z",
- "0x823aae58": "??$PropSync@UDynamicPropertyEntry@Flow@@@@YA_NAAV?$ObjVector@UDynamicPropertyEntry@Flow@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x823aae58": "??$PropSync@VStrand@CharHair@@@@YA_NAAV?$ObjVector@VStrand@CharHair@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x823ab020": "?SyncProperty@CharHair@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x823ab598": "?resize@?$vector@UDynamicPropertyEntry@Flow@@V?$StlNodeAlloc@UDynamicPropertyEntry@Flow@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUDynamicPropertyEntry@Flow@@@Z",
  "0x823ab618": "?SyncProperty@CharHair@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
