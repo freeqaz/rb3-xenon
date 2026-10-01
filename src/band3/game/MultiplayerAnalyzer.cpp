@@ -128,7 +128,8 @@ void MultiplayerAnalyzer::AddTrack(int i1, TrackType ty) {
         pData->mHeadPoints = cfg->FindInt("head");
         pData->mTailPoints = cfg->FindInt("tail");
         pData->mChordPoints = cfg->FindInt("chord");
-        pData->mMaxMultiplier = (ty - 2U <= 7 && ((1 << (ty - 2U)) & 0xC1U)) ? 6 : 4;
+        pData->mMaxMultiplier =
+            (ty == kTrackBass || ty == kTrackRealBass || ty == kTrackRealBass22Fret) ? 6 : 4;
         if (ty == kTrackDrum && mConfig->UseRealDrums()) {
             pData->mHeadPoints += cfg->FindInt("pro_bonus");
         }
