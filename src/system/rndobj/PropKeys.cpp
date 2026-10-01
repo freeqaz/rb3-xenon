@@ -125,28 +125,45 @@ void PropKeys::Copy(const PropKeys *keys) {
     unk34 = keys->unk34;
 }
 
+// Keys stay frame-ordered with a stable insertion sort, instantiated once per key
+// type (types with equal key sizes share one body).
+template <class T1, class T2>
+void SortKeysByFrame(Keys<T1, T2> &keys) {
+    int n = keys.size();
+    for (int i = 1; i < n; i++) {
+        Key<T1> tmp = keys[i];
+        int j = i;
+        for (; j > 0 && tmp.frame < keys[j - 1].frame; j--) {
+            keys[j] = keys[j - 1];
+        }
+        if (j != i) {
+            keys[j] = tmp;
+        }
+    }
+}
+
 void PropKeys::ReSort() {
     switch (mKeysType) {
     case kFloat:
-        std::sort(AsFloatKeys()->begin(), AsFloatKeys()->end());
+        SortKeysByFrame(*AsFloatKeys());
         break;
     case kColor:
-        std::sort(AsColorKeys()->begin(), AsColorKeys()->end());
+        SortKeysByFrame(*AsColorKeys());
         break;
     case kObject:
-        std::sort(AsObjectKeys()->begin(), AsObjectKeys()->end());
+        SortKeysByFrame(*AsObjectKeys());
         break;
     case kBool:
-        std::sort(AsBoolKeys()->begin(), AsBoolKeys()->end());
+        SortKeysByFrame(*AsBoolKeys());
         break;
     case kSymbol:
-        std::sort(AsSymbolKeys()->begin(), AsSymbolKeys()->end());
+        SortKeysByFrame(*AsSymbolKeys());
         break;
     case kVector3:
-        std::sort(AsVector3Keys()->begin(), AsVector3Keys()->end());
+        SortKeysByFrame(*AsVector3Keys());
         break;
     case kQuat:
-        std::sort(AsQuatKeys()->begin(), AsQuatKeys()->end());
+        SortKeysByFrame(*AsQuatKeys());
         break;
     }
 }
