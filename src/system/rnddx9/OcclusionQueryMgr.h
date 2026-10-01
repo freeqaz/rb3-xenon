@@ -46,7 +46,7 @@ protected:
 private:
     D3DQuery *GetDXQuery(unsigned int queryIndex) {
         MILO_ASSERT(queryIndex < kMaxQueries, 0x57);
-        if (!mDXQueryArray[queryIndex][mCurrentFrameIndex]) {
+        if (!mDXQueryArray[queryIndex][GetCurrentFrameIndex()]) {
             MILO_ASSERT(GetQueryState(queryIndex) == kQueryStateInvalid, 0x5D);
             D3DQuery **slot = &mDXQueryArray[queryIndex][mCurrentFrameIndex];
             if (slot) {
