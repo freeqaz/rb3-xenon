@@ -784,19 +784,19 @@ int BandIKEffector::GetType() {
         MILO_NOTIFY_ONCE("%s trying to get type with NULL effector", PathName(this));
         return 0;
     }
-    const char *name = _ref0->Name();
-    if (strncmp(name, "bone_pelvis", 11) == 0)
+    // Retail re-reads the effector's name for every comparison.
+    if (strncmp(_ref0->Name(), "bone_pelvis", 11) == 0)
         return 1;
-    if (strncmp(name, "bone_L-ankle", 12) == 0
-        || strncmp(name, "bone_R-ankle", 12) == 0)
+    if (strncmp(_ref0->Name(), "bone_L-ankle", 12) == 0
+        || strncmp(_ref0->Name(), "bone_R-ankle", 12) == 0)
         return 2;
-    if (strncmp(name, "bone_L-hand", 11) == 0
-        || strncmp(name, "bone_R-hand", 11) == 0)
+    if (strncmp(_ref0->Name(), "bone_L-hand", 11) == 0
+        || strncmp(_ref0->Name(), "bone_R-hand", 11) == 0)
         return 3;
-    if (strncmp(name, "bone_L-foreArm", 11) == 0
-        || strncmp(name, "bone_R-foreArm", 11) == 0)
+    if (strncmp(_ref0->Name(), "bone_L-foreArm", 11) == 0
+        || strncmp(_ref0->Name(), "bone_R-foreArm", 11) == 0)
         return 4;
-    if (strncmp(name, "bone_head", 9) == 0)
+    if (strncmp(_ref0->Name(), "bone_head", 9) == 0)
         return 5;
     return 0;
 }
