@@ -1,4 +1,10 @@
 {
+ "0x82747998": "??0TaskMgr@@QAA@XZ",
+ "0x8274a8f8": "?Terminate@TaskMgr@@QAAXXZ",
+ "0x82747a78": "??0?$ObjPtr@VTask@@@@QAA@ABV0@@Z",
+ "0x82747a38": "?Replace@MessageTask@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+ "0x82749450": "?Replace@ScriptTask@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+ "0x827494b0": "?Replace@ThreadTask@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x82749360": "??$_Copy_Construct@UTaskInfo@TaskTimeline@@@stlpmtx_std@@YAXPAUTaskInfo@TaskTimeline@@ABU12@@Z",
  "0x8274a9d0": "??0DataNode@@QAA@ABV0@@Z",
  "0x8276c9e0": "??$__uninitialized_copy@PAV?$ObjPtr@VObject@Hmx@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VObject@Hmx@@@@PAV1@00ABU__false_type@0@@Z",

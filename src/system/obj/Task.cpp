@@ -48,6 +48,19 @@ MessageTask::~MessageTask() {
     }
 }
 
+#ifndef HX_NATIVE
+// Retail 0x82747A38: `from` (the dying Hmx::Object*) is compared first, and
+// there is no base-class Replace call.
+void MessageTask::Replace(ObjRef *from, Hmx::Object *to) {
+    if (reinterpret_cast<Hmx::Object *>(from) == mObj.Ptr()) {
+        if (!to) {
+            delete this;
+        } else {
+            mObj = to;
+        }
+    }
+}
+#else
 void MessageTask::Replace(ObjRef *from, Hmx::Object *to) {
     if (RefIs(from, mObj)) {
         if (!to) {
@@ -59,6 +72,7 @@ void MessageTask::Replace(ObjRef *from, Hmx::Object *to) {
     } else
         Hmx::Object::Replace(from, to);
 }
+#endif
 
 void MessageTask::Poll(float) {
     if (mObj && mMsg) {
@@ -105,6 +119,18 @@ ScriptTask::~ScriptTask() {
     mScript->Release();
 }
 
+#ifndef HX_NATIVE
+// Retail 0x82749450: only a deletion matters; the task deletes itself when
+// its this-object or one of its watched objects dies.
+void ScriptTask::Replace(ObjRef *from, Hmx::Object *to) {
+    if (!to) {
+        Hmx::Object *obj = reinterpret_cast<Hmx::Object *>(from);
+        if (obj == mThis.Ptr() || ListFind(mObjects, obj)) {
+            delete this;
+        }
+    }
+}
+#else
 void ScriptTask::Replace(ObjRef *from, Hmx::Object *to) {
     if (RefIs(from, mThis)) {
         mThis = to;
@@ -117,6 +143,7 @@ void ScriptTask::Replace(ObjRef *from, Hmx::Object *to) {
     delete this;
     return;
 }
+#endif
 
 void ScriptTask::Poll(float f1) {
     MILO_ASSERT(mScript, 0xCF);
@@ -196,6 +223,17 @@ ThreadTask::ThreadTask(DataArray *script, DataArray *updateVarsObjs)
       mTimeout(-1) {}
 #endif
 
+#ifndef HX_NATIVE
+// Retail 0x827494B0: while executing, the dying object is only dropped from
+// mObjects (no base-class Replace).
+void ThreadTask::Replace(ObjRef *from, Hmx::Object *to) {
+    if (!mExecuting) {
+        ScriptTask::Replace(from, to);
+    } else {
+        mObjects.remove_if(ObjMatchPr(reinterpret_cast<Hmx::Object *>(from)));
+    }
+}
+#else
 void ThreadTask::Replace(ObjRef *from, Hmx::Object *to) {
     if (mExecuting) {
         Hmx::Object::Replace(from, to);
@@ -204,6 +242,7 @@ void ThreadTask::Replace(ObjRef *from, Hmx::Object *to) {
     }
     ScriptTask::Replace(from, to);
 }
+#endif
 
 BEGIN_HANDLERS(ThreadTask)
     HANDLE(wait, OnWait)
@@ -367,7 +406,13 @@ void TaskTimeline::AddTask(Task *task, float f) { AddTask(TaskInfo(task, mTime +
 #pragma endregion
 #pragma region TaskMgr
 
-TaskMgr::TaskMgr() { mTimelines = new TaskTimeline[4]; }
+// Retail 0x82747998: the ctor builds only the Object base, mSongPos and mTime;
+// the timelines are allocated by Init and freed by Terminate.
+TaskMgr::TaskMgr() {
+#ifdef HX_NATIVE
+    mTimelines = new TaskTimeline[4];
+#endif
+}
 
 TaskMgr::~TaskMgr() {
     delete[] mTimelines;
@@ -391,7 +436,12 @@ BEGIN_HANDLERS(TaskMgr)
     HANDLE_ACTION(set_seconds, SetSeconds(_msg->Float(2), _msg->Int(3)))
 END_HANDLERS
 
-void TaskMgr::Terminate() { SetName(nullptr, nullptr); }
+// Retail 0x8274A8F8 (called from SystemTerminate) also frees the timelines.
+void TaskMgr::Terminate() {
+    SetName(nullptr, nullptr);
+    delete[] mTimelines;
+    mTimelines = nullptr;
+}
 void TaskMgr::SetUISeconds(float f, bool b) { mTimelines[kTaskUISeconds].SetTime(f, b); }
 float TaskMgr::UISeconds() const { return mTimelines[kTaskUISeconds].GetTime(); }
 float TaskMgr::DeltaUISeconds() const { return mTimelines[kTaskUISeconds].DeltaTime(); }
