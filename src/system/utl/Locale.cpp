@@ -6,6 +6,7 @@
 #include "os/Debug.h"
 #include "os/File.h"
 #include "os/System.h"
+#include <stdio.h>
 #include "utl/Str.h"
 #include "utl/DataPointMgr.h"
 #include "xdk/xbdm/xbdm.h"
@@ -400,6 +401,13 @@ const char *LocalizeSeparatedInt(int num, Locale &locale) {
 // `locale` parameter is unused in its body, so this is logically identical;
 // kept as a separate definition (mirroring source) so the call site doesn't
 // need to load a Locale& reference.
+// Retail's LocalizeSeparatedInt(int) calls the CRT _snprintf directly; the native
+// build keeps the portable Hx_snprintf wrapper.
+#ifdef HX_NATIVE
+#define RETAIL_SNPRINTF Hx_snprintf
+#else
+#define RETAIL_SNPRINTF _snprintf
+#endif
 const char *LocalizeSeparatedInt(int num) {
     static Symbol sSep("locale_separator");
     bool success = false;
@@ -430,7 +438,7 @@ const char *LocalizeSeparatedInt(int num) {
                 buf[pos] = sep[j];
             }
         }
-        Hx_snprintf(digitBuf, 2, "%d", absNum % 10);
+        RETAIL_SNPRINTF(digitBuf, 2, "%d", absNum % 10);
         pos--;
         buf[pos] = digitBuf[0];
         digitCount++;
