@@ -101390,7 +101390,7 @@
    "address": "0x8235ee38",
    "survivor": "?_M_clear_after_move@?$vector@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@V?$StlNodeAlloc@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXXZ",
    "folded": [
-    "?_M_clear@?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXXZ"
+    "?_M_clear@?$vector@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@V?$StlNodeAlloc@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXXZ"
    ],
    "evidence": "Fold group opened by W16-MB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
@@ -101403,6 +101403,11 @@
      "spelling": "?_M_clear_after_move@?$vector@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@V?$StlNodeAlloc@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXXZ",
      "lane": "W16-MB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED); 116 B retail / 116 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. ?_M_insert_overflow_aux@?$vector@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@V?$StlNodeAlloc@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@2@ABV32@ABU__false_type@2@I_N@Z."
+    },
+    {
+     "spelling": "?_M_clear@?$vector@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@V?$StlNodeAlloc@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-MB 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 PROVEN); 116 B retail / 116 B ours. Replaces the _M_clear<vector<map<int,float>>> membership withdrawn above: retail's vector<set<Symbol>> keeps one body for _M_clear and _M_clear_after_move."
     }
    ],
    "survivor_renamed": {
@@ -101415,6 +101420,12 @@
      "lane": "W16-MB 2026-10-01",
      "class": "MAP_NAME_WRONG",
      "why": "Retail 0x8235ee38 belongs to the vector<set<Symbol>> instantiation (SongSortMgr::SongFilter's), not to the element type in the old map name: the family's node-creating callee allocates 0x14-byte _Rb_tree nodes holding one 4-byte key (a map<int,float> node is 0x18 and holds a pair), its bodies call _Rb_tree<Symbol,...,_SetTraitsT>::clear and _Copy_Construct<set<Symbol>>, and the blocks interleave Tour's own functions; Tour.obj defines the whole vector<set<Symbol>> family. The map row is renamed to the set<Symbol> spelling and re-homed to Tour, so this membership (the real name folded into the wrong one) is withdrawn and the survivor field follows the map."
+    },
+    {
+     "spelling": "?_M_clear@?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-MB 2026-10-01",
+     "class": "CHASE_REFUTED_AFTER_SURVIVOR_RENAME",
+     "why": "Admitted earlier by this lane against the old survivor spelling _M_clear_after_move<vector<map<int,float>>>, whose callees are map<int,float>'s. The survivor is now the vector<set<Symbol>> spelling (map row corrected, see survivor_renamed), and tools/icf_pair_adjudicate.py --chase reads this pair REFUTED: the bodies match but the relocation targets disagree (map<int,float> element destructors vs set<Symbol>'s). Retail has no vector<map<int,float>>; the set<Symbol> _M_clear twin is admitted in its place."
     }
    ]
   },
