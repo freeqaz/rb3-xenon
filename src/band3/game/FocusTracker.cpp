@@ -467,7 +467,10 @@ void StreakFocusTracker::CheckCondition(float f1, bool b1, bool &bref1, bool &br
     Player *pPlayer = mSource->GetPlayer(mFocusPlayer);
     int hitcount = pPlayer->mStats.mHitCount;
     int curstreak = pPlayer->mStats.GetCurrentStreak();
-    bool haveStreak = curstreak > 0;
+    // const: retail keeps the flag in r11 only. A non-const bool also gets a
+    // home-slot store (stb r11,0x50(r31)) that pushes the DataArrayPtr
+    // temporary from 0x50 to 0x54.
+    const bool haveStreak = curstreak > 0;
     if (haveStreak && !unke4) {
         unkd8 = hitcount - 1;
         unke4 = true;
