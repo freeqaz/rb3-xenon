@@ -1030,10 +1030,12 @@ namespace Quazal {
             }
             if (UsesReceiveQueue()) {
                 Buffer *pQueued;
-                InetAddress oFrom;
-                while (pSocket->m_oReceivedQueue.Pop(&pQueued, &oFrom)) {
-                    Receive(pSocket, pQueued, &oFrom);
-                    pSocket->m_oReceivedQueue.Release(pQueued);
+                {
+                    InetAddress oFrom;
+                    while (pSocket->m_oReceivedQueue.Pop(&pQueued, &oFrom)) {
+                        Receive(pSocket, pQueued, &oFrom);
+                        pSocket->m_oReceivedQueue.Release(pQueued);
+                    }
                 }
             }
             DispatchIncoming();
