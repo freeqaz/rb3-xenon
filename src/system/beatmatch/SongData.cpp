@@ -415,8 +415,9 @@ void SongData::ChangeTrackDiff(int track, int newDiff) {
 }
 
 void SongData::SendGems(int track) {
-    const std::vector<GameGem> &gems =
-        mGemDBs[track]->GetDiffGemList(mTrackDifficulties[track])->mGems;
+    int difficulty = mTrackDifficulties[track];
+    GameGemDB *db = mGemDBs[track];
+    const std::vector<GameGem> &gems = db->GetDiffGemList(difficulty)->mGems;
     for (std::vector<GameGem>::const_iterator it = gems.begin(); it != gems.end(); ++it) {
         for (std::vector<SongParserSink *>::iterator sit = mSongParserSinks.begin();
              sit != mSongParserSinks.end();
