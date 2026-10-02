@@ -688,13 +688,12 @@ int CalibrationPanel::GetTestQuality() const {
 }
 
 float CalibrationPanel::ReshapeTime(float f, float recip) {
-    float cycle = mCycleTimeMs;
     float f1 = f * recip;
     if (f1 <= 1.0f)
         f1 = f1 * f1;
     else
         f1 = (f1 - 2.0f) * (f1 - 2.0f) + 2.0f;
-    f1 = f1 * cycle;
+    f1 = f1 * mCycleTimeMs;
     return Interp(f, f1, unk8c);
 }
 

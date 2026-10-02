@@ -178,7 +178,7 @@ void GemRepTemplate::SetupTailVerts() {
 
     int i4 = mTailVerts.size() / 2;
     for (int i = 0; i < i4; i++) {
-        mCapVerts[i + i4] = mTailVerts[i];
+        mCapVerts[i] = mTailVerts[i + i4];
     }
     mTailVerts.resize(i4);
     mCapVerts.resize(i4);

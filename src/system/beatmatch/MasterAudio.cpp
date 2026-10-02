@@ -226,7 +226,8 @@ void MasterAudio::SetupTracks(
 }
 
 void MasterAudio::FillChannelList(std::list<int> &chans, int i) {
-    mTrackData.mTrackData[mSongData->GetAudioTrackNum(i).mVal]->FillChannelList(chans);
+    AudioTrackNum num = TrackNumAt(i);
+    mTrackData.mTrackData[num.mVal]->FillChannelList(chans);
 }
 
 void MasterAudio::GetExtraTrackInfo(

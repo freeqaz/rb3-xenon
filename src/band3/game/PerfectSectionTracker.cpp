@@ -198,8 +198,8 @@ void PerfectSectionTracker::CheckForCompletedSections() {
                     }
                 }
             }
-            unkac++;
             unkb4 += curc;
+            unkac++;
         }
     }
 }

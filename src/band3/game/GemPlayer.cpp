@@ -532,7 +532,8 @@ void GemPlayer::Hit(
                 AddHeadPoints(ms, gem_id, numGemSlots, flags);
             }
             if (gem.IgnoreDuration()) {
-                UpdateCrowdMeter((float)numGemSlots / (float)gem.NumSlots(), gem_id);
+                float ratio = (float)numGemSlots / (float)gem.NumSlots();
+                UpdateCrowdMeter(ratio, gem_id);
             } else {
                 // Assign the ctor's temporary DIRECTLY (no named local): retail
                 // feeds the ctor return value into the copy (`mr r4, r3`), which
@@ -543,7 +544,8 @@ void GemPlayer::Hit(
                     (TrackType)mUser->GetTrackType(), gem_id, gem, gem_hit_slots
                 );
             }
-            HandleCommonPhraseNote(numGemSlots == gem.NumSlots(), gem_id);
+            int allSlots = numGemSlots == gem.NumSlots();
+            HandleCommonPhraseNote(allSlots, gem_id);
             if (mBehavior->GetHasSolos()) {
                 HandleSoloGem(gem_id, true, ms, ((unsigned int)flags >> 1) & 1);
             }

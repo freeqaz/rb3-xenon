@@ -2548,7 +2548,7 @@ DataNode BandCharacter::ListAnimGroups(int mask) {
     for (int i = 0; i < groups->Size(); i++) {
         int _tmp1 = groups->Array(i)->Int(1);
         int flags = _tmp1 & mask;
-        if ((mask & 0xFF) == (flags & 0xFF) && (flags & 0x3F00))
+        if ((flags & 0xFF) == (mask & 0xFF) && (flags & 0x3F00))
             count++;
     }
     DataArray *result = new DataArray(count);
@@ -2557,7 +2557,7 @@ DataNode BandCharacter::ListAnimGroups(int mask) {
     for (int i = 0; i < groups->Size(); i++) {
         int _tmp2 = groups->Array(i)->Int(1);
         int flags = _tmp2 & mask;
-        if ((mask & 0xFF) == (flags & 0xFF) && (flags & 0x3F00)) {
+        if ((flags & 0xFF) == (mask & 0xFF) && (flags & 0x3F00)) {
             result->Node(idx++) = groups->Array(i)->Sym(0);
         }
     }

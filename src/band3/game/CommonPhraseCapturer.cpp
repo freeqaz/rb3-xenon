@@ -99,9 +99,8 @@ void CommonPhraseCapturer::LocalHitLastGem(Player *p, int i2, int i3) {
         if (mPhraseStates[i2].unk0 != 2) {
             mPhraseStates[i2].unk4 |= 1 << i3;
             PhraseState &state = mPhraseStates[i2];
-            int trackBits = TheSongDB->GetCommonPhraseTracks(i2);
-            trackBits |= state.unk8;
-            if (trackBits == (trackBits & (mDisabledTracks | mPhraseStates[i2].unk4))) {
+            int trackBits = TheSongDB->GetCommonPhraseTracks(i2) | state.unk8;
+            if ((trackBits & (mDisabledTracks | mPhraseStates[i2].unk4)) == trackBits) {
                 AllTracksCompletedPhrase(i2);
             }
             GetTrackPanel()->UnisonPlayerSuccess(p);

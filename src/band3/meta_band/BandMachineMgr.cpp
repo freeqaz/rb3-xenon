@@ -191,7 +191,7 @@ DataNode BandMachineMgr::OnMsg(const NewRemoteUserMsg &msg) {
     bool found = false;
     for (int i = 0; i < mRemoteMachines.size(); i++) {
         if (mRemoteMachines[i]->IsActive()
-            && userID == mRemoteMachines[i]->GetMachineID()) {
+            && mRemoteMachines[i]->GetMachineID() == userID) {
             found = true;
             break;
         }

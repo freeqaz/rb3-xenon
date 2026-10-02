@@ -55,10 +55,11 @@ void PitchDetector::Detect(unsigned int frame) {
     // re-derives the buffer length (end - begin) at each use.
     unsigned int pos = (mInput->size() - span + frame + 1) % mInput->size();
     unsigned int start = mInput->size() - pos;
-    // std::min by const reference: retail spills both operands to the stack
-    // and loads the winner back; after the first Mul it re-reads the window
-    // size from the member rather than reusing the local.
-    unsigned int firstLen = std::min(start, span);
+    // std::min(span, start) by const reference: retail spills span to 0x58 and
+    // start to 0x50, compares start < span and loads the winner back (the
+    // (start, span) argument order swaps the two slots). After the first Mul
+    // it re-reads the window size from the member rather than reusing the local.
+    unsigned int firstLen = std::min(span, start);
 
     IPP::Mul(firstLen, &mInput->begin()[pos], &mWindow[0], &mSpectrum[0]);
     if (firstLen != mSpectral.mWindowSize) {

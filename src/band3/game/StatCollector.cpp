@@ -33,7 +33,8 @@ void StatCollector::PassGem(float time, const GameGem &gameGem, int i) {
 }
 
 void StatCollector::GemPassedNow(float time, const GameGem &gameGem, int i, bool b) {
-    CheckRolls(MsToTickInt(time), b);
+    int tick = MsToTick(time);
+    CheckRolls(tick, b);
     CheckKickGem(gameGem, i, b);
 }
 

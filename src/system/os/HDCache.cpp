@@ -256,8 +256,8 @@ void HDCache::OpenFiles(int numCachedArkfiles) {
         return;
     }
     while (pendingArkfiles.size() != 0) {
-        int maxPrio = -1;
         std::vector<int>::iterator max = pendingArkfiles.end();
+        int maxPrio = -1;
         for (std::vector<int>::iterator it = pendingArkfiles.begin();
              it != pendingArkfiles.end();
              ++it) {

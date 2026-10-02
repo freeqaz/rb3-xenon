@@ -94,7 +94,7 @@ void EnterFlowMsg::Load(BinStream &bs) {
 }
 
 void EnterFlowMsg::Dispatch() {
-    if ((int)mFlow != TheBandUI.GetCurrentFlowType()) {
+    if (TheBandUI.GetCurrentFlowType() != (int)mFlow) {
         TheGameMode->SetMode(mMode);
         UIScreen *entry = TheBandUI.GetJoinEntryPointForFlowType(mFlow);
         if (entry) {

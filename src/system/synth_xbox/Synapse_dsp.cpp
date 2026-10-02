@@ -134,31 +134,15 @@ void GranularSynth::SetVoiceEnabled(unsigned int idx, bool enabled) {
 
 void Synapse::SetAttackSmoothing(float val) {
     float coeff = Time2IirA(val * 0.001f / (float)mDetectionInterval, mTargetPitch);
-    unsigned int count = 0;
-    void *vp = (char *)this + 0x5C;
-    int voiceCount = (int)((int)(*(void **)((char *)vp + 0x4)) - (int)(*(void **)vp)) / 56;
-    if (voiceCount != 0) {
-        int offset = 0;
-        do {
-            ((PitchCorrectedVoice *)((char *)(*(void **)vp) + offset))->SetAttackSmoothing(coeff);
-            count++;
-            offset += 0x38;
-        } while (count < (unsigned int)((int)((int)(*(void **)((char *)vp + 0x4)) - (int)(*(void **)vp)) / 56));
+    for (unsigned int i = 0; i < mVoices.size(); i++) {
+        mVoices[i].SetAttackSmoothing(coeff);
     }
 }
 
 void Synapse::SetReleaseSmoothing(float val) {
     float coeff = Time2IirA(val * 0.001f / (float)mDetectionInterval, mTargetPitch);
-    unsigned int count = 0;
-    void *vp = (char *)this + 0x5C;
-    int voiceCount = (int)((int)(*(void **)((char *)vp + 0x4)) - (int)(*(void **)vp)) / 56;
-    if (voiceCount != 0) {
-        int offset = 0;
-        do {
-            ((PitchCorrectedVoice *)((char *)(*(void **)vp) + offset))->SetReleaseSmoothing(coeff);
-            count++;
-            offset += 0x38;
-        } while (count < (unsigned int)((int)((int)(*(void **)((char *)vp + 0x4)) - (int)(*(void **)vp)) / 56));
+    for (unsigned int i = 0; i < mVoices.size(); i++) {
+        mVoices[i].SetReleaseSmoothing(coeff);
     }
 }
 

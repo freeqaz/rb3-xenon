@@ -415,8 +415,9 @@ void SongData::ChangeTrackDiff(int track, int newDiff) {
 }
 
 void SongData::SendGems(int track) {
-    const std::vector<GameGem> &gems =
-        mGemDBs[track]->GetDiffGemList(mTrackDifficulties[track])->mGems;
+    int difficulty = mTrackDifficulties[track];
+    GameGemDB *db = mGemDBs[track];
+    const std::vector<GameGem> &gems = db->GetDiffGemList(difficulty)->mGems;
     for (std::vector<GameGem>::const_iterator it = gems.begin(); it != gems.end(); ++it) {
         for (std::vector<SongParserSink *>::iterator sit = mSongParserSinks.begin();
              sit != mSongParserSinks.end();
@@ -1145,7 +1146,8 @@ RangedDataCollection<RGRollChord> *SongData::GetRGRollInfo(int idx) const {
 bool SongData::GetRGTrillAtTick(int idx, int i2, RGTrill &trill) const {
     RangedDataCollection<RGTrill> *pTrillInfo = mRGTrillInfos[idx];
     MILO_ASSERT(pTrillInfo, 0x640);
-    return pTrillInfo->GetDataAtTick(mTrackDifficulties[idx], i2, trill);
+    int difficulty = mTrackDifficulties[idx];
+    return pTrillInfo->GetDataAtTick(difficulty, i2, trill);
 }
 
 RangedDataCollection<RGTrill> *SongData::GetRGTrillInfo(int idx) const {
@@ -1157,7 +1159,8 @@ RangedDataCollection<RGTrill> *SongData::GetRGTrillInfo(int idx) const {
 bool SongData::RGTrillStartsAt(int track, int startTick, int &endTick) {
     RangedDataCollection<RGTrill> *pTrillInfo = mRGTrillInfos[track];
     MILO_ASSERT(pTrillInfo, 0x656);
-    return pTrillInfo->DataStartsAt(mTrackDifficulties[track], startTick, endTick);
+    int difficulty = mTrackDifficulties[track];
+    return pTrillInfo->DataStartsAt(difficulty, startTick, endTick);
 }
 
 void SongData::RecalculateGemTimes(int track) {

@@ -88,17 +88,17 @@ void CharBonesMeshes::AcquirePose() {
     }
 
     // Copy scales using MakeScale
-    pos = mOffsets[TYPE_SCALE] + mStart;
-    char *quatOff = mOffsets[TYPE_QUAT] + mStart;
-    for (; pos < quatOff; pos += sizeof(Vector3), ++curMesh) {
-        MakeScale((*curMesh)->LocalXfm().m, *(Vector3 *)pos);
+    Vector3 *scale = (Vector3 *)(mStart + mOffsets[TYPE_SCALE]);
+    Vector3 *scaleEnd = (Vector3 *)(mStart + mOffsets[TYPE_QUAT]);
+    for (; scale < scaleEnd; scale++, ++curMesh) {
+        MakeScale((*curMesh)->LocalXfm().m, *scale);
     }
 
     // Copy quaternions using Quat::Set
-    pos = mOffsets[TYPE_QUAT] + mStart;
-    char *rotxOff = mOffsets[TYPE_ROTX] + mStart;
-    for (; pos < rotxOff; pos += sizeof(Hmx::Quat), ++curMesh) {
-        ((Hmx::Quat *)pos)->Set((*curMesh)->LocalXfm().m);
+    Hmx::Quat *quat = (Hmx::Quat *)(mStart + mOffsets[TYPE_QUAT]);
+    Hmx::Quat *quatEnd = (Hmx::Quat *)(mStart + mOffsets[TYPE_ROTX]);
+    for (; quat < quatEnd; quat++, ++curMesh) {
+        quat->Set((*curMesh)->LocalXfm().m);
     }
 
     // Copy X rotations

@@ -533,7 +533,8 @@ void Singer::Poll_(float ms, const SongPos &, float micPitch, float micEnergy, f
             }
         }
         if (phraseIdx != -1) {
-            micPitch = mPlayer->mVocalParts[phraseIdx]->mVocalNoteList->PitchAt(ms);
+            VocalPart *vp = mPlayer->mVocalParts[phraseIdx];
+            micPitch = vp->mVocalNoteList->PitchAt(ms);
         } else {
             micPitch = 0.0f;
         }

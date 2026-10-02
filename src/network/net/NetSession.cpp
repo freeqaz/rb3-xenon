@@ -1044,7 +1044,7 @@ void NetSession::SetState(SessionState state) {
     bool oldbusy = IsBusy();
     mState = state;
     mCurrentStateJobID = -1;
-    if (oldbusy != IsBusy()) {
+    if (IsBusy() != oldbusy) {
         static SessionBusyMsg msg;
         MsgSource::Handle(msg, false);
     }

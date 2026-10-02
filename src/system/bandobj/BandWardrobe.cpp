@@ -251,9 +251,8 @@ void BandWardrobe::SetVenueDir(ObjectDir *dir) {
     SetContexts("venue");
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 2; j++) {
-            Character *thechar = dir->Find<Character>(
-                MakeString("crowd_%s%02d", genders[j], i + 1), false
-            );
+            const char *charName = MakeString("crowd_%s%02d", genders[j], i + 1);
+            Character *thechar = dir->Find<Character>(charName, false);
             if (thechar) {
                 CharDriver *driver = thechar->Driver();
                 ObjectDir *gendir =
@@ -433,7 +432,7 @@ bool BandWardrobe::ValidGenreGender(CamShot *shot) {
         MILO_ASSERT(PowerOf2(flags & 0xF8000), 0x3C9);
         int instnum;
         for (instnum = 0; instnum < 4; instnum++) {
-            if (flags & gInstFocus[instnum])
+            if (shot->Flags() & gInstFocus[instnum])
                 break;
         }
         Symbol instsym = BandCharDesc::GetInstrumentSym(instnum);

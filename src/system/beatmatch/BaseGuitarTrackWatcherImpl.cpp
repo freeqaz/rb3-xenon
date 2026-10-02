@@ -256,8 +256,8 @@ void BaseGuitarTrackWatcherImpl::CheckForFretTimeout(float f) {
 
 void BaseGuitarTrackWatcherImpl::CheckForHopoTimeout(float f) {
     if (mLastNoStrumGemHit != -1) {
-        GameGem &gem = mGemList->GetGem(mLastNoStrumGemHit);
-        if (!InSlopWindow(gem.mMs, f)) {
+        float gemMs = mGemList->GetGem(mLastNoStrumGemHit).mMs;
+        if (!InSlopWindow(gemMs, f)) {
             SetLastNoStrumGem(f, -1);
         }
     }

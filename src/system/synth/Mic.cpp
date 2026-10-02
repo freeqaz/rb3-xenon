@@ -59,11 +59,11 @@ int RingBuffer::Peek(void *data, int len) {
 }
 
 int RingBuffer::Write(void *data, int len) {
-    char *src = (char *)data;
     if (len > mSize) {
-        src = src + len - mSize;
+        data = (char *)data + len - mSize;
         len = mSize;
     }
+    char *src = (char *)data;
 
     int available = mSize - mWriteIx;
     int returnVal = (mTotal - mSize) + len;
