@@ -31,9 +31,10 @@ public:
     // ?StaticClassName@MiniLeaderboardDisplay@@, not @UIComponent, so retail
     // gives THIS class its own operator new and the derived App class inherits
     // it. Without it our row's only charged site was that relocation name
-    // (25/28 words equal, fuzzy 99.821). Positive control: the same-named
-    // hamobj/MiniLeaderboardDisplay already carries
-    // OBJ_MEM_OVERLOAD_INLINE_DEL(0x11) and its NewObject row is fuzzy 100.0.
+    // (25/28 words equal, fuzzy 99.821). This class's own
+    // NewObject and ??_G rows also read 100 with this operator-new-only form
+    // (they were measured unchanged when the .cpp moved onto this header from a
+    // copy that declared OBJ_MEM_OVERLOAD_INLINE_DEL(0x11)).
     //
     // operator new ONLY, for the reason spelled out in StarDisplay.h: declaring
     // an owned operator delete here lets MSVC inline it into the NewObject

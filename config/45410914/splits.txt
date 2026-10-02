@@ -4745,7 +4745,7 @@ Overlay.cpp:
 	.pdata      start:0x8220B070 end:0x8220B128
 	.text       start:0x82416B58 end:0x82417728
 
-MeterDisplay.cpp:
+system/bandobj/MeterDisplay.cpp:
 	.pdata      start:0x821FC230 end:0x821FC240
 	.pdata      start:0x821FC240 end:0x821FC250
 	.pdata      start:0x821FC250 end:0x821FC278

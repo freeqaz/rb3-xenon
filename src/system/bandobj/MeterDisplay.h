@@ -1,10 +1,17 @@
 #pragma once
-#include "ui/UIComponent.h"
 #include "bandobj/BandLabel.h"
+#include "rndobj/Anim.h"
+#include "rndobj/Dir.h"
+#include "ui/ResourceDirPtr.h"
+#include "ui/UIComponent.h"
 
+/** "Meter Display"
+ *  sizeof 0x19C (retail NewObject allocates 0x19C).
+ */
 class MeterDisplay : public UIComponent {
 public:
-    MeterDisplay();
+    // Hmx::Object
+    virtual ~MeterDisplay();
     OBJ_CLASSNAME(MeterDisplay);
     OBJ_SET_TYPE(MeterDisplay);
     virtual DataNode Handle(DataArray *, bool);
@@ -12,37 +19,59 @@ public:
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
-    virtual void DrawShowing();
-    virtual ~MeterDisplay();
     virtual void PreLoad(BinStream &);
     virtual void PostLoad(BinStream &);
-    virtual void Enter();
+    // RndDrawable
+    virtual void DrawShowing();
+    // RndPollable
     virtual void Poll();
-    virtual void Update();
+    virtual void Enter();
+    // UIComponent
+    UICOMP_DC3_VIRTUAL void OldResourcePreload(BinStream &);
+
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x16)
+    NEW_OBJ(MeterDisplay)
+    static void Init();
 
     void AnimateToValue(int, int);
-    void UpdateDisplay();
     void SetValues(int, int);
     void SetShowText(bool);
     void SetPercentageText(bool);
-
-    static void Init();
     static void Register() { REGISTER_OBJ_FACTORY(MeterDisplay); }
-    NEW_OBJ(MeterDisplay);
 
-    DECLARE_REVS;
-    NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+protected:
+    MeterDisplay();
 
-    RndAnimatable *mMeterAnim; // 0x10c
-    float mAnimPeriod; // 0x110
-    float unk114; // 0x114
-    int unk118; // 0x118
-    BandLabel *mMeterLabel; // 0x11c
-    bool mShowText; // 0x120
-    bool mPercentageText; // 0x121
-    bool mHideDenominator; // 0x122
-    Symbol mWrapperText; // 0x124
-    int mCurrentValue; // 0x128
-    int mMaxValue; // 0x12c
+    virtual void Update();
+
+    void UpdateDisplay();
+
+    RndAnimatable *mMeterAnim; // 0x140
+    /** "length of value change animation, in seconds" */
+    float mAnimPeriod; // 0x144
+    float unk4c; // 0x4c
+    int unk50; // 0x50
+    BandLabel *unk54; // 0x54
+    /** "whether or not to show text" */
+    bool mShowText; // 0x154
+    /** "whether or not to show text in percentage form" */
+    bool mPercentageText; // 0x155
+    /** "whether or not to hide denominator" */
+    bool mHideDenominator; // 0x156
+    /** "Localization token to use for wrapper" */
+    Symbol mWrapperText; // 0x158
+    /** "current value of meter" */
+    int mCurrentValue; // 0x15c
+    /** "max value of meter" */
+    int mMaxValue; // 0x160
+    // NOTE(laneBQ2): `ResourceDirPtr<RndDir> mResourceDir` used to follow. Retail RB3
+    // has no such member -- MeterDisplay ends at `mMaxValue`, and
+    // RB3 reaches the dir through the INHERITED UIComponent::mResource (a UIResource*
+    // at 0x108) via mResource->Dir(). Confirmed three ways: (1) ?SetType@MeterDisplay@@
+    // at 0x8231a9a8 has vbase-displacement immediate 356, exactly where the Object
+    // vtordisp lands once these 16 bytes are gone; (2) ?AnimateToValue@ matches at 100%
+    // and pins every own member through mMaxValue (ending at 356), so the 16 bytes can
+    // only be here; (3) retail ?Poll@ reads `lwz r11,0x30(r3)` = 216+48 = 264 =
+    // UIComponent::mResource, then `lwz r11,0x14,r11` = UIResource::mDir(0x10) + the
+    // ObjDirPtr inner pointer(+4).
 };

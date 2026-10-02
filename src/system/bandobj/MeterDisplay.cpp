@@ -1,5 +1,4 @@
-#include "hamobj/MeterDisplay.h"
-#include "MeterDisplay.h"
+#include "bandobj/MeterDisplay.h"
 #include "bandobj/BandLabel.h"
 #include "math/Utl.h"
 #include "obj/Object.h"
