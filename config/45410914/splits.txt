@@ -3482,11 +3482,7 @@ User.cpp:
 Flow.cpp:
 	.pdata      start:0x821F4C70 end:0x821F4C78
 	.pdata      start:0x821F7FA0 end:0x821F7FB0
-	.pdata      start:0x82204968 end:0x82204970
-	.pdata      start:0x82204AE8 end:0x82204B10
-	.pdata      start:0x82204B70 end:0x82204B78
 	.pdata      start:0x8221E768 end:0x8221E778
-	.pdata      start:0x82238D98 end:0x82238DA8
 	.text       start:0x822A6528 end:0x822A6580
 	.text       start:0x822A6F68 end:0x822A6F70
 	.text       start:0x822D8CC0 end:0x822D8D70
@@ -4458,35 +4454,36 @@ CharLookAt.cpp:
 
 CharHair.cpp:
 	.pdata      start:0x82204640 end:0x82204968
+	.pdata      start:0x82204968 end:0x82204970
 	.pdata      start:0x82204970 end:0x82204AC0
 	.pdata      start:0x82204AC0 end:0x82204AC8
 	.pdata      start:0x82204AC8 end:0x82204AD0
 	.pdata      start:0x82204AD0 end:0x82204AD8
 	.pdata      start:0x82204AD8 end:0x82204AE8
+	.pdata      start:0x82204AE8 end:0x82204B10
 	.pdata      start:0x82204B10 end:0x82204B70
+	.pdata      start:0x82204B70 end:0x82204B78
 	.pdata      start:0x82204B78 end:0x82204B88
 	.pdata      start:0x82204B88 end:0x82204B98
 	.pdata      start:0x82204B98 end:0x82204BA0
 	.pdata      start:0x82204BA0 end:0x82204BA8
 	.pdata      start:0x8222B968 end:0x8222B978
-	.pdata      start:0x82238C50 end:0x82238C58
-	.pdata      start:0x82238D90 end:0x82238D98
 	.text       start:0x823A4EC8 end:0x823A94F0
+	.text       start:0x823A94F0 end:0x823A9540
 	.text       start:0x823A9540 end:0x823AA9BC
 	.text       start:0x823AA9C0 end:0x823AAA04
 	.text       start:0x823AAA08 end:0x823AAB4C
 	.text       start:0x823AAB50 end:0x823AABC8
 	.text       start:0x823AABC8 end:0x823AAD78
+	.text       start:0x823AAD78 end:0x823AB020
 	.text       start:0x823AB020 end:0x823AB598
+	.text       start:0x823AB598 end:0x823AB618
 	.text       start:0x823AB618 end:0x823AB630
 	.text       start:0x823AB630 end:0x823AB6A0
 	.text       start:0x823AB6A0 end:0x823AB838
 	.text       start:0x823AB838 end:0x823AB8A8
 	.text       start:0x823AB8A8 end:0x823AB984
 	.text       start:0x8263B460 end:0x8263B5F4
-	.text       start:0x823A94F0 end:0x823A9540
-	.text       start:0x823AAD78 end:0x823AB020
-	.text       start:0x823AB598 end:0x823AB618
 
 CharUtl.cpp:
 	.pdata      start:0x82204510 end:0x82204518
@@ -7413,11 +7410,14 @@ MidiInstrument.cpp:
 	.pdata      start:0x82238C38 end:0x82238C40
 	.pdata      start:0x82238C40 end:0x82238C48
 	.pdata      start:0x82238C48 end:0x82238C50
+	.pdata      start:0x82238C50 end:0x82238C58
 	.pdata      start:0x82238C58 end:0x82238C90
 	.pdata      start:0x82238C90 end:0x82238CA8
 	.pdata      start:0x82238CA8 end:0x82238D20
 	.pdata      start:0x82238D20 end:0x82238D28
 	.pdata      start:0x82238D28 end:0x82238D90
+	.pdata      start:0x82238D90 end:0x82238D98
+	.pdata      start:0x82238D98 end:0x82238DA8
 	.pdata      start:0x82238DA8 end:0x82238DB8
 	.pdata      start:0x82238DB8 end:0x82238DD8
 	.pdata      start:0x82238DD8 end:0x82238DE0
@@ -7428,17 +7428,17 @@ MidiInstrument.cpp:
 	.text       start:0x82714918 end:0x82714948
 	.text       start:0x82714948 end:0x827149B0
 	.text       start:0x827149B0 end:0x827149D8
+	.text       start:0x827149D8 end:0x82714A48
 	.text       start:0x82714A48 end:0x82714DC8
 	.text       start:0x82714DC8 end:0x827150B8
 	.text       start:0x827150B8 end:0x82715530
 	.text       start:0x82715530 end:0x827155A8
 	.text       start:0x827155A8 end:0x82715BFC
+	.text       start:0x82715C00 end:0x82715C88
+	.text       start:0x82715C88 end:0x82715CF4
 	.text       start:0x82715CF4 end:0x82715E18
 	.text       start:0x82715E18 end:0x82715FD8
 	.text       start:0x82715FD8 end:0x82716060
-	.text       start:0x82715C88 end:0x82715CF4
-	.text       start:0x827149D8 end:0x82714A48
-	.text       start:0x82715C00 end:0x82715C88
 
 system/synth/MidiInstrumentMgr.cpp:
 	.pdata      start:0x82238DE0 end:0x82238E10
