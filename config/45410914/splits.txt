@@ -10884,7 +10884,6 @@ DuplicatedObject.cpp:
 	.pdata      start:0x82250E70 end:0x82250E80
 	.pdata      start:0x82250E80 end:0x82250E88
 	.pdata      start:0x82253490 end:0x822534E8
-	.pdata      start:0x822564A0 end:0x822564A8
 	.text       start:0x82A70400 end:0x82A7045C
 	.text       start:0x82A70460 end:0x82A704CC
 	.text       start:0x82A704D0 end:0x82A71D60
@@ -10896,7 +10895,6 @@ DuplicatedObject.cpp:
 	.text       start:0x82A75C50 end:0x82A75EE8
 	.text       start:0x82A75EE8 end:0x82A75F64
 	.text       start:0x82AB0850 end:0x82AB0F70
-	.text       start:0x82AFC2A8 end:0x82AFC2DC
 
 BandSongPref.cpp:
 	.pdata      start:0x821F1F58 end:0x821F1F68
@@ -14489,8 +14487,8 @@ network/quazal/StepSequenceJob.cpp:
 	.text       start:0x82AF9190 end:0x82AF926C
 
 network/quazal/Transport/PRUDP/PRUDPStream.cpp:
-	.pdata      start:0x822564B8 end:0x822566D0
-	.text       start:0x82AFC448 end:0x82AFE7A4
+	.pdata      start:0x822563D0 end:0x82256830
+	.text       start:0x82AFB6E0 end:0x82AFFEC0
 
 network/quazal/WorkerThreads.cpp:
 	.pdata      start:0x82256878 end:0x82256880

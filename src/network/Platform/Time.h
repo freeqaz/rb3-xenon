@@ -13,6 +13,8 @@ namespace Quazal {
         operator unsigned long long();
         operator unsigned long long() const;
         static Time GetTime();
+        bool operator==(const Time &t) const { return m_ui64Value == t.m_ui64Value; }
+        long long operator-(const Time &) const;
 
         unsigned long long m_ui64Value;
     };

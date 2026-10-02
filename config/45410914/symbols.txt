@@ -199936,7 +199936,6 @@ fn_82AFEE8C = .text:0x82AFEE8C; // type:function size:0x28
 fn_82AFEEB4 = .text:0x82AFEEB4; // type:function size:0x28
 fn_82AFEEDC = .text:0x82AFEEDC; // type:function size:0x28
 except_data_82AFEF10 = .text:0x82AFEF08; // type:object size:0x8 scope:global
-fn_82AFEF08 = .text:0x82AFEF08; // type:function size:0x8
 fn_82AFEF10 = .text:0x82AFEF10; // type:function size:0x140
 fn_82AFF050 = .text:0x82AFF050; // type:function size:0x28
 fn_82AFF078 = .text:0x82AFF078; // type:function size:0x28

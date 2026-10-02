@@ -24,31 +24,25 @@ namespace Quazal {
             typedef MemAllocator<T2> other;
         };
 
-#ifdef VERSION_SZBE69_B8
-        // Retail doesn't have constructor calls
+#if defined(VERSION_SZBE69_B8) || !defined(VERSION_SZBE69)
+        // X360 retail: converting constructors, and no user-declared
+        // destructor. The retail /Od _Rb_tree constructor at 0x82AFF400 is a
+        // leaf with no EH frame, so the allocator temporaries it converts
+        // need no destruction.
         MemAllocator() {}
         MemAllocator(MemAllocator<T> const &) {}
         template <class T2>
         MemAllocator(const MemAllocator<T2> &) {}
 #endif
 
-        // ...but still has the destructor
-        // (The X360 retail StationURL TU shows no unwind action after clear()
-        // in its ~qMap, and no local for the memory manager in allocate();
-        // RB3_QUAZAL_RETAIL_MEMALLOCATOR selects that shape per TU.)
-#ifndef RB3_QUAZAL_RETAIL_MEMALLOCATOR
+        // ...but still has the destructor on Wii. X360 retail has none: the
+        // StationURL TU shows no unwind action after clear() in its ~qMap, and
+        // the /Od _Rb_tree constructor at 0x82AFF400 is a leaf with no EH frame.
+#if defined(VERSION_SZBE69) || defined(VERSION_SZBE69_B8)
         ~MemAllocator() {}
 #endif
 
-#if defined(VERSION_SZBE69) || (!defined(VERSION_SZBE69_B8))
-        // This is the only way to make allocator conversions
-        // work in retail without using constructors.
-        // rb3-xenon (X360 retail) defines neither VERSION_SZBE69 nor
-        // VERSION_SZBE69_B8, which previously left MemAllocator with NO rebind
-        // path -> STLport _List_base(const MemAllocator&) failed to convert
-        // MemAllocator<T> to MemAllocator<_List_node<T>>. The retail SKU used
-        // this conversion-operator path (the comment above), so enable it when
-        // the constructor path (VERSION_SZBE69_B8) is absent.
+#if defined(VERSION_SZBE69)
         template <class T2>
         operator MemAllocator<T2>() const {
             return MemAllocator<T2>();
