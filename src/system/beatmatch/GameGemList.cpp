@@ -272,12 +272,13 @@ bool GameGemList::WillBeNoStrum(const GameGem &gem) {
         if (gem.GetNumStrings() == 1 && last.GetNumStrings() == 1) {
             int str = gem.GetLowestString();
             if (str == (int)last.GetLowestString()) {
-                return last.GetFret(str) != gem.GetFret(str);
+                int fret = gem.GetFret(str);
+                return fret != last.GetFret(str);
             }
         }
         return false;
     }
-    return !(gem.mSlots & mGems.back().mSlots) && GemNumSlots(gem.mSlots) == 1;
+    return !(gem.GetSlots() & mGems.back().GetSlots()) && GemNumSlots(gem.GetSlots()) == 1;
 }
 
 void GameGemList::Reset() {
