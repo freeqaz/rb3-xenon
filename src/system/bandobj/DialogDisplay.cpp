@@ -27,7 +27,11 @@ BEGIN_COPYS(DialogDisplay)
     COPY_MEMBER_FROM(pDisplay, mBottomBone)
 END_COPYS
 
-SAVE_OBJ(DialogDisplay, 0x3B)
+BEGIN_SAVES(DialogDisplay)
+    SAVE_REVS(0, 0)
+    bs << mDialogLabel << mTopBone << mBottomBone;
+    SAVE_SUPERCLASS(Hmx::Object)
+END_SAVES
 
 BEGIN_LOADS(DialogDisplay)
     LOAD_REVS(bs)

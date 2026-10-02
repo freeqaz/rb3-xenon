@@ -22,7 +22,10 @@ BEGIN_COPYS(BandHighlight)
     COPY_SUPERCLASS_FROM(UIComponent, s)
 END_COPYS
 
-SAVE_OBJ(BandHighlight, 0x32)
+BEGIN_SAVES(BandHighlight)
+    SAVE_REVS(0, 0)
+    SAVE_SUPERCLASS(UIComponent)
+END_SAVES
 
 BEGIN_LOADS(BandHighlight)
     PreLoad(bs);
