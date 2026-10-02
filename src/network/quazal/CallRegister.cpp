@@ -94,7 +94,9 @@ namespace Quazal {
         virtual void ProcessCallCompletion();
 
         _State GetState() const { return m_eState; }
-        bool HasTimedOut(Time tNow) {
+        // Returns an 8-bit flag, not bool: retail stores the negated compare
+        // without the bool re-mask.
+        unsigned char HasTimedOut(Time tNow) {
             if (m_tTimeout == Time(0)) {
                 return false;
             } else {

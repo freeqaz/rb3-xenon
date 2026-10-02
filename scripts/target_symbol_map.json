@@ -35505,7 +35505,7 @@
  "0x82abb430": "?CancelPendingCalls@CallRegister@Quazal@@QAAXXZ",
  "0x82abb4e8": "?CancelPeriodicJobs@CallRegister@Quazal@@QAAXXZ",
  "0x82abb550": "?CancelExpiredCalls@CallRegister@Quazal@@QAAXXZ",
- "0x82abb650": "?HasTimedOut@CallContext@Quazal@@QAA_NVTime@2@@Z",
+ "0x82abb650": "?HasTimedOut@CallContext@Quazal@@QAAEVTime@2@@Z",
  "0x82abb700": "?SignalRelevantFetchContextes@CallRegister@Quazal@@QAAXVDOHandle@2@W4_Outcome@DOCallContext@2@@Z",
  "0x82abb820": "?GetFetchContext@CallRegister@Quazal@@QAAPAVFetchContext@2@VDOHandle@2@0@Z",
  "0x82abba80": "?MigrationInProgress@CallRegister@Quazal@@QAA_NVDOHandle@2@0@Z",
