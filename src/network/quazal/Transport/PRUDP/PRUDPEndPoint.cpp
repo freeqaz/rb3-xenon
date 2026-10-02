@@ -276,11 +276,15 @@ namespace Quazal {
         virtual void OnDisconnection(class EndPoint *);
     };
 
-    class EndPointAddress {
+    class InetAddress;
+
+    // Only the two accessors this TU calls; the member is laid out as an
+    // empty class followed by padding up to m_pHandler.
+    class StationURL {
     public:
-        void *GetAddress();
-        unsigned char GetStreamID();
-        unsigned char GetPortType() { return GetStreamID(); }
+        InetAddress *GetInetAddress() const;
+        unsigned char GetStreamID() const;
+        unsigned char GetPortType() const { return GetStreamID(); }
     };
 
     class EndPoint;
@@ -327,7 +331,7 @@ namespace Quazal {
         ConnectionOrientedStream *GetStream() { return m_pStream; }
 
         ConnectionOrientedStream *m_pStream; // 0x4
-        EndPointAddress m_oAddress;         // 0x8
+        StationURL m_oAddress;              // 0x8
         char unkc[0x6c - 0xc];
         EndPointEventHandler *m_pHandler;   // 0x6c
         char unk70[0x80 - 0x70];
@@ -664,7 +668,7 @@ namespace Quazal {
         SetConnectionState(Connecting);
         m_oPendingOperation.Set(pConnectData, pAuthData, pfCallback, oContext);
         m_pConnectPacket->GetTimeout()->SetExpirationDelay(uiTimeout);
-        m_pConnectPacket->SetDestination(m_oAddress.GetAddress());
+        m_pConnectPacket->SetDestination(m_oAddress.GetInetAddress());
         SendPacket(m_pConnectPacket);
         if (pfCallback == 0) {
             WaitLoop oWait(50, uiTimeout);
@@ -778,7 +782,7 @@ namespace Quazal {
     }
 
     bool PRUDPEndPoint::Send(PacketOut *pPacket) {
-        pPacket->SetDestination(m_oAddress.GetAddress());
+        pPacket->SetDestination(m_oAddress.GetInetAddress());
         pPacket->SetSignature(m_uiSignature);
         pPacket->SetSessionID(m_ucSessionID);
         if (pPacket->HasFlag(0x10)) {

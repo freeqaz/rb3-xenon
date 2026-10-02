@@ -186,16 +186,22 @@ namespace Quazal {
         StationURL();
         StationURL(const char *);
         StationURL(const StationURL &);
-        virtual ~StationURL();
+        ~StationURL();
         StationURL &operator=(const StationURL &);
         bool IsEqual(const StationURL &) const;
-        int GetURLType() const;
+        enum _URLType {
+            Unknown = 0,
+            prudp = 1,
+            prudps = 2,
+            udp = 3
+        };
+        _URLType GetURLType() const;
         unsigned int GetRVConnectionID() const;
         void SetRVConnectionID(unsigned int);
         unsigned int GetFlags() const;
         bool IsPublic() const { return (GetFlags() & 2) == 2; }
 
-        char m_data[0x60];
+        char m_data[0x64];
     };
 
     class Buffer : public RootObject {

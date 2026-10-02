@@ -98,7 +98,7 @@ namespace Quazal {
         StationURL &operator=(const String &);
         bool operator==(const StationURL &) const;
         bool operator!=(const StationURL &) const;
-        void SetPID(unsigned int);
+        void SetRVConnectionID(unsigned int);
 
         char m_data[0x64];
     };
@@ -658,7 +658,7 @@ namespace Quazal {
                 return;
             }
         }
-        m_urlSecure.SetPID(m_pServices->GetCredentials()->GetGuest());
+        m_urlSecure.SetRVConnectionID(m_pServices->GetCredentials()->GetGuest());
         m_pServices->RegisterLogin();
         SetStep(Step(
             (JobStateFunc)&JobBackEndServicesLogin::DisconnectFromAuthenticationService,
