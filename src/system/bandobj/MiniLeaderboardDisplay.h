@@ -1,15 +1,12 @@
 #pragma once
-
-#include "obj/ObjMacros.h"
 #include "obj/Object.h"
 #include "ui/UIComponent.h"
 #include "utl/BinStream.h"
 
-/** "Mini Leaderboard Display" -- RB3 (band3) layout.
- *  NOTE: this is the RB3 game's bandobj MiniLeaderboardDisplay, NOT the DC3
- *  hamobj version (which carries a DC3-only OldResourcePreload virtual and a
- *  mResourceDir member). AppMiniLeaderboardDisplay.h pulls this in via
- *  "bandobj/MiniLeaderboardDisplay.h" so it resolves to the clean RB3 layout.
+/** "Mini Leaderboard Display"
+ *  sizeof 0x17C (retail NewObject allocates 0x17C). No Update override: retail's
+ *  RndDrawable-subobject vtable (0x82030ce4) holds UIComponent::Update in slot 19,
+ *  and no own mResourceDir -- the dir is reached through UIComponent::mResource.
  */
 class MiniLeaderboardDisplay : public UIComponent {
 public:
@@ -25,6 +22,8 @@ public:
     virtual void PreLoad(BinStream &);
     virtual void PostLoad(BinStream &);
     virtual void DrawShowing();
+    // UIComponent (virtual only in the native build; see UIComponent.h)
+    UICOMP_DC3_VIRTUAL void OldResourcePreload(BinStream &);
 
     bool mAllowSoloScores; // 0x140
 
@@ -67,6 +66,4 @@ public:
     NEW_OBJ(MiniLeaderboardDisplay)
     static void Init();
     static void Register() { REGISTER_OBJ_FACTORY(MiniLeaderboardDisplay) }
-
-    DECLARE_REVS;
 };

@@ -42,7 +42,7 @@
 #include "hamobj/HamWardrobe.h"
 #include "hamobj/HollaBackMinigame.h"
 #include "hamobj/MeterDisplay.h"
-#include "hamobj/MiniLeaderboardDisplay.h"
+#include "bandobj/MiniLeaderboardDisplay.h"
 #include "hamobj/MoveDir.h"
 #include "hamobj/OriginalChoreoRemixer.h"
 #include "hamobj/PhotoSpotlightPositioner.h"

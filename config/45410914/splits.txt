@@ -13442,7 +13442,7 @@ ScoreDisplay.cpp:
 	.text       start:0x82320838 end:0x82320844
 	.text       start:0x82320848 end:0x823208A0
 
-system/hamobj/MiniLeaderboardDisplay.cpp:
+system/bandobj/MiniLeaderboardDisplay.cpp:
 	.pdata      start:0x821FC178 end:0x821FC1A8
 	.pdata      start:0x821FC1A8 end:0x821FC1B8
 	.pdata      start:0x821FC1B8 end:0x821FC1D8

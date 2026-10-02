@@ -1022,7 +1022,7 @@
             "system/hamobj/HamScrollBehavior.cpp": "NonMatching",
             "system/hamobj/HamSong.cpp": "NonMatching",
             "system/hamobj/HamVisDir.cpp": "NonMatching",
-            "system/hamobj/MiniLeaderboardDisplay.cpp": "NonMatching",
+            "system/bandobj/MiniLeaderboardDisplay.cpp": "NonMatching",
             "system/hamobj/MocapSkeletonIterator.cpp": "NonMatching",
             "system/hamobj/ScoreUtl.cpp": "NonMatching",
             "system/hamobj/SongDifficultyDisplay.cpp": "NonMatching",
