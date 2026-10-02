@@ -19,6 +19,7 @@
 // caller, so both are chosen to reproduce retail's frames.
 
 #include <list>
+#include <vector>
 
 #define JJS_FILE ".\\JobJoinSession.cpp"
 
@@ -145,6 +146,8 @@ namespace Quazal {
     class qProtectedList : public RootObject {
     public:
         CriticalSection mCSList;
+        qList<T> &GetList() { return mOList; }
+
         qList<T> mOList;
     };
 
@@ -232,7 +235,12 @@ namespace Quazal {
         bool IsValid() const;
     };
 
-    class DataSet;
+    class DataSet {};
+
+    class StationState : public DataSet {
+    public:
+        bool m_bJoined;
+    };
 
     class SessionClock {
     public:
@@ -269,7 +277,7 @@ namespace Quazal {
         ~Message();
         Buffer *GetBuffer();
 
-        char m_data[0x20];
+        char m_data[0x30];
     };
 
     ByteStream &operator<<(ByteStream &, const qList<StationURL> &);
@@ -370,9 +378,27 @@ namespace Quazal {
         SystemComponent *m_pDupSpace; // 0x24
     };
 
+    class InstantiationContext : public RootObject {
+    public:
+        unsigned int GetInstance(unsigned int);
+
+        char m_data[0x30];
+    };
+
+    template <class T>
+    class qVector : public std::vector<T, MemAllocator<T> > {};
+
+    class SystemError {
+    public:
+        static void SignalError(const char *, unsigned int, unsigned int, unsigned int);
+    };
+
     class InstanceTable : public RootObject {
     public:
         unsigned int GetInstanceFromVector(unsigned int, unsigned int);
+
+        InstantiationContext m_oDefaultContext; // 0x0
+        qVector<InstantiationContext *> *m_pvContextVector; // 0x30
     };
 
     class InstanceControl : public RootObject {
@@ -452,14 +478,26 @@ namespace Quazal {
     void *GetInstanceType1Delegator();
     unsigned short GetWellKnownPort();
 
-    inline Network *GetNetwork() { return (Network *)GetInstanceType1Delegator(); }
+    // Retail calls this out of line (0x823EBC90, folded with an /O1 COMDAT of
+    // the same body): /Ob1 declines it here and still reserves its locals.
+    inline Network *GetNetwork() {
+        unsigned int uiContext = PseudoSingleton::GetCurrentContext();
+        InstanceControl *pInstance =
+            (InstanceControl *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(1, uiContext);
+        Network *pNetwork = 0;
+        if (pInstance != 0) {
+            pNetwork = (Network *)pInstance->m_pDelegatorInstance;
+        }
+        return pNetwork;
+    }
 
-    inline PRUDPTransport *GetTransport() {
+    // Its only use reads the transport and drops it (a compiled-out trace).
+    inline void CheckTransport() {
         Network *pNetwork = GetNetwork();
         if (pNetwork == 0) {
-            return 0;
+            return;
         } else {
-            return pNetwork->m_pTransport;
+            PRUDPTransport *pTransport = pNetwork->m_pTransport;
         }
     }
 
@@ -512,8 +550,7 @@ namespace Quazal {
         void SetState(int);
 
         char m_data[0x70];
-        DataSet *GetStateDataSet() { return (DataSet *)&m_bJoined; }
-        bool m_bJoined; // 0x70
+        StationState m_oState; // 0x70
     };
 
     class StationTable : public RootObject {
@@ -565,6 +602,8 @@ namespace Quazal {
         void StopToListen();
 
         char m_data[0x30];
+        void SetJoinSession(JobJoinSession *pJoinSession) { m_pJoinSession = pJoinSession; }
+
         JobJoinSession *m_pJoinSession; // 0x30
     };
 
@@ -657,6 +696,12 @@ namespace Quazal {
         void SetNewContactPoint(const StationURL &);
         void ProcessNegativeJoinResponse(unsigned char, int);
 
+        // Retail evaluates these three Connect arguments into stack temps, the
+        // return slots of expanded inline helpers.
+        static unsigned int GetConnectTimeout() { return s_uiConnectTimeout; }
+        static ConnectionManager *GetConnectionManager() { return ConnectionManager::GetInstance(); }
+        static Buffer *GetMsgBuffer(Message &oMsg) { return oMsg.GetBuffer(); }
+
         static unsigned int s_uiConnectTimeout;
         static int s_iJoinResponseTimeout;
 
@@ -679,9 +724,10 @@ namespace Quazal {
 
     JobJoinSession::JobJoinSession(const qList<StationURL> &lURLs, unsigned int uiCallID)
         : StepSequenceJob(DebugString()), m_lURLs(lURLs), m_pCancelCallback(0) {
-        for (qList<StationURL>::iterator it = m_lURLs.std::list<StationURL, MemAllocator<StationURL> >::begin();
-             it != m_lURLs.end(); ++it) {
+        qList<StationURL>::iterator it = m_lURLs.std::list<StationURL, MemAllocator<StationURL> >::begin();
+        while (it != m_lURLs.end()) {
             PrepareURL(*it);
+            ++it;
         }
         m_pEndPoint = 0;
         m_ucJoinResponse = 0;
@@ -689,7 +735,7 @@ namespace Quazal {
         CallContext *pContext = Core::GetInstance()->GetCallContextRegister()->GetContext(uiCallID);
         m_pCancelCallback = new (JJS_FILE, 0x48) JoinCancelCallback(this);
         pContext->RegisterCancelCallback(m_pCancelCallback);
-        ObjDupProtocol::GetInstance()->m_pJoinSession = this;
+        ObjDupProtocol::GetInstance()->SetJoinSession(this);
         m_unk58 = 4;
         SetStep(Step(
             (JobStateFunc)&JobJoinSession::InitiateConnection, "JobJoinSession::InitiateConnection"
@@ -703,7 +749,7 @@ namespace Quazal {
 
     void JobJoinSession::PrepareURL(StationURL &url) {
         if (url.GetPortNumber() == 0) {
-            GetTransport();
+            CheckTransport();
             url.SetPortNumber(GetWellKnownPort());
         }
         url.SetStreamType(Stream::DO);
@@ -715,27 +761,30 @@ namespace Quazal {
         m_pEndPoint = 0;
         m_oResult = 0x8006000B;
         m_pCancelCallback->Detach();
-        ObjDupProtocol::GetInstance()->m_pJoinSession = 0;
+        ObjDupProtocol::GetInstance()->SetJoinSession(0);
         SetToComplete();
     }
 
     void JobJoinSession::InitiateConnection() {
         {
             ScopedCS oCS(GetNetwork()->GetStationURLs()->mCSList);
-            for (qList<StationURL>::iterator it = GetNetwork()->GetStationURLs()->mOList.begin();
-                 it != GetNetwork()->GetStationURLs()->mOList.end(); ++it) {
+            qList<StationURL>::iterator it = GetNetwork()->GetStationURLs()->GetList().begin();
+            while (it != GetNetwork()->GetStationURLs()->GetList().end()) {
                 (*it).Trace(0x4000);
+                ++it;
             }
         }
         Message oMsg;
         oMsg << (unsigned int)StationManager::GetLocalStationHandle();
         unsigned int uiReserved = 0;
         oMsg << uiReserved;
-        if (!ConnectionManager::GetInstance()->Connect(
-                &m_oCallContext, oMsg.GetBuffer(), 0, m_lURLs, &m_pEndPoint, s_uiConnectTimeout
+        if (!GetConnectionManager()->Connect(
+                &m_oCallContext, GetMsgBuffer(oMsg), 0, m_lURLs, &m_pEndPoint, GetConnectTimeout()
             )) {
             SetStep(Step((JobStateFunc)&JobJoinSession::JoinFailed, "JobJoinSession::JoinFailed"));
-        } else if (m_oCallContext.GetState() == CallContext::CallPending) {
+            return;
+        }
+        if (m_oCallContext.GetState() == CallContext::CallPending) {
             SetToSuspended();
             ResumeOnCallCompletion(
                 &m_oCallContext,
@@ -798,7 +847,8 @@ namespace Quazal {
     void JobJoinSession::SendJoinRequest() {
         m_ucJoinResponse = 0;
         Message *pMsg = ObjDupProtocol::GetInstance()->CreateJoinRequest();
-        if (ObjDupProtocol::GetInstance()->Send(m_pEndPoint, pMsg, 1).Equals(false)) {
+        bool bResult = false;
+        if (ObjDupProtocol::GetInstance()->Send(m_pEndPoint, pMsg, 1).Equals(bResult)) {
             SetStep(Step((JobStateFunc)&JobJoinSession::JoinFailed, "JobJoinSession::JoinFailed"));
         } else {
             SetStep(Step(
@@ -1006,8 +1056,8 @@ namespace Quazal {
 
     void JobJoinSession::JoinSuccess() {
         m_oResult = 0x00060001;
-        Station::GetLocalStation()->m_bJoined = true;
-        Station::GetLocalStation()->Update(Station::GetLocalStation()->GetStateDataSet());
+        Station::GetLocalStation()->m_oState.m_bJoined = true;
+        Station::GetLocalStation()->Update(&Station::GetLocalStation()->m_oState);
         SetStep(Step((JobStateFunc)&JobJoinSession::CompleteJob, "JobJoinSession::CompleteJob"));
     }
 
@@ -1074,7 +1124,7 @@ namespace Quazal {
     }
 
     void JobJoinSession::CompleteJob() {
-        ObjDupProtocol::GetInstance()->m_pJoinSession = 0;
+        ObjDupProtocol::GetInstance()->SetJoinSession(0);
         SetToComplete();
         if (m_oResult != (int)0x00060001) {
             ObjDupProtocol::GetInstance()->StopToListen();
