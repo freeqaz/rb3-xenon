@@ -16,6 +16,8 @@ namespace Quazal {
         bool FormatVariableValue(Variable *, String *) const;
         void AddSourceTo(Message *, Time, bool);
         void CallOperationOnVars(Operation::_Event, void *);
+        // Defined inline in StationDDL.cpp, where the update protocol uses it.
+        void ExtractFrom(Message *);
 
         DOHandle m_hObserver;        // 0x0
         unsigned int m_uiMachineUID; // 0x4
