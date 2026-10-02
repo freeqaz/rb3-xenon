@@ -94,10 +94,8 @@ RndTransformable *BandCamShot::FindTarget(Symbol s, bool b) {
     if (handled.Type() != kDataUnhandled) {
         ret = handled.Obj<RndTransformable>();
     }
-    if (!ret) {
-        if (Dir())
-            ret = Dir()->Find<RndTransformable>(s.Str(), false);
-    }
+    if (!ret)
+        ret = Dir()->Find<RndTransformable>(s.Str(), false);
     return ret;
 }
 
