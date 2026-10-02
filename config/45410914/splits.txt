@@ -14213,8 +14213,8 @@ xdk/xgraphics/ucode/compiler/il/ilformatdecode.cpp:
 	.text       start:0x82A69B70 end:0x82A69C38
 
 network/quazal/Session.cpp:
-	.pdata      start:0x82250F70 end:0x82250F78
-	.text       start:0x82A78008 end:0x82A78664
+	.pdata      start:0x82250EE8 end:0x822510D8
+	.text       start:0x82A76B58 end:0x82A7ADD0
 
 network/quazal/Station.cpp:
 	.pdata      start:0x82251168 end:0x822512F8

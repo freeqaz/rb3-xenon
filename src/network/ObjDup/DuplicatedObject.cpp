@@ -460,7 +460,7 @@ namespace Quazal {
         if (op.IsADuplicaRemoval()) {
             DORef refSession(Session::GetWKHandle());
             if (refSession.IsA<Session>()) {
-                if (refSession.Get<Session>()->GetSessionState() != 3) {
+                if (refSession.Get<Session>()->GetSystemState() != 3) {
                     Message *pMsg = ObjDupProtocol::GetInstance()->CreateDeleteMessage(GetHandle());
                     SendToAllDuplicas(pMsg, 1);
                     delete pMsg;
@@ -515,7 +515,7 @@ namespace Quazal {
             SystemError::SignalError(0, 0, 0xE000000E, 0);
             return false;
         }
-        if (!IsAWellKnownDO() && !Session::IsActive()) {
+        if (!IsAWellKnownDO() && !Session::GetRole()) {
             SystemError::SignalError(0, 0, 0xE0030015, 0);
             return false;
         }
@@ -557,7 +557,7 @@ namespace Quazal {
     }
 
     DuplicatedObject *DuplicatedObject::Create(unsigned int uiClassID, unsigned int uiValue) {
-        if (!Session::IsActive()) {
+        if (!Session::GetRole()) {
             return CreateMasterImpl(DOHandle(0), uiClassID, DOID(0));
         } else {
             unsigned int uiID = 0;
@@ -1087,7 +1087,7 @@ namespace Quazal {
     void DuplicatedObject::PrepareToLeave() {
         bool bOK = false;
         DORefTemplate<Session> ref(Session::s_hSession);
-        if (ref.IsValid() && ref->GetSessionState() != 3) {
+        if (ref.IsValid() && ref->GetSystemState() != 3) {
             bOK = CallApproveEmigration(0);
         } else {
             bOK = false;

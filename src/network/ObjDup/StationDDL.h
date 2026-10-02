@@ -62,6 +62,7 @@ namespace Quazal {
         void DispatchSignalAsFaulty(const CallMethodOperation &);
 
         static unsigned int GetStaticClassID() { return s_uiClassID; }
+        static DuplicatedObject *Create(unsigned int);
         static unsigned int s_uiClassID;
 
         ConnectionInfo m_oConnectionInfo; // 0x70

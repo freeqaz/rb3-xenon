@@ -51,6 +51,9 @@ namespace Quazal {
             s_oList.RemoveVariable(this);
             FreeExtraContexts();
         }
+        // Retail (0x82A7A2A0 for T = qList<void (*)()>): the -1 branch's array
+        // new is evaluated and dropped, then the contexts are allocated and
+        // each one copy-constructed from the default value.
         virtual void AllocateExtraContexts() {
             // Retail (0x82A7DF58, the DOHandle instantiation) evaluates an
             // array new whose result is never stored when the count is -1, then
@@ -89,6 +92,9 @@ namespace Quazal {
                 mValueInContextList[uiContext] = value;
             }
         }
+        // Defined out of class (below), so /Ob1 never expands it: retail calls
+        // it out of line (0x82B4BCF8 for a 4-byte T).
+        T &GetValue(unsigned int uiContext);
 
         T &GetValue() {
             unsigned int uiContext = PseudoSingleton::GetCurrentContext();
@@ -103,4 +109,13 @@ namespace Quazal {
         T mValueInDefaultContext;
         T mDefaultValue;
     };
+
+    template <class T>
+    T &PseudoGlobalVariable<T>::GetValue(unsigned int uiContext) {
+        if (uiContext == 0) {
+            return mValueInDefaultContext;
+        } else {
+            return mValueInContextList[uiContext];
+        }
+    }
 }

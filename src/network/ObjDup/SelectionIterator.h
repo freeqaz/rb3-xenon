@@ -1,5 +1,6 @@
 #pragma once
 #include "ObjDup/DOHandle.h"
+#include "ObjDup/DOFilter.h"
 #include "ObjDup/Selection.h"
 #include "Platform/RootObject.h"
 #include "Platform/SystemError.h"
@@ -41,6 +42,7 @@ namespace Quazal {
         void GotoStart();
         void InitFilter();
         unsigned int Count();
+        void SetFilter(DOFilter *);
         bool EndReached() const { return m_oPosition.EndReached(); }
         unsigned int GetCurrentHandle() const { return m_oPosition.m_oCursor.m_uiValue; }
         DOHandle operator*() const { return DOHandle(m_oPosition.m_oCursor.m_uiValue); }
@@ -59,7 +61,24 @@ namespace Quazal {
     public:
         SelectionIteratorTemplate();
         SelectionIteratorTemplate(int iMode);
+        // Retail 0x82A76970 (T = RootDO): never expanded, so callers keep its
+        // frame.
+        void InitFilter() {
+            DOFilter *pFilter = new (__FILE__, 0x7b) IsAKindOfDOFilter(T::GetClassID());
+            SetFilter(pFilter);
+            pFilter->ReleaseRef();
+        }
         T *GetDOPtr();
         T *operator->() { return GetDOPtr(); }
     };
+
+    // Retail 0x82A79A90 (T = RootDO, in Session's TU): mode 0 and mode 1 pick
+    // the base iterator's two flags, then the per-class filter and the first
+    // position. Out of class, so /Ob1 never expands it.
+    template <class T>
+    SelectionIteratorTemplate<T>::SelectionIteratorTemplate(int iMode)
+        : SelectionIterator(iMode == 1, iMode == 0) {
+        InitFilter();
+        GotoStart();
+    }
 }

@@ -20,6 +20,9 @@ namespace Quazal {
         Message *CreateJoinRequest();
         qResult Send(EndPoint *, Message *, unsigned int);
         void StopToListen();
+        bool ListenOnWellKnown();
+        bool StartToListen();
+        bool IsListening(unsigned short *) const;
         Message *CreateActionMessage(DOHandle *, unsigned short *);
         Message *CreateDeleteMessage(DOHandle);
         Message *CreateDOProtocolMessage();

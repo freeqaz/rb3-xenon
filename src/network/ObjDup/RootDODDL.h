@@ -20,6 +20,8 @@ namespace Quazal {
         void AddDSToDiscoveryMessage(Message *, Station *);
         bool ExtractDSFromDiscoveryMessage(Message *);
         bool ExtractADataset(Message *, unsigned char);
+        static unsigned int GetClassID() { return s_uiClassID; }
+        static unsigned int s_uiClassID;
     };
 
     class _DOC_RootDO : public DOClassTemplate<_DO_RootDO, DOClass> {

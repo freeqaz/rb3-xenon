@@ -18,7 +18,8 @@
 //   * the function-local static StationURL at 0x82CC0030: constructed by 0x82AA1658
 //     (guard bit 0 of 0x82CC0094, destroyed through atexit), filled by
 //     0x82AA2BE8 (this, &hostAddress, &sessionID, &keyExchangeKey), then
-//     handed with a fresh Quazal::CallContext to 0x82A78668.
+//     handed with a fresh Quazal::CallContext to Quazal::Session::JoinSession
+//     (0x82A78668).
 namespace Quazal {
     // The three members this TU calls (0x82AA1658, 0x82AA2BE8, the dtor), spelled
     // as the StationURL TU defines them.
@@ -28,8 +29,14 @@ namespace Quazal {
         ~StationURL();
         void SetXboxAddress(const XNADDR *, const XNKID *, const XNKEY *);
     };
+
+    // The one Session member this TU calls (0x82A78668), as the Session TU
+    // defines it.
+    class Session {
+    public:
+        static bool JoinSession(CallContext *, const StationURL &);
+    };
 }
-void QuazalJoin_82A78668(Quazal::CallContext *, const Quazal::StationURL &);
 
 // ------------------------------------------------------------------ XboxJob
 
@@ -243,7 +250,7 @@ bool MakeSessionJob::IsFinished() {
                     &info.hostAddress, &info.sessionID, &info.keyExchangeKey
                 );
                 mJoinContext = new Quazal::CallContext();
-                QuazalJoin_82A78668(mJoinContext, sTarget);
+                Quazal::Session::JoinSession(mJoinContext, sTarget);
                 return false;
             }
         } else {
