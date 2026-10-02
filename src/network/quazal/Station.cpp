@@ -394,7 +394,7 @@ namespace Quazal {
 
     unsigned int Station::GetOutputLatency() { return m_oConnectionInfo.m_uiOutputLatency; }
 
-    void Station::SetLocalStation(DOHandle hStation) { s_hLocalStation.GetValue() = hStation; }
+    void Station::SetLocalStation(DOHandle hStation) { s_hLocalStation.SetValue(hStation); }
 
     DOHandle Station::GetLocalStation() { return s_hLocalStation.GetValue(); }
 
@@ -414,9 +414,9 @@ namespace Quazal {
         return hStation;
     }
 
-    unsigned int Station::GetStationID() const { return GetHandle().GetID(); }
+    unsigned int Station::GetStationID() const { return GetHandle().GetDOID(); }
 
-    unsigned int Station::ConvertDOHandleToID(DOHandle hStation) { return hStation.GetID(); }
+    unsigned int Station::ConvertDOHandleToID(DOHandle hStation) { return hStation.GetDOID(); }
 
     bool Station::TestAndSetFaultFlag() {
         CallRegister::GetInstanceRef()->QueueCancelCallToStation(GetHandle());

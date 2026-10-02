@@ -84,6 +84,15 @@ namespace Quazal {
         virtual PseudoGlobalVariableRoot *GetNext() { return mNext; }
         virtual void SetNext(PseudoGlobalVariableRoot *root) { mNext = root; }
 
+        void SetValue(const T &value) {
+            unsigned int uiContext = PseudoSingleton::GetCurrentContext();
+            if (uiContext == 0) {
+                mValueInDefaultContext = value;
+            } else {
+                mValueInContextList[uiContext] = value;
+            }
+        }
+
         T &GetValue() {
             unsigned int uiContext = PseudoSingleton::GetCurrentContext();
             if (uiContext == 0) {
