@@ -33,6 +33,8 @@ namespace Quazal {
         void SetProductInfo(unsigned int);
         void SetSessionName(const char *);
         void SetURL(const char *);
+        unsigned int GetSessionID() { return m_uiSessionID; }
+        void SetSessionID(unsigned int ui) { m_uiSessionID = ui; }
 
         unsigned char unk0[0x14];
         unsigned int m_uiProductID; // 0x14
@@ -124,8 +126,8 @@ namespace Quazal {
 
     class Station : public RootDO {
     public:
-        static DOHandle GetLocalStationHandle();
-        static Station *GetLocalInstance();
+        static DOHandle GetLocalStation();
+                static Station *GetLocalInstance();
         static void SetLocalStationHandle(DOHandle);
         static unsigned int GetClassID() { return s_uiDOClassID; }
         static Station *CreateLocalStation(unsigned int);
@@ -180,7 +182,7 @@ namespace Quazal {
         virtual void Flush() = 0;
         virtual void AddStation(DOHandle) = 0;
 
-        static BundlingPolicy *GetInstance();
+        static BundlingPolicy *GetInstance() { return s_pInstance.GetValue(); }
         static PseudoGlobalVariable<BundlingPolicy *> s_pInstance;
     };
 
@@ -193,6 +195,7 @@ namespace Quazal {
     class JoinSessionOperation {
     public:
         void Approve();
+        int GetOutcome() const { return m_iOutcome; }
 
         unsigned char unk0[0x20];
         int m_iOutcome; // 0x20
@@ -213,6 +216,7 @@ namespace Quazal {
     inline bool operator<(const Time &a, const Time &b) { return a.m_ui64Value < b.m_ui64Value; }
     inline bool operator!=(const Time &a, const Time &b) { return a.m_ui64Value != b.m_ui64Value; }
 
+    inline bool IsReferencing(const DORef &r) { return r.GetDOPtr() != NULL; }
     inline bool UseIsAllowed(const SystemComponent::Use &u) { return u.mComponentExists; }
 
     extern int XNetQosLookupKey(const XNKID *, int, int, int, int);
@@ -265,8 +269,8 @@ namespace Quazal {
     }
 
     bool InvolvesLocalStation(const ChangeMasterStationOperation *pOp) {
-        return pOp->GetNewMasterStation() == Station::GetLocalStationHandle()
-            || pOp->GetStation() == Station::GetLocalStationHandle();
+        return pOp->GetNewMasterStation() == Station::GetLocalStation()
+            || pOp->GetStation() == Station::GetLocalStation();
     }
 
     void Session::OperationBegin(DOOperation *pOp) {
@@ -436,7 +440,7 @@ namespace Quazal {
         pStation->InitURLs();
         pStation->Trace(4);
         pStation->Publish(-1);
-        if (Station::GetLocalStationHandle() != DOHandle()) {
+        if (Station::GetLocalStation() != DOHandle()) {
         } else {
             Station::SetLocalStationHandle(hStation);
         }
@@ -526,7 +530,7 @@ namespace Quazal {
     }
 
     void Session::ReleaseJoinReference() {
-        if (m_refJoin.GetDOPtr() != NULL) {
+        if (IsReferencing(m_refJoin)) {
             m_refJoin.Release();
         }
     }
@@ -541,7 +545,7 @@ namespace Quazal {
         if (s_pfApproveJoinSessionCallback) {
             s_pfApproveJoinSessionCallback(pOp);
         }
-        if (pOp->m_iOutcome == 0) {
+        if (pOp->GetOutcome() == 0) {
             pOp->Approve();
         }
     }
@@ -591,20 +595,22 @@ namespace Quazal {
     void Session::InitStaticSessionDescription(ProductInfo *pInfo) {
         GetLocalSessionDescription()->SetProductInfo(ProductFacade::GetProductType());
         if (pInfo) {
-            unsigned int uiVersion = pInfo->GetVersion();
-            unsigned int uiID = pInfo->GetID();
-            GetLocalSessionDescription()->m_uiProductID = uiID;
-            GetLocalSessionDescription()->m_uiProductVersion = uiVersion;
+            unsigned int uiProductVersion = pInfo->GetVersion();
+            unsigned int uiProductID = pInfo->GetID();
+            SessionDescription *pDesc = GetLocalSessionDescription();
+            pDesc->m_uiProductID = uiProductID;
+            pDesc->m_uiProductVersion = uiProductVersion;
         } else {
-            GetLocalSessionDescription()->m_uiProductID = 0;
-            GetLocalSessionDescription()->m_uiProductVersion = 0;
+            SessionDescription *pDesc = GetLocalSessionDescription();
+            pDesc->m_uiProductID = 0;
+            pDesc->m_uiProductVersion = 0;
         }
     }
 
     void Session::InitSessionDescription(bool bWithURL) {
         InitStaticSessionDescription(ProductFacade::GetProductInfo());
         GetLocalSessionDescription()->SetSessionName(GetSessionName());
-        GetLocalSessionDescription()->m_uiSessionID = m_dsSessionInfo.GetSessionID();
+        GetLocalSessionDescription()->SetSessionID(m_dsSessionInfo.GetSessionID());
         DORefTemplate<Station> refMaster(m_refMasterStation.GetHandle());
         if (refMaster.IsValid()) {
             refMaster->Trace(0x2000);
@@ -618,7 +624,7 @@ namespace Quazal {
                     url.SetXNKey(XboxSessionKeys::GetKey());
                 }
                 if (bValid) {
-                    if (refMaster.m_hReferencedDO == Station::GetLocalStationHandle()) {
+                    if (refMaster.m_hReferencedDO == Station::GetLocalStation()) {
                         unsigned short usPort;
                         if (ObjDupProtocol::GetInstance()->IsListening(&usPort)) {
                             url.SetPortNumber(usPort);
@@ -633,9 +639,9 @@ namespace Quazal {
     }
 
     void Session::UpdateSessionDescription() {
-        m_dsSessionInfo.SetSessionID(GetLocalSessionDescription()->m_uiSessionID);
+        m_dsSessionInfo.SetSessionID(GetLocalSessionDescription()->GetSessionID());
         m_dsSharedSessionDescription.Refresh();
-        UpdateImpl(&m_dsSharedSessionDescription, Time::GetSessionTime());
+        UpdateDataSet(&m_dsSharedSessionDescription);
     }
 
     SessionDescription *Session::GetLocalSessionDescription() {

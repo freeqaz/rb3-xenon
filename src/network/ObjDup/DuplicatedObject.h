@@ -215,7 +215,7 @@ namespace Quazal {
 
 
     template <class T>
-    bool DORefTemplate<T>::IsValid() const {
+    inline bool DORefTemplate<T>::IsValid() const {
         if (GetDOPtr() == 0) {
             SystemError::SignalError(0, 0, 0xA0030004, 0);
             return false;

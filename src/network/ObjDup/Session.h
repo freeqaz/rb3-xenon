@@ -54,6 +54,8 @@ namespace Quazal {
         void RetrieveURLs(DOHandle, qList<StationURL> *);
         static bool JoinIsAllowed();
 
+        bool UpdateDataSet(DataSet *pDS) { return UpdateImpl(pDS, Time::GetSessionTime()); }
+
         // DuplicatedObject inlines the well-known handle read (0x82E1050C).
         static DOHandle GetWKHandle() { return s_wkhSession; }
         static unsigned int GetClassID() { return s_uiDOClassID; }

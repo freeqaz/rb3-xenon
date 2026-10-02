@@ -25,6 +25,7 @@ namespace Quazal {
         unsigned char GetState();
 
         unsigned char m_bySessionState; // 0x0
+        unsigned char pad1[3];
     };
 
     class SessionFlags : public DataSet {
@@ -32,6 +33,7 @@ namespace Quazal {
         ~SessionFlags();
 
         unsigned char m_byFlags; // 0x0
+        unsigned char pad1[3];
     };
 
     class _DO_Session : public RootDO {
