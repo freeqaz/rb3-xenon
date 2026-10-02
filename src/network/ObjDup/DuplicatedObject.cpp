@@ -250,7 +250,9 @@ namespace Quazal {
         }
         if (!bValid) {
             if (op.GetType() == 6) {
-                OperationErrorNotifier::GetInstance()->NotifyError(GetHandle(), 0x80010006);
+                CallRegister::GetInstanceRef().SignalRelevantFetchContextes(
+                    GetHandle(), (DOCallContext::_Outcome)0x80010006
+                );
             }
             return false;
         }
@@ -492,7 +494,9 @@ namespace Quazal {
             Station::DynamicCast(this)->AcquireStationReference();
         }
         if (op.IsADuplica()) {
-            OperationErrorNotifier::GetInstance()->NotifyError(GetHandle(), 0x60001);
+            CallRegister::GetInstanceRef().SignalRelevantFetchContextes(
+                GetHandle(), (DOCallContext::_Outcome)0x60001
+            );
         }
     }
 
@@ -1071,7 +1075,7 @@ namespace Quazal {
     }
 
     bool DuplicatedObject::MigrationInProgress() const {
-        return CallRegister::GetInstance()->MigrationInProgress(GetHandle(), DOHandle());
+        return CallRegister::GetInstanceRef().MigrationInProgress(GetHandle(), DOHandle());
     }
 
     bool DuplicatedObject::AttemptEmigration(DOHandle hNewMaster) {

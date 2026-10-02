@@ -480,32 +480,34 @@ namespace Quazal {
         void SignalOutcome(DOHandle, _Outcome);
     };
 
-    // The protocol's own register of outstanding RMC calls.
-    class CallContextRegister {
+    // The protocol's register of outstanding DO calls (retail's CallRegister,
+    // whose methods are in the CallRegister TU). Its ID lookups are expanded
+    // here, so this TU carries their out-of-line copies.
+    class CallRegister {
     public:
-        CallContextRegister();
-        virtual ~CallContextRegister();
+        CallRegister();
+        virtual ~CallRegister();
         virtual void Register(void *);
 
-        CallContext *GetCallContextRef(unsigned short usCallID) {
+        DOCallContext *GetCallContextRef(unsigned short usCallID) {
             ScopedCS oCS(GetScheduler()->m_csSystemLock);
-            CallContext *pContext = FindCallContext(usCallID);
+            DOCallContext *pContext = FindCallContext(usCallID);
             if (pContext != 0) {
                 pContext->AcquireRef();
             }
             return pContext;
         }
-        CallContext *FindCallContext(unsigned short usCallID) {
-            qMap<unsigned short, CallContext *>::iterator it = m_mapCalls.find(usCallID);
+        DOCallContext *FindCallContext(unsigned short usCallID) {
+            qMap<unsigned short, DOCallContext *>::iterator it = m_mapCalls.find(usCallID);
             if (it != m_mapCalls.end()) {
                 return it->second;
             } else {
                 return 0;
             }
         }
-        void CancelAll();
+        void CancelPendingCalls();
 
-        qMap<unsigned short, CallContext *> m_mapCalls; // 0x4
+        qMap<unsigned short, DOCallContext *> m_mapCalls; // 0x4
         char m_pad20[8];
     };
 
@@ -848,7 +850,7 @@ namespace Quazal {
 
         bool m_bListeningOnAnyPort; // 0x4
         bool m_bListeningOnWellKnown; // 0x5
-        CallContextRegister m_oCallContextRegister; // 0x8
+        CallRegister m_oCallRegister; // 0x8
         ParticipationManager *m_pParticipationManager; // 0x30
         StationProxy m_oStationProxy; // 0x34
         char m_pad35[0xB];
@@ -1361,7 +1363,7 @@ namespace Quazal {
     }
 
     Message *ObjDupProtocol::CreateRMCCallMessage(RMCContext *pContext) {
-        m_oCallContextRegister.Register(pContext);
+        m_oCallRegister.Register(pContext);
         Message *pMsg = CreateMessage(0xA);
         *pMsg << pContext->GetCallID();
         *pMsg << pContext->GetTargetObject();
@@ -1456,7 +1458,7 @@ namespace Quazal {
     }
 
     void ObjDupProtocol::ProcessRMCResponse(Message *pMsg, unsigned short *pusCallID) {
-        CallContext *pContext = m_oCallContextRegister.GetCallContextRef(*pusCallID);
+        CallContext *pContext = m_oCallRegister.GetCallContextRef(*pusCallID);
         if (pContext != 0) {
             static_cast<DOCallContext *>(pContext)->SignalResponse(UserContext(pMsg));
             pContext->ReleaseRef();
@@ -1521,7 +1523,7 @@ namespace Quazal {
     }
 
     Message *ObjDupProtocol::CreateMigrationMessage(MigrationContext *pContext) {
-        m_oCallContextRegister.Register(pContext);
+        m_oCallRegister.Register(pContext);
         Message *pMsg = CreateDOProtocolMessage();
         ProtocolCallContext oCallContext;
         qList<DOHandle> lstStations;
@@ -1571,7 +1573,7 @@ namespace Quazal {
     }
 
     void ObjDupProtocol::ProcessCallOutcome(DOHandle hStation, unsigned short usCallID, int iOutcome) {
-        CallContext *pContext = m_oCallContextRegister.GetCallContextRef(usCallID);
+        CallContext *pContext = m_oCallRegister.GetCallContextRef(usCallID);
         if (pContext != 0) {
             static_cast<DOCallContext *>(pContext)->SignalOutcome(hStation, (DOCallContext::_Outcome)iOutcome);
             pContext->ReleaseRef();
@@ -1721,7 +1723,7 @@ namespace Quazal {
             GetTransport()->StopListening(m_usAnyPort);
             m_bListeningOnAnyPort = false;
         }
-        m_oCallContextRegister.CancelAll();
+        m_oCallRegister.CancelPendingCalls();
     }
 
     bool ObjDupProtocol::IsListeningOnWellKnown() const { return m_bListeningOnWellKnown; }

@@ -273,7 +273,7 @@ namespace Quazal {
         virtual void Register(DOCallContext *);
         virtual void Unregister(DOCallContext *);
 
-        static CallRegister *GetInstanceRef();
+        static CallRegister &GetInstanceRef();
     };
 
     DOCallContext::DOCallContext(DOHandle hTarget, bool bFlag) : m_oEventHandler(1) {
@@ -470,7 +470,7 @@ namespace Quazal {
 
     void DOCallContext::ProcessCallCompletion() {
         if (GetID() != 0)
-            CallRegister::GetInstanceRef()->Unregister(this);
+            CallRegister::GetInstanceRef().Unregister(this);
         m_refTargetStation.Release();
         m_pEvent->Set();
     }

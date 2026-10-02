@@ -2280,7 +2280,16 @@
             "network/quazal/ChangeMasterStationOperation.cpp": "NonMatching",
             "network/quazal/JobConnectStation.cpp": "NonMatching",
             "network/quazal/StationManager.cpp": "NonMatching",
-            "network/quazal/CallRegister.cpp": "NonMatching",
+            "network/quazal/CallRegister.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/EHs-c-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
             "network/quazal/ChangeDupSetOperation.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
