@@ -214,7 +214,7 @@ Symbol SongSectionController::FindPoolCategoryForPracSession(Symbol pracSession)
 bool SongSectionController::UpdatePoolCategory() {
     Symbol prev = mCurPoolCategory;
     if (mMidiSection.Null()) {
-        mCurPoolCategory = Symbol("CATCH_ALL");
+        mCurPoolCategory = "CATCH_ALL";
     } else {
         mCurPoolCategory = FindPoolCategoryForPracSession(mMidiSection);
     }
