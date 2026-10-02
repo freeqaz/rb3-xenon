@@ -101,7 +101,40 @@ admitting them to the 0x14 / 0x24 groups.
 
 ## 5. Bytes-differ rows (fork BD)
 
-FILL
+Fork BD worked the 139 BYTES_DIFFER / TWIN_BYTES_DIFFER rows plus the 2 real unpinned rows, in
+`~/tmp/wt-w16nr-bd`. **Every fix was a map rename or a split re-home. No source edit was needed**,
+because in each opened case our source called the right instantiation and the map or pin was wrong.
+Its progress read was +33 fns / +4,056 B with 0 rows down.
+
+- `70b7e9493`: CharHair `Strand` instantiations mis-pinned under Flow with `DynamicPropertyEntry` names,
+  and SampleZone instantiations under CharHair/Flow, re-homed and renamed (chase or flat-T1 PROVEN at
+  equal sizes; the retail callers are all CharHair or MidiInstrument). `PropSync<Strand>` (364 B) goes
+  0 → 100. MicClientMapper `0x8270F4F8` is one 80-B `__uninitialized_copy<MicMappingData>` that dtk had
+  cut at a split boundary, with the head mis-pinned under OutfitConfig as `fill_n<WeightedEntry>`.
+- `afa48a653` / `c9e4e3e9b`: the split's own `.pdata` and its `symbols.txt` fixed point (the over-carve
+  merge fuses `0x8270F4F8` + `0x8270F528` into one 0x50 function).
+- `8c28ccecd`: 15 rows carrying the wrong template twin, renamed to the spelling PROVEN against the
+  retail row's own bytes: the InterstitialMgr hashtable chain (it holds `hash_map<Symbol,hash_map<…>>`),
+  FileCache sort, MeshAnim ×2, Waypoint ×2, the BandCamShot/WorldDir `list` iterator swap (one block
+  re-homed from Shockwave to `world/Dir.cpp`), and PanelDir `list` / `ObjList<MatOverride>` `operator=`.
+- `e0708d450`: 7 single-row template islands re-homed into the TU whose code surrounds them.
+- `7ee5f50a8`: the `vector<MeshFace>` insert chain re-homed from CharLipSync to BandPatchMesh
+  (372 B, 90.5 → 100).
+
+The two real "unpinned" rows. The `CharHair` vbtable pair is an **ICF data fold**: both vbtables are
+`{-4, 0x78}`, and it would need a data alias, which was not installed. For `PatchSticker::MakeLoader`,
+retail's type-descriptor placeholder reads `.?AVFileLoader@@`, so **our source is right**; the row
+differs only in the order of two `lis` instructions.
+
+**One rename exposed a charge, fixed here.** Renaming InterstitialMgr's `_M_insert_noresize` to its
+proven `hash_map<Symbol,hash_map<…>>` instantiation took that 164-B row from 100 to 99.88 (its callee
+`_M_before_begin` became a fresh spelling). That spelling passes all three §3 checks against
+`0x8265df00` (1/1 retail site) and is admitted (`71f0a34d6`), which restores the row.
+
+Left by BD: `~TrackerDesc`/`~BandHeadShaper` (a 32-B carve at `0x822AFD68` whose `blr` is a separate
+4-B row, so it needs a `symbols.txt` carve), the MeshAnim `Key<vector<Vector3|Color>>` 16-B-element
+tangle, the SpotlightDrawer `0x82308478` coin flip (two twins prove equally), and about 70 EH funclet
+rows whose charge follows their parent. The remaining slice is 113 rows / 5,956 B.
 
 ## 6. UILabel `LEAPCORE::`/`NUISPEECH::` block (fork UL)
 
@@ -130,8 +163,50 @@ among the XAudio2 units), and WavMgr `0x82845F78` mapped `ResMgr<void>::Get`.
 
 ## 8. Measurement
 
-FILL
+Whole-branch A/B, fresh worktree `~/tmp/wt-w16nr-ab` at main `7f4265453`:
+`SPLIT_GUARD_NO_FIXED_POINT_CHECK=1 python3 tools/ab_measure.py --worktree ~/tmp/wt-w16nr-ab --patch <git diff main..w16-nr, minus symbols.txt and docs>`.
+Run dir `~/tmp/wt-w16nr-ab/.ab_measure_runs/20261002-160211-branch-1197511/`.
+
+- `symbols.txt` is excluded because ab_measure refuses it; leg B re-derives the same file.
+- The env var is the split guard's declared escape hatch for callers that own the fixed-point verdict.
+  The first run without it was **REFUSED**: the guard aborted leg B's build at the first split, before
+  ab_measure could iterate. ab_measure then iterated each leg to a `symbols.txt` fixed point itself:
+  leg A after 0 extra splits, leg B after 1.
+
+**Prediction, written before the run:** +73 fns / +17,048 B, 0 rows down (the sum of the progress reads).
+
+| | leg A (main) | leg B (w16-nr) | Δ |
+|---|---:|---:|---:|
+| matched_functions | 51,375 | 51,448 | **+73** |
+| masked_equal | 24,629 | 24,631 | +2 |
+| honest | 26,746 | 26,817 | **+71** |
+| matched_code_percent | 54.558790 | 54.725150 | **+0.166360 pp (+17,048 B)** |
+| fuzzy | 60.389122 | 60.393993 | +0.004871 pp |
+| units at 100 (mpn) | 478 | 482 | +4, **0 fell off** |
+| units at 100 (all-rows-fuzzy) | 423 | 429 | +6, 0 fell off |
+
+**Measured identical to the prediction.** Leg A equals main's own `report.json`.
+
+**Row level**, on the A/B's archived leg reports: **99 rows reach fuzzy 100 (+13,628 B), 0 rows go down**.
+73 keys vanish and 72 appear, all renames or re-homes (each one's new identity is listed in §5/§6), and
+together they net +3,256 B at 100. The unit "regressions" (Flow −3, Character −1, PropKeys −1,
+Shockwave −1) are rows re-homed **out** of those units, at 100 in their new units. The one row a rename
+took off 100 (InterstitialMgr `_M_insert_noresize`, 164 B) was restored before the A/B (§5).
+
+`none` control: **+1,192 B** against +17,048 graded. The patch carries splits and map renames, so the
+tool marks it NOT_APPLICABLE. Most of the graded gain is alias forgiveness, which is exactly why every
+membership in §4 is backed by chase PROVEN, twin uniqueness and retail call sites, not by the metric.
 
 ## 9. Gates
 
-FILL
+On the final tree (`~/tmp/wt-w16nr`, full build after a forced re-split):
+
+- `python3 tools/icf_alias_finder.py --validate`: **PASS**: 1,791 map-consistent / 308 tolerated /
+  **0 contradicted** / 2,100 groups.
+- `python3 tools/map_name_injectivity.py`: OK, 33,820 applied rows, injective (+1 enumerated exception).
+- `python3 tools/icf_pair_adjudicate.py --chasetest`: rc=0, "selftest PASSED -- the instrument can both
+  pass and fail". `--self-break`: the vacuous decoy goes red. `--self-break-slots`: all 6 slot decoys go
+  red and no other control moves.
+- Every W16-NR membership re-chased against its group survivor on the final tree: **61/61 PROVEN**
+  (54 with 0 cycles, 7 through a cycle leaf carrying the two-channel witness).
+- `tools/native_build_gate.sh` (run last; no `src/` file changed in this lane): GATE
