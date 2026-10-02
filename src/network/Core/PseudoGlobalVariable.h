@@ -51,6 +51,9 @@ namespace Quazal {
             s_oList.RemoveVariable(this);
             FreeExtraContexts();
         }
+        // Retail (0x82A7A2A0 for T = qList<void (*)()>): the -1 branch's array
+        // new is evaluated and dropped, then the contexts are allocated and
+        // each one copy-constructed from the default value.
         virtual void AllocateExtraContexts() {
             // Retail (0x82A7DF58, the DOHandle instantiation) evaluates an
             // array new whose result is never stored when the count is -1, then

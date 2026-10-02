@@ -72,11 +72,12 @@ namespace Quazal {
         unsigned char unk4[0x28];
         SessionDiscoveryTable *m_pSessionDiscoveryTable; // 0x2c
         unsigned char unk30[0xc];
-        void *m_p3c; // 0x3c
+        void *m_pStationInfo; // 0x3c
         unsigned char unk40[0x8];
         SystemComponent *m_pComponent; // 0x48
 
         SystemComponent *GetJoinComponent() { return m_pComponent; }
+        void *GetStationInfo() { return m_pStationInfo; }
     };
 
     class ProductInfo {
@@ -129,6 +130,7 @@ namespace Quazal {
     class Station : public RootDO {
     public:
         static DOHandle GetLocalStation();
+        static bool IsLocal(unsigned int ui) { return ui == GetLocalStation().mValue; }
                 static Station *GetLocalInstance();
         static void SetLocalStationHandle(DOHandle);
         static unsigned int GetClassID() { return s_uiDOClassID; }
@@ -185,6 +187,9 @@ namespace Quazal {
         virtual void AddStation(DOHandle) = 0;
 
         static BundlingPolicy *GetInstance() { return s_pInstance.GetValue(); }
+        static BundlingPolicy *GetCurrentInstance() {
+            return s_pInstance.GetValue(PseudoSingleton::GetCurrentContext());
+        }
         static PseudoGlobalVariable<BundlingPolicy *> s_pInstance;
     };
 
@@ -274,8 +279,8 @@ namespace Quazal {
     }
 
     bool InvolvesLocalStation(const ChangeMasterStationOperation *pOp) {
-        return pOp->GetNewMasterStation() == Station::GetLocalStation()
-            || pOp->GetStation() == Station::GetLocalStation();
+        return Station::IsLocal(pOp->m_refNewMaster.m_hReferencedDO.mValue)
+            || Station::IsLocal(pOp->m_refStation.m_hReferencedDO.mValue);
     }
 
     void Session::OperationBegin(DOOperation *pOp) {
@@ -435,11 +440,11 @@ namespace Quazal {
     }
 
     bool Session::CompleteCreation() {
-        if (BundlingPolicy::s_pInstance.GetValue(PseudoSingleton::GetCurrentContext())) {
-            BundlingPolicy::s_pInstance.GetValue(PseudoSingleton::GetCurrentContext())->Flush();
+        if (BundlingPolicy::GetCurrentInstance()) {
+            BundlingPolicy::GetCurrentInstance()->Flush();
         }
         Station *pStation = Station::CreateLocalStation(0);
-        pStation->InitStationInfo(NetZ::GetInstance()->m_p3c);
+        pStation->InitStationInfo(NetZ::GetInstance()->GetStationInfo());
         DOHandle hStation = pStation->GetHandle();
         pStation->m_dsState.SetState(2);
         pStation->InitURLs();
