@@ -283,9 +283,8 @@ void BandUI::GetCurrentScreenState(std::vector<UIScreen *> &screens) {
     if (PushDepth() > 0) {
         screens.push_back(BottomScreen());
     }
-    UIScreen *cur = CurrentScreen();
-    if (cur)
-        screens.push_back(cur);
+    if (CurrentScreen())
+        screens.push_back(CurrentScreen());
 }
 
 UIFlowType BandUI::GetCurrentFlowType() const {
