@@ -15,10 +15,36 @@ namespace Quazal {
         virtual void TestInvariants();
 
         int GetStationID() const;
+        // Lane-chosen names: retail wrappers around Acquire/ReleaseReferenceToMaster.
+        void AcquireStationReference();
+        void ReleaseStationReference();
 
         static Station *GetLocalInstance();
         static DOHandle GetLocalStation();
         static bool IsLocal(unsigned int ui) { return ui == GetLocalStation().mValue; }
+        bool Send(Message *, unsigned int);
+        static DOHandle GetLocalStationHandle();
+        static unsigned int GetStationIDFromHandle(DOHandle);
+        void OnStationDOReleased();
+        void SendMessage(Message *, unsigned int);
+        bool IsAPeer();
+        bool IsConnected();
+        unsigned int GetProcessType() const;
+        unsigned short GetState() const { return m_usState; }
+
+        static unsigned int s_uiDOClassID;
+        static unsigned int GetClassID() { return s_uiDOClassID; }
+        void SendMessage(Message *, bool);
+
+        static Station *DynamicCast(DuplicatedObject *pDO) {
+            if (pDO && pDO->IsAKindOf(_DO_Station::s_uiClassID))
+                return (Station *)pDO;
+            else
+                return NULL;
+        }
         static DOHandle GetStationHandle(unsigned int);
+
+        unsigned char unk70[0x40]; // 0x70
+        unsigned short m_usState; // 0xb0
     };
 }

@@ -10,8 +10,10 @@ namespace Quazal {
         virtual ~Selection();
 
         void SetFlags(unsigned char);
+        void Clear();
         void Add(DOHandle);
         void Add(class DuplicatedObject *);
+        void AddDO(class DuplicatedObject *pDO) { Add(pDO); }
         bool Remove(DOHandle);
         const_iterator find(DOHandle h) const {
             return qMap<DOHandle, class DuplicatedObject *>::find(h);
