@@ -127,3 +127,20 @@ void sw_PresetOverrideListSplice(
 ) {
     a.insert(a.begin(), b.begin(), b.end());
 }
+
+// The BitmapOverride and MatOverride splices follow it at 0x824D06B8 and
+// 0x824D0758: byte twins of the PresetOverride one apart from their two
+// callees.  Each has one caller, list<T>::operator= for its own element type
+// (0x824D0FB0 / 0x824D1070), and calls that type's list clear (0x824CD9F8 /
+// 0x824CDA48).
+void sw_BitmapOverrideListSplice(
+    ObjList<WorldDir::BitmapOverride> &a, const ObjList<WorldDir::BitmapOverride> &b
+) {
+    a.insert(a.begin(), b.begin(), b.end());
+}
+
+void sw_MatOverrideListSplice(
+    ObjList<WorldDir::MatOverride> &a, const ObjList<WorldDir::MatOverride> &b
+) {
+    a.insert(a.begin(), b.begin(), b.end());
+}
