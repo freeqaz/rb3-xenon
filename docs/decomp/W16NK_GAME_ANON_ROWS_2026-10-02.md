@@ -106,7 +106,7 @@ stays refused — but "ours larger by an EH-funclet's worth, relocation-aware fu
 | `Asset::HasFinishes` | 81.3 → **100** | `!mFinishes.empty()`: retail subtracts the pointers with no element-size mask |
 | `BandUI::GetCurrentScreenState` | 91.0 → **100** | re-read `CurrentScreen()` for the push (signed compare, store on the taken path) |
 | `GetStreamSettingsForContext` (NetSession) | 45.4 → **100** | bind `s_oStreamSettings[index]` before `GetCurrentContext()` (retail hoists it into r31) |
-| `QuazalSession::Poll` / `HasHostLeft` (144 / 112) | undefined → **100** | written from retail asm (no oracle in rb3-Wii or DC3); `QuazalSession+4` typed `NetZCallback*`, the parked NetZ is a static |
+| `QuazalSession::Poll` / `HasHostLeft` (144 / 112) | undefined → **100** | written from retail asm; `QuazalSession+4` typed `NetZCallback*`, the parked NetZ is a static |
 | `SyncMachineMsg::Load` (128) | anon → **100** | call `MemStream::Resize` as retail does |
 | `MCResultMsg::PrintExtra` (92) | anon → **100** | the missing second vtable slot, ported from DC3's `meta/MemcardMgr.h` |
 
