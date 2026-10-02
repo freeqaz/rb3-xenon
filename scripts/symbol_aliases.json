@@ -18991,11 +18991,19 @@
   {
    "name": "4?$ObjVector",
    "address": "0x823dcfb0",
-   "survivor": "??4?$ObjVector@VConstraint@BandIKEffector@@@@QAAXABV0@@Z",
-   "folded": [
-    "??4?$ObjVector@V?$ObjOwnerPtr@VWaypoint@@@@@@QAAXABV0@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "survivor": "??4?$ObjVector@V?$ObjOwnerPtr@VWaypoint@@@@@@QAAXABV0@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "relabelled": "W16-NX 2026-10-02: survivor label moved from ObjVector<BandIKEffector::Constraint>::operator= to ObjVector<ObjOwnerPtr<Waypoint>>::operator=, matching the corrected map row. Retail 0x823dcfb0 (96 B) has ONE caller, ?Copy@Waypoint@@ (0x823dd020), and calls 0x823dcd38 (ObjVector<ObjOwnerPtr<Waypoint>>::resize) and vector<ObjOwnerPtr<Waypoint>>::operator=; this group's own T1 evidence already matched the Waypoint spelling. The .text block 0x823DCFB0-0x823DD010 held only this row, sat between two Waypoint.cpp blocks, and was re-homed there from MeshAnim.cpp.",
+   "withdrawn": [
+    {
+     "spelling": "??4?$ObjVector@VConstraint@BandIKEffector@@@@QAAXABV0@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "class": "FORMER_SURVIVOR_LABEL_NOT_A_FOLD",
+     "disposition": "label removed, group kept",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --survivor ??4?$ObjVector@V?$ObjOwnerPtr@VWaypoint@@@@@@QAAXABV0@@Z --ours this spelling: FLAT T1 REFUTED, CHASED T1 REFUTED (BYTES-DIFFER at depth 0). No paired call site of ours reaches 0x823dcfb0 with this spelling; the one site that does (Waypoint::Copy) uses the Waypoint spelling."
+    }
+   ]
   },
   {
    "name": "_M_clear_after_move",
@@ -93443,7 +93451,8 @@
     "??$_M_find@VSymbol@@@?$hashtable@U?$pair@$$CBVSymbol@@PAVTourProperty@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVTourProperty@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVTourProperty@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVTourProperty@@@stlpmtx_std@@@2@@stlpmtx_std@@ABA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@PAVTourProperty@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@PAVTourProperty@@@stlpmtx_std@@@2@@priv@1@ABVSymbol@@@Z",
     "??$_M_find@VSymbol@@@?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@ABA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@1@ABVSymbol@@@Z",
     "??$_M_find@VSymbol@@@?$hashtable@U?$pair@$$CBVSymbol@@PAVTourDesc@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVTourDesc@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVTourDesc@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVTourDesc@@@stlpmtx_std@@@2@@stlpmtx_std@@ABA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@PAVTourDesc@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@PAVTourDesc@@@stlpmtx_std@@@2@@priv@1@ABVSymbol@@@Z",
-    "??$_M_find@VSymbol@@@?$hashtable@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@2@@stlpmtx_std@@ABA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@2@@priv@1@ABVSymbol@@@Z"
+    "??$_M_find@VSymbol@@@?$hashtable@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@2@@stlpmtx_std@@ABA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@2@@priv@1@ABVSymbol@@@Z",
+    "??$_M_find@VSymbol@@@?$hashtable@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@2@@stlpmtx_std@@ABA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@2@@priv@1@ABVSymbol@@@Z"
    ],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED). INCOMPLETE-1 (2026-08-14): 17 spelling(s) added by CHARGED-SITE enumeration -- the group existed but was a SUBSET, the same blind spot ONMSG-1 found (a pairwise comparator finds only SOME members). Each added spelling is map-absent, same-size, byte-identical to retail at the survivor address modulo relocated fields with relocation target names agreeing (flat T1 or chase), and passes a retail-UNIQUENESS gate: the body occupies exactly ONE retail address, so the alias cannot forgive a wrong callee. witness=PROVEN_flatT1 | Lane W7-D, T1 on retail bytes (2026-09-13). Our COMDAT for the folded spelling and for the survivor are both 128 B, sha256 32317c0fe50e1080, with ZERO relocations -- so nothing is masked and the comparison is total (the DATAINITFUNCS anti-vacuity condition). Retail@0x82557770 corroborates the body exactly. Injective; no other retail address carries a branch-masked-identical body. Deliberately installed against the house --install-min-relocs 1 default: that filter's stated rationale is that an UNIMPLEMENTED STUB compiles to a bare 4-byte `blr`, which cannot describe a 128 B pure-computation body. NOTE the measured limit: retail holds a bare `blr` at 6 DISTINCT addresses unfolded, so identity does not entail folding -- this rests on corroboration + injectivity, as the other installs do.",
    "retail_fanin": 76,
@@ -93491,6 +93500,11 @@
      "spelling": "??$_M_find@VSymbol@@@?$hashtable@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@2@@stlpmtx_std@@ABA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@2@@priv@1@ABVSymbol@@@Z",
      "lane": "W16-NH 2026-10-02",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 128 B retail / 128 B ours; retail body-twins 1. Retail call site(s) reaching the survivor where we call this spelling: 0x827b0ea0."
+    },
+    {
+     "spelling": "??$_M_find@VSymbol@@@?$hashtable@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@2@@stlpmtx_std@@ABA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@2@@priv@1@ABVSymbol@@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 0 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 128 == ours 128); of 1 retail masked-body twins this survivor is the only one the spelling chases PROVEN against. Retail call-site witness (decoded in band.exe as `bl 0x82557770`): 0x8256a23c. Every paired call site of this spelling lands at 0x82557770. It is the one charged site left in ?GetAsset@AssetMgr@@ (0x8256a220) once that address was named."
     }
    ]
   },
@@ -94594,11 +94608,19 @@
   {
    "name": "consensus_partition",
    "address": "0x8256a268",
-   "survivor": "?HasLesson@LessonMgr@@QBA_NVSymbol@@@Z",
-   "folded": [
-    "?HasAsset@AssetMgr@@QBA_NVSymbol@@@Z"
-   ],
-   "evidence": "PARTITIONED by the 2026-08-20 retail-anchored partition (arm D-prime): at every usable call site where our code calls this spelling, retail's own resolved bl lands at this address. Withheld classes and the derangement control are in decomp-bench archive/runs/2026-08-20-alias-partition-preland/."
+   "survivor": "?HasAsset@AssetMgr@@QBA_NVSymbol@@@Z",
+   "folded": [],
+   "evidence": "PARTITIONED by the 2026-08-20 retail-anchored partition (arm D-prime): at every usable call site where our code calls this spelling, retail's own resolved bl lands at this address. Withheld classes and the derangement control are in decomp-bench archive/runs/2026-08-20-alias-partition-preland/.",
+   "relabelled": "W16-NX 2026-10-02: survivor label moved from ?HasLesson@LessonMgr to ?HasAsset@AssetMgr, matching the map row, which this lane corrected. Retail 0x8256a268 (48 B) is `bl 0x8256a220` (?GetAsset@AssetMgr) then `!= 0`, i.e. AssetMgr::HasAsset; every retail caller (Award::Configure, CustomizePanel::SetupCurrentOutfit, AssetProvider::Text / Mat / UpdateExtendedText, PremiumAssetProvider::Text / UpdateExtendedText, ClosetMgr::UpdateCurrentOutfitConfig) is a site where our build calls ?HasAsset@AssetMgr -- the 2026-08-20 partition below had already found exactly that. The .text block 0x8256A268-0x8256A298 sits between two AssetMgr.cpp blocks and was re-homed there from LessonMgr.cpp.",
+   "withdrawn": [
+    {
+     "spelling": "?HasLesson@LessonMgr@@QBA_NVSymbol@@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "class": "FORMER_SURVIVOR_LABEL_NOT_A_FOLD",
+     "disposition": "label removed, group kept",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --survivor ?HasAsset@AssetMgr --ours ?HasLesson@LessonMgr: FLAT T1 REFUTED, CHASED T1 REFUTED (BYTES-DIFFER on the only callee slot: our HasLesson calls ?GetLesson@LessonMgr, which reads its hash_map at this+0x6c; retail's slot is ?GetAsset@AssetMgr at 0x8256a220, which reads this+0x28). No caller in our build calls ?HasLesson@LessonMgr at a site that pairs with a retail bl to this address. The name was only ever the map's label for the address, and it paired our out-of-line HasLesson COMDAT with retail's HasAsset under a forgiven placeholder callee."
+    }
+   ]
   },
   {
    "name": "OnFileGetBase",
@@ -103711,7 +103733,8 @@
    "survivor": "??$_Copy_Construct@U?$pair@QAXVString@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@QAXVString@@@0@ABU10@@Z",
    "folded": [
     "??$_Param_Construct@V?$TickedInfo@VString@@@@V1@@stlpmtx_std@@YAXPAV?$TickedInfo@VString@@@@ABV1@@Z",
-    "??$_Copy_Construct@V?$TickedInfo@VString@@@@@stlpmtx_std@@YAXPAV?$TickedInfo@VString@@@@ABV1@@Z"
+    "??$_Copy_Construct@V?$TickedInfo@VString@@@@@stlpmtx_std@@YAXPAV?$TickedInfo@VString@@@@ABV1@@Z",
+    "??$_Copy_Construct@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVSymbol@@VString@@@0@ABU10@@Z"
    ],
    "evidence": "W16-NF: anonymous retail row fn_82743A90 (80 B, unit system/movie/Movie) named by its caller binding; every folded spelling is one a retail caller of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
    "lane": "W16-NF",
@@ -103725,6 +103748,11 @@
      "spelling": "??$_Copy_Construct@V?$TickedInfo@VString@@@@@stlpmtx_std@@YAXPAV?$TickedInfo@VString@@@@ABV1@@Z",
      "lane": "W16-NF 2026-10-02",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED; retail carries 12 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x827735bc (?_M_insert_overflow_aux@?$vector@V?$TickedInfo@VString@@@@V?$StlNodeAl), 0x827741d4 (?push_back@?$vector@V?$TickedInfo@VString@@@@V?$StlNodeAlloc@V?$Ticked)."
+    },
+    {
+     "spelling": "??$_Copy_Construct@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVSymbol@@VString@@@0@ABU10@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 80 == ours 80); of 12 retail masked-body twins this survivor is the only one the spelling chases PROVEN against. Retail call-site witness (decoded in band.exe as `bl 0x82743a90`): 0x8259f714. Every paired call site of this spelling lands at 0x82743a90. It is the one charged site left in slist<pair<Symbol,String>>::_M_create_node (0x8259f6e0) once that address was named."
     }
    ],
    "added": {
@@ -107233,10 +107261,8 @@
   {
    "name": "$_M_splice_insert_dispatch",
    "address": "0x824d0618",
-   "survivor": "??$_M_splice_insert_dispatch@U?$_List_iterator@UTarget@BandCamShot@@U?$_Const_traits@UTarget@BandCamShot@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UTarget@BandCamShot@@V?$StlNodeAlloc@UTarget@BandCamShot@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@UTarget@BandCamShot@@U?$_Nonconst_traits@UTarget@BandCamShot@@@stlpmtx_std@@@1@U?$_List_iterator@UTarget@BandCamShot@@U?$_Const_traits@UTarget@BandCamShot@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
-   "folded": [
-    "??$_M_splice_insert_dispatch@U?$_List_iterator@UPresetOverride@WorldDir@@U?$_Const_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UPresetOverride@WorldDir@@V?$StlNodeAlloc@UPresetOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@UPresetOverride@WorldDir@@U?$_Nonconst_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@1@U?$_List_iterator@UPresetOverride@WorldDir@@U?$_Const_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z"
-   ],
+   "survivor": "??$_M_splice_insert_dispatch@U?$_List_iterator@UPresetOverride@WorldDir@@U?$_Const_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UPresetOverride@WorldDir@@V?$StlNodeAlloc@UPresetOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@UPresetOverride@WorldDir@@U?$_Nonconst_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@1@U?$_List_iterator@UPresetOverride@WorldDir@@U?$_Const_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
+   "folded": [],
    "evidence": "Created by lane W16-NU: see per-member records in `admitted`.",
    "lane": "W16-NU 2026-10-02",
    "admitted": [
@@ -107244,6 +107270,16 @@
      "spelling": "??$_M_splice_insert_dispatch@U?$_List_iterator@UPresetOverride@WorldDir@@U?$_Const_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UPresetOverride@WorldDir@@V?$StlNodeAlloc@UPresetOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@UPresetOverride@WorldDir@@U?$_Nonconst_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@1@U?$_List_iterator@UPresetOverride@WorldDir@@U?$_Const_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
      "lane": "W16-NU 2026-10-02",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED; the only PROVEN retail masked body twin is this survivor; every paired call site of ours lands at 0x824d0618 (1 site(s) diff_arg). The spelling was map-resident at 0x823c4800, whose body it does not match; that row now carries its proven identity (see the 0x823c4800 group's `relabelled`)."
+    }
+   ],
+   "relabelled": "W16-NX 2026-10-02: survivor label moved from the list<BandCamShot::Target> spelling to the list<WorldDir::PresetOverride> spelling, matching the corrected map row. Retail 0x824d0618 has ONE caller, ??4?$list@UPresetOverride@WorldDir@@ (list<PresetOverride>::operator=), and the only site landing here in our build is that spelling (W16-NU's admission). Its list-clear callee, now named at 0x824cd9a8, destroys the element at node+8 and frees a 0x20-byte node; our list<BandCamShot::Target>::clear destroys ObjPtr<RndEnviron> at node+0x58 and frees 0x6c bytes. The Shockwave.cpp helper that emitted the Target splice now emits the PresetOverride one.",
+   "withdrawn": [
+    {
+     "spelling": "??$_M_splice_insert_dispatch@U?$_List_iterator@UTarget@BandCamShot@@U?$_Const_traits@UTarget@BandCamShot@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UTarget@BandCamShot@@V?$StlNodeAlloc@UTarget@BandCamShot@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@UTarget@BandCamShot@@U?$_Nonconst_traits@UTarget@BandCamShot@@@stlpmtx_std@@@1@U?$_List_iterator@UTarget@BandCamShot@@U?$_Const_traits@UTarget@BandCamShot@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "class": "FORMER_SURVIVOR_LABEL_NOT_A_FOLD",
+     "disposition": "label removed, group kept",
+     "evidence": "Our list<BandCamShot::Target> splice calls list<Target>::clear, whose body differs from retail's callee at 0x824cd9a8 at two immediates (element offset 0x50 vs 0, node size 0x6c vs 0x20): tools/icf_pair_adjudicate.py --chase --survivor ?clear@?$_List_base@UPresetOverride@WorldDir@@... --ours ?clear@?$_List_base@UTarget@BandCamShot@@... is BYTES-DIFFER. No paired call site of ours reaches 0x824d0618 with the Target spelling. The label had paired only because the callee was a forgiven placeholder."
     }
    ]
   },
@@ -107278,6 +107314,272 @@
      "spelling": "??$__uninitialized_copy@PBVConstraint@BandIKEffector@@PAV12@@stlpmtx_std@@YAPAVConstraint@BandIKEffector@@PBV12@0PAV12@ABU__false_type@0@@Z",
      "lane": "W16-NU 2026-10-02",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED; the only PROVEN retail masked body twin is this survivor; every paired call site of ours lands at 0x822c4040 (2 site(s) diff_arg). The spelling was map-resident at 0x822c3fa8, whose body it does not match; that row now carries its proven identity (see the 0x822c3fa8 group's `relabelled`)."
+    }
+   ]
+  },
+  {
+   "name": "GetAsset",
+   "address": "0x8256a220",
+   "survivor": "?GetAsset@AssetMgr@@QBAPAVAsset@@VSymbol@@@Z",
+   "folded": [
+    "?GetScene@MetaMusicManager@@QBAPAVMetaMusicScene@@VSymbol@@@Z",
+    "?GetNameList@NameGenerator@@QBAPAVDataArray@@VSymbol@@@Z"
+   ],
+   "evidence": "Created by lane W16-NX: the survivor names the address (W16-NU dropped it because the name charged every caller spelling another instantiation); each folded spelling is chased PROVEN and call-site witnessed on retail bytes, see per-member records in `admitted`. Spellings landing here whose chase REFUTES are deliberately NOT folded (docs/decomp/W16NX_SHARED_BODY_ALIAS_GROUPS_2026-10-02.md).",
+   "lane": "W16-NX 2026-10-02",
+   "admitted": [
+    {
+     "spelling": "?GetScene@MetaMusicManager@@QBAPAVMetaMusicScene@@VSymbol@@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 REFUTED -> CHASED T1 PROVEN (1 SLOT-FOLD-OK; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 72 == ours 72); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x8256a220`): 0x82572050, 0x827b0ff8, in 2 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x8256a220 (tools landers/sites scan, W16-NX). Admitted when 0x8256a220 was named GetAsset, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?GetNameList@NameGenerator@@QBAPAVDataArray@@VSymbol@@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 REFUTED -> CHASED T1 PROVEN (1 SLOT-FOLD-OK; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 72 == ours 72); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x8256a220`): 0x826436f8, 0x82643914, in 2 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x8256a220 (tools landers/sites scan, W16-NX). Admitted when 0x8256a220 was named GetAsset, which turned these forgiven placeholder sites into checked ones."
+    }
+   ]
+  },
+  {
+   "name": "_M_erase",
+   "address": "0x822a1520",
+   "survivor": "?_M_erase@?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@IAAPAHPAHABU__false_type@2@@Z",
+   "folded": [
+    "?_M_erase@?$vector@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVRndDrawable@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVFileCacheEntry@@V?$StlNodeAlloc@PAVFileCacheEntry@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVFileCacheEntry@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PADV?$StlNodeAlloc@PAD@stlpmtx_std@@@stlpmtx_std@@IAAPAPADPAPADABU__false_type@2@@Z",
+    "?_M_erase@?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@IAAPAMPAMABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVRndPollable@@V?$StlNodeAlloc@PAVRndPollable@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVRndPollable@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVRemoteBandUser@@V?$StlNodeAlloc@PAVRemoteBandUser@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVRemoteBandUser@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVPatchSticker@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVBandUser@@V?$StlNodeAlloc@PAVBandUser@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVBandUser@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVSpotlight@@V?$StlNodeAlloc@PAVSpotlight@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVSpotlight@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVArpeggioPhrase@GemManager@@V?$StlNodeAlloc@PAVArpeggioPhrase@GemManager@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVArpeggioPhrase@GemManager@@PAPAV34@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVRndAnimatable@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVJoypadClient@@V?$StlNodeAlloc@PAVJoypadClient@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVJoypadClient@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVUIListSlotElement@@V?$StlNodeAlloc@PAVUIListSlotElement@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVUIListSlotElement@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVTourCharLocal@@V?$StlNodeAlloc@PAVTourCharLocal@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVTourCharLocal@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVLocalSavedSetlist@@V?$StlNodeAlloc@PAVLocalSavedSetlist@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVLocalSavedSetlist@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVUIEvent@@V?$StlNodeAlloc@PAVUIEvent@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVUIEvent@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVImpl@Movie@@V?$StlNodeAlloc@PAVImpl@Movie@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVImpl@Movie@@PAPAV34@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVStoreOffer@@V?$StlNodeAlloc@PAVStoreOffer@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVStoreOffer@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVPrefabChar@@V?$StlNodeAlloc@PAVPrefabChar@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVPrefabChar@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVTrack@@V?$StlNodeAlloc@PAVTrack@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVTrack@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVRndEnviron@@V?$StlNodeAlloc@PAVRndEnviron@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVRndEnviron@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVFader@@V?$StlNodeAlloc@PAVFader@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVFader@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVFxSend360@@V?$StlNodeAlloc@PAVFxSend360@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVFxSend360@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVRndLight@@V?$StlNodeAlloc@PAVRndLight@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVRndLight@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVUser@@V?$StlNodeAlloc@PAVUser@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVUser@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVMicXbox@@V?$StlNodeAlloc@PAVMicXbox@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVMicXbox@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVLocalBandUser@@V?$StlNodeAlloc@PAVLocalBandUser@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVLocalBandUser@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVVoice@@V?$StlNodeAlloc@PAVVoice@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVVoice@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVSpotlightDrawer@@V?$StlNodeAlloc@PAVSpotlightDrawer@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVSpotlightDrawer@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVSynchronizable@@V?$StlNodeAlloc@PAVSynchronizable@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVSynchronizable@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVPlayer@@V?$StlNodeAlloc@PAVPlayer@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVPlayer@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVBandProfile@@V?$StlNodeAlloc@PAVBandProfile@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVBandProfile@@PAPAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@PAVOvershellSlot@@V?$StlNodeAlloc@PAVOvershellSlot@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVOvershellSlot@@PAPAV3@ABU__false_type@2@@Z"
+   ],
+   "evidence": "Created by lane W16-NX: the survivor names the address (W16-NU dropped it because the name charged every caller spelling another instantiation); each folded spelling is chased PROVEN and call-site witnessed on retail bytes, see per-member records in `admitted`. Spellings landing here whose chase REFUTES are deliberately NOT folded (docs/decomp/W16NX_SHARED_BODY_ALIAS_GROUPS_2026-10-02.md).",
+   "lane": "W16-NX 2026-10-02",
+   "admitted": [
+    {
+     "spelling": "?_M_erase@?$vector@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVRndDrawable@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x82288488, 0x82370d80, 0x82370df8, 0x824049b8, 0x82405830, 0x824cdaf8, in 6 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVFileCacheEntry@@V?$StlNodeAlloc@PAVFileCacheEntry@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVFileCacheEntry@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x825192ac, 0x8251936c, 0x825194ac, in 3 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PADV?$StlNodeAlloc@PAD@stlpmtx_std@@@stlpmtx_std@@IAAPAPADPAPADABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x827c0ea0, 0x827c0f18, 0x827c0f38, in 2 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@IAAPAMPAMABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x823dfa10, 0x8269b50c, 0x8269b528, in 2 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVRndPollable@@V?$StlNodeAlloc@PAVRndPollable@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVRndPollable@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x82288500, 0x824056c0, in 2 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVRemoteBandUser@@V?$StlNodeAlloc@PAVRemoteBandUser@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVRemoteBandUser@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x82587514, 0x825c2f28, in 2 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVPatchSticker@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x82276d2c, 0x82278240, in 2 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVBandUser@@V?$StlNodeAlloc@PAVBandUser@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVBandUser@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x8267d06c, 0x82682e60, 0x82682ec8, in 2 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVSpotlight@@V?$StlNodeAlloc@PAVSpotlight@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVSpotlight@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x824b21b0, 0x824d6c54, in 2 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVArpeggioPhrase@GemManager@@V?$StlNodeAlloc@PAVArpeggioPhrase@GemManager@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVArpeggioPhrase@GemManager@@PAPAV34@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x82b9af94, 0x82b9b07c, in 1 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVRndAnimatable@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x82404950, in 1 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVJoypadClient@@V?$StlNodeAlloc@PAVJoypadClient@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVJoypadClient@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x82529648, in 1 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVUIListSlotElement@@V?$StlNodeAlloc@PAVUIListSlotElement@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVUIListSlotElement@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x828155cc, in 1 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVTourCharLocal@@V?$StlNodeAlloc@PAVTourCharLocal@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVTourCharLocal@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x8258ba20, in 1 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVLocalSavedSetlist@@V?$StlNodeAlloc@PAVLocalSavedSetlist@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVLocalSavedSetlist@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x8258baa0, in 1 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVUIEvent@@V?$StlNodeAlloc@PAVUIEvent@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVUIEvent@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x82593110, in 1 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVImpl@Movie@@V?$StlNodeAlloc@PAVImpl@Movie@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVImpl@Movie@@PAPAV34@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x82744c74, in 1 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVStoreOffer@@V?$StlNodeAlloc@PAVStoreOffer@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVStoreOffer@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x825be1cc, in 1 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVPrefabChar@@V?$StlNodeAlloc@PAVPrefabChar@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVPrefabChar@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x825547b4, in 1 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVTrack@@V?$StlNodeAlloc@PAVTrack@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVTrack@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x82b924c4, in 1 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVRndEnviron@@V?$StlNodeAlloc@PAVRndEnviron@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVRndEnviron@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x824b0318, in 1 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVFader@@V?$StlNodeAlloc@PAVFader@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVFader@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x8270e4d8, in 1 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVFxSend360@@V?$StlNodeAlloc@PAVFxSend360@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVFxSend360@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x82b5c7bc, in 1 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVRndLight@@V?$StlNodeAlloc@PAVRndLight@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVRndLight@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x824b0420, in 1 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVUser@@V?$StlNodeAlloc@PAVUser@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVUser@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x823e3c28, in 1 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVMicXbox@@V?$StlNodeAlloc@PAVMicXbox@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVMicXbox@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x82b5f714, in 1 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVLocalBandUser@@V?$StlNodeAlloc@PAVLocalBandUser@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVLocalBandUser@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x82682e60, 0x82682ec8, in 1 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVVoice@@V?$StlNodeAlloc@PAVVoice@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVVoice@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x82b6981c, in 1 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVSpotlightDrawer@@V?$StlNodeAlloc@PAVSpotlightDrawer@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVSpotlightDrawer@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x824b0528, in 1 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVSynchronizable@@V?$StlNodeAlloc@PAVSynchronizable@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVSynchronizable@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x823e9fb8, in 1 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVPlayer@@V?$StlNodeAlloc@PAVPlayer@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVPlayer@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x8269b50c, 0x8269b528, in 1 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVBandProfile@@V?$StlNodeAlloc@PAVBandProfile@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVBandProfile@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x8255172c, in 1 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@PAVOvershellSlot@@V?$StlNodeAlloc@PAVOvershellSlot@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVOvershellSlot@@PAPAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN -> CHASED T1 PROVEN (flat proof needs no chase step: 1 relocation(s), target names literally equal; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 100 == ours 100); retail body twins 1. Retail call-site witness (decoded in band.exe as `bl 0x822a1520`): 0x82554c54, in 1 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x822a1520 (tools landers/sites scan, W16-NX). Admitted when 0x822a1520 was named _M_erase, which turned these forgiven placeholder sites into checked ones."
+    }
+   ]
+  },
+  {
+   "name": "$__uninitialized_copy",
+   "address": "0x82728d08",
+   "survivor": "??$__uninitialized_copy@PAVSampleMarker@@PAV1@@stlpmtx_std@@YAPAVSampleMarker@@PAV1@00ABU__false_type@0@@Z",
+   "folded": [
+    "??$__uninitialized_copy@PAUTypeCreatorPair@NetMessageFactory@@PAU12@@stlpmtx_std@@YAPAUTypeCreatorPair@NetMessageFactory@@PAU12@00ABU__false_type@0@@Z"
+   ],
+   "evidence": "Created by lane W16-NX: the survivor names the address (W16-NU dropped it because the name charged every caller spelling another instantiation); each folded spelling is chased PROVEN and call-site witnessed on retail bytes, see per-member records in `admitted`. Spellings landing here whose chase REFUTES are deliberately NOT folded (docs/decomp/W16NX_SHARED_BODY_ALIAS_GROUPS_2026-10-02.md).",
+   "lane": "W16-NX 2026-10-02",
+   "admitted": [
+    {
+     "spelling": "??$__uninitialized_copy@PAUTypeCreatorPair@NetMessageFactory@@PAU12@@stlpmtx_std@@YAPAUTypeCreatorPair@NetMessageFactory@@PAU12@00ABU__false_type@0@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 REFUTED -> CHASED T1 PROVEN (1 SLOT-FOLD-OK; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 96 == ours 96); retail body twins 16. Retail call-site witness (decoded in band.exe as `bl 0x82728d08`): 0x823f0d70, 0x823f0de8, in 1 retail caller(s) whose paired site in our build calls this spelling. Every paired call site of this spelling lands at 0x82728d08 (tools landers/sites scan, W16-NX). Admitted when 0x82728d08 was named $__uninitialized_copy, which turned these forgiven placeholder sites into checked ones."
+    }
+   ]
+  },
+  {
+   "name": "resize",
+   "address": "0x823dcca0",
+   "survivor": "?resize@?$vector@V?$ObjPtr@VSeqInst@@@@V?$StlNodeAlloc@V?$ObjPtr@VSeqInst@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABV?$ObjPtr@VSeqInst@@@@@Z",
+   "folded": [
+    "?resize@?$vector@V?$ObjOwnerPtr@VWaypoint@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VWaypoint@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABV?$ObjOwnerPtr@VWaypoint@@@@@Z"
+   ],
+   "evidence": "Created by lane W16-NX: see per-member records in `admitted`.",
+   "lane": "W16-NX 2026-10-02",
+   "admitted": [
+    {
+     "spelling": "?resize@?$vector@V?$ObjOwnerPtr@VWaypoint@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VWaypoint@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABV?$ObjOwnerPtr@VWaypoint@@@@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 REFUTED -> CHASED T1 PROVEN (3 SLOT-FOLD-OK; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 128 == ours 128); of 22 retail masked-body twins this survivor is the only one the spelling chases PROVEN against. Retail call-site witness (decoded in band.exe as `bl 0x823dcca0`): 0x823dcd6c. Every paired call site of this spelling lands at 0x823dcca0. It is the one charged site left in ObjVector<ObjOwnerPtr<Waypoint>>::resize (0x823dcd38) once that address was named. This spelling was withdrawn from 0x822c0228 and 0x82308e90 by ALIAS-CONSOLIDATION 2026-08-19 (FABRICATED_CLOSURE_NOT_PARTITION: it sat in two groups at once); it is admitted here at a THIRD address because, of the 22 retail masked-body twins, 0x823dcca0 is the only one it chases PROVEN against (21 REFUTED)."
     }
    ]
   }

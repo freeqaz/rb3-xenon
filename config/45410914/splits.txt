@@ -2967,7 +2967,6 @@ MeshAnim.cpp:
 	.pdata      start:0x821F1E28 end:0x821F1E30
 	.pdata      start:0x821F44C8 end:0x821F44D0
 	.pdata      start:0x821F6E80 end:0x821F6E88
-	.pdata      start:0x82207630 end:0x82207638
 	.pdata      start:0x82207E50 end:0x82207E68
 	.pdata      start:0x82207E70 end:0x82207E78
 	.pdata      start:0x82207E80 end:0x82207E98
@@ -2996,7 +2995,6 @@ MeshAnim.cpp:
 	.text       start:0x822C809C end:0x822C80E0
 	.text       start:0x822C812C end:0x822C8130
 	.text       start:0x822C8284 end:0x822C8290
-	.text       start:0x823DCFB0 end:0x823DD010
 	.text       start:0x823E3C40 end:0x823E3C80
 	.text       start:0x823E4630 end:0x823E4718
 	.text       start:0x823E47D4 end:0x823E4800
@@ -3747,6 +3745,7 @@ Waypoint.cpp:
 	.pdata      start:0x821F7278 end:0x821F7280
 	.pdata      start:0x82205970 end:0x82205988
 	.pdata      start:0x822073E8 end:0x82207630
+	.pdata      start:0x82207630 end:0x82207638
 	.pdata      start:0x82207638 end:0x82207640
 	.pdata      start:0x82237D10 end:0x82237D18
 	.pdata      start:0x82237D40 end:0x82237D48
@@ -3758,6 +3757,7 @@ Waypoint.cpp:
 	.text       start:0x822DA004 end:0x822DA010
 	.text       start:0x823BE360 end:0x823BE4BC
 	.text       start:0x823DA758 end:0x823DCFB0
+	.text       start:0x823DCFB0 end:0x823DD010
 	.text       start:0x823DD010 end:0x823DD0E0
 	.text       start:0x82705AE0 end:0x82705B68
 	.text       start:0x82705DC0 end:0x82705E20
@@ -8416,13 +8416,12 @@ band3/meta_band/LessonProvider.cpp:
 
 band3/meta_band/LessonMgr.cpp:
 	.pdata      start:0x8221D740 end:0x8221D858
-	.pdata      start:0x8221D878 end:0x8221D880
 	.text       start:0x82569050 end:0x82569E78
-	.text       start:0x8256A268 end:0x8256A298
 
 band3/meta_band/AssetMgr.cpp:
 	.pdata      start:0x8221D858 end:0x8221D860
 	.pdata      start:0x8221D868 end:0x8221D878
+	.pdata      start:0x8221D878 end:0x8221D880
 	.pdata      start:0x8221D880 end:0x8221D9D0
 	.pdata      start:0x8221D9D0 end:0x8221D9D8
 	.pdata      start:0x8221D9E0 end:0x8221D9E8
@@ -8430,6 +8429,7 @@ band3/meta_band/AssetMgr.cpp:
 	.text       start:0x82569E78 end:0x82569E88
 	.text       start:0x82569E88 end:0x8256A100
 	.text       start:0x8256A150 end:0x8256A268
+	.text       start:0x8256A268 end:0x8256A298
 	.text       start:0x8256A298 end:0x8256B4C8
 	.text       start:0x8256B4C8 end:0x8256B544
 	.text       start:0x8256B570 end:0x8256B5DC

@@ -117,11 +117,13 @@ void RndShockwave::PrepareShader(float amplitude_scale) {
 template void ObjList<WorldDir::PresetOverride>::resize(unsigned int);
 template void ObjList<WorldDir::BitmapOverride>::resize(unsigned int);
 
-// laneAE: retail parked list<BandCamShot::Target>::_M_splice_insert_dispatch
-// (0x824D0758) in this unit.  Reference it so our obj emits the same COMDAT.
-#include "bandobj/BandCamShot.h"
-void sw_BandCamShotTargetListSplice(
-    ObjList<BandCamShot::Target> &a, const ObjList<BandCamShot::Target> &b
+// Retail's list<WorldDir::PresetOverride>::_M_splice_insert_dispatch sits in
+// this unit at 0x824D0618.  Its only caller is list<PresetOverride>::operator=,
+// and the list clear it calls (0x824CD9A8) frees 0x20-byte nodes whose element
+// destructor runs at node+8, which is PresetOverride's shape.  Reference it so
+// our obj emits the same COMDAT.
+void sw_PresetOverrideListSplice(
+    ObjList<WorldDir::PresetOverride> &a, const ObjList<WorldDir::PresetOverride> &b
 ) {
     a.insert(a.begin(), b.begin(), b.end());
 }
