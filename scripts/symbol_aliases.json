@@ -91065,7 +91065,8 @@
     "?IgnorePhrase@VocalPlayer@@QBA_NXZ",
     "?AddSharedInlined@BinStream@@QAA_NABVFilePath@@@Z",
     "?MiloCamera@CameraManager@@QAAPAVCamShot@@XZ",
-    "?HasSolo@StoreOffer@@QBA_NXZ"
+    "?HasSolo@StoreOffer@@QBA_NXZ",
+    "?PlatformDebugBreak@@YA_NXZ"
    ],
    "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x823591e8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 38 against 2 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies.",
    "admitted": [
@@ -91103,6 +91104,11 @@
      "spelling": "?HasSolo@StoreOffer@@QBA_NXZ",
      "lane": "W16-NH-NAME 2026-10-02",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call site(s) reaching the survivor where we call this spelling: 0x82596c9c. Vacuous return-0 body; StoreOffer::HasSolo was declared but never defined, now defined as return false. Admitted on the retail call-site witness (house rule for vacuous bodies)."
+    },
+    {
+     "spelling": "?PlatformDebugBreak@@YA_NXZ",
+     "lane": "W16-NH-NAME 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call site(s) reaching the survivor where we call this spelling: 0x8246677c, 0x8250f754. Vacuous return-0 body; PlatformDebugBreak's debugger check is compiled out of the match build (retail returns 0). Admitted on the retail call-site witness (house rule for vacuous bodies)."
     }
    ]
   },
