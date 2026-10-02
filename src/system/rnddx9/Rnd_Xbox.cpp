@@ -712,7 +712,8 @@ Vector2 &DxRnd::DrawString(
         if (c == '\n') {
             s++;
             if (*s) {
-                widest = Max(widest, cursor.x);
+                if (widest < cursor.x) // retail: fcmpu/bge/fmr, not fsel
+                    widest = cursor.x;
                 cursor.x = pos.x;
                 cursor.y += 18.0f;
             }
