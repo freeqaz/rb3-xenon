@@ -6,6 +6,8 @@
 #include "Platform/ScopedCS.h"
 #include "Platform/SystemError.h"
 #include "ObjDup/DOClass.h"
+#include "ObjDup/ObjDupProtocol.h"
+#include "ObjDup/Station.h"
 #include "Platform/Time.h"
 
 namespace Quazal {
@@ -97,6 +99,25 @@ namespace Quazal {
     }
 
     DOClass *DuplicatedObject::GetDOClass(unsigned int id) { return DOClass::FindDOClass(id); }
+
+    Message *DuplicatedObject::CreateStubMessage(unsigned short *puiSize) {
+        return ObjDupProtocol::GetInstance()->CreateStubMessage(m_dohMyself, puiSize);
+    }
+
+    bool DuplicatedObject::RemoveFromStore(DOHandle hStation, bool bDelete, bool bRemoveDuplicas) {
+        RemoveFromStoreOperation oOperation(hStation, this, bDelete, bRemoveDuplicas);
+        return ExecuteOperation(oOperation);
+    }
+
+    bool DuplicatedObject::AddToStoreAsDuplica(DOHandle hMaster, Message *pMessage) {
+        AddToStoreOperation oOperation(hMaster, this, false, pMessage);
+        return ExecuteOperation(oOperation);
+    }
+
+    bool DuplicatedObject::AddToStoreAsMaster() {
+        AddToStoreOperation oOperation(Station::GetLocalStation(), this, true, NULL);
+        return ExecuteOperation(oOperation);
+    }
 
     void DuplicatedObject::OperationBegin(DOOperation *) {}
     void DuplicatedObject::OperationEnd(DOOperation *) {}
