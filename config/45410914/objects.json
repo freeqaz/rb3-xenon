@@ -2368,7 +2368,15 @@
                     "/Ob1"
                 ]
             },
-            "network/quazal/Transport/Routing/RoutingStream.cpp": "NonMatching",
+            "network/quazal/Transport/Routing/RoutingStream.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
             "network/quazal/AccountManagement/Client/JobLoginOrCreateAccount.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
@@ -2464,7 +2472,15 @@
                     "/Ob1"
                 ]
             },
-            "network/quazal/Transport/Interface/HighLevelStream.cpp": "NonMatching",
+            "network/quazal/Transport/Interface/HighLevelStream.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
             "network/quazal/Transport/UDP/PacketIn.cpp": "NonMatching",
             "network/quazal/Authentication/Client/JobTicketManagerLogin.cpp": "NonMatching",
             "network/quazal/Authentication/Client/JobTicketManagerAcquireTicket.cpp": "NonMatching"

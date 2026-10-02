@@ -14485,8 +14485,8 @@ network/quazal/Transport/Interface/NATTraversalEngine.cpp:
 	.text       start:0x82B03480 end:0x82B07280
 
 network/quazal/Transport/Routing/RoutingStream.cpp:
-	.pdata      start:0x822570A8 end:0x822570C0
-	.text       start:0x82B0A5D0 end:0x82B0A730
+	.pdata      start:0x82257098 end:0x82257120
+	.text       start:0x82B0A518 end:0x82B0ADF0
 
 network/quazal/AccountManagement/Client/JobLoginOrCreateAccount.cpp:
 	.pdata      start:0x82257318 end:0x82257360
@@ -14605,8 +14605,8 @@ network/quazal/DupSpace/MatchOperation.cpp:
 	.text       start:0x82B481D0 end:0x82B48824
 
 network/quazal/Transport/Interface/HighLevelStream.cpp:
-	.pdata      start:0x8225A1B8 end:0x8225A1C8
-	.text       start:0x82B4EDE8 end:0x82B4EFF4
+	.pdata      start:0x8225A180 end:0x8225A1D0
+	.text       start:0x82B4EAC8 end:0x82B4F040
 
 network/quazal/Transport/UDP/PacketIn.cpp:
 	.pdata      start:0x8225A3C0 end:0x8225A3D8
