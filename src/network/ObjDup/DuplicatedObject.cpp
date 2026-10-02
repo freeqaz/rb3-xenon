@@ -204,15 +204,14 @@ namespace Quazal {
     }
 
     bool DuplicatedObject::ValidOperation(DOOperation *pOp) {
-        if (DOSelections::GetInstance()->IsAvailable()) {
+        if (DOSelections::GetCurrentInstance()->IsAvailable()) {
             switch (pOp->GetType()) {
             case 5:
             case 6:
                 SystemError::SignalError(0, 0, 0xE000000E, 0);
                 return false;
             case 0xd:
-                if (ChangeMasterStationOperation::DynamicCast(pOp)->m_dohNewMasterStation
-                    == Station::GetLocalStation()) {
+                if (Station::IsLocal(ChangeMasterStationOperation::DynamicCast(pOp)->m_dohNewMasterStation.mValue)) {
                     SystemError::SignalError(0, 0, 0xE000000E, 0);
                     return false;
                 }

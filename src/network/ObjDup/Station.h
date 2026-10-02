@@ -18,6 +18,7 @@ namespace Quazal {
 
         static Station *GetLocalInstance();
         static DOHandle GetLocalStation();
+        static bool IsLocal(unsigned int ui) { return ui == GetLocalStation().mValue; }
         static DOHandle GetStationHandle(unsigned int);
     };
 }
