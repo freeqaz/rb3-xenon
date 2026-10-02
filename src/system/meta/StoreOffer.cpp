@@ -290,6 +290,11 @@ Symbol StoreOffer::VocalPartsSym() const {
     );
 }
 
+// Retail's SongSortMgr::DoesOfferMatchFilter calls an out-of-line HasSolo whose
+// body is `li r3,0 / blr` -- linker-folded into the shared return-zero body at
+// 0x823591E8.  The solo filter on store offers therefore never matches.
+bool StoreOffer::HasSolo() const { return false; }
+
 DataNode StoreOffer::OnGetData(DataArray *d) {
     DataArray *array = d->Array(2);
     int x;
