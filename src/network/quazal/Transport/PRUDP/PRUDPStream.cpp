@@ -51,7 +51,8 @@ namespace Quazal {
     public:
 
         InetAddress *GetSourceAddress() { return &m_oSource; }
-        char m_pad06[0x12 - 6];
+        void SetDestination(const InetAddress *addr) { m_oSource = *addr; }
+        char m_pad08[0x12 - 8];
         unsigned char m_byTypeFlags; // 0x12
         char m_pad13[0x14 - 0x13];
         unsigned int m_uiSessionID; // 0x14
@@ -64,12 +65,19 @@ namespace Quazal {
     class PacketOut : public Packet {
     public:
         PacketOut(unsigned char, unsigned char, unsigned int, Buffer *);
+        char m_padA8[0xe0 - 0xa8];
+    };
+
+    class InetAddressList : public qList<InetAddress> {
+    public:
+        InetAddressList() {}
     };
 
     class NetworkInterfaces {
     public:
         virtual void Unk00();
-        virtual void GetLocalAddresses(qList<InetAddress> *);
+        virtual void GetLocalAddresses(InetAddressList *);
+        static NetworkInterfaces *GetInstance() { return s_pInstance; }
         static NetworkInterfaces *s_pInstance;
     };
 
@@ -299,8 +307,8 @@ namespace Quazal {
         StationURL target;
         if (url != NULL)
             target = *url;
-        qList<InetAddress> addresses;
-        NetworkInterfaces::s_pInstance->GetLocalAddresses(&addresses);
+        InetAddressList addresses;
+        NetworkInterfaces::GetInstance()->GetLocalAddresses(&addresses);
         if (!addresses.empty())
             target.SetAddress("255.255.255.255");
         else
@@ -315,7 +323,7 @@ namespace Quazal {
         PacketOut *packet;
         if (buf != NULL) {
             packet = new (__FILE__, 0x18f) PacketOut(0, 5, 0, buf);
-            packet->m_oSource = *url->GetInetAddress();
+            packet->SetDestination(url->GetInetAddress());
         } else {
             return qResult(0x8001000a);
         }
@@ -360,11 +368,11 @@ namespace Quazal {
         PRUDPEndPoint *ep = CreateEndPoint(&url, port, false);
         if (!ep->IsDisconnected()) {
             bool accepted = true;
-            if (m_pListener != NULL) {
+            if (GetListener() != NULL) {
                 if (buf->GetContentSize() != 0)
-                    accepted = m_pListener->ConnectionRequest(this, &ep->m_oURL, buf, ep);
+                    accepted = GetListener()->ConnectionRequest(this, &ep->m_oURL, buf, ep);
                 else
-                    accepted = m_pListener->ConnectionRequest(this, &ep->m_oURL, NULL, ep);
+                    accepted = GetListener()->ConnectionRequest(this, &ep->m_oURL, NULL, ep);
             }
             if (accepted) {
             } else {
@@ -376,13 +384,13 @@ namespace Quazal {
     }
 
     void PRUDPStream::ServiceDisconnection(InetAddress *addr, Buffer *buf) {
-        if (m_pListener != NULL) {
+        if (GetListener() != NULL) {
             StationURL url;
             url.SetAddress(addr);
             if (buf->GetContentSize() != 0)
-                m_pListener->ConnectionLost(this, buf, &url);
+                GetListener()->ConnectionLost(this, buf, &url);
             else
-                m_pListener->ConnectionLost(this, NULL, &url);
+                GetListener()->ConnectionLost(this, NULL, &url);
         }
     }
 

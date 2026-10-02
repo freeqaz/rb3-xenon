@@ -44,13 +44,14 @@ namespace Quazal {
         bool IsValid() const;
         unsigned char GetStreamID() const;
         InetAddress *GetInetAddress() const;
+        const InetAddress &GetAddress() const { return *GetInetAddress(); }
         int GetURLType() const;
         void SetAddress(const char *);
         void SetAddress(const InetAddress *);
         void SetPortNumber(unsigned short);
         void SetStreamID(unsigned char);
 
-        char m_data[0x54];
+        char m_data[0x60];
     };
 
     class EndPointUniqueID {
@@ -148,6 +149,8 @@ namespace Quazal {
         }
     };
 
+    class StreamListener;
+
     class Stream : public RootObject {
     public:
         enum Type {
@@ -187,9 +190,10 @@ namespace Quazal {
         Type GetType() { return m_eType; }
         unsigned char GetStreamID() { return m_byStreamID; }
         bool IsListening() { return m_byStreamID != 0; }
+        StreamListener *GetListener() { return m_pListener; }
 
         Type m_eType; // 0x4
-        class StreamListener *m_pListener; // 0x8
+        StreamListener *m_pListener; // 0x8
         RootTransport *m_pTransport; // 0xc
         unsigned char m_byStreamID; // 0x10
     };
