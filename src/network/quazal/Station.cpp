@@ -137,7 +137,9 @@ namespace Quazal {
             else
                 return 0;
         }
-        unsigned char m_pad18[0x14];
+        bool IsJoining() { return m_bIsJoining; }
+
+        unsigned char m_pad20[0xc];
         bool m_bIsJoining; // 0x2c
     };
 
@@ -240,11 +242,13 @@ namespace Quazal {
         if (TraceLog::GetInstance()->IsTraceEnabled(uiFlags)) {
             DuplicatedObject::Trace(uiFlags);
             TraceLog::ScopedIndent indent(2);
-            StringStream ss;
-            ss << "URLs:";
-            for (int i = 0; i < 5; i++) {
-                if (*m_oConnectionInfo.GetURL(i) != '\0') {
-                    ss << " " << m_oConnectionInfo.GetURL(i);
+            {
+                StringStream ss;
+                ss << "URLs:";
+                for (int i = 0; i < 5; i++) {
+                    if (*m_oConnectionInfo.GetURL(i) != '\0') {
+                        ss << " " << m_oConnectionInfo.GetURL(i);
+                    }
                 }
             }
             if (m_pEndPoint) {
@@ -295,8 +299,9 @@ namespace Quazal {
         ScopedCS cs(Scheduler::GetInstance()->unk38);
         if (m_pEndPoint != NULL && m_pEndPoint->IsConnected()) {
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     bool Station::IsFaulty() const {
@@ -329,7 +334,7 @@ namespace Quazal {
                 SystemError::SignalError(0, 0, 0xE000000E, 0);
                 return false;
             case 14:
-                if (JoinSessionOperation::DynamicCast(pOp)->m_bIsJoining) {
+                if (JoinSessionOperation::DynamicCast(pOp)->IsJoining()) {
                     SystemError::SignalError(0, 0, 0xE000000E, 0);
                     return false;
                 }
