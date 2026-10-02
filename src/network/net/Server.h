@@ -63,7 +63,7 @@ public:
         MILO_FAIL("not implemented for this platform");
         return nullptr;
     }
-    virtual int GetCompetitionClient() {
+    virtual Quazal::ServiceClient *GetCompetitionClient() {
         MILO_FAIL("not implemented for this platform");
         return 0;
     }
@@ -106,5 +106,7 @@ public:
 extern Server &TheServer;
 
 DECLARE_MESSAGE(ServerStatusChangedMsg, "server_status_changed");
+// Retail 0x823ECD70, called by XboxServer's Login, Poll and logout.
+ServerStatusChangedMsg(bool success) : Message(Type(), success) {}
 bool Success() const { return mData->Int(2); }
 END_MESSAGE

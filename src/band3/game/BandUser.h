@@ -347,6 +347,8 @@ END_MESSAGE
 
 DECLARE_MESSAGE(UserLoginMsg, "user_login")
 UserLoginMsg() : Message(Type()) {}
+// Retail 0x823ECE50, called by XboxServer::Poll.
+UserLoginMsg(int padNum) : Message(Type(), padNum) {}
 int GetPadNum() const { return mData->Int(2); }
 END_MESSAGE
 

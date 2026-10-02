@@ -27,6 +27,9 @@ namespace Quazal {
         void Reset();
         void Trace(unsigned int);
         void SetStateImpl(_State, qResult, bool);
+        // Retail 0x82A8C168 (the first function of the CallContext.cpp pin),
+        // called with a timeout of -1 before a pending context is torn down.
+        bool Wait(unsigned int);
 
         _State GetState() const { return unkc; }
 
