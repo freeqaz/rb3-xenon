@@ -961,9 +961,8 @@ namespace Quazal {
             SetStep(JCS_STEP(SelectConnectionTechnique));
             return;
         }
-        DOHandle hStation = m_refStation.GetReferencedHandle();
-        bool bFailed = !refSession->RetrieveURLs(&m_oURLsContext, hStation, &m_lstURLs);
-        if (bFailed) {
+        if (refSession->RetrieveURLs(&m_oURLsContext, m_refStation.GetHandle(), &m_lstURLs)
+            == false) {
             SetStep(JCS_STEP(ConnectionFailed));
         } else {
             SetStep(JCS_STEP(WaitForURLs));
