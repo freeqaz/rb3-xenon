@@ -7041,10 +7041,6 @@ BustAMoveData.cpp:
 	.pdata      start:0x821F19A8 end:0x821F19B0
 	.text       start:0x82274538 end:0x8227459C
 
-trie.cpp:
-	.pdata      start:0x822534E8 end:0x82253510
-	.text       start:0x82AB0F70 end:0x82AB12F4
-
 File_Win.cpp:
 	.pdata      start:0x82218DF8 end:0x82218E10
 	.pdata      start:0x82218E10 end:0x82218E20
