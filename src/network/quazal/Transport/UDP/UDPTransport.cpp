@@ -536,7 +536,6 @@ namespace Quazal {
 
     class RootTransport;
     class Router;
-    class BandwidthCounter;
 
     class Socket : public RootObject {
     public:
@@ -550,15 +549,15 @@ namespace Quazal {
         QueuingSocket(IOCompletionNotifier *, unsigned int, RootTransport *);
         ~QueuingSocket();
         bool Bind(InetAddress *, unsigned short *);
-        void Recv(BandwidthCounter *);
-        Buffer *GetReceivedBuffer();
-        void *FilterIncoming(Buffer *, const InetAddress *, PacketQueue *);
-        void SendCompleted();
-        Buffer *PrepareOutgoing(ProtectedPacketQueue *, void *);
-        bool SendTo(Buffer *, InetAddress *);
-        bool SendToEmulated(Buffer *, InetAddress *);
-        bool FlushEmulated();
-        void SetBandwidthCounter(BandwidthCounter *pCounter) { m_pBandwidthCounter = pCounter; }
+        // Spelled as the QueuingSocket TU names them.
+        void Recv(unsigned int);
+        Buffer *CompleteBufferRecv();
+        unsigned int FillPacketQueueFromBuffer(Buffer *, const InetAddress *, PacketQueue *);
+        int CompleteSend();
+        Buffer *CreateBufferFromPacketQueue(PacketQueue *, unsigned int);
+        bool Send(Buffer *, InetAddress *);
+        bool Queue(Buffer *, InetAddress *);
+        bool Flush();
         unsigned int GetBufferSize() const { return m_uiBufferSize; }
         unsigned int GetRefCount() const { return m_uiRefCount; }
         void ReleaseBuffer(Buffer *pBuffer) { m_oReceivedQueue.Release(pBuffer); }
@@ -567,7 +566,7 @@ namespace Quazal {
         char m_pad00[0x8c];
         unsigned int m_uiBufferSize; // 0x8c
         char m_pad90[0x94 - 0x90];
-        BandwidthCounter *m_pBandwidthCounter; // 0x94
+        unsigned int m_uiRecvBufferSize; // 0x94
         char m_pad98[0xa0 - 0x98];
         IOCompletionContext *m_pRecvContext; // 0xa0
         IOCompletionContext *m_pSendContext; // 0xa4
@@ -586,7 +585,7 @@ namespace Quazal {
         Router();
         ~Router();
         void SetTransport(RootTransport *);
-        void *GetRoutingTable();
+        unsigned int GetMaxBufferSize(); // 0x82AD0CC0; name not attested
         bool IsRouted(InetAddress *);
         void Route(Buffer *, InetAddress *, unsigned short);
         unsigned long long m_data[0x80 / 8];
@@ -596,10 +595,6 @@ namespace Quazal {
     public:
         virtual ~VirtualNATDevice();
         virtual bool Send(StationURL &);
-    };
-
-    class BandwidthCounter : public RootObject {
-    public:
     };
 
     class PacketDispatcher : public RootObject {
@@ -684,7 +679,7 @@ namespace Quazal {
 
         bool ReceiveBuffer(Buffer *, InetAddress *);
         void DetachVNATDevice(VirtualNATDevice *);
-        BandwidthCounter *GetBandwidthCounter() const { return m_pBandwidthCounter; }
+        unsigned int GetRecvBufferSize() const { return m_uiRecvBufferSize; }
         bool IsSendBuffered() const { return m_bSendBuffered; }
         bool IsEmulationEnabled() const { return m_bEmulationEnabled; }
         bool UsesReceiveQueue() const { return m_bUsesReceiveQueue; }
@@ -692,7 +687,7 @@ namespace Quazal {
         unsigned short GetDefaultPort() const { return m_usDefaultPort; }
 
         char m_pad04[0x8 - 0x4];
-        BandwidthCounter *m_pBandwidthCounter; // 0x8
+        unsigned int m_uiRecvBufferSize; // 0x8 (QueuingSocket::Recv's buffer size)
         char m_pad0C[0x10 - 0xc];
         bool m_bSendBuffered; // 0x10
         char m_pad11[0x49c - 0x11];
@@ -870,7 +865,7 @@ namespace Quazal {
 
     bool UDPTransport::BindSocket(unsigned short usPort, unsigned short *pusBoundPort, unsigned int uiBufferSize) {
         QueuingSocket *pSocket = new (__FILE__, 0x8b) QueuingSocket(&m_oIOCompletionNotifier, uiBufferSize, this);
-        pSocket->m_pBandwidthCounter = GetBandwidthCounter();
+        pSocket->m_uiRecvBufferSize = GetRecvBufferSize();
         if (!pSocket->Open(true)) {
             delete pSocket;
             return false;
@@ -884,7 +879,7 @@ namespace Quazal {
             return false;
         }
         m_vSockets.insert(std::make_pair(*pusBoundPort, pSocket));
-        pSocket->Recv(GetBandwidthCounter());
+        pSocket->Recv(GetRecvBufferSize());
         return true;
     }
 
@@ -1030,7 +1025,7 @@ namespace Quazal {
 
     bool UDPTransport::Receive(QueuingSocket *pSocket, Buffer *pBuffer, const InetAddress *pFrom) {
         bool bResult = true;
-        if (pSocket->FilterIncoming(pBuffer, pFrom, &m_oIncomingQueue) == 0) {
+        if (pSocket->FillPacketQueueFromBuffer(pBuffer, pFrom, &m_oIncomingQueue) == 0) {
             InetAddress oFrom(*pFrom);
             bResult = !ReceiveBuffer(pBuffer, &oFrom);
         }
@@ -1054,7 +1049,7 @@ namespace Quazal {
         for (itSocket = m_vSockets.begin(); itSocket != m_vSockets.end(); ++itSocket) {
             QueuingSocket *pSocket = itSocket->second;
             if (pSocket->m_pRecvContext->IsCompleted()) {
-                Buffer *pBuffer = pSocket->GetReceivedBuffer();
+                Buffer *pBuffer = pSocket->CompleteBufferRecv();
                 if (pBuffer != 0) {
                     if (!UsesReceiveQueue()) {
                         Receive(pSocket, pBuffer, &pSocket->m_oFromAddress);
@@ -1063,7 +1058,7 @@ namespace Quazal {
                     }
                     pBuffer->ReleaseRef();
                 }
-                pSocket->Recv(GetBandwidthCounter());
+                pSocket->Recv(GetRecvBufferSize());
             }
             if (UsesReceiveQueue()) {
                 Buffer *pQueued;
@@ -1077,7 +1072,7 @@ namespace Quazal {
             }
             DispatchIncoming();
             if (pSocket->m_pSendContext->IsCompleted()) {
-                pSocket->SendCompleted();
+                pSocket->CompleteSend();
                 DeliverOutgoing();
             }
         }
@@ -1144,17 +1139,17 @@ namespace Quazal {
                     bStop = true;
                 } else {
                     InetAddress oDestination(pPacket->GetDestination());
-                    Buffer *pBuffer = pSocket->PrepareOutgoing(&m_oOutgoingQueue, m_oRouter.GetRoutingTable());
+                    Buffer *pBuffer = pSocket->CreateBufferFromPacketQueue(&m_oOutgoingQueue, m_oRouter.GetMaxBufferSize());
                     if (pBuffer == 0) {
                         bStop = true;
                     } else if (m_oRouter.IsRouted(&oDestination)) {
                         m_oRouter.Route(pBuffer, &oDestination, usSrcPort);
                     } else if (!IsEmulationEnabled()) {
-                        if (!pSocket->SendTo(pBuffer, &oDestination)) {
+                        if (!pSocket->Send(pBuffer, &oDestination)) {
                             bStop = true;
                         }
                     } else {
-                        if (!pSocket->SendToEmulated(pBuffer, &oDestination)) {
+                        if (!pSocket->Queue(pBuffer, &oDestination)) {
                             bStop = true;
                         }
                     }
@@ -1168,7 +1163,7 @@ namespace Quazal {
                  it != m_vSockets.end();
                  ++it) {
                 QueuingSocket *pSocket = it->second;
-                while (pSocket->FlushEmulated()) {
+                while (pSocket->Flush()) {
                 }
             }
         }
