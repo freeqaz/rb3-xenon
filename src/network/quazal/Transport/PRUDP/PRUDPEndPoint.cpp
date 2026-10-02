@@ -129,6 +129,7 @@ namespace Quazal {
 
         Timeout *GetTimeout() { return m_pTimeout; }
         unsigned short GetNbSends() { return m_usNbSends; }
+        void SetReliable(bool bReliable) { m_bReliable = bReliable; }
 
         char unkb0[0xc0 - 0xb0];
         Timeout *m_pTimeout;        // 0xc0
@@ -400,6 +401,7 @@ namespace Quazal {
             m_oContext = oContext;
         }
         void Reset();
+        bool IsPending() { return m_pfCallback != 0; }
         void Complete(EndPoint *pEndPoint, qResult oResult) {
             pfCompletion pfCallback = m_pfCallback;
             Reset();
@@ -713,7 +715,7 @@ namespace Quazal {
         } else {
 #line 311
             PacketOut *pPacket = new (__FILE__, __LINE__) PacketOut(this, 2, ucFlags, pBuffer);
-            pPacket->m_bReliable = (uiFlags & 8) != 0;
+            pPacket->SetReliable((uiFlags & 8) != 0);
             pPacket->m_ucFragmentID = 0;
             if (!Send(pPacket)) {
                 pPacket->ReleaseRef();
@@ -781,17 +783,17 @@ namespace Quazal {
     }
 
     void PRUDPEndPoint::TimeToPing() {
-        Time tNow = Time::GetTime();
+        Time tCurrentTime = Time::GetTime();
         if (m_uiFaultReason != 0) {
             SignalFaultEvent(m_uiFaultReason);
             return;
         }
-        if (tNow - m_tLastReception > GetMaxSilenceTime()) {
+        if (tCurrentTime - m_tLastReception > GetMaxSilenceTime()) {
             SignalFaultEvent(2);
             return;
         }
-        StreamSettings *pSettings = GetStream()->GetSettings();
-        if (tNow - m_tLastSend > GetKeepAliveTimeout() && pSettings->GetSendKeepAlive()) {
+        StreamSettings *pStreamSettings = GetStream()->GetSettings();
+        if (tCurrentTime - m_tLastSend > GetKeepAliveTimeout() && pStreamSettings->GetSendKeepAlive()) {
             m_pKeepAlivePacket->SetSequenceID(m_pKeepAlivePacket->GetSequenceID() + 1);
             if (GetKeepAliveTimeout() != 0 && GetKeepAliveTimeout() != (unsigned int)-1)
                 Send(m_pKeepAlivePacket);
@@ -803,7 +805,7 @@ namespace Quazal {
         _ConnectionState eOldState = m_eState;
         SignalEvent(0x4000000);
         m_eState = eState;
-        if (m_oPendingOperation.m_pfCallback != 0) {
+        if (m_oPendingOperation.IsPending()) {
             qResult oResult = 0x80050007;
             if (eOldState == Connecting) {
                 SignalEvent(0x1000000);
