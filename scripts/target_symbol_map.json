@@ -5488,7 +5488,7 @@
  "0x822c19c8": "?GetGroundHeight@BandIKEffector@@IAAMPAVRndTransformable@@@Z",
  "0x822c1c18": "?ComputeHandPullAndQuat@BandIKEffector@@IAAXAAVQuatXfm@@AAVTransform@@ABV3@ABVVector3@@MMM@Z",
  "0x822c1dd8": "?ComputeElbowPullAndQuat@BandIKEffector@@IAAXAAVQuatXfm@@ABVTransform@@ABVVector3@@@Z",
- "0x822c1e90": "?MeasureLengths@BandIKEffector@@IAAHAAPAVRndTransformable@@0AAM11@Z",
+ "0x822c1e90": "?MeasureLengths@BandIKEffector@@IAA_NAAPAVRndTransformable@@0AAM11@Z",
  "0x822c22c8": "?Replace@?$ObjPtr@VBandIKEffector@@@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x822c2348": "??1?$ObjPtr@VBandIKEffector@@@@UAA@XZ",
  "0x822c24b8": "??1Constraint@BandIKEffector@@QAA@XZ",
