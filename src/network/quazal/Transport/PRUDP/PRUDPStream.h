@@ -15,6 +15,8 @@ namespace Quazal {
     class Packet;
     class PacketOut;
     class PRUDPStream;
+    class ConnectionOrientedStream;
+    class PacketIn;
 
     // Retail X360 layout (0x80 bytes): only the members this TU touches are spelled out.
     class InetAddress {
@@ -43,19 +45,25 @@ namespace Quazal {
     class StationURL : public RootObject {
     public:
         StationURL();
-        virtual ~StationURL();
+        ~StationURL();
         StationURL &operator=(const StationURL &);
         bool IsValid() const;
         unsigned char GetStreamID() const;
         InetAddress *GetInetAddress() const;
         const InetAddress &GetAddress() const { return *GetInetAddress(); }
-        int GetURLType() const;
-        void SetAddress(const char *);
-        void SetAddress(const InetAddress *);
+        enum _URLType {
+            Unknown = 0,
+            prudp = 1,
+            prudps = 2,
+            udp = 3
+        };
+        _URLType GetURLType() const;
+        bool SetAddress(const char *);
+        bool SetInetAddress(const InetAddress *);
         void SetPortNumber(unsigned short);
         void SetStreamID(unsigned char);
 
-        char m_data[0x60];
+        unsigned int m_data[0x64 / 4]; // word-aligned, as the real class (pointer members)
     };
 
     class EndPointUniqueID {
@@ -118,8 +126,8 @@ namespace Quazal {
 
     class PRUDPEndPoint : public EndPoint {
     public:
-        PRUDPEndPoint(PRUDPStream *, const StationURL *);
-        void ProcessPacket(Packet *);
+        PRUDPEndPoint(ConnectionOrientedStream *, const StationURL *);
+        void ServiceIncomingPacket(PacketIn *);
         char m_pad84[0x138 - 0x84];
     };
 

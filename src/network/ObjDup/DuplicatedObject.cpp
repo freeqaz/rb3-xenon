@@ -124,7 +124,7 @@ namespace Quazal {
     DOClass *DuplicatedObject::GetDOClass(unsigned int id) { return DOClass::FindDOClass(id); }
 
     Message *DuplicatedObject::CreateStubMessage(unsigned short *puiSize) {
-        return ObjDupProtocol::GetInstance()->CreateStubMessage(m_dohMyself, puiSize);
+        return ObjDupProtocol::GetInstance()->CreateActionMessage(&m_dohMyself, puiSize);
     }
 
     bool DuplicatedObject::SendStubMessage(bool bToDuplicas, Message *pMessage) {
@@ -395,7 +395,7 @@ namespace Quazal {
         Message msgDataSets;
         GetDOClass(m_dohMyself.GetDOClassID())
             ->SpecificAddDSToDiscoveryMessage(this, refStation.Get<Station>(), &msgDataSets);
-        Message *pMessage = ObjDupProtocol::GetInstance()->CreateDuplicaMessage();
+        Message *pMessage = ObjDupProtocol::GetInstance()->CreateDOProtocolMessage();
         ProtocolCallContext oContext;
         if (op.GetMigrationContext() == 0) {
             ObjDupProtocol::BuildCreateDuplica(

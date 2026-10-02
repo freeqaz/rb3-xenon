@@ -35211,7 +35211,7 @@
  "0x82a973a8": "?IsListening@ObjDupProtocol@Quazal@@QBA_NPAG@Z",
  "0x82a93f90": "?QueueMessage@ObjDupProtocol@Quazal@@QAAXPAVMessage@2@IPAVEndPoint@2@_N@Z",
  "0x82a97d60": "?clear@?$_List_base@PAVMessage@Quazal@@V?$MemAllocator@PAVMessage@Quazal@@@2@@stlpmtx_std@@QAAXXZ",
- "0x82a956b8": "?ProcessActionMessage@ObjDupProtocol@Quazal@@QAAXPAVMessage@2@PAVDOCoreRef@2@PAG@Z",
+ "0x82a956b8": "?ProcessActionMessage@ObjDupProtocol@Quazal@@QAAXPAVMessage@2@PAV?$DORefTemplate@VDuplicatedObject@Quazal@@@2@PAG@Z",
  "0x82a966b8": "?ProcessBundleMessage@ObjDupProtocol@Quazal@@QAA_NPAVMessage@2@_N1PAVString@2@@Z",
  "0x82a97480": "?AddLocalURLs@ObjDupProtocol@Quazal@@QAA_NPAVStation@2@@Z",
  "0x82a939c8": "?FaultDetection@ObjDupProtocol@Quazal@@UAAXPAVEndPoint@2@I@Z",

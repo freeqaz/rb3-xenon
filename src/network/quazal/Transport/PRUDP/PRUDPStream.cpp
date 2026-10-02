@@ -244,7 +244,7 @@ namespace Quazal {
         if (url->IsValid()) {
             ep = m_oEndPoints.Find(url->GetInetAddress(), url->GetStreamID());
             if (ep == NULL) {
-                ep = new (__FILE__, 0xae) PRUDPEndPoint(this, url);
+                ep = new (__FILE__, 0xae) PRUDPEndPoint((ConnectionOrientedStream *)this, url);
                 m_oWaterMark.Increment(1);
                 ep->m_usPort = port;
                 m_oEndPoints.Add(ep, url->GetStreamID());
@@ -410,7 +410,7 @@ namespace Quazal {
         InetAddress *addr, Buffer *buf, unsigned short port, unsigned char id
     ) {
         StationURL url;
-        url.SetAddress(addr);
+        url.SetInetAddress(addr);
         url.SetStreamID(id);
         PRUDPEndPoint *ep = CreateEndPoint(&url, port, false);
         if (!ep->IsDisconnected()) {
@@ -433,7 +433,7 @@ namespace Quazal {
     void PRUDPStream::ServiceDisconnection(InetAddress *addr, Buffer *buf) {
         if (GetListener() != NULL) {
             StationURL url;
-            url.SetAddress(addr);
+            url.SetInetAddress(addr);
             if (buf->GetContentSize() != 0)
                 GetListener()->ConnectionLost(this, buf, &url);
             else
@@ -490,7 +490,7 @@ namespace Quazal {
                     break;
                 }
                 if (pEndPoint != NULL && !pEndPoint->IsClosed())
-                    pEndPoint->ProcessPacket(packet);
+                    pEndPoint->ServiceIncomingPacket((PacketIn *)packet);
             }
             packet->ReleaseRef();
         }

@@ -407,18 +407,29 @@ namespace Quazal {
         DuplicatedObject *m_pObject;
     };
 
-    class StationRef : public DORef {
+    // DORefTemplate<T>::IsValid is emitted once per T in the DuplicatedObject TU
+    // (0x82A76568 Station, 0x82A76640 DuplicatedObject).
+    template <class T>
+    class DORefTemplate : public DORef {
     public:
-        StationRef(DOHandle hStation) : DORef(hStation) {}
-        bool IsValid();
-        Station *operator->() {
+        DORefTemplate(DOHandle h) : DORef(h) {}
+        bool IsValid() const;
+        T *operator->() {
             if (!IsValid()) {
                 return 0;
             } else {
-                return (Station *)m_pObject;
+                return (T *)m_pObject;
+            }
+        }
+        T *Get() {
+            if (!IsValid()) {
+                return 0;
+            } else {
+                return (T *)m_pObject;
             }
         }
     };
+    typedef DORefTemplate<Station> StationRef;
 
     class StationProxy {
     public:
@@ -545,15 +556,13 @@ namespace Quazal {
         virtual void CallMethod(DuplicatedObject *, unsigned short, Message *);
     };
 
-    namespace DOClassesTable {
-        DOClass *GetDOClass(unsigned int);
-    }
-
     class DuplicatedObject {
     public:
-        static void ProcessUpdateMessage(Message *, DOHandle, unsigned char);
-        bool IsAMigrationInProgress();
-        void DeleteDuplica(DOHandle, bool, bool);
+        static void UpdateDatasets(Message *, DOHandle, unsigned char);
+        static DOClass *GetDOClass(unsigned int);
+        bool IsADuplicationMaster() const;
+        bool RemoveFromStore(DOHandle, bool, bool);
+        void FillDuplicaStationsList(qList<DOHandle> *);
         bool FlagIsSet(unsigned short usFlag) { return (m_usFlags & usFlag) == usFlag; }
         bool Fetch(DOHandle, DOHandle, bool, DOHandle);
 
@@ -563,25 +572,7 @@ namespace Quazal {
         DOHandle m_hHandle; // 0x48
     };
 
-    class DOCoreRef : public DORef {
-    public:
-        DOCoreRef(DOHandle hObject) : DORef(hObject) {}
-        bool IsValid();
-        DuplicatedObject *operator->() {
-            if (!IsValid()) {
-                return 0;
-            } else {
-                return m_pObject;
-            }
-        }
-        DuplicatedObject *Get() {
-            if (!IsValid()) {
-                return 0;
-            } else {
-                return m_pObject;
-            }
-        }
-    };
+    typedef DORefTemplate<DuplicatedObject> DOCoreRef;
 
     class FetchRef : public DORef {
     public:
@@ -645,14 +636,9 @@ namespace Quazal {
         unsigned int m_uiTargetObject; // 0x68
     };
 
-    class MasterStation {
-    public:
-        void GetStations(qList<DOHandle> &);
-    };
-
     class MigrationContext {
     public:
-        MasterStation *GetMasterStation() { return m_pMasterStation; }
+        DuplicatedObject *GetObject() { return m_pObject; }
         unsigned char GetFlags() { return m_ucFlags; }
         unsigned short GetCallID() { return m_usCallID; }
 
@@ -661,7 +647,7 @@ namespace Quazal {
         char m_pad52[0xA];
         unsigned int m_uiTarget; // 0x5C
         char m_pad60[4];
-        MasterStation *m_pMasterStation; // 0x64
+        DuplicatedObject *m_pObject; // 0x64
         unsigned int m_uiMethod; // 0x68
         char m_pad6c[0x34];
         unsigned char m_ucFlags; // 0xA0
@@ -690,8 +676,8 @@ namespace Quazal {
     public:
         StationURL(const char *);
         ~StationURL();
-        unsigned int GetFlags();
-        const char *GetURL();
+        unsigned int GetType() const;
+        const char *GetURL() const;
 
         char m_pad[0x6C];
     };
@@ -1279,7 +1265,7 @@ namespace Quazal {
             );
         }
         if (bProcess) {
-            DuplicatedObject::ProcessUpdateMessage(pMsg, uiHandle, ucDataSet);
+            DuplicatedObject::UpdateDatasets(pMsg, uiHandle, ucDataSet);
         }
         return true;
     }
@@ -1312,10 +1298,10 @@ namespace Quazal {
         if (!refSource->FlagIsSet(1)) {
             return;
         }
-        if (refSource->IsAMigrationInProgress()) {
+        if (refSource->IsADuplicationMaster()) {
             return;
         } else {
-            refSource->DeleteDuplica(hObject, true, false);
+            refSource->RemoveFromStore(hObject, true, false);
         }
     }
 
@@ -1355,7 +1341,7 @@ namespace Quazal {
     void ObjDupProtocol::ProcessActionMessage(
         Message *pMsg, DOCoreRef *pRefObject, unsigned short *pusMethodID
     ) {
-        DOClassesTable::GetDOClass((*pRefObject)->m_hHandle.GetClassID())
+        DuplicatedObject::GetDOClass((*pRefObject)->m_hHandle.GetClassID())
             ->CallMethod((*pRefObject).operator->(), *pusMethodID, pMsg);
     }
 
@@ -1524,7 +1510,7 @@ namespace Quazal {
         Message *pMsg = CreateDOProtocolMessage();
         ProtocolCallContext oCallContext;
         qList<DOHandle> lstStations;
-        pContext->GetMasterStation()->GetStations(lstStations);
+        pContext->GetObject()->FillDuplicaStationsList(&lstStations);
         unsigned char ucFlags = pContext->GetFlags();
         unsigned short usCallID = pContext->GetCallID();
         unsigned int uiTarget = pContext->m_uiTarget;
@@ -1744,7 +1730,7 @@ namespace Quazal {
             StationURLList *pURLs = ((NetZ *)GetInstanceType1Delegator())->GetLocalURLs();
             ScopedCS oCS(pURLs->m_cs);
             if (!pURLs->IsEmpty()) {
-                if ((pURLs->m_lstURLs.begin()->GetFlags() & 2) == 2) {
+                if ((pURLs->m_lstURLs.begin()->GetType() & 2) == 2) {
                     pStation->m_oURLs.SetURL(0, pURLs->m_lstURLs.begin()->GetURL());
                 }
             }

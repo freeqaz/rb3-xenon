@@ -188,7 +188,7 @@ namespace Quazal {
         StationURL(const StationURL &);
         ~StationURL();
         StationURL &operator=(const StationURL &);
-        bool IsEqual(const StationURL &) const;
+        bool operator!=(const StationURL &) const;
         enum _URLType {
             Unknown = 0,
             prudp = 1,
@@ -198,10 +198,10 @@ namespace Quazal {
         _URLType GetURLType() const;
         unsigned int GetRVConnectionID() const;
         void SetRVConnectionID(unsigned int);
-        unsigned int GetFlags() const;
-        bool IsPublic() const { return (GetFlags() & 2) == 2; }
+        unsigned int GetType() const;
+        bool IsPublic() const { return (GetType() & 2) == 2; }
 
-        char m_data[0x64];
+        unsigned int m_data[0x64 / 4]; // word-aligned, as the real class (pointer members)
     };
 
     class Buffer : public RootObject {
@@ -750,7 +750,7 @@ namespace Quazal {
     bool NATTraversalEngine::GetUpdatedURL(const StationURL &url, StationURL *pURL) {
         ScopedCS oCS(m_oProbes.mCSList);
         URLProbe *pProbe = m_oProbes.FindProbe(url);
-        if (pProbe != 0 && pProbe->m_oURL.IsEqual(url)) {
+        if (pProbe != 0 && pProbe->m_oURL != url) {
             *pURL = pProbe->m_oURL;
             return true;
         }

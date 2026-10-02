@@ -13,9 +13,9 @@ namespace Quazal {
     class ObjDupProtocol : public RootObject {
     public:
         static ObjDupProtocol *GetInstance();
-        Message *CreateStubMessage(const DOHandle &, unsigned short *);
+        Message *CreateActionMessage(DOHandle *, unsigned short *);
         Message *CreateDeleteMessage(DOHandle);
-        Message *CreateDuplicaMessage();
+        Message *CreateDOProtocolMessage();
 
         static void BuildCreateDuplica(
             ProtocolCallContext *, Message *, DOHandle, DOHandle,
