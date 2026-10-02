@@ -107582,6 +107582,23 @@
      "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 REFUTED -> CHASED T1 PROVEN (3 SLOT-FOLD-OK; 0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 128 == ours 128); of 22 retail masked-body twins this survivor is the only one the spelling chases PROVEN against. Retail call-site witness (decoded in band.exe as `bl 0x823dcca0`): 0x823dcd6c. Every paired call site of this spelling lands at 0x823dcca0. It is the one charged site left in ObjVector<ObjOwnerPtr<Waypoint>>::resize (0x823dcd38) once that address was named. This spelling was withdrawn from 0x822c0228 and 0x82308e90 by ALIAS-CONSOLIDATION 2026-08-19 (FABRICATED_CLOSURE_NOT_PARTITION: it sat in two groups at once); it is admitted here at a THIRD address because, of the 22 retail masked-body twins, 0x823dcca0 is the only one it chases PROVEN against (21 REFUTED)."
     }
    ]
+  },
+  {
+   "name": "insert_unique_noresize",
+   "address": "0x8264ed88",
+   "survivor": "?insert_unique_noresize@?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$pair@U?$_Ht_iterator@V?$_Slist_iterator@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@U?$_NonLocalHashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@23@@priv@stlpmtx_std@@_N@2@ABU?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@2@@Z",
+   "folded": [],
+   "evidence": "Created by lane W16-NX to hold one REFUSED membership (no spelling is folded here). The refused pair is kept because it is the live --chasetest decoy for PLACEHOLDER_SLOT_MAPPED_VS_PLACEHOLDER: the pre-W16-JG lax rule PROVES it and the discharge rule refutes it, which is the one property a decoy for that class needs.",
+   "lane": "W16-NX 2026-10-02",
+   "withdrawn": [
+    {
+     "spelling": "?insert_unique_noresize@?$hashtable@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$pair@U?$_Ht_iterator@V?$_Slist_iterator@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@U?$_NonLocalHashMapTraitsT@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@23@@priv@stlpmtx_std@@_N@2@ABU?$pair@$$CBVSymbol@@VString@@@2@@Z",
+     "lane": "W16-NX 2026-10-02",
+     "class": "PLACEHOLDER_SLOT_MAPPED_VS_PLACEHOLDER",
+     "disposition": "membership refused (never admitted); kept as a --chasetest decoy",
+     "evidence": "Masked bodies are equal and the relocation shapes agree, so a body-twin enumerator proposes this pair, and tools/icf_pair_adjudicate.py --chase --lax-slots reads it PROVEN (the insert_after slot, retail fn_8264EC88 vs our slist<pair<Symbol,String>>::insert_after, is tolerated as a placeholder). The discharge rule refutes it on retail evidence: chasing that slot reaches retail fn_8264EC08 vs our slist<pair<Symbol,String>>::_M_create_node, which is map-resident at 0x8259f6e0 (MAPPED-VS-PLACEHOLDER), and our insert_after is located at a different retail address (SLOT-CONTRADICTED:CALLEE-LOCATED-ELSEWHERE). The vector<Symbol>-valued and String-valued hash tables are different code one level down. Found by a live-tree scan of 70,405 shape-equal (survivor, spelling) pairs; this was the only one whose discharge trace carries MAPPED-VS-PLACEHOLDER. It replaces group 0x822e5040's record as the working decoy once 0x822e4fd8 is named (that record is kept, and is tried first)."
+    }
+   ]
   }
  ]
 }
