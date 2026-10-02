@@ -4093,8 +4093,6 @@ CharLipSync.cpp:
 	.pdata      start:0x821F8628 end:0x821F8630
 	.pdata      start:0x821F8630 end:0x821F8638
 	.pdata      start:0x821F8690 end:0x821F8698
-	.pdata      start:0x821FEDB0 end:0x821FEDC0
-	.pdata      start:0x821FEE50 end:0x821FEE58
 	.pdata      start:0x822011C8 end:0x822011D8
 	.pdata      start:0x82206C90 end:0x82206CE0
 	.pdata      start:0x82206CE0 end:0x82206D68
@@ -4114,8 +4112,6 @@ CharLipSync.cpp:
 	.text       start:0x822DEB40 end:0x822DEDEC
 	.text       start:0x822DF8B0 end:0x822DF99C
 	.text       start:0x822DF9F8 end:0x822DFA20
-	.text       start:0x82348E20 end:0x82348FC4
-	.text       start:0x82349B10 end:0x82349B78
 	.text       start:0x8236AE28 end:0x8236AEA8
 	.text       start:0x823D332C end:0x823D3330
 	.text       start:0x823D333C end:0x823D3910
@@ -10500,6 +10496,7 @@ BandPatchMesh.cpp:
 	.pdata      start:0x821FED80 end:0x821FEDA0
 	.pdata      start:0x821FEDA0 end:0x821FEDA8
 	.pdata      start:0x821FEDA8 end:0x821FEDB0
+	.pdata      start:0x821FEDB0 end:0x821FEDC0
 	.pdata      start:0x821FEDC0 end:0x821FEE08
 	.pdata      start:0x821FEE08 end:0x821FEE18
 	.pdata      start:0x821FEE18 end:0x821FEE20
@@ -10508,6 +10505,7 @@ BandPatchMesh.cpp:
 	.pdata      start:0x821FEE38 end:0x821FEE40
 	.pdata      start:0x821FEE40 end:0x821FEE48
 	.pdata      start:0x821FEE48 end:0x821FEE50
+	.pdata      start:0x821FEE50 end:0x821FEE58
 	.pdata      start:0x821FEE58 end:0x821FEE60
 	.pdata      start:0x821FEE60 end:0x821FEE68
 	.pdata      start:0x821FEE68 end:0x821FEE70
@@ -10592,6 +10590,7 @@ BandPatchMesh.cpp:
 	.text       start:0x82348B28 end:0x82348D80
 	.text       start:0x82348D80 end:0x82348DEC
 	.text       start:0x82348DEC end:0x82348E20
+	.text       start:0x82348E20 end:0x82348FC4
 	.text       start:0x82348FC4 end:0x823493D0
 	.text       start:0x823493D0 end:0x82349470
 	.text       start:0x82349470 end:0x823495D8
@@ -10600,6 +10599,7 @@ BandPatchMesh.cpp:
 	.text       start:0x8234982C end:0x823498F0
 	.text       start:0x823498F0 end:0x823499F0
 	.text       start:0x823499F0 end:0x82349B10
+	.text       start:0x82349B10 end:0x82349B78
 	.text       start:0x82349B78 end:0x82349BE8
 	.text       start:0x82349BE8 end:0x82349C58
 	.text       start:0x82349C58 end:0x82349CC8
