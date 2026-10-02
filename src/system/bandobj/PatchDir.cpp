@@ -599,19 +599,16 @@ void PatchDir::LoadStickerData() {
         for (int j = 2; j < categoryArr->Size(); j++) {
             PatchSticker *sticker = new PatchSticker();
             DataArray *stickerArr = categoryArr->Array(j);
-            Symbol sizeX("size_x");
-            sticker->unk18 = stickerArr->FindArray(sizeX, true)->Float(1);
-            Symbol sizeY("size_y");
-            sticker->unk1c = stickerArr->FindArray(sizeY, true)->Float(1);
-            Symbol paletteIndex("palette_index");
-            sticker->unk20 = stickerArr->FindArray(paletteIndex, true)->Int(1);
-            Symbol allowColor("allow_color");
-            sticker->unk24 = stickerArr->FindArray(allowColor, true)->Int(1) != 0;
+            sticker->unk18 = stickerArr->FindArray(Symbol("size_x"), true)->Float(1);
+            sticker->unk1c = stickerArr->FindArray(Symbol("size_y"), true)->Float(1);
+            sticker->unk20 =
+                stickerArr->FindArray(Symbol("palette_index"), true)->Int(1);
+            sticker->unk24 =
+                stickerArr->FindArray(Symbol("allow_color"), true)->Int(1) != 0;
             sticker->unk0 = stickerArr->Str(0);
-            Symbol texPath("tex_path");
             sticker->unkc.Set(
                 FileGetPath(stickerArr->File()),
-                stickerArr->FindArray(texPath, true)->Str(1)
+                stickerArr->FindArray(Symbol("tex_path"), true)->Str(1)
             );
             stickers.push_back(sticker);
         }
