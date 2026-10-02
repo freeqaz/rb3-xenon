@@ -4155,7 +4155,6 @@ UILabel.cpp:
 	.pdata      start:0x82245030 end:0x82245038
 	.pdata      start:0x82245038 end:0x82245040
 	.pdata      start:0x82245040 end:0x822452A8
-	.pdata      start:0x8225FCF0 end:0x8225FDA0
 	.text       start:0x82355760 end:0x823557D8
 	.text       start:0x82355B84 end:0x82355BD0
 	.text       start:0x827F2148 end:0x827F22A4
@@ -4174,7 +4173,6 @@ UILabel.cpp:
 	.text       start:0x827F4910 end:0x827F4B64
 	.text       start:0x827F4B68 end:0x827F7830
 	.text       start:0x827F7AD8 end:0x827F7AE0
-	.text       start:0x82BF5DD0 end:0x82BF6B78
 
 CharBones.cpp:
 	.pdata      start:0x82204BA8 end:0x82204BB0
@@ -14842,6 +14840,18 @@ xdk/xaudio2/system.cpp:
 	.text       start:0x82BE28C8 end:0x82BE2A00
 	.text       start:0x82BE2A68 end:0x82BE2EA8
 	.text       start:0x82BE34C0 end:0x82BE39F0
+
+xdk/xaudio2/baseskin.cpp:
+	.pdata      start:0x8225FCF0 end:0x8225FD48
+	.text       start:0x82BF5DE8 end:0x82BF65A0
+
+xdk/xaudio2/commandmanager.cpp:
+	.pdata      start:0x8225FD48 end:0x8225FD88
+	.text       start:0x82BF65A0 end:0x82BF69C8
+
+xdk/xaudio2/filterskin.cpp:
+	.pdata      start:0x8225FD90 end:0x8225FDA0
+	.text       start:0x82BF6A38 end:0x82BF6B28
 
 xdk/xaudio2/voiceskin.cpp:
 	.pdata      start:0x8225FCA8 end:0x8225FCC8
