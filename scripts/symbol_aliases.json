@@ -17647,14 +17647,30 @@
   {
    "name": "$__destroy_range_aux",
    "address": "0x823f0b50",
-   "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAVSongPattern@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVSongPattern@@@0@0ABU__false_type@0@@Z",
+   "survivor": "??$_Destroy_Range@PAUTypeCreatorPair@NetMessageFactory@@@stlpmtx_std@@YAXPAUTypeCreatorPair@NetMessageFactory@@0@Z",
    "folded": [
     "??$_Destroy_Range@PAULabel@?A0xe9afadec@@@stlpmtx_std@@YAXPAULabel@?A0xe9afadec@@0@Z",
     "??$_Destroy_Range@PAVSampleMarker@@@stlpmtx_std@@YAXPAVSampleMarker@@0@Z",
     "??$__destroy_range@PAULabel@?A0xe9afadec@@U12@@stlpmtx_std@@YAXPAULabel@?A0xe9afadec@@00@Z",
     "??$__destroy_range@PAVSampleMarker@@V1@@stlpmtx_std@@YAXPAVSampleMarker@@00@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 4 folded spelling(s), 1 census sites over 2 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 4 folded spelling(s), 1 census sites over 2 functions.",
+   "repair_log": [
+    {
+     "lane": "W16-NE-F3 2026-10-02",
+     "change": "survivor swapped to the map name",
+     "why": "the map row at this address was renamed from a Dance Central instantiation to the NetMessageFactory instantiation the new network/net/NetMessage.cpp compiles; the old survivor is kept as a folded spelling until --chase adjudicates it"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAVSongPattern@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVSongPattern@@@0@0ABU__false_type@0@@Z",
+     "lane": "W16-NE-F3 2026-10-02",
+     "class": "DC3_ONLY_SPELLING_REFUTED",
+     "disposition": "withdrawn after the survivor swap",
+     "evidence": "icf_pair_adjudicate --chase: REFUTED. SongPattern is a Dance Central type with no retail RTTI and no reference outside hamobj/gesture; it was the survivor only because the map row carried it. The row is now _Destroy_Range<NetMessageFactory::TypeCreatorPair*>, which network/net/NetMessage.cpp compiles; the SampleMarker members chase PROVEN."
+    }
+   ]
   },
   {
    "name": "0SfxSeq",
@@ -83861,9 +83877,17 @@
    "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x9335ac2a@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAULabel@?A0x9335ac2a@@@0@0ABU__false_type@0@@Z",
    "folded": [
     "??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0xe9afadec@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAULabel@?A0xe9afadec@@@0@0ABU__false_type@0@@Z",
-    "??$__destroy_range_aux@V?$reverse_iterator@PAVSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVSampleMarker@@@0@0ABU__false_type@0@@Z"
+    "??$__destroy_range_aux@V?$reverse_iterator@PAVSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVSampleMarker@@@0@0ABU__false_type@0@@Z",
+    "??$__destroy_range_aux@V?$reverse_iterator@PAUTypeCreatorPair@NetMessageFactory@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUTypeCreatorPair@NetMessageFactory@@@0@0ABU__false_type@0@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions.",
+   "repair_log": [
+    {
+     "lane": "W16-NE-F3 2026-10-02",
+     "change": "added folded spelling ??$__destroy_range_aux@V?$reverse_iterator@PAUTypeCreatorPair@NetMessageFactory@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUTypeCreatorPair@NetMessageFactory@@@0@0ABU__false_type@0@@Z",
+     "why": "W16-NE-F3 2026-10-02: tools/icf_pair_adjudicate.py --chase CHASED T1 PROVEN for this spelling against the survivor. Retail calls the survivor address from the folded spelling's TU; network/net/NetMessage.cpp (new) links first, so its instantiation is the survivor."
+    }
+   ]
   },
   {
    "name": "?Replace@MsgSource@@$4PPPPPPPM@BI@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
@@ -92217,7 +92241,8 @@
     "??1MoveRating@SkeletonClip@@QAA@XZ",
     "??1SampleMarker@@QAA@XZ",
     "??1Label@?A0x81ddebd1@@QAA@XZ",
-    "??1LeaderboardRow@@QAA@XZ"
+    "??1LeaderboardRow@@QAA@XZ",
+    "??1TypeCreatorPair@NetMessageFactory@@QAA@XZ"
    ],
    "relabelled": "W16-MC 2026-10-01: survivor label moved from ??1LoaderGlitchContext to ??1FilePath (member set unchanged). Retail 0x827BEA28 is one 4-byte blr shared by these empty destructors (235 retail callers); which spelling labels it is arbitrary. LoadMgr::PollFrontLoader no longer uses LoaderGlitchContext, so Loader.obj stopped emitting that spelling and the row read 0; it still emits ??1FilePath.",
    "evidence": "Fold-thunk alias group derived by tools/fold_thunk_gate.py. Evidence tier(s) FT2. Our compiled COMDAT for each folded spelling below is byte-identical to the RETAIL body at the survivor address 0x827bea28 once relocation-carrying fields are masked, with every relocated branch destination RESOLVED through the map and NAME-equal rather than masked away; the survivor takes 235 direct branches across .text. FT1=retail's map places the folded spelling on the same body or nowhere. FT2=it places it on a different body the image itself discredits (zero .text fan-in, or no symbols.txt extent -- padding or a mid-function word). FT3=it places it on a HOMONYM, a distinct function under another module that legitimately carries the same mangled name, witnessed by dc3's leaked ham_xbox_r.map. FT-EMPTY=the body carries no relocation at all, so the fold is real but the byte comparison is vacuous. 1 folded spelling(s), 164 charged name_check sites. Per spelling: [??1FilePath@@UAA@XZ FT2, 164 sites: map parks ??1FilePath@@UAA@XZ at 0x82812508, which has ZERO .text fan-in]",
@@ -92256,6 +92281,13 @@
      "regate": true,
      "disposition": "membership withdrawn, names kept",
      "evidence": "Coordinator gate on 6440c3bf8: icf_pair_adjudicate --chase gives CHASED T1 REFUTED via MISSING(ours) -- the survivor spelling ??1FilePath@@UAA@XZ is in no compiled obj, so the fold cannot be verified (flat T1 UNDECIDABLE). Unproven rather than contradicted; restore once a compiled obj emits the survivor or an independent channel proves the fold."
+    }
+   ],
+   "repair_log": [
+    {
+     "lane": "W16-NE-F3 2026-10-02",
+     "change": "added folded spelling ??1TypeCreatorPair@NetMessageFactory@@QAA@XZ",
+     "why": "W16-NE-F3 2026-10-02: tools/icf_pair_adjudicate.py --chase CHASED T1 PROVEN for this spelling against the survivor. Retail calls the survivor address from the folded spelling's TU; network/net/NetMessage.cpp (new) links first, so its instantiation is the survivor."
     }
    ]
   },
@@ -102022,6 +102054,58 @@
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, no CYCLE leaf; both bodies 120 B, the two ObjPtr writer callees chased (fn_8229E5D0, fn_8238B5B8). WorldDir::Save (retail 0x824cd8b8) calls 0x824cd470 for mMatOverrides as well as mPresetOverrides. Requires MatOverride's writer to stream mesh and mat only, matching its reader."
     }
    ]
+  },
+  {
+   "name": "_Copy_Construct",
+   "address": "0x823f0a00",
+   "survivor": "??$_Copy_Construct@UTypeCreatorPair@NetMessageFactory@@@stlpmtx_std@@YAXPAUTypeCreatorPair@NetMessageFactory@@ABU12@@Z",
+   "folded": [
+    "??$_Param_Construct@VSampleMarker@@V1@@stlpmtx_std@@YAXPAVSampleMarker@@ABV1@@Z",
+    "??$_Copy_Construct@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@0@ABU10@@Z"
+   ],
+   "evidence": "W16-NE-F3 2026-10-02: tools/icf_pair_adjudicate.py --chase CHASED T1 PROVEN for this spelling against the survivor. Retail calls the survivor address from the folded spelling's TU; network/net/NetMessage.cpp (new) links first, so its instantiation is the survivor.",
+   "repair_log": [
+    {
+     "lane": "W16-NE-F3 2026-10-02",
+     "change": "added folded spelling ??$_Copy_Construct@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@0@ABU10@@Z",
+     "why": "W16-NE-F3 2026-10-02: tools/icf_pair_adjudicate.py --chase CHASED T1 PROVEN for this spelling against the survivor. Retail calls the survivor address from the folded spelling's TU; network/net/NetMessage.cpp (new) links first, so its instantiation is the survivor."
+    }
+   ]
+  },
+  {
+   "name": "1?$vector",
+   "address": "0x823f0c18",
+   "survivor": "??1?$vector@UTypeCreatorPair@NetMessageFactory@@V?$StlNodeAlloc@UTypeCreatorPair@NetMessageFactory@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "folded": [
+    "??1?$vector@VSampleMarker@@V?$StlNodeAlloc@VSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@ULabel@?A0x81ddebd1@@V?$StlNodeAlloc@ULabel@?A0x81ddebd1@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
+   ],
+   "evidence": "W16-NE-F3 2026-10-02: tools/icf_pair_adjudicate.py --chase CHASED T1 PROVEN for this spelling against the survivor. Retail calls the survivor address from the folded spelling's TU; network/net/NetMessage.cpp (new) links first, so its instantiation is the survivor.",
+   "repair_log": [
+    {
+     "lane": "W16-NE-F3 2026-10-02",
+     "change": "added folded spelling ??1?$vector@ULabel@?A0x81ddebd1@@V?$StlNodeAlloc@ULabel@?A0x81ddebd1@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "why": "W16-NE-F3 2026-10-02: tools/icf_pair_adjudicate.py --chase CHASED T1 PROVEN for this spelling against the survivor. Retail calls the survivor address from the folded spelling's TU; network/net/NetMessage.cpp (new) links first, so its instantiation is the survivor."
+    }
+   ]
+  },
+  {
+   "name": "push_back",
+   "address": "0x823f0e58",
+   "survivor": "?push_back@?$vector@UTypeCreatorPair@NetMessageFactory@@V?$StlNodeAlloc@UTypeCreatorPair@NetMessageFactory@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUTypeCreatorPair@NetMessageFactory@@@Z",
+   "folded": [
+    "?push_back@?$vector@ULabel@?A0x81ddebd1@@V?$StlNodeAlloc@ULabel@?A0x81ddebd1@@@stlpmtx_std@@@stlpmtx_std@@QAAXABULabel@?A0x81ddebd1@@@Z"
+   ],
+   "evidence": "W16-NE-F3 2026-10-02: tools/icf_pair_adjudicate.py --chase CHASED T1 PROVEN for this spelling against the survivor. Retail calls the survivor address from the folded spelling's TU; network/net/NetMessage.cpp (new) links first, so its instantiation is the survivor."
+  },
+  {
+   "name": "__uninitialized_fill_n",
+   "address": "0x82728da0",
+   "survivor": "??$__uninitialized_fill_n@PAVSampleMarker@@IV1@@stlpmtx_std@@YAPAVSampleMarker@@PAV1@IABV1@ABU__false_type@0@@Z",
+   "folded": [
+    "??$__uninitialized_fill_n@PAUTypeCreatorPair@NetMessageFactory@@IU12@@stlpmtx_std@@YAPAUTypeCreatorPair@NetMessageFactory@@PAU12@IABU12@ABU__false_type@0@@Z"
+   ],
+   "evidence": "W16-NE-F3 2026-10-02: tools/icf_pair_adjudicate.py --chase CHASED T1 PROVEN for this spelling against the survivor. Retail calls the survivor address from the folded spelling's TU; network/net/NetMessage.cpp (new) links first, so its instantiation is the survivor."
   }
  ]
 }
