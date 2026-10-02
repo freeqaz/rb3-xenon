@@ -24,13 +24,13 @@ namespace Quazal {
         // Acquires the referenced DO on demand (JobConnectStation's callers keep
         // the result in a temporary even when they discard it).
         DuplicatedObject *GetPtr() {
-            if (m_poReferencedDO == NULL) {
+            if (m_poReferencedDO == 0) {
                 Acquire();
             }
             DuplicatedObject *pDO = m_poReferencedDO;
             return pDO;
         }
-        bool IsAcquired() { return GetPtr() != NULL; }
+        bool IsAcquired() { return GetPtr() != 0; }
         DuplicatedObject *GetDO() const { return m_poReferencedDO; }
 
         // Lane-chosen names for the class-checked accessors retail instantiates

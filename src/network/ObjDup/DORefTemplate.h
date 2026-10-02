@@ -18,8 +18,8 @@ namespace Quazal {
                 SystemError::SignalError(0, 0, 0xA0030004, 0);
                 return false;
             } else {
-                T *pDO = (T *)m_poReferencedDO;
-                if (!T::GetDOClass(pDO->m_dohMyself.GetDOClassID())->IsAKindOf(T::GetClassID())) {
+                if (!T::GetDOClass(((T *)GetDOPtr())->m_dohMyself.GetDOClassID())
+                         ->IsAKindOf(T::GetClassID())) {
                     SystemError::SignalError(0, 0, 0xE003000C, 0);
                     return false;
                 }
