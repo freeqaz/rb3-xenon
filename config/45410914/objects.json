@@ -2124,7 +2124,10 @@
             "network/ObjDup/DuplicatedObject.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
-                    "/Od"
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/EHs-c-"
                 ]
             },
             "network/Core/TimedSignal.cpp": "NonMatching",
