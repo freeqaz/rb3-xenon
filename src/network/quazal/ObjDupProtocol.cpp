@@ -258,6 +258,17 @@ namespace Quazal {
         bool HasStartedTermination() const;
     };
 
+    // Session's statics, spelled as Session.cpp maps them (0x82A76D98, 0x82A796C8).
+    class Session {
+    public:
+        static Session *GetInstance();
+        static bool JoinIsAllowed();
+        unsigned int GetHandle() { return m_uiHandle; }
+
+        char m_pad0[0x14];
+        unsigned int m_uiHandle; // 0x14
+    };
+
     // Compiled to nothing in this build; only its address reaches Job's ctor.
     class DebugString {
     public:
@@ -385,10 +396,6 @@ namespace Quazal {
 
     class Station {
     public:
-        static bool IsLocalStationMaster();
-        // 0x82A76D98 (Session's TU) returns the session object; its +0x14 is
-        // the handle read below.
-        static Station *GetSessionMaster();
         // The Station methods below are spelled the way Station.cpp maps them.
         static DOHandle GetLocalStation();
         static void InitiateFaultProcessingForStation(DOHandle, unsigned int);
@@ -1136,7 +1143,7 @@ namespace Quazal {
 
     void ObjDupProtocol::ProcessGetParticipantsRequest(EndPoint *pEndPoint, Message *pMsg) {
         Message *pReply = CreateGetParticipantsResponse();
-        if (Station::IsLocalStationMaster()) {
+        if (Session::JoinIsAllowed()) {
             *pReply << true;
             m_oStationProxy.PrepareParticipantsMessage(pReply);
             m_oStationProxy.AddPretendant(pEndPoint, pMsg);
@@ -1214,7 +1221,7 @@ namespace Quazal {
         Message *pMsg = CreateMessage(1);
         pMsg->Append(&ucResponse, 1, true);
         if (ucResponse == 2) {
-            StationRef refStation(Station::GetSessionMaster()->GetHandle());
+            StationRef refStation(Session::GetInstance()->GetHandle());
             pMsg->AppendString(refStation->GetStationURL(0), 0x100);
         }
         return pMsg;
