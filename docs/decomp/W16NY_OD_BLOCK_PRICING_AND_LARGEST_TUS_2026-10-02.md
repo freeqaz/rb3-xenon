@@ -170,28 +170,218 @@ the unit compiles (7–8 = map-only scaffold).
 | 104 | `.\Competition\Protocol\CompetitionDDL.cpp` | `82B1FDA0` | 96 | 1,884 | 96 | 8 | 0 |
 | 105 | `.\Foundation\Protocol\DataDDL.cpp` | `82B14D48` | 116 | 1,284 | 116 | 8 | 0 |
 
-## 2. Flags: `/Ob1` is a per-TU property
+### 1.5 The bracket against the seven extents this lane established
+
+Every TU worked in §3 ended with a retail extent found by its lane. All seven fall inside [lo, hi], as did the two
+controls in §1.3 (9 of 9):
+
+| TU | lo | true extent | true B | hi |
+|---|---:|---|---:|---:|
+| StationURL | 7,960 | `82AA1658..82AA6270` | 19,208 | 24,248 |
+| JobBackEndServicesLogin | 6,688 | `82ADB5F8..82ADD088` | 6,748 | 9,456 |
+| NATTraversalEngine | 8,680 | `82B03480..82B07280` | 15,584 | 40,672 |
+| PRUDPEndPoint | 12,992 | `82B31AB8..82B358E8` | 15,720 | 28,056 |
+| PRUDPStream | 8,888 | `82AFB6E0..82AFFEC0` | 18,076 | 28,136 |
+| ObjDupProtocol | 12,060 | `82A937E0..82A97EF0` | 18,056 | 24,408 |
+| DuplicatedObject | 8,552 | `82A6FC78..82A76B58` | 28,164 | 41,632 |
+
+true/lo runs 1.01–3.29 (median ≈ 1.8), so the 105 path-anchored TUs hold roughly 189,560 × 1.8 ≈ 340 KB of the
+block. That figure is only as good as a 9-point ratio. Every scaffold pin is an under-carve: it covers only the span
+of the `__FILE__` references, and all seven lanes had to extend theirs.
+
+## 2. Flags: `/Od /Ob1`, and a prediction of mine that was right after all
 
 A probe compile (`~/tmp/w16ny/probe/p.cpp`) showed that plain `/Od` never expands an `inline` or `__forceinline`
-helper, while `/Od /Ob1` reproduces the retail shape seen in e.g. the StationURL constructor at `0x82AA1658` (the
-argument stored to a temp slot and reloaded at every use). Five earlier Quazal ports already carry `/Ob1` (MD5,
-MemoryManager, BandwidthCounter, Scheduler, ChecksumAlgorithm), so this confirms existing practice.
+helper, while `/Od /Ob1` reproduces the retail shape (an inline function's argument stored to a temp slot and
+reloaded at every use, e.g. the StationURL ctor at `0x82AA1658`). Five earlier Quazal ports already carried `/Ob1`.
 
-It is **not** block-wide. Predicted: adding `/Ob1` to DuplicatedObject (plain `/Od`) would hold or gain. Measured:
-unit matched bytes **312 → 204**, because retail emits `map::end`, `_Rb_tree::_S_right` and `~ScopedCS` out of line
-in that TU and `/Ob1` inlined them away. Reverted. Choose per TU by whether retail emits the small helpers as
-separate functions.
+I then predicted that `/Ob1` would hold or gain on DuplicatedObject, which was plain `/Od`, and measured unit matched
+bytes **312 → 204**. On that reading I told the lanes `/Ob1` was per-TU. **That reading was wrong.** The DuplicatedObject
+lane showed that retail expands `map::end`, the `DOHandle` copy, `ScopedCS` and `Scheduler::GetInstance` in place. The
+108 B were three rows that paired only because plain `/Od` emitted out-of-line copies: `_S_right` at `0x82AB0850`,
+`map::end` at `0x82AFC2A8` (really `PRUDPStream::Teardown`), and `~ScopedCS` at `0x82A707E8` (really
+`DuplicatedObject::GetDOClass`). **All seven TUs here build with `/Od /Oi- /Ob1`.** Three add `/EHs-c-`
+(DuplicatedObject, ObjDupProtocol, JobBackEndServicesLogin) and JobBackEndServicesLogin adds `/GR-`, each read from
+the TU's asm (EH records, RTTI locators). Only StringConversion (free functions, no inline helpers) cannot tell
+`/Ob1` from plain `/Od`.
+
+Every lane independently found two `/Od /Ob1` facts that decide frames:
+
+- **A declined inline still reserves its frame in the caller.** When `/Ob1` will not expand an in-class function
+  (it has named locals, or it is a second level of inlining), the call is out of line, but the caller still
+  reserves the callee's parameter and local slots. This explains every "unexplained gap" in these frames.
+- **Local names decide slot order** (W16-NW §2.5).
 
 ## 3. Per-TU results
 
-(filled in below)
+Seven TUs, dispatched to one lane each, largest guaranteed size (lo) first: PRUDPEndPoint, ObjDupProtocol,
+PRUDPStream, NATTraversalEngine, DuplicatedObject, StationURL and JobBackEndServicesLogin. They were then merged
+here. Per-lane write-ups: `W16NY_OBJDUPPROTOCOL_TU_2026-10-02.md`, `W16NY_DUPLICATEDOBJECT_TU_2026-10-02.md` (the
+other lanes' per-function tables are in their final reports, summarized below).
+
+### 3.1 Units, main vs this branch (integrated tree, `report.json`, graded ruler)
+
+| TU | flags | main: rows at 100 / rows | main: matched / unit B | branch: rows at 100 / rows | branch: matched / unit B |
+|---|---|---:|---:|---:|---:|
+| StationURL | `/Od /Oi- /Ob1` + 2 per-TU `/D` | 0 / 71 | 0 / 7,960 | 105 / 122 | 16,296 / 19,208 |
+| NATTraversalEngine | `/Od /Oi- /Ob1` | 0 / 69 | 0 / 8,680 | 72 / 147 | 12,040 / 15,580 |
+| DuplicatedObject | `/Od /Oi- /Ob1 /EHs-c-` | 8 / 95 | 312 / 25,056 | 68 / 120 | 12,136 / 29,940 |
+| PRUDPEndPoint | `/Od /Oi- /Ob1` | 0 / 64 | 0 / 12,992 | 67 / 98 | 10,372 / 15,716 |
+| PRUDPStream | `/Od /Oi- /Ob1` + `/DRB3_QUAZAL_MEMALLOCATOR_CTORS` | 0 / 69 | 0 / 8,888 | 87 / 147 | 9,812 / 18,068 |
+| JobBackEndServicesLogin | `/Od /Oi- /EHs-c- /Ob1 /GR-` | 0 / 21 | 0 / 6,688 | 20 / 22 | 6,136 / 6,748 |
+| ObjDupProtocol | `/Od /Oi- /EHs-c- /Ob1` | 0 / 53 | 0 / 12,060 | 44 / 81 | 5,700 / 18,056 |
+| **total** | | | **312** | | **72,492** |
+
+Row counts include EH funclets. Most funclets pair by byte signature, which is the +259 `masked_equal` in §4.
+
+### 3.2 What each lane established
+
+- **StationURL** (`0x82AA1658..0x82AA6270`): the TU continues past the last `__FILE__` reference through
+  Parse/ParseParam, the key accessors and the `qMap<String,unsigned>` / `qMap<String,String>` tree code. StationURL
+  is 0x64 bytes with no vtable. The four constructors stay at 42–80%: retail expands the three map members
+  differently in each one, and no allocator variant reproduced all three.
+- **NATTraversalEngine** (`0x82B03480..0x82B07280`): self-contained, with local declarations at the retail layouts. A
+  class with a vfptr and a `Time` member pads the vfptr to 8. `GetPublicURL` calls `0x823EBC90`, whose map name
+  is an anonymous-namespace function (a fold question).
+- **DuplicatedObject** (`0x82A6FC78..0x82A76B58`, plus the outlying `0x82AB0850` block): written by four sub-lanes.
+  Three map names were wrong and are corrected, each from its retail callers: `0x82A707E8` is
+  `GetDOClass(unsigned)`, not `~ScopedCS`; `0x82A75288` is `AddToCachedDuplicationSet`; `0x82A75458` is
+  `RemoveFromDuplicationSet`, and the real `IsInDuplicationSet` is `0x82A75390`. Ten rows are capped by calls to
+  fold-survivor names (`0x823EA598`, `0x82A478D0`), and five by inline jump-table words that the target object holds
+  as raw data.
+- **PRUDPEndPoint** (`0x82B31AB8..0x82B358E8`): `0x82B35778`'s carve swallowed a pad word (0x38 → 0x34).
+  `ServiceIncomingPacket` (2,912 B, 97.27) has a nested handler inline that our compiler will not expand.
+  `SetKeepAliveTimeout` is six reserved words short.
+- **PRUDPStream** (`0x82AFB6E0..0x82AFFEC0`): the TU's own functions end at `Trace`, followed by its COMDAT tail.
+  `0x82AFC2A8` (mapped `map<DOHandle,…>::end`, 100 on main) is retail vtable slot 21 and returns `0x10001`, so it is
+  `PRUDPStream::Teardown`. The re-split dropped `fn_82AFEF08`, an 8-byte phantom over an EH prefix.
+- **JobBackEndServicesLogin** (`0x82ADB5F8..0x82ADD088`): 21 of 22 at 100 once `0x82A6DE40` is named.
+  `Complete(qResult)` needs a 12-byte reservation from an inline `BackEndServices::Logout` whose body we do not hold,
+  and the lane refused to fit one.
+- **ObjDupProtocol** (`0x82A937E0..0x82A97EF0`): **renamed `0x82A6DE40` from `XShowSocialNetworkImagePostUI` to
+  `RootObject::operator new(size_t, const char*, unsigned)`**, because its body allocates with file and line. Every
+  Quazal TU calls it, and the rename also moved four rows in MemoryManager, Scheduler and BandwidthCounter.
+  `ParseSpecificMessage` holds an inline jump table of 22 absolute addresses, which the target has as raw words.
+
+### 3.3 Integration: shared headers and one spelling per function
+
+Seven lanes writing against the same Quazal headers in parallel produced conflicts. Each was settled by measurement
+on the merged tree:
+
+- **`qMemAllocator.h`.** PRUDPStream removed `~MemAllocator` and switched to converting constructors for all X360
+  TUs. That made JobBackEndServicesLogin's `ConnectStream` inlinable (100 → 0, not emitted) and cost its ConnectTo*
+  rows and StationURL's constructors. Main's shape is now the default, and PRUDPStream opts in with
+  `/DRB3_QUAZAL_MEMALLOCATOR_CTORS`. StationURL already gated its own variant behind `/DRB3_QUAZAL_RETAIL_MEMALLOCATOR`.
+- **`ScopedCS.h` / `CriticalSection.h`**: DuplicatedObject's version (`critSec->Enter()` with an inline gate). The
+  other lanes adopted it with identical scores.
+- **`Core.h` / `Scheduler.h`.** Two shapes, measured whole-binary on the merged tree:
+  DuplicatedObject's (`Core::GetInstance` with locals, if/else `Scheduler::GetInstance`) **52,181 / 5,714,832 B**
+  vs main's **52,178 / 5,711,320 B**. Main's shape gains PRUDPStream rows and costs 13 DuplicatedObject rows
+  (SendStubMessage, UndeleteMainRef, the ctor and others). DuplicatedObject's shape is kept. Retail's
+  `0x82A6F650` body also matches it, while main's ternary-plus-dead-code does not. **No single shape satisfies both
+  that body and PRUDPStream's caller reservations**, so 12 PRUDPStream rows (and their funclets) sit at 99.6–99.96
+  for want of a third shape. Gating the two shapes per TU was not done: that would give one inline function two
+  definitions, which is not a source.
+- **`RootObject.h`: `~RootObject() {}` is kept.** Two lanes found retail's unwind actions calling an empty
+  RootObject destructor. Removing it (E1) measured **+1 fn / +3,248 B**: five DuplicatedObject rows reach 100
+  (`MigrationInProgress`, `EmigrateTo`, `Publish`, `Create`, `AddToCachedDuplicationSet`, where retail expands
+  `GetHandle()` and ours stops expanding it). But it sends 16 PRUDPEndPoint/PRUDPStream funclets to 0, because
+  their call disappears, and moves four StationURL funclets 99.5 → 73.5. That trade removes a retail-evidenced
+  construct for a headline gain, so it was not taken. Two follow-ups did not find the mechanism: E3 (`DOHandle` not
+  derived from `RootObject`) and E4 (no explicit `~DOHandle`) both measured Δ0. **What lets retail inline
+  `GetHandle` with that destructor present is open.**
+- **One spelling per retail function.** Callees were placeholders (forgiven) on main. Once a TU's own map named
+  them, every other lane's guessed spelling became a charge. Callers now use the name the owning TU maps: StationURL
+  (`SetRVConnectionID` is the `"RVCID"` setter at `0x82AA3018`, decided by the key string each setter loads),
+  `PRUDPStream::Send`/`ReleaseEndPoint` (Wii-attested, in source order), `DORefTemplate<T>::IsValid`, and
+  DuplicatedObject ↔ ObjDupProtocol method names. **One of these was a real logic defect:** NAT's
+  `GetUpdatedURL` called `0x82AA3218` as `IsEqual`, but that body is `strcmp(...) != 0` (`operator!=`), so the
+  name stated the inverse of what the code does. It now reads `m_oURL != url`. The same applies outside the block:
+  `SessionJobs_Xbox`'s join-target static is a `Quazal::StationURL`.
 
 ## 4. Whole-binary A/B
 
-(filled in below)
+`ab_measure` refuses a patch that touches `symbols.txt`, so, as in W16-NW, the change is measured in two legs in one
+fresh `setup_worktree.sh` worktree (`~/tmp/wt-w16-ny-ab`) on main **`871b44290`**, after the branch was rebased
+onto it. An earlier identical pair on main `d792b486f` (before the SessionJobs and comment commits) gave the same
+deltas.
+
+### 4.1 Leg 0: main → main + this branch's `symbols.txt`
+
+The change is two lines: the phantom `fn_82AFEF08` is removed, and `0x82B35778` goes 0x38 → 0x34. Settled
+builds (the settle build did no compile or split work), `report.json` + `report.cache` wiped before each read.
+
+**Prediction:** Δmatched 0 and Δmatched_code 0, `total_functions` −1, `total_code` −12. **Measured: Δ0 on every key**
+(51,607 / 24,645 masked / 5,643,848 B / 68,914 rows / 10,247,792 B on both legs, and 0 rows moved). The totals
+prediction was wrong because `report.json` already billed `fn_82B35778` at 52 B and never listed `fn_82AFEF08` as
+a row.
+
+### 4.2 Leg 1: `ab_measure --patch` (pins, `objects.json`, sources, headers, map) on the leg-0 base
+
+`python3 tools/ab_measure.py --worktree ~/tmp/wt-w16-ny-ab --patch ~/tmp/w16ny/ab2.patch`, run dir
+`~/tmp/wt-w16-ny-ab/.ab_measure_runs/20261002-215541-ab2-3345087/`.
+
+**Prediction, written before the run:** Δmatched +582, Δmatched_code +72,656 B, from the integrated tree's reading
+against the first A/B.
+
+```
+leg A: matched=51607 masked=24645 honest=26962 code%=55.073800  (recompiles: 0, settled)
+leg B: matched=52189 masked=24904 honest=27285 code%=55.782787  (recompiles: 1412, split=1, patch_steps=13, settle iterations: 2)
+split fixed point: leg A converged after 0 extra re-split(s), leg B after 0
+Δmatched=+582  Δmasked_equal=+259  Δhonest=+323  Δcode%=+0.708987pp  Δcode_bytes=+72656
+Δfuzzy=+1.134963pp   (legA 60.492817 -> legB 61.627780)
+unit net (ALL units) = +582   vs whole-binary Δmatched = +582
+```
+
+**Measured exactly as predicted.** Per unit: NATTraversalEngine +146, PRUDPStream +114, StationURL +112,
+PRUDPEndPoint +83, DuplicatedObject +60, ObjDupProtocol +45, JobBackEndServicesLogin +20, and MemoryManager +2
+(the `0x82A6DE40` rename). `masked_equal` +259 is mostly EH funclets pairing by byte signature, so the honest
+gain is **+323 functions**.
+
+### 4.3 Rows that went down (leg A → leg B, keyed by unit and row name)
+
+| row | size | fuzzy | reason |
+|---|---:|---|---|
+| `NetSession::Poll` | 428 | 98.944 → 94.645 | Already below 100. It holds a `Quazal::Time` temp, so it feels the retail-evidenced `~RootObject() {}` (§3.3). |
+| DuplicatedObject `_Rb_tree<DOHandle,…>::_S_right` @ `0x82AB0850` | 16 | 100 → 0 | Outside the TU's retail span and never called from it. It paired only because plain `/Od` emitted an out-of-line copy. |
+| DuplicatedObject `fn_82AB0CDC` | 40 | 100 → 74 | EH funclet of STLport string code in the same outlying block. It paired by byte signature with funclets of the old `/EHsc` build, and the TU is `/EHs-c-` now. |
+| DuplicatedObject `fn_82AB0D44` | 44 | 99.9 → 0 | Same. |
+
+Two rows at 100 disappear under their old names and are at 100 under the corrected ones: `??1ScopedCS` @
+`0x82A707E8` → `DuplicatedObject::GetDOClass` (40 B), and `map<DOHandle,…>::end` @ `0x82AFC2A8` →
+`PRUDPStream::Teardown` (52 B). Net cost of the downs: 56 B (`_S_right` + `fn_82AB0CDC`), already inside the
++72,656 B.
+
+### 4.4 Measured alternatives not taken (on the merged tree, before the final A/B)
+
+| change | Δ fns / Δ B | why not |
+|---|---|---|
+| main's `Core.h`/`Scheduler.h` instead of DuplicatedObject's | −3 / −3,512 | §3.3 |
+| remove `~RootObject() {}` (E1) | +1 / +3,248 | removes a retail-evidenced destructor; 16 funclets lose their call (§3.3) |
+| `DOHandle` without `RootObject` base (E3) | 0 / 0 | no effect |
+| no explicit `~DOHandle` (E4) | 0 / 0 | no effect |
+| `GetInstanceFromVector` without `__declspec(noinline)` (E2) | −5 / +216 | +5 ObjDupProtocol rows, −4 PRUDPStream and −1 DuplicatedObject rows at 100 |
 
 ## 5. Native gate
 
 (run last)
 
 ## 6. Not done
+
+- **The rest of the block.** 98 path-anchored TUs and every path-less TU remain scaffold or `auto_*`. The block is
+  now ~9.1% of `total_code` at ~9% matched.
+- **Fold/alias charges, left for the alias lane:**
+  - 132 funclet call sites name `~RootObject`/`~Time`/`~ScopedCS`, where the map has the empty-body fold survivor
+    `StlNodeAlloc` ctor.
+  - `0x823EBC90`/`GetInstanceType1Delegator` (ObjDupProtocol ×5, NAT ×3, PRUDPStream, PRUDPEndPoint).
+  - `0x823EA598` (`reverse_iterator`, DuplicatedObject ×4).
+  - `0x82AFF0F0` (`~InetAddressList` vs NAT's `~qList<StationURL>`, 2 NAT funclets at 99.5).
+  - `_List_base<T*>::clear` instantiations.
+- The third `Core`/`Scheduler` shape (§3.3), and the `~RootObject`/`GetHandle` question.
+- StationURL's four constructors; `ServiceIncomingPacket`; `BackEndServices::Logout`'s body;
+  DuplicatedObject's `Trace` (unwritten).
+- `InstanceTable::GetInstanceFromVector` is `__declspec(noinline)` (DuplicatedObject's lane). ObjDupProtocol's
+  frames want it inline-but-declined (12 bytes): five of its rows sit at 99.7–99.87 here. E2 (§4.4) trades them for
+  PRUDPStream/DuplicatedObject rows, so it is unresolved. Like §3.3, a single shape satisfying both is missing.
+- Names: the method names for X360-only functions are chosen by these lanes and are not retail-attested. Names
+  that are Wii-attested are marked as such in the lane reports.
