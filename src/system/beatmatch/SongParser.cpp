@@ -2219,7 +2219,7 @@ bool SongParser::HandleRGGemStop(
                             geminfo.frets[si] = (char)mRGHandPos;
                         }
                         if (src->mChannel == 4) {
-                            geminfo.no_strum = kStrumForceOff;
+                            geminfo.no_strum = kStrumForceOn;
                         }
                     } else {
                         geminfo.frets[si] = (char)-1;
