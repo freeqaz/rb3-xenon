@@ -5736,15 +5736,15 @@ RhythmDetector.cpp:
 	.pdata      start:0x821F1638 end:0x821F1648
 	.pdata      start:0x821F1678 end:0x821F1680
 	.pdata      start:0x821F1690 end:0x821F16C0
-	.pdata      start:0x821F16C8 end:0x821F1700
 	.text       start:0x822703A8 end:0x82270414
 	.text       start:0x82270690 end:0x822707C0
 	.text       start:0x82270848 end:0x82270B1C
-	.text       start:0x82270B84 end:0x82270E68
 	.text       start:0x8227173C end:0x82271748
 
 App.cpp:
+	.pdata      start:0x821F16C8 end:0x821F1700
 	.pdata      start:0x821F1700 end:0x821F1748
+	.text       start:0x82270B84 end:0x82270E68
 	.text       start:0x82270E68 end:0x822716E8
 
 UIListDir.cpp:
