@@ -13,6 +13,7 @@
 #include "ObjDup/Session.h"
 #include "ObjDup/ObjDupProtocol.h"
 #include "Plugins/Message.h"
+#include "Protocol/ProtocolCallContext.h"
 #include "Platform/Time.h"
 
 namespace Quazal {
@@ -180,6 +181,148 @@ namespace Quazal {
         return bResult;
     }
 
+    void DuplicatedObject::ExecChangeMasterStation(const ChangeMasterStationOperation &op) {
+        DOHandle hStation(op.m_refStation.m_hReferencedDO);
+        DOHandle hNewMaster(op.m_refNewMaster.m_hReferencedDO);
+        LogicalClockTmpl<unsigned char> lcVersion(op.m_refNewMaster.m_lcVersion);
+        if (m_refMasterStation.m_lcVersion >= lcVersion) {
+            if (op.GetContext() == 0) {
+                lcVersion = LogicalClockTmpl<unsigned char>(
+                    m_refMasterStation.m_lcVersion.m_value + (unsigned char)1
+                );
+            } else {
+                return;
+            }
+        }
+        if (m_refMasterStation.GetHandle() == hNewMaster) {
+            if (m_refMasterStation.m_lcVersion != LogicalClockTmpl<unsigned char>(1)) {
+                Trace(1);
+            }
+            m_refMasterStation.m_lcVersion = lcVersion;
+            return;
+        }
+        DOHandle hLocal = Station::GetLocalStation();
+        if (hLocal == hStation) {
+            if (!IsADuplicationMaster()) {
+                Trace(1);
+            }
+            m_setDuplicationSet.Clear();
+            SetMasterStation(MasterStationRef(hNewMaster, lcVersion));
+        } else if (hLocal == hNewMaster) {
+            bool bReconnect = !m_refMasterStation.GetDO()->IsDeleted();
+            if (op.GetContext() == 0) {
+                bReconnect = false;
+            }
+            SetMasterStation(MasterStationRef(hNewMaster, lcVersion));
+            if (bReconnect) {
+                DORef refOldMaster((DOHandle(hStation)));
+                AddToDuplicationSet(refOldMaster.Get<Station>());
+            }
+            if (op.GetStationList()) {
+                qList<DOHandle>::const_iterator it;
+                for (it = op.GetStationList()->begin(); it != op.GetStationList()->end(); ++it) {
+                    if (*it != Station::GetLocalStation()) {
+                        DOHandle hDuplica = *it;
+                        int iState =
+                            StationConnections::GetInstance()->GetConnectionState(hDuplica);
+                        switch (iState) {
+                        case 0: {
+                            DORef refDuplica((DOHandle(hDuplica)));
+                            AddToDuplicationSet(refDuplica.Get<Station>());
+                            break;
+                        }
+                        case 2: {
+                            JobConnectStation *pJob =
+                                StationConnections::GetInstance()->GetConnectionJob(hDuplica);
+                            pJob->QueueOperation(new (".\\DuplicatedObject.cpp", 0x31d)
+                                                     ChangeDupSetOperation(
+                                                         Station::GetLocalStation(), this,
+                                                         hDuplica, true,
+                                                         (ChangeDupSetOperation::Context)1
+                                                     ));
+                            break;
+                        }
+                        }
+                    }
+                }
+            }
+            m_setCachedDuplicationSet.Clear();
+        } else {
+            SetMasterStation(MasterStationRef(hNewMaster, lcVersion));
+        }
+        RemoveFromDuplicationSet(hNewMaster);
+    }
+
+    void DuplicatedObject::ExecChangeDupSet(const ChangeDupSetOperation &op) {
+        (void)op.GetFlags();
+        DOHandle hStation(op.m_refStation.m_hReferencedDO);
+        if (op.IsARemoval()) {
+            RemoveFromDuplicationSet(hStation);
+            if (op.GetContext() != 0) {
+                ForgetDuplicaOn(hStation);
+            }
+            return;
+        }
+        DORef refStation((DOHandle(hStation)));
+        Message msgDataSets;
+        GetDOClass(m_dohMyself.GetDOClassID())
+            ->SpecificAddDSToDiscoveryMessage(this, refStation.Get<Station>(), &msgDataSets);
+        Message *pMessage = ObjDupProtocol::GetInstance()->CreateDuplicaMessage();
+        ProtocolCallContext oContext;
+        if (op.GetMigrationContext() == 0) {
+            ObjDupProtocol::BuildCreateDuplica(
+                &oContext, pMessage, GetHandle(), m_refMasterStation.GetHandle(),
+                m_refMasterStation.m_lcVersion, msgDataSets.GetBuffer()
+            );
+        } else {
+            qList<DOHandle> lstStations;
+            FillDuplicaStationsList(&lstStations);
+            ObjDupProtocol::BuildMigrateDuplica(
+                &oContext, pMessage, op.GetMigrationContext(), GetHandle(),
+                DOHandle(m_refMasterStation.GetReferencedHandle()),
+                m_refMasterStation.m_lcVersion, msgDataSets.GetBuffer(), &lstStations
+            );
+        }
+        refStation.Get<Station>()->SendMessage(pMessage, true);
+        delete pMessage;
+        AddToDuplicationSet(refStation.Get<Station>());
+    }
+
+    bool DuplicatedObject::FaultRecoveryImpl(DOOperation *pOp) {
+        FaultRecoveryOperation *pFRO;
+        if (!pOp || pOp->GetType() != 5) {
+            pFRO = NULL;
+        } else {
+            pFRO = (FaultRecoveryOperation *)pOp;
+        }
+        DOHandle hNewMaster(pFRO->m_refNewMaster.m_hReferencedDO);
+        if (m_refMasterStation.GetHandle() == hNewMaster) {
+            if (pFRO->m_refNewMaster.m_lcVersion > m_refMasterStation.m_lcVersion) {
+                m_refMasterStation.m_lcVersion = pFRO->m_refNewMaster.m_lcVersion;
+            }
+            return true;
+        }
+        if (!ChangeMasterStation(
+                DOHandle(), m_refMasterStation.GetHandle(),
+                MasterStationRef(hNewMaster, pFRO->m_refNewMaster.m_lcVersion), NULL, 0
+            )) {
+            {
+                OperationScope scope(2);
+                pFRO->Trace(0x20u);
+            }
+            return false;
+        }
+        if (hNewMaster == Station::GetLocalStation()) {
+            if (m_refMasterStation.GetHandle() != hNewMaster) {
+                Trace(1);
+            }
+            if (!CallApproveFaultRecovery()) {
+                DeleteMainRef();
+            }
+        }
+        return true;
+    }
+
     void DuplicatedObject::DecreaseRefCount(bool bRelevance) {
         bool bKeep = true;
         {
@@ -227,14 +370,14 @@ namespace Quazal {
         if (op.IsADuplica()) {
             Refresh();
         }
-        if (MainRefReleased()) {
+        if (IsDeleted()) {
             AcquireMainReference();
             SetFlag(1);
         } else {
             DOSelections::GetDuplicatedObjects()->AddDO(this);
             InitDO();
         }
-        if (GetHandle() == DOHandle(m_refMasterStation.GetReferencedHandle())) {
+        if (GetHandle() == m_refMasterStation.GetHandle()) {
             Station::DynamicCast(this)->AcquireStationReference();
         }
         if (op.IsADuplica()) {

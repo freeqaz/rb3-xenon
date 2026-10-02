@@ -75,8 +75,10 @@ namespace Quazal {
         bool PerformOperation(DOOperation *);
         void ExecRemoveFromStore(const RemoveFromStoreOperation &);
         void ExecAddToStore(const AddToStoreOperation &);
-        bool ExecChangeMasterStation(const ChangeMasterStationOperation &);
-        bool ExecChangeDupSet(const ChangeDupSetOperation &);
+        void ExecChangeMasterStation(const ChangeMasterStationOperation &);
+        void SetMasterStation(const MasterStationRef &);
+        void ExecChangeDupSet(const ChangeDupSetOperation &);
+        void ForgetDuplicaOn(DOHandle);
         bool FaultRecoveryImpl(DOOperation *);
         bool PerformFaultRecovery(DOHandle, LogicalClockTmpl<unsigned char>);
         bool SendToAllDuplicas(Message *, unsigned int);
@@ -134,7 +136,7 @@ namespace Quazal {
 
         bool FlagIsSet(unsigned short f) const { return (m_uiFlags & f) == f; }
         // Lane-chosen name: flag 1 is set while the main reference is held.
-        bool MainRefReleased() const { return !FlagIsSet(1); }
+        bool IsDeleted() const { return !FlagIsSet(1); }
 
         DOHandle GetHandle() const {
             unsigned int uiID = m_dohMyself.GetID();

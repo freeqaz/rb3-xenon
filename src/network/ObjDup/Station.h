@@ -20,6 +20,8 @@ namespace Quazal {
         void ReleaseStationReference();
 
         static Station *GetLocalInstance();
+        static DOHandle GetLocalStation();
+        void SendMessage(Message *, bool);
 
         static Station *DynamicCast(DuplicatedObject *pDO) {
             if (pDO && pDO->IsAKindOf(_DO_Station::s_uiClassID))

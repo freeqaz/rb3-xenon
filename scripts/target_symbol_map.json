@@ -34977,5 +34977,8 @@
  "0x82a71c48": "?DecreaseRefCount@DuplicatedObject@Quazal@@QAAX_N@Z",
  "0x82a71ff8": "?Refresh@DuplicatedObject@Quazal@@QAA_NXZ",
  "0x82a71d60": "?ExecAddToStore@DuplicatedObject@Quazal@@QAAXABVAddToStoreOperation@2@@Z",
- "0x82a71a80": "?ExecRemoveFromStore@DuplicatedObject@Quazal@@QAAXABVRemoveFromStoreOperation@2@@Z"
+ "0x82a71a80": "?ExecRemoveFromStore@DuplicatedObject@Quazal@@QAAXABVRemoveFromStoreOperation@2@@Z",
+ "0x82a72a90": "?FaultRecoveryImpl@DuplicatedObject@Quazal@@QAA_NPAVDOOperation@2@@Z",
+ "0x82a72718": "?ExecChangeDupSet@DuplicatedObject@Quazal@@QAAXABVChangeDupSetOperation@2@@Z",
+ "0x82a72080": "?ExecChangeMasterStation@DuplicatedObject@Quazal@@QAAXABVChangeMasterStationOperation@2@@Z"
 }
