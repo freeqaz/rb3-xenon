@@ -3,6 +3,7 @@
 // Every body written from the retail asm.
 #include "synth_xbox/XMAReader.h"
 #include "../../Memory.h"
+#include "math/Utl.h"
 #include "os/File.h"
 #include "synth/StandardStream.h"
 #include "utl/BinStream.h"
@@ -145,8 +146,9 @@ void XMAReader::Poll(float) {
     for (unsigned int i = 0; i < unk24.size(); i++)
         XMAPlaybackGetErrorBits(mPlayback, 0);
     if (mBlockOffset < 0 || FinishSeek()) {
+        unsigned int s = 0;
         int block = 0;
-        for (unsigned int s = 0; s < unk24.size(); s++) {
+        for (; s < unk24.size(); s++) {
             short *data;
             int samples = XMAPlaybackQueryAvailableData(mPlayback, s, (void **)&data);
             XMAReaderBlock *first = mBlocks[block];
@@ -179,8 +181,11 @@ void XMAReader::Poll(float) {
                 break;
             if (mBlockOffset == -1) {
                 if (mSampleOffset != 0) {
-                    if (mSampleOffset < samples)
-                        samples = mSampleOffset;
+                    // Retail zero-extends the skip to 64 bits before the
+                    // 32-bit compare (`clrrwi r11,r10,0`).
+                    __int64 skip = (unsigned int)mSampleOffset;
+                    if ((int)skip < samples)
+                        samples = (int)skip;
                     mSampleOffset -= samples;
                 } else {
                     std::vector<void *> ptrs(TableSum());
@@ -191,7 +196,7 @@ void XMAReader::Poll(float) {
             }
             for (int i = 0; i < TableSum(); i++)
                 mBlocks[i]->Consume(samples * 2);
-            unk30 += samples;
+            unk30 = samples + unk30;
             if (unk30 >= mSeekTable.back())
                 mDone = true;
         } while (samples != 0);
@@ -206,11 +211,12 @@ void XMAReader::Poll(float) {
                 }
             }
             if (ready) {
-                int size = mDataSize - mSubmitBlock * mBlockSize;
-                if (size >= mBlockSize)
-                    size = mBlockSize;
+                int left = mDataSize - mSubmitBlock * mBlockSize;
+                int size = left < mBlockSize ? left : mBlockSize;
                 for (unsigned int i = 0; i < unk24.size(); i++) {
-                    int offset = mFirstSubmit ? i << 11 : 0;
+                    int offset = 0;
+                    if (mFirstSubmit)
+                        offset = i << 11;
                     int len = size - offset;
                     if (len >= 0)
                         XMAPlaybackSubmitData(
