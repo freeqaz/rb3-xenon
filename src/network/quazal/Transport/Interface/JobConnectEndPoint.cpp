@@ -19,10 +19,6 @@
 
 #define JCEP_FILE ".\\Transport\\Interface\\JobConnectEndPoint.cpp"
 
-// Quazal's consistency check compiles to its discarded condition in this
-// build: retail evaluates `this` for the call and nothing else.
-#define JCEP_CHECK(cond) ((void)(cond))
-
 namespace Quazal {
 
     // The list allocator and list wrapper as this TU's retail code uses them:
@@ -162,6 +158,9 @@ namespace Quazal {
 
         _State GetState() const { return m_eState; }
         void SetTimeout(Time t) { m_tTimeout = t; }
+        void SetTimeoutMs(unsigned int uiTimeout) {
+            SetTimeout(Time::ConvertTimeoutToDeadline(uiTimeout));
+        }
 
         unsigned int m_unk8; // 0x8
         _State m_eState; // 0xc
@@ -181,43 +180,9 @@ namespace Quazal {
 
     class Scheduler;
 
-    class InstantiationContext : public RootObject {
-    public:
-        unsigned int GetInstance(unsigned int);
-    };
-
-    class SystemError : public RootObject {
-    public:
-        static void SignalError(const char *, unsigned int, unsigned int, unsigned int);
-    };
-
-    class InstantiationContextVector : public RootObject {
-    public:
-        unsigned int size() const;
-        InstantiationContext *&operator[](unsigned int n) { return *(m_pStart + n); }
-
-        InstantiationContext **m_pStart;
-        InstantiationContext **m_pFinish;
-    };
-
-    // GetInstance (below) is too large for /Ob1 to expand once this body is
-    // expanded into it, and every caller reserves that whole frame.
     class InstanceTable : public RootObject {
     public:
-        unsigned int GetInstanceFromVector(unsigned int ui, unsigned int idx) {
-            if (idx == 0) {
-                return m_oDefaultContext.GetInstance(ui);
-            } else if (idx >= m_pvContextVector->size()) {
-                SystemError::SignalError(0, 0, 0xe0000003, 0);
-                return -1;
-            } else {
-                return (*m_pvContextVector)[idx]->GetInstance(ui);
-            }
-        }
-
-        InstantiationContext m_oDefaultContext; // 0x0
-        char m_pad[0x30];
-        InstantiationContextVector *m_pvContextVector; // 0x30
+        unsigned int GetInstanceFromVector(unsigned int, unsigned int);
     };
 
     class InstanceControl : public RootObject {
@@ -386,6 +351,7 @@ namespace Quazal {
         }
         NATTraversalEngine *GetNATTraversalEngine();
         void SortURLs(qList<StationURL> &);
+        static TransportAdapter *GetTransportAdapter() { return s_pTransportAdapter; }
         static TransportAdapter *s_pTransportAdapter;
 
         char m_data[0x4c];
@@ -579,7 +545,10 @@ namespace Quazal {
                 "JobConnectEndPoint::TryConnectViaRouting"
             ));
         }
-        JCEP_CHECK(!m_lstURLs.empty());
+        if (m_lstURLs.empty()) {
+            // Only a trace here, which this build compiles out: retail still
+            // evaluates `this` for empty() and drops the result.
+        }
         SetStep(Step((JobStateFunc)&JobConnectEndPoint::SortURLs, "JobConnectEndPoint::SortURLs"));
         if (!m_lstURLs.empty() && !m_lstTechniques.empty()) {
             m_uiAttemptTimeout = Time::ConvertDeadlineToTimeout(m_tTimeout)
@@ -658,7 +627,8 @@ namespace Quazal {
 
     void JobConnectEndPoint::SortURLs() {
         Network::GetInstance()->SortURLs(m_lstURLs);
-        JCEP_CHECK(!m_lstURLs.empty());
+        if (m_lstURLs.empty()) {
+        }
         SetStep(Step(
             (JobStateFunc)&JobConnectEndPoint::SelectConnectionTechnique,
             "JobConnectEndPoint::SelectConnectionTechnique"
@@ -672,7 +642,7 @@ namespace Quazal {
                 "JobConnectEndPoint::ConnectionFailed"
             ));
         } else {
-            SetStep(*m_lstTechniques.begin());
+            SetStep(m_lstTechniques.front());
             m_lstTechniques.pop_front();
         }
     }
@@ -753,9 +723,10 @@ namespace Quazal {
     }
 
     void JobConnectEndPoint::ResolveCurrentURL() {
-        m_oResolveContext.SetTimeout(Time::ConvertTimeoutToDeadline(m_uiAttemptTimeout));
+        m_oResolveContext.SetTimeoutMs(m_uiAttemptTimeout);
         UpdateCurrentURL();
-        Network::s_pTransportAdapter->ResolveURL(&m_oResolveContext, &*m_itCurrentURL);
+        Network::GetTransportAdapter()->ResolveURL(&m_oResolveContext, &*m_itCurrentURL);
+
         SetStep(Step(
             (JobStateFunc)&JobConnectEndPoint::WaitForURLResolution,
             "JobConnectEndPoint::WaitForURLResolution"
@@ -826,10 +797,9 @@ namespace Quazal {
             ));
         } else {
             if (m_pEndPoint->IsConnected()) {
-                bool bResult = m_pEndPoint->Disconnect(
-                    DisconnectCallback, UserContext(this), m_uiAttemptTimeout
-                );
-                if (bResult) {
+                if (m_pEndPoint->Disconnect(
+                        DisconnectCallback, UserContext(this), m_uiAttemptTimeout
+                    )) {
                     AcquireRef();
                     SetToSuspended();
                 } else {
