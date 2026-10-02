@@ -3,6 +3,7 @@
 #include "ObjDup/DOHandle.h"
 #include "ObjDup/DORef.h"
 #include "ObjDup/MasterStationRef.h"
+#include "Platform/LogicalClock.h"
 
 namespace Quazal {
     class DuplicatedObject;
@@ -68,14 +69,31 @@ namespace Quazal {
     class UpdateDataSetOperation : public DOOperation {
     public:
         UpdateDataSetOperation(DOHandle, DuplicatedObject *, unsigned char, Message *);
+        UpdateDataSetOperation(DOHandle, DuplicatedObject *, Message *);
         virtual ~UpdateDataSetOperation();
         virtual int GetType() const;
         virtual const char *GetClassNameString() const;
         virtual void ForceImplOperationCommonMethodsMacro();
         virtual void TraceImpl(_Event, unsigned int) const;
 
+        bool UpdatesAllDataSets() const { return m_bAllDataSets; }
+        unsigned char GetDataSetID() const { return m_ucDataSetID; }
+        Message *GetMessage() const { return m_pMessage; }
+
         bool m_bAllDataSets; // 0x20
         unsigned char m_ucDataSetID; // 0x21
         Message *m_pMessage; // 0x24
+    };
+
+    class FaultRecoveryOperation : public DOOperation {
+    public:
+        FaultRecoveryOperation(DuplicatedObject *, DOHandle, LogicalClockTmpl<unsigned char>);
+        virtual ~FaultRecoveryOperation();
+        virtual int GetType() const;
+        virtual const char *GetClassNameString() const;
+        virtual void ForceImplOperationCommonMethodsMacro();
+        virtual void TraceImpl(_Event, unsigned int) const;
+
+        unsigned char unk20[0x10]; // 0x20
     };
 }

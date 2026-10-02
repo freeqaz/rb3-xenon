@@ -9,6 +9,7 @@ namespace Quazal {
     public:
         DORef();
         DORef(DOHandle);
+        DORef(DuplicatedObject *);
         ~DORef();
 
         DOHandle GetHandle() const { return m_hReferencedDO; }

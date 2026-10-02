@@ -22,6 +22,10 @@ namespace Quazal {
     class AddToStoreOperation;
     class ChangeMasterStationOperation;
     class ChangeDupSetOperation;
+    class CallMethodOperation;
+    class UpdateDataSetOperation;
+    class FetchContext;
+    class MigrationContext;
     template <class T>
     class qList;
     template <class T>
@@ -79,22 +83,28 @@ namespace Quazal {
         bool ExecChangeDupSet(const ChangeDupSetOperation &);
         bool FaultRecoveryImpl(DOOperation *);
         bool PerformFaultRecovery(DOHandle, LogicalClockTmpl<unsigned char>);
-        bool SendToAllDuplicas(Message *, unsigned int);
-        bool SendToSomeDuplicas(Selection *, Message *, unsigned int);
+        void DispatchRMCCall(const CallMethodOperation &);
+        void ExecUpdateDataSet(const UpdateDataSetOperation &);
+        static bool SendConnectOrphanRequest(FetchContext *, DOHandle);
+        void SendToAllDuplicas(Message *, unsigned int);
+        void SendToSomeDuplicas(Selection *, Message *, unsigned int);
         bool IsGlobal() const;
+        bool EmigrateTo(MigrationContext *, DOHandle);
         bool MigrationInProgress() const;
         bool AttemptEmigration(DOHandle);
-        bool PrepareToLeave();
-        bool SelectNewLocation(unsigned int);
+        void PrepareToLeave();
+        DOHandle SelectNewLocation(unsigned int);
         bool IsADuplica() const;
         bool IsADuplicationMaster() const;
         bool IsAWellKnownDO() const;
         unsigned int GetMasterID() const;
-        bool CompleteDecreaseRefCount();
+        void ReleaseMainReference();
+        void CompleteDecreaseRefCount();
         void SetFlag(unsigned short);
         void ClearFlag(unsigned short);
         bool DeleteMainRef();
         bool DeleteDuplicaMainRef();
+        bool DeleteMainRefImpl();
         bool ConnectOrphanDuplica();
         bool Publish(unsigned int);
         void FillDuplicaStationsList(qList<DOHandle> *);
@@ -142,6 +152,38 @@ namespace Quazal {
 
         bool FlagIsSet(unsigned short f) const { return (m_uiFlags & f) == f; }
         bool IsDeleted() const { return !FlagIsSet(1); }
+
+        void ReleaseReference(bool bRelevance) {
+            bool bKeep = true;
+            {
+                volatile ScopedCS cs(s_csRefCount);
+                if (bRelevance) {
+                    m_uiRelevanceCount--;
+                }
+                m_uiRefCount--;
+                if (m_uiRefCount == 0) {
+                    m_uiRefCount++;
+                    bKeep = false;
+                }
+            }
+            if (!bKeep) {
+                ReleaseMainReference();
+            }
+        }
+
+        void DecreaseRefCount() {
+            bool bComplete = false;
+            {
+                volatile ScopedCS cs(s_csRefCount);
+                m_uiRefCount--;
+                if (m_uiRefCount == 0) {
+                    bComplete = true;
+                }
+            }
+            if (bComplete) {
+                CompleteDecreaseRefCount();
+            }
+        }
 
         void AcquireMainReference() {
             volatile ScopedCS cs(s_csRefCount);

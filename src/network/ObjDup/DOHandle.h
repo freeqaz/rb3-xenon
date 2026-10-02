@@ -1,5 +1,6 @@
 #pragma once
 #include "Platform/RootObject.h"
+#include "ObjDup/DOID.h"
 
 namespace Quazal {
     class DOHandle : public RootObject {
@@ -14,6 +15,10 @@ namespace Quazal {
 
         bool operator<(const DOHandle &h) const { return mValue < h.mValue; }
         bool operator==(const DOHandle &h) const { return mValue == h.mValue; }
+        bool operator!=(const DOHandle &h) const { return mValue != h.mValue; }
+
+        DOID GetDOID() const { return GetID(); }
+        bool IsAWKHandle() const;
 
         void SetDOClassID(unsigned int);
         const char *GetClassNameString() const;
