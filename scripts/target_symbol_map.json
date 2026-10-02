@@ -1,4 +1,13 @@
 {
+ "0x822a64a8": "?resize@?$vector@V?$ObjPtr@VRndDir@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABV?$ObjPtr@VRndDir@@@@@Z",
+ "0x823f4a58": "??$__destroy_range_aux@V?$reverse_iterator@PAUCheat@CheatProvider@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUCheat@CheatProvider@@@0@0ABU__false_type@0@@Z",
+ "0x822737a0": "?ClassName@RndAnimatable@@UBA?AVSymbol@@XZ",
+ "0x8241d9c8": "??$__uninitialized_fill_n@PAV?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@IV12@@stlpmtx_std@@YAPAV?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@0@PAV10@IABV10@ABU__false_type@0@@Z",
+ "0x82307440": "??$__uninitialized_copy@PAV?$ObjPtr@VBandTrack@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VBandTrack@@@@PAV1@00ABU__false_type@0@@Z",
+ "0x82307398": "??$__uninitialized_fill_n@PAV?$ObjPtr@VBandTrack@@@@IV1@@stlpmtx_std@@YAPAV?$ObjPtr@VBandTrack@@@@PAV1@IABV1@ABU__false_type@0@@Z",
+ "0x822da980": "?resize@?$ObjVector@V?$ObjPtr@VRndPartLauncher@@@@@@QAAXI@Z",
+ "0x822da8d0": "?resize@?$ObjVector@V?$ObjPtr@VRndPropAnim@@@@@@QAAXI@Z",
+ "0x822a4738": "??$_Copy_Construct@VMeshAO@OutfitConfig@@@stlpmtx_std@@YAXPAVMeshAO@OutfitConfig@@ABV12@@Z",
  "0x827938a0": "??$__uninitialized_move@PAV?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@PAV12@U__false_type@2@@stlpmtx_std@@YAPAV?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@0@PAV10@00U__false_type@0@ABU__true_type@0@@Z",
  "0x822cee20": "?PreLoad@BandScoreboard@@UAAXAAVBinStream@@@Z",
  "0x8272b7d8": "?resize@?$vector@VSampleMarker@@V?$StlNodeAlloc@VSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVSampleMarker@@@Z",

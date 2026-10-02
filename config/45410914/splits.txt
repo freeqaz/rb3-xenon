@@ -3067,7 +3067,7 @@ MeterEffect.cpp:
 	.text       start:0x82C43390 end:0x82C43420
 
 UI.cpp:
-	.pdata      start:0x82209000 end:0x82209010
+	.pdata      start:0x82209000 end:0x82209008
 	.pdata      start:0x82209038 end:0x82209040
 	.pdata      start:0x82209050 end:0x82209060
 	.pdata      start:0x82209070 end:0x822090B0
@@ -3087,7 +3087,7 @@ UI.cpp:
 	.pdata      start:0x82245E90 end:0x82245E98
 	.pdata      start:0x82245E98 end:0x82246018
 	.pdata      start:0x82246018 end:0x82246128
-	.text       start:0x823F4A30 end:0x823F4AB8
+	.text       start:0x823F4A30 end:0x823F4A58
 	.text       start:0x823F4C38 end:0x823F4C74
 	.text       start:0x823F4D58 end:0x823F4E0C
 	.text       start:0x823F4FA0 end:0x823F52BC
@@ -3355,7 +3355,8 @@ Spline.cpp:
 Character.cpp:
 	.pdata      start:0x821F4830 end:0x821F4840
 	.pdata      start:0x821F4878 end:0x821F4888
-	.pdata      start:0x821F4A30 end:0x821F4A60
+	.pdata      start:0x821F4A30 end:0x821F4A40
+	.pdata      start:0x821F4A50 end:0x821F4A60
 	.pdata      start:0x821F4B38 end:0x821F4B40
 	.pdata      start:0x821F4B58 end:0x821F4B68
 	.pdata      start:0x82201500 end:0x82201520
@@ -3399,7 +3400,8 @@ Character.cpp:
 	.text       start:0x822A3008 end:0x822A30C0
 	.text       start:0x822A3174 end:0x822A3178
 	.text       start:0x822A3FA8 end:0x822A3FB0
-	.text       start:0x822A46C0 end:0x822A4838
+	.text       start:0x822A46C0 end:0x822A4738
+	.text       start:0x822A47A0 end:0x822A4838
 	.text       start:0x822A4A18 end:0x822A4A20
 	.text       start:0x822A5028 end:0x822A5030
 	.text       start:0x822A51DC end:0x822A5258
@@ -5805,6 +5807,7 @@ CheatProvider.cpp:
 	.pdata      start:0x822089F0 end:0x82208AC8
 	.pdata      start:0x82208FB0 end:0x82208FC8
 	.pdata      start:0x82208FC8 end:0x82208FE8
+	.pdata      start:0x82209008 end:0x82209010
 	.pdata      start:0x82209010 end:0x82209018
 	.pdata      start:0x82209018 end:0x82209028
 	.pdata      start:0x82209028 end:0x82209038
@@ -5824,6 +5827,7 @@ CheatProvider.cpp:
 	.text       start:0x823EF5F8 end:0x823F0310
 	.text       start:0x823F4590 end:0x823F4688
 	.text       start:0x823F4688 end:0x823F4810
+	.text       start:0x823F4A58 end:0x823F4AB8
 	.text       start:0x823F4AB8 end:0x823F4B08
 	.text       start:0x823F4B08 end:0x823F4BA0
 	.text       start:0x823F4BA0 end:0x823F4C38
@@ -11873,6 +11877,7 @@ OutfitConfig.cpp:
 	.pdata      start:0x821F49C8 end:0x821F49D0
 	.pdata      start:0x821F49D8 end:0x821F4A18
 	.pdata      start:0x821F4A20 end:0x821F4A30
+	.pdata      start:0x821F4A40 end:0x821F4A50
 	.pdata      start:0x821F4A60 end:0x821F4A68
 	.pdata      start:0x821F4A68 end:0x821F4A88
 	.pdata      start:0x821F4A88 end:0x821F4A98
@@ -11973,6 +11978,7 @@ OutfitConfig.cpp:
 	.text       start:0x822A4258 end:0x822A43A4
 	.text       start:0x822A43E8 end:0x822A45B8
 	.text       start:0x822A4628 end:0x822A46C0
+	.text       start:0x822A4738 end:0x822A47A0
 	.text       start:0x822A4838 end:0x822A48A0
 	.text       start:0x822A48A0 end:0x822A4980
 	.text       start:0x822A4980 end:0x822A4A18
