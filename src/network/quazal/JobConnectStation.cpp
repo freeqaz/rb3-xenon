@@ -77,7 +77,7 @@ namespace Quazal {
         void Acquire();
 
         unsigned int GetReferencedHandle() const { return m_hReferencedDO.mValue; }
-        DOHandle GetHandle() const { return DOHandle(GetReferencedHandle()); }
+        DOHandle GetHandle() const { return m_hReferencedDO; }
         DuplicatedObject *GetDOPtr() const { return m_poReferencedDO; }
         DuplicatedObject *GetPtr() {
             if (m_poReferencedDO == NULL) {
@@ -561,7 +561,7 @@ namespace Quazal {
         SelectionIterator(bool, bool);
         ~SelectionIterator();
         void Next(bool);
-        bool EndReached() const { return m_oPosition.EndReached(); }
+        bool EndReached() const { return m_oPosition.m_oCursor == 0; }
 
         void *m_pSelection; // 0x0
         SelectionPosition m_oPosition; // 0x4
@@ -908,7 +908,7 @@ namespace Quazal {
         m_pEndPoint = pEndPoint;
         Message oMsg;
         oMsg << Station::GetLocalStationHandle().GetValue();
-        oMsg << m_refStation.GetHandle();
+        oMsg << m_refStation.GetHandle().GetValue();
         if (Network::GetInstance()->RegistersEndPoints()) {
             Network::GetInstance()->RegisterEndPoint(m_pEndPoint);
         }
@@ -1001,7 +1001,7 @@ namespace Quazal {
         m_oCallContext.Reset();
         Message oMsg;
         oMsg << Station::GetLocalStationHandle().GetValue();
-        oMsg << m_refStation.GetHandle();
+        oMsg << m_refStation.GetHandle().GetValue();
         if (!Network::Connect(
                 &m_oCallContext, oMsg.GetBuffer(), 0, &m_lstURLs, &m_pEndPoint,
                 GetConnectionTimeout()
@@ -1145,7 +1145,7 @@ namespace Quazal {
             StationManager::GetInstance()->DisconnectStation(m_refStation.operator->());
         }
         bool bDisconnectAll = s_bDisconnectOnError
-            && Station::GetLocalStationHandle().mValue > m_refStation.GetReferencedHandle();
+            && Station::GetLocalStationHandle().GetValue() > m_refStation.GetHandle().GetValue();
         if (bDisconnectAll) {
             SelectionIteratorTemplate<Station> it(true, true);
             while (!it.EndReached()) {
