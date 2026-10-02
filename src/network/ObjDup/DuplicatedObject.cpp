@@ -11,6 +11,8 @@
 #include "ObjDup/DOSelections.h"
 #include "ObjDup/CallRegister.h"
 #include "ObjDup/DOCallContext.h"
+#include "ObjDup/BundlingPolicy.h"
+#include "ObjDup/SelectionIterator.h"
 
 namespace Quazal {
 
@@ -199,6 +201,21 @@ namespace Quazal {
 
     void DuplicatedObject::SendToAllDuplicas(Message *pMessage, unsigned int ui) {
         SendToSomeDuplicas(&m_setDuplicationSet, pMessage, ui);
+    }
+
+    void DuplicatedObject::SendToSomeDuplicas(
+        Selection *pSelection, Message *pMessage, unsigned int ui
+    ) {
+        if (BundlingPolicy::GetInstance()) {
+            SelectionIterator it(pSelection, false);
+            BundlingPolicy::GetInstance()->SendToSelection(pMessage, &it, this, ui);
+        } else {
+            qMap<DOHandle, DuplicatedObject *>::const_iterator i = pSelection->m_map.begin();
+            while (i != pSelection->m_map.end()) {
+                static_cast<Station *>(i->second)->SendMessage(pMessage, ui);
+                ++i;
+            }
+        }
     }
 
     bool DuplicatedObject::IsGlobal() const {
