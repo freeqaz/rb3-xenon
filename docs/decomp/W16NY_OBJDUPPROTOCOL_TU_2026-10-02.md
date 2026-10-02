@@ -1,19 +1,19 @@
 # W16-NY — the ObjDupProtocol TU written from retail (2026-10-02)
 
-**Branch** `w16-ny-objdup`, started on main `c42c979f8`. **Ruler** `name_check` (graded). Permuter not run. No alias
+**Branch** `w16-ny-objdup`, started on main `c42c979f8`, rebased onto `d792b486f`. **Ruler** `name_check` (graded). Permuter not run. No alias
 group and no `symbol_aliases.json` entry touched. `ab_measure` and the native gate were left to the coordinator.
 
 ## 1. Result
 
 Graded `report.json` of this worktree's full build: unit `network/quazal/ObjDupProtocol` **81 rows, 49 at fuzzy 100,
-6,824 B of 18,056 B** (unit fuzzy 96.01). Whole binary in the same build: `matched_code` 5,647,780 /
-`matched_functions` 51,634 (W16-NW's leg B on the same base read 5,640,480 / 51,582). This is a hand reading, not an
-A/B; the unit was a 7-line map scaffold with every row at 0 before.
+6,824 B of 18,056 B** (unit fuzzy 96.01). The unit was a 7-line map scaffold with every row at 0 before.
 
-Outside the TU, 4 rows rose and none fell against the base (compared row by row against main's `report.json`; the two
-CharBlendBone rows that differ belong to W16-NZ, merged after this branch started): MemoryManager's ctor and
-`GetDefaultMemoryManager` to 100, Scheduler's ctor and `BandwidthCounterMap::operator[]` up a little. All of it comes
-from the map fix in §3.
+Whole binary, after rebasing onto main `d792b486f`, both settled builds, read from `report.json`: main
+`matched_code` 5,643,680 / `matched_functions` 51,605 → branch **5,650,980 / 51,657 (+7,300 B / +52)**.
+`total_code` and `total_functions` are unchanged (10,247,792 / 68,914): the pin only moves auto-unit rows into this
+unit. Rows compared by name: **0 down**, 4 up outside the TU — MemoryManager's ctor and `GetDefaultMemoryManager` to
+100, Scheduler's ctor and `BandwidthCounterMap::operator[]` up a little — all from the map fix in §3. This is a hand
+reading of two builds, not an `ab_measure` run.
 
 ## 2. The TU
 
