@@ -14,6 +14,8 @@
 #include "Platform/RootObject.h"
 #include "Platform/ScopedCS.h"
 
+extern "C" int abs(int);
+
 namespace Quazal {
 
     class Time {
@@ -31,7 +33,8 @@ namespace Quazal {
     class LogicalClock {
     public:
         LogicalClock() : m_v(0) {}
-        LogicalClock(unsigned int v) : m_v(v) {}
+        LogicalClock(unsigned short v) : m_v(v) {}
+        LogicalClock(int v) : m_v(v) {}
         LogicalClock(const LogicalClock &o) : m_v(o.m_v) {}
         ~LogicalClock() {}
         LogicalClock &operator=(const LogicalClock &o) {
@@ -42,6 +45,8 @@ namespace Quazal {
             m_v++;
             return *this;
         }
+        LogicalClock operator+(unsigned short) const;
+        int operator-(const LogicalClock &) const;
 
         unsigned short m_v;
     };
@@ -71,16 +76,24 @@ namespace Quazal {
         unsigned int GetContentSize();
         void AppendData(const unsigned char *, unsigned int, unsigned int);
         void AppendData(Buffer *);
+
+        char unk4[0x14 - 0x4];
     };
 
     class Timeout {
     public:
+        void SetExpirationDelay(unsigned int);
         void SetRTO(unsigned int);
-        void SetRelativeExpirationTime(unsigned int);
         bool IsExpired();
     };
 
     class PRUDPEndPoint;
+
+    class InetAddressRef {
+    public:
+        void Set(void *);
+        char unk0[4];
+    };
 
     class Packet : public RootObject {
     public:
@@ -89,8 +102,15 @@ namespace Quazal {
         virtual void ReleaseRef();
 
         unsigned char GetType() { return m_ucFlags & 7; }
+        bool HasFlag(unsigned char ucFlag) { return (m_ucFlags & ucFlag) != 0; }
+        void SetDestination(void *pAddress) { m_oDest.Set(pAddress); }
+        void SetSignature(unsigned int uiSignature) { m_uiSignature = uiSignature; }
+        void SetSessionID(unsigned char ucSessionID) { m_ucSessionID = ucSessionID; }
+        void SetSequenceID(LogicalClock oID) { m_oSequenceID = oID; }
+        LogicalClock GetSequenceID();
+        Time GetTimeStamp();
 
-        char unk4[0x12 - 0x4];
+        char unk8[0x12 - 0x8];
         unsigned char m_ucFlags;    // 0x12
         unsigned char m_ucSessionID; // 0x13
         unsigned int m_uiSignature;  // 0x14
@@ -98,19 +118,19 @@ namespace Quazal {
         char unk1a[0x20 - 0x1a];
         unsigned char m_ucFragmentID; // 0x20
         Buffer *m_pPayload;           // 0x24
-        char m_oDest[0x4];            // 0x28
-    };
-
-    class InetAddressRef {
-    public:
-        void Set(void *);
+        InetAddressRef m_oDest;       // 0x28
+        char unk2c[0xa8 - 0x2c];
+        Time m_tTimeStamp;            // 0xa8
     };
 
     class PacketOut : public Packet {
     public:
         PacketOut(PRUDPEndPoint *, unsigned char, unsigned char, Buffer *);
 
-        char unk2c[0xc0 - 0x2c];
+        Timeout *GetTimeout() { return m_pTimeout; }
+        unsigned short GetNbSends() { return m_usNbSends; }
+
+        char unkb0[0xc0 - 0xb0];
         Timeout *m_pTimeout;        // 0xc0
         char unkc4[0xc8 - 0xc4];
         unsigned short m_usNbSends; // 0xc8
@@ -134,6 +154,7 @@ namespace Quazal {
         unsigned int GetInitialRTT();
         unsigned int GetMaxWindowMapSize();
         unsigned int GetPingTimeout();
+        bool GetSendKeepAlive();
     };
 
     class Counters {
@@ -156,6 +177,30 @@ namespace Quazal {
     class PseudoSingleton {
     public:
         static unsigned int GetCurrentContext();
+    };
+
+    struct InstanceEntry {
+        char unk0[0xc];
+        void *m_pInstance; // 0xc
+    };
+
+    class InstanceTable {
+    public:
+        InstanceEntry *Find(unsigned int, unsigned int);
+    };
+
+    class InstanceControl {
+    public:
+        static void *GetInstance(unsigned int uiType) {
+            unsigned int uiContext = PseudoSingleton::GetCurrentContext();
+            InstanceEntry *pEntry = s_oInstanceTable.Find(uiType, uiContext);
+            if (pEntry == 0)
+                return 0;
+            else
+                return pEntry->m_pInstance;
+        }
+
+        static InstanceTable s_oInstanceTable;
     };
 
     template <class T> class PseudoGlobalVariable {
@@ -204,6 +249,9 @@ namespace Quazal {
         unsigned char GetPortType();
     };
 
+    class EndPoint;
+    typedef void (*pfCompletion)(EndPoint *, qResult, const UserContext *);
+
     class EndPoint {
     public:
         enum _ConnectionState {
@@ -231,15 +279,16 @@ namespace Quazal {
         virtual void SetPeerConnected() = 0;
         virtual void SetPeerDisconnected() = 0;
         virtual _ConnectionState GetConnectionState() = 0;
-        virtual void SetConnectionState(_ConnectionState) = 0;
+        virtual bool SetConnectionState(_ConnectionState) = 0;
         virtual void Unk16();
         virtual void SignalEvent(unsigned int);
         virtual unsigned int GetRTT() = 0;
         virtual unsigned int GetRTTAverage() = 0;
-        virtual qResult _Connect(Buffer *, Buffer *, void *, const UserContext &, unsigned int) = 0;
-        virtual qResult _Disconnect(void *, const UserContext &, unsigned int) = 0;
+        virtual qResult _Connect(Buffer *, Buffer *, pfCompletion, const UserContext &, unsigned int) = 0;
+        virtual qResult _Disconnect(pfCompletion, const UserContext &, unsigned int) = 0;
         virtual qResult _Send(Buffer *, unsigned int) = 0;
         virtual ~EndPoint();
+        virtual void SignalFault(unsigned int, bool) = 0;
 
         ConnectionOrientedStream *GetStream() { return m_pStream; }
 
@@ -320,11 +369,11 @@ namespace Quazal {
     class WaitLoop {
     public:
         WaitLoop(unsigned int, unsigned int);
-        virtual ~WaitLoop() {}
+        virtual ~WaitLoop();
         void Start();
         bool CheckExpiration(const char *, unsigned int, const char *);
 
-        char unk4[0x24 - 0x4];
+        char unk4[0x30 - 0x4];
     };
 
     class Scheduler {
@@ -341,7 +390,7 @@ namespace Quazal {
             m_pfCallback = 0;
         }
         ~PendingOperation() { Reset(); }
-        void Set(Buffer *pData, Buffer *pBuffer, void *pfCallback, const UserContext &oContext) {
+        void Set(Buffer *pBuffer, Buffer *pData, pfCompletion pfCallback, const UserContext &oContext) {
             if (pBuffer)
                 m_pBuffer = pBuffer->AcquireRef();
             else
@@ -351,10 +400,15 @@ namespace Quazal {
             m_oContext = oContext;
         }
         void Reset();
+        void Complete(EndPoint *pEndPoint, qResult oResult) {
+            pfCompletion pfCallback = m_pfCallback;
+            Reset();
+            pfCallback(pEndPoint, oResult, &m_oContext);
+        }
 
         Buffer *m_pData;       // 0x0
         Buffer *m_pBuffer;     // 0x4
-        void *m_pfCallback;    // 0x8
+        pfCompletion m_pfCallback; // 0x8
         UserContext m_oContext; // 0xc
     };
 
@@ -382,19 +436,22 @@ namespace Quazal {
             SignalEvent(0x2000000);
         }
         virtual _ConnectionState GetConnectionState() { return m_eState; }
-        virtual void SetConnectionState(_ConnectionState);
+        virtual bool SetConnectionState(_ConnectionState);
         virtual unsigned int GetRTT() {
             unsigned int rtt = m_oRTT.m_uiLast;
             return rtt;
         }
         virtual unsigned int GetRTTAverage() { return m_oRTT.m_uiSmoothedAvg >> 3; }
-        virtual qResult _Connect(Buffer *, Buffer *, void *, const UserContext &, unsigned int);
-        virtual qResult _Disconnect(void *, const UserContext &, unsigned int);
+        virtual qResult _Connect(Buffer *, Buffer *, pfCompletion, const UserContext &, unsigned int);
+        virtual qResult _Disconnect(pfCompletion, const UserContext &, unsigned int);
         virtual qResult _Send(Buffer *, unsigned int);
         virtual void SignalFault(unsigned int, bool);
 
         unsigned int GetNbPacketsInWindow();
         bool IsWindowEmpty();
+        void SendOnStream(unsigned char ucPort, PacketOut *pPacket) {
+            GetStream()->Send(m_usConnectionID, ucPort, pPacket);
+        }
         qResult Frag(Buffer *, unsigned int, unsigned int, unsigned char, bool);
         bool Send(PacketOut *);
         void SendNextPackets();
@@ -410,6 +467,26 @@ namespace Quazal {
         void StartKeepAlive();
         void StopKeepAlive();
         void TimeToPing();
+        struct TransportInfo {
+            char unk0[8];
+            unsigned int m_uiMaxPacketSize; // 0x8
+        };
+        struct TransportContext {
+            TransportInfo *GetInfo() { return m_pInfo; }
+            char unk0[0x4c];
+            TransportInfo *m_pInfo; // 0x4c
+        };
+        static TransportContext *GetTransportContext() {
+            return (TransportContext *)InstanceControl::GetInstance(1);
+        }
+        static TransportInfo *GetTransportInfo() {
+            TransportContext *pContext = GetTransportContext();
+            if (pContext == 0)
+                return 0;
+            else
+                return pContext->GetInfo();
+        }
+        static unsigned short GetHeaderSize();
         Time GetLastReceptionTime(PacketIn *);
         Time GetLastSendTime(PacketOut *);
 
@@ -510,3 +587,261 @@ namespace Quazal {
     }
 
 }
+
+namespace Quazal {
+
+#define WAIT_WHILE(oWait, cond)                                                                    \
+    while (cond) {                                                                                 \
+        Scheduler::Dispatch();                                                                     \
+        if (!oWait.CheckExpiration(__FILE__, __LINE__, #cond))                                     \
+            break;                                                                                 \
+    }
+
+    qResult PRUDPEndPoint::_Connect(
+        Buffer *pConnectData, Buffer *pAuthData, pfCompletion pfCallback,
+        const UserContext &oContext, unsigned int uiTimeout
+    ) {
+        if (uiTimeout == (unsigned int)-1)
+            uiTimeout = 10000000;
+        if (!PeerIsConnected() && m_eState != NotConnected)
+            return 0x80050002;
+        if (IsConnecting() || IsConnected())
+            return 0x80050002;
+        m_bUnk94 = false;
+        SetConnectionState(Connecting);
+        m_oPendingOperation.Set(pConnectData, pAuthData, pfCallback, oContext);
+        m_pConnectPacket->GetTimeout()->SetExpirationDelay(uiTimeout);
+        m_pConnectPacket->SetDestination(m_oAddress.GetAddress());
+        SendPacket(m_pConnectPacket);
+        if (pfCallback == 0) {
+            WaitLoop oWait(50, uiTimeout);
+            oWait.Start();
+#line 189
+            WAIT_WHILE(oWait, IsConnecting())
+            m_oPendingOperation.Reset();
+            if (!IsConnected()) {
+                SetConnectionState(NotConnected);
+                return 0x80050008;
+            }
+        }
+        return 0x10001;
+    }
+
+    qResult PRUDPEndPoint::_Disconnect(
+        pfCompletion pfCallback, const UserContext &oContext, unsigned int uiTimeout
+    ) {
+        if (!IsConnected())
+            return 0x80050002;
+        SetConnectionState(Disconnecting);
+        m_oPendingOperation.Set(0, 0, pfCallback, oContext);
+#line 214
+        PacketOut *pPacket = new (__FILE__, __LINE__) PacketOut(this, 3, 0x30, 0);
+        Timeout *pTimeout = pPacket->GetTimeout();
+        pTimeout->SetExpirationDelay(uiTimeout);
+        pTimeout->SetRTO(500);
+        GetStream()->m_oTimeoutManager.SchedulePacketTimeout(pPacket);
+        if (!Send(pPacket)) {
+            pPacket->ReleaseRef();
+            return 0x80050007;
+        }
+        pPacket->ReleaseRef();
+        if (pfCallback == 0) {
+            WaitLoop oWait(50, uiTimeout);
+            oWait.Start();
+#line 233
+            WAIT_WHILE(oWait, IsDisconnecting())
+            m_oPendingOperation.Reset();
+            if (!IsNotConnected()) {
+                SetConnectionState(NotConnected);
+                return 0x80050008;
+            }
+        }
+        return 0x10001;
+    }
+
+    qResult PRUDPEndPoint::Frag(
+        Buffer *pBuffer, unsigned int uiBufferSize, unsigned int uiFragmentSize,
+        unsigned char ucFlags, bool bReliable
+    ) {
+        unsigned int uiPos = 0;
+        unsigned char ucFragmentID = 1;
+        while (pBuffer->GetContentSize() > uiPos) {
+#line 254
+            Buffer *pFragment = new (__FILE__, __LINE__) Buffer(uiBufferSize);
+            unsigned int uiRemaining = pBuffer->GetContentSize() - uiPos;
+            pFragment->AppendData(
+                pBuffer->GetContentPtr() + uiPos,
+                uiRemaining > uiFragmentSize ? uiFragmentSize : uiRemaining, -1
+            );
+#line 259
+            PacketOut *pPacket = new (__FILE__, __LINE__) PacketOut(this, 2, ucFlags, pFragment);
+            pPacket->m_bReliable = bReliable;
+            uiPos += uiFragmentSize;
+            if (pBuffer->GetContentSize() <= uiPos) {
+                pPacket->m_ucFragmentID = 0;
+            } else {
+                pPacket->m_ucFragmentID = ucFragmentID;
+                ucFragmentID++;
+                if (ucFragmentID == 0)
+                    ucFragmentID++;
+            }
+            if (!Send(pPacket)) {
+                pPacket->ReleaseRef();
+                pFragment->ReleaseRef();
+                return 0x80050007;
+            }
+            pPacket->ReleaseRef();
+            pFragment->ReleaseRef();
+        }
+        return 0x10001;
+    }
+
+    qResult PRUDPEndPoint::_Send(Buffer *pBuffer, unsigned int uiFlags) {
+        if (!IsConnected() && !PeerIsConnected())
+            return 0x80050002;
+        unsigned int uiPacketSize = GetTransportInfo()->m_uiMaxPacketSize;
+        unsigned int uiPayloadSize = uiPacketSize - (GetHeaderSize() + 8);
+        unsigned char ucFlags = 0;
+        if (uiFlags & 1)
+            ucFlags |= 0x30;
+        if (uiFlags & 2)
+            ucFlags |= 0x80;
+        if ((uiFlags & 1) && pBuffer->GetContentSize() > uiPayloadSize) {
+            return Frag(pBuffer, uiPacketSize, uiPayloadSize, ucFlags, (uiFlags & 8) != 0);
+        } else if (pBuffer->GetContentSize() > uiPayloadSize) {
+            return 0x8001000a;
+        } else {
+#line 311
+            PacketOut *pPacket = new (__FILE__, __LINE__) PacketOut(this, 2, ucFlags, pBuffer);
+            pPacket->m_bReliable = (uiFlags & 8) != 0;
+            pPacket->m_ucFragmentID = 0;
+            if (!Send(pPacket)) {
+                pPacket->ReleaseRef();
+                return 0x80050007;
+            }
+            pPacket->ReleaseRef();
+        }
+        return 0x10001;
+    }
+
+    bool PRUDPEndPoint::Send(PacketOut *pPacket) {
+        pPacket->SetDestination(m_oAddress.GetAddress());
+        pPacket->SetSignature(m_uiSignature);
+        pPacket->SetSessionID(m_ucSessionID);
+        if (pPacket->HasFlag(0x10)) {
+            GetStream()->m_pStats->m_oCounters.Increment(6, 1);
+            if (pPacket->GetNbSends() == 0 && !m_pSlidingWindow->Push(pPacket)) {
+                SignalFault(2, false);
+                return false;
+            }
+            SendNextPackets();
+        } else {
+            if (!pPacket->HasFlag(8)) {
+                GetStream()->m_pStats->m_oCounters.Increment(5, 1);
+                if (pPacket->GetType() == 2) {
+                    pPacket->SetSequenceID(m_oNextSequenceID);
+                    ++m_oNextSequenceID;
+                }
+            }
+            SendOnStream(m_oAddress.GetPortType(), pPacket);
+        }
+        return true;
+    }
+
+    void PRUDPEndPoint::SendNextPackets() {
+        PacketOut *pPacket = m_pSlidingWindow->GetNextToSend();
+        if (pPacket) {
+            m_tLastSend = Time::GetTime();
+            SendPacket(pPacket);
+        }
+    }
+
+    void PRUDPEndPoint::CancelTimeout(PacketOut *pPacket) {
+        GetStream()->m_oTimeoutManager.CancelPacketTimeout(pPacket);
+    }
+
+    void PRUDPEndPoint::StartKeepAlive() {
+        if (m_pKeepAlivePacket == 0) {
+#line 790
+            m_pKeepAlivePacket = new (__FILE__, __LINE__) PacketOut(this, 4, 0x20, 0);
+            if (GetKeepAliveTimeout() == 0 || GetKeepAliveTimeout() == (unsigned int)-1)
+                m_pKeepAlivePacket->GetTimeout()->SetRTO(1000);
+            else
+                m_pKeepAlivePacket->GetTimeout()->SetRTO(GetKeepAliveTimeout());
+            GetStream()->m_oTimeoutManager.SchedulePacketTimeout(m_pKeepAlivePacket);
+        }
+    }
+
+    void PRUDPEndPoint::StopKeepAlive() {
+        if (m_pKeepAlivePacket) {
+            GetStream()->m_oTimeoutManager.CancelPacketTimeout(m_pKeepAlivePacket);
+            m_pKeepAlivePacket->ReleaseRef();
+            m_pKeepAlivePacket = 0;
+        }
+    }
+
+    void PRUDPEndPoint::TimeToPing() {
+        Time tNow = Time::GetTime();
+        if (m_uiFaultReason != 0) {
+            SignalFaultEvent(m_uiFaultReason);
+            return;
+        }
+        if (tNow - m_tLastReception > GetMaxSilenceTime()) {
+            SignalFaultEvent(2);
+            return;
+        }
+        StreamSettings *pSettings = GetStream()->GetSettings();
+        if (tNow - m_tLastSend > GetKeepAliveTimeout() && pSettings->GetSendKeepAlive()) {
+            m_pKeepAlivePacket->SetSequenceID(m_pKeepAlivePacket->GetSequenceID() + 1);
+            if (GetKeepAliveTimeout() != 0 && GetKeepAliveTimeout() != (unsigned int)-1)
+                Send(m_pKeepAlivePacket);
+        }
+        GetStream()->m_oTimeoutManager.SchedulePacketTimeout(m_pKeepAlivePacket);
+    }
+
+    bool PRUDPEndPoint::SetConnectionState(_ConnectionState eState) {
+        _ConnectionState eOldState = m_eState;
+        SignalEvent(0x4000000);
+        m_eState = eState;
+        if (m_oPendingOperation.m_pfCallback != 0) {
+            qResult oResult = 0x80050007;
+            if (eOldState == Connecting) {
+                SignalEvent(0x1000000);
+                oResult = eState == Connected ? qResult(0x10001) : qResult(0x80050007);
+            }
+            if (eOldState == Disconnecting) {
+                oResult = eState == NotConnected ? qResult(0x10001) : qResult(0x80050007);
+            }
+            m_oPendingOperation.Complete(this, oResult);
+        }
+        SignalEvent(0x2000000);
+        return true;
+    }
+
+    void PendingOperation::Reset() {
+        if (m_pBuffer)
+            m_pBuffer->ReleaseRef();
+        m_pBuffer = 0;
+        m_pData = 0;
+        m_pfCallback = 0;
+    }
+
+    Time Packet::GetTimeStamp() { return m_tTimeStamp; }
+
+    LogicalClock LogicalClock::operator+(unsigned short usDelta) const {
+        return LogicalClock((unsigned short)(m_v + usDelta));
+    }
+
+    int LogicalClock::operator-(const LogicalClock &o) const {
+        int iThis = m_v;
+        int iOther = o.m_v;
+        if (abs(iThis - iOther) < 0x8000)
+            return iThis - iOther;
+        else if (iThis < iOther)
+            return iThis + 0x10000 - iOther;
+        else
+            return iThis - (iOther + 0x10000);
+    }
+
+}
+
