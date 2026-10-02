@@ -67,7 +67,7 @@ namespace Quazal {
         bool ChangeMasterStation(
             DOHandle, DOHandle, const MasterStationRef &, const qList<DOHandle> *, unsigned int
         );
-        void UpdateDatasets(Message *, DOHandle, unsigned char);
+        static void UpdateDatasets(Message *, DOHandle, unsigned char);
         static DOOperation *GetCurrentOperation();
         static OperationManager *GetOperationManager();
         bool ExecuteOperation(DOOperation &);

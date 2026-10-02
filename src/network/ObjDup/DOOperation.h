@@ -64,4 +64,18 @@ namespace Quazal {
         const qList<DOHandle> *m_plstDuplicaStations; // 0x3c
         Context m_eContext; // 0x40
     };
+
+    class UpdateDataSetOperation : public DOOperation {
+    public:
+        UpdateDataSetOperation(DOHandle, DuplicatedObject *, unsigned char, Message *);
+        virtual ~UpdateDataSetOperation();
+        virtual int GetType() const;
+        virtual const char *GetClassNameString() const;
+        virtual void ForceImplOperationCommonMethodsMacro();
+        virtual void TraceImpl(_Event, unsigned int) const;
+
+        bool m_bAllDataSets; // 0x20
+        unsigned char m_ucDataSetID; // 0x21
+        Message *m_pMessage; // 0x24
+    };
 }

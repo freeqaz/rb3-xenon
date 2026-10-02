@@ -190,6 +190,19 @@ namespace Quazal {
         return ExecuteOperation(oOperation);
     }
 
+    void DuplicatedObject::UpdateDatasets(Message *pMessage, DOHandle hObject, unsigned char ucDataSet) {
+        DORefTemplate<DuplicatedObject> refObject(hObject);
+        if (!refObject.IsValid()) {
+            return;
+        }
+        if (refObject.Get()->IsADuplicationMaster()) {
+            return;
+        }
+        DOHandle hSource(pMessage->m_hSource.mValue);
+        UpdateDataSetOperation oOperation(hSource, refObject.Get(), ucDataSet, pMessage);
+        refObject.Get()->ExecuteOperation(oOperation);
+    }
+
     DOOperation *DuplicatedObject::GetCurrentOperation() {
         return NetZ::GetInstance()->GetOperationManager()->GetCurrentOperation();
     }
