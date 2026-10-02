@@ -190,10 +190,10 @@ and nothing else attests them:
 
 ## 9. Native gate
 
-Run last, on the code at the commit before this section was filled in:
+Run last, on the code at `75a9b6072` (only this docs edit follows it):
 
 ```
-(pending)
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
 ```
 
 Scratch: `~/tmp/w16oe/` (`region.py`, `ab.patch`, `legA.json`, `legB.json`, `report_main.json`,
