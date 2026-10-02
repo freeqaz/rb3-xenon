@@ -397,8 +397,9 @@ bool VorbisReader::CheckHmxHeader() {
                 unsigned char stuff[16];
                 bs.Read(stuff, sizeof(stuff));
                 bs.Read(stuff, sizeof(stuff));
-                bs >> magicB;
-                mKeyIndex = (int)magicB % 6 + 6;
+                s64 keyIdx;
+                bs >> keyIdx;
+                mKeyIndex = (int)keyIdx % 6 + 6;
                 TheSynth->Grinder().HvDecrypt(stuff, mKeyMask, version);
                 gCipher = register_cipher(&rijndael_desc);
                 MILO_ASSERT(gCipher >= 0, 0x268);
