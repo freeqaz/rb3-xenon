@@ -115,3 +115,13 @@ def test_the_ledger_keys_do_not_alias_two_groups_together():
     addrs = [g["address"] for g in groups if g.get("address")]
     assert len(survs) == len(set(survs)), "survivor is no longer unique per group"
     assert len(addrs) == len(set(addrs)), "address is no longer unique per group"
+
+
+if __name__ == "__main__":
+    # W16-OA: this file is pytest-only, and run as a script it used to execute
+    # ZERO tests and exit 0 -- so the gate lanes ran (`python3 tools/test_*.py`)
+    # could not fail, and 7 duplicate survivors / 5 duplicate addresses reached
+    # scripts/symbol_aliases.json unseen.  Run its tests instead.
+    import sys as _sys
+    import pytest as _pytest
+    _sys.exit(_pytest.main([__file__, "-q", "-p", "no:cacheprovider"]))

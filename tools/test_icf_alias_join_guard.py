@@ -86,3 +86,13 @@ def test_a_census_with_no_call_site_at_all_is_still_refused():
     assert "not one is a call site" in strings, (
         "the all-data census case no longer refuses; a census that stops "
         "emitting `bl` rows would read as 'no folds exist'")
+
+
+if __name__ == "__main__":
+    # W16-OA: this file is pytest-only, and run as a script it used to execute
+    # ZERO tests and exit 0 -- so the gate lanes ran (`python3 tools/test_*.py`)
+    # could not fail, and 7 duplicate survivors / 5 duplicate addresses reached
+    # scripts/symbol_aliases.json unseen.  Run its tests instead.
+    import sys as _sys
+    import pytest as _pytest
+    _sys.exit(_pytest.main([__file__, "-q", "-p", "no:cacheprovider"]))

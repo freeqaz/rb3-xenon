@@ -212,6 +212,14 @@ SCRIPT_ARM: list[dict] = [
     # retail).  Synthetic records; includes mode=off controls so the verdict is
     # shown to be the gate's.
     {"path": "tools/test_icf_alias_survivor_gate.py", "timeout": 120},
+    # W16-OA (2026-10-02): the four pytest-only alias tests.  Run as scripts
+    # they used to execute ZERO tests and exit 0; they now run themselves under
+    # pytest.  They pin that `survivor` and placed `address` key a group (the
+    # denylist and the address-bucketed map both depend on it).
+    {"path": "tools/test_alias_group_key.py", "timeout": 120},
+    {"path": "tools/test_icf_alias_join_guard.py", "timeout": 120},
+    {"path": "tools/test_icf_alias_no_ourbuild_gate.py", "timeout": 120},
+    {"path": "tools/test_icf_alias_withdrawal_guard.py", "timeout": 120},
     {"path": "tools/test_fold_thunk_gate_install.py", "timeout": 60},
     # W16-FM (2026-09-16): comdat_fold_gate.py's MAP-SILENT tier CF5.  The gate
     # used to coerce `base_addr` unconditionally, so a folded spelling the map

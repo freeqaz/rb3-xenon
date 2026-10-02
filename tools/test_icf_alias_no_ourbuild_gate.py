@@ -98,3 +98,13 @@ def test_the_diagnosis_is_recorded_where_the_closure_is_formed():
     assert "RETAIL" in window and "760cb450" in window, (
         "the group-emission site has lost the note recording the star-vs-clique "
         "defect and why the our-build partition was reverted")
+
+
+if __name__ == "__main__":
+    # W16-OA: this file is pytest-only, and run as a script it used to execute
+    # ZERO tests and exit 0 -- so the gate lanes ran (`python3 tools/test_*.py`)
+    # could not fail, and 7 duplicate survivors / 5 duplicate addresses reached
+    # scripts/symbol_aliases.json unseen.  Run its tests instead.
+    import sys as _sys
+    import pytest as _pytest
+    _sys.exit(_pytest.main([__file__, "-q", "-p", "no:cacheprovider"]))

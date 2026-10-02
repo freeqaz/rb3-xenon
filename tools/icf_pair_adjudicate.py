@@ -382,14 +382,16 @@ def locate_retail(tgt, ours, on, mapped, exclude=None, cap=64):
     ob = ours.get(on)
     if ob is None or vacuous(ob):
         return []
+    # One index per tgt OBJECT (W16-OA: --chasetest evaluates controls in
+    # several fixture views at once, so a single-entry cache would rebuild on
+    # every switch).  The dict itself is held so its id() cannot be recycled.
     key = id(tgt)
-    if key not in _BODY_IDX:
+    if key not in _BODY_IDX or _BODY_IDX[key][0] is not tgt:
         idx = collections.defaultdict(list)
-        for n, (mb, rl, _s) in tgt.items():
+        for n, (mb, rl, _s) in dict.items(tgt):
             idx[(mb, tuple((o, t) for (o, _n, t) in rl))].append(n)
-        _BODY_IDX.clear()
-        _BODY_IDX[key] = idx
-    cands = _BODY_IDX[key].get((ob[0], tuple((o, t) for (o, _n, t) in ob[1])), [])
+        _BODY_IDX[key] = (tgt, idx)
+    cands = _BODY_IDX[key][1].get((ob[0], tuple((o, t) for (o, _n, t) in ob[1])), [])
     found = []
     for y in sorted(cands)[:cap]:
         if y == exclude:
@@ -892,7 +894,7 @@ _PAIR_HOOKS = {}
 RENAME_POS = (0x826FCCE8, "??1?$ObjPtr@VSynthSample@@@@UAA@XZ")
 
 
-def rename_controls(tgt, ours, mapped):
+def rename_controls(tgt, ours, mapped, s_name=None):
     """★ W16-JH controls for CLASS_RENAMES.  POSITIVE: retail fn_826FCCE8 (a
     ~ObjPtr<T> body storing retail's ObjRef vtable lbl_820009EC) vs OUR
     ~ObjPtr<SynthSample> (storing ??_7ObjRefOwner@@6B@): expect PROVEN.  DECOY:
@@ -900,7 +902,7 @@ def rename_controls(tgt, ours, mapped):
     different, unrelated retail class (the body's own ObjPtr<SynthSample> vtable
     lbl_820F5284) -- the rename must not blanket-accept ObjRefOwner: expect
     REFUTED.  Refuses if the positive does not carry the ObjRef slot."""
-    s, o = _retail_name_at(RENAME_POS[0]), RENAME_POS[1]
+    s, o = s_name or _retail_name_at(RENAME_POS[0]), RENAME_POS[1]
     rt = tgt.get(s)
     if rt is None or o not in ours or not any(n == "lbl_820009EC" for _o, n, _t in rt[1]):
         raise SystemExit("REFUSING: rename positive %s/%s absent or no longer stores "
@@ -1416,13 +1418,259 @@ def vacuous_pair(tgt, ours, want_fold):
                      % ("fold" if want_fold else "decoy"))
 
 
+# ★★ W16-OA.  CONTROL FIXTURES -- a control must not depend on which live
+# addresses happen to still be UNNAMED.
+#
+# THE DEFECT (measured three times on 2026-10-02).  A slot decoy is lax-PROVEN
+# only because some retail slot in its proof is still a placeholder (`fn_X`,
+# `lbl_X`), or because one of OUR spellings is still absent from the map.  So
+# ordinary, CORRECT map work retires the decoy: naming 0x822e4fd8 (W16-NU),
+# 0x8259f7e0 (W16-NZ) and -- had it been landed -- 0x8264ec88 / 0x8264ec08 each
+# left a withdrawal class with no lax-PROVEN decoy, --chasetest REFUSED, and two
+# lanes held a correct name back to keep the instrument alive.  The IN-FAMILY
+# DECOY had the silent form of the same disease: it was hardcoded as
+# `fn_827B0E78`, W16-NF named that address (0aa7f19f8), and from then on the
+# decoy "passed" as REFUTED on MISSING(retail) without comparing one byte.
+#
+# THE FIX.  A fixture records, for one control, the NAMING NEIGHBOURHOOD its
+# verdicts read: the name every retail address its lax AND discharge chases
+# touched carried at record time (keys looked up, and every relocation target
+# of every body read), plus every `in mapped` answer the chase consulted.  At
+# run time the control is evaluated in an in-memory VIEW of the tree with
+# exactly that naming restored.  Bodies, relocation shapes, the retail image and
+# OUR objs are all LIVE -- only names are frozen -- so a source or split change
+# still moves a control, and a map change no longer can.
+#
+# ⚠ A view is for CONTROLS ONLY.  It reconstructs a historical naming state on
+# purpose; nothing admitted by this tool may be decided in one.
+# ⚠ Scope bound, stated rather than hidden: locate_retail() caps its candidate
+# list at 64 in NAME order, so a candidate set larger than the cap could still
+# be reordered by naming an address outside the neighbourhood.  No recorded
+# fixture is near the cap (the record step prints the count).
+FIXTURES_PATH = ROOT / "scripts/chasetest_fixtures.json"
+_NO_FIXTURES = False      # --no-fixtures: evaluate every control on the live tree
+_VIEWS = {}
+_REF_IDX = {}
+_MAP_REV = {}
+
+
+class _RecDict(dict):
+    """A tgt copy that records every key a chase LOOKS UP (present or not)."""
+    def __init__(self, *a):
+        super().__init__(*a)
+        self.seen = set()
+
+    def get(self, k, d=None):
+        self.seen.add(k)
+        return super().get(k, d)
+
+    def __getitem__(self, k):
+        self.seen.add(k)
+        return super().__getitem__(k)
+
+    def __contains__(self, k):
+        self.seen.add(k)
+        return super().__contains__(k)
+
+
+class _RecSet(set):
+    """A `mapped` copy that records every membership query and its answer."""
+    def __init__(self, *a):
+        super().__init__(*a)
+        self.asked = {}
+
+    def __contains__(self, k):
+        r = super().__contains__(k)
+        self.asked[k] = r
+        return r
+
+
+def _map_rev():
+    """name -> address over the map's single-name rows (a name that the map
+    places at two addresses is ambiguous and is not used)."""
+    if not _MAP_REV:
+        m = json.load(open(ROOT / "scripts/target_symbol_map.json"))
+        cnt = collections.Counter()
+        for k, v in m.items():
+            if k.startswith("0x") and isinstance(v, str):
+                cnt[v] += 1
+                _MAP_REV[v] = int(k, 16)
+        for v, c in cnt.items():
+            if c > 1:
+                del _MAP_REV[v]
+        _MAP_REV.setdefault(None, None)
+    return _MAP_REV
+
+
+def _name_addr(n):
+    a = _ph_addr(n)
+    return a if a is not None else _map_rev().get(n)
+
+
+def _ref_index(tgt):
+    """reloc-target name -> keys of tgt whose relocations name it."""
+    key = id(tgt)
+    if key not in _REF_IDX or _REF_IDX[key][0] is not tgt:
+        idx = collections.defaultdict(set)
+        for k, (_mb, rl, _s) in dict.items(tgt):
+            for (_o, n, _t) in rl:
+                idx[n].add(k)
+        _REF_IDX[key] = (tgt, idx)
+    return _REF_IDX[key][1]
+
+
+def record_fixture(tgt, ours, mapped, s, o):
+    """Run the control's lax AND discharge chases on recording copies and return
+    its naming neighbourhood.  Raises if a touched name has no address (then
+    the control cannot be frozen and must not pretend to be)."""
+    global SLOT_POLICY
+    keep = SLOT_POLICY
+    T, M = _RecDict(tgt), _RecSet(mapped)
+    for pol in ("lax", "discharge"):
+        SLOT_POLICY = pol
+        try:
+            chase(T, ours, s, o, M, out=[])
+        finally:
+            SLOT_POLICY = keep
+    touched = set(T.seen)
+    for k in list(T.seen):
+        rec = dict.get(tgt, k)
+        if rec:
+            touched |= {n for (_o, n, _t) in rec[1]}
+    names, unaddressed = {}, []
+    for n in sorted(touched):
+        a = _name_addr(n)
+        if a is None:
+            # literals, constants, unmapped data globals: not address-keyed, so
+            # map work cannot rename them -- nothing to freeze.
+            unaddressed.append(n)
+            continue
+        names["0x%08x" % a] = n
+    sa = _name_addr(s)
+    return {"survivor": s, "survivor_addr": None if sa is None else "0x%08x" % sa,
+            "ours": o, "names": names,
+            "mapped": {k: v for k, v in sorted(M.asked.items())},
+            "n_unaddressed": len(unaddressed)}
+
+
+def _current_name(tgt, refs, a, recorded):
+    """The name address `a` carries in the LIVE tgt: its map name if the tree
+    uses it, else whichever placeholder spelling the tree uses."""
+    for n in (_addr_name(a), recorded, "fn_%08X" % a, "lbl_%08X" % a):
+        if n and (dict.__contains__(tgt, n) or n in refs):
+            return n
+    return None
+
+
+def fixture_view(tgt, mapped, fid, fx):
+    """(T, M): tgt/mapped with the fixture's naming restored.  Cached per fid."""
+    if fid in _VIEWS:
+        return _VIEWS[fid]
+    refs = _ref_index(tgt)
+    ren, unresolved = {}, []
+    for ah, want in fx["names"].items():
+        cur = _current_name(tgt, refs, int(ah, 16), want)
+        if cur is None:
+            unresolved.append(ah)
+        elif cur != want:
+            ren[cur] = want
+    if unresolved:
+        # The tree spells this address neither by its map name nor by a
+        # placeholder: it left the pinned spans, or the renamer did not run.
+        # Say so -- a view missing part of its neighbourhood is not the
+        # recorded state, and the caller falls back or refuses.
+        print("  ! fixture %s: %d recorded address(es) absent from the tree: %s"
+              % (fid, len(unresolved), ", ".join(unresolved[:4])))
+    # A recorded name the live tree now uses for a DIFFERENT address (a map
+    # correction moved it) must vacate: that address reverts to a placeholder.
+    targets = set(ren.values())
+    for want in targets:
+        if want in ren or not (dict.__contains__(tgt, want) or want in refs):
+            continue
+        a = _map_rev().get(want)
+        ren[want] = ("fn_%08X" % a) if a is not None else want + "__vacated__"
+    T = dict(tgt)
+    touched = set()
+    for cur in ren:
+        touched |= refs.get(cur, set())
+        if dict.__contains__(tgt, cur):
+            touched.add(cur)
+    for k in touched:
+        mb, rl, sz = tgt[k]
+        T.pop(k, None)
+    for k in touched:
+        mb, rl, sz = tgt[k]
+        T[ren.get(k, k)] = (mb, [(o, ren.get(n, n), t) for (o, n, t) in rl], sz)
+    M = set(mapped)
+    for n, v in fx["mapped"].items():
+        (M.add if v else M.discard)(n)
+    _VIEWS[fid] = (T, M, ren)
+    return _VIEWS[fid]
+
+
+def simulate_naming(tgt, mapped):
+    """--simulate-naming: name every placeholder in every recorded fixture
+    neighbourhood, in memory, exactly as obj_target_symbol_renamer would after a
+    map edit (key + every relocation naming it), add the name to `mapped`, and
+    make _addr_name() answer it.  Reads the fixture FILE even under
+    --no-fixtures, so the two modes simulate the same map work."""
+    if not FIXTURES_PATH.exists():
+        raise SystemExit("REFUSING: --simulate-naming needs %s" % FIXTURES_PATH)
+    fx_all = json.load(open(FIXTURES_PATH))["fixtures"]
+    refs = _ref_index(tgt)
+    ren = {}
+    for fx in fx_all.values():
+        for ah, n in fx["names"].items():
+            # only addresses the LIVE tree still spells as that placeholder; an
+            # address the map already names is already "map work done"
+            if placeholder(n) and _ph_addr(n) is not None and (
+                    dict.__contains__(tgt, n) or n in refs):
+                ren[n] = "?w16oa_simulated_%s@@YAXXZ" % ah[2:]
+    touched = set()
+    for cur in ren:
+        touched |= refs.get(cur, set())
+        if dict.__contains__(tgt, cur):
+            touched.add(cur)
+    recs = {k: tgt[k] for k in touched}
+    for k in touched:
+        del tgt[k]
+    for k, (mb, rl, sz) in recs.items():
+        tgt[ren.get(k, k)] = (mb, [(o, ren.get(n, n), t) for (o, n, t) in rl], sz)
+    _addr_name(0)
+    for cur, new in ren.items():
+        mapped.add(new)
+        _ADDR_NAME[_ph_addr(cur)] = new
+    _MAP_REV.clear()
+    _REF_IDX.clear()
+    print("simulate-naming: %d placeholder address(es) named in memory, %d bodies "
+          "rewritten" % (len(ren), len(touched)))
+
+
+def load_fixtures():
+    if _NO_FIXTURES or not FIXTURES_PATH.exists():
+        return {}
+    return json.load(open(FIXTURES_PATH)).get("fixtures", {})
+
+
+def control_side(tgt, mapped, fixtures, fid):
+    """(T, M, survivor_name_or_None) for one control id: its fixture view if it
+    has one, else the live tree."""
+    fx = fixtures.get(fid)
+    if fx is None:
+        return tgt, mapped, None
+    T, M, _ren = fixture_view(tgt, mapped, fid, fx)
+    s = fx["names"].get(fx["survivor_addr"]) if fx.get("survivor_addr") else fx["survivor"]
+    return T, M, s
+
+
 # W16-JE's documented bad pair: retail ~ObjPtr<SeqInst> stores a vtable whose
 # RTTI names ObjPtr<SeqInst,ObjectDir>; ours stores ObjPtr<Sequence>'s.  The old
 # general path read it PROVEN because the vtable slot is an unnamed `lbl_`.
+IN_FAMILY_DECOY_ADDR = 0x827B0E78
 JE_SLOT_DECOY = ("??1?$ObjPtr@VSeqInst@@@@UAA@XZ", "??1?$ObjPtr@VSequence@@@@UAA@XZ")
 
 
-def slot_controls(tgt, ours, mapped, al):
+def slot_controls(tgt, ours, mapped, al, fixtures=None):
     """★ W16-JG controls for the placeholder-slot discharge.
 
     DECOYS (expect REFUTED): JE's pair, plus one membership per withdrawal class
@@ -1432,18 +1680,28 @@ def slot_controls(tgt, ours, mapped, al):
     W16-JG's own.  A decoy is only USED if
     the old lax rule PROVES it -- a decoy the old rule already refuses does not
     probe the hole, and a control that cannot fail is worse than none.
+    ★ W16-OA: a class with a recorded FIXTURE (scripts/chasetest_fixtures.json)
+    is evaluated in that fixture's naming view FIRST, so naming the placeholder
+    that made it lax-PROVEN no longer retires it; the live candidates are the
+    fallback.
     POSITIVES (expect PROVEN): a live membership whose proof DISCHARGES a vtable
     slot by RTTI, and one that discharges a callee slot by chase, so the fix
-    cannot be "refuse every placeholder slot".  Refuses if any is missing."""
+    cannot be "refuse every placeholder slot".  Refuses if any is missing.
+
+    Returns (label, survivor, ours, fid, side) tuples; side is (T, M) for a
+    fixture view, else None (the live tree)."""
     global SLOT_POLICY
     keep = SLOT_POLICY
+    fixtures = fixtures if fixtures is not None else {}
 
-    def verdict(s, o, pol):
+    def verdict(s, o, pol, T=tgt, M=mapped):
         global SLOT_POLICY
         SLOT_POLICY = pol
         tr = []
-        ok = chase(tgt, ours, s, o, mapped, out=tr)
-        SLOT_POLICY = keep
+        try:
+            ok = chase(T, ours, s, o, M, out=tr)
+        finally:
+            SLOT_POLICY = keep
         return ok, [k for _d, k, _x, _y in tr]
 
     out = []
@@ -1471,13 +1729,32 @@ def slot_controls(tgt, ours, mapped, al):
     # class set itself (`seen`) still comes only from W16-JG's records.
     cands += [x for x in later if x[0] in seen and x[1] in tgt and x[2] in ours]
     used = set()
+    # ★ W16-OA: fixture decoys first, one per class that has one.
+    for c in ["W16-JE vtable pair"] + sorted(seen):
+        fid = "SLOT DECOY " + c
+        if fid not in fixtures:
+            continue
+        T, M, s_ = control_side(tgt, mapped, fixtures, fid)
+        o_ = fixtures[fid]["ours"]
+        if s_ is None or not dict.__contains__(T, s_) or o_ not in ours:
+            print("  ! fixture %s: survivor or ours absent -- falling back to live" % fid)
+            continue
+        lax_ok, _ = verdict(s_, o_, "lax", T, M)
+        if not lax_ok:
+            print("  ! fixture %s: lax rule no longer PROVES it in its view (a BODY "
+                  "changed) -- falling back to live" % fid)
+            continue
+        out.append(("SLOT DECOY %s, lax rule PROVES it (expect REFUTED)" % c, s_, o_,
+                    fid, (T, M)))
+        used.add(c)
     for c, s_, o_ in cands:
         if c in used or s_ not in tgt or o_ not in ours:
             continue
         lax_ok, _ = verdict(s_, o_, "lax")
         if not lax_ok:
             continue
-        out.append(("SLOT DECOY %s, lax rule PROVES it (expect REFUTED)" % c, s_, o_))
+        out.append(("SLOT DECOY %s, lax rule PROVES it (expect REFUTED)" % c, s_, o_,
+                    "SLOT DECOY " + c, None))
         used.add(c)
     missing = sorted(seen - used)
     if not out or missing:
@@ -1505,7 +1782,8 @@ def slot_controls(tgt, ours, mapped, al):
         if v is None:
             raise SystemExit("REFUSING: no live membership discharges a %s slot -- "
                              "the positive control would be absent." % k)
-        out.append(("SLOT POSITIVE, %s discharged (expect PROVEN)" % k[8:], v[0], v[1]))
+        out.append(("SLOT POSITIVE, %s discharged (expect PROVEN)" % k[8:], v[0], v[1],
+                    None, None))
     return out
 
 
@@ -1561,7 +1839,30 @@ def main():
     ap.add_argument("--lax-slots", action="store_true",
                     help="reproduce a pre-W16-JG verdict (blanket placeholder "
                          "tolerance). NEVER use for an admission.")
+    ap.add_argument("--no-fixtures", action="store_true",
+                    help="W16-OA: evaluate every --chasetest control on the LIVE tree, "
+                         "ignoring scripts/chasetest_fixtures.json. Diagnostic only: "
+                         "it shows whether the fixtures are load-bearing (after a "
+                         "control's placeholder is named it should REFUSE or fail).")
+    ap.add_argument("--record-fixtures", action="store_true",
+                    help="W16-OA: run --chasetest's control selection and write the "
+                         "naming neighbourhood of every fixture-able control that has "
+                         "no fixture yet to scripts/chasetest_fixtures.json (with "
+                         "--rerecord, all of them). Record on a tree where "
+                         "--chasetest PASSES; then confirm with --chasetest.")
+    ap.add_argument("--simulate-naming", action="store_true",
+                    help="W16-OA: before running, NAME in memory every placeholder in "
+                         "every fixture's neighbourhood (synthetic names, added to the "
+                         "map view), i.e. simulate the map work that used to retire "
+                         "controls. With fixtures every control must still PASS; with "
+                         "--no-fixtures the affected classes should REFUSE or fail.")
+    ap.add_argument("--rerecord", action="store_true",
+                    help="with --record-fixtures: replace existing fixtures too")
     a = ap.parse_args()
+    if a.no_fixtures:
+        globals()["_NO_FIXTURES"] = True
+    if a.record_fixtures:
+        a.chasetest = True
     if a.self_break:
         globals()["_SELF_BREAK"] = True
         a.chasetest = True
@@ -1582,6 +1883,9 @@ def main():
 
     mapped = load_mapped()
     tgt, ours = load_sides()
+    fixtures = load_fixtures()
+    if a.simulate_naming:
+        simulate_naming(tgt, mapped)
 
     pairs = []
     if a.selftest:
@@ -1619,7 +1923,14 @@ def main():
         pos = next((g["survivor"], f) for g in al["groups"] for f in g["folded"]
                    if g["survivor"] in tgt and f in ours
                    and not vacuous(tgt[g["survivor"]]))
-        pairs = [("IN-FAMILY DECOY (expect REFUTED)", "fn_827B0E78", UIC),
+        # ★ W16-OA: keyed by ADDRESS (it was the literal `fn_827B0E78`, which
+        # W16-NF's naming of 0x827b0e78 turned into MISSING(retail) -- a decoy
+        # that "passed" without comparing a byte), and evaluated in its fixture
+        # view so naming its callees cannot change what it tests either.
+        T_if, M_if, s_if = control_side(tgt, mapped, fixtures, "IN-FAMILY DECOY")
+        pairs = [("IN-FAMILY DECOY (expect REFUTED)",
+                  s_if or _retail_name_at(IN_FAMILY_DECOY_ADDR), UIC, "IN-FAMILY DECOY",
+                  (T_if, M_if) if s_if else None),
                  ("FLAT-T1 GROUP (expect PROVEN)", pos[0], pos[1])]
         # ★ W16-AE SELF-PAIR CONTROLS.  chase() used to return True for any
         # [S, S] pair before comparing a byte, so a survivor whose own COMDAT
@@ -1656,17 +1967,63 @@ def main():
                    vd_s, vd_o),
                   ("VACUOUS FOLD, destinations proven folded (expect PROVEN)",
                    vf_s, vf_o)]
-        pairs += slot_controls(tgt, ours, mapped, al)
+        pairs += slot_controls(tgt, ours, mapped, al, fixtures)
         pairs += tailpad_controls(tgt, ours)
-        pairs += rename_controls(tgt, ours, mapped)
+        T_rn, M_rn, s_rn = control_side(tgt, mapped, fixtures, "RENAME")
+        pairs += [p + ("RENAME", (T_rn, M_rn) if s_rn else None)
+                  for p in rename_controls(T_rn, ours, M_rn, s_rn)]
         pairs += overcarve_controls(tgt, ours)
         a.chase = True
     elif a.pairs:
         pairs = [("", s, o) for s, o in json.load(open(a.pairs))]
     else:
         pairs = [("", a.survivor, a.ours)]
-    pairs = [(lb, _retail_name_at(int(s, 16)) if s.lower().startswith("0x") else s, o)
-             for lb, s, o in pairs]
+    pairs = [p if len(p) == 5 else p + (None, None) for p in pairs]
+    pairs = [(lb, _retail_name_at(int(s, 16)) if s.lower().startswith("0x") else s, o,
+              fid, side) for lb, s, o, fid, side in pairs]
+
+    if a.selftest or a.chasetest:
+        # ★ W16-OA VACUITY GUARD.  A control whose survivor or our spelling is
+        # absent from its side "passes" a REFUTED expectation on MISSING alone,
+        # without comparing a byte (measured: the IN-FAMILY DECOY did exactly
+        # that from 0aa7f19f8 until this lane).  Absent is never a verdict here.
+        for lb, s, o, fid, side in pairs:
+            T = side[0] if side else tgt
+            if not dict.__contains__(T, s) or o not in ours:
+                raise SystemExit("REFUSING: control %r has its %s side ABSENT (%s) -- "
+                                 "it would be VACUOUS." % (lb, "retail" if not
+                                 dict.__contains__(T, s) else "our", s if not
+                                 dict.__contains__(T, s) else o))
+        nfx = sum(1 for p in pairs if p[4] is not None)
+        print("controls: %d, %d evaluated in a fixture view%s"
+              % (len(pairs), nfx, " (--no-fixtures)" if _NO_FIXTURES else ""))
+
+    if a.record_fixtures:
+        doc = (json.load(open(FIXTURES_PATH)) if FIXTURES_PATH.exists()
+               else {"fixtures": {}})
+        doc.setdefault("note", "W16-OA --chasetest control fixtures: the naming "
+                       "neighbourhood each control was recorded in. Written by "
+                       "icf_pair_adjudicate.py --record-fixtures; see FIXTURES "
+                       "note in that tool. Controls only -- never an admission.")
+        new = {}
+        for lb, s, o, fid, side in pairs:
+            if fid is None or (fid in doc["fixtures"] and not a.rerecord):
+                continue
+            T, M = side if side else (tgt, mapped)
+            fx = record_fixture(T, ours, M, s, o)
+            if fid in new:            # a fid shared by several pairs: union
+                new[fid]["names"].update(fx["names"])
+                new[fid]["mapped"].update(fx["mapped"])
+                new[fid]["n_unaddressed"] += fx["n_unaddressed"]
+            else:
+                new[fid] = dict(fx, label=lb)
+            print("recorded %-58s %4d names, %3d mapped answers, %d unaddressed"
+                  % (fid[:58], len(fx["names"]), len(fx["mapped"]), fx["n_unaddressed"]))
+        doc["fixtures"].update(new)
+        doc["fixtures"] = dict(sorted(doc["fixtures"].items()))
+        FIXTURES_PATH.write_text(json.dumps(doc, indent=1) + "\n")
+        print("wrote %d fixture(s) to %s; now run --chasetest" % (len(new), FIXTURES_PATH))
+        return 0
 
     # ★ W16-NN size controls: evaluated by size_gate directly (inside T1 the
     # gate is implied by masked-body equality, so a broken size rule could never
@@ -1699,17 +2056,21 @@ def main():
     tp_decoy_red = tp_other_red = n_tp_decoys = 0
     rn_decoy_red = rn_other_red = n_rn_decoys = 0
     oc_decoy_red = oc_other_red = n_oc_decoys = 0
-    for label, s, o in pairs:
+    for label, s, o, fid, side in pairs:
+        T, M = side if side else (tgt, mapped)
         hook = _PAIR_HOOKS.get(label)
         if hook:
             hook[0]()
-        verdict, det = adjudicate(tgt, ours, s, o, mapped)
-        if a.size and s in tgt and o in ours:
-            ok_sz, why_sz = size_gate(tgt[s], ours[o], o)
+        verdict, det = adjudicate(T, ours, s, o, M)
+        if a.size and s in T and o in ours:
+            ok_sz, why_sz = size_gate(T[s], ours[o], o)
             det["size_gate"] = "%s -- %s" % ("ACCEPT" if ok_sz else "REFUSE", why_sz)
-        det.update(uniqueness(tgt, ours, s, o))
-        det["survivor_map_resident"] = s in mapped
+        det.update(uniqueness(T, ours, s, o))
+        det["survivor_map_resident"] = s in M
         print("\n=== %s" % (label or "%s  <->  %s" % (s[:60], o[:60])))
+        if side:
+            print("  fixture  : %s  (%d name(s) restored in this view)"
+                  % (fid, len(_VIEWS[fid][2]) if fid in _VIEWS else -1))
         print("  survivor : %s" % s)
         print("  ours     : %s" % o)
         print("  FLAT T1  : %s" % verdict)
@@ -1717,8 +2078,8 @@ def main():
             if k in ("survivor", "ours"):
                 continue
             print("      %-28s %s" % (k, v))
-        if a.family and s in tgt and o in ours:
-            f = family(tgt, ours, o, s)
+        if a.family and s in T and o in ours:
+            f = family(T, ours, o, s)
             print("  FAMILY   : %d of ours -> %d retail address(es)"
                   % (len(f["our_family"]), len(f["retail_family"])))
             print("      our_slot0_matches_retail   %s" % f["our_slot0_matches_retail"])
@@ -1730,7 +2091,7 @@ def main():
                 print("        RETAIL %s" % n[:86])
         if a.chase:
             trace = []
-            ok = chase(tgt, ours, s, o, mapped, out=trace)
+            ok = chase(T, ours, s, o, M, out=trace)
             verdict = "PROVEN" if ok else "REFUTED"
             print("  CHASED T1: %s" % verdict)
             for d, kind, x, y in trace:
