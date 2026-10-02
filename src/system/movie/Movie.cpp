@@ -746,7 +746,7 @@ void Movie::Impl::SharedFinishOpen(bool unpause) {
     MovieInternalBuffers *bufs = MovieInternalBuffers::New(binks);
     if (bufs) {
         bufs->mRefs = count;
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < movies.size(); i++) { // bound in the condition: retail keeps an explicit counter
             Impl *movie = movies[i];
             movie->mBuffers = bufs;
             movie->FinishOpen();
@@ -1083,16 +1083,16 @@ bool Movie::Impl::Begin(
     mSoundDisabled = noSound;
     mTrack = track;
     mFillWidth = fillWidth;
+    mBinkHandle = kNoHandle;
     mAspect = 0.0f;
     mAsync = true;
-    mBinkHandle = kNoHandle;
     mPollTimer.Reset();
     if (preload) {
         static int sPhysicalHeap = MemFindHeap("physical");
         MemHeapTracker tracker(sPhysicalHeap);
         const char *name = mFilename.c_str();
         mLoader = new FileLoader(
-            FilePath(name),
+            name, // implicit FilePath: retail passes the stack temp's address
             name,
             kLoadFront,
             0,
@@ -1101,7 +1101,7 @@ bool Movie::Impl::Begin(
             stream && stream->Cached() ? stream : nullptr
         );
     } else {
-        mLoader2 = new MovieLoader(FilePath(mFilename.c_str()), kLoadStayBack, this);
+        mLoader2 = new MovieLoader(mFilename.c_str(), kLoadStayBack, this);
     }
     sActiveMovies.push_back(this);
     if (++sActivePending > 1 && !preload) {

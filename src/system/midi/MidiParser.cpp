@@ -245,7 +245,7 @@ void MidiParser::Poll() {
 
 void MidiParser::ParseNote(int startTick, int endTick, unsigned char data1) {
     if (mNoteParser && AllowedNote(data1)) {
-        MemTemp tmp;
+        MemDoTempAllocations tmp; // retail: bare bl MemPushTemp / MemPopTemp
         if (mNotes.size() == 0)
             mNotes.reserve(20000);
         int idx;
