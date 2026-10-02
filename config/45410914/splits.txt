@@ -3608,9 +3608,6 @@ SongLayout.cpp:
 	.pdata      start:0x822000F0 end:0x822000F8
 	.pdata      start:0x822000F8 end:0x82200100
 	.pdata      start:0x82206D80 end:0x82206DA0
-	.pdata      start:0x82208B48 end:0x82208B78
-	.pdata      start:0x82208B78 end:0x82208B80
-	.pdata      start:0x82208B80 end:0x82208BA8
 	.pdata      start:0x822349D8 end:0x822349E0
 	.text       start:0x822C76E4 end:0x822C76F0
 	.text       start:0x822D16F8 end:0x822D1768
@@ -3619,9 +3616,6 @@ SongLayout.cpp:
 	.text       start:0x8235CAE0 end:0x8235CB54
 	.text       start:0x8235CB54 end:0x8235CB7C
 	.text       start:0x823D43C0 end:0x823D44E8
-	.text       start:0x823F0A68 end:0x823F0CD0
-	.text       start:0x823F0CD0 end:0x823F0E1C
-	.text       start:0x823F0E1C end:0x823F0F84
 	.text       start:0x826CB590 end:0x826CB610
 
 Mesh.cpp:
@@ -7276,7 +7270,7 @@ CharIKSliderMidi.cpp:
 	.pdata      start:0x82206570 end:0x82206580
 	.pdata      start:0x82206580 end:0x82206588
 	.pdata      start:0x82206588 end:0x82206658
-	.pdata      start:0x82208AC8 end:0x82208B48
+	.pdata      start:0x82208AC8 end:0x82208B38
 	.text       start:0x823CAB00 end:0x823CAB98
 	.text       start:0x823CAB98 end:0x823CAF10
 	.text       start:0x823CAF10 end:0x823CB0C8
@@ -7284,7 +7278,7 @@ CharIKSliderMidi.cpp:
 	.text       start:0x823CB0F8 end:0x823CB2A0
 	.text       start:0x823CB2A0 end:0x823CB34C
 	.text       start:0x823CB350 end:0x823CBF28
-	.text       start:0x823F0310 end:0x823F0A68
+	.text       start:0x823F0310 end:0x823F09F8
 
 FlowSwitchCase.cpp:
 	.pdata      start:0x82204EC0 end:0x82204EC8
@@ -9299,6 +9293,16 @@ network/net/Net.cpp:
 	.text       start:0x823E02F0 end:0x823E08A0
 	.text       start:0x82C3EB80 end:0x82C3EBF0
 	.text       start:0x82C44C90 end:0x82C44CA8
+
+network/net/NetMessage.cpp:
+	.pdata      start:0x82208B38 end:0x82208B48
+	.pdata      start:0x82208B48 end:0x82208B78
+	.pdata      start:0x82208B78 end:0x82208B80
+	.pdata      start:0x82208B80 end:0x82208BA8
+	.text       start:0x823F09F8 end:0x823F0A68
+	.text       start:0x823F0A68 end:0x823F0CD0
+	.text       start:0x823F0CD0 end:0x823F0E1C
+	.text       start:0x823F0E1C end:0x823F0F84
 
 network/net/NetLog.cpp:
 	.pdata      start:0x82208600 end:0x82208610

@@ -9864,8 +9864,8 @@
  "0x823ecd70": "??0ServerStatusChangedMsg@@QAA@_N@Z",
  "0x823ee4c8": "??0InviteAcceptedMsg@@QAA@HI_N@Z",
  "0x823ee630": "??_EHollaBackMinigame@@UAAPAXI@Z",
- "0x823f0b50": "??$__destroy_range_aux@V?$reverse_iterator@PAVSongPattern@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVSongPattern@@@0@0ABU__false_type@0@@Z",
- "0x823f0cd0": "??1?$vector@VSongPattern@@V?$StlNodeAlloc@VSongPattern@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+ "0x823f0b50": "??$_Destroy_Range@PAUTypeCreatorPair@NetMessageFactory@@@stlpmtx_std@@YAXPAUTypeCreatorPair@NetMessageFactory@@0@Z",
+ "0x823f0cd0": "?_M_insert_overflow_aux@?$vector@UTypeCreatorPair@NetMessageFactory@@V?$StlNodeAlloc@UTypeCreatorPair@NetMessageFactory@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUTypeCreatorPair@NetMessageFactory@@ABU34@ABU__false_type@2@I_N@Z",
  "0x823f0f88": "?Dispatch@SessionMsg@@UAAXXZ",
  "0x823f0fa0": "?Save@SyncUserMsg@@UBAXAAVBinStream@@@Z",
  "0x823f0fb0": "?Load@SyncUserMsg@@UAAXAAVBinStream@@@Z",
@@ -34606,5 +34606,12 @@
  "0x823dd2f8": "?Replace@?$ObjPtr@VCharClipGroup@@@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x82484c00": "?resize@?$ObjVector@UPose@RndMorph@@@@QAAXI@Z",
  "0x825c2300": "??0LocalMachineUpdatedMsg@@QAA@PAVLocalBandMachine@@E@Z",
- "0x8242a920": "??$__uninitialized_fill_n@PAVDataArrayPtr@@IV1@@stlpmtx_std@@YAPAVDataArrayPtr@@PAV1@IABV1@ABU__false_type@0@@Z"
+ "0x8242a920": "??$__uninitialized_fill_n@PAVDataArrayPtr@@IV1@@stlpmtx_std@@YAPAVDataArrayPtr@@PAV1@IABV1@ABU__false_type@0@@Z",
+ "0x823f0a00": "??$_Copy_Construct@UTypeCreatorPair@NetMessageFactory@@@stlpmtx_std@@YAXPAUTypeCreatorPair@NetMessageFactory@@ABU12@@Z",
+ "0x823f0a70": "?GetNetMessageByteCode@NetMessageFactory@@QBAEVString@@@Z",
+ "0x823f0b38": "?CreateNetMessage@NetMessageFactory@@QAAPAVNetMessage@@E@Z",
+ "0x823f0ba0": "?_M_clear_after_move@?$vector@UTypeCreatorPair@NetMessageFactory@@V?$StlNodeAlloc@UTypeCreatorPair@NetMessageFactory@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+ "0x823f0c18": "??1?$vector@UTypeCreatorPair@NetMessageFactory@@V?$StlNodeAlloc@UTypeCreatorPair@NetMessageFactory@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+ "0x823f0e58": "?push_back@?$vector@UTypeCreatorPair@NetMessageFactory@@V?$StlNodeAlloc@UTypeCreatorPair@NetMessageFactory@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUTypeCreatorPair@NetMessageFactory@@@Z",
+ "0x823f0ed8": "?RegisterNetMessage@NetMessageFactory@@QAAXVString@@P6APAVNetMessage@@XZ@Z"
 }

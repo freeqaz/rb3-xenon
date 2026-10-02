@@ -2177,6 +2177,7 @@
             },
             "network/net/MatchmakingSettings.cpp": "NonMatching",
             "network/net/NetLog.cpp": "NonMatching",
+            "network/net/NetMessage.cpp": "NonMatching",
             "network/net/Net.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [

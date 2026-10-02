@@ -17647,14 +17647,30 @@
   {
    "name": "$__destroy_range_aux",
    "address": "0x823f0b50",
-   "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAVSongPattern@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVSongPattern@@@0@0ABU__false_type@0@@Z",
+   "survivor": "??$_Destroy_Range@PAUTypeCreatorPair@NetMessageFactory@@@stlpmtx_std@@YAXPAUTypeCreatorPair@NetMessageFactory@@0@Z",
    "folded": [
     "??$_Destroy_Range@PAULabel@?A0xe9afadec@@@stlpmtx_std@@YAXPAULabel@?A0xe9afadec@@0@Z",
     "??$_Destroy_Range@PAVSampleMarker@@@stlpmtx_std@@YAXPAVSampleMarker@@0@Z",
     "??$__destroy_range@PAULabel@?A0xe9afadec@@U12@@stlpmtx_std@@YAXPAULabel@?A0xe9afadec@@00@Z",
     "??$__destroy_range@PAVSampleMarker@@V1@@stlpmtx_std@@YAXPAVSampleMarker@@00@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 4 folded spelling(s), 1 census sites over 2 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 4 folded spelling(s), 1 census sites over 2 functions.",
+   "repair_log": [
+    {
+     "lane": "W16-NE-F2 2026-10-02",
+     "change": "survivor swapped to the map name",
+     "why": "0x823F0B50 is NetMessage.cpp's _Destroy_Range<NetMessageFactory::TypeCreatorPair*> (80 B, element stride 16, ~String per element); the old survivor names a Dance Central type; it is kept as folded pending --chase"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAVSongPattern@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVSongPattern@@@0@0ABU__false_type@0@@Z",
+     "lane": "W16-NE-F2 2026-10-02",
+     "class": "DC3_ONLY_SPELLING_REFUTED",
+     "disposition": "withdrawn after the survivor swap",
+     "evidence": "--chase REFUTED: the reverse-iterator destroy for a Dance Central type; retail 0x823F0B50 is a forward 16-byte-stride _Destroy_Range"
+    }
+   ]
   },
   {
    "name": "0SfxSeq",
@@ -83868,9 +83884,17 @@
    "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x9335ac2a@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAULabel@?A0x9335ac2a@@@0@0ABU__false_type@0@@Z",
    "folded": [
     "??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0xe9afadec@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAULabel@?A0xe9afadec@@@0@0ABU__false_type@0@@Z",
-    "??$__destroy_range_aux@V?$reverse_iterator@PAVSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVSampleMarker@@@0@0ABU__false_type@0@@Z"
+    "??$__destroy_range_aux@V?$reverse_iterator@PAVSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVSampleMarker@@@0@0ABU__false_type@0@@Z",
+    "??$__destroy_range_aux@V?$reverse_iterator@PAUTypeCreatorPair@NetMessageFactory@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUTypeCreatorPair@NetMessageFactory@@@0@0ABU__false_type@0@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions.",
+   "membership_log": [
+    {
+     "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAUTypeCreatorPair@NetMessageFactory@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUTypeCreatorPair@NetMessageFactory@@@0@0ABU__false_type@0@@Z",
+     "lane": "W16-NE-F2 2026-10-02",
+     "evidence": "--chase CHASED T1 PROVEN"
+    }
+   ]
   },
   {
    "name": "?Replace@MsgSource@@$4PPPPPPPM@BI@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
@@ -102059,6 +102083,82 @@
     "??$_M_allocate_and_copy@PAV?$ObjDirPtr@VObjectDir@@@@@?$vector@V?$ObjDirPtr@VObjectDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjDirPtr@VObjectDir@@@@IPAV2@0@Z"
    ],
    "evidence": "W16-NE-F2 2026-10-02: tools/icf_pair_adjudicate.py --chase CHASED T1 PROVEN (flat T1 differs only in relocation targets; the chase verifies those callee pairs fold). Both 100 B. Caller: vector<ObjDirPtr<ObjectDir>>::reserve at 0x82710D10, which retail compiles against the const-pointer instantiation."
+  },
+  {
+   "name": "_Copy_Construct",
+   "address": "0x823f0a00",
+   "survivor": "??$_Copy_Construct@UTypeCreatorPair@NetMessageFactory@@@stlpmtx_std@@YAXPAUTypeCreatorPair@NetMessageFactory@@ABU12@@Z",
+   "folded": [
+    "??$_Copy_Construct@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@0@ABU10@@Z",
+    "??$_Param_Construct@VSampleMarker@@V1@@stlpmtx_std@@YAXPAVSampleMarker@@ABV1@@Z"
+   ],
+   "evidence": "W16-NE-F2 2026-10-02: tools/icf_pair_adjudicate.py --chase CHASED T1 PROVEN. Exposed when 0x823F09F8-0x823F0F84 was identified as NetMessage.cpp and its rows named: SampleData/SynthSample/WaveFile/Loader call the same retail bodies under their own 16-byte String+pointer element instantiations.",
+   "membership_log": [
+    {
+     "spelling": "??$_Copy_Construct@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@0@ABU10@@Z",
+     "lane": "W16-NE-F2 2026-10-02",
+     "evidence": "--chase CHASED T1 PROVEN"
+    },
+    {
+     "spelling": "??$_Param_Construct@VSampleMarker@@V1@@stlpmtx_std@@YAXPAVSampleMarker@@ABV1@@Z",
+     "lane": "W16-NE-F2 2026-10-02",
+     "evidence": "--chase CHASED T1 PROVEN"
+    }
+   ]
+  },
+  {
+   "name": "__uninitialized_fill_n",
+   "address": "0x82728da0",
+   "survivor": "??$__uninitialized_fill_n@PAVSampleMarker@@IV1@@stlpmtx_std@@YAPAVSampleMarker@@PAV1@IABV1@ABU__false_type@0@@Z",
+   "folded": [
+    "??$__uninitialized_fill_n@PAUTypeCreatorPair@NetMessageFactory@@IU12@@stlpmtx_std@@YAPAUTypeCreatorPair@NetMessageFactory@@PAU12@IABU12@ABU__false_type@0@@Z"
+   ],
+   "evidence": "W16-NE-F2 2026-10-02: tools/icf_pair_adjudicate.py --chase CHASED T1 PROVEN. Exposed when 0x823F09F8-0x823F0F84 was identified as NetMessage.cpp and its rows named: SampleData/SynthSample/WaveFile/Loader call the same retail bodies under their own 16-byte String+pointer element instantiations.",
+   "membership_log": [
+    {
+     "spelling": "??$__uninitialized_fill_n@PAUTypeCreatorPair@NetMessageFactory@@IU12@@stlpmtx_std@@YAPAUTypeCreatorPair@NetMessageFactory@@PAU12@IABU12@ABU__false_type@0@@Z",
+     "lane": "W16-NE-F2 2026-10-02",
+     "evidence": "--chase CHASED T1 PROVEN"
+    }
+   ]
+  },
+  {
+   "name": "1?$vector",
+   "address": "0x823f0c18",
+   "survivor": "??1?$vector@UTypeCreatorPair@NetMessageFactory@@V?$StlNodeAlloc@UTypeCreatorPair@NetMessageFactory@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "folded": [
+    "??1?$vector@ULabel@?A0x81ddebd1@@V?$StlNodeAlloc@ULabel@?A0x81ddebd1@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@VSampleMarker@@V?$StlNodeAlloc@VSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
+   ],
+   "evidence": "W16-NE-F2 2026-10-02: tools/icf_pair_adjudicate.py --chase CHASED T1 PROVEN. Exposed when 0x823F09F8-0x823F0F84 was identified as NetMessage.cpp and its rows named: SampleData/SynthSample/WaveFile/Loader call the same retail bodies under their own 16-byte String+pointer element instantiations.",
+   "membership_log": [
+    {
+     "spelling": "??1?$vector@ULabel@?A0x81ddebd1@@V?$StlNodeAlloc@ULabel@?A0x81ddebd1@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-NE-F2 2026-10-02",
+     "evidence": "--chase CHASED T1 PROVEN"
+    },
+    {
+     "spelling": "??1?$vector@VSampleMarker@@V?$StlNodeAlloc@VSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-NE-F2 2026-10-02",
+     "evidence": "--chase CHASED T1 PROVEN"
+    }
+   ]
+  },
+  {
+   "name": "push_back",
+   "address": "0x823f0e58",
+   "survivor": "?push_back@?$vector@UTypeCreatorPair@NetMessageFactory@@V?$StlNodeAlloc@UTypeCreatorPair@NetMessageFactory@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUTypeCreatorPair@NetMessageFactory@@@Z",
+   "folded": [
+    "?push_back@?$vector@ULabel@?A0x81ddebd1@@V?$StlNodeAlloc@ULabel@?A0x81ddebd1@@@stlpmtx_std@@@stlpmtx_std@@QAAXABULabel@?A0x81ddebd1@@@Z"
+   ],
+   "evidence": "W16-NE-F2 2026-10-02: tools/icf_pair_adjudicate.py --chase CHASED T1 PROVEN. Exposed when 0x823F09F8-0x823F0F84 was identified as NetMessage.cpp and its rows named: SampleData/SynthSample/WaveFile/Loader call the same retail bodies under their own 16-byte String+pointer element instantiations.",
+   "membership_log": [
+    {
+     "spelling": "?push_back@?$vector@ULabel@?A0x81ddebd1@@V?$StlNodeAlloc@ULabel@?A0x81ddebd1@@@stlpmtx_std@@@stlpmtx_std@@QAAXABULabel@?A0x81ddebd1@@@Z",
+     "lane": "W16-NE-F2 2026-10-02",
+     "evidence": "--chase CHASED T1 PROVEN"
+    }
+   ]
   }
  ]
 }
