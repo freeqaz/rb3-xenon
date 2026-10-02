@@ -798,7 +798,6 @@ Vector3 TransformNormal(const Vector3 &, const Hmx::Matrix3 &);
 
 Vector3 RndMesh::SkinVertex(const RndMesh::Vert &vert, Vector3 *vptr) {
     Vector3 ret(0, 0, 0);
-    const Transform *xfm;
     if (NumBones() > 0) {
         Transform tf60;
         tf60.Zero();
@@ -814,14 +813,14 @@ Vector3 RndMesh::SkinVertex(const RndMesh::Vert &vert, Vector3 *vptr) {
             }
         }
         Multiply(vert.pos, tf60, ret);
-        if (!vptr) return ret;
-        xfm = &tf60;
+        if (vptr)
+            *vptr = TransformNormal(vert.norm, tf60.m);
     } else {
-        xfm = &WorldXfm();
-        Multiply(vert.pos, *xfm, ret);
-        if (!vptr) return ret;
+        const Transform &xfm = WorldXfm();
+        Multiply(vert.pos, xfm, ret);
+        if (vptr)
+            *vptr = TransformNormal(vert.norm, xfm.m);
     }
-    *vptr = TransformNormal(vert.norm, xfm->m);
     return ret;
 }
 
