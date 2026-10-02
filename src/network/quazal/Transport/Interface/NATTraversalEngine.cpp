@@ -65,7 +65,7 @@ namespace Quazal {
             typedef MemAllocator<T2> other;
         };
 
-        ~MemAllocator() {}
+        MemAllocator() {}
 
         template <class T2>
         operator MemAllocator<T2>() const {
@@ -95,7 +95,14 @@ namespace Quazal {
     };
 
     template <class T>
-    class qList : public std::list<T, MemAllocator<T> >, public RootObject {};
+    class qList : public std::list<T, MemAllocator<T> >, public RootObject {
+    public:
+        typedef typename std::list<T, MemAllocator<T> >::iterator iterator;
+        typedef typename std::list<T, MemAllocator<T> >::const_iterator const_iterator;
+        iterator begin() { return std::list<T, MemAllocator<T> >::begin(); }
+        const_iterator begin() const { return std::list<T, MemAllocator<T> >::begin(); }
+        iterator erase(iterator it) { return std::list<T, MemAllocator<T> >::erase(it); }
+    };
 
     class MutexPrimitive : public RootObject {
     public:
@@ -549,16 +556,14 @@ namespace Quazal {
                 iType = it->GetURL().GetURLType();
             }
             while (it != m_oProbes.GetList().end()) {
-                if (it->IsProbeRequested()) {
-                    if (it->GetURL().GetRVConnectionID() != 0) {
-                        switch (it->GetURL().GetURLType()) {
-                        case 3:
-                            lstRelayExt.push_back(it->GetURL());
-                            break;
-                        case 1:
-                            lstRelay.push_back(it->GetURL());
-                            break;
-                        }
+                if (it->IsProbeRequested() && it->GetURL().GetRVConnectionID() != 0) {
+                    switch (it->GetURL().GetURLType()) {
+                    case 3:
+                        lstRelayExt.push_back(it->GetURL());
+                        break;
+                    case 1:
+                        lstRelay.push_back(it->GetURL());
+                        break;
                     }
                     it->SetProbeRequested(false);
                     ++it;
