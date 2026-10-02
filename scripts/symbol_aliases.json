@@ -6275,7 +6275,8 @@
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z"
+    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
+    "??$_Param_Construct@UWeight@PlayBack@CharLipSync@@U123@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 3 census sites over 3 functions.",
    "withdrawn": [
@@ -7081,7 +7082,14 @@
      "class": "PLACED_ELSEWHERE_BY_RETAIL_CALLERS"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350.",
+   "membership_log": [
+    {
+     "spelling": "??$_Param_Construct@UWeight@PlayBack@CharLipSync@@U123@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z",
+     "lane": "W16-NE-F2 2026-10-02",
+     "evidence": "--chase CHASED T1 PROVEN"
+    }
+   ]
   },
   {
    "name": "$__uninitialized_copy",
@@ -17659,7 +17667,7 @@
     {
      "lane": "W16-NE-F2 2026-10-02",
      "change": "survivor swapped to the map name",
-     "why": "0x823F0B50 is NetMessage.cpp's _Destroy_Range<NetMessageFactory::TypeCreatorPair*> (80 B, element stride 16, ~String per element); the old survivor names a Dance Central type; it is kept as folded pending --chase"
+     "why": "0x823F0B50 is NetMessage.cpp's _Destroy_Range<NetMessageFactory::TypeCreatorPair*> (80 B, element stride 16, ~String per element); the old survivor names a Dance Central type; it is kept as folded ; --chase decided it (PROVEN kept, REFUTED withdrawn)"
     }
    ],
    "withdrawn": [
@@ -18517,15 +18525,22 @@
   {
    "name": "$__destroy_range",
    "address": "0x82703890",
-   "survivor": "??$__destroy_range@PAUMoveRating@SkeletonClip@@U12@@stlpmtx_std@@YAXPAUMoveRating@SkeletonClip@@00@Z",
+   "survivor": "??$_Destroy_Range@PAUMarker@@@stlpmtx_std@@YAXPAUMarker@@0@Z",
    "folded": [
-    "??$_Destroy_Range@PAUMarker@@@stlpmtx_std@@YAXPAUMarker@@0@Z",
     "??$_Destroy_Range@PAUMoveRating@SkeletonClip@@@stlpmtx_std@@YAXPAUMoveRating@SkeletonClip@@0@Z",
     "??$_Destroy_Range@PAVArtEntry@StoreArtLoaderPanel@@@stlpmtx_std@@YAXPAVArtEntry@StoreArtLoaderPanel@@0@Z",
     "??$__destroy_range@PAUMarker@@U1@@stlpmtx_std@@YAXPAUMarker@@00@Z",
-    "??$__destroy_range@PAVArtEntry@StoreArtLoaderPanel@@V12@@stlpmtx_std@@YAXPAVArtEntry@StoreArtLoaderPanel@@00@Z"
+    "??$__destroy_range@PAVArtEntry@StoreArtLoaderPanel@@V12@@stlpmtx_std@@YAXPAVArtEntry@StoreArtLoaderPanel@@00@Z",
+    "??$__destroy_range@PAUMoveRating@SkeletonClip@@U12@@stlpmtx_std@@YAXPAUMoveRating@SkeletonClip@@00@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 6, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 5 folded spelling(s), 1 census sites over 2 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 6, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 5 folded spelling(s), 1 census sites over 2 functions.",
+   "repair_log": [
+    {
+     "lane": "W16-NE-F2 2026-10-02",
+     "change": "survivor swapped to the map name",
+     "why": "map row renamed from retail callees; old survivor kept as folded ; --chase decided it (PROVEN kept, REFUTED withdrawn)"
+    }
+   ]
   },
   {
    "name": "UncompressedSize",
@@ -91522,7 +91537,8 @@
     "??_GDebugGraph@?A0xb39b74bf@@QAAPAXI@Z",
     "??_GLongJoyCheat@@QAAPAXI@Z",
     "??_GPendingPurchase@MusicLibraryStore@@QAAPAXI@Z",
-    "??_GSyncStore@@QAAPAXI@Z"
+    "??_GSyncStore@@QAAPAXI@Z",
+    "??_G?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@stlpmtx_std@@QAAPAXI@Z"
    ],
    "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x825bd3e8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 16 against 4 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies.",
    "admitted": [
@@ -91535,6 +91551,13 @@
      "spelling": "??_GSyncStore@@QAAPAXI@Z",
      "lane": "W16-NC-F2 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED (template-twin shape: the operator-delete slot names differ), CHASED T1 PROVEN, 0 CYCLE leaves; retail_bodytwins 1. Charged call site: ?Terminate@Net@@QAAXXZ (232 B, 99.91) -- retail 0x823E0874 `bl 0x825BD3E8` deletes mSyncStore (Net+0x3c, the SyncStore that Net::Init news at 0x823E06B0) where our source calls ??_GSyncStore."
+    }
+   ],
+   "membership_log": [
+    {
+     "spelling": "??_G?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@stlpmtx_std@@QAAPAXI@Z",
+     "lane": "W16-NE-F2 2026-10-02",
+     "evidence": "--chase CHASED T1 PROVEN"
     }
    ]
   },
@@ -96430,11 +96453,25 @@
   {
    "name": "_Destroy_Range_PAVCartRow",
    "address": "0x82703938",
-   "survivor": "??$_Destroy_Range@PAVCartRow@@@stlpmtx_std@@YAXPAVCartRow@@0@Z",
-   "folded": [
-    "??$__uninitialized_fill_n@PAUMarker@@IU1@@stlpmtx_std@@YAPAUMarker@@PAU1@IABU1@ABU__false_type@0@@Z"
+   "survivor": "??$__uninitialized_fill_n@PAUMarker@@IU1@@stlpmtx_std@@YAPAUMarker@@PAU1@IABU1@ABU__false_type@0@@Z",
+   "folded": [],
+   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 52, row addr 0x82703938). \"ours\" spelling ??$__uninitialized_fill_n@PAUMarker@@IU1@@stlpmtx_std@@YAPAUMarker@@PAU1@IABU1@ABU__false_type@0@@Z is a template/spelling twin of survivor ??$_Destroy_Range@PAVCartRow@@@stlpmtx_std@@YAXPAVCartRow@@0@Z at retail address 0x82703938. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 SLOT-FOLD-OK, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 328 B (328 B honest) across ['default/StandardStream'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md.",
+   "repair_log": [
+    {
+     "lane": "W16-NE-F2 2026-10-02",
+     "change": "survivor swapped to the map name",
+     "why": "map row renamed from retail callees; old survivor kept as folded ; --chase decided it (PROVEN kept, REFUTED withdrawn)"
+    }
    ],
-   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 52, row addr 0x82703938). \"ours\" spelling ??$__uninitialized_fill_n@PAUMarker@@IU1@@stlpmtx_std@@YAPAUMarker@@PAU1@IABU1@ABU__false_type@0@@Z is a template/spelling twin of survivor ??$_Destroy_Range@PAVCartRow@@@stlpmtx_std@@YAXPAVCartRow@@0@Z at retail address 0x82703938. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 SLOT-FOLD-OK, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 328 B (328 B honest) across ['default/StandardStream'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md."
+   "withdrawn": [
+    {
+     "spelling": "??$_Destroy_Range@PAVCartRow@@@stlpmtx_std@@YAXPAVCartRow@@0@Z",
+     "lane": "W16-NE-F2 2026-10-02",
+     "class": "DC3_ONLY_SPELLING_REFUTED",
+     "disposition": "withdrawn after the survivor swap",
+     "evidence": "--chase REFUTED; Dance Central type with no retail RTTI; the map row now names the instantiation its retail callees use"
+    }
+   ]
   },
   {
    "name": "__uninitialized_copy_PAVTransformArea",
@@ -97289,10 +97326,8 @@
   {
    "name": "$__uninitialized_fill_n",
    "address": "0x823d4458",
-   "survivor": "??$__uninitialized_fill_n@PAUMoveReplacer@@IU1@@stlpmtx_std@@YAPAUMoveReplacer@@PAU1@IABU1@ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_copy@PAUWeight@PlayBack@CharLipSync@@PAU123@@stlpmtx_std@@YAPAUWeight@PlayBack@CharLipSync@@PAU123@00ABU__false_type@0@@Z"
-   ],
+   "survivor": "??$__uninitialized_copy@PAUWeight@PlayBack@CharLipSync@@PAU123@@stlpmtx_std@@YAPAUWeight@PlayBack@CharLipSync@@PAU123@00ABU__false_type@0@@Z",
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -97301,15 +97336,29 @@
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 96 B retail / 96 B ours; retail body-twins 8. Retail call site(s) reaching the survivor where we call this spelling: 0x823d4b9c, 0x823d4c30."
     }
+   ],
+   "repair_log": [
+    {
+     "lane": "W16-NE-F2 2026-10-02",
+     "change": "survivor swapped to the map name",
+     "why": "map row renamed from retail callees; old survivor kept as folded ; --chase decided it (PROVEN kept, REFUTED withdrawn)"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_fill_n@PAUMoveReplacer@@IU1@@stlpmtx_std@@YAPAUMoveReplacer@@PAU1@IABU1@ABU__false_type@0@@Z",
+     "lane": "W16-NE-F2 2026-10-02",
+     "class": "DC3_ONLY_SPELLING_REFUTED",
+     "disposition": "withdrawn after the survivor swap",
+     "evidence": "--chase REFUTED; Dance Central type with no retail RTTI; the map row now names the instantiation its retail callees use"
+    }
    ]
   },
   {
    "name": "$__uninitialized_copy",
    "address": "0x823d43c0",
-   "survivor": "??$__uninitialized_copy@PAUMoveReplacer@@PAU1@@stlpmtx_std@@YAPAUMoveReplacer@@PAU1@00ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_fill_n@PAUWeight@PlayBack@CharLipSync@@IU123@@stlpmtx_std@@YAPAUWeight@PlayBack@CharLipSync@@PAU123@IABU123@ABU__false_type@0@@Z"
-   ],
+   "survivor": "??$__uninitialized_fill_n@PAUWeight@PlayBack@CharLipSync@@IU123@@stlpmtx_std@@YAPAUWeight@PlayBack@CharLipSync@@PAU123@IABU123@ABU__false_type@0@@Z",
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -97317,6 +97366,22 @@
      "spelling": "??$__uninitialized_fill_n@PAUWeight@PlayBack@CharLipSync@@IU123@@stlpmtx_std@@YAPAUWeight@PlayBack@CharLipSync@@PAU123@IABU123@ABU__false_type@0@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 96 B retail / 96 B ours; retail body-twins 8. Retail call site(s) reaching the survivor where we call this spelling: 0x823d4c10."
+    }
+   ],
+   "repair_log": [
+    {
+     "lane": "W16-NE-F2 2026-10-02",
+     "change": "survivor swapped to the map name",
+     "why": "map row renamed from retail callees; old survivor kept as folded ; --chase decided it (PROVEN kept, REFUTED withdrawn)"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_copy@PAUMoveReplacer@@PAU1@@stlpmtx_std@@YAPAUMoveReplacer@@PAU1@00ABU__false_type@0@@Z",
+     "lane": "W16-NE-F2 2026-10-02",
+     "class": "DC3_ONLY_SPELLING_REFUTED",
+     "disposition": "withdrawn after the survivor swap",
+     "evidence": "--chase REFUTED; Dance Central type with no retail RTTI; the map row now names the instantiation its retail callees use"
     }
    ]
   },

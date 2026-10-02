@@ -1147,6 +1147,7 @@ BandStarDisplay.cpp:
 	.text       start:0x822CDB68 end:0x822CDC18
 
 BandRetargetVignette.cpp:
+	.pdata      start:0x821F1680 end:0x821F1690
 	.pdata      start:0x821F16C0 end:0x821F16C8
 	.pdata      start:0x821F1F78 end:0x821F1F88
 	.pdata      start:0x821F6C48 end:0x821F6C58
@@ -1157,6 +1158,7 @@ BandRetargetVignette.cpp:
 	.pdata      start:0x821F6CA8 end:0x821F6CB0
 	.pdata      start:0x821F6CB0 end:0x821F6D50
 	.pdata      start:0x821F6D58 end:0x821F6DA0
+	.text       start:0x822707C0 end:0x82270848
 	.text       start:0x82270B20 end:0x82270B84
 	.text       start:0x8227A4A8 end:0x8227A528
 	.text       start:0x822C5884 end:0x822C59D4
@@ -3607,7 +3609,6 @@ SongLayout.cpp:
 	.pdata      start:0x821F8B38 end:0x821F8B40
 	.pdata      start:0x822000F0 end:0x822000F8
 	.pdata      start:0x822000F8 end:0x82200100
-	.pdata      start:0x82206D80 end:0x82206DA0
 	.pdata      start:0x822349D8 end:0x822349E0
 	.text       start:0x822C76E4 end:0x822C76F0
 	.text       start:0x822D16F8 end:0x822D1768
@@ -3615,7 +3616,6 @@ SongLayout.cpp:
 	.text       start:0x822E507C end:0x822E50A8
 	.text       start:0x8235CAE0 end:0x8235CB54
 	.text       start:0x8235CB54 end:0x8235CB7C
-	.text       start:0x823D43C0 end:0x823D44E8
 	.text       start:0x826CB590 end:0x826CB610
 
 Mesh.cpp:
@@ -4118,8 +4118,6 @@ HamNavList.cpp:
 	.text       start:0x826F7CC8 end:0x826F7E50
 
 SkeletonClip.cpp:
-	.pdata      start:0x82237AC8 end:0x82237AE8
-	.text       start:0x82703890 end:0x827039C8
 	.text       start:0x827041A0 end:0x827041A8
 
 CharLipSync.cpp:
@@ -4137,6 +4135,7 @@ CharLipSync.cpp:
 	.pdata      start:0x82206C90 end:0x82206CE0
 	.pdata      start:0x82206CE0 end:0x82206D68
 	.pdata      start:0x82206D70 end:0x82206D80
+	.pdata      start:0x82206D80 end:0x82206DA0
 	.pdata      start:0x82206DA0 end:0x82206E28
 	.pdata      start:0x82206E28 end:0x82206E40
 	.pdata      start:0x82206E40 end:0x82206ED8
@@ -4159,6 +4158,7 @@ CharLipSync.cpp:
 	.text       start:0x823D333C end:0x823D3910
 	.text       start:0x823D3918 end:0x823D4258
 	.text       start:0x823D42F0 end:0x823D43C0
+	.text       start:0x823D43C0 end:0x823D44E8
 	.text       start:0x823D44E8 end:0x823D4D18
 	.text       start:0x823D4D18 end:0x823D4F18
 	.text       start:0x823D4F18 end:0x823D5878
@@ -5744,14 +5744,14 @@ LocalePanel.cpp:
 
 RhythmDetector.cpp:
 	.pdata      start:0x821F1638 end:0x821F1648
-	.pdata      start:0x821F1678 end:0x821F16C0
+	.pdata      start:0x821F1678 end:0x821F1680
+	.pdata      start:0x821F1690 end:0x821F16C0
 	.pdata      start:0x821F16C8 end:0x821F1700
-	.pdata      start:0x8222B190 end:0x8222B198
 	.text       start:0x822703A8 end:0x82270414
-	.text       start:0x82270690 end:0x82270B1C
+	.text       start:0x82270690 end:0x822707C0
+	.text       start:0x82270848 end:0x82270B1C
 	.text       start:0x82270B84 end:0x82270E68
 	.text       start:0x8227173C end:0x82271748
-	.text       start:0x826342F0 end:0x82634354
 
 App.cpp:
 	.pdata      start:0x821F1700 end:0x821F1748
@@ -10112,6 +10112,7 @@ SetlistMergePanel.cpp:
 	.pdata      start:0x82221FB0 end:0x82221FB8
 	.pdata      start:0x82221FB8 end:0x82221FD8
 	.pdata      start:0x8222B130 end:0x8222B190
+	.pdata      start:0x8222B190 end:0x8222B198
 	.pdata      start:0x8222B198 end:0x8222B1A0
 	.pdata      start:0x8222B1B8 end:0x8222B1C0
 	.pdata      start:0x8222B1C0 end:0x8222B1D0
@@ -10136,6 +10137,7 @@ SetlistMergePanel.cpp:
 	.text       start:0x825AAF20 end:0x825AAF60
 	.text       start:0x825AAF60 end:0x825AB060
 	.text       start:0x82633D98 end:0x826342F0
+	.text       start:0x826342F0 end:0x82634354
 	.text       start:0x82634360 end:0x82634624
 	.text       start:0x826346E4 end:0x82634758
 	.text       start:0x82634760 end:0x826347F4
@@ -11714,6 +11716,7 @@ StandardStream.cpp:
 	.pdata      start:0x82237A28 end:0x82237A98
 	.pdata      start:0x82237A98 end:0x82237AC0
 	.pdata      start:0x82237AC0 end:0x82237AC8
+	.pdata      start:0x82237AC8 end:0x82237AE8
 	.pdata      start:0x82237AE8 end:0x82237AF8
 	.pdata      start:0x82237AF8 end:0x82237B00
 	.pdata      start:0x82237B08 end:0x82237B18
@@ -11737,6 +11740,7 @@ StandardStream.cpp:
 	.text       start:0x82702AA0 end:0x8270347C
 	.text       start:0x82703480 end:0x82703814
 	.text       start:0x82703818 end:0x82703890
+	.text       start:0x82703890 end:0x827039C8
 	.text       start:0x827039C8 end:0x82703A60
 	.text       start:0x82703A60 end:0x82703AC8
 	.text       start:0x82703AF8 end:0x82703B90
