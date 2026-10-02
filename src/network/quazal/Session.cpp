@@ -264,11 +264,11 @@ namespace Quazal {
     }
 
     bool Session::CreateSession(const char *szName, bool bListen) {
-        int iStep = 0;
+        int iPhase = 0;
         if (ObjDupProtocol::GetInstance() == NULL) {
             return false;
         }
-        ScopedCS cs(Scheduler::GetInstance()->unk38);
+        ScopedCS oCS(Scheduler::GetInstance()->unk38);
         if (XboxSessionKeys::GetNbKeys() == 0) {
             XboxSessionKeys::Create();
         }
@@ -281,64 +281,64 @@ namespace Quazal {
             }
             if (!bListening) {
                 SystemError::TraceLast(4);
-                CancelCreation(iStep);
+                CancelCreation(iPhase);
                 return false;
             }
         }
-        iStep++;
-        DOHandle hLocalStation;
-        hLocalStation.SetDOClassID(Station::GetClassID());
-        hLocalStation.SetDOID(DOID(1));
-        Station::SetLocalStation(hLocalStation);
-        iStep++;
-        Session *pSession = (Session *)_DO_Session::CreateWellKnown(s_wkhSession);
-        if (pSession == NULL) {
+        iPhase++;
+        DOHandle dohStation;
+        dohStation.SetDOClassID(Station::GetClassID());
+        dohStation.SetDOID(DOID(1));
+        Station::SetLocalStation(dohStation);
+        iPhase++;
+        Session *pTheSession = (Session *)_DO_Session::CreateWellKnown(s_wkhSession);
+        if (pTheSession == NULL) {
             SystemError::TraceLast(4);
-            CancelCreation(iStep);
+            CancelCreation(iPhase);
             return false;
         }
-        iStep++;
-        pSession->m_dsSessionInfo.SetSessionName(szName);
-        pSession->m_dsSessionInfo.GenerateSessionID();
-        if (!pSession->Publish(-1)) {
+        iPhase++;
+        pTheSession->m_dsSessionInfo.SetSessionName(szName);
+        pTheSession->m_dsSessionInfo.GenerateSessionID();
+        if (!pTheSession->Publish(-1)) {
             SystemError::TraceLast(4);
-            CancelCreation(iStep);
+            CancelCreation(iPhase);
             return false;
         }
-        iStep++;
-        PromotionReferee *pReferee =
+        iPhase++;
+        PromotionReferee *pPromotionReferee =
             _DO_PromotionReferee::CreateWellKnown(PromotionReferee::s_wkhPromotionReferee);
-        if (!pReferee->Publish(-1)) {
+        if (!pPromotionReferee->Publish(-1)) {
             SystemError::TraceLast(4);
-            CancelCreation(iStep);
+            CancelCreation(iPhase);
             return false;
         }
-        iStep++;
+        iPhase++;
         for (qList<void (*)()>::iterator it = s_lstWellKnownDOsFactories.GetValue().begin();
              it != s_lstWellKnownDOsFactories.GetValue().end();
-             it++) {
+             ++it) {
             (*it)();
         }
-        iStep++;
+        iPhase++;
         if (!XboxNetwork::IsInitialized()) {
             XboxNetwork::Terminate(1);
             SystemError::SignalError(0, 0, 0xE003000A, 0);
-            CancelCreation(iStep);
+            CancelCreation(iPhase);
             return false;
         }
-        iStep++;
-        if (!pSession->CompleteCreation()) {
-            CancelCreation(iStep);
+        iPhase++;
+        if (!pTheSession->CompleteCreation()) {
+            CancelCreation(iPhase);
             return false;
         }
-        iStep++;
+        iPhase++;
         DOClassesTable::GetInstance()->Seal();
         Station::GetLocalInstance()->SetState((Station::_State)3);
         Station::GetLocalInstance()->m_oConnectionInfo.m_bURLInitialized = true;
         NetZ::GetInstance()->StartSessionServices();
-        pSession->InitSessionDescription(bListen);
+        pTheSession->InitSessionDescription(bListen);
         NetZ::GetInstance()->GetSessionDiscoveryTable()->Activate();
-        pSession->UpdateSessionDescription();
+        pTheSession->UpdateSessionDescription();
         ((SystemComponent *)(Core::GetInstance() == NULL
                                  ? NULL
                                  : Core::GetInstance()->m_pSystemComponents)
@@ -423,17 +423,17 @@ namespace Quazal {
                 return true;
             }
         }
-        unsigned int uiRVCID = 0;
-        qList<StationURL>::const_iterator it = lstURLs.begin();
-        while (it != lstURLs.end()) {
-            if ((*it).GetRVConnectionID() != 0) {
-                if (uiRVCID != 0 && (*it).GetRVConnectionID() != uiRVCID) {
+        unsigned int uiConnectionID = 0;
+        qList<StationURL>::const_iterator itURL = lstURLs.begin();
+        while (itURL != lstURLs.end()) {
+            if ((*itURL).GetRVConnectionID() != 0) {
+                if (uiConnectionID != 0 && (*itURL).GetRVConnectionID() != uiConnectionID) {
                     SystemError::SignalError(0, 0, 0xE0000016, 0);
                     return false;
                 }
-                uiRVCID = (*it).GetRVConnectionID();
+                uiConnectionID = (*itURL).GetRVConnectionID();
             }
-            ++it;
+            ++itURL;
         }
         if (XboxSessionKeys::GetNbKeys() == 0) {
             for (qList<StationURL>::const_iterator itKey = lstURLs.begin(); itKey != lstURLs.end();
@@ -447,7 +447,7 @@ namespace Quazal {
                 }
             }
         }
-        ScopedCS cs(Scheduler::GetInstance()->unk38);
+        ScopedCS lock(Scheduler::GetInstance()->unk38);
         if (!pContext->BeginCall()) {
             return false;
         }
@@ -460,8 +460,8 @@ namespace Quazal {
             pContext->SetStateImpl(CallContext::CallError, qResult(0x80010001), false);
             return false;
         }
-        JobJoinSession *pJob = new (__FILE__, 0x25F) JobJoinSession(lstURLs, pContext->unk30);
-        Scheduler::GetInstance()->Queue((Job *)pJob, false);
+        JobJoinSession *pJobJoinSession = new (__FILE__, 0x25F) JobJoinSession(lstURLs, pContext->unk30);
+        Scheduler::GetInstance()->Queue((Job *)pJobJoinSession, false);
         return true;
     }
 
