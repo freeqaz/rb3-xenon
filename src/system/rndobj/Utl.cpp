@@ -1943,15 +1943,16 @@ void SetBloomBlurWeightsStreak(
 ) {
     MILO_ASSERT(pass >= 0 && pass < 3, 0x11aa);
 
-    float passF = (float)pass;
-    float scale = (float)pow(4.0, (double)passF);
-    float atten = (float)pow((double)attenuation, (double)scale);
-
     float weights[kNumBloomTaps];
     float offsets[kNumBloomTaps];
     int middle = 3;
     float initWeight = 0.333333f;
     weights[middle] = initWeight;
+
+    float passF = (float)pass;
+    float scale = (float)pow(4.0, (double)passF);
+    float atten = (float)pow((double)attenuation, (double)scale);
+
     float initOffset = 0.5f;
     offsets[middle] = initOffset;
 
@@ -2000,21 +2001,21 @@ void SetBloomBlurWeightsStreak(
     float yRatio = fHeight / fWidth;
     float sinA = (float)sin((double)angleRad);
     float cosA = (float)cos((double)angleRad);
-    int reg = 0x9a;
+    // Same RB3 PShaderConstant base as SetBloomBlurWeights (retail `li r31,0x2f`).
+    int reg = 0x2f;
     int idx = 0;
     do {
-        Vector4 texOffset;
+        float x, y;
         if (horizontal) {
             float off = offsets[idx] * invWidth;
-            texOffset.y = off * sinA;
-            texOffset.x = (float)((double)(off * cosA) * (double)yRatio);
+            y = off * sinA;
+            x = off * cosA * yRatio;
         } else {
             float off = offsets[idx] * invHeight;
-            texOffset.y = off * cosA;
-            texOffset.x = -(float)((double)(off * sinA) * (double)yRatio);
+            y = off * cosA;
+            x = -(off * sinA * yRatio);
         }
-        texOffset.z = one;
-        texOffset.w = one;
+        Vector4 texOffset(x, y, one, one);
         TheShaderMgr.SetPConstant((PShaderConstant)(reg - 0x10), texOffset);
         float w = weights[idx];
         Vector4 weight(w, w, w, w);
