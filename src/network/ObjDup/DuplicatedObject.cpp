@@ -8,6 +8,8 @@
 #include "ObjDup/DOClass.h"
 #include "ObjDup/ObjDupProtocol.h"
 #include "ObjDup/Station.h"
+#include "Core/NetZ.h"
+#include "Core/OperationManager.h"
 #include "ObjDup/DORefTemplate.h"
 #include "Platform/Message.h"
 #include "Platform/Time.h"
@@ -164,6 +166,39 @@ namespace Quazal {
             AcquireMainReference();
             SetFlag(1);
             return true;
+        }
+    }
+
+    bool DuplicatedObject::ChangeMasterStation(
+        DOHandle hTarget, DOHandle hNewMaster, const MasterStationRef &refMaster,
+        const qList<DOHandle> *plstDuplicas, unsigned int uiContext
+    ) {
+        if (m_refMasterStation.GetHandle() == refMaster.GetHandle()) {
+            if (refMaster.m_lcVersion > m_refMasterStation.m_lcVersion) {
+                m_refMasterStation.m_lcVersion = refMaster.m_lcVersion;
+            }
+            return true;
+        }
+        ScopedCS cs(Scheduler::GetInstance()->unk38);
+        if (IsDeleted()) {
+            return false;
+        }
+        ChangeMasterStationOperation oOperation(
+            hTarget, this, hNewMaster, refMaster, plstDuplicas,
+            (ChangeMasterStationOperation::Context)uiContext
+        );
+        return ExecuteOperation(oOperation);
+    }
+
+    DOOperation *DuplicatedObject::GetCurrentOperation() {
+        return NetZ::GetInstance()->GetOperationManager()->GetCurrentOperation();
+    }
+
+    OperationManager *DuplicatedObject::GetOperationManager() {
+        if (NetZ::GetInstance()) {
+            return NetZ::GetInstance()->GetOperationManager();
+        } else {
+            return NULL;
         }
     }
 

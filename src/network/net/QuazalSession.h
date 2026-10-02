@@ -3,15 +3,10 @@
 #include "os/CritSec.h"
 #include "utl/JobMgr.h"
 
-namespace Quazal {
-    // Retail deletes the terminating NetZ through vtable slot 0 (scalar
-    // deleting dtor) in QuazalSession::Poll (0x823F2B80); nothing else of the
-    // class is used from this TU.
-    class NetZ {
-    public:
-        virtual ~NetZ();
-    };
-}
+// Retail deletes the terminating NetZ through vtable slot 0 (scalar deleting
+// dtor) in QuazalSession::Poll (0x823F2B80); nothing else of the class is used
+// from this TU.
+#include "Core/NetZ.h"
 
 // QuazalSession+0x4.  Offsets read off retail HasHostLeft (0x823F2C28): a bool
 // at +0x8 guarded by the CriticalSection at +0x18; ~QuazalSession (0x823F2AC0)
