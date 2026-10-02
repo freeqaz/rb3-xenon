@@ -38,15 +38,16 @@ BEGIN_LOADS(BandButton)
 END_LOADS
 
 // Retail folds both rev words onto ONE base register with offsets 0/4
-// (lbl_82CBE414: altRev+0, rev+4), which only happens for internal-linkage,
-// align(4) file-scope statics -- not for the DECLARE_REVS/INIT_REVS class
-// statics. Same lever as BandCrowdMeter.cpp / BandWardrobe.cpp.
-static struct {
-    __declspec(align(4)) unsigned short altRev;
-    __declspec(align(4)) unsigned short rev;
-} gRevs;
-#define gAltRev gRevs.altRev
-#define gRev gRevs.rev
+// (lbl_82CBE414: altRev+0, rev+4) where a function reads both (PreLoad), and
+// reads rev through its own relocation lbl_82CBE418 where it reads only rev
+// (PostLoad).  That is two adjacent internal-linkage statics, not one struct
+// (a struct base costs PostLoad an extra addi).  Explicit `= 0` keeps them in
+// .data in declaration order.  The class statics from DECLARE_REVS/INIT_REVS
+// would each take an external relocation.
+static unsigned short sAltRev = 0;
+static unsigned short sRev = 0;
+#define gAltRev sAltRev
+#define gRev sRev
 
 void BandButton::PreLoad(BinStream &bs) {
     LOAD_REVS(bs);
@@ -145,7 +146,7 @@ void BandButton::PreLoad(BinStream &bs) {
 
 void BandButton::PostLoad(BinStream &bs) {
     UIButton::PostLoad(bs);
-    if (gRev == 13 || gRev == 14 || gRev == 15) {
+    if (gRev > 12 && gRev < 16) {
         ObjPtr<RndMesh> meshPtr(0);
         bs >> meshPtr;
     }
