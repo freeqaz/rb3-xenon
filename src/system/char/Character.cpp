@@ -431,9 +431,10 @@ void Character::DrawShadow(const Transform &xfm, const Plane &plane) {
         Multiply(plane, tf40, plb0);
 
         Transform tf90;
-        float scale = -1.0f / plb0.b;
-        tf90.m.Set(1, plb0.a * scale, 0, 0, 0, 0, 0, plb0.c * scale, 1);
-        tf90.v.Set(0, plb0.d * scale, 0);
+        tf90.m.Set(
+            1, plb0.a * (-1.0f / plb0.b), 0, 0, 0, 0, 0, plb0.c * (-1.0f / plb0.b), 1
+        );
+        tf90.v.Set(0, plb0.d * (-1.0f / plb0.b), 0);
 
         Transform tfa0;
         Multiply(tf40, tf90, tfa0);
