@@ -155,6 +155,12 @@ namespace Quazal {
         float GetExtraRetransmitTimeoutMultiplier();
         unsigned int GetExtraRetransmitTimeoutTrigger();
         float GetRetransmitTimeoutMultiplier();
+        float GetRetransmitTimeoutMultiplier(unsigned short usNbSends) {
+            if (usNbSends < GetExtraRetransmitTimeoutTrigger())
+                return GetRetransmitTimeoutMultiplier();
+            else
+                return GetExtraRetransmitTimeoutMultiplier();
+        }
         unsigned int GetInitialRTT();
         unsigned int GetMaxWindowMapSize();
         unsigned int GetMaxRTTRetransmission();
@@ -252,7 +258,8 @@ namespace Quazal {
     class EndPointAddress {
     public:
         void *GetAddress();
-        unsigned char GetPortType();
+        unsigned char GetStreamID();
+        unsigned char GetPortType() { return GetStreamID(); }
     };
 
     class EndPoint;
@@ -462,9 +469,6 @@ namespace Quazal {
         unsigned int GetNbPacketsInWindow();
         bool IsWindowEmpty();
         bool HasPendingData() { return !m_pSlidingWindow->HasRoom(); }
-        void SendOnStream(unsigned char ucPort, PacketOut *pPacket) {
-            GetStream()->Send(m_usConnectionID, ucPort, pPacket);
-        }
         qResult Frag(Buffer *, unsigned int, unsigned int, unsigned char, bool);
         bool Send(PacketOut *);
         void SendNextPackets();
@@ -757,7 +761,7 @@ namespace Quazal {
                     ++m_oNextSequenceID;
                 }
             }
-            SendOnStream(m_oAddress.GetPortType(), pPacket);
+            GetStream()->Send(m_usConnectionID, m_oAddress.GetPortType(), pPacket);
         }
         return true;
     }
@@ -781,15 +785,13 @@ namespace Quazal {
         Timeout *pTimeout = pPacket->m_pTimeout;
         unsigned int uiTimeout = (unsigned int)(
             m_oRTT.GetRTO() * pPacket->GetNbSends()
-            * (pPacket->GetNbSends() < pSettings->GetExtraRetransmitTimeoutTrigger()
-                   ? pSettings->GetRetransmitTimeoutMultiplier()
-                   : pSettings->GetExtraRetransmitTimeoutMultiplier())
+            * pSettings->GetRetransmitTimeoutMultiplier(pPacket->GetNbSends())
         );
         if (pPacket->GetNbSends() > 1)
             GetStream()->m_pStats->m_oCounters.Increment(7, 1);
         pTimeout->SetRTO(uiTimeout);
         GetStream()->m_oTimeoutManager.SchedulePacketTimeout(pPacket);
-        SendOnStream(m_oAddress.GetPortType(), pPacket);
+        GetStream()->Send(m_usConnectionID, m_oAddress.GetPortType(), pPacket);
     }
 
     bool PRUDPEndPoint::Defrag(PacketIn *pPacket) {
