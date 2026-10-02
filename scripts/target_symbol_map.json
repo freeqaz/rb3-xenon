@@ -31610,7 +31610,7 @@
  "0x82b97c78": "?IsLocal@Track@@UBA_NXZ",
  "0x82b97cd8": "?GetBandMultiplier@Track@@UBAHXZ",
  "0x82b97d18": "?PushGameplayOptions@Track@@UAAXW4VocalParam@@H@Z",
- "0x82b97d58": "?GetNoBackFromBrink@Track@@UBAHXZ",
+ "0x82b97d58": "?GetNoBackFromBrink@Track@@UBA_NXZ",
  "0x82b97d80": "?RefreshPlayerHUD@Track@@UAAXXZ",
  "0x82b97e50": "?FailedAtStart@Track@@UAA_NXZ",
  "0x82b97ea8": "?IsDeployingOverdrive@Track@@UBA_NXZ",

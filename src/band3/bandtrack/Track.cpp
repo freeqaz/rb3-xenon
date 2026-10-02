@@ -265,7 +265,7 @@ void Track::PushGameplayOptions(VocalParam, int) {
         mTrackConfig.GetBandUser()->GetPlayer()->GetUser()->GetGameplayOptions();
 }
 
-int Track::GetNoBackFromBrink() const {
+bool Track::GetNoBackFromBrink() const {
     MetaPerformer::Current();
     return 0;
 }

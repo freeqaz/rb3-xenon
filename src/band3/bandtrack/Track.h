@@ -33,7 +33,7 @@ public:
     virtual void DTSPopup(bool) const;
     virtual int GetBandMultiplier() const;
     virtual void PushGameplayOptions(VocalParam, int);
-    virtual int GetNoBackFromBrink() const;
+    virtual bool GetNoBackFromBrink() const;
     virtual void RefreshPlayerHUD();
 
     virtual bool FailedAtStart();
