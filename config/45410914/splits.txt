@@ -14581,8 +14581,8 @@ network/quazal/Transport/Interface/TransportSignatureGenerator.cpp:
 	.text       start:0x82B2FC40 end:0x82B2FEA4
 
 network/quazal/Transport/PRUDP/PRUDPEndPoint.cpp:
-	.pdata      start:0x82258C48 end:0x82258E48
-	.text       start:0x82B31C78 end:0x82B34FAC
+	.pdata      start:0x82258C18 end:0x82258EB0
+	.text       start:0x82B31AB8 end:0x82B358E8
 
 network/quazal/Transport/Interface/XboxConnectivityTester.cpp:
 	.pdata      start:0x82259058 end:0x82259078
