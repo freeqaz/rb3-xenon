@@ -12,13 +12,71 @@
 // The declarations below are local to this TU; their layouts are the ones the
 // retail code uses.
 
-#include "Platform/qStd.h"
+#include "Platform/MemoryManager.h"
 #include "Platform/Result.h"
 #include "Platform/ScopedCS.h"
+#include <list>
 
 #define JCEP_FILE ".\\Transport\\Interface\\JobConnectEndPoint.cpp"
 
+// Quazal's consistency check compiles to its discarded condition in this
+// build: retail evaluates `this` for the call and nothing else.
+#define JCEP_CHECK(cond) ((void)(cond))
+
 namespace Quazal {
+
+    // The list allocator and list wrapper as this TU's retail code uses them:
+    // the allocator has no destructor (the out-of-line ~qList at 0x82B2F050
+    // has no unwind entry), and qList has a user-declared constructor (the
+    // member constructors expand qList() and call list(const allocator_type &)
+    // out of line).
+    template <class T>
+    class MemAllocator {
+    public:
+        typedef unsigned int size_type;
+        typedef int difference_type;
+        typedef T value_type;
+        typedef T *pointer;
+        typedef T &reference;
+        typedef const T *const_pointer;
+        typedef const T &const_reference;
+
+        template <class T2>
+        struct rebind {
+            typedef MemAllocator<T2> other;
+        };
+
+        MemAllocator() {}
+
+        template <class T2>
+        operator MemAllocator<T2>() const {
+            return MemAllocator<T2>();
+        }
+
+        pointer address(reference value) const { return &value; }
+        const_pointer address(const_reference value) const { return &value; }
+        size_type max_size() const { return size_type(-1) / sizeof(T); }
+
+        pointer allocate(const size_type count, const void *hint = 0) const {
+            return reinterpret_cast<pointer>(MemoryManager::Allocate(
+                MemoryManager::GetDefaultMemoryManager(), count * sizeof(T), "Unknown", 0,
+                MemoryManager::_InstType7
+            ));
+        }
+        void deallocate(pointer ptr, size_type count) const {
+            MemoryManager::Free(
+                MemoryManager::GetDefaultMemoryManager(), ptr, MemoryManager::_InstType7
+            );
+        }
+        void construct(pointer ptr, const_reference value) const { new (ptr) T(value); }
+        void destroy(pointer ptr) const { ptr->~T(); }
+    };
+
+    template <class T>
+    class qList : public std::list<T, MemAllocator<T> >, public RootObject {
+    public:
+        qList() {}
+    };
 
     class DebugString {
     public:
@@ -123,9 +181,43 @@ namespace Quazal {
 
     class Scheduler;
 
+    class InstantiationContext : public RootObject {
+    public:
+        unsigned int GetInstance(unsigned int);
+    };
+
+    class SystemError : public RootObject {
+    public:
+        static void SignalError(const char *, unsigned int, unsigned int, unsigned int);
+    };
+
+    class InstantiationContextVector : public RootObject {
+    public:
+        unsigned int size() const;
+        InstantiationContext *&operator[](unsigned int n) { return *(m_pStart + n); }
+
+        InstantiationContext **m_pStart;
+        InstantiationContext **m_pFinish;
+    };
+
+    // GetInstance (below) is too large for /Ob1 to expand once this body is
+    // expanded into it, and every caller reserves that whole frame.
     class InstanceTable : public RootObject {
     public:
-        unsigned int GetInstanceFromVector(unsigned int, unsigned int);
+        unsigned int GetInstanceFromVector(unsigned int ui, unsigned int idx) {
+            if (idx == 0) {
+                return m_oDefaultContext.GetInstance(ui);
+            } else if (idx >= m_pvContextVector->size()) {
+                SystemError::SignalError(0, 0, 0xe0000003, 0);
+                return -1;
+            } else {
+                return (*m_pvContextVector)[idx]->GetInstance(ui);
+            }
+        }
+
+        InstantiationContext m_oDefaultContext; // 0x0
+        char m_pad[0x30];
+        InstantiationContextVector *m_pvContextVector; // 0x30
     };
 
     class InstanceControl : public RootObject {
@@ -276,11 +368,28 @@ namespace Quazal {
         bool GetUpdatedURL(const StationURL &, StationURL *);
     };
 
+    class RoutingTransport;
+
+    // Retail calls GetInstance out of line (0x823EBC90): the /Ob1 inliner
+    // declines it after reserving its locals.
     class Network : public RootObject {
     public:
+        static Network *GetInstance() {
+            unsigned int uiContext = PseudoSingleton::GetCurrentContext();
+            InstanceControl *pInstance = (InstanceControl *)
+                InstanceControl::s_oInstanceTable.GetInstanceFromVector(1, uiContext);
+            Network *pNetwork = 0;
+            if (pInstance != 0) {
+                pNetwork = (Network *)pInstance->m_pDelegatorInstance;
+            }
+            return pNetwork;
+        }
         NATTraversalEngine *GetNATTraversalEngine();
         void SortURLs(qList<StationURL> &);
         static TransportAdapter *s_pTransportAdapter;
+
+        char m_data[0x4c];
+        RoutingTransport *m_pTransport; // 0x4c
     };
 
     class RoutingTransport : public RootObject {
@@ -297,20 +406,12 @@ namespace Quazal {
         virtual Router *GetRouter();
     };
 
-    class NetZ : public RootObject {
-    public:
-        char m_data[0x4c];
-        RoutingTransport *m_pTransport; // 0x4c
-    };
-
-    void *GetInstanceType1Delegator();
-
     inline RoutingTransport *GetTransport() {
-        NetZ *pNetZ = (NetZ *)GetInstanceType1Delegator();
-        if (pNetZ == 0) {
+        Network *pNetwork = Network::GetInstance();
+        if (pNetwork == 0) {
             return 0;
         } else {
-            return pNetZ->m_pTransport;
+            return pNetwork->m_pTransport;
         }
     }
 
@@ -339,6 +440,7 @@ namespace Quazal {
         void SetToReady();
         void SetToComplete();
         State GetState() const { return m_eState; }
+        unsigned int GetTraceFlags() const { return m_uiTraceFlags; }
 
         unsigned int m_unk8[5];
         State m_eState; // 0x1c
@@ -378,6 +480,7 @@ namespace Quazal {
         ConnectCancelCallback(JobConnectEndPoint *);
         virtual ~ConnectCancelCallback();
         virtual void CallObjectMethod();
+        void Reset() { m_pJob = 0; }
 
         JobConnectEndPoint *m_pJob; // 0x4
     };
@@ -445,8 +548,6 @@ namespace Quazal {
 
     void ConnectCancelCallback::CallObjectMethod() { m_pJob->OnCancellation(); }
 
-    inline void TraceURLs(const qList<StationURL> &) {}
-
 #line 82
     JobConnectEndPoint::JobConnectEndPoint(
         ConnectionManager *pConnectionManager, unsigned int uiCallID, Buffer *pConnectData,
@@ -478,7 +579,7 @@ namespace Quazal {
                 "JobConnectEndPoint::TryConnectViaRouting"
             ));
         }
-        TraceURLs(m_lstURLs);
+        JCEP_CHECK(!m_lstURLs.empty());
         SetStep(Step((JobStateFunc)&JobConnectEndPoint::SortURLs, "JobConnectEndPoint::SortURLs"));
         if (!m_lstURLs.empty() && !m_lstTechniques.empty()) {
             m_uiAttemptTimeout = Time::ConvertDeadlineToTimeout(m_tTimeout)
@@ -503,7 +604,7 @@ namespace Quazal {
 
     void JobConnectEndPoint::OnCancellation() {
         m_pEndPoint = 0;
-        m_pCancelCallback->m_pJob = 0;
+        m_pCancelCallback->Reset();
         SetToComplete();
     }
 
@@ -549,14 +650,15 @@ namespace Quazal {
     }
 
     void JobConnectEndPoint::ResumeWithResult(qResult r) {
-        Trace(m_uiTraceFlags);
+        Trace(GetTraceFlags());
         m_rResult = r;
         SetToReady();
         ReleaseRef();
     }
 
     void JobConnectEndPoint::SortURLs() {
-        ((Network *)GetInstanceType1Delegator())->SortURLs(m_lstURLs);
+        Network::GetInstance()->SortURLs(m_lstURLs);
+        JCEP_CHECK(!m_lstURLs.empty());
         SetStep(Step(
             (JobStateFunc)&JobConnectEndPoint::SelectConnectionTechnique,
             "JobConnectEndPoint::SelectConnectionTechnique"
@@ -613,7 +715,7 @@ namespace Quazal {
                 (JobStateFunc)&JobConnectEndPoint::SelectConnectionTechnique,
                 "JobConnectEndPoint::SelectConnectionTechnique"
             ));
-        } else if (((Network *)GetInstanceType1Delegator())->GetNATTraversalEngine() == 0
+        } else if (Network::GetInstance()->GetNATTraversalEngine() == 0
                    || CanRouteTo(*m_itCurrentURL)) {
             SetStep(Step(
                 (JobStateFunc)&JobConnectEndPoint::ResolveCurrentURL,
@@ -643,9 +745,7 @@ namespace Quazal {
     }
 
     void JobConnectEndPoint::PrepareNATTraversal() {
-        NATTraversalEngine *pEngine =
-            ((Network *)GetInstanceType1Delegator())->GetNATTraversalEngine();
-        pEngine->PrepareTraversal(*m_itCurrentURL);
+        Network::GetInstance()->GetNATTraversalEngine()->PrepareTraversal(*m_itCurrentURL);
         SetStep(Step(
             (JobStateFunc)&JobConnectEndPoint::ResolveCurrentURL,
             "JobConnectEndPoint::ResolveCurrentURL"
@@ -746,7 +846,7 @@ namespace Quazal {
     void JobConnectEndPoint::ProcessConnectionFailure() {
         m_pEndPoint->Close();
         m_pEndPoint = 0;
-        if (((Network *)GetInstanceType1Delegator())->GetNATTraversalEngine() != 0) {
+        if (Network::GetInstance()->GetNATTraversalEngine() != 0) {
             SetStep(Step(
                 (JobStateFunc)&JobConnectEndPoint::CheckForUpdatedURL,
                 "JobConnectEndPoint::CheckForUpdatedURL"
@@ -761,9 +861,9 @@ namespace Quazal {
     }
 
     bool JobConnectEndPoint::UpdateCurrentURL() {
-        if (((Network *)GetInstanceType1Delegator())->GetNATTraversalEngine() != 0) {
+        if (Network::GetInstance()->GetNATTraversalEngine() != 0) {
             StationURL urlUpdated;
-            if (((Network *)GetInstanceType1Delegator())
+            if (Network::GetInstance()
                     ->GetNATTraversalEngine()
                     ->GetUpdatedURL(*m_itCurrentURL, &urlUpdated)
                 && (*m_itCurrentURL).GetPortNumber() != urlUpdated.GetPortNumber()) {
