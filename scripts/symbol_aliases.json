@@ -5655,446 +5655,6 @@
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 3 census sites over 1 functions."
   },
   {
-   "name": "insert",
-   "address": "0x822b55e0",
-   "survivor": "?insert@?$list@PAVBandCamShot@@V?$StlNodeAlloc@PAVBandCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVBandCamShot@@U?$_Nonconst_traits@PAVBandCamShot@@@stlpmtx_std@@@2@U32@ABQAVBandCamShot@@@Z",
-   "folded": [],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 53, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 86 folded spelling(s), 3 census sites over 3 functions.",
-   "withdrawn": [
-    {
-     "spelling": "?insert@?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@HU?$_Nonconst_traits@H@stlpmtx_std@@@2@U32@ABH@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@MU?$_Nonconst_traits@M@stlpmtx_std@@@2@U32@ABM@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@P6AXXZV?$StlNodeAlloc@P6AXXZ@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@P6AXXZU?$_Nonconst_traits@P6AXXZ@stlpmtx_std@@@2@U32@ABQ6AXXZ@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PADV?$StlNodeAlloc@PAD@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PADU?$_Nonconst_traits@PAD@stlpmtx_std@@@2@U32@ABQAD@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAUCompressTexDesc@Rnd@@V?$StlNodeAlloc@PAUCompressTexDesc@Rnd@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAUCompressTexDesc@Rnd@@U?$_Nonconst_traits@PAUCompressTexDesc@Rnd@@@stlpmtx_std@@@2@U32@ABQAUCompressTexDesc@Rnd@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAULayer@HamDriver@@V?$StlNodeAlloc@PAULayer@HamDriver@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAULayer@HamDriver@@U?$_Nonconst_traits@PAULayer@HamDriver@@@stlpmtx_std@@@2@U32@ABQAULayer@HamDriver@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAUMerger@FileMerger@@V?$StlNodeAlloc@PAUMerger@FileMerger@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAUMerger@FileMerger@@U?$_Nonconst_traits@PAUMerger@FileMerger@@@stlpmtx_std@@@2@U32@ABQAUMerger@FileMerger@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVCallback@ContentMgr@@V?$StlNodeAlloc@PAVCallback@ContentMgr@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVCallback@ContentMgr@@U?$_Nonconst_traits@PAVCallback@ContentMgr@@@stlpmtx_std@@@2@U32@ABQAVCallback@ContentMgr@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVCharData@@V?$StlNodeAlloc@PAVCharData@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVCharData@@U?$_Nonconst_traits@PAVCharData@@@stlpmtx_std@@@2@U32@ABQAVCharData@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVContent@@V?$StlNodeAlloc@PAVContent@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVContent@@U?$_Nonconst_traits@PAVContent@@@stlpmtx_std@@@2@U32@ABQAVContent@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVDataArray@@V?$StlNodeAlloc@PAVDataArray@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVDataArray@@U?$_Nonconst_traits@PAVDataArray@@@stlpmtx_std@@@2@U32@ABQAVDataArray@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVFaderTask@@V?$StlNodeAlloc@PAVFaderTask@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVFaderTask@@U?$_Nonconst_traits@PAVFaderTask@@@stlpmtx_std@@@2@U32@ABQAVFaderTask@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVFileCache@@V?$StlNodeAlloc@PAVFileCache@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVFileCache@@U?$_Nonconst_traits@PAVFileCache@@@stlpmtx_std@@@2@U32@ABQAVFileCache@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVGamerAwardStatus@@V?$StlNodeAlloc@PAVGamerAwardStatus@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVGamerAwardStatus@@U?$_Nonconst_traits@PAVGamerAwardStatus@@@stlpmtx_std@@@2@U32@ABQAVGamerAwardStatus@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVJob@@V?$StlNodeAlloc@PAVJob@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVJob@@U?$_Nonconst_traits@PAVJob@@@stlpmtx_std@@@2@U32@ABQAVJob@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVLoader@@V?$StlNodeAlloc@PAVLoader@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVLoader@@U?$_Nonconst_traits@PAVLoader@@@stlpmtx_std@@@2@U32@ABQAVLoader@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVNetCacheLoader@@V?$StlNodeAlloc@PAVNetCacheLoader@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVNetCacheLoader@@U?$_Nonconst_traits@PAVNetCacheLoader@@@stlpmtx_std@@@2@U32@ABQAVNetCacheLoader@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVObjRefOwner@@V?$StlNodeAlloc@PAVObjRefOwner@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVObjRefOwner@@U?$_Nonconst_traits@PAVObjRefOwner@@@stlpmtx_std@@@2@U32@ABQAVObjRefOwner@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVPassiveMessage@@V?$StlNodeAlloc@PAVPassiveMessage@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVPassiveMessage@@U?$_Nonconst_traits@PAVPassiveMessage@@@stlpmtx_std@@@2@U32@ABQAVPassiveMessage@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVPerformanceData@@V?$StlNodeAlloc@PAVPerformanceData@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVPerformanceData@@U?$_Nonconst_traits@PAVPerformanceData@@@stlpmtx_std@@@2@U32@ABQAVPerformanceData@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVPostProcessor@@V?$StlNodeAlloc@PAVPostProcessor@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVPostProcessor@@U?$_Nonconst_traits@PAVPostProcessor@@@stlpmtx_std@@@2@U32@ABQAVPostProcessor@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVPropKeys@@V?$StlNodeAlloc@PAVPropKeys@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVPropKeys@@U?$_Nonconst_traits@PAVPropKeys@@@stlpmtx_std@@@2@U32@ABQAVPropKeys@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVRndDir@@V?$StlNodeAlloc@PAVRndDir@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndDir@@U?$_Nonconst_traits@PAVRndDir@@@stlpmtx_std@@@2@U32@ABQAVRndDir@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVRndGraph@@V?$StlNodeAlloc@PAVRndGraph@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndGraph@@U?$_Nonconst_traits@PAVRndGraph@@@stlpmtx_std@@@2@U32@ABQAVRndGraph@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVRndGroup@@V?$StlNodeAlloc@PAVRndGroup@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndGroup@@U?$_Nonconst_traits@PAVRndGroup@@@stlpmtx_std@@@2@U32@ABQAVRndGroup@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVRndMat@@V?$StlNodeAlloc@PAVRndMat@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndMat@@U?$_Nonconst_traits@PAVRndMat@@@stlpmtx_std@@@2@U32@ABQAVRndMat@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVRndMesh@@V?$StlNodeAlloc@PAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndMesh@@U?$_Nonconst_traits@PAVRndMesh@@@stlpmtx_std@@@2@U32@ABQAVRndMesh@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVRndOverlay@@V?$StlNodeAlloc@PAVRndOverlay@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndOverlay@@U?$_Nonconst_traits@PAVRndOverlay@@@stlpmtx_std@@@2@U32@ABQAVRndOverlay@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVRndPollable@@V?$StlNodeAlloc@PAVRndPollable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndPollable@@U?$_Nonconst_traits@PAVRndPollable@@@stlpmtx_std@@@2@U32@ABQAVRndPollable@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVSampleInst@@V?$StlNodeAlloc@PAVSampleInst@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVSampleInst@@U?$_Nonconst_traits@PAVSampleInst@@@stlpmtx_std@@@2@U32@ABQAVSampleInst@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVSortNode@@V?$StlNodeAlloc@PAVSortNode@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVSortNode@@U?$_Nonconst_traits@PAVSortNode@@@stlpmtx_std@@@2@U32@ABQAVSortNode@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVSynthPollable@@V?$StlNodeAlloc@PAVSynthPollable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVSynthPollable@@U?$_Nonconst_traits@PAVSynthPollable@@@stlpmtx_std@@@2@U32@ABQAVSynthPollable@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVTriangle@@V?$StlNodeAlloc@PAVTriangle@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVTriangle@@U?$_Nonconst_traits@PAVTriangle@@@stlpmtx_std@@@2@U32@ABQAVTriangle@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVUIComponent@@V?$StlNodeAlloc@PAVUIComponent@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVUIComponent@@U?$_Nonconst_traits@PAVUIComponent@@@stlpmtx_std@@@2@U32@ABQAVUIComponent@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVUIResource@@V?$StlNodeAlloc@PAVUIResource@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVUIResource@@U?$_Nonconst_traits@PAVUIResource@@@stlpmtx_std@@@2@U32@ABQAVUIResource@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVUITrigger@@V?$StlNodeAlloc@PAVUITrigger@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVUITrigger@@U?$_Nonconst_traits@PAVUITrigger@@@stlpmtx_std@@@2@U32@ABQAVUITrigger@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVVoice@@V?$StlNodeAlloc@PAVVoice@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVVoice@@U?$_Nonconst_traits@PAVVoice@@@stlpmtx_std@@@2@U32@ABQAVVoice@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVVorbisReader@@V?$StlNodeAlloc@PAVVorbisReader@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVVorbisReader@@U?$_Nonconst_traits@PAVVorbisReader@@@stlpmtx_std@@@2@U32@ABQAVVorbisReader@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVWaypoint@@V?$StlNodeAlloc@PAVWaypoint@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVWaypoint@@U?$_Nonconst_traits@PAVWaypoint@@@stlpmtx_std@@@2@U32@ABQAVWaypoint@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVWebSvcRequest@@V?$StlNodeAlloc@PAVWebSvcRequest@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVWebSvcRequest@@U?$_Nonconst_traits@PAVWebSvcRequest@@@stlpmtx_std@@@2@U32@ABQAVWebSvcRequest@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PBDV?$StlNodeAlloc@PBD@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PBDU?$_Nonconst_traits@PBD@stlpmtx_std@@@2@U32@ABQBD@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@U?$pair@PAVRndMesh@@PAVObjectDir@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMesh@@PAVObjectDir@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@PAVRndMesh@@PAVObjectDir@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@PAVRndMesh@@PAVObjectDir@@@stlpmtx_std@@@2@@2@U32@ABU?$pair@PAVRndMesh@@PAVObjectDir@@@2@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@2@U32@ABU?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@U?$pair@PAVRndMultiMeshProxy@@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMultiMeshProxy@@H@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@PAVRndMultiMeshProxy@@H@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@PAVRndMultiMeshProxy@@H@stlpmtx_std@@@2@@2@U32@ABU?$pair@PAVRndMultiMeshProxy@@H@2@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@@2@@2@U32@ABU?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@2@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@U?$pair@VSymbol@@V1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@VSymbol@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@VSymbol@@V1@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@VSymbol@@V1@@stlpmtx_std@@@2@@2@U32@ABU?$pair@VSymbol@@V1@@2@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UAccomplishmentTourCondition@@V?$StlNodeAlloc@UAccomplishmentTourCondition@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UAccomplishmentTourCondition@@U?$_Nonconst_traits@UAccomplishmentTourCondition@@@stlpmtx_std@@@2@U32@ABUAccomplishmentTourCondition@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UBitmapOverride@WorldDir@@V?$StlNodeAlloc@UBitmapOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UBitmapOverride@WorldDir@@U?$_Nonconst_traits@UBitmapOverride@WorldDir@@@stlpmtx_std@@@2@U32@ABUBitmapOverride@WorldDir@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UCallbackFile@ContentMgr@@V?$StlNodeAlloc@UCallbackFile@ContentMgr@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UCallbackFile@ContentMgr@@U?$_Nonconst_traits@UCallbackFile@ContentMgr@@@stlpmtx_std@@@2@U32@ABUCallbackFile@ContentMgr@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UCollision@RndDrawable@@V?$StlNodeAlloc@UCollision@RndDrawable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UCollision@RndDrawable@@U?$_Nonconst_traits@UCollision@RndDrawable@@@stlpmtx_std@@@2@U32@ABUCollision@RndDrawable@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UConstraintSystem@CharBlendBone@@V?$StlNodeAlloc@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UConstraintSystem@CharBlendBone@@U?$_Nonconst_traits@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@2@U32@ABUConstraintSystem@CharBlendBone@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UEventSink@MsgSource@@V?$StlNodeAlloc@UEventSink@MsgSource@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UEventSink@MsgSource@@U?$_Nonconst_traits@UEventSink@MsgSource@@@stlpmtx_std@@@2@U32@ABUEventSink@MsgSource@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UNetLoaderRef@@V?$StlNodeAlloc@UNetLoaderRef@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UNetLoaderRef@@U?$_Nonconst_traits@UNetLoaderRef@@@stlpmtx_std@@@2@U32@ABUNetLoaderRef@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UOSCValue@OSCMessenger@@V?$StlNodeAlloc@UOSCValue@OSCMessenger@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UOSCValue@OSCMessenger@@U?$_Nonconst_traits@UOSCValue@OSCMessenger@@@stlpmtx_std@@@2@U32@ABUOSCValue@OSCMessenger@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UObjPair@@V?$StlNodeAlloc@UObjPair@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UObjPair@@U?$_Nonconst_traits@UObjPair@@@stlpmtx_std@@@2@U32@ABUObjPair@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UOrganizedFileMerger@FileMergerOrganizer@@V?$StlNodeAlloc@UOrganizedFileMerger@FileMergerOrganizer@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UOrganizedFileMerger@FileMergerOrganizer@@U?$_Nonconst_traits@UOrganizedFileMerger@FileMergerOrganizer@@@stlpmtx_std@@@2@U32@ABUOrganizedFileMerger@FileMergerOrganizer@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UPanelRef@@V?$StlNodeAlloc@UPanelRef@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UPanelRef@@U?$_Nonconst_traits@UPanelRef@@@stlpmtx_std@@@2@U32@ABUPanelRef@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UPointTest@Rnd@@V?$StlNodeAlloc@UPointTest@Rnd@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UPointTest@Rnd@@U?$_Nonconst_traits@UPointTest@Rnd@@@stlpmtx_std@@@2@U32@ABUPointTest@Rnd@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UPreparedScreenParams@Splash@@V?$StlNodeAlloc@UPreparedScreenParams@Splash@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UPreparedScreenParams@Splash@@U?$_Nonconst_traits@UPreparedScreenParams@Splash@@@stlpmtx_std@@@2@U32@ABUPreparedScreenParams@Splash@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UPresetOverride@WorldDir@@V?$StlNodeAlloc@UPresetOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UPresetOverride@WorldDir@@U?$_Nonconst_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@2@U32@ABUPresetOverride@WorldDir@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UReadRequest@?A0x7d2eca9f@@V?$StlNodeAlloc@UReadRequest@?A0x7d2eca9f@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UReadRequest@?A0x7d2eca9f@@U?$_Nonconst_traits@UReadRequest@?A0x7d2eca9f@@@stlpmtx_std@@@2@U32@ABUReadRequest@?A0x7d2eca9f@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@USample@DebugGraph@@V?$StlNodeAlloc@USample@DebugGraph@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@USample@DebugGraph@@U?$_Nonconst_traits@USample@DebugGraph@@@stlpmtx_std@@@2@U32@ABUSample@DebugGraph@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UScreenParams@Splash@@V?$StlNodeAlloc@UScreenParams@Splash@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UScreenParams@Splash@@U?$_Nonconst_traits@UScreenParams@Splash@@@stlpmtx_std@@@2@U32@ABUScreenParams@Splash@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UShaderTree@RndShaderMgr@@V?$StlNodeAlloc@UShaderTree@RndShaderMgr@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UShaderTree@RndShaderMgr@@U?$_Nonconst_traits@UShaderTree@RndShaderMgr@@@stlpmtx_std@@@2@U32@ABUShaderTree@RndShaderMgr@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@USink@MsgSinks@@V?$StlNodeAlloc@USink@MsgSinks@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@USink@MsgSinks@@U?$_Nonconst_traits@USink@MsgSinks@@@stlpmtx_std@@@2@U32@ABUSink@MsgSinks@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@USink@MsgSource@@V?$StlNodeAlloc@USink@MsgSource@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@USink@MsgSource@@U?$_Nonconst_traits@USink@MsgSource@@@stlpmtx_std@@@2@U32@ABUSink@MsgSource@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UTarget@HamCamShot@@V?$StlNodeAlloc@UTarget@HamCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UTarget@HamCamShot@@U?$_Nonconst_traits@UTarget@HamCamShot@@@stlpmtx_std@@@2@U32@ABUTarget@HamCamShot@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UTargetCache@HamCamShot@@V?$StlNodeAlloc@UTargetCache@HamCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UTargetCache@HamCamShot@@U?$_Nonconst_traits@UTargetCache@HamCamShot@@@stlpmtx_std@@@2@U32@ABUTargetCache@HamCamShot@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UTaskInfo@TaskTimeline@@V?$StlNodeAlloc@UTaskInfo@TaskTimeline@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UTaskInfo@TaskTimeline@@U?$_Nonconst_traits@UTaskInfo@TaskTimeline@@@stlpmtx_std@@@2@U32@ABUTaskInfo@TaskTimeline@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UTrackingIDHistory@SkeletonRecoverer@@V?$StlNodeAlloc@UTrackingIDHistory@SkeletonRecoverer@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UTrackingIDHistory@SkeletonRecoverer@@U?$_Nonconst_traits@UTrackingIDHistory@SkeletonRecoverer@@@stlpmtx_std@@@2@U32@ABUTrackingIDHistory@SkeletonRecoverer@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UTrainerCondition@@V?$StlNodeAlloc@UTrainerCondition@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UTrainerCondition@@U?$_Nonconst_traits@UTrainerCondition@@@stlpmtx_std@@@2@U32@ABUTrainerCondition@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UVar@ScriptTask@@V?$StlNodeAlloc@UVar@ScriptTask@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UVar@ScriptTask@@U?$_Nonconst_traits@UVar@ScriptTask@@@stlpmtx_std@@@2@U32@ABUVar@ScriptTask@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@V?$ObjDirPtr@VUILabelDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VUILabelDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@V?$ObjDirPtr@VUILabelDir@@@@U?$_Nonconst_traits@V?$ObjDirPtr@VUILabelDir@@@@@stlpmtx_std@@@2@U32@ABV?$ObjDirPtr@VUILabelDir@@@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@VAwardEntry@@V?$StlNodeAlloc@VAwardEntry@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VAwardEntry@@U?$_Nonconst_traits@VAwardEntry@@@stlpmtx_std@@@2@U32@ABVAwardEntry@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@VBoneState@BandCharacter@@V?$StlNodeAlloc@VBoneState@BandCharacter@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VBoneState@BandCharacter@@U?$_Nonconst_traits@VBoneState@BandCharacter@@@stlpmtx_std@@@2@U32@ABVBoneState@BandCharacter@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@VEventCall@EventAnim@@V?$StlNodeAlloc@VEventCall@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VEventCall@EventAnim@@U?$_Nonconst_traits@VEventCall@EventAnim@@@stlpmtx_std@@@2@U32@ABVEventCall@EventAnim@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VFilePath@@U?$_Nonconst_traits@VFilePath@@@stlpmtx_std@@@2@U32@ABVFilePath@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@VHitGem@GemManager@@V?$StlNodeAlloc@VHitGem@GemManager@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VHitGem@GemManager@@U?$_Nonconst_traits@VHitGem@GemManager@@@stlpmtx_std@@@2@U32@ABVHitGem@GemManager@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@VKeyFrame@EventAnim@@V?$StlNodeAlloc@VKeyFrame@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VKeyFrame@EventAnim@@U?$_Nonconst_traits@VKeyFrame@EventAnim@@@stlpmtx_std@@@2@U32@ABVKeyFrame@EventAnim@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@VOldMatOption@@V?$StlNodeAlloc@VOldMatOption@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VOldMatOption@@U?$_Nonconst_traits@VOldMatOption@@@stlpmtx_std@@@2@U32@ABVOldMatOption@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@VPracticeSectionMapping@SongSectionController@@V?$StlNodeAlloc@VPracticeSectionMapping@SongSectionController@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VPracticeSectionMapping@SongSectionController@@U?$_Nonconst_traits@VPracticeSectionMapping@SongSectionController@@@stlpmtx_std@@@2@U32@ABVPracticeSectionMapping@SongSectionController@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VSymbol@@U?$_Nonconst_traits@VSymbol@@@stlpmtx_std@@@2@U32@ABVSymbol@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@VTransform@@V?$StlNodeAlloc@VTransform@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VTransform@@U?$_Nonconst_traits@VTransform@@@stlpmtx_std@@@2@U32@ABVTransform@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VVector2@@U?$_Nonconst_traits@VVector2@@@stlpmtx_std@@@2@U32@ABVVector2@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VVector3@@U?$_Nonconst_traits@VVector3@@@stlpmtx_std@@@2@U32@ABVVector3@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@W4TrackType@@V?$StlNodeAlloc@W4TrackType@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@W4TrackType@@U?$_Nonconst_traits@W4TrackType@@@stlpmtx_std@@@2@U32@ABW4TrackType@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    }
-   ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 9 other group(s) at 10 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 9 of the 10 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
-  },
-  {
    "name": "KeyLessEq",
    "address": "0x82341460",
    "survivor": "?KeyLessEq@?$Keys@MM@@QBAHM@Z",
@@ -12313,7 +11873,9 @@
    "name": "$_Copy_Construct",
    "address": "0x827fb758",
    "survivor": "??$_Copy_Construct@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@ABV10@@Z",
-   "folded": [],
+   "folded": [
+    "??$_Param_Construct@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@ABV10@@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions. W16-U 2026-09-14: survivor re-homed to the spelling whose COMDAT equals the retail body at 0x827fb758 (masked bytes + branch relocations adjudicated by name); the previous survivor is demoted to folded. The membership SET is unchanged, so this asserts no new fold -- gen_symbol_alias_map.py renders [survivor, *folded] at one bucket address, order-independent.",
    "withdrawn": [
     {
@@ -12356,6 +11918,13 @@
        "disposition": "dropped_singleton"
       }
      ]
+    }
+   ],
+   "admitted": [
+    {
+     "spelling": "??$_Param_Construct@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W16-NH-NAME 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 60 B retail / 60 B ours; retail body-twins 112. Retail call site(s) reaching the survivor where we call this spelling: 0x827fdb24. Previously the survivor of the group at 0x826f7fd8, whose retail body it does not match (re-homed)."
     }
    ]
   },
@@ -14611,50 +14180,6 @@
     "origin_survivor": "??$_Destroy_Range@PAUDynamicPropertyEntry@Flow@@@stlpmtx_std@@YAXPAUDynamicPropertyEntry@Flow@@0@Z",
     "origin_address": "0x823a94f0"
    }
-  },
-  {
-   "name": "4?$ObjList",
-   "address": "0x82310cf0",
-   "survivor": "??4?$ObjList@UMatOverride@WorldDir@@@@QAAXABV0@@Z",
-   "folded": [
-    "??4?$ObjList@VPracticeSectionMapping@SongSectionController@@@@QAAXABV0@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [],
-   "repair": {
-    "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-    "lane": "ALIAS-REPAIR 2026-08-19",
-    "why": "Under-partitioned closure. 1 of 2 compiled members agree with the survivor under masking and DISAGREE on their RESOLVED operands (resolved through the ICF congruence over our own build), so they cannot be the same LINKED body and /OPT:ICF cannot have folded them together. Repaired, not refused: the group is partitioned into the 2 classes the evidence does support. `disposition: repartitioned` = re-emitted as its own class in a group immediately following; `dropped_singleton` = its class has one member, and one member is not a fold.",
-    "n_classes": 2,
-    "class_sizes": [
-     1,
-     1
-    ],
-    "n_subgroups": 0
-   },
-   "restore": {
-    "lane": "RELOC-RECONCILE 2026-08-20",
-    "names": [
-     "??4?$ObjList@VPracticeSectionMapping@SongSectionController@@@@QAAXABV0@@Z"
-    ],
-    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   },
-   "restored": [
-    {
-     "spelling": "??4?$ObjList@VPracticeSectionMapping@SongSectionController@@@@QAAXABV0@@Z",
-     "lane": "W9-D 2026-09-13",
-     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
-     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
-     "superseded_records": [
-      {
-       "spelling": "??4?$ObjList@VPracticeSectionMapping@SongSectionController@@@@QAAXABV0@@Z",
-       "lane": "ALIAS-REPAIR 2026-08-19",
-       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-       "disposition": "dropped_singleton"
-      }
-     ]
-    }
-   ]
   },
   {
    "name": "_GCharIKFoot",
@@ -19427,81 +18952,6 @@
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
   },
   {
-   "name": "_M_fill_insert",
-   "address": "0x822a4fb8",
-   "survivor": "?_M_fill_insert@?$vector@ULod@Character@@V?$StlNodeAlloc@ULod@Character@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAULod@Character@@IABU34@@Z",
-   "folded": [],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 13 folded spelling(s), 1 census sites over 2 functions.",
-   "withdrawn": [
-    {
-     "spelling": "?_M_fill_insert@?$vector@UGemInProgress@@V?$StlNodeAlloc@UGemInProgress@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUGemInProgress@@IABU3@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?_M_fill_insert@?$vector@UHamSupereasyMeasure@@V?$StlNodeAlloc@UHamSupereasyMeasure@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUHamSupereasyMeasure@@IABU3@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?_M_fill_insert@?$vector@URndPointTest@NgRnd@@V?$StlNodeAlloc@URndPointTest@NgRnd@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAURndPointTest@NgRnd@@IABU34@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?_M_fill_insert@?$vector@V?$Key@VVector2@@@@V?$StlNodeAlloc@V?$Key@VVector2@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VVector2@@@@IABV3@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?_M_fill_insert@?$vector@V?$ObjPtr@VBandTrack@@@@V?$StlNodeAlloc@V?$ObjPtr@VBandTrack@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjPtr@VBandTrack@@@@IABV3@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?_M_fill_insert@?$vector@V?$ObjPtr@VEventTrigger@@@@V?$StlNodeAlloc@V?$ObjPtr@VEventTrigger@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjPtr@VEventTrigger@@@@IABV3@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?_M_fill_insert@?$vector@V?$ObjPtr@VRndAnimatable@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndAnimatable@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjPtr@VRndAnimatable@@@@IABV3@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?_M_fill_insert@?$vector@V?$ObjPtr@VRndDir@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndDir@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjPtr@VRndDir@@@@IABV3@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?_M_fill_insert@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndMesh@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjPtr@VRndMesh@@@@IABV3@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?_M_fill_insert@?$vector@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjPtr@VRndTex@@@@IABV3@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?_M_fill_insert@?$vector@VPhraseState@CommonPhraseCapturer@@V?$StlNodeAlloc@VPhraseState@CommonPhraseCapturer@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVPhraseState@CommonPhraseCapturer@@IABV34@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?_M_fill_insert@?$vector@VRGTrill@@V?$StlNodeAlloc@VRGTrill@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVRGTrill@@IABV3@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?_M_fill_insert@?$vector@VSectionInfo@Stats@@V?$StlNodeAlloc@VSectionInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSectionInfo@Stats@@IABV34@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    }
-   ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 2 other group(s) at 3 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 2 of the 3 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
-  },
-  {
    "name": "_M_clear_after_move",
    "address": "0x822a6d38",
    "survivor": "?_M_clear_after_move@?$vector@VMatSwap@OutfitConfig@@V?$StlNodeAlloc@VMatSwap@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
@@ -19831,16 +19281,6 @@
      "evidence": "tools/alias_placeholder_slot_audit.py (W16-JH): this membership's T1 support rested on a relocation slot with an unnamed retail target, which W16-JG's discharge could not close and W16-JH could not prove on retail bytes. CALLEE-UNPROVEN-OURS-DISTINCT @+0x48 retail fn_826F7948 vs ours ??$__destroy_range_aux@V?$reverse_iterator@PAUEntry@LocalePanel@@@stlp -- retail fn_826F7948 96 B vs our ??$__destroy_range_aux@V?$reverse_iterator@PAUEntry@LocalePa 96 B; masked bytes equal over the common length; retail bodies byte-equal to our callee: ['fn_826F7948', '??$__destroy_range_aux@V?$reverse_iterator@PAV?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@@0@0ABU__false_type@0@@Z']. RESTORE when the chase proves it (e.g. after the callee port)."
     }
    ]
-  },
-  {
-   "name": "$_Param_Construct",
-   "address": "0x826f7fd8",
-   "survivor": "??$_Param_Construct@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@ABV10@@Z",
-   "folded": [
-    "??$_Copy_Construct@VVocalScoreHistory@@@stlpmtx_std@@YAXPAVVocalScoreHistory@@ABV1@@Z",
-    "??$_Param_Construct@VVocalScoreHistory@@V1@@stlpmtx_std@@YAXPAVVocalScoreHistory@@ABV1@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 4, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 1 census sites over 2 functions."
   },
   {
    "name": "1?$pair",
@@ -24478,446 +23918,6 @@
     }
    ],
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 22 other group(s) at 23 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 22 of the 23 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
-  },
-  {
-   "name": "insert",
-   "address": "0x827e5318",
-   "survivor": "?insert@?$list@PAVMidiParser@@V?$StlNodeAlloc@PAVMidiParser@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVMidiParser@@U?$_Nonconst_traits@PAVMidiParser@@@stlpmtx_std@@@2@U32@ABQAVMidiParser@@@Z",
-   "folded": [],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 53, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 86 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [
-    {
-     "spelling": "?insert@?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@HU?$_Nonconst_traits@H@stlpmtx_std@@@2@U32@ABH@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@MU?$_Nonconst_traits@M@stlpmtx_std@@@2@U32@ABM@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@P6AXXZV?$StlNodeAlloc@P6AXXZ@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@P6AXXZU?$_Nonconst_traits@P6AXXZ@stlpmtx_std@@@2@U32@ABQ6AXXZ@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PADV?$StlNodeAlloc@PAD@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PADU?$_Nonconst_traits@PAD@stlpmtx_std@@@2@U32@ABQAD@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAUCompressTexDesc@Rnd@@V?$StlNodeAlloc@PAUCompressTexDesc@Rnd@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAUCompressTexDesc@Rnd@@U?$_Nonconst_traits@PAUCompressTexDesc@Rnd@@@stlpmtx_std@@@2@U32@ABQAUCompressTexDesc@Rnd@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAULayer@HamDriver@@V?$StlNodeAlloc@PAULayer@HamDriver@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAULayer@HamDriver@@U?$_Nonconst_traits@PAULayer@HamDriver@@@stlpmtx_std@@@2@U32@ABQAULayer@HamDriver@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAUMerger@FileMerger@@V?$StlNodeAlloc@PAUMerger@FileMerger@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAUMerger@FileMerger@@U?$_Nonconst_traits@PAUMerger@FileMerger@@@stlpmtx_std@@@2@U32@ABQAUMerger@FileMerger@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVCallback@ContentMgr@@V?$StlNodeAlloc@PAVCallback@ContentMgr@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVCallback@ContentMgr@@U?$_Nonconst_traits@PAVCallback@ContentMgr@@@stlpmtx_std@@@2@U32@ABQAVCallback@ContentMgr@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVCharData@@V?$StlNodeAlloc@PAVCharData@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVCharData@@U?$_Nonconst_traits@PAVCharData@@@stlpmtx_std@@@2@U32@ABQAVCharData@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVContent@@V?$StlNodeAlloc@PAVContent@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVContent@@U?$_Nonconst_traits@PAVContent@@@stlpmtx_std@@@2@U32@ABQAVContent@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVDataArray@@V?$StlNodeAlloc@PAVDataArray@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVDataArray@@U?$_Nonconst_traits@PAVDataArray@@@stlpmtx_std@@@2@U32@ABQAVDataArray@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVFaderTask@@V?$StlNodeAlloc@PAVFaderTask@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVFaderTask@@U?$_Nonconst_traits@PAVFaderTask@@@stlpmtx_std@@@2@U32@ABQAVFaderTask@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVFileCache@@V?$StlNodeAlloc@PAVFileCache@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVFileCache@@U?$_Nonconst_traits@PAVFileCache@@@stlpmtx_std@@@2@U32@ABQAVFileCache@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVGamerAwardStatus@@V?$StlNodeAlloc@PAVGamerAwardStatus@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVGamerAwardStatus@@U?$_Nonconst_traits@PAVGamerAwardStatus@@@stlpmtx_std@@@2@U32@ABQAVGamerAwardStatus@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVJob@@V?$StlNodeAlloc@PAVJob@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVJob@@U?$_Nonconst_traits@PAVJob@@@stlpmtx_std@@@2@U32@ABQAVJob@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVLoader@@V?$StlNodeAlloc@PAVLoader@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVLoader@@U?$_Nonconst_traits@PAVLoader@@@stlpmtx_std@@@2@U32@ABQAVLoader@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVNetCacheLoader@@V?$StlNodeAlloc@PAVNetCacheLoader@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVNetCacheLoader@@U?$_Nonconst_traits@PAVNetCacheLoader@@@stlpmtx_std@@@2@U32@ABQAVNetCacheLoader@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVObjRefOwner@@V?$StlNodeAlloc@PAVObjRefOwner@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVObjRefOwner@@U?$_Nonconst_traits@PAVObjRefOwner@@@stlpmtx_std@@@2@U32@ABQAVObjRefOwner@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVPassiveMessage@@V?$StlNodeAlloc@PAVPassiveMessage@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVPassiveMessage@@U?$_Nonconst_traits@PAVPassiveMessage@@@stlpmtx_std@@@2@U32@ABQAVPassiveMessage@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVPerformanceData@@V?$StlNodeAlloc@PAVPerformanceData@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVPerformanceData@@U?$_Nonconst_traits@PAVPerformanceData@@@stlpmtx_std@@@2@U32@ABQAVPerformanceData@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVPostProcessor@@V?$StlNodeAlloc@PAVPostProcessor@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVPostProcessor@@U?$_Nonconst_traits@PAVPostProcessor@@@stlpmtx_std@@@2@U32@ABQAVPostProcessor@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVPropKeys@@V?$StlNodeAlloc@PAVPropKeys@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVPropKeys@@U?$_Nonconst_traits@PAVPropKeys@@@stlpmtx_std@@@2@U32@ABQAVPropKeys@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVRndDir@@V?$StlNodeAlloc@PAVRndDir@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndDir@@U?$_Nonconst_traits@PAVRndDir@@@stlpmtx_std@@@2@U32@ABQAVRndDir@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVRndGraph@@V?$StlNodeAlloc@PAVRndGraph@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndGraph@@U?$_Nonconst_traits@PAVRndGraph@@@stlpmtx_std@@@2@U32@ABQAVRndGraph@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVRndGroup@@V?$StlNodeAlloc@PAVRndGroup@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndGroup@@U?$_Nonconst_traits@PAVRndGroup@@@stlpmtx_std@@@2@U32@ABQAVRndGroup@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVRndMat@@V?$StlNodeAlloc@PAVRndMat@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndMat@@U?$_Nonconst_traits@PAVRndMat@@@stlpmtx_std@@@2@U32@ABQAVRndMat@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVRndMesh@@V?$StlNodeAlloc@PAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndMesh@@U?$_Nonconst_traits@PAVRndMesh@@@stlpmtx_std@@@2@U32@ABQAVRndMesh@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVRndOverlay@@V?$StlNodeAlloc@PAVRndOverlay@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndOverlay@@U?$_Nonconst_traits@PAVRndOverlay@@@stlpmtx_std@@@2@U32@ABQAVRndOverlay@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVRndPollable@@V?$StlNodeAlloc@PAVRndPollable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndPollable@@U?$_Nonconst_traits@PAVRndPollable@@@stlpmtx_std@@@2@U32@ABQAVRndPollable@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVSampleInst@@V?$StlNodeAlloc@PAVSampleInst@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVSampleInst@@U?$_Nonconst_traits@PAVSampleInst@@@stlpmtx_std@@@2@U32@ABQAVSampleInst@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVSortNode@@V?$StlNodeAlloc@PAVSortNode@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVSortNode@@U?$_Nonconst_traits@PAVSortNode@@@stlpmtx_std@@@2@U32@ABQAVSortNode@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVSynthPollable@@V?$StlNodeAlloc@PAVSynthPollable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVSynthPollable@@U?$_Nonconst_traits@PAVSynthPollable@@@stlpmtx_std@@@2@U32@ABQAVSynthPollable@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVTriangle@@V?$StlNodeAlloc@PAVTriangle@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVTriangle@@U?$_Nonconst_traits@PAVTriangle@@@stlpmtx_std@@@2@U32@ABQAVTriangle@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVUIComponent@@V?$StlNodeAlloc@PAVUIComponent@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVUIComponent@@U?$_Nonconst_traits@PAVUIComponent@@@stlpmtx_std@@@2@U32@ABQAVUIComponent@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVUIResource@@V?$StlNodeAlloc@PAVUIResource@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVUIResource@@U?$_Nonconst_traits@PAVUIResource@@@stlpmtx_std@@@2@U32@ABQAVUIResource@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVUITrigger@@V?$StlNodeAlloc@PAVUITrigger@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVUITrigger@@U?$_Nonconst_traits@PAVUITrigger@@@stlpmtx_std@@@2@U32@ABQAVUITrigger@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVVoice@@V?$StlNodeAlloc@PAVVoice@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVVoice@@U?$_Nonconst_traits@PAVVoice@@@stlpmtx_std@@@2@U32@ABQAVVoice@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVVorbisReader@@V?$StlNodeAlloc@PAVVorbisReader@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVVorbisReader@@U?$_Nonconst_traits@PAVVorbisReader@@@stlpmtx_std@@@2@U32@ABQAVVorbisReader@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVWaypoint@@V?$StlNodeAlloc@PAVWaypoint@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVWaypoint@@U?$_Nonconst_traits@PAVWaypoint@@@stlpmtx_std@@@2@U32@ABQAVWaypoint@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVWebSvcRequest@@V?$StlNodeAlloc@PAVWebSvcRequest@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVWebSvcRequest@@U?$_Nonconst_traits@PAVWebSvcRequest@@@stlpmtx_std@@@2@U32@ABQAVWebSvcRequest@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PBDV?$StlNodeAlloc@PBD@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PBDU?$_Nonconst_traits@PBD@stlpmtx_std@@@2@U32@ABQBD@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@U?$pair@PAVRndMesh@@PAVObjectDir@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMesh@@PAVObjectDir@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@PAVRndMesh@@PAVObjectDir@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@PAVRndMesh@@PAVObjectDir@@@stlpmtx_std@@@2@@2@U32@ABU?$pair@PAVRndMesh@@PAVObjectDir@@@2@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@2@U32@ABU?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@U?$pair@PAVRndMultiMeshProxy@@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMultiMeshProxy@@H@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@PAVRndMultiMeshProxy@@H@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@PAVRndMultiMeshProxy@@H@stlpmtx_std@@@2@@2@U32@ABU?$pair@PAVRndMultiMeshProxy@@H@2@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@@2@@2@U32@ABU?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@2@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@U?$pair@VSymbol@@V1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@VSymbol@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@VSymbol@@V1@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@VSymbol@@V1@@stlpmtx_std@@@2@@2@U32@ABU?$pair@VSymbol@@V1@@2@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UAccomplishmentTourCondition@@V?$StlNodeAlloc@UAccomplishmentTourCondition@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UAccomplishmentTourCondition@@U?$_Nonconst_traits@UAccomplishmentTourCondition@@@stlpmtx_std@@@2@U32@ABUAccomplishmentTourCondition@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UBitmapOverride@WorldDir@@V?$StlNodeAlloc@UBitmapOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UBitmapOverride@WorldDir@@U?$_Nonconst_traits@UBitmapOverride@WorldDir@@@stlpmtx_std@@@2@U32@ABUBitmapOverride@WorldDir@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UCallbackFile@ContentMgr@@V?$StlNodeAlloc@UCallbackFile@ContentMgr@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UCallbackFile@ContentMgr@@U?$_Nonconst_traits@UCallbackFile@ContentMgr@@@stlpmtx_std@@@2@U32@ABUCallbackFile@ContentMgr@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UCollision@RndDrawable@@V?$StlNodeAlloc@UCollision@RndDrawable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UCollision@RndDrawable@@U?$_Nonconst_traits@UCollision@RndDrawable@@@stlpmtx_std@@@2@U32@ABUCollision@RndDrawable@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UConstraintSystem@CharBlendBone@@V?$StlNodeAlloc@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UConstraintSystem@CharBlendBone@@U?$_Nonconst_traits@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@2@U32@ABUConstraintSystem@CharBlendBone@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UEventSink@MsgSource@@V?$StlNodeAlloc@UEventSink@MsgSource@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UEventSink@MsgSource@@U?$_Nonconst_traits@UEventSink@MsgSource@@@stlpmtx_std@@@2@U32@ABUEventSink@MsgSource@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UNetLoaderRef@@V?$StlNodeAlloc@UNetLoaderRef@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UNetLoaderRef@@U?$_Nonconst_traits@UNetLoaderRef@@@stlpmtx_std@@@2@U32@ABUNetLoaderRef@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UOSCValue@OSCMessenger@@V?$StlNodeAlloc@UOSCValue@OSCMessenger@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UOSCValue@OSCMessenger@@U?$_Nonconst_traits@UOSCValue@OSCMessenger@@@stlpmtx_std@@@2@U32@ABUOSCValue@OSCMessenger@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UObjPair@@V?$StlNodeAlloc@UObjPair@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UObjPair@@U?$_Nonconst_traits@UObjPair@@@stlpmtx_std@@@2@U32@ABUObjPair@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UOrganizedFileMerger@FileMergerOrganizer@@V?$StlNodeAlloc@UOrganizedFileMerger@FileMergerOrganizer@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UOrganizedFileMerger@FileMergerOrganizer@@U?$_Nonconst_traits@UOrganizedFileMerger@FileMergerOrganizer@@@stlpmtx_std@@@2@U32@ABUOrganizedFileMerger@FileMergerOrganizer@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UPanelRef@@V?$StlNodeAlloc@UPanelRef@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UPanelRef@@U?$_Nonconst_traits@UPanelRef@@@stlpmtx_std@@@2@U32@ABUPanelRef@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UPointTest@Rnd@@V?$StlNodeAlloc@UPointTest@Rnd@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UPointTest@Rnd@@U?$_Nonconst_traits@UPointTest@Rnd@@@stlpmtx_std@@@2@U32@ABUPointTest@Rnd@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UPreparedScreenParams@Splash@@V?$StlNodeAlloc@UPreparedScreenParams@Splash@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UPreparedScreenParams@Splash@@U?$_Nonconst_traits@UPreparedScreenParams@Splash@@@stlpmtx_std@@@2@U32@ABUPreparedScreenParams@Splash@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UPresetOverride@WorldDir@@V?$StlNodeAlloc@UPresetOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UPresetOverride@WorldDir@@U?$_Nonconst_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@2@U32@ABUPresetOverride@WorldDir@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UReadRequest@?A0x7d2eca9f@@V?$StlNodeAlloc@UReadRequest@?A0x7d2eca9f@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UReadRequest@?A0x7d2eca9f@@U?$_Nonconst_traits@UReadRequest@?A0x7d2eca9f@@@stlpmtx_std@@@2@U32@ABUReadRequest@?A0x7d2eca9f@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@USample@DebugGraph@@V?$StlNodeAlloc@USample@DebugGraph@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@USample@DebugGraph@@U?$_Nonconst_traits@USample@DebugGraph@@@stlpmtx_std@@@2@U32@ABUSample@DebugGraph@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UScreenParams@Splash@@V?$StlNodeAlloc@UScreenParams@Splash@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UScreenParams@Splash@@U?$_Nonconst_traits@UScreenParams@Splash@@@stlpmtx_std@@@2@U32@ABUScreenParams@Splash@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UShaderTree@RndShaderMgr@@V?$StlNodeAlloc@UShaderTree@RndShaderMgr@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UShaderTree@RndShaderMgr@@U?$_Nonconst_traits@UShaderTree@RndShaderMgr@@@stlpmtx_std@@@2@U32@ABUShaderTree@RndShaderMgr@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@USink@MsgSinks@@V?$StlNodeAlloc@USink@MsgSinks@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@USink@MsgSinks@@U?$_Nonconst_traits@USink@MsgSinks@@@stlpmtx_std@@@2@U32@ABUSink@MsgSinks@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@USink@MsgSource@@V?$StlNodeAlloc@USink@MsgSource@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@USink@MsgSource@@U?$_Nonconst_traits@USink@MsgSource@@@stlpmtx_std@@@2@U32@ABUSink@MsgSource@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UTarget@HamCamShot@@V?$StlNodeAlloc@UTarget@HamCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UTarget@HamCamShot@@U?$_Nonconst_traits@UTarget@HamCamShot@@@stlpmtx_std@@@2@U32@ABUTarget@HamCamShot@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UTargetCache@HamCamShot@@V?$StlNodeAlloc@UTargetCache@HamCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UTargetCache@HamCamShot@@U?$_Nonconst_traits@UTargetCache@HamCamShot@@@stlpmtx_std@@@2@U32@ABUTargetCache@HamCamShot@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UTaskInfo@TaskTimeline@@V?$StlNodeAlloc@UTaskInfo@TaskTimeline@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UTaskInfo@TaskTimeline@@U?$_Nonconst_traits@UTaskInfo@TaskTimeline@@@stlpmtx_std@@@2@U32@ABUTaskInfo@TaskTimeline@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UTrackingIDHistory@SkeletonRecoverer@@V?$StlNodeAlloc@UTrackingIDHistory@SkeletonRecoverer@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UTrackingIDHistory@SkeletonRecoverer@@U?$_Nonconst_traits@UTrackingIDHistory@SkeletonRecoverer@@@stlpmtx_std@@@2@U32@ABUTrackingIDHistory@SkeletonRecoverer@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UTrainerCondition@@V?$StlNodeAlloc@UTrainerCondition@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UTrainerCondition@@U?$_Nonconst_traits@UTrainerCondition@@@stlpmtx_std@@@2@U32@ABUTrainerCondition@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@UVar@ScriptTask@@V?$StlNodeAlloc@UVar@ScriptTask@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UVar@ScriptTask@@U?$_Nonconst_traits@UVar@ScriptTask@@@stlpmtx_std@@@2@U32@ABUVar@ScriptTask@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@V?$ObjDirPtr@VUILabelDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VUILabelDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@V?$ObjDirPtr@VUILabelDir@@@@U?$_Nonconst_traits@V?$ObjDirPtr@VUILabelDir@@@@@stlpmtx_std@@@2@U32@ABV?$ObjDirPtr@VUILabelDir@@@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@VAwardEntry@@V?$StlNodeAlloc@VAwardEntry@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VAwardEntry@@U?$_Nonconst_traits@VAwardEntry@@@stlpmtx_std@@@2@U32@ABVAwardEntry@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@VBoneState@BandCharacter@@V?$StlNodeAlloc@VBoneState@BandCharacter@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VBoneState@BandCharacter@@U?$_Nonconst_traits@VBoneState@BandCharacter@@@stlpmtx_std@@@2@U32@ABVBoneState@BandCharacter@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@VEventCall@EventAnim@@V?$StlNodeAlloc@VEventCall@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VEventCall@EventAnim@@U?$_Nonconst_traits@VEventCall@EventAnim@@@stlpmtx_std@@@2@U32@ABVEventCall@EventAnim@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VFilePath@@U?$_Nonconst_traits@VFilePath@@@stlpmtx_std@@@2@U32@ABVFilePath@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@VHitGem@GemManager@@V?$StlNodeAlloc@VHitGem@GemManager@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VHitGem@GemManager@@U?$_Nonconst_traits@VHitGem@GemManager@@@stlpmtx_std@@@2@U32@ABVHitGem@GemManager@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@VKeyFrame@EventAnim@@V?$StlNodeAlloc@VKeyFrame@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VKeyFrame@EventAnim@@U?$_Nonconst_traits@VKeyFrame@EventAnim@@@stlpmtx_std@@@2@U32@ABVKeyFrame@EventAnim@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@VOldMatOption@@V?$StlNodeAlloc@VOldMatOption@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VOldMatOption@@U?$_Nonconst_traits@VOldMatOption@@@stlpmtx_std@@@2@U32@ABVOldMatOption@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@VPracticeSectionMapping@SongSectionController@@V?$StlNodeAlloc@VPracticeSectionMapping@SongSectionController@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VPracticeSectionMapping@SongSectionController@@U?$_Nonconst_traits@VPracticeSectionMapping@SongSectionController@@@stlpmtx_std@@@2@U32@ABVPracticeSectionMapping@SongSectionController@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VSymbol@@U?$_Nonconst_traits@VSymbol@@@stlpmtx_std@@@2@U32@ABVSymbol@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@VTransform@@V?$StlNodeAlloc@VTransform@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VTransform@@U?$_Nonconst_traits@VTransform@@@stlpmtx_std@@@2@U32@ABVTransform@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VVector2@@U?$_Nonconst_traits@VVector2@@@stlpmtx_std@@@2@U32@ABVVector2@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VVector3@@U?$_Nonconst_traits@VVector3@@@stlpmtx_std@@@2@U32@ABVVector3@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@W4TrackType@@V?$StlNodeAlloc@W4TrackType@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@W4TrackType@@U?$_Nonconst_traits@W4TrackType@@@stlpmtx_std@@@2@U32@ABW4TrackType@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    }
-   ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 9 other group(s) at 10 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 9 of the 10 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
   },
   {
    "name": "1?$ObjRefConcrete",
@@ -81532,15 +80532,6 @@
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 27 other group(s) at 28 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 27 of the 28 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
   },
   {
-   "name": "insert",
-   "address": "0x823b60c0",
-   "survivor": "?insert@?$list@PAVRndTransformable@@V?$StlNodeAlloc@PAVRndTransformable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndTransformable@@U?$_Nonconst_traits@PAVRndTransformable@@@stlpmtx_std@@@2@U32@ABQAVRndTransformable@@@Z",
-   "folded": [
-    "??5@YAAAVBinStream@@AAV0@AAVRecenter@CharBoneDir@@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 53, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
-  },
-  {
    "name": "_M_erase",
    "address": "0x82442df8",
    "survivor": "?_M_erase@?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@PAV3@0ABU__false_type@2@@Z",
@@ -88568,43 +87559,6 @@
    ]
   },
   {
-   "name": "0?$pair",
-   "address": "0x822e4f70",
-   "survivor": "??0?$pair@$$CBVString@@VDataNode@@@stlpmtx_std@@QAA@ABVString@@ABVDataNode@@@Z",
-   "folded": [
-    "??0?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@QAA@ABV?$ObjPtr@VEventTrigger@@@@0@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
-   "repair": {
-    "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-    "lane": "ALIAS-REPAIR 2026-08-19",
-    "why": "Under-partitioned closure. 1 of 2 compiled members agree with the survivor under masking and DISAGREE on their RESOLVED operands (resolved through the ICF congruence over our own build), so they cannot be the same LINKED body and /OPT:ICF cannot have folded them together. Repaired, not refused: the group is partitioned into the 2 classes the evidence does support. `disposition: repartitioned` = re-emitted as its own class in a group immediately following; `dropped_singleton` = its class has one member, and one member is not a fold.",
-    "n_classes": 2,
-    "class_sizes": [
-     1,
-     1
-    ],
-    "n_subgroups": 0
-   },
-   "restored": [
-    {
-     "spelling": "??0?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@QAA@ABV?$ObjPtr@VEventTrigger@@@@0@Z",
-     "lane": "W16-CU 2026-09-15",
-     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared), on TWO independent instruments: W16-CP's adjudication sweep (~/tmp/w16cp_underpart_adjudicated.json) and W16-CU's independent re-run of tools/alias_forgiveness_audit.Sides.verdict in a different tree, which reproduced CP's layer column 456/456 with both a positive and a negative control discriminating.",
-     "why_the_original_premise_failed": "Same defect W9-D (c6711597) found in 65 sibling memberships and reversed. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate -- quoted from the group's own repair.why -- resolves operands 'through the ICF congruence over our own build'. But /OPT:ICF folded COMDATs in RETAIL's link, so an our-build congruence is neither necessary nor sufficient for the fold under test, and the predicate is unsound in this direction. Re-adjudicated on retail bytes at the flat L1_T1 layer, which does not close over the fold class being tested (unlike L2_RECURSIVE 'fixpoint via chase', whose memberships W9-D, W16-CP and this lane all leave withdrawn). Retail bytes outrank an our-build predicate.",
-     "superseded_records": [
-      {
-       "spelling": "??0?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@QAA@ABV?$ObjPtr@VEventTrigger@@@@0@Z",
-       "lane": "ALIAS-REPAIR 2026-08-19",
-       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-       "disposition": "dropped_singleton"
-      }
-     ]
-    }
-   ]
-  },
-  {
    "name": "0DialogEvent",
    "address": "0x82659220",
    "survivor": "??0DialogEvent@@QAA@PAVDataArray@@0@Z",
@@ -90310,7 +89264,10 @@
     "?insert@?$list@PAVRndOverlay@@V?$StlNodeAlloc@PAVRndOverlay@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndOverlay@@U?$_Nonconst_traits@PAVRndOverlay@@@stlpmtx_std@@@2@U32@ABQAVRndOverlay@@@Z",
     "?insert@?$list@PAVPostProcessor@@V?$StlNodeAlloc@PAVPostProcessor@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVPostProcessor@@U?$_Nonconst_traits@PAVPostProcessor@@@stlpmtx_std@@@2@U32@ABQAVPostProcessor@@@Z",
     "?insert@?$list@PAVNetCacheLoader@@V?$StlNodeAlloc@PAVNetCacheLoader@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVNetCacheLoader@@U?$_Nonconst_traits@PAVNetCacheLoader@@@stlpmtx_std@@@2@U32@ABQAVNetCacheLoader@@@Z",
-    "?insert@?$list@PAVArpeggioShape@@V?$StlNodeAlloc@PAVArpeggioShape@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVArpeggioShape@@U?$_Nonconst_traits@PAVArpeggioShape@@@stlpmtx_std@@@2@U32@ABQAVArpeggioShape@@@Z"
+    "?insert@?$list@PAVArpeggioShape@@V?$StlNodeAlloc@PAVArpeggioShape@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVArpeggioShape@@U?$_Nonconst_traits@PAVArpeggioShape@@@stlpmtx_std@@@2@U32@ABQAVArpeggioShape@@@Z",
+    "?insert@?$list@PAVRndTransformable@@V?$StlNodeAlloc@PAVRndTransformable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndTransformable@@U?$_Nonconst_traits@PAVRndTransformable@@@stlpmtx_std@@@2@U32@ABQAVRndTransformable@@@Z",
+    "?insert@?$list@PAVMidiParser@@V?$StlNodeAlloc@PAVMidiParser@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVMidiParser@@U?$_Nonconst_traits@PAVMidiParser@@@stlpmtx_std@@@2@U32@ABQAVMidiParser@@@Z",
+    "?insert@?$list@PAVBandCamShot@@V?$StlNodeAlloc@PAVBandCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVBandCamShot@@U?$_Nonconst_traits@PAVBandCamShot@@@stlpmtx_std@@@2@U32@ABQAVBandCamShot@@@Z"
    ],
    "evidence": "COMDAT-identity alias group derived by tools/comdat_fold_gate.py. Evidence tier(s) CF5. Our compiled COMDAT for each folded spelling below has the SAME SIZE as the retail body at 0x823d14c0 and every word compares equal: the words our COFF relocation table does NOT relocate compare as full 32-bit values (not masked), and every word it relocates with a BRANCH relocation has retail's destination resolved through target_symbol_map.json and name-compared. A 16-bit immediate relocation is unresolvable in a linked image and REFUSES the pair rather than being masked away. CF1=retail's map places the folded spelling on the same body or nowhere. CF2=on a different body the image discredits (ZERO REFERENCES -- no branch, no address-taken immediate pair, no .rdata/.data pointer word -- or no symbols.txt extent). CF3=on a HOMONYM witnessed by dc3's leaked ham_xbox_r.map. 5 folded spelling(s), 6 charged name_check sites. Per spelling: [?insert@?$list@PAVContent@@V?$StlNodeAlloc@PAVContent@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVContent@@U?$_Nonconst_traits@PAVContent@@@stlpmtx_std@@@2@U32@ABQAVContent@@@Z residual CF5, 2 sites: identical: 24/25 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal (1 of them via an already-installed alias group, not a literal name match)] [?insert@?$list@P6AXXZV?$StlNodeAlloc@P6AXXZ@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@P6AXXZU?$_Nonconst_traits@P6AXXZ@stlpmtx_std@@@2@U32@ABQ6AXXZ@Z residual CF5, 1 sites: identical: 24/25 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal (1 of them via an already-installed alias group, not a literal name match)] [?insert@?$list@PADV?$StlNodeAlloc@PAD@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PADU?$_Nonconst_traits@PAD@stlpmtx_std@@@2@U32@ABQAD@Z residual CF5, 1 sites: identical: 24/25 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal (1 of them via an already-installed alias group, not a literal name match)] [?insert@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAUDep@CharPollableSorter@@U?$_Nonconst_traits@PAUDep@CharPollableSorter@@@stlpmtx_std@@@2@U32@ABQAUDep@CharPollableSorter@@@Z residual CF5, 1 sites: identical: 24/25 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal] [?insert@?$list@PAVCharClip@@V?$StlNodeAlloc@PAVCharClip@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVCharClip@@U?$_Nonconst_traits@PAVCharClip@@@stlpmtx_std@@@2@U32@ABQAVCharClip@@@Z residual CF5, 1 sites: identical: 24/25 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal (1 of them via an already-installed alias group, not a literal name match)] ++ W10-B 2026-09-13: survivor RE-SEATED onto the map-resident spelling and list<char*>::insert added. (a) The group previously had ZERO map-resident members -- survivor CharClip* is absent from target_symbol_map.json -- so it violated the one-map-resident-symbol invariant and could not forgive retail's own name at its own address. Object* IS the map name at 0x823d14c0. (b) Whole-binary retail-byte population control, re-derived this lane over .pdata-authoritative extents: of 235 insert-shaped bodies (100 B / 25 instr / exactly 1 bl) carrying 149 distinct _M_create_node targets, EXACTLY ONE create_node is pointer-element (0x82520150: 0xc alloc, word copy, no ctor) and it feeds EXACTLY ONE insert, 0x823d14c0. A no-fold world needs one address per pointer T; the image has one for all of them. Negative control reproduces: list<bool> (0x8274d128) also allocates 0xc but copies with a BYTE op and sits at its own create_node 0x8274cf60. (c) tools/icf_pair_adjudicate.py --chase now returns PROVEN for insert<Object*>/insert<char*>, every level SLOT-FOLD-OK. ++ ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [2]. W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x823d14c0). \"ours\" spelling ?insert@?$list@PAVEventTrigger@@V?$StlNodeAlloc@PAVEventTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVEventTrigger@@U?$_Nonconst_traits@PAVEventTrigger@@@stlpmtx_std@@@2@U32@ABQAVEventTrigger@@@Z is a template/spelling twin of survivor ?insert@?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVObject@Hmx@@U?$_Nonconst_traits@PAVObject@Hmx@@@stlpmtx_std@@@2@U32@ABQAVObject@Hmx@@@Z at retail address 0x823d14c0. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 4 SLOT-FOLD-OK, 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 1596 B (1596 B honest) across ['default/EventTrigger'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md.",
    "withdrawn": [
@@ -91447,6 +90404,21 @@
      "spelling": "?insert@?$list@PAVArpeggioShape@@V?$StlNodeAlloc@PAVArpeggioShape@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVArpeggioShape@@U?$_Nonconst_traits@PAVArpeggioShape@@@stlpmtx_std@@@2@U32@ABQAVArpeggioShape@@@Z",
      "lane": "W16-MB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED); 100 B retail / 100 B ours. Retail calls the survivor where we call this spelling in 2 row(s), e.g. ?CreateArpeggioShape@ArpeggioShapePool@@QAAXXZ, ?ReleaseArpeggioShape@ArpeggioShapePool@@QAAXAAPAVArpeggioShape@@@Z."
+    },
+    {
+     "spelling": "?insert@?$list@PAVRndTransformable@@V?$StlNodeAlloc@PAVRndTransformable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndTransformable@@U?$_Nonconst_traits@PAVRndTransformable@@@stlpmtx_std@@@2@U32@ABQAVRndTransformable@@@Z",
+     "lane": "W16-NH-NAME 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED); 100 B retail / 100 B ours; retail body-twins 48. Retail call site(s) reaching the survivor where we call this spelling: 0x8239e2e4, 0x8239f3e8, 0x823b6b88, 0x823b6cc0, 0x823f94b0. Previously the survivor of the group at 0x823b60c0, whose retail body it does not match (re-homed)."
+    },
+    {
+     "spelling": "?insert@?$list@PAVMidiParser@@V?$StlNodeAlloc@PAVMidiParser@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVMidiParser@@U?$_Nonconst_traits@PAVMidiParser@@@stlpmtx_std@@@2@U32@ABQAVMidiParser@@@Z",
+     "lane": "W16-NH-NAME 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED); 100 B retail / 100 B ours; retail body-twins 48. Retail call site(s) reaching the survivor where we call this spelling: 0x827ea2bc, 0x827ea6b4. Previously the survivor of the group at 0x827e5318, whose retail body it does not match (re-homed)."
+    },
+    {
+     "spelling": "?insert@?$list@PAVBandCamShot@@V?$StlNodeAlloc@PAVBandCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVBandCamShot@@U?$_Nonconst_traits@PAVBandCamShot@@@stlpmtx_std@@@2@U32@ABQAVBandCamShot@@@Z",
+     "lane": "W16-NH-NAME 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED); 100 B retail / 100 B ours; retail body-twins 48. Retail call site(s) reaching the survivor where we call this spelling: 0x822b4144. Previously the survivor of the group at 0x822b55e0, whose retail body it does not match (re-homed)."
     }
    ]
   },
@@ -105096,6 +104068,1140 @@
      "spelling": "?_M_fill_insert_aux@?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@AAAXPAFIABFABU__false_type@2@@Z",
      "lane": "W16-NH-NAME 2026-10-02",
      "evidence": "Self-recursive leaf of the cycle in ?_M_fill_insert@?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@AAAXPAFIABF@Z's chase. Masked body + relocation shape unique image-wide (one retail address: the survivor); self-call slot is the only undischarged slot and is not consulted. Admitted with the parent membership, whose type witness is: fan-in: retail caller(s) of the survivor chain named for our element type: ?AddToBuffer@MicXbox@@CA_NAAV?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@PAXHPAH@Z."
+    }
+   ]
+  },
+  {
+   "name": "insert",
+   "address": "0x822b55e0",
+   "survivor": "?insert@?$list@UTarget@BandCamShot@@V?$StlNodeAlloc@UTarget@BandCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UTarget@BandCamShot@@U?$_Nonconst_traits@UTarget@BandCamShot@@@stlpmtx_std@@@2@U32@ABUTarget@BandCamShot@@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 53, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 86 folded spelling(s), 3 census sites over 3 functions.",
+   "withdrawn": [
+    {
+     "spelling": "?insert@?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@HU?$_Nonconst_traits@H@stlpmtx_std@@@2@U32@ABH@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@MU?$_Nonconst_traits@M@stlpmtx_std@@@2@U32@ABM@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@P6AXXZV?$StlNodeAlloc@P6AXXZ@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@P6AXXZU?$_Nonconst_traits@P6AXXZ@stlpmtx_std@@@2@U32@ABQ6AXXZ@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PADV?$StlNodeAlloc@PAD@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PADU?$_Nonconst_traits@PAD@stlpmtx_std@@@2@U32@ABQAD@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAUCompressTexDesc@Rnd@@V?$StlNodeAlloc@PAUCompressTexDesc@Rnd@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAUCompressTexDesc@Rnd@@U?$_Nonconst_traits@PAUCompressTexDesc@Rnd@@@stlpmtx_std@@@2@U32@ABQAUCompressTexDesc@Rnd@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAULayer@HamDriver@@V?$StlNodeAlloc@PAULayer@HamDriver@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAULayer@HamDriver@@U?$_Nonconst_traits@PAULayer@HamDriver@@@stlpmtx_std@@@2@U32@ABQAULayer@HamDriver@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAUMerger@FileMerger@@V?$StlNodeAlloc@PAUMerger@FileMerger@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAUMerger@FileMerger@@U?$_Nonconst_traits@PAUMerger@FileMerger@@@stlpmtx_std@@@2@U32@ABQAUMerger@FileMerger@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVCallback@ContentMgr@@V?$StlNodeAlloc@PAVCallback@ContentMgr@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVCallback@ContentMgr@@U?$_Nonconst_traits@PAVCallback@ContentMgr@@@stlpmtx_std@@@2@U32@ABQAVCallback@ContentMgr@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVCharData@@V?$StlNodeAlloc@PAVCharData@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVCharData@@U?$_Nonconst_traits@PAVCharData@@@stlpmtx_std@@@2@U32@ABQAVCharData@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVContent@@V?$StlNodeAlloc@PAVContent@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVContent@@U?$_Nonconst_traits@PAVContent@@@stlpmtx_std@@@2@U32@ABQAVContent@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVDataArray@@V?$StlNodeAlloc@PAVDataArray@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVDataArray@@U?$_Nonconst_traits@PAVDataArray@@@stlpmtx_std@@@2@U32@ABQAVDataArray@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVFaderTask@@V?$StlNodeAlloc@PAVFaderTask@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVFaderTask@@U?$_Nonconst_traits@PAVFaderTask@@@stlpmtx_std@@@2@U32@ABQAVFaderTask@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVFileCache@@V?$StlNodeAlloc@PAVFileCache@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVFileCache@@U?$_Nonconst_traits@PAVFileCache@@@stlpmtx_std@@@2@U32@ABQAVFileCache@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVGamerAwardStatus@@V?$StlNodeAlloc@PAVGamerAwardStatus@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVGamerAwardStatus@@U?$_Nonconst_traits@PAVGamerAwardStatus@@@stlpmtx_std@@@2@U32@ABQAVGamerAwardStatus@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVJob@@V?$StlNodeAlloc@PAVJob@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVJob@@U?$_Nonconst_traits@PAVJob@@@stlpmtx_std@@@2@U32@ABQAVJob@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVLoader@@V?$StlNodeAlloc@PAVLoader@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVLoader@@U?$_Nonconst_traits@PAVLoader@@@stlpmtx_std@@@2@U32@ABQAVLoader@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVNetCacheLoader@@V?$StlNodeAlloc@PAVNetCacheLoader@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVNetCacheLoader@@U?$_Nonconst_traits@PAVNetCacheLoader@@@stlpmtx_std@@@2@U32@ABQAVNetCacheLoader@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVObjRefOwner@@V?$StlNodeAlloc@PAVObjRefOwner@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVObjRefOwner@@U?$_Nonconst_traits@PAVObjRefOwner@@@stlpmtx_std@@@2@U32@ABQAVObjRefOwner@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVPassiveMessage@@V?$StlNodeAlloc@PAVPassiveMessage@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVPassiveMessage@@U?$_Nonconst_traits@PAVPassiveMessage@@@stlpmtx_std@@@2@U32@ABQAVPassiveMessage@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVPerformanceData@@V?$StlNodeAlloc@PAVPerformanceData@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVPerformanceData@@U?$_Nonconst_traits@PAVPerformanceData@@@stlpmtx_std@@@2@U32@ABQAVPerformanceData@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVPostProcessor@@V?$StlNodeAlloc@PAVPostProcessor@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVPostProcessor@@U?$_Nonconst_traits@PAVPostProcessor@@@stlpmtx_std@@@2@U32@ABQAVPostProcessor@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVPropKeys@@V?$StlNodeAlloc@PAVPropKeys@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVPropKeys@@U?$_Nonconst_traits@PAVPropKeys@@@stlpmtx_std@@@2@U32@ABQAVPropKeys@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVRndDir@@V?$StlNodeAlloc@PAVRndDir@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndDir@@U?$_Nonconst_traits@PAVRndDir@@@stlpmtx_std@@@2@U32@ABQAVRndDir@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVRndGraph@@V?$StlNodeAlloc@PAVRndGraph@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndGraph@@U?$_Nonconst_traits@PAVRndGraph@@@stlpmtx_std@@@2@U32@ABQAVRndGraph@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVRndGroup@@V?$StlNodeAlloc@PAVRndGroup@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndGroup@@U?$_Nonconst_traits@PAVRndGroup@@@stlpmtx_std@@@2@U32@ABQAVRndGroup@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVRndMat@@V?$StlNodeAlloc@PAVRndMat@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndMat@@U?$_Nonconst_traits@PAVRndMat@@@stlpmtx_std@@@2@U32@ABQAVRndMat@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVRndMesh@@V?$StlNodeAlloc@PAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndMesh@@U?$_Nonconst_traits@PAVRndMesh@@@stlpmtx_std@@@2@U32@ABQAVRndMesh@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVRndOverlay@@V?$StlNodeAlloc@PAVRndOverlay@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndOverlay@@U?$_Nonconst_traits@PAVRndOverlay@@@stlpmtx_std@@@2@U32@ABQAVRndOverlay@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVRndPollable@@V?$StlNodeAlloc@PAVRndPollable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndPollable@@U?$_Nonconst_traits@PAVRndPollable@@@stlpmtx_std@@@2@U32@ABQAVRndPollable@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVSampleInst@@V?$StlNodeAlloc@PAVSampleInst@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVSampleInst@@U?$_Nonconst_traits@PAVSampleInst@@@stlpmtx_std@@@2@U32@ABQAVSampleInst@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVSortNode@@V?$StlNodeAlloc@PAVSortNode@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVSortNode@@U?$_Nonconst_traits@PAVSortNode@@@stlpmtx_std@@@2@U32@ABQAVSortNode@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVSynthPollable@@V?$StlNodeAlloc@PAVSynthPollable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVSynthPollable@@U?$_Nonconst_traits@PAVSynthPollable@@@stlpmtx_std@@@2@U32@ABQAVSynthPollable@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVTriangle@@V?$StlNodeAlloc@PAVTriangle@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVTriangle@@U?$_Nonconst_traits@PAVTriangle@@@stlpmtx_std@@@2@U32@ABQAVTriangle@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVUIComponent@@V?$StlNodeAlloc@PAVUIComponent@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVUIComponent@@U?$_Nonconst_traits@PAVUIComponent@@@stlpmtx_std@@@2@U32@ABQAVUIComponent@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVUIResource@@V?$StlNodeAlloc@PAVUIResource@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVUIResource@@U?$_Nonconst_traits@PAVUIResource@@@stlpmtx_std@@@2@U32@ABQAVUIResource@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVUITrigger@@V?$StlNodeAlloc@PAVUITrigger@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVUITrigger@@U?$_Nonconst_traits@PAVUITrigger@@@stlpmtx_std@@@2@U32@ABQAVUITrigger@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVVoice@@V?$StlNodeAlloc@PAVVoice@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVVoice@@U?$_Nonconst_traits@PAVVoice@@@stlpmtx_std@@@2@U32@ABQAVVoice@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVVorbisReader@@V?$StlNodeAlloc@PAVVorbisReader@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVVorbisReader@@U?$_Nonconst_traits@PAVVorbisReader@@@stlpmtx_std@@@2@U32@ABQAVVorbisReader@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVWaypoint@@V?$StlNodeAlloc@PAVWaypoint@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVWaypoint@@U?$_Nonconst_traits@PAVWaypoint@@@stlpmtx_std@@@2@U32@ABQAVWaypoint@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVWebSvcRequest@@V?$StlNodeAlloc@PAVWebSvcRequest@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVWebSvcRequest@@U?$_Nonconst_traits@PAVWebSvcRequest@@@stlpmtx_std@@@2@U32@ABQAVWebSvcRequest@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PBDV?$StlNodeAlloc@PBD@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PBDU?$_Nonconst_traits@PBD@stlpmtx_std@@@2@U32@ABQBD@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@U?$pair@PAVRndMesh@@PAVObjectDir@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMesh@@PAVObjectDir@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@PAVRndMesh@@PAVObjectDir@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@PAVRndMesh@@PAVObjectDir@@@stlpmtx_std@@@2@@2@U32@ABU?$pair@PAVRndMesh@@PAVObjectDir@@@2@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@2@U32@ABU?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@U?$pair@PAVRndMultiMeshProxy@@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMultiMeshProxy@@H@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@PAVRndMultiMeshProxy@@H@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@PAVRndMultiMeshProxy@@H@stlpmtx_std@@@2@@2@U32@ABU?$pair@PAVRndMultiMeshProxy@@H@2@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@@2@@2@U32@ABU?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@2@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@U?$pair@VSymbol@@V1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@VSymbol@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@VSymbol@@V1@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@VSymbol@@V1@@stlpmtx_std@@@2@@2@U32@ABU?$pair@VSymbol@@V1@@2@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UAccomplishmentTourCondition@@V?$StlNodeAlloc@UAccomplishmentTourCondition@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UAccomplishmentTourCondition@@U?$_Nonconst_traits@UAccomplishmentTourCondition@@@stlpmtx_std@@@2@U32@ABUAccomplishmentTourCondition@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UBitmapOverride@WorldDir@@V?$StlNodeAlloc@UBitmapOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UBitmapOverride@WorldDir@@U?$_Nonconst_traits@UBitmapOverride@WorldDir@@@stlpmtx_std@@@2@U32@ABUBitmapOverride@WorldDir@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UCallbackFile@ContentMgr@@V?$StlNodeAlloc@UCallbackFile@ContentMgr@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UCallbackFile@ContentMgr@@U?$_Nonconst_traits@UCallbackFile@ContentMgr@@@stlpmtx_std@@@2@U32@ABUCallbackFile@ContentMgr@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UCollision@RndDrawable@@V?$StlNodeAlloc@UCollision@RndDrawable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UCollision@RndDrawable@@U?$_Nonconst_traits@UCollision@RndDrawable@@@stlpmtx_std@@@2@U32@ABUCollision@RndDrawable@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UConstraintSystem@CharBlendBone@@V?$StlNodeAlloc@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UConstraintSystem@CharBlendBone@@U?$_Nonconst_traits@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@2@U32@ABUConstraintSystem@CharBlendBone@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UEventSink@MsgSource@@V?$StlNodeAlloc@UEventSink@MsgSource@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UEventSink@MsgSource@@U?$_Nonconst_traits@UEventSink@MsgSource@@@stlpmtx_std@@@2@U32@ABUEventSink@MsgSource@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UNetLoaderRef@@V?$StlNodeAlloc@UNetLoaderRef@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UNetLoaderRef@@U?$_Nonconst_traits@UNetLoaderRef@@@stlpmtx_std@@@2@U32@ABUNetLoaderRef@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UOSCValue@OSCMessenger@@V?$StlNodeAlloc@UOSCValue@OSCMessenger@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UOSCValue@OSCMessenger@@U?$_Nonconst_traits@UOSCValue@OSCMessenger@@@stlpmtx_std@@@2@U32@ABUOSCValue@OSCMessenger@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UObjPair@@V?$StlNodeAlloc@UObjPair@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UObjPair@@U?$_Nonconst_traits@UObjPair@@@stlpmtx_std@@@2@U32@ABUObjPair@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UOrganizedFileMerger@FileMergerOrganizer@@V?$StlNodeAlloc@UOrganizedFileMerger@FileMergerOrganizer@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UOrganizedFileMerger@FileMergerOrganizer@@U?$_Nonconst_traits@UOrganizedFileMerger@FileMergerOrganizer@@@stlpmtx_std@@@2@U32@ABUOrganizedFileMerger@FileMergerOrganizer@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UPanelRef@@V?$StlNodeAlloc@UPanelRef@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UPanelRef@@U?$_Nonconst_traits@UPanelRef@@@stlpmtx_std@@@2@U32@ABUPanelRef@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UPointTest@Rnd@@V?$StlNodeAlloc@UPointTest@Rnd@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UPointTest@Rnd@@U?$_Nonconst_traits@UPointTest@Rnd@@@stlpmtx_std@@@2@U32@ABUPointTest@Rnd@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UPreparedScreenParams@Splash@@V?$StlNodeAlloc@UPreparedScreenParams@Splash@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UPreparedScreenParams@Splash@@U?$_Nonconst_traits@UPreparedScreenParams@Splash@@@stlpmtx_std@@@2@U32@ABUPreparedScreenParams@Splash@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UPresetOverride@WorldDir@@V?$StlNodeAlloc@UPresetOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UPresetOverride@WorldDir@@U?$_Nonconst_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@2@U32@ABUPresetOverride@WorldDir@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UReadRequest@?A0x7d2eca9f@@V?$StlNodeAlloc@UReadRequest@?A0x7d2eca9f@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UReadRequest@?A0x7d2eca9f@@U?$_Nonconst_traits@UReadRequest@?A0x7d2eca9f@@@stlpmtx_std@@@2@U32@ABUReadRequest@?A0x7d2eca9f@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@USample@DebugGraph@@V?$StlNodeAlloc@USample@DebugGraph@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@USample@DebugGraph@@U?$_Nonconst_traits@USample@DebugGraph@@@stlpmtx_std@@@2@U32@ABUSample@DebugGraph@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UScreenParams@Splash@@V?$StlNodeAlloc@UScreenParams@Splash@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UScreenParams@Splash@@U?$_Nonconst_traits@UScreenParams@Splash@@@stlpmtx_std@@@2@U32@ABUScreenParams@Splash@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UShaderTree@RndShaderMgr@@V?$StlNodeAlloc@UShaderTree@RndShaderMgr@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UShaderTree@RndShaderMgr@@U?$_Nonconst_traits@UShaderTree@RndShaderMgr@@@stlpmtx_std@@@2@U32@ABUShaderTree@RndShaderMgr@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@USink@MsgSinks@@V?$StlNodeAlloc@USink@MsgSinks@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@USink@MsgSinks@@U?$_Nonconst_traits@USink@MsgSinks@@@stlpmtx_std@@@2@U32@ABUSink@MsgSinks@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@USink@MsgSource@@V?$StlNodeAlloc@USink@MsgSource@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@USink@MsgSource@@U?$_Nonconst_traits@USink@MsgSource@@@stlpmtx_std@@@2@U32@ABUSink@MsgSource@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UTarget@HamCamShot@@V?$StlNodeAlloc@UTarget@HamCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UTarget@HamCamShot@@U?$_Nonconst_traits@UTarget@HamCamShot@@@stlpmtx_std@@@2@U32@ABUTarget@HamCamShot@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UTargetCache@HamCamShot@@V?$StlNodeAlloc@UTargetCache@HamCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UTargetCache@HamCamShot@@U?$_Nonconst_traits@UTargetCache@HamCamShot@@@stlpmtx_std@@@2@U32@ABUTargetCache@HamCamShot@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UTaskInfo@TaskTimeline@@V?$StlNodeAlloc@UTaskInfo@TaskTimeline@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UTaskInfo@TaskTimeline@@U?$_Nonconst_traits@UTaskInfo@TaskTimeline@@@stlpmtx_std@@@2@U32@ABUTaskInfo@TaskTimeline@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UTrackingIDHistory@SkeletonRecoverer@@V?$StlNodeAlloc@UTrackingIDHistory@SkeletonRecoverer@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UTrackingIDHistory@SkeletonRecoverer@@U?$_Nonconst_traits@UTrackingIDHistory@SkeletonRecoverer@@@stlpmtx_std@@@2@U32@ABUTrackingIDHistory@SkeletonRecoverer@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UTrainerCondition@@V?$StlNodeAlloc@UTrainerCondition@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UTrainerCondition@@U?$_Nonconst_traits@UTrainerCondition@@@stlpmtx_std@@@2@U32@ABUTrainerCondition@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UVar@ScriptTask@@V?$StlNodeAlloc@UVar@ScriptTask@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UVar@ScriptTask@@U?$_Nonconst_traits@UVar@ScriptTask@@@stlpmtx_std@@@2@U32@ABUVar@ScriptTask@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@V?$ObjDirPtr@VUILabelDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VUILabelDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@V?$ObjDirPtr@VUILabelDir@@@@U?$_Nonconst_traits@V?$ObjDirPtr@VUILabelDir@@@@@stlpmtx_std@@@2@U32@ABV?$ObjDirPtr@VUILabelDir@@@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@VAwardEntry@@V?$StlNodeAlloc@VAwardEntry@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VAwardEntry@@U?$_Nonconst_traits@VAwardEntry@@@stlpmtx_std@@@2@U32@ABVAwardEntry@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@VBoneState@BandCharacter@@V?$StlNodeAlloc@VBoneState@BandCharacter@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VBoneState@BandCharacter@@U?$_Nonconst_traits@VBoneState@BandCharacter@@@stlpmtx_std@@@2@U32@ABVBoneState@BandCharacter@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@VEventCall@EventAnim@@V?$StlNodeAlloc@VEventCall@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VEventCall@EventAnim@@U?$_Nonconst_traits@VEventCall@EventAnim@@@stlpmtx_std@@@2@U32@ABVEventCall@EventAnim@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VFilePath@@U?$_Nonconst_traits@VFilePath@@@stlpmtx_std@@@2@U32@ABVFilePath@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@VHitGem@GemManager@@V?$StlNodeAlloc@VHitGem@GemManager@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VHitGem@GemManager@@U?$_Nonconst_traits@VHitGem@GemManager@@@stlpmtx_std@@@2@U32@ABVHitGem@GemManager@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@VKeyFrame@EventAnim@@V?$StlNodeAlloc@VKeyFrame@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VKeyFrame@EventAnim@@U?$_Nonconst_traits@VKeyFrame@EventAnim@@@stlpmtx_std@@@2@U32@ABVKeyFrame@EventAnim@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@VOldMatOption@@V?$StlNodeAlloc@VOldMatOption@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VOldMatOption@@U?$_Nonconst_traits@VOldMatOption@@@stlpmtx_std@@@2@U32@ABVOldMatOption@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@VPracticeSectionMapping@SongSectionController@@V?$StlNodeAlloc@VPracticeSectionMapping@SongSectionController@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VPracticeSectionMapping@SongSectionController@@U?$_Nonconst_traits@VPracticeSectionMapping@SongSectionController@@@stlpmtx_std@@@2@U32@ABVPracticeSectionMapping@SongSectionController@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VSymbol@@U?$_Nonconst_traits@VSymbol@@@stlpmtx_std@@@2@U32@ABVSymbol@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@VTransform@@V?$StlNodeAlloc@VTransform@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VTransform@@U?$_Nonconst_traits@VTransform@@@stlpmtx_std@@@2@U32@ABVTransform@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VVector2@@U?$_Nonconst_traits@VVector2@@@stlpmtx_std@@@2@U32@ABVVector2@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VVector3@@U?$_Nonconst_traits@VVector3@@@stlpmtx_std@@@2@U32@ABVVector3@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@W4TrackType@@V?$StlNodeAlloc@W4TrackType@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@W4TrackType@@U?$_Nonconst_traits@W4TrackType@@@stlpmtx_std@@@2@U32@ABW4TrackType@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    }
+   ],
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 9 other group(s) at 10 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 9 of the 10 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md.",
+   "survivor_renamed": {
+    "from": "?insert@?$list@PAVBandCamShot@@V?$StlNodeAlloc@PAVBandCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVBandCamShot@@U?$_Nonconst_traits@PAVBandCamShot@@@stlpmtx_std@@@2@U32@ABQAVBandCamShot@@@Z",
+    "lane": "W16-NH-NAME 2026-10-02",
+    "evidence": "tools/icf_pair_adjudicate.py adjudicate(map name at 0x822b55e0, old survivor): REFUTED -- masked bodies match but relocation TARGETS disagree -- template-twin, not a fold; chase REFUTED. The old survivor is not the retail body at this address; it is now re-homed to the address retail actually calls for it (?insert@?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVObject@Hmx@@U?$_Nonconst_traits@PAVObject@Hmx, chase PROVEN, retail call site(s) 0x822b4144)."
+   }
+  },
+  {
+   "name": "4?$ObjList",
+   "address": "0x82310cf0",
+   "survivor": "??4?$ObjList@VPracticeSectionMapping@SongSectionController@@@@QAAXABV0@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "withdrawn": [],
+   "repair": {
+    "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+    "lane": "ALIAS-REPAIR 2026-08-19",
+    "why": "Under-partitioned closure. 1 of 2 compiled members agree with the survivor under masking and DISAGREE on their RESOLVED operands (resolved through the ICF congruence over our own build), so they cannot be the same LINKED body and /OPT:ICF cannot have folded them together. Repaired, not refused: the group is partitioned into the 2 classes the evidence does support. `disposition: repartitioned` = re-emitted as its own class in a group immediately following; `dropped_singleton` = its class has one member, and one member is not a fold.",
+    "n_classes": 2,
+    "class_sizes": [
+     1,
+     1
+    ],
+    "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??4?$ObjList@VPracticeSectionMapping@SongSectionController@@@@QAAXABV0@@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
+   },
+   "restored": [
+    {
+     "spelling": "??4?$ObjList@VPracticeSectionMapping@SongSectionController@@@@QAAXABV0@@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??4?$ObjList@VPracticeSectionMapping@SongSectionController@@@@QAAXABV0@@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ],
+   "survivor_renamed": {
+    "from": "??4?$ObjList@UMatOverride@WorldDir@@@@QAAXABV0@@Z",
+    "lane": "W16-NH-NAME 2026-10-02",
+    "evidence": "tools/icf_pair_adjudicate.py adjudicate(map name at 0x82310cf0, old survivor): REFUTED -- masked bodies match but relocation TARGETS disagree -- template-twin, not a fold; chase REFUTED. The old survivor is not the retail body at this address; it is now re-homed to the address retail actually calls for it (??4?$ObjList@UTarget@BandCamShot@@@@QAAXABV0@@Z, chase PROVEN, retail call site(s) 0x824d14bc)."
+   }
+  },
+  {
+   "name": "_M_fill_insert",
+   "address": "0x822a4fb8",
+   "survivor": "?_M_fill_insert@?$vector@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjPtr@VRndTex@@@@IABV3@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 13 folded spelling(s), 1 census sites over 2 functions.",
+   "withdrawn": [
+    {
+     "spelling": "?_M_fill_insert@?$vector@UGemInProgress@@V?$StlNodeAlloc@UGemInProgress@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUGemInProgress@@IABU3@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@UHamSupereasyMeasure@@V?$StlNodeAlloc@UHamSupereasyMeasure@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUHamSupereasyMeasure@@IABU3@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@URndPointTest@NgRnd@@V?$StlNodeAlloc@URndPointTest@NgRnd@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAURndPointTest@NgRnd@@IABU34@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@V?$Key@VVector2@@@@V?$StlNodeAlloc@V?$Key@VVector2@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VVector2@@@@IABV3@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@V?$ObjPtr@VBandTrack@@@@V?$StlNodeAlloc@V?$ObjPtr@VBandTrack@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjPtr@VBandTrack@@@@IABV3@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@V?$ObjPtr@VEventTrigger@@@@V?$StlNodeAlloc@V?$ObjPtr@VEventTrigger@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjPtr@VEventTrigger@@@@IABV3@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@V?$ObjPtr@VRndAnimatable@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndAnimatable@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjPtr@VRndAnimatable@@@@IABV3@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@V?$ObjPtr@VRndDir@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndDir@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjPtr@VRndDir@@@@IABV3@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndMesh@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjPtr@VRndMesh@@@@IABV3@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjPtr@VRndTex@@@@IABV3@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@VPhraseState@CommonPhraseCapturer@@V?$StlNodeAlloc@VPhraseState@CommonPhraseCapturer@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVPhraseState@CommonPhraseCapturer@@IABV34@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@VRGTrill@@V?$StlNodeAlloc@VRGTrill@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVRGTrill@@IABV3@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@VSectionInfo@Stats@@V?$StlNodeAlloc@VSectionInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSectionInfo@Stats@@IABV34@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    }
+   ],
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 2 other group(s) at 3 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 2 of the 3 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md.",
+   "survivor_renamed": {
+    "from": "?_M_fill_insert@?$vector@ULod@Character@@V?$StlNodeAlloc@ULod@Character@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAULod@Character@@IABU34@@Z",
+    "lane": "W16-NH-NAME 2026-10-02",
+    "evidence": "tools/icf_pair_adjudicate.py adjudicate(map name at 0x822a4fb8, old survivor): REFUTED -- masked bodies DIFFER (retail did not keep the code our spelling compiles to); chase REFUTED. The old survivor is not the retail body at this address; it is now re-homed to the address retail actually calls for it (?_M_fill_insert@?$vector@UIKTarget@CharIKHand@@V?$StlNodeAlloc@UIKTarget@CharIKHand@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUIKTarget@CharIKHand@@IABU34@@Z, chase PROVEN, retail call site(s) 0x8237317c)."
+   }
+  },
+  {
+   "name": "$_Param_Construct",
+   "address": "0x826f7fd8",
+   "survivor": "??$_Copy_Construct@VVocalScoreHistory@@@stlpmtx_std@@YAXPAVVocalScoreHistory@@ABV1@@Z",
+   "folded": [
+    "??$_Param_Construct@VVocalScoreHistory@@V1@@stlpmtx_std@@YAXPAVVocalScoreHistory@@ABV1@@Z"
+   ],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 4, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 1 census sites over 2 functions.",
+   "survivor_renamed": {
+    "from": "??$_Param_Construct@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@ABV10@@Z",
+    "lane": "W16-NH-NAME 2026-10-02",
+    "evidence": "tools/icf_pair_adjudicate.py adjudicate(map name at 0x826f7fd8, old survivor): REFUTED -- masked bodies match but relocation TARGETS disagree -- template-twin, not a fold; chase REFUTED. The old survivor is not the retail body at this address; it is now re-homed to the address retail actually calls for it (??$_Copy_Construct@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@s, chase PROVEN, retail call site(s) 0x827fdb24)."
+   }
+  },
+  {
+   "name": "insert",
+   "address": "0x827e5318",
+   "survivor": "?insert@?$list@VTextInstance@@V?$StlNodeAlloc@VTextInstance@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VTextInstance@@U?$_Nonconst_traits@VTextInstance@@@stlpmtx_std@@@2@U32@ABVTextInstance@@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 53, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 86 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "?insert@?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@HU?$_Nonconst_traits@H@stlpmtx_std@@@2@U32@ABH@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@MU?$_Nonconst_traits@M@stlpmtx_std@@@2@U32@ABM@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@P6AXXZV?$StlNodeAlloc@P6AXXZ@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@P6AXXZU?$_Nonconst_traits@P6AXXZ@stlpmtx_std@@@2@U32@ABQ6AXXZ@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PADV?$StlNodeAlloc@PAD@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PADU?$_Nonconst_traits@PAD@stlpmtx_std@@@2@U32@ABQAD@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAUCompressTexDesc@Rnd@@V?$StlNodeAlloc@PAUCompressTexDesc@Rnd@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAUCompressTexDesc@Rnd@@U?$_Nonconst_traits@PAUCompressTexDesc@Rnd@@@stlpmtx_std@@@2@U32@ABQAUCompressTexDesc@Rnd@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAULayer@HamDriver@@V?$StlNodeAlloc@PAULayer@HamDriver@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAULayer@HamDriver@@U?$_Nonconst_traits@PAULayer@HamDriver@@@stlpmtx_std@@@2@U32@ABQAULayer@HamDriver@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAUMerger@FileMerger@@V?$StlNodeAlloc@PAUMerger@FileMerger@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAUMerger@FileMerger@@U?$_Nonconst_traits@PAUMerger@FileMerger@@@stlpmtx_std@@@2@U32@ABQAUMerger@FileMerger@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVCallback@ContentMgr@@V?$StlNodeAlloc@PAVCallback@ContentMgr@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVCallback@ContentMgr@@U?$_Nonconst_traits@PAVCallback@ContentMgr@@@stlpmtx_std@@@2@U32@ABQAVCallback@ContentMgr@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVCharData@@V?$StlNodeAlloc@PAVCharData@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVCharData@@U?$_Nonconst_traits@PAVCharData@@@stlpmtx_std@@@2@U32@ABQAVCharData@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVContent@@V?$StlNodeAlloc@PAVContent@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVContent@@U?$_Nonconst_traits@PAVContent@@@stlpmtx_std@@@2@U32@ABQAVContent@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVDataArray@@V?$StlNodeAlloc@PAVDataArray@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVDataArray@@U?$_Nonconst_traits@PAVDataArray@@@stlpmtx_std@@@2@U32@ABQAVDataArray@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVFaderTask@@V?$StlNodeAlloc@PAVFaderTask@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVFaderTask@@U?$_Nonconst_traits@PAVFaderTask@@@stlpmtx_std@@@2@U32@ABQAVFaderTask@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVFileCache@@V?$StlNodeAlloc@PAVFileCache@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVFileCache@@U?$_Nonconst_traits@PAVFileCache@@@stlpmtx_std@@@2@U32@ABQAVFileCache@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVGamerAwardStatus@@V?$StlNodeAlloc@PAVGamerAwardStatus@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVGamerAwardStatus@@U?$_Nonconst_traits@PAVGamerAwardStatus@@@stlpmtx_std@@@2@U32@ABQAVGamerAwardStatus@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVJob@@V?$StlNodeAlloc@PAVJob@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVJob@@U?$_Nonconst_traits@PAVJob@@@stlpmtx_std@@@2@U32@ABQAVJob@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVLoader@@V?$StlNodeAlloc@PAVLoader@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVLoader@@U?$_Nonconst_traits@PAVLoader@@@stlpmtx_std@@@2@U32@ABQAVLoader@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVNetCacheLoader@@V?$StlNodeAlloc@PAVNetCacheLoader@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVNetCacheLoader@@U?$_Nonconst_traits@PAVNetCacheLoader@@@stlpmtx_std@@@2@U32@ABQAVNetCacheLoader@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVObjRefOwner@@V?$StlNodeAlloc@PAVObjRefOwner@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVObjRefOwner@@U?$_Nonconst_traits@PAVObjRefOwner@@@stlpmtx_std@@@2@U32@ABQAVObjRefOwner@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVPassiveMessage@@V?$StlNodeAlloc@PAVPassiveMessage@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVPassiveMessage@@U?$_Nonconst_traits@PAVPassiveMessage@@@stlpmtx_std@@@2@U32@ABQAVPassiveMessage@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVPerformanceData@@V?$StlNodeAlloc@PAVPerformanceData@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVPerformanceData@@U?$_Nonconst_traits@PAVPerformanceData@@@stlpmtx_std@@@2@U32@ABQAVPerformanceData@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVPostProcessor@@V?$StlNodeAlloc@PAVPostProcessor@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVPostProcessor@@U?$_Nonconst_traits@PAVPostProcessor@@@stlpmtx_std@@@2@U32@ABQAVPostProcessor@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVPropKeys@@V?$StlNodeAlloc@PAVPropKeys@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVPropKeys@@U?$_Nonconst_traits@PAVPropKeys@@@stlpmtx_std@@@2@U32@ABQAVPropKeys@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVRndDir@@V?$StlNodeAlloc@PAVRndDir@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndDir@@U?$_Nonconst_traits@PAVRndDir@@@stlpmtx_std@@@2@U32@ABQAVRndDir@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVRndGraph@@V?$StlNodeAlloc@PAVRndGraph@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndGraph@@U?$_Nonconst_traits@PAVRndGraph@@@stlpmtx_std@@@2@U32@ABQAVRndGraph@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVRndGroup@@V?$StlNodeAlloc@PAVRndGroup@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndGroup@@U?$_Nonconst_traits@PAVRndGroup@@@stlpmtx_std@@@2@U32@ABQAVRndGroup@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVRndMat@@V?$StlNodeAlloc@PAVRndMat@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndMat@@U?$_Nonconst_traits@PAVRndMat@@@stlpmtx_std@@@2@U32@ABQAVRndMat@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVRndMesh@@V?$StlNodeAlloc@PAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndMesh@@U?$_Nonconst_traits@PAVRndMesh@@@stlpmtx_std@@@2@U32@ABQAVRndMesh@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVRndOverlay@@V?$StlNodeAlloc@PAVRndOverlay@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndOverlay@@U?$_Nonconst_traits@PAVRndOverlay@@@stlpmtx_std@@@2@U32@ABQAVRndOverlay@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVRndPollable@@V?$StlNodeAlloc@PAVRndPollable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndPollable@@U?$_Nonconst_traits@PAVRndPollable@@@stlpmtx_std@@@2@U32@ABQAVRndPollable@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVSampleInst@@V?$StlNodeAlloc@PAVSampleInst@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVSampleInst@@U?$_Nonconst_traits@PAVSampleInst@@@stlpmtx_std@@@2@U32@ABQAVSampleInst@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVSortNode@@V?$StlNodeAlloc@PAVSortNode@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVSortNode@@U?$_Nonconst_traits@PAVSortNode@@@stlpmtx_std@@@2@U32@ABQAVSortNode@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVSynthPollable@@V?$StlNodeAlloc@PAVSynthPollable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVSynthPollable@@U?$_Nonconst_traits@PAVSynthPollable@@@stlpmtx_std@@@2@U32@ABQAVSynthPollable@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVTriangle@@V?$StlNodeAlloc@PAVTriangle@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVTriangle@@U?$_Nonconst_traits@PAVTriangle@@@stlpmtx_std@@@2@U32@ABQAVTriangle@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVUIComponent@@V?$StlNodeAlloc@PAVUIComponent@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVUIComponent@@U?$_Nonconst_traits@PAVUIComponent@@@stlpmtx_std@@@2@U32@ABQAVUIComponent@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVUIResource@@V?$StlNodeAlloc@PAVUIResource@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVUIResource@@U?$_Nonconst_traits@PAVUIResource@@@stlpmtx_std@@@2@U32@ABQAVUIResource@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVUITrigger@@V?$StlNodeAlloc@PAVUITrigger@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVUITrigger@@U?$_Nonconst_traits@PAVUITrigger@@@stlpmtx_std@@@2@U32@ABQAVUITrigger@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVVoice@@V?$StlNodeAlloc@PAVVoice@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVVoice@@U?$_Nonconst_traits@PAVVoice@@@stlpmtx_std@@@2@U32@ABQAVVoice@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVVorbisReader@@V?$StlNodeAlloc@PAVVorbisReader@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVVorbisReader@@U?$_Nonconst_traits@PAVVorbisReader@@@stlpmtx_std@@@2@U32@ABQAVVorbisReader@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVWaypoint@@V?$StlNodeAlloc@PAVWaypoint@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVWaypoint@@U?$_Nonconst_traits@PAVWaypoint@@@stlpmtx_std@@@2@U32@ABQAVWaypoint@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVWebSvcRequest@@V?$StlNodeAlloc@PAVWebSvcRequest@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVWebSvcRequest@@U?$_Nonconst_traits@PAVWebSvcRequest@@@stlpmtx_std@@@2@U32@ABQAVWebSvcRequest@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PBDV?$StlNodeAlloc@PBD@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PBDU?$_Nonconst_traits@PBD@stlpmtx_std@@@2@U32@ABQBD@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@U?$pair@PAVRndMesh@@PAVObjectDir@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMesh@@PAVObjectDir@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@PAVRndMesh@@PAVObjectDir@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@PAVRndMesh@@PAVObjectDir@@@stlpmtx_std@@@2@@2@U32@ABU?$pair@PAVRndMesh@@PAVObjectDir@@@2@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@2@U32@ABU?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@U?$pair@PAVRndMultiMeshProxy@@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMultiMeshProxy@@H@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@PAVRndMultiMeshProxy@@H@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@PAVRndMultiMeshProxy@@H@stlpmtx_std@@@2@@2@U32@ABU?$pair@PAVRndMultiMeshProxy@@H@2@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@@2@@2@U32@ABU?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@2@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@U?$pair@VSymbol@@V1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@VSymbol@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@VSymbol@@V1@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@VSymbol@@V1@@stlpmtx_std@@@2@@2@U32@ABU?$pair@VSymbol@@V1@@2@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UAccomplishmentTourCondition@@V?$StlNodeAlloc@UAccomplishmentTourCondition@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UAccomplishmentTourCondition@@U?$_Nonconst_traits@UAccomplishmentTourCondition@@@stlpmtx_std@@@2@U32@ABUAccomplishmentTourCondition@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UBitmapOverride@WorldDir@@V?$StlNodeAlloc@UBitmapOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UBitmapOverride@WorldDir@@U?$_Nonconst_traits@UBitmapOverride@WorldDir@@@stlpmtx_std@@@2@U32@ABUBitmapOverride@WorldDir@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UCallbackFile@ContentMgr@@V?$StlNodeAlloc@UCallbackFile@ContentMgr@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UCallbackFile@ContentMgr@@U?$_Nonconst_traits@UCallbackFile@ContentMgr@@@stlpmtx_std@@@2@U32@ABUCallbackFile@ContentMgr@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UCollision@RndDrawable@@V?$StlNodeAlloc@UCollision@RndDrawable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UCollision@RndDrawable@@U?$_Nonconst_traits@UCollision@RndDrawable@@@stlpmtx_std@@@2@U32@ABUCollision@RndDrawable@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UConstraintSystem@CharBlendBone@@V?$StlNodeAlloc@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UConstraintSystem@CharBlendBone@@U?$_Nonconst_traits@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@2@U32@ABUConstraintSystem@CharBlendBone@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UEventSink@MsgSource@@V?$StlNodeAlloc@UEventSink@MsgSource@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UEventSink@MsgSource@@U?$_Nonconst_traits@UEventSink@MsgSource@@@stlpmtx_std@@@2@U32@ABUEventSink@MsgSource@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UNetLoaderRef@@V?$StlNodeAlloc@UNetLoaderRef@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UNetLoaderRef@@U?$_Nonconst_traits@UNetLoaderRef@@@stlpmtx_std@@@2@U32@ABUNetLoaderRef@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UOSCValue@OSCMessenger@@V?$StlNodeAlloc@UOSCValue@OSCMessenger@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UOSCValue@OSCMessenger@@U?$_Nonconst_traits@UOSCValue@OSCMessenger@@@stlpmtx_std@@@2@U32@ABUOSCValue@OSCMessenger@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UObjPair@@V?$StlNodeAlloc@UObjPair@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UObjPair@@U?$_Nonconst_traits@UObjPair@@@stlpmtx_std@@@2@U32@ABUObjPair@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UOrganizedFileMerger@FileMergerOrganizer@@V?$StlNodeAlloc@UOrganizedFileMerger@FileMergerOrganizer@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UOrganizedFileMerger@FileMergerOrganizer@@U?$_Nonconst_traits@UOrganizedFileMerger@FileMergerOrganizer@@@stlpmtx_std@@@2@U32@ABUOrganizedFileMerger@FileMergerOrganizer@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UPanelRef@@V?$StlNodeAlloc@UPanelRef@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UPanelRef@@U?$_Nonconst_traits@UPanelRef@@@stlpmtx_std@@@2@U32@ABUPanelRef@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UPointTest@Rnd@@V?$StlNodeAlloc@UPointTest@Rnd@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UPointTest@Rnd@@U?$_Nonconst_traits@UPointTest@Rnd@@@stlpmtx_std@@@2@U32@ABUPointTest@Rnd@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UPreparedScreenParams@Splash@@V?$StlNodeAlloc@UPreparedScreenParams@Splash@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UPreparedScreenParams@Splash@@U?$_Nonconst_traits@UPreparedScreenParams@Splash@@@stlpmtx_std@@@2@U32@ABUPreparedScreenParams@Splash@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UPresetOverride@WorldDir@@V?$StlNodeAlloc@UPresetOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UPresetOverride@WorldDir@@U?$_Nonconst_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@2@U32@ABUPresetOverride@WorldDir@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UReadRequest@?A0x7d2eca9f@@V?$StlNodeAlloc@UReadRequest@?A0x7d2eca9f@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UReadRequest@?A0x7d2eca9f@@U?$_Nonconst_traits@UReadRequest@?A0x7d2eca9f@@@stlpmtx_std@@@2@U32@ABUReadRequest@?A0x7d2eca9f@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@USample@DebugGraph@@V?$StlNodeAlloc@USample@DebugGraph@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@USample@DebugGraph@@U?$_Nonconst_traits@USample@DebugGraph@@@stlpmtx_std@@@2@U32@ABUSample@DebugGraph@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UScreenParams@Splash@@V?$StlNodeAlloc@UScreenParams@Splash@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UScreenParams@Splash@@U?$_Nonconst_traits@UScreenParams@Splash@@@stlpmtx_std@@@2@U32@ABUScreenParams@Splash@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UShaderTree@RndShaderMgr@@V?$StlNodeAlloc@UShaderTree@RndShaderMgr@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UShaderTree@RndShaderMgr@@U?$_Nonconst_traits@UShaderTree@RndShaderMgr@@@stlpmtx_std@@@2@U32@ABUShaderTree@RndShaderMgr@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@USink@MsgSinks@@V?$StlNodeAlloc@USink@MsgSinks@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@USink@MsgSinks@@U?$_Nonconst_traits@USink@MsgSinks@@@stlpmtx_std@@@2@U32@ABUSink@MsgSinks@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@USink@MsgSource@@V?$StlNodeAlloc@USink@MsgSource@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@USink@MsgSource@@U?$_Nonconst_traits@USink@MsgSource@@@stlpmtx_std@@@2@U32@ABUSink@MsgSource@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UTarget@HamCamShot@@V?$StlNodeAlloc@UTarget@HamCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UTarget@HamCamShot@@U?$_Nonconst_traits@UTarget@HamCamShot@@@stlpmtx_std@@@2@U32@ABUTarget@HamCamShot@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UTargetCache@HamCamShot@@V?$StlNodeAlloc@UTargetCache@HamCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UTargetCache@HamCamShot@@U?$_Nonconst_traits@UTargetCache@HamCamShot@@@stlpmtx_std@@@2@U32@ABUTargetCache@HamCamShot@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UTaskInfo@TaskTimeline@@V?$StlNodeAlloc@UTaskInfo@TaskTimeline@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UTaskInfo@TaskTimeline@@U?$_Nonconst_traits@UTaskInfo@TaskTimeline@@@stlpmtx_std@@@2@U32@ABUTaskInfo@TaskTimeline@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UTrackingIDHistory@SkeletonRecoverer@@V?$StlNodeAlloc@UTrackingIDHistory@SkeletonRecoverer@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UTrackingIDHistory@SkeletonRecoverer@@U?$_Nonconst_traits@UTrackingIDHistory@SkeletonRecoverer@@@stlpmtx_std@@@2@U32@ABUTrackingIDHistory@SkeletonRecoverer@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UTrainerCondition@@V?$StlNodeAlloc@UTrainerCondition@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UTrainerCondition@@U?$_Nonconst_traits@UTrainerCondition@@@stlpmtx_std@@@2@U32@ABUTrainerCondition@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@UVar@ScriptTask@@V?$StlNodeAlloc@UVar@ScriptTask@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UVar@ScriptTask@@U?$_Nonconst_traits@UVar@ScriptTask@@@stlpmtx_std@@@2@U32@ABUVar@ScriptTask@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@V?$ObjDirPtr@VUILabelDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VUILabelDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@V?$ObjDirPtr@VUILabelDir@@@@U?$_Nonconst_traits@V?$ObjDirPtr@VUILabelDir@@@@@stlpmtx_std@@@2@U32@ABV?$ObjDirPtr@VUILabelDir@@@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@VAwardEntry@@V?$StlNodeAlloc@VAwardEntry@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VAwardEntry@@U?$_Nonconst_traits@VAwardEntry@@@stlpmtx_std@@@2@U32@ABVAwardEntry@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@VBoneState@BandCharacter@@V?$StlNodeAlloc@VBoneState@BandCharacter@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VBoneState@BandCharacter@@U?$_Nonconst_traits@VBoneState@BandCharacter@@@stlpmtx_std@@@2@U32@ABVBoneState@BandCharacter@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@VEventCall@EventAnim@@V?$StlNodeAlloc@VEventCall@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VEventCall@EventAnim@@U?$_Nonconst_traits@VEventCall@EventAnim@@@stlpmtx_std@@@2@U32@ABVEventCall@EventAnim@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VFilePath@@U?$_Nonconst_traits@VFilePath@@@stlpmtx_std@@@2@U32@ABVFilePath@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@VHitGem@GemManager@@V?$StlNodeAlloc@VHitGem@GemManager@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VHitGem@GemManager@@U?$_Nonconst_traits@VHitGem@GemManager@@@stlpmtx_std@@@2@U32@ABVHitGem@GemManager@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@VKeyFrame@EventAnim@@V?$StlNodeAlloc@VKeyFrame@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VKeyFrame@EventAnim@@U?$_Nonconst_traits@VKeyFrame@EventAnim@@@stlpmtx_std@@@2@U32@ABVKeyFrame@EventAnim@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@VOldMatOption@@V?$StlNodeAlloc@VOldMatOption@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VOldMatOption@@U?$_Nonconst_traits@VOldMatOption@@@stlpmtx_std@@@2@U32@ABVOldMatOption@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@VPracticeSectionMapping@SongSectionController@@V?$StlNodeAlloc@VPracticeSectionMapping@SongSectionController@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VPracticeSectionMapping@SongSectionController@@U?$_Nonconst_traits@VPracticeSectionMapping@SongSectionController@@@stlpmtx_std@@@2@U32@ABVPracticeSectionMapping@SongSectionController@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VSymbol@@U?$_Nonconst_traits@VSymbol@@@stlpmtx_std@@@2@U32@ABVSymbol@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@VTransform@@V?$StlNodeAlloc@VTransform@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VTransform@@U?$_Nonconst_traits@VTransform@@@stlpmtx_std@@@2@U32@ABVTransform@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VVector2@@U?$_Nonconst_traits@VVector2@@@stlpmtx_std@@@2@U32@ABVVector2@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VVector3@@U?$_Nonconst_traits@VVector3@@@stlpmtx_std@@@2@U32@ABVVector3@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@W4TrackType@@V?$StlNodeAlloc@W4TrackType@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@W4TrackType@@U?$_Nonconst_traits@W4TrackType@@@stlpmtx_std@@@2@U32@ABW4TrackType@@@Z",
+     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    }
+   ],
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 9 other group(s) at 10 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 9 of the 10 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md.",
+   "survivor_renamed": {
+    "from": "?insert@?$list@PAVMidiParser@@V?$StlNodeAlloc@PAVMidiParser@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVMidiParser@@U?$_Nonconst_traits@PAVMidiParser@@@stlpmtx_std@@@2@U32@ABQAVMidiParser@@@Z",
+    "lane": "W16-NH-NAME 2026-10-02",
+    "evidence": "tools/icf_pair_adjudicate.py adjudicate(map name at 0x827e5318, old survivor): REFUTED -- masked bodies match but relocation TARGETS disagree -- template-twin, not a fold; chase REFUTED. The old survivor is not the retail body at this address; it is now re-homed to the address retail actually calls for it (?insert@?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVObject@Hmx@@U?$_Nonconst_traits@PAVObject@Hmx, chase PROVEN, retail call site(s) 0x827ea2bc, 0x827ea6b4)."
+   }
+  },
+  {
+   "name": "insert",
+   "address": "0x823b60c0",
+   "survivor": "??5@YAAAVBinStream@@AAV0@AAVRecenter@CharBoneDir@@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 53, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "survivor_renamed": {
+    "from": "?insert@?$list@PAVRndTransformable@@V?$StlNodeAlloc@PAVRndTransformable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndTransformable@@U?$_Nonconst_traits@PAVRndTransformable@@@stlpmtx_std@@@2@U32@ABQAVRndTransformable@@@Z",
+    "lane": "W16-NH-NAME 2026-10-02",
+    "evidence": "tools/icf_pair_adjudicate.py adjudicate(map name at 0x823b60c0, old survivor): REFUTED -- masked bodies DIFFER (retail did not keep the code our spelling compiles to); chase REFUTED. The old survivor is not the retail body at this address; it is now re-homed to the address retail actually calls for it (?insert@?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVObject@Hmx@@U?$_Nonconst_traits@PAVObject@Hmx, chase PROVEN, retail call site(s) 0x8239e2e4, 0x8239f3e8, 0x823b6b88, 0x823b6cc0, 0x823f94b0)."
+   }
+  },
+  {
+   "name": "0?$pair",
+   "address": "0x822e4f70",
+   "survivor": "??0?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@QAA@ABV?$ObjPtr@VEventTrigger@@@@0@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [],
+   "repair": {
+    "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+    "lane": "ALIAS-REPAIR 2026-08-19",
+    "why": "Under-partitioned closure. 1 of 2 compiled members agree with the survivor under masking and DISAGREE on their RESOLVED operands (resolved through the ICF congruence over our own build), so they cannot be the same LINKED body and /OPT:ICF cannot have folded them together. Repaired, not refused: the group is partitioned into the 2 classes the evidence does support. `disposition: repartitioned` = re-emitted as its own class in a group immediately following; `dropped_singleton` = its class has one member, and one member is not a fold.",
+    "n_classes": 2,
+    "class_sizes": [
+     1,
+     1
+    ],
+    "n_subgroups": 0
+   },
+   "restored": [
+    {
+     "spelling": "??0?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@QAA@ABV?$ObjPtr@VEventTrigger@@@@0@Z",
+     "lane": "W16-CU 2026-09-15",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared), on TWO independent instruments: W16-CP's adjudication sweep (~/tmp/w16cp_underpart_adjudicated.json) and W16-CU's independent re-run of tools/alias_forgiveness_audit.Sides.verdict in a different tree, which reproduced CP's layer column 456/456 with both a positive and a negative control discriminating.",
+     "why_the_original_premise_failed": "Same defect W9-D (c6711597) found in 65 sibling memberships and reversed. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate -- quoted from the group's own repair.why -- resolves operands 'through the ICF congruence over our own build'. But /OPT:ICF folded COMDATs in RETAIL's link, so an our-build congruence is neither necessary nor sufficient for the fold under test, and the predicate is unsound in this direction. Re-adjudicated on retail bytes at the flat L1_T1 layer, which does not close over the fold class being tested (unlike L2_RECURSIVE 'fixpoint via chase', whose memberships W9-D, W16-CP and this lane all leave withdrawn). Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??0?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@QAA@ABV?$ObjPtr@VEventTrigger@@@@0@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ],
+   "survivor_renamed": {
+    "from": "??0?$pair@$$CBVString@@VDataNode@@@stlpmtx_std@@QAA@ABVString@@ABVDataNode@@@Z",
+    "lane": "W16-NH-NAME 2026-10-02",
+    "evidence": "tools/icf_pair_adjudicate.py adjudicate(map name at 0x822e4f70, old survivor): REFUTED -- masked bodies match but relocation TARGETS disagree -- template-twin, not a fold; chase REFUTED. The old survivor is not the retail body at this address; it is now re-homed to the address retail actually calls for it (??0?$pair@VString@@VDataNode@@@stlpmtx_std@@QAA@ABVString@@ABVDataNode@@@Z, chase PROVEN, retail call site(s) 0x8276c584)."
+   }
+  },
+  {
+   "name": "4?$ObjList",
+   "address": "0x824d1280",
+   "survivor": "??4?$ObjList@UTarget@BandCamShot@@@@QAAXABV0@@Z",
+   "folded": [
+    "??4?$ObjList@UMatOverride@WorldDir@@@@QAAXABV0@@Z"
+   ],
+   "evidence": "Created by lane W16-NH-NAME: see per-member records in `admitted`.",
+   "lane": "W16-NH-NAME 2026-10-02",
+   "admitted": [
+    {
+     "spelling": "??4?$ObjList@UMatOverride@WorldDir@@@@QAAXABV0@@Z",
+     "lane": "W16-NH-NAME 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED); 108 B retail / 108 B ours; retail body-twins 13. Retail call site(s) reaching the survivor where we call this spelling: 0x824d14bc. Previously the survivor of the group at 0x82310cf0, whose retail body it does not match (re-homed)."
+    }
+   ]
+  },
+  {
+   "name": "_M_fill_insert",
+   "address": "0x82372ca8",
+   "survivor": "?_M_fill_insert@?$vector@UIKTarget@CharIKHand@@V?$StlNodeAlloc@UIKTarget@CharIKHand@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUIKTarget@CharIKHand@@IABU34@@Z",
+   "folded": [
+    "?_M_fill_insert@?$vector@ULod@Character@@V?$StlNodeAlloc@ULod@Character@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAULod@Character@@IABU34@@Z"
+   ],
+   "evidence": "Created by lane W16-NH-NAME: see per-member records in `admitted`.",
+   "lane": "W16-NH-NAME 2026-10-02",
+   "admitted": [
+    {
+     "spelling": "?_M_fill_insert@?$vector@ULod@Character@@V?$StlNodeAlloc@ULod@Character@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAULod@Character@@IABU34@@Z",
+     "lane": "W16-NH-NAME 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 112 B retail / 112 B ours; retail body-twins 5. Retail call site(s) reaching the survivor where we call this spelling: 0x8237317c. Previously the survivor of the group at 0x822a4fb8, whose retail body it does not match (re-homed)."
+    }
+   ]
+  },
+  {
+   "name": "0?$pair",
+   "address": "0x8250b1a0",
+   "survivor": "??0?$pair@VString@@VDataNode@@@stlpmtx_std@@QAA@ABVString@@ABVDataNode@@@Z",
+   "folded": [
+    "??0?$pair@$$CBVString@@VDataNode@@@stlpmtx_std@@QAA@ABVString@@ABVDataNode@@@Z"
+   ],
+   "evidence": "Created by lane W16-NH-NAME: see per-member records in `admitted`.",
+   "lane": "W16-NH-NAME 2026-10-02",
+   "admitted": [
+    {
+     "spelling": "??0?$pair@$$CBVString@@VDataNode@@@stlpmtx_std@@QAA@ABVString@@ABVDataNode@@@Z",
+     "lane": "W16-NH-NAME 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 56 B retail / 56 B ours; retail body-twins 2. Retail call site(s) reaching the survivor where we call this spelling: 0x8276c584. Previously the survivor of the group at 0x822e4f70, whose retail body it does not match (re-homed)."
     }
    ]
   }
