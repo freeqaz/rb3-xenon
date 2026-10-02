@@ -50,6 +50,13 @@ namespace Quazal {
     public:
         SelectionIteratorTemplate();
         SelectionIteratorTemplate(int iMode);
+        // JobConnectStation::ConnectionFailed expands this one in place.
+        SelectionIteratorTemplate(bool b1, bool b2) : SelectionIterator(b1, b2) {
+            SetFilter();
+            GotoStart();
+        }
+        void SetFilter();
+        void GotoStart();
         T *GetDOPtr();
         T *operator->() { return GetDOPtr(); }
     };

@@ -10,216 +10,41 @@
 // constructor) until one reaches the station, then creates or restores the
 // Station duplica. Step names are the strings retail passes with each step.
 //
-// The surrounding NetZ classes are declared here only as far as this TU uses
-// them; their members are defined in other TUs.
+// /Od frames: an inline the compiler declines still reserves its frame in the
+// caller, and inline parameters get stack homes, so several helpers below are
+// spelled the way retail's frames require (see the notes at each).
 
-#include "Core/InstantiationContext.h"
-#include "Platform/SystemError.h"
+#include "Core/CallContext.h"
+#include "Core/Core.h"
+#include "Core/NetZ.h"
+#include "Core/SystemComponent.h"
+#include "ObjDup/CallRegister.h"
+#include "ObjDup/DOCallContext.h"
+#include "ObjDup/DOClass.h"
+#include "ObjDup/DuplicatedObject.h"
+#include "ObjDup/MasterStationRef.h"
+#include "ObjDup/ObjDupProtocol.h"
+#include "ObjDup/SelectionIterator.h"
+#include "ObjDup/Session.h"
+#include "ObjDup/Station.h"
+#include "Platform/LogicalClock.h"
+#include "Platform/Result.h"
+#include "Platform/ScopedCS.h"
+#include "Platform/String.h"
+#include "Platform/Time.h"
+#include "Platform/UserContext.h"
+#include "Plugins/EndPoint.h"
+#include "Plugins/Message.h"
+#include "Plugins/StationURL.h"
 #include "Platform/qStd.h"
 
 namespace Quazal {
 
-    // GetInstanceFromVector is an inline candidate here: /Ob1 declines it at
-    // every call site, which still reserves its this/ui/idx slots in the caller.
-    class InstanceTable : public RootObject {
-    public:
-        unsigned int GetInstanceFromVector(unsigned int ui, unsigned int idx) {
-            if (idx == 0) {
-                return m_oDefaultContext.GetInstance(ui);
-            } else if (idx >= m_pvContextVector->size()) {
-                SystemError::SignalError(0, 0, 0xe0000003, 0);
-                return -1;
-            } else {
-                return (*m_pvContextVector)[idx]->GetInstance(ui);
-            }
-        }
+    class DOOperation;
 
-        InstantiationContext m_oDefaultContext; // 0x0
-        qVector<InstantiationContext *> *m_pvContextVector; // 0x30
-    };
+    // TU-local declarations of classes this TU only calls into.
 
-    class InstanceControl : public RootObject {
-    public:
-        static InstanceTable s_oInstanceTable;
-
-        void *m_vtable; // 0x0
-        unsigned int m_icInstanceContext; // 0x4
-        unsigned int m_icInstanceType; // 0x8
-        void *m_pDelegatorInstance; // 0xc
-    };
-
-    class PseudoSingleton {
-    public:
-        static unsigned int GetCurrentContext();
-    };
-
-    class DOHandle : public RootObject {
-    public:
-        DOHandle(unsigned int val = 0) : mValue(val) {}
-        DOHandle(const DOHandle &h) : mValue(h.mValue) {}
-        ~DOHandle() {}
-
-        unsigned int GetValue() const { return mValue; }
-        unsigned int GetDOClassID() const { return (mValue & 0xFFC00000) >> 22; }
-        unsigned int GetID() const { return mValue & 0x3FFFFF; }
-        bool operator==(const DOHandle &h) const { return mValue == h.mValue; }
-        bool operator<(const DOHandle &h) const { return mValue < h.mValue; }
-
-        unsigned int mValue; // 0x0
-    };
-
-    class DuplicatedObject;
-
-    class DORef : public RootObject {
-    public:
-        DORef(DOHandle);
-        ~DORef();
-        void Acquire();
-
-        unsigned int GetReferencedHandle() const { return m_hReferencedDO.mValue; }
-        DOHandle GetHandle() const { return m_hReferencedDO; }
-        DuplicatedObject *GetDOPtr() const { return m_poReferencedDO; }
-        DuplicatedObject *GetPtr() {
-            if (m_poReferencedDO == NULL) {
-                Acquire();
-            }
-            DuplicatedObject *pDO = m_poReferencedDO;
-            return pDO;
-        }
-        bool IsAcquired() { return GetPtr() != NULL; }
-
-        DuplicatedObject *m_poReferencedDO; // 0x0
-        DOHandle m_hReferencedDO; // 0x4
-        bool m_bLockRelevance; // 0x8
-    };
-
-    template <class T>
-    class DORefTemplate : public DORef {
-    public:
-        DORefTemplate(DOHandle h) : DORef(h) {}
-        ~DORefTemplate() {}
-
-        // Retail calls the one out-of-line copy (DuplicatedObject's TU emits it
-        // first); /Ob1 declines it here but still reserves its frame.
-        bool IsValid() const {
-            if (GetDOPtr() == NULL) {
-                SystemError::SignalError(0, 0, 0xA0030004, 0);
-                return false;
-            } else {
-                T *pDO = (T *)m_poReferencedDO;
-                if (!T::GetDOClass(pDO->m_dohMyself.GetDOClassID())->IsAKindOf(T::GetStaticClassID())) {
-                    SystemError::SignalError(0, 0, 0xE003000C, 0);
-                    return false;
-                }
-                return true;
-            }
-        }
-        T *operator->() const {
-            if (!IsValid()) {
-                return 0;
-            } else {
-                return (T *)GetDOPtr();
-            }
-        }
-    };
-
-    class String : public RootObject {
-    public:
-        String(const char *);
-        ~String();
-
-        char *m_szContent;
-    };
-
-    class qResult {
-    public:
-        qResult();
-        qResult(const int &);
-        bool Equals(const bool &) const;
-        qResult &operator=(const qResult &);
-
-        unsigned int m_iReturnCode;
-        const char *m_cszFilename;
-        int m_iLineNumber;
-    };
-
-    class Time {
-    public:
-        Time(unsigned long long ullValue) : m_ullValue(ullValue) {}
-        unsigned long long m_ullValue;
-    };
-
-    class Stream {
-    public:
-        enum Type {
-            DO = 1
-        };
-    };
-
-    class StationURL {
-    public:
-        ~StationURL();
-        void SetStreamType(Stream::Type);
-        void SetStreamID(unsigned char);
-        void Trace(unsigned int) const;
-
-        char m_data[0x64];
-    };
-
-    class UserContext : public RootObject {
-    public:
-        UserContext(void *pPointer) { m_pPointer = pPointer; }
-        ~UserContext() {}
-        void *GetPointer() const { return m_pPointer; }
-
-        void *m_pPointer; // 0x0
-    };
-
-    class Buffer;
-    class CallContext;
-    class ObjDupProtocol {
-    public:
-        static ObjDupProtocol *GetInstance();
-    };
-
-    class EndPoint {
-    public:
-        virtual void _v00();
-        virtual void _v01();
-        virtual void _v02();
-        virtual void _v03();
-        virtual bool IsConnected();
-        virtual void _v05();
-        virtual void _v06();
-        virtual void _v07();
-        virtual void _v08();
-        virtual void _v09();
-        virtual void _v10();
-        virtual void _v11();
-        virtual void _v12();
-        virtual void _v13();
-        virtual void _v14();
-        virtual void _v15();
-        virtual qResult RegisterProtocol(ObjDupProtocol *);
-        virtual void _v17();
-        virtual void _v18();
-        virtual void _v19();
-        virtual qResult ConnectImpl(
-            Buffer *, unsigned int, void (*)(EndPoint *, qResult, const UserContext *),
-            const UserContext &, unsigned int
-        );
-        qResult Connect(
-            Buffer *pBuffer, unsigned int uiFlags,
-            void (*pfCallback)(EndPoint *, qResult, const UserContext *),
-            const UserContext &oContext, unsigned int uiTimeout
-        ) {
-            return ConnectImpl(pBuffer, uiFlags, pfCallback, oContext, uiTimeout);
-        }
-
-        void Release();
-        void SetStationHandle(unsigned int);
-    };
-
+    // The incoming-connection listener (NetZ + 0x40).
     class Listener {
     public:
         virtual void _v00();
@@ -233,85 +58,23 @@ namespace Quazal {
         virtual EndPoint *FindEndPoint(unsigned int);
     };
 
-    class ByteStream : public RootObject {
+    // NetZ + 0x1c; the static accessor is out of line (retail 0x82AD1BC8).
+    class ConnectionManager {
     public:
-        void Append(const void *, unsigned int, bool);
-        template <class T>
-        ByteStream &operator<<(const T &t) {
-            Append(&t, sizeof(T), true);
-            return *this;
-        }
-    };
-
-    class Message : public ByteStream {
-    public:
-        Message();
-        ~Message();
-        Buffer *GetBuffer();
-
-        void *m_pVTable; // 0x0
-        Buffer *m_pBuffer; // 0x4
-        char m_pad[0x28];
-    };
-
-    class SystemComponent {
-    public:
-        enum _State {
-            TerminatingInUse = 0x10,
-            Terminating = 0x20,
-        };
-
-        class Use : public RootObject {
-        public:
-            Use(SystemComponent *, const char *);
-            ~Use();
-
-            SystemComponent *m_pComponent; // 0x0
-            const char *m_szName; // 0x4
-            bool m_bInUse; // 0x8
-        };
-
-        _State GetState() const { return m_eState; }
-        bool IsTerminating() const {
-            return GetState() == TerminatingInUse || GetState() == Terminating;
-        }
-
-        char m_pad0[0xC];
-        _State m_eState; // 0xc
-    };
-
-    // The type-4 component: the NetZ core object of the current context.
-    class NetZ {
-    public:
-        static NetZ *GetInstance(unsigned int uiContext) {
-            return (NetZ *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(4, uiContext);
-        }
-        static NetZ *GetInstance() { return GetInstance(PseudoSingleton::GetCurrentContext()); }
-        SystemComponent *GetSystemComponent() { return m_pSystemComponent; }
-        Listener *GetListener() { return m_pListener; }
-        class Network *GetNetwork() { return m_pNetwork; }
-
-        char m_pad0[0x1C];
-        class Network *m_pNetwork; // 0x1c
-        SystemComponent *m_pSystemComponent; // 0x20
-        char m_pad24[0x1C];
-        Listener *m_pListener; // 0x40
-    };
-
-    class Network {
-    public:
-        static Network *GetInstance();
+        static ConnectionManager *GetInstance();
         bool IsShuttingDown();
         void RegisterEndPoint(EndPoint *);
         bool ConnectToURLs(
             CallContext *, Buffer *, unsigned int, qList<StationURL> *, EndPoint **, unsigned int
         );
+        // Inline wrapper: callers evaluate the timeout and buffer into its
+        // parameter homes and fetch the instance before the call.
         static bool Connect(
             CallContext *pContext, Buffer *pBuffer, unsigned int uiFlags,
             qList<StationURL> *pURLs, EndPoint **ppEndPoint, unsigned int uiTimeout
         ) {
-            Network *pNetwork = GetInstance();
-            return pNetwork->ConnectToURLs(
+            ConnectionManager *pManager = GetInstance();
+            return pManager->ConnectToURLs(
                 pContext, pBuffer, uiFlags, pURLs, ppEndPoint, uiTimeout
             );
         }
@@ -321,53 +84,16 @@ namespace Quazal {
         bool m_bRegistersEndPoints; // 0xbd
     };
 
-    class ScopedCS {
-    public:
-        ScopedCS(CriticalSection &cs) : m_bInScope(true), m_pCS(&cs) {
-            CriticalSection *pCS = m_pCS;
-            if (!MutexPrimitive::s_bNoOp) {
-                pCS->EnterImpl();
-            }
-        }
-        ~ScopedCS() { EndScope(); }
-        void EndScope() {
-            if (m_bInScope) {
-                CriticalSection *pCS = m_pCS;
-                if (!MutexPrimitive::s_bNoOp) {
-                    pCS->LeaveImpl();
-                }
-                m_bInScope = false;
-            }
-        }
-
-        bool m_bInScope; // 0x0
-        CriticalSection *m_pCS; // 0x4
-    };
-
     class Job;
 
+    // Core/Scheduler.h pulls in Core/Job.h, whose layout is not retail's (see
+    // Job below), so the scheduler is declared here as far as this TU uses it.
     class Scheduler {
     public:
         void Queue(Job *, bool);
 
         char m_pad0[0x3C];
         CriticalSection m_csSystemLock; // 0x3C
-    };
-
-    // The type-3 component; it owns the scheduler.
-    class Core {
-    public:
-        static Core *GetInstance() {
-            unsigned int uiContext = PseudoSingleton::GetCurrentContext();
-            InstanceControl *inst =
-                (InstanceControl *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(3, uiContext);
-            Core *pCore = inst ? (Core *)inst->m_pDelegatorInstance : 0;
-            return pCore;
-        }
-        Scheduler *GetScheduler() { return m_pScheduler; }
-
-        char m_pad0[8];
-        Scheduler *m_pScheduler; // 0x8
     };
 
     inline Scheduler *GetScheduler() {
@@ -379,259 +105,27 @@ namespace Quazal {
         }
     }
 
-    class RefCountedObject : public RootObject {
-    public:
-        virtual ~RefCountedObject();
-        virtual void AcquireRef();
-        virtual void ReleaseRef();
-
-        unsigned short m_ui16RefCount; // 0x4
-    };
-
-    class CallContext : public RefCountedObject {
-    public:
-        enum _State {
-            CallInit = 0,
-            CallPending = 1,
-            CallSuccess = 2,
-            CallError = 3,
-            CallCancelled = 4,
-        };
-        CallContext();
-        virtual ~CallContext();
-        virtual void _v3();
-        virtual void _v4();
-        virtual void _v5();
-        virtual void _v6();
-        virtual void _v7();
-        virtual void Trace(unsigned int);
-
-        void Reset();
-        void SetFlag(unsigned int);
-        void ClearFlag(unsigned int);
-        _State GetState() const { return m_eState; }
-
-        unsigned int m_uiFlags; // 0x8
-        _State m_eState; // 0xc
-        unsigned int m_unk10[0xE];
-        Time m_tTimeout; // 0x48
-    };
-
-    class DOCallContext : public CallContext {
-    public:
-        DOCallContext(DOHandle, bool);
-        virtual ~DOCallContext();
-        bool Cancel(unsigned int);
-
-        unsigned char unk50[0x50];
-    };
-
-    // Carries the result of Session::RetrieveURLs.
+    // The DO call context Session::RetrieveURLs completes (0xC0 bytes; its
+    // constructor is retail 0x82A9CB78).
     class RetrieveURLsContext : public DOCallContext {
     public:
         RetrieveURLsContext(DOHandle, bool);
         virtual ~RetrieveURLsContext();
+        virtual void _v6();
+        virtual void _v7();
+        virtual void Trace(unsigned int);
 
-        unsigned char unkA0[0x20];
+        unsigned char unkA8[0x18];
     };
 
-    class DOOperation;
-    class DOClass {
-    public:
-        virtual void _v00();
-        virtual void _v01();
-        virtual void _v02();
-        virtual void _v03();
-        virtual void _v04();
-        virtual void _v05();
-        virtual void _v06();
-        virtual void _v07();
-        virtual void _v08();
-        virtual void _v09();
-        virtual void _v10();
-        virtual void _v11();
-        virtual void _v12();
-        virtual void _v13();
-        virtual void _v14();
-        virtual bool IsAKindOf(unsigned int) const;
-    };
-
-    template <class T>
-    class LogicalClockTmpl : public RootObject {
-    public:
-        LogicalClockTmpl(unsigned int value = 0) : m_value(value) {}
-        LogicalClockTmpl(const LogicalClockTmpl &o) : m_value(o.m_value) {}
-
-        T m_value; // 0x0
-    };
-
-    class MasterStationRef {
-    public:
-        MasterStationRef(DOHandle, LogicalClockTmpl<unsigned char>);
-        ~MasterStationRef();
-
-        char m_pad[0x10];
-    };
-
-    class DuplicatedObject : public RootObject {
-    public:
-        virtual void _v00();
-        virtual void _v01();
-        virtual void _v02();
-        virtual void _v03();
-        virtual void _v04();
-        virtual void _v05();
-        virtual void _v06();
-        virtual void _v07();
-        virtual void _v08();
-        virtual void _v09();
-        virtual void _v10();
-        virtual void _v11();
-        virtual void Trace(unsigned int) const;
-
-        static DuplicatedObject *CreateDuplica(DOHandle, const MasterStationRef &);
-        bool AddToStoreAsDuplica(DOHandle, Message *);
-        bool DeleteDuplicaMainRef();
-        bool UndeleteMainRef();
-        DOHandle GetHandle() const {
-            DOHandle hResult = m_dohMyself;
-            if (hResult.GetID() == 0) {
-                SystemError::SignalError(0, 0, 0xE000000E, 0);
-                hResult = DOHandle();
-            }
-            return hResult;
-        }
-
-        static DOClass *GetDOClass(unsigned int);
-        bool FlagIsSet(unsigned short f) const { return (m_uiFlags & f) == f; }
-        bool IsDeleted() const { return !FlagIsSet(1); }
-
-        char m_pad4[0x1C];
-        unsigned short m_uiFlags; // 0x20
-        char m_pad22[0x26];
-        DOHandle m_dohMyself; // 0x48
-    };
-
-    class Station : public DuplicatedObject {
-    public:
-        static DOHandle GetLocalStationHandle();
-        bool IsAPeer();
-        bool IsLocal();
-        bool IsNotConnected();
-        void ClearAtEOS();
-        void SetConnection(EndPoint *);
-        EndPoint *ReleaseConnection();
-        EndPoint *GetEndPoint();
-        bool Disconnect(bool);
-        unsigned short GetState() const { return m_usState; }
-
-        static unsigned int s_uiClassID;
-        static unsigned int GetStaticClassID() { return s_uiClassID; }
-
-        char m_pad4c[0x64];
-        unsigned short m_usState; // 0xb0
-    };
-
-    class Session : public DuplicatedObject {
-    public:
-        static unsigned int s_uiClassID;
-        static unsigned int GetStaticClassID() { return s_uiClassID; }
-        static DOHandle GetInstanceHandle();
-        bool RetrieveURLs(RetrieveURLsContext *, const DOHandle &, qList<StationURL> *);
-    };
-
-    class CallRegister {
-    public:
-        static CallRegister *GetInstance();
-        DOCallContext *FindCall(DOHandle, DOHandle);
-    };
-
-    class SelectionCursor : public RootObject {
-    public:
-        SelectionCursor(const SelectionCursor &);
-        bool operator==(const unsigned int &ui) const { return m_uiValue == ui; }
-
-        unsigned int m_uiValue; // 0x0
-    };
-
-    class SelectionPosition : public RootObject {
-    public:
-        SelectionCursor GetCursor() const { return m_oCursor; }
-
-        DuplicatedObject *m_pDO; // 0x0
-        SelectionCursor m_oCursor; // 0x4
-    };
-
-    class SelectionIterator : public RootObject {
-    public:
-        SelectionIterator(bool, bool);
-        ~SelectionIterator();
-        void Next(bool);
-        bool EndReached() const { return m_oPosition.GetCursor() == 0; }
-
-        void *m_pSelection; // 0x0
-        SelectionPosition m_oPosition; // 0x4
-        unsigned char unkC[0x18];
-    };
-
-    template <class T>
-    class SelectionIteratorTemplate : public SelectionIterator {
-    public:
-        SelectionIteratorTemplate(bool b1, bool b2) : SelectionIterator(b1, b2) {
-            SetFilter();
-            GotoStart();
-        }
-        void SetFilter();
-        void GotoStart();
-        T *GetDOPtr();
-        T *operator->() {
-            T *pDO = GetDOPtr();
-            return pDO;
-        }
-    };
-
-    class DebugString {
-    public:
-        DebugString() {}
-    };
-
-    class Job : public RefCountedObject {
-    public:
-        enum State {
-            Initial = 0,
-            Waiting = 1,
-            Suspended = 2,
-            Ready = 3,
-            Running = 4,
-            Complete = 5
-        };
-        virtual ~Job();
-        virtual void DecoratedExecute();
-        virtual void Execute();
-        virtual void TestSuspendedJobState();
-        virtual void AddActivity(const char *);
-        virtual void GetTraceInfo();
-        virtual void SetDefaultPostExecutionState();
-        virtual bool SkipWaitDelayAtTermination();
-
-        void PerformExecution(const Time &);
-        void SetToWaiting(int);
-        void SetToSuspended();
-        void SetToReady();
-        void SetToRunning();
-        void SetToComplete();
-        State GetState() const { return m_eState; }
-
-        unsigned int m_unk8[5];
-        State m_eState; // 0x1c
-        unsigned int m_unk20[2];
-        Time m_tDeadline; // 0x28
-        unsigned int m_unk30[2];
-    };
-
+    // StepSequenceJob is declared locally, as in JobBackEndServicesLogin and
+    // ObjDupProtocol: retail keeps the current Step (a pointer to member plus
+    // name, 0x10 bytes) at 0x48, which Core/StepSequenceJob.h does not match.
+    // The job QueueOperation schedules for one DOOperation (0x40 bytes).
     class JobDOOperation : public Job {
     public:
         JobDOOperation(DOOperation *);
+        virtual void Execute();
 
         DOOperation *m_pOperation; // 0x38
     };
@@ -654,6 +148,7 @@ namespace Quazal {
 
         StepSequenceJob(const DebugString &);
         virtual ~StepSequenceJob();
+        virtual void Execute();
         virtual void CheckExceptions();
 
         void SetStep(const Step &);
@@ -667,7 +162,8 @@ namespace Quazal {
     };
 
     // A job that changes the connection state of one station; StationManager
-    // tracks it until it completes.
+    // tracks it until it completes (Wii: StationManager::ProcessCompletedJob
+    // takes a JobChangeConnection). Its members are in StepSequenceJob.cpp.
     class JobChangeConnection : public StepSequenceJob {
     public:
         JobChangeConnection(const String &, DOHandle);
@@ -738,7 +234,8 @@ namespace Quazal {
         bool m_bConnectingOrphan; // 0x1c8
     };
 
-    class StationManager {
+    // Declared as far as this TU calls it; its TU is StationManager.cpp.
+    class StationManager : public RootObject {
     public:
         static StationManager *GetInstance();
         bool StationIsDead(DOHandle);
@@ -841,20 +338,20 @@ namespace Quazal {
 
     void JobConnectStation::TryConnectViaUndelete() {
         m_refStation.GetPtr();
-        if (m_refStation.IsValid() && !m_refStation->IsLocal()) {
+        if (m_refStation.IsValid() && !m_refStation->IsFaulty()) {
             if (!m_refStation->IsDeleted()) {
                 m_refStation->Trace(1);
             }
             switch (m_refStation->GetState()) {
             case 3:
-                if (m_refStation->IsAPeer()) {
+                if (m_refStation->IsConnected()) {
                     SetStep(JCS_STEP(CompleteConnection));
                 } else {
                     SetStep(JCS_STEP(SelectConnectionTechnique));
                 }
                 break;
             case 1:
-                if (m_refStation->IsAPeer()) {
+                if (m_refStation->IsConnected()) {
                     SetStep(JCS_STEP(CompleteConnection));
                 } else {
                     SetStep(JCS_STEP(SelectConnectionTechnique));
@@ -900,7 +397,7 @@ namespace Quazal {
 
     void JobConnectStation::TryConnectViaIncomingEndPointImpl() {
         m_uiAttempts = m_uiAttempts - 1;
-        if (Network::GetInstance()->IsShuttingDown()) {
+        if (ConnectionManager::GetInstance()->IsShuttingDown()) {
             SetStep(JCS_STEP(ConnectionFailed));
             return;
         }
@@ -916,10 +413,10 @@ namespace Quazal {
         }
         m_pEndPoint = pIncomingEndPoint;
         Message oMsg;
-        oMsg << Station::GetLocalStationHandle().GetValue();
+        oMsg << Station::GetLocalStation().GetValue();
         oMsg << m_refStation.GetHandle().GetValue();
-        if (Network::GetInstance()->RegistersEndPoints()) {
-            Network::GetInstance()->RegisterEndPoint(m_pEndPoint);
+        if (ConnectionManager::GetInstance()->RegistersEndPoints()) {
+            ConnectionManager::GetInstance()->RegisterEndPoint(m_pEndPoint);
         }
         m_rResult = m_pEndPoint->Connect(
             oMsg.GetBuffer(), 0, ConnectCallback, UserContext(this), GetConnectionTimeout()
@@ -999,7 +496,7 @@ namespace Quazal {
         qList<StationURL>::iterator it = m_lstURLs.begin();
         while (it != m_lstURLs.end()) {
             StationURL &url = *it;
-            url.SetStreamType(Stream::DO);
+            url.SetStreamType((Stream::Type)1);
             url.SetStreamID(1);
             ++it;
         }
@@ -1009,9 +506,9 @@ namespace Quazal {
     void JobConnectStation::DirectConnectViaURLs() {
         m_oCallContext.Reset();
         Message oMsg;
-        oMsg << Station::GetLocalStationHandle().GetValue();
+        oMsg << Station::GetLocalStation().GetValue();
         oMsg << m_refStation.GetHandle().GetValue();
-        if (!Network::Connect(
+        if (!ConnectionManager::Connect(
                 &m_oCallContext, oMsg.GetBuffer(), 0, &m_lstURLs, &m_pEndPoint,
                 GetConnectionTimeout()
             )) {
@@ -1082,7 +579,7 @@ namespace Quazal {
             m_pEndPoint->SetStationHandle(m_refStation.GetReferencedHandle());
             pStation->SetConnection(m_pEndPoint);
             m_pEndPoint = NULL;
-            if (!pStation->AddToStoreAsDuplica(Station::GetLocalStationHandle(), NULL)) {
+            if (!pStation->AddToStoreAsDuplica(Station::GetLocalStation(), NULL)) {
                 m_pEndPoint = pStation->ReleaseConnection();
                 pStation->DeleteDuplicaMainRef();
                 SetStep(JCS_STEP(ConnectionFailed));
@@ -1154,11 +651,11 @@ namespace Quazal {
             StationManager::GetInstance()->DisconnectStation(m_refStation.operator->());
         }
         if (!!(s_bDisconnectOnError
-               && Station::GetLocalStationHandle().GetValue() > m_refStation.GetHandle().GetValue())) {
+               && Station::GetLocalStation().GetValue() > m_refStation.GetHandle().GetValue())) {
             SelectionIteratorTemplate<Station> it(true, true);
             while (!it.EndReached()) {
-                if (it->IsNotConnected()) {
-                    it->Disconnect(true);
+                if (it->IsAPeer()) {
+                    it->SignalFault(true);
                 }
                 it.Next(false);
             }

@@ -20,7 +20,17 @@ namespace Quazal {
         void Acquire();
 
         unsigned int GetReferencedHandle() const { return m_hReferencedDO.mValue; }
-        DOHandle GetHandle() const { return DOHandle(GetReferencedHandle()); }
+        DOHandle GetHandle() const { return m_hReferencedDO; }
+        // Acquires the referenced DO on demand (JobConnectStation's callers keep
+        // the result in a temporary even when they discard it).
+        DuplicatedObject *GetPtr() {
+            if (m_poReferencedDO == NULL) {
+                Acquire();
+            }
+            DuplicatedObject *pDO = m_poReferencedDO;
+            return pDO;
+        }
+        bool IsAcquired() { return GetPtr() != NULL; }
         DuplicatedObject *GetDO() const { return m_poReferencedDO; }
 
         // Lane-chosen names for the class-checked accessors retail instantiates

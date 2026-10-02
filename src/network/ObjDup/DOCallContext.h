@@ -12,6 +12,8 @@ namespace Quazal {
 
         DOCallContext(DOHandle, bool);
         virtual ~DOCallContext();
+        // Retail 0x82AA1410 (JobConnectStation::ConnectionFailed passes 4).
+        bool Cancel(unsigned int);
 
         unsigned char unk50[0x58]; // 0x50
     };

@@ -16,6 +16,9 @@ namespace Quazal {
         static bool JoinSessionImpl(CallContext *, const qList<Quazal::StationURL> &);
         static void RegisterWellKnownDOsFactory(void (*)(void));
         static Session *GetInstance();
+        // JobConnectStation's callees (retail 0x82A76D78 / 0x82A92C38).
+        static DOHandle GetInstanceHandle();
+        bool RetrieveURLs(class DOCallContext *, const DOHandle &, qList<StationURL> *);
 
         // Lane-chosen names: the well-known session handle at 0x82E1050C and
         // the session state read at +0x5F8.
