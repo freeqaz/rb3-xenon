@@ -244,14 +244,15 @@ namespace Quazal {
         class Listener *m_pListener; // 0x40
     };
 
-    class Session {
+    // The type-4 instance (.\DOCore.cpp, 0x82AC0470..0x82AC1808).
+    class DOCore {
     public:
-        static Session *GetInstance(unsigned int uiContext) {
-            return (Session *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(4, uiContext);
+        static DOCore *GetInstance(unsigned int uiContext) {
+            return (DOCore *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(4, uiContext);
         }
-        static Session *GetInstance() { return GetInstance(PseudoSingleton::GetCurrentContext()); }
-        bool IsTerminating();
-        bool IsJoining();
+        static DOCore *GetInstance() { return GetInstance(PseudoSingleton::GetCurrentContext()); }
+        bool IsTerminated() const;
+        bool HasStartedTermination() const;
     };
 
     // Compiled to nothing in this build; only its address reaches Job's ctor.
@@ -459,37 +460,54 @@ namespace Quazal {
         virtual void AcquireRef();
         virtual void ReleaseRef();
 
-        void SetResponseMessage(Message *);
-        void ProcessResponse(Message *pResponse) { Message *pMsg = pResponse; SetResponseMessage(pMsg); }
-        void SetOutcome(DOHandle, int);
     };
 
-    // The protocol's own register of outstanding RMC calls.
-    class CallContextRegister {
+    // An RMC response hands its message to the context as the user context.
+    class UserContext {
     public:
-        CallContextRegister();
-        virtual ~CallContextRegister();
+        UserContext(void *pPointer) : m_pPointer(pPointer) {}
+        void *m_pPointer;
+    };
+
+    // The contexts in the protocol's call register are DO call contexts
+    // (.\DOCallContext.cpp).
+    class DOCallContext : public CallContext {
+    public:
+        enum _Outcome {
+        };
+        static const char *GetOutcomeString(_Outcome);
+        void SignalResponse(UserContext);
+        void SignalOutcome(DOHandle, _Outcome);
+    };
+
+    // The protocol's register of outstanding DO calls (retail's CallRegister,
+    // whose methods are in the CallRegister TU). Its ID lookups are expanded
+    // here, so this TU carries their out-of-line copies.
+    class CallRegister {
+    public:
+        CallRegister();
+        virtual ~CallRegister();
         virtual void Register(void *);
 
-        CallContext *GetCallContextRef(unsigned short usCallID) {
+        DOCallContext *GetCallContextRef(unsigned short usCallID) {
             ScopedCS oCS(GetScheduler()->m_csSystemLock);
-            CallContext *pContext = FindCallContext(usCallID);
+            DOCallContext *pContext = FindCallContext(usCallID);
             if (pContext != 0) {
                 pContext->AcquireRef();
             }
             return pContext;
         }
-        CallContext *FindCallContext(unsigned short usCallID) {
-            qMap<unsigned short, CallContext *>::iterator it = m_mapCalls.find(usCallID);
+        DOCallContext *FindCallContext(unsigned short usCallID) {
+            qMap<unsigned short, DOCallContext *>::iterator it = m_mapCalls.find(usCallID);
             if (it != m_mapCalls.end()) {
                 return it->second;
             } else {
                 return 0;
             }
         }
-        void CancelAll();
+        void CancelPendingCalls();
 
-        qMap<unsigned short, CallContext *> m_mapCalls; // 0x4
+        qMap<unsigned short, DOCallContext *> m_mapCalls; // 0x4
         char m_pad20[8];
     };
 
@@ -670,7 +688,6 @@ namespace Quazal {
         char m_pad[0x68];
     };
 
-    const char *OutcomeToString(int);
 
     class StationURL {
     public:
@@ -833,7 +850,7 @@ namespace Quazal {
 
         bool m_bListeningOnAnyPort; // 0x4
         bool m_bListeningOnWellKnown; // 0x5
-        CallContextRegister m_oCallContextRegister; // 0x8
+        CallRegister m_oCallRegister; // 0x8
         ParticipationManager *m_pParticipationManager; // 0x30
         StationProxy m_oStationProxy; // 0x34
         char m_pad35[0xB];
@@ -1008,7 +1025,7 @@ namespace Quazal {
 
     bool ObjDupProtocol::ShouldDispatch(Message *pMsg) {
         bool bResult = true;
-        if (Session::GetInstance()->IsTerminating()) {
+        if (DOCore::GetInstance()->IsTerminated()) {
             bResult = false;
         } else if (pMsg->GetSourceStation() != 0) {
             DOHandle hStation = pMsg->GetSourceStation();
@@ -1025,7 +1042,7 @@ namespace Quazal {
     unsigned char ObjDupProtocol::ExtractMessageType(Message *pMsg) {
         unsigned char ucType = 0;
         pMsg->Extract(&ucType, 1, true);
-        if (Session::GetInstance()->IsJoining()) {
+        if (DOCore::GetInstance()->HasStartedTermination()) {
             switch (ucType) {
             case 0x08:
             case 0x0B:
@@ -1346,7 +1363,7 @@ namespace Quazal {
     }
 
     Message *ObjDupProtocol::CreateRMCCallMessage(RMCContext *pContext) {
-        m_oCallContextRegister.Register(pContext);
+        m_oCallRegister.Register(pContext);
         Message *pMsg = CreateMessage(0xA);
         *pMsg << pContext->GetCallID();
         *pMsg << pContext->GetTargetObject();
@@ -1441,9 +1458,9 @@ namespace Quazal {
     }
 
     void ObjDupProtocol::ProcessRMCResponse(Message *pMsg, unsigned short *pusCallID) {
-        CallContext *pContext = m_oCallContextRegister.GetCallContextRef(*pusCallID);
+        CallContext *pContext = m_oCallRegister.GetCallContextRef(*pusCallID);
         if (pContext != 0) {
-            pContext->ProcessResponse(pMsg);
+            static_cast<DOCallContext *>(pContext)->SignalResponse(UserContext(pMsg));
             pContext->ReleaseRef();
         }
     }
@@ -1506,7 +1523,7 @@ namespace Quazal {
     }
 
     Message *ObjDupProtocol::CreateMigrationMessage(MigrationContext *pContext) {
-        m_oCallContextRegister.Register(pContext);
+        m_oCallRegister.Register(pContext);
         Message *pMsg = CreateDOProtocolMessage();
         ProtocolCallContext oCallContext;
         qList<DOHandle> lstStations;
@@ -1546,7 +1563,7 @@ namespace Quazal {
             pTrace->Format(
                 "CALL_OUTCOME message for call %d. Outcome is %s",
                 usCallID,
-                OutcomeToString(eOutcome)
+                DOCallContext::GetOutcomeString((DOCallContext::_Outcome)eOutcome)
             );
         }
         if (bProcess) {
@@ -1556,9 +1573,9 @@ namespace Quazal {
     }
 
     void ObjDupProtocol::ProcessCallOutcome(DOHandle hStation, unsigned short usCallID, int iOutcome) {
-        CallContext *pContext = m_oCallContextRegister.GetCallContextRef(usCallID);
+        CallContext *pContext = m_oCallRegister.GetCallContextRef(usCallID);
         if (pContext != 0) {
-            pContext->SetOutcome(hStation, iOutcome);
+            static_cast<DOCallContext *>(pContext)->SignalOutcome(hStation, (DOCallContext::_Outcome)iOutcome);
             pContext->ReleaseRef();
         }
     }
@@ -1706,7 +1723,7 @@ namespace Quazal {
             GetTransport()->StopListening(m_usAnyPort);
             m_bListeningOnAnyPort = false;
         }
-        m_oCallContextRegister.CancelAll();
+        m_oCallRegister.CancelPendingCalls();
     }
 
     bool ObjDupProtocol::IsListeningOnWellKnown() const { return m_bListeningOnWellKnown; }

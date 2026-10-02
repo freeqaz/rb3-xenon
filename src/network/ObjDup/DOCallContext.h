@@ -6,6 +6,10 @@ namespace Quazal {
     // 0xA8-byte DO call contexts; only what DuplicatedObject touches is declared.
     class DOCallContext : public CallContext {
     public:
+        // Callers pass qResult-style codes (0x60001, 0x80010006, ...).
+        enum _Outcome {
+        };
+
         DOCallContext(DOHandle, bool);
         virtual ~DOCallContext();
 

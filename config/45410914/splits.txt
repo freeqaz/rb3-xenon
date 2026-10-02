@@ -14265,8 +14265,8 @@ network/quazal/Core/ByteStream.cpp:
 	.text       start:0x82A97EF8 end:0x82A987D0
 
 network/quazal/RootDODDL.cpp:
-	.pdata      start:0x822523D0 end:0x82252420
-	.text       start:0x82A99368 end:0x82A997F4
+	.pdata      start:0x822523D0 end:0x82252468
+	.text       start:0x82A99368 end:0x82A99C48
 
 network/quazal/DOClass.cpp:
 	.pdata      start:0x822524C0 end:0x822524E8
@@ -14281,8 +14281,8 @@ network/quazal/RMCContext.cpp:
 	.text       start:0x82A9D0B8 end:0x82A9D19C
 
 network/quazal/DOCallContext.cpp:
-	.pdata      start:0x822527F0 end:0x82252838
-	.text       start:0x82AA0E48 end:0x82AA15E8
+	.pdata      start:0x822527C0 end:0x82252840
+	.text       start:0x82AA06E0 end:0x82AA1650
 
 network/quazal/Transport/Interface/StationURL.cpp:
 	.pdata      start:0x82252840 end:0x82252C08
@@ -14325,16 +14325,20 @@ network/quazal/StationManager.cpp:
 	.text       start:0x82AB87A0 end:0x82AB9504
 
 network/quazal/CallRegister.cpp:
-	.pdata      start:0x822539F0 end:0x82253A30
-	.text       start:0x82ABAC98 end:0x82ABB42C
+	.pdata      start:0x822539D0 end:0x82253AF0
+	.text       start:0x82ABAB58 end:0x82ABD488
 
 network/quazal/ChangeDupSetOperation.cpp:
-	.pdata      start:0x82253B58 end:0x82253B60
-	.text       start:0x82ABDE90 end:0x82ABDF78
+	.pdata      start:0x82253B40 end:0x82253B60
+	.text       start:0x82ABDC98 end:0x82ABDF78
 
 network/quazal/DOCore.cpp:
-	.pdata      start:0x82253C90 end:0x82253C98
-	.text       start:0x82AC0470 end:0x82AC0C78
+	.pdata      start:0x82253C90 end:0x82253CF8
+	.pdata      start:0x822618D8 end:0x822618E0
+	.pdata      start:0x82261D58 end:0x82261D60
+	.text       start:0x82AC0470 end:0x82AC1808
+	.text       start:0x82C420A0 end:0x82C420E0
+	.text       start:0x82C4AEF0 end:0x82C4AF18
 
 network/quazal/SessionDiscovery/Interface/SessionDiscoveryTable.cpp:
 	.pdata      start:0x82253E58 end:0x82253E80
@@ -14485,12 +14489,12 @@ network/quazal/Transport/Routing/RoutingStream.cpp:
 	.text       start:0x82B0A5D0 end:0x82B0A730
 
 network/quazal/AccountManagement/Client/JobLoginOrCreateAccount.cpp:
-	.pdata      start:0x82257338 end:0x82257350
-	.text       start:0x82B0E468 end:0x82B0E914
+	.pdata      start:0x82257318 end:0x82257360
+	.text       start:0x82B0E148 end:0x82B0EA88
 
 network/quazal/AccountManagement/Client/JobCreateAccount.cpp:
-	.pdata      start:0x82257500 end:0x82257558
-	.text       start:0x82B13598 end:0x82B14948
+	.pdata      start:0x82257500 end:0x82257568
+	.text       start:0x82B13598 end:0x82B14AA0
 
 network/quazal/Foundation/Protocol/DataDDL.cpp:
 	.pdata      start:0x82257588 end:0x82257590
@@ -14581,8 +14585,8 @@ network/quazal/Stack/Core/BerkeleySocketDriver.cpp:
 	.text       start:0x82B3DD00 end:0x82B3DD60
 
 network/quazal/Authentication/Client/TicketManager.cpp:
-	.pdata      start:0x82259880 end:0x82259890
-	.text       start:0x82B3F530 end:0x82B3F958
+	.pdata      start:0x82259870 end:0x822598B8
+	.text       start:0x82B3F4C8 end:0x82B3FBF0
 
 network/quazal/SecureTransport/JobConnectSecureEndPoint.cpp:
 	.pdata      start:0x822599A8 end:0x822599C0
@@ -14597,8 +14601,8 @@ network/quazal/DupSpace/DuplicationSpaceTable.cpp:
 	.text       start:0x82B46FA0 end:0x82B47BC4
 
 network/quazal/DupSpace/MatchOperation.cpp:
-	.pdata      start:0x82259D00 end:0x82259D08
-	.text       start:0x82B48768 end:0x82B48824
+	.pdata      start:0x82259CD0 end:0x82259D08
+	.text       start:0x82B481D0 end:0x82B48824
 
 network/quazal/Transport/Interface/HighLevelStream.cpp:
 	.pdata      start:0x8225A1B8 end:0x8225A1C8

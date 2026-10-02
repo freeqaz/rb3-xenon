@@ -8,5 +8,9 @@ namespace Quazal {
         virtual ~_DO_RootDO() {}
         virtual void CallOperationOnDatasets(DOOperation *, Operation::_Event);
         virtual bool IsACoreDO() const;
+
+        // Sends the RemoveFromCachedDuplicationSet action to the duplicas
+        // (.\RootDODDL.cpp); DuplicatedObject::ExecChangeDupSet calls it.
+        bool RemoveFromCachedDuplicationSet_OnDuplicas(DOHandle);
     };
 }

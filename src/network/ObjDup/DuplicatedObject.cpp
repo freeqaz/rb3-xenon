@@ -26,6 +26,7 @@
 #include "ObjDup/CallRegister.h"
 #include "ObjDup/DOCallContext.h"
 #include "ObjDup/BundlingPolicy.h"
+#include "ObjDup/DOCore.h"
 #include "ObjDup/SelectionIterator.h"
 #include "ObjDup/Session.h"
 
@@ -249,7 +250,9 @@ namespace Quazal {
         }
         if (!bValid) {
             if (op.GetType() == 6) {
-                OperationErrorNotifier::GetInstance()->NotifyError(GetHandle(), 0x80010006);
+                CallRegister::GetInstanceRef().SignalRelevantFetchContextes(
+                    GetHandle(), (DOCallContext::_Outcome)0x80010006
+                );
             }
             return false;
         }
@@ -387,7 +390,7 @@ namespace Quazal {
         if (op.IsARemoval()) {
             RemoveFromDuplicationSet(hStation);
             if (op.GetContext() != 0) {
-                ForgetDuplicaOn(hStation);
+                static_cast<_DO_RootDO *>(this)->RemoveFromCachedDuplicationSet_OnDuplicas(hStation);
             }
             return;
         }
@@ -491,7 +494,9 @@ namespace Quazal {
             Station::DynamicCast(this)->AcquireStationReference();
         }
         if (op.IsADuplica()) {
-            OperationErrorNotifier::GetInstance()->NotifyError(GetHandle(), 0x60001);
+            CallRegister::GetInstanceRef().SignalRelevantFetchContextes(
+                GetHandle(), (DOCallContext::_Outcome)0x60001
+            );
         }
     }
 
@@ -596,7 +601,7 @@ namespace Quazal {
     }
 
     bool DuplicatedObject::ValidOperation(DOOperation *pOp) {
-        if (DOSelections::GetCurrentInstance()->IsAvailable()) {
+        if (DOCore::GetCurrentInstance()->HasStartedTermination()) {
             switch (pOp->GetType()) {
             case 5:
             case 6:
@@ -1070,7 +1075,7 @@ namespace Quazal {
     }
 
     bool DuplicatedObject::MigrationInProgress() const {
-        return CallRegister::GetInstance()->MigrationInProgress(GetHandle(), DOHandle());
+        return CallRegister::GetInstanceRef().MigrationInProgress(GetHandle(), DOHandle());
     }
 
     bool DuplicatedObject::AttemptEmigration(DOHandle hNewMaster) {
