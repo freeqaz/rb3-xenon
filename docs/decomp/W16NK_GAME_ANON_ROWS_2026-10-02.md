@@ -1,4 +1,4 @@
-# W16-NK — anonymous rows in compiled src/band3 + src/network units: 77 named, 115 fold memberships chase-proven, 13 source fixes (2026-10-02)
+# W16-NK — anonymous rows in compiled src/band3 + src/network units: 77 named, 115 fold memberships chase-proven, source fixed on 11 rows (2026-10-02)
 
 **Branch** `w16-nk`, rebased onto main `7f0f55bda` (W16-NH). **Ruler** `name_check` (graded;
 `report.json` `provenance.diff_config`). **Method** W16-NF's (`W16NF_ENGINE_ANON_ROWS_2026-10-02.md`),
@@ -156,7 +156,8 @@ Rebased tip (full build, forced re-split to a fixed point):
   2 extended): **115 PROVEN, 0 REFUTED, 0 CYCLE-ASSUMED**; `--chasetest`: "selftest PASSED -- the
   instrument can both pass and fail".
 - `python3 scripts/verify_objs_patched.py --verify-manifest`: OK (1,258 decomp, 3,093 target objects).
-- `tools/native_build_gate.sh` (run last): NATIVE_GATE_LINE
+- `tools/native_build_gate.sh` (run last on the final code; only this doc line follows it):
+  `NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0`.
 
 ## 10. Traps met
 
