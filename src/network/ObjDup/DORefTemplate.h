@@ -11,7 +11,21 @@ namespace Quazal {
         DORefTemplate(DOHandle h) : DORef(h) {}
         ~DORefTemplate() {}
 
-        bool IsValid() const;
+        // Inline: /Ob1 declines it, so callers call the one out-of-line copy
+        // (the first TU to use it emits it) yet still reserve its frame.
+        bool IsValid() const {
+            if (GetDOPtr() == 0) {
+                SystemError::SignalError(0, 0, 0xA0030004, 0);
+                return false;
+            } else {
+                T *pDO = (T *)m_poReferencedDO;
+                if (!T::GetDOClass(pDO->m_dohMyself.GetDOClassID())->IsAKindOf(T::GetClassID())) {
+                    SystemError::SignalError(0, 0, 0xE003000C, 0);
+                    return false;
+                }
+                return true;
+            }
+        }
         T *Get() const {
             if (!IsValid())
                 return NULL;
@@ -22,7 +36,7 @@ namespace Quazal {
             if (!IsValid()) {
                 return 0;
             } else {
-                return (T *)m_poReferencedDO;
+                return (T *)GetDOPtr();
             }
         }
     };
