@@ -419,7 +419,8 @@ void BandPatchMesh::Render(RndTex *tex, RndMat *mat) {
                     tf88.m.y *= (float)tex->Height() / (float)tex->Width();
                     tf88.v.x = -0.5f / (float)tex->Width();
                     tf88.v.y = -0.5f / (float)tex->Height();
-                    patch->SetLocalXfm(tf88);
+                    RndTransformable *trans = patch;
+                    trans->SetLocalXfm(tf88);
                     patch->SetMat(mat);
                     if (mat->GetDiffuseTex()) {
                         // DrawShowing, not Draw: the patch is drawn into the
@@ -435,7 +436,7 @@ void BandPatchMesh::Render(RndTex *tex, RndMat *mat) {
                             patch->SetShowing(false);
                     }
                     patch->SetMat(patchmat);
-                    patch->DirtyLocalXfm().Reset();
+                    trans->DirtyLocalXfm().Reset();
                 }
             }
         }

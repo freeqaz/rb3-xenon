@@ -102,6 +102,6 @@ protected:
 
 struct ByRadius {
     bool operator()(CharCollide *c1, CharCollide *c2) const {
-        return c2->Radius() > c1->Radius() ? true : false;
+        return c1->Radius() > c2->Radius() ? true : false;
     }
 };
