@@ -208,7 +208,14 @@ Branch tip after the full `./tools/ninja-locked`: `[patch-state] OK: tree is a f
 
 ## 7. Native gate
 
-(filled in after the run)
+Run last, on the branch tip `06875bc70` code (only this docs-only commit follows it):
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+The branch touches only `config/45410914/objects.json` (one TU's flags) and this doc. No source, header, map, splits or
+`symbols.txt` edit. A grep of the branch finds no rb3-Wii/oracle citation and no Co-Authored-By line.
 
 ## 8. Not done
 
