@@ -96,16 +96,18 @@ void Splash::Resume() {
                     mCurrentMovie->SetShowing(false);
                     mCurrentMovie->GetMovie().UnlockThread();
                 }
-                TheNgRnd.Resume();
+                // Mirror of Suspend()'s cross-dispatch: retail 0x82741B18 calls vtable+0x114
+                // (NgRnd::Suspend) at both sites here.
+                TheNgRnd.Suspend();
                 MILO_ASSERT(SetMutableState(kResuming), 0x11c);
                 WaitForState(kResumed);
             } else {
-                MILO_ASSERT(mState == kWaitingForTerminating, 0x122);
+                MILO_ASSERT(*(volatile int *)&mState == kWaitingForTerminating, 0x122);
                 if (mCurrentMovie != NULL) {
                     mCurrentMovie->SetShowing(false);
                     mCurrentMovie->GetMovie().UnlockThread();
                 }
-                TheNgRnd.Resume();
+                TheNgRnd.Suspend();
             }
         } else {
             // Non-threaded mode: resume drawing immediately
@@ -368,9 +370,11 @@ void Splash::WaitForState(Splash::SplashState state) {
         MILO_FAIL("Can\'t WaitForState");
     }
     // Wait for state change, allowing intermediate states for kResumed
+    // Retail reloads mState for the kResumed test (lwz 0x94 after the
+    // state == kResumed compare) instead of reusing the loop test's load.
     while (mState != state) {
         if (state == kResumed) {
-            if (mState > kResumed)
+            if (*(volatile int *)&mState > kResumed)
                 break;
         }
         MainThread() ? mWorkerEvent.Wait(-1) : mMainEvent.Wait(-1);
@@ -387,7 +391,9 @@ void Splash::CheckWorkerSuspend(bool b) {
         }
         {
             CritSecTracker cst(&mStateLock);
-            MILO_ASSERT(mState == kSuspending, 0x1ff);
+            // Retail emits a dead `lwz r10,0x94(r30)` here and at 0x209 (see the
+            // volatile-read note in the worker loop above).
+            MILO_ASSERT(*(volatile int *)&mState == kSuspending, 0x1ff);
             mState = kSuspended;
             mWorkerEvent.Set();
         }
@@ -395,7 +401,7 @@ void Splash::CheckWorkerSuspend(bool b) {
         TheNgRnd.Resume();
         {
             CritSecTracker cst(&mStateLock);
-            MILO_ASSERT(mState == kResuming, 0x209);
+            MILO_ASSERT(*(volatile int *)&mState == kResuming, 0x209);
             mState = kResumed;
             mWorkerEvent.Set();
         }
@@ -515,7 +521,7 @@ void Splash::UpdateThread() {
     MILO_ASSERT(!MainThread(), 0x21d);
     {
         CritSecTracker cst(&mStateLock);
-        MILO_ASSERT(mState == kResuming, 0x221);
+        MILO_ASSERT(*(volatile int *)&mState == kResuming, 0x221);
         mState = kResumed;
         mWorkerEvent.Set();
     }
@@ -538,7 +544,7 @@ void Splash::UpdateThread() {
 
     if (!SetImmutableState(kWaitingForTerminating)) {
         do {
-            MILO_ASSERT(mState == kSuspending, 0x246);
+            MILO_ASSERT(*(volatile int *)&mState == kSuspending, 0x246);
             CheckWorkerSuspend(false);
         } while (!SetImmutableState(kWaitingForTerminating));
     }

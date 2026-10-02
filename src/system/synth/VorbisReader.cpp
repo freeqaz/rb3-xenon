@@ -287,7 +287,9 @@ bool VorbisReader::TryDecode() {
     }
     if (mHasPendingPacket) {
         START_AUTO_TIMER("vorbis_synthesis_poll_cpu");
-        if (mVorbisBlock->synthesis_state == vorbis_block::vss_init) {
+        // Retail 0x82bb3288: the timer bodies are empty, yet the state is still read
+        // once (lwz r11,0x6c(r3), never tested), so that read was volatile.
+        if (*(volatile int *)&mVorbisBlock->synthesis_state == vorbis_block::vss_init) {
             START_AUTO_TIMER("vorbis_synthesis_vssinit_cpu");
         } else if (mVorbisBlock->synthesis_state == vorbis_block::vss_decode) {
             START_AUTO_TIMER("vorbis_synthesis_vssdecode_cpu");

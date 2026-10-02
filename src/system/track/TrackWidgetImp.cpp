@@ -372,10 +372,7 @@ void MatWidgetImp::DrawInstances(const ObjPtrList<RndMesh> &, int) {
 }
 
 int MatWidgetImp::AddMeshInstance(Transform tf, RndMesh *mesh, float f3) {
-    bool b2 = false;
-    if (!Empty() && tf.v.y < GetLastInstanceY()) {
-        b2 = true;
-    }
+    bool b2 = !Empty() && tf.v.y < GetLastInstanceY();
     MeshInstance inst(tf, mesh);
     PushInstance(inst);
     if (b2)

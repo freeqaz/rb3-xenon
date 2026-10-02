@@ -42,7 +42,7 @@ static struct {
 TrackWidget::TrackWidget()
     : mMeshes(this), mMeshesLeft(this), mMeshesSpan(this), mMeshesRight(this),
       mEnviron(this), mBaseLength(1), mBaseWidth(1), mXOffset(0), mYOffset(0),
-      mZOffset(0), mTrackDir(0), mImp(0), mFont(this), mTextObj(this),
+      mZOffset(0), mTrackDir(0), mImp(0), mFont(this), mTextObj(ObjPtrInlineOwner(), this),
       mTextAlignment(RndText::kMiddleCenter), mTextColor(1, 1, 1), mAltTextColor(1, 1, 1),
       mMat(this), mActive(0), mWideWidget(0), mAllowRotation(0), mAllowShift(0),
       mAllowLineRotation(0), mWidgetType(kImmediateWidget), mMaxMeshes(-1),
