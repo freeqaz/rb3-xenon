@@ -7586,7 +7586,7 @@
  "0x82360ba0": "?GetCurrentQuestSuccessMessage@TourPerformerImpl@@QBA?AVSymbol@@XZ",
  "0x82360c48": "?GetTotalStarsPossibleForCurrentGig@TourPerformerImpl@@QAAHXZ",
  "0x82360d38": "?GetQuestSuccessfulSongCount@TourPerformerImpl@@QBAHXZ",
- "0x82360dc8": null,
+ "0x82360dc8": "?IsQuestWon@TourPerformerImpl@@QBA_NVSymbol@@@Z",
  "0x82360e88": "?UpdateTourStats@TourPerformerImpl@@QAAXPAVTourProgress@@@Z",
  "0x82360f40": "?RestartLastSong@TourPerformerImpl@@UAAXXZ",
  "0x82360fb0": "?UpdateTourPlayerContributionLabel@TourPerformerImpl@@QAAXPAVUILabel@@PAVBandUser@@@Z",
@@ -34605,5 +34605,8 @@
  "0x823dd260": "??1?$ObjPtr@VCharClipGroup@@@@UAA@XZ",
  "0x823dd2f8": "?Replace@?$ObjPtr@VCharClipGroup@@@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x82484c00": "?resize@?$ObjVector@UPose@RndMorph@@@@QAAXI@Z",
- "0x825c2300": "??0LocalMachineUpdatedMsg@@QAA@PAVLocalBandMachine@@E@Z"
+ "0x825c2300": "??0LocalMachineUpdatedMsg@@QAA@PAVLocalBandMachine@@E@Z",
+ "0x82364028": "??0TourProgress@@QAA@XZ",
+ "0x82317f80": "?SetMicConnected@MicInputArrow@@QAAX_NH@Z",
+ "0x8258e260": "??1BandProfile@@UAA@XZ"
 }

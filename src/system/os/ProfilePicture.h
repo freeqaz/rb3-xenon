@@ -16,7 +16,9 @@ public:
         kComplete
     };
     ProfilePicture(int, Hmx::Object *);
-    ~ProfilePicture() { mState = kIdle; }
+    // Retail's inlined dtor is a call to Clear() (BandProfile dtor, 0x8258E2EC),
+    // which also releases mUserPicture.
+    ~ProfilePicture() { Clear(); }
 
     void FetchUserData();
     bool ReceiveUserData();
