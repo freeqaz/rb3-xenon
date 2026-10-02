@@ -80,14 +80,14 @@ namespace Quazal {
     public:
         StationURL();
         StationURL(const char *);
-        virtual ~StationURL();
+        ~StationURL();
         StationURL &operator=(const StationURL &);
         StationURL &operator=(const String &);
         bool operator==(const StationURL &) const;
         bool operator!=(const StationURL &) const;
         void SetPID(unsigned int);
 
-        char m_data[0x60];
+        char m_data[0x64];
     };
 
     class RefCountedObject : public RootObject {
@@ -244,6 +244,7 @@ namespace Quazal {
     void ReleaseStreamCredentials(StreamCredentials *);
 
     extern unsigned int g_uiGuestPID;
+    inline unsigned int GetGuestPID() { return g_uiGuestPID; }
     extern StationURL g_urlRegistration;
 
     class Job : public RefCountedObject {
@@ -435,8 +436,7 @@ namespace Quazal {
     ) {
         qList<StationURL> urls;
         urls.push_back(url);
-        bool ret = client->Connect(context, 0, 0, urls, connection, timeout);
-        return ret;
+        return client->Connect(context, 0, 0, urls, connection, timeout);
     }
 
     void JobBackEndServicesLogin::ProcessAuthConnectionResult() {
@@ -509,44 +509,44 @@ namespace Quazal {
                 (JobStateFunc)&JobBackEndServicesLogin::CompleteLogin,
                 "JobBackEndServicesLogin::CompleteLogin"
             ));
+            return;
+        }
+        String strAddress;
+        int iOffset = 0;
+        switch (g_uiGuestPID) {
+        case 2:
+            iOffset = 1;
+            break;
+        case 3:
+            iOffset = 2;
+            break;
+        }
+        StationURL url;
+        if (m_oURLs.m_urlSecure != "") {
+            url = m_oURLs.m_urlSecure;
         } else {
-            String str;
-            int offset = 0;
-            switch (g_uiGuestPID) {
-            case 2:
-                offset = 1;
-                break;
-            case 3:
-                offset = 2;
-                break;
-            }
-            StationURL url;
-            if (m_oURLs.m_urlSecure != StationURL("")) {
-                url = m_oURLs.m_urlSecure;
-            } else {
-                str.Format(
-                    "prudps:/address=%s;port=%d;stream=%d;sid=%d;PID=%d;CID=1;type=%d",
-                    (const char *)m_strAddress, m_usPort + offset, 3, 1, g_uiGuestPID, 2
-                );
-                url = str;
-            }
-            m_oCallContext.Reset();
-            if (!ConnectStream(
-                    m_pServices->GetStreamManager()->GetClient(), &m_oCallContext, url,
-                    &m_pSecureConnection, Time::ToMilliseconds(m_tTimeout)
-                )) {
-                Complete(qResult(0x8001000D));
-                return;
-            } else {
-                SetToWaiting();
-                ResumeOnCallCompletion(
-                    &m_oCallContext,
-                    new (JBESL_FILE, 0xF0) Step(
-                        (JobStateFunc)&JobBackEndServicesLogin::ProcessSecConnConnectionResult,
-                        "JobBackEndServicesLogin::ProcessSecConnConnectionResult"
-                    )
-                );
-            }
+            strAddress.Format(
+                "prudps:/address=%s;port=%d;stream=%d;sid=%d;PID=%d;CID=1;type=%d",
+                (const char *)m_strAddress, m_usPort + iOffset, 3, 1, GetGuestPID(), 2
+            );
+            url = strAddress;
+        }
+        m_oCallContext.Reset();
+        if (!ConnectStream(
+                m_pServices->GetStreamManager()->GetClient(), &m_oCallContext, url,
+                &m_pSecureConnection, Time::ToMilliseconds(m_tTimeout)
+            )) {
+            Complete(qResult(0x8001000D));
+            return;
+        } else {
+            SetToWaiting();
+            ResumeOnCallCompletion(
+                &m_oCallContext,
+                new (JBESL_FILE, 0xF0) Step(
+                    (JobStateFunc)&JobBackEndServicesLogin::ProcessSecConnConnectionResult,
+                    "JobBackEndServicesLogin::ProcessSecConnConnectionResult"
+                )
+            );
         }
     }
 
@@ -570,7 +570,7 @@ namespace Quazal {
     }
 
     void JobBackEndServicesLogin::ConnectToSpecialConnection() {
-        if (m_oURLs.m_urlSpecial == StationURL("")) {
+        if (m_oURLs.m_urlSpecial == "") {
             SetStep(Step(
                 (JobStateFunc)&JobBackEndServicesLogin::RegisterURLs,
                 "JobBackEndServicesLogin::RegisterURLs"
