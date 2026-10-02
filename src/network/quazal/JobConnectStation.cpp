@@ -892,8 +892,8 @@ namespace Quazal {
             SetStep(JCS_STEP(ConnectionFailed));
             return;
         }
-        EndPoint *pEndPoint = FindIncomingEndPoint(m_refStation.m_hReferencedDO);
-        if (pEndPoint == NULL) {
+        EndPoint *pIncomingEndPoint = FindIncomingEndPoint(m_refStation.m_hReferencedDO);
+        if (pIncomingEndPoint == NULL) {
             if (m_uiAttempts > 0) {
                 SetStep(JCS_STEP(TryConnectViaIncomingEndPointImpl));
                 SetToWaiting(100);
@@ -902,7 +902,7 @@ namespace Quazal {
             }
             return;
         }
-        m_pEndPoint = pEndPoint;
+        m_pEndPoint = pIncomingEndPoint;
         Message oMsg;
         oMsg << Station::GetLocalStationHandle().GetValue();
         oMsg << m_refStation.GetHandle().GetValue();
@@ -922,10 +922,11 @@ namespace Quazal {
                 SetStep(JCS_STEP(SelectConnectionTechnique));
             }
             return;
+        } else {
+            AcquireRef();
+            SetToSuspended();
+            SetStep(JCS_STEP(ProcessIncomingConnectionResult));
         }
-        AcquireRef();
-        SetToSuspended();
-        SetStep(JCS_STEP(ProcessIncomingConnectionResult));
     }
 
     void JobConnectStation::ProcessIncomingConnectionResult() {
