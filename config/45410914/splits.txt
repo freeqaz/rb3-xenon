@@ -3359,7 +3359,6 @@ Spline.cpp:
 Character.cpp:
 	.pdata      start:0x821F4830 end:0x821F4840
 	.pdata      start:0x821F4878 end:0x821F4888
-	.pdata      start:0x821F4B38 end:0x821F4B40
 	.pdata      start:0x821F4B58 end:0x821F4B68
 	.pdata      start:0x82201500 end:0x82201520
 	.pdata      start:0x82201520 end:0x82201528
@@ -3404,7 +3403,7 @@ Character.cpp:
 	.text       start:0x822A3FA8 end:0x822A3FB0
 	.text       start:0x822A4A18 end:0x822A4A20
 	.text       start:0x822A5028 end:0x822A5030
-	.text       start:0x822A51DC end:0x822A5258
+	.text       start:0x822A5250 end:0x822A5258
 	.text       start:0x822A52F4 end:0x822A52F8
 	.text       start:0x822A543C end:0x822A54B0
 	.text       start:0x822A6B20 end:0x822A6B28
@@ -11940,6 +11939,7 @@ OutfitConfig.cpp:
 	.pdata      start:0x821F4B18 end:0x821F4B20
 	.pdata      start:0x821F4B20 end:0x821F4B28
 	.pdata      start:0x821F4B28 end:0x821F4B38
+	.pdata      start:0x821F4B38 end:0x821F4B40
 	.pdata      start:0x821F4B68 end:0x821F4B78
 	.pdata      start:0x821F4B78 end:0x821F4B80
 	.pdata      start:0x821F4B98 end:0x821F4BA8
@@ -12046,6 +12046,7 @@ OutfitConfig.cpp:
 	.text       start:0x822A4F58 end:0x822A4FB8
 	.text       start:0x822A4FB8 end:0x822A5028
 	.text       start:0x822A5030 end:0x822A51DC
+	.text       start:0x822A51DC end:0x822A5250
 	.text       start:0x822A54B0 end:0x822A5528
 	.text       start:0x822A5528 end:0x822A55A0
 	.text       start:0x822A5760 end:0x822A58F0

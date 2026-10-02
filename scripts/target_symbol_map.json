@@ -1,4 +1,6 @@
 {
+ "0x822a2438": "?_M_fill_insert_aux@?$vector@V?$ObjPtr@VRndDir@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndDir@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjPtr@VRndDir@@@@IABV3@ABU__false_type@2@@Z",
+ "0x822a3930": "?_M_insert_overflow_aux@?$vector@V?$ObjPtr@VRndDir@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndDir@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAV?$ObjPtr@VRndDir@@@@ABV3@ABU__false_type@2@I_N@Z",
  "0x823f2b80": "?Poll@QuazalSession@@SAXXZ",
  "0x823f2c28": "?HasHostLeft@QuazalSession@@QAA_NXZ",
  "0x82688050": "?_M_insert_overflow_aux@?$vector@VTrackData@SongDB@@V?$StlNodeAlloc@VTrackData@SongDB@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVTrackData@SongDB@@ABV34@ABU__false_type@2@I_N@Z",
@@ -5099,7 +5101,7 @@
  "0x822a4f58": "?_M_erase@?$vector@VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVPiece@Piercing@OutfitConfig@@PAV345@0ABU__false_type@2@@Z",
  "0x822a4fb8": "?_M_fill_insert@?$vector@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjPtr@VRndTex@@@@IABV3@@Z",
  "0x822a5030": "?_M_fill_insert_aux@?$vector@VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVPiece@Piercing@OutfitConfig@@IABV345@ABU__false_type@2@@Z",
- "0x822a51e0": "?_M_fill_insert@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVFilePath@@IABV3@@Z",
+ "0x822a51e0": "?_M_fill_insert@?$vector@V?$ObjPtr@VRndDir@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndDir@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjPtr@VRndDir@@@@IABV3@@Z",
  "0x822a5258": "??0?$vector@VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
  "0x822a52f8": "??4?$vector@VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
  "0x822a5448": "??$_Copy_Construct@VOldMatOption@@@stlpmtx_std@@YAXPAVOldMatOption@@ABV1@@Z",
