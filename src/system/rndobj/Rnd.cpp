@@ -88,9 +88,10 @@ int Rnd::sPostProcPanelCount;
 #endif
 
 // Rnd & TheRnd;
-bool gNotifyKeepGoing;
-bool gFailKeepGoing;
-bool gFailRestartConsole;
+// File-local: Rnd::Modal clears all three from one base address.
+static bool gNotifyKeepGoing;
+static bool gFailKeepGoing;
+static bool gFailRestartConsole;
 
 #define gRndThread gRndHandles.mThread
 #define gRndTextureEvent gRndHandles.mTextureEvent
@@ -1571,57 +1572,53 @@ void Rnd::UpdateHeap() {
     MemPrintOverview(heapNum, *mHeapOverlay);
 }
 
-void Rnd::Modal(Debug::ModalType &type, FixedString &str, bool bb) {
-    if (bb) {
-        char *s = (char *)str.c_str();
-        MILO_LOG("%s\n", s);
+void Rnd::Modal(bool &fail, char *msg, bool wait) {
+    if (wait) {
+        MILO_LOG("%s\n", msg);
     }
-    if (CanModal(type)) {
+    if (CanModal(fail)) {
         char buf[0x1000];
-        WordWrap(str.c_str(), 0x5a, buf, 0x1000);
-        if (!bb) {
+        WordWrap(msg, 0x5a, buf, 0x1000);
+        if (!wait) {
             strcat(buf, "\n\n-- Waiting on Stack Trace --\n");
-        } else if (type == Debug::kModalFail) {
+        } else if (fail) {
             strcat(buf, "\n\n-- Program ended --\n");
         } else {
             strcat(buf, "\n\n-- Press any button to continue --\n");
         }
         bool oldShowing = ConsoleShowing();
         ShowConsole(false);
-        if (type != Debug::kModalFail || !bb) {
+        if (!fail || !wait) {
             RndSplasherSuspend();
         }
-        ModalDraw(type, buf);
-        if (bb) {
+        ModalDraw(fail, buf);
+        if (wait) {
             gFailKeepGoing = false;
             gNotifyKeepGoing = false;
             gFailRestartConsole = false;
             ModalKeyListener mkl;
             KeyboardSubscribe(&mkl);
-            unsigned int mask = 0x800;
-            if (type != Debug::kModalFail) {
-                mask = 0xFFFFFFFF;
-            }
+            // A failure waits for START only; a notify takes any button.
+            int mask = fail ? 0x800 : -1;
             while (!(mask & JoypadPollForButton(-1))) {
                 KeyboardPoll();
-                ModalDraw(type, buf);
-                if (type == Debug::kModalFail) {
-                    if (gFailKeepGoing) {
-                        type = Debug::kModalNotify;
-                        break;
-                    }
-                } else {
-                    if (gNotifyKeepGoing) break;
-                    if (type != Debug::kModalFail) continue;
+                ModalDraw(fail, buf);
+                if (fail && gFailKeepGoing) {
+                    // Keep going after a failure: the caller sees it cleared.
+                    fail = false;
+                    break;
                 }
-                if (gFailRestartConsole) {
+                if (!fail && gNotifyKeepGoing) {
+                    break;
+                }
+                if (fail && gFailRestartConsole) {
                     XLaunchNewImage(TheSystemArgs.front(), 0);
                     return;
                 }
             }
             KeyboardUnsubscribe(&mkl);
             ShowConsole(false);
-            ModalDraw(type, "");
+            ModalDraw(fail, "");
             RndSplasherResume();
         }
         ShowConsole(oldShowing);

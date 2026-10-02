@@ -8,7 +8,7 @@ public:
     ~XboxMapFile();
 
     const char *GetFunction(unsigned int, bool);
-    static bool ParseStack(const char *, struct StackData *, int, FixedString &);
+    static bool ParseStack(const char *, struct StackData *, int, char *);
 
 private:
     void ReadLine(char *, int);

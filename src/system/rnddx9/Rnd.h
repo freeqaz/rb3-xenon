@@ -140,8 +140,8 @@ public:
 
 protected:
     virtual void DoPostProcess();
-    virtual bool CanModal(Debug::ModalType);
-    virtual void ModalDraw(Debug::ModalType, const char *);
+    virtual bool CanModal(bool);
+    virtual void ModalDraw(bool, const char *);
 
 private:
     virtual void DoWorldEnd();

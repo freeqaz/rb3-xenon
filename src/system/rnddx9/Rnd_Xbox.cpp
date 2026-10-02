@@ -96,7 +96,7 @@ void CDError() {
     ShowDirtyDiscError();
 }
 
-void DxModal(Debug::ModalType &t, FixedString &s, bool b) { TheDxRnd.Modal(t, s, b); }
+void DxModal(bool &fail, char *msg, bool wait) { TheDxRnd.Modal(fail, msg, wait); }
 
 void DxRnd::PreInit(HWND__ *) {
     if (!mPreInited) {
@@ -779,12 +779,11 @@ void DxRnd::EndDrawing() {
     }
 }
 
-bool DxRnd::CanModal(Debug::ModalType t) {
+bool DxRnd::CanModal(bool fail) {
     if (mTilingActive) {
-        // Retail tests t as a byte (clrlwi. r11,r4,24), allowing EndTiling for any
-        // non-kModalWarn modal (notify/fail), not just kModalFail. The byte cast is
-        // what reproduces the low-8-bit truthiness test.
-        if ((unsigned char)t) {
+        // A failure modal ends tiling so the message can be drawn; any other modal
+        // waits for the frame.
+        if (fail) {
             EndTiling(FrontBuffer(), 0);
         } else {
             return false;
@@ -793,7 +792,7 @@ bool DxRnd::CanModal(Debug::ModalType t) {
     return true;
 }
 
-void DxRnd::ModalDraw(Debug::ModalType t, const char *cc) {
+void DxRnd::ModalDraw(bool fail, const char *cc) {
     bool wasSuspended = mSuspended;
     Resume();
     // Retail order: GetRenderTarget(dev, 0) first (fn_82852828, r4=0), then
@@ -814,10 +813,8 @@ void DxRnd::ModalDraw(Debug::ModalType t, const char *cc) {
     // a literal is CSE'd into callee-saved f31.
     static const float zero = 0.0f;
     Hmx::Color color(zero, 0, 0.5f);
-    // Retail tests t as a byte (clrlwi. r10,r25,24), same truthiness idiom as
-    // DxRnd::CanModal above -- true for kModalNotify(1) and kModalFail(2), not
-    // an equality check against kModalFail specifically.
-    if ((unsigned char)t) {
+    // A failure modal is drawn on dark red.
+    if (fail) {
         color.red = 0.25f;
         color.blue = zero;
     }

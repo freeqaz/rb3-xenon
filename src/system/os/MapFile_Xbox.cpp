@@ -260,8 +260,10 @@ void InsertSort(int *keys, T *data, int count) {
 
 template void InsertSort<StackData>(int *, StackData *, int);
 
+// Appends one "\n   <function>" line per frame to `str`, a plain char buffer
+// (retail strcats into the fourth argument directly).
 bool XboxMapFile::ParseStack(
-    const char *mapFileName, struct StackData *stack, int count, FixedString &str
+    const char *mapFileName, struct StackData *stack, int count, char *str
 ) {
     XboxMapFile mapFile(mapFileName);
     if (!mapFile.mFile) {
@@ -281,17 +283,19 @@ bool XboxMapFile::ParseStack(
         do {
             int origIdx = *pKey;
             int nameOff = origIdx * 0x80;
-            const char *name =
-                mapFile.GetFunction(*(unsigned int *)((int)pKey + offset), false);
-            strncpy(&funcNames[nameOff], name, 0x7f);
+            strncpy(
+                &funcNames[nameOff],
+                mapFile.GetFunction(*(unsigned int *)((int)pKey + offset), false),
+                0x7f
+            );
             funcNames[nameOff + 0x7f] = '\0';
             remaining--;
             pKey++;
         } while (remaining != 0);
     }
     for (int k = 0; k < count; k++) {
-        str += "\n   ";
-        str += &funcNames[k * 0x80];
+        strcat(str, "\n   ");
+        strcat(str, &funcNames[k * 0x80]);
     }
     return true;
 }

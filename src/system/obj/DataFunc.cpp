@@ -1529,7 +1529,7 @@ DEF_DATA_FUNC(DataDisableNotify) {
     return 0;
 }
 
-void ScriptDebugModal(Debug::ModalType &, FixedString &, bool) {}
+void ScriptDebugModal(bool &, char *, bool) {}
 
 DEF_DATA_FUNC(DataFilterNotify) {
 #if defined(MILO_DEBUG) && defined(HX_NATIVE)
