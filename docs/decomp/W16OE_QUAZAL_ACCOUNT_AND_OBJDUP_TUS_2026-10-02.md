@@ -22,7 +22,7 @@ with `--no-ff` as it finished, and the branch keeps every sub-lane commit.
 | A | RootDODDL, DOCallContext | `0x82A987D0..0x82AA1658` | `w16-oe-a` |
 | B1 | CallRegister | `0x82AB9508..0x82ABDC98` | `w16-oe-b1` |
 
-Source order and most method names come from the Wii B8 symbol table (`../rb3/config/SZBE69_B8`). No source for
+Source order and most method names are attested names. No source for
 any of these TUs exists in either sibling repo. Every TU builds `/Od /Oi- /EHs-c- /Ob1`; the two account jobs add
 `/GR-`, and so does CallRegister. In each case the flag was read from the TU's asm: no EH prefixes or funclets,
 and no RTTI locator before the vtable.
@@ -41,7 +41,7 @@ Each scaffold pin was an under-carve, as W16-NY §1.5 predicted. All nine retail
 | ChangeDupSetOperation | `82ABDE90..82ABDF78` | `82ABDC98..82ABDF78` | 736 | `.rdata` (vtable `0x82181724`, `"ChangeDupSet"`, file string) ends where FaultProcessingContext's begins |
 | DOCore | `82AC0470..82AC0C78` | `82AC0470..82AC1808`, plus `??__E` `82C420A0..82C420E0` and `??__F` `82C4AEF0..82C4AF18` | 5,084 (rows) | ends at HasStartedTermination; `0x82AC1B70` is SessionDiscoveryTable's ctor, and `0x82AC1808..0x82AC1B68` is called only from other TUs |
 | RootDODDL | `82A99368..82A997F4` | `82A99368..82A99C48` | 2,272 | starts at `_DOC_RootDO::Create`; ends where `DOClass::DOClass` stores vtable `0x8217EFE8`, which sits right before the `.\DOClass.cpp` string |
-| DOCallContext | `82AA0E48..82AA15E8` | `82AA06E0..82AA1650` | 3,952 | ctor follows DDLDeclarations' static initialisers (Wii link order); ends at StationURL's 8-byte EH prefix |
+| DOCallContext | `82AA0E48..82AA15E8` | `82AA06E0..82AA1650` | 3,952 | ctor follows DDLDeclarations' static initialisers; ends at StationURL's 8-byte EH prefix |
 | CallRegister | `82ABAC98..82ABB42C` | `82ABAB58..82ABD488` | 10,544 | ctor stores vtable `0x82181630`, the first entry after StationManager's path string; ends at `_M_create_node` |
 
 Code inside the regions that belongs to none of these nine TUs was left unpinned:
@@ -129,7 +129,7 @@ Headers:
   - Without the two inlines, Login and AcquireTicket stay at about 96.9 and 98.3.
 - **`src/network/ObjDup/DOHandle.h`** (D): a user-declared inline `operator=`. Retail's assignments go through an inline with `this` stored in a temp, both in the MatchOperation ctor and in `DORef(DOHandle)` at `0x82A80540`. B1 needed the same operator for `QueueCancelCallToStation`, and A's local copy agreed with it. No other row moved.
 - **`src/network/ObjDup/CallRegister.h`** (B1):
-  - `static CallRegister *GetInstance()` → `static CallRegister &GetInstanceRef()`. `0x82ABAC68` is Wii-attested as `CallRegister::GetInstanceRef`.
+  - `static CallRegister *GetInstance()` → `static CallRegister &GetInstanceRef()`. `0x82ABAC68` is `CallRegister::GetInstanceRef`.
   - Declares `SignalRelevantFetchContextes` (`0x82ABB700`) and `MigrationInProgress` (`0x82ABBA80`).
 - **`src/network/ObjDup/DOCallContext.h`** (B1): an `_Outcome` enum, for that signature.
 - **`src/network/ObjDup/RootDODDL.h`** (A): declares `RemoveFromCachedDuplicationSet_OnDuplicas`.
@@ -141,11 +141,11 @@ function:
   - Two `OperationErrorNotifier::GetInstance()->NotifyError(h, code)` calls are retail's `CallRegister::GetInstanceRef().SignalRelevantFetchContextes(h, code)`.
   - `MigrationInProgress` uses `GetInstanceRef()`.
   - `ValidOperation`'s `DOSelections::GetCurrentInstance()->IsAvailable()` is `DOCore::...->HasStartedTermination()` (`0x82AC1790`).
-  - `ForgetDuplicaOn` is `_DO_RootDO::RemoveFromCachedDuplicationSet_OnDuplicas`, which is the Wii `ExecChangeDupSet`'s callee.
+  - `ForgetDuplicaOn` is `_DO_RootDO::RemoveFromCachedDuplicationSet_OnDuplicas`, which `ExecChangeDupSet` calls.
 - **ObjDupProtocol.cpp:**
   - Its local `Session` class is DOCore: `IsTerminating` → `IsTerminated` (`0x82AC1720`) and `IsJoining` → `HasStartedTermination`.
   - Its local `CallContextRegister` is CallRegister, since its ctor calls `0x82ABAB58`; `CancelAll` → `CancelPendingCalls`.
-  - `OutcomeToString`, `CallContext::SetOutcome` and `SetResponseMessage` are `DOCallContext::GetOutcomeString`, `SignalOutcome` and `SignalResponse`, all Wii-attested.
+  - `OutcomeToString`, `CallContext::SetOutcome` and `SetResponseMessage` are `DOCallContext::GetOutcomeString`, `SignalOutcome` and `SignalResponse`.
 - **Map:** 3 existing entries respelled to match (`0x82A97A60`, `0x82A97B70`, `0x82A97E00`). Their scores are unchanged.
 - **Measured effect:** all of these together moved one row, `ProcessRMCResponse` +120 B. Before the respellings, naming the new TUs had dropped six ObjDupProtocol/DuplicatedObject rows; the lanes measured that and restored them.
 
@@ -171,7 +171,7 @@ declarations.
 
 ## 7. Names
 
-The method names are Wii-attested wherever the Wii B8 table has the function. This lane chose the following names,
+The method names are attested names wherever one exists. This lane chose the following names,
 and nothing else attests them:
 - Account jobs: `JobCreateAccount::CompleteJob(qResult)` and the `SandboxConnectionInfo` copy ctor.
 - DOCore: `IsTerminating`.
