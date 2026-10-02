@@ -22,10 +22,11 @@ namespace Quazal {
         static unsigned int s_uiCoreCount;
         // lol, gotta love unsafe static casts
         static Core *GetInstance() {
+            unsigned int uiContext = PseudoSingleton::GetCurrentContext();
             InstanceControl *inst =
-                (InstanceControl *)InstanceControl::s_oInstanceTable
-                    .GetInstanceFromVector(3, PseudoSingleton::GetCurrentContext());
-            return inst ? (Core *)inst->m_pDelegatorInstance : nullptr;
+                (InstanceControl *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(3, uiContext);
+            Core *pCore = inst ? (Core *)inst->m_pDelegatorInstance : nullptr;
+            return pCore;
         }
 
         Scheduler *GetScheduler() { return m_pScheduler; }

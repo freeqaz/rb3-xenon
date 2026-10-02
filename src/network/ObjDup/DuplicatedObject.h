@@ -9,6 +9,22 @@
 #include "Selection.h"
 
 namespace Quazal {
+    class DataSet;
+    class Time;
+    class Message;
+    class DOClass;
+    class Station;
+    class WKHandle;
+    class DOID;
+    class OperationManager;
+    class RemoveFromStoreOperation;
+    class AddToStoreOperation;
+    class ChangeMasterStationOperation;
+    class ChangeDupSetOperation;
+    template <class T>
+    class qList;
+    template <class T>
+    class LogicalClockTmpl;
 
     class DuplicatedObject : public StateMachine {
     public:
@@ -32,18 +48,87 @@ namespace Quazal {
         virtual bool IsABootstrapDO() const { return false; }
         virtual void UpdateCellStats(int, int, int) {}
 
-        unsigned int GetMasterID() const;
+        // Retail source order (0x82A6FC78..0x82A76B58).
+        bool IsAKindOf(unsigned int) const;
+        bool UpdateImpl(DataSet *, const Time &);
+        bool RefreshImpl(DataSet *, const Time &);
+        bool SpecificExtractADataset(Message *, unsigned char);
+        bool SpecificRefresh(DataSet *, const Time &);
+        bool SpecificUpdate(DataSet *, Time);
+        bool CallApproveFaultRecovery();
+        bool CallApproveEmigration(unsigned int);
+        static DOClass *GetDOClass(unsigned int);
+        Message *CreateStubMessage(unsigned short *);
+        bool SendStubMessage(bool, Message *);
+        bool RemoveFromStore(DOHandle, bool, bool);
+        bool AddToStoreAsDuplica(DOHandle, Message *);
+        bool AddToStoreAsMaster();
+        bool UndeleteMainRef();
+        bool ChangeMasterStation(
+            DOHandle, DOHandle, const MasterStationRef &, const qList<DOHandle> *, unsigned int
+        );
+        void UpdateDatasets(Message *, DOHandle, unsigned char);
+        DOOperation *GetCurrentOperation();
+        OperationManager *GetOperationManager();
+        bool ExecuteOperation(DOOperation &);
+        bool ExecRemoveFromStore(const RemoveFromStoreOperation &);
+        bool ExecAddToStore(const AddToStoreOperation &);
+        bool ExecChangeMasterStation(const ChangeMasterStationOperation &);
+        bool ExecChangeDupSet(const ChangeDupSetOperation &);
+        bool FaultRecoveryImpl(DOOperation *);
+        bool PerformFaultRecovery(DOHandle, LogicalClockTmpl<unsigned char>);
+        bool SendToAllDuplicas(Message *, unsigned int);
+        bool SendToSomeDuplicas(Selection *, Message *, unsigned int);
+        bool IsGlobal() const;
+        bool MigrationInProgress() const;
+        bool AttemptEmigration(DOHandle);
+        bool PrepareToLeave();
+        bool SelectNewLocation(unsigned int);
+        bool IsADuplica() const;
         bool IsADuplicationMaster() const;
-        void SetStationSpecialRelevance();
+        bool IsAWellKnownDO() const;
+        unsigned int GetMasterID() const;
+        bool CompleteDecreaseRefCount();
         void SetFlag(unsigned short);
         void ClearFlag(unsigned short);
+        bool DeleteMainRef();
+        bool DeleteDuplicaMainRef();
+        bool ConnectOrphanDuplica();
+        bool Publish(unsigned int);
+        void FillDuplicaStationsList(qList<DOHandle> *);
+        bool CreateWellKnown(WKHandle &);
+        bool Create(unsigned int, unsigned int);
+        bool Create(unsigned int, DOID);
+        bool CreateMasterImpl(DOHandle, unsigned int, DOID);
+        bool CreateDuplica(DOHandle, const MasterStationRef &);
+        void SetStationSpecialRelevance();
         void ReleaseReferenceToMaster();
         void AcquireReferenceToMaster();
+        bool IsDuplicatedOn(DOHandle);
+        bool IsInCachedDuplicationSet(DOHandle) const;
+        void AddToCachedDuplicationSet(const Station *);
+        bool RemoveFromCachedDuplicationSet(DOHandle);
         bool IsInDuplicationSet(DOHandle) const;
+        void AddToDuplicationSet(DuplicatedObject *);
+        bool RemoveFromDuplicationSet(DOHandle);
+        void RemoveAllDuplicasOnLeavingStation(DOHandle);
 
         void SetInitialState(const QEvent &);
         StateFuncFactory ValidState(const QEvent &);
         StateFuncFactory InvalidState(const QEvent &);
+        StateFuncFactory InitialState(const QEvent &);
+        StateFuncFactory DuplicationMasterState(const QEvent &);
+        StateFuncFactory UnpublishedMasterState(const QEvent &);
+        StateFuncFactory UnidentifiedMasterState(const QEvent &);
+        StateFuncFactory InStoreMasterState(const QEvent &);
+        StateFuncFactory DeletedMasterState(const QEvent &);
+        StateFuncFactory DuplicaState(const QEvent &);
+        StateFuncFactory InStoreDuplicaState(const QEvent &);
+        StateFuncFactory OrphanDuplicaState(const QEvent &);
+        StateFuncFactory ConnectedDuplicaState(const QEvent &);
+        StateFuncFactory DeletedDuplicaState(const QEvent &);
+
+        bool FlagIsSet(unsigned short f) const { return (m_uiFlags & f) == f; }
 
         void AcquireMainReference() {
             volatile ScopedCS cs(s_csRefCount);

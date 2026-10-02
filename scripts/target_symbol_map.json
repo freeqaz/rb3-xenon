@@ -34963,5 +34963,13 @@
  "0x82a6fee0": "??1DuplicatedObject@Quazal@@UAA@XZ",
  "0x82a6ff40": "?SetStationSpecialRelevance@DuplicatedObject@Quazal@@QAAXXZ",
  "0x82a73b90": "?SetFlag@DuplicatedObject@Quazal@@QAAXG@Z",
- "0x82a73bb8": "?ClearFlag@DuplicatedObject@Quazal@@QAAXG@Z"
+ "0x82a73bb8": "?ClearFlag@DuplicatedObject@Quazal@@QAAXG@Z",
+ "0x82a6ff80": "?IsAKindOf@DuplicatedObject@Quazal@@QBA_NI@Z",
+ "0x82a70050": "?UpdateImpl@DuplicatedObject@Quazal@@QAA_NPAVDataSet@2@ABVTime@2@@Z",
+ "0x82a70250": "?RefreshImpl@DuplicatedObject@Quazal@@QAA_NPAVDataSet@2@ABVTime@2@@Z",
+ "0x82a703e8": "?SpecificExtractADataset@DuplicatedObject@Quazal@@QAA_NPAVMessage@2@E@Z",
+ "0x82a70400": "?SpecificRefresh@DuplicatedObject@Quazal@@QAA_NPAVDataSet@2@ABVTime@2@@Z",
+ "0x82a70460": "?SpecificUpdate@DuplicatedObject@Quazal@@QAA_NPAVDataSet@2@VTime@2@@Z",
+ "0x82a704d0": "?CallApproveFaultRecovery@DuplicatedObject@Quazal@@QAA_NXZ",
+ "0x82a70528": "?CallApproveEmigration@DuplicatedObject@Quazal@@QAA_NI@Z"
 }

@@ -4,6 +4,9 @@
 #include "ObjDup/DOOperation.h"
 #include "Platform/CriticalSection.h"
 #include "Platform/ScopedCS.h"
+#include "Platform/SystemError.h"
+#include "ObjDup/DOClass.h"
+#include "Platform/Time.h"
 
 namespace Quazal {
 
@@ -29,6 +32,71 @@ namespace Quazal {
         m_refMasterStation.SetSoft();
         m_setDuplicationSet.SetFlags(1);
     }
+
+    bool DuplicatedObject::IsAKindOf(unsigned int id) const {
+        if (m_dohMyself.IsA(id)) {
+            return true;
+        }
+        return GetDOClass(m_dohMyself.GetDOClassID())->IsAKindOf(id);
+    }
+
+    bool DuplicatedObject::UpdateImpl(DataSet *pDataSet, const Time &t) {
+        ScopedCS cs(Scheduler::GetInstance()->unk38);
+        if (!IsADuplicationMaster()) {
+            SystemError::SignalError(0, 0, 0xE0030000, 0);
+            return false;
+        }
+        if (!GetDOClass(m_dohMyself.GetDOClassID())->SpecificUpdate(this, pDataSet, t)) {
+            SystemError::SignalError(0, 0, 0xE0000016, 0);
+            return false;
+        }
+        return true;
+    }
+
+    bool DuplicatedObject::RefreshImpl(DataSet *pDataSet, const Time &t) {
+        ScopedCS cs(Scheduler::GetInstance()->unk38);
+        if (IsADuplicationMaster()) {
+            SystemError::SignalError(0, 0, 0xE0030001, 0);
+            return false;
+        }
+        return GetDOClass(m_dohMyself.GetDOClassID())->SpecificRefresh(this, pDataSet, t);
+    }
+
+    bool DuplicatedObject::SpecificExtractADataset(Message *, unsigned char) { return false; }
+
+    bool DuplicatedObject::SpecificRefresh(DataSet *pDataSet, const Time &) {
+        if (!pDataSet) {
+            return true;
+        } else {
+            SystemError::SignalError(0, 0, 0xE0000016, 0);
+            return false;
+        }
+    }
+
+    bool DuplicatedObject::SpecificUpdate(DataSet *pDataSet, Time) {
+        if (!pDataSet) {
+            return true;
+        } else {
+            SystemError::SignalError(0, 0, 0xE0000016, 0);
+            return false;
+        }
+    }
+
+    bool DuplicatedObject::CallApproveFaultRecovery() {
+        if (IsAWellKnownDO()) {
+            return true;
+        }
+        return ApproveFaultRecovery();
+    }
+
+    bool DuplicatedObject::CallApproveEmigration(unsigned int ui) {
+        if (ui == 0 && IsAWellKnownDO()) {
+            return true;
+        }
+        return ApproveEmigration(ui);
+    }
+
+    DOClass *DuplicatedObject::GetDOClass(unsigned int id) { return DOClass::FindDOClass(id); }
 
     void DuplicatedObject::OperationBegin(DOOperation *) {}
     void DuplicatedObject::OperationEnd(DOOperation *) {}
