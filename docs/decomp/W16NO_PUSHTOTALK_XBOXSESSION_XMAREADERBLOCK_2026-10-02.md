@@ -161,7 +161,7 @@ Run on the branch tip after a full build at a split fixed point:
 - `python3 tools/icf_pair_adjudicate.py --chase --size --pairs` over all 3 W16-NO memberships: **3 PROVEN**;
   `--chasetest`: "selftest PASSED -- the instrument can both pass and fail".
 - `python3 scripts/verify_objs_patched.py --verify-manifest`: OK (1,262 decomp, 3,093 target objects).
-- `tools/native_build_gate.sh` (run last, on the final code): @@NATIVE@@
+- `tools/native_build_gate.sh` (run last, on the final code): `NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0`. Only this doc line follows it.
 
 ## 8. Traps met
 
