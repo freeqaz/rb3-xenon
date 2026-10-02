@@ -380,8 +380,10 @@ namespace Quazal {
             }
             break;
         case 6:
-            IsADuplica();
-            IsAPeer();
+            if (IsADuplica()) {
+            }
+            if (IsAPeer()) {
+            }
             break;
         case 9: {
             if (FlagIsSet(0x10) && GetState() != 4 && GetState() != 5) {
