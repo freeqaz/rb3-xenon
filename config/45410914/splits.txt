@@ -10351,7 +10351,8 @@ SongParser.cpp:
 	.pdata      start:0x8223EB40 end:0x8223EB48
 	.pdata      start:0x8223EB48 end:0x8223EB50
 	.pdata      start:0x8223EB50 end:0x8223EB58
-	.pdata      start:0x8223EB58 end:0x8223EB90
+	.pdata      start:0x8223EB58 end:0x8223EB60
+	.pdata      start:0x8223EB70 end:0x8223EB90
 	.pdata      start:0x8223EBA0 end:0x8223EBD0
 	.pdata      start:0x8223EBD0 end:0x8223EBE0
 	.pdata      start:0x8223EBE0 end:0x8223EBE8
