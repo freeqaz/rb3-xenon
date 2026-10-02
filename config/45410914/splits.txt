@@ -1904,11 +1904,13 @@ Instance.cpp:
 	.pdata      start:0x821F6D50 end:0x821F6D58
 	.pdata      start:0x822123C8 end:0x822123D8
 	.pdata      start:0x82215970 end:0x82215988
+	.pdata      start:0x82215988 end:0x82215990
 	.pdata      start:0x82215990 end:0x82215C00
 	.text       start:0x822C6A40 end:0x822C6A90
 	.text       start:0x824AA660 end:0x824AA6D8
 	.text       start:0x824EA084 end:0x824EA088
 	.text       start:0x824EA094 end:0x824EA220
+	.text       start:0x824EA220 end:0x824EA298
 	.text       start:0x824EA298 end:0x824ED404
 
 DepthBuffer3D.cpp:
@@ -3605,18 +3607,12 @@ CharCuff.cpp:
 
 SongLayout.cpp:
 	.pdata      start:0x821F7838 end:0x821F7840
-	.pdata      start:0x821F8B30 end:0x821F8B38
-	.pdata      start:0x821F8B38 end:0x821F8B40
 	.pdata      start:0x822000F0 end:0x822000F8
 	.pdata      start:0x822000F8 end:0x82200100
-	.pdata      start:0x822349D8 end:0x822349E0
 	.text       start:0x822C76E4 end:0x822C76F0
 	.text       start:0x822D16F8 end:0x822D1768
-	.text       start:0x822E5040 end:0x822E507C
-	.text       start:0x822E507C end:0x822E50A8
 	.text       start:0x8235CAE0 end:0x8235CB54
 	.text       start:0x8235CB54 end:0x8235CB7C
-	.text       start:0x826CB590 end:0x826CB610
 
 Mesh.cpp:
 	.pdata      start:0x821F8470 end:0x821F8480
@@ -4111,12 +4107,6 @@ PropAnim.cpp:
 	.text       start:0x8242C770 end:0x8242C7CC
 	.text       start:0x8242C7D0 end:0x8242EC18
 
-HamNavList.cpp:
-	.pdata      start:0x82215988 end:0x82215990
-	.pdata      start:0x82236EE0 end:0x82236EE8
-	.text       start:0x824EA220 end:0x824EA298
-	.text       start:0x826F7CC8 end:0x826F7E50
-
 SkeletonClip.cpp:
 	.text       start:0x827041A0 end:0x827041A8
 
@@ -4338,6 +4328,7 @@ TypeProps.cpp:
 
 CharBlendBone.cpp:
 	.pdata      start:0x82205DF0 end:0x82205DF8
+	.pdata      start:0x82205DF8 end:0x82205E10
 	.pdata      start:0x82205E10 end:0x82205E18
 	.pdata      start:0x82205E18 end:0x82205E28
 	.pdata      start:0x82205E28 end:0x82205EB0
@@ -4351,6 +4342,7 @@ CharBlendBone.cpp:
 	.text       start:0x823B40DC end:0x823B40E0
 	.text       start:0x823B40F0 end:0x823B40F8
 	.text       start:0x823C3458 end:0x823C35CC
+	.text       start:0x823C35D8 end:0x823C3728
 	.text       start:0x823C3728 end:0x823C3828
 	.text       start:0x823C3828 end:0x823C38E8
 	.text       start:0x823C38E8 end:0x823C40F0
@@ -4560,9 +4552,7 @@ CharWeightSetter.cpp:
 
 HamIKEffector.cpp:
 	.pdata      start:0x82205DD8 end:0x82205DE0
-	.pdata      start:0x82205DF8 end:0x82205E10
 	.text       start:0x823C3300 end:0x823C3354
-	.text       start:0x823C35D8 end:0x823C3728
 
 CharBonesSamples.cpp:
 	.pdata      start:0x821F86B0 end:0x821F86B8
@@ -8105,11 +8095,13 @@ band3/game/TrainerPanel.cpp:
 	.pdata      start:0x822347E0 end:0x822349C8
 	.pdata      start:0x822349C8 end:0x822349D0
 	.pdata      start:0x822349D0 end:0x822349D8
+	.pdata      start:0x822349D8 end:0x822349E0
 	.pdata      start:0x822349E8 end:0x82234AF0
 	.text       start:0x826C9780 end:0x826C97AC
 	.text       start:0x826C97B0 end:0x826CB4A0
 	.text       start:0x826CB4A0 end:0x826CB4E4
 	.text       start:0x826CB4E4 end:0x826CB590
+	.text       start:0x826CB590 end:0x826CB610
 	.text       start:0x826CB654 end:0x826CCA88
 
 band3/game/DirectInstrument.cpp:
@@ -8123,6 +8115,7 @@ band3/game/Singer.cpp:
 	.pdata      start:0x82236E40 end:0x82236E90
 	.pdata      start:0x82236E90 end:0x82236E98
 	.pdata      start:0x82236E98 end:0x82236EE0
+	.pdata      start:0x82236EE0 end:0x82236EE8
 	.pdata      start:0x82236EE8 end:0x82236EF8
 	.pdata      start:0x82236EF8 end:0x82236F00
 	.pdata      start:0x82236F00 end:0x82236F08
@@ -8141,6 +8134,7 @@ band3/game/Singer.cpp:
 	.text       start:0x826F6948 end:0x826F7948
 	.text       start:0x826F7948 end:0x826F79A8
 	.text       start:0x826F79A8 end:0x826F7CC8
+	.text       start:0x826F7CC8 end:0x826F7E50
 	.text       start:0x826F7E50 end:0x826F7F00
 	.text       start:0x826F7F00 end:0x826F7F48
 	.text       start:0x826F7F48 end:0x826F7F70
@@ -10808,6 +10802,8 @@ GemTrackDir.cpp:
 	.pdata      start:0x821F8B00 end:0x821F8B10
 	.pdata      start:0x821F8B10 end:0x821F8B20
 	.pdata      start:0x821F8B20 end:0x821F8B30
+	.pdata      start:0x821F8B30 end:0x821F8B38
+	.pdata      start:0x821F8B38 end:0x821F8B40
 	.pdata      start:0x821F8B40 end:0x821F8C10
 	.pdata      start:0x821F8C10 end:0x821F8CC0
 	.pdata      start:0x821F8CC0 end:0x821F8CC8
@@ -10849,6 +10845,8 @@ GemTrackDir.cpp:
 	.text       start:0x822E4AD8 end:0x822E4F70
 	.text       start:0x822E4F70 end:0x822E4FD0
 	.text       start:0x822E4FD0 end:0x822E5038
+	.text       start:0x822E5040 end:0x822E507C
+	.text       start:0x822E507C end:0x822E50A8
 	.text       start:0x822E50A8 end:0x822E6218
 	.text       start:0x822E6218 end:0x822E74D8
 	.text       start:0x822E74D8 end:0x822E752C

@@ -190,6 +190,11 @@ static unsigned short sLoadAltRev = 0;
 static __declspec(align(4)) unsigned short sLoadRev = 0;
 #define sPersistRev sLoadRev
 
+void WorldInstance::Load(BinStream &bs) {
+    PreLoad(bs);
+    PostLoad(bs);
+}
+
 void WorldInstance::PreLoad(BinStream &bs) {
     if (IsProxy())
         DeleteObjects();

@@ -15,39 +15,8 @@ class SingerResultsData {
 public:
     SingerResultsData() { Reset(); }
     ~SingerResultsData() {}
-    SingerResultsData(const SingerResultsData& o) {
-        int w0 = *reinterpret_cast<const int*>(&o.targetPitchHitScore);
-        int w4 = *reinterpret_cast<const int*>(&o.micPitchHitScore);
-        *reinterpret_cast<int*>(&targetPitchHitScore) = w0;
-        *reinterpret_cast<int*>(&micPitchHitScore) = w4;
-        phraseCount = o.phraseCount;
-        int wc = *reinterpret_cast<const int*>(&o.centsDeviation);
-        int w10 = *reinterpret_cast<const int*>(&o.targetPitchAccuracy);
-        *reinterpret_cast<int*>(&centsDeviation) = wc;
-        *reinterpret_cast<int*>(&targetPitchAccuracy) = w10;
-        int w14 = *reinterpret_cast<const int*>(&o.centsVariance);
-        int w18 = *reinterpret_cast<const int*>(&o.phraseScore);
-        *reinterpret_cast<int*>(&centsVariance) = w14;
-        *reinterpret_cast<int*>(&phraseScore) = w18;
-        scoreFrameCount = o.scoreFrameCount;
-    }
-    SingerResultsData& operator=(const SingerResultsData& o) {
-        int w0 = *reinterpret_cast<const int*>(&o.targetPitchHitScore);
-        int w4 = *reinterpret_cast<const int*>(&o.micPitchHitScore);
-        *reinterpret_cast<int*>(&targetPitchHitScore) = w0;
-        *reinterpret_cast<int*>(&micPitchHitScore) = w4;
-        phraseCount = o.phraseCount;
-        int wc = *reinterpret_cast<const int*>(&o.centsDeviation);
-        int w10 = *reinterpret_cast<const int*>(&o.targetPitchAccuracy);
-        *reinterpret_cast<int*>(&centsDeviation) = wc;
-        *reinterpret_cast<int*>(&targetPitchAccuracy) = w10;
-        int w14 = *reinterpret_cast<const int*>(&o.centsVariance);
-        int w18 = *reinterpret_cast<const int*>(&o.phraseScore);
-        *reinterpret_cast<int*>(&centsVariance) = w14;
-        *reinterpret_cast<int*>(&phraseScore) = w18;
-        scoreFrameCount = o.scoreFrameCount;
-        return *this;
-    }
+    // copy and assignment are compiler-generated: retail copies the element
+    // with memcpy(.., 0x20) in vector<SingerResultsData>::_M_fill_insert_aux
     void Reset() {
         targetPitchHitScore = 0;
         micPitchHitScore = 0;
