@@ -458,7 +458,7 @@ namespace Quazal {
 
     class JobConnectStation {
     public:
-        void Queue(Job *);
+        void QueueJob(Job *); // 0x82AB6E78, named by JobConnectStation.cpp
     };
 
     // .\StationManager.cpp (0x82AB7EF0..0x82ABAB58).
@@ -1102,7 +1102,7 @@ namespace Quazal {
                         StationManager::GetInstance()->GetLatestConnectionJob(hStation);
                     pMsg->Rewind();
                     pJob->Postpone();
-                    pStation->Queue(pJob);
+                    pStation->QueueJob(pJob);
                     bResult = false;
                 }
             }
