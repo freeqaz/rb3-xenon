@@ -29,14 +29,17 @@ namespace Quazal {
 
     class StreamID {
     public:
-        StreamID(unsigned char id) : m_byID(id) {}
+        StreamID(unsigned char id) { m_byID = id; }
+        ~StreamID() {}
+        operator unsigned char() const { return m_byID; }
+
         unsigned char m_byID;
     };
 
     class StationURL : public RootObject {
     public:
         StationURL();
-        ~StationURL();
+        virtual ~StationURL();
         StationURL &operator=(const StationURL &);
         bool IsValid() const;
         unsigned char GetStreamID() const;
@@ -47,7 +50,7 @@ namespace Quazal {
         void SetPortNumber(unsigned short);
         void SetStreamID(unsigned char);
 
-        char m_data[0x58];
+        char m_data[0x54];
     };
 
     class EndPointUniqueID {
@@ -94,9 +97,12 @@ namespace Quazal {
         void SetPID(unsigned int);
         void SetCID(unsigned int);
         bool IsReleased() { return m_pReleaser != NULL; }
+        InetAddress *GetAddress() { return m_oURL.GetInetAddress(); }
+        unsigned char GetStreamID() { return m_oURL.GetStreamID(); }
 
+        unsigned short m_usRefCount; // 0x4
         StationURL m_oURL; // 0x8
-        char m_pad[0x7c - 0x8 - sizeof(StationURL)];
+        char m_pad60[0x7c - 0x8 - sizeof(StationURL)];
         void *m_pReleaser; // 0x7c
         unsigned short m_usPort; // 0x80
     };
@@ -104,21 +110,25 @@ namespace Quazal {
     class PRUDPEndPoint : public EndPoint {
     public:
         PRUDPEndPoint(PRUDPStream *, const StationURL *);
+        char m_pad82[0x138 - 0x82];
     };
 
     class EndPointTable : public qMap<EndPointUniqueID, PRUDPEndPoint *> {
     public:
         PRUDPEndPoint *Find(const InetAddress *addr, StreamID id) {
-            EndPointUniqueID key(*addr, id.m_byID);
+            EndPointUniqueID key(*addr, id);
             iterator it = find(key);
             if (it == end())
                 return NULL;
             else
                 return it->second;
         }
-        void Add(PRUDPEndPoint *ep, StreamID id);
+        void Add(PRUDPEndPoint *ep, StreamID id) {
+            EndPointUniqueID key(*ep->GetAddress(), id);
+            insert(value_type(key, ep));
+        }
         void Remove(const InetAddress *addr, StreamID id) {
-            EndPointUniqueID key(*addr, id.m_byID);
+            EndPointUniqueID key(*addr, id);
             iterator it = find(key);
             if (it == end())
                 return;

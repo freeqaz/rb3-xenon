@@ -184,7 +184,7 @@ namespace Quazal {
 
     PRUDPEndPoint *PRUDPStream::CreateEndPoint(const StationURL *url, unsigned short port, bool b) {
         PRUDPEndPoint *ep = NULL;
-        ScopedCS cs(Scheduler::GetSystemLock());
+        ScopedCS cs(*Scheduler::GetSystemLock());
         InetAddress addr;
         if (url->IsValid()) {
             ep = m_oEndPoints.Find(url->GetInetAddress(), StreamID(url->GetStreamID()));
@@ -199,7 +199,7 @@ namespace Quazal {
     }
 
     EndPoint *PRUDPStream::OpenEndPoint(const StationURL *url) {
-        ScopedCS cs(Scheduler::GetSystemLock());
+        ScopedCS cs(*Scheduler::GetSystemLock());
         PRUDPEndPoint *ep = CreateEndPoint(url, GetListeningPort(), true);
         if (ep)
             ep->Open();
@@ -216,22 +216,22 @@ namespace Quazal {
     }
 
     bool PRUDPStream::OpenEndPoint(EndPoint *ep) {
-        ScopedCS cs(Scheduler::GetSystemLock());
+        ScopedCS cs(*Scheduler::GetSystemLock());
         ep->Open();
         return true;
     }
 
     void PRUDPStream::CloseEndPoint(EndPoint *ep) {
-        ScopedCS cs(Scheduler::GetSystemLock());
+        ScopedCS cs(*Scheduler::GetSystemLock());
         ep->Close();
         ReleaseEndPoint((PRUDPEndPoint *)ep);
     }
 
     void PRUDPStream::ReleaseEndPoint(PRUDPEndPoint *ep) {
-        ScopedCS cs(Scheduler::GetSystemLock());
+        ScopedCS cs(*Scheduler::GetSystemLock());
         if (!ep->IsReleased() && !ep->IsDisconnected()) {
             ep->Trace(0x2000000);
-            m_oEndPoints.Remove(ep->m_oURL.GetInetAddress(), StreamID(ep->m_oURL.GetStreamID()));
+            m_oEndPoints.Remove(ep->GetAddress(), StreamID(ep->GetStreamID()));
             ep->SetPID(0);
             ep->SetCID(0);
             m_oWaterMark.Decrement(1);
@@ -240,12 +240,12 @@ namespace Quazal {
     }
 
     void PRUDPStream::AddPIDEndPointAssociation(unsigned int pid, EndPoint *ep) {
-        ScopedCS cs(Scheduler::GetSystemLock());
+        ScopedCS cs(*Scheduler::GetSystemLock());
         m_mapPIDs.insert(std::make_pair(pid, ep));
     }
 
     bool PRUDPStream::RemovePIDEndPointAssociation(unsigned int pid, EndPoint *ep) {
-        ScopedCS cs(Scheduler::GetSystemLock());
+        ScopedCS cs(*Scheduler::GetSystemLock());
         EndPointIDMap::iterator it = m_mapPIDs.find(pid);
         while (it != m_mapPIDs.end() && it->first == pid) {
             if (it->second == ep) {
@@ -258,7 +258,7 @@ namespace Quazal {
     }
 
     EndPoint *PRUDPStream::FindEndPointByPID(unsigned int pid) {
-        ScopedCS cs(Scheduler::GetSystemLock());
+        ScopedCS cs(*Scheduler::GetSystemLock());
         EndPointIDMap::iterator it = m_mapPIDs.find(pid);
         if (it != m_mapPIDs.end())
             return it->second;
@@ -267,12 +267,12 @@ namespace Quazal {
     }
 
     void PRUDPStream::AddCIDEndPointAssociation(unsigned int cid, EndPoint *ep) {
-        ScopedCS cs(Scheduler::GetSystemLock());
+        ScopedCS cs(*Scheduler::GetSystemLock());
         m_mapCIDs.insert(std::make_pair(cid, ep));
     }
 
     bool PRUDPStream::RemoveCIDEndPointAssociation(unsigned int cid, EndPoint *ep) {
-        ScopedCS cs(Scheduler::GetSystemLock());
+        ScopedCS cs(*Scheduler::GetSystemLock());
         EndPointIDMap::iterator it = m_mapCIDs.find(cid);
         while (it != m_mapCIDs.end() && it->first == cid) {
             if (it->second == ep) {
@@ -285,7 +285,7 @@ namespace Quazal {
     }
 
     EndPoint *PRUDPStream::FindEndPointByCID(unsigned int cid) {
-        ScopedCS cs(Scheduler::GetSystemLock());
+        ScopedCS cs(*Scheduler::GetSystemLock());
         EndPointIDMap::iterator it = m_mapCIDs.find(cid);
         if (it != m_mapCIDs.end())
             return it->second;
@@ -398,7 +398,7 @@ namespace Quazal {
     }
 
     void PRUDPStream::DeleteReleasedEndPoints() {
-        ScopedCS cs(Scheduler::GetSystemLock());
+        ScopedCS cs(*Scheduler::GetSystemLock());
         while (!m_lstReleasedEndPoints.empty()) {
             delete m_lstReleasedEndPoints.front();
             m_lstReleasedEndPoints.pop_front();
@@ -411,7 +411,7 @@ namespace Quazal {
     }
 
     void PRUDPStream::Trace(unsigned int flags) {
-        ScopedCS cs(Scheduler::GetSystemLock());
+        ScopedCS cs(*Scheduler::GetSystemLock());
         m_oEndPoints.Trace(flags);
     }
 
