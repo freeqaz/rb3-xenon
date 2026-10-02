@@ -35584,5 +35584,6 @@
  "0x82b19cf8": "?_M_insert_overflow_aux@?$vector@U?$pair@GPAVQueuingSocket@Quazal@@@stlpmtx_std@@V?$MemAllocator@U?$pair@GPAVQueuingSocket@Quazal@@@stlpmtx_std@@@Quazal@@@stlpmtx_std@@IAAXPAU?$pair@GPAVQueuingSocket@Quazal@@@2@ABU32@ABU__false_type@2@I_N@Z",
  "0x82b1a010": "?_M_fill_insert_aux@?$vector@U?$pair@GPAVQueuingSocket@Quazal@@@stlpmtx_std@@V?$MemAllocator@U?$pair@GPAVQueuingSocket@Quazal@@@stlpmtx_std@@@Quazal@@@stlpmtx_std@@AAAXPAU?$pair@GPAVQueuingSocket@Quazal@@@2@IABU32@ABU__false_type@2@@Z",
  "0x82b1a310": "??$__uninitialized_fill_n@PAU?$pair@GPAVQueuingSocket@Quazal@@@stlpmtx_std@@IU12@@stlpmtx_std@@YAPAU?$pair@GPAVQueuingSocket@Quazal@@@0@PAU10@IABU10@ABU__false_type@0@@Z",
- "0x82b1a470": "??$_Destroy_Moved_Range@V?$reverse_iterator@PAU?$pair@GPAVQueuingSocket@Quazal@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAU?$pair@GPAVQueuingSocket@Quazal@@@stlpmtx_std@@@0@0@Z"
+ "0x82b1a470": "??$_Destroy_Moved_Range@V?$reverse_iterator@PAU?$pair@GPAVQueuingSocket@Quazal@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAU?$pair@GPAVQueuingSocket@Quazal@@@stlpmtx_std@@@0@0@Z",
+ "0x82b18ed8": "??1?$qChain@PAVPacket@Quazal@@@Quazal@@QAA@XZ"
 }

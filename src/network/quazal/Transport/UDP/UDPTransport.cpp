@@ -418,7 +418,30 @@ namespace Quazal {
         };
 
         qChain() : mItFirst(0), mItLast(0), mItEnd(0), mNBLinks(0) {}
-        ~qChain();
+        ~qChain() { clear(); }
+        void clear() { erase(mItFirst, mItEnd); }
+        iterator erase(iterator first, iterator last) {
+            T end_link = last.mLink;
+            T cur = first.mLink;
+            while (cur != end_link) {
+                T next = *(T *)cur;
+                T prev = *(T *)((char *)cur + sizeof(T *));
+                if (prev)
+                    *(T *)prev = next;
+                if (next)
+                    *(T *)((char *)next + sizeof(T *)) = prev;
+                *(T *)cur = 0;
+                *(T *)((char *)cur + sizeof(T *)) = 0;
+                if (mItFirst.mLink == cur)
+                    mItFirst.mLink = next;
+                if (mItLast.mLink == cur)
+                    mItLast.mLink = prev;
+                mNBLinks--;
+                cur = next;
+            }
+            first.mLink = cur;
+            return first;
+        }
         iterator begin() { return mItFirst; }
         iterator end() { return mItEnd; }
 
