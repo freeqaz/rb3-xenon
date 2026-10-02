@@ -14557,12 +14557,12 @@ network/quazal/GlobalDiscovery/GlobalDiscoveryExtension.cpp:
 	.text       start:0x82B2C030 end:0x82B2C0E0
 
 network/quazal/Transport/Interface/JobConnectEndPoint.cpp:
-	.pdata      start:0x82258720 end:0x82258788
-	.text       start:0x82B2C748 end:0x82B2CF08
+	.pdata      start:0x82258718 end:0x82258A70
+	.text       start:0x82B2C698 end:0x82B2FC38
 
 network/quazal/Transport/Interface/TransportSignatureGenerator.cpp:
-	.pdata      start:0x82258A70 end:0x82258A90
-	.text       start:0x82B2FC40 end:0x82B2FEA4
+	.pdata      start:0x82258A70 end:0x82258B00
+	.text       start:0x82B2FC40 end:0x82B30278
 
 network/quazal/Transport/PRUDP/PRUDPEndPoint.cpp:
 	.pdata      start:0x82258C18 end:0x82258EB0
