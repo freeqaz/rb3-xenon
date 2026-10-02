@@ -248,7 +248,6 @@ RockCentral.cpp:
 	.text       start:0x8250A510 end:0x8250AF88
 	.text       start:0x8253B238 end:0x8253B2BC
 	.text       start:0x82594538 end:0x82594548
-	.text       start:0x82594768 end:0x82594778
 	.text       start:0x82595D10 end:0x82595D18
 	.text       start:0x826D0F70 end:0x826D0FE8
 	.text       start:0x82C3F598 end:0x82C3F5D0
@@ -435,14 +434,14 @@ VocalTrack.cpp:
 	.text       start:0x82B9F510 end:0x82BAA230
 
 MusicLibrary.cpp:
-	.pdata      start:0x8221A748 end:0x8221A840
+	.pdata      start:0x8221A750 end:0x8221A840
 	.pdata      start:0x8221A850 end:0x8221AE00
 	.pdata      start:0x8221AE00 end:0x8221AE08
 	.pdata      start:0x8221AE08 end:0x8221AE10
 	.pdata      start:0x8221AE10 end:0x8221B1E0
 	.pdata      start:0x822303D0 end:0x822303E0
 	.text       start:0x824F6548 end:0x824F6550
-	.text       start:0x8253A7A8 end:0x8253B238
+	.text       start:0x8253A81C end:0x8253B238
 	.text       start:0x8253B2BC end:0x82541C18
 	.text       start:0x82541C18 end:0x82541CC0
 	.text       start:0x82541CC0 end:0x82541CE8
@@ -762,6 +761,7 @@ VocalTrackDir.cpp:
 	.pdata      start:0x821F9BE8 end:0x821F9BF0
 	.pdata      start:0x821F9BF0 end:0x821F9C60
 	.pdata      start:0x821F9C60 end:0x821F9CA8
+	.pdata      start:0x821F9CB0 end:0x821F9CB8
 	.pdata      start:0x821F9CB8 end:0x821F9CC8
 	.pdata      start:0x821F9CC8 end:0x821F9F58
 	.pdata      start:0x821F9F58 end:0x821F9F60
@@ -793,6 +793,7 @@ VocalTrackDir.cpp:
 	.text       start:0x822F5120 end:0x822F55B0
 	.text       start:0x822F55B0 end:0x822F58BC
 	.text       start:0x822F58C0 end:0x822F58D8
+	.text       start:0x822F5920 end:0x822F59C4
 	.text       start:0x822F59C4 end:0x822F5B18
 	.text       start:0x822F5B18 end:0x822F8F80
 	.text       start:0x822F8F80 end:0x822F8FF0
@@ -5371,31 +5372,35 @@ Memcard_Xbox.cpp:
 	.pdata      start:0x822615D0 end:0x822615D8
 	.text       start:0x8239C3C8 end:0x8239C3D0
 	.text       start:0x8252A4A0 end:0x8252A598
+	.text       start:0x8252A5A4 end:0x8252A5B4
 	.text       start:0x8252A620 end:0x8252BE74
 	.text       start:0x827D9EE8 end:0x827D9F10
 	.text       start:0x82801F78 end:0x82801F80
 	.text       start:0x82C3FB78 end:0x82C3FBE0
 
 SongStatusMgr.cpp:
-	.pdata      start:0x82224978 end:0x82224C60
-	.text       start:0x825D0F24 end:0x825D43B8
+	.pdata      start:0x82224980 end:0x82224C60
+	.text       start:0x825D0F74 end:0x825D43B8
 
 band3/meta_band/MusicLibraryNetSetlists.cpp:
 	.pdata      start:0x822247E0 end:0x822247E8
 	.pdata      start:0x822247E8 end:0x822247F0
 	.pdata      start:0x822247F0 end:0x82224978
+	.pdata      start:0x82224978 end:0x82224980
 	.pdata      start:0x82243DF0 end:0x82243DF8
 	.text       start:0x825CF570 end:0x825CF600
 	.text       start:0x825CF600 end:0x825CF820
 	.text       start:0x825CF820 end:0x825CF890
 	.text       start:0x825CF898 end:0x825D0F24
+	.text       start:0x825D0F24 end:0x825D0F74
 	.text       start:0x827E1708 end:0x827E1768
 
 Award.cpp:
 	.pdata      start:0x82226440 end:0x82226448
-	.pdata      start:0x82226448 end:0x82226518
+	.pdata      start:0x82226448 end:0x82226510
 	.text       start:0x825E9D38 end:0x825E9D78
-	.text       start:0x825E9D78 end:0x825EA748
+	.text       start:0x825E9D78 end:0x825EA6F8
+	.text       start:0x825EA73C end:0x825EA748
 
 FixedSizeSaveable.cpp:
 	.pdata      start:0x82240098 end:0x822400A8
@@ -7034,9 +7039,11 @@ AsyncFileHolmes.cpp:
 
 BandUI.cpp:
 	.pdata      start:0x8221A1D0 end:0x8221A748
+	.pdata      start:0x8221A748 end:0x8221A750
 	.text       start:0x823E0EA0 end:0x823E0EA8
 	.text       start:0x823E1060 end:0x823E1110
 	.text       start:0x82535C90 end:0x8253A7A4
+	.text       start:0x8253A7A4 end:0x8253A81C
 
 BustAMoveData.cpp:
 	.pdata      start:0x821F19A8 end:0x821F19B0
@@ -7885,6 +7892,7 @@ Accomplishment.cpp:
 	.text       start:0x82594548 end:0x825945A8
 	.text       start:0x825945A8 end:0x825945B0
 	.text       start:0x825945B0 end:0x82594768
+	.text       start:0x82594768 end:0x82594778
 	.text       start:0x82594778 end:0x825948C0
 	.text       start:0x825948C0 end:0x8259498C
 	.text       start:0x82594990 end:0x82594A78
@@ -7894,8 +7902,10 @@ Accomplishment.cpp:
 	.text       start:0x82595D18 end:0x82595F18
 
 AccomplishmentCategory.cpp:
+	.pdata      start:0x82226510 end:0x82226518
 	.pdata      start:0x82226518 end:0x82226530
 	.pdata      start:0x82226530 end:0x82226540
+	.text       start:0x825EA6F8 end:0x825EA73C
 	.text       start:0x825EA748 end:0x825EA844
 	.text       start:0x825EA848 end:0x825EA8E8
 
@@ -8286,7 +8296,7 @@ band3/bandtrack/Gem.cpp:
 
 band3/bandtrack/GemRepTemplate.cpp:
 	.pdata      start:0x8225E4E8 end:0x8225E5F8
-	.text       start:0x82BAD718 end:0x82BAEBA4
+	.text       start:0x82BAD718 end:0x82BAEB98
 
 system/os/ProfilePicture.cpp:
 	.pdata      start:0x8225D078 end:0x8225D0D0
@@ -8334,6 +8344,7 @@ band3/bandtrack/Track.cpp:
 	.pdata      start:0x8225D798 end:0x8225D7A0
 	.pdata      start:0x8225D7A0 end:0x8225D7F0
 	.pdata      start:0x8225D7F0 end:0x8225D800
+	.pdata      start:0x8225D800 end:0x8225D808
 	.text       start:0x82B97758 end:0x82B97850
 	.text       start:0x82B97850 end:0x82B97898
 	.text       start:0x82B97898 end:0x82B978E4
@@ -8363,6 +8374,7 @@ band3/bandtrack/Track.cpp:
 	.text       start:0x82B98590 end:0x82B98630
 	.text       start:0x82B98630 end:0x82B98B40
 	.text       start:0x82B98B40 end:0x82B98BE4
+	.text       start:0x82B98BE4 end:0x82B98C34
 
 band3/game/Stats.cpp:
 	.pdata      start:0x8222D830 end:0x8222D850
@@ -8391,6 +8403,7 @@ band3/bandtrack/Lyric.cpp:
 	.pdata      start:0x8225E658 end:0x8225E688
 	.pdata      start:0x8225E688 end:0x8225E6A0
 	.pdata      start:0x8225E6A0 end:0x8225E6B0
+	.text       start:0x82BAEB98 end:0x82BAEBA4
 	.text       start:0x82BAEBA8 end:0x82BAF3F0
 	.text       start:0x82BAF3F0 end:0x82BAF4C0
 	.text       start:0x82BAF4C0 end:0x82BAF540
@@ -8530,7 +8543,7 @@ band3/meta_band/AccomplishmentProgress.cpp:
 	.pdata      start:0x822200D8 end:0x82220178
 	.pdata      start:0x82220178 end:0x82220180
 	.pdata      start:0x82220180 end:0x82220350
-	.pdata      start:0x82220350 end:0x82220408
+	.pdata      start:0x82220350 end:0x82220400
 	.text       start:0x82428448 end:0x82428450
 	.text       start:0x824F7770 end:0x824F77F8
 	.text       start:0x824F91E0 end:0x824F9230
@@ -8539,7 +8552,8 @@ band3/meta_band/AccomplishmentProgress.cpp:
 	.text       start:0x8258EF80 end:0x82590240
 	.text       start:0x82590240 end:0x82590284
 	.text       start:0x82590284 end:0x8259217C
-	.text       start:0x82592180 end:0x82592C90
+	.text       start:0x82592180 end:0x82592C2C
+	.text       start:0x82592C8C end:0x82592C90
 	.text       start:0x825CF890 end:0x825CF898
 
 band3/meta_band/AppMiniLeaderboardDisplay.cpp:
@@ -9559,7 +9573,7 @@ system/bandobj/BandTrack.cpp:
 
 band3/game/Game.cpp:
 	.pdata      start:0x821FFFC0 end:0x821FFFD0
-	.pdata      start:0x82200448 end:0x82200460
+	.pdata      start:0x82200448 end:0x82200458
 	.pdata      start:0x8222FA50 end:0x8222FAD8
 	.pdata      start:0x8222FAD8 end:0x8222FCC0
 	.pdata      start:0x8222FCC0 end:0x8222FCC8
@@ -9582,7 +9596,7 @@ band3/game/Game.cpp:
 	.pdata      start:0x822301A0 end:0x822303C8
 	.pdata      start:0x822303E0 end:0x82230430
 	.text       start:0x8235B9F8 end:0x8235BA78
-	.text       start:0x8235F770 end:0x8235F84C
+	.text       start:0x8235F770 end:0x8235F7FC
 	.text       start:0x82675958 end:0x82675DE8
 	.text       start:0x82675DE8 end:0x82676F1C
 	.text       start:0x82676F20 end:0x82676F88
@@ -9641,6 +9655,7 @@ OvershellSlotState.cpp:
 	.text       start:0x8265EFA8 end:0x82660548
 
 GemPlayer.cpp:
+	.pdata      start:0x82233D90 end:0x82233D98
 	.pdata      start:0x82233D98 end:0x82233DA0
 	.pdata      start:0x82233DA0 end:0x82233DB0
 	.pdata      start:0x82233DB0 end:0x82233DB8
@@ -9690,6 +9705,7 @@ GemPlayer.cpp:
 	.pdata      start:0x82234440 end:0x82234448
 	.pdata      start:0x82234448 end:0x82234690
 	.pdata      start:0x82234698 end:0x82234730
+	.text       start:0x826BBC38 end:0x826BBC7C
 	.text       start:0x826BBC7C end:0x826BBCEC
 	.text       start:0x826BBCEC end:0x826BBD58
 	.text       start:0x826BBD58 end:0x826BBF48
@@ -9745,12 +9761,17 @@ GemPlayer.cpp:
 
 TrackerManager.cpp:
 	.pdata      start:0x82231768 end:0x82231778
+	.pdata      start:0x82231778 end:0x82231780
 	.pdata      start:0x82231780 end:0x82231798
+	.pdata      start:0x82231798 end:0x822317A0
 	.pdata      start:0x822317A0 end:0x822317C8
 	.pdata      start:0x822317C8 end:0x822317D8
+	.pdata      start:0x822317D8 end:0x822317E0
 	.pdata      start:0x822317E0 end:0x82231810
+	.pdata      start:0x82231810 end:0x82231818
 	.pdata      start:0x82231818 end:0x82231830
 	.pdata      start:0x82231830 end:0x82231840
+	.pdata      start:0x82231840 end:0x82231848
 	.pdata      start:0x82231848 end:0x82231850
 	.pdata      start:0x82231850 end:0x82231858
 	.pdata      start:0x82231858 end:0x82231860
@@ -9765,17 +9786,22 @@ TrackerManager.cpp:
 	.pdata      start:0x82231970 end:0x822319E8
 	.text       start:0x82692818 end:0x82692830
 	.text       start:0x82692830 end:0x826928B0
+	.text       start:0x826928B0 end:0x82692908
 	.text       start:0x82692908 end:0x82692978
 	.text       start:0x82692978 end:0x82692A30
+	.text       start:0x82692A30 end:0x82692A88
 	.text       start:0x82692A88 end:0x82692AA0
 	.text       start:0x82692AA0 end:0x82692BF8
 	.text       start:0x82692BF8 end:0x82692C10
 	.text       start:0x82692C10 end:0x82692C90
+	.text       start:0x82692C90 end:0x82692CE8
 	.text       start:0x82692CE8 end:0x82692D00
 	.text       start:0x82692D00 end:0x82692EB0
+	.text       start:0x82692EB0 end:0x82692F08
 	.text       start:0x82692F08 end:0x82692FE0
 	.text       start:0x82692FE0 end:0x82692FF8
 	.text       start:0x82692FF8 end:0x82693078
+	.text       start:0x82693078 end:0x826930D0
 	.text       start:0x826930D0 end:0x82693140
 	.text       start:0x82693140 end:0x82693170
 	.text       start:0x82693170 end:0x826931F8
@@ -10214,7 +10240,8 @@ AccomplishmentPanel.cpp:
 	.pdata      start:0x82227970 end:0x82227DA0
 	.text       start:0x8230A7E0 end:0x8230A91C
 	.text       start:0x82528878 end:0x825288F8
-	.text       start:0x8252A598 end:0x8252A620
+	.text       start:0x8252A598 end:0x8252A5A4
+	.text       start:0x8252A5B4 end:0x8252A620
 	.text       start:0x825F3428 end:0x825F3480
 	.text       start:0x825F3560 end:0x825F3640
 	.text       start:0x825F3708 end:0x825F37CC
@@ -11058,10 +11085,9 @@ Shuttle.cpp:
 
 FreestylePanel.cpp:
 	.pdata      start:0x82233C78 end:0x82233D90
-	.pdata      start:0x82233D90 end:0x82233D98
 	.text       start:0x826B99D4 end:0x826B99E0
 	.text       start:0x826BA880 end:0x826BBC08
-	.text       start:0x826BBC28 end:0x826BBC7C
+	.text       start:0x826BBC28 end:0x826BBC38
 
 GameplayOptions.cpp:
 	.pdata      start:0x8222D6A8 end:0x8222D6B0
@@ -11150,7 +11176,7 @@ TrackerSource.cpp:
 	.text       start:0x826E29D0 end:0x826E34D0
 
 DeployCountTracker.cpp:
-	.pdata      start:0x821F9CA8 end:0x821F9CB8
+	.pdata      start:0x821F9CA8 end:0x821F9CB0
 	.pdata      start:0x82235B40 end:0x82235B78
 	.pdata      start:0x82235B78 end:0x82235B80
 	.pdata      start:0x82235B80 end:0x82235B88
@@ -11158,7 +11184,7 @@ DeployCountTracker.cpp:
 	.pdata      start:0x82235B90 end:0x82235B98
 	.pdata      start:0x82235B98 end:0x82235C20
 	.pdata      start:0x82235C20 end:0x82235C28
-	.text       start:0x822F58D8 end:0x822F59C4
+	.text       start:0x822F58D8 end:0x822F5920
 	.text       start:0x826DC128 end:0x826DC4BC
 	.text       start:0x826DC4C0 end:0x826DC51C
 	.text       start:0x826DC51C end:0x826DC598
@@ -11372,6 +11398,7 @@ Tour.cpp:
 	.pdata      start:0x82200428 end:0x82200438
 	.pdata      start:0x82200438 end:0x82200440
 	.pdata      start:0x82200440 end:0x82200448
+	.pdata      start:0x82200458 end:0x82200460
 	.pdata      start:0x82200460 end:0x82200470
 	.pdata      start:0x82200470 end:0x82200480
 	.pdata      start:0x82200480 end:0x82200488
@@ -11412,6 +11439,7 @@ Tour.cpp:
 	.text       start:0x8235F59C end:0x8235F6D0
 	.text       start:0x8235F6D0 end:0x8235F73C
 	.text       start:0x8235F73C end:0x8235F770
+	.text       start:0x8235F7FC end:0x8235F84C
 	.text       start:0x8235F84C end:0x8235F9B8
 	.text       start:0x8235F9B8 end:0x8235FA58
 	.text       start:0x8235FA58 end:0x8235FBA8
@@ -12195,7 +12223,7 @@ BandSongMgr.cpp:
 CampaignLevel.cpp:
 	.pdata      start:0x8222D978 end:0x8222D980
 	.pdata      start:0x8222D990 end:0x8222D9E0
-	.text       start:0x825EF6D8 end:0x825EF708
+	.text       start:0x825EF704 end:0x825EF708
 	.text       start:0x82658540 end:0x826588DC
 	.text       start:0x826589E0 end:0x82658D64
 
@@ -12229,7 +12257,7 @@ GemManager.cpp:
 	.pdata      start:0x821F17C8 end:0x821F17D0
 	.pdata      start:0x821F17D0 end:0x821F17D8
 	.pdata      start:0x821F17D8 end:0x821F17E0
-	.pdata      start:0x8225D800 end:0x8225D810
+	.pdata      start:0x8225D808 end:0x8225D810
 	.pdata      start:0x8225D810 end:0x8225D818
 	.pdata      start:0x8225D818 end:0x8225D820
 	.pdata      start:0x8225D820 end:0x8225D828
@@ -12248,7 +12276,7 @@ GemManager.cpp:
 	.text       start:0x82272140 end:0x822721E4
 	.text       start:0x822721E8 end:0x82272240
 	.text       start:0x82272240 end:0x822722B0
-	.text       start:0x82B98BE4 end:0x82B98CEC
+	.text       start:0x82B98C34 end:0x82B98CEC
 	.text       start:0x82B98CF0 end:0x82B98D78
 	.text       start:0x82B98D78 end:0x82B98D88
 	.text       start:0x82B98D88 end:0x82B98DE8
@@ -12277,22 +12305,12 @@ NetGameMsgs.cpp:
 	.pdata      start:0x822314A0 end:0x822314A8
 	.pdata      start:0x822314A8 end:0x822314B0
 	.pdata      start:0x822314B0 end:0x82231768
-	.pdata      start:0x82231778 end:0x82231780
-	.pdata      start:0x82231798 end:0x822317A0
-	.pdata      start:0x822317D8 end:0x822317E0
-	.pdata      start:0x82231810 end:0x82231818
-	.pdata      start:0x82231840 end:0x82231848
 	.text       start:0x8235FF70 end:0x8235FFD8
 	.text       start:0x825BC188 end:0x825BC1C0
 	.text       start:0x82656350 end:0x82656528
 	.text       start:0x826907B8 end:0x8269083C
 	.text       start:0x8269083C end:0x82690864
 	.text       start:0x82690868 end:0x82692818
-	.text       start:0x826928B0 end:0x82692908
-	.text       start:0x82692A30 end:0x82692A88
-	.text       start:0x82692C90 end:0x82692CE8
-	.text       start:0x82692EB0 end:0x82692F08
-	.text       start:0x82693078 end:0x826930D0
 
 band3/meta_band/InputMgr.cpp:
 	.pdata      start:0x82222628 end:0x822227F8
@@ -12319,6 +12337,7 @@ SongDB.cpp:
 	.pdata      start:0x821F1C50 end:0x821F1C58
 	.pdata      start:0x821F1C60 end:0x821F1C68
 	.pdata      start:0x82208C10 end:0x82208C18
+	.pdata      start:0x82230968 end:0x82230970
 	.pdata      start:0x82230970 end:0x82230978
 	.pdata      start:0x82230978 end:0x82230980
 	.pdata      start:0x82230980 end:0x82230988
@@ -12340,6 +12359,7 @@ SongDB.cpp:
 	.text       start:0x82277270 end:0x8227730C
 	.text       start:0x82390F40 end:0x82390F68
 	.text       start:0x823F14C0 end:0x823F1520
+	.text       start:0x82684E40 end:0x82684E84
 	.text       start:0x82684E84 end:0x82684E90
 	.text       start:0x82684E98 end:0x82684EA4
 	.text       start:0x82684EA8 end:0x82684EC8
@@ -12701,9 +12721,11 @@ system/synth/SynthSample.cpp:
 	.text       start:0x82B6C844 end:0x82B6C850
 
 UIEventMgr.cpp:
+	.pdata      start:0x82220400 end:0x82220408
 	.pdata      start:0x82220408 end:0x82220410
 	.pdata      start:0x82220410 end:0x82220498
 	.pdata      start:0x82220498 end:0x82220540
+	.text       start:0x82592C2C end:0x82592C8C
 	.text       start:0x82592C90 end:0x82592D18
 	.text       start:0x82592D18 end:0x82593678
 	.text       start:0x82593678 end:0x82593F9C
@@ -13561,9 +13583,9 @@ band3/meta_band/BandStoreOffer.cpp:
 
 band3/game/BandUserMgr.cpp:
 	.pdata      start:0x82230710 end:0x82230718
-	.pdata      start:0x82230718 end:0x82230970
+	.pdata      start:0x82230718 end:0x82230968
 	.text       start:0x82682614 end:0x82682668
-	.text       start:0x82682668 end:0x82684E84
+	.text       start:0x82682668 end:0x82684E40
 
 system/utl/LogFile.cpp:
 	.pdata      start:0x822429B8 end:0x822429E8
@@ -13586,6 +13608,8 @@ system/beatmatch/SlotChannelMapping.cpp:
 band3/meta_band/Asset.cpp:
 	.pdata      start:0x82226A98 end:0x82226AE0
 	.pdata      start:0x82226AE0 end:0x82226AE8
+	.text       start:0x825EF6D8 end:0x825EF6F0
+	.text       start:0x825EF6F0 end:0x825EF704
 	.text       start:0x825EF708 end:0x825EFB54
 	.text       start:0x825EFB58 end:0x825EFBC8
 
