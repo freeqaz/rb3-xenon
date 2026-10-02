@@ -109,7 +109,7 @@ void CharCollide::Highlight() {
         }
     } else {
         Plane plane(WorldXfm().v, WorldXfm().m.x);
-        UtilDrawPlane(plane, WorldXfm().v, red, 1, 12.0f, false);
+        UtilDrawPlane(plane, WorldXfm().v, red, 1, 12.0f);
     }
     if (mMesh) {
         int count;
