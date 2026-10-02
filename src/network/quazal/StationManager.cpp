@@ -4,11 +4,22 @@
 // component (the per-station connection bookkeeping: the bootstrap station
 // URLs, the dead-station list and the queue of connect/disconnect jobs) and
 // the container helpers it instantiates. It is built /Od /Ob1 with EH off and
-// no RTTI, so every helper the classes below define in the class body is
-// expanded in place, while the ones defined out of line are called.
+// no RTTI (the vtable at 0x821815C0 has no locator), so the helpers the classes
+// below define in the class body are expanded in place and the ones defined
+// out of line are called. /Ob1 declines a few of the in-class ones
+// (DORefTemplate::IsValid, the DDL list Add/Extract templates); those are
+// called out of line and their frames are still reserved in the caller, which
+// is where retail's otherwise unexplained stack gaps come from.
+//
+// MemAllocator here has its constructors and destructor
+// (RB3_QUAZAL_MEMALLOCATOR_CTORS + RB3_QUAZAL_MEMALLOCATOR_DTOR): with them
+// /Ob1 stops at the out-of-line _Rb_tree_base constructor (0x82B4D060) in the
+// map members' construction and at the list(alloc) constructor for a local
+// qList, as retail does.
 //
 // The surrounding NetZ classes are declared here only as far as this TU uses
-// them; their members are defined in other TUs.
+// them; their members are defined in other TUs. At /Od the local names set the
+// stack layout, so some were chosen to reproduce retail's frames.
 
 #include "Platform/qStd.h"
 #include "Platform/SystemError.h"
@@ -99,6 +110,11 @@ namespace Quazal {
 
     class ByteStream : public RootObject {
     public:
+        template <class T>
+        ByteStream &operator<<(const T &t) {
+            Append(&t, sizeof(T), true);
+            return *this;
+        }
         void Append(const void *, unsigned int, bool);
         void Extract(void *, unsigned int, bool);
         ByteStream &operator>>(DOHandle &);
@@ -514,14 +530,12 @@ namespace Quazal {
 
     void StationManager::AddBootstrapStationURLs(Message *pMsg) {
         SelectionIteratorTemplate<Station> it(1);
-        unsigned short usCount = it.Count();
-        pMsg->Append(&usCount, 2, true);
+        *pMsg << (unsigned short)it.Count();
         it.GotoStart();
         while (!it.EndReached()) {
             qList<StationURL> lstURLs;
             it.GetDOPtr()->GetStationURLs(&lstURLs);
-            unsigned int uiHandle = it.GetCurrentHandle();
-            pMsg->Append(&uiHandle, 4, true);
+            *pMsg << it.GetCurrentHandle();
             AddList<StationURL, _Type_stationurl>(pMsg, lstURLs);
             it.Next(false);
         }
