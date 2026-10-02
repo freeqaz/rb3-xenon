@@ -35045,5 +35045,6 @@
  "0x82a95088": "?CreateUpdateMessage@ObjDupProtocol@Quazal@@QAAPAVMessage@2@PAIPAE@Z",
  "0x82a96918": "?QueueEOS@ObjDupProtocol@Quazal@@QAAXVDOHandle@2@@Z",
  "0x82a97e00": "??$_M_find@G@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGPAVCallContext@Quazal@@@2@U?$_Select1st@U?$pair@$$CBGPAVCallContext@Quazal@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGPAVCallContext@Quazal@@@stlpmtx_std@@@priv@2@V?$MemAllocator@U?$pair@$$CBGPAVCallContext@Quazal@@@stlpmtx_std@@@Quazal@@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABG@Z",
- "0x82a96b68": "?ShouldGrabWellKnown@ObjDupProtocol@Quazal@@QAA_NXZ"
+ "0x82a96b68": "?ShouldGrabWellKnown@ObjDupProtocol@Quazal@@QAA_NXZ",
+ "0x82a97c18": "?insert@?$list@PAVMessage@Quazal@@V?$MemAllocator@PAVMessage@Quazal@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVMessage@Quazal@@U?$_Nonconst_traits@PAVMessage@Quazal@@@stlpmtx_std@@@2@U32@ABQAVMessage@Quazal@@@Z"
 }

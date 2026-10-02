@@ -1552,16 +1552,17 @@ namespace Quazal {
             pTrace->Format("MESSAGE_BUNDLE message. Size: %d", pMsg->GetPayloadSize());
         }
         if (bProcess) {
-            bool bDone = false;
-            qList<Message *> lstMessages;
-            while (!bDone) {
-                Message *pSubMsg = new (__FILE__, 0x34D) Message();
+            bool bFinished = false;
+            Message *pSubMsg;
+            stlpmtx_std::list<Message *, MemAllocator<Message *> > lstMessages;
+            while (!bFinished) {
+                pSubMsg = new (__FILE__, 0x34D) Message();
                 pMsg->ExtractMessage(pSubMsg);
                 if (pSubMsg->GetPayloadSize() != 0) {
-                    lstMessages.insert(lstMessages.begin(), pSubMsg);
+                    lstMessages.push_front(pSubMsg);
                 } else {
                     delete pSubMsg;
-                    bDone = true;
+                    bFinished = true;
                 }
             }
             while (!lstMessages.empty()) {
@@ -1571,7 +1572,7 @@ namespace Quazal {
                     pMsg->GetSourceEndPoint(),
                     true
                 );
-                lstMessages.erase(lstMessages.begin());
+                lstMessages.pop_front();
             }
         }
         return true;
