@@ -30615,7 +30615,7 @@
  "0x82a6d548": "??1MemoryManager@Quazal@@UAA@XZ",
  "0x82a6d8c0": "?GetDefaultMemoryManager@MemoryManager@Quazal@@SAPAV12@XZ",
  "0x82a6dde8": "??2RootObject@Quazal@@SAPAXI@Z",
- "0x82a6de40": "XShowSocialNetworkImagePostUI",
+ "0x82a6de40": "??2RootObject@Quazal@@SAPAXIPBDI@Z",
  "0x82a707e8": "??1ScopedCS@Quazal@@QAA@XZ",
  "0x82a74f48": "?ComputeDistance@DuplicatedObject@Quazal@@UAAMPAV12@@Z",
  "0x82a74f60": "?ReleaseReferenceToMaster@DuplicatedObject@Quazal@@QAAXXZ",
