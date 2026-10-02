@@ -2300,7 +2300,14 @@
             "network/quazal/StepSequenceJob.cpp": "NonMatching",
             "network/quazal/Transport/PRUDP/PRUDPStream.cpp": "NonMatching",
             "network/quazal/WorkerThreads.cpp": "NonMatching",
-            "network/quazal/Transport/Interface/NATTraversalEngine.cpp": "NonMatching",
+            "network/quazal/Transport/Interface/NATTraversalEngine.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1"
+                ]
+            },
             "network/quazal/Transport/Routing/RoutingStream.cpp": "NonMatching",
             "network/quazal/AccountManagement/Client/JobLoginOrCreateAccount.cpp": "NonMatching",
             "network/quazal/AccountManagement/Client/JobCreateAccount.cpp": "NonMatching",
