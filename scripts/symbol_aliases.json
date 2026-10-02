@@ -86029,10 +86029,16 @@
    "name": "$_Copy_Construct",
    "address": "0x822a5448",
    "survivor": "??$_Copy_Construct@UPresetOverride@WorldDir@@@stlpmtx_std@@YAXPAUPresetOverride@WorldDir@@ABU12@@Z",
-   "folded": [
-    "??$_Copy_Construct@VOldMatOption@@@stlpmtx_std@@YAXPAVOldMatOption@@ABV1@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$_Copy_Construct@VOldMatOption@@@stlpmtx_std@@YAXPAVOldMatOption@@ABV1@@Z",
+     "lane": "W16-NN 2026-10-02",
+     "class": "TEMPLATE_TWIN_NOT_FOLD",
+     "reason": "Retail keeps TWO 60-B bodies: 0x822A5448 relocates +0x24 to ??0OldMatOption@@QAA@ABV0@@Z (mapped _Copy_Construct<OldMatOption>, T1 PROVEN for that spelling, REFUTED for PresetOverride) and 0x824CD6C8 relocates +0x24 to ??0PresetOverride@WorldDir@@QAA@ABU01@@Z (T1 PROVEN for PresetOverride, REFUTED for OldMatOption). Different relocation targets cannot ICF-fold; this group's survivor was never map-resident, so the validator tolerated it. 0x824CD6C8 is now mapped to the survivor spelling (retail witness: _M_create_node<PresetOverride> @0x824CDC68 branches to it, and ours calls this name)."
+    }
+   ]
   },
   {
    "name": "EndFrame",
