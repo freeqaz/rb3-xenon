@@ -129,6 +129,8 @@ namespace Quazal {
         unsigned int GetConnectionID() const;
         unsigned int GetRVConnectionID() const;
         unsigned int GetType() const;
+        bool IsBehindNAT() const { return (GetType() & 1) == 1; }
+        bool IsPublic() const { return (GetType() & 2) == 2; }
 
         char m_data[0x64];
     };
@@ -514,7 +516,6 @@ namespace Quazal {
 
     void ConnectCancelCallback::CallObjectMethod() { m_pJob->OnCancellation(); }
 
-#line 82
     JobConnectEndPoint::JobConnectEndPoint(
         ConnectionManager *pConnectionManager, unsigned int uiCallID, Buffer *pConnectData,
         Buffer *pConnectResponse, const qList<StationURL> &lstURLs, EndPoint **ppEndPoint,
@@ -557,7 +558,8 @@ namespace Quazal {
             m_uiAttemptTimeout = 0;
         }
         CallContext *pContext =
-            Core::GetInstance()->GetCallContextRegister()->GetCallContext(m_uiCallID);
+            Core::GetInstance()->GetCallContextRegister()->GetCallContext(uiCallID);
+#line 99
         m_pCancelCallback = new (JCEP_FILE, __LINE__) ConnectCancelCallback(this);
         pContext->RegisterCancellationCallback(m_pCancelCallback);
     }
@@ -696,12 +698,13 @@ namespace Quazal {
                 (JobStateFunc)&JobConnectEndPoint::PrepareNATTraversal,
                 "JobConnectEndPoint::PrepareNATTraversal"
             ));
-        } else if (!(((*m_itCurrentURL).GetType() & 1) == 1)) {
+        } else if (!(*m_itCurrentURL).IsBehindNAT()) {
             SetStep(Step(
                 (JobStateFunc)&JobConnectEndPoint::ResolveCurrentURL,
                 "JobConnectEndPoint::ResolveCurrentURL"
             ));
-        } else if (!(((*m_itCurrentURL).GetType() & 2) == 2)) {
+        } else if (!(*m_itCurrentURL).IsPublic()) {
+
             SetStep(Step(
                 (JobStateFunc)&JobConnectEndPoint::ResolveCurrentURL,
                 "JobConnectEndPoint::ResolveCurrentURL"
