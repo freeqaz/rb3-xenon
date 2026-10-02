@@ -259,7 +259,8 @@ void BandIKEffector::NeutralLocalXfm(RndTransformable *bone, Transform &tf) {
 
 void BandIKEffector::NeutralWorldXfm(RndTransformable *trans, Transform &tf) {
     RndTransformable *parent = trans->TransParent();
-    if (!parent) {
+    // retail tests the parent with a signed compare (cmpwi cr6,r3,0)
+    if ((int)parent == 0) {
         SetDeformClip(trans);
         NeutralLocalXfm(trans, tf);
     } else {
