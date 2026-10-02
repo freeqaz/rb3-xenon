@@ -155,7 +155,7 @@ into `JoypadStageKitSetRaw`; otherwise it walks four LED bytes and sends the cha
 `0x20/0x40/0x60/0x80/0xD0` commands. Its siblings are called from `BandDirector::SetFog` (`fn_82521C80`,
 `fn_82521D80`) and from `LightPreset` (`fn_82521B98`, `fn_82521BF0`, `fn_82522028`, `fn_82521E20`).
 
-**No name for it exists in any witness reachable here.** rb3-Wii has no stage-kit code. DC3's leaked map
+**No name for it exists in any witness reachable here.** DC3's leaked map
 has no such module: a byte search of `ham_xbox_r.exe` for the module's `0xaa/0x44` LED ladder finds
 nothing, the scanner counts 49,610 `mflr r12` so it can see code, and the three loose hits on the
 `0xd0/0x80` ladder are unrelated (CharSignalApplier, HamSkeletonConverter, RndMatAnim). The house
