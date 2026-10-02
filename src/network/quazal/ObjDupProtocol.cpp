@@ -210,12 +210,14 @@ namespace Quazal {
         DOProtocolContextList m_oContexts; // 0x48
     };
 
-    class ParticipationManager {
+    // The join job (JobJoinSession.cpp) registers itself here while a join is
+    // in progress; these are its handlers for the join protocol's responses.
+    class JobJoinSession {
     public:
-        void ProcessParticipants(Message *, bool);
-        void ProcessJoinAccepted(unsigned char, DOHandle, DOHandle);
-        void ProcessRedirect(class StationURL &);
-        void ProcessJoinRefused(unsigned char, unsigned int);
+        void ProcessGetParticipantsResponse(Message *, bool);
+        void ProcessPositiveJoinResponse(unsigned char, DOHandle, DOHandle);
+        void SetNewContactPoint(const class StationURL &);
+        void ProcessNegativeJoinResponse(unsigned char, int);
     };
 
     class Protocol;
@@ -856,7 +858,7 @@ namespace Quazal {
         bool m_bListeningOnAnyPort; // 0x4
         bool m_bListeningOnWellKnown; // 0x5
         CallRegister m_oCallRegister; // 0x8
-        ParticipationManager *m_pParticipationManager; // 0x30
+        JobJoinSession *m_pParticipationManager; // 0x30
         StationProxy m_oStationProxy; // 0x34
         char m_pad35[0xB];
         unsigned int m_uiContext; // 0x40
@@ -1163,7 +1165,7 @@ namespace Quazal {
         }
         bool bMaster;
         *pMsg >> bMaster;
-        m_pParticipationManager->ProcessParticipants(pMsg, bMaster);
+        m_pParticipationManager->ProcessGetParticipantsResponse(pMsg, bMaster);
     }
 
     Message *ObjDupProtocol::CreateJoinRequest() {
@@ -1243,17 +1245,17 @@ namespace Quazal {
             if ((m_uiFlags & 4) == 4) {
                 GetJoinResponseObserver()->OnJoinResponse(pMsg);
             }
-            m_pParticipationManager->ProcessJoinAccepted(ucResponse, hMaster, hStation);
+            m_pParticipationManager->ProcessPositiveJoinResponse(ucResponse, hMaster, hStation);
         } else {
             if (ucResponse == 2) {
                 char szURL[0x100];
                 pMsg->ExtractString(szURL, 0x100);
                 StationURL oURL(szURL);
-                m_pParticipationManager->ProcessRedirect(oURL);
+                m_pParticipationManager->SetNewContactPoint(oURL);
             }
             unsigned int uiReason;
             pMsg->Extract(&uiReason, 4, true);
-            m_pParticipationManager->ProcessJoinRefused(ucResponse, uiReason);
+            m_pParticipationManager->ProcessNegativeJoinResponse(ucResponse, uiReason);
         }
     }
 
