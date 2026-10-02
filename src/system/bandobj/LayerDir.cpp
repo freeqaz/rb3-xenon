@@ -195,10 +195,12 @@ END_HANDLERS
 
 DataNode LayerDir::RandomizeColors(DataArray *) {
     for (ObjList<Layer>::iterator it = mLayers.begin(); it != mLayers.end(); ++it) {
-        Hmx::Object *palette = it->mColorPalette;
-        if (palette && it->mAllowColor) {
-            int idx = RandomInt(0, palette->Property(Symbol("colors"), true)->Array()->Size());
-            const DataArray *arr = palette->Property(Symbol("colors"), true)->Array();
+        if (it->mColorPalette && it->mAllowColor) {
+            int idx = RandomInt(
+                0, it->mColorPalette->Property(Symbol("colors"), true)->Array()->Size()
+            );
+            const DataArray *arr =
+                it->mColorPalette->Property(Symbol("colors"), true)->Array();
             int packed = arr->Node(idx).Int(arr);
             it->mColor.Unpack(packed);
             RefreshLayer(*it, false);
