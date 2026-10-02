@@ -2303,7 +2303,14 @@
             "network/quazal/GlobalDiscovery/GlobalDiscoveryExtension.cpp": "NonMatching",
             "network/quazal/Transport/Interface/JobConnectEndPoint.cpp": "NonMatching",
             "network/quazal/Transport/Interface/TransportSignatureGenerator.cpp": "NonMatching",
-            "network/quazal/Transport/PRUDP/PRUDPEndPoint.cpp": "NonMatching",
+            "network/quazal/Transport/PRUDP/PRUDPEndPoint.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1"
+                ]
+            },
             "network/quazal/Transport/Interface/XboxConnectivityTester.cpp": "NonMatching",
             "network/quazal/Stack/Core/IOCompletionNotifier.cpp": "NonMatching",
             "network/quazal/Transport/UDP/QueuingSocket.cpp": "NonMatching",
