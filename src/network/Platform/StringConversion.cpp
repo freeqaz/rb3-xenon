@@ -4,23 +4,27 @@
 
 namespace {
     void Latin1ToUtf8(const char *in, char *out, unsigned int len) {
-        u8 srch = *in;
+        const unsigned char *src = (const unsigned char *)in;
+        unsigned char *dst = (unsigned char *)out;
         len--;
-        while (srch != 0 && len != 0) {
-            if ((s16)srch >= 0x80) {
-                u8 nu_hi = ((u16)srch >> 6) & 0x1F;
-                srch &= 0x3F;
-                *out = nu_hi | 0xC0;
-                *(out + 1) = srch | 0x80;
-                len -= 2;
-                out += 2;
+        int c = *src;
+        while (c != 0 && len > 0) {
+            if (c >= 0x80) {
+                *dst = ((c & 0x7C0) >> 6) | 0xC0;
+                dst++;
+                len--;
+                *dst = (c & 0x3F) | 0x80;
+                dst++;
+                len--;
             } else {
-                *(out++) = srch;
+                *dst = c;
+                dst++;
                 len--;
             }
-            srch = *((const u8 *)++in);
+            src++;
+            c = *src;
         }
-        *out = 0;
+        *dst = 0;
     }
     void Utf8ToLatin1(const char *in, char *out, unsigned int len) {
         u8 srch = *in;
