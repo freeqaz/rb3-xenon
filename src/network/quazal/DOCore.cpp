@@ -468,7 +468,7 @@ namespace Quazal {
 
     class CallRegister : public RootObject {
     public:
-        static CallRegister *GetInstance();
+        static CallRegister &GetInstanceRef();
         void Start();
         void CancelPeriodicJobs();
         void Trace(unsigned int);
@@ -595,12 +595,12 @@ namespace Quazal {
         if (m_pObjDupProtocol != 0) {
             m_pObjDupProtocol->Trace(uiLevel);
         }
-        CallRegister::GetInstance()->Trace(uiLevel);
+        CallRegister::GetInstanceRef().Trace(uiLevel);
     }
 
-    void DOCore::QueuePeriodicJobs() { CallRegister::GetInstance()->Start(); }
+    void DOCore::QueuePeriodicJobs() { CallRegister::GetInstanceRef().Start(); }
 
-    void DOCore::CancelPeriodicJobs() { CallRegister::GetInstance()->CancelPeriodicJobs(); }
+    void DOCore::CancelPeriodicJobs() { CallRegister::GetInstanceRef().CancelPeriodicJobs(); }
 
     bool DOCore::IsReadyToLeave() {
         // Retail emits two `return true` paths, the first branching over the
