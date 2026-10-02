@@ -244,14 +244,15 @@ namespace Quazal {
         class Listener *m_pListener; // 0x40
     };
 
-    class Session {
+    // The type-4 instance (.\DOCore.cpp, 0x82AC0470..0x82AC1808).
+    class DOCore {
     public:
-        static Session *GetInstance(unsigned int uiContext) {
-            return (Session *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(4, uiContext);
+        static DOCore *GetInstance(unsigned int uiContext) {
+            return (DOCore *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(4, uiContext);
         }
-        static Session *GetInstance() { return GetInstance(PseudoSingleton::GetCurrentContext()); }
-        bool IsTerminating();
-        bool IsJoining();
+        static DOCore *GetInstance() { return GetInstance(PseudoSingleton::GetCurrentContext()); }
+        bool IsTerminated() const;
+        bool HasStartedTermination() const;
     };
 
     // Compiled to nothing in this build; only its address reaches Job's ctor.
@@ -1008,7 +1009,7 @@ namespace Quazal {
 
     bool ObjDupProtocol::ShouldDispatch(Message *pMsg) {
         bool bResult = true;
-        if (Session::GetInstance()->IsTerminating()) {
+        if (DOCore::GetInstance()->IsTerminated()) {
             bResult = false;
         } else if (pMsg->GetSourceStation() != 0) {
             DOHandle hStation = pMsg->GetSourceStation();
@@ -1025,7 +1026,7 @@ namespace Quazal {
     unsigned char ObjDupProtocol::ExtractMessageType(Message *pMsg) {
         unsigned char ucType = 0;
         pMsg->Extract(&ucType, 1, true);
-        if (Session::GetInstance()->IsJoining()) {
+        if (DOCore::GetInstance()->HasStartedTermination()) {
             switch (ucType) {
             case 0x08:
             case 0x0B:

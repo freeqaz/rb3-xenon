@@ -14334,7 +14334,11 @@ network/quazal/ChangeDupSetOperation.cpp:
 
 network/quazal/DOCore.cpp:
 	.pdata      start:0x82253C90 end:0x82253CF8
+	.pdata      start:0x822618D8 end:0x822618E0
+	.pdata      start:0x82261D58 end:0x82261D60
 	.text       start:0x82AC0470 end:0x82AC1808
+	.text       start:0x82C420A0 end:0x82C420E0
+	.text       start:0x82C4AEF0 end:0x82C4AF18
 
 network/quazal/SessionDiscovery/Interface/SessionDiscoveryTable.cpp:
 	.pdata      start:0x82253E58 end:0x82253E80

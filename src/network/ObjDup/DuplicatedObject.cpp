@@ -26,6 +26,7 @@
 #include "ObjDup/CallRegister.h"
 #include "ObjDup/DOCallContext.h"
 #include "ObjDup/BundlingPolicy.h"
+#include "ObjDup/DOCore.h"
 #include "ObjDup/SelectionIterator.h"
 #include "ObjDup/Session.h"
 
@@ -596,7 +597,7 @@ namespace Quazal {
     }
 
     bool DuplicatedObject::ValidOperation(DOOperation *pOp) {
-        if (DOSelections::GetCurrentInstance()->IsAvailable()) {
+        if (DOCore::GetCurrentInstance()->HasStartedTermination()) {
             switch (pOp->GetType()) {
             case 5:
             case 6:
