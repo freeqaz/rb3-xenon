@@ -279,10 +279,10 @@ lists for the alias lane. JCSEP's `0x82B43568` (36 B, list-init helper, also cal
 
 ## 8. Native gate
 
-Run last, on the rebased code (only this docs edit follows it):
+Run last, on the rebased code at `dd226dc4b` (only this docs edit follows it):
 
 ```
-GATE_RESULT_PLACEHOLDER
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
 ```
 
 ## 9. Not done
