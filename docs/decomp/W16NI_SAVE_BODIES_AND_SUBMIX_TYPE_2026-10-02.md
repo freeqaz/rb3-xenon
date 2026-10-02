@@ -124,8 +124,9 @@ Respelling keeps all six donors and drops the wrong type, so it is strictly bett
 
 - In-worktree `report.json` after each step: the four non-TrackDir Saves at fuzzy 100 directly;
   TrackDir 99.91 before the alias, 100 after.
-- Native gate (`tools/native_build_gate.sh`), run last on the final code. Its summary line is
-  recorded in the merge/commit that follows this doc.
+- Native gate (`tools/native_build_gate.sh`), run last on the final code (`cdf15548c`; only
+  this docs edit follows it):
+  `NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0`
 
 ## Commits
 
