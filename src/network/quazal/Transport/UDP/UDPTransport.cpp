@@ -1006,10 +1006,9 @@ namespace Quazal {
 
     void UDPTransport::ServiceIOCompletions() {
         ScopedCS oCS(*Scheduler::GetSystemLock());
-        for (qSortedVector<unsigned short, QueuingSocket *>::iterator it = m_vSockets.begin();
-             it != m_vSockets.end();
-             ++it) {
-            QueuingSocket *pSocket = it->second;
+        qSortedVector<unsigned short, QueuingSocket *>::iterator itSocket;
+        for (itSocket = m_vSockets.begin(); itSocket != m_vSockets.end(); ++itSocket) {
+            QueuingSocket *pSocket = itSocket->second;
             if (pSocket->m_pRecvContext->IsCompleted()) {
                 Buffer *pBuffer = pSocket->GetReceivedBuffer();
                 if (pBuffer != 0) {
@@ -1023,8 +1022,8 @@ namespace Quazal {
                 pSocket->Recv(GetBandwidthCounter());
             }
             if (UsesReceiveQueue()) {
-                InetAddress oFrom;
                 Buffer *pQueued;
+                InetAddress oFrom;
                 while (pSocket->m_oReceivedQueue.Pop(&pQueued, &oFrom)) {
                     Receive(pSocket, pQueued, &oFrom);
                     pSocket->m_oReceivedQueue.Release(pQueued);
