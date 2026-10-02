@@ -262,14 +262,14 @@ void CalibrationPanel::UpdateProgress(bool b) {
         unkb8[1] = unkb8[2];
         unkb8[2] = unkb8[3];
         unkb8[3] = unkb8[4];
-        progress = (float)((6.0f * unka4[2] + (4.0f * (unka4[3] + unka4[1]) + (unka4[0] + unka4[4])))
-                           + 3.7554462943 * unkb8[3] + -0.7805914145 * unkb8[0]
-                           + 3.3180408913 * unkb8[1] + -5.2929307473 * unkb8[2]);
-        // Residue: retail multiplies by the NEGATIVE constants with fmadd in
-        // exactly this term order; our build folds them to fnmsub and moves
-        // them last. Three spellings (literal first, literal last, named
-        // const double) all compile the same.
-        unkb8[4] = progress;
+        // Each feedback term is parenthesised onto the running sum: retail keeps
+        // the negative coefficients as stored constants (-0.78059 at 0x820BFEE0,
+        // -5.29293 at 0x820BFED0) and accumulates with fmadd in source order.
+        // Unbracketed, /fp:fast folds them into two trailing fnmsubs.
+        unkb8[4] = (float)(((((6.0f * unka4[2] + (4.0f * (unka4[3] + unka4[1]) + (unka4[0] + unka4[4])))
+                           + 3.7554462943 * unkb8[3]) + (-0.7805914145 * unkb8[0]))
+                           + 3.3180408913 * unkb8[1]) + (-5.2929307473 * unkb8[2]));
+        progress = unkb8[4];
     }
     // Retail scales the raw (or filtered) progress straight to the 24-frame
     // bar: no (mNumHits + 2) / mNumHits factor and no clamp to mNumHits.
