@@ -35567,5 +35567,22 @@
  "0x82b2fc40": "??0TransportSignatureGenerator@Quazal@@QAA@XZ",
  "0x82b2ffa0": "??1TransportSignatureGenerator@Quazal@@QAA@XZ",
  "0x82b30058": "?ComputeSourceSignature@TransportSignatureGenerator@Quazal@@QAAIIG@Z",
- "0x82b301f8": "??1?$Holder@VKeyedChecksumAlgorithm@Quazal@@@Quazal@@QAA@XZ"
+ "0x82b301f8": "??1?$Holder@VKeyedChecksumAlgorithm@Quazal@@@Quazal@@QAA@XZ",
+ "0x82b421c8": "??0JobConnectSecureEndPoint@Quazal@@QAA@PAVSecureEndPoint@1@PBVStationURL@1@PAVBuffer@1@2P6AXPAVEndPoint@1@VqResult@1@PBVUserContext@1@@ZABV71@I@Z",
+ "0x82b423a0": "??_GJobConnectSecureEndPoint@Quazal@@UAAPAXI@Z",
+ "0x82b423e8": "??1JobConnectSecureEndPoint@Quazal@@UAA@XZ",
+ "0x82b42640": "?Execute@JobConnectSecureEndPoint@Quazal@@UAAXXZ",
+ "0x82b42720": "?ExecuteStep@JobConnectSecureEndPoint@Quazal@@QAAXXZ",
+ "0x82b427c0": "?ParseURL@JobConnectSecureEndPoint@Quazal@@QAAXXZ",
+ "0x82b429c0": "?RequestCompletionCallback@JobConnectSecureEndPoint@Quazal@@SAXPAVCallContext@2@PBVUserContext@2@@Z",
+ "0x82b42ac0": "?CheckConnectionData@JobConnectSecureEndPoint@Quazal@@QAAXXZ",
+ "0x82b42b10": "?RequestConnectionData@JobConnectSecureEndPoint@Quazal@@QAAXXZ",
+ "0x82b42db8": "?IsConnectionDataAvailable@JobConnectSecureEndPoint@Quazal@@QAA_NXZ",
+ "0x82b42e30": "?PrepareConnectionRequest@JobConnectSecureEndPoint@Quazal@@QAAXXZ",
+ "0x82b42f38": "?GetConnectionURLs@JobConnectSecureEndPoint@Quazal@@QAAXAAV?$qList@VStationURL@Quazal@@@2@@Z",
+ "0x82b43020": "?PerformConnect@JobConnectSecureEndPoint@Quazal@@QAAXXZ",
+ "0x82b43298": "?ConnectCompletionCallback@JobConnectSecureEndPoint@Quazal@@SAXPAVCallContext@2@PBVUserContext@2@@Z",
+ "0x82b432d8": "?ProcessConnectionResult@JobConnectSecureEndPoint@Quazal@@QAAXPAVCallContext@2@@Z",
+ "0x82b43450": "?CompleteConnection@JobConnectSecureEndPoint@Quazal@@QAAXXZ",
+ "0x82b43500": "?Trace@JobConnectSecureEndPoint@Quazal@@UAAXI@Z"
 }

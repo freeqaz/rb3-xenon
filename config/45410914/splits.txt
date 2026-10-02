@@ -14589,8 +14589,8 @@ network/quazal/Authentication/Client/TicketManager.cpp:
 	.text       start:0x82B3F4C8 end:0x82B3FBF0
 
 network/quazal/SecureTransport/JobConnectSecureEndPoint.cpp:
-	.pdata      start:0x822599A8 end:0x822599C0
-	.text       start:0x82B42E30 end:0x82B43294
+	.pdata      start:0x82259960 end:0x822599E0
+	.text       start:0x82B421C8 end:0x82B43590
 
 network/quazal/DupSpace/DefaultCellDDL.cpp:
 	.pdata      start:0x82259B40 end:0x82259BB0
