@@ -987,6 +987,7 @@ PatchDir.cpp:
 	.pdata      start:0x821F1E60 end:0x821F1E78
 	.pdata      start:0x821F1E78 end:0x821F1E88
 	.pdata      start:0x821F1E88 end:0x821F1E90
+	.pdata      start:0x821F1E90 end:0x821F1EA0
 	.pdata      start:0x821F1EA0 end:0x821F1F08
 	.pdata      start:0x821F1F08 end:0x821F1F18
 	.text       start:0x822737D0 end:0x822737D8
@@ -1037,6 +1038,7 @@ PatchDir.cpp:
 	.text       start:0x822797A0 end:0x822797B0
 	.text       start:0x822797C8 end:0x82279978
 	.text       start:0x82279978 end:0x822799F8
+	.text       start:0x82279A00 end:0x82279A98
 	.text       start:0x82279A98 end:0x8227A068
 	.text       start:0x8227A068 end:0x8227A1A8
 
@@ -1052,6 +1054,7 @@ SongSectionController.cpp:
 	.pdata      start:0x821FB560 end:0x821FB568
 	.pdata      start:0x821FB570 end:0x821FB5F0
 	.pdata      start:0x821FB5F8 end:0x821FB600
+	.pdata      start:0x821FB600 end:0x821FB608
 	.pdata      start:0x821FB608 end:0x821FB610
 	.pdata      start:0x821FB610 end:0x821FB630
 	.pdata      start:0x821FB630 end:0x821FB648
@@ -1076,6 +1079,7 @@ SongSectionController.cpp:
 	.text       start:0x8230DF20 end:0x8230DF5C
 	.text       start:0x8230DF88 end:0x8230E5B4
 	.text       start:0x8230E608 end:0x8230E654
+	.text       start:0x8230E658 end:0x8230E6C4
 	.text       start:0x8230E6C8 end:0x8230E734
 	.text       start:0x8230E738 end:0x8230E8F8
 	.text       start:0x8230E8F8 end:0x8230EB00
@@ -6109,7 +6113,6 @@ DataArraySongInfo.cpp:
 	.text       start:0x827A4014 end:0x827A4E10
 
 StorePreviewMgr.cpp:
-	.pdata      start:0x82223820 end:0x82223840
 	.pdata      start:0x82241060 end:0x82241080
 	.pdata      start:0x82241080 end:0x82241088
 	.pdata      start:0x82241088 end:0x82241090
@@ -6119,7 +6122,6 @@ StorePreviewMgr.cpp:
 	.pdata      start:0x822410B0 end:0x822410C8
 	.pdata      start:0x822410C8 end:0x82241168
 	.pdata      start:0x82241168 end:0x82241170
-	.text       start:0x825C21D0 end:0x825C22F4
 	.text       start:0x827B1938 end:0x827B1AC0
 	.text       start:0x827B1AC0 end:0x827B1B28
 	.text       start:0x827B1B28 end:0x827B1B78
@@ -6659,10 +6661,8 @@ PostProc_NG.cpp:
 	.text       start:0x82B87E90 end:0x82B89B68
 
 Archive.cpp:
-	.pdata      start:0x821F1E90 end:0x821F1EA0
 	.pdata      start:0x82217F28 end:0x82217F38
 	.pdata      start:0x82217F38 end:0x822180E8
-	.text       start:0x82279A00 end:0x82279A98
 	.text       start:0x82512180 end:0x82512264
 	.text       start:0x82512268 end:0x82512288
 	.text       start:0x82512288 end:0x82514858
@@ -7537,13 +7537,11 @@ TexRenderer.cpp:
 
 Group.cpp:
 	.pdata      start:0x821FB5F0 end:0x821FB5F8
-	.pdata      start:0x821FB600 end:0x821FB608
 	.pdata      start:0x8220DE08 end:0x8220DE48
 	.pdata      start:0x8220DE50 end:0x8220E060
 	.pdata      start:0x8220FBF8 end:0x8220FC00
 	.pdata      start:0x8222F4E8 end:0x8222F4F0
 	.text       start:0x8230E5B8 end:0x8230E604
-	.text       start:0x8230E658 end:0x8230E6C4
 	.text       start:0x82451FF8 end:0x824523F8
 	.text       start:0x82452494 end:0x82454990
 	.text       start:0x82454990 end:0x8245499C
@@ -10256,6 +10254,7 @@ BandMachineMgr.cpp:
 	.pdata      start:0x822237F8 end:0x82223800
 	.pdata      start:0x82223800 end:0x82223808
 	.pdata      start:0x82223808 end:0x82223810
+	.pdata      start:0x82223820 end:0x82223840
 	.pdata      start:0x82223840 end:0x82223860
 	.pdata      start:0x82223860 end:0x82223878
 	.pdata      start:0x82223878 end:0x82223888
@@ -10283,6 +10282,7 @@ BandMachineMgr.cpp:
 	.text       start:0x825C2070 end:0x825C20B0
 	.text       start:0x825C20B0 end:0x825C20F0
 	.text       start:0x825C20F0 end:0x825C2174
+	.text       start:0x825C21D0 end:0x825C22F4
 	.text       start:0x825C22F4 end:0x825C2430
 	.text       start:0x825C2430 end:0x825C2508
 	.text       start:0x825C2508 end:0x825C2640
