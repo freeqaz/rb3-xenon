@@ -4,8 +4,16 @@
 // ItemRegister<DOCallContext> base, the two MethodCallJob instantiations the
 // register queues, the PeriodicJob vtable they need, and the
 // map<unsigned short, DOCallContext *> helpers. It is built /Od /Ob1 with EH
-// off, so every helper the classes below define in the class body is expanded
-// in place (one level deep), while the ones defined out of line are called.
+// and RTTI off (no EH prefixes; the vtables at 0x82181630.. carry no locator
+// slot), so every helper the classes below define in the class body is
+// expanded in place, while the ones defined out of line are called.
+// 0x82ABD488..0x82ABDC98, which follows, is not called from this TU and is not
+// part of it.
+//
+// At /Od an inline function the compiler declines still reserves its locals
+// and temporaries in the caller's frame, so the SHAPE of the small helpers
+// (if/else rather than ?:, `p == 0` rather than `!p`) sets the callers' frame
+// sizes even though it does not change their own code.
 //
 // The surrounding NetZ classes are declared here only as far as this TU uses
 // them; their members are defined in other TUs.
