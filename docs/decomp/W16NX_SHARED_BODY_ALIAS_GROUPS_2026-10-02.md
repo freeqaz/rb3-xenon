@@ -174,7 +174,8 @@ of the post-compile passes):
 - `alias_placeholder_slot_audit.py` (dry): all 63 memberships in the six groups this lane added to are
   **CLEAN**.
 - No added `src/` line cites another decomp. No commit carries a co-author line.
-- `tools/native_build_gate.sh`, run last: see the commit that lands this doc.
+- `tools/native_build_gate.sh`, run last on the rebased tip `09284c0f3` (only this doc line follows it):
+  `NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0`
 
 ## 8. Not done
 
