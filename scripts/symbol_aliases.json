@@ -91168,9 +91168,17 @@
     "?GetBand@Band@@QBAPAVPerformer@@XZ",
     "?GetNetUIState@BandMachine@@QBA?AW4NetUIState@@XZ",
     "?GetStateID@OvershellSlotState@@QBA?AW4OvershellSlotStateID@@XZ",
-    "?MainPerformer@Band@@QBAPAVPerformer@@XZ"
+    "?MainPerformer@Band@@QBAPAVPerformer@@XZ",
+    "?GetGameData@Net@@QAAPAVNetGameData@@XZ"
    ],
-   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x827bea30 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 83 against 59 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x827bea30 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 83 against 59 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies.",
+   "admitted": [
+    {
+     "spelling": "?GetGameData@Net@@QAAPAVNetGameData@@XZ",
+     "lane": "W16-NH-NAME 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call site(s) reaching the survivor where we call this spelling: 0x823e16c4, 0x823e6b20, 0x823f1b84, 0x823f277c. Vacuous 2-word getter (lwz r3,0x28(r3); blr == Net::mGameData); admitted on the retail call-site witness, house rule for empty/vacuous bodies. Our Net::GetGameData was declared but never defined; now defined out of line."
+    }
+   ]
   },
   {
    "name": "ourside_comdat_identity",
