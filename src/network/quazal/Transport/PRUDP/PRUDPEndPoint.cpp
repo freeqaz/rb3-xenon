@@ -46,6 +46,7 @@ namespace Quazal {
             return *this;
         }
         LogicalClock operator+(unsigned short) const;
+        bool operator==(const LogicalClock &o) const { return m_v == o.m_v; }
         int operator-(const LogicalClock &) const;
 
         unsigned short m_v;
@@ -76,6 +77,7 @@ namespace Quazal {
         unsigned int GetContentSize();
         void AppendData(const unsigned char *, unsigned int, unsigned int);
         void AppendData(Buffer *);
+        void CopyContent(Buffer *);
 
         char unk4[0x14 - 0x4];
     };
@@ -85,14 +87,26 @@ namespace Quazal {
         void SetExpirationDelay(unsigned int);
         void SetRTO(unsigned int);
         bool IsExpired();
+        Time GetExpirationTime();
+        void SetExpirationTime(Time);
+
+        char unk0[0x10];
+        Time m_tExpiration; // 0x10
     };
 
     class PRUDPEndPoint;
 
-    class InetAddressRef {
+    class StationAddress {
     public:
         void Set(void *);
+        unsigned int GetAddress();
+        unsigned short GetPort();
         char unk0[4];
+    };
+
+    class SignatureGenerator {
+    public:
+        unsigned int Generate(unsigned int, unsigned short);
     };
 
     class Packet : public RootObject {
@@ -106,6 +120,10 @@ namespace Quazal {
         void SetDestination(void *pAddress) { m_oDest.Set(pAddress); }
         void SetSignature(unsigned int uiSignature) { m_uiSignature = uiSignature; }
         void SetSessionID(unsigned char ucSessionID) { m_ucSessionID = ucSessionID; }
+        unsigned char GetSessionID() { return m_ucSessionID; }
+        unsigned int GetConnectionSignature() { return m_uiConnectionSignature; }
+        unsigned char GetFragmentID() { return m_ucFragmentID; }
+        void SetFlag(unsigned char ucFlag) { m_ucFlags |= ucFlag & 0xF8; }
         void SetSequenceID(LogicalClock oID) { m_oSequenceID = oID; }
         LogicalClock GetSequenceID();
         Time GetTimeStamp();
@@ -115,10 +133,10 @@ namespace Quazal {
         unsigned char m_ucSessionID; // 0x13
         unsigned int m_uiSignature;  // 0x14
         LogicalClock m_oSequenceID;  // 0x18
-        char unk1a[0x20 - 0x1a];
+        unsigned int m_uiConnectionSignature; // 0x1c
         unsigned char m_ucFragmentID; // 0x20
         Buffer *m_pPayload;           // 0x24
-        InetAddressRef m_oDest;       // 0x28
+        StationAddress m_oDest;       // 0x28
         char unk2c[0xa8 - 0x2c];
         Time m_tTimeStamp;            // 0xa8
     };
@@ -244,6 +262,8 @@ namespace Quazal {
         TransportStats *m_pStats;          // 0xc
         char unk10[0x14 - 0x10];
         TimeoutManager m_oTimeoutManager;  // 0x14
+        char unk18[0xe0 - 0x18];
+        SignatureGenerator m_oSignatureGenerator; // 0xe0
     };
 
     class StationURL;
@@ -253,6 +273,7 @@ namespace Quazal {
         virtual void Unk0();
         virtual void OnDataReceived(class EndPoint *, Buffer *);
         virtual void OnFault(class EndPoint *, unsigned int);
+        virtual void OnDisconnection(class EndPoint *);
     };
 
     class EndPointAddress {
@@ -401,7 +422,7 @@ namespace Quazal {
 
     CriticalSection *GetSystemLock();
 
-    struct PendingOperation {
+    struct PendingOperation : public RootObject {
         PendingOperation() {
             m_pBuffer = 0;
             m_pData = 0;
@@ -424,6 +445,9 @@ namespace Quazal {
             Reset();
             pfCallback(pEndPoint, oResult, &m_oContext);
         }
+
+        Buffer *GetData() { return m_pData; }
+        Buffer *GetBuffer() { return m_pBuffer; }
 
         Buffer *m_pData;       // 0x0
         Buffer *m_pBuffer;     // 0x4
@@ -863,6 +887,130 @@ namespace Quazal {
             }
         }
     }
+
+
+    void PRUDPEndPoint::ServiceIncomingPacket(PacketIn *pPacket) {
+        unsigned char ucType = pPacket->GetType();
+        bool bDispatch = false;
+        if ((pPacket->GetType() == 0 && pPacket->HasFlag(8))
+            || (pPacket->GetType() == 1 && !pPacket->HasFlag(8)))
+            m_uiSignature = pPacket->GetConnectionSignature();
+        if (ucType != 0) {
+            if (m_ucPeerSessionID != 0) {
+                if (pPacket->GetSessionID() != m_ucPeerSessionID) {
+                    if (ucType == 1 && !pPacket->HasFlag(8)) {
+                        SignalFaultEvent(qResult(0x80050009));
+                        return;
+                    } else {
+                        return;
+                    }
+                }
+            } else {
+                m_ucPeerSessionID = pPacket->GetSessionID();
+            }
+        }
+        if (pPacket->HasFlag(0x20)) {
+            PacketOut *pAck = 0;
+            if (pPacket->GetType() == 1) {
+#line 544
+                pAck = new (__FILE__, __LINE__) PacketOut(this, pPacket->GetType(), 8, pPacket->GetPayload());
+            } else {
+#line 546
+                pAck = new (__FILE__, __LINE__) PacketOut(this, pPacket->GetType(), 0, 0);
+                pAck->SetFlag(8);
+            }
+            pAck->SetSequenceID(pPacket->GetSequenceID());
+            pAck->m_ucFragmentID = pPacket->GetFragmentID();
+            Send(pAck);
+            pAck->ReleaseRef();
+        }
+        m_tLastReception = Time::GetTime();
+        if (pPacket->HasFlag(0x10))
+            m_pDispatchQueue->Queue(pPacket);
+        switch (ucType) {
+        case 2:
+            if (pPacket->HasFlag(8)) {
+                PacketAcknowledged(pPacket);
+            } else {
+                bDispatch = true;
+                if (!pPacket->HasFlag(0x10)) {
+                    int iDelta = pPacket->GetSequenceID() - m_oNextExpectedSequenceID;
+                    if (iDelta >= 0) {
+                        GetStream()->m_pStats->m_oCounters.Increment(4, iDelta);
+                        m_oNextExpectedSequenceID = pPacket->GetSequenceID() + 1;
+                    } else {
+                        GetStream()->m_pStats->m_oCounters.Increment(4, -1);
+                    }
+                }
+            }
+            break;
+        case 3:
+            if (pPacket->HasFlag(8)) {
+                if (IsDisconnecting())
+                    SetConnectionState(NotConnected);
+                PacketAcknowledged(pPacket);
+            } else {
+                bool bWasConnected = false;
+                if (PeerIsConnected())
+                    bWasConnected = true;
+                SetPeerDisconnected();
+                if (bWasConnected) {
+                    EndPointEventHandler *pHandler = m_pHandler;
+                    if (pHandler) {
+                        void *pContext = GetFaultContext();
+                        m_pHandler->OnDisconnection(this);
+                    }
+                }
+                GetStream()->EndPointFaulted(this);
+            }
+            break;
+        case 0:
+            if (IsConnecting() && pPacket->HasFlag(8) && !m_bUnk94) {
+#line 611
+                PacketOut *pConnect = new (__FILE__, __LINE__) PacketOut(this, 1, 0x30, m_oPendingOperation.GetBuffer());
+                unsigned int uiSignature = GetStream()->m_oSignatureGenerator.Generate(
+                    pPacket->m_oDest.GetAddress(), pPacket->m_oDest.GetPort()
+                );
+                pConnect->m_uiConnectionSignature = uiSignature;
+                pConnect->GetTimeout()->SetExpirationTime(m_pConnectPacket->GetTimeout()->GetExpirationTime());
+                Send(pConnect);
+                pConnect->ReleaseRef();
+                CancelTimeout(m_pConnectPacket);
+                m_bUnk94 = true;
+            }
+            break;
+        case 1:
+            if (IsConnecting() && pPacket->HasFlag(8)) {
+                if (m_oPendingOperation.GetData()) {
+                    m_oPendingOperation.GetData()->CopyContent(pPacket->GetPayload());
+                    m_oPendingOperation.m_pData = 0;
+                }
+                PacketAcknowledged(pPacket);
+                SetConnectionState(Connected);
+            } else if (!pPacket->HasFlag(8)) {
+                SetPeerConnected();
+            }
+            StartKeepAlive();
+            break;
+        case 4:
+            if (pPacket->HasFlag(8) && m_pKeepAlivePacket) {
+                if (m_pKeepAlivePacket->GetSequenceID() == pPacket->GetSequenceID())
+                    m_oRTT.Adjust((unsigned int)(pPacket->GetTimeStamp() - m_pKeepAlivePacket->GetTimeStamp()));
+            }
+            break;
+        }
+        if (bDispatch && !pPacket->HasFlag(0x10))
+            ProcessData(pPacket, pPacket->GetTimeStamp());
+        PacketIn *pReady = m_pDispatchQueue->GetNextToDispatch();
+        while (pReady) {
+            if (pReady->GetType() == 2)
+                ProcessData(pReady, pPacket->GetTimeStamp());
+            m_pDispatchQueue->Dispatched(pReady);
+            pReady = m_pDispatchQueue->GetNextToDispatch();
+        }
+    }
+
+    Time Timeout::GetExpirationTime() { return m_tExpiration; }
 
     void PRUDPEndPoint::PacketAcknowledged(PacketIn *pPacket) {
         PacketOut *pAcked = m_pSlidingWindow->Acknowledge(pPacket->GetSequenceID());
