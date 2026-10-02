@@ -2239,7 +2239,9 @@
                 "extra_cflags": [
                     "/Od",
                     "/Oi-",
-                    "/Ob1"
+                    "/Ob1",
+                    "/DRB3_QUAZAL_RETAIL_MEMALLOCATOR",
+                    "/DRB3_QUAZAL_STRING_OPEQ"
                 ]
             },
             "network/quazal/SystemComponent.cpp": "NonMatching",

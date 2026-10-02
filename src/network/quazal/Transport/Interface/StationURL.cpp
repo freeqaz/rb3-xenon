@@ -124,79 +124,79 @@ namespace Quazal {
 
     void StationURL::Format() {
         const unsigned int uiSize = 0x400;
-        int iLength = 0;
+        int iPos = 0;
         char szURL[uiSize];
         switch (m_eURLType) {
         case prudp:
-            iLength = _snprintf(szURL, uiSize, "prudp:/");
+            iPos = _snprintf(szURL, uiSize, "prudp:/");
             break;
         case prudps:
-            iLength = _snprintf(szURL, uiSize, "prudps:/");
+            iPos = _snprintf(szURL, uiSize, "prudps:/");
             break;
         case udp:
-            iLength = _snprintf(szURL, uiSize, "udp:/");
+            iPos = _snprintf(szURL, uiSize, "udp:/");
             break;
         }
-        bool bSeparator = false;
+        bool bSep = false;
         if (m_pInetAddress->GetAddress() != 0) {
-            iLength += _snprintf(szURL + iLength, uiSize, "%s%s", "address", "=");
-            m_pInetAddress->GetAddress(szURL + iLength, uiSize - iLength);
-            iLength += strlen(szURL + iLength);
-            bSeparator = true;
+            iPos += _snprintf(szURL + iPos, uiSize, "%s%s", "address", "=");
+            m_pInetAddress->GetAddress(szURL + iPos, uiSize - iPos);
+            iPos += strlen(szURL + iPos);
+            bSep = true;
         }
         if (m_pInetAddress->GetPortNumber() != 0) {
-            if (bSeparator) {
-                iLength += _snprintf(szURL + iLength, uiSize, ";");
+            if (bSep) {
+                iPos += _snprintf(szURL + iPos, uiSize, ";");
             }
-            iLength += _snprintf(
-                szURL + iLength, uiSize, "%s%s%d", "port", "=", m_pInetAddress->GetPortNumber()
+            iPos += _snprintf(
+                szURL + iPos, uiSize, "%s%s%d", "port", "=", m_pInetAddress->GetPortNumber()
             );
-            bSeparator = true;
+            bSep = true;
         }
         for (qMap<String, String>::iterator it = m_mapParams.begin(); it != m_mapParams.end();
              ++it) {
-            if (bSeparator) {
-                iLength += _snprintf(szURL + iLength, uiSize, ";");
+            if (bSep) {
+                iPos += _snprintf(szURL + iPos, uiSize, ";");
             }
-            iLength += _snprintf(
-                szURL + iLength,
+            iPos += _snprintf(
+                szURL + iPos,
                 uiSize,
                 "%s%s%s",
                 (const char *)it->first,
                 "=",
                 (const char *)it->second
             );
-            bSeparator = true;
+            bSep = true;
         }
         for (qMap<String, unsigned int>::iterator it = m_mapUIntParams.begin();
              it != m_mapUIntParams.end();
              ++it) {
-            if (bSeparator) {
-                iLength += _snprintf(szURL + iLength, uiSize, ";");
+            if (bSep) {
+                iPos += _snprintf(szURL + iPos, uiSize, ";");
             }
-            iLength += _snprintf(
-                szURL + iLength, uiSize, "%s%s%d", (const char *)it->first, "=", it->second
+            iPos += _snprintf(
+                szURL + iPos, uiSize, "%s%s%d", (const char *)it->first, "=", it->second
             );
-            bSeparator = true;
+            bSep = true;
         }
         if (!m_mapOptions.empty()) {
-            iLength += _snprintf(szURL + iLength, uiSize, "#");
-            bSeparator = false;
+            iPos += _snprintf(szURL + iPos, uiSize, "#");
+            bSep = false;
             for (qMap<String, String>::iterator it = m_mapOptions.begin();
                  it != m_mapOptions.end();
                  ++it) {
-                if (bSeparator) {
-                    iLength += _snprintf(szURL + iLength, uiSize, ";");
+                if (bSep) {
+                    iPos += _snprintf(szURL + iPos, uiSize, ";");
                 }
-                iLength += _snprintf(
-                    szURL + iLength,
+                iPos += _snprintf(
+                    szURL + iPos,
                     uiSize,
                     "%s%s%s",
                     (const char *)it->first,
                     "=",
                     (const char *)it->second
                 );
-                bSeparator = true;
+                bSep = true;
             }
         }
         SetURL(szURL);
@@ -322,11 +322,15 @@ namespace Quazal {
     }
 
     bool StationURL::operator==(const StationURL &url) const {
-        return strcmp(GetURL(), url.GetURL()) == 0;
+        const char *szOther = url.GetURL();
+        const char *szThis = GetURL();
+        return strcmp(szThis, szOther) == 0;
     }
 
     bool StationURL::operator!=(const StationURL &url) const {
-        return strcmp(GetURL(), url.GetURL()) != 0;
+        const char *szOther = url.GetURL();
+        const char *szThis = GetURL();
+        return strcmp(szThis, szOther) != 0;
     }
 
     bool StationURL::SetParam(const String &key, const String &value, bool bOption) {
@@ -417,8 +421,9 @@ namespace Quazal {
         if (pSep == m_szURL) {
             return qResult(0x80050003);
         }
+        unsigned int i;
         unsigned int uiLength = pSep - m_szURL;
-        for (unsigned int i = 0; i < uiLength; i++) {
+        for (i = 0; i < uiLength; i++) {
             if ((m_szURL[i] < 'A' || m_szURL[i] > 'Z') && (m_szURL[i] < 'a' || m_szURL[i] > 'z')
                 && (m_szURL[i] < '0' || m_szURL[i] > '9') && m_szURL[i] != '-'
                 && m_szURL[i] != '_') {
@@ -456,7 +461,7 @@ namespace Quazal {
     StationURL::SetBinaryParam(const String &key, const void *data, unsigned int size) {
         char szHex[0x100];
         StringConversion::BufferToHexString((const unsigned char *)data, size, szHex, 0x100);
-        SetParam(key, String(szHex), false);
+        SetParam(key, szHex, false);
         return qResult(0x10001);
     }
 
@@ -552,22 +557,22 @@ namespace Quazal {
         if (pEqual == NULL || szParam == pEqual) {
             return false;
         }
-        const char *szValue = pEqual + 1;
-        if (*szValue == 0 || strstr(szValue, "=") != NULL) {
+        const char *szVal = pEqual + 1;
+        if (*szVal == 0 || strstr(szVal, "=") != NULL) {
             return false;
         }
         *pEqual = 0;
         bool bOk = true;
         if (!bOption) {
             if (strcmp(szParam, "address") == 0) {
-                bOk = SetAddress(szValue);
+                bOk = SetAddress(szVal);
             } else if (strcmp(szParam, "port") == 0) {
-                SetPortNumber(atoi(szValue));
+                SetPortNumber(atoi(szVal));
             } else {
-                SetParam(String(szParam), String(szValue), bOption);
+                SetParam(szParam, szVal, bOption);
             }
         } else {
-            SetParam(String(szParam), String(szValue), bOption);
+            SetParam(szParam, szVal, bOption);
         }
         *pEqual = '=';
         return bOk;
@@ -609,8 +614,7 @@ namespace Quazal {
     void StationURL::Trace(unsigned int) const {}
 
     bool StationURL::IsSameHost(const StationURL &url) const {
-        return String::IsEqual(GetAddress(), url.GetAddress())
-            && GetPortNumber() == url.GetPortNumber();
+        return GetAddress() == url.GetAddress() && GetPortNumber() == url.GetPortNumber();
     }
 
     StringStream &operator<<(StringStream &stream, const StationURL &url) {
