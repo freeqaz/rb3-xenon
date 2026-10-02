@@ -87,7 +87,7 @@ namespace {
         bs >> mDirtyMask;
         int size;
         bs >> size;
-        mMachineData.mBuffer.resize(size);
+        mMachineData.Resize(size);
         bs.Read(&mMachineData.mBuffer[0], size);
     }
 
