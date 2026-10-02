@@ -10875,7 +10875,6 @@ GemTrackDir.cpp:
 DuplicatedObject.cpp:
 	.pdata      start:0x82250BE8 end:0x82250EE8
 	.pdata      start:0x82253490 end:0x822534E8
-	.pdata      start:0x822564A0 end:0x822564A8
 	.text       start:0x82A6FC78 end:0x82A76B58
 	.text       start:0x82AB0850 end:0x82AB0F70
 
