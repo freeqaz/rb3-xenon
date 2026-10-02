@@ -14349,8 +14349,8 @@ network/quazal/PromotionRefereeDDL.cpp:
 	.text       start:0x82AC4290 end:0x82AC48A4
 
 network/quazal/JobJoinSession.cpp:
-	.pdata      start:0x82254258 end:0x822542D0
-	.text       start:0x82AC8748 end:0x82AC9F44
+	.pdata      start:0x82254248 end:0x82254348
+	.text       start:0x82AC8658 end:0x82ACAB10
 
 network/quazal/JobListenOnWellKnown.cpp:
 	.pdata      start:0x82254628 end:0x82254630
