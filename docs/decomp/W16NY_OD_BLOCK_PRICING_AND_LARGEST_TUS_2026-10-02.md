@@ -364,7 +364,11 @@ Two rows at 100 disappear under their old names and are at 100 under the correct
 
 ## 5. Native gate
 
-(run last)
+Run last, on the code at `6d661c067` (only this docs edit follows it):
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
 
 ## 6. Not done
 
