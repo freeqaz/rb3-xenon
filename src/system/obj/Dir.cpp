@@ -925,9 +925,13 @@ void PreloadSharedSubdirs(Symbol sym) {
 }
 #endif
 
+// 0x8274F308 is `b DeleteShared` and nothing else; SystemTerminate (0x82511278)
+// is its only caller. Clearing the superclass map is native-only.
 void ObjectDir::Terminate() {
     DeleteShared();
+#ifdef HX_NATIVE
     sSuperClassMap.clear();
+#endif
 }
 
 void ObjectDir::AddedSubDir(ObjDirPtr<ObjectDir> &subdir) {

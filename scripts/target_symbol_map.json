@@ -22516,7 +22516,7 @@
  "0x8274f120": "??$?6V?$ObjDirPtr@VObjectDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VObjectDir@@@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@V?$ObjDirPtr@VObjectDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x8274f188": "?DeleteShared@?A0xf8b42a02@@YAXXZ",
  "0x8274f250": "?SyncObjects@ObjectDir@@UAAXXZ",
- "0x8274f308": "??$_Destroy@UInlinedDir@ObjectDir@@@stlpmtx_std@@YAXPAUInlinedDir@ObjectDir@@@Z",
+ "0x8274f308": "?Terminate@ObjectDir@@SAXXZ",
  "0x8274f318": "?GetSubDirPath@ObjectDir@@QAA?AVFilePath@@ABV2@ABVBinStream@@@Z",
  "0x8274f658": "?LoadInlinedFile@?$ObjDirPtr@VObjectDir@@@@QAAXABVFilePath@@AAVBinStream@@@Z",
  "0x8274f710": "?Insert@?$KeylessHash@PBDUEntry@ObjectDir@@@@QAAPAUEntry@ObjectDir@@ABU23@@Z",
