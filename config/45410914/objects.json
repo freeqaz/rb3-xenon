@@ -683,7 +683,12 @@
             "system/char/CharBone.cpp": "NonMatching",
             "system/flow/FlowSlider.cpp": "NonMatching",
             "system/rndobj/HiResScreen.cpp": "NonMatching",
-            "system/rndobj/TexRenderer.cpp": "NonMatching",
+            "system/rndobj/TexRenderer.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_NOTIFY_ONCE_EVAL"
+                ]
+            },
             "system/rndobj/Group.cpp": "NonMatching",
             "system/char/CharNeckTwist.cpp": "NonMatching",
             "system/rndobj/MatAnim.cpp": "NonMatching",

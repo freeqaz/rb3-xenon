@@ -1682,14 +1682,14 @@ void CamShot::Shake(float freq, float amp, const Vector2 &maxAngle, Vector3 &off
             Normalize(mLastDesiredShakeOffset, mLastDesiredShakeOffset);
             mLastDesiredShakeOffset *= amp - lenamp;
         }
-        float fabs1 = std::fabs(mLastDesiredShakeAngOffset.x) - localAng.x;
+        float fabs1 = fabsf(mLastDesiredShakeAngOffset.x) - localAng.x;
         if (fabs1 > 0) {
             if (mLastDesiredShakeAngOffset.x > 0) {
                 fabs1 *= -1.0f;
             }
             mLastDesiredShakeAngOffset.x += fabs1;
         }
-        float fabs2 = std::fabs(mLastDesiredShakeAngOffset.z) - localAng.y;
+        float fabs2 = fabsf(mLastDesiredShakeAngOffset.z) - localAng.y;
         if (fabs2 > 0) {
             if (mLastDesiredShakeAngOffset.z > 0) {
                 fabs2 *= -1.0f;
@@ -1699,10 +1699,9 @@ void CamShot::Shake(float freq, float amp, const Vector2 &maxAngle, Vector3 &off
 
         Vector3 spring;
         Subtract(mLastDesiredShakeOffset, mLastShakeOffset, spring);
-        bool usePPFPS = false;
-        if (RndPostProc::Current() && RndPostProc::Current()->EmulateFPS() > 0)
-            usePPFPS = true;
-        float emulateFPS = usePPFPS ? RndPostProc::Current()->EmulateFPS() : 60.0f;
+        float emulateFPS = RndPostProc::Current() && RndPostProc::Current()->EmulateFPS() > 0
+            ? RndPostProc::Current()->EmulateFPS()
+            : 60.0f;
         float fps = 60.0f / emulateFPS;
         spring *= 0.02f;
         Vector3 vel = mShakeVelocity;

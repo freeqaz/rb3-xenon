@@ -142,7 +142,13 @@ void NgMat::SetBasicState() {
 
 void NgMat::SetRegularShaderConst(bool perPixel) {
     // Texture params: emissive multiplier, intensify, bloom
+    // Retail tests only the emissive map and intensify here; the AllowHDR()
+    // term is DC3's.
+#ifdef RB3_DC3_MAT
     if (mEmissiveMap || mIntensify || AllowHDR()) {
+#else
+    if (mEmissiveMap || mIntensify) {
+#endif
         Vector4 texParams(
             mEmissiveMultiplier,
             (float)((int)(unsigned char)mIntensify + 1),
@@ -321,7 +327,12 @@ void NgMat::SetRegularShaderConst(bool perPixel) {
     // Refraction
     if (GetRefractEnabled(false)) {
         RndTex *refractNormal = GetRefractNormalMap();
+#ifdef RB3_DC3_MAT
         RndTex *screenTex = TheRnd.GetCurrentFrameTex(TheHiResScreen.IsActive());
+#else
+        // retail passes a constant false (li r4, 0) -- no hi-res screen query
+        RndTex *screenTex = TheRnd.GetCurrentFrameTex(false);
+#endif
         if (refractNormal && screenTex) {
             TheShaderMgr.SetPConstant((PShaderConstant)1, refractNormal);
             TheRenderState.SetTextureFilter(1, (RndRenderState::FilterMode)1, false);

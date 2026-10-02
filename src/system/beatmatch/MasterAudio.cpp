@@ -847,8 +847,8 @@ void TrackData::Init(SubmixCollection *submixes, bool b) {
 
 void TrackData::SetMapping(const std::vector<int> &chans) {
     mOriginalChannels.clear();
-    if (!chans.empty())
-        mOriginalChannels.insert(mOriginalChannels.begin(), chans.begin(), chans.end());
+    // retail calls _M_range_insert straight after the clear -- no empty() guard
+    mOriginalChannels.insert(mOriginalChannels.begin(), chans.begin(), chans.end());
     if (mSubmixes) {
         RELEASE(mChannelMapping);
         if (chans.size() == 1) {

@@ -177,15 +177,17 @@ void CharIKFoot::DoFSM(Transform &tf) {
         }
     }
     if (mFootFsmState == 2) {
+        // Retail blends from the incoming tf.v, not from mFootPosition: the
+        // subtract reads tf+0x30..0x38 and the add writes back through &tf.v.
         Vector3 delta;
-        Subtract(mFinger->WorldXfm().v, mFootPosition, delta);
+        Subtract(mFinger->WorldXfm().v, tf.v, delta);
         float len = Length(delta);
         mFootBlendTime = Min(-(deltasecs * 25.0f - mFootBlendTime), len);
         if (mFootBlendTime <= 0.0f)
             mFootFsmState = 0;
         else
             delta *= (len - mFootBlendTime) / len;
-        Add(mFootPosition, delta, tf.v);
+        tf.v += delta;
         if (b2) {
             mFootPosition = tf.v;
             mFootFsmState = 1;

@@ -260,10 +260,9 @@ CharClipDriver *CharClipDriver::PreEvaluate(float beat, float deltaBeat, float d
         mAdvanceBeat = 0.0f;
     } else {
         float oldBeat = mBeat;
-        if (flags & 0x80) {
-            mDBeat = 0.0f;
-            mPlayFlags = flags & ~0x80;
-        } else if (!useUserTime) {
+        // Retail has no 0x80 "reset delta" flag test here (DC3 added it, and
+        // nothing in RB3 sets that bit): it goes straight to the user-time test.
+        if (!useUserTime) {
             float db;
             if (useRealTime) {
                 db = mClip->DeltaSecondsToDeltaBeat(deltaSeconds, oldBeat);
@@ -296,13 +295,9 @@ CharClipDriver *CharClipDriver::PreEvaluate(float beat, float deltaBeat, float d
             } else {
                 mBlendFrac = 1.0f;
             }
-            float clamped;
-            if ((mBlendFrac - 1.0f >= 0.0f)) {
-                clamped = 1.0f;
-            } else {
-                clamped = mBlendFrac;
+            if (mBlendFrac > 1.0f) {
+                mBlendFrac = 1.0f;
             }
-            mBlendFrac = clamped;
         }
     }
 

@@ -101,13 +101,15 @@ Synth *TheSynth;
 std::list<Hmx::Object *> Synth::mPlayHandlers;
 bool Synth::mTrackLevels;
 int Synth::unk98;
+#ifdef RB3_SYNTH_DC3_LISTS
 Stream *Synth::mDebugStream;
+#endif
 ADSRImpl *Synth::mADSR;
 String Synth::unka8;
 
 Synth::Synth()
     : mMuted(false), mMicClientMapper(nullptr), mMidiInstrumentMgr(nullptr), unk7c(0),
-      unk80(0) {
+      mDebugStream(nullptr) {
     // Retail (0x82700e18): no track_levels lookup and
     // no ADSRImpl; it allocates the MidiInstrumentMgr (0x18) into +0x78 here.
     SetName("synth", ObjectDir::Main());
@@ -309,14 +311,15 @@ void Synth::DestroyPitchShift(FxSendPitchShift *shift) { delete shift; }
 
 float Synth::UpdateOverlay(RndOverlay *o, float y) {
     Hmx::Color white(1, 1, 1, 1);
-    float f24 = (float)TheRnd.Width() * (y + 0.265f);
+    // retail writes the pixel y back into the parameter's home slot (0x114)
+    y = (float)TheRnd.Height() * (y + 0.265f);
     if (mDebugStream) {
-        DrawMeterScale(f24);
+        DrawMeterScale(y);
         float volume = mDebugStream->Faders()->GetVal();
-        DrawMeter(f24, volume, 0, "stream");
+        DrawMeter(y, volume, 0, "stream");
         for (int i = 0; i < mDebugStream->GetNumChannels(); i++) {
             DrawMeter(
-                f24,
+                y,
                 mDebugStream->ChannelFaders(i)->GetVal(),
                 0,
                 MakeString("chan %i", i)
@@ -324,7 +327,7 @@ float Synth::UpdateOverlay(RndOverlay *o, float y) {
         }
     }
     if (!mLevelData.empty()) {
-        DrawMeterScale(f24);
+        DrawMeterScale(y);
     }
     for (int i = 0; i < mLevelData.size(); i++) {
         float rms = RatioToDb(mLevelData[i].mRMS);
@@ -332,12 +335,12 @@ float Synth::UpdateOverlay(RndOverlay *o, float y) {
         if (rms > 2) {
             rms = -30;
         }
-        DrawMeter(f24, rms, peakhold, mLevelData[i].mName.c_str());
+        DrawMeter(y, rms, peakhold, mLevelData[i].mName.c_str());
     }
     char buf[64];
     sprintf(buf, "Total active Sequences: %d", SynthPollable::Pollables().size());
-    TheRnd.DrawString(buf, Vector2(100, f24), white, true);
-    float f12 = f24 + 12.0f;
+    TheRnd.DrawString(buf, Vector2(100, y), white, true);
+    float f12 = y + 12.0f;
     FOREACH (it, SynthPollable::Pollables()) {
         const char *name = (*it)->GetSoundDisplayName();
         if (*name != '\0') {
@@ -345,7 +348,7 @@ float Synth::UpdateOverlay(RndOverlay *o, float y) {
             f12 += 12.0f;
         }
     }
-    return f12 / (float)TheRnd.Width();
+    return f12 / (float)TheRnd.Height();
 }
 
 void Synth::SetMasterVolume(float volume) { mMasterFader->SetVal(volume); }

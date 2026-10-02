@@ -577,8 +577,8 @@ void Song::SyncState() {
         a->SetPaused(true);
         mHxMaster->Jump(GetFrame() * 1000.0f);
 
-        if (!mFastSync) {
 #ifdef HX_NATIVE
+        if (!mFastSync) {
             if (!a->IsReady()) {
                 // Defer completion — PollAsyncState() will finish when ready
                 mSavedWasPaused = wasPaused;
@@ -586,17 +586,19 @@ void Song::SyncState() {
                 mAsyncState = kAsyncWaitSync;
                 return;
             }
-#else
-            while (true) {
-                HxAudio *a2 = mHxMaster->GetHxAudio();
-                if (a2->IsReady())
-                    break;
-                TheSynth->Poll();
-                a2 = mHxMaster->GetHxAudio();
-                a2->Poll();
-            }
-#endif
         }
+#else
+        // Retail waits unconditionally: after Jump it branches straight to the
+        // IsReady() test (no mFastSync load -- that switch is DC3's).
+        while (true) {
+            HxAudio *a2 = mHxMaster->GetHxAudio();
+            if (a2->IsReady())
+                break;
+            TheSynth->Poll();
+            a2 = mHxMaster->GetHxAudio();
+            a2->Poll();
+        }
+#endif
 
         SetSpeed();
         a = mHxMaster->GetHxAudio();
