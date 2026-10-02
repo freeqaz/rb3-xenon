@@ -100,8 +100,6 @@ namespace Quazal {
     template <class T>
     class qList : public std::list<T, MemAllocator<T> >, public RootObject {
     public:
-        qList() {}
-        ~qList() {}
     };
 
     class MutexPrimitive : public RootObject {
@@ -318,7 +316,6 @@ namespace Quazal {
     class ConnectionData : public _DDL_ConnectionData {
     public:
         ConnectionData() {}
-        virtual ~ConnectionData() {}
     };
 
     class SecureConnectionClient : public RootObject {
@@ -578,9 +575,8 @@ namespace Quazal {
     void JobConnectSecureEndPoint::ParseURL() {
         m_uiCID = m_oURL.GetConnectionID();
         m_uiPID = m_oURL.GetPrincipalID();
-        bool bValid = m_oURL.GetAddress().GetLength() != 0 && m_oURL.GetPortNumber() > 0
-            && m_oURL.GetStreamID() > 0;
-        if (bValid) {
+        if (m_oURL.GetAddress().GetLength() != 0 && m_oURL.GetPortNumber() > 0
+            && m_oURL.GetStreamID() > 0) {
             StationURL url;
             url.SetInetAddress(m_oURL.GetInetAddress());
             url.SetStreamID(m_oURL.GetStreamID());
