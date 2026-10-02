@@ -14411,8 +14411,8 @@ network/quazal/Foundation/Transport/StreamManager.cpp:
 	.text       start:0x82ADAB58 end:0x82ADAD54
 
 network/quazal/Services/Facades/Client/JobBackEndServicesLogin.cpp:
-	.pdata      start:0x82254F20 end:0x82254FC8
-	.text       start:0x82ADB5F8 end:0x82ADD048
+	.pdata      start:0x82254F20 end:0x82254FD0
+	.text       start:0x82ADB5F8 end:0x82ADD088
 
 network/quazal/SecureTransport/SecureStream.cpp:
 	.pdata      start:0x82255000 end:0x82255088

@@ -2260,7 +2260,16 @@
             "network/quazal/Transport/Interface/Network.cpp": "NonMatching",
             "network/quazal/Core.cpp": "NonMatching",
             "network/quazal/Foundation/Transport/StreamManager.cpp": "NonMatching",
-            "network/quazal/Services/Facades/Client/JobBackEndServicesLogin.cpp": "NonMatching",
+            "network/quazal/Services/Facades/Client/JobBackEndServicesLogin.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/EHs-c-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
             "network/quazal/SecureTransport/SecureStream.cpp": "NonMatching",
             "network/quazal/Foundation/Client/ClientStreamManager.cpp": "NonMatching",
             "network/quazal/Foundation/Protocol/NotificationEventManager.cpp": "NonMatching",
