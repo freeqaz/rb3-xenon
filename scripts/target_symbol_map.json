@@ -34922,6 +34922,5 @@
  "0x827704a8": "?GetUsingRealDrums@SongData@@QBA_NXZ",
  "0x827704b0": "?SetGameCymbalLanes@SongData@@QAAXI@Z",
  "0x827704b8": "?GetGameCymbalLanes@SongData@@QBAIXZ",
- "0x822e4fd8": "??0?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@QAA@ABU01@@Z",
  "0x822a1638": "??$__uninitialized_copy@PAV?$ObjPtr@VRndDir@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VRndDir@@@@PAV1@00ABU__false_type@0@@Z"
 }
