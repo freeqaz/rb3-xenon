@@ -153,7 +153,8 @@ BEGIN_COPYS(BandConfiguration)
     BEGIN_COPYING_MEMBERS
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 3; j++) {
-                COPY_MEMBER(mXfms[i].xfms[j])
+                const TargTransform &from = c->mXfms[i].xfms[j];
+                mXfms[i].xfms[j] = from;
             }
         }
     END_COPYING_MEMBERS
