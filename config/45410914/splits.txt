@@ -14505,8 +14505,8 @@ network/quazal/Encryption/RC4/RC4Encryption.cpp:
 	.text       start:0x82B14E68 end:0x82B14F90
 
 network/quazal/Transport/UDP/UDPTransport.cpp:
-	.pdata      start:0x82257710 end:0x82257860
-	.text       start:0x82B15FA0 end:0x82B17810
+	.pdata      start:0x82257658 end:0x82257AF0
+	.text       start:0x82B15808 end:0x82B1A518
 
 network/quazal/Compression/ZLib/ZLibCompression.cpp:
 	.pdata      start:0x82257B98 end:0x82257BA0
