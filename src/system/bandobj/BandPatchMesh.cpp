@@ -411,9 +411,14 @@ void BandPatchMesh::Render(RndTex *tex, RndMat *mat) {
                         mat->SetBlend(RndMat::kPreMultAlpha);
                         mat->SetDiffuseTex(mMeshes[i].patches[j].mTex);
                     }
+                    // Retail also offsets the patch by half a texel
+                    // (-0.5 / width, -0.5 / height; pool constant 0x820392FC
+                    // = -0.5f), stored to the transform's v.x and v.y.
                     Transform tf88;
                     tf88.Reset();
                     tf88.m.y *= (float)tex->Height() / (float)tex->Width();
+                    tf88.v.x = -0.5f / (float)tex->Width();
+                    tf88.v.y = -0.5f / (float)tex->Height();
                     patch->SetLocalXfm(tf88);
                     patch->SetMat(mat);
                     if (mat->GetDiffuseTex()) {
