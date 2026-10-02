@@ -413,16 +413,19 @@ void DxRnd::SetDefaultRenderStates() {
     GetDeviceCaps(&caps);
     D3DDevice_SetRenderState_AlphaRef(TheDxRnd.Device(), 0);
     D3DDevice_SetRenderState_AlphaFunc(TheDxRnd.Device(), D3DCMP_GREATER);
-    unsigned int maxPointSize = (int)caps.MaxPointSize;
-    D3DDevice_SetRenderState_PointSizeMax(TheDxRnd.Device(), maxPointSize);
+    // D3D render states carry floats as their DWORD bit pattern: retail loads
+    // the word straight out of the caps struct, no conversion.
+    D3DDevice_SetRenderState_PointSizeMax(
+        TheDxRnd.Device(), *(DWORD *)&caps.MaxPointSize
+    );
     D3DDevice_SetRenderState_SeparateAlphaBlendEnable(TheDxRnd.Device(), 1);
     D3DDevice_SetRenderState_SrcBlendAlpha(TheDxRnd.Device(), 1);
     D3DDevice_SetRenderState_DestBlendAlpha(TheDxRnd.Device(), 1);
     D3DDevice_SetRenderState_BlendOpAlpha(TheDxRnd.Device(), 3);
 
+    unsigned int i = 0;
     if (caps.MaxTextureBlendStages != 0) {
         unsigned int stage_offset = 0;
-        unsigned int i = 0;
         do {
             D3DDevice_SetSamplerState_MinFilter(TheDxRnd.Device(), i, 1);
             D3DDevice_SetSamplerState_MagFilter(TheDxRnd.Device(), i, 1);
@@ -432,7 +435,7 @@ void DxRnd::SetDefaultRenderStates() {
             *stage_ptr = (*stage_ptr & 0xFE7FFFFF) | 0x800000;
 
             unsigned long long* state64 = reinterpret_cast<unsigned long long*>(device + 0x18);
-            unsigned long long shift64 = (unsigned long long)(i + 0x20) & 0x7F;
+            unsigned long long shift64 = (unsigned long long)(i + 0x20);
             unsigned long long mask = 0x8000000000000000ULL;
             *state64 |= mask >> shift64;
 
