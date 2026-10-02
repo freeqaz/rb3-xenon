@@ -7,6 +7,7 @@
 #include "Platform/SystemError.h"
 #include "ObjDup/DOClass.h"
 #include "Platform/Time.h"
+#include "ObjDup/Station.h"
 
 namespace Quazal {
 
@@ -113,9 +114,26 @@ namespace Quazal {
         referencedDO = ref->m_poReferencedDO;
     }
 
+    bool DuplicatedObject::IsInCachedDuplicationSet(DOHandle h) const {
+        return m_setCachedDuplicationSet.find(DOHandle(h)) != m_setCachedDuplicationSet.end();
+    }
+
+    void DuplicatedObject::AddToCachedDuplicationSet(const Station *pStation) {
+        m_setCachedDuplicationSet.Add(pStation->GetHandle());
+    }
+
+    bool DuplicatedObject::RemoveFromCachedDuplicationSet(DOHandle h) {
+        return m_setCachedDuplicationSet.Remove(h);
+    }
+
     bool DuplicatedObject::IsInDuplicationSet(DOHandle h) const {
-        unsigned int val = h.mValue;
-        return m_setDuplicationSet.m_map.find(DOHandle(val)) != m_setDuplicationSet.m_map.end();
+        return m_setDuplicationSet.find(DOHandle(h)) != m_setDuplicationSet.end();
+    }
+
+    void DuplicatedObject::AddToDuplicationSet(DuplicatedObject *pDO) { m_setDuplicationSet.Add(pDO); }
+
+    bool DuplicatedObject::RemoveFromDuplicationSet(DOHandle h) {
+        return m_setDuplicationSet.Remove(h);
     }
 
     // MSVC X360 makes any StateMachine-derived class use the 8-byte

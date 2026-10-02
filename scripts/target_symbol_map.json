@@ -30620,8 +30620,8 @@
  "0x82a74f48": "?ComputeDistance@DuplicatedObject@Quazal@@UAAMPAV12@@Z",
  "0x82a74f60": "?ReleaseReferenceToMaster@DuplicatedObject@Quazal@@QAAXXZ",
  "0x82a74f90": "?AcquireReferenceToMaster@DuplicatedObject@Quazal@@QAAXXZ",
- "0x82a75288": "?GetInstanceFromVector@InstanceTable@Quazal@@QAAIII@Z",
- "0x82a75458": "?IsInDuplicationSet@DuplicatedObject@Quazal@@QBA_NVDOHandle@2@@Z",
+ "0x82a75288": "?AddToCachedDuplicationSet@DuplicatedObject@Quazal@@QAAXPBVStation@2@@Z",
+ "0x82a75458": "?RemoveFromDuplicationSet@DuplicatedObject@Quazal@@QAA_NVDOHandle@2@@Z",
  "0x82a75688": "?SetInitialState@DuplicatedObject@Quazal@@QAAXABVQEvent@StateMachine@2@@Z",
  "0x82a756a8": "?InvalidState@DuplicatedObject@Quazal@@QAAP8StateMachine@2@AAP832@AAXABVQEvent@32@@Z0@Z0@Z",
  "0x82a756c0": "?ValidState@DuplicatedObject@Quazal@@QAAP8StateMachine@2@AAP832@AAXABVQEvent@32@@Z0@Z0@Z",
@@ -34971,5 +34971,9 @@
  "0x82a70400": "?SpecificRefresh@DuplicatedObject@Quazal@@QAA_NPAVDataSet@2@ABVTime@2@@Z",
  "0x82a70460": "?SpecificUpdate@DuplicatedObject@Quazal@@QAA_NPAVDataSet@2@VTime@2@@Z",
  "0x82a704d0": "?CallApproveFaultRecovery@DuplicatedObject@Quazal@@QAA_NXZ",
- "0x82a70528": "?CallApproveEmigration@DuplicatedObject@Quazal@@QAA_NI@Z"
+ "0x82a70528": "?CallApproveEmigration@DuplicatedObject@Quazal@@QAA_NI@Z",
+ "0x82a751f8": "?IsInCachedDuplicationSet@DuplicatedObject@Quazal@@QBA_NVDOHandle@2@@Z",
+ "0x82a75338": "?RemoveFromCachedDuplicationSet@DuplicatedObject@Quazal@@QAA_NVDOHandle@2@@Z",
+ "0x82a75390": "?IsInDuplicationSet@DuplicatedObject@Quazal@@QBA_NVDOHandle@2@@Z",
+ "0x82a75420": "?AddToDuplicationSet@DuplicatedObject@Quazal@@QAAXPAV12@@Z"
 }
