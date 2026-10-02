@@ -94718,7 +94718,8 @@
     "?_M_fill_insert_aux@?$vector@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@AAAXPAIIABIABU__false_type@2@@Z",
     "?_M_fill_insert_aux@?$vector@PAU_Slist_node_base@priv@stlpmtx_std@@V?$StlNodeAlloc@PAU_Slist_node_base@priv@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAPAU_Slist_node_base@priv@2@IABQAU342@ABU__false_type@2@@Z",
     "?_M_fill_insert_aux@?$vector@PAVRndPollable@@V?$StlNodeAlloc@PAVRndPollable@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVRndPollable@@IABQAV3@ABU__false_type@2@@Z",
-    "?_M_fill_insert_aux@?$vector@PAVLocalSavedSetlist@@V?$StlNodeAlloc@PAVLocalSavedSetlist@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVLocalSavedSetlist@@IABQAV3@ABU__false_type@2@@Z"
+    "?_M_fill_insert_aux@?$vector@PAVLocalSavedSetlist@@V?$StlNodeAlloc@PAVLocalSavedSetlist@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVLocalSavedSetlist@@IABQAV3@ABU__false_type@2@@Z",
+    "?_M_fill_insert_aux@?$vector@PAVTourCharLocal@@V?$StlNodeAlloc@PAVTourCharLocal@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVTourCharLocal@@IABQAV3@ABU__false_type@2@@Z"
    ],
    "body_bytes": 328,
    "nrel": 6,
@@ -94756,6 +94757,11 @@
      "spelling": "?_M_fill_insert_aux@?$vector@PAVLocalSavedSetlist@@V?$StlNodeAlloc@PAVLocalSavedSetlist@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVLocalSavedSetlist@@IABQAV3@ABU__false_type@2@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "Leaf of the W16-JE cycle proof for ?_M_fill_insert@?$vector@PAVObject@Hmx@@V?$StlNodeAlloc@PAVO | ?_M_fill_insert@?$vector@PAVLocalSavedSetlist@@V?$StlNodeAll: self-recursive on both sides; whole-image census of retail bodies with this masked body and relocation shape = exactly 1, this survivor; every non-self relocation slot chases PROVEN. Channel 2 (via the parent): HETEROGENEOUS FAN-IN naming our element type: retail 1 call(s) the survivor/leaf chain (e.g. ??$LoadStdPtr@VLocalSavedSetlist@@V?$StlNodeAlloc@PAVLocalSavedSetlist@@@stlpmtx_std@@@Fix)."
+    },
+    {
+     "spelling": "?_M_fill_insert_aux@?$vector@PAVTourCharLocal@@V?$StlNodeAlloc@PAVTourCharLocal@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVTourCharLocal@@IABQAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NH-NAME 2026-10-02",
+     "evidence": "Self-recursive leaf of the cycle in ?_M_fill_insert@?$vector@PAVTourCharLocal@@V?$StlNodeAlloc@PAVTourCharLocal@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVTourCh's chase. Masked body + relocation shape unique image-wide (one retail address: the survivor); self-call slot is the only undischarged slot and is not consulted. Admitted with the parent membership, whose type witness is: fan-in: retail caller(s) of the survivor chain named for our element type: ??$LoadStdPtr@VTourCharLocal@@V?$StlNodeAlloc@PAVTourCharLocal@@@stlpmtx_std@@@FixedSizeSaveable@@SAXAAVFixedSizeSaveableStream@@AAV?$vector@PAVTourCharLocal@@V?$StlNodeAlloc@PAVTourCharLocal@@@stlpmtx_std@@@stlpmtx_std@@HH@Z."
     }
    ]
   },
@@ -97349,7 +97355,8 @@
     "?_M_fill_insert@?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@AAAXPAHIABH@Z",
     "?_M_fill_insert@?$vector@PAVRndPollable@@V?$StlNodeAlloc@PAVRndPollable@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVRndPollable@@IABQAV3@@Z",
     "?_M_fill_insert@?$vector@PAVLocalSavedSetlist@@V?$StlNodeAlloc@PAVLocalSavedSetlist@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVLocalSavedSetlist@@IABQAV3@@Z",
-    "?_M_fill_insert@?$vector@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@AAAXPAIIABI@Z"
+    "?_M_fill_insert@?$vector@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@AAAXPAIIABI@Z",
+    "?_M_fill_insert@?$vector@PAVTourCharLocal@@V?$StlNodeAlloc@PAVTourCharLocal@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVTourCharLocal@@IABQAV3@@Z"
    ],
    "withdrawn": [],
    "evidence": "Hand-installed by lane W17-BPM3. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (flat T1 refuted only on relocation targets -- _M_fill_insert_aux / _M_insert_overflow <unsigned int> vs <Object*> -- which fold recursively through MemOrPoolAlloc/MemOrPoolAllocSTL, PoolAlloc and the operator new twins). Retail keeps four 108-byte body-twins of this shape (vector<float>, vector<float,XboxAllocator>, vector<Object*>, vector<Spotlight*>), so body identity cannot pick the membership; the call-site displacement does: WorkVerts::SetMeshVerts (0x8234A458) bl's 0x82272A60 at the mMeshVerts.resize site (idx 76), and that row is otherwise instruction-identical to retail (318/318 canonical). mMeshVerts' element type unsigned int is pinned by retail's own named callee in the same function, ?erase@?$vector@IV?$StlNodeAlloc@I@ at 0x824B06C8.",
@@ -97376,6 +97383,11 @@
      "spelling": "?_M_fill_insert@?$vector@PAVLocalSavedSetlist@@V?$StlNodeAlloc@PAVLocalSavedSetlist@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVLocalSavedSetlist@@IABQAV3@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "Cycle broken by TWO INDEPENDENT CHANNELS (FOLDPROVE-2 method), lane W16-JE. --chase is CHASED T1 PROVEN with its only CYCLE-ASSUMED leaf the self-recursive slot. (1) MASKED-BODY UNIQUENESS: ?_M_fill_insert_aux@?$vector@PAVLocalSavedSetlist@@V?$StlNodeAlloc@PAV self-recursive on both sides, whole-image census of retail bodies with its masked bytes AND relocation shape = exactly 1 (?_M_fill_insert_aux@?$vector@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDra) -- so if retail instantiated our spelling's leaf it can only be the survivor's leaf. (2) HETEROGENEOUS FAN-IN naming our element type: retail 1 call(s) the survivor/leaf chain (e.g. ??$LoadStdPtr@VLocalSavedSetlist@@V?$StlNodeAlloc@PAVLocalSavedSetlist@@@stlpmtx_std@@@Fix). The self-recursive slot itself is NOT counted as evidence. Placeholder-slot audit: every tolerated slot re-checked (data globals one address, unnamed callees chase PROVEN), 0 bad."
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@PAVTourCharLocal@@V?$StlNodeAlloc@PAVTourCharLocal@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVTourCharLocal@@IABQAV3@@Z",
+     "lane": "W16-NH-NAME 2026-10-02",
+     "evidence": "W16-JE two-channel cycle proof. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN with 1 CYCLE-ASSUMED leaf/leaves, each self-recursive on both sides; channel 1: the leaf's masked body+relocation shape occurs at exactly ONE retail address (whole-image census of 3095 dtk target objs). Channel 2 (fan-in: retail caller(s) of the survivor chain named for our element type: ??$LoadStdPtr@VTourCharLocal@@V?$StlNodeAlloc@PAVTourCharLocal@@@stlpmtx_std@@@FixedSizeSaveable@@SAXAAVFixedSizeSaveableStream@@AAV?$vector@PAVTourCharLocal@@V?$StlNodeAlloc@PAVTourCharLocal@@@stlpmtx_std@@@stlpmtx_std@@HH@Z). 108 B retail / 108 B ours. Retail call site(s) reaching the survivor where we call this spelling: 0x8258cc28."
     }
    ],
    "restored": [
@@ -97972,7 +97984,8 @@
    "folded": [
     "?_M_fill_insert@?$vector@UCompEv@DataEventList@@V?$StlNodeAlloc@UCompEv@DataEventList@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUCompEv@DataEventList@@IABU34@@Z",
     "?_M_fill_insert@?$vector@V?$Key@VVector2@@@@V?$StlNodeAlloc@V?$Key@VVector2@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VVector2@@@@IABV3@@Z",
-    "?_M_fill_insert@?$vector@VSectionInfo@Stats@@V?$StlNodeAlloc@VSectionInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSectionInfo@Stats@@IABV34@@Z"
+    "?_M_fill_insert@?$vector@VSectionInfo@Stats@@V?$StlNodeAlloc@VSectionInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSectionInfo@Stats@@IABV34@@Z",
+    "?_M_fill_insert@?$vector@UCamCatEntry@@V?$StlNodeAlloc@UCamCatEntry@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUCamCatEntry@@IABU3@@Z"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
@@ -97991,6 +98004,11 @@
      "spelling": "?_M_fill_insert@?$vector@VSectionInfo@Stats@@V?$StlNodeAlloc@VSectionInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSectionInfo@Stats@@IABV34@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "Cycle broken by TWO INDEPENDENT CHANNELS (FOLDPROVE-2 method), lane W16-JE. --chase is CHASED T1 PROVEN with its only CYCLE-ASSUMED leaf the self-recursive slot. (1) MASKED-BODY UNIQUENESS: ?_M_fill_insert_aux@?$vector@VSectionInfo@Stats@@V?$StlNodeAlloc@VSect self-recursive on both sides, whole-image census of retail bodies with its masked bytes AND relocation shape = exactly 1 (?_M_fill_insert_aux@?$vector@UCompEv@DataEventList@@V?$StlNodeAlloc@UC) -- so if retail instantiated our spelling's leaf it can only be the survivor's leaf. (2) HETEROGENEOUS FAN-IN naming our element type: retail 1 call(s) the survivor/leaf chain (e.g. ??$?5VSectionInfo@Stats@@V?$StlNodeAlloc@VSectionInfo@Stats@@@stlpmtx_std@@@@YAAAVBinStrea). The self-recursive slot itself is NOT counted as evidence. Placeholder-slot audit: every tolerated slot re-checked (data globals one address, unnamed callees chase PROVEN), 0 bad."
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@UCamCatEntry@@V?$StlNodeAlloc@UCamCatEntry@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUCamCatEntry@@IABU3@@Z",
+     "lane": "W16-NH-NAME 2026-10-02",
+     "evidence": "W16-JE two-channel cycle proof. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN with 1 CYCLE-ASSUMED leaf/leaves, each self-recursive on both sides; channel 1: the leaf's masked body+relocation shape occurs at exactly ONE retail address (whole-image census of 3095 dtk target objs). Channel 2 (co-callee: the charged retail caller also calls ?OnMidiShot5Cleanup@BandDirector@@QAAXXZ -> ?PickShot@BandDirector@@QAA?AVSymbol@@AAV?$vector@UCamCatEntry@@V?$StlNodeAlloc@UCamCatEntry@@@stlpmtx_std@@@stlpmtx_std@@V2@_N@Z; ?OnMidiShot5Cleanup@BandDirector@@QAAXXZ -> ?PickShot@BandDirector@@QAA?AVSymbol@@AAV?$vector@UCamCatEntry@@V?$StlNodeAlloc@UCamCatEntry@@@stlpmtx_std@@@stlpmtx_std@@V2@_N@Z). 112 B retail / 112 B ours. Retail call site(s) reaching the survivor where we call this spelling: 0x82299208."
     }
    ]
   },
@@ -99705,7 +99723,8 @@
    "survivor": "?_M_fill_insert@?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVVector3@@IABV3@@Z",
    "folded": [
     "?_M_fill_insert@?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVColor@Hmx@@IABV34@@Z",
-    "?_M_fill_insert@?$vector@VUserGuid@@V?$StlNodeAlloc@VUserGuid@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVUserGuid@@IABV3@@Z"
+    "?_M_fill_insert@?$vector@VUserGuid@@V?$StlNodeAlloc@VUserGuid@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVUserGuid@@IABV3@@Z",
+    "?_M_fill_insert@?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUSpotlightDrawerEntry@LightPreset@@IABU34@@Z"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
@@ -99719,6 +99738,11 @@
      "spelling": "?_M_fill_insert@?$vector@VUserGuid@@V?$StlNodeAlloc@VUserGuid@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVUserGuid@@IABV3@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "Cycle broken by TWO INDEPENDENT CHANNELS (FOLDPROVE-2 method), lane W16-JE. --chase is CHASED T1 PROVEN with its only CYCLE-ASSUMED leaf the self-recursive slot. (1) MASKED-BODY UNIQUENESS: ?_M_fill_insert_aux@?$vector@VUserGuid@@V?$StlNodeAlloc@VUserGuid@@@st self-recursive on both sides, whole-image census of retail bodies with its masked bytes AND relocation shape = exactly 1 (?_M_fill_insert_aux@?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlp) -- so if retail instantiated our spelling's leaf it can only be the survivor's leaf. (2) HETEROGENEOUS FAN-IN naming our element type: retail 1 call(s) the survivor/leaf chain (e.g. ??$?5VUserGuid@@V?$StlNodeAlloc@VUserGuid@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vecto). The self-recursive slot itself is NOT counted as evidence. Placeholder-slot audit: every tolerated slot re-checked (data globals one address, unnamed callees chase PROVEN), 0 bad."
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUSpotlightDrawerEntry@LightPreset@@IABU34@@Z",
+     "lane": "W16-NH-NAME 2026-10-02",
+     "evidence": "W16-JE two-channel cycle proof. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN with 1 CYCLE-ASSUMED leaf/leaves, each self-recursive on both sides; channel 1: the leaf's masked body+relocation shape occurs at exactly ONE retail address (whole-image census of 3095 dtk target objs). Channel 2 (fan-in: retail caller(s) of the survivor chain named for our element type: ??$?5USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@@Z; ??$PropSync@USpotlightDrawerEntry@LightPreset@@@@YA_NAAV?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z). 108 B retail / 108 B ours. Retail call site(s) reaching the survivor where we call this spelling: 0x824b2ee4, 0x824b3800, 0x824b4d7c, 0x824b8474."
     }
    ]
   },
@@ -99832,7 +99856,8 @@
    "folded": [
     "?_M_fill_insert_aux@?$vector@V?$Key@VVector2@@@@V?$StlNodeAlloc@V?$Key@VVector2@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VVector2@@@@IABV3@ABU__false_type@2@@Z",
     "?_M_fill_insert_aux@?$vector@VSectionInfo@Stats@@V?$StlNodeAlloc@VSectionInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSectionInfo@Stats@@IABV34@ABU__false_type@2@@Z",
-    "?_M_fill_insert_aux@?$vector@UNote@MidiParser@@V?$StlNodeAlloc@UNote@MidiParser@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUNote@MidiParser@@IABU34@ABU__false_type@2@@Z"
+    "?_M_fill_insert_aux@?$vector@UNote@MidiParser@@V?$StlNodeAlloc@UNote@MidiParser@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUNote@MidiParser@@IABU34@ABU__false_type@2@@Z",
+    "?_M_fill_insert_aux@?$vector@UCamCatEntry@@V?$StlNodeAlloc@UCamCatEntry@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUCamCatEntry@@IABU3@ABU__false_type@2@@Z"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
@@ -99851,6 +99876,11 @@
      "spelling": "?_M_fill_insert_aux@?$vector@UNote@MidiParser@@V?$StlNodeAlloc@UNote@MidiParser@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUNote@MidiParser@@IABU34@ABU__false_type@2@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "Cycle broken by TWO INDEPENDENT CHANNELS (FOLDPROVE-2 method), lane W16-JE. --chase is CHASED T1 PROVEN with its only CYCLE-ASSUMED leaf the self-recursive slot. (1) MASKED-BODY UNIQUENESS: ?_M_fill_insert_aux@?$vector@UNote@MidiParser@@V?$StlNodeAlloc@UNote@M self-recursive on both sides, whole-image census of retail bodies with its masked bytes AND relocation shape = exactly 1 (?_M_fill_insert_aux@?$vector@UCompEv@DataEventList@@V?$StlNodeAlloc@UC) -- so if retail instantiated our spelling's leaf it can only be the survivor's leaf. (2) HETEROGENEOUS FAN-IN naming our element type: retail 2 call(s) the survivor/leaf chain (e.g. ?_M_fill_insert@?$vector@UNote@MidiParser@@V?$StlNodeAlloc@UNote@MidiParser@@@stlpmtx_std@, ?_M_fill_insert@?$vector@UNote@MidiParser@@V?$StlNodeAlloc@UNote@MidiParser@@@stlpmtx_std@). The self-recursive slot itself is NOT counted as evidence. Placeholder-slot audit: every tolerated slot re-checked (data globals one address, unnamed callees chase PROVEN), 0 bad."
+    },
+    {
+     "spelling": "?_M_fill_insert_aux@?$vector@UCamCatEntry@@V?$StlNodeAlloc@UCamCatEntry@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUCamCatEntry@@IABU3@ABU__false_type@2@@Z",
+     "lane": "W16-NH-NAME 2026-10-02",
+     "evidence": "Self-recursive leaf of the cycle in ?_M_fill_insert@?$vector@UCamCatEntry@@V?$StlNodeAlloc@UCamCatEntry@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUCamCatEntry@@IAB's chase. Masked body + relocation shape unique image-wide (one retail address: the survivor); self-call slot is the only undischarged slot and is not consulted. Admitted with the parent membership, whose type witness is: co-callee: the charged retail caller also calls ?OnMidiShot5Cleanup@BandDirector@@QAAXXZ -> ?PickShot@BandDirector@@QAA?AVSymbol@@AAV?$vector@UCamCatEntry@@V?$StlNodeAlloc@UCamCatEntry@@@stlpmtx_std@@@stlpmtx_std@@V2@_N@Z; ?OnMidiShot5Cleanup@BandDirector@@QAAXXZ -> ?PickShot@BandDirector@@QAA?AVSymbol@@AAV?$vector@UCamCatEntry@@V?$StlNodeAlloc@UCamCatEntry@@@stlpmtx_std@@@stlpmtx_std@@V2@_N@Z."
     }
    ]
   },
@@ -105015,6 +105045,57 @@
      "spelling": "??$__uninitialized_fill_n@PAUVoice@GranularSynth@Synapse@DSP@@IU1234@@stlpmtx_std@@YAPAUVoice@GranularSynth@Synapse@DSP@@PAU1234@IABU1234@ABU__false_type@0@@Z",
      "lane": "W16-NH 2026-10-02",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 56 B retail / 56 B ours; retail body-twins 1. Retail call site(s) reaching the survivor where we call this spelling: 0x82b745bc."
+    }
+   ]
+  },
+  {
+   "name": "$?5HV?$StlNodeAlloc",
+   "address": "0x8241c8c8",
+   "survivor": "??$?5HV?$StlNodeAlloc@H@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "folded": [
+    "??$?5IV?$StlNodeAlloc@I@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@@Z"
+   ],
+   "evidence": "Created by lane W16-NH-NAME: see per-member records in `admitted`.",
+   "lane": "W16-NH-NAME 2026-10-02",
+   "admitted": [
+    {
+     "spelling": "??$?5IV?$StlNodeAlloc@I@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@@Z",
+     "lane": "W16-NH-NAME 2026-10-02",
+     "evidence": "W16-JE two-channel cycle proof. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN with 1 CYCLE-ASSUMED leaf/leaves, each self-recursive on both sides; channel 1: the leaf's masked body+relocation shape occurs at exactly ONE retail address (whole-image census of 3095 dtk target objs). Channel 2 (co-callee: the charged retail caller also calls ?Load@RndMesh@@UAAXAAVBinStream@@@Z -> ?erase@?$vector@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@QAAPAIPAI0@Z). 164 B retail / 164 B ours. Retail call site(s) reaching the survivor where we call this spelling: 0x8241fa0c, 0x82514274."
+    }
+   ]
+  },
+  {
+   "name": "_M_fill_insert",
+   "address": "0x82b5f878",
+   "survivor": "?_M_fill_insert@?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@AAAXPAGIABG@Z",
+   "folded": [
+    "?_M_fill_insert@?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@AAAXPAFIABF@Z"
+   ],
+   "evidence": "Created by lane W16-NH-NAME: see per-member records in `admitted`.",
+   "lane": "W16-NH-NAME 2026-10-02",
+   "admitted": [
+    {
+     "spelling": "?_M_fill_insert@?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@AAAXPAFIABF@Z",
+     "lane": "W16-NH-NAME 2026-10-02",
+     "evidence": "W16-JE two-channel cycle proof. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN with 1 CYCLE-ASSUMED leaf/leaves, each self-recursive on both sides; channel 1: the leaf's masked body+relocation shape occurs at exactly ONE retail address (whole-image census of 3095 dtk target objs). Channel 2 (fan-in: retail caller(s) of the survivor chain named for our element type: ?AddToBuffer@MicXbox@@CA_NAAV?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@PAXHPAH@Z). 108 B retail / 108 B ours. Retail call site(s) reaching the survivor where we call this spelling: 0x82b60620, 0x82bb3acc."
+    }
+   ]
+  },
+  {
+   "name": "_M_fill_insert_aux",
+   "address": "0x82b5f540",
+   "survivor": "?_M_fill_insert_aux@?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@AAAXPAGIABGABU__false_type@2@@Z",
+   "folded": [
+    "?_M_fill_insert_aux@?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@AAAXPAFIABFABU__false_type@2@@Z"
+   ],
+   "evidence": "Created by lane W16-NH-NAME: see per-member records in `admitted`.",
+   "lane": "W16-NH-NAME 2026-10-02",
+   "admitted": [
+    {
+     "spelling": "?_M_fill_insert_aux@?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@AAAXPAFIABFABU__false_type@2@@Z",
+     "lane": "W16-NH-NAME 2026-10-02",
+     "evidence": "Self-recursive leaf of the cycle in ?_M_fill_insert@?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@AAAXPAFIABF@Z's chase. Masked body + relocation shape unique image-wide (one retail address: the survivor); self-call slot is the only undischarged slot and is not consulted. Admitted with the parent membership, whose type witness is: fan-in: retail caller(s) of the survivor chain named for our element type: ?AddToBuffer@MicXbox@@CA_NAAV?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@PAXHPAH@Z."
     }
    ]
   }
