@@ -1,8 +1,9 @@
 # W16-NL — named insert/delete rows at fuzzy 90–99.99, and the single-precision lever (2026-10-02)
 
-**Branch** `w16-nl`, started off main `7f0f55bda`, rebased with `--rebase-merges` onto `cb7613a70`
-(pre-rebase tip kept as `w16-nl-prerebase`; the lane's net diff is identical across the rebase apart from
-hunk offsets in `target_symbol_map.json`). Five fork branches (`w16-nl-{RND,BOBJ,GAME,CW,MISC}`) are merged
+**Branch** `w16-nl`, started off main `7f0f55bda`, rebased with `--rebase-merges` onto `cb7613a70` and
+again onto `119c4e270` (pre-rebase tips kept as `w16-nl-prerebase` / `w16-nl-prerebase2`; the lane's net
+diff is identical across both rebases apart from hunk offsets in `target_symbol_map.json`; W16-NO and the
+MISC fork both edited `synth_xbox/Mic.cpp`, which auto-merged). Five fork branches (`w16-nl-{RND,BOBJ,GAME,CW,MISC}`) are merged
 into it with `--no-ff`. **Not merged to main.** Ruler `name_check` (graded). The permuter was not run.
 No `fn_` row in a band3/network unit was edited, named or re-pinned (W16-NK's territory).
 
@@ -18,25 +19,29 @@ MISC (every other system dir, 106). Slices: `~/tmp/w16nl/slice_*.json`.
 
 ## 2. Whole-branch A/B
 
-`python3 tools/ab_measure.py --worktree ~/tmp/wt-w16nl-ab --patch ~/tmp/w16nl/ab_branch.patch`
-(`git diff main w16-nl -- . ':!docs'`, 53 paths, kinds map + source), fresh worktree at main `cb7613a70`.
-Run dir `~/tmp/wt-w16nl-ab/.ab_measure_runs/20261002-145805-w16nl-whole-branch-819710/`.
+`python3 tools/ab_measure.py --worktree ~/tmp/wt-w16nl-ab2 --patch ~/tmp/w16nl/ab_branch2.patch`
+(`git diff main w16-nl -- . ':!docs'`, 53 paths, kinds map + source), fresh worktree at main `119c4e270`.
+Run dir (worktree since removed; legs archived as `~/tmp/w16nl/abA2.json`/`abB2.json`):
+`.ab_measure_runs/20261002-150619-w16nl-whole-branch-r2-870840/`.
 
 ```
-leg A: matched=51268 masked=24604 honest=26664 code%=54.343086  (recompiles: 0, settled)
-leg B: matched=51315 masked=24613 honest=26702 code%=54.482357  (recompiles: 242, split=1, settle iterations: 2)
+leg A: matched=51328 masked=24620 honest=26708 code%=54.419518  (recompiles: 0, settled)
+leg B: matched=51375 masked=24629 honest=26746 code%=54.558790  (recompiles: 242, split=1, settle iterations: 2)
 split fixed point: leg A converged after 0 extra re-split(s), leg B after 0
-Δmatched=+47  Δmasked_equal=+9  Δhonest=+38  Δcode%=+0.139271pp  Δcode_bytes=+14272
-Δfuzzy=+0.014318pp
+Δmatched=+47  Δmasked_equal=+9  Δhonest=+38  Δcode%=+0.139272pp  Δcode_bytes=+14272
+Δfuzzy=+0.014324pp
 unit net (ALL units) = +47   vs whole-binary Δmatched = +47
-units at 100% [mpn]: 474 -> 476 (FilterCoeffs, FreeCamera; 0 fell off)
+units at 100% [mpn]: 476 -> 478 (FilterCoeffs, FreeCamera; 0 fell off)
 ```
+
+The same patch measured against `cb7613a70` (before W16-NO landed) read identically: +47 / +9 / +38 /
++14,272 B. It was re-run because of the `Mic.cpp` overlap.
 
 **Prediction, written before the run:** sum of the five fork row-diffs (each against `7f0f55bda`) plus my
 own commits = **+47 fns / +14,272 B**. **Measured: +47 / +14,272 B exactly** — the disjoint-by-file slicing
 composed with no overlap loss even though main moved three times underneath.
 
-**Row diff of the archived legs** (`~/tmp/w16nl/ab_rowdiff.txt`): 69 rows up, **1 row down, 0 rows off 100**,
+**Row diff of the archived legs** (`~/tmp/w16nl/ab_rowdiff2.txt`): 69 rows up, **1 row down, 0 rows off 100**,
 2 renamed keys:
 - `UtilDrawPlane` drops its unused trailing `bool` (retail's only caller never sets r8); same score, 99.344.
 - `CharWidgetImp` ctor: the map named a `Color32` parameter where retail stores a 16-byte `Hmx::Color`.
@@ -147,14 +152,14 @@ in `~/tmp/w16nl/<FORK>/result.json`.
 
 ## 6. Gates
 
-On the rebased tip (`28cc48395`), after a full `./tools/ninja-locked` build:
+On the rebased tip (`d8a136418`, final code), after a full `./tools/ninja-locked` build:
 
 ```
-VALIDATE: PASS -- 1797 map-consistent, 291 tolerated (enumerated above), 0 contradicted, 2089 total
-[map-injectivity] OK: 33777 applied rows, 33776 distinct names, injective (+1 enumerated internal-linkage exception(s))
-[patch-state] OK: 1261 decomp, 3090 target objects match 2026-10-02T14:57:19Z (tree_sha256=df1f7f10da8d725e)
-scripts/validate_symbols.py: 68742 checked .text functions, 0 invalid
+VALIDATE: PASS -- 1798 map-consistent, 291 tolerated (enumerated above), 0 contradicted, 2090 total
+[map-injectivity] OK: 33820 applied rows, 33819 distinct names, injective (+1 enumerated internal-linkage exception(s))
+[patch-state] OK: 1262 decomp, 3093 target objects match 2026-10-02T15:09:52Z (tree_sha256=7e66ae82696c058c)
 ```
+(`scripts/validate_symbols.py` read 68,742 checked `.text` functions, 0 invalid, on the pre-W16-NO tip.)
 
 **No alias was added anywhere in the lane** — `git diff main w16-nl -- scripts/symbol_aliases.json` is empty —
 so there was nothing for `icf_pair_adjudicate.py --chase` to adjudicate. Map edits: the two renames in §2.
@@ -167,7 +172,8 @@ Co-Authored-By line.
 
 ## 7. Native gate
 
-Run on `28cc48395` (the final code; log `~/tmp/w16nl/native_gate.log`), after every build and gate above:
+Run on `d8a136418` (the final code after the second rebase; log `~/tmp/w16nl/native_gate2.log`), after
+every build and gate above. It also passed on the pre-W16-NO tip (`~/tmp/w16nl/native_gate.log`).
 
 ```
 NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
@@ -175,4 +181,4 @@ NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 fail
 
 Scratch: `~/tmp/w16nl/` (population `pop_base.json`, `cls_base.json`, `shape_insdel.json`, slices, fork
 `result.json`s, detector inputs `det_all_named.json`/`det_fn_sys.json`, variant specs `v_*.json`, A/B legs
-`abA.json`/`abB.json`, `ab_rowdiff.txt`, `ab.log`).
+`abA2.json`/`abB2.json`, `ab_rowdiff2.txt`, `ab2.log`; the first run's `abA.json`/`abB.json`/`ab.log`).
