@@ -233,8 +233,8 @@ void NgEnviron::Select(const Vector3 *pos) {
     mHasPointCubeTex = false;
     mProjectedBlend = (RndLight::ProjectedBlend)0;
 
-    Rnd::Mode mode = TheRnd.DrawMode();
-    if (mode == 3 || mode == 1 || mode == 5 || mode == 2) {
+    if (TheRnd.DrawMode() == 3 || TheRnd.DrawMode() == 1 || TheRnd.DrawMode() == 5
+        || TheRnd.DrawMode() == 2) {
         RndEnviron::Select(pos);
         NgMat::SetCurrent(0);
         return;
@@ -283,8 +283,7 @@ void NgEnviron::Select(const Vector3 *pos) {
         ClearLightRegisters(i);
     }
 
-    int projLightIdx = 2;
-    for (unsigned int i = 0; i < projLights.size(); i++, projLightIdx--) {
+    for (int i = 0, projLightIdx = 2; i < projLights.size(); i++, projLightIdx--) {
         if (SetProjLightRegisters(projLightIdx, projLightIdx - 2, *projLights[i])) {
             mNumLightsProj++;
             mNumLightsReal++;
@@ -315,7 +314,7 @@ void NgEnviron::Select(const Vector3 *pos) {
 
     bool fading = mFadeOut && mFadeEnd != mFadeStart;
     if (fading) {
-        float fadeDelta = mFadeEnd - mFadeStart;
+        float fadeDelta = FadeEnd() - mFadeStart;
         float invFadeDelta;
         if (fadeDelta < 0.001f && fadeDelta > -0.001f) {
             invFadeDelta = fadeDelta >= 0.0f ? 1.0f / 0.001f : -1.0f / 0.001f;
@@ -360,8 +359,7 @@ void NgEnviron::Select(const Vector3 *pos) {
 
     if (mUseColorAdjust) {
         const Transform &colorXfm = ColorXfm();
-        RndShaderMgr &shaderMgr = TheShaderMgr;
-        shaderMgr.SetPConstant4x3((PShaderConstant)0x6d, Hmx::Matrix4(colorXfm));
+        TheShaderMgr.SetPConstant4x3((PShaderConstant)0x6d, Hmx::Matrix4(colorXfm));
     }
 
     if (mAOEnabled) {
