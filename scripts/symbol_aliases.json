@@ -95314,7 +95314,8 @@
     "?push_back@?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@QAAXABV?$RangedData@I@?$RangedDataCollection@I@@@Z",
     "?push_back@?$vector@UFillExtent@@V?$StlNodeAlloc@UFillExtent@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUFillExtent@@@Z",
     "?push_back@?$vector@VSection@TrackerSectionManager@@V?$StlNodeAlloc@VSection@TrackerSectionManager@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVSection@TrackerSectionManager@@@Z",
-    "?push_back@?$vector@UCamCatEntry@@V?$StlNodeAlloc@UCamCatEntry@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUCamCatEntry@@@Z"
+    "?push_back@?$vector@UCamCatEntry@@V?$StlNodeAlloc@UCamCatEntry@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUCamCatEntry@@@Z",
+    "?push_back@?$vector@UXMA_PLAYBACK_INIT@@V?$StlNodeAlloc@UXMA_PLAYBACK_INIT@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUXMA_PLAYBACK_INIT@@@Z"
    ],
    "evidence": "W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x82b6aa10). \"ours\" spelling ?push_back@?$vector@VPartSelectEntry@OvershellPartSelectProvider@@V?$StlNodeAlloc@VPartSelectEntry@OvershellPartSelectProvider@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVPartSelectEntry@OvershellPartSelectProvider@@@Z is a template/spelling twin of survivor ?push_back@?$vector@UWeightedEntry@@V?$StlNodeAlloc@UWeightedEntry@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUWeightedEntry@@@Z at retail address 0x82b6aa10. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 7 SLOT-FOLD-OK, 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 1228 B (1228 B honest) across ['default/OvershellPartSelectProvider'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md.",
    "admitted": [
@@ -95342,6 +95343,11 @@
      "spelling": "?push_back@?$vector@UCamCatEntry@@V?$StlNodeAlloc@UCamCatEntry@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUCamCatEntry@@@Z",
      "lane": "W16-NH 2026-10-02",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED); 128 B retail / 128 B ours; retail body-twins 1. Retail call site(s) reaching the survivor where we call this spelling: 0x82299224."
+    },
+    {
+     "spelling": "?push_back@?$vector@UXMA_PLAYBACK_INIT@@V?$StlNodeAlloc@UXMA_PLAYBACK_INIT@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUXMA_PLAYBACK_INIT@@@Z",
+     "lane": "W16-NM 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 REFUTED (relocation targets disagree, template twin), CHASED T1 PROVEN; size gate ACCEPT (128 == 128). Retail call site: XMAReader::Init (0x82B6AA98) filling its 12-B XMA_PLAYBACK_INIT array. The survivor sits inside the XMAReader TU, so the XMAReader instantiation is the one retail kept; the WeightedEntry spelling is left as the survivor name to keep ContextChecker pairing unchanged."
     }
    ]
   },
@@ -96416,7 +96422,8 @@
     "?_M_fill_insert@?$vector@PAVRndPollable@@V?$StlNodeAlloc@PAVRndPollable@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVRndPollable@@IABQAV3@@Z",
     "?_M_fill_insert@?$vector@PAVLocalSavedSetlist@@V?$StlNodeAlloc@PAVLocalSavedSetlist@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVLocalSavedSetlist@@IABQAV3@@Z",
     "?_M_fill_insert@?$vector@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@AAAXPAIIABI@Z",
-    "?_M_fill_insert@?$vector@PAVTourCharLocal@@V?$StlNodeAlloc@PAVTourCharLocal@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVTourCharLocal@@IABQAV3@@Z"
+    "?_M_fill_insert@?$vector@PAVTourCharLocal@@V?$StlNodeAlloc@PAVTourCharLocal@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVTourCharLocal@@IABQAV3@@Z",
+    "?_M_fill_insert@?$vector@PAVXMAReaderBlock@@V?$StlNodeAlloc@PAVXMAReaderBlock@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVXMAReaderBlock@@IABQAV3@@Z"
    ],
    "withdrawn": [],
    "evidence": "Hand-installed by lane W17-BPM3. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (flat T1 refuted only on relocation targets -- _M_fill_insert_aux / _M_insert_overflow <unsigned int> vs <Object*> -- which fold recursively through MemOrPoolAlloc/MemOrPoolAllocSTL, PoolAlloc and the operator new twins). Retail keeps four 108-byte body-twins of this shape (vector<float>, vector<float,XboxAllocator>, vector<Object*>, vector<Spotlight*>), so body identity cannot pick the membership; the call-site displacement does: WorkVerts::SetMeshVerts (0x8234A458) bl's 0x82272A60 at the mMeshVerts.resize site (idx 76), and that row is otherwise instruction-identical to retail (318/318 canonical). mMeshVerts' element type unsigned int is pinned by retail's own named callee in the same function, ?erase@?$vector@IV?$StlNodeAlloc@I@ at 0x824B06C8.",
@@ -96448,6 +96455,11 @@
      "spelling": "?_M_fill_insert@?$vector@PAVTourCharLocal@@V?$StlNodeAlloc@PAVTourCharLocal@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVTourCharLocal@@IABQAV3@@Z",
      "lane": "W16-NH-NAME 2026-10-02",
      "evidence": "W16-JE two-channel cycle proof. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN with 1 CYCLE-ASSUMED leaf/leaves, each self-recursive on both sides; channel 1: the leaf's masked body+relocation shape occurs at exactly ONE retail address (whole-image census of 3095 dtk target objs). Channel 2 (fan-in: retail caller(s) of the survivor chain named for our element type: ??$LoadStdPtr@VTourCharLocal@@V?$StlNodeAlloc@PAVTourCharLocal@@@stlpmtx_std@@@FixedSizeSaveable@@SAXAAVFixedSizeSaveableStream@@AAV?$vector@PAVTourCharLocal@@V?$StlNodeAlloc@PAVTourCharLocal@@@stlpmtx_std@@@stlpmtx_std@@HH@Z). 108 B retail / 108 B ours. Retail call site(s) reaching the survivor where we call this spelling: 0x8258cc28."
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@PAVXMAReaderBlock@@V?$StlNodeAlloc@PAVXMAReaderBlock@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVXMAReaderBlock@@IABQAV3@@Z",
+     "lane": "W16-NM 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 REFUTED (relocation targets disagree, template twin), CHASED T1 PROVEN; size gate ACCEPT (108 == 108). Retail call site: XMAReader::Init (0x82B6AA98) resizing the block vector at +0x60, where our source calls this spelling."
     }
    ],
    "restored": [

@@ -11,7 +11,9 @@ class StandardStream;
 // when the flag at +0x14 says it owns it.
 class XMAReaderBlock {
 public:
+    XMAReaderBlock(int); // 0x82BBB3F0; XMAReader::Init passes 0x10000
     ~XMAReaderBlock();
+    unsigned char unk0[0x18]; // sizeof 0x18 (`li r3, 0x18` in XMAReader::Init)
 };
 
 // RB3-360 XMA stream decoder (retail RTTI .?AVXMAReader@@ @82C75A3C).
@@ -36,9 +38,12 @@ public:
     // objects.json, so this is a declaration-accuracy fix and is metric-neutral
     // by construction -- our build emits no XMAReader vtable at all.)
 #ifdef HX_NATIVE
-    virtual
+    virtual void Init();
+#else
+    // 0x82B6AA98: parse the header out of the first read and create the XMA
+    // playback object; true once the header has been consumed.
+    bool Init();
 #endif
-        void Init();
 
     // 0x82B6A518: the sum of the 0x24 table.
     int TableSum() const;

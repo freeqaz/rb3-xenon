@@ -1,11 +1,13 @@
 // XMAReader (retail RTTI .?AVXMAReader@@, vtable 0x82197138).
 // Retail .text 0x82B6A384-0x82B6B4F0, right after FxSendSynapse360.
-// Written here: the ctor, dtor, Seek, Done, FinishSeek and the table sum. Not
-// yet written: Poll (0x82B6AEB0) and the 916-B body at 0x82B6AA98, which drive
-// the XMA hardware decoder.
+// Written here: everything but Poll (0x82B6AEB0), which drives the XMA
+// hardware decoder.
 #include "synth_xbox/XMAReader.h"
 #include "../../Memory.h"
 #include "os/File.h"
+#include "synth/StandardStream.h"
+#include "utl/BinStream.h"
+#include "utl/BufStream.h"
 #include "utl/Std.h"
 #include <algorithm>
 
@@ -78,4 +80,49 @@ bool XMAReader::FinishSeek() {
         return true;
     }
     return false;
+}
+
+// 0x82B6AA98
+bool XMAReader::Init() {
+    if (!mReadBuffer)
+        return true;
+    int bytesRead;
+    if (mFile->ReadDone(bytesRead)) {
+        BufStream bs(mReadBuffer, 20000, true);
+        int version;
+        bs >> version;
+        bs >> unk10;
+        if (version < 2) {
+            int numStreams;
+            bs >> numStreams;
+            unk24.resize(numStreams, 1);
+        } else {
+            bs >> unk24;
+        }
+        bs >> unk20;
+        bs >> mBlockSize;
+        bs >> unk18;
+        bs >> unk1c;
+        bs >> mSeekTable;
+        delete mReadBuffer;
+        mReadBuffer = 0;
+        mFile->Seek(unk10, 0);
+        for (int i = 0; i < 2; i++)
+            mPhysicalBuffers[i] = PhysicalAllocTracked(mBlockSize, 4, "XMABuffer(phys)");
+        mStream->InitInfo(TableSum(), unk20, false, -1);
+        mBlocks.resize(TableSum(), 0);
+        for (unsigned int i = 0; i < mBlocks.size(); i++)
+            mBlocks[i] = new XMAReaderBlock(0x10000);
+        std::vector<XMA_PLAYBACK_INIT> inits;
+        for (unsigned int i = 0; i < unk24.size(); i++) {
+            XMA_PLAYBACK_INIT init;
+            init.sampleRate = unk20;
+            init.outputBufferSizeInSamples = 0xf80 / unk24[i];
+            init.channelCount = unk24[i];
+            init.subframesToDecode = 8;
+            inits.push_back(init);
+        }
+        XMAPlaybackCreate(unk24.size(), inits.begin(), 0, &mPlayback, 0, 0);
+    }
+    return mReadBuffer == 0;
 }
