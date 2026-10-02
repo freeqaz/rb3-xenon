@@ -124,7 +124,7 @@ namespace Quazal {
         InetAddress &operator=(const InetAddress &);
         unsigned short GetPortNumber() const;
 
-        unsigned __int64 m_storage[0x10];
+        unsigned int m_storage[0x20];
     };
 
     class Buffer : public RootObject {
@@ -176,6 +176,8 @@ namespace Quazal {
         Packet *m_pNext; // 0x8
         char m_padC[0x12 - 0xc];
         unsigned char m_byTypeFlags; // 0x12
+        char m_pad13[0x28 - 0x13];
+        InetAddress m_oSource; // 0x28
     };
 
     class PacketIn : public Packet {
@@ -184,8 +186,6 @@ namespace Quazal {
         bool Unpack(ByteStream *, unsigned int *);
         void SetLocalPort(unsigned short usPort) { m_usLocalPort = usPort; }
 
-        char m_pad13[0x28 - 0x13];
-        InetAddress m_oSource; // 0x28
         char m_padA8[0xbc - 0xa8];
         unsigned short m_usLocalPort; // 0xbc
     };
@@ -227,13 +227,14 @@ namespace Quazal {
     };
 
     // One emulated packet: the data and where it goes.
-    class EmulationItem : public RootObject {
+    class EmulationItem {
     public:
         EmulationItem(const EmulationItem &o) {
-            m_pBuffer = o.m_pBuffer;
+            m_pBuffer = o.GetBuffer();
             m_pBuffer->AcquireRef();
             m_oAddress = o.m_oAddress;
         }
+        Buffer *GetBuffer() const { return m_pBuffer; }
         ~EmulationItem() { m_pBuffer->ReleaseRef(); }
 
         Buffer *m_pBuffer; // 0x0
@@ -289,10 +290,9 @@ namespace Quazal {
                 m_tNextFree = tRelease;
             EmulationQueue::Queue(oItem, m_tNextFree);
             if (m_pDevice->GetBandwidth() != -1) {
-                Buffer *pBuffer = oItem.m_pBuffer;
-                unsigned int uiDelay =
-                    (pBuffer->GetContentSize() * 1000 * 8) / m_pDevice->GetBandwidth();
-                m_tNextFree = m_tNextFree + uiDelay;
+                m_tNextFree = oItem.GetBuffer()->GetContentSize() * 1000 * 8
+                        / m_pDevice->GetBandwidth()
+                    + (unsigned __int64)m_tNextFree;
             }
         }
 
@@ -681,7 +681,7 @@ unsigned int QueuingSocket::FillPacketQueueFromBuffer(
     Buffer *pBuffer, const InetAddress *pAddress, PacketQueue *pQueue
 ) {
     unsigned int uiNbPackets = 0;
-    bool bDone = false;
+    bool bEmpty = false;
     if (pBuffer) {
         GetTransport()->m_oCounters.Add(1, (pBuffer->GetContentSize() + 28) * 8);
         GetTransport()->m_oCounters.Add(3, 1);
@@ -692,17 +692,17 @@ unsigned int QueuingSocket::FillPacketQueueFromBuffer(
             pBuffer->AppendData(pBuffer->GetContentPtr() + 2, uiSize, 0);
             pBuffer->SetContentSize(uiSize);
         } else {
-            bDone = true;
+            bEmpty = true;
         }
     }
-    while (!bDone) {
+    while (!bEmpty) {
         PacketIn *pPacket = ExtractPacket(pAddress, pBuffer);
         if (pPacket) {
             uiNbPackets++;
             pPacket->SetLocalPort(GetAddress()->GetPortNumber());
             pQueue->Push(pPacket);
         } else {
-            bDone = true;
+            bEmpty = true;
         }
     }
     return uiNbPackets;
