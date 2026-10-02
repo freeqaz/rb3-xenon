@@ -201,10 +201,7 @@ public:
     virtual ~CharWidgetImp() {}
     virtual void Clear();
     virtual int AddTextInstance(Transform tf, String s, bool alt) {
-        bool b2 = false;
-        if (!Empty() && tf.v.y < GetLastInstanceY()) {
-            b2 = true;
-        }
+        bool b2 = !Empty() && tf.v.y < GetLastInstanceY();
         TextInstance inst(tf, s, alt);
         PushInstance(inst);
         if (b2)
@@ -279,10 +276,7 @@ public:
     virtual void RemoveAt(float, float, float);
     virtual void RemoveUntil(float, float);
     virtual int AddInstance(Transform tf, float) {
-        bool b2 = false;
-        if (!Empty() && tf.v.y < GetLastInstanceY()) {
-            b2 = true;
-        }
+        bool b2 = !Empty() && tf.v.y < GetLastInstanceY();
         RndMultiMesh::Instance inst(tf);
         PushInstance(inst);
         if (b2)
@@ -306,10 +300,7 @@ public:
     ImmediateWidgetImp(bool b) : mAllowRotation(b) {}
     // No user-declared dtor, as for MatWidgetImp (retail 0x827e2b30).
     virtual int AddInstance(Transform tf, float) {
-        bool b2 = false;
-        if (!Empty() && tf.v.y < GetLastInstanceY()) {
-            b2 = true;
-        }
+        bool b2 = !Empty() && tf.v.y < GetLastInstanceY();
         RndMultiMesh::Instance inst(tf);
         PushInstance(inst);
         if (b2)
