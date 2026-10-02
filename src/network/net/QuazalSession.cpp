@@ -4,6 +4,32 @@
 #include "os/Debug.h"
 
 Quazal::CallContext *QuazalSession::mTerminatingContext;
+Quazal::NetZ *QuazalSession::mTerminatingNetZ;
+
+// 0x823F2B80: once the terminating call context has left CallPending, both it
+// and the NetZ that ~QuazalSession parked are released.
+void QuazalSession::Poll() {
+    if (mTerminatingContext
+        && mTerminatingContext->GetState() != Quazal::CallContext::CallPending) {
+        delete mTerminatingContext;
+        mTerminatingContext = nullptr;
+        delete mTerminatingNetZ;
+        mTerminatingNetZ = nullptr;
+    }
+}
+
+// 0x823F2C28: reads and clears the callback's host-left flag under its lock.
+bool QuazalSession::HasHostLeft() {
+    bool left;
+    mCallback->mCritSec.Enter();
+    if (mCallback->mHostLeft) {
+        mCallback->mHostLeft = false;
+        left = true;
+    } else
+        left = false;
+    mCallback->mCritSec.Exit();
+    return left;
+}
 
 // 0x823F2C10, 20 bytes: tests the global ~QuazalSession (0x823F2AC0) fills
 // with a fresh CallContext and Poll (0x823F2B80) clears once it is no longer
