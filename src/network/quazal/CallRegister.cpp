@@ -184,9 +184,9 @@ namespace Quazal {
         }
         virtual ~MethodCallJob() {}
         virtual void Execute() {
-            T1 *pTarget = m_pTargetObject;
-            JobFunc pMethod = m_pMethod;
-            (pTarget->*pMethod)(m_arg);
+            T1 *target = m_pTargetObject;
+            JobFunc func = m_pMethod;
+            (target->*func)(m_arg);
         }
         virtual String GetTraceInfo() const {
             StringStream ss;
@@ -200,8 +200,33 @@ namespace Quazal {
         T2 m_arg;
     };
 
+    class Scheduler;
+
+    // The type-3 component; it owns the scheduler.
+    class Core {
+    public:
+        static Core *GetInstance() {
+            unsigned int uiContext = PseudoSingleton::GetCurrentContext();
+            InstanceControl *inst =
+                (InstanceControl *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(3, uiContext);
+            Core *pCore = inst ? (Core *)inst->m_pDelegatorInstance : 0;
+            return pCore;
+        }
+        Scheduler *GetScheduler() { return m_pScheduler; }
+
+        char m_pad0[8];
+        Scheduler *m_pScheduler; // 0x8
+    };
+
     class Scheduler {
     public:
+        static Scheduler *GetInstance() {
+            Core *inst = Core::GetInstance();
+            if (!inst)
+                return 0;
+            else
+                return inst->GetScheduler();
+        }
         void Queue(Job *, bool);
 
         char m_pad0[0x3C];
@@ -210,51 +235,18 @@ namespace Quazal {
 
     class ScopedCS {
     public:
-        ScopedCS(CriticalSection &cs) : m_bInScope(true), m_pCS(&cs) {
-            CriticalSection *pCS = m_pCS;
-            if (!MutexPrimitive::s_bNoOp) {
-                pCS->EnterImpl();
-            }
-        }
+        ScopedCS(CriticalSection &cs) : m_bInScope(true), critSec(&cs) { critSec->Enter(); }
         ~ScopedCS() { EndScope(); }
         void EndScope() {
             if (m_bInScope) {
-                CriticalSection *pCS = m_pCS;
-                if (!MutexPrimitive::s_bNoOp) {
-                    pCS->LeaveImpl();
-                }
+                critSec->Leave();
                 m_bInScope = false;
             }
         }
 
         bool m_bInScope; // 0x0
-        CriticalSection *m_pCS; // 0x4
+        CriticalSection *critSec; // 0x4
     };
-
-    // The type-3 component; it owns the scheduler.
-    class SchedulerHolder {
-    public:
-        static SchedulerHolder *GetInstance() {
-            InstanceControl *inst =
-                (InstanceControl *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(
-                    3, PseudoSingleton::GetCurrentContext()
-                );
-            return inst ? (SchedulerHolder *)inst->m_pDelegatorInstance : 0;
-        }
-        Scheduler *GetScheduler() { return m_pScheduler; }
-
-        char m_pad0[8];
-        Scheduler *m_pScheduler; // 0x8
-    };
-
-    inline Scheduler *GetScheduler() {
-        SchedulerHolder *pHolder = SchedulerHolder::GetInstance();
-        if (pHolder == 0) {
-            return 0;
-        } else {
-            return pHolder->GetScheduler();
-        }
-    }
 
     // A register of reference-counted items keyed by their 16-bit ID.
     template <class T>
@@ -276,7 +268,7 @@ namespace Quazal {
             void GotoStart() {
                 T *pItem = 0;
                 if (m_pRegister != 0) {
-                    ScopedCS oCS(GetScheduler()->m_csSystemLock);
+                    ScopedCS oCS(Scheduler::GetInstance()->m_csSystemLock);
                     pItem = m_pRegister->GetFirst();
                     if (pItem != 0) {
                         pItem->AcquireRef();
@@ -291,7 +283,7 @@ namespace Quazal {
                 if (m_pCurrent != 0) {
                     T *pItem = 0;
                     {
-                        ScopedCS oCS(GetScheduler()->m_csSystemLock);
+                        ScopedCS oCS(Scheduler::GetInstance()->m_csSystemLock);
                         pItem = m_pRegister->GetNext(m_pCurrent->GetID());
                         if (pItem != 0) {
                             pItem->AcquireRef();
@@ -323,19 +315,19 @@ namespace Quazal {
         ItemRegister() {}
         virtual ~ItemRegister() {}
         virtual void Register(T *pItem) {
-            ScopedCS oCS(GetScheduler()->m_csSystemLock);
+            ScopedCS oCS(Scheduler::GetInstance()->m_csSystemLock);
             pItem->AcquireRef();
             m_mapItems[pItem->GetID()] = pItem;
         }
         virtual void Unregister(T *pItem) {
-            ScopedCS oCS(GetScheduler()->m_csSystemLock);
+            ScopedCS oCS(Scheduler::GetInstance()->m_csSystemLock);
             typename qMap<unsigned short, T *>::iterator it = m_mapItems.find(pItem->GetID());
             m_mapItems.erase(it);
             pItem->ReleaseRef();
         }
 
         void UnregisterAll() {
-            ScopedCS oCS(GetScheduler()->m_csSystemLock);
+            ScopedCS oCS(Scheduler::GetInstance()->m_csSystemLock);
             typename qMap<unsigned short, T *>::iterator it;
             while (!m_mapItems.empty()) {
                 it = m_mapItems.begin();
@@ -421,7 +413,7 @@ namespace Quazal {
         );
         m_pCheckExpiredCallsJob->SetPeriod(100);
         m_pCheckExpiredCallsJob->AcquireRef();
-        GetScheduler()->Queue(m_pCheckExpiredCallsJob, false);
+        Scheduler::GetInstance()->Queue(m_pCheckExpiredCallsJob, false);
     }
 
     void CallRegister::CheckExpiredCalls(int) { CancelExpiredCalls(); }
@@ -436,13 +428,13 @@ namespace Quazal {
     }
 
     void CallRegister::Register(DOCallContext *pContext) {
-        ScopedCS oCS(GetScheduler()->m_csSystemLock);
+        ScopedCS oCS(Scheduler::GetInstance()->m_csSystemLock);
         pContext->SetID(GenerateCallID());
         ItemRegister<DOCallContext>::Register(pContext);
     }
 
     void CallRegister::Unregister(DOCallContext *pContext) {
-        ScopedCS oCS(GetScheduler()->m_csSystemLock);
+        ScopedCS oCS(Scheduler::GetInstance()->m_csSystemLock);
         ItemRegister<DOCallContext>::Unregister(pContext);
         pContext->SetID(0);
     }
@@ -471,7 +463,7 @@ namespace Quazal {
             new (__FILE__, 0x73) MethodCallJob<CallRegister, DOHandle, Job>(
                 "CallRegister::CancelCallToStation", this, &CallRegister::CancelCallToStation, hStation
             );
-        GetScheduler()->Queue(pJob, false);
+        Scheduler::GetInstance()->Queue(pJob, false);
     }
 
     void CallRegister::CancelPendingCalls() {
