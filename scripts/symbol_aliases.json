@@ -91064,7 +91064,8 @@
     "?AddSharedInlined@BinStream@@QAA_NABVFilePath@@@Z",
     "?MiloCamera@CameraManager@@QAAPAVCamShot@@XZ",
     "?HasSolo@StoreOffer@@QBA_NXZ",
-    "?PlatformDebugBreak@@YA_NXZ"
+    "?PlatformDebugBreak@@YA_NXZ",
+    "?GetLocalUser@RemoteUser@@UAAPAVLocalUser@@XZ"
    ],
    "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x823591e8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 38 against 2 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies.",
    "admitted": [
@@ -91107,6 +91108,11 @@
      "spelling": "?PlatformDebugBreak@@YA_NXZ",
      "lane": "W16-NH-NAME 2026-10-02",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call site(s) reaching the survivor where we call this spelling: 0x8246677c, 0x8250f754. Vacuous return-0 body; PlatformDebugBreak's debugger check is compiled out of the match build (retail returns 0). Admitted on the retail call-site witness (house rule for vacuous bodies)."
+    },
+    {
+     "spelling": "?GetLocalUser@RemoteUser@@UAAPAVLocalUser@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (VACUOUS-BUT-IDENTICAL), 0 CYCLE-ASSUMED; retail carries 8 bodies of this shape. Retail site 0x8268B920 (the tail branch of the this-adjusting thunk ?GetLocalUser@RemoteUser@@$R4BI@M@PPPPPPPM@BI@AAPAVLocalUser@@XZ at 0x8268B908) branches to the survivor address, and our thunk branches to this spelling."
     }
    ]
   },
@@ -105288,6 +105294,542 @@
     "from": "??$_Destroy_Range@PAULod@Character@@@stlpmtx_std@@YAXPAULod@Character@@0@Z",
     "lane": "W16-NH-NAME 2026-10-02",
     "evidence": "tools/icf_pair_adjudicate.py adjudicate(map name at 0x822a3f58, old survivor): REFUTED -- masked bodies DIFFER (retail did not keep the code our spelling compiles to); chase REFUTED. The old survivor is not the retail body at this address; it is now re-homed to the address retail actually calls for it (??$_Destroy_Range@PAUIKTarget@CharIKHand@@@stlpmtx_std@@YAXPAUIKTarget@CharIKHand@@0@Z, chase PROVEN, retail call site(s) 0x823715c8, 0x82371c8c)."
+   }
+  },
+  {
+   "name": "_M_splice_insert_dispatch",
+   "address": "0x82277270",
+   "survivor": "??$_M_splice_insert_dispatch@U?$_List_iterator@HU?$_Const_traits@H@stlpmtx_std@@@stlpmtx_std@@@?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@HU?$_Nonconst_traits@H@stlpmtx_std@@@1@U?$_List_iterator@HU?$_Const_traits@H@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
+   "folded": [
+    "??$_M_splice_insert_dispatch@U?$_List_iterator@VSymbol@@U?$_Const_traits@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@VSymbol@@U?$_Nonconst_traits@VSymbol@@@stlpmtx_std@@@1@U?$_List_iterator@VSymbol@@U?$_Const_traits@VSymbol@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_82277270 (156 B, unit SongDB) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "??$_M_splice_insert_dispatch@U?$_List_iterator@VSymbol@@U?$_Const_traits@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@VSymbol@@U?$_Nonconst_traits@VSymbol@@@stlpmtx_std@@@1@U?$_List_iterator@VSymbol@@U?$_Const_traits@VSymbol@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82278368 (??4?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "_Copy_Construct",
+   "address": "0x8257d4c8",
+   "survivor": "??$_Copy_Construct@VPlayerScore@@@stlpmtx_std@@YAXPAVPlayerScore@@ABV1@@Z",
+   "folded": [
+    "??$_Param_Construct@VPlayerScore@@V1@@stlpmtx_std@@YAXPAVPlayerScore@@ABV1@@Z"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_8257D4C8 (104 B, unit band3/meta_band/AccomplishmentProgress) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "??$_Param_Construct@VPlayerScore@@V1@@stlpmtx_std@@YAXPAVPlayerScore@@ABV1@@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8257e0d8 (??$__uninitialized_copy@PAVPlayerScore@@PAV1@@stlpmtx_std@@YAPAVPlayer), 0x8257eed0 (??$__uninitialized_fill_n@PAVPlayerScore@@IV1@@stlpmtx_std@@YAPAVPlaye)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "_GMetaPerformerImpl",
+   "address": "0x8257c310",
+   "survivor": "??_GMetaPerformerImpl@@UAAPAXI@Z",
+   "folded": [
+    "??_GQuickplayPerformerImpl@@UAAPAXI@Z"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_8257C310 (88 B, unit MetaPerformer) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "??_GQuickplayPerformerImpl@@UAAPAXI@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x8209f054 slot 0 (QuickplayPerformerImpl)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "_GMemcard",
+   "address": "0x8252a5b8",
+   "survivor": "??_GMemcard@@UAAPAXI@Z",
+   "folded": [
+    "??_GMemcardXbox@@UAAPAXI@Z"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_8252A5B8 (88 B, unit AccomplishmentPanel) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "??_GMemcardXbox@@UAAPAXI@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x8208b54c slot 0 (MemcardXbox)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "__uninitialized_fill_n",
+   "address": "0x823e3c40",
+   "survivor": "??$__uninitialized_fill_n@PAVVector3@@IV1@@stlpmtx_std@@YAPAVVector3@@PAV1@IABV1@ABU__false_type@0@@Z",
+   "folded": [
+    "??$__uninitialized_fill_n@PAVVector4@@IV1@@stlpmtx_std@@YAPAVVector4@@PAV1@IABV1@ABU__false_type@0@@Z"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_823E3C40 (64 B, unit network/net/NetSession) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "??$__uninitialized_fill_n@PAVVector4@@IV1@@stlpmtx_std@@YAPAVVector4@@PAV1@IABV1@ABU__false_type@0@@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8248f804 (??0?$vector@VVector4@@V?$StlNodeAlloc@VVector4@@@stlpmtx_std@@@stlpmtx)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "GetContributionSymbol",
+   "address": "0x82692978",
+   "survivor": "?GetContributionSymbol@FillsHitStatMemberTracker@@UBA?AVSymbol@@XZ",
+   "folded": [
+    "?ClassName@BandCharDescTest@@UBA?AVSymbol@@XZ",
+    "?GetGoalValueSymbol@HopoStatMemberTracker@@UBA?AVSymbol@@XZ",
+    "?GetCurrentValueSymbol@HopoStatMemberTracker@@UBA?AVSymbol@@XZ",
+    "?GetGoalValueSymbol@HopoPercentStatMemberTracker@@UBA?AVSymbol@@XZ",
+    "?GetCurrentValueSymbol@HopoPercentStatMemberTracker@@UBA?AVSymbol@@XZ",
+    "?GetGoalValueSymbol@DeployStatMemberTracker@@UBA?AVSymbol@@XZ",
+    "?GetCurrentValueSymbol@DeployStatMemberTracker@@UBA?AVSymbol@@XZ",
+    "?GetGoalValueSymbol@UnisonStatMemberTracker@@UBA?AVSymbol@@XZ",
+    "?GetCurrentValueSymbol@UnisonStatMemberTracker@@UBA?AVSymbol@@XZ",
+    "?GetGoalValueSymbol@UpstrumStatMemberTracker@@UBA?AVSymbol@@XZ",
+    "?GetCurrentValueSymbol@UpstrumStatMemberTracker@@UBA?AVSymbol@@XZ",
+    "?GetGoalValueSymbol@UpstrumPercentStatMemberTracker@@UBA?AVSymbol@@XZ",
+    "?GetCurrentValueSymbol@UpstrumPercentStatMemberTracker@@UBA?AVSymbol@@XZ",
+    "?GetGoalValueSymbol@StreakCountStatMemberTracker@@UBA?AVSymbol@@XZ",
+    "?GetCurrentValueSymbol@StreakCountStatMemberTracker@@UBA?AVSymbol@@XZ",
+    "?GetGoalValueSymbol@SoloButtonedSoloStatMemberTracker@@UBA?AVSymbol@@XZ",
+    "?GetCurrentValueSymbol@SoloButtonedSoloStatMemberTracker@@UBA?AVSymbol@@XZ",
+    "?GetGoalValueSymbol@FillsHitStatMemberTracker@@UBA?AVSymbol@@XZ",
+    "?GetCurrentValueSymbol@FillsHitStatMemberTracker@@UBA?AVSymbol@@XZ"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_82692978 (56 B, unit TrackerManager) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "?ClassName@BandCharDescTest@@UBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8227db78 (?ClassName@BandCharDescTest@@$4PPPPPPPM@A@BA?AVSymbol@@XZ)."
+    },
+    {
+     "spelling": "?GetGoalValueSymbol@HopoStatMemberTracker@@UBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820e1aa4 slot 23 (HopoStatMemberTracker)."
+    },
+    {
+     "spelling": "?GetCurrentValueSymbol@HopoStatMemberTracker@@UBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820e1aa4 slot 24 (HopoStatMemberTracker)."
+    },
+    {
+     "spelling": "?GetGoalValueSymbol@HopoPercentStatMemberTracker@@UBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820e1b6c slot 23 (HopoPercentStatMemberTracker)."
+    },
+    {
+     "spelling": "?GetCurrentValueSymbol@HopoPercentStatMemberTracker@@UBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820e1b6c slot 24 (HopoPercentStatMemberTracker)."
+    },
+    {
+     "spelling": "?GetGoalValueSymbol@DeployStatMemberTracker@@UBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820e1c3c slot 23 (DeployStatMemberTracker)."
+    },
+    {
+     "spelling": "?GetCurrentValueSymbol@DeployStatMemberTracker@@UBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820e1c3c slot 24 (DeployStatMemberTracker)."
+    },
+    {
+     "spelling": "?GetGoalValueSymbol@UnisonStatMemberTracker@@UBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820e1d6c slot 23 (UnisonStatMemberTracker)."
+    },
+    {
+     "spelling": "?GetCurrentValueSymbol@UnisonStatMemberTracker@@UBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820e1d6c slot 24 (UnisonStatMemberTracker)."
+    },
+    {
+     "spelling": "?GetGoalValueSymbol@UpstrumStatMemberTracker@@UBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820e1e3c slot 23 (UpstrumStatMemberTracker)."
+    },
+    {
+     "spelling": "?GetCurrentValueSymbol@UpstrumStatMemberTracker@@UBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820e1e3c slot 24 (UpstrumStatMemberTracker)."
+    },
+    {
+     "spelling": "?GetGoalValueSymbol@UpstrumPercentStatMemberTracker@@UBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820e1f0c slot 23 (UpstrumPercentStatMemberTracker)."
+    },
+    {
+     "spelling": "?GetCurrentValueSymbol@UpstrumPercentStatMemberTracker@@UBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820e1f0c slot 24 (UpstrumPercentStatMemberTracker)."
+    },
+    {
+     "spelling": "?GetGoalValueSymbol@StreakCountStatMemberTracker@@UBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820e1fe4 slot 23 (StreakCountStatMemberTracker)."
+    },
+    {
+     "spelling": "?GetCurrentValueSymbol@StreakCountStatMemberTracker@@UBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820e1fe4 slot 24 (StreakCountStatMemberTracker)."
+    },
+    {
+     "spelling": "?GetGoalValueSymbol@SoloButtonedSoloStatMemberTracker@@UBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820e20b4 slot 23 (SoloButtonedSoloStatMemberTracker)."
+    },
+    {
+     "spelling": "?GetCurrentValueSymbol@SoloButtonedSoloStatMemberTracker@@UBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820e20b4 slot 24 (SoloButtonedSoloStatMemberTracker)."
+    },
+    {
+     "spelling": "?GetGoalValueSymbol@FillsHitStatMemberTracker@@UBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820e218c slot 23 (FillsHitStatMemberTracker)."
+    },
+    {
+     "spelling": "?GetCurrentValueSymbol@FillsHitStatMemberTracker@@UBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820e218c slot 24 (FillsHitStatMemberTracker)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "GetLocalUser",
+   "address": "0x8268b908",
+   "survivor": "?GetLocalUser@RemoteUser@@$R4BI@M@PPPPPPPM@BI@AAPAVLocalUser@@XZ",
+   "folded": [
+    "?IsLocal@RemoteUser@@$R4BI@M@PPPPPPPM@BI@BA_NXZ",
+    "?GetLocalUser@RemoteUser@@$R4BI@M@PPPPPPPM@BI@BAPBVLocalUser@@XZ"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_8268B908 (28 B, unit BandUser) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "?IsLocal@RemoteUser@@$R4BI@M@PPPPPPPM@BI@BA_NXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820e026c slot 23 (RemoteBandUser)."
+    },
+    {
+     "spelling": "?GetLocalUser@RemoteUser@@$R4BI@M@PPPPPPPM@BI@BAPBVLocalUser@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820e026c slot 24 (RemoteBandUser)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "GetRemoteUser",
+   "address": "0x8268b848",
+   "survivor": "?GetRemoteUser@RemoteUser@@$R4BI@M@PPPPPPPM@BI@AAPAV1@XZ",
+   "folded": [
+    "?GetRemoteUser@RemoteUser@@$R4BI@M@PPPPPPPM@BI@BAPBV1@XZ"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_8268B848 (28 B, unit BandUser) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "?GetRemoteUser@RemoteUser@@$R4BI@M@PPPPPPPM@BI@BAPBV1@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820e026c slot 26 (RemoteBandUser)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "OnMsg",
+   "address": "0x82627470",
+   "survivor": "?OnMsg@MultiSelectListPanel@@QAA?AVDataNode@@ABVButtonDownMsg@@@Z",
+   "folded": [
+    "?OnMsg@UIStats@@QAA?AVDataNode@@ABVUIComponentFocusChangeMsg@@@Z"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_82627470 (20 B, unit band3/meta_band/MultiSelectListPanel) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "?OnMsg@UIStats@@QAA?AVDataNode@@ABVUIComponentFocusChangeMsg@@@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82560858 (?Handle@UIStats@@UAA?AVDataNode@@PAVDataArray@@_N@Z)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "InLock",
+   "address": "0x825aaea0",
+   "survivor": "?InLock@LockStepMgr@@QBA_NXZ",
+   "folded": [
+    "?IsPlaying@MetaMusic@@QBA_NXZ"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_825AAEA0 (16 B, unit band3/meta_band/LockStepMgr) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "?IsPlaying@MetaMusic@@QBA_NXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82571eec (?Exiting@MetaPanel@@UBA_NXZ)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "GetAward",
+   "address": "0x82594538",
+   "survivor": "?GetAward@Accomplishment@@QBA?AVSymbol@@XZ",
+   "folded": [
+    "?GetCustomOutro@Quest@@QBA?AVSymbol@@XZ",
+    "?GetLeaderboardGoal@TourDesc@@QBA?AVSymbol@@XZ"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_82594538 (12 B, unit RockCentral) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "?GetCustomOutro@Quest@@QBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8235bee0 (?GetGigSpecificOutro@Tour@@QBA?AVSymbol@@XZ)."
+    },
+    {
+     "spelling": "?GetLeaderboardGoal@TourDesc@@QBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x823620f4 (?GetTourLeaderboardGoal@TourProgress@@QBA?AVSymbol@@XZ)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "GetCategory",
+   "address": "0x82594048",
+   "survivor": "?GetCategory@Accomplishment@@QBA?AVSymbol@@XZ",
+   "folded": [
+    "?GetCustomIntro@Quest@@QBA?AVSymbol@@XZ",
+    "?GetRequiredCampaignLevel@TourDesc@@QBA?AVSymbol@@XZ",
+    "?GetRequirementToken@CampaignLevel@@QBA?AVSymbol@@XZ"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_82594048 (12 B, unit Accomplishment) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "?GetCustomIntro@Quest@@QBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8235be88 (?GetGigSpecificIntro@Tour@@QBA?AVSymbol@@XZ)."
+    },
+    {
+     "spelling": "?GetRequiredCampaignLevel@TourDesc@@QBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x825a685c (?HasReachedCampaignLevel@Campaign@@QBA_NVSymbol@@@Z), 0x82b7be94 (?IsTourDescAvailable@TourDescProvider@@QBA_NVSymbol@@@Z), 0x82b7deb0 (?Mat@TourDescProvider@@UBAPAVRndMat@@HHPAVUIListMesh@@@Z), 0x82b7e6a0 (?UpdateExtendedText@TourDescProvider@@UBAXHHPAVUILabel@@@Z)."
+    },
+    {
+     "spelling": "?GetRequirementToken@CampaignLevel@@QBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82b7e6a0 (?UpdateExtendedText@TourDescProvider@@UBAXHHPAVUILabel@@@Z), 0x82b7e6bc (?UpdateExtendedText@TourDescProvider@@UBAXHHPAVUILabel@@@Z)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "GetDynamicPrereqsFilter",
+   "address": "0x82594038",
+   "survivor": "?GetDynamicPrereqsFilter@Accomplishment@@QBA?AVSymbol@@XZ",
+   "folded": [
+    "?GetTourDesc@TourProgress@@QBA?AVSymbol@@XZ"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_82594038 (12 B, unit Accomplishment) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "?GetTourDesc@TourProgress@@QBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8235ce54 (?GetAnnouncement@Tour@@QBA?AVSymbol@@XZ), 0x8235d528 (?GetBronzeGoalIcon@Tour@@QAA?AVString@@XZ), 0x8235cf54 (?GetBronzeMedalGoalInCurrentTour@Tour@@QBAHXZ), 0x8235cde4 (?GetConclusionText@Tour@@QBA?AVSymbol@@XZ)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "IsLefty",
+   "address": "0x82baa1c8",
+   "survivor": "?IsLefty@TrackConfig@@QBA_NXZ",
+   "folded": [
+    "?UseLeftyGems@TrackConfig@@QBA_NXZ"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_82BAA1C8 (8 B, unit VocalTrack) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "?UseLeftyGems@TrackConfig@@QBA_NXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82b9d9bc (?UpdateLeftyFlip@GemManager@@QAAX_N@Z), 0x82b9dae0 (?UpdateLeftyFlip@GemManager@@QAAX_N@Z), 0x82b9db98 (?UpdateLeftyFlip@GemManager@@QAAX_N@Z)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "SetMaxMultiplier",
+   "address": "0x826eecc8",
+   "survivor": "?SetMaxMultiplier@PlayerBehavior@@QAAXH@Z",
+   "folded": [
+    "?SetMaxSlots@TrackConfig@@QAAXH@Z"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_826EECC8 (8 B, unit band3/game/PlayerBehavior) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "?SetMaxSlots@TrackConfig@@QAAXH@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82b954d8 (?PlayerInit@GemTrack@@UAAXXZ)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "SetStreakType",
+   "address": "0x826eecc0",
+   "survivor": "?SetStreakType@PlayerBehavior@@QAAXVSymbol@@@Z",
+   "folded": [
+    "?SetTrackNum@TrackConfig@@QAAXH@Z"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_826EECC0 (8 B, unit band3/game/PlayerBehavior) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "?SetTrackNum@TrackConfig@@QAAXH@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82b9540c (?Init@GemTrack@@UAAXXZ), 0x82b954c4 (?PlayerInit@GemTrack@@UAAXXZ), 0x82ba61cc (?Init@VocalTrack@@UAAXXZ)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "IsUGCAllowed",
+   "address": "0x8235b018",
+   "survivor": "?IsUGCAllowed@Quest@@QBA_NXZ",
+   "folded": [
+    "?IsOnDisc@SongMetadata@@QBA_NXZ",
+    "?GetIsLooped@SynthSample@@QBA_NXZ"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_8235B018 (8 B, unit band3/tour/Quest) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "?IsOnDisc@SongMetadata@@QBA_NXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x827a8f00 (?ContentName@SongMgr@@QBAPBDH@Z), 0x825e4f38 (?IsRelevantForSong@AccomplishmentDiscSongConditional@@UBA_NVSymbol@@@Z), 0x82679d68 (?LoadSong@Game@@QAAXXZ)."
+    },
+    {
+     "spelling": "?GetIsLooped@SynthSample@@QBA_NXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82b6e074 (??0SampleInst360@@QAA@PAVSynthSample360@@@Z)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "GetSuccessReward",
+   "address": "0x8235b008",
+   "survivor": "?GetSuccessReward@Quest@@QBAPBVTourReward@@XZ",
+   "folded": [
+    "?GetTourProperties@TourProgress@@QBAABVTourPropertyCollection@@XZ",
+    "?GetTourProperties@TourProgress@@QAAAAVTourPropertyCollection@@XZ",
+    "?GetOwnerOnlineID@NetSavedSetlist@@QBAPBVOnlineID@@XZ"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_8235B008 (8 B, unit band3/tour/Quest) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "?GetTourProperties@TourProgress@@QBAABVTourPropertyCollection@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8235ad04 (?IsConditionMet@TourCondition@@QBA_NABVTourProgress@@PBVDataArray@@@Z), 0x8235ad40 (?IsConditionMet@TourCondition@@QBA_NABVTourProgress@@PBVDataArray@@@Z)."
+    },
+    {
+     "spelling": "?GetTourProperties@TourProgress@@QAAAAVTourPropertyCollection@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82364998 (?ApplyRewardEntry@TourReward@@QBAXPAVTourProgress@@PAVDataArray@@@Z)."
+    },
+    {
+     "spelling": "?GetOwnerOnlineID@NetSavedSetlist@@QBAPBVOnlineID@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x825bad94 (?HasViewableGamercard@SetlistRecord@@QBA_NXZ), 0x825badf4 (?ViewGamercard@SetlistRecord@@QAAXPAVLocalBandUser@@@Z), 0x825d08a0 (?ParseDataResultsIntoSetlists@MusicLibraryNetSetlists@@QAAX_N@Z), 0x825cf698 (?RefreshSetlistArt@MusicLibraryNetSetlists@@QAAXXZ)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "GetCurrentValue",
+   "address": "0x826e2420",
+   "survivor": "?GetCurrentValue@AccuracyTracker@@UBAMXZ",
+   "folded": [
+    "?GetCurrentValue@StatMemberTracker@@UBAMXZ",
+    "?GetCurrentValue@StreakTracker@@UBAMXZ"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_826E2420 (8 B, unit OverdriveTimeTracker) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "?GetCurrentValue@StatMemberTracker@@UBAMXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820e1aa4 slot 18 (HopoStatMemberTracker), 0x820e1b6c slot 18 (HopoPercentStatMemberTracker), 0x820e1c3c slot 18 (DeployStatMemberTracker), 0x820e1d6c slot 18 (UnisonStatMemberTracker)."
+    },
+    {
+     "spelling": "?GetCurrentValue@StreakTracker@@UBAMXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820f09fc slot 18 (StreakTracker)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
    }
   }
  ]
