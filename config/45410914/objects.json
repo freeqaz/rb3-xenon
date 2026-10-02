@@ -2416,7 +2416,15 @@
             },
             "network/quazal/Transport/Interface/XboxConnectivityTester.cpp": "NonMatching",
             "network/quazal/Stack/Core/IOCompletionNotifier.cpp": "NonMatching",
-            "network/quazal/Transport/UDP/QueuingSocket.cpp": "NonMatching",
+            "network/quazal/Transport/UDP/QueuingSocket.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
             "network/quazal/Stack/Core/BerkeleySocketDriver.cpp": "NonMatching",
             "network/quazal/Authentication/Client/TicketManager.cpp": {
                 "status": "NonMatching",
