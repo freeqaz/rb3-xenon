@@ -548,6 +548,7 @@ namespace Quazal {
         void SetBandwidthCounter(BandwidthCounter *pCounter) { m_pBandwidthCounter = pCounter; }
         unsigned int GetBufferSize() const { return m_uiBufferSize; }
         unsigned int GetRefCount() const { return m_uiRefCount; }
+        void ReleaseBuffer(Buffer *pBuffer) { m_oReceivedQueue.Release(pBuffer); }
         bool IsSendPending() const { return m_bSendPending; }
 
         char m_pad00[0x8c];
@@ -1057,7 +1058,7 @@ namespace Quazal {
                     InetAddress oFrom;
                     while (pSocket->m_oReceivedQueue.Pop(&pQueued, &oFrom)) {
                         Receive(pSocket, pQueued, &oFrom);
-                        pSocket->m_oReceivedQueue.Release(pQueued);
+                        pSocket->ReleaseBuffer(pQueued);
                     }
                 }
             }
