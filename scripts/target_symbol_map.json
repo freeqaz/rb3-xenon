@@ -35563,5 +35563,9 @@
  "0x82b2efc0": "??_GConnectCancelCallback@Quazal@@UAAPAXI@Z",
  "0x82b2f008": "??_GJobConnectEndPoint@Quazal@@UAAPAXI@Z",
  "0x82b2f050": "??1?$qList@VStep@StepSequenceJob@Quazal@@@Quazal@@QAA@XZ",
- "0x82b2f078": "?push_back@?$list@VStep@StepSequenceJob@Quazal@@V?$MemAllocator@VStep@StepSequenceJob@Quazal@@@3@@stlpmtx_std@@QAAXABVStep@StepSequenceJob@Quazal@@@Z"
+ "0x82b2f078": "?push_back@?$list@VStep@StepSequenceJob@Quazal@@V?$MemAllocator@VStep@StepSequenceJob@Quazal@@@3@@stlpmtx_std@@QAAXABVStep@StepSequenceJob@Quazal@@@Z",
+ "0x82b2fc40": "??0TransportSignatureGenerator@Quazal@@QAA@XZ",
+ "0x82b2ffa0": "??1TransportSignatureGenerator@Quazal@@QAA@XZ",
+ "0x82b30058": "?ComputeSourceSignature@TransportSignatureGenerator@Quazal@@QAAIIG@Z",
+ "0x82b301f8": "??1?$Holder@VKeyedChecksumAlgorithm@Quazal@@@Quazal@@QAA@XZ"
 }
