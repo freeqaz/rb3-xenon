@@ -48,3 +48,7 @@ void DistortionEffect::Process(float *f, int numSamples, int numChans) {
 void DistortionEffect::SetParameters(DistortionEffect::Params const &params) {
     mDrive = params.unk4 * 0.01f;
 }
+
+// Out of line and empty in retail: StandardEffect<DistortionEffect>::DoProcess
+// calls the shared `blr` body at this position.
+void DistortionEffect::Reset() {}
