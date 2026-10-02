@@ -381,7 +381,7 @@ void MicXbox::ReadChatBuffer(void *data, unsigned int size) {
         if (unk3020.size() >= samps * 3) {
             short *out = (short *)data;
             const short *src = &unk3020[0];
-            for (unsigned int i = 0; i < samps; i++) {
+            for (unsigned int i = 0; i < size / 2; i++) {
                 out[i] = src[i * 3];
             }
             unk3020.erase(unk3020.begin(), unk3020.begin() + samps * 3);
