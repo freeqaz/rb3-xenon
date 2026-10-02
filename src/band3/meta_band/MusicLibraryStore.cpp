@@ -104,7 +104,7 @@ bool MusicLibraryStore::IsDownloading(int songID) const {
     for (std::vector<OverlappedIO>::const_iterator it = mDownloads.begin();
          it != mDownloads.end();
          ++it) {
-        if (it->mSongID == songID)
+        if (it->first == songID)
             return true;
     }
     return false;
@@ -233,9 +233,9 @@ void MusicLibraryStore::PurchaseSongs(LocalUser *user, const std::vector<int> &s
 
 void MusicLibraryStore::Poll() {
     for (std::vector<OverlappedIO>::iterator it = mDownloads.begin(); it != mDownloads.end();) {
-        StoreOffer *offer = FindOfferBySongID(it->mSongID);
+        StoreOffer *offer = FindOfferBySongID(it->first);
         DWORD status;
-        XMarketplaceGetDownloadStatus(it->mUser->GetPadNum(), offer->SongID(), &status);
+        XMarketplaceGetDownloadStatus(it->second->GetPadNum(), offer->SongID(), &status);
         if (status == ERROR_SUCCESS) {
             it = mDownloads.erase(it);
             TheContentMgr.StartRefresh();
@@ -257,11 +257,11 @@ void MusicLibraryStore::Poll() {
                     std::vector<int> &ids = mPendingPurchase->mSongIDs;
                     for (std::vector<int>::iterator it = ids.begin(); it != ids.end(); ++it) {
                         OverlappedIO d;
-                        d.mSongID = 0;
-                        d.mUser = 0;
+                        d.first = 0;
+                        d.second = 0;
                         mDownloads.push_back(d);
-                        mDownloads.back().mSongID = *it;
-                        mDownloads.back().mUser = mPendingPurchase->mUser;
+                        mDownloads.back().first = *it;
+                        mDownloads.back().second = mPendingPurchase->mUser;
                     }
                     TheMusicLibrary->RefreshStoreDisplay();
                 }

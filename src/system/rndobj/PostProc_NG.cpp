@@ -563,7 +563,10 @@ void NgPostProc::ReleaseTex() {
     RndVelocityBuffer::Singleton().FreeData();
 }
 
-void NgPostProc::Terminate() { ReleaseTex(); }
+// Out of line in retail (0x82B88FA8, `b ReleaseTex`): NgRnd::Terminate calls it.
+// Here PostProc_NG.cpp shares Env_NG's TU with Rnd_NG.cpp, where MSVC would
+// otherwise inline it into that caller.
+__declspec(noinline) void NgPostProc::Terminate() { ReleaseTex(); }
 
 void NgPostProc::EndWorld() {
     RndVelocityBuffer::Singleton().CacheCameraSettings(TheRnd.mWorldCamCopy);

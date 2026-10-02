@@ -43,14 +43,14 @@ class ContentInstalledMsg;
     off the retail bodies cited on each line. */
 class MusicLibraryStore : public Hmx::Object {
 public:
-    /** One marketplace download being watched by Poll (the struct name predates
-        this reading and is kept because proven ICF alias records spell it).
-        8 bytes: Poll steps
-        `addi r29,r29,0x8` and reads the song id at +0 and the user at +4. */
-    struct OverlappedIO {
-        int mSongID; // 0x0
-        LocalUser *mUser; // 0x4
-    };
+    /** One marketplace download being watched by Poll: (song id, user).
+        8 bytes: Poll steps `addi r29,r29,0x8` and reads the song id at +0 and
+        the user at +4. It is a std::pair, not a plain struct: retail's
+        push_back for this vector reaches __uninitialized_fill_n<pair<int,int>>
+        (0x824F9020, an mtctr/bdnz copy loop), which a pair instantiation
+        reproduces and a two-member struct does not (it compiles to an
+        addic./bne loop). The OverlappedIO name is kept as the typedef. */
+    typedef std::pair<int, LocalUser *> OverlappedIO;
     /** The songs handed to the purchaser, kept until the purchase finishes.
         PurchaseSongs allocates 0x10 bytes and zeroes all four words; Poll
         walks the vector at +0 and copies the user from +0xc. */

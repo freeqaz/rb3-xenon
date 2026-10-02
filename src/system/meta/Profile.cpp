@@ -41,6 +41,12 @@ ProfileSaveState Profile::GetSaveState() const { return mState; }
 const char *Profile::GetName() const {
     return (const char *)TheUserMgr->GetLocalUserFromPadNum(mPadNum);
 }
+
+// The same body, typed: MemcardMgr's SigninChangedMsg handler calls 0x827A4F38
+// and hands the result to PlatformMgr::HasUserSigninChanged.
+LocalUser *Profile::GetLocalUser() const {
+    return TheUserMgr->GetLocalUserFromPadNum(mPadNum);
+}
 #pragma auto_inline(on)
 
 void Profile::SetSaveState(ProfileSaveState state) {

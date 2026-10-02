@@ -338,11 +338,15 @@ void SystemPreInit(int, char **const, const char *c3) {
     ForceLinkXMemFuncs();
 }
 
+// Retail compiles the debugger check out: Debug::Fail's thread-fail loop calls
+// 0x823591E8 (li r3,0; blr), the shared return-0 body, where it calls this.
 bool PlatformDebugBreak() {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (DmIsDebuggerPresent()) {
         DebugBreak();
         return true;
     }
+#endif
     return false;
 }
 

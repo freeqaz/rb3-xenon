@@ -415,7 +415,7 @@ MCResult MemcardMgr::ThreadCall_SaveGame() {
 
 DataNode MemcardMgr::OnMsg(const SigninChangedMsg &msg) {
     if (mSelectDeviceWaiting) {
-        if (ThePlatformMgr.HasPadNumsSigninChanged(mProfile->GetPadNum())) {
+        if (ThePlatformMgr.HasUserSigninChanged(mProfile->GetLocalUser())) {
             mSelectDeviceWaiting = false;
             if (mSelectDeviceCallBackObj) {
                 static NoDeviceChosenMsg msg;
