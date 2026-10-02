@@ -840,9 +840,9 @@ void TrackPanel::SetSuppressPlayerFeedback(bool b) {
     }
 }
 
-int TrackPanel::GetNoCrowdMeter() const {
+bool TrackPanel::GetNoCrowdMeter() const {
     MetaPerformer::Current();
-    return 0;
+    return false;
 }
 
 float TrackPanel::CrowdRatingDefaultVal(Symbol s) const {
