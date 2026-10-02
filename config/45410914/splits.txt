@@ -1938,7 +1938,7 @@ MicClientMapper.cpp:
 	.pdata      start:0x82238738 end:0x82238748
 	.pdata      start:0x82238748 end:0x82238798
 	.text       start:0x8270F108 end:0x8270F4F4
-	.text       start:0x8270F528 end:0x8270FAB4
+	.text       start:0x8270F4F8 end:0x8270FAB4
 
 CharBonesBlender.cpp:
 	.pdata      start:0x822071C8 end:0x82207280
@@ -3490,12 +3490,8 @@ Flow.cpp:
 	.text       start:0x822A6528 end:0x822A6580
 	.text       start:0x822A6F68 end:0x822A6F70
 	.text       start:0x822D8CC0 end:0x822D8D70
-	.text       start:0x823A94F0 end:0x823A9540
-	.text       start:0x823AAD78 end:0x823AB020
-	.text       start:0x823AB598 end:0x823AB618
 	.text       start:0x82574D90 end:0x82574E1C
 	.text       start:0x825754AC end:0x825754B0
-	.text       start:0x82715C88 end:0x82715CF4
 
 BandSwatch.cpp:
 	.pdata      start:0x821F53B8 end:0x821F54C0
@@ -4488,8 +4484,9 @@ CharHair.cpp:
 	.text       start:0x823AB838 end:0x823AB8A8
 	.text       start:0x823AB8A8 end:0x823AB984
 	.text       start:0x8263B460 end:0x8263B5F4
-	.text       start:0x827149D8 end:0x82714A48
-	.text       start:0x82715C00 end:0x82715C88
+	.text       start:0x823A94F0 end:0x823A9540
+	.text       start:0x823AAD78 end:0x823AB020
+	.text       start:0x823AB598 end:0x823AB618
 
 CharUtl.cpp:
 	.pdata      start:0x82204510 end:0x82204518
@@ -7439,6 +7436,9 @@ MidiInstrument.cpp:
 	.text       start:0x82715CF4 end:0x82715E18
 	.text       start:0x82715E18 end:0x82715FD8
 	.text       start:0x82715FD8 end:0x82716060
+	.text       start:0x82715C88 end:0x82715CF4
+	.text       start:0x827149D8 end:0x82714A48
+	.text       start:0x82715C00 end:0x82715C88
 
 system/synth/MidiInstrumentMgr.cpp:
 	.pdata      start:0x82238DE0 end:0x82238E10
@@ -12106,7 +12106,6 @@ OutfitConfig.cpp:
 	.text       start:0x822ACA94 end:0x822ACAF0
 	.text       start:0x822ACAF8 end:0x822ACFD0
 	.text       start:0x822ACFD0 end:0x822ACFDC
-	.text       start:0x8270F4F8 end:0x8270F528
 
 LayerDir.cpp:
 	.pdata      start:0x821FCE50 end:0x821FCE60
