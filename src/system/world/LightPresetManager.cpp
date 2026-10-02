@@ -126,9 +126,8 @@ LightPreset *LightPresetManager::PickRandomPreset(Symbol s) {
 // Retail 0x824B9CD8: the preset select is inline; a missing preset is ignored.
 void LightPresetManager::SetLighting(Symbol s, bool b) {
     if (!mIgnoreLightingEvents) {
-        Symbol cat = s;
-        mLastCategory = cat;
-        LightPreset *p = PickRandomPreset(cat);
+        mLastCategory = s;
+        LightPreset *p = PickRandomPreset(mLastCategory);
         if (p)
             StartPreset(p, b);
     }
