@@ -4936,7 +4936,6 @@ Sfx.cpp:
 	.text       start:0x8271CC40 end:0x8271DE68
 
 PropSync.cpp:
-	.pdata      start:0x82213EF0 end:0x82213EF8
 	.pdata      start:0x82213F40 end:0x822140C0
 	.pdata      start:0x82214250 end:0x82214260
 	.pdata      start:0x82214260 end:0x82214278
@@ -4952,7 +4951,6 @@ PropSync.cpp:
 	.pdata      start:0x822145D8 end:0x822145F0
 	.pdata      start:0x8223D238 end:0x8223D2A0
 	.pdata      start:0x8223D2A0 end:0x8223D380
-	.text       start:0x824CA6B8 end:0x824CA754
 	.text       start:0x824CAA7C end:0x824CAA80
 	.text       start:0x824CAA8C end:0x824CAA90
 	.text       start:0x824CAC64 end:0x824CBFE0
@@ -7306,10 +7304,6 @@ DrivenPropertyEntry.cpp:
 	.text       start:0x822CEEDC end:0x822CEEE8
 	.text       start:0x82781654 end:0x82781660
 
-DefaultPhysicsManager.cpp:
-	.pdata      start:0x82213EA0 end:0x82213EB8
-	.text       start:0x824CA1F0 end:0x824CA2D4
-
 WavMgr.cpp:
 	.pdata      start:0x822084E8 end:0x82208530
 	.pdata      start:0x82208F38 end:0x82208F58
@@ -8631,13 +8625,9 @@ band3/meta_band/SongUpgradeMgr.cpp:
 	.text       start:0x8264DDAC end:0x8264E900
 
 band3/meta_band/LicenseMgr.cpp:
-	.pdata      start:0x822007F8 end:0x82200800
-	.pdata      start:0x82200B18 end:0x82200B20
 	.pdata      start:0x8222CF50 end:0x8222CF58
 	.pdata      start:0x8222CF68 end:0x8222CF70
 	.pdata      start:0x8222D050 end:0x8222D178
-	.text       start:0x82362B20 end:0x82362B78
-	.text       start:0x82365668 end:0x8236570C
 	.text       start:0x8264DB80 end:0x8264DBD8
 	.text       start:0x8264DCA8 end:0x8264DDAC
 	.text       start:0x8264E900 end:0x8264F988
@@ -10160,6 +10150,7 @@ TourProgress.cpp:
 	.pdata      start:0x822007C0 end:0x822007D8
 	.pdata      start:0x822007D8 end:0x822007F0
 	.pdata      start:0x822007F0 end:0x822007F8
+	.pdata      start:0x822007F8 end:0x82200800
 	.pdata      start:0x82200800 end:0x82200818
 	.pdata      start:0x82200818 end:0x82200820
 	.pdata      start:0x82200820 end:0x82200860
@@ -10183,6 +10174,7 @@ TourProgress.cpp:
 	.text       start:0x82362710 end:0x82362918
 	.text       start:0x82362918 end:0x82362A30
 	.text       start:0x82362A30 end:0x82362B20
+	.text       start:0x82362B20 end:0x82362B78
 	.text       start:0x82362B78 end:0x82362C70
 	.text       start:0x82362C70 end:0x82362D70
 	.text       start:0x82362D70 end:0x82362F64
@@ -10964,8 +10956,10 @@ EventAnim.cpp:
 	.pdata      start:0x82213E48 end:0x82213E58
 	.pdata      start:0x82213E58 end:0x82213E68
 	.pdata      start:0x82213E68 end:0x82213EA0
+	.pdata      start:0x82213EA0 end:0x82213EB8
 	.pdata      start:0x82213EB8 end:0x82213ED8
 	.pdata      start:0x82213ED8 end:0x82213EF0
+	.pdata      start:0x82213EF0 end:0x82213EF8
 	.pdata      start:0x82213EF8 end:0x82213F00
 	.pdata      start:0x82213F00 end:0x82213F28
 	.pdata      start:0x82213F28 end:0x82213F40
@@ -10987,8 +10981,10 @@ EventAnim.cpp:
 	.text       start:0x824C9B88 end:0x824C9D60
 	.text       start:0x824C9D60 end:0x824C9ED8
 	.text       start:0x824C9ED8 end:0x824CA1F0
+	.text       start:0x824CA1F0 end:0x824CA2D4
 	.text       start:0x824CA2D4 end:0x824CA4B8
 	.text       start:0x824CA4B8 end:0x824CA6B8
+	.text       start:0x824CA6B8 end:0x824CA754
 	.text       start:0x824CA754 end:0x824CA808
 	.text       start:0x824CA808 end:0x824CAA7C
 	.text       start:0x824CAA80 end:0x824CAA8C
@@ -13870,10 +13866,12 @@ system/char/CharMeshCacheMgr.cpp:
 
 band3/tour/TourPropertyCollection.cpp:
 	.pdata      start:0x82200B08 end:0x82200B18
+	.pdata      start:0x82200B18 end:0x82200B20
 	.pdata      start:0x82200B20 end:0x82200B38
 	.pdata      start:0x82200B40 end:0x82200B78
 	.text       start:0x82365504 end:0x82365510
 	.text       start:0x82365560 end:0x82365668
+	.text       start:0x82365668 end:0x8236570C
 	.text       start:0x82365710 end:0x823658F8
 	.text       start:0x82365978 end:0x82365C48
 
