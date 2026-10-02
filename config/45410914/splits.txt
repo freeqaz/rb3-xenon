@@ -14277,8 +14277,8 @@ network/quazal/SessionDDL.cpp:
 	.text       start:0x82A91598 end:0x82A91ECC
 
 network/quazal/ObjDupProtocol.cpp:
-	.pdata      start:0x82252020 end:0x822521C8
-	.text       start:0x82A93AB8 end:0x82A96A30
+	.pdata      start:0x82251FE8 end:0x82252258
+	.text       start:0x82A937E0 end:0x82A97EF0
 
 network/quazal/Core/ByteStream.cpp:
 	.pdata      start:0x82252258 end:0x822522F0

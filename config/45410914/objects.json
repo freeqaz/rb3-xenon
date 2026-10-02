@@ -2227,7 +2227,15 @@
             "network/quazal/MatchMaking/Client/MatchMakingClient.cpp": "NonMatching",
             "network/quazal/Foundation/ProductFacade.cpp": "NonMatching",
             "network/quazal/SessionDDL.cpp": "NonMatching",
-            "network/quazal/ObjDupProtocol.cpp": "NonMatching",
+            "network/quazal/ObjDupProtocol.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/EHs-c-",
+                    "/Ob1"
+                ]
+            },
             "network/quazal/Core/ByteStream.cpp": "NonMatching",
             "network/quazal/RootDODDL.cpp": "NonMatching",
             "network/quazal/DOClass.cpp": "NonMatching",
