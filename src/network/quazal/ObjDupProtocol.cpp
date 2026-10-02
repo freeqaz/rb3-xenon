@@ -11,15 +11,9 @@
 // stack layout (a walk over the scope's symbol hash buckets), so they were
 // chosen to reproduce retail's frames.
 
+#include "Platform/qStd.h"
+
 namespace Quazal {
-
-    typedef unsigned int size_t;
-
-    class RootObject {
-    public:
-        static void *operator new(size_t, const char *, unsigned int);
-        static void operator delete(void *);
-    };
 
     namespace PseudoSingleton {
         unsigned int GetCurrentContext();
@@ -63,6 +57,8 @@ namespace Quazal {
         DOHandle(const DOHandle &o) : m_uiValue(o.m_uiValue) {}
         ~DOHandle() {}
         bool operator!=(const DOHandle &o) const { return m_uiValue != o.m_uiValue; }
+        bool operator<(const DOHandle &o) const { return m_uiValue < o.m_uiValue; }
+        unsigned int GetClassID() const { return (m_uiValue & 0xFFC00000) >> 22; }
         operator unsigned int() const { return m_uiValue; }
 
         void SaveTo(class ByteStream *, bool) const;
@@ -94,6 +90,18 @@ namespace Quazal {
         ByteStream &operator>>(bool &);
         void AppendString(const char *, unsigned int);
         void ExtractString(char *, unsigned int);
+        void SetPosition(unsigned int);
+
+        template <class T>
+        ByteStream &operator<<(const T &t) {
+            Append(&t, sizeof(T), true);
+            return *this;
+        }
+        template <class T>
+        ByteStream &operator>>(T &t) {
+            Extract(&t, sizeof(T), true);
+            return *this;
+        }
     };
 
     class EndPoint;
@@ -112,8 +120,12 @@ namespace Quazal {
         void ExtractMessage(Message *);
 
         unsigned int GetSourceStation() { return m_uiSourceStation; }
+        EndPoint *GetSourceEndPoint() { return m_pSourceEndPoint; }
+        unsigned int GetPosition() { return m_uiPosition; }
 
-        char m_pad0[0x24];
+        char m_pad0[8];
+        unsigned int m_uiPosition; // 0x8
+        char m_padc[0x18];
         unsigned int m_uiSourceStation; // 0x24
         char m_pad28[4];
         EndPoint *m_pSourceEndPoint; // 0x2C
@@ -214,6 +226,7 @@ namespace Quazal {
         }
         BandwidthMonitor *GetBandwidthMonitor() { return m_pBandwidthMonitor; }
         ObjDupProtocol *GetObjDupProtocol() { return m_pObjDupProtocol; }
+        class Listener *GetListener() { return m_pListener; }
 
         char m_pad0[0x18];
         BandwidthMonitor *m_pBandwidthMonitor; // 0x18
@@ -224,6 +237,7 @@ namespace Quazal {
         DOProtocolHandler *m_pDOProtocolHandler; // 0x34
         char m_pad38[4];
         class MessageSigner *m_pMessageSigner; // 0x3C
+        class Listener *m_pListener; // 0x40
     };
 
     class Session {
@@ -236,30 +250,63 @@ namespace Quazal {
         bool IsJoining();
     };
 
-    class NetZ {
-    public:
-        static NetZ *GetInstance();
-        bool IsTerminating();
-    };
+    class DebugString {};
 
     class Job : public RootObject {
     public:
+        Job(const DebugString &);
+        virtual ~Job();
+        virtual void _v1();
+        virtual void _v2();
+        virtual void _v3();
+        virtual void Execute() = 0;
         void Postpone();
+        void SetResult(void *);
+
+        char m_pad4[0x34];
     };
 
     class JobProcessMessage : public Job {
     public:
         JobProcessMessage(ObjDupProtocol *, Message *);
+        virtual void Execute();
     };
 
     class JobProcessJoinRequest : public Job {
     public:
         JobProcessJoinRequest(EndPoint *, class StationInfo *, class JoinRequestData *);
+        virtual void Execute();
     };
 
     class Scheduler {
     public:
         void Queue(Job *, bool);
+
+        char m_pad0[0x3C];
+        CriticalSection m_csSystemLock; // 0x3C
+    };
+
+    class ScopedCS {
+    public:
+        ScopedCS(CriticalSection &cs) : m_bInScope(true), m_pCS(&cs) {
+            CriticalSection *pCS = m_pCS;
+            if (!MutexPrimitive::s_bNoOp) {
+                pCS->EnterImpl();
+            }
+        }
+        ~ScopedCS() { EndScope(); }
+        void EndScope() {
+            if (m_bInScope) {
+                CriticalSection *pCS = m_pCS;
+                if (!MutexPrimitive::s_bNoOp) {
+                    pCS->LeaveImpl();
+                }
+                m_bInScope = false;
+            }
+        }
+
+        bool m_bInScope; // 0x0
+        CriticalSection *m_pCS; // 0x4
     };
 
     // The type-3 component; it owns the scheduler.
@@ -291,6 +338,28 @@ namespace Quazal {
 
     class DuplicatedObject;
 
+    class StationURL;
+
+    // Walks the stations of the session.
+    class StationSelection {
+    public:
+        StationSelection(bool, bool);
+        ~StationSelection();
+        void GotoStart();
+        void Refresh();
+        bool EndReached();
+        class Station *Current();
+        void Next(int);
+
+        char m_pad[0x28];
+    };
+
+    class StationURLs {
+    public:
+        void SetURL(unsigned int, const char *);
+        void AddURL(StationURL &);
+    };
+
     class Station {
     public:
         static bool IsLocalStationMaster();
@@ -298,9 +367,16 @@ namespace Quazal {
         bool IsDisconnected();
         const char *GetStationURL(unsigned int);
         unsigned int GetHandle() { return m_uiHandle; }
+        void ProcessEOS();
+        void SendMessage(Message *, bool);
+        unsigned int GetURLCount();
+        unsigned int GetID();
+        DOHandle GetHandleValue();
 
         char m_pad0[0x14];
         unsigned int m_uiHandle; // 0x14
+        char m_pad18[0x58];
+        class StationURLs m_oURLs; // 0x70
     };
 
     class DORef {
@@ -346,13 +422,21 @@ namespace Quazal {
         void ExtractStations(Message *);
     };
 
+    class CallContext;
+
+    // The protocol's own register of outstanding RMC calls.
     class CallContextRegister {
     public:
         CallContextRegister();
         virtual ~CallContextRegister();
         virtual void Register(void *);
 
-        char m_pad4[0x24];
+        CallContext *GetCallContextRef(unsigned short);
+        CallContext *FindCallContext(unsigned short);
+        void CancelAll();
+
+        qMap<unsigned short, CallContext *> m_mapCalls; // 0x4
+        char m_pad20[8];
     };
 
     class Data : public RootObject {
@@ -387,20 +471,251 @@ namespace Quazal {
         void Sign(Message *, Time, bool);
     };
 
-    class StationURL {
-    public:
-        StationURL(const char *);
-        ~StationURL();
-
-        char m_pad[0x6C];
-    };
-
     class JoinResponseObserver {
     public:
         virtual void _v0();
         virtual void _v1();
         virtual void OnJoinResponse(Message *);
     };
+
+    class DOClass {
+    public:
+        virtual void _v00();
+        virtual void _v01();
+        virtual void _v02();
+        virtual void _v03();
+        virtual void _v04();
+        virtual void _v05();
+        virtual void _v06();
+        virtual void _v07();
+        virtual void _v08();
+        virtual void _v09();
+        virtual void _v10();
+        virtual void _v11();
+        virtual void _v12();
+        virtual void _v13();
+        virtual void _v14();
+        virtual void _v15();
+        virtual void _v16();
+        virtual void _v17();
+        virtual void _v18();
+        virtual void CallMethod(DuplicatedObject *, unsigned short, Message *);
+    };
+
+    namespace DOClassesTable {
+        DOClass *GetDOClass(unsigned int);
+    }
+
+    class DuplicatedObject {
+    public:
+        static void ProcessUpdateMessage(Message *, DOHandle, unsigned char);
+        bool IsAMigrationInProgress();
+        void DeleteDuplica(DOHandle, bool, bool);
+        bool FlagIsSet(unsigned short usFlag) { return (m_usFlags & usFlag) == usFlag; }
+        bool Fetch(DOHandle, DOHandle, bool, DOHandle);
+
+        char m_pad0[0x20];
+        unsigned short m_usFlags; // 0x20
+        char m_pad22[0x26];
+        DOHandle m_hHandle; // 0x48
+    };
+
+    class DOCoreRef : public DORef {
+    public:
+        DOCoreRef(DOHandle hObject) : DORef(hObject) {}
+        bool IsValid();
+        DuplicatedObject *operator->() {
+            if (!IsValid()) {
+                return 0;
+            } else {
+                return m_pObject;
+            }
+        }
+        DuplicatedObject *Get() {
+            if (!IsValid()) {
+                return 0;
+            } else {
+                return m_pObject;
+            }
+        }
+    };
+
+    class FetchRef : public DORef {
+    public:
+        FetchRef(DOHandle hObject) : DORef(hObject) {}
+        bool IsValid();
+        DuplicatedObject *operator->() {
+            if (!IsValid()) {
+                return 0;
+            } else {
+                return m_pObject;
+            }
+        }
+    };
+
+    class CallContext {
+    public:
+        virtual void _v0();
+        virtual void AcquireRef();
+        virtual void ReleaseRef();
+
+        void SetResponseMessage(Message *);
+        void SetOutcome(DOHandle, int);
+    };
+
+    class RMCContext {
+    public:
+        unsigned int GetTargetObject() { return m_uiTargetObject; }
+        unsigned short GetCallID() { return m_usCallID; }
+        unsigned int GetFlags() { return m_uiFlags; }
+        unsigned int GetMethodID() { return m_uiMethodID; }
+        unsigned short GetProtocolID() { return m_usProtocolID; }
+
+        char m_pad0[8];
+        unsigned int m_uiTargetObject; // 0x8
+        char m_padc[0x44];
+        unsigned short m_usCallID; // 0x50
+        char m_pad52[2];
+        unsigned int m_uiFlags; // 0x54
+        char m_pad58[0x10];
+        unsigned int m_uiMethodID; // 0x68
+        char m_pad6c[0x34];
+        unsigned short m_usProtocolID; // 0xA0
+    };
+
+    class CallMethodOperation : public RootObject {
+    public:
+        CallMethodOperation(
+            unsigned short, DOHandle, unsigned int, DOHandle, unsigned short, Message *
+        );
+        virtual ~CallMethodOperation();
+        void Prepare();
+        bool PostponeOperation();
+        void Execute();
+        void Abort();
+        unsigned short GetCallID() { return m_usCallID; }
+        void *GetResult() { return m_pResult; }
+
+        char m_pad4[0x28];
+        void *m_pResult; // 0x2C
+        unsigned short m_usCallID; // 0x30
+    };
+    class FetchContext {
+    public:
+        unsigned short GetCallID() { return m_usCallID; }
+        unsigned int GetTargetObject() { return m_uiTargetObject; }
+
+        char m_pad0[0x50];
+        unsigned short m_usCallID; // 0x50
+        char m_pad52[0x16];
+        unsigned int m_uiTargetObject; // 0x68
+    };
+
+    class MasterStation {
+    public:
+        void GetStations(qList<DOHandle> &);
+    };
+
+    class MigrationContext {
+    public:
+        MasterStation *GetMasterStation() { return m_pMasterStation; }
+        unsigned char GetFlags() { return m_ucFlags; }
+        unsigned short GetCallID() { return m_usCallID; }
+
+        char m_pad0[0x50];
+        unsigned short m_usCallID; // 0x50
+        char m_pad52[0xA];
+        unsigned int m_uiTarget; // 0x5C
+        char m_pad60[4];
+        MasterStation *m_pMasterStation; // 0x64
+        unsigned int m_uiMethod; // 0x68
+        char m_pad6c[0x34];
+        unsigned char m_ucFlags; // 0xA0
+    };
+
+    class ProtocolCallContext {
+    public:
+        ProtocolCallContext();
+        ~ProtocolCallContext();
+        void CallMigration(
+            Message *,
+            unsigned short *,
+            const DOHandle &,
+            unsigned int *,
+            unsigned int *,
+            unsigned char *,
+            qList<DOHandle> *
+        );
+
+        char m_pad[0x68];
+    };
+
+    const char *OutcomeToString(int);
+
+    class StationURL {
+    public:
+        StationURL(const char *);
+        ~StationURL();
+        unsigned int GetFlags();
+        const char *GetURL();
+
+        char m_pad[0x6C];
+    };
+
+    class StationURLList {
+    public:
+        bool IsEmpty();
+
+        CriticalSection m_cs; // 0x0
+        qList<StationURL> m_lstURLs; // 0x14
+    };
+
+    class Listener {
+    public:
+        virtual void _v0();
+        virtual void _v1();
+        virtual void _v2();
+        virtual void Start(bool, bool);
+        virtual void Stop();
+
+        char m_pad4[0xC];
+        bool m_bStarted; // 0x10
+    };
+
+    class PRUDPTransport {
+    public:
+        virtual void _v0();
+        virtual void _v1();
+        virtual bool Listen(unsigned short, unsigned short *, bool, bool);
+        virtual void _v3();
+        virtual void StopListening(unsigned short);
+    };
+
+    class NetZ {
+    public:
+        static NetZ *GetInstance();
+        static int GetMode();
+        bool IsTerminating();
+        StationURLList *GetLocalURLs();
+
+        char m_pad0[0x4C];
+        PRUDPTransport *m_pTransport; // 0x4C
+    };
+
+    void *GetInstanceType1Delegator();
+    unsigned short GetWellKnownPort();
+
+    inline PRUDPTransport *GetTransport() {
+        NetZ *pNetZ = (NetZ *)GetInstanceType1Delegator();
+        if (pNetZ == 0) {
+            return 0;
+        }
+        return pNetZ->m_pTransport;
+    }
+
+    namespace SystemError {
+        void SignalError(const char *, unsigned int, unsigned int, unsigned int);
+    }
 
     class Protocol : public RootObject {
     public:
@@ -451,6 +766,41 @@ namespace Quazal {
         bool ParseJoinResponseMessage(Message *, bool, bool, String *);
         void ProcessJoinResponse(Message *, unsigned char &);
         static JoinResponseObserver *GetJoinResponseObserver();
+        Message *CreateUpdateMessage(unsigned int *, unsigned char *);
+        bool ParseUpdateMessage(Message *, bool, bool, String *);
+        Message *CreateDeleteMessage(DOHandle);
+        bool ParseDeleteMessage(Message *, bool, bool, String *);
+        void ProcessDeleteMessage(DOHandle, DOHandle);
+        Message *CreateActionMessage(DOHandle *, unsigned short *);
+        bool ParseActionMessage(Message *, bool, bool, String *);
+        void ProcessActionMessage(Message *, DOCoreRef *, unsigned short *);
+        Message *CreateRMCCallMessage(RMCContext *);
+        bool ParseRMCCallMessage(Message *, bool, bool, String *);
+        bool ProcessRMCCallMessage(
+            Message *, unsigned short &, DOHandle &, unsigned int &, DOHandle &, unsigned short &
+        );
+        Message *CreateRMCResponseMessage(CallMethodOperation *);
+        bool ParseRMCResponseMessage(Message *, bool, bool, String *);
+        void ProcessRMCResponse(Message *, unsigned short *);
+        Message *CreateFetchRequestMessage(FetchContext *);
+        bool ParseFetchRequestMessage(Message *, bool, bool, String *);
+        void ProcessFetchRequestMessage(DOHandle &, DOHandle &, unsigned short &);
+        Message *CreateMigrationMessage(MigrationContext *);
+        Message *CreateCallOutcomeMessage(unsigned short, int);
+        bool ParseCallOutcomeMessage(Message *, bool, bool, String *);
+        void ProcessCallOutcome(DOHandle, unsigned short, int);
+        bool ProcessBundleMessage(Message *, bool, bool, String *);
+        Message *CreateEOSMessage(DOHandle);
+        void QueueEOS(DOHandle);
+        bool ParseEOSMessage(Message *, bool, bool, String *);
+        void ProcessEOS(const DOHandle &);
+        bool ShouldGrabWellKnown();
+        bool ListenOnWellKnown();
+        bool StartToListen();
+        bool ListenOnAnyPort();
+        void StopToListen();
+        bool AddLocalURLs(Station *);
+        bool ParseMessage(Message *, bool, String *);
 
         bool ParseSpecificMessage(Message *, unsigned int, bool, String *);
 
@@ -490,6 +840,27 @@ namespace Quazal {
     };
 
     extern PseudoGlobalVariable<JoinResponseObserver *> s_pJoinResponseObserver;
+
+}
+
+// Runs an RMC call that had to wait for its target object.
+class JobExecuteDelayedRMC : public Quazal::Job {
+public:
+    JobExecuteDelayedRMC(Quazal::CallMethodOperation *pOperation, Quazal::Message *pMessage)
+        : Quazal::Job(Quazal::DebugString()) {
+        m_pOperation = pOperation;
+        m_pMessage = pMessage;
+    }
+    virtual ~JobExecuteDelayedRMC();
+    virtual void Execute();
+
+    Quazal::Message *GetMessage() { return m_pMessage; }
+
+    Quazal::CallMethodOperation *m_pOperation; // 0x38
+    Quazal::Message *m_pMessage; // 0x3C
+};
+
+namespace Quazal {
 
     ObjDupProtocol::ObjDupProtocol() {
         m_bListeningOnAnyPort = false;
@@ -830,6 +1201,615 @@ namespace Quazal {
 
     JoinResponseObserver *ObjDupProtocol::GetJoinResponseObserver() {
         return s_pJoinResponseObserver.GetRef();
+    }
+
+    Message *ObjDupProtocol::CreateUpdateMessage(unsigned int *puiHandle, unsigned char *pucDataSet) {
+        DOHandle hObject = *puiHandle;
+        Message *pMsg = CreateMessage(2);
+        pMsg->Append(puiHandle, 4, true);
+        pMsg->Append(pucDataSet, 1, true);
+        return pMsg;
+    }
+
+    bool ObjDupProtocol::ParseUpdateMessage(
+        Message *pMsg, bool bProcess, bool bTrace, String *pTrace
+    ) {
+        unsigned int uiHandle;
+        *pMsg >> uiHandle;
+        DOHandle hObject = uiHandle;
+        unsigned char ucDataSet;
+        *pMsg >> ucDataSet;
+        if (bTrace) {
+            pTrace->Format(
+                "UPDATE message for object %x (%s), dataset %d (%s)",
+                hObject,
+                hObject.GetClassName(),
+                ucDataSet,
+                hObject.GetDataSetName(ucDataSet)
+            );
+        }
+        if (bProcess) {
+            DuplicatedObject::ProcessUpdateMessage(pMsg, uiHandle, ucDataSet);
+        }
+        return true;
+    }
+
+    Message *ObjDupProtocol::CreateDeleteMessage(DOHandle hObject) {
+        Message *pMsg = CreateMessage(4);
+        *pMsg << hObject;
+        return pMsg;
+    }
+
+    bool ObjDupProtocol::ParseDeleteMessage(
+        Message *pMsg, bool bProcess, bool bTrace, String *pTrace
+    ) {
+        DOHandle hObject;
+        *pMsg >> hObject;
+        if (bTrace) {
+            pTrace->Format("DELETE message for object %s %x", hObject.GetClassName(), hObject);
+        }
+        if (bProcess) {
+            ProcessDeleteMessage(hObject, pMsg->GetSourceStation());
+        }
+        return true;
+    }
+
+    void ObjDupProtocol::ProcessDeleteMessage(DOHandle hObject, DOHandle hSource) {
+        DOCoreRef refSource(hSource);
+        if (!refSource.IsValid()) {
+            return;
+        }
+        if (!refSource->FlagIsSet(1)) {
+            return;
+        }
+        if (refSource->IsAMigrationInProgress()) {
+            return;
+        } else {
+            refSource->DeleteDuplica(hObject, true, false);
+        }
+    }
+
+    Message *ObjDupProtocol::CreateActionMessage(DOHandle *phObject, unsigned short *pusMethodID) {
+        Message *pMsg = CreateMessage(5);
+        phObject->SaveTo(pMsg, false);
+        pMsg->Append(pusMethodID, 2, true);
+        return pMsg;
+    }
+
+    bool ObjDupProtocol::ParseActionMessage(
+        Message *pMsg, bool bProcess, bool bTrace, String *pTrace
+    ) {
+        unsigned int uiHandle;
+        *pMsg >> uiHandle;
+        DOHandle hObject = uiHandle;
+        DOCoreRef refObject(uiHandle);
+        if (refObject.Get() == 0) {
+            bProcess = false;
+        }
+        unsigned short usMethodID;
+        *pMsg >> usMethodID;
+        if (bTrace) {
+            pTrace->Format(
+                "ACTION message for object %s %x. MethodID: %d",
+                hObject.GetClassName(),
+                hObject,
+                usMethodID
+            );
+        }
+        if (bProcess) {
+            ProcessActionMessage(pMsg, &refObject, &usMethodID);
+        }
+        return true;
+    }
+
+    void ObjDupProtocol::ProcessActionMessage(
+        Message *pMsg, DOCoreRef *pRefObject, unsigned short *pusMethodID
+    ) {
+        DOClassesTable::GetDOClass((*pRefObject)->m_hHandle.GetClassID())
+            ->CallMethod((*pRefObject).operator->(), *pusMethodID, pMsg);
+    }
+
+    Message *ObjDupProtocol::CreateRMCCallMessage(RMCContext *pContext) {
+        m_oCallContextRegister.Register(pContext);
+        Message *pMsg = CreateMessage(0xA);
+        *pMsg << pContext->GetCallID();
+        *pMsg << pContext->GetTargetObject();
+        *pMsg << pContext->GetFlags();
+        *pMsg << pContext->GetMethodID();
+        *pMsg << pContext->GetProtocolID();
+        return pMsg;
+    }
+
+    bool ObjDupProtocol::ParseRMCCallMessage(
+        Message *pMsg, bool bProcess, bool bTrace, String *pTrace
+    ) {
+        unsigned int uiFlags = 0;
+        DOHandle hCaller;
+        DOHandle hTarget;
+        unsigned short usCallID;
+        unsigned short usMethodID;
+        *pMsg >> usCallID;
+        *pMsg >> uiFlags;
+        *pMsg >> hCaller;
+        *pMsg >> hTarget;
+        *pMsg >> usMethodID;
+        if (bTrace) {
+            pTrace->Format(
+                "RMC_CALL message RMC_ID: %d, Flags: %d, Source: %x, TargetObject: %x, MethodID: %d",
+                usCallID,
+                uiFlags,
+                hCaller.m_uiValue,
+                hTarget,
+                usMethodID
+            );
+        }
+        if (bProcess) {
+            return ProcessRMCCallMessage(pMsg, usCallID, hCaller, uiFlags, hTarget, usMethodID);
+        } else {
+            return true;
+        }
+    }
+
+    bool ObjDupProtocol::ProcessRMCCallMessage(
+        Message *pMsg,
+        unsigned short &usCallID,
+        DOHandle &hCaller,
+        unsigned int &uiFlags,
+        DOHandle &hTarget,
+        unsigned short &usMethodID
+    ) {
+        CallMethodOperation *pOperation = new (__FILE__, 0x29D)
+            CallMethodOperation(usCallID, hCaller, uiFlags, hTarget, usMethodID, pMsg);
+        unsigned int uiPosition = pMsg->GetPosition();
+        pOperation->Prepare();
+        if (!pOperation->PostponeOperation()) {
+            if (uiFlags & 4) {
+                pOperation->Execute();
+            } else {
+                pOperation->Abort();
+            }
+            delete pOperation;
+            return true;
+        }
+        pOperation->Execute();
+        pMsg->SetPosition(uiPosition);
+        JobExecuteDelayedRMC *pJob = new (__FILE__, 0x2AB) JobExecuteDelayedRMC(pOperation, pMsg);
+        GetScheduler()->Queue(pJob, false);
+        return false;
+    }
+
+}
+
+void JobExecuteDelayedRMC::Execute() {
+    unsigned int uiPosition = m_pMessage->GetPosition();
+    m_pOperation->Prepare();
+    if (!m_pOperation->PostponeOperation()) {
+        m_pOperation->Abort();
+    } else {
+        GetMessage()->SetPosition(uiPosition);
+        m_pOperation->Execute();
+        SetResult(m_pOperation->GetResult());
+    }
+}
+
+JobExecuteDelayedRMC::~JobExecuteDelayedRMC() {
+    delete m_pOperation;
+    delete m_pMessage;
+}
+
+namespace Quazal {
+
+    Message *ObjDupProtocol::CreateRMCResponseMessage(CallMethodOperation *pOperation) {
+        Message *pMsg = CreateMessage(0xB);
+        *pMsg << pOperation->GetCallID();
+        return pMsg;
+    }
+
+    bool ObjDupProtocol::ParseRMCResponseMessage(
+        Message *pMsg, bool bProcess, bool bTrace, String *pTrace
+    ) {
+        unsigned short usCallID;
+        *pMsg >> usCallID;
+        if (bTrace) {
+            pTrace->Format("RMC_RESPONSE message RMC_ID: %d", usCallID);
+        }
+        if (bProcess) {
+            ProcessRMCResponse(pMsg, &usCallID);
+        }
+        return true;
+    }
+
+    void ObjDupProtocol::ProcessRMCResponse(Message *pMsg, unsigned short *pusCallID) {
+        CallContext *pContext = m_oCallContextRegister.GetCallContextRef(*pusCallID);
+        if (pContext != 0) {
+            pContext->SetResponseMessage(pMsg);
+            pContext->ReleaseRef();
+        }
+    }
+
+    Message *ObjDupProtocol::CreateFetchRequestMessage(FetchContext *pContext) {
+        Message *pMsg = CreateMessage(0xD);
+        *pMsg << pContext->GetCallID();
+        *pMsg << pContext->GetTargetObject();
+        *pMsg << (unsigned int)StationManager::GetLocalStationHandle();
+        return pMsg;
+    }
+
+    bool ObjDupProtocol::ParseFetchRequestMessage(
+        Message *pMsg, bool bProcess, bool bTrace, String *pTrace
+    ) {
+        DOHandle hObject;
+        DOHandle hStation;
+        unsigned short usCallID;
+        *pMsg >> usCallID;
+        *pMsg >> hObject;
+        *pMsg >> hStation;
+        if (bTrace) {
+            pTrace->Format(
+                "FETCH message for object %s %x, SourceStation: %x",
+                hObject.GetClassName(),
+                hObject,
+                hStation
+            );
+        }
+        if (bProcess) {
+            ProcessFetchRequestMessage(hObject, hStation, usCallID);
+        }
+        return true;
+    }
+
+    void ObjDupProtocol::ProcessFetchRequestMessage(
+        DOHandle &hObject, DOHandle &hStation, unsigned short &usCallID
+    ) {
+        FetchRef refObject((DOHandle)hObject);
+        int iOutcome = 0x80010001;
+        if (refObject.IsValid()) {
+            if (!refObject->FlagIsSet(1)) {
+                iOutcome = 0x80060004;
+            } else {
+                if (refObject->Fetch(hStation, hStation, true, DOHandle())) {
+                    iOutcome = 0x60001;
+                } else {
+                    iOutcome = 0x80010006;
+                }
+            }
+        } else {
+            iOutcome = 0x80060004;
+        }
+        if (iOutcome != 0x60001) {
+            StationRef refStation(hStation);
+            Message *pOutcome = CreateCallOutcomeMessage(usCallID, iOutcome);
+            refStation->SendMessage(pOutcome, true);
+            delete pOutcome;
+        }
+    }
+
+    Message *ObjDupProtocol::CreateMigrationMessage(MigrationContext *pContext) {
+        m_oCallContextRegister.Register(pContext);
+        Message *pMsg = CreateDOProtocolMessage();
+        ProtocolCallContext oCallContext;
+        qList<DOHandle> lstStations;
+        pContext->GetMasterStation()->GetStations(lstStations);
+        unsigned char ucFlags = pContext->GetFlags();
+        unsigned short usCallID = pContext->GetCallID();
+        unsigned int uiTarget = pContext->m_uiTarget;
+        unsigned int uiMethod = pContext->m_uiMethod;
+        oCallContext.CallMigration(
+            pMsg,
+            &usCallID,
+            StationManager::GetLocalStationHandle(),
+            &uiMethod,
+            &uiTarget,
+            &ucFlags,
+            &lstStations
+        );
+        return pMsg;
+    }
+
+    Message *ObjDupProtocol::CreateCallOutcomeMessage(unsigned short usCallID, int iOutcome) {
+        Message *pMsg = CreateMessage(8);
+        *pMsg << usCallID;
+        *pMsg << (unsigned int)iOutcome;
+        return pMsg;
+    }
+
+    bool ObjDupProtocol::ParseCallOutcomeMessage(
+        Message *pMsg, bool bProcess, bool bTrace, String *pTrace
+    ) {
+        unsigned short usCallID;
+        *pMsg >> usCallID;
+        unsigned int uiOutcome;
+        *pMsg >> uiOutcome;
+        int iOutcome = uiOutcome;
+        if (bTrace) {
+            pTrace->Format(
+                "CALL_OUTCOME message for call %d. Outcome is %s",
+                usCallID,
+                OutcomeToString(iOutcome)
+            );
+        }
+        if (bProcess) {
+            ProcessCallOutcome(pMsg->GetSourceStation(), usCallID, iOutcome);
+        }
+        return true;
+    }
+
+    void ObjDupProtocol::ProcessCallOutcome(DOHandle hStation, unsigned short usCallID, int iOutcome) {
+        CallContext *pContext = m_oCallContextRegister.GetCallContextRef(usCallID);
+        if (pContext != 0) {
+            pContext->SetOutcome(hStation, iOutcome);
+            pContext->ReleaseRef();
+        }
+    }
+
+    CallContext *CallContextRegister::GetCallContextRef(unsigned short usCallID) {
+        ScopedCS oCS(GetScheduler()->m_csSystemLock);
+        CallContext *pContext = FindCallContext(usCallID);
+        if (pContext != 0) {
+            pContext->AcquireRef();
+        }
+        return pContext;
+    }
+
+    CallContext *CallContextRegister::FindCallContext(unsigned short usCallID) {
+        qMap<unsigned short, CallContext *>::iterator it = m_mapCalls.find(usCallID);
+        if (it != m_mapCalls.end()) {
+            return it->second;
+        } else {
+            return 0;
+        }
+    }
+
+    bool StationURLList::IsEmpty() {
+        ScopedCS oCS(m_cs);
+        return m_lstURLs.empty();
+    }
+
+    bool ObjDupProtocol::ProcessBundleMessage(
+        Message *pMsg, bool bProcess, bool bTrace, String *pTrace
+    ) {
+        if (bTrace) {
+            pTrace->Format("MESSAGE_BUNDLE message. Size: %d", pMsg->GetPayloadSize());
+        }
+        if (bProcess) {
+            bool bDone = false;
+            qList<Message *> lstMessages;
+            while (!bDone) {
+                Message *pSubMsg = new (__FILE__, 0x34D) Message();
+                pMsg->ExtractMessage(pSubMsg);
+                if (pSubMsg->GetPayloadSize() != 0) {
+                    lstMessages.insert(lstMessages.begin(), pSubMsg);
+                } else {
+                    delete pSubMsg;
+                    bDone = true;
+                }
+            }
+            while (!lstMessages.empty()) {
+                QueueMessage(
+                    lstMessages.front(),
+                    pMsg->GetSourceStation(),
+                    pMsg->GetSourceEndPoint(),
+                    true
+                );
+                lstMessages.erase(lstMessages.begin());
+            }
+        }
+        return true;
+    }
+
+    Message *ObjDupProtocol::CreateEOSMessage(DOHandle hStation) {
+        Message *pMsg = CreateMessage(0xFF);
+        *pMsg << hStation;
+        return pMsg;
+    }
+
+    void ObjDupProtocol::QueueEOS(DOHandle hStation) {
+        Message *pEOS = CreateEOSMessage(hStation);
+        Message *pMsg = new (__FILE__, 0x36E) Message(pEOS->GetBuffer());
+        delete pEOS;
+        QueueMessage(pMsg, StationManager::GetLocalStationHandle(), 0, false);
+    }
+
+    bool ObjDupProtocol::ParseEOSMessage(
+        Message *pMsg, bool bProcess, bool bTrace, String *pTrace
+    ) {
+        DOHandle hStation;
+        *pMsg >> hStation;
+        if (bTrace) {
+            pTrace->Format("EOS message for station %x", hStation.m_uiValue);
+        }
+        if (bProcess) {
+            ProcessEOS(hStation);
+        }
+        return true;
+    }
+
+    void ObjDupProtocol::ProcessEOS(const DOHandle &hStation) {
+        StationRef refStation(hStation);
+        if (refStation.IsValid()) {
+            refStation->ProcessEOS();
+        }
+    }
+
+    bool ObjDupProtocol::ShouldGrabWellKnown() {
+        if (m_bListeningOnWellKnown) {
+            return false;
+        }
+        StationRef refLocal(StationManager::GetLocalStationHandle());
+        if (!refLocal.IsValid()) {
+            return false;
+        }
+        StationSelection oStations(true, true);
+        oStations.GotoStart();
+        oStations.Refresh();
+        while (!oStations.EndReached()) {
+            bool bLower = oStations.Current()->GetID() == refLocal->GetID()
+                && oStations.Current()->GetHandleValue() < refLocal->GetHandleValue();
+            if (bLower) {
+                return false;
+            }
+            oStations.Next(0);
+        }
+        return true;
+    }
+
+    ObjDupProtocol *ObjDupProtocol::GetInstance() {
+        return NetZCore::GetInstance()->GetObjDupProtocol();
+    }
+
+    bool ObjDupProtocol::ListenOnWellKnown() {
+        PRUDPTransport *pTransport;
+        if (GetTransport() != 0) {
+            pTransport = GetTransport();
+        }
+        if (GetTransport()->Listen(GetWellKnownPort(), 0, true, false)) {
+            m_usWellKnownPort = GetWellKnownPort();
+            if (!NetZCore::GetInstance()->GetListener()->m_bStarted) {
+                NetZCore::GetInstance()->GetListener()->Start(true, false);
+            }
+            m_bListeningOnWellKnown = true;
+        }
+        return m_bListeningOnWellKnown;
+    }
+
+    bool ObjDupProtocol::StartToListen() {
+        if (IsListening(0)) {
+            return true;
+        }
+        if (ListenOnWellKnown()) {
+            return true;
+        }
+        return ListenOnAnyPort();
+    }
+
+    bool ObjDupProtocol::ListenOnAnyPort() {
+        if (GetTransport()->Listen(0, &m_usAnyPort, true, false)) {
+            if (!NetZCore::GetInstance()->GetListener()->m_bStarted) {
+                NetZCore::GetInstance()->GetListener()->Start(true, false);
+            }
+            m_bListeningOnAnyPort = true;
+        }
+        if (!m_bListeningOnAnyPort) {
+            SystemError::SignalError(0, 0, 0xE0030019, 0);
+        }
+        return m_bListeningOnAnyPort;
+    }
+
+    void ObjDupProtocol::StopToListen() {
+        if (NetZCore::GetInstance()->GetListener()->m_bStarted) {
+            NetZCore::GetInstance()->GetListener()->Stop();
+        }
+        if (m_bListeningOnWellKnown) {
+            GetTransport()->StopListening(m_usWellKnownPort);
+            m_bListeningOnWellKnown = false;
+        }
+        if (m_bListeningOnAnyPort) {
+            GetTransport()->StopListening(m_usAnyPort);
+            m_bListeningOnAnyPort = false;
+        }
+        m_oCallContextRegister.CancelAll();
+    }
+
+    bool ObjDupProtocol::IsListeningOnWellKnown() const { return m_bListeningOnWellKnown; }
+
+    bool ObjDupProtocol::IsListeningOnAnyPort() const { return m_bListeningOnAnyPort; }
+
+    bool ObjDupProtocol::IsListening(unsigned short *pusPort) const {
+        bool bListening = IsListeningOnWellKnown() || IsListeningOnAnyPort();
+        if (pusPort != 0 && bListening) {
+            if (IsListeningOnWellKnown()) {
+                *pusPort = m_usWellKnownPort;
+            } else if (IsListeningOnAnyPort()) {
+                *pusPort = m_usAnyPort;
+            }
+        }
+        return bListening;
+    }
+
+    bool ObjDupProtocol::AddLocalURLs(Station *pStation) {
+        if (NetZ::GetMode() != 1 || pStation->GetURLCount() == 1) {
+            StationURLList *pURLs = ((NetZ *)GetInstanceType1Delegator())->GetLocalURLs();
+            ScopedCS oCS(pURLs->m_cs);
+            if (!pURLs->IsEmpty()) {
+                if ((pURLs->m_lstURLs.begin()->GetFlags() & 2) == 2) {
+                    pStation->m_oURLs.SetURL(0, pURLs->m_lstURLs.begin()->GetURL());
+                }
+            }
+            for (qList<StationURL>::iterator it = pURLs->m_lstURLs.begin();
+                 it != pURLs->m_lstURLs.end();
+                 ++it) {
+                pStation->m_oURLs.AddURL(*it);
+            }
+        }
+        return true;
+    }
+
+    bool ObjDupProtocol::ParseMessage(Message *pMsg, bool bProcess, String *pTrace) {
+        unsigned char ucType = 0;
+        pMsg->Rewind();
+        *pMsg >> ucType;
+        return ParseSpecificMessage(pMsg, ucType, bProcess, pTrace);
+    }
+
+    bool ObjDupProtocol::ParseSpecificMessage(
+        Message *pMsg, unsigned int uiType, bool bProcess, String *pTrace
+    ) {
+        bool bTrace = pTrace != 0;
+        bool bResult = false;
+        switch (uiType) {
+        case 0x00:
+            bResult = ParseJoinRequestMessage(pMsg, bProcess, bTrace, pTrace);
+            break;
+        case 0x01:
+            bResult = ParseJoinResponseMessage(pMsg, bProcess, bTrace, pTrace);
+            break;
+        case 0x02:
+            bResult = ParseUpdateMessage(pMsg, bProcess, bTrace, pTrace);
+            break;
+        case 0x04:
+            bResult = ParseDeleteMessage(pMsg, bProcess, bTrace, pTrace);
+            break;
+        case 0x05:
+            bResult = ParseActionMessage(pMsg, bProcess, bTrace, pTrace);
+            break;
+        case 0x08:
+            bResult = ParseCallOutcomeMessage(pMsg, bProcess, bTrace, pTrace);
+            break;
+        case 0x0A:
+            bResult = ParseRMCCallMessage(pMsg, bProcess, bTrace, pTrace);
+            break;
+        case 0x0B:
+            bResult = ParseRMCResponseMessage(pMsg, bProcess, bTrace, pTrace);
+            break;
+        case 0x0D:
+            bResult = ParseFetchRequestMessage(pMsg, bProcess, bTrace, pTrace);
+            break;
+        case 0xFF:
+            bResult = ParseEOSMessage(pMsg, bProcess, bTrace, pTrace);
+            break;
+        case 0x0F:
+            bResult = ProcessBundleMessage(pMsg, bProcess, bTrace, pTrace);
+            break;
+        case 0x10:
+            bResult = true;
+            if (bTrace) {
+                *pTrace = "DOPROTOCOL message";
+            }
+            if (bProcess) {
+                bResult = ProcessDOProtocolMessage(pMsg);
+            }
+            break;
+        case 0x14:
+            bResult = ParseGetParticipantsRequest(pMsg, bProcess, bTrace, pTrace);
+            break;
+        case 0x15:
+            bResult = ParseGetParticipantsResponse(pMsg, bProcess, bTrace, pTrace);
+            break;
+        case 0xFE:
+            bResult = true;
+            break;
+        }
+        return bResult;
     }
 
 }
