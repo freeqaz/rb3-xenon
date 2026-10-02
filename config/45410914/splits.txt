@@ -1914,7 +1914,6 @@ Instance.cpp:
 DepthBuffer3D.cpp:
 	.pdata      start:0x82238880 end:0x82238888
 	.pdata      start:0x8223AE20 end:0x8223AE68
-	.text       start:0x826EBF20 end:0x826EBF28
 	.text       start:0x826FB9C8 end:0x826FB9D0
 	.text       start:0x82701FF0 end:0x82701FF8
 	.text       start:0x82710D10 end:0x82710DBC
@@ -3610,7 +3609,6 @@ SongLayout.cpp:
 	.pdata      start:0x822000F0 end:0x822000F8
 	.pdata      start:0x822000F8 end:0x82200100
 	.pdata      start:0x82206D80 end:0x82206DA0
-	.pdata      start:0x822349D8 end:0x822349E0
 	.text       start:0x822C76E4 end:0x822C76F0
 	.text       start:0x822D16F8 end:0x822D1768
 	.text       start:0x822E5040 end:0x822E507C
@@ -3618,7 +3616,6 @@ SongLayout.cpp:
 	.text       start:0x8235CAE0 end:0x8235CB54
 	.text       start:0x8235CB54 end:0x8235CB7C
 	.text       start:0x823D43C0 end:0x823D44E8
-	.text       start:0x826CB590 end:0x826CB610
 
 Mesh.cpp:
 	.pdata      start:0x821F8470 end:0x821F8480
@@ -3908,11 +3905,7 @@ CharIKFingers.cpp:
 
 HamRibbon.cpp:
 	.pdata      start:0x821F9710 end:0x821F9718
-	.pdata      start:0x8223EBE0 end:0x8223EBE8
-	.pdata      start:0x8223EC48 end:0x8223EC50
 	.text       start:0x822F0408 end:0x822F047C
-	.text       start:0x82788390 end:0x82788408
-	.text       start:0x82788B00 end:0x82788B80
 
 MoveAsyncDetector.cpp:
 	.pdata      start:0x82200080 end:0x82200088
@@ -4318,9 +4311,6 @@ Joypad_Xbox.cpp:
 
 CameraInput.cpp:
 	.text       start:0x822740C8 end:0x822740D0
-
-MoveDir.cpp:
-	.text       start:0x82685E28 end:0x82685E60
 
 TypeProps.cpp:
 	.pdata      start:0x8223CED0 end:0x8223CEE8
@@ -6087,9 +6077,6 @@ MetaMusic.cpp:
 	.text       start:0x82698A50 end:0x82698B1C
 	.text       start:0x8270FAB4 end:0x82710D10
 	.text       start:0x82710DBC end:0x82711F78
-
-SongCollision.cpp:
-	.text       start:0x826B8B28 end:0x826B8B3C
 
 TransProxy.cpp:
 	.pdata      start:0x8220E4E8 end:0x8220E518
@@ -8105,11 +8092,13 @@ band3/game/TrainerPanel.cpp:
 	.pdata      start:0x822347E0 end:0x822349C8
 	.pdata      start:0x822349C8 end:0x822349D0
 	.pdata      start:0x822349D0 end:0x822349D8
+	.pdata      start:0x822349D8 end:0x822349E0
 	.pdata      start:0x822349E8 end:0x82234AF0
 	.text       start:0x826C9780 end:0x826C97AC
 	.text       start:0x826C97B0 end:0x826CB4A0
 	.text       start:0x826CB4A0 end:0x826CB4E4
 	.text       start:0x826CB4E4 end:0x826CB590
+	.text       start:0x826CB590 end:0x826CB610
 	.text       start:0x826CB654 end:0x826CCA88
 
 band3/game/DirectInstrument.cpp:
@@ -10368,12 +10357,14 @@ SongParser.cpp:
 	.pdata      start:0x8223EB58 end:0x8223EB90
 	.pdata      start:0x8223EBA0 end:0x8223EBD0
 	.pdata      start:0x8223EBD0 end:0x8223EBE0
+	.pdata      start:0x8223EBE0 end:0x8223EBE8
 	.pdata      start:0x8223EBE8 end:0x8223EBF8
 	.pdata      start:0x8223EBF8 end:0x8223EC08
 	.pdata      start:0x8223EC08 end:0x8223EC10
 	.pdata      start:0x8223EC10 end:0x8223EC18
 	.pdata      start:0x8223EC18 end:0x8223EC30
 	.pdata      start:0x8223EC30 end:0x8223EC48
+	.pdata      start:0x8223EC48 end:0x8223EC50
 	.pdata      start:0x8223EC50 end:0x8223EC90
 	.pdata      start:0x8223EC90 end:0x8223ECA8
 	.pdata      start:0x8223ECA8 end:0x8223ECC0
@@ -10402,12 +10393,14 @@ SongParser.cpp:
 	.text       start:0x82787778 end:0x82787C00
 	.text       start:0x82787DD0 end:0x82788288
 	.text       start:0x82788288 end:0x82788390
+	.text       start:0x82788390 end:0x82788408
 	.text       start:0x82788408 end:0x82788518
 	.text       start:0x82788518 end:0x827887C0
 	.text       start:0x827887C0 end:0x82788814
 	.text       start:0x82788818 end:0x82788888
 	.text       start:0x82788888 end:0x827889B8
 	.text       start:0x827889B8 end:0x82788AFC
+	.text       start:0x82788B00 end:0x82788B80
 	.text       start:0x82788B80 end:0x82789788
 	.text       start:0x82789788 end:0x827898A8
 	.text       start:0x827898A8 end:0x82789AA0
@@ -11820,6 +11813,7 @@ VocalNoteList.cpp:
 	.text       start:0x826856F0 end:0x82685750
 	.text       start:0x826870D0 end:0x82687170
 	.text       start:0x826B8A80 end:0x826B8B28
+	.text       start:0x826B8B28 end:0x826B8B3C
 	.text       start:0x826B8B3C end:0x826B8BA0
 	.text       start:0x826B8BA8 end:0x826B8C9C
 	.text       start:0x826B8CA0 end:0x826B8D20
@@ -12318,6 +12312,7 @@ SongDB.cpp:
 	.text       start:0x82684F78 end:0x82685278
 	.text       start:0x8268533C end:0x826856F0
 	.text       start:0x82685750 end:0x82685E28
+	.text       start:0x82685E28 end:0x82685E60
 	.text       start:0x82685EC0 end:0x82686410
 	.text       start:0x82686410 end:0x82686460
 	.text       start:0x82686460 end:0x826870D0
@@ -13596,6 +13591,7 @@ band3/game/RealGuitarGemPlayer.cpp:
 	.pdata      start:0x822367C8 end:0x822367E0
 	.pdata      start:0x822367E0 end:0x82236870
 	.text       start:0x826EBE10 end:0x826EBF20
+	.text       start:0x826EBF20 end:0x826EBF28
 	.text       start:0x826EBF28 end:0x826EC860
 
 band3/game/BandPerformer.cpp:
