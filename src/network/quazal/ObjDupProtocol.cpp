@@ -480,8 +480,6 @@ namespace Quazal {
         void SignalOutcome(DOHandle, _Outcome);
     };
 
-    class DOCallContext : public CallContext {};
-
     // The protocol's register of outstanding DO calls (retail's CallRegister,
     // whose methods are in the CallRegister TU). Its ID lookups are expanded
     // here, so this TU carries their out-of-line copies.
