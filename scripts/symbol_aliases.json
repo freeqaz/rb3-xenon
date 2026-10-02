@@ -106151,9 +106151,9 @@
    }
   },
   {
-   "name": "_M_erase",
+   "name": "M_erase",
    "address": "0x825bd390",
-   "survivor": "?_M_erase@?$vector@UOverlappedIO@MusicLibraryStore@@V?$StlNodeAlloc@UOverlappedIO@MusicLibraryStore@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUOverlappedIO@MusicLibraryStore@@PAU34@ABU__false_type@2@@Z",
+   "survivor": "?_M_erase@?$vector@U?$pair@HPAVLocalUser@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HPAVLocalUser@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAU?$pair@HPAVLocalUser@@@2@PAU32@ABU__false_type@2@@Z",
    "folded": [
     "?_M_erase@?$vector@V?$Key@_N@@V?$StlNodeAlloc@V?$Key@_N@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$Key@_N@@PAV3@ABU__false_type@2@@Z",
     "?_M_erase@?$vector@VSeam@MeshAO@OutfitConfig@@V?$StlNodeAlloc@VSeam@MeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVSeam@MeshAO@OutfitConfig@@PAV345@ABU__false_type@2@@Z",
@@ -106163,7 +106163,7 @@
     "?_M_erase@?$vector@VUpcomingFretRelease@GemPlayer@@V?$StlNodeAlloc@VUpcomingFretRelease@GemPlayer@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVUpcomingFretRelease@GemPlayer@@PAV34@ABU__false_type@2@@Z",
     "?_M_erase@?$vector@UCacheIDStoreEntry@CacheMgr@@V?$StlNodeAlloc@UCacheIDStoreEntry@CacheMgr@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUCacheIDStoreEntry@CacheMgr@@PAU34@ABU__false_type@2@@Z"
    ],
-   "evidence": "W16-NK: anonymous retail row fn_825BD390 (88 B, unit MusicLibraryStore) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "evidence": "W16-NK: anonymous retail row fn_825BD390 (88 B, unit MusicLibraryStore) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]). Survivor respelled to vector<pair<int,LocalUser*>> after W16-NH (cb74998ac) changed MusicLibraryStore's download vector element type; the folded spellings were re-chased against it.",
    "lane": "W16-NK",
    "admitted": [
     {
