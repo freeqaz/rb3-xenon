@@ -19,7 +19,6 @@
 // caller, so both are chosen to reproduce retail's frames.
 
 #include <list>
-#include <vector>
 
 #define JJS_FILE ".\\JobJoinSession.cpp"
 
@@ -381,27 +380,13 @@ namespace Quazal {
         SystemComponent *m_pDupSpace; // 0x24
     };
 
-    class InstantiationContext : public RootObject {
-    public:
-        unsigned int GetInstance(unsigned int);
-
-        char m_data[0x30];
-    };
-
-    template <class T>
-    class qVector : public std::vector<T, MemAllocator<T> > {};
-
-    class SystemError {
-    public:
-        static void SignalError(const char *, unsigned int, unsigned int, unsigned int);
-    };
-
+    // Declared out of line here. With the header's inline body, /Ob1 declines
+    // it and reserves its this/ui/idx in every caller: CompleteJob's frame then
+    // matches retail, but the constructor's and ProcessGetParticipantsResponse's
+    // grow past it (measured), so this TU keeps the out-of-line declaration.
     class InstanceTable : public RootObject {
     public:
         unsigned int GetInstanceFromVector(unsigned int, unsigned int);
-
-        InstantiationContext m_oDefaultContext; // 0x0
-        qVector<InstantiationContext *> *m_pvContextVector; // 0x30
     };
 
     class InstanceControl : public RootObject {
@@ -491,7 +476,9 @@ namespace Quazal {
         return pNetwork;
     }
 
-    // Its only use reads the transport and drops it (a compiled-out trace).
+    // Retail reads the transport here and never uses the value: a void inline
+    // whose null path returns before the read (the doubled branch after the
+    // null test is that early return).
     inline void CheckTransport() {
         Network *pNetwork = GetNetwork();
         if (pNetwork == 0) {
@@ -778,6 +765,11 @@ namespace Quazal {
         }
         Message oMsg;
         oMsg << (unsigned int)StationManager::GetLocalStationHandle();
+        // Retail builds this second word in a temporary (0 stored at 0xa4,
+        // copied to 0xa4-4 and appended), the shape of a default DOHandle
+        // converted to unsigned int. Written that way here, /Ob1 runs out of
+        // inline budget and calls ~ScopedCS above out of line instead of
+        // expanding it (measured), so the local stays.
         unsigned int uiReserved = 0;
         oMsg << uiReserved;
         if (!GetConnectionManager()->Connect(
