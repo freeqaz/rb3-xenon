@@ -14325,8 +14325,8 @@ network/quazal/StationManager.cpp:
 	.text       start:0x82AB87A0 end:0x82AB9504
 
 network/quazal/CallRegister.cpp:
-	.pdata      start:0x822539F0 end:0x82253A30
-	.text       start:0x82ABAC98 end:0x82ABB42C
+	.pdata      start:0x822539D0 end:0x82253AF0
+	.text       start:0x82ABAB58 end:0x82ABD488
 
 network/quazal/ChangeDupSetOperation.cpp:
 	.pdata      start:0x82253B40 end:0x82253B60
