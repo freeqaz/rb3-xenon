@@ -425,22 +425,14 @@ void DxRnd::SetDefaultRenderStates() {
 
     unsigned int i = 0;
     if (caps.MaxTextureBlendStages != 0) {
-        unsigned int stage_offset = 0;
         do {
             D3DDevice_SetSamplerState_MinFilter(TheDxRnd.Device(), i, 1);
             D3DDevice_SetSamplerState_MagFilter(TheDxRnd.Device(), i, 1);
 
-            unsigned char* device = reinterpret_cast<unsigned char*>(TheDxRnd.Device());
-            unsigned int* stage_ptr = reinterpret_cast<unsigned int*>(device + stage_offset + 0x48C);
-            *stage_ptr = (*stage_ptr & 0xFE7FFFFF) | 0x800000;
-
-            unsigned long long* state64 = reinterpret_cast<unsigned long long*>(device + 0x18);
-            unsigned long long shift64 = (unsigned long long)(i + 0x20);
-            unsigned long long mask = 0x8000000000000000ULL;
-            *state64 |= mask >> shift64;
-
+            D3DDevice_SetSamplerState_MipFilter3(
+                TheDxRnd.Device(), i, 1, 0x8000000000000000ULL >> (i + 0x20)
+            );
             i++;
-            stage_offset += 0x18;
         } while (i < caps.MaxTextureBlendStages);
     }
 

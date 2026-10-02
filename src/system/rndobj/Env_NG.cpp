@@ -334,22 +334,18 @@ void NgEnviron::Select(const Vector3 *pos) {
         Vector4 leftPlane(0.0f, 0.0f, 0.0f, 1.0f);
         if (lrFade.x != lrFade.y) {
             float scale = 1.0f / (lrFade.y - lrFade.x);
-            leftPlane.Set(
-                fadeDir.x * scale,
-                fadeDir.y * scale,
-                fadeDir.z * scale,
-                -((lrFade.x + fadeRefDot) * scale)
-            );
+            leftPlane.x = fadeDir.x * scale;
+            leftPlane.y = fadeDir.y * scale;
+            leftPlane.z = fadeDir.z * scale;
+            leftPlane.w = -((lrFade.x + fadeRefDot) * scale);
         }
         Vector4 rightPlane(0.0f, 0.0f, 0.0f, 1.0f);
         if (lrFade.z != lrFade.w) {
             float scale = 1.0f / (lrFade.z - lrFade.w);
-            rightPlane.Set(
-                scale * fadeDir.x,
-                scale * fadeDir.y,
-                scale * fadeDir.z,
-                -((lrFade.w + fadeRefDot) * scale)
-            );
+            rightPlane.x = scale * fadeDir.x;
+            rightPlane.y = scale * fadeDir.y;
+            rightPlane.z = scale * fadeDir.z;
+            rightPlane.w = -((lrFade.w + fadeRefDot) * scale);
         }
         TheShaderMgr.SetVConstant((VShaderConstant)0x35, leftPlane);
         TheShaderMgr.SetVConstant((VShaderConstant)0x36, rightPlane);
