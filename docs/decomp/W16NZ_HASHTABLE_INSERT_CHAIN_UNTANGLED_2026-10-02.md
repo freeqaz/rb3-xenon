@@ -201,6 +201,8 @@ On the final rebased tip, after a full `./tools/ninja-locked`:
 - The five alias test scripts exit 0 as scripts. Under `pytest`, 4 tests fail **identically on main**:
   main already has 7 duplicate survivors and 5 duplicate addresses. This lane adds none.
 - No added `src/` line cites another decomp. No commit carries a co-author line.
+- `tools/native_build_gate.sh`, run last on the rebased tip `d0f17546f` (only this doc line follows it):
+  `NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0`
 
 ## 7. Not done
 
