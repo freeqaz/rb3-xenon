@@ -656,9 +656,7 @@ namespace Quazal {
         if (GetInstance()->GetRole() != 1) {
             return false;
         }
-        bool bTooSoon =
-            s_tLastJoin != Time(0) && Time::GetTime() < s_tLastJoin + (int)s_uiJoinDelay;
-        if (bTooSoon) {
+        if (s_tLastJoin != Time(0) && Time::GetTime() < s_tLastJoin + (int)s_uiJoinDelay) {
             return false;
         }
         return true;
