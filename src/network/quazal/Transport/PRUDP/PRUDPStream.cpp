@@ -130,7 +130,7 @@ namespace Quazal {
     }
 
     PRUDPStream::~PRUDPStream() {
-        if (m_byStreamID != 0)
+        if (IsListening())
             StopListen();
         m_bTerminating = true;
         Lock();

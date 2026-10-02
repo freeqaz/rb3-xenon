@@ -67,7 +67,7 @@ namespace Quazal {
 
     class EndPoint : public RootObject {
     public:
-        virtual ~EndPoint();
+        virtual void Unk00();
         virtual void Unk04();
         virtual void Unk08();
         virtual void Unk0C();
@@ -90,7 +90,7 @@ namespace Quazal {
         virtual void Unk50();
         virtual void Unk54();
         virtual void Unk58();
-        virtual void Release();
+        virtual ~EndPoint();
 
         void Open();
         void Close();
@@ -113,7 +113,9 @@ namespace Quazal {
         char m_pad82[0x138 - 0x82];
     };
 
-    class EndPointTable : public qMap<EndPointUniqueID, PRUDPEndPoint *> {
+    class EndPointMap : public qMap<EndPointUniqueID, PRUDPEndPoint *> {};
+
+    class EndPointTable : public EndPointMap {
     public:
         PRUDPEndPoint *Find(const InetAddress *addr, StreamID id) {
             EndPointUniqueID key(*addr, id);
@@ -184,6 +186,7 @@ namespace Quazal {
 
         Type GetType() { return m_eType; }
         unsigned char GetStreamID() { return m_byStreamID; }
+        bool IsListening() { return m_byStreamID != 0; }
 
         Type m_eType; // 0x4
         class StreamListener *m_pListener; // 0x8
