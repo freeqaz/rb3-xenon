@@ -14317,8 +14317,8 @@ network/quazal/ChangeMasterStationOperation.cpp:
 	.text       start:0x82AB4808 end:0x82AB48D0
 
 network/quazal/JobConnectStation.cpp:
-	.pdata      start:0x82253830 end:0x82253878
-	.text       start:0x82AB6A58 end:0x82AB7718
+	.pdata      start:0x822537A0 end:0x822538B0
+	.text       start:0x82AB4CA0 end:0x82AB7EF0
 
 network/quazal/StationManager.cpp:
 	.pdata      start:0x82253908 end:0x82253948
