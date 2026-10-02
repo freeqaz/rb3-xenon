@@ -1,0 +1,136 @@
+{
+ "fixtures": {
+  "IN-FAMILY DECOY": {
+   "survivor": "??A?$hash_map@VSymbol@@PAVMetaMusicScene@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAAAPAVMetaMusicScene@@ABVSymbol@@@Z",
+   "survivor_addr": "0x827b0e78",
+   "ours": "??A?$hash_map@HPAVUIComponent@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAAAPAVUIComponent@@ABH@Z",
+   "names": {
+    "0x82557770": "??$_M_find@VSymbol@@@?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@2@@stlpmtx_std@@ABA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@2@@priv@1@ABVSymbol@@@Z",
+    "0x827b0e78": "??A?$hash_map@VSymbol@@PAVMetaMusicScene@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAAAPAVMetaMusicScene@@ABVSymbol@@@Z",
+    "0x825a8b98": "?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAU?$pair@$$CBVSymbol@@PAVCampaignKey@@@2@ABU32@@Z"
+   },
+   "mapped": {},
+   "n_unaddressed": 0,
+   "label": "IN-FAMILY DECOY (expect REFUTED)"
+  },
+  "RENAME": {
+   "survivor": "fn_826FCCE8",
+   "survivor_addr": "0x826fcce8",
+   "ours": "??1?$ObjPtr@VSynthSample@@@@UAA@XZ",
+   "names": {
+    "0x8275b378": "?Release@Object@Hmx@@QAAXPAVObjRefOwner@@@Z",
+    "0x826fcce8": "fn_826FCCE8",
+    "0x820009ec": "lbl_820009EC",
+    "0x820f5284": "lbl_820F5284"
+   },
+   "mapped": {
+    "??_7?$ObjPtr@VSynthSample@@@@6B@": false,
+    "??_7ObjRefOwner@@6B@": false
+   },
+   "n_unaddressed": 3,
+   "label": "RENAME POSITIVE, retail ObjRef vtable vs our ObjRefOwner (expect PROVEN)"
+  },
+  "SLOT DECOY PLACEHOLDER_SLOT_CALLEE_LOCATED_ELSEWHERE": {
+   "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@0@0ABU__false_type@0@@Z",
+   "survivor_addr": "0x827fd9c8",
+   "ours": "??$__destroy_range_aux@V?$reverse_iterator@PAU?$pair@PAVDataArray@@VDataNode@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAU?$pair@PAVDataArray@@VDataNode@@@stlpmtx_std@@@0@0ABU__false_type@0@@Z",
+   "names": {
+    "0x827fd9c8": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@0@0ABU__false_type@0@@Z",
+    "0x8240ddb0": "??3BinStream@@SAXPAX@Z",
+    "0x824f8270": "??_G?$pair@$$CBVSymbol@@VDataNode@@@stlpmtx_std@@QAAPAXI@Z",
+    "0x827bc430": "?MemFree@@YAXPAX@Z",
+    "0x827bca50": "?MemOrPoolFreeSTL@@YAXHPAX@Z",
+    "0x82270510": "?Release@DataArray@@QAAXXZ",
+    "0x82774148": "fn_82774148"
+   },
+   "mapped": {
+    "??_G?$pair@PAVDataArray@@VDataNode@@@stlpmtx_std@@QAAPAXI@Z": false
+   },
+   "n_unaddressed": 0,
+   "label": "SLOT DECOY PLACEHOLDER_SLOT_CALLEE_LOCATED_ELSEWHERE, lax rule PROVES it (expect REFUTED)"
+  },
+  "SLOT DECOY PLACEHOLDER_SLOT_MAPPED_VS_PLACEHOLDER": {
+   "survivor": "?_M_insert_noresize@?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@IAA?AU?$_Ht_iterator@V?$_Slist_iterator@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@U?$_NonLocalHashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@23@@priv@2@IABU?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@2@@Z",
+   "survivor_addr": "0x8264ece0",
+   "ours": "?_M_insert_noresize@?$hashtable@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@stlpmtx_std@@IAA?AU?$_Ht_iterator@V?$_Slist_iterator@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@U?$_NonLocalHashMapTraitsT@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@23@@priv@2@IABU?$pair@$$CBHPAVSongMetadata@@@2@@Z",
+   "names": {
+    "0x825af290": "??$_Copy_Construct@U?$pair@$$CBVSymbol@@V?$hash_map@VSymbol@@PAVDataArray@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVSymbol@@V?$hash_map@VSymbol@@PAVDataArray@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@4@@stlpmtx_std@@@0@ABU10@@Z",
+    "0x82743a90": "??$_Copy_Construct@U?$pair@QAXVString@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@QAXVString@@@0@ABU10@@Z",
+    "0x827bd208": "?MemOrPoolAlloc@@YAPAXH@Z",
+    "0x8265df00": "?_M_before_begin@?$hashtable@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QBA?AU?$_Ht_iterator@V?$_Slist_iterator@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@U?$_NonLocalHashMapTraitsT@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@@23@@priv@2@AAI@Z",
+    "0x82576168": "?_M_create_node@?$slist@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAPAV?$_Slist_node@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@priv@2@ABU?$pair@$$CBHPAVSongMetadata@@@2@@Z",
+    "0x8265df88": "?_M_create_node@?$slist@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAPAV?$_Slist_node@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@@priv@2@ABU?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@2@@Z",
+    "0x82365510": "?_M_create_node@?$slist@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@@stlpmtx_std@@AAAPAV?$_Slist_node@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@priv@2@ABU?$pair@$$CBVSymbol@@M@2@@Z",
+    "0x825af380": "?_M_create_node@?$slist@U?$pair@$$CBVSymbol@@V?$hash_map@VSymbol@@PAVDataArray@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$hash_map@VSymbol@@PAVDataArray@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAPAV?$_Slist_node@U?$pair@$$CBVSymbol@@V?$hash_map@VSymbol@@PAVDataArray@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@@priv@2@ABU?$pair@$$CBVSymbol@@V?$hash_map@VSymbol@@PAVDataArray@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@4@@stlpmtx_std@@@2@@Z",
+    "0x824b9590": "?_M_create_node@?$slist@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAPAV?$_Slist_node@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@ABU?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@2@@Z",
+    "0x8259f6e0": "?_M_create_node@?$slist@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAPAV?$_Slist_node@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@priv@2@ABU?$pair@$$CBVSymbol@@VString@@@2@@Z",
+    "0x8264ece0": "?_M_insert_noresize@?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@IAA?AU?$_Ht_iterator@V?$_Slist_iterator@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@U?$_NonLocalHashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@23@@priv@2@IABU?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@2@@Z",
+    "0x8265e1f0": "?insert_after@?$slist@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@2@@Z",
+    "0x82362b20": "?insert_after@?$slist@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBVSymbol@@H@2@@Z",
+    "0x82365610": "?insert_after@?$slist@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBVSymbol@@M@2@@Z",
+    "0x825af8e0": "?insert_after@?$slist@U?$pair@$$CBVSymbol@@V?$hash_map@VSymbol@@PAVDataArray@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$hash_map@VSymbol@@PAVDataArray@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@V?$hash_map@VSymbol@@PAVDataArray@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@V?$hash_map@VSymbol@@PAVDataArray@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBVSymbol@@V?$hash_map@VSymbol@@PAVDataArray@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@4@@stlpmtx_std@@@2@@Z",
+    "0x824b9610": "?insert_after@?$slist@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@2@@Z",
+    "0x8259f7e0": "?insert_after@?$slist@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBVSymbol@@VString@@@2@@Z",
+    "0x8264ec08": "fn_8264EC08",
+    "0x8264ec88": "fn_8264EC88",
+    "0x827a3608": "fn_827A3608"
+   },
+   "mapped": {
+    "?_M_create_node@?$slist@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAPAV?$_Slist_node@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@priv@2@ABU?$pair@$$CBHPAVSongMetadata@@@2@@Z": true,
+    "?insert_after@?$slist@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBHPAVSongMetadata@@@2@@Z": false
+   },
+   "n_unaddressed": 4,
+   "label": "SLOT DECOY PLACEHOLDER_SLOT_MAPPED_VS_PLACEHOLDER, lax rule PROVES it (expect REFUTED)"
+  },
+  "SLOT DECOY PLACEHOLDER_SLOT_VTABLE_OF_CLASS_ELSEWHERE": {
+   "survivor": "??_GCMemoryManagedUnknown@@UAAPAXI@Z",
+   "survivor_addr": "0x82bf6f58",
+   "ours": "??_GDirectionGestureFilter@@UAAPAXI@Z",
+   "names": {
+    "0x82bc6b70": "??3@YAXPAX@Z",
+    "0x82bf6f58": "??_GCMemoryManagedUnknown@@UAAPAXI@Z",
+    "0x821ad144": "lbl_821AD144"
+   },
+   "mapped": {
+    "??_7Callback@RndOverlay@@6B@": false
+   },
+   "n_unaddressed": 1,
+   "label": "SLOT DECOY PLACEHOLDER_SLOT_VTABLE_OF_CLASS_ELSEWHERE, lax rule PROVES it (expect REFUTED)"
+  },
+  "SLOT DECOY PLACEHOLDER_SLOT_VTABLE_RTTI_DIFFERS": {
+   "survivor": "??_E?$StandardEffect@VCompressionEffect@@@@UAAPAXI@Z",
+   "survivor_addr": "0x82b8c8c8",
+   "ours": "??0ClientProtocol@Quazal@@QAA@I@Z",
+   "names": {
+    "0x82b8c8c8": "??_E?$StandardEffect@VCompressionEffect@@@@UAAPAXI@Z",
+    "0x82b8d210": "fn_82B8D210",
+    "0x8219c1c8": "lbl_8219C1C8",
+    "0x8219c95c": "lbl_8219C95C"
+   },
+   "mapped": {
+    "??0Protocol@Quazal@@QAA@I@Z": false,
+    "??_7ClientProtocol@Quazal@@6B@": false
+   },
+   "n_unaddressed": 1,
+   "label": "SLOT DECOY PLACEHOLDER_SLOT_VTABLE_RTTI_DIFFERS, lax rule PROVES it (expect REFUTED)"
+  },
+  "SLOT DECOY W16-JE vtable pair": {
+   "survivor": "??1?$ObjPtr@VSeqInst@@@@UAA@XZ",
+   "survivor_addr": "0x82705e88",
+   "ours": "??1?$ObjPtr@VSequence@@@@UAA@XZ",
+   "names": {
+    "0x82705e88": "??1?$ObjPtr@VSeqInst@@@@UAA@XZ",
+    "0x8275b378": "?Release@Object@Hmx@@QAAXPAVObjRefOwner@@@Z",
+    "0x820009ec": "lbl_820009EC",
+    "0x820f70a8": "lbl_820F70A8"
+   },
+   "mapped": {
+    "??_7?$ObjPtr@VSequence@@@@6B@": false,
+    "??_7ObjRefOwner@@6B@": false
+   },
+   "n_unaddressed": 1,
+   "label": "SLOT DECOY W16-JE vtable pair, lax rule PROVES it (expect REFUTED)"
+  }
+ },
+ "note": "W16-OA --chasetest control fixtures: the naming neighbourhood each control was recorded in. Written by icf_pair_adjudicate.py --record-fixtures; see FIXTURES note in that tool. Controls only -- never an admission."
+}
