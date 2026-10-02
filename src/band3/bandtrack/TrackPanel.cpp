@@ -648,8 +648,9 @@ void TrackPanel::Poll() {
         auto _tmp1 = mainPerformer->GetAccumulatedScore();
         mScoreboard->SetScore(_tmp1);
         if (TheGame->mProperties.mShowStars) {
+            const Game::Properties &props = TheGame->mProperties;
             mScoreboard->SetNumStars(
-                mainPerformer->GetNumStarsFloat(), TheGame->mProperties.mPlayStarSfx
+                mainPerformer->GetNumStarsFloat(), props.mPlayStarSfx
             );
         }
     }

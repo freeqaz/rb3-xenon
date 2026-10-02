@@ -451,9 +451,8 @@ void CharacterCreatorPanel::RandomizeFace() {
     static Symbol eye("eye");
     static Symbol nose("nose");
     static Symbol mouth("mouth");
-    BandCharDesc *desc = mPreviewDesc;
-    BandCharDesc::Outfit &outfit = desc->mOutfit;
-    BandCharDesc::Head &head = desc->mHead;
+    BandCharDesc::Outfit &outfit = mPreviewDesc->mOutfit;
+    BandCharDesc::Head &head = mPreviewDesc->mHead;
     head.mShape = RandomInt(0, BandHeadShaper::GetCount(shape));
     head.mChin = RandomInt(0, BandHeadShaper::GetCount(chin));
     head.mEye = RandomInt(0, BandHeadShaper::GetCount(eye));
