@@ -678,7 +678,7 @@ next:
             it->boneWeights.y = it->color.green;
             it->boneWeights.z = it->color.blue;
             it->boneWeights.w = it->color.alpha;
-            it->color.Reset();
+            it->color.Set(1.0f, 1.0f, 1.0f, 1.0f);
         }
     }
     if (gMeshRev > 0x25) {

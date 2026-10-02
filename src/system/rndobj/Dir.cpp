@@ -454,7 +454,7 @@ void RndDir::Enter() {
     if (IsProxy()) {
         MsgSource *src = dynamic_cast<MsgSource *>(Dir());
         if (src) {
-            ChainSourceSubdir(src, this);
+            ChainSourceSubdir(reinterpret_cast<Hmx::Object *>(src), this);
         }
     }
     RndPollable::Enter();
