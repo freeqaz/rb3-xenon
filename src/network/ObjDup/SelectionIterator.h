@@ -19,7 +19,14 @@ namespace Quazal {
 
     class SelectionPosition : public RootObject {
     public:
-        bool EndReached() const { return m_oCursor == 0; }
+        // Retail stores the 0 to its own slot and copy-constructs the cursor
+        // straight into a second one (no temporary pointer), the named-local
+        // shape below.
+        bool EndReached() const {
+            unsigned int uiEnd = 0;
+            SelectionCursor oCursor(m_oCursor);
+            return oCursor.m_uiValue == uiEnd;
+        }
 
         unsigned int unk0; // 0x0
         SelectionCursor m_oCursor; // 0x4
@@ -33,7 +40,9 @@ namespace Quazal {
         void Next(bool);
         void GotoStart();
         void InitFilter();
+        unsigned int Count();
         bool EndReached() const { return m_oPosition.EndReached(); }
+        unsigned int GetCurrentHandle() const { return m_oPosition.m_oCursor.m_uiValue; }
         DOHandle operator*() const { return DOHandle(m_oPosition.m_oCursor.m_uiValue); }
 
         Selection *m_pSelection; // 0x0

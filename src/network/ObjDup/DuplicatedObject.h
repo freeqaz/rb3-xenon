@@ -214,8 +214,11 @@ namespace Quazal {
     };
 
 
+    // Inline: /Ob1 declines it inside operator-> and still reserves its frame in
+    // the caller (the 12-byte gap before the first operator-> temp in retail's
+    // DORefTemplate<Station> users); it is instantiated out of line per T.
     template <class T>
-    bool DORefTemplate<T>::IsValid() const {
+    inline bool DORefTemplate<T>::IsValid() const {
         if (GetDOPtr() == 0) {
             SystemError::SignalError(0, 0, 0xA0030004, 0);
             return false;
