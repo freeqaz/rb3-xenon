@@ -12,6 +12,7 @@
 #include "Core/OperationManager.h"
 #include "ObjDup/DORefTemplate.h"
 #include "ObjDup/StationConnections.h"
+#include "ObjDup/JobChangeConnection.h"
 #include "ObjDup/DOSelections.h"
 #include "ObjDup/Session.h"
 #include "Plugins/Message.h"

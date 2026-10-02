@@ -32,6 +32,7 @@
 #include "ObjDup/SelectionIterator.h"
 #include "ObjDup/Station.h"
 #include "ObjDup/StationManager.h"
+#include "ObjDup/JobChangeConnection.h"
 #include "Platform/String.h"
 #include "Platform/qStd.h"
 #include "Plugins/Message.h"

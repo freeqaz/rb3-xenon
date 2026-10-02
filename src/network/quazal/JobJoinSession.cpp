@@ -31,6 +31,7 @@
 #include "ObjDup/DOHandle.h"
 #include "ObjDup/DORefTemplate.h"
 #include "ObjDup/Station.h"
+#include "ObjDup/StationManager.h"
 #include "ObjDup/ObjDupProtocol.h"
 #include "Core/CallContext.h"
 #include "Core/CallContextRegister.h"
@@ -171,16 +172,6 @@ namespace Quazal {
         void AddPeerAddress(InetAddress *);
     };
 
-    class StationTable : public RootObject {
-    public:
-        static StationTable *GetInstance();
-        int GetStationState(DOHandle);
-        void AddStation(DOHandle, EndPoint *);
-        DOHandle GetMasterHandle() const { return m_hMaster; }
-
-        char m_data[0x50];
-        DOHandle m_hMaster; // 0x50
-    };
 
     class DOClassesTable : public RootObject {
     public:
@@ -527,7 +518,7 @@ namespace Quazal {
                 return;
             }
         }
-        if (StationTable::GetInstance()->GetStationState(StationTable::GetInstance()->GetMasterHandle()) != 0) {
+        if (StationManager::GetInstance()->ConnectStation(StationManager::GetInstance()->GetInitialStation()) != 0) {
             SetToWaiting(0x32);
             SetStep(Step(
                 (JobStateFunc)&JobJoinSession::WaitForJoinTermination,
@@ -703,7 +694,7 @@ namespace Quazal {
             );
             m_pEndPoint->Unk7();
         }
-        StationTable::GetInstance()->AddStation(hStation, m_pEndPoint);
+        StationManager::GetInstance()->SetInitialConnectionPoint(hStation, m_pEndPoint);
         m_ucJoinResponse = ucResponse;
     }
 

@@ -27,6 +27,7 @@
 #include "ObjDup/SelectionIterator.h"
 #include "ObjDup/Session.h"
 #include "ObjDup/Station.h"
+#include "ObjDup/StationManager.h"
 #include "Platform/LogicalClock.h"
 #include "Platform/Result.h"
 #include "Platform/ScopedCS.h"
@@ -236,19 +237,6 @@ namespace Quazal {
     };
 
     // Declared as far as this TU calls it; its TU is StationManager.cpp.
-    class StationManager : public RootObject {
-    public:
-        static StationManager *GetInstance();
-        bool StationIsDead(DOHandle);
-        bool RetrieveStationURLs(DOHandle, qList<StationURL> *);
-        void DisconnectStation(Station *);
-        DOHandle GetInitialStation() const { return m_hInitialStation; }
-        EndPoint *GetInitialEndPoint() const { return m_pInitialEndPoint; }
-
-        char m_pad0[0x50];
-        DOHandle m_hInitialStation; // 0x50
-        EndPoint *m_pInitialEndPoint; // 0x54
-    };
 
 #define JCS_FILE ".\\JobConnectStation.cpp"
 #define JCS_STEP(name) Step((JobStateFunc)&JobConnectStation::name, "JobConnectStation::" #name)
