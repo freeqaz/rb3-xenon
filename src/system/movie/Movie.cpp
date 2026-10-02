@@ -746,7 +746,7 @@ void Movie::Impl::SharedFinishOpen(bool unpause) {
     MovieInternalBuffers *bufs = MovieInternalBuffers::New(binks);
     if (bufs) {
         bufs->mRefs = count;
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < movies.size(); i++) { // bound in the condition: retail keeps an explicit counter
             Impl *movie = movies[i];
             movie->mBuffers = bufs;
             movie->FinishOpen();
