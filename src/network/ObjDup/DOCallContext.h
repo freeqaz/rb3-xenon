@@ -8,6 +8,7 @@ namespace Quazal {
     public:
         // Callers pass qResult-style codes (0x60001, 0x80010006, ...).
         enum _Outcome {
+            CallCancelled = 0x80060003
         };
 
         DOCallContext(DOHandle, bool);

@@ -258,10 +258,10 @@ namespace Quazal {
         }
         DOHandle hStation = op.GetImplicitStationConnection();
         if (hStation != DOHandle()) {
-            int iState = StationConnections::GetInstance()->GetConnectionState(hStation);
+            int iState = StationManager::GetInstance()->ConnectStation(hStation);
             if (iState == 2) {
                 JobConnectStation *pJob =
-                    StationConnections::GetInstance()->GetConnectionJob(hStation);
+                    StationManager::GetInstance()->GetLatestConnectionJob(hStation);
                 DOOperation *pClone = op.Clone();
                 pJob->QueueOperation(pClone);
                 return true;
@@ -355,7 +355,7 @@ namespace Quazal {
                     if (*it != Station::GetLocalStation()) {
                         DOHandle hDuplica = *it;
                         int iState =
-                            StationConnections::GetInstance()->GetConnectionState(hDuplica);
+                            StationManager::GetInstance()->ConnectStation(hDuplica);
                         switch (iState) {
                         case 0: {
                             DORef refDuplica((DOHandle(hDuplica)));
@@ -364,7 +364,7 @@ namespace Quazal {
                         }
                         case 2: {
                             JobConnectStation *pJob =
-                                StationConnections::GetInstance()->GetConnectionJob(hDuplica);
+                                StationManager::GetInstance()->GetLatestConnectionJob(hDuplica);
                             pJob->QueueOperation(new (".\\DuplicatedObject.cpp", 0x31d)
                                                      ChangeDupSetOperation(
                                                          Station::GetLocalStation(), this,

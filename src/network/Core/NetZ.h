@@ -5,6 +5,7 @@
 namespace Quazal {
     class OperationManager;
     class SystemComponent;
+    class StationManager;
 
     // The instance-table type-4 object of the current context.
     class NetZ {
@@ -20,7 +21,11 @@ namespace Quazal {
         // state 3 (retail 0x82A7BF08).
         SystemComponent *GetComponent48() { return m_pComponent48; }
 
-        char m_unk4[0x40];
+        StationManager *GetStationManager() { return m_pStationManager; }
+
+        char m_unk4[0x1c];
+        StationManager *m_pStationManager; // 0x20
+        char m_unk24[0x20];
         OperationManager *m_pOperationManager; // 0x44
         SystemComponent *m_pComponent48; // 0x48
     };
