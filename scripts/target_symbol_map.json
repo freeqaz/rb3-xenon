@@ -35716,5 +35716,21 @@
  "0x82b3ddd0": "?Poll@BerkeleySocketDriver@Quazal@@UAA_NPAUPollInfo@SocketDriver@2@II@Z",
  "0x82b3e118": "?SetMulticastAddress@Socket@SocketDriver@Quazal@@UAA_NI@Z",
  "0x82b3e128": "??_GSocket@SocketDriver@Quazal@@UAAPAXI@Z",
- "0x82b3e178": "??_GBerkeleySocket@BerkeleySocketDriver@Quazal@@UAAPAXI@Z"
+ "0x82b3e178": "??_GBerkeleySocket@BerkeleySocketDriver@Quazal@@UAAPAXI@Z",
+ "0x82aa6b98": "??0SystemComponent@Quazal@@QAA@ABVString@1@@Z",
+ "0x82aa6c10": "?GetType@SystemComponent@Quazal@@UBAPBDXZ",
+ "0x82aa6c20": "??1SystemComponent@Quazal@@UAA@XZ",
+ "0x82aa6c70": "?SetName@SystemComponent@Quazal@@QAAXABVString@2@@Z",
+ "0x82aa6ca8": "?SetState@SystemComponent@Quazal@@QAA_NW4_State@12@_N@Z",
+ "0x82aa6d38": "?SetParent@SystemComponent@Quazal@@QAAXPAV12@@Z",
+ "0x82aa6d78": "?BeginUse@SystemComponent@Quazal@@QAA_NPBD@Z",
+ "0x82aa6e08": "?EndUse@SystemComponent@Quazal@@QAAXPBD@Z",
+ "0x82aa6e88": "?ValidTransition@SystemComponent@Quazal@@UAA_NW4_State@12@@Z",
+ "0x82aa70e0": "?UseIsAllowed@SystemComponent@Quazal@@UAA_NXZ",
+ "0x82aa7128": "?Trace@SystemComponent@Quazal@@QBAXI_N@Z",
+ "0x82aa7190": "?Initialize@SystemComponent@Quazal@@QAA?AW4_State@12@XZ",
+ "0x82aa7300": "?Terminate@SystemComponent@Quazal@@QAA?AW4_State@12@XZ",
+ "0x82aa7568": "??0Use@SystemComponent@Quazal@@QAA@PAV12@PBD@Z",
+ "0x82aa75c8": "??1Use@SystemComponent@Quazal@@QAA@XZ",
+ "0x82aa7610": "?WaitForTerminatedState@SystemComponent@Quazal@@QAA?AVqResult@2@I@Z"
 }

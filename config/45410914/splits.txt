@@ -14289,8 +14289,8 @@ network/quazal/Transport/Interface/StationURL.cpp:
 	.text       start:0x82AA1658 end:0x82AA6270
 
 network/quazal/SystemComponent.cpp:
-	.pdata      start:0x82252CE0 end:0x82252CE8
-	.text       start:0x82AA7610 end:0x82AA78E4
+	.pdata      start:0x82252C88 end:0x82252CE8
+	.text       start:0x82AA6B98 end:0x82AA78F0
 
 network/quazal/ProtocolRequestBroker.cpp:
 	.pdata      start:0x82252F00 end:0x82252F08

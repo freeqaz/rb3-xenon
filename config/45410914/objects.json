@@ -2271,7 +2271,15 @@
                     "/DRB3_QUAZAL_STRING_OPEQ"
                 ]
             },
-            "network/quazal/SystemComponent.cpp": "NonMatching",
+            "network/quazal/SystemComponent.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/EHs-c-"
+                ]
+            },
             "network/quazal/ProtocolRequestBroker.cpp": "NonMatching",
             "network/quazal/Core/Platform.cpp": "NonMatching",
             "network/quazal/Core/ObjectThreadRoot.cpp": "NonMatching",

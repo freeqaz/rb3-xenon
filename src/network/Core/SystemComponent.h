@@ -59,6 +59,11 @@ namespace Quazal {
         _State Initialize();
         _State Terminate();
         qResult WaitForTerminatedState(unsigned int);
+        // Use's count bookkeeping; out of line on X360 (0x82AA6D78 / 0x82AA6E08).
+        bool BeginUse(const char *);
+        void EndUse(const char *);
+        _State GetState() const { return mState; }
+        u32 GetUseCount() const { return mRefs; }
 
         Quazal::String mName; // 0x8
         _State mState; // 0xC
