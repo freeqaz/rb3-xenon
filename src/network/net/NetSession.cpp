@@ -87,11 +87,13 @@ namespace {
     void DisconnectOnFail() {}
 
     Quazal::StreamSettings *GetStreamSettingsForContext(int index) {
+        Quazal::PseudoGlobalVariable<Quazal::StreamSettings> &settings =
+            Quazal::Stream::s_oStreamSettings[index];
         unsigned int ctx = Quazal::PseudoSingleton::GetCurrentContext();
         if (ctx == 0) {
-            return &Quazal::Stream::s_oStreamSettings[index].mValueInDefaultContext;
+            return &settings.mValueInDefaultContext;
         } else {
-            return &Quazal::Stream::s_oStreamSettings[index].mValueInContextList[ctx];
+            return &settings.mValueInContextList[ctx];
         }
     }
 }
