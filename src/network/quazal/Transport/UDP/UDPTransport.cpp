@@ -300,10 +300,10 @@ namespace Quazal {
         }
         virtual void CallObjectMethod() {
             T *pObject = m_pObject;
-            Method pfMethod = m_pfMethod;
-            P oParam = m_oParam;
+            Method pfn = m_pfMethod;
+            P pParam = m_oParam;
             MethodStarted();
-            (pObject->*pfMethod)(oParam);
+            (pObject->*pfn)(pParam);
         }
 
         Method m_pfMethod; // 0x18
@@ -586,7 +586,7 @@ namespace Quazal {
     public:
         HighResolutionChrono();
         ~HighResolutionChrono();
-        char m_data[0x10];
+        unsigned long long m_data[0x10 / 8];
     };
 
     class ProfilingUnit : public RootObject {
@@ -627,11 +627,11 @@ namespace Quazal {
         virtual ~RootTransport();
         virtual qResult Initialize() = 0;
         virtual bool StartListen(unsigned short, unsigned short *, bool, unsigned int) = 0;
-        virtual bool StopListen() = 0;
         virtual bool StopListen(unsigned short) = 0;
+        virtual bool StopListen() = 0;
         virtual unsigned int GetNbListeningPorts() = 0;
-        virtual qResult Send(StationURL *, Buffer *) = 0;
         virtual bool Send(unsigned short, Stream::Type, unsigned char, unsigned char, PacketOut *, bool) = 0;
+        virtual qResult Send(StationURL *, Buffer *) = 0;
         virtual bool Receive(unsigned short, Buffer *, const InetAddress *) = 0;
         virtual Router *GetRouter() = 0;
         virtual void Func28();
@@ -676,17 +676,7 @@ namespace Quazal {
 
         qSortedVector() { this->reserve(2); }
 
-        std::pair<iterator, bool> insert(const value_type &oValue) {
-            bool bInserted = false;
-            KeyCompare oCompare;
-            iterator it = std::lower_bound(this->begin(), this->end(), oValue.first, oCompare);
-            if (it == this->end() || oCompare(oValue.first, *it)) {
-                it = qVector<value_type>::insert(it, oValue);
-                bInserted = true;
-            }
-            return std::pair<iterator, bool>(it, bInserted);
-        }
-
+        std::pair<iterator, bool> insert(const value_type &oValue);
         iterator find(const K &key) {
             KeyCompare oCompare;
             iterator it = std::lower_bound(this->begin(), this->end(), key, oCompare);
@@ -695,16 +685,31 @@ namespace Quazal {
             }
             return it;
         }
+        unsigned int erase(const K &key);
+    };
 
-        unsigned int erase(const K &key) {
-            iterator it = find(key);
-            if (it != this->end()) {
-                qVector<value_type>::erase(it);
-                return 1;
-            }
+    template <class K, class V>
+    std::pair<typename qSortedVector<K, V>::iterator, bool> qSortedVector<K, V>::insert(const value_type &oValue) {
+        bool bInserted = false;
+        KeyCompare oCompare;
+        iterator it = std::lower_bound(this->begin(), this->end(), oValue.first, oCompare);
+        if (it == this->end() || oCompare(oValue.first, *it)) {
+            it = qVector<value_type>::insert(it, oValue);
+            bInserted = true;
+        }
+        return std::make_pair(it, bInserted);
+    }
+
+    template <class K, class V>
+    unsigned int qSortedVector<K, V>::erase(const K &key) {
+        iterator it = find(key);
+        if (it != this->end()) {
+            qVector<value_type>::erase(it);
+            return 1;
+        } else {
             return 0;
         }
-    };
+    }
 
     class UDPTransport : public RootTransport {
     public:
@@ -723,11 +728,11 @@ namespace Quazal {
         virtual ~UDPTransport();
         virtual qResult Initialize();
         virtual bool StartListen(unsigned short, unsigned short *, bool, unsigned int);
-        virtual bool StopListen();
         virtual bool StopListen(unsigned short);
+        virtual bool StopListen();
         virtual unsigned int GetNbListeningPorts();
-        virtual qResult Send(StationURL *, Buffer *);
         virtual bool Send(unsigned short, Stream::Type, unsigned char, unsigned char, PacketOut *, bool);
+        virtual qResult Send(StationURL *, Buffer *);
         virtual bool Receive(unsigned short, Buffer *, const InetAddress *);
         virtual Router *GetRouter();
         virtual unsigned int GetPacketQueueSize() const;
@@ -821,7 +826,7 @@ namespace Quazal {
 
     bool UDPTransport::BindSocket(unsigned short usPort, unsigned short *pusBoundPort, unsigned int uiBufferSize) {
         QueuingSocket *pSocket = new (__FILE__, 0x8b) QueuingSocket(&m_oIOCompletionNotifier, uiBufferSize, this);
-        pSocket->SetBandwidthCounter(GetBandwidthCounter());
+        pSocket->m_pBandwidthCounter = GetBandwidthCounter();
         if (!pSocket->Open(true)) {
             delete pSocket;
             return false;
@@ -834,7 +839,7 @@ namespace Quazal {
             *pusBoundPort = 0;
             return false;
         }
-        m_vSockets.insert(std::pair<unsigned short, QueuingSocket *>(*pusBoundPort, pSocket));
+        m_vSockets.insert(std::make_pair(*pusBoundPort, pSocket));
         pSocket->Recv(GetBandwidthCounter());
         return true;
     }
