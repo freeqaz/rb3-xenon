@@ -302,7 +302,7 @@ void SkeletonViz::SetCamera(
         Vector3 planePos = worldXfm.v;
         planePos.y += distance;
         UtilDrawPlane(
-            plane, planePos, Hmx::Color(1.0f, 1.0f, 0.0f, 1.0f), 5, 0.5f, false
+            plane, planePos, Hmx::Color(1.0f, 1.0f, 0.0f, 1.0f), 5, 0.5f
         );
     }
 }

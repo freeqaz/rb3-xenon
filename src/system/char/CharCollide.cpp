@@ -109,7 +109,7 @@ void CharCollide::Highlight() {
         }
     } else {
         Plane plane(WorldXfm().v, WorldXfm().m.x);
-        UtilDrawPlane(plane, WorldXfm().v, red, 1, 12.0f, false);
+        UtilDrawPlane(plane, WorldXfm().v, red, 1, 12.0f);
     }
     if (mMesh) {
         int count;
@@ -124,12 +124,12 @@ void CharCollide::Highlight() {
         if (n > 0) {
             CharCollideStruct *s = unkStructs;
             do {
-                s++;
                 Hmx::Color sphereColor(0, 0, 1, 1);
                 UtilDrawSphere(
                     mMesh->Verts(s->vertIdx).pos,
                     0.1f, sphereColor
                 );
+                s++;
                 n--;
             } while (n != 0);
         }

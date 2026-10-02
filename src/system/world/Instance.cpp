@@ -94,8 +94,8 @@ void WorldInstance::SavePersistentObjects(BinStream &bs) {
     objects.sort(sorter);
     bs << (int)objects.size();
     for (std::list<Hmx::Object *>::iterator it = objects.begin(); it != objects.end(); ++it) {
-        bs << (*it)->ClassName();
-        bs << (*it)->Name();
+        Hmx::Object *&obj = *it;
+        bs << obj->ClassName() << obj->Name();
     }
     for (std::list<Hmx::Object *>::iterator it = objects.begin(); it != objects.end(); ++it) {
         (*it)->Save(bs);

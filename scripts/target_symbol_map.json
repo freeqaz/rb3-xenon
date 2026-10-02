@@ -11163,7 +11163,7 @@
  "0x8243a6f8": "?UtilDrawSphere@@YAXABVVector3@@MABVColor@Hmx@@@Z",
  "0x8243a868": "?UtilDrawCigar@@YAXABVTransform@@QBM1ABVColor@Hmx@@H@Z",
  "0x8243abd0": "?UtilDrawBox@@YAXABVTransform@@ABVBox@@ABVColor@Hmx@@_N@Z",
- "0x8243ae40": "?UtilDrawPlane@@YAXABVPlane@@ABVVector3@@ABVColor@Hmx@@HM_N@Z",
+ "0x8243ae40": "?UtilDrawPlane@@YAXABVPlane@@ABVVector3@@ABVColor@Hmx@@HM@Z",
  "0x8243b138": "?UtilDrawAxes@@YAXABVTransform@@MABVColor@Hmx@@@Z",
  "0x8243b348": "?UtilDrawLine@@YAXABVVector2@@0ABVColor@Hmx@@@Z",
  "0x8243b3e0": "?UtilDrawRect2D@@YAXABVVector2@@0ABVColor@Hmx@@@Z",

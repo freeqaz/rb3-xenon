@@ -1155,9 +1155,9 @@ void UtilDrawCigar(
     } while (iRing < 3);
 }
 
-void UtilDrawPlane(
-    const Plane &p, const Vector3 &v, const Hmx::Color &c, int i4, float f, bool
-) {
+// Retail takes no trailing bool: its only caller (CharCollide::Highlight)
+// sets r3-r6/f1 and never loads r8.
+void UtilDrawPlane(const Plane &p, const Vector3 &v, const Hmx::Color &c, int i4, float f) {
     Transform tf88;
     ScaleAdd(v, *(const Vector3 *)&p, -p.Dot(v), tf88.v);
     tf88.m.y = *(const Vector3 *)&p;
