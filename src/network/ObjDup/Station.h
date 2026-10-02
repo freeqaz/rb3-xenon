@@ -10,6 +10,8 @@ namespace Quazal {
     class StationURL;
     template <class T>
     class qList;
+    template <class T>
+    class PseudoGlobalVariable;
 
     // Bookkeeping of the duplication operations a station is updating
     // (0x1c bytes in retail; its ctor/dtor are out of line).
@@ -104,6 +106,7 @@ namespace Quazal {
         static bool IsLocal(unsigned int ui) { return ui == GetLocalStation().mValue; }
         unsigned short GetState() const { return m_oState.m_ui16State; }
 
+        static PseudoGlobalVariable<DOHandle> s_hLocalStation;
         static unsigned int s_uiDOClassID;
         static unsigned int GetClassID() { return s_uiDOClassID; }
 

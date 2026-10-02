@@ -233,7 +233,7 @@ namespace Quazal {
         }
     }
 
-    PseudoGlobalVariable<DOHandle> s_hLocalStation;
+    PseudoGlobalVariable<DOHandle> Station::s_hLocalStation;
 
     Station::Station()
         : m_oFaultFlag(), m_uiBundleCount(0) {
@@ -348,7 +348,7 @@ namespace Quazal {
 
     bool Station::ApproveEmigration(unsigned int) { return false; }
 
-    bool Station::ApproveFaultRecovery() { return false; }
+    bool Station::ApproveFaultRecovery() { return true; }
 
     bool Station::ValidOperation(DOOperation *pOp) {
         if (GetState() == 4 || GetState() == 5) {
@@ -573,6 +573,8 @@ namespace Quazal {
         }
     }
 
+    void Station::TestInvariants() { DuplicatedObject::TestInvariants(); }
+
     bool Station::SignalFault(bool b) {
         if (m_pEndPoint == NULL) {
             return false;
@@ -625,4 +627,8 @@ namespace Quazal {
     }
 
     unsigned int GetLocalStationHandle() { return Station::GetLocalStation().mValue; }
+
+    bool _DO_Station::IsABootstrapDO() const { return true; }
+
+    bool _DO_Station::IsACoreDO() const { return true; }
 }
