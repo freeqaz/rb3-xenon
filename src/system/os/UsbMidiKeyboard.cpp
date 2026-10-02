@@ -178,8 +178,11 @@ void UsbMidiKeyboard::Poll() {
                 SendMessage(msg);
             }
 
-            int highhand = proData->unkcbool * 2 + proData->unkdbool * 4
-                + proData->unkemiddle * 8 + proData->unkbbool;
+            int b = proData->unkbbool;
+            int c = proData->unkcbool * 2;
+            int d = proData->unkdbool * 4;
+            int e = proData->unkemiddle * 8;
+            int highhand = c + d + e + b;
             if (highhand != TheKeyboard->GetHighHandPlacement(i)) {
                 TheKeyboard->SetHighHandPlacement(i, highhand);
                 KeyboardHighHandPlacementMsg msg(highhand, i);
