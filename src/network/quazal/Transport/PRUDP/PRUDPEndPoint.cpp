@@ -493,6 +493,17 @@ namespace Quazal {
         unsigned int GetNbPacketsInWindow();
         bool IsWindowEmpty();
         bool HasPendingData() { return !m_pSlidingWindow->HasRoom(); }
+        // Retail passes an uninitialised handler slot by value and the helper
+        // overwrites it with m_pHandler before calling through it.
+        void FireDataReceived(EndPointEventHandler *pTarget, Buffer *pBuffer) {
+            (pTarget = m_pHandler)->OnDataReceived(this, pBuffer);
+        }
+        void FireFault(EndPointEventHandler *pTarget, unsigned int uiReason) {
+            (pTarget = m_pHandler)->OnFault(this, uiReason);
+        }
+        void FireDisconnection(EndPointEventHandler *pTarget) {
+            (pTarget = m_pHandler)->OnDisconnection(this);
+        }
         qResult Frag(Buffer *, unsigned int, unsigned int, unsigned char, bool);
         bool Send(PacketOut *);
         void SendNextPackets();
@@ -845,9 +856,10 @@ namespace Quazal {
     }
 
     void PRUDPEndPoint::DispatchData(Buffer *pBuffer) {
-        EndPointEventHandler *pHandler = m_pHandler;
-        if (pHandler)
-            m_pHandler->OnDataReceived(this, pBuffer);
+        EndPointEventHandler *pEventHandler = m_pHandler;
+        EndPointEventHandler *pTarget;
+        if (pEventHandler)
+            FireDataReceived(pTarget, pBuffer);
     }
 
     void PRUDPEndPoint::ProcessData(PacketIn *pPacket, Time tReception) {
@@ -873,9 +885,10 @@ namespace Quazal {
             void *pContext = GetFaultContext();
             SetConnectionState(Faulty);
             StopKeepAlive();
-            EndPointEventHandler *pHandler = m_pHandler;
-            if (pHandler)
-                m_pHandler->OnFault(this, uiReason);
+            EndPointEventHandler *pEventHandler = m_pHandler;
+            EndPointEventHandler *pTarget;
+            if (pEventHandler)
+                FireFault(pTarget, uiReason);
             SetPeerDisconnected();
             GetStream()->EndPointFaulted(this);
         } else {
@@ -955,10 +968,11 @@ namespace Quazal {
                     bWasConnected = true;
                 SetPeerDisconnected();
                 if (bWasConnected) {
-                    EndPointEventHandler *pHandler = m_pHandler;
-                    if (pHandler) {
+                    EndPointEventHandler *pEventHandler = m_pHandler;
+                    if (pEventHandler) {
                         void *pContext = GetFaultContext();
-                        m_pHandler->OnDisconnection(this);
+                        EndPointEventHandler *pTarget;
+                        FireDisconnection(pTarget);
                     }
                 }
                 GetStream()->EndPointFaulted(this);
