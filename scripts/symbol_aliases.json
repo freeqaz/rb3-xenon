@@ -16133,9 +16133,17 @@
    "folded": [
     "??$__uninitialized_fill_n@PAUMemDiffEntry@@IU1@@stlpmtx_std@@YAPAUMemDiffEntry@@PAU1@IABU1@ABU__false_type@0@@Z",
     "??$__uninitialized_fill_n@PAVExtraTail@TrainerGemTab@@IV12@@stlpmtx_std@@YAPAVExtraTail@TrainerGemTab@@PAV12@IABV12@ABU__false_type@0@@Z",
-    "??$__uninitialized_fill_n@PAVPoint@RndLine@@IV12@@stlpmtx_std@@YAPAVPoint@RndLine@@PAV12@IABV12@ABU__false_type@0@@Z"
+    "??$__uninitialized_fill_n@PAVPoint@RndLine@@IV12@@stlpmtx_std@@YAPAVPoint@RndLine@@PAV12@IABV12@ABU__false_type@0@@Z",
+    "??$_M_allocate_and_copy@PBVStreakInfo@Stats@@@?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVStreakInfo@Stats@@IPBV23@0@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 1 census sites over 2 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 1 census sites over 2 functions.",
+   "admitted": [
+    {
+     "spelling": "??$_M_allocate_and_copy@PBVStreakInfo@Stats@@@?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVStreakInfo@Stats@@IPBV23@0@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED (relocation targets differ), CHASED T1 PROVEN, 0 CYCLE-ASSUMED; retail carries 4 bodies of this shape. Retail call site(s) reaching the survivor where our aligned caller calls this spelling: 0x82656434 (??4 vector<StreakInfo> (NetGameMsgs))."
+    }
+   ]
   },
   {
    "name": "_GRndLight",
@@ -105866,6 +105874,528 @@
      "spelling": "??$_Param_Construct@V?$ObjPtr@VRndTex@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndTex@@@@ABV1@@Z",
      "lane": "W16-NK 2026-10-02",
      "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN and CHASED T1 PROVEN, 0 CYCLE-ASSUMED; retail carries 112 bodies of this shape. Retail call site(s) reaching the survivor where our aligned caller calls this spelling: 0x822A22C4 (??$__uninitialized_fill_n<ObjPtr<RndTex>> (Gem))."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "4vector",
+   "address": "0x826563f0",
+   "survivor": "??4?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+   "folded": [
+    "??4?$vector@VSeam@MeshAO@OutfitConfig@@V?$StlNodeAlloc@VSeam@MeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+    "??4?$vector@V?$Key@M@@V?$StlNodeAlloc@V?$Key@M@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+    "??4?$vector@V?$Key@_N@@V?$StlNodeAlloc@V?$Key@_N@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+    "??4?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+    "??4?$vector@U?$pair@HH@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HH@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+    "??4?$vector@VExtent@@V?$StlNodeAlloc@VExtent@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+    "??4?$vector@VGemScore@MultiplayerAnalyzer@@V?$StlNodeAlloc@VGemScore@MultiplayerAnalyzer@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+    "??4?$vector@UXUSER_ACHIEVEMENT@@V?$StlNodeAlloc@UXUSER_ACHIEVEMENT@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_826563F0 (308 B, unit NetGameMsgs) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "??4?$vector@VSeam@MeshAO@OutfitConfig@@V?$StlNodeAlloc@VSeam@MeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x822a4878 (??4MeshAO@OutfitConfig@@QAAAAV01@ABV01@@Z)."
+    },
+    {
+     "spelling": "??4?$vector@V?$Key@M@@V?$StlNodeAlloc@V?$Key@M@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82382864 (?Copy@CharClip@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z), 0x8242e858 (?LoadPre7@RndPropAnim@@IAAXAAVBinStream@@@Z), 0x8242e8b8 (?LoadPre7@RndPropAnim@@IAAXAAVBinStream@@@Z), 0x82463d88 (?Copy@RndMatAnim@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z)."
+    },
+    {
+     "spelling": "??4?$vector@V?$Key@_N@@V?$StlNodeAlloc@V?$Key@_N@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8242e858 (?LoadPre7@RndPropAnim@@IAAXAAVBinStream@@@Z), 0x8242e8b8 (?LoadPre7@RndPropAnim@@IAAXAAVBinStream@@@Z)."
+    },
+    {
+     "spelling": "??4?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8246f934 (??4?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlp), 0x8246f984 (??4?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlp), 0x8246f668 (?_M_fill_insert_aux@?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAllo), 0x8246f694 (?_M_fill_insert_aux@?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAllo)."
+    },
+    {
+     "spelling": "??4?$vector@U?$pair@HH@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HH@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x824c3c9c (??4CamShotCrowd@@QAAAAV0@ABV0@@Z)."
+    },
+    {
+     "spelling": "??4?$vector@VExtent@@V?$StlNodeAlloc@VExtent@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8268720c (??4TrackData@SongDB@@QAAAAV01@ABV01@@Z), 0x82687218 (??4TrackData@SongDB@@QAAAAV01@ABV01@@Z), 0x82687224 (??4TrackData@SongDB@@QAAAAV01@ABV01@@Z), 0x82687230 (??4TrackData@SongDB@@QAAAAV01@ABV01@@Z)."
+    },
+    {
+     "spelling": "??4?$vector@VGemScore@MultiplayerAnalyzer@@V?$StlNodeAlloc@VGemScore@MultiplayerAnalyzer@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x826ce548 (??4Data@MultiplayerAnalyzer@@QAAAAV01@ABV01@@Z)."
+    },
+    {
+     "spelling": "??4?$vector@UXUSER_ACHIEVEMENT@@V?$StlNodeAlloc@UXUSER_ACHIEVEMENT@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x827a27a8 (?Poll@Achievements@@QAAXXZ)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "_GBeatMap",
+   "address": "0x827740e0",
+   "survivor": "??_GBeatMap@@QAAPAXI@Z",
+   "folded": [
+    "??_G?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@QAAPAXI@Z",
+    "??_GBuildPoly@@QAAPAXI@Z",
+    "??_GTuningOffsetList@@QAAPAXI@Z",
+    "??_GSingerStats@@QAAPAXI@Z"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_827740E0 (104 B, unit BandSongMgr) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "??_G?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@QAAPAXI@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82442ca4 (??$__destroy_range@PAV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVecto), 0x8246ec0c (??$__destroy_range_aux@V?$reverse_iterator@PAV?$Key@V?$vector@VVector2)."
+    },
+    {
+     "spelling": "??_GBuildPoly@@QAAPAXI@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x824435b4 (?BuildFromBSP@@YAXPAVRndMesh@@@Z), 0x82442cf8 (?clear@?$_List_base@UBuildPoly@@V?$StlNodeAlloc@UBuildPoly@@@stlpmtx_s)."
+    },
+    {
+     "spelling": "??_GTuningOffsetList@@QAAPAXI@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82778110 (??1SongData@@UAA@XZ), 0x82778140 (??1SongData@@UAA@XZ)."
+    },
+    {
+     "spelling": "??_GSingerStats@@QAAPAXI@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82656b6c (??$__destroy_range@PAVSingerStats@@V1@@stlpmtx_std@@YAXPAVSingerStats@), 0x82656a8c (??$__destroy_range_aux@V?$reverse_iterator@PAVSingerStats@@@stlpmtx_st)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "clear",
+   "address": "0x8260ffd8",
+   "survivor": "?clear@?$hashtable@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+   "folded": [
+    "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVTourProperty@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVTourProperty@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVTourProperty@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVTourProperty@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVTourDesc@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVTourDesc@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVTourDesc@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVTourDesc@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVAccomplishment@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVAccomplishment@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAccomplishment@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAccomplishment@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVAccomplishmentCategory@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVAccomplishmentCategory@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAccomplishmentCategory@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAccomplishmentCategory@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVAccomplishmentGroup@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVAccomplishmentGroup@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAccomplishmentGroup@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAccomplishmentGroup@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$hashtable@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVSongFilter@SongSortMgr@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVSongFilter@SongSortMgr@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVSongFilter@SongSortMgr@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVSongFilter@SongSortMgr@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVCampaignLevel@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVCampaignLevel@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVCampaignLevel@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCampaignLevel@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$hashtable@U?$pair@$$CBHH@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHH@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHH@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHH@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$hashtable@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVLesson@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVLesson@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVLesson@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVLesson@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$hashtable@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVUIScreen@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVUIScreen@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVUIScreen@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVUIScreen@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$hashtable@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$hashtable@U?$pair@$$CBHPAVColorPalette@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVColorPalette@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVColorPalette@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVColorPalette@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$hashtable@U?$pair@$$CBHPAVSongUpgradeData@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongUpgradeData@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongUpgradeData@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongUpgradeData@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$hashtable@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$hashtable@U?$pair@$$CBHPAVPatchDir@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVPatchDir@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVPatchDir@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVPatchDir@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_8260FFD8 (96 B, unit CharacterCreatorPanel) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVTourProperty@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVTourProperty@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVTourProperty@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVTourProperty@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8235eb50 (?Cleanup@Tour@@QAAXXZ), 0x8235eb8c (?Cleanup@Tour@@QAAXXZ)."
+    },
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVTourDesc@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVTourDesc@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVTourDesc@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVTourDesc@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8235eb50 (?Cleanup@Tour@@QAAXXZ), 0x8235eb8c (?Cleanup@Tour@@QAAXXZ)."
+    },
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82364190 (??0TourProgress@@QAA@XZ), 0x82364198 (??0TourProgress@@QAA@XZ), 0x8236309c (?ResetTourData@TourProgress@@QAAXXZ), 0x823630a4 (?ResetTourData@TourProgress@@QAAXXZ)."
+    },
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVAccomplishment@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVAccomplishment@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAccomplishment@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAccomplishment@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8255d9c0 (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da00 (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da3c (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da78 (?Cleanup@AccomplishmentManager@@QAAXXZ)."
+    },
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVAccomplishmentCategory@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVAccomplishmentCategory@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAccomplishmentCategory@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAccomplishmentCategory@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8255d9c0 (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da00 (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da3c (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da78 (?Cleanup@AccomplishmentManager@@QAAXXZ)."
+    },
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8255d9c0 (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da00 (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da3c (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da78 (?Cleanup@AccomplishmentManager@@QAAXXZ)."
+    },
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8255d9c0 (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da00 (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da3c (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da78 (?Cleanup@AccomplishmentManager@@QAAXXZ)."
+    },
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVAccomplishmentGroup@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVAccomplishmentGroup@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAccomplishmentGroup@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAccomplishmentGroup@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8255d9c0 (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da00 (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da3c (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da78 (?Cleanup@AccomplishmentManager@@QAAXXZ)."
+    },
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8255d9c0 (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da00 (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da3c (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da78 (?Cleanup@AccomplishmentManager@@QAAXXZ)."
+    },
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8255d9c0 (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da00 (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da3c (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da78 (?Cleanup@AccomplishmentManager@@QAAXXZ)."
+    },
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8255d9c0 (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da00 (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da3c (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da78 (?Cleanup@AccomplishmentManager@@QAAXXZ)."
+    },
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVSongFilter@SongSortMgr@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVSongFilter@SongSortMgr@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVSongFilter@SongSortMgr@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVSongFilter@SongSortMgr@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8255d9c0 (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da00 (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da3c (?Cleanup@AccomplishmentManager@@QAAXXZ), 0x8255da78 (?Cleanup@AccomplishmentManager@@QAAXXZ)."
+    },
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVCampaignLevel@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVCampaignLevel@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVCampaignLevel@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCampaignLevel@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x825a8c48 (?Cleanup@Campaign@@QAAXXZ), 0x825a8c8c (?Cleanup@Campaign@@QAAXXZ)."
+    },
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x827b0f48 (?Cleanup@MetaMusicManager@@AAAXXZ), 0x827b0f50 (?Cleanup@MetaMusicManager@@AAAXXZ)."
+    },
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBHH@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHH@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHH@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHH@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8259144c (??$LoadStd@HH@FixedSizeSaveable@@SAXAAVFixedSizeSaveableStream@@AAV?$h), 0x82591a28 (?Clear@AccomplishmentProgress@@QAAXXZ), 0x82591a30 (?Clear@AccomplishmentProgress@@QAAXXZ), 0x82591a38 (?Clear@AccomplishmentProgress@@QAAXXZ)."
+    },
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x823659a4 (??$LoadStd@M@FixedSizeSaveable@@SAXAAVFixedSizeSaveableStream@@AAV?$ha), 0x82365ac4 (?Clear@TourPropertyCollection@@QAAXXZ), 0x82369418 (??1TourWeightManager@@UAA@XZ), 0x8258d20c (?DeleteAll@BandProfile@@UAAXXZ)."
+    },
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVLesson@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVLesson@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVLesson@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVLesson@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82569630 (??1LessonMgr@@UAA@XZ), 0x82569668 (??1LessonMgr@@UAA@XZ), 0x825696a0 (??1LessonMgr@@UAA@XZ)."
+    },
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8256af74 (??1AssetMgr@@UAA@XZ)."
+    },
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82579724 (?Init@BandSongMgr@@UAAXXZ), 0x8257972c (?Init@BandSongMgr@@UAAXXZ), 0x82578f78 (?Terminate@BandSongMgr@@UAAXXZ), 0x82578f80 (?Terminate@BandSongMgr@@UAAXXZ)."
+    },
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x825af134 (??4?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@VSymbo), 0x82643990 (??1NameGenerator@@UAA@XZ)."
+    },
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBVSymbol@@PAVUIScreen@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVUIScreen@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVUIScreen@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVUIScreen@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x825afec8 (?GetInterstitialsFromScreen@InterstitialMgr@@QAAXPAVUIScreen@@AAV?$vec)."
+    },
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x825d3314 (??$LoadStdPtr@VSongStatus@@@FixedSizeSaveable@@SAXAAVFixedSizeSaveable), 0x825d344c (?Clear@SongStatusMgr@@QAAXXZ)."
+    },
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBHPAVColorPalette@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVColorPalette@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVColorPalette@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVColorPalette@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8261269c (?Unload@ChooseColorPanel@@UAAXXZ)."
+    },
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBHPAVSongUpgradeData@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongUpgradeData@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongUpgradeData@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongUpgradeData@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8264df0c (?ClearCachedContent@SongUpgradeMgr@@QAAXXZ)."
+    },
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x827a95e8 (?ClearCachedContent@SongMgr@@UAAXXZ)."
+    },
+    {
+     "spelling": "?clear@?$hashtable@U?$pair@$$CBHPAVPatchDir@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVPatchDir@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVPatchDir@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVPatchDir@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82b79e34 (??1TourCharLocal@@UAA@XZ)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "_M_erase",
+   "address": "0x825bd390",
+   "survivor": "?_M_erase@?$vector@UOverlappedIO@MusicLibraryStore@@V?$StlNodeAlloc@UOverlappedIO@MusicLibraryStore@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUOverlappedIO@MusicLibraryStore@@PAU34@ABU__false_type@2@@Z",
+   "folded": [
+    "?_M_erase@?$vector@V?$Key@_N@@V?$StlNodeAlloc@V?$Key@_N@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$Key@_N@@PAV3@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@VSeam@MeshAO@OutfitConfig@@V?$StlNodeAlloc@VSeam@MeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVSeam@MeshAO@OutfitConfig@@PAV345@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUBone@CharBones@@PAU34@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@VSpotlightEntry@SpotlightDrawer@@V?$StlNodeAlloc@VSpotlightEntry@SpotlightDrawer@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVSpotlightEntry@SpotlightDrawer@@PAV34@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@VWaitingMachine@WaitList@LockStepMgr@@V?$StlNodeAlloc@VWaitingMachine@WaitList@LockStepMgr@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVWaitingMachine@WaitList@LockStepMgr@@PAV345@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@VUpcomingFretRelease@GemPlayer@@V?$StlNodeAlloc@VUpcomingFretRelease@GemPlayer@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVUpcomingFretRelease@GemPlayer@@PAV34@ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@UCacheIDStoreEntry@CacheMgr@@V?$StlNodeAlloc@UCacheIDStoreEntry@CacheMgr@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUCacheIDStoreEntry@CacheMgr@@PAU34@ABU__false_type@2@@Z"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_825BD390 (88 B, unit MusicLibraryStore) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "?_M_erase@?$vector@V?$Key@_N@@V?$StlNodeAlloc@V?$Key@_N@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$Key@_N@@PAV3@ABU__false_type@2@@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8242baf4 (?RemoveKey@BoolKeys@@UAAHH@Z)."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@VSeam@MeshAO@OutfitConfig@@V?$StlNodeAlloc@VSeam@MeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVSeam@MeshAO@OutfitConfig@@PAV345@ABU__false_type@2@@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x822a61e0 (??$PropSync@VSeam@MeshAO@OutfitConfig@@@@YA_NAAV?$vector@VSeam@MeshAO@)."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUBone@CharBones@@PAU34@ABU__false_type@2@@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x823ae538 (??$PropSync@UBone@CharBones@@@@YA_NAAV?$vector@UBone@CharBones@@V?$Stl)."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@VSpotlightEntry@SpotlightDrawer@@V?$StlNodeAlloc@VSpotlightEntry@SpotlightDrawer@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVSpotlightEntry@SpotlightDrawer@@PAV34@ABU__false_type@2@@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x824d6bbc (?RemoveFromLists@SpotlightDrawer@@SAXPAVSpotlight@@@Z)."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@VWaitingMachine@WaitList@LockStepMgr@@V?$StlNodeAlloc@VWaitingMachine@WaitList@LockStepMgr@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVWaitingMachine@WaitList@LockStepMgr@@PAV345@ABU__false_type@2@@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x825abdd8 (?RemoveMachine@WaitList@LockStepMgr@@QAAXPAVBandMachine@@@Z)."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@VUpcomingFretRelease@GemPlayer@@V?$StlNodeAlloc@VUpcomingFretRelease@GemPlayer@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVUpcomingFretRelease@GemPlayer@@PAV34@ABU__false_type@2@@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x826c22b4 (?CheckFretReleases@GemPlayer@@QAAXM@Z), 0x826c2320 (?RemoveFretReleasesInSlot@GemPlayer@@QAAXH@Z)."
+    },
+    {
+     "spelling": "?_M_erase@?$vector@UCacheIDStoreEntry@CacheMgr@@V?$StlNodeAlloc@UCacheIDStoreEntry@CacheMgr@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUCacheIDStoreEntry@CacheMgr@@PAU34@ABU__false_type@2@@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x827cef68 (?RemoveCacheID@CacheMgr@@QAAXPAVCacheID@@@Z)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "1SetUserDifficultyMsg",
+   "address": "0x82675d68",
+   "survivor": "??1SetUserDifficultyMsg@@UAA@XZ",
+   "folded": [
+    "??1ComponentScrollNetMsg@@UAA@XZ",
+    "??1ComponentSelectNetMsg@@UAA@XZ",
+    "??1ComponentFocusNetMsg@@UAA@XZ",
+    "??1SetUserTrackTypeMsg@@UAA@XZ"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_82675D68 (76 B, unit band3/game/Game) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "??1ComponentScrollNetMsg@@UAA@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8259c2a0 (?OnMsg@NetSync@@QAA?AVDataNode@@ABVUIComponentScrollMsg@@@Z)."
+    },
+    {
+     "spelling": "??1ComponentSelectNetMsg@@UAA@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8259bef4 (?OnMsg@NetSync@@QAA?AVDataNode@@ABVUIComponentSelectMsg@@@Z)."
+    },
+    {
+     "spelling": "??1ComponentFocusNetMsg@@UAA@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8259b578 (?SendNetFocus@NetSync@@QAAXPAVUser@@PAVUIComponent@@@Z)."
+    },
+    {
+     "spelling": "??1SetUserTrackTypeMsg@@UAA@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82688aa4 (?OnSetRemoteUserTrackType@GameConfig@@QAAXPAVUser@@VSymbol@@@Z)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "GetName",
+   "address": "0x82593f90",
+   "survivor": "?GetName@Accomplishment@@QBA?AVSymbol@@XZ",
+   "folded": [
+    "?GetName@FixedSetlist@@QBA?AVSymbol@@XZ",
+    "?GetName@Quest@@QBA?AVSymbol@@XZ",
+    "?GetName@GigFilter@@QBA?AVSymbol@@XZ",
+    "?GetName@TourProperty@@QBA?AVSymbol@@XZ",
+    "?GetName@TourDesc@@QBA?AVSymbol@@XZ",
+    "?GetName@AccomplishmentGroup@@QBA?AVSymbol@@XZ",
+    "?GetName@Award@@QBA?AVSymbol@@XZ",
+    "?GetName@CampaignKey@@QBA?AVSymbol@@XZ",
+    "?GetName@CampaignLevel@@QBA?AVSymbol@@XZ",
+    "?GetName@MetaMusicScene@@QBA?AVSymbol@@XZ",
+    "?GetName@SongInfoCopy@@UBA?AVSymbol@@XZ"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_82593F90 (12 B, unit UIEventMgr) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "?GetName@FixedSetlist@@QBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8235a1a4 (?ConfigureFixedSetlistData@QuestManager@@QAAXPAVDataArray@@@Z)."
+    },
+    {
+     "spelling": "?GetName@Quest@@QBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8235a2b0 (?ConfigureQuestData@QuestManager@@QAAXPAVDataArray@@@Z)."
+    },
+    {
+     "spelling": "?GetName@GigFilter@@QBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8235a094 (?ConfigureQuestFilterData@QuestManager@@QAAXPAVDataArray@@@Z)."
+    },
+    {
+     "spelling": "?GetName@TourProperty@@QBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8235ec28 (?ConfigureTourPropertyData@Tour@@QAAXPAVDataArray@@@Z)."
+    },
+    {
+     "spelling": "?GetName@TourDesc@@QBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x823621dc (?GetTourName@TourProgress@@QBA?AVSymbol@@XZ), 0x82b7e04c (?UpdateExtendedMesh@TourDescProvider@@UBAXHHPAVRndMesh@@@Z), 0x82b7e058 (?UpdateExtendedMesh@TourDescProvider@@UBAXHHPAVRndMesh@@@Z)."
+    },
+    {
+     "spelling": "?GetName@AccomplishmentGroup@@QBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8255e600 (?ConfigureAccomplishmentGroupData@AccomplishmentManager@@QAAXPAVDataAr), 0x8255e694 (?ConfigureAccomplishmentGroupData@AccomplishmentManager@@QAAXPAVDataAr), 0x825fc60c (?Text@AccomplishmentGroupProvider@@UBAXHHPAVUIListLabel@@PAVUILabel@@@)."
+    },
+    {
+     "spelling": "?GetName@Award@@QBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8255b704 (?ConfigureAwardData@AccomplishmentManager@@QAAXPAVDataArray@@@Z)."
+    },
+    {
+     "spelling": "?GetName@CampaignKey@@QBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x825a8d60 (?ConfigureCampaignKeyData@Campaign@@QAAXPAVDataArray@@@Z)."
+    },
+    {
+     "spelling": "?GetName@CampaignLevel@@QBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x825a90a0 (?ConfigureCampaignLevelData@Campaign@@QAAXPAVDataArray@@@Z), 0x825a9120 (?ConfigureCampaignLevelData@Campaign@@QAAXPAVDataArray@@@Z)."
+    },
+    {
+     "spelling": "?GetName@MetaMusicScene@@QBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x827b0fe8 (?ConfigureMetaMusicSceneData@MetaMusicManager@@AAAXPAVDataArray@@@Z)."
+    },
+    {
+     "spelling": "?GetName@SongInfoCopy@@UBA?AVSymbol@@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x82111c9c slot 1 (DataArraySongInfo), 0x8211a9ec slot 1 (SongInfoCopy)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "1AccomplishmentEarnedMsg",
+   "address": "0x82555df0",
+   "survivor": "??1AccomplishmentEarnedMsg@@UAA@XZ",
+   "folded": [
+    "??1MainHubAdvanceMsg@?A0x447fe1d1@@UAA@XZ"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_82555DF0 (76 B, unit band3/meta_band/PrefabMgr) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "??1MainHubAdvanceMsg@?A0x447fe1d1@@UAA@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82621970 (?AdvanceAll@MainHubPanel@@QAAXW4NetUIState@@@Z)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "_GNewUserMsg",
+   "address": "0x823e3f00",
+   "survivor": "??_GNewUserMsg@@UAAPAXI@Z",
+   "folded": [
+    "??_GVoiceDataMsg@@UAAPAXI@Z"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_823E3F00 (76 B, unit network/net/NetSession) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "??_GVoiceDataMsg@@UAAPAXI@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x82055664 slot 0 (VoiceDataMsg)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
+  },
+  {
+   "name": "_GSetUserDifficultyMsg",
+   "address": "0x82677f28",
+   "survivor": "??_GSetUserDifficultyMsg@@UAAPAXI@Z",
+   "folded": [
+    "??_GComponentSelectNetMsg@@UAAPAXI@Z",
+    "??_GComponentScrollNetMsg@@UAAPAXI@Z",
+    "??_GComponentFocusNetMsg@@UAAPAXI@Z",
+    "??_GSetUserTrackTypeMsg@@UAAPAXI@Z"
+   ],
+   "evidence": "W16-NK: anonymous retail row fn_82677F28 (76 B, unit band3/game/Game) named by caller binding / vtable slot; survivor is the spelling the row's own (or adjacent) unit defines; every folded spelling is one a retail caller or vtable of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "??_GComponentSelectNetMsg@@UAAPAXI@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820a5ed4 slot 0 (ComponentSelectNetMsg)."
+    },
+    {
+     "spelling": "??_GComponentScrollNetMsg@@UAAPAXI@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820a5f4c slot 0 (ComponentScrollNetMsg)."
+    },
+    {
+     "spelling": "??_GComponentFocusNetMsg@@UAAPAXI@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820a6174 slot 0 (ComponentFocusNetMsg)."
+    },
+    {
+     "spelling": "??_GSetUserTrackTypeMsg@@UAAPAXI@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail vtable slots holding the survivor address where our vtable holds this spelling: 0x820dc034 slot 0 (SetUserTrackTypeMsg)."
     }
    ],
    "added": {

@@ -7897,6 +7897,7 @@ Accomplishment.cpp:
 	.text       start:0x82276A28 end:0x82276C78
 	.text       start:0x82276F98 end:0x82277014
 	.text       start:0x82449930 end:0x82449998
+	.text       start:0x82593F8C end:0x82593F9C
 	.text       start:0x82593F9C end:0x82594084
 	.text       start:0x82594084 end:0x82594538
 	.text       start:0x82594538 end:0x82594544
@@ -10669,6 +10670,7 @@ SongData.cpp:
 	.pdata      start:0x8223DC20 end:0x8223DC28
 	.pdata      start:0x8223DC28 end:0x8223DC38
 	.pdata      start:0x8223DC38 end:0x8223DC40
+	.pdata      start:0x8223DC40 end:0x8223DC48
 	.pdata      start:0x8223DC60 end:0x8223DC88
 	.pdata      start:0x8223DC88 end:0x8223DC98
 	.pdata      start:0x8223DC98 end:0x8223DCA0
@@ -10752,6 +10754,7 @@ SongData.cpp:
 	.text       start:0x82773F3C end:0x82773FA4
 	.text       start:0x82773FB0 end:0x82774070
 	.text       start:0x82774070 end:0x827740E0
+	.text       start:0x827740E0 end:0x82774148
 	.text       start:0x827742B0 end:0x82774498
 	.text       start:0x82774498 end:0x82774540
 	.text       start:0x82774540 end:0x827745A0
@@ -12222,7 +12225,7 @@ BandSongMgr.cpp:
 	.pdata      start:0x8221EC78 end:0x8221ECD0
 	.pdata      start:0x8221ECD0 end:0x8221ECE8
 	.pdata      start:0x8221ECE8 end:0x8221ED08
-	.pdata      start:0x8223DC40 end:0x8223DC50
+	.pdata      start:0x8223DC48 end:0x8223DC50
 	.text       start:0x8256A100 end:0x8256A150
 	.text       start:0x825754B0 end:0x82575C28
 	.text       start:0x82575C28 end:0x82575C88
@@ -12236,7 +12239,7 @@ BandSongMgr.cpp:
 	.text       start:0x8257ADB0 end:0x8257AF3C
 	.text       start:0x8257AF48 end:0x8257B180
 	.text       start:0x8276FCE0 end:0x8276FD10
-	.text       start:0x827740E0 end:0x827741B0
+	.text       start:0x82774148 end:0x827741B0
 
 CampaignLevel.cpp:
 	.pdata      start:0x8222D978 end:0x8222D980
@@ -12748,7 +12751,7 @@ UIEventMgr.cpp:
 	.text       start:0x82592C2C end:0x82592C8C
 	.text       start:0x82592C90 end:0x82592D18
 	.text       start:0x82592D18 end:0x82593678
-	.text       start:0x82593678 end:0x82593F9C
+	.text       start:0x82593678 end:0x82593F8C
 
 ProfileMgr.cpp:
 	.pdata      start:0x822086A8 end:0x822086B8

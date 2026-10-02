@@ -1,4 +1,13 @@
 {
+ "0x82555df0": "??1AccomplishmentEarnedMsg@@UAA@XZ",
+ "0x823e3f00": "??_GNewUserMsg@@UAAPAXI@Z",
+ "0x82677f28": "??_GSetUserDifficultyMsg@@UAAPAXI@Z",
+ "0x826563f0": "??4?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+ "0x827740e0": "??_GBeatMap@@QAAPAXI@Z",
+ "0x8260ffd8": "?clear@?$hashtable@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+ "0x825bd390": "?_M_erase@?$vector@UOverlappedIO@MusicLibraryStore@@V?$StlNodeAlloc@UOverlappedIO@MusicLibraryStore@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUOverlappedIO@MusicLibraryStore@@PAU34@ABU__false_type@2@@Z",
+ "0x82675d68": "??1SetUserDifficultyMsg@@UAA@XZ",
+ "0x82593f90": "?GetName@Accomplishment@@QBA?AVSymbol@@XZ",
  "0x822a2438": "?_M_fill_insert_aux@?$vector@V?$ObjPtr@VRndDir@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndDir@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjPtr@VRndDir@@@@IABV3@ABU__false_type@2@@Z",
  "0x822a3930": "?_M_insert_overflow_aux@?$vector@V?$ObjPtr@VRndDir@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndDir@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAV?$ObjPtr@VRndDir@@@@ABV3@ABU__false_type@2@I_N@Z",
  "0x823f2b80": "?Poll@QuazalSession@@SAXXZ",
