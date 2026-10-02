@@ -46,6 +46,10 @@ namespace Quazal {
         return GetDOClass(m_dohMyself.GetDOClassID())->IsAKindOf(id);
     }
 
+    void DuplicatedObject::SetMasterStation(const MasterStationRef &refMaster) {
+        m_refMasterStation = refMaster;
+    }
+
     bool DuplicatedObject::UpdateImpl(DataSet *pDataSet, const Time &t) {
         ScopedCS cs(Scheduler::GetInstance()->unk38);
         if (!IsADuplicationMaster()) {

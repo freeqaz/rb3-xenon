@@ -8,6 +8,7 @@ namespace Quazal {
         MasterStationRef();
         MasterStationRef(const MasterStationRef &);
         ~MasterStationRef();
+        MasterStationRef &operator=(const MasterStationRef &);
 
         LogicalClockTmpl<unsigned char> m_lcVersion; // 0xc
     };

@@ -34982,5 +34982,6 @@
  "0x82a712d0": "?GetHandle@DORef@Quazal@@QBA?AVDOHandle@2@XZ",
  "0x82a71478": "?GetCurrentOperation@DuplicatedObject@Quazal@@SAPAVDOOperation@2@XZ",
  "0x82a714c8": "?GetOperationManager@DuplicatedObject@Quazal@@SAPAVOperationManager@2@XZ",
- "0x82a712f8": "?UpdateDatasets@DuplicatedObject@Quazal@@SAXPAVMessage@2@VDOHandle@2@E@Z"
+ "0x82a712f8": "?UpdateDatasets@DuplicatedObject@Quazal@@SAXPAVMessage@2@VDOHandle@2@E@Z",
+ "0x82a70018": "?SetMasterStation@DuplicatedObject@Quazal@@QAAXABVMasterStationRef@2@@Z"
 }

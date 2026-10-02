@@ -50,6 +50,7 @@ namespace Quazal {
 
         // Retail source order (0x82A6FC78..0x82A76B58).
         bool IsAKindOf(unsigned int) const;
+        void SetMasterStation(const MasterStationRef &);
         bool UpdateImpl(DataSet *, const Time &);
         bool RefreshImpl(DataSet *, const Time &);
         bool SpecificExtractADataset(Message *, unsigned char);
