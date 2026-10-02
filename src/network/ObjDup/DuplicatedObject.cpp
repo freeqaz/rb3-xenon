@@ -666,9 +666,9 @@ namespace Quazal {
                 ChangeDupSetOperation op(
                     hStation, it.operator->(), hStation, false, (ChangeDupSetOperation::Context)0
                 );
-                it->ExecuteOperation(op);
+                it.GetDOPtr()->ExecuteOperation(op);
             } else {
-                it->RemoveFromCachedDuplicationSet(hStation);
+                it.GetDOPtr()->RemoveFromCachedDuplicationSet(hStation);
             }
             it.Next(false);
         }

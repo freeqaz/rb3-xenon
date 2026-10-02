@@ -50,6 +50,7 @@ namespace Quazal {
     public:
         SelectionIteratorTemplate();
         SelectionIteratorTemplate(int iMode);
-        T *operator->();
+        T *GetDOPtr();
+        T *operator->() { return GetDOPtr(); }
     };
 }
