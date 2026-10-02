@@ -849,7 +849,8 @@ void BandIKEffector::PollDeps(
             changedBy.push_back(it->mTarget);
         }
     }
-    if (GetType() - 2U <= 1) {
+    int type = GetType();
+    if (type == 2 || type == 3) {
         RndTransformable *parent = mEffector->TransParent();
         if (parent) {
             change.push_back(parent);
