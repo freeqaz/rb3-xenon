@@ -1918,8 +1918,6 @@ Instance.cpp:
 	.text       start:0x824EA298 end:0x824ED404
 
 DepthBuffer3D.cpp:
-	.pdata      start:0x82238880 end:0x82238888
-	.pdata      start:0x8223AE20 end:0x8223AE68
 	.text       start:0x826FB9C8 end:0x826FB9D0
 	.text       start:0x82701FF0 end:0x82701FF8
 
