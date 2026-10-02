@@ -709,7 +709,10 @@ void CharDriver::Poll() {
                     goto apply_end;
                 }
                 mFirst->GetClip()->ScaleDown(*mBones, deltaBeat);
-            } else if (mApply != kApplyAdd) {
+            } else if (mApply == kApplyAdd) {
+                mFirst->ScaleAdd(*mBones, weight);
+                goto apply_end;
+            } else {
                 MILO_ASSERT(mApply == kApplyRotateTo, 0x22F);
                 mFirst->RotateTo(*mBones, weight);
                 goto apply_end;
