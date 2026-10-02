@@ -38,6 +38,18 @@ their new unit or name (three funclets that travelled with their parents; the tw
 their STLport spellings). The four unit completions are denominator shrinks (CheatProvider-style rows
 leaving a unit), not new matches.
 
+**Re-measured after main moved to `f0ea63628` (W16-NV, disjoint: StringConversion, the trie range,
+`symbols.txt`, `objects.json`).** The branch was rebased cleanly onto it; the patch differs only in hunk offsets.
+Same worktree advanced to `f0ea63628`, run dir `~/tmp/wt-w16-nu-ab/.ab_measure_runs/20261002-185309-ab_final2-2193899/`:
+
+```
+leg A: matched=51492 masked=24640 honest=26852 code%=54.931920  (recompiles: 0, settled)
+leg B: matched=51559 masked=24645 honest=26914 code%=55.002730  (split fixed point both legs)
+Δmatched=+67  Δmasked_equal=+5  Δhonest=+62  Δcode_bytes=+7256   rows: 14 up to 100, 0 down, 0 left 100
+```
+
+Prediction (an unchanged delta) **measured exactly**.
+
 Of the measured gain: 23 re-homed U3 rows and 17 identified U2 rows pairing from 0 to 100 (the bulk), 7
 admitted fold memberships clearing caller charges, and the two held-back template rows.
 
@@ -166,7 +178,8 @@ reports the tree a fixed point of the six post-compile passes):
 - Every membership this lane added or relabelled was re-chased against its group survivor: **9/9 PROVEN, 0
   CYCLE-ASSUMED**.
 - No added `src/` line cites rb3-Wii or the oracle. No commit carries a co-author line.
-- `tools/native_build_gate.sh`, run last on the final code (only this doc follows it):
+- `tools/native_build_gate.sh`, run last on the final code, and again on the tip rebased onto `f0ea63628`
+  (only this doc follows it): both times
   `NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0`.
 
 ## 7. Not done
