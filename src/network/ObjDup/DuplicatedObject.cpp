@@ -6,6 +6,8 @@
 #include "Platform/ScopedCS.h"
 #include "Platform/SystemError.h"
 #include "ObjDup/DOClass.h"
+#include "ObjDup/DOSelections.h"
+#include "ObjDup/Station.h"
 #include "Platform/Time.h"
 
 namespace Quazal {
@@ -138,7 +140,7 @@ namespace Quazal {
     // forces a frame. &StateMachine::TopState is a 4-byte SI pmf, so InvalidState
     // and the ValidState `else` branch match exactly.
     void DuplicatedObject::SetInitialState(const QEvent &) {
-        mCurrentState = reinterpret_cast<const StateFuncFactory &>(&DuplicatedObject::ValidState);
+        mCurrentState = (StateFuncFactory)&DuplicatedObject::ValidState;
     }
 
     StateMachine::StateFuncFactory DuplicatedObject::InvalidState(const QEvent &e) {
@@ -146,21 +148,303 @@ namespace Quazal {
     }
 
     StateMachine::StateFuncFactory DuplicatedObject::ValidState(const QEvent &e) {
-        if ((int)e.GetSignal() == 1) {
-            mCurrentState =
-                reinterpret_cast<const StateFuncFactory &>(&DuplicatedObject::ValidState);
+        switch (e.GetSignal()) {
+        case 1:
+            mCurrentState = (StateFuncFactory)&DuplicatedObject::InitialState;
             return 0;
-        } else if (((unsigned int)((e.GetSignal() & 0xFFFF) - 4) >> 31) == 0) {
-            static_cast<const Operation &>(e).Trace(1);
+        }
+        if (!e.IsSystemEvent()) {
+            const Operation &op = static_cast<const Operation &>(e);
+            op.Trace(1);
             Trace(1);
             static TransitionPath t_;
-            StaticStateTransition(
-                &t_, reinterpret_cast<const StateFuncFactory &>(&DuplicatedObject::InvalidState)
-            );
+            StaticStateTransition(&t_, (StateFuncFactory)&DuplicatedObject::InvalidState);
             return 0;
-        } else {
-            return reinterpret_cast<StateFuncFactory>(&StateMachine::TopState);
         }
+        return (StateFuncFactory)&StateMachine::TopState;
+    }
+
+    StateMachine::StateFuncFactory DuplicatedObject::InitialState(const QEvent &e) {
+        switch (e.GetSignal()) {
+        case 0x12: {
+            const CreateMasterOperation &op = static_cast<const CreateMasterOperation &>(e);
+            if (op.m_oDOID.IsNull()) {
+                static TransitionPath t_;
+                StaticStateTransition(&t_, (StateFuncFactory)&DuplicatedObject::UnidentifiedMasterState);
+                return 0;
+            } else {
+                m_dohMyself.SetDOID(DOID(op.GetDOID()));
+                SetMasterStation(op.m_refMasterStation);
+                static TransitionPath t_;
+                StaticStateTransition(&t_, (StateFuncFactory)&DuplicatedObject::UnpublishedMasterState);
+                return 0;
+            }
+            break;
+        }
+        case 6: {
+            const AddToStoreOperation &op = static_cast<const AddToStoreOperation &>(e);
+            if (op.IsDuplica()) {
+                if (op.GetOrigin() == Station::GetLocalStation()) {
+                    ExecAddToStore(op);
+                    static TransitionPath t_;
+                    StaticStateTransition(&t_, (StateFuncFactory)&DuplicatedObject::OrphanDuplicaState);
+                    return 0;
+                } else {
+                    ExecAddToStore(op);
+                    static TransitionPath t_;
+                    StaticStateTransition(&t_, (StateFuncFactory)&DuplicatedObject::InStoreDuplicaState);
+                    return 0;
+                }
+            }
+            break;
+        }
+        }
+        return (StateFuncFactory)&DuplicatedObject::ValidState;
+    }
+
+    StateMachine::StateFuncFactory DuplicatedObject::DuplicationMasterState(const QEvent &e) {
+        switch (e.GetSignal()) {
+        case 2:
+            if (m_dohMyself.GetDOID() == 0) {
+            } else {
+                if (!FlagIsSet(0x20)) {
+                    DOSelections::GetInstance()->GetMasters().Add(this);
+                }
+                DOSelections::GetInstance()->GetPublished().Add(this);
+            }
+            return 0;
+            break;
+        case 3:
+            DOSelections::GetInstance()->GetPublished().Remove(this);
+            return 0;
+            break;
+        case 7: {
+            const CallMethodOperation &op = static_cast<const CallMethodOperation &>(e);
+            CallMethod(op);
+            return 0;
+        }
+            break;
+        case 14: {
+            const ChangeDupSetOperation &op = static_cast<const ChangeDupSetOperation &>(e);
+            ExecChangeDupSet(op);
+            return 0;
+        }
+        }
+        return (StateFuncFactory)&DuplicatedObject::ValidState;
+    }
+
+    StateMachine::StateFuncFactory DuplicatedObject::UnpublishedMasterState(const QEvent &e) {
+        switch (e.GetSignal()) {
+        case 2:
+            return 0;
+        case 3:
+            return 0;
+        case 6: {
+            const AddToStoreOperation &op = static_cast<const AddToStoreOperation &>(e);
+            if (op.IsMaster()) {
+                ExecAddToStore(op);
+                static TransitionPath t_;
+                StaticStateTransition(&t_, (StateFuncFactory)&DuplicatedObject::InStoreMasterState);
+                return 0;
+            }
+            break;
+        }
+        }
+        return (StateFuncFactory)&DuplicatedObject::DuplicationMasterState;
+    }
+
+    StateMachine::StateFuncFactory DuplicatedObject::UnidentifiedMasterState(const QEvent &e) {
+        switch (e.GetSignal()) {
+        case 2:
+            return 0;
+            break;
+        case 3:
+            DOSelections::GetInstance()->GetMasters().Add(this);
+            DOSelections::GetInstance()->GetPublished().Add(this);
+            return 0;
+        }
+        return (StateFuncFactory)&DuplicatedObject::UnpublishedMasterState;
+    }
+
+    StateMachine::StateFuncFactory DuplicatedObject::InStoreMasterState(const QEvent &e) {
+        switch (e.GetSignal()) {
+        case 2:
+            SetFlag(0x20);
+            return 0;
+            break;
+        case 3:
+            return 0;
+            break;
+        case 9: {
+            const RemoveFromStoreOperation &op = static_cast<const RemoveFromStoreOperation &>(e);
+            ExecRemoveFromStore(op);
+            static TransitionPath t_;
+            StaticStateTransition(&t_, (StateFuncFactory)&DuplicatedObject::DeletedMasterState);
+            return 0;
+            break;
+        }
+        case 13: {
+            const ChangeMasterStationOperation &op =
+                static_cast<const ChangeMasterStationOperation &>(e);
+            if (op.GetOldMasterStation() == Station::GetLocalStation()) {
+                ExecChangeMasterStation(op);
+                static TransitionPath t_;
+                StaticStateTransition(&t_, (StateFuncFactory)&DuplicatedObject::ConnectedDuplicaState);
+                return 0;
+            }
+            if (op.GetNewMasterStation() == Station::GetLocalStation()) {
+                ExecChangeMasterStation(op);
+                return 0;
+            }
+            ExecChangeMasterStation(op);
+            return 0;
+        }
+        }
+        return (StateFuncFactory)&DuplicatedObject::DuplicationMasterState;
+    }
+
+    StateMachine::StateFuncFactory DuplicatedObject::DeletedMasterState(const QEvent &e) {
+        switch (e.GetSignal()) {
+        case 2:
+            return 0;
+            break;
+        case 3:
+            return 0;
+        }
+        return (StateFuncFactory)&DuplicatedObject::DuplicationMasterState;
+    }
+
+    StateMachine::StateFuncFactory DuplicatedObject::DuplicaState(const QEvent &e) {
+        switch (e.GetSignal()) {
+        case 2:
+            DOSelections::GetInstance()->GetDuplicas().Add(this);
+            return 0;
+            break;
+        case 3:
+            DOSelections::GetInstance()->GetDuplicas().Remove(this);
+            return 0;
+            break;
+        case 7: {
+            const CallMethodOperation &op = static_cast<const CallMethodOperation &>(e);
+            CallMethod(op);
+            return 0;
+        }
+        case 14: {
+            const ChangeDupSetOperation &op = static_cast<const ChangeDupSetOperation &>(e);
+            ExecChangeDupSet(op);
+            return 0;
+            break;
+        }
+        case 8: {
+            const UpdateDatasetsOperation &op = static_cast<const UpdateDatasetsOperation &>(e);
+            ExecUpdateDataSet(op);
+            return 0;
+            break;
+        }
+        case 5:
+            return 0;
+        }
+        return (StateFuncFactory)&DuplicatedObject::ValidState;
+    }
+
+    StateMachine::StateFuncFactory DuplicatedObject::InStoreDuplicaState(const QEvent &e) {
+        switch (e.GetSignal()) {
+        case 2:
+            SetFlag(0x20);
+            return 0;
+            break;
+        case 3:
+            return 0;
+            break;
+        case 9: {
+            const RemoveFromStoreOperation &op = static_cast<const RemoveFromStoreOperation &>(e);
+            ExecRemoveFromStore(op);
+            static TransitionPath t_;
+            StaticStateTransition(&t_, (StateFuncFactory)&DuplicatedObject::DeletedDuplicaState);
+            return 0;
+        }
+        case 13: {
+            const ChangeMasterStationOperation &op =
+                static_cast<const ChangeMasterStationOperation &>(e);
+            if (op.GetNewMasterStation() == Station::GetLocalStation()) {
+                ExecChangeMasterStation(op);
+                static TransitionPath t_;
+                StaticStateTransition(&t_, (StateFuncFactory)&DuplicatedObject::InStoreMasterState);
+                return 0;
+            } else if (op.GetContext() == ChangeMasterStationOperation::Context(0)) {
+                ExecChangeMasterStation(op);
+                static TransitionPath t_;
+                StaticStateTransition(&t_, (StateFuncFactory)&DuplicatedObject::OrphanDuplicaState);
+                return 0;
+            } else {
+                ExecChangeMasterStation(op);
+                return 0;
+            }
+            break;
+        }
+        }
+        return (StateFuncFactory)&DuplicatedObject::DuplicaState;
+    }
+
+    StateMachine::StateFuncFactory DuplicatedObject::OrphanDuplicaState(const QEvent &e) {
+        switch (e.GetSignal()) {
+        case 2:
+            SetFlag(0x10);
+            ConnectOrphanDuplica();
+            return 0;
+            break;
+        case 3:
+            ClearFlag(0x10);
+            return 0;
+            break;
+        case 6: {
+            const AddToStoreOperation &op = static_cast<const AddToStoreOperation &>(e);
+            if (op.IsDuplica()) {
+                ExecAddToStore(op);
+                static TransitionPath t_;
+                StaticStateTransition(&t_, (StateFuncFactory)&DuplicatedObject::ConnectedDuplicaState);
+                return 0;
+            }
+            break;
+        }
+        case 7:
+        case 8:
+        case 13:
+        case 14: {
+            const Operation &op = static_cast<const Operation &>(e);
+            if (op.GetOrigin() != Station::GetLocalStation()) {
+                const_cast<QEvent &>(e).m_bRepeatEvent = true;
+                static TransitionPath t_;
+                StaticStateTransition(&t_, (StateFuncFactory)&DuplicatedObject::ConnectedDuplicaState);
+                return 0;
+            }
+            break;
+        }
+        }
+        return (StateFuncFactory)&DuplicatedObject::InStoreDuplicaState;
+    }
+
+    StateMachine::StateFuncFactory DuplicatedObject::ConnectedDuplicaState(const QEvent &) {
+        return (StateFuncFactory)&DuplicatedObject::InStoreDuplicaState;
+    }
+
+    StateMachine::StateFuncFactory DuplicatedObject::DeletedDuplicaState(const QEvent &e) {
+        switch (e.GetSignal()) {
+        case 2:
+            return 0;
+            break;
+        case 3:
+            return 0;
+            break;
+        case 6: {
+            const AddToStoreOperation &op = static_cast<const AddToStoreOperation &>(e);
+            ExecAddToStore(op);
+            static TransitionPath t_;
+            StaticStateTransition(&t_, (StateFuncFactory)&DuplicatedObject::OrphanDuplicaState);
+            return 0;
+        }
+        }
+        return (StateFuncFactory)&DuplicatedObject::DuplicaState;
     }
 
     void DuplicatedObject::SetFlag(unsigned short f) { m_uiFlags = m_uiFlags | f; }

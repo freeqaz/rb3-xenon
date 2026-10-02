@@ -1,6 +1,7 @@
 #pragma once
 #include "Core/StateMachine.h"
 #include "Platform/UserContext.h"
+#include "ObjDup/DOHandle.h"
 
 namespace Quazal {
 
@@ -17,6 +18,7 @@ namespace Quazal {
         virtual void TraceImpl(_Event, unsigned int) const = 0;
 
         void Trace(unsigned int) const;
+        DOHandle GetOrigin() const { return m_uiOrigin; }
         void SetUserData(UserContext);
         UserContext GetUserData();
 

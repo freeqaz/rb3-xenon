@@ -34971,5 +34971,16 @@
  "0x82a70400": "?SpecificRefresh@DuplicatedObject@Quazal@@QAA_NPAVDataSet@2@ABVTime@2@@Z",
  "0x82a70460": "?SpecificUpdate@DuplicatedObject@Quazal@@QAA_NPAVDataSet@2@VTime@2@@Z",
  "0x82a704d0": "?CallApproveFaultRecovery@DuplicatedObject@Quazal@@QAA_NXZ",
- "0x82a70528": "?CallApproveEmigration@DuplicatedObject@Quazal@@QAA_NI@Z"
+ "0x82a70528": "?CallApproveEmigration@DuplicatedObject@Quazal@@QAA_NI@Z",
+ "0x82a757d0": "?InitialState@DuplicatedObject@Quazal@@QAAP8StateMachine@2@AAP832@AAXABVQEvent@32@@Z0@Z0@Z",
+ "0x82a759d0": "?DuplicationMasterState@DuplicatedObject@Quazal@@QAAP8StateMachine@2@AAP832@AAXABVQEvent@32@@Z0@Z0@Z",
+ "0x82a75b80": "?UnpublishedMasterState@DuplicatedObject@Quazal@@QAAP8StateMachine@2@AAP832@AAXABVQEvent@32@@Z0@Z0@Z",
+ "0x82a75c50": "?UnidentifiedMasterState@DuplicatedObject@Quazal@@QAAP8StateMachine@2@AAP832@AAXABVQEvent@32@@Z0@Z0@Z",
+ "0x82a75cf8": "?InStoreMasterState@DuplicatedObject@Quazal@@QAAP8StateMachine@2@AAP832@AAXABVQEvent@32@@Z0@Z0@Z",
+ "0x82a75ee8": "?DeletedMasterState@DuplicatedObject@Quazal@@QAAP8StateMachine@2@AAP832@AAXABVQEvent@32@@Z0@Z0@Z",
+ "0x82a75f68": "?DuplicaState@DuplicatedObject@Quazal@@QAAP8StateMachine@2@AAP832@AAXABVQEvent@32@@Z0@Z0@Z",
+ "0x82a760c8": "?InStoreDuplicaState@DuplicatedObject@Quazal@@QAAP8StateMachine@2@AAP832@AAXABVQEvent@32@@Z0@Z0@Z",
+ "0x82a762a8": "?OrphanDuplicaState@DuplicatedObject@Quazal@@QAAP8StateMachine@2@AAP832@AAXABVQEvent@32@@Z0@Z0@Z",
+ "0x82a76470": "?ConnectedDuplicaState@DuplicatedObject@Quazal@@QAAP8StateMachine@2@AAP832@AAXABVQEvent@32@@Z0@Z0@Z",
+ "0x82a76488": "?DeletedDuplicaState@DuplicatedObject@Quazal@@QAAP8StateMachine@2@AAP832@AAXABVQEvent@32@@Z0@Z0@Z"
 }

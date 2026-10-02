@@ -21,6 +21,8 @@ namespace Quazal {
     class AddToStoreOperation;
     class ChangeMasterStationOperation;
     class ChangeDupSetOperation;
+    class CallMethodOperation;
+    class UpdateDatasetsOperation;
     template <class T>
     class qList;
     template <class T>
@@ -127,6 +129,10 @@ namespace Quazal {
         StateFuncFactory OrphanDuplicaState(const QEvent &);
         StateFuncFactory ConnectedDuplicaState(const QEvent &);
         StateFuncFactory DeletedDuplicaState(const QEvent &);
+
+        void CallMethod(const CallMethodOperation &);
+        void ExecUpdateDataSet(const UpdateDatasetsOperation &);
+        void SetMasterStation(const MasterStationRef &);
 
         bool FlagIsSet(unsigned short f) const { return (m_uiFlags & f) == f; }
 
