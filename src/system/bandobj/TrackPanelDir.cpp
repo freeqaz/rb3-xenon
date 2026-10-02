@@ -180,7 +180,7 @@ void TrackPanelDir::AssignTracks() {
 
 void TrackPanelDir::SetTrackPanel(TrackPanelInterface *interface) {
     mTrackPanel = interface;
-    if (mInstruments.empty()) {
+    if (mInstruments.size() == 0) {
         mInstruments.resize(mTrackPanel->GetTrackCount(), kInstNone);
     }
 }

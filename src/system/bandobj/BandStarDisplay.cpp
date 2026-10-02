@@ -16,6 +16,17 @@
 
 INIT_REVS(BandStarDisplay);
 
+// Retail stores both rev words through ONE base register (altRev at +0, rev at
+// +4), which MSVC emits only for an internal-linkage aggregate -- the class
+// statics from DECLARE_REVS/INIT_REVS each take their own relocation.  Same
+// lever as BandButton.cpp.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs;
+#define gAltRev gRevs.altRev
+#define gRev gRevs.rev
+
 BandStarDisplay::BandStarDisplay()
     : mNumStars(0), mStars(this), mStarSweepAnims(this), mStarFullTriggers(this),
       mStarGoldTriggers(this), mStarOffsetAnim(this, 0), mEarnStarSfx(this, 0),

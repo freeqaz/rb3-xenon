@@ -884,7 +884,7 @@ void BandPatchMesh::WorkVerts::SetVertsAndFaces(RndMesh *mesh, bool renderTo) {
         unk44.Set(dest->Width(), dest->Height());
         unk44 *= 0.707f;
         unk4c.Set(1.0f / unk44.x, 1.0f / unk44.y);
-        unk54.Set(std::fabs(unk3c.x), std::fabs(unk3c.y));
+        unk54.Set(fabsf(unk3c.x), fabsf(unk3c.y));
         unk5c.Set(1.0f / unk54.x, 1.0f / unk54.y);
         for (int i = 0; i < mesh->Verts().size(); i++) {
             MeshVert *cur = unk10[i];

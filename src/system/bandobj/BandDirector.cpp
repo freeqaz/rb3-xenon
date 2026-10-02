@@ -106,7 +106,7 @@ BandDirector::BandDirector()
       mLightPresetCatBlend(0), mLightPresetInterpEnabled(1), mDisabled(0), mAsyncLoad(0),
       mCurShot(this), mNextShot(this), mIntroShot(this), unke0(-kHugeFloat),
       mDisablePicking(0), unke5(1), unk108(-1.0f), mEndOfSongSec(0), unk110(0),
-      mSongPref(0) {
+      mLipSyncs(), mSongPref(0) {
     static DataNode &banddirector = DataVariable("banddirector");
     banddirector = this;
     mAsyncLoad = !LOADMGR_EDITMODE;
