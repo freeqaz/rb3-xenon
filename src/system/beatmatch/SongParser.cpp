@@ -1334,7 +1334,8 @@ void SongParser::PrepareTrack(const char *track_name, PartInfo *info) {
         if (info->FakeAudio()) {
             mKeyboardDifficulty = 3;
         } else {
-            switch ((signed char)track_name[strlen(track_name) - 1]) {
+            char diffChar = track_name[strlen(track_name) - 1];
+            switch (diffChar) {
             case 'E':
                 mKeyboardDifficulty = 0;
                 break;
