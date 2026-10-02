@@ -142,6 +142,10 @@ namespace Quazal {
         }
 
         bool FlagIsSet(unsigned short f) const { return (m_uiFlags & f) == f; }
+        bool IsDeleted() const { return !FlagIsSet(1); }
+        void SetDOID(DOID oID) { m_dohMyself.SetDOID(oID); }
+        void SetDOClassID(unsigned int ui) { m_dohMyself.SetDOClassID(ui); }
+        DOClass *GetDOClass() const { return GetDOClass(m_dohMyself.GetDOClassID()); }
 
         void AcquireMainReference() {
             volatile ScopedCS cs(s_csRefCount);
