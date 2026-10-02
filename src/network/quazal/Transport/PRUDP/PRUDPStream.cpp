@@ -1,6 +1,17 @@
 // Quazal NetZ - .\Transport\PRUDP\PRUDPStream.cpp
-// Retail TU 0x82AFB6E0..0x82AFFEC0, compiled /Od /Oi- /Ob1 like the rest of the
-// Quazal block. Written from the retail asm.
+// Retail TU 0x82AFB6E0..0x82AFFEC0 (own functions to 0x82AFE9E0, then the
+// COMDAT tail), compiled /Od /Oi- /Ob1. Written from the retail asm.
+//
+// Load-bearing for the /Od frame layouts:
+// - Under /Ob1 an inline candidate the inliner rejects still reserves its
+//   locals in the caller's frame. Scheduler::GetSystemLock (0x82A6F650),
+//   TransportDelegator::GetInstance (0x823EBC90), EndPointTable::Find/Add/
+//   Remove/Trace, ServiceTimeouts and Packet::GetSequenceID are such
+//   candidates, so they are defined inline even though retail calls them.
+// - Local names decide slot order (a hash walk over the names), so they are
+//   chosen to reproduce retail's offsets.
+// - StreamID temporaries are created by implicit conversion at the call;
+//   retail keeps their address in a slot, which a functional cast does not do.
 #include "network/quazal/Transport/PRUDP/PRUDPStream.h"
 #include "Platform/RefCountedObject.h"
 #include "Core/Scheduler.h"
@@ -460,6 +471,7 @@ namespace Quazal {
                     Lock();
                     if (!packet->HasFlag(Packet::FLAG_ACK)) {
                         if (packet->GetSignature() != uiSession) {
+                            // retail branches over an empty block here
                         } else {
                             Unlock();
                             pEndPoint = ServiceConnectionRequest(pSource, packet->GetPayload(), port, id);

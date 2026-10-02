@@ -123,6 +123,9 @@ namespace Quazal {
         char m_pad84[0x138 - 0x84];
     };
 
+    // One more inline wrapper level than qMap: with it /Ob1 stops at the
+    // _Rb_tree constructor (retail calls it out of line at 0x82AFF400) while
+    // the PID/CID multimaps' constructors are fully inlined, as in retail.
     class EndPointMap : public qMap<EndPointUniqueID, PRUDPEndPoint *> {};
 
     class EndPointTable : public EndPointMap {

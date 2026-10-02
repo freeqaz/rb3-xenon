@@ -43,6 +43,8 @@ namespace Quazal {
                 return inst->m_pScheduler;
         }
 
+        // Retail 0x82A6F650. Inline, but /Ob1 rejects it at every call site
+        // (callers reserve its frame), so it is always called out of line.
         static CriticalSection *GetSystemLock() { return &GetInstance()->unk38; }
 
         int unk4; // 0x4
