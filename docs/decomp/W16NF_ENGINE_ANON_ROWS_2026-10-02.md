@@ -155,7 +155,7 @@ and fail").
 `MILO_ASSERT(0, line)` (the Wii-retail dialect); Xbox retail has real bodies. Named, they pair at
 0.7–3.2%; `BandStarDisplay`'s and `BandHighlight`'s rows moved from StreakMeter / FlowWhile
 (FlowWhile.cpp's only block — the heading was removed, a mis-pin). **Writing the five bodies is
-the follow-up**; the oracle for them is retail asm (rb3-Wii stubs them too).
+the follow-up**; their bodies have to be written from the retail asm.
 
 ## 7. Carve changes (symbols.txt)
 
