@@ -7,6 +7,7 @@
 #include "Platform/CriticalSection.h"
 #include "Platform/ScopedCS.h"
 #include "Selection.h"
+#include "Platform/SystemError.h"
 
 namespace Quazal {
     class DataSet;
@@ -68,9 +69,10 @@ namespace Quazal {
             DOHandle, DOHandle, const MasterStationRef &, const qList<DOHandle> *, unsigned int
         );
         void UpdateDatasets(Message *, DOHandle, unsigned char);
-        DOOperation *GetCurrentOperation();
-        OperationManager *GetOperationManager();
+        static DOOperation *GetCurrentOperation();
+        static OperationManager *GetOperationManager();
         bool ExecuteOperation(DOOperation &);
+        bool PerformOperation(DOOperation *);
         bool ExecRemoveFromStore(const RemoveFromStoreOperation &);
         bool ExecAddToStore(const AddToStoreOperation &);
         bool ExecChangeMasterStation(const ChangeMasterStationOperation &);
@@ -89,6 +91,8 @@ namespace Quazal {
         bool IsAWellKnownDO() const;
         unsigned int GetMasterID() const;
         bool CompleteDecreaseRefCount();
+        void DecreaseRefCount(bool);
+        bool Refresh();
         void SetFlag(unsigned short);
         void ClearFlag(unsigned short);
         bool DeleteMainRef();
@@ -129,6 +133,16 @@ namespace Quazal {
         StateFuncFactory DeletedDuplicaState(const QEvent &);
 
         bool FlagIsSet(unsigned short f) const { return (m_uiFlags & f) == f; }
+
+        DOHandle GetHandle() const {
+            unsigned int uiID = m_dohMyself.GetID();
+            if (uiID == 0) {
+                SystemError::SignalError(0, 0, 0xE000000E, 0);
+                return DOHandle(0);
+            } else {
+                return m_dohMyself;
+            }
+        }
 
         void AcquireMainReference() {
             volatile ScopedCS cs(s_csRefCount);

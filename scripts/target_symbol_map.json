@@ -34971,5 +34971,9 @@
  "0x82a70400": "?SpecificRefresh@DuplicatedObject@Quazal@@QAA_NPAVDataSet@2@ABVTime@2@@Z",
  "0x82a70460": "?SpecificUpdate@DuplicatedObject@Quazal@@QAA_NPAVDataSet@2@VTime@2@@Z",
  "0x82a704d0": "?CallApproveFaultRecovery@DuplicatedObject@Quazal@@QAA_NXZ",
- "0x82a70528": "?CallApproveEmigration@DuplicatedObject@Quazal@@QAA_NI@Z"
+ "0x82a70528": "?CallApproveEmigration@DuplicatedObject@Quazal@@QAA_NI@Z",
+ "0x82a71548": "?ExecuteOperation@DuplicatedObject@Quazal@@QAA_NAAVDOOperation@2@@Z",
+ "0x82a71998": "?PerformOperation@DuplicatedObject@Quazal@@QAA_NPAVDOOperation@2@@Z",
+ "0x82a71c48": "?DecreaseRefCount@DuplicatedObject@Quazal@@QAAX_N@Z",
+ "0x82a71ff8": "?Refresh@DuplicatedObject@Quazal@@QAA_NXZ"
 }

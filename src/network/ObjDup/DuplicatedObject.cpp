@@ -6,6 +6,8 @@
 #include "Platform/ScopedCS.h"
 #include "Platform/SystemError.h"
 #include "ObjDup/DOClass.h"
+#include "ObjDup/StationConnections.h"
+#include "Core/OperationManager.h"
 #include "Platform/Time.h"
 
 namespace Quazal {
@@ -97,6 +99,101 @@ namespace Quazal {
     }
 
     DOClass *DuplicatedObject::GetDOClass(unsigned int id) { return DOClass::FindDOClass(id); }
+
+    bool DuplicatedObject::ExecuteOperation(DOOperation &op) {
+        bool bResult;
+        bool bValid;
+        TestInvariants();
+        bValid = true;
+        if (!OperationValidator::GetInstance()->Validate(&op)) {
+            SystemError::SignalError(0, 0, 0xE000001B, 0);
+            op.Trace(0x10u);
+            bValid = false;
+        }
+        if (!ValidOperation(&op)) {
+            bValid = false;
+        }
+        if (!bValid) {
+            if (op.GetType() == 6) {
+                OperationErrorNotifier::GetInstance()->NotifyError(GetHandle(), 0x80010006);
+            }
+            return false;
+        }
+        DOHandle hStation = op.GetImplicitStationConnection();
+        if (hStation != DOHandle()) {
+            int iState = StationConnections::GetInstance()->GetConnectionState(hStation);
+            if (iState == 2) {
+                JobConnectStation *pJob =
+                    StationConnections::GetInstance()->GetConnectionJob(hStation);
+                DOOperation *pClone = op.Clone();
+                pJob->QueueOperation(pClone);
+                return true;
+            }
+            if (iState == 1) {
+                return false;
+            }
+        }
+        GetOperationManager()->OperationBegins(&op);
+        GetOperationManager()->InvokeCallbacks(-0x400, -0x201, &op);
+        if (op.CallsBackOnDataSet()) {
+            CallOperationOnDatasets(&op, (Operation::_Event)0);
+        }
+        OperationBegin(&op);
+        op.Trace((Operation::_Event)0);
+        GetOperationManager()->InvokeCallbacks(-0x1ff, -1, &op);
+        bResult = PerformOperation(&op);
+        GetOperationManager()->InvokeCallbacks(1, 0x1ff, &op);
+        if (op.CallsBackOnDataSet()) {
+            CallOperationOnDatasets(&op, (Operation::_Event)1);
+        }
+        CallOperationEndOnAdapters(&op);
+        OperationEnd(&op);
+        op.Trace((Operation::_Event)1);
+        GetOperationManager()->InvokeCallbacks(0x201, 0x400, &op);
+        GetOperationManager()->PopOperation(&op);
+        TestInvariants();
+        return bResult;
+    }
+
+    bool DuplicatedObject::PerformOperation(DOOperation *pOp) {
+        bool bResult = true;
+        switch (pOp->GetType()) {
+        case 5:
+            DispatchEvent(*pOp);
+            bResult = FaultRecoveryImpl(pOp);
+            break;
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+        case 13:
+        case 14:
+        case 18:
+            DispatchEvent(*pOp);
+            break;
+        }
+        return bResult;
+    }
+
+    void DuplicatedObject::DecreaseRefCount(bool bRelevance) {
+        bool bKeep = true;
+        {
+            ScopedCS cs(s_csRefCount);
+            if (bRelevance) {
+                m_uiRelevanceCount--;
+            }
+            m_uiRefCount--;
+            if (m_uiRefCount == 0) {
+                m_uiRefCount++;
+                bKeep = false;
+            }
+        }
+        if (!bKeep) {
+            CompleteDecreaseRefCount();
+        }
+    }
+
+    bool DuplicatedObject::Refresh() { return RefreshImpl(NULL, Time::GetSessionTime()); }
 
     void DuplicatedObject::OperationBegin(DOOperation *) {}
     void DuplicatedObject::OperationEnd(DOOperation *) {}

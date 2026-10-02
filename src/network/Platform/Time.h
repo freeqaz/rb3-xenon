@@ -14,6 +14,15 @@ namespace Quazal {
         operator unsigned long long() const;
         static Time GetTime();
 
+        typedef unsigned long long (*GetSessionTimeFunc)();
+        static GetSessionTimeFunc s_pfnGetSessionTime;
+        static Time GetSessionTime() {
+            if (s_pfnGetSessionTime)
+                return s_pfnGetSessionTime();
+            else
+                return 0;
+        }
+
         unsigned long long m_ui64Value;
     };
 }
