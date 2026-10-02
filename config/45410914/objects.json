@@ -2177,7 +2177,8 @@
             "network/Platform/StringConversion.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
-                    "/Od"
+                    "/Od",
+                    "/Oi-"
                 ]
             },
             "network/Platform/MemoryManager.cpp": {
