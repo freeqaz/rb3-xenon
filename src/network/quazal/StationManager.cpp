@@ -71,6 +71,7 @@ namespace Quazal {
             unsigned int uiID = mValue & 0x3FFFFF;
             return uiID;
         }
+        unsigned int GetDOClassID() const { return (mValue & 0xFFC00000) >> 22; }
         bool operator<(const DOHandle &h) const { return mValue < h.mValue; }
         bool operator==(const DOHandle &h) const { return mValue == h.mValue; }
         bool operator!=(const DOHandle &h) const { return mValue != h.mValue; }
@@ -183,8 +184,30 @@ namespace Quazal {
         char m_pad8[0x10];
     };
 
+    class DOClass {
+    public:
+        virtual void _v0();
+        virtual void _v1();
+        virtual void _v2();
+        virtual void _v3();
+        virtual void _v4();
+        virtual void _v5();
+        virtual void _v6();
+        virtual void _v7();
+        virtual void _v8();
+        virtual void _v9();
+        virtual void _v10();
+        virtual void _v11();
+        virtual void _v12();
+        virtual void _v13();
+        virtual void _v14();
+        virtual bool IsAKindOf(unsigned int);
+    };
+
     class DuplicatedObject : public RootObject {
     public:
+        static DOClass *GetDOClass(unsigned int);
+
         DOHandle GetHandle() const {
             unsigned int uiID = m_dohMyself.GetID();
             if (uiID == 0) {
@@ -203,7 +226,13 @@ namespace Quazal {
         DOHandle m_dohMyself; // 0x48
     };
 
-    class Station : public DuplicatedObject {
+    class _DO_Station : public DuplicatedObject {
+    public:
+        static unsigned int GetStaticClassID() { return s_uiClassID; }
+        static unsigned int s_uiClassID;
+    };
+
+    class Station : public _DO_Station {
     public:
         static DOHandle GetLocalStation();
         bool IsConnected() const;
@@ -232,7 +261,20 @@ namespace Quazal {
         DORefTemplate(DOHandle h) : DORef(h) {}
         ~DORefTemplate() {}
 
-        bool IsValid() const;
+        bool IsValid() const {
+            if (!m_poReferencedDO) {
+                SystemError::SignalError(0, 0, 0xA0030004, 0);
+                return false;
+            } else {
+                T *pDO = (T *)m_poReferencedDO;
+                if (!DuplicatedObject::GetDOClass(pDO->m_dohMyself.GetDOClassID())
+                         ->IsAKindOf(T::GetStaticClassID())) {
+                    SystemError::SignalError(0, 0, 0xE003000C, 0);
+                    return false;
+                }
+                return true;
+            }
+        }
         T *operator->() const {
             if (!IsValid()) {
                 return 0;
