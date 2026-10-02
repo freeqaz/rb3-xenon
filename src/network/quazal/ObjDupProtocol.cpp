@@ -11,21 +11,15 @@
 // stack layout (a walk over the scope's symbol hash buckets), so they were
 // chosen to reproduce retail's frames.
 
+#include "Core/InstanceControl.h"
+#include "Core/PseudoSingleton.h"
 #include "Platform/qStd.h"
 
 namespace Quazal {
 
-    namespace PseudoSingleton {
-        unsigned int GetCurrentContext();
-        void SetCurrentContext(unsigned int);
-    }
+    void SetCurrentContextIfRequired(unsigned int);
 
-    // Per-context component table; the protocol reaches its siblings through it.
-    class InstanceTable {
-    public:
-        void *GetInstance(unsigned int type, unsigned int context);
-    };
-    extern InstanceTable s_oInstanceTable;
+
 
     class String : public RootObject {
     public:
@@ -220,10 +214,10 @@ namespace Quazal {
     // The type-4 component: the NetZ core object of the current context.
     class NetZCore {
     public:
-        static NetZCore *GetInstance() {
-            unsigned int uiContext = PseudoSingleton::GetCurrentContext();
-            return (NetZCore *)s_oInstanceTable.GetInstance(4, uiContext);
+        static NetZCore *GetInstance(unsigned int uiContext) {
+            return (NetZCore *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(4, uiContext);
         }
+        static NetZCore *GetInstance() { return GetInstance(PseudoSingleton::GetCurrentContext()); }
         BandwidthMonitor *GetBandwidthMonitor() { return m_pBandwidthMonitor; }
         ObjDupProtocol *GetObjDupProtocol() { return m_pObjDupProtocol; }
         class Listener *GetListener() { return m_pListener; }
@@ -242,10 +236,10 @@ namespace Quazal {
 
     class Session {
     public:
-        static Session *GetInstance() {
-            unsigned int uiContext = PseudoSingleton::GetCurrentContext();
-            return (Session *)s_oInstanceTable.GetInstance(4, uiContext);
+        static Session *GetInstance(unsigned int uiContext) {
+            return (Session *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(4, uiContext);
         }
+        static Session *GetInstance() { return GetInstance(PseudoSingleton::GetCurrentContext()); }
         bool IsTerminating();
         bool IsJoining();
     };
@@ -422,7 +416,15 @@ namespace Quazal {
         void ExtractStations(Message *);
     };
 
-    class CallContext;
+    class CallContext {
+    public:
+        virtual void _v0();
+        virtual void AcquireRef();
+        virtual void ReleaseRef();
+
+        void SetResponseMessage(Message *);
+        void SetOutcome(DOHandle, int);
+    };
 
     // The protocol's own register of outstanding RMC calls.
     class CallContextRegister {
@@ -431,8 +433,22 @@ namespace Quazal {
         virtual ~CallContextRegister();
         virtual void Register(void *);
 
-        CallContext *GetCallContextRef(unsigned short);
-        CallContext *FindCallContext(unsigned short);
+        CallContext *GetCallContextRef(unsigned short usCallID) {
+            ScopedCS oCS(GetScheduler()->m_csSystemLock);
+            CallContext *pContext = FindCallContext(usCallID);
+            if (pContext != 0) {
+                pContext->AcquireRef();
+            }
+            return pContext;
+        }
+        CallContext *FindCallContext(unsigned short usCallID) {
+            qMap<unsigned short, CallContext *>::iterator it = m_mapCalls.find(usCallID);
+            if (it != m_mapCalls.end()) {
+                return it->second;
+            } else {
+                return 0;
+            }
+        }
         void CancelAll();
 
         qMap<unsigned short, CallContext *> m_mapCalls; // 0x4
@@ -553,16 +569,6 @@ namespace Quazal {
         }
     };
 
-    class CallContext {
-    public:
-        virtual void _v0();
-        virtual void AcquireRef();
-        virtual void ReleaseRef();
-
-        void SetResponseMessage(Message *);
-        void SetOutcome(DOHandle, int);
-    };
-
     class RMCContext {
     public:
         unsigned int GetTargetObject() { return m_uiTargetObject; }
@@ -664,7 +670,10 @@ namespace Quazal {
 
     class StationURLList {
     public:
-        bool IsEmpty();
+        bool IsEmpty() {
+            ScopedCS oCS(m_cs);
+            return m_lstURLs.empty();
+        }
 
         CriticalSection m_cs; // 0x0
         qList<StationURL> m_lstURLs; // 0x14
@@ -713,9 +722,7 @@ namespace Quazal {
         return pNetZ->m_pTransport;
     }
 
-    namespace SystemError {
-        void SignalError(const char *, unsigned int, unsigned int, unsigned int);
-    }
+
 
     class Protocol : public RootObject {
     public:
@@ -851,8 +858,21 @@ public:
         m_pOperation = pOperation;
         m_pMessage = pMessage;
     }
-    virtual ~JobExecuteDelayedRMC();
-    virtual void Execute();
+    virtual ~JobExecuteDelayedRMC() {
+        delete m_pOperation;
+        delete m_pMessage;
+    }
+    virtual void Execute() {
+        unsigned int uiPosition = m_pMessage->GetPosition();
+        m_pOperation->Prepare();
+        if (!m_pOperation->PostponeOperation()) {
+            m_pOperation->Abort();
+        } else {
+            GetMessage()->SetPosition(uiPosition);
+            m_pOperation->Execute();
+            SetResult(m_pOperation->GetResult());
+        }
+    }
 
     Quazal::Message *GetMessage() { return m_pMessage; }
 
@@ -880,7 +900,7 @@ namespace Quazal {
     }
 
     void ObjDupProtocol::FaultDetection(EndPoint *pEndPoint, unsigned int uiReason) {
-        PseudoSingleton::SetCurrentContext(m_uiContext);
+        SetCurrentContextIfRequired(m_uiContext);
         m_oStationProxy.FaultDetection(pEndPoint);
         DOHandle hStation = pEndPoint->GetStationID();
         if (hStation != DOHandle()) {
@@ -889,7 +909,7 @@ namespace Quazal {
     }
 
     void ObjDupProtocol::PeerDisconnected(EndPoint *pEndPoint) {
-        PseudoSingleton::SetCurrentContext(m_uiContext);
+        SetCurrentContextIfRequired(m_uiContext);
         m_oStationProxy.FaultDetection(pEndPoint);
     }
 
@@ -902,7 +922,7 @@ namespace Quazal {
     void ObjDupProtocol::ReleaseMessage(Message *pMsg) { delete pMsg; }
 
     void ObjDupProtocol::Receive(EndPoint *pEndPoint, Buffer *pBuffer) {
-        PseudoSingleton::SetCurrentContext(m_uiContext);
+        SetCurrentContextIfRequired(m_uiContext);
         if (NetZCore::GetInstance()->GetBandwidthMonitor()->AcceptIncoming(pBuffer)) {
             Message *pMsg = new (__FILE__, 0x8C) Message(pBuffer);
             if (pMsg->IsValid()) {
@@ -956,7 +976,7 @@ namespace Quazal {
 
     bool ObjDupProtocol::Dispatch(JobProcessMessage *pJob, Message *pMsg) {
         bool bResult = false;
-        PseudoSingleton::SetCurrentContext(m_uiContext);
+        SetCurrentContextIfRequired(m_uiContext);
         if (ShouldDispatch(pMsg)) {
             unsigned char ucType = ExtractMessageType(pMsg);
             if (TraceLog::GetInstance()->TraceIsOn(0x200)) {
@@ -1380,23 +1400,6 @@ namespace Quazal {
 
 }
 
-void JobExecuteDelayedRMC::Execute() {
-    unsigned int uiPosition = m_pMessage->GetPosition();
-    m_pOperation->Prepare();
-    if (!m_pOperation->PostponeOperation()) {
-        m_pOperation->Abort();
-    } else {
-        GetMessage()->SetPosition(uiPosition);
-        m_pOperation->Execute();
-        SetResult(m_pOperation->GetResult());
-    }
-}
-
-JobExecuteDelayedRMC::~JobExecuteDelayedRMC() {
-    delete m_pOperation;
-    delete m_pMessage;
-}
-
 namespace Quazal {
 
     Message *ObjDupProtocol::CreateRMCResponseMessage(CallMethodOperation *pOperation) {
@@ -1540,29 +1543,6 @@ namespace Quazal {
             pContext->SetOutcome(hStation, iOutcome);
             pContext->ReleaseRef();
         }
-    }
-
-    CallContext *CallContextRegister::GetCallContextRef(unsigned short usCallID) {
-        ScopedCS oCS(GetScheduler()->m_csSystemLock);
-        CallContext *pContext = FindCallContext(usCallID);
-        if (pContext != 0) {
-            pContext->AcquireRef();
-        }
-        return pContext;
-    }
-
-    CallContext *CallContextRegister::FindCallContext(unsigned short usCallID) {
-        qMap<unsigned short, CallContext *>::iterator it = m_mapCalls.find(usCallID);
-        if (it != m_mapCalls.end()) {
-            return it->second;
-        } else {
-            return 0;
-        }
-    }
-
-    bool StationURLList::IsEmpty() {
-        ScopedCS oCS(m_cs);
-        return m_lstURLs.empty();
     }
 
     bool ObjDupProtocol::ProcessBundleMessage(
