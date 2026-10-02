@@ -149,8 +149,13 @@ namespace Quazal {
         ~ByteStream();
         void Clear();
         bool Append(const unsigned char *, unsigned int, unsigned int);
-        ByteStream &operator<<(const Buffer *);
+        ByteStream &operator<<(const Buffer &);
+        ByteStream &operator<<(const unsigned short &us) {
+            Append((const unsigned char *)&us, sizeof(us), 1);
+            return *this;
+        }
         Buffer *GetBuffer() { return m_pBuffer; }
+        unsigned int GetLength() { return m_pBuffer->GetContentSize(); }
 
         bool m_bErrorHasOccurred; // 0x0
         Buffer *m_pBuffer; // 0x4
@@ -165,12 +170,12 @@ namespace Quazal {
         bool IsValid();
         void Pack(ByteStream *);
         bool IsBundlableWith(Packet *);
-        bool IsVoice() { return (m_byFlags & 0x80) != 0; }
+        bool HasFlag(unsigned char flag) { return (m_byTypeFlags & flag) != 0; }
 
         char m_pad4[0x8 - 0x4];
         Packet *m_pNext; // 0x8
         char m_padC[0x12 - 0xc];
-        unsigned char m_byFlags; // 0x12
+        unsigned char m_byTypeFlags; // 0x12
     };
 
     class PacketIn : public Packet {
@@ -185,21 +190,32 @@ namespace Quazal {
         unsigned short m_usLocalPort; // 0xbc
     };
 
-    class PacketQueue {
+    template <class T>
+    class qChain : public RootObject {
     public:
         class iterator {
         public:
-            iterator(Packet *p) : m_p(p) {}
-            iterator(const iterator &o) : m_p(o.m_p) {}
-            Packet *m_p;
-        };
-        Packet *End() { return m_pEnd; }
-        iterator Dequeue(iterator);
-        void Queue(Packet *);
+            iterator(const T &link) : mLink(link) {}
+            iterator(const iterator &it) : mLink(it.mLink) {}
+            bool operator!=(const iterator &it) const { return !(mLink == it.mLink); }
+            const T &operator*() const { return mLink; }
 
-        Packet *m_pFirst; // 0x0
-        Packet *m_pLast; // 0x4
-        Packet *m_pEnd; // 0x8
+            T mLink; // 0x0
+        };
+
+        iterator begin() { return mItFirst; }
+        iterator end() { return mItEnd; }
+
+        iterator mItFirst; // 0x0
+        iterator mItLast; // 0x4
+        iterator mItEnd; // 0x8
+        unsigned long mNBLinks; // 0xc
+    };
+
+    class PacketQueue : public qChain<Packet *> {
+    public:
+        void Push(Packet *);
+        iterator Erase(iterator);
     };
 
     class EmulationDevice {
@@ -402,14 +418,32 @@ namespace Quazal {
         EmulationDevice m_oInputDevice; // 0x4b4
     };
 
+    class PseudoSingleton {
+    public:
+        static unsigned int GetCurrentContext();
+    };
+
+    class InstanceTable {
+    public:
+        void *GetInstanceFromVector(unsigned int, unsigned int);
+    };
+
     class InstanceControl {
     public:
-        static void *GetInstance(unsigned int);
+        static InstanceTable s_oInstanceTable;
+        char m_pad0[0x8];
+        void *m_pDelegatorInstance; // 0x8
     };
 
     class TransportDelegator {
     public:
-        static TransportDelegator *GetInstance();
+        static TransportDelegator *GetInstance() {
+            unsigned int uiContext = PseudoSingleton::GetCurrentContext();
+            InstanceControl *inst =
+                (InstanceControl *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(1, uiContext);
+            TransportDelegator *pDelegator = inst ? (TransportDelegator *)inst->m_pDelegatorInstance : 0;
+            return pDelegator;
+        }
         RootTransport *GetTransport() { return m_pTransport; }
         char m_pad[0x4c];
         RootTransport *m_pTransport; // 0x4c
@@ -545,61 +579,56 @@ bool QueuingSocket::SendBuffer(Buffer *pBuffer, InetAddress *pAddress) {
 }
 
 Buffer *QueuingSocket::CreateBufferFromPacketQueue(PacketQueue *pQueue, unsigned int uiMaxSize) {
-    Packet *pNext = pQueue->m_pFirst;
-    Packet *pPacket = pNext;
+    PacketQueue::iterator it = pQueue->begin();
+    Packet *pCurrentPacket = *it;
     ByteStream *pStream = 0;
-    ByteStream *pVoiceStream = 0;
+    ByteStream *pVDPVoiceStream = 0;
     unsigned int uiNbPackets = 0;
-    if (pPacket && pPacket->IsValid()) {
+    if (pCurrentPacket && pCurrentPacket->IsValid()) {
 #line 167
         pStream = new (__FILE__, __LINE__) ByteStream();
-        if (IsVDP()) {
-            unsigned short usHeader = 0;
-            pStream->Append((const unsigned char *)&usHeader, 2, 1);
-        }
+        if (IsVDP())
+            *pStream << (unsigned short)0;
         ByteStream oPacketStream;
-        while (pNext != pQueue->End()) {
+        while (it != pQueue->end()) {
             oPacketStream.Clear();
-            pPacket->Pack(&oPacketStream);
+            pCurrentPacket->Pack(&oPacketStream);
             unsigned int uiVoiceSize = 0;
-            if (pVoiceStream)
-                uiVoiceSize = pVoiceStream->m_pBuffer->GetContentSize();
-            if (pStream->m_pBuffer->GetContentSize()
-                    + oPacketStream.m_pBuffer->GetContentSize() + uiVoiceSize
-                <= uiMaxSize) {
-                if (IsVDP() && pPacket->IsVoice()) {
-                    if (!pVoiceStream)
+            if (pVDPVoiceStream)
+                uiVoiceSize = pVDPVoiceStream->GetLength();
+            if (pStream->GetLength() + oPacketStream.GetLength() + uiVoiceSize <= uiMaxSize) {
+                if (IsVDP() && pCurrentPacket->HasFlag(0x80)) {
+                    if (!pVDPVoiceStream)
 #line 188
-                        pVoiceStream = new (__FILE__, __LINE__) ByteStream();
-                    *pVoiceStream << oPacketStream.GetBuffer();
+                        pVDPVoiceStream = new (__FILE__, __LINE__) ByteStream();
+                    *pVDPVoiceStream << *oPacketStream.GetBuffer();
                 } else {
-                    *pStream << oPacketStream.GetBuffer();
+                    *pStream << *oPacketStream.GetBuffer();
                 }
-                pPacket->AcquireRef();
-                pNext = pQueue->Dequeue(pNext).m_p;
+                pCurrentPacket->AcquireRef();
+                it.mLink = *pQueue->Erase(it);
                 uiNbPackets++;
-                while (pNext != pQueue->End() && !pNext->IsBundlableWith(pPacket)) {
-                    pNext = pNext->m_pNext;
+                while (it != pQueue->end() && !(*it)->IsBundlableWith(pCurrentPacket)) {
+                    it.mLink = (*it)->m_pNext;
                 }
-                pPacket->ReleaseRef();
-                pPacket = pNext;
+                pCurrentPacket->ReleaseRef();
+                pCurrentPacket = *it;
             } else {
-                pNext = pQueue->End();
+                it = pQueue->end();
             }
         }
         if (IsVDP()) {
-            unsigned short usSize = pStream->m_pBuffer->GetContentSize() - 2;
+            unsigned short usSize = pStream->GetLength() - 2;
             pStream->GetBuffer()->AppendData(&usSize, 2, 0);
         }
-        if (pVoiceStream) {
-            *pStream << pVoiceStream->GetBuffer();
-            delete pVoiceStream;
+        if (pVDPVoiceStream) {
+            *pStream << *pVDPVoiceStream->GetBuffer();
+            delete pVDPVoiceStream;
         }
     }
     Buffer *pBuffer = 0;
     if (pStream && pStream->GetBuffer()) {
-        unsigned int uiSize = pStream->m_pBuffer->GetContentSize();
-        GetTransport()->m_oCounters.Add(0, (uiSize + 28) * 8);
+        GetTransport()->m_oCounters.Add(0, (pStream->GetLength() + 28) * 8);
         GetTransport()->m_oCounters.Add(2, 1);
         pBuffer = pStream->GetBuffer();
         pBuffer->AcquireRef();
@@ -671,7 +700,7 @@ unsigned int QueuingSocket::FillPacketQueueFromBuffer(
         if (pPacket) {
             uiNbPackets++;
             pPacket->SetLocalPort(GetAddress()->GetPortNumber());
-            pQueue->Queue(pPacket);
+            pQueue->Push(pPacket);
         } else {
             bDone = true;
         }
