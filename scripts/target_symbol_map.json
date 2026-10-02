@@ -35012,5 +35012,7 @@
  "0x82a71c48": "?ReleaseReference@DuplicatedObject@Quazal@@QAAX_N@Z",
  "0x82a71ff8": "?Refresh@DuplicatedObject@Quazal@@QAA_NXZ",
  "0x82a71d60": "?ExecAddToStore@DuplicatedObject@Quazal@@QAAXABVAddToStoreOperation@2@@Z",
- "0x82a71a80": "?ExecRemoveFromStore@DuplicatedObject@Quazal@@QAAXABVRemoveFromStoreOperation@2@@Z"
+ "0x82a71a80": "?ExecRemoveFromStore@DuplicatedObject@Quazal@@QAAXABVRemoveFromStoreOperation@2@@Z",
+ "0x82a73010": "?SendToSomeDuplicas@DuplicatedObject@Quazal@@QAAXPAVSelection@2@PAVMessage@2@I@Z",
+ "0x82a73128": "?GetInstance@BundlingPolicy@Quazal@@SAPAV12@XZ"
 }
