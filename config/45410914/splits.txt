@@ -14265,8 +14265,8 @@ network/quazal/Core/ByteStream.cpp:
 	.text       start:0x82A97EF8 end:0x82A987D0
 
 network/quazal/RootDODDL.cpp:
-	.pdata      start:0x822523D0 end:0x82252420
-	.text       start:0x82A99368 end:0x82A997F4
+	.pdata      start:0x822523D0 end:0x82252468
+	.text       start:0x82A99368 end:0x82A99C48
 
 network/quazal/DOClass.cpp:
 	.pdata      start:0x822524C0 end:0x822524E8
@@ -14281,8 +14281,8 @@ network/quazal/RMCContext.cpp:
 	.text       start:0x82A9D0B8 end:0x82A9D19C
 
 network/quazal/DOCallContext.cpp:
-	.pdata      start:0x822527F0 end:0x82252838
-	.text       start:0x82AA0E48 end:0x82AA15E8
+	.pdata      start:0x822527C0 end:0x82252840
+	.text       start:0x82AA06E0 end:0x82AA1650
 
 network/quazal/Transport/Interface/StationURL.cpp:
 	.pdata      start:0x82252840 end:0x82252C08

@@ -2240,11 +2240,27 @@
                 ]
             },
             "network/quazal/Core/ByteStream.cpp": "NonMatching",
-            "network/quazal/RootDODDL.cpp": "NonMatching",
+            "network/quazal/RootDODDL.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/EHs-c-",
+                    "/Ob1"
+                ]
+            },
             "network/quazal/DOClass.cpp": "NonMatching",
             "network/quazal/DOCoreTypes.cpp": "NonMatching",
             "network/quazal/RMCContext.cpp": "NonMatching",
-            "network/quazal/DOCallContext.cpp": "NonMatching",
+            "network/quazal/DOCallContext.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/EHs-c-",
+                    "/Ob1"
+                ]
+            },
             "network/quazal/Transport/Interface/StationURL.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
