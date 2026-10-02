@@ -2219,7 +2219,16 @@
                     "/Ob1"
                 ]
             },
-            "network/quazal/Session.cpp": "NonMatching",
+            "network/quazal/Session.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/EHs-c-",
+                    "/GR-"
+                ]
+            },
             "network/quazal/Station.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [

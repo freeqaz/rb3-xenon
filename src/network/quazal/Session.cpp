@@ -89,16 +89,16 @@ namespace Quazal {
         static unsigned int GetProductType();
     };
 
+    // The registered Xbox session keys (list at 0x82E10420).
     class XboxSessionKeys {
     public:
-        static XboxSessionKeys *GetInstance() { return s_oInstance.Get(); }
+        static unsigned int GetNbKeys() { return s_lstKeys.size(); }
         static void Create();
         static void RegisterKey(const XNKID *, const XNKEY *);
         static const XNKID *GetKID();
         static const XNKEY *GetKey();
 
-        XboxSessionKeys *Get();
-        static XboxSessionKeys s_oInstance;
+        static qList<XboxSessionKeys *> s_lstKeys;
     };
 
     class DOClassesTable : public RootObject {
@@ -217,6 +217,8 @@ namespace Quazal {
     inline bool operator!=(const Time &a, const Time &b) { return a.m_ui64Value != b.m_ui64Value; }
 
     inline bool IsReferencing(const DORef &r) { return r.GetDOPtr() != NULL; }
+    inline DOHandle GetRefHandle(const DORef &r) { return r.m_hReferencedDO; }
+    inline const char *GetURLString(const StationURL &url) { return url.GetURL(); }
     inline bool UseIsAllowed(const SystemComponent::Use &u) { return u.mComponentExists; }
 
     extern int XNetQosLookupKey(const XNKID *, int, int, int, int);
@@ -329,7 +331,7 @@ namespace Quazal {
             return false;
         }
         ScopedCS cs(Scheduler::GetInstance()->unk38);
-        if (XboxSessionKeys::GetInstance() == NULL) {
+        if (XboxSessionKeys::GetNbKeys() == 0) {
             XboxSessionKeys::Create();
         }
         if (bListen) {
@@ -493,7 +495,7 @@ namespace Quazal {
                 uiRVCID = (*it).GetRVConnectionID();
             }
         }
-        if (XboxSessionKeys::GetInstance() == NULL) {
+        if (XboxSessionKeys::GetNbKeys() == 0) {
             for (qList<StationURL>::const_iterator it = lstURLs.begin(); it != lstURLs.end();
                  it++) {
                 XNKID kid;
@@ -587,7 +589,7 @@ namespace Quazal {
             if (*it == pfFactory) {
                 it = s_lstWellKnownDOsFactories.GetValue().erase(it);
             } else {
-                it++;
+                ++it;
             }
         }
     }
@@ -617,21 +619,21 @@ namespace Quazal {
             StationURL url(refMaster->GetStationURL(0));
             if (bWithURL) {
                 bool bValid = true;
-                if (XboxSessionKeys::GetInstance() == NULL) {
+                if (XboxSessionKeys::GetNbKeys() == 0) {
                     bValid = false;
                 } else {
                     url.SetXNKid(XboxSessionKeys::GetKID());
                     url.SetXNKey(XboxSessionKeys::GetKey());
                 }
                 if (bValid) {
-                    if (refMaster.m_hReferencedDO == Station::GetLocalStation()) {
+                    if (GetRefHandle(refMaster) == Station::GetLocalStation()) {
                         unsigned short usPort;
                         if (ObjDupProtocol::GetInstance()->IsListening(&usPort)) {
                             url.SetPortNumber(usPort);
                         }
                     }
                     if (url.IsValid()) {
-                        GetLocalSessionDescription()->SetURL(url.GetURL());
+                        GetLocalSessionDescription()->SetURL(GetURLString(url));
                     }
                 }
             }

@@ -5,7 +5,10 @@
 namespace Quazal {
     class DOHandle : public RootObject {
     public:
-        DOHandle(unsigned int val = 0) : mValue(val) {}
+        DOHandle() : mValue(0) {}
+        // Out of line in retail: every DOHandle(unsigned) is a call (to the
+        // ICF survivor at 0x82A478D0), while the default ctor is expanded.
+        DOHandle(unsigned int);
         DOHandle(const DOHandle &h) : mValue(h.mValue) {}
         ~DOHandle() {}
         // User-declared and inline: retail's assignments go through it with the
