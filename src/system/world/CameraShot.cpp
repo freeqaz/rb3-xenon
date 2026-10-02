@@ -896,9 +896,9 @@ void CamShotCrowd::AddCrowdChars(
     mCrowd->SetFullness(1, mCrowd->mCharFullness);
 
     if (!crowdChars) {
-        ObjList<WorldCrowd::CharData>::iterator it = mCrowd->mCharacters.begin();
+        std::list<WorldCrowd::CharData>::const_iterator it = mCrowd->GetCharacters().begin();
         int charIdx = 0;
-        for (; it != mCrowd->mCharacters.end(); ++it, ++charIdx) {
+        for (; it != mCrowd->GetCharacters().end(); ++it, ++charIdx) {
             int instIdx = 0;
             RndMultiMesh::InstanceList &insts = it->mMMesh->Instances();
             for (RndMultiMesh::InstanceList::iterator instIt = insts.begin();
@@ -911,8 +911,9 @@ void CamShotCrowd::AddCrowdChars(
         FOREACH_PTR (it, crowdChars) {
             RndMultiMesh *mmesh = it->first;
             int charIdx = 0;
-            for (ObjList<WorldCrowd::CharData>::iterator it2 = mCrowd->mCharacters.begin();
-                 it2 != mCrowd->mCharacters.end() && it2->mMMesh != mmesh; it2++) {
+            for (std::list<WorldCrowd::CharData>::const_iterator it2 =
+                     mCrowd->GetCharacters().begin();
+                 it2 != mCrowd->GetCharacters().end() && it2->mMMesh != mmesh; it2++) {
                 charIdx++;
             }
             if (charIdx != mCrowd->mCharacters.size()) {
