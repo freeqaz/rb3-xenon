@@ -25249,7 +25249,7 @@
  "0x827ee7c0": "??$__insertion_sort@PAUMidi@MidiReader@@U12@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUMidi@MidiReader@@00P6A_NABU12@1@Z@Z",
  "0x827ee820": "??$__partial_sort@PAUMidi@MidiReader@@U12@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUMidi@MidiReader@@000P6A_NABU12@1@Z@Z",
  "0x827ee8c0": "??1?$_Vector_base@UMidi@MidiReader@@V?$StlNodeAlloc@UMidi@MidiReader@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
- "0x827ee8f0": "?_M_insert_overflow_aux@?$vector@UTempoInfoPoint@MultiTempoTempoMap@@V?$StlNodeAlloc@UTempoInfoPoint@MultiTempoTempoMap@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUTempoInfoPoint@MultiTempoTempoMap@@ABU34@ABU__false_type@2@I_N@Z",
+ "0x827ee8f0": "?_M_insert_overflow_aux@?$vector@UMidi@MidiReader@@V?$StlNodeAlloc@UMidi@MidiReader@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUMidi@MidiReader@@ABU34@ABU__false_type@2@I_N@Z",
  "0x827eeac0": "??$__final_insertion_sort@PAUMidi@MidiReader@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUMidi@MidiReader@@0P6A_NABU12@1@Z@Z",
  "0x827eeb30": "??0MidiReader@@QAA@AAVBinStream@@AAVMidiReceiver@@PBD@Z",
  "0x827eec98": "??$__introsort_loop@PAUMidi@MidiReader@@U12@HP6A_NABU12@0@Z@stlpmtx_std@@YAXPAUMidi@MidiReader@@00HP6A_NABU12@1@Z@Z",
