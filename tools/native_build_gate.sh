@@ -386,6 +386,27 @@ if [ -n "${NATIVE_GATE_ONLY:-}" ]; then
     partial=1
 fi
 
+# ------------------------------------------------- truncated objects -------
+# A native build KILLED mid-compile (session ended, Ctrl-C, SIGKILL) can leave
+# 0-byte `.o` files whose mtime is newer than their sources, so ninja calls them
+# up to date and every later run links an EMPTY object. Measured 2026-10-02: a
+# gate run killed at 21:14:31 left three (PlatformMgr_Native and SongParser in
+# rb3-score2, BeatMap in rb3-score3); the next gate run in that tree FAILED
+# 16/18 on undefined PlatformMgr/BeatMap symbols, and passed 18/18 once they
+# were gone. Reproduced by truncating rb3-score3's BeatMap.cpp.o while keeping
+# its mtime: ninja leaves it alone, the old gate still read PASS 18/18 because
+# the binary predated the truncation, and the next relink FAILED. So the
+# verdict depended on whether anything happened to relink. A fresh mtime does
+# NOT reproduce it (ninja's deps log then marks the object stale and rebuilds
+# it). No real compile emits a 0-byte ELF object (an empty TU still carries
+# headers), so deleting them is safe: ninja rebuilds them below.
+mapfile -t zero_objs < <(find "$BUILD" -name '*.o' -size 0 2>/dev/null)
+if [ ${#zero_objs[@]} -gt 0 ]; then
+    echo "NATIVE GATE: removed ${#zero_objs[@]} zero-byte object(s) left by an interrupted build:"
+    printf '  %s\n' "${zero_objs[@]#"$BUILD"/}"
+    rm -f -- "${zero_objs[@]}"
+fi
+
 # ------------------------------------------------------------- build -------
 # -k 0: keep going after failures, so INDEPENDENT breakages are all reported in
 # one run instead of the first one masking the rest.

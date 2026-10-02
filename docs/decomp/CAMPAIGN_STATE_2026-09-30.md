@@ -1,5 +1,9 @@
 # CAMPAIGN STATE — 2026-09-30 (fourth edition)
 
+> **SUPERSEDED** for numbers and priorities by
+> [CAMPAIGN_STATE_2026-10-02.md](CAMPAIGN_STATE_2026-10-02.md) (ceiling 61.745%,
+> 88.36% of it). Kept as the dated record of what moved +499,860 B on 09-30.
+
 > Replaces [CAMPAIGN_STATE_2026-08-17.md](CAMPAIGN_STATE_2026-08-17.md) as the
 > current-state doc. That edition's partition and arc history stay valid as a
 > dated record; its **strategic claim "there is no big lever left" is refuted

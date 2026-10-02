@@ -767,6 +767,13 @@ balance check at EOF that fires for any future desync cause). ⇒ **"it's only a
 comment, no need to re-gate" is NOT safe**, and the lane's gate run must be its
 **last** action, not its second-to-last.
 
+🧹 **The gate deletes 0-byte `.o` files before building (2026-10-02).** A native
+build killed mid-compile leaves empty objects that ninja treats as up to date,
+so a later relink fails on undefined symbols (`rb3-score2/3`: `BeatMap`,
+`PlatformMgr`), while a run that happens not to relink still reads PASS. The
+gate prints `removed N zero-byte object(s)` when it hits this; if you see it,
+an earlier build in that tree was interrupted.
+
 📋 **Paste the gate's own summary line into your write-up — do not paraphrase
 the verdict.** The last line of every run, on every exit path, is
 
@@ -1222,11 +1229,11 @@ across this lane's sabotage cycles. Two clean builds here do not differ at all.
   four thresholds so it stays visibly one: `thr≤4 = 0 units · ≤5 = 0 · ≤6 = 104
   · ≤7 = 104`. Scaffold bytes are stable (179,948 B / 104 units vs 08-17's
   180,196 / 105 — one unit of legitimate drift, not a methodology change).
-  ✅✅✅ **RE-MEASURED 2026-09-30 at main `61bb82227`: ceiling 61.537%
-  (6,305,760 B), `matched_code` 4,677,848 B = 45.650580% = 74.18% OF THE
-  CEILING, gap 1,627,912 B.** The ceiling moved +0.002 pp, our share +8.5 pp in
-  two weeks (+499,860 B on 09-30 alone). Use these figures; current-state doc:
-  `docs/decomp/CAMPAIGN_STATE_2026-09-30.md`.
+  ✅✅✅ **RE-MEASURED 2026-10-02 at main `2b066acc8` (lane W16-NP): ceiling
+  61.745% (6,327,260 B), `matched_code` 5,590,840 B = 54.559% = 88.36% OF THE
+  CEILING, gap 736,420 B.** Earlier readings: 09-30 61.537% / 74.18%, 10-01
+  61.537% / 74.51%. Current-state doc: `docs/decomp/CAMPAIGN_STATE_2026-10-02.md`
+  (it partitions the remaining gap by blocker). Re-measure; do not inherit.
   ⚠ **`tools/ceiling_recompute.py` takes FOUR positional args** —
   `main(report_path, objdiff_path, root, label)`. Fewer raises a bare
   `IndexError: list index out of range`, which reads like a data problem and is
