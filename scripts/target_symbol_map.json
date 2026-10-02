@@ -34809,5 +34809,6 @@
  "0x822e8c50": "??$__uninitialized_copy@PAV?$ObjPtr@VRndPropAnim@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VRndPropAnim@@@@PAV1@00ABU__false_type@0@@Z",
  "0x822e8cf8": "??$__uninitialized_copy@PAV?$ObjPtr@VEventTrigger@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VEventTrigger@@@@PAV1@00ABU__false_type@0@@Z",
  "0x822ea9f8": "??$_M_allocate_and_copy@PBV?$ObjPtr@VRndPropAnim@@@@@?$vector@V?$ObjPtr@VRndPropAnim@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPropAnim@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndPropAnim@@@@IPBV2@0@Z",
- "0x822a90e8": "??$_Copy_Construct@VOldColorOption@@@stlpmtx_std@@YAXPAVOldColorOption@@ABV1@@Z"
+ "0x822a90e8": "??$_Copy_Construct@VOldColorOption@@@stlpmtx_std@@YAXPAVOldColorOption@@ABV1@@Z",
+ "0x824cd6c8": "??$_Copy_Construct@UPresetOverride@WorldDir@@@stlpmtx_std@@YAXPAUPresetOverride@WorldDir@@ABU12@@Z"
 }
