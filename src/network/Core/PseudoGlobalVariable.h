@@ -89,6 +89,9 @@ namespace Quazal {
                 mValueInContextList[uiContext] = value;
             }
         }
+        // Defined out of class (below), so /Ob1 never expands it: retail calls
+        // it out of line (0x82B4BCF8 for a 4-byte T).
+        T &GetValue(unsigned int uiContext);
 
         T &GetValue() {
             unsigned int uiContext = PseudoSingleton::GetCurrentContext();
@@ -103,4 +106,13 @@ namespace Quazal {
         T mValueInDefaultContext;
         T mDefaultValue;
     };
+
+    template <class T>
+    T &PseudoGlobalVariable<T>::GetValue(unsigned int uiContext) {
+        if (uiContext == 0) {
+            return mValueInDefaultContext;
+        } else {
+            return mValueInContextList[uiContext];
+        }
+    }
 }
