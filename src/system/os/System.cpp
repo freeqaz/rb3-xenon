@@ -290,6 +290,10 @@ int SystemMs() {
     return gSystemMs;
 }
 
+#ifndef HX_NATIVE
+void StageKitPoll(); // retail 0x82521ED0, body not in source
+#endif
+
 void SystemPoll(bool b1) {
 #ifdef HX_NATIVE
     static Timer *_t = AutoTimer::GetTimer("system_poll");
@@ -327,9 +331,9 @@ void SystemPoll(bool b1) {
 #else
     // RB3 retail 0x82510270: no system_poll AutoTimer, no gUsingCD-gated
     // HolmesClientPoll and no WebSvcMgr poll (DC3-era, kept for native).
-    // Retail ends with an unidentified stage-kit poll (fn_82521ED0, which feeds
-    // JoypadStageKitSetRaw from a 32-entry ring) with no known source; it is
-    // not called here.
+    // Retail ends with a stage-kit poll (fn_82521ED0, which feeds
+    // JoypadStageKitSetRaw from a 32-entry ring). Its body has no source here
+    // and its retail name is unknown; StageKitPoll below stands for it.
     Timer::ClearSlowFrame();
     SystemMs();
     TheDebug.Poll();
@@ -351,6 +355,7 @@ void SystemPoll(bool b1) {
     ThePlatformMgr.Poll();
     TheVirtualKeyboard.Poll();
     TheContentMgr.PollRefresh();
+    StageKitPoll();
 #endif
 }
 
