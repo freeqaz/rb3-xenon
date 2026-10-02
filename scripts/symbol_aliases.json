@@ -88128,7 +88128,8 @@
     "??0?$_Vector_base@PAVFile@@V?$StlNodeAlloc@PAVFile@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@PAVFile@@@1@@Z",
     "??0?$_Vector_base@PAVShortcutNode@@V?$StlNodeAlloc@PAVShortcutNode@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@PAVShortcutNode@@@1@@Z",
     "??0?$_Vector_base@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VSymbol@@@1@@Z",
-    "??0?$_Vector_base@PAVDataArray@@V?$StlNodeAlloc@PAVDataArray@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@PAVDataArray@@@1@@Z"
+    "??0?$_Vector_base@PAVDataArray@@V?$StlNodeAlloc@PAVDataArray@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@PAVDataArray@@@1@@Z",
+    "??0?$_Vector_base@PAXV?$StlNodeAlloc@PAX@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@PAX@1@@Z"
    ],
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. ",
    "admitted": [
@@ -88136,6 +88137,11 @@
      "spelling": "??0?$_Vector_base@PAVDataArray@@V?$StlNodeAlloc@PAVDataArray@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@PAVDataArray@@@1@@Z",
      "lane": "W16-KD 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED only on the template-twin relocation names, which the chase discharges). Retail call-site witness: the charged site in our caller (Locale::Init, Song::SyncState, NetCacheMgr::AddLoaderRef, Archive::Merge, Loader ctor, FileCache ctor/dtor, SetSystemArgs) branches to the survivor at the position of this spelling."
+    },
+    {
+     "spelling": "??0?$_Vector_base@PAXV?$StlNodeAlloc@PAX@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@PAX@1@@Z",
+     "lane": "W16-NO 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 REFUTED only as a template twin (masked bodies equal, relocation target names differ), CHASED T1 PROVEN with 0 CYCLE-ASSUMED slots (gChunkAlloc DATA-ACCEPTED, ??2@YAPAXI@Z / ??2ChunkAllocator SLOT-FOLD-OK, MemOrPoolAlloc / MemOrPoolAllocSTL SLOT-FOLD-OK); size gate ACCEPT (96 == 96). Retail call-site witness: XMAReader::Poll (0x82B6AEB0) constructs its per-channel read-pointer vector<void*>(TableSum()) with `addi r3,r31,0x58; bl 0x82803280`, the position of this spelling in our Poll."
     }
    ]
   },
