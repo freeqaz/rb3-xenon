@@ -178,7 +178,8 @@ void BandIKEffector::SetName(const char *cc, ObjectDir *dir) {
 
 void BandIKEffector::SetDeformClip(Hmx::Object *o) {
     static Symbol bc("BandCharacter");
-    if (o->ClassName() == bc) {
+    Symbol name = o->ClassName();
+    if (name == bc) {
         sDeformClip =
             BandCharDesc::GetDeformClip(dynamic_cast<BandCharacter *>(o)->mGender);
     } else
