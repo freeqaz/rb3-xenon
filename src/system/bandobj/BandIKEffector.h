@@ -54,7 +54,7 @@ protected:
     // Retail mangles these as protected (IAA...) — match the target_symbol_map.
     int GetType();
     float GetGroundHeight(RndTransformable *);
-    int MeasureLengths(
+    bool MeasureLengths(
         RndTransformable *&handBone,
         RndTransformable *&elbowBone,
         float &inv2ab,

@@ -186,7 +186,7 @@ void BandIKEffector::SetDeformClip(Hmx::Object *o) {
         sDeformClip = 0;
 }
 
-int BandIKEffector::MeasureLengths(
+bool BandIKEffector::MeasureLengths(
     RndTransformable *&handBone,
     RndTransformable *&elbowBone,
     float &inv2ab,
@@ -195,16 +195,16 @@ int BandIKEffector::MeasureLengths(
 ) {
     handBone = mEffector->TransParent();
     if (!handBone)
-        return 0;
+        return false;
     elbowBone = handBone->TransParent();
     if (!elbowBone)
-        return 0;
+        return false;
     float a = mEffector->mLocalXfm.v.x;
     float b = handBone->mLocalXfm.v.x;
     aPlusb = a + b;
     aaPlusbb = a * a + b * b;
     inv2ab = 1.0f / (2.0f * a * b);
-    return 1;
+    return true;
 }
 
 void BandIKEffector::NeutralLocalPos(RndTransformable *bone, Vector3 &pos) {
@@ -260,7 +260,8 @@ void BandIKEffector::NeutralLocalXfm(RndTransformable *bone, Transform &tf) {
 
 void BandIKEffector::NeutralWorldXfm(RndTransformable *trans, Transform &tf) {
     RndTransformable *parent = trans->TransParent();
-    if (!parent) {
+    // retail tests the parent with a signed compare (cmpwi cr6,r3,0)
+    if ((int)parent == 0) {
         SetDeformClip(trans);
         NeutralLocalXfm(trans, tf);
     } else {
@@ -885,9 +886,7 @@ void BandIKEffector::IKElbow(const Vector3 &hand) {
     Hmx::Matrix3 m;
     MakeRotMatrix(quat.q, m);
     Multiply(m, shoulderXfm.m, shoulderXfm.m);
-    shoulderXfm.v.x += quat.v.x;
-    shoulderXfm.v.y += quat.v.y;
-    shoulderXfm.v.z += quat.v.z;
+    Add(shoulderXfm.v, quat.v, shoulderXfm.v);
     shoulder->SetWorldXfm(shoulderXfm);
 
     Transform elbowOut;

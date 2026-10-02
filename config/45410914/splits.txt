@@ -6083,13 +6083,13 @@ Pollable.cpp:
 	.text       start:0x827187F8 end:0x82718A30
 
 MidiReader.cpp:
-	.pdata      start:0x82244A28 end:0x82244AB8
+	.pdata      start:0x82244A28 end:0x82244AC8
 	.pdata      start:0x82244AC8 end:0x82244B00
 	.pdata      start:0x82244B00 end:0x82244B08
 	.pdata      start:0x82244B08 end:0x82244B80
 	.pdata      start:0x82244B80 end:0x82244B88
 	.pdata      start:0x82244B88 end:0x82244B90
-	.text       start:0x827EDDA0 end:0x827EE8F0
+	.text       start:0x827EDDA0 end:0x827EEABC
 	.text       start:0x827EEABC end:0x827EED68
 	.text       start:0x827EED68 end:0x827EEDE8
 	.text       start:0x827EEDE8 end:0x827EF930
@@ -7835,11 +7835,9 @@ DOFProc_NG.cpp:
 	.text       start:0x82B8B860 end:0x82B8C440
 
 MultiTempoTempoMap.cpp:
-	.pdata      start:0x82244AB8 end:0x82244AC8
 	.pdata      start:0x8225EAC8 end:0x8225EB48
 	.pdata      start:0x8225EB48 end:0x8225EB50
 	.pdata      start:0x8225EB50 end:0x8225EB60
-	.text       start:0x827EE8F0 end:0x827EEABC
 	.text       start:0x82BBA114 end:0x82BBA168
 	.text       start:0x82BBA168 end:0x82BBAAC0
 	.text       start:0x82BBAAC0 end:0x82BBAB0C
