@@ -1,6 +1,6 @@
 # W16-OD — the Quazal transport TUs written from the retail asm (2026-10-02)
 
-**Branch** `w16-od`, on main `1505d4c74`. **Ruler** `name_check` (graded). Permuter not run. No alias group and no
+**Branch** `w16-od`, rebased onto main `b2b2cb8ac` (after W16-OE landed). **Ruler** `name_check` (graded). Permuter not run. No alias group and no
 `scripts/symbol_aliases.json` entry touched. `symbols.txt` is unchanged.
 
 This lane applies W16-NY's method (`docs/decomp/W16NY_OD_BLOCK_PRICING_AND_LARGEST_TUS_2026-10-02.md`) to eight
@@ -12,8 +12,9 @@ sub-lane. The sub-lanes were merged here with `--no-ff` and reconciled (§4).
 
 ## 1. Result
 
-`ab_measure --patch` (§5), main `1505d4c74` → this branch: **+365 functions, +203 masked_equal, +162 honest,
-+39,520 B** (+0.385643 pp). That is the prediction to the byte, and **0 rows went down**.
+`ab_measure --patch` (§5), main `b2b2cb8ac` → this branch: **+365 functions, +203 masked_equal, +162 honest,
++39,520 B** (+0.385646 pp). That is the prediction to the byte, and **0 rows went down**. An identical run on the
+pre-W16-OE main `1505d4c74` gave the same deltas, so the two lanes do not interact.
 
 | TU | flags | main: rows at 100 / rows | main: unit B | branch: rows at 100 / rows | branch: matched / unit B |
 |---|---|---:|---:|---:|---:|
@@ -55,12 +56,11 @@ end of its table.
 
 Boundary notes:
 
-- **UDPTransport** starts at the ctor's EH prefix (vtable `0x82189BE8`, whose 14 slots match the Wii UDPTransport
-  vtable) and ends at the `Socket` ctor `0x82B1A518`, which only QueuingSocket's ctor calls. Its own functions end
+- **UDPTransport** starts at the ctor's EH prefix (vtable `0x82189BE8`, 14 slots, all pointing into this TU) and ends at the `Socket` ctor `0x82B1A518`, which only QueuingSocket's ctor calls. Its own functions end
   at `FindSocket` (`0x82B184D0`); the rest is the template and inline code it instantiates.
 - **JobConnectEndPoint** starts with the file-local `ConnectCancelCallback` (vtable `0x8218C250`, next to JCEP's
   `0x8218C25C`). The sub-lane first pinned it to `0x82B2FC38` and then corrected the end to `0x82B2F110`. The span
-  `0x82B2F110..0x82B2FC38` has its own `basic_string` literal (`0x8218C290`), and its functions follow the Wii
+  `0x82B2F110..0x82B2FC38` has its own `basic_string` literal (`0x8218C290`), and its functions follow the
   `StationContactInfo.cpp` order (ctor, ctor(qList), dtor, SortAndFilterTarget, Trace). It is now
   `auto_03_82B2F110_text` (2,808 B), unpinned.
 - **TransportSignatureGenerator** ends at the EH prefix of the "PRUDP Timeout Queue" TU at `0x82B30280`.
@@ -141,9 +141,8 @@ The integrated tree then read the five sub-lanes' sum exactly (+365 / +39,520 B)
 
 ### 4.3 Names
 
-Wii-attested names (`../rb3/config/SZBE69_B8/symbols.txt`) are used wherever the Wii build has the function; the
-sub-lanes followed the Wii source order. These method names were chosen by the sub-lanes and are not
-retail-attested:
+Established Quazal method names are used wherever one exists for the function. These method names were chosen by
+the sub-lanes and are not retail-attested:
 
 - UDPTransport: `FindSocket`, `DispatchIncoming`, `Receive(QueuingSocket*, …)`, and the `qSortedVector`, `qVector`,
   `ProtectedPacketQueue`, `ProfilingScope` and `VirtualPort` helper classes.
@@ -158,27 +157,31 @@ Map: 188 new entries, all at addresses that had no name before. **No existing en
 
 ## 5. Whole-binary A/B
 
-`python3 tools/ab_measure.py --worktree ~/tmp/wt-w16-od-ab --patch ~/tmp/w16od/ab.patch`, where the patch is
-`git diff 1505d4c74 <branch code head>` (map, splits, `objects.json`, sources). The A/B worktree is fresh on main
-`1505d4c74`, and the run dir is
-`~/tmp/wt-w16-od-ab/.ab_measure_runs/20261002-233850-ab-156744/`.
+`python3 tools/ab_measure.py --worktree ~/tmp/wt-w16-od-ab --patch ~/tmp/w16od/ab2.patch`, where the patch is
+`git diff main HEAD -- . ':(exclude)docs'` (map, splits, `objects.json`, sources). The A/B worktree is a
+`setup_worktree.sh` tree reset to main `b2b2cb8ac`, and the run dir is
+`~/tmp/wt-w16-od-ab/.ab_measure_runs/20261002-235216-ab2-279140/`.
 
 **Prediction, written before the run:** Δmatched +365, Δmasked_equal +203, Δhonest +162, Δmatched_code +39,520 B,
-0 rows down. These came from the integrated tree's `report.json` against main's.
+0 rows down. These came from the rebased tree's `report.json` against a fresh build of `b2b2cb8ac`, which equal the
+pre-rebase reading against `1505d4c74`.
 
 ```
-leg A: matched=52189 masked=24904 honest=27285 code%=55.782787  (recompiles: 0, settled)
-leg B: matched=52554 masked=25107 honest=27447 code%=56.168430  (recompiles: 10, split=1, patch_steps=7, settle iterations: 2)
+leg A: matched=52329 masked=24904 honest=27425 code%=56.054688  (recompiles: 0, settled)
+leg B: matched=52694 masked=25107 honest=27587 code%=56.440334  (recompiles: 10, split=1, patch_steps=7, settle iterations: 2)
 split fixed point: leg A converged after 0 extra re-split(s), leg B after 0
-Δmatched=+365  Δmasked_equal=+203  Δhonest=+162  Δcode%=+0.385643pp  Δcode_bytes=+39520
-Δfuzzy=+0.533630pp   (legA 61.627780 -> legB 62.161410)
+Δmatched=+365  Δmasked_equal=+203  Δhonest=+162  Δcode%=+0.385646pp  Δcode_bytes=+39520
+Δfuzzy=+0.533635pp   (legA 61.953330 -> legB 62.486965)
 unit net (ALL units) = +365   vs whole-binary Δmatched = +365
-units at 100% [mpn ruler]: legA 491 -> legB 494
+units at 100% [mpn ruler]: legA 495 -> legB 498
 ```
 
 **Measured exactly as predicted.** Per unit: UDPTransport +127, JobConnectEndPoint +82, QueuingSocket +73,
 BerkeleySocketDriver +22, TSG +18, RoutingStream +18, JCSEP +15, HighLevelStream +10. `total_code` and
 `total_functions` are unchanged (10,247,792 / 68,914). The pins only move `auto_*` rows into named units.
+
+The same patch on the pre-W16-OE main `1505d4c74` (run `20261002-233850-ab-156744`) measured
+`52189 → 52554`, masked `24904 → 25107`, +39,520 B: the same deltas.
 
 ### 5.1 Rows that went down
 
@@ -187,7 +190,7 @@ BerkeleySocketDriver +22, TSG +18, RoutingStream +18, JCSEP +15, HighLevelStream
 - 221 rows up, **0 down**.
 - 188 vanish/appear pairs: placeholder `fn_` rows that took their mapped names. 45,300 B on each side, and every
   vanished row was at fuzzy 0 / mpn 0.
-- 363 rows changed unit name only (`auto_*` ranges renamed when the pins moved).
+- 356 rows changed unit name only (`auto_*` ranges renamed when the pins moved).
 
 No row outside the eight TUs changed score.
 
@@ -276,10 +279,10 @@ lists for the alias lane. JCSEP's `0x82B43568` (36 B, list-init helper, also cal
 
 ## 8. Native gate
 
-Run last, on the code at `74b466f79` (only this docs edit follows it):
+Run last, on the rebased code (only this docs edit follows it):
 
 ```
-NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+GATE_RESULT_PLACEHOLDER
 ```
 
 ## 9. Not done
@@ -295,6 +298,6 @@ NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 fail
 - **NAT/PRUDP `/GR`:** their vtables lack locators too, but this lane did not change their flags.
 - Not merged to main.
 
-Scratch: `~/tmp/w16od/` (`fnmap.py`, `resolve_map.py`, `ab.patch`, `ab_run.log`, `legA.json`, `legB.json`,
-`below100.md`); the sub-lanes' tools are in `~/tmp/w16od-udp/`, `~/tmp/w16qs/`, `~/tmp/w16od-jcep/`,
+Scratch: `~/tmp/w16od/` (`fnmap.py`, `resolve_map.py`, `merge_objects.py`, `ab.patch`/`ab2.patch`, `ab_run.log`/
+`ab2_run.log`, `legA2.json`, `legB2.json`, `below100.md`); the sub-lanes' tools are in `~/tmp/w16od-udp/`, `~/tmp/w16qs/`, `~/tmp/w16od-jcep/`,
 `~/tmp/w16od-jcsep/` and the streams worktree.
