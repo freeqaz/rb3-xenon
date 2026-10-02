@@ -35841,7 +35841,7 @@
  "0x82aca848": "?ProcessNegativeJoinResponse@JobJoinSession@Quazal@@QAAXEH@Z",
  "0x82ac8748": "??0JobJoinSession@Quazal@@QAA@ABV?$qList@VStationURL@Quazal@@@1@I@Z",
  "0x82ac9ce0": "?JoinDenied@JobJoinSession@Quazal@@QAAXXZ",
- "0x82ac9c60": "?SignalCallContext@JobJoinSession@Quazal@@QAAXW4_State@CallContext@2@UqResult@2@@Z",
+ "0x82ac9c60": "?SignalCallContext@JobJoinSession@Quazal@@QAAXW4_State@CallContext@2@VqResult@2@@Z",
  "0x82aca5d8": "?ProcessPositiveJoinResponse@JobJoinSession@Quazal@@QAAXEVDOHandle@2@0@Z",
  "0x82ac89b8": "??_GJobJoinSession@Quazal@@UAAPAXI@Z",
  "0x82ac9d88": "?InitiateDisconnect@JobJoinSession@Quazal@@QAAXXZ",

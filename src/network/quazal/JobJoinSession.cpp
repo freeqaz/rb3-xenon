@@ -156,7 +156,8 @@ namespace Quazal {
         DebugString() {}
     };
 
-    struct qResult {
+    class qResult {
+    public:
         qResult();
         qResult(const int &);
         bool Equals(const bool &) const;
@@ -213,10 +214,6 @@ namespace Quazal {
         unsigned int m_uiValue;
     };
 
-    namespace StationManager {
-        DOHandle GetLocalStationHandle();
-        void SetMasterStationHandle(DOHandle);
-    }
 
     class DuplicatedObject;
 
@@ -364,8 +361,8 @@ namespace Quazal {
             Running = 8,
             Faulty = 0x80
         };
-        void SetState(_State, bool);
-        void Use();
+        _State Initialize();
+        void Trace(unsigned int, bool) const;
         _State GetState() const { return m_eState; }
         bool IsFaulty() const { return GetState() == Faulty; }
         bool IsReady() const { return GetState() == Ready || GetState() == Running; }
@@ -532,9 +529,14 @@ namespace Quazal {
 
     class Station : public DuplicatedObject {
     public:
-        static Station *GetLocalStation();
+        enum _State {
+            Joining = 3
+        };
+        static Station *GetLocalInstance();
+        static DOHandle GetLocalStation();
+        static void SetLocalStation(DOHandle);
         static bool IsReadyToJoin();
-        void SetState(int);
+        void SetState(_State);
 
         char m_data[0x70];
         StationState m_oState; // 0x70
@@ -764,7 +766,7 @@ namespace Quazal {
             }
         }
         Message oMsg;
-        oMsg << (unsigned int)StationManager::GetLocalStationHandle();
+        oMsg << (unsigned int)Station::GetLocalStation();
         // Retail builds this second word in a temporary (0 stored at 0xa4,
         // copied to 0xa4-4 and appended), the shape of a default DOHandle
         // converted to unsigned int. Written that way here, /Ob1 runs out of
@@ -909,13 +911,13 @@ namespace Quazal {
         }
         SystemComponent *pDupSpace =
             (Core::GetInstance() == 0 ? 0 : Core::GetInstance()->GetSystemComponents())->m_pDupSpace;
-        pDupSpace->Use();
+        pDupSpace->Initialize();
         if (pDupSpace->IsFaulty()) {
             SetStep(Step((JobStateFunc)&JobJoinSession::JoinFailed, "JobJoinSession::JoinFailed"));
             return;
         }
         if (!pDupSpace->IsReady()) {
-            pDupSpace->SetState(SystemComponent::Ready, true);
+            pDupSpace->Trace(SystemComponent::Ready, true);
             SetToWaiting(0x32);
             SetStep(Step(
                 (JobStateFunc)&JobJoinSession::WaitForJoinTermination,
@@ -932,7 +934,7 @@ namespace Quazal {
             return;
         }
         {
-            DORefTemplate<Station> refLocal(StationManager::GetLocalStationHandle());
+            DORefTemplate<Station> refLocal(Station::GetLocalStation());
             if (!refLocal.IsValid()) {
                 SetToWaiting(0x32);
                 SetStep(Step(
@@ -1053,8 +1055,8 @@ namespace Quazal {
 
     void JobJoinSession::JoinSuccess() {
         m_oResult = 0x00060001;
-        Station::GetLocalStation()->m_oState.m_bJoined = true;
-        Station::GetLocalStation()->Update(&Station::GetLocalStation()->m_oState);
+        Station::GetLocalInstance()->m_oState.m_bJoined = true;
+        Station::GetLocalInstance()->Update(&Station::GetLocalInstance()->m_oState);
         SetStep(Step((JobStateFunc)&JobJoinSession::CompleteJob, "JobJoinSession::CompleteJob"));
     }
 
@@ -1110,7 +1112,7 @@ namespace Quazal {
     void JobJoinSession::ProcessPositiveJoinResponse(
         unsigned char ucResponse, DOHandle hMaster, DOHandle hStation
     ) {
-        StationManager::SetMasterStationHandle(hMaster);
+        Station::SetLocalStation(hMaster);
         m_pEndPoint->SetPID(hStation);
         if (ConnectionManager::GetInstance()->GetMode() == 1) {
             ConnectionManager::GetInstance()->AddPeerAddress(
@@ -1129,7 +1131,7 @@ namespace Quazal {
             ObjDupProtocol::GetInstance()->StopToListen();
             SignalCallContext(CallContext::CallError, m_oResult);
         } else {
-            Station::GetLocalStation()->SetState(3);
+            Station::GetLocalInstance()->SetState(Station::Joining);
             NetZCore::GetInstance()->StartSession();
             SignalCallContext(CallContext::CallSuccess, qResult(0x00060001));
         }
