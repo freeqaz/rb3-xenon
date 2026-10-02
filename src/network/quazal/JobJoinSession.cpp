@@ -647,6 +647,7 @@ namespace Quazal {
         virtual void Trace(unsigned int);
 
         void SetStep(const Step &);
+        int GetTimeInStep() const { return Time::GetTime() - m_tStepTime; }
         void ResumeOnCallCompletion(CallContext *, Step *);
 
         Time m_tStepTime; // 0x38
@@ -860,19 +861,19 @@ namespace Quazal {
 
     void JobJoinSession::WaitForResponse() {
         switch (m_ucJoinResponse) {
-        case 0:
-            if (!m_pEndPoint->IsConnected()) {
-                SetStep(Step((JobStateFunc)&JobJoinSession::JoinFailed, "JobJoinSession::JoinFailed"));
-            } else if ((int)(Time::GetTime() - m_tStepTime) > s_iJoinResponseTimeout) {
-                SetStep(Step((JobStateFunc)&JobJoinSession::JoinFailed, "JobJoinSession::JoinFailed"));
-            } else {
-                SetToWaiting(0x32);
-            }
-            break;
         case 1:
             SetStep(Step(
                 (JobStateFunc)&JobJoinSession::ProcessWelcome, "JobJoinSession::ProcessWelcome"
             ));
+            break;
+        case 0:
+            if (!m_pEndPoint->IsConnected()) {
+                SetStep(Step((JobStateFunc)&JobJoinSession::JoinFailed, "JobJoinSession::JoinFailed"));
+            } else if (GetTimeInStep() > s_iJoinResponseTimeout) {
+                SetStep(Step((JobStateFunc)&JobJoinSession::JoinFailed, "JobJoinSession::JoinFailed"));
+            } else {
+                SetToWaiting(0x32);
+            }
             break;
         case 2:
             SetStep(Step(
@@ -887,7 +888,7 @@ namespace Quazal {
                 (JobStateFunc)&JobJoinSession::TestConnection, "JobJoinSession::TestConnection"
             ));
             break;
-        default:
+        case 5:
             SetStep(Step((JobStateFunc)&JobJoinSession::JoinFailed, "JobJoinSession::JoinFailed"));
             break;
         }
@@ -1073,38 +1074,40 @@ namespace Quazal {
     }
 
     void JobJoinSession::TestConnection() {
-        if (m_lParticipants.empty()) {
-            SetStep(Step(
-                (JobStateFunc)&JobJoinSession::SendJoinRequest, "JobJoinSession::SendJoinRequest"
-            ));
-            return;
-        }
-        switch (m_oCallContext.GetState()) {
-        case CallContext::CallInit:
-            if (!ConnectivityTesterRef::GetInstance()->Test(&m_oCallContext, &m_lParticipants, 5000)) {
+        if (!m_lParticipants.empty()) {
+            switch (m_oCallContext.GetState()) {
+            case CallContext::CallInit: {
+                ConnectivityTesterRef *pTester = ConnectivityTesterRef::GetInstance();
+                if (!pTester->Test(&m_oCallContext, &m_lParticipants, 5000)) {
+                    SetStep(Step(
+                        (JobStateFunc)&JobJoinSession::ConnectivityTestFailed,
+                        "JobJoinSession::ConnectivityTestFailed"
+                    ));
+                    return;
+                }
+            }
+            case CallContext::CallPending:
+                SetToWaiting(0xFA);
+                break;
+            case CallContext::CallSuccess:
+                SetStep(Step(
+                    (JobStateFunc)&JobJoinSession::SendJoinRequest, "JobJoinSession::SendJoinRequest"
+                ));
+                m_oCallContext.Reset();
+                break;
+            case CallContext::CallError:
+                m_lParticipants.SetResult(4);
                 SetStep(Step(
                     (JobStateFunc)&JobJoinSession::ConnectivityTestFailed,
                     "JobJoinSession::ConnectivityTestFailed"
                 ));
-                return;
+                m_oCallContext.Reset();
+                break;
             }
-        case CallContext::CallPending:
-            SetToWaiting(0xFA);
-            break;
-        case CallContext::CallSuccess:
+        } else {
             SetStep(Step(
                 (JobStateFunc)&JobJoinSession::SendJoinRequest, "JobJoinSession::SendJoinRequest"
             ));
-            m_oCallContext.Reset();
-            break;
-        default:
-            m_lParticipants.SetResult(4);
-            SetStep(Step(
-                (JobStateFunc)&JobJoinSession::ConnectivityTestFailed,
-                "JobJoinSession::ConnectivityTestFailed"
-            ));
-            m_oCallContext.Reset();
-            break;
         }
     }
 
