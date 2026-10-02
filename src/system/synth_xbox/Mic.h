@@ -140,6 +140,7 @@ public:
     void AddMic(MicXbox *);
     void Shutdown();
     void AddRemoteMic(unsigned long long const &, XAUDIO2_EFFECT_CHAIN *);
+    void RemoveRemoteMic(unsigned long long const &); // retail 0x82B5F748
     void Init();
 
     static MicManagerXbox *GetInstance();
