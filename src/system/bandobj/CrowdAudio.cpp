@@ -447,7 +447,11 @@ void CrowdAudio::SetBank(ObjectDir *dir) {
     }
 }
 
-void CrowdAudio::Save(BinStream &) { MILO_ASSERT(0, 0x33F); }
+BEGIN_SAVES(CrowdAudio)
+    SAVE_REVS(5, 0)
+    SAVE_SUPERCLASS(Hmx::Object)
+    SAVE_SUPERCLASS(RndPollable)
+END_SAVES
 
 BEGIN_LOADS(CrowdAudio)
     // RB3-360 retail uses the ObjMacros rev dialect: the packed rev int is split

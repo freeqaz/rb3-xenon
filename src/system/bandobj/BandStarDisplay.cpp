@@ -144,7 +144,12 @@ void BandStarDisplay::SetStarType(Symbol s, bool b) {
     }
 }
 
-SAVE_OBJ(BandStarDisplay, 0xDC)
+BEGIN_SAVES(BandStarDisplay)
+    SAVE_REVS(2, 0)
+    if (IsProxy())
+        bs << mStarType;
+    SAVE_SUPERCLASS(RndDir)
+END_SAVES
 
 BEGIN_COPYS(BandStarDisplay)
     CREATE_COPY_AS(BandStarDisplay, rhs)

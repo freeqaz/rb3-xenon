@@ -117,7 +117,15 @@ BEGIN_COPYS(TrackDir)
     END_COPYING_MEMBERS
 END_COPYS
 
-SAVE_OBJ(TrackDir, 0x90)
+BEGIN_SAVES(TrackDir)
+    SAVE_REVS(6, 0)
+    SAVE_SUPERCLASS(PanelDir)
+    if (!IsProxy()) {
+        bs << mDrawGroup << mAnimGroup << mYPerSecond << mTopY << mBottomY;
+        bs << mSlots;
+        bs << mWarnOnResort;
+    }
+END_SAVES
 
 BEGIN_LOADS(TrackDir)
     PreLoad(bs);
