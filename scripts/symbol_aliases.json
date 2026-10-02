@@ -5459,12 +5459,20 @@
   {
    "name": "$__uninitialized_copy",
    "address": "0x826b8ad0",
-   "survivor": "??$__uninitialized_copy@PAUBeatCollisionData@@PAU1@@stlpmtx_std@@YAPAUBeatCollisionData@@PAU1@00ABU__false_type@0@@Z",
+   "survivor": "??$__uninitialized_copy@PAVVocalPhrase@@PAV1@@stlpmtx_std@@YAPAVVocalPhrase@@PAV1@00ABU__false_type@0@@Z",
    "folded": [
     "??$__uninitialized_copy@PAVPitchCorrectedVoice@Synapse@DSP@@PAV123@@stlpmtx_std@@YAPAVPitchCorrectedVoice@Synapse@DSP@@PAV123@00ABU__false_type@0@@Z",
-    "??$__uninitialized_copy@PBUBeatCollisionData@@PAU1@@stlpmtx_std@@YAPAUBeatCollisionData@@PBU1@0PAU1@ABU__false_type@0@@Z"
+    "??$__uninitialized_copy@PBUBeatCollisionData@@PAU1@@stlpmtx_std@@YAPAUBeatCollisionData@@PBU1@0PAU1@ABU__false_type@0@@Z",
+    "??$__uninitialized_copy@PAUBeatCollisionData@@PAU1@@stlpmtx_std@@YAPAUBeatCollisionData@@PAU1@00ABU__false_type@0@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 3, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 4 census sites over 2 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 3, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 4 census sites over 2 functions.",
+   "repair_log": [
+    {
+     "lane": "W16-NE 2026-10-02",
+     "change": "survivor swapped to the map name",
+     "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
+    }
+   ]
   },
   {
    "name": "0TrackerDisplay",
@@ -7093,13 +7101,20 @@
   {
    "name": "$__uninitialized_fill_n",
    "address": "0x82787718",
-   "survivor": "??$__uninitialized_fill_n@PAUSongCollisionOutput@@IU1@@stlpmtx_std@@YAPAUSongCollisionOutput@@PAU1@IABU1@ABU__false_type@0@@Z",
+   "survivor": "?_M_erase@?$vector@VRGRollChord@@V?$StlNodeAlloc@VRGRollChord@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVRGRollChord@@PAV3@0ABU__false_type@2@@Z",
    "folded": [
-    "?_M_erase@?$vector@VRGRollChord@@V?$StlNodeAlloc@VRGRollChord@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVRGRollChord@@PAV3@0ABU__false_type@2@@Z",
     "?_M_erase@?$vector@VTrainerSection@@V?$StlNodeAlloc@VTrainerSection@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVTrainerSection@@PAV3@0ABU__false_type@2@@Z",
-    "?_M_erase@?$vector@VUIMesh@UIComponent@@V?$StlNodeAlloc@VUIMesh@UIComponent@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVUIMesh@UIComponent@@PAV34@0ABU__false_type@2@@Z"
+    "?_M_erase@?$vector@VUIMesh@UIComponent@@V?$StlNodeAlloc@VUIMesh@UIComponent@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVUIMesh@UIComponent@@PAV34@0ABU__false_type@2@@Z",
+    "??$__uninitialized_fill_n@PAUSongCollisionOutput@@IU1@@stlpmtx_std@@YAPAUSongCollisionOutput@@PAU1@IABU1@ABU__false_type@0@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 3 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 3 census sites over 1 functions.",
+   "repair_log": [
+    {
+     "lane": "W16-NE 2026-10-02",
+     "change": "survivor swapped to the map name",
+     "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
+    }
+   ]
   },
   {
    "name": "clear",
@@ -11586,11 +11601,19 @@
   {
    "name": "$__uninitialized_fill_n",
    "address": "0x826b8a80",
-   "survivor": "??$__uninitialized_fill_n@PAUBeatCollisionData@@IU1@@stlpmtx_std@@YAPAUBeatCollisionData@@PAU1@IABU1@ABU__false_type@0@@Z",
+   "survivor": "??$__uninitialized_fill_n@PAVVocalPhrase@@IV1@@stlpmtx_std@@YAPAVVocalPhrase@@PAV1@IABV1@ABU__false_type@0@@Z",
    "folded": [
-    "??$__uninitialized_fill_n@PAVPitchCorrectedVoice@Synapse@DSP@@IV123@@stlpmtx_std@@YAPAVPitchCorrectedVoice@Synapse@DSP@@PAV123@IABV123@ABU__false_type@0@@Z"
+    "??$__uninitialized_fill_n@PAVPitchCorrectedVoice@Synapse@DSP@@IV123@@stlpmtx_std@@YAPAVPitchCorrectedVoice@Synapse@DSP@@PAV123@IABV123@ABU__false_type@0@@Z",
+    "??$__uninitialized_fill_n@PAUBeatCollisionData@@IU1@@stlpmtx_std@@YAPAUBeatCollisionData@@PAU1@IABU1@ABU__false_type@0@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions.",
+   "repair_log": [
+    {
+     "lane": "W16-NE 2026-10-02",
+     "change": "survivor swapped to the map name",
+     "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
+    }
+   ]
   },
   {
    "name": "insert",
@@ -14195,11 +14218,18 @@
   {
    "name": "$__destroy_range_aux",
    "address": "0x823873f8",
-   "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@@0@0ABU__false_type@0@@Z",
+   "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAUCharInterestState@CharEyes@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUCharInterestState@CharEyes@@@0@0ABU__false_type@0@@Z",
    "folded": [
-    "??$__destroy_range_aux@V?$reverse_iterator@PAUCharInterestState@CharEyes@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUCharInterestState@CharEyes@@@0@0ABU__false_type@0@@Z"
+    "??$__destroy_range_aux@V?$reverse_iterator@PAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@@0@0ABU__false_type@0@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 1 census sites over 2 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 1 census sites over 2 functions.",
+   "repair_log": [
+    {
+     "lane": "W16-NE 2026-10-02",
+     "change": "survivor swapped to the map name",
+     "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
+    }
+   ]
   },
   {
    "name": "_M_clear",
@@ -77233,13 +77263,20 @@
   {
    "name": "$__uninitialized_fill_n",
    "address": "0x8239c508",
-   "survivor": "??$__uninitialized_fill_n@PAUHamListRibbonDrawState@@IU1@@stlpmtx_std@@YAPAUHamListRibbonDrawState@@PAU1@IABU1@ABU__false_type@0@@Z",
+   "survivor": "??$__uninitialized_fill_n@PAVVert@SyncMeshCB@@IV12@@stlpmtx_std@@YAPAVVert@SyncMeshCB@@PAV12@IABV12@ABU__false_type@0@@Z",
    "folded": [
     "??$__uninitialized_fill_n@PAV?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@IV12@@stlpmtx_std@@YAPAV?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@PAV12@IABV12@ABU__false_type@0@@Z",
     "??$__uninitialized_fill_n@PAVBattleStep@@IV1@@stlpmtx_std@@YAPAVBattleStep@@PAV1@IABV1@ABU__false_type@0@@Z",
-    "??$__uninitialized_fill_n@PAVVert@SyncMeshCB@@IV12@@stlpmtx_std@@YAPAVVert@SyncMeshCB@@PAV12@IABV12@ABU__false_type@0@@Z"
+    "??$__uninitialized_fill_n@PAUHamListRibbonDrawState@@IU1@@stlpmtx_std@@YAPAUHamListRibbonDrawState@@PAU1@IABU1@ABU__false_type@0@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 4, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 4, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 0 census sites over 1 functions.",
+   "repair_log": [
+    {
+     "lane": "W16-NE 2026-10-02",
+     "change": "survivor swapped to the map name",
+     "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
+    }
+   ]
   },
   {
    "name": "_M_clear_after_move",
@@ -84794,9 +84831,9 @@
   {
    "name": "6",
    "address": "0x8230c200",
-   "survivor": "??6@YAAAVBinStream@@AAV0@ABUNavItem@HamNavProvider@@@Z",
+   "survivor": "??6@YAAAVBinStream@@AAV0@ABVContentPoolMapping@SongSectionController@@@Z",
    "folded": [
-    "??6@YAAAVBinStream@@AAV0@ABVContentPoolMapping@SongSectionController@@@Z"
+    "??6@YAAAVBinStream@@AAV0@ABUNavItem@HamNavProvider@@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [],
@@ -84825,6 +84862,13 @@
        "disposition": "dropped_singleton"
       }
      ]
+    }
+   ],
+   "repair_log": [
+    {
+     "lane": "W16-NE 2026-10-02",
+     "change": "survivor swapped to the map name",
+     "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
     }
    ]
   },
@@ -87531,9 +87575,9 @@
   {
    "name": "1?$vector",
    "address": "0x822ec870",
-   "survivor": "??1?$vector@UMoveReplacer@@V?$StlNodeAlloc@UMoveReplacer@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "survivor": "??1?$vector@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
    "folded": [
-    "??1?$vector@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ"
+    "??1?$vector@UMoveReplacer@@V?$StlNodeAlloc@UMoveReplacer@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [],
@@ -87563,6 +87607,13 @@
        "disposition": "dropped_singleton"
       }
      ]
+    }
+   ],
+   "repair_log": [
+    {
+     "lane": "W16-NE 2026-10-02",
+     "change": "survivor swapped to the map name",
+     "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
     }
    ]
   },
@@ -93442,9 +93493,9 @@
   {
    "name": "CVEIN1__M_fill_insert_aux",
    "address": "0x82781160",
-   "survivor": "?_M_fill_insert_aux@?$vector@UBeatCollisionData@@V?$StlNodeAlloc@UBeatCollisionData@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUBeatCollisionData@@IABU3@ABU__false_type@2@@Z",
+   "survivor": "?_M_fill_insert_aux@?$vector@VVocalPhrase@@V?$StlNodeAlloc@VVocalPhrase@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVVocalPhrase@@IABV3@ABU__false_type@2@@Z",
    "folded": [
-    "?_M_fill_insert_aux@?$vector@VVocalPhrase@@V?$StlNodeAlloc@VVocalPhrase@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVVocalPhrase@@IABV3@ABU__false_type@2@@Z"
+    "?_M_fill_insert_aux@?$vector@UBeatCollisionData@@V?$StlNodeAlloc@UBeatCollisionData@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUBeatCollisionData@@IABU3@ABU__false_type@2@@Z"
    ],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 2,
@@ -93469,6 +93520,13 @@
        "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
       }
      ]
+    }
+   ],
+   "repair_log": [
+    {
+     "lane": "W16-NE 2026-10-02",
+     "change": "survivor swapped to the map name",
+     "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
     }
    ]
   },
@@ -96809,9 +96867,9 @@
   {
    "name": "push_back",
    "address": "0x822ecbc8",
-   "survivor": "?push_back@?$vector@VSongPattern@@V?$StlNodeAlloc@VSongPattern@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVSongPattern@@@Z",
+   "survivor": "?push_back@?$vector@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@2@@Z",
    "folded": [
-    "?push_back@?$vector@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@2@@Z"
+    "?push_back@?$vector@VSongPattern@@V?$StlNodeAlloc@VSongPattern@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVSongPattern@@@Z"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
@@ -96820,6 +96878,13 @@
      "spelling": "?push_back@?$vector@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@2@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 116 B retail / 116 B ours; retail body-twins 3. Retail call site(s) reaching the survivor where we call this spelling: 0x822ed594, 0x822ed5d4."
+    }
+   ],
+   "repair_log": [
+    {
+     "lane": "W16-NE 2026-10-02",
+     "change": "survivor swapped to the map name",
+     "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
     }
    ]
   },
@@ -97776,9 +97841,9 @@
   {
    "name": "push_back",
    "address": "0x827742b0",
-   "survivor": "?push_back@?$vector@UHamListRibbonDrawState@@V?$StlNodeAlloc@UHamListRibbonDrawState@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUHamListRibbonDrawState@@@Z",
+   "survivor": "?push_back@?$vector@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@V?$StlNodeAlloc@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABV?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@@Z",
    "folded": [
-    "?push_back@?$vector@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@V?$StlNodeAlloc@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABV?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@@Z"
+    "?push_back@?$vector@UHamListRibbonDrawState@@V?$StlNodeAlloc@UHamListRibbonDrawState@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUHamListRibbonDrawState@@@Z"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
@@ -97787,6 +97852,13 @@
      "spelling": "?push_back@?$vector@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@V?$StlNodeAlloc@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABV?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 128 B retail / 128 B ours; retail body-twins 1. Retail call site(s) reaching the survivor where we call this spelling: 0x82779188."
+    }
+   ],
+   "repair_log": [
+    {
+     "lane": "W16-NE 2026-10-02",
+     "change": "survivor swapped to the map name",
+     "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
     }
    ]
   },
@@ -98161,9 +98233,9 @@
   {
    "name": "$?6VBattleStep",
    "address": "0x822a0ed8",
-   "survivor": "??$?6VBattleStep@@V?$StlNodeAlloc@VBattleStep@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VBattleStep@@V?$StlNodeAlloc@VBattleStep@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "survivor": "??$?6VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@@Z",
    "folded": [
-    "??$?6VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@@Z"
+    "??$?6VBattleStep@@V?$StlNodeAlloc@VBattleStep@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VBattleStep@@V?$StlNodeAlloc@VBattleStep@@@stlpmtx_std@@@stlpmtx_std@@@Z"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
@@ -98172,6 +98244,13 @@
      "spelling": "??$?6VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 96 B retail / 96 B ours; retail body-twins 1. Retail call site(s) reaching the survivor where we call this spelling: 0x822a1bd4."
+    }
+   ],
+   "repair_log": [
+    {
+     "lane": "W16-NE 2026-10-02",
+     "change": "survivor swapped to the map name",
+     "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
     }
    ]
   },
@@ -98236,9 +98315,9 @@
   {
    "name": "_M_insert_overflow_aux",
    "address": "0x824e1ac0",
-   "survivor": "?_M_insert_overflow_aux@?$vector@USongCollisionOutput@@V?$StlNodeAlloc@USongCollisionOutput@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUSongCollisionOutput@@ABU3@ABU__false_type@2@I_N@Z",
+   "survivor": "?_M_insert_overflow_aux@?$vector@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAU?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@ABU32@ABU__false_type@2@I_N@Z",
    "folded": [
-    "?_M_insert_overflow_aux@?$vector@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAU?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@ABU32@ABU__false_type@2@I_N@Z"
+    "?_M_insert_overflow_aux@?$vector@USongCollisionOutput@@V?$StlNodeAlloc@USongCollisionOutput@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUSongCollisionOutput@@ABU3@ABU__false_type@2@I_N@Z"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
@@ -98247,6 +98326,13 @@
      "spelling": "?_M_insert_overflow_aux@?$vector@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAU?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@ABU32@ABU__false_type@2@I_N@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 404 B retail / 404 B ours; retail body-twins 1. Retail call site(s) reaching the survivor where we call this spelling: 0x824e231c."
+    }
+   ],
+   "repair_log": [
+    {
+     "lane": "W16-NE 2026-10-02",
+     "change": "survivor swapped to the map name",
+     "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
     }
    ]
   },
@@ -98377,9 +98463,9 @@
   {
    "name": "_M_insert_overflow_aux",
    "address": "0x823d4d18",
-   "survivor": "?_M_insert_overflow_aux@?$vector@UMoveReplacer@@V?$StlNodeAlloc@UMoveReplacer@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUMoveReplacer@@ABU3@ABU__false_type@2@I_N@Z",
+   "survivor": "?_M_insert_overflow_aux@?$vector@UWeight@PlayBack@CharLipSync@@V?$StlNodeAlloc@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUWeight@PlayBack@CharLipSync@@ABU345@ABU__false_type@2@I_N@Z",
    "folded": [
-    "?_M_insert_overflow_aux@?$vector@UWeight@PlayBack@CharLipSync@@V?$StlNodeAlloc@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUWeight@PlayBack@CharLipSync@@ABU345@ABU__false_type@2@I_N@Z"
+    "?_M_insert_overflow_aux@?$vector@UMoveReplacer@@V?$StlNodeAlloc@UMoveReplacer@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUMoveReplacer@@ABU3@ABU__false_type@2@I_N@Z"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
@@ -98388,6 +98474,13 @@
      "spelling": "?_M_insert_overflow_aux@?$vector@UWeight@PlayBack@CharLipSync@@V?$StlNodeAlloc@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUWeight@PlayBack@CharLipSync@@ABU345@ABU__false_type@2@I_N@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 328 B retail / 328 B ours; retail body-twins 7. Retail call site(s) reaching the survivor where we call this spelling: 0x823d4f74."
+    }
+   ],
+   "repair_log": [
+    {
+     "lane": "W16-NE 2026-10-02",
+     "change": "survivor swapped to the map name",
+     "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
     }
    ]
   },
@@ -99235,12 +99328,19 @@
   {
    "name": "push_back",
    "address": "0x8258e1e0",
-   "survivor": "?push_back@?$vector@VArchiveSkeleton@@V?$StlNodeAlloc@VArchiveSkeleton@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVArchiveSkeleton@@@Z",
+   "survivor": "?push_back@?$vector@VStandIn@@V?$StlNodeAlloc@VStandIn@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVStandIn@@@Z",
    "folded": [
-    "?push_back@?$vector@VStandIn@@V?$StlNodeAlloc@VStandIn@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVStandIn@@@Z"
+    "?push_back@?$vector@VArchiveSkeleton@@V?$StlNodeAlloc@VArchiveSkeleton@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVArchiveSkeleton@@@Z"
    ],
    "evidence": "Retail ??0BandProfile@@QAA@H@Z (0x8258e6f8) branches to the survivor at 0x8258ea80, inside the 4-iteration mStandIns.push_back(StandIn()) loop, where our compiled ctor calls this spelling. tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED (template twin: masked bodies equal, relocation targets differ), CHASED T1 PROVEN with every differing slot discharged as a verified fold (_M_insert_overflow_aux<ArchiveSkeleton> <- <StandIn>, MemOrPoolAlloc <- MemOrPoolAllocSTL), 0 CYCLE leaves.",
-   "lane": "W16-KD 2026-10-01"
+   "lane": "W16-KD 2026-10-01",
+   "repair_log": [
+    {
+     "lane": "W16-NE 2026-10-02",
+     "change": "survivor swapped to the map name",
+     "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
+    }
+   ]
   },
   {
    "name": "Ranks",
@@ -101150,9 +101250,9 @@
   {
    "name": "__uninitialized_fill_n",
    "address": "0x824cd818",
-   "survivor": "??$__uninitialized_fill_n@PAUGrammar@SpeechMgr@@IU12@@stlpmtx_std@@YAPAUGrammar@SpeechMgr@@PAU12@IABU12@ABU__false_type@0@@Z",
+   "survivor": "??$__uninitialized_fill_n@PAVFilePath@@IV1@@stlpmtx_std@@YAPAVFilePath@@PAV1@IABV1@ABU__false_type@0@@Z",
    "folded": [
-    "??$__uninitialized_fill_n@PAVFilePath@@IV1@@stlpmtx_std@@YAPAVFilePath@@PAV1@IABV1@ABU__false_type@0@@Z"
+    "??$__uninitialized_fill_n@PAUGrammar@SpeechMgr@@IU12@@stlpmtx_std@@YAPAUGrammar@SpeechMgr@@PAU12@IABU12@ABU__false_type@0@@Z"
    ],
    "evidence": "Fold group opened by W16-LB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
@@ -101160,6 +101260,13 @@
      "spelling": "??$__uninitialized_fill_n@PAVFilePath@@IV1@@stlpmtx_std@@YAPAVFilePath@@PAV1@IABV1@ABU__false_type@0@@Z",
      "lane": "W16-LB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED); 96 B retail / 96 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. ?_M_fill_insert_aux@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVFilePath@@IABV3@ABU__false_type@2@@Z."
+    }
+   ],
+   "repair_log": [
+    {
+     "lane": "W16-NE 2026-10-02",
+     "change": "survivor swapped to the map name",
+     "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
     }
    ]
   },
@@ -101552,9 +101659,9 @@
   {
    "name": "_M_fill_insert",
    "address": "0x823d4ea8",
-   "survivor": "?_M_fill_insert@?$vector@VSongSection@@V?$StlNodeAlloc@VSongSection@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSongSection@@IABV3@@Z",
+   "survivor": "?_M_fill_insert@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVString@@IABV3@@Z",
    "folded": [
-    "?_M_fill_insert@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVString@@IABV3@@Z"
+    "?_M_fill_insert@?$vector@VSongSection@@V?$StlNodeAlloc@VSongSection@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSongSection@@IABV3@@Z"
    ],
    "evidence": "Fold group opened by W16-MB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
@@ -101562,6 +101669,13 @@
      "spelling": "?_M_fill_insert@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVString@@IABV3@@Z",
      "lane": "W16-MB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 PROVEN); 112 B retail / 112 B ours. Retail calls the survivor where we call this spelling in 2 row(s), e.g. ??$PropSync@VString@@@@YA_NAAV?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z, ?resize@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVString@@@Z. Overrides earlier withdrawal record(s) for this spelling under other survivors (0x822c83d0 SURVIVOR_NAME_WRONG_SIZE_AND_BODY_DIFFER): those refused membership without a per-pair proof against this survivor, and the chase above is one."
+    }
+   ],
+   "repair_log": [
+    {
+     "lane": "W16-NE 2026-10-02",
+     "change": "survivor swapped to the map name",
+     "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
     }
    ]
   },
@@ -101682,9 +101796,9 @@
   {
    "name": "1?$vector",
    "address": "0x82387ee0",
-   "survivor": "??1?$vector@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V?$StlNodeAlloc@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+   "survivor": "??1?$vector@UCharInterestState@CharEyes@@V?$StlNodeAlloc@UCharInterestState@CharEyes@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
    "folded": [
-    "??1?$vector@UCharInterestState@CharEyes@@V?$StlNodeAlloc@UCharInterestState@CharEyes@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
+    "??1?$vector@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V?$StlNodeAlloc@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ"
    ],
    "evidence": "Fold group opened by W16-MB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
@@ -101692,6 +101806,13 @@
      "spelling": "??1?$vector@UCharInterestState@CharEyes@@V?$StlNodeAlloc@UCharInterestState@CharEyes@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
      "lane": "W16-MB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED); 132 B retail / 132 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. ??1CharEyes@@UAA@XZ. Overrides earlier withdrawal record(s) for this spelling under other survivors (0x822aa258 FABRICATED_CLOSURE_NOT_PARTITION; 0x82373ec8 FABRICATED_CLOSURE_NOT_PARTITION; 0x8246f2b8 FABRICATED_CLOSURE_NOT_PARTITION; 0x827d1570 FABRICATED_CLOSURE_NOT_PARTITION): those refused membership without a per-pair proof against this survivor, and the chase above is one."
+    }
+   ],
+   "repair_log": [
+    {
+     "lane": "W16-NE 2026-10-02",
+     "change": "survivor swapped to the map name",
+     "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
     }
    ]
   },
