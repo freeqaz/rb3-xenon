@@ -2220,7 +2220,16 @@
                 ]
             },
             "network/quazal/Session.cpp": "NonMatching",
-            "network/quazal/Station.cpp": "NonMatching",
+            "network/quazal/Station.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/EHs-c-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
             "network/quazal/Core/MutexPrimitive.cpp": "NonMatching",
             "network/quazal/StationDDL.cpp": "NonMatching",
             "network/quazal/Core/String.cpp": "NonMatching",
