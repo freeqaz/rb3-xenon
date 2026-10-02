@@ -1910,12 +1910,10 @@ Instance.cpp:
 	.text       start:0x824EA298 end:0x824ED404
 
 DepthBuffer3D.cpp:
-	.pdata      start:0x82238880 end:0x82238888
 	.pdata      start:0x8223AE20 end:0x8223AE68
 	.text       start:0x826EBF20 end:0x826EBF28
 	.text       start:0x826FB9C8 end:0x826FB9D0
 	.text       start:0x82701FF0 end:0x82701FF8
-	.text       start:0x82710D10 end:0x82710DBC
 	.text       start:0x82741040 end:0x82741350
 
 MicClientMapper.cpp:
@@ -3920,11 +3918,7 @@ HamPhotoDisplay.cpp:
 
 HamRibbon.cpp:
 	.pdata      start:0x821F9710 end:0x821F9718
-	.pdata      start:0x8223EBE0 end:0x8223EBE8
-	.pdata      start:0x8223EC48 end:0x8223EC50
 	.text       start:0x822F0408 end:0x822F047C
-	.text       start:0x82788390 end:0x82788408
-	.text       start:0x82788B00 end:0x82788B80
 
 MoveAsyncDetector.cpp:
 	.pdata      start:0x82200080 end:0x82200088
@@ -3998,12 +3992,6 @@ band3/meta_band/InterstitialMgr.cpp:
 	.text       start:0x825AFE98 end:0x825B0290
 	.text       start:0x825B0290 end:0x825B03E0
 	.text       start:0x825B03E0 end:0x825B0518
-
-LiveCameraInput.cpp:
-	.pdata      start:0x8220C158 end:0x8220C168
-	.pdata      start:0x8220C320 end:0x8220C328
-	.text       start:0x8242A870 end:0x8242A958
-	.text       start:0x8242C070 end:0x8242C1CC
 
 CharacterTest.cpp:
 	.pdata      start:0x821FC8A8 end:0x821FC8B0
@@ -4100,27 +4088,29 @@ CharIKHand.cpp:
 	.text       start:0x823999A8 end:0x823999C4
 
 PropAnim.cpp:
-	.pdata      start:0x821F6E60 end:0x821F6E70
 	.pdata      start:0x8220BD20 end:0x8220BD28
 	.pdata      start:0x8220BD30 end:0x8220BF20
 	.pdata      start:0x8220BF20 end:0x8220BFE8
 	.pdata      start:0x8220BFE8 end:0x8220C0A0
 	.pdata      start:0x8220C0A0 end:0x8220C0A8
+	.pdata      start:0x8220C158 end:0x8220C168
 	.pdata      start:0x8220C168 end:0x8220C238
 	.pdata      start:0x8220C238 end:0x8220C320
+	.pdata      start:0x8220C320 end:0x8220C328
 	.pdata      start:0x8220C328 end:0x8220C330
 	.pdata      start:0x8220C330 end:0x8220C348
 	.pdata      start:0x8220C348 end:0x8220C360
 	.pdata      start:0x8220C368 end:0x8220C378
 	.pdata      start:0x8220C378 end:0x8220C570
-	.text       start:0x822C7D58 end:0x822C7E04
 	.text       start:0x824268A8 end:0x82426950
 	.text       start:0x82426A04 end:0x82428448
 	.text       start:0x82428450 end:0x8242916C
 	.text       start:0x82429170 end:0x82429BE0
 	.text       start:0x82429BE8 end:0x82429C2C
+	.text       start:0x8242A870 end:0x8242A958
 	.text       start:0x8242A958 end:0x8242B404
 	.text       start:0x8242B408 end:0x8242C070
+	.text       start:0x8242C070 end:0x8242C1CC
 	.text       start:0x8242C1CC end:0x8242C208
 	.text       start:0x8242C208 end:0x8242C434
 	.text       start:0x8242C438 end:0x8242C568
@@ -6092,12 +6082,14 @@ MetaMusic.cpp:
 	.pdata      start:0x82207D30 end:0x82207D40
 	.pdata      start:0x82231D78 end:0x82231D80
 	.pdata      start:0x82238798 end:0x82238880
+	.pdata      start:0x82238880 end:0x82238888
 	.pdata      start:0x82238888 end:0x82238998
 	.text       start:0x823CE81C end:0x823CE820
 	.text       start:0x823CE82C end:0x823CE838
 	.text       start:0x823E3630 end:0x823E3790
 	.text       start:0x82698A50 end:0x82698B1C
 	.text       start:0x8270FAB4 end:0x82710D10
+	.text       start:0x82710D10 end:0x82710DBC
 	.text       start:0x82710DBC end:0x82711F78
 
 SongCollision.cpp:
@@ -10376,12 +10368,14 @@ SongParser.cpp:
 	.pdata      start:0x8223EB58 end:0x8223EB90
 	.pdata      start:0x8223EBA0 end:0x8223EBD0
 	.pdata      start:0x8223EBD0 end:0x8223EBE0
+	.pdata      start:0x8223EBE0 end:0x8223EBE8
 	.pdata      start:0x8223EBE8 end:0x8223EBF8
 	.pdata      start:0x8223EBF8 end:0x8223EC08
 	.pdata      start:0x8223EC08 end:0x8223EC10
 	.pdata      start:0x8223EC10 end:0x8223EC18
 	.pdata      start:0x8223EC18 end:0x8223EC30
 	.pdata      start:0x8223EC30 end:0x8223EC48
+	.pdata      start:0x8223EC48 end:0x8223EC50
 	.pdata      start:0x8223EC50 end:0x8223EC90
 	.pdata      start:0x8223EC90 end:0x8223ECA8
 	.pdata      start:0x8223ECA8 end:0x8223ECC0
@@ -10410,12 +10404,14 @@ SongParser.cpp:
 	.text       start:0x82787778 end:0x82787C00
 	.text       start:0x82787DD0 end:0x82788288
 	.text       start:0x82788288 end:0x82788390
+	.text       start:0x82788390 end:0x82788408
 	.text       start:0x82788408 end:0x82788518
 	.text       start:0x82788518 end:0x827887C0
 	.text       start:0x827887C0 end:0x82788814
 	.text       start:0x82788818 end:0x82788888
 	.text       start:0x82788888 end:0x827889B8
 	.text       start:0x827889B8 end:0x82788AFC
+	.text       start:0x82788B00 end:0x82788B80
 	.text       start:0x82788B80 end:0x82789788
 	.text       start:0x82789788 end:0x827898A8
 	.text       start:0x827898A8 end:0x82789AA0
@@ -13833,6 +13829,7 @@ system/bandobj/BandFaceDeform.cpp:
 	.pdata      start:0x821F6E20 end:0x821F6E28
 	.pdata      start:0x821F6E30 end:0x821F6E38
 	.pdata      start:0x821F6E40 end:0x821F6E50
+	.pdata      start:0x821F6E60 end:0x821F6E70
 	.pdata      start:0x821F6E78 end:0x821F6E80
 	.pdata      start:0x821F6E88 end:0x821F6E90
 	.pdata      start:0x821F6E90 end:0x821F6E98
@@ -13853,6 +13850,7 @@ system/bandobj/BandFaceDeform.cpp:
 	.text       start:0x822C7988 end:0x822C79F0
 	.text       start:0x822C7A20 end:0x822C7A80
 	.text       start:0x822C7AF8 end:0x822C7CAC
+	.text       start:0x822C7D58 end:0x822C7E04
 	.text       start:0x822C7F4C end:0x822C809C
 	.text       start:0x822C80E0 end:0x822C812C
 	.text       start:0x822C8130 end:0x822C8160

@@ -19895,11 +19895,18 @@
   {
    "name": "1?$vector",
    "address": "0x822c7d58",
-   "survivor": "??1?$vector@VDataArrayPtr@@V?$StlNodeAlloc@VDataArrayPtr@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
-   "folded": [
-    "??1?$vector@VDeltaArray@BandFaceDeform@@V?$StlNodeAlloc@VDeltaArray@BandFaceDeform@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "survivor": "??1?$vector@VDeltaArray@BandFaceDeform@@V?$StlNodeAlloc@VDeltaArray@BandFaceDeform@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??1?$vector@VDataArrayPtr@@V?$StlNodeAlloc@VDataArrayPtr@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-NE-F2 2026-10-02",
+     "class": "MISNAMED_SURVIVOR",
+     "disposition": "map row renamed; spelling withdrawn",
+     "evidence": "retail body calls __destroy_range_aux<reverse_iterator<BandFaceDeform::DeltaArray*>> (0x822C7840); ~vector<DataArrayPtr> is the distinct body at 0x8242A870, which calls __destroy_range_aux<reverse_iterator<DataArrayPtr*>> (0x82429170)"
+    }
+   ]
   },
   {
    "name": "_M_fill_insert",
@@ -96942,10 +96949,8 @@
   {
    "name": "resize",
    "address": "0x82788b00",
-   "survivor": "?resize@?$vector@V?$Key@VTransform@@@@V?$StlNodeAlloc@V?$Key@VTransform@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABV?$Key@VTransform@@@@@Z",
-   "folded": [
-    "?resize@?$vector@VRGRollChord@@V?$StlNodeAlloc@VRGRollChord@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVRGRollChord@@@Z"
-   ],
+   "survivor": "?resize@?$vector@VRGRollChord@@V?$StlNodeAlloc@VRGRollChord@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVRGRollChord@@@Z",
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -96953,6 +96958,15 @@
      "spelling": "?resize@?$vector@VRGRollChord@@V?$StlNodeAlloc@VRGRollChord@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVRGRollChord@@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 128 B retail / 128 B ours; retail body-twins 5. Retail call site(s) reaching the survivor where we call this spelling: 0x82788eac, 0x82789658."
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "?resize@?$vector@V?$Key@VTransform@@@@V?$StlNodeAlloc@V?$Key@VTransform@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABV?$Key@VTransform@@@@@Z",
+     "lane": "W16-NE-F2 2026-10-02",
+     "class": "MISNAMED_SURVIVOR",
+     "disposition": "map row renamed; spelling withdrawn",
+     "evidence": "retail resize forwards to vector<RGRollChord> helpers with element size 0x18; Key<Transform> is 0x44 bytes"
     }
    ]
   },
@@ -97589,10 +97603,8 @@
   {
    "name": "_M_insert_overflow_aux",
    "address": "0x82710dc8",
-   "survivor": "?_M_insert_overflow_aux@?$vector@VDataArrayPtr@@V?$StlNodeAlloc@VDataArrayPtr@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVDataArrayPtr@@ABV3@ABU__false_type@2@I_N@Z",
-   "folded": [
-    "?_M_insert_overflow_aux@?$vector@V?$ObjDirPtr@VObjectDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAV?$ObjDirPtr@VObjectDir@@@@ABV3@ABU__false_type@2@I_N@Z"
-   ],
+   "survivor": "?_M_insert_overflow_aux@?$vector@V?$ObjDirPtr@VObjectDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAV?$ObjDirPtr@VObjectDir@@@@ABV3@ABU__false_type@2@I_N@Z",
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -97600,6 +97612,15 @@
      "spelling": "?_M_insert_overflow_aux@?$vector@V?$ObjDirPtr@VObjectDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAV?$ObjDirPtr@VObjectDir@@@@ABV3@ABU__false_type@2@I_N@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 328 B retail / 328 B ours; retail body-twins 23. Retail call site(s) reaching the survivor where we call this spelling: 0x8271180c, 0x8275139c."
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "?_M_insert_overflow_aux@?$vector@VDataArrayPtr@@V?$StlNodeAlloc@VDataArrayPtr@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVDataArrayPtr@@ABV3@ABU__false_type@2@I_N@Z",
+     "lane": "W16-NE-F2 2026-10-02",
+     "class": "MISNAMED_SURVIVOR",
+     "disposition": "map row renamed; spelling withdrawn",
+     "evidence": "retail body copies 12-byte elements via __uninitialized_copy<ObjDirPtr<ObjectDir>> (0x82710768) and _Copy_Construct<ObjDirPtr<ObjectDir>> (0x8270FBE0); the DataArrayPtr member is the distinct body at 0x8242C070 (4-byte element, DataArray refcount bump at +0xA)"
     }
    ]
   },
@@ -97748,10 +97769,8 @@
   {
    "name": "reserve",
    "address": "0x82710d10",
-   "survivor": "?reserve@?$vector@VArchiveSkeleton@@V?$StlNodeAlloc@VArchiveSkeleton@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
-   "folded": [
-    "?reserve@?$vector@V?$ObjDirPtr@VObjectDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z"
-   ],
+   "survivor": "?reserve@?$vector@V?$ObjDirPtr@VObjectDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -97759,6 +97778,15 @@
      "spelling": "?reserve@?$vector@V?$ObjDirPtr@VObjectDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 172 B retail / 172 B ours; retail body-twins 5. Retail call site(s) reaching the survivor where we call this spelling: 0x82711918."
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "?reserve@?$vector@VArchiveSkeleton@@V?$StlNodeAlloc@VArchiveSkeleton@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
+     "lane": "W16-NE-F2 2026-10-02",
+     "class": "MISNAMED_SURVIVOR",
+     "disposition": "map row renamed; spelling withdrawn",
+     "evidence": "retail reserve uses element size 0xC and calls _M_allocate_and_copy<ObjDirPtr<ObjectDir>>; the folded spelling compiles to element size 0x1A0"
     }
    ]
   },
@@ -102022,6 +102050,15 @@
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, no CYCLE leaf; both bodies 120 B, the two ObjPtr writer callees chased (fn_8229E5D0, fn_8238B5B8). WorldDir::Save (retail 0x824cd8b8) calls 0x824cd470 for mMatOverrides as well as mPresetOverrides. Requires MatOverride's writer to stream mesh and mat only, matching its reader."
     }
    ]
+  },
+  {
+   "name": "$_M_allocate_and_copy",
+   "address": "0x8274f858",
+   "survivor": "??$_M_allocate_and_copy@PBV?$ObjDirPtr@VObjectDir@@@@@?$vector@V?$ObjDirPtr@VObjectDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjDirPtr@VObjectDir@@@@IPBV2@0@Z",
+   "folded": [
+    "??$_M_allocate_and_copy@PAV?$ObjDirPtr@VObjectDir@@@@@?$vector@V?$ObjDirPtr@VObjectDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjDirPtr@VObjectDir@@@@IPAV2@0@Z"
+   ],
+   "evidence": "W16-NE-F2 2026-10-02: tools/icf_pair_adjudicate.py --chase CHASED T1 PROVEN (flat T1 differs only in relocation targets; the chase verifies those callee pairs fold). Both 100 B. Caller: vector<ObjDirPtr<ObjectDir>>::reserve at 0x82710D10, which retail compiles against the const-pointer instantiation."
   }
  ]
 }
