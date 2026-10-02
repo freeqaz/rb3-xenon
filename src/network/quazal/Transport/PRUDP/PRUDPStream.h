@@ -24,6 +24,8 @@ namespace Quazal {
         ~InetAddress();
         InetAddress &operator=(const InetAddress &);
         unsigned int GetAddress() const;
+        bool operator<(const InetAddress &) const;
+        bool operator==(const InetAddress &) const;
         unsigned short GetPortNumber() const;
 
         char m_data[0x80];
@@ -62,7 +64,10 @@ namespace Quazal {
             m_oAddress = addr;
             m_byStreamID = id;
         }
-        bool operator<(const EndPointUniqueID &) const;
+        bool operator<(const EndPointUniqueID &o) const {
+            return m_oAddress < o.m_oAddress
+                || (m_oAddress == o.m_oAddress && m_byStreamID < o.m_byStreamID);
+        }
 
         InetAddress m_oAddress; // 0x0
         unsigned char m_byStreamID; // 0x80
