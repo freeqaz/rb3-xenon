@@ -104,9 +104,10 @@ namespace Quazal {
         char unk0[4];
     };
 
-    class SignatureGenerator {
+    // Transport\Interface\TransportSignatureGenerator.cpp owns this.
+    class TransportSignatureGenerator {
     public:
-        unsigned int Generate(unsigned int, unsigned short);
+        unsigned int ComputeSourceSignature(unsigned int, unsigned short);
     };
 
     class Packet : public RootObject {
@@ -261,7 +262,7 @@ namespace Quazal {
         char unk10[0x14 - 0x10];
         TimeoutManager m_oTimeoutManager;  // 0x14
         char unk18[0xe0 - 0x18];
-        SignatureGenerator m_oSignatureGenerator; // 0xe0
+        TransportSignatureGenerator m_oSignatureGenerator; // 0xe0
     };
 
     // The stream this TU's endpoints belong to; Send and ReleaseEndPoint are
@@ -992,7 +993,7 @@ namespace Quazal {
             if (IsConnecting() && pPacket->HasFlag(8) && !m_bUnk94) {
 #line 611
                 PacketOut *pConnect = new (__FILE__, __LINE__) PacketOut(this, 1, 0x30, m_oPendingOperation.GetBuffer());
-                unsigned int uiSignature = GetStream()->m_oSignatureGenerator.Generate(
+                unsigned int uiSignature = GetStream()->m_oSignatureGenerator.ComputeSourceSignature(
                     pPacket->m_oDest.GetAddress(), pPacket->m_oDest.GetPort()
                 );
                 pConnect->m_uiConnectionSignature = uiSignature;

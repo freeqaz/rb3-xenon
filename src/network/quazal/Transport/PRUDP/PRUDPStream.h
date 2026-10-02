@@ -170,6 +170,15 @@ namespace Quazal {
 
     class StreamListener;
 
+    // Transport\Interface\TransportSignatureGenerator.cpp owns these.
+    class TransportSignatureGenerator {
+    public:
+        TransportSignatureGenerator();
+        ~TransportSignatureGenerator();
+        unsigned int ComputeSourceSignature(unsigned int, unsigned short);
+        void *m_pChecksum;
+    };
+
     class Stream : public RootObject {
     public:
         enum Type {
@@ -275,14 +284,6 @@ namespace Quazal {
             char m_data[0x60];
         };
 
-        class SessionIDTable {
-        public:
-            SessionIDTable();
-            ~SessionIDTable();
-            unsigned int Lookup(unsigned int, unsigned short);
-            void *m_p;
-        };
-
         PacketQueue m_oPacketQueue; // 0x14
         EndPointTable m_oEndPoints; // 0x74
         qList<PRUDPEndPoint *> m_lstReleasedEndPoints; // 0x90
@@ -292,7 +293,7 @@ namespace Quazal {
         String m_strWaterMarkLabel; // 0xa8
         WaterMark m_oWaterMark; // 0xac
         unsigned short m_usListeningPort; // 0xdc
-        SessionIDTable m_oSessionIDs; // 0xe0
+        TransportSignatureGenerator m_oSignatureGenerator; // 0xe0
         EndPointIDMap m_mapPIDs; // 0xe4
         EndPointIDMap m_mapCIDs; // 0xfc
     };
