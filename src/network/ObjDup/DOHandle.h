@@ -16,14 +16,15 @@ namespace Quazal {
         }
         bool IsA(unsigned int id) const { return (mValue & 0xFFC00000) >> 22 == id; }
 
+        DOID GetDOID() const { return DOID(GetID()); }
         bool operator<(const DOHandle &h) const { return mValue < h.mValue; }
         bool operator==(const DOHandle &h) const { return mValue == h.mValue; }
         bool operator!=(const DOHandle &h) const { return mValue != h.mValue; }
 
-        DOID GetDOID() const { return GetID(); }
         bool IsAWKHandle() const;
 
         void SetDOClassID(unsigned int);
+        void SetDOID(DOID);
         const char *GetClassNameString() const;
 
         unsigned int mValue; // 0x0

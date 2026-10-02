@@ -7,6 +7,7 @@ namespace Quazal {
     public:
         MasterStationRef();
         MasterStationRef(const MasterStationRef &);
+        MasterStationRef(DOHandle, LogicalClockTmpl<unsigned char>);
         ~MasterStationRef();
         MasterStationRef &operator=(const MasterStationRef &);
 

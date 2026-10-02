@@ -1,6 +1,7 @@
 #pragma once
 #include "Core/Operation.h"
 #include "ObjDup/DOHandle.h"
+#include "ObjDup/DOID.h"
 #include "ObjDup/DORef.h"
 #include "ObjDup/MasterStationRef.h"
 #include "Platform/LogicalClock.h"
@@ -75,6 +76,12 @@ namespace Quazal {
         virtual bool CallsBackOnDataSet();
         virtual bool CallsBackOnDataSet(unsigned char);
 
+        static ChangeMasterStationOperation *DynamicCast(DOOperation *pOp) {
+            if (pOp == 0 || pOp->GetType() != 0xd)
+                return 0;
+            return static_cast<ChangeMasterStationOperation *>(pOp);
+        }
+
         DORef m_refNewMasterStation; // 0x20
         MasterStationRef m_refMasterStation; // 0x2c
         const qList<DOHandle> *m_plstDuplicaStations; // 0x3c
@@ -114,5 +121,35 @@ namespace Quazal {
         virtual bool CallsBackOnDataSet(unsigned char);
 
         unsigned char unk20[0x10]; // 0x20
+    };
+
+    class CreateMasterOperation : public DOOperation {
+    public:
+        CreateMasterOperation(DuplicatedObject *, DOHandle, DOID);
+        virtual ~CreateMasterOperation();
+        virtual int GetType() const;
+        virtual const char *GetClassNameString() const;
+        virtual void ForceImplOperationCommonMethodsMacro();
+        virtual void TraceImpl(_Event, unsigned int) const;
+        virtual bool CallsBackOnDataSet();
+        virtual bool CallsBackOnDataSet(unsigned char);
+
+        unsigned char unk20[0x14];
+    };
+
+    class ChangeDupSetOperation : public DOOperation {
+    public:
+        enum Context {
+        };
+        ChangeDupSetOperation(DOHandle, DuplicatedObject *, DOHandle, bool, Context);
+        virtual ~ChangeDupSetOperation();
+        virtual int GetType() const;
+        virtual const char *GetClassNameString() const;
+        virtual void ForceImplOperationCommonMethodsMacro();
+        virtual void TraceImpl(_Event, unsigned int) const;
+        virtual bool CallsBackOnDataSet();
+        virtual bool CallsBackOnDataSet(unsigned char);
+
+        unsigned char unk20[0x18];
     };
 }

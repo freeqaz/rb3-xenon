@@ -22,5 +22,6 @@ namespace Quazal {
         static DOHandle GetWKHandle() { return s_wkhSession; }
         unsigned char GetSessionState();
         static WKHandle s_wkhSession;
+        static bool IsActive();
     };
 }

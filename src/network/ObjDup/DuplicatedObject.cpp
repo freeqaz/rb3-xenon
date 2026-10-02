@@ -16,6 +16,10 @@
 #include "ObjDup/Session.h"
 #include "Plugins/Message.h"
 #include "Platform/Time.h"
+#include "ObjDup/WKHandle.h"
+#include "ObjDup/Session.h"
+#include "ObjDup/SelectionIterator.h"
+#include "ObjDup/DOSelections.h"
 #include "ObjDup/Station.h"
 #include "ObjDup/DOSelections.h"
 #include "ObjDup/CallRegister.h"
@@ -349,6 +353,123 @@ namespace Quazal {
 
     void DuplicatedObject::OperationBegin(DOOperation *) {}
     void DuplicatedObject::OperationEnd(DOOperation *) {}
+    bool DuplicatedObject::Publish(unsigned int ui) {
+        unsigned int uiID = m_dohMyself.GetID();
+        if (uiID == 0) {
+            if (!GetDOClass(m_dohMyself.GetDOClassID())->GenerateObjectID(&uiID, ui)) {
+                SystemError::SignalError(0, 0, 0xE000000C, 0);
+                return false;
+            }
+        }
+        ScopedCS cs(Scheduler::GetInstance()->unk38);
+        if (!FlagIsSet(1)) {
+            SystemError::SignalError(0, 0, 0xE000000E, 0);
+            return false;
+        }
+        if (!IsAWellKnownDO() && !Session::IsActive()) {
+            SystemError::SignalError(0, 0, 0xE0030015, 0);
+            return false;
+        }
+        if (!FlagIsSet(4)) {
+            SystemError::SignalError(0, 0, 0xE0030007, 0);
+            return false;
+        }
+        if (FlagIsSet(0x20)) {
+            SystemError::SignalError(0, 0, 0xE0030008, 0);
+            return false;
+        }
+        if (m_dohMyself.GetID() == 0) {
+            m_dohMyself.SetDOID(DOID(uiID));
+            SetMasterStation(
+                MasterStationRef(Station::GetLocalStation(), LogicalClockTmpl<unsigned char>(2))
+            );
+        }
+        return AddToStoreAsMaster();
+    }
+
+    void DuplicatedObject::FillDuplicaStationsList(qList<DOHandle> *pList) {
+        SelectionIterator it(&m_setDuplicationSet, false);
+        while (!it.EndReached()) {
+            pList->push_back(*it);
+            it.Next(false);
+        }
+    }
+
+    DuplicatedObject *DuplicatedObject::CreateWellKnown(WKHandle &wk) {
+        DuplicatedObject *pDO;
+        ScopedCS cs(Scheduler::GetInstance()->unk38);
+        if (wk.IsCreated()) {
+            SystemError::SignalError(0, 0, 0xE003000D, 0);
+            return 0;
+        }
+        pDO = CreateMasterImpl(Station::GetStationHandle(1), wk.GetDOClassID(), DOID(wk.GetID()));
+        wk.m_bCreated = true;
+        return pDO;
+    }
+
+    DuplicatedObject *DuplicatedObject::Create(unsigned int uiClassID, unsigned int uiValue) {
+        if (!Session::IsActive()) {
+            return CreateMasterImpl(DOHandle(0), uiClassID, DOID(0));
+        } else {
+            unsigned int uiID = 0;
+            if (!DOClass::FindDOClass(uiClassID)->GenerateObjectID(&uiID, uiValue)) {
+                SystemError::SignalError(0, 0, 0xE000000C, 0);
+                return 0;
+            }
+            return CreateMasterImpl(Station::GetLocalStation(), uiClassID, uiID);
+        }
+    }
+
+    DuplicatedObject *DuplicatedObject::Create(unsigned int uiClassID, DOID oID) {
+        return CreateMasterImpl(Station::GetLocalStation(), uiClassID, oID);
+    }
+
+    DuplicatedObject *
+    DuplicatedObject::CreateMasterImpl(DOHandle hMaster, unsigned int uiClassID, DOID oID) {
+        ScopedCS cs(Scheduler::GetInstance()->unk38);
+        DOHandle h(0);
+        h.SetDOClassID(uiClassID);
+        h.SetDOID(oID);
+        if (DOSelections::GetInstance()->Contains(h)) {
+            return 0;
+        }
+        DuplicatedObject *pDO = GetDOClass(uiClassID)->Create();
+        pDO->m_dohMyself.SetDOClassID(uiClassID);
+        pDO->SetFlag(4);
+        CreateMasterOperation op(pDO, hMaster, oID);
+        pDO->ExecuteOperation(op);
+        return pDO;
+    }
+
+    DuplicatedObject *
+    DuplicatedObject::CreateDuplica(DOHandle h, const MasterStationRef &refMaster) {
+        DuplicatedObject *pDO = GetDOClass(h.GetDOClassID())->Create();
+        pDO->m_dohMyself.SetDOClassID(h.GetDOClassID());
+        pDO->SetFlag(4);
+        pDO->m_dohMyself.SetDOID(h.GetDOID());
+        pDO->SetMasterStation(refMaster);
+        return pDO;
+    }
+
+    bool DuplicatedObject::ValidOperation(DOOperation *pOp) {
+        if (DOSelections::GetInstance()->IsAvailable()) {
+            switch (pOp->GetType()) {
+            case 5:
+            case 6:
+                SystemError::SignalError(0, 0, 0xE000000E, 0);
+                return false;
+            case 0xd:
+                if (ChangeMasterStationOperation::DynamicCast(pOp)->m_refMasterStation.m_hReferencedDO
+                    == Station::GetLocalStation()) {
+                    SystemError::SignalError(0, 0, 0xE000000E, 0);
+                    return false;
+                }
+                break;
+            }
+        }
+        return true;
+    }
+
     float DuplicatedObject::ComputeDistance(DuplicatedObject *) { return -1; }
     void DuplicatedObject::ReleaseReferenceToMaster() { m_refMasterStation.Release(); }
 
@@ -360,6 +481,15 @@ namespace Quazal {
             ref->Acquire();
         }
         referencedDO = ref->m_poReferencedDO;
+    }
+
+    bool DuplicatedObject::IsDuplicatedOn(DOHandle h) {
+        ScopedCS cs(Scheduler::GetInstance()->unk38);
+        if (IsADuplicationMaster()) {
+            return m_setDuplicationSet.find(h) != m_setDuplicationSet.end();
+        } else {
+            return IsInCachedDuplicationSet(h);
+        }
     }
 
     bool DuplicatedObject::IsInCachedDuplicationSet(DOHandle h) const {
@@ -382,6 +512,25 @@ namespace Quazal {
 
     bool DuplicatedObject::RemoveFromDuplicationSet(DOHandle h) {
         return m_setDuplicationSet.Remove(h);
+    }
+
+    void DuplicatedObject::RemoveAllDuplicasOnLeavingStation(DOHandle hStation) {
+        SelectionIteratorTemplate<DuplicatedObject> it;
+        while (!it.EndReached()) {
+            if (it->IsADuplicationMaster() && it->IsASettledMaster()) {
+                ChangeDupSetOperation op(
+                    hStation, it.operator->(), hStation, false, (ChangeDupSetOperation::Context)0
+                );
+                it->ExecuteOperation(op);
+            } else {
+                it->RemoveFromCachedDuplicationSet(hStation);
+            }
+            it.Next(false);
+        }
+    }
+
+    bool DuplicatedObject::IsASettledMaster() const {
+        return IsADuplicationMaster() && !MigrationInProgress();
     }
 
     // MSVC X360 makes any StateMachine-derived class use the 8-byte

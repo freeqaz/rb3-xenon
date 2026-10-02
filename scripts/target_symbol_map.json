@@ -35014,5 +35014,16 @@
  "0x82a71d60": "?ExecAddToStore@DuplicatedObject@Quazal@@QAAXABVAddToStoreOperation@2@@Z",
  "0x82a71a80": "?ExecRemoveFromStore@DuplicatedObject@Quazal@@QAAXABVRemoveFromStoreOperation@2@@Z",
  "0x82a73010": "?SendToSomeDuplicas@DuplicatedObject@Quazal@@QAAXPAVSelection@2@PAVMessage@2@I@Z",
- "0x82a73128": "?GetInstance@BundlingPolicy@Quazal@@SAPAV12@XZ"
+ "0x82a73128": "?GetInstance@BundlingPolicy@Quazal@@SAPAV12@XZ",
+ "0x82a74220": "?Publish@DuplicatedObject@Quazal@@QAA_NI@Z",
+ "0x82a746a8": "?FillDuplicaStationsList@DuplicatedObject@Quazal@@QAAXPAV?$qList@VDOHandle@Quazal@@@2@@Z",
+ "0x82a74758": "?CreateWellKnown@DuplicatedObject@Quazal@@SAPAV12@AAVWKHandle@2@@Z",
+ "0x82a74928": "?Create@DuplicatedObject@Quazal@@SAPAV12@II@Z",
+ "0x82a74a40": "?Create@DuplicatedObject@Quazal@@SAPAV12@IVDOID@2@@Z",
+ "0x82a74ab0": "?CreateMasterImpl@DuplicatedObject@Quazal@@SAPAV12@VDOHandle@2@IVDOID@2@@Z",
+ "0x82a74ce8": "?CreateDuplica@DuplicatedObject@Quazal@@SAPAV12@VDOHandle@2@ABVMasterStationRef@2@@Z",
+ "0x82a74de0": "?ValidOperation@DuplicatedObject@Quazal@@UAA_NPAVDOOperation@2@@Z",
+ "0x82a74fe0": "?IsDuplicatedOn@DuplicatedObject@Quazal@@QAA_NVDOHandle@2@@Z",
+ "0x82a754b0": "?RemoveAllDuplicasOnLeavingStation@DuplicatedObject@Quazal@@SAXVDOHandle@2@@Z",
+ "0x82a75620": "?IsASettledMaster@DuplicatedObject@Quazal@@QBA_NXZ"
 }

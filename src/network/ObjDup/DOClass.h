@@ -40,6 +40,8 @@ namespace Quazal {
         virtual void DispatchRMCResult(RMCContext *);
         virtual bool ValidCastTowards(unsigned int);
 
+        bool GenerateObjectID(unsigned int *, unsigned int);
+
         static DOClass *FindDOClass(unsigned int);
     };
 }

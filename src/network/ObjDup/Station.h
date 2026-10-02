@@ -36,5 +36,6 @@ namespace Quazal {
             else
                 return NULL;
         }
+        static DOHandle GetStationHandle(unsigned int);
     };
 }
