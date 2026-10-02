@@ -14499,8 +14499,8 @@ network/quazal/WorkerThreads.cpp:
 	.text       start:0x82B00210 end:0x82B0046C
 
 network/quazal/Transport/Interface/NATTraversalEngine.cpp:
-	.pdata      start:0x82256A48 end:0x82256C70
-	.text       start:0x82B036B8 end:0x82B058F8
+	.pdata      start:0x82256A18 end:0x82256E80
+	.text       start:0x82B03480 end:0x82B07280
 
 network/quazal/Transport/Routing/RoutingStream.cpp:
 	.pdata      start:0x822570A8 end:0x822570C0
