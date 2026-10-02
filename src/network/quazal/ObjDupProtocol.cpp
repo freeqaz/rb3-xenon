@@ -41,6 +41,7 @@ namespace Quazal {
     class Time {
     public:
         Time();
+        Time(unsigned long long ullValue) : m_ullValue(ullValue) {}
         unsigned long long m_ullValue;
     };
 
@@ -74,6 +75,14 @@ namespace Quazal {
         char m_pad4[0x10];
     };
 
+    // A read cursor into a ByteStream; retail builds one from the raw offset
+    // and hands it back by value.
+    class StreamPosition {
+    public:
+        StreamPosition(unsigned int uiPosition) : m_uiPosition(uiPosition) {}
+        unsigned int m_uiPosition;
+    };
+
     class ByteStream : public RootObject {
     public:
         void Append(const void *, unsigned int, bool);
@@ -84,7 +93,7 @@ namespace Quazal {
         ByteStream &operator>>(bool &);
         void AppendString(const char *, unsigned int);
         void ExtractString(char *, unsigned int);
-        void SetPosition(unsigned int);
+        void SetPosition(StreamPosition);
 
         template <class T>
         ByteStream &operator<<(const T &t) {
@@ -219,6 +228,7 @@ namespace Quazal {
         }
         static NetZCore *GetInstance() { return GetInstance(PseudoSingleton::GetCurrentContext()); }
         BandwidthMonitor *GetBandwidthMonitor() { return m_pBandwidthMonitor; }
+        class MessageSigner *GetMessageSigner() { return m_pMessageSigner; }
         ObjDupProtocol *GetObjDupProtocol() { return m_pObjDupProtocol; }
         class Listener *GetListener() { return m_pListener; }
 
@@ -423,6 +433,7 @@ namespace Quazal {
         virtual void ReleaseRef();
 
         void SetResponseMessage(Message *);
+        void ProcessResponse(Message *pResponse) { Message *pMsg = pResponse; SetResponseMessage(pMsg); }
         void SetOutcome(DOHandle, int);
     };
 
@@ -863,12 +874,12 @@ public:
         delete m_pMessage;
     }
     virtual void Execute() {
-        unsigned int uiPosition = m_pMessage->GetPosition();
+        Quazal::StreamPosition oPosition = m_pMessage->GetPosition();
         m_pOperation->Prepare();
         if (!m_pOperation->PostponeOperation()) {
             m_pOperation->Abort();
         } else {
-            GetMessage()->SetPosition(uiPosition);
+            GetMessage()->SetPosition(oPosition);
             m_pOperation->Execute();
             SetResult(m_pOperation->GetResult());
         }
@@ -1130,9 +1141,9 @@ namespace Quazal {
 
     Message *ObjDupProtocol::CreateJoinRequest() {
         Message *pMsg = CreateMessage(0);
-        StationInfo oInfo(GetStationInfoFactory(1));
-        oInfo.Write(pMsg);
-        NetZCore::GetInstance()->m_pMessageSigner->Sign(pMsg, Time(), true);
+        StationInfo oStationInfo(GetStationInfoFactory(1));
+        oStationInfo.Write(pMsg);
+        NetZCore::GetInstance()->GetMessageSigner()->Sign(pMsg, Time(0), true);
         return pMsg;
     }
 
@@ -1380,7 +1391,7 @@ namespace Quazal {
     ) {
         CallMethodOperation *pOperation = new (__FILE__, 0x29D)
             CallMethodOperation(usCallID, hCaller, uiFlags, hTarget, usMethodID, pMsg);
-        unsigned int uiPosition = pMsg->GetPosition();
+        StreamPosition oPosition = pMsg->GetPosition();
         pOperation->Prepare();
         if (!pOperation->PostponeOperation()) {
             if (uiFlags & 4) {
@@ -1392,7 +1403,7 @@ namespace Quazal {
             return true;
         }
         pOperation->Execute();
-        pMsg->SetPosition(uiPosition);
+        pMsg->SetPosition(oPosition);
         JobExecuteDelayedRMC *pJob = new (__FILE__, 0x2AB) JobExecuteDelayedRMC(pOperation, pMsg);
         GetScheduler()->Queue(pJob, false);
         return false;
@@ -1425,7 +1436,7 @@ namespace Quazal {
     void ObjDupProtocol::ProcessRMCResponse(Message *pMsg, unsigned short *pusCallID) {
         CallContext *pContext = m_oCallContextRegister.GetCallContextRef(*pusCallID);
         if (pContext != 0) {
-            pContext->SetResponseMessage(pMsg);
+            pContext->ProcessResponse(pMsg);
             pContext->ReleaseRef();
         }
     }
