@@ -1937,9 +1937,12 @@ The "guard-thunk wall" that drags game-unit fuzzy down
 - Cross-binary identification (planned): Ghidra + BinDiff transfer dc3's
   named functions (from leaked `ham_xbox_r.map`) onto RB3's anonymous
   `fn_8XXXXXXX` by structural similarity. BinDiff installed at
-  `/usr/bin/bindiff`; BinExport plugin ships at `/opt/bindiff/extra/ghidra/`;
-  XEXLoaderWV source cloned at `/home/free/code/milohax/XEXLoaderWV/` (needs
-  rebuild for Ghidra 12.1 — installed prebuilt is 12.0.1).
+  `/usr/bin/bindiff`; BinExport is built from `../binexport` (java/) and
+  installed per-version under `~/.config/ghidra/ghidra_<ver>/Extensions/` —
+  **one copy only**, a duplicate aborts Ghidra; XEXLoaderWV source at
+  `/home/free/code/milohax/XEXLoaderWV/` (our `master` = upstream + lane D's
+  loader fixes, 2026-10-02; rebuild with `gradle buildExtension` from the
+  `XEXLoaderWV/` subdir against a COPY of the install, never the live one).
 
 ## Orchestrator MCP, Ghidra MCP, skills
 
@@ -1964,8 +1967,18 @@ most tooling transfers verbatim.
 - Port **8002** (DC3 owns 8000, rb3-Wii owns 8001).
 - Project at `ghidra_projects/RB3Xenon/RB3Xenon` (build via
   `tools/ghidra/import-xex.sh` — single-pass full analysis, no leaked .map).
-- Uses VMX128 SLEIGH fork at `/home/free/code/milohax/ghidra/build/ghidra/`
-  (same Ghidra build DC3 uses).
+- Uses the Xbox 360 Ghidra fork at `/home/free/code/milohax/ghidra/build/ghidra/`
+  (a symlink into `build/ghidra-dist/`; **12.3_DEV since 2026-10-02**, built
+  from fork `master` — NSA-synced, VMX128 audited to 100% agreement with
+  MSVC's disassembler, `PowerPC:BE:64:Xenon` defaulting to the
+  `ppc_64_xenon_msvc.cspec` save/restore call-fixups). Shared with dc3-decomp
+  (:8000) and rb3 (:8001). Swap record + rollback:
+  `docs/plans/ghidra-install-swap-2026-10-02.md`.
+  ⚠ **pyghidra-mcp caches decompiles in `cache.db` keyed by BINARY hash**, so a
+  Ghidra upgrade that changes decompile output is invisible until that
+  gitignored file is moved aside — the 12.3 swap served pre-swap text until it
+  was. ⚠ An existing program needs the "PowerPC MSVC Save/Restore Helpers"
+  analyzer run once (headless, service stopped) before the fixups apply.
 - Python client: `tools/ghidra/mcp_client.py` — default URL
   `http://127.0.0.1:8002/mcp`, session cache at
   `/tmp/claude/ghidra_mcp_session_rb3xenon.txt`.

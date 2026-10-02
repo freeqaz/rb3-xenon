@@ -83,3 +83,15 @@ The 12.2 tree is never modified by these steps.
 - `application.revision.ghidra-sync` key naming (lane A built from a dir
   named `ghidra-sync`); the integration build ran from `ghidra-integ` so the
   key is `application.revision.ghidra-integ`. Nothing we run reads it.
+
+## EXECUTED 2026-10-02 — outcome
+
+- Projects backed up by reflink to `~/tmp/ghidra-project-backup-20261002/{rb3-xenon,dc3-decomp,rb3}` (1.4 / 1.3 / 5.3 GB).
+- `build/ghidra` → `ghidra-dist/ghidra_12.3_DEV` (revision `b003194af3`); 12.2 tree left intact beside it.
+- Extensions rebuilt for 12.3 and installed: XEXLoaderWV (lane D), `ghidra-xbe`, BinExport (required a fast-forward of `../binexport` to upstream `b56dea7` — 12.3 added an abstract `Exporter.canExportDomainObject(Class)` that the old checkout did not implement; built with an init-script toolchain override because its build pins Java 21 and java-21 here is JRE-only).
+- One-time post-swap pass on every existing Xenon program (`~/tmp/ghidra-postswap/ApplyXenonUpgrade.java`): TU5 and TU0 in RB3Xenon, `default.xex-997567` in DC3 — each **236 call-fixups bound / 234 helper functions**. DC3's helpers were already named from `ham_xbox_r.map`; the analyzer found the same 234 entries (independent confirmation).
+- ⚠ **The first "after" decompile was byte-identical to "before"** — pyghidra-mcp's `cache.db` is keyed by binary hash, which the swap did not change. `--reinit` does not clear it. Moved aside (rb3-xenon 9,138 rows, dc3 3,690 rows → `~/tmp/ghidra-postswap/`). After that: `BandDirector::Poll` went from `void Poll(void) { iVar4 = FUN_82829258(); … iVar4+0xe9 }` to `void Poll(int param_1) { … param_1+0xe9 }` with `__savegprlr_28 replaced with injection`; DC3's `CharLipSync::PlayBack::Poll` likewise, `this` typed.
+- Services: :8002 (rb3-xenon) and :8000 (dc3) restarted on 12.3, both opening existing programs with no re-import and no duplicate. :8001 (rb3) not started (not running before). :8003 (xex-patcher) pointed at the 12.2 dir directly and stays there.
+- `JAVA_HOME` resolver landed in rb3-xenon `077aaa5df`, dc3-decomp `f407c9fc8`, rb3 `69599d86b`.
+- Fork `master` fast-forwarded to the integration tip + BSim merge (`05f2c9c906`); XEXLoaderWV `master` to lane D's tip (`0fa5154`). ⚠ The deployed install predates the BSim merge (built at `b003194af3`); the two BSim commits affect only BSim queries, which nothing currently exercises.
+- Not done: no `ppc.ldefs` language version bump (projects were not fully re-analysed; the three programs got the analyzer pass only — a full re-analysis to refresh VMX128 register references is a follow-up if vector-heavy decompiles look wrong).
