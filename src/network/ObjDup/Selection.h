@@ -10,6 +10,9 @@ namespace Quazal {
         virtual ~Selection();
 
         void SetFlags(unsigned char);
+        void Clear();
+        void Add(class DuplicatedObject *);
+        void AddDO(class DuplicatedObject *pDO) { Add(pDO); }
 
         qMap<DOHandle, class DuplicatedObject *> m_map; // 0x4
         unsigned char m_byFlags; // 0x20;

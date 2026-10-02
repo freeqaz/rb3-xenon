@@ -16,6 +16,7 @@ namespace Quazal {
         bool IsA(unsigned int id) const { return (mValue & 0xFFC00000) >> 22 == id; }
 
         bool operator<(const DOHandle &h) const { return mValue < h.mValue; }
+        bool operator==(const DOHandle &h) const { return mValue == h.mValue; }
         bool operator!=(const DOHandle &h) const { return mValue != h.mValue; }
 
         void SetDOClassID(unsigned int);

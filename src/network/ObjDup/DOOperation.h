@@ -24,6 +24,8 @@ namespace Quazal {
         RemoveFromStoreOperation(DOHandle, DuplicatedObject *, bool, bool);
         virtual ~RemoveFromStoreOperation();
 
+        bool IsADuplicaRemoval() const { return m_b21; }
+
         bool m_b20; // 0x20
         bool m_b21; // 0x21
     };
@@ -32,6 +34,9 @@ namespace Quazal {
     public:
         AddToStoreOperation(DOHandle, DuplicatedObject *, bool, Message *);
         virtual ~AddToStoreOperation();
+
+        Message *GetMessage() const { return m_pMessage; }
+        bool IsADuplica() const { return !m_bMaster; }
 
         bool m_bMaster; // 0x20
         Message *m_pMessage; // 0x24

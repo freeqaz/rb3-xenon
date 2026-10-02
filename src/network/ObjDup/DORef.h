@@ -1,6 +1,7 @@
 #pragma once
 #include "DOHandle.h"
 #include "Platform/RootObject.h"
+#include "Platform/SystemError.h"
 
 namespace Quazal {
     class DuplicatedObject;
@@ -8,11 +9,40 @@ namespace Quazal {
     class DORef : public RootObject {
     public:
         DORef();
+        DORef(DOHandle);
         ~DORef();
 
         void SetSoft();
         void Release();
         void Acquire();
+
+        unsigned int GetReferencedHandle() const { return m_hReferencedDO.mValue; }
+
+        // Lane-chosen names for the class-checked accessors retail instantiates
+        // at the end of the TU.
+        template <class T>
+        bool IsA() const {
+            if (!m_poReferencedDO) {
+                SystemError::SignalError(0, 0, 0xA0030004, 0);
+                return false;
+            } else {
+                T *pDO = (T *)m_poReferencedDO;
+                if (!T::GetDOClass(pDO->m_dohMyself.GetDOClassID())
+                         ->IsAKindOf(T::GetStaticClassID())) {
+                    SystemError::SignalError(0, 0, 0xE003000C, 0);
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        template <class T>
+        T *Get() const {
+            if (!IsA<T>())
+                return 0;
+            else
+                return (T *)m_poReferencedDO;
+        }
 
         void EmptyInit() {
             m_bLockRelevance = true;

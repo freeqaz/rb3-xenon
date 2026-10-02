@@ -73,8 +73,8 @@ namespace Quazal {
         static OperationManager *GetOperationManager();
         bool ExecuteOperation(DOOperation &);
         bool PerformOperation(DOOperation *);
-        bool ExecRemoveFromStore(const RemoveFromStoreOperation &);
-        bool ExecAddToStore(const AddToStoreOperation &);
+        void ExecRemoveFromStore(const RemoveFromStoreOperation &);
+        void ExecAddToStore(const AddToStoreOperation &);
         bool ExecChangeMasterStation(const ChangeMasterStationOperation &);
         bool ExecChangeDupSet(const ChangeDupSetOperation &);
         bool FaultRecoveryImpl(DOOperation *);
@@ -133,6 +133,8 @@ namespace Quazal {
         StateFuncFactory DeletedDuplicaState(const QEvent &);
 
         bool FlagIsSet(unsigned short f) const { return (m_uiFlags & f) == f; }
+        // Lane-chosen name: flag 1 is set while the main reference is held.
+        bool MainRefReleased() const { return !FlagIsSet(1); }
 
         DOHandle GetHandle() const {
             unsigned int uiID = m_dohMyself.GetID();

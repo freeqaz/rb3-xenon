@@ -8,6 +8,11 @@
 #include "ObjDup/DOClass.h"
 #include "ObjDup/StationConnections.h"
 #include "Core/OperationManager.h"
+#include "ObjDup/DOSelections.h"
+#include "ObjDup/Station.h"
+#include "ObjDup/Session.h"
+#include "ObjDup/ObjDupProtocol.h"
+#include "Plugins/Message.h"
 #include "Platform/Time.h"
 
 namespace Quazal {
@@ -194,6 +199,48 @@ namespace Quazal {
     }
 
     bool DuplicatedObject::Refresh() { return RefreshImpl(NULL, Time::GetSessionTime()); }
+
+    void DuplicatedObject::ExecRemoveFromStore(const RemoveFromStoreOperation &op) {
+        if (op.IsADuplicaRemoval()) {
+            DORef refSession(Session::GetWKHandle());
+            if (refSession.IsA<Session>()) {
+                if (refSession.Get<Session>()->GetSessionState() != 3) {
+                    Message *pMsg = ObjDupProtocol::GetInstance()->CreateDeleteMessage(GetHandle());
+                    SendToAllDuplicas(pMsg, 1);
+                    delete pMsg;
+                }
+            }
+            m_setDuplicationSet.Clear();
+        }
+        ClearFlag(1);
+        DecreaseRefCount(false);
+        if (m_dohMyself.IsA(_DO_Station::GetStaticClassID())) {
+            ((Station *)this)->ReleaseStationReference();
+        }
+    }
+
+    void DuplicatedObject::ExecAddToStore(const AddToStoreOperation &op) {
+        if (op.GetMessage()) {
+            GetDOClass(m_dohMyself.GetDOClassID())
+                ->SpecificExtractDSFromDiscoveryMessage(this, op.GetMessage());
+        }
+        if (op.IsADuplica()) {
+            Refresh();
+        }
+        if (MainRefReleased()) {
+            AcquireMainReference();
+            SetFlag(1);
+        } else {
+            DOSelections::GetDuplicatedObjects()->AddDO(this);
+            InitDO();
+        }
+        if (GetHandle() == DOHandle(m_refMasterStation.GetReferencedHandle())) {
+            Station::DynamicCast(this)->AcquireStationReference();
+        }
+        if (op.IsADuplica()) {
+            OperationErrorNotifier::GetInstance()->NotifyError(GetHandle(), 0x60001);
+        }
+    }
 
     void DuplicatedObject::OperationBegin(DOOperation *) {}
     void DuplicatedObject::OperationEnd(DOOperation *) {}
