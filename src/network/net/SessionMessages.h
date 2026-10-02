@@ -233,6 +233,7 @@ public:
 class VoiceDataMsg : public SessionMsg {
 public:
     VoiceDataMsg() {}
+    VoiceDataMsg(const void *, int, const User *);
     virtual void Save(BinStream &) const;
     virtual void Load(BinStream &);
     virtual bool VoiceData() const { return true; }

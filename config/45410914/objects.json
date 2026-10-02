@@ -326,6 +326,7 @@
             "system/beatmatch/DrumTrackWatcherImpl.cpp": "NonMatching",
             "system/synth_xbox/FxSend.cpp": "NonMatching",
             "system/synth_xbox/XMAReader.cpp": "NonMatching",
+            "system/synth_xbox/XMAReaderBlock.cpp": "NonMatching",
             "system/utl/Pool.cpp": "NonMatching",
             "system/utl/VarTimer.cpp": "NonMatching",
             "system/utl/BeatMap.cpp": "NonMatching",

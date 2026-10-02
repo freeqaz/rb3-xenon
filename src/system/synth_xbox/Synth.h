@@ -41,6 +41,9 @@ public:
     virtual void ReleaseMic(int);
     virtual void Init();
 
+    void ActivateLocalChat(int, bool);
+    int GetChatData(int, void *, int);
+
     CriticalSection unk88; // 0x88
     std::vector<Mic *> mMics; // 0xa8
     std::vector<IXAudio2SubmixVoice *> mHeadsetSubmixes; // 0xb4

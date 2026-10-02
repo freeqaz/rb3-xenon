@@ -73,6 +73,47 @@ void ChatReceiver::ActivateProcessing(bool b1) {
     }
 }
 
+// Retail 0x82B5E2C8. Pulls this talker's pending local chat packets out of
+// XHV2 and appends them to the outgoing stream.
+void ChatReceiver::ReadLocalChat() {
+    if (mXHV->IsLocalTalking(unk4)) {
+        UINT32 size = 0x80;
+        UINT32 packets = 0;
+        unsigned char buf[0x80];
+        if (mXHV->GetLocalChatData(unk4, buf, &size, &packets) == 0) {
+            unk50->Seek(0, BinStream::kSeekEnd);
+            unk50->Write(buf, size);
+        }
+    }
+}
+
+// Retail 0x82B5EE50. Hands out up to `max` bytes of queued local chat once
+// either 100 ms have passed since data first queued or a full packet's worth
+// is waiting; returns the byte count (0 when nothing is sent).
+int ChatReceiver::GetChatData(void *buf, int max) {
+    bool hadData = unk50->Size() > 0;
+    ReadLocalChat();
+    bool hasData = unk50->Size() > 0;
+    if (!hasData) {
+        return 0;
+    }
+    if (!hadData) {
+        unk20.Restart();
+    }
+    if (unk20.SplitMs() < 100.0f && unk50->Size() < max) {
+        return 0;
+    }
+    unk20.Restart();
+    int size = unk50->Size();
+    if (size < max) {
+        max = size;
+    }
+    memcpy(buf, unk50->Buffer(), max);
+    unk50->Seek(max, BinStream::kSeekBegin);
+    unk50->Compact();
+    return max;
+}
+
 void ChatReceiver::ProcessChatData(void *data, unsigned int size, int *flag) {
     float w = gLowCut * 0.000392699f;
     float b1 = Sine(w + 1.5707964f) * -2.0f;
@@ -524,6 +565,51 @@ void MicManagerXbox::RequirePushToTalk(bool b, int pad) {
         mPushToTalkPad = pad;
     } else {
         mPushToTalkPad = -1;
+    }
+}
+
+// Retail 0x82B5E470. Turns a local user's chat talker on or off; a user
+// going quiet also gives up the shared (headset-less) mic.
+void MicManagerXbox::ActivateLocalChat(int pad, bool active) {
+    unkc[pad]->ActivateProcessing(active);
+    CritSecTracker t(&unk68);
+    unkc[pad]->unk8 = active;
+    if (unk18 == pad && !active) {
+        unk18 = -1;
+    }
+}
+
+// Retail 0x82B5F318.
+int MicManagerXbox::GetChatData(int pad, void *buf, int max) {
+    return unkc[pad]->GetChatData(buf, max);
+}
+
+// Retail 0x82B5E370. Queues chat bytes received from a remote talker for
+// MicManagerXbox::Poll to submit; a buffer that would overflow drops them.
+void MicManagerXbox::AddRemoteChatData(
+    unsigned long long const &xuid, const void *data, int size
+) {
+    FOREACH (it, unk28) {
+        if (*(unsigned long long *)&*it == xuid) {
+            if (it->unk8[250] + size <= 1000) {
+                memcpy((char *)it->unk8 + it->unk8[250], data, size);
+                it->unk8[250] += size;
+            }
+            return;
+        }
+    }
+}
+
+// Retail 0x82B5F748.
+void MicManagerXbox::RemoveRemoteMic(unsigned long long const &xuid) {
+    void *mode = _xhv_voicechat_mode;
+    unk1c->StopRemoteProcessingModes(xuid, &mode, 1);
+    unk1c->UnregisterRemoteTalker(xuid);
+    FOREACH (it, unk28) {
+        if (*(unsigned long long *)&*it == xuid) {
+            unk28.erase(it);
+            return;
+        }
     }
 }
 

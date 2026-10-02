@@ -20,3 +20,16 @@ public:
     ULONGLONG mNonce; // 0x8
     XSESSION_INFO mInfo; // 0x10
 };
+
+// XNetQosListen on a session id (retail 0x823EF400 / 0x823EF450, in
+// NetSession_Xbox.cpp's .text): enable it, advertising `data` when given, or
+// release it. XboxSession (DeleteSession, FinishJoin, UpdateSettings) and
+// MakeSessionJob::OnCompletion call them. The names are ours.
+void QosListenSetData(const XNKID *, const void *, int);
+void QosListenRelease(const XNKID *);
+
+namespace Quazal {
+    // Retail 0x82A8EEF8 (anonymous): XNetRegisterKey for a session id and its
+    // key-exchange key. FinishJoin and MakeSessionJob::OnCompletion call it.
+    void RegisterXNetKey(const XNKID *, const XNKEY *);
+}

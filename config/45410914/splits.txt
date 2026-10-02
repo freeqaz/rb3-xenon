@@ -5809,7 +5809,6 @@ FileMergerOrganizer.cpp:
 	.text       start:0x823DA6E0 end:0x823DA758
 
 CheatProvider.cpp:
-	.pdata      start:0x822089F0 end:0x82208AC8
 	.pdata      start:0x82208FB0 end:0x82208FC8
 	.pdata      start:0x82208FC8 end:0x82208FE8
 	.pdata      start:0x82209008 end:0x82209010
@@ -5829,7 +5828,6 @@ CheatProvider.cpp:
 	.pdata      start:0x82237728 end:0x82237730
 	.pdata      start:0x82237760 end:0x82237770
 	.pdata      start:0x82237778 end:0x822377A0
-	.text       start:0x823EF5F8 end:0x823F0310
 	.text       start:0x823F4590 end:0x823F4688
 	.text       start:0x823F4688 end:0x823F4810
 	.text       start:0x823F4A58 end:0x823F4AB8
@@ -7255,7 +7253,6 @@ CharIKSliderMidi.cpp:
 	.pdata      start:0x82206570 end:0x82206580
 	.pdata      start:0x82206580 end:0x82206588
 	.pdata      start:0x82206588 end:0x82206658
-	.pdata      start:0x82208AC8 end:0x82208B38
 	.text       start:0x823CAB00 end:0x823CAB98
 	.text       start:0x823CAB98 end:0x823CAF10
 	.text       start:0x823CAF10 end:0x823CB0C8
@@ -7263,7 +7260,6 @@ CharIKSliderMidi.cpp:
 	.text       start:0x823CB0F8 end:0x823CB2A0
 	.text       start:0x823CB2A0 end:0x823CB34C
 	.text       start:0x823CB350 end:0x823CBF28
-	.text       start:0x823F0310 end:0x823F0A00
 
 FlowSwitchCase.cpp:
 	.pdata      start:0x82204EC0 end:0x82204EC8
@@ -15723,8 +15719,12 @@ network/net/SessionSearcher_Xbox.cpp:
 	.text       start:0x823EDE08 end:0x823EEAB8
 
 network/net/NetSession_Xbox.cpp:
-	.pdata      start:0x82208918 end:0x822089F0
-	.text       start:0x823EEAB8 end:0x823EF5F8
+	.pdata      start:0x82208918 end:0x82208B38
+	.text       start:0x823EEAB8 end:0x823F0A00
+
+system/synth_xbox/XMAReaderBlock.cpp:
+	.pdata      start:0x8225EB80 end:0x8225EB98
+	.text       start:0x82BBB2E8 end:0x82BBB510
 
 system/synth_xbox/XMAReader.cpp:
 	.pdata      start:0x8225B4B0 end:0x8225B520

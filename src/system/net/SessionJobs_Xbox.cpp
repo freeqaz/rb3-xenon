@@ -11,19 +11,14 @@
 #include "xdk/XNET.h"
 
 // Callees retail reaches from MakeSessionJob that no symbol, string or RTTI
-// identifies (the three at 0x82A7xxxx-0x82AAxxxx sit in the /Od Quazal
-// region).  The declarations record only the call shapes retail uses; each is
-// named for its retail address.
-//   * 0x823EF400 (XboxSession's .text): (XSESSION_INFO *, int, int); its other
-//     caller is 0x823EF8A0.
-//   * 0x82A8EEF8: (const XNKID *, const XNKEY *) -- the session id and key
-//     exchange key of one XSESSION_INFO.
+// identifies (the ones at 0x82A7xxxx-0x82AAxxxx sit in the /Od Quazal region).
+// The declarations record only the call shapes retail uses; each is named for
+// its retail address. (0x823EF400 and 0x82A8EEF8 are QosListenSetData and
+// Quazal::RegisterXNetKey, declared in net/XSessionData.h.)
 //   * the function-local static at 0x82CC0030: constructed by 0x82AA1658
 //     (guard bit 0 of 0x82CC0094, destroyed through atexit), filled by
 //     0x82AA2BE8 (this, &hostAddress, &sessionID, &keyExchangeKey), then
 //     handed with a fresh Quazal::CallContext to 0x82A78668.
-void XboxSessionHelper_823EF400(XSESSION_INFO *, int, int);
-void QuazalSessionKey_82A8EEF8(const XNKID *, const XNKEY *);
 class QuazalJoinTarget_82AA1658 {
 public:
     QuazalJoinTarget_82AA1658();
@@ -277,8 +272,8 @@ void MakeSessionJob::Cancel(Hmx::Object *) {
 void MakeSessionJob::OnCompletion(Hmx::Object *) {
     if (mSession && (mFlags & XSESSION_CREATE_HOST)) {
         XSESSION_INFO info = mData->mInfo;
-        XboxSessionHelper_823EF400(&info, 0, 0);
-        QuazalSessionKey_82A8EEF8(&info.sessionID, &info.keyExchangeKey);
+        QosListenSetData(&info.sessionID, nullptr, 0);
+        Quazal::RegisterXNetKey(&info.sessionID, &info.keyExchangeKey);
     }
     if (mFlags & XSESSION_CREATE_HOST) {
         TheNetSession->OnRegisterSessionJobComplete(mSuccess);

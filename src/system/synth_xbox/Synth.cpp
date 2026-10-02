@@ -359,6 +359,22 @@ bool Synth360::IsMicConnected(int i) const {
     }
 }
 
+// Retail 0x82B5BBA8; XboxSession turns a joining local user's chat on.
+void Synth360::ActivateLocalChat(int pad, bool active) {
+    if (!mMics.empty()) {
+        MicManagerXbox::GetInstance()->ActivateLocalChat(pad, active);
+    }
+}
+
+// Retail 0x82B5BC00; XboxSession's voice pump reads outgoing chat here.
+int Synth360::GetChatData(int pad, void *buf, int max) {
+    if (!mMics.empty()) {
+        return MicManagerXbox::GetInstance()->GetChatData(pad, buf, max);
+    }
+    return -1;
+}
+
+// Retail 0x82B5BC50 (Synth360 vtable).
 void Synth360::RequirePushToTalk(bool b, int i) {
     if (!mMics.empty()) {
         MicManagerXbox::GetInstance()->RequirePushToTalk(b, i);

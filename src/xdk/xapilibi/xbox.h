@@ -45,6 +45,7 @@ DWORD XUserReadGamerPicture(
     XOVERLAPPED *pOverlapped
 );
 VOID XUserSetContext(DWORD dwUserIndex, DWORD dwContextId, DWORD dwContextValue);
+DWORD XUserMuteListQuery(DWORD dwUserIndex, XUID XuidRemoteTalker, BOOL *pfOnMuteList);
 VOID XUserSetProperty(
     DWORD dwUserIndex, DWORD dwPropertyId, DWORD cbValue, const VOID *pvValue
 );
