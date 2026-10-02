@@ -243,6 +243,8 @@ namespace Quazal {
         NATTraversalStream(NATTraversalEngine *, RootTransport *);
         virtual ~NATTraversalStream();
         void SendMsg(const StationURL &, Buffer *);
+
+        char m_data[0x14];
     };
 
     class NATRelayInterface : public RootObject {
@@ -274,10 +276,14 @@ namespace Quazal {
         StationURL m_oURL; // 0x4
     };
 
-    class NATSession : public RootObject {
+    class Job : public RootObject {
     public:
-        NATSession(void *, NATTraversalEngine *);
-        virtual ~NATSession();
+        virtual ~Job();
+    };
+
+    class JobGetPublicURL : public Job {
+    public:
+        JobGetPublicURL(void *, NATTraversalEngine *);
         virtual void Func1();
         virtual void Func2();
         virtual void Func3();
@@ -288,9 +294,11 @@ namespace Quazal {
         virtual void Func8();
         virtual void Func9();
         virtual void SetPublicURL();
+
+        char m_data[0x44];
     };
 
-    class NATSessionOwner : public RootObject {
+    class URLRequester : public RootObject {
     public:
         bool IsReady();
         void *GetContext() const { return m_pContext; }
@@ -298,19 +306,61 @@ namespace Quazal {
         void *m_pContext; // 0x34
     };
 
-    class SystemLockOwner : public RootObject {
+    class Scheduler : public RootObject {
     public:
-        void RegisterSession(NATSession *, int);
+        void Queue(Job *, bool);
+        static Scheduler *GetInstance();
+
         char m_data[0x3c];
-        CriticalSection m_csLock; // 0x3c
+        CriticalSection m_csSystemLock; // 0x3c
     };
 
-    class InstanceHolder : public RootObject {
+    class InstanceTable : public RootObject {
     public:
-        static InstanceHolder *GetInstance();
-        char m_data[0x8];
-        SystemLockOwner *m_pOwner; // 0x8
+        unsigned int GetInstanceFromVector(unsigned int, unsigned int);
     };
+
+    class InstanceControl : public RootObject {
+    public:
+        static InstanceTable s_oInstanceTable;
+
+        char m_data[0xc];
+        void *m_pDelegatorInstance; // 0xc
+    };
+
+    class PseudoSingleton : public RootObject {
+    public:
+        static unsigned int GetCurrentContext();
+    };
+
+    // Retail calls GetInstance out of line (0x823EA910, an /O1 COMDAT): the
+    // /Ob1 inliner gives up on it here, after reserving its locals.
+    class Core : public RootObject {
+    public:
+        static Core *GetInstance() {
+            unsigned int uiContext = PseudoSingleton::GetCurrentContext();
+            InstanceControl *pInstance =
+                (InstanceControl *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(3, uiContext);
+            Core *pCore = 0;
+            if (pInstance != 0) {
+                pCore = (Core *)pInstance->m_pDelegatorInstance;
+            }
+            return pCore;
+        }
+        Scheduler *GetScheduler() const { return m_pScheduler; }
+
+        char m_data[0x8];
+        Scheduler *m_pScheduler; // 0x8
+    };
+
+    inline Scheduler *Scheduler::GetInstance() {
+        Core *pCore = Core::GetInstance();
+        if (pCore == 0) {
+            return 0;
+        } else {
+            return pCore->GetScheduler();
+        }
+    }
 
     class TraceLog : public RootObject {
     public:
@@ -328,15 +378,6 @@ namespace Quazal {
 
     PublicURLList *GetPublicURLListOwner();
     PublicURLList *GetPublicURLList(PublicURLList *);
-
-    inline SystemLockOwner *GetSystemLockOwner() {
-        InstanceHolder *pHolder = InstanceHolder::GetInstance();
-        if (pHolder == 0) {
-            return 0;
-        } else {
-            return pHolder->m_pOwner;
-        }
-    }
 
     class NATTraversalEngine : public RootObject {
     public:
@@ -363,8 +404,8 @@ namespace Quazal {
         void SendEcho();
         void ReceiveMessage(const StationURL &, const unsigned char *, unsigned int);
         bool GetPublicURL(int, StationURL *);
-        bool RegisterSession(NATSessionOwner *, int);
-        void UnregisterSession();
+        bool RequestPublicURL(URLRequester *, int);
+        void ClearPublicURLJob();
         void ReceiveProbe(Msg, const StationURL &, unsigned int, Time);
         bool GetUpdatedURL(const StationURL &, StationURL *);
         unsigned int GetURLPingTime(const StationURL &);
@@ -386,7 +427,7 @@ namespace Quazal {
         NATDirectInterface *m_pDirect; // 0x38
         NATRelayInterface *m_pRelay; // 0x3c
         NATEchoInterface *m_pEcho; // 0x40
-        NATSession *m_pSession; // 0x44
+        JobGetPublicURL *m_pJob; // 0x44
     };
 
     NATTraversalEngine::NATTraversalEngine() {
@@ -394,7 +435,7 @@ namespace Quazal {
         m_pDirect = 0;
         m_uiLocalCID = 0;
         m_pRelay = 0;
-        m_pSession = 0;
+        m_pJob = 0;
         m_pEcho = 0;
     }
 
@@ -425,7 +466,7 @@ namespace Quazal {
 
     bool NATTraversalEngine::PrepareNATTraversal(const StationURL &url) {
         {
-            ScopedCS oCS(GetSystemLockOwner()->m_csLock);
+            ScopedCS oCS(Scheduler::GetInstance()->m_csSystemLock);
             if (m_pRelay == 0) {
                 return false;
             }
@@ -440,7 +481,7 @@ namespace Quazal {
 
     bool NATTraversalEngine::PrepareNATTraversal(const qList<StationURL> &lstURLs) {
         {
-            ScopedCS oCS(GetSystemLockOwner()->m_csLock);
+            ScopedCS oCS(Scheduler::GetInstance()->m_csSystemLock);
             if (m_pRelay == 0) {
                 return false;
             }
@@ -453,7 +494,7 @@ namespace Quazal {
 
     bool NATTraversalEngine::AddURLToProbe(const StationURL &url, bool bRequested) {
         {
-            ScopedCS oCS(GetSystemLockOwner()->m_csLock);
+            ScopedCS oCS(Scheduler::GetInstance()->m_csSystemLock);
             if (m_pRelay == 0) {
                 return false;
             }
@@ -569,7 +610,7 @@ namespace Quazal {
     void NATTraversalEngine::ReceiveMessage(
         const StationURL &url, const unsigned char *pData, unsigned int uiSize
     ) {
-        ScopedCS oCS(GetSystemLockOwner()->m_csLock);
+        ScopedCS oCS(Scheduler::GetInstance()->m_csSystemLock);
         if (uiSize > 1) {
             Buffer oBuffer(0x400);
             oBuffer.AppendData(pData, uiSize, -1);
@@ -592,12 +633,12 @@ namespace Quazal {
                 Buffer oPayload(oBuffer.GetContentSize());
                 oStream >> oPayload;
                 StationURL oURL((const char *)oPayload.GetContentPtr());
-                if (m_pSession != 0) {
+                if (m_pJob != 0) {
                     oURL.SetRVConnectionID(m_uiLocalCID);
                     if (m_pDirect != 0) {
                         m_pDirect->SetURL(oURL);
                     }
-                    m_pSession->SetPublicURL();
+                    m_pJob->SetPublicURL();
                 }
                 break;
             }
@@ -628,9 +669,9 @@ namespace Quazal {
         return false;
     }
 
-    bool NATTraversalEngine::RegisterSession(NATSessionOwner *pOwner, int iType) {
-        ScopedCS oCS(GetSystemLockOwner()->m_csLock);
-        if (m_pSession != 0) {
+    bool NATTraversalEngine::RequestPublicURL(URLRequester *pOwner, int iType) {
+        ScopedCS oCS(Scheduler::GetInstance()->m_csSystemLock);
+        if (m_pJob != 0) {
             return false;
         }
         if (iType != 3) {
@@ -642,14 +683,14 @@ namespace Quazal {
         if (!pOwner->IsReady()) {
             return false;
         }
-        m_pSession = new (__FILE__, 0x15b) NATSession(pOwner->GetContext(), this);
-        GetSystemLockOwner()->RegisterSession(m_pSession, 0);
+        m_pJob = new (__FILE__, 0x15b) JobGetPublicURL(pOwner->GetContext(), this);
+        Scheduler::GetInstance()->Queue(m_pJob, false);
         return true;
     }
 
-    void NATTraversalEngine::UnregisterSession() {
-        ScopedCS oCS(GetSystemLockOwner()->m_csLock);
-        m_pSession = 0;
+    void NATTraversalEngine::ClearPublicURLJob() {
+        ScopedCS oCS(Scheduler::GetInstance()->m_csSystemLock);
+        m_pJob = 0;
     }
 
     void NATTraversalEngine::ReceiveProbe(
@@ -710,7 +751,7 @@ namespace Quazal {
     }
 
     bool NATTraversalEngine::RegisterRelay(NATRelayInterface *pRelay) {
-        ScopedCS oCS(GetSystemLockOwner()->m_csLock);
+        ScopedCS oCS(Scheduler::GetInstance()->m_csSystemLock);
         if (m_pRelay != 0) {
             return false;
         }
@@ -721,7 +762,7 @@ namespace Quazal {
     }
 
     bool NATTraversalEngine::UnregisterRelay() {
-        ScopedCS oCS(GetSystemLockOwner()->m_csLock);
+        ScopedCS oCS(Scheduler::GetInstance()->m_csSystemLock);
         if (m_pRelay == 0) {
             return false;
         }
@@ -732,7 +773,7 @@ namespace Quazal {
     }
 
     bool NATTraversalEngine::RegisterEcho(NATEchoInterface *pEcho) {
-        ScopedCS oCS(GetSystemLockOwner()->m_csLock);
+        ScopedCS oCS(Scheduler::GetInstance()->m_csSystemLock);
         if (m_pEcho != 0) {
             return false;
         }
@@ -741,7 +782,7 @@ namespace Quazal {
     }
 
     bool NATTraversalEngine::UnregisterEcho() {
-        ScopedCS oCS(GetSystemLockOwner()->m_csLock);
+        ScopedCS oCS(Scheduler::GetInstance()->m_csSystemLock);
         if (m_pEcho == 0) {
             return false;
         }
