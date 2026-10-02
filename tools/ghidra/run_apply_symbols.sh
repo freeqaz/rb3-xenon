@@ -30,8 +30,17 @@ MAP_JSON="$SCRIPT_DIR/rb3_symbol_map.json"
 # must match the chosen program's VAs.
 PROGRAM="default_tu5.xex-c5a170"
 
-export JAVA_HOME="${JAVA_HOME:-/usr/lib/jvm/java-17-openjdk}"
 export GHIDRA_INSTALL_DIR="${GHIDRA_INSTALL_DIR:-$MILOHAX_DIR/ghidra/build/ghidra}"
+# JAVA_HOME follows the install's application.java.min (see pyghidra-service.sh).
+if [[ -z "${JAVA_HOME:-}" ]]; then
+    _jmin=$(sed -n 's/^application.java.min=//p' "$GHIDRA_INSTALL_DIR/Ghidra/application.properties" 2>/dev/null)
+    for _jv in $(ls -d /usr/lib/jvm/java-*-openjdk 2>/dev/null | sed 's/.*java-\([0-9]*\)-openjdk/\1/' | sort -n); do
+        if [[ "$_jv" -ge "${_jmin:-21}" && -x "/usr/lib/jvm/java-$_jv-openjdk/bin/java" ]]; then
+            export JAVA_HOME="/usr/lib/jvm/java-$_jv-openjdk"; break
+        fi
+    done
+    [[ -n "${JAVA_HOME:-}" ]] || { echo "No installed JDK >= ${_jmin:-21} under /usr/lib/jvm" >&2; exit 1; }
+fi
 # Standalone PyGhidra (Python 3 + JPype) — run via the pyghidra-mcp venv that the
 # service uses, so JPype/pyghidra match the Ghidra build.
 PYGHIDRA_MCP="$MILOHAX_DIR/pyghidra-mcp"

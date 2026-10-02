@@ -30,11 +30,23 @@ PYGHIDRA_MCP="$MILOHAX_DIR/pyghidra-mcp"
 PIDFILE="/tmp/claude/pyghidra-mcp-rb3xenon.pid"
 LOGFILE="/tmp/claude/pyghidra-mcp-rb3xenon.log"
 
-export JAVA_HOME="/usr/lib/jvm/java-17-openjdk"
 # Use VMX128-enabled Ghidra fork (not stock /opt/ghidra)
 # Build: cd ../ghidra && gradle buildGhidra
 # The setup script extracts build/dist/*.zip → build/ghidra/
 export GHIDRA_INSTALL_DIR="$MILOHAX_DIR/ghidra/build/ghidra"
+# JAVA_HOME follows the install: read application.java.min from the install's
+# own application.properties and pick the lowest installed JDK that satisfies
+# it (12.2 needs 21, 12.3 needs 25). A hardcoded java-17 sat here for months
+# after the install had moved past it. Override by exporting JAVA_HOME.
+if [[ -z "${JAVA_HOME:-}" ]]; then
+    _jmin=$(sed -n 's/^application.java.min=//p' "$GHIDRA_INSTALL_DIR/Ghidra/application.properties" 2>/dev/null)
+    for _jv in $(ls -d /usr/lib/jvm/java-*-openjdk 2>/dev/null | sed 's/.*java-\([0-9]*\)-openjdk/\1/' | sort -n); do
+        if [[ "$_jv" -ge "${_jmin:-21}" && -x "/usr/lib/jvm/java-$_jv-openjdk/bin/java" ]]; then
+            export JAVA_HOME="/usr/lib/jvm/java-$_jv-openjdk"; break
+        fi
+    done
+    [[ -n "${JAVA_HOME:-}" ]] || { echo "No installed JDK >= ${_jmin:-21} under /usr/lib/jvm" >&2; exit 1; }
+fi
 # Use writable temp directory for Ghidra user home (avoids read-only filesystem issues)
 export GHIDRA_USER_HOME="/tmp/claude/ghidra_user_rb3xenon"
 
