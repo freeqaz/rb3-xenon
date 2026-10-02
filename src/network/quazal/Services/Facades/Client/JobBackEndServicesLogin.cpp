@@ -1,10 +1,23 @@
 // Quazal NetZ - Services/Facades/Client/JobBackEndServicesLogin.cpp
-// Retail TU: .text 0x82ADB5F8..0x82ADD088 (22 functions), built /Od.
+// Retail TU: .text 0x82ADB5F8..0x82ADD088 (22 functions), built
+// /Od /Oi- /EHs-c- /Ob1 /GR- (objects.json).
 //
 // The login job is a StepSequenceJob: every step either sets the next step
 // directly or issues an asynchronous call and resumes on its completion.
-// Step names are the ones retail passes with each step
-// ("JobBackEndServicesLogin::ValidateArguments", ...).
+// Step and member-function names are the ones retail passes with each step
+// ("JobBackEndServicesLogin::ValidateArguments", ...); the names of the classes
+// it calls into are descriptive.
+//
+// Two /Od /Ob1 rules this file depends on:
+// - Small inline helpers (getters, StringStream::operator<<(int), Step's ctor)
+//   are expanded in place, each with its this/return temporaries.
+// - An inline function too large to expand (ConnectStream, LoginURLs' ctor and
+//   dtor) is called out of line, emitted after its first caller, and still
+//   reserves stack in every caller for its temporaries. Retail's frames carry
+//   that reservation, so those functions must stay inline.
+//
+// The declarations below are local to this TU; their layouts are the ones the
+// retail code uses.
 
 #include "Platform/qStd.h"
 
@@ -121,9 +134,6 @@ namespace Quazal {
         CallContext();
         virtual ~CallContext();
         void Reset();
-        bool BeginCall();
-        void SetStateImpl(_State, qResult, bool);
-
         void SetStateToSuccess(qResult);
         void SetStateToError(qResult);
 
@@ -135,8 +145,7 @@ namespace Quazal {
         _State m_eState; // 0xc
         unsigned int m_unk10[6];
         qResult m_oOutcome; // 0x28
-        unsigned int m_uiCallID; // 0x34
-        unsigned int m_unk38[4];
+        unsigned int m_unk34[5];
         Time m_tTimeout; // 0x48
     };
 
@@ -153,26 +162,17 @@ namespace Quazal {
         CallContext *GetContext(unsigned int);
     };
 
-    class Job;
-
-    class Scheduler {
-    public:
-        void Queue(Job *, bool);
-    };
-
     class InstanceControl {
     public:
         static InstanceControl *GetInstance();
-        Scheduler *GetScheduler() const { return m_pScheduler; }
         CallContextRegister *GetCallContextRegister() const { return m_pRegister; }
 
-        unsigned int m_unk0[2];
-        Scheduler *m_pScheduler; // 0x8
+        unsigned int m_unk0[3];
         CallContextRegister *m_pRegister; // 0xc
     };
 
     class StreamCredentials;
-    class SpecialConnection;
+    class LoginURLs;
 
     class Credentials : public RootObject {
     public:
@@ -200,7 +200,7 @@ namespace Quazal {
     class AuthenticationClient : public ServiceClient {
     public:
         bool Login(
-            ProtocolCallContext *, qResult *, String *, const char *, void *, int, int
+            ProtocolCallContext *, qResult *, String *, const char *, LoginURLs *, int, int
         );
         void ClearCredentials(Credentials *);
         unsigned int GetPID() const { return m_uiPID; }
@@ -252,8 +252,6 @@ namespace Quazal {
 
         unsigned int m_unk0[0x1C];
         Credentials *m_pCredentials; // 0x70
-        unsigned int m_unk74[7];
-        Job *m_pLogoutJob; // 0x90
     };
 
     void ReleaseStreamCredentials(StreamCredentials *);
@@ -264,15 +262,6 @@ namespace Quazal {
 
     class Job : public RefCountedObject {
     public:
-        enum State {
-            Initial = 0,
-            Waiting = 1,
-            Suspended = 2,
-            Ready = 3,
-            Running = 4,
-            Complete = 5
-        };
-
         virtual ~Job();
         virtual void DecoratedExecute();
         virtual void Execute();
@@ -284,11 +273,8 @@ namespace Quazal {
 
         void SetToWaiting();
         void SetToComplete();
-        State GetState() const { return m_eState; }
 
-        unsigned int m_unk8[5];
-        State m_eState; // 0x1c
-        unsigned int m_unk20[14];
+        unsigned int m_unk8[20];
         unsigned int m_unk58; // 0x58
     };
 
@@ -328,9 +314,12 @@ namespace Quazal {
         StationURL m_urlSpecial; // 0x70
     };
 
-    class LoginURLsX : public LoginURLs {
+    // Retail constructs the member below by calling LoginURLs' ctor and then
+    // storing the vtable again: a derived class with an inline ctor, whose vtable
+    // and destructor fold into LoginURLs'.
+    class ServiceURLs : public LoginURLs {
     public:
-        LoginURLsX() {}
+        ServiceURLs() {}
     };
 
     class JobBackEndServicesLogin : public StepSequenceJob {
@@ -375,10 +364,10 @@ namespace Quazal {
         Buffer m_oBuffer; // 0x148
         BackEndServices *m_pServices; // 0x15c
         StationURL m_urlSecure; // 0x160
-        LoginURLsX m_oURLs; // 0x1c4
+        ServiceURLs m_oURLs; // 0x1c4
         qResult *m_pResult; // 0x298
-        int m_iArg9; // 0x29c
-        int m_iArg10; // 0x2a0
+        int m_iLoginArg1; // 0x29c
+        int m_iLoginArg2; // 0x2a0
         StreamCredentials *m_pAuthConnection; // 0x2a4
         StreamCredentials *m_pSecureConnection; // 0x2a8
         StreamCredentials *m_pSpecialConnection; // 0x2ac
@@ -392,11 +381,11 @@ namespace Quazal {
     JobBackEndServicesLogin::JobBackEndServicesLogin(
         unsigned int callID, BackEndServices *services, qResult *result,
         const String &username, const char *password, const char *address,
-        unsigned short port, Credentials **credentials, int arg9, int arg10, unsigned int timeout
+        unsigned short port, Credentials **credentials, int loginArg1, int loginArg2, unsigned int timeout
     )
         : StepSequenceJob(DebugString()), m_uiCallID(callID), m_strUsername(username),
           m_strAddress(address), m_usPort(port), m_ppCredentials(credentials), m_oBuffer(0x400),
-          m_pServices(services), m_pResult(result), m_iArg9(arg9), m_iArg10(arg10),
+          m_pServices(services), m_pResult(result), m_iLoginArg1(loginArg1), m_iLoginArg2(loginArg2),
           m_pAuthConnection(0), m_pSecureConnection(0), m_pSpecialConnection(0),
           m_tTimeout(timeout) {
         m_unk58 = 4;
@@ -496,7 +485,7 @@ namespace Quazal {
                 m_oProtocolCallContext.SetTimeout(m_tTimeout);
                 if (!client->Login(
                         &m_oProtocolCallContext, &m_rAuthResult, &m_strUsername,
-                        m_szPassword, &m_oURLs, m_iArg9, m_iArg10
+                        m_szPassword, &m_oURLs, m_iLoginArg1, m_iLoginArg2
                     )) {
                     Complete(qResult(0x8001000D));
                     return;
@@ -706,6 +695,10 @@ namespace Quazal {
         Complete(qResult(0x00010001));
     }
 
+    // Below 100: retail's frame is 12 bytes larger, reserved at the Logout call
+    // (between the temporaries of its argument and of GetInstance). That is the
+    // same reservation an inline-but-not-expanded callee leaves, so Logout is most
+    // likely inline in the BackEndServices header; its body is not written here.
     void JobBackEndServicesLogin::Complete(qResult result) {
         m_rResult = result;
         if (!m_rResult && m_pServices->GetCredentials() != 0) {
