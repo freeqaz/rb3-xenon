@@ -9,12 +9,18 @@
 // The TU's own functions are the constructor, BuildRoutingPacket,
 // ReceiveIncomingPacket and DoWork; then the COMDATs it instantiates, in
 // first-reference order: Stream::GetSettings (declined by /Ob1 in the
-// constructor), the scalar deleting destructor (which expands the in-class
-// destructors of RoutingStream and RoutingTable) and ExtractRoutingHeader
-// (declined in ReceiveIncomingPacket, which still reserves its frame).
+// constructor; PRUDPEndPoint calls the same copy), the scalar deleting
+// destructor (RoutingStream's destructor is implicit, so it does not reset
+// the vptr, and RoutingTable's in-class one is expanded) and
+// ExtractRoutingHeader (declined in ReceiveIncomingPacket, which still
+// reserves its frame).
 //
 // The classes are declared here with the retail X360 layouts, as far as the
-// TU reads them. /Od: local NAMES decide the stack offsets.
+// TU reads them. /Od: local NAMES decide the stack offsets, and the inline
+// helpers below are spelled to reproduce retail's temporaries (the payload
+// test is materialized as a bool, the header size is converted to unsigned
+// short at run time, and only the first perf-counter call evaluates its
+// object into a temporary before its argument).
 
 namespace Quazal {
 
@@ -180,9 +186,10 @@ namespace Quazal {
         virtual bool Receive(unsigned short, Buffer *, const InetAddress *);
         virtual Router *GetRouter();
 
+        TransportPerfCounters *GetPerfCounters() { return &m_oPerfCounters; }
+
         char m_pad04[0x18 - 4];
         TransportPerfCounters m_oPerfCounters; // 0x18
-        TransportPerfCounters *GetPerfCounters() { return &m_oPerfCounters; }
     };
 
     class RoutingTable : public RootObject {
@@ -206,7 +213,9 @@ namespace Quazal {
 
         static PacketOut *BuildRoutingPacket(Buffer *, unsigned char, const InetAddress &);
         static unsigned short GetHeaderSize() { return 12; }
-        static bool IsValidRoutingPayload(Buffer *pBuffer) { return pBuffer != 0 && pBuffer->GetContentSize() > GetHeaderSize(); }
+        static bool IsValidRoutingPayload(Buffer *pBuffer) {
+            return pBuffer != 0 && pBuffer->GetContentSize() > GetHeaderSize();
+        }
         static void ExtractRoutingHeader(Buffer *pPayload, InetAddress *pAddress, Buffer *pData) {
             ByteStream bs(pPayload);
             unsigned int uiIP;

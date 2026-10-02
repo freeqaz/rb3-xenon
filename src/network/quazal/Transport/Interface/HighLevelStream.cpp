@@ -119,7 +119,7 @@ namespace Quazal {
         virtual void Unk10();
         virtual void Unk14();
         virtual void Unk18();
-        virtual void Send(unsigned short, unsigned int, unsigned char, unsigned char, PacketOut *, unsigned int);
+        virtual void Send(unsigned short, Stream::Type, unsigned char, unsigned char, PacketOut *, bool);
 
         char m_pad04[0x4d0 - 4];
         void RegisterStream(Stream *pStream, unsigned char byStreamID) {
@@ -147,6 +147,11 @@ namespace Quazal {
         static unsigned int GetCurrentContext();
     };
 
+    // GetInstance's only retail body is the /O1 copy it folded into
+    // (0x823EBC90, mapped as NetworkEmulator's anonymous-namespace function).
+    // /Ob1 declines it, so the constructor reserves its locals; the five
+    // below are the count that reproduces the constructor's frame, not a
+    // body read from retail.
     class TransportDelegator {
     public:
         static TransportDelegator *GetInstance() {
@@ -226,7 +231,7 @@ namespace Quazal {
         pPacket->SetDestination(pURL->GetInetAddress());
         pPacket->SetSourceVPort(VirtualPort(GetType(), m_byStreamID));
         pPacket->SetDestinationVPort(VirtualPort(eType, byID));
-        m_pTransport->Send(usSendPort, GetType(), m_byStreamID, byID, pPacket, 0);
+        m_pTransport->Send(usSendPort, GetType(), m_byStreamID, byID, pPacket, false);
         pPacket->ReleaseRef();
     }
 
