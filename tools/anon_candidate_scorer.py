@@ -55,7 +55,8 @@ Prefilter (cheap, documented, not a scoring step)
 ---------------------------------------------------
 Candidate considered for a target only if
     0.5 <= candidate_size / target_size <= 2.0
-(both from COFF section size / report row `size`). This is a coarse gate,
+(both from the function EXTENT -- not the COMDAT section size, W16-NN -- and
+report row `size`). This is a coarse gate,
 not a proxy for correctness -- it exists purely to keep the number of
 objdiff-cli invocations (each ~0.35 s) bounded. Within the surviving set,
 only the `--max-candidates-per-target` closest-by-size candidates are
@@ -128,6 +129,8 @@ def scope_dir(src):
 
 sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 from obj_target_symbol_renamer import rename_symbols  # noqa: E402
+sys.path.insert(0, str(PROJECT_ROOT / "tools"))
+from coff_bodies_ext import function_extent_sizes  # noqa: E402
 
 
 def coff_parse(path: Path):
@@ -168,8 +171,30 @@ def coff_parse(path: Path):
 
 
 def coff_function_sizes(obj_path: Path) -> dict:
-    """name -> COMDAT section byte size, for every defined EXTERNAL function
-    symbol in obj_path."""
+    """name -> function EXTENT in bytes, for every defined EXTERNAL function
+    symbol in obj_path -- the size that is comparable to a retail row's.
+
+    ★ W16-NN (2026-10-02).  This used to return the COMDAT SECTION length, which
+    for an EH-bearing function is [8 B prefix][body][8 B prefix][__unwind$], so
+    it over-stated 41,912 of 557,594 of our symbol instances (always upward) and
+    agreed with retail on only 71.6% of the rows report.json scores at fuzzy 100.
+    Lanes W16-NF and W16-NK built a `|retail - ours| > 8 => refuse` gate on it
+    and refused functions that paired at 100 the moment they were named (W16-NK
+    §4: `vector<ObjPtr<GemTrackDir>>::_M_fill_insert_aux`, "392 vs ours 440").
+    The extent comes from `coff_bodies_ext.function_extent_sizes`, calibrated at
+    99.966%; the old measure survives only as `comdat_section_sizes`.  Compare
+    sizes with `icf_pair_adjudicate.size_gate`, not with a tolerance."""
+    _secs, fns = coff_parse(obj_path)
+    ext = function_extent_sizes(obj_path)
+    return {name: ext[name] for name, _sec in fns if name in ext}
+
+
+def comdat_section_sizes(obj_path: Path) -> dict:
+    """name -> COMDAT SECTION byte length (the pre-W16-NN `coff_function_sizes`).
+
+    ⛔ NOT comparable to a retail size: it includes the EH prefixes and the
+    `__unwind$` funclets.  Kept only so `icf_pair_adjudicate --self-break-size-eh`
+    can show its EH-funclet control goes red under exactly this measure."""
     secs, fns = coff_parse(obj_path)
     return {name: len(secs[sec]["data"]) for name, sec in fns}
 
@@ -511,11 +536,18 @@ def coff_functions_full(path: Path):
     for s in syms:
         by_sec[s[1]].append(s)
     out = {}
+    # ★ W16-NN: "value -> next function symbol" still billed the SUCCESSOR's
+    # 8-byte EH prefix to this function (uniform +8 on 6,576 of our symbol
+    # instances; 98.3% agreement with retail at fuzzy 100).  Clamp to the
+    # coff_bodies_ext extent (99.966%) -- one rule for both readers.
+    ext = function_extent_sizes(path)
     for sec, lst in by_sec.items():
         lst.sort(key=lambda s: s[3])
         data, relocs = secs.get(sec, (b"", set()))
         for j, (name, _sec, sclass, val) in enumerate(lst):
             end = lst[j + 1][3] if j + 1 < len(lst) else len(data)
+            if 0 < ext.get(name, 0) < end - val:
+                end = val + ext[name]
             body = data[val:end]
             rel = {r - val for r in relocs if val <= r < end}
             out[name] = {"sclass": sclass, "size": end - val, "body": body, "relocs": rel}

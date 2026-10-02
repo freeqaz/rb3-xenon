@@ -944,6 +944,138 @@ def tailpad_controls(tgt, ours):
              "__chasetest_tailpad_nop__", o)]
 
 
+# ★★ W16-NN.  THE SIZE GATE -- one like-for-like comparison, no tolerance.
+#
+# THE DEFECT (lane W16-NK, docs/decomp/W16NK_GAME_ANON_ROWS_2026-10-02.md §4).
+# Identification lanes W16-NF and W16-NK refused a naming proposal when
+# |retail size - our size| > 8, with "our size" read by
+# anon_candidate_scorer.coff_function_sizes -- the COMDAT SECTION length.  An
+# EH-bearing COMDAT is [8 B prefix][body][8 B prefix][__unwind$ funclet], so
+# `vector<ObjPtr<GemTrackDir>>::_M_fill_insert_aux` read "392 vs ours 440" and
+# was refused, then paired at 100 the moment it was named.  This tool's own T1
+# was never affected: `collect` reads coff_bodies_ext EXTENTS (392 == 392).
+#
+# MEASURED (main 4f29d4495, 21,383 names both sides define, non-vacuous): the
+# legacy rule refused 5,843 of 21,084 equal-extent pairs (27.7%; 5,692 of them
+# masked-byte-identical) AND ADMITTED 145 of 322 pairs whose retail body is
+# genuinely larger.  It was wrong in both directions, so the fix is NOT a wider
+# tolerance -- the tolerance was compensating for the unlike measure.
+#
+# THE RULE.  Retail = the target-obj extent (dtk carves by .pdata; == report.json
+# row size).  Ours = the coff_bodies_ext extent (99.966% equal to retail's row
+# size over the 26,399 named rows report.json scores at fuzzy 100).  Accept iff
+# equal, or retail = ours + zero alignment words (retail_tail_pad, the one
+# retail-side reader artifact already proven).  Anything else is refused and
+# the refusal names the DIRECTION.  Exact equality is right because T1 needs it
+# anyway (masked bodies of different length cannot be equal) -- this gate exists
+# for consumers that score a proposal by fuzzy rather than T1.
+#
+# _SELF_BREAK_SIZE re-introduces one wrong rule at a time so --chasetest's SIZE
+# controls can be watched going red (see size_controls):
+#   "eh"       ours = COMDAT section length (the W16-NF/NK measure)
+#   "tol"      symmetric tolerance of SIZE_BREAK_TOL bytes (widen-to-cover-funclets)
+#   "onesided" ours-larger always admitted ("ours may carry a funclet")
+_SELF_BREAK_SIZE = None
+SIZE_BREAK_TOL = 64
+_SECTION_SIZES = {}
+
+
+def _our_section_size(name):
+    if not _SECTION_SIZES:
+        from anon_candidate_scorer import comdat_section_sizes
+        for p in sorted(glob.glob(str(ROOT / "build/45410914/src/**/*.obj"), recursive=True)):
+            for n, s in comdat_section_sizes(Path(p)).items():
+                _SECTION_SIZES.setdefault(n, s)
+    return _SECTION_SIZES.get(name)
+
+
+def size_gate(rt, ob, our_name=None):
+    """(ok, why) for retail record `rt` vs our record `ob` (collect() records,
+    i.e. like-for-like EXTENTS).  See the W16-NN note above."""
+    rs, os_ = rt[2], ob[2]
+    if _SELF_BREAK_SIZE == "eh" and our_name:
+        os_ = _our_section_size(our_name) or os_
+    if _SELF_BREAK_SIZE == "tol" and abs(rs - os_) <= SIZE_BREAK_TOL:
+        return True, "within +-%d B (BROKEN tolerance rule)" % SIZE_BREAK_TOL
+    if rs == os_:
+        return True, "extents equal: retail %d == ours %d" % (rs, os_)
+    if rs > os_:
+        if os_ == ob[2] and retail_tail_pad(rt, ob):
+            return True, ("retail %d = ours %d + %d B zero alignment padding"
+                          % (rs, os_, rs - os_))
+        return False, ("retail LARGER: retail %d vs ours %d (+%d B the port does not "
+                       "emit)" % (rs, os_, rs - os_))
+    if _SELF_BREAK_SIZE == "onesided":
+        return True, "ours larger, admitted (BROKEN one-sided rule)"
+    return False, ("ours LARGER: retail %d vs ours %d (+%d B over like-for-like "
+                   "extents; EH prefixes and funclets are already excluded)"
+                   % (rs, os_, os_ - rs))
+
+
+SIZE_EH_POS = 0x82307EB0      # W16-NK §4: retail 392, our COMDAT section 440
+SIZE_RL_POS = (0x82697FE8,    # W16-NK §4: retail 132 vs our 116
+               "??$__unguarded_partition@PAPAUObjEntry@@PAU1@UObjSort@@@stlpmtx_std@@"
+               "YAPAPAUObjEntry@@PAPAU1@0PAU1@UObjSort@@@Z")
+
+
+def size_controls(tgt, ours):
+    """★ W16-NN controls for size_gate, one per direction, picked from the LIVE
+    tree (the documented W16-NK rows are preferred when still valid, so a map
+    or source repair cannot strand the control):
+
+      EH-FUNCLET POSITIVE  same function both sides (masked bodies equal), our
+                           COMDAT section >= extent + 16 -> expect ACCEPT.
+                           Red under --self-break-size eh.
+      RETAIL-LARGER DECOY  retail extent > ours by 4 B, not tail padding, our
+                           section == extent (no EH confound) -> expect REFUSE.
+                           Red under --self-break-size tol.
+      RETAIL-LARGER W16-NK the documented 132-vs-116 pair, if both sides still
+                           define it -> expect REFUSE.  Red under tol.
+      OURS-LARGER DECOY    ours extent > retail by 4 B, our section == extent
+                           (so not explained by any funclet) -> expect REFUSE.
+                           Red under tol and onesided.
+
+    Returns [(label, retail_name, our_name, want_ok, red_under)].  Refuses (exit)
+    if any control cannot be built or is VACUOUS -- an EH positive whose section
+    length already equals retail's could not detect the defect it exists for."""
+    _our_section_size("")  # build the index once
+    cands = sorted(n for n in tgt if n in ours and not n.startswith(("fn_", "lbl_"))
+                   and not vacuous(tgt[n]) and not vacuous(ours[n]))
+    out = []
+    eh = _retail_name_at(SIZE_EH_POS)
+
+    def eh_ok(r, o):
+        rt, ob = tgt.get(r), ours.get(o)
+        sec = _SECTION_SIZES.get(o)
+        return (rt is not None and ob is not None and sec is not None
+                and rt[2] == ob[2] and rt[0] == ob[0] and sec >= ob[2] + 16)
+    if not eh_ok(eh, eh):
+        eh = next((n for n in cands if eh_ok(n, n)), None)
+    if eh is None:
+        raise SystemExit("REFUSING: no EH-funclet size positive in the live tree -- "
+                         "the EH control would be VACUOUS.")
+    out.append(("SIZE EH-FUNCLET POSITIVE, retail %d / our section %d (expect ACCEPT)"
+                % (tgt[eh][2], _SECTION_SIZES[eh]), eh, eh, True, {"eh"}))
+
+    def clean(n):
+        return _SECTION_SIZES.get(n) == ours[n][2]
+    rl = next((n for n in cands if tgt[n][2] - ours[n][2] == 4 and clean(n)
+               and not retail_tail_pad(tgt[n], ours[n])), None)
+    ol = next((n for n in cands if ours[n][2] - tgt[n][2] == 4 and clean(n)), None)
+    if rl is None or ol is None:
+        raise SystemExit("REFUSING: no live retail-larger / ours-larger size decoy -- "
+                         "the size refusal controls would be VACUOUS.")
+    out.append(("SIZE RETAIL-LARGER DECOY, +4 B (expect REFUSE)", rl, rl, False,
+                {"tol"}))
+    s, o = _retail_name_at(SIZE_RL_POS[0]), SIZE_RL_POS[1]
+    if s in tgt and o in ours and tgt[s][2] > ours[o][2]:
+        out.append(("SIZE RETAIL-LARGER W16-NK, %d vs %d (expect REFUSE)"
+                    % (tgt[s][2], ours[o][2]), s, o, False, {"tol"}))
+    out.append(("SIZE OURS-LARGER DECOY, +4 B, no funclet (expect REFUSE)", ol, ol,
+                False, {"tol", "onesided"}))
+    return out
+
+
 def chase(tgt, ours, survivor, our_name, mapped, depth=0, stack=None, memo=None,
           out=None, maxdepth=12, ctx=None):
     """RECURSIVE T1: verify a fold through relocation-target EQUIVALENCE.
@@ -1347,6 +1479,17 @@ def main():
                     help="run --chasetest with retail_overcarve's branch CENSUS "
                          "removed. The OVERCARVE DECOY control MUST go red and every "
                          "other control must stay green; exits 0 only then.")
+    ap.add_argument("--self-break-size", choices=("eh", "tol", "onesided"),
+                    help="run --chasetest with ONE wrong size rule re-introduced "
+                         "(eh: ours = COMDAT section length, the W16-NF/NK measure; "
+                         "tol: +-%d B tolerance; onesided: ours-larger admitted). "
+                         "Exactly the SIZE controls that rule should break MUST go "
+                         "red and every other control must stay green; exits 0 only "
+                         "then." % SIZE_BREAK_TOL)
+    ap.add_argument("--size", action="store_true",
+                    help="also print the W16-NN like-for-like size gate per pair. "
+                         "A retail side spelled 0xADDR is resolved to its target-obj "
+                         "name (map name, else fn_ADDR).")
     ap.add_argument("--lax-slots", action="store_true",
                     help="reproduce a pre-W16-JG verdict (blanket placeholder "
                          "tolerance). NEVER use for an admission.")
@@ -1364,6 +1507,9 @@ def main():
         a.chasetest = True
     if a.self_break_overcarve:
         globals()["_SELF_BREAK_OVERCARVE"] = True
+        a.chasetest = True
+    if a.self_break_size:
+        globals()["_SELF_BREAK_SIZE"] = a.self_break_size
         a.chasetest = True
 
     mapped = load_mapped()
@@ -1451,6 +1597,32 @@ def main():
         pairs = [("", s, o) for s, o in json.load(open(a.pairs))]
     else:
         pairs = [("", a.survivor, a.ours)]
+    pairs = [(lb, _retail_name_at(int(s, 16)) if s.lower().startswith("0x") else s, o)
+             for lb, s, o in pairs]
+
+    # ★ W16-NN size controls: evaluated by size_gate directly (inside T1 the
+    # gate is implied by masked-body equality, so a broken size rule could never
+    # show there -- its consumers are fuzzy-scored naming gates).
+    size_red, size_other_red = set(), 0
+    if a.chasetest:
+        print("\n=== SIZE GATE CONTROLS (W16-NN)%s"
+              % (" -- self-break-size=%s" % a.self_break_size if a.self_break_size else ""))
+        for label, rs, on, want, red_under in size_controls(tgt, ours):
+            ok, why = size_gate(tgt[rs], ours[on], on)
+            print("  %-62s %s  %s" % (label, "ACCEPT" if ok else "REFUSE", why))
+            print("      retail %s" % rs[:90])
+            if on != rs:
+                print("      ours   %s" % on[:90])
+            if ok != want:
+                print("  ** CONTROL FAILED: wanted %s **" % ("ACCEPT" if want else "REFUSE"))
+                if a.self_break_size in red_under:
+                    size_red.add(label)
+                else:
+                    size_other_red += 1
+            elif a.self_break_size in red_under:
+                size_red.add("MISSING:" + label)
+        expect = {lb for lb, _r, _o, _w, ru in size_controls(tgt, ours)
+                  if a.self_break_size in ru}
 
     if a.lax_slots or a.self_break_slots:
         globals()["SLOT_POLICY"] = "lax"
@@ -1464,6 +1636,9 @@ def main():
         if hook:
             hook[0]()
         verdict, det = adjudicate(tgt, ours, s, o, mapped)
+        if a.size and s in tgt and o in ours:
+            ok_sz, why_sz = size_gate(tgt[s], ours[o], o)
+            det["size_gate"] = "%s -- %s" % ("ACCEPT" if ok_sz else "REFUSE", why_sz)
         det.update(uniqueness(tgt, ours, s, o))
         det["survivor_map_resident"] = s in mapped
         print("\n=== %s" % (label or "%s  <->  %s" % (s[:60], o[:60])))
@@ -1520,6 +1695,21 @@ def main():
                     oc_decoy_red += 1
                 else:
                     oc_other_red += 1
+    if a.self_break_size:
+        # Exactly the controls this wrong rule should break must go red, and
+        # nothing else may move (the T1/chase controls never consult size_gate,
+        # so any red there is a separate defect, not this self-break).
+        if size_red == expect and not size_other_red and not rc:
+            print("\nself-break-size=%s OK -- exactly %d SIZE control(s) went RED: %s; "
+                  "no other control moved." % (a.self_break_size, len(expect),
+                                               "; ".join(sorted(expect))))
+            return 0
+        print("\nself-break-size=%s FAILED -- red %s, expected %s, %d other size "
+              "controls red, chase rc=%d." % (a.self_break_size, sorted(size_red),
+                                              sorted(expect), size_other_red, rc))
+        return 1
+    if a.chasetest and size_other_red:
+        rc = 1
     if a.self_break_overcarve:
         if n_oc_decoys and oc_decoy_red == n_oc_decoys and not oc_other_red:
             print("\nself-break-overcarve OK -- the OVERCARVE DECOY went RED with the "

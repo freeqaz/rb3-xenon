@@ -182,6 +182,27 @@ def eh_prefix_end(end, v, marks, raw, rel):
     return end
 
 
+def function_extent_sizes(path):
+    """{name: function EXTENT in bytes} -- the size to compare against RETAIL.
+
+    ★ W16-NN.  This is the one like-for-like size of OUR function: the slice
+    `function_bodies_ext` yields (leading EH prefix excluded, interior EH prefix
+    handed back to its successor, `__unwind$`/`__ehhandler$` funclets excluded),
+    which is what dtk's `.pdata`-carved target side and report.json's row `size`
+    measure.  NOT the COMDAT section length: an EH-bearing COMDAT is
+    [8 B prefix][body][8 B prefix][__unwind$ funclet], so section length
+    over-states the function by 16 B + the funclet (W16-NK: retail 392 vs a
+    section of 440 for a function that pairs at 100).
+
+    Calibrated (2026-10-02, main 4f29d4495) on the 26,399 named rows report.json
+    scores at fuzzy 100: this extent equals retail's row size on 26,390
+    (99.966%); COMDAT section length on 18,827 / 26,284 (71.6%); the old
+    `anon_candidate_scorer.coff_functions_full` slice on 25,952 (98.3%, a
+    uniform +8 -- the EH_PREFIX_SUFFIX_ARTIFACT above).  The 9 extent residuals
+    are ours +4 in /Od objects (keygen_xbox, Quazal MD5)."""
+    return {n: len(b) for n, b, _r, _v in function_bodies_ext(path)}
+
+
 def function_bodies_ext(path, stats=None):
     """Yield (name, body_bytes, relocs, entry_off) for each function slice."""
     data = Path(path).read_bytes()
