@@ -24,18 +24,27 @@ namespace Quazal {
             typedef MemAllocator<T2> other;
         };
 
-#ifdef VERSION_SZBE69_B8
-        // Retail doesn't have constructor calls
+#if defined(VERSION_SZBE69_B8) || defined(RB3_QUAZAL_MEMALLOCATOR_CTORS)
+        // VERSION_SZBE69_B8 has no constructor calls. X360 TUs built with
+        // RB3_QUAZAL_MEMALLOCATOR_CTORS (PRUDPStream) convert through these
+        // constructors: the retail /Od _Rb_tree constructor at 0x82AFF400 is a
+        // leaf with no EH frame, so the converted temporaries need no destruction.
         MemAllocator() {}
         MemAllocator(MemAllocator<T> const &) {}
         template <class T2>
         MemAllocator(const MemAllocator<T2> &) {}
 #endif
 
-        // ...but still has the destructor
+        // ...but still has the destructor. Two X360 TUs show none in retail:
+        // StationURL (no unwind action after clear() in its ~qMap) and
+        // PRUDPStream (the leaf _Rb_tree constructor above). Elsewhere it is
+        // load-bearing: without it JobBackEndServicesLogin's ConnectStream
+        // becomes inlinable and is no longer emitted out of line.
+#if !defined(RB3_QUAZAL_RETAIL_MEMALLOCATOR) && !defined(RB3_QUAZAL_MEMALLOCATOR_CTORS)
         ~MemAllocator() {}
+#endif
 
-#if defined(VERSION_SZBE69) || (!defined(VERSION_SZBE69_B8))
+#if defined(VERSION_SZBE69) || (!defined(VERSION_SZBE69_B8) && !defined(RB3_QUAZAL_MEMALLOCATOR_CTORS))
         // This is the only way to make allocator conversions
         // work in retail without using constructors.
         // rb3-xenon (X360 retail) defines neither VERSION_SZBE69 nor
@@ -72,9 +81,19 @@ namespace Quazal {
             // bank 5/6 use type info for allocation tracing purposes
             typeid(pointer);
 #endif
+#ifdef RB3_QUAZAL_RETAIL_MEMALLOCATOR
+            return reinterpret_cast<pointer>(MemoryManager::Allocate(
+                MemoryManager::GetDefaultMemoryManager(),
+                count * sizeof(T),
+                "Unknown",
+                0,
+                MemoryManager::_InstType7
+            ));
+#else
             return reinterpret_cast<pointer>(
                 MemoryManager::Allocate(count * sizeof(T), MemoryManager::_InstType7)
             );
+#endif
         }
 
         void deallocate(pointer ptr, size_type count) const {

@@ -10,5 +10,8 @@ namespace Quazal {
         virtual void CallOperationOnDatasets(DOOperation *, Operation::_Event);
         virtual bool IsACoreDO() const;
         virtual bool IsABootstrapDO() const;
+
+        static unsigned int GetStaticClassID() { return s_uiClassID; }
+        static unsigned int s_uiClassID;
     };
 }

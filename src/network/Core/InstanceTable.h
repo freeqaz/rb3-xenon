@@ -38,7 +38,7 @@ namespace Quazal {
             return (*m_pvContextVector)[idx]->DelInstance(ic, ui);
         }
 
-        unsigned int GetInstanceFromVector(unsigned int ui, unsigned int idx) {
+        __declspec(noinline) unsigned int GetInstanceFromVector(unsigned int ui, unsigned int idx) {
             if (idx == 0) {
                 return m_oDefaultContext.GetInstance(ui);
             } else if (idx >= m_pvContextVector->size()) {

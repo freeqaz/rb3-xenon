@@ -2124,7 +2124,10 @@
             "network/ObjDup/DuplicatedObject.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
-                    "/Od"
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/EHs-c-"
                 ]
             },
             "network/Core/TimedSignal.cpp": "NonMatching",
@@ -2227,14 +2230,31 @@
             "network/quazal/MatchMaking/Client/MatchMakingClient.cpp": "NonMatching",
             "network/quazal/Foundation/ProductFacade.cpp": "NonMatching",
             "network/quazal/SessionDDL.cpp": "NonMatching",
-            "network/quazal/ObjDupProtocol.cpp": "NonMatching",
+            "network/quazal/ObjDupProtocol.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/EHs-c-",
+                    "/Ob1"
+                ]
+            },
             "network/quazal/Core/ByteStream.cpp": "NonMatching",
             "network/quazal/RootDODDL.cpp": "NonMatching",
             "network/quazal/DOClass.cpp": "NonMatching",
             "network/quazal/DOCoreTypes.cpp": "NonMatching",
             "network/quazal/RMCContext.cpp": "NonMatching",
             "network/quazal/DOCallContext.cpp": "NonMatching",
-            "network/quazal/Transport/Interface/StationURL.cpp": "NonMatching",
+            "network/quazal/Transport/Interface/StationURL.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/DRB3_QUAZAL_RETAIL_MEMALLOCATOR",
+                    "/DRB3_QUAZAL_STRING_OPEQ"
+                ]
+            },
             "network/quazal/SystemComponent.cpp": "NonMatching",
             "network/quazal/ProtocolRequestBroker.cpp": "NonMatching",
             "network/quazal/Core/Platform.cpp": "NonMatching",
@@ -2260,7 +2280,16 @@
             "network/quazal/Transport/Interface/Network.cpp": "NonMatching",
             "network/quazal/Core.cpp": "NonMatching",
             "network/quazal/Foundation/Transport/StreamManager.cpp": "NonMatching",
-            "network/quazal/Services/Facades/Client/JobBackEndServicesLogin.cpp": "NonMatching",
+            "network/quazal/Services/Facades/Client/JobBackEndServicesLogin.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/EHs-c-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
             "network/quazal/SecureTransport/SecureStream.cpp": "NonMatching",
             "network/quazal/Foundation/Client/ClientStreamManager.cpp": "NonMatching",
             "network/quazal/Foundation/Protocol/NotificationEventManager.cpp": "NonMatching",
@@ -2280,9 +2309,24 @@
             "network/quazal/Core/StringConverter.cpp": "NonMatching",
             "network/quazal/Core/EventHandler.cpp": "NonMatching",
             "network/quazal/StepSequenceJob.cpp": "NonMatching",
-            "network/quazal/Transport/PRUDP/PRUDPStream.cpp": "NonMatching",
+            "network/quazal/Transport/PRUDP/PRUDPStream.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/DRB3_QUAZAL_MEMALLOCATOR_CTORS"
+                ]
+            },
             "network/quazal/WorkerThreads.cpp": "NonMatching",
-            "network/quazal/Transport/Interface/NATTraversalEngine.cpp": "NonMatching",
+            "network/quazal/Transport/Interface/NATTraversalEngine.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1"
+                ]
+            },
             "network/quazal/Transport/Routing/RoutingStream.cpp": "NonMatching",
             "network/quazal/AccountManagement/Client/JobLoginOrCreateAccount.cpp": "NonMatching",
             "network/quazal/AccountManagement/Client/JobCreateAccount.cpp": "NonMatching",
@@ -2303,7 +2347,14 @@
             "network/quazal/GlobalDiscovery/GlobalDiscoveryExtension.cpp": "NonMatching",
             "network/quazal/Transport/Interface/JobConnectEndPoint.cpp": "NonMatching",
             "network/quazal/Transport/Interface/TransportSignatureGenerator.cpp": "NonMatching",
-            "network/quazal/Transport/PRUDP/PRUDPEndPoint.cpp": "NonMatching",
+            "network/quazal/Transport/PRUDP/PRUDPEndPoint.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1"
+                ]
+            },
             "network/quazal/Transport/Interface/XboxConnectivityTester.cpp": "NonMatching",
             "network/quazal/Stack/Core/IOCompletionNotifier.cpp": "NonMatching",
             "network/quazal/Transport/UDP/QueuingSocket.cpp": "NonMatching",

@@ -11,6 +11,7 @@ namespace Quazal {
             QEvent() : m_bRepeatEvent(0) {}
             virtual ~QEvent() {}
             virtual unsigned short GetSignal() const = 0;
+            bool IsSystemEvent() const { return GetSignal() < 4; }
 
             bool m_bRepeatEvent; // 0x4
         };
