@@ -411,9 +411,14 @@ void BandPatchMesh::Render(RndTex *tex, RndMat *mat) {
                         mat->SetBlend(RndMat::kPreMultAlpha);
                         mat->SetDiffuseTex(mMeshes[i].patches[j].mTex);
                     }
+                    // Retail also offsets the patch by half a texel
+                    // (-0.5 / width, -0.5 / height; pool constant 0x820392FC
+                    // = -0.5f), stored to the transform's v.x and v.y.
                     Transform tf88;
                     tf88.Reset();
                     tf88.m.y *= (float)tex->Height() / (float)tex->Width();
+                    tf88.v.x = -0.5f / (float)tex->Width();
+                    tf88.v.y = -0.5f / (float)tex->Height();
                     patch->SetLocalXfm(tf88);
                     patch->SetMat(mat);
                     if (mat->GetDiffuseTex()) {
@@ -879,7 +884,7 @@ void BandPatchMesh::WorkVerts::SetVertsAndFaces(RndMesh *mesh, bool renderTo) {
         unk44.Set(dest->Width(), dest->Height());
         unk44 *= 0.707f;
         unk4c.Set(1.0f / unk44.x, 1.0f / unk44.y);
-        unk54.Set(std::fabs(unk3c.x), std::fabs(unk3c.y));
+        unk54.Set(fabsf(unk3c.x), fabsf(unk3c.y));
         unk5c.Set(1.0f / unk54.x, 1.0f / unk54.y);
         for (int i = 0; i < mesh->Verts().size(); i++) {
             MeshVert *cur = unk10[i];

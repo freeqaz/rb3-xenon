@@ -847,8 +847,8 @@ void TrackData::Init(SubmixCollection *submixes, bool b) {
 
 void TrackData::SetMapping(const std::vector<int> &chans) {
     mOriginalChannels.clear();
-    if (!chans.empty())
-        mOriginalChannels.insert(mOriginalChannels.begin(), chans.begin(), chans.end());
+    // retail calls _M_range_insert straight after the clear -- no empty() guard
+    mOriginalChannels.insert(mOriginalChannels.begin(), chans.begin(), chans.end());
     if (mSubmixes) {
         RELEASE(mChannelMapping);
         if (chans.size() == 1) {
@@ -883,8 +883,8 @@ void TrackData::SetMapping(const char *cc) {
 
 TrackData::~TrackData() { RELEASE(mChannelMapping); }
 
-int TrackData::GetSucceeding(int slot) const {
-    int ret;
+bool TrackData::GetSucceeding(int slot) const {
+    bool ret;
     if (mMultiSlot) {
         if (slot == -1) {
             MILO_ASSERT(slot != -1, 0x698);

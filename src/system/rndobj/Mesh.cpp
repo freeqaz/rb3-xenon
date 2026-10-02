@@ -1,3 +1,8 @@
+// Retail inlines the owner-only ObjPtr ctor at the RndMesh::Load locals, while
+// RndMesh::RndMesh() calls the out-of-line two-arg ctor for mMat.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
+#define RB3_OBJOWNERPTR_INLINE_OWNER_CTOR
 #include "rndobj/Mesh.h"
 #include "rndobj/MeshVertCompress.h"
 #include "math/Geo.h"
@@ -127,7 +132,7 @@ int RndMesh::sLastCollide;
 bool RndMesh::sUpdateApproxLight = true;
 
 RndMesh::RndMesh()
-    : mMat(this), mGeomOwner(this, this), mBones(this), mMutable(0),
+    : mMat(this, nullptr), mGeomOwner(this, this), mBones(this), mMutable(0),
       mVolume(kVolumeTriangles), mBSPTree(nullptr), mMultiMesh(nullptr), mHasAOCalc(0),
       mKeepMeshData(0), mCompressedVerts(nullptr), mNumCompressedVerts(0) {}
 

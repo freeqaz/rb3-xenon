@@ -284,8 +284,8 @@ void DxTex::ResetSurfaces() {
         mMovieTextures[i] = nullptr;
     }
 
-    bool _bit0 = (mType & kRendered) != 0;
-    if (((_bit0) && mNumMips) || ((mType & kMovie) && (mType & 0x20))) {
+    bool rendered = (mType & kRendered) != 0;
+    if ((rendered && mNumMips) || ((bool)(mType & kMovie) && (mType & 0x20))) {
         TheDxRnd.AutoDelete(mTexture);
         mTexture = nullptr;
     }

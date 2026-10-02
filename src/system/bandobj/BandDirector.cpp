@@ -106,7 +106,7 @@ BandDirector::BandDirector()
       mLightPresetCatBlend(0), mLightPresetInterpEnabled(1), mDisabled(0), mAsyncLoad(0),
       mCurShot(this), mNextShot(this), mIntroShot(this), unke0(-kHugeFloat),
       mDisablePicking(0), unke5(1), unk108(-1.0f), mEndOfSongSec(0), unk110(0),
-      mSongPref(0) {
+      mLipSyncs(), mSongPref(0) {
     static DataNode &banddirector = DataVariable("banddirector");
     banddirector = this;
     mAsyncLoad = !LOADMGR_EDITMODE;
@@ -171,7 +171,7 @@ void BandDirector::Enter() {
         // The config read is dev-build only; kept for the native host.
         BandDirector::sMotionBlurBlendAmount = SystemConfig("rnd", "motion_blur")->Float(1);
 #endif
-        mCamPostProc = 0;
+        mCamPostProc.ReleaseObjConcrete();
         mLightPresetCatA = mLightPresetCatB = gNullStr;
         mLightPresetCatBlend = 0;
         unk108 = -1.0f;
@@ -196,7 +196,8 @@ void BandDirector::Enter() {
             mIntroShot = 0;
         } else
             FindNextShot();
-        Symbol hidden = HiddenInstrument(TheBandWardrobe->GetPlayMode());
+        Symbol playMode = TheBandWardrobe->GetPlayMode();
+        Symbol hidden = HiddenInstrument(playMode);
         static const char *modes[3] = { "keyboard", "guitar", "bass" };
         for (int i = 0; i < 3U; i++) {
             Symbol thismode = modes[i];

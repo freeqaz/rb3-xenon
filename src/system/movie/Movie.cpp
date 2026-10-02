@@ -622,11 +622,11 @@ MovieInternalBuffers *MovieInternalBuffers::New(std::vector<BINK *> binks) {
             memset(&info, 0, sizeof(info));
             BinkGetFrameBuffersInfo(bink, &info);
             BINKFRAMEBUFFERS &b = bufs->mBuffers;
-            b.TotalFrames = Max(b.TotalFrames, info.TotalFrames);
-            b.YABufferWidth = Max(b.YABufferWidth, info.YABufferWidth);
-            b.YABufferHeight = Max(b.YABufferHeight, info.YABufferHeight);
-            b.cRcBBufferWidth = Max(b.cRcBBufferWidth, info.cRcBBufferWidth);
-            b.cRcBBufferHeight = Max(b.cRcBBufferHeight, info.cRcBBufferHeight);
+            b.TotalFrames = Max(info.TotalFrames, b.TotalFrames);
+            b.YABufferWidth = Max(info.YABufferWidth, b.YABufferWidth);
+            b.YABufferHeight = Max(info.YABufferHeight, b.YABufferHeight);
+            b.cRcBBufferWidth = Max(info.cRcBBufferWidth, b.cRcBBufferWidth);
+            b.cRcBBufferHeight = Max(info.cRcBBufferHeight, b.cRcBBufferHeight);
             BinkRegisterFrameBuffers(bink, &b);
         }
     }

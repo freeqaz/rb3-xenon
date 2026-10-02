@@ -36,7 +36,9 @@ public:
         kHttpGet_ReceivingHeaders = 8,
     };
 
-    HttpGet(unsigned int ip, unsigned short port, const char *, const char *);
+    // Retail takes three arguments: NetLoaderXbox's ctor (0x827d88c8)
+    // sets only r4-r6 before bl 0x827DC9E8.
+    HttpGet(unsigned int ip, unsigned short port, const char *);
     HttpGet(
         unsigned int ip, unsigned short port, const char *, unsigned char, const char *
     );
@@ -61,7 +63,6 @@ public:
     unsigned int GetBufferSize();
     void SetTimeout(float);
     HttpGetFailType FailType() const { return mFailType; }
-    State PrevState() const { return mPrevState; }
 
     MEM_OVERLOAD(HttpGet, 0x1C);
 
@@ -116,8 +117,7 @@ protected:
     // There is no stored HTTP status code in retail.
     bool mHeaderOnly; // 0x68
     HttpGetFailType mFailType; // 0x6c
-    State mPrevState; // 0x70
-    bool mFlags; // 0x74
+    // sizeof == 0x70 in retail: NetLoaderXbox allocates `li r3,0x70`.
 };
 
 class HttpPost : public HttpGet {

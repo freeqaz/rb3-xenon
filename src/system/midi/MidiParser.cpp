@@ -197,7 +197,7 @@ void MidiParser::ClearManagedParsers() {
     FOREACH (it, sParsers) {
         MidiParser *cur = *it;
         if (cur) {
-            if (!ObjectDir::Main()->Find<Hmx::Object>(cur->Name(), false)) {
+            if (!ObjectDir::Main()->Find<MsgSource>(cur->Name(), false)) {
                 cur->mEvents->Clear();
             } else {
                 parsers.push_back(cur);

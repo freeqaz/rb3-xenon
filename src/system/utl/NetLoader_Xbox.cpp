@@ -10,7 +10,7 @@ NetLoaderXbox::NetLoaderXbox(const String &str) : NetLoader(str), unk24(0) {
     unsigned int ip = pNetCacheMgrXbox->GetIP();
     String root = TheNetCacheMgr->GetServerRoot();
     root += str;
-    mHttpGet = new HttpGet(ip, TheNetCacheMgr->GetPort(), root.c_str(), nullptr);
+    mHttpGet = new HttpGet(ip, TheNetCacheMgr->GetPort(), root.c_str());
     MILO_ASSERT(mHttpGet, 0x20);
 }
 

@@ -175,7 +175,8 @@ void DxMultiMesh::DrawShowing() {
     if (mInstances.empty())
         return;
     RndMesh *mesh = mMesh;
-    if (!mesh)
+    // retail tests the mesh with a signed compare (cmpwi cr6,r11,0)
+    if ((int)mesh == 0)
         return;
     if (!static_cast<DxMesh *>(mesh->GetGeomOwner())->CanDraw())
         return;

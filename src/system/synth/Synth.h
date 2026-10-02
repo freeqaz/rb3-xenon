@@ -220,11 +220,11 @@ protected:
     Fader *mMidiInstrumentFader; // 0x70
     MicClientMapper *mMicClientMapper; // 0x74 (retail: fn_82664760 reads +0x74)
     MidiInstrumentMgr *mMidiInstrumentMgr; // 0x78 (retail: Terminate reads +0x78)
-    // 8 unidentified, non-destructible bytes: possibly `int unk60;`
-    // (TranscodableMixer*?) and `int unk64;` (Stream* mDebugStream?) in exactly
-    // these two slots, between mMidiInstrumentMgr and mHud.
+    // One unidentified word (possibly TranscodableMixer *) and the debug-meter
+    // stream: retail Synth::UpdateOverlay reads its Stream* from this+0x80
+    // (`lwz r11, 0x58(r3)` off the RndOverlay::Callback base at +0x28).
     int unk7c; // 0x7c
-    int unk80; // 0x80
+    Stream *mDebugStream; // 0x80
 #endif
     // mHud is retail-verified at 0x84 (Synth::ToggleHud reads +0x84 for mHud).
     RndOverlay *mHud; // 0x84
@@ -235,7 +235,9 @@ protected:
     // member by +0x20 (which broke Synth360::EnableLevels et al).
     static std::list<Hmx::Object *> mPlayHandlers;
     static int unk98; // TranscodableMixer* mSecureMixer?
+#ifdef RB3_SYNTH_DC3_LISTS
     static Stream *mDebugStream;
+#endif
     static ADSRImpl *mADSR;
     static String unka8;
 };

@@ -49,6 +49,10 @@ void Net::Poll() {
     mServer->Poll();
 }
 
+// Out of line in retail but folded by ICF: NetSession::CheckJoinable and
+// NumOpenSlots call 0x827BEA30, `lwz r3,0x28(r3); blr`, at this call position.
+NetGameData *Net::GetGameData() { return mGameData; }
+
 // 0x823E0420
 void Net::SetGameData(NetGameData *data) {
     mGameData = data;

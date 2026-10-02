@@ -287,7 +287,9 @@ bool VorbisReader::TryDecode() {
     }
     if (mHasPendingPacket) {
         START_AUTO_TIMER("vorbis_synthesis_poll_cpu");
-        if (mVorbisBlock->synthesis_state == vorbis_block::vss_init) {
+        // Retail 0x82bb3288: the timer bodies are empty, yet the state is still read
+        // once (lwz r11,0x6c(r3), never tested), so that read was volatile.
+        if (*(volatile int *)&mVorbisBlock->synthesis_state == vorbis_block::vss_init) {
             START_AUTO_TIMER("vorbis_synthesis_vssinit_cpu");
         } else if (mVorbisBlock->synthesis_state == vorbis_block::vss_decode) {
             START_AUTO_TIMER("vorbis_synthesis_vssdecode_cpu");
@@ -397,8 +399,9 @@ bool VorbisReader::CheckHmxHeader() {
                 unsigned char stuff[16];
                 bs.Read(stuff, sizeof(stuff));
                 bs.Read(stuff, sizeof(stuff));
-                bs >> magicB;
-                mKeyIndex = (int)magicB % 6 + 6;
+                s64 keyIdx;
+                bs >> keyIdx;
+                mKeyIndex = (int)keyIdx % 6 + 6;
                 TheSynth->Grinder().HvDecrypt(stuff, mKeyMask, version);
                 gCipher = register_cipher(&rijndael_desc);
                 MILO_ASSERT(gCipher >= 0, 0x268);

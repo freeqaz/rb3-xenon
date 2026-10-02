@@ -1556,7 +1556,7 @@ DataNode VocalTrackDir::DataForEachConfigObj(DataArray *da) {
 
 DataNode VocalTrackDir::OnIsolatePart(DataArray *da) {
     int part = da->Int(2);
-    if (part + 1U > 3) {
+    if (part < -1 || part > 2) {
         MILO_NOTIFY_ONCE("isolating invalid vocal part: %d", part);
         return DataNode(0);
     } else {

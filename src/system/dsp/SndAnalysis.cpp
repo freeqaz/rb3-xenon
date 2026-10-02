@@ -90,16 +90,11 @@ int FindCCPeak(const float *dp_data, const float *ss_data, int vlen, int startPe
     int half = vlen / 2;
     int max_peaks = half - 1;
     for (int n = startPeriod; n < max_peaks; n++) {
-        float dp = dp_data[n];
-        if (dp > dp_data[n - 1] && dp > dp_data[n + 1]) {
-            float ssa = ss_data[n - 1];
-            float ssb = ss_data[n + half - 1];
-            float norm = sqrtf(ss_data[half - 1] * (ssb - ssa));
-            float ratio = dp / norm;
+        if (dp_data[n] > dp_data[n - 1] && dp_data[n] > dp_data[n + 1]) {
+            float norm = sqrtf(ss_data[half - 1] * (ss_data[n + half - 1] - ss_data[n - 1]));
+            float ratio = dp_data[n] / norm;
             if (ratio > 0.75f) {
-                if (ratio > bestcor) {
-                    bestcor = ratio;
-                }
+                bestcor = (ratio - bestcor >= 0.0f) ? ratio : bestcor; // retail: fsubs + fsel
                 cors[num_peaks] = ratio;
                 peaks[num_peaks] = n;
                 num_peaks++;

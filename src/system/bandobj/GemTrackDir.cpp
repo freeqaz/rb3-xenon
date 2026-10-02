@@ -1090,11 +1090,10 @@ void GemTrackDir::SetDisplayOffset(float offset, bool force) {
 }
 
 void GemTrackDir::SetScreenRectX(float f) {
-    RndCam *cam = mGameCam;
-    if (cam && unk488 >= 0 && unk488 < mNumTracks) {
-        Hmx::Rect rect = cam->GetScreenRect();
+    if (mGameCam && unk488 >= 0 && unk488 < mNumTracks) {
+        Hmx::Rect rect = mGameCam->GetScreenRect();
         rect.x = f * (unk488 - 0.5f * (mNumTracks - 1));
-        cam->SetScreenRect(rect);
+        mGameCam->SetScreenRect(rect);
     }
 }
 

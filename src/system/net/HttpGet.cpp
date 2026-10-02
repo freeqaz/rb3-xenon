@@ -168,20 +168,18 @@ namespace {
     }
 };
 
-HttpGet::HttpGet(unsigned int ip, unsigned short port, const char *c1, const char *c2)
+HttpGet::HttpGet(unsigned int ip, unsigned short port, const char *c1)
     : mSocket(nullptr), mPath(c1), mPort(port), mState(-1), mHeaderOnly(false),
       mTimeoutMs(kDefaultTimeoutMs), mIP(ip), mRecvBuf(nullptr), mRecvBufPos(0),
       mFileBuf(nullptr), mFileBufSize(0), mFileBufRecvPos(0), mRetryCount(0), mFailType() {
-    // Retail (0x827DC9E8) leaves mPrevState and mFlags unset here and adds no
-    // request headers; only the five-argument ctor does.
-    (void)c2;
+    // Retail (0x827DC9E8) adds no request headers; only the five-argument ctor does.
     SetState(kHttpGet_Connecting);
 }
 
 HttpGet::HttpGet(
     unsigned int ip, unsigned short port, const char *c1, unsigned char uc, const char *c2
 )
-    : mSocket(nullptr), mPath(c1), mPort(port), mState(-1), mHeaderOnly((uc & 1) != 0), mFlags(uc & 3),
+    : mSocket(nullptr), mPath(c1), mPort(port), mState(-1), mHeaderOnly((uc & 1) != 0),
       mTimeoutMs(kDefaultTimeoutMs), mIP(ip), mRecvBuf(nullptr), mRecvBufPos(0),
       mFileBuf(nullptr), mFileBufSize(0), mFileBufRecvPos(0), mRetryCount(0), mFailType() {
     (void)c2;

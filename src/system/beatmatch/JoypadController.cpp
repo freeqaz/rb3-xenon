@@ -230,7 +230,7 @@ int JoypadController::GetVirtualSlot(int i) const {
     return i;
 }
 
-int JoypadController::OnMsg(const ButtonDownMsg &msg) {
+bool JoypadController::OnMsg(const ButtonDownMsg &msg) {
     if (mDisabled)
         return 0;
     if (!mLocalUser)
@@ -300,7 +300,7 @@ int JoypadController::OnMsg(const ButtonDownMsg &msg) {
     return 0;
 }
 
-int JoypadController::OnMsg(const ButtonUpMsg &msg) {
+bool JoypadController::OnMsg(const ButtonUpMsg &msg) {
     if (mDisabled)
         return 0;
     MILO_ASSERT(mSink, 0x213);

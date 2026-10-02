@@ -52,7 +52,7 @@ public:
     TrackData();
     TrackData(SubmixCollection *, const std::vector<int> &, bool, bool);
     ~TrackData();
-    int GetSucceeding(int) const;
+    bool GetSucceeding(int) const;
     void Hit(int, int, float);
     void Init(SubmixCollection *, bool);
     bool IsSlotActive(int, float) const;
@@ -222,7 +222,7 @@ public:
     AudioTrackNum TrackNumAt(int idx) { return mSongData->GetAudioTrackNum(idx); }
     int NumPlayTracks() const { return mTrackData.mTrackData.size(); }
     bool IsStreamPlaying() const { return mSongStream && mSongStream->IsPlaying(); }
-    int GetSucceeding(AudioTrackNum num, int slot) const {
+    bool GetSucceeding(AudioTrackNum num, int slot) const {
         return mTrackData[num]->GetSucceeding(slot);
     }
 

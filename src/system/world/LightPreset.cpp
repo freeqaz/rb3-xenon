@@ -1559,6 +1559,9 @@ BEGIN_LOADS(LightPreset)
     }
     SyncNewSpotlights();
     CacheFrames();
+    // Retail clears the flag here, before the String locals unwind, and again
+    // in ~AutoLoading (two `stb r22, 6(r21)` at the tail of 0x824B5xxx's body).
+    sLoading = false;
 END_LOADS
 
 void LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
