@@ -35387,5 +35387,14 @@
  "0x82b3f9f8": "?InsertTicket@TicketManager@Quazal@@QAAXIPAVTicket@2@@Z",
  "0x82b3fa38": "?ReleaseTicket@TicketManager@Quazal@@QAAXPAVTicket@2@@Z",
  "0x82b3fac0": "?erase_unique@?$_Rb_tree@IU?$less@I@stlpmtx_std@@U?$pair@$$CBIPAVTicket@Quazal@@@2@U?$_Select1st@U?$pair@$$CBIPAVTicket@Quazal@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBIPAVTicket@Quazal@@@stlpmtx_std@@@priv@2@V?$MemAllocator@U?$pair@$$CBIPAVTicket@Quazal@@@stlpmtx_std@@@Quazal@@@stlpmtx_std@@QAAIABI@Z",
- "0x82b3fb80": "?clear@?$_Rb_tree@IU?$less@I@stlpmtx_std@@U?$pair@$$CBIPAVTicket@Quazal@@@2@U?$_Select1st@U?$pair@$$CBIPAVTicket@Quazal@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBIPAVTicket@Quazal@@@stlpmtx_std@@@priv@2@V?$MemAllocator@U?$pair@$$CBIPAVTicket@Quazal@@@stlpmtx_std@@@Quazal@@@stlpmtx_std@@QAAXXZ"
+ "0x82b3fb80": "?clear@?$_Rb_tree@IU?$less@I@stlpmtx_std@@U?$pair@$$CBIPAVTicket@Quazal@@@2@U?$_Select1st@U?$pair@$$CBIPAVTicket@Quazal@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBIPAVTicket@Quazal@@@stlpmtx_std@@@priv@2@V?$MemAllocator@U?$pair@$$CBIPAVTicket@Quazal@@@stlpmtx_std@@@Quazal@@@stlpmtx_std@@QAAXXZ",
+ "0x82b481d0": "??0MatchOperation@Quazal@@QAA@PAVDuplicationSpace@1@W4_MatchType@01@VDOHandle@1@@Z",
+ "0x82b48260": "?GetType@MatchOperation@Quazal@@UBAHXZ",
+ "0x82b48270": "?GetClassNameString@MatchOperation@Quazal@@UBAPBDXZ",
+ "0x82b48280": "??_GMatchOperation@Quazal@@UAAPAXI@Z",
+ "0x82b482c8": "??1MatchOperation@Quazal@@UAA@XZ",
+ "0x82b48300": "?TraceImpl@MatchOperation@Quazal@@UBAXW4_Event@Operation@2@I@Z",
+ "0x82b48480": "?ExecuteQueuedOperation@MatchOperation@Quazal@@QAAXH@Z",
+ "0x82b48528": "?ExecuteOperation@MatchOperation@Quazal@@QAAXXZ",
+ "0x82b48768": "?Queue@MatchOperation@Quazal@@SAXPAVDuplicationSpace@2@W4_MatchType@12@VDOHandle@2@H@Z"
 }
