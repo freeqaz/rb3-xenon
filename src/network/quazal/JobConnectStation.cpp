@@ -1143,9 +1143,8 @@ namespace Quazal {
         if (m_refStation.IsValid()) {
             StationManager::GetInstance()->DisconnectStation(m_refStation.operator->());
         }
-        bool bDisconnectAll = s_bDisconnectOnError
-            && Station::GetLocalStationHandle().GetValue() > m_refStation.GetHandle().GetValue();
-        if (bDisconnectAll) {
+        if (!!(s_bDisconnectOnError
+               && Station::GetLocalStationHandle().GetValue() > m_refStation.GetHandle().GetValue())) {
             SelectionIteratorTemplate<Station> it(true, true);
             while (!it.EndReached()) {
                 if (it->IsNotConnected()) {
