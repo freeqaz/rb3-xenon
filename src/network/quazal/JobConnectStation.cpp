@@ -13,11 +13,45 @@
 // The surrounding NetZ classes are declared here only as far as this TU uses
 // them; their members are defined in other TUs.
 
-#include "Core/InstanceControl.h"
-#include "Core/PseudoSingleton.h"
+#include "Core/InstantiationContext.h"
+#include "Platform/SystemError.h"
 #include "Platform/qStd.h"
 
 namespace Quazal {
+
+    // GetInstanceFromVector is an inline candidate here: /Ob1 declines it at
+    // every call site, which still reserves its this/ui/idx slots in the caller.
+    class InstanceTable : public RootObject {
+    public:
+        unsigned int GetInstanceFromVector(unsigned int ui, unsigned int idx) {
+            if (idx == 0) {
+                return m_oDefaultContext.GetInstance(ui);
+            } else if (idx >= m_pvContextVector->size()) {
+                SystemError::SignalError(0, 0, 0xe0000003, 0);
+                return -1;
+            } else {
+                return (*m_pvContextVector)[idx]->GetInstance(ui);
+            }
+        }
+
+        InstantiationContext m_oDefaultContext; // 0x0
+        qVector<InstantiationContext *> *m_pvContextVector; // 0x30
+    };
+
+    class InstanceControl : public RootObject {
+    public:
+        static InstanceTable s_oInstanceTable;
+
+        void *m_vtable; // 0x0
+        unsigned int m_icInstanceContext; // 0x4
+        unsigned int m_icInstanceType; // 0x8
+        void *m_pDelegatorInstance; // 0xc
+    };
+
+    class PseudoSingleton {
+    public:
+        static unsigned int GetCurrentContext();
+    };
 
     class DOHandle : public RootObject {
     public:
@@ -26,6 +60,7 @@ namespace Quazal {
         ~DOHandle() {}
 
         unsigned int GetValue() const { return mValue; }
+        unsigned int GetDOClassID() const { return (mValue & 0xFFC00000) >> 22; }
         bool operator==(const DOHandle &h) const { return mValue == h.mValue; }
         bool operator<(const DOHandle &h) const { return mValue < h.mValue; }
 
@@ -42,6 +77,7 @@ namespace Quazal {
 
         unsigned int GetReferencedHandle() const { return m_hReferencedDO.mValue; }
         DOHandle GetHandle() const { return DOHandle(GetReferencedHandle()); }
+        DuplicatedObject *GetDOPtr() const { return m_poReferencedDO; }
 
         DuplicatedObject *m_poReferencedDO; // 0x0
         DOHandle m_hReferencedDO; // 0x4
@@ -54,12 +90,26 @@ namespace Quazal {
         DORefTemplate(DOHandle h) : DORef(h) {}
         ~DORefTemplate() {}
 
-        bool IsValid() const;
+        // Retail calls the one out-of-line copy (DuplicatedObject's TU emits it
+        // first); /Ob1 declines it here but still reserves its frame.
+        bool IsValid() const {
+            if (GetDOPtr() == NULL) {
+                SystemError::SignalError(0, 0, 0xA0030004, 0);
+                return false;
+            } else {
+                T *pDO = (T *)m_poReferencedDO;
+                if (!T::GetDOClass(pDO->m_dohMyself.GetDOClassID())->IsAKindOf(T::GetStaticClassID())) {
+                    SystemError::SignalError(0, 0, 0xE003000C, 0);
+                    return false;
+                }
+                return true;
+            }
+        }
         T *operator->() const {
             if (!IsValid()) {
                 return 0;
             } else {
-                return (T *)m_poReferencedDO;
+                return (T *)GetDOPtr();
             }
         }
     };
@@ -352,6 +402,26 @@ namespace Quazal {
     };
 
     class DOOperation;
+    class DOClass {
+    public:
+        virtual void _v00();
+        virtual void _v01();
+        virtual void _v02();
+        virtual void _v03();
+        virtual void _v04();
+        virtual void _v05();
+        virtual void _v06();
+        virtual void _v07();
+        virtual void _v08();
+        virtual void _v09();
+        virtual void _v10();
+        virtual void _v11();
+        virtual void _v12();
+        virtual void _v13();
+        virtual void _v14();
+        virtual bool IsAKindOf(unsigned int) const;
+    };
+
     class MasterStationRef {
     public:
         MasterStationRef(DOHandle, bool);
@@ -382,11 +452,14 @@ namespace Quazal {
         bool UndeleteMainRef();
         DOHandle GetHandle() const;
 
+        static DOClass *GetDOClass(unsigned int);
         bool FlagIsSet(unsigned short f) const { return (m_uiFlags & f) == f; }
         bool IsDeleted() const { return !FlagIsSet(1); }
 
         char m_pad4[0x1C];
         unsigned short m_uiFlags; // 0x20
+        char m_pad22[0x26];
+        DOHandle m_dohMyself; // 0x48
     };
 
     class Station : public DuplicatedObject {
@@ -402,12 +475,17 @@ namespace Quazal {
         bool Disconnect(bool);
         unsigned short GetState() const { return m_usState; }
 
-        char m_pad22[0x8E];
+        static unsigned int s_uiClassID;
+        static unsigned int GetStaticClassID() { return s_uiClassID; }
+
+        char m_pad4c[0x64];
         unsigned short m_usState; // 0xb0
     };
 
     class Session : public DuplicatedObject {
     public:
+        static unsigned int s_uiClassID;
+        static unsigned int GetStaticClassID() { return s_uiClassID; }
         static DOHandle GetInstanceHandle();
         bool RetrieveURLs(RetrieveURLsContext *, const DOHandle &, qList<StationURL> *);
     };
@@ -655,13 +733,14 @@ namespace Quazal {
     JobConnectStation::~JobConnectStation() {}
 
     void JobConnectStation::CheckExceptions() {
-        if (!m_bCompleting) {
-            if (NetZ::GetInstance()->GetSystemComponent()->IsTerminating()) {
-                SetStep(JCS_STEP(ConnectionCancelled));
-            }
-            if (IsCancelled()) {
-                SetStep(JCS_STEP(ConnectionCancelled));
-            }
+        if (m_bCompleting) {
+            return;
+        }
+        if (NetZ::GetInstance()->GetSystemComponent()->IsTerminating()) {
+            SetStep(JCS_STEP(ConnectionCancelled));
+        }
+        if (IsCancelled()) {
+            SetStep(JCS_STEP(ConnectionCancelled));
         }
     }
 
