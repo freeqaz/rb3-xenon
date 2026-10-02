@@ -214,14 +214,14 @@ void LayerDir::RefreshLayer(Layer &layer, bool useColorIdx) {
         if (layer.mActive) {
             if (layer.mAllowColor) {
                 if (useColorIdx) {
-                    Hmx::Object *palette = layer.mColorPalette;
-                    if (palette) {
+                    if (layer.mColorPalette) {
                         DataArray *arr =
-                            palette->Property(Symbol("colors"), true)->Array();
+                            layer.mColorPalette->Property(Symbol("colors"), true)->Array();
                         int colorIdx = layer.mColorIdx;
                         if (arr->Size() > colorIdx) {
                             const DataArray *arr2 =
-                                palette->Property(Symbol("colors"), true)->Array();
+                                layer.mColorPalette->Property(Symbol("colors"), true)
+                                    ->Array();
                             int packed = arr2->Node(colorIdx).Int(arr2);
                             layer.mColor.Unpack(packed);
                         }
