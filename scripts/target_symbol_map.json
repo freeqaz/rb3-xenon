@@ -34984,5 +34984,11 @@
  "0x82a73a30": "?DecreaseRefCount@DuplicatedObject@Quazal@@QAAXXZ",
  "0x82a73b10": "?CompleteDecreaseRefCount@DuplicatedObject@Quazal@@QAAXXZ",
  "0x82a73be8": "?DeleteMainRef@DuplicatedObject@Quazal@@QAA_NXZ",
- "0x82a73d38": "?DeleteDuplicaMainRef@DuplicatedObject@Quazal@@QAA_NXZ"
+ "0x82a73d38": "?DeleteDuplicaMainRef@DuplicatedObject@Quazal@@QAA_NXZ",
+ "0x82a72db8": "?ExecUpdateDataSet@DuplicatedObject@Quazal@@QAAXABVUpdateDataSetOperation@2@@Z",
+ "0x82a72ea0": "?SendConnectOrphanRequest@DuplicatedObject@Quazal@@SA_NPAVFetchContext@2@VDOHandle@2@@Z",
+ "0x82a72ef0": "?PerformFaultRecovery@DuplicatedObject@Quazal@@QAA_NVDOHandle@2@V?$LogicalClockTmpl@E@2@@Z",
+ "0x82a73228": "?EmigrateTo@DuplicatedObject@Quazal@@QAA_NPAVMigrationContext@2@VDOHandle@2@@Z",
+ "0x82a733d0": "?AttemptEmigration@DuplicatedObject@Quazal@@QAA_NVDOHandle@2@@Z",
+ "0x82a73e18": "?DeleteMainRefImpl@DuplicatedObject@Quazal@@QAA_NXZ"
 }

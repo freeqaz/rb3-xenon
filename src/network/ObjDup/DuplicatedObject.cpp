@@ -10,6 +10,7 @@
 #include "ObjDup/Station.h"
 #include "ObjDup/DOSelections.h"
 #include "ObjDup/CallRegister.h"
+#include "ObjDup/DOCallContext.h"
 
 namespace Quazal {
 
@@ -172,6 +173,30 @@ namespace Quazal {
         GetDOClass(m_dohMyself.GetDOClassID())->DispatchRMCCall(op);
     }
 
+    void DuplicatedObject::ExecUpdateDataSet(const UpdateDataSetOperation &op) {
+        if (op.UpdatesAllDataSets()) {
+            GetDOClass(m_dohMyself.GetDOClassID())
+                ->SpecificExtractDSFromDiscoveryMessage(this, op.GetMessage());
+        } else {
+            GetDOClass(m_dohMyself.GetDOClassID())
+                ->SpecificExtractADataset(this, op.GetMessage(), op.GetDataSetID());
+        }
+    }
+
+    bool DuplicatedObject::SendConnectOrphanRequest(FetchContext *pContext, DOHandle hDO) {
+        return pContext->ConnectOrphan(hDO);
+    }
+
+    bool DuplicatedObject::PerformFaultRecovery(
+        DOHandle hFaultyStation, LogicalClockTmpl<unsigned char> clock
+    ) {
+        if (IsDeleted()) {
+            return false;
+        }
+        FaultRecoveryOperation op(this, hFaultyStation, clock);
+        return ExecuteOperation(op);
+    }
+
     void DuplicatedObject::SendToAllDuplicas(Message *pMessage, unsigned int ui) {
         SendToSomeDuplicas(&m_setDuplicationSet, pMessage, ui);
     }
@@ -186,8 +211,18 @@ namespace Quazal {
         return false;
     }
 
+    bool DuplicatedObject::EmigrateTo(MigrationContext *pContext, DOHandle hNewMaster) {
+        return pContext->MigrateObject(GetHandle(), hNewMaster);
+    }
+
     bool DuplicatedObject::MigrationInProgress() const {
         return CallRegister::GetInstance()->MigrationInProgress(GetHandle(), DOHandle());
+    }
+
+    bool DuplicatedObject::AttemptEmigration(DOHandle hNewMaster) {
+        MigrationContext *pContext = new (__FILE__, 0x450) MigrationContext(false);
+        pContext->SetFlag(2);
+        return EmigrateTo(pContext, hNewMaster);
     }
 
     bool DuplicatedObject::IsADuplica() const {
@@ -239,6 +274,21 @@ namespace Quazal {
     bool DuplicatedObject::DeleteDuplicaMainRef() {
         ScopedCS cs(Scheduler::GetInstance()->unk38);
         return DeleteMainRefImpl();
+    }
+
+    bool DuplicatedObject::DeleteMainRefImpl() {
+        DORef ref(this);
+        if (FlagIsSet(0x20)) {
+            RemoveFromStore(DOHandle(), true, true);
+        } else {
+            DORef refSelf(this);
+            ClearFlag(1);
+            ReleaseReference(false);
+            if (m_dohMyself.IsA(Station::GetClassID())) {
+                static_cast<Station *>(this)->OnStationDOReleased();
+            }
+        }
+        return true;
     }
 
     // ---- end 0x82A72D58..0x82A74220 ----

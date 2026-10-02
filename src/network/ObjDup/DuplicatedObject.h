@@ -23,7 +23,7 @@ namespace Quazal {
     class ChangeMasterStationOperation;
     class ChangeDupSetOperation;
     class CallMethodOperation;
-    class DataSetsMessageOperation;
+    class UpdateDataSetOperation;
     class FetchContext;
     class MigrationContext;
     template <class T>
@@ -83,7 +83,7 @@ namespace Quazal {
         bool FaultRecoveryImpl(DOOperation *);
         bool PerformFaultRecovery(DOHandle, LogicalClockTmpl<unsigned char>);
         void DispatchRMCCall(const CallMethodOperation &);
-        void ExtractDataSets(const DataSetsMessageOperation &);
+        void ExecUpdateDataSet(const UpdateDataSetOperation &);
         static bool SendConnectOrphanRequest(FetchContext *, DOHandle);
         void SendToAllDuplicas(Message *, unsigned int);
         void SendToSomeDuplicas(Selection *, Message *, unsigned int);
@@ -140,6 +140,7 @@ namespace Quazal {
         StateFuncFactory DeletedDuplicaState(const QEvent &);
 
         bool FlagIsSet(unsigned short f) const { return (m_uiFlags & f) == f; }
+        bool IsDeleted() const { return !FlagIsSet(1); }
 
         DOHandle GetHandle() const {
             if (m_dohMyself.GetDOID() == 0) {
@@ -147,6 +148,24 @@ namespace Quazal {
                 return DOHandle();
             } else {
                 return m_dohMyself;
+            }
+        }
+
+        void ReleaseReference(bool bRelevance) {
+            bool bKeep = true;
+            {
+                volatile ScopedCS cs(s_csRefCount);
+                if (bRelevance) {
+                    m_uiRelevanceCount--;
+                }
+                m_uiRefCount--;
+                if (m_uiRefCount == 0) {
+                    m_uiRefCount++;
+                    bKeep = false;
+                }
+            }
+            if (!bKeep) {
+                ReleaseMainReference();
             }
         }
 

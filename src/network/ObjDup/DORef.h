@@ -8,6 +8,8 @@ namespace Quazal {
     class DORef : public RootObject {
     public:
         DORef();
+        DORef(DOHandle);
+        DORef(DuplicatedObject *);
         ~DORef();
 
         void SetSoft();
