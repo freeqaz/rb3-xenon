@@ -29,14 +29,16 @@ void SetMeshAnim(ObjectDir *dir, std::vector<int> &vec) {
     else {
         if (manim->VertPointsKeys().size() == 0) {
             MILO_WARN("%s has no point verts", PathName(manim));
-        } else {
+            return;
+        }
+        {
             std::vector<Vector3> &vertkeys = manim->VertPointsKeys()[0].value;
             vec.resize(vertkeys.size());
             ObjectDir *headdir = DirLoader::LoadObjects(
-                FilePath(MakeString(
+                MakeString(
                     "char/main/head/%s/head.milo",
                     strstr(dir->GetPathName(), "female") ? "female" : "male"
-                )),
+                ),
                 0,
                 0
             );

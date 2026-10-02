@@ -12,7 +12,7 @@ public:
     virtual int GetNumPlayers() const = 0;
     virtual bool InGame() const = 0;
     virtual bool IsGameOver() const = 0;
-    virtual int GetNoCrowdMeter() const = 0;
+    virtual bool GetNoCrowdMeter() const = 0;
     virtual int GetGameExcitement() const = 0;
     virtual void PushCrowdReaction(bool) = 0;
     virtual bool ShowApplauseMeter() const = 0;

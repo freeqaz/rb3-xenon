@@ -46,7 +46,7 @@ public:
     virtual int GetNumPlayers() const;
     virtual bool InGame() const;
     virtual bool IsGameOver() const;
-    virtual int GetNoCrowdMeter() const; // fix ret type
+    virtual bool GetNoCrowdMeter() const;
     virtual int GetGameExcitement() const; // fix ret type
     virtual void PushCrowdReaction(bool);
     virtual bool ShowApplauseMeter() const { return false; }
