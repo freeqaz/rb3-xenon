@@ -824,23 +824,6 @@ const CharGraphNode *CharClip::FindLastNode(CharClip *clip, float beat) const {
     return nullptr;
 }
 
-void CharClip::EvaluateChannel(void *dest, const void *channel, int frame, float blend) {
-    if (!channel) {
-        MILO_FAIL("%s passed in NULL for evaluate channel", (char *)PathName(this));
-    }
-    int offset = (intptr_t)channel - 1;
-    if (offset < mFull.TotalSize()) {
-        mFull.EvaluateChannel(dest, offset, frame, blend);
-    } else {
-        int oneOffset = offset - mFull.TotalSize();
-        if (oneOffset < mOne.TotalSize()) {
-            mOne.EvaluateChannel(dest, oneOffset, 0, 0);
-        } else {
-            MILO_FAIL("%s could not find offset %d %d", (char *)offset, oneOffset, PathName(this));
-        }
-    }
-}
-
 void CharClip::ScaleAddSample(
     CharBones &bones, float f1, int i1, float f2, int i2, float f3
 ) {
@@ -873,6 +856,8 @@ CharClip::FindNode(CharClip *clip, float f1, int iii, float f2) const {
     unsigned int blendMode = iii & 0xFu;
     const CharGraphNode *n = nullptr;
 
+    // kPlayNoBlend has no transition node at all; kPlayNow and unknown modes
+    // fall back to a node at the current beat.
     if (blendMode >= kPlayNoBlend) {
         if (blendMode != kPlayNoBlend) {
             if (blendMode >= kPlayLast) {
@@ -889,6 +874,8 @@ CharClip::FindNode(CharClip *clip, float f1, int iii, float f2) const {
             } else {
                 n = FindFirstNode(clip, f1);
             }
+        } else {
+            return nullptr;
         }
     }
 
@@ -955,10 +942,22 @@ int CharClip::BeatToSample(float f, float *fp) const {
     return mFull.FracToSample(fp);
 }
 
-void CharClip::EvaluateChannel(void *v1, const void *v2, float f3) {
-    float fp;
-    int sample = BeatToSample(f3, &fp);
-    EvaluateChannel(v1, v2, sample, fp);
+// A channel handle is its byte offset + 1, first into the full samples and
+// then into the one-sample block.
+void CharClip::EvaluateChannel(void *dest, const void *channel, float beat) {
+    float frac;
+    int sample = BeatToSample(beat, &frac);
+    int offset = (intptr_t)channel - 1;
+    if (offset < mFull.TotalSize()) {
+        mFull.EvaluateChannel(dest, offset, sample, frac);
+    } else {
+        int oneOffset = offset - mFull.TotalSize();
+        if (oneOffset < mOne.TotalSize()) {
+            mOne.EvaluateChannel(dest, oneOffset, 0, 0);
+        } else {
+            MILO_FAIL("%s could not find offset %d %d", (char *)offset, oneOffset, PathName(this));
+        }
+    }
 }
 
 void CharClip::RotateBy(CharBones &bones, float f) {
@@ -986,15 +985,11 @@ void CharClip::ScaleAdd(CharBones &bones, float f1, float f2, float f3) {
 
 void CharClip::SetRelative(CharClip *clip) {
     if (clip != mRelative) {
-        if (clip == this) {
-            MILO_NOTIFY("%s cannot be relative to itself", PathName(this));
-        } else {
-            mRelative = clip;
-            if (mRelative)
-                Relativize();
-            else
-                MILO_NOTIFY("%s cannot de-relativize clip, must reexport", PathName(this));
-        }
+        mRelative = clip;
+        if (mRelative)
+            Relativize();
+        else
+            MILO_NOTIFY("%s cannot de-relativize clip, must reexport", PathName(this));
     }
 }
 

@@ -34,13 +34,7 @@ void UIListProvider::Text(int, int, UIListLabel *listlabel, UILabel *label) cons
 }
 
 void UIListProvider::UpdateExtendedText(int, int, UILabel *label) const {
-    if (!TheLoadMgr.EditMode()) {
-        MILO_NOTIFY(
-            "Trying to update extended text without an override provider method. Label = %s",
-            label->Name()
-        );
-        label->SetTextToken(gNullStr);
-    }
+    label->SetTextToken(gNullStr);
 }
 
 void UIListProvider::UpdateExtendedMesh(int, int, RndMesh *mesh) const {

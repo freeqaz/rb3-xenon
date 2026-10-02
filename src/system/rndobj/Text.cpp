@@ -729,7 +729,7 @@ bool canBreak(const char *cc, int i) {
     return cc[i] == '\t';
 }
 
-float segmentLength(int i1, int i2, int i3, int i4, float *f5, const char *c6) {
+inline float segmentLength(int i1, int i2, int i3, int i4, float *f5, const char *c6) {
     float lineLen = 0;
     for (; c6[i2 - 1] == ' ' && i1 < i2; i2--, i4--)
         ;
@@ -793,12 +793,7 @@ void RndText::WrapText(const char *text, const Style &style, HX_VECTOR(Line) & l
     int numChars = text ? UTF8StrLen(text) : 0;
 
     if (style.mFont == nullptr || textLen == 0) {
-        Line emptyLine;
-        if (lines.size() > 1) {
-            lines.erase(lines.begin() + 1, lines.end());
-        } else {
-            lines.insert(lines.end(), 1 - lines.size(), emptyLine);
-        }
+        lines.resize(1, Line());
         Line &line0 = lines[0];
         line0.lineStyle = style;
         line0.mStart = text;
@@ -813,12 +808,7 @@ void RndText::WrapText(const char *text, const Style &style, HX_VECTOR(Line) & l
     ComputeCharWidths(charWidths, numChars, text, style);
 
     if (mWrapWidth == 0.0f) {
-        Line emptyLine;
-        if (lines.size() > 1) {
-            lines.erase(lines.begin() + 1, lines.end());
-        } else {
-            lines.insert(lines.end(), 1 - lines.size(), emptyLine);
-        }
+        lines.resize(1, Line());
         Line &line0 = lines[0];
         line0.lineStyle = style;
         line0.mStart = text;
@@ -1122,24 +1112,6 @@ void RndText::SetText(const char *text) {
         mText = text;
     }
     if (!mText.empty()) {
-        if (mCapsMode == kForceLower || mCapsMode == kForceUpper) {
-            int i2 = 0;
-            const char *casestr = "[noforcecase]";
-            for (int i = 0; i < mText.length();) {
-                unsigned short us;
-                unsigned int ui = DecodeUTF8(us, &mText[i]);
-                if (us != (unsigned short)*casestr)
-                    break;
-                if (i2 == 0xC) {
-                    mCapsMode = kCapsModeNone;
-                    mText = mText.replace(0, 0xD, "");
-                    break;
-                }
-                i2++;
-                casestr++;
-                i += ui;
-            }
-        }
         if (mCapsMode == kForceUpper) {
             for (int i = 0; i < mText.length();) {
                 unsigned short us;
@@ -1174,14 +1146,16 @@ float RndText::GetStringWidthUTF8(
 ) const {
     unsigned short us8 = 0;
     float ret = 0;
-    Style myStyle;
+    // a copy of mStyle is made only when no style is passed; the local is
+    // not default-constructed
+    unsigned int styleBuf[(sizeof(Style) + 3) / 4];
     Style *style = (Style *)styleIn;
     if (!cc2) {
         cc2 = cc1 + strlen(cc1);
     }
     if (!style) {
-        myStyle = mStyle;
-        style = &myStyle;
+        memcpy(styleBuf, &mStyle, sizeof(Style));
+        style = (Style *)styleBuf;
     }
     if (!style->mFont) {
         style->mFont = (RndFont *)mFont.Ptr();
@@ -1888,18 +1862,15 @@ float RndText::GetDistanceToPlane(const Plane &p, Vector3 &v) {
     if (mMeshMap.empty())
         return 0;
     else {
+        // no nearest-mesh test in this build: each mesh overwrites the
+        // result, so the last mesh in the map wins
         float ret = 0;
-        bool first = true;
         FOREACH (it, mMeshMap) {
             RndMesh *mesh = it->second.mesh;
             if (mesh) {
                 Vector3 vec;
-                float dist = mesh->GetDistanceToPlane(p, vec);
-                if (first || std::fabs(dist) < std::fabs(ret)) {
-                    first = false;
-                    v = vec;
-                    ret = dist;
-                }
+                ret = mesh->GetDistanceToPlane(p, vec);
+                v = vec;
             }
         }
         return ret;

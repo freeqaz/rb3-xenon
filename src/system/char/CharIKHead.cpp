@@ -305,9 +305,6 @@ void CharIKHead::Highlight() {
 #pragma endregion CharIKHead
 #pragma region CharIKHead::Point
 
-CharIKHead::Point::Point(Hmx::Object *owner)
-    : mBone(owner), mPos(0, 0, 0), mLen(0), mLenRatio(0) {}
-
 CharIKHead::Point::Point(CharIKHead::Point const &point)
     : mBone(point.mBone), mPos(point.mPos), mLen(point.mLen), mLenRatio(point.mLenRatio) {}
 

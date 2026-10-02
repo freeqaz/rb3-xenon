@@ -113,10 +113,13 @@ void Tour::ConfigureTourStatusData(DataArray *arr) {
         entry.mStars = pStatusEntry->Int(1);
         m_vTourStatus.push_back(entry);
     }
+#ifdef HX_NATIVE
+    // Not in retail (0x8235F160 ends after the parse loop).
     for (int i = 1; i < m_vTourStatus.size(); i++) {
         if (m_vTourStatus[i - 1].mStars >= m_vTourStatus[i].mStars)
             MILO_WARN("Tour status fan requirement values are not increasing!");
     }
+#endif
 }
 
 int Tour::GetTourStatusIndexForFanCount(int fanCount) const {
@@ -488,29 +491,31 @@ DataNode Tour::OnMsg(const PrimaryProfileChangedMsg& msg) {
     if (profile) {
         m_pProfile = profile;
     }
-    if (!TheGameMode->InMode(tour)) {
-        return 1;
-    }
-    int isPostScreen = 0;
-    UIScreen *pScreen = TheUI->CurrentScreen();
-    if (pScreen) {
-        isPostScreen = streq(pScreen->Name(), tour_customize_post_screen.Str());
-    }
-    bool shouldSignOut = false;
-    if (isPostScreen) {
-        if (!profile) {
-            shouldSignOut = true;
+    static Symbol tour("tour");
+    if (TheGameMode->InMode(tour)) {
+        UIScreen *pScreen = TheUI->CurrentScreen();
+        bool isPostScreen = false;
+        if (pScreen) {
+            static Symbol tour_customize_post_screen("tour_customize_post_screen");
+            isPostScreen = streq(pScreen->Name(), tour_customize_post_screen.Str());
         }
-    } else {
-        TourProgress *pProgress = TheTour->m_pTourProgress;
-        if (!profile || (pProgress && !profile->OwnsTourProgress(pProgress))) {
-            shouldSignOut = true;
+        bool shouldSignOut = false;
+        if (isPostScreen) {
+            if (!profile) {
+                shouldSignOut = true;
+            }
+        } else {
+            TourProgress *pProgress = TheTour->m_pTourProgress;
+            if (!profile || (pProgress && !profile->OwnsTourProgress(pProgress))) {
+                shouldSignOut = true;
+            }
         }
-    }
-    if (shouldSignOut) {
-        static Message sMsg("sign_out_notify", 0);
-        sMsg[0] = 2;
-        TheUIEventMgr->TriggerEvent(sign_out, sMsg);
+        if (shouldSignOut) {
+            static Symbol sign_out("sign_out");
+            static Message init("init", 0);
+            init[0] = 2;
+            TheUIEventMgr->TriggerEvent(sign_out, init);
+        }
     }
     return 1;
 }

@@ -118,15 +118,15 @@ void RndPollAnim::Poll() {
     }
 }
 
+// Retail's Enter/Exit go straight to the anim loop; neither calls the
+// RndPollable base.
 void RndPollAnim::Enter() {
-    RndPollable::Enter();
     FOREACH (it, mAnims) {
         (*it)->StartAnim();
     }
 }
 
 void RndPollAnim::Exit() {
-    RndPollable::Exit();
     FOREACH (it, mAnims) {
         (*it)->EndAnim();
     }

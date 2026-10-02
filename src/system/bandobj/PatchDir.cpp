@@ -1,4 +1,5 @@
 #include "bandobj/PatchDir.h"
+#include "math/Utl.h"
 #include "decomp.h"
 #include "math/Rand.h"
 #include "math/Rot.h"
@@ -182,19 +183,14 @@ void PatchLayer::ClearSticker() {
 
 void PatchLayer::FlipX() {
     SetScaleX(-1.0f * (mScaleX * (1 / 1638.3f) - 5.0f));
-    float r = fmod(360.0f - (360.0f * mRot / 511.0f), 360.0);
-    if (r < 0.0f)
-        r += 360.0f;
-    SetRotation(r);
+    float rot = mRot * (360.0f / 511.0f);
+    SetRotation(Mod(360.0f - rot, 360.0f));
 }
 
 void PatchLayer::FlipY() {
     SetScaleX(-1.0f * (mScaleX * (1 / 1638.3f) - 5.0f));
-    float rot = 360.0f * mRot / 511.0f;
-    float r = fmod(90.0f + (360.0f - (rot - 90.0f)), 360.0);
-    if (r < 0.0f)
-        r += 360.0f;
-    SetRotation(r);
+    float rot = mRot * (360.0f / 511.0f);
+    SetRotation(Mod((360.0f - (rot - 90.0f)) + 90.0f, 360.0f));
 }
 
 void PatchLayer::SetScale(float x, float y) {

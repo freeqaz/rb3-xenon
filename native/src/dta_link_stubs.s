@@ -211,9 +211,9 @@ _ZN10RndOverlay4FindE6Symbolb:
     xorq %rax, %rax
     ret
 
-.weak _ZN11XboxMapFile10ParseStackEPKcP9StackDataiR11FixedString
-.type _ZN11XboxMapFile10ParseStackEPKcP9StackDataiR11FixedString,@function
-_ZN11XboxMapFile10ParseStackEPKcP9StackDataiR11FixedString:
+.weak _ZN11XboxMapFile10ParseStackEPKcP9StackDataiPc
+.type _ZN11XboxMapFile10ParseStackEPKcP9StackDataiPc,@function
+_ZN11XboxMapFile10ParseStackEPKcP9StackDataiPc:
     xorq %rax, %rax
     ret
 

@@ -970,8 +970,7 @@ DataNode RndPropAnim::OnReplaceKeyframe(DataArray *da) {
 
 DataNode RndPropAnim::OnReplaceFrame(DataArray *da) {
     sReplaceFrame = true;
-    if (da)
-        sFrameReplace = da->Float(2);
+    sFrameReplace = da->Float(2);
     return 0;
 }
 

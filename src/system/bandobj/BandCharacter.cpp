@@ -1934,17 +1934,22 @@ void BandCharacter::SyncOutfitConfig(OutfitConfig *cfg) {
     strcpy(buf, cfg->Name());
     char *dot = strchr(buf, '.');
     MILO_ASSERT(dot, 0x5EA);
-    int colors[7];
     *dot = 0;
+    // Retail builds all five category names here; eyebrows and feet are not
+    // read in this function.
+    static Symbol eyes("eyes");
+    static Symbol skin("skin");
+    static Symbol heads("heads");
+    static Symbol eyebrows("eyebrows");
+    static Symbol feet("feet");
     Symbol sym(buf);
+    int colors[3];
     if (sym == eyes) {
-        colors[3] = 0;
-        colors[4] = 0;
-        colors[5] = 0;
-        colors[3] = mHead.mEyeColor;
-        cfg->SetColors(&colors[3]);
+        colors[1] = 0;
+        colors[2] = 0;
+        colors[0] = mHead.mEyeColor;
+        cfg->SetColors(colors);
     } else if (sym == skin || sym == heads) {
-        colors[0] = 0;
         colors[1] = 0;
         colors[2] = 0;
         colors[0] = mSkinColor;
@@ -2388,7 +2393,14 @@ RndTex *BandCharacter::GetBandLogo() {
 }
 
 void BandCharacter::Compress(RndTex *tex, bool b) {
-    tex->Compress((RndTex::AlphaCompress)b);
+    if (mFileMerger->AsyncLoad()) {
+        // Queue the compress; TextureCompressed retires the ID.
+        mCompressedTextureIDs.push_back(
+            TheRnd.CompressTexture(tex, (RndTex::AlphaCompress)b, this)
+        );
+    } else {
+        tex->Compress((RndTex::AlphaCompress)b);
+    }
 }
 
 // See the declaration in BandCharacter.h: the parameter is intptr_t under LP64
@@ -3232,6 +3244,10 @@ DataNode BandCharacter::OnPostMerge(DataArray *da) {
     if (!mFileMerger->mLoadingLoad
         && (noTextures || (mFileMerger->mAsyncLoad && !unk6bd))) {
         SyncObjects();
+    }
+    if (category == "body_tempo_clips" || category == "body_realtime_clips"
+        || category == "body_add_base" || category == "body_add_clips") {
+        CharUtlRandomizeClipGroups(dir);
     }
     return DataNode(0);
 }

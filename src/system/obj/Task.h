@@ -174,7 +174,9 @@ public:
     void SetAVOffset(float);
     float DeltaTutorialSeconds() const;
     void ClearTimelineTasks(TaskUnits);
+#ifdef HX_NATIVE
     void QueueTaskDelete(Task *);
+#endif
     void ResetTaskTime(float, float);
     void ResetSecondTaskTime(float);
     void ResetBeatTaskTime(float);
@@ -196,7 +198,11 @@ private:
     int unk4c; // 0x44
     Timer mTime; // 0x48
     float mAVOffset; // 0x78
+#ifdef HX_NATIVE
+    // Deferred-delete queue (QueueTaskDelete); the retail TaskMgr has no
+    // member past mAVOffset -- its ctor initializes nothing beyond the Timer.
     std::vector<ObjPtr<Task> > unk84; // 0x7c
+#endif
 };
 
 extern TaskMgr TheTaskMgr;

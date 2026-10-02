@@ -521,21 +521,15 @@ void BandCamShot::Store() {
 }
 
 void BandCamShot::View() {
-    bool b;
     FOREACH (it, mTargets) {
-        Target &cur = *it;
-        RndTransformable *t;
-        b = false;
-        if (!(*it).mTarget.Null()) {
-            t = GetTargetCache(cur.mTarget)->unk4;
-            if (t)
-                b = true;
-        }
-        if (b) {
-            TeleportTarget(t, cur.mXfm, false);
-            Character *charObj = dynamic_cast<Character *>(t);
-            if (charObj)
-                FreezeChar(charObj, false);
+        if (!it->mTarget.Null()) {
+            RndTransformable *t = GetTargetCache(it->mTarget)->unk4;
+            if (t) {
+                TeleportTarget(t, it->mXfm, false);
+                Character *charObj = dynamic_cast<Character *>(t);
+                if (charObj)
+                    FreezeChar(charObj, false);
+            }
         }
     }
     StartAnim();
@@ -822,24 +816,11 @@ DataNode BandCamShot::OnListAnimGroups(const DataArray *da) {
 }
 
 DataNode BandCamShot::OnTestDelta(DataArray *arr) {
-    float f4 = arr->Float(2);
-    bool ret = true;
-    if (f4 != 0) {
-        bool inRange = false;
-        bool passMin = true;
-        if (mMinTime != 0) {
-            if (!(f4 >= mMinTime)) passMin = false;
-        }
-        if (passMin) {
-            bool passMax = true;
-            if (mMaxTime != 0) {
-                if (!(f4 <= mMaxTime)) passMax = false;
-            }
-            if (passMax) inRange = true;
-        }
-        if (!inRange) ret = false;
-    }
-    return ret;
+    float delta = arr->Float(2);
+    return delta != 0
+            && ((mMinTime != 0 && delta < mMinTime) || (mMaxTime != 0 && delta > mMaxTime))
+        ? 0
+        : 1;
 }
 
 DataNode BandCamShot::OnAllowableNextShots(const DataArray *da) {

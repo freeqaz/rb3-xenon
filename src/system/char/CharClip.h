@@ -227,7 +227,6 @@ public:
     const CharGraphNode *FindFirstNode(CharClip *clip, float beat) const;
     const CharGraphNode *FindLastNode(CharClip *clip, float beat) const;
     const CharGraphNode *FindNode(CharClip *clip, float f1, int iii, float f2) const;
-    void EvaluateChannel(void *dest, const void *channel, int frame, float blend);
     void ScaleAddSample(CharBones &bones, float f1, int i1, float f2, int i2, float f3);
     float FrameToBeat(float frame) const;
     float BeatToFrame(float beat) const;

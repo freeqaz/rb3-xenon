@@ -127,6 +127,7 @@ void StreakMeter::MultiplierChanged() {
 }
 
 void StreakMeter::UpdateMultiplierText(int mult) {
+    static Symbol streak_multiplier_fmt("streak_multiplier_fmt");
     mMultiplierLabel->SetShowing(true);
     mMultiplierLabel->SetTokenFmt(streak_multiplier_fmt, mult);
     mXLabel->SetShowing(true);

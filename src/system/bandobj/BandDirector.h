@@ -10,6 +10,15 @@
 #include "bandobj/BandSongPref.h"
 #include "utl/Loader.h"
 
+/** A shot category waiting to be placed by OnMidiShot5Cleanup, with the
+ *  shot it remaps to and its rank in cam_cat_priorities (0x8228CAB0). */
+struct CamCatEntry {
+    __declspec(noinline) CamCatEntry();
+    Symbol mCategory; // 0x0
+    Symbol mShot; // 0x4
+    int mPriority; // 0x8
+};
+
 class BandDirector : public RndPollable, public RndDrawable {
 public:
     class VenueLoader : public Loader::Callback {
@@ -175,6 +184,7 @@ public:
     DataNode OnMidiShotCategory(DataArray *);
 
     static Symbol RemapCat(Symbol, Symbol);
+    Symbol PickShot(std::vector<CamCatEntry> &, Symbol, bool);
     static const char *PickDist(float *, char *, char *);
     static void Init();
     static void Register() { REGISTER_OBJ_FACTORY(BandDirector); }

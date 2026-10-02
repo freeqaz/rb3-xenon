@@ -193,19 +193,10 @@ void PitchArrow::SetColor(VocalHUDColor col) {
 }
 
 void PitchArrow::SetColorFade(float f) {
-    float clamped;
-    if (f > 1.0f) clamped = 1.0f;
-    else if (f < 0.0f) clamped = 0.0f;
-    else clamped = f;
+    float clamped = Clamp(0.0f, 1.0f, f);
     float cur = mColorFade;
     if (clamped != cur && mColorAnim && mColorFadeAnim) {
-        float hi = 0.1f + cur;
-        float lo = cur - 0.1f;
-        float final;
-        if (clamped > hi) final = hi;
-        else if (clamped < lo) final = lo;
-        else final = clamped;
-        mColorFade = final;
+        mColorFade = Clamp(cur - 0.1f, cur + 0.1f, clamped);
         mColorFadeAnim->SetFrame(mColorFade, 1.0f);
     }
 }
@@ -229,15 +220,11 @@ void PitchArrow::SetVolume(float b) {
 
 void PitchArrow::SetSplit(bool b) {
     RndPropAnim *anim = mSplitAnim;
-    if (anim) {
+    if ((int)anim) {
         float next = anim->GetFrame();
         if (b) next = next + 0.05f;
         else next = next - 0.05f;
-        float clamped;
-        if (next > 1.0f) clamped = 1.0f;
-        else if (next < 0.0f) clamped = 0.0f;
-        else clamped = next;
-        anim->SetFrame(clamped, 1.0f);
+        anim->SetFrame(Clamp(0.0f, 1.0f, next), 1.0f);
     }
 }
 

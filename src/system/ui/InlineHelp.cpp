@@ -372,11 +372,12 @@ void InlineHelp::SetLabelRotationPcts(float f) {
 
 void InlineHelp::DrawShowing() {
     int numLabels = mTextLabels.size();
-    const Transform &parentXfm = mTemplateLabel->WorldXfm();
+    // The labels are laid out from this object's own world transform.
+    const Transform &parentXfm = WorldXfm();
     Transform worldXfm;
     memcpy(&worldXfm, &parentXfm, sizeof(Transform));
-    UILabel *t = mTemplateLabel;
-    MILO_ASSERT(t, 0x117);
+    // Retail constructs this name here and never reads it.
+    static Symbol action_chars("action_chars");
 
     Transform offsetXfm;
     offsetXfm.m.Identity();

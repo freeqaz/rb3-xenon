@@ -96,7 +96,7 @@ void UsbMidiKeyboard::Poll() {
     if (!TheKeyboard)
         return;
 
-    for (int i = 0; (unsigned int)i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         JoypadType ty = JoypadGetPadData(i)->mType;
         if (ty == kJoypadXboxMidiBoxKeyboard || ty == kJoypadPs3MidiBoxKeyboard
             || ty == kJoypadWiiMidiBoxKeyboard || ty == kJoypadXboxKeytar
@@ -106,29 +106,28 @@ void UsbMidiKeyboard::Poll() {
                 (ProKeysData *)&JoypadGetPadData(i)->mProGuitarData;
 
             int slotCounter = 1;
-            for (int note = 0x30; note < 73; note++) {
-                int keyIndex = note - 0x30;
-                int byteIdx = keyIndex / 8;
-                int bitIdx = 7 - (keyIndex % 8);
-                bool pressed = (proData->unk0[byteIdx] >> bitIdx) & 1;
+            for (int keyIndex = 0; keyIndex < 25; keyIndex++) {
+                int note = keyIndex + 0x30;
+                bool pressed = (proData->unk0[keyIndex / 8] >> (7 - keyIndex % 8)) & 1;
 
                 bool storedPressed = TheKeyboard->GetKeyPressed(i, note);
 
                 if (pressed != storedPressed) {
                     if (pressed) {
-                        int extVel = TheKeyboard->GetSlottedKeyVelocityFromExtended(
-                            slotCounter++, proData->unk0
+                        TheKeyboard->SetKeyVelocity(
+                            i,
+                            note,
+                            TheKeyboard->GetSlottedKeyVelocityFromExtended(
+                                slotCounter, proData->unk0
+                            )
                         );
-                        TheKeyboard->SetKeyVelocity(i, note, extVel);
-                        auto _tmp2 = TheKeyboard->GetKeyVelocity(i, note);
-                        auto _tmp0 = KeyboardKeyPressedMsg(note, _tmp2, i);
-                        SendMessage(
-                            _tmp0
-                        );
+                        slotCounter++;
+                        KeyboardKeyPressedMsg msg(note, TheKeyboard->GetKeyVelocity(i, note), i);
+                        SendMessage(msg);
                     } else {
                         TheKeyboard->SetKeyVelocity(i, note, 0);
-                        auto _tmp3 = KeyboardKeyReleasedMsg(note, i);
-                        SendMessage(_tmp3);
+                        KeyboardKeyReleasedMsg msg(note, i);
+                        SendMessage(msg);
                     }
                     TheKeyboard->SetKeyPressed(i, note, pressed);
                 } else {
@@ -140,44 +139,51 @@ void UsbMidiKeyboard::Poll() {
             bool sus = proData->mSustain;
             if (sus != TheKeyboard->GetSustain(i)) {
                 TheKeyboard->SetSustain(i, sus);
-                SendMessage(KeyboardSustainMsg(sus, i));
+                KeyboardSustainMsg msg(sus, i);
+                SendMessage(msg);
             }
 
             bool stomped = proData->mStompPedal;
             if (stomped != TheKeyboard->GetStompPedal(i)) {
                 TheKeyboard->SetStompPedal(i, stomped);
-                SendMessage(KeyboardStompBoxMsg(stomped, i));
+                KeyboardStompBoxMsg msg(stomped, i);
+                SendMessage(msg);
             }
 
             int mod = proData->unkachar;
             if (mod != TheKeyboard->GetModVal(i)) {
                 TheKeyboard->SetModVal(i, mod);
-                SendMessage(KeyboardModMsg(mod, i));
+                KeyboardModMsg msg(mod, i);
+                SendMessage(msg);
             }
 
             int exp = proData->mExpressionPedal;
             if (exp != TheKeyboard->GetExpressionPedal(i)) {
                 TheKeyboard->SetExpressionPedal(i, exp);
-                SendMessage(KeyboardExpressionPedalMsg(exp, i));
+                KeyboardExpressionPedalMsg msg(exp, i);
+                SendMessage(msg);
             }
 
             int conn = proData->mConnectedAccessories;
             if (conn != TheKeyboard->GetConnectedAccessory(i)) {
                 TheKeyboard->SetConnectedAccessories(i, conn);
-                SendMessage(KeyboardConnectedAccessoriesMsg(conn, i));
+                KeyboardConnectedAccessoriesMsg msg(conn, i);
+                SendMessage(msg);
             }
 
             int lowhand = proData->mLowHandPlacement;
             if (lowhand != TheKeyboard->GetLowHandPlacement(i)) {
                 TheKeyboard->SetLowHandPlacement(i, lowhand);
-                SendMessage(KeyboardLowHandPlacementMsg(lowhand, i));
+                KeyboardLowHandPlacementMsg msg(lowhand, i);
+                SendMessage(msg);
             }
 
-            int highhand = proData->unkbbool + (proData->unkcbool << 1)
-                + (proData->unkdbool << 2) + (proData->unkemiddle << 3);
+            int highhand = proData->unkcbool * 2 + proData->unkdbool * 4
+                + proData->unkemiddle * 8 + proData->unkbbool;
             if (highhand != TheKeyboard->GetHighHandPlacement(i)) {
                 TheKeyboard->SetHighHandPlacement(i, highhand);
-                SendMessage(KeyboardHighHandPlacementMsg(highhand, i));
+                KeyboardHighHandPlacementMsg msg(highhand, i);
+                SendMessage(msg);
             }
 
             int accelAxisVal0 = proData->unkachar;
@@ -187,10 +193,8 @@ void UsbMidiKeyboard::Poll() {
                 || accelAxisVal1 != TheKeyboard->GetAccelAxisVal(i, 1)
                 || accelAxisVal2 != TheKeyboard->GetAccelAxisVal(i, 2)) {
                 TheKeyboard->SetAccelerometer(i, accelAxisVal0, accelAxisVal1, accelAxisVal2);
-                auto _tmp1 = KeysAccelerometerMsg(accelAxisVal0, accelAxisVal1, accelAxisVal2, i);
-                SendMessage(
-                    _tmp1
-                );
+                KeysAccelerometerMsg msg(accelAxisVal0, accelAxisVal1, accelAxisVal2, i);
+                SendMessage(msg);
             }
         }
     }

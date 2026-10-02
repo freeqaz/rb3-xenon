@@ -280,12 +280,7 @@ CharBones::CharBones() : mCompression(kCompressNone), mStart(0), mTotalSize(0) {
 BEGIN_PROPSYNCS(CharBonesObject)
     gPropBones = this;
     SYNC_PROP(bones, mBones)
-    // NOTE: unlike the other 97 classes in this wave, retail's
-    // CharBonesObject::SyncProperty DOES tail-chain a superclass (8 target-only
-    // instructions + bool-normalised return). Keep it unguarded. The residual
-    // mismatch here is a CharBones sub-object layout delta (mBones at this-0x18
-    // in retail vs this-0x50 for us), not the chain.
-    SYNC_SUPERCLASS(Hmx::Object)
+    // Retail does not chain to Hmx::Object: an unmatched property returns false.
 END_PROPSYNCS
 
 void CharBones::ScaleAdd(CharClip *clip, float f1, float f2, float f3) {

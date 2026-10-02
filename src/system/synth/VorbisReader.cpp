@@ -355,7 +355,8 @@ void VorbisReader::DoRawSeek(int byte) {
     mFile->Seek(byte + mHdrSize, 0);
     if (mCtrState) {
         MILO_ASSERT(byte%16 == 0, 0x3F4);
-        *(int *)mNonce = bool(EndianSwap((unsigned int)byte));
+        // the CTR counter is the 16-byte block index, stored big-endian
+        *(int *)mNonce = EndianSwap((unsigned int)(byte / 16));
         int ret = ctr_reinit(gCipher, mNonce, mCtrState);
         MILO_ASSERT(ret == 0, 0x3F7);
     }

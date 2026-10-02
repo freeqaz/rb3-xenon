@@ -236,13 +236,19 @@ BinStream &operator<<(BinStream &bs, const WorldDir::BitmapOverride &o) {
     return bs;
 }
 
+// mat2 is not part of the stream: the reader below takes mesh and mat only.
 BinStream &operator<<(BinStream &bs, const WorldDir::MatOverride &o) {
-    bs << o.mesh << o.mat << o.mat2;
+    bs << o.mesh << o.mat;
     return bs;
 }
 
+// Retail writes rev 0x19 with no alt rev, and the stream ends at mHUD.
 BEGIN_SAVES(WorldDir)
+#ifdef WORLDDIR_DC3_TAIL
     SAVE_REVS(0x1D, 1)
+#else
+    SAVE_REVS(0x19, 0)
+#endif
     bs << mHUDFilename;
     SAVE_SUPERCLASS(PanelDir)
     bs << mHideOverrides << mBitmapOverrides << mMatOverrides << mPresetOverrides;
@@ -254,13 +260,6 @@ BEGIN_SAVES(WorldDir)
     ObjPtr<RndTransformable> listener(this, m3DSoundMgr.mListener);
     bs << listener;
     bs << mExplicitPostProc;
-#else
-    // Keep the rev-0x1C/0x1D/altRev stream slots (DC3-format saves) with
-    // defaults; retail RB3 has none of these members.
-    bs << 1.0f;
-    ObjPtr<RndTransformable> listener(this);
-    bs << listener;
-    bs << true;
 #endif
 END_SAVES
 

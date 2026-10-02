@@ -152,12 +152,16 @@ unsigned int GatherObjects(ObjPtrList<Hmx::Object> &list, std::vector<T *> &obje
     return objects.size();
 }
 
+// default tessellation thresholds: small and large perimeter, then error
+static const float sTessellateDefaults[3] = { 18.0f, 72.0f, 0.67625f };
+
 RndAmbientOcclusion::RndAmbientOcclusion()
     : mDontCastAO(this), mDontReceiveAO(this), mTessellate(this),
       mIgnoreTransparent(true), mIgnorePrelit(true), mIgnoreHidden(true),
       mUseMeshNormals(true), mIntersectBackFaces(false), mTessellateTriLimit(8),
-      mTessellateTriError(0.67625f), mTessellateTriLarge(gUnitsPerMeter * 2.0f),
-      mTessellateTriSmall(gUnitsPerMeter * 0.5f), mTree(0), mQuality((Quality)1) {}
+      mTessellateTriError(sTessellateDefaults[2]),
+      mTessellateTriLarge(sTessellateDefaults[1]),
+      mTessellateTriSmall(sTessellateDefaults[0]), mTree(0), mQuality((Quality)1) {}
 
 RndAmbientOcclusion::~RndAmbientOcclusion() { Clean(); }
 
@@ -404,23 +408,24 @@ bool VectorSort<RndMesh *>::operator()(RndMesh *item1, RndMesh *item2) {
 }
 
 void RndAmbientOcclusion::BuildObjectLists(ObjectDir *dir) {
-    ObjectDir *myDir = dir ? dir : Dir();
+    if (!dir)
+        dir = Dir();
     Clean();
     MILO_ASSERT(mObjectsCast.empty(), 0x199);
     MILO_ASSERT(mObjectsReceive.empty(), 0x19A);
     MILO_ASSERT(mObjectsTessellate.empty(), 0x19B);
     std::vector<RndMesh *> meshes;
-    GatherObjectsFromDir(myDir, meshes);
-    std::unique_copy(meshes.begin(), meshes.end(), meshes.begin());
-    std::vector<RndMesh *> dontReceiveMeshes;
+    GatherObjectsFromDir(dir, meshes);
+    std::unique(meshes.begin(), meshes.end());
     std::vector<RndMesh *> dontCastMeshes;
+    std::vector<RndMesh *> dontReceiveMeshes;
     std::vector<RndMesh *> tessellateMeshes;
     GatherObjects(mDontCastAO, dontCastMeshes);
     GatherObjects(mDontReceiveAO, dontReceiveMeshes);
     GatherObjects(mTessellate, tessellateMeshes);
-    std::unique_copy(dontCastMeshes.begin(), dontCastMeshes.end(), meshes.end());
-    std::unique_copy(dontReceiveMeshes.begin(), dontReceiveMeshes.end(), meshes.end());
-    std::unique_copy(tessellateMeshes.begin(), tessellateMeshes.end(), meshes.end());
+    std::unique(dontCastMeshes.begin(), dontCastMeshes.end());
+    std::unique(dontReceiveMeshes.begin(), dontReceiveMeshes.end());
+    std::unique(tessellateMeshes.begin(), tessellateMeshes.end());
     FOREACH (it, meshes) {
         RndMesh *cur = *it;
         if (IsValid_AOCast(cur)
@@ -433,16 +438,17 @@ void RndAmbientOcclusion::BuildObjectLists(ObjectDir *dir) {
                 == dontReceiveMeshes.end()) {
             mObjectsReceive.push_back(cur);
         }
-        if (IsValid_Tessellate(cur, myDir)
+        if (IsValid_Tessellate(cur, dir)
             && std::find(tessellateMeshes.begin(), tessellateMeshes.end(), cur)
                 != tessellateMeshes.end()) {
             mObjectsTessellate.push_back(cur);
         }
     }
+    // tessellate in the order the meshes were listed
     std::sort(
         mObjectsTessellate.begin(),
         mObjectsTessellate.end(),
-        VectorSort<RndMesh *>(mObjectsTessellate)
+        VectorSort<RndMesh *>(tessellateMeshes)
     );
 }
 
@@ -741,7 +747,7 @@ bool kdTree<Triangle>::kdTreeNode::FindSplit_SAH(
 
 template <>
 bool kdTree<Triangle>::Intersect(
-    const Vector3 &origin, const Vector3 &direction, float maxDist, float &hitDist
+    const Vector3 &origin, const Vector3 &direction, float &hitDist
 ) const {
     float tNear, tFar;
     bool boxHit = ::Intersect(origin, direction, mBounds, tNear, tFar);
@@ -766,19 +772,20 @@ bool kdTree<Triangle>::Intersect(
                         children[0] = &nodes[(node->mFlags & 0x7FFF) * 2 + 1];
                         children[1] = &nodes[(node->mFlags & 0x7FFF) * 2 + 2];
 
-                        bool isAbove = origin[axis] > splitVal;
+                        // near child first; the far one is the other index
+                        int isAbove = origin[axis] > splitVal;
 
                         if (tSplit < 0.0f || tSplit > tFar) {
                             node = children[isAbove];
-                        } else if (tSplit >= tNear) {
+                        } else if (tSplit < tNear) {
+                            node = children[isAbove ^ 1];
+                        } else {
                             nodeStack[stackDepth].tFar = tFar;
                             nodeStack[stackDepth].tNear = tSplit;
                             tFar = tSplit;
-                            stackDepth++;
                             node = children[isAbove];
-                            nodeStack[stackDepth - 1].node = children[!isAbove];
-                        } else {
-                            node = children[!isAbove];
+                            nodeStack[stackDepth].node = children[isAbove ^ 1];
+                            stackDepth++;
                         }
                     } else {
                         kdTriList *triList = node->GetTriList();
@@ -808,50 +815,45 @@ bool kdTree<Triangle>::Intersect(
     return false;
 }
 
+// rays are cast out to 48 units; a hit is weighted by (dist / 48)^2
+static const float kAOMaxDist = 48.0f;
+static float sAOInvMaxDist = 1.0f / 48.0f;
+
 void RndAmbientOcclusion::CalculateAOAtPoint(
     const Vector3 &pos, const Vector3 &norm, float *result
 ) const {
-    float maxDist = gUnitsPerMeter * 50.0f;
     Vector3 rayOrigin;
     rayOrigin.x = norm.x * 0.001f + pos.x;
     rayOrigin.y = norm.y * 0.001f + pos.y;
     rayOrigin.z = norm.z * 0.001f + pos.z;
     double shAccum[4] = { 0, 0, 0, 0 };
-    float invMaxDist = 1.0f / maxDist;
-    int numSamples = mSampleDirs.size();
-    float shCoeffs[4];
-    float occlusion = 1.0f;
+    unsigned int numSamples = mSampleDirs.size();
 
-    for (int i = 0; (unsigned int)i < numSamples; i++) {
+    for (unsigned int i = 0; i < numSamples; i++) {
         const Vector3 &sampleDir = mSampleDirs[i];
         float dot = norm.x * sampleDir.x + sampleDir.z * norm.z + sampleDir.y * norm.y;
-        occlusion = 1.0f;
         if (dot > 0.0f) {
+            float occlusion = 1.0f;
             float hitDist;
-            bool hit = mTree->Intersect(rayOrigin, sampleDir, maxDist, hitDist);
-            if (hit && hitDist <= maxDist) {
-                float t = hitDist * invMaxDist;
-                occlusion = t * t;
+            if (mTree->Intersect(rayOrigin, sampleDir, hitDist) && hitDist <= kAOMaxDist) {
+                hitDist *= sAOInvMaxDist;
+                occlusion = hitDist * hitDist;
             }
+            float shCoeffs[4];
             BuildSHCoeff(sampleDir, shCoeffs);
-            for (int j = 0; j <= 3; j++) {
-                shAccum[j] += (double)(shCoeffs[j] * occlusion * dot);
+            for (int j = 0; j < 4; j++) {
+                shAccum[j] += shCoeffs[j] * occlusion * dot;
             }
         }
     }
 
     for (unsigned int k = 0; k < 4; k++) {
-        shAccum[k] *= (double)(12.566371f / (float)numSamples);
+        shAccum[k] *= 12.566371f / (float)numSamples;
         if (k == 0) {
-            float val = (float)shAccum[0];
-            val = val > 0.0f ? val : 0.0f;
-            val = val < 1.0f ? val : 1.0f;
-            shAccum[0] = val;
+            shAccum[0] = Clamp(0.0f, 1.0f, (float)shAccum[0]);
         } else {
-            float val = (float)shAccum[k];
-            val = val > -1.0f ? val : -1.0f;
-            val = val < 1.0f ? val : 1.0f;
-            shAccum[k] = val * 0.5f + 0.5f;
+            // the linear terms are remapped from [-1, 1] to [0, 1]
+            shAccum[k] = (Clamp(-1.0f, 1.0f, (float)shAccum[k]) * 0.5) + 0.5;
         }
     }
 

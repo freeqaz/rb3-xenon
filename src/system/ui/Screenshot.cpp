@@ -6,8 +6,8 @@
 #include "rndobj/Rnd.h"
 
 Screenshot::~Screenshot() {
-    RELEASE(mTex);
-    RELEASE(mMat);
+    delete mTex;
+    delete mMat;
 }
 
 Screenshot::Screenshot() : mTex(nullptr), mMat(nullptr) {}

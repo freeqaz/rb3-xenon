@@ -1,3 +1,9 @@
+// Retail ??0TrackDir@@ inlines the owner-only ObjPtr ctor for every RndGroup /
+// RndTransformable member (mOwner, vptr, mObject stores plus a $T temp store,
+// the EH-region form) and calls the out-of-line two-arg ctor only for mTrack and
+// mTrackGems (ObjPtr<RndEnviron>), which are therefore spelled (this, nullptr).
+#define RB3_OBJPTR_INLINE_OWNER_CTOR
+#define RB3_OBJPTR_INLINE_OWNER_CTOR_EH
 #include "compiler_macros.h"
 #include "decomp.h"
 #include "obj/ObjMacros.h"
@@ -26,7 +32,7 @@ TrackDir::TrackDir()
       mStationaryBackAfterKeyShift(this), mMovingBack(this), mKeyShiftMovingBack(this),
       mKeyShiftStationaryMiddle(this), mStationaryMiddle(this), mMovingFront(this),
       mKeyShiftMovingFront(this), mKeyShiftStationaryFront(this), mStationaryFront(this),
-      mAlwaysShowing(this), mRotatorCam(this), mTrack(this), mTrackGems(this),
+      mAlwaysShowing(this), mRotatorCam(this), mTrack(this, nullptr), mTrackGems(this, nullptr),
       unk368(1.0f) {
     mActiveWidgets.reserve(50);
     unk2d8.Reset();

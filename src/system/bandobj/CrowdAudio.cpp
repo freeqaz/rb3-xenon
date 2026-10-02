@@ -69,14 +69,14 @@ CrowdAudio *TheCrowdAudio;
 void CrowdAudio::Init() { Register(); }
 
 CrowdAudio::CrowdAudio()
-    : mCurrentMogg(this, 0), mOldMogg(this, 0), mFadingMogg(this, 0),
+    : mCurrentMogg(NULL, NULL), mOldMogg(NULL, NULL), mFadingMogg(NULL, NULL),
       mMainFader(Hmx::Object::New<Fader>()), mWantDuck(0), mResultsDuck(0),
       mResultsFadeDuration(1000.0f), mResultsFader(Hmx::Object::New<Fader>()),
       mFadeInFromLoadingDuration(1000.0f), mEntryFader(Hmx::Object::New<Fader>()),
       mVenueChangeFadeDuration(1000.0f), mLevel(kExcitementBad), mLoopChangeTime(1e+30f),
       mIntro(0), mVenueIntro(0), mLevels(0), mVenueOutro(0), mState(0), mCrowdVol(0),
       mCamShotVol(0), mEnabled(1), mCrowdReacts(1), mLastClapBeat(0), mClapAllowed(1),
-      mBank(this, 0), mCurrentBankFader(0), mOtherBankFader(0),
+      mBank(NULL, NULL), mCurrentBankFader(0), mOtherBankFader(0),
       mReleaseFader(Hmx::Object::New<Fader>()), mCrossfadeDuration(1000.0f),
       mReleaseTime(5000.0f), mPaused(0), mShouldPlayVenueIntro(0),
       mShouldPlayVenueOutro(0), mWon(0), mRestarting(1),
@@ -241,7 +241,7 @@ bool CrowdAudio::PlayLoop(const DataArray *loopInfo, bool force) {
                     mCurrentMogg->MoggClip::Stop();
                 mOldMogg->RemoveFader(mReleaseFader);
                 mCurrentMogg = mOldMogg;
-                mOldMogg = 0;
+                mOldMogg.ReleaseObjConcrete();
             }
         }
         if (b2 || force) {
@@ -259,16 +259,15 @@ bool CrowdAudio::PlayLoop(const DataArray *loopInfo, bool force) {
             }
             mCurrentMogg = clip;
             DataArray *loopArr = loopInfo->Array(2);
-            float pan = (loopArr->Float(1) + loopArr->Float(2)) * 0.5f;
-            mCurrentMogg->SetPan(0, pan);
-            mCurrentMogg->SetPan(1, pan);
+            mCurrentMogg->SetPan(0, loopArr->Float(1));
+            mCurrentMogg->SetPan(1, loopArr->Float(2));
             mCurrentMogg->AddFader(mMainFader);
             mCurrentMogg->AddFader(mEntryFader);
             mCurrentMogg->AddFader(mResultsFader);
             mCurrentMogg->AddFader(mCurrentBankFader);
             mCurrentMogg->RemoveFader(mOtherBankFader);
             mCurrentMogg->RemoveFader(mReleaseFader);
-            mCurrentMogg->Play(0.0f);
+            mCurrentMogg->Play();
             SetPaused(mPaused);
         }
         return true;
@@ -328,7 +327,7 @@ void CrowdAudio::UpdateVolume() {
 }
 
 void CrowdAudio::SetEnabled(bool b) {
-    Hmx::Object *src = Dir();
+    MsgSource *src = dynamic_cast<MsgSource *>(Dir());
     if (src)
         src->RemoveSink(this);
     mEnabled = b;
@@ -342,15 +341,15 @@ void CrowdAudio::SetEnabled(bool b) {
 void CrowdAudio::StopAllMoggs() {
     if (mCurrentMogg) {
         mCurrentMogg->MoggClip::Stop();
-        mCurrentMogg = 0;
+        mCurrentMogg.ReleaseObjConcrete();
     }
     if (mOldMogg) {
         mOldMogg->MoggClip::Stop();
-        mOldMogg = 0;
+        mOldMogg.ReleaseObjConcrete();
     }
     if (mFadingMogg) {
         mFadingMogg->MoggClip::Stop();
-        mFadingMogg = 0;
+        mFadingMogg.ReleaseObjConcrete();
     }
 }
 

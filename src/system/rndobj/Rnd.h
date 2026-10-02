@@ -253,7 +253,7 @@ public:
     RndTex *GetNullTexture();
     int CompressTexture(RndTex *, RndTex::AlphaCompress, CompressTextureCallback *);
     void CompressTextureCancel(CompressTextureCallback *);
-    void Modal(Debug::ModalType &, FixedString &, bool);
+    void Modal(bool &, char *, bool);
     void PushClipPlanes(ObjPtrVec<RndTransformable> &planes) {
         if (planes.size() > 0) {
             PushClipPlanesInternal(planes);
@@ -277,8 +277,8 @@ protected:
     virtual void DoWorldEnd();
     virtual void DoPostProcess();
     virtual void DrawPreClear();
-    virtual bool CanModal(Debug::ModalType) { return false; }
-    virtual void ModalDraw(Debug::ModalType, const char *) {}
+    virtual bool CanModal(bool) { return false; }
+    virtual void ModalDraw(bool, const char *) {}
     RND_DC3_VIRTUAL unsigned int GetDefaultTexBitmapOrder() const { return 0; }
 
     virtual float UpdateOverlay(RndOverlay *, float);

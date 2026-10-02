@@ -77,8 +77,6 @@ EventTrigger::ProxyCall::operator=(const EventTrigger::ProxyCall &p) {
     return *this;
 }
 
-EventTrigger::HideDelay::HideDelay(Hmx::Object *o) : mHide(o, 0), mDelay(0), mRate(0) {}
-
 EventTrigger::HideDelay &
 EventTrigger::HideDelay::operator=(const EventTrigger::HideDelay &h) {
     mHide = h.mHide.Ptr();

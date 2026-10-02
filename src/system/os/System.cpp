@@ -80,7 +80,7 @@ Symbol gSystemLocale;
 
 Timer gSystemTimer;
 bool gNetUseTimedSleep;
-bool(__cdecl *ParseStack)(char const *, struct StackData *, int, class FixedString &) =
+bool(__cdecl *ParseStack)(char const *, struct StackData *, int, char *) =
     XboxMapFile::ParseStack;
 
 std::vector<char *> TheSystemArgs;
@@ -226,10 +226,16 @@ Symbol GetSongTitlePronunciationLanguage() {
 }
 
 int SystemExec(const char *args) {
+#ifdef HX_NATIVE
     if (gUsingCD)
         return -1;
     else
         return HolmesClientSysExec(args);
+#else
+    // The retail build has no Holmes client: OnSystemExec (0x825107D8)
+    // evaluates its argument and always answers -1.
+    return -1;
+#endif
 }
 
 bool PlatformLittleEndian(Platform p) {
@@ -416,7 +422,10 @@ void SetSystemLanguage(Symbol lang, bool cheats) {
 
 void SetGfxMode(GfxMode mode) {
     gGfxMode = mode;
+#ifdef HX_NATIVE
+    // No Holmes client in the retail build, so no re-init here.
     HolmesClientReInit();
+#endif
     DataVariable("gfx_mode") = mode;
 }
 
@@ -496,7 +505,7 @@ void AppendStackTrace(FixedString &str, void *v) {
     } else if (TheArchive && TheArchive->Patched()) {
         parse = false;
     } else {
-        parse = (*ParseStack)(mapName.c_str(), &data, stackIdx, str);
+        parse = (*ParseStack)(mapName.c_str(), &data, stackIdx, (char *)str.c_str());
     }
     if (!parse) {
         GenericMapFile::ParseStack(mapName.c_str(), &data, stackIdx, str);

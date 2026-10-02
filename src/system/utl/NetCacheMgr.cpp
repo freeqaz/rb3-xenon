@@ -86,7 +86,9 @@ void NetCacheMgr::EnterUnloadState() {
     FOREACH (it, mNetLoaderRefs) {
         NetLoaderRef &cur = *it;
         if (cur.mRefCount > 0) {
-            MILO_NOTIFY(
+            // Retail copies the name String and destroys it: a warning, whose
+            // stripped form evaluates its arguments as by-value call arguments.
+            MILO_WARN(
                 "Loader for %s has %d reference(s) left unaccounted for!",
                 cur.mName,
                 cur.mRefCount

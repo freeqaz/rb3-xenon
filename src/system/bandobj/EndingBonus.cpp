@@ -181,7 +181,7 @@ void EndingBonus::SetIconOrder(int num, bool b) {
     for (int i = 0; i < nums.size(); i++) {
         mIconData[nums[i]].SetUsed(true);
         mIconData[nums[i]].mIcon->SetLocalPos(
-            -((nums.size() - 1) * 0.5f - i) * 1.5f, 0, 0
+            Vector3((i - (nums.size() - 1) * 0.5f) * 1.5f, 0, 0)
         );
     }
 }

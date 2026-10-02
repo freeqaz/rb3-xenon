@@ -218,7 +218,7 @@ DataNode CharDriver::OnPlayGroupFlags(const DataArray *msg) {
     MILO_ASSERT(msg->Size() <= 5, 0x3aa);
     CharClipGroup *group = mClips->Find<CharClipGroup>(msg->Str(2), false);
     if (!group) {
-        MILO_NOTIFY("%s could not find group %s", PathName(this), msg->Str(2));
+        MILO_FAIL_RTL("%s could not find group %s", PathName(this), msg->Str(2));
         return 0;
     } else {
         int clipIdx = msg->Int(3);
@@ -477,13 +477,10 @@ static CharClip *MyFindClip(const DataNode &n, ObjectDir *dir) {
         );
         return nullptr;
     }
-    return group->GetClip(0);
+    return group->GetClip();
 }
 
 CharClip *CharDriver::FindClip(const DataNode &node, bool warn) {
-    if (!mClips) {
-        MILO_FAIL("%s: trying to FindClip with no mClips", PathName(this));
-    }
     CharClip *clip = MyFindClip(node, mClips);
     if (!clip && warn) {
         String str;

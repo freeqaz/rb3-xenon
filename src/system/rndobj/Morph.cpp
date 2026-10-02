@@ -46,8 +46,12 @@ BinStream &operator<<(BinStream &bs, const RndMorph::Pose &p) {
     return bs;
 }
 
+// Retail writes the revision from an initialised data word (read with lwz,
+// referenced only here), not an immediate.
+static int sMorphSaveRev = 4;
+
 BEGIN_SAVES(RndMorph)
-    SAVE_REVS(4, 0)
+    bs << sMorphSaveRev;
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndAnimatable)
     bs << mPoses << mTarget << mNormals << mSpline << mIntensity;

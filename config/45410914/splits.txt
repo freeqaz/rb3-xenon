@@ -334,6 +334,7 @@ BandCamShot.cpp:
 BandDirector.cpp:
 	.pdata      start:0x821F3210 end:0x821F3220
 	.pdata      start:0x821F3228 end:0x821F3248
+	.pdata      start:0x821F3248 end:0x821F3250
 	.pdata      start:0x821F3250 end:0x821F32E0
 	.pdata      start:0x821F32E0 end:0x821F32E8
 	.pdata      start:0x821F32E8 end:0x821F3608
@@ -345,6 +346,7 @@ BandDirector.cpp:
 	.pdata      start:0x821F3F88 end:0x821F42A8
 	.text       start:0x8228C908 end:0x8228C980
 	.text       start:0x8228C9B8 end:0x8228CAB0
+	.text       start:0x8228CAB0 end:0x8228CB10
 	.text       start:0x8228CB10 end:0x8228D310
 	.text       start:0x8228D310 end:0x8228D354
 	.text       start:0x8228D354 end:0x822907F0
@@ -510,7 +512,6 @@ BandCharacter.cpp:
 	.pdata      start:0x821F2FB8 end:0x821F2FC0
 	.pdata      start:0x821F2FC0 end:0x821F3210
 	.pdata      start:0x821F3220 end:0x821F3228
-	.pdata      start:0x821F3248 end:0x821F3250
 	.text       start:0x8227A228 end:0x8227A2A0
 	.text       start:0x8227A528 end:0x8227A5A8
 	.text       start:0x8227A728 end:0x8227A7A8
@@ -552,7 +553,6 @@ BandCharacter.cpp:
 	.text       start:0x8228A900 end:0x8228A988
 	.text       start:0x8228A988 end:0x8228C908
 	.text       start:0x8228C980 end:0x8228C9B8
-	.text       start:0x8228CAB0 end:0x8228CB10
 	.text       start:0x82545C88 end:0x82545C90
 
 Console.cpp:
@@ -2955,9 +2955,6 @@ MeshAnim.cpp:
 	.pdata      start:0x82234730 end:0x82234738
 	.pdata      start:0x8223B860 end:0x8223B868
 	.pdata      start:0x8223D920 end:0x8223D928
-	.pdata      start:0x82241168 end:0x82241170
-	.pdata      start:0x82241180 end:0x82241188
-	.pdata      start:0x82241198 end:0x822411C8
 	.pdata      start:0x822411D8 end:0x822411E0
 	.pdata      start:0x822447D8 end:0x822447E0
 	.text       start:0x822724E8 end:0x82272540
@@ -2996,10 +2993,6 @@ MeshAnim.cpp:
 	.text       start:0x826C83E8 end:0x826C8468
 	.text       start:0x8274BB88 end:0x8274BBE4
 	.text       start:0x827708C0 end:0x82770920
-	.text       start:0x827B2770 end:0x827B27B8
-	.text       start:0x827B28A0 end:0x827B2924
-	.text       start:0x827B29BC end:0x827B29C0
-	.text       start:0x827B2A0C end:0x827B2C24
 	.text       start:0x827B2D80 end:0x827B2DA8
 	.text       start:0x827EBAD0 end:0x827EBB34
 
@@ -3572,6 +3565,7 @@ VorbisReader.cpp:
 	.pdata      start:0x8225E888 end:0x8225E8A0
 	.pdata      start:0x8225E8A0 end:0x8225E8A8
 	.pdata      start:0x8225E8B0 end:0x8225E8B8
+	.pdata      start:0x8225E8E0 end:0x8225E8E8
 	.pdata      start:0x8225E8E8 end:0x8225E8F0
 	.pdata      start:0x8225E908 end:0x8225E918
 	.pdata      start:0x8225E950 end:0x8225E958
@@ -3591,6 +3585,7 @@ VorbisReader.cpp:
 	.text       start:0x82BB2D48 end:0x82BB3110
 	.text       start:0x82BB3110 end:0x82BB3228
 	.text       start:0x82BB3288 end:0x82BB33D8
+	.text       start:0x82BB3578 end:0x82BB36B8
 	.text       start:0x82BB36B8 end:0x82BB3750
 	.text       start:0x82BB37C4 end:0x82BB37D0
 	.text       start:0x82BB3870 end:0x82BB3BB8
@@ -3701,7 +3696,6 @@ Mesh.cpp:
 	.pdata      start:0x8223D058 end:0x8223D060
 	.pdata      start:0x822449B0 end:0x822449C0
 	.pdata      start:0x8225E8D8 end:0x8225E8E0
-	.pdata      start:0x8225E8E0 end:0x8225E8E8
 	.pdata      start:0x8225E8F0 end:0x8225E8F8
 	.pdata      start:0x8225E8F8 end:0x8225E908
 	.pdata      start:0x8225E918 end:0x8225E928
@@ -3748,7 +3742,6 @@ Mesh.cpp:
 	.text       start:0x827674E8 end:0x82767518
 	.text       start:0x827ED4B0 end:0x827ED548
 	.text       start:0x82BB3510 end:0x82BB3578
-	.text       start:0x82BB3578 end:0x82BB36B8
 	.text       start:0x82BB3750 end:0x82BB37C4
 	.text       start:0x82BB37D0 end:0x82BB3870
 	.text       start:0x82BB3BB8 end:0x82BB3C68
@@ -4726,13 +4719,18 @@ MemMgr.cpp:
 StorePurchaser.cpp:
 	.pdata      start:0x82241170 end:0x82241178
 	.pdata      start:0x82241178 end:0x82241180
+	.pdata      start:0x82241180 end:0x82241188
 	.pdata      start:0x82241188 end:0x82241190
 	.pdata      start:0x82241190 end:0x82241198
+	.pdata      start:0x82241198 end:0x822411C8
 	.pdata      start:0x822411C8 end:0x822411D8
 	.text       start:0x827B27B8 end:0x827B27FC
 	.text       start:0x827B27FC end:0x827B28A0
+	.text       start:0x827B28A0 end:0x827B2924
 	.text       start:0x827B2924 end:0x827B29BC
+	.text       start:0x827B29BC end:0x827B29C0
 	.text       start:0x827B29C0 end:0x827B2A0C
+	.text       start:0x827B2A0C end:0x827B2C24
 	.text       start:0x827B2C24 end:0x827B2D80
 
 FftIpp.cpp:
@@ -6250,6 +6248,7 @@ StorePreviewMgr.cpp:
 	.pdata      start:0x822410A8 end:0x822410B0
 	.pdata      start:0x822410B0 end:0x822410C8
 	.pdata      start:0x822410C8 end:0x82241168
+	.pdata      start:0x82241168 end:0x82241170
 	.text       start:0x825C21D0 end:0x825C22F4
 	.text       start:0x827B1938 end:0x827B1AC0
 	.text       start:0x827B1AC0 end:0x827B1B28
@@ -6259,6 +6258,7 @@ StorePreviewMgr.cpp:
 	.text       start:0x827B1CA8 end:0x827B1D60
 	.text       start:0x827B1D60 end:0x827B1FC8
 	.text       start:0x827B1FC8 end:0x827B2770
+	.text       start:0x827B2770 end:0x827B27B8
 
 CharEyes.cpp:
 	.pdata      start:0x822028F0 end:0x82202900

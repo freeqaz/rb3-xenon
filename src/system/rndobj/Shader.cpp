@@ -147,10 +147,10 @@ void RndShader::ShaderWarn(const char *msg) {
         sWarnings.insert(hash);
     }
     if (TheLoadMgr.EditMode()) {
-        Debug::ModalType ty = Debug::kModalNotify;
+        bool fail = false;
         if (mModalCallback) {
             StackString<1024> str(msg);
-            (*mModalCallback)(ty, str, true);
+            (*mModalCallback)(fail, (char *)str.c_str(), true);
         }
     }
 }
@@ -368,11 +368,13 @@ void CheckShadow() {
         Hmx::Matrix4 projMtx;
         shadowCam->GetViewProjectXfms(viewXfm, projMtx);
         Hmx::Matrix4 viewProj = Hmx::operator*(viewXfm, projMtx);
+        // Clip space to shadow-map texture space: scale x/y by 0.5 (y flipped),
+        // bias both by 0.5 + 1/1024.
         static Hmx::Matrix4 sShadowTexMatrix(
-            Vector4(0.0f, 0.0f, 0.0f, 0.0f),
+            Vector4(0.5f, 0.0f, 0.0f, 0.0f),
             Vector4(0.0f, -0.5f, 0.0f, 0.0f),
             Vector4(0.0f, 0.0f, 1.0f, 0.0f),
-            Vector4(0.0f, 0.501953125f, 0.0f, 1.0f)
+            Vector4(0.5009765625f, 0.5009765625f, 0.0f, 1.0f)
         );
         viewProj = Hmx::operator*(viewProj, sShadowTexMatrix);
         TheShaderMgr.SetVConstant((VShaderConstant)0x28, viewProj);

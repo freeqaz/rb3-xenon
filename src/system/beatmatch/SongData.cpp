@@ -1043,11 +1043,11 @@ void SongData::AddKeyboardRangeShift(int i1, int i2, float f3, int i4, int i5) {
     std::vector<RangeSection> &curRanges = mKeyboardRangeSections[i1];
     if (sect.unkc == -1.0f) {
         float fSpan = 16.0f;
-        if (curRanges.size() != 0) {
+        if (curRanges.size() > 0) {
             fSpan = curRanges.back().unkc - curRanges.back().unk8;
             MILO_ASSERT(fSpan > 0.0f, 0x589);
         }
-        sect.unkc += fSpan;
+        sect.unkc = sect.unk8 + fSpan;
     }
     curRanges.push_back(sect);
 }

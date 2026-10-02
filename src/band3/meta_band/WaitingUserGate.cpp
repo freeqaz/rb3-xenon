@@ -115,7 +115,7 @@ NetMessage *EnterFlowMsg::NewNetMessage() { return new EnterFlowMsg(); }
 void OpenGateData::Save(BinStream &bs) const {
     bs << mWaitingUsers;
     unsigned char nb = mCurrentScreenState.size();
-    bs.Write(&nb, 1);
+    bs << nb;
     for (int i = 0; i < nb; i++) {
         String name(mCurrentScreenState[i]->Name());
         bs << name;

@@ -79,7 +79,7 @@ RndMat::RndMat()
 #endif
 {
     mTexXfm.Reset();
-    mColorMod.resize(3);
+    ResetColors(mColorMod, 3);
 }
 
 // BEGIN_HANDLERS / BEGIN_PROPSYNCS for the merged class live in rndobj/Mat.cpp
@@ -120,10 +120,12 @@ BEGIN_SAVES(RndMat)
 #endif
 END_SAVES
 
+// Retail casts first, copies the Object base, and then copies members with no
+// null test on the cast.
 BEGIN_COPYS(RndMat)
-    COPY_SUPERCLASS(Hmx::Object)
     CREATE_COPY(RndMat)
-    BEGIN_COPYING_MEMBERS
+    COPY_SUPERCLASS(Hmx::Object)
+    {
         if (ty == kCopyFromMax) {
             if (!mDiffuseTex != !c->mDiffuseTex) {
                 COPY_MEMBER(mDiffuseTex)
@@ -181,6 +183,9 @@ BEGIN_COPYS(RndMat)
             COPY_MEMBER(mRimLightUnder)
             COPY_MEMBER(mScreenAligned)
             COPY_MEMBER(mShaderVariation)
+            COPY_MEMBER(mShaderOptions)
+            COPY_MEMBER(mColorModFlags)
+            COPY_MEMBER(mColorMod)
             COPY_MEMBER(mPerfSettings)
             COPY_MEMBER(mRefractEnabled)
             COPY_MEMBER(mRefractStrength)
@@ -194,15 +199,9 @@ BEGIN_COPYS(RndMat)
             COPY_MEMBER(mWorldProjectionStartBlend)
             COPY_MEMBER(mWorldProjectionEndBlend)
 #endif
-            // folded in from the DC3 RndMat::Copy layer (mShaderOptions /
-            // mColorModFlags / mColorMod are members of the ONE retail material
-            // class, so they belong in its ONE Copy)
-            COPY_MEMBER(mShaderOptions)
-            COPY_MEMBER(mColorModFlags)
-            COPY_MEMBER(mColorMod)
         }
         mDirty = 3;
-    END_COPYING_MEMBERS
+    }
 END_COPYS
 
 // Retail's material Load is fn_82438F40 (vtable slot 10 of RndMat's vtable at

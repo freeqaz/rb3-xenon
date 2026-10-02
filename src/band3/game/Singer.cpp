@@ -186,7 +186,7 @@ void Singer::CreateMicClientID() {
         return;
     }
 #endif
-    if ((!TheNet.GetNetSession()->HasUser(u) || !u->IsLocal()) && !u->IsNullUser()) {
+    if ((!u->UnkTU5Virtual() || !u->IsLocal()) && !u->IsNullUser()) {
         mMicClientID = sNullClientID;
     } else {
         mMicClientID = MicClientID(mSingerIndex, -1);
