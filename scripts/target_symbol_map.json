@@ -1,4 +1,13 @@
 {
+ "0x82b6a388": "??1StreamReader@@UAA@XZ",
+ "0x82b6a398": "??_GStreamReader@@UAAPAXI@Z",
+ "0x82b6a3e0": "?Done@XMAReader@@UAA_NXZ",
+ "0x82b6a518": "?TableSum@XMAReader@@QBAHXZ",
+ "0x82b6a568": "??0XMAReader@@QAA@PAVFile@@PAVStandardStream@@@Z",
+ "0x82b6a738": "?Seek@XMAReader@@UAAXH@Z",
+ "0x82b6a7c0": "??$DeleteAll@V?$vector@PAVXMAReaderBlock@@V?$StlNodeAlloc@PAVXMAReaderBlock@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVXMAReaderBlock@@V?$StlNodeAlloc@PAVXMAReaderBlock@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x82b6a828": "??1XMAReader@@UAA@XZ",
+ "0x82b6a9c0": "??_GXMAReader@@UAAPAXI@Z",
  "0x823eeab8": "??_GSessionData@@UAAPAXI@Z",
  "0x823ef2c8": "?CopyInto@XSessionData@@UAAXPAVSessionData@@@Z",
  "0x823ef338": "?Equals@XSessionData@@UBA_NPBVSessionData@@@Z",
