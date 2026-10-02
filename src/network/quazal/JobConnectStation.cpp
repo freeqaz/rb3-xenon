@@ -539,17 +539,16 @@ namespace Quazal {
     class SelectionCursor : public RootObject {
     public:
         SelectionCursor(const SelectionCursor &);
+        bool operator==(const unsigned int &ui) const { return m_uiValue == ui; }
 
         unsigned int m_uiValue; // 0x0
     };
 
-    inline bool operator==(SelectionCursor a, unsigned int b) { return a.m_uiValue == b; }
-
     class SelectionPosition : public RootObject {
     public:
-        bool EndReached() const { return m_oCursor == 0; }
+        SelectionCursor GetCursor() const { return m_oCursor; }
 
-        unsigned int unk0; // 0x0
+        DuplicatedObject *m_pDO; // 0x0
         SelectionCursor m_oCursor; // 0x4
     };
 
@@ -558,7 +557,7 @@ namespace Quazal {
         SelectionIterator(bool, bool);
         ~SelectionIterator();
         void Next(bool);
-        bool EndReached() const { return m_oPosition.m_oCursor == 0; }
+        bool EndReached() const { return m_oPosition.GetCursor() == 0; }
 
         void *m_pSelection; // 0x0
         SelectionPosition m_oPosition; // 0x4
@@ -575,7 +574,10 @@ namespace Quazal {
         void SetFilter();
         void GotoStart();
         T *GetDOPtr();
-        T *operator->() { return GetDOPtr(); }
+        T *operator->() {
+            T *pDO = GetDOPtr();
+            return pDO;
+        }
     };
 
     class DebugString {
