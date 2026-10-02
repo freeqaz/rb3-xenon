@@ -440,99 +440,11 @@ struct IsIllegalFreestylePred_HX {
 } // namespace
 #endif
 
-namespace {
-// STLport's remove_if = find_if + remove_copy_if, but its *public* find_if
-// wrapper (stl/_algobase.h) is not tagged inline, so under -inline noauto a
-// direct std::remove_if() call leaves find_if out-of-line. Reconstruct the
-// inlinable pieces here so the whole remove-erase inlines exactly as the
-// target does: the 4-wide Duff's-device search returns by value (the trailing
-// ++first go dead → offset addressing rather than induction), and each stage
-// takes the predicate by value (the target's three stacked pred copies).
-//
-// The two-tier find (FindIf wrapper -> Find impl) mirrors STLport's real
-// find_if -> __find_if call chain; that extra by-value hop is what drives the
-// compiler to lay the find/remove_copy predicate copies into the target's
-// stack slots (0x10/0x14 and 0x8/0xc) rather than swapping them.
-template <class _Pred>
-inline std::vector<std::pair<float, float> >::iterator FindInvalidFreestyle(
-    std::vector<std::pair<float, float> >::iterator first,
-    std::vector<std::pair<float, float> >::iterator last,
-    _Pred pred
-) {
-    for (int trip = (last - first) >> 2; trip > 0; --trip) {
-        if (pred(*first))
-            return first;
-        ++first;
-        if (pred(*first))
-            return first;
-        ++first;
-        if (pred(*first))
-            return first;
-        ++first;
-        if (pred(*first))
-            return first;
-        ++first;
-    }
-    switch (last - first) {
-    case 3:
-        if (pred(*first))
-            return first;
-        ++first;
-    case 2:
-        if (pred(*first))
-            return first;
-        ++first;
-    case 1:
-        if (pred(*first))
-            return first;
-    default:
-        return last;
-    }
-}
-
-template <class _Pred>
-inline std::vector<std::pair<float, float> >::iterator FindIfInvalidFreestyle(
-    std::vector<std::pair<float, float> >::iterator first,
-    std::vector<std::pair<float, float> >::iterator last,
-    _Pred pred
-) {
-    return FindInvalidFreestyle(first, last, pred);
-}
-
-template <class _Pred>
-inline std::vector<std::pair<float, float> >::iterator RemoveCopyInvalidFreestyle(
-    std::vector<std::pair<float, float> >::iterator first,
-    std::vector<std::pair<float, float> >::iterator last,
-    std::vector<std::pair<float, float> >::iterator result,
-    _Pred pred
-) {
-    for (; first != last; ++first) {
-        if (!pred(*first)) {
-            *result = *first;
-            ++result;
-        }
-    }
-    return result;
-}
-
-template <class _Pred>
-inline std::vector<std::pair<float, float> >::iterator RemoveInvalidFreestyle(
-    std::vector<std::pair<float, float> >::iterator first,
-    std::vector<std::pair<float, float> >::iterator last,
-    _Pred pred
-) {
-    first = FindIfInvalidFreestyle(first, last, pred);
-    if (first == last)
-        return first;
-    else {
-        std::vector<std::pair<float, float> >::iterator next = first;
-        return RemoveCopyInvalidFreestyle(++next, last, first, pred);
-    }
-}
-} // namespace
-
 void VocalNoteList::RemoveInvalidFreestyleSections() {
-    std::vector<std::pair<float, float> >::iterator first = RemoveInvalidFreestyle(
+    // Retail 0x82780EE8 is STLport's out-of-line remove_if: it calls __find_if
+    // (0x82780BC0) with the iterator-category tag as a fourth argument, then
+    // remove_copy_if (0x82780E80).
+    std::vector<std::pair<float, float> >::iterator first = std::remove_if(
         mFreestyleSections.begin(), mFreestyleSections.end(),
 #ifdef HX_NATIVE
         IsIllegalFreestylePred_HX(mFreestyleMinDuration));

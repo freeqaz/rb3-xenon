@@ -94345,7 +94345,8 @@
     "?push_back@?$vector@VUpcomingFretRelease@GemPlayer@@V?$StlNodeAlloc@VUpcomingFretRelease@GemPlayer@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVUpcomingFretRelease@GemPlayer@@@Z",
     "?push_back@?$vector@UXUSER_ACHIEVEMENT@@V?$StlNodeAlloc@UXUSER_ACHIEVEMENT@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUXUSER_ACHIEVEMENT@@@Z",
     "?push_back@?$vector@V?$Key@M@@V?$StlNodeAlloc@V?$Key@M@@@stlpmtx_std@@@stlpmtx_std@@QAAXABV?$Key@M@@@Z",
-    "?push_back@?$vector@VTourStatusEntry@@V?$StlNodeAlloc@VTourStatusEntry@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVTourStatusEntry@@@Z"
+    "?push_back@?$vector@VTourStatusEntry@@V?$StlNodeAlloc@VTourStatusEntry@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVTourStatusEntry@@@Z",
+    "?push_back@?$vector@UGroupDrawDist@@V?$StlNodeAlloc@UGroupDrawDist@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUGroupDrawDist@@@Z"
    ],
    "evidence": "W39-PUSHBACK retail-byte fold proof (NOT masked-T1). Retail Player::LocalSetEnabledState @0x826a7d68+0x4e8 = VA 0x826a8250 decodes in band.exe to `bl 0x82441658`, and the element it pushes is built by TWO INTEGER STORES (li r11,-1 / stw r23,0xa0(r31) / stw r11,0xa4(r31)) -- Extent(int,int), NOT Vector2(float,float) -- with every caller instruction byte-equal, so 0x82441658 IS vector<Extent>::push_back in retail. The map names 0x82441658 push_back<Vector2>; push_back<Extent> and push_back<Key<float>> have NO address of their own in a map that distinguishes 89 other push_back addresses. Retail's body at 0x82441658 (120 B, 1 reloc) is IDENTICAL (relocation TARGET NAMES COMPARED, not masked) to our push_back<Key<float>>, and its single reloc targets the aux the map spells _M_insert_overflow_aux<Key<float>> @0x822969b0 while OUR push_back<Vector2> calls aux<Vector2> (which has no retail address) -- i.e. the aux family's fold is DIRECTLY WITNESSED in retail bytes. vs our push_back<Extent>: bodies identical, sole reloc = that aux pair; aux pair bodies identical (396 B, 7 relocs) with 4 name diffs that are T-INVARIANT (the same-spelling control, retail aux<Key<float>> vs OUR aux<Key<float>>, shows the SAME 4 diffs at the SAME offsets). Of those 4, 3 were independently proven IDENTICAL WITH ZERO RELOCATIONS here (__uninitialized_copy 56 B x2, __uninitialized_fill_n 48 B); the 4th is the global MemOrPoolAlloc/MemOrPoolAllocSTL allocator wiring, present for every STL container. Anti-vacuity control FIRES: the comparator returns DIFFERENT for push_back<Vector3> (136 B), <int> (112 B), <String> (116 B) vs retail's 120 B. No relocation was masked at any depth. W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x82441658). \"ours\" spelling ?push_back@?$vector@V?$Key@VSymbol@@@@V?$StlNodeAlloc@V?$Key@VSymbol@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABV?$Key@VSymbol@@@@@Z is a template/spelling twin of survivor ?push_back@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVVector2@@@Z at retail address 0x82441658. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 7 SLOT-FOLD-OK, 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 560 B (560 B honest) across ['default/BandDirector'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md. W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x82441658). \"ours\" spelling ?push_back@?$vector@VTrackSlot@TrackPanel@@V?$StlNodeAlloc@VTrackSlot@TrackPanel@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVTrackSlot@TrackPanel@@@Z is a template/spelling twin of survivor ?push_back@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVVector2@@@Z at retail address 0x82441658. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 7 SLOT-FOLD-OK, 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 460 B (460 B honest) across ['default/band3/bandtrack/TrackPanel'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md. W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 48, row addr 0x82441658). \"ours\" spelling ?push_back@?$vector@VCategory@CameraManager@@V?$StlNodeAlloc@VCategory@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVCategory@CameraManager@@@Z is a template/spelling twin of survivor ?push_back@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVVector2@@@Z at retail address 0x82441658. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 7 SLOT-FOLD-OK, 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 328 B (328 B honest) across ['default/CameraManager'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md. W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 53, row addr 0x82441658). \"ours\" spelling ?push_back@?$vector@UWaitInfo@@V?$StlNodeAlloc@UWaitInfo@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUWaitInfo@@@Z is a template/spelling twin of survivor ?push_back@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVVector2@@@Z at retail address 0x82441658. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 7 SLOT-FOLD-OK, 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 324 B (324 B honest) across ['default/Joypad'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md. W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 76, row addr 0x82441658). \"ours\" spelling ?push_back@?$vector@VWaitingMachine@WaitList@LockStepMgr@@V?$StlNodeAlloc@VWaitingMachine@WaitList@LockStepMgr@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVWaitingMachine@WaitList@LockStepMgr@@@Z is a template/spelling twin of survivor ?push_back@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVVector2@@@Z at retail address 0x82441658. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 7 SLOT-FOLD-OK, 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 284 B (284 B honest) across ['default/band3/meta_band/LockStepMgr'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md.",
    "admitted": [
@@ -94449,6 +94450,11 @@
      "spelling": "?push_back@?$vector@VTourStatusEntry@@V?$StlNodeAlloc@VTourStatusEntry@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVTourStatusEntry@@@Z",
      "lane": "W16-NH 2026-10-02",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED); 120 B retail / 120 B ours; retail body-twins 3. Retail call site(s) reaching the survivor where we call this spelling: 0x8235f1d0."
+    },
+    {
+     "spelling": "?push_back@?$vector@UGroupDrawDist@@V?$StlNodeAlloc@UGroupDrawDist@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUGroupDrawDist@@@Z",
+     "lane": "W16-NU 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED; the only PROVEN retail masked body twin is this survivor; every paired call site of ours lands at 0x82441658 (1 site(s) diff_arg). The spelling was map-resident at 0x82774228, whose body it does not match; that row now carries its proven identity (see the 0x82774228 group's `relabelled`)."
     }
    ]
   },
@@ -96064,11 +96070,17 @@
   {
    "name": "__uninitialized_copy_BandIKEffector",
    "address": "0x822c3fa8",
-   "survivor": "??$__uninitialized_copy@PBVConstraint@BandIKEffector@@PAV12@@stlpmtx_std@@YAPAVConstraint@BandIKEffector@@PBV12@0PAV12@ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_fill_n@PAVConstraint@BandIKEffector@@IV12@@stlpmtx_std@@YAPAVConstraint@BandIKEffector@@PAV12@IABV12@ABU__false_type@0@@Z"
-   ],
-   "evidence": "W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x822c3fa8). \"ours\" spelling ??$__uninitialized_fill_n@PAVConstraint@BandIKEffector@@IV12@@stlpmtx_std@@YAPAVConstraint@BandIKEffector@@PAV12@IABV12@ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_copy@PBVConstraint@BandIKEffector@@PAV12@@stlpmtx_std@@YAPAVConstraint@BandIKEffector@@PBV12@0PAV12@ABU__false_type@0@@Z at retail address 0x822c3fa8. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 SLOT-FOLD-OK, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 2 row(s) / 720 B (720 B honest) across ['default/BandIKEffector'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md."
+   "survivor": "??$__uninitialized_fill_n@PAVConstraint@BandIKEffector@@IV12@@stlpmtx_std@@YAPAVConstraint@BandIKEffector@@PAV12@IABV12@ABU__false_type@0@@Z",
+   "folded": [],
+   "evidence": "W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x822c3fa8). \"ours\" spelling ??$__uninitialized_fill_n@PAVConstraint@BandIKEffector@@IV12@@stlpmtx_std@@YAPAVConstraint@BandIKEffector@@PAV12@IABV12@ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_copy@PBVConstraint@BandIKEffector@@PAV12@@stlpmtx_std@@YAPAVConstraint@BandIKEffector@@PBV12@0PAV12@ABU__false_type@0@@Z at retail address 0x822c3fa8. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 SLOT-FOLD-OK, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 2 row(s) / 720 B (720 B honest) across ['default/BandIKEffector'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md.",
+   "relabelled": [
+    {
+     "lane": "W16-NU 2026-10-02",
+     "old_survivor": "??$__uninitialized_copy@PBVConstraint@BandIKEffector@@PAV12@@stlpmtx_std@@YAPAVConstraint@BandIKEffector@@PBV12@0PAV12@ABU__false_type@0@@Z",
+     "new_survivor": "??$__uninitialized_fill_n@PAVConstraint@BandIKEffector@@IV12@@stlpmtx_std@@YAPAVConstraint@BandIKEffector@@PAV12@IABV12@ABU__false_type@0@@Z",
+     "evidence": "Map label at 0x822c3fa8 was ??$__uninitialized_copy@PBVConstraint@BandIKEffector@@PAV12@@stlpmtx_std@@YAPAVConstraint@..., whose body chases REFUTED against this address (template twin). ??$__uninitialized_fill_n@PAVConstraint@BandIKEffector@@IV12@@stlpmtx_std@@YAPAVConstraint... chases PROVEN here, uniquely among our masked body twins, and our paired call sites of it land at 0x822c3fa8 (2 site(s) equal). The map row now carries ??$__uninitialized_fill_n@PAVConstraint@BandIKEffector@@IV12...; it was a folded member here and is the survivor now."
+    }
+   ]
   },
   {
    "name": "resize_SpotlightDrawer",
@@ -96294,11 +96306,19 @@
   {
    "name": "__uninitialized_copy_Hmx",
    "address": "0x822c78f8",
-   "survivor": "??$__uninitialized_copy@PBV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@PAV1@@stlpmtx_std@@YAPAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@PBV1@0PAV1@ABU__false_type@0@@Z",
+   "survivor": "??$__uninitialized_copy@PBVDeltaArray@BandFaceDeform@@PAV12@@stlpmtx_std@@YAPAVDeltaArray@BandFaceDeform@@PBV12@0PAV12@ABU__false_type@0@@Z",
    "folded": [
     "??$__uninitialized_copy@PAVDeltaArray@BandFaceDeform@@PAV12@@stlpmtx_std@@YAPAVDeltaArray@BandFaceDeform@@PAV12@00ABU__false_type@0@@Z"
    ],
-   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 19, row addr 0x822c78f8). \"ours\" spelling ??$__uninitialized_copy@PAVDeltaArray@BandFaceDeform@@PAV12@@stlpmtx_std@@YAPAVDeltaArray@BandFaceDeform@@PAV12@00ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_copy@PBV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@PAV1@@stlpmtx_std@@YAPAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@PBV1@0PAV1@ABU__false_type@0@@Z at retail address 0x822c78f8. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 SLOT-FOLD-OK, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 396 B (396 B honest) across ['default/system/bandobj/BandFaceDeform'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md."
+   "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 19, row addr 0x822c78f8). \"ours\" spelling ??$__uninitialized_copy@PAVDeltaArray@BandFaceDeform@@PAV12@@stlpmtx_std@@YAPAVDeltaArray@BandFaceDeform@@PAV12@00ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_copy@PBV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@PAV1@@stlpmtx_std@@YAPAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@PBV1@0PAV1@ABU__false_type@0@@Z at retail address 0x822c78f8. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 SLOT-FOLD-OK, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 396 B (396 B honest) across ['default/system/bandobj/BandFaceDeform'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md.",
+   "relabelled": [
+    {
+     "lane": "W16-NU 2026-10-02",
+     "old_survivor": "??$__uninitialized_copy@PBV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@PAV1@@stlpmtx_std@@YAPAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@PBV1@0PAV1@ABU__false_type@0@@Z",
+     "new_survivor": "??$__uninitialized_copy@PBVDeltaArray@BandFaceDeform@@PAV12@@stlpmtx_std@@YAPAVDeltaArray@BandFaceDeform@@PBV12@0PAV12@ABU__false_type@0@@Z",
+     "evidence": "Map label at 0x822c78f8 was ??$__uninitialized_copy@PBV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmt..., which chases REFUTED against this address. ??$__uninitialized_copy@PBVDeltaArray@BandFaceDeform@@PAV12@@stlpmtx_std@@YAPAVDeltaArray@... chases PROVEN here (the only PROVEN retail masked twin), and our paired caller's charged site lands here. The old label has no paired caller of its own."
+    }
+   ]
   },
   {
    "name": "__uninitialized_fill_n_PAVPracticeStep",
@@ -97210,7 +97230,8 @@
     "??0?$vector@VGemScore@MultiplayerAnalyzer@@V?$StlNodeAlloc@VGemScore@MultiplayerAnalyzer@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
     "??0?$vector@VStreakItem@Scoring@@V?$StlNodeAlloc@VStreakItem@Scoring@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
     "??0?$vector@VSeam@MeshAO@OutfitConfig@@V?$StlNodeAlloc@VSeam@MeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
-    "??0?$vector@V?$Key@M@@V?$StlNodeAlloc@V?$Key@M@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z"
+    "??0?$vector@V?$Key@M@@V?$StlNodeAlloc@V?$Key@M@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
+    "??0?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
@@ -97244,6 +97265,11 @@
      "spelling": "??0?$vector@V?$Key@M@@V?$StlNodeAlloc@V?$Key@M@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 116 B retail / 116 B ours; retail body-twins 3. Retail call site(s) reaching the survivor where we call this spelling: 0x824839e0."
+    },
+    {
+     "spelling": "??0?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
+     "lane": "W16-NU 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED; the only PROVEN retail masked body twin is this survivor; every paired call site of ours lands at 0x82686260 (4 site(s) diff_arg). The spelling was map-resident at 0x82576f18, whose body it does not match; that row now carries its proven identity (see the 0x82576f18 group's `relabelled`)."
     }
    ]
   },
@@ -98039,10 +98065,8 @@
   {
    "name": "$_M_splice_insert_dispatch",
    "address": "0x8230ede8",
-   "survivor": "??$_M_splice_insert_dispatch@PBQAVRndAnimatable@@@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@PAVRndAnimatable@@U?$_Nonconst_traits@PAVRndAnimatable@@@stlpmtx_std@@@1@PBQAVRndAnimatable@@1ABU__false_type@1@@Z",
-   "folded": [
-    "??$_M_splice_insert_dispatch@U?$_List_iterator@VContentPoolMapping@SongSectionController@@U?$_Const_traits@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@@stlpmtx_std@@@?$list@VContentPoolMapping@SongSectionController@@V?$StlNodeAlloc@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@VContentPoolMapping@SongSectionController@@U?$_Nonconst_traits@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@@1@U?$_List_iterator@VContentPoolMapping@SongSectionController@@U?$_Const_traits@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z"
-   ],
+   "survivor": "??$_M_splice_insert_dispatch@U?$_List_iterator@VContentPoolMapping@SongSectionController@@U?$_Const_traits@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@@stlpmtx_std@@@?$list@VContentPoolMapping@SongSectionController@@V?$StlNodeAlloc@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@VContentPoolMapping@SongSectionController@@U?$_Nonconst_traits@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@@1@U?$_List_iterator@VContentPoolMapping@SongSectionController@@U?$_Const_traits@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -98050,6 +98074,14 @@
      "spelling": "??$_M_splice_insert_dispatch@U?$_List_iterator@VContentPoolMapping@SongSectionController@@U?$_Const_traits@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@@stlpmtx_std@@@?$list@VContentPoolMapping@SongSectionController@@V?$StlNodeAlloc@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@VContentPoolMapping@SongSectionController@@U?$_Nonconst_traits@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@@1@U?$_List_iterator@VContentPoolMapping@SongSectionController@@U?$_Const_traits@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 156 B retail / 156 B ours; retail body-twins 19. Retail call site(s) reaching the survivor where we call this spelling: 0x82310808."
+    }
+   ],
+   "relabelled": [
+    {
+     "lane": "W16-NU 2026-10-02",
+     "old_survivor": "??$_M_splice_insert_dispatch@PBQAVRndAnimatable@@@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@PAVRndAnimatable@@U?$_Nonconst_traits@PAVRndAnimatable@@@stlpmtx_std@@@1@PBQAVRndAnimatable@@1ABU__false_type@1@@Z",
+     "new_survivor": "??$_M_splice_insert_dispatch@U?$_List_iterator@VContentPoolMapping@SongSectionController@@U?$_Const_traits@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@@stlpmtx_std@@@?$list@VContentPoolMapping@SongSectionController@@V?$StlNodeAlloc@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@VContentPoolMapping@SongSectionController@@U?$_Nonconst_traits@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@@1@U?$_List_iterator@VContentPoolMapping@SongSectionController@@U?$_Const_traits@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
+     "evidence": "Map label at 0x8230ede8 was ??$_M_splice_insert_dispatch@PBQAVRndAnimatable@@@?$list@PAVRndAnimatable@@V?$StlNodeAlloc..., whose body chases REFUTED against this address (template twin). ??$_M_splice_insert_dispatch@U?$_List_iterator@VContentPoolMapping@SongSectionController@@... chases PROVEN here, uniquely among our masked body twins, and our paired call sites of it land at 0x8230ede8 (1 site(s) equal). The map row now carries ??$_M_splice_insert_dispatch@U?$_List_iterator@VContentPoolM...; it was a folded member here and is the survivor now."
     }
    ]
   },
@@ -98115,10 +98147,8 @@
   {
    "name": "push_back",
    "address": "0x82774228",
-   "survivor": "?push_back@?$vector@UGroupDrawDist@@V?$StlNodeAlloc@UGroupDrawDist@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUGroupDrawDist@@@Z",
-   "folded": [
-    "?push_back@?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABV?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@Z"
-   ],
+   "survivor": "?push_back@?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABV?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@Z",
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -98126,6 +98156,14 @@
      "spelling": "?push_back@?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABV?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 136 B retail / 136 B ours; retail body-twins 2. Retail call site(s) reaching the survivor where we call this spelling: 0x827790b0."
+    }
+   ],
+   "relabelled": [
+    {
+     "lane": "W16-NU 2026-10-02",
+     "old_survivor": "?push_back@?$vector@UGroupDrawDist@@V?$StlNodeAlloc@UGroupDrawDist@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUGroupDrawDist@@@Z",
+     "new_survivor": "?push_back@?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABV?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@Z",
+     "evidence": "Map label at 0x82774228 was ?push_back@?$vector@UGroupDrawDist@@V?$StlNodeAlloc@UGroupDrawDist@@@stlpmtx_std@@@stlpmtx..., whose body chases REFUTED against this address (template twin). ?push_back@?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@... chases PROVEN here, uniquely among our masked body twins, and our paired call sites of it land at 0x82774228 (1 site(s) equal). The map row now carries ?push_back@?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?...; it was a folded member here and is the survivor now."
     }
    ]
   },
@@ -98904,10 +98942,8 @@
   {
    "name": "4?$vector",
    "address": "0x822c7e08",
-   "survivor": "??4?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
-   "folded": [
-    "??4?$vector@VDeltaArray@BandFaceDeform@@V?$StlNodeAlloc@VDeltaArray@BandFaceDeform@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z"
-   ],
+   "survivor": "??4?$vector@VDeltaArray@BandFaceDeform@@V?$StlNodeAlloc@VDeltaArray@BandFaceDeform@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -98915,6 +98951,14 @@
      "spelling": "??4?$vector@VDeltaArray@BandFaceDeform@@V?$StlNodeAlloc@VDeltaArray@BandFaceDeform@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 324 B retail / 324 B ours; retail body-twins 1. Retail call site(s) reaching the survivor where we call this spelling: 0x822c8360."
+    }
+   ],
+   "relabelled": [
+    {
+     "lane": "W16-NU 2026-10-02",
+     "old_survivor": "??4?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+     "new_survivor": "??4?$vector@VDeltaArray@BandFaceDeform@@V?$StlNodeAlloc@VDeltaArray@BandFaceDeform@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+     "evidence": "Map label at 0x822c7e08 was ??4?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmt..., whose body chases REFUTED against this address (template twin). ??4?$vector@VDeltaArray@BandFaceDeform@@V?$StlNodeAlloc@VDeltaArray@BandFaceDeform@@@stlpm... chases PROVEN here, uniquely among our masked body twins, and our paired call sites of it land at 0x822c7e08 (1 site(s) equal). The map row now carries ??4?$vector@VDeltaArray@BandFaceDeform@@V?$StlNodeAlloc@VDel...; it was a folded member here and is the survivor now."
     }
    ]
   },
@@ -98982,7 +99026,7 @@
   {
    "name": "$__destroy_range",
    "address": "0x822c78a0",
-   "survivor": "??$__destroy_range@PAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V1@@stlpmtx_std@@YAXPAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@00@Z",
+   "survivor": "??$__destroy_range@PAVDeltaArray@BandFaceDeform@@V12@@stlpmtx_std@@YAXPAVDeltaArray@BandFaceDeform@@00@Z",
    "folded": [
     "??$_Destroy_Range@PAVDeltaArray@BandFaceDeform@@@stlpmtx_std@@YAXPAVDeltaArray@BandFaceDeform@@0@Z"
    ],
@@ -98993,6 +99037,14 @@
      "spelling": "??$_Destroy_Range@PAVDeltaArray@BandFaceDeform@@@stlpmtx_std@@YAXPAVDeltaArray@BandFaceDeform@@0@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 80 B retail / 80 B ours; retail body-twins 1. Retail call site(s) reaching the survivor where we call this spelling: 0x822c7a6c."
+    }
+   ],
+   "relabelled": [
+    {
+     "lane": "W16-NU 2026-10-02",
+     "old_survivor": "??$__destroy_range@PAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V1@@stlpmtx_std@@YAXPAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@00@Z",
+     "new_survivor": "??$__destroy_range@PAVDeltaArray@BandFaceDeform@@V12@@stlpmtx_std@@YAXPAVDeltaArray@BandFaceDeform@@00@Z",
+     "evidence": "Map label at 0x822c78a0 was the Key<vector<Color>> instantiation, which chases REFUTED here. __destroy_range<DeltaArray> is flat-T1 PROVEN at this address (the only PROVEN retail masked twin), and all 5 retail callers of 0x822c78a0 are vector<DeltaArray> family members (0x822c78f8, 0x822c7990, 0x822c7a20, 0x822c7e08, 0x822c7f58)."
     }
    ]
   },
@@ -99094,10 +99146,8 @@
   {
    "name": "0?$vector",
    "address": "0x82576f18",
-   "survivor": "??0?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
-   "folded": [
-    "??0?$vector@U?$pair@MM@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@MM@stlpmtx_std@@@2@@stlpmtx_std@@QAA@ABV01@@Z"
-   ],
+   "survivor": "??0?$vector@U?$pair@MM@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@MM@stlpmtx_std@@@2@@stlpmtx_std@@QAA@ABV01@@Z",
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -99105,6 +99155,14 @@
      "spelling": "??0?$vector@U?$pair@MM@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@MM@stlpmtx_std@@@2@@stlpmtx_std@@QAA@ABV01@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 116 B retail / 116 B ours; retail body-twins 3. Retail call site(s) reaching the survivor where we call this spelling: 0x82578d60."
+    }
+   ],
+   "relabelled": [
+    {
+     "lane": "W16-NU 2026-10-02",
+     "old_survivor": "??0?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
+     "new_survivor": "??0?$vector@U?$pair@MM@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@MM@stlpmtx_std@@@2@@stlpmtx_std@@QAA@ABV01@@Z",
+     "evidence": "Map label at 0x82576f18 was ??0?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z..., whose body chases REFUTED against this address (template twin). ??0?$vector@U?$pair@MM@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@MM@stlpmtx_std@@@2@@stlpmtx_st... chases PROVEN here, uniquely among our masked body twins, and our paired call sites of it land at 0x82576f18 (1 site(s) equal). The map row now carries ??0?$vector@U?$pair@MM@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@...; it was a folded member here and is the survivor now."
     }
    ]
   },
@@ -101349,16 +101407,22 @@
   {
    "name": "_Destroy_Range",
    "address": "0x82b6f168",
-   "survivor": "??$_Destroy_Range@PAVPitchCorrectedVoice@Synapse@DSP@@@stlpmtx_std@@YAXPAVPitchCorrectedVoice@Synapse@DSP@@0@Z",
-   "folded": [
-    "??$__destroy_range_aux@V?$reverse_iterator@PAVPitchCorrectedVoice@Synapse@DSP@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVPitchCorrectedVoice@Synapse@DSP@@@0@0ABU__false_type@0@@Z"
-   ],
+   "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAVPitchCorrectedVoice@Synapse@DSP@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVPitchCorrectedVoice@Synapse@DSP@@@0@0ABU__false_type@0@@Z",
+   "folded": [],
    "evidence": "Fold group opened by W16-LB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
     {
      "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAVPitchCorrectedVoice@Synapse@DSP@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVPitchCorrectedVoice@Synapse@DSP@@@0@0ABU__false_type@0@@Z",
      "lane": "W16-LB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED); 96 B retail / 96 B ours. Retail calls the survivor where we call this spelling in 2 row(s), e.g. ??1?$vector@VPitchCorrectedVoice@Synapse@DSP@@V?$StlNodeAlloc@VPitchCorrectedVoice@Synapse@DSP@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ, ?_M_clear_after_move@?$vector@VPitchCorrectedVoice@Synapse@DSP@@V?$StlNodeAlloc@VPitchCorrectedVoice@Synapse@DSP@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ."
+    }
+   ],
+   "relabelled": [
+    {
+     "lane": "W16-NU 2026-10-02",
+     "old_survivor": "??$_Destroy_Range@PAVPitchCorrectedVoice@Synapse@DSP@@@stlpmtx_std@@YAXPAVPitchCorrectedVoice@Synapse@DSP@@0@Z",
+     "new_survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAVPitchCorrectedVoice@Synapse@DSP@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVPitchCorrectedVoice@Synapse@DSP@@@0@0ABU__false_type@0@@Z",
+     "evidence": "Map label at 0x82b6f168 was ??$_Destroy_Range@PAVPitchCorrectedVoice@Synapse@DSP@@@stlpmtx_std@@YAXPAVPitchCorrectedVo..., whose body chases REFUTED against this address (template twin). ??$__destroy_range_aux@V?$reverse_iterator@PAVPitchCorrectedVoice@Synapse@DSP@@@stlpmtx_st... chases PROVEN here, uniquely among our masked body twins, and our paired call sites of it land at 0x82b6f168 (2 site(s) equal). The map row now carries ??$__destroy_range_aux@V?$reverse_iterator@PAVPitchCorrected...; it was a folded member here and is the survivor now."
     }
    ]
   },
@@ -101739,16 +101803,22 @@
   {
    "name": "_M_splice_insert_dispatch",
    "address": "0x823c4800",
-   "survivor": "??$_M_splice_insert_dispatch@U?$_List_iterator@UPresetOverride@WorldDir@@U?$_Const_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UPresetOverride@WorldDir@@V?$StlNodeAlloc@UPresetOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@UPresetOverride@WorldDir@@U?$_Nonconst_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@1@U?$_List_iterator@UPresetOverride@WorldDir@@U?$_Const_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
-   "folded": [
-    "??$_M_splice_insert_dispatch@U?$_List_iterator@UConstraintSystem@CharBlendBone@@U?$_Const_traits@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UConstraintSystem@CharBlendBone@@V?$StlNodeAlloc@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@UConstraintSystem@CharBlendBone@@U?$_Nonconst_traits@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@1@U?$_List_iterator@UConstraintSystem@CharBlendBone@@U?$_Const_traits@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z"
-   ],
+   "survivor": "??$_M_splice_insert_dispatch@U?$_List_iterator@UConstraintSystem@CharBlendBone@@U?$_Const_traits@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UConstraintSystem@CharBlendBone@@V?$StlNodeAlloc@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@UConstraintSystem@CharBlendBone@@U?$_Nonconst_traits@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@1@U?$_List_iterator@UConstraintSystem@CharBlendBone@@U?$_Const_traits@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
+   "folded": [],
    "evidence": "Fold group opened by W16-MB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
     {
      "spelling": "??$_M_splice_insert_dispatch@U?$_List_iterator@UConstraintSystem@CharBlendBone@@U?$_Const_traits@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UConstraintSystem@CharBlendBone@@V?$StlNodeAlloc@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@UConstraintSystem@CharBlendBone@@U?$_Nonconst_traits@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@1@U?$_List_iterator@UConstraintSystem@CharBlendBone@@U?$_Const_traits@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
      "lane": "W16-MB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED); 156 B retail / 156 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. ??4?$list@UConstraintSystem@CharBlendBone@@V?$StlNodeAlloc@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z."
+    }
+   ],
+   "relabelled": [
+    {
+     "lane": "W16-NU 2026-10-02",
+     "old_survivor": "??$_M_splice_insert_dispatch@U?$_List_iterator@UPresetOverride@WorldDir@@U?$_Const_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UPresetOverride@WorldDir@@V?$StlNodeAlloc@UPresetOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@UPresetOverride@WorldDir@@U?$_Nonconst_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@1@U?$_List_iterator@UPresetOverride@WorldDir@@U?$_Const_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
+     "new_survivor": "??$_M_splice_insert_dispatch@U?$_List_iterator@UConstraintSystem@CharBlendBone@@U?$_Const_traits@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UConstraintSystem@CharBlendBone@@V?$StlNodeAlloc@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@UConstraintSystem@CharBlendBone@@U?$_Nonconst_traits@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@1@U?$_List_iterator@UConstraintSystem@CharBlendBone@@U?$_Const_traits@UConstraintSystem@CharBlendBone@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
+     "evidence": "Map label at 0x823c4800 was ??$_M_splice_insert_dispatch@U?$_List_iterator@UPresetOverride@WorldDir@@U?$_Const_traits@..., whose body chases REFUTED against this address (template twin). ??$_M_splice_insert_dispatch@U?$_List_iterator@UConstraintSystem@CharBlendBone@@U?$_Const_... chases PROVEN here, uniquely among our masked body twins, and our paired call sites of it land at 0x823c4800 (1 site(s) equal). The map row now carries ??$_M_splice_insert_dispatch@U?$_List_iterator@UConstraintSy...; it was a folded member here and is the survivor now."
     }
    ]
   },
@@ -104522,7 +104592,8 @@
    "address": "0x824058b8",
    "survivor": "??$_M_splice_insert_dispatch@PBQAVRndPollable@@@?$list@PAVRndPollable@@V?$StlNodeAlloc@PAVRndPollable@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@PAVRndPollable@@U?$_Nonconst_traits@PAVRndPollable@@@stlpmtx_std@@@1@PBQAVRndPollable@@1ABU__false_type@1@@Z",
    "folded": [
-    "??$_M_splice_insert_dispatch@PBH@?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@HU?$_Nonconst_traits@H@stlpmtx_std@@@1@PBH1ABU__false_type@1@@Z"
+    "??$_M_splice_insert_dispatch@PBH@?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@HU?$_Nonconst_traits@H@stlpmtx_std@@@1@PBH1ABU__false_type@1@@Z",
+    "??$_M_splice_insert_dispatch@PBQAVRndAnimatable@@@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@PAVRndAnimatable@@U?$_Nonconst_traits@PAVRndAnimatable@@@stlpmtx_std@@@1@PBQAVRndAnimatable@@1ABU__false_type@1@@Z"
    ],
    "evidence": "Created by lane W16-NH: see per-member records in `admitted`.",
    "lane": "W16-NH 2026-10-02",
@@ -104531,6 +104602,11 @@
      "spelling": "??$_M_splice_insert_dispatch@PBH@?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@HU?$_Nonconst_traits@H@stlpmtx_std@@@1@PBH1ABU__false_type@1@@Z",
      "lane": "W16-NH 2026-10-02",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED); 156 B retail / 156 B ours; retail body-twins 19. Retail call site(s) reaching the survivor where we call this spelling: 0x8279428c."
+    },
+    {
+     "spelling": "??$_M_splice_insert_dispatch@PBQAVRndAnimatable@@@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@PAVRndAnimatable@@U?$_Nonconst_traits@PAVRndAnimatable@@@stlpmtx_std@@@1@PBQAVRndAnimatable@@1ABU__false_type@1@@Z",
+     "lane": "W16-NU 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED; the only PROVEN retail masked body twin is this survivor; every paired call site of ours lands at 0x824058b8 (2 site(s) diff_arg). The spelling was map-resident at 0x8230ede8, whose body it does not match; that row now carries its proven identity (see the 0x8230ede8 group's `relabelled`)."
     }
    ]
   },
@@ -107134,6 +107210,74 @@
      "spelling": "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
      "lane": "W16-NR 2026-10-02",
      "evidence": "chase PROVEN with 0 CYCLE-ASSUMED; unique among 112 retail masked twins (O chased against every twin, only the survivor PROVEN); 1/1 retail call sites at our spelling's sites (objdiff diff of every paired caller) land at the survivor; extent 60 B both sides (size_gate like-for-like). Slot discharge is the W16-JG strict policy."
+    }
+   ]
+  },
+  {
+   "name": "4?$vector",
+   "address": "0x8246f9f0",
+   "survivor": "??4?$vector@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+   "folded": [
+    "??4?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z"
+   ],
+   "evidence": "Created by lane W16-NU: see per-member records in `admitted`.",
+   "lane": "W16-NU 2026-10-02",
+   "admitted": [
+    {
+     "spelling": "??4?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+     "lane": "W16-NU 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED; the only PROVEN retail masked body twin is this survivor; every paired call site of ours lands at 0x8246f9f0 (1 site(s) diff_arg). The spelling was map-resident at 0x822c7e08, whose body it does not match; that row now carries its proven identity (see the 0x822c7e08 group's `relabelled`)."
+    }
+   ]
+  },
+  {
+   "name": "$_M_splice_insert_dispatch",
+   "address": "0x824d0618",
+   "survivor": "??$_M_splice_insert_dispatch@U?$_List_iterator@UTarget@BandCamShot@@U?$_Const_traits@UTarget@BandCamShot@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UTarget@BandCamShot@@V?$StlNodeAlloc@UTarget@BandCamShot@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@UTarget@BandCamShot@@U?$_Nonconst_traits@UTarget@BandCamShot@@@stlpmtx_std@@@1@U?$_List_iterator@UTarget@BandCamShot@@U?$_Const_traits@UTarget@BandCamShot@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
+   "folded": [
+    "??$_M_splice_insert_dispatch@U?$_List_iterator@UPresetOverride@WorldDir@@U?$_Const_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UPresetOverride@WorldDir@@V?$StlNodeAlloc@UPresetOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@UPresetOverride@WorldDir@@U?$_Nonconst_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@1@U?$_List_iterator@UPresetOverride@WorldDir@@U?$_Const_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z"
+   ],
+   "evidence": "Created by lane W16-NU: see per-member records in `admitted`.",
+   "lane": "W16-NU 2026-10-02",
+   "admitted": [
+    {
+     "spelling": "??$_M_splice_insert_dispatch@U?$_List_iterator@UPresetOverride@WorldDir@@U?$_Const_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UPresetOverride@WorldDir@@V?$StlNodeAlloc@UPresetOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@UPresetOverride@WorldDir@@U?$_Nonconst_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@1@U?$_List_iterator@UPresetOverride@WorldDir@@U?$_Const_traits@UPresetOverride@WorldDir@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
+     "lane": "W16-NU 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED; the only PROVEN retail masked body twin is this survivor; every paired call site of ours lands at 0x824d0618 (1 site(s) diff_arg). The spelling was map-resident at 0x823c4800, whose body it does not match; that row now carries its proven identity (see the 0x823c4800 group's `relabelled`)."
+    }
+   ]
+  },
+  {
+   "name": "$__destroy_range",
+   "address": "0x82b6f1c8",
+   "survivor": "??$__destroy_range@PAVPitchCorrectedVoice@Synapse@DSP@@V123@@stlpmtx_std@@YAXPAVPitchCorrectedVoice@Synapse@DSP@@00@Z",
+   "folded": [
+    "??$_Destroy_Range@PAVPitchCorrectedVoice@Synapse@DSP@@@stlpmtx_std@@YAXPAVPitchCorrectedVoice@Synapse@DSP@@0@Z"
+   ],
+   "evidence": "Created by lane W16-NU: see per-member records in `admitted`.",
+   "lane": "W16-NU 2026-10-02",
+   "admitted": [
+    {
+     "spelling": "??$_Destroy_Range@PAVPitchCorrectedVoice@Synapse@DSP@@@stlpmtx_std@@YAXPAVPitchCorrectedVoice@Synapse@DSP@@0@Z",
+     "lane": "W16-NU 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED; the only PROVEN retail masked body twin is this survivor; every paired call site of ours lands at 0x82b6f1c8 (1 site(s) diff_arg). The spelling was map-resident at 0x82b6f168, whose body it does not match; that row now carries its proven identity (see the 0x82b6f168 group's `relabelled`)."
+    }
+   ]
+  },
+  {
+   "name": "$__uninitialized_copy",
+   "address": "0x822c4040",
+   "survivor": "??$__uninitialized_copy@PAVConstraint@BandIKEffector@@PAV12@@stlpmtx_std@@YAPAVConstraint@BandIKEffector@@PAV12@00ABU__false_type@0@@Z",
+   "folded": [
+    "??$__uninitialized_copy@PBVConstraint@BandIKEffector@@PAV12@@stlpmtx_std@@YAPAVConstraint@BandIKEffector@@PBV12@0PAV12@ABU__false_type@0@@Z"
+   ],
+   "evidence": "Created by lane W16-NU: see per-member records in `admitted`.",
+   "lane": "W16-NU 2026-10-02",
+   "admitted": [
+    {
+     "spelling": "??$__uninitialized_copy@PBVConstraint@BandIKEffector@@PAV12@@stlpmtx_std@@YAPAVConstraint@BandIKEffector@@PBV12@0PAV12@ABU__false_type@0@@Z",
+     "lane": "W16-NU 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED; the only PROVEN retail masked body twin is this survivor; every paired call site of ours lands at 0x822c4040 (2 site(s) diff_arg). The spelling was map-resident at 0x822c3fa8, whose body it does not match; that row now carries its proven identity (see the 0x822c3fa8 group's `relabelled`)."
     }
    ]
   }
