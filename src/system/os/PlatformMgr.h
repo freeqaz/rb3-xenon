@@ -291,6 +291,8 @@ public:
     ShowGamercardResult ShowGamercardForPadNum(int, const OnlineID *);
     ShowGamercardResult ShowGamercard(class LocalUser *, const OnlineID *);
     bool CanSeeUserCreatedContent(const OnlineID *) const;
+    // Retail 0x8251C830. The name is ours.
+    bool CanCommunicateWith(const OnlineID *) const;
     // Wii-origin entry points referenced by ported meta_band/OvershellPanel code.
     // Declaration-only; append-only — does not alter existing PlatformMgr layout.
     void RegisterSignInserCallback(SignInUserCallbackFunc *);

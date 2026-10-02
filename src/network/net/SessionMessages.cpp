@@ -235,6 +235,14 @@ void EndGameMsg::Load(BinStream &bs) {
     bs >> unkc;
 }
 
+// Retail 0x823F1D30; XboxSession::Poll wraps a local talker's chat bytes.
+VoiceDataMsg::VoiceDataMsg(const void *data, int size, const User *user)
+    : mVoiceData(false) {
+    mUserGuid = user->GetUserGuid();
+    mVoiceData.Write(data, size);
+    mVoiceData.Seek(0, BinStream::kSeekBegin);
+}
+
 void VoiceDataMsg::GetVoiceData(BinStream &bs) const {
     bs.Write(mVoiceData.Buffer(), mVoiceData.Size());
 }

@@ -59,6 +59,16 @@ INT XNetQosLookup(
     XNQOS **ppxnqos
 );
 INT XNetQosRelease(XNQOS *pxnqos);
+
+/* QoS listening for a hosted session (XboxSession, network/net/NetSession_Xbox.cpp). */
+#define XNET_QOS_LISTEN_ENABLE 0x00000001
+#define XNET_QOS_LISTEN_DISABLE 0x00000002
+#define XNET_QOS_LISTEN_SET_DATA 0x00000004
+#define XNET_QOS_LISTEN_SET_BITSPERSEC 0x00000008
+#define XNET_QOS_LISTEN_RELEASE 0x00000010
+INT XNetQosListen(
+    const XNKID *pxnkid, const BYTE *pb, UINT cb, DWORD dwBitsPerSec, DWORD dwFlags
+);
 INT XNetXnAddrToMachineId(const XNADDR *pxnaddr, ULONGLONG *pqwMachineId);
 
 #ifdef __cplusplus

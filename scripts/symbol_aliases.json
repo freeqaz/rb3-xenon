@@ -90633,9 +90633,17 @@
     "??1?$vector@VUserGuid@@V?$StlNodeAlloc@VUserGuid@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
     "??1?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
     "??1?$vector@VVector4@@V?$StlNodeAlloc@VVector4@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
-    "??1DifficultyInfo@SongParser@@QAA@XZ"
+    "??1DifficultyInfo@SongParser@@QAA@XZ",
+    "??1?$vector@VUserStat@@V?$StlNodeAlloc@VUserStat@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
    ],
-   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x826a0ce8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 79 against 42 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x826a0ce8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 79 against 42 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies.",
+   "admitted": [
+    {
+     "spelling": "??1?$vector@VUserStat@@V?$StlNodeAlloc@VUserStat@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-NO 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN, CHASED T1 PROVEN; size gate ACCEPT (36 == 36). Retail call site: EH funclet 0x823F09A4 of XboxSession::EndSession (0x823F08D0), which destroys its stack vector<UserStat>."
+    }
+   ]
   },
   {
    "name": "ourside_comdat_identity",
@@ -106448,6 +106456,23 @@
      "spelling": "?RemoveRemoteFromSession@NetSession@@UAAXPAVRemoteUser@@@Z",
      "lane": "W16-NM 2026-10-02",
      "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 REFUTED (relocation targets disagree), CHASED T1 PROVEN (the one differing slot, callee fn_822A1520, chases); size gate ACCEPT (96 == 96). Retail call site: 0x823EEFE8 XboxSession::RemoveRemoteFromSession."
+    }
+   ]
+  },
+  {
+   "name": "1NewUserMsg",
+   "address": "0x823e30f0",
+   "survivor": "??1NewUserMsg@@UAA@XZ",
+   "folded": [
+    "??1VoiceDataMsg@@UAA@XZ"
+   ],
+   "evidence": "W16-NO: NewUserMsg's and VoiceDataMsg's dtors are the same 76-B body (re-store the NetMessage vtable, destroy the MemStream member). Retail XboxSession::Poll (0x823F06F0) destroys its stack VoiceDataMsg with a bl to this address. Admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NO",
+   "admitted": [
+    {
+     "spelling": "??1VoiceDataMsg@@UAA@XZ",
+     "lane": "W16-NO 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 PROVEN, CHASED T1 PROVEN (both relocations are the NetMessage vtable); size gate ACCEPT (76 == 76). Retail call site: 0x823F06F0 XboxSession::Poll."
     }
    ]
   }

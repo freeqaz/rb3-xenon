@@ -551,6 +551,12 @@ bool PlatformMgr::CanSeeUserCreatedContent(const OnlineID *oid) const {
     );
 }
 
+bool PlatformMgr::CanCommunicateWith(const OnlineID *oid) const {
+    return XPrivilegeCheck(
+        XPRIVILEGE_COMMUNICATIONS, XPRIVILEGE_COMMUNICATIONS_FRIENDS_ONLY, oid
+    );
+}
+
 bool PlatformMgr::IsGuestOnlineID(const OnlineID *oid) const {
     // Retail materialises the bool straight into r3 (li 1 / bne / li 0, no
     // clrlwi), the if/return shape rather than a `!= 0` expression.
