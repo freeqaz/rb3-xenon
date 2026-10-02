@@ -335,6 +335,7 @@ BandCamShot.cpp:
 
 BandDirector.cpp:
 	.pdata      start:0x821F3210 end:0x821F3220
+	.pdata      start:0x821F3220 end:0x821F3228
 	.pdata      start:0x821F3228 end:0x821F3248
 	.pdata      start:0x821F3248 end:0x821F3250
 	.pdata      start:0x821F3250 end:0x821F32E0
@@ -347,6 +348,7 @@ BandDirector.cpp:
 	.pdata      start:0x821F3F80 end:0x821F3F88
 	.pdata      start:0x821F3F88 end:0x821F42A8
 	.text       start:0x8228C908 end:0x8228C980
+	.text       start:0x8228C980 end:0x8228C9B8
 	.text       start:0x8228C9B8 end:0x8228CAB0
 	.text       start:0x8228CAB0 end:0x8228CB10
 	.text       start:0x8228CB10 end:0x8228D310
@@ -513,7 +515,6 @@ BandCharacter.cpp:
 	.pdata      start:0x821F2F90 end:0x821F2FB8
 	.pdata      start:0x821F2FB8 end:0x821F2FC0
 	.pdata      start:0x821F2FC0 end:0x821F3210
-	.pdata      start:0x821F3220 end:0x821F3228
 	.text       start:0x8227A228 end:0x8227A2A0
 	.text       start:0x8227A528 end:0x8227A5A8
 	.text       start:0x8227A728 end:0x8227A7A8
@@ -554,7 +555,6 @@ BandCharacter.cpp:
 	.text       start:0x8228A648 end:0x8228A900
 	.text       start:0x8228A900 end:0x8228A988
 	.text       start:0x8228A988 end:0x8228C908
-	.text       start:0x8228C980 end:0x8228C9B8
 	.text       start:0x82545C88 end:0x82545C90
 
 Console.cpp:
