@@ -2404,8 +2404,24 @@
             "network/quazal/SessionClock/SessionClockExtension.cpp": "NonMatching",
             "network/quazal/DupSpace/DupSpaceExtension.cpp": "NonMatching",
             "network/quazal/GlobalDiscovery/GlobalDiscoveryExtension.cpp": "NonMatching",
-            "network/quazal/Transport/Interface/JobConnectEndPoint.cpp": "NonMatching",
-            "network/quazal/Transport/Interface/TransportSignatureGenerator.cpp": "NonMatching",
+            "network/quazal/Transport/Interface/JobConnectEndPoint.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
+            "network/quazal/Transport/Interface/TransportSignatureGenerator.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
             "network/quazal/Transport/PRUDP/PRUDPEndPoint.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
