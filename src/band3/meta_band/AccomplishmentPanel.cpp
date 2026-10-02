@@ -905,7 +905,10 @@ inline Symbol AccomplishmentEntryProvider::DataSymbol(int i_iData) {
 
 Symbol AccomplishmentPanel::GetAccomplishmentName() {
     static Symbol acc_secret("acc_secret");
-    return IsSecret() ? acc_secret : SelectedAccomplishment();
+    if (IsSecret())
+        return acc_secret;
+    Symbol selected = SelectedAccomplishment();
+    return selected;
 }
 
 Symbol AccomplishmentPanel::GetAccomplishmentDescription() {

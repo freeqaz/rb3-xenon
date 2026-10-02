@@ -584,8 +584,8 @@ void SpotlightDrawer::DrawWorld() {
             MILO_ASSERT(sEnviron->GetUseApprox() == false, 0x1dc);
             sEnviron->Select(nullptr);
             std::vector<SpotlightEntry>::iterator itEnd = sLights.end();
-            if (sLights.begin() != itEnd) {
-                std::vector<SpotlightEntry>::iterator it = sLights.begin();
+            std::vector<SpotlightEntry>::iterator it = sLights.begin();
+            if (it != itEnd) {
                 do {
                     SpotlightEntry *e1 = it;
                     Spotlight *spot = it->mSpotlight;

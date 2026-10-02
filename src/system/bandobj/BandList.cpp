@@ -435,12 +435,12 @@ void BandList::UpdateFocusAndPulseAnims(int i, Transform &tf) {
     float uisecs = TheTaskMgr.UISeconds();
     float startframe = mFocusAnim->StartFrame();
     float endframe = mFocusAnim->EndFrame();
-    float defaulttime = 0;
-    float time = (uisecs - starttime) * mFocusAnim->FramesPerUnit();
+    float time = 0;
+    float elapsed = (uisecs - starttime) * mFocusAnim->FramesPerUnit();
     AnimState astate = mAnimStates[i];
     switch (astate) {
     case kGoingIn:
-        time = startframe + time;
+        time = startframe + elapsed;
         if (time >= endframe) {
             time = endframe;
             mAnimStates[i] = kIn;
@@ -449,7 +449,7 @@ void BandList::UpdateFocusAndPulseAnims(int i, Transform &tf) {
         }
         break;
     case kGoingOut:
-        time = endframe - time;
+        time = endframe - elapsed;
         if (time <= startframe) {
             time = startframe;
             mAnimStates[i] = kOut;
@@ -466,7 +466,6 @@ void BandList::UpdateFocusAndPulseAnims(int i, Transform &tf) {
         time = startframe;
         break;
     default:
-        time = defaulttime;
         break;
     }
     mFrames[i] = time;
@@ -483,6 +482,9 @@ void BandList::StartPulseAnim(int idx) {
 
 void BandList::UpdatePulseAnim(int i, Transform &tf) {
     if (mAnimStates[i] == kIn) {
+        // Retail performs this lookup and discards the result, so a missing
+        // start time is default-inserted before it is read below.
+        mStartTimes[i];
         float f5 = TheTaskMgr.UISeconds();
         float f6 = mPulseAnim->StartFrame();
         float f7 = mPulseAnim->EndFrame();

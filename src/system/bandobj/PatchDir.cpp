@@ -491,9 +491,9 @@ void PatchDir::SaveRemote(BinStream &bs) {
     IntPacker packer(buf, 0x830);
     packer.AddU(0, 0x10);
     SaveRemote(packer);
-    unsigned int size = packer.mPos >> 3 & 0xFFFF;
+    unsigned short size = packer.mPos >> 3;
     if (packer.mPos & 7)
-        size = size + 1 & 0xFFFF;
+        size++;
     packer.SetPos(0);
     packer.AddU(size, 0x10);
     MILO_ASSERT(size < kPatchBufSize, 0x37B);

@@ -67,7 +67,7 @@ void UtilDrawBox(const Transform &tf, const Box &box, const Hmx::Color &col, boo
 void UtilDrawRect2D(const Vector2 &v1, const Vector2 &v2, const Hmx::Color &color);
 void UtilDrawCircle2D(const Vector2 &, float, const Hmx::Color &, int);
 void UtilDrawCylinder(const Transform &, float, float, const Hmx::Color &, int);
-void UtilDrawPlane(const Plane &, const Vector3 &, const Hmx::Color &, int, float, bool);
+void UtilDrawPlane(const Plane &, const Vector3 &, const Hmx::Color &, int, float);
 void UtilDrawCigar(const Transform &, const float *const, const float *const, const Hmx::Color &, int);
 
 void TransformKeys(RndTransAnim *, const Transform &);

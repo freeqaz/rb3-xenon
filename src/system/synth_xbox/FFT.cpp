@@ -62,7 +62,7 @@ int fft_real_forward_scalar(float* data, unsigned long size, float* context) {
             unsigned int count = size >> 2;
             float* lo = data + 2;
             float* hi = data + size;
-            for (unsigned int k = 0; k < count; ++k) {
+            for (unsigned int k = 0; k < size >> 2; ++k) {
                 float hi_im = hi[-1];
                 float lo_im = lo[1];
                 float diff_im = lo_im - hi_im;

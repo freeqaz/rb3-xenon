@@ -195,10 +195,12 @@ END_HANDLERS
 
 DataNode LayerDir::RandomizeColors(DataArray *) {
     for (ObjList<Layer>::iterator it = mLayers.begin(); it != mLayers.end(); ++it) {
-        Hmx::Object *palette = it->mColorPalette;
-        if (palette && it->mAllowColor) {
-            int idx = RandomInt(0, palette->Property(Symbol("colors"), true)->Array()->Size());
-            const DataArray *arr = palette->Property(Symbol("colors"), true)->Array();
+        if (it->mColorPalette && it->mAllowColor) {
+            int idx = RandomInt(
+                0, it->mColorPalette->Property(Symbol("colors"), true)->Array()->Size()
+            );
+            const DataArray *arr =
+                it->mColorPalette->Property(Symbol("colors"), true)->Array();
             int packed = arr->Node(idx).Int(arr);
             it->mColor.Unpack(packed);
             RefreshLayer(*it, false);
@@ -212,14 +214,14 @@ void LayerDir::RefreshLayer(Layer &layer, bool useColorIdx) {
         if (layer.mActive) {
             if (layer.mAllowColor) {
                 if (useColorIdx) {
-                    Hmx::Object *palette = layer.mColorPalette;
-                    if (palette) {
+                    if (layer.mColorPalette) {
                         DataArray *arr =
-                            palette->Property(Symbol("colors"), true)->Array();
+                            layer.mColorPalette->Property(Symbol("colors"), true)->Array();
                         int colorIdx = layer.mColorIdx;
                         if (arr->Size() > colorIdx) {
                             const DataArray *arr2 =
-                                palette->Property(Symbol("colors"), true)->Array();
+                                layer.mColorPalette->Property(Symbol("colors"), true)
+                                    ->Array();
                             int packed = arr2->Node(colorIdx).Int(arr2);
                             layer.mColor.Unpack(packed);
                         }

@@ -648,8 +648,9 @@ void TrackPanel::Poll() {
         auto _tmp1 = mainPerformer->GetAccumulatedScore();
         mScoreboard->SetScore(_tmp1);
         if (TheGame->mProperties.mShowStars) {
+            const Game::Properties &props = TheGame->mProperties;
             mScoreboard->SetNumStars(
-                mainPerformer->GetNumStarsFloat(), TheGame->mProperties.mPlayStarSfx
+                mainPerformer->GetNumStarsFloat(), props.mPlayStarSfx
             );
         }
     }
@@ -840,9 +841,9 @@ void TrackPanel::SetSuppressPlayerFeedback(bool b) {
     }
 }
 
-int TrackPanel::GetNoCrowdMeter() const {
+bool TrackPanel::GetNoCrowdMeter() const {
     MetaPerformer::Current();
-    return 0;
+    return false;
 }
 
 float TrackPanel::CrowdRatingDefaultVal(Symbol s) const {

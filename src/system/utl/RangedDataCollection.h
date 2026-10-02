@@ -142,11 +142,11 @@ public:
             if (data == mRangeDataArray[dataIdx].begin())
                 return nullptr;
             else {
-                const RangedData<T> *before = &data[-1];
-                if (!before->ContainsTick(tick))
+                data--;
+                if (!data->ContainsTick(tick))
                     return nullptr;
                 else
-                    return &data[-1];
+                    return data;
             }
         }
     }

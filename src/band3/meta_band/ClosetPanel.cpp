@@ -97,7 +97,8 @@ void ClosetPanel::CycleCamera() {
         // Retail stores &substrs.back() (end - 0xc) to the frame's first local
         // slot before strtol: the home of a named reference.
         String &last = substrs.back();
-        int l6 = strtol(last.c_str(), 0, 10) + 1;
+        int num = strtol(last.c_str(), 0, 10);
+        int l6 = num + 1;
         String str30;
         for (int i = 0; i < substrs.size() - 1; i++) {
             str30 += substrs[i] + "_";

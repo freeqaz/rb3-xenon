@@ -235,7 +235,8 @@ void SetlistSort::BuildSetlistTree(std::map<Symbol, SetlistRecord> &records) {
     DeleteTree();
     Init();
     FOREACH (it, records) {
-        SetlistSortNode *newSetlist = NewSetlistNode(&it->second);
+        SetlistRecord &rec = it->second;
+        SetlistSortNode *newSetlist = NewSetlistNode(&rec);
         std::pair<ShortcutNode **, ShortcutNode **> found;
         found =
             std::equal_range(mTree.begin(), mTree.end(), newSetlist, CompareShortcuts());

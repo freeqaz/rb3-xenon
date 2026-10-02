@@ -495,10 +495,8 @@ void BandTrack::EnablePlayer() {
         if (trig)
             trig->Trigger();
         mDisabled = false;
-        if (MyTrackPanelDir()) {
-            int idx = mTrackIdx;
-            MyTrackPanelDir()->EnablePlayer(idx);
-        }
+        if (MyTrackPanelDir())
+            MyTrackPanelDir()->EnablePlayer(mTrackIdx);
     }
 }
 
@@ -542,7 +540,7 @@ void BandTrack::SetupPlayerIntro() {
     if (mPlayerIntro) {
         mPlayerIntro->HandleType(reset);
         if (mTrackInstrument >= 0 && mTrackInstrument < 8) {
-            static Message setIcon("set_icon", DataNode("G"));
+            static Message setIcon("set_icon", "G");
             if (mParent) {
                 setIcon[0] = mParent->GetTrackIcon();
                 mParent->SetUserNameLabel(mPlayerIntro, "player_name.lbl");
@@ -691,7 +689,7 @@ void BandTrack::StartFinale(unsigned int ui) {
     GameWon();
     if (HasLocalPlayer()) {
         if (mEndgameFeedback) {
-            static Message finale_start("end_game_start_inst", DataNode(""));
+            static Message finale_start("end_game_start_inst", "");
             finale_start[0] = DataNode(mInstrument);
             mEndgameFeedback->HandleType(finale_start);
         }
@@ -777,7 +775,7 @@ void BandTrack::PopupHelp(Symbol sym, bool b) {
         return;
     if (mParent->PlayerDisabled())
         return;
-    static Message msg("help", DataNode(""), DataNode(0), DataNode(""), DataNode(""));
+    static Message msg("help", "", 0, "", "");
     msg[0] = sym;
     msg[1] = b;
     msg[2] = mInstrument;

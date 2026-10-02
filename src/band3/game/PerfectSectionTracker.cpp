@@ -309,7 +309,8 @@ bool PerfectSectionTracker::HandleExitExtent(float f, int i, bool b) {
                 int i118 = 0;
                 int i11c = 0;
                 int tick = unk104.GetSectionEndTick(unkc4);
-                unk104.GetGemStatsInRange(pPlayer, tick, MsToTick(f), i118, i11c);
+                int endTick = MsToTick(f);
+                unk104.GetGemStatsInRange(pPlayer, tick, endTick, i118, i11c);
                 PlayerStreakData &data = it->second;
                 float f17 = 0;
                 int i15 = 0;
@@ -318,9 +319,9 @@ bool PerfectSectionTracker::HandleExitExtent(float f, int i, bool b) {
                 if (data.unkc != 0) {
                     b1 = true;
                     i15 |= 2;
-                    if ((float)(pPlayer->mStats.mHitCount - data.unk4 - i118)
-                            / (float)(data.unkc - (pPlayer->mStats.m0x0c - data.unk8 - i11c))
-                        >= unkb0) {
+                    int num = pPlayer->mStats.mHitCount - data.unk4 - i118;
+                    int seen = pPlayer->mStats.m0x0c - data.unk8;
+                    if ((float)num / (float)(data.unkc - (seen - i11c)) >= unkb0) {
                         unk8c[key]++;
                         i15 |= 3;
                         b14 = true;

@@ -1334,7 +1334,8 @@ void SongParser::PrepareTrack(const char *track_name, PartInfo *info) {
         if (info->FakeAudio()) {
             mKeyboardDifficulty = 3;
         } else {
-            switch ((signed char)track_name[strlen(track_name) - 1]) {
+            char diffChar = track_name[strlen(track_name) - 1];
+            switch (diffChar) {
             case 'E':
                 mKeyboardDifficulty = 0;
                 break;
@@ -2219,7 +2220,7 @@ bool SongParser::HandleRGGemStop(
                             geminfo.frets[si] = (char)mRGHandPos;
                         }
                         if (src->mChannel == 4) {
-                            geminfo.no_strum = kStrumForceOff;
+                            geminfo.no_strum = kStrumForceOn;
                         }
                     } else {
                         geminfo.frets[si] = (char)-1;

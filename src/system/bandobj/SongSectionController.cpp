@@ -189,20 +189,21 @@ Symbol SongSectionController::FindPoolCategoryForPracSession(Symbol pracSession)
     for (ObjList<PracticeSectionMapping>::iterator it = mappings.begin();
          it != mappings.end();
          ++it) {
+        PracticeSectionMapping &mapping = *it;
         bool invalidMatched = false;
-        for (std::list<String>::iterator sit = it->mInvalidPracticeSections.begin();
-             sit != it->mInvalidPracticeSections.end();
+        for (std::list<String>::iterator sit = mapping.mInvalidPracticeSections.begin();
+             sit != mapping.mInvalidPracticeSections.end();
              ++sit) {
             if (StringMatchesFilter(pracSession.Str(), sit->c_str())) {
                 invalidMatched = true;
             }
         }
         if (!invalidMatched) {
-            for (std::list<String>::iterator sit = it->mValidPracticeSections.begin();
-                 sit != it->mValidPracticeSections.end();
+            for (std::list<String>::iterator sit = mapping.mValidPracticeSections.begin();
+                 sit != mapping.mValidPracticeSections.end();
                  ++sit) {
                 if (StringMatchesFilter(pracSession.Str(), sit->c_str())) {
-                    return it->mPoolCategory;
+                    return mapping.mPoolCategory;
                 }
             }
         }
@@ -213,7 +214,7 @@ Symbol SongSectionController::FindPoolCategoryForPracSession(Symbol pracSession)
 bool SongSectionController::UpdatePoolCategory() {
     Symbol prev = mCurPoolCategory;
     if (mMidiSection.Null()) {
-        mCurPoolCategory = Symbol("CATCH_ALL");
+        mCurPoolCategory = "CATCH_ALL";
     } else {
         mCurPoolCategory = FindPoolCategoryForPracSession(mMidiSection);
     }

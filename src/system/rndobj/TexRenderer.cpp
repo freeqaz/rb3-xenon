@@ -487,17 +487,13 @@ void RndTexRenderer::DrawToTexture() {
         cam->SetTargetTex(mOutputTexture);
         cam->Select();
         int cap = (mFirstDraw && mPrimeDraw) ? 2 : 1;
-        if (cap > 0) {
-            int j = cap;
-            do {
-                DrawBefore();
-                if (rdir && rdir->ClassName() == "WorldDir") {
-                    rdir->RndDir::DrawShowing();
-                } else
-                    mDrawable->DrawShowing();
-                DrawAfter();
-                j--;
-            } while (j != 0);
+        for (int j = 0; j < cap; j++) {
+            DrawBefore();
+            if (rdir && rdir->ClassName() == "WorldDir") {
+                rdir->RndDir::DrawShowing();
+            } else
+                mDrawable->DrawShowing();
+            DrawAfter();
         }
         cam->SetTargetTex(nullptr);
         if (!mMirrorCam) {

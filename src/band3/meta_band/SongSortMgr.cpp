@@ -77,7 +77,9 @@ void SongSortMgr::SongFilter::IntersectFilter(SongSortMgr::SongFilter *filter) {
             std::vector<Symbol> v20;
             FOREACH_CONST_POST (it, filters[i]) {
                 Symbol cur = *it;
-                if (!filter->HasFilter((FilterType)i, cur)) {
+                Symbol key = cur;
+                std::set<Symbol> &other = filter->filters[i];
+                if (other.find(key) == other.end()) {
                     v20.push_back(cur);
                 }
             }

@@ -209,10 +209,9 @@ bool BandIKEffector::MeasureLengths(
 
 void BandIKEffector::NeutralLocalPos(RndTransformable *bone, Vector3 &pos) {
     if (sDeformClip) {
-        const char *name = bone->Name();
-        bool pelvisMatch = (strcmp(name, "bone_pelvis.mesh") == 0);
+        bool pelvisMatch = (strcmp(bone->Name(), "bone_pelvis.mesh") == 0);
         if (!pelvisMatch) {
-            Symbol sym = CharBones::ChannelName(name, CharBones::TYPE_POS);
+            Symbol sym = CharBones::ChannelName(bone->Name(), CharBones::TYPE_POS);
             void *chan = sDeformClip->GetChannel(sym);
             if (chan) {
                 sDeformClip->EvaluateChannel(&pos, chan, 0.0f);
@@ -818,14 +817,13 @@ float BandIKEffector::ApplyPosConstraints(
             Multiply(src, tpose, local);
             float lensq = LengthSquared(local);
             Multiply(local, c.mTarget->WorldXfm(), local);
-            float clamped = Max(lensq, 0.001f);
-            float w = 144.0f * c.mWeight / clamped;
+            float w = (c.mWeight * 144.0f) / Max(0.001f, lensq);
             ScaleAdd(dst, local, w, dst);
             totalWeight += w;
         }
     }
     if (mMore) {
-        totalWeight += bool(mMore->ApplyPosConstraints(dst, src, root));
+        totalWeight += mMore->ApplyPosConstraints(dst, src, root);
     }
     return totalWeight;
 }
