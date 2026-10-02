@@ -104,9 +104,10 @@ namespace Quazal {
         char unk0[4];
     };
 
-    class SignatureGenerator {
+    // Transport\Interface\TransportSignatureGenerator.cpp owns this.
+    class TransportSignatureGenerator {
     public:
-        unsigned int Generate(unsigned int, unsigned short);
+        unsigned int ComputeSourceSignature(unsigned int, unsigned short);
     };
 
     class Packet : public RootObject {
@@ -249,19 +250,27 @@ namespace Quazal {
 
     extern PseudoGlobalVariable<StreamSettings> s_oStreamSettings[];
 
-    class ConnectionOrientedStream {
+    // GetSettings is Stream's: its out-of-line copy is the COMDAT at
+    // 0x82B0AB88 in RoutingStream's TU, which the map names
+    // Stream::GetSettings.
+    class Stream {
     public:
         StreamSettings *GetSettings() { return &s_oStreamSettings[m_eType].GetValue(); }
-        void EndPointDisconnected(PRUDPEndPoint *);
 
         char unk0[0x4];
         unsigned int m_eType;              // 0x4
+    };
+
+    class ConnectionOrientedStream : public Stream {
+    public:
+        void EndPointDisconnected(PRUDPEndPoint *);
+
         char unk8[0xc - 0x8];
         TransportStats *m_pStats;          // 0xc
         char unk10[0x14 - 0x10];
         TimeoutManager m_oTimeoutManager;  // 0x14
         char unk18[0xe0 - 0x18];
-        SignatureGenerator m_oSignatureGenerator; // 0xe0
+        TransportSignatureGenerator m_oSignatureGenerator; // 0xe0
     };
 
     // The stream this TU's endpoints belong to; Send and ReleaseEndPoint are
@@ -992,7 +1001,7 @@ namespace Quazal {
             if (IsConnecting() && pPacket->HasFlag(8) && !m_bUnk94) {
 #line 611
                 PacketOut *pConnect = new (__FILE__, __LINE__) PacketOut(this, 1, 0x30, m_oPendingOperation.GetBuffer());
-                unsigned int uiSignature = GetStream()->m_oSignatureGenerator.Generate(
+                unsigned int uiSignature = GetStream()->m_oSignatureGenerator.ComputeSourceSignature(
                     pPacket->m_oDest.GetAddress(), pPacket->m_oDest.GetPort()
                 );
                 pConnect->m_uiConnectionSignature = uiSignature;

@@ -2368,7 +2368,15 @@
                     "/Ob1"
                 ]
             },
-            "network/quazal/Transport/Routing/RoutingStream.cpp": "NonMatching",
+            "network/quazal/Transport/Routing/RoutingStream.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
             "network/quazal/AccountManagement/Client/JobLoginOrCreateAccount.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
@@ -2391,7 +2399,15 @@
             },
             "network/quazal/Foundation/Protocol/DataDDL.cpp": "NonMatching",
             "network/quazal/Encryption/RC4/RC4Encryption.cpp": "NonMatching",
-            "network/quazal/Transport/UDP/UDPTransport.cpp": "NonMatching",
+            "network/quazal/Transport/UDP/UDPTransport.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
             "network/quazal/Compression/ZLib/ZLibCompression.cpp": "NonMatching",
             "network/quazal/SystemComponents.cpp": "NonMatching",
             "network/quazal/Authentication/Client/AuthenticationClient.cpp": "NonMatching",
@@ -2404,8 +2420,24 @@
             "network/quazal/SessionClock/SessionClockExtension.cpp": "NonMatching",
             "network/quazal/DupSpace/DupSpaceExtension.cpp": "NonMatching",
             "network/quazal/GlobalDiscovery/GlobalDiscoveryExtension.cpp": "NonMatching",
-            "network/quazal/Transport/Interface/JobConnectEndPoint.cpp": "NonMatching",
-            "network/quazal/Transport/Interface/TransportSignatureGenerator.cpp": "NonMatching",
+            "network/quazal/Transport/Interface/JobConnectEndPoint.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
+            "network/quazal/Transport/Interface/TransportSignatureGenerator.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
             "network/quazal/Transport/PRUDP/PRUDPEndPoint.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
@@ -2416,8 +2448,25 @@
             },
             "network/quazal/Transport/Interface/XboxConnectivityTester.cpp": "NonMatching",
             "network/quazal/Stack/Core/IOCompletionNotifier.cpp": "NonMatching",
-            "network/quazal/Transport/UDP/QueuingSocket.cpp": "NonMatching",
-            "network/quazal/Stack/Core/BerkeleySocketDriver.cpp": "NonMatching",
+            "network/quazal/Transport/UDP/QueuingSocket.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
+            "network/quazal/Stack/Core/BerkeleySocketDriver.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/GR-",
+                    "/EHs-c-"
+                ]
+            },
             "network/quazal/Authentication/Client/TicketManager.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
@@ -2427,7 +2476,16 @@
                     "/Ob1"
                 ]
             },
-            "network/quazal/SecureTransport/JobConnectSecureEndPoint.cpp": "NonMatching",
+            "network/quazal/SecureTransport/JobConnectSecureEndPoint.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/EHs-c-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
             "network/quazal/DupSpace/DefaultCellDDL.cpp": "NonMatching",
             "network/quazal/DupSpace/DuplicationSpaceTable.cpp": "NonMatching",
             "network/quazal/DupSpace/MatchOperation.cpp": {
@@ -2439,7 +2497,15 @@
                     "/Ob1"
                 ]
             },
-            "network/quazal/Transport/Interface/HighLevelStream.cpp": "NonMatching",
+            "network/quazal/Transport/Interface/HighLevelStream.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
             "network/quazal/Transport/UDP/PacketIn.cpp": "NonMatching",
             "network/quazal/Authentication/Client/JobTicketManagerLogin.cpp": "NonMatching",
             "network/quazal/Authentication/Client/JobTicketManagerAcquireTicket.cpp": "NonMatching"

@@ -446,7 +446,7 @@ namespace Quazal {
             PRUDPEndPoint *pEndPoint = NULL;
             InetAddress *pSource = &packet->m_oSource;
             unsigned int uiSession =
-                m_oSessionIDs.Lookup(packet->m_oSource.GetAddress(), packet->m_oSource.GetPortNumber());
+                m_oSignatureGenerator.ComputeSourceSignature(packet->m_oSource.GetAddress(), packet->m_oSource.GetPortNumber());
             if (packet->GetSignature() != uiSession && packet->GetType() != Packet::SYN
                 && packet->GetType() != Packet::DISCONNECT)
                 return false;
