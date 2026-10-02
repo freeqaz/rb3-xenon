@@ -1910,11 +1910,9 @@ Instance.cpp:
 	.text       start:0x824EA298 end:0x824ED404
 
 DepthBuffer3D.cpp:
-	.pdata      start:0x8223AE20 end:0x8223AE68
 	.text       start:0x826EBF20 end:0x826EBF28
 	.text       start:0x826FB9C8 end:0x826FB9D0
 	.text       start:0x82701FF0 end:0x82701FF8
-	.text       start:0x82741040 end:0x82741350
 
 MicClientMapper.cpp:
 	.pdata      start:0x82238738 end:0x82238748
@@ -5520,7 +5518,7 @@ CharServoBone.cpp:
 	.text       start:0x82376178 end:0x82376D3C
 	.text       start:0x825459E0 end:0x825459E8
 
-Mat.cpp:
+system/rndobj/Mat.cpp:
 	.pdata      start:0x8220CB00 end:0x8220CB08
 	.pdata      start:0x8220CB10 end:0x8220CB20
 	.pdata      start:0x8220CB20 end:0x8220CB30
@@ -6896,6 +6894,10 @@ AllocInfo.cpp:
 system/rnddx9/Utl.cpp:
 	.pdata      start:0x8223AB48 end:0x8223AB58
 	.text       start:0x8273D658 end:0x8273D7C8
+
+system/rnddx9/Mat.cpp:
+	.pdata      start:0x8223AE20 end:0x8223AE68
+	.text       start:0x82741040 end:0x82741350
 
 system/rnddx9/CubeTex.cpp:
 	.pdata      start:0x8223AB58 end:0x8223ABA8

@@ -320,5 +320,3 @@ END_COPYS
 #undef gRev
 #undef gAltRev
 
-// sw2 scatter-include (default/DepthBuffer3D <- rnddx9/Mat.cpp)
-#include "rnddx9/Mat.cpp"
