@@ -1,10 +1,11 @@
 #pragma once
+#include "Platform/RootObject.h"
 
 namespace Quazal {
-    class DOID {
+    class DOID : public RootObject {
     public:
-        DOID(unsigned int ui) : m_uiValue(ui) {}
-        DOID(const DOID &id) : m_uiValue(id.m_uiValue) {}
+        DOID(unsigned int ui = 0) : m_uiValue(ui) {}
+        DOID(const DOID &o) : m_uiValue(o.m_uiValue) {}
         operator unsigned int() const { return m_uiValue; }
         bool IsNull() const { return (unsigned int)*this == 0; }
 

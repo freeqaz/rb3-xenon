@@ -1,5 +1,6 @@
 #pragma once
 #include "Platform/MemoryManager.h"
+#include "Core/PseudoSingleton.h"
 #include "Platform/RootObject.h"
 #include "Plugins/StreamSettings.h"
 
@@ -60,7 +61,7 @@ namespace Quazal {
                 unsigned int uiCount = 0xffffffc0;
                 mValueInContextList = new T[uiCount];
             } else {
-                mValueInContextList = (StreamSettings *)QUAZAL_DEFAULT_ALLOC(
+                mValueInContextList = (T *)QUAZAL_DEFAULT_ALLOC(
                     s_uiNbOfExtraContexts * 0x50, 0x77, _InstType10
                 );
             }
@@ -82,6 +83,15 @@ namespace Quazal {
         }
         virtual PseudoGlobalVariableRoot *GetNext() { return mNext; }
         virtual void SetNext(PseudoGlobalVariableRoot *root) { mNext = root; }
+
+        T &GetValue() {
+            unsigned int uiContext = PseudoSingleton::GetCurrentContext();
+            if (uiContext == 0) {
+                return mValueInDefaultContext;
+            } else {
+                return mValueInContextList[uiContext];
+            }
+        }
 
         T *mValueInContextList;
         T mValueInDefaultContext;

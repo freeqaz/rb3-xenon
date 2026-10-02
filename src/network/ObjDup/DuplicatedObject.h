@@ -4,9 +4,12 @@
 #include "DOHandle.h"
 #include "ObjDup/MasterStationRef.h"
 #include "ObjDup/DOOperation.h"
+#include "ObjDup/DORefTemplate.h"
 #include "Platform/CriticalSection.h"
 #include "Platform/ScopedCS.h"
 #include "Selection.h"
+#include "ObjDup/DOID.h"
+#include "Platform/SystemError.h"
 
 namespace Quazal {
     class DataSet;
@@ -15,14 +18,15 @@ namespace Quazal {
     class DOClass;
     class Station;
     class WKHandle;
-    class DOID;
     class OperationManager;
     class RemoveFromStoreOperation;
     class AddToStoreOperation;
     class ChangeMasterStationOperation;
     class ChangeDupSetOperation;
     class CallMethodOperation;
-    class UpdateDatasetsOperation;
+    class UpdateDataSetOperation;
+    class FetchContext;
+    class MigrationContext;
     template <class T>
     class qList;
     template <class T>
@@ -52,6 +56,7 @@ namespace Quazal {
 
         // Retail source order (0x82A6FC78..0x82A76B58).
         bool IsAKindOf(unsigned int) const;
+        void SetMasterStation(const MasterStationRef &);
         bool UpdateImpl(DataSet *, const Time &);
         bool RefreshImpl(DataSet *, const Time &);
         bool SpecificExtractADataset(Message *, unsigned char);
@@ -69,40 +74,49 @@ namespace Quazal {
         bool ChangeMasterStation(
             DOHandle, DOHandle, const MasterStationRef &, const qList<DOHandle> *, unsigned int
         );
-        void UpdateDatasets(Message *, DOHandle, unsigned char);
-        DOOperation *GetCurrentOperation();
-        OperationManager *GetOperationManager();
+        static void UpdateDatasets(Message *, DOHandle, unsigned char);
+        static DOOperation *GetCurrentOperation();
+        static OperationManager *GetOperationManager();
         bool ExecuteOperation(DOOperation &);
-        bool ExecRemoveFromStore(const RemoveFromStoreOperation &);
-        bool ExecAddToStore(const AddToStoreOperation &);
-        bool ExecChangeMasterStation(const ChangeMasterStationOperation &);
-        bool ExecChangeDupSet(const ChangeDupSetOperation &);
+        bool PerformOperation(DOOperation *);
+        void ExecRemoveFromStore(const RemoveFromStoreOperation &);
+        void ExecAddToStore(const AddToStoreOperation &);
+        void ExecChangeMasterStation(const ChangeMasterStationOperation &);
+        void ExecChangeDupSet(const ChangeDupSetOperation &);
+        void ForgetDuplicaOn(DOHandle);
         bool FaultRecoveryImpl(DOOperation *);
         bool PerformFaultRecovery(DOHandle, LogicalClockTmpl<unsigned char>);
-        bool SendToAllDuplicas(Message *, unsigned int);
-        bool SendToSomeDuplicas(Selection *, Message *, unsigned int);
+        void DispatchRMCCall(const CallMethodOperation &);
+        void ExecUpdateDataSet(const UpdateDataSetOperation &);
+        static bool SendConnectOrphanRequest(FetchContext *, DOHandle);
+        void SendToAllDuplicas(Message *, unsigned int);
+        void SendToSomeDuplicas(Selection *, Message *, unsigned int);
         bool IsGlobal() const;
+        bool EmigrateTo(MigrationContext *, DOHandle);
         bool MigrationInProgress() const;
         bool AttemptEmigration(DOHandle);
-        bool PrepareToLeave();
-        bool SelectNewLocation(unsigned int);
+        void PrepareToLeave();
+        DOHandle SelectNewLocation(unsigned int);
         bool IsADuplica() const;
         bool IsADuplicationMaster() const;
         bool IsAWellKnownDO() const;
         unsigned int GetMasterID() const;
-        bool CompleteDecreaseRefCount();
+        void ReleaseMainReference();
+        void CompleteDecreaseRefCount();
+        bool Refresh();
         void SetFlag(unsigned short);
         void ClearFlag(unsigned short);
         bool DeleteMainRef();
         bool DeleteDuplicaMainRef();
+        bool DeleteMainRefImpl();
         bool ConnectOrphanDuplica();
         bool Publish(unsigned int);
         void FillDuplicaStationsList(qList<DOHandle> *);
-        bool CreateWellKnown(WKHandle &);
-        bool Create(unsigned int, unsigned int);
-        bool Create(unsigned int, DOID);
-        bool CreateMasterImpl(DOHandle, unsigned int, DOID);
-        bool CreateDuplica(DOHandle, const MasterStationRef &);
+        static DuplicatedObject *CreateWellKnown(WKHandle &);
+        static DuplicatedObject *Create(unsigned int, unsigned int);
+        static DuplicatedObject *Create(unsigned int, DOID);
+        static DuplicatedObject *CreateMasterImpl(DOHandle, unsigned int, DOID);
+        static DuplicatedObject *CreateDuplica(DOHandle, const MasterStationRef &);
         void SetStationSpecialRelevance();
         void ReleaseReferenceToMaster();
         void AcquireReferenceToMaster();
@@ -113,7 +127,8 @@ namespace Quazal {
         bool IsInDuplicationSet(DOHandle) const;
         void AddToDuplicationSet(DuplicatedObject *);
         bool RemoveFromDuplicationSet(DOHandle);
-        void RemoveAllDuplicasOnLeavingStation(DOHandle);
+        static void RemoveAllDuplicasOnLeavingStation(DOHandle);
+        bool IsASettledMaster() const;
 
         void SetInitialState(const QEvent &);
         StateFuncFactory ValidState(const QEvent &);
@@ -130,11 +145,54 @@ namespace Quazal {
         StateFuncFactory ConnectedDuplicaState(const QEvent &);
         StateFuncFactory DeletedDuplicaState(const QEvent &);
 
-        void CallMethod(const CallMethodOperation &);
-        void ExecUpdateDataSet(const UpdateDatasetsOperation &);
-        void SetMasterStation(const MasterStationRef &);
+        DOHandle GetHandle() const {
+            DOID oID = m_dohMyself.GetID();
+            if (oID.m_uiValue == 0) {
+                SystemError::SignalError(0, 0, 0xE000000E, 0);
+                return DOHandle(0);
+            } else {
+                return m_dohMyself;
+            }
+        }
+
+        // The root DO class id (retail's DuplicatedObject check at 0x82A76568
+        // passes 1).
+        static unsigned int GetClassID() { return 1; }
 
         bool FlagIsSet(unsigned short f) const { return (m_uiFlags & f) == f; }
+        bool IsDeleted() const { return !FlagIsSet(1); }
+
+        void ReleaseReference(bool bRelevance) {
+            bool bKeep = true;
+            {
+                volatile ScopedCS cs(s_csRefCount);
+                if (bRelevance) {
+                    m_uiRelevanceCount--;
+                }
+                m_uiRefCount--;
+                if (m_uiRefCount == 0) {
+                    m_uiRefCount++;
+                    bKeep = false;
+                }
+            }
+            if (!bKeep) {
+                ReleaseMainReference();
+            }
+        }
+
+        void DecreaseRefCount() {
+            bool bComplete = false;
+            {
+                volatile ScopedCS cs(s_csRefCount);
+                m_uiRefCount--;
+                if (m_uiRefCount == 0) {
+                    bComplete = true;
+                }
+            }
+            if (bComplete) {
+                CompleteDecreaseRefCount();
+            }
+        }
 
         void AcquireMainReference() {
             volatile ScopedCS cs(s_csRefCount);
@@ -152,4 +210,19 @@ namespace Quazal {
         Selection m_setCachedDuplicationSet; // 0x4c
     };
 
+
+    template <class T>
+    bool DORefTemplate<T>::IsValid() const {
+        if (GetDOPtr() == 0) {
+            SystemError::SignalError(0, 0, 0xA0030004, 0);
+            return false;
+        } else {
+            if (!DuplicatedObject::GetDOClass(GetDOPtr()->m_dohMyself.GetDOClassID())
+                     ->IsAKindOf(T::GetClassID())) {
+                SystemError::SignalError(0, 0, 0xE003000C, 0);
+                return false;
+            }
+            return true;
+        }
+    }
 }

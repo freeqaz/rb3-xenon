@@ -17,6 +17,7 @@ namespace Quazal {
         virtual void ForceImplOperationCommonMethodsMacro() = 0;
         virtual void TraceImpl(_Event, unsigned int) const = 0;
 
+        void Trace(_Event) const;
         void Trace(unsigned int) const;
         DOHandle GetOrigin() const { return m_uiOrigin; }
         void SetUserData(UserContext);
