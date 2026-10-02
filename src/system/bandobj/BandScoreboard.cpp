@@ -9,6 +9,17 @@
 
 INIT_REVS(BandScoreboard)
 
+// Retail stores both rev words through ONE base register (altRev at +0, rev at
+// +4), which MSVC emits only for an internal-linkage aggregate -- the class
+// statics from DECLARE_REVS/INIT_REVS each take their own relocation.  Same
+// lever as BandButton.cpp.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs;
+#define gAltRev gRevs.altRev
+#define gRev gRevs.rev
+
 BandScoreboard::BandScoreboard()
     : mScore(-1), mThousandsCommaMesh(this, 0), mMillionsCommaMesh(this, 0),
       mNumMeshes(this), mSrcMeshes(this), mStarDisplay(this, 0) {}
