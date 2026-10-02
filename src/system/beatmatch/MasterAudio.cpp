@@ -883,8 +883,8 @@ void TrackData::SetMapping(const char *cc) {
 
 TrackData::~TrackData() { RELEASE(mChannelMapping); }
 
-int TrackData::GetSucceeding(int slot) const {
-    int ret;
+bool TrackData::GetSucceeding(int slot) const {
+    bool ret;
     if (mMultiSlot) {
         if (slot == -1) {
             MILO_ASSERT(slot != -1, 0x698);
