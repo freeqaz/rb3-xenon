@@ -254,7 +254,11 @@ namespace Quazal {
         bool IsJoining();
     };
 
-    class DebugString {};
+    // Compiled to nothing in this build; only its address reaches Job's ctor.
+    class DebugString {
+    public:
+        DebugString() {}
+    };
 
     class Job : public RootObject {
     public:
@@ -274,12 +278,16 @@ namespace Quazal {
     public:
         JobProcessMessage(ObjDupProtocol *, Message *);
         virtual void Execute();
+
+        char m_pad38[8];
     };
 
     class JobProcessJoinRequest : public Job {
     public:
         JobProcessJoinRequest(EndPoint *, class StationInfo *, class JoinRequestData *);
         virtual void Execute();
+
+        char m_pad38[0x58];
     };
 
     class Scheduler {
@@ -316,7 +324,13 @@ namespace Quazal {
     // The type-3 component; it owns the scheduler.
     class SchedulerHolder {
     public:
-        static SchedulerHolder *GetInstance();
+        static SchedulerHolder *GetInstance() {
+            InstanceControl *inst =
+                (InstanceControl *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(
+                    3, PseudoSingleton::GetCurrentContext()
+                );
+            return inst ? (SchedulerHolder *)inst->m_pDelegatorInstance : 0;
+        }
         Scheduler *GetScheduler() { return m_pScheduler; }
 
         char m_pad0[8];
@@ -327,8 +341,9 @@ namespace Quazal {
         SchedulerHolder *pHolder = SchedulerHolder::GetInstance();
         if (pHolder == 0) {
             return 0;
+        } else {
+            return pHolder->GetScheduler();
         }
-        return pHolder->GetScheduler();
     }
 
     class TraceLog {
@@ -616,6 +631,7 @@ namespace Quazal {
         char m_pad4[0x28];
         void *m_pResult; // 0x2C
         unsigned short m_usCallID; // 0x30
+        char m_pad32[0x1A];
     };
     class FetchContext {
     public:
@@ -1389,24 +1405,26 @@ namespace Quazal {
         DOHandle &hTarget,
         unsigned short &usMethodID
     ) {
-        CallMethodOperation *pOperation = new (__FILE__, 0x29D)
+        CallMethodOperation *pOp = new (__FILE__, 0x29D)
             CallMethodOperation(usCallID, hCaller, uiFlags, hTarget, usMethodID, pMsg);
-        StreamPosition oPosition = pMsg->GetPosition();
-        pOperation->Prepare();
-        if (!pOperation->PostponeOperation()) {
+        StreamPosition posMsg = pMsg->GetPosition();
+        pOp->Prepare();
+        if (!pOp->PostponeOperation()) {
             if (uiFlags & 4) {
-                pOperation->Execute();
+                pOp->Execute();
             } else {
-                pOperation->Abort();
+                pOp->Abort();
             }
-            delete pOperation;
+            delete pOp;
             return true;
+        } else {
+            pOp->Execute();
+            pMsg->SetPosition(posMsg);
+            JobExecuteDelayedRMC *pJob =
+                new (__FILE__, 0x2AB) JobExecuteDelayedRMC(pOp, pMsg);
+            GetScheduler()->Queue(pJob, false);
+            return false;
         }
-        pOperation->Execute();
-        pMsg->SetPosition(oPosition);
-        JobExecuteDelayedRMC *pJob = new (__FILE__, 0x2AB) JobExecuteDelayedRMC(pOperation, pMsg);
-        GetScheduler()->Queue(pJob, false);
-        return false;
     }
 
 }
