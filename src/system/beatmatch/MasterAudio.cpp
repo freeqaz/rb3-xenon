@@ -163,7 +163,10 @@ void MasterAudio::SetupChannels(SongInfo *info) {
     for (int i = 0; i < vols.size(); i++) {
         if (!info->IsPlayTrackChannel(i)) {
             FaderGroup *curGrp = mSongStream->ChannelFaders(i);
-            if (std::find(crowd_channels.begin(), crowd_channels.end(), i) != crowd_channels.end()) {
+            // retail materialises the membership test as a bool (subic/subfe/clrlwi.)
+            bool isCrowd =
+                std::find(crowd_channels.begin(), crowd_channels.end(), i) != crowd_channels.end();
+            if (isCrowd) {
                 curGrp->Add(mBaseCrowdFader);
                 curGrp->Add(mCrowdFader);
                 curGrp->Add(mPracticeFader);
