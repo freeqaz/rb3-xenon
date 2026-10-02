@@ -746,7 +746,7 @@ namespace Quazal {
 #define JCS_STEP(name) Step((JobStateFunc)&JobConnectStation::name, "JobConnectStation::" #name)
 
     JobConnectStation::JobConnectStation(DOHandle hStation)
-        : JobChangeConnection(String("JobConnectStation"), hStation),
+        : JobChangeConnection("JobConnectStation", hStation),
           m_oUse(NetZ::GetInstance()->GetSystemComponent(), NULL),
           m_oURLsContext(DOHandle(), true) {
         m_pEndPoint = NULL;
