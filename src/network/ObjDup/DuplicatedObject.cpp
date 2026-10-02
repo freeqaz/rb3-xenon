@@ -7,6 +7,9 @@
 #include "Platform/SystemError.h"
 #include "ObjDup/DOClass.h"
 #include "Platform/Time.h"
+#include "ObjDup/Station.h"
+#include "ObjDup/DOSelections.h"
+#include "ObjDup/CallRegister.h"
 
 namespace Quazal {
 
@@ -163,7 +166,81 @@ namespace Quazal {
         }
     }
 
+    // ---- 0x82A72D58..0x82A74220 ----
+
+    void DuplicatedObject::DispatchRMCCall(const CallMethodOperation &op) {
+        GetDOClass(m_dohMyself.GetDOClassID())->DispatchRMCCall(op);
+    }
+
+    void DuplicatedObject::SendToAllDuplicas(Message *pMessage, unsigned int ui) {
+        SendToSomeDuplicas(&m_setDuplicationSet, pMessage, ui);
+    }
+
+    bool DuplicatedObject::IsGlobal() const {
+        if (IsAWellKnownDO()) {
+            return true;
+        }
+        if (HasGlobalDOProperty() && !HasForcedNonGlobalProperty()) {
+            return true;
+        }
+        return false;
+    }
+
+    bool DuplicatedObject::MigrationInProgress() const {
+        return CallRegister::GetInstance()->MigrationInProgress(GetHandle(), DOHandle());
+    }
+
+    bool DuplicatedObject::IsADuplica() const {
+        if (DOHandle(m_refMasterStation.m_hReferencedDO.mValue) == DOHandle()) {
+            return false;
+        }
+        return !IsADuplicationMaster();
+    }
+
+    bool DuplicatedObject::IsADuplicationMaster() const {
+        if (DOHandle(m_refMasterStation.m_hReferencedDO.mValue) == DOHandle()) {
+            return false;
+        }
+        if (Station::GetLocalStationHandle() == DOHandle()) {
+            return true;
+        }
+        return DOHandle(m_refMasterStation.m_hReferencedDO.mValue) == Station::GetLocalStationHandle();
+    }
+
+    bool DuplicatedObject::IsAWellKnownDO() const { return m_dohMyself.IsAWKHandle(); }
+
+    unsigned int DuplicatedObject::GetMasterID() const {
+        return Station::GetStationIDFromHandle(m_refMasterStation.m_hReferencedDO.mValue);
+    }
+
+    void DuplicatedObject::ReleaseMainReference() {
+        ScopedCS cs(Scheduler::GetInstance()->unk38);
+        DecreaseRefCount();
+    }
+
+    void DuplicatedObject::CompleteDecreaseRefCount() {
+        DOSelections::GetInstance()->RemoveFromAllSelections(this);
+        SetFlag(8);
+        GetDOClass(m_dohMyself.GetDOClassID())->Delete(this);
+    }
+
     void DuplicatedObject::SetFlag(unsigned short f) { m_uiFlags = m_uiFlags | f; }
     void DuplicatedObject::ClearFlag(unsigned short f) { m_uiFlags = m_uiFlags & (f ^ 0xFFFF); }
+
+    bool DuplicatedObject::DeleteMainRef() {
+        ScopedCS cs(Scheduler::GetInstance()->unk38);
+        if (IsADuplica()) {
+            SystemError::SignalError(0, 0, 0xE0030000, 0);
+            return false;
+        }
+        return DeleteMainRefImpl();
+    }
+
+    bool DuplicatedObject::DeleteDuplicaMainRef() {
+        ScopedCS cs(Scheduler::GetInstance()->unk38);
+        return DeleteMainRefImpl();
+    }
+
+    // ---- end 0x82A72D58..0x82A74220 ----
 
 }

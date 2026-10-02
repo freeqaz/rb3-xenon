@@ -7,6 +7,7 @@
 #include "Platform/CriticalSection.h"
 #include "Platform/ScopedCS.h"
 #include "Selection.h"
+#include "Platform/SystemError.h"
 
 namespace Quazal {
     class DataSet;
@@ -21,6 +22,10 @@ namespace Quazal {
     class AddToStoreOperation;
     class ChangeMasterStationOperation;
     class ChangeDupSetOperation;
+    class CallMethodOperation;
+    class DataSetsMessageOperation;
+    class FetchContext;
+    class MigrationContext;
     template <class T>
     class qList;
     template <class T>
@@ -77,22 +82,28 @@ namespace Quazal {
         bool ExecChangeDupSet(const ChangeDupSetOperation &);
         bool FaultRecoveryImpl(DOOperation *);
         bool PerformFaultRecovery(DOHandle, LogicalClockTmpl<unsigned char>);
-        bool SendToAllDuplicas(Message *, unsigned int);
-        bool SendToSomeDuplicas(Selection *, Message *, unsigned int);
+        void DispatchRMCCall(const CallMethodOperation &);
+        void ExtractDataSets(const DataSetsMessageOperation &);
+        static bool SendConnectOrphanRequest(FetchContext *, DOHandle);
+        void SendToAllDuplicas(Message *, unsigned int);
+        void SendToSomeDuplicas(Selection *, Message *, unsigned int);
         bool IsGlobal() const;
+        bool EmigrateTo(MigrationContext *, DOHandle);
         bool MigrationInProgress() const;
         bool AttemptEmigration(DOHandle);
-        bool PrepareToLeave();
-        bool SelectNewLocation(unsigned int);
+        void PrepareToLeave();
+        DOHandle SelectNewLocation(unsigned int);
         bool IsADuplica() const;
         bool IsADuplicationMaster() const;
         bool IsAWellKnownDO() const;
         unsigned int GetMasterID() const;
-        bool CompleteDecreaseRefCount();
+        void ReleaseMainReference();
+        void CompleteDecreaseRefCount();
         void SetFlag(unsigned short);
         void ClearFlag(unsigned short);
         bool DeleteMainRef();
         bool DeleteDuplicaMainRef();
+        bool DeleteMainRefImpl();
         bool ConnectOrphanDuplica();
         bool Publish(unsigned int);
         void FillDuplicaStationsList(qList<DOHandle> *);
@@ -129,6 +140,29 @@ namespace Quazal {
         StateFuncFactory DeletedDuplicaState(const QEvent &);
 
         bool FlagIsSet(unsigned short f) const { return (m_uiFlags & f) == f; }
+
+        DOHandle GetHandle() const {
+            if (m_dohMyself.GetDOID() == 0) {
+                SystemError::SignalError(0, 0, 0xE000000E, 0);
+                return DOHandle();
+            } else {
+                return m_dohMyself;
+            }
+        }
+
+        void DecreaseRefCount() {
+            bool bComplete = false;
+            {
+                volatile ScopedCS cs(s_csRefCount);
+                m_uiRefCount--;
+                if (m_uiRefCount == 0) {
+                    bComplete = true;
+                }
+            }
+            if (bComplete) {
+                CompleteDecreaseRefCount();
+            }
+        }
 
         void AcquireMainReference() {
             volatile ScopedCS cs(s_csRefCount);

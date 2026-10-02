@@ -17,5 +17,7 @@ namespace Quazal {
         int GetStationID() const;
 
         static Station *GetLocalInstance();
+        static DOHandle GetLocalStationHandle();
+        static unsigned int GetStationIDFromHandle(DOHandle);
     };
 }
