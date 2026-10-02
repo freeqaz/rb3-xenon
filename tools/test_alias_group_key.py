@@ -137,3 +137,13 @@ def test_render_map_skips_an_address_less_group():
 def test_render_map_still_renders_a_placed_group():
     out = _render([{"address": "0x82000000", "survivor": "surv_placed", "folded": ["fold_placed"]}])
     assert out.count("82000000") >= 2
+
+
+if __name__ == "__main__":
+    # W16-OA: this file is pytest-only, and run as a script it used to execute
+    # ZERO tests and exit 0 -- so the gate lanes ran (`python3 tools/test_*.py`)
+    # could not fail, and 7 duplicate survivors / 5 duplicate addresses reached
+    # scripts/symbol_aliases.json unseen.  Run its tests instead.
+    import sys as _sys
+    import pytest as _pytest
+    _sys.exit(_pytest.main([__file__, "-q", "-p", "no:cacheprovider"]))
