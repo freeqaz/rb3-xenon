@@ -749,8 +749,9 @@ Vector2 &DxRnd::DrawString(
             kVS_ViewProjMatrix, RndCam::Current()->GetViewProjMatrix()
         );
     }
+    if (cursor.x < widest) // retail: fcmpu/bge, then the line advance
+        cursor.x = widest;
     cursor.y += 18.0f;
-    cursor.x = Max(cursor.x, widest);
     return cursor;
 }
 
