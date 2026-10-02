@@ -1,15 +1,12 @@
 #pragma once
-
-#include "obj/ObjMacros.h"
 #include "obj/Object.h"
 #include "ui/UIComponent.h"
 #include "utl/BinStream.h"
 
-/** "Mini Leaderboard Display" -- RB3 (band3) layout.
- *  NOTE: this is the RB3 game's bandobj MiniLeaderboardDisplay, NOT the DC3
- *  hamobj version (which carries a DC3-only OldResourcePreload virtual and a
- *  mResourceDir member). AppMiniLeaderboardDisplay.h pulls this in via
- *  "bandobj/MiniLeaderboardDisplay.h" so it resolves to the clean RB3 layout.
+/** "Mini Leaderboard Display"
+ *  sizeof 0x17C (retail NewObject allocates 0x17C). No Update override: retail's
+ *  RndDrawable-subobject vtable (0x82030ce4) holds UIComponent::Update in slot 19,
+ *  and no own mResourceDir -- the dir is reached through UIComponent::mResource.
  */
 class MiniLeaderboardDisplay : public UIComponent {
 public:
@@ -25,6 +22,8 @@ public:
     virtual void PreLoad(BinStream &);
     virtual void PostLoad(BinStream &);
     virtual void DrawShowing();
+    // UIComponent (virtual only in the native build; see UIComponent.h)
+    UICOMP_DC3_VIRTUAL void OldResourcePreload(BinStream &);
 
     bool mAllowSoloScores; // 0x140
 
@@ -32,9 +31,10 @@ public:
     // ?StaticClassName@MiniLeaderboardDisplay@@, not @UIComponent, so retail
     // gives THIS class its own operator new and the derived App class inherits
     // it. Without it our row's only charged site was that relocation name
-    // (25/28 words equal, fuzzy 99.821). Positive control: the same-named
-    // hamobj/MiniLeaderboardDisplay already carries
-    // OBJ_MEM_OVERLOAD_INLINE_DEL(0x11) and its NewObject row is fuzzy 100.0.
+    // (25/28 words equal, fuzzy 99.821). This class's own
+    // NewObject and ??_G rows also read 100 with this operator-new-only form
+    // (they were measured unchanged when the .cpp moved onto this header from a
+    // copy that declared OBJ_MEM_OVERLOAD_INLINE_DEL(0x11)).
     //
     // operator new ONLY, for the reason spelled out in StarDisplay.h: declaring
     // an owned operator delete here lets MSVC inline it into the NewObject
@@ -67,6 +67,4 @@ public:
     NEW_OBJ(MiniLeaderboardDisplay)
     static void Init();
     static void Register() { REGISTER_OBJ_FACTORY(MiniLeaderboardDisplay) }
-
-    DECLARE_REVS;
 };

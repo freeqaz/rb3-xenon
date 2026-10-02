@@ -1,5 +1,4 @@
-#include "hamobj/MeterDisplay.h"
-#include "MeterDisplay.h"
+#include "bandobj/MeterDisplay.h"
 #include "bandobj/BandLabel.h"
 #include "math/Utl.h"
 #include "obj/Object.h"
@@ -218,14 +217,13 @@ void MeterDisplay::DrawShowing() {
         float f1 = TheTaskMgr.UISeconds() - unk4c;
         float period = mAnimPeriod;
         if (period > 0) {
-            int itouse = unk50;
-            if (itouse >= 0 && f1 > 0) {
+            if (unk50 >= 0 && f1 > 0) {
                 if (f1 < period) {
-                    f = ((f1 / period) * (float)(itouse - mCurrentValue)
+                    f = ((f1 / period) * (float)(unk50 - mCurrentValue)
                          + (float)mCurrentValue)
                         / (float)mMaxValue;
                 } else {
-                    mCurrentValue = itouse;
+                    mCurrentValue = unk50;
                     unk50 = -1;
                     f = (float)mCurrentValue / (float)mMaxValue;
                 }

@@ -4745,7 +4745,7 @@ Overlay.cpp:
 	.pdata      start:0x8220B070 end:0x8220B128
 	.text       start:0x82416B58 end:0x82417728
 
-MeterDisplay.cpp:
+system/bandobj/MeterDisplay.cpp:
 	.pdata      start:0x821FC230 end:0x821FC240
 	.pdata      start:0x821FC240 end:0x821FC250
 	.pdata      start:0x821FC250 end:0x821FC278
@@ -13440,7 +13440,7 @@ ScoreDisplay.cpp:
 	.text       start:0x82320838 end:0x82320844
 	.text       start:0x82320848 end:0x823208A0
 
-system/hamobj/MiniLeaderboardDisplay.cpp:
+system/bandobj/MiniLeaderboardDisplay.cpp:
 	.pdata      start:0x821FC178 end:0x821FC1A8
 	.pdata      start:0x821FC1A8 end:0x821FC1B8
 	.pdata      start:0x821FC1B8 end:0x821FC1D8
