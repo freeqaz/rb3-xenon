@@ -27,7 +27,6 @@ namespace Quazal {
         ~StationInfo();
         unsigned int GetMachineUniqueID() const;
         void InitMachineUniqueID();
-        void SetObserver(unsigned int ui) { m_hObserver.mValue = ui; }
     };
 
     class StationState : public _DS_StationState {

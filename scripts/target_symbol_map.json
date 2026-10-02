@@ -35411,7 +35411,7 @@
  "0x82a7cc40": "?InitIdentification@Station@Quazal@@QAAXPAVStationIdentification@2@@Z",
  "0x82a7cc80": "??4_DS_StationIdentification@Quazal@@QAAAAV01@ABV01@@Z",
  "0x82a7cce8": "?ConvertIDToDOHandle@Station@Quazal@@SA?AVDOHandle@2@I@Z",
- "0x82a7cd58": "?GetStationID@Station@Quazal@@QBAHXZ",
+ "0x82a7cd58": "?GetStationID@Station@Quazal@@QBAIXZ",
  "0x82a7ce08": "?ConvertDOHandleToID@Station@Quazal@@SAIVDOHandle@2@@Z",
  "0x82a7ce38": "?TestAndSetFaultFlag@Station@Quazal@@QAA_NXZ",
  "0x82a7cf88": "?TestAndSet@ProtectedFlag@Quazal@@QAAHXZ",

@@ -41,6 +41,7 @@ namespace Quazal {
 
         int m_iValue; // 0x0
         CriticalSection m_csLock; // 0x4
+        unsigned int m_uiUnk18; // 0x18
     };
 
     class Station : public _DO_Station {
@@ -82,7 +83,7 @@ namespace Quazal {
         static Station *GetLocalInstance();
         void InitIdentification(StationIdentification *);
         static DOHandle ConvertIDToDOHandle(unsigned int);
-        int GetStationID() const;
+        unsigned int GetStationID() const;
         static unsigned int ConvertDOHandleToID(DOHandle);
         bool TestAndSetFaultFlag();
         unsigned int GetProcessType() const;

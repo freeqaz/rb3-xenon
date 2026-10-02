@@ -382,14 +382,19 @@ namespace Quazal {
     class Station {
     public:
         static bool IsLocalStationMaster();
-        static Station *GetLocalStation();
-        bool IsDisconnected();
-        const char *GetStationURL(unsigned int);
+        // 0x82A76D98 (Session's TU) returns the session object; its +0x14 is
+        // the handle read below.
+        static Station *GetSessionMaster();
+        // The Station methods below are spelled the way Station.cpp maps them.
+        static DOHandle GetLocalStation();
+        static void InitiateFaultProcessingForStation(DOHandle, unsigned int);
+        bool IsFaulty() const;
+        const char *GetStationURL(int);
         unsigned int GetHandle() { return m_uiHandle; }
-        void ProcessEOS();
-        void SendMessage(Message *, bool);
-        unsigned int GetURLCount();
-        unsigned int GetID();
+        void SetAtEOS();
+        bool Send(Message *, unsigned int);
+        unsigned int GetStationID() const;
+        unsigned int GetMachineUniqueID() const;
         DOHandle GetHandleValue();
 
         char m_pad0[0x14];
@@ -748,10 +753,6 @@ namespace Quazal {
         virtual void PeerDisconnected(EndPoint *) = 0;
     };
 
-    namespace StationManager {
-        void FaultDetected(DOHandle, unsigned int);
-        DOHandle GetLocalStationHandle();
-    }
 
     class ObjDupProtocol : public Protocol {
     public:
@@ -920,7 +921,7 @@ namespace Quazal {
         m_oStationProxy.FaultDetection(pEndPoint);
         DOHandle hStation = pEndPoint->GetStationID();
         if (hStation != DOHandle()) {
-            StationManager::FaultDetected(hStation, uiReason);
+            Station::InitiateFaultProcessingForStation(hStation, uiReason);
         }
     }
 
@@ -945,7 +946,7 @@ namespace Quazal {
                 QueueMessage(
                     pMsg,
                     pEndPoint != 0 ? DOHandle(pEndPoint->GetStationID())
-                                   : StationManager::GetLocalStationHandle(),
+                                   : Station::GetLocalStation(),
                     pEndPoint,
                     false
                 );
@@ -1014,7 +1015,7 @@ namespace Quazal {
             DOHandle hStation = pMsg->GetSourceStation();
             StationRef refStation(hStation);
             if (refStation.IsValid()) {
-                if (refStation->IsDisconnected()) {
+                if (refStation->IsFaulty()) {
                     bResult = false;
                 }
             }
@@ -1185,7 +1186,7 @@ namespace Quazal {
         Message *pMsg = CreateMessage(1);
         pMsg->Append(&ucResponse, 1, true);
         if (ucResponse == 2) {
-            StationRef refStation(Station::GetLocalStation()->GetHandle());
+            StationRef refStation(Station::GetSessionMaster()->GetHandle());
             pMsg->AppendString(refStation->GetStationURL(0), 0x100);
         }
         return pMsg;
@@ -1452,7 +1453,7 @@ namespace Quazal {
         Message *pMsg = CreateMessage(0xD);
         *pMsg << pContext->GetCallID();
         *pMsg << pContext->GetTargetObject();
-        *pMsg << (unsigned int)StationManager::GetLocalStationHandle();
+        *pMsg << (unsigned int)Station::GetLocalStation();
         return pMsg;
     }
 
@@ -1500,7 +1501,7 @@ namespace Quazal {
         if (iOutcome != 0x60001) {
             StationRef refStation(hStation);
             Message *pOutcome = CreateCallOutcomeMessage(usCallID, iOutcome);
-            refStation->SendMessage(pOutcome, true);
+            refStation->Send(pOutcome, true);
             delete pOutcome;
         }
     }
@@ -1518,7 +1519,7 @@ namespace Quazal {
         oCallContext.CallMigration(
             pMsg,
             &usCallID,
-            StationManager::GetLocalStationHandle(),
+            Station::GetLocalStation(),
             &uiMethod,
             &uiTarget,
             &ucFlags,
@@ -1606,7 +1607,7 @@ namespace Quazal {
         Message *pEOS = CreateEOSMessage(hStation);
         Message *pCopy = new (__FILE__, 0x36E) Message(pEOS->GetBuffer());
         delete pEOS;
-        QueueMessage(pCopy, StationManager::GetLocalStationHandle(), 0, false);
+        QueueMessage(pCopy, Station::GetLocalStation(), 0, false);
     }
 
     bool ObjDupProtocol::ParseEOSMessage(
@@ -1626,7 +1627,7 @@ namespace Quazal {
     void ObjDupProtocol::ProcessEOS(const DOHandle &hStation) {
         StationRef refStation(hStation);
         if (refStation.IsValid()) {
-            refStation->ProcessEOS();
+            refStation->SetAtEOS();
         }
     }
 
@@ -1634,7 +1635,7 @@ namespace Quazal {
         if (m_bListeningOnWellKnown) {
             return false;
         }
-        StationRef refLocal(StationManager::GetLocalStationHandle());
+        StationRef refLocal(Station::GetLocalStation());
         if (!refLocal.IsValid()) {
             return false;
         }
@@ -1642,7 +1643,7 @@ namespace Quazal {
         oStations.GotoStart();
         oStations.Refresh();
         while (!oStations.EndReached()) {
-            bool bLower = oStations.Current()->GetID() == refLocal->GetID()
+            bool bLower = oStations.Current()->GetMachineUniqueID() == refLocal->GetMachineUniqueID()
                 && oStations.Current()->GetHandleValue() < refLocal->GetHandleValue();
             if (bLower) {
                 return false;
@@ -1726,7 +1727,7 @@ namespace Quazal {
     }
 
     bool ObjDupProtocol::AddLocalURLs(Station *pStation) {
-        if (NetZ::GetMode() != 1 || pStation->GetURLCount() == 1) {
+        if (NetZ::GetMode() != 1 || pStation->GetStationID() == 1) {
             StationURLList *pURLs = ((NetZ *)GetInstanceType1Delegator())->GetLocalURLs();
             ScopedCS oCS(pURLs->m_cs);
             if (!pURLs->IsEmpty()) {

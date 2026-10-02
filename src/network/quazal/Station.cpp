@@ -214,7 +214,7 @@ namespace Quazal {
     Station::Station()
         : m_oFaultFlag(), m_uiBundleCount(0) {
         m_pThis = this;
-        m_oStationInfo.SetObserver(0);
+        m_oStationInfo.m_hObserver = DOHandle();
         m_pEndPoint = 0;
         m_bAtEOS = false;
         SetStationSpecialRelevance();
@@ -226,8 +226,7 @@ namespace Quazal {
             StationManager::GetInstance()->TraceState(GetHandle(), 1);
         }
         JobListenOnWellKnown::Activate();
-        bool bDead = GetLocalStation() != GetHandle() && (GetState() == 4 || GetState() == 5);
-        if (bDead) {
+        if (GetHandle() != GetLocalStation() && (GetState() == 4 || GetState() == 5)) {
             StationManager::GetInstance()->AddDeadStation(GetHandle());
         }
     }
@@ -279,7 +278,7 @@ namespace Quazal {
 
     bool Station::IsAPeer() { return !IsLocal(); }
 
-    bool Station::IsLocal() { return GetHandle() == GetLocalStation(); }
+    bool Station::IsLocal() { return GetLocalStation() == GetHandle(); }
 
     bool Station::DiscoversGlobalObject(DuplicatedObject *pDO) {
         switch (GetState()) {
@@ -410,7 +409,7 @@ namespace Quazal {
         return hStation;
     }
 
-    int Station::GetStationID() const { return GetHandle().GetID(); }
+    unsigned int Station::GetStationID() const { return GetHandle().GetID(); }
 
     unsigned int Station::ConvertDOHandleToID(DOHandle hStation) { return hStation.GetID(); }
 

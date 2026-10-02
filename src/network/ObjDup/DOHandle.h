@@ -8,6 +8,10 @@ namespace Quazal {
         DOHandle(unsigned int val = 0) : mValue(val) {}
         DOHandle(const DOHandle &h) : mValue(h.mValue) {}
         ~DOHandle() {}
+        DOHandle &operator=(const DOHandle &h) {
+            mValue = h.mValue;
+            return *this;
+        }
 
         unsigned int GetDOClassID() const { return (mValue & 0xFFC00000) >> 22; }
         unsigned int GetID() const {
