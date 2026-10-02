@@ -7104,8 +7104,7 @@
    "survivor": "?_M_erase@?$vector@VRGRollChord@@V?$StlNodeAlloc@VRGRollChord@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVRGRollChord@@PAV3@0ABU__false_type@2@@Z",
    "folded": [
     "?_M_erase@?$vector@VTrainerSection@@V?$StlNodeAlloc@VTrainerSection@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVTrainerSection@@PAV3@0ABU__false_type@2@@Z",
-    "?_M_erase@?$vector@VUIMesh@UIComponent@@V?$StlNodeAlloc@VUIMesh@UIComponent@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVUIMesh@UIComponent@@PAV34@0ABU__false_type@2@@Z",
-    "??$__uninitialized_fill_n@PAUSongCollisionOutput@@IU1@@stlpmtx_std@@YAPAUSongCollisionOutput@@PAU1@IABU1@ABU__false_type@0@@Z"
+    "?_M_erase@?$vector@VUIMesh@UIComponent@@V?$StlNodeAlloc@VUIMesh@UIComponent@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVUIMesh@UIComponent@@PAV34@0ABU__false_type@2@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 3 census sites over 1 functions.",
    "repair_log": [
@@ -7113,6 +7112,15 @@
      "lane": "W16-NE 2026-10-02",
      "change": "survivor swapped to the map name",
      "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_fill_n@PAUSongCollisionOutput@@IU1@@stlpmtx_std@@YAPAUSongCollisionOutput@@PAU1@IABU1@ABU__false_type@0@@Z",
+     "lane": "W16-NE 2026-10-02",
+     "class": "DC3_ONLY_SPELLING_REFUTED",
+     "disposition": "withdrawn after the survivor swap",
+     "evidence": "icf_pair_adjudicate --chase: REFUTED (masked bodies differ). The spelling names a Dance Central type with no retail RTTI and no reference outside hamobj/gesture; it was this group's survivor only because the map row carried it. The map row now carries the RB3 instantiation the sandwiching TU compiles, whose own members chase PROVEN."
     }
    ]
   },
@@ -14219,15 +14227,22 @@
    "name": "$__destroy_range_aux",
    "address": "0x823873f8",
    "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAUCharInterestState@CharEyes@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUCharInterestState@CharEyes@@@0@0ABU__false_type@0@@Z",
-   "folded": [
-    "??$__destroy_range_aux@V?$reverse_iterator@PAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@@0@0ABU__false_type@0@@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 1 census sites over 2 functions.",
    "repair_log": [
     {
      "lane": "W16-NE 2026-10-02",
      "change": "survivor swapped to the map name",
      "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@@0@0ABU__false_type@0@@Z",
+     "lane": "W16-NE 2026-10-02",
+     "class": "DC3_ONLY_SPELLING_REFUTED",
+     "disposition": "withdrawn after the survivor swap",
+     "evidence": "icf_pair_adjudicate --chase: REFUTED (masked bodies differ). The spelling names a Dance Central type with no retail RTTI and no reference outside hamobj/gesture; it was this group's survivor only because the map row carried it. The map row now carries the RB3 instantiation the sandwiching TU compiles, whose own members chase PROVEN."
     }
    ]
   },
@@ -84832,11 +84847,17 @@
    "name": "6",
    "address": "0x8230c200",
    "survivor": "??6@YAAAVBinStream@@AAV0@ABVContentPoolMapping@SongSectionController@@@Z",
-   "folded": [
-    "??6@YAAAVBinStream@@AAV0@ABUNavItem@HamNavProvider@@@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??6@YAAAVBinStream@@AAV0@ABUNavItem@HamNavProvider@@@Z",
+     "lane": "W16-NE 2026-10-02",
+     "class": "DC3_ONLY_SPELLING_REFUTED",
+     "disposition": "withdrawn after the survivor swap",
+     "evidence": "icf_pair_adjudicate --chase: REFUTED (masked bodies differ). The spelling names a Dance Central type with no retail RTTI and no reference outside hamobj/gesture; it was this group's survivor only because the map row carried it. The map row now carries the RB3 instantiation the sandwiching TU compiles, whose own members chase PROVEN."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -87576,11 +87597,17 @@
    "name": "1?$vector",
    "address": "0x822ec870",
    "survivor": "??1?$vector@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
-   "folded": [
-    "??1?$vector@UMoveReplacer@@V?$StlNodeAlloc@UMoveReplacer@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??1?$vector@UMoveReplacer@@V?$StlNodeAlloc@UMoveReplacer@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-NE 2026-10-02",
+     "class": "DC3_ONLY_SPELLING_REFUTED",
+     "disposition": "withdrawn after the survivor swap",
+     "evidence": "icf_pair_adjudicate --chase: REFUTED (masked bodies differ). The spelling names a Dance Central type with no retail RTTI and no reference outside hamobj/gesture; it was this group's survivor only because the map row carried it. The map row now carries the RB3 instantiation the sandwiching TU compiles, whose own members chase PROVEN."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -96868,9 +96895,7 @@
    "name": "push_back",
    "address": "0x822ecbc8",
    "survivor": "?push_back@?$vector@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@2@@Z",
-   "folded": [
-    "?push_back@?$vector@VSongPattern@@V?$StlNodeAlloc@VSongPattern@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVSongPattern@@@Z"
-   ],
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -96885,6 +96910,15 @@
      "lane": "W16-NE 2026-10-02",
      "change": "survivor swapped to the map name",
      "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "?push_back@?$vector@VSongPattern@@V?$StlNodeAlloc@VSongPattern@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVSongPattern@@@Z",
+     "lane": "W16-NE 2026-10-02",
+     "class": "DC3_ONLY_SPELLING_REFUTED",
+     "disposition": "withdrawn after the survivor swap",
+     "evidence": "icf_pair_adjudicate --chase: REFUTED (masked bodies differ). The spelling names a Dance Central type with no retail RTTI and no reference outside hamobj/gesture; it was this group's survivor only because the map row carried it. The map row now carries the RB3 instantiation the sandwiching TU compiles, whose own members chase PROVEN."
     }
    ]
   },
@@ -98234,9 +98268,7 @@
    "name": "$?6VBattleStep",
    "address": "0x822a0ed8",
    "survivor": "??$?6VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@@Z",
-   "folded": [
-    "??$?6VBattleStep@@V?$StlNodeAlloc@VBattleStep@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VBattleStep@@V?$StlNodeAlloc@VBattleStep@@@stlpmtx_std@@@stlpmtx_std@@@Z"
-   ],
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -98251,6 +98283,15 @@
      "lane": "W16-NE 2026-10-02",
      "change": "survivor swapped to the map name",
      "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$?6VBattleStep@@V?$StlNodeAlloc@VBattleStep@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VBattleStep@@V?$StlNodeAlloc@VBattleStep@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+     "lane": "W16-NE 2026-10-02",
+     "class": "DC3_ONLY_SPELLING_REFUTED",
+     "disposition": "withdrawn after the survivor swap",
+     "evidence": "icf_pair_adjudicate --chase: REFUTED (masked bodies differ). The spelling names a Dance Central type with no retail RTTI and no reference outside hamobj/gesture; it was this group's survivor only because the map row carried it. The map row now carries the RB3 instantiation the sandwiching TU compiles, whose own members chase PROVEN."
     }
    ]
   },
@@ -98316,9 +98357,7 @@
    "name": "_M_insert_overflow_aux",
    "address": "0x824e1ac0",
    "survivor": "?_M_insert_overflow_aux@?$vector@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAU?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@ABU32@ABU__false_type@2@I_N@Z",
-   "folded": [
-    "?_M_insert_overflow_aux@?$vector@USongCollisionOutput@@V?$StlNodeAlloc@USongCollisionOutput@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUSongCollisionOutput@@ABU3@ABU__false_type@2@I_N@Z"
-   ],
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -98333,6 +98372,15 @@
      "lane": "W16-NE 2026-10-02",
      "change": "survivor swapped to the map name",
      "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "?_M_insert_overflow_aux@?$vector@USongCollisionOutput@@V?$StlNodeAlloc@USongCollisionOutput@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUSongCollisionOutput@@ABU3@ABU__false_type@2@I_N@Z",
+     "lane": "W16-NE 2026-10-02",
+     "class": "DC3_ONLY_SPELLING_REFUTED",
+     "disposition": "withdrawn after the survivor swap",
+     "evidence": "icf_pair_adjudicate --chase: REFUTED (masked bodies differ). The spelling names a Dance Central type with no retail RTTI and no reference outside hamobj/gesture; it was this group's survivor only because the map row carried it. The map row now carries the RB3 instantiation the sandwiching TU compiles, whose own members chase PROVEN."
     }
    ]
   },
@@ -98464,9 +98512,7 @@
    "name": "_M_insert_overflow_aux",
    "address": "0x823d4d18",
    "survivor": "?_M_insert_overflow_aux@?$vector@UWeight@PlayBack@CharLipSync@@V?$StlNodeAlloc@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUWeight@PlayBack@CharLipSync@@ABU345@ABU__false_type@2@I_N@Z",
-   "folded": [
-    "?_M_insert_overflow_aux@?$vector@UMoveReplacer@@V?$StlNodeAlloc@UMoveReplacer@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUMoveReplacer@@ABU3@ABU__false_type@2@I_N@Z"
-   ],
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -98481,6 +98527,15 @@
      "lane": "W16-NE 2026-10-02",
      "change": "survivor swapped to the map name",
      "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "?_M_insert_overflow_aux@?$vector@UMoveReplacer@@V?$StlNodeAlloc@UMoveReplacer@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUMoveReplacer@@ABU3@ABU__false_type@2@I_N@Z",
+     "lane": "W16-NE 2026-10-02",
+     "class": "DC3_ONLY_SPELLING_REFUTED",
+     "disposition": "withdrawn after the survivor swap",
+     "evidence": "icf_pair_adjudicate --chase: REFUTED (masked bodies differ). The spelling names a Dance Central type with no retail RTTI and no reference outside hamobj/gesture; it was this group's survivor only because the map row carried it. The map row now carries the RB3 instantiation the sandwiching TU compiles, whose own members chase PROVEN."
     }
    ]
   },
@@ -99329,9 +99384,7 @@
    "name": "push_back",
    "address": "0x8258e1e0",
    "survivor": "?push_back@?$vector@VStandIn@@V?$StlNodeAlloc@VStandIn@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVStandIn@@@Z",
-   "folded": [
-    "?push_back@?$vector@VArchiveSkeleton@@V?$StlNodeAlloc@VArchiveSkeleton@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVArchiveSkeleton@@@Z"
-   ],
+   "folded": [],
    "evidence": "Retail ??0BandProfile@@QAA@H@Z (0x8258e6f8) branches to the survivor at 0x8258ea80, inside the 4-iteration mStandIns.push_back(StandIn()) loop, where our compiled ctor calls this spelling. tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED (template twin: masked bodies equal, relocation targets differ), CHASED T1 PROVEN with every differing slot discharged as a verified fold (_M_insert_overflow_aux<ArchiveSkeleton> <- <StandIn>, MemOrPoolAlloc <- MemOrPoolAllocSTL), 0 CYCLE leaves.",
    "lane": "W16-KD 2026-10-01",
    "repair_log": [
@@ -99339,6 +99392,15 @@
      "lane": "W16-NE 2026-10-02",
      "change": "survivor swapped to the map name",
      "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "?push_back@?$vector@VArchiveSkeleton@@V?$StlNodeAlloc@VArchiveSkeleton@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVArchiveSkeleton@@@Z",
+     "lane": "W16-NE 2026-10-02",
+     "class": "DC3_ONLY_SPELLING_REFUTED",
+     "disposition": "withdrawn after the survivor swap",
+     "evidence": "icf_pair_adjudicate --chase: REFUTED (masked bodies differ). The spelling names a Dance Central type with no retail RTTI and no reference outside hamobj/gesture; it was this group's survivor only because the map row carried it. The map row now carries the RB3 instantiation the sandwiching TU compiles, whose own members chase PROVEN."
     }
    ]
   },
@@ -101251,9 +101313,7 @@
    "name": "__uninitialized_fill_n",
    "address": "0x824cd818",
    "survivor": "??$__uninitialized_fill_n@PAVFilePath@@IV1@@stlpmtx_std@@YAPAVFilePath@@PAV1@IABV1@ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_fill_n@PAUGrammar@SpeechMgr@@IU12@@stlpmtx_std@@YAPAUGrammar@SpeechMgr@@PAU12@IABU12@ABU__false_type@0@@Z"
-   ],
+   "folded": [],
    "evidence": "Fold group opened by W16-LB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
     {
@@ -101267,6 +101327,15 @@
      "lane": "W16-NE 2026-10-02",
      "change": "survivor swapped to the map name",
      "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_fill_n@PAUGrammar@SpeechMgr@@IU12@@stlpmtx_std@@YAPAUGrammar@SpeechMgr@@PAU12@IABU12@ABU__false_type@0@@Z",
+     "lane": "W16-NE 2026-10-02",
+     "class": "DC3_ONLY_SPELLING_REFUTED",
+     "disposition": "withdrawn after the survivor swap",
+     "evidence": "icf_pair_adjudicate --chase: REFUTED (masked bodies differ). The spelling names a Dance Central type with no retail RTTI and no reference outside hamobj/gesture; it was this group's survivor only because the map row carried it. The map row now carries the RB3 instantiation the sandwiching TU compiles, whose own members chase PROVEN."
     }
    ]
   },
@@ -101660,9 +101729,7 @@
    "name": "_M_fill_insert",
    "address": "0x823d4ea8",
    "survivor": "?_M_fill_insert@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVString@@IABV3@@Z",
-   "folded": [
-    "?_M_fill_insert@?$vector@VSongSection@@V?$StlNodeAlloc@VSongSection@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSongSection@@IABV3@@Z"
-   ],
+   "folded": [],
    "evidence": "Fold group opened by W16-MB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
     {
@@ -101676,6 +101743,15 @@
      "lane": "W16-NE 2026-10-02",
      "change": "survivor swapped to the map name",
      "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "?_M_fill_insert@?$vector@VSongSection@@V?$StlNodeAlloc@VSongSection@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSongSection@@IABV3@@Z",
+     "lane": "W16-NE 2026-10-02",
+     "class": "DC3_ONLY_SPELLING_REFUTED",
+     "disposition": "withdrawn after the survivor swap",
+     "evidence": "icf_pair_adjudicate --chase: REFUTED (masked bodies differ). The spelling names a Dance Central type with no retail RTTI and no reference outside hamobj/gesture; it was this group's survivor only because the map row carried it. The map row now carries the RB3 instantiation the sandwiching TU compiles, whose own members chase PROVEN."
     }
    ]
   },
@@ -101797,9 +101873,7 @@
    "name": "1?$vector",
    "address": "0x82387ee0",
    "survivor": "??1?$vector@UCharInterestState@CharEyes@@V?$StlNodeAlloc@UCharInterestState@CharEyes@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
-   "folded": [
-    "??1?$vector@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V?$StlNodeAlloc@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ"
-   ],
+   "folded": [],
    "evidence": "Fold group opened by W16-MB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
     {
@@ -101813,6 +101887,15 @@
      "lane": "W16-NE 2026-10-02",
      "change": "survivor swapped to the map name",
      "why": "the map row at this address was renamed from a Dance Central instantiation (type absent from retail RTTI and from every non-hamobj/gesture source) to the RB3 instantiation its sandwiching TU compiles; the old survivor is kept as a folded spelling, so the group membership is unchanged"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??1?$vector@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V?$StlNodeAlloc@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-NE 2026-10-02",
+     "class": "DC3_ONLY_SPELLING_REFUTED",
+     "disposition": "withdrawn after the survivor swap",
+     "evidence": "icf_pair_adjudicate --chase: REFUTED (masked bodies differ). The spelling names a Dance Central type with no retail RTTI and no reference outside hamobj/gesture; it was this group's survivor only because the map row carried it. The map row now carries the RB3 instantiation the sandwiching TU compiles, whose own members chase PROVEN."
     }
    ]
   },
