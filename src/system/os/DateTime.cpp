@@ -72,7 +72,7 @@ unsigned int DateTime::ToCode() const {
 }
 
 void DateTime::ToMiniDateString(class String &str) const {
-    str += MakeString("%02d/%02d", mMonth + 1, mDay);
+    str += MakeString("%02d/%02d", Month(), mDay);
 }
 
 int DateTime::Year() const { return mYear + 1900; }
@@ -150,7 +150,7 @@ void DateTime::Format(class String &str) const {
         }
     }
 
-    if (SearchReplace(str.c_str(), "%Y", MakeString("%04d", mYear + 1900), buf)) {
+    if (SearchReplace(str.c_str(), "%Y", MakeString("%04d", Year()), buf)) {
         str = buf;
     }
     if (SearchReplace(str.c_str(), "%H", MakeString("%02d", mHour), buf)) {

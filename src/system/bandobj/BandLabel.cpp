@@ -219,7 +219,7 @@ void BandLabel::FinishCount() {
     }
 }
 
-bool BandLabel::IsEmptyValue() const { return mTextToken == gNullStr; }
+bool BandLabel::IsEmptyValue() const { return mLabelText == gNullStr; }
 
 void BandLabel::FinishValueChange() {
     UILabel::SetDisplayText(unk1e8.c_str(), unk1f4);
