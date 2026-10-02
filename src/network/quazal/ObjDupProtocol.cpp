@@ -967,8 +967,8 @@ namespace Quazal {
     }
 
     void ObjDupProtocol::TraceMessage(Message *pMsg, unsigned char ucType) {
-        String strTrace;
-        ParseSpecificMessage(pMsg, ucType, false, &strTrace);
+        String strDesc;
+        ParseSpecificMessage(pMsg, ucType, false, &strDesc);
         pMsg->Rewind();
         unsigned char ucSkip = 0;
         pMsg->Extract(&ucSkip, 1, true);
@@ -1139,7 +1139,7 @@ namespace Quazal {
     bool ObjDupProtocol::ParseJoinRequestMessage(
         Message *pMsg, bool bProcess, bool bTrace, String *pTrace
     ) {
-        EndPoint *pEndPoint = pMsg->m_pSourceEndPoint;
+        EndPoint *pSourceEndPoint = pMsg->m_pSourceEndPoint;
         String strTrace;
         StationInfo *pInfo = new (__FILE__, 0x1AA) StationInfo(GetStationInfoFactory(1));
         pInfo->Read(pMsg, bTrace, &strTrace);
@@ -1149,7 +1149,7 @@ namespace Quazal {
             pTrace->Format("JOIN_REQUEST message. %s", strTrace.CStr());
         }
         if (bProcess) {
-            ProcessJoinRequest(pEndPoint, pInfo, pData);
+            ProcessJoinRequest(pSourceEndPoint, pInfo, pData);
         } else {
             delete pData;
             delete pInfo;
@@ -1523,16 +1523,16 @@ namespace Quazal {
         *pMsg >> usCallID;
         unsigned int uiOutcome;
         *pMsg >> uiOutcome;
-        int iOutcome = uiOutcome;
+        int eOutcome = uiOutcome;
         if (bTrace) {
             pTrace->Format(
                 "CALL_OUTCOME message for call %d. Outcome is %s",
                 usCallID,
-                OutcomeToString(iOutcome)
+                OutcomeToString(eOutcome)
             );
         }
         if (bProcess) {
-            ProcessCallOutcome(pMsg->GetSourceStation(), usCallID, iOutcome);
+            ProcessCallOutcome(pMsg->GetSourceStation(), usCallID, eOutcome);
         }
         return true;
     }
@@ -1585,9 +1585,9 @@ namespace Quazal {
 
     void ObjDupProtocol::QueueEOS(DOHandle hStation) {
         Message *pEOS = CreateEOSMessage(hStation);
-        Message *pMsg = new (__FILE__, 0x36E) Message(pEOS->GetBuffer());
+        Message *pCopy = new (__FILE__, 0x36E) Message(pEOS->GetBuffer());
         delete pEOS;
-        QueueMessage(pMsg, StationManager::GetLocalStationHandle(), 0, false);
+        QueueMessage(pCopy, StationManager::GetLocalStationHandle(), 0, false);
     }
 
     bool ObjDupProtocol::ParseEOSMessage(
