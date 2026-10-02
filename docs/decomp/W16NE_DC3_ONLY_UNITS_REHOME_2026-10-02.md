@@ -152,7 +152,7 @@ member; mostly anonymous-namespace spellings) that are equally refuted against t
 on main (194 / 194 pairs REFUTED). No brand-new membership is refuted. They were left in place under the
 no-prune rule.
 
-## 8. Gates (rebased tip, built)
+## 8. Gates (rebased tip, built; the native gate ran last on the final code, only this docs edit follows it)
 
 ```
 VALIDATE: PASS -- 1691 map-consistent, 297 tolerated (enumerated above), 0 contradicted, 1989 total
@@ -160,7 +160,7 @@ VALIDATE: PASS -- 1691 map-consistent, 297 tolerated (enumerated above), 0 contr
 [patch-state] OK: tree is a fixed point of 6 post-compile passes
 OK: both objdiff-cli entry points resolve the same ruler.
 configure.py rc=0 (no escape hatch); splits census: 0 duplicate headings, 0 .text overlaps (6,988 blocks)
-NATIVE_GATE_RESULT: see the commit that follows this one
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
 ```
 
 Merge notes: F2 and F3's text merge silently produced **two** `network/net/NetMessage.cpp` headings
