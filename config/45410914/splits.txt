@@ -837,6 +837,7 @@ BandCrowdMeter.cpp:
 	.pdata      start:0x821F6468 end:0x821F6478
 	.pdata      start:0x821F6478 end:0x821F6538
 	.pdata      start:0x821F6538 end:0x821F6540
+	.pdata      start:0x821F6548 end:0x821F6550
 	.pdata      start:0x821F6550 end:0x821F6568
 	.pdata      start:0x821F6568 end:0x821F6570
 	.pdata      start:0x821F6570 end:0x821F6598
@@ -864,6 +865,7 @@ BandCrowdMeter.cpp:
 	.text       start:0x822BCF28 end:0x822BCFD0
 	.text       start:0x822BCFD0 end:0x822BDCB0
 	.text       start:0x822BDCB0 end:0x822BDD10
+	.text       start:0x822BDDB0 end:0x822BDF00
 	.text       start:0x822BDF00 end:0x822BE020
 	.text       start:0x822BE020 end:0x822BE088
 	.text       start:0x822BE088 end:0x822BE2EC
@@ -3479,10 +3481,6 @@ User.cpp:
 HamMove.cpp:
 	.text       start:0x827B7ED0 end:0x827B7EE0
 
-HamNavProvider.cpp:
-	.pdata      start:0x821F6548 end:0x821F6550
-	.text       start:0x822BDDB0 end:0x822BDF00
-
 Flow.cpp:
 	.pdata      start:0x821F4C70 end:0x821F4C78
 	.pdata      start:0x821F7FA0 end:0x821F7FB0
@@ -3907,10 +3905,6 @@ CharIKFingers.cpp:
 	.text       start:0x823B44A8 end:0x823B4518
 	.text       start:0x823B4518 end:0x823B45A0
 	.text       start:0x823B45A0 end:0x823B4B3C
-
-HamPhotoDisplay.cpp:
-	.pdata      start:0x821F79E0 end:0x821F79E8
-	.text       start:0x822D38B0 end:0x822D3900
 
 HamRibbon.cpp:
 	.pdata      start:0x821F9710 end:0x821F9718
@@ -13652,11 +13646,13 @@ system/bandobj/UnisonIcon.cpp:
 	.pdata      start:0x821F7938 end:0x821F7940
 	.pdata      start:0x821F7940 end:0x821F7948
 	.pdata      start:0x821F7948 end:0x821F79E0
+	.pdata      start:0x821F79E0 end:0x821F79E8
 	.text       start:0x822D2BA8 end:0x822D2C28
 	.text       start:0x822D2C28 end:0x822D2C80
 	.text       start:0x822D2C80 end:0x822D2CEC
 	.text       start:0x822D2CEC end:0x822D2D58
 	.text       start:0x822D2D58 end:0x822D38B0
+	.text       start:0x822D38B0 end:0x822D3900
 
 system/bandobj/DialogDisplay.cpp:
 	.pdata      start:0x821FD230 end:0x821FD360
