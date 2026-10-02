@@ -35,6 +35,8 @@ namespace Quazal {
         unsigned int GetMasterID() const;
         bool IsADuplicationMaster() const;
         void SetStationSpecialRelevance();
+        void SetFlag(unsigned short);
+        void ClearFlag(unsigned short);
         void ReleaseReferenceToMaster();
         void AcquireReferenceToMaster();
         bool IsInDuplicationSet(DOHandle) const;

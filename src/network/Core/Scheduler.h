@@ -36,11 +36,10 @@ namespace Quazal {
         static CriticalSection s_csGlobalSystemLock;
         static Scheduler *GetInstance() {
             Core *inst = Core::GetInstance();
-            return !inst ? nullptr : inst->m_pScheduler;
             if (!inst)
                 return nullptr;
             else
-                return inst->m_pScheduler;
+                return inst->GetScheduler();
         }
 
         int unk4; // 0x4

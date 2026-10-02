@@ -12,6 +12,15 @@ namespace Quazal {
         void EnterImpl();
         void LeaveImpl();
 
+        void Enter() {
+            if (!MutexPrimitive::s_bNoOp)
+                EnterImpl();
+        }
+        void Leave() {
+            if (!MutexPrimitive::s_bNoOp)
+                LeaveImpl();
+        }
+
         MutexPrimitive m_oMutex;
         LockChecker m_oLockChecker;
     };

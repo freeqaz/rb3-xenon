@@ -18,7 +18,7 @@ namespace Quazal {
         {
             ScopedCS cs(Scheduler::GetInstance()->unk38);
             AcquireMainReference();
-            m_uiFlags |= 1;
+            SetFlag(1);
         }
         InitialTransition();
     }
@@ -94,5 +94,8 @@ namespace Quazal {
             return reinterpret_cast<StateFuncFactory>(&StateMachine::TopState);
         }
     }
+
+    void DuplicatedObject::SetFlag(unsigned short f) { m_uiFlags = m_uiFlags | f; }
+    void DuplicatedObject::ClearFlag(unsigned short f) { m_uiFlags = m_uiFlags & (f ^ 0xFFFF); }
 
 }

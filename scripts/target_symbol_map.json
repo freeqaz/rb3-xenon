@@ -30616,7 +30616,7 @@
  "0x82a6d8c0": "?GetDefaultMemoryManager@MemoryManager@Quazal@@SAPAV12@XZ",
  "0x82a6dde8": "??2RootObject@Quazal@@SAPAXI@Z",
  "0x82a6de40": "XShowSocialNetworkImagePostUI",
- "0x82a707e8": "??1ScopedCS@Quazal@@QAA@XZ",
+ "0x82a707e8": "?GetDOClass@DuplicatedObject@Quazal@@SAPAVDOClass@2@I@Z",
  "0x82a74f48": "?ComputeDistance@DuplicatedObject@Quazal@@UAAMPAV12@@Z",
  "0x82a74f60": "?ReleaseReferenceToMaster@DuplicatedObject@Quazal@@QAAXXZ",
  "0x82a74f90": "?AcquireReferenceToMaster@DuplicatedObject@Quazal@@QAAXXZ",
@@ -34956,5 +34956,12 @@
  "0x8259f6e0": "?_M_create_node@?$slist@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAPAV?$_Slist_node@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@priv@2@ABU?$pair@$$CBVSymbol@@VString@@@2@@Z",
  "0x822a1520": "?_M_erase@?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@IAAPAHPAHABU__false_type@2@@Z",
  "0x82728d08": "??$__uninitialized_copy@PAVSampleMarker@@PAV1@@stlpmtx_std@@YAPAVSampleMarker@@PAV1@00ABU__false_type@0@@Z",
- "0x822e4fd8": "??0?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@QAA@ABU01@@Z"
+ "0x822e4fd8": "??0?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@QAA@ABU01@@Z",
+ "0x82a6fc78": "??0DuplicatedObject@Quazal@@QAA@XZ",
+ "0x82a6fdf0": "?AcquireMainReference@DuplicatedObject@Quazal@@QAAXXZ",
+ "0x82a6fe98": "??_GDuplicatedObject@Quazal@@UAAPAXI@Z",
+ "0x82a6fee0": "??1DuplicatedObject@Quazal@@UAA@XZ",
+ "0x82a6ff40": "?SetStationSpecialRelevance@DuplicatedObject@Quazal@@QAAXXZ",
+ "0x82a73b90": "?SetFlag@DuplicatedObject@Quazal@@QAAXG@Z",
+ "0x82a73bb8": "?ClearFlag@DuplicatedObject@Quazal@@QAAXG@Z"
 }

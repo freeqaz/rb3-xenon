@@ -28,6 +28,8 @@ namespace Quazal {
             return inst ? (Core *)inst->m_pDelegatorInstance : nullptr;
         }
 
+        Scheduler *GetScheduler() { return m_pScheduler; }
+
         Scheduler *m_pScheduler; // 0x8
         CallContextRegister *m_pCallContextRegister; // 0xc
         SystemComponents *m_pSystemComponents; // 0x10
