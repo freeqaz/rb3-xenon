@@ -6034,14 +6034,12 @@ Msg.cpp:
 
 MetaMusic.cpp:
 	.pdata      start:0x82207D30 end:0x82207D40
-	.pdata      start:0x82231D78 end:0x82231D80
 	.pdata      start:0x82238798 end:0x82238880
 	.pdata      start:0x82238880 end:0x82238888
 	.pdata      start:0x82238888 end:0x82238998
 	.text       start:0x823CE81C end:0x823CE820
 	.text       start:0x823CE82C end:0x823CE838
 	.text       start:0x823E3630 end:0x823E3790
-	.text       start:0x82698A50 end:0x82698B1C
 	.text       start:0x8270FAB4 end:0x82710D10
 	.text       start:0x82710D10 end:0x82710DBC
 	.text       start:0x82710DBC end:0x82711F78
@@ -8375,12 +8373,14 @@ band3/game/Stats.cpp:
 	.pdata      start:0x82231CB8 end:0x82231D20
 	.pdata      start:0x82231D20 end:0x82231D30
 	.pdata      start:0x82231D30 end:0x82231D78
+	.pdata      start:0x82231D78 end:0x82231D80
 	.pdata      start:0x82231D90 end:0x82231EA8
 	.pdata      start:0x822349E0 end:0x822349E8
 	.text       start:0x82657660 end:0x82657798
 	.text       start:0x82697538 end:0x826985C8
 	.text       start:0x826985C8 end:0x82698648
 	.text       start:0x82698648 end:0x82698A50
+	.text       start:0x82698A50 end:0x82698B1C
 	.text       start:0x82698B1C end:0x82698B20
 	.text       start:0x82698C08 end:0x82699FE0
 	.text       start:0x826CB610 end:0x826CB654
