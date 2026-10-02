@@ -2313,7 +2313,16 @@
             "network/quazal/Core/StringStream.cpp": "NonMatching",
             "network/quazal/DOClassesTable.cpp": "NonMatching",
             "network/quazal/ChangeMasterStationOperation.cpp": "NonMatching",
-            "network/quazal/JobConnectStation.cpp": "NonMatching",
+            "network/quazal/JobConnectStation.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/EHs-c-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
             "network/quazal/StationManager.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [

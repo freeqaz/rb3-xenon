@@ -11,7 +11,9 @@ namespace Quazal {
     class UserContext : public RootObject {
     public:
         UserContext() { m_uContextStorage.m_uiValue = 0; }
+        UserContext(void *pPointer) { m_uContextStorage.m_pPointer = pPointer; }
         ~UserContext() {}
+        void *GetPointer() const { return m_uContextStorage.m_pPointer; }
 
     private:
         // total size: 0x4

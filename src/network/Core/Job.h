@@ -39,6 +39,7 @@ namespace Quazal {
         void SetToComplete();
         void SetToCancel();
         void SetToInitial();
+        State GetState() const { return m_eState; }
 
         int unk8;
         int unkc;

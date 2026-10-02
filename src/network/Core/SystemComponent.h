@@ -65,6 +65,9 @@ namespace Quazal {
         void EndUse(const char *);
         _State GetState() const { return mState; }
         u32 GetUseCount() const { return mRefs; }
+        bool IsTerminating() const {
+            return GetState() == TerminatingInUse || GetState() == Terminating;
+        }
 
         Quazal::String mName; // 0x8
         _State mState; // 0xC

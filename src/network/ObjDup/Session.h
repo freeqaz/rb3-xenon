@@ -53,6 +53,8 @@ namespace Quazal {
         bool SynchronizeTermination(DOHandle);
         void RetrieveURLs(DOHandle, qList<StationURL> *);
         static bool JoinIsAllowed();
+        // JobConnectStation's callees (retail 0x82A76D78 / 0x82A92C38).
+        bool RetrieveURLs(class DOCallContext *, const DOHandle &, qList<StationURL> *);
 
         bool UpdateDataSet(DataSet *pDS) { return UpdateImpl(pDS, Time::GetSessionTime()); }
 
