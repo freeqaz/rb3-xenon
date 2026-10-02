@@ -27,7 +27,6 @@ namespace Quazal {
 
         DOID GetDOID() const { return DOID(GetID()); }
         bool operator<(const DOHandle &h) const { return mValue < h.mValue; }
-        unsigned int GetValue() const { return mValue; }
         bool operator==(const DOHandle &h) const { return mValue == h.mValue; }
         bool operator!=(const DOHandle &h) const { return mValue != h.mValue; }
 
