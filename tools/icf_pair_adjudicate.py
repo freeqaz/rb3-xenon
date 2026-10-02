@@ -975,18 +975,40 @@ def tailpad_controls(tgt, ours):
 #   "eh"       ours = COMDAT section length (the W16-NF/NK measure)
 #   "tol"      symmetric tolerance of SIZE_BREAK_TOL bytes (widen-to-cover-funclets)
 #   "onesided" ours-larger always admitted ("ours may carry a funclet")
+#   "firstdef" ours = collect()'s first definition only (see VARIANTS below)
+#
+# ★ VARIANTS (found by this lane's own re-run: two rows the grader scores at
+# fuzzy 100 read "retail LARGER").  One COMDAT name can be compiled to DIFFERENT
+# bodies in different TUs -- ?resize@?$ObjVector@V?$ObjPtr@VRndDir@@@@@@ is 72 B
+# in Gem.obj / ExternalMic.obj and 84 B in OutfitConfig.obj / BandStarDisplay.obj;
+# retail kept the 84-B one.  collect() keeps the FIRST definition in sorted path
+# order (band3/ sorts first), i.e. whichever the linker may have discarded.  So
+# "ours" is a SET: 311 of our 96,954 names have more than one extent, and 41 of
+# 21,720 same-name pairs match retail only through a non-first variant.  The
+# gate accepts iff retail's extent equals SOME compiled variant, and says which.
 _SELF_BREAK_SIZE = None
 SIZE_BREAK_TOL = 64
 _SECTION_SIZES = {}
+_EXT_VARIANTS = collections.defaultdict(dict)   # name -> {extent: first obj}
 
 
 def _our_section_size(name):
     if not _SECTION_SIZES:
         from anon_candidate_scorer import comdat_section_sizes
+        from coff_bodies_ext import function_extent_sizes
         for p in sorted(glob.glob(str(ROOT / "build/45410914/src/**/*.obj"), recursive=True)):
             for n, s in comdat_section_sizes(Path(p)).items():
                 _SECTION_SIZES.setdefault(n, s)
+            rel = str(Path(p).relative_to(ROOT / "build/45410914/src"))
+            for n, s in function_extent_sizes(p).items():
+                _EXT_VARIANTS[n].setdefault(s, rel)
     return _SECTION_SIZES.get(name)
+
+
+def our_extent_variants(name):
+    """{extent: first obj defining that body} over every obj that defines `name`."""
+    _our_section_size("")
+    return _EXT_VARIANTS.get(name, {})
 
 
 def size_gate(rt, ob, our_name=None):
@@ -999,6 +1021,12 @@ def size_gate(rt, ob, our_name=None):
         return True, "within +-%d B (BROKEN tolerance rule)" % SIZE_BREAK_TOL
     if rs == os_:
         return True, "extents equal: retail %d == ours %d" % (rs, os_)
+    if our_name and _SELF_BREAK_SIZE not in ("eh", "firstdef"):
+        v = our_extent_variants(our_name)
+        if rs in v:
+            return True, ("retail %d == our %d-B variant in %s (collect's first "
+                          "definition is %d B; our TUs compile %d bodies for this name)"
+                          % (rs, rs, v[rs], os_, len(v)))
     if rs > os_:
         if os_ == ob[2] and retail_tail_pad(rt, ob):
             return True, ("retail %d = ours %d + %d B zero alignment padding"
@@ -1013,6 +1041,7 @@ def size_gate(rt, ob, our_name=None):
 
 
 SIZE_EH_POS = 0x82307EB0      # W16-NK §4: retail 392, our COMDAT section 440
+SIZE_VAR_POS = 0x822A7A70     # PropSync<Piece>: retail 392; Gem.obj 360, OutfitConfig.obj 392
 SIZE_RL_POS = (0x82697FE8,    # W16-NK §4: retail 132 vs our 116
                "??$__unguarded_partition@PAPAUObjEntry@@PAU1@UObjSort@@@stlpmtx_std@@"
                "YAPAPAUObjEntry@@PAPAU1@0PAU1@UObjSort@@@Z")
@@ -1034,6 +1063,15 @@ def size_controls(tgt, ours):
       OURS-LARGER DECOY    ours extent > retail by 4 B, our section == extent
                            (so not explained by any funclet) -> expect REFUSE.
                            Red under tol and onesided.
+      VARIANT POSITIVE     retail extent != collect()'s first definition but
+                           == another TU's body for the same name -> expect
+                           ACCEPT.  Red under firstdef, and under eh (which
+                           measures the first definition's SECTION and skips
+                           the variant rule; the pick requires that section !=
+                           retail so the red is guaranteed, not coincidental).
+
+    Every refusal decoy is a name with ONE extent variant, so the variant rule
+    can never be what accepts or refuses it.
 
     Returns [(label, retail_name, our_name, want_ok, red_under)].  Refuses (exit)
     if any control cannot be built or is VACUOUS -- an EH positive whose section
@@ -1058,7 +1096,7 @@ def size_controls(tgt, ours):
                 % (tgt[eh][2], _SECTION_SIZES[eh]), eh, eh, True, {"eh"}))
 
     def clean(n):
-        return _SECTION_SIZES.get(n) == ours[n][2]
+        return _SECTION_SIZES.get(n) == ours[n][2] and len(our_extent_variants(n)) == 1
     rl = next((n for n in cands if tgt[n][2] - ours[n][2] == 4 and clean(n)
                and not retail_tail_pad(tgt[n], ours[n])), None)
     ol = next((n for n in cands if ours[n][2] - tgt[n][2] == 4 and clean(n)), None)
@@ -1073,6 +1111,20 @@ def size_controls(tgt, ours):
                     % (tgt[s][2], ours[o][2]), s, o, False, {"tol"}))
     out.append(("SIZE OURS-LARGER DECOY, +4 B, no funclet (expect REFUSE)", ol, ol,
                 False, {"tol", "onesided"}))
+
+    def var_ok(n):
+        return (n in tgt and n in ours and tgt[n][2] != ours[n][2]
+                and tgt[n][2] in our_extent_variants(n)
+                and not retail_tail_pad(tgt[n], ours[n])
+                and _SECTION_SIZES.get(n) != tgt[n][2])
+    vp = _retail_name_at(SIZE_VAR_POS)
+    if not var_ok(vp):
+        vp = next((n for n in cands if var_ok(n)), None)
+    if vp is None:
+        raise SystemExit("REFUSING: no live TU-variant size positive -- the variant "
+                         "control would be VACUOUS.")
+    out.append(("SIZE VARIANT POSITIVE, retail %d / first def %d (expect ACCEPT)"
+                % (tgt[vp][2], ours[vp][2]), vp, vp, True, {"firstdef", "eh"}))
     return out
 
 
@@ -1479,10 +1531,11 @@ def main():
                     help="run --chasetest with retail_overcarve's branch CENSUS "
                          "removed. The OVERCARVE DECOY control MUST go red and every "
                          "other control must stay green; exits 0 only then.")
-    ap.add_argument("--self-break-size", choices=("eh", "tol", "onesided"),
+    ap.add_argument("--self-break-size", choices=("eh", "tol", "onesided", "firstdef"),
                     help="run --chasetest with ONE wrong size rule re-introduced "
                          "(eh: ours = COMDAT section length, the W16-NF/NK measure; "
-                         "tol: +-%d B tolerance; onesided: ours-larger admitted). "
+                         "tol: +-%d B tolerance; onesided: ours-larger admitted; "
+                         "firstdef: only collect()'s first TU variant). "
                          "Exactly the SIZE controls that rule should break MUST go "
                          "red and every other control must stay green; exits 0 only "
                          "then." % SIZE_BREAK_TOL)
