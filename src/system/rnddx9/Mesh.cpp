@@ -363,12 +363,9 @@ void DxMesh::SetTransforms() {
     unsigned int boneCount = mBones.size();
     TheShaderMgr.SetMeshInfo(boneCount, HasAOCalc());
     float fw = FurWeight(Mat());
-    bool hasFur;
-    if (fw > 0.0f) {
-        hasFur = true;
-    } else {
+    bool hasFur = true;
+    if (!(fw > 0.0f))
         hasFur = false;
-    }
     if (boneCount == 0) {
         TheShaderMgr.UpdateCache(WorldXfm(), 0);
         if (hasFur) {
