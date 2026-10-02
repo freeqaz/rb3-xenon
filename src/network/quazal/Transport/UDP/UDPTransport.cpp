@@ -1,16 +1,29 @@
 // Quazal NetZ - .\Transport\UDP\UDPTransport.cpp
 //
-// Retail TU: .text 0x82B15808..0x82B1A518 (the ctor's EH prefix up to the
-// Socket TU, whose ctor 0x82B1A518 is called by QueuingSocket's). Built /Od
-// (see objects.json). The TU's own functions end at FindSocket; the rest is
-// the COMDAT tail it instantiates (PacketQueue helpers, the ObjectThread and
-// TransportJob members, and the sorted socket vector).
+// Retail TU: .text 0x82B15808..0x82B1A518, from the ctor's EH prefix to the
+// Socket TU (0x82B1A518 is Socket's ctor, called only by QueuingSocket's).
+// Built /Od /Oi- /Ob1 /GR- (objects.json): no RTTI locator precedes any of
+// the TU's vtables, and the TU has unwind funclets, so /EHsc stays. The TU's
+// own functions end at FindSocket; the rest is the COMDAT tail it
+// instantiates (qChain/PacketQueue helpers, the ObjectThread and TransportJob
+// members, and the sorted socket vector).
 //
 // The classes this TU touches are declared here with the layouts its code
 // reads, rather than taken from the shared Quazal headers.
 //
-// This TU is built /Od: its locals are laid out by a walk over the scope's
-// symbol hash table, so the local NAMES below determine the stack offsets.
+// /Od frame facts this source relies on:
+// - An inline the /Ob1 inliner declines still reserves its locals in the
+//   caller's frame. qSortedVector::find is in class (retail reserves it in
+//   erase and FindSocket); qSortedVector::insert is defined out of class
+//   (BindSocket reserves nothing for it).
+// - A parameter of an expanded inline is homed when the argument is a value
+//   (a call result, a this other than the caller's own); make_pair and
+//   QueuingSocket::ReleaseBuffer exist because retail homes those arguments.
+// - Function-scope local NAMES decide slot order (a walk over the symbol hash
+//   table); block-scope locals go above their enclosing scope's, so some
+//   declarations sit in their own block.
+// - Overloaded virtuals are declared in reverse so MSVC gives retail's slots
+//   (StopListen(us) before StopListen(), Send(us, ...) before Send(URL*, ...)).
 
 #include <vector>
 #include <list>
