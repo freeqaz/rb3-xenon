@@ -122,6 +122,20 @@ class Fixture:
         self.log = tmp / "stub.log"
         for name in PATCHERS:
             (self.scripts / name).write_text(STUB)
+        # The verifier's W16-AE DENYLIST EFFECT check (97ef33f5c) reads
+        # scripts/target_symbol_map.json on every --check and --verify-manifest
+        # and REFUSES (rc=7) when it cannot -- correctly: a check that passes
+        # because its input is missing is the vacuity this file exists to
+        # catch.  This fixture predated that check and supplied no map, so 27
+        # tests read rc=7 instead of the verdict they were written about (lane
+        # W16-OB).  The map is EMPTY-denylist on purpose: the fixture's target
+        # objs are fake bytes, not COFF, so any live denylisted name would make
+        # the check refuse on parse.  The denylist check's own behaviour is
+        # proved by scripts/test_denylist_applied.py against real target objs;
+        # `test_the_denylist_check_is_still_in_the_chain` below is the control
+        # that this accommodation did not unhook it from either path.
+        self.map = self.scripts / "target_symbol_map.json"
+        self.map.write_text(json.dumps({"_denylist": []}))
 
     def run(self, *args, rc_overrides=None, min_declared=1):
         """Invoke the verifier against this fixture.
@@ -577,6 +591,38 @@ class PatchStateTests(unittest.TestCase):
                 # CONTROL: the same fixture with that pass green reads GREEN,
                 # so the red above is attributable to this pass alone.
                 self.assertEqual(self.fx.run("--check").returncode, 0)
+
+    def test_the_denylist_check_is_still_in_the_chain(self):
+        """CONTROL for the fixture's empty-denylist map (lane W16-OB).
+
+        Every other test here runs with a map whose `_denylist` is empty, which
+        the denylist check accepts with a NOTE.  If that check were dropped from
+        `run_check` or from `--verify-manifest`, all of them would still pass.
+        A malformed denylist must therefore be REFUSED on BOTH paths, named as
+        the denylist's refusal (rc=7 alone is also what an unreadable map
+        gives), and repairing the map must restore GREEN.
+        """
+        self.assertEqual(self.fx.run("--check", "--emit").returncode, 0)
+        self.assertEqual(self.fx.run("--verify-manifest").returncode, 0)
+
+        self.fx.map.write_text(json.dumps({"_denylist": ["not-an-address"]}))
+        # The map is itself a recorded BUILD INPUT, so changing it makes
+        # --verify-manifest answer BUILD OWED (rc=6) before it reaches the
+        # denylist -- the right verdict, but not the one under test.  Re-emit
+        # (--emit alone does not run --check) so the manifest records the
+        # malformed map and the denylist is the only thing left to object.
+        self.assertEqual(self.fx.run("--emit").returncode, 0)
+        for args in (("--check",), ("--verify-manifest",)):
+            with self.subTest(path=args[0]):
+                red = self.fx.run(*args)
+                self.assertEqual(red.returncode, 7, red.stdout + red.stderr)
+                self.assertIn("REFUSE(denylist)", red.stderr)
+                self.assertIn("not a list of lowercase 0x-addresses",
+                              red.stderr)
+
+        self.fx.map.write_text(json.dumps({"_denylist": []}))
+        self.assertEqual(self.fx.run("--check", "--emit").returncode, 0)
+        self.assertEqual(self.fx.run("--verify-manifest").returncode, 0)
 
     def test_check_failure_blocks_the_manifest(self):
         """A red --check must not be papered over by emitting a manifest.

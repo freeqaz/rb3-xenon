@@ -65,35 +65,16 @@
 # pristine checkout. Somebody reconciled the expectations and did not prune the
 # list — exactly the rot the --strict-manifest rule above now prevents.
 
-# [drift] same commit, same shape, different module: the test asserts the string
-# "Equiv fills:" appears in format_probe_result's output; prober.py:454 now
-# writes "  Runs: N (x equiv, y div, z err)" instead. A display-string
-# expectation the formatter moved past.
-scripts/unicorn_runner/tests/test_prober.py::TestFormatProbeResult::test_format_input_sensitive
+# ⛔ REMOVED 2026-10-02 (lane W16-OB): test_prober.py::TestFormatProbeResult::
+# test_format_input_sensitive. It has PASSED since 115a97769 (2026-09-14, lane
+# W16-AM), which tracked the formatter's "fills" -> "inputs" label rename; that
+# commit did not prune this line, so the entry sat STALE for 18 days.
 
 # ── tools ─────────────────────────────────────────────────────────────────────
 
-# [drift] A FLOOR assertion over a LIVE DATA FILE that map lanes legitimately
-# shrink. The test reads the committed scripts/target_symbol_map.json and
-# asserts `claimed_by_grain["bijection_arbitrary"] >= 939`; the population is
-# now 929. Measured 2026-09-11 (lane TESTCI) identically on two different
-# revisions of the map — 656bb7b9 and a93d7a93 — so this is a real repo-wide
-# red, not one worktree's drift. The sibling floor (icf_arbitrary >= 28) is
-# still satisfied at 31.
-#
-# It is [drift], not [bug]: 929 < 939 is what legitimate map repair LOOKS like.
-# Removing a wrong name is the documented, paid-for work of the map lanes
-# (docs: map/name economics — a wrong name is financed by its callers), and
-# recent commits on main are exactly that (DataInt back to retail,
-# StringMatchesFilter restored, Object::AddRef/Release named from retail bytes).
-# The floor was written against a population those lanes then reduced.
-#
-# ⚠ THE COST OF THIS ENTRY, STATED PLAINLY: while it is listed, CI will NOT
-# catch a further shrink of this population, including one that is a genuine
-# regression. That is a real hole and the reason to close it soon.
-#
-# FIX = re-derive the floor and edit the assertion in
-# tools/test_comdat_retail_verify.py, then delete this line. NOT done here: that
-# file belongs to the map/alias lanes, which were live in this tree while this
-# lane ran, and scripts/target_symbol_map.json was explicitly off-limits.
-tools/test_comdat_retail_verify.py::test_the_real_map_populations_are_bound_as_floors
+# ⛔ REMOVED 2026-10-02 (lane W16-OB): test_comdat_retail_verify.py::
+# test_the_real_map_populations_are_bound_as_floors. The floor it records as
+# red (bijection_arbitrary 929 < 939) has been satisfied since 3ffdbbf79
+# (2026-09-14), when map work took the population to 967; measured by walking
+# every map revision since 2026-09-10 through classify_map_rows (last red
+# 9314a27e7 at 930, first green 3ffdbbf79 at 967). The floor itself is unchanged.
