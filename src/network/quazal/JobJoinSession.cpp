@@ -147,6 +147,7 @@ namespace Quazal {
     public:
         CriticalSection mCSList;
         qList<T> &GetList() { return mOList; }
+        CriticalSection &GetLock() { return mCSList; }
 
         qList<T> mOList;
     };
@@ -768,7 +769,7 @@ namespace Quazal {
 
     void JobJoinSession::InitiateConnection() {
         {
-            ScopedCS oCS(GetNetwork()->GetStationURLs()->mCSList);
+            ScopedCS oCS(GetNetwork()->GetStationURLs()->GetLock());
             qList<StationURL>::iterator it = GetNetwork()->GetStationURLs()->GetList().begin();
             while (it != GetNetwork()->GetStationURLs()->GetList().end()) {
                 (*it).Trace(0x4000);
@@ -816,28 +817,28 @@ namespace Quazal {
 
     void JobJoinSession::SendGetParticipantsRequest() {
         if (ConnectivityTesterRef::GetInstance()->Get() != 0) {
-            Message *pMsg = ObjDupProtocol::GetInstance()->CreateGetParticipantsRequest();
-            qList<StationURL> lURLs;
-            ScopedCS oCS(GetNetwork()->GetStationURLs()->mCSList);
-            qList<StationURL>::iterator it = GetNetwork()->GetStationURLs()->mOList.begin();
-            NATTraversalEngine *pNAT = GetNetwork()->GetNATTraversalEngine();
-            while (it != GetNetwork()->GetStationURLs()->mOList.end()) {
-                StationURL url(*it);
-                if (pNAT != 0 && pNAT->GetLocalCID() != 0) {
-                    url.SetRVConnectionID(pNAT->GetLocalCID());
+            Message *pMessage = ObjDupProtocol::GetInstance()->CreateGetParticipantsRequest();
+            qList<StationURL> lstURLs;
+            ScopedCS oLock(GetNetwork()->GetStationURLs()->GetLock());
+            qList<StationURL>::iterator iterURL = GetNetwork()->GetStationURLs()->GetList().begin();
+            NATTraversalEngine *pEngine = GetNetwork()->GetNATTraversalEngine();
+            while (iterURL != GetNetwork()->GetStationURLs()->GetList().end()) {
+                StationURL url(*iterURL);
+                if (pEngine != 0 && pEngine->GetLocalCID() != 0) {
+                    url.SetRVConnectionID(pEngine->GetLocalCID());
                 }
-                lURLs.push_back(url);
-                ++it;
+                lstURLs.push_back(url);
+                ++iterURL;
             }
-            *pMsg << lURLs;
-            if (!ObjDupProtocol::GetInstance()->Send(m_pEndPoint, pMsg, 1)) {
+            *pMessage << lstURLs;
+            if (!ObjDupProtocol::GetInstance()->Send(m_pEndPoint, pMessage, 1)) {
                 SetStep(Step((JobStateFunc)&JobJoinSession::JoinFailed, "JobJoinSession::JoinFailed"));
             } else {
                 SetStep(Step(
                     (JobStateFunc)&JobJoinSession::WaitForResponse, "JobJoinSession::WaitForResponse"
                 ));
             }
-            delete pMsg;
+            delete pMessage;
         } else {
             SetStep(Step(
                 (JobStateFunc)&JobJoinSession::SendJoinRequest, "JobJoinSession::SendJoinRequest"
