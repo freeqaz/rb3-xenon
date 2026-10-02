@@ -10881,28 +10881,10 @@ GemTrackDir.cpp:
 	.text       start:0x822EFB50 end:0x822EFB5C
 
 DuplicatedObject.cpp:
-	.pdata      start:0x82250C30 end:0x82250C38
-	.pdata      start:0x82250C38 end:0x82250C40
-	.pdata      start:0x82250C40 end:0x82250CD0
-	.pdata      start:0x82250CD0 end:0x82250D40
-	.pdata      start:0x82250D40 end:0x82250D78
-	.pdata      start:0x82250D78 end:0x82250DB8
-	.pdata      start:0x82250DB8 end:0x82250DD0
-	.pdata      start:0x82250DD0 end:0x82250E70
-	.pdata      start:0x82250E70 end:0x82250E80
-	.pdata      start:0x82250E80 end:0x82250E88
+	.pdata      start:0x82250BE8 end:0x82250EE8
 	.pdata      start:0x82253490 end:0x822534E8
 	.pdata      start:0x822564A0 end:0x822564A8
-	.text       start:0x82A70400 end:0x82A7045C
-	.text       start:0x82A70460 end:0x82A704CC
-	.text       start:0x82A704D0 end:0x82A71D60
-	.text       start:0x82A71D60 end:0x82A732F8
-	.text       start:0x82A732F8 end:0x82A73910
-	.text       start:0x82A73910 end:0x82A74220
-	.text       start:0x82A74220 end:0x82A74928
-	.text       start:0x82A74928 end:0x82A75C50
-	.text       start:0x82A75C50 end:0x82A75EE8
-	.text       start:0x82A75EE8 end:0x82A75F64
+	.text       start:0x82A6FC78 end:0x82A76B58
 	.text       start:0x82AB0850 end:0x82AB0F70
 	.text       start:0x82AFC2A8 end:0x82AFC2DC
 
