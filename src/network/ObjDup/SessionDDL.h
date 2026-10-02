@@ -4,6 +4,8 @@
 #include "ObjDup/SessionInfo.h"
 
 namespace Quazal {
+    class WKHandle;
+
     // The session's datasets. Retail's _DO_Session dtor (0x82A76CC8) destroys
     // +0x5FC, +0x5F8, +0x570 and +0x70 out of line before ~RootDO, so each
     // dataset class has an out-of-line dtor.
@@ -46,6 +48,9 @@ namespace Quazal {
         virtual bool IsABootstrapDO() const;
 
         static unsigned int GetStaticClassID() { return s_uiClassID; }
+        // Retail 0x82A91ED0: checks the handle's class, then
+        // DuplicatedObject::CreateWellKnown.
+        static DuplicatedObject *CreateWellKnown(WKHandle &);
         static unsigned int s_uiClassID;
 
         SharedSessionDescription m_dsSharedSessionDescription; // 0x70

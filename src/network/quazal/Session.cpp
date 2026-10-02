@@ -5,29 +5,31 @@
 // vtables at 0x8217DC00 / 0x8217DC48 / 0x8217DCBC).
 
 #include "ObjDup/Session.h"
-#include "ObjDup/DORefTemplate.h"
-#include "ObjDup/DOOperation.h"
+#include "ObjDup/BundlingPolicy.h"
 #include "ObjDup/DOClass.h"
+#include "ObjDup/DOOperation.h"
+#include "ObjDup/DORefTemplate.h"
+#include "ObjDup/ObjDupProtocol.h"
 #include "ObjDup/SelectionIterator.h"
+#include "ObjDup/Station.h"
+#include "Core/NetZ.h"
 #include "Core/Scheduler.h"
 #include "Core/SystemComponent.h"
 #include "Core/SystemComponents.h"
 #include "Platform/ScopedCS.h"
 #include "Platform/SystemError.h"
 #include "Platform/TraceLog.h"
-
-struct XNKID {
-    unsigned char ab[8];
-};
-struct XNKEY {
-    unsigned char ab[16];
-};
+#include "xdk/XNET.h"
 
 namespace Quazal {
     class SessionDiscoveryProtocol;
 
-    // The objects this TU reaches through the type-4 instance (NetZ). Their
-    // code lives in other TUs; only what Session calls is declared.
+    // TU-private declarations: none of these classes has a header in this
+    // tree. Only what Session calls is declared; method names are lane-chosen
+    // (the retail callees are unnamed).
+
+    // The local session description (NetZ's session-discovery table hands it
+    // out; 0x82AC3898).
     class SessionDescription : public RootObject {
     public:
         void SetProductInfo(unsigned int);
@@ -45,6 +47,7 @@ namespace Quazal {
         void (*m_pfUpdateCallback)(); // 0x40
     };
 
+    // NetZ's member at 0x2c.
     class SessionDiscoveryTable : public RootObject {
     public:
         void RegisterProtocol(SessionDiscoveryProtocol *, bool);
@@ -56,28 +59,6 @@ namespace Quazal {
         unsigned char unk0[0x84];
         bool m_bIsMaster; // 0x84
         bool m_bActive; // 0x85
-    };
-
-    class NetZ {
-    public:
-        virtual ~NetZ();
-
-        static NetZ *GetInstance() {
-            unsigned int uiContext = PseudoSingleton::GetCurrentContext();
-            return (NetZ *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(4, uiContext);
-        }
-        SessionDiscoveryTable *GetSessionDiscoveryTable() { return m_pSessionDiscoveryTable; }
-        void StartSessionServices();
-
-        unsigned char unk4[0x28];
-        SessionDiscoveryTable *m_pSessionDiscoveryTable; // 0x2c
-        unsigned char unk30[0xc];
-        void *m_pStationInfo; // 0x3c
-        unsigned char unk40[0x8];
-        SystemComponent *m_pComponent; // 0x48
-
-        SystemComponent *GetJoinComponent() { return m_pComponent; }
-        void *GetStationInfo() { return m_pStationInfo; }
     };
 
     class ProductInfo {
@@ -92,18 +73,24 @@ namespace Quazal {
         static unsigned int GetProductType();
     };
 
-    // The registered Xbox session keys (list at 0x82E10420).
+    // The registered Xbox session keys (the list at 0x82E10420).
     class XboxSessionKeys {
     public:
         static unsigned int GetNbKeys() { return s_lstKeys.size(); }
         static void Create();
-        static void RegisterKey(const XNKID *, const XNKEY *);
         static const XNKID *GetKID();
         static const XNKEY *GetKey();
 
         static qList<XboxSessionKeys *> s_lstKeys;
     };
 
+    // Declared in net/XSessionData.h (retail 0x82A8EEF8).
+    void RegisterXNetKey(const XNKID *, const XNKEY *);
+    // Retail 0x8284D8D8, reached with the session key id.
+    extern int XNetQosLookupKey(const XNKID *, int, int, int, int);
+
+    // Retail's ../ObjDup/DOClassesTable.h inline, instantiated in this TU
+    // (0x82A77C60); /Ob1 never expands it.
     class DOClassesTable : public RootObject {
     public:
         DOClassesTable();
@@ -120,37 +107,6 @@ namespace Quazal {
         unsigned int unk4;
     };
 
-    class StationStateDS {
-    public:
-        void SetState(unsigned short);
-
-        unsigned short m_usState; // 0x0
-    };
-
-    class Station : public RootDO {
-    public:
-        static DOHandle GetLocalStation();
-        static bool IsLocal(unsigned int ui) { return ui == GetLocalStation().mValue; }
-                static Station *GetLocalInstance();
-        static void SetLocalStationHandle(DOHandle);
-        static unsigned int GetClassID() { return s_uiDOClassID; }
-        static Station *CreateLocalStation(unsigned int);
-
-        void SetProcessType(unsigned int);
-        void InitStationInfo(void *);
-        void InitURLs();
-        void Connect();
-        const char *GetStationURL(unsigned int);
-        void GetURLs(qList<StationURL> *);
-        unsigned short GetState() const { return m_dsState.m_usState; }
-
-        static unsigned int s_uiDOClassID;
-
-        bool m_bLocal; // 0x70
-        unsigned char unk71[0x3f];
-        StationStateDS m_dsState; // 0xb0
-    };
-
     class PromotionReferee : public RootDO {
     public:
         static unsigned int GetClassID() { return s_uiDOClassID; }
@@ -165,34 +121,7 @@ namespace Quazal {
         static PromotionReferee *CreateWellKnown(WKHandle &);
     };
 
-    class _DO_SessionFactory {
-    public:
-        static Session *CreateWellKnown(WKHandle &);
-    };
-
-    class ObjDupProtocol : public RootObject {
-    public:
-        static ObjDupProtocol *GetInstance();
-        bool ListenOnWellKnown();
-        bool StartToListen();
-        void StopToListen();
-        bool IsListening(unsigned short *) const;
-    };
-
-    class BundlingPolicy : public RootObject {
-    public:
-        virtual ~BundlingPolicy();
-        virtual void SendToSelection(void *, void *, void *, unsigned int) = 0;
-        virtual void Flush() = 0;
-        virtual void AddStation(DOHandle) = 0;
-
-        static BundlingPolicy *GetInstance() { return s_pInstance.GetValue(); }
-        static BundlingPolicy *GetCurrentInstance() {
-            return s_pInstance.GetValue(PseudoSingleton::GetCurrentContext());
-        }
-        static PseudoGlobalVariable<BundlingPolicy *> s_pInstance;
-    };
-
+    // Defined in JobJoinSession.cpp (no header); the ctor as that TU spells it.
     class JobJoinSession : public RootObject {
     public:
         JobJoinSession(const qList<StationURL> &, unsigned int);
@@ -208,6 +137,7 @@ namespace Quazal {
         int m_iOutcome; // 0x20
     };
 
+    // The statics at 0x82A9F1C0 / 0x82A9F270 / 0x82A9F408.
     class XboxNetwork {
     public:
         static bool IsTerminating();
@@ -215,10 +145,9 @@ namespace Quazal {
         static void Terminate(int);
     };
 
-    class SystemError2 {
-    public:
-        static void SetLastError(unsigned int);
-    };
+    inline BundlingPolicy *GetBundlingPolicy() {
+        return BundlingPolicy::s_pInstance.GetValue(PseudoSingleton::GetCurrentContext());
+    }
 
     inline bool operator<(const Time &a, const Time &b) { return a.m_ui64Value < b.m_ui64Value; }
     inline bool operator!=(const Time &a, const Time &b) { return a.m_ui64Value != b.m_ui64Value; }
@@ -350,7 +279,7 @@ namespace Quazal {
                 bListening = ObjDupProtocol::GetInstance()->ListenOnWellKnown();
             }
             if (!bListening) {
-                SystemError2::SetLastError(4);
+                SystemError::TraceLast(4);
                 CancelCreation(iStep);
                 return false;
             }
@@ -359,11 +288,11 @@ namespace Quazal {
         DOHandle hLocalStation;
         hLocalStation.SetDOClassID(Station::GetClassID());
         hLocalStation.SetDOID(DOID(1));
-        Station::SetLocalStationHandle(hLocalStation);
+        Station::SetLocalStation(hLocalStation);
         iStep++;
-        Session *pSession = _DO_SessionFactory::CreateWellKnown(s_wkhSession);
+        Session *pSession = (Session *)_DO_Session::CreateWellKnown(s_wkhSession);
         if (pSession == NULL) {
-            SystemError2::SetLastError(4);
+            SystemError::TraceLast(4);
             CancelCreation(iStep);
             return false;
         }
@@ -371,7 +300,7 @@ namespace Quazal {
         pSession->m_dsSessionInfo.SetSessionName(szName);
         pSession->m_dsSessionInfo.GenerateSessionID();
         if (!pSession->Publish(-1)) {
-            SystemError2::SetLastError(4);
+            SystemError::TraceLast(4);
             CancelCreation(iStep);
             return false;
         }
@@ -379,7 +308,7 @@ namespace Quazal {
         PromotionReferee *pReferee =
             _DO_PromotionReferee::CreateWellKnown(PromotionReferee::s_wkhPromotionReferee);
         if (!pReferee->Publish(-1)) {
-            SystemError2::SetLastError(4);
+            SystemError::TraceLast(4);
             CancelCreation(iStep);
             return false;
         }
@@ -403,8 +332,8 @@ namespace Quazal {
         }
         iStep++;
         DOClassesTable::GetInstance()->Seal();
-        Station::GetLocalInstance()->SetProcessType(3);
-        Station::GetLocalInstance()->m_bLocal = true;
+        Station::GetLocalInstance()->SetState((Station::_State)3);
+        Station::GetLocalInstance()->m_oConnectionInfo.m_bURLInitialized = true;
         NetZ::GetInstance()->StartSessionServices();
         pSession->InitSessionDescription(bListen);
         NetZ::GetInstance()->GetSessionDiscoveryTable()->Activate();
@@ -440,21 +369,21 @@ namespace Quazal {
     }
 
     bool Session::CompleteCreation() {
-        if (BundlingPolicy::GetCurrentInstance()) {
-            BundlingPolicy::GetCurrentInstance()->Flush();
+        if (GetBundlingPolicy()) {
+            GetBundlingPolicy()->Flush();
         }
-        Station *pStation = Station::CreateLocalStation(0);
-        pStation->InitStationInfo(NetZ::GetInstance()->GetStationInfo());
+        Station *pStation = (Station *)_DO_Station::Create(0);
+        pStation->InitIdentification(NetZ::GetInstance()->GetStationIdentification());
         DOHandle hStation = pStation->GetHandle();
-        pStation->m_dsState.SetState(2);
-        pStation->InitURLs();
+        pStation->m_oState.Set(2);
+        pStation->InitLocalStationInfo();
         pStation->Trace(4);
         pStation->Publish(-1);
         if (Station::GetLocalStation() != DOHandle()) {
         } else {
-            Station::SetLocalStationHandle(hStation);
+            Station::SetLocalStation(hStation);
         }
-        pStation->Connect();
+        pStation->AcquireOwnReference();
         AddStation(hStation);
         SelectionIteratorTemplate<RootDO> it(0);
         while (!it.EndReached()) {
@@ -512,13 +441,13 @@ namespace Quazal {
                 XNKEY key;
                 if ((*itKey).GetXNKid(&kid)) {
                     (*itKey).GetXNKey(&key);
-                    XboxSessionKeys::RegisterKey(&kid, &key);
+                    RegisterXNetKey(&kid, &key);
                     int iRes = XNetQosLookupKey(&kid, 0, 0, 0, 1);
                 }
             }
         }
         ScopedCS cs(Scheduler::GetInstance()->unk38);
-        if (!pContext->FlagsAreValid()) {
+        if (!pContext->BeginCall()) {
             return false;
         }
         if (XboxNetwork::IsTerminating()) {
@@ -714,12 +643,12 @@ namespace Quazal {
     void Session::RetrieveURLs(DOHandle hStation, qList<StationURL> *pURLs) {
         DORefTemplate<Station> ref(hStation);
         if (ref.IsValid()) {
-            ref->GetURLs(pURLs);
+            ref->GetStationURLs(pURLs);
         }
     }
 
     bool Session::JoinIsAllowed() {
-        SystemComponent::Use oUse(NetZ::GetInstance()->GetJoinComponent(), NULL);
+        SystemComponent::Use oUse(NetZ::GetInstance()->GetComponent48(), NULL);
         if (!UseIsAllowed(oUse)) {
             return false;
         }

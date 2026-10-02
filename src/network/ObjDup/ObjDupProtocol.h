@@ -13,6 +13,10 @@ namespace Quazal {
     class ObjDupProtocol : public RootObject {
     public:
         static ObjDupProtocol *GetInstance();
+        bool ListenOnWellKnown();
+        bool StartToListen();
+        void StopToListen();
+        bool IsListening(unsigned short *) const;
         Message *CreateActionMessage(DOHandle *, unsigned short *);
         Message *CreateDeleteMessage(DOHandle);
         Message *CreateDOProtocolMessage();
