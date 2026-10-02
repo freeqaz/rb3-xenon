@@ -14485,12 +14485,12 @@ network/quazal/Transport/Routing/RoutingStream.cpp:
 	.text       start:0x82B0A5D0 end:0x82B0A730
 
 network/quazal/AccountManagement/Client/JobLoginOrCreateAccount.cpp:
-	.pdata      start:0x82257338 end:0x82257350
-	.text       start:0x82B0E468 end:0x82B0E914
+	.pdata      start:0x82257318 end:0x82257360
+	.text       start:0x82B0E148 end:0x82B0EA88
 
 network/quazal/AccountManagement/Client/JobCreateAccount.cpp:
-	.pdata      start:0x82257500 end:0x82257558
-	.text       start:0x82B13598 end:0x82B14948
+	.pdata      start:0x82257500 end:0x82257568
+	.text       start:0x82B13598 end:0x82B14AA0
 
 network/quazal/Foundation/Protocol/DataDDL.cpp:
 	.pdata      start:0x82257588 end:0x82257590
