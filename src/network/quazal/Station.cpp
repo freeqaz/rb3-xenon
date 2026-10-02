@@ -12,6 +12,7 @@
 
 #include "ObjDup/Station.h"
 #include "ObjDup/DOClass.h"
+#include "ObjDup/RMCContext.h"
 #include "Core/Scheduler.h"
 #include "Core/NetZ.h"
 #include "Core/SystemComponent.h"
@@ -194,20 +195,6 @@ namespace Quazal {
         static Session *GetInstance();
         static bool IsCreated();
         static unsigned char GetRole();
-    };
-
-    class RMCContext : public RootObject {
-    public:
-        RMCContext(DOHandle, bool);
-        ~RMCContext();
-        void ClearFlag(unsigned int);
-        void SetFlag(unsigned int);
-        unsigned char m_pad[0xe0];
-    };
-
-    class _DOC_Station {
-    public:
-        static void CallSignalAsFaulty(Station *, RMCContext *, const unsigned int &);
     };
 
     class JobProcessFault : public Job {
@@ -604,7 +591,7 @@ namespace Quazal {
                     oContext.ClearFlag(0x20);
                     oContext.SetFlag(4);
                     oContext.SetFlag(0x1000);
-                    _DOC_Station::CallSignalAsFaulty(ref.operator->(), &oContext, uiReason);
+                    ref->CallSignalAsFaulty(&oContext, uiReason);
                 }
             }
             if (Session::GetInstance()->GetMasterStation() == hStation) {

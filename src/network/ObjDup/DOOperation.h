@@ -1,5 +1,6 @@
 #pragma once
 #include "Core/Operation.h"
+#include "Platform/Result.h"
 #include "ObjDup/DOHandle.h"
 #include "ObjDup/DOID.h"
 #include "ObjDup/DORef.h"
@@ -98,7 +99,19 @@ namespace Quazal {
 
     // Layout from the retail ctor 0x82AB48D0.
     // Signal 7; only cast to here (its members live in the RMC code).
-    class CallMethodOperation : public DOOperation {};
+    class CallMethodOperation : public DOOperation {
+    public:
+        Message *GetCallMessage() const;
+        Message *PrepareSuccessMessage() const;
+        unsigned short GetMethodID() const { return m_usMethodID; }
+        // Taken by value: retail copies the result into a temp, then assigns.
+        void SetReturnValue(qResult oResult) const { m_oResult = oResult; }
+
+        unsigned char m_pad20[0x12];
+        unsigned short m_usMethodID; // 0x32
+        unsigned char m_pad34[0xc];
+        mutable qResult m_oResult; // 0x40
+    };
 
     class UpdateDataSetOperation : public DOOperation {
     public:
