@@ -344,6 +344,7 @@
  "0x82424940": "?ReSort@PropKeys@@QAAXXZ",
  "0x8230be58": "?RegisterEvents@SongSectionController@@QAAXXZ",
  "0x827b53c0": "?OnMsg@StorePanel@@IAA?AVDataNode@@ABVSigninChangedMsg@@@Z",
+ "0x827b5470": "?OnMsg@StorePanel@@IAA?AVDataNode@@ABVProfileSwappedMsg@@@Z",
  "0x82bb1708": "?GetSeekPos@OggMap@@QAAXHAAH0@Z",
  "0x82bb5130": "?Process@DistortionEffect@@QAAXPAMHH@Z",
  "0x828206b8": "??0UIListSubList@@IAA@XZ",
