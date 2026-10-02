@@ -150,7 +150,10 @@ BEGIN_COPYS(RndMat)
 #endif
             COPY_MEMBER(mTexGen)
             COPY_MEMBER(mTexWrap)
-            COPY_MEMBER(mTexXfm)
+            {
+                const Transform &texXfm = c->mTexXfm;
+                mTexXfm = texXfm;
+            }
             COPY_MEMBER(mDiffuseTex)
 #ifdef RB3_DC3_MAT
             COPY_MEMBER(mDiffuseTex2)
