@@ -67,30 +67,34 @@ long random(long l) {
 #define NEEDS_BYTESWAP(p, v) (*(((unsigned char *)(p)) + 3) == (v))
 #define BYTESWAP_32BIT(v)                                                                \
     do {                                                                                 \
-        unsigned char t0, t1;                                                            \
-        t0 = *((unsigned char *)(v) + 0);                                                \
-        t1 = *((unsigned char *)(v) + 3);                                                \
-        *((unsigned char *)(v) + 0) = t1;                                                \
-        *((unsigned char *)(v) + 3) = t0;                                                \
-        t0 = *((unsigned char *)(v) + 1);                                                \
-        t1 = *((unsigned char *)(v) + 2);                                                \
-        *((unsigned char *)(v) + 1) = t1;                                                \
-        *((unsigned char *)(v) + 2) = t0;                                                \
+        unsigned char *p = (unsigned char *)(v);                                         \
+        unsigned char t;                                                                 \
+        t = p[0];                                                                        \
+        p[0] = p[3];                                                                     \
+        p[3] = t;                                                                        \
+        t = p[1];                                                                        \
+        p[1] = p[2];                                                                     \
+        p[2] = t;                                                                        \
     } while (0);
 
 void KeyChain::getMasher(unsigned char *uc) {
-    unsigned int m = 1;
-    int needs_byteswap = NEEDS_BYTESWAP(&m, 1);
-    unsigned int *masher_p = reinterpret_cast<unsigned int *>(uc);
+    // NOTE(W16-NQ): /Od gives each local a frame slot in an order keyed on its
+    // NAME, not its declaration order. These names reproduce retail's slots
+    // (masher 0x50, needs_byteswap 0x54, endian 0x58, seed 0x5c); the originals
+    // are not recoverable.
+    unsigned int endian = 1;
+    bool needs_byteswap = NEEDS_BYTESWAP(&endian, 1);
+    long seed = 0xEB;
+    unsigned int *masher = reinterpret_cast<unsigned int *>(uc);
 
     for (int i = 0; i < 8; i++) {
-        *masher_p = random((0 == i) ? 0xEB : 0);
+        *masher = random((0 == i) ? seed : 0);
 
         if (needs_byteswap) {
-            BYTESWAP_32BIT(masher_p);
+            BYTESWAP_32BIT(masher);
         }
 
-        masher_p++;
+        masher++;
     }
 }
 

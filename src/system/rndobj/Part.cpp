@@ -918,10 +918,7 @@ BEGIN_LOADS(RndParticleSys)
             if (p) {
                 p->angle = 0;
                 p->swingArm = 0;
-                p->vel.x = 0;
-                p->vel.y = 0;
-                p->vel.z = 0;
-                p->vel.w = 0;
+                p->vel.Set(0, 0, 0, 0);
             } else {
                 MILO_NOTIFY_ONCE(
                     "Unable to allocate all particles for %s\n",

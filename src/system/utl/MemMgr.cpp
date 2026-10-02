@@ -609,8 +609,8 @@ void MemInit() {
         void *mem = malloc(0x10000);
         DataArray *heapArr = cfg->FindArray("heaps");
         gNumHeaps = gSingleHeap ? 1 : heapArr->Size() - 1;
-        Symbol size("size");
         int totalBytes = 0;
+        Symbol size("size");
         for (int i = heapArr->Size() - 1; i > 0; i--) {
             DataArray *heap = heapArr->Array(i);
             int bytes = 0;
@@ -627,6 +627,9 @@ void MemInit() {
         free(mem);
         MemHeapStack::sDefaultHeap = 0;
     }
+    // Retail stores false back to disableMgr's slot (stb r25,0x50(r31)) after
+    // the heap block, on both paths, before testing enableTracking.
+    disableMgr = false;
     if (enableTracking) {
         MemTrackInit(trackHeap, trackedAllocs);
     }

@@ -562,7 +562,18 @@ DataNode StorePanel::OnMsg(SigninChangedMsg const &msg) {
     return 1;
 }
 
-DataNode StorePanel::OnMsg(ProfileSwappedMsg const &) { return 0; }
+// Retail (0x827B5470): when the store user's profile is swapped to the other
+// user in the message, forward the new user to StoreUserProfileSwappedToUser
+// (vtable +0x6c).
+DataNode StorePanel::OnMsg(ProfileSwappedMsg const &msg) {
+    LocalUser *user = StoreUser();
+    if (user == msg.GetUser1()) {
+        StoreUserProfileSwappedToUser(msg.GetUser2());
+    } else if (user == msg.GetUser2()) {
+        StoreUserProfileSwappedToUser(msg.GetUser1());
+    }
+    return 1;
+}
 
 DataNode StorePanel::OnMsg(SingleItemEnumCompleteMsg const &msg) {
     bool hasOffer = false;

@@ -1307,8 +1307,7 @@ void SongParser::PrepareTrack(const char *track_name, PartInfo *info) {
         if (it->ContainsTrackName(track_name)) {
             if (it->NoSongDataTrack()) {
                 if (it->audio_type == kAudioFake) {
-                    int t = mNextFakeTrack;
-                    mNextFakeTrack = t + 1;
+                    int t = mNextFakeTrack++;
                     mTrack = t + 100;
                 } else {
                     mTrack = mNextRealTrack;
@@ -1388,13 +1387,10 @@ void SongParser::PrepareTrack(const char *track_name, PartInfo *info) {
     bool drumstyle = mForceDrumStyleGems
         || std::find(mDrumStyleInstruments.begin(), mDrumStyleInstruments.end(), info->type)
             != mDrumStyleInstruments.end();
-    bool s9 = false;
     mDrumStyleGems = drumstyle;
     mIgnoreGemDurations = mTrackType == kTrackDrum;
     int ty = mTrackType;
-    if (ty == 1 || ty == 2 || ty == 4 || ty == 6 || ty == 7 || ty == 8 || ty == 9) {
-        s9 = true;
-    }
+    bool s9 = ty == 1 || ty == 2 || ty == 4 || ty == 6 || ty == 7 || ty == 8 || ty == 9;
     mTrackAllowsHopos = s9;
     if (b2) {
         mSink->AddTrack(

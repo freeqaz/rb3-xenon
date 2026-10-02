@@ -4771,7 +4771,6 @@
     "?OnGetOccluded@CamShot@@IAA?AVDataNode@@PAVDataArray@@@Z",
     "?OnMovieSetTrack@BinkMovieSys@@SA?AVDataNode@@PAVDataArray@@@Z",
     "?OnMsg@BandUI@@QAA?AVDataNode@@ABVProcessedJoinRequestMsg@@@Z",
-    "?OnMsg@StorePanel@@IAA?AVDataNode@@ABVProfileSwappedMsg@@@Z",
     "?OnRebuild@WorldCrowd@@IAA?AVDataNode@@PAVDataArray@@@Z",
     "?OnRemoveSink@Object@Hmx@@AAA?AVDataNode@@PAVDataArray@@@Z",
     "?OnSaveFaceAnims@HamDirector@@IAA?AVDataNode@@PAVDataArray@@@Z",
@@ -4789,6 +4788,13 @@
      "class": "SURVIVOR_SIZE_MISMATCH",
      "disposition": "withdrawn",
      "why": "W16-GU 2026-09-30. This membership existed only because our RndPropAnim::ForeachKeyframe was a `{ return DataNode(0); }` scaffold stub. W16-GN (aa576155) ported the real body (retail fn_82429C38, 2,256 B; ours 2,192 B / 76 relocations per W16-GS's check of the compiled object), which cannot be byte-identical to this group's 16-byte stub survivor. Not flagged by the validator because the real body's retail address is unmapped; false on bytes, not on map residency. Withdrawn, not pruned."
+    },
+    {
+     "spelling": "?OnMsg@StorePanel@@IAA?AVDataNode@@ABVProfileSwappedMsg@@@Z",
+     "lane": "W16-NQ 2026-10-02",
+     "class": "CONTRADICTED_BY_IDENTIFICATION",
+     "disposition": "membership withdrawn; the spelling is now map-resident at 0x827b5470",
+     "evidence": "The membership rested on our old stub body ({ return 0; }) being byte-identical to DataNode::DataNode(). Retail bytes refute it: StorePanel::Handle's ProfileSwappedMsg arm calls 0x827b5470 (bl at 0x827b58f0, the only bl into that address), a 152 B body that compares StoreUser() with GetUser1/GetUser2 and calls StoreUserProfileSwappedToUser; none of the 9 retail bl callers of 0x8228d358 lies in StorePanel. W16-NQ wrote that body and named 0x827b5470; it reads 100 there. Leaving the membership would assert one name at two retail addresses (VALIDATE: CONTRADICTED)."
     }
    ]
   },

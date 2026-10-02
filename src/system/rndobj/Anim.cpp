@@ -556,16 +556,16 @@ DataNode RndAnimatable::OnAnimate(DataArray *arr) {
     // Retail reads exactly nine keys here (blend/range/loop/dest/period/delay/
     // units/name/wait) and builds the six-argument AnimTask: no listener, ease,
     // wrap or trigger_anim_task, and no assert on a zero period.
-    TaskUnits local_units = kTaskSeconds; // 0x60
     float local_blend = 0.0f; // 0x5c
     float animTaskStart = StartFrame();
     float animTaskEnd = EndFrame();
     bool animTaskLoop = Loop();
     float local_delay = 0.0f; // 0x58
+    TaskUnits local_units = kTaskSeconds; // 0x60
     const char *local_name = nullptr; // 0x54
     bool local_wait = false; // 0x50
-    local_units = Units();
     float p = FramesPerUnit();
+    local_units = Units();
 
     static Symbol blend("blend");
     static Symbol range("range");

@@ -1285,7 +1285,8 @@ DataNode BandWardrobe::OnEnterVignette(DataArray *da) {
 // re-fund it; this residual is permuter-class and the permuter is off.
 void BandWardrobe::SyncVignetteInterest(int playerIdx) {
     MILO_ASSERT(playerIdx < kNumTargets, 0x876);
-    BandCharacter *bc = FindTarget(mCurNames->names[playerIdx], *mCurNames);
+    Symbol name = mCurNames->names[playerIdx];
+    BandCharacter *bc = FindTarget(name, *mCurNames);
     if (bc) {
         bc->Character::SetFocusInterest(mPlayerForcedFocuses[playerIdx], 0);
     }
@@ -1293,7 +1294,8 @@ void BandWardrobe::SyncVignetteInterest(int playerIdx) {
 
 void BandWardrobe::SyncEnableBlinks(int playerIdx) {
     MILO_ASSERT(playerIdx < kNumTargets, 0x883);
-    BandCharacter *bc = FindTarget(mCurNames->names[playerIdx], *mCurNames);
+    Symbol name = mCurNames->names[playerIdx];
+    BandCharacter *bc = FindTarget(name, *mCurNames);
     if (bc) {
         bc->EnableBlinks(mPlayerEnableBlinks[playerIdx], false);
     }

@@ -43,6 +43,7 @@ float PeakDetector::gaussianWindow(unsigned int i) const {
 
     float q = (d * d) / (mCurWidth * mCurWidth * 0.0003f);
     if (q < 40.0f) {
+        float negq = -q;
         float v = mInput->begin()[i];
         float mag;
         if (v < 0.0f) {
@@ -50,7 +51,7 @@ float PeakDetector::gaussianWindow(unsigned int i) const {
         } else {
             mag = v;
         }
-        return (float)exp(-q) * mag;
+        return (float)exp(negq) * mag;
     }
     return 0.0f;
 }

@@ -1268,8 +1268,9 @@ const char *SongData::SongFullPath() const {
 
 VocalNoteList *SongData::GetVocalNoteList(int idx) {
     if (mPlayerTrackConfigList->UseVocalHarmony()) {
-        if (idx + 1U < mVocalNoteLists.size()) {
-            return mVocalNoteLists[idx + 1U];
+        unsigned int i = idx + 1;
+        if (i < mVocalNoteLists.size()) {
+            return mVocalNoteLists[i];
         } else
             return nullptr;
     } else if (idx != 0)

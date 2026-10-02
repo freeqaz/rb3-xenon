@@ -120,9 +120,10 @@ void MergeObject(
 #else
         // Retail (0x827583E0) walks o1's ring inline, re-reading the head after
         // each dispatch: Replace(o1, o2) moves the ref, unlinking its node.
-        const ObjRef &refs = o1->Refs();
-        while (!refs.empty()) {
-            RefPtrOf(refs.begin())->Replace(reinterpret_cast<ObjRef *>(o1), o2);
+        // Retail re-reads the head at the top of the body as well as in the
+        // test, which is what calling Refs() at each use gives.
+        while (!o1->Refs().empty()) {
+            RefPtrOf(o1->Refs().begin())->Replace(reinterpret_cast<ObjRef *>(o1), o2);
         }
 #endif
         if (act == MergeFilter::kMerge)
@@ -531,9 +532,8 @@ void ReplaceObject(
     to->SetName(name, dir);
     if (copyDeep)
         CopyObject(from, to, Hmx::Object::kCopyDeep, setProxyFile);
-    const ObjRef &refs = from->Refs();
-    while (!refs.empty()) {
-        RefPtrOf(refs.begin())->Replace(reinterpret_cast<ObjRef *>(from), to);
+    while (!from->Refs().empty()) {
+        RefPtrOf(from->Refs().begin())->Replace(reinterpret_cast<ObjRef *>(from), to);
     }
 #endif
     if (deleteFrom)

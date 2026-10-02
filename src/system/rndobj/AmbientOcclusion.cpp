@@ -1033,8 +1033,8 @@ void RndAmbientOcclusion::CalculateAO(float *outTime) {
     timer.Restart();
     PreprocessMesh();
 
-    unsigned int lastPercent = 0;
     unsigned int progress = 0;
+    unsigned int lastPercent = 0;
     for (std::vector<RndMesh *>::iterator it = mObjectsReceive.begin();
          it != mObjectsReceive.end(); ++it) {
         RndMesh *mesh = *it;
@@ -1074,9 +1074,7 @@ void RndAmbientOcclusion::CalculateAO(float *outTime) {
             && DataVariable("batcher.batching").Int(0) != 0;
         Hmx::Object *milo = ObjectDir::Main()->FindObject("milo", false);
         if (milo && !batching) {
-            milo->Handle(
-                Message("record", DataNode(mesh), DataNode("Ambient Occlusion")), true
-            );
+            milo->Handle(Message("record", DataNode(mesh), "Ambient Occlusion"), true);
             milo->Handle(Message("update_objects", DataNode(1)), true);
         }
     }
@@ -1657,9 +1655,7 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
             && DataVariable("batcher.batching").Int(0) != 0;
         Hmx::Object *milo = ObjectDir::Main()->FindObject("milo", false);
         if (milo && !batching) {
-            milo->Handle(
-                Message("record", DataNode(mesh), DataNode("Ambient Occlusion")), true
-            );
+            milo->Handle(Message("record", DataNode(mesh), "Ambient Occlusion"), true);
             milo->Handle(Message("update_objects", DataNode(1)), true);
         }
     }

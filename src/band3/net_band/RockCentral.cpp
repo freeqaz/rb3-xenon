@@ -1450,9 +1450,7 @@ void RockCentral::UpdateSetlist(
             type("type"), shared("shared"), list_guid("list_guid"), flags("flags"),
             art("art");
         INIT_DATAPOINT("setlists/update");
-        auto _tmp3 = profile->GetPadNum();
-        auto _tmp2 = server->GetPlayerID(_tmp3);
-        ADD_DATA_PAIR(pid, _tmp2);
+        ADD_DATA_PAIR(pid, server->GetPlayerID(profile->GetPadNum()));
         ADD_DATA_PAIR(name, setlist->GetTitle());
         ADD_DATA_PAIR(description, setlist->GetDescription());
         ADD_DATA_PAIR(type, SavedSetlist::kSetlistLocal);

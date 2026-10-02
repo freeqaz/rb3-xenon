@@ -1196,28 +1196,29 @@ float Rnd::DrawTimers(float f) {
     for (std::list<std::pair<Timer, TimerStats> >::iterator it = timers.begin();
          it != timers.end();
          ++it) {
-        if (!it->first.Draw()) {
+        Timer &timer = it->first;
+        if (!timer.Draw()) {
             continue;
         }
 
-        float budget = it->first.Budget();
+        float budget = timer.Budget();
 
-        bool overBudget = budget != 0.0f && it->first.GetLastMs() > budget;
+        bool overBudget = budget != 0.0f && timer.GetLastMs() > budget;
 
         if (overBudget) {
             rect.w = budget * scale;
             DrawRectScreen(rect, barColor, nullptr, nullptr, nullptr);
             rect.x += rect.w;
-            rect.w = (it->first.GetLastMs() - it->first.Budget()) * scale;
+            rect.w = (timer.GetLastMs() - timer.Budget()) * scale;
             DrawRectScreen(rect, budgetExcessColor, nullptr, nullptr, nullptr);
         } else {
-            rect.w = it->first.GetLastMs() * scale;
+            rect.w = timer.GetLastMs() * scale;
             DrawRectScreen(rect, barColor, nullptr, nullptr, nullptr);
         }
 
-        if (it->first.GetWorstMs() > it->first.GetLastMs()) {
+        if (timer.GetWorstMs() > timer.GetLastMs()) {
             rect.x += rect.w;
-            rect.w = (it->first.GetWorstMs() - it->first.GetLastMs()) * scale;
+            rect.w = (timer.GetWorstMs() - timer.GetLastMs()) * scale;
             DrawRectScreen(rect, worstExcessColor, nullptr, nullptr, nullptr);
         }
 

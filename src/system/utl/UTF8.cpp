@@ -141,8 +141,9 @@ void ASCIItoUTF8(char *out, int len, const char *in) {
     memset(out, 0, len);
     String str;
     char *p = out;
-    for (char c = *in; c != '\0'; c = *++in) {
-        int utf8 = EncodeUTF8(str, (unsigned char)c);
+    for (; *in != '\0'; in++) {
+        unsigned char c = *in;
+        int utf8 = EncodeUTF8(str, c);
         if ((p - out) + utf8 >= (unsigned int)len) {
             return;
         }

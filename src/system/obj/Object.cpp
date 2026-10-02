@@ -1091,11 +1091,15 @@ void Hmx::Object::SetNote(const char *note) {
         char *buf = (char *)MemOrPoolAlloc(strlen(note) + 1);
         mNote = buf;
         // Retail copies with a two-pointer byte loop (lbzu/stbu), not the
-        // strcpy intrinsic's dst-src indexed form. This spelling gets the
-        // loads right; MSVC still indexes the store off the source pointer.
-        const char *src = note - 1;
+        // strcpy intrinsic's dst-src indexed form: the byte is read into a
+        // local, stored, then tested, which keeps the store pointer separate.
         char *dst = buf - 1;
-        while ((*++dst = *++src) != 0) {
+        const char *src = note - 1;
+        for (;;) {
+            char c = *++src;
+            *++dst = c;
+            if (c == 0)
+                break;
         }
     } else {
         mNote = gNullStr;

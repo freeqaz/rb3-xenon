@@ -50,7 +50,8 @@ public:
             mLoadedObjects = m.mLoadedObjects;
             mLoadedSubdirs = m.mLoadedSubdirs;
             mPreClear = m.mPreClear;
-            mForceReload = m.mForceReload;
+            // Retail's operator= (BandWardrobe unit) copies mPreClear (0x2a)
+            // and returns: mForceReload (0x29) is not copied.
             return *this;
         }
 

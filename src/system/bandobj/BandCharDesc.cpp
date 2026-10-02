@@ -1069,8 +1069,8 @@ void BandCharDesc::ClearPatch(BandCharDesc::Patch::Category cat, const char *cc)
     }
 }
 
-void BandCharDesc::Compress(RndTex *tex, bool b) {
-    tex->Compress((RndTex::AlphaCompress)b);
+void BandCharDesc::Compress(RndTex *tex, RndTex::AlphaCompress b) {
+    tex->Compress(b);
 }
 
 BEGIN_HANDLERS(BandCharDesc)

@@ -186,7 +186,7 @@ public:
     virtual RndTex *GetPatchTex(Patch &) { return 0; }
     virtual RndMesh *GetPatchMesh(Patch &) { return 0; }
     virtual RndTex *GetBandLogo() { return 0; }
-    virtual void Compress(RndTex *, bool);
+    virtual void Compress(RndTex *, RndTex::AlphaCompress);
     virtual ObjectDir *GetPatchDir() { return 0; }
     virtual void AddOverlays(BandPatchMesh &) {}
     virtual void MiloReload() {}

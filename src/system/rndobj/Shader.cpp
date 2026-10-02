@@ -548,7 +548,9 @@ u64 RndShaderParticles::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     if (TheRnd.DrawMode() == (Rnd::Mode)6) {
         opts |= 0x200000000000;
     }
-    return (s64)(TheRnd.DrawMode() != (Rnd::Mode)3 ? -1 : 0) & opts;
+    if (TheRnd.DrawMode() == (Rnd::Mode)3)
+        opts = 0;
+    return opts;
 }
 
 // The two bodies below were previously scored against each other's retail
