@@ -24128,7 +24128,7 @@
  "0x827b7d88": "?Unload@StoreArtLoaderPanel@@UAAXXZ",
  "0x827b7dc8": "?EnsureArtLoader@StoreArtLoaderPanel@@QAAXABVString@@@Z",
  "0x827b7e88": "??_GStoreArtLoaderPanel@@UAAPAXI@Z",
- "0x827b7ed0": null,
+ "0x827b7ed0": "?IsEnumerating@XboxEnumeration@@UBA_NXZ",
  "0x827b7ee0": "??0EnumProduct@@QAA@ABU0@@Z",
  "0x827b7f40": "??$_Copy_Construct@UEnumProduct@@@stlpmtx_std@@YAXPAUEnumProduct@@ABU1@@Z",
  "0x827b7fb0": "?_M_create_node@?$list@UEnumProduct@@V?$StlNodeAlloc@UEnumProduct@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABUEnumProduct@@@Z",

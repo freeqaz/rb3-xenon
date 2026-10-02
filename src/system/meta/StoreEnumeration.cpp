@@ -93,7 +93,9 @@ error_path:
 }
 
 bool XboxEnumeration::IsEnumerating() const {
-    return mEnumerating;
+    // Retail (0x827B7ED0, XboxEnumeration vtable slot 2) tests the open
+    // enumeration handle, not mEnumerating: lwz 0x3C; return != 0.
+    return mHandle != 0;
 }
 
 void XboxEnumeration::Poll() {
