@@ -1144,12 +1144,12 @@ void RndText::SetText(const char *text) {
 float RndText::GetStringWidthUTF8(
     const char *cc1, const char *cc2, bool bbb, const RndText::Style *styleIn
 ) const {
-    unsigned short us8 = 0;
     float ret = 0;
     // a copy of mStyle is made only when no style is passed; the local is
     // not default-constructed
     unsigned int styleBuf[(sizeof(Style) + 3) / 4];
     Style *style = (Style *)styleIn;
+    unsigned short us8 = 0;
     if (!cc2) {
         cc2 = cc1 + strlen(cc1);
     }

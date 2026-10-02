@@ -70,7 +70,8 @@ bool AddChordLevel(
     if (strlen(buffer) + strlen(localBuf) >= bufferLen - 1)
         return false;
     strcat(buffer, localBuf);
-    return i4++ + 1 < i3 || i3 == -1;
+    ++i4;
+    return i4 < i3 || i3 == -1;
 }
 
 void RGParseOverrideChord(char *buf, int bufLen, const char *cc) {
