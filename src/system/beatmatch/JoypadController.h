@@ -32,8 +32,8 @@ public:
     bool IsCymbal(int) const;
     bool NoSlotButtonsThisFrame() const;
 
-    int OnMsg(const ButtonDownMsg &);
-    int OnMsg(const ButtonUpMsg &);
+    bool OnMsg(const ButtonDownMsg &);
+    bool OnMsg(const ButtonUpMsg &);
 
     __declspec(noinline) JoypadData *GetJoypadData() const {
         return mLocalUser ? JoypadGetPadData(mLocalUser->GetPadNum()) : 0;
