@@ -2234,7 +2234,14 @@
             "network/quazal/DOCoreTypes.cpp": "NonMatching",
             "network/quazal/RMCContext.cpp": "NonMatching",
             "network/quazal/DOCallContext.cpp": "NonMatching",
-            "network/quazal/Transport/Interface/StationURL.cpp": "NonMatching",
+            "network/quazal/Transport/Interface/StationURL.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1"
+                ]
+            },
             "network/quazal/SystemComponent.cpp": "NonMatching",
             "network/quazal/ProtocolRequestBroker.cpp": "NonMatching",
             "network/quazal/Core/Platform.cpp": "NonMatching",
